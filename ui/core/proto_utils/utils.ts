@@ -957,21 +957,21 @@ export function isTankSpec(spec: Spec): boolean {
 // Prefixes used for storing browser data for each site. Even if a Spec is
 // renamed, DO NOT change these values or people will lose their saved data.
 export const specToLocalStorageKey: Record<Spec, string> = {
-	[Spec.SpecBalanceDruid]: '__balance_druid',
-	[Spec.SpecElementalShaman]: '__elemental_shaman',
-	[Spec.SpecEnhancementShaman]: '__enhacement_shaman',
-	[Spec.SpecFeralDruid]: '__feral_druid',
-	[Spec.SpecFeralTankDruid]: '__feral_tank_druid',
-	[Spec.SpecHunter]: '__hunter',
-	[Spec.SpecMage]: '__mage',
-	[Spec.SpecRetributionPaladin]: '__retribution_paladin',
-	[Spec.SpecProtectionPaladin]: '__protection_paladin',
-	[Spec.SpecRogue]: '__rogue',
-	[Spec.SpecShadowPriest]: '__shadow_priest',
-	[Spec.SpecWarlock]: '__warlock',
-	[Spec.SpecWarrior]: '__warrior',
-	[Spec.SpecProtectionWarrior]: '__protection_warrior',
-	[Spec.SpecSmitePriest]: '__smite_priest',
+	[Spec.SpecBalanceDruid]: '__wotlk_balance_druid',
+	[Spec.SpecElementalShaman]: '__wotlk_elemental_shaman',
+	[Spec.SpecEnhancementShaman]: '__wotlk_enhacement_shaman',
+	[Spec.SpecFeralDruid]: '__wotlk_feral_druid',
+	[Spec.SpecFeralTankDruid]: '__wotlk_feral_tank_druid',
+	[Spec.SpecHunter]: '__wotlk_hunter',
+	[Spec.SpecMage]: '__wotlk_mage',
+	[Spec.SpecRetributionPaladin]: '__wotlk_retribution_paladin',
+	[Spec.SpecProtectionPaladin]: '__wotlk_protection_paladin',
+	[Spec.SpecRogue]: '__wotlk_rogue',
+	[Spec.SpecShadowPriest]: '__wotlk_shadow_priest',
+	[Spec.SpecWarlock]: '__wotlk_warlock',
+	[Spec.SpecWarrior]: '__wotlk_warrior',
+	[Spec.SpecProtectionWarrior]: '__wotlk_protection_warrior',
+	[Spec.SpecSmitePriest]: '__wotlk_smite_priest',
 };
 
 // Returns a copy of playerOptions, with the class field set.

@@ -261,7 +261,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.addWarning({
 				updateOn: new TypedEvent<void>(),
 				shouldDisplay: () => true,
-				getContent: () => 'This sim is still under development.',
+				getContent: () => 'This sim has not yet been updated from its TBC state.',
 			});
 		}
 
