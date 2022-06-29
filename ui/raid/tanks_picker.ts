@@ -1,13 +1,13 @@
-import { Component } from '/tbc/core/components/component.js';
-import { Input, InputConfig } from '/tbc/core/components/input.js';
-import { RaidTargetPicker } from '/tbc/core/components/raid_target_picker.js';
-import { Player } from '/tbc/core/player.js';
-import { Raid } from '/tbc/core/raid.js';
-import { EventID, TypedEvent } from '/tbc/core/typed_event.js';
-import { Class } from '/tbc/core/proto/common.js';
-import { RaidTarget } from '/tbc/core/proto/common.js';
-import { Spec } from '/tbc/core/proto/common.js';
-import { emptyRaidTarget } from '/tbc/core/proto_utils/utils.js';
+import { Component } from '/wotlk/core/components/component.js';
+import { Input, InputConfig } from '/wotlk/core/components/input.js';
+import { RaidTargetPicker } from '/wotlk/core/components/raid_target_picker.js';
+import { Player } from '/wotlk/core/player.js';
+import { Raid } from '/wotlk/core/raid.js';
+import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
+import { Class } from '/wotlk/core/proto/common.js';
+import { RaidTarget } from '/wotlk/core/proto/common.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { emptyRaidTarget } from '/wotlk/core/proto_utils/utils.js';
 
 import { RaidSimUI } from './raid_sim_ui.js';
 

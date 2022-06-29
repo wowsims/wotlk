@@ -1,8 +1,8 @@
-import { Spec } from '/tbc/core/proto/common.js';
-import { SimResult, SimResultFilter } from '/tbc/core/proto_utils/sim_result.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { SimResult, SimResultFilter } from '/wotlk/core/proto_utils/sim_result.js';
 
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
-import { RaidSimResultsManager } from '/tbc/core/components/raid_sim_action.js';
+import { RaidSimResultsManager } from '/wotlk/core/components/raid_sim_action.js';
 
 export class ToplineResults extends ResultComponent {
 	constructor(config: ResultComponentConfig) {

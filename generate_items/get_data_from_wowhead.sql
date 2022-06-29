@@ -31,7 +31,7 @@ BEGIN
 	SET @authHeader = 'No Auth';
 	SET @contentType = 'application/json';
 
-	SET @url = CONCAT('https://tbc.wowhead.com/tooltip/item/', @UID,'&json')
+	SET @url = CONCAT('https://wotlk.wowhead.com/tooltip/item/', @UID,'&json')
 
 	-- Open the connection.
 	EXEC @ret = sp_OACreate 'MSXML2.ServerXMLHTTP', @token OUT;
@@ -99,7 +99,7 @@ BEGIN
 	SET @authHeader = 'No Auth';
 	SET @contentType = 'application/json';
 
-	SET @url = CONCAT('https://tbc.wowhead.com/tooltip/item/', @UID,'&json')
+	SET @url = CONCAT('https://wotlk.wowhead.com/tooltip/item/', @UID,'&json')
 
 	-- Open the connection.
 	EXEC @ret = sp_OACreate 'MSXML2.ServerXMLHTTP', @token OUT;

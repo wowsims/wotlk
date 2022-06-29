@@ -3,9 +3,9 @@ package hunter
 import (
 	"time"
 
-	"github.com/wowsims/tbc/sim/core"
-	"github.com/wowsims/tbc/sim/core/proto"
-	"github.com/wowsims/tbc/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 type HunterPet struct {
@@ -178,8 +178,8 @@ type PetConfig struct {
 	RandomSelection bool
 }
 
-// Abilities reference: https://tbc.wowhead.com/hunter-pets
-// https://tbc.wowhead.com/guides/hunter-dps-best-pets-taming-loyalty-burning-crusade-classic
+// Abilities reference: https://wotlk.wowhead.com/hunter-pets
+// https://wotlk.wowhead.com/guides/hunter-dps-best-pets-taming-loyalty-burning-crusade-classic
 var PetConfigs = map[proto.Hunter_Options_PetType]PetConfig{
 	proto.Hunter_Options_Bat: PetConfig{
 		Name:             "Bat",

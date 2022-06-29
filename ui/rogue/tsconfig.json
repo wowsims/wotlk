@@ -2,7 +2,7 @@
 	"extends": "../tsconfig-base",
 	"compilerOptions": {
 		"composite": true,
-		"outDir": "../../dist/tbc/rogue",
+		"outDir": "../../dist/wotlk/rogue",
 	},
 	"include": [
 		"**/*.ts",

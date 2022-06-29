@@ -1,28 +1,28 @@
-import { RaidBuffs, StrengthOfEarthType } from '/tbc/core/proto/common.js';
-import { PartyBuffs } from '/tbc/core/proto/common.js';
-import { IndividualBuffs } from '/tbc/core/proto/common.js';
-import { Debuffs } from '/tbc/core/proto/common.js';
-import { Spec } from '/tbc/core/proto/common.js';
-import { Stat } from '/tbc/core/proto/common.js';
-import { TristateEffect } from '/tbc/core/proto/common.js'
-import { Stats } from '/tbc/core/proto_utils/stats.js';
-import { Player } from '/tbc/core/player.js';
-import { IndividualSimUI } from '/tbc/core/individual_sim_ui.js';
-import { EventID, TypedEvent } from '/tbc/core/typed_event.js';
+import { RaidBuffs, StrengthOfEarthType } from '/wotlk/core/proto/common.js';
+import { PartyBuffs } from '/wotlk/core/proto/common.js';
+import { IndividualBuffs } from '/wotlk/core/proto/common.js';
+import { Debuffs } from '/wotlk/core/proto/common.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { Stat } from '/wotlk/core/proto/common.js';
+import { TristateEffect } from '/wotlk/core/proto/common.js'
+import { Stats } from '/wotlk/core/proto_utils/stats.js';
+import { Player } from '/wotlk/core/player.js';
+import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
+import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
 
-import { Alchohol } from '/tbc/core/proto/common.js';
-import { BattleElixir } from '/tbc/core/proto/common.js';
-import { Flask } from '/tbc/core/proto/common.js';
-import { Food } from '/tbc/core/proto/common.js';
-import { GuardianElixir } from '/tbc/core/proto/common.js';
-import { Conjured } from '/tbc/core/proto/common.js';
-import { Drums } from '/tbc/core/proto/common.js';
-import { PetFood } from '/tbc/core/proto/common.js';
-import { Potions } from '/tbc/core/proto/common.js';
-import { WeaponImbue } from '/tbc/core/proto/common.js';
+import { Alchohol } from '/wotlk/core/proto/common.js';
+import { BattleElixir } from '/wotlk/core/proto/common.js';
+import { Flask } from '/wotlk/core/proto/common.js';
+import { Food } from '/wotlk/core/proto/common.js';
+import { GuardianElixir } from '/wotlk/core/proto/common.js';
+import { Conjured } from '/wotlk/core/proto/common.js';
+import { Drums } from '/wotlk/core/proto/common.js';
+import { PetFood } from '/wotlk/core/proto/common.js';
+import { Potions } from '/wotlk/core/proto/common.js';
+import { WeaponImbue } from '/wotlk/core/proto/common.js';
 
-import * as IconInputs from '/tbc/core/components/icon_inputs.js';
-import * as OtherInputs from '/tbc/core/components/other_inputs.js';
+import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
+import * as OtherInputs from '/wotlk/core/components/other_inputs.js';
 
 import * as RetributionPaladinInputs from './inputs.js';
 import * as Presets from './presets.js';

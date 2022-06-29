@@ -2,7 +2,7 @@
 	"extends": "../tsconfig-base",
 	"compilerOptions": {
 		"composite": true,
-		"outDir": "../../dist/tbc/retribution_paladin",
+		"outDir": "../../dist/wotlk/retribution_paladin",
 	},
 	"include": [
 		"**/*.ts",

@@ -1,5 +1,5 @@
-import { SimUI } from '/tbc/core/sim_ui.js';
-import { EventID, TypedEvent } from '/tbc/core/typed_event.js';
+import { SimUI } from '/wotlk/core/sim_ui.js';
+import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
 
 import { Component } from './component.js';
 

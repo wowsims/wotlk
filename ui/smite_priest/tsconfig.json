@@ -2,7 +2,7 @@
 	"extends": "../tsconfig-base",
 	"compilerOptions": {
 		"composite": true,
-		"outDir": "../../dist/tbc/smite_priest",
+		"outDir": "../../dist/wotlk/smite_priest",
 	},
 	"include": [
 		"**/*.ts",

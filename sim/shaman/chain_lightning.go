@@ -3,7 +3,7 @@ package shaman
 import (
 	"time"
 
-	"github.com/wowsims/tbc/sim/core"
+	"github.com/wowsims/wotlk/sim/core"
 )
 
 func (shaman *Shaman) newChainLightningSpell(isLightningOverload bool) *core.Spell {

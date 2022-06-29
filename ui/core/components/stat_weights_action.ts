@@ -1,20 +1,20 @@
-import { StatWeightsRequest, StatWeightsResult, StatWeightValues, ProgressMetrics } from '/tbc/core/proto/api.js';
-import { ItemSlot } from '/tbc/core/proto/common.js';
-import { Gem } from '/tbc/core/proto/common.js';
-import { GemColor } from '/tbc/core/proto/common.js';
-import { Stat } from '/tbc/core/proto/common.js';
-import { Stats } from '/tbc/core/proto_utils/stats.js';
-import { Gear } from '/tbc/core/proto_utils/gear.js';
-import { gemMatchesSocket, getMetaGemCondition } from '/tbc/core/proto_utils/gems.js';
-import { statNames, statOrder } from '/tbc/core/proto_utils/names.js';
-import { IndividualSimUI } from '/tbc/core/individual_sim_ui.js';
-import { EventID, TypedEvent } from '/tbc/core/typed_event.js';
-import { Player } from '/tbc/core/player.js';
-import { stDevToConf90 } from '/tbc/core/utils.js';
-import { BooleanPicker } from '/tbc/core/components/boolean_picker.js';
-import { NumberPicker } from '/tbc/core/components/number_picker.js';
-import { ResultsViewer } from '/tbc/core/components/results_viewer.js';
-import { getEnumValues, maxIndex, sum } from '/tbc/core/utils.js';
+import { StatWeightsRequest, StatWeightsResult, StatWeightValues, ProgressMetrics } from '/wotlk/core/proto/api.js';
+import { ItemSlot } from '/wotlk/core/proto/common.js';
+import { Gem } from '/wotlk/core/proto/common.js';
+import { GemColor } from '/wotlk/core/proto/common.js';
+import { Stat } from '/wotlk/core/proto/common.js';
+import { Stats } from '/wotlk/core/proto_utils/stats.js';
+import { Gear } from '/wotlk/core/proto_utils/gear.js';
+import { gemMatchesSocket, getMetaGemCondition } from '/wotlk/core/proto_utils/gems.js';
+import { statNames, statOrder } from '/wotlk/core/proto_utils/names.js';
+import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
+import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
+import { Player } from '/wotlk/core/player.js';
+import { stDevToConf90 } from '/wotlk/core/utils.js';
+import { BooleanPicker } from '/wotlk/core/components/boolean_picker.js';
+import { NumberPicker } from '/wotlk/core/components/number_picker.js';
+import { ResultsViewer } from '/wotlk/core/components/results_viewer.js';
+import { getEnumValues, maxIndex, sum } from '/wotlk/core/utils.js';
 
 import { Popup } from './popup.js';
 

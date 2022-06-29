@@ -3,7 +3,7 @@ package core
 import (
 	"time"
 
-	"github.com/wowsims/tbc/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	googleProto "google.golang.org/protobuf/proto"
 )
 

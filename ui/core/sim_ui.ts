@@ -1,10 +1,10 @@
-import { Component } from '/tbc/core/components/component.js';
-import { NumberPicker } from '/tbc/core/components/number_picker.js';
-import { ResultsViewer } from '/tbc/core/components/results_viewer.js';
-import { Title } from '/tbc/core/components/title.js';
-import { Spec } from '/tbc/core/proto/common.js';
-import { SimOptions } from '/tbc/core/proto/api.js';
-import { specToLocalStorageKey } from '/tbc/core/proto_utils/utils.js';
+import { Component } from '/wotlk/core/components/component.js';
+import { NumberPicker } from '/wotlk/core/components/number_picker.js';
+import { ResultsViewer } from '/wotlk/core/components/results_viewer.js';
+import { Title } from '/wotlk/core/components/title.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { SimOptions } from '/wotlk/core/proto/api.js';
+import { specToLocalStorageKey } from '/wotlk/core/proto_utils/utils.js';
 
 import { Sim } from './sim.js';
 import { Target } from './target.js';
@@ -135,7 +135,7 @@ export abstract class SimUI extends Component {
 			'allowHTML': true,
 		});
 		reportBug.addEventListener('click', event => {
-			window.open('https://github.com/wowsims/tbc/issues/new/choose', '_blank');
+			window.open('https://github.com/wowsims/wotlk/issues/new/choose', '_blank');
 		});
 		this.addToolbarItem(reportBug);
 
@@ -148,10 +148,10 @@ export abstract class SimUI extends Component {
 		}
 
 		const downloadBinary = document.createElement('span');
-		// downloadBinary.src = "/tbc/assets/gauge.svg"
+		// downloadBinary.src = "/wotlk/assets/gauge.svg"
 		downloadBinary.classList.add('downbin');
 		downloadBinary.addEventListener('click', event => {
-			window.open('https://github.com/wowsims/tbc/releases', '_blank');
+			window.open('https://github.com/wowsims/wotlk/releases', '_blank');
 		});
 
 		if (document.location.href.includes("localhost")) {

@@ -4,8 +4,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/wowsims/tbc/sim/core"
-	"github.com/wowsims/tbc/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // https://web.archive.org/web/20071201221602/http://www.shadowpriest.com/viewtopic.php?t=7616

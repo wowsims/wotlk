@@ -1,7 +1,7 @@
 # Recursive wildcard function
 rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 
-OUT_DIR=dist/tbc
+OUT_DIR=dist/wotlk
 GOROOT:=$(shell go env GOROOT)
 
 ifeq ($(shell go env GOOS),darwin)
@@ -42,17 +42,17 @@ $(OUT_DIR)/index.html:
 clean:
 	rm -f ui/core/proto/*.ts
 	rm -f sim/core/proto/*.pb.go
-	rm -f wowsimtbc
-	rm -f wowsimtbc-windows.exe
-	rm -f wowsimtbc-amd64-darwin
-	rm -f wowsimtbc-amd64-linux
+	rm -f wowsimwotlk
+	rm -f wowsimwotlk-windows.exe
+	rm -f wowsimwotlk-amd64-darwin
+	rm -f wowsimwotlk-amd64-linux
 	rm -rf dist
 	rm -rf binary_dist
 	find . -name "*.results.tmp" -type f -delete
 
 # Host a local server, for dev testing
 host: $(OUT_DIR)
-	# Intentionally serve one level up, so the local site has 'tbc' as the first
+	# Intentionally serve one level up, so the local site has 'wotlk' as the first
 	# directory just like github pages.
 	npx http-server $(OUT_DIR)/..
 
@@ -70,7 +70,7 @@ node_modules: package-lock.json
 
 $(OUT_DIR)/core/tsconfig.tsbuildinfo: $(call rwildcard,ui/core,*.ts) ui/core/proto/api.ts
 	npx tsc -p ui/core
-	$(SED) 's#@protobuf-ts/runtime#/tbc/protobuf-ts/index#g' $(OUT_DIR)/core/proto/*.js
+	$(SED) 's#@protobuf-ts/runtime#/wotlk/protobuf-ts/index#g' $(OUT_DIR)/core/proto/*.js
 	$(SED) "s/from \"(.*)\";/from '\1.js';/g" $(OUT_DIR)/core/proto/*.js
 
 # Generic rule for hosting any class directory
@@ -91,7 +91,7 @@ $(OUT_DIR)/%/index.html: ui/index_template.html $(OUT_DIR)/assets
 	$(eval title := $(shell echo $(shell basename $(@D)) | sed -r 's/(^|_)([a-z])/\U \2/g' | cut -c 2-))
 	echo $(title)
 	mkdir -p $(@D)
-	cat ui/index_template.html | sed 's/@@TITLE@@/TBC $(title) Simulator/g' > $@
+	cat ui/index_template.html | sed 's/@@TITLE@@/WOTLK $(title) Simulator/g' > $@
 
 .PHONY: wasm
 wasm: $(OUT_DIR)/lib.wasm
@@ -119,23 +119,23 @@ $(OUT_DIR)/assets: assets/*
 	cp -r assets $(OUT_DIR)
 
 binary_dist/dist.go: sim/web/dist.go.tmpl
-	mkdir -p binary_dist/tbc
-	touch binary_dist/tbc/embedded
+	mkdir -p binary_dist/wotlk
+	touch binary_dist/wotlk/embedded
 	cp sim/web/dist.go.tmpl binary_dist/dist.go
 
 binary_dist: $(OUT_DIR)
 	rm -rf binary_dist
 	mkdir -p binary_dist
 	cp -r $(OUT_DIR) binary_dist/
-	rm binary_dist/tbc/lib.wasm
-	rm -rf binary_dist/tbc/assets/item_data
+	rm binary_dist/wotlk/lib.wasm
+	rm -rf binary_dist/wotlk/assets/item_data
 
 # Builds the web server with the compiled client.
-wowsimtbc: binary_dist devserver
+wowsimwotlk: binary_dist devserver
 
 devserver: sim/web/main.go binary_dist/dist.go
 	@echo "Starting server compile now..."
-	@if go build -o wowsimtbc ./sim/web/main.go; then \
+	@if go build -o wowsimwotlk ./sim/web/main.go; then \
 		echo "\033[1;32mBuild Completed Succeessfully\033[0m"; \
 	else \
 		echo "\033[1;31mBUILD FAILED\033[0m"; \
@@ -143,12 +143,12 @@ devserver: sim/web/main.go binary_dist/dist.go
 	fi
 
 rundevserver: devserver
-	./wowsimtbc --usefs=true --launch=false
+	./wowsimwotlk --usefs=true --launch=false
 
-release: wowsimtbc
-	GOOS=windows GOARCH=amd64 go build -o wowsimtbc-windows.exe -ldflags="-X 'main.Version=$(VERSION)'" ./sim/web/main.go
-	GOOS=darwin GOARCH=amd64 go build -o wowsimtbc-amd64-darwin -ldflags="-X 'main.Version=$(VERSION)'" ./sim/web/main.go
-	GOOS=linux GOARCH=amd64 go build -o wowsimtbc-amd64-linux   -ldflags="-X 'main.Version=$(VERSION)'" ./sim/web/main.go
+release: wowsimwotlk
+	GOOS=windows GOARCH=amd64 go build -o wowsimwotlk-windows.exe -ldflags="-X 'main.Version=$(VERSION)'" ./sim/web/main.go
+	GOOS=darwin GOARCH=amd64 go build -o wowsimwotlk-amd64-darwin -ldflags="-X 'main.Version=$(VERSION)'" ./sim/web/main.go
+	GOOS=linux GOARCH=amd64 go build -o wowsimwotlk-amd64-linux   -ldflags="-X 'main.Version=$(VERSION)'" ./sim/web/main.go
 
 sim/core/proto/api.pb.go: proto/*.proto
 	protoc -I=./proto --go_out=./sim/core ./proto/*.proto

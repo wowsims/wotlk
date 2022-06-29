@@ -3,8 +3,8 @@ package rogue
 import (
 	"time"
 
-	"github.com/wowsims/tbc/sim/core"
-	"github.com/wowsims/tbc/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 var ItemSetAssassination = core.NewItemSet(core.ItemSet{
@@ -63,7 +63,7 @@ var ItemSetDeathmantle = core.NewItemSet(core.ItemSet{
 						return
 					}
 
-					// https://tbc.wowhead.com/spell=37170/free-finisher-chance, proc mask = 20.
+					// https://wotlk.wowhead.com/spell=37170/free-finisher-chance, proc mask = 20.
 					if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
 						return
 					}
@@ -126,7 +126,7 @@ func init() {
 					return
 				}
 
-				// https://tbc.wowhead.com/spell=37173/armor-penetration, proc mask = 16.
+				// https://wotlk.wowhead.com/spell=37173/armor-penetration, proc mask = 16.
 				if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeSpecial) {
 					return
 				}

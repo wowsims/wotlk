@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/wowsims/tbc/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // Callback for after a spell hits the target and after damage is calculated. Use it for proc effects

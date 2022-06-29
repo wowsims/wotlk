@@ -1,11 +1,11 @@
-import { Encounter as EncounterProto } from '/tbc/core/proto/common.js';
-import { Raid as RaidProto } from '/tbc/core/proto/api.js';
-import { RaidSimRequest, RaidSimResult, ProgressMetrics } from '/tbc/core/proto/api.js';
-import { SimRunData } from '/tbc/core/proto/ui.js';
-import { ActionMetrics, SimResult, SimResultFilter } from '/tbc/core/proto_utils/sim_result.js';
-import { SimUI } from '/tbc/core/sim_ui.js';
-import { EventID, TypedEvent } from '/tbc/core/typed_event.js';
-import { formatDeltaTextElem } from '/tbc/core/utils.js';
+import { Encounter as EncounterProto } from '/wotlk/core/proto/common.js';
+import { Raid as RaidProto } from '/wotlk/core/proto/api.js';
+import { RaidSimRequest, RaidSimResult, ProgressMetrics } from '/wotlk/core/proto/api.js';
+import { SimRunData } from '/wotlk/core/proto/ui.js';
+import { ActionMetrics, SimResult, SimResultFilter } from '/wotlk/core/proto_utils/sim_result.js';
+import { SimUI } from '/wotlk/core/sim_ui.js';
+import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
+import { formatDeltaTextElem } from '/wotlk/core/utils.js';
 
 declare var tippy: any;
 

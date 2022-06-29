@@ -1,9 +1,9 @@
-import { ActionId } from '/tbc/core/proto_utils/action_id.js';
-import { ResourceMetrics, SimResult, SimResultFilter } from '/tbc/core/proto_utils/sim_result.js';
-import { ResourceType } from '/tbc/core/proto/api.js';
-import { resourceNames } from '/tbc/core/proto_utils/names.js';
-import { orderedResourceTypes } from '/tbc/core/proto_utils/utils.js';
-import { getEnumValues } from '/tbc/core/utils.js';
+import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
+import { ResourceMetrics, SimResult, SimResultFilter } from '/wotlk/core/proto_utils/sim_result.js';
+import { ResourceType } from '/wotlk/core/proto/api.js';
+import { resourceNames } from '/wotlk/core/proto_utils/names.js';
+import { orderedResourceTypes } from '/wotlk/core/proto_utils/utils.js';
+import { getEnumValues } from '/wotlk/core/utils.js';
 
 import { ColumnSortType, MetricsTable } from './metrics_table.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';

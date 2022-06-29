@@ -3,16 +3,16 @@ package sim
 import (
 	"testing"
 
-	"github.com/wowsims/tbc/sim/core"
-	"github.com/wowsims/tbc/sim/core/proto"
-	"github.com/wowsims/tbc/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 	"google.golang.org/protobuf/encoding/protojson"
 
-	balanceDruid "github.com/wowsims/tbc/sim/druid/balance"
-	hunter "github.com/wowsims/tbc/sim/hunter"
-	shadowPriest "github.com/wowsims/tbc/sim/priest/shadow"
-	elementalShaman "github.com/wowsims/tbc/sim/shaman/elemental"
-	enhancementShaman "github.com/wowsims/tbc/sim/shaman/enhancement"
+	balanceDruid "github.com/wowsims/wotlk/sim/druid/balance"
+	hunter "github.com/wowsims/wotlk/sim/hunter"
+	shadowPriest "github.com/wowsims/wotlk/sim/priest/shadow"
+	elementalShaman "github.com/wowsims/wotlk/sim/shaman/elemental"
+	enhancementShaman "github.com/wowsims/wotlk/sim/shaman/enhancement"
 )
 
 func init() {

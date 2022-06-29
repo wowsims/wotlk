@@ -3,9 +3,9 @@ package protection
 import (
 	"testing"
 
-	_ "github.com/wowsims/tbc/sim/common" // imported to get item effects included.
-	"github.com/wowsims/tbc/sim/core"
-	"github.com/wowsims/tbc/sim/core/proto"
+	_ "github.com/wowsims/wotlk/sim/common" // imported to get item effects included.
+	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func init() {

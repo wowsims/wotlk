@@ -1,8 +1,8 @@
 package protection
 
 import (
-	"github.com/wowsims/tbc/sim/core/items"
-	"github.com/wowsims/tbc/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/items"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 var defaultProtTalents = &proto.PaladinTalents{

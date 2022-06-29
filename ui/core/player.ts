@@ -1,33 +1,33 @@
-import { Class } from '/tbc/core/proto/common.js';
-import { Cooldowns } from '/tbc/core/proto/common.js';
-import { Consumes } from '/tbc/core/proto/common.js';
-import { Enchant } from '/tbc/core/proto/common.js';
-import { Gem } from '/tbc/core/proto/common.js';
-import { GemColor } from '/tbc/core/proto/common.js';
-import { HealingModel } from '/tbc/core/proto/common.js';
-import { IndividualBuffs } from '/tbc/core/proto/common.js';
-import { ItemSlot } from '/tbc/core/proto/common.js';
-import { Item } from '/tbc/core/proto/common.js';
-import { Race, ShattrathFaction } from '/tbc/core/proto/common.js';
-import { RaidTarget } from '/tbc/core/proto/common.js';
-import { RangedWeaponType } from '/tbc/core/proto/common.js';
-import { Spec } from '/tbc/core/proto/common.js';
-import { Faction } from '/tbc/core/proto/common.js';
-import { Stat } from '/tbc/core/proto/common.js';
-import { WeaponImbue } from '/tbc/core/proto/common.js';
-import { WeaponType } from '/tbc/core/proto/common.js';
-import { PlayerStats } from '/tbc/core/proto/api.js';
-import { Player as PlayerProto } from '/tbc/core/proto/api.js';
-import { StatWeightsResult } from '/tbc/core/proto/api.js';
-import { EquippedItem, getWeaponDPS } from '/tbc/core/proto_utils/equipped_item.js';
+import { Class } from '/wotlk/core/proto/common.js';
+import { Cooldowns } from '/wotlk/core/proto/common.js';
+import { Consumes } from '/wotlk/core/proto/common.js';
+import { Enchant } from '/wotlk/core/proto/common.js';
+import { Gem } from '/wotlk/core/proto/common.js';
+import { GemColor } from '/wotlk/core/proto/common.js';
+import { HealingModel } from '/wotlk/core/proto/common.js';
+import { IndividualBuffs } from '/wotlk/core/proto/common.js';
+import { ItemSlot } from '/wotlk/core/proto/common.js';
+import { Item } from '/wotlk/core/proto/common.js';
+import { Race, ShattrathFaction } from '/wotlk/core/proto/common.js';
+import { RaidTarget } from '/wotlk/core/proto/common.js';
+import { RangedWeaponType } from '/wotlk/core/proto/common.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { Faction } from '/wotlk/core/proto/common.js';
+import { Stat } from '/wotlk/core/proto/common.js';
+import { WeaponImbue } from '/wotlk/core/proto/common.js';
+import { WeaponType } from '/wotlk/core/proto/common.js';
+import { PlayerStats } from '/wotlk/core/proto/api.js';
+import { Player as PlayerProto } from '/wotlk/core/proto/api.js';
+import { StatWeightsResult } from '/wotlk/core/proto/api.js';
+import { EquippedItem, getWeaponDPS } from '/wotlk/core/proto_utils/equipped_item.js';
 
-import { talentStringToProto } from '/tbc/core/talents/factory.js';
-import { Gear } from '/tbc/core/proto_utils/gear.js';
+import { talentStringToProto } from '/wotlk/core/talents/factory.js';
+import { Gear } from '/wotlk/core/proto_utils/gear.js';
 import {
 	gemEligibleForSocket,
 	gemMatchesSocket,
-} from '/tbc/core/proto_utils/gems.js';
-import { Stats } from '/tbc/core/proto_utils/stats.js';
+} from '/wotlk/core/proto_utils/gems.js';
+import { Stats } from '/wotlk/core/proto_utils/stats.js';
 
 import {
 	SpecRotation,
@@ -51,7 +51,7 @@ import {
 	specToEligibleRaces,
 	specTypeFunctions,
 	withSpecProto,
-} from '/tbc/core/proto_utils/utils.js';
+} from '/wotlk/core/proto_utils/utils.js';
 
 import { Listener } from './typed_event.js';
 import { EventID, TypedEvent } from './typed_event.js';

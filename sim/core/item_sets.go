@@ -3,7 +3,7 @@ package core
 import (
 	"fmt"
 
-	"github.com/wowsims/tbc/sim/core/items"
+	"github.com/wowsims/wotlk/sim/core/items"
 )
 
 type ItemSet struct {

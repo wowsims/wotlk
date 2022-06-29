@@ -1,12 +1,12 @@
-import { Class } from '/tbc/core/proto/common.js';
-import { RaidTarget } from '/tbc/core/proto/common.js';
-import { Spec } from '/tbc/core/proto/common.js';
-import { BuffBot as BuffBotProto } from '/tbc/core/proto/ui.js';
-import { classColors } from '/tbc/core/proto_utils/utils.js';
-import { emptyRaidTarget } from '/tbc/core/proto_utils/utils.js';
-import { specToClass } from '/tbc/core/proto_utils/utils.js';
-import { Sim } from '/tbc/core/sim.js';
-import { EventID, TypedEvent } from '/tbc/core/typed_event.js';
+import { Class } from '/wotlk/core/proto/common.js';
+import { RaidTarget } from '/wotlk/core/proto/common.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { BuffBot as BuffBotProto } from '/wotlk/core/proto/ui.js';
+import { classColors } from '/wotlk/core/proto_utils/utils.js';
+import { emptyRaidTarget } from '/wotlk/core/proto_utils/utils.js';
+import { specToClass } from '/wotlk/core/proto_utils/utils.js';
+import { Sim } from '/wotlk/core/sim.js';
+import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
 import { BuffBotSettings, buffBotPresets } from './presets.js';
 
 export const NO_ASSIGNMENT = -1;

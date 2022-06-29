@@ -2,7 +2,7 @@
 	"extends": "../tsconfig-base",
 	"compilerOptions": {
 		"declaration": false,
-		"outDir": "../../dist/tbc/raid",
+		"outDir": "../../dist/wotlk/raid",
 	},
 	"include": [
 		"**/*.ts",

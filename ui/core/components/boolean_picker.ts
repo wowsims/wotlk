@@ -1,4 +1,4 @@
-import { EventID, TypedEvent } from '/tbc/core/typed_event.js';
+import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
 
 import { Input, InputConfig } from './input.js';
 

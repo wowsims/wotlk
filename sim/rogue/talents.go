@@ -3,9 +3,9 @@ package rogue
 import (
 	"time"
 
-	"github.com/wowsims/tbc/sim/core"
-	"github.com/wowsims/tbc/sim/core/proto"
-	"github.com/wowsims/tbc/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (rogue *Rogue) ApplyTalents() {
@@ -219,7 +219,7 @@ func (rogue *Rogue) applyWeaponSpecializations() {
 		}
 	}
 
-	// https://tbc.wowhead.com/spell=13964/sword-specialization, proc mask = 20.
+	// https://wotlk.wowhead.com/spell=13964/sword-specialization, proc mask = 20.
 	swordSpecMask := core.ProcMaskUnknown
 	if rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeSword {
 		swordSpecMask |= core.ProcMaskMeleeMH
@@ -294,7 +294,7 @@ func (rogue *Rogue) applyCombatPotency() {
 				return
 			}
 
-			// https://tbc.wowhead.com/spell=35553/combat-potency, proc mask = 8838608.
+			// https://wotlk.wowhead.com/spell=35553/combat-potency, proc mask = 8838608.
 			if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeOH) {
 				return
 			}

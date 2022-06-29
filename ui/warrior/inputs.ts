@@ -1,13 +1,13 @@
-import { IconPickerConfig } from '/tbc/core/components/icon_picker.js';
-import { RaidTarget } from '/tbc/core/proto/common.js';
-import { Spec } from '/tbc/core/proto/common.js';
-import { NO_TARGET } from '/tbc/core/proto_utils/utils.js';
-import { ActionId } from '/tbc/core/proto_utils/action_id.js';
-import { Player } from '/tbc/core/player.js';
-import { Sim } from '/tbc/core/sim.js';
-import { EventID, TypedEvent } from '/tbc/core/typed_event.js';
-import { IndividualSimUI } from '/tbc/core/individual_sim_ui.js';
-import { Target } from '/tbc/core/target.js';
+import { IconPickerConfig } from '/wotlk/core/components/icon_picker.js';
+import { RaidTarget } from '/wotlk/core/proto/common.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { NO_TARGET } from '/wotlk/core/proto_utils/utils.js';
+import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
+import { Player } from '/wotlk/core/player.js';
+import { Sim } from '/wotlk/core/sim.js';
+import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
+import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
+import { Target } from '/wotlk/core/target.js';
 
 import {
 	WarriorShout,
@@ -16,7 +16,7 @@ import {
 	Warrior_Rotation as WarriorRotation,
 	Warrior_Rotation_SunderArmor as SunderArmor,
 	Warrior_Options as WarriorOptions,
-} from '/tbc/core/proto/warrior.js';
+} from '/wotlk/core/proto/warrior.js';
 
 import * as Presets from './presets.js';
 import { SimUI } from '../core/sim_ui.js';

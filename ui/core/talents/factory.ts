@@ -1,11 +1,11 @@
-import { Player } from '/tbc/core/player.js';
-import { Class } from '/tbc/core/proto/common.js';
-import { Spec } from '/tbc/core/proto/common.js';
+import { Player } from '/wotlk/core/player.js';
+import { Class } from '/wotlk/core/proto/common.js';
+import { Spec } from '/wotlk/core/proto/common.js';
 import {
 	SpecTalents,
 	specToClass,
 	specTypeFunctions,
-} from '/tbc/core/proto_utils/utils.js';
+} from '/wotlk/core/proto_utils/utils.js';
 
 import { druidTalentsConfig, DruidTalentsPicker } from './druid.js';
 import { hunterTalentsConfig, HunterTalentsPicker } from './hunter.js';

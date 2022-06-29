@@ -1,7 +1,7 @@
-import { Spec } from '/tbc/core/proto/common.js';
-import { PriestTalents as PriestTalents } from '/tbc/core/proto/priest.js';
-import { PriestSpecs } from '/tbc/core/proto_utils/utils.js';
-import { Player } from '/tbc/core/player.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { PriestTalents as PriestTalents } from '/wotlk/core/proto/priest.js';
+import { PriestSpecs } from '/wotlk/core/proto_utils/utils.js';
+import { Player } from '/wotlk/core/player.js';
 
 import { TalentsConfig, TalentsPicker, newTalentsConfig } from './talents_picker.js';
 
@@ -15,7 +15,7 @@ export class PriestTalentsPicker extends TalentsPicker<Spec.SpecShadowPriest> {
 export const priestTalentsConfig: TalentsConfig<Spec.SpecShadowPriest> = newTalentsConfig([
 	{
 		name: 'Discipline',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/tbc/201.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/201.jpg',
 		talents: [
 			{
 				//fieldName: 'unbreakableWill',
@@ -231,7 +231,7 @@ export const priestTalentsConfig: TalentsConfig<Spec.SpecShadowPriest> = newTale
 	},
 	{
 		name: 'Holy',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/tbc/202.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/202.jpg',
 		talents: [
 			{
 				//fieldName: 'healingFocus',
@@ -435,7 +435,7 @@ export const priestTalentsConfig: TalentsConfig<Spec.SpecShadowPriest> = newTale
 	},
 	{
 		name: 'Shadow',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/tbc/203.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/203.jpg',
 		talents: [
 			{
 				//fieldName: 'spiritTap',

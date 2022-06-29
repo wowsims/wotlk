@@ -1,7 +1,7 @@
-import { Spec } from '/tbc/core/proto/common.js';
-import { HunterTalents as HunterTalents } from '/tbc/core/proto/hunter.js';
-import { HunterSpecs } from '/tbc/core/proto_utils/utils.js';
-import { Player } from '/tbc/core/player.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { HunterTalents as HunterTalents } from '/wotlk/core/proto/hunter.js';
+import { HunterSpecs } from '/wotlk/core/proto_utils/utils.js';
+import { Player } from '/wotlk/core/player.js';
 
 import { TalentsConfig, TalentsPicker, newTalentsConfig } from './talents_picker.js';
 
@@ -14,7 +14,7 @@ export class HunterTalentsPicker extends TalentsPicker<Spec.SpecHunter> {
 export const hunterTalentsConfig: TalentsConfig<Spec.SpecHunter> = newTalentsConfig([
 	{
 		name: 'Beast Mastery',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/tbc/361.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/361.jpg',
 		talents: [
 			{
 				fieldName: 'improvedAspectOfTheHawk',
@@ -221,7 +221,7 @@ export const hunterTalentsConfig: TalentsConfig<Spec.SpecHunter> = newTalentsCon
 	},
 	{
 		name: 'Marksmanship',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/tbc/363.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/363.jpg',
 		talents: [
 			{
 				//fieldName: 'improvedConsussiveShot',
@@ -419,7 +419,7 @@ export const hunterTalentsConfig: TalentsConfig<Spec.SpecHunter> = newTalentsCon
 	},
 	{
 		name: 'Survival',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/tbc/362.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/362.jpg',
 		talents: [
 			{
 				fieldName: 'monsterSlaying',

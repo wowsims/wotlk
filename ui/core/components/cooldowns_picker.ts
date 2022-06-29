@@ -1,17 +1,17 @@
-import { Component } from '/tbc/core/components/component.js';
-import { IconEnumPicker, IconEnumValueConfig } from '/tbc/core/components/icon_enum_picker.js';
-import { Input, InputConfig } from '/tbc/core/components/input.js';
-import { NumberListPicker } from '/tbc/core/components/number_list_picker.js';
-import { Player } from '/tbc/core/player.js';
-import { EventID, TypedEvent } from '/tbc/core/typed_event.js';
-import { ActionID as ActionIdProto } from '/tbc/core/proto/common.js';
-import { Cooldowns } from '/tbc/core/proto/common.js';
-import { Cooldown } from '/tbc/core/proto/common.js';
-import { ActionId } from '/tbc/core/proto_utils/action_id.js';
-import { Class } from '/tbc/core/proto/common.js';
-import { Spec } from '/tbc/core/proto/common.js';
-import { getEnumValues } from '/tbc/core/utils.js';
-import { wait } from '/tbc/core/utils.js';
+import { Component } from '/wotlk/core/components/component.js';
+import { IconEnumPicker, IconEnumValueConfig } from '/wotlk/core/components/icon_enum_picker.js';
+import { Input, InputConfig } from '/wotlk/core/components/input.js';
+import { NumberListPicker } from '/wotlk/core/components/number_list_picker.js';
+import { Player } from '/wotlk/core/player.js';
+import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
+import { ActionID as ActionIdProto } from '/wotlk/core/proto/common.js';
+import { Cooldowns } from '/wotlk/core/proto/common.js';
+import { Cooldown } from '/wotlk/core/proto/common.js';
+import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
+import { Class } from '/wotlk/core/proto/common.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { getEnumValues } from '/wotlk/core/utils.js';
+import { wait } from '/wotlk/core/utils.js';
 
 declare var tippy: any;
 

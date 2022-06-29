@@ -1,7 +1,7 @@
-import { Spec } from '/tbc/core/proto/common.js';
-import { RogueTalents as RogueTalents } from '/tbc/core/proto/rogue.js';
-import { RogueSpecs } from '/tbc/core/proto_utils/utils.js';
-import { Player } from '/tbc/core/player.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { RogueTalents as RogueTalents } from '/wotlk/core/proto/rogue.js';
+import { RogueSpecs } from '/wotlk/core/proto_utils/utils.js';
+import { Player } from '/wotlk/core/player.js';
 
 import { TalentsConfig, TalentsPicker, newTalentsConfig } from './talents_picker.js';
 
@@ -14,7 +14,7 @@ export class RogueTalentsPicker extends TalentsPicker<Spec.SpecRogue> {
 export const rogueTalentsConfig: TalentsConfig<Spec.SpecRogue> = newTalentsConfig([
 	{
 		name: 'Assassination',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/tbc/182.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/182.jpg',
 		talents: [
 			{
 				fieldName: 'improvedEviscerate',
@@ -221,7 +221,7 @@ export const rogueTalentsConfig: TalentsConfig<Spec.SpecRogue> = newTalentsConfi
 	},
 	{
 		name: 'Combat',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/tbc/181.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/181.jpg',
 		talents: [
 			{
 				//fieldName: 'improvedGouge',
@@ -459,7 +459,7 @@ export const rogueTalentsConfig: TalentsConfig<Spec.SpecRogue> = newTalentsConfi
 	},
 	{
 		name: 'Subtlety',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/tbc/183.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/183.jpg',
 		talents: [
 			{
 				//fieldName: 'masterOfDeception',

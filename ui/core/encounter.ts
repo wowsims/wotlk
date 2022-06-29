@@ -1,11 +1,11 @@
-import { Encounter as EncounterProto } from '/tbc/core/proto/common.js';
-import { MobType } from '/tbc/core/proto/common.js';
-import { Stat } from '/tbc/core/proto/common.js';
-import { Target as TargetProto } from '/tbc/core/proto/common.js';
-import { PresetEncounter } from '/tbc/core/proto/api.js';
-import { PresetTarget } from '/tbc/core/proto/api.js';
-import { Target } from '/tbc/core/target.js';
-import { Stats } from '/tbc/core/proto_utils/stats.js';
+import { Encounter as EncounterProto } from '/wotlk/core/proto/common.js';
+import { MobType } from '/wotlk/core/proto/common.js';
+import { Stat } from '/wotlk/core/proto/common.js';
+import { Target as TargetProto } from '/wotlk/core/proto/common.js';
+import { PresetEncounter } from '/wotlk/core/proto/api.js';
+import { PresetTarget } from '/wotlk/core/proto/api.js';
+import { Target } from '/wotlk/core/target.js';
+import { Stats } from '/wotlk/core/proto_utils/stats.js';
 
 import { Sim } from './sim.js';
 import { EventID, TypedEvent } from './typed_event.js';

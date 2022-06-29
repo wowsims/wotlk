@@ -1,4 +1,4 @@
-import { SimResult, SimResultFilter } from '/tbc/core/proto_utils/sim_result.js';
+import { SimResult, SimResultFilter } from '/wotlk/core/proto_utils/sim_result.js';
 
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
 

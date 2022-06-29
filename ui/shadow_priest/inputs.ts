@@ -1,13 +1,13 @@
-import { ShadowPriest_Rotation_RotationType as RotationType } from '/tbc/core/proto/priest.js';
-import { Race, RaidTarget } from '/tbc/core/proto/common.js';
-import { Spec } from '/tbc/core/proto/common.js';
-import { NO_TARGET } from '/tbc/core/proto_utils/utils.js';
-import { ActionId } from '/tbc/core/proto_utils/action_id.js';
-import { Player } from '/tbc/core/player.js';
-import { Sim } from '/tbc/core/sim.js';
-import { IndividualSimUI } from '/tbc/core/individual_sim_ui.js';
-import { Target } from '/tbc/core/target.js';
-import { EventID, TypedEvent } from '/tbc/core/typed_event.js';
+import { ShadowPriest_Rotation_RotationType as RotationType } from '/wotlk/core/proto/priest.js';
+import { Race, RaidTarget } from '/wotlk/core/proto/common.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { NO_TARGET } from '/wotlk/core/proto_utils/utils.js';
+import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
+import { Player } from '/wotlk/core/player.js';
+import { Sim } from '/wotlk/core/sim.js';
+import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
+import { Target } from '/wotlk/core/target.js';
+import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.

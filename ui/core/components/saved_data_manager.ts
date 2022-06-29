@@ -1,7 +1,7 @@
-import { Spec } from '/tbc/core/proto/common.js';
-import { EventID, TypedEvent } from '/tbc/core/typed_event.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
 
-import { Component } from '/tbc/core/components/component.js';
+import { Component } from '/wotlk/core/components/component.js';
 
 declare var tippy: any;
 

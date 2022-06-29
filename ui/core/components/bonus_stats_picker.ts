@@ -1,8 +1,8 @@
-import { Stat } from '/tbc/core/proto/common.js';
-import { statNames, statOrder } from '/tbc/core/proto_utils/names.js';
-import { Stats } from '/tbc/core/proto_utils/stats.js';
-import { Player } from '/tbc/core/player.js';
-import { EventID, TypedEvent } from '/tbc/core/typed_event.js';
+import { Stat } from '/wotlk/core/proto/common.js';
+import { statNames, statOrder } from '/wotlk/core/proto_utils/names.js';
+import { Stats } from '/wotlk/core/proto_utils/stats.js';
+import { Player } from '/wotlk/core/player.js';
+import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
 
 import { Component } from './component.js';
 import { NumberPicker } from './number_picker.js';

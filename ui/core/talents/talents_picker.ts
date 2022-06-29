@@ -1,11 +1,11 @@
-import { Component } from '/tbc/core/components/component.js';
-import { Spec } from '/tbc/core/proto/common.js';
-import { ActionId } from '/tbc/core/proto_utils/action_id.js';
-import { SpecTalents } from '/tbc/core/proto_utils/utils.js';
-import { Player } from '/tbc/core/player.js';
-import { EventID, TypedEvent } from '/tbc/core/typed_event.js';
-import { isRightClick } from '/tbc/core/utils.js';
-import { sum } from '/tbc/core/utils.js';
+import { Component } from '/wotlk/core/components/component.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
+import { SpecTalents } from '/wotlk/core/proto_utils/utils.js';
+import { Player } from '/wotlk/core/player.js';
+import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
+import { isRightClick } from '/wotlk/core/utils.js';
+import { sum } from '/wotlk/core/utils.js';
 
 const MAX_TALENT_POINTS = 61;
 const NUM_ROWS = 9;

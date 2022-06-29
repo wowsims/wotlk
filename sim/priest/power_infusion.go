@@ -1,8 +1,8 @@
 package priest
 
 import (
-	"github.com/wowsims/tbc/sim/core"
-	"github.com/wowsims/tbc/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (priest *Priest) registerPowerInfusionCD() {

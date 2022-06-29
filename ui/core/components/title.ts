@@ -1,6 +1,6 @@
-import { Component } from '/tbc/core/components/component.js';
-import { launchedSpecs } from '/tbc/core/launched_sims.js';
-import { Spec } from '/tbc/core/proto/common.js';
+import { Component } from '/wotlk/core/components/component.js';
+import { launchedSpecs } from '/wotlk/core/launched_sims.js';
+import { Spec } from '/wotlk/core/proto/common.js';
 import {
 	classColors,
 	getSpecSiteUrl,
@@ -10,7 +10,7 @@ import {
 	specToClass,
 	titleIcons,
 	raidSimIcon,
-} from '/tbc/core/proto_utils/utils.js';
+} from '/wotlk/core/proto_utils/utils.js';
 
 declare var tippy: any;
 

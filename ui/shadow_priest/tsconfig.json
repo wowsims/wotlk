@@ -2,7 +2,7 @@
 	"extends": "../tsconfig-base",
 	"compilerOptions": {
 		"composite": true,
-		"outDir": "../../dist/tbc/shadow_priest",
+		"outDir": "../../dist/wotlk/shadow_priest",
 	},
 	"include": [
 		"**/*.ts",

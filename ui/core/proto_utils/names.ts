@@ -1,9 +1,9 @@
-import { Class } from '/tbc/core/proto/common.js';
-import { ItemSlot } from '/tbc/core/proto/common.js';
-import { Race } from '/tbc/core/proto/common.js';
-import { ShattrathFaction } from '/tbc/core/proto/common.js';
-import { Stat } from '/tbc/core/proto/common.js';
-import { ResourceType } from '/tbc/core/proto/api.js';
+import { Class } from '/wotlk/core/proto/common.js';
+import { ItemSlot } from '/wotlk/core/proto/common.js';
+import { Race } from '/wotlk/core/proto/common.js';
+import { ShattrathFaction } from '/wotlk/core/proto/common.js';
+import { Stat } from '/wotlk/core/proto/common.js';
+import { ResourceType } from '/wotlk/core/proto/api.js';
 
 export const raceNames: Record<Race, string> = {
 	[Race.RaceUnknown]: 'None',

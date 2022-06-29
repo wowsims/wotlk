@@ -1,8 +1,8 @@
-import { RaidSimRequest, RaidSimResult } from '/tbc/core/proto/api.js';
-import { ResourceType } from '/tbc/core/proto/api.js';
-import { ActionId } from '/tbc/core/proto_utils/action_id.js';
-import { resourceNames, stringToResourceType } from '/tbc/core/proto_utils/names.js';
-import { bucket, getEnumValues, stringComparator, sum } from '/tbc/core/utils.js';
+import { RaidSimRequest, RaidSimResult } from '/wotlk/core/proto/api.js';
+import { ResourceType } from '/wotlk/core/proto/api.js';
+import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
+import { resourceNames, stringToResourceType } from '/wotlk/core/proto_utils/names.js';
+import { bucket, getEnumValues, stringComparator, sum } from '/wotlk/core/utils.js';
 
 export class Entity {
 	readonly name: string;

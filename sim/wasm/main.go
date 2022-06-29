@@ -8,9 +8,9 @@ import (
 	"runtime/debug"
 	"syscall/js"
 
-	"github.com/wowsims/tbc/sim"
-	"github.com/wowsims/tbc/sim/core"
-	proto "github.com/wowsims/tbc/sim/core/proto"
+	"github.com/wowsims/wotlk/sim"
+	"github.com/wowsims/wotlk/sim/core"
+	proto "github.com/wowsims/wotlk/sim/core/proto"
 	googleProto "google.golang.org/protobuf/proto"
 )
 

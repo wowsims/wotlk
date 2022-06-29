@@ -1,7 +1,7 @@
-import { Spec } from '/tbc/core/proto/common.js';
-import { DruidTalents as DruidTalents } from '/tbc/core/proto/druid.js';
-import { DruidSpecs } from '/tbc/core/proto_utils/utils.js';
-import { Player } from '/tbc/core/player.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { DruidTalents as DruidTalents } from '/wotlk/core/proto/druid.js';
+import { DruidSpecs } from '/wotlk/core/proto_utils/utils.js';
+import { Player } from '/wotlk/core/player.js';
 
 import { TalentsConfig, TalentsPicker, newTalentsConfig } from './talents_picker.js';
 
@@ -15,7 +15,7 @@ export class DruidTalentsPicker extends TalentsPicker<Spec.SpecBalanceDruid> {
 export const druidTalentsConfig: TalentsConfig<Spec.SpecBalanceDruid> = newTalentsConfig([
 	{
 		name: 'Balance',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/tbc/283.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/283.jpg',
 		talents: [
 			{
 				fieldName: 'starlightWrath',
@@ -222,7 +222,7 @@ export const druidTalentsConfig: TalentsConfig<Spec.SpecBalanceDruid> = newTalen
 	},
 	{
 		name: 'Feral Combat',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/tbc/281.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/281.jpg',
 		talents: [
 			{
 				fieldName: 'ferocity',
@@ -429,7 +429,7 @@ export const druidTalentsConfig: TalentsConfig<Spec.SpecBalanceDruid> = newTalen
 	},
 	{
 		name: 'Restoration',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/tbc/282.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/282.jpg',
 		talents: [
 			{
 				fieldName: 'improvedMarkOfTheWild',

@@ -4,8 +4,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/wowsims/tbc/sim/core"
-	"github.com/wowsims/tbc/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // Note: AM doesn't charge its mana up-front, instead it charges 1/5 of the mana on each tick.

@@ -2,7 +2,7 @@
 	"extends": "../tsconfig-base",
 	"compilerOptions": {
 		"composite": true,
-		"outDir": "../../dist/tbc/hunter",
+		"outDir": "../../dist/wotlk/hunter",
 	},
 	"include": [
 		"**/*.ts",

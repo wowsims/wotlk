@@ -1,10 +1,10 @@
-import { Party as PartyProto } from '/tbc/core/proto/api.js';
-import { PartyStats as PartyStatsProto } from '/tbc/core/proto/api.js';
-import { Player as PlayerProto } from '/tbc/core/proto/api.js';
-import { PartyBuffs } from '/tbc/core/proto/common.js';
-import { Class } from '/tbc/core/proto/common.js';
-import { Spec } from '/tbc/core/proto/common.js';
-import { playerToSpec } from '/tbc/core/proto_utils/utils.js';
+import { Party as PartyProto } from '/wotlk/core/proto/api.js';
+import { PartyStats as PartyStatsProto } from '/wotlk/core/proto/api.js';
+import { Player as PlayerProto } from '/wotlk/core/proto/api.js';
+import { PartyBuffs } from '/wotlk/core/proto/common.js';
+import { Class } from '/wotlk/core/proto/common.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { playerToSpec } from '/wotlk/core/proto_utils/utils.js';
 
 import { Raid } from './raid.js';
 import { Player } from './player.js';

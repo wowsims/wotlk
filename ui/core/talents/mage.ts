@@ -1,7 +1,7 @@
-import { Spec } from '/tbc/core/proto/common.js';
-import { MageTalents as MageTalents } from '/tbc/core/proto/mage.js';
-import { MageSpecs } from '/tbc/core/proto_utils/utils.js';
-import { Player } from '/tbc/core/player.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { MageTalents as MageTalents } from '/wotlk/core/proto/mage.js';
+import { MageSpecs } from '/wotlk/core/proto_utils/utils.js';
+import { Player } from '/wotlk/core/player.js';
 
 import { TalentsConfig, TalentsPicker, newTalentsConfig } from './talents_picker.js';
 
@@ -14,7 +14,7 @@ export class MageTalentsPicker extends TalentsPicker<Spec.SpecMage> {
 export const mageTalentsConfig: TalentsConfig<Spec.SpecMage> = newTalentsConfig([
 	{
 		name: 'Arcane',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/tbc/81.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/81.jpg',
 		talents: [
 			{
 				fieldName: 'arcaneSubtlety',
@@ -239,7 +239,7 @@ export const mageTalentsConfig: TalentsConfig<Spec.SpecMage> = newTalentsConfig(
 	},
 	{
 		name: 'Fire',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/tbc/41.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/41.jpg',
 		talents: [
 			{
 				fieldName: 'improvedFireball',
@@ -455,7 +455,7 @@ export const mageTalentsConfig: TalentsConfig<Spec.SpecMage> = newTalentsConfig(
 	},
 	{
 		name: 'Frost',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/tbc/61.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/61.jpg',
 		talents: [
 			{
 				//fieldName: 'frostWarding',

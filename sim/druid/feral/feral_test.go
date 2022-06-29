@@ -3,9 +3,9 @@ package feral
 import (
 	"testing"
 
-	_ "github.com/wowsims/tbc/sim/common"
-	"github.com/wowsims/tbc/sim/core"
-	"github.com/wowsims/tbc/sim/core/proto"
+	_ "github.com/wowsims/wotlk/sim/common"
+	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func init() {

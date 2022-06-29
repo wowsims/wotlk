@@ -3,8 +3,8 @@ package shaman
 import (
 	"time"
 
-	"github.com/wowsims/tbc/sim/core"
-	"github.com/wowsims/tbc/sim/core/items"
+	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/items"
 )
 
 // newLightningBoltTemplate returns a cast generator for Lightning Bolt with as many fields precomputed as possible.

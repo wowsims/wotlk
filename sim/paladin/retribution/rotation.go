@@ -4,8 +4,8 @@ import (
 	"math"
 	"time"
 
-	"github.com/wowsims/tbc/sim/core"
-	"github.com/wowsims/tbc/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (ret *RetributionPaladin) OnGCDReady(sim *core.Simulation) {

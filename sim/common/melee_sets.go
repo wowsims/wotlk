@@ -3,9 +3,9 @@ package common
 import (
 	"time"
 
-	"github.com/wowsims/tbc/sim/core"
-	"github.com/wowsims/tbc/sim/core/proto"
-	"github.com/wowsims/tbc/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // Keep these in alphabetical order.
@@ -221,7 +221,7 @@ var ItemSetTwinBladesOfAzzinoth = core.NewItemSet(core.ItemSet{
 						return
 					}
 
-					// https://tbc.wowhead.com/spell=41434/the-twin-blades-of-azzinoth, proc mask = 20.
+					// https://wotlk.wowhead.com/spell=41434/the-twin-blades-of-azzinoth, proc mask = 20.
 					if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
 						return
 					}

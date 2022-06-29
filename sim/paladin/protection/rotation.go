@@ -3,7 +3,7 @@ package protection
 import (
 	"time"
 
-	"github.com/wowsims/tbc/sim/core"
+	"github.com/wowsims/wotlk/sim/core"
 )
 
 func (prot *ProtectionPaladin) OnGCDReady(sim *core.Simulation) {

@@ -1,44 +1,44 @@
-import { Class, Faction } from '/tbc/core/proto/common.js';
-import { Consumes } from '/tbc/core/proto/common.js';
-import { Enchant } from '/tbc/core/proto/common.js';
-import { Encounter as EncounterProto } from '/tbc/core/proto/common.js';
-import { EquipmentSpec } from '/tbc/core/proto/common.js';
-import { Gem } from '/tbc/core/proto/common.js';
-import { GemColor } from '/tbc/core/proto/common.js';
-import { ItemQuality } from '/tbc/core/proto/common.js';
-import { ItemSlot } from '/tbc/core/proto/common.js';
-import { ItemSpec } from '/tbc/core/proto/common.js';
-import { ItemType } from '/tbc/core/proto/common.js';
-import { Item } from '/tbc/core/proto/common.js';
-import { Race } from '/tbc/core/proto/common.js';
-import { RaidTarget } from '/tbc/core/proto/common.js';
-import { Spec } from '/tbc/core/proto/common.js';
-import { Stat } from '/tbc/core/proto/common.js';
-import { Raid as RaidProto } from '/tbc/core/proto/api.js';
-import { PresetEncounter, PresetTarget } from '/tbc/core/proto/api.js';
-import { ComputeStatsRequest, ComputeStatsResult } from '/tbc/core/proto/api.js';
-import { GearListRequest, GearListResult } from '/tbc/core/proto/api.js';
-import { RaidSimRequest, RaidSimResult } from '/tbc/core/proto/api.js';
-import { SimOptions } from '/tbc/core/proto/api.js';
-import { StatWeightsRequest, StatWeightsResult } from '/tbc/core/proto/api.js';
-import { SimSettings as SimSettingsProto } from '/tbc/core/proto/ui.js';
+import { Class, Faction } from '/wotlk/core/proto/common.js';
+import { Consumes } from '/wotlk/core/proto/common.js';
+import { Enchant } from '/wotlk/core/proto/common.js';
+import { Encounter as EncounterProto } from '/wotlk/core/proto/common.js';
+import { EquipmentSpec } from '/wotlk/core/proto/common.js';
+import { Gem } from '/wotlk/core/proto/common.js';
+import { GemColor } from '/wotlk/core/proto/common.js';
+import { ItemQuality } from '/wotlk/core/proto/common.js';
+import { ItemSlot } from '/wotlk/core/proto/common.js';
+import { ItemSpec } from '/wotlk/core/proto/common.js';
+import { ItemType } from '/wotlk/core/proto/common.js';
+import { Item } from '/wotlk/core/proto/common.js';
+import { Race } from '/wotlk/core/proto/common.js';
+import { RaidTarget } from '/wotlk/core/proto/common.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { Stat } from '/wotlk/core/proto/common.js';
+import { Raid as RaidProto } from '/wotlk/core/proto/api.js';
+import { PresetEncounter, PresetTarget } from '/wotlk/core/proto/api.js';
+import { ComputeStatsRequest, ComputeStatsResult } from '/wotlk/core/proto/api.js';
+import { GearListRequest, GearListResult } from '/wotlk/core/proto/api.js';
+import { RaidSimRequest, RaidSimResult } from '/wotlk/core/proto/api.js';
+import { SimOptions } from '/wotlk/core/proto/api.js';
+import { StatWeightsRequest, StatWeightsResult } from '/wotlk/core/proto/api.js';
+import { SimSettings as SimSettingsProto } from '/wotlk/core/proto/ui.js';
 
-import { EquippedItem } from '/tbc/core/proto_utils/equipped_item.js';
-import { Gear } from '/tbc/core/proto_utils/gear.js';
-import { SimResult } from '/tbc/core/proto_utils/sim_result.js';
-import { Stats } from '/tbc/core/proto_utils/stats.js';
-import { gemEligibleForSocket } from '/tbc/core/proto_utils/gems.js';
-import { gemMatchesSocket } from '/tbc/core/proto_utils/gems.js';
-import { SpecRotation } from '/tbc/core/proto_utils/utils.js';
-import { SpecTalents } from '/tbc/core/proto_utils/utils.js';
-import { SpecTypeFunctions } from '/tbc/core/proto_utils/utils.js';
-import { specTypeFunctions } from '/tbc/core/proto_utils/utils.js';
-import { SpecOptions } from '/tbc/core/proto_utils/utils.js';
-import { specToClass } from '/tbc/core/proto_utils/utils.js';
-import { specToEligibleRaces } from '/tbc/core/proto_utils/utils.js';
-import { getEligibleItemSlots } from '/tbc/core/proto_utils/utils.js';
-import { getEligibleEnchantSlots } from '/tbc/core/proto_utils/utils.js';
-import { playerToSpec } from '/tbc/core/proto_utils/utils.js';
+import { EquippedItem } from '/wotlk/core/proto_utils/equipped_item.js';
+import { Gear } from '/wotlk/core/proto_utils/gear.js';
+import { SimResult } from '/wotlk/core/proto_utils/sim_result.js';
+import { Stats } from '/wotlk/core/proto_utils/stats.js';
+import { gemEligibleForSocket } from '/wotlk/core/proto_utils/gems.js';
+import { gemMatchesSocket } from '/wotlk/core/proto_utils/gems.js';
+import { SpecRotation } from '/wotlk/core/proto_utils/utils.js';
+import { SpecTalents } from '/wotlk/core/proto_utils/utils.js';
+import { SpecTypeFunctions } from '/wotlk/core/proto_utils/utils.js';
+import { specTypeFunctions } from '/wotlk/core/proto_utils/utils.js';
+import { SpecOptions } from '/wotlk/core/proto_utils/utils.js';
+import { specToClass } from '/wotlk/core/proto_utils/utils.js';
+import { specToEligibleRaces } from '/wotlk/core/proto_utils/utils.js';
+import { getEligibleItemSlots } from '/wotlk/core/proto_utils/utils.js';
+import { getEligibleEnchantSlots } from '/wotlk/core/proto_utils/utils.js';
+import { playerToSpec } from '/wotlk/core/proto_utils/utils.js';
 
 import { Encounter } from './encounter.js';
 import { Player } from './player.js';
@@ -49,7 +49,7 @@ import { sum } from './utils.js';
 import { wait } from './utils.js';
 import { WorkerPool } from './worker_pool.js';
 
-import * as OtherConstants from '/tbc/core/constants/other.js';
+import * as OtherConstants from '/wotlk/core/constants/other.js';
 
 declare var pako: any;
 
@@ -229,12 +229,12 @@ export class Sim {
 			const rExp: RegExp = /(.*\.go:\d+)/g;
 			filteredError += errorStr.match(rExp)?.join(" ");
 			var hash = this.hashCode(filteredError);
-			fetch('https://api.github.com/search/issues?q=is:issue+is:open+repo:wowsims/tbc+' + hash).then(resp => {
+			fetch('https://api.github.com/search/issues?q=is:issue+is:open+repo:wowsims/wotlk+' + hash).then(resp => {
 				resp.json().then((issues) => {
 					if (issues.total_count > 0) {
 						window.open(issues.items[0].html_url, "_blank");
 					} else {
-						window.open("https://github.com/wowsims/tbc/issues/new?assignees=&labels=&title=Crash%20Report%20" + hash + "&body=" + encodeURIComponent(errorStr + "\n\nRequest:\n" + extra), '_blank');
+						window.open("https://github.com/wowsims/wotlk/issues/new?assignees=&labels=&title=Crash%20Report%20" + hash + "&body=" + encodeURIComponent(errorStr + "\n\nRequest:\n" + extra), '_blank');
 					}
 				});
 			}).catch(fetchErr => {

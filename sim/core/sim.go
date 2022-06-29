@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/wowsims/tbc/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 type Simulation struct {

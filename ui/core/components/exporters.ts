@@ -1,16 +1,16 @@
-import { Class } from '/tbc/core/proto/common.js';
-import { EquipmentSpec } from '/tbc/core/proto/common.js';
-import { ItemSpec } from '/tbc/core/proto/common.js';
-import { Race } from '/tbc/core/proto/common.js';
-import { Spec } from '/tbc/core/proto/common.js';
-import { Stat } from '/tbc/core/proto/common.js';
-import { IndividualSimSettings } from '/tbc/core/proto/ui.js';
-import { IndividualSimUI } from '/tbc/core/individual_sim_ui.js';
-import { Player } from '/tbc/core/player.js';
-import { classNames, nameToClass, nameToRace } from '/tbc/core/proto_utils/names.js';
-import { talentSpellIdsToTalentString } from '/tbc/core/talents/factory.js';
-import { EventID, TypedEvent } from '/tbc/core/typed_event.js';
-import { downloadString, getEnumValues } from '/tbc/core/utils.js';
+import { Class } from '/wotlk/core/proto/common.js';
+import { EquipmentSpec } from '/wotlk/core/proto/common.js';
+import { ItemSpec } from '/wotlk/core/proto/common.js';
+import { Race } from '/wotlk/core/proto/common.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { Stat } from '/wotlk/core/proto/common.js';
+import { IndividualSimSettings } from '/wotlk/core/proto/ui.js';
+import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
+import { Player } from '/wotlk/core/player.js';
+import { classNames, nameToClass, nameToRace } from '/wotlk/core/proto_utils/names.js';
+import { talentSpellIdsToTalentString } from '/wotlk/core/talents/factory.js';
+import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
+import { downloadString, getEnumValues } from '/wotlk/core/utils.js';
 
 import { Popup } from './popup.js';
 

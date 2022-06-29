@@ -1,20 +1,20 @@
-import { BooleanPicker } from '/tbc/core/components/boolean_picker.js';
-import { EnumPicker } from '/tbc/core/components/enum_picker.js';
-import { IconEnumPicker, IconEnumPickerConfig } from '/tbc/core/components/icon_enum_picker.js';
-import { IconPickerConfig } from '/tbc/core/components/icon_picker.js';
+import { BooleanPicker } from '/wotlk/core/components/boolean_picker.js';
+import { EnumPicker } from '/wotlk/core/components/enum_picker.js';
+import { IconEnumPicker, IconEnumPickerConfig } from '/wotlk/core/components/icon_enum_picker.js';
+import { IconPickerConfig } from '/wotlk/core/components/icon_picker.js';
 import {
 	AirTotem,
 	EarthTotem,
 	FireTotem,
 	WaterTotem,
 	ShamanTotems,
-} from '/tbc/core/proto/shaman.js';
-import { Spec } from '/tbc/core/proto/common.js';
-import { ActionId } from '/tbc/core/proto_utils/action_id.js';
-import { Player } from '/tbc/core/player.js';
-import { Sim } from '/tbc/core/sim.js';
-import { IndividualSimUI } from '/tbc/core/individual_sim_ui.js';
-import { EventID, TypedEvent } from '/tbc/core/typed_event.js';
+} from '/wotlk/core/proto/shaman.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
+import { Player } from '/wotlk/core/player.js';
+import { Sim } from '/wotlk/core/sim.js';
+import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
+import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
 
 export type DpsShaman = Spec.SpecEnhancementShaman | Spec.SpecElementalShaman;
 

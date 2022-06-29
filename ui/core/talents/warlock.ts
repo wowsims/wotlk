@@ -1,7 +1,7 @@
-import { Spec } from '/tbc/core/proto/common.js';
-import { WarlockTalents as WarlockTalents } from '/tbc/core/proto/warlock.js';
-import { WarlockSpecs } from '/tbc/core/proto_utils/utils.js';
-import { Player } from '/tbc/core/player.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { WarlockTalents as WarlockTalents } from '/wotlk/core/proto/warlock.js';
+import { WarlockSpecs } from '/wotlk/core/proto_utils/utils.js';
+import { Player } from '/wotlk/core/player.js';
 
 import { TalentsConfig, TalentsPicker, newTalentsConfig } from './talents_picker.js';
 
@@ -14,7 +14,7 @@ export class WarlockTalentsPicker extends TalentsPicker<Spec.SpecWarlock> {
 export const warlockTalentsConfig: TalentsConfig<Spec.SpecWarlock> = newTalentsConfig([
 	{
 		name: 'Affliction',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/tbc/302.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/302.jpg',
 		talents: [
 			{
 				fieldName: 'suppression',
@@ -221,7 +221,7 @@ export const warlockTalentsConfig: TalentsConfig<Spec.SpecWarlock> = newTalentsC
 	},
 	{
 		name: 'Demonology',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/tbc/303.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/303.jpg',
 		talents: [
 			{
 				//fieldName: 'improvedHealthstone',
@@ -437,7 +437,7 @@ export const warlockTalentsConfig: TalentsConfig<Spec.SpecWarlock> = newTalentsC
 	},
 	{
 		name: 'Destruction',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/tbc/301.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/301.jpg',
 		talents: [
 			{
 				fieldName: 'improvedShadowBolt',

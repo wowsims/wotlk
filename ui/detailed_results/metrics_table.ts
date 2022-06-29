@@ -1,6 +1,6 @@
-import { ActionMetrics, UnitMetrics, SimResult, SimResultFilter } from '/tbc/core/proto_utils/sim_result.js';
-import { ActionId } from '/tbc/core/proto_utils/action_id.js';
-import { EventID, TypedEvent } from '/tbc/core/typed_event.js';
+import { ActionMetrics, UnitMetrics, SimResult, SimResultFilter } from '/wotlk/core/proto_utils/sim_result.js';
+import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
+import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
 
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
 

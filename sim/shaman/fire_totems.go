@@ -4,8 +4,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/wowsims/tbc/sim/core"
-	"github.com/wowsims/tbc/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (shaman *Shaman) registerSearingTotemSpell() {
@@ -47,7 +47,7 @@ func (shaman *Shaman) registerSearingTotemSpell() {
 		// These are the real tick values, but searing totem doesn't start its next
 		// cast until the previous missile hits the target. We don't have an option
 		// for target distance yet so just pretend the tick rate is lower.
-		// https://tbc.wowhead.com/spell=25530/attack
+		// https://wotlk.wowhead.com/spell=25530/attack
 		//NumberOfTicks:        30,
 		//TickLength:           time.Second * 2.2,
 		NumberOfTicks: 24,

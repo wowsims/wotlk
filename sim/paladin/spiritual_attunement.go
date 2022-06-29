@@ -1,7 +1,7 @@
 package paladin
 
 import (
-	"github.com/wowsims/tbc/sim/core"
+	"github.com/wowsims/wotlk/sim/core"
 )
 
 func (paladin *Paladin) registerSpiritualAttunement() {

@@ -1,6 +1,6 @@
-import { Spec } from '/tbc/core/proto/common.js';
-import { ShamanTalents as ShamanTalents } from '/tbc/core/proto/shaman.js';
-import { Player } from '/tbc/core/player.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { ShamanTalents as ShamanTalents } from '/wotlk/core/proto/shaman.js';
+import { Player } from '/wotlk/core/player.js';
 
 import { TalentsConfig, TalentsPicker, newTalentsConfig } from './talents_picker.js';
 

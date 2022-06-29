@@ -1,5 +1,5 @@
-import { ActionId } from '/tbc/core/proto_utils/action_id.js';
-import { AuraMetrics, SimResult, SimResultFilter } from '/tbc/core/proto_utils/sim_result.js';
+import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
+import { AuraMetrics, SimResult, SimResultFilter } from '/wotlk/core/proto_utils/sim_result.js';
 
 import { ColumnSortType, MetricsTable } from './metrics_table.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';

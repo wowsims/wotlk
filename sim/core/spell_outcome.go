@@ -1,7 +1,7 @@
 package core
 
 import (
-	"github.com/wowsims/tbc/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // This function should do 3 things:

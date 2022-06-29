@@ -2,7 +2,7 @@
 	"extends": "../tsconfig-base",
 	"compilerOptions": {
 		"composite": true,
-		"outDir": "../../dist/tbc/enhancement_shaman",
+		"outDir": "../../dist/wotlk/enhancement_shaman",
 	},
 	"include": [
 		"**/*.ts",

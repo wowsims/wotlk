@@ -1,7 +1,7 @@
 package core
 
-import "github.com/wowsims/tbc/sim/core/proto"
-import "github.com/wowsims/tbc/sim/core/stats"
+import "github.com/wowsims/wotlk/sim/core/proto"
+import "github.com/wowsims/wotlk/sim/core/stats"
 
 type ProcMask uint32
 

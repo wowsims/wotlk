@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/wowsims/tbc/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 type ApplySpellEffects func(*Simulation, *Unit, *Spell)

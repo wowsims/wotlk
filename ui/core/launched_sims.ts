@@ -1,4 +1,4 @@
-import { Spec } from '/tbc/core/proto/common.js';
+import { Spec } from '/wotlk/core/proto/common.js';
 
 // This file is for anything related to launching a new sim. DO NOT touch this
 // file until your sim is ready to launch!

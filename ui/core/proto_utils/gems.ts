@@ -1,5 +1,5 @@
-import { Gem } from '/tbc/core/proto/common.js';
-import { GemColor } from '/tbc/core/proto/common.js';
+import { Gem } from '/wotlk/core/proto/common.js';
+import { GemColor } from '/wotlk/core/proto/common.js';
 
 const socketToMatchingColors = new Map<GemColor, Array<GemColor>>();
 socketToMatchingColors.set(GemColor.GemColorMeta, [GemColor.GemColorMeta]);

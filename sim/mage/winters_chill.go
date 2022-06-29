@@ -1,7 +1,7 @@
 package mage
 
 import (
-	"github.com/wowsims/tbc/sim/core"
+	"github.com/wowsims/wotlk/sim/core"
 )
 
 // Winters Chill has a separate hit check from frostbolt, so it needs its own spell.

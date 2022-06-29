@@ -4,8 +4,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/wowsims/tbc/sim/core"
-	"github.com/wowsims/tbc/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 var ItemSetJusticarBattlegear = core.NewItemSet(core.ItemSet{
@@ -137,7 +137,7 @@ var ItemSetLightbringerArmor = core.NewItemSet(core.ItemSet{
 func init() {
 	// Librams implemented in seals.go and judgement.go
 
-	// TODO: once we have judgement of command.. https://tbc.wowhead.com/item=33503/libram-of-divine-judgement
+	// TODO: once we have judgement of command.. https://wotlk.wowhead.com/item=33503/libram-of-divine-judgement
 
 	core.NewItemEffect(27484, func(agent core.Agent) {
 		paladin := agent.(PaladinAgent).GetPaladin()

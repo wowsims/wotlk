@@ -4,9 +4,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/wowsims/tbc/sim/core"
-	"github.com/wowsims/tbc/sim/core/proto"
-	"github.com/wowsims/tbc/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warlock *Warlock) registerCurseOfElementsSpell() {
@@ -82,7 +82,7 @@ func (warlock *Warlock) registerCurseOfRecklessnessSpell() {
 	})
 }
 
-// https://tbc.wowhead.com/spell=11719/curse-of-tongues
+// https://wotlk.wowhead.com/spell=11719/curse-of-tongues
 func (warlock *Warlock) registerCurseOfTonguesSpell() {
 	if warlock.Rotation.Curse != proto.Warlock_Rotation_Tongues {
 		return
@@ -118,7 +118,7 @@ func (warlock *Warlock) registerCurseOfTonguesSpell() {
 	})
 }
 
-// https://tbc.wowhead.com/spell=27218/curse-of-agony
+// https://wotlk.wowhead.com/spell=27218/curse-of-agony
 func (warlock *Warlock) registerCurseOfAgonySpell() {
 	if warlock.Rotation.Curse != proto.Warlock_Rotation_Agony && warlock.Rotation.Curse != proto.Warlock_Rotation_Doom {
 		return

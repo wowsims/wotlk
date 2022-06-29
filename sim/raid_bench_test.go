@@ -3,14 +3,14 @@ package sim
 import (
 	"testing"
 
-	"github.com/wowsims/tbc/sim/core"
-	"github.com/wowsims/tbc/sim/core/proto"
-	"github.com/wowsims/tbc/sim/core/stats"
-	"github.com/wowsims/tbc/sim/druid/balance"
-	"github.com/wowsims/tbc/sim/mage"
-	"github.com/wowsims/tbc/sim/priest/shadow"
-	"github.com/wowsims/tbc/sim/shaman/elemental"
-	"github.com/wowsims/tbc/sim/shaman/enhancement"
+	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/druid/balance"
+	"github.com/wowsims/wotlk/sim/mage"
+	"github.com/wowsims/wotlk/sim/priest/shadow"
+	"github.com/wowsims/wotlk/sim/shaman/elemental"
+	"github.com/wowsims/wotlk/sim/shaman/enhancement"
 )
 
 // 1 moonkin, 1 ele shaman, 1 spriest, 2x arcane

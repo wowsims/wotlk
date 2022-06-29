@@ -1,6 +1,6 @@
-import { DetailedResultsUpdate, SimRun, SimRunData } from '/tbc/core/proto/ui.js';
-import { EventID, TypedEvent } from '/tbc/core/typed_event.js';
-import { SimResult, SimResultFilter } from '/tbc/core/proto_utils/sim_result.js';
+import { DetailedResultsUpdate, SimRun, SimRunData } from '/wotlk/core/proto/ui.js';
+import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
+import { SimResult, SimResultFilter } from '/wotlk/core/proto_utils/sim_result.js';
 
 import { SimResultData } from './result_component.js';
 import { ResultsFilter } from './results_filter.js';

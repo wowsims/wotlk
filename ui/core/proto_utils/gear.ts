@@ -1,12 +1,12 @@
-import { Gem } from '/tbc/core/proto/common.js';
-import { GemColor } from '/tbc/core/proto/common.js';
-import { ItemSlot } from '/tbc/core/proto/common.js';
-import { ItemSpec } from '/tbc/core/proto/common.js';
-import { EquipmentSpec } from '/tbc/core/proto/common.js';
-import { WeaponType } from '/tbc/core/proto/common.js';
-import { equalsOrBothNull } from '/tbc/core/utils.js';
-import { getEnumValues } from '/tbc/core/utils.js';
-import { isBluntWeaponType, isSharpWeaponType } from '/tbc/core/proto_utils/utils.js';
+import { Gem } from '/wotlk/core/proto/common.js';
+import { GemColor } from '/wotlk/core/proto/common.js';
+import { ItemSlot } from '/wotlk/core/proto/common.js';
+import { ItemSpec } from '/wotlk/core/proto/common.js';
+import { EquipmentSpec } from '/wotlk/core/proto/common.js';
+import { WeaponType } from '/wotlk/core/proto/common.js';
+import { equalsOrBothNull } from '/wotlk/core/utils.js';
+import { getEnumValues } from '/wotlk/core/utils.js';
+import { isBluntWeaponType, isSharpWeaponType } from '/wotlk/core/proto_utils/utils.js';
 
 import { isMetaGemActive } from './gems.js';
 import { gemMatchesSocket } from './gems.js';

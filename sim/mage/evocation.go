@@ -3,7 +3,7 @@ package mage
 import (
 	"time"
 
-	"github.com/wowsims/tbc/sim/core"
+	"github.com/wowsims/wotlk/sim/core"
 )
 
 func (mage *Mage) registerEvocationCD() {

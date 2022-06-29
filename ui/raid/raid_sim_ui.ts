@@ -1,23 +1,23 @@
-import { BooleanPicker } from "/tbc/core/components/boolean_picker.js";
-import { DetailedResults } from "/tbc/core/components/detailed_results.js";
-import { EncounterPicker } from "/tbc/core/components/encounter_picker.js";
-import { LogRunner } from "/tbc/core/components/log_runner.js";
-import { addRaidSimAction, RaidSimResultsManager, ReferenceData } from "/tbc/core/components/raid_sim_action.js";
-import { SavedDataManager } from "/tbc/core/components/saved_data_manager.js";
-import { SettingsMenu } from "/tbc/core/components/settings_menu.js";
+import { BooleanPicker } from "/wotlk/core/components/boolean_picker.js";
+import { DetailedResults } from "/wotlk/core/components/detailed_results.js";
+import { EncounterPicker } from "/wotlk/core/components/encounter_picker.js";
+import { LogRunner } from "/wotlk/core/components/log_runner.js";
+import { addRaidSimAction, RaidSimResultsManager, ReferenceData } from "/wotlk/core/components/raid_sim_action.js";
+import { SavedDataManager } from "/wotlk/core/components/saved_data_manager.js";
+import { SettingsMenu } from "/wotlk/core/components/settings_menu.js";
 
-import * as Tooltips from "/tbc/core/constants/tooltips.js";
-import { Encounter } from "/tbc/core/encounter.js";
-import { Player } from "/tbc/core/player.js";
-import { Raid as RaidProto } from "/tbc/core/proto/api.js";
-import { Class, Encounter as EncounterProto, Faction, Stat, TristateEffect } from "/tbc/core/proto/common.js";
-import { Blessings } from "/tbc/core/proto/paladin.js";
-import { BlessingsAssignments, BuffBot as BuffBotProto, RaidSimSettings, SavedEncounter, SavedRaid } from "/tbc/core/proto/ui.js";
-import { playerToSpec } from "/tbc/core/proto_utils/utils.js";
-import { Raid } from "/tbc/core/raid.js";
-import { Sim } from "/tbc/core/sim.js";
-import { SimUI } from "/tbc/core/sim_ui.js";
-import { EventID, TypedEvent } from "/tbc/core/typed_event.js";
+import * as Tooltips from "/wotlk/core/constants/tooltips.js";
+import { Encounter } from "/wotlk/core/encounter.js";
+import { Player } from "/wotlk/core/player.js";
+import { Raid as RaidProto } from "/wotlk/core/proto/api.js";
+import { Class, Encounter as EncounterProto, Faction, Stat, TristateEffect } from "/wotlk/core/proto/common.js";
+import { Blessings } from "/wotlk/core/proto/paladin.js";
+import { BlessingsAssignments, BuffBot as BuffBotProto, RaidSimSettings, SavedEncounter, SavedRaid } from "/wotlk/core/proto/ui.js";
+import { playerToSpec } from "/wotlk/core/proto_utils/utils.js";
+import { Raid } from "/wotlk/core/raid.js";
+import { Sim } from "/wotlk/core/sim.js";
+import { SimUI } from "/wotlk/core/sim_ui.js";
+import { EventID, TypedEvent } from "/wotlk/core/typed_event.js";
 
 import { AssignmentsPicker } from "./assignments_picker.js";
 import { BlessingsPicker } from "./blessings_picker.js";
@@ -35,7 +35,7 @@ export interface RaidSimConfig {
 }
 
 const extraKnownIssues: Array<string> = [
-	//'We\'re still missing implementations for many specs. If you\'d like to help us out, check out our <a href="https://github.com/wowsims/tbc">Github project</a> or <a href="https://discord.gg/jJMPr9JWwx">join our discord</a>!',
+	//'We\'re still missing implementations for many specs. If you\'d like to help us out, check out our <a href="https://github.com/wowsims/wotlk">Github project</a> or <a href="https://discord.gg/jJMPr9JWwx">join our discord</a>!',
 ];
 
 export class RaidSimUI extends SimUI {

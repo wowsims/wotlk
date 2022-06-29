@@ -1,9 +1,9 @@
-import { Enchant } from '/tbc/core/proto/common.js';
-import { Gem } from '/tbc/core/proto/common.js';
-import { Item } from '/tbc/core/proto/common.js';
-import { ItemSlot } from '/tbc/core/proto/common.js';
-import { ItemSpec } from '/tbc/core/proto/common.js';
-import { Stat } from '/tbc/core/proto/common.js';
+import { Enchant } from '/wotlk/core/proto/common.js';
+import { Gem } from '/wotlk/core/proto/common.js';
+import { Item } from '/wotlk/core/proto/common.js';
+import { ItemSlot } from '/wotlk/core/proto/common.js';
+import { ItemSpec } from '/wotlk/core/proto/common.js';
+import { Stat } from '/wotlk/core/proto/common.js';
 
 import { ActionId } from './action_id.js';
 import { enchantAppliesToItem } from './utils.js';

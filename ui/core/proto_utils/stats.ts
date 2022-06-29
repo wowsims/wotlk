@@ -1,5 +1,5 @@
-import { Stat } from '/tbc/core/proto/common.js';
-import { getEnumValues } from '/tbc/core/utils.js';
+import { Stat } from '/wotlk/core/proto/common.js';
+import { getEnumValues } from '/wotlk/core/utils.js';
 
 const STATS_LEN = getEnumValues(Stat).length;
 

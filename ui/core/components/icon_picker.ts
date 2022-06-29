@@ -1,6 +1,6 @@
-import { ActionId } from '/tbc/core/proto_utils/action_id.js';
-import { EventID, TypedEvent } from '/tbc/core/typed_event.js';
-import { isRightClick } from '/tbc/core/utils.js';
+import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
+import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
+import { isRightClick } from '/wotlk/core/utils.js';
 
 import { Component } from './component.js';
 import { Input, InputConfig } from './input.js';

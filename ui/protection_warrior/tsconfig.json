@@ -2,7 +2,7 @@
 	"extends": "../tsconfig-base",
 	"compilerOptions": {
 		"composite": true,
-		"outDir": "../../dist/tbc/protection_warrior",
+		"outDir": "../../dist/wotlk/protection_warrior",
 	},
 	"include": [
 		"**/*.ts",

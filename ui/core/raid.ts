@@ -1,11 +1,11 @@
-import { Class } from '/tbc/core/proto/common.js';
-import { Debuffs } from '/tbc/core/proto/common.js';
-import { RaidTarget } from '/tbc/core/proto/common.js';
-import { Raid as RaidProto } from '/tbc/core/proto/api.js';
-import { RaidStats as RaidStatsProto } from '/tbc/core/proto/api.js';
-import { RaidBuffs } from '/tbc/core/proto/common.js';
-import { Spec } from '/tbc/core/proto/common.js';
-import { NO_TARGET } from '/tbc/core/proto_utils/utils.js';
+import { Class } from '/wotlk/core/proto/common.js';
+import { Debuffs } from '/wotlk/core/proto/common.js';
+import { RaidTarget } from '/wotlk/core/proto/common.js';
+import { Raid as RaidProto } from '/wotlk/core/proto/api.js';
+import { RaidStats as RaidStatsProto } from '/wotlk/core/proto/api.js';
+import { RaidBuffs } from '/wotlk/core/proto/common.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { NO_TARGET } from '/wotlk/core/proto_utils/utils.js';
 
 import { Party, MAX_PARTY_SIZE } from './party.js';
 import { Player } from './player.js';

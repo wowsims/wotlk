@@ -1,8 +1,8 @@
-Welcome to the WoW TBC Classic simulator! If you have questions or are thinking about contributing, [join our discord](https://discord.gg/jJMPr9JWwx "https://discord.gg/jJMPr9JWwx") to chat!
+Welcome to the WoW WOTLK Classic simulator! If you have questions or are thinking about contributing, [join our discord](https://discord.gg/jJMPr9JWwx "https://discord.gg/jJMPr9JWwx") to chat!
 
 The primary goal of this project is to provide a framework that makes it easy to build a DPS sim for any class/spec, with a polished UI and accurate results. Each community will have ownership / responsibility over their portion of the sim, to ensure accuracy and that their community is represented. By having all the individual sims on the same engine, we can also have a combined 'raid sim' for testing raid compositions.
 
-[Live sims can be found here.](https://wowsims.github.io/tbc "https://wowsims.github.io/tbc")
+[Live sims can be found here.](https://wowsims.github.io/wotlk "https://wowsims.github.io/wotlk")
 
 # Installation
 This project has dependencies on Go >=1.16, protobuf-compiler and the corresponding Go plugins, and node >= 14.0.
@@ -31,7 +31,7 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
 nvm install 14.17.6
 
 # Install the npm package dependencies using node
-cd tbc
+cd wotlk
 npm install
 ```
 
@@ -41,26 +41,26 @@ If you want to develop on Windows, we recommend setting up a Ubuntu virtual mach
 ## Docker
 Alternatively, install Docker and your workflow will look something like this:
 ```sh
-git clone https://github.com/wowsims/tbc.git
-cd tbc
+git clone https://github.com/wowsims/wotlk.git
+cd wotlk
 
 # Build the docker image and install npm dependencies (only need to run these once).
-docker build --tag wowsims-tbc .
-docker run --rm -v $(pwd):/tbc wowsims-tbc npm install
+docker build --tag wowsims-wotlk .
+docker run --rm -v $(pwd):/wotlk wowsims-wotlk npm install
 
-# Now you can run the commands as shown in the Commands sections, preceding everything with, "docker run --rm -it -p 8080:8080 -v $(pwd):/tbc wowsims-tbc".
+# Now you can run the commands as shown in the Commands sections, preceding everything with, "docker run --rm -it -p 8080:8080 -v $(pwd):/wotlk wowsims-wotlk".
 # For convenience, set this as an environment variable:
-TBC_CMD="docker run --rm -it -p 8080:8080 -v $(pwd):/tbc wowsims-tbc"
+WOTLK_CMD="docker run --rm -it -p 8080:8080 -v $(pwd):/wotlk wowsims-wotlk"
 
 # ... do some coding on the sim ...
 
 # Run tests
-$TBC_CMD make test
+$WOTLK_CMD make test
 
 # ... do some coding on the UI ...
 
 # Host a local site
-$TBC_CMD make host
+$WOTLK_CMD make host
 ```
 
 # Commands
@@ -76,8 +76,8 @@ make test
 make update-tests
 
 # Host a local version of the UI at http://localhost:8080. Visit it by pointing a browser to
-# http://localhost:8080/tbc/YOUR_SPEC_HERE, where YOUR_SPEC_HERE is the directory under ui/ with your custom code.
-# Recompiles the entire client before launching using `make dist/tbc`
+# http://localhost:8080/wotlk/YOUR_SPEC_HERE, where YOUR_SPEC_HERE is the directory under ui/ with your custom code.
+# Recompiles the entire client before launching using `make dist/wotlk`
 make host
 
 # Delete all generated files (.pb.go and .ts proto files, and dist/)
@@ -86,21 +86,21 @@ make clean
 # Recompiles the ts only for the given spec (e.g. make host_elemental_shaman)
 make host_$spec
 
-# Recompiles the `wowsimtbc` server binary and runs it, hosting /dist directory at http://localhost:3333/tbc. 
+# Recompiles the `wowsimwotlk` server binary and runs it, hosting /dist directory at http://localhost:3333/wotlk. 
 # This is the fastest way to iterate on core go simulator code so you don't have to wait for client rebuilds.
 # To rebuild client for a spec just do 'make $spec' and refresh browser.
 make rundevserver
 
-# Creates the 'wowsimtbc' binary that can host the UI and run simulations natively (instead of with wasm).
+# Creates the 'wowsimwotlk' binary that can host the UI and run simulations natively (instead of with wasm).
 # Builds the UI and the compiles it into the binary so that you can host the sim as a server instead of wasm on the client.
-# It does this by first doing make dist/tbc and then copying all those files to binary_dist/tbc and loading all the files in that directory into its binary on compile.
-make wowsimtbc
+# It does this by first doing make dist/wotlk and then copying all those files to binary_dist/wotlk and loading all the files in that directory into its binary on compile.
+make wowsimwotlk
 
 # Using the --usefs flag will instead of hosting the client built into the binary, it will host whatever code is found in the /dist directory. 
 # Use --wasm to host the client with the wasm simulator.
 # The server also disables all caching so that refreshes should pickup any changed files in dist/. The client will still call to the server to run simulations so you can iterate more quickly on client changes.
-# make dist/tbc && ./wowsimtbc --usefs would rebuild the whole client and host it. (you would have had to run `make devserver` to build the wowsimtbc binary first.)
-./wowsimtbc --usefs
+# make dist/wotlk && ./wowsimwotlk --usefs would rebuild the whole client and host it. (you would have had to run `make devserver` to build the wowsimwotlk binary first.)
+./wowsimwotlk --usefs
 
 # Generate code for items. Only necessary if you changed the items generator.
 make items
@@ -137,7 +137,7 @@ The UI and sim can be done in either order, but it is generally recommended to b
 
 No .html is needed, it will be generated based on `ui/index_template.html` and the `$SPEC` name.
 
-When you're ready to try out the site, run `make host` and navigate to `http://localhost:8080/tbc/$SPEC`.
+When you're ready to try out the site, run `make host` and navigate to `http://localhost:8080/wotlk/$SPEC`.
 
 ## Implement the Sim
 This step is where most of the magic happens. A few highlights to start understanding the sim code:

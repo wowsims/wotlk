@@ -1,11 +1,11 @@
-import { MobType } from '/tbc/core/proto/common.js';
-import { SpellSchool } from '/tbc/core/proto/common.js';
-import { Stat } from '/tbc/core/proto/common.js';
-import { Target as TargetProto } from '/tbc/core/proto/common.js';
-import { PresetTarget } from '/tbc/core/proto/api.js';
-import { Stats } from '/tbc/core/proto_utils/stats.js';
+import { MobType } from '/wotlk/core/proto/common.js';
+import { SpellSchool } from '/wotlk/core/proto/common.js';
+import { Stat } from '/wotlk/core/proto/common.js';
+import { Target as TargetProto } from '/wotlk/core/proto/common.js';
+import { PresetTarget } from '/wotlk/core/proto/api.js';
+import { Stats } from '/wotlk/core/proto_utils/stats.js';
 
-import * as Mechanics from '/tbc/core/constants/mechanics.js';
+import * as Mechanics from '/wotlk/core/constants/mechanics.js';
 
 import { Listener } from './typed_event.js';
 import { Sim } from './sim.js';

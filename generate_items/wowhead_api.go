@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/wowsims/tbc/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 type Stats [42]float64
@@ -602,7 +602,7 @@ func getWowheadItemResponse(itemID int, tooltipsDB map[int]string) WowheadItemRe
 		tooltipBytes = []byte(tooltipStr)
 	} else {
 		fmt.Printf("Item DB missing ID: %d\n", itemID)
-		url := fmt.Sprintf("https://tbc.wowhead.com/tooltip/item/%d", itemID)
+		url := fmt.Sprintf("https://wotlk.wowhead.com/tooltip/item/%d", itemID)
 
 		httpClient := http.Client{
 			Timeout: 5 * time.Second,

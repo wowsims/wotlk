@@ -1,7 +1,7 @@
-import { SimResult, SimResultFilter, UnitMetrics } from '/tbc/core/proto_utils/sim_result.js';
-import { EventID, TypedEvent } from '/tbc/core/typed_event.js';
-import { EnumPicker } from '/tbc/core/components/enum_picker.js';
-import { Input } from '/tbc/core/components/input.js';
+import { SimResult, SimResultFilter, UnitMetrics } from '/wotlk/core/proto_utils/sim_result.js';
+import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
+import { EnumPicker } from '/wotlk/core/components/enum_picker.js';
+import { Input } from '/wotlk/core/components/input.js';
 
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
 

@@ -1,7 +1,7 @@
-import { Spec } from '/tbc/core/proto/common.js';
-import { WarriorTalents as WarriorTalents } from '/tbc/core/proto/warrior.js';
-import { WarriorSpecs } from '/tbc/core/proto_utils/utils.js';
-import { Player } from '/tbc/core/player.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { WarriorTalents as WarriorTalents } from '/wotlk/core/proto/warrior.js';
+import { WarriorSpecs } from '/wotlk/core/proto_utils/utils.js';
+import { Player } from '/wotlk/core/player.js';
 
 import { TalentsConfig, TalentsPicker, newTalentsConfig } from './talents_picker.js';
 
@@ -14,7 +14,7 @@ export class WarriorTalentsPicker extends TalentsPicker<Spec.SpecWarrior> {
 export const warriorTalentsConfig: TalentsConfig<Spec.SpecWarrior> = newTalentsConfig([
 	{
 		name: 'Arms',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/tbc/161.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/161.jpg',
 		talents: [
 			{
 				fieldName: 'improvedHeroicStrike',
@@ -239,7 +239,7 @@ export const warriorTalentsConfig: TalentsConfig<Spec.SpecWarrior> = newTalentsC
 	},
 	{
 		name: 'Fury',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/tbc/164.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/164.jpg',
 		talents: [
 			{
 				fieldName: 'boomingVoice',
@@ -446,7 +446,7 @@ export const warriorTalentsConfig: TalentsConfig<Spec.SpecWarrior> = newTalentsC
 	},
 	{
 		name: 'Protection',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/tbc/163.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/163.jpg',
 		talents: [
 			{
 				fieldName: 'improvedBloodrage',

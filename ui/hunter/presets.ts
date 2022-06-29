@@ -1,10 +1,10 @@
-import { Consumes } from '/tbc/core/proto/common.js';
-import { EquipmentSpec } from '/tbc/core/proto/common.js';
-import { Flask } from '/tbc/core/proto/common.js';
-import { Food } from '/tbc/core/proto/common.js';
-import { Potions } from '/tbc/core/proto/common.js';
-import { WeaponImbue } from '/tbc/core/proto/common.js';
-import { Player } from '/tbc/core/player.js';
+import { Consumes } from '/wotlk/core/proto/common.js';
+import { EquipmentSpec } from '/wotlk/core/proto/common.js';
+import { Flask } from '/wotlk/core/proto/common.js';
+import { Food } from '/wotlk/core/proto/common.js';
+import { Potions } from '/wotlk/core/proto/common.js';
+import { WeaponImbue } from '/wotlk/core/proto/common.js';
+import { Player } from '/wotlk/core/player.js';
 
 import {
 	Hunter_Rotation as HunterRotation,
@@ -13,16 +13,16 @@ import {
 	Hunter_Options_Ammo as Ammo,
 	Hunter_Options_QuiverBonus as QuiverBonus,
 	Hunter_Options_PetType as PetType,
-} from '/tbc/core/proto/hunter.js';
+} from '/wotlk/core/proto/hunter.js';
 
-import * as Tooltips from '/tbc/core/constants/tooltips.js';
+import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
 
 // Default talents. Uses the wowhead calculator format, make the talents on
-// https://tbc.wowhead.com/talent-calc and copy the numbers in the url.
+// https://wotlk.wowhead.com/talent-calc and copy the numbers in the url.
 export const BeastMasteryTalents = {
 	name: 'BM',
 	data: '512002015150122431051-0505201205',

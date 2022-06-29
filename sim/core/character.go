@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/wowsims/tbc/sim/core/items"
-	"github.com/wowsims/tbc/sim/core/proto"
-	"github.com/wowsims/tbc/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core/items"
+	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // Character is a data structure to hold all the shared values that all

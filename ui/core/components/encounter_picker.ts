@@ -1,22 +1,22 @@
-import { MobType } from '/tbc/core/proto/common.js';
-import { SpellSchool } from '/tbc/core/proto/common.js';
-import { Stat } from '/tbc/core/proto/common.js';
-import { Encounter } from '/tbc/core/encounter.js';
-import { Target } from '/tbc/core/target.js';
-import { EventID, TypedEvent } from '/tbc/core/typed_event.js';
-import { BooleanPicker } from '/tbc/core/components/boolean_picker.js';
-import { EnumPicker, EnumPickerConfig } from '/tbc/core/components/enum_picker.js';
-import { ListPicker, ListPickerConfig } from '/tbc/core/components/list_picker.js';
-import { NumberPicker } from '/tbc/core/components/number_picker.js';
-import { Stats } from '/tbc/core/proto_utils/stats.js';
-import { isTankSpec } from '/tbc/core/proto_utils/utils.js';
-import { statNames } from '/tbc/core/proto_utils/names.js';
-import { getEnumValues } from '/tbc/core/utils.js';
+import { MobType } from '/wotlk/core/proto/common.js';
+import { SpellSchool } from '/wotlk/core/proto/common.js';
+import { Stat } from '/wotlk/core/proto/common.js';
+import { Encounter } from '/wotlk/core/encounter.js';
+import { Target } from '/wotlk/core/target.js';
+import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
+import { BooleanPicker } from '/wotlk/core/components/boolean_picker.js';
+import { EnumPicker, EnumPickerConfig } from '/wotlk/core/components/enum_picker.js';
+import { ListPicker, ListPickerConfig } from '/wotlk/core/components/list_picker.js';
+import { NumberPicker } from '/wotlk/core/components/number_picker.js';
+import { Stats } from '/wotlk/core/proto_utils/stats.js';
+import { isTankSpec } from '/wotlk/core/proto_utils/utils.js';
+import { statNames } from '/wotlk/core/proto_utils/names.js';
+import { getEnumValues } from '/wotlk/core/utils.js';
 
 import { Component } from './component.js';
 import { Popup } from './popup.js';
 
-import * as Mechanics from '/tbc/core/constants/mechanics.js';
+import * as Mechanics from '/wotlk/core/constants/mechanics.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
 import { SimUI } from '../sim_ui.js';
 

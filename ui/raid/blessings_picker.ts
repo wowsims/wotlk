@@ -1,20 +1,20 @@
-import { Component } from '/tbc/core/components/component.js';
-import { IconEnumPicker } from '/tbc/core/components/icon_enum_picker.js';
-import { EventID, TypedEvent } from '/tbc/core/typed_event.js';
-import { Class } from '/tbc/core/proto/common.js';
-import { Spec } from '/tbc/core/proto/common.js';
-import { Blessings } from '/tbc/core/proto/paladin.js';
-import { BlessingsAssignment } from '/tbc/core/proto/ui.js';
-import { BlessingsAssignments } from '/tbc/core/proto/ui.js';
-import { ActionId } from '/tbc/core/proto_utils/action_id.js';
+import { Component } from '/wotlk/core/components/component.js';
+import { IconEnumPicker } from '/wotlk/core/components/icon_enum_picker.js';
+import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
+import { Class } from '/wotlk/core/proto/common.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { Blessings } from '/wotlk/core/proto/paladin.js';
+import { BlessingsAssignment } from '/wotlk/core/proto/ui.js';
+import { BlessingsAssignments } from '/wotlk/core/proto/ui.js';
+import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
 import {
 	makeDefaultBlessings,
 	classColors,
 	naturalSpecOrder,
 	specNames,
 	titleIcons,
-} from '/tbc/core/proto_utils/utils.js';
-import { getEnumValues } from '/tbc/core/utils.js';
+} from '/wotlk/core/proto_utils/utils.js';
+import { getEnumValues } from '/wotlk/core/utils.js';
 
 import { RaidSimUI } from './raid_sim_ui.js';
 import { implementedSpecs } from './presets.js';

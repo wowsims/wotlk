@@ -1,4 +1,4 @@
-module github.com/wowsims/tbc
+module github.com/wowsims/wotlk
 
 go 1.16
 

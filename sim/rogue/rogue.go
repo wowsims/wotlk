@@ -3,9 +3,9 @@ package rogue
 import (
 	"time"
 
-	"github.com/wowsims/tbc/sim/core"
-	"github.com/wowsims/tbc/sim/core/proto"
-	"github.com/wowsims/tbc/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func RegisterRogue() {
@@ -205,7 +205,7 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 		Rotation:  *rogueOptions.Rotation,
 	}
 
-	// Passive rogue threat reduction: https://tbc.wowhead.com/spell=21184/rogue-passive-dnd
+	// Passive rogue threat reduction: https://wotlk.wowhead.com/spell=21184/rogue-passive-dnd
 	rogue.PseudoStats.ThreatMultiplier *= 0.71
 	rogue.PseudoStats.CanParry = true
 

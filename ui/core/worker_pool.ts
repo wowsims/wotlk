@@ -1,4 +1,4 @@
-import { REPO_NAME } from '/tbc/core/constants/other.js'
+import { REPO_NAME } from '/wotlk/core/constants/other.js'
 import { Enchant } from './proto/common.js';
 import { Gem } from './proto/common.js';
 import { GemColor } from './proto/common.js';

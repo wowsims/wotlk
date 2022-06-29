@@ -1,7 +1,7 @@
 package encounters
 
 import (
-	"github.com/wowsims/tbc/sim/core"
+	"github.com/wowsims/wotlk/sim/core"
 )
 
 func init() {

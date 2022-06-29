@@ -1,45 +1,45 @@
-import { RaidBuffs } from '/tbc/core/proto/common.js';
-import { PartyBuffs } from '/tbc/core/proto/common.js';
-import { IndividualBuffs } from '/tbc/core/proto/common.js';
-import { Class } from '/tbc/core/proto/common.js';
-import { Consumes } from '/tbc/core/proto/common.js';
-import { Debuffs } from '/tbc/core/proto/common.js';
-import { Encounter } from '/tbc/core/proto/common.js';
-import { ItemSlot } from '/tbc/core/proto/common.js';
-import { MobType } from '/tbc/core/proto/common.js';
-import { RaidTarget } from '/tbc/core/proto/common.js';
-import { Spec } from '/tbc/core/proto/common.js';
-import { NO_TARGET } from '/tbc/core/proto_utils/utils.js';
-import { Stat } from '/tbc/core/proto/common.js';
-import { TristateEffect } from '/tbc/core/proto/common.js'
-import { StrengthOfEarthType } from '/tbc/core/proto/common.js'
-import { Stats } from '/tbc/core/proto_utils/stats.js';
-import { Player } from '/tbc/core/player.js';
-import { Sim } from '/tbc/core/sim.js';
-import { IndividualSimUI } from '/tbc/core/individual_sim_ui.js';
-import { TypedEvent } from '/tbc/core/typed_event.js';
+import { RaidBuffs } from '/wotlk/core/proto/common.js';
+import { PartyBuffs } from '/wotlk/core/proto/common.js';
+import { IndividualBuffs } from '/wotlk/core/proto/common.js';
+import { Class } from '/wotlk/core/proto/common.js';
+import { Consumes } from '/wotlk/core/proto/common.js';
+import { Debuffs } from '/wotlk/core/proto/common.js';
+import { Encounter } from '/wotlk/core/proto/common.js';
+import { ItemSlot } from '/wotlk/core/proto/common.js';
+import { MobType } from '/wotlk/core/proto/common.js';
+import { RaidTarget } from '/wotlk/core/proto/common.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { NO_TARGET } from '/wotlk/core/proto_utils/utils.js';
+import { Stat } from '/wotlk/core/proto/common.js';
+import { TristateEffect } from '/wotlk/core/proto/common.js'
+import { StrengthOfEarthType } from '/wotlk/core/proto/common.js'
+import { Stats } from '/wotlk/core/proto_utils/stats.js';
+import { Player } from '/wotlk/core/player.js';
+import { Sim } from '/wotlk/core/sim.js';
+import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
+import { TypedEvent } from '/wotlk/core/typed_event.js';
 
-import { Alchohol } from '/tbc/core/proto/common.js';
-import { BattleElixir } from '/tbc/core/proto/common.js';
-import { Flask } from '/tbc/core/proto/common.js';
-import { Food } from '/tbc/core/proto/common.js';
-import { GuardianElixir } from '/tbc/core/proto/common.js';
-import { Conjured } from '/tbc/core/proto/common.js';
-import { Drums } from '/tbc/core/proto/common.js';
-import { PetFood } from '/tbc/core/proto/common.js';
-import { Potions } from '/tbc/core/proto/common.js';
-import { WeaponImbue } from '/tbc/core/proto/common.js';
+import { Alchohol } from '/wotlk/core/proto/common.js';
+import { BattleElixir } from '/wotlk/core/proto/common.js';
+import { Flask } from '/wotlk/core/proto/common.js';
+import { Food } from '/wotlk/core/proto/common.js';
+import { GuardianElixir } from '/wotlk/core/proto/common.js';
+import { Conjured } from '/wotlk/core/proto/common.js';
+import { Drums } from '/wotlk/core/proto/common.js';
+import { PetFood } from '/wotlk/core/proto/common.js';
+import { Potions } from '/wotlk/core/proto/common.js';
+import { WeaponImbue } from '/wotlk/core/proto/common.js';
 
 import {
 	DruidTalents as DruidTalents,
 	FeralTankDruid,
 	FeralTankDruid_Rotation as DruidRotation,
 	FeralTankDruid_Options as DruidOptions
-} from '/tbc/core/proto/druid.js';
+} from '/wotlk/core/proto/druid.js';
 
-import * as IconInputs from '/tbc/core/components/icon_inputs.js';
-import * as OtherInputs from '/tbc/core/components/other_inputs.js';
-import * as Tooltips from '/tbc/core/constants/tooltips.js';
+import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
+import * as OtherInputs from '/wotlk/core/components/other_inputs.js';
+import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 
 import * as DruidInputs from './inputs.js';
 import * as Presets from './presets.js';

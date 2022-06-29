@@ -1,9 +1,9 @@
-import { ActionID as ActionIdProto } from '/tbc/core/proto/common.js';
-import { ResourceType } from '/tbc/core/proto/api.js';
-import { Item } from '/tbc/core/proto/common.js';
-import { OtherAction } from '/tbc/core/proto/common.js';
-import { getWowheadItemId } from '/tbc/core/proto_utils/equipped_item.js';
-import { NO_TARGET } from '/tbc/core/proto_utils/utils.js';
+import { ActionID as ActionIdProto } from '/wotlk/core/proto/common.js';
+import { ResourceType } from '/wotlk/core/proto/api.js';
+import { Item } from '/wotlk/core/proto/common.js';
+import { OtherAction } from '/wotlk/core/proto/common.js';
+import { getWowheadItemId } from '/wotlk/core/proto_utils/equipped_item.js';
+import { NO_TARGET } from '/wotlk/core/proto_utils/utils.js';
 
 // Uniquely identifies a specific item / spell / thing in WoW. This object is immutable.
 export class ActionId {
@@ -110,9 +110,9 @@ export class ActionId {
 
 	setWowheadHref(elem: HTMLAnchorElement) {
 		if (this.itemId) {
-			elem.href = 'https://tbc.wowhead.com/item=' + this.itemId;
+			elem.href = 'https://wotlk.wowhead.com/item=' + this.itemId;
 		} else if (this.spellId) {
-			elem.href = 'https://tbc.wowhead.com/spell=' + this.spellId;
+			elem.href = 'https://wotlk.wowhead.com/spell=' + this.spellId;
 		}
 	}
 
@@ -359,7 +359,7 @@ export class ActionId {
 	private static async getTooltipDataHelper(id: number, tooltipPostfix: string, cache: Map<number, Promise<any>>): Promise<any> {
 		if (!cache.has(id)) {
 			cache.set(id,
-				fetch(`https://tbc.wowhead.com/tooltip/${tooltipPostfix}/${id}`)
+				fetch(`https://wotlk.wowhead.com/tooltip/${tooltipPostfix}/${id}`)
 					.then(response => response.json()));
 		}
 
@@ -392,7 +392,7 @@ const petNameToActionId: Record<string, ActionId> = {
 	'Water Elemental': ActionId.fromSpellId(31687),
 };
 
-// https://tbc.wowhead.com/hunter-pets
+// https://wotlk.wowhead.com/hunter-pets
 const petNameToIcon: Record<string, string> = {
 	'Bat': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_bat.jpg',
 	'Bear': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_bear.jpg',

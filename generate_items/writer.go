@@ -6,8 +6,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/wowsims/tbc/sim/core/proto"
-	"github.com/wowsims/tbc/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func specInSlice(a proto.Spec, list []proto.Spec) bool {
@@ -36,8 +36,8 @@ func writeGemFile(outDir string, gemsData []GemData) {
 package items
 	
 import (
-	"github.com/wowsims/tbc/sim/core/proto"
-	"github.com/wowsims/tbc/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 var Gems = []Gem{
@@ -81,8 +81,8 @@ func writeItemFile(outDir string, itemsData []ItemData) {
 package items
 	
 import (
-	"github.com/wowsims/tbc/sim/core/proto"
-	"github.com/wowsims/tbc/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 var Items = []Item{

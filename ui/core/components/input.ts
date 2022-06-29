@@ -1,5 +1,5 @@
-import { Sim } from '/tbc/core/sim.js';
-import { EventID, TypedEvent } from '/tbc/core/typed_event.js';
+import { Sim } from '/wotlk/core/sim.js';
+import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
 
 import { Component } from './component.js';
 

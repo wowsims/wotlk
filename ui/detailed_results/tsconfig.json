@@ -2,7 +2,7 @@
 	"extends": "../tsconfig-base",
 	"compilerOptions": {
 		"declaration": false,
-		"outDir": "../../dist/tbc/detailed_results",
+		"outDir": "../../dist/wotlk/detailed_results",
 	},
 	"include": [
 		"**/*.ts",

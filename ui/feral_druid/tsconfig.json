@@ -2,7 +2,7 @@
   "extends": "../tsconfig-base",
   "compilerOptions": {
     "composite": true,
-    "outDir": "../../dist/tbc/feral_druid",
+    "outDir": "../../dist/wotlk/feral_druid",
   },
   "include": [
     "**/*.ts",

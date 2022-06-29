@@ -2,7 +2,7 @@
 	"extends": "../tsconfig-base",
 	"compilerOptions": {
 		"composite": true,
-		"outDir": "../../dist/tbc/balance_druid",
+		"outDir": "../../dist/wotlk/balance_druid",
 	},
 	"include": [
 		"**/*.ts",

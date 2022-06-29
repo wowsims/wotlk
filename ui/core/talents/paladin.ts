@@ -1,7 +1,7 @@
-import { Spec } from '/tbc/core/proto/common.js';
-import { PaladinTalents as PaladinTalents } from '/tbc/core/proto/paladin.js';
-import { PaladinSpecs } from '/tbc/core/proto_utils/utils.js';
-import { Player } from '/tbc/core/player.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { PaladinTalents as PaladinTalents } from '/wotlk/core/proto/paladin.js';
+import { PaladinSpecs } from '/wotlk/core/proto_utils/utils.js';
+import { Player } from '/wotlk/core/player.js';
 
 import { TalentsConfig, TalentsPicker, newTalentsConfig } from './talents_picker.js';
 

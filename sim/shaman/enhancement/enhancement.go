@@ -1,10 +1,10 @@
 package enhancement
 
 import (
-	"github.com/wowsims/tbc/sim/common"
-	"github.com/wowsims/tbc/sim/core"
-	"github.com/wowsims/tbc/sim/core/proto"
-	"github.com/wowsims/tbc/sim/shaman"
+	"github.com/wowsims/wotlk/sim/common"
+	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/shaman"
 )
 
 func RegisterEnhancementShaman() {

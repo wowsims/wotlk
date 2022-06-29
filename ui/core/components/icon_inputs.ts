@@ -1,39 +1,39 @@
-import { ActionId } from '/tbc/core/proto_utils/action_id.js';
-import { Alchohol } from '/tbc/core/proto/common.js';
-import { BattleElixir } from '/tbc/core/proto/common.js';
-import { Explosive } from '/tbc/core/proto/common.js';
-import { Flask } from '/tbc/core/proto/common.js';
-import { Food } from '/tbc/core/proto/common.js';
-import { GuardianElixir } from '/tbc/core/proto/common.js';
-import { RaidBuffs } from '/tbc/core/proto/common.js';
-import { PartyBuffs } from '/tbc/core/proto/common.js';
-import { IndividualBuffs } from '/tbc/core/proto/common.js';
-import { Conjured } from '/tbc/core/proto/common.js';
-import { Consumes } from '/tbc/core/proto/common.js';
-import { Debuffs } from '/tbc/core/proto/common.js';
-import { Drums } from '/tbc/core/proto/common.js';
-import { PetFood } from '/tbc/core/proto/common.js';
-import { Potions } from '/tbc/core/proto/common.js';
-import { Spec } from '/tbc/core/proto/common.js';
-import { TristateEffect } from '/tbc/core/proto/common.js';
-import { WeaponImbue } from '/tbc/core/proto/common.js';
-import { IndividualSimIconPickerConfig } from '/tbc/core/individual_sim_ui.js';
-import { Party } from '/tbc/core/party.js';
-import { Player } from '/tbc/core/player.js';
-import { Raid } from '/tbc/core/raid.js';
-import { Sim } from '/tbc/core/sim.js';
-import { Target } from '/tbc/core/target.js';
-import { Encounter } from '/tbc/core/encounter.js';
-import { EventID, TypedEvent } from '/tbc/core/typed_event.js';
+import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
+import { Alchohol } from '/wotlk/core/proto/common.js';
+import { BattleElixir } from '/wotlk/core/proto/common.js';
+import { Explosive } from '/wotlk/core/proto/common.js';
+import { Flask } from '/wotlk/core/proto/common.js';
+import { Food } from '/wotlk/core/proto/common.js';
+import { GuardianElixir } from '/wotlk/core/proto/common.js';
+import { RaidBuffs } from '/wotlk/core/proto/common.js';
+import { PartyBuffs } from '/wotlk/core/proto/common.js';
+import { IndividualBuffs } from '/wotlk/core/proto/common.js';
+import { Conjured } from '/wotlk/core/proto/common.js';
+import { Consumes } from '/wotlk/core/proto/common.js';
+import { Debuffs } from '/wotlk/core/proto/common.js';
+import { Drums } from '/wotlk/core/proto/common.js';
+import { PetFood } from '/wotlk/core/proto/common.js';
+import { Potions } from '/wotlk/core/proto/common.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { TristateEffect } from '/wotlk/core/proto/common.js';
+import { WeaponImbue } from '/wotlk/core/proto/common.js';
+import { IndividualSimIconPickerConfig } from '/wotlk/core/individual_sim_ui.js';
+import { Party } from '/wotlk/core/party.js';
+import { Player } from '/wotlk/core/player.js';
+import { Raid } from '/wotlk/core/raid.js';
+import { Sim } from '/wotlk/core/sim.js';
+import { Target } from '/wotlk/core/target.js';
+import { Encounter } from '/wotlk/core/encounter.js';
+import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
 
-import { ExclusivityTag } from '/tbc/core/individual_sim_ui.js';
+import { ExclusivityTag } from '/wotlk/core/individual_sim_ui.js';
 import { IconPickerConfig } from './icon_picker.js';
 import { IconEnumPicker, IconEnumPickerConfig, IconEnumValueConfig } from './icon_enum_picker.js';
 
 import {
 	Hunter_Rotation as HunterRotation,
 	Hunter_Rotation_WeaveType as WeaveType,
-} from '/tbc/core/proto/hunter.js';
+} from '/wotlk/core/proto/hunter.js';
 
 // Keep each section in alphabetical order.
 

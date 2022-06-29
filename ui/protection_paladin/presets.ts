@@ -1,31 +1,31 @@
-import { Conjured, Consumes } from '/tbc/core/proto/common.js';
-import { EquipmentSpec } from '/tbc/core/proto/common.js';
-import { Flask } from '/tbc/core/proto/common.js';
-import { Food } from '/tbc/core/proto/common.js';
-import { ItemSpec } from '/tbc/core/proto/common.js';
-import { Potions } from '/tbc/core/proto/common.js';
-import { Spec } from '/tbc/core/proto/common.js';
-import { WeaponImbue } from '/tbc/core/proto/common.js';
-import { Faction } from '/tbc/core/proto/common.js';
-import { Player } from '/tbc/core/player.js';
+import { Conjured, Consumes } from '/wotlk/core/proto/common.js';
+import { EquipmentSpec } from '/wotlk/core/proto/common.js';
+import { Flask } from '/wotlk/core/proto/common.js';
+import { Food } from '/wotlk/core/proto/common.js';
+import { ItemSpec } from '/wotlk/core/proto/common.js';
+import { Potions } from '/wotlk/core/proto/common.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { WeaponImbue } from '/wotlk/core/proto/common.js';
+import { Faction } from '/wotlk/core/proto/common.js';
+import { Player } from '/wotlk/core/player.js';
 
 import {
 	PaladinAura as PaladinAura,
 	PaladinJudgement as PaladinJudgement,
 	ProtectionPaladin_Rotation as ProtectionPaladinRotation,
 	ProtectionPaladin_Options as ProtectionPaladinOptions,
-} from '/tbc/core/proto/paladin.js';
+} from '/wotlk/core/proto/paladin.js';
 
-import * as Enchants from '/tbc/core/constants/enchants.js';
-import * as Gems from '/tbc/core/proto_utils/gems.js';
-import * as Tooltips from '/tbc/core/constants/tooltips.js';
+import * as Enchants from '/wotlk/core/constants/enchants.js';
+import * as Gems from '/wotlk/core/proto_utils/gems.js';
+import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
 
 // Default talents. Uses the wowhead calculator format, make the talents on
-// https://tbc.wowhead.com/talent-calc and copy the numbers in the url.
+// https://wotlk.wowhead.com/talent-calc and copy the numbers in the url.
 export const AvengersShieldTalents = {
 	name: 'Avenger\'s Shield',
 	data: '-0530513050000142521051-052050003003',

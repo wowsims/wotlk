@@ -1,7 +1,7 @@
 package core
 
 import (
-	"github.com/wowsims/tbc/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 const MaxRage = 100.0

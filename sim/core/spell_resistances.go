@@ -1,7 +1,7 @@
 package core
 
 import (
-	"github.com/wowsims/tbc/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // Modifies damage based on Armor or Magic resistances, depending on the damage type.

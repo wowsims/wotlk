@@ -1,20 +1,20 @@
-import { BooleanPicker } from '/tbc/core/components/boolean_picker.js';
-import { EnumPicker, EnumPickerConfig } from '/tbc/core/components/enum_picker.js';
-import { Conjured } from '/tbc/core/proto/common.js';
-import { Potions } from '/tbc/core/proto/common.js';
-import { RaidTarget } from '/tbc/core/proto/common.js';
-import { StrengthOfEarthType } from '/tbc/core/proto/common.js';
-import { TristateEffect } from '/tbc/core/proto/common.js';
-import { Party } from '/tbc/core/party.js';
-import { Player } from '/tbc/core/player.js';
-import { Sim } from '/tbc/core/sim.js';
-import { Target } from '/tbc/core/target.js';
-import { Encounter } from '/tbc/core/encounter.js';
-import { Raid } from '/tbc/core/raid.js';
-import { SimUI } from '/tbc/core/sim_ui.js';
-import { IndividualSimUI } from '/tbc/core/individual_sim_ui.js';
-import { EventID, TypedEvent } from '/tbc/core/typed_event.js';
-import { emptyRaidTarget } from '/tbc/core/proto_utils/utils.js';
+import { BooleanPicker } from '/wotlk/core/components/boolean_picker.js';
+import { EnumPicker, EnumPickerConfig } from '/wotlk/core/components/enum_picker.js';
+import { Conjured } from '/wotlk/core/proto/common.js';
+import { Potions } from '/wotlk/core/proto/common.js';
+import { RaidTarget } from '/wotlk/core/proto/common.js';
+import { StrengthOfEarthType } from '/wotlk/core/proto/common.js';
+import { TristateEffect } from '/wotlk/core/proto/common.js';
+import { Party } from '/wotlk/core/party.js';
+import { Player } from '/wotlk/core/player.js';
+import { Sim } from '/wotlk/core/sim.js';
+import { Target } from '/wotlk/core/target.js';
+import { Encounter } from '/wotlk/core/encounter.js';
+import { Raid } from '/wotlk/core/raid.js';
+import { SimUI } from '/wotlk/core/sim_ui.js';
+import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
+import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
+import { emptyRaidTarget } from '/wotlk/core/proto_utils/utils.js';
 
 export function makeShow1hWeaponsSelector(parent: HTMLElement, sim: Sim): BooleanPicker<Sim> {
 	return new BooleanPicker<Sim>(parent, sim, {

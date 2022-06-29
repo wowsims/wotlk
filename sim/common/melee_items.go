@@ -3,9 +3,9 @@ package common
 import (
 	"time"
 
-	"github.com/wowsims/tbc/sim/core"
-	"github.com/wowsims/tbc/sim/core/proto"
-	"github.com/wowsims/tbc/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func init() {
@@ -44,7 +44,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				// https://tbc.wowhead.com/spell=16615/add-lightning-dam-weap-03, proc mask = 20.
+				// https://wotlk.wowhead.com/spell=16615/add-lightning-dam-weap-03, proc mask = 20.
 				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}
@@ -77,7 +77,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				// https://tbc.wowhead.com/spell=7711/add-fire-dam-weap-02, proc mask = 20.
+				// https://wotlk.wowhead.com/spell=7711/add-fire-dam-weap-02, proc mask = 20.
 				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}
@@ -209,7 +209,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				// https://tbc.wowhead.com/spell=16916/strength-of-the-champion, proc mask = 0. Handled in-game via script.
+				// https://wotlk.wowhead.com/spell=16916/strength-of-the-champion, proc mask = 0. Handled in-game via script.
 				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}
@@ -241,7 +241,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				// https://tbc.wowhead.com/spell=33489/blinding-speed, proc mask = 0. Handled in-game via script.
+				// https://wotlk.wowhead.com/spell=33489/blinding-speed, proc mask = 0. Handled in-game via script.
 				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(procMask) {
 					return
 				}
@@ -267,7 +267,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				// https://tbc.wowhead.com/spell=34513/lionheart, proc mask = 0. Handled in-game via script.
+				// https://wotlk.wowhead.com/spell=34513/lionheart, proc mask = 0. Handled in-game via script.
 				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}

@@ -1,8 +1,8 @@
 package mage
 
 import (
-	"github.com/wowsims/tbc/sim/core"
-	"github.com/wowsims/tbc/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (mage *Mage) registerArcaneExplosionSpell() {

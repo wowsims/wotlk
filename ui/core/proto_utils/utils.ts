@@ -1,36 +1,36 @@
-import { REPO_NAME } from '/tbc/core/constants/other.js'
-import { camelToSnakeCase } from '/tbc/core/utils.js';
-import { getEnumValues } from '/tbc/core/utils.js';
-import { intersection } from '/tbc/core/utils.js';
-import { maxIndex } from '/tbc/core/utils.js';
-import { sum } from '/tbc/core/utils.js';
+import { REPO_NAME } from '/wotlk/core/constants/other.js'
+import { camelToSnakeCase } from '/wotlk/core/utils.js';
+import { getEnumValues } from '/wotlk/core/utils.js';
+import { intersection } from '/wotlk/core/utils.js';
+import { maxIndex } from '/wotlk/core/utils.js';
+import { sum } from '/wotlk/core/utils.js';
 
-import { Player } from '/tbc/core/proto/api.js';
-import { ResourceType } from '/tbc/core/proto/api.js';
-import { ArmorType } from '/tbc/core/proto/common.js';
-import { Class } from '/tbc/core/proto/common.js';
-import { Enchant } from '/tbc/core/proto/common.js';
-import { EnchantType } from '/tbc/core/proto/common.js';
-import { Gem } from '/tbc/core/proto/common.js';
-import { GemColor } from '/tbc/core/proto/common.js';
-import { HandType } from '/tbc/core/proto/common.js';
-import { ItemSlot } from '/tbc/core/proto/common.js';
-import { ItemType } from '/tbc/core/proto/common.js';
-import { Item } from '/tbc/core/proto/common.js';
-import { Race } from '/tbc/core/proto/common.js';
-import { Faction } from '/tbc/core/proto/common.js';
-import { RaidTarget } from '/tbc/core/proto/common.js';
-import { RangedWeaponType } from '/tbc/core/proto/common.js';
-import { Spec } from '/tbc/core/proto/common.js';
-import { Stat } from '/tbc/core/proto/common.js';
-import { WeaponType } from '/tbc/core/proto/common.js';
-import { Blessings } from '/tbc/core/proto/paladin.js';
-import { BlessingsAssignment } from '/tbc/core/proto/ui.js';
-import { BlessingsAssignments } from '/tbc/core/proto/ui.js';
+import { Player } from '/wotlk/core/proto/api.js';
+import { ResourceType } from '/wotlk/core/proto/api.js';
+import { ArmorType } from '/wotlk/core/proto/common.js';
+import { Class } from '/wotlk/core/proto/common.js';
+import { Enchant } from '/wotlk/core/proto/common.js';
+import { EnchantType } from '/wotlk/core/proto/common.js';
+import { Gem } from '/wotlk/core/proto/common.js';
+import { GemColor } from '/wotlk/core/proto/common.js';
+import { HandType } from '/wotlk/core/proto/common.js';
+import { ItemSlot } from '/wotlk/core/proto/common.js';
+import { ItemType } from '/wotlk/core/proto/common.js';
+import { Item } from '/wotlk/core/proto/common.js';
+import { Race } from '/wotlk/core/proto/common.js';
+import { Faction } from '/wotlk/core/proto/common.js';
+import { RaidTarget } from '/wotlk/core/proto/common.js';
+import { RangedWeaponType } from '/wotlk/core/proto/common.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { Stat } from '/wotlk/core/proto/common.js';
+import { WeaponType } from '/wotlk/core/proto/common.js';
+import { Blessings } from '/wotlk/core/proto/paladin.js';
+import { BlessingsAssignment } from '/wotlk/core/proto/ui.js';
+import { BlessingsAssignments } from '/wotlk/core/proto/ui.js';
 
 import { Stats } from './stats.js';
 
-import * as Gems from '/tbc/core/proto_utils/gems.js';
+import * as Gems from '/wotlk/core/proto_utils/gems.js';
 
 import {
 	BalanceDruid,
@@ -43,17 +43,17 @@ import {
 	BalanceDruid_Options as BalanceDruidOptions,
 	FeralDruid_Options as FeralDruidOptions,
 	FeralTankDruid_Options as FeralTankDruidOptions
-} from '/tbc/core/proto/druid.js';
-import { ElementalShaman, EnhancementShaman_Rotation as EnhancementShamanRotation, ElementalShaman_Rotation as ElementalShamanRotation, ShamanTalents, ElementalShaman_Options as ElementalShamanOptions, EnhancementShaman_Options as EnhancementShamanOptions, EnhancementShaman } from '/tbc/core/proto/shaman.js';
-import { Hunter, Hunter_Rotation as HunterRotation, HunterTalents, Hunter_Options as HunterOptions } from '/tbc/core/proto/hunter.js';
-import { Mage, Mage_Rotation as MageRotation, MageTalents, Mage_Options as MageOptions } from '/tbc/core/proto/mage.js';
-import { Rogue, Rogue_Rotation as RogueRotation, RogueTalents, Rogue_Options as RogueOptions } from '/tbc/core/proto/rogue.js';
-import { RetributionPaladin, RetributionPaladin_Rotation as RetributionPaladinRotation, PaladinTalents, RetributionPaladin_Options as RetributionPaladinOptions } from '/tbc/core/proto/paladin.js';
-import { ProtectionPaladin, ProtectionPaladin_Rotation as ProtectionPaladinRotation, ProtectionPaladin_Options as ProtectionPaladinOptions } from '/tbc/core/proto/paladin.js';
-import { ShadowPriest, SmitePriest_Rotation as SmitePriestRotation, ShadowPriest_Rotation as ShadowPriestRotation, PriestTalents, ShadowPriest_Options as ShadowPriestOptions, SmitePriest_Options as SmitePriestOptions, SmitePriest } from '/tbc/core/proto/priest.js';
-import { Warlock, Warlock_Rotation as WarlockRotation, WarlockTalents, Warlock_Options as WarlockOptions } from '/tbc/core/proto/warlock.js';
-import { Warrior, Warrior_Rotation as WarriorRotation, WarriorTalents, Warrior_Options as WarriorOptions } from '/tbc/core/proto/warrior.js';
-import { ProtectionWarrior, ProtectionWarrior_Rotation as ProtectionWarriorRotation, ProtectionWarrior_Options as ProtectionWarriorOptions } from '/tbc/core/proto/warrior.js';
+} from '/wotlk/core/proto/druid.js';
+import { ElementalShaman, EnhancementShaman_Rotation as EnhancementShamanRotation, ElementalShaman_Rotation as ElementalShamanRotation, ShamanTalents, ElementalShaman_Options as ElementalShamanOptions, EnhancementShaman_Options as EnhancementShamanOptions, EnhancementShaman } from '/wotlk/core/proto/shaman.js';
+import { Hunter, Hunter_Rotation as HunterRotation, HunterTalents, Hunter_Options as HunterOptions } from '/wotlk/core/proto/hunter.js';
+import { Mage, Mage_Rotation as MageRotation, MageTalents, Mage_Options as MageOptions } from '/wotlk/core/proto/mage.js';
+import { Rogue, Rogue_Rotation as RogueRotation, RogueTalents, Rogue_Options as RogueOptions } from '/wotlk/core/proto/rogue.js';
+import { RetributionPaladin, RetributionPaladin_Rotation as RetributionPaladinRotation, PaladinTalents, RetributionPaladin_Options as RetributionPaladinOptions } from '/wotlk/core/proto/paladin.js';
+import { ProtectionPaladin, ProtectionPaladin_Rotation as ProtectionPaladinRotation, ProtectionPaladin_Options as ProtectionPaladinOptions } from '/wotlk/core/proto/paladin.js';
+import { ShadowPriest, SmitePriest_Rotation as SmitePriestRotation, ShadowPriest_Rotation as ShadowPriestRotation, PriestTalents, ShadowPriest_Options as ShadowPriestOptions, SmitePriest_Options as SmitePriestOptions, SmitePriest } from '/wotlk/core/proto/priest.js';
+import { Warlock, Warlock_Rotation as WarlockRotation, WarlockTalents, Warlock_Options as WarlockOptions } from '/wotlk/core/proto/warlock.js';
+import { Warrior, Warrior_Rotation as WarriorRotation, WarriorTalents, Warrior_Options as WarriorOptions } from '/wotlk/core/proto/warrior.js';
+import { ProtectionWarrior, ProtectionWarrior_Rotation as ProtectionWarriorRotation, ProtectionWarrior_Options as ProtectionWarriorOptions } from '/wotlk/core/proto/warrior.js';
 
 export type DruidSpecs = [Spec.SpecBalanceDruid, Spec.SpecFeralDruid, Spec.SpecFeralTankDruid];
 export type HunterSpecs = Spec.SpecHunter;
@@ -186,24 +186,24 @@ export const talentTreeIcons: Record<Class, Array<string>> = {
 };
 
 export const titleIcons: Record<Spec, string> = {
-	[Spec.SpecBalanceDruid]: '/tbc/assets/balance_druid_icon.png',
-	[Spec.SpecElementalShaman]: '/tbc/assets/elemental_shaman_icon.png',
-	[Spec.SpecEnhancementShaman]: '/tbc/assets/enhancement_shaman_icon.png',
-	[Spec.SpecFeralDruid]: '/tbc/assets/feral_druid_icon.png',
-	[Spec.SpecFeralTankDruid]: '/tbc/assets/feral_druid_tank_icon.png',
-	[Spec.SpecHunter]: '/tbc/assets/hunter_icon.png',
-	[Spec.SpecMage]: '/tbc/assets/mage_icon.png',
-	[Spec.SpecRogue]: '/tbc/assets/rogue_icon.png',
-	[Spec.SpecRetributionPaladin]: '/tbc/assets/retribution_icon.png',
-	[Spec.SpecProtectionPaladin]: '/tbc/assets/protection_paladin_icon.png',
-	[Spec.SpecShadowPriest]: '/tbc/assets/shadow_priest_icon.png',
-	[Spec.SpecWarlock]: '/tbc/assets/warlock_icon.png',
-	[Spec.SpecWarrior]: '/tbc/assets/warrior_icon.png',
-	[Spec.SpecProtectionWarrior]: '/tbc/assets/protection_warrior_icon.png',
-	[Spec.SpecSmitePriest]: '/tbc/assets/smite_priest_icon.png',
+	[Spec.SpecBalanceDruid]: '/wotlk/assets/balance_druid_icon.png',
+	[Spec.SpecElementalShaman]: '/wotlk/assets/elemental_shaman_icon.png',
+	[Spec.SpecEnhancementShaman]: '/wotlk/assets/enhancement_shaman_icon.png',
+	[Spec.SpecFeralDruid]: '/wotlk/assets/feral_druid_icon.png',
+	[Spec.SpecFeralTankDruid]: '/wotlk/assets/feral_druid_tank_icon.png',
+	[Spec.SpecHunter]: '/wotlk/assets/hunter_icon.png',
+	[Spec.SpecMage]: '/wotlk/assets/mage_icon.png',
+	[Spec.SpecRogue]: '/wotlk/assets/rogue_icon.png',
+	[Spec.SpecRetributionPaladin]: '/wotlk/assets/retribution_icon.png',
+	[Spec.SpecProtectionPaladin]: '/wotlk/assets/protection_paladin_icon.png',
+	[Spec.SpecShadowPriest]: '/wotlk/assets/shadow_priest_icon.png',
+	[Spec.SpecWarlock]: '/wotlk/assets/warlock_icon.png',
+	[Spec.SpecWarrior]: '/wotlk/assets/warrior_icon.png',
+	[Spec.SpecProtectionWarrior]: '/wotlk/assets/protection_warrior_icon.png',
+	[Spec.SpecSmitePriest]: '/wotlk/assets/smite_priest_icon.png',
 };
 
-export const raidSimIcon: string = '/tbc/assets/raid_icon.png';
+export const raidSimIcon: string = '/wotlk/assets/raid_icon.png';
 
 // Returns the index of the talent tree (0, 1, or 2) that has the most points.
 export function getTalentTree(talentsString: string): number {
