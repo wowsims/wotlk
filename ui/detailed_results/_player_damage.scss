@@ -1,0 +1,37 @@
+.player-damage-row {
+	cursor: pointer;
+}
+
+.amount-header-cell, .amount-cell {
+	text-align: center !important;
+}
+
+.amount-cell {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	height: 35px;
+	width: 600px;
+	margin: auto;
+}
+
+.player-damage-percent {
+	display: inline-block;
+	margin: 0 10px;
+	width: 75px;
+	text-align: right;
+}
+
+.player-damage-bar-container {
+	display: inline-block;
+	flex-grow: 1;
+}
+
+.player-damage-bar {
+	height: 25px;
+}
+
+.player-damage-total {
+	display: inline-block;
+	margin: 0 10px;
+}

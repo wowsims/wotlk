@@ -1,0 +1,177 @@
+syntax = "proto3";
+package proto;
+
+option go_package = "./proto";
+
+message ShamanTalents {
+	// Elemental
+	int32 convection = 1;
+	int32 concussion = 2;
+	int32 call_of_flame = 3;
+	bool elemental_focus = 4;
+	int32 reverberation = 5;
+	int32 call_of_thunder = 6;
+	int32 improved_fire_totems = 7;
+	int32 elemental_devastation = 8;
+	bool elemental_fury = 9;
+	int32 unrelenting_storm = 10;
+	int32 elemental_precision = 11;
+	int32 lightning_mastery = 12;
+	bool elemental_mastery = 13;
+	int32 lightning_overload = 14;
+	bool totemOfWrath = 33;
+
+	// Enhancement
+	int32 ancestral_knowledge = 15;
+	int32 shield_specialization = 37;
+	int32 thundering_strikes = 16;
+	int32 enhancing_totems = 17;
+	bool shamanistic_focus = 18;
+	int32 anticipation = 38;
+	int32 flurry = 19;
+	int32 toughness = 39;
+	int32 improved_weapon_totems = 20;
+	bool spirit_weapons = 36;
+	int32 elemental_weapons = 21;
+	int32 mental_quickness = 22;
+	int32 weapon_mastery = 23;
+	int32 dual_wield_specialization = 24;
+	int32 unleashed_rage = 25;
+	bool stormstrike = 34;
+	bool shamanistic_rage = 35;
+
+	// Restoration
+	int32 totemic_focus = 26;
+	int32 natures_guidance = 27;
+	int32 restorative_totems = 28;
+	int32 tidal_mastery = 29;
+	bool natures_swiftness = 30;
+	bool mana_tide_totem = 31;
+	int32 natures_blessing = 32;
+}
+
+enum EarthTotem {
+	NoEarthTotem = 0;
+	StrengthOfEarthTotem = 1;
+	TremorTotem = 2;
+}
+
+enum AirTotem {
+	NoAirTotem = 0;
+	GraceOfAirTotem = 1;
+	TranquilAirTotem = 2;
+	WindfuryTotem = 3;
+	WrathOfAirTotem = 4;
+}
+
+enum FireTotem {
+	NoFireTotem = 0;
+	MagmaTotem = 1;
+	SearingTotem = 2;
+	TotemOfWrath = 3;
+  FireNovaTotem = 4;
+}
+
+enum WaterTotem {
+	NoWaterTotem = 0;
+	ManaSpringTotem = 1;
+}
+
+message ShamanTotems {
+	EarthTotem earth = 1;
+	AirTotem air = 2;
+	FireTotem fire = 3;
+	WaterTotem water = 4;
+
+	// If set, will twist windfury with whichever air totem is selected.
+	bool twist_windfury = 5; 
+
+	// Rank of Windfury Totem to cast, if using Windfury Totem.
+	int32 windfury_totem_rank = 11;
+
+	// If set, will twist fire nova with whichever fire totem is selected.
+	bool twist_fire_nova = 6;
+
+	// If set, will use mana tide when appropriate.
+	bool use_mana_tide = 7;
+
+	// If set, will use fire elemental totem at the start and revert to regular
+	// fire totems when it expires. If fire nova is also selected, fire nova
+	// will be used once before dropping fire ele.
+	bool use_fire_elemental = 8;
+
+	// If set, will revert to regular fire totems when fire elemental goes OOM,
+	// instead of waiting the full 2 minutes.
+	bool recall_fire_elemental_on_oom = 9;
+
+	// If set, any time a 2-minute totem is about to expire, will recall and
+	// replace all totems.
+	bool recall_totems = 10;
+}
+
+message ElementalShaman {
+	message Rotation {
+		ShamanTotems totems = 3;
+
+		enum RotationType {
+			Unknown = 0;
+			Adaptive = 1;
+			CLOnClearcast = 2;
+			CLOnCD = 3;
+			FixedLBCL = 4;
+			LBOnly = 5;
+		}
+
+		RotationType type = 1;
+
+		// Only used if type == FixedLBCL
+		int32 lbs_per_cl = 2;
+	}
+
+	message Options {
+		bool water_shield = 1;
+		bool bloodlust = 2;
+
+		// Indicates the shaman will be dropping an improved wrath of air totem before
+		// the fight by snapshotting the T4 2pc bonus.
+		bool snapshot_t4_2pc = 6;
+	}
+
+	Rotation rotation = 1;
+	ShamanTalents talents = 2;
+	Options options = 3;
+}
+
+
+message EnhancementShaman {
+  message Rotation {
+		ShamanTotems totems = 1;
+
+    enum PrimaryShock {
+			None = 0;
+			Earth = 1;
+			Frost = 2;
+    }
+    PrimaryShock primary_shock = 2;
+
+		bool weave_flame_shock = 3;
+
+		// For internal use only. Use to stagger SS casts between multiple Enhance
+		// Shaman to optimize SS charge usage.
+		double first_stormstrike_delay = 4;
+  }
+
+  message Options {
+		bool water_shield = 1;
+		bool bloodlust = 2;
+		bool delay_offhand_swings = 5;
+
+		// Indicates the shaman will be dropping an improved strength of earth totem before
+		// the fight by snapshotting the T4 2pc bonus.
+		bool snapshot_t4_2pc = 6;
+  }
+
+  Rotation rotation = 1;
+  ShamanTalents talents = 2;
+  Options options = 3;
+}

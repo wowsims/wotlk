@@ -1,0 +1,46 @@
+
+.list-picker-root {
+}
+
+.list-picker-items {
+}
+
+.list-picker-item-container {
+	border: 1px solid var(--theme-color-primary);
+	margin: 5px;
+}
+
+.list-picker-item-header {
+	display: flex;
+	align-items: center;
+	justify-content: right;
+	margin-top: 1px;
+}
+.list-picker-item-header > span {
+	margin: 3px 15px;
+	cursor: pointer;
+	font-size: 16px;
+}
+
+.list-picker-item-header span:hover {
+	text-shadow:
+		0 0 3px red,
+		0 0 3px red,
+		0 0 3px red;
+}
+
+.list-picker-item-up {
+	color: cyan;
+}
+.list-picker-item-down {
+	color: magenta;
+}
+.list-picker-item-copy {
+	color: yellow;
+}
+.list-picker-item-delete {
+	color: red;
+}
+
+.list-picker-item {
+}

@@ -1,0 +1,25 @@
+// Set color variables which control the site theme.
+.protection-warrior-sim-ui {
+	--theme-color-primary: #745221;
+	--theme-color-background: #1c1408;
+	--theme-color-background-raw: 28, 20, 8;
+	--theme-background-image: url('/tbc/assets/protection_warrior_background.jpg');
+	--theme-background-opacity: 0.95;
+	--main-text-color: White;
+}
+
+// Set grid width for icon sections based on how many buffs we configured.
+.protection-warrior-sim-ui .self-buffs-section {
+  grid-template-columns: repeat(4, 1fr);
+}
+.protection-warrior-sim-ui .buffs-section {
+  grid-template-columns: repeat(5, 1fr);
+}
+.protection-warrior-sim-ui .debuffs-section {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+// Prot has a lot of EP stats, so make the text smaller so it fits vertically.
+.protection-warrior-sim-ui .character-stats-table-row {
+  font-size: 11px;
+}

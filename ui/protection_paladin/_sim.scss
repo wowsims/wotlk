@@ -1,0 +1,24 @@
+// Set color variables which control the site theme.
+.protection-paladin-sim-ui {
+	--theme-color-primary: #cc48a4;
+	--theme-color-background: rgb(20, 13, 18);
+	--theme-color-background-raw: 20, 13, 18;
+	--theme-background-image: url('/tbc/assets/prot_paladin.png');
+	--theme-background-opacity: 0.95;
+	--main-text-color: White;
+}
+
+// Set grid width for icon sections based on how many buffs we configured.
+.protection-paladin-sim-ui .self-buffs-section {
+	grid-template-columns: repeat(2, 1fr);
+}
+.protection-paladin-sim-ui .buffs-section {
+	grid-template-columns: repeat(7, 1fr);
+}
+.protection-paladin-sim-ui .debuffs-section {
+	grid-template-columns: repeat(5, 1fr);
+}
+
+.protection-paladin-sim-ui .character-stats-table-row {
+	font-size: 10px;
+}

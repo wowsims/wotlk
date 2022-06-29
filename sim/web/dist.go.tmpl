@@ -1,0 +1,10 @@
+// This file is copied over to the dist/ package when building the web server.
+//  This is how we embed the dist/ into the binary.
+package dist
+
+import (
+	"embed"
+)
+
+//go:embed tbc
+var FS embed.FS

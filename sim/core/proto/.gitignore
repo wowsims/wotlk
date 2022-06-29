@@ -1,0 +1,2 @@
+# This directory is for Go code generated from the *.proto files in /proto.
+*.pb.go

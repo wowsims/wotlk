@@ -1,0 +1,147 @@
+syntax = "proto3";
+package proto;
+
+option go_package = "./proto";
+
+message MageTalents {
+	// Arcane
+	int32 arcane_subtlety = 1;
+	int32 arcane_focus = 2;
+	int32 wand_specialization = 3;
+	int32 magic_absorption = 48;
+	int32 arcane_concentration = 4;
+	int32 arcane_impact = 5;
+	int32 arcane_meditation = 6;
+	bool presence_of_mind = 7;
+	int32 arcane_mind = 8;
+	int32 arcane_instability = 9;
+	int32 arcane_potency = 10;
+	int32 empowered_arcane_missiles = 11;
+	bool arcane_power = 12;
+	int32 spell_power = 13;
+	int32 mind_mastery = 14;
+
+	// Fire
+	int32 improved_fireball = 15;
+	int32 ignite = 16;
+	int32 improved_fire_blast = 17;
+	int32 incineration = 18;
+	int32 improved_flamestrike = 19;
+	bool pyroblast = 20;
+	int32 burning_soul = 47;
+	int32 improved_scorch = 21;
+	int32 master_of_elements = 22;
+	int32 playing_with_fire = 23;
+	int32 critical_mass = 24;
+	bool blast_wave = 25;
+	int32 fire_power = 26;
+	int32 pyromaniac = 27;
+	bool combustion = 28;
+	int32 molten_fury = 29;
+	int32 empowered_fireball = 30;
+	bool dragons_breath = 31;
+
+	// Frost
+	int32 improved_frostbolt = 32;
+	int32 elemental_precision = 33;
+	int32 ice_shards = 34;
+	int32 improved_frost_nova = 35;
+	int32 piercing_ice = 36;
+	bool icy_veins = 37;
+	int32 frost_channeling = 38;
+	int32 shatter = 39;
+	bool cold_snap = 40;
+	int32 improved_cone_of_cold = 41;
+	int32 ice_floes = 42;
+	int32 winters_chill = 43;
+	int32 arctic_winds = 44;
+	int32 empowered_frostbolt = 45;
+	bool summon_water_elemental = 46;
+}
+
+message Mage {
+	message Rotation {
+		// Just used for controlling which options are displayed in the UI. Is not
+		// used by the sim.
+		enum Type {
+			Arcane = 0;
+			Fire = 1;
+			Frost = 2;
+		}
+		Type type = 1;
+
+		message ArcaneRotation {
+			enum Filler {
+				Frostbolt = 0;
+				ArcaneMissiles = 1;
+				Scorch = 2;
+				Fireball = 3;
+				ArcaneMissilesFrostbolt = 4;
+				ArcaneMissilesScorch = 5;
+				ScorchTwoFireball = 6;
+			}
+			// The spells to use to fill time while waiting for arcane blast stacks to drop.
+			Filler filler = 1;
+
+			// Number of arcane blasts to cast before switching to filler.
+			int32 arcane_blasts_between_fillers = 2;
+
+			// Percentage of mana (0-1) below which to switch to regen rotation.
+			double start_regen_rotation_percent = 3;
+
+			// Percentage of mana (0-1) above which to switch to regular rotation.
+			double stop_regen_rotation_percent = 4;
+
+			// Prevents DPS cooldowns from being using during regen rotation.
+			bool disable_dps_cooldowns_during_regen = 5;
+		}
+		ArcaneRotation arcane = 2;
+
+		message FireRotation {
+			enum PrimarySpell {
+				Fireball = 0;
+				Scorch = 1;
+			}
+			PrimarySpell primary_spell = 1;
+
+			bool maintain_improved_scorch = 2;
+
+			bool weave_fire_blast = 3;
+		}
+		FireRotation fire = 3;
+
+		message FrostRotation {
+			// Chance for water elemental to disobey, doing nothing rather than cast.
+			double water_elemental_disobey_chance = 3;
+		}
+		FrostRotation frost = 4;
+
+		message AoeRotation {
+			enum Rotation {
+				ArcaneExplosion = 0;
+				Flamestrike = 1;
+				Blizzard = 2;
+			}
+			Rotation rotation = 1;
+		}
+		AoeRotation aoe = 5;
+
+		bool multi_target_rotation = 6;
+	}
+	Rotation rotation = 1;
+
+	MageTalents talents = 2;
+	
+	message Options {
+		enum ArmorType {
+			NoArmor = 0;
+			MageArmor = 1;
+			MoltenArmor = 2;
+		}
+		ArmorType armor = 1;
+
+		// Number of Evocation ticks to use. If 0, use all of them.
+		int32 evocation_ticks = 2;
+	}
+	Options options = 3;
+}

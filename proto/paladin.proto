@@ -1,0 +1,140 @@
+syntax = "proto3";
+package proto;
+
+option go_package = "./proto";
+
+message PaladinTalents {
+	// Holy
+	int32 divine_strength = 1;
+	int32 divine_intellect = 2;
+	int32 improved_seal_of_righteousness = 3;
+	int32 illumination = 34;
+	int32 improved_blessing_of_wisdom = 4;
+	bool divine_favor = 5;
+	int32 purifying_power = 6;
+	int32 holy_power = 7;
+	bool holy_shock = 8;
+	int32 blessed_life = 51;
+	int32 holy_guidance = 9;
+	bool divine_illumination = 10;
+
+	// Protection
+	int32 improved_devotion_aura = 35;
+	int32 redoubt = 36;
+	int32 precision = 11;
+	int32 toughness = 37;
+	bool blessing_of_kings = 12;
+	int32 improved_righteous_fury = 38;
+	int32 shield_specialization = 39;
+	int32 anticipation = 40;
+	int32 spell_warding = 41;
+	bool blessing_of_sanctuary = 42;
+	int32 reckoning = 13;
+	int32 sacred_duty = 14;
+	int32 one_handed_weapon_specialization = 15;
+	int32 improved_holy_shield = 43;
+	bool holy_shield = 44;
+	int32 ardent_defender = 45;
+	int32 combat_expertise = 16;
+	bool avengers_shield = 17;
+
+	// Retribution
+	int32 improved_blessing_of_might = 18;
+	int32 benediction = 19;
+	int32 improved_judgement = 20;
+	int32 improved_seal_of_the_crusader = 21;
+	int32 deflection = 46;
+	int32 vindication = 22;
+	int32 conviction = 23;
+	bool seal_of_command = 24;
+	int32 pursuit_of_justice = 47;
+	int32 eye_for_an_eye = 48;
+	int32 improved_retribution_aura = 49;
+	int32 crusade = 25;
+	int32 two_handed_weapon_specialization = 26;
+	bool sanctity_aura = 27;
+	int32 improved_sanctity_aura = 28;
+	int32 vengeance = 29;
+	int32 sanctified_judgement = 30;
+	int32 sanctified_seals = 31;
+	int32 divine_purpose = 50;
+	int32 fanaticism = 32;
+	bool crusader_strike = 33;
+}
+
+enum Blessings {
+	BlessingUnknown = 0;
+	BlessingOfKings = 1;
+	BlessingOfMight = 2;
+	BlessingOfSalvation = 3;
+	BlessingOfWisdom = 4;
+	BlessingOfSanctuary = 5;
+	BlessingOfLight = 6;
+}
+
+enum PaladinAura {
+	NoPaladinAura = 0;
+	SanctityAura = 1;
+	DevotionAura = 2;
+	RetributionAura = 3;
+}
+
+enum PaladinJudgement {
+	NoPaladinJudgement = 0;
+	JudgementOfWisdom = 1;
+	JudgementOfLight = 2;
+	JudgementOfCrusader = 3;
+	JudgementOfVengeance = 4;
+	JudgementOfRighteousness = 5;
+}
+
+message RetributionPaladin {
+	message Rotation {
+		enum ConsecrationRank {
+			None = 0;
+			Rank1 = 1;
+			Rank4 = 2;
+			Rank6 = 3;
+		}
+		ConsecrationRank consecration_rank = 1;
+
+		bool use_exorcism = 2;
+	}
+	Rotation rotation = 1;
+
+	PaladinTalents talents = 2;
+	
+	message Options {
+		enum Judgement {
+			None = 0;
+			Wisdom = 1;
+			Crusader = 2;
+		}
+		Judgement judgement = 1;
+
+		PaladinAura aura = 5;
+
+		int32 crusader_strike_delay_ms = 2;
+		int32 haste_leeway_ms = 3;
+		double damage_taken_per_second = 4;
+	}
+	Options options = 3;
+}
+
+message ProtectionPaladin {
+	message Rotation {
+		bool prioritize_holy_shield = 1;
+		int32 consecration_rank = 2;
+		bool use_exorcism = 3;
+		PaladinJudgement maintain_judgement = 4;
+	}
+	Rotation rotation = 1;
+
+	PaladinTalents talents = 2;
+
+	message Options {
+		PaladinAura aura = 1;
+		bool use_avenging_wrath = 2;
+	}
+	Options options = 3;
+}

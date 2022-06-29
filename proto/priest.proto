@@ -1,0 +1,98 @@
+syntax = "proto3";
+package proto;
+
+option go_package = "./proto";
+
+import "common.proto";
+
+message PriestTalents {
+	// Discipline
+	int32 wand_specialization = 1;
+	int32 silent_resolve = 31;
+	int32 improved_power_word_fortitude = 34;
+	bool inner_focus = 2;
+	int32 meditation = 3;
+	int32 mental_agility = 4;
+	int32 mental_strength = 5;
+	bool divine_spirit = 6;
+	int32 improved_divine_spirit = 7;
+	int32 focused_power = 8;
+	int32 force_of_will = 9;
+	bool power_infusion = 10;
+	int32 enlightenment = 11;
+
+	// Holy
+	int32 holy_specialization = 12;
+	int32 divine_fury = 13;
+	bool holy_nova = 14;
+	int32 searing_light = 15;
+	int32 spiritual_guidance = 16;
+	int32 surge_of_light = 17;
+	bool spirit_of_redemption = 33;
+
+	// Shadow
+	int32 shadow_affinity = 32;
+	int32 improved_shadow_word_pain = 18;
+	int32 shadow_focus = 19;
+	int32 improved_mind_blast = 20;
+	bool mind_flay = 21;
+	int32 shadow_weaving = 22;
+	bool vampiric_embrace = 23;
+	int32 improved_vampiric_embrace = 24;
+	int32 focused_mind = 25;
+	int32 darkness = 26;
+	bool shadowform = 27;
+	int32 shadow_power = 28;
+	int32 misery = 29;
+	bool vampiric_touch = 30;
+}
+
+message ShadowPriest {
+	message Rotation {
+		enum RotationType {
+			Unknown = 0;
+			Basic = 1;
+			Clipping = 2;
+			Ideal = 3;
+		}
+	
+		RotationType rotation_type = 1;
+		bool use_dev_plague = 3; // only undead
+		bool precast_vt = 4; // casts VT ahead of the start of the fight so that it lands on 0
+		double latency = 5; // Latency between actions
+		bool use_starshards = 6; // only nelf
+	}
+	Rotation rotation = 1;
+
+	PriestTalents talents = 2;
+	
+	message Options {
+		bool use_shadowfiend = 1;
+	}
+	Options options = 3;
+}
+
+message SmitePriest {
+	message Rotation {
+		enum RotationType {
+			Unknown = 0;
+			Basic = 1;
+			HolyFireWeave = 2;
+		}
+	
+		RotationType rotation_type = 1;
+		bool use_dev_plague = 3; // only undead
+		bool use_starshards = 4; // only nelf
+		bool use_mind_blast = 5;
+		bool use_shadow_word_death = 6;
+	}
+	Rotation rotation = 1;
+
+	PriestTalents talents = 2;
+	
+	message Options {
+		bool use_shadowfiend = 1;
+		RaidTarget power_infusion_target = 2;
+	}
+	Options options = 3;
+}

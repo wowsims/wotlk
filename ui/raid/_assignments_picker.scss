@@ -1,0 +1,16 @@
+.assigned-buff-player {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin: 3px;
+}
+
+.assigned-buff-player > * {
+	margin: 3px;
+}
+
+.assigned-buff-player .raid-target-picker-option {
+	display: flex;
+	align-items: center;
+	min-width: 200px;
+}

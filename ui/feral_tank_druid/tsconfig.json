@@ -1,0 +1,13 @@
+{
+  "extends": "../tsconfig-base",
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "../../dist/tbc/feral_tank_druid",
+  },
+  "include": [
+    "**/*.ts",
+  ],
+  "references": [
+    { "path": "../core" },
+  ],
+}

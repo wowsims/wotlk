@@ -1,0 +1,216 @@
+:root {
+	--theme-color-primary: DarkSlateGrey;
+	--theme-color-background: DarkSlateGrey;
+	--theme-color-background-raw: 0, 0, 0;
+	--theme-background-image: linear-gradient(black, black);
+	--theme-background-opacity: 0.9;
+	--main-bg-color: DarkSlateGrey;
+	--main-text-color: White;
+	--main-secondary-color: Black;
+	--sidebar-bg-color: DarkKhaki;
+	--sidebar-text-color: White;
+	--sidebar-highlight-color: Blue;
+}
+
+.hide {
+	display: none;
+}
+
+@font-face {
+	font-family: SimDefaultFont;
+	src: url(/tbc/assets/PlusJakartaSans-Regular.woff2);
+}
+
+@font-face {
+	font-family: SimDefaultFont;
+	src: url(/tbc/assets/PlusJakartaSans-Bold.woff2);
+	font-weight: bold;
+}
+
+* {
+	font-family: SimDefaultFont;
+	letter-spacing: 1px;
+}
+
+$sim-transitions: .2s ease-in;
+
+@mixin vertical-center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+@mixin horizontal-center {
+  margin: 0;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+@mixin vertical-horizontal-center {
+  margin: 0 !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
+
+@mixin vertical-bottom {
+  position: absolute;
+  bottom: 0;
+}
+
+@mixin horizontal-left {
+  position: absolute;
+  left: 0;
+}
+
+@mixin horizontal-right {
+  position: absolute;
+  right: 0;
+}
+
+@mixin screen-vertical-horizontal-center {
+  margin: 0;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) !important;
+}
+
+.loader {
+  border: 16px solid #f3f3f3; /* Light grey */
+  border-top: 16px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.item-quality-junk {
+  color: #fff !important;
+}
+
+.item-quality-common {
+  color: white !important;
+}
+
+.item-quality-uncommon {
+  color: #1eff00 !important;
+}
+
+.item-quality-rare {
+  color: #0070dd !important;
+}
+
+.item-quality-epic {
+  color: #a335ee !important;
+}
+
+.item-quality-legendary {
+  color: #ff8000 !important;
+}
+
+#bootstrap-overrides .socket-color-blue {
+  border: 1px solid blue !important;
+}
+
+#bootstrap-overrides .socket-color-meta {
+  border: 1px solid white !important;
+}
+
+#bootstrap-overrides .socket-color-red {
+  border: 1px solid red !important;
+}
+
+#bootstrap-overrides .socket-color-yellow {
+  border: 1px solid yellow !important;
+}
+
+@mixin wowhead-background-icon {
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.dropdown-root {
+	position: relative;
+	display: inline-block !important;
+	white-space: nowrap;
+}
+
+.dropdown-button {
+	cursor: pointer;
+	background-color: gray;
+}
+
+.dropdown-panel {
+	display: none;
+	position: absolute;
+	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	z-index: 1;
+}
+
+.dropdown-panel-column {
+	display: inline-flex;
+	flex-direction: column;
+}
+
+.dropdown-root:hover .dropdown-panel {
+	display: grid !important;
+}
+
+.dropdown-option-container:hover {
+	text-decoration: none;
+}
+
+.dropdown-option-container {
+	background-color: gray;
+}
+
+.dropdown-option {
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+}
+
+*:not(.dropdown-button) > * > .dropdown-option:not(:hover) {
+	opacity: 0.7;
+}
+
+.positive {
+	color: lawngreen !important;
+}
+.negative {
+	color: red !important;
+}
+
+.safe {
+	color: lawngreen;
+}
+.warning {
+	color: yellow;
+}
+.danger {
+	color: red;
+}
+
+.bold {
+	font-weight: bold;
+}
+
+.sim-button {
+	color: var(--main-text-color);
+	background-color: var(--theme-color-primary);
+	border: none;
+	padding: 5px;
+	font-weight: bold;
+}

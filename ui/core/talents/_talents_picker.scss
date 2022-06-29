@@ -1,0 +1,90 @@
+@import "../shared";
+
+.talents-picker-root {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  overflow-y: auto;
+  min-width: 33vh;
+  height: calc(100% - 70px);
+}
+
+.talent-tree-picker-root {
+  background: #444;
+  padding: 4px;
+  border-radius: 6px;
+  margin: 1px;
+  flex: 1;
+  max-width: calc(32vh + 8px);
+}
+
+.talent-tree-header {
+  padding: 6px;
+  text-align: center;
+  color: white;
+}
+
+.talent-tree-title {
+  display: inline-block;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.talent-tree-reset {
+  float: right;
+  color: red;
+  font-size: 20px !important;
+  cursor: pointer;
+}
+.talents-picker-root.frozen .talent-tree-reset {
+	display: none;
+}
+
+.talent-tree-main {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(9, 1fr);
+  background-size: 100% 100%;
+  height: 72vh;
+  width: 32vh;
+  border-radius: 4px;
+}
+
+$talent-partial-color: #40BF40;
+$talent-full-color: #ffd100;
+
+.talent-picker-root {
+  @include wowhead-background-icon;
+  width: 70%;
+  height: 70%;
+  border: 1px solid $talent-partial-color;
+  border-radius: 4px;
+  margin: 10px;
+}
+.talent-picker-root[data-points="0"]:not(.talent-picker-can-add) {
+  filter: grayscale(100%);
+}
+.talent-picker-root.talent-full {
+  border-color: $talent-full-color;
+}
+
+.talent-picker-points {
+  @include vertical-bottom;
+  @include horizontal-right;
+  margin: 0;
+  color: $talent-partial-color;
+  background-color: black;
+}
+.talent-picker-root[data-points="0"]:not(.talent-picker-can-add) .talent-picker-points {
+  filter: grayscale(100%);
+}
+.talent-picker-root.talent-full .talent-picker-points {
+  color: $talent-full-color;
+}
+.talents-picker-root.talents-full .talent-picker-root[data-points="0"] .talent-picker-points {
+  display: none;
+}
+
+.icon-input:not(.active), .icon-input-improved:not(.active), .icon-input-counter:not(.active) {
+  border-color: dimgray;
+}

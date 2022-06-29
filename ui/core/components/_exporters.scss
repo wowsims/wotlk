@@ -1,0 +1,26 @@
+@import "./popup";
+
+.exporter {
+	text-align: center;
+}
+
+.exporter-title {
+	display: block;
+	font-size: 24px;
+	font-weight: bold;
+	margin: 10px;
+}
+
+.exporter-textarea {
+	width: 100%;
+	height: 40vh;
+	background-color: #111218;
+	resize: none;
+}
+
+.exporter .actions-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+	padding: 10px;
+}

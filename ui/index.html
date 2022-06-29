@@ -1,0 +1,279 @@
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <link rel="icon" type="image/x-icon" href="/tbc/assets/favicon_io/favicon.ico">
+    <style>
+        a {
+            text-decoration: none;
+        }
+
+        .content {
+            position: absolute;
+            top: 50px;
+            left: 0;
+            right: 0;
+            margin-left: auto;
+            margin-right: auto;
+            height: 90%;
+            width: 75%;
+            text-align: center;
+        }
+
+        .dropdown-option:hover {
+            background-color: rgba(255, 255, 255, 0.3) !important; 
+        }
+
+        .dropdown-option {
+            flex: 0;
+            margin-top: 10px;
+            margin-left: 10px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            background-color: rgba(255, 255, 255, 0.1);
+            height: clamp(25px, 5px + 4.6vh, 60px);
+            padding-left: 6px;
+            padding-right: 6px;
+            white-space: nowrap;
+        }
+
+        .sim-title-dropdown {
+            display: flex;
+            flex-direction: row;
+            margin: 0 auto;
+            flex-wrap: wrap;
+            justify-content: space-evenly;
+        }
+
+        .dropdown-panel .sim-title-spec-label {
+            text-shadow: 0 0 1px black, 0 0 1px black, 0 0 1px black;
+        }
+
+        .sim-title-spec-label {
+            font-size: clamp(0.6rem, -1rem + 4vw, 1rem);
+            font-weight: bold;
+        }
+
+        .sim-title-label {
+            margin: 2px 5px;
+        }
+
+        .sim-title-icon {
+            width: clamp(22px, 4px + 3.4vh, 40px);
+        }
+
+        @font-face {
+            font-family: SimDefaultFont;
+            src: url(/tbc/assets/PlusJakartaSans-Regular.woff2);
+        }
+
+        @font-face {
+            font-family: SimDefaultFont;
+            src: url(/tbc/assets/PlusJakartaSans-Bold.woff2);
+            font-weight: bold;
+        }
+
+        * {
+            font-family: SimDefaultFont;
+            letter-spacing: 1px;
+        }
+
+        .bg-image {
+            background-image: url("assets/tbc.jpg");
+            filter: brightness(20%) blur(2px);
+            height: 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .info h2 {
+            font-size: clamp(2rem, -0.8rem + 7vw, 3.5rem);
+            color: #e0a335;
+        }
+        .info p {
+            font-size: clamp(0.8rem, -1rem + 4vw, 1.5rem);
+            color: white;
+        }
+    </style>
+</head>
+
+<body style="background-color: black">
+    <div class="bg-image"></div>
+    <div class="content">
+        <img src="/tbc/assets/WoW-Simulator-Icon.png" style="height: 75px;">
+        <div class="info">
+            <h2>WoW TBC Sims</h2>
+            <p>Welcome to WoWSims. This is a community-driven project to provide simulations for TBC Classes & Raids
+                together with the leading theorycrafters and class representatives.</p>
+        </div>
+        <hr style="width: 50%">
+        <div class="dropdown-panel sim-title-dropdown within-raid-sim-hide">
+            <div class="sim-title-option dropdown-option" style="flex-basis:100%; justify-content: center; background-color: rgba(0, 0, 0, 0.5);">
+                <a href="/tbc/raid/" class="">
+                    <img src="/tbc/assets/raid_icon.png" class="sim-title-icon">
+                </a>
+                <a href="/tbc/raid/" class="sim-title-dropdown-option-container" style="color: white;">
+                    <div class="sim-title-label-container">
+                        <span class="sim-title-spec-label sim-title-label">RAID</span>
+                    </div>
+                </a>
+            </div>
+            <div class="sim-title-option dropdown-option">
+                <a href="/tbc/balance_druid/" class="">
+                    <img src="/tbc/assets/balance_druid_icon.png" class="sim-title-icon">
+                </a>
+                <a href="/tbc/balance_druid/" class="sim-title-dropdown-option-container" style="color: rgb(255, 125, 10);">
+                    <div class="sim-title-label-container">
+                        <span class="sim-title-spec-label sim-title-label">BALANCE DRUID</span>
+                    </div>
+                </a>
+            </div>
+            <div class="sim-title-option dropdown-option">
+                <a href="/tbc/feral_druid/" class="">
+                    <img src="/tbc/assets/feral_druid_icon.png" class="sim-title-icon">
+                </a>
+                <a href="/tbc/feral_druid/" class="sim-title-dropdown-option-container" style="color: rgb(255, 125, 10);">
+                    <div class="sim-title-label-container">
+                        <span class="sim-title-spec-label sim-title-label">FERAL DRUID</span>
+                    </div>
+                </a>
+            </div>
+            <div class="sim-title-option dropdown-option">
+                <a href="/tbc/feral_tank_druid/" class="">
+                    <img src="/tbc/assets/feral_druid_tank_icon.png" class="sim-title-icon">
+                </a>
+                <a href="/tbc/feral_tank_druid/" class="sim-title-dropdown-option-container" style="color: rgb(255, 125, 10);">
+                    <div class="sim-title-label-container">
+                        <span class="sim-title-spec-label sim-title-label">FERAL TANK DRUID</span>
+                    </div>
+                </a>
+            </div>
+            <div class="sim-title-option dropdown-option">
+                <a href="/tbc/hunter/" class="">
+                    <img src="/tbc/assets/hunter_icon.png" class="sim-title-icon">
+                </a>
+                <a href="/tbc/hunter/" class="sim-title-dropdown-option-container" style="color: rgb(171, 212, 115);">
+                    <div class="sim-title-label-container">
+                        <span class="sim-title-spec-label sim-title-label">HUNTER</span>
+                    </div>
+                </a>
+            </div>
+            <div class="sim-title-option dropdown-option">
+                <a href="/tbc/mage/" class="">
+                    <img src="/tbc/assets/mage_icon.png" class="sim-title-icon">
+                </a>
+                <a href="/tbc/mage/" class="sim-title-dropdown-option-container" style="color: rgb(105, 204, 240);">
+                    <div class="sim-title-label-container">
+                        <span class="sim-title-spec-label sim-title-label">MAGE</span>
+                    </div>
+                </a>
+            </div>
+            <div class="sim-title-option dropdown-option">
+                <a href="/tbc/retribution_paladin/" class="">
+                    <img src="/tbc/assets/retribution_icon.png" class="sim-title-icon">
+                </a>
+                <a href="/tbc/retribution_paladin/" class="sim-title-dropdown-option-container" style="color: rgb(245, 140, 186);">
+                    <div class="sim-title-label-container">
+                        <span class="sim-title-spec-label sim-title-label">RETRIBUTION PALADIN</span>
+                    </div>
+                </a>
+            </div>
+            <div class="sim-title-option dropdown-option">
+                <a href="/tbc/protection_paladin/" class="">
+                    <img src="/tbc/assets/protection_paladin_icon.png" class="sim-title-icon">
+                </a>
+                <a href="/tbc/protection_paladin/" class="sim-title-dropdown-option-container" style="color: rgb(245, 140, 186);">
+                    <div class="sim-title-label-container">
+                        <span class="sim-title-spec-label sim-title-label">PROTECTION PALADIN</span>
+                    </div>
+                </a>
+            </div>
+            <div class="sim-title-option dropdown-option">
+                <a href="/tbc/shadow_priest/" class="">
+                    <img src="/tbc/assets/shadow_priest_icon.png" class="sim-title-icon">
+                </a>
+                <a href="/tbc/shadow_priest/" class="sim-title-dropdown-option-container" style="color: rgb(255, 255, 255);">
+                    <div class="sim-title-label-container">
+                        <span class="sim-title-spec-label sim-title-label">SHADOW PRIEST</span>
+                    </div>
+                </a>
+            </div>
+            <div class="sim-title-option dropdown-option">
+                <a href="/tbc/smite_priest/" class="">
+                    <img src="/tbc/assets/smite_priest_icon.png" class="sim-title-icon">
+                </a>
+                <a href="/tbc/smite_priest/" class="sim-title-dropdown-option-container" style="color: rgb(255, 255, 255);">
+                    <div class="sim-title-label-container">
+                        <span class="sim-title-spec-label sim-title-label">SMITE PRIEST</span>
+                    </div>
+                </a>
+            </div>
+            <div class="sim-title-option dropdown-option">
+                <a href="/tbc/rogue/" class="">
+                    <img src="/tbc/assets/rogue_icon.png" class="sim-title-icon">
+                </a>
+                <a href="/tbc/rogue/" class="sim-title-dropdown-option-container" style="color: rgb(255, 245, 105);">
+                    <div class="sim-title-label-container">
+                        <span class="sim-title-spec-label sim-title-label">ROGUE</span>
+                    </div>
+                </a>
+            </div>
+            <div class="sim-title-option dropdown-option">
+                <a href="/tbc/elemental_shaman/" class="">
+                    <img src="/tbc/assets/elemental_shaman_icon.png" class="sim-title-icon">
+                </a>
+                <a href="/tbc/elemental_shaman/" class="sim-title-dropdown-option-container" style="color: rgb(36, 89, 255);">
+                    <div class="sim-title-label-container">
+                        <span class="sim-title-spec-label sim-title-label">ELEMENTAL SHAMAN</span>
+                    </div>
+                </a>
+            </div>
+            <div class="sim-title-option dropdown-option">
+                <a href="/tbc/enhancement_shaman/" class="">
+                    <img src="/tbc/assets/enhancement_shaman_icon.png" class="sim-title-icon">
+                </a>
+                <a href="/tbc/enhancement_shaman/" class="sim-title-dropdown-option-container" style="color: rgb(36, 89, 255);">
+                    <div class="sim-title-label-container">
+                        <span class="sim-title-spec-label sim-title-label">ENHANCEMENT SHAMAN</span>
+                    </div>
+                </a>
+            </div>
+            <div class="sim-title-option dropdown-option">
+                <a href="/tbc/warlock/" class="">
+                    <img src="/tbc/assets/warlock_icon.png" class="sim-title-icon">
+                </a>
+                <a href="/tbc/warlock/" class="sim-title-dropdown-option-container" style="color: rgb(148, 130, 201);">
+                    <div class="sim-title-label-container">
+                        <span class="sim-title-spec-label sim-title-label">WARLOCK</span>
+                    </div>
+                </a>
+            </div>
+            <div class="sim-title-option dropdown-option">
+                <a href="/tbc/warrior/" class="">
+                    <img src="/tbc/assets/warrior_icon.png" class="sim-title-icon">
+                </a>
+                <a href="/tbc/warrior/" class="sim-title-dropdown-option-container" style="color: rgb(199, 156, 110);">
+                    <div class="sim-title-label-container">
+                        <span class="sim-title-spec-label sim-title-label">WARRIOR</span>
+                    </div>
+                </a>
+            </div>
+            <div class="sim-title-option dropdown-option">
+                <a href="/tbc/protection_warrior/" class="">
+                    <img src="/tbc/assets/protection_warrior_icon.png" class="sim-title-icon">
+                </a>
+                <a href="/tbc/protection_warrior/" class="sim-title-dropdown-option-container" style="color: rgb(199, 156, 110);">
+                    <div class="sim-title-label-container">
+                        <span class="sim-title-spec-label sim-title-label">PROTECTION WARRIOR</span>
+                    </div>
+                </a>
+            </div>
+            </a>
+        </div>
+    </div>
+    </div>
+</body>
+
+</html>

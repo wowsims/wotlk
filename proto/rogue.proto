@@ -1,0 +1,93 @@
+syntax = "proto3";
+package proto;
+
+option go_package = "./proto";
+
+message RogueTalents {
+	// Assassination
+	int32 improved_eviscerate = 1;
+	int32 malice = 2;
+	int32 ruthlessness = 3;
+	int32 murder = 4;
+	int32 puncturing_wounds = 5;
+	bool relentless_strikes = 6;
+	int32 improved_expose_armor = 7;
+	int32 lethality = 8;
+	int32 vile_poisons = 9;
+	int32 improved_poisons = 10;
+	bool cold_blood = 11;
+	int32 quick_recovery = 12;
+	int32 seal_fate = 13;
+	int32 master_poisoner = 14;
+	bool vigor = 15;
+	int32 find_weakness = 16;
+	bool mutilate = 17;
+
+	// Combat
+	int32 improved_sinister_strike = 18;
+	int32 lightning_reflexes = 48;
+	int32 improved_slice_and_dice = 19;
+	int32 deflection = 49;
+	int32 precision = 20;
+	int32 dagger_specialization = 21;
+	int32 dual_wield_specialization = 22;
+	int32 mace_specialization = 23;
+	bool blade_flurry = 24;
+	int32 sword_specialization = 25;
+	int32 fist_weapon_specialization = 26;
+	int32 weapon_expertise = 27;
+	int32 aggression = 28;
+	int32 vitality = 29;
+	bool adrenaline_rush = 30;
+	int32 combat_potency = 31;
+	bool surprise_attacks = 32;
+
+	// Subtlety
+	int32 opportunity = 33;
+	int32 sleight_of_hand = 46;
+	int32 initiative = 34;
+	bool ghostly_strike = 35;
+	int32 improved_ambush = 36;
+	int32 elusiveness = 47;
+	int32 serrated_blades = 37;
+	bool preparation = 38;
+	int32 dirty_deeds = 39;
+	bool hemorrhage = 40;
+	int32 master_of_subtlety = 41;
+	int32 deadliness = 42;
+	bool premeditation = 43;
+	int32 sinister_calling = 44;
+	bool shadowstep = 45;
+}
+
+message Rogue {
+	message Rotation {
+		enum Builder {
+			Unknown = 0;
+			Auto = 1;
+			SinisterStrike = 2;
+			Backstab = 3;
+			Hemorrhage = 4;
+			Mutilate = 5;
+		}
+		Builder builder = 3;
+
+		bool maintain_expose_armor = 1;
+
+		// Allows use of rupture when sensible.
+		bool use_rupture = 2;
+
+		// Shiv instead of regular builder if deadly poison is about to fall.
+		bool use_shiv = 5;
+
+		// Don't use damage finishers (eviscerate, rupture) unless >= this many CPs.
+		int32 min_combo_points_for_damage_finisher = 4;
+	}
+	Rotation rotation = 1;
+
+	RogueTalents talents = 2;
+	
+	message Options {
+	}
+	Options options = 3;
+}

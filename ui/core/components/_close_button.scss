@@ -1,0 +1,25 @@
+.close-button {
+	position: absolute;
+	right: -10px;
+	top: -10px;
+	height: 30px;
+	width: 30px;
+	background-color: black;
+	border: 2px solid white;
+	border-radius: 20px;
+
+	font-size: 20px;
+	font-weight: 900;
+	color: red;
+	opacity: 0.5;
+	text-shadow: none;
+	cursor: pointer;
+}
+
+.close-button:hover {
+	opacity: 1;
+}
+
+.close-button span {
+	@include vertical-horizontal-center;
+}

@@ -1,0 +1,13 @@
+{
+	"extends": "../tsconfig-base",
+	"compilerOptions": {
+		"declaration": false,
+		"outDir": "../../dist/tbc/detailed_results",
+	},
+	"include": [
+		"**/*.ts",
+	],
+	"references": [
+		{ "path": "../core" },
+	],
+}

@@ -1,0 +1,122 @@
+syntax = "proto3";
+package proto;
+
+option go_package = "./proto";
+
+import "api.proto";
+import "common.proto";
+import "paladin.proto";
+
+message SimSettings {
+	int32 iterations = 1;
+	int32 phase = 2;
+	int64 fixed_rng_seed = 3;
+	bool show_threat_metrics = 4;
+	bool show_experimental = 5;
+	Faction faction = 6;
+}
+
+// Contains all information that is imported/exported from an individual sim.
+message IndividualSimSettings {
+	SimSettings settings = 5;
+	RaidBuffs raid_buffs = 1;
+	Debuffs debuffs = 8;
+	repeated RaidTarget tanks = 7;
+	PartyBuffs party_buffs = 2;
+	Player player = 3;
+	Encounter encounter = 4;
+	repeated double ep_weights = 6;
+}
+
+// Local storage data for gear settings.
+message SavedGearSet {
+	EquipmentSpec gear = 1;
+	repeated double bonus_stats = 2;
+}
+
+// Local storage data for other settings.
+message SavedSettings {
+	RaidBuffs raid_buffs = 1;
+	PartyBuffs party_buffs = 2;
+	Debuffs debuffs = 7;
+	IndividualBuffs player_buffs = 3;
+	Consumes consumes = 4;
+	Race race = 5;
+	Cooldowns cooldowns = 6;
+}
+
+message SavedTalents {
+	string talents_string = 1;
+}
+
+// A buff bot placed in a raid.
+message BuffBot {
+	// Uniquely identifies which buffbot this is.
+	string id = 1;
+
+	int32 raid_index = 2;
+
+	// The assigned player to innervate. Only used for druid buffbots.
+	RaidTarget innervate_assignment = 3;
+
+	// The assigned player to PI. Only used for disc priest buffbots.
+	RaidTarget power_infusion_assignment = 4;
+}
+
+message BlessingsAssignment {
+	// Index corresponds to Spec that the blessing should be applied to.
+	repeated Blessings blessings = 1;
+}
+
+message BlessingsAssignments {
+	// Assignments for each paladin.
+	repeated BlessingsAssignment paladins = 1;
+}
+
+// Local storage data for a saved encounter.
+message SavedEncounter {
+	Encounter encounter = 1;
+}
+
+// Local storage data for raid sim settings.
+message SavedRaid {
+	Raid raid = 1;
+	repeated BuffBot buff_bots = 2;
+	BlessingsAssignments blessings = 3;
+	Faction faction = 4;
+	int32 phase = 5;
+}
+
+// Contains all information that is imported/exported from a raid sim.
+message RaidSimSettings {
+	SimSettings settings = 5;
+	Raid raid = 1;
+	repeated BuffBot buff_bots = 2;
+	BlessingsAssignments blessings = 3;
+	Encounter encounter = 4;
+}
+
+// All the data related to running the sim once.
+message SimRun {
+	RaidSimRequest request = 1;
+	RaidSimResult result = 2;
+}
+
+// Contains a sim run and also other context data.
+message SimRunData {
+	SimRun run = 1;
+
+	// The run stored as a reference, for comparison to the current run.
+	SimRun reference_run = 2;
+}
+
+// Sent by the sim to the detailed results page.
+message DetailedResultsUpdate {
+	oneof data {
+		// Show results from a run.
+		SimRunData run_data = 1;
+
+		// Update sim settings.
+		SimSettings settings = 2;
+	}
+}

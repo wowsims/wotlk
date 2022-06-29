@@ -1,0 +1,185 @@
+@import "../shared";
+@import "./popup";
+
+.gear-picker-root {
+  display: flex;
+  flex-wrap: wrap;
+  min-width: 250px;
+}
+
+.gear-picker-left, .gear-picker-right {
+  width: 50%;
+  flex: 1;
+  min-width: 250px;
+}
+
+.item-picker-root {
+  display: flex;
+  margin: 3px;
+}
+.gear-picker-left .item-picker-root {
+  flex-direction: row;
+  text-align: left;
+}
+.gear-picker-right .item-picker-root {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+@media only screen and (max-width: calc(750px + 1vw)) {
+  .gear-picker-right .item-picker-root {
+    text-align: left;
+    flex-direction: row;
+  }
+}
+
+.item-picker-icon {
+  @include wowhead-background-icon;
+  width: 8vh;
+  height: 8vh;
+  border: 2px solid dimgray;
+}
+
+.item-picker-sockets-container {
+  @include vertical-bottom;
+  @include horizontal-center;
+  width: 100%;
+  text-align: center;
+}
+
+.item-picker-gem-icon {
+  @include wowhead-background-icon;
+  width: 28%;
+  margin: 1px;
+}
+
+.item-picker-labels-container {
+  padding: 3px;
+	text-shadow: 2px 2px 4px black;
+  flex: 1;
+}
+
+.item-picker-name {
+  display: block;
+  font-size: clamp(16px, 17px, 18px);
+	letter-spacing: normal;
+}
+
+.item-picker-enchant {
+  display: block;
+  font-size: clamp(12px, 13px, 14px);;
+  color: lawngreen;
+	letter-spacing: normal;
+}
+
+.selector-modal {
+}
+
+.selector-modal-tab-content-header {
+  margin: 5px;
+	display: flex;
+	align-items: center;
+}
+
+.selector-modal-remove-button {
+}
+
+.selector-modal-tab-gem-icon {
+  @include wowhead-background-icon;
+  width: 35px;
+  height: 35px;
+	margin: 5px 20px;
+}
+
+.selector-modal-tab-gem-icon:hover, li.active>.selector-modal-tab-gem-icon {
+	box-shadow:
+			0 0 10px white,
+			0 0 10px white,
+			0 0 10px white;
+}
+
+.selector-modal-search {
+  border: 1px inset black;
+  border-radius: 4px;
+	margin: 5px;
+}
+
+.selector-modal-filter-bar-filler {
+	flex-grow: 1;
+}
+
+.selector-modal-boolean-option {
+	margin: 5px;
+}
+.selector-modal-boolean-option .input-label-div {
+	margin: 0;
+}
+.selector-modal-boolean-option .input-label {
+	font-weight: bold;
+	margin: 0;
+}
+.selector-modal-boolean-option .boolean-picker-input {
+	width: 10px;
+}
+
+.selector-modal-phase-selector {
+	font-size: 18px;
+	font-weight: 700;
+}
+
+.selector-modal-list {
+	max-height: 70vh;
+	overflow-y: scroll;
+	overflow-x: hidden;
+  padding: 0;
+}
+
+.selector-modal-list-item {
+  display: flex;
+  align-items: center;
+  padding: 2px;
+	text-shadow: 2px 2px 3px black;
+	background-color: #111218;
+}
+.selector-modal-list-item.hidden {
+	display: none;
+}
+.selector-modal-list-item.odd {
+  background: #222;
+}
+.selector-modal-list-item:hover {
+  background: #333;
+}
+
+.selector-modal-list-item.active .selector-modal-list-item-icon {
+  border: 3px solid lawngreen;
+}
+
+.selector-modal-list-item-icon {
+  @include wowhead-background-icon;
+  width: 50px;
+  height: 50px;
+  border: 2px solid #888;
+}
+
+.selector-modal-list-item-name {
+  font-size: 18px;
+  text-decoration: none !important;
+  cursor: pointer;
+  margin-left: 10px;
+	letter-spacing: normal;
+}
+
+.selector-modal-list-item-padding {
+	flex-grow: 1;
+}
+
+.selector-modal-list-item-ep {
+	font-size: 16px;
+	font-weight: 800;
+}
+
+.selector-modal-list-item-ep > span {
+	display: inline-block;
+	margin: 5px;
+	color: white;
+}

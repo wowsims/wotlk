@@ -1,0 +1,11 @@
+@import "./assignments_picker";
+@import "./blessings_picker";
+@import "./raid_picker";
+@import "./tanks_picker";
+
+.raid-settings-tab {
+	overflow-y: auto;
+}
+.raid-settings-sections {
+  position: relative;
+}

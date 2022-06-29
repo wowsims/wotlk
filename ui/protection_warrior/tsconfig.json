@@ -1,0 +1,13 @@
+{
+	"extends": "../tsconfig-base",
+	"compilerOptions": {
+		"composite": true,
+		"outDir": "../../dist/tbc/protection_warrior",
+	},
+	"include": [
+		"**/*.ts",
+	],
+	"references": [
+		{ "path": "../core" },
+	],
+}

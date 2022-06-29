@@ -1,0 +1,43 @@
+@import "./popup";
+
+.settings-menu {
+}
+
+.settings-menu-title {
+	text-align: center;
+	margin: 20px;
+	font-size: 24px;
+}
+
+.settings-menu-content {
+	margin: 20px;
+	display: flex;
+	flex-wrap: wrap;
+	overflow-y: auto;
+	max-height: 80vh;
+}
+
+.settings-menu-content-left {
+	text-align: left;
+	flex: 3;
+}
+.settings-menu-content-right {
+	text-align: right;
+	flex: 2;
+}
+
+.settings-menu-section {
+	margin: 15px 0;
+}
+
+.last-used-rng-seed-container {
+	margin: 8px;
+}
+.last-used-rng-seed {
+	margin: 5px;
+}
+
+.ep-weights-label {
+	font-weight: bold;
+	margin: 5px;
+}

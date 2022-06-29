@@ -1,0 +1,144 @@
+syntax = "proto3";
+package proto;
+
+option go_package = "./proto";
+
+message HunterTalents {
+	// Beast Mastery
+	int32 improved_aspect_of_the_hawk = 1;
+	int32 endurance_training = 2;
+	int32 focused_fire = 3;
+	int32 unleashed_fury = 4;
+	int32 ferocity = 5;
+	int32 bestial_discipline = 6;
+	int32 animal_handler = 45;
+	int32 frenzy = 7;
+	int32 ferocious_inspiration = 8;
+	bool bestial_wrath = 9;
+	int32 serpents_swiftness = 10;
+	bool the_beast_within = 11;
+
+	// Marksmanship
+	int32 lethal_shots = 12;
+	int32 improved_hunters_mark = 13;
+	int32 efficiency = 14;
+	int32 go_for_the_throat = 15;
+	int32 improved_arcane_shot = 16;
+	bool aimed_shot = 17;
+	int32 rapid_killing = 18;
+	int32 improved_stings = 19;
+	int32 mortal_shots = 20;
+	bool scatter_shot = 21;
+	int32 barrage = 22;
+	int32 combat_experience = 23;
+	int32 ranged_weapon_specialization = 24;
+	int32 careful_aim = 25;
+	bool trueshot_aura = 26;
+	int32 improved_barrage = 27;
+	int32 master_marksman = 28;
+	bool silencing_shot = 29;
+
+	// Survival
+	int32 monster_slaying = 30;
+	int32 humanoid_slaying = 31;
+	int32 savage_strikes = 32;
+	int32 deflection = 46;
+	int32 clever_traps = 33;
+	int32 survivalist = 34;
+	int32 trap_mastery = 35;
+	int32 surefooted = 36;
+	int32 survival_instincts = 37;
+	int32 killer_instinct = 38;
+	int32 resourcefulness = 39;
+	int32 lightning_reflexes = 40;
+	int32 thrill_of_the_hunt = 41;
+	int32 expose_weakness = 42;
+	int32 master_tactician = 43;
+	bool readiness = 44;
+}
+
+message Hunter {
+	message Rotation {
+		bool use_multi_shot = 1;
+		bool use_arcane_shot = 2;
+		bool precast_aimed_shot = 3;
+		bool lazy_rotation = 12; // Restricts to 1 action between each auto shot.
+
+		enum StingType {
+			NoSting = 0;
+			ScorpidSting = 1;
+			SerpentSting = 2;
+		}
+		StingType sting = 5;
+
+		// Switch to Aspect of the Viper when mana goes below this percent.
+		double viper_start_mana_percent = 6;
+		// Switch back to Aspect of the Hawk when mana goes above this percent.
+		double viper_stop_mana_percent = 7;
+
+		enum WeaveType {
+			WeaveNone = 0;
+			WeaveAutosOnly = 1;
+			WeaveRaptorOnly = 2;
+			WeaveFull = 3;
+		}
+		WeaveType weave = 11;
+
+		// Time in milliseconds from when the hunter starts moving to when they reengage their ranged autos.
+		int32 time_to_weave_ms = 9;
+
+		// Percent of fight (0-1) to use melee weaving.
+		double percent_weaved = 10;
+	}
+	Rotation rotation = 1;
+
+	HunterTalents talents = 2;
+	
+	message Options {
+		enum QuiverBonus {
+			QuiverNone = 0;
+			Speed10 = 1;
+			Speed11 = 2;
+			Speed12 = 3;
+			Speed13 = 4;
+			Speed14 = 5;
+			Speed15 = 6;
+		}
+		QuiverBonus quiver_bonus = 1;
+
+		enum Ammo {
+			AmmoNone = 0;
+			TimelessArrow = 1;
+			MysteriousArrow = 2;
+			AdamantiteStinger = 3;
+			WardensArrow = 4;
+			HalaaniRazorshaft = 5;
+			BlackflightArrow = 6;
+		}
+		Ammo ammo = 2;
+
+		enum PetType {
+			PetNone = 0;
+			Bat = 5;
+			Bear = 7;
+			Cat = 2;
+			Crab = 8;
+			Owl = 4;
+			Raptor = 3;
+			Ravager = 1;
+			WindSerpent = 6;
+		}
+
+		PetType pet_type = 3;
+		double pet_uptime = 4;
+		bool pet_single_ability = 6;
+
+		int32 latency_ms = 5;
+
+		// For internal use only.
+		// Used for hunter presims to avoid artifacts caused by randomness when
+		// calculating average ability damage from a low sample size.
+		bool remove_randomness = 7;
+	}
+	Options options = 3;
+}

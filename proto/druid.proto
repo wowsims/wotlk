@@ -1,0 +1,141 @@
+syntax = "proto3";
+package proto;
+
+option go_package = "./proto";
+
+import "common.proto";
+
+message DruidTalents {
+	// Balance
+	int32 starlight_wrath = 1;
+	int32 focused_starlight = 2;
+	int32 improved_moonfire = 3;
+	int32 brambles = 4;
+	bool insect_swarm = 5;
+	int32 vengeance = 6;
+	int32 lunar_guidance = 7;
+	bool natures_grace = 8;
+	int32 moonglow = 9;
+	int32 moonfury = 10;
+	int32 balance_of_power = 11;
+	int32 dreamstate = 12;
+	bool moonkin_form = 13;
+	int32 improved_faerie_fire = 14;
+	int32 wrath_of_cenarius = 15;
+	bool force_of_nature = 16;
+
+	// Feral Combat
+	int32 ferocity = 17;
+	int32 feral_aggression = 18;
+	int32 feral_instinct = 41;
+	int32 thick_hide = 42;
+	int32 feral_swiftness = 43;
+	int32 sharpened_claws = 19;
+	int32 shredding_attacks = 20;
+	int32 predatory_strikes = 21;
+	int32 primal_fury = 22;
+	int32 savage_fury = 23;
+	bool faerie_fire = 24;
+	int32 heart_of_the_wild = 25;
+	int32 survival_of_the_fittest = 26;
+	bool leader_of_the_pack = 27;
+	int32 improved_leader_of_the_pack = 28;
+	int32 predatory_instincts = 29;
+	bool mangle = 30;
+
+	// Restoration
+	int32 improved_mark_of_the_wild = 31;
+	int32 furor = 32;
+	int32 naturalist = 33;
+	int32 natural_shapeshifter = 34;
+	int32 intensity = 35;
+	int32 subtlety = 40;
+	bool omen_of_clarity = 36;
+	bool natures_swiftness = 37;
+	int32 living_spirit = 38;
+	int32 natural_perfection = 39;
+}
+
+message BalanceDruid {
+  message Rotation {
+    enum PrimarySpell {
+        Unknown = 0;
+        Starfire = 1;
+        Starfire6 = 2;
+        Wrath = 3;
+        Adaptive = 4;
+    }
+
+    PrimarySpell primary_spell = 1;
+    bool faerie_fire = 2;
+    bool insect_swarm = 3;
+    bool moonfire = 4;
+		bool hurricane = 5;
+  }
+  Rotation rotation = 1;
+
+  DruidTalents talents = 2;
+
+  message Options {
+    RaidTarget innervate_target = 1;
+    bool battle_res = 2;
+  }
+  Options options = 3;
+}
+
+message FeralDruid {
+  message Rotation {
+    enum FinishingMove {
+			Rip = 0;
+			Bite = 1;
+			None = 2;
+    }
+
+    FinishingMove finishing_move = 1;
+    bool mangle_trick = 2;
+    bool biteweave = 3;
+    bool ripweave = 8;
+    int32 rip_min_combo_points = 5;
+    int32 bite_min_combo_points = 6;
+    bool rake_trick = 7;
+
+		bool maintain_faerie_fire = 9;
+  }
+  Rotation rotation = 1;
+
+  DruidTalents talents = 2;
+
+  message Options {
+    RaidTarget innervate_target = 1;
+    int32 latency_ms = 2;
+  }
+  Options options = 3;
+}
+
+message FeralTankDruid {
+  message Rotation {
+		// Minimum rage to queue HS or Cleave.
+		int32 maul_rage_threshold = 1;
+		bool maintain_demoralizing_roar = 2;
+		bool maintain_faerie_fire = 3;
+
+		enum Swipe {
+			SwipeNone = 0;
+			SwipeWithEnoughAP = 1;
+			SwipeSpam = 2;
+		}
+		Swipe swipe = 4;
+
+		double swipe_ap_threshold = 5;
+  }
+  Rotation rotation = 1;
+
+  DruidTalents talents = 2;
+
+  message Options {
+    RaidTarget innervate_target = 1;
+
+		double starting_rage = 2;
+  }
+  Options options = 3;
+}

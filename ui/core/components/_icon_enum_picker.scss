@@ -1,0 +1,25 @@
+.icon-enum-picker-root {
+  border: 2px solid dimgray;
+  transition: $sim-transitions;
+}
+
+.icon-enum-picker-root a {
+	height: 40px;
+	width: 40px;
+	display: block;
+}
+
+.icon-enum-picker-root.active {
+  border-color: lawngreen;
+}
+.icon-enum-picker-root.disabled {
+  border-color: dimgray;
+}
+
+.icon-enum-picker-button {
+  background-size: cover;
+}
+
+.icon-enum-picker-option {
+  background-size: cover;
+}

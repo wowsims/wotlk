@@ -1,0 +1,16 @@
+.tank-picker-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin: 3px;
+}
+
+.tank-picker-row > * {
+	margin: 3px;
+}
+
+.tank-picker-row .raid-target-picker-option {
+	display: flex;
+	align-items: center;
+	min-width: 200px;
+}

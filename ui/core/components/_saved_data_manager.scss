@@ -1,0 +1,53 @@
+.saved-data-manager-root {
+}
+
+.saved-data-set-chip {
+  display: inline-block;
+  border: 2px solid black;
+  border-radius: 20px;
+  padding: 1px 5px;
+  margin: 5px 5px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.saved-data-set-chip.active {
+  background-color: black;
+  color: white;
+}
+.saved-data-set-chip.disabled {
+	display: none;
+}
+
+.saved-data-set-delete {
+  color: red;
+}
+.saved-data-set-delete:hover {
+  color: yellow;
+}
+
+.saved-data-manager-root.frozen .saved-data-set-delete {
+	display: none;
+}
+.saved-data-manager-root.frozen .saved-data-create-container {
+	display: none;
+}
+.saved-data-manager-root.frozen .saved-data-set-chip:first-child:nth-last-child(1) {
+	display: none;
+}
+
+.saved-data-set-chip:not(.saved-data-has-tooltip) .saved-data-set-tooltip {
+  display: none;
+}
+
+.saved-data-set-chip.saved-data-preset .saved-data-set-delete {
+  display: none;
+}
+
+.saved-data-save-input {
+  width: 100px;
+}
+
+.saved-data-save-button {
+	color: black;
+}

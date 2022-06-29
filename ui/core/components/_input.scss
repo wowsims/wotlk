@@ -1,0 +1,19 @@
+.input-label-div {
+	display: inline-block;
+  margin: 5px;
+}
+
+.input-label, .input-tooltip {
+  margin: 3px;
+}
+
+.input-root.disabled .input-label, .input-root.disabled .input-tooltip {
+	filter: opacity(0.5);
+}
+.input-root.disabled .dropdown-button, .input-root.disabled .dropdown-option {
+	filter: grayscale(1);
+}
+
+.input-root.hide {
+	display: none;
+}

@@ -1,0 +1,281 @@
+@import "./components/close_button";
+@import "./components/number_picker";
+@import "./components/title";
+@import "./shared";
+
+html {
+	overflow: hidden;
+}
+
+body {
+  margin: 0;
+}
+
+td, th {
+  padding: auto;
+}
+
+input, select {
+	color: var(--main-text-color);
+	background-color: #1e2633;
+	border: 1px solid #373e58;
+	padding: 3px;
+}
+
+.sim-input {
+	color: var(--main-text-color);
+	background-color: #1e2633;
+	border: 1px solid #373e58;
+	padding: 3px;
+}
+
+.sim-root {
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  overflow-y: auto;
+}
+
+.sim-sidebar {
+  height: 100%;
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background: #111218;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.sim-sidebar>div {
+  margin: 10px 0;
+}
+
+.sim-sidebar-title {
+	margin: 0 0 50px 0 !important;
+}
+
+.sim-sidebar-title, .sim-toolbar {
+	min-height: 60px;
+	border-bottom: 1px solid white;
+	display: flex;
+}
+
+.sim-title-root {
+	width: 100%;
+}
+
+.sim-sidebar-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sim-sidebar-actions-button {
+  width: 150px;
+  height: 40px;
+  cursor: pointer;
+  margin: 5px;
+
+  background: transparent;
+  color: var(--main-text-color);
+  border: 1px solid var(--theme-color-primary);
+  font-weight: 1000;
+  transition: all .2s ease-in;
+}
+
+.sim-sidebar-actions-button:hover {
+  color: var(--main-text-color);
+  background: var(--theme-color-primary);
+}
+
+.iterations-picker {
+  text-align: center;
+}
+
+.iterations-picker .input-label {
+  color: var(--sidebar-text-color);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.sim-sidebar-results {
+  flex-grow: 1;
+}
+
+.sim-sidebar-results {
+  height: 100%;
+  position: relative;
+}
+
+.sim-sidebar-results > div {
+  @include vertical-horizontal-center;
+  width: 100%;
+	text-align: center;
+}
+
+.results-pending .loader {
+  margin: auto;
+}
+
+.sim-sidebar-actions, .sim-sidebar-footer {
+	margin: 0 !important;
+	display: flex;
+}
+
+.iterations-label {
+	color: var(--sidebar-text-color);
+}
+
+.results-sim {
+	color: var(--sidebar-text-color);
+	text-shadow: 0 0 10px var(--sidebar-highlight-color);
+}
+
+.sim-main {
+  height: 100%;
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+	background-image:
+		linear-gradient(rgba(var(--theme-color-background-raw), var(--theme-background-opacity)), rgba(var(--theme-color-background-raw), var(--theme-background-opacity))),
+		var(--theme-background-image);
+	background-size: cover;
+	background-position: center center;
+  color: var(--main-text-color);
+  overflow-y: auto;
+  flex: 4;
+  min-width: 250px;
+}
+
+.nav-tabs {
+	padding-left: 40px;
+	padding-top: 15px;
+	border-bottom-color: var(--theme-color-primary);
+	color: var(--main-text-color);
+	font-size: clamp(10px, 1.5vw, 15px);
+}
+.nav-tabs>li>a {
+	color: var(--main-text-color) !important;
+	border: none !important;
+	border-radius: 0 !important;
+	margin: 0.1vh 0.1vw 0.1vh 0.1vw;
+	font-weight: bold;
+}
+.nav-tabs>li>a:hover, .nav-tabs>li.active>a {
+	background-color: var(--theme-color-primary) !important;
+}
+
+.sim-main > .tab-content {
+	flex-grow: 1;
+	height: 80%;
+}
+.sim-main > .tab-content > .tab-pane {
+	height: 100%;
+}
+
+.sim-toolbar {
+	display: flex;
+	align-items: flex-end;
+}
+
+.sim-tabs {
+	padding-top: 0;
+	width: 100%;
+	border: none;
+}
+
+.sim-top-bar {
+	float: right !important;
+	display: flex !important;
+	align-items: center !important;
+	margin-right: 10px;
+}
+
+.sim-top-bar-item {
+	cursor: pointer;
+	font-size: clamp(12px, 2vw, 20px);
+	margin-right: 12px;
+}
+
+.sim-dropdown-menu {
+	position: relative;
+}
+.sim-dropdown-menu .dropdown-menu {
+	background-color: #111218;
+	border: 1px solid var(--theme-color-primary);
+	text-align: right;
+	min-width: auto;
+	color: white;
+	font-weight: bold;
+	top: 120%;
+}
+.sim-dropdown-menu .dropdown-item {
+	display: block;
+	padding: 5px 20px;
+	user-select: none;
+	white-space: nowrap;
+}
+.sim-dropdown-menu .dropdown-item:hover {
+	background-color: #2a2c3b;
+}
+
+.notices {
+	font-size: 30px;
+	color: blue;
+	margin: 0 20px;
+	text-shadow:
+			0 0 10px white,
+			0 0 10px white,
+			0 0 10px white;
+}
+
+.warnings {
+	font-size: 30px;
+	color: yellow;
+	margin: 0 20px;
+	text-shadow:
+			0 0 10px red,
+			0 0 10px red,
+			0 0 10px red;
+}
+
+.known-issues {
+	display: none;
+	background-color: red;
+	border: 2px solid var(--main-text-color);
+	padding: 2px;
+	margin: 0 10px;
+	font-size: 14px;
+	font-weight: 900;
+}
+
+.downbin {
+	mask: url(/tbc/assets/gauge.svg);
+	mask-size: cover;
+	-webkit-mask: url(/tbc/assets/gauge.svg);
+	-webkit-mask-size: cover;
+	display: inline-block;
+	width: 22px;
+	height: 22px;
+}
+
+.downbinnorm {
+	background-color: white;
+}
+
+.downbinalert {
+	background-color: red;
+}
+
+.hide-threat-metrics .threat-metrics {
+	display: none !important;
+}
+
+.hide-experimental .experimental {
+	display: none !important;
+}
+
+.hide-in-front-of-target .in-front-of-target {
+	display: none !important;
+}
