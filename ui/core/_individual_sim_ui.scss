@@ -20,6 +20,7 @@
 @import "./components/saved_data_manager";
 @import "./components/settings_menu";
 @import "./components/stat_weights_action";
+@import "./talents/glyphs_picker";
 @import "./talents/talents_picker";
 
 .within-raid-sim .within-raid-sim-hide {
@@ -228,6 +229,19 @@
 }
 
 .talents-tab {
+}
+
+.talents-tab-content {
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	margin-top: 10px;
+}
+
+.glyphs-picker {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 }
 
 .saved-talents-manager {

@@ -49,6 +49,8 @@ message Player {
 	// Only used by the UI. Sim uses talents within the spec protos.
 	string talentsString = 17;
 
+	Glyphs glyphs = 28;
+
 	Cooldowns cooldowns = 19;
 
 	bool in_front_of_target = 23;

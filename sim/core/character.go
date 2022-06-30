@@ -35,6 +35,8 @@ type Character struct {
 	// Provides stat dependency management behavior.
 	stats.StatDependencyManager
 
+	glyphs [6]int32
+
 	// Provides major cooldown management behavior.
 	majorCooldownManager
 
@@ -85,6 +87,17 @@ func NewCharacter(party *Party, partyIndex int, player proto.Player) Character {
 	character.GCD = character.NewTimer()
 
 	character.Label = fmt.Sprintf("%s (#%d)", character.Name, character.Index+1)
+
+	if player.Glyphs != nil {
+		character.glyphs = [6]int32{
+			player.Glyphs.Major1,
+			player.Glyphs.Major2,
+			player.Glyphs.Major3,
+			player.Glyphs.Minor1,
+			player.Glyphs.Minor2,
+			player.Glyphs.Minor3,
+		}
+	}
 
 	if player.Consumes != nil {
 		character.Consumes = *player.Consumes
@@ -352,6 +365,15 @@ func (character *Character) advance(sim *Simulation, elapsedTime time.Duration) 
 			petAgent.GetPet().advance(sim, elapsedTime)
 		}
 	}
+}
+
+func (character *Character) HasGlyph(glyphID int32) bool {
+	for _, g := range character.glyphs {
+		if g == glyphID {
+			return true
+		}
+	}
+	return false
 }
 
 func (character *Character) HasTrinketEquipped(itemID int32) bool {
