@@ -1,13 +1,20 @@
 import { Spec } from '/wotlk/core/proto/common.js';
-import { ShamanTalents as ShamanTalents } from '/wotlk/core/proto/shaman.js';
+import { ShamanTalents, ShamanMajorGlyph, ShamanMinorGlyph } from '/wotlk/core/proto/shaman.js';
 import { Player } from '/wotlk/core/player.js';
 
+import { GlyphsConfig, GlyphsPicker } from './glyphs_picker.js';
 import { TalentsConfig, TalentsPicker, newTalentsConfig } from './talents_picker.js';
 
 // Talents are the same for all Shaman specs, so its ok to just use ElementalShaman here
 export class ShamanTalentsPicker extends TalentsPicker<Spec.SpecElementalShaman> {
 	constructor(parent: HTMLElement, player: Player<Spec.SpecElementalShaman>) {
 		super(parent, player, shamanTalentsConfig);
+	}
+}
+
+export class ShamanGlyphsPicker extends GlyphsPicker {
+	constructor(parent: HTMLElement, player: Player<any>) {
+		super(parent, player, shamanGlyphsConfig);
 	}
 }
 
@@ -616,3 +623,18 @@ export const shamanTalentsConfig: TalentsConfig<Spec.SpecElementalShaman> = newT
 		],
 	},
 ]);
+
+export const shamanGlyphsConfig: GlyphsConfig = {
+	majorGlyphs: {
+		[ShamanMajorGlyph.GlyphOfChainHeal]: 'https://wow.zamimg.com/images/wow/icons/large/spell_nature_healingwavegreater.jpg',
+		[ShamanMajorGlyph.GlyphOfChainLightning]: 'https://wow.zamimg.com/images/wow/icons/large/spell_nature_chainlightning.jpg',
+		[ShamanMajorGlyph.GlyphOfEarthShield]: 'https://wow.zamimg.com/images/wow/icons/large/spell_nature_skinofearth.jpg',
+		[ShamanMajorGlyph.GlyphOfEarthlivingWeapon]: 'https://wow.zamimg.com/images/wow/icons/large/spell_shaman_earthlivingweapon.jpg',
+	},
+	minorGlyphs: {
+		[ShamanMinorGlyph.GlyphOfAstralRecall]: 'https://wow.zamimg.com/images/wow/icons/large/spell_nature_astralrecal.jpg',
+		[ShamanMinorGlyph.GlyphOfGhostWolf]: 'https://wow.zamimg.com/images/wow/icons/large/spell_nature_spiritwolf.jpg',
+		[ShamanMinorGlyph.GlyphOfRenewedLife]: 'https://wow.zamimg.com/images/wow/icons/large/spell_nature_reincarnation.jpg',
+		[ShamanMinorGlyph.GlyphOfThunderstorm]: 'https://wow.zamimg.com/images/wow/icons/large/spell_shaman_thunderstorm.jpg',
+	},
+};

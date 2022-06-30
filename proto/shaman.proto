@@ -50,6 +50,22 @@ message ShamanTalents {
 	int32 natures_blessing = 32;
 }
 
+enum ShamanMajorGlyph {
+	ShamanMajorGlyphNone = 0;
+	GlyphOfChainHeal = 41517;
+	GlyphOfChainLightning = 41518;
+	GlyphOfEarthShield = 45775;
+	GlyphOfEarthlivingWeapon = 41527;
+}
+
+enum ShamanMinorGlyph {
+	ShamanMinorGlyphNone = 0;
+	GlyphOfAstralRecall = 43381;
+	GlyphOfGhostWolf = 43725;
+	GlyphOfRenewedLife = 43385;
+	GlyphOfThunderstorm = 44923;
+}
+
 enum EarthTotem {
 	NoEarthTotem = 0;
 	StrengthOfEarthTotem = 1;

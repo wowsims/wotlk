@@ -1,21 +1,25 @@
-import { Class } from '/wotlk/core/proto/common.js';
-import { Cooldowns } from '/wotlk/core/proto/common.js';
-import { Consumes } from '/wotlk/core/proto/common.js';
-import { Enchant } from '/wotlk/core/proto/common.js';
-import { Gem } from '/wotlk/core/proto/common.js';
-import { GemColor } from '/wotlk/core/proto/common.js';
-import { HealingModel } from '/wotlk/core/proto/common.js';
-import { IndividualBuffs } from '/wotlk/core/proto/common.js';
-import { ItemSlot } from '/wotlk/core/proto/common.js';
-import { Item } from '/wotlk/core/proto/common.js';
-import { Race, ShattrathFaction } from '/wotlk/core/proto/common.js';
-import { RaidTarget } from '/wotlk/core/proto/common.js';
-import { RangedWeaponType } from '/wotlk/core/proto/common.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { Faction } from '/wotlk/core/proto/common.js';
-import { Stat } from '/wotlk/core/proto/common.js';
-import { WeaponImbue } from '/wotlk/core/proto/common.js';
-import { WeaponType } from '/wotlk/core/proto/common.js';
+import {
+	Class,
+	Cooldowns,
+	Consumes,
+	Enchant,
+	Gem,
+	GemColor,
+	Glyphs,
+	HealingModel,
+	IndividualBuffs,
+	ItemSlot,
+	Item,
+	Race, ShattrathFaction,
+	RaidTarget,
+	RangedWeaponType,
+	Spec,
+	Faction,
+	Stat,
+	WeaponImbue,
+	WeaponType,
+} from '/wotlk/core/proto/common.js';
+
 import { PlayerStats } from '/wotlk/core/proto/api.js';
 import { Player as PlayerProto } from '/wotlk/core/proto/api.js';
 import { StatWeightsResult } from '/wotlk/core/proto/api.js';
@@ -78,6 +82,7 @@ export class Player<SpecType extends Spec> {
 	private shattFaction: ShattrathFaction;
 	private rotation: SpecRotation<SpecType>;
 	private talentsString: string = '';
+	private glyphs: Glyphs = Glyphs.create();
 	private specOptions: SpecOptions<SpecType>;
 	private cooldowns: Cooldowns = Cooldowns.create();
 	private inFrontOfTarget: boolean = false;
@@ -101,6 +106,7 @@ export class Player<SpecType extends Spec> {
 	readonly raceChangeEmitter = new TypedEvent<void>('PlayerRace');
 	readonly rotationChangeEmitter = new TypedEvent<void>('PlayerRotation');
 	readonly talentsChangeEmitter = new TypedEvent<void>('PlayerTalents');
+	readonly glyphsChangeEmitter = new TypedEvent<void>('PlayerGlyphs');
 	readonly specOptionsChangeEmitter = new TypedEvent<void>('PlayerSpecOptions');
 	readonly cooldownsChangeEmitter = new TypedEvent<void>('PlayerCooldowns');
 	readonly inFrontOfTargetChangeEmitter = new TypedEvent<void>('PlayerInFrontOfTarget');
@@ -133,6 +139,7 @@ export class Player<SpecType extends Spec> {
 			this.raceChangeEmitter,
 			this.rotationChangeEmitter,
 			this.talentsChangeEmitter,
+			this.glyphsChangeEmitter,
 			this.specOptionsChangeEmitter,
 			this.cooldownsChangeEmitter,
 			this.inFrontOfTargetChangeEmitter,
@@ -460,6 +467,40 @@ export class Player<SpecType extends Spec> {
 		return getTalentTreeIcon(this.spec, this.getTalentsString());
 	}
 
+	getGlyphs(): Glyphs {
+		// Make a defensive copy
+		return Glyphs.clone(this.glyphs);
+	}
+
+	setGlyphs(eventID: EventID, newGlyphs: Glyphs) {
+		if (Glyphs.equals(this.glyphs, newGlyphs))
+			return;
+
+		// Make a defensive copy
+		this.glyphs = Glyphs.clone(newGlyphs);
+		this.glyphsChangeEmitter.emit(eventID);
+	}
+
+	getMajorGlyphs(): Array<number> {
+		return [
+			this.glyphs.major1,
+			this.glyphs.major2,
+			this.glyphs.major3,
+		].filter(glyph => glyph != 0);
+	}
+
+	getMinorGlyphs(): Array<number> {
+		return [
+			this.glyphs.minor1,
+			this.glyphs.minor2,
+			this.glyphs.minor3,
+		].filter(glyph => glyph != 0);
+	}
+
+	getAllGlyphs(): Array<number> {
+		return this.getMajorGlyphs().concat(this.getMinorGlyphs());
+	}
+
 	getSpecOptions(): SpecOptions<SpecType> {
 		return this.specTypeFunctions.optionsCopy(this.specOptions);
 	}
@@ -634,6 +675,7 @@ export class Player<SpecType extends Spec> {
 				buffs: this.getBuffs(),
 				cooldowns: this.getCooldowns(),
 				talentsString: this.getTalentsString(),
+				glyphs: this.getGlyphs(),
 				inFrontOfTarget: this.getInFrontOfTarget(),
 				healingModel: this.getHealingModel(),
 			}),
@@ -653,6 +695,7 @@ export class Player<SpecType extends Spec> {
 			this.setBuffs(eventID, proto.buffs || IndividualBuffs.create());
 			this.setCooldowns(eventID, proto.cooldowns || Cooldowns.create());
 			this.setTalentsString(eventID, proto.talentsString);
+			this.setGlyphs(eventID, proto.glyphs || Glyphs.create());
 			this.setInFrontOfTarget(eventID, proto.inFrontOfTarget);
 			this.setHealingModel(eventID, proto.healingModel || HealingModel.create());
 			this.setRotation(eventID, this.specTypeFunctions.rotationFromPlayer(proto));

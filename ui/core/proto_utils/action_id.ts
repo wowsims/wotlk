@@ -358,19 +358,35 @@ export class ActionId {
 
 	private static async getTooltipDataHelper(id: number, tooltipPostfix: string, cache: Map<number, Promise<any>>): Promise<any> {
 		if (!cache.has(id)) {
-			cache.set(id,
-				fetch(`https://wowhead.com/wotlk/tooltip/${tooltipPostfix}/${id}`)
-					.then(response => response.json()));
+			const url = `https://wowhead.com/wotlk/tooltip/${tooltipPostfix}/${id}`;
+			try {
+				const response = await fetch(url);
+				cache.set(id, response.json());
+			} catch (e) {
+				console.error('Error while fetching url: ' + url + '\n\n' + e);
+				cache.set(id, Promise.resolve({
+					name: '',
+					tooltip: '',
+				}));
+			}
 		}
 
 		return cache.get(id) as Promise<any>;
 	}
 
-	private static async getTooltipData(actionId: ActionId): Promise<any> {
+	static async getItemTooltipData(id: number): Promise<any> {
+		return await ActionId.getTooltipDataHelper(id, 'item', itemToTooltipDataCache);
+	}
+
+	static async getSpellTooltipData(id: number): Promise<any> {
+		return await ActionId.getTooltipDataHelper(id, 'spell', spellToTooltipDataCache);
+	}
+
+	static async getTooltipData(actionId: ActionId): Promise<any> {
 		if (actionId.itemId) {
-			return await ActionId.getTooltipDataHelper(actionId.itemId, 'item', itemToTooltipDataCache);
+			return await ActionId.getItemTooltipData(actionId.itemId);
 		} else {
-			return await ActionId.getTooltipDataHelper(actionId.spellId, 'spell', spellToTooltipDataCache);
+			return await ActionId.getSpellTooltipData(actionId.spellId);
 		}
 	}
 }

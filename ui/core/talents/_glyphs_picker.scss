@@ -1,0 +1,47 @@
+@import "../shared";
+@import "../components/popup";
+
+.glyphs-picker-root {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+
+.glyph-picker-root {
+  display: flex;
+  margin: 10px 5px;
+  flex-direction: row;
+  text-align: left;
+}
+
+.glyph-picker-icon {
+  @include wowhead-background-icon;
+  width: 8vh;
+  height: 8vh;
+  border: 2px solid dimgray;
+}
+.glyph-picker-root.minor .glyph-picker-icon {
+  width: 6vh;
+  height: 6vh;
+}
+
+.glyph-picker-labels-container {
+  padding: 3px;
+	text-shadow: 2px 2px 4px black;
+  flex: 1;
+}
+
+.glyph-picker-name {
+  display: block;
+  font-size: clamp(16px, 17px, 18px);
+	letter-spacing: normal;
+}
+
+.selector-modal-list-item-description {
+  font-size: 14px;
+  text-decoration: none !important;
+  margin-left: 10px;
+	letter-spacing: normal;
+	color: grey;
+	margin: 5px;
+}

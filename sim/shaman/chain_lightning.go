@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (shaman *Shaman) newChainLightningSpell(isLightningOverload bool) *core.Spell {
@@ -44,7 +45,7 @@ func (shaman *Shaman) newChainLightningSpell(isLightningOverload bool) *core.Spe
 	}
 
 	hasTidefury := ItemSetTidefury.CharacterHasSetBonus(&shaman.Character, 2)
-	numHits := core.MinInt32(3, shaman.Env.GetNumTargets())
+	numHits := core.MinInt32(core.TernaryInt32(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfChainLightning), 4, 3), shaman.Env.GetNumTargets())
 	effects := make([]core.SpellEffect, 0, numHits)
 
 	effect.Target = shaman.Env.GetTargetUnit(0)
