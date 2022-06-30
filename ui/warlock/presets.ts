@@ -20,7 +20,7 @@ import { FelArmor, Sacrifice } from './inputs';
 // keep them in a separate file.
 
 // Default talents. Uses the wowhead calculator format, make the talents on
-// https://wotlk.wowhead.com/talent-calc and copy the numbers in the url.
+// https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 export const DestructionTalents = {
 	name: 'Destruction',
 	data: '-20501301332001-50500051220051053105',

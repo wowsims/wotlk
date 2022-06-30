@@ -30,7 +30,7 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 // keep them in a separate file.
 
 // Default talents. Uses the wowhead calculator format, make the talents on
-// https://wotlk.wowhead.com/talent-calc and copy the numbers in the url.
+// https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 export const StandardTalents = {
 	name: 'Standard',
 	data: '55003105100213351051--05105301005',

@@ -110,9 +110,9 @@ export class ActionId {
 
 	setWowheadHref(elem: HTMLAnchorElement) {
 		if (this.itemId) {
-			elem.href = 'https://wotlk.wowhead.com/item=' + this.itemId;
+			elem.href = 'https://wowhead.com/wotlk/item=' + this.itemId;
 		} else if (this.spellId) {
-			elem.href = 'https://wotlk.wowhead.com/spell=' + this.spellId;
+			elem.href = 'https://wowhead.com/wotlk/spell=' + this.spellId;
 		}
 	}
 
@@ -359,7 +359,7 @@ export class ActionId {
 	private static async getTooltipDataHelper(id: number, tooltipPostfix: string, cache: Map<number, Promise<any>>): Promise<any> {
 		if (!cache.has(id)) {
 			cache.set(id,
-				fetch(`https://wotlk.wowhead.com/tooltip/${tooltipPostfix}/${id}`)
+				fetch(`https://wowhead.com/wotlk/tooltip/${tooltipPostfix}/${id}`)
 					.then(response => response.json()));
 		}
 
@@ -392,7 +392,7 @@ const petNameToActionId: Record<string, ActionId> = {
 	'Water Elemental': ActionId.fromSpellId(31687),
 };
 
-// https://wotlk.wowhead.com/hunter-pets
+// https://wowhead.com/wotlk/hunter-pets
 const petNameToIcon: Record<string, string> = {
 	'Bat': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_bat.jpg',
 	'Bear': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_bear.jpg',
