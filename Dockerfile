@@ -3,6 +3,7 @@
 FROM golang:1.18
 
 WORKDIR /wotlk
+COPY . .
 
 RUN apt-get update
 RUN apt-get install -y protobuf-compiler
