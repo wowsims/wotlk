@@ -7,15 +7,15 @@ import {
 	specTypeFunctions,
 } from '/wotlk/core/proto_utils/utils.js';
 
-import { druidTalentsConfig, DruidTalentsPicker } from './druid.js';
-import { hunterTalentsConfig, HunterTalentsPicker } from './hunter.js';
-import { mageTalentsConfig, MageTalentsPicker } from './mage.js';
-import { paladinTalentsConfig, PaladinTalentsPicker } from './paladin.js';
-import { priestTalentsConfig, PriestTalentsPicker } from './priest.js';
-import { rogueTalentsConfig, RogueTalentsPicker } from './rogue.js';
+import { druidTalentsConfig, DruidTalentsPicker, DruidGlyphsPicker } from './druid.js';
+import { hunterTalentsConfig, HunterTalentsPicker, HunterGlyphsPicker } from './hunter.js';
+import { mageTalentsConfig, MageTalentsPicker, MageGlyphsPicker } from './mage.js';
+import { paladinTalentsConfig, PaladinTalentsPicker, PaladinGlyphsPicker } from './paladin.js';
+import { priestTalentsConfig, PriestTalentsPicker, PriestGlyphsPicker } from './priest.js';
+import { rogueTalentsConfig, RogueTalentsPicker, RogueGlyphsPicker } from './rogue.js';
 import { shamanTalentsConfig, ShamanTalentsPicker, ShamanGlyphsPicker } from './shaman.js';
-import { warlockTalentsConfig, WarlockTalentsPicker } from './warlock.js';
-import { warriorTalentsConfig, WarriorTalentsPicker } from './warrior.js';
+import { warlockTalentsConfig, WarlockTalentsPicker, WarlockGlyphsPicker } from './warlock.js';
+import { warriorTalentsConfig, WarriorTalentsPicker, WarriorGlyphsPicker } from './warrior.js';
 import { TalentsConfig, TalentsPicker } from './talents_picker.js';
 import { GlyphsPicker } from './glyphs_picker.js';
 
@@ -56,23 +56,31 @@ export function newTalentsPicker<SpecType extends Spec>(parent: HTMLElement, pla
 export function newGlyphsPicker(parent: HTMLElement, player: Player<any>): GlyphsPicker | null {
 	switch (player.getClass()) {
 		case Class.ClassDruid:
+			return new DruidGlyphsPicker(parent, player);
 			break;
 		case Class.ClassShaman:
 			return new ShamanGlyphsPicker(parent, player);
 			break;
 		case Class.ClassHunter:
+			return new HunterGlyphsPicker(parent, player);
 			break;
 		case Class.ClassMage:
+			return new MageGlyphsPicker(parent, player);
 			break;
 		case Class.ClassPaladin:
+			return new PaladinGlyphsPicker(parent, player);
 			break;
 		case Class.ClassRogue:
+			return new RogueGlyphsPicker(parent, player);
 			break;
 		case Class.ClassPriest:
+			return new PriestGlyphsPicker(parent, player);
 			break;
 		case Class.ClassWarlock:
+			return new WarlockGlyphsPicker(parent, player);
 			break;
 		case Class.ClassWarrior:
+			return new WarriorGlyphsPicker(parent, player);
 			break;
 	}
 	return null;

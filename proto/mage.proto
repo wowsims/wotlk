@@ -59,6 +59,49 @@ message MageTalents {
 	bool summon_water_elemental = 46;
 }
 
+enum MageMajorGlyph {
+	MageMajorGlyphNone = 0;
+	GlyphOfArcaneBarrage = 45738;
+	GlyphOfArcaneBlast = 44955;
+	GlyphOfArcaneExplosion = 42734;
+	GlyphOfArcaneMissiles = 42735;
+	GlyphOfArcanePower = 42736;
+	GlyphOfBlink = 42737;
+	GlyphOfDeepFreeze = 45736;
+	GlyphOfEternalWater = 50045;
+	GlyphOfEvocation = 42738;
+	GlyphOfFireBlast = 42740;
+	GlyphOfFireball = 42739;
+	GlyphOfFrostNova = 42741;
+	GlyphOfFrostbolt = 42742;
+	GlyphOfFrostfire = 44684;
+	GlyphOfIceArmor = 42743;
+	GlyphOfIceBarrier = 45740;
+	GlyphOfIceBlock = 42744;
+	GlyphOfIceLance = 42745;
+	GlyphOfIcyVeins = 42746;
+	GlyphOfInvisibility = 42748;
+	GlyphOfLivingBomb = 45737;
+	GlyphOfMageArmor = 42749;
+	GlyphOfManaGem = 42750;
+	GlyphOfMirrorImage = 45739;
+	GlyphOfMoltenArmor = 42751;
+	GlyphOfPolymorph = 42752;
+	GlyphOfRemoveCurse = 42753;
+	GlyphOfScorch = 42747;
+	GlyphOfWaterElemental = 42754;
+}
+enum MageMinorGlyph {
+	MageMinorGlyphNone = 0;
+	GlyphOfArcaneIntellect = 43339;
+	GlyphOfBlastWave = 44920;
+	GlyphOfFireWard = 43357;
+	GlyphOfFrostArmor = 43359;
+	GlyphOfFrostWard = 43360;
+	GlyphOfSlowFall = 43364;
+	GlyphOfThePenguin = 43361;
+}
+
 message Mage {
 	message Rotation {
 		// Just used for controlling which options are displayed in the UI. Is not

@@ -61,6 +61,48 @@ message WarlockTalents {
 	bool shadowfury = 47;
 }
 
+enum WarlockMajorGlyph {
+	WarlockMajorGlyphNone = 0;
+	GlyphOfChaosBolt = 45781;
+	GlyphOfConflagrate = 42454;
+	GlyphOfCorruption = 42455;
+	GlyphOfCurseOfAgony = 42456;
+	GlyphOfDeathCoil = 42457;
+	GlyphOfDemonicCircle = 45782;
+	GlyphOfFear = 42458;
+	GlyphOfFelguard = 42459;
+	GlyphOfFelhunter = 42460;
+	GlyphOfHaunt = 45779;
+	GlyphOfHealthFunnel = 42461;
+	GlyphOfHealthstone = 42462;
+	GlyphOfHowlOfTerror = 42463;
+	GlyphOfImmolate = 42464;
+	GlyphOfImp = 42465;
+	GlyphOfIncinerate = 42453;
+	GlyphOfLifeTap = 45785;
+	GlyphOfMetamorphosis = 45780;
+	GlyphOfQuickDecay = 50077;
+	GlyphOfSearingPain = 42466;
+	GlyphOfShadowBolt = 42467;
+	GlyphOfShadowburn = 42468;
+	GlyphOfShadowflame = 45783;
+	GlyphOfSiphonLife = 42469;
+	GlyphOfSoulLink = 45789;
+	GlyphOfSoulstone = 42470;
+	GlyphOfSuccubus = 42471;
+	GlyphOfUnstableAffliction = 42472;
+	GlyphOfVoidwalker = 42473;
+}
+enum WarlockMinorGlyph {
+	WarlockMinorGlyphNone = 0;
+	GlyphOfCurseOfExhausion = 43392;
+	GlyphOfDrainSoul = 43390;
+	GlyphOfEnslaveDemon = 43393;
+	GlyphOfKilrogg = 43391;
+	GlyphOfSouls = 43394;
+	GlyphOfUnendingBreath = 43389;
+}
+
 message Warlock {
 	message Rotation {
 		enum PrimarySpell {
