@@ -1,5 +1,6 @@
 import { Class } from '/wotlk/core/proto/common.js';
 import { ItemSlot } from '/wotlk/core/proto/common.js';
+import { Profession } from '/wotlk/core/proto/common.js';
 import { Race } from '/wotlk/core/proto/common.js';
 import { ShattrathFaction } from '/wotlk/core/proto/common.js';
 import { Stat } from '/wotlk/core/proto/common.js';
@@ -60,6 +61,21 @@ export function nameToClass(name: string): Class {
 
 	return Class.ClassUnknown;
 }
+
+export const professionNames: Record<Profession, string> = {
+	[Profession.ProfessionUnknown]: 'None',
+	[Profession.Alchemy]: 'Alchemy',
+	[Profession.Blacksmithing]: 'Blacksmithing',
+	[Profession.Enchanting]: 'Enchanting',
+	[Profession.Engineering]: 'Engineering',
+	[Profession.Herbalism]: 'Herbalism',
+	[Profession.Inscription]: 'Inscription',
+	[Profession.Jewelcrafting]: 'Jewelcrafting',
+	[Profession.Leatherworking]: 'Leatherworking',
+	[Profession.Mining]: 'Mining',
+	[Profession.Skinning]: 'Skinning',
+	[Profession.Tailoring]: 'Tailoring',
+};
 
 export const statOrder: Array<Stat> = [
 	Stat.StatHealth,
