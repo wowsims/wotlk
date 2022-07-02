@@ -49,7 +49,7 @@ var Gems = []Gem{
 		}
 		allow := allowList[gemData.Declaration.ID]
 		if !allow {
-			if gemData.Response.Quality < int(proto.ItemQuality_ItemQualityUncommon) {
+			if gemData.Response.GetQuality() < int(proto.ItemQuality_ItemQualityUncommon) {
 				continue
 			}
 			if gemData.Response.GetPhase() == 0 {
@@ -89,13 +89,16 @@ var Items = []Item{
 `)
 
 	for _, itemData := range itemsData {
+		if itemData.Response == nil {
+			continue
+		}
 		itemLevel := itemData.Response.GetItemLevel()
 		if itemData.Declaration.Filter {
 			continue
 		}
 		deny := false
 		for _, pattern := range denyListNameRegexes {
-			if pattern.MatchString(itemData.Response.Name) {
+			if pattern.MatchString(itemData.Response.GetName()) {
 				deny = true
 				break
 			}
@@ -108,9 +111,11 @@ var Items = []Item{
 		}
 		allow := allowList[itemData.Declaration.ID]
 		if !allow {
-			if itemData.Response.Quality < int(proto.ItemQuality_ItemQualityUncommon) {
+			if itemData.Response.GetQuality() < int(proto.ItemQuality_ItemQualityUncommon) {
 				continue
-			} else if itemData.Response.Quality < int(proto.ItemQuality_ItemQualityEpic) {
+			} else if itemData.Response.GetQuality() > int(proto.ItemQuality_ItemQualityLegendary) {
+				continue
+			} else if itemData.Response.GetQuality() < int(proto.ItemQuality_ItemQualityEpic) {
 				if itemLevel < 105 {
 					continue
 				}
@@ -122,7 +127,7 @@ var Items = []Item{
 			}
 		}
 		if itemLevel == 0 {
-			fmt.Printf("Missing ilvl: %s", itemData.Response.Name)
+			fmt.Printf("Missing ilvl: %s", itemData.Response.GetName())
 		}
 
 		file.WriteString(fmt.Sprintf("\t%s,\n", itemToGoString(itemData)))
@@ -133,10 +138,10 @@ var Items = []Item{
 	file.Sync()
 }
 
-func gemToGoString(gemDeclaration GemDeclaration, gemResponse WowheadItemResponse) string {
+func gemToGoString(gemDeclaration GemDeclaration, gemResponse ItemResponse) string {
 	gemStr := "{"
 
-	gemStr += fmt.Sprintf("Name:\"%s\", ", gemResponse.Name)
+	gemStr += fmt.Sprintf("Name:\"%s\", ", gemResponse.GetName())
 	gemStr += fmt.Sprintf("ID:%d, ", gemDeclaration.ID)
 
 	phase := gemDeclaration.Phase
@@ -144,7 +149,7 @@ func gemToGoString(gemDeclaration GemDeclaration, gemResponse WowheadItemRespons
 		phase = gemResponse.GetPhase()
 	}
 	gemStr += fmt.Sprintf("Phase:%d, ", phase)
-	gemStr += fmt.Sprintf("Quality:proto.ItemQuality_%s, ", proto.ItemQuality(gemResponse.Quality).String())
+	gemStr += fmt.Sprintf("Quality:proto.ItemQuality_%s, ", proto.ItemQuality(gemResponse.GetQuality()).String())
 	gemStr += fmt.Sprintf("Color:proto.GemColor_%s, ", proto.GemColor(gemResponse.GetSocketColor()).String())
 	gemStr += fmt.Sprintf("Stats: %s, ", statsToGoString(gemResponse.GetGemStats(), gemDeclaration.Stats))
 
@@ -159,7 +164,7 @@ func gemToGoString(gemDeclaration GemDeclaration, gemResponse WowheadItemRespons
 func itemToGoString(itemData ItemData) string {
 	itemStr := "{"
 
-	itemStr += fmt.Sprintf("Name:\"%s\", ", strings.ReplaceAll(itemData.Response.Name, "\"", "\\\""))
+	itemStr += fmt.Sprintf("Name:\"%s\", ", strings.ReplaceAll(itemData.Response.GetName(), "\"", "\\\""))
 	itemStr += fmt.Sprintf("ID:%d, ", itemData.Declaration.ID)
 
 	classAllowlist := itemData.Response.GetClassAllowlist()
@@ -190,7 +195,7 @@ func itemToGoString(itemData ItemData) string {
 			handType = itemData.Declaration.HandType
 		}
 		if handType == proto.HandType_HandTypeUnknown {
-			panic("Unknown hand type for item: " + itemData.Response.Tooltip)
+			panic("Unknown hand type for item: " + fmt.Sprintf("%#v", itemData.Response))
 		}
 		itemStr += fmt.Sprintf("HandType:proto.HandType_%s, ", handType.String())
 	} else {
@@ -215,7 +220,7 @@ func itemToGoString(itemData ItemData) string {
 		phase = itemData.Response.GetPhase()
 	}
 	itemStr += fmt.Sprintf("Phase:%d, ", phase)
-	itemStr += fmt.Sprintf("Quality:proto.ItemQuality_%s, ", proto.ItemQuality(itemData.Response.Quality).String())
+	itemStr += fmt.Sprintf("Quality:proto.ItemQuality_%s, ", proto.ItemQuality(itemData.Response.GetQuality()).String())
 
 	if itemData.Response.GetUnique() {
 		itemStr += fmt.Sprintf("Unique:true, ")
@@ -243,6 +248,10 @@ func itemToGoString(itemData ItemData) string {
 	setName := itemData.Response.GetItemSetName()
 	if setName != "" {
 		itemStr += fmt.Sprintf(", SetName: \"%s\"", setName)
+	}
+
+	if itemData.Response.IsHeroic() {
+		itemStr += ", Heroic: true"
 	}
 
 	itemStr += "}"
