@@ -58,6 +58,142 @@ message MageTalents {
 	int32 empowered_frostbolt = 45;
 	bool summon_water_elemental = 46;
 }
+//message MageTalents {
+//	// Arcane
+//	int32 arcane_subtlety = 1;
+//	int32 arcane_focus = 2;
+//	int32 arcane_stability = 3;
+//	int32 arcane_fortitude = 4;
+//	int32 magic_absorption = 5;
+//	int32 arcane_concentration = 6;
+//	int32 magic_attunement = 7;
+//	int32 spell_impact = 8;
+//	int32 student_of_the_mind = 9;
+//	bool focus_magic = 10;
+//	int32 arcane_shielding = 11;
+//	int32 improved_counterspell = 12;
+//	int32 arcane_meditation = 13;
+//	int32 torment_the_weak = 14;
+//	int32 improved_blink = 15;
+//	bool presence_of_mind = 16;
+//	int32 arcane_mind = 17;
+//	int32 prismatic_cloak = 18;
+//	int32 arcane_instability = 19;
+//	int32 arcane_potency = 20;
+//	int32 arcane_empowerment = 21;
+//	bool arcane_power = 22;
+//	int32 incanters_absorption = 23;
+//	int32 arcane_flows = 24;
+//	int32 mind_mastery = 25;
+//	bool slow = 26;
+//	int32 missile_barrage = 27;
+//	int32 netherwind_presence = 28;
+//	int32 spell_power = 29;
+//	bool arcane_barrage = 30;
+//
+//	// Fire
+//	int32 improved_fire_blast = 31;
+//	int32 incineration = 32;
+//	int32 improved_fireball = 33;
+//	int32 ignite = 34;
+//	int32 burning_determination = 35;
+//	int32 world_in_flames = 36;
+//	int32 flame_throwing = 37;
+//	int32 impact = 38;
+//	bool pyroblast = 39;
+//	int32 burning_soul = 40;
+//	int32 improved_scorch = 41;
+//	int32 molten_shields = 42;
+//	int32 master_of_elements = 43;
+//	int32 playing_with_fire = 44;
+//	int32 critical_mass = 45;
+//	bool blast_wave = 46;
+//	int32 blazing_speed = 47;
+//	int32 fire_power = 48;
+//	int32 pyromaniac = 49;
+//	bool combustion = 50;
+//	int32 molten_fury = 51;
+//	int32 fiery_payback = 52;
+//	int32 empowered_fire = 53;
+//	int32 firestarter = 54;
+//	bool dragons_breath = 55;
+//	int32 hot_streak = 56;
+//	int32 burnout = 57;
+//	bool living_bomb = 58;
+//
+//	// Frost
+//	int32 frostbite = 59;
+//	int32 improved_frostbolt = 60;
+//	int32 ice_floes = 61;
+//	int32 ice_shards = 62;
+//	int32 frost_warding = 63;
+//	int32 precision = 64;
+//	int32 permafrost = 65;
+//	int32 piercing_ice = 66;
+//	bool icy_veins = 67;
+//	int32 improved_blizzard = 68;
+//	int32 arctic_reach = 69;
+//	int32 frost_channeling = 70;
+//	int32 shatter = 71;
+//	bool cold_snap = 72;
+//	int32 improved_cone_of_cold = 73;
+//	int32 frozen_core = 74;
+//	int32 cold_as_ice = 75;
+//	int32 winters_chill = 76;
+//	int32 shattered_barrier = 77;
+//	bool ice_barrier = 78;
+//	int32 arctic_winds = 79;
+//	int32 empowered_frostbolt = 80;
+//	int32 fingers_of_frost = 81;
+//	int32 brain_freeze = 82;
+//	bool summon_water_elemental = 83;
+//	int32 enduring_winter = 84;
+//	int32 chilled_to_the_bone = 85;
+//	bool deep_freeze = 86;
+//}
+
+enum MageMajorGlyph {
+	MageMajorGlyphNone = 0;
+	GlyphOfArcaneBarrage = 45738;
+	GlyphOfArcaneBlast = 44955;
+	GlyphOfArcaneExplosion = 42734;
+	GlyphOfArcaneMissiles = 42735;
+	GlyphOfArcanePower = 42736;
+	GlyphOfBlink = 42737;
+	GlyphOfDeepFreeze = 45736;
+	GlyphOfEternalWater = 50045;
+	GlyphOfEvocation = 42738;
+	GlyphOfFireBlast = 42740;
+	GlyphOfFireball = 42739;
+	GlyphOfFrostNova = 42741;
+	GlyphOfFrostbolt = 42742;
+	GlyphOfFrostfire = 44684;
+	GlyphOfIceArmor = 42743;
+	GlyphOfIceBarrier = 45740;
+	GlyphOfIceBlock = 42744;
+	GlyphOfIceLance = 42745;
+	GlyphOfIcyVeins = 42746;
+	GlyphOfInvisibility = 42748;
+	GlyphOfLivingBomb = 45737;
+	GlyphOfMageArmor = 42749;
+	GlyphOfManaGem = 42750;
+	GlyphOfMirrorImage = 45739;
+	GlyphOfMoltenArmor = 42751;
+	GlyphOfPolymorph = 42752;
+	GlyphOfRemoveCurse = 42753;
+	GlyphOfScorch = 42747;
+	GlyphOfWaterElemental = 42754;
+}
+enum MageMinorGlyph {
+	MageMinorGlyphNone = 0;
+	GlyphOfArcaneIntellect = 43339;
+	GlyphOfBlastWave = 44920;
+	GlyphOfFireWard = 43357;
+	GlyphOfFrostArmor = 43359;
+	GlyphOfFrostWard = 43360;
+	GlyphOfSlowFall = 43364;
+	GlyphOfThePenguin = 43361;
+}
 
 message Mage {
 	message Rotation {
