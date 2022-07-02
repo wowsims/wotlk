@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+# This tool generates the talents config code, e.g. in ui/core/talents/shaman.ts.
+
 import json
 import sys
 
