@@ -9,6 +9,7 @@ import { Sim } from '/wotlk/core/sim.js';
 import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
 import { Target } from '/wotlk/core/target.js';
 import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
+import { makePetTypeInputConfig } from '/wotlk/core/talents/hunter_pet.js';
 
 import {
 	Hunter,
@@ -96,30 +97,7 @@ export const LatencyMs = {
 export const PetTypeInput = {
 	type: 'enum' as const,
 	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-	config: {
-		extraCssClasses: [
-			'pet-type-picker',
-		],
-		label: 'Pet',
-		values: [
-			{ name: 'None', value: PetType.PetNone },
-			{ name: 'Ravager', value: PetType.Ravager },
-			{ name: 'Wind Serpent', value: PetType.WindSerpent },
-			{ name: 'Bat', value: PetType.Bat },
-			{ name: 'Bear', value: PetType.Bear },
-			{ name: 'Cat', value: PetType.Cat },
-			{ name: 'Crab', value: PetType.Crab },
-			{ name: 'Owl', value: PetType.Owl },
-			{ name: 'Raptor', value: PetType.Raptor },
-		],
-		changedEvent: (player: Player<Spec.SpecHunter>) => player.specOptionsChangeEmitter,
-		getValue: (player: Player<Spec.SpecHunter>) => player.getSpecOptions().petType,
-		setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: number) => {
-			const newOptions = player.getSpecOptions();
-			newOptions.petType = newValue;
-			player.setSpecOptions(eventID, newOptions);
-		},
-	},
+	config: makePetTypeInputConfig(true),
 };
 
 export const PetUptime = {
