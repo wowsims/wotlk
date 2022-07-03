@@ -78,6 +78,7 @@ var wotlkdbMp5Regex = regexp.MustCompile("Restores ([0-9]+) mana per 5 sec")
 var wotlkdbAttackPowerRegex = regexp.MustCompile(`Increases attack power by ([0-9]+)\.`)
 var wotlkdbRangedAttackPowerRegex = regexp.MustCompile("Increases ranged attack power by ([0-9]+)")
 var wotlkdbFeralAttackPowerRegex = regexp.MustCompile("Increases attack power by ([0-9]+) in Cat, Bear, Dire Bear, and Moonkin forms only")
+var wotlkdbFeralAttackPowerRegex2 = regexp.MustCompile("<!--fap-->\\(([0-9]+) Feral Attack Power\\)")
 var wotlkdbArmorPenetrationRegex = regexp.MustCompile("Increases armor penetration rating by <!--rtg44-->([0-9]+)")
 var wotlkdbExpertiseRegex = regexp.MustCompile("Increases expertise rating by <!--rtg37-->([0-9]+)")
 
@@ -86,7 +87,7 @@ var wotlkdbDefenseRegex2 = regexp.MustCompile("Equip: Increases defense rating b
 var wotlkdbBlockRegex = regexp.MustCompile(`Equip: Increases your shield block rating by <!--rtg15-->([0-9]+)\.`)
 var wotlkdbBlockRegex2 = regexp.MustCompile("Equip: Increases your shield block rating by ([0-9]+)")
 var wotlkdbBlockValueRegex = regexp.MustCompile(`Equip: Increases the block value of your shield by ([0-9]+)\.`)
-var wotlkdbBlockValueRegex2 = regexp.MustCompile("<br>([0-9]+) Block<br>")
+var wotlkdbBlockValueRegex2 = regexp.MustCompile("<span>([0-9]+) Block</span>")
 var wotlkdbDodgeRegex = regexp.MustCompile("Increases your dodge rating by <!--rtg13-->([0-9]+)")
 var wotlkdbDodgeRegex2 = regexp.MustCompile("Increases your dodge rating by ([0-9]+)")
 var wotlkdbParryRegex = regexp.MustCompile("Increases your parry rating by <!--rtg14-->([0-9]+)")
@@ -124,7 +125,7 @@ func (item WotlkItemResponse) GetStats() Stats {
 		proto.Stat_StatMP5:               float64(item.GetIntValue(wotlkdbMp5Regex)),
 		proto.Stat_StatAttackPower:       float64(item.GetIntValue(wotlkdbAttackPowerRegex)),
 		proto.Stat_StatRangedAttackPower: float64(item.GetIntValue(wotlkdbAttackPowerRegex) + item.GetIntValue(wotlkdbRangedAttackPowerRegex)),
-		proto.Stat_StatFeralAttackPower:  float64(item.GetIntValue(wotlkdbFeralAttackPowerRegex)),
+		proto.Stat_StatFeralAttackPower:  float64(item.GetIntValue(wotlkdbFeralAttackPowerRegex) + item.GetIntValue(wotlkdbFeralAttackPowerRegex2)),
 		proto.Stat_StatArmorPenetration:  float64(item.GetIntValue(wotlkdbArmorPenetrationRegex)),
 		proto.Stat_StatExpertise:         float64(item.GetIntValue(wotlkdbExpertiseRegex)),
 		proto.Stat_StatDefense:           float64(item.GetIntValue(wotlkdbDefenseRegex) + item.GetIntValue(wotlkdbDefenseRegex2)),
@@ -229,7 +230,7 @@ var wotlkWeaponTypePatterns = map[proto.WeaponType]*regexp.Regexp{
 	proto.WeaponType_WeaponTypeMace:    regexp.MustCompile("<th>Mace</th>"),
 	proto.WeaponType_WeaponTypeOffHand: regexp.MustCompile("<td>Held In Off-Hand</td>"),
 	proto.WeaponType_WeaponTypePolearm: regexp.MustCompile("<th>Polearm</th>"),
-	proto.WeaponType_WeaponTypeShield:  regexp.MustCompile("<th>Shield</th>"),
+	proto.WeaponType_WeaponTypeShield:  regexp.MustCompile("<th><!--asc6-->Shield</th>"),
 	proto.WeaponType_WeaponTypeStaff:   regexp.MustCompile("<th>Staff</th>"),
 	proto.WeaponType_WeaponTypeSword:   regexp.MustCompile("<th>Sword</th>"),
 }

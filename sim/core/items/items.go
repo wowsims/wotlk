@@ -304,6 +304,8 @@ func NewEquipmentSet(equipSpec EquipmentSpec) Equipment {
 	for _, itemSpec := range equipSpec {
 		if itemSpec.ID != 0 {
 			equipment.EquipItem(NewItem(itemSpec))
+		} else {
+			fmt.Printf("ITEM ID NOT DEFINED: %#v\n", itemSpec)
 		}
 	}
 	return equipment
