@@ -53,46 +53,91 @@ func (item WotlkItemResponse) GetIntValue(pattern *regexp.Regexp) int {
 	return item.GetTooltipRegexValue(pattern, 1)
 }
 
+var wotlkdbArmorRegex = regexp.MustCompile("<!--amr-->([0-9]+) Armor")
+var wotlkdbAgilityRegex = regexp.MustCompile(`<!--stat3-->\+([0-9]+) Agility`)
+var wotlkdbStrengthRegex = regexp.MustCompile(`<!--stat4-->\+([0-9]+) Strength`)
+var wotlkdbIntellectRegex = regexp.MustCompile(`<!--stat5-->\+([0-9]+) Intellect`)
+var wotlkdbSpiritRegex = regexp.MustCompile(`<!--stat6-->\+([0-9]+) Spirit`)
+var wotlkdbStaminaRegex = regexp.MustCompile(`<!--stat7-->\+([0-9]+) Stamina`)
+var wotlkdbSpellPowerRegex = regexp.MustCompile("Increases spell power by ([0-9]+)")
+
+// Not sure these exist anymore?
+var wotlkdbArcaneSpellPowerRegex = regexp.MustCompile("Increases Arcane power by ([0-9]+)")
+var wotlkdbFireSpellPowerRegex = regexp.MustCompile("Increases Fire power by ([0-9]+)")
+var wotlkdbFrostSpellPowerRegex = regexp.MustCompile("Increases Frost power by ([0-9]+)")
+var wotlkdbHolySpellPowerRegex = regexp.MustCompile("Increases Holy power by ([0-9]+)")
+var wotlkdbNatureSpellPowerRegex = regexp.MustCompile("Increases Nature power by ([0-9]+)")
+var wotlkdbShadowSpellPowerRegex = regexp.MustCompile("Increases Shadow power by ([0-9]+)")
+
+var wotlkdbHitRegex = regexp.MustCompile("Improves hit rating by <!--rtg31-->([0-9]+)")
+var wotlkdbCritRegex = regexp.MustCompile("Improves critical strike rating by <!--rtg32-->([0-9]+)")
+var wotlkdbHasteRegex = regexp.MustCompile("Increases your haste rating by <!--rtg36-->([0-9]+)")
+
+var wotlkdbSpellPenetrationRegex = regexp.MustCompile("Increases your spell penetration by ([0-9]+)")
+var wotlkdbMp5Regex = regexp.MustCompile("Restores ([0-9]+) mana per 5 sec")
+var wotlkdbAttackPowerRegex = regexp.MustCompile(`Increases attack power by ([0-9]+)\.`)
+var wotlkdbRangedAttackPowerRegex = regexp.MustCompile("Increases ranged attack power by ([0-9]+)")
+var wotlkdbFeralAttackPowerRegex = regexp.MustCompile("Increases attack power by ([0-9]+) in Cat, Bear, Dire Bear, and Moonkin forms only")
+var wotlkdbArmorPenetrationRegex = regexp.MustCompile("Increases armor penetration rating by <!--rtg44-->([0-9]+)")
+var wotlkdbExpertiseRegex = regexp.MustCompile("Increases expertise rating by <!--rtg37-->([0-9]+)")
+
+var wotlkdbDefenseRegex = regexp.MustCompile("Increases defense rating by <!--rtg12-->([0-9]+)")
+var wotlkdbDefenseRegex2 = regexp.MustCompile("Increases defense rating by ([0-9]+)")
+var wotlkdbBlockRegex = regexp.MustCompile("Increases your shield block rating by <!--rtg15-->([0-9]+)")
+var wotlkdbBlockRegex2 = regexp.MustCompile("Increases your shield block rating by ([0-9]+)")
+var wotlkdbBlockValueRegex = regexp.MustCompile("Increases the block value of your shield by ([0-9]+)")
+var wotlkdbBlockValueRegex2 = regexp.MustCompile("<br>([0-9]+) Block<br>")
+var wotlkdbDodgeRegex = regexp.MustCompile("Increases your dodge rating by <!--rtg13-->([0-9]+)")
+var wotlkdbDodgeRegex2 = regexp.MustCompile("Increases your dodge rating by ([0-9]+)")
+var wotlkdbParryRegex = regexp.MustCompile("Increases your parry rating by <!--rtg14-->([0-9]+)")
+var wotlkdbParryRegex2 = regexp.MustCompile("Increases your parry rating by ([0-9]+)")
+var wotlkdbResilienceRegex = regexp.MustCompile("Improves your resilience rating by <!--rtg35-->([0-9]+)")
+var wotlkdbArcaneResistanceRegex = regexp.MustCompile(`\+([0-9]+) Arcane Resistance`)
+var wotlkdbFireResistanceRegex = regexp.MustCompile(`\+([0-9]+) Fire Resistance`)
+var wotlkdbFrostResistanceRegex = regexp.MustCompile(`\+([0-9]+) Frost Resistance`)
+var wotlkdbNatureResistanceRegex = regexp.MustCompile(`\+([0-9]+) Nature Resistance`)
+var wotlkdbShadowResistanceRegex = regexp.MustCompile(`\+([0-9]+) Shadow Resistance`)
+
 func (item WotlkItemResponse) GetStats() Stats {
 	return Stats{
-		proto.Stat_StatArmor:             float64(item.GetIntValue(armorRegex)),
-		proto.Stat_StatStrength:          float64(item.GetIntValue(strengthRegex)),
-		proto.Stat_StatAgility:           float64(item.GetIntValue(agilityRegex)),
-		proto.Stat_StatStamina:           float64(item.GetIntValue(staminaRegex)),
-		proto.Stat_StatIntellect:         float64(item.GetIntValue(intellectRegex)),
-		proto.Stat_StatSpirit:            float64(item.GetIntValue(spiritRegex)),
-		proto.Stat_StatSpellPower:        float64(item.GetIntValue(spellPowerRegex)),
-		proto.Stat_StatHealingPower:      float64(item.GetIntValue(spellPowerRegex)),
-		proto.Stat_StatArcaneSpellPower:  float64(item.GetIntValue(arcaneSpellPowerRegex)),
-		proto.Stat_StatFireSpellPower:    float64(item.GetIntValue(fireSpellPowerRegex)),
-		proto.Stat_StatFrostSpellPower:   float64(item.GetIntValue(frostSpellPowerRegex)),
-		proto.Stat_StatHolySpellPower:    float64(item.GetIntValue(holySpellPowerRegex)),
-		proto.Stat_StatNatureSpellPower:  float64(item.GetIntValue(natureSpellPowerRegex)),
-		proto.Stat_StatShadowSpellPower:  float64(item.GetIntValue(shadowSpellPowerRegex)),
-		proto.Stat_StatSpellHit:          float64(item.GetIntValue(hitRegex)),
-		proto.Stat_StatMeleeHit:          float64(item.GetIntValue(hitRegex)),
-		proto.Stat_StatSpellCrit:         float64(item.GetIntValue(critRegex)),
-		proto.Stat_StatMeleeCrit:         float64(item.GetIntValue(critRegex)),
-		proto.Stat_StatSpellHaste:        float64(item.GetIntValue(hasteRegex)),
-		proto.Stat_StatMeleeHaste:        float64(item.GetIntValue(hasteRegex)),
-		proto.Stat_StatSpellPenetration:  float64(item.GetIntValue(spellPenetrationRegex)),
-		proto.Stat_StatMP5:               float64(item.GetIntValue(mp5Regex)),
-		proto.Stat_StatAttackPower:       float64(item.GetIntValue(attackPowerRegex)),
-		proto.Stat_StatRangedAttackPower: float64(item.GetIntValue(attackPowerRegex) + item.GetIntValue(rangedAttackPowerRegex)),
-		proto.Stat_StatFeralAttackPower:  float64(item.GetIntValue(feralAttackPowerRegex)),
-		proto.Stat_StatArmorPenetration:  float64(item.GetIntValue(armorPenetrationRegex)),
-		proto.Stat_StatExpertise:         float64(item.GetIntValue(expertiseRegex)),
-		proto.Stat_StatDefense:           float64(item.GetIntValue(defenseRegex) + item.GetIntValue(defenseRegex2)),
-		proto.Stat_StatBlock:             float64(item.GetIntValue(blockRegex) + item.GetIntValue(blockRegex2)),
-		proto.Stat_StatBlockValue:        float64(item.GetIntValue(blockValueRegex) + item.GetIntValue(blockValueRegex2)),
-		proto.Stat_StatDodge:             float64(item.GetIntValue(dodgeRegex) + item.GetIntValue(dodgeRegex2)),
-		proto.Stat_StatParry:             float64(item.GetIntValue(parryRegex) + item.GetIntValue(parryRegex2)),
-		proto.Stat_StatResilience:        float64(item.GetIntValue(resilienceRegex)),
-		proto.Stat_StatArcaneResistance:  float64(item.GetIntValue(arcaneResistanceRegex)),
-		proto.Stat_StatFireResistance:    float64(item.GetIntValue(fireResistanceRegex)),
-		proto.Stat_StatFrostResistance:   float64(item.GetIntValue(frostResistanceRegex)),
-		proto.Stat_StatNatureResistance:  float64(item.GetIntValue(natureResistanceRegex)),
-		proto.Stat_StatShadowResistance:  float64(item.GetIntValue(shadowResistanceRegex)),
+		proto.Stat_StatArmor:             float64(item.GetIntValue(wotlkdbArmorRegex)),
+		proto.Stat_StatStrength:          float64(item.GetIntValue(wotlkdbStrengthRegex)),
+		proto.Stat_StatAgility:           float64(item.GetIntValue(wotlkdbAgilityRegex)),
+		proto.Stat_StatStamina:           float64(item.GetIntValue(wotlkdbStaminaRegex)),
+		proto.Stat_StatIntellect:         float64(item.GetIntValue(wotlkdbIntellectRegex)),
+		proto.Stat_StatSpirit:            float64(item.GetIntValue(wotlkdbSpiritRegex)),
+		proto.Stat_StatSpellPower:        float64(item.GetIntValue(wotlkdbSpellPowerRegex)),
+		proto.Stat_StatHealingPower:      float64(item.GetIntValue(wotlkdbSpellPowerRegex)),
+		proto.Stat_StatArcaneSpellPower:  float64(item.GetIntValue(wotlkdbArcaneSpellPowerRegex)),
+		proto.Stat_StatFireSpellPower:    float64(item.GetIntValue(wotlkdbFireSpellPowerRegex)),
+		proto.Stat_StatFrostSpellPower:   float64(item.GetIntValue(wotlkdbFrostSpellPowerRegex)),
+		proto.Stat_StatHolySpellPower:    float64(item.GetIntValue(wotlkdbHolySpellPowerRegex)),
+		proto.Stat_StatNatureSpellPower:  float64(item.GetIntValue(wotlkdbNatureSpellPowerRegex)),
+		proto.Stat_StatShadowSpellPower:  float64(item.GetIntValue(wotlkdbShadowSpellPowerRegex)),
+		proto.Stat_StatSpellHit:          float64(item.GetIntValue(wotlkdbHitRegex)),
+		proto.Stat_StatMeleeHit:          float64(item.GetIntValue(wotlkdbHitRegex)),
+		proto.Stat_StatSpellCrit:         float64(item.GetIntValue(wotlkdbCritRegex)),
+		proto.Stat_StatMeleeCrit:         float64(item.GetIntValue(wotlkdbCritRegex)),
+		proto.Stat_StatSpellHaste:        float64(item.GetIntValue(wotlkdbHasteRegex)),
+		proto.Stat_StatMeleeHaste:        float64(item.GetIntValue(wotlkdbHasteRegex)),
+		proto.Stat_StatSpellPenetration:  float64(item.GetIntValue(wotlkdbSpellPenetrationRegex)),
+		proto.Stat_StatMP5:               float64(item.GetIntValue(wotlkdbMp5Regex)),
+		proto.Stat_StatAttackPower:       float64(item.GetIntValue(wotlkdbAttackPowerRegex)),
+		proto.Stat_StatRangedAttackPower: float64(item.GetIntValue(wotlkdbAttackPowerRegex) + item.GetIntValue(wotlkdbRangedAttackPowerRegex)),
+		proto.Stat_StatFeralAttackPower:  float64(item.GetIntValue(wotlkdbFeralAttackPowerRegex)),
+		proto.Stat_StatArmorPenetration:  float64(item.GetIntValue(wotlkdbArmorPenetrationRegex)),
+		proto.Stat_StatExpertise:         float64(item.GetIntValue(wotlkdbExpertiseRegex)),
+		proto.Stat_StatDefense:           float64(item.GetIntValue(wotlkdbDefenseRegex) + item.GetIntValue(wotlkdbDefenseRegex2)),
+		proto.Stat_StatBlock:             float64(item.GetIntValue(wotlkdbBlockRegex) + item.GetIntValue(wotlkdbBlockRegex2)),
+		proto.Stat_StatBlockValue:        float64(item.GetIntValue(wotlkdbBlockValueRegex) + item.GetIntValue(wotlkdbBlockValueRegex2)),
+		proto.Stat_StatDodge:             float64(item.GetIntValue(wotlkdbDodgeRegex) + item.GetIntValue(wotlkdbDodgeRegex2)),
+		proto.Stat_StatParry:             float64(item.GetIntValue(wotlkdbParryRegex) + item.GetIntValue(wotlkdbParryRegex2)),
+		proto.Stat_StatResilience:        float64(item.GetIntValue(wotlkdbResilienceRegex)),
+		proto.Stat_StatArcaneResistance:  float64(item.GetIntValue(wotlkdbArcaneResistanceRegex)),
+		proto.Stat_StatFireResistance:    float64(item.GetIntValue(wotlkdbFireResistanceRegex)),
+		proto.Stat_StatFrostResistance:   float64(item.GetIntValue(wotlkdbFrostResistanceRegex)),
+		proto.Stat_StatNatureResistance:  float64(item.GetIntValue(wotlkdbNatureResistanceRegex)),
+		proto.Stat_StatShadowResistance:  float64(item.GetIntValue(wotlkdbShadowResistanceRegex)),
 	}
 }
 
@@ -351,7 +396,7 @@ func (item WotlkItemResponse) GetGemStats() Stats {
 	return stats
 }
 
-var wotlkItemSetNameRegex = regexp.MustCompile("<a href=\\\"\\/itemset=([0-9]+)\\\" class=\\\"q\\\">([^<]+)<")
+var wotlkItemSetNameRegex = regexp.MustCompile("<a href=\\\"\\?itemset=([0-9]+)\\\" class=\\\"q\\\">([^<]+)<")
 
 func (item WotlkItemResponse) GetItemSetName() string {
 	return item.GetTooltipRegexString(wotlkItemSetNameRegex, 2)

@@ -253,6 +253,7 @@ var requiredEquippableRegexes = []*regexp.Regexp{
 	regexp.MustCompile("<td>One-Hand</td>"),
 	regexp.MustCompile("<td>Off Hand</td>"),
 	regexp.MustCompile("<td>Held In Off-hand</td>"),
+	regexp.MustCompile("<td>Held In Off-Hand</td>"),
 }
 
 // If any of these regexes are present, the item is not equippable.
@@ -316,7 +317,7 @@ var itemTypePatterns = map[proto.ItemType]*regexp.Regexp{
 	proto.ItemType_ItemTypeFeet:     regexp.MustCompile("<td>Feet</td>"),
 	proto.ItemType_ItemTypeFinger:   regexp.MustCompile("<td>Finger</td>"),
 	proto.ItemType_ItemTypeTrinket:  regexp.MustCompile("<td>Trinket</td>"),
-	proto.ItemType_ItemTypeWeapon:   regexp.MustCompile("<td>((Main Hand)|(Two-Hand)|(One-Hand)|(Off Hand)|(Held In Off-hand))</td>"),
+	proto.ItemType_ItemTypeWeapon:   regexp.MustCompile("<td>((Main Hand)|(Two-Hand)|(One-Hand)|(Off Hand)|(Held In Off-hand)|(Held In Off-Hand))</td>"),
 	proto.ItemType_ItemTypeRanged:   regexp.MustCompile("<td>(Ranged|Thrown|Relic)</td>"),
 }
 
@@ -369,7 +370,7 @@ func (item WowheadItemResponse) GetWeaponType() proto.WeaponType {
 var handTypePatterns = map[proto.HandType]*regexp.Regexp{
 	proto.HandType_HandTypeMainHand: regexp.MustCompile("<td>Main Hand</td>"),
 	proto.HandType_HandTypeOneHand:  regexp.MustCompile("<td>One-Hand</td>"),
-	proto.HandType_HandTypeOffHand:  regexp.MustCompile("<td>((Off Hand)|(Held In Off-hand))</td>"),
+	proto.HandType_HandTypeOffHand:  regexp.MustCompile("<td>((Off Hand)|(Held In Off-hand)|(Held In Off-Hand))</td>"),
 	proto.HandType_HandTypeTwoHand:  regexp.MustCompile("<td>Two-Hand</td>"),
 }
 

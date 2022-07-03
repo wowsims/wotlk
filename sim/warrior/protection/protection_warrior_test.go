@@ -41,6 +41,7 @@ func TestProtectionWarrior(t *testing.T) {
 				proto.WeaponType_WeaponTypeMace,
 				proto.WeaponType_WeaponTypeDagger,
 				proto.WeaponType_WeaponTypeFist,
+				proto.WeaponType_WeaponTypeShield,
 			},
 		},
 
