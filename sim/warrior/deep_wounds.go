@@ -30,19 +30,19 @@ func (warrior *Warrior) applyDeepWounds() {
 				return
 			}
 
-			tickDamage := warrior.AutoAttacks.MH.AverageDamage()
+			tickDamage := warrior.AutoAttacks.MH.AverageDamage() * 0.16 * float64(warrior.Talents.DeepWounds)
 			for i := int32(0); i < sim.GetNumTargets(); i++ {
 				target := sim.GetTarget(i)
 				dotAura := target.GetOrRegisterAura(core.Aura{
 					Label:    "DeepWounds-" + strconv.Itoa(int(warrior.Index)),
 					ActionID: actionID,
-					Duration: time.Second * 12,
+					Duration: time.Second * 6,
 				})
 				dot := core.NewDot(core.Dot{
 					Spell:         deepWoundsSpell,
 					Aura:          dotAura,
-					NumberOfTicks: 4,
-					TickLength:    time.Second * 3,
+					NumberOfTicks: 6,
+					TickLength:    time.Second * 1,
 					TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 						ProcMask:         core.ProcMaskPeriodicDamage,
 						DamageMultiplier: 0.2 * float64(warrior.Talents.DeepWounds),
@@ -63,7 +63,7 @@ func (warrior *Warrior) applyDeepWounds() {
 				deepWoundsSpell.Cast(sim, nil)
 				deepWoundsSpell.SpellMetrics[spellEffect.Target.TableIndex].Hits++
 				dwDots[spellEffect.Target.Index].Apply(sim)
-				warrior.procBloodFrenzy(sim, spellEffect, time.Second*12)
+				warrior.procBloodFrenzy(sim, spellEffect, time.Second*6)
 			}
 		},
 	})

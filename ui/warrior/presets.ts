@@ -42,51 +42,33 @@ export const FuryTalents = {
 };
 
 export const DefaultRotation = WarriorRotation.create({
-	useOverpower: false,
-	useHamstring: true,
+	useRend: true,
 	prioritizeWw: false,
 	sunderArmor: SunderArmor.SunderArmorMaintain,
-	hsRageThreshold: 60,
-	overpowerRageThreshold: 10,
-	hamstringRageThreshold: 75,
-	rampageCdThreshold: 5,
-	slamLatency: 150,
-	slamGcdDelay: 400,
-	slamMsWwDelay: 2000,
+	hsRageThreshold: 40,
+	rendRageThreshold: 75,
 	useHsDuringExecute: true,
-	useMsDuringExecute: true,
 	useBtDuringExecute: true,
 	useWwDuringExecute: true,
-	useSlamDuringExecute: true,
+	useSlamOverExecute: true,
 });
 
 export const ArmsRotation = WarriorRotation.create({
-	useOverpower: false,
-	useHamstring: true,
 	useSlam: true,
-	prioritizeWw: false,
+	useMs: true,
 	sunderArmor: SunderArmor.SunderArmorMaintain,
+	msRageThreshold: 60,
 	hsRageThreshold: 60,
-	overpowerRageThreshold: 10,
-	hamstringRageThreshold: 75,
-	rampageCdThreshold: 5,
-	slamLatency: 150,
-	slamGcdDelay: 400,
-	slamMsWwDelay: 2000,
+	rendRageThreshold: 75,
+	rendCdThreshold: 3,
 	useHsDuringExecute: true,
-	useMsDuringExecute: true,
-	useBtDuringExecute: true,
-	useWwDuringExecute: true,
-	useSlamDuringExecute: true,
+	spamExecute: false,
 });
 
 export const DefaultOptions = WarriorOptions.create({
 	startingRage: 0,
 	useRecklessness: true,
 	shout: WarriorShout.WarriorShoutBattle,
-	precastShout: true,
-	precastShoutSapphire: false,
-	precastShoutT2: false,
 });
 
 export const DefaultConsumes = Consumes.create({

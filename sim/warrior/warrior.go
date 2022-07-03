@@ -13,7 +13,7 @@ type WarriorInputs struct {
 	PrecastShout         bool
 	PrecastShoutSapphire bool
 	PrecastShoutT2       bool
-	RampageCDThreshold   time.Duration
+	RendCdThreshold      time.Duration
 }
 
 type Warrior struct {
@@ -26,7 +26,7 @@ type Warrior struct {
 	// Current state
 	Stance              Stance
 	overpowerValidUntil time.Duration
-	rampageValidUntil   time.Duration
+	rendValidUntil      time.Duration
 	RevengeValidUntil   time.Duration
 	shoutExpiresAt      time.Duration
 
@@ -44,7 +44,6 @@ type Warrior struct {
 	DemoralizingShout    *core.Spell
 	Devastate            *core.Spell
 	Execute              *core.Spell
-	Hamstring            *core.Spell
 	MortalStrike         *core.Spell
 	Overpower            *core.Spell
 	Rampage              *core.Spell
@@ -115,10 +114,8 @@ func (warrior *Warrior) Initialize() {
 	warrior.registerDemoralizingShoutSpell()
 	warrior.registerDevastateSpell()
 	warrior.registerExecuteSpell()
-	warrior.registerHamstringSpell()
 	warrior.registerMortalStrikeSpell(primaryTimer)
 	warrior.registerOverpowerSpell(overpowerRevengeTimer)
-	warrior.registerRampageSpell()
 	warrior.registerRevengeSpell(overpowerRevengeTimer)
 	warrior.registerShieldBlockSpell()
 	warrior.registerShieldSlamSpell(primaryTimer)
@@ -136,7 +133,7 @@ func (warrior *Warrior) Initialize() {
 
 func (warrior *Warrior) Reset(sim *core.Simulation) {
 	warrior.overpowerValidUntil = 0
-	warrior.rampageValidUntil = 0
+	warrior.rendValidUntil = 0
 	warrior.RevengeValidUntil = 0
 
 	warrior.shoutExpiresAt = 0

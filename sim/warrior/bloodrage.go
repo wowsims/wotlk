@@ -10,7 +10,7 @@ func (warrior *Warrior) registerBloodrageCD() {
 	actionID := core.ActionID{SpellID: 2687}
 	rageMetrics := warrior.NewRageMetrics(actionID)
 
-	instantRage := 10.0 + 3*float64(warrior.Talents.ImprovedBloodrage)
+	instantRage := 20.0 + 3*float64(warrior.Talents.ImprovedBloodrage)
 
 	brSpell := warrior.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,

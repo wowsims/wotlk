@@ -6,156 +6,102 @@ option go_package = "./proto";
 message WarriorTalents {
 	// Arms
 	int32 improved_heroic_strike = 1;
-	int32 deflection = 45;
-	int32 improved_rend = 2;
-	int32 improved_charge = 3;
-	int32 improved_thunder_clap = 4;
-	int32 improved_overpower = 5;
-	bool anger_management = 6;
-	int32 deep_wounds = 7;
-	int32 two_handed_weapon_specialization = 8;
+	int32 deflection = 2;
+	int32 improved_rend = 3;
+	int32 improved_charge = 4;
+	int32 iron_will = 5;
+	int32 tactical_mastery = 6;
+	int32 improved_overpower = 7;
+	bool anger_management = 8;
 	int32 impale = 9;
-	int32 poleaxe_specialization = 10;
-	bool death_wish = 11;
-	int32 mace_specialization = 12;
-	int32 sword_specialization = 13;
-	int32 improved_disciplines = 14;
-	int32 blood_frenzy = 15;
-	bool mortal_strike = 16;
-	int32 improved_mortal_strike = 17;
-	bool endless_rage = 18;
+	int32 deep_wounds = 10;
+	int32 two_handed_weapon_specialization = 11;
+	int32 taste_for_blood = 12;
+	int32 poleaxe_specialization = 13;
+    bool sweeping_strikes = 14;
+	int32 mace_specialization = 15;
+	int32 sword_specialization = 16;
+	int32 weapon_mastery = 17;
+	int32 improved_hamstring = 18;
+	int32 trauma = 19;
+	int32 second_wind = 20;
+	bool mortal_strike = 21;
+	int32 strength_of_arms = 22;
+	int32 improved_slam = 23;
+	bool juggernaut = 24;
+	int32 improved_mortal_strike = 25;
+	int32 unrelenting_assault = 26;
+	int32 sudden_death = 27;
+	bool endless_rage = 28;
+	int32 blood_frenzy = 29;
+	int32 wrecking_crew = 30;
+	bool bladestorm = 31;
 
 	// Fury
-	int32 booming_voice = 19;
-	int32 cruelty = 20;
-	int32 improved_demoralizing_shout = 46;
-	int32 unbridled_wrath = 21;
-	int32 improved_cleave = 22;
-	int32 commanding_presence = 23;
-	int32 dual_wield_specialization = 24;
-	int32 improved_execute = 25;
-	int32 improved_slam = 26;
-	bool sweeping_strikes = 27;
-	int32 weapon_mastery = 28;
-	int32 improved_berserker_rage = 29;
-	int32 flurry = 30;
-	int32 precision = 31;
-	bool bloodthirst = 32;
-	int32 improved_whirlwind = 33;
-	int32 improved_berserker_stance = 34;
-	bool rampage = 35;
+	int32 armored_to_the_teeth = 32;
+	int32 booming_voice = 33;
+	int32 cruelty = 34;
+	int32 improved_demoralizing_shout = 35;
+	int32 unbridled_wrath = 36;
+	int32 improved_cleave = 37;
+	bool piercing_howl = 38;
+	int32 blood_craze = 39;
+	int32 commanding_presence = 40;
+	int32 dual_wield_specialization = 41;
+	int32 improved_execute = 42;
+	int32 enrage = 43;
+	int32 precision = 44;
+	bool death_wish = 45;
+	int32 improved_intercept = 46;
+	int32 improved_berserker_rage = 47;
+	int32 flurry = 48;
+	int32 intensify_rage = 49;
+	bool bloodthirst = 50;
+	int32 improved_whirlwind = 51;
+	int32 furious_attacks = 52;
+	int32 improved_berserker_stance = 53;
+	bool heroic_fury = 54;
+	bool rampage = 55;
+	int32 bloodsurge = 56;
+	int32 unending_fury = 57;
+	bool titans_grip = 58;
 
 	// Protection
-	int32 improved_bloodrage = 36;
-	int32 tactical_mastery = 37;
-	int32 anticipation = 47;
-	int32 shield_specialization = 48;
-	int32 toughness = 49;
-	bool last_stand = 53;
-	bool improved_shield_block = 50;
-	int32 defiance = 38;
-	int32 improved_sunder_armor = 39;
-	int32 improved_shield_wall = 54;
-	int32 shield_mastery = 51;
-	int32 one_handed_weapon_specialization = 40;
-	int32 improved_defensive_stance = 52;
-	bool shield_slam = 41;
-	int32 focused_rage = 42;
-	int32 vitality = 43;
-	bool devastate = 44;
+	int32 improved_bloodrage = 59;
+	int32 shield_specialization = 60;
+	int32 improved_thunder_clap = 61;
+	int32 incite = 62;
+	int32 anticipation = 63;
+	bool last_stand = 64;
+	int32 improved_revenge = 65;
+	int32 shield_mastery = 66;
+	int32 toughness = 67;
+	int32 improved_spell_reflection = 68;
+	int32 improved_disarm = 69;
+	int32 puncture = 70;
+	int32 improved_disciplines = 71;
+	bool concussion_blow = 72;
+	int32 gag_order = 73;
+	int32 one_handed_weapon_specialization = 74;
+	int32 improved_defensive_stance = 75;
+	bool vigilance = 76;
+	int32 focused_rage = 77;
+	int32 vitality = 78;
+	int32 safeguard = 79;
+	bool warbringer = 80;
+	bool devastate = 81;
+	int32 critical_block = 82;
+	int32 sword_and_board = 83;
+	int32 damage_shield = 84;
+	bool shockwave = 85;
+
+	// TBC Talents (Here because some deprecated abilities that hasn't been removed need it so it could be compiled)
+	int32 improved_sunder_armor = 86;
+	int32 improved_shield_wall = 87;
+	bool improved_shield_block = 88;
+	int32 defiance = 89;
+	bool shield_slam = 90;
 }
-//message WarriorTalents {
-//	// Arms
-//	int32 improved_heroic_strike = 1;
-//	int32 deflection = 2;
-//	int32 improved_rend = 3;
-//	int32 improved_charge = 4;
-//	int32 iron_will = 5;
-//	int32 tactical_mastery = 6;
-//	int32 improved_overpower = 7;
-//	bool anger_management = 8;
-//	int32 impale = 9;
-//	int32 deep_wounds = 10;
-//	int32 two_handed_weapon_specialization = 11;
-//	int32 taste_for_blood = 12;
-//	int32 poleaxe_specialization = 13;
-//	bool sweeping_strikes = 14;
-//	int32 mace_specialization = 15;
-//	int32 sword_specialization = 16;
-//	int32 weapon_mastery = 17;
-//	int32 improved_hamstring = 18;
-//	int32 trauma = 19;
-//	int32 second_wind = 20;
-//	bool mortal_strike = 21;
-//	int32 strength_of_arms = 22;
-//	int32 improved_slam = 23;
-//	bool juggernaut = 24;
-//	int32 improved_mortal_strike = 25;
-//	int32 unrelenting_assault = 26;
-//	int32 sudden_death = 27;
-//	bool endless_rage = 28;
-//	int32 blood_frenzy = 29;
-//	int32 wrecking_crew = 30;
-//	bool bladestorm = 31;
-//
-//	// Fury
-//	int32 armored_to_the_teeth = 32;
-//	int32 booming_voice = 33;
-//	int32 cruelty = 34;
-//	int32 improved_demoralizing_shout = 35;
-//	int32 unbridled_wrath = 36;
-//	int32 improved_cleave = 37;
-//	bool piercing_howl = 38;
-//	int32 blood_craze = 39;
-//	int32 commanding_presence = 40;
-//	int32 dual_wield_specialization = 41;
-//	int32 improved_execute = 42;
-//	int32 enrage = 43;
-//	int32 precision = 44;
-//	bool death_wish = 45;
-//	int32 improved_intercept = 46;
-//	int32 improved_berserker_rage = 47;
-//	int32 flurry = 48;
-//	int32 intensify_rage = 49;
-//	bool bloodthirst = 50;
-//	int32 improved_whirlwind = 51;
-//	int32 furious_attacks = 52;
-//	int32 improved_berserker_stance = 53;
-//	bool heroic_fury = 54;
-//	bool rampage = 55;
-//	int32 bloodsurge = 56;
-//	int32 unending_fury = 57;
-//	bool titans_grip = 58;
-//
-//	// Protection
-//	int32 improved_bloodrage = 59;
-//	int32 shield_specialization = 60;
-//	int32 improved_thunder_clap = 61;
-//	int32 incite = 62;
-//	int32 anticipation = 63;
-//	bool last_stand = 64;
-//	int32 improved_revenge = 65;
-//	int32 shield_mastery = 66;
-//	int32 toughness = 67;
-//	int32 improved_spell_reflection = 68;
-//	int32 improved_disarm = 69;
-//	int32 puncture = 70;
-//	int32 improved_disciplines = 71;
-//	bool concussion_blow = 72;
-//	int32 gag_order = 73;
-//	int32 one_handed_weapon_specialization = 74;
-//	int32 improved_defensive_stance = 75;
-//	bool vigilance = 76;
-//	int32 focused_rage = 77;
-//	int32 vitality = 78;
-//	int32 safeguard = 79;
-//	bool warbringer = 80;
-//	bool devastate = 81;
-//	int32 critical_block = 82;
-//	int32 sword_and_board = 83;
-//	int32 damage_shield = 84;
-//	bool shockwave = 85;
-//}
 
 enum WarriorMajorGlyph {
 	WarriorMajorGlyphNone = 0;
@@ -206,9 +152,10 @@ enum WarriorShout {
 
 message Warrior {
 	message Rotation {
-		bool use_cleave = 14;
-		bool use_overpower = 1;
-		bool use_hamstring = 2;
+		bool use_cleave = 1;
+		// Fury only: Use rend on free global (Arms warrior will always try to refresh Rend)
+		bool use_rend = 2;
+		bool use_ms = 18;
 		bool use_slam = 3;
 		bool prioritize_ww = 4;
 
@@ -217,34 +164,27 @@ message Warrior {
 			SunderArmorHelpStack = 1;
 			SunderArmorMaintain = 2;
 		}
-		SunderArmor sunderArmor = 15;
-		bool maintain_demo_shout = 16;
-		bool maintain_thunder_clap = 17;
+		SunderArmor sunderArmor = 5;
+		bool maintain_demo_shout = 6;
+		bool maintain_thunder_clap = 7;
 
 		// Queue HS or Cleave when over this threshold.
-		double hs_rage_threshold = 5;
+		double hs_rage_threshold = 8;
 
-		// Swap for overpower after reducing rage below this threshold.
-		double overpower_rage_threshold = 6;
+		// Use Mortal Strike when over this threshold.
+		double ms_rage_threshold = 9;
 
-		// Use Hamstring in unused GCDs when over this threshold.
-		double hamstring_rage_threshold = 7;
+		// Fury only: Use Rend when over this threshold.
+		double rend_rage_threshold = 10;
 
-		// Refresh Rampage when remaining duration is less than this threshold.
-		double rampage_cd_threshold = 8;
+		// Refresh Rend when remaining duration is less than this threshold.
+		double rend_cd_threshold = 11;
 
-		// Time between MH swing and start of Slam cast.
-		double slam_latency = 9;
-
-		// Amount of time Slam is allowed to  delay the GCD, and MS+WW, by.
-		double slam_gcd_delay = 19;
-		double slam_ms_ww_delay = 20;
-
-		bool use_hs_during_execute = 10;
+		bool use_hs_during_execute = 12;
 		bool use_bt_during_execute = 13;
-		bool use_ms_during_execute = 12;
-		bool use_ww_during_execute = 11;
-		bool use_slam_during_execute = 18;
+		bool spam_execute = 14;
+		bool use_ww_during_execute = 15;
+		bool use_slam_over_execute = 16;
 	}
 	Rotation rotation = 1;
 
@@ -255,9 +195,6 @@ message Warrior {
 		bool use_recklessness = 2;
 
 		WarriorShout shout = 3;
-		bool precast_shout = 4;
-		bool precast_shout_t2 = 5;
-		bool precast_shout_sapphire = 6; // Disabled if sapphire is equipped
 	}
 	Options options = 3;
 }
@@ -296,12 +233,12 @@ message ProtectionWarrior {
 	
 	message Options {
 		double starting_rage = 1;
-		bool use_shield_wall = 6;
+		bool use_shield_wall = 8;
 
 		WarriorShout shout = 4;
 		bool precast_shout = 5;
-		bool precast_shout_t2 = 2;
-		bool precast_shout_sapphire = 3; // Disabled if sapphire is equipped
+		bool precast_shout_t2 = 6;
+		bool precast_shout_sapphire = 7;
 	}
 	Options options = 3;
 }

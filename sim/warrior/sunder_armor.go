@@ -5,7 +5,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-var SunderArmorActionID = core.ActionID{SpellID: 25225}
+var SunderArmorActionID = core.ActionID{SpellID: 47467}
 
 func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell {
 	cost := 15.0 - float64(warrior.Talents.ImprovedSunderArmor) - float64(warrior.Talents.FocusedRage)

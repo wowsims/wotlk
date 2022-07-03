@@ -13,3 +13,4 @@ binary_dist
 *.results.tmp
 .dockerignore
 wotlk/
+wowsimwotlk

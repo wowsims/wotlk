@@ -12,7 +12,7 @@ func (warrior *Warrior) registerSlamSpell() {
 	refundAmount := cost * 0.8
 
 	warrior.Slam = warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 25242},
+		ActionID:    core.ActionID{SpellID: 47475},
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 
@@ -35,7 +35,7 @@ func (warrior *Warrior) registerSlamSpell() {
 			ThreatMultiplier: 1,
 			FlatThreatBonus:  70,
 
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 140, 1, true),
+			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 250, 1, true),
 			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(true)),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

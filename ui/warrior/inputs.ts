@@ -79,65 +79,6 @@ export const ShoutPicker = {
 	},
 };
 
-export const PrecastShout = {
-	type: 'boolean' as const,
-	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-	config: {
-		extraCssClasses: [
-			'precast-shout-picker',
-		],
-		label: 'Precast Shout',
-		labelTooltip: 'Selected shout is cast 10 seconds before combat starts.',
-		changedEvent: (player: Player<Spec.SpecWarrior>) => player.specOptionsChangeEmitter,
-		getValue: (player: Player<Spec.SpecWarrior>) => player.getSpecOptions().precastShout,
-		setValue: (eventID: EventID, player: Player<Spec.SpecWarrior>, newValue: boolean) => {
-			const newOptions = player.getSpecOptions();
-			newOptions.precastShout = newValue;
-			player.setSpecOptions(eventID, newOptions);
-		},
-	},
-};
-
-export const PrecastShoutWithSapphire = {
-	type: 'boolean' as const,
-	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-	config: {
-		extraCssClasses: [
-			'precast-shout-with-sapphire-picker',
-		],
-		label: 'Precast with Sapphire',
-		labelTooltip: 'Snapshot bonus from Solarian\'s Sapphire (+70 attack power) with precast shout.',
-		changedEvent: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.specOptionsChangeEmitter, player.gearChangeEmitter]),
-		getValue: (player: Player<Spec.SpecWarrior>) => player.getSpecOptions().precastShoutSapphire,
-		setValue: (eventID: EventID, player: Player<Spec.SpecWarrior>, newValue: boolean) => {
-			const newOptions = player.getSpecOptions();
-			newOptions.precastShoutSapphire = newValue;
-			player.setSpecOptions(eventID, newOptions);
-		},
-		enableWhen: (player: Player<Spec.SpecWarrior>) => player.getSpecOptions().shout == WarriorShout.WarriorShoutBattle && player.getSpecOptions().precastShout && !player.getGear().hasTrinket(30446),
-	},
-};
-
-export const PrecastShoutWithT2 = {
-	type: 'boolean' as const,
-	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-	config: {
-		extraCssClasses: [
-			'precast-shout-with-t2-picker',
-		],
-		label: 'Precast with T2',
-		labelTooltip: 'Snapshot T2 set bonus (+30 attack power) with precast shout.',
-		changedEvent: (player: Player<Spec.SpecWarrior>) => player.specOptionsChangeEmitter,
-		getValue: (player: Player<Spec.SpecWarrior>) => player.getSpecOptions().precastShoutT2,
-		setValue: (eventID: EventID, player: Player<Spec.SpecWarrior>, newValue: boolean) => {
-			const newOptions = player.getSpecOptions();
-			newOptions.precastShoutT2 = newValue;
-			player.setSpecOptions(eventID, newOptions);
-		},
-		enableWhen: (player: Player<Spec.SpecWarrior>) => player.getSpecOptions().shout == WarriorShout.WarriorShoutBattle && player.getSpecOptions().precastShout,
-	},
-};
-
 export const WarriorRotationConfig = {
 	inputs: [
 		{
@@ -158,34 +99,36 @@ export const WarriorRotationConfig = {
 		},
 		{
 			type: 'boolean' as const,
-			cssClass: 'overpower-picker',
+			cssClass: 'rend-picker',
 			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
 			config: {
-				label: 'Use Overpower',
-				labelTooltip: 'Use Overpower when available.',
-				changedEvent: (player: Player<Spec.SpecWarrior>) => player.rotationChangeEmitter,
-				getValue: (player: Player<Spec.SpecWarrior>) => player.getRotation().useOverpower,
+				label: 'Use Rend',
+				labelTooltip: 'Use Rend on free globals.',
+				changedEvent: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+				getValue: (player: Player<Spec.SpecWarrior>) => player.getRotation().useRend,
 				setValue: (eventID: EventID, player: Player<Spec.SpecWarrior>, newValue: boolean) => {
 					const newRotation = player.getRotation();
-					newRotation.useOverpower = newValue;
+					newRotation.useRend = newValue;
 					player.setRotation(eventID, newRotation);
 				},
+				showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().bloodthirst,
 			},
 		},
 		{
 			type: 'boolean' as const,
-			cssClass: 'hamstring-picker',
+			cssClass: 'ms-picker',
 			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
 			config: {
-				label: 'Use Hamstring',
-				labelTooltip: 'Use Hamstring on free globals.',
-				changedEvent: (player: Player<Spec.SpecWarrior>) => player.rotationChangeEmitter,
-				getValue: (player: Player<Spec.SpecWarrior>) => player.getRotation().useHamstring,
+				label: 'Use Mortal Strike',
+				labelTooltip: 'Use Mortal Strike when rage threshold is met.',
+				changedEvent: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+				getValue: (player: Player<Spec.SpecWarrior>) => player.getRotation().useMs,
 				setValue: (eventID: EventID, player: Player<Spec.SpecWarrior>, newValue: boolean) => {
 					const newRotation = player.getRotation();
-					newRotation.useHamstring = newValue;
+					newRotation.useMs = newValue;
 					player.setRotation(eventID, newRotation);
 				},
+				showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().mortalStrike,
 			},
 		},
 		{
@@ -202,7 +145,7 @@ export const WarriorRotationConfig = {
 					newRotation.useSlam = newValue;
 					player.setRotation(eventID, newRotation);
 				},
-				showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().improvedSlam == 2,
+				showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().mortalStrike,
 			},
 		},
 		{
@@ -211,14 +154,15 @@ export const WarriorRotationConfig = {
 			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
 			config: {
 				label: 'Prioritize WW',
-				labelTooltip: 'Prioritize Whirlwind over Bloodthirst or Mortal Strike.',
-				changedEvent: (player: Player<Spec.SpecWarrior>) => player.rotationChangeEmitter,
+				labelTooltip: 'Prioritize Whirlwind over Bloodthirst',
+				changedEvent: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 				getValue: (player: Player<Spec.SpecWarrior>) => player.getRotation().prioritizeWw,
 				setValue: (eventID: EventID, player: Player<Spec.SpecWarrior>, newValue: boolean) => {
 					const newRotation = player.getRotation();
 					newRotation.prioritizeWw = newValue;
 					player.setRotation(eventID, newRotation);
 				},
+				showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().bloodthirst,
 			},
 		},
 		{
@@ -239,110 +183,53 @@ export const WarriorRotationConfig = {
 		},
 		{
 			type: 'number' as const,
-			cssClass: 'overpower-rage-threshold',
+			cssClass: 'ms-rage-threshold',
 			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
 			config: {
-				label: 'Overpower rage threshold',
-				labelTooltip: 'Use Overpower when rage is below a point.',
-				changedEvent: (player: Player<Spec.SpecWarrior>) => player.rotationChangeEmitter,
-				getValue: (player: Player<Spec.SpecWarrior>) => player.getRotation().overpowerRageThreshold,
-				setValue: (eventID: EventID, player: Player<Spec.SpecWarrior>, newValue: number) => {
-					const newRotation = player.getRotation();
-					newRotation.overpowerRageThreshold = newValue;
-					player.setRotation(eventID, newRotation);
-				},
-				showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().useOverpower,
-			},
-		},
-		{
-			type: 'number' as const,
-			cssClass: 'hamstring-rage-threshold',
-			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-			config: {
-				label: 'Hamstring rage threshold',
-				labelTooltip: 'Hamstring will only be used when rage is larger than this value.',
-				changedEvent: (player: Player<Spec.SpecWarrior>) => player.rotationChangeEmitter,
-				getValue: (player: Player<Spec.SpecWarrior>) => player.getRotation().hamstringRageThreshold,
-				setValue: (eventID: EventID, player: Player<Spec.SpecWarrior>, newValue: number) => {
-					const newRotation = player.getRotation();
-					newRotation.hamstringRageThreshold = newValue;
-					player.setRotation(eventID, newRotation);
-				},
-				showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().useHamstring,
-			},
-		},
-		{
-			type: 'number' as const,
-			cssClass: 'slam-latency',
-			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-			config: {
-				label: 'Slam Latency',
-				labelTooltip: 'Time between MH swing and start of the Slam cast, in milliseconds.',
+				label: 'Mortal Strike rage threshold',
+				labelTooltip: 'Use Mortal Strike when rage is below a point.',
 				changedEvent: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-				getValue: (player: Player<Spec.SpecWarrior>) => player.getRotation().slamLatency,
+				getValue: (player: Player<Spec.SpecWarrior>) => player.getRotation().msRageThreshold,
 				setValue: (eventID: EventID, player: Player<Spec.SpecWarrior>, newValue: number) => {
 					const newRotation = player.getRotation();
-					newRotation.slamLatency = newValue;
+					newRotation.msRageThreshold = newValue;
 					player.setRotation(eventID, newRotation);
 				},
-				showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().useSlam && player.getTalents().improvedSlam == 2,
+				showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().useMs,
 			},
 		},
 		{
 			type: 'number' as const,
-			cssClass: 'slam-gcd-delay',
+			cssClass: 'rend-rage-threshold',
 			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
 			config: {
-				extraCssClasses: [
-					'experimental',
-				],
-				label: 'Slam GCD Delay',
-				labelTooltip: 'Amount of time Slam may delay the GCD, in milliseconds.',
+				label: 'Rend rage threshold',
+				labelTooltip: 'Rend will only be used when rage is larger than this value.',
 				changedEvent: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-				getValue: (player: Player<Spec.SpecWarrior>) => player.getRotation().slamGcdDelay,
+				getValue: (player: Player<Spec.SpecWarrior>) => player.getRotation().rendRageThreshold,
 				setValue: (eventID: EventID, player: Player<Spec.SpecWarrior>, newValue: number) => {
 					const newRotation = player.getRotation();
-					newRotation.slamGcdDelay = newValue;
+					newRotation.rendRageThreshold = newValue;
 					player.setRotation(eventID, newRotation);
 				},
-				showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().useSlam && player.getTalents().improvedSlam == 2,
+				showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().useRend && player.getTalents().bloodthirst,
 			},
 		},
 		{
 			type: 'number' as const,
-			cssClass: 'slam-ms-ww-delay',
+			cssClass: 'rend-duration-threshold',
 			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
 			config: {
-				extraCssClasses: [
-					'experimental',
-				],
-				label: 'Slam MS+WW Delay',
-				labelTooltip: 'Amount of time Slam may delay MS+WW, in milliseconds.',
+				label: 'Rend Refresh Time',
+				labelTooltip: 'Refresh Rend when the remaining duration is less than this amount of time (seconds).',
 				changedEvent: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-				getValue: (player: Player<Spec.SpecWarrior>) => player.getRotation().slamMsWwDelay,
+				getValue: (player: Player<Spec.SpecWarrior>) => player.getRotation().rendCdThreshold,
 				setValue: (eventID: EventID, player: Player<Spec.SpecWarrior>, newValue: number) => {
 					const newRotation = player.getRotation();
-					newRotation.slamMsWwDelay = newValue;
+					newRotation.rendCdThreshold = newValue;
 					player.setRotation(eventID, newRotation);
 				},
-				showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().useSlam && player.getTalents().improvedSlam == 2,
-			},
-		},
-		{
-			type: 'number' as const,
-			cssClass: 'rampage-duration-threshold',
-			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-			config: {
-				label: 'Rampage Refresh Time',
-				labelTooltip: 'Refresh Rampage when the remaining duration is less than this amount of time (seconds).',
-				changedEvent: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-				getValue: (player: Player<Spec.SpecWarrior>) => player.getRotation().rampageCdThreshold,
-				setValue: (eventID: EventID, player: Player<Spec.SpecWarrior>, newValue: number) => {
-					const newRotation = player.getRotation();
-					newRotation.rampageCdThreshold = newValue;
-					player.setRotation(eventID, newRotation);
-				},
-				showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().rampage,
+				showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().mortalStrike,
 			},
 		},
 		{
@@ -380,16 +267,33 @@ export const WarriorRotationConfig = {
 		},
 		{
 			type: 'boolean' as const,
-			cssClass: 'ms-exec-picker-fury',
+			cssClass: 'ww-exec-picker',
 			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
 			config: {
-				label: 'MS during Execute Phase',
-				labelTooltip: 'Use Mortal Strike during Execute Phase.',
+				label: 'WW during Execute Phase',
+				labelTooltip: 'Use Whirlwind during Execute Phase.',
 				changedEvent: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-				getValue: (player: Player<Spec.SpecWarrior>) => player.getRotation().useMsDuringExecute,
+				getValue: (player: Player<Spec.SpecWarrior>) => player.getRotation().useWwDuringExecute,
 				setValue: (eventID: EventID, player: Player<Spec.SpecWarrior>, newValue: boolean) => {
 					const newRotation = player.getRotation();
-					newRotation.useMsDuringExecute = newValue;
+					newRotation.useWwDuringExecute = newValue;
+					player.setRotation(eventID, newRotation);
+				},
+				showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().bloodthirst,
+			},
+		},
+		{
+			type: 'boolean' as const,
+			cssClass: 'spam-exec-picker',
+			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
+			config: {
+				label: 'Spam Execute',
+				labelTooltip: 'Use Execute whenever possible during Execute Phase',
+				changedEvent: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+				getValue: (player: Player<Spec.SpecWarrior>) => player.getRotation().spamExecute,
+				setValue: (eventID: EventID, player: Player<Spec.SpecWarrior>, newValue: boolean) => {
+					const newRotation = player.getRotation();
+					newRotation.spamExecute = newValue;
 					player.setRotation(eventID, newRotation);
 				},
 				showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().mortalStrike,
@@ -397,35 +301,19 @@ export const WarriorRotationConfig = {
 		},
 		{
 			type: 'boolean' as const,
-			cssClass: 'ww-exec-picker',
+			cssClass: 'slam-over-exec-picker',
 			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
 			config: {
-				label: 'WW during Execute Phase',
-				labelTooltip: 'Use Whirlwind during Execute Phase.',
-				changedEvent: (player: Player<Spec.SpecWarrior>) => player.rotationChangeEmitter,
-				getValue: (player: Player<Spec.SpecWarrior>) => player.getRotation().useWwDuringExecute,
-				setValue: (eventID: EventID, player: Player<Spec.SpecWarrior>, newValue: boolean) => {
-					const newRotation = player.getRotation();
-					newRotation.useWwDuringExecute = newValue;
-					player.setRotation(eventID, newRotation);
-				},
-			},
-		},
-		{
-			type: 'boolean' as const,
-			cssClass: 'slam-exec-picker',
-			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-			config: {
-				label: 'Slam during Execute Phase',
-				labelTooltip: 'Use Slam during Execute Phase.',
+				label: 'Slam Over Execute',
+				labelTooltip: 'Use Slam Over Execute when Taste for Blood Procs in Execute Phase.',
 				changedEvent: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-				getValue: (player: Player<Spec.SpecWarrior>) => player.getRotation().useSlamDuringExecute,
+				getValue: (player: Player<Spec.SpecWarrior>) => player.getRotation().useSlamOverExecute,
 				setValue: (eventID: EventID, player: Player<Spec.SpecWarrior>, newValue: boolean) => {
 					const newRotation = player.getRotation();
-					newRotation.useSlamDuringExecute = newValue;
+					newRotation.useSlamOverExecute = newValue;
 					player.setRotation(eventID, newRotation);
 				},
-				showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().useSlam && player.getTalents().improvedSlam == 2,
+				showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().bloodthirst,
 			},
 		},
 		{
