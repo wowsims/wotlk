@@ -1,18 +1,17 @@
 package warlock
 
 import (
-	"time"
+//	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
+//	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warlock *Warlock) ApplyTalents() {
 	// demonic embrace
 	if warlock.Talents.DemonicEmbrace > 0 {
-		bonus := 1 + (0.03)*float64(warlock.Talents.DemonicEmbrace)
-		negative := 1 - (0.01)*float64(warlock.Talents.DemonicEmbrace)
+		bonus := 1.01 + float64(warlock.Talents.DemonicEmbrace) * 0.03
 		warlock.AddStatDependency(stats.StatDependency{
 			SourceStat:   stats.Stamina,
 			ModifiedStat: stats.Stamina,
@@ -20,16 +19,9 @@ func (warlock *Warlock) ApplyTalents() {
 				return in * bonus
 			},
 		})
-		warlock.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Spirit,
-			ModifiedStat: stats.Spirit,
-			Modifier: func(in float64, _ float64) float64 {
-				return in * negative
-			},
-		})
 	}
 
-	// Add 1% crit per level of backlash.
+/*	// Add 1% crit per level of backlash.
 	warlock.PseudoStats.BonusCritRating += float64(warlock.Talents.Backlash) * 1 * core.SpellCritRatingPerCritChance
 
 	// fel intellect
@@ -83,9 +75,11 @@ func (warlock *Warlock) ApplyTalents() {
 	warlock.applyShadowEmbrace()
 	warlock.setupNightfall()
 	warlock.setupAmplifyCurse()
+*/
 }
 
-func (warlock *Warlock) applyShadowEmbrace() {
+
+/*func (warlock *Warlock) applyShadowEmbrace() {
 	if warlock.Talents.ShadowEmbrace == 0 {
 		return
 	}
@@ -173,7 +167,7 @@ func (warlock *Warlock) setupNightfall() {
 		},
 	})
 }
-
+*/
 func (warlock *Warlock) applyNightfall(cast *core.Cast) {
 	if warlock.NightfallProcAura.IsActive() {
 		cast.CastTime = 0

@@ -716,7 +716,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		tooltip: 'Protection Paladin',
 		iconUrl: talentTreeIcons[Class.ClassPaladin][1],
 	},
-	{
+/*	{
 		spec: Spec.SpecWarlock,
 		rotation: WarlockPresets.DefaultRotation,
 		talents: WarlockPresets.DestructionTalents.data,
@@ -747,11 +747,11 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		},
 		tooltip: 'Destruction Warlock: defaults to casting Curse of Doom.',
 		iconUrl: talentTreeIcons[Class.ClassWarlock][2],
-	},
+	},*/
 	{
 		spec: Spec.SpecWarlock,
 		rotation: WarlockPresets.AfflictionRotation,
-		talents: WarlockPresets.AfflicationTalents.data,
+		talents: WarlockPresets.AfflictionTalents.data,
 		specOptions: WarlockPresets.AfflictionOptions,
 		consumes: WarlockPresets.DefaultConsumes,
 		defaultName: 'Aff Warlock',
@@ -780,7 +780,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		tooltip: 'Affliction Warlock: by default casts CoE with Malediction',
 		iconUrl: talentTreeIcons[Class.ClassWarlock][0],
 	},
-	{
+/*	{
 		spec: Spec.SpecWarlock,
 		rotation: WarlockPresets.DemonologyRotation,
 		talents: WarlockPresets.DemonologistTalents.data,
@@ -811,7 +811,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		},
 		tooltip: 'Demonology Warlock',
 		iconUrl: talentTreeIcons[Class.ClassWarlock][1],
-	},
+	},*/
 ];
 
 export const implementedSpecs: Array<Spec> = [...new Set(playerPresets.map(preset => preset.spec))];
@@ -1041,7 +1041,7 @@ export const buffBotPresets: Array<BuffBotSettings> = [
 		spec: Spec.SpecWarlock,
 		name: 'Aff Warlock',
 		deprecated: true,
-		tooltip: 'Afflication Warlock: Adds Curse of Elements (improved). Also adds +20% uptime to ISB.',
+		tooltip: 'Affliction Warlock: Adds Curse of Elements (improved). Also adds +20% uptime to ISB.',
 		iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_curseofachimonde.jpg',
 		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
 			const debuffs = raidProto.debuffs!;

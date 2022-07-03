@@ -112,8 +112,8 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		})
 	}
 
-	if warlock.Talents.FelIntellect > 0 {
-		intBonus := 1 + (0.05)*float64(warlock.Talents.FelIntellect)
+	if warlock.Talents.FelVitality > 0 {
+		intBonus := 1 + (0.05)*float64(warlock.Talents.FelVitality)
 		wp.AddStatDependency(stats.StatDependency{
 			SourceStat:   stats.Intellect,
 			ModifiedStat: stats.Intellect,
