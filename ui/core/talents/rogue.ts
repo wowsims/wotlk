@@ -1,23 +1,9 @@
-import { Spec } from '/wotlk/core/proto/common.js';
 import { RogueTalents, RogueMajorGlyph, RogueMinorGlyph } from '/wotlk/core/proto/rogue.js';
-import { Player } from '/wotlk/core/player.js';
 
-import { GlyphsConfig, GlyphsPicker } from './glyphs_picker.js';
-import { TalentsConfig, TalentsPicker, newTalentsConfig } from './talents_picker.js';
+import { GlyphsConfig } from './glyphs_picker.js';
+import { TalentsConfig, newTalentsConfig } from './talents_picker.js';
 
-export class RogueTalentsPicker extends TalentsPicker<Spec.SpecRogue> {
-	constructor(parent: HTMLElement, player: Player<Spec.SpecRogue>) {
-		super(parent, player, rogueTalentsConfig);
-	}
-}
-
-export class RogueGlyphsPicker extends GlyphsPicker {
-	constructor(parent: HTMLElement, player: Player<any>) {
-		super(parent, player, rogueGlyphsConfig);
-	}
-}
-
-export const rogueTalentsConfig: TalentsConfig<Spec.SpecRogue> = newTalentsConfig([
+export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig([
 	{
 		name: 'Assassination',
 		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/182.jpg',

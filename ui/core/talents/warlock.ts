@@ -1,21 +1,7 @@
-import { Spec } from '/wotlk/core/proto/common.js';
 import { WarlockTalents, WarlockMajorGlyph, WarlockMinorGlyph } from '/wotlk/core/proto/warlock.js';
-import { Player } from '/wotlk/core/player.js';
 
-import { GlyphsConfig, GlyphsPicker } from './glyphs_picker.js';
-import { TalentsConfig, TalentsPicker, newTalentsConfig } from './talents_picker.js';
-
-export class WarlockTalentsPicker extends TalentsPicker<Spec.SpecWarlock> {
-	constructor(parent: HTMLElement, player: Player<Spec.SpecWarlock>) {
-		super(parent, player, warlockTalentsConfig);
-	}
-}
-
-export class WarlockGlyphsPicker extends GlyphsPicker {
-	constructor(parent: HTMLElement, player: Player<any>) {
-		super(parent, player, warlockGlyphsConfig);
-	}
-}
+import { GlyphsConfig } from './glyphs_picker.js';
+import { TalentsConfig, newTalentsConfig } from './talents_picker.js';
 
 export const warlockTalentsConfig: TalentsConfig<Spec.SpecWarlock> = newTalentsConfig([
     {

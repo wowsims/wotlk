@@ -6,85 +6,37 @@ import {
 	specToClass,
 	specTypeFunctions,
 } from '/wotlk/core/proto_utils/utils.js';
+import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
 
-import { druidTalentsConfig, DruidTalentsPicker, DruidGlyphsPicker } from './druid.js';
-import { hunterTalentsConfig, HunterTalentsPicker, HunterGlyphsPicker } from './hunter.js';
-import { mageTalentsConfig, MageTalentsPicker, MageGlyphsPicker } from './mage.js';
-import { paladinTalentsConfig, PaladinTalentsPicker, PaladinGlyphsPicker } from './paladin.js';
-import { priestTalentsConfig, PriestTalentsPicker, PriestGlyphsPicker } from './priest.js';
-import { rogueTalentsConfig, RogueTalentsPicker, RogueGlyphsPicker } from './rogue.js';
-import { shamanTalentsConfig, ShamanTalentsPicker, ShamanGlyphsPicker } from './shaman.js';
-import { warlockTalentsConfig, WarlockTalentsPicker, WarlockGlyphsPicker } from './warlock.js';
-import { warriorTalentsConfig, WarriorTalentsPicker, WarriorGlyphsPicker } from './warrior.js';
+import { druidTalentsConfig, druidGlyphsConfig } from './druid.js';
+import { hunterTalentsConfig, hunterGlyphsConfig } from './hunter.js';
+import { mageTalentsConfig, mageGlyphsConfig } from './mage.js';
+import { paladinTalentsConfig, paladinGlyphsConfig } from './paladin.js';
+import { priestTalentsConfig, priestGlyphsConfig } from './priest.js';
+import { rogueTalentsConfig, rogueGlyphsConfig } from './rogue.js';
+import { shamanTalentsConfig, shamanGlyphsConfig } from './shaman.js';
+import { warlockTalentsConfig, warlockGlyphsConfig } from './warlock.js';
+import { warriorTalentsConfig, warriorGlyphsConfig } from './warrior.js';
 import { TalentsConfig, TalentsPicker } from './talents_picker.js';
-import { GlyphsPicker } from './glyphs_picker.js';
+import { GlyphsConfig, GlyphsPicker } from './glyphs_picker.js';
 
-export function newTalentsPicker<SpecType extends Spec>(parent: HTMLElement, player: Player<SpecType>): TalentsPicker<SpecType> {
-	switch (player.getClass()) {
-		case Class.ClassDruid:
-			return new DruidTalentsPicker(parent, player as Player<Spec.SpecBalanceDruid>) as TalentsPicker<SpecType>;
-			break;
-		case Class.ClassShaman:
-			return new ShamanTalentsPicker(parent, player as Player<Spec.SpecElementalShaman>) as TalentsPicker<SpecType>;
-			break;
-		case Class.ClassHunter:
-			return new HunterTalentsPicker(parent, player as Player<Spec.SpecHunter>) as TalentsPicker<SpecType>;
-			break;
-		case Class.ClassMage:
-			return new MageTalentsPicker(parent, player as Player<Spec.SpecMage>) as TalentsPicker<SpecType>;
-			break;
-		case Class.ClassPaladin:
-			return new PaladinTalentsPicker(parent, player as Player<Spec.SpecRetributionPaladin>) as TalentsPicker<SpecType>;
-			break;
-		case Class.ClassRogue:
-			return new RogueTalentsPicker(parent, player as Player<Spec.SpecRogue>) as TalentsPicker<SpecType>;
-			break;
-		case Class.ClassPriest:
-			return new PriestTalentsPicker(parent, player as Player<Spec.SpecShadowPriest>) as TalentsPicker<SpecType>;
-			break;
-		case Class.ClassWarlock:
-			return new WarlockTalentsPicker(parent, player as Player<Spec.SpecWarlock>) as TalentsPicker<SpecType>;
-			break;
-		case Class.ClassWarrior:
-			return new WarriorTalentsPicker(parent, player as Player<Spec.SpecWarrior>) as TalentsPicker<SpecType>;
-			break;
-		default:
-			throw new Error('Unimplemented class talents: ' + player.getClass());
-	}
+import * as Mechanics from '/wotlk/core/constants/mechanics.js';
+
+export function newTalentsPicker(parent: HTMLElement, player: Player<any>): TalentsPicker<Player<any>, any> {
+	return new TalentsPicker(parent, player, classTalentsConfig[player.getClass()], {
+		changedEvent: (player: Player<any>) => player.talentsChangeEmitter,
+		getValue: (player: Player<any>) => player.getTalentsString(),
+		setValue: (eventID: EventID, player: Player<any>, newValue: string) => {
+			player.setTalentsString(eventID, newValue);
+		},
+		numRows: 9,
+		pointsPerRow: 5,
+		maxPoints: Mechanics.CHARACTER_LEVEL - 9,
+	});
 }
 
-export function newGlyphsPicker(parent: HTMLElement, player: Player<any>): GlyphsPicker | null {
-	switch (player.getClass()) {
-		case Class.ClassDruid:
-			return new DruidGlyphsPicker(parent, player);
-			break;
-		case Class.ClassShaman:
-			return new ShamanGlyphsPicker(parent, player);
-			break;
-		case Class.ClassHunter:
-			return new HunterGlyphsPicker(parent, player);
-			break;
-		case Class.ClassMage:
-			return new MageGlyphsPicker(parent, player);
-			break;
-		case Class.ClassPaladin:
-			return new PaladinGlyphsPicker(parent, player);
-			break;
-		case Class.ClassRogue:
-			return new RogueGlyphsPicker(parent, player);
-			break;
-		case Class.ClassPriest:
-			return new PriestGlyphsPicker(parent, player);
-			break;
-		case Class.ClassWarlock:
-			return new WarlockGlyphsPicker(parent, player);
-			break;
-		case Class.ClassWarrior:
-			return new WarriorGlyphsPicker(parent, player);
-			break;
-	}
-	return null;
-	//throw new Error('Unimplemented class glyphs: ' + player.getClass());
+export function newGlyphsPicker(parent: HTMLElement, player: Player<any>): GlyphsPicker {
+	return new GlyphsPicker(parent, player, classGlyphsConfig[player.getClass()]);
 }
 
 const classTalentsConfig: Record<Class, TalentsConfig<any>> = {
@@ -98,6 +50,19 @@ const classTalentsConfig: Record<Class, TalentsConfig<any>> = {
 	[Class.ClassPriest]: priestTalentsConfig,
 	[Class.ClassWarlock]: warlockTalentsConfig,
 	[Class.ClassWarrior]: warriorTalentsConfig,
+};
+
+const classGlyphsConfig: Record<Class, GlyphsConfig> = {
+	[Class.ClassUnknown]: { majorGlyphs: [], minorGlyphs: [] },
+	[Class.ClassDruid]: druidGlyphsConfig,
+	[Class.ClassShaman]: shamanGlyphsConfig,
+	[Class.ClassHunter]: hunterGlyphsConfig,
+	[Class.ClassMage]: mageGlyphsConfig,
+	[Class.ClassRogue]: rogueGlyphsConfig,
+	[Class.ClassPaladin]: paladinGlyphsConfig,
+	[Class.ClassPriest]: priestGlyphsConfig,
+	[Class.ClassWarlock]: warlockGlyphsConfig,
+	[Class.ClassWarrior]: warriorGlyphsConfig,
 };
 
 export function talentSpellIdsToTalentString(playerClass: Class, talentIds: Array<number>): string {
@@ -120,7 +85,7 @@ export function talentSpellIdsToTalentString(playerClass: Class, talentIds: Arra
 }
 
 export function talentStringToProto<SpecType extends Spec>(spec: Spec, talentString: string): SpecTalents<SpecType> {
-	const talentsConfig = classTalentsConfig[specToClass[spec]] as TalentsConfig<SpecType>;
+	const talentsConfig = classTalentsConfig[specToClass[spec]] as TalentsConfig<SpecTalents<SpecType>>;
 
 	const specFunctions = specTypeFunctions[spec];
 	const proto = specFunctions.talentsCreate() as SpecTalents<SpecType>;
