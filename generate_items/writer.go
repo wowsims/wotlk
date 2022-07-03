@@ -154,7 +154,7 @@ func gemToGoString(gemDeclaration GemDeclaration, gemResponse ItemResponse) stri
 	gemStr += fmt.Sprintf("Stats: %s, ", statsToGoString(gemResponse.GetGemStats(), gemDeclaration.Stats))
 
 	if gemResponse.GetUnique() {
-		gemStr += fmt.Sprintf("Unique:true, ")
+		gemStr += "Unique:true, "
 	}
 
 	gemStr += "}"
@@ -223,7 +223,7 @@ func itemToGoString(itemData ItemData) string {
 	itemStr += fmt.Sprintf("Quality:proto.ItemQuality_%s, ", proto.ItemQuality(itemData.Response.GetQuality()).String())
 
 	if itemData.Response.GetUnique() {
-		itemStr += fmt.Sprintf("Unique:true, ")
+		itemStr += "Unique:true, "
 	}
 
 	itemStr += fmt.Sprintf("Ilvl:%d, ", itemData.Response.GetItemLevel())
@@ -232,18 +232,17 @@ func itemToGoString(itemData ItemData) string {
 		itemStr += fmt.Sprintf("QualityModifier:%0.03f, ", itemData.QualityModifier)
 	}
 
-	itemStr += fmt.Sprintf("Stats: %s, ", statsToGoString(itemData.Response.GetStats(), itemData.Declaration.Stats))
+	itemStr += fmt.Sprintf("Stats: %s", statsToGoString(itemData.Response.GetStats(), itemData.Declaration.Stats))
 
 	gemSockets := itemData.Response.GetGemSockets()
 	if len(gemSockets) > 0 {
-		itemStr += "GemSockets: []proto.GemColor{"
+		itemStr += ", GemSockets: []proto.GemColor{"
 		for _, gemColor := range gemSockets {
 			itemStr += fmt.Sprintf("proto.GemColor_%s,", gemColor.String())
 		}
 		itemStr += "}, "
+		itemStr += fmt.Sprintf("SocketBonus: %s", statsToGoString(itemData.Response.GetSocketBonus(), Stats{}))
 	}
-
-	itemStr += fmt.Sprintf("SocketBonus: %s", statsToGoString(itemData.Response.GetSocketBonus(), Stats{}))
 
 	setName := itemData.Response.GetItemSetName()
 	if setName != "" {

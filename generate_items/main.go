@@ -84,6 +84,9 @@ func main() {
 		} else if gemsData[j].Response == nil {
 			return true
 		}
+		if gemsData[i].Response.GetName() == gemsData[j].Response.GetName() {
+			return gemsData[i].Declaration.ID < gemsData[j].Declaration.ID
+		}
 		return gemsData[i].Response.GetName() < gemsData[j].Response.GetName()
 	})
 	writeGemFile(*outDir, gemsData)
@@ -93,6 +96,9 @@ func main() {
 			return false
 		} else if itemsData[j].Response == nil {
 			return true
+		}
+		if itemsData[i].Response.GetName() == itemsData[j].Response.GetName() {
+			return itemsData[i].Declaration.ID < itemsData[j].Declaration.ID
 		}
 		return itemsData[i].Response.GetName() < itemsData[j].Response.GetName()
 	})

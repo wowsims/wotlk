@@ -58,6 +58,7 @@ enum Class {
 	ClassShaman = 7;
 	ClassWarlock = 8;
 	ClassWarrior = 9;
+	ClassDeathKnight = 10;
 }
 
 enum Stat {
