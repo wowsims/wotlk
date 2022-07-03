@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warrior *Warrior) RegisterRecklessnessCD() {
@@ -15,12 +14,17 @@ func (warrior *Warrior) RegisterRecklessnessCD() {
 		Duration:  time.Second * 12,
 		MaxStacks: 3,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			warrior.AddStatDynamic(sim, stats.MeleeCrit, 100*core.MeleeCritRatingPerCritChance)
+			warrior.PseudoStats.BonusMeleeSpellCritRating += 100 * core.MeleeCritRatingPerCritChance
 			warrior.PseudoStats.DamageTakenMultiplier *= 1.2
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			warrior.AddStatDynamic(sim, stats.MeleeCrit, -100*core.MeleeCritRatingPerCritChance)
+			warrior.PseudoStats.BonusMeleeSpellCritRating -= 100 * core.MeleeCritRatingPerCritChance
 			warrior.PseudoStats.DamageTakenMultiplier /= 1.2
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if aura.IsActive() && spellEffect.ProcMask.Matches(core.ProcMaskMeleeSpecial) {
+				aura.RemoveStack(sim)
+			}
 		},
 	})
 
