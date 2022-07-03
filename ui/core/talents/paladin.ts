@@ -1,24 +1,9 @@
-import { Spec } from '/wotlk/core/proto/common.js';
 import { PaladinTalents, PaladinMajorGlyph, PaladinMinorGlyph } from '/wotlk/core/proto/paladin.js';
-import { Player } from '/wotlk/core/player.js';
 
-import { GlyphsConfig, GlyphsPicker } from './glyphs_picker.js';
-import { TalentsConfig, TalentsPicker, newTalentsConfig } from './talents_picker.js';
+import { GlyphsConfig } from './glyphs_picker.js';
+import { TalentsConfig, newTalentsConfig } from './talents_picker.js';
 
-// Talents are the same for all Paladin specs, so its ok to just use RetributionPaladin here
-export class PaladinTalentsPicker extends TalentsPicker<Spec.SpecRetributionPaladin> {
-	constructor(parent: HTMLElement, player: Player<Spec.SpecRetributionPaladin>) {
-		super(parent, player, paladinTalentsConfig);
-	}
-}
-
-export class PaladinGlyphsPicker extends GlyphsPicker {
-	constructor(parent: HTMLElement, player: Player<any>) {
-		super(parent, player, paladinGlyphsConfig);
-	}
-}
-
-export const paladinTalentsConfig: TalentsConfig<Spec.SpecRetributionPaladin> = newTalentsConfig([
+export const paladinTalentsConfig: TalentsConfig<PaladinTalents> = newTalentsConfig([
 	{
 		name: 'Holy',
 		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/classic/382.jpg',

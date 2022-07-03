@@ -1,23 +1,9 @@
-import { Spec } from '/wotlk/core/proto/common.js';
 import { MageTalents, MageMajorGlyph, MageMinorGlyph } from '/wotlk/core/proto/mage.js';
-import { Player } from '/wotlk/core/player.js';
 
-import { GlyphsConfig, GlyphsPicker } from './glyphs_picker.js';
-import { TalentsConfig, TalentsPicker, newTalentsConfig } from './talents_picker.js';
+import { GlyphsConfig } from './glyphs_picker.js';
+import { TalentsConfig, newTalentsConfig } from './talents_picker.js';
 
-export class MageTalentsPicker extends TalentsPicker<Spec.SpecMage> {
-	constructor(parent: HTMLElement, player: Player<Spec.SpecMage>) {
-		super(parent, player, mageTalentsConfig);
-	}
-}
-
-export class MageGlyphsPicker extends GlyphsPicker {
-	constructor(parent: HTMLElement, player: Player<any>) {
-		super(parent, player, mageGlyphsConfig);
-	}
-}
-
-export const mageTalentsConfig: TalentsConfig<Spec.SpecMage> = newTalentsConfig([
+export const mageTalentsConfig: TalentsConfig<MageTalents> = newTalentsConfig([
 	{
 		name: 'Arcane',
 		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/81.jpg',

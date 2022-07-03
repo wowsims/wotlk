@@ -51,6 +51,9 @@ message Player {
 
 	Glyphs glyphs = 28;
 
+	Profession profession1 = 29;
+	Profession profession2 = 30;
+
 	Cooldowns cooldowns = 19;
 
 	bool in_front_of_target = 23;

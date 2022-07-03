@@ -1,23 +1,9 @@
-import { Spec } from '/wotlk/core/proto/common.js';
 import { HunterTalents, HunterMajorGlyph, HunterMinorGlyph } from '/wotlk/core/proto/hunter.js';
-import { Player } from '/wotlk/core/player.js';
 
-import { GlyphsConfig, GlyphsPicker } from './glyphs_picker.js';
-import { TalentsConfig, TalentsPicker, newTalentsConfig } from './talents_picker.js';
+import { GlyphsConfig } from './glyphs_picker.js';
+import { TalentsConfig, newTalentsConfig } from './talents_picker.js';
 
-export class HunterTalentsPicker extends TalentsPicker<Spec.SpecHunter> {
-	constructor(parent: HTMLElement, player: Player<Spec.SpecHunter>) {
-		super(parent, player, hunterTalentsConfig);
-	}
-}
-
-export class HunterGlyphsPicker extends GlyphsPicker {
-	constructor(parent: HTMLElement, player: Player<any>) {
-		super(parent, player, hunterGlyphsConfig);
-	}
-}
-
-export const hunterTalentsConfig: TalentsConfig<Spec.SpecHunter> = newTalentsConfig([
+export const hunterTalentsConfig: TalentsConfig<HunterTalents> = newTalentsConfig([
 	{
 		name: 'Beast Mastery',
 		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/361.jpg',

@@ -1,23 +1,9 @@
-import { Spec } from '/wotlk/core/proto/common.js';
 import { WarriorTalents, WarriorMajorGlyph, WarriorMinorGlyph } from '/wotlk/core/proto/warrior.js';
-import { Player } from '/wotlk/core/player.js';
 
-import { GlyphsConfig, GlyphsPicker } from './glyphs_picker.js';
-import { TalentsConfig, TalentsPicker, newTalentsConfig } from './talents_picker.js';
+import { GlyphsConfig } from './glyphs_picker.js';
+import { TalentsConfig, newTalentsConfig } from './talents_picker.js';
 
-export class WarriorTalentsPicker extends TalentsPicker<Spec.SpecWarrior> {
-	constructor(parent: HTMLElement, player: Player<Spec.SpecWarrior>) {
-		super(parent, player, warriorTalentsConfig);
-	}
-}
-
-export class WarriorGlyphsPicker extends GlyphsPicker {
-	constructor(parent: HTMLElement, player: Player<any>) {
-		super(parent, player, warriorGlyphsConfig);
-	}
-}
-
-export const warriorTalentsConfig: TalentsConfig<Spec.SpecWarrior> = newTalentsConfig([
+export const warriorTalentsConfig: TalentsConfig<WarriorTalents> = newTalentsConfig([
 	{
 		name: 'Arms',
 		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/161.jpg',
