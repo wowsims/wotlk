@@ -1,24 +1,9 @@
-import { Spec } from '/wotlk/core/proto/common.js';
 import { PriestTalents, PriestMajorGlyph, PriestMinorGlyph } from '/wotlk/core/proto/priest.js';
-import { Player } from '/wotlk/core/player.js';
 
-import { GlyphsConfig, GlyphsPicker } from './glyphs_picker.js';
-import { TalentsConfig, TalentsPicker, newTalentsConfig } from './talents_picker.js';
+import { GlyphsConfig } from './glyphs_picker.js';
+import { TalentsConfig, newTalentsConfig } from './talents_picker.js';
 
-// Talents are the same for all Priest specs, so its ok to just use ShadowPriest here
-export class PriestTalentsPicker extends TalentsPicker<Spec.SpecShadowPriest> {
-	constructor(parent: HTMLElement, player: Player<Spec.SpecShadowPriest>) {
-		super(parent, player, priestTalentsConfig);
-	}
-}
-
-export class PriestGlyphsPicker extends GlyphsPicker {
-	constructor(parent: HTMLElement, player: Player<any>) {
-		super(parent, player, priestGlyphsConfig);
-	}
-}
-
-export const priestTalentsConfig: TalentsConfig<Spec.SpecShadowPriest> = newTalentsConfig([
+export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfig([
 	{
 		name: 'Discipline',
 		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/201.jpg',

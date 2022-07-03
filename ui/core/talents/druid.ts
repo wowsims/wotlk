@@ -1,24 +1,9 @@
-import { Spec } from '/wotlk/core/proto/common.js';
 import { DruidTalents, DruidMajorGlyph, DruidMinorGlyph } from '/wotlk/core/proto/druid.js';
-import { Player } from '/wotlk/core/player.js';
 
-import { GlyphsConfig, GlyphsPicker } from './glyphs_picker.js';
-import { TalentsConfig, TalentsPicker, newTalentsConfig } from './talents_picker.js';
+import { GlyphsConfig, } from './glyphs_picker.js';
+import { TalentsConfig, newTalentsConfig } from './talents_picker.js';
 
-// Talents are the same for all Druid specs, so its ok to just use BalanceDruid here
-export class DruidTalentsPicker extends TalentsPicker<Spec.SpecBalanceDruid> {
-	constructor(parent: HTMLElement, player: Player<Spec.SpecBalanceDruid>) {
-		super(parent, player, druidTalentsConfig)
-	}
-}
-
-export class DruidGlyphsPicker extends GlyphsPicker {
-	constructor(parent: HTMLElement, player: Player<any>) {
-		super(parent, player, druidGlyphsConfig);
-	}
-}
-
-export const druidTalentsConfig: TalentsConfig<Spec.SpecBalanceDruid> = newTalentsConfig([
+export const druidTalentsConfig: TalentsConfig<DruidTalents> = newTalentsConfig([
 	{
 		name: 'Balance',
 		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/283.jpg',

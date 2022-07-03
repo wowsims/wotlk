@@ -1,4 +1,5 @@
 import { Component } from '/wotlk/core/components/component.js';
+import { Input, InputConfig } from '/wotlk/core/components/input.js';
 import { Spec } from '/wotlk/core/proto/common.js';
 import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
 import { SpecTalents } from '/wotlk/core/proto_utils/utils.js';
@@ -7,26 +8,51 @@ import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
 import { isRightClick } from '/wotlk/core/utils.js';
 import { sum } from '/wotlk/core/utils.js';
 
-const MAX_TALENT_POINTS = 61;
-const NUM_ROWS = 9;
-const TALENTS_STORAGE_KEY = 'Talents';
+export interface TalentsPickerConfig<ModObject> extends InputConfig<ModObject, string> {
+	numRows: number,
+	pointsPerRow: number,
+	maxPoints: number,
+}
 
-export abstract class TalentsPicker<SpecType extends Spec> extends Component {
-	private readonly player: Player<SpecType>;
+export class TalentsPicker<ModObject, TalentsProto> extends Input<ModObject, string> {
+	readonly numRows: number;
+	readonly pointsPerRow: number;
+	maxPoints: number;
+
 	frozen: boolean;
-	readonly trees: Array<TalentTreePicker<SpecType>>;
+	readonly trees: Array<TalentTreePicker<TalentsProto>>;
 
-	constructor(parent: HTMLElement, player: Player<SpecType>, treeConfigs: TalentsConfig<SpecType>) {
-		super(parent, 'talents-picker-root');
-		this.player = player;
+	constructor(parent: HTMLElement, modObject: ModObject, treeConfigs: TalentsConfig<TalentsProto>, config: TalentsPickerConfig<ModObject>) {
+		super(parent, 'talents-picker-root', modObject, config);
+		this.numRows = config.numRows;
+		this.pointsPerRow = config.pointsPerRow;
+		this.maxPoints = config.maxPoints;
+
 		this.frozen = false;
-		this.trees = treeConfigs.map(treeConfig => new TalentTreePicker(this.rootElem, player, treeConfig, this));
+		this.trees = treeConfigs.map(treeConfig => new TalentTreePicker(this.rootElem, treeConfig, this));
 		this.trees.forEach(tree => tree.talents.forEach(talent => talent.setPoints(0, false)));
 
-		this.setTalentsString(TypedEvent.nextEventID(), this.player.getTalentsString());
-		this.player.talentsChangeEmitter.on(eventID => {
-			this.setTalentsString(eventID, this.player.getTalentsString());
-		});
+		this.init();
+	}
+
+	getInputElem(): HTMLElement {
+		return this.rootElem;
+	}
+
+	getInputValue(): string {
+		return this.trees.map(tree => tree.getTalentsString()).join('-').replace(/-+$/g, '');
+	}
+
+	setInputValue(newValue: string) {
+		const parts = newValue.split('-');
+		this.trees.forEach((tree, idx) => tree.setTalentsString(parts[idx] || ''));
+
+		if (this.isFull()) {
+			this.rootElem.classList.add('talents-full');
+		} else {
+			this.rootElem.classList.remove('talents-full');
+		}
+		this.trees.forEach(tree => tree.update());
 	}
 
 	get numPoints() {
@@ -34,31 +60,7 @@ export abstract class TalentsPicker<SpecType extends Spec> extends Component {
 	}
 
 	isFull() {
-		return this.numPoints >= MAX_TALENT_POINTS;
-	}
-
-	update(eventID: EventID) {
-		if (this.isFull()) {
-			this.rootElem.classList.add('talents-full');
-		} else {
-			this.rootElem.classList.remove('talents-full');
-		}
-
-		this.trees.forEach(tree => tree.update());
-
-		TypedEvent.freezeAllAndDo(() => {
-			this.player.setTalentsString(eventID, this.getTalentsString());
-		});
-	}
-
-	getTalentsString(): string {
-		return this.trees.map(tree => tree.getTalentsString()).join('-').replace(/-+$/g, '');
-	}
-
-	setTalentsString(eventID: EventID, str: string) {
-		const parts = str.split('-');
-		this.trees.forEach((tree, idx) => tree.setTalentsString(parts[idx] || ''));
-		this.update(eventID);
+		return this.numPoints >= this.maxPoints;
 	}
 
 	// Freezes the talent calculator so that user input cannot change it.
@@ -68,17 +70,17 @@ export abstract class TalentsPicker<SpecType extends Spec> extends Component {
 	}
 }
 
-class TalentTreePicker<SpecType extends Spec> extends Component {
-	private readonly config: TalentTreeConfig<SpecType>;
+class TalentTreePicker<TalentsProto> extends Component {
+	private readonly config: TalentTreeConfig<TalentsProto>;
 	private readonly title: HTMLElement;
 
-	readonly talents: Array<TalentPicker<SpecType>>;
-	readonly picker: TalentsPicker<SpecType>;
+	readonly talents: Array<TalentPicker<TalentsProto>>;
+	readonly picker: TalentsPicker<any, TalentsProto>;
 
 	// The current number of points in this tree
 	numPoints: number;
 
-	constructor(parent: HTMLElement, player: Player<SpecType>, config: TalentTreeConfig<SpecType>, picker: TalentsPicker<SpecType>) {
+	constructor(parent: HTMLElement, config: TalentTreeConfig<TalentsProto>, picker: TalentsPicker<any, TalentsProto>) {
 		super(parent, 'talent-tree-picker-root');
 		this.config = config;
 		this.numPoints = 0;
@@ -98,7 +100,7 @@ class TalentTreePicker<SpecType extends Spec> extends Component {
 		const main = this.rootElem.getElementsByClassName('talent-tree-main')[0] as HTMLElement;
 		main.style.backgroundImage = `url('${config.backgroundUrl}')`;
 
-		this.talents = config.talents.map(talent => new TalentPicker(main, player, talent, this));
+		this.talents = config.talents.map(talent => new TalentPicker(main, talent, this));
 		this.talents.forEach(talent => {
 			if (talent.config.prereqLocation) {
 				this.getTalent(talent.config.prereqLocation).config.prereqOfLocation = talent.config.location;
@@ -109,7 +111,7 @@ class TalentTreePicker<SpecType extends Spec> extends Component {
 		reset.addEventListener('click', event => {
 			if (!this.picker.frozen) {
 				this.talents.forEach(talent => talent.setPoints(0, false));
-				this.picker.update(TypedEvent.nextEventID());
+				this.picker.inputChanged(TypedEvent.nextEventID());
 			}
 		});
 	}
@@ -119,7 +121,7 @@ class TalentTreePicker<SpecType extends Spec> extends Component {
 		this.talents.forEach(talent => talent.update());
 	}
 
-	getTalent(location: TalentLocation): TalentPicker<SpecType> {
+	getTalent(location: TalentLocation): TalentPicker<TalentsProto> {
 		const talent = this.talents.find(talent => talent.getRow() == location.rowIdx && talent.getCol() == location.colIdx);
 		if (!talent)
 			throw new Error('No talent found with location: ' + location);
@@ -135,14 +137,14 @@ class TalentTreePicker<SpecType extends Spec> extends Component {
 	}
 }
 
-class TalentPicker<SpecType extends Spec> extends Component {
-	readonly config: TalentConfig<SpecType>;
-	private readonly tree: TalentTreePicker<SpecType>;
+class TalentPicker<TalentsProto> extends Component {
+	readonly config: TalentConfig<TalentsProto>;
+	private readonly tree: TalentTreePicker<TalentsProto>;
 	private readonly pointsDisplay: HTMLElement;
 
 	private longTouchTimer?: number;
 
-	constructor(parent: HTMLElement, player: Player<SpecType>, config: TalentConfig<SpecType>, tree: TalentTreePicker<SpecType>) {
+	constructor(parent: HTMLElement, config: TalentConfig<TalentsProto>, tree: TalentTreePicker<TalentsProto>) {
 		super(parent, 'talent-picker-root', document.createElement('a'));
 		this.config = config;
 		this.tree = tree;
@@ -167,7 +169,7 @@ class TalentPicker<SpecType extends Spec> extends Component {
 			event.preventDefault();
 			this.longTouchTimer = setTimeout(() => {
 				this.setPoints(0, true);
-				this.tree.picker.update(TypedEvent.nextEventID());
+				this.tree.picker.inputChanged(TypedEvent.nextEventID());
 				this.longTouchTimer = undefined;
 			}, 750);
 		});
@@ -187,7 +189,7 @@ class TalentPicker<SpecType extends Spec> extends Component {
 				newPoints = 0;
 			}
 			this.setPoints(newPoints, true);
-			this.tree.picker.update(TypedEvent.nextEventID());
+			this.tree.picker.inputChanged(TypedEvent.nextEventID());
 		});
 		this.rootElem.addEventListener('mousedown', event => {
 			if (this.tree.picker.frozen)
@@ -199,7 +201,7 @@ class TalentPicker<SpecType extends Spec> extends Component {
 			} else {
 				this.setPoints(this.getPoints() + 1, true);
 			}
-			this.tree.picker.update(TypedEvent.nextEventID());
+			this.tree.picker.inputChanged(TypedEvent.nextEventID());
 		});
 	}
 
@@ -227,11 +229,11 @@ class TalentPicker<SpecType extends Spec> extends Component {
 		if (newPoints > oldPoints) {
 			const additionalPoints = newPoints - oldPoints;
 
-			if (this.tree.picker.numPoints + additionalPoints > MAX_TALENT_POINTS) {
+			if (this.tree.picker.numPoints + additionalPoints > this.tree.picker.maxPoints) {
 				return false;
 			}
 
-			if (this.tree.numPoints < this.getRow() * 5) {
+			if (this.tree.numPoints < this.getRow() * this.tree.picker.pointsPerRow) {
 				return false;
 			}
 
@@ -244,7 +246,7 @@ class TalentPicker<SpecType extends Spec> extends Component {
 
 			// Figure out whether any lower talents would have the row requirement
 			// broken by subtracting points.
-			const pointTotalsByRow = [...Array(NUM_ROWS).keys()]
+			const pointTotalsByRow = [...Array(this.tree.picker.numRows).keys()]
 				.map(rowIdx => this.tree.talents.filter(talent => talent.getRow() == rowIdx))
 				.map(talentsInRow => sum(talentsInRow.map(talent => talent.getPoints())));
 			pointTotalsByRow[this.getRow()] -= removedPoints;
@@ -254,7 +256,7 @@ class TalentPicker<SpecType extends Spec> extends Component {
 			if (!this.tree.talents.every(talent =>
 				talent.getPoints() == 0
 				|| talent.getRow() == 0
-				|| cumulativeTotalsByRow[talent.getRow() - 1] >= talent.getRow() * 5)) {
+				|| cumulativeTotalsByRow[talent.getRow() - 1] >= talent.getRow() * this.tree.picker.pointsPerRow)) {
 				return false;
 			}
 
@@ -312,12 +314,12 @@ class TalentPicker<SpecType extends Spec> extends Component {
 	}
 }
 
-export type TalentsConfig<SpecType extends Spec> = Array<TalentTreeConfig<SpecType>>;
+export type TalentsConfig<TalentsProto> = Array<TalentTreeConfig<TalentsProto>>;
 
-export type TalentTreeConfig<SpecType extends Spec> = {
+export type TalentTreeConfig<TalentsProto> = {
 	name: string;
 	backgroundUrl: string;
-	talents: Array<TalentConfig<SpecType>>;
+	talents: Array<TalentConfig<TalentsProto>>;
 };
 
 export type TalentLocation = {
@@ -327,8 +329,8 @@ export type TalentLocation = {
 	colIdx: number;
 };
 
-export type TalentConfig<SpecType extends Spec> = {
-	fieldName?: keyof SpecTalents<SpecType>
+export type TalentConfig<TalentsProto> = {
+	fieldName?: keyof TalentsProto;
 
 	location: TalentLocation;
 
@@ -345,7 +347,7 @@ export type TalentConfig<SpecType extends Spec> = {
 	maxPoints: number;
 };
 
-export function newTalentsConfig<SpecType extends Spec>(talents: TalentsConfig<SpecType>): TalentsConfig<SpecType> {
+export function newTalentsConfig<TalentsProto>(talents: TalentsConfig<TalentsProto>): TalentsConfig<TalentsProto> {
 	talents.forEach(tree => {
 		tree.talents.forEach((talent, i) => {
 			// Validate that talents are given in the correct order (left-to-right top-to-bottom).
