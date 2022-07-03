@@ -10,6 +10,7 @@ import {
 	IndividualBuffs,
 	ItemSlot,
 	Item,
+	Profession,
 	Race, ShattrathFaction,
 	RaidTarget,
 	RangedWeaponType,
@@ -79,7 +80,9 @@ export class Player<SpecType extends Spec> {
 	private bonusStats: Stats = new Stats();
 	private gear: Gear = new Gear({});
 	private race: Race;
-	private shattFaction: ShattrathFaction;
+	private profession1: Profession = 0;
+	private profession2: Profession = 0;
+	private shattFaction: ShattrathFaction = 0;
 	private rotation: SpecRotation<SpecType>;
 	private talentsString: string = '';
 	private glyphs: Glyphs = Glyphs.create();
@@ -103,6 +106,7 @@ export class Player<SpecType extends Spec> {
 	readonly consumesChangeEmitter = new TypedEvent<void>('PlayerConsumes');
 	readonly bonusStatsChangeEmitter = new TypedEvent<void>('PlayerBonusStats');
 	readonly gearChangeEmitter = new TypedEvent<void>('PlayerGear');
+	readonly professionChangeEmitter = new TypedEvent<void>('PlayerProfession');
 	readonly raceChangeEmitter = new TypedEvent<void>('PlayerRace');
 	readonly rotationChangeEmitter = new TypedEvent<void>('PlayerRotation');
 	readonly talentsChangeEmitter = new TypedEvent<void>('PlayerTalents');
@@ -125,7 +129,6 @@ export class Player<SpecType extends Spec> {
 
 		this.spec = spec;
 		this.race = specToEligibleRaces[this.spec][0];
-		this.shattFaction = 0;
 		this.specTypeFunctions = specTypeFunctions[this.spec] as SpecTypeFunctions<SpecType>;
 		this.rotation = this.specTypeFunctions.rotationCreate();
 		this.specOptions = this.specTypeFunctions.optionsCreate();
@@ -136,6 +139,7 @@ export class Player<SpecType extends Spec> {
 			this.consumesChangeEmitter,
 			this.bonusStatsChangeEmitter,
 			this.gearChangeEmitter,
+			this.professionChangeEmitter,
 			this.raceChangeEmitter,
 			this.rotationChangeEmitter,
 			this.talentsChangeEmitter,
@@ -285,6 +289,25 @@ export class Player<SpecType extends Spec> {
 		if (newRace != this.race) {
 			this.race = newRace;
 			this.raceChangeEmitter.emit(eventID);
+		}
+	}
+
+	getProfession1(): Profession {
+		return this.profession1;
+	}
+	setProfession1(eventID: EventID, newProfession: Profession) {
+		if (newProfession != this.profession1) {
+			this.profession1 = newProfession;
+			this.professionChangeEmitter.emit(eventID);
+		}
+	}
+	getProfession2(): Profession {
+		return this.profession2;
+	}
+	setProfession2(eventID: EventID, newProfession: Profession) {
+		if (newProfession != this.profession2) {
+			this.profession2 = newProfession;
+			this.professionChangeEmitter.emit(eventID);
 		}
 	}
 
@@ -711,6 +734,8 @@ export class Player<SpecType extends Spec> {
 
 	applySharedDefaults(eventID: EventID) {
 		TypedEvent.freezeAllAndDo(() => {
+			this.setProfession1(eventID, Profession.Engineering);
+			this.setProfession2(eventID, Profession.Jewelcrafting);
 			this.setShattFaction(eventID, ShattrathFaction.ShattrathFactionAldor);
 			this.setInFrontOfTarget(eventID, isTankSpec(this.spec));
 			this.setHealingModel(eventID, HealingModel.create());
@@ -723,6 +748,8 @@ export class Player<SpecType extends Spec> {
 
 	static applySharedDefaultsToProto(proto : PlayerProto) {
 		const spec = playerToSpec(proto);
+		proto.profession1 = Profession.Engineering;
+		proto.profession2 = Profession.Jewelcrafting;
 		proto.shattFaction = ShattrathFaction.ShattrathFactionAldor;
 		proto.inFrontOfTarget = isTankSpec(spec);
 		proto.healingModel = HealingModel.create();

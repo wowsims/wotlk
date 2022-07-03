@@ -62,6 +62,21 @@ enum Class {
 	ClassDeathKnight = 10;
 }
 
+enum Profession {
+	ProfessionUnknown = 0;
+	Alchemy = 1;
+	Blacksmithing = 2;
+	Enchanting = 3;
+	Engineering = 4;
+	Herbalism = 5;
+	Inscription = 6;
+	Jewelcrafting = 7;
+	Leatherworking = 8;
+	Mining = 9;
+	Skinning = 10;
+	Tailoring = 11;
+}
+
 enum Stat {
 	StatStrength = 0;
 	StatAgility = 1;

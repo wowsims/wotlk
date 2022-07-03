@@ -5,18 +5,6 @@ import { Player } from '/wotlk/core/player.js';
 import { GlyphsConfig, GlyphsPicker } from './glyphs_picker.js';
 import { TalentsConfig, TalentsPicker, newTalentsConfig } from './talents_picker.js';
 
-export class DeathKnightTalentsPicker extends TalentsPicker<Spec.SpecDeathKnight> {
-	constructor(parent: HTMLElement, player: Player<Spec.SpecDeathKnight>) {
-		super(parent, player, deathKnightTalentsConfig);
-	}
-}
-
-export class DeathKnightGlyphsPicker extends GlyphsPicker {
-	constructor(parent: HTMLElement, player: Player<any>) {
-		super(parent, player, DeathKnightGlyphsConfig);
-	}
-}
-
 export const deathKnightTalentsConfig: TalentsConfig<Spec.SpecDeathKnight> = newTalentsConfig([
     {
         name: 'Blood',
@@ -35,7 +23,7 @@ export const deathKnightTalentsConfig: TalentsConfig<Spec.SpecDeathKnight> = new
     }
 ]);
 
-export const DeathKnightGlyphsConfig: GlyphsConfig = {
+export const deathKnightGlyphsConfig: GlyphsConfig = {
 	majorGlyphs: {},
     minorGlyphs: {},
 };
