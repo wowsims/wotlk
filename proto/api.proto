@@ -4,6 +4,7 @@ package proto;
 option go_package = "./proto";
 
 import "common.proto";
+import "deathknight.proto";
 import "druid.proto";
 import "hunter.proto";
 import "mage.proto";
@@ -44,6 +45,7 @@ message Player {
 		Warlock warlock = 13;
 		Warrior warrior = 14;
 		ProtectionWarrior protection_warrior = 21;
+		DeathKnight death_knight = 31;
 	}
 
 	// Only used by the UI. Sim uses talents within the spec protos.

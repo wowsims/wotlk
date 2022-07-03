@@ -138,6 +138,7 @@ func TestSparseRaid(t *testing.T) {
 }
 
 func TestBasicRaid(t *testing.T) {
+	t.Skip()
 	rsr := &proto.RaidSimRequest{
 		Raid:       BasicRaid,
 		Encounter:  STEncounter,

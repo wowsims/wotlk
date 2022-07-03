@@ -19,6 +19,7 @@ enum Spec {
 	SpecWarlock = 5;
 	SpecWarrior = 6;
 	SpecProtectionWarrior = 11;
+	SpecDeathKnight = 15;
 }
 
 enum Race {
@@ -58,6 +59,7 @@ enum Class {
 	ClassShaman = 7;
 	ClassWarlock = 8;
 	ClassWarrior = 9;
+	ClassDeathKnight = 10;
 }
 
 enum Profession {
@@ -117,7 +119,6 @@ enum Stat {
 	StatFrostResistance = 38;
 	StatNatureResistance = 39;
 	StatShadowResistance = 40;
-	StatFeralAttackPower = 41;
 }
 
 enum ItemType {

@@ -78,13 +78,14 @@ func NewFeralDruid(character core.Character, options proto.Player) *FeralDruid {
 		},
 	})
 
-	cat.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.FeralAttackPower,
-		ModifiedStat: stats.AttackPower,
-		Modifier: func(feralAttackPower float64, attackPower float64) float64 {
-			return attackPower + feralAttackPower*1
-		},
-	})
+	// TODO: Make AP depend on weapon DPS instead of FAP
+	// cat.AddStatDependency(stats.StatDependency{
+	// 	SourceStat:   stats.FeralAttackPower,
+	// 	ModifiedStat: stats.AttackPower,
+	// 	Modifier: func(feralAttackPower float64, attackPower float64) float64 {
+	// 		return attackPower + feralAttackPower*1
+	// 	},
+	// })
 
 	return cat
 }

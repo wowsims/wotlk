@@ -54,6 +54,9 @@ func (testSuite *IndividualTestSuite) TestDPS(testName string, rsr *proto.RaidSi
 	testSuite.testNames = append(testSuite.testNames, testName)
 
 	result := RunRaidSim(rsr)
+	if result.Logs != "" {
+		fmt.Printf("LOGS: %s\n", result.Logs)
+	}
 	if result.ErrorResult != "" {
 		panic("simulation failed to run: " + result.ErrorResult)
 	}
