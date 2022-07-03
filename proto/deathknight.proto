@@ -1,0 +1,28 @@
+syntax = "proto3";
+package proto;
+
+option go_package = "./proto";
+
+message DeathKnightTalents {
+
+}
+
+enum DeathKnightMajorGlyph {
+	DeathKnightMajorGlyphNone = 0;
+}
+enum DeathKnightMinorGlyph {
+	DeathKnightMinorGlyphNone = 0;
+}
+
+message DeathKnight {
+	message Rotation {
+	}
+	Rotation rotation = 1;
+
+	DeathKnightTalents talents = 2;
+	
+	message Options {
+	}
+	Options options = 3;
+}
+
