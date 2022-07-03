@@ -5,7 +5,7 @@ The primary goal of this project is to provide a framework that makes it easy to
 [Live sims can be found here.](https://wowsims.github.io/wotlk "https://wowsims.github.io/wotlk")
 
 # Installation
-This project has dependencies on Go >=1.16, protobuf-compiler and the corresponding Go plugins, and node >= 14.0.
+This project has dependencies on Go >=1.18, protobuf-compiler and the corresponding Go plugins, and node >= 14.0.
 
 ## Ubuntu
 Do not use apt to install any dependencies, the versions they install are all too old.
