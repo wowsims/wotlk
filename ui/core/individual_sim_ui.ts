@@ -23,6 +23,7 @@ import { Gear } from '/wotlk/core/proto_utils/gear.js';
 import { GearPicker } from '/wotlk/core/components/gear_picker.js';
 import { GuardianElixir } from '/wotlk/core/proto/common.js';
 import { HealingModel } from '/wotlk/core/proto/common.js';
+import { HunterPetTalentsPicker } from '/wotlk/core/talents/hunter_pet.js';
 import { IconEnumPicker, IconEnumPickerConfig } from '/wotlk/core/components/icon_enum_picker.js';
 import { IconPicker, IconPickerConfig } from '/wotlk/core/components/icon_picker.js';
 import { ItemSlot } from '/wotlk/core/proto/common.js';
@@ -69,6 +70,7 @@ import { equalsOrBothNull, getEnumValues } from '/wotlk/core/utils.js';
 import { getMetaGemConditionDescription } from '/wotlk/core/proto_utils/gems.js';
 import { isDualWieldSpec } from '/wotlk/core/proto_utils/utils.js';
 import { launchedSpecs } from '/wotlk/core/launched_sims.js';
+import { makePetTypeInputConfig } from '/wotlk/core/talents/hunter_pet.js';
 import { newIndividualExporters } from '/wotlk/core/components/exporters.js';
 import { newIndividualImporters } from '/wotlk/core/components/importers.js';
 import { newGlyphsPicker } from '/wotlk/core/talents/factory.js';
@@ -855,18 +857,29 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 	private addTalentsTab() {
 		this.addTab('TALENTS', 'talents-tab', `
-			<div class="talents-tab-content">
-				<div class="talents-picker">
+			<div class="player-pet-toggle">
+			</div>
+			<div class="talents-content">
+				<div class="talents-tab-content">
+					<div class="talents-picker">
+					</div>
+					<div class="glyphs-picker">
+					</div>
 				</div>
-				<div class="glyphs-picker">
+				<div class="saved-talents-manager">
 				</div>
 			</div>
-			<div class="saved-talents-manager">
+			<div class="talents-content">
+				<div class="talents-tab-content">
+					<div class="pet-talents-picker">
+					</div>
+				</div>
 			</div>
 		`);
 
 		const talentsPicker = newTalentsPicker(this.rootElem.getElementsByClassName('talents-picker')[0] as HTMLElement, this.player);
 		const glyphsPicker = newGlyphsPicker(this.rootElem.getElementsByClassName('glyphs-picker')[0] as HTMLElement, this.player);
+
 		const savedTalentsManager = new SavedDataManager<Player<any>, SavedTalents>(this.rootElem.getElementsByClassName('saved-talents-manager')[0] as HTMLElement, this.player, {
 			label: 'Talents',
 			storageKey: this.getSavedTalentsStorageKey(),
@@ -899,6 +912,39 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 					}),
 				});
 			});
+
+			if (this.player.getClass() == Class.ClassHunter) {
+				const petTalentsPicker = new HunterPetTalentsPicker(this.rootElem.getElementsByClassName('pet-talents-picker')[0] as HTMLElement, this.player as Player<Spec.SpecHunter>);
+
+				let curShown = 0;
+				const toggledElems = Array.from(this.rootElem.getElementsByClassName('talents-content')) as Array<HTMLElement>;
+				const updateToggle = () => {
+					toggledElems[1 - curShown].style.display = 'none';
+					toggledElems[curShown].style.removeProperty('display');
+
+					if (curShown == 0) {
+						petTypeToggle.rootElem.style.display = 'none';
+					} else {
+						petTypeToggle.rootElem.style.removeProperty('display');
+					}
+				}
+
+				const toggleContainer = this.rootElem.getElementsByClassName('player-pet-toggle')[0] as HTMLElement;
+				const playerPetToggle = new EnumPicker(toggleContainer, this, {
+					values: [
+						{ name: 'Player', value: 0 },
+						{ name: 'Pet', value: 1 },
+					],
+					changedEvent: sim => new TypedEvent(),
+					getValue: sim => curShown,
+					setValue: (eventID, sim, newValue) => {
+						curShown = newValue;
+						updateToggle();
+					},
+				});
+				const petTypeToggle = new EnumPicker(toggleContainer, this.player as Player<Spec.SpecHunter>, makePetTypeInputConfig(false));
+				updateToggle();
+			}
 		});
 	}
 
