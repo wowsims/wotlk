@@ -14,6 +14,36 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 
 	if consumes.Flask != proto.Flask_FlaskUnknown {
 		switch consumes.Flask {
+		case proto.Flask_FlaskOfTheFrostWyrm:
+			character.AddStats(stats.Stats{
+				stats.SpellPower: 125,
+				stats.HealingPower: 125,
+			})
+		case proto.Flask_FlaskOfEndlessRage:
+			character.AddStats(stats.Stats{
+				stats.AttackPower:       180,
+				stats.RangedAttackPower: 180,
+			})
+		case proto.Flask_FlaskOfPureMojo:
+			character.AddStats(stats.Stats{
+				stats.MP5: 45,
+			})
+		case proto.Flask_FlaskOfStoneblood:
+			character.AddStats(stats.Stats{
+				stats.Health: 1300,
+			})
+		case proto.Flask_LesserFlaskOfToughness:
+			character.AddStats(stats.Stats{
+				stats.Resilience: 50,
+			})
+		case proto.Flask_LesserFlaskOfResistance:
+			character.AddStats(stats.Stats{
+				stats.ArcaneResistance: 50,
+				stats.FireResistance:   50,
+				stats.FrostResistance:  50,
+				stats.NatureResistance: 50,
+				stats.ShadowResistance: 50,
+			})
 		case proto.Flask_FlaskOfBlindingLight:
 			character.AddStats(stats.Stats{
 				stats.NatureSpellPower: 80,

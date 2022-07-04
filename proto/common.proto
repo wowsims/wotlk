@@ -301,13 +301,20 @@ enum WeaponImbue {
 
 enum Flask {
 	FlaskUnknown = 0;
-	FlaskOfBlindingLight = 1;
-	FlaskOfMightyRestoration = 2;
-	FlaskOfPureDeath = 3;
-	FlaskOfRelentlessAssault = 4;
-	FlaskOfSupremePower = 5;
-	FlaskOfFortification = 6;
-	FlaskOfChromaticWonder = 7;
+	FlaskOfTheFrostWyrm = 1;
+	FlaskOfEndlessRage = 2;
+	FlaskOfPureMojo = 3;
+	FlaskOfStoneblood = 4;
+	LesserFlaskOfToughness = 5;
+	LesserFlaskOfResistance = 6;
+
+	FlaskOfBlindingLight = 7;
+	FlaskOfMightyRestoration = 8;
+	FlaskOfPureDeath = 9;
+	FlaskOfRelentlessAssault = 10;
+	FlaskOfSupremePower = 11;
+	FlaskOfFortification = 12;
+	FlaskOfChromaticWonder = 13;
 }
 
 enum BattleElixir {

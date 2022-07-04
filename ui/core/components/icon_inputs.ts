@@ -441,6 +441,12 @@ export const makeConjuredInput = makeConsumeInputFactory('defaultConjured', [
 ] as Array<IconEnumValueConfig<Player<any>, Conjured>>);
 
 export const makeFlasksInput = makeConsumeInputFactory('flask', [
+	{ actionId: ActionId.fromItemId(46376), value: Flask.FlaskOfTheFrostWyrm },
+	{ actionId: ActionId.fromItemId(46377), value: Flask.FlaskOfEndlessRage },
+	{ actionId: ActionId.fromItemId(46378), value: Flask.FlaskOfPureMojo },
+	{ actionId: ActionId.fromItemId(46379), value: Flask.FlaskOfStoneblood },
+	{ actionId: ActionId.fromItemId(40079), value: Flask.LesserFlaskOfToughness },
+	{ actionId: ActionId.fromItemId(44939), value: Flask.LesserFlaskOfResistance },
 	{ actionId: ActionId.fromItemId(22861), value: Flask.FlaskOfBlindingLight },
 	{ actionId: ActionId.fromItemId(22853), value: Flask.FlaskOfMightyRestoration },
 	{ actionId: ActionId.fromItemId(22866), value: Flask.FlaskOfPureDeath },
