@@ -14,7 +14,7 @@ func (shaman *Shaman) ApplyTalents() {
 	}
 
 	if shaman.Talents.ThunderingStrikes > 0 {
-		shaman.AddStat(stats.MeleeCrit, core.MeleeCritRatingPerCritChance*1*float64(shaman.Talents.ThunderingStrikes))
+		shaman.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*1*float64(shaman.Talents.ThunderingStrikes))
 	}
 
 	shaman.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*1*float64(shaman.Talents.Anticipation))
@@ -149,7 +149,7 @@ func (shaman *Shaman) applyElementalDevastation() {
 		return
 	}
 
-	critBonus := 3.0 * float64(shaman.Talents.ElementalDevastation) * core.SpellCritRatingPerCritChance
+	critBonus := 3.0 * float64(shaman.Talents.ElementalDevastation) * core.CritRatingPerCritChance
 	procAura := shaman.NewTemporaryStatsAura("Elemental Devastation Proc", core.ActionID{SpellID: 30160}, stats.Stats{stats.MeleeCrit: critBonus}, time.Second*10)
 
 	shaman.RegisterAura(core.Aura{
@@ -183,10 +183,10 @@ func (shaman *Shaman) registerElementalMasteryCD() {
 		ActionID: actionID,
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			shaman.AddStatDynamic(sim, stats.SpellCrit, 100*core.SpellCritRatingPerCritChance)
+			shaman.AddStatDynamic(sim, stats.SpellCrit, 100*core.CritRatingPerCritChance)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			shaman.AddStatDynamic(sim, stats.SpellCrit, -100*core.SpellCritRatingPerCritChance)
+			shaman.AddStatDynamic(sim, stats.SpellCrit, -100*core.CritRatingPerCritChance)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if !spell.Flags.Matches(SpellFlagShock | SpellFlagElectric) {

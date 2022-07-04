@@ -161,7 +161,7 @@ func NewWarrior(character core.Character, talents proto.WarriorTalents, inputs W
 		SourceStat:   stats.Agility,
 		ModifiedStat: stats.MeleeCrit,
 		Modifier: func(agility float64, meleecrit float64) float64 {
-			return meleecrit + (agility/33)*core.MeleeCritRatingPerCritChance
+			return meleecrit + (agility/33)*core.CritRatingPerCritChance
 		},
 	})
 	warrior.AddStatDependency(stats.StatDependency{
@@ -212,7 +212,7 @@ func init() {
 		stats.Intellect:   34,
 		stats.Spirit:      53,
 		stats.AttackPower: 190,
-		stats.MeleeCrit:   1.14 * core.MeleeCritRatingPerCritChance,
+		stats.MeleeCrit:   1.14 * core.CritRatingPerCritChance,
 		stats.Dodge:       0.75 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDwarf, Class: proto.Class_ClassWarrior}] = stats.Stats{
@@ -223,7 +223,7 @@ func init() {
 		stats.Intellect:   32,
 		stats.Spirit:      50,
 		stats.AttackPower: 190,
-		stats.MeleeCrit:   1.14 * core.MeleeCritRatingPerCritChance,
+		stats.MeleeCrit:   1.14 * core.CritRatingPerCritChance,
 		stats.Dodge:       0.75 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceGnome, Class: proto.Class_ClassWarrior}] = stats.Stats{
@@ -234,7 +234,7 @@ func init() {
 		stats.Intellect:   38,
 		stats.Spirit:      51,
 		stats.AttackPower: 190,
-		stats.MeleeCrit:   1.14 * core.MeleeCritRatingPerCritChance,
+		stats.MeleeCrit:   1.14 * core.CritRatingPerCritChance,
 		stats.Dodge:       0.75 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceHuman, Class: proto.Class_ClassWarrior}] = stats.Stats{
@@ -245,7 +245,7 @@ func init() {
 		stats.Intellect:   33,
 		stats.Spirit:      56,
 		stats.AttackPower: 190,
-		stats.MeleeCrit:   1.14 * core.MeleeCritRatingPerCritChance,
+		stats.MeleeCrit:   1.14 * core.CritRatingPerCritChance,
 		stats.Dodge:       0.75 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassWarrior}] = stats.Stats{
@@ -256,7 +256,7 @@ func init() {
 		stats.Intellect:   33,
 		stats.Spirit:      51,
 		stats.AttackPower: 190,
-		stats.MeleeCrit:   1.14 * core.MeleeCritRatingPerCritChance,
+		stats.MeleeCrit:   1.14 * core.CritRatingPerCritChance,
 		stats.Dodge:       0.75 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceOrc, Class: proto.Class_ClassWarrior}] = stats.Stats{
@@ -267,7 +267,7 @@ func init() {
 		stats.Intellect:   30,
 		stats.Spirit:      54,
 		stats.AttackPower: 190,
-		stats.MeleeCrit:   1.14 * core.MeleeCritRatingPerCritChance,
+		stats.MeleeCrit:   1.14 * core.CritRatingPerCritChance,
 		stats.Dodge:       0.75 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTauren, Class: proto.Class_ClassWarrior}] = stats.Stats{
@@ -278,7 +278,7 @@ func init() {
 		stats.Intellect:   28,
 		stats.Spirit:      53,
 		stats.AttackPower: 190,
-		stats.MeleeCrit:   1.14 * core.MeleeCritRatingPerCritChance,
+		stats.MeleeCrit:   1.14 * core.CritRatingPerCritChance,
 		stats.Dodge:       0.75 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassWarrior}] = stats.Stats{
@@ -289,7 +289,7 @@ func init() {
 		stats.Intellect:   29,
 		stats.Spirit:      52,
 		stats.AttackPower: 190,
-		stats.MeleeCrit:   1.14 * core.MeleeCritRatingPerCritChance,
+		stats.MeleeCrit:   1.14 * core.CritRatingPerCritChance,
 		stats.Dodge:       0.75 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceUndead, Class: proto.Class_ClassWarrior}] = stats.Stats{
@@ -300,7 +300,7 @@ func init() {
 		stats.Intellect:   31,
 		stats.Spirit:      56,
 		stats.AttackPower: 190,
-		stats.MeleeCrit:   1.14 * core.MeleeCritRatingPerCritChance,
+		stats.MeleeCrit:   1.14 * core.CritRatingPerCritChance,
 		stats.Dodge:       0.75 * core.DodgeRatingPerDodgeChance,
 	}
 }

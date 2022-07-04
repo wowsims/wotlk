@@ -31,7 +31,7 @@ func (priest *Priest) registerShadowWordDeathSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:             core.ProcMaskSpellDamage,
 			BonusSpellHitRating:  float64(priest.Talents.ShadowFocus) * 2 * core.SpellHitRatingPerHitChance,
-			BonusSpellCritRating: float64(priest.Talents.ShadowPower) * 3 * core.SpellCritRatingPerCritChance,
+			BonusSpellCritRating: float64(priest.Talents.ShadowPower) * 3 * core.CritRatingPerCritChance,
 			DamageMultiplier: 1 *
 				(1 + float64(priest.Talents.Darkness)*0.02) *
 				core.TernaryFloat64(priest.Talents.Shadowform, 1.15, 1),

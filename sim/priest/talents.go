@@ -46,7 +46,7 @@ func (priest *Priest) ApplyTalents() {
 				return spellPower + spellPower*coeff
 			},
 		})
-		priest.AddStat(stats.SpellCrit, float64(priest.Talents.ForceOfWill)*1*core.SpellCritRatingPerCritChance)
+		priest.AddStat(stats.SpellCrit, float64(priest.Talents.ForceOfWill)*1*core.CritRatingPerCritChance)
 	}
 
 	if priest.Talents.Enlightenment > 0 {
@@ -141,11 +141,11 @@ func (priest *Priest) registerInnerFocus() {
 		ActionID: actionID,
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			priest.AddStatDynamic(sim, stats.SpellCrit, 25*core.SpellCritRatingPerCritChance)
+			priest.AddStatDynamic(sim, stats.SpellCrit, 25*core.CritRatingPerCritChance)
 			priest.PseudoStats.NoCost = true
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			priest.AddStatDynamic(sim, stats.SpellCrit, -25*core.SpellCritRatingPerCritChance)
+			priest.AddStatDynamic(sim, stats.SpellCrit, -25*core.CritRatingPerCritChance)
 			priest.PseudoStats.NoCost = false
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

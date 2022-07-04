@@ -70,8 +70,8 @@ func (shaman *Shaman) newElectricSpellEffect(minBaseDamage float64, maxBaseDamag
 		ProcMask:            core.ProcMaskSpellDamage,
 		BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * 2 * core.SpellHitRatingPerHitChance,
 		BonusSpellCritRating: 0 +
-			(float64(shaman.Talents.TidalMastery) * 1 * core.SpellCritRatingPerCritChance) +
-			(float64(shaman.Talents.CallOfThunder) * 1 * core.SpellCritRatingPerCritChance),
+			(float64(shaman.Talents.TidalMastery) * 1 * core.CritRatingPerCritChance) +
+			(float64(shaman.Talents.CallOfThunder) * 1 * core.CritRatingPerCritChance),
 		BonusSpellPower: 0 +
 			core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == TotemOfStorms, 33, 0) +
 			core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == TotemOfTheVoid, 55, 0) +

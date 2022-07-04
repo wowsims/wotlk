@@ -164,7 +164,7 @@ func New(char core.Character, form DruidForm, selfBuffs SelfBuffs, talents proto
 		SourceStat:   stats.Intellect,
 		ModifiedStat: stats.SpellCrit,
 		Modifier: func(intellect float64, spellCrit float64) float64 {
-			return spellCrit + (intellect/79.4)*core.SpellCritRatingPerCritChance
+			return spellCrit + (intellect/79.4)*core.CritRatingPerCritChance
 		},
 	})
 
@@ -180,7 +180,7 @@ func New(char core.Character, form DruidForm, selfBuffs SelfBuffs, talents proto
 		SourceStat:   stats.Agility,
 		ModifiedStat: stats.MeleeCrit,
 		Modifier: func(agility float64, meleeCrit float64) float64 {
-			return meleeCrit + (agility/25)*core.MeleeCritRatingPerCritChance
+			return meleeCrit + (agility/25)*core.CritRatingPerCritChance
 		},
 	})
 
@@ -204,9 +204,9 @@ func init() {
 		stats.Intellect:   115,
 		stats.Spirit:      135,
 		stats.Mana:        2370,
-		stats.SpellCrit:   40.66,                                    // 3.29% chance to crit shown on naked character screen
-		stats.AttackPower: -20,                                      // accounts for the fact that the first 20 points in Str only provide 1 AP rather than 2
-		stats.MeleeCrit:   0.96 * core.MeleeCritRatingPerCritChance, // 3.56% chance to crit shown on naked character screen
+		stats.SpellCrit:   40.66,                               // 3.29% chance to crit shown on naked character screen
+		stats.AttackPower: -20,                                 // accounts for the fact that the first 20 points in Str only provide 1 AP rather than 2
+		stats.MeleeCrit:   0.96 * core.CritRatingPerCritChance, // 3.56% chance to crit shown on naked character screen
 		stats.Dodge:       -1.87 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassDruid}] = stats.Stats{
@@ -217,9 +217,9 @@ func init() {
 		stats.Intellect:   120,
 		stats.Spirit:      133,
 		stats.Mana:        2370,
-		stats.SpellCrit:   40.60,                                    // 3.35% chance to crit shown on naked character screen
-		stats.AttackPower: -20,                                      // accounts for the fact that the first 20 points in Str only provide 1 AP rather than 2
-		stats.MeleeCrit:   0.96 * core.MeleeCritRatingPerCritChance, // 3.96% chance to crit shown on naked character screen
+		stats.SpellCrit:   40.60,                               // 3.35% chance to crit shown on naked character screen
+		stats.AttackPower: -20,                                 // accounts for the fact that the first 20 points in Str only provide 1 AP rather than 2
+		stats.MeleeCrit:   0.96 * core.CritRatingPerCritChance, // 3.96% chance to crit shown on naked character screen
 		stats.Dodge:       -1.87 * core.DodgeRatingPerDodgeChance,
 	}
 }

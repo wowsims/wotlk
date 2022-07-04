@@ -236,7 +236,7 @@ func NewHunter(character core.Character, options proto.Player) *Hunter {
 		hunter.AutoAttacks.Ranged.BaseDamageMax = weaponAvg
 
 		hunter.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*100)
-		hunter.AddStat(stats.MeleeCrit, core.MeleeCritRatingPerCritChance*-100)
+		hunter.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*-100)
 	}
 
 	hunter.pet = hunter.NewHunterPet()
@@ -245,7 +245,7 @@ func NewHunter(character core.Character, options proto.Player) *Hunter {
 		SourceStat:   stats.Intellect,
 		ModifiedStat: stats.SpellCrit,
 		Modifier: func(intellect float64, spellCrit float64) float64 {
-			return spellCrit + (intellect/55)*core.SpellCritRatingPerCritChance
+			return spellCrit + (intellect/55)*core.CritRatingPerCritChance
 		},
 	})
 
@@ -269,7 +269,7 @@ func NewHunter(character core.Character, options proto.Player) *Hunter {
 		SourceStat:   stats.Agility,
 		ModifiedStat: stats.MeleeCrit,
 		Modifier: func(agility float64, meleeCrit float64) float64 {
-			return meleeCrit + (agility/40)*core.MeleeCritRatingPerCritChance
+			return meleeCrit + (agility/40)*core.CritRatingPerCritChance
 		},
 	})
 
@@ -288,7 +288,7 @@ func init() {
 
 		stats.AttackPower:       120,
 		stats.RangedAttackPower: 130,
-		stats.MeleeCrit:         -1.53 * core.MeleeCritRatingPerCritChance,
+		stats.MeleeCrit:         -1.53 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassHunter}] = stats.Stats{
 		stats.Health:    3388,
@@ -301,7 +301,7 @@ func init() {
 
 		stats.AttackPower:       120,
 		stats.RangedAttackPower: 130,
-		stats.MeleeCrit:         -1.53 * core.MeleeCritRatingPerCritChance,
+		stats.MeleeCrit:         -1.53 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDwarf, Class: proto.Class_ClassHunter}] = stats.Stats{
 		stats.Health:    3388,
@@ -314,7 +314,7 @@ func init() {
 
 		stats.AttackPower:       120,
 		stats.RangedAttackPower: 130,
-		stats.MeleeCrit:         -1.53 * core.MeleeCritRatingPerCritChance,
+		stats.MeleeCrit:         -1.53 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassHunter}] = stats.Stats{
 		stats.Health:    3388,
@@ -327,7 +327,7 @@ func init() {
 
 		stats.AttackPower:       120,
 		stats.RangedAttackPower: 130,
-		stats.MeleeCrit:         -1.53 * core.MeleeCritRatingPerCritChance,
+		stats.MeleeCrit:         -1.53 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceOrc, Class: proto.Class_ClassHunter}] = stats.Stats{
 		stats.Health:    3388,
@@ -340,7 +340,7 @@ func init() {
 
 		stats.AttackPower:       120,
 		stats.RangedAttackPower: 130,
-		stats.MeleeCrit:         -1.53 * core.MeleeCritRatingPerCritChance,
+		stats.MeleeCrit:         -1.53 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTauren, Class: proto.Class_ClassHunter}] = stats.Stats{
 		stats.Health:    3388,
@@ -353,7 +353,7 @@ func init() {
 
 		stats.AttackPower:       120,
 		stats.RangedAttackPower: 130,
-		stats.MeleeCrit:         -1.53 * core.MeleeCritRatingPerCritChance,
+		stats.MeleeCrit:         -1.53 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassHunter}] = stats.Stats{
 		stats.Health:    3388,
@@ -366,7 +366,7 @@ func init() {
 
 		stats.AttackPower:       120,
 		stats.RangedAttackPower: 130,
-		stats.MeleeCrit:         -1.53 * core.MeleeCritRatingPerCritChance,
+		stats.MeleeCrit:         -1.53 * core.CritRatingPerCritChance,
 	}
 }
 

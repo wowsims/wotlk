@@ -56,7 +56,7 @@ func NewShaman(character core.Character, talents proto.ShamanTalents, totems pro
 		SourceStat:   stats.Intellect,
 		ModifiedStat: stats.SpellCrit,
 		Modifier: func(intellect float64, spellCrit float64) float64 {
-			return spellCrit + (intellect/78.1)*core.SpellCritRatingPerCritChance
+			return spellCrit + (intellect/78.1)*core.CritRatingPerCritChance
 		},
 	})
 
@@ -72,7 +72,7 @@ func NewShaman(character core.Character, talents proto.ShamanTalents, totems pro
 		SourceStat:   stats.Agility,
 		ModifiedStat: stats.MeleeCrit,
 		Modifier: func(agility float64, meleeCrit float64) float64 {
-			return meleeCrit + (agility/25)*core.MeleeCritRatingPerCritChance
+			return meleeCrit + (agility/25)*core.CritRatingPerCritChance
 		},
 	})
 

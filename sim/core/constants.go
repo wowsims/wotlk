@@ -9,28 +9,31 @@ const CharacterLevel = 80
 const GCDMin = time.Second * 1
 const GCDDefault = time.Millisecond * 1500
 
-const HasteRatingPerHastePercent = 32.79 // @level 80
-
-const MeleeCritRatingPerCritChance = 22.08
 const MeleeAttackRatingPerDamage = 14.0
+const ExpertisePerQuarterPercentReduction = 32.79 / 4 // TODO: Does it still cutoff at 1/4 percents?
+const ArmorPenPerPercentArmor = 13.99
 
-const ExpertisePerQuarterPercentReduction = 3.94
-const ArmorPenPerPercentArmor = 5.92
+const HasteRatingPerHastePercent = 32.79
+const CritRatingPerCritChance = 45.91
 
-const CritRatingPerCritChance = 22.08
-const HitRatingPerHitChance = 26.23199272 // @80
+const SpellHitRatingPerHitChance = 26.23199272
+const MeleeHitRatingPerHitChance = 26.23199272
 
-const DefenseRatingPerDefense = 2.3654
-const MissDodgeParryBlockCritChancePerDefense = 0.04
-const BlockRatingPerBlockChance = 7.8846
-const DodgeRatingPerDodgeChance = 18.9231
-const ParryRatingPerParryChance = 23.6538
-const ResilienceRatingPerCritReductionChance = 39.4231
-const ResilienceRatingPerCritDamageReductionPercent = 39.4231 / 2
+const DefenseRatingPerDefense = 4.92
+const DodgeRatingPerDodgeChance = 45.25
+const ParryRatingPerParryChance = 45.25
+const BlockRatingPerBlockChance = 16.39
+const MissDodgeParryBlockCritChancePerDefense = 0.0325 // TODO: verify this.
+
 const DefenseRatingToChanceReduction = (1.0 / DefenseRatingPerDefense) * MissDodgeParryBlockCritChancePerDefense / 100
 
-const LevelBasedNPCSpellResistancePerLevel = 28.0 / 3
+const ResilienceRatingPerCritReductionChance = 82.0
+const ResilienceRatingPerCritDamageReductionPercent = 39.4231 / 2.2
 
+// With a level 80 attacker you get 32/3 bonus resist per level above attacker
+const LevelBasedNPCSpellResistancePerLevel = 32.0 / 3
+
+// TODO: Find these numbers for WOTLK
 const EnemyAutoAttackAPCoefficient = 0.000649375
 const CrushChance = 0.15
 

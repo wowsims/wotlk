@@ -110,7 +110,7 @@ func NewTarget(options proto.Target, targetIndex int32) *Target {
 		target.Level = 73
 	}
 	if target.stats[stats.MeleeCrit] == 0 {
-		target.stats[stats.MeleeCrit] = UnitLevelFloat64(target.Level, 0.05, 0.052, 0.054, 0.056) * MeleeCritRatingPerCritChance
+		target.stats[stats.MeleeCrit] = UnitLevelFloat64(target.Level, 0.05, 0.052, 0.054, 0.056) * CritRatingPerCritChance
 	}
 
 	if target.Level == 73 && options.SuppressDodge {
