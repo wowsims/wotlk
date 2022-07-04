@@ -8,6 +8,14 @@ import { NO_TARGET } from '/wotlk/core/proto_utils/utils.js';
 // If true uses wotlkdb.com, else uses wowhead.com.
 export const USE_WOTLK_DB = false;
 
+
+type ItemData = {
+	ID: number,
+	Name: string,
+	Icon: string,
+};
+type ItemDB = Record<number, ItemData>;
+
 // Uniquely identifies a specific item / spell / thing in WoW. This object is immutable.
 export class ActionId {
 	readonly itemId: number;
@@ -382,6 +390,31 @@ export class ActionId {
 		}
 	}
 
+	private static dbCache = new Map<string, Promise<ItemDB>>();
+	private static async getDb(url: string): Promise<ItemDB> {
+		if (!ActionId.dbCache.has(url)) {
+			ActionId.dbCache.set(url, fetch(url)
+					.then(response => response.json())
+					.then(responseJson => {
+						const db: ItemDB = {};
+						(responseJson as Array<ItemData>).forEach(item => {
+							db[item.ID] = item;
+						});
+						return db;
+					}));
+		}
+		return ActionId.dbCache.get(url)!;
+	}
+	private static async getDbTooltipDataHelper(id: number, dbUrl: string): Promise<any> {
+		const db = await ActionId.getDb(dbUrl);
+		return db[id] ? {
+			name: db[id].Name,
+			icon: db[id].Icon,
+		} : {
+			name: '',
+			icon: '',
+		};
+	}
 	private static async getWowheadTooltipDataHelper(id: number, tooltipPostfix: string, cache: Map<number, Promise<any>>): Promise<any> {
 		if (!cache.has(id)) {
 			const url = `https://wowhead.com/wotlk/tooltip/${tooltipPostfix}/${id}`;
@@ -428,11 +461,12 @@ export class ActionId {
 	}
 
 	static async getItemTooltipData(id: number): Promise<any> {
-		if (USE_WOTLK_DB) {
-			return await ActionId.getWotlkdbTooltipDataHelper(id, 'item', itemToTooltipDataCache);
-		} else {
-			return await ActionId.getWowheadTooltipDataHelper(id, 'item', itemToTooltipDataCache);
-		}
+		return await ActionId.getDbTooltipDataHelper(id, '/wotlk/assets/item_data/all_items_db.json');
+		//if (USE_WOTLK_DB) {
+		//	return await ActionId.getWotlkdbTooltipDataHelper(id, 'item', itemToTooltipDataCache);
+		//} else {
+		//	return await ActionId.getWowheadTooltipDataHelper(id, 'item', itemToTooltipDataCache);
+		//}
 	}
 
 	static async getSpellTooltipData(id: number): Promise<any> {
