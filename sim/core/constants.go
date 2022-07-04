@@ -4,22 +4,21 @@ import (
 	"time"
 )
 
-const CharacterLevel = 70
+const CharacterLevel = 80
 
 const GCDMin = time.Second * 1
 const GCDDefault = time.Millisecond * 1500
 
-const HasteRatingPerHastePercent = 15.77
+const HasteRatingPerHastePercent = 32.79 // @level 80
 
 const MeleeCritRatingPerCritChance = 22.08
-const MeleeHitRatingPerHitChance = 15.77
 const MeleeAttackRatingPerDamage = 14.0
 
 const ExpertisePerQuarterPercentReduction = 3.94
 const ArmorPenPerPercentArmor = 5.92
 
-const SpellCritRatingPerCritChance = 22.08
-const SpellHitRatingPerHitChance = 12.62
+const CritRatingPerCritChance = 22.08
+const HitRatingPerHitChance = 26.23199272 // @80
 
 const DefenseRatingPerDefense = 2.3654
 const MissDodgeParryBlockCritChancePerDefense = 0.04
