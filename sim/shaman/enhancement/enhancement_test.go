@@ -16,7 +16,7 @@ func TestEnhancement(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
 		Class: proto.Class_ClassShaman,
 
-		Race:       proto.Race_RaceTroll10,
+		Race:       proto.Race_RaceTroll,
 		OtherRaces: []proto.Race{proto.Race_RaceOrc},
 
 		GearSet: core.GearSetCombo{Label: "P2", GearSet: Phase2Gear},

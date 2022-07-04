@@ -241,7 +241,7 @@ func init() {
 		stats.Mana:      2241,
 		stats.SpellCrit: core.SpellCritRatingPerCritChance * 0.926,
 	}
-	trollStats := stats.Stats{
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassMage}] = stats.Stats{
 		stats.Health:    3213,
 		stats.Strength:  34,
 		stats.Agility:   41,
@@ -251,8 +251,6 @@ func init() {
 		stats.Mana:      2241,
 		stats.SpellCrit: core.SpellCritRatingPerCritChance * 0.935,
 	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll10, Class: proto.Class_ClassMage}] = trollStats
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll30, Class: proto.Class_ClassMage}] = trollStats
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceUndead, Class: proto.Class_ClassMage}] = stats.Stats{
 		stats.Health:    3213,
 		stats.Strength:  32,

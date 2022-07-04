@@ -16,7 +16,7 @@ func TestArcane(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
 		Class: proto.Class_ClassMage,
 
-		Race: proto.Race_RaceTroll10,
+		Race: proto.Race_RaceTroll,
 
 		GearSet: core.GearSetCombo{Label: "P1Arcane", GearSet: P1ArcaneGear},
 
@@ -50,7 +50,7 @@ func TestFire(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
 		Class: proto.Class_ClassMage,
 
-		Race: proto.Race_RaceTroll10,
+		Race: proto.Race_RaceTroll,
 
 		GearSet: core.GearSetCombo{Label: "P1Fire", GearSet: P1FireGear},
 
@@ -84,7 +84,7 @@ func TestFrost(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
 		Class: proto.Class_ClassMage,
 
-		Race: proto.Race_RaceTroll10,
+		Race: proto.Race_RaceTroll,
 
 		GearSet: core.GearSetCombo{Label: "P1Frost", GearSet: P1FrostGear},
 

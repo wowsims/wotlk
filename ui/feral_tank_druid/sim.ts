@@ -168,7 +168,7 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 				IconInputs.GraceOfAirTotem,
 				IconInputs.BattleShout,
 				IconInputs.CommandingShout,
-				IconInputs.DraeneiRacialMelee,
+				IconInputs.HeroicPresence,
 				IconInputs.FerociousInspiration,
 				IconInputs.DevotionAura,
 				IconInputs.RetributionAura,

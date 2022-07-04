@@ -72,7 +72,7 @@ var castersWithElemental = &proto.Party{
 		},
 		{
 			Name:      "Elemental Shaman 1",
-			Race:      proto.Race_RaceTroll10,
+			Race:      proto.Race_RaceTroll,
 			Class:     proto.Class_ClassShaman,
 			Equipment: ElementalEquipment,
 			Spec: &proto.Player_ElementalShaman{
@@ -105,7 +105,7 @@ var castersWithElemental = &proto.Party{
 		},
 		{
 			Name:      "Arcane Mage 1",
-			Race:      proto.Race_RaceTroll10,
+			Race:      proto.Race_RaceTroll,
 			Class:     proto.Class_ClassMage,
 			Equipment: ArcaneEquipment,
 			Spec: &proto.Player_Mage{
@@ -195,7 +195,7 @@ var castersWithResto = &proto.Party{
 		},
 		{
 			Name:      "Arcane Mage 3",
-			Race:      proto.Race_RaceTroll10,
+			Race:      proto.Race_RaceTroll,
 			Class:     proto.Class_ClassMage,
 			Equipment: ArcaneEquipment,
 			Spec: &proto.Player_Mage{
@@ -242,7 +242,7 @@ func BenchmarkSimulate(b *testing.B) {
 					Players: []*proto.Player{
 						{
 							Name:      "Enhancement Shaman 1",
-							Race:      proto.Race_RaceTroll10,
+							Race:      proto.Race_RaceTroll,
 							Class:     proto.Class_ClassShaman,
 							Equipment: enhancement.Phase2Gear,
 							Spec: &proto.Player_EnhancementShaman{

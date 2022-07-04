@@ -12,16 +12,17 @@ func applyRaceEffects(agent Agent) {
 
 	switch character.Race {
 	case proto.Race_RaceBloodElf:
-		character.AddStat(stats.ArcaneResistance, 5)
-		character.AddStat(stats.FireResistance, 5)
-		character.AddStat(stats.FrostResistance, 5)
-		character.AddStat(stats.NatureResistance, 5)
-		character.AddStat(stats.ShadowResistance, 5)
+		character.PseudoStats.ReducedArcaneHitTakenChance += 0.02
+		character.PseudoStats.ReducedFireHitTakenChance += 0.02
+		character.PseudoStats.ReducedFrostHitTakenChance += 0.02
+		character.PseudoStats.ReducedNatureHitTakenChance += 0.02
+		character.PseudoStats.ReducedShadowHitTakenChance += 0.02
 		// TODO: Add major cooldown: arcane torrent
 	case proto.Race_RaceDraenei:
-		character.AddStat(stats.ShadowResistance, 10)
+		character.PseudoStats.ReducedShadowHitTakenChance += 0.02
+		// TODO: Gift of the naaru for healers
 	case proto.Race_RaceDwarf:
-		character.AddStat(stats.FrostResistance, 10)
+		character.PseudoStats.ReducedFrostHitTakenChance += 0.02
 
 		// Gun specialization (+1% ranged crit when using a gun).
 		if weapon := character.Equip[proto.ItemSlot_ItemSlotRanged]; weapon.ID != 0 {
@@ -29,8 +30,15 @@ func applyRaceEffects(agent Agent) {
 				character.PseudoStats.BonusRangedCritRating += 1 * MeleeCritRatingPerCritChance
 			}
 		}
+
+		applyWeaponSpecialization(
+				character,
+				5 * ExpertisePerQuarterPercentReduction,
+				[]proto.WeaponType{ proto.WeaponType_WeaponTypeMace })
+
+		// TODO: Stoneform
 	case proto.Race_RaceGnome:
-		character.AddStat(stats.ArcaneResistance, 10)
+		character.PseudoStats.ReducedArcaneHitTakenChance += 0.02
 
 		character.AddStatDependency(stats.StatDependency{
 			SourceStat:   stats.Intellect,
@@ -44,38 +52,18 @@ func applyRaceEffects(agent Agent) {
 			SourceStat:   stats.Spirit,
 			ModifiedStat: stats.Spirit,
 			Modifier: func(spirit float64, _ float64) float64 {
-				return spirit * 1.1
+				return spirit * 1.03
 			},
 		})
 
-		const expertiseBonus = 5 * ExpertisePerQuarterPercentReduction
-		mh := false
-		oh := false
-		isDW := false
-		if weapon := character.Equip[proto.ItemSlot_ItemSlotMainHand]; weapon.ID != 0 {
-			if weapon.WeaponType == proto.WeaponType_WeaponTypeSword || weapon.WeaponType == proto.WeaponType_WeaponTypeMace {
-				mh = true
-			}
-		}
-		if weapon := character.Equip[proto.ItemSlot_ItemSlotOffHand]; weapon.ID != 0 && weapon.WeaponType != proto.WeaponType_WeaponTypeShield {
-			isDW = true
-			if weapon.WeaponType == proto.WeaponType_WeaponTypeSword || weapon.WeaponType == proto.WeaponType_WeaponTypeMace {
-				oh = true
-			}
-		}
-		if mh && (oh || !isDW) {
-			character.AddStat(stats.Expertise, expertiseBonus)
-		} else {
-			if mh {
-				character.PseudoStats.BonusMHExpertiseRating += expertiseBonus
-			}
-			if oh {
-				character.PseudoStats.BonusOHExpertiseRating += expertiseBonus
-			}
-		}
+		applyWeaponSpecialization(
+				character,
+				3 * ExpertisePerQuarterPercentReduction,
+				[]proto.WeaponType{ proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeSword })
 	case proto.Race_RaceNightElf:
-		character.AddStat(stats.NatureResistance, 10)
-		character.AddStat(stats.Dodge, DodgeRatingPerDodgeChance*1)
+		character.PseudoStats.ReducedNatureHitTakenChance += 0.02
+		character.PseudoStats.ReducedPhysicalHitTakenChance += 0.02
+		// TODO: Shadowmeld?
 	case proto.Race_RaceOrc:
 		// Command (Pet damage +5%)
 		if len(character.Pets) > 0 {
@@ -111,41 +99,14 @@ func applyRaceEffects(agent Agent) {
 		})
 
 		// Axe specialization
-		mh := false
-		oh := false
-		isDW := false
-		const expertiseBonus = 5 * ExpertisePerQuarterPercentReduction
-		if weapon := character.Equip[proto.ItemSlot_ItemSlotMainHand]; weapon.ID != 0 {
-			if weapon.WeaponType == proto.WeaponType_WeaponTypeAxe {
-				mh = true
-			}
-		}
-		if weapon := character.Equip[proto.ItemSlot_ItemSlotOffHand]; weapon.ID != 0 {
-			isDW = true
-			if weapon.WeaponType == proto.WeaponType_WeaponTypeAxe {
-				oh = true
-			}
-		}
-		if mh && (oh || !isDW) {
-			character.AddStat(stats.Expertise, expertiseBonus)
-		} else {
-			if mh {
-				character.PseudoStats.BonusMHExpertiseRating += expertiseBonus
-			}
-			if oh {
-				character.PseudoStats.BonusOHExpertiseRating += expertiseBonus
-			}
-		}
+		applyWeaponSpecialization(
+				character,
+				5 * ExpertisePerQuarterPercentReduction,
+				[]proto.WeaponType{ proto.WeaponType_WeaponTypeAxe })
 	case proto.Race_RaceTauren:
-		character.AddStat(stats.NatureResistance, 10)
-		character.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Health,
-			ModifiedStat: stats.Health,
-			Modifier: func(health float64, _ float64) float64 {
-				return health * 1.05
-			},
-		})
-	case proto.Race_RaceTroll10, proto.Race_RaceTroll30:
+		character.PseudoStats.ReducedNatureHitTakenChance += 0.02
+		character.AddStat(stats.Health, character.GetBaseStats()[stats.Health] * 0.05)
+	case proto.Race_RaceTroll:
 		// Bow specialization (+1% ranged crit when using a bow).
 		if weapon := character.Equip[proto.ItemSlot_ItemSlotRanged]; weapon.ID != 0 {
 			if weapon.RangedWeaponType == proto.RangedWeaponType_RangedWeaponTypeBow {
@@ -159,53 +120,26 @@ func applyRaceEffects(agent Agent) {
 		}
 
 		// Berserking
-		hasteBonus := 1.1
-		if character.Race == proto.Race_RaceTroll30 {
-			hasteBonus = 1.3
-		}
-		inverseBonus := 1 / hasteBonus
-
-		var resourceType stats.Stat
-		var cost float64
-		var actionID ActionID
-		if character.Class == proto.Class_ClassRogue {
-			resourceType = stats.Energy
-			cost = 10
-			actionID = ActionID{SpellID: 26297}
-		} else if character.Class == proto.Class_ClassWarrior {
-			resourceType = stats.Rage
-			cost = 5
-			actionID = ActionID{SpellID: 26296}
-		} else {
-			resourceType = stats.Mana
-			cost = character.BaseMana() * 0.06
-			actionID = ActionID{SpellID: 20554}
-		}
+		actionID := ActionID{SpellID: 26297}
 
 		berserkingAura := character.RegisterAura(Aura{
 			Label:    "Berserking",
 			ActionID: actionID,
 			Duration: time.Second * 10,
 			OnGain: func(aura *Aura, sim *Simulation) {
-				character.MultiplyCastSpeed(hasteBonus)
-				character.MultiplyAttackSpeed(sim, hasteBonus)
+				character.MultiplyCastSpeed(1.2)
+				character.MultiplyAttackSpeed(sim, 1.2)
 			},
 			OnExpire: func(aura *Aura, sim *Simulation) {
-				character.MultiplyCastSpeed(inverseBonus)
-				character.MultiplyAttackSpeed(sim, inverseBonus)
+				character.MultiplyCastSpeed(1 / 1.2)
+				character.MultiplyAttackSpeed(sim, 1 / 1.2)
 			},
 		})
 
 		berserkingSpell := character.RegisterSpell(SpellConfig{
 			ActionID: actionID,
 
-			ResourceType: resourceType,
-			BaseCost:     cost,
-
 			Cast: CastConfig{
-				DefaultCast: Cast{
-					Cost: cost,
-				},
 				CD: Cooldown{
 					Timer:    character.NewTimer(),
 					Duration: time.Minute * 3,
@@ -220,17 +154,40 @@ func applyRaceEffects(agent Agent) {
 		character.AddMajorCooldown(MajorCooldown{
 			Spell: berserkingSpell,
 			Type:  CooldownTypeDPS,
-			CanActivate: func(sim *Simulation, character *Character) bool {
-				if character.Class == proto.Class_ClassRogue {
-					return character.CurrentEnergy() >= cost
-				} else if character.Class == proto.Class_ClassWarrior {
-					return character.CurrentRage() >= cost
-				} else {
-					return character.CurrentMana() >= cost
-				}
-			},
 		})
 	case proto.Race_RaceUndead:
-		character.AddStat(stats.ShadowResistance, 10)
+		character.PseudoStats.ReducedShadowHitTakenChance += 0.02
+	}
+}
+
+func applyWeaponSpecialization(character *Character, expertiseBonus float64, weaponTypes []proto.WeaponType) {
+	mh := false
+	oh := false
+	isDW := false
+	if weapon := character.Equip[proto.ItemSlot_ItemSlotMainHand]; weapon.ID != 0 {
+		for _, wt := range weaponTypes {
+			if weapon.WeaponType == wt {
+				mh = true
+			}
+		}
+	}
+	if weapon := character.Equip[proto.ItemSlot_ItemSlotOffHand]; weapon.ID != 0 && weapon.WeaponType != proto.WeaponType_WeaponTypeShield {
+		isDW = true
+		for _, wt := range weaponTypes {
+			if weapon.WeaponType == wt {
+				mh = true
+			}
+		}
+	}
+
+	if mh && (oh || !isDW) {
+		character.AddStat(stats.Expertise, expertiseBonus)
+	} else {
+		if mh {
+			character.PseudoStats.BonusMHExpertiseRating += expertiseBonus
+		}
+		if oh {
+			character.PseudoStats.BonusOHExpertiseRating += expertiseBonus
+		}
 	}
 }

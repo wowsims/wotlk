@@ -174,7 +174,7 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 				IconInputs.DevotionAura,
 				IconInputs.RetributionAura,
 				IconInputs.SanctityAura,
-				IconInputs.DraeneiRacialMelee,
+				IconInputs.HeroicPresence,
 				IconInputs.BraidedEterniumChain,
 				IconInputs.BloodPact,
 			],
