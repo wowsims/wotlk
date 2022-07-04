@@ -13,7 +13,8 @@ func (mage *Mage) registerManaGemsCD() {
 		return
 	}
 
-	manaMetrics := mage.NewManaMetrics(core.MageManaGemMCDActionID)
+	actionID := core.ActionID{ItemID: 22044}
+	manaMetrics := mage.NewManaMetrics(actionID)
 
 	var serpentCoilAura *core.Aura
 	if mage.HasTrinketEquipped(SerpentCoilBraidID) {
@@ -41,12 +42,12 @@ func (mage *Mage) registerManaGemsCD() {
 	})
 
 	spell := mage.RegisterSpell(core.SpellConfig{
-		ActionID: core.MageManaGemMCDActionID,
+		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
-				Timer:    mage.GetConjuredCD(),
+				Timer:    mage.NewTimer(),
 				Duration: time.Minute * 2,
 			},
 		},
@@ -69,7 +70,7 @@ func (mage *Mage) registerManaGemsCD() {
 			remainingManaGems--
 			if remainingManaGems == 0 {
 				// Disable this cooldown since we're out of emeralds.
-				mage.DisableMajorCooldown(core.MageManaGemMCDActionID)
+				mage.DisableMajorCooldown(actionID)
 			}
 		},
 	})

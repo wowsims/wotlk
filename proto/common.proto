@@ -255,14 +255,20 @@ enum Explosive {
 
 enum Potions {
 	UnknownPotion = 0;
-	DestructionPotion = 1;
-	SuperManaPotion = 2;
-	HastePotion = 3;
-	MightyRagePotion = 4;
-	FelManaPotion = 5;
-	InsaneStrengthPotion = 6;
-	IronshieldPotion = 7;
-	HeroicPotion = 8;
+	RunicHealingPotion = 1;
+	RunicManaPotion = 2;
+	IndestructiblePotion = 3;
+	PotionOfSpeed = 4;
+	PotionOfWildMagic = 5;
+
+	DestructionPotion = 6;
+	SuperManaPotion = 7;
+	HastePotion = 8;
+	MightyRagePotion = 9;
+	FelManaPotion = 10;
+	InsaneStrengthPotion = 11;
+	IronshieldPotion = 12;
+	HeroicPotion = 13;
 }
 
 enum Conjured {
@@ -476,8 +482,7 @@ message Consumes {
 	int32 pet_scroll_of_strength = 47;
 
 	Potions default_potion = 15;
-	Potions starting_potion = 16;
-	int32 num_starting_potions = 17;
+	Potions prepop_potion = 16;
 
 	Conjured default_conjured = 27;
 	Conjured starting_conjured = 48;

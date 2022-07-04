@@ -78,15 +78,15 @@ export function makePhaseSelector(parent: HTMLElement, sim: Sim): EnumPicker<Sim
 	});
 }
 
-export const StartingPotion = {
+export const PrepopPotion = {
 	type: 'enum' as const,
 	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
 	config: {
 		extraCssClasses: [
-			'starting-potion-picker',
+			'prepop-potion-picker',
 		],
-		label: 'Starting Potion',
-		labelTooltip: 'If set, this potion will be used instead of the default potion for the first few uses.',
+		label: 'Prepop Potion',
+		labelTooltip: 'If set, this potion will be used 1s before combat starts.',
 		values: [
 			{ name: 'None', value: Potions.UnknownPotion },
 			{ name: 'Destruction', value: Potions.DestructionPotion },
@@ -95,32 +95,12 @@ export const StartingPotion = {
 			{ name: 'Fel Mana', value: Potions.FelManaPotion },
 		],
 		changedEvent: (player: Player<any>) => player.consumesChangeEmitter,
-		getValue: (player: Player<any>) => player.getConsumes().startingPotion,
+		getValue: (player: Player<any>) => player.getConsumes().prepopPotion,
 		setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
 			const newConsumes = player.getConsumes();
-			newConsumes.startingPotion = newValue;
+			newConsumes.prepopPotion = newValue;
 			player.setConsumes(eventID, newConsumes);
 		},
-	},
-};
-
-export const NumStartingPotions = {
-	type: 'number' as const,
-	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-	config: {
-		extraCssClasses: [
-			'num-starting-potions-picker',
-		],
-		label: '# to use',
-		labelTooltip: 'The number of starting potions to use before going back to the default potion.',
-		changedEvent: (player: Player<any>) => player.consumesChangeEmitter,
-		getValue: (player: Player<any>) => player.getConsumes().numStartingPotions,
-		setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
-			const newConsumes = player.getConsumes();
-			newConsumes.numStartingPotions = newValue;
-			player.setConsumes(eventID, newConsumes);
-		},
-		enableWhen: (player: Player<any>) => player.getConsumes().startingPotion != Potions.UnknownPotion,
 	},
 };
 
