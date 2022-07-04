@@ -487,6 +487,20 @@ export const makeGuardianElixirsInput = makeConsumeInputFactory('guardianElixir'
 });
 
 export const makeFoodInput = makeConsumeInputFactory('food', [
+	{ actionId: ActionId.fromItemId(43015), value: Food.FoodFishFeast },
+	{ actionId: ActionId.fromItemId(34753), value: Food.FoodGreatFeast },
+	{ actionId: ActionId.fromItemId(42999), value: Food.FoodBlackenedDragonfin },
+	{ actionId: ActionId.fromItemId(42995), value: Food.FoodHeartyRhino },
+	{ actionId: ActionId.fromItemId(34754), value: Food.FoodMegaMammothMeal },
+	{ actionId: ActionId.fromItemId(34756), value: Food.FoodSpicedWormBurger },
+	{ actionId: ActionId.fromItemId(42994), value: Food.FoodRhinoliciousWormsteak },
+	{ actionId: ActionId.fromItemId(34769), value: Food.FoodImperialMantaSteak },
+	{ actionId: ActionId.fromItemId(42996), value: Food.FoodSnapperExtreme },
+	{ actionId: ActionId.fromItemId(34758), value: Food.FoodMightyRhinoDogs },
+	{ actionId: ActionId.fromItemId(34767), value: Food.FoodFirecrackerSalmon },
+	{ actionId: ActionId.fromItemId(42998), value: Food.FoodCuttlesteak },
+	{ actionId: ActionId.fromItemId(43000), value: Food.FoodDragonfinFilet },
+
 	{ actionId: ActionId.fromItemId(27657), value: Food.FoodBlackenedBasilisk },
 	{ actionId: ActionId.fromItemId(27664), value: Food.FoodGrilledMudfish },
 	{ actionId: ActionId.fromItemId(27655), value: Food.FoodRavagerDog },
