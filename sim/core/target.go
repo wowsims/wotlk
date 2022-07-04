@@ -105,15 +105,16 @@ func NewTarget(options proto.Target, targetIndex int32) *Target {
 			Metrics:     NewUnitMetrics(),
 		},
 	}
+	defaultRaidBossLevel := int32(CharacterLevel + 3)
 	target.GCD = target.NewTimer()
 	if target.Level == 0 {
-		target.Level = 73
+		target.Level = defaultRaidBossLevel
 	}
 	if target.stats[stats.MeleeCrit] == 0 {
 		target.stats[stats.MeleeCrit] = UnitLevelFloat64(target.Level, 0.05, 0.052, 0.054, 0.056) * CritRatingPerCritChance
 	}
 
-	if target.Level == 73 && options.SuppressDodge {
+	if target.Level == defaultRaidBossLevel && options.SuppressDodge {
 		// Sunwell boss Dodge Suppression. -20% dodge and -5% miss chance.
 		target.PseudoStats.DodgeReduction += 0.2
 		target.PseudoStats.IncreasedMissChance -= 0.05
@@ -123,7 +124,7 @@ func NewTarget(options proto.Target, targetIndex int32) *Target {
 	target.PseudoStats.CanParry = true
 	target.PseudoStats.ParryHaste = options.ParryHaste
 	target.PseudoStats.InFrontOfTarget = true
-	if target.Level == 73 && options.CanCrush {
+	if target.Level == defaultRaidBossLevel && options.CanCrush {
 		target.PseudoStats.CanCrush = true
 	}
 
