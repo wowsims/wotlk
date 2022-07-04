@@ -218,8 +218,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				inputs: [
 					ShamanInputs.SnapshotT42Pc,
 					OtherInputs.ShadowPriestDPS,
-					OtherInputs.StartingPotion,
-					OtherInputs.NumStartingPotions,
+					OtherInputs.PrepopPotion,
 					OtherInputs.TankAssignment,
 				],
 			},

@@ -416,6 +416,12 @@ export const BattleShout = {
 };
 
 export const makePotionsInput = makeConsumeInputFactory('defaultPotion', [
+	{ actionId: ActionId.fromItemId(33447), value: Potions.RunicHealingPotion },
+	{ actionId: ActionId.fromItemId(33448), value: Potions.RunicManaPotion },
+	{ actionId: ActionId.fromItemId(40093), value: Potions.IndestructiblePotion },
+	{ actionId: ActionId.fromItemId(40211), value: Potions.PotionOfSpeed },
+	{ actionId: ActionId.fromItemId(40212), value: Potions.PotionOfWildMagic },
+
 	{ actionId: ActionId.fromItemId(22839), value: Potions.DestructionPotion },
 	{ actionId: ActionId.fromItemId(22838), value: Potions.HastePotion },
 	{ actionId: ActionId.fromItemId(13442), value: Potions.MightyRagePotion },
