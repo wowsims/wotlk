@@ -4,7 +4,99 @@ package proto;
 option go_package = "./proto";
 
 message DeathKnightTalents {
+	// Blood
+	int32 butchery = 1;
+	int32 subversion = 2;
+	int32 blade_barrier = 3;
+	int32 bladed_armor = 4;
+	int32 scent_of_blood = 5;
+	int32 two_handed_weapon_specialization = 6;
+	bool rune_tap = 7;
+	int32 dark_conviction = 8;
+	int32 death_rune_mastery = 9;
+    int32 improved_rune_tap = 10;
+	int32 spell_deflection = 11;
+	int32 vendetta = 12;
+	int32 bloody_strikes = 13;
+	int32 veteran_of_the_third_war = 14;
+	int32 mark_of_blood = 15;
+	int32 bloody_vengeance = 16;
+	int32 abominations_might = 17;
+	int32 bloodworms = 18;
+	bool hysteria = 19;
+	int32 improved_blood_presence = 20;
+	int32 improved_death_strike = 21;
+	int32 sudden_doom = 22;
+	bool vampiric_blood = 23;
+	int32 will_of_the_necropolis = 24;
+	bool heart_strike = 25;
+	int32 might_of_mograine = 26;
+	int32 blood_gorged = 27;
+	bool dancing_rune_weapon = 28;
 
+	// Frost
+	int32 improved_icy_touch = 29;
+	int32 runic_power_mastery = 30;
+	int32 toughness = 31;
+	int32 icy_reach = 32;
+	int32 black_ice = 33;
+	int32 nerves_of_cold_steel = 34;
+	int32 icy_talons = 35;
+	bool lichborne = 36;
+	int32 annihilation = 37;
+	int32 killing_machine = 38;
+	int32 chill_of_the_grave = 39;
+	int32 endless_winter = 40;
+	int32 frigid_dreadplate = 41;
+	int32 glacier_rot = 42;
+	bool deathchill = 43;
+	bool improved_icy_talons = 44;
+	int32 merciless_combat = 45;
+	int32 rime = 46;
+	int32 chilblains = 47;
+	bool hungering_cold = 48;
+	int32 improved_frost_presence = 49;
+	int32 threat_of_thassarian = 50;
+	int32 blood_of_the_north = 51;
+	bool unbreakable_armor = 52;
+	int32 acclimation = 53;
+	bool frost_strike = 54;
+	int32 guile_of_gorefiend = 55;
+	int32 tundra_stalker = 56;
+	bool howling_blast = 57;
+
+	// Unholy
+	int32 vicious_strikes = 58;
+	int32 virulence = 59;
+	int32 anticipation = 60;
+	int32 epidemic = 61;
+	int32 morbidity = 62;
+	int32 unholy_command = 63;
+	int32 ravenous_dead = 64;
+	int32 outbreak = 65;
+	int32 necrosis = 66;
+	bool corpse_explosion = 67;
+	int32 on_a_pale_horse = 68;
+	int32 blood_caked_blade = 69;
+	int32 night_of_the_dead = 70;
+	bool unholy_blight = 71;
+	int32 impurity = 72;
+	int32 dirge = 73;
+	int32 desecration = 74;
+	int32 magic_suppression = 75;
+	int32 reaping = 76;
+	bool master_of_ghouls = 77;
+	int32 desolation = 78;
+	bool anti_magic_zone = 79;
+	int32 improved_unholy_presence = 80;
+	bool ghoul_frenzy = 81;
+	int32 crypt_fever = 82;
+	bool bone_shield = 83;
+	int32 wandering_plague = 84;
+	int32 ebon_plaguebringer = 85;
+	bool scourge_strike = 86;
+	int32 rage_of_rivendare = 87;
+	bool summon_gargoyle = 88; 
 }
 
 enum DeathKnightMajorGlyph {
