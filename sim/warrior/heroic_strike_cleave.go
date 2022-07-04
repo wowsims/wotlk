@@ -29,6 +29,7 @@ func (warrior *Warrior) registerHeroicStrikeSpell() {
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 			FlatThreatBonus:  194,
+			BonusCritRating:  float64(warrior.Talents.Incite) * 5 * core.MeleeCritRatingPerCritChance,
 
 			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 495, 1, true),
 			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(true)),
@@ -52,6 +53,7 @@ func (warrior *Warrior) registerCleaveSpell() {
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 		FlatThreatBonus:  125,
+		BonusCritRating:  float64(warrior.Talents.Incite) * 5 * core.MeleeCritRatingPerCritChance,
 
 		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, flatDamageBonus, 1, true),
 		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(true)),
