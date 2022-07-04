@@ -124,9 +124,6 @@ func NewTarget(options proto.Target, targetIndex int32) *Target {
 	target.PseudoStats.CanParry = true
 	target.PseudoStats.ParryHaste = options.ParryHaste
 	target.PseudoStats.InFrontOfTarget = true
-	if target.Level == defaultRaidBossLevel && options.CanCrush {
-		target.PseudoStats.CanCrush = true
-	}
 
 	preset := GetPresetTargetWithID(options.Id)
 	if preset != nil && preset.AI != nil {

@@ -42,7 +42,6 @@ var DefaultTargetProto = proto.Target{
 
 	SwingSpeed:    2,
 	MinBaseDamage: 4192.05,
-	CanCrush:      true,
 	ParryHaste:    true,
 }
 

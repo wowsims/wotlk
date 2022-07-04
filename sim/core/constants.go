@@ -35,7 +35,6 @@ const LevelBasedNPCSpellResistancePerLevel = 32.0 / 3
 
 // TODO: Find these numbers for WOTLK
 const EnemyAutoAttackAPCoefficient = 0.000649375
-const CrushChance = 0.15
 
 // IDs for items used in core
 const (

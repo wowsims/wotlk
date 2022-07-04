@@ -463,7 +463,6 @@ type PseudoStats struct {
 
 	CanBlock bool
 	CanParry bool
-	CanCrush bool
 
 	ParryHaste bool
 

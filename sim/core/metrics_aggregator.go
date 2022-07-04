@@ -109,7 +109,6 @@ type TargetedActionMetrics struct {
 	Casts   int32
 	Hits    int32
 	Crits   int32
-	Crushes int32
 	Misses  int32
 	Dodges  int32
 	Parries int32
@@ -127,7 +126,6 @@ func (tam *TargetedActionMetrics) ToProto() *proto.TargetedActionMetrics {
 		Casts:   tam.Casts,
 		Hits:    tam.Hits,
 		Crits:   tam.Crits,
-		Crushes: tam.Crushes,
 		Misses:  tam.Misses,
 		Dodges:  tam.Dodges,
 		Parries: tam.Parries,
@@ -239,7 +237,6 @@ func (unitMetrics *UnitMetrics) addSpell(spell *Spell) {
 		tam.Misses += spellTargetMetrics.Misses
 		tam.Hits += spellTargetMetrics.Hits
 		tam.Crits += spellTargetMetrics.Crits
-		tam.Crushes += spellTargetMetrics.Crushes
 		tam.Dodges += spellTargetMetrics.Dodges
 		tam.Parries += spellTargetMetrics.Parries
 		tam.Blocks += spellTargetMetrics.Blocks
