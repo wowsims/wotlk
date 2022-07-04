@@ -37,17 +37,17 @@ func (priest *Priest) ApplyTalents() {
 		})
 	}
 
-	if priest.Talents.ForceOfWill > 0 {
-		coeff := 0.01 * float64(priest.Talents.ForceOfWill)
-		priest.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.SpellPower,
-			ModifiedStat: stats.SpellPower,
-			Modifier: func(spellPower float64, _ float64) float64 {
-				return spellPower + spellPower*coeff
-			},
-		})
-		priest.AddStat(stats.SpellCrit, float64(priest.Talents.ForceOfWill)*1*core.SpellCritRatingPerCritChance)
-	}
+	// if priest.Talents.ForceOfWill > 0 {
+	//coeff := 0.01 * float64(priest.Talents.ForceOfWill)
+	//priest.AddStatDependency(stats.StatDependency{
+	//	SourceStat:   stats.SpellPower,
+	//ModifiedStat: stats.SpellPower,
+	//	Modifier: func(spellPower float64, _ float64) float64 {
+	//	return spellPower + spellPower*coeff
+	//	},
+	//})
+	//priest.AddStat(stats.SpellCrit, float64(priest.Talents.ForceOfWill)*1*core.SpellCritRatingPerCritChance)
+	//	}
 
 	if priest.Talents.Enlightenment > 0 {
 		coeff := 0.01 * float64(priest.Talents.Enlightenment)

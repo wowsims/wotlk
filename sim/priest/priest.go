@@ -60,9 +60,9 @@ func (priest *Priest) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 		true,
 		priest.Talents.ImprovedPowerWordFortitude == 2))
 
-	raidBuffs.DivineSpirit = core.MaxTristate(raidBuffs.DivineSpirit, core.MakeTristateValue(
-		priest.Talents.DivineSpirit,
-		priest.Talents.ImprovedDivineSpirit == 2))
+	//raidBuffs.DivineSpirit = core.MaxTristate(raidBuffs.DivineSpirit, core.MakeTristateValue(
+	//priest.Talents.DivineSpirit,
+	//priest.Talents.ImprovedDivineSpirit == 2))
 }
 
 func (priest *Priest) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
