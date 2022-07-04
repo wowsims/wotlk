@@ -302,38 +302,66 @@ enum WeaponImbue {
 
 enum Flask {
 	FlaskUnknown = 0;
-	FlaskOfBlindingLight = 1;
-	FlaskOfMightyRestoration = 2;
-	FlaskOfPureDeath = 3;
-	FlaskOfRelentlessAssault = 4;
-	FlaskOfSupremePower = 5;
-	FlaskOfFortification = 6;
-	FlaskOfChromaticWonder = 7;
+	FlaskOfTheFrostWyrm = 1;
+	FlaskOfEndlessRage = 2;
+	FlaskOfPureMojo = 3;
+	FlaskOfStoneblood = 4;
+	LesserFlaskOfToughness = 5;
+	LesserFlaskOfResistance = 6;
+
+	// TBC
+	FlaskOfBlindingLight = 7;
+	FlaskOfMightyRestoration = 8;
+	FlaskOfPureDeath = 9;
+	FlaskOfRelentlessAssault = 10;
+	FlaskOfSupremePower = 11;
+	FlaskOfFortification = 12;
+	FlaskOfChromaticWonder = 13;
 }
 
 enum BattleElixir {
 	BattleElixirUnknown = 0;
-	AdeptsElixir = 1;
-	ElixirOfDemonslaying = 2;
-	ElixirOfMajorAgility = 3;
-	ElixirOfMajorFirePower = 4;
-	ElixirOfMajorFrostPower = 5;
-	ElixirOfMajorShadowPower = 6;
-	ElixirOfMajorStrength = 7;
-	ElixirOfMastery = 10;
-	ElixirOfTheMongoose = 8;
-	FelStrengthElixir = 9;
-	GreaterArcaneElixir = 11;
+	ElixirOfAccuracy = 1;
+	ElixirOfArmorPiercing = 2;
+	ElixirOfDeadlyStrikes = 3;
+	ElixirOfExpertise = 4;
+	ElixirOfLightningSpeed = 5;
+	ElixirOfMightyAgility = 6;
+	ElixirOfMightyStrength = 7;
+	GurusElixir = 8;
+	SpellpowerElixir = 9;
+	WrathElixir = 10;
+
+	// TBC
+	AdeptsElixir = 11;
+	ElixirOfDemonslaying = 12;
+	ElixirOfMajorAgility = 13;
+	ElixirOfMajorFirePower = 14;
+	ElixirOfMajorFrostPower = 15;
+	ElixirOfMajorShadowPower = 16;
+	ElixirOfMajorStrength = 17;
+	ElixirOfMastery = 18;
+	ElixirOfTheMongoose = 19;
+	FelStrengthElixir = 20;
+	GreaterArcaneElixir = 21;
 }
 
 enum GuardianElixir {
 	GuardianElixirUnknown = 0;
-	ElixirOfDraenicWisdom = 1;
-	ElixirOfIronskin = 5;
-	ElixirOfMajorDefense = 6;
-	ElixirOfMajorFortitude = 4;
-	ElixirOfMajorMageblood = 2;
-	GiftOfArthas = 3;
+	ElixirOfMightyDefense = 1;
+	ElixirOfMightyFortitude = 2;
+	ElixirOfMightyMageblood = 3;
+	ElixirOfMightyThoughts = 4;
+	ElixirOfProtection = 5;
+	ElixirOfSpirit = 6;
+
+	// TBC
+	GiftOfArthas = 7;
+	ElixirOfDraenicWisdom = 8;
+	ElixirOfIronskin = 9;
+	ElixirOfMajorDefense = 10;
+	ElixirOfMajorFortitude = 11;
+	ElixirOfMajorMageblood = 12;
 }
 
 enum Food {

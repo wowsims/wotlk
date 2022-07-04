@@ -441,6 +441,12 @@ export const makeConjuredInput = makeConsumeInputFactory('defaultConjured', [
 ] as Array<IconEnumValueConfig<Player<any>, Conjured>>);
 
 export const makeFlasksInput = makeConsumeInputFactory('flask', [
+	{ actionId: ActionId.fromItemId(46376), value: Flask.FlaskOfTheFrostWyrm },
+	{ actionId: ActionId.fromItemId(46377), value: Flask.FlaskOfEndlessRage },
+	{ actionId: ActionId.fromItemId(46378), value: Flask.FlaskOfPureMojo },
+	{ actionId: ActionId.fromItemId(46379), value: Flask.FlaskOfStoneblood },
+	{ actionId: ActionId.fromItemId(40079), value: Flask.LesserFlaskOfToughness },
+	{ actionId: ActionId.fromItemId(44939), value: Flask.LesserFlaskOfResistance },
 	{ actionId: ActionId.fromItemId(22861), value: Flask.FlaskOfBlindingLight },
 	{ actionId: ActionId.fromItemId(22853), value: Flask.FlaskOfMightyRestoration },
 	{ actionId: ActionId.fromItemId(22866), value: Flask.FlaskOfPureDeath },
@@ -458,6 +464,16 @@ export const makeFlasksInput = makeConsumeInputFactory('flask', [
 });
 
 export const makeBattleElixirsInput = makeConsumeInputFactory('battleElixir', [
+	{ actionId: ActionId.fromItemId(44325), value: BattleElixir.ElixirOfAccuracy },
+	{ actionId: ActionId.fromItemId(44330), value: BattleElixir.ElixirOfArmorPiercing },
+	{ actionId: ActionId.fromItemId(44327), value: BattleElixir.ElixirOfDeadlyStrikes },
+	{ actionId: ActionId.fromItemId(44329), value: BattleElixir.ElixirOfExpertise },
+	{ actionId: ActionId.fromItemId(44331), value: BattleElixir.ElixirOfLightningSpeed },
+	{ actionId: ActionId.fromItemId(39666), value: BattleElixir.ElixirOfMightyAgility },
+	{ actionId: ActionId.fromItemId(40073), value: BattleElixir.ElixirOfMightyStrength },
+	{ actionId: ActionId.fromItemId(40076), value: BattleElixir.GurusElixir },
+	{ actionId: ActionId.fromItemId(40070), value: BattleElixir.SpellpowerElixir },
+	{ actionId: ActionId.fromItemId(40068), value: BattleElixir.WrathElixir },
 	{ actionId: ActionId.fromItemId(28103), value: BattleElixir.AdeptsElixir },
 	{ actionId: ActionId.fromItemId(9224), value: BattleElixir.ElixirOfDemonslaying },
 	{ actionId: ActionId.fromItemId(22831), value: BattleElixir.ElixirOfMajorAgility },
@@ -478,6 +494,12 @@ export const makeBattleElixirsInput = makeConsumeInputFactory('battleElixir', [
 });
 
 export const makeGuardianElixirsInput = makeConsumeInputFactory('guardianElixir', [
+	{ actionId: ActionId.fromItemId(44328), value: GuardianElixir.ElixirOfMightyDefense },
+	{ actionId: ActionId.fromItemId(40078), value: GuardianElixir.ElixirOfMightyFortitude },
+	{ actionId: ActionId.fromItemId(40109), value: GuardianElixir.ElixirOfMightyMageblood },
+	{ actionId: ActionId.fromItemId(44332), value: GuardianElixir.ElixirOfMightyThoughts },
+	{ actionId: ActionId.fromItemId(40097), value: GuardianElixir.ElixirOfProtection },
+	{ actionId: ActionId.fromItemId(40072), value: GuardianElixir.ElixirOfSpirit },
 	{ actionId: ActionId.fromItemId(9088), value: GuardianElixir.GiftOfArthas },
 	{ actionId: ActionId.fromItemId(32067), value: GuardianElixir.ElixirOfDraenicWisdom },
 	{ actionId: ActionId.fromItemId(32068), value: GuardianElixir.ElixirOfIronskin },

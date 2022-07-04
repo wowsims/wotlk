@@ -9,26 +9,45 @@ var defaultDestroTalents = &proto.WarlockTalents{
 	// destro
 	ImprovedShadowBolt: 5,
 	Bane:               5,
-	Devastation:        5,
-	Shadowburn:         true,
+	Ruin:               5,
+	Intensity:          2,
 	DestructiveReach:   2,
-	ImprovedImmolate:   5,
-	Ruin:               true,
+	Devastation:        true,
+	Aftermath:          2,
+	ImprovedImmolate:   3,
 	Emberstorm:         5,
-	Backlash:           3,
 	Conflagrate:        true,
+	Backlash:           3,
+	Shadowburn:         true,
 	ShadowAndFlame:     5,
-	//demo
-	DemonicEmbrace:     5,
-	ImprovedVoidwalker: 1,
-	FelIntellect:       3,
-	// FelDomination: true,
-	// MasterSummoner: 2,
-	FelStamina:       3,
-	DemonicAegis:     3,
-	DemonicSacrifice: true,
+	Backdraft:          3,
+	EmpoweredImp:       3,
+	FireAndBrimstone:   5,
+	ChaosBolt:          true,
+	Shadowfury:         true,
+	Pyroclasm:          3,
+	DemonicPower:       2,
+	Cataclysm:          3,
+	SoulLeech:          3,
+	ImprovedSoulLeech:  2,
+	// demo
+	FelSynergy:         2,
+	ImprovedImp: 		3,
 }
 
+/*var defaultDestroMajorGlyphs = &proto.WarlockMajorGlyph{
+	WarlockMajorGlyph:
+	proto.GlyphOfConflagrate,
+	proto.GlyphOfImmolate,
+	proto.GlyphOfIncinerate,
+}
+
+var defaultDestroMinorGlyphs = &proto.WarlockMinorGlyph{
+	GlyphOfDrainSoul,
+	GlyphOfEnslaveDemon,
+	GlyphOfKilrogg,
+}
+*/
 var defaultDestroRotation = &proto.Warlock_Rotation{
 	PrimarySpell: proto.Warlock_Rotation_Shadowbolt,
 	Immolate:     true,
@@ -36,8 +55,7 @@ var defaultDestroRotation = &proto.Warlock_Rotation{
 
 var defaultDestroOptions = &proto.Warlock_Options{
 	Armor:           proto.Warlock_Options_FelArmor,
-	Summon:          proto.Warlock_Options_Succubus,
-	SacrificeSummon: true,
+	Summon:          proto.Warlock_Options_Imp,
 }
 
 var DefaultDestroWarlock = &proto.Player_Warlock{
@@ -45,7 +63,9 @@ var DefaultDestroWarlock = &proto.Player_Warlock{
 		Talents:  defaultDestroTalents,
 		Options:  defaultDestroOptions,
 		Rotation: defaultDestroRotation,
-	},
+/*		MajorGlyph: defaultDestroMajorGlyphs,
+		MinorGlyph: defaultDestroMinorGlyphs,
+*/	},
 }
 
 var FullRaidBuffs = &proto.RaidBuffs{
