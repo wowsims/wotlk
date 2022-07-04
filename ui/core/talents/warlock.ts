@@ -3,7 +3,7 @@ import { WarlockTalents, WarlockMajorGlyph, WarlockMinorGlyph } from '/wotlk/cor
 import { GlyphsConfig } from './glyphs_picker.js';
 import { TalentsConfig, newTalentsConfig } from './talents_picker.js';
 
-export const warlockTalentsConfig: TalentsConfig<Spec.SpecWarlock> = newTalentsConfig([
+export const warlockTalentsConfig: TalentsConfig<WarlockTalents> = newTalentsConfig([
     {
         name: "Affliction",
         backgroundUrl: "https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/302.jpg",
