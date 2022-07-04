@@ -580,7 +580,6 @@ message Target {
 	double swing_speed = 8;
 	bool dual_wield = 9;
 	bool dual_wield_penalty = 10;
-	bool can_crush = 11;
 	bool parry_haste = 12;
 	bool suppress_dodge = 16; // Sunwell Radiance
 	SpellSchool spell_school = 13; // Allows elemental attacks.

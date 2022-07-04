@@ -174,7 +174,7 @@ func NewMage(character core.Character, options proto.Player) *Mage {
 		SourceStat:   stats.Intellect,
 		ModifiedStat: stats.SpellCrit,
 		Modifier: func(intellect float64, spellCrit float64) float64 {
-			return spellCrit + (intellect/81)*core.SpellCritRatingPerCritChance
+			return spellCrit + (intellect/81)*core.CritRatingPerCritChance
 		},
 	})
 
@@ -189,7 +189,7 @@ func NewMage(character core.Character, options proto.Player) *Mage {
 	if mage.Options.Armor == proto.Mage_Options_MageArmor {
 		mage.PseudoStats.SpiritRegenRateCasting += 0.3
 	} else if mage.Options.Armor == proto.Mage_Options_MoltenArmor {
-		mage.AddStat(stats.SpellCrit, 3*core.SpellCritRatingPerCritChance)
+		mage.AddStat(stats.SpellCrit, 3*core.CritRatingPerCritChance)
 	}
 
 	if mage.Talents.SummonWaterElemental {
@@ -209,7 +209,7 @@ func init() {
 		stats.Intellect: 155,
 		stats.Spirit:    144,
 		stats.Mana:      2241,
-		stats.SpellCrit: core.SpellCritRatingPerCritChance * 0.926,
+		stats.SpellCrit: core.CritRatingPerCritChance * 0.926,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassMage}] = stats.Stats{
 		stats.Health:    3213,
@@ -219,7 +219,7 @@ func init() {
 		stats.Intellect: 152,
 		stats.Spirit:    147,
 		stats.Mana:      2241,
-		stats.SpellCrit: core.SpellCritRatingPerCritChance * 0.933,
+		stats.SpellCrit: core.CritRatingPerCritChance * 0.933,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceGnome, Class: proto.Class_ClassMage}] = stats.Stats{
 		stats.Health:    3213,
@@ -229,7 +229,7 @@ func init() {
 		stats.Intellect: 154.3, // Gnomes start with 162 int, we assume this include racial so / 1.05
 		stats.Spirit:    145,
 		stats.Mana:      2241,
-		stats.SpellCrit: core.SpellCritRatingPerCritChance * 0.93,
+		stats.SpellCrit: core.CritRatingPerCritChance * 0.93,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceHuman, Class: proto.Class_ClassMage}] = stats.Stats{
 		stats.Health:    3213,
@@ -239,7 +239,7 @@ func init() {
 		stats.Intellect: 151,
 		stats.Spirit:    159,
 		stats.Mana:      2241,
-		stats.SpellCrit: core.SpellCritRatingPerCritChance * 0.926,
+		stats.SpellCrit: core.CritRatingPerCritChance * 0.926,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassMage}] = stats.Stats{
 		stats.Health:    3213,
@@ -249,7 +249,7 @@ func init() {
 		stats.Intellect: 147,
 		stats.Spirit:    146,
 		stats.Mana:      2241,
-		stats.SpellCrit: core.SpellCritRatingPerCritChance * 0.935,
+		stats.SpellCrit: core.CritRatingPerCritChance * 0.935,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceUndead, Class: proto.Class_ClassMage}] = stats.Stats{
 		stats.Health:    3213,
@@ -259,7 +259,7 @@ func init() {
 		stats.Intellect: 149,
 		stats.Spirit:    150,
 		stats.Mana:      2241,
-		stats.SpellCrit: core.SpellCritRatingPerCritChance * 0.930,
+		stats.SpellCrit: core.CritRatingPerCritChance * 0.930,
 	}
 }
 

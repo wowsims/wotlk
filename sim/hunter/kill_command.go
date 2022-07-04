@@ -73,7 +73,7 @@ func (hp *HunterPet) registerKillCommandSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			BonusCritRating:  float64(hp.hunterOwner.Talents.FocusedFire) * 10 * core.MeleeCritRatingPerCritChance,
+			BonusCritRating:  float64(hp.hunterOwner.Talents.FocusedFire) * 10 * core.CritRatingPerCritChance,
 			DamageMultiplier: hp.config.DamageMultiplier,
 			ThreatMultiplier: 1,
 

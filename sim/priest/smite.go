@@ -33,7 +33,7 @@ func (priest *Priest) registerSmiteSpell() {
 			ProcMask:            core.ProcMaskSpellDamage,
 			BonusSpellHitRating: float64(priest.Talents.FocusedPower) * 2 * core.SpellHitRatingPerHitChance,
 
-			BonusSpellCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.SpellCritRatingPerCritChance,
+			BonusSpellCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
 
 			DamageMultiplier: 1 + 0.05*float64(priest.Talents.SearingLight),
 

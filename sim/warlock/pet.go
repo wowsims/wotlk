@@ -54,12 +54,12 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		SourceStat:   stats.Agility,
 		ModifiedStat: stats.MeleeCrit,
 		Modifier: func(agility float64, meleeCrit float64) float64 {
-			return meleeCrit + (agility*0.04)*core.MeleeCritRatingPerCritChance
+			return meleeCrit + (agility*0.04)*core.CritRatingPerCritChance
 		},
 	})
 	wp.AddStats(stats.Stats{
-		stats.MeleeCrit: float64(warlock.Talents.DemonicTactics) * 1 * core.MeleeCritRatingPerCritChance,
-		stats.SpellCrit: float64(warlock.Talents.DemonicTactics) * 1 * core.SpellCritRatingPerCritChance,
+		stats.MeleeCrit: float64(warlock.Talents.DemonicTactics) * 1 * core.CritRatingPerCritChance,
+		stats.SpellCrit: float64(warlock.Talents.DemonicTactics) * 1 * core.CritRatingPerCritChance,
 	})
 
 	if warlock.Talents.SoulLink {
@@ -88,7 +88,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 			SourceStat:   stats.Intellect,
 			ModifiedStat: stats.SpellCrit,
 			Modifier: func(intellect float64, spellCrit float64) float64 {
-				return spellCrit + (0.0125*intellect/100)*core.SpellCritRatingPerCritChance
+				return spellCrit + (0.0125*intellect/100)*core.CritRatingPerCritChance
 			},
 		})
 	case proto.Warlock_Options_Felgaurd:

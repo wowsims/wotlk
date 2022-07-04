@@ -32,7 +32,7 @@ const ShortDuration = 60
 const LongDuration = 300
 
 var DefaultTargetProto = proto.Target{
-	Level: 73,
+	Level: CharacterLevel + 3,
 	Stats: stats.Stats{
 		stats.Armor:       7684,
 		stats.AttackPower: 320,
@@ -42,7 +42,6 @@ var DefaultTargetProto = proto.Target{
 
 	SwingSpeed:    2,
 	MinBaseDamage: 4192.05,
-	CanCrush:      true,
 	ParryHaste:    true,
 }
 

@@ -29,7 +29,7 @@ func (rogue *Rogue) registerBackstabSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:        core.ProcMaskMeleeMHSpecial,
-			BonusCritRating: 10 * core.MeleeCritRatingPerCritChance * float64(rogue.Talents.PuncturingWounds),
+			BonusCritRating: 10 * core.CritRatingPerCritChance * float64(rogue.Talents.PuncturingWounds),
 			// All of these use "Apply Aura: Modifies Damage/Healing Done", and stack additively (up to 142%).
 			DamageMultiplier: 1 +
 				0.04*float64(rogue.Talents.Opportunity) +

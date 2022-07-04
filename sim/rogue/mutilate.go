@@ -19,7 +19,7 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 	effect := core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeMHSpecial,
 
-		BonusCritRating: 5 * core.MeleeCritRatingPerCritChance * float64(rogue.Talents.PuncturingWounds),
+		BonusCritRating: 5 * core.CritRatingPerCritChance * float64(rogue.Talents.PuncturingWounds),
 		DamageMultiplier: 1 +
 			0.04*float64(rogue.Talents.Opportunity) +
 			core.TernaryFloat64(ItemSetSlayers.CharacterHasSetBonus(&rogue.Character, 4), 0.06, 0),
