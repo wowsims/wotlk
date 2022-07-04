@@ -90,6 +90,55 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 		}
 	} else {
 		switch consumes.BattleElixir {
+		case proto.BattleElixir_ElixirOfAccuracy:
+			character.AddStats(stats.Stats{
+				stats.MeleeHit: 45,
+				stats.SpellHit: 45,
+			})
+		case proto.BattleElixir_ElixirOfArmorPiercing:
+			character.AddStats(stats.Stats{
+				stats.ArmorPenetration: 45,
+			})
+		case proto.BattleElixir_ElixirOfDeadlyStrikes:
+			character.AddStats(stats.Stats{
+				stats.MeleeCrit: 45,
+				stats.SpellCrit: 45,
+			})
+		case proto.BattleElixir_ElixirOfExpertise:
+			character.AddStats(stats.Stats{
+				stats.Expertise: 45,
+			})
+		case proto.BattleElixir_ElixirOfLightningSpeed:
+			character.AddStats(stats.Stats{
+				stats.MeleeHaste: 45,
+				stats.SpellHaste: 45,
+			})
+		case proto.BattleElixir_ElixirOfMightyAgility:
+			character.AddStats(stats.Stats{
+				stats.Agility: 45,
+			})
+		case proto.BattleElixir_ElixirOfMightyStrength:
+			character.AddStats(stats.Stats{
+				stats.Strength: 45,
+			})
+		case proto.BattleElixir_GurusElixir:
+			character.AddStats(stats.Stats{
+				stats.Agility: 20,
+				stats.Strength: 20,
+				stats.Stamina: 20,
+				stats.Intellect: 20,
+				stats.Spirit: 20,
+			})
+		case proto.BattleElixir_SpellpowerElixir:
+			character.AddStats(stats.Stats{
+				stats.SpellPower:   58,
+				stats.HealingPower: 58,
+			})
+		case proto.BattleElixir_WrathElixir:
+			character.AddStats(stats.Stats{
+				stats.AttackPower:   90,
+				stats.RangedAttackPower: 90,
+			})
 		case proto.BattleElixir_AdeptsElixir:
 			character.AddStats(stats.Stats{
 				stats.SpellCrit:    24,
@@ -147,6 +196,30 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 		}
 
 		switch consumes.GuardianElixir {
+		case proto.GuardianElixir_ElixirOfMightyDefense:
+			character.AddStats(stats.Stats{
+				stats.Defense: 45,
+			})
+		case proto.GuardianElixir_ElixirOfMightyFortitude:
+			character.AddStats(stats.Stats{
+				stats.Health: 350,
+			})
+		case proto.GuardianElixir_ElixirOfMightyMageblood:
+			character.AddStats(stats.Stats{
+				stats.MP5: 30,
+			})
+		case proto.GuardianElixir_ElixirOfMightyThoughts:
+			character.AddStats(stats.Stats{
+				stats.Intellect: 45,
+			})
+		case proto.GuardianElixir_ElixirOfProtection:
+			character.AddStats(stats.Stats{
+				stats.Armor: 800,
+			})
+		case proto.GuardianElixir_ElixirOfSpirit:
+			character.AddStats(stats.Stats{
+				stats.Spirit: 50,
+			})
 		case proto.GuardianElixir_ElixirOfDraenicWisdom:
 			character.AddStats(stats.Stats{
 				stats.Intellect: 30,
