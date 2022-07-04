@@ -5,16 +5,16 @@ The primary goal of this project is to provide a framework that makes it easy to
 [Live sims can be found here.](https://wowsims.github.io/wotlk "https://wowsims.github.io/wotlk")
 
 # Installation
-This project has dependencies on Go >=1.16, protobuf-compiler and the corresponding Go plugins, and node >= 14.0.
+This project has dependencies on Go >=1.18, protobuf-compiler and the corresponding Go plugins, and node >= 14.0.
 
 ## Ubuntu
 Do not use apt to install any dependencies, the versions they install are all too old.
 Script below will curl latest versions and install them.
 ```sh
 # Standard Go installation script
-curl -O https://dl.google.com/go/go1.16.10.linux-amd64.tar.gz
+curl -O https://dl.google.com/go/go1.18.3.linux-amd64.tar.gz
 sudo rm -rf /usr/local/go 
-sudo tar -C /usr/local -xzf go1.16.10.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.18.3.linux-amd64.tar.gz
 echo `export PATH=$PATH:/usr/local/go/bin` >> $HOME/.bashrc
 echo 'export GOPATH=$HOME/go' >> $HOME/.bashrc
 echo 'export PATH=$PATH:$GOPATH/bin' >> $HOME/.bashrc

@@ -185,6 +185,51 @@ enum HunterMinorGlyph {
 	GlyphOfThePack = 43355;
 }
 
+message HunterPetTalents {
+	// Cunning
+	int32 cobra_reflexes = 1;
+	bool dive = 2;
+	int32 great_stamina = 3;
+	int32 natural_armor = 4;
+	bool boars_speed = 5;
+	int32 mobility = 6;
+	int32 owls_focus = 7;
+	int32 spiked_collar = 8;
+	int32 culling_the_herd = 9;
+	int32 lionhearted = 10;
+	bool carrion_feeder = 11;
+	int32 great_resistance = 12;
+	int32 cornered = 13;
+	int32 feeding_frenzy = 14;
+	bool wolverine_bite = 15;
+	bool roar_of_recovery = 16;
+	bool bullheaded = 17;
+	int32 grace_of_the_mantis = 18;
+	int32 wild_hunt = 19;
+	bool roar_of_sacrifice = 20;
+
+	// Ferocity
+	int32 improved_cower = 21;
+	int32 bloodthirsty = 22;
+	bool heart_of_the_pheonix = 23;
+	int32 spiders_bite = 24;
+	bool rabid = 25;
+	bool lick_your_wounds = 26;
+	bool call_of_the_wild = 27;
+	int32 shark_attack = 28;
+
+	// Tenacity
+	bool charge = 29;
+	int32 blood_of_the_rhino = 30;
+	int32 pet_barding = 31;
+	int32 guard_dog = 32;
+	bool thunderstomp = 33;
+	bool last_stand = 34;
+	bool taunt = 35;
+	bool intervene = 36;
+	int32 silverback = 37;
+}
+
 message Hunter {
 	message Rotation {
 		bool use_multi_shot = 1;
@@ -258,6 +303,7 @@ message Hunter {
 		}
 
 		PetType pet_type = 3;
+		HunterPetTalents pet_talents = 8;
 		double pet_uptime = 4;
 		bool pet_single_ability = 6;
 

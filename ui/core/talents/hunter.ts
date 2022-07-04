@@ -1,4 +1,4 @@
-import { HunterTalents, HunterMajorGlyph, HunterMinorGlyph } from '/wotlk/core/proto/hunter.js';
+import { HunterTalents, HunterMajorGlyph, HunterMinorGlyph, HunterPetTalents } from '/wotlk/core/proto/hunter.js';
 
 import { GlyphsConfig } from './glyphs_picker.js';
 import { TalentsConfig, newTalentsConfig } from './talents_picker.js';

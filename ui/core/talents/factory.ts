@@ -17,19 +17,20 @@ import { rogueTalentsConfig, rogueGlyphsConfig } from './rogue.js';
 import { shamanTalentsConfig, shamanGlyphsConfig } from './shaman.js';
 import { warlockTalentsConfig, warlockGlyphsConfig } from './warlock.js';
 import { warriorTalentsConfig, warriorGlyphsConfig } from './warrior.js';
+import { deathKnightTalentsConfig, deathKnightGlyphsConfig } from './deathknight.js';
 import { TalentsConfig, TalentsPicker } from './talents_picker.js';
 import { GlyphsConfig, GlyphsPicker } from './glyphs_picker.js';
 
 import * as Mechanics from '/wotlk/core/constants/mechanics.js';
 
 export function newTalentsPicker(parent: HTMLElement, player: Player<any>): TalentsPicker<Player<any>, any> {
-	return new TalentsPicker(parent, player, classTalentsConfig[player.getClass()], {
+	return new TalentsPicker(parent, player, {
+		trees: classTalentsConfig[player.getClass()],
 		changedEvent: (player: Player<any>) => player.talentsChangeEmitter,
 		getValue: (player: Player<any>) => player.getTalentsString(),
 		setValue: (eventID: EventID, player: Player<any>, newValue: string) => {
 			player.setTalentsString(eventID, newValue);
 		},
-		numRows: 9,
 		pointsPerRow: 5,
 		maxPoints: Mechanics.CHARACTER_LEVEL - 9,
 	});
@@ -41,6 +42,7 @@ export function newGlyphsPicker(parent: HTMLElement, player: Player<any>): Glyph
 
 const classTalentsConfig: Record<Class, TalentsConfig<any>> = {
 	[Class.ClassUnknown]: [],
+	[Class.ClassDeathKnight]: deathKnightTalentsConfig,
 	[Class.ClassDruid]: druidTalentsConfig,
 	[Class.ClassShaman]: shamanTalentsConfig,
 	[Class.ClassHunter]: hunterTalentsConfig,
@@ -54,6 +56,7 @@ const classTalentsConfig: Record<Class, TalentsConfig<any>> = {
 
 const classGlyphsConfig: Record<Class, GlyphsConfig> = {
 	[Class.ClassUnknown]: { majorGlyphs: [], minorGlyphs: [] },
+	[Class.ClassDeathKnight]: deathKnightGlyphsConfig,
 	[Class.ClassDruid]: druidGlyphsConfig,
 	[Class.ClassShaman]: shamanGlyphsConfig,
 	[Class.ClassHunter]: hunterGlyphsConfig,
@@ -84,12 +87,15 @@ export function talentSpellIdsToTalentString(playerClass: Class, talentIds: Arra
 	return talentsStr
 }
 
-export function talentStringToProto<SpecType extends Spec>(spec: Spec, talentString: string): SpecTalents<SpecType> {
-	const talentsConfig = classTalentsConfig[specToClass[spec]] as TalentsConfig<SpecTalents<SpecType>>;
-
+export function playerTalentStringToProto<SpecType extends Spec>(spec: Spec, talentString: string): SpecTalents<SpecType> {
 	const specFunctions = specTypeFunctions[spec];
 	const proto = specFunctions.talentsCreate() as SpecTalents<SpecType>;
+	const talentsConfig = classTalentsConfig[specToClass[spec]] as TalentsConfig<SpecTalents<SpecType>>;
 
+	return talentStringToProto(proto, talentString, talentsConfig);
+}
+
+export function talentStringToProto<TalentsProto>(proto: TalentsProto, talentString: string, talentsConfig: TalentsConfig<TalentsProto>): TalentsProto {
 	talentString.split('-').forEach((treeString, treeIdx) => {
 		const treeConfig = talentsConfig[treeIdx];
 		[...treeString].forEach((talentString, i) => {
@@ -106,4 +112,14 @@ export function talentStringToProto<SpecType extends Spec>(spec: Spec, talentStr
 	});
 
 	return proto;
+}
+
+// Note that this function will fail if any of the talent names are not defined. TODO: Remove that condition
+// once all talents are migrated to wrath and use all fields.
+export function protoToTalentString<TalentsProto>(proto: TalentsProto, talentsConfig: TalentsConfig<TalentsProto>): string {
+	return talentsConfig.map(treeConfig => {
+		return treeConfig.talents
+				.map(talentConfig => String(Number(proto[talentConfig.fieldName!])))
+				.join('').replace(/0+$/g, '');
+	}).join('-').replace(/-+$/g, '');
 }

@@ -46,9 +46,8 @@ var FullConsumes = &proto.Consumes{
 	Flask:              proto.Flask_FlaskOfBlindingLight,
 	Food:               proto.Food_FoodBlackenedBasilisk,
 	DefaultPotion:      proto.Potions_SuperManaPotion,
-	StartingPotion:     proto.Potions_DestructionPotion,
+	PrepopPotion:       proto.Potions_DestructionPotion,
 	MainHandImbue:      proto.WeaponImbue_WeaponImbueBrilliantWizardOil,
-	NumStartingPotions: 1,
 	DefaultConjured:    proto.Conjured_ConjuredDarkRune,
 }
 

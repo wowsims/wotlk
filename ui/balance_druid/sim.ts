@@ -204,8 +204,7 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 			otherInputs: {
 				inputs: [
 					OtherInputs.ShadowPriestDPS,
-					OtherInputs.StartingPotion,
-					OtherInputs.NumStartingPotions,
+					OtherInputs.PrepopPotion,
 					OtherInputs.SnapshotImprovedWrathOfAirTotem,
 					OtherInputs.TankAssignment,
 				],

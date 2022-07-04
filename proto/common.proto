@@ -19,6 +19,7 @@ enum Spec {
 	SpecWarlock = 5;
 	SpecWarrior = 6;
 	SpecProtectionWarrior = 11;
+	SpecDeathKnight = 15;
 }
 
 enum Race {
@@ -58,6 +59,7 @@ enum Class {
 	ClassShaman = 7;
 	ClassWarlock = 8;
 	ClassWarrior = 9;
+	ClassDeathKnight = 10;
 }
 
 enum Profession {
@@ -117,7 +119,6 @@ enum Stat {
 	StatFrostResistance = 38;
 	StatNatureResistance = 39;
 	StatShadowResistance = 40;
-	StatFeralAttackPower = 41;
 }
 
 enum ItemType {
@@ -254,14 +255,20 @@ enum Explosive {
 
 enum Potions {
 	UnknownPotion = 0;
-	DestructionPotion = 1;
-	SuperManaPotion = 2;
-	HastePotion = 3;
-	MightyRagePotion = 4;
-	FelManaPotion = 5;
-	InsaneStrengthPotion = 6;
-	IronshieldPotion = 7;
-	HeroicPotion = 8;
+	RunicHealingPotion = 1;
+	RunicManaPotion = 2;
+	IndestructiblePotion = 3;
+	PotionOfSpeed = 4;
+	PotionOfWildMagic = 5;
+
+	DestructionPotion = 6;
+	SuperManaPotion = 7;
+	HastePotion = 8;
+	MightyRagePotion = 9;
+	FelManaPotion = 10;
+	InsaneStrengthPotion = 11;
+	IronshieldPotion = 12;
+	HeroicPotion = 13;
 }
 
 enum Conjured {
@@ -330,13 +337,28 @@ enum GuardianElixir {
 
 enum Food {
 	FoodUnknown = 0;
-	FoodBlackenedBasilisk = 1;
-	FoodGrilledMudfish = 2;
-	FoodRavagerDog = 3;
-	FoodRoastedClefthoof = 4;
-	FoodSkullfishSoup = 5;
-	FoodSpicyHotTalbuk = 6;
-	FoodFishermansFeast = 7;
+	FoodFishFeast = 1;
+	FoodGreatFeast = 2;
+	FoodBlackenedDragonfin = 3;
+	FoodHeartyRhino = 4;
+	FoodMegaMammothMeal = 5;
+	FoodSpicedWormBurger = 6;
+	FoodRhinoliciousWormsteak = 7;
+	FoodImperialMantaSteak = 8;
+	FoodSnapperExtreme = 9;
+	FoodMightyRhinoDogs = 10;
+	FoodFirecrackerSalmon = 11;
+	FoodCuttlesteak = 12;
+	FoodDragonfinFilet = 13;
+
+	// TBC Foods
+	FoodBlackenedBasilisk = 14;
+	FoodGrilledMudfish = 15;
+	FoodRavagerDog = 16;
+	FoodRoastedClefthoof = 17;
+	FoodSkullfishSoup = 18;
+	FoodSpicyHotTalbuk = 19;
+	FoodFishermansFeast = 20;
 }
 
 enum PetFood {
@@ -460,8 +482,7 @@ message Consumes {
 	int32 pet_scroll_of_strength = 47;
 
 	Potions default_potion = 15;
-	Potions starting_potion = 16;
-	int32 num_starting_potions = 17;
+	Potions prepop_potion = 16;
 
 	Conjured default_conjured = 27;
 	Conjured starting_conjured = 48;

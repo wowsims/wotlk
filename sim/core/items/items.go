@@ -65,6 +65,7 @@ func init() {
 type Item struct {
 	ID        int32
 	WowheadID int32
+	Heroic    bool
 	Type      proto.ItemType
 	ArmorType proto.ArmorType
 	// Weapon Stats

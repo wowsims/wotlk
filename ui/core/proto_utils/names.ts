@@ -48,6 +48,7 @@ export const classNames: Record<Class, string> = {
 	[Class.ClassShaman]: 'Shaman',
 	[Class.ClassWarlock]: 'Warlock',
 	[Class.ClassWarrior]: 'Warrior',
+	[Class.ClassDeathKnight]: 'Death Knight',
 }
 
 export function nameToClass(name: string): Class {
@@ -100,7 +101,6 @@ export const statOrder: Array<Stat> = [
 	Stat.StatMP5,
 	Stat.StatAttackPower,
 	Stat.StatRangedAttackPower,
-	Stat.StatFeralAttackPower,
 	Stat.StatMeleeHit,
 	Stat.StatMeleeCrit,
 	Stat.StatMeleeHaste,
@@ -152,7 +152,6 @@ export const statNames: Record<Stat, string> = {
 	[Stat.StatRage]: 'Rage',
 	[Stat.StatArmor]: 'Armor',
 	[Stat.StatRangedAttackPower]: 'Ranged AP',
-	[Stat.StatFeralAttackPower]: 'Feral AP',
 	[Stat.StatDefense]: 'Defense',
 	[Stat.StatBlock]: 'Block',
 	[Stat.StatBlockValue]: 'Block Value',
