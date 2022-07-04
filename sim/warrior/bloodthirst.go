@@ -37,7 +37,7 @@ func (warrior *Warrior) registerBloodthirstSpell(cdTimer *core.Timer) {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeMHSpecial,
 
-			DamageMultiplier: 1 * core.TernaryFloat64(ItemSetOnslaughtBattlegear.CharacterHasSetBonus(&warrior.Character, 4), 1.05, 1),
+			DamageMultiplier: 1 * core.TernaryFloat64(ItemSetOnslaughtBattlegear.CharacterHasSetBonus(&warrior.Character, 4), 1.05, 1) * 0.05 * float64(warrior.Talents.UnendingFury),
 			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{
