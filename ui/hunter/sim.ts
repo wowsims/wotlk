@@ -145,7 +145,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				IconInputs.StrengthOfEarthTotem,
 				IconInputs.ManaSpringTotem,
 				IconInputs.BattleShout,
-				IconInputs.DraeneiRacialMelee,
+				IconInputs.HeroicPresence,
 				IconInputs.LeaderOfThePack,
 				IconInputs.FerociousInspiration,
 				IconInputs.TrueshotAura,

@@ -53,14 +53,9 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		character.PseudoStats.DamageDealtMultiplier *= multiplier
 	}
 
-	if partyBuffs.DraeneiRacialMelee {
+	if partyBuffs.HeroicPresence {
 		character.AddStats(stats.Stats{
 			stats.MeleeHit: 1 * MeleeHitRatingPerHitChance,
-		})
-	}
-
-	if partyBuffs.DraeneiRacialCaster {
-		character.AddStats(stats.Stats{
 			stats.SpellHit: 1 * SpellHitRatingPerHitChance,
 		})
 	}

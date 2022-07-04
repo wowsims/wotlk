@@ -355,7 +355,7 @@ func init() {
 		stats.RangedAttackPower: 130,
 		stats.MeleeCrit:         -1.53 * core.MeleeCritRatingPerCritChance,
 	}
-	trollStats := stats.Stats{
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassHunter}] = stats.Stats{
 		stats.Health:    3388,
 		stats.Strength:  65,
 		stats.Agility:   153,
@@ -368,8 +368,6 @@ func init() {
 		stats.RangedAttackPower: 130,
 		stats.MeleeCrit:         -1.53 * core.MeleeCritRatingPerCritChance,
 	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll10, Class: proto.Class_ClassHunter}] = trollStats
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll30, Class: proto.Class_ClassHunter}] = trollStats
 }
 
 // Agent is a generic way to access underlying hunter on any of the agents.

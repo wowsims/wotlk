@@ -131,7 +131,7 @@ class GlyphPicker extends Input<Player<any>, number> {
 		this.selectedGlyph = this.glyphOptions.find(glyphData => glyphData.id == newValue) || emptyGlyphData;
 
 		this.iconElem.style.backgroundImage = `url('${this.selectedGlyph.iconUrl}')`;
-		this.iconElem.href = this.selectedGlyph.id == 0 ? '' : 'https://wowhead.com/wotlk/item=' + this.selectedGlyph.id;
+		this.iconElem.href = this.selectedGlyph.id == 0 ? '' : ActionId.makeItemUrl(this.selectedGlyph.id);
 	}
 }
 
@@ -165,8 +165,8 @@ class GlyphSelectorModal extends Popup {
 				<span class="selector-modal-list-item-description">${glyphData.description}</span>
       `;
 
-			(listItemElem.children[0] as HTMLAnchorElement).href = glyphData.id == 0 ? '' : 'https://wowhead.com/wotlk/item=' + glyphData.id;
-			(listItemElem.children[1] as HTMLAnchorElement).href = glyphData.id == 0 ? '' : 'https://wowhead.com/wotlk/item=' + glyphData.id;
+			(listItemElem.children[0] as HTMLAnchorElement).href = glyphData.id == 0 ? '' : ActionId.makeItemUrl(glyphData.id);
+			(listItemElem.children[1] as HTMLAnchorElement).href = glyphData.id == 0 ? '' : ActionId.makeItemUrl(glyphData.id);
 			const iconElem = listItemElem.getElementsByClassName('selector-modal-list-item-icon')[0] as HTMLImageElement;
 			iconElem.style.backgroundImage = `url('${glyphData.iconUrl}')`;
 
