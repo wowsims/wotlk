@@ -64,7 +64,7 @@ func (wp *WarlockPet) newFirebolt() *core.Spell {
 			DefaultCast: core.Cast{
 				Cost:     baseCost,
 				GCD:      core.GCDDefault,
-				CastTime: time.Millisecond*2000 - (time.Millisecond * time.Duration(250*wp.owner.Talents.ImprovedFirebolt)),
+				CastTime: time.Millisecond*2000 - (time.Millisecond * time.Duration(250*wp.owner.Talents.DemonicPower)),
 			},
 			IgnoreHaste: true,
 		},
@@ -125,7 +125,7 @@ func (wp *WarlockPet) newLashOfPain() *core.Spell {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    wp.NewTimer(),
-				Duration: time.Second*12 - (time.Second * time.Duration(3*wp.owner.Talents.ImprovedLashOfPain)),
+				Duration: time.Second*12 - (time.Second * time.Duration(3*wp.owner.Talents.DemonicPower)),
 			},
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{

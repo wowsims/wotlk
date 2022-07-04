@@ -59,6 +59,9 @@ func (warrior *Warrior) applyDeepWounds() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spellEffect.ProcMask.Matches(core.ProcMaskEmpty) {
+				return
+			}
 			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
 				deepWoundsSpell.Cast(sim, nil)
 				deepWoundsSpell.SpellMetrics[spellEffect.Target.TableIndex].Hits++

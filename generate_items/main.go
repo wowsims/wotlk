@@ -4,15 +4,19 @@ import (
 	"bufio"
 	"encoding/csv"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"sort"
 	"strconv"
 	"strings"
+
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func main() {
 	outDir := flag.String("outDir", "", "Path to output directory for writing generated .go files.")
+	db := flag.String("db", "wotlkdb", "which database to use")
 	flag.Parse()
 
 	if *outDir == "" {
@@ -20,36 +24,83 @@ func main() {
 	}
 
 	tooltipsDB := getWowheadTooltipsDB()
-
-	gemDeclarations := getGemDeclarations()
-	gemsData := make([]GemData, len(gemDeclarations))
-	for idx, gemDeclaration := range gemDeclarations {
-		gemData := GemData{
-			Declaration: gemDeclaration,
-			Response:    getWowheadItemResponse(gemDeclaration.ID, tooltipsDB),
+	var gemsData []GemData
+	var itemsData []ItemData
+	if *db == "wowhead" {
+		gemDeclarations := getGemDeclarations()
+		gemsData = make([]GemData, len(gemDeclarations))
+		for idx, gemDeclaration := range gemDeclarations {
+			gemData := GemData{
+				Declaration: gemDeclaration,
+				Response:    getWowheadItemResponse(gemDeclaration.ID, tooltipsDB),
+			}
+			if gemData.Response.GetName() == "" {
+				continue
+			}
+			//log.Printf("\n\n%+v\n", gemData.Response)
+			gemsData[idx] = gemData
 		}
-		//log.Printf("\n\n%+v\n", gemData.Response)
-		gemsData[idx] = gemData
+
+		itemDeclarations := getItemDeclarations()
+		qualityModifiers := getItemQualityModifiers()
+		itemsData = make([]ItemData, len(itemDeclarations))
+		for idx, itemDeclaration := range itemDeclarations {
+			itemData := ItemData{
+				Declaration:     itemDeclaration,
+				Response:        getWowheadItemResponse(itemDeclaration.ID, tooltipsDB),
+				QualityModifier: qualityModifiers[itemDeclaration.ID],
+			}
+			if itemData.Response.GetName() == "" {
+				continue
+			}
+			//fmt.Printf("\n\n%+v\n", itemData.Response)
+			itemsData[idx] = itemData
+		}
+	} else if *db == "wotlkdb" {
+		itemsData = make([]ItemData, 0, len(tooltipsDB))
+		gemsData = make([]GemData, 0, len(tooltipsDB))
+		for k := range tooltipsDB {
+			resp := getWotlkItemResponse(k, tooltipsDB)
+			if resp.Name == "" || strings.Contains(resp.Name, "zzOLD") {
+				continue
+			}
+			if resp.IsPattern() {
+				continue
+			}
+			// No socket color means that this isn't a gem
+			if resp.GetSocketColor() == proto.GemColor_GemColorUnknown {
+				itemsData = append(itemsData, ItemData{Response: resp, Declaration: ItemDeclaration{ID: k}})
+			} else {
+				gemsData = append(gemsData, GemData{Response: resp, Declaration: GemDeclaration{ID: k}})
+			}
+		}
+	} else {
+		panic("invalid item database source")
 	}
+
 	sort.SliceStable(gemsData, func(i, j int) bool {
-		return gemsData[i].Response.Name < gemsData[j].Response.Name
+		if gemsData[i].Response == nil {
+			return false
+		} else if gemsData[j].Response == nil {
+			return true
+		}
+		if gemsData[i].Response.GetName() == gemsData[j].Response.GetName() {
+			return gemsData[i].Declaration.ID < gemsData[j].Declaration.ID
+		}
+		return gemsData[i].Response.GetName() < gemsData[j].Response.GetName()
 	})
 	writeGemFile(*outDir, gemsData)
 
-	itemDeclarations := getItemDeclarations()
-	qualityModifiers := getItemQualityModifiers()
-	itemsData := make([]ItemData, len(itemDeclarations))
-	for idx, itemDeclaration := range itemDeclarations {
-		itemData := ItemData{
-			Declaration:     itemDeclaration,
-			Response:        getWowheadItemResponse(itemDeclaration.ID, tooltipsDB),
-			QualityModifier: qualityModifiers[itemDeclaration.ID],
-		}
-		//fmt.Printf("\n\n%+v\n", itemData.Response)
-		itemsData[idx] = itemData
-	}
 	sort.SliceStable(itemsData, func(i, j int) bool {
-		return itemsData[i].Response.Name < itemsData[j].Response.Name
+		if itemsData[i].Response == nil {
+			return false
+		} else if itemsData[j].Response == nil {
+			return true
+		}
+		if itemsData[i].Response.GetName() == itemsData[j].Response.GetName() {
+			return itemsData[i].Declaration.ID < itemsData[j].Declaration.ID
+		}
+		return itemsData[i].Response.GetName() < itemsData[j].Response.GetName()
 	})
 	writeItemFile(*outDir, itemsData)
 }
@@ -146,7 +197,7 @@ func getItemDeclarations() []ItemDeclaration {
 func getWowheadTooltipsDB() map[int]string {
 	file, err := os.Open("./assets/item_data/all_item_tooltips.csv")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to open all_item_tooltips.csv: %s", err)
 	}
 	defer file.Close()
 
@@ -172,6 +223,7 @@ func getWowheadTooltipsDB() map[int]string {
 		db[itemID] = tooltip
 	}
 
+	fmt.Printf("\n--\nTOOLTIPS LOADED: %d\n--\n", len(db))
 	return db
 }
 

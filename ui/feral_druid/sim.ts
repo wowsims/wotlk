@@ -63,7 +63,6 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 				Stat.StatStrength,
 				Stat.StatAgility,
 				Stat.StatAttackPower,
-				Stat.StatFeralAttackPower,
 				Stat.StatMeleeHit,
 				Stat.StatMeleeCrit,
 				Stat.StatMeleeHaste,
@@ -97,7 +96,6 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 					[Stat.StatStrength]: 2.266,
 					[Stat.StatAgility]: 3.5,
 					[Stat.StatAttackPower]: 1,
-					[Stat.StatFeralAttackPower]: 1,
 					[Stat.StatMeleeHit]: 3.2,
 					[Stat.StatMeleeCrit]: 2.37,
 					[Stat.StatMeleeHaste]: 1.36,
@@ -238,8 +236,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 			otherInputs: {
 				inputs: [
 					DruidInputs.LatencyMs,
-					OtherInputs.StartingPotion,
-					OtherInputs.NumStartingPotions,
+					OtherInputs.PrepopPotion,
 					OtherInputs.ExposeWeaknessUptime,
 					OtherInputs.ExposeWeaknessHunterAgility,
 					OtherInputs.SnapshotImprovedStrengthOfEarthTotem,

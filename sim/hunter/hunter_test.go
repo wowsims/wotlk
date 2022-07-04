@@ -36,6 +36,16 @@ func TestHunter(t *testing.T) {
 
 		ItemFilter: core.ItemFilter{
 			ArmorType: proto.ArmorType_ArmorTypeMail,
+			WeaponTypes: []proto.WeaponType{
+				proto.WeaponType_WeaponTypeAxe,
+				proto.WeaponType_WeaponTypeDagger,
+				proto.WeaponType_WeaponTypeFist,
+				proto.WeaponType_WeaponTypeMace,
+				proto.WeaponType_WeaponTypeOffHand,
+				proto.WeaponType_WeaponTypePolearm,
+				proto.WeaponType_WeaponTypeStaff,
+				proto.WeaponType_WeaponTypeSword,
+			},
 			RangedWeaponTypes: []proto.RangedWeaponType{
 				proto.RangedWeaponType_RangedWeaponTypeBow,
 				proto.RangedWeaponType_RangedWeaponTypeCrossbow,

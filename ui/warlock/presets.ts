@@ -13,7 +13,7 @@ import { Warlock, Warlock_Rotation as WarlockRotation, WarlockTalents as Warlock
 import * as Enchants from '/wotlk/core/constants/enchants.js';
 import * as Gems from '/wotlk/core/proto_utils/gems.js';
 import * as Tooltips from '/wotlk/core/constants/tooltips.js';
-import { FelArmor, Sacrifice } from './inputs';
+import { FelArmor } from './inputs';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -21,7 +21,8 @@ import { FelArmor, Sacrifice } from './inputs';
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
-export const DestructionTalents = {
+
+/*export const DestructionTalents = {
 	name: 'Destruction',
 	data: '-20501301332001-50500051220051053105',
 };
@@ -30,17 +31,17 @@ export const T6DestroTalents = {
 	name: 'Catabolt',
 	data: '-20501301332001-55500051221001303025',
 };
-
-export const AfflicationTalents = {
-	name: 'Afflication',
-	data: '55022000102351055103--50500051220001',
+*/
+export const AfflictionTalents = {
+	name: 'Affliction',
+	data: '2350002030023510253510331151--55000005',
 };
 
-export const DemonologistTalents = {
+/*export const DemonologistTalents = {
 	name: 'Demonologist',
 	data: '01-2050030133250101501351-5050005112',
 };
-
+*/
 
 export const DefaultRotation = WarlockRotation.create({
 	primarySpell: Warlock_Rotation_PrimarySpell.Shadowbolt,
@@ -67,19 +68,16 @@ export const DemonologyRotation = WarlockRotation.create({
 
 export const DefaultOptions = WarlockOptions.create({
 	armor: Armor.FelArmor,
-	sacrificeSummon: true,
 	summon: Summon.Succubus,
 });
 
 export const AfflictionOptions = WarlockOptions.create({
 	armor: Armor.FelArmor,
-	sacrificeSummon: false,
 	summon: Summon.Imp,
 });
 
 export const DemonologyOptions = WarlockOptions.create({
 	armor: Armor.FelArmor,
-	sacrificeSummon: false,
 	summon: Summon.Felgaurd,
 });
 

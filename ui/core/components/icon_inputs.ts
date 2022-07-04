@@ -416,6 +416,12 @@ export const BattleShout = {
 };
 
 export const makePotionsInput = makeConsumeInputFactory('defaultPotion', [
+	{ actionId: ActionId.fromItemId(33447), value: Potions.RunicHealingPotion },
+	{ actionId: ActionId.fromItemId(33448), value: Potions.RunicManaPotion },
+	{ actionId: ActionId.fromItemId(40093), value: Potions.IndestructiblePotion },
+	{ actionId: ActionId.fromItemId(40211), value: Potions.PotionOfSpeed },
+	{ actionId: ActionId.fromItemId(40212), value: Potions.PotionOfWildMagic },
+
 	{ actionId: ActionId.fromItemId(22839), value: Potions.DestructionPotion },
 	{ actionId: ActionId.fromItemId(22838), value: Potions.HastePotion },
 	{ actionId: ActionId.fromItemId(13442), value: Potions.MightyRagePotion },
@@ -435,6 +441,12 @@ export const makeConjuredInput = makeConsumeInputFactory('defaultConjured', [
 ] as Array<IconEnumValueConfig<Player<any>, Conjured>>);
 
 export const makeFlasksInput = makeConsumeInputFactory('flask', [
+	{ actionId: ActionId.fromItemId(46376), value: Flask.FlaskOfTheFrostWyrm },
+	{ actionId: ActionId.fromItemId(46377), value: Flask.FlaskOfEndlessRage },
+	{ actionId: ActionId.fromItemId(46378), value: Flask.FlaskOfPureMojo },
+	{ actionId: ActionId.fromItemId(46379), value: Flask.FlaskOfStoneblood },
+	{ actionId: ActionId.fromItemId(40079), value: Flask.LesserFlaskOfToughness },
+	{ actionId: ActionId.fromItemId(44939), value: Flask.LesserFlaskOfResistance },
 	{ actionId: ActionId.fromItemId(22861), value: Flask.FlaskOfBlindingLight },
 	{ actionId: ActionId.fromItemId(22853), value: Flask.FlaskOfMightyRestoration },
 	{ actionId: ActionId.fromItemId(22866), value: Flask.FlaskOfPureDeath },
@@ -452,6 +464,16 @@ export const makeFlasksInput = makeConsumeInputFactory('flask', [
 });
 
 export const makeBattleElixirsInput = makeConsumeInputFactory('battleElixir', [
+	{ actionId: ActionId.fromItemId(44325), value: BattleElixir.ElixirOfAccuracy },
+	{ actionId: ActionId.fromItemId(44330), value: BattleElixir.ElixirOfArmorPiercing },
+	{ actionId: ActionId.fromItemId(44327), value: BattleElixir.ElixirOfDeadlyStrikes },
+	{ actionId: ActionId.fromItemId(44329), value: BattleElixir.ElixirOfExpertise },
+	{ actionId: ActionId.fromItemId(44331), value: BattleElixir.ElixirOfLightningSpeed },
+	{ actionId: ActionId.fromItemId(39666), value: BattleElixir.ElixirOfMightyAgility },
+	{ actionId: ActionId.fromItemId(40073), value: BattleElixir.ElixirOfMightyStrength },
+	{ actionId: ActionId.fromItemId(40076), value: BattleElixir.GurusElixir },
+	{ actionId: ActionId.fromItemId(40070), value: BattleElixir.SpellpowerElixir },
+	{ actionId: ActionId.fromItemId(40068), value: BattleElixir.WrathElixir },
 	{ actionId: ActionId.fromItemId(28103), value: BattleElixir.AdeptsElixir },
 	{ actionId: ActionId.fromItemId(9224), value: BattleElixir.ElixirOfDemonslaying },
 	{ actionId: ActionId.fromItemId(22831), value: BattleElixir.ElixirOfMajorAgility },
@@ -472,6 +494,12 @@ export const makeBattleElixirsInput = makeConsumeInputFactory('battleElixir', [
 });
 
 export const makeGuardianElixirsInput = makeConsumeInputFactory('guardianElixir', [
+	{ actionId: ActionId.fromItemId(44328), value: GuardianElixir.ElixirOfMightyDefense },
+	{ actionId: ActionId.fromItemId(40078), value: GuardianElixir.ElixirOfMightyFortitude },
+	{ actionId: ActionId.fromItemId(40109), value: GuardianElixir.ElixirOfMightyMageblood },
+	{ actionId: ActionId.fromItemId(44332), value: GuardianElixir.ElixirOfMightyThoughts },
+	{ actionId: ActionId.fromItemId(40097), value: GuardianElixir.ElixirOfProtection },
+	{ actionId: ActionId.fromItemId(40072), value: GuardianElixir.ElixirOfSpirit },
 	{ actionId: ActionId.fromItemId(9088), value: GuardianElixir.GiftOfArthas },
 	{ actionId: ActionId.fromItemId(32067), value: GuardianElixir.ElixirOfDraenicWisdom },
 	{ actionId: ActionId.fromItemId(32068), value: GuardianElixir.ElixirOfIronskin },
@@ -487,6 +515,20 @@ export const makeGuardianElixirsInput = makeConsumeInputFactory('guardianElixir'
 });
 
 export const makeFoodInput = makeConsumeInputFactory('food', [
+	{ actionId: ActionId.fromItemId(43015), value: Food.FoodFishFeast },
+	{ actionId: ActionId.fromItemId(34753), value: Food.FoodGreatFeast },
+	{ actionId: ActionId.fromItemId(42999), value: Food.FoodBlackenedDragonfin },
+	{ actionId: ActionId.fromItemId(42995), value: Food.FoodHeartyRhino },
+	{ actionId: ActionId.fromItemId(34754), value: Food.FoodMegaMammothMeal },
+	{ actionId: ActionId.fromItemId(34756), value: Food.FoodSpicedWormBurger },
+	{ actionId: ActionId.fromItemId(42994), value: Food.FoodRhinoliciousWormsteak },
+	{ actionId: ActionId.fromItemId(34769), value: Food.FoodImperialMantaSteak },
+	{ actionId: ActionId.fromItemId(42996), value: Food.FoodSnapperExtreme },
+	{ actionId: ActionId.fromItemId(34758), value: Food.FoodMightyRhinoDogs },
+	{ actionId: ActionId.fromItemId(34767), value: Food.FoodFirecrackerSalmon },
+	{ actionId: ActionId.fromItemId(42998), value: Food.FoodCuttlesteak },
+	{ actionId: ActionId.fromItemId(43000), value: Food.FoodDragonfinFilet },
+
 	{ actionId: ActionId.fromItemId(27657), value: Food.FoodBlackenedBasilisk },
 	{ actionId: ActionId.fromItemId(27664), value: Food.FoodGrilledMudfish },
 	{ actionId: ActionId.fromItemId(27655), value: Food.FoodRavagerDog },

@@ -10,9 +10,9 @@ func (warlock *Warlock) registerLifeTapSpell() {
 	baseRestore := 582.0 * (1.0 + 0.1*float64(warlock.Talents.ImprovedLifeTap))
 	manaMetrics := warlock.NewManaMetrics(actionID)
 
-	petRestore := 0.3333 * float64(warlock.Talents.ManaFeed)
+	petRestore := core.TernaryFloat64(warlock.Talents.ManaFeed, 0, 1)
 	var petManaMetrics []*core.ResourceMetrics
-	if warlock.Talents.ManaFeed > 0 {
+	if warlock.Talents.ManaFeed {
 		for _, pet := range warlock.Pets {
 			petManaMetrics = append(petManaMetrics, pet.GetPet().NewManaMetrics(actionID))
 		}
@@ -36,7 +36,7 @@ func (warlock *Warlock) registerLifeTapSpell() {
 				restore := baseRestore + (warlock.GetStat(stats.SpellPower)+warlock.GetStat(stats.ShadowSpellPower))*0.8
 				warlock.AddMana(sim, restore, manaMetrics, true)
 
-				if warlock.Talents.ManaFeed > 0 {
+				if warlock.Talents.ManaFeed {
 					for i, pet := range warlock.Pets {
 						pet.GetPet().AddMana(sim, restore*petRestore, petManaMetrics[i], true)
 					}

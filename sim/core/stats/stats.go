@@ -58,7 +58,6 @@ const (
 	FrostResistance
 	NatureResistance
 	ShadowResistance
-	FeralAttackPower
 
 	Len
 )
@@ -131,8 +130,6 @@ func (s Stat) StatName() string {
 		return "Armor"
 	case RangedAttackPower:
 		return "RangedAttackPower"
-	case FeralAttackPower:
-		return "FeralAttackPower"
 	case Defense:
 		return "Defense"
 	case Block:
@@ -164,9 +161,7 @@ func (s Stat) StatName() string {
 
 func FromFloatArray(values []float64) Stats {
 	stats := Stats{}
-	for i, v := range values {
-		stats[i] = v
-	}
+	copy(stats[:], values)
 	return stats
 }
 

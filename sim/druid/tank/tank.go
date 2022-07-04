@@ -84,13 +84,14 @@ func NewFeralTankDruid(character core.Character, options proto.Player) *FeralTan
 		},
 	})
 
-	bear.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.FeralAttackPower,
-		ModifiedStat: stats.AttackPower,
-		Modifier: func(feralAttackPower float64, attackPower float64) float64 {
-			return attackPower + feralAttackPower*1
-		},
-	})
+	// TODO: make AP depend on weapon DPS instead of FAP
+	// bear.AddStatDependency(stats.StatDependency{
+	// 	SourceStat:   stats.FeralAttackPower,
+	// 	ModifiedStat: stats.AttackPower,
+	// 	Modifier: func(feralAttackPower float64, attackPower float64) float64 {
+	// 		return attackPower + feralAttackPower*1
+	// 	},
+	// })
 
 	return bear
 }

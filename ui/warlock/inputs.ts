@@ -42,7 +42,7 @@ export const DemonArmor = {
 	},
 };
 
-export const Sacrifice = {
+/*export const Sacrifice = {
 	id: ActionId.fromSpellId(18788),
 	states: 2,
 	extraCssClasses: [
@@ -56,7 +56,7 @@ export const Sacrifice = {
 		player.setSpecOptions(eventID, newOptions);
 	},
 };
-
+*/
 export const DemonSummon = {
 	extraCssClasses: [
 		'warlock-summon-picker',

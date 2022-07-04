@@ -26,7 +26,7 @@ import { Player as PlayerProto } from '/wotlk/core/proto/api.js';
 import { StatWeightsResult } from '/wotlk/core/proto/api.js';
 import { EquippedItem, getWeaponDPS } from '/wotlk/core/proto_utils/equipped_item.js';
 
-import { talentStringToProto } from '/wotlk/core/talents/factory.js';
+import { playerTalentStringToProto } from '/wotlk/core/talents/factory.js';
 import { Gear } from '/wotlk/core/proto_utils/gear.js';
 import {
 	gemEligibleForSocket,
@@ -464,7 +464,7 @@ export class Player<SpecType extends Spec> {
 
 	getTalents(): SpecTalents<SpecType> {
 		if (this.talents == null) {
-			this.talents = talentStringToProto(this.spec, this.talentsString) as SpecTalents<SpecType>;
+			this.talents = playerTalentStringToProto(this.spec, this.talentsString) as SpecTalents<SpecType>;
 		}
 		return this.talents;
 	}
