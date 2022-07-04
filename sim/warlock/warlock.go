@@ -22,7 +22,11 @@ type Warlock struct {
 	CorruptionDot  *core.Dot
 	SiphonLife     *core.Spell
 	SiphonLifeDot  *core.Dot
+/*	Haunt		   *core.Spell
+	Haunt		   *core.Aura
 
+	DemonicEmpowerment		   *core.Aura
+*/
 	LifeTap *core.Spell
 
 	CurseOfElements         *core.Spell
@@ -83,8 +87,7 @@ func (warlock *Warlock) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 
 func (warlock *Warlock) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 	partyBuffs.BloodPact = core.MaxTristate(partyBuffs.BloodPact, core.MakeTristateValue(
-		warlock.Options.Summon == proto.Warlock_Options_Imp &&
-			(!warlock.Talents.DemonicSacrifice || !warlock.Options.SacrificeSummon),
+		warlock.Options.Summon == proto.Warlock_Options_Imp,
 		warlock.Talents.ImprovedImp == 2))
 }
 
@@ -126,7 +129,7 @@ func NewWarlock(character core.Character, options proto.Player) *Warlock {
 		warlock.AddStat(stats.SpellPower, amount)
 	}
 
-	if warlock.Talents.DemonicSacrifice && warlock.Options.SacrificeSummon {
+/*	if warlock.Talents.DemonicSacrifice && warlock.Options.SacrificeSummon {
 		switch warlock.Options.Summon {
 		case proto.Warlock_Options_Succubus:
 			warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.15
@@ -135,7 +138,8 @@ func NewWarlock(character core.Character, options proto.Player) *Warlock {
 		case proto.Warlock_Options_Felgaurd:
 			warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.10
 		}
-	} else if warlock.Options.Summon != proto.Warlock_Options_NoSummon {
+	} else*/
+	if warlock.Options.Summon != proto.Warlock_Options_NoSummon {
 		warlock.Pet = warlock.NewWarlockPet()
 	}
 
