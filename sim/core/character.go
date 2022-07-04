@@ -264,16 +264,7 @@ func (character *Character) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 }
 func (character *Character) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 	if character.Race == proto.Race_RaceDraenei {
-		class := character.Class
-		if class == proto.Class_ClassHunter ||
-			class == proto.Class_ClassPaladin ||
-			class == proto.Class_ClassWarrior {
-			partyBuffs.DraeneiRacialMelee = true
-		} else if class == proto.Class_ClassMage ||
-			class == proto.Class_ClassPriest ||
-			class == proto.Class_ClassShaman {
-			partyBuffs.DraeneiRacialCaster = true
-		}
+		partyBuffs.HeroicPresence = true
 	}
 
 	if character.Consumes.Drums > 0 {

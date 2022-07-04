@@ -351,7 +351,7 @@ func init() {
 		stats.AttackPower: 120,
 		stats.MeleeCrit:   -0.3 * core.MeleeCritRatingPerCritChance,
 	}
-	trollStats := stats.Stats{
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassRogue}] = stats.Stats{
 		stats.Health:    3524,
 		stats.Strength:  96,
 		stats.Agility:   160,
@@ -362,8 +362,6 @@ func init() {
 		stats.AttackPower: 120,
 		stats.MeleeCrit:   -0.3 * core.MeleeCritRatingPerCritChance,
 	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll10, Class: proto.Class_ClassRogue}] = trollStats
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll30, Class: proto.Class_ClassRogue}] = trollStats
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceUndead, Class: proto.Class_ClassRogue}] = stats.Stats{
 		stats.Health:    3524,
 		stats.Strength:  94,

@@ -1264,43 +1264,43 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-Settings-Human-P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 581.8131190069251
-  tps: 1143.404672669492
+  dps: 580.6134593790828
+  tps: 1142.215995305923
  }
 }
 dps_results: {
  key: "TestProtectionWarrior-Settings-Human-P1-Basic-FullBuffs-LongSingleTarget"
  value: {
-  dps: 569.0891667153694
-  tps: 987.3051686296197
+  dps: 564.3408629374858
+  tps: 979.4611607861007
  }
 }
 dps_results: {
  key: "TestProtectionWarrior-Settings-Human-P1-Basic-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 620.5545494108333
-  tps: 1079.9730589280182
+  dps: 622.1320736640516
+  tps: 1083.3286131285759
  }
 }
 dps_results: {
  key: "TestProtectionWarrior-Settings-Human-P1-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 242.3266784675648
-  tps: 574.2424975230809
+  dps: 239.43991406760406
+  tps: 569.4549308995461
  }
 }
 dps_results: {
  key: "TestProtectionWarrior-Settings-Human-P1-Basic-NoBuffs-LongSingleTarget"
  value: {
-  dps: 230.00822024328127
-  tps: 419.49582306366864
+  dps: 229.0191818636787
+  tps: 417.58913271447005
  }
 }
 dps_results: {
  key: "TestProtectionWarrior-Settings-Human-P1-Basic-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 218.04796811443347
-  tps: 401.3224595402125
+  dps: 215.72247981217578
+  tps: 396.22305737589596
  }
 }
 dps_results: {

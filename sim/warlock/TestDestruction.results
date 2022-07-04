@@ -37,11 +37,11 @@ character_stats_results: {
   final_stats: 0
   final_stats: 0
   final_stats: 10636
-  final_stats: 5
-  final_stats: 5
-  final_stats: 5
-  final_stats: 5
-  final_stats: 5
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
  }
 }
 dps_results: {
@@ -523,22 +523,22 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-Settings-Human-P4-Destro Warlock-FullBuffs-LongMultiTarget"
  value: {
-  dps: 1624.3326067359365
-  tps: 2397.711102118988
+  dps: 1629.466125058343
+  tps: 2399.8858443150193
  }
 }
 dps_results: {
  key: "TestDestruction-Settings-Human-P4-Destro Warlock-FullBuffs-LongSingleTarget"
  value: {
-  dps: 1624.3326067359365
-  tps: 1004.4647076819085
+  dps: 1629.466125058343
+  tps: 1007.8227065446436
  }
 }
 dps_results: {
  key: "TestDestruction-Settings-Human-P4-Destro Warlock-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 2136.6070488696782
-  tps: 1224.699169655222
+  dps: 2134.6635370193853
+  tps: 1223.5432966390267
  }
 }
 dps_results: {

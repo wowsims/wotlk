@@ -141,7 +141,7 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 				IconInputs.TotemOfWrath,
 				IconInputs.ManaSpringTotem,
 				IconInputs.ManaTideTotem,
-				IconInputs.DraeneiRacialCaster,
+				IconInputs.HeroicPresence,
 				IconInputs.EyeOfTheNight,
 				IconInputs.ChainOfTheTwilightOwl,
 				IconInputs.JadePendantOfBlasting,
