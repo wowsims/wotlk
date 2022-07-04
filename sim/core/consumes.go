@@ -181,6 +181,82 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 	}
 
 	switch consumes.Food {
+	case proto.Food_FoodFishFeast:
+		character.AddStats(stats.Stats{
+			stats.AttackPower:       80,
+			stats.RangedAttackPower: 80,
+			stats.SpellPower:        46,
+			stats.HealingPower:      46,
+			stats.Stamina:           40,
+		})
+	case proto.Food_FoodGreatFeast:
+		character.AddStats(stats.Stats{
+			stats.AttackPower:       60,
+			stats.RangedAttackPower: 60,
+			stats.SpellPower:        35,
+			stats.HealingPower:      35,
+			stats.Stamina:           30,
+		})
+	case proto.Food_FoodBlackenedDragonfin:
+		character.AddStats(stats.Stats{
+			stats.Agility: 40,
+			stats.Stamina: 40,
+		})
+	case proto.Food_FoodHeartyRhino:
+		character.AddStats(stats.Stats{
+			stats.ArmorPenetration: 40,
+			stats.Stamina: 40,
+		})
+	case proto.Food_FoodMegaMammothMeal:
+		character.AddStats(stats.Stats{
+			stats.AttackPower: 80,
+			stats.RangedAttackPower: 80,
+			stats.Stamina: 40,
+		})
+	case proto.Food_FoodSpicedWormBurger:
+		character.AddStats(stats.Stats{
+			stats.MeleeCrit: 40,
+			stats.SpellCrit: 40,
+			stats.Stamina: 40,
+		})
+	case proto.Food_FoodRhinoliciousWormsteak:
+		character.AddStats(stats.Stats{
+			stats.Expertise: 40,
+			stats.Stamina: 40,
+		})
+	case proto.Food_FoodImperialMantaSteak:
+		character.AddStats(stats.Stats{
+			stats.MeleeHaste: 40,
+			stats.SpellHaste: 40,
+			stats.Stamina: 40,
+		})
+	case proto.Food_FoodSnapperExtreme:
+		character.AddStats(stats.Stats{
+			stats.MeleeHit: 40,
+			stats.SpellHit: 40,
+			stats.Stamina: 40,
+		})
+	case proto.Food_FoodMightyRhinoDogs:
+		character.AddStats(stats.Stats{
+			stats.MP5: 16,
+			stats.Stamina: 40,
+		})
+	case proto.Food_FoodFirecrackerSalmon:
+		character.AddStats(stats.Stats{
+			stats.SpellPower: 46,
+			stats.HealingPower: 46,
+			stats.Stamina: 40,
+		})
+	case proto.Food_FoodCuttlesteak:
+		character.AddStats(stats.Stats{
+			stats.Spirit: 40,
+			stats.Stamina: 40,
+		})
+	case proto.Food_FoodDragonfinFilet:
+		character.AddStats(stats.Stats{
+			stats.Strength: 40,
+			stats.Stamina: 40,
+		})
 	case proto.Food_FoodBlackenedBasilisk:
 		character.AddStats(stats.Stats{
 			stats.SpellPower:   23,
