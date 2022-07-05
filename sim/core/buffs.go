@@ -35,10 +35,10 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 	}
 
 	character.AddStats(stats.Stats{
-		stats.SpellCrit: GetTristateValueFloat(partyBuffs.MoonkinAura, 5*SpellCritRatingPerCritChance, 5*SpellCritRatingPerCritChance+20),
+		stats.SpellCrit: GetTristateValueFloat(partyBuffs.MoonkinAura, 5*CritRatingPerCritChance, 5*CritRatingPerCritChance+20),
 	})
 	character.AddStats(stats.Stats{
-		stats.MeleeCrit: GetTristateValueFloat(partyBuffs.LeaderOfThePack, 5*MeleeCritRatingPerCritChance, 5*MeleeCritRatingPerCritChance+20),
+		stats.MeleeCrit: GetTristateValueFloat(partyBuffs.LeaderOfThePack, 5*CritRatingPerCritChance, 5*CritRatingPerCritChance+20),
 	})
 
 	if partyBuffs.TrueshotAura {
@@ -53,14 +53,9 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		character.PseudoStats.DamageDealtMultiplier *= multiplier
 	}
 
-	if partyBuffs.DraeneiRacialMelee {
+	if partyBuffs.HeroicPresence {
 		character.AddStats(stats.Stats{
 			stats.MeleeHit: 1 * MeleeHitRatingPerHitChance,
-		})
-	}
-
-	if partyBuffs.DraeneiRacialCaster {
-		character.AddStats(stats.Stats{
 			stats.SpellHit: 1 * SpellHitRatingPerHitChance,
 		})
 	}
@@ -176,7 +171,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 
 	if partyBuffs.TotemOfWrath > 0 {
 		character.AddStats(stats.Stats{
-			stats.SpellCrit: 3 * SpellCritRatingPerCritChance * float64(partyBuffs.TotemOfWrath),
+			stats.SpellCrit: 3 * CritRatingPerCritChance * float64(partyBuffs.TotemOfWrath),
 			stats.SpellHit:  3 * SpellHitRatingPerHitChance * float64(partyBuffs.TotemOfWrath),
 		})
 	}
@@ -247,7 +242,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		character.AddStats(stats.Stats{stats.SpellPower: 15})
 	}
 	if partyBuffs.ChainOfTheTwilightOwl {
-		character.AddStats(stats.Stats{stats.SpellCrit: 2 * SpellCritRatingPerCritChance})
+		character.AddStats(stats.Stats{stats.SpellCrit: 2 * CritRatingPerCritChance})
 	}
 }
 

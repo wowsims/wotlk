@@ -46,7 +46,7 @@ func (mage *Mage) ApplyTalents() {
 	}
 
 	if mage.Talents.ArcaneInstability > 0 {
-		mage.AddStat(stats.SpellCrit, float64(mage.Talents.ArcaneInstability)*1*core.SpellCritRatingPerCritChance)
+		mage.AddStat(stats.SpellCrit, float64(mage.Talents.ArcaneInstability)*1*core.CritRatingPerCritChance)
 		mage.spellDamageMultiplier += float64(mage.Talents.ArcaneInstability) * 0.01
 	}
 
@@ -68,7 +68,7 @@ func (mage *Mage) applyArcaneConcentration() {
 	}
 
 	procChance := 0.02 * float64(mage.Talents.ArcaneConcentration)
-	bonusCrit := float64(mage.Talents.ArcanePotency) * 10 * core.SpellCritRatingPerCritChance
+	bonusCrit := float64(mage.Talents.ArcanePotency) * 10 * core.CritRatingPerCritChance
 
 	// Used to make sure we don't try to roll twice for the same cast on aoe spells.
 	var curCastIdx int
@@ -284,7 +284,7 @@ func (mage *Mage) registerCombustionCD() {
 	}
 
 	numCrits := 0
-	const critPerStack = 10 * core.SpellCritRatingPerCritChance
+	const critPerStack = 10 * core.CritRatingPerCritChance
 
 	aura := mage.RegisterAura(core.Aura{
 		Label:     "Combustion",

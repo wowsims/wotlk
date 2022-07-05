@@ -14,11 +14,11 @@ func (warrior *Warrior) RegisterRecklessnessCD() {
 		Duration:  time.Second * 12,
 		MaxStacks: 3,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			warrior.PseudoStats.BonusMeleeSpellCritRating += 100 * core.MeleeCritRatingPerCritChance
+			warrior.PseudoStats.BonusMeleeSpellCritRating += 100 * core.CritRatingPerCritChance
 			warrior.PseudoStats.DamageTakenMultiplier *= 1.2
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			warrior.PseudoStats.BonusMeleeSpellCritRating -= 100 * core.MeleeCritRatingPerCritChance
+			warrior.PseudoStats.BonusMeleeSpellCritRating -= 100 * core.CritRatingPerCritChance
 			warrior.PseudoStats.DamageTakenMultiplier /= 1.2
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

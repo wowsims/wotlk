@@ -32,9 +32,8 @@ enum Race {
 	RaceNightElf = 6;
 	RaceOrc = 7;
 	RaceTauren = 8;
-	RaceTroll10 = 9;
-	RaceTroll30 = 10;
-	RaceUndead = 11;
+	RaceTroll = 9;
+	RaceUndead = 10;
 }
 
 enum Faction {
@@ -421,8 +420,7 @@ message PartyBuffs {
 	TristateEffect devotion_aura = 35;
 	TristateEffect retribution_aura = 36;
 	bool trueshot_aura = 21;
-	bool draenei_racial_melee = 3;
-	bool draenei_racial_caster = 4;
+	bool heroic_presence = 3;
 
 	// Drums
 	Drums drums = 5;
@@ -582,7 +580,6 @@ message Target {
 	double swing_speed = 8;
 	bool dual_wield = 9;
 	bool dual_wield_penalty = 10;
-	bool can_crush = 11;
 	bool parry_haste = 12;
 	bool suppress_dodge = 16; // Sunwell Radiance
 	SpellSchool spell_school = 13; // Allows elemental attacks.

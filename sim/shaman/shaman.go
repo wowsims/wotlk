@@ -56,7 +56,7 @@ func NewShaman(character core.Character, talents proto.ShamanTalents, totems pro
 		SourceStat:   stats.Intellect,
 		ModifiedStat: stats.SpellCrit,
 		Modifier: func(intellect float64, spellCrit float64) float64 {
-			return spellCrit + (intellect/78.1)*core.SpellCritRatingPerCritChance
+			return spellCrit + (intellect/78.1)*core.CritRatingPerCritChance
 		},
 	})
 
@@ -72,7 +72,7 @@ func NewShaman(character core.Character, talents proto.ShamanTalents, totems pro
 		SourceStat:   stats.Agility,
 		ModifiedStat: stats.MeleeCrit,
 		Modifier: func(agility float64, meleeCrit float64) float64 {
-			return meleeCrit + (agility/25)*core.MeleeCritRatingPerCritChance
+			return meleeCrit + (agility/25)*core.CritRatingPerCritChance
 		},
 	})
 
@@ -348,8 +348,7 @@ func init() {
 		stats.AttackPower: 120,
 		stats.MeleeCrit:   37.07,
 	}
-
-	trollStats := stats.Stats{
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassShaman}] = stats.Stats{
 		stats.Health:      2979,
 		stats.Strength:    103,
 		stats.Agility:     66,
@@ -361,6 +360,4 @@ func init() {
 		stats.AttackPower: 120,
 		stats.MeleeCrit:   37.07,
 	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll10, Class: proto.Class_ClassShaman}] = trollStats
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll30, Class: proto.Class_ClassShaman}] = trollStats
 }

@@ -32,7 +32,7 @@ func (hunter *Hunter) registerRaptorStrikeSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
 
-			BonusCritRating:  float64(hunter.Talents.SavageStrikes) * 10 * core.MeleeCritRatingPerCritChance,
+			BonusCritRating:  float64(hunter.Talents.SavageStrikes) * 10 * core.CritRatingPerCritChance,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 

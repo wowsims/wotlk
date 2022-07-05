@@ -16,17 +16,12 @@ export const raceNames: Record<Race, string> = {
 	[Race.RaceNightElf]: 'Night Elf',
 	[Race.RaceOrc]: 'Orc',
 	[Race.RaceTauren]: 'Tauren',
-	[Race.RaceTroll10]: 'Troll (+10% Haste)',
-	[Race.RaceTroll30]: 'Troll (+30% Haste)',
+	[Race.RaceTroll]: 'Troll',
 	[Race.RaceUndead]: 'Undead',
 };
 
 export function nameToRace(name: string): Race {
 	const normalized = name.toLowerCase().replaceAll(' ', '');
-	if (normalized.includes('troll')) {
-		return Race.RaceTroll10;
-	}
-
 	for (const key in raceNames) {
 		const race = parseInt(key) as Race;
 		if (raceNames[race].toLowerCase().replaceAll(' ', '') == normalized) {

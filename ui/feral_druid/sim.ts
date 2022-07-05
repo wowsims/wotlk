@@ -169,7 +169,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 				IconInputs.ManaSpringTotem,
 				IconInputs.BattleShout,
 				IconInputs.BraidedEterniumChain,
-				IconInputs.DraeneiRacialMelee,
+				IconInputs.HeroicPresence,
 				IconInputs.FerociousInspiration,
 				IconInputs.SanctityAura,
 				IconInputs.TrueshotAura,

@@ -98,7 +98,7 @@ func init() {
 		hunter := agent.(HunterAgent).GetHunter()
 
 		hunter.pet.PseudoStats.DamageDealtMultiplier *= 1.03
-		hunter.pet.AddStat(stats.MeleeCrit, core.MeleeCritRatingPerCritChance*2)
+		hunter.pet.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*2)
 	})
 
 	core.NewItemEffect(32336, func(agent core.Agent) {

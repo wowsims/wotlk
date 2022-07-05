@@ -146,7 +146,7 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 		numTicks = int(nextCD / tickLength)
 	}
 
-	critChance := (spriest.GetStat(stats.SpellCrit) / (core.SpellCritRatingPerCritChance * 100)) + (float64(spriest.Talents.ShadowPower) * 0.03)
+	critChance := (spriest.GetStat(stats.SpellCrit) / (core.CritRatingPerCritChance * 100)) + (float64(spriest.Talents.ShadowPower) * 0.03)
 	averageCritMultiplier := 1 + 0.5*critChance
 	mfDamage := (528 + 0.57*(spriest.GetStat(stats.SpellPower))) * 0.3333
 

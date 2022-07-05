@@ -50,7 +50,7 @@ func (mage *Mage) newArcaneBlastSpell(numStacks int32) *core.Spell {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:             core.ProcMaskSpellDamage,
 			BonusSpellHitRating:  float64(mage.Talents.ArcaneFocus) * 2 * core.SpellHitRatingPerHitChance,
-			BonusSpellCritRating: float64(mage.Talents.ArcaneImpact) * 2 * core.SpellCritRatingPerCritChance,
+			BonusSpellCritRating: float64(mage.Talents.ArcaneImpact) * 2 * core.CritRatingPerCritChance,
 
 			DamageMultiplier: mage.spellDamageMultiplier * core.TernaryFloat64(mage.hasTristfal, 1.2, 1),
 			ThreatMultiplier: 1 - 0.2*float64(mage.Talents.ArcaneSubtlety),

@@ -21,7 +21,7 @@ func (paladin *Paladin) registerJudgementOfBloodSpell(cdTimer *core.Timer, sanct
 	effect := core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeOrRangedSpecial,
 
-		BonusCritRating:  3 * core.MeleeCritRatingPerCritChance * float64(paladin.Talents.Fanaticism),
+		BonusCritRating:  3 * core.CritRatingPerCritChance * float64(paladin.Talents.Fanaticism),
 		DamageMultiplier: paladin.WeaponSpecializationMultiplier(),
 		ThreatMultiplier: 1,
 
@@ -238,7 +238,7 @@ func (paladin *Paladin) registerJudgementOfRighteousnessSpell(cdTimer *core.Time
 			ProcMask: core.ProcMaskMeleeOrRangedSpecial,
 
 			BonusSpellPower:  core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 33504, 94.0, 0),
-			BonusCritRating:  3 * core.MeleeCritRatingPerCritChance * float64(paladin.Talents.Fanaticism),
+			BonusCritRating:  3 * core.CritRatingPerCritChance * float64(paladin.Talents.Fanaticism),
 			DamageMultiplier: 1 + 0.03*float64(paladin.Talents.ImprovedSealOfRighteousness),
 			ThreatMultiplier: 1,
 

@@ -117,7 +117,7 @@ var waterElementalBaseStats = stats.Stats{
 	stats.SpellPower: 300,
 	stats.Mana:       2000,
 	stats.SpellHit:   3 * core.SpellHitRatingPerHitChance,
-	stats.SpellCrit:  8 * core.SpellCritRatingPerCritChance,
+	stats.SpellCrit:  8 * core.CritRatingPerCritChance,
 }
 
 var waterElementalStatInheritance = func(ownerStats stats.Stats) stats.Stats {

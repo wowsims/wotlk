@@ -859,8 +859,7 @@ export const raceToFaction: Record<Race, Faction> = {
 	[Race.RaceNightElf]: Faction.Alliance,
 	[Race.RaceOrc]: Faction.Horde,
 	[Race.RaceTauren]: Faction.Horde,
-	[Race.RaceTroll10]: Faction.Horde,
-	[Race.RaceTroll30]: Faction.Horde,
+	[Race.RaceTroll]: Faction.Horde,
 	[Race.RaceUndead]: Faction.Horde,
 };
 
@@ -894,16 +893,14 @@ const hunterRaces = [
 	Race.RaceNightElf,
 	Race.RaceOrc,
 	Race.RaceTauren,
-	Race.RaceTroll10,
-	Race.RaceTroll30,
+	Race.RaceTroll,
 ];
 const mageRaces = [
 	Race.RaceBloodElf,
 	Race.RaceDraenei,
 	Race.RaceGnome,
 	Race.RaceHuman,
-	Race.RaceTroll10,
-	Race.RaceTroll30,
+	Race.RaceTroll,
 	Race.RaceUndead,
 ];
 const paladinRaces = [
@@ -919,8 +916,7 @@ const priestRaces = [
 	Race.RaceHuman,
 	Race.RaceNightElf,
 	Race.RaceOrc,
-	Race.RaceTroll10,
-	Race.RaceTroll30,
+	Race.RaceTroll,
 	Race.RaceUndead,
 ];
 const rogueRaces = [
@@ -930,16 +926,14 @@ const rogueRaces = [
 	Race.RaceHuman,
 	Race.RaceNightElf,
 	Race.RaceOrc,
-	Race.RaceTroll10,
-	Race.RaceTroll30,
+	Race.RaceTroll,
 	Race.RaceUndead,
 ];
 const shamanRaces = [
 	Race.RaceDraenei,
 	Race.RaceOrc,
 	Race.RaceTauren,
-	Race.RaceTroll10,
-	Race.RaceTroll30,
+	Race.RaceTroll,
 ];
 const warlockRaces = [
 	Race.RaceBloodElf,
@@ -956,8 +950,7 @@ const warriorRaces = [
 	Race.RaceNightElf,
 	Race.RaceOrc,
 	Race.RaceTauren,
-	Race.RaceTroll10,
-	Race.RaceTroll30,
+	Race.RaceTroll,
 	Race.RaceUndead,
 ];
 const deathKnightRaces = [
@@ -969,8 +962,7 @@ const deathKnightRaces = [
 	Race.RaceNightElf,
 	Race.RaceOrc,
 	Race.RaceTauren,
-	Race.RaceTroll10,
-	Race.RaceTroll30,
+	Race.RaceTroll,
 	Race.RaceUndead,
 ];
 

@@ -33,7 +33,7 @@ func (mage *Mage) registerFrostboltSpell() {
 			ProcMask: core.ProcMaskSpellDamage,
 			// Frostbolt get 2x bonus from Elemental Precision because it's a binary spell.
 			BonusSpellHitRating:  float64(mage.Talents.ElementalPrecision) * 2 * core.SpellHitRatingPerHitChance,
-			BonusSpellCritRating: float64(mage.Talents.EmpoweredFrostbolt) * 1 * core.SpellCritRatingPerCritChance,
+			BonusSpellCritRating: float64(mage.Talents.EmpoweredFrostbolt) * 1 * core.CritRatingPerCritChance,
 
 			DamageMultiplier: mage.spellDamageMultiplier *
 				(1 + 0.02*float64(mage.Talents.PiercingIce)) *

@@ -145,7 +145,7 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 				IconInputs.ManaSpringTotem,
 				IconInputs.ManaTideTotem,
 				IconInputs.FerociousInspiration,
-				IconInputs.DraeneiRacialCaster,
+				IconInputs.HeroicPresence,
 				IconInputs.EyeOfTheNight,
 				IconInputs.ChainOfTheTwilightOwl,
 				IconInputs.JadePendantOfBlasting,

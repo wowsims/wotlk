@@ -464,7 +464,6 @@ type PseudoStats struct {
 
 	CanBlock bool
 	CanParry bool
-	CanCrush bool
 
 	ParryHaste bool
 
@@ -489,6 +488,13 @@ type PseudoStats struct {
 	HolyDamageTakenMultiplier     float64
 	NatureDamageTakenMultiplier   float64
 	ShadowDamageTakenMultiplier   float64
+
+	ReducedPhysicalHitTakenChance float64
+	ReducedArcaneHitTakenChance float64
+	ReducedFireHitTakenChance float64
+	ReducedFrostHitTakenChance float64
+	ReducedNatureHitTakenChance float64
+	ReducedShadowHitTakenChance float64
 
 	PeriodicPhysicalDamageTakenMultiplier float64
 }
