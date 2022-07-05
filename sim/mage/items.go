@@ -3,7 +3,6 @@ package mage
 import (
 	"time"
 
-	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
@@ -67,7 +66,7 @@ var ItemSetTempestRegalia = core.NewItemSet(core.ItemSet{
 })
 
 func init() {
-	common.NewSimpleStatOffensiveTrinketEffect(19339, stats.Stats{stats.SpellHaste: 330}, time.Second*20, time.Minute*5) // MQG
+	core.NewSimpleStatOffensiveTrinketEffect(19339, stats.Stats{stats.SpellHaste: 330}, time.Second*20, time.Minute*5) // MQG
 
 	core.NewItemEffect(32488, func(agent core.Agent) {
 		mage := agent.(MageAgent).GetMage()
