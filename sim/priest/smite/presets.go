@@ -6,20 +6,20 @@ import (
 )
 
 var StandardTalents = &proto.PriestTalents{
-	InnerFocus:           true,
-	Meditation:           3,
-	SilentResolve:        1,
-	MentalAgility:        5,
-	MentalStrength:       5,
-	DivineSpirit:         true,
-	ImprovedDivineSpirit: 2,
-	ForceOfWill:          5,
-	PowerInfusion:        true,
-	HolySpecialization:   5,
-	DivineFury:           5,
-	SearingLight:         2,
-	SpiritualGuidance:    5,
-	SurgeOfLight:         2,
+	InnerFocus:     true,
+	Meditation:     3,
+	SilentResolve:  1,
+	MentalAgility:  5,
+	MentalStrength: 5,
+	//DivineSpirit:         true,
+	//ImprovedDivineSpirit: 2,
+	//ForceOfWill:          5,
+	PowerInfusion:      true,
+	HolySpecialization: 5,
+	DivineFury:         5,
+	SearingLight:       2,
+	SpiritualGuidance:  5,
+	SurgeOfLight:       2,
 }
 
 var FullRaidBuffs = &proto.RaidBuffs{
@@ -38,11 +38,11 @@ var FullIndividualBuffs = &proto.IndividualBuffs{
 }
 
 var FullConsumes = &proto.Consumes{
-	Flask:              proto.Flask_FlaskOfBlindingLight,
-	Food:               proto.Food_FoodBlackenedBasilisk,
-	DefaultPotion:      proto.Potions_SuperManaPotion,
-	DefaultConjured:    proto.Conjured_ConjuredDarkRune,
-	MainHandImbue:      proto.WeaponImbue_WeaponImbueBrilliantWizardOil,
+	Flask:           proto.Flask_FlaskOfBlindingLight,
+	Food:            proto.Food_FoodBlackenedBasilisk,
+	DefaultPotion:   proto.Potions_SuperManaPotion,
+	DefaultConjured: proto.Conjured_ConjuredDarkRune,
+	MainHandImbue:   proto.WeaponImbue_WeaponImbueBrilliantWizardOil,
 }
 
 var FullDebuffs = &proto.Debuffs{
