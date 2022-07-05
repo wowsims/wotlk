@@ -133,6 +133,10 @@ $sim-transitions: .2s ease-in;
   border: 1px solid yellow !important;
 }
 
+#bootstrap-overrides .socket-color-prismatic{
+  border: 1px solid pink !important;
+}
+
 @mixin wowhead-background-icon {
   background-repeat: no-repeat;
   background-size: cover;
