@@ -248,7 +248,7 @@ dps_results: {
  key: "TestProtectionWarrior-AllItems-BracingEarthsiegeDiamond"
  value: {
   dps: 528.3377682874204
-  tps: 916.5100967846967
+  tps: 898.2465615156696
  }
 }
 dps_results: {
@@ -317,8 +317,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-ChaoticSkyflareDiamond"
  value: {
-  dps: 530.2158503092352
-  tps: 920.1043952870533
+  dps: 540.9553416789621
+  tps: 937.7666391977888
  }
 }
 dps_results: {
@@ -541,8 +541,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-EternalEarthsiegeDiamond"
  value: {
-  dps: 528.3377682874204
-  tps: 916.5100967846967
+  dps: 530.817269731193
+  tps: 920.2910885363052
  }
 }
 dps_results: {
@@ -679,6 +679,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestProtectionWarrior-AllItems-IndestructibleAlchemist'sStone-44323"
+ value: {
+  dps: 512.1306865830863
+  tps: 891.7959178937576
+ }
+}
+dps_results: {
  key: "TestProtectionWarrior-AllItems-InsightfulEarthsiegeDiamond"
  value: {
   dps: 528.3377682874204
@@ -760,6 +767,20 @@ dps_results: {
  value: {
   dps: 512.1306865830863
   tps: 891.7959178937576
+ }
+}
+dps_results: {
+ key: "TestProtectionWarrior-AllItems-MercurialAlchemistStone-44322"
+ value: {
+  dps: 520.2728187703085
+  tps: 906.6323720351418
+ }
+}
+dps_results: {
+ key: "TestProtectionWarrior-AllItems-MightyAlchemist'sStone-44324"
+ value: {
+  dps: 518.0185581087435
+  tps: 902.2053698738773
  }
 }
 dps_results: {
@@ -870,8 +891,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-RelentlessEarthsiegeDiamond"
  value: {
-  dps: 531.5636793462288
-  tps: 922.195173313389
+  dps: 541.3388373142502
+  tps: 937.9599228708882
  }
 }
 dps_results: {
@@ -1143,8 +1164,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 528.3377682874204
-  tps: 916.5100967846967
+  dps: 533.3127298971199
+  tps: 925.9357074807713
  }
 }
 dps_results: {

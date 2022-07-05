@@ -62,7 +62,7 @@ dps_results: {
  key: "TestFrost-AllItems-Alchemist'sStone-13503"
  value: {
   dps: 1630.252845663774
-  tps: 1322.5405256142483
+  tps: 1322.1518417742022
  }
 }
 dps_results: {
@@ -89,8 +89,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Assassin'sAlchemistStone-35751"
  value: {
-  dps: 1626.87540045016
-  tps: 1320.489452201555
+  dps: 1625.6805553472286
+  tps: 1319.3247574760387
  }
 }
 dps_results: {
@@ -138,8 +138,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-BeamingEarthsiegeDiamond"
  value: {
-  dps: 1646.5324460122981
-  tps: 1337.4597297209755
+  dps: 1646.5322718724442
+  tps: 1337.4639481789773
  }
 }
 dps_results: {
@@ -195,7 +195,7 @@ dps_results: {
  key: "TestFrost-AllItems-BracingEarthsiegeDiamond"
  value: {
   dps: 1660.5107290180517
-  tps: 1348.7076583185628
+  tps: 1322.21792512367
  }
 }
 dps_results: {
@@ -236,8 +236,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-ChaoticSkyflareDiamond"
  value: {
-  dps: 1646.5324460122981
-  tps: 1337.4597297209755
+  dps: 1683.94880607715
+  tps: 1370.460959298175
  }
 }
 dps_results: {
@@ -355,8 +355,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-EmberSkyflareDiamond"
  value: {
-  dps: 1660.5107290180517
-  tps: 1348.7076583185628
+  dps: 1662.6913336558075
+  tps: 1350.6046428232908
  }
 }
 dps_results: {
@@ -460,8 +460,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Guardian'sAlchemistStone-35748"
  value: {
-  dps: 1626.87540045016
-  tps: 1320.489452201555
+  dps: 1625.6805553472286
+  tps: 1319.3247574760387
  }
 }
 dps_results: {
@@ -521,10 +521,17 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFrost-AllItems-IndestructibleAlchemist'sStone-44323"
+ value: {
+  dps: 1625.6805553472286
+  tps: 1319.3247574760387
+ }
+}
+dps_results: {
  key: "TestFrost-AllItems-InsightfulEarthsiegeDiamond"
  value: {
   dps: 1645.963154868255
-  tps: 1336.9458686777255
+  tps: 1340.7688263255393
  }
 }
 dps_results: {
@@ -598,6 +605,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFrost-AllItems-MercurialAlchemistStone-44322"
+ value: {
+  dps: 1656.406425711638
+  tps: 1346.451413604334
+ }
+}
+dps_results: {
+ key: "TestFrost-AllItems-MightyAlchemist'sStone-44324"
+ value: {
+  dps: 1639.753442064955
+  tps: 1331.7057572405176
+ }
+}
+dps_results: {
  key: "TestFrost-AllItems-MindQuickeningGem-19339"
  value: {
   dps: 1637.5301146572465
@@ -663,15 +684,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Redeemer'sAlchemistStone-35750"
  value: {
-  dps: 1678.2115130013522
-  tps: 1363.014197372269
+  dps: 1676.9747319339313
+  tps: 1361.8191014390666
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-RelentlessEarthsiegeDiamond"
  value: {
-  dps: 1640.3406862443026
-  tps: 1331.998597605603
+  dps: 1677.1997879300345
+  tps: 1364.508325292419
  }
 }
 dps_results: {
@@ -782,8 +803,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Sorcerer'sAlchemistStone-35749"
  value: {
-  dps: 1678.2115130013522
-  tps: 1363.014197372269
+  dps: 1676.9747319339313
+  tps: 1361.8191014390666
  }
 }
 dps_results: {
@@ -894,8 +915,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 1640.3406862443026
-  tps: 1331.998597605603
+  dps: 1638.7756581372034
+  tps: 1328.9432378128338
  }
 }
 dps_results: {
