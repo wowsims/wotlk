@@ -181,7 +181,7 @@ dps_results: {
  key: "TestMutilate-AllItems-BracingEarthsiegeDiamond"
  value: {
   dps: 1165.3480949867917
-  tps: 815.3557122744422
+  tps: 799.0485980289537
  }
 }
 dps_results: {
@@ -222,8 +222,8 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-ChaoticSkyflareDiamond"
  value: {
-  dps: 1171.6899642400663
-  tps: 819.9111930493912
+  dps: 1191.7696446555415
+  tps: 834.1677661443781
  }
 }
 dps_results: {
@@ -649,8 +649,8 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-RelentlessEarthsiegeDiamond"
  value: {
-  dps: 1177.6303167119843
-  tps: 824.1188732156442
+  dps: 1197.873932847723
+  tps: 838.4918406720186
  }
 }
 dps_results: {
@@ -866,8 +866,8 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 1165.3480949867917
-  tps: 815.3557122744422
+  dps: 1176.6864424667046
+  tps: 823.384193542211
  }
 }
 dps_results: {
