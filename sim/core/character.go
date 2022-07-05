@@ -35,6 +35,8 @@ type Character struct {
 	// Provides stat dependency management behavior.
 	stats.StatDependencyManager
 
+	professions [2]proto.Profession
+
 	glyphs [6]int32
 
 	// Provides major cooldown management behavior.
@@ -77,6 +79,10 @@ func NewCharacter(party *Party, partyIndex int, player proto.Player) Character {
 		ShattFaction: player.ShattFaction,
 		Class:        player.Class,
 		Equip:        items.ProtoToEquipment(*player.Equipment),
+		professions: [2]proto.Profession{
+			player.Profession1,
+			player.Profession2,
+		},
 
 		Party:      party,
 		PartyIndex: partyIndex,
@@ -150,6 +156,7 @@ func (character *Character) applyAllEffects(agent Agent, raidBuffs proto.RaidBuf
 	playerStats := &proto.PlayerStats{}
 
 	applyRaceEffects(agent)
+	character.applyProfessionEffects()
 	playerStats.BaseStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
 
 	character.AddStats(character.Equip.Stats())
@@ -359,6 +366,10 @@ func (character *Character) advance(sim *Simulation, elapsedTime time.Duration) 
 			petAgent.GetPet().advance(sim, elapsedTime)
 		}
 	}
+}
+
+func (character *Character) HasProfession(prof proto.Profession) bool {
+	return prof == character.professions[0] || prof == character.professions[1]
 }
 
 func (character *Character) HasGlyph(glyphID int32) bool {
