@@ -143,7 +143,7 @@ func (spellEffect *SpellEffect) PhysicalCritChance(unit *Unit, spell *Spell, att
 		critRating += unit.PseudoStats.BonusOHCritRating
 	}
 
-	return (critRating / (MeleeCritRatingPerCritChance * 100)) - attackTable.CritSuppression
+	return (critRating / (CritRatingPerCritChance * 100)) - attackTable.CritSuppression
 }
 
 func (spellEffect *SpellEffect) SpellPower(unit *Unit, spell *Spell) float64 {
@@ -157,7 +157,7 @@ func (spellEffect *SpellEffect) SpellCritChance(unit *Unit, spell *Spell) float6
 	} else if spell.SpellSchool.Matches(SpellSchoolFrost) {
 		critRating += spellEffect.Target.PseudoStats.BonusFrostCritRating
 	}
-	return critRating / (SpellCritRatingPerCritChance * 100)
+	return critRating / (CritRatingPerCritChance * 100)
 }
 
 func (spellEffect *SpellEffect) init(sim *Simulation, spell *Spell) {

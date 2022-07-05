@@ -15,9 +15,9 @@ func (mage *Mage) registerScorchSpell() {
 		BonusSpellHitRating: float64(mage.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
 
 		BonusSpellCritRating: 0 +
-			float64(mage.Talents.Incineration)*2*core.SpellCritRatingPerCritChance +
-			float64(mage.Talents.CriticalMass)*2*core.SpellCritRatingPerCritChance +
-			float64(mage.Talents.Pyromaniac)*1*core.SpellCritRatingPerCritChance,
+			float64(mage.Talents.Incineration)*2*core.CritRatingPerCritChance +
+			float64(mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
+			float64(mage.Talents.Pyromaniac)*1*core.CritRatingPerCritChance,
 
 		DamageMultiplier: mage.spellDamageMultiplier * (1 + 0.02*float64(mage.Talents.FirePower)),
 		ThreatMultiplier: 1 - 0.05*float64(mage.Talents.BurningSoul),

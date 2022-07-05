@@ -33,7 +33,7 @@ type Unit struct {
 	// Unique label for logging.
 	Label string
 
-	Level int32 // Level of Unit, e.g. Bosses are lvl 73.
+	Level int32 // Level of Unit, e.g. Bosses are 83.
 
 	MobType proto.MobType
 

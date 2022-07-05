@@ -9,11 +9,11 @@ import (
 )
 
 func (paladin *Paladin) ApplyTalents() {
-	paladin.AddStat(stats.MeleeCrit, core.MeleeCritRatingPerCritChance*float64(paladin.Talents.SanctifiedSeals))
-	paladin.AddStat(stats.SpellCrit, core.SpellCritRatingPerCritChance*float64(paladin.Talents.SanctifiedSeals))
+	paladin.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*float64(paladin.Talents.SanctifiedSeals))
+	paladin.AddStat(stats.SpellCrit, core.CritRatingPerCritChance*float64(paladin.Talents.SanctifiedSeals))
 	paladin.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*float64(paladin.Talents.Precision))
 	paladin.AddStat(stats.SpellHit, core.SpellHitRatingPerHitChance*float64(paladin.Talents.Precision))
-	paladin.AddStat(stats.MeleeCrit, core.MeleeCritRatingPerCritChance*float64(paladin.Talents.Conviction))
+	paladin.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*float64(paladin.Talents.Conviction))
 	paladin.AddStat(stats.Parry, core.ParryRatingPerParryChance*1*float64(paladin.Talents.Deflection))
 	paladin.AddStat(stats.Armor, paladin.Equip.Stats()[stats.Armor]*0.02*float64(paladin.Talents.Toughness))
 	paladin.AddStat(stats.Defense, core.DefenseRatingPerDefense*4*float64(paladin.Talents.Anticipation))

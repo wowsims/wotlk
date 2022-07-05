@@ -126,7 +126,7 @@ func NewPaladin(character core.Character, talents proto.PaladinTalents) *Paladin
 		SourceStat:   stats.Intellect,
 		ModifiedStat: stats.SpellCrit,
 		Modifier: func(intellect float64, spellCrit float64) float64 {
-			return spellCrit + (intellect/80)*core.SpellCritRatingPerCritChance
+			return spellCrit + (intellect/80)*core.CritRatingPerCritChance
 		},
 	})
 
@@ -142,7 +142,7 @@ func NewPaladin(character core.Character, talents proto.PaladinTalents) *Paladin
 		SourceStat:   stats.Agility,
 		ModifiedStat: stats.MeleeCrit,
 		Modifier: func(agility float64, meleeCrit float64) float64 {
-			return meleeCrit + (agility/25)*core.MeleeCritRatingPerCritChance
+			return meleeCrit + (agility/25)*core.CritRatingPerCritChance
 		},
 	})
 

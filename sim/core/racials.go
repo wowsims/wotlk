@@ -27,14 +27,14 @@ func applyRaceEffects(agent Agent) {
 		// Gun specialization (+1% ranged crit when using a gun).
 		if weapon := character.Equip[proto.ItemSlot_ItemSlotRanged]; weapon.ID != 0 {
 			if weapon.RangedWeaponType == proto.RangedWeaponType_RangedWeaponTypeGun {
-				character.PseudoStats.BonusRangedCritRating += 1 * MeleeCritRatingPerCritChance
+				character.PseudoStats.BonusRangedCritRating += 1 * CritRatingPerCritChance
 			}
 		}
 
 		applyWeaponSpecialization(
-				character,
-				5 * ExpertisePerQuarterPercentReduction,
-				[]proto.WeaponType{ proto.WeaponType_WeaponTypeMace })
+			character,
+			5*ExpertisePerQuarterPercentReduction,
+			[]proto.WeaponType{proto.WeaponType_WeaponTypeMace})
 
 		// TODO: Stoneform
 	case proto.Race_RaceGnome:
@@ -57,9 +57,9 @@ func applyRaceEffects(agent Agent) {
 		})
 
 		applyWeaponSpecialization(
-				character,
-				3 * ExpertisePerQuarterPercentReduction,
-				[]proto.WeaponType{ proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeSword })
+			character,
+			3*ExpertisePerQuarterPercentReduction,
+			[]proto.WeaponType{proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeSword})
 	case proto.Race_RaceNightElf:
 		character.PseudoStats.ReducedNatureHitTakenChance += 0.02
 		character.PseudoStats.ReducedPhysicalHitTakenChance += 0.02
@@ -100,17 +100,17 @@ func applyRaceEffects(agent Agent) {
 
 		// Axe specialization
 		applyWeaponSpecialization(
-				character,
-				5 * ExpertisePerQuarterPercentReduction,
-				[]proto.WeaponType{ proto.WeaponType_WeaponTypeAxe })
+			character,
+			5*ExpertisePerQuarterPercentReduction,
+			[]proto.WeaponType{proto.WeaponType_WeaponTypeAxe})
 	case proto.Race_RaceTauren:
 		character.PseudoStats.ReducedNatureHitTakenChance += 0.02
-		character.AddStat(stats.Health, character.GetBaseStats()[stats.Health] * 0.05)
+		character.AddStat(stats.Health, character.GetBaseStats()[stats.Health]*0.05)
 	case proto.Race_RaceTroll:
 		// Bow specialization (+1% ranged crit when using a bow).
 		if weapon := character.Equip[proto.ItemSlot_ItemSlotRanged]; weapon.ID != 0 {
 			if weapon.RangedWeaponType == proto.RangedWeaponType_RangedWeaponTypeBow {
-				character.PseudoStats.BonusRangedCritRating += 1 * MeleeCritRatingPerCritChance
+				character.PseudoStats.BonusRangedCritRating += 1 * CritRatingPerCritChance
 			}
 		}
 
@@ -132,7 +132,7 @@ func applyRaceEffects(agent Agent) {
 			},
 			OnExpire: func(aura *Aura, sim *Simulation) {
 				character.MultiplyCastSpeed(1 / 1.2)
-				character.MultiplyAttackSpeed(sim, 1 / 1.2)
+				character.MultiplyAttackSpeed(sim, 1/1.2)
 			},
 		})
 

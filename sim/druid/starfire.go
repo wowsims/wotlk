@@ -31,7 +31,7 @@ func (druid *Druid) newStarfireSpell(rank int) *core.Spell {
 
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
-		BonusSpellCritRating: (float64(druid.Talents.FocusedStarlight) * 2 * core.SpellCritRatingPerCritChance) + core.TernaryFloat64(ItemSetThunderheartRegalia.CharacterHasSetBonus(&druid.Character, 4), 5*core.SpellCritRatingPerCritChance, 0),
+		BonusSpellCritRating: (float64(druid.Talents.FocusedStarlight) * 2 * core.CritRatingPerCritChance) + core.TernaryFloat64(ItemSetThunderheartRegalia.CharacterHasSetBonus(&druid.Character, 4), 5*core.CritRatingPerCritChance, 0),
 		DamageMultiplier:     1 + 0.02*float64(druid.Talents.Moonfury),
 		ThreatMultiplier:     1,
 		BaseDamage:           core.BaseDamageConfigMagic(minBaseDamage+bonusFlatDamage, maxBaseDamage+bonusFlatDamage, spellCoefficient),

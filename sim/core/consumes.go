@@ -16,7 +16,7 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 		switch consumes.Flask {
 		case proto.Flask_FlaskOfTheFrostWyrm:
 			character.AddStats(stats.Stats{
-				stats.SpellPower: 125,
+				stats.SpellPower:   125,
 				stats.HealingPower: 125,
 			})
 		case proto.Flask_FlaskOfEndlessRage:
@@ -123,11 +123,11 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 			})
 		case proto.BattleElixir_GurusElixir:
 			character.AddStats(stats.Stats{
-				stats.Agility: 20,
-				stats.Strength: 20,
-				stats.Stamina: 20,
+				stats.Agility:   20,
+				stats.Strength:  20,
+				stats.Stamina:   20,
 				stats.Intellect: 20,
-				stats.Spirit: 20,
+				stats.Spirit:    20,
 			})
 		case proto.BattleElixir_SpellpowerElixir:
 			character.AddStats(stats.Stats{
@@ -136,7 +136,7 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 			})
 		case proto.BattleElixir_WrathElixir:
 			character.AddStats(stats.Stats{
-				stats.AttackPower:   90,
+				stats.AttackPower:       90,
 				stats.RangedAttackPower: 90,
 			})
 		case proto.BattleElixir_AdeptsElixir:
@@ -308,57 +308,57 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 	case proto.Food_FoodHeartyRhino:
 		character.AddStats(stats.Stats{
 			stats.ArmorPenetration: 40,
-			stats.Stamina: 40,
+			stats.Stamina:          40,
 		})
 	case proto.Food_FoodMegaMammothMeal:
 		character.AddStats(stats.Stats{
-			stats.AttackPower: 80,
+			stats.AttackPower:       80,
 			stats.RangedAttackPower: 80,
-			stats.Stamina: 40,
+			stats.Stamina:           40,
 		})
 	case proto.Food_FoodSpicedWormBurger:
 		character.AddStats(stats.Stats{
 			stats.MeleeCrit: 40,
 			stats.SpellCrit: 40,
-			stats.Stamina: 40,
+			stats.Stamina:   40,
 		})
 	case proto.Food_FoodRhinoliciousWormsteak:
 		character.AddStats(stats.Stats{
 			stats.Expertise: 40,
-			stats.Stamina: 40,
+			stats.Stamina:   40,
 		})
 	case proto.Food_FoodImperialMantaSteak:
 		character.AddStats(stats.Stats{
 			stats.MeleeHaste: 40,
 			stats.SpellHaste: 40,
-			stats.Stamina: 40,
+			stats.Stamina:    40,
 		})
 	case proto.Food_FoodSnapperExtreme:
 		character.AddStats(stats.Stats{
 			stats.MeleeHit: 40,
 			stats.SpellHit: 40,
-			stats.Stamina: 40,
+			stats.Stamina:  40,
 		})
 	case proto.Food_FoodMightyRhinoDogs:
 		character.AddStats(stats.Stats{
-			stats.MP5: 16,
+			stats.MP5:     16,
 			stats.Stamina: 40,
 		})
 	case proto.Food_FoodFirecrackerSalmon:
 		character.AddStats(stats.Stats{
-			stats.SpellPower: 46,
+			stats.SpellPower:   46,
 			stats.HealingPower: 46,
-			stats.Stamina: 40,
+			stats.Stamina:      40,
 		})
 	case proto.Food_FoodCuttlesteak:
 		character.AddStats(stats.Stats{
-			stats.Spirit: 40,
+			stats.Spirit:  40,
 			stats.Stamina: 40,
 		})
 	case proto.Food_FoodDragonfinFilet:
 		character.AddStats(stats.Stats{
 			stats.Strength: 40,
-			stats.Stamina: 40,
+			stats.Stamina:  40,
 		})
 	case proto.Food_FoodBlackenedBasilisk:
 		character.AddStats(stats.Stats{
@@ -776,7 +776,7 @@ func makePotionActivation(potionType proto.Potions, character *Character, potion
 					},
 				},
 				ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
-					healthGain := 2700.0 + (4500.0 - 2700.0) * sim.RandomFloat("RunicHealingPotion")
+					healthGain := 2700.0 + (4500.0-2700.0)*sim.RandomFloat("RunicHealingPotion")
 					character.GainHealth(sim, healthGain, healthMetrics)
 				},
 			}),
@@ -808,7 +808,7 @@ func makePotionActivation(potionType proto.Potions, character *Character, potion
 					},
 				},
 				ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
-					manaGain := 4200 + (4400.0 - 4200.0) * sim.RandomFloat("RunicManaPotion")
+					manaGain := 4200 + (4400.0-4200.0)*sim.RandomFloat("RunicManaPotion")
 					if alchStoneEquipped {
 						manaGain *= 1.4
 					}
@@ -893,7 +893,7 @@ func makePotionActivation(potionType proto.Potions, character *Character, potion
 		}
 	} else if potionType == proto.Potions_DestructionPotion {
 		actionID := ActionID{ItemID: 22839}
-		aura := character.NewTemporaryStatsAura("Destruction Potion", actionID, stats.Stats{stats.SpellPower: 120, stats.SpellCrit: 2 * SpellCritRatingPerCritChance}, time.Second*15-prepopTime)
+		aura := character.NewTemporaryStatsAura("Destruction Potion", actionID, stats.Stats{stats.SpellPower: 120, stats.SpellCrit: 2 * CritRatingPerCritChance}, time.Second*15-prepopTime)
 		return MajorCooldown{
 			Type: CooldownTypeDPS,
 			CanActivate: func(sim *Simulation, character *Character) bool {
