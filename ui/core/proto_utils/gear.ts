@@ -1,8 +1,11 @@
+import { Enchant } from '/wotlk/core/proto/common.js';
+import { EquipmentSpec } from '/wotlk/core/proto/common.js';
 import { Gem } from '/wotlk/core/proto/common.js';
 import { GemColor } from '/wotlk/core/proto/common.js';
+import { Item } from '/wotlk/core/proto/common.js';
 import { ItemSlot } from '/wotlk/core/proto/common.js';
 import { ItemSpec } from '/wotlk/core/proto/common.js';
-import { EquipmentSpec } from '/wotlk/core/proto/common.js';
+import { Profession } from '/wotlk/core/proto/common.js';
 import { WeaponType } from '/wotlk/core/proto/common.js';
 import { equalsOrBothNull } from '/wotlk/core/utils.js';
 import { getEnumValues } from '/wotlk/core/utils.js';
@@ -170,5 +173,11 @@ export class Gear {
 	hasSharpOHWeapon(): boolean {
 		const weapon = this.getEquippedItem(ItemSlot.ItemSlotOffHand);
 		return weapon != null && isSharpWeaponType(weapon.item.weaponType);
+	}
+
+	getFailedProfessionRequirements(professions: Array<Profession>): Array<Item | Gem | Enchant> {
+		return (this.asArray().filter(ei => ei != null) as Array<EquippedItem>)
+				.map(ei => ei.getFailedProfessionRequirements(professions))
+				.flat();
 	}
 }

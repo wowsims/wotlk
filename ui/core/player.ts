@@ -310,6 +310,9 @@ export class Player<SpecType extends Spec> {
 			this.professionChangeEmitter.emit(eventID);
 		}
 	}
+	getProfessions(): Array<Profession> {
+		return [this.profession1, this.profession2].filter(p => p != Profession.ProfessionUnknown);
+	}
 
 	getShattFaction(): ShattrathFaction {
 		return this.shattFaction;
