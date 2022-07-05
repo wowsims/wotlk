@@ -25,7 +25,7 @@ func (warrior *Warrior) registerThunderClapSpell() {
 		ProcMask:         core.ProcMaskSpellDamage,
 		DamageMultiplier: impTCDamageMult,
 		ThreatMultiplier: 1.75,
-		BonusCritRating:  float64(warrior.Talents.Incite) * 5 * core.MeleeCritRatingPerCritChance,
+		BonusCritRating:  float64(warrior.Talents.Incite) * 5 * core.CritRatingPerCritChance,
 		BaseDamage:       core.BaseDamageConfigFlat(123),
 		OutcomeApplier:   warrior.OutcomeFuncMagicHitAndCrit(warrior.spellCritMultiplier(true)),
 	}
