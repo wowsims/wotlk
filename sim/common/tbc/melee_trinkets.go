@@ -1,4 +1,4 @@
-package common
+package tbc
 
 import (
 	"time"
@@ -31,29 +31,29 @@ func init() {
 	//addBattlemasterEffect(34163)
 
 	// Offensive trinkets. Keep these in order by item ID.
-	NewSimpleStatOffensiveTrinketEffect(22954, stats.Stats{stats.MeleeHaste: 200}, time.Second*15, time.Minute*2)                                 // Kiss of the Spider
-	NewSimpleStatOffensiveTrinketEffect(23041, stats.Stats{stats.AttackPower: 260, stats.RangedAttackPower: 260}, time.Second*20, time.Minute*2)  // Slayer's Crest
-	NewSimpleStatOffensiveTrinketEffect(24128, stats.Stats{stats.AttackPower: 320, stats.RangedAttackPower: 320}, time.Second*12, time.Minute*3)  // Figurine Nightseye Panther
-	NewSimpleStatOffensiveTrinketEffect(28041, stats.Stats{stats.AttackPower: 200, stats.RangedAttackPower: 200}, time.Second*15, time.Minute*2)  // Bladefists Breadth
-	NewSimpleStatOffensiveTrinketEffect(28121, stats.Stats{stats.ArmorPenetration: 600}, time.Second*20, time.Minute*2)                           // Icon of Unyielding Courage
-	NewSimpleStatOffensiveTrinketEffect(28288, stats.Stats{stats.MeleeHaste: 260}, time.Second*10, time.Minute*2)                                 // Abacus of Violent Odds
-	NewSimpleStatOffensiveTrinketEffect(29383, stats.Stats{stats.AttackPower: 278, stats.RangedAttackPower: 278}, time.Second*20, time.Minute*2)  // Bloodlust Brooch
-	NewSimpleStatOffensiveTrinketEffect(29776, stats.Stats{stats.AttackPower: 200, stats.RangedAttackPower: 200}, time.Second*20, time.Minute*2)  // Core of Arkelos
-	NewSimpleStatOffensiveTrinketEffect(32658, stats.Stats{stats.Agility: 150}, time.Second*20, time.Minute*2)                                    // Badge of Tenacity
-	NewSimpleStatOffensiveTrinketEffect(33831, stats.Stats{stats.AttackPower: 360, stats.RangedAttackPower: 360}, time.Second*20, time.Minute*2)  // Berserkers Call
-	NewSimpleStatOffensiveTrinketEffect(35702, stats.Stats{stats.AttackPower: 320, stats.RangedAttackPower: 320}, time.Second*15, time.Second*90) // Figurine Shadowsong Panther
-	NewSimpleStatOffensiveTrinketEffect(38287, stats.Stats{stats.AttackPower: 278, stats.RangedAttackPower: 278}, time.Second*20, time.Minute*2)  // Empty Direbrew Mug
+	core.NewSimpleStatOffensiveTrinketEffect(22954, stats.Stats{stats.MeleeHaste: 200}, time.Second*15, time.Minute*2)                                 // Kiss of the Spider
+	core.NewSimpleStatOffensiveTrinketEffect(23041, stats.Stats{stats.AttackPower: 260, stats.RangedAttackPower: 260}, time.Second*20, time.Minute*2)  // Slayer's Crest
+	core.NewSimpleStatOffensiveTrinketEffect(24128, stats.Stats{stats.AttackPower: 320, stats.RangedAttackPower: 320}, time.Second*12, time.Minute*3)  // Figurine Nightseye Panther
+	core.NewSimpleStatOffensiveTrinketEffect(28041, stats.Stats{stats.AttackPower: 200, stats.RangedAttackPower: 200}, time.Second*15, time.Minute*2)  // Bladefists Breadth
+	core.NewSimpleStatOffensiveTrinketEffect(28121, stats.Stats{stats.ArmorPenetration: 600}, time.Second*20, time.Minute*2)                           // Icon of Unyielding Courage
+	core.NewSimpleStatOffensiveTrinketEffect(28288, stats.Stats{stats.MeleeHaste: 260}, time.Second*10, time.Minute*2)                                 // Abacus of Violent Odds
+	core.NewSimpleStatOffensiveTrinketEffect(29383, stats.Stats{stats.AttackPower: 278, stats.RangedAttackPower: 278}, time.Second*20, time.Minute*2)  // Bloodlust Brooch
+	core.NewSimpleStatOffensiveTrinketEffect(29776, stats.Stats{stats.AttackPower: 200, stats.RangedAttackPower: 200}, time.Second*20, time.Minute*2)  // Core of Arkelos
+	core.NewSimpleStatOffensiveTrinketEffect(32658, stats.Stats{stats.Agility: 150}, time.Second*20, time.Minute*2)                                    // Badge of Tenacity
+	core.NewSimpleStatOffensiveTrinketEffect(33831, stats.Stats{stats.AttackPower: 360, stats.RangedAttackPower: 360}, time.Second*20, time.Minute*2)  // Berserkers Call
+	core.NewSimpleStatOffensiveTrinketEffect(35702, stats.Stats{stats.AttackPower: 320, stats.RangedAttackPower: 320}, time.Second*15, time.Second*90) // Figurine Shadowsong Panther
+	core.NewSimpleStatOffensiveTrinketEffect(38287, stats.Stats{stats.AttackPower: 278, stats.RangedAttackPower: 278}, time.Second*20, time.Minute*2)  // Empty Direbrew Mug
 
 	// Defensive trinkets. Keep these in order by item ID.
-	NewSimpleStatDefensiveTrinketEffect(27891, stats.Stats{stats.Armor: 1280}, time.Second*20, time.Minute*2)                                                          // Adamantine Figurine
-	NewSimpleStatDefensiveTrinketEffect(28528, stats.Stats{stats.Dodge: 300}, time.Second*10, time.Minute*2)                                                           // Moroes Lucky Pocket Watch
-	NewSimpleStatDefensiveTrinketEffect(29387, stats.Stats{stats.BlockValue: 200}, time.Second*20, time.Minute*2)                                                      // Gnomeregan Auto-Blocker 600
-	NewSimpleStatDefensiveTrinketEffect(30300, stats.Stats{stats.Block: 125}, time.Second*15, time.Second*90)                                                          // Dabiris Enigma
-	NewSimpleStatDefensiveTrinketEffect(30629, stats.Stats{stats.Defense: 165, stats.AttackPower: -330, stats.RangedAttackPower: -330}, time.Second*15, time.Minute*3) // Scarab of Displacement
-	NewSimpleStatDefensiveTrinketEffect(32501, stats.Stats{stats.Health: 1750}, time.Second*20, time.Minute*3)                                                         // Shadowmoon Insignia
-	NewSimpleStatDefensiveTrinketEffect(32534, stats.Stats{stats.Health: 1250}, time.Second*15, time.Minute*5)                                                         // Brooch of the Immortal King
-	NewSimpleStatDefensiveTrinketEffect(33830, stats.Stats{stats.Armor: 2500}, time.Second*20, time.Minute*2)                                                          // Ancient Aqir Artifact
-	NewSimpleStatDefensiveTrinketEffect(38289, stats.Stats{stats.BlockValue: 200}, time.Second*20, time.Minute*2)                                                      // Coren's Lucky Coin
+	core.NewSimpleStatDefensiveTrinketEffect(27891, stats.Stats{stats.Armor: 1280}, time.Second*20, time.Minute*2)                                                          // Adamantine Figurine
+	core.NewSimpleStatDefensiveTrinketEffect(28528, stats.Stats{stats.Dodge: 300}, time.Second*10, time.Minute*2)                                                           // Moroes Lucky Pocket Watch
+	core.NewSimpleStatDefensiveTrinketEffect(29387, stats.Stats{stats.BlockValue: 200}, time.Second*20, time.Minute*2)                                                      // Gnomeregan Auto-Blocker 600
+	core.NewSimpleStatDefensiveTrinketEffect(30300, stats.Stats{stats.Block: 125}, time.Second*15, time.Second*90)                                                          // Dabiris Enigma
+	core.NewSimpleStatDefensiveTrinketEffect(30629, stats.Stats{stats.Defense: 165, stats.AttackPower: -330, stats.RangedAttackPower: -330}, time.Second*15, time.Minute*3) // Scarab of Displacement
+	core.NewSimpleStatDefensiveTrinketEffect(32501, stats.Stats{stats.Health: 1750}, time.Second*20, time.Minute*3)                                                         // Shadowmoon Insignia
+	core.NewSimpleStatDefensiveTrinketEffect(32534, stats.Stats{stats.Health: 1250}, time.Second*15, time.Minute*5)                                                         // Brooch of the Immortal King
+	core.NewSimpleStatDefensiveTrinketEffect(33830, stats.Stats{stats.Armor: 2500}, time.Second*20, time.Minute*2)                                                          // Ancient Aqir Artifact
+	core.NewSimpleStatDefensiveTrinketEffect(38289, stats.Stats{stats.BlockValue: 200}, time.Second*20, time.Minute*2)                                                      // Coren's Lucky Coin
 
 	// Proc effects. Keep these in order by item ID.
 

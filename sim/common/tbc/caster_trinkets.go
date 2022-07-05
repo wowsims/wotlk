@@ -1,4 +1,4 @@
-package common
+package tbc
 
 import (
 	"time"
@@ -10,18 +10,18 @@ import (
 
 func init() {
 	// Offensive trinkets. Keep these in order by item ID.
-	NewSimpleStatOffensiveTrinketEffect(23046, stats.Stats{stats.SpellPower: 130}, time.Second*20, time.Minute*2)  // Restrained Essence of Sapphiron
-	NewSimpleStatOffensiveTrinketEffect(24126, stats.Stats{stats.SpellPower: 150}, time.Second*20, time.Minute*5)  // Living Ruby Serpent
-	NewSimpleStatOffensiveTrinketEffect(29132, stats.Stats{stats.SpellPower: 150}, time.Second*15, time.Second*90) // Scryer's Bloodgem
-	NewSimpleStatOffensiveTrinketEffect(29179, stats.Stats{stats.SpellPower: 150}, time.Second*15, time.Second*90) // Xiri's Gift
-	NewSimpleStatOffensiveTrinketEffect(29370, stats.Stats{stats.SpellPower: 155}, time.Second*20, time.Minute*2)  // Icon of the Silver Crescent
-	NewSimpleStatOffensiveTrinketEffect(32483, stats.Stats{stats.SpellHaste: 175}, time.Second*20, time.Minute*2)  // Skull of Gul'dan
-	NewSimpleStatOffensiveTrinketEffect(33829, stats.Stats{stats.SpellPower: 211}, time.Second*20, time.Minute*2)  // Hex Shrunken Head
-	NewSimpleStatOffensiveTrinketEffect(34429, stats.Stats{stats.SpellPower: 320}, time.Second*15, time.Second*90) // Shifting Naaru Sliver
-	NewSimpleStatOffensiveTrinketEffect(38290, stats.Stats{stats.SpellPower: 155}, time.Second*20, time.Minute*2)  // Dark Iron Smoking Pipe
+	core.NewSimpleStatOffensiveTrinketEffect(23046, stats.Stats{stats.SpellPower: 130}, time.Second*20, time.Minute*2)  // Restrained Essence of Sapphiron
+	core.NewSimpleStatOffensiveTrinketEffect(24126, stats.Stats{stats.SpellPower: 150}, time.Second*20, time.Minute*5)  // Living Ruby Serpent
+	core.NewSimpleStatOffensiveTrinketEffect(29132, stats.Stats{stats.SpellPower: 150}, time.Second*15, time.Second*90) // Scryer's Bloodgem
+	core.NewSimpleStatOffensiveTrinketEffect(29179, stats.Stats{stats.SpellPower: 150}, time.Second*15, time.Second*90) // Xiri's Gift
+	core.NewSimpleStatOffensiveTrinketEffect(29370, stats.Stats{stats.SpellPower: 155}, time.Second*20, time.Minute*2)  // Icon of the Silver Crescent
+	core.NewSimpleStatOffensiveTrinketEffect(32483, stats.Stats{stats.SpellHaste: 175}, time.Second*20, time.Minute*2)  // Skull of Gul'dan
+	core.NewSimpleStatOffensiveTrinketEffect(33829, stats.Stats{stats.SpellPower: 211}, time.Second*20, time.Minute*2)  // Hex Shrunken Head
+	core.NewSimpleStatOffensiveTrinketEffect(34429, stats.Stats{stats.SpellPower: 320}, time.Second*15, time.Second*90) // Shifting Naaru Sliver
+	core.NewSimpleStatOffensiveTrinketEffect(38290, stats.Stats{stats.SpellPower: 155}, time.Second*20, time.Minute*2)  // Dark Iron Smoking Pipe
 
 	// Defensive trinkets. Keep these in order by item ID.
-	NewSimpleStatDefensiveTrinketEffect(29376, stats.Stats{stats.SpellPower: 99}, time.Second*20, time.Minute*2) // Essence of the Marytr
+	core.NewSimpleStatDefensiveTrinketEffect(29376, stats.Stats{stats.SpellPower: 99}, time.Second*20, time.Minute*2) // Essence of the Marytr
 
 	// Proc effects. Keep these in order by item ID.
 
