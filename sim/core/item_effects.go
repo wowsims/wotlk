@@ -1,8 +1,12 @@
 package core
 
 import (
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"log"
+	"strconv"
+	"time"
+
+	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // Function for applying permanent effects to an Agent.
@@ -41,4 +45,50 @@ func AddWeaponEffect(id int32, weaponEffect ApplyWeaponEffect) {
 		log.Fatalf("Cannot add multiple effects for one item: %d, %#v", id, weaponEffect)
 	}
 	weaponEffects[id] = weaponEffect
+}
+
+
+// Helpers for making common types of active item effects.
+
+func NewSimpleStatItemActiveEffect(itemID int32, bonus stats.Stats, duration time.Duration, cooldown time.Duration, sharedCDFunc func(*Character) Cooldown) {
+	NewItemEffect(itemID, MakeTemporaryStatsOnUseCDRegistration(
+		"ItemActive-"+strconv.Itoa(int(itemID)),
+		bonus,
+		duration,
+		SpellConfig{
+			ActionID: ActionID{ItemID: itemID},
+		},
+		func(character *Character) Cooldown {
+			return Cooldown{
+				Timer:    character.NewTimer(),
+				Duration: cooldown,
+			}
+		},
+		sharedCDFunc,
+	))
+}
+
+// No shared CD
+func NewSimpleStatItemEffect(itemID int32, bonus stats.Stats, duration time.Duration, cooldown time.Duration) {
+	NewSimpleStatItemActiveEffect(itemID, bonus, duration, cooldown, func(character *Character) Cooldown {
+		return Cooldown{}
+	})
+}
+
+func NewSimpleStatOffensiveTrinketEffect(itemID int32, bonus stats.Stats, duration time.Duration, cooldown time.Duration) {
+	NewSimpleStatItemActiveEffect(itemID, bonus, duration, cooldown, func(character *Character) Cooldown {
+		return Cooldown{
+			Timer:    character.GetOffensiveTrinketCD(),
+			Duration: duration,
+		}
+	})
+}
+
+func NewSimpleStatDefensiveTrinketEffect(itemID int32, bonus stats.Stats, duration time.Duration, cooldown time.Duration) {
+	NewSimpleStatItemActiveEffect(itemID, bonus, duration, cooldown, func(character *Character) Cooldown {
+		return Cooldown{
+			Timer:    character.GetDefensiveTrinketCD(),
+			Duration: duration,
+		}
+	})
 }
