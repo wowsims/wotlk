@@ -648,6 +648,7 @@ message Item {
 	ItemQuality quality = 12;
 	bool unique = 13;
 	int32 ilvl = 20;
+	Profession required_profession = 21;
 }
 
 // Extra enum for describing which items are eligible for an enchant, when
@@ -656,6 +657,7 @@ enum EnchantType {
 	EnchantTypeNormal = 0;
 	EnchantTypeTwoHand = 1;
 	EnchantTypeShield = 2;
+	EnchantTypeKit = 3;
 }
 
 message Enchant {
@@ -674,6 +676,7 @@ message Enchant {
 
 	ItemQuality quality = 8;
 	int32 phase = 11;
+	Profession required_profession = 13;
 
 	// Classes that are allowed to use the enchant. Empty indicates no special class restrictions.
 	repeated Class class_allowlist = 12;
@@ -689,6 +692,7 @@ message Gem {
 	int32 phase = 5;
 	ItemQuality quality = 6;
 	bool unique = 7;
+	Profession required_profession = 8;
 }
 
 message RaidTarget {
