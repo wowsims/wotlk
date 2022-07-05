@@ -120,9 +120,6 @@ message TargetedActionMetrics {
 	// # of times this action was a critical strike.
 	int32 crits = 3;
 
-	// # of times this action was a crushing blow.
-	int32 crushes = 11;
-
 	// # of times this action was a Miss or Resist.
 	int32 misses = 4;
 

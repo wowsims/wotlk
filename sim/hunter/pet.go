@@ -81,7 +81,7 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 		SourceStat:   stats.Agility,
 		ModifiedStat: stats.MeleeCrit,
 		Modifier: func(agility float64, meleeCrit float64) float64 {
-			return meleeCrit + (agility/33)*core.MeleeCritRatingPerCritChance
+			return meleeCrit + (agility/33)*core.CritRatingPerCritChance
 		},
 	})
 
@@ -154,7 +154,7 @@ var hunterPetBaseStats = stats.Stats{
 	stats.AttackPower: -20, // Apparently pets and warriors have a AP penalty.
 
 	// Add 1.8% because pets aren't affected by that component of crit suppression.
-	stats.MeleeCrit: (1.1515 + 1.8) * core.MeleeCritRatingPerCritChance,
+	stats.MeleeCrit: (1.1515 + 1.8) * core.CritRatingPerCritChance,
 }
 
 var hunterPetStatInheritance = func(ownerStats stats.Stats) stats.Stats {

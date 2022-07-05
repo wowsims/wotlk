@@ -14,11 +14,11 @@ func (warrior *Warrior) RegisterRecklessnessCD() {
 		ActionID: actionID,
 		Duration: time.Second*15 + time.Second*2*time.Duration(warrior.Talents.ImprovedDisciplines),
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			warrior.AddStatDynamic(sim, stats.MeleeCrit, 100*core.MeleeCritRatingPerCritChance)
+			warrior.AddStatDynamic(sim, stats.MeleeCrit, 100*core.CritRatingPerCritChance)
 			warrior.PseudoStats.DamageTakenMultiplier *= 1.2
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			warrior.AddStatDynamic(sim, stats.MeleeCrit, -100*core.MeleeCritRatingPerCritChance)
+			warrior.AddStatDynamic(sim, stats.MeleeCrit, -100*core.CritRatingPerCritChance)
 			warrior.PseudoStats.DamageTakenMultiplier /= 1.2
 		},
 	})

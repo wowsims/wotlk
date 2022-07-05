@@ -42,7 +42,7 @@ func (character *Character) NewGnomishFlameTurret() *GnomishFlameTurret {
 			GnomishFlameTurretName,
 			character,
 			stats.Stats{
-				stats.SpellCrit: 1 * SpellCritRatingPerCritChance,
+				stats.SpellCrit: 1 * CritRatingPerCritChance,
 			},
 			func(ownerStats stats.Stats) stats.Stats {
 				return stats.Stats{}

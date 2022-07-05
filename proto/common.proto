@@ -32,9 +32,8 @@ enum Race {
 	RaceNightElf = 6;
 	RaceOrc = 7;
 	RaceTauren = 8;
-	RaceTroll10 = 9;
-	RaceTroll30 = 10;
-	RaceUndead = 11;
+	RaceTroll = 9;
+	RaceUndead = 10;
 }
 
 enum Faction {
@@ -422,8 +421,7 @@ message PartyBuffs {
 	TristateEffect devotion_aura = 35;
 	TristateEffect retribution_aura = 36;
 	bool trueshot_aura = 21;
-	bool draenei_racial_melee = 3;
-	bool draenei_racial_caster = 4;
+	bool heroic_presence = 3;
 
 	// Drums
 	Drums drums = 5;
@@ -583,7 +581,6 @@ message Target {
 	double swing_speed = 8;
 	bool dual_wield = 9;
 	bool dual_wield_penalty = 10;
-	bool can_crush = 11;
 	bool parry_haste = 12;
 	bool suppress_dodge = 16; // Sunwell Radiance
 	SpellSchool spell_school = 13; // Allows elemental attacks.
@@ -652,6 +649,7 @@ message Item {
 	ItemQuality quality = 12;
 	bool unique = 13;
 	int32 ilvl = 20;
+	Profession required_profession = 21;
 }
 
 // Extra enum for describing which items are eligible for an enchant, when
@@ -660,6 +658,7 @@ enum EnchantType {
 	EnchantTypeNormal = 0;
 	EnchantTypeTwoHand = 1;
 	EnchantTypeShield = 2;
+	EnchantTypeKit = 3;
 }
 
 message Enchant {
@@ -678,6 +677,7 @@ message Enchant {
 
 	ItemQuality quality = 8;
 	int32 phase = 11;
+	Profession required_profession = 13;
 
 	// Classes that are allowed to use the enchant. Empty indicates no special class restrictions.
 	repeated Class class_allowlist = 12;
@@ -693,6 +693,7 @@ message Gem {
 	int32 phase = 5;
 	ItemQuality quality = 6;
 	bool unique = 7;
+	Profession required_profession = 8;
 }
 
 message RaidTarget {

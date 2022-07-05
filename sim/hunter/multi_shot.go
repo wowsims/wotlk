@@ -13,7 +13,7 @@ func (hunter *Hunter) registerMultiShotSpell() {
 	baseEffect := core.SpellEffect{
 		ProcMask: core.ProcMaskRangedSpecial,
 
-		BonusCritRating:  float64(hunter.Talents.ImprovedBarrage) * 4 * core.MeleeCritRatingPerCritChance,
+		BonusCritRating:  float64(hunter.Talents.ImprovedBarrage) * 4 * core.CritRatingPerCritChance,
 		DamageMultiplier: 1 + 0.04*float64(hunter.Talents.Barrage),
 		ThreatMultiplier: 1,
 

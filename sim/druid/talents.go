@@ -9,14 +9,14 @@ import (
 
 func (druid *Druid) ApplyTalents() {
 	druid.AddStat(stats.SpellHit, float64(druid.Talents.BalanceOfPower)*2*core.SpellHitRatingPerHitChance)
-	druid.AddStat(stats.SpellCrit, float64(druid.Talents.NaturalPerfection)*1*core.SpellCritRatingPerCritChance)
+	druid.AddStat(stats.SpellCrit, float64(druid.Talents.NaturalPerfection)*1*core.CritRatingPerCritChance)
 	druid.PseudoStats.SpiritRegenRateCasting = float64(druid.Talents.Intensity) * 0.1
 	druid.PseudoStats.ThreatMultiplier *= 1 - 0.04*float64(druid.Talents.Subtlety)
 	druid.PseudoStats.PhysicalDamageDealtMultiplier *= 1 + 0.02*float64(druid.Talents.Naturalist)
 
 	if druid.InForm(Bear | Cat) {
 		druid.AddStat(stats.AttackPower, float64(druid.Talents.PredatoryStrikes)*0.5*float64(core.CharacterLevel))
-		druid.AddStat(stats.MeleeCrit, float64(druid.Talents.SharpenedClaws)*2*core.MeleeCritRatingPerCritChance)
+		druid.AddStat(stats.MeleeCrit, float64(druid.Talents.SharpenedClaws)*2*core.CritRatingPerCritChance)
 		druid.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*2*float64(druid.Talents.FeralSwiftness))
 	}
 	if druid.InForm(Bear) {

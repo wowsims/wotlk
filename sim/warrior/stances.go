@@ -106,7 +106,7 @@ func (warrior *Warrior) registerDefensiveStanceAura() {
 
 func (warrior *Warrior) registerBerserkerStanceAura() {
 	threatMult := 0.8 - 0.02*float64(warrior.Talents.ImprovedBerserkerStance)
-	critBonus := core.MeleeCritRatingPerCritChance * 3
+	critBonus := core.CritRatingPerCritChance * 3
 
 	warrior.BerserkerStanceAura = warrior.GetOrRegisterAura(core.Aura{
 		Label:    "Berserker Stance",

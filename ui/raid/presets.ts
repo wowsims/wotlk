@@ -278,7 +278,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceGnome,
-			[Faction.Horde]: Race.RaceTroll10,
+			[Faction.Horde]: Race.RaceTroll,
 		},
 		defaultGear: {
 			[Faction.Unknown]: {},
@@ -310,7 +310,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceGnome,
-			[Faction.Horde]: Race.RaceTroll10,
+			[Faction.Horde]: Race.RaceTroll,
 		},
 		defaultGear: {
 			[Faction.Unknown]: {},
@@ -342,7 +342,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceGnome,
-			[Faction.Horde]: Race.RaceTroll10,
+			[Faction.Horde]: Race.RaceTroll,
 		},
 		defaultGear: {
 			[Faction.Unknown]: {},

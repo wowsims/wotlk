@@ -15,7 +15,7 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 	actionID := core.ActionID{SpellID: 38699}
 	baseCost := 740.0
 
-	bonusCrit := float64(mage.Talents.ArcanePotency) * 10 * core.SpellCritRatingPerCritChance
+	bonusCrit := float64(mage.Talents.ArcanePotency) * 10 * core.CritRatingPerCritChance
 
 	mage.ArcaneMissiles = mage.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,

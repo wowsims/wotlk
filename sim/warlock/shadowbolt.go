@@ -12,11 +12,11 @@ func (warlock *Warlock) registerShadowboltSpell() {
 
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
-		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 0, 1) * 5 * core.SpellCritRatingPerCritChance,
+		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 0, 1) * 5 * core.CritRatingPerCritChance,
 		DamageMultiplier:     1 * core.TernaryFloat64(has4pMal, 1.06, 1.0) * (1 + 0.02*float64(warlock.Talents.ShadowMastery)),
 		ThreatMultiplier:     1 - 0.05*float64(warlock.Talents.DestructiveReach),
 		BaseDamage:           core.BaseDamageConfigMagic(544.0, 607.0, 0.857+0.04*float64(warlock.Talents.ShadowAndFlame)),
-		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin) / 5)),
+		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
 	}
 	// Don't add ISB debuff aura if the target is initialized with the 'estimated ISB uptime' debuff.
 	if warlock.Talents.ImprovedShadowBolt > 0 {

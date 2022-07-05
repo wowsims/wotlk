@@ -13,13 +13,13 @@ func (warlock *Warlock) registerImmolateSpell() {
 	baseCost := 445.0
 
 	effect := core.SpellEffect{
-		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 0, 1) * 5 * core.SpellCritRatingPerCritChance,
+		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 0, 1) * 5 * core.CritRatingPerCritChance,
 		DamageMultiplier: 1 *
 			(1 + (0.05 * float64(warlock.Talents.ImprovedImmolate))) *
 			(1 + (0.02 * float64(warlock.Talents.Emberstorm))),
 		ThreatMultiplier: 1 - 0.05*float64(warlock.Talents.DestructiveReach),
 		BaseDamage:       core.BaseDamageConfigMagic(332.0, 332.0, 0.2+0.04*float64(warlock.Talents.ShadowAndFlame)),
-		OutcomeApplier:   warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin) / 5)),
+		OutcomeApplier:   warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
 		OnSpellHitDealt:  applyDotOnLanded(&warlock.ImmolateDot),
 		ProcMask:         core.ProcMaskSpellDamage,
 	}

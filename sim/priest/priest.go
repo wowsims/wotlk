@@ -60,9 +60,9 @@ func (priest *Priest) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 		true,
 		priest.Talents.ImprovedPowerWordFortitude == 2))
 
-	raidBuffs.DivineSpirit = core.MaxTristate(raidBuffs.DivineSpirit, core.MakeTristateValue(
-		priest.Talents.DivineSpirit,
-		priest.Talents.ImprovedDivineSpirit == 2))
+	//raidBuffs.DivineSpirit = core.MaxTristate(raidBuffs.DivineSpirit, core.MakeTristateValue(
+	//priest.Talents.DivineSpirit,
+	//priest.Talents.ImprovedDivineSpirit == 2))
 }
 
 func (priest *Priest) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
@@ -117,7 +117,7 @@ func New(char core.Character, selfBuffs SelfBuffs, talents proto.PriestTalents) 
 		SourceStat:   stats.Intellect,
 		ModifiedStat: stats.SpellCrit,
 		Modifier: func(intellect float64, spellCrit float64) float64 {
-			return spellCrit + (intellect/80)*core.SpellCritRatingPerCritChance
+			return spellCrit + (intellect/80)*core.CritRatingPerCritChance
 		},
 	})
 
@@ -133,7 +133,7 @@ func init() {
 		stats.Intellect: 145,
 		stats.Spirit:    166,
 		stats.Mana:      2620,
-		stats.SpellCrit: core.SpellCritRatingPerCritChance * 1.24,
+		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDwarf, Class: proto.Class_ClassPriest}] = stats.Stats{
 		stats.Health:    3211,
@@ -143,7 +143,7 @@ func init() {
 		stats.Intellect: 144,
 		stats.Spirit:    150,
 		stats.Mana:      2620,
-		stats.SpellCrit: core.SpellCritRatingPerCritChance * 1.24,
+		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassPriest}] = stats.Stats{
 		stats.Health:    3211,
@@ -153,7 +153,7 @@ func init() {
 		stats.Intellect: 145,
 		stats.Spirit:    151,
 		stats.Mana:      2620,
-		stats.SpellCrit: core.SpellCritRatingPerCritChance * 1.24,
+		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassPriest}] = stats.Stats{
 		stats.Health:    3211,
@@ -163,7 +163,7 @@ func init() {
 		stats.Intellect: 146,
 		stats.Spirit:    153,
 		stats.Mana:      2620,
-		stats.SpellCrit: core.SpellCritRatingPerCritChance * 1.24,
+		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceUndead, Class: proto.Class_ClassPriest}] = stats.Stats{
 		stats.Health:    3211,
@@ -173,9 +173,9 @@ func init() {
 		stats.Intellect: 143,
 		stats.Spirit:    156,
 		stats.Mana:      2620,
-		stats.SpellCrit: core.SpellCritRatingPerCritChance * 1.24,
+		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
 	}
-	trollStats := stats.Stats{
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassPriest}] = stats.Stats{
 		stats.Health:    3211,
 		stats.Strength:  40,
 		stats.Agility:   47,
@@ -183,10 +183,8 @@ func init() {
 		stats.Intellect: 141,
 		stats.Spirit:    152,
 		stats.Mana:      2620,
-		stats.SpellCrit: core.SpellCritRatingPerCritChance * 1.24,
+		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
 	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll10, Class: proto.Class_ClassPriest}] = trollStats
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll30, Class: proto.Class_ClassPriest}] = trollStats
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassPriest}] = stats.Stats{
 		stats.Health:    3211,
 		stats.Strength:  36,
@@ -195,7 +193,7 @@ func init() {
 		stats.Intellect: 149,
 		stats.Spirit:    150,
 		stats.Mana:      2620,
-		stats.SpellCrit: core.SpellCritRatingPerCritChance * 1.24,
+		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
 	}
 }
 

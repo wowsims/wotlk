@@ -89,6 +89,8 @@ type Item struct {
 	Ilvl       int32
 	SetName    string // Empty string if not part of a set.
 
+	RequiredProfession proto.Profession
+
 	// Hidden variable used for a few obscure mechanics (Seal of Righteousness).
 	// Intuitively, this is a measure of the difference between the expected stats
 	// and the actual stats of an item, e.g. decreased weapon DPS on caster weapons.
@@ -123,6 +125,8 @@ func (item Item) ToProto() *proto.Item {
 		Ilvl:             item.Ilvl,
 		GemSockets:       item.GemSockets,
 		SocketBonus:      item.SocketBonus[:],
+
+		RequiredProfession: item.RequiredProfession,
 	}
 }
 
@@ -149,6 +153,8 @@ type Enchant struct {
 	EnchantType proto.EnchantType // Additional category when ItemType isn't enough.
 	Phase       int32
 
+	RequiredProfession proto.Profession
+
 	// Used by the UI to filter which enchants are shown.
 	ClassAllowlist []proto.Class
 }
@@ -165,6 +171,8 @@ func (enchant Enchant) ToProto() *proto.Enchant {
 		Quality:        enchant.Quality,
 		Phase:          enchant.Phase,
 		ClassAllowlist: enchant.ClassAllowlist[:],
+
+		RequiredProfession: enchant.RequiredProfession,
 	}
 }
 
@@ -176,7 +184,8 @@ type Gem struct {
 	Phase   byte
 	Quality proto.ItemQuality
 	Unique  bool
-	// Requirements  // Validate the gem can be used... later
+
+	RequiredProfession proto.Profession
 }
 
 func (gem Gem) ToProto() *proto.Gem {
@@ -188,6 +197,8 @@ func (gem Gem) ToProto() *proto.Gem {
 		Phase:   int32(gem.Phase),
 		Quality: gem.Quality,
 		Unique:  gem.Unique,
+
+		RequiredProfession: gem.RequiredProfession,
 	}
 }
 

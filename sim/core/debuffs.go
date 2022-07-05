@@ -220,7 +220,7 @@ func JudgementOfLightAura(target *Unit) *Aura {
 }
 
 func JudgementOfTheCrusaderAura(target *Unit, level int32, flatBonus float64, percentBonus float64) *Aura {
-	bonusCrit := float64(level) * SpellCritRatingPerCritChance
+	bonusCrit := float64(level) * CritRatingPerCritChance
 
 	totalSP := 219*percentBonus + flatBonus
 	return target.GetOrRegisterAura(Aura{
@@ -385,7 +385,7 @@ func WintersChillAura(target *Unit, startingStacks int32) *Aura {
 			aura.SetStacks(sim, startingStacks)
 		},
 		OnStacksChange: func(aura *Aura, sim *Simulation, oldStacks int32, newStacks int32) {
-			aura.Unit.PseudoStats.BonusFrostCritRating += 2 * SpellCritRatingPerCritChance * float64(newStacks-oldStacks)
+			aura.Unit.PseudoStats.BonusFrostCritRating += 2 * CritRatingPerCritChance * float64(newStacks-oldStacks)
 		},
 	})
 }
