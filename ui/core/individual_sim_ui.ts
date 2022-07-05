@@ -287,11 +287,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 					return '';
 				}
 
-				return `
-					<ul>
-						${failedProfReqs.map(fpr => `<li>${fpr.name} requires ${professionNames[fpr.requiredProfession]}, but it is not selected.</li>`).join('')}
-					</ul>
-				`;
+				return failedProfReqs.map(fpr => `${fpr.name} requires ${professionNames[fpr.requiredProfession]}, but it is not selected.`);
 			},
 		});
 		(config.warnings || []).forEach(warning => this.addWarning(warning(this)));
