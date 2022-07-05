@@ -6,7 +6,7 @@ import { getWowheadItemId } from '/wotlk/core/proto_utils/equipped_item.js';
 import { NO_TARGET } from '/wotlk/core/proto_utils/utils.js';
 
 // If true uses wotlkdb.com, else uses wowhead.com.
-export const USE_WOTLK_DB = false;
+export const USE_WOTLK_DB = true;
 
 
 type ItemData = {
@@ -470,11 +470,12 @@ export class ActionId {
 	}
 
 	static async getSpellTooltipData(id: number): Promise<any> {
-		if (USE_WOTLK_DB) {
-			return await ActionId.getWotlkdbTooltipDataHelper(id, 'spell', spellToTooltipDataCache);
-		} else {
-			return await ActionId.getWowheadTooltipDataHelper(id, 'spell', spellToTooltipDataCache);
-		}
+		return await ActionId.getDbTooltipDataHelper(id, '/wotlk/assets/spell_data/all_spells_db.json');
+		//if (USE_WOTLK_DB) {
+		//	return await ActionId.getWotlkdbTooltipDataHelper(id, 'spell', spellToTooltipDataCache);
+		//} else {
+		//	return await ActionId.getWowheadTooltipDataHelper(id, 'spell', spellToTooltipDataCache);
+		//}
 	}
 
 	static async getTooltipData(actionId: ActionId): Promise<any> {
