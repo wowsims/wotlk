@@ -313,6 +313,9 @@ export class Player<SpecType extends Spec> {
 	getProfessions(): Array<Profession> {
 		return [this.profession1, this.profession2].filter(p => p != Profession.ProfessionUnknown);
 	}
+	hasProfession(prof: Profession): boolean {
+		return this.getProfessions().includes(prof);
+	}
 
 	getShattFaction(): ShattrathFaction {
 		return this.shattFaction;
@@ -675,6 +678,10 @@ export class Player<SpecType extends Spec> {
 			parts.push('ench=' + equippedItem.enchant.effectId);
 		}
 		parts.push('pcs=' + this.gear.asArray().filter(ei => ei != null).map(ei => ei!.item.id).join(':'));
+
+		if (equippedItem.hasExtraSocket(this.hasProfession(Profession.Blacksmithing))) {
+			parts.push('sock');
+		}
 
 		elem.setAttribute('data-wowhead', parts.join('&'));
 	}

@@ -158,6 +158,23 @@ export class Gear {
 		}
 	}
 
+	// Removes bonus gems from blacksmith profession bonus.
+	withoutBlacksmithSockets(): Gear {
+		let curGear: Gear = this;
+
+		const wristItem = this.getEquippedItem(ItemSlot.ItemSlotWrist);
+		if (wristItem) {
+			curGear = curGear.withEquippedItem(ItemSlot.ItemSlotWrist, wristItem.withGem(null, wristItem.numPossibleSockets - 1));
+		}
+
+		const handsItem = this.getEquippedItem(ItemSlot.ItemSlotHands);
+		if (handsItem) {
+			curGear = curGear.withEquippedItem(ItemSlot.ItemSlotHands, handsItem.withGem(null, handsItem.numPossibleSockets - 1));
+		}
+
+		return curGear;
+	}
+
 	hasBluntMHWeapon(): boolean {
 		const weapon = this.getEquippedItem(ItemSlot.ItemSlotMainHand);
 		return weapon != null && isBluntWeaponType(weapon.item.weaponType);
