@@ -9,8 +9,20 @@ import (
 )
 
 func (priest *Priest) registerDevouringPlagueSpell() {
-	actionID := core.ActionID{SpellID: 25467}
-	baseCost := 1145.0
+	actionID := core.ActionID{SpellID: 48300}
+	baseCost := priest.BaseMana() * 0.25
+	target := priest.CurrentTarget
+
+	effect := core.SpellEffect{
+		DamageMultiplier: 8 * 0.1 * float64(priest.Talents.ImprovedDevouringPlague) *
+			(1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01 + 0.05*float64(priest.Talents.ImprovedDevouringPlague)) *
+			core.TernaryFloat64(priest.Talents.Shadowform, 1.15, 1),
+		ThreatMultiplier: 1 - 0.05*float64(priest.Talents.ShadowAffinity),
+		BaseDamage:       core.BaseDamageConfigMagic(172.0, 172.0, 0.1849),
+		OutcomeApplier:   priest.OutcomeFuncMagicHitAndCrit(priest.DefaultSpellCritMultiplier()),
+		OnSpellHitDealt:  applyDotOnLanded(&priest.DevouringPlagueDot),
+		ProcMask:         core.ProcMaskSpellDamage,
+	}
 
 	priest.DevouringPlague = priest.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -24,43 +36,45 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 				Cost: baseCost * (1 - 0.02*float64(priest.Talents.MentalAgility)),
 				GCD:  core.GCDDefault,
 			},
-			CD: core.Cooldown{
-				Timer:    priest.NewTimer(),
-				Duration: time.Minute * 3,
-			},
 		},
-
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:            core.ProcMaskEmpty,
-			BonusSpellHitRating: float64(priest.Talents.ShadowFocus) * 2 * core.SpellHitRatingPerHitChance,
-			ThreatMultiplier:    1 - 0.08*float64(priest.Talents.ShadowAffinity),
-			OutcomeApplier:      priest.OutcomeFuncMagicHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					priest.DevouringPlagueDot.Apply(sim)
-				}
-			},
-		}),
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})
 
-	target := priest.CurrentTarget
 	priest.DevouringPlagueDot = core.NewDot(core.Dot{
 		Spell: priest.DevouringPlague,
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "DevouringPlague-" + strconv.Itoa(int(priest.Index)),
 			ActionID: actionID,
 		}),
+
 		NumberOfTicks: 8,
-		TickLength:    time.Second * 3,
+		TickLength:    time.Second * priest.ApplyCastSpeed(3),
+
+		AffectedByCastSpeed: priest.Talents.Shadowform,
+
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask: core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 *
-				(1 + float64(priest.Talents.Darkness)*0.02) *
+			DamageMultiplier: (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01 + 0.05*float64(priest.Talents.ImprovedDevouringPlague)) *
 				core.TernaryFloat64(priest.Talents.Shadowform, 1.15, 1),
 			ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 			IsPeriodic:       true,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(1216/8, 0.1),
-			OutcomeApplier:   priest.OutcomeFuncTick(),
+			BaseDamage:       core.BaseDamageConfigMagicNoRoll(1376/8, 0.1849),
+
+			// OutcomeApplier: priest.DPcrits()
+			// Assume shadow form is always active for right now
+			//if priest.Talents.Shadowform > 0 { // NEED TO ADD A CHECK TO SEE IF SHADOWFORM TALENT IS CHOSEN, THEN DETERMINE IF DOTS CAN CRIT OR NOT
+			OutcomeApplier: priest.OutcomeFuncMagicCrit(priest.SpellCritMultiplier(1, 1)),
+			//}else{
+			//OutcomeApplier:   priest.OutcomeFuncTick(),
+			//}
 		}),
 	})
+}
+
+func applyDotOnLanded(dot **core.Dot) func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		if spellEffect.Landed() {
+			(*dot).Apply(sim)
+		}
+	}
 }
