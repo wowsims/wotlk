@@ -59,7 +59,6 @@ func NewDpsWarrior(character core.Character, options proto.Player) *DpsWarrior {
 		if war.GCD.IsReady(sim) {
 			war.TryUseCooldowns(sim)
 			if war.GCD.IsReady(sim) {
-				war.tryQueueSlam(sim)
 				war.doRotation(sim)
 			}
 		} else if !war.thunderClapNext {

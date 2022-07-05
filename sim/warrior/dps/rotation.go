@@ -36,7 +36,6 @@ func (war *DpsWarrior) doRotation(sim *core.Simulation) {
 	}
 
 	if war.shouldSunder(sim) {
-		war.castSlamAt = 0
 		if war.Talents.Devastate {
 			war.Devastate.Cast(sim, war.CurrentTarget)
 		} else {
@@ -46,26 +45,9 @@ func (war *DpsWarrior) doRotation(sim *core.Simulation) {
 		return
 	}
 
-	if war.castSlamAt != 0 {
-		if sim.CurrentTime < war.castSlamAt {
-			return
-		} else if sim.CurrentTime == war.castSlamAt {
-			war.castSlamAt = 0
-			if war.CanSlam() {
-				war.CastSlam(sim, war.CurrentTarget)
-				war.tryQueueHsCleave(sim)
-				return
-			}
-		} else {
-			war.castSlamAt = 0
-			return
-		}
-	}
-
-	// If using a GCD will clip the next slam, only allow high priority spells like BT/MS/WW/debuffs.
 	isExecutePhase := sim.IsExecutePhase()
-	canSlam := war.Rotation.UseSlam
-	highPrioSpellsOnly := canSlam
+	SpamExecute := war.Rotation.SpamExecute
+	highPrioSpellsOnly := !SpamExecute
 
 	if isExecutePhase {
 		war.executeRotation(sim, highPrioSpellsOnly)
@@ -82,15 +64,6 @@ func (war *DpsWarrior) doRotation(sim *core.Simulation) {
 			nextSunderAt := war.SunderArmorAura.ExpiresAt() - SunderWindow
 			nextCD = core.MinDuration(nextCD, nextSunderAt)
 		}
-
-		if nextCD > sim.CurrentTime {
-
-			if canSlam {
-				war.WaitUntil(sim, core.MinDuration(nextCD, war.AutoAttacks.MainhandSwingAt))
-			} else {
-				war.WaitUntil(sim, nextCD)
-			}
-		}
 	}
 }
 
@@ -106,7 +79,7 @@ func (war *DpsWarrior) normalRotation(sim *core.Simulation, highPrioSpellsOnly b
 			war.ShieldSlam.Cast(sim, war.CurrentTarget)
 		} else if !war.Rotation.PrioritizeWw && war.CanWhirlwind(sim) {
 			war.Whirlwind.Cast(sim, war.CurrentTarget)
-		} else if war.Talents.MortalStrike && war.ShouldOverpower(sim) {
+		} else if war.ShouldOverpower(sim) {
 			if !war.StanceMatches(warrior.BattleStance) {
 				if !war.BattleStance.IsReady(sim) {
 					return
@@ -114,6 +87,8 @@ func (war *DpsWarrior) normalRotation(sim *core.Simulation, highPrioSpellsOnly b
 				war.BattleStance.Cast(sim, nil)
 			}
 			war.Overpower.Cast(sim, war.CurrentTarget)
+		} else if war.CanSlam(sim) {
+			war.Slam.Cast(sim, war.CurrentTarget)
 		} else if !highPrioSpellsOnly {
 			if war.tryMaintainDebuffs(sim) {
 				// Do nothing, already cast
@@ -132,6 +107,8 @@ func (war *DpsWarrior) executeRotation(sim *core.Simulation, highPrioSpellsOnly 
 			war.Whirlwind.Cast(sim, war.CurrentTarget)
 		} else if war.Rotation.UseBtDuringExecute && war.CanBloodthirst(sim) {
 			war.Bloodthirst.Cast(sim, war.CurrentTarget)
+		} else if war.Rotation.UseSlamOverExecute || war.Rotation.UseSlam {
+			war.Slam.Cast(sim, war.CurrentTarget)
 		} else if war.CanMortalStrike(sim) {
 			war.MortalStrike.Cast(sim, war.CurrentTarget)
 		} else if !war.Rotation.PrioritizeWw && war.Rotation.UseWwDuringExecute && war.CanWhirlwind(sim) {
@@ -148,38 +125,6 @@ func (war *DpsWarrior) executeRotation(sim *core.Simulation, highPrioSpellsOnly 
 	}
 
 	war.tryQueueHsCleave(sim)
-}
-
-func (war *DpsWarrior) slamInRotation(sim *core.Simulation) bool {
-	return war.Rotation.UseSlam
-}
-
-func (war *DpsWarrior) tryQueueSlam(sim *core.Simulation) {
-	if !war.slamInRotation(sim) {
-		return
-	}
-
-	if war.castSlamAt != 0 {
-		// Slam already queued.
-		return
-	}
-
-	// Check that we just finished a MH swing or a MH swing replacement.
-	if war.AutoAttacks.MainhandSwingAt > sim.CurrentTime && war.AutoAttacks.MainhandSwingAt != sim.CurrentTime+war.AutoAttacks.MainhandSwingSpeed() {
-		return
-	}
-
-	if war.thunderClapNext || !war.CanSlam() || war.shouldSunder(sim) {
-		return
-	}
-
-	gcdAt := war.GCD.ReadyAt()
-	slamAt := sim.CurrentTime
-
-	war.castSlamAt = slamAt
-	if slamAt != gcdAt {
-		war.WaitUntil(sim, slamAt) // Pause GCD until slam time
-	}
 }
 
 func (war *DpsWarrior) trySwapToBerserker(sim *core.Simulation) bool {

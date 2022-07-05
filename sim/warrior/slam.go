@@ -46,12 +46,6 @@ func (warrior *Warrior) registerSlamSpell() {
 		}),
 	})
 }
-
-func (warrior *Warrior) CanSlam() bool {
-	return warrior.CurrentRage() >= warrior.Slam.DefaultCast.Cost
-}
-
-func (warrior *Warrior) CastSlam(sim *core.Simulation, target *core.Unit) bool {
-	warrior.AutoAttacks.DelayAllUntil(sim, sim.CurrentTime+warrior.Slam.DefaultCast.CastTime)
-	return warrior.Slam.Cast(sim, target)
+func (warrior *Warrior) CanSlam(sim *core.Simulation) bool {
+	return warrior.CurrentRage() >= warrior.Slam.DefaultCast.Cost && warrior.Slam.IsReady(sim)
 }
