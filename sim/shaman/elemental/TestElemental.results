@@ -108,7 +108,7 @@ dps_results: {
  key: "TestElemental-AllItems-Alchemist'sStone-13503"
  value: {
   dps: 1365.944343033495
-  tps: 1130.7276688450893
+  tps: 1129.6453808053525
  }
 }
 dps_results: {
@@ -129,7 +129,7 @@ dps_results: {
  key: "TestElemental-AllItems-Assassin'sAlchemistStone-35751"
  value: {
   dps: 1363.8847658732527
-  tps: 1130.3256784363066
+  tps: 1129.0974986876984
  }
 }
 dps_results: {
@@ -584,7 +584,7 @@ dps_results: {
  key: "TestElemental-AllItems-Guardian'sAlchemistStone-35748"
  value: {
   dps: 1363.8847658732527
-  tps: 1130.3256784363066
+  tps: 1129.0974986876984
  }
 }
 dps_results: {
@@ -641,6 +641,13 @@ dps_results: {
  value: {
   dps: 1387.252395740723
   tps: 1157.1210280166974
+ }
+}
+dps_results: {
+ key: "TestElemental-AllItems-IndestructibleAlchemist'sStone-44323"
+ value: {
+  dps: 1363.8847658732527
+  tps: 1129.0974986876984
  }
 }
 dps_results: {
@@ -704,6 +711,20 @@ dps_results: {
  value: {
   dps: 1416.566000392387
   tps: 1171.8317809269254
+ }
+}
+dps_results: {
+ key: "TestElemental-AllItems-MercurialAlchemistStone-44322"
+ value: {
+  dps: 1381.1767906631328
+  tps: 1140.8708503608575
+ }
+}
+dps_results: {
+ key: "TestElemental-AllItems-MightyAlchemist'sStone-44324"
+ value: {
+  dps: 1376.7853959524844
+  tps: 1140.4015920162906
  }
 }
 dps_results: {
@@ -801,7 +822,7 @@ dps_results: {
  key: "TestElemental-AllItems-Redeemer'sAlchemistStone-35750"
  value: {
   dps: 1402.9308573403762
-  tps: 1161.9993229194986
+  tps: 1160.7711431708904
  }
 }
 dps_results: {
@@ -941,7 +962,7 @@ dps_results: {
  key: "TestElemental-AllItems-Sorcerer'sAlchemistStone-35749"
  value: {
   dps: 1402.9308573403762
-  tps: 1161.9993229194986
+  tps: 1160.7711431708904
  }
 }
 dps_results: {

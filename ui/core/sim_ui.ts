@@ -19,7 +19,6 @@ const noticeText = '';
 // Config for displaying a warning to the user whenever a condition is met.
 export interface SimWarning {
 	updateOn: TypedEvent<any>,
-	shouldDisplay: () => boolean,
 	getContent: () => string,
 }
 
@@ -226,7 +225,7 @@ export abstract class SimUI extends Component {
 	}
 
 	private updateWarnings() {
-		const activeWarnings = this.warnings.filter(warning => warning.shouldDisplay());
+		const activeWarnings = this.warnings.map(warning => warning.getContent()).filter(content => content != '');
 
 		const warningsElem = document.getElementsByClassName('warnings')[0] as HTMLElement;
 		if (activeWarnings.length == 0) {
@@ -235,7 +234,7 @@ export abstract class SimUI extends Component {
 			warningsElem.style.display = 'initial';
 			this.warningsTippy.setContent(`
 				<ul class="known-issues-tooltip">
-					${activeWarnings.map(warning => '<li>' + warning.getContent() + '</li>').join('')}
+					${activeWarnings.map(content => '<li>' + content + '</li>').join('')}
 				</ul>`
 			);
 		}

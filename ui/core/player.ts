@@ -699,6 +699,8 @@ export class Player<SpecType extends Spec> {
 				cooldowns: this.getCooldowns(),
 				talentsString: this.getTalentsString(),
 				glyphs: this.getGlyphs(),
+				profession1: this.getProfession1(),
+				profession2: this.getProfession2(),
 				inFrontOfTarget: this.getInFrontOfTarget(),
 				healingModel: this.getHealingModel(),
 			}),
@@ -719,6 +721,8 @@ export class Player<SpecType extends Spec> {
 			this.setCooldowns(eventID, proto.cooldowns || Cooldowns.create());
 			this.setTalentsString(eventID, proto.talentsString);
 			this.setGlyphs(eventID, proto.glyphs || Glyphs.create());
+			this.setProfession1(eventID, proto.profession1);
+			this.setProfession2(eventID, proto.profession2);
 			this.setInFrontOfTarget(eventID, proto.inFrontOfTarget);
 			this.setHealingModel(eventID, proto.healingModel || HealingModel.create());
 			this.setRotation(eventID, this.specTypeFunctions.rotationFromPlayer(proto));
