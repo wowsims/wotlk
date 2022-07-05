@@ -9,7 +9,7 @@ import (
 )
 
 func (priest *Priest) registerVampiricTouchSpell() {
-	actionID := core.ActionID{SpellID: 34917}
+	actionID := core.ActionID{SpellID: 48160}
 	baseCost := priest.BaseMana() * 0.16
 
 	applier := priest.OutcomeFuncTick()
