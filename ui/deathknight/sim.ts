@@ -74,7 +74,7 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P1_FURY_PRESET.gear,
+				gear: Presets.P1_FROST_BIS_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatStrength]: 2.17,
@@ -91,7 +91,7 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				// Default rotation settings.
 				rotation: Presets.DefaultRotation,
 				// Default talents.
-				talents: Presets.BloodTalents.data,
+				talents: Presets.FrostTalents.data,
 				// Default spec-specific settings.
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
@@ -143,7 +143,7 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				IconInputs.FerociousInspiration,
 				IconInputs.TrueshotAura,
 				IconInputs.SanctityAura,
-				IconInputs.DraeneiRacialMelee,
+				IconInputs.HeroicPresence,
 				IconInputs.BraidedEterniumChain,
 			],
 			playerBuffInputs: [
@@ -233,11 +233,11 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 			presets: {
 				// Preset talents that the user can quickly select.
 				talents: [
-					Presets.BloodTalents,
+					Presets.FrostTalents,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.P1_FURY_PRESET,
+					Presets.P1_FROST_BIS_PRESET,
 				],
 			},
 		});

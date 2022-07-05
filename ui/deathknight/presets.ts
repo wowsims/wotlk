@@ -26,9 +26,9 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wotlk.wowhead.com/talent-calc and copy the numbers in the url.
-export const BloodTalents = {
-	name: 'Blood Tank',
-	data: '',
+export const FrostTalents = {
+	name: 'Frost Dps',
+	data: '23050005-32005350352203012300033101351',
 };
 
 export const DefaultRotation = DeathKnightRotation.create({
@@ -47,108 +47,216 @@ export const DefaultConsumes = Consumes.create({
 	offHandImbue: WeaponImbue.WeaponImbueAdamantiteSharpeningStone,
 });
 
-export const P1_FURY_PRESET = {
-	name: 'P1 Fury Preset',
+export const P1_FROST_BIS_PRESET = {
+	name: 'P1 Frost BiS Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecDeathKnight>) => player.getTalents().scourgeStrike,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-	  {
-			"id": 29021,
-			"enchant": 29192,
-			"gems": [
-				32409,
-				24048
-			]
-		},
-		{
-			"id": 29381
-		},
-		{
-			"id": 29023,
-			"enchant": 28888,
-			"gems": [
-				24048,
-				24067
-			]
-		},
-		{
-			"id": 24259,
-			"enchant": 34004,
-			"gems": [
-				24058
-			]
-		},
-		{
-			"id": 29019,
-			"enchant": 24003,
-			"gems": [
-				24048,
-				24048,
-				24048
-			]
-		},
-		{
-			"id": 28795,
-			"enchant": 27899,
-			"gems": [
-				24067,
-				24058
-			]
-		},
-		{
-			"id": 28824,
-			"enchant": 33995,
-			"gems": [
-				24067,
-				24048
-			]
-		},
-		{
-			"id": 28779,
-			"gems": [
-				24058,
-				24067
-			]
-		},
-		{
-			"id": 28741,
-			"enchant": 29535,
-			"gems": [
-				24048,
-				24048,
-				24048
-			]
-		},
-		{
-			"id": 28608,
-			"enchant": 28279,
-			"gems": [
-				24058,
-				24048
-			]
-		},
-		{
-			"id": 28757
-		},
-		{
-			"id": 30834
-		},
-		{
-			"id": 29383
-		},
-		{
-			"id": 28830
-		},
-		{
-			"id": 28438,
-			"enchant": 22559
-		},
-		{
-			"id": 28729,
-			"enchant": 22559
-		},
-		{
-			"id": 30279
-		}
+        {
+            "name": "Spiked Titansteel Helm",
+            "id": 41386,
+            "enchant": {
+                "name": "Arcanum of Torment",
+                "id": 3817,
+                "itemId": 50367
+            },
+            "gems": [
+                {
+                    "name": "Relentless Earthsiege Diamond",
+                    "id": 41398
+                },
+                {
+                    "name": "Nightmare Tear",
+                    "id": 49110
+                }
+            ],
+            "slot": "HEAD"
+        },
+        {
+            "name": "Titanium Impact Choker",
+            "id": 42645,
+            "gems": [
+                {
+                    "name": "Bold Scarlet Ruby",
+                    "id": 39996
+                }
+            ],
+            "slot": "NECK"
+        },
+        {
+            "name": "Pauldrons of Berserking",
+            "id": 34388,
+            "enchant": {
+                "name": "Greater Inscription of the Axe",
+                "id": 3808,
+                "itemId": 50335
+            },
+            "gems": [
+                {
+                    "name": "Bold Scarlet Ruby",
+                    "id": 39996
+                },
+                {
+                    "name": "Bold Scarlet Ruby",
+                    "id": 39996
+                }
+            ],
+            "slot": "SHOULDERS"
+        },
+        {
+            "name": "Heroes' Scourgeborne Battleplate",
+            "id": 39617,
+            "enchant": {
+                "name": "Enchant Chest - Powerful Stats",
+                "id": 3832,
+                "spellId": 60692
+            },
+            "gems": [
+                {
+                    "name": "Bold Scarlet Ruby",
+                    "id": 39996
+                },
+                {
+                    "name": "Bold Scarlet Ruby",
+                    "id": 39996
+                }
+            ],
+            "slot": "CHEST"
+        },
+        {
+            "name": "Jorach's Crocolisk Skin Belt",
+            "id": 40694,
+            "gems": [
+                {
+                    "name": "Bold Scarlet Ruby",
+                    "id": 39996
+                },
+                {
+                    "name": "Bold Scarlet Ruby",
+                    "id": 39996
+                }
+            ],
+            "slot": "WAIST"
+        },
+        {
+            "name": "Staggering Legplates",
+            "id": 37193,
+            "enchant": {
+                "name": "Icescale Leg Armor",
+                "id": 3823,
+                "itemId": 38374
+            },
+            "gems": [
+                {
+                    "name": "Bold Dragon's Eye",
+                    "id": 42142
+                },
+                {
+                    "name": "Bold Scarlet Ruby",
+                    "id": 39996
+                }
+            ],
+            "slot": "LEGS"
+        },
+        {
+            "name": "Death-Inured Sabatons",
+            "id": 44306,
+            "enchant": {
+                "name": "Nitro Boosts",
+                "id": 3606,
+                "itemId": 41118
+            },
+            "gems": [
+                {
+                    "name": "Bold Dragon's Eye",
+                    "id": 42142
+                },
+                {
+                    "name": "Bold Dragon's Eye",
+                    "id": 42142
+                }
+            ],
+            "slot": "FEET"
+        },
+        {
+            "name": "Vengeance Bindings",
+            "id": 41355,
+            "enchant": {
+                "name": "Enchant Bracers - Greater Assault",
+                "id": 3845,
+                "spellId": 44575
+            },
+            "slot": "WRISTS"
+        },
+        {
+            "name": "Heroes' Scourgeborne Gauntlets",
+            "id": 39618,
+            "enchant": {
+                "name": "Hyperspeed Accelerators",
+                "id": 3604,
+                "spellId": 54999
+            },
+            "gems": [
+                {
+                    "name": "Bold Scarlet Ruby",
+                    "id": 39996
+                }
+            ],
+            "slot": "HANDS"
+        },
+        {
+            "name": "Hemorrhaging Circle",
+            "id": 37642,
+            "slot": "FINGER_1"
+        },
+        {
+            "name": "Ring of the Kirin Tor",
+            "id": 44935,
+            "slot": "FINGER_2"
+        },
+        {
+            "name": "Mirror of Truth",
+            "id": 40684,
+            "slot": "TRINKET_1"
+        },
+        {
+            "name": "Darkmoon Card: Greatness",
+            "id": 42987,
+            "slot": "TRINKET_2"
+        },
+        {
+            "name": "Cloak of Bloodied Waters",
+            "id": 37647,
+            "enchant": {
+                "name": "Flexweave Underlay",
+                "id": 3605,
+                "itemId": 41111
+            },
+            "slot": "BACK"
+        },
+        {
+            "name": "Titansteel Bonecrusher",
+            "id": 41383,
+            "enchant": {
+                "name": "Rune of Razorice",
+                "id": 3370,
+                "spellId": 53343
+            },
+            "slot": "MAIN_HAND"
+        },
+        {
+            "name": "Krol Cleaver",
+            "id": 43611,
+            "enchant": {
+                "name": "Rune of the Fallen Crusader",
+                "id": 3368,
+                "spellId": 53344
+            },
+            "slot": "OFF_HAND"
+        },
+        {
+            "name": "Sigil of Haunted Dreams",
+            "id": 40715,
+            "slot": "RANGED"
+        }
 	]}`),
 };
