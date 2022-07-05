@@ -3,6 +3,7 @@ import { Gem } from '/wotlk/core/proto/common.js';
 import { Item } from '/wotlk/core/proto/common.js';
 import { ItemSlot } from '/wotlk/core/proto/common.js';
 import { ItemSpec } from '/wotlk/core/proto/common.js';
+import { Profession } from '/wotlk/core/proto/common.js';
 import { Stat } from '/wotlk/core/proto/common.js';
 
 import { ActionId } from './action_id.js';
@@ -159,5 +160,21 @@ export class EquippedItem {
 			enchant: this._enchant?.id,
 			gems: this._gems.map(gem => gem?.id || 0),
 		});
+	}
+
+	getFailedProfessionRequirements(professions: Array<Profession>): Array<Item | Gem | Enchant> {
+		let failed: Array<Item | Gem | Enchant> = [];
+		if (this._item.requiredProfession != Profession.ProfessionUnknown && !professions.includes(this._item.requiredProfession)) {
+			failed.push(this._item);
+		}
+		if (this._enchant != null && this._enchant.requiredProfession != Profession.ProfessionUnknown && !professions.includes(this._enchant.requiredProfession)) {
+			failed.push(this._enchant);
+		}
+		this._gems.forEach(gem => {
+			if (gem != null && gem.requiredProfession != Profession.ProfessionUnknown && !professions.includes(gem.requiredProfession)) {
+				failed.push(gem);
+			}
+		});
+		return failed;
 	}
 };

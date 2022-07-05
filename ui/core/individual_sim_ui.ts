@@ -279,6 +279,21 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				return `Meta gem disabled (${metaGem.name}): ${getMetaGemConditionDescription(metaGem)}`;
 			},
 		});
+		this.addWarning({
+			updateOn: this.player.gearChangeEmitter,
+			getContent: () => {
+				const failedProfReqs = this.player.getGear().getFailedProfessionRequirements(this.player.getProfessions());
+				if (failedProfReqs.length == 0) {
+					return '';
+				}
+
+				return `
+					<ul>
+						${failedProfReqs.map(fpr => `<li>${fpr.name} requires ${professionNames[fpr.requiredProfession]}, but it is not selected.</li>`).join('')}
+					</ul>
+				`;
+			},
+		});
 		(config.warnings || []).forEach(warning => this.addWarning(warning(this)));
 
 		this.exclusivityMap = {
