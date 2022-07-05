@@ -13,6 +13,11 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 	baseCost := priest.BaseMana() * 0.25
 	target := priest.CurrentTarget
 
+	applier := priest.OutcomeFuncTick()
+	if priest.Talents.Shadowform {
+		applier = priest.OutcomeFuncMagicCrit(priest.SpellCritMultiplier(1, 1))
+	}
+
 	effect := core.SpellEffect{
 		DamageMultiplier: 8 * 0.1 * float64(priest.Talents.ImprovedDevouringPlague) *
 			(1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01 + 0.05*float64(priest.Talents.ImprovedDevouringPlague)) *
@@ -20,7 +25,7 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 		ThreatMultiplier: 1 - 0.05*float64(priest.Talents.ShadowAffinity),
 		BaseDamage:       core.BaseDamageConfigMagic(172.0, 172.0, 0.1849),
 		OutcomeApplier:   priest.OutcomeFuncMagicHitAndCrit(priest.DefaultSpellCritMultiplier()),
-		OnSpellHitDealt:  applyDotOnLanded(&priest.DevouringPlagueDot),
+		OnSpellHitDealt:  applyDotOnLanded(priest.DevouringPlagueDot),
 		ProcMask:         core.ProcMaskSpellDamage,
 	}
 
@@ -47,31 +52,24 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 			ActionID: actionID,
 		}),
 
-		NumberOfTicks: 8,
-		TickLength:    time.Second * priest.ApplyCastSpeed(3),
-
+		NumberOfTicks:       8,
+		TickLength:          time.Second * priest.ApplyCastSpeed(3),
 		AffectedByCastSpeed: priest.Talents.Shadowform,
 
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask: core.ProcMaskPeriodicDamage,
+			ProcMask:             core.ProcMaskPeriodicDamage,
+			BonusSpellCritRating: float64(priest.Talents.MindMelt) * 3 * core.CritRatingPerCritChance,
 			DamageMultiplier: (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01 + 0.05*float64(priest.Talents.ImprovedDevouringPlague)) *
 				core.TernaryFloat64(priest.Talents.Shadowform, 1.15, 1),
 			ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 			IsPeriodic:       true,
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(1376/8, 0.1849),
-
-			// OutcomeApplier: priest.DPcrits()
-			// Assume shadow form is always active for right now
-			//if priest.Talents.Shadowform > 0 { // NEED TO ADD A CHECK TO SEE IF SHADOWFORM TALENT IS CHOSEN, THEN DETERMINE IF DOTS CAN CRIT OR NOT
-			OutcomeApplier: priest.OutcomeFuncMagicCrit(priest.SpellCritMultiplier(1, 1)),
-			//}else{
-			//OutcomeApplier:   priest.OutcomeFuncTick(),
-			//}
+			OutcomeApplier:   applier,
 		}),
 	})
 }
 
-func applyDotOnLanded(dot **core.Dot) func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+func applyDotOnLanded(dot *core.Dot) func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 		if spellEffect.Landed() {
 			(*dot).Apply(sim)
