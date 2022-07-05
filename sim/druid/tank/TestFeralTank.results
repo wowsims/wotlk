@@ -188,7 +188,7 @@ dps_results: {
  key: "TestFeralTank-AllItems-BracingEarthsiegeDiamond"
  value: {
   dps: 705.3692488072417
-  tps: 990.170271316406
+  tps: 970.5790992234112
  }
 }
 dps_results: {
@@ -229,8 +229,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-ChaoticSkyflareDiamond"
  value: {
-  dps: 704.0660937983953
-  tps: 991.336056735018
+  dps: 724.1872853201436
+  tps: 1024.2301943996986
  }
 }
 dps_results: {
@@ -712,8 +712,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-RelentlessEarthsiegeDiamond"
  value: {
-  dps: 716.0749322353404
-  tps: 1006.5691705984483
+  dps: 725.8078871750381
+  tps: 1022.51825457813
  }
 }
 dps_results: {
@@ -950,8 +950,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 705.3692488072417
-  tps: 990.170271316406
+  dps: 709.6170753069325
+  tps: 999.0863346703688
  }
 }
 dps_results: {

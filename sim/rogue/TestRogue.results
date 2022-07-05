@@ -195,7 +195,7 @@ dps_results: {
  key: "TestRogue-AllItems-BracingEarthsiegeDiamond"
  value: {
   dps: 1310.7654723172343
-  tps: 918.5997247113598
+  tps: 900.2277302171325
  }
 }
 dps_results: {
@@ -243,8 +243,8 @@ dps_results: {
 dps_results: {
  key: "TestRogue-AllItems-ChaoticSkyflareDiamond"
  value: {
-  dps: 1315.0915855900248
-  tps: 921.6712651350417
+  dps: 1335.7360538590465
+  tps: 936.3288376060468
  }
 }
 dps_results: {
@@ -747,8 +747,8 @@ dps_results: {
 dps_results: {
  key: "TestRogue-AllItems-RelentlessEarthsiegeDiamond"
  value: {
-  dps: 1323.6362993162757
-  tps: 927.7380118806789
+  dps: 1344.5038343564415
+  tps: 942.5539617591971
  }
 }
 dps_results: {
@@ -1020,8 +1020,8 @@ dps_results: {
 dps_results: {
  key: "TestRogue-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 1310.7654723172343
-  tps: 918.5997247113598
+  dps: 1332.522295865826
+  tps: 934.1005677925042
  }
 }
 dps_results: {

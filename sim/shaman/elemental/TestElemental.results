@@ -234,7 +234,7 @@ dps_results: {
  key: "TestElemental-AllItems-BracingEarthsiegeDiamond"
  value: {
   dps: 1393.94613597011
-  tps: 1160.898689626092
+  tps: 1138.104590947168
  }
 }
 dps_results: {
@@ -296,8 +296,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-ChaoticSkyflareDiamond"
  value: {
-  dps: 1384.0533452772593
-  tps: 1152.9327890847726
+  dps: 1416.6473168771583
+  tps: 1179.4390158726408
  }
 }
 dps_results: {
@@ -457,8 +457,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-EmberSkyflareDiamond"
  value: {
-  dps: 1393.94613597011
-  tps: 1160.898689626092
+  dps: 1393.201003853973
+  tps: 1161.179033221248
  }
 }
 dps_results: {
@@ -647,7 +647,7 @@ dps_results: {
  key: "TestElemental-AllItems-InsightfulEarthsiegeDiamond"
  value: {
   dps: 1383.6886903674363
-  tps: 1155.3805327905125
+  tps: 1160.9956974593595
  }
 }
 dps_results: {
@@ -807,8 +807,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-RelentlessEarthsiegeDiamond"
  value: {
-  dps: 1378.8257467482345
-  tps: 1148.641911942417
+  dps: 1410.9667605611255
+  tps: 1174.807266175515
  }
 }
 dps_results: {

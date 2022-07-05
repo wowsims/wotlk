@@ -145,8 +145,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-BeamingEarthsiegeDiamond"
  value: {
-  dps: 784.7871647710703
-  tps: 762.7552400679941
+  dps: 788.7992742399198
+  tps: 766.5292368288501
  }
 }
 dps_results: {
@@ -202,7 +202,7 @@ dps_results: {
  key: "TestSmite-AllItems-BracingEarthsiegeDiamond"
  value: {
   dps: 790.874318994454
-  tps: 768.5163594622785
+  tps: 753.6495146479832
  }
 }
 dps_results: {
@@ -243,8 +243,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-ChaoticSkyflareDiamond"
  value: {
-  dps: 784.7871647710703
-  tps: 762.7552400679941
+  dps: 791.0586285692909
+  tps: 768.65543320936
  }
 }
 dps_results: {
@@ -376,8 +376,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-EmberSkyflareDiamond"
  value: {
-  dps: 790.874318994454
-  tps: 768.5163594622785
+  dps: 790.975858184103
+  tps: 768.461972180488
  }
 }
 dps_results: {
@@ -558,8 +558,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-InsightfulEarthsiegeDiamond"
  value: {
-  dps: 792.6994916463756
-  tps: 770.2156649811373
+  dps: 846.5213828954551
+  tps: 826.045059583087
  }
 }
 dps_results: {
@@ -691,8 +691,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-RelentlessEarthsiegeDiamond"
  value: {
-  dps: 784.3241527108632
-  tps: 762.335750869583
+  dps: 790.5611562801474
+  tps: 768.2035238275653
  }
 }
 dps_results: {
