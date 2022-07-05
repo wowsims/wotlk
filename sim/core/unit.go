@@ -285,6 +285,15 @@ func (unit *Unit) SwingSpeed() float64 {
 	return unit.PseudoStats.MeleeSpeedMultiplier * (1 + (unit.stats[stats.MeleeHaste] / (HasteRatingPerHastePercent * 100)))
 }
 
+func (unit *Unit) Armor() float64 {
+	return unit.PseudoStats.ArmorMultiplier * unit.stats[stats.Armor]
+}
+
+func (unit *Unit) ArmorPenetration() float64 {
+	// TODO: talents (e.g. mace spec) and battle stance are additive here
+	return MinFloat(unit.stats[stats.ArmorPenetration]/ArmorPenPerPercentArmor, 1.0)
+}
+
 func (unit *Unit) RangedSwingSpeed() float64 {
 	return unit.PseudoStats.RangedSpeedMultiplier * (1 + (unit.stats[stats.MeleeHaste] / (HasteRatingPerHastePercent * 100)))
 }

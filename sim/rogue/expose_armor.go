@@ -11,7 +11,7 @@ func (rogue *Rogue) registerExposeArmorSpell() {
 	baseCost := 25.0
 	refundAmount := 0.4 * float64(rogue.Talents.QuickRecovery)
 
-	rogue.ExposeArmorAura = core.ExposeArmorAura(rogue.CurrentTarget, rogue.Talents.ImprovedExposeArmor)
+	rogue.ExposeArmorAura = core.ExposeArmorAura(rogue.CurrentTarget, false) // TODO: check glyph
 
 	rogue.ExposeArmor = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 26866, Tag: 5},
