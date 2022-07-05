@@ -1261,7 +1261,7 @@ const classToEligibleRangedWeaponTypes: Record<Class, Array<RangedWeaponType>> =
 		RangedWeaponType.RangedWeaponTypeThrown,
 	],
 	[Class.ClassDeathKnight]: [
-		RangedWeaponType.RangedWeaponTypeRelic,
+		RangedWeaponType.RangedWeaponTypeSigil,
 	],
 };
 

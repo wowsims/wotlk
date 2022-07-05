@@ -44,13 +44,29 @@ func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
 
 func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight {
 	deathKnightOptions := options.GetDeathKnight()
+
 	deathKnight := &DeathKnight{
 		Character: character,
 		Talents:   *deathKnightOptions.Talents,
 		Options:   *deathKnightOptions.Options,
 		Rotation:  *deathKnightOptions.Rotation,
 	}
-	deathKnight.EnableManaBar()
+
+	maxRunicPower := 100.0
+	if deathKnight.Talents.RunicPowerMastery == 1 {
+		maxRunicPower = 115.0
+	} else if deathKnight.Talents.RunicPowerMastery == 2 {
+		maxRunicPower = 130.0
+	}
+	deathKnight.EnableRuneSystem(maxRunicPower, func(sim *core.Simulation) {
+
+	})
+
+	deathKnight.EnableAutoAttacks(deathKnight, core.AutoAttackOptions{
+		MainHand:       deathKnight.WeaponFromMainHand(deathKnight.DefaultMeleeCritMultiplier()),
+		OffHand:        deathKnight.WeaponFromOffHand(deathKnight.DefaultMeleeCritMultiplier()),
+		AutoSwingMelee: true,
+	})
 
 	deathKnight.AddStatDependency(stats.StatDependency{
 		SourceStat:   stats.Agility,
@@ -184,6 +200,17 @@ func init() {
 		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceUndead, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
+		stats.Health:      7941,
+		stats.Strength:    180,
+		stats.Agility:     112,
+		stats.Stamina:     160,
+		stats.Intellect:   35,
+		stats.Spirit:      63,
+		stats.AttackPower: 220,
+		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
+		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
+	}
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
 		stats.Health:      7941,
 		stats.Strength:    180,
 		stats.Agility:     112,

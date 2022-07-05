@@ -1,14 +1,16 @@
 package deathknight
 
 import (
-//	"time"
+	//	"time"
 
-//"github.com/wowsims/wotlk/sim/core"
-//"github.com/wowsims/wotlk/sim/core/proto"
-//"github.com/wowsims/wotlk/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core"
+	//"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (deathknight *DeathKnight) ApplyTalents() {
+func (deathKnight *DeathKnight) ApplyTalents() {
+	deathKnight.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*float64(deathKnight.Talents.DarkConviction))
+	deathKnight.AddStat(stats.SpellCrit, core.CritRatingPerCritChance*float64(deathKnight.Talents.DarkConviction))
 }
 
 // demonic embrace

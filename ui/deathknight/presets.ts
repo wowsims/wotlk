@@ -48,215 +48,98 @@ export const DefaultConsumes = Consumes.create({
 });
 
 export const P1_FROST_BIS_PRESET = {
-	name: 'P1 Frost BiS Preset',
+	name: 'P1 Frost Pre-Raid Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-        {
-            "name": "Spiked Titansteel Helm",
-            "id": 41386,
-            "enchant": {
-                "name": "Arcanum of Torment",
-                "id": 3817,
-                "itemId": 50367
-            },
-            "gems": [
-                {
-                    "name": "Relentless Earthsiege Diamond",
-                    "id": 41398
-                },
-                {
-                    "name": "Nightmare Tear",
-                    "id": 49110
-                }
-            ],
-            "slot": "HEAD"
-        },
-        {
-            "name": "Titanium Impact Choker",
-            "id": 42645,
-            "gems": [
-                {
-                    "name": "Bold Scarlet Ruby",
-                    "id": 39996
-                }
-            ],
-            "slot": "NECK"
-        },
-        {
-            "name": "Pauldrons of Berserking",
-            "id": 34388,
-            "enchant": {
-                "name": "Greater Inscription of the Axe",
-                "id": 3808,
-                "itemId": 50335
-            },
-            "gems": [
-                {
-                    "name": "Bold Scarlet Ruby",
-                    "id": 39996
-                },
-                {
-                    "name": "Bold Scarlet Ruby",
-                    "id": 39996
-                }
-            ],
-            "slot": "SHOULDERS"
-        },
-        {
-            "name": "Heroes' Scourgeborne Battleplate",
-            "id": 39617,
-            "enchant": {
-                "name": "Enchant Chest - Powerful Stats",
-                "id": 3832,
-                "spellId": 60692
-            },
-            "gems": [
-                {
-                    "name": "Bold Scarlet Ruby",
-                    "id": 39996
-                },
-                {
-                    "name": "Bold Scarlet Ruby",
-                    "id": 39996
-                }
-            ],
-            "slot": "CHEST"
-        },
-        {
-            "name": "Jorach's Crocolisk Skin Belt",
-            "id": 40694,
-            "gems": [
-                {
-                    "name": "Bold Scarlet Ruby",
-                    "id": 39996
-                },
-                {
-                    "name": "Bold Scarlet Ruby",
-                    "id": 39996
-                }
-            ],
-            "slot": "WAIST"
-        },
-        {
-            "name": "Staggering Legplates",
-            "id": 37193,
-            "enchant": {
-                "name": "Icescale Leg Armor",
-                "id": 3823,
-                "itemId": 38374
-            },
-            "gems": [
-                {
-                    "name": "Bold Dragon's Eye",
-                    "id": 42142
-                },
-                {
-                    "name": "Bold Scarlet Ruby",
-                    "id": 39996
-                }
-            ],
-            "slot": "LEGS"
-        },
-        {
-            "name": "Death-Inured Sabatons",
-            "id": 44306,
-            "enchant": {
-                "name": "Nitro Boosts",
-                "id": 3606,
-                "itemId": 41118
-            },
-            "gems": [
-                {
-                    "name": "Bold Dragon's Eye",
-                    "id": 42142
-                },
-                {
-                    "name": "Bold Dragon's Eye",
-                    "id": 42142
-                }
-            ],
-            "slot": "FEET"
-        },
-        {
-            "name": "Vengeance Bindings",
-            "id": 41355,
-            "enchant": {
-                "name": "Enchant Bracers - Greater Assault",
-                "id": 3845,
-                "spellId": 44575
-            },
-            "slot": "WRISTS"
-        },
-        {
-            "name": "Heroes' Scourgeborne Gauntlets",
-            "id": 39618,
-            "enchant": {
-                "name": "Hyperspeed Accelerators",
-                "id": 3604,
-                "spellId": 54999
-            },
-            "gems": [
-                {
-                    "name": "Bold Scarlet Ruby",
-                    "id": 39996
-                }
-            ],
-            "slot": "HANDS"
-        },
-        {
-            "name": "Hemorrhaging Circle",
-            "id": 37642,
-            "slot": "FINGER_1"
-        },
-        {
-            "name": "Ring of the Kirin Tor",
-            "id": 44935,
-            "slot": "FINGER_2"
-        },
-        {
-            "name": "Mirror of Truth",
-            "id": 40684,
-            "slot": "TRINKET_1"
-        },
-        {
-            "name": "Darkmoon Card: Greatness",
-            "id": 42987,
-            "slot": "TRINKET_2"
-        },
-        {
-            "name": "Cloak of Bloodied Waters",
-            "id": 37647,
-            "enchant": {
-                "name": "Flexweave Underlay",
-                "id": 3605,
-                "itemId": 41111
-            },
-            "slot": "BACK"
-        },
-        {
-            "name": "Titansteel Bonecrusher",
-            "id": 41383,
-            "enchant": {
-                "name": "Rune of Razorice",
-                "id": 3370,
-                "spellId": 53343
-            },
-            "slot": "MAIN_HAND"
-        },
-        {
-            "name": "Krol Cleaver",
-            "id": 43611,
-            "enchant": {
-                "name": "Rune of the Fallen Crusader",
-                "id": 3368,
-                "spellId": 53344
-            },
-            "slot": "OFF_HAND"
-        },
-        {
-            "name": "Sigil of Haunted Dreams",
-            "id": 40715,
-            "slot": "RANGED"
-        }
+		{
+			"id": 41386,
+			"enchant": 50367,
+			"gems": [
+				41398,
+				40022
+			]
+		},
+		{
+			"id": 42645,
+			"gems": [
+				39996
+			]
+		},
+		{
+			"id": 34388,
+			"enchant": 50335,
+			"gems": [
+				39996,
+				39996
+			]
+		},
+		{
+			"id": 37647,
+			"enchant": 47898
+		},
+		{
+			"id": 39617,
+			"enchant": 60692,
+			"gems": [
+				39996,
+				39996
+			]
+		},
+		{
+			"id": 41355,
+			"enchant": 44575
+		},
+		{
+			"id": 39618,
+			"enchant": 60668,
+			"gems": [
+				39996
+			]
+		},
+		{
+			"id": 40694,
+			"gems": [
+				39996
+			]
+		},
+		{
+			"id": 37193,
+			"enchant": 38374,
+			"gems": [
+				39996,
+				39996
+			]
+		},
+		{
+			"id": 44306,
+			"enchant": 60763,
+			"gems": [
+				39996,
+				39996
+			]
+		},
+		{
+			"id": 37642
+		},
+		{
+			"id": 44935
+		},
+		{
+			"id": 40684
+		},
+		{
+			"id": 42987
+		},
+		{
+			"id": 41383,
+			"enchant": 53343
+		},
+		{
+			"id": 43611,
+			"enchant": 53344
+		},
+		{
+			"id": 40715
+		}
 	]}`),
 };

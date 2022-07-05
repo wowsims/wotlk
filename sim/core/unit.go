@@ -74,6 +74,7 @@ type Unit struct {
 	healthBar
 	rageBar
 	energyBar
+	runeSystem
 
 	// All spells that can be cast by this unit.
 	Spellbook []*Spell
