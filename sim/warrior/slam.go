@@ -31,7 +31,7 @@ func (warrior *Warrior) registerSlamSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeMHSpecial,
 
-			DamageMultiplier: 1 * 0.05 * float64(warrior.Talents.UnendingFury),
+			DamageMultiplier: 1 * 0.02 * float64(warrior.Talents.UnendingFury),
 			ThreatMultiplier: 1,
 			FlatThreatBonus:  70,
 
