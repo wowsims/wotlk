@@ -55,8 +55,8 @@ func (priest *Priest) registerVampiricTouchSpell() {
 		}),
 
 		NumberOfTicks:       5,
-		TickLength:          time.Second * priest.ApplyCastSpeed(3),
-		AffectedByCastSpeed: true,
+		TickLength:          time.Second * 3,
+		AffectedByCastSpeed: priest.Talents.Shadowform,
 
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			DamageMultiplier: 1 * (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01) *

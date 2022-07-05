@@ -53,7 +53,7 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 		}),
 
 		NumberOfTicks:       8,
-		TickLength:          time.Second * priest.ApplyCastSpeed(3),
+		TickLength:          time.Second * 3,
 		AffectedByCastSpeed: priest.Talents.Shadowform,
 
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
