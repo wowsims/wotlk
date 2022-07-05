@@ -68,8 +68,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-Alchemist'sStone-13503"
  value: {
-  dps: 784.7148642886916
-  tps: 763.7472129960787
+  dps: 775.5109904216597
+  tps: 753.9030224542406
  }
 }
 dps_results: {
@@ -89,8 +89,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-Assassin'sAlchemistStone-35751"
  value: {
-  dps: 768.5123066041001
-  tps: 748.2347725185864
+  dps: 753.6115583754893
+  tps: 732.9213143257466
  }
 }
 dps_results: {
@@ -488,8 +488,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-Guardian'sAlchemistStone-35748"
  value: {
-  dps: 768.5123066041001
-  tps: 748.2347725185864
+  dps: 753.6115583754893
+  tps: 732.9213143257466
  }
 }
 dps_results: {
@@ -556,6 +556,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSmite-AllItems-IndestructibleAlchemist'sStone-44323"
+ value: {
+  dps: 753.6115583754893
+  tps: 732.9213143257466
+ }
+}
+dps_results: {
  key: "TestSmite-AllItems-InsightfulEarthsiegeDiamond"
  value: {
   dps: 846.5213828954551
@@ -616,6 +623,20 @@ dps_results: {
  value: {
   dps: 793.6241518402475
   tps: 771.1631686606368
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-MercurialAlchemistStone-44322"
+ value: {
+  dps: 769.579358061791
+  tps: 748.2829288765283
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-MightyAlchemist'sStone-44324"
+ value: {
+  dps: 763.0275570847183
+  tps: 741.8155999860716
  }
 }
 dps_results: {
@@ -684,8 +705,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-Redeemer'sAlchemistStone-35750"
  value: {
-  dps: 790.1591165360273
-  tps: 768.8255401900485
+  dps: 775.2168600488783
+  tps: 753.3758823033763
  }
 }
 dps_results: {
@@ -803,8 +824,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-Sorcerer'sAlchemistStone-35749"
  value: {
-  dps: 790.1591165360273
-  tps: 768.8255401900485
+  dps: 775.2168600488783
+  tps: 753.3758823033763
  }
 }
 dps_results: {

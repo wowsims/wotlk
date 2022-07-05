@@ -605,6 +605,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestHunter-AllItems-IndestructibleAlchemist'sStone-44323"
+ value: {
+  dps: 1622.5516013002916
+  tps: 1140.708165865413
+ }
+}
+dps_results: {
  key: "TestHunter-AllItems-InsightfulEarthsiegeDiamond"
  value: {
   dps: 1684.578858738083
@@ -686,6 +693,20 @@ dps_results: {
  value: {
   dps: 1622.5516013002916
   tps: 1140.708165865413
+ }
+}
+dps_results: {
+ key: "TestHunter-AllItems-MercurialAlchemistStone-44322"
+ value: {
+  dps: 1628.5580100050588
+  tps: 1145.0873038222237
+ }
+}
+dps_results: {
+ key: "TestHunter-AllItems-MightyAlchemist'sStone-44324"
+ value: {
+  dps: 1636.3830616706982
+  tps: 1154.2072179352856
  }
 }
 dps_results: {

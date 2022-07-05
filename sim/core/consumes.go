@@ -752,7 +752,15 @@ func registerPotionCD(agent Agent, consumes proto.Consumes) {
 	}
 }
 
-var AlchStoneItemIDs = []int32{13503, 35748, 35749, 35750, 35751}
+var AlchStoneItemIDs = []int32{13503, 35748, 35749, 35750, 35751, 44322, 44323, 44324}
+
+func (character *Character) HasAlchStone() bool {
+	alchStoneEquipped := false
+	for _, itemID := range AlchStoneItemIDs {
+		alchStoneEquipped = alchStoneEquipped || character.HasTrinketEquipped(itemID)
+	}
+	return character.HasProfession(proto.Profession_Alchemy) && alchStoneEquipped
+}
 
 func makePotionActivation(potionType proto.Potions, character *Character, potionCD *Timer, prepopTime time.Duration) MajorCooldown {
 	if potionType == proto.Potions_RunicHealingPotion {
@@ -782,10 +790,7 @@ func makePotionActivation(potionType proto.Potions, character *Character, potion
 			}),
 		}
 	} else if potionType == proto.Potions_RunicManaPotion {
-		alchStoneEquipped := false
-		for _, itemID := range AlchStoneItemIDs {
-			alchStoneEquipped = alchStoneEquipped || character.HasTrinketEquipped(itemID)
-		}
+		alchStoneEquipped := character.HasAlchStone()
 		actionID := ActionID{ItemID: 33448}
 		manaMetrics := character.NewManaMetrics(actionID)
 		return MajorCooldown{
@@ -917,10 +922,7 @@ func makePotionActivation(potionType proto.Potions, character *Character, potion
 			}),
 		}
 	} else if potionType == proto.Potions_SuperManaPotion {
-		alchStoneEquipped := false
-		for _, itemID := range AlchStoneItemIDs {
-			alchStoneEquipped = alchStoneEquipped || character.HasTrinketEquipped(itemID)
-		}
+		alchStoneEquipped := character.HasAlchStone()
 		actionID := ActionID{ItemID: 22832}
 		manaMetrics := character.NewManaMetrics(actionID)
 		return MajorCooldown{
@@ -1019,10 +1021,7 @@ func makePotionActivation(potionType proto.Potions, character *Character, potion
 
 		// Restores 3200 mana over 24 seconds.
 		manaGain := 3200.0
-		alchStoneEquipped := false
-		for _, itemID := range AlchStoneItemIDs {
-			alchStoneEquipped = alchStoneEquipped || character.HasTrinketEquipped(itemID)
-		}
+		alchStoneEquipped := character.HasAlchStone()
 		if alchStoneEquipped {
 			manaGain *= 1.4
 		}

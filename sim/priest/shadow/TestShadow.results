@@ -69,7 +69,7 @@ dps_results: {
  key: "TestShadow-AllItems-Alchemist'sStone-13503"
  value: {
   dps: 1434.229842549133
-  tps: 1118.7433712318648
+  tps: 1117.9890642399325
  }
 }
 dps_results: {
@@ -89,8 +89,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-Assassin'sAlchemistStone-35751"
  value: {
-  dps: 1433.6120891175203
-  tps: 1118.545994752153
+  dps: 1434.6852348780997
+  tps: 1118.3585396522194
  }
 }
 dps_results: {
@@ -488,8 +488,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-Guardian'sAlchemistStone-35748"
  value: {
-  dps: 1433.6120891175203
-  tps: 1118.545994752153
+  dps: 1434.6852348780997
+  tps: 1118.3585396522194
  }
 }
 dps_results: {
@@ -556,6 +556,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestShadow-AllItems-IndestructibleAlchemist'sStone-44323"
+ value: {
+  dps: 1434.6852348780997
+  tps: 1118.3585396522194
+ }
+}
+dps_results: {
  key: "TestShadow-AllItems-InsightfulEarthsiegeDiamond"
  value: {
   dps: 1468.7673938677099
@@ -616,6 +623,20 @@ dps_results: {
  value: {
   dps: 1480.7174431052356
   tps: 1153.6629715552267
+ }
+}
+dps_results: {
+ key: "TestShadow-AllItems-MercurialAlchemistStone-44322"
+ value: {
+  dps: 1446.8056142745907
+  tps: 1127.6577450240634
+ }
+}
+dps_results: {
+ key: "TestShadow-AllItems-MightyAlchemist'sStone-44324"
+ value: {
+  dps: 1437.1589461711817
+  tps: 1120.2108038031772
  }
 }
 dps_results: {
@@ -684,8 +705,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-Redeemer'sAlchemistStone-35750"
  value: {
-  dps: 1466.2658600476361
-  tps: 1143.295445321602
+  dps: 1467.518517550079
+  tps: 1143.5923157841303
  }
 }
 dps_results: {
@@ -803,8 +824,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-Sorcerer'sAlchemistStone-35749"
  value: {
-  dps: 1466.2658600476361
-  tps: 1143.295445321602
+  dps: 1467.518517550079
+  tps: 1143.5923157841303
  }
 }
 dps_results: {
