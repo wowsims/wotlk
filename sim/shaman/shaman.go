@@ -8,6 +8,8 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+const baseMana = 4396.0
+
 // Start looking to refresh 2 minute totems at 1:55.
 const TotemRefreshTime2M = time.Second * 115
 

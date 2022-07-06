@@ -8,37 +8,30 @@ import (
 )
 
 func (shaman *Shaman) ApplyTalents() {
-	if shaman.Talents.NaturesGuidance > 0 {
-		shaman.AddStat(stats.SpellHit, float64(shaman.Talents.NaturesGuidance)*1*core.SpellHitRatingPerHitChance)
-		shaman.AddStat(stats.MeleeHit, float64(shaman.Talents.NaturesGuidance)*1*core.MeleeHitRatingPerHitChance)
-	}
-
 	if shaman.Talents.ThunderingStrikes > 0 {
 		shaman.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*1*float64(shaman.Talents.ThunderingStrikes))
 	}
 
 	shaman.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*1*float64(shaman.Talents.Anticipation))
-	shaman.AddStat(stats.Block, core.BlockRatingPerBlockChance*1*float64(shaman.Talents.ShieldSpecialization))
-	shaman.AddStat(stats.Armor, shaman.Equip.Stats()[stats.Armor]*0.02*float64(shaman.Talents.Toughness))
 	shaman.PseudoStats.PhysicalDamageDealtMultiplier *= 1 + 0.02*float64(shaman.Talents.WeaponMastery)
-
-	if shaman.Talents.ShieldSpecialization > 0 {
-		bonus := 1 + 0.05*float64(shaman.Talents.ShieldSpecialization)
-		shaman.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.BlockValue,
-			ModifiedStat: stats.BlockValue,
-			Modifier: func(bv float64, _ float64) float64 {
-				return bv * bonus
-			},
-		})
-	}
 
 	if shaman.Talents.DualWieldSpecialization > 0 && shaman.HasOHWeapon() {
 		shaman.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*2*float64(shaman.Talents.DualWieldSpecialization))
 	}
 
+	if shaman.Talents.Toughness > 0 {
+		coeff := 1 + 0.02*float64(shaman.Talents.Toughness)
+		shaman.AddStatDependency(stats.StatDependency{
+			SourceStat:   stats.Stamina,
+			ModifiedStat: stats.Stamina,
+			Modifier: func(stm float64, _ float64) float64 {
+				return stm * coeff
+			},
+		})
+	}
+
 	if shaman.Talents.UnrelentingStorm > 0 {
-		coeff := 0.02 * float64(shaman.Talents.UnrelentingStorm)
+		coeff := 0.04 * float64(shaman.Talents.UnrelentingStorm)
 		shaman.AddStatDependency(stats.StatDependency{
 			SourceStat:   stats.Intellect,
 			ModifiedStat: stats.MP5,
@@ -49,10 +42,10 @@ func (shaman *Shaman) ApplyTalents() {
 	}
 
 	if shaman.Talents.AncestralKnowledge > 0 {
-		coeff := 0.01 * float64(shaman.Talents.AncestralKnowledge)
+		coeff := 0.02 * float64(shaman.Talents.AncestralKnowledge)
 		shaman.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Mana,
-			ModifiedStat: stats.Mana,
+			SourceStat:   stats.Intellect,
+			ModifiedStat: stats.Intellect,
 			Modifier: func(mana float64, _ float64) float64 {
 				return mana + mana*coeff
 			},
