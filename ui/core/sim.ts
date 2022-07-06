@@ -10,6 +10,7 @@ import { ItemSlot } from '/wotlk/core/proto/common.js';
 import { ItemSpec } from '/wotlk/core/proto/common.js';
 import { ItemType } from '/wotlk/core/proto/common.js';
 import { Item } from '/wotlk/core/proto/common.js';
+import { Profession } from '/wotlk/core/proto/common.js';
 import { Race } from '/wotlk/core/proto/common.js';
 import { RaidTarget } from '/wotlk/core/proto/common.js';
 import { Spec } from '/wotlk/core/proto/common.js';
@@ -165,9 +166,24 @@ export class Sim {
 					return;
 				}
 
-				const gear = this.lookupEquipmentSpec(player.equipment);
+				let gear = this.lookupEquipmentSpec(player.equipment);
+				let gearChanged = false;
+
+				// Disable meta gem if inactive.
 				if (gear.hasInactiveMetaGem()) {
-					player.equipment = gear.withoutMetaGem().asSpec();
+					gear = gear.withoutMetaGem();
+					gearChanged = true;
+				}
+
+				// Remove bonus sockets if not blacksmith.
+				const isBlacksmith = [player.profession1, player.profession2].includes(Profession.Blacksmithing);
+				if (!isBlacksmith) {
+					gear = gear.withoutBlacksmithSockets();
+					gearChanged = true;
+				}
+
+				if (gearChanged) {
+					player.equipment = gear.asSpec();
 				}
 			});
 		});
