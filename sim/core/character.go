@@ -35,6 +35,8 @@ type Character struct {
 	// Provides stat dependency management behavior.
 	stats.StatDependencyManager
 
+	professions [2]proto.Profession
+
 	glyphs [6]int32
 
 	// Provides major cooldown management behavior.
@@ -77,6 +79,10 @@ func NewCharacter(party *Party, partyIndex int, player proto.Player) Character {
 		ShattFaction: player.ShattFaction,
 		Class:        player.Class,
 		Equip:        items.ProtoToEquipment(*player.Equipment),
+		professions: [2]proto.Profession{
+			player.Profession1,
+			player.Profession2,
+		},
 
 		Party:      party,
 		PartyIndex: partyIndex,
@@ -150,6 +156,7 @@ func (character *Character) applyAllEffects(agent Agent, raidBuffs proto.RaidBuf
 	playerStats := &proto.PlayerStats{}
 
 	applyRaceEffects(agent)
+	character.applyProfessionEffects()
 	playerStats.BaseStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
 
 	character.AddStats(character.Equip.Stats())
@@ -242,7 +249,10 @@ func (character *Character) GetBaseStats() stats.Stats {
 // https://web.archive.org/web/20081014064638/http://elitistjerks.com/f31/t12595-relentless_earthstorm_diamond_-_melee_only/p4/
 // https://github.com/TheGroxEmpire/TBC_DPS_Warrior_Sim/issues/30
 func (character *Character) calculateCritMultiplier(normalCritDamage float64, primaryModifiers float64, secondaryModifiers float64) float64 {
-	if character.HasMetaGemEquipped(34220) || character.HasMetaGemEquipped(32409) { // CSD and RED
+	if character.HasMetaGemEquipped(34220) ||
+		character.HasMetaGemEquipped(32409) ||
+		character.HasMetaGemEquipped(41285) ||
+		character.HasMetaGemEquipped(41398) {
 		primaryModifiers *= 1.03
 	}
 	return 1.0 + (normalCritDamage*primaryModifiers-1.0)*(1.0+secondaryModifiers)
@@ -356,6 +366,10 @@ func (character *Character) advance(sim *Simulation, elapsedTime time.Duration) 
 			petAgent.GetPet().advance(sim, elapsedTime)
 		}
 	}
+}
+
+func (character *Character) HasProfession(prof proto.Profession) bool {
+	return prof == character.professions[0] || prof == character.professions[1]
 }
 
 func (character *Character) HasGlyph(glyphID int32) bool {

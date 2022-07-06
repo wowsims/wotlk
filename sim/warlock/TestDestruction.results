@@ -96,8 +96,8 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-AllItems-ChaoticSkyflareDiamond"
  value: {
-  dps: 1370.193086245826
-  tps: 838.9830938669821
+  dps: 1386.291125186346
+  tps: 849.1248583995098
  }
 }
 dps_results: {
@@ -299,8 +299,8 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-AllItems-RelentlessEarthsiegeDiamond"
  value: {
-  dps: 1365.9588251581479
-  tps: 836.3155093817447
+  dps: 1381.7422669230166
+  tps: 846.2590776936121
  }
 }
 dps_results: {

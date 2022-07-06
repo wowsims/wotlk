@@ -34,15 +34,15 @@ func (priest *Priest) ApplyShadowOnHitEffects() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			priest.ApplyVampiricTouchManaReturn(sim, spellEffect.Damage)
-		},
+		//OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) { // Needs to be replaced by replensishment (when VT is active MB now gives mana return)
+		//	priest.ApplyVampiricTouchManaReturn(sim, spellEffect.Damage)
+		//},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if !spellEffect.Landed() {
 				return
 			}
 			priest.ApplyShadowWeaving(sim, spellEffect.Target)
-			priest.ApplyVampiricTouchManaReturn(sim, spellEffect.Damage)
+			// priest.ApplyVampiricTouchManaReturn(sim, spellEffect.Damage) // Needs to be replaced by replensishment (when VT is active MB now gives mana return)
 
 			if spell == priest.ShadowWordPain || spell == priest.VampiricTouch || spell.ActionID.SpellID == priest.MindFlay[1].ActionID.SpellID {
 				priest.ApplyMisery(sim, spellEffect.Target)

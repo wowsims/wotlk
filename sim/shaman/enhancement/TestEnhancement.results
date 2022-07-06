@@ -131,8 +131,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-BeamingEarthsiegeDiamond"
  value: {
-  dps: 1785.4450098628693
-  tps: 1321.7157045846054
+  dps: 1786.4875556196669
+  tps: 1320.0839774031126
  }
 }
 dps_results: {
@@ -181,7 +181,7 @@ dps_results: {
  key: "TestEnhancement-AllItems-BracingEarthsiegeDiamond"
  value: {
   dps: 1780.5041210722238
-  tps: 1317.0771145166095
+  tps: 1291.932917823029
  }
 }
 dps_results: {
@@ -243,8 +243,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-ChaoticSkyflareDiamond"
  value: {
-  dps: 1785.4450098628693
-  tps: 1321.7157045846054
+  dps: 1812.7757274699165
+  tps: 1340.8221315986032
  }
 }
 dps_results: {
@@ -397,8 +397,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-EmberSkyflareDiamond"
  value: {
-  dps: 1780.5041210722238
-  tps: 1317.0771145166095
+  dps: 1772.3530510378848
+  tps: 1312.0330516561216
  }
 }
 dps_results: {
@@ -591,10 +591,17 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-IndestructibleAlchemist'sStone-44323"
+ value: {
+  dps: 1755.246742062559
+  tps: 1299.51563055753
+ }
+}
+dps_results: {
  key: "TestEnhancement-AllItems-InsightfulEarthsiegeDiamond"
  value: {
-  dps: 1775.4723773371193
-  tps: 1314.0016213523895
+  dps: 1791.3413102544876
+  tps: 1324.9649812816413
  }
 }
 dps_results: {
@@ -651,6 +658,20 @@ dps_results: {
  value: {
   dps: 1767.5327894189406
   tps: 1308.880297664336
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-MercurialAlchemistStone-44322"
+ value: {
+  dps: 1768.4392560849083
+  tps: 1309.6123168121903
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-MightyAlchemist'sStone-44324"
+ value: {
+  dps: 1780.8723125196914
+  tps: 1318.0162042464542
  }
 }
 dps_results: {
@@ -754,8 +775,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-RelentlessEarthsiegeDiamond"
  value: {
-  dps: 1786.2255214014078
-  tps: 1321.284431067243
+  dps: 1813.6719349611387
+  tps: 1340.4895538605713
  }
 }
 dps_results: {
@@ -1020,8 +1041,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 1776.9145003001486
-  tps: 1314.349006235272
+  dps: 1786.8367187186307
+  tps: 1325.3912085508837
  }
 }
 dps_results: {

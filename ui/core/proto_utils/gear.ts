@@ -1,8 +1,11 @@
+import { Enchant } from '/wotlk/core/proto/common.js';
+import { EquipmentSpec } from '/wotlk/core/proto/common.js';
 import { Gem } from '/wotlk/core/proto/common.js';
 import { GemColor } from '/wotlk/core/proto/common.js';
+import { Item } from '/wotlk/core/proto/common.js';
 import { ItemSlot } from '/wotlk/core/proto/common.js';
 import { ItemSpec } from '/wotlk/core/proto/common.js';
-import { EquipmentSpec } from '/wotlk/core/proto/common.js';
+import { Profession } from '/wotlk/core/proto/common.js';
 import { WeaponType } from '/wotlk/core/proto/common.js';
 import { equalsOrBothNull } from '/wotlk/core/utils.js';
 import { getEnumValues } from '/wotlk/core/utils.js';
@@ -155,6 +158,23 @@ export class Gear {
 		}
 	}
 
+	// Removes bonus gems from blacksmith profession bonus.
+	withoutBlacksmithSockets(): Gear {
+		let curGear: Gear = this;
+
+		const wristItem = this.getEquippedItem(ItemSlot.ItemSlotWrist);
+		if (wristItem) {
+			curGear = curGear.withEquippedItem(ItemSlot.ItemSlotWrist, wristItem.withGem(null, wristItem.numPossibleSockets - 1));
+		}
+
+		const handsItem = this.getEquippedItem(ItemSlot.ItemSlotHands);
+		if (handsItem) {
+			curGear = curGear.withEquippedItem(ItemSlot.ItemSlotHands, handsItem.withGem(null, handsItem.numPossibleSockets - 1));
+		}
+
+		return curGear;
+	}
+
 	hasBluntMHWeapon(): boolean {
 		const weapon = this.getEquippedItem(ItemSlot.ItemSlotMainHand);
 		return weapon != null && isBluntWeaponType(weapon.item.weaponType);
@@ -170,5 +190,11 @@ export class Gear {
 	hasSharpOHWeapon(): boolean {
 		const weapon = this.getEquippedItem(ItemSlot.ItemSlotOffHand);
 		return weapon != null && isSharpWeaponType(weapon.item.weaponType);
+	}
+
+	getFailedProfessionRequirements(professions: Array<Profession>): Array<Item | Gem | Enchant> {
+		return (this.asArray().filter(ei => ei != null) as Array<EquippedItem>)
+				.map(ei => ei.getFailedProfessionRequirements(professions))
+				.flat();
 	}
 }

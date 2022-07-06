@@ -50,8 +50,13 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 				(simUI: IndividualSimUI<Spec.SpecRogue>) => {
 					return {
 						updateOn: simUI.player.changeEmitter,
-						shouldDisplay: () => simUI.player.getRotation().maintainExposeArmor && simUI.player.getTalents().improvedExposeArmor < 2,
-						getContent: () => '\'Maintain Expose Armor\' selected, but missing points in Improved Expose Armor!',
+						getContent: () => {
+							if (simUI.player.getRotation().maintainExposeArmor && simUI.player.getTalents().improvedExposeArmor < 2) {
+								return '\'Maintain Expose Armor\' selected, but missing points in Improved Expose Armor!';
+							} else {
+								return '';
+							}
+						},
 					};
 				},
 			],

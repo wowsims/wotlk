@@ -310,6 +310,12 @@ export class Player<SpecType extends Spec> {
 			this.professionChangeEmitter.emit(eventID);
 		}
 	}
+	getProfessions(): Array<Profession> {
+		return [this.profession1, this.profession2].filter(p => p != Profession.ProfessionUnknown);
+	}
+	hasProfession(prof: Profession): boolean {
+		return this.getProfessions().includes(prof);
+	}
 
 	getShattFaction(): ShattrathFaction {
 		return this.shattFaction;
@@ -673,6 +679,10 @@ export class Player<SpecType extends Spec> {
 		}
 		parts.push('pcs=' + this.gear.asArray().filter(ei => ei != null).map(ei => ei!.item.id).join(':'));
 
+		if (equippedItem.hasExtraSocket(this.hasProfession(Profession.Blacksmithing))) {
+			parts.push('sock');
+		}
+
 		elem.setAttribute('data-wowhead', parts.join('&'));
 	}
 
@@ -699,6 +709,8 @@ export class Player<SpecType extends Spec> {
 				cooldowns: this.getCooldowns(),
 				talentsString: this.getTalentsString(),
 				glyphs: this.getGlyphs(),
+				profession1: this.getProfession1(),
+				profession2: this.getProfession2(),
 				inFrontOfTarget: this.getInFrontOfTarget(),
 				healingModel: this.getHealingModel(),
 			}),
@@ -719,6 +731,8 @@ export class Player<SpecType extends Spec> {
 			this.setCooldowns(eventID, proto.cooldowns || Cooldowns.create());
 			this.setTalentsString(eventID, proto.talentsString);
 			this.setGlyphs(eventID, proto.glyphs || Glyphs.create());
+			this.setProfession1(eventID, proto.profession1);
+			this.setProfession2(eventID, proto.profession2);
 			this.setInFrontOfTarget(eventID, proto.inFrontOfTarget);
 			this.setHealingModel(eventID, proto.healingModel || HealingModel.create());
 			this.setRotation(eventID, this.specTypeFunctions.rotationFromPlayer(proto));

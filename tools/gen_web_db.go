@@ -14,6 +14,7 @@ import (
 
 // Example usage:
 // go run ./tools/gen_web_db.go -infile=./assets/item_data/all_item_tooltips.csv -outfile=./assets/item_data/all_items_db.json
+// go run ./tools/gen_web_db.go -infile=./assets/spell_data/all_spell_tooltips.csv -outfile=./assets/spell_data/all_spells_db.json
 
 func main() {
 	infile := flag.String("infile", "", "Path to input .csv file for tooltips data.")
@@ -28,7 +29,7 @@ func main() {
 	// Ignore first line
 	lines = lines[1:]
 
-	pattern := regexp.MustCompile(`(\d+), .*{"name": "(.+?)",.*,"icon": "(.+?)"`)
+	pattern := regexp.MustCompile(`(\d+),\s*.*{"name":\s*"(.+?)".*"icon":\s*"(.+?)"`)
 
 	var items []ItemData
 	for _, line := range lines {
@@ -43,7 +44,7 @@ func main() {
 		}
 
 		items = append(items, ItemData{
-			ID: id,
+			ID:   id,
 			Name: string(matches[2]),
 			Icon: string(matches[3]),
 		})

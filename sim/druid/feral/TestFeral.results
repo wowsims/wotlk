@@ -374,6 +374,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeral-AllItems-IndestructibleAlchemist'sStone-44323"
+ value: {
+  dps: 1955.5366800899988
+  tps: 1422.747524761697
+ }
+}
+dps_results: {
  key: "TestFeral-AllItems-KissoftheSpider-22954"
  value: {
   dps: 1969.001913866359
@@ -434,6 +441,20 @@ dps_results: {
  value: {
   dps: 1955.5366800899988
   tps: 1422.747524761697
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-MercurialAlchemistStone-44322"
+ value: {
+  dps: 1958.5413526404561
+  tps: 1425.502845067544
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-MightyAlchemist'sStone-44324"
+ value: {
+  dps: 1971.5558978740394
+  tps: 1433.9856119879087
  }
 }
 dps_results: {
