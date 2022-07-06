@@ -14,11 +14,22 @@ func (warrior *Warrior) ApplyTalents() {
 	warrior.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*1*float64(warrior.Talents.Precision))
 	warrior.AddStat(stats.Defense, core.DefenseRatingPerDefense*4*float64(warrior.Talents.Anticipation))
 	warrior.AddStat(stats.Armor, warrior.Equip.Stats()[stats.Armor]*0.02*float64(warrior.Talents.Toughness))
-	warrior.AddStat(stats.Expertise, core.ExpertisePerQuarterPercentReduction*2*float64(warrior.Talents.Defiance))
+	warrior.AddStat(stats.Expertise, core.ExpertisePerQuarterPercentReduction*2*float64(warrior.Talents.StrengthOfArms))
 	warrior.PseudoStats.DodgeReduction += 0.01 * float64(warrior.Talents.WeaponMastery)
 
 	if warrior.Talents.DualWieldSpecialization > 0 {
 		warrior.AutoAttacks.OHEffect.BaseDamage.Calculator = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, 1+0.05*float64(warrior.Talents.DualWieldSpecialization), true)
+	}
+
+	if warrior.Talents.StrengthOfArms > 0 {
+		bonus := 1 + 0.02*float64(warrior.Talents.StrengthOfArms)
+		warrior.AddStatDependency(stats.StatDependency{
+			SourceStat:   stats.Strength,
+			ModifiedStat: stats.Strength,
+			Modifier: func(str float64, _ float64) float64 {
+				return str * bonus
+			},
+		})
 	}
 
 	// TODO: This should only be applied while berserker stance is active.
@@ -27,8 +38,8 @@ func (warrior *Warrior) ApplyTalents() {
 		warrior.AddStatDependency(stats.StatDependency{
 			SourceStat:   stats.Strength,
 			ModifiedStat: stats.Strength,
-			Modifier: func(ap float64, _ float64) float64 {
-				return ap * bonus
+			Modifier: func(str float64, _ float64) float64 {
+				return str * bonus
 			},
 		})
 	}
