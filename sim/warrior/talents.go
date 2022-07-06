@@ -322,6 +322,44 @@ func (warrior *Warrior) applyFlurry() {
 	})
 }
 
+func (warrior *Warrior) applyWreckingCrew() {
+	if warrior.Talents.WreckingCrew == 0 {
+		return
+	}
+
+	bonus := 1 + 0.02*float64(warrior.Talents.WreckingCrew)
+
+	procAura := warrior.RegisterAura(core.Aura{
+		Label:    "Enrage",
+		ActionID: core.ActionID{SpellID: 57518},
+		Duration: time.Second * 12,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.DamageDealtMultiplier *= bonus
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.DamageDealtMultiplier /= bonus
+		},
+	})
+	warrior.RegisterAura(core.Aura{
+		Label:    "Wrecking Crew",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+				return
+			}
+
+			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+				return
+			}
+
+			procAura.Activate(sim)
+		},
+	})
+}
+
 func (warrior *Warrior) applyShieldSpecialization() {
 	if warrior.Talents.ShieldSpecialization == 0 {
 		return
