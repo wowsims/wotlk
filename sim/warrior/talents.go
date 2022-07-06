@@ -208,16 +208,16 @@ func (warrior *Warrior) applyWeaponSpecializations() {
 		var swordSpecializationSpell *core.Spell
 		icd := core.Cooldown{
 			Timer:    warrior.NewTimer(),
-			Duration: time.Millisecond * 500,
+			Duration: time.Second * 6,
 		}
-		procChance := 0.01 * float64(warrior.Talents.SwordSpecialization)
+		procChance := 0.02 * float64(warrior.Talents.SwordSpecialization)
 
 		warrior.RegisterAura(core.Aura{
 			Label:    "Sword Specialization",
 			Duration: core.NeverExpires,
 			OnInit: func(aura *core.Aura, sim *core.Simulation) {
 				swordSpecializationSpell = warrior.GetOrRegisterSpell(core.SpellConfig{
-					ActionID:    core.ActionID{SpellID: 12815},
+					ActionID:    core.ActionID{SpellID: 12281},
 					SpellSchool: core.SpellSchoolPhysical,
 					Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 
