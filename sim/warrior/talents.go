@@ -135,7 +135,7 @@ func (warrior *Warrior) applyTwoHandedWeaponSpecialization() {
 		return
 	}
 
-	warrior.PseudoStats.PhysicalDamageDealtMultiplier *= 1 + 0.01*float64(warrior.Talents.TwoHandedWeaponSpecialization)
+	warrior.PseudoStats.PhysicalDamageDealtMultiplier *= 1 + 0.02*float64(warrior.Talents.TwoHandedWeaponSpecialization)
 }
 
 func (warrior *Warrior) applyOneHandedWeaponSpecialization() {
