@@ -75,6 +75,10 @@ func (priest *Priest) Initialize() {
 		priest.MiseryAura = core.MiseryAura(priest.CurrentTarget, priest.Talents.Misery)
 	}
 
+	if priest.Talents.ShadowWeaving > 0 {
+		priest.ShadowWeavingAura = core.ShadowWeavingAura(priest.CurrentTarget, 0)
+	}
+
 	priest.registerDevouringPlagueSpell()
 	priest.registerHolyFireSpell()
 	priest.registerShadowWordPainSpell()
@@ -98,13 +102,6 @@ func (priest *Priest) Initialize() {
 		priest.newMindFlayDot(1),
 		priest.newMindFlayDot(2),
 		priest.newMindFlayDot(3),
-	}
-
-	if priest.Talents.Misery > 0 {
-		priest.MiseryAura = core.MiseryAura(priest.CurrentTarget, priest.Talents.Misery)
-	}
-	if priest.Talents.ShadowWeaving > 0 {
-		priest.ShadowWeavingAura = core.ShadowWeavingAura(priest.CurrentTarget, 0)
 	}
 }
 

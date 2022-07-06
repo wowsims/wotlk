@@ -20,7 +20,8 @@ func (priest *Priest) registerMindBlastSpell() {
 	}
 
 	base := core.BaseDamageConfigMagic(997, 1053, 0.429)
-	if priest.MiseryAura.IsActive() {
+	//if priest.MiseryAura.IsActive() {
+	if priest.MiseryAura != nil {
 		base = core.BaseDamageConfigMagic(997, 1053, 0.429*float64(priest.Talents.Misery)*0.05)
 	}
 
