@@ -23,16 +23,16 @@ type runeSystem struct {
 
 func (unit *Unit) EnableRuneSystem(maxRunicPower float64, onRunicPowerGain OnRunicPowerGain) {
 	unit.runeSystem = runeSystem{
-		unit:          unit,
+		unit: unit,
 
-		bloodRunes:    2,
-		frostRunes:    2,
-		unholyRunes:   2,
+		bloodRunes:  2,
+		frostRunes:  2,
+		unholyRunes: 2,
 
-		maxRunicPower: 100,
+		maxRunicPower:     100,
 		currentRunicPower: 0,
 
-		onRunicPowerGain: onRunicPowerGain
+		onRunicPowerGain: onRunicPowerGain,
 	}
 }
 
