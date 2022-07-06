@@ -19,9 +19,9 @@ func (priest *Priest) registerMindBlastSpell() {
 			core.TernaryFloat64(ItemSetAbsolution.CharacterHasSetBonus(&priest.Character, 4), 1.1, 1)
 	}
 
-	base := core.BaseDamageConfigMagic(992, 1048, 0.429)
+	base := core.BaseDamageConfigMagic(997, 1053, 0.429)
 	if priest.MiseryAura.IsActive() {
-		base = core.BaseDamageConfigMagic(992, 1048, 0.429*float64(priest.Talents.Misery)*0.05)
+		base = core.BaseDamageConfigMagic(997, 1053, 0.429*float64(priest.Talents.Misery)*0.05)
 	}
 
 	priest.MindBlast = priest.RegisterSpell(core.SpellConfig{
