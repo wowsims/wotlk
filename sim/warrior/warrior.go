@@ -47,6 +47,7 @@ type Warrior struct {
 	MortalStrike         *core.Spell
 	Overpower            *core.Spell
 	Rampage              *core.Spell
+	Rend                 *core.Spell
 	Revenge              *core.Spell
 	ShieldBlock          *core.Spell
 	ShieldSlam           *core.Spell
@@ -55,6 +56,7 @@ type Warrior struct {
 	SunderArmorDevastate *core.Spell
 	ThunderClap          *core.Spell
 	Whirlwind            *core.Spell
+	RendDot              *core.Dot
 
 	HeroicStrikeOrCleave *core.Spell
 	HSOrCleaveQueueAura  *core.Aura

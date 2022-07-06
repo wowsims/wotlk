@@ -1,0 +1,64 @@
+package warrior
+
+import (
+	"strconv"
+	"time"
+
+	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/stats"
+)
+
+func (warrior *Warrior) applyRend() {
+	actionID := core.ActionID{SpellID: 47465}
+
+	cost := 10.0
+	refundAmount := cost * 0.8
+	warrior.Rend = warrior.RegisterSpell(core.SpellConfig{
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolPhysical,
+		Flags:       core.SpellFlagNoOnCastComplete,
+
+		ResourceType: stats.Rage,
+		BaseCost:     cost,
+
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				Cost: cost,
+				GCD:  core.GCDDefault,
+			},
+			IgnoreHaste: true,
+		},
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+			ProcMask:         core.ProcMaskPeriodicDamage,
+			ThreatMultiplier: 1,
+			IsPeriodic:       true,
+			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if !spellEffect.Landed() {
+					warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
+				}
+				warrior.RendDot.Apply(sim)
+				warrior.procBloodFrenzy(sim, spellEffect, time.Second*15)
+			},
+		}),
+	})
+	target := warrior.CurrentTarget
+	tickDamage := 380 + 0.2*5*warrior.AutoAttacks.MH.AverageDamage()/15*(1+0.1*float64(warrior.Talents.ImprovedRend))
+	warrior.RendDot = core.NewDot(core.Dot{
+		Spell: warrior.Rend,
+		Aura: target.RegisterAura(core.Aura{
+			Label:    "Rends-" + strconv.Itoa(int(warrior.Index)),
+			ActionID: actionID,
+		}),
+		NumberOfTicks: 5,
+		TickLength:    time.Second * 3,
+		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
+			ProcMask:         core.ProcMaskPeriodicDamage,
+			DamageMultiplier: 1 + 0.01*float64(warrior.Talents.ImprovedRend),
+			ThreatMultiplier: 1,
+			IsPeriodic:       true,
+
+			BaseDamage:     core.BaseDamageConfigFlat(tickDamage),
+			OutcomeApplier: warrior.OutcomeFuncTick(),
+		}),
+	})
+}

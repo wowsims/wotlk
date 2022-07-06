@@ -105,7 +105,43 @@ func (warrior *Warrior) applyAngerManagement() {
 		})
 	})
 }
+func (warrior *Warrior) applyTasteForBlood() {
+	if warrior.Talents.TasteForBlood == 0 {
+		return
+	}
 
+	procChance := 0.33 * float64(warrior.Talents.TasteForBlood)
+	icd := core.Cooldown{
+		Timer:    warrior.NewTimer(),
+		Duration: time.Second * 6,
+	}
+	warrior.RegisterAura(core.Aura{
+		Label: "Taste for Blood",
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.Landed() {
+				return
+			}
+
+			if spell != warrior.Rend {
+				return
+			}
+
+			if !icd.IsReady(sim) {
+				return
+			}
+
+			if sim.RandomFloat("Taste for Blood") > procChance {
+				return
+			}
+			icd.Use(sim)
+			warrior.overpowerValidUntil = sim.CurrentTime + time.Second*5
+		},
+	})
+
+}
 func (warrior *Warrior) applyBloodFrenzy() {
 	if warrior.Talents.BloodFrenzy == 0 {
 		return
