@@ -213,7 +213,7 @@ func (mcdm *majorCooldownManager) finalize(character *Character) {
 //
 // This function should be called from Agent.Init().
 func (mcdm *majorCooldownManager) DelayDPSCooldownsForArmorDebuffs() {
-	if !mcdm.character.CurrentTarget.HasAuraWithTag(SunderExposeAuraTag) {
+	if !mcdm.character.CurrentTarget.HasAuraWithTag(MajorArmorReductionTag) {
 		return
 	}
 

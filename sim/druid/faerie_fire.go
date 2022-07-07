@@ -71,5 +71,5 @@ func (druid *Druid) ShouldFaerieFire(sim *core.Simulation) bool {
 		return false
 	}
 
-	return druid.CurrentTarget.ShouldRefreshAuraWithTagAtPriority(sim, core.FaerieFireAuraTag, druid.FaerieFireAura.Priority, time.Second*3)
+	return druid.CurrentTarget.ShouldRefreshAuraWithTagAtPriority(sim, core.MinorArmorReductionAuraTag, druid.FaerieFireAura.Priority, time.Second*3)
 }
