@@ -11,7 +11,8 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 	cost := 15.0 - float64(warrior.Talents.ImprovedSunderArmor) - float64(warrior.Talents.FocusedRage)
 	refundAmount := cost * 0.8
 	warrior.SunderArmorAura = core.SunderArmorAura(warrior.CurrentTarget, 0)
-	warrior.ExposeArmorAura = core.ExposeArmorAura(warrior.CurrentTarget, 2)
+	warrior.ExposeArmorAura = core.ExposeArmorAura(warrior.CurrentTarget, false)
+	warrior.AcidSpitAura = core.AcidSpitAura(warrior.CurrentTarget, 0)
 
 	config := core.SpellConfig{
 		ActionID:    SunderArmorActionID,
@@ -70,5 +71,7 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 }
 
 func (warrior *Warrior) CanSunderArmor(sim *core.Simulation) bool {
-	return warrior.CurrentRage() >= warrior.SunderArmor.DefaultCast.Cost && !warrior.ExposeArmorAura.IsActive()
+	return warrior.CurrentRage() >= warrior.SunderArmor.DefaultCast.Cost &&
+		!warrior.ExposeArmorAura.IsActive() &&
+		!warrior.AcidSpitAura.IsActive()
 }

@@ -43,10 +43,11 @@ func (spellEffect *SpellEffect) applyResistances(sim *Simulation, spell *Spell, 
 	}
 }
 
-// ArmorDamageReduction currently assumes a level 70 attacker
+// ArmorDamageReduction currently assumes a level 80 attacker
 func (at *AttackTable) UpdateArmorDamageReduction() {
-	effectiveArmor := MaxFloat(0, at.Defender.stats[stats.Armor]-at.Attacker.stats[stats.ArmorPenetration])
-	at.ArmorDamageReduction = MaxFloat(0.25, 1-(effectiveArmor/(effectiveArmor+(float64(at.Attacker.Level)*467.5-22167.5))))
+	reducibleArmor := MinFloat((at.Defender.Armor()+ReducibleArmorConstant)/3, at.Defender.Armor())
+	effectiveArmor := MaxFloat(at.Defender.Armor()-reducibleArmor*at.Attacker.ArmorPenetration(), 0)
+	at.ArmorDamageReduction = 1 / ((float64(at.Attacker.Level)*467.5-22167.5)/effectiveArmor + 1)
 }
 
 func (at *AttackTable) UpdatePartialResists() {
