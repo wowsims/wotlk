@@ -169,8 +169,7 @@ message ShamanTotems {
 	bool use_mana_tide = 5;
 
 	// If set, will use fire elemental totem at the start and revert to regular
-	// fire totems when it expires. If fire nova is also selected, fire nova
-	// will be used once before dropping fire ele.
+	// fire totems when it expires.
 	bool use_fire_elemental = 6;
 
 	// If set, will revert to regular fire totems when fire elemental goes OOM,

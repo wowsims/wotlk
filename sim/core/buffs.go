@@ -171,9 +171,10 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 
 	if partyBuffs.TotemOfWrath {
 		character.AddStats(stats.Stats{
-			stats.SpellCrit:  3 * CritRatingPerCritChance,
-			stats.MeleeCrit:  3 * CritRatingPerCritChance,
-			stats.SpellPower: 280,
+			stats.SpellCrit:    3 * CritRatingPerCritChance,
+			stats.MeleeCrit:    3 * CritRatingPerCritChance,
+			stats.SpellPower:   280,
+			stats.HealingPower: 280,
 		})
 	}
 	if partyBuffs.WrathOfAirTotem {
