@@ -446,8 +446,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-Figurine-LivingRubySerpent-24126"
  value: {
-  dps: 882.7184073744191
-  tps: 855.6726940519411
+  dps: 821.7527487892274
+  tps: 797.5583877453947
  }
 }
 dps_results: {
@@ -626,10 +626,17 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSmite-AllItems-MarkoftheWarPrisoner-37873"
+ value: {
+  dps: 863.750819071459
+  tps: 837.5384415410867
+ }
+}
+dps_results: {
  key: "TestSmite-AllItems-MercurialAlchemistStone-44322"
  value: {
-  dps: 812.8014562797612
-  tps: 789.2202519846787
+  dps: 829.6915473815462
+  tps: 805.2130017019475
  }
 }
 dps_results: {
@@ -761,8 +768,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-Scryer'sBloodgem-29132"
  value: {
-  dps: 896.8803783936529
-  tps: 869.262995243783
+  dps: 820.4650140766847
+  tps: 796.2620466842607
  }
 }
 dps_results: {
@@ -833,6 +840,13 @@ dps_results: {
  value: {
   dps: 745.0435646936129
   tps: 724.7976310213195
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-SundialoftheExiled-40682"
+ value: {
+  dps: 838.3765512273873
+  tps: 813.429049656635
  }
 }
 dps_results: {
@@ -985,15 +999,15 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-Xi'ri'sGift-29179"
  value: {
-  dps: 872.4784107640152
-  tps: 845.85074762161
+  dps: 824.1179926916444
+  tps: 799.9473849798767
  }
 }
 dps_results: {
  key: "TestSmite-Average-Default"
  value: {
-  dps: 841.2187647420072
-  tps: 816.1802450734499
+  dps: 840.819830718819
+  tps: 815.8038578965578
  }
 }
 dps_results: {
