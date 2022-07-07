@@ -7,7 +7,7 @@ character_stats_results: {
   final_stats: 463.1
   final_stats: 181.50000000000003
   final_stats: 1316
-  final_stats: 839
+  final_stats: 1119
   final_stats: 80
   final_stats: 0
   final_stats: 0
@@ -280,6 +280,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestElemental-AllItems-CataclysmRegalia"
+ value: {
+  dps: 1344.7223475861288
+  tps: 978.3540246127835
+ }
+}
+dps_results: {
  key: "TestElemental-AllItems-ChaoticSkyfireDiamond"
  value: {
   dps: 1459.9399599338294
@@ -333,6 +340,13 @@ dps_results: {
  value: {
   dps: 1157.8183382007544
   tps: 841.9711367154985
+ }
+}
+dps_results: {
+ key: "TestElemental-AllItems-CycloneRegalia"
+ value: {
+  dps: 1286.2702591781929
+  tps: 931.8753721869216
  }
 }
 dps_results: {
@@ -508,6 +522,13 @@ dps_results: {
  value: {
   dps: 1500.3655437302828
   tps: 1069.816658541908
+ }
+}
+dps_results: {
+ key: "TestElemental-AllItems-Fathom-BroochoftheTidewalker-30663"
+ value: {
+  dps: 1413.5055211083234
+  tps: 1011.3729441864417
  }
 }
 dps_results: {
@@ -718,6 +739,13 @@ dps_results: {
  value: {
   dps: 1441.506904574472
   tps: 1039.9658413223742
+ }
+}
+dps_results: {
+ key: "TestElemental-AllItems-NaturalAlignmentCrystal-19344"
+ value: {
+  dps: 1577.4955695936985
+  tps: 1125.4629835795067
  }
 }
 dps_results: {
@@ -1068,6 +1096,13 @@ dps_results: {
  value: {
   dps: 1427.3025682357934
   tps: 1036.123379427997
+ }
+}
+dps_results: {
+ key: "TestElemental-AllItems-TidefuryRaiment"
+ value: {
+  dps: 1228.3488009057814
+  tps: 890.7683275377971
  }
 }
 dps_results: {

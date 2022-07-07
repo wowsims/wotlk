@@ -227,6 +227,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-CataclysmRegalia"
+ value: {
+  dps: 1.753938214195455e+126
+  tps: 1.753938214195455e+126
+ }
+}
+dps_results: {
  key: "TestEnhancement-AllItems-ChaoticSkyfireDiamond"
  value: {
   dps: 5.072614242357166e+129
@@ -280,6 +287,13 @@ dps_results: {
  value: {
   dps: 2.848952737240824e+126
   tps: 2.848952737240824e+126
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-CycloneRegalia"
+ value: {
+  dps: 1.5169938099362898e+126
+  tps: 1.5169938099362898e+126
  }
 }
 dps_results: {
@@ -448,6 +462,13 @@ dps_results: {
  value: {
   dps: 9.585922107960333e+125
   tps: 9.585922107960333e+125
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-Fathom-BroochoftheTidewalker-30663"
+ value: {
+  dps: 4.0049498744217416e+127
+  tps: 4.0049498744217416e+127
  }
 }
 dps_results: {
@@ -665,6 +686,13 @@ dps_results: {
  value: {
   dps: 1.6093160506016628e+128
   tps: 1.6093160506016628e+128
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-NaturalAlignmentCrystal-19344"
+ value: {
+  dps: 8.834525939812142e+127
+  tps: 8.834525939812142e+127
  }
 }
 dps_results: {
@@ -1015,6 +1043,13 @@ dps_results: {
  value: {
   dps: 4.8344524143367035e+128
   tps: 4.8344524143367035e+128
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-TidefuryRaiment"
+ value: {
+  dps: 1.4580061639205651e+122
+  tps: 1.4580061639205651e+122
  }
 }
 dps_results: {

@@ -10,6 +10,7 @@ import (
 
 // TODO: Implement all wotlk weapon imbues
 //  Include `Elemental Weapons` talent when implementing
+//  Include t4 bonus to flametongue weapon
 
 var TotemOfTheAstralWinds int32 = 27815
 
