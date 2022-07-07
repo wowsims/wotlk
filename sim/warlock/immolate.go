@@ -10,7 +10,7 @@ import (
 
 func (warlock *Warlock) registerImmolateSpell() {
 	actionID := core.ActionID{SpellID: 27215}
-	baseCost := 445.0
+	baseCost := 0.17 * warlock.BaseMana()
 
 	effect := core.SpellEffect{
 		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 0, 1) * 5 * core.CritRatingPerCritChance,
@@ -18,7 +18,7 @@ func (warlock *Warlock) registerImmolateSpell() {
 			(1 + (0.05 * float64(warlock.Talents.ImprovedImmolate))) *
 			(1 + (0.02 * float64(warlock.Talents.Emberstorm))),
 		ThreatMultiplier: 1 - 0.05*float64(warlock.Talents.DestructiveReach),
-		BaseDamage:       core.BaseDamageConfigMagic(332.0, 332.0, 0.2+0.04*float64(warlock.Talents.ShadowAndFlame)),
+		BaseDamage:       core.BaseDamageConfigMagic(460.0, 460.0, 0.2+0.04*float64(warlock.Talents.ShadowAndFlame)),
 		OutcomeApplier:   warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
 		OnSpellHitDealt:  applyDotOnLanded(&warlock.ImmolateDot),
 		ProcMask:         core.ProcMaskSpellDamage,
@@ -53,7 +53,7 @@ func (warlock *Warlock) registerImmolateSpell() {
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(615/5, 0.13),
+			BaseDamage:       core.BaseDamageConfigMagicNoRoll(785/5, 0.13),
 			OutcomeApplier:   warlock.OutcomeFuncTick(),
 			IsPeriodic:       true,
 			ProcMask:         core.ProcMaskPeriodicDamage,

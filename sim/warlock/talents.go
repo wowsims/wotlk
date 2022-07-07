@@ -1,7 +1,7 @@
 package warlock
 
 import (
-	//	"time"
+	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
 	//	"github.com/wowsims/wotlk/sim/core/proto"
@@ -21,61 +21,69 @@ func (warlock *Warlock) ApplyTalents() {
 		})
 	}
 
-	/*	// Add 1% crit per level of backlash.
-		warlock.PseudoStats.BonusCritRating += float64(warlock.Talents.Backlash) * 1 * core.CritRatingPerCritChance
+	// Suppression 
+	warlock.AddStat(stats.SpellHit, float64(warlock.Talents.Suppression)*core.SpellHitRatingPerHitChance)
 
-		// fel intellect
-		if warlock.Talents.FelIntellect > 0 {
-			bonus := (0.01) * float64(warlock.Talents.FelIntellect)
-			// Adding a second 3% bonus int->mana dependency
-			warlock.AddStatDependency(stats.StatDependency{
-				SourceStat:   stats.Intellect,
-				ModifiedStat: stats.Mana,
-				Modifier: func(intellect float64, mana float64) float64 {
-					return mana + intellect*(15*bonus)
-				},
-			})
-		}
+	// Add 1% crit per level of backlash.
+	warlock.AddStat(stats.SpellCrit, float64(warlock.Talents.Backlash)*core.CritRatingPerCritChance)
 
-		warlock.PseudoStats.BonusCritRating += float64(warlock.Talents.DemonicTactics) * 1 * core.CritRatingPerCritChance
-
-		//  TODO: fel stamina increases max health (might be useful for warlock tanking sim)
-
-		if !warlock.Options.SacrificeSummon && warlock.Options.Summon != proto.Warlock_Options_NoSummon {
-			if warlock.Talents.MasterDemonologist > 0 {
-				switch warlock.Options.Summon {
-				case proto.Warlock_Options_Imp:
-					warlock.PseudoStats.ThreatMultiplier *= 0.96 * float64(warlock.Talents.MasterDemonologist)
-				case proto.Warlock_Options_Succubus:
-					warlock.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.02*float64(warlock.Talents.MasterDemonologist)
-				case proto.Warlock_Options_Felgaurd:
-					warlock.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
-					// 		Felguard - Increases all damage caused by 1% and all resistances by .1 per level.
-					// 		Voidwalker - Reduces physical damage taken by 2%.
-					// 		Felhunter - Increases all resistances by .2 per level.
-				}
-			}
-
-			if warlock.Talents.SoulLink {
-				warlock.PseudoStats.DamageDealtMultiplier *= 1.05
-			}
-
-			// Extract stats for demonic knowledge
-			petChar := warlock.Pets[0].GetCharacter()
-			bonus := (petChar.GetStat(stats.Stamina) + petChar.GetStat(stats.Intellect)) * (0.04 * float64(warlock.Talents.DemonicKnowledge))
-			warlock.AddStat(stats.SpellPower, bonus)
-		}
-
-		// demonic tactics, applies even without pet out
-		warlock.AddStats(stats.Stats{
-			stats.MeleeCrit: float64(warlock.Talents.DemonicTactics) * 1 * core.CritRatingPerCritChance,
-			stats.SpellCrit: float64(warlock.Talents.DemonicTactics) * 1 * core.CritRatingPerCritChance,
+	// fel intellect
+	if warlock.Talents.FelVitality > 0 {
+		bonus := (0.01) * float64(warlock.Talents.FelVitality)
+		// Adding a second 3% bonus int->mana dependency
+		warlock.AddStatDependency(stats.StatDependency{
+			SourceStat:   stats.Intellect,
+			ModifiedStat: stats.Mana,
+			Modifier: func(intellect float64, mana float64) float64 {
+				return mana + intellect*15*bonus
+			},
 		})
+	    // //  TODO: fel stamina increases max health (might be useful for warlock tanking sim)
+		// warlock.AddStatDependency(stats.StatDependency{
+		// 	SourceStat:   stats.Stamina,
+		// 	ModifiedStat: stats.Health,
+		// 	Modifier: func(intellect float64, mana float64) float64 {
+		// 		return Health + Stamina*10*bonus
+		// 	},
+		// })
+	}
 
-		warlock.applyShadowEmbrace()
-		warlock.setupNightfall()
-		warlock.setupAmplifyCurse()
-	*/
+	warlock.PseudoStats.BonusCritRating += float64(warlock.Talents.DemonicTactics) * 1 * core.CritRatingPerCritChance
+
+
+	// if !warlock.Options.SacrificeSummon && warlock.Options.Summon != proto.Warlock_Options_NoSummon {
+	// 	if warlock.Talents.MasterDemonologist > 0 {
+	// 		switch warlock.Options.Summon {
+	// 		case proto.Warlock_Options_Imp:
+	// 			warlock.PseudoStats.ThreatMultiplier *= 0.96 * float64(warlock.Talents.MasterDemonologist)
+	// 		case proto.Warlock_Options_Succubus:
+	// 			warlock.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.02*float64(warlock.Talents.MasterDemonologist)
+	// 		case proto.Warlock_Options_Felgaurd:
+	// 			warlock.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
+	// 			// 		Felguard - Increases all damage caused by 1% and all resistances by .1 per level.
+	// 			// 		Voidwalker - Reduces physical damage taken by 2%.
+	// 			// 		Felhunter - Increases all resistances by .2 per level.
+	// 		}
+	// 	}
+
+	// 	if warlock.Talents.SoulLink {
+	// 		warlock.PseudoStats.DamageDealtMultiplier *= 1.05
+	// 	}
+
+	// 	// Extract stats for demonic knowledge
+	// 	petChar := warlock.Pets[0].GetCharacter()
+	// 	bonus := (petChar.GetStat(stats.Stamina) + petChar.GetStat(stats.Intellect)) * (0.04 * float64(warlock.Talents.DemonicKnowledge))
+	// 	warlock.AddStat(stats.SpellPower, bonus)
+	// }
+
+	// // demonic tactics, applies even without pet out
+	// warlock.AddStats(stats.Stats{
+	// 	stats.MeleeCrit: float64(warlock.Talents.DemonicTactics) * 1 * core.CritRatingPerCritChance,
+	// 	stats.SpellCrit: float64(warlock.Talents.DemonicTactics) * 1 * core.CritRatingPerCritChance,
+	// })
+
+	// warlock.applyShadowEmbrace()
+	warlock.setupNightfall()
 }
 
 /*func (warlock *Warlock) applyShadowEmbrace() {
@@ -106,30 +114,7 @@ func (warlock *Warlock) ApplyTalents() {
 	})
 }
 
-func (warlock *Warlock) setupAmplifyCurse() {
-	if !warlock.Talents.AmplifyCurse {
-		return
-	}
-	warlock.AmplifyCurseAura = warlock.RegisterAura(core.Aura{
-		Label:    "Amplify Curse",
-		ActionID: core.ActionID{SpellID: 18288},
-		Duration: time.Second * 30,
-	})
-	warlock.AmplifyCurse = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 18288},
-		SpellSchool: core.SpellSchoolShadow,
-		Cast: core.CastConfig{
-			CD: core.Cooldown{
-				Timer:    warlock.NewTimer(),
-				Duration: time.Minute * 3,
-			},
-		},
-		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			warlock.AmplifyCurseAura.Activate(sim)
-		},
-	})
-}
-
+*/
 func (warlock *Warlock) setupNightfall() {
 	if warlock.Talents.Nightfall == 0 {
 		return
@@ -159,14 +144,14 @@ func (warlock *Warlock) setupNightfall() {
 			if spell != warlock.Corruption { // TODO: also works on drain life...
 				return
 			}
-			if sim.RandomFloat("nightfall") > 0.04 {
+			if sim.RandomFloat("nightfall") > 0.02 * float64(warlock.Talents.Nightfall) {
 				return
 			}
 			warlock.NightfallProcAura.Activate(sim)
 		},
 	})
 }
-*/
+
 func (warlock *Warlock) applyNightfall(cast *core.Cast) {
 	if warlock.NightfallProcAura.IsActive() {
 		cast.CastTime = 0

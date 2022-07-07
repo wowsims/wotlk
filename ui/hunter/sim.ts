@@ -118,7 +118,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				}),
 				debuffs: Debuffs.create({
 					sunderArmor: true,
-					curseOfRecklessness: true,
+					curseOfWeakness: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					improvedSealOfTheCrusader: true,
 					judgementOfWisdom: true,
@@ -168,7 +168,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				IconInputs.FaerieFire,
 				IconInputs.SunderArmor,
 				IconInputs.ExposeArmor,
-				IconInputs.CurseOfRecklessness,
+				IconInputs.CurseOfWeakness,
 				IconInputs.CurseOfElements,
 				IconInputs.Misery,
 				IconInputs.GiftOfArthas,

@@ -15,7 +15,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 80
   final_stats: 100
-  final_stats: 237.69597815999998
+  final_stats: 237.69
   final_stats: 950.1434919753087
   final_stats: 0
   final_stats: 0
@@ -992,8 +992,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Average-Default"
  value: {
-  dps: 1676.2524944718323
-  tps: 1364.647434276459
+  dps: 1676.0458065329246
+  tps: 1364.551158711722
  }
 }
 dps_results: {

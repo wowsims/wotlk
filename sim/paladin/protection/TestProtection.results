@@ -15,12 +15,12 @@ character_stats_results: {
   final_stats: 80
   final_stats: 0
   final_stats: 100
-  final_stats: 255.39195632000002
+  final_stats: 255.38
   final_stats: 570.3908375000001
   final_stats: 0
   final_stats: 0
   final_stats: 1437.4
-  final_stats: 162.69597816
+  final_stats: 162.69
   final_stats: 234.29387999999997
   final_stats: 0
   final_stats: 0
@@ -103,7 +103,7 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-BadgeoftheSwarmguard-21670"
  value: {
-  dps: 287.75596294968153
+  dps: 287.7559629496815
   tps: 560.3447450750493
  }
 }
@@ -670,8 +670,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-LightbringerBattlegear"
  value: {
-  dps: 328.9683136653695
-  tps: 608.0412708033082
+  dps: 328.973731682957
+  tps: 608.0515650367245
  }
 }
 dps_results: {
@@ -1160,17 +1160,17 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Average-Default"
  value: {
-  dps: 569.0985917304687
-  tps: 1164.1516944720756
-  dtps: 1072.084010375089
+  dps: 569.0991232562403
+  tps: 1163.620888570433
+  dtps: 1005.7311610153006
  }
 }
 dps_results: {
  key: "TestProtection-SelfDrums-DPS"
  value: {
   dps: 567.3394826706681
-  tps: 1159.2559909226825
-  dtps: 1075.2889134899808
+  tps: 1158.7493159087899
+  dtps: 1008.8792295245823
  }
 }
 dps_results: {
@@ -1197,8 +1197,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Settings-BloodElf-P4-Protection Paladin-NoBuffs-LongMultiTarget"
  value: {
-  dps: 949.4493372718101
-  tps: 2118.9188154717303
+  dps: 949.4594812587401
+  tps: 2118.9384745184
  }
 }
 dps_results: {
@@ -1239,8 +1239,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Settings-Human-P4-Protection Paladin-NoBuffs-LongMultiTarget"
  value: {
-  dps: 951.5693865533788
-  tps: 2131.12286866121
+  dps: 951.579530540309
+  tps: 2131.14252770788
  }
 }
 dps_results: {
@@ -1261,7 +1261,7 @@ dps_results: {
  key: "TestProtection-SwitchInFrontOfTarget-Default"
  value: {
   dps: 590.7919019401711
-  tps: 1192.1481750939106
-  dtps: 1030.1658586991007
+  tps: 1191.4598862351509
+  dtps: 966.6977626971666
  }
 }
