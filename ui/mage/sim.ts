@@ -107,7 +107,7 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 					bloodlust: 1,
 					manaSpringTotem: TristateEffect.TristateEffectImproved,
 					manaTideTotems: 1,
-					wrathOfAirTotem: TristateEffect.TristateEffectRegular,
+					wrathOfAirTotem: true,
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
@@ -214,7 +214,7 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 					OtherInputs.PrepopPotion,
 					OtherInputs.StartingConjured,
 					OtherInputs.NumStartingConjured,
-					OtherInputs.SnapshotImprovedWrathOfAirTotem,
+
 					OtherInputs.TankAssignment,
 				],
 			},

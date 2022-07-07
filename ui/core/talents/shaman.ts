@@ -27,13 +27,13 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 				maxPoints: 5,
 			},
 			{
-				//fieldName: 'earthsGrasp',
+				fieldName: 'callOfFlame',
 				location: {
 					rowIdx: 1,
 					colIdx: 0,
 				},
-				spellIds: [16043, 16130],
-				maxPoints: 2,
+				spellIds: [16038, 16160, 16161],
+				maxPoints: 3,
 			},
 			{
 				//fieldName: 'elementalWarding',
@@ -41,47 +41,47 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 					rowIdx: 1,
 					colIdx: 1,
 				},
-				spellIds: [28996],
+				spellIds: [28996, 28997, 28998],
 				maxPoints: 3,
 			},
 			{
-				fieldName: 'callOfFlame',
+				fieldName: 'elementalDevastation',
 				location: {
 					rowIdx: 1,
 					colIdx: 2,
 				},
-				spellIds: [16038, 16160],
+				spellIds: [30160, 29179, 29180],
 				maxPoints: 3,
-			},
-			{
-				fieldName: 'elementalFocus',
-				location: {
-					rowIdx: 2,
-					colIdx: 0,
-				},
-				spellIds: [16164],
-				maxPoints: 1,
 			},
 			{
 				fieldName: 'reverberation',
 				location: {
 					rowIdx: 2,
-					colIdx: 1,
+					colIdx: 0,
 				},
-				spellIds: [16040, 16113],
+				spellIds: [16040, 16113, 16114, 16115, 16116],
 				maxPoints: 5,
 			},
 			{
-				fieldName: 'callOfThunder',
+				fieldName: 'elementalFocus',
+				location: {
+					rowIdx: 2,
+					colIdx: 1,
+				},
+				spellIds: [16164],
+				maxPoints: 1,
+			},
+			{
+				fieldName: 'elementalFury',
 				location: {
 					rowIdx: 2,
 					colIdx: 2,
 				},
-				spellIds: [16041, 16117],
+				spellIds: [16089, 60184, 60185, 60187, 60188],
 				maxPoints: 5,
 			},
 			{
-				fieldName: 'improvedFireTotems',
+				fieldName: 'improvedFireNova',
 				location: {
 					rowIdx: 3,
 					colIdx: 0,
@@ -99,16 +99,7 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 				maxPoints: 3,
 			},
 			{
-				fieldName: 'elementalDevastation',
-				location: {
-					rowIdx: 3,
-					colIdx: 3,
-				},
-				spellIds: [30160, 29179],
-				maxPoints: 3,
-			},
-			{
-				//fieldName: 'stormReach',
+				//fieldName: 'elementalReach',
 				location: {
 					rowIdx: 4,
 					colIdx: 0,
@@ -117,12 +108,16 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 				maxPoints: 2,
 			},
 			{
-				fieldName: 'elementalFury',
+				fieldName: 'callOfThunder',
 				location: {
 					rowIdx: 4,
 					colIdx: 1,
 				},
-				spellIds: [16089],
+				prereqLocation: {
+					rowIdx: 2,
+					colIdx: 1,
+				},
+				spellIds: [16041],
 				maxPoints: 1,
 			},
 			{
@@ -131,8 +126,8 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 					rowIdx: 4,
 					colIdx: 3,
 				},
-				spellIds: [30664],
-				maxPoints: 5,
+				spellIds: [30664, 30665, 30666],
+				maxPoints: 3,
 			},
 			{
 				fieldName: 'elementalPrecision',
@@ -140,7 +135,7 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 					rowIdx: 5,
 					colIdx: 0,
 				},
-				spellIds: [30672],
+				spellIds: [30672, 30673, 30674],
 				maxPoints: 3,
 			},
 			{
@@ -170,13 +165,35 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 				maxPoints: 1,
 			},
 			{
-				//fieldName: 'elementalShields',
+				fieldName: 'stormEarthAndFire',
 				location: {
 					rowIdx: 6,
 					colIdx: 2,
 				},
-				spellIds: [30669],
+				spellIds: [51483, 51485, 51486],
 				maxPoints: 3,
+			},
+			{
+				fieldName: 'boomingEchoes',
+				location: {
+					rowIdx: 7,
+					colIdx: 0,
+				},
+				spellIds: [63372],
+				maxPoints: 2,
+			},
+			{
+				fieldName: 'elementalOath',
+				location: {
+					rowIdx: 7,
+					colIdx: 1,
+				},
+				prereqLocation: {
+					rowIdx: 6,
+					colIdx: 1,
+				},
+				spellIds: [51470],
+				maxPoints: 2,
 			},
 			{
 				fieldName: 'lightningOverload',
@@ -184,8 +201,17 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 					rowIdx: 7,
 					colIdx: 1,
 				},
-				spellIds: [30675, 30678],
-				maxPoints: 5,
+				spellIds: [30679],
+				maxPoints: 3,
+			},
+			{
+				// fieldName: 'astralShift',
+				location: {
+					rowIdx: 8,
+					colIdx: 0,
+				},
+				spellIds: [51474],
+				maxPoints: 3,
 			},
 			{
 				fieldName: 'totemOfWrath',
@@ -193,11 +219,34 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 					rowIdx: 8,
 					colIdx: 1,
 				},
-				prereqLocation: {
-					rowIdx: 7,
+				spellIds: [30706],
+				maxPoints: 1,
+			},
+			{
+				fieldName: 'lavaFlows',
+				location: {
+					rowIdx: 8,
+					colIdx: 2,
+				},
+				spellIds: [51482],
+				maxPoints: 1,
+			},
+			{
+				fieldName: 'shamanism',
+				location: {
+					rowIdx: 9,
 					colIdx: 1,
 				},
-				spellIds: [30706],
+				spellIds: [62101],
+				maxPoints: 5,
+			},
+			{
+				fieldName: 'thunderstorm',
+				location: {
+					rowIdx: 10,
+					colIdx: 1,
+				},
+				spellIds: [51490],
 				maxPoints: 1,
 			},
 		],
@@ -207,21 +256,30 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/classic/263.jpg',
 		talents: [
 			{
-				fieldName: 'ancestralKnowledge',
+				fieldName: 'enhancingTotems',
+				location: {
+					rowIdx: 0,
+					colIdx: 0,
+				},
+				spellIds: [16259, 16295, 16298],
+				maxPoints: 3,
+			},
+			{
+				// fieldName: 'earthsGrasp',
 				location: {
 					rowIdx: 0,
 					colIdx: 1,
 				},
-				spellIds: [17485],
-				maxPoints: 5,
+				spellIds: [16043],
+				maxPoints: 2,
 			},
 			{
-				fieldName: 'shieldSpecialization',
+				fieldName: 'ancestralKnowledge',
 				location: {
 					rowIdx: 0,
 					colIdx: 2,
 				},
-				spellIds: [16253, 16298],
+				spellIds: [17485],
 				maxPoints: 5,
 			},
 			{
@@ -252,22 +310,22 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 				maxPoints: 2,
 			},
 			{
-				//fieldName: 'improvedLightningShield',
+				fieldName: 'improvedShields',
 				location: {
 					rowIdx: 1,
 					colIdx: 3,
 				},
-				spellIds: [16261, 16290],
+				spellIds: [16261, 16290, 51881],
 				maxPoints: 3,
 			},
 			{
-				fieldName: 'enhancingTotems',
+				fieldName: 'elementalWeapons',
 				location: {
 					rowIdx: 2,
 					colIdx: 0,
 				},
-				spellIds: [16259, 16295],
-				maxPoints: 2,
+				spellIds: [16266, 29079, 29080],
+				maxPoints: 3,
 			},
 			{
 				fieldName: 'shamanisticFocus',
@@ -285,7 +343,7 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 					colIdx: 3,
 				},
 				spellIds: [16254, 16271],
-				maxPoints: 5,
+				maxPoints: 3,
 			},
 			{
 				fieldName: 'flurry',
@@ -310,12 +368,12 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 				maxPoints: 5,
 			},
 			{
-				fieldName: 'improvedWeaponTotems',
+				fieldName: 'improvedWindfuryTotem',
 				location: {
 					rowIdx: 4,
 					colIdx: 0,
 				},
-				spellIds: [29192],
+				spellIds: [29192, 29193],
 				maxPoints: 2,
 			},
 			{
@@ -328,31 +386,40 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 				maxPoints: 1,
 			},
 			{
-				fieldName: 'elementalWeapons',
+				fieldName: 'mentalDexterity',
 				location: {
 					rowIdx: 4,
 					colIdx: 2,
 				},
-				spellIds: [16266, 29079],
+				spellIds: [51883],
 				maxPoints: 3,
 			},
 			{
-				fieldName: 'mentalQuickness',
+				fieldName: 'unleashedRage',
 				location: {
 					rowIdx: 5,
 					colIdx: 0,
 				},
-				spellIds: [30812],
+				spellIds: [30802, 30808, 30809],
 				maxPoints: 3,
 			},
 			{
 				fieldName: 'weaponMastery',
 				location: {
 					rowIdx: 5,
-					colIdx: 3,
+					colIdx: 2,
 				},
 				spellIds: [29082, 29084, 29086],
 				maxPoints: 5,
+			},
+			{
+				fieldName: 'frozenPower',
+				location: {
+					rowIdx: 5,
+					colIdx: 2,
+				},
+				spellIds: [63373, 63374],
+				maxPoints: 2,
 			},
 			{
 				fieldName: 'dualWieldSpecialization',
@@ -386,21 +453,52 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 					rowIdx: 6,
 					colIdx: 2,
 				},
-				prereqLocation: {
-					rowIdx: 4,
-					colIdx: 2,
-				},
 				spellIds: [17364],
 				maxPoints: 1,
 			},
 			{
-				fieldName: 'unleashedRage',
+				fieldName: 'staticShock',
+				location: {
+					rowIdx: 7,
+					colIdx: 0,
+				},
+				spellIds: [51527],
+				maxPoints: 3,
+			},
+			{
+				fieldName: 'lavaLash',
 				location: {
 					rowIdx: 7,
 					colIdx: 1,
 				},
-				spellIds: [30802, 30808],
-				maxPoints: 5,
+				prereqLocation: {
+					rowIdx: 6,
+					colIdx: 1,
+				},
+				spellIds: [51527],
+				maxPoints: 1,
+			},
+			{
+				fieldName: 'improvedStormstrike',
+				location: {
+					rowIdx: 7,
+					colIdx: 2,
+				},
+				prereqLocation: {
+					rowIdx: 6,
+					colIdx: 2,
+				},
+				spellIds: [51521, 51522],
+				maxPoints: 2,
+			},
+			{
+				fieldName: 'mentalQuickness',
+				location: {
+					rowIdx: 8,
+					colIdx: 0,
+				},
+				spellIds: [30812],
+				maxPoints: 3,
 			},
 			{
 				fieldName: 'shamanisticRage',
@@ -409,6 +507,33 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 					colIdx: 1,
 				},
 				spellIds: [30823],
+				maxPoints: 1,
+			},
+			{
+				fieldName: 'earthenPower',
+				location: {
+					rowIdx: 8,
+					colIdx: 2,
+				},
+				spellIds: [51523, 51524],
+				maxPoints: 2,
+			},
+			{
+				fieldName: 'maelstromWeapon',
+				location: {
+					rowIdx: 9,
+					colIdx: 1,
+				},
+				spellIds: [51528],
+				maxPoints: 5,
+			},
+			{
+				fieldName: 'feralSpirit',
+				location: {
+					rowIdx: 10,
+					colIdx: 1,
+				},
+				spellIds: [51533],
 				maxPoints: 1,
 			},
 		],
@@ -427,12 +552,12 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 				maxPoints: 5,
 			},
 			{
-				//fieldName: 'tidalFocus',
+				fieldName: 'totemicFocus',
 				location: {
 					rowIdx: 0,
 					colIdx: 2,
 				},
-				spellIds: [16179, 16214],
+				spellIds: [16173, 16222],
 				maxPoints: 5,
 			},
 			{
@@ -445,25 +570,25 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 				maxPoints: 2,
 			},
 			{
-				//fieldName: 'ancestralUealing',
+				//fieldName: 'healingGrace',
 				location: {
 					rowIdx: 1,
 					colIdx: 1,
 				},
-				spellIds: [16176, 16235],
+				spellIds: [29187, 29189, 29191],
 				maxPoints: 3,
 			},
 			{
-				fieldName: 'totemicFocus',
+				//fieldName: 'tidalFocus',
 				location: {
 					rowIdx: 1,
 					colIdx: 2,
 				},
-				spellIds: [16173, 16222],
+				spellIds: [16179, 16214],
 				maxPoints: 5,
 			},
 			{
-				fieldName: 'naturesGuidance',
+				fieldName: 'improvedWaterShield',
 				location: {
 					rowIdx: 2,
 					colIdx: 0,
@@ -478,24 +603,24 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 					colIdx: 1,
 				},
 				spellIds: [16181, 16230, 16232],
-				maxPoints: 5,
+				maxPoints: 3,
 			},
 			{
-				//fieldName: 'totemicMastery',
+				//fieldName: 'tidalForce',
 				location: {
 					rowIdx: 2,
 					colIdx: 2,
 				},
-				spellIds: [16189],
+				spellIds: [55198],
 				maxPoints: 1,
 			},
 			{
-				//fieldName: 'healingGrace',
+				//fieldName: 'ancestralUealing',
 				location: {
 					rowIdx: 2,
 					colIdx: 3,
 				},
-				spellIds: [29187, 29189, 29191],
+				spellIds: [16176, 16235],
 				maxPoints: 3,
 			},
 			{
@@ -505,7 +630,7 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 					colIdx: 1,
 				},
 				spellIds: [16187, 16205],
-				maxPoints: 5,
+				maxPoints: 3,
 			},
 			{
 				fieldName: 'tidalMastery',
@@ -553,7 +678,16 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 				maxPoints: 5,
 			},
 			{
-				//fieldName: 'manaTideTotem',
+				//fieldName: 'naturesGuardian',
+				location: {
+					rowIdx: 6,
+					colIdx: 0,
+				},
+				spellIds: [30881, 30883],
+				maxPoints: 5,
+			},
+			{
+				fieldName: 'manaTideTotem',
 				location: {
 					rowIdx: 6,
 					colIdx: 1,
@@ -566,31 +700,53 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 				maxPoints: 1,
 			},
 			{
-				//fieldName: 'naturesGuardian',
+				//fieldName: 'cleanseSpirit',
 				location: {
 					rowIdx: 6,
 					colIdx: 2,
 				},
-				spellIds: [30881, 30883],
-				maxPoints: 5,
+				prereqLocation: {
+					rowIdx: 5,
+					colIdx: 2,
+				},
+				spellIds: [51886],
+				maxPoints: 1,
 			},
 			{
-				fieldName: 'naturesBlessing',
+				fieldName: 'blessingOfTheEternals',
 				location: {
 					rowIdx: 7,
-					colIdx: 1,
+					colIdx: 0,
 				},
-				spellIds: [30867],
-				maxPoints: 3,
+				spellIds: [51554, 51555],
+				maxPoints: 2,
 			},
 			{
 				//fieldName: 'improvedChainHeal',
 				location: {
 					rowIdx: 7,
-					colIdx: 2,
+					colIdx: 1,
 				},
 				spellIds: [30872],
 				maxPoints: 2,
+			},
+			{
+				fieldName: 'naturesBlessing',
+				location: {
+					rowIdx: 7,
+					colIdx: 2,
+				},
+				spellIds: [30867],
+				maxPoints: 3,
+			},
+			{
+				fieldName: 'ancestralAwakening',
+				location: {
+					rowIdx: 8,
+					colIdx: 0,
+				},
+				spellIds: [51558],
+				maxPoints: 3,
 			},
 			{
 				//fieldName: 'earthShield',
@@ -598,11 +754,38 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 					rowIdx: 8,
 					colIdx: 1,
 				},
+				spellIds: [974],
+				maxPoints: 1,
+			},
+			{
+				//fieldName: 'improvedEarthShield',
+				location: {
+					rowIdx: 8,
+					colIdx: 2,
+				},
 				prereqLocation: {
-					rowIdx: 7,
+					rowIdx: 8,
 					colIdx: 1,
 				},
-				spellIds: [974],
+				spellIds: [51560],
+				maxPoints: 2,
+			},
+			{
+				//fieldName: 'tidalWaves',
+				location: {
+					rowIdx: 9,
+					colIdx: 1,
+				},
+				spellIds: [51562],
+				maxPoints: 5,
+			},
+			{
+				//fieldName: 'riptide',
+				location: {
+					rowIdx: 10,
+					colIdx: 1,
+				},
+				spellIds: [61295],
 				maxPoints: 1,
 			},
 		],

@@ -1,4 +1,4 @@
-import { RaidBuffs, StrengthOfEarthType } from '/wotlk/core/proto/common.js';
+import { RaidBuffs } from '/wotlk/core/proto/common.js';
 import { PartyBuffs } from '/wotlk/core/proto/common.js';
 import { IndividualBuffs } from '/wotlk/core/proto/common.js';
 import { Debuffs } from '/wotlk/core/proto/common.js';
@@ -127,7 +127,6 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 					bloodlust: 1,
 					drums: Drums.DrumsOfBattle,
 					manaSpringTotem: TristateEffect.TristateEffectRegular,
-					wrathOfAirTotem: TristateEffect.TristateEffectRegular,
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
@@ -165,11 +164,10 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 				IconInputs.DrumsOfBattleBuff,
 				IconInputs.Bloodlust,
 				IconInputs.ManaSpringTotem,
-				IconInputs.WrathOfAirTotem,
 				IconInputs.TotemOfWrath,
 				IconInputs.WindfuryTotem,
 				IconInputs.StrengthOfEarthTotem,
-				IconInputs.GraceOfAirTotem,
+
 				IconInputs.BattleShout,
 				IconInputs.CommandingShout,
 				IconInputs.HeroicPresence,
@@ -282,8 +280,6 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 					OtherInputs.ExposeWeaknessUptime,
 					OtherInputs.ExposeWeaknessHunterAgility,
 					OtherInputs.InspirationUptime,
-					OtherInputs.SnapshotImprovedStrengthOfEarthTotem,
-					OtherInputs.SnapshotImprovedWrathOfAirTotem,
 					OtherInputs.InFrontOfTarget,
 				],
 			},

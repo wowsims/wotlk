@@ -436,16 +436,12 @@ message PartyBuffs {
 	// Totems
 	TristateEffect mana_spring_totem = 12;
 	int32 mana_tide_totems = 17;
-	int32 totem_of_wrath = 13;
-	TristateEffect wrath_of_air_totem = 14;
-	bool snapshot_improved_wrath_of_air_totem = 25;
-	TristateEffect grace_of_air_totem = 15;
-	StrengthOfEarthType strength_of_earth_totem = 16;
-	bool snapshot_improved_strength_of_earth_totem = 31;
+	bool totem_of_wrath = 13;
+	bool wrath_of_air_totem = 14;
+	TristateEffect strength_of_earth_totem = 16; // none, normal, 15% improved
 	bool tranquil_air_totem = 26;
 
-	int32 windfury_totem_rank = 23; // 0 if none, otherwise rank of the ability (1-5).
-	int32 windfury_totem_iwt = 24;
+	TristateEffect windfury_totem = 23; // none, normal, 2pt improved
 
 	TristateEffect battle_shout = 18;
 	bool bs_solarian_sapphire = 28;
@@ -455,14 +451,6 @@ message PartyBuffs {
 
 	// Mitigation buffs
 	TristateEffect commanding_shout = 32;
-}
-
-enum StrengthOfEarthType {
-	None = 0;
-	Basic = 1;
-	CycloneBonus = 2;
-	EnhancingTotems = 3;
-	EnhancingAndCyclone = 4;
 }
 
 // Buffs are only used by individual sims, never the raid sim.

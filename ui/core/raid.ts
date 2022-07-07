@@ -20,7 +20,6 @@ export class Raid {
 	private buffs: RaidBuffs = RaidBuffs.create();
 	private debuffs: Debuffs = Debuffs.create();
 	private tanks: Array<RaidTarget> = [];
-	private staggerStormstrikes: boolean = false;
 
 	// Emits when a raid member is added/removed/moved.
 	readonly compChangeEmitter = new TypedEvent<void>();
@@ -28,7 +27,6 @@ export class Raid {
 	readonly buffsChangeEmitter = new TypedEvent<void>();
 	readonly debuffsChangeEmitter = new TypedEvent<void>();
 	readonly tanksChangeEmitter = new TypedEvent<void>();
-	readonly staggerStormstrikesChangeEmitter = new TypedEvent<void>();
 
 	// Emits when anything in the raid changes.
 	readonly changeEmitter: TypedEvent<void>;
@@ -141,25 +139,12 @@ export class Raid {
 		this.tanksChangeEmitter.emit(eventID);
 	}
 
-	getStaggerStormstrikes(): boolean {
-		return this.staggerStormstrikes;
-	}
-
-	setStaggerStormstrikes(eventID: EventID, newValue: boolean) {
-		if (this.staggerStormstrikes == newValue)
-			return;
-
-		this.staggerStormstrikes = newValue;
-		this.staggerStormstrikesChangeEmitter.emit(eventID);
-	}
-
 	toProto(forExport?: boolean): RaidProto {
 		return RaidProto.create({
 			parties: this.parties.map(party => party.toProto(forExport)),
 			buffs: this.getBuffs(),
 			debuffs: this.getDebuffs(),
 			tanks: this.getTanks(),
-			staggerStormstrikes: this.getStaggerStormstrikes(),
 		});
 	}
 
@@ -167,7 +152,6 @@ export class Raid {
 		TypedEvent.freezeAllAndDo(() => {
 			this.setBuffs(eventID, proto.buffs || RaidBuffs.create());
 			this.setDebuffs(eventID, proto.debuffs || Debuffs.create());
-			this.setStaggerStormstrikes(eventID, proto.staggerStormstrikes);
 			this.setTanks(eventID, proto.tanks);
 
 			for (let i = 0; i < MAX_NUM_PARTIES; i++) {

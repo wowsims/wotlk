@@ -2,7 +2,6 @@ package core
 
 import (
 	"sort"
-	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -122,17 +121,6 @@ func NewRaid(raidConfig proto.Raid) *Raid {
 	raid := &Raid{
 		dpsMetrics:   NewDistributionMetrics(),
 		nextPetIndex: 25,
-	}
-
-	if raidConfig.StaggerStormstrikes {
-		enhanceShaman := RaidPlayersWithSpec(raidConfig, proto.Spec_SpecEnhancementShaman)
-		if len(enhanceShaman) > 1 {
-			stagger := time.Duration(float64(time.Second*10) / float64(len(enhanceShaman)))
-			for i, shaman := range enhanceShaman {
-				delay := stagger * time.Duration(i)
-				shaman.Spec.(*proto.Player_EnhancementShaman).EnhancementShaman.Rotation.FirstStormstrikeDelay = delay.Seconds()
-			}
-		}
 	}
 
 	for partyIndex, partyConfig := range raidConfig.Parties {

@@ -17,13 +17,17 @@ func (shaman *Shaman) ShockCD() time.Duration {
 func (shaman *Shaman) newShockSpellConfig(spellID int32, spellSchool core.SpellSchool, baseCost float64, shockTimer *core.Timer) (core.SpellConfig, core.SpellEffect) {
 	actionID := core.ActionID{SpellID: spellID}
 
+	cost := baseCost
+	if shaman.Talents.ShamanisticFocus {
+		cost -= baseCost * 0.45
+	}
 	return core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: spellSchool,
 			Flags:       SpellFlagShock,
 
 			ResourceType: stats.Mana,
-			BaseCost:     baseCost,
+			BaseCost:     cost,
 
 			Cast: core.CastConfig{
 				DefaultCast: core.Cast{
@@ -35,12 +39,6 @@ func (shaman *Shaman) newShockSpellConfig(spellID int32, spellSchool core.SpellS
 				},
 				ModifyCast: func(_ *core.Simulation, spell *core.Spell, cast *core.Cast) {
 					shaman.modifyCastClearcasting(spell, cast)
-					if shaman.ShamanisticFocusAura != nil && shaman.ShamanisticFocusAura.IsActive() {
-						cast.Cost -= baseCost * 0.6
-					}
-					if shaman.ElementalMasteryAura != nil && shaman.ElementalMasteryAura.IsActive() {
-						cast.Cost = 0
-					}
 				},
 				CD: core.Cooldown{
 					Timer:    shockTimer,
@@ -73,6 +71,8 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 	const spellID = 25457
 	config, effect := shaman.newShockSpellConfig(spellID, core.SpellSchoolFire, 500.0, shockTimer)
 
+	config.Cast.CD.Duration -= time.Duration(shaman.Talents.BoomingEchoes) * time.Second
+
 	effect.BaseDamage = core.BaseDamageConfigMagic(377, 377, 0.214)
 	effect.OutcomeApplier = shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier())
 	if effect.OnSpellHitDealt == nil {
@@ -104,7 +104,7 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 		NumberOfTicks: 4,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			DamageMultiplier: 1 * (1 + 0.01*float64(shaman.Talents.Concussion)),
+			DamageMultiplier: 1 * (1 + 0.01*float64(shaman.Talents.Concussion)) * (1.0 + float64(shaman.Talents.StormEarthAndFire)*0.2), // 20% bonus dmg per SE&F
 			ThreatMultiplier: 1,
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(420/4, 0.1),
 			OutcomeApplier:   shaman.OutcomeFuncTick(),
@@ -117,6 +117,7 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 func (shaman *Shaman) registerFrostShockSpell(shockTimer *core.Timer) {
 	config, effect := shaman.newShockSpellConfig(25464, core.SpellSchoolFrost, 525.0, shockTimer)
 	config.Flags |= core.SpellFlagBinary
+	config.Cast.CD.Duration -= time.Duration(shaman.Talents.BoomingEchoes) * time.Second
 
 	effect.ThreatMultiplier *= 2
 	effect.BaseDamage = core.BaseDamageConfigMagic(647, 683, 0.386)

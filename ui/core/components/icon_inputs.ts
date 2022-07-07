@@ -330,30 +330,15 @@ function makeEnumValueConsumeInput(id: ActionId, consumesFieldName: keyof Consum
 // Custom buffs that don't fit into any of the helper functions above.
 //////////////////////////////////////////////////////////////////////
 
-export const GraceOfAirTotem = {
-	id: ActionId.fromSpellId(25359),
-	states: 3,
-	improvedId: ActionId.fromSpellId(16295),
-	changedEvent: (party: Party) => party.buffsChangeEmitter,
-	getValue: (party: Party) => party.getBuffs().graceOfAirTotem,
-	setValue: (eventID: EventID, party: Party, newValue: number) => {
-		const newBuffs = party.getBuffs();
-		newBuffs.graceOfAirTotem = newValue;
-		party.setBuffs(eventID, newBuffs);
-	},
-};
-
 export const StrengthOfEarthTotem = {
 	id: ActionId.fromSpellId(25528),
-	states: 4,
-	improvedId: ActionId.fromSpellId(16295),
-	improvedId2: ActionId.fromSpellId(37223),
+	states: 3,
+	improvedId: ActionId.fromSpellId(52456),
 	changedEvent: (party: Party) => party.buffsChangeEmitter,
-	getValue: (party: Party) => party.getBuffs().strengthOfEarthTotem > 2 ? party.getBuffs().strengthOfEarthTotem - 1 : party.getBuffs().strengthOfEarthTotem,
+	getValue: (party: Party) => party.getBuffs().strengthOfEarthTotem,
 	setValue: (eventID: EventID, party: Party, newValue: number) => {
 		const newBuffs = party.getBuffs();
-		// Skip cyclone-only value.
-		newBuffs.strengthOfEarthTotem = newValue > 1 ? newValue + 1 : newValue;
+		newBuffs.strengthOfEarthTotem = newValue;
 		party.setBuffs(eventID, newBuffs);
 	},
 };
@@ -363,31 +348,10 @@ export const WindfuryTotem = {
 	states: 3,
 	improvedId: ActionId.fromSpellId(29193),
 	changedEvent: (party: Party) => party.buffsChangeEmitter,
-	getValue: (party: Party) => {
-		const buffs = party.getBuffs();
-		if (buffs.windfuryTotemRank == 0) {
-			return 0;
-		}
-
-		if (buffs.windfuryTotemIwt > 0) {
-			return 2;
-		} else {
-			return 1;
-		}
-	},
+	getValue: (party: Party) => party.getBuffs().windfuryTotem,
 	setValue: (eventID: EventID, party: Party, newValue: number) => {
 		const newBuffs = party.getBuffs();
-		if (newValue == 0) {
-			newBuffs.windfuryTotemRank = 0;
-			newBuffs.windfuryTotemIwt = 0;
-		} else {
-			newBuffs.windfuryTotemRank = 5;
-			if (newValue == 2) {
-				newBuffs.windfuryTotemIwt = 2;
-			} else {
-				newBuffs.windfuryTotemIwt = 0;
-			}
-		}
+		newBuffs.windfuryTotem = newValue;
 		party.setBuffs(eventID, newBuffs);
 	},
 };
@@ -605,7 +569,7 @@ export function makeWeaponImbueInput(isMainHand: boolean, options: Array<WeaponI
 	if (isMainHand) {
 		const config = makeConsumeInputFactory('mainHandImbue', allOptions)(options);
 		config.enableWhen = (player: Player<any>) => !player.getParty()
-			|| player.getParty()!.getBuffs().windfuryTotemRank == 0
+			|| player.getParty()!.getBuffs().windfuryTotem == 0
 			|| (player.spec == Spec.SpecHunter && (player.getRotation() as HunterRotation).weave == WeaveType.WeaveNone);
 		config.changedEvent = (player: Player<any>) => TypedEvent.onAny([player.getRaid()?.changeEmitter || player.consumesChangeEmitter]);
 		return config;

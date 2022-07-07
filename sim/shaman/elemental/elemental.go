@@ -27,9 +27,8 @@ func NewElementalShaman(character core.Character, options proto.Player) *Element
 	eleShamOptions := options.GetElementalShaman()
 
 	selfBuffs := shaman.SelfBuffs{
-		Bloodlust:        eleShamOptions.Options.Bloodlust,
-		WaterShield:      eleShamOptions.Options.WaterShield,
-		SnapshotWOAT42Pc: eleShamOptions.Options.SnapshotT4_2Pc,
+		Bloodlust: eleShamOptions.Options.Bloodlust,
+		Shield:    eleShamOptions.Options.Shield,
 	}
 
 	totems := proto.ShamanTotems{}
@@ -42,18 +41,6 @@ func NewElementalShaman(character core.Character, options proto.Player) *Element
 	switch eleShamOptions.Rotation.Type {
 	case proto.ElementalShaman_Rotation_Adaptive:
 		rotation = NewAdaptiveRotation(eleShamOptions.Talents)
-	case proto.ElementalShaman_Rotation_CLOnClearcast:
-		if eleShamOptions.Talents.ElementalFocus {
-			rotation = NewCLOnClearcastRotation()
-		} else {
-			rotation = NewCLOnCDRotation()
-		}
-	case proto.ElementalShaman_Rotation_CLOnCD:
-		rotation = NewCLOnCDRotation()
-	case proto.ElementalShaman_Rotation_FixedLBCL:
-		rotation = NewFixedRotation(eleShamOptions.Rotation.LbsPerCl)
-	case proto.ElementalShaman_Rotation_LBOnly:
-		rotation = NewLBOnlyRotation()
 	}
 
 	return &ElementalShaman{

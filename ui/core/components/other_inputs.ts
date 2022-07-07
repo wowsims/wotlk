@@ -3,7 +3,6 @@ import { EnumPicker, EnumPickerConfig } from '/wotlk/core/components/enum_picker
 import { Conjured } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
 import { RaidTarget } from '/wotlk/core/proto/common.js';
-import { StrengthOfEarthType } from '/wotlk/core/proto/common.js';
 import { TristateEffect } from '/wotlk/core/proto/common.js';
 import { Party } from '/wotlk/core/party.js';
 import { Player } from '/wotlk/core/player.js';
@@ -246,48 +245,6 @@ export const ExposeWeaknessHunterAgility = {
 			newDebuffs.exposeWeaknessHunterAgility = newValue;
 			raid.setDebuffs(eventID, newDebuffs);
 		},
-	},
-};
-
-export const SnapshotImprovedStrengthOfEarthTotem = {
-	type: 'boolean' as const,
-	getModObject: (simUI: IndividualSimUI<any>) => simUI.player.getParty()!,
-	config: {
-		extraCssClasses: [
-			'snapshot-improved-strength-of-earth-totem-picker',
-			'within-raid-sim-hide',
-		],
-		label: 'Snapshot Imp Strength of Earth',
-		labelTooltip: 'An enhancement shaman in your party is snapshotting their improved Strength of Earth totem bonus from T4 2pc (+12 Strength) for the first 1:50s of the fight.',
-		changedEvent: (party: Party) => party.buffsChangeEmitter,
-		getValue: (party: Party) => party.getBuffs().snapshotImprovedStrengthOfEarthTotem,
-		setValue: (eventID: EventID, party: Party, newValue: boolean) => {
-			const buffs = party.getBuffs();
-			buffs.snapshotImprovedStrengthOfEarthTotem = newValue;
-			party.setBuffs(eventID, buffs);
-		},
-		enableWhen: (party: Party) => party.getBuffs().strengthOfEarthTotem == StrengthOfEarthType.Basic || party.getBuffs().strengthOfEarthTotem == StrengthOfEarthType.EnhancingTotems,
-	},
-};
-
-export const SnapshotImprovedWrathOfAirTotem = {
-	type: 'boolean' as const,
-	getModObject: (simUI: IndividualSimUI<any>) => simUI.player.getParty()!,
-	config: {
-		extraCssClasses: [
-			'snapshot-improved-wrath-of-air-totem-picker',
-			'within-raid-sim-hide',
-		],
-		label: 'Snapshot Imp Wrath of Air',
-		labelTooltip: 'An elemental shaman in your party is snapshotting their improved wrath of air totem bonus from T4 2pc (+20 spell power) for the first 1:50s of the fight.',
-		changedEvent: (party: Party) => party.buffsChangeEmitter,
-		getValue: (party: Party) => party.getBuffs().snapshotImprovedWrathOfAirTotem,
-		setValue: (eventID: EventID, party: Party, newValue: boolean) => {
-			const buffs = party.getBuffs();
-			buffs.snapshotImprovedWrathOfAirTotem = newValue;
-			party.setBuffs(eventID, buffs);
-		},
-		enableWhen: (party: Party) => party.getBuffs().wrathOfAirTotem == TristateEffect.TristateEffectRegular,
 	},
 };
 

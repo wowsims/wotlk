@@ -86,21 +86,20 @@ func (testSuite *IndividualTestSuite) writeToFile() {
 	}
 }
 
-func (testSuite *IndividualTestSuite) readExpectedResults() proto.TestSuiteResult {
+func (testSuite *IndividualTestSuite) readExpectedResults() (proto.TestSuiteResult, error) {
 	data, err := os.ReadFile(testSuite.Name + ".results")
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
-			return newTestSuiteResult()
+			return newTestSuiteResult(), nil
 		}
-
-		panic(err)
+		return proto.TestSuiteResult{}, err
 	}
 
 	results := &proto.TestSuiteResult{}
 	if err = prototext.Unmarshal(data, results); err != nil {
-		panic(err)
+		return *results, err
 	}
-	return *results
+	return *results, err
 }
 
 func newTestSuiteResult() proto.TestSuiteResult {
@@ -129,7 +128,11 @@ func RunTestSuite(t *testing.T, suiteName string, generator TestGenerator) {
 		}
 	}()
 
-	expectedResults := testSuite.readExpectedResults()
+	expectedResults, err := testSuite.readExpectedResults()
+	if err != nil {
+		t.Logf("\n\n----- FAILURE LOADING RESULTS FILE TESTS WILL FAIL-----\n%s\n-----\n\n", err)
+		t.Fail()
+	}
 
 	numTests := generator.NumTests()
 	for i := 0; i < numTests; i++ {

@@ -169,40 +169,32 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		stats.Health: GetTristateValueFloat(partyBuffs.CommandingShout, 1080, 1080*1.25),
 	})
 
-	if partyBuffs.TotemOfWrath > 0 {
+	if partyBuffs.TotemOfWrath {
 		character.AddStats(stats.Stats{
-			stats.SpellCrit: 3 * CritRatingPerCritChance * float64(partyBuffs.TotemOfWrath),
-			stats.SpellHit:  3 * SpellHitRatingPerHitChance * float64(partyBuffs.TotemOfWrath),
+			stats.SpellCrit:    3 * CritRatingPerCritChance,
+			stats.MeleeCrit:    3 * CritRatingPerCritChance,
+			stats.SpellPower:   280,
+			stats.HealingPower: 280,
+		})
+	}
+	if partyBuffs.WrathOfAirTotem {
+		character.PseudoStats.CastSpeedMultiplier *= 1.05
+	}
+	if partyBuffs.StrengthOfEarthTotem > 0 {
+		// TODO: Check for Horn of Winter (larger of the two is applied)
+		// Pretty sure we don't need to deal with any flat increases (like from t4)
+		bonus := GetTristateValueFloat(partyBuffs.StrengthOfEarthTotem, 155, 155*1.15)
+		character.AddStats(stats.Stats{
+			stats.Strength: bonus,
+			stats.Agility:  bonus,
 		})
 	}
 	character.AddStats(stats.Stats{
-		stats.SpellPower: GetTristateValueFloat(partyBuffs.WrathOfAirTotem, 101, 121),
+		stats.MP5: GetTristateValueFloat(partyBuffs.ManaSpringTotem, 91, 91*1.2),
 	})
-	if partyBuffs.WrathOfAirTotem == proto.TristateEffect_TristateEffectRegular && partyBuffs.SnapshotImprovedWrathOfAirTotem {
-		SnapshotImprovedWrathOfAirTotemAura(character)
-	}
-	character.AddStats(stats.Stats{
-		stats.Agility: GetTristateValueFloat(partyBuffs.GraceOfAirTotem, 77, 88),
-	})
-	switch partyBuffs.StrengthOfEarthTotem {
-	case proto.StrengthOfEarthType_Basic:
-		character.AddStat(stats.Strength, 86)
-	case proto.StrengthOfEarthType_CycloneBonus:
-		character.AddStat(stats.Strength, 98)
-	case proto.StrengthOfEarthType_EnhancingTotems:
-		character.AddStat(stats.Strength, 98)
-	case proto.StrengthOfEarthType_EnhancingAndCyclone:
-		character.AddStat(stats.Strength, 112)
-	}
-	if (partyBuffs.StrengthOfEarthTotem == proto.StrengthOfEarthType_Basic || partyBuffs.StrengthOfEarthTotem == proto.StrengthOfEarthType_EnhancingTotems) && partyBuffs.SnapshotImprovedStrengthOfEarthTotem {
-		SnapshotImprovedStrengthOfEarthTotemAura(character)
-	}
-	character.AddStats(stats.Stats{
-		stats.MP5: GetTristateValueFloat(partyBuffs.ManaSpringTotem, 50, 62.5),
-	})
-	if partyBuffs.WindfuryTotemRank > 0 && IsEligibleForWindfuryTotem(character) {
-		WindfuryTotemAura(character, partyBuffs.WindfuryTotemRank, partyBuffs.WindfuryTotemIwt)
-	}
+
+	character.PseudoStats.MeleeSpeedMultiplier *= 1.0 + GetTristateValueFloat(partyBuffs.WindfuryTotem, 0.16, 0.2)
+
 	if partyBuffs.TranquilAirTotem {
 		character.PseudoStats.ThreatMultiplier *= 0.8
 	}
