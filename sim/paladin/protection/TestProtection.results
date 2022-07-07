@@ -15,12 +15,12 @@ character_stats_results: {
   final_stats: 80
   final_stats: 0
   final_stats: 100
-  final_stats: 255.39195632000002
+  final_stats: 255.38
   final_stats: 570.3908375000001
   final_stats: 0
   final_stats: 0
   final_stats: 1437.4
-  final_stats: 162.69597816
+  final_stats: 162.69
   final_stats: 234.29387999999997
   final_stats: 0
   final_stats: 0
@@ -670,8 +670,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-LightbringerBattlegear"
  value: {
-  dps: 328.9683136653695
-  tps: 608.0412708033082
+  dps: 328.973731682957
+  tps: 608.0515650367245
  }
 }
 dps_results: {
@@ -1160,8 +1160,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Average-Default"
  value: {
-  dps: 569.0985917304687
-  tps: 1163.619858473488
+  dps: 569.0991232562403
+  tps: 1163.620888570433
   dtps: 1005.7311610153006
  }
 }
@@ -1197,8 +1197,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Settings-BloodElf-P4-Protection Paladin-NoBuffs-LongMultiTarget"
  value: {
-  dps: 949.4493372718101
-  tps: 2118.9188154717303
+  dps: 949.4594812587401
+  tps: 2118.9384745184
  }
 }
 dps_results: {
@@ -1239,8 +1239,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Settings-Human-P4-Protection Paladin-NoBuffs-LongMultiTarget"
  value: {
-  dps: 951.5693865533788
-  tps: 2131.12286866121
+  dps: 951.579530540309
+  tps: 2131.14252770788
  }
 }
 dps_results: {

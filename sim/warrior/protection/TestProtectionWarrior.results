@@ -47,7 +47,7 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestProtectionWarrior-StatWeights-Default"
  value: {
-  weights: 0.07352737461738315
+  weights: 0.0790555360205812
   weights: 0
   weights: 0
   weights: 0
@@ -65,7 +65,7 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.03356282450097581
+  weights: 0.033534139351402814
   weights: 0
   weights: 0
   weights: 0
@@ -74,12 +74,12 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.0030094528857244995
+  weights: 0.0018164932153791823
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.04040117109212503
-  weights: -0.006078024481979866
+  weights: 0.04187458049386521
+  weights: -0.005947020369210066
   weights: 0
   weights: 0
   weights: 0
@@ -289,15 +289,15 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-BulwarkofKings-28484"
  value: {
-  dps: 138.10039568915653
-  tps: 270.95223728028384
+  dps: 138.51297113944602
+  tps: 272.36456801644573
  }
 }
 dps_results: {
  key: "TestProtectionWarrior-AllItems-BulwarkoftheAncientKings-28485"
  value: {
-  dps: 138.55226848472094
-  tps: 272.38977782636647
+  dps: 138.74152512760998
+  tps: 272.74416603969
  }
 }
 dps_results: {
@@ -324,8 +324,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-CloakofDarkness-33122"
  value: {
-  dps: 133.72075384845192
-  tps: 262.40836337551747
+  dps: 134.84657785858357
+  tps: 264.97043053932015
  }
 }
 dps_results: {
@@ -394,8 +394,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-DesolationBattlegear"
  value: {
-  dps: 131.56117284523012
-  tps: 255.2635588014553
+  dps: 131.54564723767405
+  tps: 255.45581244856857
  }
 }
 dps_results: {
@@ -436,8 +436,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-Devastation-30316"
  value: {
-  dps: 271.04812180322585
-  tps: 491.10617330703593
+  dps: 271.717225324471
+  tps: 492.2221519681561
  }
 }
 dps_results: {
@@ -709,15 +709,15 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-KhoriumChampion-23541"
  value: {
-  dps: 182.44054844188915
-  tps: 342.81911452374356
+  dps: 183.1351588777686
+  tps: 343.90044134343486
  }
 }
 dps_results: {
  key: "TestProtectionWarrior-AllItems-KissoftheSpider-22954"
  value: {
-  dps: 136.62507726986732
-  tps: 268.79561008400265
+  dps: 135.55960780122996
+  tps: 266.7963280172753
  }
 }
 dps_results: {
@@ -821,8 +821,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-OnslaughtBattlegear"
  value: {
-  dps: 19.4882688
-  tps: 89.46582635599896
+  dps: 19.46520576
+  tps: 89.70206411119896
  }
 }
 dps_results: {
@@ -926,8 +926,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-Romulo'sPoisonVial-28579"
  value: {
-  dps: 144.65428991202472
-  tps: 281.9693626305302
+  dps: 144.10344090341164
+  tps: 280.2557622664966
  }
 }
 dps_results: {
@@ -1129,8 +1129,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-TheSkullofGul'dan-32483"
  value: {
-  dps: 136.63627963267595
-  tps: 269.0128300689815
+  dps: 136.36413379871058
+  tps: 268.5713720462805
  }
 }
 dps_results: {
@@ -1206,8 +1206,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-TsunamiTalisman-30627"
  value: {
-  dps: 138.32727423746832
-  tps: 271.3657161863145
+  dps: 137.26022578911335
+  tps: 269.6488389159179
  }
 }
 dps_results: {
@@ -1269,9 +1269,9 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-Average-Default"
  value: {
-  dps: 209.62429717265354
-  tps: 552.9857735591935
-  dtps: 618.4880144859891
+  dps: 209.5600563018494
+  tps: 552.9534696979764
+  dtps: 618.5797918006201
  }
 }
 dps_results: {

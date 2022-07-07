@@ -15,7 +15,7 @@ character_stats_results: {
   final_stats: 80
   final_stats: 0
   final_stats: 126
-  final_stats: 282.69597816
+  final_stats: 282.69
   final_stats: 1055.426825
   final_stats: 146
   final_stats: 0
@@ -54,8 +54,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-AbsolutionRegalia"
  value: {
-  dps: 749.6222599983525
-  tps: 729.249447580127
+  dps: 749.2364002279292
+  tps: 728.8971213671124
  }
 }
 dps_results: {
@@ -908,8 +908,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-TheTwinStars"
  value: {
-  dps: 798.079688866575
-  tps: 775.5693126159655
+  dps: 794.2794344813199
+  tps: 771.874780281203
  }
 }
 dps_results: {
@@ -978,8 +978,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-WrathofSpellfire"
  value: {
-  dps: 701.596886021437
-  tps: 683.6288875268239
+  dps: 701.668712938049
+  tps: 683.6997605952504
  }
 }
 dps_results: {
@@ -992,8 +992,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-Average-Default"
  value: {
-  dps: 789.8378580610625
-  tps: 767.4240557044081
+  dps: 790.0775945181078
+  tps: 767.6528811994139
  }
 }
 dps_results: {

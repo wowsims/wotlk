@@ -222,8 +222,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-ChaoticSkyfireDiamond"
  value: {
-  dps: 339.73990685013445
-  tps: 465.4068498464409
+  dps: 339.90717936227804
+  tps: 462.81922316213013
  }
 }
 dps_results: {
@@ -376,8 +376,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-EnigmaticSkyfireDiamond"
  value: {
-  dps: 335.5571165439606
-  tps: 456.6139066861743
+  dps: 335.66211551597934
+  tps: 457.77757397913285
  }
 }
 dps_results: {
@@ -600,8 +600,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-Mana-EtchedRegalia"
  value: {
-  dps: 273.6021051581666
-  tps: 398.8098894212663
+  dps: 274.256485015241
+  tps: 399.2014112988946
  }
 }
 dps_results: {
@@ -663,8 +663,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-NordrassilRegalia"
  value: {
-  dps: 279.33457061206997
-  tps: 407.69903923289786
+  dps: 276.919073162411
+  tps: 404.35848120937555
  }
 }
 dps_results: {
@@ -1055,9 +1055,9 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-Average-Default"
  value: {
-  dps: 398.3009591487368
-  tps: 610.0354721410886
-  dtps: 708.85358795888
+  dps: 398.3707746992711
+  tps: 610.1419517751594
+  dtps: 708.9117834606263
  }
 }
 dps_results: {
