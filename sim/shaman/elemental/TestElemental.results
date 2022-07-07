@@ -15,12 +15,12 @@ character_stats_results: {
   final_stats: 80
   final_stats: 0
   final_stats: 341.786
-  final_stats: 193.39195632000002
+  final_stats: 193.38
   final_stats: 1025.3969014084507
   final_stats: 0
   final_stats: 0
   final_stats: 399.40000000000003
-  final_stats: 100.69597816000001
+  final_stats: 100.69
   final_stats: 532.8736
   final_stats: 0
   final_stats: 0
@@ -61,7 +61,7 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.8116451317299531
+  weights: 0.849637933348519
   weights: 0.2686833854109796
   weights: 0
   weights: 0
@@ -1185,8 +1185,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Average-Default"
  value: {
-  dps: 1409.9835027658037
-  tps: 1175.0236335710165
+  dps: 1410.1825864036382
+  tps: 1175.164609091549
  }
 }
 dps_results: {
