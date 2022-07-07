@@ -74,8 +74,8 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 		MakePermanent(FaerieFireAura(target, GetTristateValueInt32(debuffs.FaerieFire, 0, 3)))
 	}
 
-	if debuffs.CurseOfRecklessness {
-		MakePermanent(CurseOfRecklessnessAura(target))
+	if debuffs.CurseOfWeakness {
+		MakePermanent(CurseOfWeaknessAura(target))
 	}
 
 	if debuffs.ExposeWeaknessUptime > 0 && debuffs.ExposeWeaknessHunterAgility > 0 {
@@ -486,11 +486,11 @@ func ScheduledExposeArmorAura(target *Unit, talentPoints int32) *Aura {
 	return aura
 }
 
-func CurseOfRecklessnessAura(target *Unit) *Aura {
+func CurseOfWeaknessAura(target *Unit) *Aura {
 	bonus := stats.Stats{stats.Armor: -800, stats.AttackPower: 135}
 
 	return target.GetOrRegisterAura(Aura{
-		Label:    "Curse of Recklessness",
+		Label:    "Curse of Weakness",
 		ActionID: ActionID{SpellID: 27226},
 		Duration: time.Minute * 2,
 		OnGain: func(aura *Aura, sim *Simulation) {

@@ -539,7 +539,7 @@ message Debuffs {
 	TristateEffect expose_armor = 9;
 	TristateEffect faerie_fire = 10;
 	bool sunder_armor = 11;
-	bool curse_of_recklessness = 12;
+	bool curse_of_weakness = 12;
 
 	TristateEffect hunters_mark = 15;
 	double expose_weakness_uptime = 13;
