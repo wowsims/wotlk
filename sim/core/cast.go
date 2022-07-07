@@ -156,6 +156,16 @@ func (spell *Spell) wrapCastFuncResources(config CastConfig, onCastComplete Cast
 			onCastComplete(sim, target)
 			return true
 		}
+	case stats.RuneSystem:
+		return func(sim *Simulation, target *Unit) bool {
+			spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
+			if spell.Unit.CurrentRunicPower() < spell.CurCast.Cost {
+				return false
+			}
+			spell.Unit.SpendRunicPower(sim, spell.CurCast.Cost, spell.ResourceMetrics)
+			onCastComplete(sim, target)
+			return true
+		}
 	}
 
 	panic("Invalid resource type")

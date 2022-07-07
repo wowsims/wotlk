@@ -207,6 +207,9 @@ func (unit *Unit) NewRageMetrics(actionID ActionID) *ResourceMetrics {
 func (unit *Unit) NewEnergyMetrics(actionID ActionID) *ResourceMetrics {
 	return unit.Metrics.NewResourceMetrics(actionID, proto.ResourceType_ResourceTypeEnergy)
 }
+func (unit *Unit) NewRuneSystemMetrics(actionID ActionID) *ResourceMetrics {
+	return unit.Metrics.NewResourceMetrics(actionID, proto.ResourceType_ResourceTypeRuneSystem)
+}
 func (unit *Unit) NewComboPointMetrics(actionID ActionID) *ResourceMetrics {
 	return unit.Metrics.NewResourceMetrics(actionID, proto.ResourceType_ResourceTypeComboPoints)
 }

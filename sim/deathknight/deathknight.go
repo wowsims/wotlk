@@ -1,6 +1,8 @@
 package deathknight
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -12,18 +14,18 @@ type DeathKnight struct {
 	Options  proto.DeathKnight_Options
 	Rotation proto.DeathKnight_Rotation
 
-	IcyTouch         *core.Spell
-	Obliteration     *core.Spell
-	PlagueStrike     *core.Spell
-	FrostStrike      *core.Spell
-	BloodStrike      *core.Spell
-	HowlingBlast     *core.Spell
-	HornOfWinter     *core.Spell
-	UnbreakableArmor *core.Spell
-	ArmyOfTheDead    *core.Spell
-	RaiseDead        *core.Spell
+	IcyTouch *core.Spell
+	//Obliteration     *core.Spell
+	//PlagueStrike     *core.Spell
+	//FrostStrike      *core.Spell
+	//BloodStrike      *core.Spell
+	//HowlingBlast     *core.Spell
+	//HornOfWinter     *core.Spell
+	//UnbreakableArmor *core.Spell
+	//ArmyOfTheDead    *core.Spell
+	//RaiseDead        *core.Spell
 
-	BloodPresenceAura *core.Aura
+	//BloodPresenceAura *core.Aura
 }
 
 func (deathKnight *DeathKnight) GetCharacter() *core.Character {
@@ -35,7 +37,47 @@ func (deathKnight *DeathKnight) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
 
 func (deathKnight *DeathKnight) Initialize() {
+	deathKnight.registerIcyTouchSpell()
+}
 
+func (deathKnight *DeathKnight) registerIcyTouchSpell() {
+	baseCost := 10.0
+
+	deathKnight.IcyTouch = deathKnight.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 59131},
+		SpellSchool: core.SpellSchoolFrost,
+
+		ResourceType: stats.RuneSystem,
+		BaseCost:     baseCost,
+
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				Cost: baseCost,
+				GCD:  core.GCDDefault,
+			},
+			CD: core.Cooldown{
+				Timer:    deathKnight.NewTimer(),
+				Duration: time.Second * 6,
+			},
+		},
+
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+			ProcMask: core.ProcMaskSpellDamage,
+
+			DamageMultiplier: 1.0,
+
+			ThreatMultiplier: 7.0,
+
+			BaseDamage:     core.BaseDamageConfigMagic(217, 235, 0.2),
+			OutcomeApplier: deathKnight.OutcomeFuncMagicHitAndCrit(deathKnight.DefaultSpellCritMultiplier()),
+
+			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if spellEffect.Landed() {
+					deathKnight.SpendFrostRune(sim, spell.RuneSystemMetrics())
+				}
+			},
+		}),
+	})
 }
 
 func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
@@ -58,9 +100,22 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 	} else if deathKnight.Talents.RunicPowerMastery == 2 {
 		maxRunicPower = 130.0
 	}
-	deathKnight.EnableRuneSystem(maxRunicPower, func(sim *core.Simulation) {
+	deathKnight.EnableRuneSystem(maxRunicPower,
+		func(sim *core.Simulation) {
 
-	})
+		},
+		func(sim *core.Simulation) {
+
+		},
+		func(sim *core.Simulation) {
+
+		},
+		func(sim *core.Simulation) {
+
+		},
+		func(sim *core.Simulation) {
+
+		})
 
 	deathKnight.EnableAutoAttacks(deathKnight, core.AutoAttackOptions{
 		MainHand:       deathKnight.WeaponFromMainHand(deathKnight.DefaultMeleeCritMultiplier()),

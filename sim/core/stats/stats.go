@@ -44,6 +44,7 @@ const (
 	Mana
 	Energy
 	Rage
+	RuneSystem
 	Armor
 	RangedAttackPower
 	Defense
@@ -126,6 +127,8 @@ func (s Stat) StatName() string {
 		return "Energy"
 	case Rage:
 		return "Rage"
+	case RuneSystem:
+		return "Rune System"
 	case Armor:
 		return "Armor"
 	case RangedAttackPower:

@@ -542,5 +542,5 @@ export const resourceTypeToIcon: Record<ResourceType, string> = {
 	[ResourceType.ResourceTypeRage]: 'https://wow.zamimg.com/images/wow/icons/medium/spell_misc_emotionangry.jpg',
 	[ResourceType.ResourceTypeComboPoints]: 'https://wow.zamimg.com/images/wow/icons/medium/inv_mace_2h_pvp410_c_01.jpg',
 	[ResourceType.ResourceTypeFocus]: 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_focusfire.jpg',
-	[ResourceType.ResourceTypeRunes]: 'https://wow.zamimg.com/images/wow/icons/medium/inv_sword_62.jpg',
+	[ResourceType.ResourceTypeRuneSystem]: 'https://wow.zamimg.com/images/wow/icons/medium/inv_sword_62.jpg',
 };

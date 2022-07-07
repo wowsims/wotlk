@@ -1603,5 +1603,5 @@ export const orderedResourceTypes: Array<ResourceType> = [
 	ResourceType.ResourceTypeRage,
 	ResourceType.ResourceTypeComboPoints,
 	ResourceType.ResourceTypeFocus,
-	ResourceType.ResourceTypeRunes,
+	ResourceType.ResourceTypeRuneSystem,
 ];

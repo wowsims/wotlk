@@ -37,9 +37,9 @@ var Enchants = []Enchant{
 	{ID: 44872, EffectID: 3809, Name: "Greater Inscription of the Crag", Quality: proto.ItemQuality_ItemQualityEpic, Bonus: stats.Stats{stats.SpellPower: 24, stats.HealingPower: 24, stats.MP5: 8}, ItemType: proto.ItemType_ItemTypeShoulder},
 	{ID: 44871, EffectID: 3808, Name: "Greater Inscription of the Axe", Quality: proto.ItemQuality_ItemQualityEpic, Bonus: stats.Stats{stats.AttackPower: 40, stats.RangedAttackPower: 40, stats.MeleeCrit: 15, stats.SpellCrit: 15}, ItemType: proto.ItemType_ItemTypeShoulder},
 	{ID: 44873, EffectID: 3811, Name: "Greater Inscription of the Pinnacle", Quality: proto.ItemQuality_ItemQualityEpic, Bonus: stats.Stats{stats.Dodge: 20, stats.Defense: 15}, ItemType: proto.ItemType_ItemTypeShoulder},
-	{ID: 61120, EffectID: 3838, Name: "Master's Inscription of the Storm",    IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{stats.SpellPower: 70, stats.HealingPower: 70, stats.MeleeCrit: 15, stats.SpellCrit: 15}, ItemType: proto.ItemType_ItemTypeShoulder, RequiredProfession: proto.Profession_Inscription},
-	{ID: 61118, EffectID: 3836, Name: "Master's Inscription of the Crag",     IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{stats.SpellPower: 70, stats.HealingPower: 70, stats.MP5: 8}, ItemType: proto.ItemType_ItemTypeShoulder, RequiredProfession: proto.Profession_Inscription},
-	{ID: 61117, EffectID: 3835, Name: "Master's Inscription of the Axe",      IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{stats.AttackPower: 120, stats.RangedAttackPower: 120, stats.MeleeCrit: 15, stats.SpellCrit: 15}, ItemType: proto.ItemType_ItemTypeShoulder, RequiredProfession: proto.Profession_Inscription},
+	{ID: 61120, EffectID: 3838, Name: "Master's Inscription of the Storm", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{stats.SpellPower: 70, stats.HealingPower: 70, stats.MeleeCrit: 15, stats.SpellCrit: 15}, ItemType: proto.ItemType_ItemTypeShoulder, RequiredProfession: proto.Profession_Inscription},
+	{ID: 61118, EffectID: 3836, Name: "Master's Inscription of the Crag", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{stats.SpellPower: 70, stats.HealingPower: 70, stats.MP5: 8}, ItemType: proto.ItemType_ItemTypeShoulder, RequiredProfession: proto.Profession_Inscription},
+	{ID: 61117, EffectID: 3835, Name: "Master's Inscription of the Axe", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{stats.AttackPower: 120, stats.RangedAttackPower: 120, stats.MeleeCrit: 15, stats.SpellCrit: 15}, ItemType: proto.ItemType_ItemTypeShoulder, RequiredProfession: proto.Profession_Inscription},
 	{ID: 61119, EffectID: 3837, Name: "Master's Inscription of the Pinnacle", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{stats.Dodge: 60, stats.Defense: 15}, ItemType: proto.ItemType_ItemTypeShoulder, RequiredProfession: proto.Profession_Inscription},
 
 	// Back
@@ -144,11 +144,21 @@ var Enchants = []Enchant{
 	{ID: 44496, EffectID: 3788, Name: "Accuracy", Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{stats.MeleeHit: 25, stats.SpellHit: 25, stats.MeleeCrit: 25, stats.SpellCrit: 25}, ItemType: proto.ItemType_ItemTypeWeapon},
 	{ID: 44629, EffectID: 3830, Name: "Exceptional Spellpower", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{stats.SpellPower: 50, stats.HealingPower: 50}, ItemType: proto.ItemType_ItemTypeWeapon},
 	{ID: 60621, EffectID: 1606, Name: "Greater Potency", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{stats.AttackPower: 50, stats.RangedAttackPower: 50}, ItemType: proto.ItemType_ItemTypeWeapon},
+	{ID: 53343, EffectID: 3370, Name: "Rune of Razorice", Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon},
+	{ID: 53341, EffectID: 3369, Name: "Rune of Cinderglacier", Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon},
+	{ID: 53331, EffectID: 3366, Name: "Rune of Lichbane", Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon},
+	{ID: 54447, EffectID: 3595, Name: "Rune of Spellbreaking", Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon},
+	{ID: 54446, EffectID: 3594, Name: "Rune of Swordbreaking", Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon},
+	{ID: 53344, EffectID: 3368, Name: "Rune of the Fallen Crusader", Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon},
+	{ID: 70164, EffectID: 3883, Name: "Rune of the Nerubian Carapace", Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon},
 
 	// 2H Weapon
 	{ID: 44473, EffectID: 3247, Name: "Scourgebane", Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeTwoHand},
 	{ID: 44483, EffectID: 3827, Name: "Massacre", Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{stats.AttackPower: 110, stats.RangedAttackPower: 110}, ItemType: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeTwoHand},
 	{ID: 44630, EffectID: 3828, Name: "Greater Savagery", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{stats.AttackPower: 85, stats.RangedAttackPower: 85}, ItemType: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeTwoHand},
+	{ID: 53342, EffectID: 3367, Name: "Rune of Spellshattering", Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon},
+	{ID: 53323, EffectID: 3365, Name: "Rune of Swordshattering", Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon},
+	{ID: 62158, EffectID: 3847, Name: "Rune of the Stoneskin Gargoyle", Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon},
 
 	// Shield
 	{ID: 44489, EffectID: 1952, Name: "Defense", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{stats.Defense: 20}, ItemType: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeShield},

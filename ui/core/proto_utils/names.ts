@@ -189,7 +189,7 @@ export const resourceNames: Record<ResourceType, string> = {
 	[ResourceType.ResourceTypeRage]: 'Rage',
 	[ResourceType.ResourceTypeComboPoints]: 'Combo Points',
 	[ResourceType.ResourceTypeFocus]: 'Focus',
-	[ResourceType.ResourceTypeRunes]: 'Runes',
+	[ResourceType.ResourceTypeRuneSystem]: 'Rune System',
 };
 
 export const resourceColors: Record<ResourceType, string> = {
@@ -200,7 +200,7 @@ export const resourceColors: Record<ResourceType, string> = {
 	[ResourceType.ResourceTypeRage]: '#ff0000',
 	[ResourceType.ResourceTypeComboPoints]: '#ffa07a',
 	[ResourceType.ResourceTypeFocus]: '#cd853f',
-	[ResourceType.ResourceTypeRunes]: '#5b99ee',
+	[ResourceType.ResourceTypeRuneSystem]: '#5b99ee',
 };
 
 export function stringToResourceType(str: string): ResourceType {
