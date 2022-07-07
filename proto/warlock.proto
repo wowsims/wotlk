@@ -3,65 +3,6 @@ package proto;
 
 option go_package = "./proto";
 
-// // Old TC Talents
-// message WarlockTalents {
-// 	// Affliction
-// 	int32 suppression = 1;
-// 	int32 improved_corruption = 2;
-// 	int32 improved_drain_soul = 49;
-// 	int32 improved_life_tap = 3;
-// 	int32 soul_siphon = 4;
-// 	int32 improved_curse_of_agony = 5;
-// 	bool amplify_curse = 6;
-// 	int32 nightfall = 7;
-// 	int32 empowered_corruption = 8;
-// 	int32 shadow_embrace = 50;
-// 	bool siphon_life = 9;
-// 	int32 shadow_mastery = 10;
-// 	int32 contagion = 11;
-// 	bool dark_pact = 12;
-// 	int32 malediction = 13;
-// 	bool unstable_affliction = 14;
-
-// 	// Demonology
-// 	int32 improved_imp = 15;
-// 	int32 demonic_embrace = 16;
-// 	int32 improved_voidwalker = 17;
-// 	int32 fel_intellect = 18;
-// 	int32 improved_sayaad = 19;
-// 	int32 fel_stamina = 20;
-// 	int32 demonic_aegis = 21;
-// 	int32 unholy_power = 22;
-// 	int32 improved_enslave_demon = 23;
-// 	bool demonic_sacrifice = 24;
-// 	int32 master_conjuror = 25;
-// 	int32 mana_feed = 26;
-// 	int32 master_demonologist = 27;
-// 	bool soul_link = 28;
-// 	int32 demonic_knowledge = 29;
-// 	int32 demonic_tactics = 30;
-// 	bool summon_felguard = 31;
-
-// 	// Destruction
-// 	int32 improved_shadow_bolt = 32;
-// 	int32 cataclysm = 33;
-// 	int32 bane = 34;
-// 	int32 improved_firebolt = 35;
-// 	int32 improved_lash_of_pain = 36;
-// 	int32 destructive_reach = 48;
-// 	int32 devastation = 37;
-// 	bool shadowburn = 38;
-// 	int32 improved_searing_pain = 39;
-// 	int32 improved_immolate = 40;
-// 	bool ruin = 41;
-// 	int32 emberstorm = 42;
-// 	int32 backlash = 43;
-// 	bool conflagrate = 44;
-// 	int32 soul_leech = 45;
-// 	int32 shadow_and_flame = 46;
-// 	bool shadowfury = 47;
-// }
-
 // WotLK talents
 message WarlockTalents {
 	// Affliction
@@ -205,7 +146,7 @@ message Warlock {
 		enum Curse {
 			NoCurse = 0;
 			Elements = 1;
-			Recklessness = 2;
+			Weakness = 2;
 			Doom = 3;
 			Agony = 4;
 			Tongues = 5;

@@ -1,4 +1,4 @@
-export const CHARACTER_LEVEL = 70;
+export const CHARACTER_LEVEL = 80;
 export const BOSS_LEVEL = CHARACTER_LEVEL + 3;
 
 export const EXPERTISE_PER_QUARTER_PERCENT_REDUCTION = 3.94;

@@ -139,7 +139,7 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 				}),
 				debuffs: Debuffs.create({
 					mangle: true,
-					curseOfRecklessness: true,
+					curseOfWeakness: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					improvedSealOfTheCrusader: true,
 					huntersMark: TristateEffect.TristateEffectImproved,
@@ -196,7 +196,7 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 				IconInputs.FaerieFire,
 				IconInputs.SunderArmor,
 				IconInputs.ExposeArmor,
-				IconInputs.CurseOfRecklessness,
+				IconInputs.CurseOfWeakness,
 				IconInputs.GiftOfArthas,
 				IconInputs.DemoralizingRoar,
 				IconInputs.DemoralizingShout,

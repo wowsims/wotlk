@@ -10,7 +10,7 @@ import (
 
 func (warlock *Warlock) registerUnstableAffSpell() {
 	actionID := core.ActionID{SpellID: 30405}
-	baseCost := 400.0
+	baseCost := 0.15 * warlock.BaseMana()
 
 	warlock.UnstableAff = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -19,7 +19,7 @@ func (warlock *Warlock) registerUnstableAffSpell() {
 		BaseCost:     baseCost,
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost,
+				Cost:     baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond * 1500,
 			},
@@ -43,8 +43,8 @@ func (warlock *Warlock) registerUnstableAffSpell() {
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			DamageMultiplier: 1 * (1 + 0.02*float64(warlock.Talents.ShadowMastery)),
-			ThreatMultiplier: 1 - 0.05*float64(warlock.Talents.ImprovedDrainSoul),
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(1050/6, spellCoefficient),
+			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+			BaseDamage:       core.BaseDamageConfigMagicNoRoll(1150/6, spellCoefficient),
 			OutcomeApplier:   warlock.OutcomeFuncTick(),
 			IsPeriodic:       true,
 			ProcMask:         core.ProcMaskPeriodicDamage,
