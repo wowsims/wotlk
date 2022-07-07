@@ -73,6 +73,10 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 		})
 	}
 
+	if debuffs.CurseOfWeakness {
+		MakePermanent(CurseOfWeaknessAura(target))
+	}
+
 	if debuffs.SunderArmor {
 		sunderArmorAura := SunderArmorAura(target, 1)
 		ScheduledAura(sunderArmorAura, true, PeriodicActionOptions{
@@ -500,22 +504,6 @@ func ExposeArmorAura(target *Unit, hasGlyph bool) *Aura {
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 / (1.0 - armorReduction))
-		},
-	})
-}
-
-func CurseOfWeaknessAura(target *Unit) *Aura {
-	bonus := stats.Stats{stats.Armor: -800, stats.AttackPower: 135}
-
-	return target.GetOrRegisterAura(Aura{
-		Label:    "Curse of Weakness",
-		ActionID: ActionID{SpellID: 27226},
-		Duration: time.Minute * 2,
-		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.AddStatsDynamic(sim, bonus)
-		},
-		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.AddStatsDynamic(sim, bonus.Multiply(-1))
 		},
 	})
 }

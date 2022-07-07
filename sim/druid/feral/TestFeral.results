@@ -97,7 +97,7 @@ dps_results: {
  key: "TestFeral-AllItems-BadgeoftheSwarmguard-21670"
  value: {
   dps: 695.2119170707534
-  tps: 527.9169430180337
+  tps: 527.9169430180335
  }
 }
 dps_results: {
@@ -397,7 +397,7 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-MadnessoftheBetrayer-32505"
  value: {
-  dps: 623.787567942137
+  dps: 623.7875679421368
   tps: 477.2959965653349
  }
 }

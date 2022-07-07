@@ -103,8 +103,8 @@ func (war *DpsWarrior) Initialize() {
 
 	war.RegisterHSOrCleave(war.Rotation.UseCleave, war.Rotation.HsRageThreshold)
 
-	if war.Options.UseRecklessness {
-		war.RegisterRecklessnessCD()
+	if war.Options.UseWeakness {
+		war.RegisterWeaknessCD()
 	}
 
 	// This makes the behavior of these options more intuitive in the individual sim.

@@ -103,7 +103,7 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-BadgeoftheSwarmguard-21670"
  value: {
-  dps: 945.9032105412712
+  dps: 945.9032105412709
   tps: 708.7035102913725
  }
 }
@@ -579,7 +579,7 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-IconofUnyieldingCourage-28121"
  value: {
-  dps: 965.3187521939566
+  dps: 965.3187521939565
   tps: 722.4964685186093
  }
 }
@@ -698,7 +698,7 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-MadnessoftheBetrayer-32505"
  value: {
-  dps: 933.4989072481955
+  dps: 933.4989072481953
   tps: 700.2534326536846
  }
 }

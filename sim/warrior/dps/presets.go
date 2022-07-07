@@ -101,7 +101,7 @@ var warriorRotation = &proto.Warrior_Rotation{
 
 var warriorOptions = &proto.Warrior_Options{
 	StartingRage:         50,
-	UseRecklessness:      true,
+	UseWeakness:   		  true,
 	Shout:                proto.WarriorShout_WarriorShoutBattle,
 	PrecastShout:         false,
 	PrecastShoutT2:       false,

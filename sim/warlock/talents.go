@@ -21,7 +21,7 @@ func (warlock *Warlock) ApplyTalents() {
 		})
 	}
 
-	// Suppression (to do : mana cost for affliction spells)
+	// Suppression 
 	warlock.AddStat(stats.SpellHit, float64(warlock.Talents.Suppression)*core.SpellHitRatingPerHitChance)
 
 	// Add 1% crit per level of backlash.
