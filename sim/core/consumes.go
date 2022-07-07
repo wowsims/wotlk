@@ -420,7 +420,7 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 	}
 
 	// Weapon Imbues
-	allowMHImbue := character.HasMHWeapon() && (character.HasMHWeaponImbue || partyBuffs.WindfuryTotemRank == 0)
+	allowMHImbue := character.HasMHWeapon() && character.HasMHWeaponImbue
 	if allowMHImbue {
 		addImbueStats(character, consumes.MainHandImbue)
 	}

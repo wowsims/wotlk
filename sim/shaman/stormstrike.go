@@ -12,23 +12,21 @@ var StormstrikeActionID = core.ActionID{SpellID: 17364}
 
 func (shaman *Shaman) stormstrikeDebuffAura(target *core.Unit) *core.Aura {
 	return target.GetOrRegisterAura(core.Aura{
-		Label:     "Stormstrike",
+		Label:     "Stormstrike-" + shaman.Label,
 		ActionID:  StormstrikeActionID,
 		Duration:  time.Second * 12,
-		MaxStacks: 2,
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			target.PseudoStats.NatureDamageTakenMultiplier *= 1.2
-		},
-		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			target.PseudoStats.NatureDamageTakenMultiplier /= 1.2
-		},
+		MaxStacks: 4,
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spell.Unit != &shaman.Unit {
+				return
+			}
 			if spell.SpellSchool != core.SpellSchoolNature {
 				return
 			}
 			if !spellEffect.Landed() || spellEffect.Damage == 0 {
 				return
 			}
+			spellEffect.DamageMultiplier *= 1.2
 			aura.RemoveStack(sim)
 		},
 	})
@@ -75,6 +73,8 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 		skyshatterAura = shaman.NewTemporaryStatsAura("Skyshatter 4pc AP Bonus", core.ActionID{SpellID: 38432}, stats.Stats{stats.AttackPower: 70}, time.Second*12)
 	}
 
+	manaMetrics := shaman.NewManaMetrics(core.ActionID{SpellID: 51522})
+
 	shaman.Stormstrike = shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    StormstrikeActionID,
 		SpellSchool: core.SpellSchoolPhysical,
@@ -106,8 +106,11 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 					return
 				}
 
+				if shaman.Talents.ImprovedStormstrike > 0 {
+					shaman.AddMana(sim, baseMana*0.2, manaMetrics, true)
+				}
 				ssDebuffAura.Activate(sim)
-				ssDebuffAura.SetStacks(sim, 2)
+				ssDebuffAura.SetStacks(sim, 4)
 
 				if skyshatterAura != nil {
 					skyshatterAura.Activate(sim)

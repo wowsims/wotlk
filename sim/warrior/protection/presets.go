@@ -63,10 +63,8 @@ var FullPartyBuffs = &proto.PartyBuffs{
 	Drums:                proto.Drums_DrumsOfBattle,
 	BattleShout:          proto.TristateEffect_TristateEffectImproved,
 	LeaderOfThePack:      proto.TristateEffect_TristateEffectImproved,
-	GraceOfAirTotem:      proto.TristateEffect_TristateEffectRegular,
-	StrengthOfEarthTotem: proto.StrengthOfEarthType_EnhancingTotems,
-	WindfuryTotemRank:    5,
-	WindfuryTotemIwt:     2,
+	StrengthOfEarthTotem: proto.TristateEffect_TristateEffectImproved,
+	WindfuryTotem:        proto.TristateEffect_TristateEffectImproved,
 }
 var FullIndividualBuffs = &proto.IndividualBuffs{
 	BlessingOfKings: true,

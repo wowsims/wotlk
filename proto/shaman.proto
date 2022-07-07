@@ -141,10 +141,9 @@ enum EarthTotem {
 
 enum AirTotem {
 	NoAirTotem = 0;
-	GraceOfAirTotem = 1;
-	TranquilAirTotem = 2;
-	WindfuryTotem = 3;
-	WrathOfAirTotem = 4;
+	TranquilAirTotem = 1;
+	WindfuryTotem = 2;
+	WrathOfAirTotem = 3;
 }
 
 enum FireTotem {

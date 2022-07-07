@@ -88,8 +88,8 @@ var castersWithElemental = &proto.Party{
 						Type: proto.ElementalShaman_Rotation_Adaptive,
 					},
 					Options: &proto.ElementalShaman_Options{
-						WaterShield: true,
-						Bloodlust:   true,
+						Shield:    proto.ShamanShield_WaterShield,
+						Bloodlust: true,
 					},
 				},
 			},
@@ -227,7 +227,7 @@ var castersWithResto = &proto.Party{
 		Bloodlust:       1,
 		Drums:           proto.Drums_DrumsOfBattle,
 		ManaSpringTotem: proto.TristateEffect_TristateEffectImproved,
-		WrathOfAirTotem: proto.TristateEffect_TristateEffectRegular,
+		WrathOfAirTotem: true,
 		ManaTideTotems:  1,
 	},
 }
@@ -258,7 +258,7 @@ func BenchmarkSimulate(b *testing.B) {
 										PrimaryShock: proto.EnhancementShaman_Rotation_Frost,
 									},
 									Options: &proto.EnhancementShaman_Options{
-										WaterShield:        true,
+										Shield:             proto.ShamanShield_LightningShield,
 										Bloodlust:          true,
 										DelayOffhandSwings: true,
 									},

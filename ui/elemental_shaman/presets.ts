@@ -9,7 +9,7 @@ import { Faction } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
 import { Player } from '/wotlk/core/player.js';
 
-import { ElementalShaman, ElementalShaman_Rotation as ElementalShamanRotation, ElementalShaman_Options as ElementalShamanOptions } from '/wotlk/core/proto/shaman.js';
+import { ElementalShaman, ElementalShaman_Rotation as ElementalShamanRotation, ElementalShaman_Options as ElementalShamanOptions, ShamanShield } from '/wotlk/core/proto/shaman.js';
 import { ElementalShaman_Rotation_RotationType as RotationType } from '/wotlk/core/proto/shaman.js';
 
 import {
@@ -43,7 +43,7 @@ export const RestoTalents = {
 
 export const DefaultRotation = ElementalShamanRotation.create({
 	totems: ShamanTotems.create({
-		earth: EarthTotem.TremorTotem,
+		earth: EarthTotem.StrengthOfEarthTotem,
 		air: AirTotem.WrathOfAirTotem,
 		fire: FireTotem.TotemOfWrath,
 		water: WaterTotem.ManaSpringTotem,
@@ -52,7 +52,7 @@ export const DefaultRotation = ElementalShamanRotation.create({
 });
 
 export const DefaultOptions = ElementalShamanOptions.create({
-	waterShield: true,
+	shield: ShamanShield.WaterShield,
 	bloodlust: true,
 });
 

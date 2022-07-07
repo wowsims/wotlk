@@ -8,6 +8,9 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
+// TODO: Implement all wotlk weapon imbues
+//  Include `Elemental Weapons` talent when implementing
+
 var TotemOfTheAstralWinds int32 = 27815
 
 func (shaman *Shaman) newWindfuryImbueSpell(isMH bool) *core.Spell {

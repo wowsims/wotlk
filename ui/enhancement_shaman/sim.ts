@@ -139,7 +139,8 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 
 			// IconInputs to include in the 'Self Buffs' section on the settings tab.
 			selfBuffInputs: [
-				ShamanInputs.IconWaterShield,
+				ShamanInputs.IconWaterShield, 
+				ShamanInputs.IconLightningShield,
 				ShamanInputs.IconBloodlust,
 			],
 			// IconInputs to include in the 'Other Buffs' section on the settings tab.
@@ -242,7 +243,6 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 					OtherInputs.PrepopPotion,
 					OtherInputs.ExposeWeaknessUptime,
 					OtherInputs.ExposeWeaknessHunterAgility,
-					ShamanInputs.SnapshotT42Pc,
 					OtherInputs.SnapshotBsSolarianSapphire,
 					OtherInputs.SnapshotBsT2,
 					OtherInputs.TankAssignment,

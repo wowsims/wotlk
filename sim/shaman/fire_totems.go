@@ -9,8 +9,8 @@ import (
 )
 
 func (shaman *Shaman) registerSearingTotemSpell() {
-	actionID := core.ActionID{SpellID: 25533}
-	baseCost := 205.0
+	actionID := core.ActionID{SpellID: 58704}
+	baseCost := baseMana * 0.07
 
 	shaman.SearingTotem = shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -33,7 +33,6 @@ func (shaman *Shaman) registerSearingTotemSpell() {
 			shaman.SearingTotemDot.Apply(sim)
 			// +1 needed because of rounding issues with Searing totem tick time.
 			shaman.NextTotemDrops[FireTotem] = sim.CurrentTime + time.Second*60 + 1
-			shaman.tryTwistFireNova(sim)
 		},
 	})
 
@@ -63,8 +62,8 @@ func (shaman *Shaman) registerSearingTotemSpell() {
 }
 
 func (shaman *Shaman) registerMagmaTotemSpell() {
-	actionID := core.ActionID{SpellID: 25552}
-	baseCost := 800.0
+	actionID := core.ActionID{SpellID: 58734}
+	baseCost := baseMana * 0.27
 
 	shaman.MagmaTotem = shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -86,7 +85,6 @@ func (shaman *Shaman) registerMagmaTotemSpell() {
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			shaman.MagmaTotemDot.Apply(sim)
 			shaman.NextTotemDrops[FireTotem] = sim.CurrentTime + time.Second*20 + 1
-			shaman.tryTwistFireNova(sim)
 		},
 	})
 
@@ -103,8 +101,9 @@ func (shaman *Shaman) registerMagmaTotemSpell() {
 			ProcMask:            core.ProcMaskEmpty,
 			BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * 2 * core.SpellHitRatingPerHitChance,
 			DamageMultiplier:    1 + float64(shaman.Talents.CallOfFlame)*0.05,
-			BaseDamage:          core.BaseDamageConfigMagicNoRoll(97, 0.067),
-			OutcomeApplier:      shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier()),
+			// TODO: find magma totem sp coeff
+			BaseDamage:     core.BaseDamageConfigMagicNoRoll(371, 0.067),
+			OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier()),
 		})),
 	})
 }
