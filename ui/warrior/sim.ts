@@ -126,7 +126,7 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 			// IconInputs to include in the 'Self Buffs' section on the settings tab.
 			selfBuffInputs: [
 				WarriorInputs.ShoutPicker,
-				WarriorInputs.Weakness,
+				WarriorInputs.Recklessness,
 			],
 			// IconInputs to include in the 'Other Buffs' section on the settings tab.
 			raidBuffInputs: [

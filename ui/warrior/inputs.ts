@@ -24,17 +24,17 @@ import { SimUI } from '../core/sim_ui.js';
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
 
-export const Weakness = {
+export const Recklessness = {
 	id: ActionId.fromSpellId(1719),
 	states: 2,
 	extraCssClasses: [
-		'warrior-Weakness-picker',
+		'warrior-Recklessness-picker',
 	],
 	changedEvent: (player: Player<Spec.SpecWarrior>) => player.specOptionsChangeEmitter,
-	getValue: (player: Player<Spec.SpecWarrior>) => player.getSpecOptions().useWeakness,
+	getValue: (player: Player<Spec.SpecWarrior>) => player.getSpecOptions().useRecklessness,
 	setValue: (eventID: EventID, player: Player<Spec.SpecWarrior>, newValue: boolean) => {
 		const newOptions = player.getSpecOptions();
-		newOptions.useWeakness = newValue
+		newOptions.useRecklessness = newValue
 		player.setSpecOptions(eventID, newOptions);
 	},
 };

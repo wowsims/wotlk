@@ -992,8 +992,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-Average-Default"
  value: {
-  dps: 1250.797043188111
-  tps: 1253.0213395004605
+  dps: 1250.8362315013678
+  tps: 1253.0291394081917
  }
 }
 dps_results: {
@@ -1006,8 +1006,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-Settings-Troll-P1Arcane-AOE-FullBuffs-LongMultiTarget"
  value: {
-  dps: 6328.786743320152
-  tps: 6997.409032294509
+  dps: 6330.897849450099
+  tps: 6999.477916301857
  }
 }
 dps_results: {

@@ -14,7 +14,7 @@ func (warlock *Warlock) registerShadowboltSpell() {
 		ProcMask:             core.ProcMaskSpellDamage,
 		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 0, 1) * 5 * core.CritRatingPerCritChance,
 		DamageMultiplier:     1 * core.TernaryFloat64(has4pMal, 1.06, 1.0) * (1 + 0.02*float64(warlock.Talents.ShadowMastery)),
-		ThreatMultiplier:     1 - 0.05*float64(warlock.Talents.DestructiveReach),
+		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.DestructiveReach),
 		BaseDamage:           core.BaseDamageConfigMagic(694.0, 775.0, 0.857+0.04*float64(warlock.Talents.ShadowAndFlame)),
 		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
 	}

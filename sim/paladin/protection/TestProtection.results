@@ -15,12 +15,12 @@ character_stats_results: {
   final_stats: 80
   final_stats: 0
   final_stats: 141
-  final_stats: 176.69597816
+  final_stats: 176.69
   final_stats: 570.3908375000001
   final_stats: 0
   final_stats: 0
   final_stats: 1437.4
-  final_stats: 162.69597816
+  final_stats: 162.69
   final_stats: 372.02387999999996
   final_stats: 0
   final_stats: 0
@@ -1160,8 +1160,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Average-Default"
  value: {
-  dps: 601.9927829138691
-  tps: 1222.5183537929197
+  dps: 601.9996956486223
+  tps: 1222.532128016457
   dtps: 1004.9793973573542
  }
 }
@@ -1176,8 +1176,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Settings-BloodElf-P4-Protection Paladin-FullBuffs-LongMultiTarget"
  value: {
-  dps: 2581.6464807748807
-  tps: 5603.976941574545
+  dps: 2581.6622308684705
+  tps: 5604.007465255923
  }
 }
 dps_results: {
@@ -1197,8 +1197,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Settings-BloodElf-P4-Protection Paladin-NoBuffs-LongMultiTarget"
  value: {
-  dps: 949.4493372718101
-  tps: 2118.9188154717303
+  dps: 949.4594812587401
+  tps: 2118.9384745184
  }
 }
 dps_results: {
@@ -1218,8 +1218,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Settings-Human-P4-Protection Paladin-FullBuffs-LongMultiTarget"
  value: {
-  dps: 2581.611927442113
-  tps: 5604.141093083679
+  dps: 2581.625686140913
+  tps: 5604.167757441955
  }
 }
 dps_results: {
@@ -1239,8 +1239,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Settings-Human-P4-Protection Paladin-NoBuffs-LongMultiTarget"
  value: {
-  dps: 951.5693865533788
-  tps: 2131.12286866121
+  dps: 951.579530540309
+  tps: 2131.14252770788
  }
 }
 dps_results: {

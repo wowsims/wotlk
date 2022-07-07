@@ -15,7 +15,7 @@ character_stats_results: {
   final_stats: 80
   final_stats: 0
   final_stats: 228.63
-  final_stats: 214.92797088
+  final_stats: 214.92000000000002
   final_stats: 784.6121788413097
   final_stats: 0
   final_stats: 0
@@ -1048,8 +1048,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Average-Default"
  value: {
-  dps: 1094.4655203868804
-  tps: 1093.9579338728186
+  dps: 1094.6323839956312
+  tps: 1094.1218139369037
  }
 }
 dps_results: {

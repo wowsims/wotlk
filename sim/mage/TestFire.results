@@ -852,8 +852,8 @@ dps_results: {
 dps_results: {
  key: "TestFire-AllItems-TempestRegalia"
  value: {
-  dps: 1618.2278859514283
-  tps: 1376.3924986993754
+  dps: 1616.1107293376615
+  tps: 1375.830985570614
  }
 }
 dps_results: {

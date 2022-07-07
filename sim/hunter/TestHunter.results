@@ -1055,8 +1055,8 @@ dps_results: {
 dps_results: {
  key: "TestHunter-AllItems-TheSkullofGul'dan-32483"
  value: {
-  dps: 450.57484938658854
-  tps: 125.7554253421787
+  dps: 450.6997712862402
+  tps: 125.6920367304357
  }
 }
 dps_results: {
@@ -1251,15 +1251,15 @@ dps_results: {
 dps_results: {
  key: "TestHunter-Settings-Dwarf-P1-French-NoBuffs-LongMultiTarget"
  value: {
-  dps: 243.39072101729008
-  tps: 324.2293637712957
+  dps: 244.92619986205906
+  tps: 325.2269324569847
  }
 }
 dps_results: {
  key: "TestHunter-Settings-Dwarf-P1-French-NoBuffs-LongSingleTarget"
  value: {
-  dps: 246.3285258473121
-  tps: 144.22596156966623
+  dps: 247.05319514946032
+  tps: 144.99372894239033
  }
 }
 dps_results: {
@@ -1377,8 +1377,8 @@ dps_results: {
 dps_results: {
  key: "TestHunter-Settings-Orc-P1-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 205.8613656508677
-  tps: 286.734718540529
+  dps: 206.67898623285402
+  tps: 287.5066739426981
  }
 }
 dps_results: {
@@ -1426,8 +1426,8 @@ dps_results: {
 dps_results: {
  key: "TestHunter-Settings-Orc-P1-French-NoBuffs-LongSingleTarget"
  value: {
-  dps: 255.63295112816417
-  tps: 147.56632412594882
+  dps: 254.72127832424022
+  tps: 146.1941418315519
  }
 }
 dps_results: {
@@ -1461,8 +1461,8 @@ dps_results: {
 dps_results: {
  key: "TestHunter-Settings-Orc-P1-MeleeWeave-NoBuffs-LongMultiTarget"
  value: {
-  dps: 209.95691518516608
-  tps: 279.1614373417845
+  dps: 209.82776985330798
+  tps: 279.2610049056031
  }
 }
 dps_results: {

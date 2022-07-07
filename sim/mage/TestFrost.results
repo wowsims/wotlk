@@ -208,8 +208,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-BraidedEterniumChain-24114"
  value: {
-  dps: 1806.5934812924368
-  tps: 1472.0225630296422
+  dps: 1808.2282241975618
+  tps: 1473.078440370792
  }
 }
 dps_results: {
@@ -894,8 +894,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-TheTwinStars"
  value: {
-  dps: 1813.3457879492269
-  tps: 1476.3688275263446
+  dps: 1812.6808805181229
+  tps: 1475.6913286385936
  }
 }
 dps_results: {
@@ -992,8 +992,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Average-Default"
  value: {
-  dps: 1823.0173570646532
-  tps: 1488.1558890446668
+  dps: 1823.0061518010073
+  tps: 1488.1457690977813
  }
 }
 dps_results: {

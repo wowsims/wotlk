@@ -15,12 +15,12 @@ character_stats_results: {
   final_stats: 0
   final_stats: 0
   final_stats: 91
-  final_stats: 128.69597816
+  final_stats: 128.69
   final_stats: 545.5161875
   final_stats: 133
   final_stats: 0
   final_stats: 3640.6755000000007
-  final_stats: 144.69597816
+  final_stats: 144.69
   final_stats: 1843.03877
   final_stats: 133
   final_stats: 0
@@ -1034,8 +1034,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-TheDecapitator-28767"
  value: {
-  dps: 1317.3794718263794
-  tps: 975.3392105936188
+  dps: 1317.3203142195844
+  tps: 975.2978002688624
  }
 }
 dps_results: {
@@ -1181,8 +1181,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-Average-Default"
  value: {
-  dps: 1302.590777174457
-  tps: 965.1945545546429
+  dps: 1302.5771390772873
+  tps: 965.1843595614953
  }
 }
 dps_results: {

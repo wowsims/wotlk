@@ -20,7 +20,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 0
   final_stats: 2518
-  final_stats: 333.39195632
+  final_stats: 333.38
   final_stats: 1774.1318800000001
   final_stats: 0
   final_stats: 0
@@ -194,8 +194,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-BraidedEterniumChain-24114"
  value: {
-  dps: 2.2066036628106688e+131
-  tps: 2.2066036628106688e+131
+  dps: 2.1335232223393132e+131
+  tps: 2.1335232223393132e+131
  }
 }
 dps_results: {
@@ -474,8 +474,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-FelstalkerArmor"
  value: {
-  dps: 5.472926635174018e+127
-  tps: 5.472926635174018e+127
+  dps: 2.222298452609423e+127
+  tps: 2.222298452609423e+127
  }
 }
 dps_results: {
@@ -621,8 +621,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-KissoftheSpider-22954"
  value: {
-  dps: 3.7587042196118625e+127
-  tps: 3.7587042196118625e+127
+  dps: 2.7207675489455513e+128
+  tps: 2.7207675489455513e+128
  }
 }
 dps_results: {
@@ -824,8 +824,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-SextantofUnstableCurrents-30626"
  value: {
-  dps: 2.1095436312399105e+128
-  tps: 2.1095436312399105e+128
+  dps: 7.47001378725731e+127
+  tps: 7.47001378725731e+127
  }
 }
 dps_results: {
@@ -845,8 +845,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-ShatteredSunPendantofAcumen-34678"
  value: {
-  dps: 8.869734848730923e+126
-  tps: 8.869734848730923e+126
+  dps: 5.248379428532675e+126
+  tps: 5.248379428532675e+126
  }
 }
 dps_results: {
@@ -880,15 +880,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-SkyshatterHarness"
  value: {
-  dps: 7.375100936176564e+129
-  tps: 7.375100936176564e+129
+  dps: 1.27006325350253e+130
+  tps: 1.27006325350253e+130
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-SkyshatterRegalia"
  value: {
-  dps: 3.4377038273189485e+126
-  tps: 3.4377038273189485e+126
+  dps: 2.1715506487553927e+124
+  tps: 2.1715506487553927e+124
  }
 }
 dps_results: {
@@ -978,8 +978,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-TheBladefist-29348"
  value: {
-  dps: 1.101851161959492e+127
-  tps: 1.101851161959492e+127
+  dps: 3.525365073628448e+125
+  tps: 3.525365073628448e+125
  }
 }
 dps_results: {
@@ -1139,8 +1139,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Orc-P2-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 3.9233153303080936e+127
-  tps: 3.9233153303080936e+127
+  dps: 3.127476131657345e+127
+  tps: 3.127476131657345e+127
  }
 }
 dps_results: {
@@ -1181,8 +1181,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Troll-P2-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 2.5591648495248328e+125
-  tps: 2.5591648495248328e+125
+  dps: 1.3206877031582078e+127
+  tps: 1.3206877031582078e+127
  }
 }
 dps_results: {
@@ -1223,7 +1223,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 1.90427777859388e+118
-  tps: 1.90427777859388e+118
+  dps: 1.3626307522233354e+116
+  tps: 1.3626307522233354e+116
  }
 }

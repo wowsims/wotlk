@@ -47,7 +47,7 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestProtectionWarrior-StatWeights-Default"
  value: {
-  weights: 0.07843967024873763
+  weights: 0.07847787515208579
   weights: 0
   weights: 0
   weights: 0
@@ -65,7 +65,7 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.028384420082302027
+  weights: 0.028220272934095195
   weights: 0
   weights: 0
   weights: 0
@@ -74,12 +74,12 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.004791644477893726
+  weights: 0.005968329809404054
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.039819848273595825
-  weights: -0.010071632411462304
+  weights: 0.03975704245065373
+  weights: -0.012114606104428275
   weights: 0
   weights: 0
   weights: 0
@@ -177,8 +177,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-BeamingEarthsiegeDiamond"
  value: {
-  dps: 139.6056123797317
-  tps: 271.17240315307373
+  dps: 139.02212787000542
+  tps: 269.74490759676667
  }
 }
 dps_results: {
@@ -324,8 +324,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-CloakofDarkness-33122"
  value: {
-  dps: 139.33018626335615
-  tps: 270.72956081895586
+  dps: 138.3103807700952
+  tps: 268.4797109375984
  }
 }
 dps_results: {
@@ -436,8 +436,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-Devastation-30316"
  value: {
-  dps: 285.3532901204486
-  tps: 518.1851486940284
+  dps: 285.97092392298305
+  tps: 519.099678518764
  }
 }
 dps_results: {
@@ -520,8 +520,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-EnigmaticSkyflareDiamond"
  value: {
-  dps: 139.6056123797317
-  tps: 271.17240315307373
+  dps: 139.02212787000542
+  tps: 269.74490759676667
  }
 }
 dps_results: {
@@ -667,8 +667,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-ImpassiveSkyflareDiamond"
  value: {
-  dps: 139.6056123797317
-  tps: 271.17240315307373
+  dps: 139.02212787000542
+  tps: 269.74490759676667
  }
 }
 dps_results: {
@@ -709,22 +709,22 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-KhoriumChampion-23541"
  value: {
-  dps: 198.84750179359537
-  tps: 372.47874981509636
+  dps: 198.25302518281495
+  tps: 371.59818213713334
  }
 }
 dps_results: {
  key: "TestProtectionWarrior-AllItems-KissoftheSpider-22954"
  value: {
-  dps: 140.62021605299068
-  tps: 273.4580014416875
+  dps: 140.2683684398003
+  tps: 273.3021712553841
  }
 }
 dps_results: {
  key: "TestProtectionWarrior-AllItems-LionheartChampion-28429"
  value: {
-  dps: 209.33791189892577
-  tps: 388.7437133418732
+  dps: 206.4439395471185
+  tps: 383.97372927036105
  }
 }
 dps_results: {
@@ -779,8 +779,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-MightyAlchemist'sStone-44324"
  value: {
-  dps: 139.21646752252104
-  tps: 270.4852810119899
+  dps: 139.60560357750327
+  tps: 271.1301999891116
  }
 }
 dps_results: {
@@ -821,8 +821,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-OnslaughtBattlegear"
  value: {
-  dps: 14.846832000000015
-  tps: 82.88036267333335
+  dps: 14.645030400000014
+  tps: 82.46240361466661
  }
 }
 dps_results: {
@@ -975,8 +975,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-ShatteredSunPendantofMight-34679"
  value: {
-  dps: 141.7544445406225
-  tps: 275.05561081934025
+  dps: 141.93432611362798
+  tps: 274.8543005284309
  }
 }
 dps_results: {
@@ -1087,8 +1087,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-TheBladefist-29348"
  value: {
-  dps: 158.6996055950888
-  tps: 309.2185054305103
+  dps: 159.47250401855703
+  tps: 311.37226995699456
  }
 }
 dps_results: {
@@ -1206,8 +1206,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-TsunamiTalisman-30627"
  value: {
-  dps: 141.6520175174919
-  tps: 274.70357899323784
+  dps: 142.25377145186715
+  tps: 276.01908150030266
  }
 }
 dps_results: {
@@ -1269,9 +1269,9 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-Average-Default"
  value: {
-  dps: 218.49589716944666
-  tps: 564.7877007069299
-  dtps: 585.3799653542139
+  dps: 218.46620412750752
+  tps: 564.7042059939889
+  dtps: 585.3530007181329
  }
 }
 dps_results: {

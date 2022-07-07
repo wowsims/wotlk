@@ -243,8 +243,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-BurningRage"
  value: {
-  dps: 292.00420688497
-  tps: 251.81186033291021
+  dps: 291.97622135945124
+  tps: 251.78763086412084
  }
 }
 dps_results: {
@@ -348,15 +348,15 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-DestroyerArmor"
  value: {
-  dps: 270.5718988897878
-  tps: 233.77462653238416
+  dps: 270.21575585609446
+  tps: 233.37395892960066
  }
 }
 dps_results: {
  key: "TestArms-AllItems-DestroyerBattlegear"
  value: {
-  dps: 297.1377771177021
-  tps: 252.98169505734285
+  dps: 297.70362425033073
+  tps: 253.58632351935776
  }
 }
 dps_results: {
@@ -656,8 +656,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-KissoftheSpider-22954"
  value: {
-  dps: 319.6069489144936
-  tps: 277.0933562860532
+  dps: 319.32013449785484
+  tps: 276.53439224791964
  }
 }
 dps_results: {
@@ -677,8 +677,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-MadnessoftheBetrayer-32505"
  value: {
-  dps: 225.90816225912215
-  tps: 198.5510075468097
+  dps: 224.4871407562302
+  tps: 197.3258533865628
  }
 }
 dps_results: {
@@ -740,8 +740,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-NetherscaleArmor"
  value: {
-  dps: 315.24142792780697
-  tps: 273.3119255381378
+  dps: 314.8455782748434
+  tps: 272.79286780919864
  }
 }
 dps_results: {
@@ -957,8 +957,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-SpellstrikeInfusion"
  value: {
-  dps: 289.07276149746116
-  tps: 251.24289984307944
+  dps: 288.93231436060904
+  tps: 251.13196909306612
  }
 }
 dps_results: {
@@ -971,8 +971,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-StrengthoftheClefthoof"
  value: {
-  dps: 285.1538798487752
-  tps: 247.61433691330367
+  dps: 284.879823254871
+  tps: 247.52854288414918
  }
 }
 dps_results: {
@@ -1076,15 +1076,15 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-TheTwinBladesofAzzinoth"
  value: {
-  dps: 373.20707743900994
-  tps: 320.027732994994
+  dps: 373.99410409502093
+  tps: 320.5386398695882
  }
 }
 dps_results: {
  key: "TestArms-AllItems-TheTwinStars"
  value: {
-  dps: 310.676340606991
-  tps: 268.8577779980613
+  dps: 310.97381309912953
+  tps: 269.07284652066187
  }
 }
 dps_results: {
@@ -1146,8 +1146,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-TsunamiTalisman-30627"
  value: {
-  dps: 321.2248749092931
-  tps: 278.3765576501298
+  dps: 321.5140980986533
+  tps: 278.71976094787294
  }
 }
 dps_results: {
@@ -1209,8 +1209,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-Average-Default"
  value: {
-  dps: 324.6722164870476
-  tps: 281.1993580997241
+  dps: 324.49987652188713
+  tps: 281.0685367299199
  }
 }
 dps_results: {
@@ -1237,8 +1237,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-Settings-Human-Arms P1-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 427.1841578292101
-  tps: 468.44090741766763
+  dps: 426.9918282032761
+  tps: 467.9170674920938
  }
 }
 dps_results: {
