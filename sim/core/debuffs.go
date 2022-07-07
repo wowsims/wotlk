@@ -74,10 +74,6 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 		MakePermanent(FaerieFireAura(target, GetTristateValueInt32(debuffs.FaerieFire, 0, 3)))
 	}
 
-	if debuffs.CurseOfWeakness {
-		MakePermanent(CurseOfWeaknessAura(target))
-	}
-
 	if debuffs.ExposeWeaknessUptime > 0 && debuffs.ExposeWeaknessHunterAgility > 0 {
 		uptime := MinFloat(1.0, debuffs.ExposeWeaknessUptime)
 		ewAura := MakePermanent(ExposeWeaknessAura(target, debuffs.ExposeWeaknessHunterAgility, uptime))
