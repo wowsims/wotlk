@@ -29,7 +29,7 @@ func TestSunderArmorStacks(t *testing.T) {
 	tolerance := 0.001
 	for stacks <= 5 {
 		expectedArmor = baseArmor * (1.0 - float64(stacks)*0.04)
-		if target.Armor() < expectedArmor-tolerance || target.Armor() > expectedArmor+tolerance {
+		if !WithinToleranceFloat64(expectedArmor, target.Armor(), tolerance) {
 			t.Fatalf("Armor value for target should be %f but found %f", expectedArmor, target.Armor())
 		}
 		stacks++
@@ -60,7 +60,7 @@ func TestAcidSpitStacks(t *testing.T) {
 	tolerance := 0.001
 	for stacks <= 2 {
 		expectedArmor = baseArmor * (1.0 - float64(stacks)*0.1)
-		if target.Armor() < expectedArmor-tolerance || target.Armor() > expectedArmor+tolerance {
+		if !WithinToleranceFloat64(expectedArmor, target.Armor(), tolerance) {
 			t.Fatalf("Armor value for target should be %f but found %f", expectedArmor, target.Armor())
 		}
 		stacks++
@@ -89,7 +89,7 @@ func TestExposeArmor(t *testing.T) {
 	exposeAura.Activate(&sim)
 	tolerance := 0.001
 	expectedArmor = baseArmor * (1.0 - 0.2)
-	if target.Armor() < expectedArmor-tolerance || target.Armor() > expectedArmor+tolerance {
+	if !WithinToleranceFloat64(expectedArmor, target.Armor(), tolerance) {
 		t.Fatalf("Armor value for target should be %f but found %f", expectedArmor, target.Armor())
 	}
 }
@@ -116,13 +116,13 @@ func TestMajorArmorReductionAurasDoNotStack(t *testing.T) {
 	acidSpitAura.Activate(&sim)
 	tolerance := 0.001
 	expectedArmor = baseArmor * (1.0 - float64(stacks)*0.1)
-	if target.Armor() < expectedArmor-tolerance || target.Armor() > expectedArmor+tolerance {
+	if !WithinToleranceFloat64(expectedArmor, target.Armor(), tolerance) {
 		t.Fatalf("Armor value for target should be %f but found %f", expectedArmor, target.Armor())
 	}
 	exposeArmorAura := ExposeArmorAura(&target, false)
 	exposeArmorAura.Activate(&sim)
 	expectedArmor = baseArmor * (1.0 - 0.2)
-	if target.Armor() < expectedArmor-tolerance || target.Armor() > expectedArmor+tolerance {
+	if !WithinToleranceFloat64(expectedArmor, target.Armor(), tolerance) {
 		t.Fatalf("Armor value for target should be %f but found %f", expectedArmor, target.Armor())
 	}
 }
@@ -149,13 +149,13 @@ func TestMajorAndMinorArmorReductionsApplyMultiplicatively(t *testing.T) {
 	acidSpitAura.Activate(&sim)
 	tolerance := 0.001
 	expectedArmor = baseArmor * (1.0 - float64(stacks)*0.1)
-	if target.Armor() < expectedArmor-tolerance || target.Armor() > expectedArmor+tolerance {
+	if !WithinToleranceFloat64(expectedArmor, target.Armor(), tolerance) {
 		t.Fatalf("Armor value for target should be %f but found %f", expectedArmor, target.Armor())
 	}
 	faerieFireAura := FaerieFireAura(&target, 5)
 	faerieFireAura.Activate(&sim)
 	expectedArmor = baseArmor * (1.0 - 0.2) * (1.0 - 0.05)
-	if target.Armor() < expectedArmor-tolerance || target.Armor() > expectedArmor+tolerance {
+	if !WithinToleranceFloat64(expectedArmor, target.Armor(), tolerance) {
 		t.Fatalf("Armor value for target should be %f but found %f", expectedArmor, target.Armor())
 	}
 }
@@ -180,7 +180,7 @@ func TestDamageReductionFromArmor(t *testing.T) {
 	expectedDamageReduction := 0.4113
 	attackTable := NewAttackTable(&attacker, &target)
 	tolerance := 0.0001
-	if attackTable.ArmorDamageReduction < expectedDamageReduction-tolerance || attackTable.ArmorDamageReduction > expectedDamageReduction+tolerance {
+	if !WithinToleranceFloat64(expectedDamageReduction, attackTable.ArmorDamageReduction, tolerance) {
 		t.Fatalf("Expected no armor modifiers to result in %f damage reduction got %f", expectedDamageReduction, attackTable.ArmorDamageReduction)
 	}
 
@@ -189,7 +189,7 @@ func TestDamageReductionFromArmor(t *testing.T) {
 	acidSpitAura.Activate(&sim)
 	expectedDamageReduction = 0.3585
 	attackTable.UpdateArmorDamageReduction()
-	if attackTable.ArmorDamageReduction < expectedDamageReduction-tolerance || attackTable.ArmorDamageReduction > expectedDamageReduction+tolerance {
+	if !WithinToleranceFloat64(expectedDamageReduction, attackTable.ArmorDamageReduction, tolerance) {
 		t.Fatalf("Expected major armor modifier to result in %f damage reduction got %f", expectedDamageReduction, attackTable.ArmorDamageReduction)
 	}
 
@@ -198,7 +198,7 @@ func TestDamageReductionFromArmor(t *testing.T) {
 	faerieFireAura.Activate(&sim)
 	attackTable.UpdateArmorDamageReduction()
 	expectedDamageReduction = 0.3468
-	if attackTable.ArmorDamageReduction < expectedDamageReduction-tolerance || attackTable.ArmorDamageReduction > expectedDamageReduction+tolerance {
+	if !WithinToleranceFloat64(expectedDamageReduction, attackTable.ArmorDamageReduction, tolerance) {
 		t.Fatalf("Expected major & minor armor modifier to result in %f damage reduction got %f", expectedDamageReduction, attackTable.ArmorDamageReduction)
 	}
 
@@ -207,7 +207,7 @@ func TestDamageReductionFromArmor(t *testing.T) {
 	sporeCloudAura.Activate(&sim)
 	attackTable.UpdateArmorDamageReduction()
 	expectedDamageReduction = 0.34
-	if attackTable.ArmorDamageReduction < expectedDamageReduction-tolerance || attackTable.ArmorDamageReduction > expectedDamageReduction+tolerance {
+	if !WithinToleranceFloat64(expectedDamageReduction, attackTable.ArmorDamageReduction, tolerance) {
 		t.Fatalf("Expected major & minor armor modifier to result in %f damage reduction got %f", expectedDamageReduction, attackTable.ArmorDamageReduction)
 	}
 
@@ -216,7 +216,7 @@ func TestDamageReductionFromArmor(t *testing.T) {
 	shatteringThrowAura.Activate(&sim)
 	attackTable.UpdateArmorDamageReduction()
 	expectedDamageReduction = 0.2918
-	if attackTable.ArmorDamageReduction < expectedDamageReduction-tolerance || attackTable.ArmorDamageReduction > expectedDamageReduction+tolerance {
+	if !WithinToleranceFloat64(expectedDamageReduction, attackTable.ArmorDamageReduction, tolerance) {
 		t.Fatalf("Expected major & minor armor modifier to result in %f damage reduction got %f", expectedDamageReduction, attackTable.ArmorDamageReduction)
 	}
 
@@ -225,7 +225,7 @@ func TestDamageReductionFromArmor(t *testing.T) {
 	shatteringThrowAura.Deactivate(&sim)
 	attackTable.UpdateArmorDamageReduction()
 	expectedDamageReduction = 0.3468
-	if attackTable.ArmorDamageReduction < expectedDamageReduction-tolerance || attackTable.ArmorDamageReduction > expectedDamageReduction+tolerance {
+	if !WithinToleranceFloat64(expectedDamageReduction, attackTable.ArmorDamageReduction, tolerance) {
 		t.Fatalf("Expected major & minor armor modifier to result in %f damage reduction got %f", expectedDamageReduction, attackTable.ArmorDamageReduction)
 	}
 
@@ -233,7 +233,7 @@ func TestDamageReductionFromArmor(t *testing.T) {
 	attacker.stats[stats.ArmorPenetration] = 1400
 	attackTable.UpdateArmorDamageReduction()
 	expectedDamageReduction = 0.0203
-	if attackTable.ArmorDamageReduction < expectedDamageReduction-tolerance || attackTable.ArmorDamageReduction > expectedDamageReduction+tolerance {
+	if !WithinToleranceFloat64(expectedDamageReduction, attackTable.ArmorDamageReduction, tolerance) {
 		t.Fatalf("Expected major & minor armor modifier to result in %f damage reduction got %f", expectedDamageReduction, attackTable.ArmorDamageReduction)
 	}
 
@@ -241,7 +241,7 @@ func TestDamageReductionFromArmor(t *testing.T) {
 	attacker.stats[stats.ArmorPenetration] = 1600
 	attackTable.UpdateArmorDamageReduction()
 	expectedDamageReduction = 0.0203
-	if attackTable.ArmorDamageReduction < expectedDamageReduction-tolerance || attackTable.ArmorDamageReduction > expectedDamageReduction+tolerance {
+	if !WithinToleranceFloat64(expectedDamageReduction, attackTable.ArmorDamageReduction, tolerance) {
 		t.Fatalf("Expected major & minor armor modifier to result in %f damage reduction got %f", expectedDamageReduction, attackTable.ArmorDamageReduction)
 	}
 
@@ -249,7 +249,7 @@ func TestDamageReductionFromArmor(t *testing.T) {
 	sporeCloudAura.Activate(&sim)
 	attackTable.UpdateArmorDamageReduction()
 	expectedDamageReduction = 0.0100
-	if attackTable.ArmorDamageReduction < expectedDamageReduction-tolerance || attackTable.ArmorDamageReduction > expectedDamageReduction+tolerance {
+	if !WithinToleranceFloat64(expectedDamageReduction, attackTable.ArmorDamageReduction, tolerance) {
 		t.Fatalf("Expected major & minor armor modifier to result in %f damage reduction got %f", expectedDamageReduction, attackTable.ArmorDamageReduction)
 	}
 
@@ -257,7 +257,7 @@ func TestDamageReductionFromArmor(t *testing.T) {
 	shatteringThrowAura.Activate(&sim)
 	attackTable.UpdateArmorDamageReduction()
 	expectedDamageReduction = 0.0
-	if attackTable.ArmorDamageReduction < expectedDamageReduction-tolerance || attackTable.ArmorDamageReduction > expectedDamageReduction+tolerance {
+	if !WithinToleranceFloat64(expectedDamageReduction, attackTable.ArmorDamageReduction, tolerance) {
 		t.Fatalf("Expected major & minor armor modifier to result in %f damage reduction got %f", expectedDamageReduction, attackTable.ArmorDamageReduction)
 	}
 

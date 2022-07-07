@@ -63,11 +63,28 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 	}
 
 	if debuffs.ExposeArmor != proto.TristateEffect_TristateEffectMissing {
-		ScheduledExposeArmorAura(target, false) // TODO: fix this
+		exposeArmorAura := ExposeArmorAura(target, false) // TODO: check glyph
+		ScheduledAura(exposeArmorAura, false, PeriodicActionOptions{
+			Period:   time.Duration(10.0 * float64(time.Second)),
+			NumTicks: 1,
+			OnAction: func(sim *Simulation) {
+				exposeArmorAura.Activate(sim)
+			},
+		})
 	}
 
 	if debuffs.SunderArmor {
-		ScheduledSunderArmorAura(target)
+		sunderArmorAura := SunderArmorAura(target, 1)
+		ScheduledAura(sunderArmorAura, true, PeriodicActionOptions{
+			Period:   time.Duration(1.5 * float64(time.Second)),
+			NumTicks: 4,
+			Priority: ActionPriorityDOT, // High prio so it comes before actual warrior sunders.
+			OnAction: func(sim *Simulation) {
+				if sunderArmorAura.IsActive() {
+					sunderArmorAura.AddStack(sim)
+				}
+			},
+		})
 	}
 
 	if debuffs.FaerieFire != proto.TristateEffect_TristateEffectMissing {
@@ -117,6 +134,17 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 	if debuffs.Screech {
 		MakePermanent(ScreechAura(target))
 	}
+}
+
+func ScheduledAura(aura *Aura, preActivate bool, options PeriodicActionOptions) *Aura {
+	aura.Duration = NeverExpires
+	aura.OnReset = func(aura *Aura, sim *Simulation) {
+		if preActivate {
+			aura.Activate(sim)
+		}
+		StartPeriodicAction(sim, options)
+	}
+	return aura
 }
 
 func MiseryAura(target *Unit, numPoints int32) *Aura {
@@ -436,25 +464,6 @@ func SunderArmorAura(target *Unit, startingStacks int32) *Aura {
 	})
 }
 
-func ScheduledSunderArmorAura(target *Unit) *Aura {
-	aura := SunderArmorAura(target, 1)
-	aura.Duration = NeverExpires
-	aura.OnReset = func(aura *Aura, sim *Simulation) {
-		aura.Activate(sim)
-		StartPeriodicAction(sim, PeriodicActionOptions{
-			Period:   time.Duration(1.5 * float64(time.Second)),
-			NumTicks: 4,
-			Priority: ActionPriorityDOT, // High prio so it comes before actual warrior sunders.
-			OnAction: func(sim *Simulation) {
-				if aura.IsActive() {
-					aura.AddStack(sim)
-				}
-			},
-		})
-	}
-	return aura
-}
-
 var AcidSpitAuraLabel = "Acid Spit"
 
 func AcidSpitAura(target *Unit, startingStacks int32) *Aura {
@@ -478,25 +487,6 @@ func AcidSpitAura(target *Unit, startingStacks int32) *Aura {
 	})
 }
 
-func ScheduledAcidSpitAura(target *Unit) *Aura {
-	aura := AcidSpitAura(target, 1)
-	aura.Duration = NeverExpires
-	aura.OnReset = func(aura *Aura, sim *Simulation) {
-		aura.Activate(sim)
-		StartPeriodicAction(sim, PeriodicActionOptions{
-			Period:   time.Duration(1.5 * float64(time.Second)),
-			NumTicks: 1,
-			Priority: ActionPriorityDOT,
-			OnAction: func(sim *Simulation) {
-				if aura.IsActive() {
-					aura.AddStack(sim)
-				}
-			},
-		})
-	}
-	return aura
-}
-
 func ExposeArmorAura(target *Unit, hasGlyph bool) *Aura {
 	armorReduction := 0.2
 	duration := time.Second * 30
@@ -516,21 +506,6 @@ func ExposeArmorAura(target *Unit, hasGlyph bool) *Aura {
 			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 / (1.0 - armorReduction))
 		},
 	})
-}
-
-func ScheduledExposeArmorAura(target *Unit, hasGlyph bool) *Aura {
-	aura := ExposeArmorAura(target, hasGlyph)
-	aura.Duration = NeverExpires
-	aura.OnReset = func(aura *Aura, sim *Simulation) {
-		StartPeriodicAction(sim, PeriodicActionOptions{
-			Period:   time.Duration(10.0 * float64(time.Second)),
-			NumTicks: 1,
-			OnAction: func(sim *Simulation) {
-				aura.Activate(sim)
-			},
-		})
-	}
-	return aura
 }
 
 func CurseOfRecklessnessAura(target *Unit) *Aura {
