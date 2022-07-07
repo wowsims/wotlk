@@ -61,8 +61,13 @@ dps_results: {
 dps_results: {
  key: "TestFire-AllItems-Alchemist'sStone-13503"
  value: {
+<<<<<<< HEAD
   dps: 1358.561579196596
   tps: 1155.077742540146
+=======
+  dps: 1206.8075843633485
+  tps: 1024.0967236886788
+>>>>>>> origin/master
  }
 }
 dps_results: {
@@ -89,8 +94,13 @@ dps_results: {
 dps_results: {
  key: "TestFire-AllItems-Assassin'sAlchemistStone-35751"
  value: {
+<<<<<<< HEAD
   dps: 1319.498333769942
   tps: 1120.979098048261
+=======
+  dps: 1155.813124966246
+  tps: 984.2637815864348
+>>>>>>> origin/master
  }
 }
 dps_results: {
@@ -460,8 +470,13 @@ dps_results: {
 dps_results: {
  key: "TestFire-AllItems-Guardian'sAlchemistStone-35748"
  value: {
+<<<<<<< HEAD
   dps: 1319.498333769942
   tps: 1120.979098048261
+=======
+  dps: 1155.813124966246
+  tps: 984.2637815864348
+>>>>>>> origin/master
  }
 }
 dps_results: {
@@ -518,6 +533,13 @@ dps_results: {
  value: {
   dps: 1295.7933569870552
   tps: 1103.194485764412
+ }
+}
+dps_results: {
+ key: "TestFire-AllItems-IndestructibleAlchemist'sStone-44323"
+ value: {
+  dps: 1155.813124966246
+  tps: 984.2637815864348
  }
 }
 dps_results: {
@@ -598,6 +620,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFire-AllItems-MercurialAlchemistStone-44322"
+ value: {
+  dps: 1161.0863560638552
+  tps: 987.5167233145528
+ }
+}
+dps_results: {
+ key: "TestFire-AllItems-MightyAlchemist'sStone-44324"
+ value: {
+  dps: 1175.0455697699788
+  tps: 995.3502445374403
+ }
+}
+dps_results: {
  key: "TestFire-AllItems-MindQuickeningGem-19339"
  value: {
   dps: 1295.730721435044
@@ -663,8 +699,13 @@ dps_results: {
 dps_results: {
  key: "TestFire-AllItems-Redeemer'sAlchemistStone-35750"
  value: {
+<<<<<<< HEAD
   dps: 1355.8762343074518
   tps: 1151.0853821428432
+=======
+  dps: 1189.5749154834477
+  tps: 1012.2391133355715
+>>>>>>> origin/master
  }
 }
 dps_results: {
@@ -782,8 +823,13 @@ dps_results: {
 dps_results: {
  key: "TestFire-AllItems-Sorcerer'sAlchemistStone-35749"
  value: {
+<<<<<<< HEAD
   dps: 1355.8762343074518
   tps: 1151.0853821428432
+=======
+  dps: 1189.5749154834477
+  tps: 1012.2391133355715
+>>>>>>> origin/master
  }
 }
 dps_results: {

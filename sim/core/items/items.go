@@ -293,11 +293,14 @@ func NewItem(itemSpec ItemSpec) Item {
 	}
 
 	if len(itemSpec.Gems) > 0 {
-		item.Gems = make([]Gem, len(item.GemSockets))
+		// Need to do this to account for possible extra gem sockets.
+		numGems := len(item.GemSockets)
+		if len(itemSpec.Gems) > numGems {
+			numGems = len(itemSpec.Gems)
+		}
+
+		item.Gems = make([]Gem, numGems)
 		for gemIdx, gemID := range itemSpec.Gems {
-			if gemIdx >= len(item.GemSockets) {
-				break // in case we get invalid gem settings.
-			}
 			if gem, ok := GemsByID[gemID]; ok {
 				item.Gems[gemIdx] = gem
 			} else {
@@ -361,10 +364,10 @@ func (equipment Equipment) Stats() stats.Stats {
 		}
 
 		// Check socket bonus
-		if len(item.GemSockets) > 0 && len(item.GemSockets) == len(item.Gems) {
+		if len(item.GemSockets) > 0 && len(item.Gems) >= len(item.GemSockets) {
 			allMatch := true
-			for gemIndex, gem := range item.Gems {
-				if !ColorIntersects(gem.Color, item.GemSockets[gemIndex]) {
+			for gemIndex, socketColor := range item.GemSockets {
+				if !ColorIntersects(socketColor, item.Gems[gemIndex].Color) {
 					allMatch = false
 					break
 				}

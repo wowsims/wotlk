@@ -1045,15 +1045,15 @@ export const buffBotPresets: Array<BuffBotSettings> = [
 	},
 	{
 		// The value of this field must never change, to preserve local storage data.
-		buffBotId: 'CoR Warlock',
+		buffBotId: 'CoW Warlock',
 		spec: Spec.SpecWarlock,
 		deprecated: true,
-		name: 'CoR Warlock',
-		tooltip: 'CoR Warlock: Adds Curse of Recklessness. Also adds +20% uptime to ISB.',
+		name: 'CoW Warlock',
+		tooltip: 'CoW Warlock: Adds Curse of Weakness. Also adds +20% uptime to ISB.',
 		iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_unholystrength.jpg',
 		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
 			const debuffs = raidProto.debuffs!;
-			debuffs.curseOfRecklessness = true;
+			debuffs.curseOfWeakness = true;
 			debuffs.isbUptime = Math.min(1.0, debuffs.isbUptime + 0.2);
 		},
 	},

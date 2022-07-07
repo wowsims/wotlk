@@ -17,30 +17,31 @@ type Priest struct {
 
 	// cached cast stuff
 	// TODO: aoe multi-target situations will need multiple spells ticking for each target.
-	DevouringPlague *core.Spell
-	HolyFire        *core.Spell
-	InnerFocus      *core.Spell
-	MindBlast       *core.Spell
-	MindFlay        []*core.Spell
-	ShadowWordDeath *core.Spell
-	ShadowWordPain  *core.Spell
-	Shadowfiend     *core.Spell
-	Smite           *core.Spell
-	Starshards      *core.Spell
-	VampiricTouch   *core.Spell
-
-	DevouringPlagueDot *core.Dot
-	HolyFireDot        *core.Dot
-	MindFlayDot        []*core.Dot
-	ShadowWordPainDot  *core.Dot
-	ShadowfiendDot     *core.Dot
-	StarshardsDot      *core.Dot
-	VampiricTouchDot   *core.Dot
 
 	InnerFocusAura       *core.Aura
 	MiseryAura           *core.Aura
 	ShadowWeavingAura    *core.Aura
 	SurgeOfLightProcAura *core.Aura
+
+	DevouringPlague *core.Spell
+	HolyFire        *core.Spell
+	InnerFocus      *core.Spell
+	ShadowWordPain  *core.Spell
+	MindBlast       *core.Spell
+	MindFlay        []*core.Spell
+	ShadowWordDeath *core.Spell
+	Shadowfiend     *core.Spell
+	Smite           *core.Spell
+	Starshards      *core.Spell
+	VampiricTouch   *core.Spell
+
+	ShadowWordPainDot  *core.Dot
+	DevouringPlagueDot *core.Dot
+	HolyFireDot        *core.Dot
+	MindFlayDot        []*core.Dot
+	ShadowfiendDot     *core.Dot
+	StarshardsDot      *core.Dot
+	VampiricTouchDot   *core.Dot
 }
 
 type SelfBuffs struct {
@@ -69,11 +70,20 @@ func (priest *Priest) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
 
 func (priest *Priest) Initialize() {
+
+	if priest.Talents.Misery > 0 {
+		priest.MiseryAura = core.MiseryAura(priest.CurrentTarget, priest.Talents.Misery)
+	}
+
+	if priest.Talents.ShadowWeaving > 0 {
+		priest.ShadowWeavingAura = core.ShadowWeavingAura(priest.CurrentTarget, 0)
+	}
+
 	priest.registerDevouringPlagueSpell()
 	priest.registerHolyFireSpell()
+	priest.registerShadowWordPainSpell()
 	priest.registerMindBlastSpell()
 	priest.registerShadowWordDeathSpell()
-	priest.registerShadowWordPainSpell()
 	priest.registerShadowfiendSpell()
 	priest.registerSmiteSpell()
 	priest.registerStarshardsSpell()
@@ -92,13 +102,6 @@ func (priest *Priest) Initialize() {
 		priest.newMindFlayDot(1),
 		priest.newMindFlayDot(2),
 		priest.newMindFlayDot(3),
-	}
-
-	if priest.Talents.Misery > 0 {
-		priest.MiseryAura = core.MiseryAura(priest.CurrentTarget, priest.Talents.Misery)
-	}
-	if priest.Talents.ShadowWeaving > 0 {
-		priest.ShadowWeavingAura = core.ShadowWeavingAura(priest.CurrentTarget, 0)
 	}
 }
 

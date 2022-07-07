@@ -79,7 +79,7 @@ var FullDebuffs = &proto.Debuffs{
 	BloodFrenzy:                 true,
 	ExposeArmor:                 proto.TristateEffect_TristateEffectImproved,
 	FaerieFire:                  proto.TristateEffect_TristateEffectImproved,
-	CurseOfRecklessness:         true,
+	CurseOfWeakness:    	     true,
 	HuntersMark:                 proto.TristateEffect_TristateEffectImproved,
 	ExposeWeaknessUptime:        1,
 	ExposeWeaknessHunterAgility: 800,

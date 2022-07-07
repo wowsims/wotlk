@@ -20,8 +20,6 @@ type Warlock struct {
 	UnstableAffDot *core.Dot
 	Corruption     *core.Spell
 	CorruptionDot  *core.Dot
-	SiphonLife     *core.Spell
-	SiphonLifeDot  *core.Dot
 	/*	Haunt		   *core.Spell
 		Haunt		   *core.Aura
 
@@ -31,17 +29,14 @@ type Warlock struct {
 
 	CurseOfElements         *core.Spell
 	CurseOfElementsAura     *core.Aura
-	CurseOfRecklessness     *core.Spell
-	CurseOfRecklessnessAura *core.Aura
+	CurseOfWeakness   		*core.Spell
+	CurseOfWeaknessAura 	*core.Aura
 	CurseOfTongues          *core.Spell
 	CurseOfTonguesAura      *core.Aura
 	CurseOfAgony            *core.Spell
 	CurseOfAgonyDot         *core.Dot
 	CurseOfDoom             *core.Spell
 	CurseOfDoomDot          *core.Dot
-
-	AmplifyCurse     *core.Spell
-	AmplifyCurseAura *core.Aura
 
 	Seeds    []*core.Spell
 	SeedDots []*core.Dot
@@ -68,16 +63,13 @@ func (warlock *Warlock) Initialize() {
 	warlock.registerImmolateSpell()
 	warlock.registerCorruptionSpell()
 	warlock.registerCurseOfElementsSpell()
-	warlock.registerCurseOfRecklessnessSpell()
+	warlock.registerCurseOfWeaknessSpell()
 	warlock.registerCurseOfTonguesSpell()
 	warlock.registerCurseOfAgonySpell()
 	warlock.registerCurseOfDoomSpell()
 	warlock.registerLifeTapSpell()
 	if warlock.Talents.UnstableAffliction {
 		warlock.registerUnstableAffSpell()
-	}
-	if warlock.Talents.SiphonLife {
-		warlock.registerSiphonLifeSpell()
 	}
 	warlock.registerSeedSpell()
 }

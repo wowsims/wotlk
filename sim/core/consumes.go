@@ -19,23 +19,50 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 				stats.SpellPower:   125,
 				stats.HealingPower: 125,
 			})
+			if character.HasProfession(proto.Profession_Alchemy) {
+				character.AddStats(stats.Stats{
+					stats.SpellPower:   47,
+					stats.HealingPower: 47,
+				})
+			}
 		case proto.Flask_FlaskOfEndlessRage:
 			character.AddStats(stats.Stats{
 				stats.AttackPower:       180,
 				stats.RangedAttackPower: 180,
 			})
+			if character.HasProfession(proto.Profession_Alchemy) {
+				character.AddStats(stats.Stats{
+					stats.AttackPower:       80,
+					stats.RangedAttackPower: 80,
+				})
+			}
 		case proto.Flask_FlaskOfPureMojo:
 			character.AddStats(stats.Stats{
 				stats.MP5: 45,
 			})
+			if character.HasProfession(proto.Profession_Alchemy) {
+				character.AddStats(stats.Stats{
+					stats.MP5: 20,
+				})
+			}
 		case proto.Flask_FlaskOfStoneblood:
 			character.AddStats(stats.Stats{
 				stats.Health: 1300,
 			})
+			if character.HasProfession(proto.Profession_Alchemy) {
+				character.AddStats(stats.Stats{
+					stats.Health: 650,
+				})
+			}
 		case proto.Flask_LesserFlaskOfToughness:
 			character.AddStats(stats.Stats{
 				stats.Resilience: 50,
 			})
+			if character.HasProfession(proto.Profession_Alchemy) {
+				character.AddStats(stats.Stats{
+					stats.Resilience: 82,
+				})
+			}
 		case proto.Flask_LesserFlaskOfResistance:
 			character.AddStats(stats.Stats{
 				stats.ArcaneResistance: 50,
@@ -44,6 +71,15 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 				stats.NatureResistance: 50,
 				stats.ShadowResistance: 50,
 			})
+			if character.HasProfession(proto.Profession_Alchemy) {
+				character.AddStats(stats.Stats{
+					stats.ArcaneResistance: 40,
+					stats.FireResistance:   40,
+					stats.FrostResistance:  40,
+					stats.NatureResistance: 40,
+					stats.ShadowResistance: 40,
+				})
+			}
 		case proto.Flask_FlaskOfBlindingLight:
 			character.AddStats(stats.Stats{
 				stats.NatureSpellPower: 80,
@@ -752,7 +788,15 @@ func registerPotionCD(agent Agent, consumes proto.Consumes) {
 	}
 }
 
-var AlchStoneItemIDs = []int32{13503, 35748, 35749, 35750, 35751}
+var AlchStoneItemIDs = []int32{13503, 35748, 35749, 35750, 35751, 44322, 44323, 44324}
+
+func (character *Character) HasAlchStone() bool {
+	alchStoneEquipped := false
+	for _, itemID := range AlchStoneItemIDs {
+		alchStoneEquipped = alchStoneEquipped || character.HasTrinketEquipped(itemID)
+	}
+	return character.HasProfession(proto.Profession_Alchemy) && alchStoneEquipped
+}
 
 func makePotionActivation(potionType proto.Potions, character *Character, potionCD *Timer, prepopTime time.Duration) MajorCooldown {
 	if potionType == proto.Potions_RunicHealingPotion {
@@ -782,10 +826,7 @@ func makePotionActivation(potionType proto.Potions, character *Character, potion
 			}),
 		}
 	} else if potionType == proto.Potions_RunicManaPotion {
-		alchStoneEquipped := false
-		for _, itemID := range AlchStoneItemIDs {
-			alchStoneEquipped = alchStoneEquipped || character.HasTrinketEquipped(itemID)
-		}
+		alchStoneEquipped := character.HasAlchStone()
 		actionID := ActionID{ItemID: 33448}
 		manaMetrics := character.NewManaMetrics(actionID)
 		return MajorCooldown{
@@ -917,10 +958,7 @@ func makePotionActivation(potionType proto.Potions, character *Character, potion
 			}),
 		}
 	} else if potionType == proto.Potions_SuperManaPotion {
-		alchStoneEquipped := false
-		for _, itemID := range AlchStoneItemIDs {
-			alchStoneEquipped = alchStoneEquipped || character.HasTrinketEquipped(itemID)
-		}
+		alchStoneEquipped := character.HasAlchStone()
 		actionID := ActionID{ItemID: 22832}
 		manaMetrics := character.NewManaMetrics(actionID)
 		return MajorCooldown{
@@ -1019,10 +1057,7 @@ func makePotionActivation(potionType proto.Potions, character *Character, potion
 
 		// Restores 3200 mana over 24 seconds.
 		manaGain := 3200.0
-		alchStoneEquipped := false
-		for _, itemID := range AlchStoneItemIDs {
-			alchStoneEquipped = alchStoneEquipped || character.HasTrinketEquipped(itemID)
-		}
+		alchStoneEquipped := character.HasAlchStone()
 		if alchStoneEquipped {
 			manaGain *= 1.4
 		}

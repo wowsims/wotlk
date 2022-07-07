@@ -114,7 +114,7 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 				debuffs: Debuffs.create({
 					mangle: true,
 					sunderArmor: true,
-					curseOfRecklessness: true,
+					curseOfWeakness: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					improvedSealOfTheCrusader: true,
 					huntersMark: TristateEffect.TristateEffectImproved,
@@ -126,7 +126,7 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 			// IconInputs to include in the 'Self Buffs' section on the settings tab.
 			selfBuffInputs: [
 				WarriorInputs.ShoutPicker,
-				WarriorInputs.Recklessness,
+				WarriorInputs.Weakness,
 			],
 			// IconInputs to include in the 'Other Buffs' section on the settings tab.
 			raidBuffInputs: [
@@ -161,7 +161,7 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 				IconInputs.FaerieFire,
 				IconInputs.SunderArmor,
 				IconInputs.ExposeArmor,
-				IconInputs.CurseOfRecklessness,
+				IconInputs.CurseOfWeakness,
 				IconInputs.GiftOfArthas,
 			],
 			// Which options are selectable in the 'Consumes' section.

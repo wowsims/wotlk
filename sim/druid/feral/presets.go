@@ -88,7 +88,7 @@ var FullDebuffs = &proto.Debuffs{
 	FaerieFire:                  proto.TristateEffect_TristateEffectImproved,
 	SunderArmor:                 true,
 	Mangle:                      true,
-	CurseOfRecklessness:         true,
+	CurseOfWeakness:             true,
 	HuntersMark:                 proto.TristateEffect_TristateEffectImproved,
 	ExposeWeaknessUptime:        1.0,
 	ExposeWeaknessHunterAgility: 1000,

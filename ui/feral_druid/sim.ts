@@ -51,8 +51,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 				(simUI: IndividualSimUI<Spec.SpecFeralDruid>) => {
 					return {
 						updateOn: simUI.player.inFrontOfTargetChangeEmitter,
-						shouldDisplay: () => simUI.player.getInFrontOfTarget(),
-						getContent: () => 'Frontal rotation (without Shred) is not implemented.',
+						getContent: () => simUI.player.getInFrontOfTarget() ? 'Frontal rotation (without Shred) is not implemented.' : '',
 					};
 				},
 			],
@@ -142,7 +141,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 					exposeArmor: TristateEffect.TristateEffectImproved,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					sunderArmor: true,
-					curseOfRecklessness: true,
+					curseOfWeakness: true,
 					huntersMark: TristateEffect.TristateEffectImproved,
 					exposeWeaknessUptime: 0.95,
 					exposeWeaknessHunterAgility: 1200,
@@ -183,7 +182,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 				IconInputs.ImprovedSealOfTheCrusader,
 				IconInputs.BloodFrenzy,
 				IconInputs.HuntersMark,
-				IconInputs.CurseOfRecklessness,
+				IconInputs.CurseOfWeakness,
 				IconInputs.FaerieFire,
 				IconInputs.ExposeArmor,
 				IconInputs.SunderArmor,

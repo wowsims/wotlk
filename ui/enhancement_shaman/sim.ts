@@ -125,7 +125,7 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				debuffs: Debuffs.create({
 					bloodFrenzy: true,
 					sunderArmor: true,
-					curseOfRecklessness: true,
+					curseOfWeakness: true,
 					curseOfElements: TristateEffect.TristateEffectRegular,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					judgementOfWisdom: true,
@@ -179,7 +179,7 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				IconInputs.FaerieFire,
 				IconInputs.SunderArmor,
 				IconInputs.ExposeArmor,
-				IconInputs.CurseOfRecklessness,
+				IconInputs.CurseOfWeakness,
 				IconInputs.CurseOfElements,
 				IconInputs.Misery,
 				IconInputs.ImprovedScorch,

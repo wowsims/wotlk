@@ -49,8 +49,13 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 				(simUI: IndividualSimUI<Spec.SpecRogue>) => {
 					return {
 						updateOn: simUI.player.changeEmitter,
-						shouldDisplay: () => simUI.player.getRotation().maintainExposeArmor && simUI.player.getTalents().improvedExposeArmor < 2,
-						getContent: () => '\'Maintain Expose Armor\' selected, but missing points in Improved Expose Armor!',
+						getContent: () => {
+							if (simUI.player.getRotation().maintainExposeArmor && simUI.player.getTalents().improvedExposeArmor < 2) {
+								return '\'Maintain Expose Armor\' selected, but missing points in Improved Expose Armor!';
+							} else {
+								return '';
+							}
+						},
 					};
 				},
 			],
@@ -126,7 +131,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					bloodFrenzy: true,
 					mangle: true,
 					sunderArmor: true,
-					curseOfRecklessness: true,
+					curseOfWeakness: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					improvedSealOfTheCrusader: true,
 					misery: true,
@@ -172,7 +177,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 				IconInputs.FaerieFire,
 				IconInputs.SunderArmor,
 				IconInputs.ExposeArmor,
-				IconInputs.CurseOfRecklessness,
+				IconInputs.CurseOfWeakness,
 				IconInputs.Misery,
 				IconInputs.GiftOfArthas,
 			],
