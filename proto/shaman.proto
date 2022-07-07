@@ -187,7 +187,6 @@ enum ShamanShield {
 	LightningShield = 2;
 }
 
-
 message ElementalShaman {
 	message Rotation {
 		ShamanTotems totems = 3;
@@ -213,7 +212,6 @@ message ElementalShaman {
 message EnhancementShaman {
 	message Rotation {
 		ShamanTotems totems = 1;
-
 		enum PrimaryShock {
 				None = 0;
 				Earth = 1;

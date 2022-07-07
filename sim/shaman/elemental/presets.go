@@ -56,7 +56,6 @@ var FullPartyBuffs = &proto.PartyBuffs{
 var FullIndividualBuffs = &proto.IndividualBuffs{
 	BlessingOfKings:  true,
 	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
-	ShadowPriestDps:  500,
 }
 
 var FullConsumes = &proto.Consumes{

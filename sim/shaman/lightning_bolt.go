@@ -9,13 +9,13 @@ import (
 
 // newLightningBoltSpell returns a precomputed instance of lightning bolt to use for casting.
 func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spell {
-	baseCost := 300.0
+	baseCost := baseMana * 0.1
 	if shaman.Equip[items.ItemSlotRanged].ID == TotemOfThePulsingEarth {
 		baseCost -= 27.0
 	}
 
 	spellConfig := shaman.newElectricSpellConfig(
-		core.ActionID{SpellID: 25449},
+		core.ActionID{SpellID: 49238},
 		baseCost,
 		time.Millisecond*2500,
 		isLightningOverload)
@@ -29,7 +29,7 @@ func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spel
 		}
 	}
 
-	effect := shaman.newElectricSpellEffect(571, 652, 0.7143, isLightningOverload)
+	effect := shaman.newElectricSpellEffect(719, 819, 0.7143, isLightningOverload)
 
 	if ItemSetSkyshatterRegalia.CharacterHasSetBonus(&shaman.Character, 4) {
 		effect.DamageMultiplier *= 1.05

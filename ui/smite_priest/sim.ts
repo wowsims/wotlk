@@ -214,9 +214,7 @@ export class SmitePriestSimUI extends IndividualSimUI<Spec.SpecSmitePriest> {
 			otherInputs: {
 				inputs: [
 					OtherInputs.ISBUptime,
-					OtherInputs.ShadowPriestDPS,
 					OtherInputs.PrepopPotion,
-
 					OtherInputs.TankAssignment,
 				],
 			},
