@@ -61,13 +61,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-Alchemist'sStone-13503"
  value: {
-<<<<<<< HEAD
-  dps: 1264.6403962950856
-  tps: 1268.2781106815587
-=======
-  dps: 1276.057684385108
-  tps: 1277.4579957701512
->>>>>>> origin/master
+  dps: 1249.158003271489
+  tps: 1252.7871853782278
  }
 }
 dps_results: {
@@ -94,13 +89,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-Assassin'sAlchemistStone-35751"
  value: {
-<<<<<<< HEAD
-  dps: 1236.6726972145254
-  tps: 1240.967470830787
-=======
-  dps: 1249.6338346789696
-  tps: 1250.9607456116908
->>>>>>> origin/master
+  dps: 1235.3617986528532
+  tps: 1237.8733668980042
  }
 }
 dps_results: {
@@ -470,13 +460,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-Guardian'sAlchemistStone-35748"
  value: {
-<<<<<<< HEAD
-  dps: 1236.6726972145254
-  tps: 1240.967470830787
-=======
-  dps: 1249.6338346789696
-  tps: 1250.9607456116908
->>>>>>> origin/master
+  dps: 1235.3617986528532
+  tps: 1237.8733668980042
  }
 }
 dps_results: {
@@ -538,8 +523,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-IndestructibleAlchemist'sStone-44323"
  value: {
-  dps: 1249.6338346789696
-  tps: 1250.9607456116908
+  dps: 1235.3617986528532
+  tps: 1237.8733668980042
  }
 }
 dps_results: {
@@ -622,15 +607,15 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-MercurialAlchemistStone-44322"
  value: {
-  dps: 1250.1891736273192
-  tps: 1251.5497251033294
+  dps: 1247.9105045281626
+  tps: 1250.0741123830378
  }
 }
 dps_results: {
  key: "TestArcane-AllItems-MightyAlchemist'sStone-44324"
  value: {
-  dps: 1259.3383209116698
-  tps: 1260.3128383999046
+  dps: 1243.1052397054234
+  tps: 1245.3699345502935
  }
 }
 dps_results: {
@@ -699,13 +684,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-Redeemer'sAlchemistStone-35750"
  value: {
-<<<<<<< HEAD
-  dps: 1271.4528700969993
-  tps: 1274.5518666855623
-=======
-  dps: 1282.7591543378849
-  tps: 1282.9363010897382
->>>>>>> origin/master
+  dps: 1270.138001333631
+  tps: 1271.4377696076956
  }
 }
 dps_results: {
@@ -823,13 +803,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-Sorcerer'sAlchemistStone-35749"
  value: {
-<<<<<<< HEAD
-  dps: 1271.4528700969993
-  tps: 1274.5518666855623
-=======
-  dps: 1282.7591543378849
-  tps: 1282.9363010897382
->>>>>>> origin/master
+  dps: 1270.138001333631
+  tps: 1271.4377696076956
  }
 }
 dps_results: {
