@@ -19,23 +19,50 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 				stats.SpellPower:   125,
 				stats.HealingPower: 125,
 			})
+			if character.HasProfession(proto.Profession_Alchemy) {
+				character.AddStats(stats.Stats{
+					stats.SpellPower:   47,
+					stats.HealingPower: 47,
+				})
+			}
 		case proto.Flask_FlaskOfEndlessRage:
 			character.AddStats(stats.Stats{
 				stats.AttackPower:       180,
 				stats.RangedAttackPower: 180,
 			})
+			if character.HasProfession(proto.Profession_Alchemy) {
+				character.AddStats(stats.Stats{
+					stats.AttackPower:       80,
+					stats.RangedAttackPower: 80,
+				})
+			}
 		case proto.Flask_FlaskOfPureMojo:
 			character.AddStats(stats.Stats{
 				stats.MP5: 45,
 			})
+			if character.HasProfession(proto.Profession_Alchemy) {
+				character.AddStats(stats.Stats{
+					stats.MP5: 20,
+				})
+			}
 		case proto.Flask_FlaskOfStoneblood:
 			character.AddStats(stats.Stats{
 				stats.Health: 1300,
 			})
+			if character.HasProfession(proto.Profession_Alchemy) {
+				character.AddStats(stats.Stats{
+					stats.Health: 650,
+				})
+			}
 		case proto.Flask_LesserFlaskOfToughness:
 			character.AddStats(stats.Stats{
 				stats.Resilience: 50,
 			})
+			if character.HasProfession(proto.Profession_Alchemy) {
+				character.AddStats(stats.Stats{
+					stats.Resilience: 82,
+				})
+			}
 		case proto.Flask_LesserFlaskOfResistance:
 			character.AddStats(stats.Stats{
 				stats.ArcaneResistance: 50,
@@ -44,6 +71,15 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 				stats.NatureResistance: 50,
 				stats.ShadowResistance: 50,
 			})
+			if character.HasProfession(proto.Profession_Alchemy) {
+				character.AddStats(stats.Stats{
+					stats.ArcaneResistance: 40,
+					stats.FireResistance:   40,
+					stats.FrostResistance:  40,
+					stats.NatureResistance: 40,
+					stats.ShadowResistance: 40,
+				})
+			}
 		case proto.Flask_FlaskOfBlindingLight:
 			character.AddStats(stats.Stats{
 				stats.NatureSpellPower: 80,

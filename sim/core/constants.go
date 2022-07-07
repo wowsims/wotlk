@@ -12,6 +12,7 @@ const GCDDefault = time.Millisecond * 1500
 const MeleeAttackRatingPerDamage = 14.0
 const ExpertisePerQuarterPercentReduction = 32.79 / 4 // TODO: Does it still cutoff at 1/4 percents?
 const ArmorPenPerPercentArmor = 13.99
+const ReducibleArmorConstant = 15232.5
 
 const HasteRatingPerHastePercent = 32.79
 const CritRatingPerCritChance = 45.91

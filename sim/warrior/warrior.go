@@ -68,6 +68,7 @@ type Warrior struct {
 	DemoralizingShoutAura *core.Aura
 	BloodFrenzyAuras      []*core.Aura
 	ExposeArmorAura       *core.Aura // Warriors don't cast this but they need to check it.
+	AcidSpitAura          *core.Aura // Warriors don't cast this but they need to check it.
 	RampageAura           *core.Aura
 	SunderArmorAura       *core.Aura
 	ThunderClapAura       *core.Aura
