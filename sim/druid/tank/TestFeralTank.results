@@ -503,7 +503,7 @@ dps_results: {
  key: "TestFeralTank-AllItems-IconofUnyieldingCourage-28121"
  value: {
   dps: 258.4186524210404
-  tps: 348.0350681190791
+  tps: 348.035068119079
  }
 }
 dps_results: {
@@ -1055,17 +1055,17 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-Average-Default"
  value: {
-  dps: 399.8294741392602
-  tps: 617.6762546866712
-  dtps: 756.5737900783956
+  dps: 398.3009591487368
+  tps: 610.0354721410886
+  dtps: 708.85358795888
  }
 }
 dps_results: {
  key: "TestFeralTank-SelfDrums-DPS"
  value: {
-  dps: 398.1764394074324
-  tps: 617.4479908156452
-  dtps: 755.9436742282726
+  dps: 394.55529826966324
+  tps: 607.8634430319954
+  dtps: 707.536816678871
  }
 }
 dps_results: {
@@ -1113,8 +1113,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 456.09371370322975
-  tps: 693.2968890074294
-  dtps: 705.4174201334977
+  dps: 452.4920666499827
+  tps: 681.6742826379436
+  dtps: 660.7989389090194
  }
 }

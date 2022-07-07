@@ -21,13 +21,11 @@ func (warlock *Warlock) ApplyTalents() {
 		})
 	}
 
-	// Suppression (to do : mana cost for affliction spells)
-	if warlock.Talents.Suppression > 0 {
-		warlock.AddStat(stats.SpellHit, core.SpellHitRatingPerHitChance*float64(warlock.Talents.Suppression))
-	}
+	// Suppression 
+	warlock.AddStat(stats.SpellHit, float64(warlock.Talents.Suppression)*core.SpellHitRatingPerHitChance)
 
 	// Add 1% crit per level of backlash.
-	warlock.PseudoStats.BonusCritRating += float64(warlock.Talents.Backlash) * 1 * core.CritRatingPerCritChance
+	warlock.AddStat(stats.SpellCrit, float64(warlock.Talents.Backlash)*core.CritRatingPerCritChance)
 
 	// fel intellect
 	if warlock.Talents.FelVitality > 0 {
