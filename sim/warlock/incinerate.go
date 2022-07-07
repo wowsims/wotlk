@@ -8,7 +8,7 @@ import (
 )
 
 func (warlock *Warlock) registerIncinerateSpell() {
-	baseCost := 355.0
+	baseCost := 0.14 * warlock.BaseMana()
 	has4pMal := ItemSetMaleficRaiment.CharacterHasSetBonus(&warlock.Character, 4)
 
 	effect := core.SpellEffect{
@@ -42,7 +42,7 @@ func (warlock *Warlock) registerIncinerateSpell() {
 }
 
 func (warlock *Warlock) incinerateDamage() core.BaseDamageConfig {
-	base := core.BaseDamageConfigMagic(444.0, 514.0, 0.714+0.04*float64(warlock.Talents.ShadowAndFlame))
+	base := core.BaseDamageConfigMagic(582.0, 676.0, 0.714+0.04*float64(warlock.Talents.ShadowAndFlame))
 
 	return core.WrapBaseDamageConfig(base, func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
 		return func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
@@ -50,7 +50,7 @@ func (warlock *Warlock) incinerateDamage() core.BaseDamageConfig {
 			// Boost damage if immolate is ticking
 			// TODO: in a raid simulator we need to be able to see which dots are ticking from other warlocks.
 			if warlock.ImmolateDot.IsActive() { // TODO: use target.getaurabytag(immolatetag)
-				return normalDamage + 119.5 //  111 to 128 averages to 119.5
+				return normalDamage + 157 //  145 to 169 averages to 157
 			} else {
 				return normalDamage
 			}

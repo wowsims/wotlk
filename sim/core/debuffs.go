@@ -73,6 +73,10 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 		})
 	}
 
+	if debuffs.CurseOfWeakness {
+		MakePermanent(CurseOfWeaknessAura(target))
+	}
+
 	if debuffs.SunderArmor {
 		sunderArmorAura := SunderArmorAura(target, 1)
 		ScheduledAura(sunderArmorAura, true, PeriodicActionOptions{
@@ -89,10 +93,6 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 
 	if debuffs.FaerieFire != proto.TristateEffect_TristateEffectMissing {
 		MakePermanent(FaerieFireAura(target, GetTristateValueInt32(debuffs.FaerieFire, 0, 3)))
-	}
-
-	if debuffs.CurseOfRecklessness {
-		MakePermanent(CurseOfRecklessnessAura(target))
 	}
 
 	if debuffs.ExposeWeaknessUptime > 0 && debuffs.ExposeWeaknessHunterAgility > 0 {
@@ -504,22 +504,6 @@ func ExposeArmorAura(target *Unit, hasGlyph bool) *Aura {
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 / (1.0 - armorReduction))
-		},
-	})
-}
-
-func CurseOfRecklessnessAura(target *Unit) *Aura {
-	bonus := stats.Stats{stats.AttackPower: 135}
-
-	return target.GetOrRegisterAura(Aura{
-		Label:    "Curse of Recklessness",
-		ActionID: ActionID{SpellID: 27226},
-		Duration: time.Minute * 2,
-		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.AddStatsDynamic(sim, bonus)
-		},
-		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.AddStatsDynamic(sim, bonus.Multiply(-1))
 		},
 	})
 }

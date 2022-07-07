@@ -103,7 +103,7 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-BadgeoftheSwarmguard-21670"
  value: {
-  dps: 287.75596294968153
+  dps: 287.7559629496815
   tps: 560.3447450750493
  }
 }
@@ -1161,16 +1161,16 @@ dps_results: {
  key: "TestProtection-Average-Default"
  value: {
   dps: 569.0985917304687
-  tps: 1164.1516944720756
-  dtps: 1072.084010375089
+  tps: 1163.619858473488
+  dtps: 1005.7311610153006
  }
 }
 dps_results: {
  key: "TestProtection-SelfDrums-DPS"
  value: {
   dps: 567.3394826706681
-  tps: 1159.2559909226825
-  dtps: 1075.2889134899808
+  tps: 1158.7493159087899
+  dtps: 1008.8792295245823
  }
 }
 dps_results: {
@@ -1261,7 +1261,7 @@ dps_results: {
  key: "TestProtection-SwitchInFrontOfTarget-Default"
  value: {
   dps: 590.7919019401711
-  tps: 1192.1481750939106
-  dtps: 1030.1658586991007
+  tps: 1191.4598862351509
+  dtps: 966.6977626971666
  }
 }

@@ -7,10 +7,10 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (warrior *Warrior) RegisterRecklessnessCD() {
+func (warrior *Warrior) RegisterWeaknessCD() {
 	actionID := core.ActionID{SpellID: 1719}
 	reckAura := warrior.RegisterAura(core.Aura{
-		Label:    "Recklessness",
+		Label:    "Weakness",
 		ActionID: actionID,
 		Duration: time.Second*15 + time.Second*2*time.Duration(warrior.Talents.ImprovedDisciplines),
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {

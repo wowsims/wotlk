@@ -25,7 +25,7 @@ func (warlock *Warlock) registerSeedSpell() {
 }
 
 func (warlock *Warlock) makeSeed(targetIdx int, cap float64) {
-	baseCost := 882.0
+	baseCost := 0.34 * warlock.BaseMana()
 
 	flatBonus := 0.0
 	if ItemSetOblivionRaiment.CharacterHasSetBonus(&warlock.Character, 4) {
@@ -34,9 +34,10 @@ func (warlock *Warlock) makeSeed(targetIdx int, cap float64) {
 	baseSeedExplosionEffect := core.SpellEffect{
 		ProcMask:         core.ProcMaskSpellDamage,
 		DamageMultiplier: 1 * (1 + 0.02*float64(warlock.Talents.ShadowMastery)) * (1 + 0.01*float64(warlock.Talents.Contagion)),
-		ThreatMultiplier: 1 - 0.05*float64(warlock.Talents.ImprovedDrainSoul),
-		BaseDamage:       core.BaseDamageConfigMagic(1110+flatBonus, 1290+flatBonus, 0.143),
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+		BaseDamage:       core.BaseDamageConfigMagic(1633+flatBonus, 1897+flatBonus, 0.143),
 		OutcomeApplier:   warlock.OutcomeFuncMagicHitAndCrit(1.5),
+		BonusSpellCritRating: float64(warlock.Talents.ImprovedCorruption) * core.CritRatingPerCritChance,
 	}
 
 	// Use a custom aoe effect list that does not include the seeded target.
@@ -84,7 +85,7 @@ func (warlock *Warlock) makeSeed(targetIdx int, cap float64) {
 		BaseCost:     baseCost,
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost,
+				Cost:     baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond * 2000,
 			},
@@ -97,7 +98,7 @@ func (warlock *Warlock) makeSeed(targetIdx int, cap float64) {
 	seedDmgTracker := 0.0
 	trySeedPop := func(sim *core.Simulation, dmg float64) {
 		seedDmgTracker += dmg
-		if seedDmgTracker > 1044 {
+		if seedDmgTracker > 1518 {
 			warlock.SeedDots[targetIdx].Deactivate(sim)
 			seedExplosion.Cast(sim, target)
 			seedDmgTracker = 0
@@ -133,7 +134,7 @@ func (warlock *Warlock) makeSeed(targetIdx int, cap float64) {
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
 			DamageMultiplier: 1 * (1 + 0.02*float64(warlock.Talents.ShadowMastery)) * (1 + 0.01*float64(warlock.Talents.Contagion)),
-			ThreatMultiplier: 1 - 0.05*float64(warlock.Talents.ImprovedDrainSoul),
+			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(174, 0.25),
 			OutcomeApplier:   warlock.OutcomeFuncTick(),
 			IsPeriodic:       true,

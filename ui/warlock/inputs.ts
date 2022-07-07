@@ -184,7 +184,7 @@ export const WarlockRotationConfig = {
 						name: "Elements", value: Curse.Elements,
 					},
 					{
-						name: "Recklessness", value: Curse.Recklessness,
+						name: "Weakness", value: Curse.Weakness,
 					},
 					{
 						name: "Doom", value: Curse.Doom,

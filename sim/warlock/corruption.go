@@ -10,7 +10,7 @@ import (
 
 func (warlock *Warlock) registerCorruptionSpell() {
 	actionID := core.ActionID{SpellID: 27216}
-	baseCost := 370.0
+	baseCost := 0.14 * warlock.BaseMana()
 
 	warlock.Corruption = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -19,9 +19,8 @@ func (warlock *Warlock) registerCorruptionSpell() {
 		BaseCost:     baseCost,
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost,
+				Cost:     baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
 				GCD:      core.GCDDefault,
-				CastTime: time.Millisecond*2000 - (time.Millisecond * 400 * time.Duration(warlock.Talents.ImprovedCorruption)),
 			},
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -43,9 +42,9 @@ func (warlock *Warlock) registerCorruptionSpell() {
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * (1 + 0.02*float64(warlock.Talents.ShadowMastery)) * (1 + 0.01*float64(warlock.Talents.Contagion)),
-			ThreatMultiplier: 1 - 0.05*float64(warlock.Talents.ImprovedDrainSoul),
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(900/6, spellCoefficient),
+			DamageMultiplier: 1 * (1 + 0.02*float64(warlock.Talents.ShadowMastery)) * (1 + 0.01*float64(warlock.Talents.Contagion)) * (1 + 0.01*float64(warlock.Talents.ImprovedCorruption)),
+			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+			BaseDamage:       core.BaseDamageConfigMagicNoRoll(1080/6, spellCoefficient),
 			OutcomeApplier:   warlock.OutcomeFuncTick(),
 			IsPeriodic:       true,
 		}),
