@@ -480,6 +480,8 @@ type PseudoStats struct {
 
 	DamageTakenMultiplier float64 // All damage
 
+	ArmorMultiplier float64 // Major/minor/special multipicative armor modifiers
+
 	PhysicalDamageTakenMultiplier float64
 	ArcaneDamageTakenMultiplier   float64
 	FireDamageTakenMultiplier     float64
@@ -525,6 +527,8 @@ func NewPseudoStats() PseudoStats {
 
 		// Target effects.
 		DamageTakenMultiplier: 1,
+
+		ArmorMultiplier: 1,
 
 		PhysicalDamageTakenMultiplier: 1,
 		ArcaneDamageTakenMultiplier:   1,

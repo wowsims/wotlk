@@ -170,3 +170,7 @@ func UnitLevelFloat64(unitLevel int32, maxLevelPlus0Val float64, maxLevelPlus1Va
 		return maxLevelPlus3Val
 	}
 }
+
+func WithinToleranceFloat64(expectedValue float64, actualValue float64, tolerance float64) bool {
+	return actualValue >= (expectedValue-tolerance) && actualValue <= (expectedValue+tolerance)
+}
