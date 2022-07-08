@@ -10,6 +10,9 @@ import (
 
 const ThreatPerManaGained = 0.5
 
+// EnableManaBar will setup caster stat dependencies (int->mana and int->spellcrit)
+// as well as enable the mana gain action to regenerate mana.
+// It will then enable mana gain metrics for reporting.
 // TODO: Make this into an object like rageBar or energyBar.
 func (character *Character) EnableManaBar() {
 	// Assumes all units have >= 20 intellect.
@@ -22,6 +25,15 @@ func (character *Character) EnableManaBar() {
 		ModifiedStat: stats.Mana,
 		Modifier: func(intellect float64, mana float64) float64 {
 			return mana + intellect*15
+		},
+	})
+
+	// This conversion is now universal for
+	character.AddStatDependency(stats.StatDependency{
+		SourceStat:   stats.Intellect,
+		ModifiedStat: stats.SpellCrit,
+		Modifier: func(intellect float64, spellCrit float64) float64 {
+			return spellCrit + (intellect/166.16)*CritRatingPerCritChance
 		},
 	})
 

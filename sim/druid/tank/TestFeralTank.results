@@ -16,7 +16,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 91
   final_stats: 41
-  final_stats: 304.48321017632236
+  final_stats: 198.57961295137216
   final_stats: 0
   final_stats: 0
   final_stats: 2599.30495
@@ -173,8 +173,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-BlazefuryMedallion-17111"
  value: {
-  dps: 364.7813997953722
-  tps: 501.0068748086393
+  dps: 364.74029364090245
+  tps: 501.30480950294987
  }
 }
 dps_results: {
@@ -796,8 +796,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-Romulo'sPoisonVial-28579"
  value: {
-  dps: 381.350229103036
-  tps: 518.7967126747343
+  dps: 378.16832012311386
+  tps: 517.6679773987127
  }
 }
 dps_results: {
@@ -1013,8 +1013,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-Timbal'sFocusingCrystal-34470"
  value: {
-  dps: 372.26160473648713
-  tps: 507.11137811984275
+  dps: 373.5626315606698
+  tps: 510.3944097134206
  }
 }
 dps_results: {
