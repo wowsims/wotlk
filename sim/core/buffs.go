@@ -84,10 +84,17 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		})
 	}
 
-	if individualBuffs.ShadowPriestDps > 0 {
-		character.AddStats(stats.Stats{
-			stats.MP5: float64(individualBuffs.ShadowPriestDps) * 0.25,
+	if individualBuffs.Replenishment {
+		character.AddStatDependency(stats.StatDependency{
+			SourceStat:   stats.Mana,
+			ModifiedStat: stats.MP5,
+			Modifier: func(mana float64, mp5 float64) float64 {
+				return mp5 + mana*0.01 // adds 1% of max mana to mp5
+			},
 		})
+		// character.AddStats(stats.Stats{
+		// 	stats.MP5: float64(individualBuffs.ShadowPriestDps) * 0.25,
+		// })
 	}
 
 	character.AddStats(stats.Stats{

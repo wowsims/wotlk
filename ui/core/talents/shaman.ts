@@ -192,7 +192,7 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 					rowIdx: 6,
 					colIdx: 1,
 				},
-				spellIds: [51470],
+				spellIds: [51466, 51470],
 				maxPoints: 2,
 			},
 			{
@@ -201,7 +201,7 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 					rowIdx: 7,
 					colIdx: 2,
 				},
-				spellIds: [30679],
+				spellIds: [30675, 30678, 30679],
 				maxPoints: 3,
 			},
 			{
@@ -228,8 +228,8 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 					rowIdx: 8,
 					colIdx: 2,
 				},
-				spellIds: [51482],
-				maxPoints: 1,
+				spellIds: [51480, 51481, 51482],
+				maxPoints: 3,
 			},
 			{
 				fieldName: 'shamanism',
@@ -237,7 +237,7 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 					rowIdx: 9,
 					colIdx: 1,
 				},
-				spellIds: [62101],
+				spellIds: [62097],
 				maxPoints: 5,
 			},
 			{

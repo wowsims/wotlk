@@ -462,7 +462,7 @@ message IndividualBuffs {
 	TristateEffect blessing_of_wisdom = 2;
 	TristateEffect blessing_of_might = 3;
 
-	int32 shadow_priest_dps = 4;
+	bool replenishment = 4;
 
 	bool unleashed_rage = 7;
 

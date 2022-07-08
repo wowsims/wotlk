@@ -116,14 +116,6 @@ func New(char core.Character, selfBuffs SelfBuffs, talents proto.PriestTalents) 
 	}
 	priest.EnableManaBar()
 
-	priest.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Intellect,
-		ModifiedStat: stats.SpellCrit,
-		Modifier: func(intellect float64, spellCrit float64) float64 {
-			return spellCrit + (intellect/80)*core.CritRatingPerCritChance
-		},
-	})
-
 	return priest
 }
 

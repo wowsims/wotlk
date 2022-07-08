@@ -210,7 +210,6 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 			otherInputs: {
 				inputs: [
 					MageInputs.EvocationTicks,
-					OtherInputs.ShadowPriestDPS,
 					OtherInputs.PrepopPotion,
 					OtherInputs.StartingConjured,
 					OtherInputs.NumStartingConjured,

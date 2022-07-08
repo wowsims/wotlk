@@ -242,14 +242,6 @@ func NewHunter(character core.Character, options proto.Player) *Hunter {
 	hunter.pet = hunter.NewHunterPet()
 
 	hunter.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Intellect,
-		ModifiedStat: stats.SpellCrit,
-		Modifier: func(intellect float64, spellCrit float64) float64 {
-			return spellCrit + (intellect/55)*core.CritRatingPerCritChance
-		},
-	})
-
-	hunter.AddStatDependency(stats.StatDependency{
 		SourceStat:   stats.Strength,
 		ModifiedStat: stats.AttackPower,
 		Modifier: func(strength float64, attackPower float64) float64 {

@@ -63,9 +63,9 @@ export const ManaTideTotem = makeMultistatePartyBuffInput(ActionId.fromSpellId(1
 export const MoonkinAura = makeTristatePartyBuffInput(ActionId.fromSpellId(24907), ActionId.fromItemId(32387), 'moonkinAura');
 export const RetributionAura = makeTristatePartyBuffInput(ActionId.fromSpellId(27150), ActionId.fromSpellId(20092), 'retributionAura');
 export const SanctityAura = makeTristatePartyBuffInput(ActionId.fromSpellId(20218), ActionId.fromSpellId(31870), 'sanctityAura');
-export const TotemOfWrath = makeMultistatePartyBuffInput(ActionId.fromSpellId(30706), 5, 'totemOfWrath');
+export const TotemOfWrath = makeBooleanPartyBuffInput(ActionId.fromSpellId(30706), 'totemOfWrath');
 export const TrueshotAura = makeBooleanPartyBuffInput(ActionId.fromSpellId(27066), 'trueshotAura');
-export const WrathOfAirTotem = makeTristatePartyBuffInput(ActionId.fromSpellId(3738), ActionId.fromSpellId(37212), 'wrathOfAirTotem');
+export const WrathOfAirTotem = makeBooleanPartyBuffInput(ActionId.fromSpellId(3738), 'wrathOfAirTotem');
 export const BloodPact = makeTristatePartyBuffInput(ActionId.fromSpellId(27268), ActionId.fromSpellId(18696), 'bloodPact');
 
 export const DrumsOfBattleBuff = makeEnumValuePartyBuffInput(ActionId.fromItemId(185848), 'drums', Drums.DrumsOfBattle, ['Drums']);
@@ -80,6 +80,7 @@ export const BlessingOfWisdom = makeTristateIndividualBuffInput(ActionId.fromSpe
 export const Innervate = makeMultistateIndividualBuffInput(ActionId.fromSpellId(29166), 11, 'innervates');
 export const PowerInfusion = makeMultistateIndividualBuffInput(ActionId.fromSpellId(10060), 11, 'powerInfusions');
 export const UnleashedRage = makeBooleanIndividualBuffInput(ActionId.fromSpellId(30811), 'unleashedRage');
+export const Replenishment = makeBooleanIndividualBuffInput(ActionId.fromSpellId(57669), 'replenishment');
 
 // Debuffs
 export const BloodFrenzy = makeBooleanDebuffInput(ActionId.fromSpellId(29859), 'bloodFrenzy');
@@ -89,11 +90,11 @@ export const ImprovedSealOfTheCrusader = makeBooleanDebuffInput(ActionId.fromSpe
 export const JudgementOfWisdom = makeBooleanDebuffInput(ActionId.fromSpellId(27164), 'judgementOfWisdom');
 export const JudgementOfLight = makeBooleanDebuffInput(ActionId.fromSpellId(27163), 'judgementOfLight');
 export const Mangle = makeBooleanDebuffInput(ActionId.fromSpellId(33876), 'mangle');
-export const Misery = makeBooleanDebuffInput(ActionId.fromSpellId(33195), 'misery');
+export const Misery = makeBooleanDebuffInput(ActionId.fromSpellId(33198), 'misery');
 export const ShadowWeaving = makeBooleanDebuffInput(ActionId.fromSpellId(15334), 'shadowWeaving');
 export const CurseOfElements = makeTristateDebuffInput(ActionId.fromSpellId(27228), ActionId.fromSpellId(32484), 'curseOfElements');
 export const CurseOfWeakness = makeBooleanDebuffInput(ActionId.fromSpellId(27226), 'curseOfWeakness');
-export const FaerieFire = makeTristateDebuffInput(ActionId.fromSpellId(26993), ActionId.fromSpellId(33602), 'faerieFire');
+export const FaerieFire = makeTristateDebuffInput(ActionId.fromSpellId(770), ActionId.fromSpellId(33602), 'faerieFire');
 export const ExposeArmor = makeTristateDebuffInput(ActionId.fromSpellId(26866), ActionId.fromSpellId(14169), 'exposeArmor');
 export const SunderArmor = makeBooleanDebuffInput(ActionId.fromSpellId(25225), 'sunderArmor');
 export const WintersChill = makeBooleanDebuffInput(ActionId.fromSpellId(28595), 'wintersChill');
@@ -562,7 +563,7 @@ export function makeWeaponImbueInput(isMainHand: boolean, options: Array<WeaponI
 		{ actionId: ActionId.fromSpellId(27186), value: WeaponImbue.WeaponImbueRogueDeadlyPoison },
 		{ actionId: ActionId.fromSpellId(26891), value: WeaponImbue.WeaponImbueRogueInstantPoison },
 		{ actionId: ActionId.fromSpellId(25505), value: WeaponImbue.WeaponImbueShamanWindfury },
-		{ actionId: ActionId.fromSpellId(25489), value: WeaponImbue.WeaponImbueShamanFlametongue },
+		{ actionId: ActionId.fromSpellId(58790), value: WeaponImbue.WeaponImbueShamanFlametongue },
 		{ actionId: ActionId.fromSpellId(25500), value: WeaponImbue.WeaponImbueShamanFrostbrand },
 		{ actionId: ActionId.fromSpellId(25485), value: WeaponImbue.WeaponImbueShamanRockbiter },
 	];

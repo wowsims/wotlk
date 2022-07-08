@@ -6,6 +6,7 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // TODO: Implement all wotlk weapon imbues
@@ -142,6 +143,7 @@ func (shaman *Shaman) ApplyFlametongueImbue(mh bool, oh bool) {
 		return
 	}
 
+	shaman.AddStat(stats.SpellPower, 211)
 	mhSpell := shaman.newFlametongueImbueSpell(true)
 	ohSpell := shaman.newFlametongueImbueSpell(false)
 

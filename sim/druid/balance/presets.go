@@ -39,16 +39,15 @@ var FullPartyBuffs = &proto.PartyBuffs{
 var FullIndividualBuffs = &proto.IndividualBuffs{
 	BlessingOfKings:  true,
 	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
-	ShadowPriestDps:  500,
 }
 
 var FullConsumes = &proto.Consumes{
-	Flask:              proto.Flask_FlaskOfBlindingLight,
-	Food:               proto.Food_FoodBlackenedBasilisk,
-	DefaultPotion:      proto.Potions_SuperManaPotion,
-	PrepopPotion:       proto.Potions_DestructionPotion,
-	MainHandImbue:      proto.WeaponImbue_WeaponImbueBrilliantWizardOil,
-	DefaultConjured:    proto.Conjured_ConjuredDarkRune,
+	Flask:           proto.Flask_FlaskOfBlindingLight,
+	Food:            proto.Food_FoodBlackenedBasilisk,
+	DefaultPotion:   proto.Potions_SuperManaPotion,
+	PrepopPotion:    proto.Potions_DestructionPotion,
+	MainHandImbue:   proto.WeaponImbue_WeaponImbueBrilliantWizardOil,
+	DefaultConjured: proto.Conjured_ConjuredDarkRune,
 }
 
 var FullDebuffs = &proto.Debuffs{

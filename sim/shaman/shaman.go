@@ -34,14 +34,6 @@ func NewShaman(character core.Character, talents proto.ShamanTalents, totems pro
 
 	// Add Shaman stat dependencies
 	shaman.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Intellect,
-		ModifiedStat: stats.SpellCrit,
-		Modifier: func(intellect float64, spellCrit float64) float64 {
-			return spellCrit + (intellect/78.1)*core.CritRatingPerCritChance
-		},
-	})
-
-	shaman.AddStatDependency(stats.StatDependency{
 		SourceStat:   stats.Strength,
 		ModifiedStat: stats.AttackPower,
 		Modifier: func(strength float64, attackPower float64) float64 {
@@ -53,7 +45,7 @@ func NewShaman(character core.Character, talents proto.ShamanTalents, totems pro
 		SourceStat:   stats.Agility,
 		ModifiedStat: stats.MeleeCrit,
 		Modifier: func(agility float64, meleeCrit float64) float64 {
-			return meleeCrit + (agility/25)*core.CritRatingPerCritChance
+			return meleeCrit + (agility/83.3)*core.CritRatingPerCritChance
 		},
 	})
 
@@ -98,11 +90,12 @@ type Shaman struct {
 	ChainLightning    *core.Spell
 	ChainLightningLOs []*core.Spell
 
-	LavaBurst *core.Spell
-	FireNova  *core.Spell
-
+	LavaBurst   *core.Spell
+	FireNova    *core.Spell
 	LavaLash    *core.Spell
 	Stormstrike *core.Spell
+
+	Thunderstorm *core.Spell
 
 	EarthShock *core.Spell
 	FlameShock *core.Spell
@@ -204,6 +197,9 @@ func (shaman *Shaman) Initialize() {
 		shaman.ChainLightningLOs = append(shaman.ChainLightningLOs, shaman.newChainLightningSpell(true))
 	}
 
+	if shaman.Talents.Thunderstorm {
+		shaman.Thunderstorm = shaman.newThunderstormSpell()
+	}
 	shaman.registerShocks()
 	shaman.registerGraceOfAirTotemSpell()
 	shaman.registerMagmaTotemSpell()
@@ -248,6 +244,8 @@ func (shaman *Shaman) Reset(sim *core.Simulation) {
 			}
 		}
 	}
+
+	shaman.FlameShock.CD.Reset()
 }
 
 func (shaman *Shaman) ElementalCritMultiplier() float64 {
@@ -267,9 +265,9 @@ func init() {
 		stats.Intellect:   109,
 		stats.Spirit:      122,
 		stats.Mana:        baseMana,
-		stats.SpellCrit:   47.89,
-		stats.AttackPower: 120,
-		stats.MeleeCrit:   37.07,
+		stats.SpellCrit:   2.2 * core.CritRatingPerCritChance,
+		stats.AttackPower: 95, // TODO: confirm this.
+		stats.MeleeCrit:   2.92 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceOrc, Class: proto.Class_ClassShaman}] = stats.Stats{
 		stats.Health:      2979,
@@ -279,9 +277,9 @@ func init() {
 		stats.Intellect:   105,
 		stats.Spirit:      123,
 		stats.Mana:        baseMana,
-		stats.SpellCrit:   47.89,
-		stats.AttackPower: 120,
-		stats.MeleeCrit:   37.07,
+		stats.SpellCrit:   2.2 * core.CritRatingPerCritChance,
+		stats.AttackPower: 95, // TODO: confirm this.
+		stats.MeleeCrit:   2.92 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTauren, Class: proto.Class_ClassShaman}] = stats.Stats{
 		stats.Health:      2979,
@@ -291,20 +289,20 @@ func init() {
 		stats.Intellect:   103,
 		stats.Spirit:      122,
 		stats.Mana:        baseMana,
-		stats.SpellCrit:   47.89,
-		stats.AttackPower: 120,
-		stats.MeleeCrit:   37.07,
+		stats.SpellCrit:   2.2 * core.CritRatingPerCritChance,
+		stats.AttackPower: 95, // TODO: confirm this.
+		stats.MeleeCrit:   2.92 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassShaman}] = stats.Stats{
 		stats.Health:      2979,
-		stats.Strength:    103,
-		stats.Agility:     66,
-		stats.Stamina:     115,
-		stats.Intellect:   104,
-		stats.Spirit:      121,
+		stats.Strength:    121,
+		stats.Agility:     76,
+		stats.Stamina:     137,
+		stats.Intellect:   136,
+		stats.Spirit:      144,
 		stats.Mana:        baseMana,
-		stats.SpellCrit:   47.89,
-		stats.AttackPower: 120,
-		stats.MeleeCrit:   37.07,
+		stats.SpellCrit:   2.2 * core.CritRatingPerCritChance,
+		stats.AttackPower: 95, // TODO: confirm this.
+		stats.MeleeCrit:   2.92 * core.CritRatingPerCritChance,
 	}
 }
