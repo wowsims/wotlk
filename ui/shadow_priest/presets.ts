@@ -22,7 +22,7 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 export const StandardTalents = {
 	name: 'Standard',
-	data: '500230013--503250510240103051451',
+	data: '05032031--325023051223010323151301351',
 };
 
 export const DefaultRotation = Rotation.create({
