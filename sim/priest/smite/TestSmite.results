@@ -55,7 +55,7 @@ dps_results: {
  key: "TestSmite-AllItems-AbsolutionRegalia"
  value: {
   dps: 798.492027932121
-  tps: 775.9072866738346
+  tps: 775.9072866738343
  }
 }
 dps_results: {
@@ -69,7 +69,7 @@ dps_results: {
  key: "TestSmite-AllItems-Alchemist'sStone-13503"
  value: {
   dps: 814.41225159928
-  tps: 790.9553398672849
+  tps: 790.9553398672848
  }
 }
 dps_results: {
@@ -187,7 +187,7 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-BlazefuryMedallion-17111"
  value: {
-  dps: 796.0094266802863
+  dps: 796.009426680286
   tps: 773.295281031981
  }
 }
@@ -208,14 +208,14 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-BracingEarthstormDiamond"
  value: {
-  dps: 820.1192802343508
+  dps: 820.1192802343506
   tps: 796.3420167927492
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-BraidedEterniumChain-24114"
  value: {
-  dps: 805.4751970348967
+  dps: 805.4751970348963
   tps: 782.3367435412106
  }
 }
@@ -292,7 +292,7 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-DarkIronSmokingPipe-38290"
  value: {
-  dps: 818.8797199663292
+  dps: 818.8797199663288
   tps: 795.0818543833494
  }
 }
@@ -418,7 +418,7 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-EssenceoftheMartyr-29376"
  value: {
-  dps: 821.74195798826
+  dps: 821.7419579882596
   tps: 797.8680687666103
  }
 }
@@ -475,7 +475,7 @@ dps_results: {
  key: "TestSmite-AllItems-ForlornStarflareDiamond"
  value: {
   dps: 794.5686468307358
-  tps: 771.5802289253203
+  tps: 771.5802289253202
  }
 }
 dps_results: {
@@ -510,7 +510,7 @@ dps_results: {
  key: "TestSmite-AllItems-HexShrunkenHead-33829"
  value: {
   dps: 823.1113991402538
-  tps: 799.1013571955236
+  tps: 799.1013571955233
  }
 }
 dps_results: {
@@ -530,7 +530,7 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-ImbuedUnstableDiamond"
  value: {
-  dps: 820.1192802343508
+  dps: 820.1192802343506
   tps: 796.3420167927492
  }
 }
@@ -552,7 +552,7 @@ dps_results: {
  key: "TestSmite-AllItems-IncarnateRaiment"
  value: {
   dps: 702.8067560554092
-  tps: 685.3196324844466
+  tps: 685.3196324844465
  }
 }
 dps_results: {
@@ -635,7 +635,7 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-MercurialAlchemistStone-44322"
  value: {
-  dps: 810.2837693592348
+  dps: 810.2837693592344
   tps: 786.819554005924
  }
 }
@@ -656,7 +656,7 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-MysticalSkyfireDiamond"
  value: {
-  dps: 813.3033340015755
+  dps: 813.3033340015753
   tps: 789.8676018416253
  }
 }
@@ -803,7 +803,7 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-ShatteredSunPendantofMight-34679"
  value: {
-  dps: 796.0094266802863
+  dps: 796.009426680286
   tps: 773.295281031981
  }
 }
@@ -838,7 +838,7 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-SpellstrikeInfusion"
  value: {
-  dps: 735.0079417185011
+  dps: 735.007941718501
   tps: 715.3245384025586
  }
 }
@@ -901,8 +901,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-TheLightningCapacitor-28785"
  value: {
-  dps: 811.0641975218858
-  tps: 788.1383219486138
+  dps: 813.0059472084406
+  tps: 790.0412366414374
  }
 }
 dps_results: {
@@ -922,7 +922,7 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-TheTwinStars"
  value: {
-  dps: 820.5464031125543
+  dps: 820.5464031125542
   tps: 796.7418197079502
  }
 }
@@ -958,14 +958,14 @@ dps_results: {
  key: "TestSmite-AllItems-TirelessStarflareDiamond"
  value: {
   dps: 794.5686468307358
-  tps: 771.5802289253203
+  tps: 771.5802289253202
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-TrenchantEarthshatterDiamond"
  value: {
   dps: 794.5686468307358
-  tps: 771.5802289253203
+  tps: 771.5802289253202
  }
 }
 dps_results: {
@@ -993,7 +993,7 @@ dps_results: {
  key: "TestSmite-AllItems-WrathofSpellfire"
  value: {
   dps: 731.8393260007039
-  tps: 712.454633652933
+  tps: 712.4546336529327
  }
 }
 dps_results: {
@@ -1035,7 +1035,7 @@ dps_results: {
  key: "TestSmite-Settings-Undead-P3-Basic-FullBuffs-ShortSingleTarget"
  value: {
   dps: 1194.0886218999347
-  tps: 1170.4276835918363
+  tps: 1170.427683591836
  }
 }
 dps_results: {

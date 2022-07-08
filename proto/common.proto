@@ -516,6 +516,7 @@ message Debuffs {
 	bool misery = 3;
 	TristateEffect curse_of_elements = 4;
 	double isb_uptime = 5;
+	bool improved_shadow_bolt = 27;
 	bool shadow_weaving = 18;
 
 	bool improved_scorch = 6;

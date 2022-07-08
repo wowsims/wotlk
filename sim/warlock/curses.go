@@ -14,15 +14,7 @@ func (warlock *Warlock) registerCurseOfElementsSpell() {
 		return
 	}
 	baseCost := 0.1 * warlock.BaseMana()
-	auras := warlock.CurrentTarget.GetAurasWithTag("Curse of Elements")
-	for _, aura := range auras {
-		if int32(aura.Priority) >= warlock.Talents.Malediction {
-			// Someone else with at least as good of curse is already doing it... lets not.
-			warlock.Rotation.Curse = proto.Warlock_Rotation_NoCurse // TODO: swap to agony for dps?
-			return
-		}
-	}
-	warlock.CurseOfElementsAura = core.CurseOfElementsAura(warlock.CurrentTarget, warlock.Talents.Malediction)
+	warlock.CurseOfElementsAura = core.CurseOfElementsAura(warlock.CurrentTarget)
 	warlock.CurseOfElementsAura.Duration = time.Minute * 5
 
 	warlock.CurseOfElements = warlock.RegisterSpell(core.SpellConfig{

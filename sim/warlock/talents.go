@@ -82,39 +82,28 @@ func (warlock *Warlock) ApplyTalents() {
 	// 	stats.SpellCrit: float64(warlock.Talents.DemonicTactics) * 1 * core.CritRatingPerCritChance,
 	// })
 
-	// warlock.applyShadowEmbrace()
+
 	warlock.setupNightfall()
+
+	if warlock.Talents.ShadowEmbrace > 0 {
+		warlock.ShadowEmbraceAura = ShadowEmbraceAura(warlock)
+	}
 }
 
-/*func (warlock *Warlock) applyShadowEmbrace() {
-	if warlock.Talents.ShadowEmbrace == 0 {
-		return
-	}
-
-	var debuffAuras []*core.Aura
-	for _, target := range warlock.Env.Encounter.Targets {
-		debuffAuras = append(debuffAuras, core.ShadowEmbraceAura(&target.Unit, warlock.Talents.ShadowEmbrace))
-	}
-
-	warlock.RegisterAura(core.Aura{
-		Label:    "Shadow Embrace Talent",
-		Duration: core.NeverExpires,
-		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Activate(sim)
-		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() {
-				return
-			}
-
-			if spell == warlock.Corruption || spell == warlock.SiphonLife || spell == warlock.CurseOfAgony || spell.SameAction(warlock.Seeds[0].ActionID) {
-				debuffAuras[spellEffect.Target.Index].Activate(sim)
-			}
+func ShadowEmbraceAura(warlock *Warlock) *core.Aura {
+	return warlock.GetOrRegisterAura(core.Aura{
+		Label:     "Shadow Embrace",
+		ActionID:  core.ActionID{SpellID: 32394},
+		Duration:  time.Second * 12,
+		MaxStacks: 3,
+		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
+			aura.Unit.PseudoStats.PeriodicShadowDamageDealtMultiplier /= 1.0 + 0.01*float64(warlock.Talents.ShadowEmbrace)*float64(oldStacks)
+			aura.Unit.PseudoStats.PeriodicShadowDamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.ShadowEmbrace)*float64(newStacks)
 		},
 	})
 }
 
-*/
+
 func (warlock *Warlock) setupNightfall() {
 	if warlock.Talents.Nightfall == 0 {
 		return
