@@ -28,8 +28,8 @@ var FullRaidBuffs = &proto.RaidBuffs{
 }
 var FullPartyBuffs = &proto.PartyBuffs{
 	MoonkinAura:     proto.TristateEffect_TristateEffectRegular,
-	TotemOfWrath:    1,
-	WrathOfAirTotem: proto.TristateEffect_TristateEffectImproved,
+	TotemOfWrath:    true,
+	WrathOfAirTotem: true,
 	ManaSpringTotem: proto.TristateEffect_TristateEffectRegular,
 }
 var FullIndividualBuffs = &proto.IndividualBuffs{

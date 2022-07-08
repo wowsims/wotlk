@@ -148,7 +148,7 @@ func ScheduledAura(aura *Aura, preActivate bool, options PeriodicActionOptions) 
 }
 
 func MiseryAura(target *Unit, numPoints int32) *Aura {
-	multiplier := 1.0 + 0.01*float64(numPoints)
+	multiplier := float64(numPoints)
 
 	return target.GetOrRegisterAura(Aura{
 		Label:    "Misery-" + strconv.Itoa(int(numPoints)),
@@ -157,20 +157,10 @@ func MiseryAura(target *Unit, numPoints int32) *Aura {
 		Duration: time.Second * 24,
 		Priority: float64(numPoints),
 		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier *= multiplier
-			aura.Unit.PseudoStats.FireDamageTakenMultiplier *= multiplier
-			aura.Unit.PseudoStats.FrostDamageTakenMultiplier *= multiplier
-			aura.Unit.PseudoStats.HolyDamageTakenMultiplier *= multiplier
-			aura.Unit.PseudoStats.NatureDamageTakenMultiplier *= multiplier
-			aura.Unit.PseudoStats.ShadowDamageTakenMultiplier *= multiplier
+			target.PseudoStats.BonusSpellHitRating += multiplier * SpellHitRatingPerHitChance
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier /= multiplier
-			aura.Unit.PseudoStats.FireDamageTakenMultiplier /= multiplier
-			aura.Unit.PseudoStats.FrostDamageTakenMultiplier /= multiplier
-			aura.Unit.PseudoStats.HolyDamageTakenMultiplier /= multiplier
-			aura.Unit.PseudoStats.NatureDamageTakenMultiplier /= multiplier
-			aura.Unit.PseudoStats.ShadowDamageTakenMultiplier /= multiplier
+			target.PseudoStats.BonusSpellHitRating -= multiplier * SpellHitRatingPerHitChance
 		},
 	})
 }
@@ -431,11 +421,13 @@ func FaerieFireAura(target *Unit, level int32) *Aura {
 		Priority: float64(level),
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 - armorReduction)
-			aura.Unit.PseudoStats.BonusMeleeHitRating += float64(level) * MeleeHitRatingPerHitChance
+			aura.Unit.PseudoStats.BonusSpellHitRating += float64(level) * SpellHitRatingPerHitChance
+			aura.Unit.PseudoStats.BonusCritRating += float64(level) * CritRatingPerCritChance
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 / (1.0 - armorReduction))
-			aura.Unit.PseudoStats.BonusMeleeHitRating -= float64(level) * MeleeHitRatingPerHitChance
+			aura.Unit.PseudoStats.BonusSpellHitRating -= float64(level) * SpellHitRatingPerHitChance
+			aura.Unit.PseudoStats.BonusCritRating += float64(level) * CritRatingPerCritChance
 		},
 	})
 }

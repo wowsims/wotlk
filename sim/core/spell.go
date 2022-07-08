@@ -187,6 +187,9 @@ func (spell *Spell) ReadyAt() time.Duration {
 }
 
 func (spell *Spell) IsReady(sim *Simulation) bool {
+	if spell == nil {
+		return false
+	}
 	return BothTimersReady(spell.CD.Timer, spell.SharedCD.Timer, sim)
 }
 

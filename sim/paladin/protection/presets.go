@@ -53,8 +53,8 @@ var FullRaidBuffs = &proto.RaidBuffs{
 }
 var FullPartyBuffs = &proto.PartyBuffs{
 	MoonkinAura:     proto.TristateEffect_TristateEffectRegular,
-	TotemOfWrath:    1,
-	WrathOfAirTotem: proto.TristateEffect_TristateEffectImproved,
+	TotemOfWrath:    true,
+	WrathOfAirTotem: true,
 	ManaSpringTotem: proto.TristateEffect_TristateEffectRegular,
 }
 var FullIndividualBuffs = &proto.IndividualBuffs{
@@ -65,11 +65,11 @@ var FullIndividualBuffs = &proto.IndividualBuffs{
 }
 
 var FullConsumes = &proto.Consumes{
-	Flask:              proto.Flask_FlaskOfBlindingLight,
-	Food:               proto.Food_FoodBlackenedBasilisk,
-	DefaultPotion:      proto.Potions_SuperManaPotion,
-	DefaultConjured:    proto.Conjured_ConjuredDarkRune,
-	MainHandImbue:      proto.WeaponImbue_WeaponImbueSuperiorWizardOil,
+	Flask:           proto.Flask_FlaskOfBlindingLight,
+	Food:            proto.Food_FoodBlackenedBasilisk,
+	DefaultPotion:   proto.Potions_SuperManaPotion,
+	DefaultConjured: proto.Conjured_ConjuredDarkRune,
+	MainHandImbue:   proto.WeaponImbue_WeaponImbueSuperiorWizardOil,
 }
 
 var FullDebuffs = &proto.Debuffs{

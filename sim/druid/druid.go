@@ -161,14 +161,6 @@ func New(char core.Character, form DruidForm, selfBuffs SelfBuffs, talents proto
 	druid.EnableManaBar()
 
 	druid.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Intellect,
-		ModifiedStat: stats.SpellCrit,
-		Modifier: func(intellect float64, spellCrit float64) float64 {
-			return spellCrit + (intellect/79.4)*core.CritRatingPerCritChance
-		},
-	})
-
-	druid.AddStatDependency(stats.StatDependency{
 		SourceStat:   stats.Strength,
 		ModifiedStat: stats.AttackPower,
 		Modifier: func(strength float64, attackPower float64) float64 {

@@ -17,8 +17,8 @@ const ReducibleArmorConstant = 15232.5
 const HasteRatingPerHastePercent = 32.79
 const CritRatingPerCritChance = 45.91
 
-const SpellHitRatingPerHitChance = 26.23199272
-const MeleeHitRatingPerHitChance = 26.23199272
+const SpellHitRatingPerHitChance = 26.232
+const MeleeHitRatingPerHitChance = 26.232
 
 const DefenseRatingPerDefense = 4.92
 const DodgeRatingPerDodgeChance = 45.25

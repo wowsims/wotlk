@@ -109,8 +109,8 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 					drums: Drums.DrumsOfBattle,
 					bloodlust: 1,
 					manaSpringTotem: TristateEffect.TristateEffectRegular,
-					totemOfWrath: 1,
-					wrathOfAirTotem: TristateEffect.TristateEffectRegular,
+					totemOfWrath: true,
+					wrathOfAirTotem: true,
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
@@ -203,9 +203,8 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
-					OtherInputs.ShadowPriestDPS,
 					OtherInputs.PrepopPotion,
-					OtherInputs.SnapshotImprovedWrathOfAirTotem,
+
 					OtherInputs.TankAssignment,
 				],
 			},

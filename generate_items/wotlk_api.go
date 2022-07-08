@@ -59,7 +59,8 @@ var wotlkdbStrengthRegex = regexp.MustCompile(`<!--stat4-->\+([0-9]+) Strength`)
 var wotlkdbIntellectRegex = regexp.MustCompile(`<!--stat5-->\+([0-9]+) Intellect`)
 var wotlkdbSpiritRegex = regexp.MustCompile(`<!--stat6-->\+([0-9]+) Spirit`)
 var wotlkdbStaminaRegex = regexp.MustCompile(`<!--stat7-->\+([0-9]+) Stamina`)
-var wotlkdbSpellPowerRegex = regexp.MustCompile("Increases spell power by ([0-9]+)")
+var wotlkdbSpellPowerRegex = regexp.MustCompile("Equip: Increases spell power by ([0-9]+)")
+var wotlkdbSpellPowerRegex2 = regexp.MustCompile("Equip: Increases spell power by <!--rtg45-->([0-9]+)")
 
 // Not sure these exist anymore?
 var wotlkdbArcaneSpellPowerRegex = regexp.MustCompile("Increases Arcane power by ([0-9]+)")
@@ -98,6 +99,7 @@ var wotlkdbNatureResistanceRegex = regexp.MustCompile(`\+([0-9]+) Nature Resista
 var wotlkdbShadowResistanceRegex = regexp.MustCompile(`\+([0-9]+) Shadow Resistance`)
 
 func (item WotlkItemResponse) GetStats() Stats {
+	sp := float64(item.GetIntValue(wotlkdbSpellPowerRegex)) + float64(item.GetIntValue(wotlkdbSpellPowerRegex2))
 	return Stats{
 		proto.Stat_StatArmor:             float64(item.GetIntValue(wotlkdbArmorRegex)),
 		proto.Stat_StatStrength:          float64(item.GetIntValue(wotlkdbStrengthRegex)),
@@ -105,8 +107,8 @@ func (item WotlkItemResponse) GetStats() Stats {
 		proto.Stat_StatStamina:           float64(item.GetIntValue(wotlkdbStaminaRegex)),
 		proto.Stat_StatIntellect:         float64(item.GetIntValue(wotlkdbIntellectRegex)),
 		proto.Stat_StatSpirit:            float64(item.GetIntValue(wotlkdbSpiritRegex)),
-		proto.Stat_StatSpellPower:        float64(item.GetIntValue(wotlkdbSpellPowerRegex)),
-		proto.Stat_StatHealingPower:      float64(item.GetIntValue(wotlkdbSpellPowerRegex)),
+		proto.Stat_StatSpellPower:        sp,
+		proto.Stat_StatHealingPower:      sp,
 		proto.Stat_StatArcaneSpellPower:  float64(item.GetIntValue(wotlkdbArcaneSpellPowerRegex)),
 		proto.Stat_StatFireSpellPower:    float64(item.GetIntValue(wotlkdbFireSpellPowerRegex)),
 		proto.Stat_StatFrostSpellPower:   float64(item.GetIntValue(wotlkdbFrostSpellPowerRegex)),
@@ -254,10 +256,10 @@ var wotlkRangedWeaponTypePatterns = map[proto.RangedWeaponType]*regexp.Regexp{
 	proto.RangedWeaponType_RangedWeaponTypeBow:      regexp.MustCompile("<th>Bow</th>"),
 	proto.RangedWeaponType_RangedWeaponTypeCrossbow: regexp.MustCompile("<th>Crossbow</th>"),
 	proto.RangedWeaponType_RangedWeaponTypeGun:      regexp.MustCompile("<th>Gun</th>"),
-	proto.RangedWeaponType_RangedWeaponTypeIdol:     regexp.MustCompile("<th>Idol</th>"),
-	proto.RangedWeaponType_RangedWeaponTypeLibram:   regexp.MustCompile("<th>Libram</th>"),
+	proto.RangedWeaponType_RangedWeaponTypeIdol:     regexp.MustCompile("<th><!--asc8-->Idol</th>"),
+	proto.RangedWeaponType_RangedWeaponTypeLibram:   regexp.MustCompile("<th><!--asc7-->Libram</th>"),
 	proto.RangedWeaponType_RangedWeaponTypeThrown:   regexp.MustCompile("<th>Thrown</th>"),
-	proto.RangedWeaponType_RangedWeaponTypeTotem:    regexp.MustCompile("<th>Totem</th>"),
+	proto.RangedWeaponType_RangedWeaponTypeTotem:    regexp.MustCompile("<th><!--asc9-->Totem</th>"),
 	proto.RangedWeaponType_RangedWeaponTypeWand:     regexp.MustCompile("<th>Wand</th>"),
 	proto.RangedWeaponType_RangedWeaponTypeSigil:    regexp.MustCompile("<th>Sigil</th>"),
 }

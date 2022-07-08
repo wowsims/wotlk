@@ -55,10 +55,10 @@ var FullPartyBuffs = &proto.PartyBuffs{
 	Drums:                      proto.Drums_DrumsOfBattle,
 	BattleShout:                proto.TristateEffect_TristateEffectImproved,
 	LeaderOfThePack:            proto.TristateEffect_TristateEffectImproved,
-	GraceOfAirTotem:            proto.TristateEffect_TristateEffectImproved,
 	ManaSpringTotem:            proto.TristateEffect_TristateEffectRegular,
 	BraidedEterniumChain:       true,
-	StrengthOfEarthTotem:       proto.StrengthOfEarthType_EnhancingTotems,
+	StrengthOfEarthTotem:       proto.TristateEffect_TristateEffectImproved,
+	WindfuryTotem:              proto.TristateEffect_TristateEffectImproved,
 	SnapshotBsSolarianSapphire: true,
 	SanctityAura:               proto.TristateEffect_TristateEffectImproved,
 }

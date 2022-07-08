@@ -443,18 +443,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: ElementalShamanPresets.P1_PRESET.gear,
-				2: ElementalShamanPresets.P2_PRESET.gear,
-				3: ElementalShamanPresets.P3_PRESET.gear,
-				4: ElementalShamanPresets.P4_PRESET.gear,
-				5: ElementalShamanPresets.P5_ALLIANCE_PRESET.gear,
+				1: ElementalShamanPresets.PRE_RAID_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				1: ElementalShamanPresets.P1_PRESET.gear,
-				2: ElementalShamanPresets.P2_PRESET.gear,
-				3: ElementalShamanPresets.P3_PRESET.gear,
-				4: ElementalShamanPresets.P4_PRESET.gear,
-				5: ElementalShamanPresets.P5_HORDE_PRESET.gear,
+				1: ElementalShamanPresets.PRE_RAID_PRESET.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecElementalShaman],
@@ -989,7 +981,6 @@ export const buffBotPresets: Array<BuffBotSettings> = [
 				Spec.SpecMage,
 				Spec.SpecShadowPriest,
 				Spec.SpecSmitePriest,
-				Spec.SpecProtectionPaladin,
 				Spec.SpecEnhancementShaman,
 				Spec.SpecElementalShaman,
 				Spec.SpecWarlock,
@@ -999,25 +990,20 @@ export const buffBotPresets: Array<BuffBotSettings> = [
 				Spec.SpecRogue,
 				Spec.SpecWarrior,
 				Spec.SpecProtectionWarrior,
-			];
-			const goaSpecs = [
 				Spec.SpecFeralDruid,
 				Spec.SpecFeralTankDruid,
-				Spec.SpecHunter,
 			];
-			const [woaVotes, wfVotes, goaVotes] = [woaSpecs, wfSpecs, goaSpecs]
+			const [woaVotes, wfVotes] = [woaSpecs, wfSpecs]
 				.map(specs => partyProto.players
 					.filter(player => player.class != Class.ClassUnknown)
 					.map(player => playerToSpec(player))
 					.filter(playerSpec => specs.includes(playerSpec))
 					.length);
 
-			if (woaVotes >= wfVotes && woaVotes >= goaVotes) {
-				partyProto.buffs!.wrathOfAirTotem = Math.max(partyProto.buffs!.wrathOfAirTotem, TristateEffect.TristateEffectRegular);
-			} else if (wfVotes >= goaVotes) {
-				partyProto.buffs!.windfuryTotemRank = 5;
+			if (woaVotes >= wfVotes) {
+				partyProto.buffs!.wrathOfAirTotem = true;
 			} else {
-				partyProto.buffs!.graceOfAirTotem = Math.max(partyProto.buffs!.graceOfAirTotem, TristateEffect.TristateEffectRegular);
+				partyProto.buffs!.windfuryTotem = TristateEffect.TristateEffectRegular;
 			}
 		},
 	},

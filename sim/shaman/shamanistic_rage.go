@@ -33,7 +33,7 @@ func (shaman *Shaman) registerShamanisticRageCD() {
 			if !ppmm.Proc(sim, spellEffect.ProcMask, "shamanistic rage") {
 				return
 			}
-			mana := aura.Unit.GetStat(stats.AttackPower) * 0.3
+			mana := aura.Unit.GetStat(stats.AttackPower) * 0.15
 			aura.Unit.AddMana(sim, mana, manaMetrics, true)
 		},
 	})

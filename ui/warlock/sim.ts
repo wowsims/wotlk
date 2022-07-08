@@ -102,8 +102,8 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 					drums: Drums.DrumsOfBattle,
 					bloodlust: 1,
 					manaSpringTotem: TristateEffect.TristateEffectRegular,
-					totemOfWrath: 1,
-					wrathOfAirTotem: TristateEffect.TristateEffectRegular,
+					totemOfWrath: true,
+					wrathOfAirTotem: true,
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
@@ -215,9 +215,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			otherInputs: {
 				inputs: [
 					OtherInputs.ISBUptime,
-					OtherInputs.ShadowPriestDPS,
 					OtherInputs.PrepopPotion,
-					OtherInputs.SnapshotImprovedWrathOfAirTotem,
 					OtherInputs.TankAssignment,
 				],
 			},
