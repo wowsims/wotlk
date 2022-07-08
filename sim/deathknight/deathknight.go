@@ -39,7 +39,7 @@ func (deathKnight *DeathKnight) Initialize() {
 }
 
 func (deathKnight *DeathKnight) registerIcyTouchSpell() {
-	baseCost := 10.0
+	//baseCost := 10.0
 
 	//deathKnight.IcyTouch = deathKnight.RegisterSpell(core.SpellConfig{
 	//	ActionID:    core.ActionID{SpellID: 59131},

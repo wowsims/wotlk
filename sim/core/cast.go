@@ -156,28 +156,7 @@ func (spell *Spell) wrapCastFuncResources(config CastConfig, onCastComplete Cast
 			onCastComplete(sim, target)
 			return true
 		}
-	case stats.RunicPower:
-		return func(sim *Simulation, target *Unit) bool {
-			spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
-			if spell.Unit.runicPowerBar.CurrentRunicPower() < spell.CurCast.Cost {
-				return false
-			}
-			spell.Unit.runicPowerBar.SpendRunicPower(sim, spell.CurCast.Cost, spell.ResourceMetrics)
-			onCastComplete(sim, target)
-			return true
-		}
-	//TODO: implement runes here
-	case stats.BloodRune:
-	//	return func(sim *Simulation, target *Unit) bool {
-	//		spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
-	//		if spell.Unit.runicPowerBar.CurrentRunicPower() < spell.CurCast.Cost {
-	//			return false
-	//		}
-	//		spell.Unit.runicPowerBar.SpendRunicPower(sim, spell.CurCast.Cost, spell.ResourceMetrics)
-	//		onCastComplete(sim, target)
-	//		return true
-	//	}
-	//}
+	}
 
 	panic("Invalid resource type")
 }

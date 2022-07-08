@@ -1,4 +1,4 @@
-import { RaidBuffs, StrengthOfEarthType } from '/wotlk/core/proto/common.js';
+import { RaidBuffs } from '/wotlk/core/proto/common.js';
 import { PartyBuffs } from '/wotlk/core/proto/common.js';
 import { IndividualBuffs } from '/wotlk/core/proto/common.js';
 import { Class } from '/wotlk/core/proto/common.js';
@@ -101,10 +101,8 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				partyBuffs: PartyBuffs.create({
 					bloodlust: 1,
 					drums: Drums.DrumsOfBattle,
-					graceOfAirTotem: TristateEffect.TristateEffectImproved,
-					strengthOfEarthTotem: StrengthOfEarthType.EnhancingTotems,
-					windfuryTotemRank: 5,
-					windfuryTotemIwt: 2,
+					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
+					windfuryTotem: TristateEffect.TristateEffectImproved,
 					leaderOfThePack: TristateEffect.TristateEffectImproved,
 				}),
 				individualBuffs: IndividualBuffs.create({
@@ -116,7 +114,7 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				debuffs: Debuffs.create({
 					mangle: true,
 					sunderArmor: true,
-					curseOfRecklessness: true,
+					curseOfWeakness: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					improvedSealOfTheCrusader: true,
 					huntersMark: TristateEffect.TristateEffectImproved,
@@ -136,7 +134,7 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				IconInputs.DrumsOfBattleBuff,
 				IconInputs.Bloodlust,
 				IconInputs.StrengthOfEarthTotem,
-				IconInputs.GraceOfAirTotem,
+
 				IconInputs.WindfuryTotem,
 				IconInputs.BattleShout,
 				IconInputs.LeaderOfThePack,
@@ -161,7 +159,7 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				IconInputs.FaerieFire,
 				IconInputs.SunderArmor,
 				IconInputs.ExposeArmor,
-				IconInputs.CurseOfRecklessness,
+				IconInputs.CurseOfWeakness,
 				IconInputs.GiftOfArthas,
 			],
 			// Which options are selectable in the 'Consumes' section.
@@ -212,8 +210,6 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				inputs: [
 					OtherInputs.ExposeWeaknessUptime,
 					OtherInputs.ExposeWeaknessHunterAgility,
-					OtherInputs.SnapshotImprovedStrengthOfEarthTotem,
-					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],
 			},
