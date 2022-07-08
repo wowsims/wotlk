@@ -27,16 +27,16 @@ type Warlock struct {
 	*/
 	LifeTap *core.Spell
 
-	CurseOfElements         *core.Spell
-	CurseOfElementsAura     *core.Aura
-	CurseOfWeakness   		*core.Spell
-	CurseOfWeaknessAura 	*core.Aura
-	CurseOfTongues          *core.Spell
-	CurseOfTonguesAura      *core.Aura
-	CurseOfAgony            *core.Spell
-	CurseOfAgonyDot         *core.Dot
-	CurseOfDoom             *core.Spell
-	CurseOfDoomDot          *core.Dot
+	CurseOfElements     *core.Spell
+	CurseOfElementsAura *core.Aura
+	CurseOfWeakness     *core.Spell
+	CurseOfWeaknessAura *core.Aura
+	CurseOfTongues      *core.Spell
+	CurseOfTonguesAura  *core.Aura
+	CurseOfAgony        *core.Spell
+	CurseOfAgonyDot     *core.Dot
+	CurseOfDoom         *core.Spell
+	CurseOfDoomDot      *core.Dot
 
 	Seeds    []*core.Spell
 	SeedDots []*core.Dot
@@ -98,14 +98,6 @@ func NewWarlock(character core.Character, options proto.Player) *Warlock {
 		// manaTracker:           common.NewManaSpendingRateTracker(),
 	}
 	warlock.EnableManaBar()
-
-	warlock.Character.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Intellect,
-		ModifiedStat: stats.SpellCrit,
-		Modifier: func(intellect float64, spellCrit float64) float64 {
-			return spellCrit + (intellect/81.92)*core.CritRatingPerCritChance
-		},
-	})
 
 	warlock.Character.AddStatDependency(stats.StatDependency{
 		SourceStat:   stats.Strength,

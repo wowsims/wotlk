@@ -26,6 +26,10 @@ func (shaman *Shaman) newLavaBurstSpell() *core.Spell {
 				CastTime: time.Second * 2,
 				GCD:      core.GCDDefault,
 			},
+			CD: core.Cooldown{
+				Timer:    shaman.NewTimer(),
+				Duration: time.Second * 8,
+			},
 		},
 	}
 
@@ -48,7 +52,22 @@ func (shaman *Shaman) newLavaBurstSpell() *core.Spell {
 		DamageMultiplier: 1 * (1 + 0.01*float64(shaman.Talents.Concussion)),
 		ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
 		BaseDamage:       core.BaseDamageConfigMagic(1192, 1518, 0.5714),
-		OutcomeApplier:   shaman.OutcomeFuncMagicHitAndCrit(critMultiplier),
+		OutcomeApplier: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
+			if spellEffect.MagicHitCheck(sim, spell, attackTable) {
+				if shaman.FlameShockDot.IsActive() || spellEffect.MagicCritCheck(sim, spell, attackTable) {
+					spellEffect.Outcome = core.OutcomeCrit
+					spell.SpellMetrics[spellEffect.Target.TableIndex].Crits++
+					spellEffect.Damage *= critMultiplier
+				} else {
+					spellEffect.Outcome = core.OutcomeHit
+					spell.SpellMetrics[spellEffect.Target.TableIndex].Hits++
+				}
+			} else {
+				spellEffect.Outcome = core.OutcomeMiss
+				spell.SpellMetrics[spellEffect.Target.TableIndex].Misses++
+				spellEffect.Damage = 0
+			}
+		},
 	}
 	effect.DamageMultiplier *= 1.0 + .02*float64(shaman.Talents.CallOfFlame)
 

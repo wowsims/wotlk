@@ -3,7 +3,6 @@ package elemental
 import (
 	"time"
 
-	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
@@ -53,9 +52,9 @@ type Rotation interface {
 //                             ADAPTIVE
 // ################################################################
 type AdaptiveRotation struct {
-	manaTracker common.ManaSpendingRateTracker
+	// manaTracker common.ManaSpendingRateTracker
 
-	hasClearcasting bool
+	// hasClearcasting bool
 	// baseRotation    Rotation // The rotation used most of the time
 	// surplusRotation Rotation // The rotation used when we have extra mana
 
@@ -63,22 +62,36 @@ type AdaptiveRotation struct {
 }
 
 func (rotation *AdaptiveRotation) DoAction(eleShaman *ElementalShaman, sim *core.Simulation) {
-	// If we have enough mana to burn, use the surplus rotation.
-	// if rotation.manaTracker.ProjectedManaSurplus(sim, eleShaman.GetCharacter()) {
-	// 	rotation.surplusRotation.DoAction(eleShaman, sim)
-	// } else {
-	// 	rotation.baseRotation.DoAction(eleShaman, sim)
-	// }
+	target := sim.GetTargetUnit(0)
 
-	// TODO: Elemental Shaman rotation goes here.
+	if eleShaman.CurrentManaPercent() < 0.9 && eleShaman.Thunderstorm.IsReady(sim) {
+		eleShaman.Thunderstorm.Cast(sim, target)
+		return
+	}
 
-	eleShaman.LightningBolt.Cast(sim, sim.GetTargetUnit(0))
+	// TODO: If lvb CD < FlameShockDot.Duration then we need to cast FS
+	fsUp := eleShaman.FlameShockDot.IsActive()
+	if !fsUp && eleShaman.FlameShock.IsReady(sim) {
+		if !eleShaman.FlameShock.Cast(sim, target) {
+			eleShaman.WaitForMana(sim, eleShaman.FlameShock.CurCast.Cost)
+		}
+		return
+	} else if fsUp && eleShaman.LavaBurst.IsReady(sim) {
+		if !eleShaman.LavaBurst.Cast(sim, target) {
+			eleShaman.WaitForMana(sim, eleShaman.LavaBurst.CurCast.Cost)
+		}
+		return
+	}
 
-	rotation.manaTracker.Update(sim, eleShaman.GetCharacter())
+	if !eleShaman.LightningBolt.Cast(sim, target) {
+		eleShaman.WaitForMana(sim, eleShaman.LightningBolt.CurCast.Cost)
+	}
+
+	// rotation.manaTracker.Update(sim, eleShaman.GetCharacter())
 }
 
 func (rotation *AdaptiveRotation) Reset(eleShaman *ElementalShaman, sim *core.Simulation) {
-	rotation.manaTracker.Reset()
+	// rotation.manaTracker.Reset()
 	// rotation.baseRotation.Reset(eleShaman, sim)
 	// rotation.surplusRotation.Reset(eleShaman, sim)
 }
@@ -97,8 +110,8 @@ func (rotation *AdaptiveRotation) GetPresimOptions() *core.PresimOptions {
 
 func NewAdaptiveRotation(talents *proto.ShamanTalents) *AdaptiveRotation {
 	return &AdaptiveRotation{
-		hasClearcasting: talents.ElementalFocus,
-		manaTracker:     common.NewManaSpendingRateTracker(),
+		// hasClearcasting: talents.ElementalFocus,
+		// manaTracker:     common.NewManaSpendingRateTracker(),
 	}
 }
 

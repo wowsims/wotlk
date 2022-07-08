@@ -43,11 +43,16 @@ func NewElementalShaman(character core.Character, options proto.Player) *Element
 		rotation = NewAdaptiveRotation(eleShamOptions.Talents)
 	}
 
-	return &ElementalShaman{
+	ele := &ElementalShaman{
 		Shaman:   shaman.NewShaman(character, *eleShamOptions.Talents, totems, selfBuffs),
 		rotation: rotation,
 		has4pT6:  shaman.ItemSetSkyshatterRegalia.CharacterHasSetBonus(&character, 4),
 	}
+	ele.ApplyFlametongueImbue(
+		ele.Consumes.MainHandImbue == proto.WeaponImbue_WeaponImbueShamanFlametongue,
+		ele.Consumes.OffHandImbue == proto.WeaponImbue_WeaponImbueShamanFlametongue)
+
+	return ele
 }
 
 type ElementalShaman struct {

@@ -68,13 +68,14 @@ func (shaman *Shaman) registerEarthShockSpell(shockTimer *core.Timer) {
 }
 
 func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
-	const spellID = 25457
-	config, effect := shaman.newShockSpellConfig(spellID, core.SpellSchoolFire, 500.0, shockTimer)
+	const flameshockID = 49233
+	config, effect := shaman.newShockSpellConfig(flameshockID, core.SpellSchoolFire, baseMana*0.17, shockTimer)
 
 	config.Cast.CD.Duration -= time.Duration(shaman.Talents.BoomingEchoes) * time.Second
 
-	effect.BaseDamage = core.BaseDamageConfigMagic(377, 377, 0.214)
-	effect.OutcomeApplier = shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier())
+	effect.BaseDamage = core.BaseDamageConfigMagic(500, 500, 0.214)
+	critMult := shaman.ElementalCritMultiplier()
+	effect.OutcomeApplier = shaman.OutcomeFuncMagicHitAndCrit(critMult)
 	if effect.OnSpellHitDealt == nil {
 		effect.OnSpellHitDealt = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Landed() {
@@ -99,15 +100,16 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 		Spell: shaman.FlameShock,
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "FlameShock-" + strconv.Itoa(int(shaman.Index)),
-			ActionID: core.ActionID{SpellID: spellID},
+			ActionID: core.ActionID{SpellID: flameshockID},
 		}),
-		NumberOfTicks: 4,
-		TickLength:    time.Second * 3,
+		NumberOfTicks:       4,
+		TickLength:          time.Second * 3,
+		AffectedByCastSpeed: true,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			DamageMultiplier: 1 * (1 + 0.01*float64(shaman.Talents.Concussion)) * (1.0 + float64(shaman.Talents.StormEarthAndFire)*0.2), // 20% bonus dmg per SE&F
 			ThreatMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(420/4, 0.1),
-			OutcomeApplier:   shaman.OutcomeFuncTick(),
+			BaseDamage:       core.BaseDamageConfigMagicNoRoll(834/6, 0.1),
+			OutcomeApplier:   shaman.OutcomeFuncMagicCrit(critMult),
 			IsPeriodic:       true,
 			ProcMask:         core.ProcMaskPeriodicDamage,
 		}),

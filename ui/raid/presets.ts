@@ -443,18 +443,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: ElementalShamanPresets.P1_PRESET.gear,
-				2: ElementalShamanPresets.P2_PRESET.gear,
-				3: ElementalShamanPresets.P3_PRESET.gear,
-				4: ElementalShamanPresets.P4_PRESET.gear,
-				5: ElementalShamanPresets.P5_ALLIANCE_PRESET.gear,
+				1: ElementalShamanPresets.PRE_RAID_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				1: ElementalShamanPresets.P1_PRESET.gear,
-				2: ElementalShamanPresets.P2_PRESET.gear,
-				3: ElementalShamanPresets.P3_PRESET.gear,
-				4: ElementalShamanPresets.P4_PRESET.gear,
-				5: ElementalShamanPresets.P5_HORDE_PRESET.gear,
+				1: ElementalShamanPresets.PRE_RAID_PRESET.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecElementalShaman],

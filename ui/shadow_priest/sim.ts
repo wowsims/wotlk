@@ -206,9 +206,7 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 			otherInputs: {
 				inputs: [
 					OtherInputs.ISBUptime,
-					OtherInputs.ShadowPriestDPS,
 					OtherInputs.PrepopPotion,
-
 					OtherInputs.TankAssignment,
 				],
 			},

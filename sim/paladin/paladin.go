@@ -123,14 +123,6 @@ func NewPaladin(character core.Character, talents proto.PaladinTalents) *Paladin
 
 	// Add paladin stat dependencies
 	paladin.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Intellect,
-		ModifiedStat: stats.SpellCrit,
-		Modifier: func(intellect float64, spellCrit float64) float64 {
-			return spellCrit + (intellect/80)*core.CritRatingPerCritChance
-		},
-	})
-
-	paladin.AddStatDependency(stats.StatDependency{
 		SourceStat:   stats.Strength,
 		ModifiedStat: stats.AttackPower,
 		Modifier: func(strength float64, attackPower float64) float64 {

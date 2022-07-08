@@ -472,7 +472,8 @@ type PseudoStats struct {
 	BonusRangedAttackPower float64 // Hunters mark, EW
 	BonusCritRating        float64 // Imp Judgement of the Crusader
 	BonusFrostCritRating   float64 // Winter's Chill
-	BonusMeleeHitRating    float64 // Imp FF
+	BonusMeleeHitRating    float64 //
+	BonusSpellHitRating    float64 // Imp FF
 
 	BonusDamageTaken         float64 // Blessing of Sanctuary
 	BonusPhysicalDamageTaken float64 // Hemo, Gift of Arthas, etc
