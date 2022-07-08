@@ -124,10 +124,11 @@ type Shaman struct {
 	SearingTotemDot *core.Dot
 	MagmaTotemDot   *core.Dot
 
-	ClearcastingAura     *core.Aura
-	ElementalMasteryAura *core.Aura
-	NaturesSwiftnessAura *core.Aura
-	MaelstromWeaponAura  *core.Aura
+	ClearcastingAura         *core.Aura
+	ElementalMasteryAura     *core.Aura
+	ElementalMasteryBuffAura *core.Aura
+	NaturesSwiftnessAura     *core.Aura
+	MaelstromWeaponAura      *core.Aura
 }
 
 // Implemented by each Shaman spec.
