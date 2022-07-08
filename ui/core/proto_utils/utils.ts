@@ -1603,5 +1603,9 @@ export const orderedResourceTypes: Array<ResourceType> = [
 	ResourceType.ResourceTypeRage,
 	ResourceType.ResourceTypeComboPoints,
 	ResourceType.ResourceTypeFocus,
-	ResourceType.ResourceTypeRuneSystem,
+	ResourceType.ResourceTypeRunicPower,
+	ResourceType.ResourceTypeBloodRune,
+	ResourceType.ResourceTypeFrostRune,
+	ResourceType.ResourceTypeUnholyRune,
+	ResourceType.ResourceTypeDeathRune,
 ];

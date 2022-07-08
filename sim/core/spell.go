@@ -57,7 +57,10 @@ type Spell struct {
 	ResourceType      stats.Stat
 	ResourceMetrics   *ResourceMetrics
 	comboPointMetrics *ResourceMetrics
-	runeSystemMetrics *ResourceMetrics
+	bloodRuneMetrics *ResourceMetrics
+	frostRuneMetrics *ResourceMetrics
+	unholyRuneMetrics *ResourceMetrics
+	deathRuneMetrics *ResourceMetrics
 
 	// Base cost. Many effects in the game which 'reduce mana cost by X%'
 	// are calculated using the base cost.
@@ -108,8 +111,8 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		spell.ResourceMetrics = spell.Unit.NewRageMetrics(spell.ActionID)
 	case stats.Energy:
 		spell.ResourceMetrics = spell.Unit.NewEnergyMetrics(spell.ActionID)
-	case stats.RuneSystem:
-		spell.ResourceMetrics = spell.Unit.NewRuneSystemMetrics(spell.ActionID)
+	case stats.:
+		spell.ResourceMetrics = spell.Unit.New(spell.ActionID)
 	}
 
 	spell.castFn = spell.makeCastFunc(config.Cast, spell.applyEffects)
@@ -175,11 +178,11 @@ func (spell *Spell) ComboPointMetrics() *ResourceMetrics {
 	return spell.comboPointMetrics
 }
 
-func (spell *Spell) RuneSystemMetrics() *ResourceMetrics {
-	if spell.runeSystemMetrics == nil {
-		spell.runeSystemMetrics = spell.Unit.NewRuneSystemMetrics(spell.ActionID)
+func (spell *Spell) RunicPowerMetrics() *ResourceMetrics {
+	if spell.runicPowerMetrics == nil {
+		spell.runicPowerMetrics = spell.Unit.NewRunicPowerMetrics(spell.ActionID)
 	}
-	return spell.runeSystemMetrics
+	return spell.runicPowerMetrics
 }
 
 func (spell *Spell) ReadyAt() time.Duration {

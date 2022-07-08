@@ -44,7 +44,11 @@ const (
 	Mana
 	Energy
 	Rage
-	RuneSystem
+	RunicPower
+	BloodRune
+	FrostRune
+	UnholyRune
+	DeathRune
 	Armor
 	RangedAttackPower
 	Defense
@@ -127,8 +131,16 @@ func (s Stat) StatName() string {
 		return "Energy"
 	case Rage:
 		return "Rage"
-	case RuneSystem:
-		return "Rune System"
+	case RunicPower:
+		return "Runic Power"
+	case BloodRune:
+		return "Blood Rune"
+	case FrostRune:
+		return "Frost Rune"
+	case UnholyRune:
+		return "Unholy Rune"
+	case DeathRune:
+		return "Death Rune"
 	case Armor:
 		return "Armor"
 	case RangedAttackPower:

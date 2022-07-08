@@ -74,7 +74,11 @@ type Unit struct {
 	healthBar
 	rageBar
 	energyBar
-	runicPowerBar
+	runicPowerBar  RunicPowerBar
+	bloodRunesBar  RuneBar
+	frostRunesBar  RuneBar
+	unholyRunesBar RuneBar
+	deathRunesBar  RuneBar
 
 	// All spells that can be cast by this unit.
 	Spellbook []*Spell
