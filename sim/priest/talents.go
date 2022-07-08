@@ -11,6 +11,10 @@ func (priest *Priest) ApplyTalents() {
 	priest.setupSurgeOfLight()
 	priest.registerInnerFocus()
 
+	if priest.Talents.Shadowform {
+		priest.PseudoStats.ShadowDamageDealtMultiplier *= 1.15
+	}
+
 	if priest.Talents.Meditation > 0 {
 		priest.PseudoStats.SpiritRegenRateCasting = float64(priest.Talents.Meditation) * 0.1
 	}

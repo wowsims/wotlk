@@ -59,12 +59,11 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:             core.ProcMaskPeriodicDamage,
 			BonusSpellCritRating: float64(priest.Talents.MindMelt) * 3 * core.CritRatingPerCritChance,
-			DamageMultiplier: (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01 + 0.05*float64(priest.Talents.ImprovedDevouringPlague)) *
-				core.TernaryFloat64(priest.Talents.Shadowform, 1.15, 1),
-			ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
-			IsPeriodic:       true,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(1376/8, 0.1849),
-			OutcomeApplier:   applier,
+			DamageMultiplier:     (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01 + 0.05*float64(priest.Talents.ImprovedDevouringPlague)),
+			ThreatMultiplier:     1 - 0.08*float64(priest.Talents.ShadowAffinity),
+			IsPeriodic:           true,
+			BaseDamage:           core.BaseDamageConfigMagicNoRoll(1376/8, 0.1849),
+			OutcomeApplier:       applier,
 		}),
 	})
 }
