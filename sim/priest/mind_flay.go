@@ -9,11 +9,11 @@ import (
 )
 
 func (priest *Priest) MindFlayActionID(numTicks int) core.ActionID {
-	return core.ActionID{SpellID: 25387, Tag: int32(numTicks)}
+	return core.ActionID{SpellID: 48156, Tag: int32(numTicks)}
 }
 
 func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
-	baseCost := 230.0
+	baseCost := priest.BaseMana() * 0.09
 	channelTime := time.Second * time.Duration(numTicks)
 
 	return priest.RegisterSpell(core.SpellConfig{
@@ -76,7 +76,7 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 				core.TernaryFloat64(ItemSetIncarnate.CharacterHasSetBonus(&priest.Character, 4), 1.05, 1),
 			ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 			IsPeriodic:       true,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(528/3, 0.19),
+			BaseDamage:       core.BaseDamageConfigMagicNoRoll(588/3, 0.257),
 			OutcomeApplier:   priest.OutcomeFuncTick(),
 			ProcMask:         core.ProcMaskPeriodicDamage,
 		}),
