@@ -128,7 +128,6 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
 					battleShout: TristateEffect.TristateEffectImproved,
 					snapshotBsSolarianSapphire: true,
-					sanctityAura: TristateEffect.TristateEffectImproved,
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
@@ -168,10 +167,8 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 				IconInputs.BattleShout,
 				IconInputs.CommandingShout,
 				IconInputs.HeroicPresence,
-				IconInputs.FerociousInspiration,
 				IconInputs.DevotionAura,
 				IconInputs.RetributionAura,
-				IconInputs.SanctityAura,
 				IconInputs.TrueshotAura,
 				IconInputs.BraidedEterniumChain,
 				IconInputs.BloodPact,

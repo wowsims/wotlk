@@ -1,7 +1,6 @@
 package hunter
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -13,7 +12,6 @@ func (hunter *Hunter) ApplyTalents() {
 	if hunter.pet != nil {
 		hunter.applyFocusedFire()
 		hunter.applyFrenzy()
-		hunter.applyFerociousInspiration()
 		hunter.registerBestialWrathCD()
 
 		hunter.pet.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*2*float64(hunter.Talents.Ferocity))
@@ -334,52 +332,6 @@ func (hunter *Hunter) applyFrenzy() {
 				return
 			}
 			if procChance == 1 || sim.RandomFloat("Frenzy") < procChance {
-				procAura.Activate(sim)
-			}
-		},
-	})
-}
-
-func (hunter *Hunter) applyFerociousInspiration() {
-	if hunter.pet == nil || hunter.Talents.FerociousInspiration == 0 {
-		return
-	}
-
-	multiplier := 1.0 + 0.01*float64(hunter.Talents.FerociousInspiration)
-
-	makeProcAura := func(character *core.Character) *core.Aura {
-		return character.RegisterAura(core.Aura{
-			Label:    "Ferocious Inspiration-" + strconv.Itoa(int(hunter.Index)),
-			ActionID: core.ActionID{SpellID: 34460, Tag: int32(hunter.Index)},
-			Duration: time.Second * 10,
-			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Unit.PseudoStats.DamageDealtMultiplier *= multiplier
-			},
-			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Unit.PseudoStats.DamageDealtMultiplier /= multiplier
-			},
-		})
-	}
-
-	var procAuras []*core.Aura
-	hunter.RegisterAura(core.Aura{
-		Label:    "Ferocious Inspiration",
-		Duration: core.NeverExpires,
-		OnInit: func(aura *core.Aura, sim *core.Simulation) {
-			procAuras = make([]*core.Aura, len(hunter.Party.PlayersAndPets))
-			for i, playerOrPet := range hunter.Party.PlayersAndPets {
-				procAuras[i] = makeProcAura(playerOrPet.GetCharacter())
-			}
-		},
-		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Activate(sim)
-		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
-				return
-			}
-
-			for _, procAura := range procAuras {
 				procAura.Activate(sim)
 			}
 		},

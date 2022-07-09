@@ -48,9 +48,8 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		})
 	}
 
-	if partyBuffs.FerociousInspiration > 0 {
-		multiplier := math.Pow(1.03, float64(partyBuffs.FerociousInspiration))
-		character.PseudoStats.DamageDealtMultiplier *= multiplier
+	if raidBuffs.ArcaneEmpowerment || raidBuffs.FerociousInspiration || raidBuffs.SanctifiedRetribution {
+		character.PseudoStats.DamageDealtMultiplier *= 1.03
 	}
 
 	if partyBuffs.HeroicPresence {
@@ -134,11 +133,6 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		RetributionAura(character, 2)
 	} else if partyBuffs.RetributionAura == proto.TristateEffect_TristateEffectRegular {
 		RetributionAura(character, 0)
-	}
-	if partyBuffs.SanctityAura == proto.TristateEffect_TristateEffectImproved {
-		SanctityAura(character, 2)
-	} else if partyBuffs.SanctityAura == proto.TristateEffect_TristateEffectRegular {
-		SanctityAura(character, 0)
 	}
 
 	if partyBuffs.BattleShout != proto.TristateEffect_TristateEffectMissing {
@@ -336,25 +330,6 @@ func SnapshotBattleShoutAura(character *Character, snapshotAp float64, boomingVo
 		config.OnReset = func(aura *Aura, sim *Simulation) {
 			aura.Activate(sim)
 		}
-	})
-}
-
-func SanctityAura(character *Character, level float64) *Aura {
-	return character.GetOrRegisterAura(Aura{
-		Label:    "Sanctity Aura",
-		ActionID: ActionID{SpellID: 31870},
-		Duration: NeverExpires,
-		OnReset: func(aura *Aura, sim *Simulation) {
-			aura.Activate(sim)
-		},
-		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.HolyDamageDealtMultiplier *= 1.1
-			aura.Unit.PseudoStats.DamageDealtMultiplier *= 1 + 0.01*level
-		},
-		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.HolyDamageDealtMultiplier /= 1.1
-			aura.Unit.PseudoStats.DamageDealtMultiplier /= 1 + 0.01*level
-		},
 	})
 }
 

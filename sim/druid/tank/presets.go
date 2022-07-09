@@ -56,7 +56,6 @@ var FullPartyBuffs = &proto.PartyBuffs{
 	BraidedEterniumChain:       true,
 	StrengthOfEarthTotem:       proto.TristateEffect_TristateEffectImproved,
 	SnapshotBsSolarianSapphire: true,
-	SanctityAura:               proto.TristateEffect_TristateEffectImproved,
 }
 var FullIndividualBuffs = &proto.IndividualBuffs{
 	BlessingOfKings: true,
@@ -82,7 +81,7 @@ var FullDebuffs = &proto.Debuffs{
 	ExposeArmor:                 proto.TristateEffect_TristateEffectImproved,
 	FaerieFire:                  proto.TristateEffect_TristateEffectImproved,
 	SunderArmor:                 true,
-	CurseOfWeakness:       		 true,
+	CurseOfWeakness:             true,
 	HuntersMark:                 proto.TristateEffect_TristateEffectImproved,
 	ExposeWeaknessUptime:        1.0,
 	ExposeWeaknessHunterAgility: 1000,
