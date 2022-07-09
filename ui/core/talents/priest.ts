@@ -9,7 +9,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
         backgroundUrl: "https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/201.jpg",
         talents: [
             {
-              //fieldName: "unbreakableWill",
+                fieldName: "unbreakableWill",
                 location: {
                     rowIdx: 0,
                     colIdx: 1
@@ -24,7 +24,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 5
             },
             {
-              //fieldName: "twinDisciplines",
+                fieldName: "twinDisciplines",
                 location: {
                     rowIdx: 0,
                     colIdx: 2
@@ -39,7 +39,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 5
             },
             {
-                //fieldName: "silentResolve",
+                fieldName: "silentResolve",
                 location: {
                     rowIdx: 1,
                     colIdx: 0
@@ -52,7 +52,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 3
             },
             {
-               // //fieldName: "improvedInnerFire",
+                fieldName: "improvedInnerFire",
                 location: {
                     rowIdx: 1,
                     colIdx: 1
@@ -65,7 +65,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 3
             },
             {
-                //fieldName: "improvedPowerWordFortitude",
+                fieldName: "improvedPowerWordFortitude",
                 location: {
                     rowIdx: 1,
                     colIdx: 2
@@ -77,7 +77,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 2
             },
             {
-              //  //fieldName: "martyrdom",
+                fieldName: "martyrdom",
                 location: {
                     rowIdx: 1,
                     colIdx: 3
@@ -89,7 +89,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 2
             },
             {
-                //fieldName: "meditation",
+                fieldName: "meditation",
                 location: {
                     rowIdx: 2,
                     colIdx: 0
@@ -102,7 +102,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 3
             },
             {
-                //fieldName: "innerFocus",
+                fieldName: "innerFocus",
                 location: {
                     rowIdx: 2,
                     colIdx: 1
@@ -113,7 +113,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 1
             },
             {
-              //  //fieldName: "improvedPowerWordShield",
+                fieldName: "improvedPowerWordShield",
                 location: {
                     rowIdx: 2,
                     colIdx: 2
@@ -126,7 +126,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 3
             },
             {
-              //  //fieldName: "absolution",
+                fieldName: "absolution",
                 location: {
                     rowIdx: 3,
                     colIdx: 0
@@ -139,7 +139,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 3
             },
             {
-                //fieldName: "mentalAgility",
+                fieldName: "mentalAgility",
                 location: {
                     rowIdx: 3,
                     colIdx: 1
@@ -152,7 +152,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 3
             },
             {
-              //  //fieldName: "improvedManaBurn",
+                fieldName: "improvedManaBurn",
                 location: {
                     rowIdx: 3,
                     colIdx: 3
@@ -164,7 +164,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 2
             },
             {
-              //  //fieldName: "reflectiveShield",
+                fieldName: "reflectiveShield",
                 location: {
                     rowIdx: 4,
                     colIdx: 0
@@ -176,7 +176,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 2
             },
             {
-                //fieldName: "mentalStrength",
+                fieldName: "mentalStrength",
                 location: {
                     rowIdx: 4,
                     colIdx: 1
@@ -191,7 +191,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 5
             },
             {
-               // //fieldName: "soulWarding",
+                fieldName: "soulWarding",
                 location: {
                     rowIdx: 4,
                     colIdx: 2
@@ -206,7 +206,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 }
             },
             {
-                //fieldName: "focusedPower",
+                fieldName: "focusedPower",
                 location: {
                     rowIdx: 5,
                     colIdx: 0
@@ -218,7 +218,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 2
             },
             {
-                //fieldName: "enlightenment",
+                fieldName: "enlightenment",
                 location: {
                     rowIdx: 5,
                     colIdx: 2
@@ -231,7 +231,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 3
             },
             {
-               // //fieldName: "focusedWill",
+                fieldName: "focusedWill",
                 location: {
                     rowIdx: 6,
                     colIdx: 0
@@ -244,7 +244,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 3
             },
             {
-                //fieldName: "powerInfusion",
+                fieldName: "powerInfusion",
                 location: {
                     rowIdx: 6,
                     colIdx: 1
@@ -259,7 +259,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 }
             },
             {
-               // //fieldName: "improvedFlashHeal",
+                fieldName: "improvedFlashHeal",
                 location: {
                     rowIdx: 6,
                     colIdx: 2
@@ -272,7 +272,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 3
             },
             {
-               // //fieldName: "renewedHope",
+                fieldName: "renewedHope",
                 location: {
                     rowIdx: 7,
                     colIdx: 0
@@ -284,7 +284,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 2
             },
             {
-               // //fieldName: "rapture",
+                fieldName: "rapture",
                 location: {
                     rowIdx: 7,
                     colIdx: 1
@@ -297,7 +297,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 3
             },
             {
-              //  //fieldName: "aspiration",
+                fieldName: "aspiration",
                 location: {
                     rowIdx: 7,
                     colIdx: 2
@@ -309,7 +309,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 2
             },
             {
-              //  //fieldName: "divineAegis",
+                fieldName: "divineAegis",
                 location: {
                     rowIdx: 8,
                     colIdx: 0
@@ -322,7 +322,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 3
             },
             {
-              //  //fieldName: "painSuppression",
+                fieldName: "painSuppression",
                 location: {
                     rowIdx: 8,
                     colIdx: 1
@@ -333,7 +333,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 1
             },
             {
-              //  //fieldName: "grace",
+                fieldName: "grace",
                 location: {
                     rowIdx: 8,
                     colIdx: 2
@@ -345,7 +345,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 2
             },
             {
-             //   //fieldName: "borrowedTime",
+                fieldName: "borrowedTime",
                 location: {
                     rowIdx: 9,
                     colIdx: 1
@@ -360,7 +360,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 5
             },
             {
-              //  //fieldName: "penance",
+                fieldName: "penance",
                 location: {
                     rowIdx: 10,
                     colIdx: 1
@@ -377,7 +377,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
         backgroundUrl: "https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/202.jpg",
         talents: [
             {
-               // //fieldName: "healingFocus",
+                fieldName: "healingFocus",
                 location: {
                     rowIdx: 0,
                     colIdx: 0
@@ -389,7 +389,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 2
             },
             {
-              //  //fieldName: "improvedRenew",
+                fieldName: "improvedRenew",
                 location: {
                     rowIdx: 0,
                     colIdx: 1
@@ -402,7 +402,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 3
             },
             {
-                //fieldName: "holySpecialization",
+                fieldName: "holySpecialization",
                 location: {
                     rowIdx: 0,
                     colIdx: 2
@@ -417,7 +417,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 5
             },
             {
-             //   //fieldName: "spellWarding",
+                fieldName: "spellWarding",
                 location: {
                     rowIdx: 1,
                     colIdx: 1
@@ -432,7 +432,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 5
             },
             {
-                //fieldName: "divineFury",
+                fieldName: "divineFury",
                 location: {
                     rowIdx: 1,
                     colIdx: 2
@@ -447,7 +447,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 5
             },
             {
-              //  //fieldName: "desperatePrayer",
+                fieldName: "desperatePrayer",
                 location: {
                     rowIdx: 2,
                     colIdx: 0
@@ -458,7 +458,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 1
             },
             {
-              //  //fieldName: "blessedRecovery",
+                fieldName: "blessedRecovery",
                 location: {
                     rowIdx: 2,
                     colIdx: 1
@@ -471,7 +471,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 3
             },
             {
-              //  //fieldName: "inspiration",
+                fieldName: "inspiration",
                 location: {
                     rowIdx: 2,
                     colIdx: 3
@@ -484,7 +484,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 3
             },
             {
-              //  //fieldName: "holyReach",
+                fieldName: "holyReach",
                 location: {
                     rowIdx: 3,
                     colIdx: 0
@@ -496,7 +496,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 2
             },
             {
-             //   //fieldName: "improvedHealing",
+                fieldName: "improvedHealing",
                 location: {
                     rowIdx: 3,
                     colIdx: 1
@@ -509,7 +509,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 3
             },
             {
-                //fieldName: "searingLight",
+                fieldName: "searingLight",
                 location: {
                     rowIdx: 3,
                     colIdx: 2
@@ -525,7 +525,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 }
             },
             {
-              //  //fieldName: "healingPrayers",
+                fieldName: "healingPrayers",
                 location: {
                     rowIdx: 4,
                     colIdx: 0
@@ -537,7 +537,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 2
             },
             {
-                //fieldName: "spiritOfRedemption",
+                fieldName: "spiritOfRedemption",
                 location: {
                     rowIdx: 4,
                     colIdx: 1
@@ -548,7 +548,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 1
             },
             {
-                //fieldName: "spiritualGuidance",
+                fieldName: "spiritualGuidance",
                 location: {
                     rowIdx: 4,
                     colIdx: 2
@@ -563,7 +563,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 5
             },
             {
-                //fieldName: "surgeOfLight",
+                fieldName: "surgeOfLight",
                 location: {
                     rowIdx: 5,
                     colIdx: 0
@@ -575,7 +575,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 2
             },
             {
-             //   //fieldName: "spiritualHealing",
+                fieldName: "spiritualHealing",
                 location: {
                     rowIdx: 5,
                     colIdx: 2
@@ -590,7 +590,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 5
             },
             {
-              //  //fieldName: "holyConcentration",
+                fieldName: "holyConcentration",
                 location: {
                     rowIdx: 6,
                     colIdx: 0
@@ -603,7 +603,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 3
             },
             {
-              //  //fieldName: "lightwell",
+                fieldName: "lightwell",
                 location: {
                     rowIdx: 6,
                     colIdx: 1
@@ -618,7 +618,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 }
             },
             {
-              //  //fieldName: "blessedResilience",
+                fieldName: "blessedResilience",
                 location: {
                     rowIdx: 6,
                     colIdx: 2
@@ -631,7 +631,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 3
             },
             {
-              //  //fieldName: "bodyAndSoul",
+                fieldName: "bodyAndSoul",
                 location: {
                     rowIdx: 7,
                     colIdx: 0
@@ -643,7 +643,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 2
             },
             {
-              //  //fieldName: "empoweredHealing",
+                fieldName: "empoweredHealing",
                 location: {
                     rowIdx: 7,
                     colIdx: 1
@@ -658,7 +658,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 5
             },
             {
-               // //fieldName: "serendipity",
+                fieldName: "serendipity",
                 location: {
                     rowIdx: 7,
                     colIdx: 2
@@ -671,7 +671,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 3
             },
             {
-              //  //fieldName: "empoweredRenew",
+                fieldName: "empoweredRenew",
                 location: {
                     rowIdx: 8,
                     colIdx: 0
@@ -684,7 +684,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 3
             },
             {
-              //  //fieldName: "circleOfHealing",
+                fieldName: "circleOfHealing",
                 location: {
                     rowIdx: 8,
                     colIdx: 1
@@ -695,7 +695,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 1
             },
             {
-              //  //fieldName: "testOfFaith",
+                fieldName: "testOfFaith",
                 location: {
                     rowIdx: 8,
                     colIdx: 2
@@ -708,7 +708,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 3
             },
             {
-               // //fieldName: "divineProvidence",
+                fieldName: "divineProvidence",
                 location: {
                     rowIdx: 9,
                     colIdx: 1
@@ -723,7 +723,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 5
             },
             {
-              //  //fieldName: "guardianSpirit",
+                fieldName: "guardianSpirit",
                 location: {
                     rowIdx: 10,
                     colIdx: 1
@@ -740,7 +740,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
         backgroundUrl: "https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/203.jpg",
         talents: [
             {
-               // //fieldName: "spiritTap",
+                fieldName: "spiritTap",
                 location: {
                     rowIdx: 0,
                     colIdx: 0
@@ -753,7 +753,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 3
             },
             {
-              //  //fieldName: "improvedSpiritTap",
+                fieldName: "improvedSpiritTap",
                 location: {
                     rowIdx: 0,
                     colIdx: 1
@@ -769,7 +769,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 }
             },
             {
-                //fieldName: "darkness",
+                fieldName: "darkness",
                 location: {
                     rowIdx: 0,
                     colIdx: 2
@@ -784,7 +784,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 5
             },
             {
-                //fieldName: "shadowAffinity",
+                fieldName: "shadowAffinity",
                 location: {
                     rowIdx: 1,
                     colIdx: 0
@@ -797,7 +797,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 3
             },
             {
-                //fieldName: "improvedShadowWordPain",
+                fieldName: "improvedShadowWordPain",
                 location: {
                     rowIdx: 1,
                     colIdx: 1
@@ -809,7 +809,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 2
             },
             {
-                //fieldName: "shadowFocus",
+                fieldName: "shadowFocus",
                 location: {
                     rowIdx: 1,
                     colIdx: 2
@@ -822,7 +822,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 3
             },
             {
-               // //fieldName: "improvedPsychicScream",
+                fieldName: "improvedPsychicScream",
                 location: {
                     rowIdx: 2,
                     colIdx: 0
@@ -834,7 +834,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 2
             },
             {
-                //fieldName: "improvedMindBlast",
+                fieldName: "improvedMindBlast",
                 location: {
                     rowIdx: 2,
                     colIdx: 1
@@ -849,7 +849,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 5
             },
             {
-                //fieldName: "mindFlay",
+                fieldName: "mindFlay",
                 location: {
                     rowIdx: 2,
                     colIdx: 2
@@ -860,7 +860,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 1
             },
             {
-                // //fieldName: "veiledShadows",
+                fieldName: "veiledShadows",
                 location: {
                     rowIdx: 3,
                     colIdx: 1
@@ -872,7 +872,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 2
             },
             {
-              //  //fieldName: "shadowReach",
+                fieldName: "shadowReach",
                 location: {
                     rowIdx: 3,
                     colIdx: 2
@@ -884,7 +884,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 2
             },
             {
-                //fieldName: "shadowWeaving",
+                fieldName: "shadowWeaving",
                 location: {
                     rowIdx: 3,
                     colIdx: 3
@@ -897,7 +897,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 3
             },
             {
-               // //fieldName: "silence",
+                fieldName: "silence",
                 location: {
                     rowIdx: 4,
                     colIdx: 0
@@ -912,7 +912,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 }
             },
             {
-                //fieldName: "vampiricEmbrace",
+                fieldName: "vampiricEmbrace",
                 location: {
                     rowIdx: 4,
                     colIdx: 1
@@ -923,7 +923,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 1
             },
             {
-                //fieldName: "improvedVampiricEmbrace",
+                fieldName: "improvedVampiricEmbrace",
                 location: {
                     rowIdx: 4,
                     colIdx: 2
@@ -939,7 +939,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 }
             },
             {
-                //fieldName: "focusedMind",
+                fieldName: "focusedMind",
                 location: {
                     rowIdx: 4,
                     colIdx: 3
@@ -952,7 +952,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 3
             },
             {
-               // //fieldName: "mindMelt",
+                fieldName: "mindMelt",
                 location: {
                     rowIdx: 5,
                     colIdx: 0
@@ -964,7 +964,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 2
             },
             {
-               // //fieldName: "improvedDevouringPlague",
+                fieldName: "improvedDevouringPlague",
                 location: {
                     rowIdx: 5,
                     colIdx: 2
@@ -977,7 +977,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 3
             },
             {
-                //fieldName: "shadowform",
+                fieldName: "shadowform",
                 location: {
                     rowIdx: 6,
                     colIdx: 1
@@ -992,7 +992,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 }
             },
             {
-                //fieldName: "shadowPower",
+                fieldName: "shadowPower",
                 location: {
                     rowIdx: 6,
                     colIdx: 2
@@ -1007,7 +1007,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 5
             },
             {
-               // //fieldName: "improvedShadowform",
+                fieldName: "improvedShadowform",
                 location: {
                     rowIdx: 7,
                     colIdx: 0
@@ -1023,7 +1023,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 }
             },
             {
-                //fieldName: "misery",
+                fieldName: "misery",
                 location: {
                     rowIdx: 7,
                     colIdx: 2
@@ -1036,7 +1036,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 3
             },
             {
-               // //fieldName: "psychicHorror",
+                fieldName: "psychicHorror",
                 location: {
                     rowIdx: 8,
                     colIdx: 0
@@ -1047,7 +1047,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 1
             },
             {
-                //fieldName: "vampiricTouch",
+                fieldName: "vampiricTouch",
                 location: {
                     rowIdx: 8,
                     colIdx: 1
@@ -1062,7 +1062,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 }
             },
             {
-                ////fieldName: "painAndSuffering",
+                fieldName: "painAndSuffering",
                 location: {
                     rowIdx: 8,
                     colIdx: 2
@@ -1075,7 +1075,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 3
             },
             {
-               // //fieldName: "twistedFaith",
+                fieldName: "twistedFaith",
                 location: {
                     rowIdx: 9,
                     colIdx: 2
@@ -1090,7 +1090,7 @@ export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfi
                 maxPoints: 5
             },
             {
-              //  //fieldName: "dispersion",
+                fieldName: "dispersion",
                 location: {
                     rowIdx: 10,
                     colIdx: 1
