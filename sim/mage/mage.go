@@ -171,14 +171,6 @@ func NewMage(character core.Character, options proto.Player) *Mage {
 	}
 
 	mage.Character.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Intellect,
-		ModifiedStat: stats.SpellCrit,
-		Modifier: func(intellect float64, spellCrit float64) float64 {
-			return spellCrit + (intellect/81)*core.CritRatingPerCritChance
-		},
-	})
-
-	mage.Character.AddStatDependency(stats.StatDependency{
 		SourceStat:   stats.Strength,
 		ModifiedStat: stats.AttackPower,
 		Modifier: func(strength float64, attackPower float64) float64 {

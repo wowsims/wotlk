@@ -1,4 +1,4 @@
-import { RaidBuffs, StrengthOfEarthType } from '/wotlk/core/proto/common.js';
+import { RaidBuffs } from '/wotlk/core/proto/common.js';
 import { PartyBuffs } from '/wotlk/core/proto/common.js';
 import { IndividualBuffs } from '/wotlk/core/proto/common.js';
 import { Class } from '/wotlk/core/proto/common.js';
@@ -127,10 +127,8 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 				partyBuffs: PartyBuffs.create({
 					bloodlust: 1,
 					drums: Drums.DrumsOfBattle,
-					graceOfAirTotem: TristateEffect.TristateEffectImproved,
-					strengthOfEarthTotem: StrengthOfEarthType.EnhancingTotems,
-					windfuryTotemRank: 5,
-					windfuryTotemIwt: 2,
+					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
+					windfuryTotem: TristateEffect.TristateEffectImproved,
 					leaderOfThePack: TristateEffect.TristateEffectImproved,
 				}),
 				individualBuffs: IndividualBuffs.create({
@@ -140,7 +138,7 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 				}),
 				debuffs: Debuffs.create({
 					mangle: true,
-					curseOfRecklessness: true,
+					curseOfWeakness: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					improvedSealOfTheCrusader: true,
 					huntersMark: TristateEffect.TristateEffectImproved,
@@ -165,7 +163,7 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 				IconInputs.DrumsOfBattleBuff,
 				IconInputs.Bloodlust,
 				IconInputs.StrengthOfEarthTotem,
-				IconInputs.GraceOfAirTotem,
+
 				IconInputs.WindfuryTotem,
 				IconInputs.BattleShout,
 				IconInputs.CommandingShout,
@@ -197,7 +195,7 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 				IconInputs.FaerieFire,
 				IconInputs.SunderArmor,
 				IconInputs.ExposeArmor,
-				IconInputs.CurseOfRecklessness,
+				IconInputs.CurseOfWeakness,
 				IconInputs.GiftOfArthas,
 				IconInputs.DemoralizingRoar,
 				IconInputs.DemoralizingShout,
@@ -273,7 +271,6 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 					OtherInputs.ExposeWeaknessUptime,
 					OtherInputs.ExposeWeaknessHunterAgility,
 					OtherInputs.InspirationUptime,
-					OtherInputs.SnapshotImprovedStrengthOfEarthTotem,
 					OtherInputs.InFrontOfTarget,
 				],
 			},

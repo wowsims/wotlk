@@ -39,7 +39,7 @@ import {
 
 // Raid Buffs
 export const ArcaneBrilliance = makeBooleanRaidBuffInput(ActionId.fromSpellId(27127), 'arcaneBrilliance');
-export const DivineSpirit = makeTristateRaidBuffInput(ActionId.fromSpellId(25312), ActionId.fromSpellId(33182), 'divineSpirit', ['Spirit']);
+export const DivineSpirit = makeBooleanRaidBuffInput(ActionId.fromSpellId(48073), 'divineSpirit');
 export const GiftOfTheWild = makeTristateRaidBuffInput(ActionId.fromSpellId(26991), ActionId.fromSpellId(17055), 'giftOfTheWild');
 export const Thorns = makeTristateRaidBuffInput(ActionId.fromSpellId(26992), ActionId.fromSpellId(16840), 'thorns');
 export const PowerWordFortitude = makeTristateRaidBuffInput(ActionId.fromSpellId(25389), ActionId.fromSpellId(14767), 'powerWordFortitude');
@@ -63,9 +63,9 @@ export const ManaTideTotem = makeMultistatePartyBuffInput(ActionId.fromSpellId(1
 export const MoonkinAura = makeTristatePartyBuffInput(ActionId.fromSpellId(24907), ActionId.fromItemId(32387), 'moonkinAura');
 export const RetributionAura = makeTristatePartyBuffInput(ActionId.fromSpellId(27150), ActionId.fromSpellId(20092), 'retributionAura');
 export const SanctityAura = makeTristatePartyBuffInput(ActionId.fromSpellId(20218), ActionId.fromSpellId(31870), 'sanctityAura');
-export const TotemOfWrath = makeMultistatePartyBuffInput(ActionId.fromSpellId(30706), 5, 'totemOfWrath');
+export const TotemOfWrath = makeBooleanPartyBuffInput(ActionId.fromSpellId(30706), 'totemOfWrath');
 export const TrueshotAura = makeBooleanPartyBuffInput(ActionId.fromSpellId(27066), 'trueshotAura');
-export const WrathOfAirTotem = makeTristatePartyBuffInput(ActionId.fromSpellId(3738), ActionId.fromSpellId(37212), 'wrathOfAirTotem');
+export const WrathOfAirTotem = makeBooleanPartyBuffInput(ActionId.fromSpellId(3738), 'wrathOfAirTotem');
 export const BloodPact = makeTristatePartyBuffInput(ActionId.fromSpellId(27268), ActionId.fromSpellId(18696), 'bloodPact');
 
 export const DrumsOfBattleBuff = makeEnumValuePartyBuffInput(ActionId.fromItemId(185848), 'drums', Drums.DrumsOfBattle, ['Drums']);
@@ -80,6 +80,7 @@ export const BlessingOfWisdom = makeTristateIndividualBuffInput(ActionId.fromSpe
 export const Innervate = makeMultistateIndividualBuffInput(ActionId.fromSpellId(29166), 11, 'innervates');
 export const PowerInfusion = makeMultistateIndividualBuffInput(ActionId.fromSpellId(10060), 11, 'powerInfusions');
 export const UnleashedRage = makeBooleanIndividualBuffInput(ActionId.fromSpellId(30811), 'unleashedRage');
+export const Replenishment = makeBooleanIndividualBuffInput(ActionId.fromSpellId(57669), 'replenishment');
 
 // Debuffs
 export const BloodFrenzy = makeBooleanDebuffInput(ActionId.fromSpellId(29859), 'bloodFrenzy');
@@ -89,11 +90,11 @@ export const ImprovedSealOfTheCrusader = makeBooleanDebuffInput(ActionId.fromSpe
 export const JudgementOfWisdom = makeBooleanDebuffInput(ActionId.fromSpellId(27164), 'judgementOfWisdom');
 export const JudgementOfLight = makeBooleanDebuffInput(ActionId.fromSpellId(27163), 'judgementOfLight');
 export const Mangle = makeBooleanDebuffInput(ActionId.fromSpellId(33876), 'mangle');
-export const Misery = makeBooleanDebuffInput(ActionId.fromSpellId(33195), 'misery');
+export const Misery = makeBooleanDebuffInput(ActionId.fromSpellId(33198), 'misery');
 export const ShadowWeaving = makeBooleanDebuffInput(ActionId.fromSpellId(15334), 'shadowWeaving');
 export const CurseOfElements = makeTristateDebuffInput(ActionId.fromSpellId(27228), ActionId.fromSpellId(32484), 'curseOfElements');
-export const CurseOfRecklessness = makeBooleanDebuffInput(ActionId.fromSpellId(27226), 'curseOfRecklessness');
-export const FaerieFire = makeTristateDebuffInput(ActionId.fromSpellId(26993), ActionId.fromSpellId(33602), 'faerieFire');
+export const CurseOfWeakness = makeBooleanDebuffInput(ActionId.fromSpellId(27226), 'curseOfWeakness');
+export const FaerieFire = makeTristateDebuffInput(ActionId.fromSpellId(770), ActionId.fromSpellId(33602), 'faerieFire');
 export const ExposeArmor = makeTristateDebuffInput(ActionId.fromSpellId(26866), ActionId.fromSpellId(14169), 'exposeArmor');
 export const SunderArmor = makeBooleanDebuffInput(ActionId.fromSpellId(25225), 'sunderArmor');
 export const WintersChill = makeBooleanDebuffInput(ActionId.fromSpellId(28595), 'wintersChill');
@@ -330,30 +331,15 @@ function makeEnumValueConsumeInput(id: ActionId, consumesFieldName: keyof Consum
 // Custom buffs that don't fit into any of the helper functions above.
 //////////////////////////////////////////////////////////////////////
 
-export const GraceOfAirTotem = {
-	id: ActionId.fromSpellId(25359),
-	states: 3,
-	improvedId: ActionId.fromSpellId(16295),
-	changedEvent: (party: Party) => party.buffsChangeEmitter,
-	getValue: (party: Party) => party.getBuffs().graceOfAirTotem,
-	setValue: (eventID: EventID, party: Party, newValue: number) => {
-		const newBuffs = party.getBuffs();
-		newBuffs.graceOfAirTotem = newValue;
-		party.setBuffs(eventID, newBuffs);
-	},
-};
-
 export const StrengthOfEarthTotem = {
 	id: ActionId.fromSpellId(25528),
-	states: 4,
-	improvedId: ActionId.fromSpellId(16295),
-	improvedId2: ActionId.fromSpellId(37223),
+	states: 3,
+	improvedId: ActionId.fromSpellId(52456),
 	changedEvent: (party: Party) => party.buffsChangeEmitter,
-	getValue: (party: Party) => party.getBuffs().strengthOfEarthTotem > 2 ? party.getBuffs().strengthOfEarthTotem - 1 : party.getBuffs().strengthOfEarthTotem,
+	getValue: (party: Party) => party.getBuffs().strengthOfEarthTotem,
 	setValue: (eventID: EventID, party: Party, newValue: number) => {
 		const newBuffs = party.getBuffs();
-		// Skip cyclone-only value.
-		newBuffs.strengthOfEarthTotem = newValue > 1 ? newValue + 1 : newValue;
+		newBuffs.strengthOfEarthTotem = newValue;
 		party.setBuffs(eventID, newBuffs);
 	},
 };
@@ -363,31 +349,10 @@ export const WindfuryTotem = {
 	states: 3,
 	improvedId: ActionId.fromSpellId(29193),
 	changedEvent: (party: Party) => party.buffsChangeEmitter,
-	getValue: (party: Party) => {
-		const buffs = party.getBuffs();
-		if (buffs.windfuryTotemRank == 0) {
-			return 0;
-		}
-
-		if (buffs.windfuryTotemIwt > 0) {
-			return 2;
-		} else {
-			return 1;
-		}
-	},
+	getValue: (party: Party) => party.getBuffs().windfuryTotem,
 	setValue: (eventID: EventID, party: Party, newValue: number) => {
 		const newBuffs = party.getBuffs();
-		if (newValue == 0) {
-			newBuffs.windfuryTotemRank = 0;
-			newBuffs.windfuryTotemIwt = 0;
-		} else {
-			newBuffs.windfuryTotemRank = 5;
-			if (newValue == 2) {
-				newBuffs.windfuryTotemIwt = 2;
-			} else {
-				newBuffs.windfuryTotemIwt = 0;
-			}
-		}
+		newBuffs.windfuryTotem = newValue;
 		party.setBuffs(eventID, newBuffs);
 	},
 };
@@ -598,14 +563,14 @@ export function makeWeaponImbueInput(isMainHand: boolean, options: Array<WeaponI
 		{ actionId: ActionId.fromSpellId(27186), value: WeaponImbue.WeaponImbueRogueDeadlyPoison },
 		{ actionId: ActionId.fromSpellId(26891), value: WeaponImbue.WeaponImbueRogueInstantPoison },
 		{ actionId: ActionId.fromSpellId(25505), value: WeaponImbue.WeaponImbueShamanWindfury },
-		{ actionId: ActionId.fromSpellId(25489), value: WeaponImbue.WeaponImbueShamanFlametongue },
+		{ actionId: ActionId.fromSpellId(58790), value: WeaponImbue.WeaponImbueShamanFlametongue },
 		{ actionId: ActionId.fromSpellId(25500), value: WeaponImbue.WeaponImbueShamanFrostbrand },
 		{ actionId: ActionId.fromSpellId(25485), value: WeaponImbue.WeaponImbueShamanRockbiter },
 	];
 	if (isMainHand) {
 		const config = makeConsumeInputFactory('mainHandImbue', allOptions)(options);
 		config.enableWhen = (player: Player<any>) => !player.getParty()
-			|| player.getParty()!.getBuffs().windfuryTotemRank == 0
+			|| player.getParty()!.getBuffs().windfuryTotem == 0
 			|| (player.spec == Spec.SpecHunter && (player.getRotation() as HunterRotation).weave == WeaveType.WeaveNone);
 		config.changedEvent = (player: Player<any>) => TypedEvent.onAny([player.getRaid()?.changeEmitter || player.consumesChangeEmitter]);
 		return config;

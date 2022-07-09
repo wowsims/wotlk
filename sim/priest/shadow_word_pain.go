@@ -9,8 +9,8 @@ import (
 )
 
 func (priest *Priest) registerShadowWordPainSpell() {
-	actionID := core.ActionID{SpellID: 25368}
-	baseCost := 575.0
+	actionID := core.ActionID{SpellID: 48125}
+	baseCost := priest.BaseMana() * 0.22
 
 	priest.ShadowWordPain = priest.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,

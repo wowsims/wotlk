@@ -253,7 +253,6 @@ message Warrior {
 	message Options {
 		double starting_rage = 1;
 		bool use_recklessness = 2;
-
 		WarriorShout shout = 3;
 		bool precast_shout = 4;
 		bool precast_shout_t2 = 5;

@@ -13,29 +13,28 @@ func (warlock *Warlock) registerShadowboltSpell() {
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
 		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 0, 1) * 5 * core.CritRatingPerCritChance,
-		DamageMultiplier:     1 * core.TernaryFloat64(has4pMal, 1.06, 1.0) * (1 + 0.02*float64(warlock.Talents.ShadowMastery)),
-		ThreatMultiplier:     1 - 0.05*float64(warlock.Talents.DestructiveReach),
-		BaseDamage:           core.BaseDamageConfigMagic(544.0, 607.0, 0.857+0.04*float64(warlock.Talents.ShadowAndFlame)),
-		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
+		DamageMultiplier:     1 * core.TernaryFloat64(has4pMal, 1.06, 1.0) * (1 + 0.02*float64(warlock.Talents.ShadowMastery)) * (1 + 0.02*float64(warlock.Talents.ImprovedShadowBolt)),
+		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.DestructiveReach),
+		BaseDamage:           core.BaseDamageConfigMagic(694.0, 775.0, 0.857+0.04*float64(warlock.Talents.ShadowAndFlame)),
+		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin) / 5)),
 	}
-	// Don't add ISB debuff aura if the target is initialized with the 'estimated ISB uptime' debuff.
+	// ISB
 	if warlock.Talents.ImprovedShadowBolt > 0 {
-		existingAura := warlock.Env.Encounter.Targets[0].GetAurasWithTag("ImprovedShadowBolt")
-
-		if len(existingAura) == 0 || existingAura[0].Duration != core.NeverExpires {
-			warlock.ImpShadowboltAura = core.ImprovedShadowBoltAura(warlock.CurrentTarget, warlock.Talents.ImprovedShadowBolt, 0)
-			effect.OnSpellHitDealt = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.Outcome.Matches(core.OutcomeCrit) {
-					return
-				}
-				if !warlock.ImpShadowboltAura.IsActive() {
-					warlock.ImpShadowboltAura.Activate(sim)
-				}
-				warlock.ImpShadowboltAura.SetStacks(sim, 4)
+		effect.OnSpellHitDealt = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if sim.RandomFloat("ISB") < 0.2 * float64(warlock.Talents.ImprovedShadowBolt) {
+				core.ImprovedShadowBoltAura(warlock.CurrentTarget).Activate(sim)
+				core.ImprovedShadowBoltAura(warlock.CurrentTarget).Refresh(sim)
 			}
 		}
 	}
 
+	// Shadow Embrace
+	if warlock.Talents.ShadowEmbrace > 0 {
+		effect.OnSpellHitDealt = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			warlock.ShadowEmbraceAura.Activate(sim)
+			warlock.ShadowEmbraceAura.AddStack(sim)
+		}
+	}
 	var modCast func(*core.Simulation, *core.Spell, *core.Cast)
 
 	if warlock.Talents.Nightfall > 0 {
@@ -44,7 +43,7 @@ func (warlock *Warlock) registerShadowboltSpell() {
 		}
 	}
 
-	baseCost := 420.0
+	baseCost :=  0.17 * warlock.BaseMana()
 	warlock.Shadowbolt = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 27209},
 		SpellSchool: core.SpellSchoolShadow,

@@ -167,8 +167,8 @@ var FullFirePartyBuffs = &proto.PartyBuffs{
 	Bloodlust:       1,
 	MoonkinAura:     proto.TristateEffect_TristateEffectRegular,
 	ManaSpringTotem: proto.TristateEffect_TristateEffectRegular,
-	TotemOfWrath:    1,
-	WrathOfAirTotem: proto.TristateEffect_TristateEffectRegular,
+	TotemOfWrath:    true,
+	WrathOfAirTotem: true,
 }
 var FullFrostPartyBuffs = FullFirePartyBuffs
 var FullIndividualBuffs = &proto.IndividualBuffs{
@@ -182,7 +182,7 @@ var FullArcanePartyBuffs = &proto.PartyBuffs{
 	MoonkinAura:     proto.TristateEffect_TristateEffectRegular,
 	ManaSpringTotem: proto.TristateEffect_TristateEffectImproved,
 	ManaTideTotems:  1,
-	WrathOfAirTotem: proto.TristateEffect_TristateEffectRegular,
+	WrathOfAirTotem: true,
 }
 var FullArcaneIndividualBuffs = &proto.IndividualBuffs{
 	BlessingOfKings:  true,

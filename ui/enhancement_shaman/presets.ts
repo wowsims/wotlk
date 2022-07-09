@@ -9,7 +9,7 @@ import { WeaponImbue } from '/wotlk/core/proto/common.js';
 import { Faction } from '/wotlk/core/proto/common.js';
 import { Player } from '/wotlk/core/player.js';
 
-import { EnhancementShaman, EnhancementShaman_Rotation as EnhancementShamanRotation, EnhancementShaman_Options as EnhancementShamanOptions } from '/wotlk/core/proto/shaman.js';
+import { EnhancementShaman, EnhancementShaman_Rotation as EnhancementShamanRotation, EnhancementShaman_Options as EnhancementShamanOptions, ShamanShield } from '/wotlk/core/proto/shaman.js';
 import {
 	AirTotem,
 	EarthTotem,
@@ -42,18 +42,15 @@ export const RestoSubspecTalents = {
 export const DefaultRotation = EnhancementShamanRotation.create({
 	totems: ShamanTotems.create({
 		earth: EarthTotem.StrengthOfEarthTotem,
-		air: AirTotem.GraceOfAirTotem,
+		air: AirTotem.WindfuryTotem,
 		fire: FireTotem.SearingTotem,
 		water: WaterTotem.ManaSpringTotem,
-		twistWindfury: true,
-		windfuryTotemRank: 5,
 	}),
 	primaryShock: PrimaryShock.Frost,
-	weaveFlameShock: true,
 });
 
 export const DefaultOptions = EnhancementShamanOptions.create({
-	waterShield: true,
+	shield: ShamanShield.LightningShield,
 	bloodlust: true,
 	delayOffhandSwings: true,
 });

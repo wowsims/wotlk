@@ -12,23 +12,21 @@ var BasicIndividualBuffs = &proto.IndividualBuffs{
 }
 
 var StandardTalents = &proto.ShamanTalents{
-	Convection:         2,
-	Concussion:         5,
-	CallOfFlame:        3,
-	ElementalFocus:     true,
-	Reverberation:      5,
-	ImprovedFireTotems: 1,
+	Convection:     2,
+	Concussion:     5,
+	CallOfFlame:    3,
+	ElementalFocus: true,
+	Reverberation:  5,
 
 	AncestralKnowledge:      5,
 	ThunderingStrikes:       5,
 	EnhancingTotems:         2,
 	ShamanisticFocus:        true,
 	Flurry:                  5,
-	ImprovedWeaponTotems:    1,
 	SpiritWeapons:           true,
 	ElementalWeapons:        3,
 	MentalQuickness:         3,
-	WeaponMastery:           5,
+	WeaponMastery:           3,
 	DualWieldSpecialization: 3,
 	Stormstrike:             true,
 	UnleashedRage:           5,
@@ -46,20 +44,15 @@ var PlayerOptionsBasic = &proto.Player_EnhancementShaman{
 var enhShamRotation = &proto.EnhancementShaman_Rotation{
 	Totems: &proto.ShamanTotems{
 		Earth: proto.EarthTotem_StrengthOfEarthTotem,
-		Air:   proto.AirTotem_GraceOfAirTotem,
+		Air:   proto.AirTotem_WindfuryTotem,
 		Water: proto.WaterTotem_ManaSpringTotem,
 		Fire:  proto.FireTotem_MagmaTotem,
-
-		WindfuryTotemRank: 5,
-		TwistWindfury:     true,
-		TwistFireNova:     true,
 	},
-	PrimaryShock:    proto.EnhancementShaman_Rotation_Earth,
-	WeaveFlameShock: true,
+	PrimaryShock: proto.EnhancementShaman_Rotation_Earth,
 }
 
 var enhShamOptions = &proto.EnhancementShaman_Options{
-	WaterShield:        true,
+	Shield:             proto.ShamanShield_WaterShield, // lighting for enh?
 	Bloodlust:          true,
 	DelayOffhandSwings: true,
 }

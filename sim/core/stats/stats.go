@@ -453,6 +453,8 @@ type PseudoStats struct {
 	NatureDamageDealtMultiplier   float64
 	ShadowDamageDealtMultiplier   float64
 
+	PeriodicShadowDamageDealtMultiplier   float64
+
 	// Modifiers for spells with the SpellFlagAgentReserved1 flag set.
 	BonusCritRatingAgentReserved1       float64
 	AgentReserved1DamageDealtMultiplier float64
@@ -470,9 +472,11 @@ type PseudoStats struct {
 
 	BonusMeleeAttackPower  float64 // Imp Hunters mark, EW
 	BonusRangedAttackPower float64 // Hunters mark, EW
+	BonusSpellCritRating   float64 // Imp Shadow Bolt debuff
 	BonusCritRating        float64 // Imp Judgement of the Crusader
 	BonusFrostCritRating   float64 // Winter's Chill
-	BonusMeleeHitRating    float64 // Imp FF
+	BonusMeleeHitRating    float64 //
+	BonusSpellHitRating    float64 // Imp FF
 
 	BonusDamageTaken         float64 // Blessing of Sanctuary
 	BonusPhysicalDamageTaken float64 // Hemo, Gift of Arthas, etc
@@ -522,7 +526,7 @@ func NewPseudoStats() PseudoStats {
 		HolyDamageDealtMultiplier:     1,
 		NatureDamageDealtMultiplier:   1,
 		ShadowDamageDealtMultiplier:   1,
-
+		PeriodicShadowDamageDealtMultiplier:   1,
 		AgentReserved1DamageDealtMultiplier: 1,
 
 		// Target effects.

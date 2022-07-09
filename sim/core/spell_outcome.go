@@ -26,8 +26,8 @@ func (unit *Unit) OutcomeFuncTick() OutcomeApplier {
 
 func (unit *Unit) OutcomeFuncMagicHitAndCrit(critMultiplier float64) OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
-		if spellEffect.magicHitCheck(sim, spell, attackTable) {
-			if spellEffect.magicCritCheck(sim, spell, attackTable) {
+		if spellEffect.MagicHitCheck(sim, spell, attackTable) {
+			if spellEffect.MagicCritCheck(sim, spell, attackTable) {
 				spellEffect.Outcome = OutcomeCrit
 				spell.SpellMetrics[spellEffect.Target.TableIndex].Crits++
 				spellEffect.Damage *= critMultiplier
@@ -45,7 +45,7 @@ func (unit *Unit) OutcomeFuncMagicHitAndCrit(critMultiplier float64) OutcomeAppl
 
 func (unit *Unit) OutcomeFuncMagicCrit(critMultiplier float64) OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
-		if spellEffect.magicCritCheck(sim, spell, attackTable) {
+		if spellEffect.MagicCritCheck(sim, spell, attackTable) {
 			spellEffect.Outcome = OutcomeCrit
 			spell.SpellMetrics[spellEffect.Target.TableIndex].Crits++
 			spellEffect.Damage *= critMultiplier
@@ -58,8 +58,8 @@ func (unit *Unit) OutcomeFuncMagicCrit(critMultiplier float64) OutcomeApplier {
 
 func (unit *Unit) OutcomeFuncMagicHitAndCritBinary(critMultiplier float64) OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
-		if spellEffect.magicHitCheckBinary(sim, spell, attackTable) {
-			if spellEffect.magicCritCheck(sim, spell, attackTable) {
+		if spellEffect.MagicHitCheckBinary(sim, spell, attackTable) {
+			if spellEffect.MagicCritCheck(sim, spell, attackTable) {
 				spellEffect.Outcome = OutcomeCrit
 				spell.SpellMetrics[spellEffect.Target.TableIndex].Crits++
 				spellEffect.Damage *= critMultiplier
@@ -90,7 +90,7 @@ func (unit *Unit) OutcomeFuncCritFixedChance(critChance float64, critMultiplier 
 
 func (unit *Unit) OutcomeFuncMagicHit() OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
-		if spellEffect.magicHitCheck(sim, spell, attackTable) {
+		if spellEffect.MagicHitCheck(sim, spell, attackTable) {
 			spellEffect.Outcome = OutcomeHit
 			spell.SpellMetrics[spellEffect.Target.TableIndex].Hits++
 		} else {
@@ -103,7 +103,7 @@ func (unit *Unit) OutcomeFuncMagicHit() OutcomeApplier {
 
 func (unit *Unit) OutcomeFuncMagicHitBinary() OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
-		if spellEffect.magicHitCheckBinary(sim, spell, attackTable) {
+		if spellEffect.MagicHitCheckBinary(sim, spell, attackTable) {
 			spellEffect.Outcome = OutcomeHit
 			spell.SpellMetrics[spellEffect.Target.TableIndex].Hits++
 		} else {
@@ -309,11 +309,11 @@ func (unit *Unit) OutcomeFuncEnemyMeleeWhite() OutcomeApplier {
 }
 
 // Calculates a hit check using the stats from this spell.
-func (spellEffect *SpellEffect) magicHitCheck(sim *Simulation, spell *Spell, attackTable *AttackTable) bool {
-	missChance := attackTable.BaseSpellMissChance - (spell.Unit.GetStat(stats.SpellHit)+spellEffect.BonusSpellHitRating)/(SpellHitRatingPerHitChance*100)
+func (spellEffect *SpellEffect) MagicHitCheck(sim *Simulation, spell *Spell, attackTable *AttackTable) bool {
+	missChance := attackTable.BaseSpellMissChance - (spell.Unit.GetStat(stats.SpellHit)+spellEffect.BonusSpellHitRating+spellEffect.Target.PseudoStats.BonusSpellHitRating)/(SpellHitRatingPerHitChance*100)
 	return sim.RandomFloat("Magical Hit Roll") > missChance
 }
-func (spellEffect *SpellEffect) magicHitCheckBinary(sim *Simulation, spell *Spell, attackTable *AttackTable) bool {
+func (spellEffect *SpellEffect) MagicHitCheckBinary(sim *Simulation, spell *Spell, attackTable *AttackTable) bool {
 	baseHitChance := (1 - attackTable.BaseSpellMissChance) * attackTable.GetBinaryHitChance(spell.SpellSchool)
 	missChance := 1 - baseHitChance - (spell.Unit.GetStat(stats.SpellHit)+spellEffect.BonusSpellHitRating)/(SpellHitRatingPerHitChance*100)
 	return sim.RandomFloat("Magical Hit Roll") > missChance
@@ -323,7 +323,7 @@ func (spellEffect *SpellEffect) fixedCritCheck(sim *Simulation, critChance float
 	return sim.RandomFloat("Fixed Crit Roll") < critChance
 }
 
-func (spellEffect *SpellEffect) magicCritCheck(sim *Simulation, spell *Spell, attackTable *AttackTable) bool {
+func (spellEffect *SpellEffect) MagicCritCheck(sim *Simulation, spell *Spell, attackTable *AttackTable) bool {
 	critChance := spellEffect.SpellCritChance(spell.Unit, spell)
 	return sim.RandomFloat("Magical Crit Roll") < critChance
 }

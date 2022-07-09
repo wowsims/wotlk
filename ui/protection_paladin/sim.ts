@@ -1,4 +1,4 @@
-import { RaidBuffs, StrengthOfEarthType } from '/wotlk/core/proto/common.js';
+import { RaidBuffs } from '/wotlk/core/proto/common.js';
 import { PartyBuffs } from '/wotlk/core/proto/common.js';
 import { IndividualBuffs } from '/wotlk/core/proto/common.js';
 import { Debuffs } from '/wotlk/core/proto/common.js';
@@ -128,7 +128,6 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 					bloodlust: 1,
 					drums: Drums.DrumsOfBattle,
 					manaSpringTotem: TristateEffect.TristateEffectRegular,
-					wrathOfAirTotem: TristateEffect.TristateEffectRegular,
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
@@ -143,7 +142,7 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 					exposeArmor: TristateEffect.TristateEffectImproved,
 					sunderArmor: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
-					curseOfRecklessness: true,
+					curseOfWeakness: true,
 					huntersMark: TristateEffect.TristateEffectImproved,
 					exposeWeaknessUptime: 0.95,
 					exposeWeaknessHunterAgility: 1200,
@@ -166,11 +165,10 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 				IconInputs.DrumsOfBattleBuff,
 				IconInputs.Bloodlust,
 				IconInputs.ManaSpringTotem,
-				IconInputs.WrathOfAirTotem,
 				IconInputs.TotemOfWrath,
 				IconInputs.WindfuryTotem,
 				IconInputs.StrengthOfEarthTotem,
-				IconInputs.GraceOfAirTotem,
+
 				IconInputs.BattleShout,
 				IconInputs.CommandingShout,
 				IconInputs.HeroicPresence,
@@ -201,7 +199,7 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 				IconInputs.BloodFrenzy,
 				IconInputs.HuntersMark,
 				IconInputs.FaerieFire,
-				IconInputs.CurseOfRecklessness,
+				IconInputs.CurseOfWeakness,
 				IconInputs.Misery,
 				IconInputs.GiftOfArthas,
 				IconInputs.DemoralizingRoar,
@@ -283,8 +281,6 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 					OtherInputs.ExposeWeaknessUptime,
 					OtherInputs.ExposeWeaknessHunterAgility,
 					OtherInputs.InspirationUptime,
-					OtherInputs.SnapshotImprovedStrengthOfEarthTotem,
-					OtherInputs.SnapshotImprovedWrathOfAirTotem,
 					OtherInputs.InFrontOfTarget,
 				],
 			},

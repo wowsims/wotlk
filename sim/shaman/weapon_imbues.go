@@ -6,7 +6,12 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
+
+// TODO: Implement all wotlk weapon imbues
+//  Include `Elemental Weapons` talent when implementing
+//  Include t4 bonus to flametongue weapon
 
 var TotemOfTheAstralWinds int32 = 27815
 
@@ -138,6 +143,7 @@ func (shaman *Shaman) ApplyFlametongueImbue(mh bool, oh bool) {
 		return
 	}
 
+	shaman.AddStat(stats.SpellPower, 211)
 	mhSpell := shaman.newFlametongueImbueSpell(true)
 	ohSpell := shaman.newFlametongueImbueSpell(false)
 

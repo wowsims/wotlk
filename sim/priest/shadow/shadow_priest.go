@@ -26,15 +26,6 @@ func RegisterShadowPriest() {
 func NewShadowPriest(character core.Character, options proto.Player) *ShadowPriest {
 	shadowOptions := options.GetShadowPriest()
 
-	// Only undead can do Dev Plague
-	if shadowOptions.Rotation.UseDevPlague && options.Race != proto.Race_RaceUndead {
-		shadowOptions.Rotation.UseDevPlague = false
-	}
-	// Only nelf can do starshards
-	if shadowOptions.Rotation.UseStarshards && options.Race != proto.Race_RaceNightElf {
-		shadowOptions.Rotation.UseStarshards = false
-	}
-
 	selfBuffs := priest.SelfBuffs{
 		UseShadowfiend: shadowOptions.Options.UseShadowfiend,
 	}

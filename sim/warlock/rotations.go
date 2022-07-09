@@ -58,30 +58,21 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	switch warlock.Rotation.Curse {
 	case proto.Warlock_Rotation_Elements:
 		castCurse(warlock.CurseOfElements, warlock.CurseOfElementsAura)
-	case proto.Warlock_Rotation_Recklessness:
-		castCurse(warlock.CurseOfRecklessness, warlock.CurseOfRecklessnessAura)
+	case proto.Warlock_Rotation_Weakness:
+		castCurse(warlock.CurseOfWeakness, warlock.CurseOfWeaknessAura)
 	case proto.Warlock_Rotation_Tongues:
 		castCurse(warlock.CurseOfTongues, warlock.CurseOfTonguesAura)
 	case proto.Warlock_Rotation_Doom:
 		if sim.GetRemainingDuration() < time.Minute {
 			// Can't cast agony until we are at end and both agony and doom are not ticking.
 			if sim.GetRemainingDuration() > time.Second*30 && !warlock.CurseOfAgonyDot.IsActive() && !warlock.CurseOfDoomDot.IsActive() {
-				if warlock.Talents.AmplifyCurse && warlock.AmplifyCurse.CD.IsReady(sim) {
-					warlock.AmplifyCurse.Cast(sim, warlock.CurrentTarget)
-				}
 				spell = warlock.CurseOfAgony
 			}
 		} else if warlock.CurseOfDoom.CD.IsReady(sim) && !warlock.CurseOfDoomDot.IsActive() {
-			if warlock.Talents.AmplifyCurse && warlock.AmplifyCurse.CD.IsReady(sim) {
-				warlock.AmplifyCurse.Cast(sim, warlock.CurrentTarget)
-			}
 			spell = warlock.CurseOfDoom
 		}
 	case proto.Warlock_Rotation_Agony:
 		if !warlock.CurseOfAgonyDot.IsActive() {
-			if warlock.Talents.AmplifyCurse && warlock.AmplifyCurse.CD.IsReady(sim) {
-				warlock.AmplifyCurse.Cast(sim, warlock.CurrentTarget)
-			}
 			spell = warlock.CurseOfAgony
 		}
 	}
@@ -133,8 +124,6 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		spell = warlock.UnstableAff
 	} else if warlock.Rotation.Corruption && !warlock.CorruptionDot.IsActive() {
 		spell = warlock.Corruption
-	} else if warlock.Talents.SiphonLife && !warlock.SiphonLifeDot.IsActive() && (warlock.ImpShadowboltAura == nil || warlock.ImpShadowboltAura.IsActive()) {
-		spell = warlock.SiphonLife
 	} else if warlock.Rotation.Immolate && !warlock.ImmolateDot.IsActive() {
 		spell = warlock.Immolate
 	} else {

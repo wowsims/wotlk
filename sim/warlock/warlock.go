@@ -20,8 +20,6 @@ type Warlock struct {
 	UnstableAffDot *core.Dot
 	Corruption     *core.Spell
 	CorruptionDot  *core.Dot
-	SiphonLife     *core.Spell
-	SiphonLifeDot  *core.Dot
 	/*	Haunt		   *core.Spell
 		Haunt		   *core.Aura
 
@@ -31,8 +29,8 @@ type Warlock struct {
 
 	CurseOfElements         *core.Spell
 	CurseOfElementsAura     *core.Aura
-	CurseOfRecklessness     *core.Spell
-	CurseOfRecklessnessAura *core.Aura
+	CurseOfWeakness   		*core.Spell
+	CurseOfWeaknessAura 	*core.Aura
 	CurseOfTongues          *core.Spell
 	CurseOfTonguesAura      *core.Aura
 	CurseOfAgony            *core.Spell
@@ -40,14 +38,11 @@ type Warlock struct {
 	CurseOfDoom             *core.Spell
 	CurseOfDoomDot          *core.Dot
 
-	AmplifyCurse     *core.Spell
-	AmplifyCurseAura *core.Aura
-
 	Seeds    []*core.Spell
 	SeedDots []*core.Dot
 
-	NightfallProcAura *core.Aura
-	ImpShadowboltAura *core.Aura
+	NightfallProcAura 	    *core.Aura
+	ShadowEmbraceAura 	    *core.Aura
 
 	Pet *WarlockPet
 
@@ -68,16 +63,13 @@ func (warlock *Warlock) Initialize() {
 	warlock.registerImmolateSpell()
 	warlock.registerCorruptionSpell()
 	warlock.registerCurseOfElementsSpell()
-	warlock.registerCurseOfRecklessnessSpell()
+	warlock.registerCurseOfWeaknessSpell()
 	warlock.registerCurseOfTonguesSpell()
 	warlock.registerCurseOfAgonySpell()
 	warlock.registerCurseOfDoomSpell()
 	warlock.registerLifeTapSpell()
 	if warlock.Talents.UnstableAffliction {
 		warlock.registerUnstableAffSpell()
-	}
-	if warlock.Talents.SiphonLife {
-		warlock.registerSiphonLifeSpell()
 	}
 	warlock.registerSeedSpell()
 }
@@ -106,14 +98,6 @@ func NewWarlock(character core.Character, options proto.Player) *Warlock {
 		// manaTracker:           common.NewManaSpendingRateTracker(),
 	}
 	warlock.EnableManaBar()
-
-	warlock.Character.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Intellect,
-		ModifiedStat: stats.SpellCrit,
-		Modifier: func(intellect float64, spellCrit float64) float64 {
-			return spellCrit + (intellect/81.92)*core.CritRatingPerCritChance
-		},
-	})
 
 	warlock.Character.AddStatDependency(stats.StatDependency{
 		SourceStat:   stats.Strength,
@@ -165,67 +149,67 @@ func RegisterWarlock() {
 
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassWarlock}] = stats.Stats{
-		stats.Health:      3310,
-		stats.Strength:    48,
-		stats.Agility:     60,
-		stats.Stamina:     75,
-		stats.Intellect:   137,
-		stats.Spirit:      130,
-		stats.Mana:        2335,
+		stats.Health:      7906,
+		stats.Strength:    56,
+		stats.Agility:     69,
+		stats.Stamina:     95,
+		stats.Intellect:   163,
+		stats.Spirit:      165,
+		stats.Mana:        6021,
 		stats.SpellCrit:   1.697 * core.CritRatingPerCritChance,
-		stats.AttackPower: 86,
+		stats.AttackPower: 102,
 		// Not sure how stats modify the crit chance.
 		// stats.MeleeCrit:   4.43 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceOrc, Class: proto.Class_ClassWarlock}] = stats.Stats{
-		stats.Health:      3310,
-		stats.Strength:    54,
-		stats.Agility:     55,
-		stats.Stamina:     78,
-		stats.Intellect:   130,
-		stats.Spirit:      134,
-		stats.Mana:        2335,
+		stats.Health:      7946,
+		stats.Strength:    62,
+		stats.Agility:     64,
+		stats.Stamina:     99,
+		stats.Intellect:   156,
+		stats.Spirit:      169,
+		stats.Mana:        5916,
 		stats.SpellCrit:   1.697 * core.CritRatingPerCritChance,
-		stats.AttackPower: 86,
+		stats.AttackPower: 114,
 		// Not sure how stats modify the crit chance.
 		// stats.MeleeCrit:   4.43 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceUndead, Class: proto.Class_ClassWarlock}] = stats.Stats{
-		stats.Health:      3310,
-		stats.Strength:    50,
-		stats.Agility:     56,
-		stats.Stamina:     77,
-		stats.Intellect:   131,
-		stats.Spirit:      144,
-		stats.Mana:        2335,
+		stats.Health:      7946,
+		stats.Strength:    58,
+		stats.Agility:     65,
+		stats.Stamina:     99,
+		stats.Intellect:   157,
+		stats.Spirit:      171,
+		stats.Mana:        5931,
 		stats.SpellCrit:   1.697 * core.CritRatingPerCritChance,
-		stats.AttackPower: 86,
+		stats.AttackPower: 106,
 		// Not sure how stats modify the crit chance.
 		// stats.MeleeCrit:   4.43 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceHuman, Class: proto.Class_ClassWarlock}] = stats.Stats{
-		stats.Health:      3300,
-		stats.Strength:    51,
-		stats.Agility:     58,
-		stats.Stamina:     76,
-		stats.Intellect:   133,
-		stats.Spirit:      144,
-		stats.Mana:        2395,
+		stats.Health:      7926,
+		stats.Strength:    59,
+		stats.Agility:     67,
+		stats.Stamina:     97,
+		stats.Intellect:   159,
+		stats.Spirit:      178,
+		stats.Mana:        5961,
 		stats.SpellCrit:   1.697 * core.CritRatingPerCritChance,
-		stats.AttackPower: 86,
+		stats.AttackPower: 108,
 		// Not sure how stats modify the crit chance.
 		// stats.MeleeCrit:   4.43 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceGnome, Class: proto.Class_ClassWarlock}] = stats.Stats{
-		stats.Health:      3310,
-		stats.Strength:    46,
-		stats.Agility:     61,
-		stats.Stamina:     75,
-		stats.Intellect:   143,
-		stats.Spirit:      131,
-		stats.Mana:        2335,
+		stats.Health:      7916,
+		stats.Strength:    54,
+		stats.Agility:     70,
+		stats.Stamina:     96,
+		stats.Intellect:   178,
+		stats.Spirit:      166,
+		stats.Mana:        6246,
 		stats.SpellCrit:   1.697 * core.CritRatingPerCritChance,
-		stats.AttackPower: 86,
+		stats.AttackPower: 98,
 		// Not sure how stats modify the crit chance.
 		// stats.MeleeCrit:   4.43 * core.CritRatingPerCritChance,
 	}

@@ -9,7 +9,6 @@ import { ItemSlot } from '/wotlk/core/proto/common.js';
 import { MobType } from '/wotlk/core/proto/common.js';
 import { Spec } from '/wotlk/core/proto/common.js';
 import { Stat } from '/wotlk/core/proto/common.js';
-import { StrengthOfEarthType } from '/wotlk/core/proto/common.js';
 import { TristateEffect } from '/wotlk/core/proto/common.js'
 import { Player } from '/wotlk/core/player.js';
 import { Stats } from '/wotlk/core/proto_utils/stats.js';
@@ -117,10 +116,8 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 				partyBuffs: PartyBuffs.create({
 					bloodlust: 1,
 					drums: Drums.DrumsOfBattle,
-					graceOfAirTotem: TristateEffect.TristateEffectImproved,
-					strengthOfEarthTotem: StrengthOfEarthType.EnhancingTotems,
-					windfuryTotemRank: 5,
-					windfuryTotemIwt: 2,
+					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
+					windfuryTotem: TristateEffect.TristateEffectImproved,
 					battleShout: TristateEffect.TristateEffectImproved,
 					leaderOfThePack: TristateEffect.TristateEffectImproved,
 				}),
@@ -134,7 +131,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					bloodFrenzy: true,
 					mangle: true,
 					sunderArmor: true,
-					curseOfRecklessness: true,
+					curseOfWeakness: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					improvedSealOfTheCrusader: true,
 					misery: true,
@@ -155,7 +152,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 				IconInputs.DrumsOfBattleBuff,
 				IconInputs.Bloodlust,
 				IconInputs.StrengthOfEarthTotem,
-				IconInputs.GraceOfAirTotem,
+
 				IconInputs.WindfuryTotem,
 				IconInputs.BattleShout,
 				IconInputs.LeaderOfThePack,
@@ -180,7 +177,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 				IconInputs.FaerieFire,
 				IconInputs.SunderArmor,
 				IconInputs.ExposeArmor,
-				IconInputs.CurseOfRecklessness,
+				IconInputs.CurseOfWeakness,
 				IconInputs.Misery,
 				IconInputs.GiftOfArthas,
 			],
@@ -232,7 +229,6 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					OtherInputs.NumStartingConjured,
 					OtherInputs.ExposeWeaknessUptime,
 					OtherInputs.ExposeWeaknessHunterAgility,
-					OtherInputs.SnapshotImprovedStrengthOfEarthTotem,
 					OtherInputs.SnapshotBsSolarianSapphire,
 					OtherInputs.SnapshotBsT2,
 					OtherInputs.TankAssignment,

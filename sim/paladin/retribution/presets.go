@@ -48,7 +48,7 @@ var DefaultOptions = &proto.Player_RetributionPaladin{
 var FullRaidBuffs = &proto.RaidBuffs{
 	ArcaneBrilliance: true,
 	GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
-	DivineSpirit:     proto.TristateEffect_TristateEffectImproved,
+	DivineSpirit:     true,
 }
 
 var FullPartyBuffs = &proto.PartyBuffs{
@@ -56,10 +56,9 @@ var FullPartyBuffs = &proto.PartyBuffs{
 	Drums:                proto.Drums_DrumsOfBattle,
 	BraidedEterniumChain: true,
 	ManaSpringTotem:      proto.TristateEffect_TristateEffectRegular,
-	StrengthOfEarthTotem: proto.StrengthOfEarthType_EnhancingTotems,
-	WindfuryTotemRank:    5,
+	StrengthOfEarthTotem: proto.TristateEffect_TristateEffectImproved,
+	WindfuryTotem:        proto.TristateEffect_TristateEffectImproved,
 	BattleShout:          proto.TristateEffect_TristateEffectImproved,
-	WindfuryTotemIwt:     2,
 }
 
 var FullIndividualBuffs = &proto.IndividualBuffs{
@@ -85,7 +84,7 @@ var FullDebuffs = &proto.Debuffs{
 	BloodFrenzy:                 true,
 	ExposeArmor:                 proto.TristateEffect_TristateEffectImproved,
 	FaerieFire:                  proto.TristateEffect_TristateEffectImproved,
-	CurseOfRecklessness:         true,
+	CurseOfWeakness:             true,
 	HuntersMark:                 proto.TristateEffect_TristateEffectImproved,
 	ExposeWeaknessUptime:        1,
 	ExposeWeaknessHunterAgility: 800,

@@ -443,18 +443,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: ElementalShamanPresets.P1_PRESET.gear,
-				2: ElementalShamanPresets.P2_PRESET.gear,
-				3: ElementalShamanPresets.P3_PRESET.gear,
-				4: ElementalShamanPresets.P4_PRESET.gear,
-				5: ElementalShamanPresets.P5_ALLIANCE_PRESET.gear,
+				1: ElementalShamanPresets.PRE_RAID_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				1: ElementalShamanPresets.P1_PRESET.gear,
-				2: ElementalShamanPresets.P2_PRESET.gear,
-				3: ElementalShamanPresets.P3_PRESET.gear,
-				4: ElementalShamanPresets.P4_PRESET.gear,
-				5: ElementalShamanPresets.P5_HORDE_PRESET.gear,
+				1: ElementalShamanPresets.PRE_RAID_PRESET.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecElementalShaman],
@@ -508,17 +500,9 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: ShadowPriestPresets.P1_PRESET.gear,
-				2: ShadowPriestPresets.P2_PRESET.gear,
-				3: ShadowPriestPresets.P3_PRESET.gear,
-				4: ShadowPriestPresets.P4_PRESET.gear,
-				5: ShadowPriestPresets.P5_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: ShadowPriestPresets.P1_PRESET.gear,
-				2: ShadowPriestPresets.P2_PRESET.gear,
-				3: ShadowPriestPresets.P3_PRESET.gear,
-				4: ShadowPriestPresets.P4_PRESET.gear,
-				5: ShadowPriestPresets.P5_PRESET.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecShadowPriest],
@@ -540,17 +524,9 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: SmitePriestPresets.P1_PRESET.gear,
-				2: SmitePriestPresets.P2_PRESET.gear,
-				3: SmitePriestPresets.P3_PRESET.gear,
-				4: SmitePriestPresets.P4_PRESET.gear,
-				5: SmitePriestPresets.P5_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: SmitePriestPresets.P1_PRESET.gear,
-				2: SmitePriestPresets.P2_PRESET.gear,
-				3: SmitePriestPresets.P3_PRESET.gear,
-				4: SmitePriestPresets.P4_PRESET.gear,
-				5: SmitePriestPresets.P5_PRESET.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecSmitePriest],
@@ -957,7 +933,7 @@ export const buffBotPresets: Array<BuffBotSettings> = [
 		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
 			raidProto.buffs!.shadowProtection = true;
 			raidProto.buffs!.powerWordFortitude = TristateEffect.TristateEffectImproved;
-			raidProto.buffs!.divineSpirit = TristateEffect.TristateEffectImproved;
+			raidProto.buffs!.divineSpirit = true;
 
 			const powerInfusionIndex = buffBot.getPowerInfusionAssignment().targetIndex;
 			if (powerInfusionIndex != NO_TARGET) {
@@ -989,7 +965,6 @@ export const buffBotPresets: Array<BuffBotSettings> = [
 				Spec.SpecMage,
 				Spec.SpecShadowPriest,
 				Spec.SpecSmitePriest,
-				Spec.SpecProtectionPaladin,
 				Spec.SpecEnhancementShaman,
 				Spec.SpecElementalShaman,
 				Spec.SpecWarlock,
@@ -999,25 +974,20 @@ export const buffBotPresets: Array<BuffBotSettings> = [
 				Spec.SpecRogue,
 				Spec.SpecWarrior,
 				Spec.SpecProtectionWarrior,
-			];
-			const goaSpecs = [
 				Spec.SpecFeralDruid,
 				Spec.SpecFeralTankDruid,
-				Spec.SpecHunter,
 			];
-			const [woaVotes, wfVotes, goaVotes] = [woaSpecs, wfSpecs, goaSpecs]
+			const [woaVotes, wfVotes] = [woaSpecs, wfSpecs]
 				.map(specs => partyProto.players
 					.filter(player => player.class != Class.ClassUnknown)
 					.map(player => playerToSpec(player))
 					.filter(playerSpec => specs.includes(playerSpec))
 					.length);
 
-			if (woaVotes >= wfVotes && woaVotes >= goaVotes) {
-				partyProto.buffs!.wrathOfAirTotem = Math.max(partyProto.buffs!.wrathOfAirTotem, TristateEffect.TristateEffectRegular);
-			} else if (wfVotes >= goaVotes) {
-				partyProto.buffs!.windfuryTotemRank = 5;
+			if (woaVotes >= wfVotes) {
+				partyProto.buffs!.wrathOfAirTotem = true;
 			} else {
-				partyProto.buffs!.graceOfAirTotem = Math.max(partyProto.buffs!.graceOfAirTotem, TristateEffect.TristateEffectRegular);
+				partyProto.buffs!.windfuryTotem = TristateEffect.TristateEffectRegular;
 			}
 		},
 	},
@@ -1051,15 +1021,15 @@ export const buffBotPresets: Array<BuffBotSettings> = [
 	},
 	{
 		// The value of this field must never change, to preserve local storage data.
-		buffBotId: 'CoR Warlock',
+		buffBotId: 'CoW Warlock',
 		spec: Spec.SpecWarlock,
 		deprecated: true,
-		name: 'CoR Warlock',
-		tooltip: 'CoR Warlock: Adds Curse of Recklessness. Also adds +20% uptime to ISB.',
+		name: 'CoW Warlock',
+		tooltip: 'CoW Warlock: Adds Curse of Weakness. Also adds +20% uptime to ISB.',
 		iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_unholystrength.jpg',
 		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
 			const debuffs = raidProto.debuffs!;
-			debuffs.curseOfRecklessness = true;
+			debuffs.curseOfWeakness = true;
 			debuffs.isbUptime = Math.min(1.0, debuffs.isbUptime + 0.2);
 		},
 	},

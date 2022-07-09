@@ -12,7 +12,6 @@ import { Spec } from '/wotlk/core/proto/common.js';
 import { NO_TARGET } from '/wotlk/core/proto_utils/utils.js';
 import { Stat } from '/wotlk/core/proto/common.js';
 import { TristateEffect } from '/wotlk/core/proto/common.js'
-import { StrengthOfEarthType } from '/wotlk/core/proto/common.js'
 import { Stats } from '/wotlk/core/proto_utils/stats.js';
 import { Player } from '/wotlk/core/player.js';
 import { Sim } from '/wotlk/core/sim.js';
@@ -126,8 +125,7 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 					drums: Drums.DrumsOfBattle,
 					bloodlust: 1,
 					braidedEterniumChain: true,
-					graceOfAirTotem: TristateEffect.TristateEffectImproved,
-					strengthOfEarthTotem: StrengthOfEarthType.EnhancingTotems,
+					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
 					battleShout: TristateEffect.TristateEffectImproved,
 					snapshotBsSolarianSapphire: true,
 					sanctityAura: TristateEffect.TristateEffectImproved,
@@ -143,7 +141,7 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 					exposeArmor: TristateEffect.TristateEffectImproved,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					sunderArmor: true,
-					curseOfRecklessness: true,
+					curseOfWeakness: true,
 					huntersMark: TristateEffect.TristateEffectImproved,
 					exposeWeaknessUptime: 0.95,
 					exposeWeaknessHunterAgility: 1200,
@@ -166,7 +164,7 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 				IconInputs.DrumsOfBattleBuff,
 				IconInputs.Bloodlust,
 				IconInputs.StrengthOfEarthTotem,
-				IconInputs.GraceOfAirTotem,
+
 				IconInputs.BattleShout,
 				IconInputs.CommandingShout,
 				IconInputs.HeroicPresence,
@@ -195,7 +193,7 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 				IconInputs.FaerieFire,
 				IconInputs.SunderArmor,
 				IconInputs.ExposeArmor,
-				IconInputs.CurseOfRecklessness,
+				IconInputs.CurseOfWeakness,
 				IconInputs.GiftOfArthas,
 				IconInputs.DemoralizingRoar,
 				IconInputs.DemoralizingShout,
@@ -265,7 +263,6 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 					OtherInputs.ExposeWeaknessUptime,
 					OtherInputs.ExposeWeaknessHunterAgility,
 					OtherInputs.InspirationUptime,
-					OtherInputs.SnapshotImprovedStrengthOfEarthTotem,
 					OtherInputs.SnapshotBsSolarianSapphire,
 					OtherInputs.SnapshotBsT2,
 					OtherInputs.InFrontOfTarget,

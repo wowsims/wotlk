@@ -31,8 +31,8 @@ var defaultDestroTalents = &proto.WarlockTalents{
 	SoulLeech:          3,
 	ImprovedSoulLeech:  2,
 	// demo
-	FelSynergy:         2,
-	ImprovedImp: 		3,
+	FelSynergy:  2,
+	ImprovedImp: 3,
 }
 
 /*var defaultDestroMajorGlyphs = &proto.WarlockMajorGlyph{
@@ -54,8 +54,8 @@ var defaultDestroRotation = &proto.Warlock_Rotation{
 }
 
 var defaultDestroOptions = &proto.Warlock_Options{
-	Armor:           proto.Warlock_Options_FelArmor,
-	Summon:          proto.Warlock_Options_Imp,
+	Armor:  proto.Warlock_Options_FelArmor,
+	Summon: proto.Warlock_Options_Imp,
 }
 
 var DefaultDestroWarlock = &proto.Player_Warlock{
@@ -63,23 +63,23 @@ var DefaultDestroWarlock = &proto.Player_Warlock{
 		Talents:  defaultDestroTalents,
 		Options:  defaultDestroOptions,
 		Rotation: defaultDestroRotation,
-/*		MajorGlyph: defaultDestroMajorGlyphs,
-		MinorGlyph: defaultDestroMinorGlyphs,
-*/	},
+		/*		MajorGlyph: defaultDestroMajorGlyphs,
+				MinorGlyph: defaultDestroMinorGlyphs,
+		*/},
 }
 
 var FullRaidBuffs = &proto.RaidBuffs{
 	ArcaneBrilliance: true,
 	GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
-	DivineSpirit:     proto.TristateEffect_TristateEffectImproved,
+	DivineSpirit:     true,
 }
 
 var FullPartyBuffs = &proto.PartyBuffs{
 	Bloodlust:       1,
 	Drums:           proto.Drums_DrumsOfBattle,
 	ManaSpringTotem: proto.TristateEffect_TristateEffectRegular,
-	WrathOfAirTotem: proto.TristateEffect_TristateEffectRegular,
-	TotemOfWrath:    1,
+	WrathOfAirTotem: true,
+	TotemOfWrath:    true,
 }
 
 var FullIndividualBuffs = &proto.IndividualBuffs{
@@ -100,7 +100,7 @@ var FullDebuffs = &proto.Debuffs{
 	BloodFrenzy:                 true,
 	ExposeArmor:                 proto.TristateEffect_TristateEffectImproved,
 	FaerieFire:                  proto.TristateEffect_TristateEffectImproved,
-	CurseOfRecklessness:         true,
+	CurseOfWeakness:             true,
 	HuntersMark:                 proto.TristateEffect_TristateEffectImproved,
 	ExposeWeaknessUptime:        1,
 	ExposeWeaknessHunterAgility: 800,

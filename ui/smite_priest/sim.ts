@@ -108,14 +108,14 @@ export class SmitePriestSimUI extends IndividualSimUI<Spec.SpecSmitePriest> {
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					arcaneBrilliance: true,
-					divineSpirit: TristateEffect.TristateEffectImproved,
+					divineSpirit: true,
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
 				}),
 				partyBuffs: PartyBuffs.create({
 					drums: Drums.DrumsOfBattle,
 					bloodlust: 1,
 					manaSpringTotem: TristateEffect.TristateEffectRegular,
-					wrathOfAirTotem: TristateEffect.TristateEffectRegular,
+					wrathOfAirTotem: true,
 					sanctityAura: TristateEffect.TristateEffectImproved,
 				}),
 				individualBuffs: IndividualBuffs.create({
@@ -214,9 +214,7 @@ export class SmitePriestSimUI extends IndividualSimUI<Spec.SpecSmitePriest> {
 			otherInputs: {
 				inputs: [
 					OtherInputs.ISBUptime,
-					OtherInputs.ShadowPriestDPS,
 					OtherInputs.PrepopPotion,
-					OtherInputs.SnapshotImprovedWrathOfAirTotem,
 					OtherInputs.TankAssignment,
 				],
 			},
@@ -241,10 +239,6 @@ export class SmitePriestSimUI extends IndividualSimUI<Spec.SpecSmitePriest> {
 				// Preset gear configurations that the user can quickly select.
 				gear: [
 					Presets.P1_PRESET,
-					Presets.P2_PRESET,
-					Presets.P3_PRESET,
-					Presets.P4_PRESET,
-					Presets.P5_PRESET,
 				],
 			},
 		});

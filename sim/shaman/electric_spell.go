@@ -17,6 +17,7 @@ const (
 	TotemOfThePulsingEarth   = 29389
 	TotemOfTheVoid           = 28248
 	TotemOfRage              = 22395
+	TotemOfHex               = 40267
 )
 
 const (
@@ -70,16 +71,19 @@ func (shaman *Shaman) newElectricSpellEffect(minBaseDamage float64, maxBaseDamag
 		ProcMask:            core.ProcMaskSpellDamage,
 		BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * 2 * core.SpellHitRatingPerHitChance,
 		BonusSpellCritRating: 0 +
-			(float64(shaman.Talents.TidalMastery) * 1 * core.CritRatingPerCritChance) +
-			(float64(shaman.Talents.CallOfThunder) * 1 * core.CritRatingPerCritChance),
+			(float64(shaman.Talents.TidalMastery) * 1 * core.CritRatingPerCritChance),
 		BonusSpellPower: 0 +
 			core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == TotemOfStorms, 33, 0) +
 			core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == TotemOfTheVoid, 55, 0) +
-			core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == TotemOfAncestralGuidance, 85, 0),
+			core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == TotemOfAncestralGuidance, 85, 0) +
+			core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == TotemOfHex, 165, 0),
 		DamageMultiplier: 1 * (1 + 0.01*float64(shaman.Talents.Concussion)),
 		ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
 		BaseDamage:       core.BaseDamageConfigMagic(minBaseDamage, maxBaseDamage, spellCoefficient),
 		OutcomeApplier:   shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier()),
+	}
+	if shaman.Talents.CallOfThunder {
+		effect.BonusSpellCritRating += 5 * core.CritRatingPerCritChance
 	}
 
 	if isLightningOverload {
@@ -94,6 +98,6 @@ func (shaman *Shaman) newElectricSpellEffect(minBaseDamage float64, maxBaseDamag
 func (shaman *Shaman) applyElectricSpellCastInitModifiers(spell *core.Spell, cast *core.Cast) {
 	shaman.modifyCastClearcasting(spell, cast)
 	if shaman.ElementalMasteryAura != nil && shaman.ElementalMasteryAura.IsActive() {
-		cast.Cost = 0
+		cast.CastTime = 0
 	}
 }

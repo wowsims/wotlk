@@ -1,4 +1,4 @@
-import { RaidBuffs, StrengthOfEarthType } from '/wotlk/core/proto/common.js';
+import { RaidBuffs } from '/wotlk/core/proto/common.js';
 import { PartyBuffs } from '/wotlk/core/proto/common.js';
 import { IndividualBuffs } from '/wotlk/core/proto/common.js';
 import { Debuffs } from '/wotlk/core/proto/common.js';
@@ -104,18 +104,16 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					arcaneBrilliance: true,
-					divineSpirit: TristateEffect.TristateEffectImproved,
+					divineSpirit: true,
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
 				}),
 				partyBuffs: PartyBuffs.create({
 					bloodlust: 1,
 					drums: Drums.DrumsOfBattle,
 					manaSpringTotem: TristateEffect.TristateEffectRegular,
-					strengthOfEarthTotem: StrengthOfEarthType.EnhancingTotems,
-					windfuryTotemRank: 5,
-					graceOfAirTotem: TristateEffect.TristateEffectImproved,
+					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
+					windfuryTotem: TristateEffect.TristateEffectImproved,
 					battleShout: TristateEffect.TristateEffectImproved,
-					windfuryTotemIwt: 2,
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
@@ -132,7 +130,7 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 					exposeArmor: TristateEffect.TristateEffectImproved,
 					sunderArmor: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
-					curseOfRecklessness: true,
+					curseOfWeakness: true,
 					huntersMark: TristateEffect.TristateEffectImproved,
 					exposeWeaknessUptime: 0.95,
 					exposeWeaknessHunterAgility: 1200,
@@ -154,7 +152,7 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 				IconInputs.ManaSpringTotem,
 				IconInputs.WindfuryTotem,
 				IconInputs.StrengthOfEarthTotem,
-				IconInputs.GraceOfAirTotem,
+
 				IconInputs.BattleShout,
 				IconInputs.HeroicPresence,
 				IconInputs.LeaderOfThePack,
@@ -178,7 +176,7 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 				IconInputs.BloodFrenzy,
 				IconInputs.HuntersMark,
 				IconInputs.FaerieFire,
-				IconInputs.CurseOfRecklessness,
+				IconInputs.CurseOfWeakness,
 				IconInputs.CurseOfElements,
 				IconInputs.Misery,
 				IconInputs.GiftOfArthas,
@@ -239,7 +237,6 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 					OtherInputs.ExposeWeaknessUptime,
 					OtherInputs.ExposeWeaknessHunterAgility,
 					OtherInputs.ISBUptime,
-					OtherInputs.SnapshotImprovedStrengthOfEarthTotem,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],

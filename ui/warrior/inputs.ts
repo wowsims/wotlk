@@ -28,7 +28,7 @@ export const Recklessness = {
 	id: ActionId.fromSpellId(1719),
 	states: 2,
 	extraCssClasses: [
-		'warrior-recklessness-picker',
+		'warrior-Recklessness-picker',
 	],
 	changedEvent: (player: Player<Spec.SpecWarrior>) => player.specOptionsChangeEmitter,
 	getValue: (player: Player<Spec.SpecWarrior>) => player.getSpecOptions().useRecklessness,

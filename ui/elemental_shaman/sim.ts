@@ -1,18 +1,12 @@
 import { RaidBuffs } from '/wotlk/core/proto/common.js';
 import { PartyBuffs } from '/wotlk/core/proto/common.js';
 import { IndividualBuffs } from '/wotlk/core/proto/common.js';
-import { Class } from '/wotlk/core/proto/common.js';
-import { Consumes } from '/wotlk/core/proto/common.js';
 import { Debuffs } from '/wotlk/core/proto/common.js';
-import { Encounter } from '/wotlk/core/proto/common.js';
-import { ItemSlot } from '/wotlk/core/proto/common.js';
-import { MobType } from '/wotlk/core/proto/common.js';
 import { Spec } from '/wotlk/core/proto/common.js';
 import { Stat } from '/wotlk/core/proto/common.js';
 import { TristateEffect } from '/wotlk/core/proto/common.js'
 import { Player } from '/wotlk/core/player.js';
 import { Stats } from '/wotlk/core/proto_utils/stats.js';
-import { Sim } from '/wotlk/core/sim.js';
 import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
 import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
 import { TotemsSection } from '/wotlk/core/components/totem_inputs.js';
@@ -23,17 +17,13 @@ import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
 import { GuardianElixir } from '/wotlk/core/proto/common.js';
 import { Conjured } from '/wotlk/core/proto/common.js';
-import { Drums } from '/wotlk/core/proto/common.js';
-import { PetFood } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
 
-import { ElementalShaman, ElementalShaman_Rotation as ElementalShamanRotation, ElementalShaman_Options as ElementalShamanOptions } from '/wotlk/core/proto/shaman.js';
 
 import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
 import * as OtherInputs from '/wotlk/core/components/other_inputs.js';
 import * as Mechanics from '/wotlk/core/constants/mechanics.js';
-import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 
 import * as ShamanInputs from './inputs.js';
 import * as Presets from './presets.js';
@@ -79,6 +69,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 			// Which stats to display in the Character Stats section, at the bottom of the left-hand sidebar.
 			displayStats: [
 				Stat.StatHealth,
+				Stat.StatMana,
 				Stat.StatStamina,
 				Stat.StatIntellect,
 				Stat.StatSpellPower,
@@ -92,8 +83,8 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				let stats = new Stats();
 				stats = stats.addStat(Stat.StatSpellHit, player.getTalents().elementalPrecision * 2 * Mechanics.SPELL_HIT_RATING_PER_HIT_CHANCE);
 				stats = stats.addStat(Stat.StatSpellCrit,
-					player.getTalents().lightningMastery * 1 * Mechanics.SPELL_CRIT_RATING_PER_CRIT_CHANCE +
-					player.getTalents().tidalMastery * 1 * Mechanics.SPELL_CRIT_RATING_PER_CRIT_CHANCE);
+					player.getTalents().tidalMastery * 1 * Mechanics.SPELL_CRIT_RATING_PER_CRIT_CHANCE + 
+					player.getTalents().thunderingStrikes * 1 * Mechanics.SPELL_CRIT_RATING_PER_CRIT_CHANCE);
 
 				return {
 					talents: stats,
@@ -102,14 +93,14 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P1_PRESET.gear,
+				gear: Presets.PRE_RAID_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatIntellect]: 0.33,
+					[Stat.StatIntellect]: 0.17,
 					[Stat.StatSpellPower]: 1,
 					[Stat.StatNatureSpellPower]: 1,
-					[Stat.StatSpellCrit]: 0.78,
-					[Stat.StatSpellHaste]: 1.25,
+					[Stat.StatSpellCrit]: 1,
+					[Stat.StatSpellHaste]: 1,
 					[Stat.StatMP5]: 0.08,
 				}),
 				// Default consumes settings.
@@ -123,7 +114,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					arcaneBrilliance: true,
-					divineSpirit: TristateEffect.TristateEffectImproved,
+					divineSpirit: true,
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
 				}),
 				partyBuffs: PartyBuffs.create({
@@ -134,11 +125,11 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 					blessingOfSalvation: true,
 				}),
 				debuffs: Debuffs.create({
+					faerieFire: TristateEffect.TristateEffectImproved,
 					judgementOfWisdom: true,
 					misery: true,
 				}),
 			},
-
 			// IconInputs to include in the 'Self Buffs' section on the settings tab.
 			selfBuffInputs: [
 				ShamanInputs.IconWaterShield,
@@ -152,9 +143,6 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 			],
 			partyBuffInputs: [
 				IconInputs.MoonkinAura,
-				IconInputs.DrumsOfBattleBuff,
-				IconInputs.DrumsOfRestorationBuff,
-				IconInputs.Bloodlust,
 				IconInputs.WrathOfAirTotem,
 				IconInputs.TotemOfWrath,
 				IconInputs.ManaSpringTotem,
@@ -164,7 +152,6 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				IconInputs.JadePendantOfBlasting,
 				IconInputs.AtieshWarlock,
 				IconInputs.AtieshMage,
-				IconInputs.SanctityAura,
 			],
 			playerBuffInputs: [
 				IconInputs.BlessingOfKings,
@@ -175,14 +162,14 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 			],
 			// IconInputs to include in the 'Debuffs' section on the settings tab.
 			debuffInputs: [
-				IconInputs.JudgementOfWisdom,
 				IconInputs.ImprovedSealOfTheCrusader,
 				IconInputs.Misery,
+				IconInputs.FaerieFire,
 			],
 			// Which options are selectable in the 'Consumes' section.
 			consumeOptions: {
 				potions: [
-					Potions.SuperManaPotion,
+					Potions.RunicManaPotion,
 					Potions.DestructionPotion,
 				],
 				conjured: [
@@ -190,6 +177,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 					Conjured.ConjuredFlameCap,
 				],
 				flasks: [
+					Flask.FlaskOfTheFrostWyrm,
 					Flask.FlaskOfBlindingLight,
 					Flask.FlaskOfSupremePower,
 				],
@@ -208,8 +196,10 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 					Alchohol.AlchoholKreegsStoutBeatdown,
 				],
 				weaponImbues: [
-					WeaponImbue.WeaponImbueBrilliantWizardOil,
-					WeaponImbue.WeaponImbueSuperiorWizardOil,
+					WeaponImbue.WeaponImbueShamanWindfury,
+					WeaponImbue.WeaponImbueShamanFlametongue,
+					WeaponImbue.WeaponImbueShamanFrostbrand,
+					WeaponImbue.WeaponImbueShamanRockbiter,
 				],
 				other: [
 				],
@@ -219,8 +209,6 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
-					ShamanInputs.SnapshotT42Pc,
-					OtherInputs.ShadowPriestDPS,
 					OtherInputs.PrepopPotion,
 					OtherInputs.TankAssignment,
 				],
@@ -249,12 +237,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.P1_PRESET,
-					Presets.P2_PRESET,
-					Presets.P3_PRESET,
-					Presets.P4_PRESET,
-					Presets.P5_ALLIANCE_PRESET,
-					Presets.P5_HORDE_PRESET,
+					Presets.PRE_RAID_PRESET,
 				],
 			},
 		});

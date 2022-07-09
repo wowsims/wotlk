@@ -8,37 +8,35 @@ import (
 )
 
 func (shaman *Shaman) ApplyTalents() {
-	if shaman.Talents.NaturesGuidance > 0 {
-		shaman.AddStat(stats.SpellHit, float64(shaman.Talents.NaturesGuidance)*1*core.SpellHitRatingPerHitChance)
-		shaman.AddStat(stats.MeleeHit, float64(shaman.Talents.NaturesGuidance)*1*core.MeleeHitRatingPerHitChance)
-	}
-
 	if shaman.Talents.ThunderingStrikes > 0 {
 		shaman.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*1*float64(shaman.Talents.ThunderingStrikes))
+		shaman.AddStat(stats.SpellCrit, core.CritRatingPerCritChance*1*float64(shaman.Talents.ThunderingStrikes))
 	}
 
 	shaman.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*1*float64(shaman.Talents.Anticipation))
-	shaman.AddStat(stats.Block, core.BlockRatingPerBlockChance*1*float64(shaman.Talents.ShieldSpecialization))
-	shaman.AddStat(stats.Armor, shaman.Equip.Stats()[stats.Armor]*0.02*float64(shaman.Talents.Toughness))
-	shaman.PseudoStats.PhysicalDamageDealtMultiplier *= 1 + 0.02*float64(shaman.Talents.WeaponMastery)
-
-	if shaman.Talents.ShieldSpecialization > 0 {
-		bonus := 1 + 0.05*float64(shaman.Talents.ShieldSpecialization)
-		shaman.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.BlockValue,
-			ModifiedStat: stats.BlockValue,
-			Modifier: func(bv float64, _ float64) float64 {
-				return bv * bonus
-			},
-		})
-	}
+	shaman.PseudoStats.PhysicalDamageDealtMultiplier *= []float64{0, 1.04, 1.07, 1.1}[shaman.Talents.WeaponMastery]
 
 	if shaman.Talents.DualWieldSpecialization > 0 && shaman.HasOHWeapon() {
 		shaman.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*2*float64(shaman.Talents.DualWieldSpecialization))
 	}
 
+	if shaman.Talents.BlessingOfTheEternals > 0 {
+		shaman.AddStat(stats.SpellCrit, float64(shaman.Talents.BlessingOfTheEternals)*2*core.CritRatingPerCritChance)
+	}
+
+	if shaman.Talents.Toughness > 0 {
+		coeff := 1 + 0.02*float64(shaman.Talents.Toughness)
+		shaman.AddStatDependency(stats.StatDependency{
+			SourceStat:   stats.Stamina,
+			ModifiedStat: stats.Stamina,
+			Modifier: func(stm float64, _ float64) float64 {
+				return stm * coeff
+			},
+		})
+	}
+
 	if shaman.Talents.UnrelentingStorm > 0 {
-		coeff := 0.02 * float64(shaman.Talents.UnrelentingStorm)
+		coeff := 0.04 * float64(shaman.Talents.UnrelentingStorm)
 		shaman.AddStatDependency(stats.StatDependency{
 			SourceStat:   stats.Intellect,
 			ModifiedStat: stats.MP5,
@@ -49,10 +47,10 @@ func (shaman *Shaman) ApplyTalents() {
 	}
 
 	if shaman.Talents.AncestralKnowledge > 0 {
-		coeff := 0.01 * float64(shaman.Talents.AncestralKnowledge)
+		coeff := 0.02 * float64(shaman.Talents.AncestralKnowledge)
 		shaman.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Mana,
-			ModifiedStat: stats.Mana,
+			SourceStat:   stats.Intellect,
+			ModifiedStat: stats.Intellect,
 			Modifier: func(mana float64, _ float64) float64 {
 				return mana + mana*coeff
 			},
@@ -66,6 +64,17 @@ func (shaman *Shaman) ApplyTalents() {
 			ModifiedStat: stats.SpellPower,
 			Modifier: func(attackPower float64, spellPower float64) float64 {
 				return spellPower + attackPower*coeff
+			},
+		})
+	}
+
+	if shaman.Talents.MentalDexterity > 0 {
+		coeff := 0.3333 * float64(shaman.Talents.MentalDexterity)
+		shaman.AddStatDependency(stats.StatDependency{
+			SourceStat:   stats.Intellect,
+			ModifiedStat: stats.AttackPower,
+			Modifier: func(intellect float64, attackPower float64) float64 {
+				return attackPower + intellect*coeff
 			},
 		})
 	}
@@ -90,11 +99,13 @@ func (shaman *Shaman) ApplyTalents() {
 	shaman.applyElementalFocus()
 	shaman.applyElementalDevastation()
 	shaman.applyFlurry()
-	shaman.applyShamanisticFocus()
+	shaman.applyMaelstromWeapon()
 	shaman.applyUnleashedRage()
 	shaman.registerElementalMasteryCD()
 	shaman.registerNaturesSwiftnessCD()
 	shaman.registerShamanisticRageCD()
+
+	// TODO: FeralSpirit Spirit summons
 }
 
 func (shaman *Shaman) applyElementalFocus() {
@@ -144,6 +155,13 @@ func (shaman *Shaman) modifyCastClearcasting(spell *core.Spell, cast *core.Cast)
 	}
 }
 
+func (shaman *Shaman) modifyCastMaelstrom(spell *core.Spell, cast *core.Cast) {
+	if shaman.MaelstromWeaponAura != nil && shaman.MaelstromWeaponAura.GetStacks() > 0 {
+		castReduction := float64(shaman.MaelstromWeaponAura.GetStacks()) * 0.2
+		cast.CastTime -= time.Duration(float64(cast.CastTime) * castReduction)
+	}
+}
+
 func (shaman *Shaman) applyElementalDevastation() {
 	if shaman.Talents.ElementalDevastation == 0 {
 		return
@@ -178,19 +196,24 @@ func (shaman *Shaman) registerElementalMasteryCD() {
 	cdTimer := shaman.NewTimer()
 	cd := time.Minute * 3
 
+	// TODO: Share CD with Natures Swiftness
+
 	shaman.ElementalMasteryAura = shaman.RegisterAura(core.Aura{
 		Label:    "Elemental Mastery",
 		ActionID: actionID,
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			shaman.AddStatDynamic(sim, stats.SpellCrit, 100*core.CritRatingPerCritChance)
+			shaman.AddStatDynamic(sim, stats.SpellHaste, 15*core.HasteRatingPerHastePercent)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			shaman.AddStatDynamic(sim, stats.SpellCrit, -100*core.CritRatingPerCritChance)
+			shaman.AddStatDynamic(sim, stats.SpellHaste, -15*core.HasteRatingPerHastePercent)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spell.Flags.Matches(SpellFlagShock | SpellFlagElectric) {
-				return
+			if !spell.Flags.Matches(SpellFlagElectric) {
+				// Only LB / CL / LvB use EM
+				if spell.ActionID.SpellID != lavaBurstActionID.SpellID {
+					return
+				}
 			}
 			// Remove the buff and put skill on CD
 			aura.Deactivate(sim)
@@ -329,49 +352,19 @@ func (shaman *Shaman) applyUnleashedRage() {
 	})
 }
 
-func (shaman *Shaman) applyShamanisticFocus() {
-	if !shaman.Talents.ShamanisticFocus {
-		return
-	}
-
-	shaman.ShamanisticFocusAura = shaman.RegisterAura(core.Aura{
-		Label:    "Shamanistic Focus Proc",
-		ActionID: core.ActionID{SpellID: 43338},
-		Duration: core.NeverExpires,
-		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if spell.Flags.Matches(SpellFlagShock) {
-				aura.Deactivate(sim)
-			}
-		},
-	})
-
-	shaman.RegisterAura(core.Aura{
-		Label:    "Shamanistic Focus",
-		Duration: core.NeverExpires,
-		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Activate(sim)
-		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
-				return
-			}
-			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
-				return
-			}
-			shaman.ShamanisticFocusAura.Activate(sim)
-		},
-	})
-}
-
 func (shaman *Shaman) applyFlurry() {
 	if shaman.Talents.Flurry == 0 {
 		return
 	}
 
-	bonus := 1.05 + 0.05*float64(shaman.Talents.Flurry)
-	if ItemSetCataclysmHarness.CharacterHasSetBonus(&shaman.Character, 4) {
-		bonus += 0.05
-	}
+	bonus := 1.0 + 0.06*float64(shaman.Talents.Flurry)
+
+	// I believe there is a set in wotlk that improves flurry.
+
+	// if ItemSetCataclysmHarness.CharacterHasSetBonus(&shaman.Character, 4) {
+	// 	bonus += 0.05
+	// }
+
 	inverseBonus := 1 / bonus
 
 	procAura := shaman.RegisterAura(core.Aura{
@@ -415,6 +408,49 @@ func (shaman *Shaman) applyFlurry() {
 				icd.Use(sim)
 				procAura.RemoveStack(sim)
 			}
+		},
+	})
+}
+
+func (shaman *Shaman) applyMaelstromWeapon() {
+	if shaman.Talents.MaelstromWeapon == 0 {
+		return
+	}
+
+	// TODO: Don't forget to make it so that AA don't reset when casting when MW is active
+	// for LB / CL / LvB
+	// They can't actually hit while casting, but the AA timer doesnt reset if you cast during the AA timer.
+
+	// For sim purposes maelstrom weapon only impacts CL / LB
+	procAura := shaman.RegisterAura(core.Aura{
+		Label:     "MaelstromWeapon Proc",
+		ActionID:  core.ActionID{SpellID: 53817},
+		Duration:  time.Second * 30,
+		MaxStacks: 5,
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spell.Flags.Matches(SpellFlagElectric) {
+				return
+			}
+			shaman.MaelstromWeaponAura.Deactivate(sim)
+		},
+	})
+	shaman.MaelstromWeaponAura = procAura
+
+	// This aura is hidden, just applies stacks of the proc aura.
+	shaman.RegisterAura(core.Aura{
+		Label:    "MaelstromWeapon",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+				return
+			}
+			if !procAura.IsActive() {
+				procAura.Activate(sim)
+			}
+			procAura.AddStack(sim)
 		},
 	})
 }

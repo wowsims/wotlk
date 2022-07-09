@@ -9,7 +9,6 @@ import { ItemSlot } from '/wotlk/core/proto/common.js';
 import { MobType } from '/wotlk/core/proto/common.js';
 import { Spec } from '/wotlk/core/proto/common.js';
 import { Stat } from '/wotlk/core/proto/common.js';
-import { StrengthOfEarthType } from '/wotlk/core/proto/common.js';
 import { TristateEffect } from '/wotlk/core/proto/common.js'
 import { Player } from '/wotlk/core/player.js';
 import { Stats } from '/wotlk/core/proto_utils/stats.js';
@@ -104,9 +103,8 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				}),
 				partyBuffs: PartyBuffs.create({
 					bloodlust: 1,
-					graceOfAirTotem: TristateEffect.TristateEffectImproved,
-					strengthOfEarthTotem: StrengthOfEarthType.EnhancingAndCyclone,
-					windfuryTotemRank: 5,
+					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
+					windfuryTotem: TristateEffect.TristateEffectImproved,
 					battleShout: TristateEffect.TristateEffectImproved,
 					leaderOfThePack: TristateEffect.TristateEffectImproved,
 				}),
@@ -118,7 +116,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				}),
 				debuffs: Debuffs.create({
 					sunderArmor: true,
-					curseOfRecklessness: true,
+					curseOfWeakness: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					improvedSealOfTheCrusader: true,
 					judgementOfWisdom: true,
@@ -140,7 +138,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 			partyBuffInputs: [
 				IconInputs.DrumsOfBattleBuff,
 				IconInputs.Bloodlust,
-				IconInputs.GraceOfAirTotem,
+
 				IconInputs.WindfuryTotem,
 				IconInputs.StrengthOfEarthTotem,
 				IconInputs.ManaSpringTotem,
@@ -168,7 +166,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				IconInputs.FaerieFire,
 				IconInputs.SunderArmor,
 				IconInputs.ExposeArmor,
-				IconInputs.CurseOfRecklessness,
+				IconInputs.CurseOfWeakness,
 				IconInputs.CurseOfElements,
 				IconInputs.Misery,
 				IconInputs.GiftOfArthas,
@@ -231,7 +229,6 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 					OtherInputs.PrepopPotion,
 					OtherInputs.ExposeWeaknessUptime,
 					OtherInputs.ExposeWeaknessHunterAgility,
-					OtherInputs.SnapshotImprovedStrengthOfEarthTotem,
 					OtherInputs.SnapshotBsSolarianSapphire,
 					OtherInputs.SnapshotBsT2,
 					OtherInputs.TankAssignment,

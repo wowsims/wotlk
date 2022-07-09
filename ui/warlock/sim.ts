@@ -96,14 +96,14 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					arcaneBrilliance: true,
-					divineSpirit: TristateEffect.TristateEffectImproved,
+					divineSpirit: true,
 				}),
 				partyBuffs: PartyBuffs.create({
 					drums: Drums.DrumsOfBattle,
 					bloodlust: 1,
 					manaSpringTotem: TristateEffect.TristateEffectRegular,
-					totemOfWrath: 1,
-					wrathOfAirTotem: TristateEffect.TristateEffectRegular,
+					totemOfWrath: true,
+					wrathOfAirTotem: true,
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
@@ -169,7 +169,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				IconInputs.BloodFrenzy,
 				IconInputs.HuntersMark,
 				IconInputs.FaerieFire,
-				IconInputs.CurseOfRecklessness,
+				IconInputs.CurseOfWeakness,
 			],
 			// Which options are selectable in the 'Consumes' section.
 			consumeOptions: {
@@ -215,9 +215,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			otherInputs: {
 				inputs: [
 					OtherInputs.ISBUptime,
-					OtherInputs.ShadowPriestDPS,
 					OtherInputs.PrepopPotion,
-					OtherInputs.SnapshotImprovedWrathOfAirTotem,
 					OtherInputs.TankAssignment,
 				],
 			},

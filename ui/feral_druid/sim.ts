@@ -12,7 +12,6 @@ import { Spec } from '/wotlk/core/proto/common.js';
 import { NO_TARGET } from '/wotlk/core/proto_utils/utils.js';
 import { Stat } from '/wotlk/core/proto/common.js';
 import { TristateEffect } from '/wotlk/core/proto/common.js'
-import { StrengthOfEarthType } from '/wotlk/core/proto/common.js'
 import { Stats } from '/wotlk/core/proto_utils/stats.js';
 import { Player } from '/wotlk/core/player.js';
 import { Sim } from '/wotlk/core/sim.js';
@@ -124,8 +123,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 					bloodlust: 1,
 					manaSpringTotem: TristateEffect.TristateEffectRegular,
 					braidedEterniumChain: true,
-					graceOfAirTotem: TristateEffect.TristateEffectImproved,
-					strengthOfEarthTotem: StrengthOfEarthType.EnhancingTotems,
+					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
 					battleShout: TristateEffect.TristateEffectImproved,
 					snapshotBsSolarianSapphire: true,
 					sanctityAura: TristateEffect.TristateEffectImproved,
@@ -143,7 +141,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 					exposeArmor: TristateEffect.TristateEffectImproved,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					sunderArmor: true,
-					curseOfRecklessness: true,
+					curseOfWeakness: true,
 					huntersMark: TristateEffect.TristateEffectImproved,
 					exposeWeaknessUptime: 0.95,
 					exposeWeaknessHunterAgility: 1200,
@@ -164,7 +162,6 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 				IconInputs.DrumsOfBattleBuff,
 				IconInputs.Bloodlust,
 				IconInputs.StrengthOfEarthTotem,
-				IconInputs.GraceOfAirTotem,
 				IconInputs.ManaSpringTotem,
 				IconInputs.BattleShout,
 				IconInputs.BraidedEterniumChain,
@@ -185,7 +182,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 				IconInputs.ImprovedSealOfTheCrusader,
 				IconInputs.BloodFrenzy,
 				IconInputs.HuntersMark,
-				IconInputs.CurseOfRecklessness,
+				IconInputs.CurseOfWeakness,
 				IconInputs.FaerieFire,
 				IconInputs.ExposeArmor,
 				IconInputs.SunderArmor,
@@ -238,7 +235,6 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 					OtherInputs.PrepopPotion,
 					OtherInputs.ExposeWeaknessUptime,
 					OtherInputs.ExposeWeaknessHunterAgility,
-					OtherInputs.SnapshotImprovedStrengthOfEarthTotem,
 					OtherInputs.SnapshotBsSolarianSapphire,
 					OtherInputs.SnapshotBsT2,
 					OtherInputs.TankAssignment,
