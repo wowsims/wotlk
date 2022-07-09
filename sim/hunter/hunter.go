@@ -42,9 +42,6 @@ type Hunter struct {
 	hasGronnstalker2Pc bool
 	currentAspect      *core.Aura
 
-	killCommandEnabledUntil time.Duration // Time that KC enablement expires.
-	killCommandBlocked      bool          // True while Steady Shot is casting, to prevent KC.
-
 	latency     time.Duration
 	timeToWeave time.Duration
 
@@ -73,8 +70,8 @@ type Hunter struct {
 	arcaneShotCastTime float64
 	useMultiForCatchup bool
 
-	AspectOfTheHawk  *core.Spell
-	AspectOfTheViper *core.Spell
+	AspectOfTheDragonhawk *core.Spell
+	AspectOfTheViper      *core.Spell
 
 	AimedShot    *core.Spell
 	ArcaneShot   *core.Spell
@@ -88,10 +85,10 @@ type Hunter struct {
 
 	SerpentStingDot *core.Dot
 
-	AspectOfTheHawkAura  *core.Aura
-	AspectOfTheViperAura *core.Aura
-	ScorpidStingAura     *core.Aura
-	TalonOfAlarAura      *core.Aura
+	AspectOfTheDragonhawkAura *core.Aura
+	AspectOfTheViperAura      *core.Aura
+	ScorpidStingAura          *core.Aura
+	TalonOfAlarAura           *core.Aura
 
 	hardcastOnComplete core.CastFunc
 }
@@ -118,17 +115,19 @@ func (hunter *Hunter) Initialize() {
 	hunter.AutoAttacks.OHEffect.OutcomeApplier = hunter.OutcomeFuncMeleeWhite(hunter.critMultiplier(false, hunter.CurrentTarget))
 	hunter.AutoAttacks.RangedEffect.OutcomeApplier = hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, hunter.CurrentTarget))
 
-	hunter.registerAspectOfTheHawkSpell()
+	hunter.registerAspectOfTheDragonhawkSpell()
 	hunter.registerAspectOfTheViperSpell()
 
 	hunter.registerAimedShotSpell()
 	hunter.registerArcaneShotSpell()
-	hunter.registerKillCommandSpell()
 	hunter.registerMultiShotSpell()
 	hunter.registerRaptorStrikeSpell()
 	hunter.registerScorpidStingSpell()
 	hunter.registerSerpentStingSpell()
 	hunter.registerSteadyShotSpell()
+
+	hunter.registerKillCommandCD()
+	hunter.registerRapidFireCD()
 
 	hunter.hardcastOnComplete = func(sim *core.Simulation, _ *core.Unit) {
 		hunter.rotation(sim, false)
@@ -138,8 +137,6 @@ func (hunter *Hunter) Initialize() {
 }
 
 func (hunter *Hunter) Reset(sim *core.Simulation) {
-	hunter.killCommandEnabledUntil = 0
-	hunter.killCommandBlocked = false
 	hunter.nextAction = OptionNone
 	hunter.nextActionAt = 0
 	hunter.rangedSwingSpeed = 0

@@ -101,7 +101,7 @@ class TalentTreePicker<TalentsProto> extends Component {
 		main.style.backgroundImage = `url('${config.backgroundUrl}')`;
 		main.style.gridTemplateRows = `repeat(${this.picker.numRows}, 1fr)`;
 
-		const iconSize = 70 / this.picker.numRows;
+		const iconSize = Math.max(70 / this.picker.numRows, 10);
 		main.style.height = `${iconSize * this.picker.numRows}vh`
 		main.style.width = `${iconSize * 4}vh`
 

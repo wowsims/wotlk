@@ -7,7 +7,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (hunter *Hunter) registerAspectOfTheHawkSpell() {
+func (hunter *Hunter) registerAspectOfTheDragonhawkSpell() {
 	var impHawkAura *core.Aura
 	const improvedHawkProcChance = 0.1
 	if hunter.Talents.ImprovedAspectOfTheHawk > 0 {
@@ -25,69 +25,84 @@ func (hunter *Hunter) registerAspectOfTheHawkSpell() {
 		})
 	}
 
-	actionID := core.ActionID{SpellID: 27044}
-	hunter.AspectOfTheHawkAura = hunter.NewTemporaryStatsAuraWrapped("Aspect of the Hawk", actionID, stats.Stats{stats.RangedAttackPower: 155}, core.NeverExpires, func(aura *core.Aura) {
-		hunter.applySharedAspectConfig(true, aura)
-		aura.OnSpellHitDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.ProcMask.Matches(core.ProcMaskRangedAuto) {
-				return
+	actionID := core.ActionID{SpellID: 61847}
+	hunter.AspectOfTheDragonhawkAura = hunter.NewTemporaryStatsAuraWrapped(
+		"Aspect of the Dragonhawk",
+		actionID,
+		stats.Stats{
+			stats.RangedAttackPower: core.TernaryFloat64(hunter.Talents.AspectMastery, 390, 300),
+			stats.Dodge:             (18 + 2*float64(hunter.Talents.ImprovedAspectOfTheMonkey)) * core.DodgeRatingPerDodgeChance,
+		},
+		core.NeverExpires,
+		func(aura *core.Aura) {
+			hunter.applySharedAspectConfig(true, aura)
+
+			if hunter.Talents.AspectMastery {
+				oldOnGain := aura.OnGain
+				aura.OnGain = func(aura *core.Aura, sim *core.Simulation) {
+					oldOnGain(aura, sim)
+					aura.Unit.PseudoStats.DamageTakenMultiplier *= 0.95
+				}
+				oldOnExpire := aura.OnExpire
+				aura.OnExpire = func(aura *core.Aura, sim *core.Simulation) {
+					oldOnExpire(aura, sim)
+					aura.Unit.PseudoStats.DamageTakenMultiplier /= 0.95
+				}
 			}
 
-			if impHawkAura != nil && sim.RandomFloat("Imp Aspect of the Hawk") < improvedHawkProcChance {
-				impHawkAura.Activate(sim)
-			}
-		}
-	})
+			aura.OnSpellHitDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if !spellEffect.ProcMask.Matches(core.ProcMaskRangedAuto) {
+					return
+				}
 
-	baseCost := 140.0
-	hunter.AspectOfTheHawk = hunter.RegisterSpell(core.SpellConfig{
+				if impHawkAura != nil && sim.RandomFloat("Imp Aspect of the Hawk") < improvedHawkProcChance {
+					impHawkAura.Activate(sim)
+				}
+			}
+		})
+
+	hunter.AspectOfTheDragonhawk = hunter.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
-
-		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
-			},
-			IgnoreHaste: true, // Hunter GCD is locked at 1.5s
-		},
-
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			hunter.AspectOfTheHawkAura.Activate(sim)
+			hunter.AspectOfTheDragonhawkAura.Activate(sim)
 		},
 	})
 }
 
 func (hunter *Hunter) registerAspectOfTheViperSpell() {
 	actionID := core.ActionID{SpellID: 34074}
+
+	damagePenalty := core.TernaryFloat64(hunter.Talents.AspectMastery, 0.6, 0.5)
+
 	auraConfig := core.Aura{
 		Label:    "Aspect of the Viper",
 		ActionID: actionID,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.DamageDealtMultiplier *= damagePenalty
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.DamageDealtMultiplier /= damagePenalty
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+				return
+			}
+
+			// TODO: Mana gain
+		},
 	}
 	hunter.applySharedAspectConfig(false, &auraConfig)
 	hunter.AspectOfTheViperAura = hunter.RegisterAura(auraConfig)
 
-	baseCost := 40.0
 	hunter.AspectOfTheViper = hunter.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
-
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
-
-		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
-			},
-			IgnoreHaste: true, // Hunter GCD is locked at 1.5s
-		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			hunter.AspectOfTheViperAura.Activate(sim)
 		},
 	})
+	hunter.AspectOfTheViper.ResourceMetrics = hunter.NewManaMetrics(hunter.AspectOfTheViper.ActionID)
 }
 
 func (hunter *Hunter) applySharedAspectConfig(isHawk bool, aura *core.Aura) {

@@ -453,7 +453,7 @@ type PseudoStats struct {
 	NatureDamageDealtMultiplier   float64
 	ShadowDamageDealtMultiplier   float64
 
-	PeriodicShadowDamageDealtMultiplier   float64
+	PeriodicShadowDamageDealtMultiplier float64
 
 	// Modifiers for spells with the SpellFlagAgentReserved1 flag set.
 	BonusCritRatingAgentReserved1       float64
@@ -502,6 +502,8 @@ type PseudoStats struct {
 	ReducedShadowHitTakenChance   float64
 
 	PeriodicPhysicalDamageTakenMultiplier float64
+
+	HealingTakenMultiplier float64
 }
 
 func NewPseudoStats() PseudoStats {
@@ -519,14 +521,14 @@ func NewPseudoStats() PseudoStats {
 		DamageDealtMultiplier:       1,
 		RangedDamageDealtMultiplier: 1,
 
-		PhysicalDamageDealtMultiplier: 1,
-		ArcaneDamageDealtMultiplier:   1,
-		FireDamageDealtMultiplier:     1,
-		FrostDamageDealtMultiplier:    1,
-		HolyDamageDealtMultiplier:     1,
-		NatureDamageDealtMultiplier:   1,
-		ShadowDamageDealtMultiplier:   1,
-		PeriodicShadowDamageDealtMultiplier:   1,
+		PhysicalDamageDealtMultiplier:       1,
+		ArcaneDamageDealtMultiplier:         1,
+		FireDamageDealtMultiplier:           1,
+		FrostDamageDealtMultiplier:          1,
+		HolyDamageDealtMultiplier:           1,
+		NatureDamageDealtMultiplier:         1,
+		ShadowDamageDealtMultiplier:         1,
+		PeriodicShadowDamageDealtMultiplier: 1,
 		AgentReserved1DamageDealtMultiplier: 1,
 
 		// Target effects.
@@ -543,5 +545,7 @@ func NewPseudoStats() PseudoStats {
 		ShadowDamageTakenMultiplier:   1,
 
 		PeriodicPhysicalDamageTakenMultiplier: 1,
+
+		HealingTakenMultiplier: 1,
 	}
 }
