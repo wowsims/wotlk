@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
+	//"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -123,17 +123,17 @@ func (hunter *Hunter) critMultiplier(isRanged bool, target *core.Unit) float64 {
 	primaryModifier := 1.0
 	secondaryModifier := 0.0
 
-	monsterMultiplier := 1.0 + 0.01*float64(hunter.Talents.MonsterSlaying)
-	humanoidMultiplier := 1.0 + 0.01*float64(hunter.Talents.HumanoidSlaying)
-	if target.MobType == proto.MobType_MobTypeBeast || target.MobType == proto.MobType_MobTypeGiant || target.MobType == proto.MobType_MobTypeDragonkin {
-		primaryModifier *= monsterMultiplier
-	} else if target.MobType == proto.MobType_MobTypeHumanoid {
-		primaryModifier *= humanoidMultiplier
-	}
+	//monsterMultiplier := 1.0 + 0.01*float64(hunter.Talents.MonsterSlaying)
+	//humanoidMultiplier := 1.0 + 0.01*float64(hunter.Talents.HumanoidSlaying)
+	//if target.MobType == proto.MobType_MobTypeBeast || target.MobType == proto.MobType_MobTypeGiant || target.MobType == proto.MobType_MobTypeDragonkin {
+	//	primaryModifier *= monsterMultiplier
+	//} else if target.MobType == proto.MobType_MobTypeHumanoid {
+	//	primaryModifier *= humanoidMultiplier
+	//}
 
-	if isRanged {
-		secondaryModifier += 0.06 * float64(hunter.Talents.MortalShots)
-	}
+	//if isRanged {
+	//	secondaryModifier += 0.06 * float64(hunter.Talents.MortalShots)
+	//}
 
 	return hunter.MeleeCritMultiplier(primaryModifier, secondaryModifier)
 }
@@ -326,19 +326,19 @@ func (hunter *Hunter) applyGoForTheThroat() {
 }
 
 func (hunter *Hunter) applySlaying() {
-	if hunter.Talents.MonsterSlaying == 0 && hunter.Talents.HumanoidSlaying == 0 {
-		return
-	}
+	//if hunter.Talents.MonsterSlaying == 0 && hunter.Talents.HumanoidSlaying == 0 {
+	//	return
+	//}
 
-	monsterMultiplier := 1.0 + 0.01*float64(hunter.Talents.MonsterSlaying)
-	humanoidMultiplier := 1.0 + 0.01*float64(hunter.Talents.HumanoidSlaying)
+	//monsterMultiplier := 1.0 + 0.01*float64(hunter.Talents.MonsterSlaying)
+	//humanoidMultiplier := 1.0 + 0.01*float64(hunter.Talents.HumanoidSlaying)
 
-	switch hunter.CurrentTarget.MobType {
-	case proto.MobType_MobTypeBeast, proto.MobType_MobTypeGiant, proto.MobType_MobTypeDragonkin:
-		hunter.PseudoStats.DamageDealtMultiplier *= monsterMultiplier
-	case proto.MobType_MobTypeHumanoid:
-		hunter.PseudoStats.DamageDealtMultiplier *= humanoidMultiplier
-	}
+	//switch hunter.CurrentTarget.MobType {
+	//case proto.MobType_MobTypeBeast, proto.MobType_MobTypeGiant, proto.MobType_MobTypeDragonkin:
+	//	hunter.PseudoStats.DamageDealtMultiplier *= monsterMultiplier
+	//case proto.MobType_MobTypeHumanoid:
+	//	hunter.PseudoStats.DamageDealtMultiplier *= humanoidMultiplier
+	//}
 }
 
 func (hunter *Hunter) applyThrillOfTheHunt() {

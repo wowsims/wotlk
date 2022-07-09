@@ -72,7 +72,7 @@ export class MetaGemCondition {
 			return numYellow;
 		} else if (gemColor == GemColor.GemColorBlue) {
 			return numBlue;
-		} else  {
+		} else {
 			throw new Error('Invalid gem color for category check: ' + gemColor);
 		}
 	}

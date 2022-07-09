@@ -194,7 +194,7 @@ export class Gear {
 
 	getFailedProfessionRequirements(professions: Array<Profession>): Array<Item | Gem | Enchant> {
 		return (this.asArray().filter(ei => ei != null) as Array<EquippedItem>)
-				.map(ei => ei.getFailedProfessionRequirements(professions))
-				.flat();
+			.map(ei => ei.getFailedProfessionRequirements(professions))
+			.flat();
 	}
 }
