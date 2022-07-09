@@ -11,7 +11,6 @@ import {
 	Hunter_Rotation_WeaveType as WeaveType,
 	Hunter_Options as HunterOptions,
 	Hunter_Options_Ammo as Ammo,
-	Hunter_Options_QuiverBonus as QuiverBonus,
 	Hunter_Options_PetType as PetType,
 } from '/wotlk/core/proto/hunter.js';
 
@@ -51,7 +50,6 @@ export const DefaultRotation = HunterRotation.create({
 });
 
 export const DefaultOptions = HunterOptions.create({
-	quiverBonus: QuiverBonus.Speed15,
 	ammo: Ammo.TimelessArrow,
 	petType: PetType.Ravager,
 	petUptime: 1,

@@ -18,37 +18,11 @@ import {
 	Hunter_Rotation_WeaveType as WeaveType,
 	Hunter_Options as HunterOptions,
 	Hunter_Options_Ammo as Ammo,
-	Hunter_Options_QuiverBonus as QuiverBonus,
 	Hunter_Options_PetType as PetType,
 } from '/wotlk/core/proto/hunter.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
-
-export const Quiver = {
-	extraCssClasses: [
-		'quiver-picker',
-	],
-	numColumns: 1,
-	values: [
-		{ color: '82e89d', value: QuiverBonus.QuiverNone },
-		{ actionId: ActionId.fromItemId(18714), value: QuiverBonus.Speed15 },
-		{ actionId: ActionId.fromItemId(2662), value: QuiverBonus.Speed14 },
-		{ actionId: ActionId.fromItemId(8217), value: QuiverBonus.Speed13 },
-		{ actionId: ActionId.fromItemId(7371), value: QuiverBonus.Speed12 },
-		{ actionId: ActionId.fromItemId(3605), value: QuiverBonus.Speed11 },
-		{ actionId: ActionId.fromItemId(3573), value: QuiverBonus.Speed10 },
-	],
-	equals: (a: QuiverBonus, b: QuiverBonus) => a == b,
-	zeroValue: QuiverBonus.QuiverNone,
-	changedEvent: (player: Player<Spec.SpecHunter>) => player.specOptionsChangeEmitter,
-	getValue: (player: Player<Spec.SpecHunter>) => player.getSpecOptions().quiverBonus,
-	setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: number) => {
-		const newOptions = player.getSpecOptions();
-		newOptions.quiverBonus = newValue;
-		player.setSpecOptions(eventID, newOptions);
-	},
-};
 
 export const WeaponAmmo = {
 	extraCssClasses: [
