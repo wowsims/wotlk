@@ -16,7 +16,8 @@ type HunterPet struct {
 
 	hunterOwner *Hunter
 
-	KillCommand *core.Spell
+	CobraStrikesAura *core.Aura
+	KillCommandAura  *core.Aura
 
 	primaryAbility   PetAbility
 	secondaryAbility PetAbility
@@ -97,8 +98,6 @@ func (hp *HunterPet) GetPet() *core.Pet {
 }
 
 func (hp *HunterPet) Initialize() {
-	hp.registerKillCommandSpell()
-
 	if hp.hunterOwner.Options.PetSingleAbility {
 		hp.primaryAbility = hp.NewPetAbility(hp.config.SecondaryAbility, true)
 		hp.config.RandomSelection = false
@@ -144,6 +143,33 @@ func (hp *HunterPet) OnGCDReady(sim *core.Simulation) {
 	if !hp.primaryAbility.TryCast(sim, target, hp) {
 		if hp.secondaryAbility.Type != Unknown {
 			hp.secondaryAbility.TryCast(sim, target, hp)
+		}
+	}
+}
+
+func (hp *HunterPet) specialDamageMod(baseDamageConfig core.BaseDamageConfig) core.BaseDamageConfig {
+	return core.WrapBaseDamageConfig(baseDamageConfig, func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
+		return func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+			normalDamage := oldCalculator(sim, hitEffect, spell)
+			if hp.KillCommandAura.IsActive() {
+				return normalDamage * (1 + 0.2*float64(hp.KillCommandAura.GetStacks()))
+			} else {
+				return normalDamage
+			}
+		}
+	})
+}
+
+func (hp *HunterPet) specialOutcomeMod(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
+	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
+		if hp.CobraStrikesAura != nil && hp.CobraStrikesAura.IsActive() {
+			hp.AddStat(stats.MeleeCrit, 100*core.CritRatingPerCritChance)
+			hp.AddStat(stats.SpellCrit, 100*core.CritRatingPerCritChance)
+			outcomeApplier(sim, spell, spellEffect, attackTable)
+			hp.AddStat(stats.MeleeCrit, -100*core.CritRatingPerCritChance)
+			hp.AddStat(stats.SpellCrit, -100*core.CritRatingPerCritChance)
+		} else {
+			outcomeApplier(sim, spell, spellEffect, attackTable)
 		}
 	}
 }

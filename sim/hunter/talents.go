@@ -18,25 +18,75 @@ func (hunter *Hunter) ApplyTalents() {
 
 		hunter.pet.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*2*float64(hunter.Talents.Ferocity))
 		hunter.pet.AddStat(stats.SpellCrit, core.CritRatingPerCritChance*2*float64(hunter.Talents.Ferocity))
-		hunter.pet.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*2*float64(hunter.Talents.AnimalHandler))
-		hunter.pet.AddStat(stats.SpellHit, core.SpellHitRatingPerHitChance*2*float64(hunter.Talents.AnimalHandler))
-		hunter.pet.PseudoStats.DamageDealtMultiplier *= 1 + 0.04*float64(hunter.Talents.UnleashedFury)
+		hunter.pet.AddStat(stats.Dodge, 3*core.DodgeRatingPerDodgeChance*float64(hunter.Talents.CatlikeReflexes))
+		hunter.pet.PseudoStats.DamageDealtMultiplier *= 1 + 0.03*float64(hunter.Talents.UnleashedFury)
+		hunter.pet.PseudoStats.DamageDealtMultiplier *= 1 + 0.04*float64(hunter.Talents.KindredSpirits)
 		hunter.pet.PseudoStats.MeleeSpeedMultiplier *= 1 + 0.04*float64(hunter.Talents.SerpentsSwiftness)
-	}
+		// TODO: Beast Mastery (in UI)
 
-	hunter.applyGoForTheThroat()
-	hunter.applySlaying()
-	hunter.applyThrillOfTheHunt()
-	hunter.applyExposeWeakness()
-	hunter.applyMasterTactician()
-	hunter.registerReadinessCD()
+		if hunter.Talents.AnimalHandler != 0 {
+			bonus := 1 + 0.05*float64(hunter.Talents.AnimalHandler)
+			hunter.pet.AddStatDependency(stats.StatDependency{
+				SourceStat:   stats.AttackPower,
+				ModifiedStat: stats.AttackPower,
+				Modifier: func(ap float64, _ float64) float64 {
+					return ap * bonus
+				},
+			})
+		}
+	}
 
 	hunter.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*1*float64(hunter.Talents.Surefooted))
 	hunter.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*1*float64(hunter.Talents.KillerInstinct))
 	hunter.AddStat(stats.Parry, core.ParryRatingPerParryChance*1*float64(hunter.Talents.Deflection))
+	hunter.pet.AddStat(stats.Dodge, 1*core.DodgeRatingPerDodgeChance*float64(hunter.Talents.CatlikeReflexes))
 	hunter.PseudoStats.RangedSpeedMultiplier *= 1 + 0.04*float64(hunter.Talents.SerpentsSwiftness)
 	hunter.PseudoStats.RangedDamageDealtMultiplier *= 1 + 0.01*float64(hunter.Talents.RangedWeaponSpecialization)
 	hunter.PseudoStats.BonusRangedCritRating += 1 * float64(hunter.Talents.LethalShots) * core.CritRatingPerCritChance
+
+	if hunter.Talents.EnduranceTraining > 0 {
+		healthBonus := 0.01 * float64(hunter.Talents.EnduranceTraining)
+		hunter.AddStatDependency(stats.StatDependency{
+			SourceStat:   stats.Health,
+			ModifiedStat: stats.Health,
+			Modifier: func(health float64, _ float64) float64 {
+				return health * (1 + healthBonus)
+			},
+		})
+		if hunter.pet != nil {
+			hunter.pet.AddStatDependency(stats.StatDependency{
+				SourceStat:   stats.Health,
+				ModifiedStat: stats.Health,
+				Modifier: func(health float64, _ float64) float64 {
+					return health * (1 + 2*healthBonus)
+				},
+			})
+		}
+	}
+
+	if hunter.Talents.ThickHide > 0 {
+		var hunterBonus, petBonus float64
+		if hunter.Talents.ThickHide == 1 {
+			hunterBonus = 0.04
+			petBonus = 0.07
+		} else if hunter.Talents.ThickHide == 2 {
+			hunterBonus = 0.07
+			petBonus = 0.14
+		} else if hunter.Talents.ThickHide == 3 {
+			hunterBonus = 0.1
+			petBonus = 0.2
+		}
+		hunter.AddStat(stats.Armor, hunter.Equip.Stats()[stats.Armor]*hunterBonus)
+		if hunter.pet != nil {
+			hunter.pet.AddStatDependency(stats.StatDependency{
+				SourceStat:   stats.Armor,
+				ModifiedStat: stats.Armor,
+				Modifier: func(armor float64, _ float64) float64 {
+					return armor * (1 + petBonus)
+				},
+			})
+		}
+	}
 
 	if hunter.Talents.Survivalist > 0 {
 		healthBonus := 1 + 0.02*float64(hunter.Talents.Survivalist)
@@ -115,8 +165,17 @@ func (hunter *Hunter) ApplyTalents() {
 		})
 	}
 
-	hunter.applyKillCommand()
-	hunter.registerRapidFireCD()
+	hunter.applySpiritBond()
+	hunter.applyInvigoration()
+	hunter.applyCobraStrikes()
+
+	hunter.applyGoForTheThroat()
+	hunter.applySlaying()
+	hunter.applyThrillOfTheHunt()
+	hunter.applyExposeWeakness()
+	hunter.applyMasterTactician()
+
+	hunter.registerReadinessCD()
 }
 
 func (hunter *Hunter) critMultiplier(isRanged bool, target *core.Unit) float64 {
@@ -138,12 +197,111 @@ func (hunter *Hunter) critMultiplier(isRanged bool, target *core.Unit) float64 {
 	return hunter.MeleeCritMultiplier(primaryModifier, secondaryModifier)
 }
 
+func (hunter *Hunter) applySpiritBond() {
+	if hunter.Talents.SpiritBond == 0 || hunter.pet == nil {
+		return
+	}
+
+	hunter.PseudoStats.HealingTakenMultiplier *= 1 + 0.05*float64(hunter.Talents.SpiritBond)
+	hunter.pet.PseudoStats.HealingTakenMultiplier *= 1 + 0.05*float64(hunter.Talents.SpiritBond)
+
+	actionID := core.ActionID{SpellID: 20895}
+	healthMultiplier := 0.01 * float64(hunter.Talents.SpiritBond)
+	healthMetrics := hunter.NewHealthMetrics(actionID)
+	petHealthMetrics := hunter.pet.NewHealthMetrics(actionID)
+
+	hunter.RegisterResetEffect(func(sim *core.Simulation) {
+		core.StartPeriodicAction(sim, core.PeriodicActionOptions{
+			Period: time.Second * 10,
+			OnAction: func(sim *core.Simulation) {
+				hunter.GainHealth(sim, hunter.MaxHealth()*healthMultiplier, healthMetrics)
+				hunter.pet.GainHealth(sim, hunter.pet.MaxHealth()*healthMultiplier, petHealthMetrics)
+			},
+		})
+	})
+}
+
+func (hunter *Hunter) applyInvigoration() {
+	if hunter.Talents.Invigoration == 0 || hunter.pet == nil {
+		return
+	}
+
+	procChance := 0.5 * float64(hunter.Talents.Invigoration)
+	manaMetrics := hunter.NewManaMetrics(core.ActionID{SpellID: 53253})
+
+	hunter.pet.RegisterAura(core.Aura{
+		Label:    "Invigoration",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeSpecial | core.ProcMaskSpellDamage) {
+				return
+			}
+
+			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+				return
+			}
+
+			if procChance == 1 || sim.RandomFloat("Invigoration") < procChance {
+				hunter.AddMana(sim, 0.01*hunter.MaxMana(), manaMetrics, false)
+			}
+		},
+	})
+}
+
+func (hunter *Hunter) applyCobraStrikes() {
+	if hunter.Talents.CobraStrikes == 0 || hunter.pet == nil {
+		return
+	}
+
+	actionID := core.ActionID{SpellID: 53260}
+	procChance := 0.2 * float64(hunter.Talents.CobraStrikes)
+
+	hunter.pet.CobraStrikesAura = hunter.pet.RegisterAura(core.Aura{
+		Label:     "Cobra Strikes",
+		ActionID:  actionID,
+		Duration:  time.Second * 10,
+		MaxStacks: 2,
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spellEffect.ProcMask.Matches(core.ProcMaskMeleeSpecial | core.ProcMaskSpellDamage) {
+				aura.RemoveStack(sim)
+			}
+		},
+	})
+
+	hunter.RegisterAura(core.Aura{
+		Label:    "Cobra Strikes",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+				return
+			}
+
+			// TODO: Kill shot too
+			if spell != hunter.ArcaneShot && spell != hunter.SteadyShot {
+				return
+			}
+
+			if sim.RandomFloat("Cobra Strikes") < procChance {
+				hunter.pet.CobraStrikesAura.Activate(sim)
+				hunter.pet.CobraStrikesAura.SetStacks(sim, 2)
+			}
+		},
+	})
+}
+
 func (hunter *Hunter) applyFocusedFire() {
 	if hunter.Talents.FocusedFire == 0 || hunter.pet == nil {
 		return
 	}
 
 	hunter.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.01*float64(hunter.Talents.FocusedFire)
+	// TODO: Pet special crit %
 }
 
 func (hunter *Hunter) applyFrenzy() {
@@ -228,9 +386,16 @@ func (hunter *Hunter) applyFerociousInspiration() {
 	})
 }
 
+func (hunter *Hunter) applyLongevity(dur time.Duration) time.Duration {
+	return time.Duration(float64(dur) * (1.0 - 0.1*float64(hunter.Talents.Longevity)))
+}
+
 func (hunter *Hunter) registerBestialWrathCD() {
 	if !hunter.Talents.BestialWrath {
 		return
+	}
+	if hunter.Talents.TheBeastWithin {
+		hunter.PseudoStats.DamageDealtMultiplier *= 1.1
 	}
 
 	actionID := core.ActionID{SpellID: 19574}
@@ -238,7 +403,7 @@ func (hunter *Hunter) registerBestialWrathCD() {
 	bestialWrathPetAura := hunter.pet.RegisterAura(core.Aura{
 		Label:    "Bestial Wrath Pet",
 		ActionID: actionID,
-		Duration: time.Second * 18,
+		Duration: time.Second * 10,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.DamageDealtMultiplier *= 1.5
 		},
@@ -250,14 +415,14 @@ func (hunter *Hunter) registerBestialWrathCD() {
 	bestialWrathAura := hunter.RegisterAura(core.Aura{
 		Label:    "Bestial Wrath",
 		ActionID: actionID,
-		Duration: time.Second * 18,
+		Duration: time.Second * 10,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.DamageDealtMultiplier *= 1.1
-			aura.Unit.PseudoStats.CostMultiplier *= 0.8
+			aura.Unit.PseudoStats.CostMultiplier *= 0.5
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.DamageDealtMultiplier /= 1.1
-			aura.Unit.PseudoStats.CostMultiplier /= 0.8
+			aura.Unit.PseudoStats.CostMultiplier /= 0.5
 		},
 	})
 
@@ -275,7 +440,7 @@ func (hunter *Hunter) registerBestialWrathCD() {
 			},
 			CD: core.Cooldown{
 				Timer:    hunter.NewTimer(),
-				Duration: time.Minute * 2,
+				Duration: hunter.applyLongevity(time.Minute * 2),
 			},
 		},
 
