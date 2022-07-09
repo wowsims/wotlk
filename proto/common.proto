@@ -406,32 +406,12 @@ message RaidBuffs {
 	TristateEffect divine_spirit = 4;
 	TristateEffect gift_of_the_wild = 5;
 	TristateEffect thorns = 6;
-}
 
-// Buffs that affect a single party.
-message PartyBuffs {
-	int32 bloodlust = 1;
-	int32 ferocious_inspiration = 22; // Number of BM hunters in party.
-
-	TristateEffect blood_pact = 34;
-	TristateEffect moonkin_aura = 2;
-	TristateEffect leader_of_the_pack = 19;
-	TristateEffect sanctity_aura = 20;
-	TristateEffect devotion_aura = 35;
-	TristateEffect retribution_aura = 36;
-	bool trueshot_aura = 21;
-	bool heroic_presence = 3;
+	int32 bloodlust = 3;
 
 	// Drums
-	Drums drums = 5;
-
-	// Item Buffs
-	int32 atiesh_mage = 6;
-	int32 atiesh_warlock = 7;
-	bool braided_eternium_chain = 8;
-	bool eye_of_the_night = 9;
-	bool chain_of_the_twilight_owl = 10;
-	bool jade_pendant_of_blasting = 11;
+	Drums drums = 9;
+	TristateEffect moonkin_aura = 2;
 
 	// Totems
 	TristateEffect mana_spring_totem = 12;
@@ -440,17 +420,29 @@ message PartyBuffs {
 	bool wrath_of_air_totem = 14;
 	TristateEffect strength_of_earth_totem = 16; // none, normal, 15% improved
 	bool tranquil_air_totem = 26;
-
 	TristateEffect windfury_totem = 23; // none, normal, 2pt improved
 
+	TristateEffect blood_pact = 34;	
+	TristateEffect sanctity_aura = 20;
+	TristateEffect devotion_aura = 35;
+	TristateEffect retribution_aura = 36;
+	bool trueshot_aura = 21;
+	bool heroic_presence = 10;
 	TristateEffect battle_shout = 18;
-	bool bs_solarian_sapphire = 28;
-	bool snapshot_bs_solarian_sapphire = 29;
-	bool snapshot_bs_t2 = 30;
-	int32 snapshot_bs_booming_voice_rank = 33;
 
 	// Mitigation buffs
 	TristateEffect commanding_shout = 32;
+}
+
+// Buffs that affect a single party.
+message PartyBuffs {
+	// Item Buffs
+	int32 atiesh_mage = 6;
+	int32 atiesh_warlock = 7;
+	bool braided_eternium_chain = 8;
+	bool eye_of_the_night = 9;
+	bool chain_of_the_twilight_owl = 10;
+	bool jade_pendant_of_blasting = 11;
 }
 
 // Buffs are only used by individual sims, never the raid sim.
@@ -463,12 +455,13 @@ message IndividualBuffs {
 	TristateEffect blessing_of_might = 3;
 
 	bool replenishment = 4;
-
 	bool unleashed_rage = 7;
 
 	// How many of each of these buffs the player will be receiving.
 	int32 innervates = 5;
 	int32 power_infusions = 6;
+	int32 unholy_frenzy = 11;
+
 
 	double inspiration_uptime = 10;
 }

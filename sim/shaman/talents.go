@@ -149,14 +149,14 @@ func (shaman *Shaman) applyElementalFocus() {
 }
 
 func (shaman *Shaman) modifyCastClearcasting(spell *core.Spell, cast *core.Cast) {
-	if shaman.ClearcastingAura != nil && shaman.ClearcastingAura.IsActive() {
+	if shaman.ClearcastingAura.IsActive() {
 		// Reduces mana cost by 40%
 		cast.Cost -= spell.BaseCost * 0.4
 	}
 }
 
 func (shaman *Shaman) modifyCastMaelstrom(spell *core.Spell, cast *core.Cast) {
-	if shaman.MaelstromWeaponAura != nil && shaman.MaelstromWeaponAura.GetStacks() > 0 {
+	if shaman.MaelstromWeaponAura.GetStacks() > 0 {
 		castReduction := float64(shaman.MaelstromWeaponAura.GetStacks()) * 0.2
 		cast.CastTime -= time.Duration(float64(cast.CastTime) * castReduction)
 	}

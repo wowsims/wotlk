@@ -167,7 +167,7 @@ func (druid *Druid) setupNaturesGrace() {
 }
 
 func (druid *Druid) applyNaturesGrace(cast *core.Cast) {
-	if druid.NaturesGraceProcAura != nil && druid.NaturesGraceProcAura.IsActive() {
+	if druid.NaturesGraceProcAura.IsActive() {
 		cast.CastTime -= time.Millisecond * 500
 	}
 }
@@ -219,7 +219,7 @@ func (druid *Druid) registerNaturesSwiftnessCD() {
 }
 
 func (druid *Druid) applyNaturesSwiftness(cast *core.Cast) {
-	if druid.NaturesSwiftnessAura != nil && druid.NaturesSwiftnessAura.IsActive() {
+	if druid.NaturesSwiftnessAura.IsActive() {
 		cast.CastTime = 0
 	}
 }
@@ -299,12 +299,8 @@ func (druid *Druid) applyOmenOfClarity() {
 	})
 }
 
-func (druid *Druid) ClearcastingActive() bool {
-	return druid.ClearcastingAura != nil && druid.ClearcastingAura.IsActive()
-}
-
 func (druid *Druid) ApplyClearcasting(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-	if druid.ClearcastingActive() {
+	if druid.ClearcastingAura.IsActive() {
 		cast.Cost = 0
 		druid.ClearcastingAura.Deactivate(sim)
 	}
