@@ -187,16 +187,18 @@ func NewHunter(character core.Character, options proto.Player) *Hunter {
 		hunter.PseudoStats.RangedSpeedMultiplier *= 1.15
 	} else {
 		switch hunter.Options.Ammo {
+		case proto.Hunter_Options_IcebladeArrow:
+			hunter.AmmoDPS = 91.5
+		case proto.Hunter_Options_SaroniteRazorheads:
+			hunter.AmmoDPS = 67.5
+		case proto.Hunter_Options_TerrorshaftArrow:
+			hunter.AmmoDPS = 46.5
 		case proto.Hunter_Options_TimelessArrow:
 			hunter.AmmoDPS = 53
 		case proto.Hunter_Options_MysteriousArrow:
 			hunter.AmmoDPS = 46.5
 		case proto.Hunter_Options_AdamantiteStinger:
 			hunter.AmmoDPS = 43
-		case proto.Hunter_Options_WardensArrow:
-			hunter.AmmoDPS = 37
-		case proto.Hunter_Options_HalaaniRazorshaft:
-			hunter.AmmoDPS = 34
 		case proto.Hunter_Options_BlackflightArrow:
 			hunter.AmmoDPS = 32
 		}
