@@ -75,31 +75,33 @@ func runSim(rsr proto.RaidSimRequest, progress chan *proto.ProgressMetrics, skip
 			}
 			runtime.Gosched() // allow time for message to make it back out.
 		}
-		presimResult := sim.runPresims(rsr)
-		if presimResult.ErrorResult != "" {
+		if presimResult := sim.runPresims(rsr); presimResult != nil {
+			if presimResult.ErrorResult != "" {
+				if progress != nil {
+					progress <- &proto.ProgressMetrics{
+						TotalIterations: sim.Options.Iterations,
+						FinalRaidResult: presimResult,
+					}
+				}
+				return presimResult
+			}
 			if progress != nil {
 				progress <- &proto.ProgressMetrics{
-					FinalRaidResult: presimResult,
+					TotalIterations: sim.Options.Iterations,
+					PresimRunning:   false,
 				}
+				sim.ProgressReport = func(progMetric *proto.ProgressMetrics) {
+					progress <- progMetric
+				}
+				runtime.Gosched() // allow time for message to make it back out.
 			}
-			return presimResult
-		}
-		if progress != nil {
-			progress <- &proto.ProgressMetrics{
-				TotalIterations: sim.Options.Iterations,
-				PresimRunning:   false,
-			}
-			sim.ProgressReport = func(progMetric *proto.ProgressMetrics) {
-				progress <- progMetric
-			}
-			runtime.Gosched() // allow time for message to make it back out.
-		}
 
-		// Use pre-sim as estimate for length of fight (when using health fight)
-		if sim.Encounter.EndFightAtHealth > 0 && presimResult != nil {
-			sim.BaseDuration = time.Duration(presimResult.AvgIterationDuration) * time.Second
-			sim.Duration = time.Duration(presimResult.AvgIterationDuration) * time.Second
-			sim.Encounter.DurationIsEstimate = false // we now have a pretty good value for duration
+			// Use pre-sim as estimate for length of fight (when using health fight)
+			if sim.Encounter.EndFightAtHealth > 0 && presimResult != nil {
+				sim.BaseDuration = time.Duration(presimResult.AvgIterationDuration) * time.Second
+				sim.Duration = time.Duration(presimResult.AvgIterationDuration) * time.Second
+				sim.Encounter.DurationIsEstimate = false // we now have a pretty good value for duration
+			}
 		}
 	}
 

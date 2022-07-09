@@ -76,8 +76,8 @@ func (unit *Unit) FinishedWaitingForManaAndGCDReady(sim *Simulation) bool {
 }
 
 func (unit *Unit) WaitUntil(sim *Simulation, readyTime time.Duration) {
-	if readyTime <= sim.CurrentTime {
-		panic("cannot wait zero or negative time")
+	if readyTime < sim.CurrentTime {
+		panic("cannot wait negative time")
 	}
 	unit.waitStartTime = sim.CurrentTime
 	unit.SetGCDTimer(sim, readyTime)
