@@ -45,12 +45,7 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		spell = spriest.VampiricTouch
 	} else if !spriest.ShadowWordPainDot.IsActive() {
 		spell = spriest.ShadowWordPain
-	} else if spriest.rotation.UseStarshards && spriest.Starshards.IsReady(sim) {
-		spell = spriest.Starshards
-	} else if spriest.rotation.UseDevPlague && spriest.DevouringPlague.IsReady(sim) {
-		spell = spriest.DevouringPlague
 	} else if spriest.Talents.MindFlay {
-
 		allCDs := []time.Duration{
 			mbidx:  spriest.MindBlast.TimeToReady(sim),
 			swdidx: spriest.ShadowWordDeath.TimeToReady(sim),

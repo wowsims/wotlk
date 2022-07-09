@@ -41,12 +41,6 @@ func (spriest *SmitePriest) tryUseGCD(sim *core.Simulation) {
 	if !spriest.ShadowWordPainDot.IsActive() {
 		spell = spriest.ShadowWordPain
 		// Favor star shards for NE if off cooldown first
-	} else if spriest.rotation.UseStarshards && spriest.Starshards.IsReady(sim) {
-		spell = spriest.Starshards
-		// Allow for undead to use devouring plague off CD
-	} else if spriest.rotation.UseDevPlague && spriest.DevouringPlague.IsReady(sim) {
-		spell = spriest.DevouringPlague
-		// If setting enabled, throw mind blast into our rotation off CD
 	} else if spriest.rotation.UseMindBlast && spriest.MindBlast.IsReady(sim) {
 		spell = spriest.MindBlast
 		// If setting enabled, cast Shadow Word: Death on cooldown

@@ -403,7 +403,7 @@ message RaidBuffs {
 	bool arcane_brilliance = 1;
 	TristateEffect power_word_fortitude = 7;
 	bool shadow_protection = 8;
-	TristateEffect divine_spirit = 4;
+	bool divine_spirit = 4;
 	TristateEffect gift_of_the_wild = 5;
 	TristateEffect thorns = 6;
 }

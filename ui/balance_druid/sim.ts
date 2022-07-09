@@ -103,7 +103,7 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					arcaneBrilliance: true,
-					divineSpirit: TristateEffect.TristateEffectImproved,
+					divineSpirit: true,
 				}),
 				partyBuffs: PartyBuffs.create({
 					drums: Drums.DrumsOfBattle,

@@ -1,13 +1,8 @@
-import { ShadowPriest_Rotation_RotationType as RotationType } from '/wotlk/core/proto/priest.js';
-import { Race, RaidTarget } from '/wotlk/core/proto/common.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { NO_TARGET } from '/wotlk/core/proto_utils/utils.js';
-import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
-import { Player } from '/wotlk/core/player.js';
-import { Sim } from '/wotlk/core/sim.js';
 import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
-import { Target } from '/wotlk/core/target.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
+import { Player } from '/wotlk/core/player.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { ShadowPriest_Rotation_RotationType as RotationType } from '/wotlk/core/proto/priest.js';
+import { EventID } from '/wotlk/core/typed_event.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
@@ -70,40 +65,6 @@ export const ShadowPriestRotationConfig = {
 					newRotation.precastVt = newValue;
 					player.setRotation(eventID, newRotation);
 				},
-			},
-		},
-		{
-			type: 'boolean' as const,
-			cssClass: 'devplague-picker',
-			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-			config: {
-				label: 'Use Devouring Plague',
-				labelTooltip: 'Use Devouring Plague whenever off CD.',
-				changedEvent: (player: Player<Spec.SpecShadowPriest>) => player.raceChangeEmitter,
-				getValue: (player: Player<Spec.SpecShadowPriest>) => player.getRotation().useDevPlague,
-				setValue: (eventID: EventID, player: Player<Spec.SpecShadowPriest>, newValue: boolean) => {
-					const newRotation = player.getRotation();
-					newRotation.useDevPlague = newValue;
-					player.setRotation(eventID, newRotation);
-				},
-				enableWhen: (player: Player<Spec.SpecShadowPriest>) => player.getRace() == Race.RaceUndead,
-			},
-		},
-		{
-			type: 'boolean' as const,
-			cssClass: 'starshards-picker',
-			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-			config: {
-				label: 'Use starshards',
-				labelTooltip: 'Use Starshards whenever off CD.',
-				changedEvent: (player: Player<Spec.SpecShadowPriest>) => player.raceChangeEmitter,
-				getValue: (player: Player<Spec.SpecShadowPriest>) => player.getRotation().useStarshards,
-				setValue: (eventID: EventID, player: Player<Spec.SpecShadowPriest>, newValue: boolean) => {
-					const newRotation = player.getRotation();
-					newRotation.useStarshards = newValue;
-					player.setRotation(eventID, newRotation);
-				},
-				enableWhen: (player: Player<Spec.SpecShadowPriest>) => player.getRace() == Race.RaceNightElf,
 			},
 		},
 		{
