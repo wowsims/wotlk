@@ -281,7 +281,9 @@ export class Sim {
 
 		const request = this.makeRaidSimRequest(true);
 		const result = await this.workerPool.raidSimAsync(request, () => { });
-
+		if (result.errorResult != "") {
+			this.handleError(result.errorResult, this.encodeSimReq(request));
+		}
 		const simResult = await SimResult.makeNew(request, result);
 		this.simResultEmitter.emit(eventID, simResult);
 		return simResult;
