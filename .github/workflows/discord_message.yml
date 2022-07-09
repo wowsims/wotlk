@@ -1,0 +1,16 @@
+name: Discord Webhook Messages
+on:
+  push:
+    branches:
+      - master
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2.3.1
+      - name: Run Discord Webhook
+        uses: bythope/discord-webhook-messages@v1.1.0
+        with:
+          webhookUrl: 'https://discord.com/api/webhooks/995364288300589067/cC3b7S3jxacTyM7JHOe-yWEHMRalKaGIHcP9HIHVNwjOXdDUJ3AkW784ZSSP0D5m0HoI'
+          handler: 'push'
