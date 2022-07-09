@@ -400,38 +400,65 @@ enum Alchohol {
 
 // Buffs that affect the entire raid.
 message RaidBuffs {
-	bool arcane_brilliance = 1;
-	TristateEffect power_word_fortitude = 7;
-	bool shadow_protection = 8;
+	TristateEffect power_word_fortitude = 1;
+	bool arcane_brilliance = 2;
+	bool fel_intelligence = 3;
 	TristateEffect divine_spirit = 4;
 	TristateEffect gift_of_the_wild = 5;
-	TristateEffect thorns = 6;
+	bool shadow_protection = 6;	
+	
+	bool swift_retribution = 7;
+	TristateEffect moonkin_aura = 8;
+	bool elemental_oath = 9;
+	bool totem_of_wrath = 10; // shouldn't stack with demonic pact (does in beta right now)
 
-	int32 bloodlust = 3;
+	// +Health
+	TristateEffect commanding_shout = 11;
+	TristateEffect blood_pact = 12;	
+
+	// 155 agi/str
+	bool horn_of_winter = 13;
+	TristateEffect strength_of_earth_totem = 14; // none, normal, 15% improved
+	
+	// 20% Melee Haste
+	TristateEffect icy_talons = 15;
+	TristateEffect windfury_totem = 16; // none, 16%, 20%
+
+	// +AP
+	TristateEffect battle_shout = 17; // does not stack with blessing_of_might
+	
+	// 10% AP
+	bool trueshot_aura = 18;
+	bool unleashed_rage = 19;
+	bool abominations_might = 20;
+
+	// 5% phy crit
+	TristateEffect leader_of_the_pack = 21;
+	bool rampage = 22;
+
+	// 3% dmg
+	bool ferocious_inspiration = 23;
+	bool sanctified_retribution = 24;
+	bool arcane_empowerment = 25;
+
+	TristateEffect mana_spring_totem = 26; // does not stack with blessing of wis
+	
+	bool wrath_of_air_totem = 14;
+	bool tranquil_air_totem = 26;
+
+	bool bloodlust = 3;
+	bool heroic_presence = 10;
+	int32 mana_tide_totems = 17;
+
+	TristateEffect thorns = 8;
+	TristateEffect devotion_aura = 35;
+	TristateEffect retribution_aura = 36;
+
+	// Assumes that if true, all players will get it. 
+	bool replenishment = 4; // vampiric touch, judgements of the wise, hunting party, imp soul leech, enduring winter
 
 	// Drums
 	Drums drums = 9;
-	TristateEffect moonkin_aura = 2;
-
-	// Totems
-	TristateEffect mana_spring_totem = 12;
-	int32 mana_tide_totems = 17;
-	bool totem_of_wrath = 13;
-	bool wrath_of_air_totem = 14;
-	TristateEffect strength_of_earth_totem = 16; // none, normal, 15% improved
-	bool tranquil_air_totem = 26;
-	TristateEffect windfury_totem = 23; // none, normal, 2pt improved
-
-	TristateEffect blood_pact = 34;	
-	TristateEffect sanctity_aura = 20;
-	TristateEffect devotion_aura = 35;
-	TristateEffect retribution_aura = 36;
-	bool trueshot_aura = 21;
-	bool heroic_presence = 10;
-	TristateEffect battle_shout = 18;
-
-	// Mitigation buffs
-	TristateEffect commanding_shout = 32;
 }
 
 // Buffs that affect a single party.
@@ -445,25 +472,24 @@ message PartyBuffs {
 	bool jade_pendant_of_blasting = 11;
 }
 
-// Buffs are only used by individual sims, never the raid sim.
-// These are usually individuals of actions taken by other Characters.
+// These are usually individual actions taken by other Characters.
 message IndividualBuffs {
+	// Blessings, used for raid sim and individual sim
 	bool blessing_of_kings = 1;
-	bool blessing_of_salvation = 8;
-	bool blessing_of_sanctuary = 9;
 	TristateEffect blessing_of_wisdom = 2;
 	TristateEffect blessing_of_might = 3;
-
-	bool replenishment = 4;
-	bool unleashed_rage = 7;
+	bool blessing_of_sanctuary = 4;
 
 	// How many of each of these buffs the player will be receiving.
-	int32 innervates = 5;
-	int32 power_infusions = 6;
-	int32 unholy_frenzy = 11;
-
-
-	double inspiration_uptime = 10;
+	// Only used in individual sims 
+	//   as the class that provides these would cast them in raid sim
+	int32 hymn_of_hope = 5;
+	int32 hand_of_salvation = 6;
+	int32 rapture = 7;
+	int32 innervates = 8;
+	int32 power_infusions = 9;
+	int32 unholy_frenzy = 10;
+	int32 revitalize = 11;+
 }
 
 message Consumes {
@@ -504,21 +530,29 @@ message Consumes {
 
 message Debuffs {
 	bool judgement_of_wisdom = 1;
-	bool judgement_of_light = 25;
-	bool improved_seal_of_the_crusader = 2;
-	bool misery = 3;
-	TristateEffect curse_of_elements = 4;
-	double isb_uptime = 5;
-	bool shadow_weaving = 18;
+	bool judgement_of_light = 2;
 
+	bool misery = 3;
+	TristateEffect faerie_fire = 10;
+
+	TristateEffect curse_of_elements = 4;
+	TristateEffect ebon_plaguebringer = 5;
+
+	bool heart_of_the_crusader = 6;
+	bool master_poisoner = 7;
+
+	bool improved_shadow_bolt = 8;
 	bool improved_scorch = 6;
 	bool winters_chill = 7;
 
 	bool blood_frenzy = 8;
+	bool savage_combat = 9;
+
 	bool gift_of_arthas = 17;
+	
 	bool mangle = 16;
+
 	TristateEffect expose_armor = 9;
-	TristateEffect faerie_fire = 10;
 	bool sunder_armor = 11;
 	bool curse_of_weakness = 12;
 
@@ -529,6 +563,7 @@ message Debuffs {
 	TristateEffect demoralizing_roar = 19;
 	TristateEffect demoralizing_shout = 20;
 	TristateEffect thunder_clap = 21;
+
 	bool insect_swarm = 22;
 	bool scorpid_sting = 23;
 	bool shadow_embrace = 24;
