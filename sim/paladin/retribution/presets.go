@@ -48,7 +48,7 @@ var DefaultOptions = &proto.Player_RetributionPaladin{
 var FullRaidBuffs = &proto.RaidBuffs{
 	ArcaneBrilliance: true,
 	GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
-	DivineSpirit:     proto.TristateEffect_TristateEffectImproved,
+	DivineSpirit:     true,
 }
 
 var FullPartyBuffs = &proto.PartyBuffs{
@@ -84,7 +84,7 @@ var FullDebuffs = &proto.Debuffs{
 	BloodFrenzy:                 true,
 	ExposeArmor:                 proto.TristateEffect_TristateEffectImproved,
 	FaerieFire:                  proto.TristateEffect_TristateEffectImproved,
-	CurseOfWeakness:  		     true,
+	CurseOfWeakness:             true,
 	HuntersMark:                 proto.TristateEffect_TristateEffectImproved,
 	ExposeWeaknessUptime:        1,
 	ExposeWeaknessHunterAgility: 800,

@@ -109,7 +109,7 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					arcaneBrilliance: true,
-					divineSpirit: TristateEffect.TristateEffectImproved,
+					divineSpirit: true,
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
 				}),
 				partyBuffs: PartyBuffs.create({

@@ -104,7 +104,7 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					arcaneBrilliance: true,
-					divineSpirit: TristateEffect.TristateEffectImproved,
+					divineSpirit: true,
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
 				}),
 				partyBuffs: PartyBuffs.create({
@@ -137,8 +137,6 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 			],
 			partyBuffInputs: [
 				IconInputs.MoonkinAura,
-				IconInputs.DrumsOfBattleBuff,
-				IconInputs.DrumsOfRestorationBuff,
 				IconInputs.Bloodlust,
 				IconInputs.WrathOfAirTotem,
 				IconInputs.TotemOfWrath,
@@ -146,16 +144,10 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 				IconInputs.ManaTideTotem,
 				IconInputs.FerociousInspiration,
 				IconInputs.HeroicPresence,
-				IconInputs.EyeOfTheNight,
-				IconInputs.ChainOfTheTwilightOwl,
-				IconInputs.JadePendantOfBlasting,
-				IconInputs.AtieshWarlock,
-				IconInputs.AtieshMage,
 			],
 			playerBuffInputs: [
 				IconInputs.BlessingOfKings,
 				IconInputs.BlessingOfWisdom,
-				IconInputs.BlessingOfSalvation,
 				IconInputs.Innervate,
 				IconInputs.PowerInfusion,
 			],
@@ -168,34 +160,30 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 			// Which options are selectable in the 'Consumes' section.
 			consumeOptions: {
 				potions: [
-					Potions.SuperManaPotion,
-					Potions.DestructionPotion,
+					Potions.PotionOfSpeed,
+					Potions.PotionOfWildMagic,
+					Potions.RunicManaPotion,
 				],
 				conjured: [
-					Conjured.ConjuredDarkRune,
 				],
 				flasks: [
-					Flask.FlaskOfPureDeath,
-					Flask.FlaskOfSupremePower,
+					Flask.FlaskOfTheFrostWyrm,
 				],
 				battleElixirs: [
-					BattleElixir.ElixirOfMajorShadowPower,
-					BattleElixir.AdeptsElixir,
+					BattleElixir.SpellpowerElixir,
 				],
 				guardianElixirs: [
-					GuardianElixir.ElixirOfDraenicWisdom,
-					GuardianElixir.ElixirOfMajorMageblood,
+					GuardianElixir.ElixirOfSpirit,
+					GuardianElixir.ElixirOfMightyThoughts,
+					GuardianElixir.ElixirOfMightyMageblood,
 				],
 				food: [
-					Food.FoodBlackenedBasilisk,
+					Food.FoodFishFeast,
 					Food.FoodSkullfishSoup,
 				],
 				alcohol: [
-					Alchohol.AlchoholKreegsStoutBeatdown,
 				],
 				weaponImbues: [
-					WeaponImbue.WeaponImbueBrilliantWizardOil,
-					WeaponImbue.WeaponImbueSuperiorWizardOil,
 				],
 				other: [
 				],
@@ -231,10 +219,6 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 				// Preset gear configurations that the user can quickly select.
 				gear: [
 					Presets.P1_PRESET,
-					Presets.P2_PRESET,
-					Presets.P3_PRESET,
-					Presets.P4_PRESET,
-					Presets.P5_PRESET,
 				],
 			},
 		});

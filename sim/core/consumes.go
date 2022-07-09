@@ -450,9 +450,9 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 		// Proc from Band of Eternal Defender removes scroll.
 		character.AddStat(stats.Armor, []float64{0, 60, 120, 180, 240, 300}[consumes.ScrollOfProtection])
 	}
-	if raidBuffs.DivineSpirit == proto.TristateEffect_TristateEffectMissing {
+	if !raidBuffs.DivineSpirit {
 		// Doesn't stack with DS
-		character.AddStat(stats.Spirit, []float64{0, 3, 7, 11, 15, 30}[consumes.ScrollOfSpirit])
+		character.AddStat(stats.Spirit, []float64{0, 3, 7, 11, 15, 30, 40, 64}[consumes.ScrollOfSpirit])
 	}
 
 	// Weapon Imbues
