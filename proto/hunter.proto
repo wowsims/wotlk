@@ -215,17 +215,6 @@ message Hunter {
 	HunterTalents talents = 2;
 	
 	message Options {
-		enum QuiverBonus {
-			QuiverNone = 0;
-			Speed10 = 1;
-			Speed11 = 2;
-			Speed12 = 3;
-			Speed13 = 4;
-			Speed14 = 5;
-			Speed15 = 6;
-		}
-		QuiverBonus quiver_bonus = 1;
-
 		enum Ammo {
 			AmmoNone = 0;
 			IcebladeArrow = 1;
@@ -236,7 +225,7 @@ message Hunter {
 			AdamantiteStinger = 6;
 			BlackflightArrow = 7;
 		}
-		Ammo ammo = 2;
+		Ammo ammo = 1;
 
 		enum PetType {
 			PetNone = 0;
@@ -250,12 +239,12 @@ message Hunter {
 			WindSerpent = 6;
 		}
 
-		PetType pet_type = 3;
-		HunterPetTalents pet_talents = 8;
+		PetType pet_type = 2;
+		HunterPetTalents pet_talents = 3;
 		double pet_uptime = 4;
-		bool pet_single_ability = 6;
+		bool pet_single_ability = 5;
 
-		int32 latency_ms = 5;
+		int32 latency_ms = 6;
 
 		// For internal use only.
 		// Used for hunter presims to avoid artifacts caused by randomness when

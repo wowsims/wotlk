@@ -126,7 +126,6 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 
 			// IconInputs to include in the 'Self Buffs' section on the settings tab.
 			selfBuffInputs: [
-				HunterInputs.Quiver,
 				HunterInputs.WeaponAmmo,
 			],
 			// IconInputs to include in the 'Other Buffs' section on the settings tab.
