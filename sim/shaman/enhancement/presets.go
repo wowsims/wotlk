@@ -62,11 +62,9 @@ var FullRaidBuffs = &proto.RaidBuffs{
 	GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
 }
 var FullPartyBuffs = &proto.PartyBuffs{
-	FerociousInspiration: 2,
-	BattleShout:          proto.TristateEffect_TristateEffectImproved,
-	LeaderOfThePack:      proto.TristateEffect_TristateEffectImproved,
-	SanctityAura:         proto.TristateEffect_TristateEffectImproved,
-	TrueshotAura:         true,
+	BattleShout:     proto.TristateEffect_TristateEffectImproved,
+	LeaderOfThePack: proto.TristateEffect_TristateEffectImproved,
+	TrueshotAura:    true,
 }
 var FullIndividualBuffs = &proto.IndividualBuffs{
 	BlessingOfKings:  true,

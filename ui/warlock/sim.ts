@@ -141,7 +141,6 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				IconInputs.TotemOfWrath,
 				IconInputs.ManaSpringTotem,
 				IconInputs.ManaTideTotem,
-				IconInputs.SanctityAura,
 				IconInputs.HeroicPresence,
 				IconInputs.EyeOfTheNight,
 				IconInputs.ChainOfTheTwilightOwl,

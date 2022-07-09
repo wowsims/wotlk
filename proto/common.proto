@@ -401,22 +401,25 @@ enum Alchohol {
 // Buffs that affect the entire raid.
 message RaidBuffs {
 	bool arcane_brilliance = 1;
-	TristateEffect power_word_fortitude = 7;
-	bool shadow_protection = 8;
+	TristateEffect power_word_fortitude = 2;
+	bool shadow_protection = 3;
 	bool divine_spirit = 4;
 	TristateEffect gift_of_the_wild = 5;
 	TristateEffect thorns = 6;
+
+	// % Damage Buffs
+	bool arcane_empowerment = 7;
+	bool ferocious_inspiration = 8;
+	bool sanctified_retribution = 9;
 }
 
 // Buffs that affect a single party.
 message PartyBuffs {
 	int32 bloodlust = 1;
-	int32 ferocious_inspiration = 22; // Number of BM hunters in party.
 
 	TristateEffect blood_pact = 34;
 	TristateEffect moonkin_aura = 2;
 	TristateEffect leader_of_the_pack = 19;
-	TristateEffect sanctity_aura = 20;
 	TristateEffect devotion_aura = 35;
 	TristateEffect retribution_aura = 36;
 	bool trueshot_aura = 21;

@@ -60,7 +60,6 @@ var FullPartyBuffs = &proto.PartyBuffs{
 	StrengthOfEarthTotem:       proto.TristateEffect_TristateEffectImproved,
 	WindfuryTotem:              proto.TristateEffect_TristateEffectImproved,
 	SnapshotBsSolarianSapphire: true,
-	SanctityAura:               proto.TristateEffect_TristateEffectImproved,
 }
 var FullIndividualBuffs = &proto.IndividualBuffs{
 	BlessingOfKings: true,
