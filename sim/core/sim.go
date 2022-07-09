@@ -76,6 +76,14 @@ func runSim(rsr proto.RaidSimRequest, progress chan *proto.ProgressMetrics, skip
 			runtime.Gosched() // allow time for message to make it back out.
 		}
 		presimResult := sim.runPresims(rsr)
+		if presimResult.ErrorResult != "" {
+			if progress != nil {
+				progress <- &proto.ProgressMetrics{
+					FinalRaidResult: presimResult,
+				}
+			}
+			return presimResult
+		}
 		if progress != nil {
 			progress <- &proto.ProgressMetrics{
 				TotalIterations: sim.Options.Iterations,
