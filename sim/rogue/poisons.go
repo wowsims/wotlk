@@ -24,7 +24,7 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:            core.ProcMaskEmpty,
-			BonusSpellHitRating: 5 * core.SpellHitRatingPerHitChance * float64(rogue.Talents.MasterPoisoner),
+			BonusSpellHitRating: 5 * core.SpellHitRatingPerHitChance * float64(rogue.Talents.Precision),
 			ThreatMultiplier:    1,
 			OutcomeApplier:      rogue.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
@@ -55,7 +55,7 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 + 0.04*float64(rogue.Talents.VilePoisons),
+			DamageMultiplier: 1 + []float64{0.0, 0.07, 0.14, 0.20}[rogue.Talents.VilePoisons],
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
 			BaseDamage:       core.MultiplyByStacks(core.BaseDamageConfigFlat(180/4), dotAura),
@@ -101,9 +101,9 @@ func (rogue *Rogue) registerInstantPoisonSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:            core.ProcMaskEmpty,
-			DamageMultiplier:    1 + 0.04*float64(rogue.Talents.VilePoisons),
+			DamageMultiplier:    1 + []float64{0.0, 0.07, 0.14, 0.20}[rogue.Talents.VilePoisons],
 			ThreatMultiplier:    1,
-			BonusSpellHitRating: 5 * core.SpellHitRatingPerHitChance * float64(rogue.Talents.MasterPoisoner),
+			BonusSpellHitRating: 5 * core.SpellHitRatingPerHitChance * float64(rogue.Talents.Precision),
 			BaseDamage:          core.BaseDamageConfigRoll(146, 194),
 			OutcomeApplier:      rogue.OutcomeFuncMagicHitAndCrit(rogue.SpellCritMultiplier()),
 		}),
