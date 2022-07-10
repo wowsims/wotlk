@@ -8,6 +8,8 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+const baseMana = 4396.0
+
 // Start looking to refresh 2 minute totems at 1:55.
 const TotemRefreshTime2M = time.Second * 115
 
@@ -18,29 +20,8 @@ const (
 )
 
 func NewShaman(character core.Character, talents proto.ShamanTalents, totems proto.ShamanTotems, selfBuffs SelfBuffs) *Shaman {
-	if totems.WindfuryTotemRank == 0 {
-		// If rank is 0, disable windfury options.
-		totems.TwistWindfury = false
-		if totems.Air == proto.AirTotem_WindfuryTotem {
-			totems.Air = proto.AirTotem_NoAirTotem
-		}
-	}
-	if totems.Air == proto.AirTotem_WindfuryTotem {
-		// No need to twist windfury if its already the default totem.
-		totems.TwistWindfury = false
-	} else if totems.Air == proto.AirTotem_NoAirTotem && totems.TwistWindfury {
-		// If twisting windfury without a default air totem, make windfury the default instead.
-		totems.Air = proto.AirTotem_WindfuryTotem
-		totems.TwistWindfury = false
-	}
 	if totems.Fire == proto.FireTotem_TotemOfWrath && !talents.TotemOfWrath {
 		totems.Fire = proto.FireTotem_NoFireTotem
-	}
-	if totems.Air != proto.AirTotem_WrathOfAirTotem && selfBuffs.SnapshotWOAT42Pc {
-		selfBuffs.SnapshotWOAT42Pc = false
-	}
-	if totems.Earth != proto.EarthTotem_StrengthOfEarthTotem && selfBuffs.SnapshotSOET42Pc {
-		selfBuffs.SnapshotSOET42Pc = false
 	}
 
 	shaman := &Shaman{
@@ -53,14 +34,6 @@ func NewShaman(character core.Character, talents proto.ShamanTalents, totems pro
 
 	// Add Shaman stat dependencies
 	shaman.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Intellect,
-		ModifiedStat: stats.SpellCrit,
-		Modifier: func(intellect float64, spellCrit float64) float64 {
-			return spellCrit + (intellect/78.1)*core.CritRatingPerCritChance
-		},
-	})
-
-	shaman.AddStatDependency(stats.StatDependency{
 		SourceStat:   stats.Strength,
 		ModifiedStat: stats.AttackPower,
 		Modifier: func(strength float64, attackPower float64) float64 {
@@ -72,12 +45,12 @@ func NewShaman(character core.Character, talents proto.ShamanTalents, totems pro
 		SourceStat:   stats.Agility,
 		ModifiedStat: stats.MeleeCrit,
 		Modifier: func(agility float64, meleeCrit float64) float64 {
-			return meleeCrit + (agility/25)*core.CritRatingPerCritChance
+			return meleeCrit + (agility/83.3)*core.CritRatingPerCritChance
 		},
 	})
 
-	if selfBuffs.WaterShield {
-		shaman.AddStat(stats.MP5, 50)
+	if selfBuffs.Shield == proto.ShamanShield_WaterShield {
+		shaman.AddStat(stats.MP5, 100)
 	}
 
 	return shaman
@@ -85,10 +58,8 @@ func NewShaman(character core.Character, talents proto.ShamanTalents, totems pro
 
 // Which buffs this shaman is using.
 type SelfBuffs struct {
-	Bloodlust        bool
-	WaterShield      bool
-	SnapshotWOAT42Pc bool
-	SnapshotSOET42Pc bool
+	Bloodlust bool
+	Shield    proto.ShamanShield
 }
 
 // Indexes into NextTotemDrops for self buffs
@@ -119,7 +90,12 @@ type Shaman struct {
 	ChainLightning    *core.Spell
 	ChainLightningLOs []*core.Spell
 
+	LavaBurst   *core.Spell
+	FireNova    *core.Spell
+	LavaLash    *core.Spell
 	Stormstrike *core.Spell
+
+	Thunderstorm *core.Spell
 
 	EarthShock *core.Spell
 	FlameShock *core.Spell
@@ -137,15 +113,15 @@ type Shaman struct {
 	WindfuryTotem        *core.Spell
 	WrathOfAirTotem      *core.Spell
 
-	FlameShockDot    *core.Dot
-	SearingTotemDot  *core.Dot
-	MagmaTotemDot    *core.Dot
-	FireNovaTotemDot *core.Dot
+	FlameShockDot   *core.Dot
+	SearingTotemDot *core.Dot
+	MagmaTotemDot   *core.Dot
 
-	ClearcastingAura     *core.Aura
-	ElementalMasteryAura *core.Aura
-	NaturesSwiftnessAura *core.Aura
-	ShamanisticFocusAura *core.Aura
+	ClearcastingAura         *core.Aura
+	ElementalMasteryAura     *core.Aura
+	ElementalMasteryBuffAura *core.Aura
+	NaturesSwiftnessAura     *core.Aura
+	MaelstromWeaponAura      *core.Aura
 }
 
 // Implemented by each Shaman spec.
@@ -168,71 +144,45 @@ func (shaman *Shaman) HasMinorGlyph(glyph proto.ShamanMinorGlyph) bool {
 }
 
 func (shaman *Shaman) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
-}
-func (shaman *Shaman) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 	if shaman.Totems.Fire == proto.FireTotem_TotemOfWrath {
-		partyBuffs.TotemOfWrath += 1
-	}
-	if shaman.Talents.ManaTideTotem {
-		partyBuffs.ManaTideTotems++
+		raidBuffs.TotemOfWrath = true
 	}
 
 	switch shaman.Totems.Water {
 	case proto.WaterTotem_ManaSpringTotem:
-		partyBuffs.ManaSpringTotem = core.MaxTristate(partyBuffs.ManaSpringTotem, proto.TristateEffect_TristateEffectRegular)
+		raidBuffs.ManaSpringTotem = core.MaxTristate(raidBuffs.ManaSpringTotem, proto.TristateEffect_TristateEffectRegular)
 		if shaman.Talents.RestorativeTotems == 5 {
-			partyBuffs.ManaSpringTotem = proto.TristateEffect_TristateEffectImproved
+			raidBuffs.ManaSpringTotem = proto.TristateEffect_TristateEffectImproved
 		}
 	}
 
 	switch shaman.Totems.Air {
 	case proto.AirTotem_WrathOfAirTotem:
-		woaValue := proto.TristateEffect_TristateEffectRegular
-		if ItemSetCycloneRegalia.CharacterHasSetBonus(shaman.GetCharacter(), 2) {
-			woaValue = proto.TristateEffect_TristateEffectImproved
-		} else if shaman.SelfBuffs.SnapshotWOAT42Pc {
-			partyBuffs.SnapshotImprovedWrathOfAirTotem = true
-		}
-		partyBuffs.WrathOfAirTotem = core.MaxTristate(partyBuffs.WrathOfAirTotem, woaValue)
-	case proto.AirTotem_GraceOfAirTotem:
-		value := proto.TristateEffect_TristateEffectRegular
-		if shaman.Talents.EnhancingTotems == 2 {
-			value = proto.TristateEffect_TristateEffectImproved
-		}
-		partyBuffs.GraceOfAirTotem = core.MaxTristate(partyBuffs.GraceOfAirTotem, value)
+		raidBuffs.WrathOfAirTotem = true
 	case proto.AirTotem_WindfuryTotem:
-		break
-	case proto.AirTotem_TranquilAirTotem:
-		partyBuffs.TranquilAirTotem = true
-	}
-
-	if shaman.Totems.TwistWindfury || shaman.Totems.Air == proto.AirTotem_WindfuryTotem {
-		if shaman.Totems.WindfuryTotemRank > partyBuffs.WindfuryTotemRank {
-			partyBuffs.WindfuryTotemRank = shaman.Totems.WindfuryTotemRank
-			partyBuffs.WindfuryTotemIwt = shaman.Talents.ImprovedWeaponTotems
-		} else if shaman.Totems.WindfuryTotemRank == partyBuffs.WindfuryTotemRank {
-			partyBuffs.WindfuryTotemIwt = core.MaxInt32(partyBuffs.WindfuryTotemIwt, shaman.Talents.ImprovedWeaponTotems)
+		wfVal := proto.TristateEffect_TristateEffectRegular
+		if shaman.Talents.ImprovedWindfuryTotem > 0 {
+			wfVal = proto.TristateEffect_TristateEffectImproved
 		}
+		raidBuffs.WindfuryTotem = core.MaxTristate(wfVal, raidBuffs.WindfuryTotem)
 	}
 
 	switch shaman.Totems.Earth {
 	case proto.EarthTotem_StrengthOfEarthTotem:
-		value := proto.StrengthOfEarthType_Basic
-		if shaman.Talents.EnhancingTotems == 2 {
-			value = proto.StrengthOfEarthType_EnhancingTotems
+		totem := proto.TristateEffect_TristateEffectRegular
+		if shaman.Talents.EnhancingTotems == 3 {
+			totem = proto.TristateEffect_TristateEffectImproved
 		}
-		if ItemSetCycloneHarness.CharacterHasSetBonus(&shaman.Character, 2) {
-			if value == proto.StrengthOfEarthType_EnhancingTotems {
-				value = proto.StrengthOfEarthType_EnhancingAndCyclone
-			} else {
-				value = proto.StrengthOfEarthType_CycloneBonus
-			}
-		} else if shaman.SelfBuffs.SnapshotSOET42Pc {
-			partyBuffs.SnapshotImprovedStrengthOfEarthTotem = true
-		}
-		if value > partyBuffs.StrengthOfEarthTotem {
-			partyBuffs.StrengthOfEarthTotem = value
-		}
+		raidBuffs.StrengthOfEarthTotem = core.MaxTristate(raidBuffs.StrengthOfEarthTotem, totem)
+	}
+
+	if shaman.Talents.UnleashedRage > 0 {
+		raidBuffs.UnleashedRage = true
+	}
+}
+func (shaman *Shaman) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
+	if shaman.Talents.ManaTideTotem {
+		partyBuffs.ManaTideTotems++
 	}
 }
 
@@ -241,6 +191,8 @@ func (shaman *Shaman) Initialize() {
 	shaman.registerStormstrikeSpell()
 	shaman.LightningBolt = shaman.newLightningBoltSpell(false)
 	shaman.LightningBoltLO = shaman.newLightningBoltSpell(true)
+	shaman.LavaBurst = shaman.newLavaBurstSpell()
+	// shaman.FireNova = shaman.newFireNovaSpell()
 
 	shaman.ChainLightning = shaman.newChainLightningSpell(false)
 	numHits := core.MinInt32(3, shaman.Env.GetNumTargets())
@@ -249,17 +201,19 @@ func (shaman *Shaman) Initialize() {
 		shaman.ChainLightningLOs = append(shaman.ChainLightningLOs, shaman.newChainLightningSpell(true))
 	}
 
+	if shaman.Talents.Thunderstorm {
+		shaman.Thunderstorm = shaman.newThunderstormSpell()
+	}
 	shaman.registerShocks()
 	shaman.registerGraceOfAirTotemSpell()
 	shaman.registerMagmaTotemSpell()
 	shaman.registerManaSpringTotemSpell()
-	shaman.registerNovaTotemSpell()
 	shaman.registerSearingTotemSpell()
 	shaman.registerStrengthOfEarthTotemSpell()
 	shaman.registerTotemOfWrathSpell()
 	shaman.registerTranquilAirTotemSpell()
 	shaman.registerTremorTotemSpell()
-	shaman.registerWindfuryTotemSpell(shaman.Totems.WindfuryTotemRank)
+	shaman.registerWindfuryTotemSpell()
 	shaman.registerWrathOfAirTotemSpell()
 
 	shaman.registerBloodlustCD()
@@ -275,10 +229,6 @@ func (shaman *Shaman) Reset(sim *core.Simulation) {
 				shaman.NextTotemDrops[i] = TotemRefreshTime2M
 				shaman.NextTotemDropType[i] = int32(shaman.Totems.Air)
 			}
-			if shaman.Totems.TwistWindfury {
-				shaman.NextTotemDropType[i] = int32(proto.AirTotem_WindfuryTotem)
-				shaman.NextTotemDrops[i] = time.Second * 10 // gotta recast windfury after 10s
-			}
 		case EarthTotem:
 			if shaman.Totems.Earth != proto.EarthTotem_NoEarthTotem {
 				shaman.NextTotemDrops[i] = TotemRefreshTime2M
@@ -286,9 +236,6 @@ func (shaman *Shaman) Reset(sim *core.Simulation) {
 			}
 		case FireTotem:
 			shaman.NextTotemDropType[i] = int32(shaman.Totems.Fire)
-			if shaman.Totems.TwistFireNova {
-				shaman.NextTotemDropType[FireTotem] = int32(proto.FireTotem_FireNovaTotem) // start by dropping nova, then alternating.
-			}
 			if shaman.NextTotemDropType[i] != int32(proto.FireTotem_NoFireTotem) {
 				shaman.NextTotemDrops[i] = TotemRefreshTime2M
 				if shaman.NextTotemDropType[i] != int32(proto.FireTotem_TotemOfWrath) {
@@ -301,12 +248,14 @@ func (shaman *Shaman) Reset(sim *core.Simulation) {
 			}
 		}
 	}
+
+	shaman.FlameShock.CD.Reset()
 }
 
 func (shaman *Shaman) ElementalCritMultiplier() float64 {
 	critMultiplier := shaman.DefaultSpellCritMultiplier()
-	if shaman.Talents.ElementalFury {
-		critMultiplier = shaman.SpellCritMultiplier(1, 1)
+	if shaman.Talents.ElementalFury > 0 {
+		critMultiplier = shaman.SpellCritMultiplier(1, 0.2*float64(shaman.Talents.ElementalFury))
 	}
 	return critMultiplier
 }
@@ -319,10 +268,10 @@ func init() {
 		stats.Stamina:     113,
 		stats.Intellect:   109,
 		stats.Spirit:      122,
-		stats.Mana:        2958,
-		stats.SpellCrit:   47.89,
-		stats.AttackPower: 120,
-		stats.MeleeCrit:   37.07,
+		stats.Mana:        baseMana,
+		stats.SpellCrit:   2.2 * core.CritRatingPerCritChance,
+		stats.AttackPower: 95, // TODO: confirm this.
+		stats.MeleeCrit:   2.92 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceOrc, Class: proto.Class_ClassShaman}] = stats.Stats{
 		stats.Health:      2979,
@@ -331,10 +280,10 @@ func init() {
 		stats.Stamina:     116,
 		stats.Intellect:   105,
 		stats.Spirit:      123,
-		stats.Mana:        2958,
-		stats.SpellCrit:   47.89,
-		stats.AttackPower: 120,
-		stats.MeleeCrit:   37.07,
+		stats.Mana:        baseMana,
+		stats.SpellCrit:   2.2 * core.CritRatingPerCritChance,
+		stats.AttackPower: 95, // TODO: confirm this.
+		stats.MeleeCrit:   2.92 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTauren, Class: proto.Class_ClassShaman}] = stats.Stats{
 		stats.Health:      2979,
@@ -343,21 +292,21 @@ func init() {
 		stats.Stamina:     116,
 		stats.Intellect:   103,
 		stats.Spirit:      122,
-		stats.Mana:        2958,
-		stats.SpellCrit:   47.89,
-		stats.AttackPower: 120,
-		stats.MeleeCrit:   37.07,
+		stats.Mana:        baseMana,
+		stats.SpellCrit:   2.2 * core.CritRatingPerCritChance,
+		stats.AttackPower: 95, // TODO: confirm this.
+		stats.MeleeCrit:   2.92 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassShaman}] = stats.Stats{
 		stats.Health:      2979,
-		stats.Strength:    103,
-		stats.Agility:     66,
-		stats.Stamina:     115,
-		stats.Intellect:   104,
-		stats.Spirit:      121,
-		stats.Mana:        2958,
-		stats.SpellCrit:   47.89,
-		stats.AttackPower: 120,
-		stats.MeleeCrit:   37.07,
+		stats.Strength:    121,
+		stats.Agility:     76,
+		stats.Stamina:     137,
+		stats.Intellect:   136,
+		stats.Spirit:      144,
+		stats.Mana:        baseMana,
+		stats.SpellCrit:   2.2 * core.CritRatingPerCritChance,
+		stats.AttackPower: 95, // TODO: confirm this.
+		stats.MeleeCrit:   2.92 * core.CritRatingPerCritChance,
 	}
 }

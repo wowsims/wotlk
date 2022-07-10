@@ -22,7 +22,7 @@ import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
 import { GuardianElixir } from '/wotlk/core/proto/common.js';
 import { Conjured } from '/wotlk/core/proto/common.js';
-import { Drums } from '/wotlk/core/proto/common.js';
+
 import { PetFood } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
@@ -108,26 +108,23 @@ export class SmitePriestSimUI extends IndividualSimUI<Spec.SpecSmitePriest> {
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					arcaneBrilliance: true,
-					divineSpirit: TristateEffect.TristateEffectImproved,
+					divineSpirit: true,
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
+					bloodlust: true,
+					manaSpringTotem: TristateEffect.TristateEffectRegular,
+					wrathOfAirTotem: true,
 				}),
 				partyBuffs: PartyBuffs.create({
-					drums: Drums.DrumsOfBattle,
-					bloodlust: 1,
-					manaSpringTotem: TristateEffect.TristateEffectRegular,
-					wrathOfAirTotem: TristateEffect.TristateEffectRegular,
-					sanctityAura: TristateEffect.TristateEffectImproved,
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
 					blessingOfWisdom: 2,
-					blessingOfSalvation: true,
+
 				}),
 				debuffs: Debuffs.create({
 					judgementOfWisdom: true,
 					misery: true,
-					improvedSealOfTheCrusader: true,
-					curseOfElements: TristateEffect.TristateEffectRegular,
+					curseOfElements: true,
 				}),
 			},
 
@@ -140,36 +137,30 @@ export class SmitePriestSimUI extends IndividualSimUI<Spec.SpecSmitePriest> {
 				IconInputs.ArcaneBrilliance,
 				IconInputs.DivineSpirit,
 				IconInputs.GiftOfTheWild,
-			],
-			partyBuffInputs: [
-
 				IconInputs.MoonkinAura,
-				IconInputs.DrumsOfBattleBuff,
-				IconInputs.DrumsOfRestorationBuff,
 				IconInputs.Bloodlust,
 				IconInputs.WrathOfAirTotem,
 				IconInputs.TotemOfWrath,
 				IconInputs.ManaSpringTotem,
+			],
+			partyBuffInputs: [
 				IconInputs.ManaTideTotem,
 				IconInputs.HeroicPresence,
 				IconInputs.EyeOfTheNight,
 				IconInputs.ChainOfTheTwilightOwl,
-				IconInputs.JadePendantOfBlasting,
 				IconInputs.AtieshWarlock,
 				IconInputs.AtieshMage,
-				IconInputs.SanctityAura,
 			],
 			playerBuffInputs: [
 				IconInputs.BlessingOfKings,
 				IconInputs.BlessingOfWisdom,
-				IconInputs.BlessingOfSalvation,
 				IconInputs.Innervate,
 				IconInputs.PowerInfusion,
 			],
 			// IconInputs to include in the 'Debuffs' section on the settings tab.
 			debuffInputs: [
 				IconInputs.JudgementOfWisdom,
-				IconInputs.ImprovedSealOfTheCrusader,
+
 				IconInputs.CurseOfElements,
 				IconInputs.Misery,
 			],
@@ -213,10 +204,7 @@ export class SmitePriestSimUI extends IndividualSimUI<Spec.SpecSmitePriest> {
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
-					OtherInputs.ISBUptime,
-					OtherInputs.ShadowPriestDPS,
 					OtherInputs.PrepopPotion,
-					OtherInputs.SnapshotImprovedWrathOfAirTotem,
 					OtherInputs.TankAssignment,
 				],
 			},
@@ -241,10 +229,6 @@ export class SmitePriestSimUI extends IndividualSimUI<Spec.SpecSmitePriest> {
 				// Preset gear configurations that the user can quickly select.
 				gear: [
 					Presets.P1_PRESET,
-					Presets.P2_PRESET,
-					Presets.P3_PRESET,
-					Presets.P4_PRESET,
-					Presets.P5_PRESET,
 				],
 			},
 		});

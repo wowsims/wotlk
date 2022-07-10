@@ -77,29 +77,25 @@ func (druid *Druid) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	if druid.Talents.Brambles == 3 {
 		raidBuffs.Thorns = proto.TristateEffect_TristateEffectImproved
 	}
+
+	if druid.InForm(Moonkin) && druid.Talents.MoonkinForm {
+		raidBuffs.MoonkinAura = core.MaxTristate(raidBuffs.MoonkinAura, proto.TristateEffect_TristateEffectRegular)
+		// if druid.Talents.ImprovedMoonkinForm > 0 {
+		// 	raidBuffs.LeaderOfThePack = proto.TristateEffect_TristateEffectImproved
+		// }
+	}
+	if druid.InForm(Cat|Bear) && druid.Talents.LeaderOfThePack {
+		raidBuffs.LeaderOfThePack = core.MaxTristate(raidBuffs.LeaderOfThePack, proto.TristateEffect_TristateEffectRegular)
+		if druid.Talents.ImprovedLeaderOfThePack > 0 {
+			raidBuffs.LeaderOfThePack = proto.TristateEffect_TristateEffectImproved
+		}
+	}
+
 }
 
 const ravenGoddessItemID = 32387
 
 func (druid *Druid) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
-	if druid.InForm(Moonkin) && druid.Talents.MoonkinForm {
-		partyBuffs.MoonkinAura = core.MaxTristate(partyBuffs.MoonkinAura, proto.TristateEffect_TristateEffectRegular)
-		for _, e := range druid.Equip {
-			if e.ID == ravenGoddessItemID {
-				partyBuffs.MoonkinAura = proto.TristateEffect_TristateEffectImproved
-				break
-			}
-		}
-	}
-	if druid.InForm(Cat|Bear) && druid.Talents.LeaderOfThePack {
-		partyBuffs.LeaderOfThePack = core.MaxTristate(partyBuffs.LeaderOfThePack, proto.TristateEffect_TristateEffectRegular)
-		for _, e := range druid.Equip {
-			if e.ID == ravenGoddessItemID {
-				partyBuffs.LeaderOfThePack = proto.TristateEffect_TristateEffectImproved
-				break
-			}
-		}
-	}
 }
 
 func (druid *Druid) MeleeCritMultiplier() float64 {
@@ -159,14 +155,6 @@ func New(char core.Character, form DruidForm, selfBuffs SelfBuffs, talents proto
 		form:         form,
 	}
 	druid.EnableManaBar()
-
-	druid.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Intellect,
-		ModifiedStat: stats.SpellCrit,
-		Modifier: func(intellect float64, spellCrit float64) float64 {
-			return spellCrit + (intellect/79.4)*core.CritRatingPerCritChance
-		},
-	})
 
 	druid.AddStatDependency(stats.StatDependency{
 		SourceStat:   stats.Strength,

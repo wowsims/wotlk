@@ -9,8 +9,13 @@ import (
 )
 
 func (priest *Priest) registerShadowWordPainSpell() {
-	actionID := core.ActionID{SpellID: 25368}
-	baseCost := 575.0
+	actionID := core.ActionID{SpellID: 48125}
+	baseCost := priest.BaseMana() * 0.22
+
+	applier := priest.OutcomeFuncTick()
+	if priest.Talents.Shadowform {
+		applier = priest.OutcomeFuncMagicCrit(priest.SpellCritMultiplier(1, 1))
+	}
 
 	priest.ShadowWordPain = priest.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -48,19 +53,17 @@ func (priest *Priest) registerShadowWordPainSpell() {
 		}),
 
 		NumberOfTicks: 6 +
-			int(priest.Talents.ImprovedShadowWordPain) +
 			core.TernaryInt(ItemSetAbsolution.CharacterHasSetBonus(&priest.Character, 2), 1, 0),
 		TickLength: time.Second * 3,
 
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask: core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 *
-				(1 + float64(priest.Talents.Darkness)*0.02) *
-				core.TernaryFloat64(priest.Talents.Shadowform, 1.15, 1),
-			ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
-			IsPeriodic:       true,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(1236/6, 0.183),
-			OutcomeApplier:   priest.OutcomeFuncTick(),
+			ProcMask:             core.ProcMaskPeriodicDamage,
+			DamageMultiplier:     (1 + float64(priest.Talents.Darkness)*0.02) * (1 + float64(priest.Talents.ImprovedShadowWordPain)*0.03),
+			BonusSpellCritRating: float64(priest.Talents.MindMelt) * 3 * core.CritRatingPerCritChance,
+			ThreatMultiplier:     1 - 0.08*float64(priest.Talents.ShadowAffinity),
+			IsPeriodic:           true,
+			BaseDamage:           core.BaseDamageConfigMagicNoRoll(1380/6, 0.1833),
+			OutcomeApplier:       applier,
 		}),
 	})
 }

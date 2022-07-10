@@ -10,8 +10,7 @@ import (
 func (priest *Priest) registerShadowWordDeathSpell() {
 	baseCost := priest.BaseMana() * 0.12
 
-	playerMod := (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01) *
-		core.TernaryFloat64(priest.Talents.Shadowform, 1.15, 1)
+	playerMod := (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01)
 	// target := priest.CurrentTarget // Add this section when we get target health simmed to investigate SWD glyph
 	// if priest.GlyphOfShadowWordDeath && target.CurrentHealth < 0.35*target.MaxHealth{
 	//	playerMod = 1 * (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01) *
@@ -38,7 +37,7 @@ func (priest *Priest) registerShadowWordDeathSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:             core.ProcMaskSpellDamage,
-			BonusSpellHitRating:  0 + float64(priest.Talents.ShadowFocus)*1*core.SpellHitRatingPerHitChance,
+			BonusSpellHitRating:  float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
 			BonusSpellCritRating: float64(priest.Talents.MindMelt) * 2 * core.CritRatingPerCritChance,
 			DamageMultiplier:     playerMod,
 			ThreatMultiplier:     1 - 0.08*float64(priest.Talents.ShadowAffinity),

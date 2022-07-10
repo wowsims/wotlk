@@ -10,6 +10,7 @@ import {
 	WaterTotem,
 	EnhancementShaman_Rotation_PrimaryShock as PrimaryShock,
 	ShamanTotems,
+	ShamanShield
 } from '/wotlk/core/proto/shaman.js';
 import { EnhancementShaman_Options as ShamanOptions } from '/wotlk/core/proto/shaman.js';
 import { Spec } from '/wotlk/core/proto/common.js';
@@ -25,7 +26,30 @@ import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
 // These don't need to be in a separate file but it keeps things cleaner.
 
 export const IconBloodlust = makeBooleanShamanBuffInput(ActionId.fromSpellId(2825), 'bloodlust');
-export const IconWaterShield = makeBooleanShamanBuffInput(ActionId.fromSpellId(33736), 'waterShield');
+
+export const IconLightningShield = {
+	id: ActionId.fromSpellId(49281),
+	states: 2,
+	changedEvent: (player: Player<Spec.SpecElementalShaman>) => player.specOptionsChangeEmitter,
+	getValue: (player: Player<Spec.SpecElementalShaman>) => player.getSpecOptions().shield == ShamanShield.WaterShield,
+	setValue: (eventID: EventID, player: Player<Spec.SpecElementalShaman>, newValue: boolean) => {
+		const newOptions = player.getSpecOptions();
+		newOptions.shield = ShamanShield.LightningShield;
+		player.setSpecOptions(eventID, newOptions);
+	},
+}
+
+export const IconWaterShield = {
+	id: ActionId.fromSpellId(33736),
+	states: 2,
+	changedEvent: (player: Player<Spec.SpecElementalShaman>) => player.specOptionsChangeEmitter,
+	getValue: (player: Player<Spec.SpecElementalShaman>) => player.getSpecOptions().shield == ShamanShield.WaterShield,
+	setValue: (eventID: EventID, player: Player<Spec.SpecElementalShaman>, newValue: boolean) => {
+		const newOptions = player.getSpecOptions();
+		newOptions.shield = ShamanShield.WaterShield;
+		player.setSpecOptions(eventID, newOptions);
+	},
+}
 
 export const DelayOffhandSwings = {
 	type: 'boolean' as const,
@@ -43,26 +67,6 @@ export const DelayOffhandSwings = {
 			newOptions.delayOffhandSwings = newValue;
 			player.setSpecOptions(eventID, newOptions);
 		},
-	},
-};
-
-export const SnapshotT42Pc = {
-	type: 'boolean' as const,
-	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-	config: {
-		extraCssClasses: [
-			'snapshot-t4-2pc-picker',
-		],
-		label: 'Snapshot T4 2pc',
-		labelTooltip: 'Snapshots the improved Strength of Earth totem bonus from T4 2pc (+12 strength) for the first 1:50s of the fight. Only works if the selected Earth totem is Strength of Earth Totem.',
-		changedEvent: (player: Player<Spec.SpecEnhancementShaman>) => player.changeEmitter,
-		getValue: (player: Player<Spec.SpecEnhancementShaman>) => player.getSpecOptions().snapshotT42Pc,
-		setValue: (eventID: EventID, player: Player<Spec.SpecEnhancementShaman>, newValue: boolean) => {
-			const newOptions = player.getSpecOptions();
-			newOptions.snapshotT42Pc = newValue;
-			player.setSpecOptions(eventID, newOptions);
-		},
-		enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().totems?.earth == EarthTotem.StrengthOfEarthTotem,
 	},
 };
 
@@ -92,22 +96,7 @@ export const EnhancementShamanRotationConfig = {
 					player.setRotation(eventID, newRotation);
 				},
 			},
-		},
-		{
-			type: 'boolean' as const, cssClass: 'weave-flame-shock-picker',
-			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-			config: {
-				label: 'Weave Flame Shock',
-				labelTooltip: 'Use Flame Shock whenever the target does not already have the DoT.',
-				changedEvent: (player: Player<Spec.SpecEnhancementShaman>) => player.rotationChangeEmitter,
-				getValue: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().weaveFlameShock,
-				setValue: (eventID: EventID, player: Player<Spec.SpecEnhancementShaman>, newValue: boolean) => {
-					const newRotation = player.getRotation();
-					newRotation.weaveFlameShock = newValue;
-					player.setRotation(eventID, newRotation);
-				},
-			},
-		},
+		}
 	],
 };
 

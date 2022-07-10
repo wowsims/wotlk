@@ -126,6 +126,9 @@ func (aura *Aura) doneIteration(sim *Simulation) {
 }
 
 func (aura *Aura) IsActive() bool {
+	if aura == nil {
+		return false
+	}
 	return aura.active
 }
 
@@ -139,6 +142,9 @@ func (aura *Aura) Refresh(sim *Simulation) {
 }
 
 func (aura *Aura) GetStacks() int32 {
+	if aura == nil {
+		return 0
+	}
 	return aura.stacks
 }
 
@@ -250,8 +256,7 @@ func (at *auraTracker) HasAura(label string) bool {
 	return aura != nil
 }
 func (at *auraTracker) HasActiveAura(label string) bool {
-	aura := at.GetAura(label)
-	return aura != nil && aura.IsActive()
+	return at.GetAura(label).IsActive()
 }
 
 func (at *auraTracker) registerAura(unit *Unit, aura Aura) *Aura {

@@ -450,13 +450,13 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 		// Proc from Band of Eternal Defender removes scroll.
 		character.AddStat(stats.Armor, []float64{0, 60, 120, 180, 240, 300}[consumes.ScrollOfProtection])
 	}
-	if raidBuffs.DivineSpirit == proto.TristateEffect_TristateEffectMissing {
+	if raidBuffs.DivineSpirit {
 		// Doesn't stack with DS
-		character.AddStat(stats.Spirit, []float64{0, 3, 7, 11, 15, 30}[consumes.ScrollOfSpirit])
+		character.AddStat(stats.Spirit, []float64{0, 3, 7, 11, 15, 30, 40, 64}[consumes.ScrollOfSpirit])
 	}
 
 	// Weapon Imbues
-	allowMHImbue := character.HasMHWeapon() && (character.HasMHWeaponImbue || partyBuffs.WindfuryTotemRank == 0)
+	allowMHImbue := character.HasMHWeapon() && character.HasMHWeaponImbue
 	if allowMHImbue {
 		addImbueStats(character, consumes.MainHandImbue)
 	}
@@ -466,7 +466,6 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 
 	registerPotionCD(agent, consumes)
 	registerConjuredCD(agent, consumes)
-	registerDrumsCD(agent, partyBuffs, consumes)
 	registerExplosivesCD(agent, consumes)
 }
 
@@ -546,173 +545,6 @@ func addImbueStats(character *Character, imbue proto.WeaponImbue) {
 				procAura.Activate(sim)
 			},
 		})
-	}
-}
-
-var DrumsAuraTag = "Drums"
-
-const DrumsCD = time.Minute * 2 // Tinnitus
-var DrumsOfBattleActionID = ActionID{SpellID: 351355}
-var DrumsOfRestorationActionID = ActionID{SpellID: 351358}
-var DrumsOfWarActionID = ActionID{SpellID: 351360}
-
-// Adds drums as a major cooldown to the character, if it's being used.
-func registerDrumsCD(agent Agent, partyBuffs proto.PartyBuffs, consumes proto.Consumes) {
-	character := agent.GetCharacter()
-	drumsType := proto.Drums_DrumsUnknown
-
-	// Whether this agent is the one casting the drums.
-	drumsSelfCast := false
-
-	if consumes.Drums != proto.Drums_DrumsUnknown {
-		drumsType = consumes.Drums
-		drumsSelfCast = true
-
-		// Disable self-drums on other party members, so there is only 1 drummer.
-		for _, partyMember := range agent.GetCharacter().Party.Players {
-			if partyMember != agent {
-				partyMember.GetCharacter().Consumes.Drums = proto.Drums_DrumsUnknown
-			}
-		}
-	} else if partyBuffs.Drums != proto.Drums_DrumsUnknown {
-		drumsType = partyBuffs.Drums
-	}
-
-	// If we aren't casting drums, and there is another real party member doing so, then we're done.
-	if !drumsSelfCast {
-		for _, partyMember := range agent.GetCharacter().Party.Players {
-			if partyMember != agent && partyMember.GetCharacter().Consumes.Drums != proto.Drums_DrumsUnknown {
-				return
-			}
-		}
-	}
-
-	var actionID ActionID
-	var cooldownType CooldownType
-	if drumsType == proto.Drums_DrumsOfBattle {
-		actionID = DrumsOfBattleActionID
-		cooldownType = CooldownTypeDPS
-	} else if drumsType == proto.Drums_DrumsOfRestoration {
-		actionID = DrumsOfRestorationActionID
-		cooldownType = CooldownTypeMana
-	} else if drumsType == proto.Drums_DrumsOfWar {
-		actionID = DrumsOfWarActionID
-		cooldownType = CooldownTypeDPS
-	} else {
-		return
-	}
-
-	mcd := MajorCooldown{
-		Priority: CooldownPriorityDrums,
-		Type:     cooldownType | CooldownTypeUsableShapeShifted,
-	}
-
-	if drumsSelfCast {
-		auras := []*Aura{}
-		for _, partyMember := range character.Party.Players {
-			drumsAura := makeDrumsAura(partyMember.GetCharacter(), drumsType)
-			auras = append(auras, drumsAura)
-		}
-
-		mcd.Spell = character.RegisterSpell(SpellConfig{
-			ActionID: actionID,
-
-			Cast: CastConfig{
-				DefaultCast: Cast{
-					GCD: GCDDefault,
-				},
-				CD: Cooldown{
-					Timer:    character.NewTimer(),
-					Duration: DrumsCD,
-				},
-			},
-
-			ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
-				// When a real player is using drums, their cast applies to the whole party.
-				for _, aura := range auras {
-					aura.Activate(sim)
-				}
-			},
-		})
-	} else {
-		// When there is no real player using drums, each player gets a fake CD that
-		// gives just themself the buff, with no cast time.
-		drumsAura := makeDrumsAura(agent.GetCharacter(), drumsType)
-		mcd.Spell = character.RegisterSpell(SpellConfig{
-			ActionID: actionID,
-			Flags:    SpellFlagNoMetrics,
-
-			Cast: CastConfig{
-				CD: Cooldown{
-					Timer:    character.NewTimer(),
-					Duration: DrumsCD,
-				},
-			},
-
-			ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
-				drumsAura.Activate(sim)
-			},
-		})
-	}
-
-	agent.GetCharacter().AddMajorCooldown(mcd)
-}
-
-func makeDrumsAura(character *Character, drumsType proto.Drums) *Aura {
-	if drumsType == proto.Drums_DrumsOfBattle {
-		const hasteBonus = 80
-		return character.NewTemporaryStatsAuraWrapped("Drums of Battle", DrumsOfBattleActionID, stats.Stats{stats.MeleeHaste: hasteBonus, stats.SpellHaste: hasteBonus}, time.Second*30, func(aura *Aura) {
-			oldOnGain := aura.OnGain
-			aura.OnGain = func(aura *Aura, sim *Simulation) {
-				oldOnGain(aura, sim)
-				// Drums of battle doesn't affect pets, ask Blizzard.
-			}
-		})
-	} else if drumsType == proto.Drums_DrumsOfRestoration {
-		// 600 mana over 15 seconds == 200 mp5
-		const mp5Bonus = 200
-
-		petAuras := []*Aura{}
-		for _, petAgent := range character.Party.Pets {
-			pet := petAgent.GetPet()
-			petAuras = append(petAuras, pet.NewTemporaryStatsAura("Drums of Restoration", DrumsOfRestorationActionID, stats.Stats{stats.MP5: mp5Bonus}, time.Second*15))
-		}
-
-		return character.NewTemporaryStatsAuraWrapped("Drums of Restoration", DrumsOfRestorationActionID, stats.Stats{stats.MP5: mp5Bonus}, time.Second*15, func(aura *Aura) {
-			oldOnGain := aura.OnGain
-			aura.OnGain = func(aura *Aura, sim *Simulation) {
-				oldOnGain(aura, sim)
-
-				for i, petAgent := range character.Party.Pets {
-					pet := petAgent.GetPet()
-					if pet.IsEnabled() {
-						petAuras[i].Activate(sim)
-					}
-				}
-			}
-		})
-	} else if drumsType == proto.Drums_DrumsOfWar {
-		petAuras := []*Aura{}
-		for _, petAgent := range character.Party.Pets {
-			pet := petAgent.GetPet()
-			petAuras = append(petAuras, pet.NewTemporaryStatsAura("Drums of War", DrumsOfWarActionID, stats.Stats{stats.AttackPower: 60, stats.RangedAttackPower: 60, stats.SpellPower: 30}, time.Second*30))
-		}
-
-		return character.NewTemporaryStatsAuraWrapped("Drums of War", DrumsOfWarActionID, stats.Stats{stats.AttackPower: 60, stats.RangedAttackPower: 60, stats.SpellPower: 30}, time.Second*30, func(aura *Aura) {
-			oldOnGain := aura.OnGain
-			aura.OnGain = func(aura *Aura, sim *Simulation) {
-				oldOnGain(aura, sim)
-
-				for i, petAgent := range character.Party.Pets {
-					pet := petAgent.GetPet()
-					if pet.IsEnabled() {
-						petAuras[i].Activate(sim)
-					}
-				}
-			}
-		})
-	} else {
-		return nil
 	}
 }
 

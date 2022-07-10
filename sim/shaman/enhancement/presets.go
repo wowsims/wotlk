@@ -12,23 +12,21 @@ var BasicIndividualBuffs = &proto.IndividualBuffs{
 }
 
 var StandardTalents = &proto.ShamanTalents{
-	Convection:         2,
-	Concussion:         5,
-	CallOfFlame:        3,
-	ElementalFocus:     true,
-	Reverberation:      5,
-	ImprovedFireTotems: 1,
+	Convection:     2,
+	Concussion:     5,
+	CallOfFlame:    3,
+	ElementalFocus: true,
+	Reverberation:  5,
 
 	AncestralKnowledge:      5,
 	ThunderingStrikes:       5,
 	EnhancingTotems:         2,
 	ShamanisticFocus:        true,
 	Flurry:                  5,
-	ImprovedWeaponTotems:    1,
 	SpiritWeapons:           true,
 	ElementalWeapons:        3,
 	MentalQuickness:         3,
-	WeaponMastery:           5,
+	WeaponMastery:           3,
 	DualWieldSpecialization: 3,
 	Stormstrike:             true,
 	UnleashedRage:           5,
@@ -46,35 +44,28 @@ var PlayerOptionsBasic = &proto.Player_EnhancementShaman{
 var enhShamRotation = &proto.EnhancementShaman_Rotation{
 	Totems: &proto.ShamanTotems{
 		Earth: proto.EarthTotem_StrengthOfEarthTotem,
-		Air:   proto.AirTotem_GraceOfAirTotem,
+		Air:   proto.AirTotem_WindfuryTotem,
 		Water: proto.WaterTotem_ManaSpringTotem,
 		Fire:  proto.FireTotem_MagmaTotem,
-
-		WindfuryTotemRank: 5,
-		TwistWindfury:     true,
-		TwistFireNova:     true,
 	},
-	PrimaryShock:    proto.EnhancementShaman_Rotation_Earth,
-	WeaveFlameShock: true,
+	PrimaryShock: proto.EnhancementShaman_Rotation_Earth,
 }
 
 var enhShamOptions = &proto.EnhancementShaman_Options{
-	WaterShield:        true,
+	Shield:             proto.ShamanShield_WaterShield, // lighting for enh?
 	Bloodlust:          true,
 	DelayOffhandSwings: true,
 }
 
 var FullRaidBuffs = &proto.RaidBuffs{
-	ArcaneBrilliance: true,
-	GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
-}
-var FullPartyBuffs = &proto.PartyBuffs{
-	FerociousInspiration: 2,
+	ArcaneBrilliance:     true,
+	GiftOfTheWild:        proto.TristateEffect_TristateEffectImproved,
+	FerociousInspiration: true,
 	BattleShout:          proto.TristateEffect_TristateEffectImproved,
 	LeaderOfThePack:      proto.TristateEffect_TristateEffectImproved,
-	SanctityAura:         proto.TristateEffect_TristateEffectImproved,
 	TrueshotAura:         true,
 }
+var FullPartyBuffs = &proto.PartyBuffs{}
 var FullIndividualBuffs = &proto.IndividualBuffs{
 	BlessingOfKings:  true,
 	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
@@ -82,21 +73,17 @@ var FullIndividualBuffs = &proto.IndividualBuffs{
 }
 
 var FullConsumes = &proto.Consumes{
-	Drums:           proto.Drums_DrumsOfBattle,
 	MainHandImbue:   proto.WeaponImbue_WeaponImbueShamanWindfury,
 	OffHandImbue:    proto.WeaponImbue_WeaponImbueShamanWindfury,
 	DefaultConjured: proto.Conjured_ConjuredFlameCap,
 }
 
 var FullDebuffs = &proto.Debuffs{
-	BloodFrenzy:                 true,
-	ExposeArmor:                 proto.TristateEffect_TristateEffectImproved,
-	FaerieFire:                  proto.TristateEffect_TristateEffectImproved,
-	ImprovedSealOfTheCrusader:   true,
-	JudgementOfWisdom:           true,
-	Misery:                      true,
-	ExposeWeaknessUptime:        0.8,
-	ExposeWeaknessHunterAgility: 800,
+	BloodFrenzy:       true,
+	ExposeArmor:       proto.TristateEffect_TristateEffectImproved,
+	FaerieFire:        proto.TristateEffect_TristateEffectImproved,
+	JudgementOfWisdom: true,
+	Misery:            true,
 }
 
 var Phase2Gear = items.EquipmentSpecFromJsonString(`{"items": [

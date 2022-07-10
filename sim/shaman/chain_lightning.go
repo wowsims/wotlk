@@ -9,27 +9,33 @@ import (
 
 func (shaman *Shaman) newChainLightningSpell(isLightningOverload bool) *core.Spell {
 	spellConfig := shaman.newElectricSpellConfig(
-		core.ActionID{SpellID: 25442},
-		760.0,
+		core.ActionID{SpellID: 49271},
+		baseMana*0.26,
 		time.Millisecond*2000,
 		isLightningOverload)
 
+	sefReduction := []time.Duration{0, 750 * time.Millisecond, 1500 * time.Millisecond, 2500 * time.Millisecond}
 	if !isLightningOverload {
 		spellConfig.Cast.CD = core.Cooldown{
 			Timer:    shaman.NewTimer(),
-			Duration: time.Second * 6,
+			Duration: time.Second*6 - sefReduction[shaman.Talents.StormEarthAndFire],
 		}
 	}
 
 	spellConfig.Cast.ModifyCast = func(_ *core.Simulation, spell *core.Spell, cast *core.Cast) {
 		shaman.applyElectricSpellCastInitModifiers(spell, cast)
+		if shaman.NaturesSwiftnessAura.IsActive() {
+			cast.CastTime = 0
+		} else {
+			shaman.modifyCastMaelstrom(spell, cast)
+		}
 	}
 
-	effect := shaman.newElectricSpellEffect(734, 838, 0.651, isLightningOverload)
+	effect := shaman.newElectricSpellEffect(973, 1111, 0.5714, isLightningOverload)
 
 	makeOnSpellHit := func(hitIndex int32) func(*core.Simulation, *core.Spell, *core.SpellEffect) {
 		if !isLightningOverload && shaman.Talents.LightningOverload > 0 {
-			lightningOverloadChance := float64(shaman.Talents.LightningOverload) * 0.04 / 3
+			lightningOverloadChance := float64(shaman.Talents.LightningOverload) * 0.11 / 3
 			return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if !spellEffect.Landed() {
 					return

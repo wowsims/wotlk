@@ -54,24 +54,20 @@ var warriorOptions = &proto.ProtectionWarrior_Options{
 }
 
 var FullRaidBuffs = &proto.RaidBuffs{
-	ArcaneBrilliance: true,
-	GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
-	Thorns:           proto.TristateEffect_TristateEffectImproved,
-}
-var FullPartyBuffs = &proto.PartyBuffs{
-	Bloodlust:            1,
-	Drums:                proto.Drums_DrumsOfBattle,
+	ArcaneBrilliance:     true,
+	GiftOfTheWild:        proto.TristateEffect_TristateEffectImproved,
+	Thorns:               proto.TristateEffect_TristateEffectImproved,
+	Bloodlust:            true,
 	BattleShout:          proto.TristateEffect_TristateEffectImproved,
 	LeaderOfThePack:      proto.TristateEffect_TristateEffectImproved,
-	GraceOfAirTotem:      proto.TristateEffect_TristateEffectRegular,
-	StrengthOfEarthTotem: proto.StrengthOfEarthType_EnhancingTotems,
-	WindfuryTotemRank:    5,
-	WindfuryTotemIwt:     2,
+	StrengthOfEarthTotem: proto.TristateEffect_TristateEffectImproved,
+	WindfuryTotem:        proto.TristateEffect_TristateEffectImproved,
+	UnleashedRage:        true,
 }
+var FullPartyBuffs = &proto.PartyBuffs{}
 var FullIndividualBuffs = &proto.IndividualBuffs{
 	BlessingOfKings: true,
 	BlessingOfMight: proto.TristateEffect_TristateEffectImproved,
-	UnleashedRage:   true,
 }
 
 var FullConsumes = &proto.Consumes{
@@ -80,12 +76,11 @@ var FullConsumes = &proto.Consumes{
 }
 
 var FullDebuffs = &proto.Debuffs{
-	BloodFrenzy:               true,
-	FaerieFire:                proto.TristateEffect_TristateEffectImproved,
-	ImprovedSealOfTheCrusader: true,
-	Misery:                    true,
-	ShadowEmbrace:             true,
-	ScorpidSting:              true,
+	BloodFrenzy:   true,
+	FaerieFire:    proto.TristateEffect_TristateEffectImproved,
+	Misery:        true,
+	ShadowEmbrace: true,
+	ScorpidSting:  true,
 }
 
 var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [

@@ -76,7 +76,7 @@ func (priest *Priest) Initialize() {
 	}
 
 	if priest.Talents.ShadowWeaving > 0 {
-		priest.ShadowWeavingAura = core.ShadowWeavingAura(priest.CurrentTarget, 0)
+		// priest.ShadowWeavingAura = core.ShadowWeavingAura(priest.CurrentTarget, 0)
 	}
 
 	priest.registerDevouringPlagueSpell()
@@ -115,14 +115,6 @@ func New(char core.Character, selfBuffs SelfBuffs, talents proto.PriestTalents) 
 		Talents:   talents,
 	}
 	priest.EnableManaBar()
-
-	priest.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Intellect,
-		ModifiedStat: stats.SpellCrit,
-		Modifier: func(intellect float64, spellCrit float64) float64 {
-			return spellCrit + (intellect/80)*core.CritRatingPerCritChance
-		},
-	})
 
 	return priest
 }

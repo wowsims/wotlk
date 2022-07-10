@@ -31,8 +31,8 @@ var defaultDestroTalents = &proto.WarlockTalents{
 	SoulLeech:          3,
 	ImprovedSoulLeech:  2,
 	// demo
-	FelSynergy:         2,
-	ImprovedImp: 		3,
+	FelSynergy:  2,
+	ImprovedImp: 3,
 }
 
 /*var defaultDestroMajorGlyphs = &proto.WarlockMajorGlyph{
@@ -54,8 +54,8 @@ var defaultDestroRotation = &proto.Warlock_Rotation{
 }
 
 var defaultDestroOptions = &proto.Warlock_Options{
-	Armor:           proto.Warlock_Options_FelArmor,
-	Summon:          proto.Warlock_Options_Imp,
+	Armor:  proto.Warlock_Options_FelArmor,
+	Summon: proto.Warlock_Options_Imp,
 }
 
 var DefaultDestroWarlock = &proto.Player_Warlock{
@@ -63,28 +63,25 @@ var DefaultDestroWarlock = &proto.Player_Warlock{
 		Talents:  defaultDestroTalents,
 		Options:  defaultDestroOptions,
 		Rotation: defaultDestroRotation,
-/*		MajorGlyph: defaultDestroMajorGlyphs,
-		MinorGlyph: defaultDestroMinorGlyphs,
-*/	},
+		/*		MajorGlyph: defaultDestroMajorGlyphs,
+				MinorGlyph: defaultDestroMinorGlyphs,
+		*/},
 }
 
 var FullRaidBuffs = &proto.RaidBuffs{
 	ArcaneBrilliance: true,
 	GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
-	DivineSpirit:     proto.TristateEffect_TristateEffectImproved,
+	DivineSpirit:     true,
+	Bloodlust:        true,
+	ManaSpringTotem:  proto.TristateEffect_TristateEffectRegular,
+	WrathOfAirTotem:  true,
+	TotemOfWrath:     true,
 }
 
-var FullPartyBuffs = &proto.PartyBuffs{
-	Bloodlust:       1,
-	Drums:           proto.Drums_DrumsOfBattle,
-	ManaSpringTotem: proto.TristateEffect_TristateEffectRegular,
-	WrathOfAirTotem: proto.TristateEffect_TristateEffectRegular,
-	TotemOfWrath:    1,
-}
+var FullPartyBuffs = &proto.PartyBuffs{}
 
 var FullIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings:     true,
-	BlessingOfSalvation: true,
+	BlessingOfKings: true,
 }
 
 var FullConsumes = &proto.Consumes{
@@ -95,15 +92,13 @@ var FullConsumes = &proto.Consumes{
 }
 
 var FullDebuffs = &proto.Debuffs{
-	JudgementOfWisdom:           true,
-	Misery:                      true,
-	BloodFrenzy:                 true,
-	ExposeArmor:                 proto.TristateEffect_TristateEffectImproved,
-	FaerieFire:                  proto.TristateEffect_TristateEffectImproved,
-	CurseOfWeakness:	         true,
-	HuntersMark:                 proto.TristateEffect_TristateEffectImproved,
-	ExposeWeaknessUptime:        1,
-	ExposeWeaknessHunterAgility: 800,
+	JudgementOfWisdom: true,
+	Misery:            true,
+	BloodFrenzy:       true,
+	ExposeArmor:       proto.TristateEffect_TristateEffectImproved,
+	FaerieFire:        proto.TristateEffect_TristateEffectImproved,
+	CurseOfWeakness:   proto.TristateEffect_TristateEffectImproved,
+	HuntersMark:       proto.TristateEffect_TristateEffectImproved,
 }
 
 var Phase4Gear = items.EquipmentSpecFromJsonString(`{"items": [

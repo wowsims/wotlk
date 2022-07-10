@@ -12,7 +12,6 @@ import { Spec } from '/wotlk/core/proto/common.js';
 import { NO_TARGET } from '/wotlk/core/proto_utils/utils.js';
 import { Stat } from '/wotlk/core/proto/common.js';
 import { TristateEffect } from '/wotlk/core/proto/common.js'
-import { StrengthOfEarthType } from '/wotlk/core/proto/common.js'
 import { Stats } from '/wotlk/core/proto_utils/stats.js';
 import { Player } from '/wotlk/core/player.js';
 import { Sim } from '/wotlk/core/sim.js';
@@ -25,7 +24,6 @@ import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
 import { GuardianElixir } from '/wotlk/core/proto/common.js';
 import { Conjured } from '/wotlk/core/proto/common.js';
-import { Drums } from '/wotlk/core/proto/common.js';
 import { PetFood } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
@@ -118,35 +116,28 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 				raidBuffs: RaidBuffs.create({
 					arcaneBrilliance: true,
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
+					bloodlust: true,
+					manaSpringTotem: TristateEffect.TristateEffectRegular,
+					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
+					battleShout: TristateEffect.TristateEffectImproved,
+					unleashedRage: true,
 				}),
 				partyBuffs: PartyBuffs.create({
-					drums: Drums.DrumsOfBattle,
-					bloodlust: 1,
-					manaSpringTotem: TristateEffect.TristateEffectRegular,
 					braidedEterniumChain: true,
-					graceOfAirTotem: TristateEffect.TristateEffectImproved,
-					strengthOfEarthTotem: StrengthOfEarthType.EnhancingTotems,
-					battleShout: TristateEffect.TristateEffectImproved,
-					snapshotBsSolarianSapphire: true,
-					sanctityAura: TristateEffect.TristateEffectImproved,
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
 					blessingOfMight: TristateEffect.TristateEffectImproved,
-					unleashedRage: true,
 				}),
 				debuffs: Debuffs.create({
 					judgementOfWisdom: true,
-					improvedSealOfTheCrusader: true,
 					bloodFrenzy: true,
 					giftOfArthas: true,
 					exposeArmor: TristateEffect.TristateEffectImproved,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					sunderArmor: true,
-					curseOfWeakness: true,
+					curseOfWeakness: TristateEffect.TristateEffectRegular,
 					huntersMark: TristateEffect.TristateEffectImproved,
-					exposeWeaknessUptime: 0.95,
-					exposeWeaknessHunterAgility: 1200,
 				}),
 			},
 
@@ -159,30 +150,25 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 				IconInputs.ArcaneBrilliance,
 				IconInputs.DivineSpirit,
 				IconInputs.GiftOfTheWild,
-			],
-			partyBuffInputs: [
-				IconInputs.DrumsOfBattleBuff,
 				IconInputs.Bloodlust,
 				IconInputs.StrengthOfEarthTotem,
-				IconInputs.GraceOfAirTotem,
 				IconInputs.ManaSpringTotem,
 				IconInputs.BattleShout,
+				IconInputs.TrueshotAura,
+				IconInputs.UnleashedRage,
+			],
+			partyBuffInputs: [
 				IconInputs.BraidedEterniumChain,
 				IconInputs.HeroicPresence,
-				IconInputs.FerociousInspiration,
-				IconInputs.SanctityAura,
-				IconInputs.TrueshotAura,
 			],
 			playerBuffInputs: [
 				IconInputs.BlessingOfKings,
 				IconInputs.BlessingOfWisdom,
 				IconInputs.BlessingOfMight,
-				IconInputs.UnleashedRage,
 			],
 			// IconInputs to include in the 'Debuffs' section on the settings tab.
 			debuffInputs: [
 				IconInputs.JudgementOfWisdom,
-				IconInputs.ImprovedSealOfTheCrusader,
 				IconInputs.BloodFrenzy,
 				IconInputs.HuntersMark,
 				IconInputs.CurseOfWeakness,
@@ -236,11 +222,6 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 				inputs: [
 					DruidInputs.LatencyMs,
 					OtherInputs.PrepopPotion,
-					OtherInputs.ExposeWeaknessUptime,
-					OtherInputs.ExposeWeaknessHunterAgility,
-					OtherInputs.SnapshotImprovedStrengthOfEarthTotem,
-					OtherInputs.SnapshotBsSolarianSapphire,
-					OtherInputs.SnapshotBsT2,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],

@@ -21,11 +21,11 @@ var basicSpec = &proto.Player_ElementalShaman{
 		},
 		Talents: &proto.ShamanTalents{
 			// ElementalDevastation
-			ElementalFury:      true,
+			ElementalFury:      5,
 			Convection:         5,
 			Concussion:         5,
 			ElementalFocus:     true,
-			CallOfThunder:      5,
+			CallOfThunder:      true,
 			UnrelentingStorm:   3,
 			ElementalPrecision: 3,
 			LightningMastery:   5,
@@ -33,7 +33,7 @@ var basicSpec = &proto.Player_ElementalShaman{
 			LightningOverload:  5,
 		},
 		Options: &proto.ElementalShaman_Options{
-			WaterShield: true,
+			Shield: proto.ShamanShield_WaterShield,
 		},
 	},
 }

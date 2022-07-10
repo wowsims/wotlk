@@ -97,6 +97,10 @@ func (mage *Mage) GetMage() *Mage {
 
 func (mage *Mage) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	raidBuffs.ArcaneBrilliance = true
+
+	//if mage.Talents.ArcaneEmpowerment == 3 {
+	//	raidBuffs.ArcaneEmpowerment = true
+	//}
 }
 func (mage *Mage) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
@@ -169,14 +173,6 @@ func NewMage(character core.Character, options proto.Player) *Mage {
 	if mageOptions.Rotation.Aoe != nil {
 		mage.AoeRotation = *mageOptions.Rotation.Aoe
 	}
-
-	mage.Character.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Intellect,
-		ModifiedStat: stats.SpellCrit,
-		Modifier: func(intellect float64, spellCrit float64) float64 {
-			return spellCrit + (intellect/81)*core.CritRatingPerCritChance
-		},
-	})
 
 	mage.Character.AddStatDependency(stats.StatDependency{
 		SourceStat:   stats.Strength,

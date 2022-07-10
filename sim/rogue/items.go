@@ -79,12 +79,8 @@ var ItemSetDeathmantle = core.NewItemSet(core.ItemSet{
 	},
 })
 
-func (rogue *Rogue) deathmantleActive() bool {
-	return rogue.DeathmantleProcAura != nil && rogue.DeathmantleProcAura.IsActive()
-}
-
 func (rogue *Rogue) applyDeathmantle(sim *core.Simulation, _ *core.Spell, cast *core.Cast) {
-	if rogue.deathmantleActive() {
+	if rogue.DeathmantleProcAura.IsActive() {
 		cast.Cost = 0
 		rogue.DeathmantleProcAura.Deactivate(sim)
 	}

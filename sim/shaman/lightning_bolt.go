@@ -7,34 +7,36 @@ import (
 	"github.com/wowsims/wotlk/sim/core/items"
 )
 
-// newLightningBoltTemplate returns a cast generator for Lightning Bolt with as many fields precomputed as possible.
+// newLightningBoltSpell returns a precomputed instance of lightning bolt to use for casting.
 func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spell {
-	baseCost := 300.0
+	baseCost := baseMana * 0.1
 	if shaman.Equip[items.ItemSlotRanged].ID == TotemOfThePulsingEarth {
 		baseCost -= 27.0
 	}
 
 	spellConfig := shaman.newElectricSpellConfig(
-		core.ActionID{SpellID: 25449},
+		core.ActionID{SpellID: 49238},
 		baseCost,
 		time.Millisecond*2500,
 		isLightningOverload)
 
 	spellConfig.Cast.ModifyCast = func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 		shaman.applyElectricSpellCastInitModifiers(spell, cast)
-		if shaman.NaturesSwiftnessAura != nil && shaman.NaturesSwiftnessAura.IsActive() {
+		if shaman.NaturesSwiftnessAura.IsActive() {
 			cast.CastTime = 0
+		} else {
+			shaman.modifyCastMaelstrom(spell, cast)
 		}
 	}
 
-	effect := shaman.newElectricSpellEffect(571, 652, 0.794, isLightningOverload)
+	effect := shaman.newElectricSpellEffect(719, 819, 0.7143, isLightningOverload)
 
 	if ItemSetSkyshatterRegalia.CharacterHasSetBonus(&shaman.Character, 4) {
 		effect.DamageMultiplier *= 1.05
 	}
 
 	if !isLightningOverload && shaman.Talents.LightningOverload > 0 {
-		lightningOverloadChance := float64(shaman.Talents.LightningOverload) * 0.04
+		lightningOverloadChance := float64(shaman.Talents.LightningOverload) * 0.11
 		effect.OnSpellHitDealt = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if !spellEffect.Landed() {
 				return

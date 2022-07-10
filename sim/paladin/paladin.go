@@ -67,20 +67,20 @@ func (paladin *Paladin) GetPaladin() *Paladin {
 }
 
 func (paladin *Paladin) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
-}
-
-func (paladin *Paladin) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
-	partyBuffs.DevotionAura = core.MaxTristate(partyBuffs.DevotionAura, core.MakeTristateValue(
+	raidBuffs.DevotionAura = core.MaxTristate(raidBuffs.DevotionAura, core.MakeTristateValue(
 		paladin.PaladinAura == proto.PaladinAura_DevotionAura,
 		paladin.Talents.ImprovedDevotionAura == 5))
 
-	partyBuffs.RetributionAura = core.MaxTristate(partyBuffs.RetributionAura, core.MakeTristateValue(
+	raidBuffs.RetributionAura = core.MaxTristate(raidBuffs.RetributionAura, core.MakeTristateValue(
 		paladin.PaladinAura == proto.PaladinAura_RetributionAura,
 		paladin.Talents.ImprovedRetributionAura == 2))
 
-	partyBuffs.SanctityAura = core.MaxTristate(partyBuffs.SanctityAura, core.MakeTristateValue(
-		paladin.Talents.SanctityAura && paladin.PaladinAura == proto.PaladinAura_SanctityAura,
-		paladin.Talents.ImprovedSanctityAura == 2))
+	//if paladin.Talents.SanctifiedRetribution {
+	//	raidBuffs.SanctifiedRetribution = true
+	//}
+}
+
+func (paladin *Paladin) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
 
 func (paladin *Paladin) Initialize() {
@@ -122,14 +122,6 @@ func NewPaladin(character core.Character, talents proto.PaladinTalents) *Paladin
 	paladin.EnableManaBar()
 
 	// Add paladin stat dependencies
-	paladin.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Intellect,
-		ModifiedStat: stats.SpellCrit,
-		Modifier: func(intellect float64, spellCrit float64) float64 {
-			return spellCrit + (intellect/80)*core.CritRatingPerCritChance
-		},
-	})
-
 	paladin.AddStatDependency(stats.StatDependency{
 		SourceStat:   stats.Strength,
 		ModifiedStat: stats.AttackPower,

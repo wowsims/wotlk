@@ -56,7 +56,6 @@ export function TotemsSection(simUI: IndividualSimUI<DpsShaman>, parentElem: HTM
 		numColumns: 1,
 		values: [
 			{ color: '#baffc9', value: AirTotem.NoAirTotem },
-			{ actionId: ActionId.fromSpellId(25359), value: AirTotem.GraceOfAirTotem },
 			{ actionId: ActionId.fromSpellId(25908), value: AirTotem.TranquilAirTotem },
 			{ actionId: ActionId.fromSpellId(25587), value: AirTotem.WindfuryTotem },
 			{ actionId: ActionId.fromSpellId(3738), value: AirTotem.WrathOfAirTotem },
@@ -116,65 +115,6 @@ export function TotemsSection(simUI: IndividualSimUI<DpsShaman>, parentElem: HTM
 			if (!newRotation.totems)
 				newRotation.totems = ShamanTotems.create();
 			newRotation.totems!.water = newValue;
-			player.setRotation(eventID, newRotation);
-		},
-	});
-
-	const twistWindfuryPicker = new BooleanPicker(totemInputsContainer, simUI.player, {
-		extraCssClasses: [
-			'twist-windfury-picker',
-		],
-		label: 'Twist Windfury',
-		labelTooltip: 'Twist Windfury Totem with whichever air totem is selected.',
-		changedEvent: (player: Player<DpsShaman>) => player.rotationChangeEmitter,
-		getValue: (player: Player<DpsShaman>) => player.getRotation().totems?.twistWindfury || false,
-		setValue: (eventID: EventID, player: Player<DpsShaman>, newValue: boolean) => {
-			const newRotation = player.getRotation();
-			if (!newRotation.totems)
-				newRotation.totems = ShamanTotems.create();
-			newRotation.totems!.twistWindfury = newValue;
-			player.setRotation(eventID, newRotation);
-		},
-	});
-
-	const windfuryRankPicker = new EnumPicker(totemInputsContainer, simUI.player, {
-		extraCssClasses: [
-			'windfury-rank-picker',
-		],
-		values: [
-			{ name: 'No WF', value: 0 },
-			{ name: '1', value: 1 },
-			{ name: '2', value: 2 },
-			{ name: '3', value: 3 },
-			{ name: '4', value: 4 },
-			{ name: '5', value: 5 },
-		],
-		label: 'WF Totem Rank',
-		labelTooltip: 'Rank of Windfury Totem to use, if using Windfury Totem.',
-		changedEvent: (player: Player<DpsShaman>) => player.rotationChangeEmitter,
-		getValue: (player: Player<DpsShaman>) => player.getRotation().totems?.windfuryTotemRank || 0,
-		setValue: (eventID: EventID, player: Player<DpsShaman>, newValue: number) => {
-			const newRotation = player.getRotation();
-			if (!newRotation.totems)
-				newRotation.totems = ShamanTotems.create();
-			newRotation.totems!.windfuryTotemRank = newValue;
-			player.setRotation(eventID, newRotation);
-		},
-	});
-
-	const twistFireNovaPicker = new BooleanPicker(totemInputsContainer, simUI.player, {
-		extraCssClasses: [
-			'twist-fire-nova-picker',
-		],
-		label: 'Twist Fire Nova',
-		labelTooltip: 'Twist Fire Nova Totem with whichever fire totem is selected.',
-		changedEvent: (player: Player<DpsShaman>) => player.rotationChangeEmitter,
-		getValue: (player: Player<DpsShaman>) => player.getRotation().totems?.twistFireNova || false,
-		setValue: (eventID: EventID, player: Player<DpsShaman>, newValue: boolean) => {
-			const newRotation = player.getRotation();
-			if (!newRotation.totems)
-				newRotation.totems = ShamanTotems.create();
-			newRotation.totems!.twistFireNova = newValue;
 			player.setRotation(eventID, newRotation);
 		},
 	});

@@ -32,7 +32,7 @@ func (hunter *Hunter) registerArcaneShotSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskRangedSpecial,
-			DamageMultiplier: 1,
+			DamageMultiplier: 1 * (1 + 0.03*float64(hunter.Talents.FerociousInspiration)),
 			ThreatMultiplier: 1,
 
 			BaseDamage: hunter.talonOfAlarDamageMod(core.BaseDamageConfig{

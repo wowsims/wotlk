@@ -9,11 +9,11 @@ import (
 )
 
 func (priest *Priest) MindFlayActionID(numTicks int) core.ActionID {
-	return core.ActionID{SpellID: 25387, Tag: int32(numTicks)}
+	return core.ActionID{SpellID: 48156, Tag: int32(numTicks)}
 }
 
 func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
-	baseCost := 230.0
+	baseCost := priest.BaseMana() * 0.09
 	channelTime := time.Second * time.Duration(numTicks)
 
 	return priest.RegisterSpell(core.SpellConfig{
@@ -44,13 +44,23 @@ func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:            core.ProcMaskEmpty,
-			BonusSpellHitRating: float64(priest.Talents.ShadowFocus) * 2 * core.SpellHitRatingPerHitChance,
+			BonusSpellHitRating: float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
 			ThreatMultiplier:    1 - 0.08*float64(priest.Talents.ShadowAffinity),
 			OutcomeApplier:      priest.OutcomeFuncMagicHitBinary(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					priest.MindFlayDot[numTicks].Apply(sim)
+				if !spellEffect.Landed() {
+					return
 				}
+
+				if priest.ShadowWordPainDot.IsActive() {
+					if priest.Talents.PainAndSuffering == 3 {
+						priest.ShadowWordPainDot.Refresh(sim)
+					} else if sim.RandomFloat("Pain and Suffering") < (float64(priest.Talents.PainAndSuffering) * 0.33) {
+						priest.ShadowWordPainDot.Refresh(sim)
+					}
+				}
+
+				priest.MindFlayDot[numTicks].Apply(sim)
 			},
 		}),
 	})
@@ -58,6 +68,43 @@ func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 
 func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 	target := priest.CurrentTarget
+
+	effect := core.SpellEffect{
+		DamageMultiplier:     1,
+		ThreatMultiplier:     1 - 0.08*float64(priest.Talents.ShadowAffinity),
+		IsPeriodic:           true,
+		BonusSpellCritRating: float64(priest.Talents.MindMelt) * 2 * core.CritRatingPerCritChance,
+		OutcomeApplier:       priest.OutcomeFuncMagicHitAndCrit(1 + float64(priest.Talents.ShadowPower)*0.2),
+		ProcMask:             core.ProcMaskSpellDamage,
+	}
+
+	normalCalc := core.BaseDamageFuncMagic(588/3, 588/3, 0.257)
+	miseryCalc := core.BaseDamageFuncMagic(588/3, 588/3, (1+float64(priest.Talents.Misery)*0.05)*0.257)
+
+	normMod := (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01) * // initialize modifier
+		core.TernaryFloat64(ItemSetIncarnate.CharacterHasSetBonus(&priest.Character, 4), 1.05, 1)
+
+	swpMod := (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01 + float64(priest.Talents.TwistedFaith)*0.02) * // update modifier if SWP active
+		core.TernaryFloat64(ItemSetIncarnate.CharacterHasSetBonus(&priest.Character, 4), 1.05, 1)
+
+	effect.BaseDamage = core.BaseDamageConfig{
+		Calculator: func(sim *core.Simulation, effect *core.SpellEffect, spell *core.Spell) float64 {
+			var dmg float64
+			if priest.MiseryAura.IsActive() {
+				dmg = miseryCalc(sim, effect, spell)
+			} else {
+				dmg = normalCalc(sim, effect, spell)
+			}
+			if priest.ShadowWordPainDot.IsActive() {
+				dmg *= swpMod // multiply the damage
+			} else {
+				dmg *= normMod // multiply the damage
+			}
+			return dmg
+		},
+		TargetSpellCoefficient: 0.0,
+	}
+
 	return core.NewDot(core.Dot{
 		Spell: priest.MindFlay[numTicks],
 		Aura: target.RegisterAura(core.Aura{
@@ -69,16 +116,6 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 		TickLength:          time.Second,
 		AffectedByCastSpeed: true,
 
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			DamageMultiplier: 1 *
-				(1 + float64(priest.Talents.Darkness)*0.02) *
-				core.TernaryFloat64(priest.Talents.Shadowform, 1.15, 1) *
-				core.TernaryFloat64(ItemSetIncarnate.CharacterHasSetBonus(&priest.Character, 4), 1.05, 1),
-			ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
-			IsPeriodic:       true,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(528/3, 0.19),
-			OutcomeApplier:   priest.OutcomeFuncTick(),
-			ProcMask:         core.ProcMaskPeriodicDamage,
-		}),
+		TickEffects: core.TickFuncSnapshot(target, effect),
 	})
 }

@@ -119,7 +119,7 @@ export function talentStringToProto<TalentsProto>(proto: TalentsProto, talentStr
 export function protoToTalentString<TalentsProto>(proto: TalentsProto, talentsConfig: TalentsConfig<TalentsProto>): string {
 	return talentsConfig.map(treeConfig => {
 		return treeConfig.talents
-				.map(talentConfig => String(Number(proto[talentConfig.fieldName!])))
-				.join('').replace(/0+$/g, '');
+			.map(talentConfig => String(Number(proto[talentConfig.fieldName!])))
+			.join('').replace(/0+$/g, '');
 	}).join('-').replace(/-+$/g, '');
 }

@@ -8,6 +8,30 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+var ItemSetSkyshatterRegalia = core.NewItemSet(core.ItemSet{
+	Name: "Skyshatter Regalia",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			shaman := agent.(ShamanAgent).GetShaman()
+
+			if shaman.Totems.Air == proto.AirTotem_NoAirTotem ||
+				shaman.Totems.Water == proto.WaterTotem_NoWaterTotem ||
+				shaman.Totems.Earth == proto.EarthTotem_NoEarthTotem ||
+				shaman.Totems.Fire == proto.FireTotem_NoFireTotem {
+				return
+			}
+
+			shaman.AddStat(stats.MP5, 15)
+			shaman.AddStat(stats.SpellCrit, 35)
+			shaman.AddStat(stats.SpellPower, 45)
+		},
+		4: func(agent core.Agent) {
+			// Increases damage done by Lightning Bolt by 5%.
+			// Implemented in lightning_bolt.go.
+		},
+	},
+})
+
 var ItemSetTidefury = core.NewItemSet(core.ItemSet{
 	Name: "Tidefury Raiment",
 	Bonuses: map[int32]core.ApplyEffect{
@@ -17,7 +41,7 @@ var ItemSetTidefury = core.NewItemSet(core.ItemSet{
 		4: func(agent core.Agent) {
 			shaman := agent.(ShamanAgent).GetShaman()
 
-			if shaman.SelfBuffs.WaterShield {
+			if shaman.SelfBuffs.Shield == proto.ShamanShield_WaterShield {
 				shaman.AddStat(stats.MP5, 3)
 			}
 		},
@@ -28,7 +52,7 @@ var ItemSetCycloneRegalia = core.NewItemSet(core.ItemSet{
 	Name: "Cyclone Regalia",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
-			// Handled in shaman.go
+			// TODO: handle in weapon_imbues.go
 		},
 		4: func(agent core.Agent) {
 			shaman := agent.(ShamanAgent).GetShaman()
@@ -89,30 +113,6 @@ var ItemSetCataclysmRegalia = core.NewItemSet(core.ItemSet{
 					shaman.AddMana(sim, 120, manaMetrics, false)
 				},
 			})
-		},
-	},
-})
-
-var ItemSetSkyshatterRegalia = core.NewItemSet(core.ItemSet{
-	Name: "Skyshatter Regalia",
-	Bonuses: map[int32]core.ApplyEffect{
-		2: func(agent core.Agent) {
-			shaman := agent.(ShamanAgent).GetShaman()
-
-			if shaman.Totems.Air == proto.AirTotem_NoAirTotem ||
-				shaman.Totems.Water == proto.WaterTotem_NoWaterTotem ||
-				shaman.Totems.Earth == proto.EarthTotem_NoEarthTotem ||
-				shaman.Totems.Fire == proto.FireTotem_NoFireTotem {
-				return
-			}
-
-			shaman.AddStat(stats.MP5, 15)
-			shaman.AddStat(stats.SpellCrit, 35)
-			shaman.AddStat(stats.SpellPower, 45)
-		},
-		4: func(agent core.Agent) {
-			// Increases damage done by Lightning Bolt by 5%.
-			// Implemented in lightning_bolt.go.
 		},
 	},
 })

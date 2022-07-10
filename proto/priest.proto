@@ -146,10 +146,8 @@ message ShadowPriest {
 		}
 	
 		RotationType rotation_type = 1;
-		bool use_dev_plague = 3;  //only undead
-		bool precast_vt = 4; // casts VT ahead of the start of the fight so that it lands on 0
-		double latency = 5; // Latency between actions
-		bool use_starshards = 6;  //only nelf
+		bool precast_vt = 2; // casts VT ahead of the start of the fight so that it lands on 0
+		double latency = 3; // Latency between actions
 	}
 	Rotation rotation = 1;
 
@@ -170,10 +168,8 @@ message SmitePriest {
 		}
 	
 		RotationType rotation_type = 1;
-		bool use_dev_plague = 3;  //only undead
-		bool use_starshards = 4;  //only nelf
-		bool use_mind_blast = 5;
-		bool use_shadow_word_death = 6;
+		bool use_mind_blast = 2;
+		bool use_shadow_word_death = 3;
 	}
 	Rotation rotation = 1;
 

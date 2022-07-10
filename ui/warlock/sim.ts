@@ -16,7 +16,7 @@ import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
 import { GuardianElixir } from '/wotlk/core/proto/common.js';
 import { Conjured } from '/wotlk/core/proto/common.js';
-import { Drums } from '/wotlk/core/proto/common.js';
+
 import { Potions } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
 
@@ -96,28 +96,25 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					arcaneBrilliance: true,
-					divineSpirit: TristateEffect.TristateEffectImproved,
+					divineSpirit: true,
+					bloodlust: true,
+					manaSpringTotem: TristateEffect.TristateEffectRegular,
+					totemOfWrath: true,
+					wrathOfAirTotem: true,
 				}),
 				partyBuffs: PartyBuffs.create({
-					drums: Drums.DrumsOfBattle,
-					bloodlust: 1,
-					manaSpringTotem: TristateEffect.TristateEffectRegular,
-					totemOfWrath: 1,
-					wrathOfAirTotem: TristateEffect.TristateEffectRegular,
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
 					blessingOfWisdom: TristateEffect.TristateEffectImproved,
-					blessingOfSalvation: true,
+
 				}),
 				debuffs: Debuffs.create({
 					judgementOfWisdom: true,
 					misery: true,
-					shadowWeaving: true,
-					curseOfElements: TristateEffect.TristateEffectRegular,
+					curseOfElements: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					sunderArmor: true,
-					isbUptime: 0.65,
 				}),
 			},
 
@@ -131,36 +128,29 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			raidBuffInputs: [
 				IconInputs.ArcaneBrilliance,
 				IconInputs.DivineSpirit,
-			],
-			partyBuffInputs: [
 				IconInputs.MoonkinAura,
-				IconInputs.DrumsOfBattleBuff,
-				IconInputs.DrumsOfRestorationBuff,
 				IconInputs.Bloodlust,
 				IconInputs.WrathOfAirTotem,
 				IconInputs.TotemOfWrath,
 				IconInputs.ManaSpringTotem,
+			],
+			partyBuffInputs: [
 				IconInputs.ManaTideTotem,
-				IconInputs.SanctityAura,
 				IconInputs.HeroicPresence,
 				IconInputs.EyeOfTheNight,
 				IconInputs.ChainOfTheTwilightOwl,
-				IconInputs.JadePendantOfBlasting,
 				IconInputs.AtieshWarlock,
 				IconInputs.AtieshMage,
 			],
 			playerBuffInputs: [
 				IconInputs.BlessingOfKings,
 				IconInputs.BlessingOfWisdom,
-				IconInputs.BlessingOfSalvation,
 				IconInputs.Innervate,
 				IconInputs.PowerInfusion,
 			],
 			// IconInputs to include in the 'Debuffs' section on the settings tab.
 			debuffInputs: [
 				IconInputs.JudgementOfWisdom,
-				IconInputs.ImprovedSealOfTheCrusader,
-				IconInputs.ShadowWeaving,
 				IconInputs.Misery,
 				IconInputs.ImprovedScorch,
 				IconInputs.CurseOfElements,
@@ -214,10 +204,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
-					OtherInputs.ISBUptime,
-					OtherInputs.ShadowPriestDPS,
 					OtherInputs.PrepopPotion,
-					OtherInputs.SnapshotImprovedWrathOfAirTotem,
 					OtherInputs.TankAssignment,
 				],
 			},

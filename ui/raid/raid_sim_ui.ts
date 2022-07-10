@@ -233,20 +233,6 @@ export class RaidSimUI extends SimUI {
 			placement: 'left',
 		});
 
-		const assignmentsPicker = new AssignmentsPicker(this.rootElem.getElementsByClassName('assignments-section-container')[0] as HTMLElement, this);
-		const tanksPicker = new TanksPicker(this.rootElem.getElementsByClassName('tanks-section-container')[0] as HTMLElement, this);
-
-		const otherOptionsSectionElem = this.rootElem.getElementsByClassName('other-options-section')[0] as HTMLElement;
-		new BooleanPicker(otherOptionsSectionElem, this.sim.raid, {
-			label: 'Stagger Stormstrikes',
-			labelTooltip: 'When there are multiple Enhancement Shaman in the raid, causes them to coordinate their Stormstrike casts for optimal SS charge usage.',
-			changedEvent: (raid: Raid) => raid.staggerStormstrikesChangeEmitter,
-			getValue: (raid: Raid) => raid.getStaggerStormstrikes(),
-			setValue: (eventID: EventID, raid: Raid, newValue: boolean) => {
-				raid.setStaggerStormstrikes(eventID, newValue);
-			},
-		});
-
 		// Init Muuri layout only when settings tab is clicked, because it needs the elements
 		// to be shown so it can calculate sizes.
 		(this.rootElem.getElementsByClassName('raid-settings-tab-tab')[0] as HTMLElement)!.addEventListener('click', event => {
@@ -316,8 +302,6 @@ export class RaidSimUI extends SimUI {
 					playerProtos.forEach(playerProto => playerProto.buffs!.blessingOfMight = TristateEffect.TristateEffectImproved);
 				} else if (paladin.blessings[spec] == Blessings.BlessingOfWisdom) {
 					playerProtos.forEach(playerProto => playerProto.buffs!.blessingOfWisdom = TristateEffect.TristateEffectImproved);
-				} else if (paladin.blessings[spec] == Blessings.BlessingOfSalvation) {
-					playerProtos.forEach(playerProto => playerProto.buffs!.blessingOfSalvation = true);
 				} else if (paladin.blessings[spec] == Blessings.BlessingOfSanctuary) {
 					playerProtos.forEach(playerProto => playerProto.buffs!.blessingOfSanctuary = true);
 				}

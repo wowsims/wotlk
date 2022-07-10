@@ -82,44 +82,47 @@ func (warlock *Warlock) ApplyTalents() {
 	// 	stats.SpellCrit: float64(warlock.Talents.DemonicTactics) * 1 * core.CritRatingPerCritChance,
 	// })
 
-	// warlock.applyShadowEmbrace()
-	warlock.setupNightfall()
+	if warlock.Talents.Nightfall > 0 {
+		warlock.setupNightfall()
+	}
+
+	if warlock.Talents.ShadowEmbrace > 0 {
+		warlock.setupShadowEmbrace()
+	}
+
+	
 }
 
-/*func (warlock *Warlock) applyShadowEmbrace() {
-	if warlock.Talents.ShadowEmbrace == 0 {
-		return
-	}
-
-	var debuffAuras []*core.Aura
-	for _, target := range warlock.Env.Encounter.Targets {
-		debuffAuras = append(debuffAuras, core.ShadowEmbraceAura(&target.Unit, warlock.Talents.ShadowEmbrace))
-	}
+func (warlock *Warlock) setupShadowEmbrace() {
+	warlock.ShadowEmbraceAura = warlock.RegisterAura(core.Aura{
+		Label:     "Shadow Embrace",
+		ActionID:  core.ActionID{SpellID: 32391},
+		Duration:  time.Second * 12,
+		MaxStacks: 3,
+		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
+			aura.Unit.PseudoStats.PeriodicShadowDamageDealtMultiplier /= 1.0 + 0.01*float64(warlock.Talents.ShadowEmbrace)*float64(oldStacks)
+			aura.Unit.PseudoStats.PeriodicShadowDamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.ShadowEmbrace)*float64(newStacks)
+			// TO DO : Healing over time reduction part
+		},
+	})
 
 	warlock.RegisterAura(core.Aura{
-		Label:    "Shadow Embrace Talent",
+		Label: "Shadow Embrace Talent",
+//		ActionID: core.ActionID{SpellID: 32394},
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() {
-				return
-			}
-
-			if spell == warlock.Corruption || spell == warlock.SiphonLife || spell == warlock.CurseOfAgony || spell.SameAction(warlock.Seeds[0].ActionID) {
-				debuffAuras[spellEffect.Target.Index].Activate(sim)
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)  {
+			if spell == warlock.Shadowbolt { // TODO: also works on Haunt
+				warlock.ShadowEmbraceAura.Activate(sim)
+				warlock.ShadowEmbraceAura.AddStack(sim)
 			}
 		},
 	})
 }
 
-*/
 func (warlock *Warlock) setupNightfall() {
-	if warlock.Talents.Nightfall == 0 {
-		return
-	}
-
 	warlock.NightfallProcAura = warlock.RegisterAura(core.Aura{
 		Label:    "Nightfall Shadow Trance",
 		ActionID: core.ActionID{SpellID: 17941},

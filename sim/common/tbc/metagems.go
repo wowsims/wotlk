@@ -119,5 +119,4 @@ func init() {
 	// These are handled in character.go, but create empty effects so they are included in tests.
 	core.NewItemEffect(34220, func(_ core.Agent) {}) // Chaotic Skyfire Diamond
 	core.NewItemEffect(32409, func(_ core.Agent) {}) // Relentless Earthstorm Diamond
-
 }

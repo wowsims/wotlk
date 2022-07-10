@@ -9,22 +9,18 @@ var StandardTalents = &proto.ShamanTalents{
 	Convection:         5,
 	Concussion:         5,
 	ElementalFocus:     true,
-	CallOfThunder:      5,
-	ElementalFury:      true,
+	CallOfThunder:      true,
+	ElementalFury:      5,
 	UnrelentingStorm:   3,
 	ElementalPrecision: 3,
 	LightningMastery:   5,
 	ElementalMastery:   true,
 	LightningOverload:  5,
 	TotemOfWrath:       true,
-
-	TotemicFocus:    5,
-	NaturesGuidance: 3,
-	TidalMastery:    5,
 }
 
 var eleShamOptionsNoBuffs = &proto.ElementalShaman_Options{
-	WaterShield: true,
+	Shield: proto.ShamanShield_WaterShield,
 }
 
 var NoTotems = &proto.ShamanTotems{}
@@ -35,20 +31,9 @@ var BasicTotems = &proto.ShamanTotems{
 	Fire:  proto.FireTotem_TotemOfWrath,
 }
 
-var PlayerOptionsCLOnClearcastNoBuffs = &proto.Player_ElementalShaman{
-	ElementalShaman: &proto.ElementalShaman{
-		Talents: StandardTalents,
-		Options: eleShamOptionsNoBuffs,
-		Rotation: &proto.ElementalShaman_Rotation{
-			Totems: NoTotems,
-			Type:   proto.ElementalShaman_Rotation_CLOnClearcast,
-		},
-	},
-}
-
 var eleShamOptions = &proto.ElementalShaman_Options{
-	WaterShield: true,
-	Bloodlust:   true,
+	Shield:    proto.ShamanShield_WaterShield,
+	Bloodlust: true,
 }
 var PlayerOptionsAdaptive = &proto.Player_ElementalShaman{
 	ElementalShaman: &proto.ElementalShaman{
@@ -61,67 +46,29 @@ var PlayerOptionsAdaptive = &proto.Player_ElementalShaman{
 	},
 }
 
-var PlayerOptionsLBOnly = &proto.Player_ElementalShaman{
-	ElementalShaman: &proto.ElementalShaman{
-		Talents: StandardTalents,
-		Options: eleShamOptions,
-		Rotation: &proto.ElementalShaman_Rotation{
-			Totems: BasicTotems,
-			Type:   proto.ElementalShaman_Rotation_LBOnly,
-		},
-	},
-}
-
-var PlayerOptionsFixed3LBCL = &proto.Player_ElementalShaman{
-	ElementalShaman: &proto.ElementalShaman{
-		Talents: StandardTalents,
-		Options: eleShamOptions,
-		Rotation: &proto.ElementalShaman_Rotation{
-			Totems:   BasicTotems,
-			Type:     proto.ElementalShaman_Rotation_FixedLBCL,
-			LbsPerCl: 3,
-		},
-	},
-}
-
-var PlayerOptionsCLOnClearcast = &proto.Player_ElementalShaman{
-	ElementalShaman: &proto.ElementalShaman{
-		Talents: StandardTalents,
-		Options: eleShamOptions,
-		Rotation: &proto.ElementalShaman_Rotation{
-			Totems: BasicTotems,
-			Type:   proto.ElementalShaman_Rotation_CLOnClearcast,
-		},
-	},
-}
-
 var FullRaidBuffs = &proto.RaidBuffs{
 	ArcaneBrilliance: true,
 	GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
+	MoonkinAura:      proto.TristateEffect_TristateEffectRegular,
 }
-var FullPartyBuffs = &proto.PartyBuffs{
-	MoonkinAura: proto.TristateEffect_TristateEffectRegular,
-}
+var FullPartyBuffs = &proto.PartyBuffs{}
 var FullIndividualBuffs = &proto.IndividualBuffs{
 	BlessingOfKings:  true,
 	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
-	ShadowPriestDps:  500,
 }
 
 var FullConsumes = &proto.Consumes{
-	Flask:              proto.Flask_FlaskOfBlindingLight,
-	Food:               proto.Food_FoodBlackenedBasilisk,
-	DefaultPotion:      proto.Potions_SuperManaPotion,
-	PrepopPotion:       proto.Potions_DestructionPotion,
-	MainHandImbue:      proto.WeaponImbue_WeaponImbueBrilliantWizardOil,
-	DefaultConjured:    proto.Conjured_ConjuredDarkRune,
-	Drums:              proto.Drums_DrumsOfBattle,
+	Flask:           proto.Flask_FlaskOfBlindingLight,
+	Food:            proto.Food_FoodBlackenedBasilisk,
+	DefaultPotion:   proto.Potions_SuperManaPotion,
+	PrepopPotion:    proto.Potions_DestructionPotion,
+	MainHandImbue:   proto.WeaponImbue_WeaponImbueBrilliantWizardOil,
+	DefaultConjured: proto.Conjured_ConjuredDarkRune,
 }
 
 var FullDebuffs = &proto.Debuffs{
-	ImprovedSealOfTheCrusader: true,
-	JudgementOfWisdom:         true,
-	Misery:                    true,
+	JudgementOfWisdom: true,
+	Misery:            true,
 }
 
 var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
