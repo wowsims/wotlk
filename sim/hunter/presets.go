@@ -128,19 +128,16 @@ var windSerpentOptions = &proto.Hunter_Options{
 }
 
 var FullRaidBuffs = &proto.RaidBuffs{
-	ArcaneBrilliance: true,
-	GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
-}
-var FullPartyBuffs = &proto.PartyBuffs{
-	Bloodlust: 1,
-	Drums:     proto.Drums_DrumsOfBattle,
-
+	ArcaneBrilliance:     true,
+	GiftOfTheWild:        proto.TristateEffect_TristateEffectImproved,
+	Bloodlust:            true,
 	BattleShout:          proto.TristateEffect_TristateEffectImproved,
 	LeaderOfThePack:      proto.TristateEffect_TristateEffectImproved,
 	ManaSpringTotem:      proto.TristateEffect_TristateEffectRegular,
 	StrengthOfEarthTotem: proto.TristateEffect_TristateEffectImproved,
 	WindfuryTotem:        proto.TristateEffect_TristateEffectImproved,
 }
+var FullPartyBuffs = &proto.PartyBuffs{}
 var FullIndividualBuffs = &proto.IndividualBuffs{
 	BlessingOfKings:  true,
 	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
@@ -155,11 +152,10 @@ var FullConsumes = &proto.Consumes{
 }
 
 var FullDebuffs = &proto.Debuffs{
-	BloodFrenzy:               true,
-	FaerieFire:                proto.TristateEffect_TristateEffectImproved,
-	ImprovedSealOfTheCrusader: true,
-	JudgementOfWisdom:         true,
-	Misery:                    true,
+	BloodFrenzy:       true,
+	FaerieFire:        proto.TristateEffect_TristateEffectImproved,
+	JudgementOfWisdom: true,
+	Misery:            true,
 }
 
 var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
