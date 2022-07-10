@@ -39,7 +39,7 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 			petConfig.Name,
 			&hunter.Character,
 			hunterPetBaseStats,
-			hunterPetStatInheritance,
+			hunter.makeStatInheritance(),
 			true,
 		),
 		config:      petConfig,
@@ -111,7 +111,7 @@ func (hp *HunterPet) Reset(sim *core.Simulation) {
 	hp.focusBar.reset(sim)
 	if sim.Log != nil {
 		hp.Log(sim, "Total Pet stats: %s", hp.GetStats())
-		inheritedStats := hunterPetStatInheritance(hp.hunterOwner.GetStats())
+		inheritedStats := hp.hunterOwner.makeStatInheritance()(hp.hunterOwner.GetStats())
 		hp.Log(sim, "Inherited Pet stats: %s", inheritedStats)
 	}
 
@@ -162,12 +162,19 @@ func (hp *HunterPet) specialDamageMod(baseDamageConfig core.BaseDamageConfig) co
 
 func (hp *HunterPet) specialOutcomeMod(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
 	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
-		if hp.CobraStrikesAura != nil && hp.CobraStrikesAura.IsActive() {
-			hp.AddStat(stats.MeleeCrit, 100*core.CritRatingPerCritChance)
-			hp.AddStat(stats.SpellCrit, 100*core.CritRatingPerCritChance)
+		if hp.CobraStrikesAura.IsActive() {
+			hp.AddStatDynamic(sim, stats.MeleeCrit, 100*core.CritRatingPerCritChance)
+			hp.AddStatDynamic(sim, stats.SpellCrit, 100*core.CritRatingPerCritChance)
 			outcomeApplier(sim, spell, spellEffect, attackTable)
-			hp.AddStat(stats.MeleeCrit, -100*core.CritRatingPerCritChance)
-			hp.AddStat(stats.SpellCrit, -100*core.CritRatingPerCritChance)
+			hp.AddStatDynamic(sim, stats.MeleeCrit, -100*core.CritRatingPerCritChance)
+			hp.AddStatDynamic(sim, stats.SpellCrit, -100*core.CritRatingPerCritChance)
+		} else if hp.KillCommandAura.IsActive() && hp.hunterOwner.Talents.FocusedFire > 0 {
+			bonusCrit := 10 * core.CritRatingPerCritChance * float64(hp.hunterOwner.Talents.FocusedFire)
+			hp.AddStatDynamic(sim, stats.MeleeCrit, bonusCrit)
+			hp.AddStatDynamic(sim, stats.SpellCrit, bonusCrit)
+			outcomeApplier(sim, spell, spellEffect, attackTable)
+			hp.AddStatDynamic(sim, stats.MeleeCrit, -bonusCrit)
+			hp.AddStatDynamic(sim, stats.SpellCrit, -bonusCrit)
 		} else {
 			outcomeApplier(sim, spell, spellEffect, attackTable)
 		}
@@ -183,12 +190,15 @@ var hunterPetBaseStats = stats.Stats{
 	stats.MeleeCrit: (1.1515 + 1.8) * core.CritRatingPerCritChance,
 }
 
-var hunterPetStatInheritance = func(ownerStats stats.Stats) stats.Stats {
-	return stats.Stats{
-		stats.Stamina:     ownerStats[stats.Stamina] * 0.3,
-		stats.Armor:       ownerStats[stats.Armor] * 0.35,
-		stats.AttackPower: ownerStats[stats.RangedAttackPower] * 0.22,
-		stats.SpellPower:  ownerStats[stats.RangedAttackPower] * 0.128,
+func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
+	hvw := 0.1 * float64(hunter.Talents.HunterVsWild)
+	return func(ownerStats stats.Stats) stats.Stats {
+		return stats.Stats{
+			stats.Stamina:     ownerStats[stats.Stamina] * 0.3,
+			stats.Armor:       ownerStats[stats.Armor] * 0.35,
+			stats.AttackPower: ownerStats[stats.RangedAttackPower]*0.22 + ownerStats[stats.Stamina]*hvw,
+			stats.SpellPower:  ownerStats[stats.RangedAttackPower] * 0.128,
+		}
 	}
 }
 

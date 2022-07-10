@@ -1202,43 +1202,43 @@ dps_results: {
 dps_results: {
  key: "TestRogue-Settings-BloodElf-P1-Hemo-FullBuffs-LongMultiTarget"
  value: {
-  dps: 403.9877428301242
-  tps: 274.23081188816644
+  dps: 428.5383843552866
+  tps: 291.6617673710318
  }
 }
 dps_results: {
  key: "TestRogue-Settings-BloodElf-P1-Hemo-FullBuffs-LongSingleTarget"
  value: {
-  dps: 317.9968240628123
-  tps: 213.2220144129383
+  dps: 344.4712498092837
+  tps: 232.01885669293293
  }
 }
 dps_results: {
  key: "TestRogue-Settings-BloodElf-P1-Hemo-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 310.3907280615946
-  tps: 220.37741692373208
+  dps: 326.3141809866149
+  tps: 231.6830685004965
  }
 }
 dps_results: {
  key: "TestRogue-Settings-BloodElf-P1-Hemo-NoBuffs-LongMultiTarget"
  value: {
-  dps: 92.13944084920013
-  tps: 65.41900300293209
+  dps: 92.47493855323853
+  tps: 65.65720637279935
  }
 }
 dps_results: {
  key: "TestRogue-Settings-BloodElf-P1-Hemo-NoBuffs-LongSingleTarget"
  value: {
-  dps: 80.3072053671323
-  tps: 57.01811581066395
+  dps: 81.01374931749315
+  tps: 57.519762015420156
  }
 }
 dps_results: {
  key: "TestRogue-Settings-BloodElf-P1-Hemo-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 91.25810864361803
-  tps: 64.79325713696879
+  dps: 93.51956828735828
+  tps: 66.39889348402437
  }
 }
 dps_results: {
@@ -1286,43 +1286,43 @@ dps_results: {
 dps_results: {
  key: "TestRogue-Settings-Human-P1-Hemo-FullBuffs-LongMultiTarget"
  value: {
-  dps: 404.86198899250917
-  tps: 274.89745913538974
+  dps: 429.35980554945127
+  tps: 292.2909088908184
  }
 }
 dps_results: {
  key: "TestRogue-Settings-Human-P1-Hemo-FullBuffs-LongSingleTarget"
  value: {
-  dps: 319.3980486476048
-  tps: 214.28387734627697
+  dps: 346.0573738530716
+  tps: 233.21199824215847
  }
 }
 dps_results: {
  key: "TestRogue-Settings-Human-P1-Hemo-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 311.8053611116609
-  tps: 221.38180638927923
+  dps: 327.72653695499844
+  tps: 232.68584123804888
  }
 }
 dps_results: {
  key: "TestRogue-Settings-Human-P1-Hemo-NoBuffs-LongMultiTarget"
  value: {
-  dps: 92.90406458027896
-  tps: 65.96188585199806
+  dps: 93.27510718908597
+  tps: 66.22532610425104
  }
 }
 dps_results: {
  key: "TestRogue-Settings-Human-P1-Hemo-NoBuffs-LongSingleTarget"
  value: {
-  dps: 79.66627251065371
-  tps: 56.56305348256416
+  dps: 80.21752838426153
+  tps: 56.9544451528257
  }
 }
 dps_results: {
  key: "TestRogue-Settings-Human-P1-Hemo-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 92.11404086884326
-  tps: 65.40096901687872
+  dps: 94.56378879737504
+  tps: 67.14029004613629
  }
 }
 dps_results: {

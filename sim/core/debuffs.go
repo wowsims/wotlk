@@ -251,10 +251,10 @@ func CurseOfElementsAura(target *Unit) *Aura {
 func ImprovedShadowBoltAura(target *Unit) *Aura {
 	bonusSpellCrit := 5.0 * CritRatingPerCritChance
 	config := Aura{
-		Label:     "ImprovedShadowBolt",
-		Tag:       "ImprovedShadowBolt",
-		ActionID:  ActionID{SpellID: 17800},
-		Duration:  time.Second * 30,
+		Label:    "ImprovedShadowBolt",
+		Tag:      "ImprovedShadowBolt",
+		ActionID: ActionID{SpellID: 17800},
+		Duration: time.Second * 30,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.BonusCritRating += bonusSpellCrit
 		},

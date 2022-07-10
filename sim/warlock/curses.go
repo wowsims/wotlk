@@ -27,7 +27,7 @@ func (warlock *Warlock) registerCurseOfElementsSpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
-				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 0, 1) * 500 * time.Millisecond, 
+				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 0, 1)*500*time.Millisecond,
 			},
 		},
 
@@ -61,7 +61,7 @@ func (warlock *Warlock) registerCurseOfWeaknessSpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
-				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 0, 1) * 500 * time.Millisecond, 
+				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 0, 1)*500*time.Millisecond,
 			},
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -96,7 +96,7 @@ func (warlock *Warlock) registerCurseOfTonguesSpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
-				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 0, 1) * 500 * time.Millisecond, 
+				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 0, 1)*500*time.Millisecond,
 			},
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -138,7 +138,7 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
-				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 0, 1) * 500 * time.Millisecond, 
+				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 0, 1)*500*time.Millisecond,
 			},
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -192,7 +192,7 @@ func (warlock *Warlock) registerCurseOfDoomSpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
-				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 0, 1) * 500 * time.Millisecond, 
+				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 0, 1)*500*time.Millisecond,
 			},
 			CD: core.Cooldown{
 				Timer:    warlock.NewTimer(),

@@ -21,7 +21,7 @@ func (warlock *Warlock) ApplyTalents() {
 		})
 	}
 
-	// Suppression 
+	// Suppression
 	warlock.AddStat(stats.SpellHit, float64(warlock.Talents.Suppression)*core.SpellHitRatingPerHitChance)
 
 	// Add 1% crit per level of backlash.
@@ -38,7 +38,7 @@ func (warlock *Warlock) ApplyTalents() {
 				return mana + intellect*15*bonus
 			},
 		})
-	    // //  TODO: fel stamina increases max health (might be useful for warlock tanking sim)
+		// //  TODO: fel stamina increases max health (might be useful for warlock tanking sim)
 		// warlock.AddStatDependency(stats.StatDependency{
 		// 	SourceStat:   stats.Stamina,
 		// 	ModifiedStat: stats.Health,
@@ -49,7 +49,6 @@ func (warlock *Warlock) ApplyTalents() {
 	}
 
 	warlock.PseudoStats.BonusCritRating += float64(warlock.Talents.DemonicTactics) * 1 * core.CritRatingPerCritChance
-
 
 	// if !warlock.Options.SacrificeSummon && warlock.Options.Summon != proto.Warlock_Options_NoSummon {
 	// 	if warlock.Talents.MasterDemonologist > 0 {
@@ -90,7 +89,6 @@ func (warlock *Warlock) ApplyTalents() {
 		warlock.setupShadowEmbrace()
 	}
 
-	
 }
 
 func (warlock *Warlock) setupShadowEmbrace() {
@@ -108,12 +106,12 @@ func (warlock *Warlock) setupShadowEmbrace() {
 
 	warlock.RegisterAura(core.Aura{
 		Label: "Shadow Embrace Talent",
-//		ActionID: core.ActionID{SpellID: 32394},
+		//		ActionID: core.ActionID{SpellID: 32394},
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)  {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spell == warlock.Shadowbolt { // TODO: also works on Haunt
 				warlock.ShadowEmbraceAura.Activate(sim)
 				warlock.ShadowEmbraceAura.AddStack(sim)
@@ -147,7 +145,7 @@ func (warlock *Warlock) setupNightfall() {
 			if spell != warlock.Corruption { // TODO: also works on drain life...
 				return
 			}
-			if sim.RandomFloat("nightfall") > 0.02 * float64(warlock.Talents.Nightfall) {
+			if sim.RandomFloat("nightfall") > 0.02*float64(warlock.Talents.Nightfall) {
 				return
 			}
 			warlock.NightfallProcAura.Activate(sim)

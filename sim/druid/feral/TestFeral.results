@@ -691,8 +691,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-ThunderheartHarness"
  value: {
-  dps: 358.70149338255777
-  tps: 292.1490560782593
+  dps: 396.81216016193616
+  tps: 319.2076294916177
  }
 }
 dps_results: {
