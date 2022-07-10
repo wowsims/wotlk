@@ -540,23 +540,6 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 		})
 	}
 
-	if config.Consumes.Drums == proto.Drums_DrumsUnknown {
-		newRaid := googleProto.Clone(defaultRaid).(*proto.Raid)
-		newRaid.Parties[0].Players[0].Consumes.Drums = proto.Drums_DrumsOfBattle
-
-		generator.subgenerators = append(generator.subgenerators, SubGenerator{
-			name: "SelfDrums",
-			generator: &SingleDpsTestGenerator{
-				Name: "DPS",
-				Request: &proto.RaidSimRequest{
-					Raid:       newRaid,
-					Encounter:  MakeSingleTargetEncounter(0),
-					SimOptions: DefaultSimTestOptions,
-				},
-			},
-		})
-	}
-
 	// Add this separately so it's always last, which makes it easy to find in the
 	// displayed test results.
 	generator.subgenerators = append(generator.subgenerators, SubGenerator{

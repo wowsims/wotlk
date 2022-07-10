@@ -46,7 +46,7 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 				if spellEffect.Landed() {
 					// CC has a special interaction with AM, gets the benefit of CC crit bonus from
 					// the previous cast along with its own.
-					if mage.ClearcastingAura != nil && mage.ClearcastingAura.IsActive() && mage.bonusAMCCCrit == 0 {
+					if mage.ClearcastingAura.IsActive() && mage.bonusAMCCCrit == 0 {
 						mage.AddStatDynamic(sim, stats.SpellCrit, bonusCrit)
 						mage.bonusAMCCCrit = bonusCrit
 					}

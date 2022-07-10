@@ -101,7 +101,7 @@ var warriorRotation = &proto.Warrior_Rotation{
 
 var warriorOptions = &proto.Warrior_Options{
 	StartingRage:         50,
-	UseRecklessness:   	  true,
+	UseRecklessness:      true,
 	Shout:                proto.WarriorShout_WarriorShoutBattle,
 	PrecastShout:         false,
 	PrecastShoutT2:       false,
@@ -111,27 +111,23 @@ var warriorOptions = &proto.Warrior_Options{
 var FullRaidBuffs = &proto.RaidBuffs{
 	ArcaneBrilliance: true,
 	GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
+	BattleShout:      proto.TristateEffect_TristateEffectImproved,
+	LeaderOfThePack:  proto.TristateEffect_TristateEffectImproved,
 }
-var FullPartyBuffs = &proto.PartyBuffs{
-	BattleShout:     proto.TristateEffect_TristateEffectImproved,
-	LeaderOfThePack: proto.TristateEffect_TristateEffectImproved,
-}
+var FullPartyBuffs = &proto.PartyBuffs{}
 var FullIndividualBuffs = &proto.IndividualBuffs{
 	BlessingOfKings:  true,
 	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
 	BlessingOfMight:  proto.TristateEffect_TristateEffectImproved,
 }
 
-var FullConsumes = &proto.Consumes{
-	Drums: proto.Drums_DrumsOfBattle,
-}
+var FullConsumes = &proto.Consumes{}
 
 var FullDebuffs = &proto.Debuffs{
-	BloodFrenzy:               true,
-	FaerieFire:                proto.TristateEffect_TristateEffectImproved,
-	ImprovedSealOfTheCrusader: true,
-	JudgementOfWisdom:         true,
-	Misery:                    true,
+	BloodFrenzy:       true,
+	FaerieFire:        proto.TristateEffect_TristateEffectImproved,
+	JudgementOfWisdom: true,
+	Misery:            true,
 }
 
 var FuryP1Gear = items.EquipmentSpecFromJsonString(`{"items": [

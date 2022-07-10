@@ -78,30 +78,21 @@ func (warrior *Warrior) GetCharacter() *core.Character {
 	return &warrior.Character
 }
 
-func (warrior *Warrior) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
+func (warrior *Warrior) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	if warrior.ShoutType == proto.WarriorShout_WarriorShoutBattle {
-		partyBuffs.BattleShout = core.MaxTristate(partyBuffs.BattleShout, proto.TristateEffect_TristateEffectRegular)
+		raidBuffs.BattleShout = core.MaxTristate(raidBuffs.BattleShout, proto.TristateEffect_TristateEffectRegular)
 		if warrior.Talents.CommandingPresence == 5 {
-			partyBuffs.BattleShout = proto.TristateEffect_TristateEffectImproved
-		}
-		if warrior.HasTrinketEquipped(30446) { // Solarian's Sapphire
-			partyBuffs.BsSolarianSapphire = true
-			partyBuffs.SnapshotBsSolarianSapphire = false
-		}
-		if warrior.PrecastShout {
-			if (warrior.PrecastShoutSapphire || !partyBuffs.SnapshotBsSolarianSapphire) &&
-				(warrior.PrecastShoutT2 || !partyBuffs.SnapshotBsT2) {
-				partyBuffs.SnapshotBsSolarianSapphire = warrior.PrecastShoutSapphire
-				partyBuffs.SnapshotBsT2 = warrior.PrecastShoutT2
-				partyBuffs.SnapshotBsBoomingVoiceRank = warrior.Talents.BoomingVoice
-			}
+			raidBuffs.BattleShout = proto.TristateEffect_TristateEffectImproved
 		}
 	} else if warrior.ShoutType == proto.WarriorShout_WarriorShoutCommanding {
-		partyBuffs.CommandingShout = core.MaxTristate(partyBuffs.CommandingShout, proto.TristateEffect_TristateEffectRegular)
+		raidBuffs.CommandingShout = core.MaxTristate(raidBuffs.CommandingShout, proto.TristateEffect_TristateEffectRegular)
 		if warrior.Talents.CommandingPresence == 5 {
-			partyBuffs.CommandingShout = proto.TristateEffect_TristateEffectImproved
+			raidBuffs.CommandingShout = proto.TristateEffect_TristateEffectImproved
 		}
 	}
+}
+
+func (warrior *Warrior) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
 
 func (warrior *Warrior) Initialize() {

@@ -103,14 +103,14 @@ func (hunter *Hunter) GetHunter() *Hunter {
 }
 
 func (hunter *Hunter) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
+	if hunter.Talents.TrueshotAura {
+		raidBuffs.TrueshotAura = true
+	}
 	if hunter.Talents.FerociousInspiration == 3 && hunter.pet != nil {
 		raidBuffs.FerociousInspiration = true
 	}
 }
 func (hunter *Hunter) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
-	if hunter.Talents.TrueshotAura {
-		partyBuffs.TrueshotAura = true
-	}
 }
 
 func (hunter *Hunter) Initialize() {

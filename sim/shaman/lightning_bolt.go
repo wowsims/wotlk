@@ -22,7 +22,7 @@ func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spel
 
 	spellConfig.Cast.ModifyCast = func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 		shaman.applyElectricSpellCastInitModifiers(spell, cast)
-		if shaman.NaturesSwiftnessAura != nil && shaman.NaturesSwiftnessAura.IsActive() {
+		if shaman.NaturesSwiftnessAura.IsActive() {
 			cast.CastTime = 0
 		} else {
 			shaman.modifyCastMaelstrom(spell, cast)

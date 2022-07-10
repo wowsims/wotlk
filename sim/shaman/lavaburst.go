@@ -34,7 +34,9 @@ func (shaman *Shaman) newLavaBurstSpell() *core.Spell {
 	}
 
 	spellConfig.Cast.ModifyCast = func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-		if shaman.NaturesSwiftnessAura != nil && shaman.NaturesSwiftnessAura.IsActive() {
+		if shaman.ElementalMasteryAura.IsActive() {
+			cast.CastTime = 0
+		} else if shaman.NaturesSwiftnessAura.IsActive() {
 			cast.CastTime = 0
 		}
 	}

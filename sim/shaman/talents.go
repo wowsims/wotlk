@@ -149,14 +149,14 @@ func (shaman *Shaman) applyElementalFocus() {
 }
 
 func (shaman *Shaman) modifyCastClearcasting(spell *core.Spell, cast *core.Cast) {
-	if shaman.ClearcastingAura != nil && shaman.ClearcastingAura.IsActive() {
+	if shaman.ClearcastingAura.IsActive() {
 		// Reduces mana cost by 40%
 		cast.Cost -= spell.BaseCost * 0.4
 	}
 }
 
 func (shaman *Shaman) modifyCastMaelstrom(spell *core.Spell, cast *core.Cast) {
-	if shaman.MaelstromWeaponAura != nil && shaman.MaelstromWeaponAura.GetStacks() > 0 {
+	if shaman.MaelstromWeaponAura.GetStacks() > 0 {
 		castReduction := float64(shaman.MaelstromWeaponAura.GetStacks()) * 0.2
 		cast.CastTime -= time.Duration(float64(cast.CastTime) * castReduction)
 	}
@@ -198,16 +198,22 @@ func (shaman *Shaman) registerElementalMasteryCD() {
 
 	// TODO: Share CD with Natures Swiftness
 
-	shaman.ElementalMasteryAura = shaman.RegisterAura(core.Aura{
-		Label:    "Elemental Mastery",
+	shaman.ElementalMasteryBuffAura = shaman.RegisterAura(core.Aura{
+		Label:    "Elemental Mastery Proc",
 		ActionID: actionID,
-		Duration: core.NeverExpires,
+		Duration: time.Second * 15,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			shaman.AddStatDynamic(sim, stats.SpellHaste, 15*core.HasteRatingPerHastePercent)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			shaman.AddStatDynamic(sim, stats.SpellHaste, -15*core.HasteRatingPerHastePercent)
 		},
+	})
+
+	shaman.ElementalMasteryAura = shaman.RegisterAura(core.Aura{
+		Label:    "Elemental Mastery",
+		ActionID: actionID,
+		Duration: core.NeverExpires,
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if !spell.Flags.Matches(SpellFlagElectric) {
 				// Only LB / CL / LvB use EM
@@ -232,8 +238,8 @@ func (shaman *Shaman) registerElementalMasteryCD() {
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+			shaman.ElementalMasteryBuffAura.Activate(sim)
 			shaman.ElementalMasteryAura.Activate(sim)
-			shaman.ElementalMasteryAura.Prioritize()
 		},
 	})
 

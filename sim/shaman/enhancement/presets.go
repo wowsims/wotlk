@@ -58,14 +58,14 @@ var enhShamOptions = &proto.EnhancementShaman_Options{
 }
 
 var FullRaidBuffs = &proto.RaidBuffs{
-	ArcaneBrilliance: true,
-	GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
+	ArcaneBrilliance:     true,
+	GiftOfTheWild:        proto.TristateEffect_TristateEffectImproved,
+	FerociousInspiration: true,
+	BattleShout:          proto.TristateEffect_TristateEffectImproved,
+	LeaderOfThePack:      proto.TristateEffect_TristateEffectImproved,
+	TrueshotAura:         true,
 }
-var FullPartyBuffs = &proto.PartyBuffs{
-	BattleShout:     proto.TristateEffect_TristateEffectImproved,
-	LeaderOfThePack: proto.TristateEffect_TristateEffectImproved,
-	TrueshotAura:    true,
-}
+var FullPartyBuffs = &proto.PartyBuffs{}
 var FullIndividualBuffs = &proto.IndividualBuffs{
 	BlessingOfKings:  true,
 	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
@@ -73,21 +73,17 @@ var FullIndividualBuffs = &proto.IndividualBuffs{
 }
 
 var FullConsumes = &proto.Consumes{
-	Drums:           proto.Drums_DrumsOfBattle,
 	MainHandImbue:   proto.WeaponImbue_WeaponImbueShamanWindfury,
 	OffHandImbue:    proto.WeaponImbue_WeaponImbueShamanWindfury,
 	DefaultConjured: proto.Conjured_ConjuredFlameCap,
 }
 
 var FullDebuffs = &proto.Debuffs{
-	BloodFrenzy:                 true,
-	ExposeArmor:                 proto.TristateEffect_TristateEffectImproved,
-	FaerieFire:                  proto.TristateEffect_TristateEffectImproved,
-	ImprovedSealOfTheCrusader:   true,
-	JudgementOfWisdom:           true,
-	Misery:                      true,
-	ExposeWeaknessUptime:        0.8,
-	ExposeWeaknessHunterAgility: 800,
+	BloodFrenzy:       true,
+	ExposeArmor:       proto.TristateEffect_TristateEffectImproved,
+	FaerieFire:        proto.TristateEffect_TristateEffectImproved,
+	JudgementOfWisdom: true,
+	Misery:            true,
 }
 
 var Phase2Gear = items.EquipmentSpecFromJsonString(`{"items": [

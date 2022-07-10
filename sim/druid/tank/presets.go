@@ -44,23 +44,21 @@ var PlayerOptionsDefault = &proto.Player_FeralTankDruid{
 }
 
 var FullRaidBuffs = &proto.RaidBuffs{
-	ArcaneBrilliance: true,
-	GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
+	ArcaneBrilliance:     true,
+	GiftOfTheWild:        proto.TristateEffect_TristateEffectImproved,
+	Bloodlust:            true,
+	BattleShout:          proto.TristateEffect_TristateEffectImproved,
+	LeaderOfThePack:      proto.TristateEffect_TristateEffectImproved,
+	ManaSpringTotem:      proto.TristateEffect_TristateEffectRegular,
+	StrengthOfEarthTotem: proto.TristateEffect_TristateEffectImproved,
+	UnleashedRage:        true,
 }
 var FullPartyBuffs = &proto.PartyBuffs{
-	Bloodlust:                  1,
-	Drums:                      proto.Drums_DrumsOfBattle,
-	BattleShout:                proto.TristateEffect_TristateEffectImproved,
-	LeaderOfThePack:            proto.TristateEffect_TristateEffectImproved,
-	ManaSpringTotem:            proto.TristateEffect_TristateEffectRegular,
-	BraidedEterniumChain:       true,
-	StrengthOfEarthTotem:       proto.TristateEffect_TristateEffectImproved,
-	SnapshotBsSolarianSapphire: true,
+	BraidedEterniumChain: true,
 }
 var FullIndividualBuffs = &proto.IndividualBuffs{
 	BlessingOfKings: true,
 	BlessingOfMight: proto.TristateEffect_TristateEffectImproved,
-	UnleashedRage:   true,
 }
 
 var FullConsumes = &proto.Consumes{
@@ -74,17 +72,14 @@ var FullConsumes = &proto.Consumes{
 }
 
 var FullDebuffs = &proto.Debuffs{
-	JudgementOfWisdom:           true,
-	ImprovedSealOfTheCrusader:   true,
-	BloodFrenzy:                 true,
-	GiftOfArthas:                true,
-	ExposeArmor:                 proto.TristateEffect_TristateEffectImproved,
-	FaerieFire:                  proto.TristateEffect_TristateEffectImproved,
-	SunderArmor:                 true,
-	CurseOfWeakness:             true,
-	HuntersMark:                 proto.TristateEffect_TristateEffectImproved,
-	ExposeWeaknessUptime:        1.0,
-	ExposeWeaknessHunterAgility: 1000,
+	JudgementOfWisdom: true,
+	BloodFrenzy:       true,
+	GiftOfArthas:      true,
+	ExposeArmor:       proto.TristateEffect_TristateEffectImproved,
+	FaerieFire:        proto.TristateEffect_TristateEffectImproved,
+	SunderArmor:       true,
+	CurseOfWeakness:   true,
+	HuntersMark:       proto.TristateEffect_TristateEffectImproved,
 }
 
 var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
