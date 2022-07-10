@@ -49,10 +49,9 @@ var PlayerOptionsAdaptive = &proto.Player_ElementalShaman{
 var FullRaidBuffs = &proto.RaidBuffs{
 	ArcaneBrilliance: true,
 	GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
+	MoonkinAura:      proto.TristateEffect_TristateEffectRegular,
 }
-var FullPartyBuffs = &proto.PartyBuffs{
-	MoonkinAura: proto.TristateEffect_TristateEffectRegular,
-}
+var FullPartyBuffs = &proto.PartyBuffs{}
 var FullIndividualBuffs = &proto.IndividualBuffs{
 	BlessingOfKings:  true,
 	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
@@ -65,13 +64,11 @@ var FullConsumes = &proto.Consumes{
 	PrepopPotion:    proto.Potions_DestructionPotion,
 	MainHandImbue:   proto.WeaponImbue_WeaponImbueBrilliantWizardOil,
 	DefaultConjured: proto.Conjured_ConjuredDarkRune,
-	Drums:           proto.Drums_DrumsOfBattle,
 }
 
 var FullDebuffs = &proto.Debuffs{
-	ImprovedSealOfTheCrusader: true,
-	JudgementOfWisdom:         true,
-	Misery:                    true,
+	JudgementOfWisdom: true,
+	Misery:            true,
 }
 
 var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [

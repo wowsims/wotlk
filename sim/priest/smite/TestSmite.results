@@ -1011,13 +1011,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestSmite-SelfDrums-DPS"
- value: {
-  dps: 824.7317236276701
-  tps: 800.772054267647
- }
-}
-dps_results: {
  key: "TestSmite-Settings-Undead-P3-Basic-FullBuffs-LongMultiTarget"
  value: {
   dps: 815.670356408892

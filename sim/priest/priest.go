@@ -76,7 +76,7 @@ func (priest *Priest) Initialize() {
 	}
 
 	if priest.Talents.ShadowWeaving > 0 {
-		priest.ShadowWeavingAura = core.ShadowWeavingAura(priest.CurrentTarget, 0)
+		// priest.ShadowWeavingAura = core.ShadowWeavingAura(priest.CurrentTarget, 0)
 	}
 
 	priest.registerDevouringPlagueSpell()

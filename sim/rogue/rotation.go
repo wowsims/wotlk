@@ -62,7 +62,7 @@ func (rogue *Rogue) doPlanSliceASAP(sim *core.Simulation) {
 	sndTimeRemaining := rogue.SliceAndDiceAura.RemainingDuration(sim)
 
 	if comboPoints > 0 {
-		if energy >= SliceAndDiceEnergyCost || rogue.deathmantleActive() {
+		if energy >= SliceAndDiceEnergyCost || rogue.DeathmantleProcAura.IsActive() {
 			if rogue.canPoolEnergy(sim, energy) && sndTimeRemaining > time.Second*2 {
 				return
 			}
@@ -96,7 +96,7 @@ func (rogue *Rogue) doPlanMaximalSlice(sim *core.Simulation) {
 
 	remainingSimDuration := sim.GetRemainingDuration()
 	if rogue.sliceAndDiceDurations[comboPoints] >= remainingSimDuration {
-		if energy >= SliceAndDiceEnergyCost || rogue.deathmantleActive() {
+		if energy >= SliceAndDiceEnergyCost || rogue.DeathmantleProcAura.IsActive() {
 			if rogue.canPoolEnergy(sim, energy) && sndTimeRemaining > time.Second*2 {
 				return
 			}
@@ -107,7 +107,7 @@ func (rogue *Rogue) doPlanMaximalSlice(sim *core.Simulation) {
 	}
 
 	if sndTimeRemaining <= time.Second && comboPoints > 0 {
-		if energy >= SliceAndDiceEnergyCost || rogue.deathmantleActive() {
+		if energy >= SliceAndDiceEnergyCost || rogue.DeathmantleProcAura.IsActive() {
 			rogue.SliceAndDice[comboPoints].Cast(sim, nil)
 			rogue.plan = PlanNone
 		}
@@ -123,7 +123,7 @@ func (rogue *Rogue) doPlanMaximalSlice(sim *core.Simulation) {
 				rogue.doPlanExposeArmor(sim)
 				return
 			}
-			if energy >= SliceAndDiceEnergyCost || rogue.deathmantleActive() {
+			if energy >= SliceAndDiceEnergyCost || rogue.DeathmantleProcAura.IsActive() {
 				if rogue.canPoolEnergy(sim, energy) && sndTimeRemaining > time.Second*2 {
 					return
 				}
@@ -133,7 +133,7 @@ func (rogue *Rogue) doPlanMaximalSlice(sim *core.Simulation) {
 			}
 		} else {
 			if comboPoints == 5 {
-				if energy >= SliceAndDiceEnergyCost || rogue.deathmantleActive() {
+				if energy >= SliceAndDiceEnergyCost || rogue.DeathmantleProcAura.IsActive() {
 					if rogue.canPoolEnergy(sim, energy) && sndTimeRemaining > time.Second*2 {
 						return
 					}
@@ -147,7 +147,7 @@ func (rogue *Rogue) doPlanMaximalSlice(sim *core.Simulation) {
 		}
 	} else {
 		if comboPoints == 5 {
-			if energy >= SliceAndDiceEnergyCost || rogue.deathmantleActive() {
+			if energy >= SliceAndDiceEnergyCost || rogue.DeathmantleProcAura.IsActive() {
 				if rogue.canPoolEnergy(sim, energy) && sndTimeRemaining > time.Second*2 {
 					return
 				}
@@ -174,7 +174,7 @@ func (rogue *Rogue) doPlanExposeArmor(sim *core.Simulation) {
 	target := rogue.CurrentTarget
 
 	if comboPoints == 5 {
-		if energy >= rogue.ExposeArmor.DefaultCast.Cost || rogue.deathmantleActive() {
+		if energy >= rogue.ExposeArmor.DefaultCast.Cost || rogue.DeathmantleProcAura.IsActive() {
 			eaTimeRemaining := rogue.ExposeArmorAura.RemainingDuration(sim)
 			if rogue.canPoolEnergy(sim, energy) && eaTimeRemaining > time.Second*2 {
 				return
@@ -334,13 +334,13 @@ func (rogue *Rogue) tryUseDamageFinisher(sim *core.Simulation, energy float64, c
 		!rogue.RuptureDot.IsActive() &&
 		sim.GetRemainingDuration() >= rogue.RuptureDuration(comboPoints) &&
 		(sim.GetNumTargets() == 1 || (rogue.BladeFlurryAura == nil || !rogue.BladeFlurryAura.IsActive())) {
-		if energy >= RuptureEnergyCost || rogue.deathmantleActive() {
+		if energy >= RuptureEnergyCost || rogue.DeathmantleProcAura.IsActive() {
 			rogue.Rupture[comboPoints].Cast(sim, rogue.CurrentTarget)
 		}
 		return true
 	}
 
-	if energy >= rogue.Eviscerate[comboPoints].DefaultCast.Cost || rogue.deathmantleActive() {
+	if energy >= rogue.Eviscerate[comboPoints].DefaultCast.Cost || rogue.DeathmantleProcAura.IsActive() {
 		rogue.Eviscerate[comboPoints].Cast(sim, rogue.CurrentTarget)
 		return true
 	}

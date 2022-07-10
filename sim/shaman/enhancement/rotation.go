@@ -65,14 +65,6 @@ func (enh *EnhancementShaman) SetupRotationSchedule() {
 			curTime = castAt + shockCD
 		}
 	}
-	// We need to directly manage all GCD-bound CDs ourself.
-	if enh.Consumes.Drums == proto.Drums_DrumsOfBattle {
-		enh.scheduler.ScheduleMCD(enh.GetCharacter(), core.DrumsOfBattleActionID)
-	} else if enh.Consumes.Drums == proto.Drums_DrumsOfRestoration {
-		enh.scheduler.ScheduleMCD(enh.GetCharacter(), core.DrumsOfRestorationActionID)
-	} else if enh.Consumes.Drums == proto.Drums_DrumsOfWar {
-		enh.scheduler.ScheduleMCD(enh.GetCharacter(), core.DrumsOfWarActionID)
-	}
 	if enh.SelfBuffs.Bloodlust {
 		enh.scheduler.ScheduleMCD(enh.GetCharacter(), enh.BloodlustActionID())
 	}

@@ -396,7 +396,7 @@ message RaidBuffs {
 	TristateEffect power_word_fortitude = 1;
 	bool arcane_brilliance = 2;
 	bool fel_intelligence = 3;
-	TristateEffect divine_spirit = 4;
+	bool divine_spirit = 4;
 	TristateEffect gift_of_the_wild = 5;
 	bool shadow_protection = 6;	
 

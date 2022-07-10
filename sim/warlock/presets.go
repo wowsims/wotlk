@@ -72,19 +72,16 @@ var FullRaidBuffs = &proto.RaidBuffs{
 	ArcaneBrilliance: true,
 	GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
 	DivineSpirit:     true,
+	Bloodlust:        true,
+	ManaSpringTotem:  proto.TristateEffect_TristateEffectRegular,
+	WrathOfAirTotem:  true,
+	TotemOfWrath:     true,
 }
 
-var FullPartyBuffs = &proto.PartyBuffs{
-	Bloodlust:       1,
-	Drums:           proto.Drums_DrumsOfBattle,
-	ManaSpringTotem: proto.TristateEffect_TristateEffectRegular,
-	WrathOfAirTotem: true,
-	TotemOfWrath:    true,
-}
+var FullPartyBuffs = &proto.PartyBuffs{}
 
 var FullIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings:     true,
-	BlessingOfSalvation: true,
+	BlessingOfKings: true,
 }
 
 var FullConsumes = &proto.Consumes{
@@ -95,15 +92,13 @@ var FullConsumes = &proto.Consumes{
 }
 
 var FullDebuffs = &proto.Debuffs{
-	JudgementOfWisdom:           true,
-	Misery:                      true,
-	BloodFrenzy:                 true,
-	ExposeArmor:                 proto.TristateEffect_TristateEffectImproved,
-	FaerieFire:                  proto.TristateEffect_TristateEffectImproved,
-	CurseOfWeakness:             true,
-	HuntersMark:                 proto.TristateEffect_TristateEffectImproved,
-	ExposeWeaknessUptime:        1,
-	ExposeWeaknessHunterAgility: 800,
+	JudgementOfWisdom: true,
+	Misery:            true,
+	BloodFrenzy:       true,
+	ExposeArmor:       proto.TristateEffect_TristateEffectImproved,
+	FaerieFire:        proto.TristateEffect_TristateEffectImproved,
+	CurseOfWeakness:   true,
+	HuntersMark:       proto.TristateEffect_TristateEffectImproved,
 }
 
 var Phase4Gear = items.EquipmentSpecFromJsonString(`{"items": [

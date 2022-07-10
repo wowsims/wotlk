@@ -144,30 +144,23 @@ func (shaman *Shaman) HasMinorGlyph(glyph proto.ShamanMinorGlyph) bool {
 }
 
 func (shaman *Shaman) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
-}
-func (shaman *Shaman) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 	if shaman.Totems.Fire == proto.FireTotem_TotemOfWrath {
-		partyBuffs.TotemOfWrath = true
-	}
-	if shaman.Talents.ManaTideTotem {
-		partyBuffs.ManaTideTotems++
+		raidBuffs.TotemOfWrath = true
 	}
 
 	switch shaman.Totems.Water {
 	case proto.WaterTotem_ManaSpringTotem:
-		partyBuffs.ManaSpringTotem = core.MaxTristate(partyBuffs.ManaSpringTotem, proto.TristateEffect_TristateEffectRegular)
+		raidBuffs.ManaSpringTotem = core.MaxTristate(raidBuffs.ManaSpringTotem, proto.TristateEffect_TristateEffectRegular)
 		if shaman.Talents.RestorativeTotems == 5 {
-			partyBuffs.ManaSpringTotem = proto.TristateEffect_TristateEffectImproved
+			raidBuffs.ManaSpringTotem = proto.TristateEffect_TristateEffectImproved
 		}
 	}
 
 	switch shaman.Totems.Air {
 	case proto.AirTotem_WrathOfAirTotem:
-		partyBuffs.WrathOfAirTotem = true
+		raidBuffs.WrathOfAirTotem = true
 	case proto.AirTotem_WindfuryTotem:
 		break
-	case proto.AirTotem_TranquilAirTotem:
-		partyBuffs.TranquilAirTotem = true
 	}
 
 	switch shaman.Totems.Earth {
@@ -176,9 +169,14 @@ func (shaman *Shaman) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 		if shaman.Talents.EnhancingTotems == 3 {
 			totem = proto.TristateEffect_TristateEffectImproved
 		}
-		if totem > partyBuffs.StrengthOfEarthTotem {
-			partyBuffs.StrengthOfEarthTotem = totem
+		if totem > raidBuffs.StrengthOfEarthTotem {
+			raidBuffs.StrengthOfEarthTotem = totem
 		}
+	}
+}
+func (shaman *Shaman) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
+	if shaman.Talents.ManaTideTotem {
+		partyBuffs.ManaTideTotems++
 	}
 }
 

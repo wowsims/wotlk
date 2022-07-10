@@ -34,23 +34,27 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		ThornsAura(character, 0)
 	}
 
+	if raidBuffs.MoonkinAura > 0 || raidBuffs.ElementalOath {
+		character.AddStat(stats.SpellCrit, 5*CritRatingPerCritChance)
+	}
+
 	character.AddStats(stats.Stats{
-		stats.SpellCrit: GetTristateValueFloat(partyBuffs.MoonkinAura, 5*CritRatingPerCritChance, 5*CritRatingPerCritChance+20),
-	})
-	character.AddStats(stats.Stats{
-		stats.MeleeCrit: GetTristateValueFloat(partyBuffs.LeaderOfThePack, 5*CritRatingPerCritChance, 5*CritRatingPerCritChance+20),
+		stats.MeleeCrit: GetTristateValueFloat(raidBuffs.LeaderOfThePack, 5*CritRatingPerCritChance, 5*CritRatingPerCritChance+20),
 	})
 
-	if partyBuffs.TrueshotAura {
-		character.AddStats(stats.Stats{
-			stats.AttackPower:       125,
-			stats.RangedAttackPower: 125,
+	if raidBuffs.TrueshotAura || raidBuffs.AbominationsMight || raidBuffs.UnleashedRage {
+		// Increases AP by 10%
+		character.AddStatDependency(stats.StatDependency{
+			SourceStat:   stats.AttackPower,
+			ModifiedStat: stats.AttackPower,
+			Modifier: func(ap float64, _ float64) float64 {
+				return ap * 1.1
+			},
 		})
 	}
 
-	if partyBuffs.FerociousInspiration > 0 {
-		multiplier := math.Pow(1.03, float64(partyBuffs.FerociousInspiration))
-		character.PseudoStats.DamageDealtMultiplier *= multiplier
+	if raidBuffs.FerociousInspiration || raidBuffs.SanctifiedRetribution || raidBuffs.ArcaneEmpowerment {
+		character.PseudoStats.DamageDealtMultiplier *= 1.03
 	}
 
 	if partyBuffs.HeroicPresence {
@@ -60,9 +64,9 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		})
 	}
 
-	character.AddStats(stats.Stats{
-		stats.Stamina: GetTristateValueFloat(partyBuffs.BloodPact, 70, 91),
-	})
+	// character.AddStats(stats.Stats{
+	// 	stats.Stamina: GetTristateValueFloat(partyBuffs.BloodPact, 70, 91),
+	// })
 	character.AddStats(stats.Stats{
 		stats.Stamina: GetTristateValueFloat(raidBuffs.PowerWordFortitude, 79, 102),
 	})
@@ -116,57 +120,33 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		}
 	}
 
-	if individualBuffs.BlessingOfSalvation {
-		character.PseudoStats.ThreatMultiplier *= 0.7
-	}
 	if individualBuffs.BlessingOfSanctuary {
 		character.PseudoStats.BonusDamageTaken -= 80
 		BlessingOfSanctuaryAura(character)
 	}
 
 	character.AddStats(stats.Stats{
-		stats.Armor: GetTristateValueFloat(partyBuffs.DevotionAura, 861, 1205),
+		stats.Armor: GetTristateValueFloat(raidBuffs.DevotionAura, 861, 1205),
 	})
-	if partyBuffs.RetributionAura == proto.TristateEffect_TristateEffectImproved {
+	if raidBuffs.RetributionAura == proto.TristateEffect_TristateEffectImproved {
 		RetributionAura(character, 2)
-	} else if partyBuffs.RetributionAura == proto.TristateEffect_TristateEffectRegular {
+	} else if raidBuffs.RetributionAura == proto.TristateEffect_TristateEffectRegular {
 		RetributionAura(character, 0)
 	}
-	if partyBuffs.SanctityAura == proto.TristateEffect_TristateEffectImproved {
-		SanctityAura(character, 2)
-	} else if partyBuffs.SanctityAura == proto.TristateEffect_TristateEffectRegular {
-		SanctityAura(character, 0)
-	}
 
-	if partyBuffs.BattleShout != proto.TristateEffect_TristateEffectMissing {
-		talentMultiplier := GetTristateValueFloat(partyBuffs.BattleShout, 1, 1.25)
+	if raidBuffs.BattleShout != proto.TristateEffect_TristateEffectMissing {
+		talentMultiplier := GetTristateValueFloat(raidBuffs.BattleShout, 1, 1.25)
 
 		battleShoutAP := 306 * talentMultiplier
-		if partyBuffs.BsSolarianSapphire {
-			partyBuffs.SnapshotBsSolarianSapphire = false
-			battleShoutAP += 70 * talentMultiplier
-		}
 		character.AddStats(stats.Stats{
 			stats.AttackPower: math.Floor(battleShoutAP),
 		})
-
-		snapshotAP := 0.0
-		if partyBuffs.SnapshotBsSolarianSapphire {
-			snapshotAP += 70 * talentMultiplier
-		}
-		if partyBuffs.SnapshotBsT2 {
-			snapshotAP += 30 * talentMultiplier
-		}
-		if snapshotAP > 0 {
-			snapshotAP = math.Floor(snapshotAP)
-			SnapshotBattleShoutAura(character, snapshotAP, partyBuffs.SnapshotBsBoomingVoiceRank)
-		}
 	}
 	character.AddStats(stats.Stats{
-		stats.Health: GetTristateValueFloat(partyBuffs.CommandingShout, 1080, 1080*1.25),
+		stats.Health: GetTristateValueFloat(raidBuffs.CommandingShout, 1080, 1080*1.25),
 	})
 
-	if partyBuffs.TotemOfWrath {
+	if raidBuffs.TotemOfWrath {
 		character.AddStats(stats.Stats{
 			stats.SpellCrit:    3 * CritRatingPerCritChance,
 			stats.MeleeCrit:    3 * CritRatingPerCritChance,
@@ -174,41 +154,28 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 			stats.HealingPower: 280,
 		})
 	}
-	if partyBuffs.WrathOfAirTotem {
+	if raidBuffs.WrathOfAirTotem {
 		character.PseudoStats.CastSpeedMultiplier *= 1.05
 	}
-	if partyBuffs.StrengthOfEarthTotem > 0 {
+	if raidBuffs.StrengthOfEarthTotem > 0 {
 		// TODO: Check for Horn of Winter (larger of the two is applied)
 		// Pretty sure we don't need to deal with any flat increases (like from t4)
-		bonus := GetTristateValueFloat(partyBuffs.StrengthOfEarthTotem, 155, 155*1.15)
+		bonus := GetTristateValueFloat(raidBuffs.StrengthOfEarthTotem, 155, 155*1.15)
 		character.AddStats(stats.Stats{
 			stats.Strength: bonus,
 			stats.Agility:  bonus,
 		})
 	}
 	character.AddStats(stats.Stats{
-		stats.MP5: GetTristateValueFloat(partyBuffs.ManaSpringTotem, 91, 91*1.2),
+		stats.MP5: GetTristateValueFloat(raidBuffs.ManaSpringTotem, 91, 91*1.2),
 	})
 
-	character.PseudoStats.MeleeSpeedMultiplier *= 1.0 + GetTristateValueFloat(partyBuffs.WindfuryTotem, 0.16, 0.2)
+	character.PseudoStats.MeleeSpeedMultiplier *= 1.0 + GetTristateValueFloat(raidBuffs.WindfuryTotem, 0.16, 0.2)
 
-	if partyBuffs.TranquilAirTotem {
-		character.PseudoStats.ThreatMultiplier *= 0.8
+	if raidBuffs.Bloodlust {
+		registerBloodlustCD(agent)
 	}
 
-	if individualBuffs.UnleashedRage {
-		character.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.AttackPower,
-			ModifiedStat: stats.AttackPower,
-			Modifier: func(ap float64, _ float64) float64 {
-				return ap * 1.1
-			},
-		})
-	}
-
-	applyInspiration(character, individualBuffs.InspirationUptime)
-
-	registerBloodlustCD(agent, partyBuffs.Bloodlust)
 	registerPowerInfusionCD(agent, individualBuffs.PowerInfusions)
 	registerManaTideTotemCD(agent, partyBuffs.ManaTideTotems)
 	registerInnervateCD(agent, individualBuffs.Innervates)
@@ -227,9 +194,6 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 	if partyBuffs.EyeOfTheNight {
 		character.AddStats(stats.Stats{stats.SpellPower: 34})
 	}
-	if partyBuffs.JadePendantOfBlasting {
-		character.AddStats(stats.Stats{stats.SpellPower: 15})
-	}
 	if partyBuffs.ChainOfTheTwilightOwl {
 		character.AddStats(stats.Stats{stats.SpellCrit: 2 * CritRatingPerCritChance})
 	}
@@ -244,14 +208,11 @@ func applyPetBuffEffects(petAgent PetAgent, raidBuffs proto.RaidBuffs, partyBuff
 
 	// We need to modify the buffs a bit because some things are applied to pets by
 	// the owner during combat (Bloodlust) or don't make sense for a pet.
-	partyBuffs.Bloodlust = 0
-	partyBuffs.Drums = proto.Drums_DrumsUnknown
+	raidBuffs.Bloodlust = false
 	individualBuffs.Innervates = 0
 	individualBuffs.PowerInfusions = 0
 
 	// For some reason pets don't benefit from buffs that are ratings, e.g. crit rating or haste rating.
-	partyBuffs.LeaderOfThePack = MinTristate(partyBuffs.LeaderOfThePack, proto.TristateEffect_TristateEffectRegular)
-	partyBuffs.MoonkinAura = MinTristate(partyBuffs.MoonkinAura, proto.TristateEffect_TristateEffectRegular)
 	partyBuffs.BraidedEterniumChain = false
 
 	applyBuffEffects(petAgent, raidBuffs, partyBuffs, individualBuffs)
@@ -653,13 +614,10 @@ const BloodlustAuraTag = "Bloodlust"
 const BloodlustDuration = time.Second * 40
 const BloodlustCD = time.Minute * 10
 
-func registerBloodlustCD(agent Agent, numBloodlusts int32) {
-	if numBloodlusts == 0 {
-		return
-	}
-
+func registerBloodlustCD(agent Agent) {
 	bloodlustAura := BloodlustAura(agent.GetCharacter(), -1)
 
+	// TODO: do we need consecutive CDs
 	registerExternalConsecutiveCDApproximation(
 		agent,
 		externalConsecutiveCDApproximation{
@@ -675,8 +633,7 @@ func registerBloodlustCD(agent Agent, numBloodlusts int32) {
 				return !character.HasActiveAuraWithTag(PowerInfusionAuraTag)
 			},
 			AddAura: func(sim *Simulation, character *Character) { bloodlustAura.Activate(sim) },
-		},
-		numBloodlusts)
+		}, 1)
 }
 
 func BloodlustAura(character *Character, actionTag int32) *Aura {

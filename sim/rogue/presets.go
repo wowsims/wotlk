@@ -103,16 +103,13 @@ var basicRotation = &proto.Rogue_Rotation{
 var basicOptions = &proto.Rogue_Options{}
 
 var FullRaidBuffs = &proto.RaidBuffs{
-	GiftOfTheWild: proto.TristateEffect_TristateEffectImproved,
-}
-var FullPartyBuffs = &proto.PartyBuffs{
-	Bloodlust: 1,
-	Drums:     proto.Drums_DrumsOfBattle,
-
+	GiftOfTheWild:   proto.TristateEffect_TristateEffectImproved,
+	Bloodlust:       true,
 	BattleShout:     proto.TristateEffect_TristateEffectImproved,
 	LeaderOfThePack: proto.TristateEffect_TristateEffectImproved,
 	WindfuryTotem:   proto.TristateEffect_TristateEffectImproved,
 }
+var FullPartyBuffs = &proto.PartyBuffs{}
 var FullIndividualBuffs = &proto.IndividualBuffs{
 	BlessingOfKings: true,
 	BlessingOfMight: proto.TristateEffect_TristateEffectImproved,
@@ -129,12 +126,11 @@ var FullConsumes = &proto.Consumes{
 }
 
 var FullDebuffs = &proto.Debuffs{
-	BloodFrenzy:               true,
-	Mangle:                    true,
-	SunderArmor:               true,
-	FaerieFire:                proto.TristateEffect_TristateEffectImproved,
-	ImprovedSealOfTheCrusader: true,
-	Misery:                    true,
+	BloodFrenzy: true,
+	Mangle:      true,
+	SunderArmor: true,
+	FaerieFire:  proto.TristateEffect_TristateEffectImproved,
+	Misery:      true,
 }
 
 var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
