@@ -475,9 +475,10 @@ message IndividualBuffs {
 	TristateEffect blessing_of_might = 3;
 	bool blessing_of_sanctuary = 4;
 
-	// How many of each of these buffs the player will be receiving.
 	// Only used in individual sims 
 	//   as the class that provides these would cast them in raid sim
+
+	// How many of each of these buffs the player will be receiving.
 	int32 hymn_of_hope = 5;
 	int32 hand_of_salvation = 6;
 	int32 rapture = 7;
@@ -486,7 +487,6 @@ message IndividualBuffs {
 	int32 unholy_frenzy = 10;
 	int32 revitalize = 11;
 
-	// Assumes that if true, all players will get it. 
 	bool replenishment = 12; // vampiric touch, judgements of the wise, hunting party, imp soul leech, enduring winter
 }
 

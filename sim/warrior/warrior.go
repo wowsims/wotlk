@@ -135,9 +135,6 @@ func (warrior *Warrior) Reset(sim *core.Simulation) {
 	if warrior.Shout != nil && warrior.PrecastShout {
 		warrior.shoutExpiresAt = warrior.shoutDuration - time.Second*10
 	}
-	if snapshotAura := warrior.GetAura(core.SnapshotBattleShoutAuraLabel); snapshotAura != nil {
-		warrior.shoutExpiresAt = snapshotAura.Duration + ShoutExpirationThreshold
-	}
 }
 
 func NewWarrior(character core.Character, talents proto.WarriorTalents, inputs WarriorInputs) *Warrior {

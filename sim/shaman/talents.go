@@ -100,7 +100,6 @@ func (shaman *Shaman) ApplyTalents() {
 	shaman.applyElementalDevastation()
 	shaman.applyFlurry()
 	shaman.applyMaelstromWeapon()
-	shaman.applyUnleashedRage()
 	shaman.registerElementalMasteryCD()
 	shaman.registerNaturesSwiftnessCD()
 	shaman.registerShamanisticRageCD()
@@ -294,66 +293,6 @@ func (shaman *Shaman) registerNaturesSwiftnessCD() {
 			// Don't use NS unless we're casting a full-length lightning bolt, which is
 			// the only spell shamans have with a cast longer than GCD.
 			return !character.HasTemporarySpellCastSpeedIncrease()
-		},
-	})
-}
-
-func (shaman *Shaman) applyUnleashedRage() {
-	if shaman.Talents.UnleashedRage == 0 {
-		return
-	}
-	level := shaman.Talents.UnleashedRage
-
-	bonusCoeff := 0.02 * float64(level)
-	var currentAPBonuses []float64
-	var urAuras = make([]*core.Aura, len(shaman.Party.PlayersAndPets))
-
-	for i, playerOrPet := range shaman.Party.PlayersAndPets {
-		char := playerOrPet.GetCharacter()
-		idx := i
-		urAuras[i] = char.GetOrRegisterAura(core.Aura{
-			Label:    "Unleahed Rage Proc",
-			ActionID: core.ActionID{SpellID: 30811},
-			Duration: time.Second * 10,
-			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				buffs := char.ApplyStatDependencies(stats.Stats{stats.AttackPower: currentAPBonuses[idx]})
-				char.AddStatsDynamic(sim, buffs)
-			},
-			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				buffs := char.ApplyStatDependencies(stats.Stats{stats.AttackPower: currentAPBonuses[idx]})
-				unbuffs := buffs.Multiply(-1)
-				char.AddStatsDynamic(sim, unbuffs)
-			},
-		})
-	}
-
-	shaman.RegisterAura(core.Aura{
-		Label:    "Unleashed Rage",
-		Duration: core.NeverExpires,
-		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-			currentAPBonuses = make([]float64, len(shaman.Party.PlayersAndPets))
-			aura.Activate(sim)
-		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			// proc mask = 20 (melee auto & special)
-			if !spellEffect.Outcome.Matches(core.OutcomeCrit) || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
-				return
-			}
-
-			for i, playerOrPet := range shaman.Party.PlayersAndPets {
-				char := playerOrPet.GetCharacter()
-				prevBonus := currentAPBonuses[i]
-				newBonus := (char.GetStat(stats.AttackPower) - prevBonus) * bonusCoeff
-
-				if prevBonus != newBonus {
-					urAuras[i].Deactivate(sim)
-					currentAPBonuses[i] = newBonus
-					urAuras[i].Activate(sim)
-				} else if newBonus != 0 {
-					// If the bonus is the same, we can just refresh.
-					urAuras[i].Refresh(sim)
-				}
-			}
 		},
 	})
 }

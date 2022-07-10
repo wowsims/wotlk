@@ -22,7 +22,7 @@ import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
 import { GuardianElixir } from '/wotlk/core/proto/common.js';
 import { Conjured } from '/wotlk/core/proto/common.js';
-import { Drums } from '/wotlk/core/proto/common.js';
+
 import { PetFood } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
@@ -112,20 +112,18 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
-				}),
-				partyBuffs: PartyBuffs.create({
-					bloodlust: 1,
-					drums: Drums.DrumsOfBattle,
+					bloodlust: true,
 					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
 					windfuryTotem: TristateEffect.TristateEffectImproved,
 					battleShout: TristateEffect.TristateEffectImproved,
 					leaderOfThePack: TristateEffect.TristateEffectImproved,
+					unleashedRage: true,
+				}),
+				partyBuffs: PartyBuffs.create({
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
 					blessingOfMight: TristateEffect.TristateEffectImproved,
-					blessingOfSalvation: true,
-					unleashedRage: true,
 				}),
 				debuffs: Debuffs.create({
 					bloodFrenzy: true,
@@ -133,11 +131,8 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					sunderArmor: true,
 					curseOfWeakness: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
-					improvedSealOfTheCrusader: true,
 					misery: true,
 					huntersMark: TristateEffect.TristateEffectImproved,
-					exposeWeaknessUptime: 0.95,
-					exposeWeaknessHunterAgility: 1200,
 				}),
 			},
 
@@ -147,30 +142,27 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 			// IconInputs to include in the 'Other Buffs' section on the settings tab.
 			raidBuffInputs: [
 				IconInputs.GiftOfTheWild,
-			],
-			partyBuffInputs: [
-				IconInputs.DrumsOfBattleBuff,
 				IconInputs.Bloodlust,
 				IconInputs.StrengthOfEarthTotem,
-
 				IconInputs.WindfuryTotem,
 				IconInputs.BattleShout,
 				IconInputs.LeaderOfThePack,
 				IconInputs.TrueshotAura,
+				IconInputs.UnleashedRage,
+			],
+			partyBuffInputs: [
 				IconInputs.HeroicPresence,
 				IconInputs.BraidedEterniumChain,
 			],
 			playerBuffInputs: [
 				IconInputs.BlessingOfKings,
 				IconInputs.BlessingOfMight,
-				IconInputs.BlessingOfSalvation,
-				IconInputs.UnleashedRage,
 			],
 			// IconInputs to include in the 'Debuffs' section on the settings tab.
 			debuffInputs: [
 				IconInputs.BloodFrenzy,
 				IconInputs.Mangle,
-				IconInputs.ImprovedSealOfTheCrusader,
+
 				IconInputs.HuntersMark,
 				IconInputs.FaerieFire,
 				IconInputs.SunderArmor,
@@ -225,10 +217,6 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 				inputs: [
 					OtherInputs.StartingConjured,
 					OtherInputs.NumStartingConjured,
-					OtherInputs.ExposeWeaknessUptime,
-					OtherInputs.ExposeWeaknessHunterAgility,
-					OtherInputs.SnapshotBsSolarianSapphire,
-					OtherInputs.SnapshotBsT2,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],
