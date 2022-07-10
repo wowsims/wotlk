@@ -75,7 +75,7 @@ var FullConsumes = &proto.Consumes{
 var FullDebuffs = &proto.Debuffs{
 	Misery:                      true,
 	CurseOfElements:             proto.TristateEffect_TristateEffectImproved,
-	IsbUptime:                   1,
+	ImprovedShadowBolt:          true,
 	BloodFrenzy:                 true,
 	ExposeArmor:                 proto.TristateEffect_TristateEffectImproved,
 	FaerieFire:                  proto.TristateEffect_TristateEffectImproved,

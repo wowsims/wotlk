@@ -193,7 +193,6 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
-					OtherInputs.ISBUptime,
 					OtherInputs.PrepopPotion,
 					OtherInputs.TankAssignment,
 				],

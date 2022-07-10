@@ -28,7 +28,7 @@ func (warlock *Warlock) registerShadowboltSpell() {
 		}
 	}
 
-	// Shadow Embrace
+	// Shadow Embrace TO DO Fix erases ISB 
 	if warlock.Talents.ShadowEmbrace > 0 {
 		effect.OnSpellHitDealt = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			warlock.ShadowEmbraceAura.Activate(sim)

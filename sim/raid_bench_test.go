@@ -278,7 +278,6 @@ func BenchmarkSimulate(b *testing.B) {
 				JudgementOfWisdom:         true,
 				ImprovedSealOfTheCrusader: true,
 				CurseOfElements:           proto.TristateEffect_TristateEffectImproved,
-				IsbUptime:                 0.2,
 			},
 		},
 		Encounter: &proto.Encounter{

@@ -149,25 +149,25 @@ export const NumStartingConjured = {
 	},
 };
 
-export const ISBUptime = {
-	type: 'number' as const,
-	getModObject: (simUI: IndividualSimUI<any>) => simUI.sim.raid,
-	config: {
-		extraCssClasses: [
-			'isb-uptime-picker',
-			'within-raid-sim-hide',
-		],
-		label: 'Improved Shadowbolt Uptime %',
-		labelTooltip: "Uptime for the Improved Shadowbolt debuff, applied by 1 or more warlocks in your raid.",
-		changedEvent: (raid: Raid) => raid.debuffsChangeEmitter,
-		getValue: (raid: Raid) => Math.round(raid.getDebuffs().isbUptime * 100),
-		setValue: (eventID: EventID, raid: Raid, newValue: number) => {
-			const newDebuffs = raid.getDebuffs();
-			newDebuffs.isbUptime = newValue / 100;
-			raid.setDebuffs(eventID, newDebuffs);
-		},
-	},
-};
+// export const ISBUptime = {
+// 	type: 'number' as const,
+// 	getModObject: (simUI: IndividualSimUI<any>) => simUI.sim.raid,
+// 	config: {
+// 		extraCssClasses: [
+// 			'isb-uptime-picker',
+// 			'within-raid-sim-hide',
+// 		],
+// 		label: 'Improved Shadowbolt Uptime %',
+// 		labelTooltip: "Uptime for the Improved Shadowbolt debuff, applied by 1 or more warlocks in your raid.",
+// 		changedEvent: (raid: Raid) => raid.debuffsChangeEmitter,
+// 		getValue: (raid: Raid) => Math.round(raid.getDebuffs().isbUptime * 100),
+// 		setValue: (eventID: EventID, raid: Raid, newValue: number) => {
+// 			const newDebuffs = raid.getDebuffs();
+// 			newDebuffs.isbUptime = newValue / 100;
+// 			raid.setDebuffs(eventID, newDebuffs);
+// 		},
+// 	},
+// };
 
 export const InspirationUptime = {
 	type: 'number' as const,

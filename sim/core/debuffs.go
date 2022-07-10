@@ -36,15 +36,15 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 		MakePermanent(ImprovedShadowBoltAura(target))
 	}
 
-	if debuffs.IsbUptime > 0.0 {
-		uptime := MinFloat(1.0, debuffs.IsbUptime)
-		isbAura := MakePermanent(ImprovedShadowBoltAura(target))
-		if uptime != 1.0 {
-			isbAura.OnDoneIteration = func(aura *Aura, _ *Simulation) {
-				aura.metrics.Uptime = time.Duration(float64(aura.metrics.Uptime) * uptime)
-			}
-		}
-	}
+	// if debuffs.IsbUptime > 0.0 {
+	// 	uptime := MinFloat(1.0, debuffs.IsbUptime)
+	// 	isbAura := MakePermanent(ImprovedShadowBoltAura(target))
+	// 	if uptime != 1.0 {
+	// 		isbAura.OnDoneIteration = func(aura *Aura, _ *Simulation) {
+	// 			aura.metrics.Uptime = time.Duration(float64(aura.metrics.Uptime) * uptime)
+	// 		}
+	// 	}
+	// }
 
 	if debuffs.ImprovedScorch {
 		MakePermanent(ImprovedScorchAura(target, 5))
@@ -297,7 +297,7 @@ func ImprovedShadowBoltAura(target *Unit) *Aura {
 	config := Aura{
 		Label:     "ImprovedShadowBolt",
 		Tag:       "ImprovedShadowBolt",
-		ActionID:  ActionID{SpellID: 17803},
+		ActionID:  ActionID{SpellID: 17800},
 		Duration:  time.Second * 30,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.BonusCritRating += bonusSpellCrit
@@ -306,18 +306,6 @@ func ImprovedShadowBoltAura(target *Unit) *Aura {
 			aura.Unit.PseudoStats.BonusCritRating -= bonusSpellCrit
 		},
 	}
-
-//	if uptime == 0 {
-//		config.OnSpellHitTaken = func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
-//			if spell.SpellSchool != SpellSchoolShadow {
-//				return
-//			}
-//			if !spellEffect.Landed() || spellEffect.Damage == 0 || !spellEffect.ProcMask.Matches(ProcMaskSpellDamage) {
-//				return
-//			}
-//			aura.RemoveStack(sim)
-//		}
-//	}
 
 	return target.GetOrRegisterAura(config)
 }

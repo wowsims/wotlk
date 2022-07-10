@@ -80,7 +80,7 @@ var FullDebuffs = &proto.Debuffs{
 	JudgementOfWisdom:           true,
 	Misery:                      true,
 	CurseOfElements:             proto.TristateEffect_TristateEffectImproved,
-	IsbUptime:                   1,
+	ImprovedShadowBolt:          true,
 	BloodFrenzy:                 true,
 	ExposeArmor:                 proto.TristateEffect_TristateEffectImproved,
 	FaerieFire:                  proto.TristateEffect_TristateEffectImproved,

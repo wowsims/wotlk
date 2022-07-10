@@ -117,7 +117,6 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 					curseOfElements: TristateEffect.TristateEffectRegular,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					sunderArmor: true,
-					isbUptime: 0.65,
 				}),
 			},
 
@@ -214,7 +213,6 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
-					OtherInputs.ISBUptime,
 					OtherInputs.PrepopPotion,
 					OtherInputs.TankAssignment,
 				],
