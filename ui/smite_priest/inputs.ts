@@ -103,39 +103,5 @@ export const SmitePriestRotationConfig = {
 				},
 			},
 		},
-		{
-			type: 'boolean' as const,
-			cssClass: 'devplague-picker',
-			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-			config: {
-				label: 'Use Devouring Plague',
-				labelTooltip: 'Use Devouring Plague whenever off CD.',
-				changedEvent: (player: Player<Spec.SpecSmitePriest>) => player.raceChangeEmitter,
-				getValue: (player: Player<Spec.SpecSmitePriest>) => player.getRotation().useDevPlague,
-				setValue: (eventID: EventID, player: Player<Spec.SpecSmitePriest>, newValue: boolean) => {
-					const newRotation = player.getRotation();
-					newRotation.useDevPlague = newValue;
-					player.setRotation(eventID, newRotation);
-				},
-				enableWhen: (player: Player<Spec.SpecSmitePriest>) => player.getRace() == Race.RaceUndead,
-			},
-		},
-		{
-			type: 'boolean' as const,
-			cssClass: 'starshards-picker',
-			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-			config: {
-				label: 'Use starshards',
-				labelTooltip: 'Use Starshards whenever off CD.',
-				changedEvent: (player: Player<Spec.SpecSmitePriest>) => player.raceChangeEmitter,
-				getValue: (player: Player<Spec.SpecSmitePriest>) => player.getRotation().useStarshards,
-				setValue: (eventID: EventID, player: Player<Spec.SpecSmitePriest>, newValue: boolean) => {
-					const newRotation = player.getRotation();
-					newRotation.useStarshards = newValue;
-					player.setRotation(eventID, newRotation);
-				},
-				enableWhen: (player: Player<Spec.SpecShadowPriest>) => player.getRace() == Race.RaceNightElf,
-			},
-		},
 	],
 };

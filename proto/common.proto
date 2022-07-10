@@ -237,13 +237,6 @@ enum TristateEffect {
 	TristateEffectImproved = 2;
 }
 
-enum Drums {
-	DrumsUnknown = 0;
-	DrumsOfBattle = 1;
-	DrumsOfRestoration = 2;
-	DrumsOfWar = 3;
-}
-
 enum Explosive {
 	ExplosiveUnknown = 0;
 	ExplosiveFelIronBomb = 1;
@@ -406,11 +399,13 @@ message RaidBuffs {
 	TristateEffect divine_spirit = 4;
 	TristateEffect gift_of_the_wild = 5;
 	bool shadow_protection = 6;	
-	
+
 	bool swift_retribution = 7;
 	TristateEffect moonkin_aura = 8;
 	bool elemental_oath = 9;
+
 	bool totem_of_wrath = 10; // shouldn't stack with demonic pact (does in beta right now)
+	int32 demonic_pact = 37; // SP buff
 
 	// +Health
 	TristateEffect commanding_shout = 11;
@@ -443,22 +438,18 @@ message RaidBuffs {
 
 	TristateEffect mana_spring_totem = 26; // does not stack with blessing of wis
 	
-	bool wrath_of_air_totem = 14;
-	bool tranquil_air_totem = 26;
+	// 5% spell haste
+	bool wrath_of_air_totem = 27;
 
-	bool bloodlust = 3;
-	bool heroic_presence = 10;
-	int32 mana_tide_totems = 17;
+	bool bloodlust = 29;
 
-	TristateEffect thorns = 8;
-	TristateEffect devotion_aura = 35;
-	TristateEffect retribution_aura = 36;
-
-	// Assumes that if true, all players will get it. 
-	bool replenishment = 4; // vampiric touch, judgements of the wise, hunting party, imp soul leech, enduring winter
+	TristateEffect thorns = 32;
+	TristateEffect devotion_aura = 33;
+	TristateEffect retribution_aura = 34;
 
 	// Drums
-	Drums drums = 9;
+	bool DrumsOfKings = 38;
+	bool DrumsOfWild = 39;
 }
 
 // Buffs that affect a single party.
@@ -466,10 +457,14 @@ message PartyBuffs {
 	// Item Buffs
 	int32 atiesh_mage = 6;
 	int32 atiesh_warlock = 7;
+
 	bool braided_eternium_chain = 8;
 	bool eye_of_the_night = 9;
 	bool chain_of_the_twilight_owl = 10;
-	bool jade_pendant_of_blasting = 11;
+	
+	// Group buffs
+	int32 mana_tide_totems = 11;
+	bool heroic_presence = 30;
 }
 
 // These are usually individual actions taken by other Characters.
@@ -489,7 +484,10 @@ message IndividualBuffs {
 	int32 innervates = 8;
 	int32 power_infusions = 9;
 	int32 unholy_frenzy = 10;
-	int32 revitalize = 11;+
+	int32 revitalize = 11;
+
+	// Assumes that if true, all players will get it. 
+	bool replenishment = 12; // vampiric touch, judgements of the wise, hunting party, imp soul leech, enduring winter
 }
 
 message Consumes {
@@ -521,11 +519,12 @@ message Consumes {
 	Conjured starting_conjured = 48;
 	int32 num_starting_conjured = 49;
 
-	Drums drums = 19;
-
 	bool super_sapper = 50;
 	bool goblin_sapper = 51;
 	Explosive filler_explosive = 52;
+
+	bool DrumsOfKings = 54;
+	bool DrumsOfWild = 55;
 }
 
 message Debuffs {
@@ -533,41 +532,43 @@ message Debuffs {
 	bool judgement_of_light = 2;
 
 	bool misery = 3;
-	TristateEffect faerie_fire = 10;
+	TristateEffect faerie_fire = 4;
 
-	TristateEffect curse_of_elements = 4;
-	TristateEffect ebon_plaguebringer = 5;
+	TristateEffect curse_of_elements = 5;
+	TristateEffect ebon_plaguebringer = 6;
 
-	bool heart_of_the_crusader = 6;
-	bool master_poisoner = 7;
+	// +3% to crit against target
+	bool heart_of_the_crusader = 7;
+	bool master_poisoner = 8;
+	bool totem_of_wrath = 9;
 
-	bool improved_shadow_bolt = 8;
-	bool improved_scorch = 6;
-	bool winters_chill = 7;
+	// 13% spell dmg
+	bool improved_shadow_bolt = 10;
+	bool improved_scorch = 11;
+	bool winters_chill = 12;
 
-	bool blood_frenzy = 8;
-	bool savage_combat = 9;
+	bool blood_frenzy = 13;
+	bool savage_combat = 14;
 
-	bool gift_of_arthas = 17;
+	// TODO: validate these
+	bool gift_of_arthas = 15;
 	
 	bool mangle = 16;
 
-	TristateEffect expose_armor = 9;
-	bool sunder_armor = 11;
-	bool curse_of_weakness = 12;
+	TristateEffect expose_armor = 17;
+	bool sunder_armor = 18;
+	bool curse_of_weakness = 19;
 
-	TristateEffect hunters_mark = 15;
-	double expose_weakness_uptime = 13;
-	double expose_weakness_hunter_agility = 14;
+	TristateEffect hunters_mark = 20;
 
-	TristateEffect demoralizing_roar = 19;
-	TristateEffect demoralizing_shout = 20;
-	TristateEffect thunder_clap = 21;
+	TristateEffect demoralizing_roar = 22;
+	TristateEffect demoralizing_shout = 23;
+	TristateEffect thunder_clap = 24;
 
-	bool insect_swarm = 22;
-	bool scorpid_sting = 23;
-	bool shadow_embrace = 24;
-	bool screech = 26;
+	bool insect_swarm = 25;
+	bool scorpid_sting = 26;
+	bool shadow_embrace = 27;
+	bool screech = 28;
 }
 
 enum MobType {

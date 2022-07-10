@@ -53,6 +53,7 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 
 			// All stats for which EP should be calculated.
 			epStats: [
+				Stat.StatStamina,
 				Stat.StatStrength,
 				Stat.StatAgility,
 				Stat.StatAttackPower,

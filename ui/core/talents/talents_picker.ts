@@ -100,7 +100,10 @@ class TalentTreePicker<TalentsProto> extends Component {
 		const main = this.rootElem.getElementsByClassName('talent-tree-main')[0] as HTMLElement;
 		main.style.backgroundImage = `url('${config.backgroundUrl}')`;
 		main.style.gridTemplateRows = `repeat(${this.picker.numRows}, 1fr)`;
-		main.style.height = `${8 * this.picker.numRows}vh`
+
+		const iconSize = Math.max(70 / this.picker.numRows, 10);
+		main.style.height = `${iconSize * this.picker.numRows}vh`
+		main.style.width = `${iconSize * 4}vh`
 
 		this.talents = config.talents.map(talent => new TalentPicker(main, talent, this));
 		this.talents.forEach(talent => {

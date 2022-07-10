@@ -26,15 +26,6 @@ func RegisterSmitePriest() {
 func NewSmitePriest(character core.Character, options proto.Player) *SmitePriest {
 	smiteOptions := options.GetSmitePriest()
 
-	// Only undead can do Dev Plague
-	if smiteOptions.Rotation.UseDevPlague && options.Race != proto.Race_RaceUndead {
-		smiteOptions.Rotation.UseDevPlague = false
-	}
-	// Only nelf can do starshards
-	if smiteOptions.Rotation.UseStarshards && options.Race != proto.Race_RaceNightElf {
-		smiteOptions.Rotation.UseStarshards = false
-	}
-
 	selfBuffs := priest.SelfBuffs{
 		UseShadowfiend: smiteOptions.Options.UseShadowfiend,
 	}

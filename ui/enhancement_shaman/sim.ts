@@ -109,7 +109,7 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					arcaneBrilliance: true,
-					divineSpirit: TristateEffect.TristateEffectImproved,
+					divineSpirit: true,
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
 				}),
 				partyBuffs: PartyBuffs.create({
@@ -139,7 +139,7 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 
 			// IconInputs to include in the 'Self Buffs' section on the settings tab.
 			selfBuffInputs: [
-				ShamanInputs.IconWaterShield, 
+				ShamanInputs.IconWaterShield,
 				ShamanInputs.IconLightningShield,
 				ShamanInputs.IconBloodlust,
 			],

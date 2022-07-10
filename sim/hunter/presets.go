@@ -35,10 +35,10 @@ var SVTalents = &proto.HunterTalents{
 	GoForTheThroat:      2,
 	RapidKilling:        1,
 
-	MonsterSlaying:    3,
-	HumanoidSlaying:   3,
-	SavageStrikes:     2,
-	CleverTraps:       2,
+	//MonsterSlaying:    3,
+	//HumanoidSlaying:   3,
+	SavageStrikes: 2,
+	//CleverTraps:       2,
 	Survivalist:       2,
 	Surefooted:        3,
 	SurvivalInstincts: 2,
@@ -113,15 +113,13 @@ var meleeWeaveRotation = &proto.Hunter_Rotation{
 }
 
 var basicOptions = &proto.Hunter_Options{
-	QuiverBonus: proto.Hunter_Options_Speed15,
-	Ammo:        proto.Hunter_Options_AdamantiteStinger,
-	PetType:     proto.Hunter_Options_Ravager,
-	PetUptime:   0.9,
-	LatencyMs:   15,
+	Ammo:      proto.Hunter_Options_AdamantiteStinger,
+	PetType:   proto.Hunter_Options_Ravager,
+	PetUptime: 0.9,
+	LatencyMs: 15,
 }
 
 var windSerpentOptions = &proto.Hunter_Options{
-	QuiverBonus:      proto.Hunter_Options_Speed15,
 	Ammo:             proto.Hunter_Options_AdamantiteStinger,
 	PetType:          proto.Hunter_Options_WindSerpent,
 	PetUptime:        0.9,

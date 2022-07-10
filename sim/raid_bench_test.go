@@ -54,7 +54,6 @@ var castersWithElemental = &proto.Party{
 					Talents: shadow.StandardTalents,
 					Rotation: &proto.ShadowPriest_Rotation{
 						RotationType: proto.ShadowPriest_Rotation_Ideal,
-						UseDevPlague: true,
 					},
 					Options: &proto.ShadowPriest_Options{
 						UseShadowfiend: true,
@@ -177,7 +176,6 @@ var castersWithResto = &proto.Party{
 					Talents: shadow.StandardTalents,
 					Rotation: &proto.ShadowPriest_Rotation{
 						RotationType: proto.ShadowPriest_Rotation_Ideal,
-						UseDevPlague: true,
 					},
 					Options: &proto.ShadowPriest_Options{
 						UseShadowfiend: true,

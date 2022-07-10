@@ -83,7 +83,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				let stats = new Stats();
 				stats = stats.addStat(Stat.StatSpellHit, player.getTalents().elementalPrecision * 2 * Mechanics.SPELL_HIT_RATING_PER_HIT_CHANCE);
 				stats = stats.addStat(Stat.StatSpellCrit,
-					player.getTalents().tidalMastery * 1 * Mechanics.SPELL_CRIT_RATING_PER_CRIT_CHANCE + 
+					player.getTalents().tidalMastery * 1 * Mechanics.SPELL_CRIT_RATING_PER_CRIT_CHANCE +
 					player.getTalents().thunderingStrikes * 1 * Mechanics.SPELL_CRIT_RATING_PER_CRIT_CHANCE);
 
 				return {
@@ -114,7 +114,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					arcaneBrilliance: true,
-					divineSpirit: TristateEffect.TristateEffectImproved,
+					divineSpirit: TristateEffect.TristateEffectRegular,
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
 				}),
 				partyBuffs: PartyBuffs.create({
@@ -122,7 +122,6 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
 					blessingOfWisdom: 2,
-					blessingOfSalvation: true,
 				}),
 				debuffs: Debuffs.create({
 					faerieFire: TristateEffect.TristateEffectImproved,

@@ -71,16 +71,9 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 			stats.ShadowResistance: 70,
 		})
 	}
-	character.AddStats(stats.Stats{
-		stats.Spirit: GetTristateValueFloat(raidBuffs.DivineSpirit, 50.0, 50.0),
-	})
-	if raidBuffs.DivineSpirit == proto.TristateEffect_TristateEffectImproved {
-		character.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Spirit,
-			ModifiedStat: stats.SpellPower,
-			Modifier: func(spirit float64, spellPower float64) float64 {
-				return spellPower + spirit*0.1
-			},
+	if raidBuffs.DivineSpirit {
+		character.AddStats(stats.Stats{
+			stats.Spirit: 80,
 		})
 	}
 
@@ -92,9 +85,6 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 				return mp5 + mana*0.01 // adds 1% of max mana to mp5
 			},
 		})
-		// character.AddStats(stats.Stats{
-		// 	stats.MP5: float64(individualBuffs.ShadowPriestDps) * 0.25,
-		// })
 	}
 
 	character.AddStats(stats.Stats{

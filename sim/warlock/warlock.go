@@ -27,22 +27,22 @@ type Warlock struct {
 	*/
 	LifeTap *core.Spell
 
-	CurseOfElements     *core.Spell
-	CurseOfElementsAura *core.Aura
-	CurseOfWeakness     *core.Spell
-	CurseOfWeaknessAura *core.Aura
-	CurseOfTongues      *core.Spell
-	CurseOfTonguesAura  *core.Aura
-	CurseOfAgony        *core.Spell
-	CurseOfAgonyDot     *core.Dot
-	CurseOfDoom         *core.Spell
-	CurseOfDoomDot      *core.Dot
+	CurseOfElements         *core.Spell
+	CurseOfElementsAura     *core.Aura
+	CurseOfWeakness   		*core.Spell
+	CurseOfWeaknessAura 	*core.Aura
+	CurseOfTongues          *core.Spell
+	CurseOfTonguesAura      *core.Aura
+	CurseOfAgony            *core.Spell
+	CurseOfAgonyDot         *core.Dot
+	CurseOfDoom             *core.Spell
+	CurseOfDoomDot          *core.Dot
 
 	Seeds    []*core.Spell
 	SeedDots []*core.Dot
 
-	NightfallProcAura *core.Aura
-	ImpShadowboltAura *core.Aura
+	NightfallProcAura 	    *core.Aura
+	ShadowEmbraceAura 	    *core.Aura
 
 	Pet *WarlockPet
 

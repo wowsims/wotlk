@@ -180,7 +180,7 @@ export class EquippedItem {
 
 	hasExtraSocket(isBlacksmithing: boolean): boolean {
 		return this.item.type == ItemType.ItemTypeWaist ||
-				(isBlacksmithing && [ItemType.ItemTypeWrist, ItemType.ItemTypeHands].includes(this.item.type));
+			(isBlacksmithing && [ItemType.ItemTypeWrist, ItemType.ItemTypeHands].includes(this.item.type));
 	}
 
 	numSockets(isBlacksmithing: boolean): number {

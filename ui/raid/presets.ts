@@ -219,18 +219,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: HunterPresets.P1_BM_PRESET.gear,
-				2: HunterPresets.P2_BM_PRESET.gear,
-				3: HunterPresets.P3_BM_PRESET.gear,
-				4: HunterPresets.P4_BM_PRESET.gear,
-				5: HunterPresets.P5_BM_PRESET.gear,
+				1: HunterPresets.P1_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				1: HunterPresets.P1_BM_PRESET.gear,
-				2: HunterPresets.P2_BM_PRESET.gear,
-				3: HunterPresets.P3_BM_PRESET.gear,
-				4: HunterPresets.P4_BM_PRESET.gear,
-				5: HunterPresets.P5_BM_PRESET.gear,
+				1: HunterPresets.P1_PRESET.gear,
 			},
 		},
 		tooltip: 'BM Hunter',
@@ -251,18 +243,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: HunterPresets.P1_SV_PRESET.gear,
-				2: HunterPresets.P2_SV_PRESET.gear,
-				3: HunterPresets.P3_SV_PRESET.gear,
-				4: HunterPresets.P4_SV_PRESET.gear,
-				5: HunterPresets.P5_SV_PRESET.gear,
+				1: HunterPresets.P1_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				1: HunterPresets.P1_SV_PRESET.gear,
-				2: HunterPresets.P2_SV_PRESET.gear,
-				3: HunterPresets.P3_SV_PRESET.gear,
-				4: HunterPresets.P4_SV_PRESET.gear,
-				5: HunterPresets.P5_SV_PRESET.gear,
+				1: HunterPresets.P1_PRESET.gear,
 			},
 		},
 		tooltip: 'SV Hunter',
@@ -500,17 +484,9 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: ShadowPriestPresets.P1_PRESET.gear,
-				2: ShadowPriestPresets.P2_PRESET.gear,
-				3: ShadowPriestPresets.P3_PRESET.gear,
-				4: ShadowPriestPresets.P4_PRESET.gear,
-				5: ShadowPriestPresets.P5_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: ShadowPriestPresets.P1_PRESET.gear,
-				2: ShadowPriestPresets.P2_PRESET.gear,
-				3: ShadowPriestPresets.P3_PRESET.gear,
-				4: ShadowPriestPresets.P4_PRESET.gear,
-				5: ShadowPriestPresets.P5_PRESET.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecShadowPriest],
@@ -532,17 +508,9 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: SmitePriestPresets.P1_PRESET.gear,
-				2: SmitePriestPresets.P2_PRESET.gear,
-				3: SmitePriestPresets.P3_PRESET.gear,
-				4: SmitePriestPresets.P4_PRESET.gear,
-				5: SmitePriestPresets.P5_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: SmitePriestPresets.P1_PRESET.gear,
-				2: SmitePriestPresets.P2_PRESET.gear,
-				3: SmitePriestPresets.P3_PRESET.gear,
-				4: SmitePriestPresets.P4_PRESET.gear,
-				5: SmitePriestPresets.P5_PRESET.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecSmitePriest],
@@ -708,38 +676,38 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		tooltip: 'Protection Paladin',
 		iconUrl: talentTreeIcons[Class.ClassPaladin][1],
 	},
-/*	{
-		spec: Spec.SpecWarlock,
-		rotation: WarlockPresets.DefaultRotation,
-		talents: WarlockPresets.DestructionTalents.data,
-		specOptions: WarlockPresets.DefaultOptions,
-		consumes: WarlockPresets.DefaultConsumes,
-		defaultName: 'Destro Warlock',
-		defaultFactionRaces: {
-			[Faction.Unknown]: Race.RaceUnknown,
-			[Faction.Alliance]: Race.RaceHuman,
-			[Faction.Horde]: Race.RaceBloodElf,
-		},
-		defaultGear: {
-			[Faction.Unknown]: {},
-			[Faction.Alliance]: {
-				1: WarlockPresets.P1_DESTRO.gear,
-				2: WarlockPresets.P2_DESTRO.gear,
-				3: WarlockPresets.P3_DESTRO.gear,
-				4: WarlockPresets.P4_DESTRO.gear,
-				5: WarlockPresets.P5_DESTRO.gear,
+	/*	{
+			spec: Spec.SpecWarlock,
+			rotation: WarlockPresets.DefaultRotation,
+			talents: WarlockPresets.DestructionTalents.data,
+			specOptions: WarlockPresets.DefaultOptions,
+			consumes: WarlockPresets.DefaultConsumes,
+			defaultName: 'Destro Warlock',
+			defaultFactionRaces: {
+				[Faction.Unknown]: Race.RaceUnknown,
+				[Faction.Alliance]: Race.RaceHuman,
+				[Faction.Horde]: Race.RaceBloodElf,
 			},
-			[Faction.Horde]: {
-				1: WarlockPresets.P1_DESTRO.gear,
-				2: WarlockPresets.P2_DESTRO.gear,
-				3: WarlockPresets.P3_DESTRO.gear,
-				4: WarlockPresets.P4_DESTRO.gear,
-				5: WarlockPresets.P5_DESTRO.gear,
+			defaultGear: {
+				[Faction.Unknown]: {},
+				[Faction.Alliance]: {
+					1: WarlockPresets.P1_DESTRO.gear,
+					2: WarlockPresets.P2_DESTRO.gear,
+					3: WarlockPresets.P3_DESTRO.gear,
+					4: WarlockPresets.P4_DESTRO.gear,
+					5: WarlockPresets.P5_DESTRO.gear,
+				},
+				[Faction.Horde]: {
+					1: WarlockPresets.P1_DESTRO.gear,
+					2: WarlockPresets.P2_DESTRO.gear,
+					3: WarlockPresets.P3_DESTRO.gear,
+					4: WarlockPresets.P4_DESTRO.gear,
+					5: WarlockPresets.P5_DESTRO.gear,
+				},
 			},
-		},
-		tooltip: 'Destruction Warlock: defaults to casting Curse of Doom.',
-		iconUrl: talentTreeIcons[Class.ClassWarlock][2],
-	},*/
+			tooltip: 'Destruction Warlock: defaults to casting Curse of Doom.',
+			iconUrl: talentTreeIcons[Class.ClassWarlock][2],
+		},*/
 	{
 		spec: Spec.SpecWarlock,
 		rotation: WarlockPresets.AfflictionRotation,
@@ -772,38 +740,38 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		tooltip: 'Affliction Warlock: by default casts CoE with Malediction',
 		iconUrl: talentTreeIcons[Class.ClassWarlock][0],
 	},
-/*	{
-		spec: Spec.SpecWarlock,
-		rotation: WarlockPresets.DemonologyRotation,
-		talents: WarlockPresets.DemonologistTalents.data,
-		specOptions: WarlockPresets.DemonologyOptions,
-		consumes: WarlockPresets.DefaultConsumes,
-		defaultName: 'Demo Warlock',
-		defaultFactionRaces: {
-			[Faction.Unknown]: Race.RaceUnknown,
-			[Faction.Alliance]: Race.RaceHuman,
-			[Faction.Horde]: Race.RaceBloodElf,
-		},
-		defaultGear: {
-			[Faction.Unknown]: {},
-			[Faction.Alliance]: {
-				1: WarlockPresets.P1_DESTRO.gear,
-				2: WarlockPresets.P2_DESTRO.gear,
-				3: WarlockPresets.P3_DESTRO.gear,
-				4: WarlockPresets.P4_DESTRO.gear,
-				5: WarlockPresets.P5_DESTRO.gear,
+	/*	{
+			spec: Spec.SpecWarlock,
+			rotation: WarlockPresets.DemonologyRotation,
+			talents: WarlockPresets.DemonologistTalents.data,
+			specOptions: WarlockPresets.DemonologyOptions,
+			consumes: WarlockPresets.DefaultConsumes,
+			defaultName: 'Demo Warlock',
+			defaultFactionRaces: {
+				[Faction.Unknown]: Race.RaceUnknown,
+				[Faction.Alliance]: Race.RaceHuman,
+				[Faction.Horde]: Race.RaceBloodElf,
 			},
-			[Faction.Horde]: {
-				1: WarlockPresets.P1_DESTRO.gear,
-				2: WarlockPresets.P2_DESTRO.gear,
-				3: WarlockPresets.P3_DESTRO.gear,
-				4: WarlockPresets.P4_DESTRO.gear,
-				5: WarlockPresets.P5_DESTRO.gear,
+			defaultGear: {
+				[Faction.Unknown]: {},
+				[Faction.Alliance]: {
+					1: WarlockPresets.P1_DESTRO.gear,
+					2: WarlockPresets.P2_DESTRO.gear,
+					3: WarlockPresets.P3_DESTRO.gear,
+					4: WarlockPresets.P4_DESTRO.gear,
+					5: WarlockPresets.P5_DESTRO.gear,
+				},
+				[Faction.Horde]: {
+					1: WarlockPresets.P1_DESTRO.gear,
+					2: WarlockPresets.P2_DESTRO.gear,
+					3: WarlockPresets.P3_DESTRO.gear,
+					4: WarlockPresets.P4_DESTRO.gear,
+					5: WarlockPresets.P5_DESTRO.gear,
+				},
 			},
-		},
-		tooltip: 'Demonology Warlock',
-		iconUrl: talentTreeIcons[Class.ClassWarlock][1],
-	},*/
+			tooltip: 'Demonology Warlock',
+			iconUrl: talentTreeIcons[Class.ClassWarlock][1],
+		},*/
 ];
 
 export const implementedSpecs: Array<Spec> = [...new Set(playerPresets.map(preset => preset.spec))];
@@ -949,7 +917,7 @@ export const buffBotPresets: Array<BuffBotSettings> = [
 		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
 			raidProto.buffs!.shadowProtection = true;
 			raidProto.buffs!.powerWordFortitude = TristateEffect.TristateEffectImproved;
-			raidProto.buffs!.divineSpirit = TristateEffect.TristateEffectImproved;
+			raidProto.buffs!.divineSpirit = true;
 
 			const powerInfusionIndex = buffBot.getPowerInfusionAssignment().targetIndex;
 			if (powerInfusionIndex != NO_TARGET) {
