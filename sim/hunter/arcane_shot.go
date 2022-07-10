@@ -7,7 +7,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (hunter *Hunter) registerArcaneShotSpell() {
+func (hunter *Hunter) registerArcaneShotSpell(timer *core.Timer) {
 	baseCost := 0.05 * hunter.BaseMana()
 
 	hunter.ArcaneShot = hunter.RegisterSpell(core.SpellConfig{
@@ -25,28 +25,39 @@ func (hunter *Hunter) registerArcaneShotSpell() {
 			},
 			IgnoreHaste: true,
 			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
-				cast.CastTime = hunter.SteadyShotCastTime()
+				if hunter.LockAndLoadAura.IsActive() {
+					cast.Cost = 0
+				} else if hunter.ImprovedSteadyShotAura.IsActive() {
+					cast.Cost *= 0.8
+				}
 			},
 			CD: core.Cooldown{
-				Timer:    hunter.NewTimer(),
+				Timer:    timer,
 				Duration: time.Second*6 - time.Millisecond*200*time.Duration(hunter.Talents.ImprovedArcaneShot),
 			},
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskRangedSpecial,
+			ProcMask:        core.ProcMaskRangedSpecial,
+			BonusCritRating: 2 * core.CritRatingPerCritChance * float64(hunter.Talents.SurvivalInstincts),
 			DamageMultiplier: 1 *
 				(1 + 0.05*float64(hunter.Talents.ImprovedArcaneShot)) *
-				(1 + 0.03*float64(hunter.Talents.FerociousInspiration)),
+				(1 + 0.03*float64(hunter.Talents.FerociousInspiration)) *
+				(1 + 0.01*float64(hunter.Talents.MarkedForDeath)),
 			ThreatMultiplier: 1,
 
 			BaseDamage: hunter.talonOfAlarDamageMod(core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.15 + 492
+					damage := (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.15 + 492
+					if hunter.ImprovedSteadyShotAura.IsActive() {
+						damage *= 1.15
+						hunter.ImprovedSteadyShotAura.Deactivate(sim)
+					}
+					return damage
 				},
 				TargetSpellCoefficient: 1,
 			}),
-			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, hunter.CurrentTarget)),
+			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, true, hunter.CurrentTarget)),
 		}),
 	})
 }

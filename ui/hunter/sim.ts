@@ -222,6 +222,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 					HunterInputs.PetTypeInput,
 					HunterInputs.PetUptime,
 					HunterInputs.PetSingleAbility,
+					HunterInputs.SniperTrainingUptime,
 					HunterInputs.LatencyMs,
 					OtherInputs.PrepopPotion,
 					OtherInputs.ExposeWeaknessUptime,

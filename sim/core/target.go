@@ -214,12 +214,16 @@ type AttackTable struct {
 	BinaryShadowHitChance float64
 
 	ArmorDamageReduction float64
+
+	DamageDealtMultiplier float64
 }
 
 func NewAttackTable(attacker *Unit, defender *Unit) *AttackTable {
 	table := &AttackTable{
 		Attacker: attacker,
 		Defender: defender,
+
+		DamageDealtMultiplier: 1,
 	}
 
 	if defender.Type == EnemyUnit {

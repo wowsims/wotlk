@@ -73,21 +73,28 @@ type Hunter struct {
 	AspectOfTheDragonhawk *core.Spell
 	AspectOfTheViper      *core.Spell
 
-	AimedShot    *core.Spell
-	ArcaneShot   *core.Spell
-	KillCommand  *core.Spell
-	MultiShot    *core.Spell
-	RapidFire    *core.Spell
-	RaptorStrike *core.Spell
-	ScorpidSting *core.Spell
-	SerpentSting *core.Spell
-	SteadyShot   *core.Spell
+	AimedShot     *core.Spell
+	ArcaneShot    *core.Spell
+	BlackArrow    *core.Spell
+	ChimeraShot   *core.Spell
+	ExplosiveShot *core.Spell
+	KillCommand   *core.Spell
+	KillShot      *core.Spell
+	MultiShot     *core.Spell
+	RapidFire     *core.Spell
+	RaptorStrike  *core.Spell
+	ScorpidSting  *core.Spell
+	SerpentSting  *core.Spell
+	SteadyShot    *core.Spell
 
-	SerpentStingDot *core.Dot
+	BlackArrowDot    *core.Dot
+	ExplosiveShotDot *core.Dot
+	SerpentStingDot  *core.Dot
 
 	AspectOfTheDragonhawkAura *core.Aura
 	AspectOfTheViperAura      *core.Aura
 	ImprovedSteadyShotAura    *core.Aura
+	LockAndLoadAura           *core.Aura
 	ScorpidStingAura          *core.Aura
 	TalonOfAlarAura           *core.Aura
 
@@ -115,15 +122,21 @@ func (hunter *Hunter) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 
 func (hunter *Hunter) Initialize() {
 	// Update auto crit multipliers now that we have the targets.
-	hunter.AutoAttacks.MHEffect.OutcomeApplier = hunter.OutcomeFuncMeleeWhite(hunter.critMultiplier(false, hunter.CurrentTarget))
-	hunter.AutoAttacks.OHEffect.OutcomeApplier = hunter.OutcomeFuncMeleeWhite(hunter.critMultiplier(false, hunter.CurrentTarget))
-	hunter.AutoAttacks.RangedEffect.OutcomeApplier = hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, hunter.CurrentTarget))
+	hunter.AutoAttacks.MHEffect.OutcomeApplier = hunter.OutcomeFuncMeleeWhite(hunter.critMultiplier(false, false, hunter.CurrentTarget))
+	hunter.AutoAttacks.OHEffect.OutcomeApplier = hunter.OutcomeFuncMeleeWhite(hunter.critMultiplier(false, false, hunter.CurrentTarget))
+	hunter.AutoAttacks.RangedEffect.OutcomeApplier = hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, false, hunter.CurrentTarget))
 
 	hunter.registerAspectOfTheDragonhawkSpell()
 	hunter.registerAspectOfTheViperSpell()
 
+	arcaneShotTimer := hunter.NewTimer()
+
 	hunter.registerAimedShotSpell()
-	hunter.registerArcaneShotSpell()
+	hunter.registerArcaneShotSpell(arcaneShotTimer)
+	hunter.registerBlackArrowSpell()
+	hunter.registerChimeraShotSpell()
+	hunter.registerExplosiveShotSpell(arcaneShotTimer)
+	hunter.registerKillShotSpell()
 	hunter.registerMultiShotSpell()
 	hunter.registerRaptorStrikeSpell()
 	hunter.registerScorpidStingSpell()

@@ -13,8 +13,10 @@ func (hunter *Hunter) registerMultiShotSpell() {
 	baseEffect := core.SpellEffect{
 		ProcMask: core.ProcMaskRangedSpecial,
 
-		BonusCritRating:  4 * core.CritRatingPerCritChance * float64(hunter.Talents.ImprovedBarrage),
-		DamageMultiplier: 1 + 0.04*float64(hunter.Talents.Barrage),
+		BonusCritRating: 4 * core.CritRatingPerCritChance * float64(hunter.Talents.ImprovedBarrage),
+		DamageMultiplier: 1 *
+			(1 + 0.04*float64(hunter.Talents.Barrage)) *
+			(1 + 0.01*float64(hunter.Talents.MarkedForDeath)),
 		ThreatMultiplier: 1,
 
 		BaseDamage: hunter.talonOfAlarDamageMod(core.BaseDamageConfig{
@@ -27,7 +29,7 @@ func (hunter *Hunter) registerMultiShotSpell() {
 			},
 			TargetSpellCoefficient: 1,
 		}),
-		OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, hunter.CurrentTarget)),
+		OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, false, hunter.CurrentTarget)),
 
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			hunter.rotation(sim, false)

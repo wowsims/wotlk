@@ -44,9 +44,13 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskRangedSpecial,
 
-			BonusCritRating: core.TernaryFloat64(ItemSetRiftStalker.CharacterHasSetBonus(&hunter.Character, 4), 5*core.CritRatingPerCritChance, 0),
+			BonusCritRating: 0 +
+				2*core.CritRatingPerCritChance*float64(hunter.Talents.SurvivalInstincts) +
+				core.TernaryFloat64(ItemSetRiftStalker.CharacterHasSetBonus(&hunter.Character, 4), 5*core.CritRatingPerCritChance, 0),
 			DamageMultiplier: 1 *
 				(1 + 0.03*float64(hunter.Talents.FerociousInspiration)) *
+				(1 + 0.01*float64(hunter.Talents.MarkedForDeath)) *
+				hunter.sniperTrainingMultiplier() *
 				core.TernaryFloat64(ItemSetGronnstalker.CharacterHasSetBonus(&hunter.Character, 4), 1.1, 1),
 			ThreatMultiplier: 1,
 
@@ -58,7 +62,7 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 				},
 				TargetSpellCoefficient: 1,
 			}),
-			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, hunter.CurrentTarget)),
+			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, true, hunter.CurrentTarget)),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				hunter.rotation(sim, false)

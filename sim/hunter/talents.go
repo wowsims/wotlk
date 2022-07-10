@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	//"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -44,6 +44,7 @@ func (hunter *Hunter) ApplyTalents() {
 	hunter.PseudoStats.RangedSpeedMultiplier *= 1 + 0.04*float64(hunter.Talents.SerpentsSwiftness)
 	hunter.PseudoStats.RangedDamageDealtMultiplier *= 1 + 0.01*float64(hunter.Talents.RangedWeaponSpecialization)
 	hunter.PseudoStats.BonusRangedCritRating += 1 * float64(hunter.Talents.LethalShots) * core.CritRatingPerCritChance
+	hunter.PseudoStats.DamageTakenMultiplier *= 1 - 0.02*float64(hunter.Talents.SurvivalInstincts)
 	// TODO: Hunter's mark
 
 	if hunter.Talents.EnduranceTraining > 0 {
@@ -145,8 +146,36 @@ func (hunter *Hunter) ApplyTalents() {
 			},
 		})
 	}
+	if hunter.Talents.HunterVsWild > 0 {
+		bonus := 1 + 0.1*float64(hunter.Talents.HunterVsWild)
+		hunter.AddStatDependency(stats.StatDependency{
+			SourceStat:   stats.Stamina,
+			ModifiedStat: stats.AttackPower,
+			Modifier: func(stam float64, ap float64) float64 {
+				return ap + stam*bonus
+			},
+		})
+		hunter.AddStatDependency(stats.StatDependency{
+			SourceStat:   stats.Stamina,
+			ModifiedStat: stats.RangedAttackPower,
+			Modifier: func(stam float64, rap float64) float64 {
+				return rap + stam*bonus
+			},
+		})
+	}
 	if hunter.Talents.LightningReflexes > 0 {
 		agiBonus := 1 + 0.03*float64(hunter.Talents.LightningReflexes)
+		hunter.AddStatDependency(stats.StatDependency{
+			SourceStat:   stats.Agility,
+			ModifiedStat: stats.Agility,
+			Modifier: func(agility float64, _ float64) float64 {
+				return agility * agiBonus
+			},
+		})
+	}
+	if hunter.Talents.HuntingParty > 0 {
+		// TODO: Activate replenishment
+		agiBonus := 1 + 0.01*float64(hunter.Talents.HuntingParty)
 		hunter.AddStatDependency(stats.StatDependency{
 			SourceStat:   stats.Agility,
 			ModifiedStat: stats.Agility,
@@ -163,7 +192,7 @@ func (hunter *Hunter) ApplyTalents() {
 	hunter.applyPiercingShots()
 	hunter.applyWildQuiver()
 
-	hunter.applySlaying()
+	hunter.applyImprovedTracking()
 	hunter.applyThrillOfTheHunt()
 	hunter.applyExposeWeakness()
 	hunter.applyMasterTactician()
@@ -171,20 +200,15 @@ func (hunter *Hunter) ApplyTalents() {
 	hunter.registerReadinessCD()
 }
 
-func (hunter *Hunter) critMultiplier(isRanged bool, target *core.Unit) float64 {
+func (hunter *Hunter) critMultiplier(isRanged bool, isMFDSpell bool, target *core.Unit) float64 {
 	primaryModifier := 1.0
 	secondaryModifier := 0.0
 
-	//monsterMultiplier := 1.0 + 0.01*float64(hunter.Talents.MonsterSlaying)
-	//humanoidMultiplier := 1.0 + 0.01*float64(hunter.Talents.HumanoidSlaying)
-	//if target.MobType == proto.MobType_MobTypeBeast || target.MobType == proto.MobType_MobTypeGiant || target.MobType == proto.MobType_MobTypeDragonkin {
-	//	primaryModifier *= monsterMultiplier
-	//} else if target.MobType == proto.MobType_MobTypeHumanoid {
-	//	primaryModifier *= humanoidMultiplier
-	//}
-
 	if isRanged {
 		secondaryModifier += 0.06 * float64(hunter.Talents.MortalShots)
+		if isMFDSpell {
+			secondaryModifier += 0.02 * float64(hunter.Talents.MarkedForDeath)
+		}
 	}
 
 	return hunter.MeleeCritMultiplier(primaryModifier, secondaryModifier)
@@ -541,20 +565,72 @@ func (hunter *Hunter) applyGoForTheThroat() {
 	})
 }
 
-func (hunter *Hunter) applySlaying() {
-	//if hunter.Talents.MonsterSlaying == 0 && hunter.Talents.HumanoidSlaying == 0 {
-	//	return
-	//}
+func (hunter *Hunter) applyImprovedTracking() {
+	if hunter.Talents.ImprovedTracking == 0 {
+		return
+	}
 
-	//monsterMultiplier := 1.0 + 0.01*float64(hunter.Talents.MonsterSlaying)
-	//humanoidMultiplier := 1.0 + 0.01*float64(hunter.Talents.HumanoidSlaying)
+	switch hunter.CurrentTarget.MobType {
+	case proto.MobType_MobTypeBeast:
+	case proto.MobType_MobTypeDemon:
+	case proto.MobType_MobTypeDragonkin:
+	case proto.MobType_MobTypeElemental:
+	case proto.MobType_MobTypeGiant:
+	case proto.MobType_MobTypeHumanoid:
+	case proto.MobType_MobTypeUndead:
+		hunter.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.01*float64(hunter.Talents.ImprovedTracking)
+	}
+}
 
-	//switch hunter.CurrentTarget.MobType {
-	//case proto.MobType_MobTypeBeast, proto.MobType_MobTypeGiant, proto.MobType_MobTypeDragonkin:
-	//	hunter.PseudoStats.DamageDealtMultiplier *= monsterMultiplier
-	//case proto.MobType_MobTypeHumanoid:
-	//	hunter.PseudoStats.DamageDealtMultiplier *= humanoidMultiplier
-	//}
+func (hunter *Hunter) applyLockAndLoad() {
+	if hunter.Talents.LockAndLoad == 0 {
+		return
+	}
+
+	actionID := core.ActionID{SpellID: 56344}
+	procChance := 0.02 * float64(hunter.Talents.LockAndLoad)
+
+	icd := core.Cooldown{
+		Timer:    hunter.NewTimer(),
+		Duration: time.Second * 22,
+	}
+
+	hunter.LockAndLoadAura = hunter.pet.RegisterAura(core.Aura{
+		Label:     "Lock and Load Proc",
+		ActionID:  actionID,
+		Duration:  time.Second * 12,
+		MaxStacks: 2,
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spell == hunter.ArcaneShot || spell == hunter.ExplosiveShot {
+				aura.RemoveStack(sim)
+				hunter.ArcaneShot.CD.Reset() // Shares the CD with explosive shot.
+			}
+		},
+	})
+
+	hunter.RegisterAura(core.Aura{
+		Label:    "Lock and Load Talent",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			// TODO: Explosive trap
+			if spell != hunter.BlackArrow {
+				return
+			}
+
+			if !icd.IsReady(sim) {
+				return
+			}
+
+			if sim.RandomFloat("Lock and Load") < procChance {
+				icd.Use(sim)
+				hunter.LockAndLoadAura.Activate(sim)
+				hunter.LockAndLoadAura.SetStacks(sim, 2)
+			}
+		},
+	})
 }
 
 func (hunter *Hunter) applyThrillOfTheHunt() {
@@ -593,15 +669,25 @@ func (hunter *Hunter) applyExposeWeakness() {
 		return
 	}
 
-	var debuffAura *core.Aura
+	actionID := core.ActionID{SpellID: 34503}
 	procChance := float64(hunter.Talents.ExposeWeakness) / 3
+
+	var curBonus stats.Stats
+	procAura := hunter.RegisterAura(core.Aura{
+		Label:    "Expose Weakness Proc",
+		ActionID: actionID,
+		Duration: time.Second * 7,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.AddStatsDynamic(sim, curBonus)
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.AddStatsDynamic(sim, curBonus.Multiply(-1))
+		},
+	})
 
 	hunter.RegisterAura(core.Aura{
 		Label:    "Expose Weakness Talent",
 		Duration: core.NeverExpires,
-		OnInit: func(aura *core.Aura, sim *core.Simulation) {
-			debuffAura = core.ExposeWeaknessAura(hunter.CurrentTarget, float64(hunter.Index), 1.0)
-		},
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
@@ -615,18 +701,15 @@ func (hunter *Hunter) applyExposeWeakness() {
 			}
 
 			if procChance == 1 || sim.RandomFloat("ExposeWeakness") < procChance {
-				// TODO: Find a cleaner way to do this
-				newBonus := hunter.GetStat(stats.Agility) * 0.25
-				if !debuffAura.IsActive() {
-					debuffAura.Priority = newBonus
-					debuffAura.Activate(sim)
-				} else if debuffAura.Priority == newBonus {
-					debuffAura.Activate(sim)
-				} else if debuffAura.Priority < newBonus {
-					debuffAura.Deactivate(sim)
-					debuffAura.Priority = newBonus
-					debuffAura.Activate(sim)
+				procAura.Deactivate(sim)
+
+				val := hunter.GetStat(stats.Agility) * 0.25
+				curBonus = stats.Stats{
+					stats.AttackPower:       val,
+					stats.RangedAttackPower: val,
 				}
+
+				procAura.Activate(sim)
 			}
 		},
 	})
@@ -637,7 +720,7 @@ func (hunter *Hunter) applyMasterTactician() {
 		return
 	}
 
-	procChance := 0.06
+	procChance := 0.1
 	critBonus := 2 * core.CritRatingPerCritChance * float64(hunter.Talents.MasterTactician)
 
 	procAura := hunter.NewTemporaryStatsAura("Master Tactician Proc", core.ActionID{SpellID: 34839}, stats.Stats{stats.MeleeCrit: critBonus}, time.Second*8)
@@ -660,6 +743,10 @@ func (hunter *Hunter) applyMasterTactician() {
 			procAura.Activate(sim)
 		},
 	})
+}
+
+func (hunter *Hunter) sniperTrainingMultiplier() float64 {
+	return 1 + 0.02*float64(hunter.Talents.SniperTraining)*hunter.Options.SniperTrainingUptime
 }
 
 func (hunter *Hunter) registerReadinessCD() {

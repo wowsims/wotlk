@@ -61,4 +61,14 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 			OutcomeApplier: hunter.OutcomeFuncTick(),
 		}),
 	})
+
+	if hunter.Talents.NoxiousStings > 0 {
+		multiplier := 1 + 0.01*float64(hunter.Talents.NoxiousStings)
+		hunter.SerpentStingDot.Aura.OnGain = func(aura *core.Aura, sim *core.Simulation) {
+			hunter.AttackTables[aura.Unit.TableIndex].DamageDealtMultiplier *= multiplier
+		}
+		hunter.SerpentStingDot.Aura.OnExpire = func(aura *core.Aura, sim *core.Simulation) {
+			hunter.AttackTables[aura.Unit.TableIndex].DamageDealtMultiplier /= multiplier
+		}
+	}
 }
