@@ -84,7 +84,7 @@ var FullDebuffs = &proto.Debuffs{
 	FaerieFire:        proto.TristateEffect_TristateEffectImproved,
 	SunderArmor:       true,
 	Mangle:            true,
-	CurseOfWeakness:   true,
+	CurseOfWeakness:   proto.TristateEffect_TristateEffectImproved,
 	HuntersMark:       proto.TristateEffect_TristateEffectImproved,
 }
 

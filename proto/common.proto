@@ -534,7 +534,7 @@ message Debuffs {
 	bool misery = 3;
 	TristateEffect faerie_fire = 4;
 
-	TristateEffect curse_of_elements = 5;
+	bool curse_of_elements = 5;
 	TristateEffect ebon_plaguebringer = 6;
 
 	// +3% to crit against target
@@ -557,7 +557,7 @@ message Debuffs {
 
 	TristateEffect expose_armor = 17;
 	bool sunder_armor = 18;
-	bool curse_of_weakness = 19;
+	TristateEffect curse_of_weakness = 19;
 
 	TristateEffect hunters_mark = 20;
 

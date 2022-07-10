@@ -112,7 +112,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				debuffs: Debuffs.create({
 					judgementOfWisdom: true,
 					misery: true,
-					curseOfElements: TristateEffect.TristateEffectRegular,
+					curseOfElements: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					sunderArmor: true,
 				}),

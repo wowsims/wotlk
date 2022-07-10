@@ -116,7 +116,7 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 				debuffs: Debuffs.create({
 					judgementOfWisdom: true,
 					misery: true,
-					curseOfElements: TristateEffect.TristateEffectRegular,
+					curseOfElements: true,
 				}),
 			},
 

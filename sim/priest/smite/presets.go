@@ -46,7 +46,7 @@ var FullConsumes = &proto.Consumes{
 
 var FullDebuffs = &proto.Debuffs{
 	JudgementOfWisdom: true,
-	CurseOfElements:   proto.TristateEffect_TristateEffectImproved,
+	CurseOfElements:   true,
 }
 
 var PlayerOptionsBasic = &proto.Player_SmitePriest{
