@@ -160,7 +160,11 @@ func (shaman *Shaman) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	case proto.AirTotem_WrathOfAirTotem:
 		raidBuffs.WrathOfAirTotem = true
 	case proto.AirTotem_WindfuryTotem:
-		break
+		wfVal := proto.TristateEffect_TristateEffectRegular
+		if shaman.Talents.ImprovedWindfuryTotem > 0 {
+			wfVal = proto.TristateEffect_TristateEffectImproved
+		}
+		raidBuffs.WindfuryTotem = core.MaxTristate(wfVal, raidBuffs.WindfuryTotem)
 	}
 
 	switch shaman.Totems.Earth {
@@ -169,9 +173,11 @@ func (shaman *Shaman) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 		if shaman.Talents.EnhancingTotems == 3 {
 			totem = proto.TristateEffect_TristateEffectImproved
 		}
-		if totem > raidBuffs.StrengthOfEarthTotem {
-			raidBuffs.StrengthOfEarthTotem = totem
-		}
+		raidBuffs.StrengthOfEarthTotem = core.MaxTristate(raidBuffs.StrengthOfEarthTotem, totem)
+	}
+
+	if shaman.Talents.UnleashedRage > 0 {
+		raidBuffs.UnleashedRage = true
 	}
 }
 func (shaman *Shaman) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {

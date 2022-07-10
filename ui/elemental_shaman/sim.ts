@@ -114,7 +114,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					arcaneBrilliance: true,
-					divineSpirit: TristateEffect.TristateEffectRegular,
+					divineSpirit: true,
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
 				}),
 				partyBuffs: PartyBuffs.create({
@@ -139,29 +139,27 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				IconInputs.ArcaneBrilliance,
 				IconInputs.DivineSpirit,
 				IconInputs.GiftOfTheWild,
-			],
-			partyBuffInputs: [
 				IconInputs.MoonkinAura,
 				IconInputs.WrathOfAirTotem,
 				IconInputs.TotemOfWrath,
 				IconInputs.ManaSpringTotem,
+			],
+			partyBuffInputs: [
 				IconInputs.ManaTideTotem,
 				IconInputs.EyeOfTheNight,
 				IconInputs.ChainOfTheTwilightOwl,
-				IconInputs.JadePendantOfBlasting,
 				IconInputs.AtieshWarlock,
 				IconInputs.AtieshMage,
 			],
 			playerBuffInputs: [
 				IconInputs.BlessingOfKings,
 				IconInputs.BlessingOfWisdom,
-				IconInputs.BlessingOfSalvation,
 				IconInputs.Innervate,
 				IconInputs.PowerInfusion,
 			],
 			// IconInputs to include in the 'Debuffs' section on the settings tab.
 			debuffInputs: [
-				IconInputs.ImprovedSealOfTheCrusader,
+
 				IconInputs.Misery,
 				IconInputs.FaerieFire,
 			],
