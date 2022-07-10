@@ -10,7 +10,7 @@ import { Cooldowns } from '/wotlk/core/proto/common.js';
 import { CooldownsPicker } from '/wotlk/core/components/cooldowns_picker.js';
 import { Debuffs } from '/wotlk/core/proto/common.js';
 import { DetailedResults } from '/wotlk/core/components/detailed_results.js';
-import { Drums } from '/wotlk/core/proto/common.js';
+
 import { Encounter as EncounterProto } from '/wotlk/core/proto/common.js';
 import { Encounter } from './encounter.js';
 import { EncounterPicker, EncounterPickerConfig } from '/wotlk/core/components/encounter_picker.js';
@@ -649,7 +649,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		}
 
 		const tradeConsumesElem = this.rootElem.getElementsByClassName('consumes-trade')[0] as HTMLElement;
-		new IndividualSimIconPicker(tradeConsumesElem, this.player, IconInputs.DrumsInput, this);
 		new IndividualSimIconPicker(tradeConsumesElem, this.player, IconInputs.SuperSapper, this);
 		new IndividualSimIconPicker(tradeConsumesElem, this.player, IconInputs.GoblinSapper, this);
 		new IndividualSimIconPicker(tradeConsumesElem, this.player, IconInputs.FillerExplosiveInput, this);

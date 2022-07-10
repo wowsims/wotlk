@@ -2,6 +2,8 @@ package core
 
 import (
 	"time"
+
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 type TickEffects func(*Simulation, *Spell) func()
@@ -124,6 +126,7 @@ func TickFuncSnapshot(target *Unit, baseEffect SpellEffect) TickEffects {
 		*snapshotEffect = baseEffect
 		snapshotEffect.Target = target
 		baseDamage := snapshotEffect.calculateBaseDamage(sim, spell) * snapshotEffect.DamageMultiplier
+		snapshotEffect.BonusSpellCritRating = snapshotEffect.BonusSpellCritRating + spell.Unit.GetStat(stats.SpellCrit)
 		snapshotEffect.DamageMultiplier = 1
 		snapshotEffect.BaseDamage = BaseDamageConfigFlat(baseDamage)
 

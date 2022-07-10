@@ -87,7 +87,6 @@ export class BlessingsPicker extends Component {
 					values: [
 						{ color: classColors[Class.ClassPaladin], value: Blessings.BlessingUnknown },
 						{ actionId: ActionId.fromSpellId(25898), value: Blessings.BlessingOfKings },
-						{ actionId: ActionId.fromSpellId(25895), value: Blessings.BlessingOfSalvation },
 						{ actionId: ActionId.fromSpellId(27141), value: Blessings.BlessingOfMight },
 						{ actionId: ActionId.fromSpellId(27143), value: Blessings.BlessingOfWisdom },
 						{ actionId: ActionId.fromSpellId(27169), value: Blessings.BlessingOfSanctuary },

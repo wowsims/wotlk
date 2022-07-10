@@ -1,5 +1,5 @@
 import { Consumes } from '/wotlk/core/proto/common.js';
-import { Drums } from '/wotlk/core/proto/common.js';
+
 import { EquipmentSpec } from '/wotlk/core/proto/common.js';
 import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
@@ -33,7 +33,7 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 export const StandardTalents = {
 	name: 'Standard',
-	data: '55003105100213351051--05105301005',
+	data: '0532001523212351322301351-005052031',
 };
 
 export const RestoTalents = {
@@ -57,7 +57,6 @@ export const DefaultOptions = ElementalShamanOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	drums: Drums.DrumsOfBattle,
 	defaultPotion: Potions.SuperManaPotion,
 	flask: Flask.FlaskOfBlindingLight,
 	food: Food.FoodBlackenedBasilisk,

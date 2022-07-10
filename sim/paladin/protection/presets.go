@@ -73,11 +73,11 @@ var FullConsumes = &proto.Consumes{
 
 var FullDebuffs = &proto.Debuffs{
 	Misery:          true,
-	CurseOfElements: proto.TristateEffect_TristateEffectImproved,
+	CurseOfElements: true,
 	BloodFrenzy:     true,
 	ExposeArmor:     proto.TristateEffect_TristateEffectImproved,
 	FaerieFire:      proto.TristateEffect_TristateEffectImproved,
-	CurseOfWeakness: true,
+	CurseOfWeakness: proto.TristateEffect_TristateEffectImproved,
 	HuntersMark:     proto.TristateEffect_TristateEffectImproved,
 }
 

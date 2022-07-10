@@ -20,7 +20,7 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 		MakePermanent(JudgementOfLightAura(target))
 	}
 
-	if debuffs.CurseOfElements != proto.TristateEffect_TristateEffectMissing {
+	if debuffs.CurseOfElements {
 		MakePermanent(CurseOfElementsAura(target))
 	}
 
@@ -59,8 +59,8 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 		})
 	}
 
-	if debuffs.CurseOfWeakness {
-		MakePermanent(CurseOfWeaknessAura(target))
+	if debuffs.CurseOfWeakness != proto.TristateEffect_TristateEffectMissing {
+		MakePermanent(CurseOfWeaknessAura(target, 2))
 	}
 
 	if debuffs.SunderArmor {
@@ -143,7 +143,7 @@ var JudgementOfWisdomAuraLabel = "Judgement of Wisdom"
 
 func JudgementOfWisdomAura(target *Unit) *Aura {
 	const mana = 74 / 2 // 50% proc
-	actionID := ActionID{SpellID: 27164}
+	actionID := ActionID{SpellID: 53408}
 
 	return target.GetOrRegisterAura(Aura{
 		Label:    JudgementOfWisdomAuraLabel,
@@ -167,7 +167,7 @@ func JudgementOfWisdomAura(target *Unit) *Aura {
 				unit.AddMana(sim, mana, unit.JowManaMetrics, false)
 			}
 
-			if spell.ActionID.SpellID == 35395 {
+			if spell.ActionID.SpellID == 35395 { // Crusader strike
 				aura.Refresh(sim)
 			}
 		},
@@ -227,7 +227,7 @@ func CurseOfElementsAura(target *Unit) *Aura {
 	return target.GetOrRegisterAura(Aura{
 		Label:    "Curse of Elements",
 		Tag:      "Curse of Elements",
-		ActionID: ActionID{SpellID: 27228},
+		ActionID: ActionID{SpellID: 47865},
 
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier *= multiplier
@@ -253,7 +253,7 @@ func ImprovedShadowBoltAura(target *Unit) *Aura {
 	config := Aura{
 		Label:    "ImprovedShadowBolt",
 		Tag:      "ImprovedShadowBolt",
-		ActionID: ActionID{SpellID: 17803},
+		ActionID: ActionID{SpellID: 17800},
 		Duration: time.Second * 30,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.BonusCritRating += bonusSpellCrit
@@ -262,18 +262,6 @@ func ImprovedShadowBoltAura(target *Unit) *Aura {
 			aura.Unit.PseudoStats.BonusCritRating -= bonusSpellCrit
 		},
 	}
-
-	//	if uptime == 0 {
-	//		config.OnSpellHitTaken = func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
-	//			if spell.SpellSchool != SpellSchoolShadow {
-	//				return
-	//			}
-	//			if !spellEffect.Landed() || spellEffect.Damage == 0 || !spellEffect.ProcMask.Matches(ProcMaskSpellDamage) {
-	//				return
-	//			}
-	//			aura.RemoveStack(sim)
-	//		}
-	//	}
 
 	return target.GetOrRegisterAura(config)
 }
@@ -452,14 +440,14 @@ func ExposeArmorAura(target *Unit, hasGlyph bool) *Aura {
 	})
 }
 
-func CurseOfWeaknessAura(target *Unit) *Aura {
+func CurseOfWeaknessAura(target *Unit, points int32) *Aura {
 	bonus := stats.Stats{stats.AttackPower: -478}
 	armorReduction := 0.05
 
 	return target.GetOrRegisterAura(Aura{
 		Label:    "Curse of Weakness",
 		Tag:      MinorArmorReductionAuraTag,
-		ActionID: ActionID{SpellID: 27226}, // TODO: Fix spell id
+		ActionID: ActionID{SpellID: 50511},
 		Duration: time.Minute * 2,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.AddStatsDynamic(sim, bonus)

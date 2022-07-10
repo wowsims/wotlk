@@ -48,9 +48,19 @@ func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 			ThreatMultiplier:    1 - 0.08*float64(priest.Talents.ShadowAffinity),
 			OutcomeApplier:      priest.OutcomeFuncMagicHitBinary(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					priest.MindFlayDot[numTicks].Apply(sim)
+				if !spellEffect.Landed() {
+					return
 				}
+
+				if priest.ShadowWordPainDot.IsActive() {
+					if priest.Talents.PainAndSuffering == 3 {
+						priest.ShadowWordPainDot.Refresh(sim)
+					} else if sim.RandomFloat("Pain and Suffering") < (float64(priest.Talents.PainAndSuffering) * 0.33) {
+						priest.ShadowWordPainDot.Refresh(sim)
+					}
+				}
+
+				priest.MindFlayDot[numTicks].Apply(sim)
 			},
 		}),
 	})
@@ -64,7 +74,7 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 		ThreatMultiplier:     1 - 0.08*float64(priest.Talents.ShadowAffinity),
 		IsPeriodic:           true,
 		BonusSpellCritRating: float64(priest.Talents.MindMelt) * 2 * core.CritRatingPerCritChance,
-		OutcomeApplier:       priest.OutcomeFuncTick(),
+		OutcomeApplier:       priest.OutcomeFuncMagicHitAndCrit(1 + float64(priest.Talents.ShadowPower)*0.2),
 		ProcMask:             core.ProcMaskSpellDamage,
 	}
 

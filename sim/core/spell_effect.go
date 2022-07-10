@@ -39,7 +39,7 @@ type SpellEffect struct {
 	// Adds a fixed amount of threat to this spell, before multipliers.
 	FlatThreatBonus float64
 
-	// TODO: Should be able to remove this after refactoring is done.
+	// Used in determining snapshot based damage from effect details (e.g. snapshot crit and % damage modifiers)
 	IsPeriodic bool
 
 	// Controls which effects can proc from this effect.
@@ -151,7 +151,16 @@ func (spellEffect *SpellEffect) SpellPower(unit *Unit, spell *Spell) float64 {
 }
 
 func (spellEffect *SpellEffect) SpellCritChance(unit *Unit, spell *Spell) float64 {
-	critRating := (unit.GetStat(stats.SpellCrit) + spellEffect.BonusSpellCritRating + spellEffect.Target.PseudoStats.BonusCritRating)
+	critRating := float64(0)
+
+	// periodic spells apply crit from snapshot at time of initial cast if capable of a crit
+	// ignoring units real time crit in this case
+	if spellEffect.IsPeriodic {
+		critRating += (spellEffect.BonusSpellCritRating + spellEffect.Target.PseudoStats.BonusCritRating)
+	} else {
+		critRating += (unit.GetStat(stats.SpellCrit) + spellEffect.BonusSpellCritRating + spellEffect.Target.PseudoStats.BonusCritRating)
+	}
+
 	if spell.SpellSchool.Matches(SpellSchoolFire) {
 		critRating += unit.PseudoStats.BonusFireCritRating
 	} else if spell.SpellSchool.Matches(SpellSchoolFrost) {

@@ -12,10 +12,12 @@ import (
 func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.PartyBuffs, individualBuffs proto.IndividualBuffs) {
 	character := agent.GetCharacter()
 
-	if raidBuffs.ArcaneBrilliance {
-		character.AddStats(stats.Stats{
-			stats.Intellect: 40,
-		})
+	if raidBuffs.ArcaneBrilliance || raidBuffs.FelIntelligence {
+		val := 48.0
+		if raidBuffs.ArcaneBrilliance {
+			val = 60.0
+		}
+		character.AddStat(stats.Intellect, val)
 	}
 
 	gotwAmount := GetTristateValueFloat(raidBuffs.GiftOfTheWild, 14.0, 18.0)
@@ -37,10 +39,20 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 	if raidBuffs.MoonkinAura > 0 || raidBuffs.ElementalOath {
 		character.AddStat(stats.SpellCrit, 5*CritRatingPerCritChance)
 	}
+	if raidBuffs.MoonkinAura == proto.TristateEffect_TristateEffectImproved || raidBuffs.SwiftRetribution {
+		character.PseudoStats.CastSpeedMultiplier *= 1.03
+		character.PseudoStats.MeleeSpeedMultiplier *= 1.03
+		character.PseudoStats.RangedSpeedMultiplier *= 1.03
+	}
 
-	character.AddStats(stats.Stats{
-		stats.MeleeCrit: GetTristateValueFloat(raidBuffs.LeaderOfThePack, 5*CritRatingPerCritChance, 5*CritRatingPerCritChance+20),
-	})
+	if raidBuffs.LeaderOfThePack > 0 || raidBuffs.Rampage {
+		character.AddStats(stats.Stats{
+			stats.MeleeCrit: 5 * CritRatingPerCritChance,
+		})
+		if raidBuffs.LeaderOfThePack == proto.TristateEffect_TristateEffectImproved {
+			// TODO: healing aura from imp LotP
+		}
+	}
 
 	if raidBuffs.TrueshotAura || raidBuffs.AbominationsMight || raidBuffs.UnleashedRage {
 		// Increases AP by 10%
@@ -64,23 +76,32 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		})
 	}
 
-	// character.AddStats(stats.Stats{
-	// 	stats.Stamina: GetTristateValueFloat(partyBuffs.BloodPact, 70, 91),
-	// })
+	if raidBuffs.BloodPact > 0 || raidBuffs.CommandingShout > 0 {
+		health := GetTristateValueFloat(raidBuffs.BloodPact, 1330, 1330*1.3)
+		health2 := GetTristateValueFloat(raidBuffs.CommandingShout, 2255, 2255*1.25)
+		character.AddStat(stats.Health, MaxFloat(health, health2))
+	}
+
 	character.AddStats(stats.Stats{
-		stats.Stamina: GetTristateValueFloat(raidBuffs.PowerWordFortitude, 79, 102),
+		stats.Stamina: GetTristateValueFloat(raidBuffs.PowerWordFortitude, 165, 165*1.3),
 	})
 	if raidBuffs.ShadowProtection {
 		character.AddStats(stats.Stats{
 			stats.ShadowResistance: 70,
 		})
 	}
-	if raidBuffs.DivineSpirit {
+	if raidBuffs.DivineSpirit || raidBuffs.FelIntelligence {
+		v := 64.0
+		if raidBuffs.DivineSpirit {
+			v = 80.0
+		}
 		character.AddStats(stats.Stats{
-			stats.Spirit: 80,
+			stats.Spirit: v,
 		})
 	}
 
+	// TODO: any way to validate that this is not a raid sim?
+	// TODO: convert this to a real mana replenishment aura we can use in raid sim.
 	if individualBuffs.Replenishment {
 		character.AddStatDependency(stats.StatDependency{
 			SourceStat:   stats.Mana,
@@ -134,43 +155,49 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		RetributionAura(character, 0)
 	}
 
-	if raidBuffs.BattleShout != proto.TristateEffect_TristateEffectMissing {
-		talentMultiplier := GetTristateValueFloat(raidBuffs.BattleShout, 1, 1.25)
-
-		battleShoutAP := 306 * talentMultiplier
+	if raidBuffs.BattleShout > 0 || individualBuffs.BlessingOfMight > 0 {
+		bonusAP := 550 * GetTristateValueFloat(raidBuffs.BattleShout, 1, 1.25)
+		bomAP := 550 * GetTristateValueFloat(individualBuffs.BlessingOfMight, 1, 1.25)
+		if bomAP > bonusAP {
+			bonusAP = bomAP
+		}
 		character.AddStats(stats.Stats{
-			stats.AttackPower: math.Floor(battleShoutAP),
+			stats.AttackPower: math.Floor(bomAP),
 		})
 	}
 	character.AddStats(stats.Stats{
 		stats.Health: GetTristateValueFloat(raidBuffs.CommandingShout, 1080, 1080*1.25),
 	})
 
-	if raidBuffs.TotemOfWrath {
+	if raidBuffs.TotemOfWrath || raidBuffs.DemonicPact > 0 {
+		v := MaxFloat(280, float64(raidBuffs.DemonicPact))
 		character.AddStats(stats.Stats{
-			stats.SpellCrit:    3 * CritRatingPerCritChance,
-			stats.MeleeCrit:    3 * CritRatingPerCritChance,
-			stats.SpellPower:   280,
-			stats.HealingPower: 280,
+			stats.SpellPower:   v,
+			stats.HealingPower: v,
 		})
 	}
 	if raidBuffs.WrathOfAirTotem {
 		character.PseudoStats.CastSpeedMultiplier *= 1.05
 	}
-	if raidBuffs.StrengthOfEarthTotem > 0 {
-		// TODO: Check for Horn of Winter (larger of the two is applied)
-		// Pretty sure we don't need to deal with any flat increases (like from t4)
-		bonus := GetTristateValueFloat(raidBuffs.StrengthOfEarthTotem, 155, 155*1.15)
+	if raidBuffs.StrengthOfEarthTotem > 0 || raidBuffs.HornOfWinter {
+		val := MaxTristate(proto.TristateEffect_TristateEffectRegular, raidBuffs.StrengthOfEarthTotem)
+		bonus := GetTristateValueFloat(val, 155, 155*1.15)
 		character.AddStats(stats.Stats{
 			stats.Strength: bonus,
 			stats.Agility:  bonus,
 		})
 	}
-	character.AddStats(stats.Stats{
-		stats.MP5: GetTristateValueFloat(raidBuffs.ManaSpringTotem, 91, 91*1.2),
-	})
 
-	character.PseudoStats.MeleeSpeedMultiplier *= 1.0 + GetTristateValueFloat(raidBuffs.WindfuryTotem, 0.16, 0.2)
+	if individualBuffs.BlessingOfWisdom > 0 || raidBuffs.ManaSpringTotem > 0 {
+		character.AddStats(stats.Stats{
+			stats.MP5: GetTristateValueFloat(MaxTristate(individualBuffs.BlessingOfWisdom, raidBuffs.ManaSpringTotem), 91, 91*1.2),
+		})
+	}
+
+	if raidBuffs.WindfuryTotem > 0 || raidBuffs.IcyTalons > 0 {
+		val := MaxTristate(raidBuffs.WindfuryTotem, raidBuffs.IcyTalons)
+		character.PseudoStats.MeleeSpeedMultiplier *= GetTristateValueFloat(val, 1.16, 1.2)
+	}
 
 	if raidBuffs.Bloodlust {
 		registerBloodlustCD(agent)
@@ -280,17 +307,6 @@ func SnapshotImprovedStrengthOfEarthTotemAura(character *Character) *Aura {
 
 func SnapshotImprovedWrathOfAirTotemAura(character *Character) *Aura {
 	return character.NewTemporaryStatsAuraWrapped("Wrath of Air Totem Snapshot", ActionID{SpellID: 37212}, stats.Stats{stats.SpellPower: 20}, time.Second*110, func(config *Aura) {
-		config.OnReset = func(aura *Aura, sim *Simulation) {
-			aura.Activate(sim)
-		}
-	})
-}
-
-var SnapshotBattleShoutAuraLabel = "Battle Shout Snapshot"
-
-func SnapshotBattleShoutAura(character *Character, snapshotAp float64, boomingVoiceRank int32) *Aura {
-	shoutDuration := time.Duration(float64(time.Minute*2)*(1+0.1*float64(boomingVoiceRank))) - time.Second*10
-	return character.NewTemporaryStatsAuraWrapped(SnapshotBattleShoutAuraLabel, ActionID{SpellID: 2048, Tag: 1}, stats.Stats{stats.AttackPower: snapshotAp}, shoutDuration, func(config *Aura) {
 		config.OnReset = func(aura *Aura, sim *Simulation) {
 			aura.Activate(sim)
 		}

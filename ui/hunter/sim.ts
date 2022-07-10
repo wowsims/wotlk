@@ -22,7 +22,7 @@ import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
 import { GuardianElixir } from '/wotlk/core/proto/common.js';
 import { Conjured } from '/wotlk/core/proto/common.js';
-import { Drums } from '/wotlk/core/proto/common.js';
+
 import { PetFood } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
@@ -100,27 +100,25 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				raidBuffs: RaidBuffs.create({
 					arcaneBrilliance: true,
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
-				}),
-				partyBuffs: PartyBuffs.create({
-					bloodlust: 1,
+					bloodlust: true,
 					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
 					windfuryTotem: TristateEffect.TristateEffectImproved,
 					battleShout: TristateEffect.TristateEffectImproved,
 					leaderOfThePack: TristateEffect.TristateEffectImproved,
 				}),
+				partyBuffs: PartyBuffs.create({
+				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
 					blessingOfWisdom: 2,
 					blessingOfMight: 2,
-					blessingOfSalvation: true,
 				}),
 				debuffs: Debuffs.create({
 					sunderArmor: true,
-					curseOfWeakness: true,
+					curseOfWeakness: TristateEffect.TristateEffectRegular,
 					faerieFire: TristateEffect.TristateEffectImproved,
-					improvedSealOfTheCrusader: true,
 					judgementOfWisdom: true,
-					curseOfElements: TristateEffect.TristateEffectRegular,
+					curseOfElements: true,
 				}),
 			},
 
@@ -133,31 +131,27 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				IconInputs.ArcaneBrilliance,
 				IconInputs.DivineSpirit,
 				IconInputs.GiftOfTheWild,
-			],
-			partyBuffInputs: [
-				IconInputs.DrumsOfBattleBuff,
 				IconInputs.Bloodlust,
-
 				IconInputs.WindfuryTotem,
 				IconInputs.StrengthOfEarthTotem,
 				IconInputs.ManaSpringTotem,
 				IconInputs.BattleShout,
-				IconInputs.HeroicPresence,
 				IconInputs.LeaderOfThePack,
 				IconInputs.TrueshotAura,
+				IconInputs.UnleashedRage,
+			],
+			partyBuffInputs: [
+				IconInputs.HeroicPresence,
 				IconInputs.BraidedEterniumChain,
 			],
 			playerBuffInputs: [
 				IconInputs.BlessingOfKings,
 				IconInputs.BlessingOfWisdom,
 				IconInputs.BlessingOfMight,
-				IconInputs.BlessingOfSalvation,
-				IconInputs.UnleashedRage,
 			],
 			// IconInputs to include in the 'Debuffs' section on the settings tab.
 			debuffInputs: [
 				IconInputs.BloodFrenzy,
-				IconInputs.ImprovedSealOfTheCrusader,
 				IconInputs.JudgementOfWisdom,
 				IconInputs.HuntersMark,
 				IconInputs.FaerieFire,
@@ -225,10 +219,6 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 					HunterInputs.SniperTrainingUptime,
 					HunterInputs.LatencyMs,
 					OtherInputs.PrepopPotion,
-					OtherInputs.ExposeWeaknessUptime,
-					OtherInputs.ExposeWeaknessHunterAgility,
-					OtherInputs.SnapshotBsSolarianSapphire,
-					OtherInputs.SnapshotBsT2,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],
