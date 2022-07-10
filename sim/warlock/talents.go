@@ -82,12 +82,15 @@ func (warlock *Warlock) ApplyTalents() {
 	// 	stats.SpellCrit: float64(warlock.Talents.DemonicTactics) * 1 * core.CritRatingPerCritChance,
 	// })
 
-
-	warlock.setupNightfall()
+	if warlock.Talents.Nightfall > 0 {
+		warlock.setupNightfall()
+	}
 
 	if warlock.Talents.ShadowEmbrace > 0 {
 		warlock.ShadowEmbraceAura = ShadowEmbraceAura(warlock)
 	}
+
+	
 }
 
 func ShadowEmbraceAura(warlock *Warlock) *core.Aura {
@@ -105,10 +108,6 @@ func ShadowEmbraceAura(warlock *Warlock) *core.Aura {
 
 
 func (warlock *Warlock) setupNightfall() {
-	if warlock.Talents.Nightfall == 0 {
-		return
-	}
-
 	warlock.NightfallProcAura = warlock.RegisterAura(core.Aura{
 		Label:    "Nightfall Shadow Trance",
 		ActionID: core.ActionID{SpellID: 17941},

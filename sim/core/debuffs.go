@@ -251,10 +251,10 @@ func CurseOfElementsAura(target *Unit) *Aura {
 func ImprovedShadowBoltAura(target *Unit) *Aura {
 	bonusSpellCrit := 5.0 * CritRatingPerCritChance
 	config := Aura{
-		Label:    "ImprovedShadowBolt",
-		Tag:      "ImprovedShadowBolt",
-		ActionID: ActionID{SpellID: 17803},
-		Duration: time.Second * 30,
+		Label:     "ImprovedShadowBolt",
+		Tag:       "ImprovedShadowBolt",
+		ActionID:  ActionID{SpellID: 17800},
+		Duration:  time.Second * 30,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.BonusCritRating += bonusSpellCrit
 		},
@@ -262,18 +262,6 @@ func ImprovedShadowBoltAura(target *Unit) *Aura {
 			aura.Unit.PseudoStats.BonusCritRating -= bonusSpellCrit
 		},
 	}
-
-	//	if uptime == 0 {
-	//		config.OnSpellHitTaken = func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
-	//			if spell.SpellSchool != SpellSchoolShadow {
-	//				return
-	//			}
-	//			if !spellEffect.Landed() || spellEffect.Damage == 0 || !spellEffect.ProcMask.Matches(ProcMaskSpellDamage) {
-	//				return
-	//			}
-	//			aura.RemoveStack(sim)
-	//		}
-	//	}
 
 	return target.GetOrRegisterAura(config)
 }
