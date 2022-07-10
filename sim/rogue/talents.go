@@ -9,42 +9,25 @@ import (
 )
 
 func (rogue *Rogue) ApplyTalents() {
-	// TODO: Last few talents in the sub tree.
 
 	rogue.applyMurder()
 	rogue.applySealFate()
 	rogue.applyWeaponSpecializations()
 	rogue.applyCombatPotency()
 
-	rogue.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*1*float64(rogue.Talents.LightningReflexes))
-	rogue.AddStat(stats.Parry, core.ParryRatingPerParryChance*1*float64(rogue.Talents.Deflection))
+	rogue.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*2*float64(rogue.Talents.LightningReflexes))
+	rogue.AddStat(stats.MeleeHaste, core.HasteRatingPerHastePercent*[]float64{0, 3, 6, 10}[rogue.Talents.LightningReflexes])
+	rogue.AddStat(stats.Parry, core.ParryRatingPerParryChance*2*float64(rogue.Talents.Deflection))
 	rogue.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*1*float64(rogue.Talents.Malice))
 	rogue.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*1*float64(rogue.Talents.Precision))
-	rogue.AddStat(stats.Expertise, core.ExpertisePerQuarterPercentReduction*5*float64(rogue.Talents.WeaponExpertise))
-	rogue.AddStat(stats.ArmorPenetration, 186*float64(rogue.Talents.SerratedBlades))
+	rogue.AddStat(stats.Expertise, core.ExpertiseRatingPerExpertise*5*float64(rogue.Talents.WeaponExpertise))
+	rogue.AddStat(stats.ArmorPenetration, core.ArmorPenPerPercentArmor*3*float64(rogue.Talents.SerratedBlades))
 
 	if rogue.Talents.DualWieldSpecialization > 0 {
 		rogue.AutoAttacks.OHEffect.BaseDamage.Calculator = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, 1+0.1*float64(rogue.Talents.DualWieldSpecialization), true)
 	}
 
-	if rogue.Talents.Vitality > 0 {
-		agiBonus := 1 + 0.01*float64(rogue.Talents.Vitality)
-		rogue.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Agility,
-			ModifiedStat: stats.Agility,
-			Modifier: func(agility float64, _ float64) float64 {
-				return agility * agiBonus
-			},
-		})
-		stamBonus := 1 + 0.02*float64(rogue.Talents.Vitality)
-		rogue.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Stamina,
-			ModifiedStat: stats.Stamina,
-			Modifier: func(stamina float64, _ float64) float64 {
-				return stamina * stamBonus
-			},
-		})
-	}
+	rogue.EnergyTickMultiplier *= (1 + []float64{0, 0.08, 0.16, 0.25}[rogue.Talents.Vitality])
 
 	if rogue.Talents.Deadliness > 0 {
 		apBonus := 1 + 0.02*float64(rogue.Talents.Deadliness)
@@ -67,6 +50,8 @@ func (rogue *Rogue) ApplyTalents() {
 			},
 		})
 	}
+
+	rogue.PseudoStats.AgentReserved1DamageDealtMultiplier *= (1 + float64(rogue.Talents.FindWeakness)*0.02)
 
 	rogue.registerColdBloodCD()
 	rogue.registerBladeFlurryCD()
