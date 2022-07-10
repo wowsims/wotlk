@@ -1,6 +1,8 @@
 package deathknight
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -39,43 +41,43 @@ func (deathKnight *DeathKnight) Initialize() {
 }
 
 func (deathKnight *DeathKnight) registerIcyTouchSpell() {
-	//baseCost := 10.0
+	baseCost := 10.0
 
-	//deathKnight.IcyTouch = deathKnight.RegisterSpell(core.SpellConfig{
-	//	ActionID:    core.ActionID{SpellID: 59131},
-	//	SpellSchool: core.SpellSchoolFrost,
-	//
-	//	ResourceType: stats.RuneSystem,
-	//	BaseCost:     baseCost,
-	//
-	//	Cast: core.CastConfig{
-	//		DefaultCast: core.Cast{
-	//			Cost: baseCost,
-	//			GCD:  core.GCDDefault,
-	//		},
-	//		CD: core.Cooldown{
-	//			Timer:    deathKnight.NewTimer(),
-	//			Duration: time.Second * 6,
-	//		},
-	//	},
-	//
-	//	ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-	//		ProcMask: core.ProcMaskSpellDamage,
-	//
-	//		DamageMultiplier: 1.0,
-	//
-	//		ThreatMultiplier: 7.0,
-	//
-	//		BaseDamage:     core.BaseDamageConfigMagic(217, 235, 0.2),
-	//		OutcomeApplier: deathKnight.OutcomeFuncMagicHitAndCrit(deathKnight.DefaultSpellCritMultiplier()),
-	//
-	//		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-	//			if spellEffect.Landed() {
-	//				deathKnight.frostRunesBar.SpendRune(sim, spell.RuneSystemMetrics())
-	//			}
-	//		},
-	//	}),
-	//})
+	deathKnight.IcyTouch = deathKnight.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 59131},
+		SpellSchool: core.SpellSchoolFrost,
+
+		ResourceType: stats.RunicPower,
+		BaseCost:     baseCost,
+
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				Cost: baseCost,
+				GCD:  core.GCDDefault,
+			},
+			CD: core.Cooldown{
+				Timer:    deathKnight.NewTimer(),
+				Duration: time.Second * 6.0,
+			},
+		},
+
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+			ProcMask: core.ProcMaskSpellDamage,
+
+			DamageMultiplier: 1.0,
+
+			ThreatMultiplier: 7.0,
+
+			BaseDamage:     core.BaseDamageConfigMagic(217, 235, 0.2),
+			OutcomeApplier: deathKnight.OutcomeFuncMagicHitAndCrit(deathKnight.DefaultSpellCritMultiplier()),
+
+			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if spellEffect.Landed() {
+					deathKnight.SpendFrostRune(sim, spell.FrostRuneMetrics())
+				}
+			},
+		}),
+	})
 }
 
 func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {

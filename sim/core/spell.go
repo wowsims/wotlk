@@ -205,7 +205,7 @@ func (spell *Spell) FrostRuneMetrics() *ResourceMetrics {
 	if spell.frostRuneMetrics == nil {
 		spell.frostRuneMetrics = spell.Unit.NewFrostRuneMetrics(spell.ActionID)
 	}
-	return spell.bloodRuneMetrics
+	return spell.frostRuneMetrics
 }
 
 func (spell *Spell) UnholyRuneMetrics() *ResourceMetrics {
