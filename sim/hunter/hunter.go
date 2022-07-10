@@ -105,6 +105,13 @@ func (hunter *Hunter) GetCharacter() *core.Character {
 	return &hunter.Character
 }
 
+func (hunter *Hunter) HasMajorGlyph(glyph proto.HunterMajorGlyph) bool {
+	return hunter.HasGlyph(int32(glyph))
+}
+func (hunter *Hunter) HasMinorGlyph(glyph proto.HunterMinorGlyph) bool {
+	return hunter.HasGlyph(int32(glyph))
+}
+
 func (hunter *Hunter) GetHunter() *Hunter {
 	return hunter
 }
@@ -160,7 +167,7 @@ func (hunter *Hunter) Reset(sim *core.Simulation) {
 	hunter.manaSpentPerSecondAtFirstAspectSwap = 0
 	hunter.permaHawk = false
 
-	huntersMarkAura := core.HuntersMarkAura(hunter.CurrentTarget, hunter.Talents.ImprovedHuntersMark, false)
+	huntersMarkAura := core.HuntersMarkAura(hunter.CurrentTarget, hunter.Talents.ImprovedHuntersMark, hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfHuntersMark))
 	huntersMarkAura.Activate(sim)
 
 	if sim.Log != nil && !hunter.Rotation.LazyRotation {

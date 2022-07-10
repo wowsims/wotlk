@@ -105,7 +105,7 @@ enum HunterMajorGlyph {
 	GlyphOfExplosiveTrap = 45733;
 	GlyphOfFreezingTrap = 42905;
 	GlyphOfFrostTrap = 42906;
-	GlyphOfHunterSMark = 42907;
+	GlyphOfHuntersMark = 42907;
 	GlyphOfImmolationTrap = 42908;
 	GlyphOfKillShot = 45732;
 	GlyphOfMending = 42900;

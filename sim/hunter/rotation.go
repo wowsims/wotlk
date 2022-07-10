@@ -17,12 +17,6 @@ const (
 )
 
 func (hunter *Hunter) OnManaTick(sim *core.Simulation) {
-	if hunter.currentAspect == hunter.AspectOfTheViperAura {
-		bonusPer3Seconds := 0.04 * hunter.MaxMana()
-		manaGain := bonusPer3Seconds * 2 / 3
-		hunter.AddMana(sim, manaGain, hunter.AspectOfTheViper.ResourceMetrics, false)
-	}
-
 	if hunter.IsWaitingForMana() && hunter.DoneWaitingForMana(sim) {
 		if hunter.nextAction == OptionNone && hunter.Hardcast.Expires <= sim.CurrentTime {
 			hunter.rotation(sim, false)
