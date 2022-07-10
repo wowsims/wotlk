@@ -587,7 +587,9 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		configureIconSection(
 			buffsSection,
 			[
-				this.individualConfig.raidBuffInputs.map(iconInput => new IndividualSimIconPicker(buffsSection, this.sim.raid, iconInput, this)),
+				this.individualConfig.raidBuffInputs
+						.concat([IconInputs.FerociousInspiration])
+						.map(iconInput => new IndividualSimIconPicker(buffsSection, this.sim.raid, iconInput, this)),
 				this.individualConfig.playerBuffInputs.map(iconInput => new IndividualSimIconPicker(buffsSection, this.player, iconInput, this)),
 				this.individualConfig.partyBuffInputs.map(iconInput => new IndividualSimIconPicker(buffsSection, this.player.getParty()!, iconInput, this)),
 			].flat(),

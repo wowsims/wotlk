@@ -53,7 +53,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		})
 	}
 
-	if raidBuffs.FerociousInspiration || raidBuffs.SanctifiedRetribution || raidBuffs.ArcaneEmpowerment {
+	if raidBuffs.ArcaneEmpowerment || raidBuffs.FerociousInspiration || raidBuffs.SanctifiedRetribution {
 		character.PseudoStats.DamageDealtMultiplier *= 1.03
 	}
 
@@ -294,25 +294,6 @@ func SnapshotBattleShoutAura(character *Character, snapshotAp float64, boomingVo
 		config.OnReset = func(aura *Aura, sim *Simulation) {
 			aura.Activate(sim)
 		}
-	})
-}
-
-func SanctityAura(character *Character, level float64) *Aura {
-	return character.GetOrRegisterAura(Aura{
-		Label:    "Sanctity Aura",
-		ActionID: ActionID{SpellID: 31870},
-		Duration: NeverExpires,
-		OnReset: func(aura *Aura, sim *Simulation) {
-			aura.Activate(sim)
-		},
-		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.HolyDamageDealtMultiplier *= 1.1
-			aura.Unit.PseudoStats.DamageDealtMultiplier *= 1 + 0.01*level
-		},
-		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.HolyDamageDealtMultiplier /= 1.1
-			aura.Unit.PseudoStats.DamageDealtMultiplier /= 1 + 0.01*level
-		},
 	})
 }
 

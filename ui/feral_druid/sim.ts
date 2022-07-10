@@ -126,7 +126,6 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
 					battleShout: TristateEffect.TristateEffectImproved,
 					snapshotBsSolarianSapphire: true,
-					sanctityAura: TristateEffect.TristateEffectImproved,
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
@@ -166,8 +165,6 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 				IconInputs.BattleShout,
 				IconInputs.BraidedEterniumChain,
 				IconInputs.HeroicPresence,
-				IconInputs.FerociousInspiration,
-				IconInputs.SanctityAura,
 				IconInputs.TrueshotAura,
 			],
 			playerBuffInputs: [

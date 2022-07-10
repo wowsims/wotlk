@@ -74,6 +74,10 @@ func (paladin *Paladin) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	raidBuffs.RetributionAura = core.MaxTristate(raidBuffs.RetributionAura, core.MakeTristateValue(
 		paladin.PaladinAura == proto.PaladinAura_RetributionAura,
 		paladin.Talents.ImprovedRetributionAura == 2))
+
+	//if paladin.Talents.SanctifiedRetribution {
+	//	raidBuffs.SanctifiedRetribution = true
+	//}
 }
 
 func (paladin *Paladin) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {

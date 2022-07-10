@@ -144,9 +144,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				IconInputs.BattleShout,
 				IconInputs.HeroicPresence,
 				IconInputs.LeaderOfThePack,
-				IconInputs.FerociousInspiration,
 				IconInputs.TrueshotAura,
-				IconInputs.SanctityAura,
 				IconInputs.BraidedEterniumChain,
 			],
 			playerBuffInputs: [
