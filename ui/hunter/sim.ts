@@ -115,7 +115,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				}),
 				debuffs: Debuffs.create({
 					sunderArmor: true,
-					curseOfWeakness: true,
+					curseOfWeakness: TristateEffect.TristateEffectRegular,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					judgementOfWisdom: true,
 					curseOfElements: true,
@@ -216,6 +216,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 					HunterInputs.PetTypeInput,
 					HunterInputs.PetUptime,
 					HunterInputs.PetSingleAbility,
+					HunterInputs.SniperTrainingUptime,
 					HunterInputs.LatencyMs,
 					OtherInputs.PrepopPotion,
 					OtherInputs.TankAssignment,

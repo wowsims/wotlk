@@ -559,7 +559,7 @@ message Debuffs {
 
 	TristateEffect expose_armor = 17;
 	bool sunder_armor = 18;
-	bool curse_of_weakness = 19;
+	TristateEffect curse_of_weakness = 19;
 
 	TristateEffect hunters_mark = 20;
 

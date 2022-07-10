@@ -691,8 +691,13 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-ThunderheartHarness"
  value: {
+<<<<<<< HEAD
   dps: 351.9155567206822
   tps: 276.5668095905241
+=======
+  dps: 396.81216016193616
+  tps: 319.2076294916177
+>>>>>>> origin/master
  }
 }
 dps_results: {

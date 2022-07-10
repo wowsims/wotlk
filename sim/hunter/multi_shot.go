@@ -8,13 +8,15 @@ import (
 )
 
 func (hunter *Hunter) registerMultiShotSpell() {
-	baseCost := 275.0
+	baseCost := 0.09 * hunter.BaseMana
 
 	baseEffect := core.SpellEffect{
 		ProcMask: core.ProcMaskRangedSpecial,
 
-		BonusCritRating:  float64(hunter.Talents.ImprovedBarrage) * 4 * core.CritRatingPerCritChance,
-		DamageMultiplier: 1 + 0.04*float64(hunter.Talents.Barrage),
+		BonusCritRating: 4 * core.CritRatingPerCritChance * float64(hunter.Talents.ImprovedBarrage),
+		DamageMultiplier: 1 *
+			(1 + 0.04*float64(hunter.Talents.Barrage)) *
+			(1 + 0.01*float64(hunter.Talents.MarkedForDeath)),
 		ThreatMultiplier: 1,
 
 		BaseDamage: hunter.talonOfAlarDamageMod(core.BaseDamageConfig{
@@ -23,11 +25,11 @@ func (hunter *Hunter) registerMultiShotSpell() {
 					hunter.AutoAttacks.Ranged.BaseDamage(sim) +
 					hunter.AmmoDamageBonus +
 					hitEffect.BonusWeaponDamage(spell.Unit) +
-					205
+					408
 			},
 			TargetSpellCoefficient: 1,
 		}),
-		OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, hunter.CurrentTarget)),
+		OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, false, hunter.CurrentTarget)),
 
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			hunter.rotation(sim, false)
@@ -42,7 +44,7 @@ func (hunter *Hunter) registerMultiShotSpell() {
 	}
 
 	hunter.MultiShot = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 27021},
+		ActionID:    core.ActionID{SpellID: 49048},
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 
@@ -52,7 +54,7 @@ func (hunter *Hunter) registerMultiShotSpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost *
-					(1 - 0.02*float64(hunter.Talents.Efficiency)) *
+					(1 - 0.03*float64(hunter.Talents.Efficiency)) *
 					core.TernaryFloat64(ItemSetDemonStalker.CharacterHasSetBonus(&hunter.Character, 4), 0.9, 1),
 
 				GCD:      core.GCDDefault + hunter.latency,

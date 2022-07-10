@@ -246,10 +246,12 @@ message Hunter {
 
 		int32 latency_ms = 6;
 
+		double sniper_training_uptime = 7;
+
 		// For internal use only.
 		// Used for hunter presims to avoid artifacts caused by randomness when
 		// calculating average ability damage from a low sample size.
-		bool remove_randomness = 7;
+		bool remove_randomness = 8;
 	}
 	Options options = 3;
 }

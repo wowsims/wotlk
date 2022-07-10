@@ -8,7 +8,7 @@ import (
 func (hunter *Hunter) registerScorpidStingSpell() {
 	hunter.ScorpidStingAura = core.ScorpidStingAura(hunter.CurrentTarget)
 
-	baseCost := hunter.BaseMana * 0.09
+	baseCost := 0.09 * hunter.BaseMana
 
 	hunter.ScorpidSting = hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 3043},
@@ -19,7 +19,7 @@ func (hunter *Hunter) registerScorpidStingSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.02*float64(hunter.Talents.Efficiency)),
+				Cost: baseCost * (1 - 0.03*float64(hunter.Talents.Efficiency)),
 				GCD:  core.GCDDefault,
 			},
 			IgnoreHaste: true, // Hunter GCD is locked at 1.5s

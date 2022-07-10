@@ -81,7 +81,7 @@ var FullDebuffs = &proto.Debuffs{
 	BloodFrenzy:       true,
 	ExposeArmor:       proto.TristateEffect_TristateEffectImproved,
 	FaerieFire:        proto.TristateEffect_TristateEffectImproved,
-	CurseOfWeakness:   true,
+	CurseOfWeakness:   proto.TristateEffect_TristateEffectImproved,
 	HuntersMark:       proto.TristateEffect_TristateEffectImproved,
 }
 

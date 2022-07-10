@@ -65,8 +65,8 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 		})
 	}
 
-	if debuffs.CurseOfWeakness {
-		MakePermanent(CurseOfWeaknessAura(target))
+	if debuffs.CurseOfWeakness != proto.TristateEffect_TristateEffectMissing {
+		MakePermanent(CurseOfWeaknessAura(target, 2))
 	}
 
 	if debuffs.SunderArmor {
@@ -173,7 +173,7 @@ func JudgementOfWisdomAura(target *Unit) *Aura {
 				unit.AddMana(sim, unit.BaseMana*0.02, unit.JowManaMetrics, false)
 			}
 
-			if spell.ActionID.SpellID == 35395 {
+			if spell.ActionID.SpellID == 35395 { // Crusader strike
 				aura.Refresh(sim)
 			}
 		},
@@ -227,7 +227,7 @@ func JudgementOfTheCrusaderAura(target *Unit, level int32, flatBonus float64, pe
 	})
 }
 
-const spelldmgtag = "spelldamage13percent"
+const spelldmgtag = `13%dmg`
 
 func CurseOfElementsAura(target *Unit) *Aura {
 	multiplier := 1.13
@@ -302,7 +302,7 @@ func ImprovedShadowBoltAura(target *Unit) *Aura {
 	config := Aura{
 		Label:    "ImprovedShadowBolt",
 		Tag:      "ImprovedShadowBolt",
-		ActionID: ActionID{SpellID: 17803},
+		ActionID: ActionID{SpellID: 17800},
 		Duration: time.Second * 30,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.BonusCritRating += bonusSpellCrit
@@ -311,18 +311,6 @@ func ImprovedShadowBoltAura(target *Unit) *Aura {
 			aura.Unit.PseudoStats.BonusCritRating -= bonusSpellCrit
 		},
 	}
-
-	//	if uptime == 0 {
-	//		config.OnSpellHitTaken = func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
-	//			if spell.SpellSchool != SpellSchoolShadow {
-	//				return
-	//			}
-	//			if !spellEffect.Landed() || spellEffect.Damage == 0 || !spellEffect.ProcMask.Matches(ProcMaskSpellDamage) {
-	//				return
-	//			}
-	//			aura.RemoveStack(sim)
-	//		}
-	//	}
 
 	return target.GetOrRegisterAura(config)
 }
@@ -501,14 +489,14 @@ func ExposeArmorAura(target *Unit, hasGlyph bool) *Aura {
 	})
 }
 
-func CurseOfWeaknessAura(target *Unit) *Aura {
+func CurseOfWeaknessAura(target *Unit, points int32) *Aura {
 	bonus := stats.Stats{stats.AttackPower: -478}
 	armorReduction := 0.05
 
 	return target.GetOrRegisterAura(Aura{
 		Label:    "Curse of Weakness",
 		Tag:      MinorArmorReductionAuraTag,
-		ActionID: ActionID{SpellID: 27226}, // TODO: Fix spell id
+		ActionID: ActionID{SpellID: 50511},
 		Duration: time.Minute * 2,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.AddStatsDynamic(sim, bonus)
