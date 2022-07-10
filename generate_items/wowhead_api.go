@@ -515,13 +515,13 @@ func (item WowheadItemResponse) GetSocketBonus() Stats {
 
 var gemSocketColorPatterns = map[proto.GemColor]*regexp.Regexp{
 	proto.GemColor_GemColorMeta:      regexp.MustCompile("Only fits in a meta gem slot\\."),
-	proto.GemColor_GemColorBlue:      regexp.MustCompile("Matches a Blue Socket\\."),
-	proto.GemColor_GemColorRed:       regexp.MustCompile("Matches a Red Socket\\."),
-	proto.GemColor_GemColorYellow:    regexp.MustCompile("Matches a Yellow Socket\\."),
-	proto.GemColor_GemColorOrange:    regexp.MustCompile("Matches a ((Yellow)|(Red)) or ((Yellow)|(Red)) Socket\\."),
-	proto.GemColor_GemColorPurple:    regexp.MustCompile("Matches a ((Blue)|(Red)) or ((Blue)|(Red)) Socket\\."),
-	proto.GemColor_GemColorGreen:     regexp.MustCompile("Matches a ((Yellow)|(Blue)) or ((Yellow)|(Blue)) Socket\\."),
-	proto.GemColor_GemColorPrismatic: regexp.MustCompile("Matches a Red, Yellow or Blue Socket\\."),
+	proto.GemColor_GemColorBlue:      regexp.MustCompile("Matches a Blue (S|s)ocket\\."),
+	proto.GemColor_GemColorRed:       regexp.MustCompile("Matches a Red (S|s)ocket\\."),
+	proto.GemColor_GemColorYellow:    regexp.MustCompile("Matches a Yellow (S|s)ocket\\."),
+	proto.GemColor_GemColorOrange:    regexp.MustCompile("Matches a ((Yellow)|(Red)) or ((Yellow)|(Red)) (S|s)ocket\\."),
+	proto.GemColor_GemColorPurple:    regexp.MustCompile("Matches a ((Blue)|(Red)) or ((Blue)|(Red)) (S|s)ocket\\."),
+	proto.GemColor_GemColorGreen:     regexp.MustCompile("Matches a ((Yellow)|(Blue)) or ((Yellow)|(Blue)) (S|s)ocket\\."),
+	proto.GemColor_GemColorPrismatic: regexp.MustCompile("Matches a Red, Yellow or Blue (S|s)ocket\\."),
 }
 
 func (item WowheadItemResponse) GetSocketColor() proto.GemColor {

@@ -31,11 +31,9 @@ var StandardTalents = &proto.DruidTalents{
 var FullRaidBuffs = &proto.RaidBuffs{
 	ArcaneBrilliance: true,
 	GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
+	MoonkinAura:      proto.TristateEffect_TristateEffectImproved,
 }
-var FullPartyBuffs = &proto.PartyBuffs{
-	MoonkinAura: proto.TristateEffect_TristateEffectRegular,
-	Drums:       proto.Drums_DrumsOfBattle,
-}
+var FullPartyBuffs = &proto.PartyBuffs{}
 var FullIndividualBuffs = &proto.IndividualBuffs{
 	BlessingOfKings:  true,
 	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,

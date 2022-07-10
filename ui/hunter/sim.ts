@@ -22,7 +22,7 @@ import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
 import { GuardianElixir } from '/wotlk/core/proto/common.js';
 import { Conjured } from '/wotlk/core/proto/common.js';
-import { Drums } from '/wotlk/core/proto/common.js';
+
 import { PetFood } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
@@ -75,7 +75,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P1_BM_PRESET.gear,
+				gear: Presets.P1_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatIntellect]: 0.01,
@@ -100,25 +100,23 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				raidBuffs: RaidBuffs.create({
 					arcaneBrilliance: true,
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
-				}),
-				partyBuffs: PartyBuffs.create({
-					bloodlust: 1,
+					bloodlust: true,
 					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
 					windfuryTotem: TristateEffect.TristateEffectImproved,
 					battleShout: TristateEffect.TristateEffectImproved,
 					leaderOfThePack: TristateEffect.TristateEffectImproved,
 				}),
+				partyBuffs: PartyBuffs.create({
+				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
 					blessingOfWisdom: 2,
 					blessingOfMight: 2,
-					blessingOfSalvation: true,
 				}),
 				debuffs: Debuffs.create({
 					sunderArmor: true,
 					curseOfWeakness: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
-					improvedSealOfTheCrusader: true,
 					judgementOfWisdom: true,
 					curseOfElements: TristateEffect.TristateEffectRegular,
 				}),
@@ -126,7 +124,6 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 
 			// IconInputs to include in the 'Self Buffs' section on the settings tab.
 			selfBuffInputs: [
-				HunterInputs.Quiver,
 				HunterInputs.WeaponAmmo,
 			],
 			// IconInputs to include in the 'Other Buffs' section on the settings tab.
@@ -134,33 +131,27 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				IconInputs.ArcaneBrilliance,
 				IconInputs.DivineSpirit,
 				IconInputs.GiftOfTheWild,
-			],
-			partyBuffInputs: [
-				IconInputs.DrumsOfBattleBuff,
 				IconInputs.Bloodlust,
-
 				IconInputs.WindfuryTotem,
 				IconInputs.StrengthOfEarthTotem,
 				IconInputs.ManaSpringTotem,
 				IconInputs.BattleShout,
-				IconInputs.HeroicPresence,
 				IconInputs.LeaderOfThePack,
-				IconInputs.FerociousInspiration,
 				IconInputs.TrueshotAura,
-				IconInputs.SanctityAura,
+				IconInputs.UnleashedRage,
+			],
+			partyBuffInputs: [
+				IconInputs.HeroicPresence,
 				IconInputs.BraidedEterniumChain,
 			],
 			playerBuffInputs: [
 				IconInputs.BlessingOfKings,
 				IconInputs.BlessingOfWisdom,
 				IconInputs.BlessingOfMight,
-				IconInputs.BlessingOfSalvation,
-				IconInputs.UnleashedRage,
 			],
 			// IconInputs to include in the 'Debuffs' section on the settings tab.
 			debuffInputs: [
 				IconInputs.BloodFrenzy,
-				IconInputs.ImprovedSealOfTheCrusader,
 				IconInputs.JudgementOfWisdom,
 				IconInputs.HuntersMark,
 				IconInputs.FaerieFire,
@@ -227,10 +218,6 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 					HunterInputs.PetSingleAbility,
 					HunterInputs.LatencyMs,
 					OtherInputs.PrepopPotion,
-					OtherInputs.ExposeWeaknessUptime,
-					OtherInputs.ExposeWeaknessHunterAgility,
-					OtherInputs.SnapshotBsSolarianSapphire,
-					OtherInputs.SnapshotBsT2,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],
@@ -257,16 +244,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.P1_BM_PRESET,
-					Presets.P2_BM_PRESET,
-					Presets.P3_BM_PRESET,
-					Presets.P4_BM_PRESET,
-					Presets.P5_BM_PRESET,
-					Presets.P1_SV_PRESET,
-					Presets.P2_SV_PRESET,
-					Presets.P3_SV_PRESET,
-					Presets.P4_SV_PRESET,
-					Presets.P5_SV_PRESET,
+					Presets.P1_PRESET,
 				],
 			},
 		});

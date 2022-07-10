@@ -194,12 +194,8 @@ export class Sim {
 	private makeRaidSimRequest(debug: boolean): RaidSimRequest {
 		const raid = this.getModifiedRaidProto();
 		const encounter = this.encounter.toProto();
-		const hunters = raid.parties.map(party => party.players).flat().filter(player => player.name && playerToSpec(player) == Spec.SpecHunter);
-		if (hunters.some(hunter => (specTypeFunctions[Spec.SpecHunter]!.talentsFromPlayer(hunter) as SpecTalents<Spec.SpecHunter>).exposeWeakness > 0)) {
-			if (raid.debuffs) {
-				raid.debuffs.exposeWeaknessUptime = 0;
-			}
-		}
+
+		// TODO: remove any replenishment from sim request here? probably makes more sense to do it inside the sim to protect against accidents
 
 		return RaidSimRequest.create({
 			raid: raid,

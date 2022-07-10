@@ -14,7 +14,6 @@
   border-radius: 6px;
   margin: 1px;
   flex: 1;
-  max-width: calc(32vh + 8px);
 }
 
 .talent-tree-header {
@@ -43,9 +42,9 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   // grid-template-rows: repeat(9, 1fr); // Set in js
-  background-size: 100% 100%;
   // height: 72vh; // Set in js
-  width: 32vh;
+  // width: 32vh; // Set in js
+  background-size: 100% 100%;
   border-radius: 4px;
 }
 
@@ -54,11 +53,9 @@ $talent-full-color: #ffd100;
 
 .talent-picker-root {
   @include wowhead-background-icon;
-  width: 70%;
-  height: 70%;
   border: 1px solid $talent-partial-color;
   border-radius: 4px;
-  margin: 10px;
+  margin: 15%;
 }
 .talent-picker-root[data-points="0"]:not(.talent-picker-can-add) {
   filter: grayscale(100%);

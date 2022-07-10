@@ -27,22 +27,22 @@ type Warlock struct {
 	*/
 	LifeTap *core.Spell
 
-	CurseOfElements         *core.Spell
-	CurseOfElementsAura     *core.Aura
-	CurseOfWeakness   		*core.Spell
-	CurseOfWeaknessAura 	*core.Aura
-	CurseOfTongues          *core.Spell
-	CurseOfTonguesAura      *core.Aura
-	CurseOfAgony            *core.Spell
-	CurseOfAgonyDot         *core.Dot
-	CurseOfDoom             *core.Spell
-	CurseOfDoomDot          *core.Dot
+	CurseOfElements     *core.Spell
+	CurseOfElementsAura *core.Aura
+	CurseOfWeakness     *core.Spell
+	CurseOfWeaknessAura *core.Aura
+	CurseOfTongues      *core.Spell
+	CurseOfTonguesAura  *core.Aura
+	CurseOfAgony        *core.Spell
+	CurseOfAgonyDot     *core.Dot
+	CurseOfDoom         *core.Spell
+	CurseOfDoomDot      *core.Dot
 
 	Seeds    []*core.Spell
 	SeedDots []*core.Dot
 
-	NightfallProcAura 	    *core.Aura
-	ShadowEmbraceAura 	    *core.Aura
+	NightfallProcAura *core.Aura
+	ShadowEmbraceAura *core.Aura
 
 	Pet *WarlockPet
 
@@ -75,12 +75,12 @@ func (warlock *Warlock) Initialize() {
 }
 
 func (warlock *Warlock) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
+	raidBuffs.BloodPact = core.MaxTristate(raidBuffs.BloodPact, core.MakeTristateValue(
+		warlock.Options.Summon == proto.Warlock_Options_Imp,
+		warlock.Talents.ImprovedImp == 2))
 }
 
 func (warlock *Warlock) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
-	partyBuffs.BloodPact = core.MaxTristate(partyBuffs.BloodPact, core.MakeTristateValue(
-		warlock.Options.Summon == proto.Warlock_Options_Imp,
-		warlock.Talents.ImprovedImp == 2))
 }
 
 func (warlock *Warlock) Reset(sim *core.Simulation) {

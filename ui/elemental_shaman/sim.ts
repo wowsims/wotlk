@@ -83,7 +83,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				let stats = new Stats();
 				stats = stats.addStat(Stat.StatSpellHit, player.getTalents().elementalPrecision * 2 * Mechanics.SPELL_HIT_RATING_PER_HIT_CHANCE);
 				stats = stats.addStat(Stat.StatSpellCrit,
-					player.getTalents().tidalMastery * 1 * Mechanics.SPELL_CRIT_RATING_PER_CRIT_CHANCE + 
+					player.getTalents().tidalMastery * 1 * Mechanics.SPELL_CRIT_RATING_PER_CRIT_CHANCE +
 					player.getTalents().thunderingStrikes * 1 * Mechanics.SPELL_CRIT_RATING_PER_CRIT_CHANCE);
 
 				return {
@@ -122,7 +122,6 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
 					blessingOfWisdom: 2,
-					blessingOfSalvation: true,
 				}),
 				debuffs: Debuffs.create({
 					faerieFire: TristateEffect.TristateEffectImproved,
@@ -140,29 +139,27 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				IconInputs.ArcaneBrilliance,
 				IconInputs.DivineSpirit,
 				IconInputs.GiftOfTheWild,
-			],
-			partyBuffInputs: [
 				IconInputs.MoonkinAura,
 				IconInputs.WrathOfAirTotem,
 				IconInputs.TotemOfWrath,
 				IconInputs.ManaSpringTotem,
+			],
+			partyBuffInputs: [
 				IconInputs.ManaTideTotem,
 				IconInputs.EyeOfTheNight,
 				IconInputs.ChainOfTheTwilightOwl,
-				IconInputs.JadePendantOfBlasting,
 				IconInputs.AtieshWarlock,
 				IconInputs.AtieshMage,
 			],
 			playerBuffInputs: [
 				IconInputs.BlessingOfKings,
 				IconInputs.BlessingOfWisdom,
-				IconInputs.BlessingOfSalvation,
 				IconInputs.Innervate,
 				IconInputs.PowerInfusion,
 			],
 			// IconInputs to include in the 'Debuffs' section on the settings tab.
 			debuffInputs: [
-				IconInputs.ImprovedSealOfTheCrusader,
+
 				IconInputs.Misery,
 				IconInputs.FaerieFire,
 			],

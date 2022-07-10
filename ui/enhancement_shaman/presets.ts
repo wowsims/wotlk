@@ -1,5 +1,5 @@
 import { Consumes } from '/wotlk/core/proto/common.js';
-import { Drums } from '/wotlk/core/proto/common.js';
+
 import { EquipmentSpec } from '/wotlk/core/proto/common.js';
 import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
@@ -56,7 +56,6 @@ export const DefaultOptions = EnhancementShamanOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	drums: Drums.DrumsOfBattle,
 	defaultPotion: Potions.HastePotion,
 	flask: Flask.FlaskOfRelentlessAssault,
 	food: Food.FoodRoastedClefthoof,

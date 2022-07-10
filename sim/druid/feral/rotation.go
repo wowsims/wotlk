@@ -61,7 +61,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) bool {
 	rakeDebuff := cat.RakeDot.IsActive()
 	nextTick := cat.NextEnergyTickAt()
 	shiftCost := cat.CatForm.DefaultCast.Cost
-	omenProc := cat.ClearcastingActive()
+	omenProc := cat.ClearcastingAura.IsActive()
 
 	// 10/6/21 - Added logic to not cast Rip if we're near the end of the
 	// fight.

@@ -22,7 +22,6 @@ import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
 import { GuardianElixir } from '/wotlk/core/proto/common.js';
 import { Conjured } from '/wotlk/core/proto/common.js';
-import { Drums } from '/wotlk/core/proto/common.js';
 import { PetFood } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
@@ -111,16 +110,15 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 					arcaneBrilliance: true,
 					divineSpirit: true,
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
-				}),
-				partyBuffs: PartyBuffs.create({
 					battleShout: TristateEffect.TristateEffectImproved,
 					leaderOfThePack: TristateEffect.TristateEffectImproved,
+				}),
+				partyBuffs: PartyBuffs.create({
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
 					blessingOfWisdom: TristateEffect.TristateEffectImproved,
 					blessingOfMight: TristateEffect.TristateEffectImproved,
-					blessingOfSalvation: true,
 				}),
 				debuffs: Debuffs.create({
 					bloodFrenzy: true,
@@ -129,17 +127,14 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 					curseOfElements: TristateEffect.TristateEffectRegular,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					judgementOfWisdom: true,
-					improvedSealOfTheCrusader: true,
 					misery: true,
 					huntersMark: TristateEffect.TristateEffectImproved,
-					exposeWeaknessUptime: 0.95,
-					exposeWeaknessHunterAgility: 1200,
 				}),
 			},
 
 			// IconInputs to include in the 'Self Buffs' section on the settings tab.
 			selfBuffInputs: [
-				ShamanInputs.IconWaterShield, 
+				ShamanInputs.IconWaterShield,
 				ShamanInputs.IconLightningShield,
 				ShamanInputs.IconBloodlust,
 			],
@@ -147,9 +142,6 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 			raidBuffInputs: [
 				IconInputs.ArcaneBrilliance,
 				IconInputs.GiftOfTheWild,
-			],
-			partyBuffInputs: [
-				IconInputs.DrumsOfBattleBuff,
 				IconInputs.Bloodlust,
 				IconInputs.ManaSpringTotem,
 				IconInputs.WrathOfAirTotem,
@@ -157,9 +149,9 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				IconInputs.BattleShout,
 				IconInputs.LeaderOfThePack,
 				IconInputs.MoonkinAura,
-				IconInputs.FerociousInspiration,
 				IconInputs.TrueshotAura,
-				IconInputs.SanctityAura,
+			],
+			partyBuffInputs: [
 				IconInputs.BraidedEterniumChain,
 				IconInputs.EyeOfTheNight,
 				IconInputs.ChainOfTheTwilightOwl,
@@ -168,12 +160,10 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				IconInputs.BlessingOfKings,
 				IconInputs.BlessingOfWisdom,
 				IconInputs.BlessingOfMight,
-				IconInputs.BlessingOfSalvation,
 			],
 			// IconInputs to include in the 'Debuffs' section on the settings tab.
 			debuffInputs: [
 				IconInputs.BloodFrenzy,
-				IconInputs.ImprovedSealOfTheCrusader,
 				IconInputs.JudgementOfWisdom,
 				IconInputs.HuntersMark,
 				IconInputs.FaerieFire,
@@ -241,10 +231,6 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				inputs: [
 					ShamanInputs.DelayOffhandSwings,
 					OtherInputs.PrepopPotion,
-					OtherInputs.ExposeWeaknessUptime,
-					OtherInputs.ExposeWeaknessHunterAgility,
-					OtherInputs.SnapshotBsSolarianSapphire,
-					OtherInputs.SnapshotBsT2,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],

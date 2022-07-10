@@ -97,7 +97,7 @@ func (shaman *Shaman) newElectricSpellEffect(minBaseDamage float64, maxBaseDamag
 // Shared LB/CL logic that is dynamic, i.e. can't be precomputed.
 func (shaman *Shaman) applyElectricSpellCastInitModifiers(spell *core.Spell, cast *core.Cast) {
 	shaman.modifyCastClearcasting(spell, cast)
-	if shaman.ElementalMasteryAura != nil && shaman.ElementalMasteryAura.IsActive() {
+	if shaman.ElementalMasteryAura.IsActive() {
 		cast.CastTime = 0
 	}
 }

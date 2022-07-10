@@ -46,26 +46,24 @@ var DefaultOptions = &proto.Player_RetributionPaladin{
 }
 
 var FullRaidBuffs = &proto.RaidBuffs{
-	ArcaneBrilliance: true,
-	GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
-	DivineSpirit:     true,
-}
-
-var FullPartyBuffs = &proto.PartyBuffs{
-	Bloodlust:            1,
-	Drums:                proto.Drums_DrumsOfBattle,
-	BraidedEterniumChain: true,
+	ArcaneBrilliance:     true,
+	GiftOfTheWild:        proto.TristateEffect_TristateEffectImproved,
+	DivineSpirit:         true,
+	Bloodlust:            true,
 	ManaSpringTotem:      proto.TristateEffect_TristateEffectRegular,
 	StrengthOfEarthTotem: proto.TristateEffect_TristateEffectImproved,
 	WindfuryTotem:        proto.TristateEffect_TristateEffectImproved,
 	BattleShout:          proto.TristateEffect_TristateEffectImproved,
+	UnleashedRage:        true,
+}
+
+var FullPartyBuffs = &proto.PartyBuffs{
+	BraidedEterniumChain: true,
 }
 
 var FullIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings:     true,
-	BlessingOfMight:     proto.TristateEffect_TristateEffectImproved,
-	BlessingOfSalvation: true,
-	UnleashedRage:       true,
+	BlessingOfKings: true,
+	BlessingOfMight: proto.TristateEffect_TristateEffectImproved,
 }
 
 var FullConsumes = &proto.Consumes{
@@ -77,17 +75,14 @@ var FullConsumes = &proto.Consumes{
 }
 
 var FullDebuffs = &proto.Debuffs{
-	JudgementOfWisdom:           true,
-	Misery:                      true,
-	CurseOfElements:             proto.TristateEffect_TristateEffectImproved,
-	ImprovedShadowBolt:          true,
-	BloodFrenzy:                 true,
-	ExposeArmor:                 proto.TristateEffect_TristateEffectImproved,
-	FaerieFire:                  proto.TristateEffect_TristateEffectImproved,
-	CurseOfWeakness:             true,
-	HuntersMark:                 proto.TristateEffect_TristateEffectImproved,
-	ExposeWeaknessUptime:        1,
-	ExposeWeaknessHunterAgility: 800,
+	JudgementOfWisdom: true,
+	Misery:            true,
+	CurseOfElements:   proto.TristateEffect_TristateEffectImproved,
+	BloodFrenzy:       true,
+	ExposeArmor:       proto.TristateEffect_TristateEffectImproved,
+	FaerieFire:        proto.TristateEffect_TristateEffectImproved,
+	CurseOfWeakness:   true,
+	HuntersMark:       proto.TristateEffect_TristateEffectImproved,
 }
 
 var Phase4Gear = items.EquipmentSpecFromJsonString(`{"items": [

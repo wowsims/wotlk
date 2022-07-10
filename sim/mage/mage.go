@@ -97,6 +97,10 @@ func (mage *Mage) GetMage() *Mage {
 
 func (mage *Mage) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	raidBuffs.ArcaneBrilliance = true
+
+	//if mage.Talents.ArcaneEmpowerment == 3 {
+	//	raidBuffs.ArcaneEmpowerment = true
+	//}
 }
 func (mage *Mage) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }

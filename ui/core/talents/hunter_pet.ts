@@ -81,7 +81,7 @@ export class HunterPetTalentsPicker extends Component {
 		this.rootElem.classList.add(categoryClasses[this.curCategory]);
 
 		const talentsContainer = this.rootElem.getElementsByClassName('pet-talents-container')[0] as HTMLElement;
-		
+
 		const pickers = categoryOrder.map((category, i) => {
 			const talentsConfig = petTalentsConfig[i];
 

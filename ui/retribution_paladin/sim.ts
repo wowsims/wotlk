@@ -16,7 +16,7 @@ import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
 import { GuardianElixir } from '/wotlk/core/proto/common.js';
 import { Conjured } from '/wotlk/core/proto/common.js';
-import { Drums } from '/wotlk/core/proto/common.js';
+
 import { PetFood } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
@@ -106,20 +106,18 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 					arcaneBrilliance: true,
 					divineSpirit: true,
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
-				}),
-				partyBuffs: PartyBuffs.create({
-					bloodlust: 1,
-					drums: Drums.DrumsOfBattle,
+					bloodlust: true,
 					manaSpringTotem: TristateEffect.TristateEffectRegular,
 					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
 					windfuryTotem: TristateEffect.TristateEffectImproved,
 					battleShout: TristateEffect.TristateEffectImproved,
+					unleashedRage: true,
+				}),
+				partyBuffs: PartyBuffs.create({
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
 					blessingOfMight: TristateEffect.TristateEffectImproved,
-					blessingOfSalvation: true,
-					unleashedRage: true,
 				}),
 				debuffs: Debuffs.create({
 					judgementOfWisdom: true,
@@ -131,8 +129,6 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 					faerieFire: TristateEffect.TristateEffectImproved,
 					curseOfWeakness: true,
 					huntersMark: TristateEffect.TristateEffectImproved,
-					exposeWeaknessUptime: 0.95,
-					exposeWeaknessHunterAgility: 1200,
 				}),
 			},
 
@@ -144,32 +140,28 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 				IconInputs.ArcaneBrilliance,
 				IconInputs.GiftOfTheWild,
 				IconInputs.DivineSpirit,
-			],
-			partyBuffInputs: [
-				IconInputs.DrumsOfBattleBuff,
 				IconInputs.Bloodlust,
 				IconInputs.ManaSpringTotem,
 				IconInputs.WindfuryTotem,
 				IconInputs.StrengthOfEarthTotem,
-
 				IconInputs.BattleShout,
-				IconInputs.HeroicPresence,
 				IconInputs.LeaderOfThePack,
-				IconInputs.FerociousInspiration,
 				IconInputs.TrueshotAura,
+				IconInputs.UnleashedRage,
+			],
+			partyBuffInputs: [
+				IconInputs.HeroicPresence,
 				IconInputs.BraidedEterniumChain,
 			],
 			playerBuffInputs: [
 				IconInputs.BlessingOfKings,
 				IconInputs.BlessingOfWisdom,
 				IconInputs.BlessingOfMight,
-				IconInputs.BlessingOfSalvation,
-				IconInputs.UnleashedRage,
 			],
 			// IconInputs to include in the 'Debuffs' section on the settings tab.
 			debuffInputs: [
 				IconInputs.JudgementOfWisdom,
-				IconInputs.ImprovedSealOfTheCrusader,
+
 				IconInputs.ExposeArmor,
 				IconInputs.SunderArmor,
 				IconInputs.BloodFrenzy,
@@ -233,8 +225,6 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 					RetributionPaladinInputs.JudgementSelection,
 					RetributionPaladinInputs.CrusaderStrikeDelayMS,
 					RetributionPaladinInputs.DamgeTakenPerSecond,
-					OtherInputs.ExposeWeaknessUptime,
-					OtherInputs.ExposeWeaknessHunterAgility,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],

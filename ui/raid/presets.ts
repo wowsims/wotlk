@@ -3,7 +3,7 @@ import { Raid as RaidProto } from '/wotlk/core/proto/api.js';
 import { Party as PartyProto } from '/wotlk/core/proto/api.js';
 import { Class } from '/wotlk/core/proto/common.js';
 import { Consumes } from '/wotlk/core/proto/common.js';
-import { Drums } from '/wotlk/core/proto/common.js';
+
 import { Encounter as EncounterProto } from '/wotlk/core/proto/common.js';
 import { EquipmentSpec } from '/wotlk/core/proto/common.js';
 import { Race } from '/wotlk/core/proto/common.js';
@@ -219,18 +219,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: HunterPresets.P1_BM_PRESET.gear,
-				2: HunterPresets.P2_BM_PRESET.gear,
-				3: HunterPresets.P3_BM_PRESET.gear,
-				4: HunterPresets.P4_BM_PRESET.gear,
-				5: HunterPresets.P5_BM_PRESET.gear,
+				1: HunterPresets.P1_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				1: HunterPresets.P1_BM_PRESET.gear,
-				2: HunterPresets.P2_BM_PRESET.gear,
-				3: HunterPresets.P3_BM_PRESET.gear,
-				4: HunterPresets.P4_BM_PRESET.gear,
-				5: HunterPresets.P5_BM_PRESET.gear,
+				1: HunterPresets.P1_PRESET.gear,
 			},
 		},
 		tooltip: 'BM Hunter',
@@ -251,18 +243,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: HunterPresets.P1_SV_PRESET.gear,
-				2: HunterPresets.P2_SV_PRESET.gear,
-				3: HunterPresets.P3_SV_PRESET.gear,
-				4: HunterPresets.P4_SV_PRESET.gear,
-				5: HunterPresets.P5_SV_PRESET.gear,
+				1: HunterPresets.P1_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				1: HunterPresets.P1_SV_PRESET.gear,
-				2: HunterPresets.P2_SV_PRESET.gear,
-				3: HunterPresets.P3_SV_PRESET.gear,
-				4: HunterPresets.P4_SV_PRESET.gear,
-				5: HunterPresets.P5_SV_PRESET.gear,
+				1: HunterPresets.P1_PRESET.gear,
 			},
 		},
 		tooltip: 'SV Hunter',
@@ -692,38 +676,38 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		tooltip: 'Protection Paladin',
 		iconUrl: talentTreeIcons[Class.ClassPaladin][1],
 	},
-/*	{
-		spec: Spec.SpecWarlock,
-		rotation: WarlockPresets.DefaultRotation,
-		talents: WarlockPresets.DestructionTalents.data,
-		specOptions: WarlockPresets.DefaultOptions,
-		consumes: WarlockPresets.DefaultConsumes,
-		defaultName: 'Destro Warlock',
-		defaultFactionRaces: {
-			[Faction.Unknown]: Race.RaceUnknown,
-			[Faction.Alliance]: Race.RaceHuman,
-			[Faction.Horde]: Race.RaceBloodElf,
-		},
-		defaultGear: {
-			[Faction.Unknown]: {},
-			[Faction.Alliance]: {
-				1: WarlockPresets.P1_DESTRO.gear,
-				2: WarlockPresets.P2_DESTRO.gear,
-				3: WarlockPresets.P3_DESTRO.gear,
-				4: WarlockPresets.P4_DESTRO.gear,
-				5: WarlockPresets.P5_DESTRO.gear,
+	/*	{
+			spec: Spec.SpecWarlock,
+			rotation: WarlockPresets.DefaultRotation,
+			talents: WarlockPresets.DestructionTalents.data,
+			specOptions: WarlockPresets.DefaultOptions,
+			consumes: WarlockPresets.DefaultConsumes,
+			defaultName: 'Destro Warlock',
+			defaultFactionRaces: {
+				[Faction.Unknown]: Race.RaceUnknown,
+				[Faction.Alliance]: Race.RaceHuman,
+				[Faction.Horde]: Race.RaceBloodElf,
 			},
-			[Faction.Horde]: {
-				1: WarlockPresets.P1_DESTRO.gear,
-				2: WarlockPresets.P2_DESTRO.gear,
-				3: WarlockPresets.P3_DESTRO.gear,
-				4: WarlockPresets.P4_DESTRO.gear,
-				5: WarlockPresets.P5_DESTRO.gear,
+			defaultGear: {
+				[Faction.Unknown]: {},
+				[Faction.Alliance]: {
+					1: WarlockPresets.P1_DESTRO.gear,
+					2: WarlockPresets.P2_DESTRO.gear,
+					3: WarlockPresets.P3_DESTRO.gear,
+					4: WarlockPresets.P4_DESTRO.gear,
+					5: WarlockPresets.P5_DESTRO.gear,
+				},
+				[Faction.Horde]: {
+					1: WarlockPresets.P1_DESTRO.gear,
+					2: WarlockPresets.P2_DESTRO.gear,
+					3: WarlockPresets.P3_DESTRO.gear,
+					4: WarlockPresets.P4_DESTRO.gear,
+					5: WarlockPresets.P5_DESTRO.gear,
+				},
 			},
-		},
-		tooltip: 'Destruction Warlock: defaults to casting Curse of Doom.',
-		iconUrl: talentTreeIcons[Class.ClassWarlock][2],
-	},*/
+			tooltip: 'Destruction Warlock: defaults to casting Curse of Doom.',
+			iconUrl: talentTreeIcons[Class.ClassWarlock][2],
+		},*/
 	{
 		spec: Spec.SpecWarlock,
 		rotation: WarlockPresets.AfflictionRotation,
@@ -756,38 +740,38 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		tooltip: 'Affliction Warlock: by default casts CoE with Malediction',
 		iconUrl: talentTreeIcons[Class.ClassWarlock][0],
 	},
-/*	{
-		spec: Spec.SpecWarlock,
-		rotation: WarlockPresets.DemonologyRotation,
-		talents: WarlockPresets.DemonologistTalents.data,
-		specOptions: WarlockPresets.DemonologyOptions,
-		consumes: WarlockPresets.DefaultConsumes,
-		defaultName: 'Demo Warlock',
-		defaultFactionRaces: {
-			[Faction.Unknown]: Race.RaceUnknown,
-			[Faction.Alliance]: Race.RaceHuman,
-			[Faction.Horde]: Race.RaceBloodElf,
-		},
-		defaultGear: {
-			[Faction.Unknown]: {},
-			[Faction.Alliance]: {
-				1: WarlockPresets.P1_DESTRO.gear,
-				2: WarlockPresets.P2_DESTRO.gear,
-				3: WarlockPresets.P3_DESTRO.gear,
-				4: WarlockPresets.P4_DESTRO.gear,
-				5: WarlockPresets.P5_DESTRO.gear,
+	/*	{
+			spec: Spec.SpecWarlock,
+			rotation: WarlockPresets.DemonologyRotation,
+			talents: WarlockPresets.DemonologistTalents.data,
+			specOptions: WarlockPresets.DemonologyOptions,
+			consumes: WarlockPresets.DefaultConsumes,
+			defaultName: 'Demo Warlock',
+			defaultFactionRaces: {
+				[Faction.Unknown]: Race.RaceUnknown,
+				[Faction.Alliance]: Race.RaceHuman,
+				[Faction.Horde]: Race.RaceBloodElf,
 			},
-			[Faction.Horde]: {
-				1: WarlockPresets.P1_DESTRO.gear,
-				2: WarlockPresets.P2_DESTRO.gear,
-				3: WarlockPresets.P3_DESTRO.gear,
-				4: WarlockPresets.P4_DESTRO.gear,
-				5: WarlockPresets.P5_DESTRO.gear,
+			defaultGear: {
+				[Faction.Unknown]: {},
+				[Faction.Alliance]: {
+					1: WarlockPresets.P1_DESTRO.gear,
+					2: WarlockPresets.P2_DESTRO.gear,
+					3: WarlockPresets.P3_DESTRO.gear,
+					4: WarlockPresets.P4_DESTRO.gear,
+					5: WarlockPresets.P5_DESTRO.gear,
+				},
+				[Faction.Horde]: {
+					1: WarlockPresets.P1_DESTRO.gear,
+					2: WarlockPresets.P2_DESTRO.gear,
+					3: WarlockPresets.P3_DESTRO.gear,
+					4: WarlockPresets.P4_DESTRO.gear,
+					5: WarlockPresets.P5_DESTRO.gear,
+				},
 			},
-		},
-		tooltip: 'Demonology Warlock',
-		iconUrl: talentTreeIcons[Class.ClassWarlock][1],
-	},*/
+			tooltip: 'Demonology Warlock',
+			iconUrl: talentTreeIcons[Class.ClassWarlock][1],
+		},*/
 ];
 
 export const implementedSpecs: Array<Spec> = [...new Set(playerPresets.map(preset => preset.spec))];
@@ -805,7 +789,7 @@ export const buffBotPresets: Array<BuffBotSettings> = [
 			raidProto.buffs!.giftOfTheWild = Math.max(raidProto.buffs!.giftOfTheWild, TristateEffect.TristateEffectRegular);
 			raidProto.buffs!.thorns = Math.max(raidProto.buffs!.thorns, TristateEffect.TristateEffectRegular);
 			raidProto.debuffs!.faerieFire = Math.max(raidProto.debuffs!.faerieFire, TristateEffect.TristateEffectRegular);
-			partyProto.buffs!.leaderOfThePack = Math.max(partyProto.buffs!.leaderOfThePack, TristateEffect.TristateEffectRegular);
+			raidProto.buffs!.leaderOfThePack = Math.max(raidProto.buffs!.leaderOfThePack, TristateEffect.TristateEffectRegular);
 
 			const innervateIndex = buffBot.getInnervateAssignment().targetIndex;
 			if (innervateIndex != NO_TARGET) {
@@ -900,19 +884,6 @@ export const buffBotPresets: Array<BuffBotSettings> = [
 	},
 	{
 		// The value of this field must never change, to preserve local storage data.
-		buffBotId: 'JoC Paladin',
-		spec: Spec.SpecRetributionPaladin,
-		deprecated: true,
-		name: 'JoC Paladin',
-		tooltip: 'JoC Paladin: Adds a set of blessings and Improved Judgement of the Crusader (+3% crit).',
-		iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/spell_holy_holysmite.jpg',
-		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
-			// Blessings are handled elswhere.
-			raidProto.debuffs!.improvedSealOfTheCrusader = true;
-		},
-	},
-	{
-		// The value of this field must never change, to preserve local storage data.
 		buffBotId: 'Holy Priest',
 		spec: Spec.SpecShadowPriest,
 		name: 'Holy Priest',
@@ -951,12 +922,11 @@ export const buffBotPresets: Array<BuffBotSettings> = [
 		buffBotId: 'Resto Shaman',
 		spec: Spec.SpecElementalShaman,
 		name: 'Resto Shaman',
-		tooltip: 'Resto Shaman: Adds Bloodlust, Mana Spring Totem, Mana Tide Totem, Strength of Earth Totem, and Drums of Battle. Chooses air totem based on party composition.',
+		tooltip: 'Resto Shaman: Adds Bloodlust, Mana Spring Totem, Mana Tide Totem, Strength of Earth Totem. Chooses air totem based on party composition.',
 		iconUrl: talentTreeIcons[Class.ClassShaman][2],
 		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
-			partyProto.buffs!.drums = Drums.DrumsOfBattle;
-			partyProto.buffs!.bloodlust++;
-			partyProto.buffs!.manaSpringTotem = TristateEffect.TristateEffectImproved;
+			raidProto.buffs!.bloodlust = true;
+			raidProto.buffs!.manaSpringTotem = TristateEffect.TristateEffectImproved;
 			partyProto.buffs!.manaTideTotems++;
 
 			// Choose which air totem to drop based on party composition.
@@ -985,49 +955,10 @@ export const buffBotPresets: Array<BuffBotSettings> = [
 					.length);
 
 			if (woaVotes >= wfVotes) {
-				partyProto.buffs!.wrathOfAirTotem = true;
+				raidProto.buffs!.wrathOfAirTotem = true;
 			} else {
-				partyProto.buffs!.windfuryTotem = TristateEffect.TristateEffectRegular;
+				raidProto.buffs!.windfuryTotem = TristateEffect.TristateEffectRegular;
 			}
-		},
-	},
-	{
-		// The value of this field must never change, to preserve local storage data.
-		buffBotId: 'CoE Warlock',
-		spec: Spec.SpecWarlock,
-		deprecated: true,
-		name: 'CoE Warlock',
-		tooltip: 'CoE Warlock: Adds Curse of Elements (regular). Also adds +20% uptime to ISB.',
-		iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_chilltouch.jpg',
-		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
-			const debuffs = raidProto.debuffs!;
-			debuffs.curseOfElements = Math.max(debuffs.curseOfElements, TristateEffect.TristateEffectRegular);
-		},
-	},
-	{
-		// The value of this field must never change, to preserve local storage data.
-		buffBotId: 'Malediction Warlock',
-		spec: Spec.SpecWarlock,
-		name: 'Aff Warlock',
-		deprecated: true,
-		tooltip: 'Affliction Warlock: Adds Curse of Elements (improved). Also adds +20% uptime to ISB.',
-		iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_curseofachimonde.jpg',
-		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
-			const debuffs = raidProto.debuffs!;
-			debuffs.curseOfElements = TristateEffect.TristateEffectImproved;
-		},
-	},
-	{
-		// The value of this field must never change, to preserve local storage data.
-		buffBotId: 'CoW Warlock',
-		spec: Spec.SpecWarlock,
-		deprecated: true,
-		name: 'CoW Warlock',
-		tooltip: 'CoW Warlock: Adds Curse of Weakness. Also adds +20% uptime to ISB.',
-		iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_unholystrength.jpg',
-		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
-			const debuffs = raidProto.debuffs!;
-			debuffs.curseOfWeakness = true;
 		},
 	},
 	{
@@ -1039,7 +970,7 @@ export const buffBotPresets: Array<BuffBotSettings> = [
 		tooltip: 'Arms Warrior: Adds Sunder Armor, Blood Frenzy, and Improved Battle Shout.',
 		iconUrl: 'https://wow.zamimg.com/images/wow/icons/medium/ability_warrior_savageblow.jpg',
 		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
-			partyProto.buffs!.battleShout = TristateEffect.TristateEffectImproved;
+			raidProto.buffs!.battleShout = TristateEffect.TristateEffectImproved;
 			const debuffs = raidProto.debuffs!;
 			debuffs.sunderArmor = true;
 			debuffs.bloodFrenzy = true;
@@ -1054,7 +985,7 @@ export const buffBotPresets: Array<BuffBotSettings> = [
 		tooltip: 'Fury Warrior: Adds Sunder Armor and Improved Battle Shout.',
 		iconUrl: 'https://wow.zamimg.com/images/wow/icons/medium/ability_warrior_innerrage.jpg',
 		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
-			partyProto.buffs!.battleShout = TristateEffect.TristateEffectImproved;
+			raidProto.buffs!.battleShout = TristateEffect.TristateEffectImproved;
 			const debuffs = raidProto.debuffs!;
 			debuffs.sunderArmor = true;
 		},

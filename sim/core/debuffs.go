@@ -13,19 +13,11 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 		MakePermanent(MiseryAura(target, 5))
 	}
 
-	if debuffs.ShadowWeaving {
-		MakePermanent(ShadowWeavingAura(target, 5))
-	}
-
 	if debuffs.JudgementOfWisdom {
 		MakePermanent(JudgementOfWisdomAura(target))
 	}
 	if debuffs.JudgementOfLight {
 		MakePermanent(JudgementOfLightAura(target))
-	}
-
-	if debuffs.ImprovedSealOfTheCrusader {
-		MakePermanent(JudgementOfTheCrusaderAura(target, 3, 0, 1.0))
 	}
 
 	if debuffs.CurseOfElements != proto.TristateEffect_TristateEffectMissing {
@@ -89,16 +81,6 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 		MakePermanent(FaerieFireAura(target, GetTristateValueInt32(debuffs.FaerieFire, 0, 3)))
 	}
 
-	if debuffs.ExposeWeaknessUptime > 0 && debuffs.ExposeWeaknessHunterAgility > 0 {
-		uptime := MinFloat(1.0, debuffs.ExposeWeaknessUptime)
-		ewAura := MakePermanent(ExposeWeaknessAura(target, debuffs.ExposeWeaknessHunterAgility, uptime))
-		if uptime != 1.0 {
-			ewAura.OnDoneIteration = func(aura *Aura, _ *Simulation) {
-				aura.metrics.Uptime = time.Duration(float64(aura.metrics.Uptime) * uptime)
-			}
-		}
-	}
-
 	if debuffs.HuntersMark != proto.TristateEffect_TristateEffectMissing {
 		if debuffs.HuntersMark == proto.TristateEffect_TristateEffectImproved {
 			MakePermanent(HuntersMarkAura(target, 5, true))
@@ -153,22 +135,6 @@ func MiseryAura(target *Unit, numPoints int32) *Aura {
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			target.PseudoStats.BonusSpellHitRating -= multiplier * SpellHitRatingPerHitChance
-		},
-	})
-}
-
-func ShadowWeavingAura(target *Unit, startingStacks int32) *Aura {
-	return target.GetOrRegisterAura(Aura{
-		Label:     "Shadow Weaving",
-		ActionID:  ActionID{SpellID: 15334},
-		Duration:  time.Second * 15,
-		MaxStacks: 5,
-		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.SetStacks(sim, startingStacks)
-		},
-		OnStacksChange: func(aura *Aura, sim *Simulation, oldStacks int32, newStacks int32) {
-			aura.Unit.PseudoStats.ShadowDamageTakenMultiplier /= 1.0 + 0.02*float64(oldStacks)
-			aura.Unit.PseudoStats.ShadowDamageTakenMultiplier *= 1.0 + 0.02*float64(newStacks)
 		},
 	})
 }
@@ -728,5 +694,3 @@ func ScorpidStingAura(target *Unit) *Aura {
 		},
 	})
 }
-
-
