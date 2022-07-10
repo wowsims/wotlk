@@ -1002,7 +1002,6 @@ export const buffBotPresets: Array<BuffBotSettings> = [
 		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
 			const debuffs = raidProto.debuffs!;
 			debuffs.curseOfElements = Math.max(debuffs.curseOfElements, TristateEffect.TristateEffectRegular);
-			// debuffs.isbUptime = Math.min(1.0, debuffs.isbUptime + 0.2);
 		},
 	},
 	{
@@ -1016,7 +1015,6 @@ export const buffBotPresets: Array<BuffBotSettings> = [
 		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
 			const debuffs = raidProto.debuffs!;
 			debuffs.curseOfElements = TristateEffect.TristateEffectImproved;
-			// debuffs.isbUptime = Math.min(1.0, debuffs.isbUptime + 0.2);
 		},
 	},
 	{
@@ -1030,7 +1028,6 @@ export const buffBotPresets: Array<BuffBotSettings> = [
 		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
 			const debuffs = raidProto.debuffs!;
 			debuffs.curseOfWeakness = true;
-			// debuffs.isbUptime = Math.min(1.0, debuffs.isbUptime + 0.2);
 		},
 	},
 	{

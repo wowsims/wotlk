@@ -36,16 +36,6 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 		MakePermanent(ImprovedShadowBoltAura(target))
 	}
 
-	// if debuffs.IsbUptime > 0.0 {
-	// 	uptime := MinFloat(1.0, debuffs.IsbUptime)
-	// 	isbAura := MakePermanent(ImprovedShadowBoltAura(target))
-	// 	if uptime != 1.0 {
-	// 		isbAura.OnDoneIteration = func(aura *Aura, _ *Simulation) {
-	// 			aura.metrics.Uptime = time.Duration(float64(aura.metrics.Uptime) * uptime)
-	// 		}
-	// 	}
-	// }
-
 	if debuffs.ImprovedScorch {
 		MakePermanent(ImprovedScorchAura(target, 5))
 	}
