@@ -22,7 +22,7 @@ import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
 import { GuardianElixir } from '/wotlk/core/proto/common.js';
 import { Conjured } from '/wotlk/core/proto/common.js';
-import { Drums } from '/wotlk/core/proto/common.js';
+
 import { PetFood } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
@@ -104,25 +104,24 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					arcaneBrilliance: true,
-					divineSpirit: TristateEffect.TristateEffectImproved,
+					divineSpirit: true,
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
-				}),
-				partyBuffs: PartyBuffs.create({
-					drums: Drums.DrumsOfBattle,
-					bloodlust: 1,
+					bloodlust: true,
 					manaSpringTotem: TristateEffect.TristateEffectRegular,
 					totemOfWrath: true,
 					wrathOfAirTotem: true,
 				}),
+				partyBuffs: PartyBuffs.create({
+				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
 					blessingOfWisdom: 2,
-					blessingOfSalvation: true,
+
 				}),
 				debuffs: Debuffs.create({
 					judgementOfWisdom: true,
 					misery: true,
-					curseOfElements: TristateEffect.TristateEffectRegular,
+					curseOfElements: true,
 				}),
 			},
 
@@ -134,68 +133,55 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 				IconInputs.ArcaneBrilliance,
 				IconInputs.DivineSpirit,
 				IconInputs.GiftOfTheWild,
-			],
-			partyBuffInputs: [
 				IconInputs.MoonkinAura,
-				IconInputs.DrumsOfBattleBuff,
-				IconInputs.DrumsOfRestorationBuff,
 				IconInputs.Bloodlust,
 				IconInputs.WrathOfAirTotem,
 				IconInputs.TotemOfWrath,
 				IconInputs.ManaSpringTotem,
+			],
+			partyBuffInputs: [
 				IconInputs.ManaTideTotem,
-				IconInputs.FerociousInspiration,
 				IconInputs.HeroicPresence,
-				IconInputs.EyeOfTheNight,
-				IconInputs.ChainOfTheTwilightOwl,
-				IconInputs.JadePendantOfBlasting,
-				IconInputs.AtieshWarlock,
-				IconInputs.AtieshMage,
 			],
 			playerBuffInputs: [
 				IconInputs.BlessingOfKings,
 				IconInputs.BlessingOfWisdom,
-				IconInputs.BlessingOfSalvation,
 				IconInputs.Innervate,
 				IconInputs.PowerInfusion,
 			],
 			// IconInputs to include in the 'Debuffs' section on the settings tab.
 			debuffInputs: [
 				IconInputs.JudgementOfWisdom,
-				IconInputs.ImprovedSealOfTheCrusader,
+
 				IconInputs.CurseOfElements,
 			],
 			// Which options are selectable in the 'Consumes' section.
 			consumeOptions: {
 				potions: [
-					Potions.SuperManaPotion,
-					Potions.DestructionPotion,
+					Potions.PotionOfSpeed,
+					Potions.PotionOfWildMagic,
+					Potions.RunicManaPotion,
 				],
 				conjured: [
-					Conjured.ConjuredDarkRune,
 				],
 				flasks: [
-					Flask.FlaskOfPureDeath,
-					Flask.FlaskOfSupremePower,
+					Flask.FlaskOfTheFrostWyrm,
 				],
 				battleElixirs: [
-					BattleElixir.ElixirOfMajorShadowPower,
-					BattleElixir.AdeptsElixir,
+					BattleElixir.SpellpowerElixir,
 				],
 				guardianElixirs: [
-					GuardianElixir.ElixirOfDraenicWisdom,
-					GuardianElixir.ElixirOfMajorMageblood,
+					GuardianElixir.ElixirOfSpirit,
+					GuardianElixir.ElixirOfMightyThoughts,
+					GuardianElixir.ElixirOfMightyMageblood,
 				],
 				food: [
-					Food.FoodBlackenedBasilisk,
+					Food.FoodFishFeast,
 					Food.FoodSkullfishSoup,
 				],
 				alcohol: [
-					Alchohol.AlchoholKreegsStoutBeatdown,
 				],
 				weaponImbues: [
-					WeaponImbue.WeaponImbueBrilliantWizardOil,
-					WeaponImbue.WeaponImbueSuperiorWizardOil,
 				],
 				other: [
 				],
@@ -205,7 +191,6 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
-					OtherInputs.ISBUptime,
 					OtherInputs.PrepopPotion,
 					OtherInputs.TankAssignment,
 				],
@@ -231,10 +216,6 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 				// Preset gear configurations that the user can quickly select.
 				gear: [
 					Presets.P1_PRESET,
-					Presets.P2_PRESET,
-					Presets.P3_PRESET,
-					Presets.P4_PRESET,
-					Presets.P5_PRESET,
 				],
 			},
 		});

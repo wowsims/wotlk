@@ -54,7 +54,6 @@ var castersWithElemental = &proto.Party{
 					Talents: shadow.StandardTalents,
 					Rotation: &proto.ShadowPriest_Rotation{
 						RotationType: proto.ShadowPriest_Rotation_Ideal,
-						UseDevPlague: true,
 					},
 					Options: &proto.ShadowPriest_Options{
 						UseShadowfiend: true,
@@ -96,7 +95,6 @@ var castersWithElemental = &proto.Party{
 			Consumes: &proto.Consumes{
 				MainHandImbue: proto.WeaponImbue_WeaponImbueBrilliantWizardOil,
 				DefaultPotion: proto.Potions_SuperManaPotion,
-				Drums:         proto.Drums_DrumsOfBattle,
 			},
 			Buffs: &proto.IndividualBuffs{
 				BlessingOfKings:  true,
@@ -177,7 +175,6 @@ var castersWithResto = &proto.Party{
 					Talents: shadow.StandardTalents,
 					Rotation: &proto.ShadowPriest_Rotation{
 						RotationType: proto.ShadowPriest_Rotation_Ideal,
-						UseDevPlague: true,
 					},
 					Options: &proto.ShadowPriest_Options{
 						UseShadowfiend: true,
@@ -224,11 +221,7 @@ var castersWithResto = &proto.Party{
 		},
 	},
 	Buffs: &proto.PartyBuffs{
-		Bloodlust:       1,
-		Drums:           proto.Drums_DrumsOfBattle,
-		ManaSpringTotem: proto.TristateEffect_TristateEffectImproved,
-		WrathOfAirTotem: true,
-		ManaTideTotems:  1,
+		ManaTideTotems: 1,
 	},
 }
 
@@ -274,13 +267,15 @@ func BenchmarkSimulate(b *testing.B) {
 				},
 			},
 			Buffs: &proto.RaidBuffs{
-				GiftOfTheWild: proto.TristateEffect_TristateEffectImproved,
+				GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
+				ArcaneBrilliance: true,
+				Bloodlust:        true,
+				WrathOfAirTotem:  true,
+				ManaSpringTotem:  proto.TristateEffect_TristateEffectImproved,
 			},
 			Debuffs: &proto.Debuffs{
-				JudgementOfWisdom:         true,
-				ImprovedSealOfTheCrusader: true,
-				CurseOfElements:           proto.TristateEffect_TristateEffectImproved,
-				IsbUptime:                 0.2,
+				JudgementOfWisdom: true,
+				CurseOfElements:   true,
 			},
 		},
 		Encounter: &proto.Encounter{

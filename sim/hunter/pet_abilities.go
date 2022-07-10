@@ -83,16 +83,16 @@ func (hp *HunterPet) newBite(isPrimary bool) PetAbility {
 				IgnoreHaste: true,
 				CD: core.Cooldown{
 					Timer:    hp.NewTimer(),
-					Duration: time.Second * 10,
+					Duration: hp.hunterOwner.applyLongevity(time.Second * 10),
 				},
 			},
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				ProcMask:         core.ProcMaskMeleeMHSpecial,
-				DamageMultiplier: 1,
+				DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
 				ThreatMultiplier: 1,
-				BaseDamage:       core.BaseDamageConfigRoll(108, 132),
-				OutcomeApplier:   hp.OutcomeFuncMeleeSpecialHitAndCrit(2),
+				BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigRoll(108, 132)),
+				OutcomeApplier:   hp.specialOutcomeMod(hp.OutcomeFuncMeleeSpecialHitAndCrit(2)),
 			}),
 		}),
 	}
@@ -117,10 +117,10 @@ func (hp *HunterPet) newClaw(isPrimary bool) PetAbility {
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				ProcMask:         core.ProcMaskMeleeMHSpecial,
-				DamageMultiplier: 1,
+				DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
 				ThreatMultiplier: 1,
-				BaseDamage:       core.BaseDamageConfigRoll(54, 76),
-				OutcomeApplier:   hp.OutcomeFuncMeleeSpecialHitAndCrit(2),
+				BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigRoll(54, 76)),
+				OutcomeApplier:   hp.specialOutcomeMod(hp.OutcomeFuncMeleeSpecialHitAndCrit(2)),
 			}),
 		}),
 	}
@@ -145,9 +145,9 @@ func (hp *HunterPet) newGore(isPrimary bool) PetAbility {
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				ProcMask:         core.ProcMaskMeleeMHSpecial,
-				DamageMultiplier: 1,
+				DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
 				ThreatMultiplier: 1,
-				BaseDamage: core.WrapBaseDamageConfig(core.BaseDamageConfigRoll(37, 61), func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
+				BaseDamage: hp.specialDamageMod(core.WrapBaseDamageConfig(core.BaseDamageConfigRoll(37, 61), func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
 					return func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
 						damage := oldCalculator(sim, spellEffect, spell)
 						if sim.RandomFloat("Gore") < 0.5 {
@@ -155,8 +155,8 @@ func (hp *HunterPet) newGore(isPrimary bool) PetAbility {
 						}
 						return damage
 					}
-				}),
-				OutcomeApplier: hp.OutcomeFuncMeleeSpecialHitAndCrit(2),
+				})),
+				OutcomeApplier: hp.specialOutcomeMod(hp.OutcomeFuncMeleeSpecialHitAndCrit(2)),
 			}),
 		}),
 	}
@@ -180,10 +180,10 @@ func (hp *HunterPet) newLightningBreath(isPrimary bool) PetAbility {
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				ProcMask:         core.ProcMaskSpellDamage,
-				DamageMultiplier: 1,
+				DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
 				ThreatMultiplier: 1,
-				BaseDamage:       core.BaseDamageConfigMagic(80, 93, 0.05),
-				OutcomeApplier:   hp.OutcomeFuncMagicHitAndCrit(1.5),
+				BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMagic(80, 93, 0.05)),
+				OutcomeApplier:   hp.specialOutcomeMod(hp.OutcomeFuncMagicHitAndCrit(1.5)),
 			}),
 		}),
 	}
@@ -213,10 +213,10 @@ func (hp *HunterPet) newScreech(isPrimary bool) PetAbility {
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				ProcMask:         core.ProcMaskMeleeMHSpecial,
-				DamageMultiplier: 1,
+				DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
 				ThreatMultiplier: 1,
-				BaseDamage:       core.BaseDamageConfigRoll(33, 61),
-				OutcomeApplier:   hp.OutcomeFuncMeleeSpecialHitAndCrit(2),
+				BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigRoll(33, 61)),
+				OutcomeApplier:   hp.specialOutcomeMod(hp.OutcomeFuncMeleeSpecialHitAndCrit(2)),
 
 				OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 					if spellEffect.Landed() {

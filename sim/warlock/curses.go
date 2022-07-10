@@ -14,19 +14,11 @@ func (warlock *Warlock) registerCurseOfElementsSpell() {
 		return
 	}
 	baseCost := 0.1 * warlock.BaseMana()
-	auras := warlock.CurrentTarget.GetAurasWithTag("Curse of Elements")
-	for _, aura := range auras {
-		if int32(aura.Priority) >= warlock.Talents.Malediction {
-			// Someone else with at least as good of curse is already doing it... lets not.
-			warlock.Rotation.Curse = proto.Warlock_Rotation_NoCurse // TODO: swap to agony for dps?
-			return
-		}
-	}
-	warlock.CurseOfElementsAura = core.CurseOfElementsAura(warlock.CurrentTarget, warlock.Talents.Malediction)
+	warlock.CurseOfElementsAura = core.CurseOfElementsAura(warlock.CurrentTarget)
 	warlock.CurseOfElementsAura.Duration = time.Minute * 5
 
 	warlock.CurseOfElements = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 27228},
+		ActionID:    core.ActionID{SpellID: 47865},
 		SpellSchool: core.SpellSchoolShadow,
 
 		ResourceType: stats.Mana,
@@ -35,7 +27,7 @@ func (warlock *Warlock) registerCurseOfElementsSpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
-				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 0, 1) * 500 * time.Millisecond, 
+				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 0, 1)*500*time.Millisecond,
 			},
 		},
 
@@ -58,18 +50,18 @@ func (warlock *Warlock) registerCurseOfWeaknessSpell() {
 		return
 	}
 	baseCost := 0.1 * warlock.BaseMana()
-	warlock.CurseOfWeaknessAura = core.CurseOfWeaknessAura(warlock.CurrentTarget)
+	warlock.CurseOfWeaknessAura = core.CurseOfWeaknessAura(warlock.CurrentTarget, warlock.Talents.ImprovedCurseOfWeakness)
 	warlock.CurseOfWeaknessAura.Duration = time.Minute * 2
 
 	warlock.CurseOfWeakness = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 27226},
+		ActionID:     core.ActionID{SpellID: 50511},
 		SpellSchool:  core.SpellSchoolShadow,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
-				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 0, 1) * 500 * time.Millisecond, 
+				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 0, 1)*500*time.Millisecond,
 			},
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -82,7 +74,6 @@ func (warlock *Warlock) registerCurseOfWeaknessSpell() {
 	})
 }
 
-// https://wotlk.wowhead.com/spell=11719/curse-of-tongues
 func (warlock *Warlock) registerCurseOfTonguesSpell() {
 	if warlock.Rotation.Curse != proto.Warlock_Rotation_Tongues {
 		return
@@ -105,7 +96,7 @@ func (warlock *Warlock) registerCurseOfTonguesSpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
-				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 0, 1) * 500 * time.Millisecond, 
+				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 0, 1)*500*time.Millisecond,
 			},
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -123,7 +114,7 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 	if warlock.Rotation.Curse != proto.Warlock_Rotation_Agony && warlock.Rotation.Curse != proto.Warlock_Rotation_Doom {
 		return
 	}
-	actionID := core.ActionID{SpellID: 27218}
+	actionID := core.ActionID{SpellID: 47864}
 	baseCost := 0.1 * warlock.BaseMana()
 	target := warlock.CurrentTarget
 	baseDmg := 1740 / 12.0
@@ -147,7 +138,7 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
-				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 0, 1) * 500 * time.Millisecond, 
+				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 0, 1)*500*time.Millisecond,
 			},
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -178,7 +169,7 @@ func (warlock *Warlock) registerCurseOfDoomSpell() {
 	if warlock.Rotation.Curse != proto.Warlock_Rotation_Doom {
 		return
 	}
-	actionID := core.ActionID{SpellID: 30910}
+	actionID := core.ActionID{SpellID: 47867}
 	baseCost := 0.15 * warlock.BaseMana()
 
 	target := warlock.CurrentTarget
@@ -201,7 +192,7 @@ func (warlock *Warlock) registerCurseOfDoomSpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
-				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 0, 1) * 500 * time.Millisecond, 
+				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 0, 1)*500*time.Millisecond,
 			},
 			CD: core.Cooldown{
 				Timer:    warlock.NewTimer(),

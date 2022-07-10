@@ -25,13 +25,12 @@ var StandardTalents = &proto.PriestTalents{
 var FullRaidBuffs = &proto.RaidBuffs{
 	ArcaneBrilliance: true,
 	GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
+	MoonkinAura:      proto.TristateEffect_TristateEffectRegular,
+	TotemOfWrath:     true,
+	WrathOfAirTotem:  true,
+	ManaSpringTotem:  proto.TristateEffect_TristateEffectRegular,
 }
-var FullPartyBuffs = &proto.PartyBuffs{
-	MoonkinAura:     proto.TristateEffect_TristateEffectRegular,
-	TotemOfWrath:    true,
-	WrathOfAirTotem: true,
-	ManaSpringTotem: proto.TristateEffect_TristateEffectRegular,
-}
+var FullPartyBuffs = &proto.PartyBuffs{}
 var FullIndividualBuffs = &proto.IndividualBuffs{
 	BlessingOfKings:  true,
 	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
@@ -47,7 +46,7 @@ var FullConsumes = &proto.Consumes{
 
 var FullDebuffs = &proto.Debuffs{
 	JudgementOfWisdom: true,
-	CurseOfElements:   proto.TristateEffect_TristateEffectImproved,
+	CurseOfElements:   true,
 }
 
 var PlayerOptionsBasic = &proto.Player_SmitePriest{

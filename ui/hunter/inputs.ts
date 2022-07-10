@@ -18,37 +18,11 @@ import {
 	Hunter_Rotation_WeaveType as WeaveType,
 	Hunter_Options as HunterOptions,
 	Hunter_Options_Ammo as Ammo,
-	Hunter_Options_QuiverBonus as QuiverBonus,
 	Hunter_Options_PetType as PetType,
 } from '/wotlk/core/proto/hunter.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
-
-export const Quiver = {
-	extraCssClasses: [
-		'quiver-picker',
-	],
-	numColumns: 1,
-	values: [
-		{ color: '82e89d', value: QuiverBonus.QuiverNone },
-		{ actionId: ActionId.fromItemId(18714), value: QuiverBonus.Speed15 },
-		{ actionId: ActionId.fromItemId(2662), value: QuiverBonus.Speed14 },
-		{ actionId: ActionId.fromItemId(8217), value: QuiverBonus.Speed13 },
-		{ actionId: ActionId.fromItemId(7371), value: QuiverBonus.Speed12 },
-		{ actionId: ActionId.fromItemId(3605), value: QuiverBonus.Speed11 },
-		{ actionId: ActionId.fromItemId(3573), value: QuiverBonus.Speed10 },
-	],
-	equals: (a: QuiverBonus, b: QuiverBonus) => a == b,
-	zeroValue: QuiverBonus.QuiverNone,
-	changedEvent: (player: Player<Spec.SpecHunter>) => player.specOptionsChangeEmitter,
-	getValue: (player: Player<Spec.SpecHunter>) => player.getSpecOptions().quiverBonus,
-	setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: number) => {
-		const newOptions = player.getSpecOptions();
-		newOptions.quiverBonus = newValue;
-		player.setSpecOptions(eventID, newOptions);
-	},
-};
 
 export const WeaponAmmo = {
 	extraCssClasses: [
@@ -57,11 +31,12 @@ export const WeaponAmmo = {
 	numColumns: 1,
 	values: [
 		{ color: 'grey', value: Ammo.AmmoNone },
+		{ actionId: ActionId.fromItemId(52021), value: Ammo.IcebladeArrow },
+		{ actionId: ActionId.fromItemId(41165), value: Ammo.SaroniteRazorheads },
+		{ actionId: ActionId.fromItemId(41586), value: Ammo.TerrorshaftArrow },
 		{ actionId: ActionId.fromItemId(31737), value: Ammo.TimelessArrow },
 		{ actionId: ActionId.fromItemId(34581), value: Ammo.MysteriousArrow },
 		{ actionId: ActionId.fromItemId(33803), value: Ammo.AdamantiteStinger },
-		{ actionId: ActionId.fromItemId(31949), value: Ammo.WardensArrow },
-		{ actionId: ActionId.fromItemId(30611), value: Ammo.HalaaniRazorshaft },
 		{ actionId: ActionId.fromItemId(28056), value: Ammo.BlackflightArrow },
 	],
 	equals: (a: Ammo, b: Ammo) => a == b,
@@ -135,6 +110,26 @@ export const PetSingleAbility = {
 			newOptions.petSingleAbility = newValue;
 			player.setSpecOptions(eventID, newOptions);
 		},
+	},
+};
+
+export const SniperTrainingUptime = {
+	type: 'number' as const,
+	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
+	config: {
+		extraCssClasses: [
+			'sniper-training-uptime-picker',
+		],
+		label: 'ST Uptime (%)',
+		labelTooltip: 'Uptime for the Sniper Training talent, as a percent of the fight duration.',
+		changedEvent: (player: Player<Spec.SpecHunter>) => player.specOptionsChangeEmitter,
+		getValue: (player: Player<Spec.SpecHunter>) => player.getSpecOptions().sniperTrainingUptime * 100,
+		setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: number) => {
+			const newOptions = player.getSpecOptions();
+			newOptions.sniperTrainingUptime = newValue / 100;
+			player.setSpecOptions(eventID, newOptions);
+		},
+		showWhen: (player: Player<Spec.SpecHunter>) => player.getTalents().sniperTraining > 0,
 	},
 };
 

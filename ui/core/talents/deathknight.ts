@@ -1173,5 +1173,10 @@ export const deathKnightTalentsConfig: TalentsConfig<DeathKnightTalents> = newTa
 
 export const deathKnightGlyphsConfig: GlyphsConfig = {
 	majorGlyphs: {},
+<<<<<<< HEAD
     minorGlyphs: {},
 };
+=======
+	minorGlyphs: {},
+};
+>>>>>>> 7d90d7cc23b24e4dad63ec7f0a053367ca29f008

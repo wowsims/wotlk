@@ -302,8 +302,6 @@ export class RaidSimUI extends SimUI {
 					playerProtos.forEach(playerProto => playerProto.buffs!.blessingOfMight = TristateEffect.TristateEffectImproved);
 				} else if (paladin.blessings[spec] == Blessings.BlessingOfWisdom) {
 					playerProtos.forEach(playerProto => playerProto.buffs!.blessingOfWisdom = TristateEffect.TristateEffectImproved);
-				} else if (paladin.blessings[spec] == Blessings.BlessingOfSalvation) {
-					playerProtos.forEach(playerProto => playerProto.buffs!.blessingOfSalvation = true);
 				} else if (paladin.blessings[spec] == Blessings.BlessingOfSanctuary) {
 					playerProtos.forEach(playerProto => playerProto.buffs!.blessingOfSanctuary = true);
 				}

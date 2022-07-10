@@ -394,14 +394,14 @@ export class ActionId {
 	private static async getDb(url: string): Promise<ItemDB> {
 		if (!ActionId.dbCache.has(url)) {
 			ActionId.dbCache.set(url, fetch(url)
-					.then(response => response.json())
-					.then(responseJson => {
-						const db: ItemDB = {};
-						(responseJson as Array<ItemData>).forEach(item => {
-							db[item.ID] = item;
-						});
-						return db;
-					}));
+				.then(response => response.json())
+				.then(responseJson => {
+					const db: ItemDB = {};
+					(responseJson as Array<ItemData>).forEach(item => {
+						db[item.ID] = item;
+					});
+					return db;
+				}));
 		}
 		return ActionId.dbCache.get(url)!;
 	}

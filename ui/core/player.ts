@@ -760,7 +760,7 @@ export class Player<SpecType extends Spec> {
 		});
 	}
 
-	static applySharedDefaultsToProto(proto : PlayerProto) {
+	static applySharedDefaultsToProto(proto: PlayerProto) {
 		const spec = playerToSpec(proto);
 		proto.profession1 = Profession.Engineering;
 		proto.profession2 = Profession.Jewelcrafting;

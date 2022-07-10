@@ -160,16 +160,14 @@ var PlayerOptionsArcaneAOE = &proto.Player_Mage{
 }
 
 var FullRaidBuffs = &proto.RaidBuffs{
-	GiftOfTheWild: proto.TristateEffect_TristateEffectImproved,
-}
-var FullFirePartyBuffs = &proto.PartyBuffs{
-	Drums:           proto.Drums_DrumsOfBattle,
-	Bloodlust:       1,
+	GiftOfTheWild:   proto.TristateEffect_TristateEffectImproved,
+	Bloodlust:       true,
 	MoonkinAura:     proto.TristateEffect_TristateEffectRegular,
 	ManaSpringTotem: proto.TristateEffect_TristateEffectRegular,
 	TotemOfWrath:    true,
 	WrathOfAirTotem: true,
 }
+var FullFirePartyBuffs = &proto.PartyBuffs{}
 var FullFrostPartyBuffs = FullFirePartyBuffs
 var FullIndividualBuffs = &proto.IndividualBuffs{
 	BlessingOfKings:  true,
@@ -177,12 +175,7 @@ var FullIndividualBuffs = &proto.IndividualBuffs{
 }
 
 var FullArcanePartyBuffs = &proto.PartyBuffs{
-	Drums:           proto.Drums_DrumsOfBattle,
-	Bloodlust:       1,
-	MoonkinAura:     proto.TristateEffect_TristateEffectRegular,
-	ManaSpringTotem: proto.TristateEffect_TristateEffectImproved,
-	ManaTideTotems:  1,
-	WrathOfAirTotem: true,
+	ManaTideTotems: 1,
 }
 var FullArcaneIndividualBuffs = &proto.IndividualBuffs{
 	BlessingOfKings:  true,
@@ -214,10 +207,9 @@ var FullArcaneConsumes = &proto.Consumes{
 }
 
 var FullDebuffs = &proto.Debuffs{
-	CurseOfElements:           proto.TristateEffect_TristateEffectImproved,
-	ImprovedSealOfTheCrusader: true,
-	JudgementOfWisdom:         true,
-	Misery:                    true,
+	CurseOfElements:   true,
+	JudgementOfWisdom: true,
+	Misery:            true,
 }
 
 var P1FireGear = items.EquipmentSpecFromJsonString(`{"items": [

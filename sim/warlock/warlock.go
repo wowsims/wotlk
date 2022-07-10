@@ -42,7 +42,7 @@ type Warlock struct {
 	SeedDots []*core.Dot
 
 	NightfallProcAura *core.Aura
-	ImpShadowboltAura *core.Aura
+	ShadowEmbraceAura *core.Aura
 
 	Pet *WarlockPet
 
@@ -75,12 +75,12 @@ func (warlock *Warlock) Initialize() {
 }
 
 func (warlock *Warlock) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
+	raidBuffs.BloodPact = core.MaxTristate(raidBuffs.BloodPact, core.MakeTristateValue(
+		warlock.Options.Summon == proto.Warlock_Options_Imp,
+		warlock.Talents.ImprovedImp == 2))
 }
 
 func (warlock *Warlock) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
-	partyBuffs.BloodPact = core.MaxTristate(partyBuffs.BloodPact, core.MakeTristateValue(
-		warlock.Options.Summon == proto.Warlock_Options_Imp,
-		warlock.Talents.ImprovedImp == 2))
 }
 
 func (warlock *Warlock) Reset(sim *core.Simulation) {

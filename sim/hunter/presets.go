@@ -35,10 +35,10 @@ var SVTalents = &proto.HunterTalents{
 	GoForTheThroat:      2,
 	RapidKilling:        1,
 
-	MonsterSlaying:    3,
-	HumanoidSlaying:   3,
-	SavageStrikes:     2,
-	CleverTraps:       2,
+	//MonsterSlaying:    3,
+	//HumanoidSlaying:   3,
+	SavageStrikes: 2,
+	//CleverTraps:       2,
 	Survivalist:       2,
 	Surefooted:        3,
 	SurvivalInstincts: 2,
@@ -113,15 +113,13 @@ var meleeWeaveRotation = &proto.Hunter_Rotation{
 }
 
 var basicOptions = &proto.Hunter_Options{
-	QuiverBonus: proto.Hunter_Options_Speed15,
-	Ammo:        proto.Hunter_Options_AdamantiteStinger,
-	PetType:     proto.Hunter_Options_Ravager,
-	PetUptime:   0.9,
-	LatencyMs:   15,
+	Ammo:      proto.Hunter_Options_AdamantiteStinger,
+	PetType:   proto.Hunter_Options_Ravager,
+	PetUptime: 0.9,
+	LatencyMs: 15,
 }
 
 var windSerpentOptions = &proto.Hunter_Options{
-	QuiverBonus:      proto.Hunter_Options_Speed15,
 	Ammo:             proto.Hunter_Options_AdamantiteStinger,
 	PetType:          proto.Hunter_Options_WindSerpent,
 	PetUptime:        0.9,
@@ -130,19 +128,16 @@ var windSerpentOptions = &proto.Hunter_Options{
 }
 
 var FullRaidBuffs = &proto.RaidBuffs{
-	ArcaneBrilliance: true,
-	GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
-}
-var FullPartyBuffs = &proto.PartyBuffs{
-	Bloodlust: 1,
-	Drums:     proto.Drums_DrumsOfBattle,
-
+	ArcaneBrilliance:     true,
+	GiftOfTheWild:        proto.TristateEffect_TristateEffectImproved,
+	Bloodlust:            true,
 	BattleShout:          proto.TristateEffect_TristateEffectImproved,
 	LeaderOfThePack:      proto.TristateEffect_TristateEffectImproved,
 	ManaSpringTotem:      proto.TristateEffect_TristateEffectRegular,
 	StrengthOfEarthTotem: proto.TristateEffect_TristateEffectImproved,
 	WindfuryTotem:        proto.TristateEffect_TristateEffectImproved,
 }
+var FullPartyBuffs = &proto.PartyBuffs{}
 var FullIndividualBuffs = &proto.IndividualBuffs{
 	BlessingOfKings:  true,
 	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
@@ -157,11 +152,10 @@ var FullConsumes = &proto.Consumes{
 }
 
 var FullDebuffs = &proto.Debuffs{
-	BloodFrenzy:               true,
-	FaerieFire:                proto.TristateEffect_TristateEffectImproved,
-	ImprovedSealOfTheCrusader: true,
-	JudgementOfWisdom:         true,
-	Misery:                    true,
+	BloodFrenzy:       true,
+	FaerieFire:        proto.TristateEffect_TristateEffectImproved,
+	JudgementOfWisdom: true,
+	Misery:            true,
 }
 
 var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [

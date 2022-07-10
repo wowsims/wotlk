@@ -2,6 +2,8 @@ package core
 
 import (
 	"time"
+
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 type TickEffects func(*Simulation, *Spell) func()
@@ -66,6 +68,12 @@ func (dot *Dot) TakeSnapshot(sim *Simulation) {
 	dot.tickFn = dot.TickEffects(sim, dot.Spell)
 }
 
+// Forces an instant tick. Does not reset the tick timer or aura duration,
+// the tick is simply an extra tick.
+func (dot *Dot) TickOnce() {
+	dot.tickFn()
+}
+
 func NewDot(config Dot) *Dot {
 	dot := &Dot{}
 	*dot = config
@@ -118,6 +126,7 @@ func TickFuncSnapshot(target *Unit, baseEffect SpellEffect) TickEffects {
 		*snapshotEffect = baseEffect
 		snapshotEffect.Target = target
 		baseDamage := snapshotEffect.calculateBaseDamage(sim, spell) * snapshotEffect.DamageMultiplier
+		snapshotEffect.BonusSpellCritRating = snapshotEffect.BonusSpellCritRating + spell.Unit.GetStat(stats.SpellCrit)
 		snapshotEffect.DamageMultiplier = 1
 		snapshotEffect.BaseDamage = BaseDamageConfigFlat(baseDamage)
 

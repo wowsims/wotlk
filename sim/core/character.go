@@ -271,14 +271,12 @@ func (character *Character) DefaultMeleeCritMultiplier() float64 {
 }
 
 func (character *Character) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
+	raidBuffs.DrumsOfKings = character.Consumes.DrumsOfKings
+	raidBuffs.DrumsOfWild = character.Consumes.DrumsOfWild
 }
 func (character *Character) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 	if character.Race == proto.Race_RaceDraenei {
 		partyBuffs.HeroicPresence = true
-	}
-
-	if character.Consumes.Drums > 0 {
-		partyBuffs.Drums = character.Consumes.Drums
 	}
 
 	if character.Equip[items.ItemSlotMainHand].ID == ItemIDAtieshMage {
@@ -296,9 +294,6 @@ func (character *Character) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 	}
 	if character.Equip[items.ItemSlotNeck].ID == ItemIDEyeOfTheNight {
 		partyBuffs.EyeOfTheNight = true
-	}
-	if character.Equip[items.ItemSlotNeck].ID == ItemIDJadePendantOfBlasting {
-		partyBuffs.JadePendantOfBlasting = true
 	}
 }
 

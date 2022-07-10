@@ -34,7 +34,7 @@ func (priest *Priest) registerVampiricTouchSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:            core.ProcMaskSpellDamage,
-			BonusSpellHitRating: float64(priest.Talents.ShadowFocus) * 2 * core.SpellHitRatingPerHitChance,
+			BonusSpellHitRating: float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
 			ThreatMultiplier:    1 - 0.08*float64(priest.Talents.ShadowAffinity),
 			OutcomeApplier:      priest.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
@@ -59,8 +59,7 @@ func (priest *Priest) registerVampiricTouchSpell() {
 		AffectedByCastSpeed: priest.Talents.Shadowform,
 
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			DamageMultiplier: 1 * (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01) *
-				core.TernaryFloat64(priest.Talents.Shadowform, 1.15, 1),
+			DamageMultiplier:     1 + float64(priest.Talents.Darkness)*0.02,
 			BonusSpellCritRating: float64(priest.Talents.MindMelt) * 3 * core.CritRatingPerCritChance,
 			ThreatMultiplier:     1 - 0.08*float64(priest.Talents.ShadowAffinity),
 			IsPeriodic:           true,

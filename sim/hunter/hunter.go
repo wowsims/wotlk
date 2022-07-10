@@ -42,9 +42,6 @@ type Hunter struct {
 	hasGronnstalker2Pc bool
 	currentAspect      *core.Aura
 
-	killCommandEnabledUntil time.Duration // Time that KC enablement expires.
-	killCommandBlocked      bool          // True while Steady Shot is casting, to prevent KC.
-
 	latency     time.Duration
 	timeToWeave time.Duration
 
@@ -73,25 +70,33 @@ type Hunter struct {
 	arcaneShotCastTime float64
 	useMultiForCatchup bool
 
-	AspectOfTheHawk  *core.Spell
-	AspectOfTheViper *core.Spell
+	AspectOfTheDragonhawk *core.Spell
+	AspectOfTheViper      *core.Spell
 
-	AimedShot    *core.Spell
-	ArcaneShot   *core.Spell
-	KillCommand  *core.Spell
-	MultiShot    *core.Spell
-	RapidFire    *core.Spell
-	RaptorStrike *core.Spell
-	ScorpidSting *core.Spell
-	SerpentSting *core.Spell
-	SteadyShot   *core.Spell
+	AimedShot     *core.Spell
+	ArcaneShot    *core.Spell
+	BlackArrow    *core.Spell
+	ChimeraShot   *core.Spell
+	ExplosiveShot *core.Spell
+	KillCommand   *core.Spell
+	KillShot      *core.Spell
+	MultiShot     *core.Spell
+	RapidFire     *core.Spell
+	RaptorStrike  *core.Spell
+	ScorpidSting  *core.Spell
+	SerpentSting  *core.Spell
+	SteadyShot    *core.Spell
 
-	SerpentStingDot *core.Dot
+	BlackArrowDot    *core.Dot
+	ExplosiveShotDot *core.Dot
+	SerpentStingDot  *core.Dot
 
-	AspectOfTheHawkAura  *core.Aura
-	AspectOfTheViperAura *core.Aura
-	ScorpidStingAura     *core.Aura
-	TalonOfAlarAura      *core.Aura
+	AspectOfTheDragonhawkAura *core.Aura
+	AspectOfTheViperAura      *core.Aura
+	ImprovedSteadyShotAura    *core.Aura
+	LockAndLoadAura           *core.Aura
+	ScorpidStingAura          *core.Aura
+	TalonOfAlarAura           *core.Aura
 
 	hardcastOnComplete core.CastFunc
 }
@@ -105,30 +110,41 @@ func (hunter *Hunter) GetHunter() *Hunter {
 }
 
 func (hunter *Hunter) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
+	if hunter.Talents.TrueshotAura {
+		raidBuffs.TrueshotAura = true
+	}
+	if hunter.Talents.FerociousInspiration == 3 && hunter.pet != nil {
+		raidBuffs.FerociousInspiration = true
+	}
 }
 func (hunter *Hunter) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
-	if hunter.Talents.TrueshotAura {
-		partyBuffs.TrueshotAura = true
-	}
 }
 
 func (hunter *Hunter) Initialize() {
 	// Update auto crit multipliers now that we have the targets.
-	hunter.AutoAttacks.MHEffect.OutcomeApplier = hunter.OutcomeFuncMeleeWhite(hunter.critMultiplier(false, hunter.CurrentTarget))
-	hunter.AutoAttacks.OHEffect.OutcomeApplier = hunter.OutcomeFuncMeleeWhite(hunter.critMultiplier(false, hunter.CurrentTarget))
-	hunter.AutoAttacks.RangedEffect.OutcomeApplier = hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, hunter.CurrentTarget))
+	hunter.AutoAttacks.MHEffect.OutcomeApplier = hunter.OutcomeFuncMeleeWhite(hunter.critMultiplier(false, false, hunter.CurrentTarget))
+	hunter.AutoAttacks.OHEffect.OutcomeApplier = hunter.OutcomeFuncMeleeWhite(hunter.critMultiplier(false, false, hunter.CurrentTarget))
+	hunter.AutoAttacks.RangedEffect.OutcomeApplier = hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, false, hunter.CurrentTarget))
 
-	hunter.registerAspectOfTheHawkSpell()
+	hunter.registerAspectOfTheDragonhawkSpell()
 	hunter.registerAspectOfTheViperSpell()
 
+	arcaneShotTimer := hunter.NewTimer()
+
 	hunter.registerAimedShotSpell()
-	hunter.registerArcaneShotSpell()
-	hunter.registerKillCommandSpell()
+	hunter.registerArcaneShotSpell(arcaneShotTimer)
+	hunter.registerBlackArrowSpell()
+	hunter.registerChimeraShotSpell()
+	hunter.registerExplosiveShotSpell(arcaneShotTimer)
+	hunter.registerKillShotSpell()
 	hunter.registerMultiShotSpell()
 	hunter.registerRaptorStrikeSpell()
 	hunter.registerScorpidStingSpell()
 	hunter.registerSerpentStingSpell()
 	hunter.registerSteadyShotSpell()
+
+	hunter.registerKillCommandCD()
+	hunter.registerRapidFireCD()
 
 	hunter.hardcastOnComplete = func(sim *core.Simulation, _ *core.Unit) {
 		hunter.rotation(sim, false)
@@ -138,8 +154,6 @@ func (hunter *Hunter) Initialize() {
 }
 
 func (hunter *Hunter) Reset(sim *core.Simulation) {
-	hunter.killCommandEnabledUntil = 0
-	hunter.killCommandBlocked = false
 	hunter.nextAction = OptionNone
 	hunter.nextActionAt = 0
 	hunter.rangedSwingSpeed = 0
@@ -183,39 +197,28 @@ func NewHunter(character core.Character, options proto.Player) *Hunter {
 
 	rangedWeapon := hunter.WeaponFromRanged(0)
 	hunter.PseudoStats.RangedSpeedMultiplier = 1
-	if hunter.HasRangedWeapon() && hunter.GetRangedWeapon().ID == ThoridalTheStarsFuryItemID {
-		hunter.PseudoStats.RangedSpeedMultiplier *= 1.15
-	} else {
+
+	// Passive bonus (used to be from quiver).
+	hunter.PseudoStats.RangedSpeedMultiplier *= 1.15
+
+	if hunter.HasRangedWeapon() && hunter.GetRangedWeapon().ID != ThoridalTheStarsFuryItemID {
 		switch hunter.Options.Ammo {
+		case proto.Hunter_Options_IcebladeArrow:
+			hunter.AmmoDPS = 91.5
+		case proto.Hunter_Options_SaroniteRazorheads:
+			hunter.AmmoDPS = 67.5
+		case proto.Hunter_Options_TerrorshaftArrow:
+			hunter.AmmoDPS = 46.5
 		case proto.Hunter_Options_TimelessArrow:
 			hunter.AmmoDPS = 53
 		case proto.Hunter_Options_MysteriousArrow:
 			hunter.AmmoDPS = 46.5
 		case proto.Hunter_Options_AdamantiteStinger:
 			hunter.AmmoDPS = 43
-		case proto.Hunter_Options_WardensArrow:
-			hunter.AmmoDPS = 37
-		case proto.Hunter_Options_HalaaniRazorshaft:
-			hunter.AmmoDPS = 34
 		case proto.Hunter_Options_BlackflightArrow:
 			hunter.AmmoDPS = 32
 		}
 		hunter.AmmoDamageBonus = hunter.AmmoDPS * rangedWeapon.SwingSpeed
-
-		switch hunter.Options.QuiverBonus {
-		case proto.Hunter_Options_Speed10:
-			hunter.PseudoStats.RangedSpeedMultiplier *= 1.1
-		case proto.Hunter_Options_Speed11:
-			hunter.PseudoStats.RangedSpeedMultiplier *= 1.11
-		case proto.Hunter_Options_Speed12:
-			hunter.PseudoStats.RangedSpeedMultiplier *= 1.12
-		case proto.Hunter_Options_Speed13:
-			hunter.PseudoStats.RangedSpeedMultiplier *= 1.13
-		case proto.Hunter_Options_Speed14:
-			hunter.PseudoStats.RangedSpeedMultiplier *= 1.14
-		case proto.Hunter_Options_Speed15:
-			hunter.PseudoStats.RangedSpeedMultiplier *= 1.15
-		}
 	}
 
 	hunter.EnableAutoAttacks(hunter, core.AutoAttackOptions{
@@ -270,91 +273,91 @@ func NewHunter(character core.Character, options proto.Player) *Hunter {
 
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassHunter}] = stats.Stats{
-		stats.Health:    3388,
-		stats.Strength:  61,
-		stats.Agility:   153,
-		stats.Stamina:   106,
-		stats.Intellect: 81,
-		stats.Spirit:    82,
-		stats.Mana:      3383,
+		stats.Health:    7324,
+		stats.Strength:  71,
+		stats.Agility:   183,
+		stats.Stamina:   126,
+		stats.Intellect: 94,
+		stats.Spirit:    96,
+		stats.Mana:      5046,
 
 		stats.AttackPower:       120,
 		stats.RangedAttackPower: 130,
 		stats.MeleeCrit:         -1.53 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassHunter}] = stats.Stats{
-		stats.Health:    3388,
-		stats.Strength:  65,
-		stats.Agility:   148,
-		stats.Stamina:   107,
-		stats.Intellect: 78,
-		stats.Spirit:    85,
-		stats.Mana:      3383,
+		stats.Health:    7324,
+		stats.Strength:  75,
+		stats.Agility:   178,
+		stats.Stamina:   127,
+		stats.Intellect: 91,
+		stats.Spirit:    99,
+		stats.Mana:      5046,
 
 		stats.AttackPower:       120,
 		stats.RangedAttackPower: 130,
 		stats.MeleeCrit:         -1.53 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDwarf, Class: proto.Class_ClassHunter}] = stats.Stats{
-		stats.Health:    3388,
-		stats.Strength:  66,
-		stats.Agility:   147,
-		stats.Stamina:   111,
-		stats.Intellect: 76,
-		stats.Spirit:    82,
-		stats.Mana:      3383,
+		stats.Health:    7324,
+		stats.Strength:  76,
+		stats.Agility:   177,
+		stats.Stamina:   131,
+		stats.Intellect: 89,
+		stats.Spirit:    96,
+		stats.Mana:      5046,
 
 		stats.AttackPower:       120,
 		stats.RangedAttackPower: 130,
 		stats.MeleeCrit:         -1.53 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassHunter}] = stats.Stats{
-		stats.Health:    3388,
-		stats.Strength:  61,
-		stats.Agility:   156,
-		stats.Stamina:   107,
-		stats.Intellect: 77,
-		stats.Spirit:    83,
-		stats.Mana:      3383,
+		stats.Health:    7324,
+		stats.Strength:  71,
+		stats.Agility:   193,
+		stats.Stamina:   127,
+		stats.Intellect: 93,
+		stats.Spirit:    97,
+		stats.Mana:      5046,
 
 		stats.AttackPower:       120,
 		stats.RangedAttackPower: 130,
 		stats.MeleeCrit:         -1.53 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceOrc, Class: proto.Class_ClassHunter}] = stats.Stats{
-		stats.Health:    3388,
-		stats.Strength:  67,
-		stats.Agility:   148,
-		stats.Stamina:   110,
-		stats.Intellect: 74,
-		stats.Spirit:    86,
-		stats.Mana:      3383,
+		stats.Health:    7324,
+		stats.Strength:  77,
+		stats.Agility:   178,
+		stats.Stamina:   130,
+		stats.Intellect: 87,
+		stats.Spirit:    100,
+		stats.Mana:      5046,
 
 		stats.AttackPower:       120,
 		stats.RangedAttackPower: 130,
 		stats.MeleeCrit:         -1.53 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTauren, Class: proto.Class_ClassHunter}] = stats.Stats{
-		stats.Health:    3388,
-		stats.Strength:  69,
-		stats.Agility:   146,
-		stats.Stamina:   110,
-		stats.Intellect: 72,
-		stats.Spirit:    85,
-		stats.Mana:      3383,
+		stats.Health:    7324,
+		stats.Strength:  79,
+		stats.Agility:   183,
+		stats.Stamina:   130,
+		stats.Intellect: 88,
+		stats.Spirit:    99,
+		stats.Mana:      5046,
 
 		stats.AttackPower:       120,
 		stats.RangedAttackPower: 130,
 		stats.MeleeCrit:         -1.53 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassHunter}] = stats.Stats{
-		stats.Health:    3388,
-		stats.Strength:  65,
-		stats.Agility:   153,
-		stats.Stamina:   109,
-		stats.Intellect: 73,
-		stats.Spirit:    84,
-		stats.Mana:      3383,
+		stats.Health:    7324,
+		stats.Strength:  75,
+		stats.Agility:   190,
+		stats.Stamina:   129,
+		stats.Intellect: 89,
+		stats.Spirit:    98,
+		stats.Mana:      5046,
 
 		stats.AttackPower:       120,
 		stats.RangedAttackPower: 130,

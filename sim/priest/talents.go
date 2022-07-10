@@ -11,6 +11,10 @@ func (priest *Priest) ApplyTalents() {
 	priest.setupSurgeOfLight()
 	priest.registerInnerFocus()
 
+	if priest.Talents.Shadowform {
+		priest.PseudoStats.ShadowDamageDealtMultiplier *= 1.15
+	}
+
 	if priest.Talents.Meditation > 0 {
 		priest.PseudoStats.SpiritRegenRateCasting = float64(priest.Talents.Meditation) * 0.1
 	}
@@ -123,7 +127,7 @@ func (priest *Priest) setupSurgeOfLight() {
 }
 
 func (priest *Priest) applySurgeOfLight(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
-	if priest.SurgeOfLightProcAura != nil && priest.SurgeOfLightProcAura.IsActive() {
+	if priest.SurgeOfLightProcAura.IsActive() {
 		cast.CastTime = 0
 		cast.Cost = 0
 	}

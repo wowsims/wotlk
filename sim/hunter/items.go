@@ -57,7 +57,7 @@ func (hunter *Hunter) talonOfAlarDamageMod(baseDamageConfig core.BaseDamageConfi
 		return core.WrapBaseDamageConfig(baseDamageConfig, func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
 			return func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				normalDamage := oldCalculator(sim, hitEffect, spell)
-				if hunter.TalonOfAlarAura != nil && hunter.TalonOfAlarAura.IsActive() {
+				if hunter.TalonOfAlarAura.IsActive() {
 					return normalDamage + 40
 				} else {
 					return normalDamage

@@ -133,7 +133,7 @@ binary_dist: $(OUT_DIR)
 # Builds the web server with the compiled client.
 wowsimwotlk: binary_dist devserver
 
-devserver: sim/web/main.go binary_dist/dist.go
+devserver: sim/core/proto/api.pb.go sim/web/main.go binary_dist/dist.go
 	@echo "Starting server compile now..."
 	@if go build -o wowsimwotlk ./sim/web/main.go; then \
 		echo "\033[1;32mBuild Completed Succeessfully\033[0m"; \
