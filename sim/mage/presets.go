@@ -207,7 +207,7 @@ var FullArcaneConsumes = &proto.Consumes{
 }
 
 var FullDebuffs = &proto.Debuffs{
-	CurseOfElements:   proto.TristateEffect_TristateEffectImproved,
+	CurseOfElements:   true,
 	JudgementOfWisdom: true,
 	Misery:            true,
 }

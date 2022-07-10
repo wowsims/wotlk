@@ -112,7 +112,7 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 				debuffs: Debuffs.create({
 					mangle: true,
 					sunderArmor: true,
-					curseOfWeakness: true,
+					curseOfWeakness: TristateEffect.TristateEffectRegular,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					huntersMark: TristateEffect.TristateEffectImproved,
 				}),
