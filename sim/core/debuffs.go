@@ -441,7 +441,8 @@ func ExposeArmorAura(target *Unit, hasGlyph bool) *Aura {
 }
 
 func CurseOfWeaknessAura(target *Unit, points int32) *Aura {
-	bonus := stats.Stats{stats.AttackPower: -478}
+	APReduction := 478 * (1 + 0.1 * float64(points))
+	bonus := stats.Stats{stats.AttackPower: -APReduction}
 	armorReduction := 0.05
 
 	return target.GetOrRegisterAura(Aura{
