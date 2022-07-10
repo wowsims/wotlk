@@ -10,7 +10,7 @@ import (
 
 func (priest *Priest) registerVampiricTouchSpell() {
 	actionID := core.ActionID{SpellID: 48160}
-	baseCost := priest.BaseMana() * 0.16
+	baseCost := priest.BaseMana * 0.16
 
 	applier := priest.OutcomeFuncTick()
 	if priest.Talents.Shadowform {

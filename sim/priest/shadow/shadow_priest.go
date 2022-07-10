@@ -39,6 +39,8 @@ func NewShadowPriest(character core.Character, options proto.Player) *ShadowPrie
 
 	spriest.ApplyShadowOnHitEffects()
 
+	spriest.EnableResumeAfterManaWait(spriest.tryUseGCD)
+
 	return spriest
 }
 

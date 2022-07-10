@@ -10,10 +10,23 @@ import (
 
 const ThreatPerManaGained = 0.5
 
+type OnManaTick func(sim *Simulation)
+
+type manaBar struct {
+	unit       *Unit
+	OnManaTick OnManaTick
+
+	BaseMana float64
+
+	manaCastingMetrics    *ResourceMetrics
+	manaNotCastingMetrics *ResourceMetrics
+	JowManaMetrics        *ResourceMetrics
+	VtManaMetrics         *ResourceMetrics
+}
+
 // EnableManaBar will setup caster stat dependencies (int->mana and int->spellcrit)
 // as well as enable the mana gain action to regenerate mana.
 // It will then enable mana gain metrics for reporting.
-// TODO: Make this into an object like rageBar or energyBar.
 func (character *Character) EnableManaBar() {
 	// Assumes all units have >= 20 intellect.
 	// See https://wowwiki-archive.fandom.com/wiki/Base_mana.
@@ -44,17 +57,26 @@ func (character *Character) EnableManaBar() {
 
 	character.manaCastingMetrics = character.NewManaMetrics(ActionID{OtherID: proto.OtherAction_OtherActionManaRegen, Tag: 1})
 	character.manaNotCastingMetrics = character.NewManaMetrics(ActionID{OtherID: proto.OtherAction_OtherActionManaRegen, Tag: 2})
+
+	character.BaseMana = character.GetBaseStats()[stats.Mana]
+	character.Unit.manaBar.unit = &character.Unit
+}
+
+// EnableResumeAfterManaWait will setup the OnManaTick callback to resume the given callback
+//  once enough mana has been gained after calling unit.WaitForMana()
+func (character *Character) EnableResumeAfterManaWait(callback func(sim *Simulation)) {
+	if callback == nil {
+		panic("attempted to setup a mana tick callback that was nil")
+	}
+	character.OnManaTick = func(sim *Simulation) {
+		if character.FinishedWaitingForManaAndGCDReady(sim) {
+			callback(sim)
+		}
+	}
 }
 
 func (unit *Unit) HasManaBar() bool {
-	return unit.MaxMana() > 0
-}
-
-// Empty handler so Agents don't have to provide one if they have no logic to add.
-func (unit *Unit) OnManaTick(sim *Simulation) {}
-
-func (character *Character) BaseMana() float64 {
-	return character.GetBaseStats()[stats.Mana]
+	return unit.manaBar.unit != nil
 }
 func (unit *Unit) MaxMana() float64 {
 	return unit.GetInitialStat(stats.Mana)
@@ -241,14 +263,19 @@ func (sim *Simulation) initManaTickAction() {
 	}
 	pa.OnAction = func(sim *Simulation) {
 		for _, player := range playersWithManaBars {
-			player.GetCharacter().ManaTick(sim)
-			player.OnManaTick(sim)
+			char := player.GetCharacter()
+			char.ManaTick(sim)
+			if char.OnManaTick != nil {
+				char.OnManaTick(sim)
+			}
 		}
 		for _, petAgent := range petsWithManaBars {
 			pet := petAgent.GetPet()
 			if pet.IsEnabled() {
 				pet.ManaTick(sim)
-				petAgent.OnManaTick(sim)
+				if pet.OnManaTick != nil {
+					pet.OnManaTick(sim)
+				}
 			}
 		}
 

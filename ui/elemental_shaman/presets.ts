@@ -57,10 +57,10 @@ export const DefaultOptions = ElementalShamanOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	defaultPotion: Potions.SuperManaPotion,
-	flask: Flask.FlaskOfBlindingLight,
-	food: Food.FoodBlackenedBasilisk,
-	mainHandImbue: WeaponImbue.WeaponImbueBrilliantWizardOil,
+	defaultPotion: Potions.RunicManaPotion,
+	flask: Flask.FlaskOfTheFrostWyrm,
+	food: Food.FoodFishFeast,
+	mainHandImbue: WeaponImbue.WeaponImbueShamanFlametongue,
 });
 
 export const PRE_RAID_PRESET = {

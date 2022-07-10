@@ -8,7 +8,7 @@ import (
 )
 
 func (hunter *Hunter) registerMultiShotSpell() {
-	baseCost := 0.09 * hunter.BaseMana()
+	baseCost := 0.09 * hunter.BaseMana
 
 	baseEffect := core.SpellEffect{
 		ProcMask: core.ProcMaskRangedSpecial,

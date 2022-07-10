@@ -11,12 +11,6 @@ func (mage *Mage) OnGCDReady(sim *core.Simulation) {
 	mage.tryUseGCD(sim)
 }
 
-func (mage *Mage) OnManaTick(sim *core.Simulation) {
-	if mage.FinishedWaitingForManaAndGCDReady(sim) {
-		mage.tryUseGCD(sim)
-	}
-}
-
 func (mage *Mage) tryUseGCD(sim *core.Simulation) {
 	var spell *core.Spell
 	if mage.RotationType == proto.Mage_Rotation_Arcane {

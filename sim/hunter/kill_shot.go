@@ -8,7 +8,7 @@ import (
 )
 
 func (hunter *Hunter) registerKillShotSpell() {
-	baseCost := 0.07 * hunter.BaseMana()
+	baseCost := 0.07 * hunter.BaseMana
 
 	hunter.KillShot = hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 61006},

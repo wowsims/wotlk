@@ -158,9 +158,3 @@ func (enh *EnhancementShaman) SetupRotationSchedule() {
 func (enh *EnhancementShaman) OnGCDReady(sim *core.Simulation) {
 	enh.scheduler.DoNextAbility(sim, &enh.Character)
 }
-
-func (enh *EnhancementShaman) OnManaTick(sim *core.Simulation) {
-	if enh.IsWaitingForMana() && !enh.DoneWaitingForMana(sim) {
-		// Do nothing, just need to check so metrics get updated.
-	}
-}

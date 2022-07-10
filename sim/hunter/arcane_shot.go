@@ -8,7 +8,7 @@ import (
 )
 
 func (hunter *Hunter) registerArcaneShotSpell(timer *core.Timer) {
-	baseCost := 0.05 * hunter.BaseMana()
+	baseCost := 0.05 * hunter.BaseMana
 
 	hunter.ArcaneShot = hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 49045},

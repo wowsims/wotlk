@@ -179,6 +179,10 @@ func (shaman *Shaman) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	if shaman.Talents.UnleashedRage > 0 {
 		raidBuffs.UnleashedRage = true
 	}
+
+	if shaman.Talents.ElementalOath > 0 {
+		raidBuffs.ElementalOath = true
+	}
 }
 func (shaman *Shaman) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 	if shaman.Talents.ManaTideTotem {

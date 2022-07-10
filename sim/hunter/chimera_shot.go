@@ -11,7 +11,7 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 	if !hunter.Talents.ChimeraShot {
 		return
 	}
-	baseCost := 0.12 * hunter.BaseMana()
+	baseCost := 0.12 * hunter.BaseMana
 
 	hunter.ChimeraShot = hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 53209},

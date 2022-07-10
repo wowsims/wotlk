@@ -38,7 +38,7 @@ func (hunter *Hunter) registerRapidFireCD() {
 		},
 	})
 
-	baseCost := 0.03 * hunter.BaseMana()
+	baseCost := 0.03 * hunter.BaseMana
 	hunter.RapidFire = hunter.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 
