@@ -87,6 +87,7 @@ type Hunter struct {
 
 	AspectOfTheDragonhawkAura *core.Aura
 	AspectOfTheViperAura      *core.Aura
+	ImprovedSteadyShotAura    *core.Aura
 	ScorpidStingAura          *core.Aura
 	TalonOfAlarAura           *core.Aura
 

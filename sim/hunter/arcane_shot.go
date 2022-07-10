@@ -8,10 +8,10 @@ import (
 )
 
 func (hunter *Hunter) registerArcaneShotSpell() {
-	baseCost := 230.0
+	baseCost := 0.05 * hunter.BaseMana()
 
 	hunter.ArcaneShot = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 27019},
+		ActionID:    core.ActionID{SpellID: 49045},
 		SpellSchool: core.SpellSchoolArcane,
 		Flags:       core.SpellFlagMeleeMetrics,
 
@@ -20,10 +20,13 @@ func (hunter *Hunter) registerArcaneShotSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.02*float64(hunter.Talents.Efficiency)),
+				Cost: baseCost * (1 - 0.03*float64(hunter.Talents.Efficiency)),
 				GCD:  core.GCDDefault + hunter.latency,
 			},
 			IgnoreHaste: true,
+			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
+				cast.CastTime = hunter.SteadyShotCastTime()
+			},
 			CD: core.Cooldown{
 				Timer:    hunter.NewTimer(),
 				Duration: time.Second*6 - time.Millisecond*200*time.Duration(hunter.Talents.ImprovedArcaneShot),
@@ -31,13 +34,15 @@ func (hunter *Hunter) registerArcaneShotSpell() {
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskRangedSpecial,
-			DamageMultiplier: 1 * (1 + 0.03*float64(hunter.Talents.FerociousInspiration)),
+			ProcMask: core.ProcMaskRangedSpecial,
+			DamageMultiplier: 1 *
+				(1 + 0.05*float64(hunter.Talents.ImprovedArcaneShot)) *
+				(1 + 0.03*float64(hunter.Talents.FerociousInspiration)),
 			ThreatMultiplier: 1,
 
 			BaseDamage: hunter.talonOfAlarDamageMod(core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.15 + 273
+					return (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.15 + 492
 				},
 				TargetSpellCoefficient: 1,
 			}),

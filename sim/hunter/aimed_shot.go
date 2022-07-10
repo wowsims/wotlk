@@ -1,15 +1,17 @@
 package hunter
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (hunter *Hunter) registerAimedShotSpell() {
-	baseCost := 370.0
+	baseCost := 0.08 * hunter.BaseMana()
 
 	hunter.AimedShot = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 27065},
+		ActionID:    core.ActionID{SpellID: 49050},
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 
@@ -18,20 +20,22 @@ func (hunter *Hunter) registerAimedShotSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.02*float64(hunter.Talents.Efficiency)),
-				// Actual aimed shot has a 2.5s cast time, but we only use it as an instant precast.
-				//CastTime:       time.Millisecond * 2500,
-				//GCD:            core.GCDDefault,
+				Cost: baseCost *
+					(1 - 0.03*float64(hunter.Talents.Efficiency)) *
+					(1 - 0.05*float64(hunter.Talents.MasterMarksman)),
+				GCD: core.GCDDefault,
 			},
-			//CD: core.Cooldown{
-			//	Timer:    hunter.NewTimer(),
-			//	Duration: time.Second * 6,
-			//},
+			IgnoreHaste: true,
+			CD: core.Cooldown{
+				Timer:    hunter.NewTimer(),
+				Duration: time.Second * 10,
+			},
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskRangedSpecial,
-			DamageMultiplier: 1,
+			BonusCritRating:  4 * core.CritRatingPerCritChance * float64(hunter.Talents.ImprovedBarrage),
+			DamageMultiplier: 1 + 0.04*float64(hunter.Talents.Barrage),
 			ThreatMultiplier: 1,
 
 			BaseDamage: hunter.talonOfAlarDamageMod(core.BaseDamageConfig{
@@ -40,7 +44,7 @@ func (hunter *Hunter) registerAimedShotSpell() {
 						hunter.AutoAttacks.Ranged.BaseDamage(sim) +
 						hunter.AmmoDamageBonus +
 						hitEffect.BonusWeaponDamage(spell.Unit) +
-						870
+						408
 				},
 				TargetSpellCoefficient: 1,
 			}),

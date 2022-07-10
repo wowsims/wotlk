@@ -163,11 +163,18 @@ func (hp *HunterPet) specialDamageMod(baseDamageConfig core.BaseDamageConfig) co
 func (hp *HunterPet) specialOutcomeMod(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
 	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
 		if hp.CobraStrikesAura != nil && hp.CobraStrikesAura.IsActive() {
-			hp.AddStat(stats.MeleeCrit, 100*core.CritRatingPerCritChance)
-			hp.AddStat(stats.SpellCrit, 100*core.CritRatingPerCritChance)
+			hp.AddStatDynamic(sim, stats.MeleeCrit, 100*core.CritRatingPerCritChance)
+			hp.AddStatDynamic(sim, stats.SpellCrit, 100*core.CritRatingPerCritChance)
 			outcomeApplier(sim, spell, spellEffect, attackTable)
-			hp.AddStat(stats.MeleeCrit, -100*core.CritRatingPerCritChance)
-			hp.AddStat(stats.SpellCrit, -100*core.CritRatingPerCritChance)
+			hp.AddStatDynamic(sim, stats.MeleeCrit, -100*core.CritRatingPerCritChance)
+			hp.AddStatDynamic(sim, stats.SpellCrit, -100*core.CritRatingPerCritChance)
+		} else if hp.KillCommandAura.IsActive() && hp.hunterOwner.Talents.FocusedFire > 0 {
+			bonusCrit := 10 * core.CritRatingPerCritChance * float64(hp.hunterOwner.Talents.FocusedFire)
+			hp.AddStatDynamic(sim, stats.MeleeCrit, bonusCrit)
+			hp.AddStatDynamic(sim, stats.SpellCrit, bonusCrit)
+			outcomeApplier(sim, spell, spellEffect, attackTable)
+			hp.AddStatDynamic(sim, stats.MeleeCrit, -bonusCrit)
+			hp.AddStatDynamic(sim, stats.SpellCrit, -bonusCrit)
 		} else {
 			outcomeApplier(sim, spell, spellEffect, attackTable)
 		}

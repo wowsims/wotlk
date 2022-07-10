@@ -1,6 +1,7 @@
 package hunter
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -34,13 +35,16 @@ func (hunter *Hunter) ApplyTalents() {
 		}
 	}
 
+	hunter.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*1*float64(hunter.Talents.FocusedAim))
 	hunter.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*1*float64(hunter.Talents.Surefooted))
 	hunter.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*1*float64(hunter.Talents.KillerInstinct))
+	hunter.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*1*float64(hunter.Talents.MasterMarksman))
 	hunter.AddStat(stats.Parry, core.ParryRatingPerParryChance*1*float64(hunter.Talents.Deflection))
 	hunter.pet.AddStat(stats.Dodge, 1*core.DodgeRatingPerDodgeChance*float64(hunter.Talents.CatlikeReflexes))
 	hunter.PseudoStats.RangedSpeedMultiplier *= 1 + 0.04*float64(hunter.Talents.SerpentsSwiftness)
 	hunter.PseudoStats.RangedDamageDealtMultiplier *= 1 + 0.01*float64(hunter.Talents.RangedWeaponSpecialization)
 	hunter.PseudoStats.BonusRangedCritRating += 1 * float64(hunter.Talents.LethalShots) * core.CritRatingPerCritChance
+	// TODO: Hunter's mark
 
 	if hunter.Talents.EnduranceTraining > 0 {
 		healthBonus := 0.01 * float64(hunter.Talents.EnduranceTraining)
@@ -98,40 +102,29 @@ func (hunter *Hunter) ApplyTalents() {
 	}
 
 	if hunter.Talents.CombatExperience > 0 {
-		agiBonus := 1 + 0.01*float64(hunter.Talents.CombatExperience)
+		bonus := 1 + 0.02*float64(hunter.Talents.CombatExperience)
 		hunter.AddStatDependency(stats.StatDependency{
 			SourceStat:   stats.Agility,
 			ModifiedStat: stats.Agility,
 			Modifier: func(agility float64, _ float64) float64 {
-				return agility * agiBonus
+				return agility * bonus
 			},
 		})
-		intBonus := 1 + 0.03*float64(hunter.Talents.CombatExperience)
 		hunter.AddStatDependency(stats.StatDependency{
 			SourceStat:   stats.Intellect,
 			ModifiedStat: stats.Intellect,
 			Modifier: func(intellect float64, _ float64) float64 {
-				return intellect * intBonus
+				return intellect * bonus
 			},
 		})
 	}
 	if hunter.Talents.CarefulAim > 0 {
-		bonus := 0.15 * float64(hunter.Talents.CarefulAim)
+		bonus := (1 / 3) * float64(hunter.Talents.CarefulAim)
 		hunter.AddStatDependency(stats.StatDependency{
 			SourceStat:   stats.Intellect,
 			ModifiedStat: stats.RangedAttackPower,
 			Modifier: func(intellect float64, rap float64) float64 {
 				return rap + intellect*bonus
-			},
-		})
-	}
-	if hunter.Talents.MasterMarksman > 0 {
-		bonus := 1 + 0.02*float64(hunter.Talents.MasterMarksman)
-		hunter.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.RangedAttackPower,
-			ModifiedStat: stats.RangedAttackPower,
-			Modifier: func(rap float64, _ float64) float64 {
-				return rap * bonus
 			},
 		})
 	}
@@ -166,8 +159,10 @@ func (hunter *Hunter) ApplyTalents() {
 	hunter.applySpiritBond()
 	hunter.applyInvigoration()
 	hunter.applyCobraStrikes()
-
 	hunter.applyGoForTheThroat()
+	hunter.applyPiercingShots()
+	hunter.applyWildQuiver()
+
 	hunter.applySlaying()
 	hunter.applyThrillOfTheHunt()
 	hunter.applyExposeWeakness()
@@ -188,9 +183,9 @@ func (hunter *Hunter) critMultiplier(isRanged bool, target *core.Unit) float64 {
 	//	primaryModifier *= humanoidMultiplier
 	//}
 
-	//if isRanged {
-	//	secondaryModifier += 0.06 * float64(hunter.Talents.MortalShots)
-	//}
+	if isRanged {
+		secondaryModifier += 0.06 * float64(hunter.Talents.MortalShots)
+	}
 
 	return hunter.MeleeCritMultiplier(primaryModifier, secondaryModifier)
 }
@@ -293,13 +288,117 @@ func (hunter *Hunter) applyCobraStrikes() {
 	})
 }
 
+func (hunter *Hunter) applyPiercingShots() {
+	if hunter.Talents.PiercingShots == 0 {
+		return
+	}
+
+	actionID := core.ActionID{SpellID: 53238}
+	dmgMultiplier := 0.1 * float64(hunter.Talents.PiercingShots)
+
+	psSpell := hunter.RegisterSpell(core.SpellConfig{
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolPhysical,
+		Flags:       core.SpellFlagNoOnCastComplete,
+	})
+
+	target := hunter.CurrentTarget
+	dotAura := target.GetOrRegisterAura(core.Aura{
+		Label:    "PiercingShots-" + strconv.Itoa(int(hunter.Index)),
+		ActionID: actionID,
+		Duration: time.Second * 8,
+	})
+
+	psDot := core.NewDot(core.Dot{
+		Spell:         psSpell,
+		Aura:          dotAura,
+		NumberOfTicks: 8,
+		TickLength:    time.Second * 1,
+	})
+
+	hunter.RegisterAura(core.Aura{
+		Label:    "Piercing Shots Talent",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+				return
+			}
+			if spell != hunter.AimedShot && spell != hunter.SteadyShot {
+				// TODO: Chimera Shot too
+				return
+			}
+
+			totalDmg := spellEffect.Damage * dmgMultiplier
+			psDot.TickEffects = core.TickFuncSnapshot(target, core.SpellEffect{
+				ProcMask:         core.ProcMaskPeriodicDamage,
+				DamageMultiplier: 1,
+				ThreatMultiplier: 1,
+				IsPeriodic:       true,
+				BaseDamage:       core.BaseDamageConfigFlat(totalDmg / 8),
+				OutcomeApplier:   hunter.OutcomeFuncTick(),
+			})
+			psDot.Apply(sim)
+		},
+	})
+}
+
+func (hunter *Hunter) applyWildQuiver() {
+	if hunter.Talents.WildQuiver == 0 {
+		return
+	}
+
+	actionID := core.ActionID{SpellID: 53217}
+	procChance := 0.04 * float64(hunter.Talents.WildQuiver)
+
+	wqSpell := hunter.RegisterSpell(core.SpellConfig{
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolNature,
+		Flags:       core.SpellFlagNoOnCastComplete,
+
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+			ProcMask:         core.ProcMaskEmpty,
+			DamageMultiplier: 0.8,
+			ThreatMultiplier: 1,
+
+			BaseDamage: core.BaseDamageConfig{
+				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+					return hunter.AutoAttacks.Ranged.BaseDamage(sim) +
+						hunter.AmmoDamageBonus +
+						hitEffect.BonusWeaponDamage(spell.Unit)
+				},
+				TargetSpellCoefficient: 1,
+			},
+			OutcomeApplier: hunter.OutcomeFuncAlwaysHit(),
+		}),
+	})
+
+	hunter.RegisterAura(core.Aura{
+		Label:    "Wild Quiver Talent",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.ProcMask.Matches(core.ProcMaskRangedAuto) {
+				return
+			}
+
+			if sim.RandomFloat("Wild Quiver") < procChance {
+				wqSpell.Cast(sim, spellEffect.Target)
+			}
+		},
+	})
+}
+
 func (hunter *Hunter) applyFocusedFire() {
 	if hunter.Talents.FocusedFire == 0 || hunter.pet == nil {
 		return
 	}
 
 	hunter.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.01*float64(hunter.Talents.FocusedFire)
-	// TODO: Pet special crit %
 }
 
 func (hunter *Hunter) applyFrenzy() {
@@ -578,11 +677,12 @@ func (hunter *Hunter) registerReadinessCD() {
 			//IgnoreHaste: true, // Hunter GCD is locked
 			CD: core.Cooldown{
 				Timer:    hunter.NewTimer(),
-				Duration: time.Minute * 5,
+				Duration: time.Minute * 3,
 			},
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+			hunter.AimedShot.CD.Reset()
 			hunter.RapidFire.CD.Reset()
 			hunter.MultiShot.CD.Reset()
 			hunter.ArcaneShot.CD.Reset()

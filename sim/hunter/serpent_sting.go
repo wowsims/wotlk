@@ -9,8 +9,8 @@ import (
 )
 
 func (hunter *Hunter) registerSerpentStingSpell() {
-	actionID := core.ActionID{SpellID: 27016}
-	baseCost := 275.0
+	actionID := core.ActionID{SpellID: 49001}
+	baseCost := 0.09 * hunter.BaseMana()
 
 	hunter.SerpentSting = hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -21,7 +21,7 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.02*float64(hunter.Talents.Efficiency)),
+				Cost: baseCost * (1 - 0.03*float64(hunter.Talents.Efficiency)),
 				GCD:  core.GCDDefault,
 			},
 			IgnoreHaste: true, // Hunter GCD is locked at 1.5s
@@ -50,13 +50,13 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 + 0.06*float64(hunter.Talents.ImprovedStings),
+			DamageMultiplier: 1 + 0.1*float64(hunter.Talents.ImprovedStings),
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
 
 			BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
 				attackPower := spellEffect.RangedAttackPower(spell.Unit) + spellEffect.RangedAttackPowerOnTarget()
-				return 132 + attackPower*0.02
+				return 242 + attackPower*0.04
 			}, 0),
 			OutcomeApplier: hunter.OutcomeFuncTick(),
 		}),
