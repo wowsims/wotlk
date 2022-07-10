@@ -33,7 +33,7 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 export const StandardTalents = {
 	name: 'Standard',
-	data: '55003105100213351051--05105301005',
+	data: '0532001523212351322301351-005052031',
 };
 
 export const RestoTalents = {
