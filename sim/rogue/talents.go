@@ -106,7 +106,7 @@ func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, 
 		if netherblade4pc && sim.RandomFloat("Netherblade 4pc") < 0.15 {
 			rogue.AddComboPoints(sim, 1, netherblade4pcMetrics)
 		}
-		if relentlessStrikes {
+		if relentlessStrikes > 0 {
 			if numPoints == 5 || sim.RandomFloat("RelentlessStrikes") < 0.2*float64(numPoints) {
 				rogue.AddEnergy(sim, 25, relentlessStrikesMetrics)
 			}
@@ -206,16 +206,16 @@ func (rogue *Rogue) applySealFate() {
 func (rogue *Rogue) applyWeaponSpecializations() {
 	if weapon := rogue.Equip[proto.ItemSlot_ItemSlotMainHand]; weapon.ID != 0 {
 		if weapon.WeaponType == proto.WeaponType_WeaponTypeFist {
-			rogue.PseudoStats.BonusMHCritRating += 1 * core.CritRatingPerCritChance * float64(rogue.Talents.FistWeaponSpecialization)
+			rogue.PseudoStats.BonusMHCritRating += 1 * core.CritRatingPerCritChance * float64(rogue.Talents.CloseQuartersCombat)
 		} else if weapon.WeaponType == proto.WeaponType_WeaponTypeDagger {
-			rogue.PseudoStats.BonusMHCritRating += 1 * core.CritRatingPerCritChance * float64(rogue.Talents.DaggerSpecialization)
+			rogue.PseudoStats.BonusMHCritRating += 1 * core.CritRatingPerCritChance * float64(rogue.Talents.CloseQuartersCombat)
 		}
 	}
 	if weapon := rogue.Equip[proto.ItemSlot_ItemSlotOffHand]; weapon.ID != 0 {
 		if weapon.WeaponType == proto.WeaponType_WeaponTypeFist {
-			rogue.PseudoStats.BonusOHCritRating += 1 * core.CritRatingPerCritChance * float64(rogue.Talents.FistWeaponSpecialization)
+			rogue.PseudoStats.BonusOHCritRating += 1 * core.CritRatingPerCritChance * float64(rogue.Talents.CloseQuartersCombat)
 		} else if weapon.WeaponType == proto.WeaponType_WeaponTypeDagger {
-			rogue.PseudoStats.BonusOHCritRating += 1 * core.CritRatingPerCritChance * float64(rogue.Talents.DaggerSpecialization)
+			rogue.PseudoStats.BonusOHCritRating += 1 * core.CritRatingPerCritChance * float64(rogue.Talents.CloseQuartersCombat)
 		}
 	}
 
@@ -227,13 +227,13 @@ func (rogue *Rogue) applyWeaponSpecializations() {
 	if rogue.Equip[proto.ItemSlot_ItemSlotOffHand].WeaponType == proto.WeaponType_WeaponTypeSword {
 		swordSpecMask |= core.ProcMaskMeleeOH
 	}
-	if rogue.Talents.SwordSpecialization > 0 && swordSpecMask != core.ProcMaskUnknown {
+	if rogue.Talents.HackAndSlash > 0 && swordSpecMask != core.ProcMaskUnknown {
 		var swordSpecializationSpell *core.Spell
 		icd := core.Cooldown{
 			Timer:    rogue.NewTimer(),
 			Duration: time.Millisecond * 500,
 		}
-		procChance := 0.01 * float64(rogue.Talents.SwordSpecialization)
+		procChance := 0.01 * float64(rogue.Talents.HackAndSlash)
 
 		rogue.RegisterAura(core.Aura{
 			Label:    "Sword Specialization",
