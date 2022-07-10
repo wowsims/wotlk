@@ -25,7 +25,7 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 		ThreatMultiplier:    1 - 0.05*float64(priest.Talents.ShadowAffinity),
 		BaseDamage:          core.BaseDamageConfigMagic(172.0, 172.0, 0.1849),
 		OutcomeApplier:      priest.OutcomeFuncMagicHitAndCrit(priest.DefaultSpellCritMultiplier()),
-		OnSpellHitDealt:     applyDotOnLanded(priest.DevouringPlagueDot),
+		OnSpellHitDealt:     applyDotOnLanded(&priest.DevouringPlagueDot),
 		ProcMask:            core.ProcMaskSpellDamage,
 	}
 
@@ -68,7 +68,7 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 	})
 }
 
-func applyDotOnLanded(dot *core.Dot) func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+func applyDotOnLanded(dot **core.Dot) func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 		if spellEffect.Landed() {
 			(*dot).Apply(sim)
