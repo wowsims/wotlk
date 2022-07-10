@@ -51,7 +51,7 @@ var FullConsumes = &proto.Consumes{
 var FullDebuffs = &proto.Debuffs{
 	JudgementOfWisdom: true,
 	Misery:            true,
-	CurseOfElements:   proto.TristateEffect_TristateEffectImproved,
+	CurseOfElements:   true,
 }
 
 var PlayerOptionsAdaptive = &proto.Player_BalanceDruid{

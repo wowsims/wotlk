@@ -43,6 +43,8 @@ func NewSmitePriest(character core.Character, options proto.Player) *SmitePriest
 		rotation: *smiteOptions.Rotation,
 	}
 
+	spriest.EnableResumeAfterManaWait(spriest.tryUseGCD)
+
 	return spriest
 }
 

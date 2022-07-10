@@ -26,7 +26,7 @@ func (hunter *Hunter) registerKillCommandCD() {
 		},
 	})
 
-	baseCost := 0.03 * hunter.BaseMana()
+	baseCost := 0.03 * hunter.BaseMana
 
 	hunter.KillCommand = hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,

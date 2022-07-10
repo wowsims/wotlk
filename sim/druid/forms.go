@@ -50,7 +50,7 @@ func (druid *Druid) PowerShiftCat(sim *core.Simulation) bool {
 
 func (druid *Druid) registerCatFormSpell() {
 	actionID := core.ActionID{SpellID: 768}
-	baseCost := druid.BaseMana() * 0.35
+	baseCost := druid.BaseMana * 0.35
 
 	furorProcChance := 0.2 * float64(druid.Talents.Furor)
 
@@ -128,7 +128,7 @@ func (druid *Druid) PowerShiftBear(sim *core.Simulation) {
 
 func (druid *Druid) registerBearFormSpell() {
 	actionID := core.ActionID{SpellID: 9634}
-	baseCost := druid.BaseMana() * 0.35
+	baseCost := druid.BaseMana * 0.35
 	furorProcChance := 0.2 * float64(druid.Talents.Furor)
 
 	previousRage := 0.0

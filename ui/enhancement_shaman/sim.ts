@@ -124,7 +124,7 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 					bloodFrenzy: true,
 					sunderArmor: true,
 					curseOfWeakness: true,
-					curseOfElements: TristateEffect.TristateEffectRegular,
+					curseOfElements: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					judgementOfWisdom: true,
 					misery: true,

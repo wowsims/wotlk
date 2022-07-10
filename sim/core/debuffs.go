@@ -20,8 +20,14 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 		MakePermanent(JudgementOfLightAura(target))
 	}
 
-	if debuffs.CurseOfElements != proto.TristateEffect_TristateEffectMissing {
+	if debuffs.CurseOfElements {
 		MakePermanent(CurseOfElementsAura(target))
+	}
+	if debuffs.EbonPlaguebringer {
+		MakePermanent(EbonPlaguebringerAura(target))
+	}
+	if debuffs.EarthAndMoon {
+		MakePermanent(EarthAndMoonAura(target))
 	}
 
 	if debuffs.ImprovedShadowBolt {
@@ -142,8 +148,7 @@ func MiseryAura(target *Unit, numPoints int32) *Aura {
 var JudgementOfWisdomAuraLabel = "Judgement of Wisdom"
 
 func JudgementOfWisdomAura(target *Unit) *Aura {
-	const mana = 74 / 2 // 50% proc
-	actionID := ActionID{SpellID: 27164}
+	actionID := ActionID{SpellID: 53408}
 
 	return target.GetOrRegisterAura(Aura{
 		Label:    JudgementOfWisdomAuraLabel,
@@ -160,11 +165,12 @@ func JudgementOfWisdomAura(target *Unit) *Aura {
 			}
 
 			unit := spell.Unit
-			if unit.HasManaBar() {
+			if unit.HasManaBar() && sim.RandomFloat("jow") > 0.5 {
 				if unit.JowManaMetrics == nil {
 					unit.JowManaMetrics = unit.NewManaMetrics(actionID)
 				}
-				unit.AddMana(sim, mana, unit.JowManaMetrics, false)
+				// JoW returns 2% of base mana 50% of the time.
+				unit.AddMana(sim, unit.BaseMana*0.02, unit.JowManaMetrics, false)
 			}
 
 			if spell.ActionID.SpellID == 35395 {
@@ -221,29 +227,72 @@ func JudgementOfTheCrusaderAura(target *Unit, level int32, flatBonus float64, pe
 	})
 }
 
+const spelldmgtag = "spelldamage13percent"
+
 func CurseOfElementsAura(target *Unit) *Aura {
 	multiplier := 1.13
 
 	return target.GetOrRegisterAura(Aura{
 		Label:    "Curse of Elements",
-		Tag:      "Curse of Elements",
-		ActionID: ActionID{SpellID: 27228},
+		Tag:      spelldmgtag,
+		ActionID: ActionID{SpellID: 47865},
 
 		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier *= multiplier
-			aura.Unit.PseudoStats.FireDamageTakenMultiplier *= multiplier
-			aura.Unit.PseudoStats.FrostDamageTakenMultiplier *= multiplier
-			aura.Unit.PseudoStats.ShadowDamageTakenMultiplier *= multiplier
-			aura.Unit.PseudoStats.NatureDamageTakenMultiplier *= multiplier
+			if !target.HasActiveAuraWithTag(spelldmgtag) {
+				aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier *= multiplier
+				aura.Unit.PseudoStats.FireDamageTakenMultiplier *= multiplier
+				aura.Unit.PseudoStats.FrostDamageTakenMultiplier *= multiplier
+				aura.Unit.PseudoStats.ShadowDamageTakenMultiplier *= multiplier
+				aura.Unit.PseudoStats.NatureDamageTakenMultiplier *= multiplier
+			}
 			aura.Unit.AddStatsDynamic(sim, stats.Stats{stats.ArcaneResistance: -165, stats.FireResistance: -165, stats.FrostResistance: -165, stats.ShadowResistance: -165, stats.NatureResistance: -165})
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier /= multiplier
-			aura.Unit.PseudoStats.FireDamageTakenMultiplier /= multiplier
-			aura.Unit.PseudoStats.FrostDamageTakenMultiplier /= multiplier
-			aura.Unit.PseudoStats.ShadowDamageTakenMultiplier /= multiplier
-			aura.Unit.PseudoStats.NatureDamageTakenMultiplier /= multiplier
+			if !target.HasActiveAuraWithTag(spelldmgtag) {
+				aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier /= multiplier
+				aura.Unit.PseudoStats.FireDamageTakenMultiplier /= multiplier
+				aura.Unit.PseudoStats.FrostDamageTakenMultiplier /= multiplier
+				aura.Unit.PseudoStats.ShadowDamageTakenMultiplier /= multiplier
+				aura.Unit.PseudoStats.NatureDamageTakenMultiplier /= multiplier
+			}
 			aura.Unit.AddStatsDynamic(sim, stats.Stats{stats.ArcaneResistance: 165, stats.FireResistance: 165, stats.FrostResistance: 165, stats.ShadowResistance: 165, stats.NatureResistance: 165})
+		},
+	})
+}
+
+func EarthAndMoonAura(target *Unit) *Aura {
+	return earthMoonEbonPlaguebringerAura(target, "Earth And Moon", 48511)
+}
+
+func EbonPlaguebringerAura(target *Unit) *Aura {
+	return earthMoonEbonPlaguebringerAura(target, "Ebon Plaguebringer", 51161)
+}
+
+func earthMoonEbonPlaguebringerAura(target *Unit, label string, id int32) *Aura {
+	multiplier := 1.13
+
+	return target.GetOrRegisterAura(Aura{
+		Label:    label,
+		Tag:      spelldmgtag,
+		ActionID: ActionID{SpellID: id},
+
+		OnGain: func(aura *Aura, sim *Simulation) {
+			if !target.HasActiveAuraWithTag(spelldmgtag) {
+				aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier *= multiplier
+				aura.Unit.PseudoStats.FireDamageTakenMultiplier *= multiplier
+				aura.Unit.PseudoStats.FrostDamageTakenMultiplier *= multiplier
+				aura.Unit.PseudoStats.ShadowDamageTakenMultiplier *= multiplier
+				aura.Unit.PseudoStats.NatureDamageTakenMultiplier *= multiplier
+			}
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			if !target.HasActiveAuraWithTag(spelldmgtag) {
+				aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier /= multiplier
+				aura.Unit.PseudoStats.FireDamageTakenMultiplier /= multiplier
+				aura.Unit.PseudoStats.FrostDamageTakenMultiplier /= multiplier
+				aura.Unit.PseudoStats.ShadowDamageTakenMultiplier /= multiplier
+				aura.Unit.PseudoStats.NatureDamageTakenMultiplier /= multiplier
+			}
 		},
 	})
 }

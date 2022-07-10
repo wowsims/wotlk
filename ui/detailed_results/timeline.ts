@@ -199,7 +199,12 @@ export class Timeline extends ResultComponent {
 			const threatOption = this.rootElem.getElementsByClassName('threat-option')[0] as HTMLElement;
 			threatOption.classList.add('hide');
 
-			this.updateRotationChart(player, duration);
+			try {
+				this.updateRotationChart(player, duration);
+			} catch (e) {
+				console.log("Failed to update rotation chart: ", e);
+			}
+			
 
 			const dpsData = this.addDpsSeries(player, options, '');
 			this.addDpsYAxis(dpsData.maxDps, options);
@@ -464,7 +469,12 @@ export class Timeline extends ResultComponent {
 		const target = targets[0];
 
 		this.clearRotationChart();
-		this.drawRotationTimeRuler(this.rotationTimeline.getElementsByClassName('rotation-timeline-canvas')[0] as HTMLCanvasElement, duration);
+		
+		try {
+			this.drawRotationTimeRuler(this.rotationTimeline.getElementsByClassName('rotation-timeline-canvas')[0] as HTMLCanvasElement, duration);
+		} catch (e){
+			console.log("Failed to draw rotation: ", e);
+		}
 
 		orderedResourceTypes.forEach(resourceType => this.addResourceRow(resourceType, player.groupedResourceLogs[resourceType], duration));
 

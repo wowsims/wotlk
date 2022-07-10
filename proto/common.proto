@@ -534,15 +534,17 @@ message Debuffs {
 	bool misery = 3;
 	TristateEffect faerie_fire = 4;
 
-	TristateEffect curse_of_elements = 5;
-	TristateEffect ebon_plaguebringer = 6;
-
+	// 13% bonus spell damage
+	bool curse_of_elements = 5;
+	bool ebon_plaguebringer = 6;
+	bool earth_and_moon = 29;
+	
 	// +3% to crit against target
 	bool heart_of_the_crusader = 7;
 	bool master_poisoner = 8;
 	bool totem_of_wrath = 9;
 
-	// 13% spell dmg
+	// 5% spell crit
 	bool improved_shadow_bolt = 10;
 	bool improved_scorch = 11;
 	bool winters_chill = 12;

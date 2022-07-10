@@ -8,7 +8,7 @@ import (
 )
 
 func (priest *Priest) registerMindBlastSpell() {
-	baseCost := priest.BaseMana() * 0.17
+	baseCost := priest.BaseMana * 0.17
 
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,

@@ -117,7 +117,7 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 				debuffs: Debuffs.create({
 					judgementOfWisdom: true,
 					misery: true,
-					curseOfElements: TristateEffect.TristateEffectRegular,
+					curseOfElements: true,
 				}),
 			},
 

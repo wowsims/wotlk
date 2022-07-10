@@ -124,7 +124,7 @@ export class SmitePriestSimUI extends IndividualSimUI<Spec.SpecSmitePriest> {
 				debuffs: Debuffs.create({
 					judgementOfWisdom: true,
 					misery: true,
-					curseOfElements: TristateEffect.TristateEffectRegular,
+					curseOfElements: true,
 				}),
 			},
 

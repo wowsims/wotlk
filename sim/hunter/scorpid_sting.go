@@ -8,7 +8,7 @@ import (
 func (hunter *Hunter) registerScorpidStingSpell() {
 	hunter.ScorpidStingAura = core.ScorpidStingAura(hunter.CurrentTarget)
 
-	baseCost := hunter.BaseMana() * 0.09
+	baseCost := hunter.BaseMana * 0.09
 
 	hunter.ScorpidSting = hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 3043},

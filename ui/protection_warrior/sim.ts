@@ -191,7 +191,6 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 				IconInputs.DemoralizingShout,
 				IconInputs.Screech,
 				IconInputs.ThunderClap,
-				IconInputs.ShadowEmbrace,
 				IconInputs.InsectSwarm,
 				IconInputs.ScorpidSting,
 			],

@@ -122,11 +122,13 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
 					blessingOfWisdom: 2,
+					replenishment: true,
 				}),
 				debuffs: Debuffs.create({
 					faerieFire: TristateEffect.TristateEffectImproved,
 					judgementOfWisdom: true,
 					misery: true,
+					curseOfElements: true,
 				}),
 			},
 			// IconInputs to include in the 'Self Buffs' section on the settings tab.
@@ -156,10 +158,13 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				IconInputs.BlessingOfWisdom,
 				IconInputs.Innervate,
 				IconInputs.PowerInfusion,
+				IconInputs.Replenishment,
 			],
 			// IconInputs to include in the 'Debuffs' section on the settings tab.
 			debuffInputs: [
-
+				IconInputs.ImprovedScorch,
+				IconInputs.CurseOfElements,
+				IconInputs.JudgementOfWisdom,
 				IconInputs.Misery,
 				IconInputs.FaerieFire,
 			],
@@ -186,6 +191,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 					GuardianElixir.ElixirOfMajorMageblood,
 				],
 				food: [
+					Food.FoodFishFeast,
 					Food.FoodBlackenedBasilisk,
 					Food.FoodSkullfishSoup,
 				],

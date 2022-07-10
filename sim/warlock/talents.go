@@ -21,7 +21,7 @@ func (warlock *Warlock) ApplyTalents() {
 		})
 	}
 
-	// Suppression 
+	// Suppression
 	warlock.AddStat(stats.SpellHit, float64(warlock.Talents.Suppression)*core.SpellHitRatingPerHitChance)
 
 	// Add 1% crit per level of backlash.
@@ -38,7 +38,7 @@ func (warlock *Warlock) ApplyTalents() {
 				return mana + intellect*15*bonus
 			},
 		})
-	    // //  TODO: fel stamina increases max health (might be useful for warlock tanking sim)
+		// //  TODO: fel stamina increases max health (might be useful for warlock tanking sim)
 		// warlock.AddStatDependency(stats.StatDependency{
 		// 	SourceStat:   stats.Stamina,
 		// 	ModifiedStat: stats.Health,
@@ -49,7 +49,6 @@ func (warlock *Warlock) ApplyTalents() {
 	}
 
 	warlock.PseudoStats.BonusCritRating += float64(warlock.Talents.DemonicTactics) * 1 * core.CritRatingPerCritChance
-
 
 	// if !warlock.Options.SacrificeSummon && warlock.Options.Summon != proto.Warlock_Options_NoSummon {
 	// 	if warlock.Talents.MasterDemonologist > 0 {
@@ -82,7 +81,6 @@ func (warlock *Warlock) ApplyTalents() {
 	// 	stats.SpellCrit: float64(warlock.Talents.DemonicTactics) * 1 * core.CritRatingPerCritChance,
 	// })
 
-
 	warlock.setupNightfall()
 
 	if warlock.Talents.ShadowEmbrace > 0 {
@@ -102,7 +100,6 @@ func ShadowEmbraceAura(warlock *Warlock) *core.Aura {
 		},
 	})
 }
-
 
 func (warlock *Warlock) setupNightfall() {
 	if warlock.Talents.Nightfall == 0 {
@@ -133,7 +130,7 @@ func (warlock *Warlock) setupNightfall() {
 			if spell != warlock.Corruption { // TODO: also works on drain life...
 				return
 			}
-			if sim.RandomFloat("nightfall") > 0.02 * float64(warlock.Talents.Nightfall) {
+			if sim.RandomFloat("nightfall") > 0.02*float64(warlock.Talents.Nightfall) {
 				return
 			}
 			warlock.NightfallProcAura.Activate(sim)

@@ -118,7 +118,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 					curseOfWeakness: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					judgementOfWisdom: true,
-					curseOfElements: TristateEffect.TristateEffectRegular,
+					curseOfElements: true,
 				}),
 			},
 

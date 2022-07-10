@@ -122,7 +122,7 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 				debuffs: Debuffs.create({
 					judgementOfWisdom: true,
 					misery: true,
-					curseOfElements: TristateEffect.TristateEffectRegular,
+					curseOfElements: true,
 					bloodFrenzy: true,
 					exposeArmor: TristateEffect.TristateEffectImproved,
 					sunderArmor: true,
