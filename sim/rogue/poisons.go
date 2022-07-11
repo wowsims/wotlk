@@ -47,6 +47,20 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 		ActionID:  actionID,
 		MaxStacks: 5,
 		Duration:  time.Second * 12,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			if rogue.Talents.SavageCombat < 1 {
+				return
+			}
+			savageCombatAura := core.SavageCombatAura(target, rogue.Talents.SavageCombat)
+			savageCombatAura.Activate(sim)
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			if rogue.Talents.SavageCombat < 1 {
+				return
+			}
+			savageCombatAura := core.SavageCombatAura(target, rogue.Talents.SavageCombat)
+			savageCombatAura.Deactivate(sim)
+		},
 	})
 	rogue.DeadlyPoisonDot = core.NewDot(core.Dot{
 		Spell:         rogue.DeadlyPoison,
