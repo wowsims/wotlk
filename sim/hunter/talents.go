@@ -765,12 +765,20 @@ func (hunter *Hunter) registerReadinessCD() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			hunter.AimedShot.CD.Reset()
 			hunter.RapidFire.CD.Reset()
 			hunter.MultiShot.CD.Reset()
 			hunter.ArcaneShot.CD.Reset()
 			hunter.KillCommand.CD.Reset()
 			hunter.RaptorStrike.CD.Reset()
+			if hunter.AimedShot != nil {
+				hunter.AimedShot.CD.Reset()
+			}
+			if hunter.ChimeraShot != nil {
+				hunter.ChimeraShot.CD.Reset()
+			}
+			if hunter.BlackArrow != nil {
+				hunter.BlackArrow.CD.Reset()
+			}
 		},
 	})
 

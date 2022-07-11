@@ -9,6 +9,9 @@ import (
 )
 
 func (hunter *Hunter) registerAimedShotSpell() {
+	if !hunter.Talents.AimedShot {
+		return
+	}
 	baseCost := 0.08 * hunter.BaseMana
 
 	hunter.AimedShot = hunter.RegisterSpell(core.SpellConfig{
