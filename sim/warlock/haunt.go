@@ -23,7 +23,7 @@ func (warlock *Warlock) registerHauntSpell() {
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
 		ThreatMultiplier: 	  1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-		DamageMultiplier: 1,
+		DamageMultiplier: 	  1,
 		BaseDamage:           core.BaseDamageConfigMagic(645.0, 753.0, 0.4286),
 		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, core.TernaryFloat64(warlock.Talents.Pandemic, 0, 1))),
 		OnSpellHitDealt:  	  func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
@@ -37,7 +37,7 @@ func (warlock *Warlock) registerHauntSpell() {
 		},
 	}
 
-	baseCost := 0.12 * warlock.BaseMana()
+	baseCost := 0.12 * warlock.BaseMana
 	warlock.Haunt = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 59164},
 		SpellSchool: core.SpellSchoolShadow,

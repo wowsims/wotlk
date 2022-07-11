@@ -319,7 +319,7 @@ func (spell *Spell) makeCastFuncWait(config CastConfig, onCastComplete CastFunc)
 
 				if spell.Unit.AutoAttacks.IsEnabled() {
 					// Delay autoattacks until the cast is complete.
-					spell.Unit.AutoAttacks.DelayAllUntil(sim, spell.Unit.Hardcast.Expires)
+					spell.Unit.AutoAttacks.DelayMeleeUntil(sim, spell.Unit.Hardcast.Expires)
 				}
 			}
 		}

@@ -51,6 +51,8 @@ func NewRetributionPaladin(character core.Character, options proto.Player) *Retr
 		AutoSwingMelee: true,
 	})
 
+	ret.EnableResumeAfterManaWait(ret.tryUseGCD)
+
 	return ret
 }
 

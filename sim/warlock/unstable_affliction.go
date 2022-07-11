@@ -10,7 +10,7 @@ import (
 
 func (warlock *Warlock) registerUnstableAffSpell() {
 	actionID := core.ActionID{SpellID: 30405}
-	baseCost := 0.15 * warlock.BaseMana()
+	baseCost := 0.15 * warlock.BaseMana
 
 	warlock.UnstableAff = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,

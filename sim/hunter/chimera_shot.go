@@ -8,14 +8,14 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (hunter *Hunter) registerAimedShotSpell() {
-	if !hunter.Talents.AimedShot {
+func (hunter *Hunter) registerChimeraShotSpell() {
+	if !hunter.Talents.ChimeraShot {
 		return
 	}
-	baseCost := 0.08 * hunter.BaseMana
+	baseCost := 0.12 * hunter.BaseMana
 
-	hunter.AimedShot = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 49050},
+	hunter.ChimeraShot = hunter.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 53209},
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 
@@ -27,9 +27,9 @@ func (hunter *Hunter) registerAimedShotSpell() {
 				Cost: baseCost *
 					(1 - 0.03*float64(hunter.Talents.Efficiency)) *
 					(1 - 0.05*float64(hunter.Talents.MasterMarksman)),
-				GCD: core.GCDDefault,
+				GCD: core.GCDDefault + hunter.latency,
 			},
-			IgnoreHaste: true,
+			IgnoreHaste: true, // Hunter GCD is locked at 1.5s
 			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
 				if hunter.ImprovedSteadyShotAura.IsActive() {
 					cast.Cost *= 0.8
@@ -37,27 +37,20 @@ func (hunter *Hunter) registerAimedShotSpell() {
 			},
 			CD: core.Cooldown{
 				Timer:    hunter.NewTimer(),
-				Duration: time.Second*10 - core.TernaryDuration(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfAimedShot), time.Second*2, 0),
+				Duration: time.Second*10 - core.TernaryDuration(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfChimeraShot), time.Second*1, 0),
 			},
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskRangedSpecial,
-			BonusCritRating: 4*core.CritRatingPerCritChance*float64(hunter.Talents.ImprovedBarrage) +
-				core.TernaryFloat64(hunter.Talents.TrueshotAura && hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfTrueshotAura), 10*core.CritRatingPerCritChance, 0),
-			DamageMultiplier: 1 *
-				(1 + 0.04*float64(hunter.Talents.Barrage)) *
-				(1 + 0.01*float64(hunter.Talents.MarkedForDeath)) *
-				hunter.sniperTrainingMultiplier(),
+
+			DamageMultiplier: 1 + 0.01*float64(hunter.Talents.MarkedForDeath),
 			ThreatMultiplier: 1,
 
-			BaseDamage: hunter.talonOfAlarDamageMod(core.BaseDamageConfig{
+			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					damage := (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.2 +
-						hunter.AutoAttacks.Ranged.BaseDamage(sim) +
-						hunter.AmmoDamageBonus +
-						hitEffect.BonusWeaponDamage(spell.Unit) +
-						408
+						1.2*hunter.AutoAttacks.Ranged.BaseDamage(sim)*2.8/hunter.AutoAttacks.Ranged.SwingSpeed
 
 					if hunter.ImprovedSteadyShotAura.IsActive() {
 						damage *= 1.15
@@ -66,8 +59,26 @@ func (hunter *Hunter) registerAimedShotSpell() {
 					return damage
 				},
 				TargetSpellCoefficient: 1,
-			}),
+			},
 			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, true, hunter.CurrentTarget)),
+			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if !spellEffect.Landed() {
+					return
+				}
+
+				if hunter.SerpentStingDot.IsActive() {
+					hunter.SerpentStingDot.Refresh(sim)
+					// SS has 5 ticks, so 2 ticks is 40%
+					hunter.SerpentStingDot.TickOnce()
+					hunter.SerpentStingDot.TickOnce()
+				} else if hunter.ScorpidStingAura.IsActive() {
+					hunter.ScorpidStingAura.Refresh(sim)
+				}
+			},
 		}),
 	})
+}
+
+func (hunter *Hunter) ChimeraShotCastTime() time.Duration {
+	return time.Duration(float64(time.Millisecond*1500)/hunter.RangedSwingSpeed()) + hunter.latency
 }

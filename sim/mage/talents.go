@@ -354,7 +354,7 @@ func (mage *Mage) registerIcyVeinsCD() {
 	}
 
 	actionID := core.ActionID{SpellID: 12472}
-	manaCost := mage.BaseMana() * 0.03
+	manaCost := mage.BaseMana * 0.03
 
 	icyVeinsAura := mage.RegisterAura(core.Aura{
 		Label:    "Icy Veins",

@@ -10,7 +10,7 @@ import (
 
 func (warlock *Warlock) registerCorruptionSpell() {
 	actionID := core.ActionID{SpellID: 47813}
-	baseCost := 0.14 * warlock.BaseMana()
+	baseCost := 0.14 * warlock.BaseMana
 
 	warlock.Corruption = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -19,8 +19,8 @@ func (warlock *Warlock) registerCorruptionSpell() {
 		BaseCost:     baseCost,
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
-				GCD:      core.GCDDefault,
+				Cost: baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
+				GCD:  core.GCDDefault,
 			},
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{

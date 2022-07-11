@@ -10,7 +10,7 @@ import (
 
 func (warlock *Warlock) registerImmolateSpell() {
 	actionID := core.ActionID{SpellID: 47811}
-	baseCost := 0.17 * warlock.BaseMana()
+	baseCost := 0.17 * warlock.BaseMana
 
 	effect := core.SpellEffect{
 		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 0, 1) * 5 * core.CritRatingPerCritChance,

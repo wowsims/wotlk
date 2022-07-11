@@ -113,6 +113,26 @@ export const PetSingleAbility = {
 	},
 };
 
+export const SniperTrainingUptime = {
+	type: 'number' as const,
+	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
+	config: {
+		extraCssClasses: [
+			'sniper-training-uptime-picker',
+		],
+		label: 'ST Uptime (%)',
+		labelTooltip: 'Uptime for the Sniper Training talent, as a percent of the fight duration.',
+		changedEvent: (player: Player<Spec.SpecHunter>) => player.specOptionsChangeEmitter,
+		getValue: (player: Player<Spec.SpecHunter>) => player.getSpecOptions().sniperTrainingUptime * 100,
+		setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: number) => {
+			const newOptions = player.getSpecOptions();
+			newOptions.sniperTrainingUptime = newValue / 100;
+			player.setSpecOptions(eventID, newOptions);
+		},
+		showWhen: (player: Player<Spec.SpecHunter>) => player.getTalents().sniperTraining > 0,
+	},
+};
+
 export const HunterRotationConfig = {
 	inputs: [
 		{
@@ -261,21 +281,6 @@ export const HunterRotationConfig = {
 					player.setRotation(eventID, newRotation);
 				},
 				showWhen: (player: Player<Spec.SpecHunter>) => player.getRotation().weave != WeaveType.WeaveNone,
-			},
-		},
-		{
-			type: 'boolean' as const, cssClass: 'precast-aimed-shot-picker',
-			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-			config: {
-				label: 'Precast Aimed Shot',
-				labelTooltip: 'Starts the encounter with an instant Aimed Shot.',
-				changedEvent: (player: Player<Spec.SpecHunter>) => player.rotationChangeEmitter,
-				getValue: (player: Player<Spec.SpecHunter>) => player.getRotation().precastAimedShot,
-				setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: boolean) => {
-					const newRotation = player.getRotation();
-					newRotation.precastAimedShot = newValue;
-					player.setRotation(eventID, newRotation);
-				},
 			},
 		},
 	],

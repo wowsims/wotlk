@@ -13,12 +13,6 @@ func (warlock *Warlock) OnGCDReady(sim *core.Simulation) {
 	warlock.tryUseGCD(sim)
 }
 
-func (warlock *Warlock) OnManaTick(sim *core.Simulation) {
-	if warlock.FinishedWaitingForManaAndGCDReady(sim) {
-		warlock.tryUseGCD(sim)
-	}
-}
-
 func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	var spell *core.Spell
 	var target = warlock.CurrentTarget

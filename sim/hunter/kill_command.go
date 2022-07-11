@@ -22,11 +22,10 @@ func (hunter *Hunter) registerKillCommandCD() {
 			if spellEffect.ProcMask.Matches(core.ProcMaskMeleeSpecial | core.ProcMaskSpellDamage) {
 				aura.RemoveStack(sim)
 			}
-			// TODO: Apply damage bonus for pet specials
 		},
 	})
 
-	baseCost := 0.03 * hunter.BaseMana()
+	baseCost := 0.03 * hunter.BaseMana
 
 	hunter.KillCommand = hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,

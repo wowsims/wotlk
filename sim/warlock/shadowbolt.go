@@ -45,7 +45,7 @@ func (warlock *Warlock) registerShadowboltSpell() {
 		}
 	}
 
-	baseCost :=  0.17 * warlock.BaseMana()
+	baseCost := 0.17 * warlock.BaseMana
 	warlock.Shadowbolt = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47809},
 		SpellSchool: core.SpellSchoolShadow,

@@ -15,12 +15,6 @@ func (eleShaman *ElementalShaman) OnGCDReady(sim *core.Simulation) {
 	eleShaman.tryUseGCD(sim)
 }
 
-func (eleShaman *ElementalShaman) OnManaTick(sim *core.Simulation) {
-	if eleShaman.FinishedWaitingForManaAndGCDReady(sim) {
-		eleShaman.tryUseGCD(sim)
-	}
-}
-
 func (eleShaman *ElementalShaman) tryUseGCD(sim *core.Simulation) {
 	if eleShaman.TryDropTotems(sim) {
 		return
@@ -84,6 +78,9 @@ func (rotation *AdaptiveRotation) DoAction(eleShaman *ElementalShaman, sim *core
 	}
 
 	if !eleShaman.LightningBolt.Cast(sim, target) {
+		if sim.Log != nil {
+			eleShaman.Log(sim, "Failed to cast LB, cost: %0.1f, current mana: %0.1f\n")
+		}
 		eleShaman.WaitForMana(sim, eleShaman.LightningBolt.CurCast.Cost)
 	}
 

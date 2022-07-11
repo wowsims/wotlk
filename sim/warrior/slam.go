@@ -52,6 +52,6 @@ func (warrior *Warrior) CanSlam() bool {
 }
 
 func (warrior *Warrior) CastSlam(sim *core.Simulation, target *core.Unit) bool {
-	warrior.AutoAttacks.DelayAllUntil(sim, sim.CurrentTime+warrior.Slam.DefaultCast.CastTime+warrior.AutoAttacks.MainhandSwingSpeed())
+	warrior.AutoAttacks.DelayMeleeUntil(sim, sim.CurrentTime+warrior.Slam.DefaultCast.CastTime+warrior.AutoAttacks.MainhandSwingSpeed())
 	return warrior.Slam.Cast(sim, target)
 }

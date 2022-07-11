@@ -21,7 +21,7 @@ func (warlock *Warlock) ApplyTalents() {
 		})
 	}
 
-	// Suppression 
+	// Suppression
 	warlock.AddStat(stats.SpellHit, float64(warlock.Talents.Suppression)*core.SpellHitRatingPerHitChance)
 
 	// Shadow Mastery 
@@ -57,7 +57,6 @@ func (warlock *Warlock) ApplyTalents() {
 	}
 
 	warlock.PseudoStats.BonusCritRating += float64(warlock.Talents.DemonicTactics) * 1 * core.CritRatingPerCritChance
-
 
 	// if !warlock.Options.SacrificeSummon && warlock.Options.Summon != proto.Warlock_Options_NoSummon {
 	// 	if warlock.Talents.MasterDemonologist > 0 {
@@ -193,7 +192,7 @@ func (warlock *Warlock) setupNightfall() {
 			if spell != warlock.Corruption { // TODO: also works on drain life...
 				return
 			}
-			if sim.RandomFloat("nightfall") > 0.02 * float64(warlock.Talents.Nightfall) {
+			if sim.RandomFloat("nightfall") > 0.02*float64(warlock.Talents.Nightfall) {
 				return
 			}
 			warlock.NightfallProcAura.Activate(sim)

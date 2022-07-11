@@ -19,12 +19,6 @@ func (spriest *SmitePriest) OnGCDReady(sim *core.Simulation) {
 	spriest.tryUseGCD(sim)
 }
 
-func (spriest *SmitePriest) OnManaTick(sim *core.Simulation) {
-	if spriest.FinishedWaitingForManaAndGCDReady(sim) {
-		spriest.tryUseGCD(sim)
-	}
-}
-
 func (spriest *SmitePriest) tryUseGCD(sim *core.Simulation) {
 
 	// Calculate higher SW:P uptime if using HF
