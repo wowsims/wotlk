@@ -9,7 +9,7 @@ import (
 )
 
 func (warlock *Warlock) registerCorruptionSpell() {
-	actionID := core.ActionID{SpellID: 27216}
+	actionID := core.ActionID{SpellID: 47813}
 	baseCost := 0.14 * warlock.BaseMana()
 
 	warlock.Corruption = warlock.RegisterSpell(core.SpellConfig{
@@ -29,8 +29,14 @@ func (warlock *Warlock) registerCorruptionSpell() {
 			OnSpellHitDealt: applyDotOnLanded(&warlock.CorruptionDot),
 		}),
 	})
+
 	target := warlock.CurrentTarget
-	spellCoefficient := 0.156 + ((0.12 * float64(warlock.Talents.EmpoweredCorruption)) / 6)
+	ticksNumber := 6
+	spellCoefficient := (1.2 + 0.12 * float64(warlock.Talents.EmpoweredCorruption)) / float64(ticksNumber) + 0.01 * float64(warlock.Talents.EverlastingAffliction)
+	applier := warlock.OutcomeFuncTick()
+	if warlock.Talents.Pandemic {
+		applier = warlock.OutcomeFuncMagicCrit(warlock.SpellCritMultiplier(1, 1))
+	}
 
 	warlock.CorruptionDot = core.NewDot(core.Dot{
 		Spell: warlock.Corruption,
@@ -38,14 +44,16 @@ func (warlock *Warlock) registerCorruptionSpell() {
 			Label:    "Corruption-" + strconv.Itoa(int(warlock.Index)),
 			ActionID: actionID,
 		}),
-		NumberOfTicks: 6,
+		NumberOfTicks: ticksNumber,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * (1 + 0.02*float64(warlock.Talents.ShadowMastery)) * (1 + 0.01*float64(warlock.Talents.Contagion)) * (1 + 0.01*float64(warlock.Talents.ImprovedCorruption)),
+			DamageMultiplier: (1 + 0.01*float64(warlock.Talents.Contagion)) *
+				(1 + 0.01*float64(warlock.Talents.ImprovedCorruption)) * (1 + 0.05*core.TernaryFloat64(warlock.Talents.SiphonLife, 0, 1)),
 			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(1080/6, spellCoefficient),
-			OutcomeApplier:   warlock.OutcomeFuncTick(),
+			BonusCritRating:  3 * core.CritRatingPerCritChance * float64(warlock.Talents.Malediction),
+			OutcomeApplier:   applier,
 			IsPeriodic:       true,
 		}),
 	})

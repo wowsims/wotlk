@@ -109,7 +109,6 @@ func (warlock *Warlock) registerCurseOfTonguesSpell() {
 	})
 }
 
-// https://wotlk.wowhead.com/spell=27218/curse-of-agony
 func (warlock *Warlock) registerCurseOfAgonySpell() {
 	if warlock.Rotation.Curse != proto.Warlock_Rotation_Agony && warlock.Rotation.Curse != proto.Warlock_Rotation_Doom {
 		return
@@ -121,9 +120,7 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 	baseDmg *= (1 + 0.05*float64(warlock.Talents.ImprovedCurseOfAgony))
 
 	effect := core.SpellEffect{
-		DamageMultiplier: 1 *
-			(1 + 0.02*float64(warlock.Talents.ShadowMastery)) *
-			(1 + 0.01*float64(warlock.Talents.Contagion)),
+		DamageMultiplier: 1 + 0.01*float64(warlock.Talents.Contagion),
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 		BaseDamage:       core.BaseDamageConfigMagicNoRoll(baseDmg, 0.1),
 		OutcomeApplier:   warlock.OutcomeFuncTick(),
@@ -174,10 +171,8 @@ func (warlock *Warlock) registerCurseOfDoomSpell() {
 
 	target := warlock.CurrentTarget
 	effect := core.SpellEffect{
-		DamageMultiplier: 1 *
-			(1 + 0.02*float64(warlock.Talents.ShadowMastery)) *
-			(1 + 0.01*float64(warlock.Talents.Contagion)),
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+		DamageMultiplier: 1,
 		BaseDamage:       core.BaseDamageConfigMagicNoRoll(7300, 2),
 		OutcomeApplier:   warlock.OutcomeFuncTick(),
 		IsPeriodic:       true,

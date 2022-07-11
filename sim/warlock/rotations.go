@@ -122,6 +122,8 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// TODO: optimize so that cast time of DoT is included in calculation so you can cast right before falling off.
 	if warlock.Talents.UnstableAffliction && !warlock.UnstableAffDot.IsActive() {
 		spell = warlock.UnstableAff
+	} else if warlock.Rotation.Haunt && !warlock.HauntAura.IsActive() {
+		spell = warlock.Haunt
 	} else if warlock.Rotation.Corruption && !warlock.CorruptionDot.IsActive() {
 		spell = warlock.Corruption
 	} else if warlock.Rotation.Immolate && !warlock.ImmolateDot.IsActive() {

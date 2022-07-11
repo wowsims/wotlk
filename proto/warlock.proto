@@ -156,6 +156,7 @@ message Warlock {
 		bool immolate = 3;
 		bool corruption = 4;
 		bool detonate_seed = 5;
+		bool haunt = 6;
 	}
 	Rotation rotation = 1;
 

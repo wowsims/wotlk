@@ -32,20 +32,27 @@ func (warlock *Warlock) registerUnstableAffSpell() {
 	})
 
 	target := warlock.CurrentTarget
-	spellCoefficient := 0.2
+	ticksNumber := 6
+	spellCoefficient := 1.2 / float64(ticksNumber) + 0.01 * float64(warlock.Talents.EverlastingAffliction)
+	applier := warlock.OutcomeFuncTick()
+	if warlock.Talents.Pandemic {
+		applier = warlock.OutcomeFuncMagicCrit(warlock.SpellCritMultiplier(1, 1))
+	}
+
 	warlock.UnstableAffDot = core.NewDot(core.Dot{
 		Spell: warlock.UnstableAff,
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "unstableaff-" + strconv.Itoa(int(warlock.Index)),
 			ActionID: actionID,
 		}),
-		NumberOfTicks: 6,
+		NumberOfTicks: ticksNumber,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			DamageMultiplier: 1 * (1 + 0.02*float64(warlock.Talents.ShadowMastery)),
+			DamageMultiplier: 1 * (1 + 0.05*core.TernaryFloat64(warlock.Talents.SiphonLife, 0, 1)),
 			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(1150/6, spellCoefficient),
-			OutcomeApplier:   warlock.OutcomeFuncTick(),
+			BonusCritRating:  3 * core.CritRatingPerCritChance * float64(warlock.Talents.Malediction),
+			OutcomeApplier:   applier,
 			IsPeriodic:       true,
 			ProcMask:         core.ProcMaskPeriodicDamage,
 		}),

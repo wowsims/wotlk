@@ -42,7 +42,7 @@ func (warlock *Warlock) registerIncinerateSpell() {
 }
 
 func (warlock *Warlock) incinerateDamage() core.BaseDamageConfig {
-	base := core.BaseDamageConfigMagic(582.0, 676.0, 0.714+0.04*float64(warlock.Talents.ShadowAndFlame))
+	base := core.BaseDamageConfigMagic(582.0, 676.0, 0.713*(1+0.04*float64(warlock.Talents.ShadowAndFlame)))
 
 	return core.WrapBaseDamageConfig(base, func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
 		return func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
