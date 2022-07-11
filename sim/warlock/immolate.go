@@ -9,7 +9,7 @@ import (
 )
 
 func (warlock *Warlock) registerImmolateSpell() {
-	actionID := core.ActionID{SpellID: 27215}
+	actionID := core.ActionID{SpellID: 47811}
 	baseCost := 0.17 * warlock.BaseMana
 
 	effect := core.SpellEffect{
@@ -53,7 +53,7 @@ func (warlock *Warlock) registerImmolateSpell() {
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(785/5, 0.13),
+			BaseDamage:       core.BaseDamageConfigMagicNoRoll(785/5, 0.2),
 			OutcomeApplier:   warlock.OutcomeFuncTick(),
 			IsPeriodic:       true,
 			ProcMask:         core.ProcMaskPeriodicDamage,

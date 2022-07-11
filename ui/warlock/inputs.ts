@@ -153,6 +153,24 @@ export const WarlockRotationConfig = {
 			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
 			config: {
 				extraCssClasses: [
+					'haunt-picker',
+				],
+				label: 'Use Haunt',
+				labelTooltip: 'Use Haunt as the next cast after the buff expires.',
+				changedEvent: (player: Player<Spec.SpecWarlock>) => player.rotationChangeEmitter,
+				getValue: (player: Player<Spec.SpecWarlock>) => player.getRotation().haunt,
+				setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: boolean) => {
+					const newRotation = player.getRotation();
+					newRotation.haunt = newValue;
+					player.setRotation(eventID, newRotation);
+				},
+			},
+		},
+		{
+			type: 'boolean' as const,
+			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
+			config: {
+				extraCssClasses: [
 					'detonate-seed-picker',
 				],
 				label: 'Detonate Seed on Cast',

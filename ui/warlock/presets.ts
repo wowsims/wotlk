@@ -54,6 +54,7 @@ export const AfflictionRotation = WarlockRotation.create({
 	primarySpell: Warlock_Rotation_PrimarySpell.Shadowbolt,
 	immolate: true,
 	corruption: true,
+	haunt: true,
 	curse: Warlock_Rotation_Curse.Elements,
 	detonateSeed: true,
 });

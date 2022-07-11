@@ -42,33 +42,11 @@ type Hunter struct {
 	hasGronnstalker2Pc bool
 	currentAspect      *core.Aura
 
-	latency     time.Duration
-	timeToWeave time.Duration
-
-	nextAction   int
-	nextActionAt time.Duration
-
-	// Expected single-cast damage values calculated by the presim, used for adaptive logic.
-	avgShootDmg  float64
-	avgWeaveDmg  float64
-	avgSteadyDmg float64
-	avgMultiDmg  float64
-	avgArcaneDmg float64
+	latency time.Duration
 
 	// Used for deciding when we can use hawk for the rest of the fight.
 	manaSpentPerSecondAtFirstAspectSwap float64
 	permaHawk                           bool
-
-	// Cached values for adaptive rotation calcs.
-	rangedSwingSpeed   float64
-	rangedWindup       float64
-	shootDPS           float64
-	weaveDPS           float64
-	steadyDPS          float64
-	steadyShotCastTime float64
-	multiShotCastTime  float64
-	arcaneShotCastTime float64
-	useMultiForCatchup bool
 
 	AspectOfTheDragonhawk *core.Spell
 	AspectOfTheViper      *core.Spell
@@ -97,8 +75,6 @@ type Hunter struct {
 	LockAndLoadAura           *core.Aura
 	ScorpidStingAura          *core.Aura
 	TalonOfAlarAura           *core.Aura
-
-	hardcastOnComplete core.CastFunc
 }
 
 func (hunter *Hunter) GetCharacter() *core.Character {
@@ -153,26 +129,15 @@ func (hunter *Hunter) Initialize() {
 	hunter.registerKillCommandCD()
 	hunter.registerRapidFireCD()
 
-	hunter.hardcastOnComplete = func(sim *core.Simulation, _ *core.Unit) {
-		hunter.rotation(sim, false)
-	}
-
 	hunter.DelayDPSCooldownsForArmorDebuffs()
 }
 
 func (hunter *Hunter) Reset(sim *core.Simulation) {
-	hunter.nextAction = OptionNone
-	hunter.nextActionAt = 0
-	hunter.rangedSwingSpeed = 0
 	hunter.manaSpentPerSecondAtFirstAspectSwap = 0
 	hunter.permaHawk = false
 
 	huntersMarkAura := core.HuntersMarkAura(hunter.CurrentTarget, hunter.Talents.ImprovedHuntersMark, hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfHuntersMark))
 	huntersMarkAura.Activate(sim)
-
-	if sim.Log != nil && !hunter.Rotation.LazyRotation {
-		hunter.Log(sim, "Average damage values for adaptive rotation: shoot=%0.02f, weave=%0.02f, steady=%0.02f, multi=%0.02f, arcane=%0.02f", hunter.avgShootDmg, hunter.avgWeaveDmg, hunter.avgSteadyDmg, hunter.avgMultiDmg, hunter.avgArcaneDmg)
-	}
 }
 
 func NewHunter(character core.Character, options proto.Player) *Hunter {
@@ -184,20 +149,11 @@ func NewHunter(character core.Character, options proto.Player) *Hunter {
 		Options:   *hunterOptions.Options,
 		Rotation:  *hunterOptions.Rotation,
 
-		latency:     time.Millisecond * time.Duration(hunterOptions.Options.LatencyMs),
-		timeToWeave: time.Millisecond * time.Duration(hunterOptions.Rotation.TimeToWeaveMs+hunterOptions.Options.LatencyMs),
+		latency: time.Millisecond * time.Duration(hunterOptions.Options.LatencyMs),
 
 		hasGronnstalker2Pc: ItemSetGronnstalker.CharacterHasSetBonus(&character, 2),
 	}
 	hunter.EnableManaBar()
-
-	hunter.OnManaTick = func(sim *core.Simulation) {
-		if hunter.IsWaitingForMana() && hunter.DoneWaitingForMana(sim) {
-			if hunter.nextAction == OptionNone && hunter.Hardcast.Expires <= sim.CurrentTime {
-				hunter.rotation(sim, false)
-			}
-		}
-	}
 
 	if hunter.Rotation.PercentWeaved <= 0 {
 		hunter.Rotation.Weave = proto.Hunter_Rotation_WeaveNone
@@ -245,6 +201,7 @@ func NewHunter(character core.Character, options proto.Player) *Hunter {
 		ReplaceMHSwing: func(sim *core.Simulation, _ *core.Spell) *core.Spell {
 			return hunter.TryRaptorStrike(sim)
 		},
+		AutoSwingRanged: true,
 	})
 	hunter.AutoAttacks.RangedEffect.BaseDamage.Calculator = core.BaseDamageFuncRangedWeapon(hunter.AmmoDamageBonus)
 

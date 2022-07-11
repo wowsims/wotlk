@@ -1,6 +1,8 @@
 package priest
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -76,7 +78,17 @@ func (priest *Priest) Initialize() {
 	}
 
 	if priest.Talents.ShadowWeaving > 0 {
-		// priest.ShadowWeavingAura = core.ShadowWeavingAura(priest.CurrentTarget, 0)
+		priest.ShadowWeavingAura = priest.GetOrRegisterAura(core.Aura{
+			Label:     "Shadow Weaving",
+			ActionID:  core.ActionID{SpellID: 15258},
+			Duration:  time.Second * 15,
+			MaxStacks: 5,
+			// TODO: This affects all spells not just direct damage. Dot damage should omit multipliers since it's snapshot at cast time.
+			// OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
+			// 	aura.Unit.PseudoStats.ShadowDamageDealtMultiplier /= 1.0 + 0.02*float64(oldStacks)
+			// 	aura.Unit.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + 0.02*float64(newStacks)
+			// },
+		})
 	}
 
 	priest.registerDevouringPlagueSpell()
@@ -102,6 +114,27 @@ func (priest *Priest) Initialize() {
 		priest.newMindFlayDot(1),
 		priest.newMindFlayDot(2),
 		priest.newMindFlayDot(3),
+	}
+}
+
+func (priest *Priest) AddShadowWeavingStack(sim *core.Simulation) {
+	if priest.Talents.ShadowWeaving == 0 {
+		return
+	}
+
+	if priest.ShadowWeavingAura.IsActive() {
+		priest.ShadowWeavingAura.AddStack(sim)
+		priest.ShadowWeavingAura.Refresh(sim)
+	} else {
+		priest.ShadowWeavingAura.Activate(sim)
+	}
+}
+
+func (priest *Priest) OnSpellHitAddShadowWeaving() func(*core.Simulation, *core.Spell, *core.SpellEffect) {
+	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		if spellEffect.Landed() {
+			priest.AddShadowWeavingStack(sim)
+		}
 	}
 }
 
