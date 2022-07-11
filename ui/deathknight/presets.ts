@@ -32,11 +32,9 @@ export const FrostTalents = {
 };
 
 export const DefaultRotation = DeathKnightRotation.create({
-	useScourgeStrike: false,
 });
 
 export const DefaultOptions = DeathKnightOptions.create({
-	dualWhield: true,
 });
 
 export const DefaultConsumes = Consumes.create({
