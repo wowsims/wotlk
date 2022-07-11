@@ -10,8 +10,8 @@ import (
 )
 
 func (druid *Druid) registerMoonfireSpell() {
-	actionID := core.ActionID{SpellID: 26988}
-	baseCost := 495.0
+	actionID := core.ActionID{SpellID: 48463}
+	baseMana*0.21
 
 	druid.Moonfire = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
