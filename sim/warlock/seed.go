@@ -14,10 +14,14 @@ func (warlock *Warlock) registerSeedSpell() {
 	warlock.Seeds = make([]*core.Spell, numTargets)
 	warlock.SeedDots = make([]*core.Dot, numTargets)
 
-	numHit := float64(numTargets - 1)
 	// For this simulation we always assume the seed target didn't die to trigger the seed because we don't simulate health.
 	// This effectively lowers the seed AOE cap using the function:
-	cap := 13580.0 * numHit / (numHit + 1)
+	flatBonus := 0.0
+	if ItemSetOblivionRaiment.CharacterHasSetBonus(&warlock.Character, 4) {
+		flatBonus += 180
+	}
+	cap := 10.0 * ((1633+flatBonus + 1897+flatBonus)/2 + 0.2129 * (warlock.GetStat(stats.SpellPower) + warlock.GetStat(stats.ShadowSpellPower))) *
+		(1 + 0.01*float64(warlock.Talents.Contagion))
 
 	for i := 0; i < numTargets; i++ {
 		warlock.makeSeed(i, cap)
@@ -33,7 +37,7 @@ func (warlock *Warlock) makeSeed(targetIdx int, cap float64) {
 	}
 	baseSeedExplosionEffect := core.SpellEffect{
 		ProcMask:         	  core.ProcMaskSpellDamage,
-		DamageMultiplier: 	  1 * (1 + 0.01*float64(warlock.Talents.Contagion)),
+		DamageMultiplier: 	  1 + 0.01*float64(warlock.Talents.Contagion),
 		ThreatMultiplier:	  1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 		BaseDamage:      	  core.BaseDamageConfigMagic(1633+flatBonus, 1897+flatBonus, 0.2129),
 		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(1.5),
