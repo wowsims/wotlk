@@ -27,6 +27,9 @@ type DeathKnight struct {
 	//ArmyOfTheDead    *core.Spell
 	//RaiseDead        *core.Spell
 
+	FrostFeverDisease  *core.Dot
+	BloodPlagueDisease *core.Dot
+
 	BloodPresenceAura  *core.Aura
 	FrostPresenceAura  *core.Aura
 	UnholyPresenceAura *core.Aura
@@ -43,47 +46,12 @@ func (deathKnight *DeathKnight) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 func (deathKnight *DeathKnight) Initialize() {
 	deathKnight.registerPresences()
 	deathKnight.registerIcyTouchSpell()
+	deathKnight.registerDiseaseDots()
 }
 
-func (deathKnight *DeathKnight) registerIcyTouchSpell() {
-	baseCost := 10.0
-
-	deathKnight.IcyTouch = deathKnight.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 59131},
-		SpellSchool: core.SpellSchoolFrost,
-
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
-
-		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
-			},
-			CD: core.Cooldown{
-				Timer:    deathKnight.NewTimer(),
-				Duration: 6.0 * time.Second,
-			},
-		},
-
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:             core.ProcMaskSpellDamage,
-			BonusSpellCritRating: 0 + float64(deathKnight.Talents.DarkConviction),
-			DamageMultiplier:     1 * (1 + 0.05*float64(deathKnight.Talents.ImprovedIcyTouch)),
-			ThreatMultiplier:     7.0,
-
-			BaseDamage:     core.BaseDamageConfigMagic(227, 245, 0),
-			OutcomeApplier: deathKnight.OutcomeFuncMagicHitAndCritAPScaled(deathKnight.DefaultSpellCritMultiplier(), 0.1),
-
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					deathKnight.SpendFrostRune(sim, spell.FrostRuneMetrics())
-
-					// TODO: Generate runic power
-				}
-			},
-		}),
-	})
+func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
+	deathKnight.BloodPresenceAura.Activate(sim)
+	deathKnight.Presence = BloodPresence
 }
 
 func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight {
@@ -105,9 +73,6 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 	deathKnight.EnableRunicPowerBar(
 		maxRunicPower,
 		func(sim *core.Simulation) {},
-	)
-
-	deathKnight.EnableRuneBars(
 		func(sim *core.Simulation) {},
 		func(sim *core.Simulation) {},
 		func(sim *core.Simulation) {},
@@ -162,9 +127,84 @@ func RegisterDeathKnight() {
 	)
 }
 
-func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
-	deathKnight.BloodPresenceAura.Activate(sim)
-	deathKnight.Presence = BloodPresence
+func (deathKnight *DeathKnight) registerDiseaseDots() {
+	//actionID := core.ActionID{SpellID: 48125}
+	//target := deathKnight.CurrentTarget
+	//
+	//deathKnight.FrostFeverDisease = core.NewDot(core.Dot{
+	//	Aura: target.RegisterAura(core.Aura{
+	//		Label:    "FrostFever-" + strconv.Itoa(int(deathKnight.Index)),
+	//		ActionID: actionID,
+	//	}),
+	//
+	//	NumberOfTicks: 5,
+	//	TickLength:    time.Second * 3,
+	//
+	//	TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
+	//		ProcMask:             core.ProcMaskPeriodicDamage,
+	//		DamageMultiplier:     1,
+	//		BonusSpellCritRating: 0,
+	//		ThreatMultiplier:     1,
+	//		IsPeriodic:           true,
+	//		BaseDamage: core.WrapBaseDamageConfig(
+	//			core.BaseDamageConfigMagicNoRoll(1380/6, 0.1833),
+	//			func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
+	//				return func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
+	//					dmg := oldCalculator(sim, spellEffect, spell)
+	//
+	//					return dmg * swMod
+	//				}
+	//			}),
+	//		OutcomeApplier: applier,
+	//	}),
+	//})
+}
+
+func (deathKnight *DeathKnight) registerIcyTouchSpell() {
+	baseCost := 10.0
+
+	deathKnight.IcyTouch = deathKnight.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 59131},
+		SpellSchool: core.SpellSchoolFrost,
+
+		ResourceType: stats.RunicPower,
+		BaseCost:     baseCost,
+
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				Cost: baseCost,
+				GCD:  core.GCDDefault,
+			},
+			CD: core.Cooldown{
+				Timer:    deathKnight.NewTimer(),
+				Duration: 6.0 * time.Second,
+			},
+		},
+
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+			ProcMask:             core.ProcMaskSpellDamage,
+			BonusSpellCritRating: 0 + float64(deathKnight.Talents.DarkConviction),
+			DamageMultiplier:     1 * (1 + 0.05*float64(deathKnight.Talents.ImprovedIcyTouch)),
+			ThreatMultiplier:     7.0,
+
+			BaseDamage: core.BaseDamageConfig{
+				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+					roll := (245.0-227.0)*sim.RandomFloat("Icy Touch") + 227.0
+					return roll + hitEffect.MeleeAttackPower(spell.Unit)*0.1
+				},
+				TargetSpellCoefficient: 1,
+			},
+			OutcomeApplier: deathKnight.OutcomeFuncMagicHitAndCrit(deathKnight.DefaultSpellCritMultiplier()),
+
+			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if spellEffect.Landed() {
+					deathKnight.SpendFrostRune(sim, spell.FrostRuneMetrics())
+
+					// TODO: Generate runic power
+				}
+			},
+		}),
+	})
 }
 
 func init() {

@@ -1,6 +1,24 @@
 package core
 
+import "time"
+
+type OnBloodRuneGain func(sim *Simulation)
+type OnFrostRuneGain func(sim *Simulation)
+type OnUnholyRuneGain func(sim *Simulation)
+type OnDeathRuneGain func(sim *Simulation)
 type OnRunicPowerGain func(sim *Simulation)
+
+type Rune struct {
+	unit *Unit
+
+	cd Cooldown
+}
+
+type DeathRune struct {
+	unit *Unit
+
+	cd Cooldown
+}
 
 type runicPowerBar struct {
 	unit *Unit
@@ -8,15 +26,23 @@ type runicPowerBar struct {
 	maxRunicPower     float64
 	currentRunicPower float64
 
-	bloodRunesBar  runeBar
-	frostRunesBar  runeBar
-	unholyRunesBar runeBar
-	deathRunesBar  runeBar
+	bloodRunes  [2]Rune
+	frostRunes  [2]Rune
+	unholyRunes [2]Rune
+	deathRunes  [3]DeathRune
 
+	onBloodRuneGain  OnBloodRuneGain
+	onFrostRuneGain  OnFrostRuneGain
+	onUnholyRuneGain OnUnholyRuneGain
+	onDeathRuneGain  OnDeathRuneGain
 	onRunicPowerGain OnRunicPowerGain
 }
 
 func (unit *Unit) EnableRunicPowerBar(maxRunicPower float64,
+	onBloodRuneGain OnBloodRuneGain,
+	onFrostRuneGain OnFrostRuneGain,
+	onUnholyRuneGain OnUnholyRuneGain,
+	onDeathRuneGain OnDeathRuneGain,
 	onRunicPowerGain OnRunicPowerGain) {
 	unit.runicPowerBar = runicPowerBar{
 		unit: unit,
@@ -24,8 +50,64 @@ func (unit *Unit) EnableRunicPowerBar(maxRunicPower float64,
 		maxRunicPower:     maxRunicPower,
 		currentRunicPower: maxRunicPower,
 
+		bloodRunes: [2]Rune{
+			Rune{
+				unit: unit,
+				cd:   Cooldown{unit.NewTimer(), 10.0 * time.Second},
+			},
+			Rune{
+				unit: unit,
+				cd:   Cooldown{unit.NewTimer(), 10.0 * time.Second},
+			},
+		},
+
+		frostRunes: [2]Rune{
+			Rune{
+				unit: unit,
+				cd:   Cooldown{unit.NewTimer(), 10.0 * time.Second},
+			},
+			Rune{
+				unit: unit,
+				cd:   Cooldown{unit.NewTimer(), 10.0 * time.Second},
+			},
+		},
+
+		unholyRunes: [2]Rune{
+			Rune{
+				unit: unit,
+				cd:   Cooldown{unit.NewTimer(), 10.0 * time.Second},
+			},
+			Rune{
+				unit: unit,
+				cd:   Cooldown{unit.NewTimer(), 10.0 * time.Second},
+			},
+		},
+
+		deathRunes: [3]DeathRune{
+			DeathRune{
+				unit: unit,
+				cd:   Cooldown{unit.NewTimer(), -10.0 * time.Second},
+			},
+			DeathRune{
+				unit: unit,
+				cd:   Cooldown{unit.NewTimer(), -10.0 * time.Second},
+			},
+			DeathRune{
+				unit: unit,
+				cd:   Cooldown{unit.NewTimer(), -10.0 * time.Second},
+			},
+		},
+
+		onBloodRuneGain:  onBloodRuneGain,
+		onFrostRuneGain:  onFrostRuneGain,
+		onUnholyRuneGain: onUnholyRuneGain,
+		onDeathRuneGain:  onDeathRuneGain,
 		onRunicPowerGain: onRunicPowerGain,
 	}
+
+	unit.runicPowerBar.deathRunes[0].cd.Set(1<<63 - 1)
+	unit.runicPowerBar.deathRunes[1].cd.Set(1<<63 - 1)
+	unit.runicPowerBar.deathRunes[2].cd.Set(1<<63 - 1)
 }
 
 func (unit *Unit) HasRunicPower() bool {
@@ -34,6 +116,61 @@ func (unit *Unit) HasRunicPower() bool {
 
 func (rp *runicPowerBar) CurrentRunicPower() float64 {
 	return rp.currentRunicPower
+}
+
+func (r *Rune) IsReady(sim *Simulation) bool {
+	return r.cd.IsReady(sim)
+}
+
+func (dr *DeathRune) IsReady(sim *Simulation) bool {
+	return dr.cd.IsReady(sim)
+}
+
+func (rp *runicPowerBar) CurrentBloodRunes(sim *Simulation) int32 {
+	total := int32(0)
+	if rp.bloodRunes[1].IsReady(sim) {
+		total += 1
+	}
+	if rp.bloodRunes[0].IsReady(sim) {
+		total += 1
+	}
+	return total
+}
+
+func (rp *runicPowerBar) CurrentFrostRunes(sim *Simulation) int32 {
+	total := int32(0)
+	if rp.frostRunes[1].IsReady(sim) {
+		total += 1
+	}
+	if rp.frostRunes[0].IsReady(sim) {
+		total += 1
+	}
+	return total
+}
+
+func (rp *runicPowerBar) CurrentUnholyRunes(sim *Simulation) int32 {
+	total := int32(0)
+	if rp.unholyRunes[1].IsReady(sim) {
+		total += 1
+	}
+	if rp.unholyRunes[0].IsReady(sim) {
+		total += 1
+	}
+	return total
+}
+
+func (rp *runicPowerBar) CurrentDeathRunes(sim *Simulation) int32 {
+	total := int32(0)
+	if rp.deathRunes[2].IsReady(sim) {
+		total += 1
+	}
+	if rp.deathRunes[1].IsReady(sim) {
+		total += 1
+	}
+	if rp.deathRunes[0].IsReady(sim) {
+		total += 1
+	}
+	return total
 }
 
 func (rp *runicPowerBar) addRunicPowerInterval(sim *Simulation, amount float64, metrics *ResourceMetrics) {
@@ -72,67 +209,107 @@ func (rp *runicPowerBar) SpendRunicPower(sim *Simulation, amount float64, metric
 
 }
 
-func (rp *runicPowerBar) CurrentBloodRunes() float64 {
-	rb := &rp.bloodRunesBar
-	return rb.CurrentRunes()
+func (rp *runicPowerBar) CastCostPossible(sim *Simulation, runicPowerAmount float64, bloodAmount int32, frostAmount int32, unholyAmount int32, deathAmount int32) bool {
+	return (rp.currentRunicPower > runicPowerAmount) &&
+		(rp.CurrentBloodRunes(sim) >= bloodAmount) &&
+		(rp.CurrentFrostRunes(sim) >= frostAmount) &&
+		(rp.CurrentUnholyRunes(sim) >= unholyAmount) &&
+		(rp.CurrentDeathRunes(sim) >= deathAmount)
 }
 
-func (rp *runicPowerBar) CurrentFrostRunes() float64 {
-	rb := &rp.frostRunesBar
-	return rb.CurrentRunes()
+// func (rb *runeBar) SpendRune(sim *Simulation, metrics *ResourceMetrics) {
+// 	availableRune := rb.GetAvailableRune(sim)
+
+// 	if availableRune.available {
+// 		newRunes := rb.currentRunes - 1
+// 		metrics.AddEvent(-1, -1)
+
+// 		if sim.Log != nil {
+// 			rb.unit.Log(sim, "Spent %s Rune(%d) from %s (%d --> %d).", rb.RuneTypeName(), availableRune.slot, metrics.ActionID, int32(rb.currentRunes), int32(newRunes))
+// 		}
+
+// 		rb.currentRunes = newRunes
+// 		rb.cooldowns[availableRune.slot].Use(sim)
+// 	}
+// }
+
+func (r *Rune) Spend(sim *Simulation) {
+	r.cd.Use(sim)
 }
 
-func (rp *runicPowerBar) CurrentUnholyRunes() float64 {
-	rb := &rp.unholyRunesBar
-	return rb.CurrentRunes()
+func (dr *DeathRune) Spend(sim *Simulation) {
+	dr.cd.Use(sim)
 }
 
-func (rp *runicPowerBar) CurrentDeathRunes() float64 {
-	rb := &rp.deathRunesBar
-	return rb.CurrentRunes()
-}
-
-func (rp *runicPowerBar) CastCostPossible(sim *Simulation, runicPowerAmount float64, bloodAmount int32, frostAmount int32, unholyAmount int32) bool {
-	possible := true
-
-	if runicPowerAmount > rp.currentRunicPower {
-		possible = false
+func (rp *runicPowerBar) SpendRuneMetrics(sim *Simulation, metrics *ResourceMetrics, runeName string, slot int32, currentRunes int32, newRunes int32) {
+	metrics.AddEvent(-1, -1)
+	if sim.Log != nil {
+		rp.unit.Log(sim, "Spent %s Rune(slot %d) from %s (%d --> %d).", runeName, slot, metrics.ActionID, currentRunes, newRunes)
 	}
-
-	brb := &rp.bloodRunesBar
-	if bloodAmount > 0 {
-		possible = possible && brb.AnyAvailableRune(sim)
-	}
-
-	frb := &rp.frostRunesBar
-	if frostAmount > 0 {
-		possible = possible && frb.AnyAvailableRune(sim)
-	}
-
-	urb := &rp.unholyRunesBar
-	if unholyAmount > 0 {
-		possible = possible && urb.AnyAvailableRune(sim)
-	}
-
-	return possible
 }
 
 func (rp *runicPowerBar) SpendBloodRune(sim *Simulation, metrics *ResourceMetrics) {
-	rb := &rp.bloodRunesBar
-	rb.SpendRune(sim, metrics)
+	currentBloodRunes := rp.CurrentBloodRunes(sim)
+
+	slot := int32(-1)
+	if rp.bloodRunes[1].IsReady(sim) {
+		slot = 1
+	} else if rp.bloodRunes[0].IsReady(sim) {
+		slot = 0
+	} else {
+		panic("Trying to spend blood rune but we have none!")
+	}
+
+	rp.bloodRunes[slot].Spend(sim)
+	rp.SpendRuneMetrics(sim, metrics, "Blood", slot, currentBloodRunes, rp.CurrentBloodRunes(sim))
 }
 
 func (rp *runicPowerBar) SpendFrostRune(sim *Simulation, metrics *ResourceMetrics) {
-	rb := &rp.frostRunesBar
-	rb.SpendRune(sim, metrics)
+	currentFrostRunes := rp.CurrentFrostRunes(sim)
+
+	slot := int32(-1)
+	if rp.frostRunes[1].IsReady(sim) {
+		slot = 1
+	} else if rp.frostRunes[0].IsReady(sim) {
+		slot = 0
+	} else {
+		panic("Trying to spend frost rune but we have none!")
+	}
+
+	rp.frostRunes[slot].Spend(sim)
+	rp.SpendRuneMetrics(sim, metrics, "Frost", slot, currentFrostRunes, rp.CurrentFrostRunes(sim))
 }
 
 func (rp *runicPowerBar) SpendUnholyRune(sim *Simulation, metrics *ResourceMetrics) {
-	rb := &rp.unholyRunesBar
-	rb.SpendRune(sim, metrics)
+	currentUnholyRunes := rp.CurrentUnholyRunes(sim)
+
+	slot := int32(-1)
+	if rp.unholyRunes[1].IsReady(sim) {
+		slot = 1
+	} else if rp.unholyRunes[0].IsReady(sim) {
+		slot = 0
+	} else {
+		panic("Trying to spend unholy rune but we have none!")
+	}
+
+	rp.unholyRunes[slot].Spend(sim)
+	rp.SpendRuneMetrics(sim, metrics, "Unholy", slot, currentUnholyRunes, rp.CurrentUnholyRunes(sim))
 }
 
 func (rp *runicPowerBar) SpendDeathRune(sim *Simulation, metrics *ResourceMetrics) {
-	rb := &rp.deathRunesBar
-	rb.SpendRune(sim, metrics)
+	currentDeathRunes := rp.CurrentDeathRunes(sim)
+
+	slot := int32(-1)
+	if rp.deathRunes[2].IsReady(sim) {
+		slot = 2
+	} else if rp.deathRunes[1].IsReady(sim) {
+		slot = 1
+	} else if rp.deathRunes[0].IsReady(sim) {
+		slot = 0
+	} else {
+		panic("Trying to spend death rune but we have none!")
+	}
+
+	rp.deathRunes[slot].Spend(sim)
+	rp.SpendRuneMetrics(sim, metrics, "Death", slot, currentDeathRunes, rp.CurrentDeathRunes(sim))
 }
