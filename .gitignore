@@ -14,3 +14,5 @@ binary_dist
 .dockerignore
 *wowsimwotlk*
 *.code-workspace
+wowsimwotlk
+*.gitignore

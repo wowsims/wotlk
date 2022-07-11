@@ -1,6 +1,10 @@
 package core
 
-import "time"
+import (
+	"time"
+
+	"github.com/wowsims/wotlk/sim/core/proto"
+)
 
 type OnBloodRuneGain func(sim *Simulation)
 type OnFrostRuneGain func(sim *Simulation)
@@ -30,6 +34,13 @@ type runicPowerBar struct {
 	frostRunes  [2]Rune
 	unholyRunes [2]Rune
 	deathRunes  [3]DeathRune
+
+	runeGainTrackers [4]int32
+
+	bloodRuneGainMetrics  *ResourceMetrics
+	frostRuneGainMetrics  *ResourceMetrics
+	unholyRuneGainMetrics *ResourceMetrics
+	deathRuneGainMetrics  *ResourceMetrics
 
 	onBloodRuneGain  OnBloodRuneGain
 	onFrostRuneGain  OnFrostRuneGain
@@ -98,12 +109,19 @@ func (unit *Unit) EnableRunicPowerBar(maxRunicPower float64,
 			},
 		},
 
+		runeGainTrackers: [4]int32{2, 2, 2, 0},
+
 		onBloodRuneGain:  onBloodRuneGain,
 		onFrostRuneGain:  onFrostRuneGain,
 		onUnholyRuneGain: onUnholyRuneGain,
 		onDeathRuneGain:  onDeathRuneGain,
 		onRunicPowerGain: onRunicPowerGain,
 	}
+
+	unit.bloodRuneGainMetrics = unit.NewBloodRuneMetrics(ActionID{OtherID: proto.OtherAction_OtherActionBloodRuneGain, Tag: 1})
+	unit.frostRuneGainMetrics = unit.NewFrostRuneMetrics(ActionID{OtherID: proto.OtherAction_OtherActionFrostRuneGain, Tag: 1})
+	unit.unholyRuneGainMetrics = unit.NewUnholyRuneMetrics(ActionID{OtherID: proto.OtherAction_OtherActionUnholyRuneGain, Tag: 1})
+	unit.deathRuneGainMetrics = unit.NewDeathRuneMetrics(ActionID{OtherID: proto.OtherAction_OtherActionDeathRuneGain, Tag: 1})
 
 	unit.runicPowerBar.deathRunes[0].cd.Set(1<<63 - 1)
 	unit.runicPowerBar.deathRunes[1].cd.Set(1<<63 - 1)
@@ -173,9 +191,62 @@ func (rp *runicPowerBar) CurrentDeathRunes(sim *Simulation) int32 {
 	return total
 }
 
-//func (rp *runicPowerBar) TimeToNextFrostRune(sim *Simulation) time.Duration {
-//	// TODO implement this!
-//}
+func (rp *runicPowerBar) GainRuneMetrics(sim *Simulation, metrics *ResourceMetrics, runeName string, newRunes int32, prevRunes int32) {
+	metrics.AddEvent(1, float64(newRunes-prevRunes))
+
+	if sim.Log != nil {
+		rp.unit.Log(sim, "Gained %s Rune (%d --> %d).", runeName, prevRunes, newRunes)
+	}
+}
+
+func (rp *runicPowerBar) CheckRuneGainTrackers(sim *Simulation) {
+	newRunes := rp.CurrentBloodRunes(sim)
+	prevRunes := rp.runeGainTrackers[0]
+	if newRunes > prevRunes {
+		rp.onBloodRuneGain(sim)
+		rp.GainRuneMetrics(sim, rp.bloodRuneGainMetrics, "Blood", newRunes, prevRunes)
+	}
+
+	newRunes = rp.CurrentFrostRunes(sim)
+	prevRunes = rp.runeGainTrackers[1]
+	if newRunes > prevRunes {
+		rp.onFrostRuneGain(sim)
+		rp.GainRuneMetrics(sim, rp.frostRuneGainMetrics, "Frost", newRunes, prevRunes)
+	}
+
+	newRunes = rp.CurrentUnholyRunes(sim)
+	prevRunes = rp.runeGainTrackers[2]
+	if newRunes > prevRunes {
+		rp.onUnholyRuneGain(sim)
+		rp.GainRuneMetrics(sim, rp.unholyRuneGainMetrics, "Unholy", newRunes, prevRunes)
+	}
+
+	newRunes = rp.CurrentDeathRunes(sim)
+	prevRunes = rp.runeGainTrackers[3]
+	if newRunes > prevRunes {
+		rp.onDeathRuneGain(sim)
+		rp.GainRuneMetrics(sim, rp.deathRuneGainMetrics, "Death", newRunes, prevRunes)
+	}
+}
+
+func (rp *runicPowerBar) UpdateRuneGainTrackers(sim *Simulation) {
+	rp.runeGainTrackers[0] = rp.CurrentBloodRunes(sim)
+	rp.runeGainTrackers[1] = rp.CurrentFrostRunes(sim)
+	rp.runeGainTrackers[2] = rp.CurrentUnholyRunes(sim)
+	rp.runeGainTrackers[3] = rp.CurrentDeathRunes(sim)
+}
+
+func (rp *runicPowerBar) TimeToNextBloodRune(sim *Simulation) time.Duration {
+	return MinDuration(rp.frostRunes[0].cd.TimeToReady(sim), rp.frostRunes[1].cd.TimeToReady(sim))
+}
+
+func (rp *runicPowerBar) TimeToNextFrostRune(sim *Simulation) time.Duration {
+	return MinDuration(rp.bloodRunes[0].cd.TimeToReady(sim), rp.bloodRunes[1].cd.TimeToReady(sim))
+}
+
+func (rp *runicPowerBar) TimeToNextUnholyRune(sim *Simulation) time.Duration {
+	return MinDuration(rp.unholyRunes[0].cd.TimeToReady(sim), rp.unholyRunes[1].cd.TimeToReady(sim))
+}
 
 func (rp *runicPowerBar) addRunicPowerInterval(sim *Simulation, amount float64, metrics *ResourceMetrics) {
 	if amount < 0 {

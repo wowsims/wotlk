@@ -44,11 +44,6 @@ const (
 	Mana
 	Energy
 	Rage
-	RunicPower
-	BloodRune
-	FrostRune
-	UnholyRune
-	DeathRune
 	Armor
 	RangedAttackPower
 	Defense
@@ -63,6 +58,11 @@ const (
 	FrostResistance
 	NatureResistance
 	ShadowResistance
+	RunicPower
+	BloodRune
+	FrostRune
+	UnholyRune
+	DeathRune
 
 	Len
 )
@@ -131,16 +131,6 @@ func (s Stat) StatName() string {
 		return "Energy"
 	case Rage:
 		return "Rage"
-	case RunicPower:
-		return "Runic Power"
-	case BloodRune:
-		return "Blood Rune"
-	case FrostRune:
-		return "Frost Rune"
-	case UnholyRune:
-		return "Unholy Rune"
-	case DeathRune:
-		return "Death Rune"
 	case Armor:
 		return "Armor"
 	case RangedAttackPower:
@@ -169,6 +159,16 @@ func (s Stat) StatName() string {
 		return "ShadowResistance"
 	case ArcaneResistance:
 		return "ArcaneResistance"
+	case RunicPower:
+		return "Runic Power"
+	case BloodRune:
+		return "Blood Rune"
+	case FrostRune:
+		return "Frost Rune"
+	case UnholyRune:
+		return "Unholy Rune"
+	case DeathRune:
+		return "Death Rune"
 	}
 
 	return "none"

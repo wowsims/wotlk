@@ -735,6 +735,10 @@ enum OtherAction {
 	OtherActionRefund = 8; // Refund of a resource like Energy or Rage, when the ability didn't land.
 	OtherActionDamageTaken = 9; // Indicates damage taken; used for rage gen.
 	OtherActionHealingModel = 12; // Indicates healing received from healing model.
+	OtherActionBloodRuneGain = 13; // Indicates healing received from healing model.
+	OtherActionFrostRuneGain  = 14; // Indicates healing received from healing model.
+	OtherActionUnholyRuneGain  = 15; // Indicates healing received from healing model.
+	OtherActionDeathRuneGain  = 16; // Indicates healing received from healing model.
 }
 
 message ActionID {

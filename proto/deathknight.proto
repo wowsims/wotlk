@@ -19,7 +19,7 @@ message DeathKnightTalents {
 	int32 vendetta = 12;
 	int32 bloody_strikes = 13;
 	int32 veteran_of_the_third_war = 14;
-	int32 mark_of_blood = 15;
+	bool mark_of_blood = 15;
 	int32 bloody_vengeance = 16;
 	int32 abominations_might = 17;
 	int32 bloodworms = 18;

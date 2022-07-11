@@ -9,17 +9,21 @@ import (
 	//"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+func (deathKnight *DeathKnight) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
+	if deathKnight.GCD.IsReady(sim) {
+		deathKnight.tryUseGCD(sim)
+	}
+}
+
 func (deathKnight *DeathKnight) OnGCDReady(sim *core.Simulation) {
+	deathKnight.CheckRuneGainTrackers(sim)
 	deathKnight.tryUseGCD(sim)
+	deathKnight.UpdateRuneGainTrackers(sim)
 }
 
 func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 	//var spell *core.Spell
 	var target = deathKnight.CurrentTarget
-
-	if sim.Log != nil {
-		deathKnight.Unit.Log(sim, "Trying to use GCD")
-	}
 
 	if deathKnight.GCD.IsReady(sim) {
 		if deathKnight.CanIcyTouch(sim) {

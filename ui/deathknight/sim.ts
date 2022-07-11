@@ -58,18 +58,16 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 			// Which stats to display in the Character Stats section, at the bottom of the left-hand sidebar.
 			displayStats: [
 				Stat.StatHealth,
-				Stat.StatStamina,
 				Stat.StatArmor,
 				Stat.StatStrength,
 				Stat.StatAgility,
 				Stat.StatAttackPower,
+				Stat.StatExpertise,
 				Stat.StatMeleeHit,
 				Stat.StatMeleeCrit,
 				Stat.StatMeleeHaste,
-				Stat.StatExpertise,
 				Stat.StatArmorPenetration,
 			],
-
 			defaults: {
 				// Default equipped gear.
 				gear: Presets.P1_FROST_BIS_PRESET.gear,
@@ -94,11 +92,13 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
-					arcaneBrilliance: true,
-					divineSpirit: true,
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
-					battleShout: TristateEffect.TristateEffectImproved,
+					bloodlust: true,
+					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
+					windfuryTotem: TristateEffect.TristateEffectImproved,
 					leaderOfThePack: TristateEffect.TristateEffectImproved,
+					unleashedRage: true,
+					abominationsMight: true,
 				}),
 				partyBuffs: PartyBuffs.create({
 				}),
@@ -124,10 +124,8 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 			],
 			// IconInputs to include in the 'Other Buffs' section on the settings tab.
 			raidBuffInputs: [
-				IconInputs.ArcaneBrilliance,
 				IconInputs.GiftOfTheWild,
 				IconInputs.Bloodlust,
-				IconInputs.ManaSpringTotem,
 				IconInputs.WrathOfAirTotem,
 				IconInputs.TotemOfWrath,
 				IconInputs.BattleShout,
@@ -136,9 +134,6 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				IconInputs.TrueshotAura,
 			],
 			partyBuffInputs: [
-				IconInputs.BraidedEterniumChain,
-				IconInputs.EyeOfTheNight,
-				IconInputs.ChainOfTheTwilightOwl,
 			],
 			playerBuffInputs: [
 				IconInputs.BlessingOfKings,
