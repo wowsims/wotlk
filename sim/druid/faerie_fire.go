@@ -30,7 +30,7 @@ func (druid *Druid) registerFaerieFireSpell() {
 		}
 	}
 
-	druid.FaerieFireAura = core.FaerieFireAura(druid.CurrentTarget, druid.Talents.ImprovedFaerieFire)
+	druid.FaerieFireAura = core.FaerieFireAura(druid.CurrentTarget, druid.Talents.ImprovedFaerieFire > 0)
 
 	druid.FaerieFire = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
