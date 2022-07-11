@@ -213,7 +213,7 @@ type AttackTable struct {
 	BinaryNatureHitChance float64
 	BinaryShadowHitChance float64
 
-	ArmorDamageReduction float64
+	ArmorDamageModifier float64
 
 	DamageDealtMultiplier float64
 }
