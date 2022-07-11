@@ -20,11 +20,11 @@ type Warlock struct {
 	UnstableAffDot *core.Dot
 	Corruption     *core.Spell
 	CorruptionDot  *core.Dot
-	/*	Haunt		   *core.Spell
-		Haunt		   *core.Aura
+	Haunt		   *core.Spell
+	HauntAura	   *core.Aura
 
-		DemonicEmpowerment		   *core.Aura
-	*/
+	// DemonicEmpowerment		   *core.Aura
+	
 	LifeTap *core.Spell
 
 	CurseOfElements     *core.Spell
@@ -43,6 +43,7 @@ type Warlock struct {
 
 	NightfallProcAura *core.Aura
 	ShadowEmbraceAura *core.Aura
+	EradicationAura	  *core.Aura
 
 	Pet *WarlockPet
 
@@ -72,6 +73,9 @@ func (warlock *Warlock) Initialize() {
 		warlock.registerUnstableAffSpell()
 	}
 	warlock.registerSeedSpell()
+	if warlock.Talents.Haunt {
+		warlock.registerHauntSpell()
+	}
 }
 
 func (warlock *Warlock) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
