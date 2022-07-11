@@ -133,7 +133,7 @@ func MiseryAura(target *Unit, numPoints int32) *Aura {
 	return target.GetOrRegisterAura(Aura{
 		Label:    "Misery-" + strconv.Itoa(int(numPoints)),
 		Tag:      "Misery",
-		ActionID: ActionID{SpellID: 33195},
+		ActionID: ActionID{SpellID: 33198},
 		Duration: time.Second * 24,
 		Priority: float64(numPoints),
 		OnGain: func(aura *Aura, sim *Simulation) {
@@ -405,7 +405,7 @@ func FaerieFireAura(target *Unit, level int32) *Aura {
 	return target.GetOrRegisterAura(Aura{
 		Label:    "Faerie Fire-" + strconv.Itoa(int(level)),
 		Tag:      MinorArmorReductionAuraTag,
-		ActionID: ActionID{SpellID: 26993},
+		ActionID: ActionID{SpellID: 770},
 		Duration: time.Second * 40,
 		Priority: float64(level),
 		OnGain: func(aura *Aura, sim *Simulation) {
@@ -496,7 +496,8 @@ func ExposeArmorAura(target *Unit, hasGlyph bool) *Aura {
 }
 
 func CurseOfWeaknessAura(target *Unit, points int32) *Aura {
-	bonus := stats.Stats{stats.AttackPower: -478}
+	APReduction := 478 * (1 + 0.1 * float64(points))
+	bonus := stats.Stats{stats.AttackPower: -APReduction}
 	armorReduction := 0.05
 
 	return target.GetOrRegisterAura(Aura{

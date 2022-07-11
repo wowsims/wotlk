@@ -31,8 +31,8 @@ var defaultDestroTalents = &proto.WarlockTalents{
 	SoulLeech:          3,
 	ImprovedSoulLeech:  2,
 	// demo
-	FelSynergy:  2,
-	ImprovedImp: 3,
+	FelSynergy:  		2,
+	ImprovedImp: 		3,
 }
 
 /*var defaultDestroMajorGlyphs = &proto.WarlockMajorGlyph{

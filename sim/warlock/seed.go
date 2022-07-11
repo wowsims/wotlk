@@ -32,10 +32,10 @@ func (warlock *Warlock) makeSeed(targetIdx int, cap float64) {
 		flatBonus += 180
 	}
 	baseSeedExplosionEffect := core.SpellEffect{
-		ProcMask:             core.ProcMaskSpellDamage,
-		DamageMultiplier:     1 * (1 + 0.02*float64(warlock.Talents.ShadowMastery)) * (1 + 0.01*float64(warlock.Talents.Contagion)),
-		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-		BaseDamage:           core.BaseDamageConfigMagic(1633+flatBonus, 1897+flatBonus, 0.143),
+		ProcMask:         	  core.ProcMaskSpellDamage,
+		DamageMultiplier: 	  1 * (1 + 0.01*float64(warlock.Talents.Contagion)),
+		ThreatMultiplier:	  1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+		BaseDamage:      	  core.BaseDamageConfigMagic(1633+flatBonus, 1897+flatBonus, 0.2129),
 		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(1.5),
 		BonusSpellCritRating: float64(warlock.Talents.ImprovedCorruption) * core.CritRatingPerCritChance,
 	}
@@ -54,7 +54,7 @@ func (warlock *Warlock) makeSeed(targetIdx int, cap float64) {
 		}
 		baseEffects[i].Target = warlock.Env.GetTargetUnit(int32(expTarget))
 	}
-	seedActionID := core.ActionID{SpellID: 27243}
+	seedActionID := core.ActionID{SpellID: 47836}
 
 	explosionId := seedActionID
 	explosionId.Tag = 1
@@ -133,9 +133,9 @@ func (warlock *Warlock) makeSeed(targetIdx int, cap float64) {
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * (1 + 0.02*float64(warlock.Talents.ShadowMastery)) * (1 + 0.01*float64(warlock.Talents.Contagion)),
+			DamageMultiplier: 1 * (1 + 0.01*float64(warlock.Talents.Contagion)) * (1 + 0.05*core.TernaryFloat64(warlock.Talents.SiphonLife, 0, 1)),
 			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(174, 0.25),
+			BaseDamage:       core.BaseDamageConfigMagicNoRoll(1518/6, 0.25),
 			OutcomeApplier:   warlock.OutcomeFuncTick(),
 			IsPeriodic:       true,
 		}),
