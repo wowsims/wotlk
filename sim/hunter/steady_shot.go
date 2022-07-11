@@ -82,8 +82,6 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, true, hunter.CurrentTarget)),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				hunter.rotation(sim, false)
-
 				if spellEffect.Landed() && impSSProcChance > 0 && sim.RandomFloat("Imp Steady Shot") < impSSProcChance {
 					hunter.ImprovedSteadyShotAura.Activate(sim)
 				}

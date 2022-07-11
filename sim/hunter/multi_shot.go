@@ -31,10 +31,6 @@ func (hunter *Hunter) registerMultiShotSpell() {
 			TargetSpellCoefficient: 1,
 		}),
 		OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, false, hunter.CurrentTarget)),
-
-		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			hunter.rotation(sim, false)
-		},
 	}
 
 	numHits := core.MinInt32(3, hunter.Env.GetNumTargets())
