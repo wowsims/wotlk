@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"time"
+	"math"
 
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
@@ -402,6 +403,28 @@ func ApplyEffectFuncMultipleDamageCapped(baseEffects []SpellEffect, aoeCap float
 		}
 		for i := range baseEffects {
 			effect := &baseEffects[i]
+			effect.finalize(sim, spell)
+		}
+	}
+}
+
+func ApplyEffectFuncMultipleDamageCappedWotLK(baseEffects []SpellEffect, numTargets int) ApplySpellEffects {
+	for _, effect := range baseEffects {
+		effect.Validate()
+	}
+
+	return func(sim *Simulation, _ *Unit, spell *Spell) {
+		capMultiplier := math.Min(10.0 / float64(numTargets), 1.0)
+		for i := range baseEffects {
+			effect := &baseEffects[i]
+			effect.init(sim, spell)
+			attackTable := spell.Unit.AttackTables[effect.Target.TableIndex]
+			effect.Damage = effect.calculateBaseDamage(sim, spell)
+			effect.Damage *= capMultiplier
+			effect.applyAttackerModifiers(sim, spell)
+			effect.applyResistances(sim, spell, attackTable)
+			effect.OutcomeApplier(sim, spell, effect, attackTable)
+			effect.applyTargetModifiers(sim, spell, attackTable)
 			effect.finalize(sim, spell)
 		}
 	}
