@@ -76,6 +76,7 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 		BonusSpellCritRating: float64(priest.Talents.MindMelt) * 2 * core.CritRatingPerCritChance,
 		OutcomeApplier:       priest.OutcomeFuncMagicHitAndCrit(1 + float64(priest.Talents.ShadowPower)*0.2),
 		ProcMask:             core.ProcMaskSpellDamage,
+		OnSpellHitDealt:      priest.OnSpellHitAddShadowWeaving(),
 	}
 
 	normalCalc := core.BaseDamageFuncMagic(588/3, 588/3, 0.257)
@@ -90,6 +91,8 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 	effect.BaseDamage = core.BaseDamageConfig{
 		Calculator: func(sim *core.Simulation, effect *core.SpellEffect, spell *core.Spell) float64 {
 			var dmg float64
+			shadowWeavingMod := 1 + float64(priest.ShadowWeavingAura.GetStacks())*0.02
+
 			if priest.MiseryAura.IsActive() {
 				dmg = miseryCalc(sim, effect, spell)
 			} else {
@@ -100,7 +103,7 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 			} else {
 				dmg *= normMod // multiply the damage
 			}
-			return dmg
+			return dmg * shadowWeavingMod
 		},
 		TargetSpellCoefficient: 0.0,
 	}

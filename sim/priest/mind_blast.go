@@ -17,6 +17,7 @@ func (priest *Priest) registerMindBlastSpell() {
 		DamageMultiplier:     1,
 		ThreatMultiplier:     1 - 0.08*float64(priest.Talents.ShadowAffinity),
 		OutcomeApplier:       priest.OutcomeFuncMagicHitAndCrit(priest.SpellCritMultiplier(1, float64(priest.Talents.ShadowPower)/5)),
+		OnSpellHitDealt:      priest.OnSpellHitAddShadowWeaving(),
 	}
 
 	normalCalc := core.BaseDamageFuncMagic(997, 1053, 0.429)
@@ -31,6 +32,8 @@ func (priest *Priest) registerMindBlastSpell() {
 	effect.BaseDamage = core.BaseDamageConfig{
 		Calculator: func(sim *core.Simulation, effect *core.SpellEffect, spell *core.Spell) float64 {
 			var dmg float64
+			shadowWeavingMod := 1 + float64(priest.ShadowWeavingAura.GetStacks())*0.02
+
 			if priest.MiseryAura.IsActive() { // priest.MiseryAura != nil
 				dmg = miseryCalc(sim, effect, spell)
 			} else {
@@ -41,7 +44,7 @@ func (priest *Priest) registerMindBlastSpell() {
 			} else {
 				dmg *= normMod // multiply the damage
 			}
-			return dmg
+			return dmg * shadowWeavingMod
 		},
 		TargetSpellCoefficient: 0.0,
 	}
