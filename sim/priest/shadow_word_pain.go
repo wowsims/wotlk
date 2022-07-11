@@ -38,6 +38,7 @@ func (priest *Priest) registerShadowWordPainSpell() {
 			OutcomeApplier:      priest.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
+					priest.AddShadowWeavingStack(sim)
 					priest.ShadowWordPainDot.Apply(sim)
 				}
 			},
@@ -62,8 +63,17 @@ func (priest *Priest) registerShadowWordPainSpell() {
 			BonusSpellCritRating: float64(priest.Talents.MindMelt) * 3 * core.CritRatingPerCritChance,
 			ThreatMultiplier:     1 - 0.08*float64(priest.Talents.ShadowAffinity),
 			IsPeriodic:           true,
-			BaseDamage:           core.BaseDamageConfigMagicNoRoll(1380/6, 0.1833),
-			OutcomeApplier:       applier,
+			BaseDamage: core.WrapBaseDamageConfig(
+				core.BaseDamageConfigMagicNoRoll(1380/6, 0.1833),
+				func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
+					return func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
+						swMod := 1 + float64(priest.ShadowWeavingAura.GetStacks())*0.02
+						dmg := oldCalculator(sim, spellEffect, spell)
+
+						return dmg * swMod
+					}
+				}),
+			OutcomeApplier: applier,
 		}),
 	})
 }

@@ -25,8 +25,13 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 		ThreatMultiplier:    1 - 0.05*float64(priest.Talents.ShadowAffinity),
 		BaseDamage:          core.BaseDamageConfigMagic(172.0, 172.0, 0.1849),
 		OutcomeApplier:      priest.OutcomeFuncMagicHitAndCrit(priest.DefaultSpellCritMultiplier()),
-		OnSpellHitDealt:     applyDotOnLanded(&priest.DevouringPlagueDot),
-		ProcMask:            core.ProcMaskSpellDamage,
+		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spellEffect.Landed() {
+				priest.AddShadowWeavingStack(sim)
+				priest.DevouringPlagueDot.Apply(sim)
+			}
+		},
+		ProcMask: core.ProcMaskSpellDamage,
 	}
 
 	priest.DevouringPlague = priest.RegisterSpell(core.SpellConfig{
@@ -62,16 +67,17 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 			DamageMultiplier:     (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.ImprovedDevouringPlague)*0.05),
 			ThreatMultiplier:     1 - 0.08*float64(priest.Talents.ShadowAffinity),
 			IsPeriodic:           true,
-			BaseDamage:           core.BaseDamageConfigMagicNoRoll(1376/8, 0.1849),
-			OutcomeApplier:       applier,
+			BaseDamage: core.WrapBaseDamageConfig(
+				core.BaseDamageConfigMagicNoRoll(1376/8, 0.1849),
+				func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
+					return func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
+						swMod := 1 + float64(priest.ShadowWeavingAura.GetStacks())*0.02
+						dmg := oldCalculator(sim, spellEffect, spell)
+
+						return dmg * swMod
+					}
+				}),
+			OutcomeApplier: applier,
 		}),
 	})
-}
-
-func applyDotOnLanded(dot **core.Dot) func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-		if spellEffect.Landed() {
-			(*dot).Apply(sim)
-		}
-	}
 }
