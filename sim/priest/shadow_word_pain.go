@@ -10,7 +10,7 @@ import (
 
 func (priest *Priest) registerShadowWordPainSpell() {
 	actionID := core.ActionID{SpellID: 48125}
-	baseCost := priest.BaseMana() * 0.22
+	baseCost := priest.BaseMana * 0.22
 
 	applier := priest.OutcomeFuncTick()
 	if priest.Talents.Shadowform {

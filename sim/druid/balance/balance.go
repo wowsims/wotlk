@@ -40,6 +40,8 @@ func NewBalanceDruid(character core.Character, options proto.Player) *BalanceDru
 		useBattleRes:    balanceOptions.Options.BattleRes,
 	}
 
+	moonkin.EnableResumeAfterManaWait(moonkin.tryUseGCD)
+
 	return moonkin
 }
 

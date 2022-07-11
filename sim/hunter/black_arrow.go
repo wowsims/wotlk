@@ -14,7 +14,7 @@ func (hunter *Hunter) registerBlackArrowSpell() {
 	}
 
 	actionID := core.ActionID{SpellID: 3674}
-	baseCost := 0.06 * hunter.BaseMana()
+	baseCost := 0.06 * hunter.BaseMana
 
 	hunter.BlackArrow = hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,

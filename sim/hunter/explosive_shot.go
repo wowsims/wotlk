@@ -15,7 +15,7 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 	}
 
 	actionID := core.ActionID{SpellID: 60053}
-	baseCost := 0.07 * hunter.BaseMana()
+	baseCost := 0.07 * hunter.BaseMana
 
 	baseEffect := core.SpellEffect{
 		ProcMask: core.ProcMaskRangedSpecial,

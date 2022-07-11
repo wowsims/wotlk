@@ -11,7 +11,7 @@ import (
 
 func (hunter *Hunter) registerSerpentStingSpell() {
 	actionID := core.ActionID{SpellID: 49001}
-	baseCost := 0.09 * hunter.BaseMana()
+	baseCost := 0.09 * hunter.BaseMana
 
 	hunter.SerpentSting = hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,

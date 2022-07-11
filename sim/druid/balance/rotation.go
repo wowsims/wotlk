@@ -13,12 +13,6 @@ func (moonkin *BalanceDruid) OnGCDReady(sim *core.Simulation) {
 	moonkin.tryUseGCD(sim)
 }
 
-func (moonkin *BalanceDruid) OnManaTick(sim *core.Simulation) {
-	if moonkin.FinishedWaitingForManaAndGCDReady(sim) {
-		moonkin.tryUseGCD(sim)
-	}
-}
-
 func (moonkin *BalanceDruid) tryUseGCD(sim *core.Simulation) {
 	if moonkin.useSurplusRotation {
 		moonkin.manaTracker.Update(sim, moonkin.GetCharacter())

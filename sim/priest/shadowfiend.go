@@ -16,7 +16,7 @@ func (priest *Priest) registerShadowfiendSpell() {
 	}
 
 	actionID := core.ActionID{SpellID: 34433}
-	baseCost := priest.BaseMana() * 0.06
+	baseCost := priest.BaseMana * 0.06
 
 	priest.Shadowfiend = priest.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,

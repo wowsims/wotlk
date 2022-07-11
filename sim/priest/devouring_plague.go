@@ -10,7 +10,7 @@ import (
 
 func (priest *Priest) registerDevouringPlagueSpell() {
 	actionID := core.ActionID{SpellID: 48300}
-	baseCost := priest.BaseMana() * 0.25
+	baseCost := priest.BaseMana * 0.25
 	target := priest.CurrentTarget
 
 	applier := priest.OutcomeFuncTick()

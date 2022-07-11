@@ -48,6 +48,8 @@ func NewElementalShaman(character core.Character, options proto.Player) *Element
 		rotation: rotation,
 		has4pT6:  shaman.ItemSetSkyshatterRegalia.CharacterHasSetBonus(&character, 4),
 	}
+	ele.EnableResumeAfterManaWait(ele.tryUseGCD)
+
 	ele.ApplyFlametongueImbue(
 		ele.Consumes.MainHandImbue == proto.WeaponImbue_WeaponImbueShamanFlametongue,
 		ele.Consumes.OffHandImbue == proto.WeaponImbue_WeaponImbueShamanFlametongue)

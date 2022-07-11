@@ -79,7 +79,7 @@ func (hunter *Hunter) registerAspectOfTheViperSpell() {
 
 	damagePenalty := core.TernaryFloat64(hunter.Talents.AspectMastery, 0.6, 0.5)
 
-	baseManaRegen := 0.02 * hunter.BaseMana() * core.TernaryFloat64(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfAspectOfTheViper), 1.1, 1)
+	baseManaRegen := 0.02 * hunter.BaseMana * core.TernaryFloat64(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfAspectOfTheViper), 1.1, 1)
 	manaPerRangedHit := baseManaRegen * hunter.AutoAttacks.Ranged.SwingSpeed
 	manaPerMHHit := baseManaRegen * hunter.AutoAttacks.MH.SwingSpeed
 	manaPerOHHit := baseManaRegen * hunter.AutoAttacks.OH.SwingSpeed

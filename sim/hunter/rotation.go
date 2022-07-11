@@ -16,14 +16,6 @@ const (
 	OptionNone
 )
 
-func (hunter *Hunter) OnManaTick(sim *core.Simulation) {
-	if hunter.IsWaitingForMana() && hunter.DoneWaitingForMana(sim) {
-		if hunter.nextAction == OptionNone && hunter.Hardcast.Expires <= sim.CurrentTime {
-			hunter.rotation(sim, false)
-		}
-	}
-}
-
 func (hunter *Hunter) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
 	if spell == hunter.AutoAttacks.RangedAuto {
 		hunter.TryUseCooldowns(sim)

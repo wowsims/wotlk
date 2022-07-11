@@ -9,7 +9,7 @@ import (
 )
 
 func (hunter *Hunter) registerAimedShotSpell() {
-	baseCost := 0.08 * hunter.BaseMana()
+	baseCost := 0.08 * hunter.BaseMana
 
 	hunter.AimedShot = hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 49050},

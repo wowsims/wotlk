@@ -497,7 +497,7 @@ func (hunter *Hunter) registerBestialWrathCD() {
 		},
 	})
 
-	manaCost := hunter.BaseMana() * 0.1
+	manaCost := hunter.BaseMana * 0.1
 
 	bwSpell := hunter.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,

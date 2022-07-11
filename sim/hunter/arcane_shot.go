@@ -9,7 +9,7 @@ import (
 )
 
 func (hunter *Hunter) registerArcaneShotSpell(timer *core.Timer) {
-	baseCost := 0.05 * hunter.BaseMana()
+	baseCost := 0.05 * hunter.BaseMana
 
 	var onSpellHit func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)
 	if hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfArcaneShot) {

@@ -191,6 +191,14 @@ func NewHunter(character core.Character, options proto.Player) *Hunter {
 	}
 	hunter.EnableManaBar()
 
+	hunter.OnManaTick = func(sim *core.Simulation) {
+		if hunter.IsWaitingForMana() && hunter.DoneWaitingForMana(sim) {
+			if hunter.nextAction == OptionNone && hunter.Hardcast.Expires <= sim.CurrentTime {
+				hunter.rotation(sim, false)
+			}
+		}
+	}
+
 	if hunter.Rotation.PercentWeaved <= 0 {
 		hunter.Rotation.Weave = proto.Hunter_Rotation_WeaveNone
 	}

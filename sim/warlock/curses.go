@@ -13,7 +13,7 @@ func (warlock *Warlock) registerCurseOfElementsSpell() {
 	if warlock.Rotation.Curse != proto.Warlock_Rotation_Elements {
 		return
 	}
-	baseCost := 0.1 * warlock.BaseMana()
+	baseCost := 0.1 * warlock.BaseMana
 	warlock.CurseOfElementsAura = core.CurseOfElementsAura(warlock.CurrentTarget)
 	warlock.CurseOfElementsAura.Duration = time.Minute * 5
 
@@ -49,7 +49,7 @@ func (warlock *Warlock) registerCurseOfWeaknessSpell() {
 	if warlock.Rotation.Curse != proto.Warlock_Rotation_Weakness {
 		return
 	}
-	baseCost := 0.1 * warlock.BaseMana()
+	baseCost := 0.1 * warlock.BaseMana
 	warlock.CurseOfWeaknessAura = core.CurseOfWeaknessAura(warlock.CurrentTarget, warlock.Talents.ImprovedCurseOfWeakness)
 	warlock.CurseOfWeaknessAura.Duration = time.Minute * 2
 
@@ -79,7 +79,7 @@ func (warlock *Warlock) registerCurseOfTonguesSpell() {
 		return
 	}
 	actionID := core.ActionID{SpellID: 11719}
-	baseCost := 0.04 * warlock.BaseMana()
+	baseCost := 0.04 * warlock.BaseMana
 
 	// Empty aura so we can simulate cost/time to keep tongues up
 	warlock.CurseOfTonguesAura = warlock.CurrentTarget.GetOrRegisterAura(core.Aura{
@@ -115,7 +115,7 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 		return
 	}
 	actionID := core.ActionID{SpellID: 47864}
-	baseCost := 0.1 * warlock.BaseMana()
+	baseCost := 0.1 * warlock.BaseMana
 	target := warlock.CurrentTarget
 	baseDmg := 1740 / 12.0
 	baseDmg *= (1 + 0.05*float64(warlock.Talents.ImprovedCurseOfAgony))
@@ -170,7 +170,7 @@ func (warlock *Warlock) registerCurseOfDoomSpell() {
 		return
 	}
 	actionID := core.ActionID{SpellID: 47867}
-	baseCost := 0.15 * warlock.BaseMana()
+	baseCost := 0.15 * warlock.BaseMana
 
 	target := warlock.CurrentTarget
 	effect := core.SpellEffect{

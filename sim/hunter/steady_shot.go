@@ -9,7 +9,7 @@ import (
 )
 
 func (hunter *Hunter) registerSteadyShotSpell() {
-	baseCost := 0.05 * hunter.BaseMana()
+	baseCost := 0.05 * hunter.BaseMana
 
 	impSSProcChance := 0.05 * float64(hunter.Talents.ImprovedSteadyShot)
 	if hunter.Talents.ImprovedSteadyShot > 0 {

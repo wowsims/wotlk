@@ -13,7 +13,7 @@ func (priest *Priest) MindFlayActionID(numTicks int) core.ActionID {
 }
 
 func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
-	baseCost := priest.BaseMana() * 0.09
+	baseCost := priest.BaseMana * 0.09
 	channelTime := time.Second * time.Duration(numTicks)
 
 	return priest.RegisterSpell(core.SpellConfig{
