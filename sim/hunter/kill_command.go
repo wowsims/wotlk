@@ -22,7 +22,6 @@ func (hunter *Hunter) registerKillCommandCD() {
 			if spellEffect.ProcMask.Matches(core.ProcMaskMeleeSpecial | core.ProcMaskSpellDamage) {
 				aura.RemoveStack(sim)
 			}
-			// TODO: Apply damage bonus for pet specials
 		},
 	})
 

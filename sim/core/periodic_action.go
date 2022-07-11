@@ -64,7 +64,8 @@ func NewPeriodicAction(sim *Simulation, options PeriodicActionOptions) *PendingA
 }
 
 // Convenience for immediately creating and starting a periodic action.
-func StartPeriodicAction(sim *Simulation, options PeriodicActionOptions) {
+func StartPeriodicAction(sim *Simulation, options PeriodicActionOptions) *PendingAction {
 	pa := NewPeriodicAction(sim, options)
 	sim.AddPendingAction(pa)
+	return pa
 }

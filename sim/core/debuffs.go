@@ -89,9 +89,9 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 
 	if debuffs.HuntersMark != proto.TristateEffect_TristateEffectMissing {
 		if debuffs.HuntersMark == proto.TristateEffect_TristateEffectImproved {
-			MakePermanent(HuntersMarkAura(target, 5, true))
+			MakePermanent(HuntersMarkAura(target, 3, true))
 		} else {
-			MakePermanent(HuntersMarkAura(target, 0, true))
+			MakePermanent(HuntersMarkAura(target, 0, false))
 		}
 	}
 
@@ -558,67 +558,26 @@ func ShatteringThrowAura(target *Unit) *Aura {
 	})
 }
 
-// Multiplier is for accomodating uptime %. For a real hunter, always pass 1.0
-func ExposeWeaknessAura(target *Unit, hunterAgility float64, multiplier float64) *Aura {
-	apBonus := hunterAgility * 0.25 * multiplier
-
-	return target.GetOrRegisterAura(Aura{
-		Label:    "ExposeWeakness-" + strconv.Itoa(int(hunterAgility)),
-		Tag:      "ExposeWeakness",
-		ActionID: ActionID{SpellID: 34503},
-		Duration: time.Second * 7,
-		Priority: apBonus,
-		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.BonusMeleeAttackPower += aura.Priority
-			aura.Unit.PseudoStats.BonusRangedAttackPower += aura.Priority
-		},
-		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.BonusMeleeAttackPower -= aura.Priority
-			aura.Unit.PseudoStats.BonusRangedAttackPower -= aura.Priority
-		},
-	})
-}
-
-func HuntersMarkAura(target *Unit, points int32, fullyStacked bool) *Aura {
-	const baseRangedBonus = 110.0
-	const bonusPerStack = 11.0
-	const maxStacks = 30
-	meleeBonus := baseRangedBonus * 0.2 * float64(points)
-
-	startingStacks := int32(0)
-	if fullyStacked {
-		startingStacks = maxStacks
-	}
-
+func HuntersMarkAura(target *Unit, points int32, glyphed bool) *Aura {
+	bonus := 500.0 * (1 + 0.1*float64(points))
 	priority := float64(points)
-	if fullyStacked {
-		// Add a half point so that permanent versions always win.
-		priority += 0.5
+
+	if glyphed {
+		bonus += 500.0 * 0.2
+		priority += 2
 	}
 
 	return target.GetOrRegisterAura(Aura{
-		Label:     "HuntersMark-" + strconv.Itoa(int(points)),
-		Tag:       "HuntersMark",
-		ActionID:  ActionID{SpellID: 14325},
-		Duration:  NeverExpires,
-		MaxStacks: 30,
-		Priority:  priority,
+		Label:    "HuntersMark-" + strconv.Itoa(int(priority)),
+		Tag:      "HuntersMark",
+		ActionID: ActionID{SpellID: 53338},
+		Duration: NeverExpires,
+		Priority: priority,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.BonusMeleeAttackPower += meleeBonus
-			aura.Unit.PseudoStats.BonusRangedAttackPower += baseRangedBonus
-			aura.SetStacks(sim, startingStacks)
+			aura.Unit.PseudoStats.BonusRangedAttackPower += bonus
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.BonusMeleeAttackPower -= meleeBonus
-			aura.Unit.PseudoStats.BonusRangedAttackPower -= baseRangedBonus
-		},
-		OnStacksChange: func(aura *Aura, sim *Simulation, oldStacks int32, newStacks int32) {
-			aura.Unit.PseudoStats.BonusRangedAttackPower += bonusPerStack * float64(newStacks-oldStacks)
-		},
-		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
-			if spellEffect.ProcMask.Matches(ProcMaskRanged) && spellEffect.Landed() {
-				aura.AddStack(sim)
-			}
+			aura.Unit.PseudoStats.BonusRangedAttackPower -= bonus
 		},
 	})
 }
