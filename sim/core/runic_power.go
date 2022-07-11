@@ -173,6 +173,10 @@ func (rp *runicPowerBar) CurrentDeathRunes(sim *Simulation) int32 {
 	return total
 }
 
+func (rp *runicPowerBar) TimeToNextFrostRune(sim *Simulation) time.Duration {
+	// TODO implement this!
+}
+
 func (rp *runicPowerBar) addRunicPowerInterval(sim *Simulation, amount float64, metrics *ResourceMetrics) {
 	if amount < 0 {
 		panic("Trying to add negative runic power!")

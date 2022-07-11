@@ -4,8 +4,6 @@ import (
 	//"math"
 	//"time"
 
-	"fmt"
-
 	"github.com/wowsims/wotlk/sim/core"
 	//"github.com/wowsims/wotlk/sim/core/proto"
 	//"github.com/wowsims/wotlk/sim/core/stats"
@@ -26,6 +24,8 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 	if deathKnight.GCD.IsReady(sim) {
 		if deathKnight.CanIcyTouch(sim) {
 			deathKnight.IcyTouch.Cast(sim, target)
+		} else if deathKnight.CanPlagueStrike(sim) {
+			deathKnight.PlagueStrike.Cast(sim, target)
 		} else {
 			nextCD := deathKnight.IcyTouch.ReadyAt()
 
@@ -37,12 +37,9 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 }
 
 func (deathKnight *DeathKnight) CanIcyTouch(sim *core.Simulation) bool {
-	fmt.Printf("%f rp | %d br | %d fr | %d ur | %d dr\n",
-		deathKnight.CurrentRunicPower(),
-		deathKnight.CurrentBloodRunes(sim),
-		deathKnight.CurrentFrostRunes(sim),
-		deathKnight.CurrentUnholyRunes(sim),
-		deathKnight.CurrentDeathRunes(sim))
-
 	return deathKnight.CastCostPossible(sim, 10.0, 0, 1, 0, 0) && deathKnight.IcyTouch.IsReady(sim)
+}
+
+func (deathKnight *DeathKnight) CanPlagueStrike(sim *core.Simulation) bool {
+	return deathKnight.CastCostPossible(sim, 10.0, 0, 0, 1, 0) && deathKnight.PlagueStrike.IsReady(sim)
 }
