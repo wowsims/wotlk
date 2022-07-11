@@ -362,7 +362,7 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 			}
 
 			// Undo armor reduction to get the raw damage value.
-			curDmg = spellEffect.Damage / rogue.AttackTables[spellEffect.Target.Index].ArmorDamageReduction
+			curDmg = spellEffect.Damage / rogue.AttackTables[spellEffect.Target.Index].ArmorDamageModifier
 
 			bfHit.Cast(sim, rogue.Env.NextTargetUnit(spellEffect.Target))
 			bfHit.SpellMetrics[spellEffect.Target.TableIndex].Casts--
