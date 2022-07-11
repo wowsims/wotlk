@@ -16,7 +16,7 @@ func (rogue *Rogue) applyPoisons() {
 }
 
 func (rogue *Rogue) registerDeadlyPoisonSpell() {
-	actionID := core.ActionID{SpellID: 27186}
+	actionID := core.ActionID{SpellID: 43233}
 
 	rogue.DeadlyPoison = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -72,8 +72,15 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 			DamageMultiplier: 1 + []float64{0.0, 0.07, 0.14, 0.20}[rogue.Talents.VilePoisons],
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
-			BaseDamage:       core.MultiplyByStacks(core.BaseDamageConfigFlat(180/4), dotAura),
-			OutcomeApplier:   rogue.OutcomeFuncTick(),
+			BaseDamage: core.MultiplyByStacks(
+				core.BaseDamageConfig{
+					Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+						return 74/4 + hitEffect.MeleeAttackPower(spell.Unit)*0.12
+					},
+					TargetSpellCoefficient: 1,
+				},
+				dotAura),
+			OutcomeApplier: rogue.OutcomeFuncTick(),
 		})),
 	})
 }
@@ -87,7 +94,7 @@ func (rogue *Rogue) applyDeadlyPoison(hasWFTotem bool) {
 		return
 	}
 
-	procChance := 0.3 + 0.02*float64(rogue.Talents.ImprovedPoisons)
+	procChance := 0.3 + 0.04*float64(rogue.Talents.ImprovedPoisons)
 
 	rogue.RegisterAura(core.Aura{
 		Label:    "Deadly Poison",
@@ -110,7 +117,7 @@ func (rogue *Rogue) applyDeadlyPoison(hasWFTotem bool) {
 
 func (rogue *Rogue) registerInstantPoisonSpell() {
 	rogue.InstantPoison = rogue.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 26891},
+		ActionID:    core.ActionID{SpellID: 43231},
 		SpellSchool: core.SpellSchoolNature,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -118,8 +125,13 @@ func (rogue *Rogue) registerInstantPoisonSpell() {
 			DamageMultiplier:    1 + []float64{0.0, 0.07, 0.14, 0.20}[rogue.Talents.VilePoisons],
 			ThreatMultiplier:    1,
 			BonusSpellHitRating: 5 * core.SpellHitRatingPerHitChance * float64(rogue.Talents.Precision),
-			BaseDamage:          core.BaseDamageConfigRoll(146, 194),
-			OutcomeApplier:      rogue.OutcomeFuncMagicHitAndCrit(rogue.SpellCritMultiplier()),
+			BaseDamage: core.BaseDamageConfig{
+				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+					return 300 + hitEffect.MeleeAttackPower(spell.Unit)*0.1
+				},
+				TargetSpellCoefficient: 1,
+			},
+			OutcomeApplier: rogue.OutcomeFuncMagicHitAndCrit(rogue.SpellCritMultiplier()),
 		}),
 	})
 }
@@ -133,7 +145,7 @@ func (rogue *Rogue) applyInstantPoison(hasWFTotem bool) {
 		return
 	}
 
-	procChance := 0.2 + 0.02*float64(rogue.Talents.ImprovedPoisons)
+	procChance := 0.2 + 0.06*float64(rogue.Talents.ImprovedPoisons)
 
 	rogue.RegisterAura(core.Aura{
 		Label:    "Instant Poison",
