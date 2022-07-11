@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -15,12 +16,14 @@ func (hunter *Hunter) registerRapidFireCD() {
 		manaMetrics = hunter.NewManaMetrics(core.ActionID{SpellID: 53232})
 	}
 
+	hasteMultiplier := 1.4 + core.TernaryFloat64(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfRapidFire), 0.08, 0)
+
 	rfAura := hunter.RegisterAura(core.Aura{
 		Label:    "Rapid Fire",
 		ActionID: actionID,
 		Duration: time.Second * 15,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.RangedSpeedMultiplier *= 1.4
+			aura.Unit.PseudoStats.RangedSpeedMultiplier *= hasteMultiplier
 
 			if manaMetrics != nil {
 				manaPerTick := 0.02 * float64(hunter.Talents.RapidRecuperation) * hunter.MaxMana()
@@ -34,11 +37,11 @@ func (hunter *Hunter) registerRapidFireCD() {
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.RangedSpeedMultiplier /= 1.4
+			aura.Unit.PseudoStats.RangedSpeedMultiplier /= hasteMultiplier
 		},
 	})
 
-	baseCost := 0.03 * hunter.BaseMana()
+	baseCost := 0.03 * hunter.BaseMana
 	hunter.RapidFire = hunter.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 

@@ -4,11 +4,12 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (hunter *Hunter) registerMultiShotSpell() {
-	baseCost := 0.09 * hunter.BaseMana()
+	baseCost := 0.09 * hunter.BaseMana
 
 	baseEffect := core.SpellEffect{
 		ProcMask: core.ProcMaskRangedSpecial,
@@ -30,10 +31,6 @@ func (hunter *Hunter) registerMultiShotSpell() {
 			TargetSpellCoefficient: 1,
 		}),
 		OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, false, hunter.CurrentTarget)),
-
-		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			hunter.rotation(sim, false)
-		},
 	}
 
 	numHits := core.MinInt32(3, hunter.Env.GetNumTargets())
@@ -66,7 +63,7 @@ func (hunter *Hunter) registerMultiShotSpell() {
 			IgnoreHaste: true, // Hunter GCD is locked at 1.5s
 			CD: core.Cooldown{
 				Timer:    hunter.NewTimer(),
-				Duration: time.Second * 10,
+				Duration: time.Second*10 - core.TernaryDuration(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfMultiShot), time.Second*1, 0),
 			},
 		},
 

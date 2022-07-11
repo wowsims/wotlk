@@ -105,7 +105,7 @@ enum HunterMajorGlyph {
 	GlyphOfExplosiveTrap = 45733;
 	GlyphOfFreezingTrap = 42905;
 	GlyphOfFrostTrap = 42906;
-	GlyphOfHunterSMark = 42907;
+	GlyphOfHuntersMark = 42907;
 	GlyphOfImmolationTrap = 42908;
 	GlyphOfKillShot = 45732;
 	GlyphOfMending = 42900;
@@ -181,7 +181,6 @@ message Hunter {
 	message Rotation {
 		bool use_multi_shot = 1;
 		bool use_arcane_shot = 2;
-		bool precast_aimed_shot = 3;
 		bool lazy_rotation = 12; // Restricts to 1 action between each auto shot.
 
 		enum StingType {

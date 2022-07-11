@@ -138,11 +138,6 @@ func (fa *FakeAgent) OnGCDReady(sim *Simulation) {
 	panic("not implemented") // TODO: Implement
 }
 
-// Called after each mana tick, if this Agent uses mana.
-func (fa *FakeAgent) OnManaTick(sim *Simulation) {
-	panic("not implemented") // TODO: Implement
-}
-
 type FakeAgent struct {
 	Character
 }

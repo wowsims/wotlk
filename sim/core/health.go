@@ -10,7 +10,7 @@ import (
 type healthBar struct {
 	unit *Unit
 
-	currentHealth  float64
+	currentHealth float64
 
 	DamageTakenHealthMetrics *ResourceMetrics
 }

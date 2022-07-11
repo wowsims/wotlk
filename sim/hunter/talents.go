@@ -40,12 +40,11 @@ func (hunter *Hunter) ApplyTalents() {
 	hunter.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*1*float64(hunter.Talents.KillerInstinct))
 	hunter.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*1*float64(hunter.Talents.MasterMarksman))
 	hunter.AddStat(stats.Parry, core.ParryRatingPerParryChance*1*float64(hunter.Talents.Deflection))
-	hunter.pet.AddStat(stats.Dodge, 1*core.DodgeRatingPerDodgeChance*float64(hunter.Talents.CatlikeReflexes))
+	hunter.AddStat(stats.Dodge, 1*core.DodgeRatingPerDodgeChance*float64(hunter.Talents.CatlikeReflexes))
 	hunter.PseudoStats.RangedSpeedMultiplier *= 1 + 0.04*float64(hunter.Talents.SerpentsSwiftness)
 	hunter.PseudoStats.RangedDamageDealtMultiplier *= 1 + 0.01*float64(hunter.Talents.RangedWeaponSpecialization)
 	hunter.PseudoStats.BonusRangedCritRating += 1 * float64(hunter.Talents.LethalShots) * core.CritRatingPerCritChance
 	hunter.PseudoStats.DamageTakenMultiplier *= 1 - 0.02*float64(hunter.Talents.SurvivalInstincts)
-	// TODO: Hunter's mark
 
 	if hunter.Talents.EnduranceTraining > 0 {
 		healthBonus := 0.01 * float64(hunter.Talents.EnduranceTraining)
@@ -191,7 +190,6 @@ func (hunter *Hunter) ApplyTalents() {
 	hunter.applyGoForTheThroat()
 	hunter.applyPiercingShots()
 	hunter.applyWildQuiver()
-
 	hunter.applyImprovedTracking()
 	hunter.applyThrillOfTheHunt()
 	hunter.applyExposeWeakness()
@@ -299,8 +297,7 @@ func (hunter *Hunter) applyCobraStrikes() {
 				return
 			}
 
-			// TODO: Kill shot too
-			if spell != hunter.ArcaneShot && spell != hunter.SteadyShot {
+			if spell != hunter.ArcaneShot && spell != hunter.SteadyShot && spell != hunter.KillShot {
 				return
 			}
 
@@ -350,8 +347,7 @@ func (hunter *Hunter) applyPiercingShots() {
 			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
 				return
 			}
-			if spell != hunter.AimedShot && spell != hunter.SteadyShot {
-				// TODO: Chimera Shot too
+			if spell != hunter.AimedShot && spell != hunter.SteadyShot && spell != hunter.ChimeraShot {
 				return
 			}
 
@@ -501,7 +497,7 @@ func (hunter *Hunter) registerBestialWrathCD() {
 		},
 	})
 
-	manaCost := hunter.BaseMana() * 0.1
+	manaCost := hunter.BaseMana * 0.1
 
 	bwSpell := hunter.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
@@ -515,7 +511,7 @@ func (hunter *Hunter) registerBestialWrathCD() {
 			},
 			CD: core.Cooldown{
 				Timer:    hunter.NewTimer(),
-				Duration: hunter.applyLongevity(time.Minute * 2),
+				Duration: hunter.applyLongevity(time.Minute*2) - core.TernaryDuration(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfBestialWrath), time.Second*20, 0),
 			},
 		},
 
@@ -769,12 +765,20 @@ func (hunter *Hunter) registerReadinessCD() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			hunter.AimedShot.CD.Reset()
 			hunter.RapidFire.CD.Reset()
 			hunter.MultiShot.CD.Reset()
 			hunter.ArcaneShot.CD.Reset()
 			hunter.KillCommand.CD.Reset()
 			hunter.RaptorStrike.CD.Reset()
+			if hunter.AimedShot != nil {
+				hunter.AimedShot.CD.Reset()
+			}
+			if hunter.ChimeraShot != nil {
+				hunter.ChimeraShot.CD.Reset()
+			}
+			if hunter.BlackArrow != nil {
+				hunter.BlackArrow.CD.Reset()
+			}
 		},
 	})
 

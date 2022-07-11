@@ -4,11 +4,12 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (hunter *Hunter) registerKillShotSpell() {
-	baseCost := 0.07 * hunter.BaseMana()
+	baseCost := 0.07 * hunter.BaseMana
 
 	hunter.KillShot = hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 61006},
@@ -26,7 +27,7 @@ func (hunter *Hunter) registerKillShotSpell() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    hunter.NewTimer(),
-				Duration: time.Second * 15,
+				Duration: time.Second*15 - core.TernaryDuration(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfAimedShot), time.Second*6, 0),
 			},
 		},
 

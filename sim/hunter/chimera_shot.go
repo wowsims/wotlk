@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -11,7 +12,7 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 	if !hunter.Talents.ChimeraShot {
 		return
 	}
-	baseCost := 0.12 * hunter.BaseMana()
+	baseCost := 0.12 * hunter.BaseMana
 
 	hunter.ChimeraShot = hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 53209},
@@ -36,7 +37,7 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 			},
 			CD: core.Cooldown{
 				Timer:    hunter.NewTimer(),
-				Duration: time.Second * 10,
+				Duration: time.Second*10 - core.TernaryDuration(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfChimeraShot), time.Second*1, 0),
 			},
 		},
 
@@ -66,9 +67,12 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 				}
 
 				if hunter.SerpentStingDot.IsActive() {
+					hunter.SerpentStingDot.Refresh(sim)
 					// SS has 5 ticks, so 2 ticks is 40%
 					hunter.SerpentStingDot.TickOnce()
 					hunter.SerpentStingDot.TickOnce()
+				} else if hunter.ScorpidStingAura.IsActive() {
+					hunter.ScorpidStingAura.Refresh(sim)
 				}
 			},
 		}),

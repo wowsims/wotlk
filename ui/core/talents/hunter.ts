@@ -1182,7 +1182,7 @@ export const hunterGlyphsConfig: GlyphsConfig = {
 			description: 'Increases the radius of the effect from your Frost Trap by 2 yards.',
 			iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/spell_frost_freezingbreath.jpg',
 		},
-		[HunterMajorGlyph.GlyphOfHunterSMark]: {
+		[HunterMajorGlyph.GlyphOfHuntersMark]: {
 			name: 'Glyph of Hunter\'s Mark',
 			description: 'Increases the attack power bonus of your Hunter\'s Mark by 20%.',
 			iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/ability_hunter_snipershot.jpg',

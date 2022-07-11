@@ -4,11 +4,22 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (hunter *Hunter) registerArcaneShotSpell(timer *core.Timer) {
-	baseCost := 0.05 * hunter.BaseMana()
+	baseCost := 0.05 * hunter.BaseMana
+
+	var onSpellHit func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)
+	if hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfArcaneShot) {
+		manaMetrics := hunter.NewManaMetrics(core.ActionID{ItemID: 42898})
+		onSpellHit = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spellEffect.Landed() && (hunter.SerpentStingDot.IsActive() || hunter.ScorpidStingAura.IsActive()) {
+				hunter.AddMana(sim, 0.2*hunter.ArcaneShot.DefaultCast.Cost, manaMetrics, false)
+			}
+		}
+	}
 
 	hunter.ArcaneShot = hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 49045},
@@ -57,7 +68,8 @@ func (hunter *Hunter) registerArcaneShotSpell(timer *core.Timer) {
 				},
 				TargetSpellCoefficient: 1,
 			}),
-			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, true, hunter.CurrentTarget)),
+			OutcomeApplier:  hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, true, hunter.CurrentTarget)),
+			OnSpellHitDealt: onSpellHit,
 		}),
 	})
 }

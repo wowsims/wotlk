@@ -83,20 +83,18 @@ var PlayerOptionsSV = &proto.Player_Hunter{
 }
 
 var basicRotation = &proto.Hunter_Rotation{
-	UseMultiShot:     true,
-	UseArcaneShot:    false,
-	Sting:            proto.Hunter_Rotation_SerpentSting,
-	PrecastAimedShot: true,
-	LazyRotation:     true,
+	UseMultiShot:  true,
+	UseArcaneShot: false,
+	Sting:         proto.Hunter_Rotation_SerpentSting,
+	LazyRotation:  true,
 
 	ViperStartManaPercent: 0.2,
 	ViperStopManaPercent:  0.3,
 }
 var frenchRotation = &proto.Hunter_Rotation{
-	UseMultiShot:     true,
-	UseArcaneShot:    true,
-	Sting:            proto.Hunter_Rotation_SerpentSting,
-	PrecastAimedShot: false,
+	UseMultiShot:  true,
+	UseArcaneShot: true,
+	Sting:         proto.Hunter_Rotation_SerpentSting,
 
 	ViperStartManaPercent: 0.3,
 	ViperStopManaPercent:  0.5,

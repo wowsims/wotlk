@@ -20,12 +20,6 @@ func (spriest *ShadowPriest) OnGCDReady(sim *core.Simulation) {
 	spriest.tryUseGCD(sim)
 }
 
-func (spriest *ShadowPriest) OnManaTick(sim *core.Simulation) {
-	if spriest.FinishedWaitingForManaAndGCDReady(sim) {
-		spriest.tryUseGCD(sim)
-	}
-}
-
 func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 	if spriest.rotation.PrecastVt && sim.CurrentTime == 0 {
 		spriest.SpendMana(sim, spriest.VampiricTouch.DefaultCast.Cost, spriest.VampiricTouch.ResourceMetrics)
