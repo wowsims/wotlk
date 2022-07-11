@@ -12,7 +12,5 @@ binary_dist
 # temporary files
 *.results.tmp
 .dockerignore
-*wowsimwotlk*
 *.code-workspace
 wowsimwotlk
-*.gitignore
