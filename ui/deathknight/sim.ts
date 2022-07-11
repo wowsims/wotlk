@@ -7,15 +7,14 @@ import { Debuffs } from '/wotlk/core/proto/common.js';
 import { Encounter } from '/wotlk/core/proto/common.js';
 import { ItemSlot } from '/wotlk/core/proto/common.js';
 import { MobType } from '/wotlk/core/proto/common.js';
-import { RaidTarget } from '/wotlk/core/proto/common.js';
 import { Spec } from '/wotlk/core/proto/common.js';
 import { Stat } from '/wotlk/core/proto/common.js';
 import { TristateEffect } from '/wotlk/core/proto/common.js'
-import { Stats } from '/wotlk/core/proto_utils/stats.js';
 import { Player } from '/wotlk/core/player.js';
+import { Stats } from '/wotlk/core/proto_utils/stats.js';
 import { Sim } from '/wotlk/core/sim.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
 import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
+import { TotemsSection } from '/wotlk/core/components/totem_inputs.js';
 
 import { Alchohol } from '/wotlk/core/proto/common.js';
 import { BattleElixir } from '/wotlk/core/proto/common.js';
@@ -23,11 +22,9 @@ import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
 import { GuardianElixir } from '/wotlk/core/proto/common.js';
 import { Conjured } from '/wotlk/core/proto/common.js';
-import { Drums } from '/wotlk/core/proto/common.js';
 import { PetFood } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
-
 import { DeathKnight, DeathKnight_Rotation as DeathKnightRotation, DeathKnightTalents as DeathKnightTalents, DeathKnight_Options as DeathKnightOptions } from '/wotlk/core/proto/deathknight.js';
 
 import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
@@ -62,13 +59,14 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 			displayStats: [
 				Stat.StatHealth,
 				Stat.StatStamina,
+				Stat.StatArmor,
 				Stat.StatStrength,
 				Stat.StatAgility,
 				Stat.StatAttackPower,
-				Stat.StatExpertise,
 				Stat.StatMeleeHit,
 				Stat.StatMeleeCrit,
 				Stat.StatMeleeHaste,
+				Stat.StatExpertise,
 				Stat.StatArmorPenetration,
 			],
 
@@ -96,30 +94,28 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
+					arcaneBrilliance: true,
+					divineSpirit: true,
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
+					battleShout: TristateEffect.TristateEffectImproved,
+					leaderOfThePack: TristateEffect.TristateEffectImproved,
 				}),
 				partyBuffs: PartyBuffs.create({
-					bloodlust: 1,
-					drums: Drums.DrumsOfBattle,
-					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
-					windfuryTotem: TristateEffect.TristateEffectImproved,
-					leaderOfThePack: TristateEffect.TristateEffectImproved,
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
+					blessingOfWisdom: TristateEffect.TristateEffectImproved,
 					blessingOfMight: TristateEffect.TristateEffectImproved,
-					blessingOfSalvation: true,
-					unleashedRage: true,
 				}),
 				debuffs: Debuffs.create({
-					mangle: true,
+					bloodFrenzy: true,
 					sunderArmor: true,
-					curseOfWeakness: true,
+					curseOfWeakness: TristateEffect.TristateEffectRegular,
+					curseOfElements: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
-					improvedSealOfTheCrusader: true,
+					judgementOfWisdom: true,
+					misery: true,
 					huntersMark: TristateEffect.TristateEffectImproved,
-					exposeWeaknessUptime: 0.95,
-					exposeWeaknessHunterAgility: 1200,
 				}),
 			},
 
@@ -128,38 +124,40 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 			],
 			// IconInputs to include in the 'Other Buffs' section on the settings tab.
 			raidBuffInputs: [
+				IconInputs.ArcaneBrilliance,
 				IconInputs.GiftOfTheWild,
-			],
-			partyBuffInputs: [
-				IconInputs.DrumsOfBattleBuff,
 				IconInputs.Bloodlust,
-				IconInputs.StrengthOfEarthTotem,
-
-				IconInputs.WindfuryTotem,
+				IconInputs.ManaSpringTotem,
+				IconInputs.WrathOfAirTotem,
+				IconInputs.TotemOfWrath,
 				IconInputs.BattleShout,
 				IconInputs.LeaderOfThePack,
-				IconInputs.FerociousInspiration,
+				IconInputs.MoonkinAura,
 				IconInputs.TrueshotAura,
-				IconInputs.SanctityAura,
-				IconInputs.HeroicPresence,
+			],
+			partyBuffInputs: [
 				IconInputs.BraidedEterniumChain,
+				IconInputs.EyeOfTheNight,
+				IconInputs.ChainOfTheTwilightOwl,
 			],
 			playerBuffInputs: [
 				IconInputs.BlessingOfKings,
+				IconInputs.BlessingOfWisdom,
 				IconInputs.BlessingOfMight,
-				IconInputs.BlessingOfSalvation,
-				IconInputs.UnleashedRage,
 			],
 			// IconInputs to include in the 'Debuffs' section on the settings tab.
 			debuffInputs: [
 				IconInputs.BloodFrenzy,
-				IconInputs.Mangle,
-				IconInputs.ImprovedSealOfTheCrusader,
+				IconInputs.JudgementOfWisdom,
 				IconInputs.HuntersMark,
 				IconInputs.FaerieFire,
 				IconInputs.SunderArmor,
 				IconInputs.ExposeArmor,
 				IconInputs.CurseOfWeakness,
+				IconInputs.CurseOfElements,
+				IconInputs.Misery,
+				IconInputs.ImprovedScorch,
+				IconInputs.WintersChill,
 				IconInputs.GiftOfArthas,
 			],
 			// Which options are selectable in the 'Consumes' section.
@@ -193,10 +191,6 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				alcohol: [
 				],
 				weaponImbues: [
-					WeaponImbue.WeaponImbueAdamantiteSharpeningStone,
-					WeaponImbue.WeaponImbueAdamantiteWeightstone,
-					WeaponImbue.WeaponImbueElementalSharpeningStone,
-					WeaponImbue.WeaponImbueRighteousWeaponCoating,
 				],
 				other: [
 					IconInputs.ScrollOfAgilityV,
@@ -208,8 +202,7 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
-					OtherInputs.ExposeWeaknessUptime,
-					OtherInputs.ExposeWeaknessHunterAgility,
+					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],
 			},
@@ -219,7 +212,7 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 					Stat.StatArmor,
 				],
 				// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
-				showExecuteProportion: true,
+				showExecuteProportion: false,
 			},
 
 			// If true, the talents on the talents tab will not be individually modifiable by the user.

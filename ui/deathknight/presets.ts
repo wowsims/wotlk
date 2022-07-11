@@ -40,11 +40,6 @@ export const DefaultOptions = DeathKnightOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	flask: Flask.FlaskOfRelentlessAssault,
-	food: Food.FoodRoastedClefthoof,
-	defaultPotion: Potions.HastePotion,
-	mainHandImbue: WeaponImbue.WeaponImbueAdamantiteSharpeningStone,
-	offHandImbue: WeaponImbue.WeaponImbueAdamantiteSharpeningStone,
 });
 
 export const P1_FROST_BIS_PRESET = {
@@ -53,7 +48,7 @@ export const P1_FROST_BIS_PRESET = {
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 41386,
-			"enchant": 50367,
+			"enchant": 44879,
 			"gems": [
 				41398,
 				40022

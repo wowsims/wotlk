@@ -14,6 +14,8 @@ type DeathKnight struct {
 	Options  proto.DeathKnight_Options
 	Rotation proto.DeathKnight_Rotation
 
+	Presence Presence
+
 	IcyTouch *core.Spell
 	//Obliteration     *core.Spell
 	//PlagueStrike     *core.Spell
@@ -25,7 +27,9 @@ type DeathKnight struct {
 	//ArmyOfTheDead    *core.Spell
 	//RaiseDead        *core.Spell
 
-	//BloodPresenceAura *core.Aura
+	BloodPresenceAura  *core.Aura
+	FrostPresenceAura  *core.Aura
+	UnholyPresenceAura *core.Aura
 }
 
 func (deathKnight *DeathKnight) GetCharacter() *core.Character {
@@ -37,6 +41,7 @@ func (deathKnight *DeathKnight) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
 
 func (deathKnight *DeathKnight) Initialize() {
+	deathKnight.registerPresences()
 	deathKnight.registerIcyTouchSpell()
 }
 
@@ -57,31 +62,28 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 			},
 			CD: core.Cooldown{
 				Timer:    deathKnight.NewTimer(),
-				Duration: time.Second * 6.0,
+				Duration: 6.0 * time.Second,
 			},
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
+			ProcMask:             core.ProcMaskSpellDamage,
+			BonusSpellCritRating: 0 + float64(deathKnight.Talents.DarkConviction),
+			DamageMultiplier:     1 * (1 + 0.05*float64(deathKnight.Talents.ImprovedIcyTouch)),
+			ThreatMultiplier:     7.0,
 
-			DamageMultiplier: 1.0,
-
-			ThreatMultiplier: 7.0,
-
-			BaseDamage:     core.BaseDamageConfigMagic(217, 235, 0.2),
-			OutcomeApplier: deathKnight.OutcomeFuncMagicHitAndCrit(deathKnight.DefaultSpellCritMultiplier()),
+			BaseDamage:     core.BaseDamageConfigMagic(227, 245, 0),
+			OutcomeApplier: deathKnight.OutcomeFuncMagicHitAndCritAPScaled(deathKnight.DefaultSpellCritMultiplier(), 0.1),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					deathKnight.SpendFrostRune(sim, spell.FrostRuneMetrics())
+
+					// TODO: Generate runic power
 				}
 			},
 		}),
 	})
-}
-
-func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
-
 }
 
 func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight {
@@ -158,6 +160,11 @@ func RegisterDeathKnight() {
 			player.Spec = playerSpec
 		},
 	)
+}
+
+func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
+	deathKnight.BloodPresenceAura.Activate(sim)
+	deathKnight.Presence = BloodPresence
 }
 
 func init() {

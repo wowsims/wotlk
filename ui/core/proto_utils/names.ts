@@ -189,7 +189,7 @@ export const resourceNames: Record<ResourceType, string> = {
 	[ResourceType.ResourceTypeRage]: 'Rage',
 	[ResourceType.ResourceTypeComboPoints]: 'Combo Points',
 	[ResourceType.ResourceTypeFocus]: 'Focus',
-	[ResourceType.ResourceTypeRunicPower]: 'Rune System',
+	[ResourceType.ResourceTypeRunicPower]: 'Runic Power',
 	[ResourceType.ResourceTypeBloodRune]: 'Blood Rune',
 	[ResourceType.ResourceTypeFrostRune]: 'Frost Rune',
 	[ResourceType.ResourceTypeUnholyRune]: 'Unholy Rune',

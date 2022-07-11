@@ -1,14 +1,55 @@
 package core
 
+import (
+	"time"
+)
+
 type OnRuneGain func(sim *Simulation)
+
+const (
+	RuneType_Blood int32 = iota
+	RuneType_Frost
+	RuneType_Unholy
+	RuneType_Death
+)
+
+const (
+	RuneTypeBloodName  string = "Blood"
+	RuneTypeFrostName  string = "Frost"
+	RuneTypeUnholyName string = "Unholy"
+	RuneTypeDeathName  string = "Death"
+	RuneTypeUndefName  string = "Undefined"
+)
+
+func (rb *runeBar) RuneTypeName() string {
+	switch rb.runeType {
+	case RuneType_Blood:
+		return RuneTypeBloodName
+	case RuneType_Frost:
+		return RuneTypeFrostName
+	case RuneType_Unholy:
+		return RuneTypeUnholyName
+	case RuneType_Death:
+		return RuneTypeDeathName
+	}
+	// Should never get this!
+	return RuneTypeUndefName
+}
+
+type AvailableRune struct {
+	slot      int32
+	available bool
+}
 
 type runeBar struct {
 	unit *Unit
 
-	name string
+	runeType int32
 
 	maxRunes     float64
 	currentRunes float64
+
+	cooldowns [3]Cooldown
 
 	onRuneGain OnRuneGain
 }
@@ -21,10 +62,16 @@ func (unit *Unit) EnableRuneBars(onBloodRuneGain OnRuneGain,
 	unit.runicPowerBar.bloodRunesBar = runeBar{
 		unit: unit,
 
-		name: "Blood",
+		runeType: RuneType_Blood,
 
 		maxRunes:     2,
 		currentRunes: 2,
+
+		cooldowns: [3]Cooldown{
+			Cooldown{unit.NewTimer(), 10 * time.Second},
+			Cooldown{unit.NewTimer(), 10 * time.Second},
+			Cooldown{nil, 0},
+		},
 
 		onRuneGain: onBloodRuneGain,
 	}
@@ -32,10 +79,16 @@ func (unit *Unit) EnableRuneBars(onBloodRuneGain OnRuneGain,
 	unit.runicPowerBar.frostRunesBar = runeBar{
 		unit: unit,
 
-		name: "Frost",
+		runeType: RuneType_Frost,
 
 		maxRunes:     2,
 		currentRunes: 2,
+
+		cooldowns: [3]Cooldown{
+			Cooldown{unit.NewTimer(), 10 * time.Second},
+			Cooldown{unit.NewTimer(), 10 * time.Second},
+			Cooldown{nil, 0},
+		},
 
 		onRuneGain: onFrostRuneGain,
 	}
@@ -43,10 +96,16 @@ func (unit *Unit) EnableRuneBars(onBloodRuneGain OnRuneGain,
 	unit.runicPowerBar.unholyRunesBar = runeBar{
 		unit: unit,
 
-		name: "Unholy",
+		runeType: RuneType_Unholy,
 
 		maxRunes:     2,
 		currentRunes: 2,
+
+		cooldowns: [3]Cooldown{
+			Cooldown{unit.NewTimer(), 10 * time.Second},
+			Cooldown{unit.NewTimer(), 10 * time.Second},
+			Cooldown{nil, 0},
+		},
 
 		onRuneGain: onUnholyRuneGain,
 	}
@@ -54,10 +113,16 @@ func (unit *Unit) EnableRuneBars(onBloodRuneGain OnRuneGain,
 	unit.runicPowerBar.deathRunesBar = runeBar{
 		unit: unit,
 
-		name: "Death",
+		runeType: RuneType_Death,
 
 		maxRunes:     3,
 		currentRunes: 0,
+
+		cooldowns: [3]Cooldown{
+			Cooldown{unit.NewTimer(), 10 * time.Second},
+			Cooldown{unit.NewTimer(), 10 * time.Second},
+			Cooldown{unit.NewTimer(), 10 * time.Second},
+		},
 
 		onRuneGain: onDeathRuneGain,
 	}
@@ -80,19 +145,45 @@ func (rb *runeBar) CurrentRunes() float64 {
 	return rb.currentRunes
 }
 
+func (rb *runeBar) AnyAvailableRune(sim *Simulation) bool {
+	available := false
+	if rb.cooldowns[1].IsReady(sim) {
+		available = true
+	} else if rb.cooldowns[0].IsReady(sim) {
+		available = true
+	}
+
+	return available
+}
+
+func (rb *runeBar) GetAvailableRune(sim *Simulation) AvailableRune {
+	available := false
+	slot := -1
+	if rb.cooldowns[1].IsReady(sim) {
+		available = true
+		slot = 1
+	} else if rb.cooldowns[0].IsReady(sim) {
+		available = true
+		slot = 0
+	}
+
+	return AvailableRune{int32(slot), available}
+}
+
 func (rb *runeBar) SpendRune(sim *Simulation, metrics *ResourceMetrics) {
-	if rb.currentRunes <= 0 {
-		panic("Trying to spend negative runic power!")
+	availableRune := rb.GetAvailableRune(sim)
+
+	if availableRune.available {
+		newRunes := rb.currentRunes - 1
+		metrics.AddEvent(-1, -1)
+
+		if sim.Log != nil {
+			rb.unit.Log(sim, "Spent %s Rune(%d) from %s (%d --> %d).", rb.RuneTypeName(), availableRune.slot, metrics.ActionID, int32(rb.currentRunes), int32(newRunes))
+		}
+
+		rb.currentRunes = newRunes
+		rb.cooldowns[availableRune.slot].Use(sim)
 	}
-
-	newRunes := rb.currentRunes - 1
-	metrics.AddEvent(-1, -1)
-
-	if sim.Log != nil {
-		rb.unit.Log(sim, "Spent one %s Rune from %s (%d --> %d).", rb.name, metrics.ActionID, int32(rb.currentRunes), int32(newRunes))
-	}
-
-	rb.currentRunes = newRunes
 }
 
 //func (rp *runicPowerBar) addRunicPowerInterval(sim *Simulation, amount float64, metrics *ResourceMetrics) {

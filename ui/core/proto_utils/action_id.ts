@@ -6,7 +6,7 @@ import { getWowheadItemId } from '/wotlk/core/proto_utils/equipped_item.js';
 import { NO_TARGET } from '/wotlk/core/proto_utils/utils.js';
 
 // If true uses wotlkdb.com, else uses wowhead.com.
-export const USE_WOTLK_DB = true;
+export const USE_WOTLK_DB = false;
 
 
 type ItemData = {

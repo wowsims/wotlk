@@ -1,16 +1,35 @@
 package deathknight
 
-import (
-	//	"time"
-
-	"github.com/wowsims/wotlk/sim/core"
+import ( //	"time"
 	//"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (deathKnight *DeathKnight) ApplyTalents() {
-	deathKnight.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*float64(deathKnight.Talents.DarkConviction))
-	deathKnight.AddStat(stats.SpellCrit, core.CritRatingPerCritChance*float64(deathKnight.Talents.DarkConviction))
+	// Blood
+
+	deathKnight.PseudoStats.BonusMeleeCritRating += core.CritRatingPerCritChance * float64(deathKnight.Talents.DarkConviction)
+	deathKnight.PseudoStats.BonusSpellCritRating += core.CritRatingPerCritChance * float64(deathKnight.Talents.DarkConviction)
+
+	if deathKnight.Talents.BladedArmor > 0 {
+		coeff := float64(deathKnight.Talents.BladedArmor)
+		deathKnight.AddStatDependency(stats.StatDependency{
+			SourceStat:   stats.Armor,
+			ModifiedStat: stats.AttackPower,
+			Modifier: func(armor float64, attackPower float64) float64 {
+				return attackPower + coeff*armor/180.0
+			},
+		})
+	}
+
+	//Frost
+	deathKnight.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*float64(deathKnight.Talents.NervesOfColdSteel))
+
+	deathKnight.PseudoStats.FrostDamageDealtMultiplier += 0.02 * float64(deathKnight.Talents.BlackIce)
+	deathKnight.PseudoStats.ShadowDamageDealtMultiplier += 0.02 * float64(deathKnight.Talents.BlackIce)
+
+	//Unholy
 }
 
 // demonic embrace

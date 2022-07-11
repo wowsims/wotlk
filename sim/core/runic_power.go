@@ -92,6 +92,31 @@ func (rp *runicPowerBar) CurrentDeathRunes() float64 {
 	return rb.CurrentRunes()
 }
 
+func (rp *runicPowerBar) CastCostPossible(sim *Simulation, runicPowerAmount float64, bloodAmount int32, frostAmount int32, unholyAmount int32) bool {
+	possible := true
+
+	if runicPowerAmount > rp.currentRunicPower {
+		possible = false
+	}
+
+	brb := &rp.bloodRunesBar
+	if bloodAmount > 0 {
+		possible = possible && brb.AnyAvailableRune(sim)
+	}
+
+	frb := &rp.frostRunesBar
+	if frostAmount > 0 {
+		possible = possible && frb.AnyAvailableRune(sim)
+	}
+
+	urb := &rp.unholyRunesBar
+	if unholyAmount > 0 {
+		possible = possible && urb.AnyAvailableRune(sim)
+	}
+
+	return possible
+}
+
 func (rp *runicPowerBar) SpendBloodRune(sim *Simulation, metrics *ResourceMetrics) {
 	rb := &rp.bloodRunesBar
 	rb.SpendRune(sim, metrics)
