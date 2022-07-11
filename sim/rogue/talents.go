@@ -189,74 +189,32 @@ func (rogue *Rogue) applySealFate() {
 }
 
 func (rogue *Rogue) applyWeaponSpecializations() {
-	if weapon := rogue.Equip[proto.ItemSlot_ItemSlotMainHand]; weapon.ID != 0 {
-		if weapon.WeaponType == proto.WeaponType_WeaponTypeFist {
-			rogue.PseudoStats.BonusMHCritRating += 1 * core.CritRatingPerCritChance * float64(rogue.Talents.CloseQuartersCombat)
-		} else if weapon.WeaponType == proto.WeaponType_WeaponTypeDagger {
-			rogue.PseudoStats.BonusMHCritRating += 1 * core.CritRatingPerCritChance * float64(rogue.Talents.CloseQuartersCombat)
-		}
-	}
-	if weapon := rogue.Equip[proto.ItemSlot_ItemSlotOffHand]; weapon.ID != 0 {
-		if weapon.WeaponType == proto.WeaponType_WeaponTypeFist {
-			rogue.PseudoStats.BonusOHCritRating += 1 * core.CritRatingPerCritChance * float64(rogue.Talents.CloseQuartersCombat)
-		} else if weapon.WeaponType == proto.WeaponType_WeaponTypeDagger {
-			rogue.PseudoStats.BonusOHCritRating += 1 * core.CritRatingPerCritChance * float64(rogue.Talents.CloseQuartersCombat)
-		}
-	}
-
+	mhWeapon := rogue.GetMHWeapon()
+	ohWeapon := rogue.GetOHWeapon()
 	// https://wotlk.wowhead.com/spell=13964/sword-specialization, proc mask = 20.
-	swordSpecMask := core.ProcMaskUnknown
-	if rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeSword {
-		swordSpecMask |= core.ProcMaskMeleeMH
-	}
-	if rogue.Equip[proto.ItemSlot_ItemSlotOffHand].WeaponType == proto.WeaponType_WeaponTypeSword {
-		swordSpecMask |= core.ProcMaskMeleeOH
-	}
-	if rogue.Talents.HackAndSlash > 0 && swordSpecMask != core.ProcMaskUnknown {
-		var swordSpecializationSpell *core.Spell
-		icd := core.Cooldown{
-			Timer:    rogue.NewTimer(),
-			Duration: time.Millisecond * 500,
+	hackAndSlashMask := core.ProcMaskUnknown
+	if mhWeapon != nil && mhWeapon.ID != 0 {
+		switch mhWeapon.WeaponType {
+		case proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeAxe:
+			hackAndSlashMask |= core.ProcMaskMeleeMH
+		case proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeFist:
+			rogue.PseudoStats.BonusMHCritRating += 1 * core.CritRatingPerCritChance * float64(rogue.Talents.CloseQuartersCombat)
+		case proto.WeaponType_WeaponTypeMace:
+			rogue.PseudoStats.BonusMHArmorPenRating += 3 * core.ArmorPenPerPercentArmor * float64(rogue.Talents.MaceSpecialization)
 		}
-		procChance := 0.01 * float64(rogue.Talents.HackAndSlash)
-
-		rogue.RegisterAura(core.Aura{
-			Label:    "Sword Specialization",
-			Duration: core.NeverExpires,
-			OnInit: func(aura *core.Aura, sim *core.Simulation) {
-				swordSpecializationSpell = rogue.GetOrRegisterSpell(core.SpellConfig{
-					ActionID:    core.ActionID{SpellID: 13964},
-					SpellSchool: core.SpellSchoolPhysical,
-					Flags:       core.SpellFlagMeleeMetrics,
-
-					ApplyEffects: core.ApplyEffectFuncDirectDamage(rogue.AutoAttacks.MHEffect),
-				})
-			},
-			OnReset: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Activate(sim)
-			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() {
-					return
-				}
-
-				if !spellEffect.ProcMask.Matches(swordSpecMask) {
-					return
-				}
-
-				if !icd.IsReady(sim) {
-					return
-				}
-
-				if sim.RandomFloat("Sword Specialization") > procChance {
-					return
-				}
-				icd.Use(sim)
-
-				swordSpecializationSpell.Cast(sim, spellEffect.Target)
-			},
-		})
 	}
+	if ohWeapon != nil && ohWeapon.ID != 0 {
+		switch ohWeapon.WeaponType {
+		case proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeAxe:
+			hackAndSlashMask |= core.ProcMaskMeleeOH
+		case proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeFist:
+			rogue.PseudoStats.BonusOHCritRating += 1 * core.CritRatingPerCritChance * float64(rogue.Talents.CloseQuartersCombat)
+		case proto.WeaponType_WeaponTypeMace:
+			rogue.PseudoStats.BonusOHArmorPenRating += 3 * core.ArmorPenPerPercentArmor * float64(rogue.Talents.MaceSpecialization)
+		}
+	}
+
+	rogue.registerHackAndSlash(hackAndSlashMask)
 }
 
 func (rogue *Rogue) applyCombatPotency() {
