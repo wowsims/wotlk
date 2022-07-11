@@ -410,11 +410,13 @@ func FaerieFireAura(target *Unit, level int32) *Aura {
 		Priority: float64(level),
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 - armorReduction)
+			aura.Unit.updateArmor()
 			aura.Unit.PseudoStats.BonusSpellHitRating += float64(level) * SpellHitRatingPerHitChance
 			aura.Unit.PseudoStats.BonusCritRating += float64(level) * CritRatingPerCritChance
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 / (1.0 - armorReduction))
+			aura.Unit.updateArmor()
 			aura.Unit.PseudoStats.BonusSpellHitRating -= float64(level) * SpellHitRatingPerHitChance
 			aura.Unit.PseudoStats.BonusCritRating += float64(level) * CritRatingPerCritChance
 		},
@@ -430,7 +432,7 @@ func SunderArmorAura(target *Unit, startingStacks int32) *Aura {
 	return target.GetOrRegisterAura(Aura{
 		Label:     SunderArmorAuraLabel,
 		Tag:       MajorArmorReductionTag,
-		ActionID:  ActionID{SpellID: 25225}, // TODO: Fix spell id
+		ActionID:  ActionID{SpellID: 47467},
 		Duration:  time.Second * 30,
 		MaxStacks: 5,
 		Priority:  armorReductionPerStack * 5,
@@ -438,9 +440,10 @@ func SunderArmorAura(target *Unit, startingStacks int32) *Aura {
 			aura.SetStacks(sim, startingStacks)
 		},
 		OnStacksChange: func(aura *Aura, sim *Simulation, oldStacks int32, newStacks int32) {
-			oldMultiplier := (1.0 - float64(oldStacks)*armorReductionPerStack)
-			newMultiplier := (1.0 - float64(newStacks)*armorReductionPerStack)
-			aura.Unit.PseudoStats.ArmorMultiplier *= (newMultiplier / oldMultiplier)
+			oldMultiplier := 1.0 - float64(oldStacks)*armorReductionPerStack
+			newMultiplier := 1.0 - float64(newStacks)*armorReductionPerStack
+			aura.Unit.PseudoStats.ArmorMultiplier *= newMultiplier / oldMultiplier
+			aura.Unit.updateArmor()
 		},
 	})
 }
@@ -453,7 +456,7 @@ func AcidSpitAura(target *Unit, startingStacks int32) *Aura {
 	return target.GetOrRegisterAura(Aura{
 		Label:     AcidSpitAuraLabel,
 		Tag:       MajorArmorReductionTag,
-		ActionID:  ActionID{SpellID: 55745}, // TODO: Spell id
+		ActionID:  ActionID{SpellID: 55754},
 		Duration:  time.Second * 10,
 		MaxStacks: 2,
 		Priority:  armorReductionPerStack * 2,
@@ -464,6 +467,7 @@ func AcidSpitAura(target *Unit, startingStacks int32) *Aura {
 			oldMultiplier := (1.0 - float64(oldStacks)*armorReductionPerStack)
 			newMultiplier := (1.0 - float64(newStacks)*armorReductionPerStack)
 			aura.Unit.PseudoStats.ArmorMultiplier *= (newMultiplier / oldMultiplier)
+			aura.Unit.updateArmor()
 		},
 	})
 }
@@ -477,14 +481,16 @@ func ExposeArmorAura(target *Unit, hasGlyph bool) *Aura {
 	return target.GetOrRegisterAura(Aura{
 		Label:    "ExposeArmor",
 		Tag:      MajorArmorReductionTag,
-		ActionID: ActionID{SpellID: 26866}, // TODO: Spell id
+		ActionID: ActionID{SpellID: 48669},
 		Duration: duration,
 		Priority: armorReduction,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 - armorReduction)
+			aura.Unit.updateArmor()
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 / (1.0 - armorReduction))
+			aura.Unit.updateArmor()
 		},
 	})
 }
@@ -501,10 +507,12 @@ func CurseOfWeaknessAura(target *Unit, points int32) *Aura {
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.AddStatsDynamic(sim, bonus)
 			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 - armorReduction)
+			aura.Unit.updateArmor()
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.AddStatsDynamic(sim, bonus.Multiply(-1))
 			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 / (1.0 - armorReduction))
+			aura.Unit.updateArmor()
 		},
 	})
 }
@@ -515,13 +523,15 @@ func StingAura(target *Unit) *Aura {
 	return target.GetOrRegisterAura(Aura{
 		Label:    "Sting",
 		Tag:      MinorArmorReductionAuraTag,
-		ActionID: ActionID{SpellID: 27226}, // TODO: Fix spell id
+		ActionID: ActionID{SpellID: 56631},
 		Duration: time.Second * 20,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 - armorReduction)
+			aura.Unit.updateArmor()
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 / (1.0 - armorReduction))
+			aura.Unit.updateArmor()
 		},
 	})
 }
@@ -531,13 +541,15 @@ func SporeCloudAura(target *Unit) *Aura {
 
 	return target.GetOrRegisterAura(Aura{
 		Label:    "Spore Cloud",
-		ActionID: ActionID{SpellID: 27226}, // TODO: Fix spell id
+		ActionID: ActionID{SpellID: 53598},
 		Duration: time.Second * 9,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 - armorReduction)
+			aura.Unit.updateArmor()
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 / (1.0 - armorReduction))
+			aura.Unit.updateArmor()
 		},
 	})
 }
@@ -547,13 +559,15 @@ func ShatteringThrowAura(target *Unit) *Aura {
 
 	return target.GetOrRegisterAura(Aura{
 		Label:    "Shattering Throw",
-		ActionID: ActionID{SpellID: 27226}, // TODO: Fix spell id
+		ActionID: ActionID{SpellID: 64382},
 		Duration: time.Second * 10,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 - armorReduction)
+			aura.Unit.updateArmor()
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 / (1.0 - armorReduction))
+			aura.Unit.updateArmor()
 		},
 	})
 }
