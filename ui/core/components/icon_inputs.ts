@@ -80,12 +80,8 @@ export const Replenishment = makeBooleanIndividualBuffInput(ActionId.fromSpellId
 
 // Debuffs
 export const BloodFrenzy = makeBooleanDebuffInput(ActionId.fromSpellId(29859), 'bloodFrenzy');
-<<<<<<< HEAD
 export const HuntersMark = makeTristateDebuffInput(ActionId.fromSpellId(53338), ActionId.fromSpellId(19423), 'huntersMark');
-=======
-export const HuntersMark = makeTristateDebuffInput(ActionId.fromSpellId(14325), ActionId.fromSpellId(19425), 'huntersMark');
 export const ImprovedShadowbolt = makeBooleanDebuffInput(ActionId.fromSpellId(17803), 'improvedShadowBolt');
->>>>>>> 276cbed32f5f535a592b3bf6e41a6f4cab6ea94a
 export const ImprovedScorch = makeBooleanDebuffInput(ActionId.fromSpellId(12873), 'improvedScorch');
 export const WintersChill = makeBooleanDebuffInput(ActionId.fromSpellId(28593), 'wintersChill');
 export const JudgementOfWisdom = makeBooleanDebuffInput(ActionId.fromSpellId(53408), 'judgementOfWisdom');
