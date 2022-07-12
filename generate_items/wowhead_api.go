@@ -43,6 +43,7 @@ type ItemResponse interface {
 	GetGemStats() Stats
 	GetItemSetName() string
 	IsHeroic() bool
+	GetRequiredProfession() proto.Profession
 }
 
 type WowheadItemResponse struct {
@@ -308,9 +309,10 @@ func (item WowheadItemResponse) GetPhase() int {
 }
 
 var uniqueRegex = regexp.MustCompile("Unique")
+var jcGemsRegex = regexp.MustCompile("Jeweler's Gems")
 
 func (item WowheadItemResponse) GetUnique() bool {
-	return uniqueRegex.MatchString(item.Tooltip)
+	return uniqueRegex.MatchString(item.Tooltip) && !jcGemsRegex.MatchString(item.Tooltip)
 }
 
 var itemTypePatterns = map[proto.ItemType]*regexp.Regexp{
@@ -652,4 +654,12 @@ func getWowheadItemResponse(itemID int, tooltipsDB map[int]string) WowheadItemRe
 // TODO: i can't find wowhead heroic items yet...
 func (item WowheadItemResponse) IsHeroic() bool {
 	return strings.Contains(item.Tooltip, "<span class=\"q2\">Heroic</span>")
+}
+
+func (item WowheadItemResponse) GetRequiredProfession() proto.Profession {
+	if jcGemsRegex.MatchString(item.Tooltip) {
+		return proto.Profession_Jewelcrafting
+	}
+
+	return proto.Profession_ProfessionUnknown
 }

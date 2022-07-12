@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/wowsims/wotlk/sim/core/items"
 )
@@ -24,6 +25,10 @@ func (set ItemSet) ItemIDs() []int32 {
 	for id, _ := range set.Items {
 		ids = append(ids, id)
 	}
+	// Sort so the order of IDs is always consistent, for tests.
+	sort.Slice(ids, func(i, j int) bool {
+		return ids[i] < ids[j]
+	})
 	return ids
 }
 

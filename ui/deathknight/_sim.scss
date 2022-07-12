@@ -1,0 +1,20 @@
+// Set color variables which control the site theme.
+.deathknight-sim-ui {
+	--theme-color-primary: #2a044b;
+	--theme-color-background: #480781;
+	--theme-color-background-raw: 11, 0, 21;
+	--theme-background-image: url('/wotlk/assets/death_knight_background.jpg');
+	--theme-background-opacity: 0.95;
+	--main-text-color: White;
+}
+
+// Set grid width for icon sections based on how many buffs we configured.
+.deathknight-sim-ui .self-buffs-section {
+  grid-template-columns: repeat(2, 1fr);
+}
+.deathknight-sim-ui .buffs-section {
+  grid-template-columns: repeat(6, 1fr);
+}
+.deathknight-sim-ui .debuffs-section {
+  grid-template-columns: repeat(3, 1fr);
+}

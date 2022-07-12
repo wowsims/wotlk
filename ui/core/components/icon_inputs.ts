@@ -38,6 +38,7 @@ import {
 // Keep each section in alphabetical order.
 
 // Raid Buffs
+export const AbominationsMight = makeBooleanRaidBuffInput(ActionId.fromSpellId(53137), 'abominationsMight');
 export const ArcaneBrilliance = makeBooleanRaidBuffInput(ActionId.fromSpellId(27127), 'arcaneBrilliance');
 export const FelIntelligence = makeBooleanRaidBuffInput(ActionId.fromSpellId(57567), 'felIntelligence');
 export const DivineSpirit = makeBooleanRaidBuffInput(ActionId.fromSpellId(48073), 'divineSpirit');

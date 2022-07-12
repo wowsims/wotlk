@@ -24,7 +24,7 @@ func (warlock *Warlock) ApplyTalents() {
 	// Suppression
 	warlock.AddStat(stats.SpellHit, float64(warlock.Talents.Suppression)*core.SpellHitRatingPerHitChance)
 
-	// Shadow Mastery 
+	// Shadow Mastery
 	warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + 0.03*float64(warlock.Talents.ShadowMastery)
 
 	// Backlash (Add 1% crit per level)
@@ -46,12 +46,12 @@ func (warlock *Warlock) ApplyTalents() {
 	if warlock.Talents.FelVitality > 0 {
 		bonus := 0.01 * float64(warlock.Talents.FelVitality)
 		// Adding a second 3% bonus int->mana dependency
-	    // TODO: increases max health
+		// TODO: increases max health
 		warlock.AddStatDependency(stats.StatDependency{
 			SourceStat:   stats.Intellect,
 			ModifiedStat: stats.Mana,
 			Modifier: func(intellect float64, mana float64) float64 {
-				return mana + intellect * 15 * bonus
+				return mana + intellect*15*bonus
 			},
 		})
 	}
@@ -100,29 +100,46 @@ func (warlock *Warlock) ApplyTalents() {
 	if warlock.Talents.Eradication > 0 {
 		warlock.setupEradication()
 	}
+
+	if warlock.Talents.DeathsEmbrace > 0 {
+		warlock.applyDeathsEmbrace()
+	}
+
+}
+
+func (warlock *Warlock) applyDeathsEmbrace() {
+	multiplier := 1.0 + 0.04*float64(warlock.Talents.DeathsEmbrace)
+
+	warlock.RegisterResetEffect(func(sim *core.Simulation) {
+		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute20 bool) {
+			if isExecute20 {
+				warlock.PseudoStats.ShadowDamageDealtMultiplier *= multiplier
+			}
+		})
+	})
 }
 
 func (warlock *Warlock) setupEradication() {
-	hasteBonusPercent:= float64(warlock.Talents.Eradication) * 6 
+	hasteBonusPercent := float64(warlock.Talents.Eradication) * 6
 	if warlock.Talents.Eradication == 3 {
 		hasteBonusPercent += 2
 	}
 	warlock.EradicationAura = warlock.RegisterAura(core.Aura{
-		Label:     "Eradication",
-		ActionID:  core.ActionID{SpellID: 64371},
-		Duration:  time.Second * 10,
+		Label:    "Eradication",
+		ActionID: core.ActionID{SpellID: 64371},
+		Duration: time.Second * 10,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.MultiplyCastSpeed(1 + hasteBonusPercent / 100)
+			aura.Unit.MultiplyCastSpeed(1 + hasteBonusPercent/100)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.MultiplyCastSpeed(1 / (1 + hasteBonusPercent / 100))
+			aura.Unit.MultiplyCastSpeed(1 / (1 + hasteBonusPercent/100))
 		},
 	})
 
 	warlock.RegisterAura(core.Aura{
-		Label:     "Eradication Talent Hidden Aura",
+		Label: "Eradication Talent Hidden Aura",
 		// ActionID:  core.ActionID{SpellID: 47197},
-		Duration:  core.NeverExpires,
+		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
@@ -131,7 +148,7 @@ func (warlock *Warlock) setupEradication() {
 				if sim.RandomFloat("Eradication") < 0.06 {
 					warlock.EradicationAura.Activate(sim)
 				}
-			}			
+			}
 		},
 	})
 }
@@ -151,12 +168,12 @@ func (warlock *Warlock) setupShadowEmbrace() {
 
 	warlock.RegisterAura(core.Aura{
 		Label: "Shadow Embrace Talent Hidden Aura",
-//		ActionID: core.ActionID{SpellID: 32394},
+		//		ActionID: core.ActionID{SpellID: 32394},
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)  {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spell == warlock.Shadowbolt || spell == warlock.Haunt {
 				if !warlock.ShadowEmbraceAura.IsActive() {
 					warlock.ShadowEmbraceAura.Activate(sim)
