@@ -25,7 +25,7 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 	baseCost := 0.34 * warlock.BaseMana
 
 	flatBonus := 0.0
-	if ItemSetOblivionRaiment.CharacterHasSetBonus(&warlock.Character, 4) {
+	if warlock.HasSetBonus(ItemSetOblivionRaiment, 4) {
 		flatBonus += 180
 	}
 
@@ -39,18 +39,10 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 	}
 
 	// Use a custom aoe effect list that does not include the seeded target.
-	baseEffects := make([]core.SpellEffect, warlock.Env.GetNumTargets()-1)
-	skipped := false
+	baseEffects := make([]core.SpellEffect, warlock.Env.GetNumTargets())
 	for i := range baseEffects {
 		baseEffects[i] = baseSeedExplosionEffect
-		expTarget := i
-		if i == targetIdx {
-			skipped = true
-		}
-		if skipped {
-			expTarget++
-		}
-		baseEffects[i].Target = warlock.Env.GetTargetUnit(int32(expTarget))
+		baseEffects[i].Target = warlock.Env.GetTargetUnit(int32(i))
 	}
 	seedActionID := core.ActionID{SpellID: 47836}
 
@@ -61,7 +53,7 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 		ActionID:     explosionId,
 		SpellSchool:  core.SpellSchoolShadow,
 		Cast:         core.CastConfig{},
-		ApplyEffects: core.ApplyEffectFuncMultipleDamageCappedWotLK(baseEffects, numTargets),
+		ApplyEffects: core.ApplyEffectFuncMultipleDamageCappedWotLK(baseEffects),
 	})
 
 	effect := core.SpellEffect{

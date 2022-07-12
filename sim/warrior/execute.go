@@ -12,7 +12,7 @@ func (warrior *Warrior) registerExecuteSpell() {
 	} else if warrior.Talents.ImprovedExecute == 2 {
 		cost -= 5
 	}
-	if ItemSetOnslaughtBattlegear.CharacterHasSetBonus(&warrior.Character, 2) {
+	if warrior.HasSetBonus(ItemSetOnslaughtBattlegear, 2) {
 		cost -= 3
 	}
 	refundAmount := cost * 0.8

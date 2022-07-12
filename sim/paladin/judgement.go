@@ -39,7 +39,7 @@ func (paladin *Paladin) registerJudgementOfBloodSpell(cdTimer *core.Timer, sanct
 		},
 	}
 
-	baseCost := core.TernaryFloat64(ItemSetCrystalforgeBattlegear.CharacterHasSetBonus(&paladin.Character, 2), JudgementManaCost-35, JudgementManaCost)
+	baseCost := core.TernaryFloat64(paladin.HasSetBonus(ItemSetCrystalforgeBattlegear, 2), JudgementManaCost-35, JudgementManaCost)
 	paladin.JudgementOfBlood = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 31898},
 		SpellSchool: core.SpellSchoolHoly,
@@ -67,7 +67,14 @@ func (paladin *Paladin) CanJudgementOfBlood(sim *core.Simulation) bool {
 }
 
 func (paladin *Paladin) registerJudgementOfTheCrusaderSpell(cdTimer *core.Timer, sanctifiedJudgementMetrics *core.ResourceMetrics) {
-	baseCost := core.TernaryFloat64(ItemSetCrystalforgeBattlegear.CharacterHasSetBonus(&paladin.Character, 2), JudgementManaCost-35, JudgementManaCost)
+	flatBonus := 0.0
+	if paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 23203 {
+		flatBonus += 33.0
+	} else if paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 27949 {
+		flatBonus += 47.0
+	}
+
+	baseCost := core.TernaryFloat64(paladin.HasSetBonus(ItemSetCrystalforgeBattlegear, 2), JudgementManaCost-35, JudgementManaCost)
 	paladin.JudgementOfTheCrusader = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 27159},
 		SpellSchool: core.SpellSchoolHoly,
@@ -113,7 +120,7 @@ func (paladin *Paladin) CanJudgementOfTheCrusader(sim *core.Simulation) bool {
 func (paladin *Paladin) registerJudgementOfWisdomSpell(cdTimer *core.Timer, sanctifiedJudgementMetrics *core.ResourceMetrics) {
 	paladin.JudgementOfWisdomAura = core.JudgementOfWisdomAura(paladin.CurrentTarget)
 
-	baseCost := core.TernaryFloat64(ItemSetCrystalforgeBattlegear.CharacterHasSetBonus(&paladin.Character, 2), JudgementManaCost-35, JudgementManaCost)
+	baseCost := core.TernaryFloat64(paladin.HasSetBonus(ItemSetCrystalforgeBattlegear, 2), JudgementManaCost-35, JudgementManaCost)
 	paladin.JudgementOfWisdom = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 27164},
 		SpellSchool: core.SpellSchoolHoly,
@@ -159,7 +166,7 @@ func (paladin *Paladin) CanJudgementOfWisdom(sim *core.Simulation) bool {
 func (paladin *Paladin) registerJudgementOfLightSpell(cdTimer *core.Timer, sanctifiedJudgementMetrics *core.ResourceMetrics) {
 	paladin.JudgementOfLightAura = core.JudgementOfLightAura(paladin.CurrentTarget)
 
-	baseCost := core.TernaryFloat64(ItemSetCrystalforgeBattlegear.CharacterHasSetBonus(&paladin.Character, 2), JudgementManaCost-35, JudgementManaCost)
+	baseCost := core.TernaryFloat64(paladin.HasSetBonus(ItemSetCrystalforgeBattlegear, 2), JudgementManaCost-35, JudgementManaCost)
 	paladin.JudgementOfLight = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 27163},
 		SpellSchool: core.SpellSchoolHoly,
@@ -203,7 +210,7 @@ func (paladin *Paladin) CanJudgementOfLight(sim *core.Simulation) bool {
 }
 
 func (paladin *Paladin) registerJudgementOfRighteousnessSpell(cdTimer *core.Timer, sanctifiedJudgementMetrics *core.ResourceMetrics) {
-	baseCost := core.TernaryFloat64(ItemSetCrystalforgeBattlegear.CharacterHasSetBonus(&paladin.Character, 2), JudgementManaCost-35, JudgementManaCost)
+	baseCost := core.TernaryFloat64(paladin.HasSetBonus(ItemSetCrystalforgeBattlegear, 2), JudgementManaCost-35, JudgementManaCost)
 	paladin.JudgementOfRighteousness = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 27157},
 		SpellSchool: core.SpellSchoolHoly,

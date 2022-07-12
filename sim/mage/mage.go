@@ -193,7 +193,7 @@ func NewMage(character core.Character, options proto.Player) *Mage {
 		mage.waterElemental = mage.NewWaterElemental(mage.FrostRotation.WaterElementalDisobeyChance)
 	}
 
-	mage.hasTristfal = ItemSetTirisfalRegalia.CharacterHasSetBonus(&mage.Character, 2)
+	mage.hasTristfal = mage.HasSetBonus(ItemSetTirisfalRegalia, 2)
 	return mage
 }
 
