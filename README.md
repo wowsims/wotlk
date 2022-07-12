@@ -35,9 +35,6 @@ cd wotlk
 npm install
 ```
 
-## Windows
-If you want to develop on Windows, we recommend setting up a Ubuntu virtual machine (VM) or running Docker using [this guide](https://docs.docker.com/desktop/windows/wsl/ "https://docs.docker.com/desktop/windows/wsl/") and then following the Ubuntu or Docker instructions, respectively.
-
 ## Docker
 Alternatively, install Docker and your workflow will look something like this:
 ```sh
@@ -62,6 +59,9 @@ $WOTLK_CMD make test
 # Host a local site
 $WOTLK_CMD make host
 ```
+
+## Windows
+If you want to develop on Windows, we recommend setting up a Ubuntu virtual machine (VM) or running Docker using [this guide](https://docs.docker.com/desktop/windows/wsl/ "https://docs.docker.com/desktop/windows/wsl/") and then following the Ubuntu or Docker instructions, respectively.
 
 # Commands
 We use a makefile for our build system. These commands will usually be all you need while developing for this project:
