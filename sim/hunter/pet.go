@@ -66,10 +66,7 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 		AutoSwingMelee: true,
 	})
 
-	// Cobra reflexes
-	hp.PseudoStats.MeleeSpeedMultiplier *= 1.3
 	hp.AutoAttacks.MHEffect.DamageMultiplier *= petConfig.DamageMultiplier
-	hp.AutoAttacks.MHEffect.DamageMultiplier *= 0.85
 
 	hp.AddStatDependency(stats.StatDependency{
 		SourceStat:   stats.Strength,
@@ -95,6 +92,15 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 
 func (hp *HunterPet) GetPet() *core.Pet {
 	return &hp.Pet
+}
+
+func (hp *HunterPet) Talents() proto.HunterPetTalents {
+	talents := hp.hunterOwner.Options.PetTalents
+	if talents == nil {
+		return proto.HunterPetTalents{}
+	} else {
+		return *talents
+	}
 }
 
 func (hp *HunterPet) Initialize() {
@@ -192,12 +198,19 @@ var hunterPetBaseStats = stats.Stats{
 
 func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
 	hvw := 0.1 * float64(hunter.Talents.HunterVsWild)
+
+	petTalents := hunter.Options.PetTalents
+	var wildHunt int32
+	if petTalents != nil {
+		wildHunt = petTalents.WildHunt
+	}
+
 	return func(ownerStats stats.Stats) stats.Stats {
 		return stats.Stats{
-			stats.Stamina:     ownerStats[stats.Stamina] * 0.3,
+			stats.Stamina:     ownerStats[stats.Stamina]*0.3 + 0.2*float64(wildHunt),
 			stats.Armor:       ownerStats[stats.Armor] * 0.35,
-			stats.AttackPower: ownerStats[stats.RangedAttackPower]*0.22 + ownerStats[stats.Stamina]*hvw,
-			stats.SpellPower:  ownerStats[stats.RangedAttackPower] * 0.128,
+			stats.AttackPower: ownerStats[stats.RangedAttackPower]*0.22 + ownerStats[stats.Stamina]*hvw + 0.15*float64(wildHunt),
+			stats.SpellPower:  ownerStats[stats.RangedAttackPower]*0.128 + 0.15*float64(wildHunt),
 		}
 	}
 }
