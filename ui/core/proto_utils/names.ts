@@ -189,6 +189,11 @@ export const resourceNames: Record<ResourceType, string> = {
 	[ResourceType.ResourceTypeRage]: 'Rage',
 	[ResourceType.ResourceTypeComboPoints]: 'Combo Points',
 	[ResourceType.ResourceTypeFocus]: 'Focus',
+	[ResourceType.ResourceTypeRunicPower]: 'Runic Power',
+	[ResourceType.ResourceTypeBloodRune]: 'Blood Rune',
+	[ResourceType.ResourceTypeFrostRune]: 'Frost Rune',
+	[ResourceType.ResourceTypeUnholyRune]: 'Unholy Rune',
+	[ResourceType.ResourceTypeDeathRune]: 'Death Rune',
 };
 
 export const resourceColors: Record<ResourceType, string> = {
@@ -199,6 +204,11 @@ export const resourceColors: Record<ResourceType, string> = {
 	[ResourceType.ResourceTypeRage]: '#ff0000',
 	[ResourceType.ResourceTypeComboPoints]: '#ffa07a',
 	[ResourceType.ResourceTypeFocus]: '#cd853f',
+	[ResourceType.ResourceTypeRunicPower]: '#5b99ee',
+	[ResourceType.ResourceTypeBloodRune]: '#ff0000',
+	[ResourceType.ResourceTypeFrostRune]: '#0000ff',
+	[ResourceType.ResourceTypeUnholyRune]: '#00ff00',
+	[ResourceType.ResourceTypeDeathRune]: '#8b008b',
 };
 
 export function stringToResourceType(str: string): ResourceType {

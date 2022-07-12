@@ -100,6 +100,21 @@ func (warlock *Warlock) ApplyTalents() {
 	if warlock.Talents.Eradication > 0 {
 		warlock.setupEradication()
 	}
+
+	if warlock.Talents.DeathsEmbrace > 0 {
+		warlock.applyDeathsEmbrace()
+	}
+
+}
+
+func (warlock *Warlock) applyDeathsEmbrace() {
+	multiplier := 1.0 + 0.04*float64(warlock.Talents.DeathsEmbrace)
+
+	warlock.RegisterResetEffect(func(sim *core.Simulation) {
+		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation) {
+			warlock.PseudoStats.ShadowDamageDealtMultiplier *= multiplier
+		})
+	})
 }
 
 func (warlock *Warlock) setupEradication() {
