@@ -133,18 +133,15 @@ func ScheduledAura(aura *Aura, preActivate bool, options PeriodicActionOptions) 
 func MiseryAura(target *Unit) *Aura {
 	return target.GetOrRegisterAura(Aura{
 		Label:    "Misery",
-		Tag:      "Misery",
+		Tag:      MinorSpellHitDebuffAuraTag,
+		Priority: 3,
 		ActionID: ActionID{SpellID: 33198},
 		Duration: time.Second * 24,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			if !target.HasActiveAura("Improved Faerie Fire") {
-				target.PseudoStats.BonusSpellHitRating += 3 * SpellHitRatingPerHitChance
-			}
+			target.PseudoStats.BonusSpellHitRating += 3 * SpellHitRatingPerHitChance
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			if !target.HasActiveAura("Improved Faerie Fire") {
-				target.PseudoStats.BonusSpellHitRating -= 3 * SpellHitRatingPerHitChance
-			}
+			target.PseudoStats.BonusSpellHitRating -= 3 * SpellHitRatingPerHitChance
 		},
 	})
 }
@@ -198,32 +195,6 @@ func JudgementOfLightAura(target *Unit) *Aura {
 				return
 			}
 
-			if spell.ActionID.SpellID == 35395 {
-				aura.Refresh(sim)
-			}
-		},
-	})
-}
-
-func JudgementOfTheCrusaderAura(target *Unit, level int32, flatBonus float64, percentBonus float64) *Aura {
-	bonusCrit := float64(level) * CritRatingPerCritChance
-
-	totalSP := 219*percentBonus + flatBonus
-	return target.GetOrRegisterAura(Aura{
-		Label:    "Judgement of the Crusader-" + strconv.Itoa(int(level)),
-		Tag:      "Judgement of the Crusader",
-		ActionID: ActionID{SpellID: 27159},
-		Duration: time.Second * 20,
-		Priority: float64(level),
-		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.BonusHolyDamageTaken += totalSP
-			aura.Unit.PseudoStats.BonusCritRating += bonusCrit
-		},
-		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.BonusHolyDamageTaken -= totalSP
-			aura.Unit.PseudoStats.BonusCritRating -= bonusCrit
-		},
-		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
 			if spell.ActionID.SpellID == 35395 {
 				aura.Refresh(sim)
 			}
@@ -418,38 +389,59 @@ func WintersChillAura(target *Unit, startingStacks int32) *Aura {
 }
 
 var MinorArmorReductionAuraTag = "MinorArmorReductionAura"
+var MinorSpellHitDebuffAuraTag = "sphit3%"
 
 func FaerieFireAura(target *Unit, imp bool) *Aura {
 	const armorReduction = 0.05
+
+	var mainAura *Aura
+	var secondaryAura *Aura
 
 	label := "Faerie Fire"
 	if imp {
 		label = "Improved " + label
 	}
-	return target.GetOrRegisterAura(Aura{
+	mainAura = target.GetOrRegisterAura(Aura{
 		Label:    label,
 		Tag:      MinorArmorReductionAuraTag,
+		Priority: armorReduction,
 		ActionID: ActionID{SpellID: 770},
-		Duration: time.Second * 40,
+		Duration: time.Minute * 5,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			if !target.HasActiveAuraWithTag(MinorArmorReductionAuraTag) {
-				aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 - armorReduction)
-				aura.Unit.updateArmor()
-			}
-			if imp && !target.HasActiveAuraWithTag("Misery") {
-				aura.Unit.PseudoStats.BonusSpellHitRating += 3 * SpellHitRatingPerHitChance
+			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 - armorReduction)
+			aura.Unit.updateArmor()
+			if imp {
+				secondaryAura.Activate(sim)
 			}
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			if !target.HasActiveAuraWithTag(MinorArmorReductionAuraTag) {
-				aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 / (1.0 - armorReduction))
-				aura.Unit.updateArmor()
-			}
-			if imp && !target.HasActiveAuraWithTag("Misery") {
-				aura.Unit.PseudoStats.BonusSpellHitRating -= 3 * SpellHitRatingPerHitChance
+			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 / (1.0 - armorReduction))
+			aura.Unit.updateArmor()
+			if secondaryAura.IsActive() {
+				secondaryAura.Deactivate(sim)
 			}
 		},
 	})
+	if imp {
+		secondaryAura = target.GetOrRegisterAura(Aura{
+			Label:    "Improved Faerie Fire Secondary",
+			Tag:      MinorSpellHitDebuffAuraTag,
+			Priority: 3,
+			// no ActionID to hide this secondary effect from stats
+			Duration: time.Minute * 5,
+			OnGain: func(aura *Aura, sim *Simulation) {
+				aura.Unit.PseudoStats.BonusSpellHitRating += 3 * SpellHitRatingPerHitChance
+			},
+			OnExpire: func(aura *Aura, sim *Simulation) {
+				aura.Unit.PseudoStats.BonusSpellHitRating -= 3 * SpellHitRatingPerHitChance
+				if mainAura.IsActive() {
+					mainAura.Deactivate(sim)
+				}
+			},
+		})
+
+	}
+	return mainAura
 }
 
 var SunderArmorAuraLabel = "Sunder Armor"
@@ -532,6 +524,7 @@ func CurseOfWeaknessAura(target *Unit, points int32) *Aura {
 	return target.GetOrRegisterAura(Aura{
 		Label:    "Curse of Weakness",
 		Tag:      MinorArmorReductionAuraTag,
+		Priority: armorReduction,
 		ActionID: ActionID{SpellID: 50511},
 		Duration: time.Minute * 2,
 		OnGain: func(aura *Aura, sim *Simulation) {
@@ -541,7 +534,7 @@ func CurseOfWeaknessAura(target *Unit, points int32) *Aura {
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.AddStatsDynamic(sim, bonus.Multiply(-1))
-			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 / (1.0 - armorReduction))
+			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 - armorReduction)
 			aura.Unit.updateArmor()
 		},
 	})
@@ -553,6 +546,7 @@ func StingAura(target *Unit) *Aura {
 	return target.GetOrRegisterAura(Aura{
 		Label:    "Sting",
 		Tag:      MinorArmorReductionAuraTag,
+		Priority: armorReduction,
 		ActionID: ActionID{SpellID: 56631},
 		Duration: time.Second * 20,
 		OnGain: func(aura *Aura, sim *Simulation) {
@@ -560,7 +554,7 @@ func StingAura(target *Unit) *Aura {
 			aura.Unit.updateArmor()
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 / (1.0 - armorReduction))
+			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 - armorReduction)
 			aura.Unit.updateArmor()
 		},
 	})

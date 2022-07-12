@@ -67,18 +67,6 @@ func (paladin *Paladin) CanJudgementOfBlood(sim *core.Simulation) bool {
 }
 
 func (paladin *Paladin) registerJudgementOfTheCrusaderSpell(cdTimer *core.Timer, sanctifiedJudgementMetrics *core.ResourceMetrics) {
-	percentBonus := 1.0
-	if ItemSetJusticarBattlegear.CharacterHasSetBonus(&paladin.Character, 2) {
-		percentBonus = 1.15
-	}
-	flatBonus := 0.0
-	if paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 23203 {
-		flatBonus += 33.0
-	} else if paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 27949 {
-		flatBonus += 47.0
-	}
-	paladin.JudgementOfTheCrusaderAura = core.JudgementOfTheCrusaderAura(paladin.CurrentTarget, paladin.Talents.ImprovedSealOfTheCrusader, flatBonus, percentBonus)
-
 	baseCost := core.TernaryFloat64(ItemSetCrystalforgeBattlegear.CharacterHasSetBonus(&paladin.Character, 2), JudgementManaCost-35, JudgementManaCost)
 	paladin.JudgementOfTheCrusader = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 27159},
