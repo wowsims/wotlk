@@ -158,7 +158,7 @@ func init() {
 					return
 				}
 
-				if !ppmm.ProcWithWeaponSpecials(sim, spellEffect.ProcMask, "Badge of the Swarmguard") {
+				if !ppmm.Proc(sim, spellEffect.ProcMask, "Badge of the Swarmguard") {
 					return
 				}
 
@@ -261,7 +261,7 @@ func init() {
 				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 					return
 				}
-				if !ppmm.ProcWithWeaponSpecials(sim, spellEffect.ProcMask, "RomulosPoisonVial") {
+				if !ppmm.Proc(sim, spellEffect.ProcMask, "RomulosPoisonVial") {
 					return
 				}
 
@@ -294,7 +294,7 @@ func init() {
 				if !icd.IsReady(sim) {
 					return
 				}
-				if !ppmm.ProcWithWeaponSpecials(sim, spellEffect.ProcMask, "dragonspine") {
+				if !ppmm.Proc(sim, spellEffect.ProcMask, "dragonspine") {
 					return
 				}
 				icd.Use(sim)
@@ -448,7 +448,7 @@ func init() {
 				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 					return
 				}
-				if !ppmm.ProcWithWeaponSpecials(sim, spellEffect.ProcMask, "Madness of the Betrayer") {
+				if !ppmm.Proc(sim, spellEffect.ProcMask, "Madness of the Betrayer") {
 					return
 				}
 

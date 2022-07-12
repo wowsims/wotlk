@@ -556,7 +556,7 @@ func init() {
 				if !icd.IsReady(sim) {
 					return
 				}
-				if !ppmm.ProcWithWeaponSpecials(sim, spellEffect.ProcMask, "Band of the Eternal Champion") {
+				if !ppmm.Proc(sim, spellEffect.ProcMask, "Band of the Eternal Champion") {
 					return
 				}
 
