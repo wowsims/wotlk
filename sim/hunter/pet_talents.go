@@ -302,13 +302,15 @@ func (hp *HunterPet) registerCallOfTheWildCD() {
 			ActionID: actionID,
 			Duration: time.Second * 20,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				val := unit.GetStat(stats.AttackPower) * 0.1
-				curBonus = stats.Stats{stats.AttackPower: val, stats.RangedAttackPower: val}
+				curBonus = stats.Stats{
+					stats.AttackPower:       aura.Unit.GetStat(stats.AttackPower) * 0.1,
+					stats.RangedAttackPower: aura.Unit.GetStat(stats.RangedAttackPower) * 0.1,
+				}
 
-				unit.AddStatsDynamic(sim, curBonus)
+				aura.Unit.AddStatsDynamic(sim, curBonus)
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				unit.AddStatsDynamic(sim, curBonus.Multiply(-1))
+				aura.Unit.AddStatsDynamic(sim, curBonus.Multiply(-1))
 			},
 		})
 	}

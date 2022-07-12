@@ -64,6 +64,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestHunter-AllItems-Ahn'KaharBloodHunter'sBattlegear"
+ value: {
+  dps: 2177.3456582628437
+  tps: 1703.1337587900507
+ }
+}
+dps_results: {
  key: "TestHunter-AllItems-Alchemist'sStone-13503"
  value: {
   dps: 1691.2566007346927
@@ -285,6 +292,13 @@ dps_results: {
  value: {
   dps: 1714.210314041235
   tps: 1261.452012652723
+ }
+}
+dps_results: {
+ key: "TestHunter-AllItems-CryptstalkerBattlegear"
+ value: {
+  dps: 2381.3325634514963
+  tps: 1888.2128505779228
  }
 }
 dps_results: {
@@ -516,6 +530,13 @@ dps_results: {
  value: {
   dps: 1699.861153512638
   tps: 1248.6758909346138
+ }
+}
+dps_results: {
+ key: "TestHunter-AllItems-Gladiator'sPursuit"
+ value: {
+  dps: 1983.014146774631
+  tps: 1507.9359988919969
  }
 }
 dps_results: {
@@ -869,6 +890,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestHunter-AllItems-ScourgestalkerBattlegear"
+ value: {
+  dps: 1843.2984237806456
+  tps: 1392.667101739707
+ }
+}
+dps_results: {
  key: "TestHunter-AllItems-Scryer'sBloodgem-29132"
  value: {
   dps: 1714.3208370399325
@@ -1167,6 +1195,13 @@ dps_results: {
  value: {
   dps: 1657.669942591093
   tps: 1212.1104990704853
+ }
+}
+dps_results: {
+ key: "TestHunter-AllItems-Windrunner'sPursuit"
+ value: {
+  dps: 1985.88582788087
+  tps: 1500.991439440855
  }
 }
 dps_results: {
