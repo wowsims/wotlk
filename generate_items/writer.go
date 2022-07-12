@@ -157,6 +157,11 @@ func gemToGoString(gemDeclaration GemDeclaration, gemResponse ItemResponse) stri
 		gemStr += "Unique:true, "
 	}
 
+	prof := gemResponse.GetRequiredProfession()
+	if prof != proto.Profession_ProfessionUnknown {
+		gemStr += fmt.Sprintf("RequiredProfession:proto.Profession_%s, ", prof.String())
+	}
+
 	gemStr += "}"
 	return gemStr
 }
@@ -247,6 +252,11 @@ func itemToGoString(itemData ItemData) string {
 	setName := itemData.Response.GetItemSetName()
 	if setName != "" {
 		itemStr += fmt.Sprintf(", SetName: \"%s\"", setName)
+	}
+
+	prof := itemData.Response.GetRequiredProfession()
+	if prof != proto.Profession_ProfessionUnknown {
+		itemStr += fmt.Sprintf(", RequiredProfession:proto.Profession_%s", prof.String())
 	}
 
 	if itemData.Response.IsHeroic() {
