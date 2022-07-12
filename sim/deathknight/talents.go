@@ -2,6 +2,7 @@ package deathknight
 
 import ( //	"time"
 	//"github.com/wowsims/wotlk/sim/core/proto"
+
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -13,8 +14,10 @@ func (deathKnight *DeathKnight) ApplyTalents() {
 	// Blood
 
 	// Butchery
+	// Pointless to Implement
 
 	// Subversion
+	// TODO: Implement
 
 	// Bladed Armor
 	if deathKnight.Talents.BladedArmor > 0 {
@@ -34,20 +37,26 @@ func (deathKnight *DeathKnight) ApplyTalents() {
 	}
 
 	// Rune Tap
+	// TODO: Implement
 
 	// Dark Conviction
 	deathKnight.PseudoStats.BonusMeleeCritRating += core.CritRatingPerCritChance * float64(deathKnight.Talents.DarkConviction)
 	deathKnight.PseudoStats.BonusSpellCritRating += core.CritRatingPerCritChance * float64(deathKnight.Talents.DarkConviction)
 
 	// Death Rune Mastery
+	// TODO: Implement
 
 	// Improved Rune Tap
+	// TODO: Implement
 
 	// Spell Deflection
+	// TODO: Implement
 
 	// Vendetta
+	// TODO: Implement
 
 	// Bloody Strikes
+	// TODO: Implement
 
 	// Veteran of the Third War
 	if deathKnight.Talents.VeteranOfTheThirdWar > 0 {
@@ -74,8 +83,10 @@ func (deathKnight *DeathKnight) ApplyTalents() {
 	}
 
 	// Mark of Blood
+	// TODO: Implement
 
 	// Bloody Vengeance
+	// TODO: Implement
 
 	// Abomination's Might
 	if deathKnight.Talents.AbominationsMight > 0 {
@@ -92,6 +103,7 @@ func (deathKnight *DeathKnight) ApplyTalents() {
 	// Frost
 
 	// Improved Icy Touch
+	// Implemented outside
 
 	// Toughness
 	if deathKnight.Talents.Toughness > 0 {
@@ -122,11 +134,13 @@ func (deathKnight *DeathKnight) ApplyTalents() {
 	// Pointless to Implement
 
 	// Annihilation
+	// TODO: Implement
 
 	// Killing Machine
 	deathKnight.applyKillingMachine()
 
 	// Chill of the Grave
+	// Implemented outside
 
 	// Endless Winter
 	if deathKnight.Talents.EndlessWinter > 0 {
@@ -140,6 +154,22 @@ func (deathKnight *DeathKnight) ApplyTalents() {
 		})
 	}
 
+	// Frigid Dreadplate
+	// TODO: Implement
+
+	// Glacier rot
+	// Implemented outside
+
+	// Deathchill
+	// TODO: Implement
+
+	// Improved Icy Talons
+	deathKnight.applyIcyTalons()
+	if deathKnight.Talents.ImprovedIcyTalons {
+		deathKnight.PseudoStats.MeleeSpeedMultiplier *= 1.05
+	}
+
+	// Merciless Combat
 	//Unholy
 }
 
@@ -182,6 +212,26 @@ func (deathKnight *DeathKnight) applyKillingMachine() {
 			if sim.RandomFloat("Killing Machine") < procChance {
 				deathKnight.KillingMachineAura.Activate(sim)
 			}
+		},
+	})
+}
+
+func (deathKnight *DeathKnight) applyIcyTalons() {
+	if deathKnight.Talents.IcyTalons == 0 {
+		return
+	}
+
+	actionID := core.ActionID{SpellID: 50887}
+
+	deathKnight.IcyTalonsAura = deathKnight.RegisterAura(core.Aura{
+		ActionID: actionID,
+		Label:    "Icy Talons",
+		Duration: time.Second * 20.0,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.MeleeSpeedMultiplier *= 1.0 + 0.04*float64(deathKnight.Talents.IcyTalons)
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.MeleeSpeedMultiplier /= 1.0 + 0.04*float64(deathKnight.Talents.IcyTalons)
 		},
 	})
 }

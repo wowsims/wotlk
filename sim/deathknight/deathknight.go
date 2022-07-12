@@ -16,7 +16,7 @@ type DeathKnight struct {
 
 	IcyTouch     *core.Spell
 	PlagueStrike *core.Spell
-	//Obliterate *core.Spell
+	Obliterate   *core.Spell
 	//FrostStrike      *core.Spell
 	//BloodStrike      *core.Spell
 	//HowlingBlast     *core.Spell
@@ -31,10 +31,13 @@ type DeathKnight struct {
 	BloodPlagueDisease *core.Dot
 
 	KillingMachineAura *core.Aura
+	IcyTalonsAura      *core.Aura
 
 	BloodPresenceAura  *core.Aura
 	FrostPresenceAura  *core.Aura
 	UnholyPresenceAura *core.Aura
+
+	IcyTouchAura *core.Aura
 }
 
 func (deathKnight *DeathKnight) GetCharacter() *core.Character {
@@ -49,12 +52,17 @@ func (deathKnight *DeathKnight) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	if deathKnight.Talents.AbominationsMight > 0 {
 		raidBuffs.AbominationsMight = true
 	}
+
+	if deathKnight.Talents.ImprovedIcyTalons {
+		raidBuffs.IcyTalons = true
+	}
 }
 
 func (deathKnight *DeathKnight) Initialize() {
 	deathKnight.registerPresences()
 	deathKnight.registerIcyTouchSpell()
 	deathKnight.registerPlagueStrikeSpell()
+	deathKnight.registerObliterateSpell()
 	deathKnight.registerDiseaseDots()
 }
 
@@ -136,8 +144,8 @@ func RegisterDeathKnight() {
 	)
 }
 
-func (deathKnight *DeathKnight) DiseasesAreActive() {
-	//return deathKnight.FrostFeverDot.IsActive() || deathKnight.BloodPlagueDot.IsActive()
+func (deathKnight *DeathKnight) DiseasesAreActive() bool {
+	return deathKnight.FrostFeverDisease.IsActive() || deathKnight.BloodPlagueDisease.IsActive()
 }
 
 func init() {

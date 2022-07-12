@@ -99,6 +99,7 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 					leaderOfThePack: TristateEffect.TristateEffectImproved,
 					unleashedRage: true,
 					abominationsMight: true,
+					icyTalons: true,
 				}),
 				partyBuffs: PartyBuffs.create({
 				}),

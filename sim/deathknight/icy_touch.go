@@ -7,7 +7,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (deathKnight *DeathKnight) specialOutcomeMod(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
+func (deathKnight *DeathKnight) killingMachineOutcomeMod(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
 	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
 		if deathKnight.KillingMachineAura.IsActive() {
 			deathKnight.AddStatDynamic(sim, stats.SpellCrit, 100*core.CritRatingPerCritChance)
@@ -21,6 +21,10 @@ func (deathKnight *DeathKnight) specialOutcomeMod(outcomeApplier core.OutcomeApp
 
 func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 	baseCost := 10.0
+	target := deathKnight.CurrentTarget
+
+	itAura := core.IcyTouchAura(target, deathKnight.Talents.ImprovedIcyTouch)
+	deathKnight.IcyTouchAura = itAura
 
 	deathKnight.IcyTouch = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 59131},
@@ -42,18 +46,22 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:             core.ProcMaskSpellDamage,
-			BonusSpellCritRating: 0.0,
-			DamageMultiplier:     1.0 + 0.05*float64(deathKnight.Talents.ImprovedIcyTouch), // + glacierRotDamageBonus,
+			BonusSpellCritRating: 5.0 * float64(deathKnight.Talents.Rime) * core.CritRatingPerCritChance,
+			DamageMultiplier:     1.0,
 			ThreatMultiplier:     7.0,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					roll := (245.0-227.0)*sim.RandomFloat("Icy Touch") + 227.0
-					return roll + hitEffect.MeleeAttackPower(spell.Unit)*0.1
+					return (roll + hitEffect.MeleeAttackPower(spell.Unit)*0.1) *
+						(1.0 +
+							0.05*float64(deathKnight.Talents.ImprovedIcyTouch) +
+							core.TernaryFloat64(deathKnight.DiseasesAreActive() && deathKnight.Talents.GlacierRot > 0, 0.07*float64(deathKnight.Talents.GlacierRot), 0.0) +
+							core.TernaryFloat64(sim.IsExecutePhase35() && deathKnight.Talents.MercilessCombat > 0, 0.06*float64(deathKnight.Talents.MercilessCombat), 0.0))
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: deathKnight.specialOutcomeMod(deathKnight.OutcomeFuncMagicHitAndCrit(deathKnight.DefaultSpellCritMultiplier())),
+			OutcomeApplier: deathKnight.killingMachineOutcomeMod(deathKnight.OutcomeFuncMagicHitAndCrit(deathKnight.DefaultMeleeCritMultiplier())),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
@@ -62,8 +70,18 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 
 					amountOfRunicPower := 10.0 + 2.5*float64(deathKnight.Talents.ChillOfTheGrave)
 					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
+
+					deathKnight.IcyTouchAura.Activate(sim)
+
+					if deathKnight.IcyTouchAura.IsActive() {
+						deathKnight.IcyTalonsAura.Activate(sim)
+					}
 				}
 			},
 		}),
 	})
+}
+
+func (deathKnight *DeathKnight) CanIcyTouch(sim *core.Simulation) bool {
+	return deathKnight.CastCostPossible(sim, 10.0, 0, 1, 0, 0) && deathKnight.IcyTouch.IsReady(sim)
 }

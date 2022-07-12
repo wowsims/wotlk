@@ -236,16 +236,16 @@ func (rp *runicPowerBar) UpdateRuneGainTrackers(sim *Simulation) {
 	rp.runeGainTrackers[3] = rp.CurrentDeathRunes(sim)
 }
 
-func (rp *runicPowerBar) TimeToNextBloodRune(sim *Simulation) time.Duration {
-	return MinDuration(rp.frostRunes[0].cd.TimeToReady(sim), rp.frostRunes[1].cd.TimeToReady(sim))
+func (rp *runicPowerBar) BloodRuneReadyAt(sim *Simulation) time.Duration {
+	return MinDuration(rp.bloodRunes[0].cd.ReadyAt(), rp.bloodRunes[1].cd.ReadyAt())
 }
 
-func (rp *runicPowerBar) TimeToNextFrostRune(sim *Simulation) time.Duration {
-	return MinDuration(rp.bloodRunes[0].cd.TimeToReady(sim), rp.bloodRunes[1].cd.TimeToReady(sim))
+func (rp *runicPowerBar) FrostRuneReadyAt(sim *Simulation) time.Duration {
+	return MinDuration(rp.frostRunes[0].cd.ReadyAt(), rp.frostRunes[1].cd.ReadyAt())
 }
 
-func (rp *runicPowerBar) TimeToNextUnholyRune(sim *Simulation) time.Duration {
-	return MinDuration(rp.unholyRunes[0].cd.TimeToReady(sim), rp.unholyRunes[1].cd.TimeToReady(sim))
+func (rp *runicPowerBar) UnholyRuneReadyAt(sim *Simulation) time.Duration {
+	return MinDuration(rp.unholyRunes[0].cd.ReadyAt(), rp.unholyRunes[1].cd.ReadyAt())
 }
 
 func (rp *runicPowerBar) addRunicPowerInterval(sim *Simulation, amount float64, metrics *ResourceMetrics) {

@@ -4,6 +4,8 @@ import (
 	//"math"
 	//"time"
 
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core"
 	//"github.com/wowsims/wotlk/sim/core/proto"
 	//"github.com/wowsims/wotlk/sim/core/stats"
@@ -21,29 +23,62 @@ func (deathKnight *DeathKnight) OnGCDReady(sim *core.Simulation) {
 	deathKnight.UpdateRuneGainTrackers(sim)
 }
 
+const (
+	DKRotation_Wait uint8 = iota
+	DKRotation_IT
+	DKRotation_PS
+	DKRotation_Obli
+	DKRotation_BS
+	DKRotation_BT
+	DKRotation_UA
+	DKRotation_Pesti
+	DKRotation_FS
+)
+
 func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 	//var spell *core.Spell
 	var target = deathKnight.CurrentTarget
 
 	if deathKnight.GCD.IsReady(sim) {
-		if deathKnight.CanIcyTouch(sim) {
-			deathKnight.IcyTouch.Cast(sim, target)
-		} else if deathKnight.CanPlagueStrike(sim) {
-			deathKnight.PlagueStrike.Cast(sim, target)
+		if !deathKnight.FrostFeverDisease.IsActive() {
+			if deathKnight.CanIcyTouch(sim) {
+				deathKnight.IcyTouch.Cast(sim, target)
+			}
+		} else if !deathKnight.BloodPlagueDisease.IsActive() {
+			if deathKnight.CanPlagueStrike(sim) {
+				deathKnight.PlagueStrike.Cast(sim, target)
+			}
+		} else if deathKnight.FrostFeverDisease.IsActive() &&
+			deathKnight.BloodPlagueDisease.IsActive() &&
+			deathKnight.FrostFeverDisease.ExpiresAt() > deathKnight.FrostRuneReadyAt(sim) &&
+			deathKnight.BloodPlagueDisease.ExpiresAt() > deathKnight.UnholyRuneReadyAt(sim) &&
+			deathKnight.CanObliterate(sim) {
+			deathKnight.Obliterate.Cast(sim, target)
 		} else {
-			nextCD := deathKnight.IcyTouch.ReadyAt()
+			frostFeverExpireTime := deathKnight.FrostFeverDisease.ExpiresAt()
+			bloodPlagueExpireTime := deathKnight.BloodPlagueDisease.ExpiresAt()
 
-			if nextCD > sim.CurrentTime {
-				deathKnight.WaitUntil(sim, nextCD)
+			runeWaitTime := 0 * time.Second
+			if deathKnight.CurrentFrostRunes(sim) == 0 {
+				if deathKnight.CurrentUnholyRunes(sim) == 0 {
+					runeWaitTime = core.MaxDuration(deathKnight.FrostRuneReadyAt(sim), deathKnight.UnholyRuneReadyAt(sim))
+				} else {
+					runeWaitTime = deathKnight.FrostRuneReadyAt(sim)
+				}
+			} else {
+				if deathKnight.CurrentUnholyRunes(sim) == 0 {
+					runeWaitTime = deathKnight.UnholyRuneReadyAt(sim)
+				}
+			}
+
+			waitTime := core.MinDuration(frostFeverExpireTime, bloodPlagueExpireTime)
+			if runeWaitTime != 0 {
+				waitTime = core.MinDuration(waitTime, runeWaitTime)
+			}
+
+			if waitTime > sim.CurrentTime {
+				deathKnight.WaitUntil(sim, waitTime)
 			}
 		}
 	}
-}
-
-func (deathKnight *DeathKnight) CanIcyTouch(sim *core.Simulation) bool {
-	return deathKnight.CastCostPossible(sim, 10.0, 0, 1, 0, 0) && deathKnight.IcyTouch.IsReady(sim)
-}
-
-func (deathKnight *DeathKnight) CanPlagueStrike(sim *core.Simulation) bool {
-	return deathKnight.CastCostPossible(sim, 10.0, 0, 0, 1, 0) && deathKnight.PlagueStrike.IsReady(sim)
 }
