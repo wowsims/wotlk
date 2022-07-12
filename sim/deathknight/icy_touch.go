@@ -65,7 +65,9 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
-					deathKnight.SpendFrostRune(sim, spell.FrostRuneMetrics())
+					dkSpellCost := deathKnight.DetermineOptimalCost(sim, baseCost, 0, 1, 0)
+					deathKnight.Spend(sim, spell, dkSpellCost)
+
 					deathKnight.FrostFeverDisease.Apply(sim)
 
 					amountOfRunicPower := 10.0 + 2.5*float64(deathKnight.Talents.ChillOfTheGrave)
@@ -83,5 +85,5 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 }
 
 func (deathKnight *DeathKnight) CanIcyTouch(sim *core.Simulation) bool {
-	return deathKnight.CastCostPossible(sim, 10.0, 0, 1, 0, 0) && deathKnight.IcyTouch.IsReady(sim)
+	return deathKnight.CastCostPossible(sim, 10.0, 0, 1, 0) && deathKnight.IcyTouch.IsReady(sim)
 }

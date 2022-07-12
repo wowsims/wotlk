@@ -25,18 +25,25 @@ type DeathKnight struct {
 	//ArmyOfTheDead    *core.Spell
 	//RaiseDead        *core.Spell
 
+	// "CDs"
+	BloodTap *core.Spell
+
+	// Diseases
 	FrostFever         *core.Spell
 	FrostFeverDisease  *core.Dot
 	BloodPlague        *core.Spell
 	BloodPlagueDisease *core.Dot
 
+	// Talent Auras
 	KillingMachineAura *core.Aura
 	IcyTalonsAura      *core.Aura
 
+	// Presences
 	BloodPresenceAura  *core.Aura
 	FrostPresenceAura  *core.Aura
 	UnholyPresenceAura *core.Aura
 
+	// Debuffs
 	IcyTouchAura *core.Aura
 }
 
@@ -63,6 +70,7 @@ func (deathKnight *DeathKnight) Initialize() {
 	deathKnight.registerIcyTouchSpell()
 	deathKnight.registerPlagueStrikeSpell()
 	deathKnight.registerObliterateSpell()
+	deathKnight.registerBloodTapSpell()
 	deathKnight.registerDiseaseDots()
 }
 

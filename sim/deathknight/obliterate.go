@@ -45,8 +45,9 @@ func (deathKnight *DeathKnight) registerObliterateSpell() {
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
-					deathKnight.SpendUnholyRune(sim, spell.UnholyRuneMetrics())
-					deathKnight.SpendFrostRune(sim, spell.FrostRuneMetrics())
+					dkSpellCost := deathKnight.DetermineOptimalCost(sim, baseCost, 0, 1, 1)
+					deathKnight.Spend(sim, spell, dkSpellCost)
+
 					amountOfRunicPower := 10.0 + 2.5*float64(deathKnight.Talents.ChillOfTheGrave)
 					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 				}
@@ -56,5 +57,5 @@ func (deathKnight *DeathKnight) registerObliterateSpell() {
 }
 
 func (deathKnight *DeathKnight) CanObliterate(sim *core.Simulation) bool {
-	return deathKnight.CastCostPossible(sim, 15.0, 0, 1, 1, 0) && deathKnight.Obliterate.IsReady(sim)
+	return deathKnight.CastCostPossible(sim, 15.0, 0, 1, 1) && deathKnight.Obliterate.IsReady(sim)
 }

@@ -40,8 +40,11 @@ func (deathKnight *DeathKnight) registerPlagueStrikeSpell() {
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
-					deathKnight.SpendUnholyRune(sim, spell.UnholyRuneMetrics())
+					dkSpellCost := deathKnight.DetermineOptimalCost(sim, baseCost, 0, 0, 1)
+					deathKnight.Spend(sim, spell, dkSpellCost)
+
 					deathKnight.BloodPlagueDisease.Apply(sim)
+
 					deathKnight.AddRunicPower(sim, 10.0, spell.RunicPowerMetrics())
 				}
 			},
@@ -50,5 +53,5 @@ func (deathKnight *DeathKnight) registerPlagueStrikeSpell() {
 }
 
 func (deathKnight *DeathKnight) CanPlagueStrike(sim *core.Simulation) bool {
-	return deathKnight.CastCostPossible(sim, 10.0, 0, 0, 1, 0) && deathKnight.PlagueStrike.IsReady(sim)
+	return deathKnight.CastCostPossible(sim, 10.0, 0, 0, 1) && deathKnight.PlagueStrike.IsReady(sim)
 }
