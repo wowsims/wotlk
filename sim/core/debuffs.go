@@ -400,6 +400,23 @@ func FaerieFireAura(target *Unit, imp bool) *Aura {
 	label := "Faerie Fire"
 	if imp {
 		label = "Improved " + label
+		secondaryAura = target.GetOrRegisterAura(Aura{
+			Label:    "Improved Faerie Fire Secondary",
+			Tag:      MinorSpellHitDebuffAuraTag,
+			Duration: time.Minute * 5,
+			Priority: 3,
+			// no ActionID to hide this secondary effect from stats
+			OnGain: func(aura *Aura, sim *Simulation) {
+				aura.Unit.PseudoStats.BonusSpellHitRating += 3 * SpellHitRatingPerHitChance
+			},
+			OnExpire: func(aura *Aura, sim *Simulation) {
+				aura.Unit.PseudoStats.BonusSpellHitRating -= 3 * SpellHitRatingPerHitChance
+				if mainAura.IsActive() {
+					mainAura.Deactivate(sim)
+				}
+			},
+		})
+
 	}
 	mainAura = target.GetOrRegisterAura(Aura{
 		Label:    label,
@@ -422,25 +439,6 @@ func FaerieFireAura(target *Unit, imp bool) *Aura {
 			}
 		},
 	})
-	if imp {
-		secondaryAura = target.GetOrRegisterAura(Aura{
-			Label:    "Improved Faerie Fire Secondary",
-			Tag:      MinorSpellHitDebuffAuraTag,
-			Priority: 3,
-			// no ActionID to hide this secondary effect from stats
-			Duration: time.Minute * 5,
-			OnGain: func(aura *Aura, sim *Simulation) {
-				aura.Unit.PseudoStats.BonusSpellHitRating += 3 * SpellHitRatingPerHitChance
-			},
-			OnExpire: func(aura *Aura, sim *Simulation) {
-				aura.Unit.PseudoStats.BonusSpellHitRating -= 3 * SpellHitRatingPerHitChance
-				if mainAura.IsActive() {
-					mainAura.Deactivate(sim)
-				}
-			},
-		})
-
-	}
 	return mainAura
 }
 
