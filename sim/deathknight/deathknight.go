@@ -67,6 +67,7 @@ func (deathKnight *DeathKnight) Initialize() {
 }
 
 func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
+	deathKnight.ResetRunicPowerBar()
 	deathKnight.BloodPresenceAura.Activate(sim)
 	deathKnight.Presence = BloodPresence
 }

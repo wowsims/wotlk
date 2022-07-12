@@ -2,6 +2,8 @@ package core
 
 import (
 	"time"
+
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 type OnBloodRuneGain func(sim *Simulation)
@@ -33,11 +35,22 @@ type runicPowerBar struct {
 	frostRunes  [2]Rune
 	unholyRunes [2]Rune
 
+	bloodRuneGainMetrics  *ResourceMetrics
+	frostRuneGainMetrics  *ResourceMetrics
+	unholyRuneGainMetrics *ResourceMetrics
+	deathRuneGainMetrics  *ResourceMetrics
+
 	onBloodRuneGain  OnBloodRuneGain
 	onFrostRuneGain  OnFrostRuneGain
 	onUnholyRuneGain OnUnholyRuneGain
 	onDeathRuneGain  OnDeathRuneGain
 	onRunicPowerGain OnRunicPowerGain
+}
+
+func (rp *runicPowerBar) ResetRunicPowerBar() {
+	rp.bloodRunes = [2]Rune{Rune{state: RuneState_Normal, pas: [2]*PendingAction{nil, nil}}, Rune{state: RuneState_Normal, pas: [2]*PendingAction{nil, nil}}}
+	rp.frostRunes = [2]Rune{Rune{state: RuneState_Normal, pas: [2]*PendingAction{nil, nil}}, Rune{state: RuneState_Normal, pas: [2]*PendingAction{nil, nil}}}
+	rp.unholyRunes = [2]Rune{Rune{state: RuneState_Normal, pas: [2]*PendingAction{nil, nil}}, Rune{state: RuneState_Normal, pas: [2]*PendingAction{nil, nil}}}
 }
 
 func (unit *Unit) EnableRunicPowerBar(maxRunicPower float64,
@@ -62,6 +75,11 @@ func (unit *Unit) EnableRunicPowerBar(maxRunicPower float64,
 		onDeathRuneGain:  onDeathRuneGain,
 		onRunicPowerGain: onRunicPowerGain,
 	}
+
+	unit.bloodRuneGainMetrics = unit.NewBloodRuneMetrics(ActionID{OtherID: proto.OtherAction_OtherActionBloodRuneGain, Tag: 1})
+	unit.frostRuneGainMetrics = unit.NewFrostRuneMetrics(ActionID{OtherID: proto.OtherAction_OtherActionFrostRuneGain, Tag: 1})
+	unit.unholyRuneGainMetrics = unit.NewUnholyRuneMetrics(ActionID{OtherID: proto.OtherAction_OtherActionUnholyRuneGain, Tag: 1})
+	unit.deathRuneGainMetrics = unit.NewDeathRuneMetrics(ActionID{OtherID: proto.OtherAction_OtherActionDeathRuneGain, Tag: 1})
 }
 
 func (unit *Unit) HasRunicPower() bool {
@@ -137,7 +155,7 @@ func (rp *runicPowerBar) CastCostPossible(sim *Simulation, runicPowerAmount floa
 }
 
 func (rp *runicPowerBar) GenerateRuneMetrics(sim *Simulation, metrics *ResourceMetrics, name string, currRunes int32, newRunes int32) {
-	metrics.AddEvent(1, 1)
+	metrics.AddEvent(1, float64(newRunes)-float64(currRunes))
 
 	if sim.Log != nil {
 		rp.unit.Log(sim, "Generated %s Rune from %s (%d --> %d).", name, metrics.ActionID, currRunes, newRunes)
@@ -199,7 +217,7 @@ func (rp *runicPowerBar) GenerateUnholyRune(sim *Simulation, metrics *ResourceMe
 func (rp *runicPowerBar) SpendBloodRune(sim *Simulation, metrics *ResourceMetrics) {
 	currRunes := rp.CurrentBloodRunes()
 	rp.SpendRuneMetrics(sim, metrics, "Blood", currRunes, currRunes-1)
-	SpendRuneFromType(&rp.bloodRunes, RuneState_Normal)
+	spendSlot := SpendRuneFromType(&rp.bloodRunes, RuneState_Normal)
 
 	pa := &PendingAction{
 		NextActionAt: sim.CurrentTime + 10*time.Second,
@@ -207,17 +225,18 @@ func (rp *runicPowerBar) SpendBloodRune(sim *Simulation, metrics *ResourceMetric
 	}
 
 	pa.OnAction = func(sim *Simulation) {
-		rp.GenerateBloodRune(sim, metrics)
+		rp.GenerateBloodRune(sim, rp.bloodRuneGainMetrics)
 		rp.onBloodRuneGain(sim)
 	}
 
+	rp.bloodRunes[spendSlot].pas[0] = pa
 	sim.AddPendingAction(pa)
 }
 
 func (rp *runicPowerBar) SpendFrostRune(sim *Simulation, metrics *ResourceMetrics) {
 	currRunes := rp.CurrentFrostRunes()
 	rp.SpendRuneMetrics(sim, metrics, "Frost", currRunes, currRunes-1)
-	SpendRuneFromType(&rp.frostRunes, RuneState_Normal)
+	spendSlot := SpendRuneFromType(&rp.frostRunes, RuneState_Normal)
 
 	pa := &PendingAction{
 		NextActionAt: sim.CurrentTime + 10*time.Second,
@@ -225,17 +244,18 @@ func (rp *runicPowerBar) SpendFrostRune(sim *Simulation, metrics *ResourceMetric
 	}
 
 	pa.OnAction = func(sim *Simulation) {
-		rp.GenerateFrostRune(sim, metrics)
+		rp.GenerateFrostRune(sim, rp.frostRuneGainMetrics)
 		rp.onFrostRuneGain(sim)
 	}
 
+	rp.frostRunes[spendSlot].pas[0] = pa
 	sim.AddPendingAction(pa)
 }
 
 func (rp *runicPowerBar) SpendUnholyRune(sim *Simulation, metrics *ResourceMetrics) {
 	currRunes := rp.CurrentUnholyRunes()
 	rp.SpendRuneMetrics(sim, metrics, "Unholy", currRunes, currRunes-1)
-	SpendRuneFromType(&rp.unholyRunes, RuneState_Normal)
+	spendSlot := SpendRuneFromType(&rp.unholyRunes, RuneState_Normal)
 
 	pa := &PendingAction{
 		NextActionAt: sim.CurrentTime + 10*time.Second,
@@ -243,10 +263,11 @@ func (rp *runicPowerBar) SpendUnholyRune(sim *Simulation, metrics *ResourceMetri
 	}
 
 	pa.OnAction = func(sim *Simulation) {
-		rp.GenerateUnholyRune(sim, metrics)
+		rp.GenerateUnholyRune(sim, rp.unholyRuneGainMetrics)
 		rp.onUnholyRuneGain(sim)
 	}
 
+	rp.unholyRunes[spendSlot].pas[0] = pa
 	sim.AddPendingAction(pa)
 }
 
