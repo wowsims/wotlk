@@ -40,6 +40,11 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 		}),
 	})
 
+	dotOutcome := hunter.OutcomeFuncTick()
+	if ItemSetWindrunnersPursuit.CharacterHasSetBonus(&hunter.Character, 2) {
+		dotOutcome = hunter.OutcomeFuncMeleeSpecialCritOnly(hunter.critMultiplier(false, false, hunter.CurrentTarget))
+	}
+
 	target := hunter.CurrentTarget
 	hunter.SerpentStingDot = core.NewDot(core.Dot{
 		Spell: hunter.SerpentSting,
@@ -50,8 +55,10 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 		NumberOfTicks: 5 + int(core.TernaryInt32(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfSerpentSting), 2, 0)),
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 + 0.1*float64(hunter.Talents.ImprovedStings),
+			ProcMask: core.ProcMaskPeriodicDamage,
+			DamageMultiplier: 1 *
+				(1 + 0.1*float64(hunter.Talents.ImprovedStings)) *
+				core.TernaryFloat64(ItemSetScourgestalkerBattlegear.CharacterHasSetBonus(&hunter.Character, 2), 1.1, 1),
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
 
@@ -59,7 +66,7 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 				attackPower := spellEffect.RangedAttackPower(spell.Unit) + spellEffect.RangedAttackPowerOnTarget()
 				return 242 + attackPower*0.04
 			}, 0),
-			OutcomeApplier: hunter.OutcomeFuncTick(),
+			OutcomeApplier: dotOutcome,
 		}),
 	})
 
