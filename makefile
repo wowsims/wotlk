@@ -11,7 +11,7 @@ else
 endif
 
 # Make everything. Keep this first so it's the default rule.
-$(OUT_DIR): ui_shared balance_druid feral_druid feral_tank_druid elemental_shaman enhancement_shaman hunter mage rogue retribution_paladin protection_paladin shadow_priest smite_priest warlock warrior protection_warrior raid
+$(OUT_DIR): ui_shared balance_druid feral_druid feral_tank_druid elemental_shaman enhancement_shaman hunter mage rogue retribution_paladin protection_paladin shadow_priest smite_priest warlock warrior protection_warrior deathknight raid
 
 # Add new sim rules here! Don't forget to add it as a dependency to the default rule above.
 balance_druid: $(OUT_DIR)/balance_druid/index.js $(OUT_DIR)/balance_druid/index.css $(OUT_DIR)/balance_druid/index.html
@@ -29,7 +29,7 @@ smite_priest: $(OUT_DIR)/smite_priest/index.js $(OUT_DIR)/smite_priest/index.css
 warlock: $(OUT_DIR)/warlock/index.js $(OUT_DIR)/warlock/index.css $(OUT_DIR)/warlock/index.html
 warrior: $(OUT_DIR)/warrior/index.js $(OUT_DIR)/warrior/index.css $(OUT_DIR)/warrior/index.html
 protection_warrior: $(OUT_DIR)/protection_warrior/index.js $(OUT_DIR)/protection_warrior/index.css $(OUT_DIR)/protection_warrior/index.html
-
+deathknight: $(OUT_DIR)/deathknight/index.js $(OUT_DIR)/deathknight/index.css $(OUT_DIR)/deathknight/index.html
 
 raid: $(OUT_DIR)/raid/index.js $(OUT_DIR)/raid/index.css $(OUT_DIR)/raid/index.html
 

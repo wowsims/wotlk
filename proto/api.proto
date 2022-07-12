@@ -157,6 +157,11 @@ enum ResourceType {
 	ResourceTypeComboPoints = 4;
 	ResourceTypeFocus = 5;
 	ResourceTypeHealth = 6;
+	ResourceTypeRunicPower = 7;
+	ResourceTypeBloodRune = 8;
+	ResourceTypeFrostRune = 9;
+	ResourceTypeUnholyRune = 10;
+	ResourceTypeDeathRune = 11;
 }
 
 message ResourceMetrics {

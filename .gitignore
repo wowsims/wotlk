@@ -12,3 +12,5 @@ binary_dist
 # temporary files
 *.results.tmp
 .dockerignore
+*.code-workspace
+wowsimwotlk

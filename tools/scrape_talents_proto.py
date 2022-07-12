@@ -15,7 +15,7 @@ if len(sys.argv) < 3:
 class_name = sys.argv[1]
 output_file_path = sys.argv[2]
 
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+driver = webdriver.Chrome(ChromeDriverManager().install())
 driver.implicitly_wait(2)
 
 driver.get('https://wowhead.com/wotlk/talent-calc/' + class_name)
