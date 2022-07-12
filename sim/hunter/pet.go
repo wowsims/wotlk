@@ -66,7 +66,8 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 		AutoSwingMelee: true,
 	})
 
-	hp.AutoAttacks.MHEffect.DamageMultiplier *= petConfig.DamageMultiplier
+	// Pet family bonus is now the same for all pets.
+	hp.AutoAttacks.MHEffect.DamageMultiplier *= 1.05
 
 	hp.AddStatDependency(stats.StatDependency{
 		SourceStat:   stats.Strength,
@@ -218,8 +219,6 @@ func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
 type PetConfig struct {
 	Name string
 
-	DamageMultiplier float64
-
 	PrimaryAbility   PetAbilityType
 	SecondaryAbility PetAbilityType
 
@@ -232,49 +231,41 @@ type PetConfig struct {
 var PetConfigs = map[proto.Hunter_Options_PetType]PetConfig{
 	proto.Hunter_Options_Bat: PetConfig{
 		Name:             "Bat",
-		DamageMultiplier: 1.07,
 		PrimaryAbility:   Bite,
 		SecondaryAbility: Screech,
 	},
 	proto.Hunter_Options_Bear: PetConfig{
 		Name:             "Bear",
-		DamageMultiplier: 0.91,
 		PrimaryAbility:   Bite,
 		SecondaryAbility: Claw,
 	},
 	proto.Hunter_Options_Cat: PetConfig{
 		Name:             "Cat",
-		DamageMultiplier: 1.1,
 		PrimaryAbility:   Bite,
 		SecondaryAbility: Claw,
 	},
 	proto.Hunter_Options_Crab: PetConfig{
-		Name:             "Crab",
-		DamageMultiplier: 0.95,
-		PrimaryAbility:   Claw,
+		Name:           "Crab",
+		PrimaryAbility: Claw,
 	},
 	proto.Hunter_Options_Owl: PetConfig{
 		Name:             "Owl",
-		DamageMultiplier: 1.07,
 		PrimaryAbility:   Claw,
 		SecondaryAbility: Screech,
 		RandomSelection:  true,
 	},
 	proto.Hunter_Options_Raptor: PetConfig{
 		Name:             "Raptor",
-		DamageMultiplier: 1.1,
 		PrimaryAbility:   Bite,
 		SecondaryAbility: Claw,
 	},
 	proto.Hunter_Options_Ravager: PetConfig{
 		Name:             "Ravager",
-		DamageMultiplier: 1.1,
 		PrimaryAbility:   Bite,
 		SecondaryAbility: Gore,
 	},
 	proto.Hunter_Options_WindSerpent: PetConfig{
 		Name:             "Wind Serpent",
-		DamageMultiplier: 1.07,
 		PrimaryAbility:   Bite,
 		SecondaryAbility: LightningBreath,
 	},
