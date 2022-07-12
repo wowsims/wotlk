@@ -12,35 +12,55 @@ import { Target } from '/wotlk/core/target.js';
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
 
-export const FelArmor = {
-	id: ActionId.fromSpellId(28189),
-	states: 2,
+// export const FelArmor = {
+// 	id: ActionId.fromSpellId(47893),
+// 	states: 2,
+// 	extraCssClasses: [
+// 		'fel-armor-picker',
+// 	],
+// 	changedEvent: (player: Player<Spec.SpecWarlock>) => player.specOptionsChangeEmitter,
+// 	getValue: (player: Player<Spec.SpecWarlock>) => player.getSpecOptions().armor == Armor.FelArmor,
+// 	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: boolean) => {
+// 		const newOptions = player.getSpecOptions();
+// 		newOptions.armor = newValue ? Armor.FelArmor : Armor.NoArmor;
+// 		player.setSpecOptions(eventID, newOptions);
+// 	},
+// };
+
+// export const DemonArmor = {
+// 	id: ActionId.fromSpellId(47889),
+// 	states: 2,
+// 	extraCssClasses: [
+// 		'demon-armor-picker',
+// 	],
+// 	changedEvent: (player: Player<Spec.SpecWarlock>) => player.specOptionsChangeEmitter,
+// 	getValue: (player: Player<Spec.SpecWarlock>) => player.getSpecOptions().armor == Armor.DemonArmor,
+// 	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: boolean) => {
+// 		const newOptions = player.getSpecOptions();
+// 		newOptions.armor = newValue ? Armor.DemonArmor : Armor.NoArmor;
+// 		player.setSpecOptions(eventID, newOptions);
+// 	},
+// };
+export const WarlockArmor = {
 	extraCssClasses: [
-		'fel-armor-picker',
+		'warlock-armor-picker',
 	],
+	numColumns: 2,
+	values: [
+		{ actionId: ActionId.fromSpellId(47893), value: Armor.FelArmor },
+		{ actionId: ActionId.fromSpellId(47889), value: Armor.DemonArmor },
+	],
+	equals: (a: Armor, b: Armor) => a == b,
+	zeroValue: Armor.NoArmor,
 	changedEvent: (player: Player<Spec.SpecWarlock>) => player.specOptionsChangeEmitter,
-	getValue: (player: Player<Spec.SpecWarlock>) => player.getSpecOptions().armor == Armor.FelArmor,
-	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: boolean) => {
+	getValue: (player: Player<Spec.SpecWarlock>) => player.getSpecOptions().armor,
+	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: number) => {
 		const newOptions = player.getSpecOptions();
-		newOptions.armor = newValue ? Armor.FelArmor : Armor.NoArmor;
+		newOptions.armor = newValue;
 		player.setSpecOptions(eventID, newOptions);
 	},
 };
 
-export const DemonArmor = {
-	id: ActionId.fromSpellId(27260),
-	states: 2,
-	extraCssClasses: [
-		'demon-armor-picker',
-	],
-	changedEvent: (player: Player<Spec.SpecWarlock>) => player.specOptionsChangeEmitter,
-	getValue: (player: Player<Spec.SpecWarlock>) => player.getSpecOptions().armor == Armor.DemonArmor,
-	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: boolean) => {
-		const newOptions = player.getSpecOptions();
-		newOptions.armor = newValue ? Armor.DemonArmor : Armor.NoArmor;
-		player.setSpecOptions(eventID, newOptions);
-	},
-};
 
 /*export const Sacrifice = {
 	id: ActionId.fromSpellId(18788),
@@ -61,13 +81,13 @@ export const DemonSummon = {
 	extraCssClasses: [
 		'warlock-summon-picker',
 	],
-	numColumns: 2,
+	numColumns: 3,
 	values: [
-		{ color: '82e89d', value: Summon.NoSummon },
+		{ color: '808080', value: Summon.NoSummon },
 		{ actionId: ActionId.fromSpellId(688), value: Summon.Imp },
 		// { actionId: ActionId.fromSpellId(697), value: Summon.Voidwalker },
 		{ actionId: ActionId.fromSpellId(712), value: Summon.Succubus },
-		// { actionId: ActionId.fromSpellId(691), value: Summon.Felhound },
+		{ actionId: ActionId.fromSpellId(691), value: Summon.Felhunter },
 		{ actionId: ActionId.fromSpellId(30146), value: Summon.Felguard },
 	],
 	equals: (a: Summon, b: Summon) => a == b,
@@ -153,11 +173,30 @@ export const WarlockRotationConfig = {
 			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
 			config: {
 				extraCssClasses: [
+					'unstableaffliction-picker',
+				],
+				label: 'Use Unstable Affliction',
+				labelTooltip: 'Use Unstable Affliction as the next cast after the dot expires.',
+				changedEvent: (player: Player<Spec.SpecWarlock>) => player.talentsChangeEmitter,
+				getValue: (player: Player<Spec.SpecWarlock>) => player.getRotation().unstableAffliction,
+				setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: boolean) => {
+					const newRotation = player.getRotation();
+					newRotation.unstableAffliction = newValue;
+					player.setRotation(eventID, newRotation);
+				},
+				enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalents().unstableAffliction,
+			},
+		},
+		{
+			type: 'boolean' as const,
+			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
+			config: {
+				extraCssClasses: [
 					'haunt-picker',
 				],
 				label: 'Use Haunt',
 				labelTooltip: 'Use Haunt as the next cast after the buff expires.',
-				changedEvent: (player: Player<Spec.SpecWarlock>) => player.rotationChangeEmitter,
+				changedEvent: (player: Player<Spec.SpecWarlock>) => player.talentsChangeEmitter,
 				getValue: (player: Player<Spec.SpecWarlock>) => player.getRotation().haunt,
 				setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: boolean) => {
 					const newRotation = player.getRotation();
@@ -176,7 +215,7 @@ export const WarlockRotationConfig = {
 				],
 				label: 'Use Chaos Bolt',
 				labelTooltip: 'Use Chaos Bolt as the next cast when CD is up.',
-				changedEvent: (player: Player<Spec.SpecWarlock>) => player.rotationChangeEmitter,
+				changedEvent: (player: Player<Spec.SpecWarlock>) => player.talentsChangeEmitter,
 				getValue: (player: Player<Spec.SpecWarlock>) => player.getRotation().chaosBolt,
 				setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: boolean) => {
 					const newRotation = player.getRotation();

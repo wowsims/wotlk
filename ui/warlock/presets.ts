@@ -13,7 +13,7 @@ import { Warlock, Warlock_Rotation as WarlockRotation, WarlockTalents as Warlock
 import * as Enchants from '/wotlk/core/constants/enchants.js';
 import * as Gems from '/wotlk/core/proto_utils/gems.js';
 import * as Tooltips from '/wotlk/core/constants/tooltips.js';
-import { FelArmor } from './inputs';
+import { WarlockArmor } from './inputs';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -38,27 +38,26 @@ export const DemonologyTalents = {
 };
 
 
-export const DefaultRotation = WarlockRotation.create({
-	primarySpell: Warlock_Rotation_PrimarySpell.Shadowbolt,
+export const DestructionRotation = WarlockRotation.create({
+	primarySpell: Warlock_Rotation_PrimarySpell.Incinerate,
 	immolate: true,
+	chaosBolt: true,
 	curse: Warlock_Rotation_Curse.Doom,
 	detonateSeed: true,
 });
 
 export const AfflictionRotation = WarlockRotation.create({
 	primarySpell: Warlock_Rotation_PrimarySpell.Shadowbolt,
-	immolate: true,
 	corruption: true,
 	haunt: true,
-	curse: Warlock_Rotation_Curse.Elements,
+	curse: Warlock_Rotation_Curse.Doom,
 	detonateSeed: true,
 });
 
 export const DemonologyRotation = WarlockRotation.create({
 	primarySpell: Warlock_Rotation_PrimarySpell.Shadowbolt,
-	immolate: true,
 	corruption: true,
-	curse: Warlock_Rotation_Curse.Elements,
+	curse: Warlock_Rotation_Curse.Doom,
 	detonateSeed: true,
 });
 
@@ -69,7 +68,7 @@ export const DefaultOptions = WarlockOptions.create({
 
 export const AfflictionOptions = WarlockOptions.create({
 	armor: Armor.FelArmor,
-	summon: Summon.Imp,
+	summon: Summon.Felhunter,
 });
 
 export const DemonologyOptions = WarlockOptions.create({

@@ -107,6 +107,15 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 				return ap * 1.05 // hidden 5% boost
 			},
 		})
+	case proto.Warlock_Options_Felhunter:
+		wp.PseudoStats.DamageDealtMultiplier *= 1.0
+		wp.AddStatDependency(stats.StatDependency{
+			SourceStat:   stats.AttackPower,
+			ModifiedStat: stats.AttackPower,
+			Modifier: func(ap float64, _ float64) float64 {
+				return ap * 1.05 // hidden 5% boost
+			},
+		})
 	}
 
 	if warlock.Talents.FelVitality > 0 {
@@ -243,6 +252,22 @@ var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
 			stats.Mana:        893,
 			stats.Spirit:      122,
 			stats.MP5:         48,
+		},
+	},
+	proto.Warlock_Options_Felhunter: {
+		Name:           "Felhunter",
+		ManaIntRatio:   11.5,
+		Melee:          true,
+		PrimaryAbility: ShadowBite,
+		Stats: stats.Stats{
+			stats.AttackPower: 286,
+			stats.Stamina:     280,
+			stats.Strength:    153,
+			stats.Agility:     108,
+			stats.Intellect:   133,
+			stats.Mana:        1109,
+			stats.Spirit:      122,
+			stats.MP5:         15,
 		},
 	},
 }
