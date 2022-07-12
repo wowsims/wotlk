@@ -73,7 +73,7 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 			ProcMask:            core.ProcMaskSpellDamage,
 			BonusSpellHitRating: float64(mage.Talents.ArcaneFocus) * 2 * core.SpellHitRatingPerHitChance,
 
-			DamageMultiplier: mage.spellDamageMultiplier * core.TernaryFloat64(ItemSetTempestRegalia.CharacterHasSetBonus(&mage.Character, 4), 1.05, 1),
+			DamageMultiplier: mage.spellDamageMultiplier * core.TernaryFloat64(mage.HasSetBonus(ItemSetTempestRegalia, 4), 1.05, 1),
 			ThreatMultiplier: 1 - 0.2*float64(mage.Talents.ArcaneSubtlety),
 
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(265, 1/3.5+0.03*float64(mage.Talents.EmpoweredArcaneMissiles)),

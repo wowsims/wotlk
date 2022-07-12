@@ -458,7 +458,8 @@ func ApplyEffectFuncMultipleDamageCapped(baseEffects []SpellEffect, aoeCap float
 	}
 }
 
-func ApplyEffectFuncMultipleDamageCappedWotLK(baseEffects []SpellEffect, numTargets int) ApplySpellEffects {
+func ApplyEffectFuncMultipleDamageCappedWotLK(baseEffects []SpellEffect) ApplySpellEffects {
+	numTargets := len(baseEffects)
 	for _, effect := range baseEffects {
 		effect.Validate()
 	}

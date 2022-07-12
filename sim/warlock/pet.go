@@ -88,7 +88,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 				return spellCrit + (0.0125*intellect/100)*core.CritRatingPerCritChance
 			},
 		})
-	case proto.Warlock_Options_Felgaurd:
+	case proto.Warlock_Options_Felguard:
 		wp.PseudoStats.DamageDealtMultiplier *= 1.0 + (0.01 * float64(warlock.Talents.MasterDemonologist))
 		// Simulates a pre-stacked demonic frenzy
 		wp.AddStatDependency(stats.StatDependency{
@@ -100,6 +100,15 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		})
 	case proto.Warlock_Options_Succubus:
 		wp.PseudoStats.DamageDealtMultiplier *= 1.0 + (0.02 * float64(warlock.Talents.MasterDemonologist))
+		wp.AddStatDependency(stats.StatDependency{
+			SourceStat:   stats.AttackPower,
+			ModifiedStat: stats.AttackPower,
+			Modifier: func(ap float64, _ float64) float64 {
+				return ap * 1.05 // hidden 5% boost
+			},
+		})
+	case proto.Warlock_Options_Felhunter:
+		wp.PseudoStats.DamageDealtMultiplier *= 1.0
 		wp.AddStatDependency(stats.StatDependency{
 			SourceStat:   stats.AttackPower,
 			ModifiedStat: stats.AttackPower,
@@ -120,7 +129,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		})
 	}
 
-	if ItemSetOblivionRaiment.CharacterHasSetBonus(&warlock.Character, 2) {
+	if warlock.HasSetBonus(ItemSetOblivionRaiment, 2) {
 		wp.AddStat(stats.MP5, 45)
 	}
 
@@ -197,7 +206,7 @@ type PetConfig struct {
 }
 
 var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
-	proto.Warlock_Options_Felgaurd: {
+	proto.Warlock_Options_Felguard: {
 		Name:             "Felguard",
 		Melee:            true,
 		PrimaryAbility:   Cleave,
@@ -243,6 +252,22 @@ var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
 			stats.Mana:        893,
 			stats.Spirit:      122,
 			stats.MP5:         48,
+		},
+	},
+	proto.Warlock_Options_Felhunter: {
+		Name:           "Felhunter",
+		ManaIntRatio:   11.5,
+		Melee:          true,
+		PrimaryAbility: ShadowBite,
+		Stats: stats.Stats{
+			stats.AttackPower: 286,
+			stats.Stamina:     280,
+			stats.Strength:    153,
+			stats.Agility:     108,
+			stats.Intellect:   133,
+			stats.Mana:        1109,
+			stats.Spirit:      122,
+			stats.MP5:         15,
 		},
 	},
 }

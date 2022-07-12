@@ -9,7 +9,7 @@ import (
 
 func (warrior *Warrior) registerMortalStrikeSpell(cdTimer *core.Timer) {
 	cost := 30.0
-	if ItemSetDestroyerBattlegear.CharacterHasSetBonus(&warrior.Character, 4) {
+	if warrior.HasSetBonus(ItemSetDestroyerBattlegear, 4) {
 		cost -= 5
 	}
 	refundAmount := cost * 0.8
@@ -39,7 +39,7 @@ func (warrior *Warrior) registerMortalStrikeSpell(cdTimer *core.Timer) {
 
 			DamageMultiplier: 1 *
 				(1 + 0.01*float64(warrior.Talents.ImprovedMortalStrike)) *
-				core.TernaryFloat64(ItemSetOnslaughtBattlegear.CharacterHasSetBonus(&warrior.Character, 4), 1.05, 1),
+				core.TernaryFloat64(warrior.HasSetBonus(ItemSetOnslaughtBattlegear, 4), 1.05, 1),
 			ThreatMultiplier: 1,
 
 			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 210, 1, true),

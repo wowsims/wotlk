@@ -10,7 +10,7 @@ import (
 func (warrior *Warrior) registerDemoralizingShoutSpell() {
 	cost := 10.0
 	cost -= float64(warrior.Talents.FocusedRage)
-	if ItemSetBoldArmor.CharacterHasSetBonus(&warrior.Character, 2) {
+	if warrior.HasSetBonus(ItemSetBoldArmor, 2) {
 		cost -= 2
 	}
 

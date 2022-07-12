@@ -31,7 +31,7 @@ func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spel
 
 	effect := shaman.newElectricSpellEffect(719, 819, 0.7143, isLightningOverload)
 
-	if ItemSetSkyshatterRegalia.CharacterHasSetBonus(&shaman.Character, 4) {
+	if shaman.HasSetBonus(ItemSetSkyshatterRegalia, 4) {
 		effect.DamageMultiplier *= 1.05
 	}
 

@@ -24,10 +24,10 @@ func (priest *Priest) registerMindBlastSpell() {
 	miseryCalc := core.BaseDamageFuncMagic(997, 1053, (1+float64(priest.Talents.Misery)*0.05)*0.429)
 
 	normMod := (1 + float64(priest.Talents.Darkness)*0.02) * // initialize modifier
-		core.TernaryFloat64(ItemSetAbsolution.CharacterHasSetBonus(&priest.Character, 4), 1.1, 1)
+		core.TernaryFloat64(priest.HasSetBonus(ItemSetAbsolution, 4), 1.1, 1)
 
 	swpMod := (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwistedFaith)*0.02) * // update modifier if SWP active
-		core.TernaryFloat64(ItemSetAbsolution.CharacterHasSetBonus(&priest.Character, 4), 1.1, 1)
+		core.TernaryFloat64(priest.HasSetBonus(ItemSetAbsolution, 4), 1.1, 1)
 
 	effect.BaseDamage = core.BaseDamageConfig{
 		Calculator: func(sim *core.Simulation, effect *core.SpellEffect, spell *core.Spell) float64 {

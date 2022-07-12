@@ -9,11 +9,10 @@ import (
 )
 
 func (warlock *Warlock) registerUnstableAffSpell() {
-	actionID := core.ActionID{SpellID: 30405}
 	baseCost := 0.15 * warlock.BaseMana
 
 	warlock.UnstableAff = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
+		ActionID:     core.ActionID{SpellID: 30405},
 		SpellSchool:  core.SpellSchoolShadow,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -30,7 +29,9 @@ func (warlock *Warlock) registerUnstableAffSpell() {
 			OnSpellHitDealt: applyDotOnLanded(&warlock.UnstableAffDot),
 		}),
 	})
+}
 
+func (warlock *Warlock) registerUnstableAffDot() {
 	target := warlock.CurrentTarget
 	ticksNumber := 6
 	spellCoefficient := 1.2 / float64(ticksNumber) + 0.01 * float64(warlock.Talents.EverlastingAffliction)
@@ -43,7 +44,7 @@ func (warlock *Warlock) registerUnstableAffSpell() {
 		Spell: warlock.UnstableAff,
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "unstableaff-" + strconv.Itoa(int(warlock.Index)),
-			ActionID: actionID,
+			ActionID: core.ActionID{SpellID: 30405},
 		}),
 		NumberOfTicks: ticksNumber,
 		TickLength:    time.Second * 3,

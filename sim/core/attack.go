@@ -597,11 +597,6 @@ type PPMManager struct {
 	mhProcChance     float64
 	ohProcChance     float64
 	rangedProcChance float64
-
-	// For feral druids, certain PPM effects use their equipped weapon speed
-	// instead of their paw attack speed.
-	mhSpecialProcChance float64
-	ohSpecialProcChance float64
 }
 
 // Returns whether the effect procced.
@@ -616,49 +611,17 @@ func (ppmm *PPMManager) Proc(sim *Simulation, procMask ProcMask, label string) b
 	return false
 }
 
-// Returns whether the effect procced.
-// This is different from Proc() in that yellow melee hits use a proc chance based on the equipped
-// weapon speed rather than the base attack speed. This distinction matters for feral druids.
-func (ppmm *PPMManager) ProcWithWeaponSpecials(sim *Simulation, procMask ProcMask, label string) bool {
-	if procMask.Matches(ProcMaskMeleeMHAuto) {
-		return ppmm.mhProcChance > 0 && sim.RandomFloat(label) < ppmm.mhProcChance
-	} else if procMask.Matches(ProcMaskMeleeMHSpecial) {
-		return ppmm.mhSpecialProcChance > 0 && sim.RandomFloat(label) < ppmm.mhSpecialProcChance
-	} else if procMask.Matches(ProcMaskMeleeOHAuto) {
-		return ppmm.ohProcChance > 0 && sim.RandomFloat(label) < ppmm.ohProcChance
-	} else if procMask.Matches(ProcMaskMeleeOHSpecial) {
-		return ppmm.ohSpecialProcChance > 0 && sim.RandomFloat(label) < ppmm.ohSpecialProcChance
-	} else if procMask.Matches(ProcMaskRanged) {
-		return ppmm.rangedProcChance > 0 && sim.RandomFloat(label) < ppmm.rangedProcChance
-	}
-	return false
-}
-
 func (aa *AutoAttacks) NewPPMManager(ppm float64, procMask ProcMask) PPMManager {
 	if !aa.IsEnabled() {
 		return PPMManager{}
 	}
 
-	character := aa.agent.GetCharacter()
-
 	ppmm := PPMManager{}
 	if procMask.Matches(ProcMaskMeleeMH) {
 		ppmm.mhProcChance = ppm * aa.MH.SwingSpeed / 60.0
-		ppmm.mhSpecialProcChance = ppmm.mhProcChance
-		if character != nil {
-			if mhWeapon := character.GetMHWeapon(); mhWeapon != nil {
-				ppmm.mhSpecialProcChance = ppm * mhWeapon.SwingSpeed / 60.0
-			}
-		}
 	}
 	if procMask.Matches(ProcMaskMeleeOH) {
 		ppmm.ohProcChance = ppm * aa.OH.SwingSpeed / 60.0
-		ppmm.ohSpecialProcChance = ppmm.ohProcChance
-		if character != nil {
-			if ohWeapon := character.GetOHWeapon(); ohWeapon != nil {
-				ppmm.ohSpecialProcChance = ppm * ohWeapon.SwingSpeed / 60.0
-			}
-		}
 	}
 	if procMask.Matches(ProcMaskRanged) {
 		ppmm.rangedProcChance = ppm * aa.Ranged.SwingSpeed / 60.0

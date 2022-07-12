@@ -37,21 +37,6 @@ func (set ItemSet) ItemIsInSet(itemID int32) bool {
 	return ok
 }
 
-func (set ItemSet) CharacterHasSetBonus(character *Character, numItems int32) bool {
-	if _, ok := set.Bonuses[numItems]; !ok {
-		panic(fmt.Sprintf("Item set %s does not have a bonus with %d pieces.", set.Name, numItems))
-	}
-
-	count := int32(0)
-	for _, item := range character.Equip {
-		if set.ItemIsInSet(item.ID) {
-			count++
-		}
-	}
-
-	return count >= numItems
-}
-
 var sets = []*ItemSet{}
 
 func GetAllItemSets() []*ItemSet {
@@ -89,6 +74,21 @@ func NewItemSet(setStruct ItemSet) *ItemSet {
 		itemSetLookup[itemID] = set
 	}
 	return set
+}
+
+func (character *Character) HasSetBonus(itemSet *ItemSet, numItems int32) bool {
+	if _, ok := itemSet.Bonuses[numItems]; !ok {
+		panic(fmt.Sprintf("Item set %s does not have a bonus with %d pieces.", itemSet.Name, numItems))
+	}
+
+	count := int32(0)
+	for _, item := range character.Equip {
+		if itemSet.ItemIsInSet(item.ID) {
+			count++
+		}
+	}
+
+	return count >= numItems
 }
 
 type ActiveSetBonus struct {

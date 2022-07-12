@@ -147,7 +147,7 @@ func (mage *Mage) registerPresenceOfMindCD() {
 	}
 
 	cooldown := time.Minute * 3
-	if ItemSetAldorRegalia.CharacterHasSetBonus(&mage.Character, 4) {
+	if mage.HasSetBonus(ItemSetAldorRegalia, 4) {
 		cooldown -= time.Second * 24
 	}
 

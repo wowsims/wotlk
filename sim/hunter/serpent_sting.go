@@ -41,7 +41,7 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 	})
 
 	dotOutcome := hunter.OutcomeFuncTick()
-	if ItemSetWindrunnersPursuit.CharacterHasSetBonus(&hunter.Character, 2) {
+	if hunter.HasSetBonus(ItemSetWindrunnersPursuit, 2) {
 		dotOutcome = hunter.OutcomeFuncMeleeSpecialCritOnly(hunter.critMultiplier(false, false, hunter.CurrentTarget))
 	}
 
@@ -58,7 +58,7 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 			ProcMask: core.ProcMaskPeriodicDamage,
 			DamageMultiplier: 1 *
 				(1 + 0.1*float64(hunter.Talents.ImprovedStings)) *
-				core.TernaryFloat64(ItemSetScourgestalkerBattlegear.CharacterHasSetBonus(&hunter.Character, 2), 1.1, 1),
+				core.TernaryFloat64(hunter.HasSetBonus(ItemSetScourgestalkerBattlegear, 2), 1.1, 1),
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
 

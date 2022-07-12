@@ -44,7 +44,7 @@ func (druid *Druid) registerFerociousBiteSpell() {
 			ProcMask: core.ProcMaskMeleeMHSpecial,
 			DamageMultiplier: 1 +
 				0.03*float64(druid.Talents.FeralAggression) +
-				core.TernaryFloat64(ItemSetThunderheartHarness.CharacterHasSetBonus(&druid.Character, 4), 0.15, 0),
+				core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartHarness, 4), 0.15, 0),
 			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{

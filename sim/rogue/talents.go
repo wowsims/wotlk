@@ -96,7 +96,7 @@ func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, 
 		})
 	}
 
-	netherblade4pc := ItemSetNetherblade.CharacterHasSetBonus(&rogue.Character, 4)
+	netherblade4pc := rogue.HasSetBonus(ItemSetNetherblade, 4)
 	netherblade4pcMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 37168})
 
 	return func(sim *core.Simulation, numPoints int32) {

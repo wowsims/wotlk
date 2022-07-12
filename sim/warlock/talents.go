@@ -65,7 +65,7 @@ func (warlock *Warlock) ApplyTalents() {
 	// 			warlock.PseudoStats.ThreatMultiplier *= 0.96 * float64(warlock.Talents.MasterDemonologist)
 	// 		case proto.Warlock_Options_Succubus:
 	// 			warlock.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.02*float64(warlock.Talents.MasterDemonologist)
-	// 		case proto.Warlock_Options_Felgaurd:
+	// 		case proto.Warlock_Options_Felguard:
 	// 			warlock.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
 	// 			// 		Felguard - Increases all damage caused by 1% and all resistances by .1 per level.
 	// 			// 		Voidwalker - Reduces physical damage taken by 2%.
