@@ -885,8 +885,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-TheLightningCapacitor-28785"
  value: {
-  dps: 1139.8566583304562
-  tps: 1141.8550369235522
+  dps: 1132.996783203572
+  tps: 1135.3831555242487
  }
 }
 dps_results: {

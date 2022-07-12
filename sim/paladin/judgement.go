@@ -93,7 +93,6 @@ func (paladin *Paladin) registerJudgementOfTheCrusaderSpell(cdTimer *core.Timer,
 			},
 			OnCastComplete: func(sim *core.Simulation, spell *core.Spell) {
 				paladin.sanctifiedJudgement(sim, sanctifiedJudgementMetrics, paladin.SealOfTheCrusader.DefaultCast.Cost)
-				paladin.SealOfTheCrusaderAura.Deactivate(sim)
 				paladin.CurrentSeal = nil
 			},
 		},
@@ -106,15 +105,13 @@ func (paladin *Paladin) registerJudgementOfTheCrusaderSpell(cdTimer *core.Timer,
 				if !spellEffect.Landed() {
 					return
 				}
-				paladin.JudgementOfTheCrusaderAura.Activate(sim)
-				paladin.CurrentJudgement = paladin.JudgementOfTheCrusaderAura
 			},
 		}),
 	})
 }
 
 func (paladin *Paladin) CanJudgementOfTheCrusader(sim *core.Simulation) bool {
-	return paladin.canJudgement(sim) && paladin.CurrentSeal == paladin.SealOfTheCrusaderAura
+	return false // just disable JoC because its not in wotlk
 }
 
 func (paladin *Paladin) registerJudgementOfWisdomSpell(cdTimer *core.Timer, sanctifiedJudgementMetrics *core.ResourceMetrics) {
