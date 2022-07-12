@@ -6,8 +6,8 @@ import (
 )
 
 func (warlock *Warlock) registerLifeTapSpell() {
-	actionID := core.ActionID{SpellID: 27222}
-	baseRestore := 582.0 * (1.0 + 0.1*float64(warlock.Talents.ImprovedLifeTap))
+	actionID := core.ActionID{SpellID: 57946}
+	baseRestore := 2000.0 * (1.0 + 0.1*float64(warlock.Talents.ImprovedLifeTap))
 	manaMetrics := warlock.NewManaMetrics(actionID)
 
 	petRestore := core.TernaryFloat64(warlock.Talents.ManaFeed, 0, 1)
@@ -32,8 +32,8 @@ func (warlock *Warlock) registerLifeTapSpell() {
 			FlatThreatBonus:  1,
 			OutcomeApplier:   warlock.OutcomeFuncAlwaysHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				// Life tap adds 0.8*sp to mana restore
-				restore := baseRestore + (warlock.GetStat(stats.SpellPower)+warlock.GetStat(stats.ShadowSpellPower))*0.8
+				// Life tap adds 0.5*sp to mana restore
+				restore := baseRestore + (warlock.GetStat(stats.SpellPower)+warlock.GetStat(stats.ShadowSpellPower))*0.5
 				warlock.AddMana(sim, restore, manaMetrics, true)
 
 				if warlock.Talents.ManaFeed {
