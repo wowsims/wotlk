@@ -259,6 +259,32 @@ func init() {
 		w.BaseDamageMax += 15
 	})
 
+	//core.NewItemEffect(53343, func(agent core.Agent) {
+	//	character := agent.GetCharacter()
+	//	actionID := core.ActionID{SpellID: 6603}
+
+	//	spell := character.GetOrRegisterSpell(core.SpellConfig{
+	//		ActionID:    actionID,
+	//		SpellSchool: core.SpellSchoolPhysical,
+	//		Flags:       core.SpellFlagMeleeMetrics,
+
+	//		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+	//			ProcMask:         core.ProcMaskEmpty,
+	//			DamageMultiplier: 1,
+	//			ThreatMultiplier: 1,
+
+	//			BaseDamage:     core.BaseDamageConfigRoll(1654, 2020),
+	//			OutcomeApplier: character.OutcomeFuncMagicCrit(character.DefaultSpellCritMultiplier()),
+	//		}),
+	//	})
+	//
+	//	character.AddMajorCooldown(core.MajorCooldown{
+	//		Spell:    spell,
+	//		Priority: core.CooldownPriorityLow, // Use low prio so other actives get used first.
+	//		Type:     core.CooldownTypeDPS,
+	//	})
+	//})
+
 	core.NewItemEffect(54998, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		actionID := core.ActionID{SpellID: 54757}

@@ -69,6 +69,7 @@ type Unit struct {
 	manaBar
 	rageBar
 	energyBar
+	runicPowerBar
 
 	// All spells that can be cast by this unit.
 	Spellbook []*Spell

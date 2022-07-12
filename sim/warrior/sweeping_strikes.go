@@ -52,7 +52,7 @@ func (warrior *Warrior) registerSweepingStrikesCD() {
 			// TODO: If the triggering spell is Execute and 2nd target health > 20%, do a normalized MH hit instead.
 
 			// Undo armor reduction to get the raw damage value.
-			curDmg = spellEffect.Damage / warrior.AttackTables[spellEffect.Target.Index].ArmorDamageReduction
+			curDmg = spellEffect.Damage / warrior.AttackTables[spellEffect.Target.Index].ArmorDamageModifier
 
 			ssHit.Cast(sim, warrior.Env.NextTargetUnit(spellEffect.Target))
 			ssHit.SpellMetrics[spellEffect.Target.TableIndex].Casts--

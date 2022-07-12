@@ -194,7 +194,7 @@ func (item WotlkItemResponse) GetPhase() int {
 }
 
 func (item WotlkItemResponse) GetUnique() bool {
-	return uniqueRegex.MatchString(item.Tooltip)
+	return uniqueRegex.MatchString(item.Tooltip) && !jcGemsRegex.MatchString(item.Tooltip)
 }
 
 func (item WotlkItemResponse) GetItemType() proto.ItemType {
@@ -261,6 +261,7 @@ var wotlkRangedWeaponTypePatterns = map[proto.RangedWeaponType]*regexp.Regexp{
 	proto.RangedWeaponType_RangedWeaponTypeThrown:   regexp.MustCompile("<th>Thrown</th>"),
 	proto.RangedWeaponType_RangedWeaponTypeTotem:    regexp.MustCompile("<th><!--asc9-->Totem</th>"),
 	proto.RangedWeaponType_RangedWeaponTypeWand:     regexp.MustCompile("<th>Wand</th>"),
+	proto.RangedWeaponType_RangedWeaponTypeSigil:    regexp.MustCompile("<th>Sigil</th>"),
 }
 
 func (item WotlkItemResponse) GetRangedWeaponType() proto.RangedWeaponType {
@@ -476,4 +477,12 @@ func getWotlkItemResponse(itemID int, tooltipsDB map[int]string) WotlkItemRespon
 
 func (item WotlkItemResponse) IsHeroic() bool {
 	return strings.Contains(item.Tooltip, "<span class=\"q2\">Heroic</span>")
+}
+
+func (item WotlkItemResponse) GetRequiredProfession() proto.Profession {
+	if jcGemsRegex.MatchString(item.Tooltip) {
+		return proto.Profession_Jewelcrafting
+	}
+
+	return proto.Profession_ProfessionUnknown
 }
