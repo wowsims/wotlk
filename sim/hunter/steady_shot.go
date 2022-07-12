@@ -47,12 +47,12 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 
 			BonusCritRating: 0 +
 				2*core.CritRatingPerCritChance*float64(hunter.Talents.SurvivalInstincts) +
-				core.TernaryFloat64(ItemSetRiftStalker.CharacterHasSetBonus(&hunter.Character, 4), 5*core.CritRatingPerCritChance, 0),
+				core.TernaryFloat64(hunter.HasSetBonus(ItemSetRiftStalker, 4), 5*core.CritRatingPerCritChance, 0),
 			DamageMultiplier: 1 *
 				(1 + 0.03*float64(hunter.Talents.FerociousInspiration)) *
 				(1 + 0.01*float64(hunter.Talents.MarkedForDeath)) *
 				hunter.sniperTrainingMultiplier() *
-				core.TernaryFloat64(ItemSetGronnstalker.CharacterHasSetBonus(&hunter.Character, 4), 1.1, 1),
+				core.TernaryFloat64(hunter.HasSetBonus(ItemSetGronnstalker, 4), 1.1, 1),
 			ThreatMultiplier: 1,
 
 			BaseDamage: core.WrapBaseDamageConfig(

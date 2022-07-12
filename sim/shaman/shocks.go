@@ -34,7 +34,7 @@ func (shaman *Shaman) newShockSpellConfig(spellID int32, spellSchool core.SpellS
 					Cost: baseCost -
 						baseCost*float64(shaman.Talents.Convection)*0.02 -
 						baseCost*float64(shaman.Talents.MentalQuickness)*0.02 -
-						core.TernaryFloat64(ItemSetSkyshatterHarness.CharacterHasSetBonus(&shaman.Character, 2), baseCost*0.1, 0),
+						core.TernaryFloat64(shaman.HasSetBonus(ItemSetSkyshatterHarness, 2), baseCost*0.1, 0),
 					GCD: core.GCDDefault,
 				},
 				ModifyCast: func(_ *core.Simulation, spell *core.Spell, cast *core.Cast) {

@@ -289,7 +289,7 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 		BiteOverRip:    UseBite && rotation.FinishingMove != proto.FeralDruid_Rotation_Rip,
 		UseMangleTrick: rotation.MangleTrick,
 		UseRipTrick:    rotation.Ripweave,
-		UseRakeTrick:   rotation.RakeTrick && !druid.ItemSetThunderheartHarness.CharacterHasSetBonus(&cat.Character, 2),
+		UseRakeTrick:   rotation.RakeTrick && !cat.HasSetBonus(druid.ItemSetThunderheartHarness, 2),
 		Wolfshead:      cat.Equip[items.ItemSlotHead].ID == 8345,
 
 		MaintainFaerieFire: rotation.MaintainFaerieFire,

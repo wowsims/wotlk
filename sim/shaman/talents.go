@@ -306,7 +306,7 @@ func (shaman *Shaman) applyFlurry() {
 
 	// I believe there is a set in wotlk that improves flurry.
 
-	// if ItemSetCataclysmHarness.CharacterHasSetBonus(&shaman.Character, 4) {
+	// if shaman.HasSetBonus(ItemSetCataclysmHarness, 4) {
 	// 	bonus += 0.05
 	// }
 

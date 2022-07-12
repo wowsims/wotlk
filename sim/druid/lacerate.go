@@ -16,7 +16,7 @@ func (druid *Druid) registerLacerateSpell() {
 	refundAmount := cost * 0.8
 
 	tickDamage := 155.0 / 5
-	if ItemSetNordrassilHarness.CharacterHasSetBonus(&druid.Character, 4) {
+	if druid.HasSetBonus(ItemSetNordrassilHarness, 4) {
 		tickDamage += 15
 	}
 	if druid.Equip[items.ItemSlotRanged].ID == 27744 { // Idol of Ursoc

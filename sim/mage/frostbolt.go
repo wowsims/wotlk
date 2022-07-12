@@ -38,7 +38,7 @@ func (mage *Mage) registerFrostboltSpell() {
 			DamageMultiplier: mage.spellDamageMultiplier *
 				(1 + 0.02*float64(mage.Talents.PiercingIce)) *
 				(1 + 0.01*float64(mage.Talents.ArcticWinds)) *
-				core.TernaryFloat64(ItemSetTempestRegalia.CharacterHasSetBonus(&mage.Character, 4), 1.05, 1),
+				core.TernaryFloat64(mage.HasSetBonus(ItemSetTempestRegalia, 4), 1.05, 1),
 
 			ThreatMultiplier: 1 - (0.1/3)*float64(mage.Talents.FrostChanneling),
 

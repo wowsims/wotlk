@@ -85,7 +85,7 @@ func (hunter *Hunter) registerAspectOfTheViperSpell() {
 	manaPerOHHit := baseManaRegen * hunter.AutoAttacks.OH.SwingSpeed
 	var tickPA *core.PendingAction
 
-	hasCryptstalker4pc := ItemSetCryptstalkerBattlegear.CharacterHasSetBonus(&hunter.Character, 4)
+	hasCryptstalker4pc := hunter.HasSetBonus(ItemSetCryptstalkerBattlegear, 4)
 
 	auraConfig := core.Aura{
 		Label:    "Aspect of the Viper",

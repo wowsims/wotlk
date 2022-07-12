@@ -54,7 +54,7 @@ func (priest *Priest) registerShadowWordPainSpell() {
 		}),
 
 		NumberOfTicks: 6 +
-			core.TernaryInt(ItemSetAbsolution.CharacterHasSetBonus(&priest.Character, 2), 1, 0),
+			core.TernaryInt(priest.HasSetBonus(ItemSetAbsolution, 2), 1, 0),
 		TickLength: time.Second * 3,
 
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{

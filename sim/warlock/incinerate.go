@@ -9,7 +9,7 @@ import (
 
 func (warlock *Warlock) registerIncinerateSpell() {
 	baseCost := 0.14 * warlock.BaseMana
-	has4pMal := ItemSetMaleficRaiment.CharacterHasSetBonus(&warlock.Character, 4)
+	has4pMal := warlock.HasSetBonus(ItemSetMaleficRaiment, 4)
 
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,

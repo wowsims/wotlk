@@ -20,7 +20,7 @@ func (druid *Druid) registerInnervateCD() {
 
 	baseCost := druid.BaseMana * 0.04
 	innervateCD := core.InnervateCD
-	if ItemSetMalorneRegalia.CharacterHasSetBonus(druid.GetCharacter(), 4) {
+	if druid.HasSetBonus(ItemSetMalorneRegalia, 4) {
 		innervateCD -= time.Second * 48
 	}
 
