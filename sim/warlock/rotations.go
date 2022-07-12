@@ -104,9 +104,9 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			// stop regen, start blasting
 			warlock.DoingRegen = false
 		} else {
-			warlock.LifeTap.Cast(sim, target)
-			if warlock.CurrentManaPercent() > 0.6 {
-				warlock.DoingRegen = false
+		warlock.LifeTap.Cast(sim, target)
+		if warlock.CurrentManaPercent() > 0.6 {
+			warlock.DoingRegen = false
 			}
 			return
 		}

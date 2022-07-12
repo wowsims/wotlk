@@ -24,9 +24,8 @@ type Warlock struct {
 	HauntAura	   *core.Aura
 	LifeTap 	   *core.Spell
 	ChaosBolt 	   *core.Spell
-
-	// DemonicEmpowerment		   *core.Aura
-	
+	Soulfire 	   *core.Spell
+	Conflagrate    *core.Spell
 
 	CurseOfElements     *core.Spell
 	CurseOfElementsAura *core.Aura
@@ -42,9 +41,13 @@ type Warlock struct {
 	Seeds    []*core.Spell
 	SeedDots []*core.Dot
 
-	NightfallProcAura *core.Aura
-	ShadowEmbraceAura *core.Aura
-	EradicationAura	  *core.Aura
+	NightfallProcAura 		*core.Aura
+	ShadowEmbraceAura 		*core.Aura
+	EradicationAura	  		*core.Aura
+	DemonicEmpowerment		*core.Spell
+	DemonicEmpowermentAura	*core.Aura
+	Metamorphosis			*core.Spell
+	MetamorphosisAura		*core.Aura
 
 	Pet *WarlockPet
 
@@ -80,6 +83,12 @@ func (warlock *Warlock) Initialize() {
 	}
 	if warlock.Talents.ChaosBolt {
 		warlock.registerChaosBoltSpell()
+	}
+	// if warlock.Talents.DemonicEmpowerment {
+	// 	warlock.registerDemonicEmpowermentSpell()
+	// }
+	if warlock.Talents.Metamorphosis {
+		warlock.registerMetamorphosisSpell()
 	}
 }
 

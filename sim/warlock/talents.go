@@ -88,8 +88,9 @@ func (warlock *Warlock) ApplyTalents() {
 	}
 
 	if warlock.Talents.DemonicPact > 0 {
-		spBonus := 0.02 * float64(warlock.Talents.DemonicPact) * float64(stats.SpellPower)
-		warlock.AddStat(stats.SpellPower, spBonus)
+		spellDmgBonus := 0.02 * float64(warlock.Talents.DemonicPact)
+		warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1 + spellDmgBonus
+		warlock.PseudoStats.FireDamageDealtMultiplier *= 1 + spellDmgBonus
 	}
 
  	if warlock.Talents.MoltenSkin > 0 {
