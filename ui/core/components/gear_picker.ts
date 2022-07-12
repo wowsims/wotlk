@@ -173,13 +173,15 @@ class ItemPicker extends Component {
 				this.socketsContainerElem.appendChild(gemIconElem);
 
 				if (gemIdx == newItem.numPossibleSockets - 1 && [ItemType.ItemTypeWrist, ItemType.ItemTypeHands].includes(newItem.item.type)) {
-					this.player.professionChangeEmitter.on(() => {
+					const updateProfession = () => {
 						if (this.player.hasProfession(Profession.Blacksmithing)) {
 							gemIconElem.style.removeProperty('display');
 						} else {
 							gemIconElem.style.display = 'none';
 						}
-					});
+					};
+					this.player.professionChangeEmitter.on(updateProfession);
+					updateProfession();
 				}
 			});
 		}

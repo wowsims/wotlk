@@ -19,6 +19,10 @@ const (
 	Screech
 )
 
+// These IDs are needed for certain talents.
+const BiteSpellID = 27050
+const ClawSpellID = 27049
+
 type PetAbility struct {
 	Type PetAbilityType
 
@@ -37,7 +41,9 @@ func (ability *PetAbility) TryCast(sim *core.Simulation, target *core.Unit, hp *
 		return false
 	}
 
-	hp.SpendFocus(sim, ability.Cost, ability.ActionID)
+	if !hp.PseudoStats.NoCost {
+		hp.SpendFocus(sim, ability.Cost, ability.ActionID)
+	}
 	ability.Cast(sim, target)
 	return true
 }
@@ -72,7 +78,7 @@ func (hp *HunterPet) newBite(isPrimary bool) PetAbility {
 		Cost: 35,
 
 		Spell: hp.RegisterSpell(core.SpellConfig{
-			ActionID:    core.ActionID{SpellID: 27050},
+			ActionID:    core.ActionID{SpellID: BiteSpellID},
 			SpellSchool: core.SpellSchoolPhysical,
 			Flags:       core.SpellFlagMeleeMetrics,
 
@@ -104,7 +110,7 @@ func (hp *HunterPet) newClaw(isPrimary bool) PetAbility {
 		Cost: 25,
 
 		Spell: hp.RegisterSpell(core.SpellConfig{
-			ActionID:    core.ActionID{SpellID: 27049},
+			ActionID:    core.ActionID{SpellID: ClawSpellID},
 			SpellSchool: core.SpellSchoolPhysical,
 			Flags:       core.SpellFlagMeleeMetrics,
 
