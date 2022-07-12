@@ -74,6 +74,8 @@ const (
 	ProcMaskDirect = ProcMaskMelee | ProcMaskRanged | ProcMaskSpellDamage
 
 	ProcMaskTwoRoll = ProcMaskRanged | ProcMaskMeleeSpecial
+
+	ProcMaskSpecial = ProcMaskMeleeOrRangedSpecial | ProcMaskSpellDamage
 )
 
 func GetMeleeProcMaskForHands(mh bool, oh bool) ProcMask {

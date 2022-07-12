@@ -33,6 +33,7 @@ func (hunter *Hunter) ApplyTalents() {
 				},
 			})
 		}
+		hunter.pet.ApplyTalents()
 	}
 
 	hunter.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*1*float64(hunter.Talents.FocusedAim))

@@ -64,7 +64,7 @@ func (war *DpsWarrior) doRotation(sim *core.Simulation) {
 	}
 
 	// If using a GCD will clip the next slam, only allow high priority spells like BT/MS/WW/debuffs.
-	isExecutePhase := sim.IsExecutePhase()
+	isExecutePhase := sim.IsExecutePhase20()
 	canSlam := war.Rotation.UseSlam && (!isExecutePhase || war.Rotation.UseSlamDuringExecute)
 	highPrioSpellsOnly := canSlam && sim.CurrentTime+core.GCDDefault-war.slamGCDDelay > war.AutoAttacks.MainhandSwingAt+war.slamLatency
 
@@ -158,7 +158,7 @@ func (war *DpsWarrior) executeRotation(sim *core.Simulation, highPrioSpellsOnly 
 }
 
 func (war *DpsWarrior) slamInRotation(sim *core.Simulation) bool {
-	return war.Rotation.UseSlam && (!sim.IsExecutePhase() || war.Rotation.UseSlamDuringExecute)
+	return war.Rotation.UseSlam && (!sim.IsExecutePhase20() || war.Rotation.UseSlamDuringExecute)
 }
 
 func (war *DpsWarrior) tryQueueSlam(sim *core.Simulation) {
@@ -194,7 +194,7 @@ func (war *DpsWarrior) tryQueueSlam(sim *core.Simulation) {
 	gcdReadyAgainAt := slamAt + core.GCDDefault
 	msDelay := core.MaxDuration(0, gcdReadyAgainAt-core.MaxDuration(sim.CurrentTime, war.MortalStrike.ReadyAt()))
 	wwDelay := core.MaxDuration(0, gcdReadyAgainAt-core.MaxDuration(sim.CurrentTime, war.Whirlwind.ReadyAt()))
-	if sim.IsExecutePhase() {
+	if sim.IsExecutePhase20() {
 		if !war.Rotation.UseMsDuringExecute {
 			msDelay = 0
 		}
@@ -269,7 +269,7 @@ func (war *DpsWarrior) tryMaintainDebuffs(sim *core.Simulation) bool {
 }
 
 func (war *DpsWarrior) tryQueueHsCleave(sim *core.Simulation) {
-	if sim.IsExecutePhase() && !war.Rotation.UseHsDuringExecute {
+	if sim.IsExecutePhase20() && !war.Rotation.UseHsDuringExecute {
 		return
 	}
 

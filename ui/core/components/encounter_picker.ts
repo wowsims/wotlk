@@ -400,12 +400,22 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter, s
 
 	if (showExecuteProportion) {
 		new NumberPicker(rootElem, encounter, {
-			label: 'Execute Duration (%)',
+			label: 'Execute Duration 20 (%)',
 			labelTooltip: 'Percentage of the total encounter duration, for which the targets will be considered to be in execute range (< 20% HP) for the purpose of effects like Warrior Execute or Mage Molten Fury.',
 			changedEvent: (encounter: Encounter) => encounter.changeEmitter,
-			getValue: (encounter: Encounter) => encounter.getExecuteProportion() * 100,
+			getValue: (encounter: Encounter) => encounter.getExecuteProportion20() * 100,
 			setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
-				encounter.setExecuteProportion(eventID, newValue / 100);
+				encounter.setExecuteProportion20(eventID, newValue / 100);
+			},
+			enableWhen: (obj) => { return !encounter.getUseHealth() },
+		});
+		new NumberPicker(rootElem, encounter, {
+			label: 'Execute Duration 35 (%)',
+			labelTooltip: 'Percentage of the total encounter duration, for which the targets will be considered to be in execute range (< 35% HP) for the purpose of effects like Warrior Execute or Mage Molten Fury.',
+			changedEvent: (encounter: Encounter) => encounter.changeEmitter,
+			getValue: (encounter: Encounter) => encounter.getExecuteProportion35() * 100,
+			setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
+				encounter.setExecuteProportion35(eventID, newValue / 100);
 			},
 			enableWhen: (obj) => { return !encounter.getUseHealth() },
 		});

@@ -279,8 +279,8 @@ func BenchmarkSimulate(b *testing.B) {
 			},
 		},
 		Encounter: &proto.Encounter{
-			Duration:          180,
-			ExecuteProportion: 0.1,
+			Duration:             180,
+			ExecuteProportion_20: 0.1,
 			Targets: []*proto.Target{
 				{
 					Stats:   stats.Stats{stats.Armor: 7684}.ToFloatArray(),

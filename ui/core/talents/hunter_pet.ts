@@ -573,7 +573,7 @@ const ferocityPetTalentsConfig: TalentsConfig<HunterPetTalents> = newTalentsConf
 					rowIdx: 2,
 					colIdx: 3,
 				},
-				spellIds: [19596],
+				spellIds: [61685],
 				maxPoints: 1,
 			},
 			{
@@ -687,7 +687,7 @@ const tenacityPetTalentsConfig: TalentsConfig<HunterPetTalents> = newTalentsConf
 					rowIdx: 0,
 					colIdx: 1,
 				},
-				spellIds: [19596],
+				spellIds: [61685],
 				maxPoints: 1,
 			},
 			{

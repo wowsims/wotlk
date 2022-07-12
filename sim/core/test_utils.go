@@ -63,8 +63,9 @@ func MakeDefaultEncounterCombos(debuffs *proto.Debuffs) []EncounterCombo {
 		EncounterCombo{
 			Label: "ShortSingleTarget",
 			Encounter: &proto.Encounter{
-				Duration:          ShortDuration,
-				ExecuteProportion: 0.2,
+				Duration:             ShortDuration,
+				ExecuteProportion_20: 0.2,
+				ExecuteProportion_35: 0.35,
 				Targets: []*proto.Target{
 					DefaultTarget,
 				},
@@ -73,8 +74,9 @@ func MakeDefaultEncounterCombos(debuffs *proto.Debuffs) []EncounterCombo {
 		EncounterCombo{
 			Label: "LongSingleTarget",
 			Encounter: &proto.Encounter{
-				Duration:          LongDuration,
-				ExecuteProportion: 0.2,
+				Duration:             LongDuration,
+				ExecuteProportion_20: 0.2,
+				ExecuteProportion_35: 0.35,
 				Targets: []*proto.Target{
 					DefaultTarget,
 				},
@@ -83,9 +85,10 @@ func MakeDefaultEncounterCombos(debuffs *proto.Debuffs) []EncounterCombo {
 		EncounterCombo{
 			Label: "LongMultiTarget",
 			Encounter: &proto.Encounter{
-				Duration:          LongDuration,
-				ExecuteProportion: 0.2,
-				Targets:           multipleTargets,
+				Duration:             LongDuration,
+				ExecuteProportion_20: 0.2,
+				ExecuteProportion_35: 0.35,
+				Targets:              multipleTargets,
 			},
 		},
 	}
@@ -93,9 +96,10 @@ func MakeDefaultEncounterCombos(debuffs *proto.Debuffs) []EncounterCombo {
 
 func MakeSingleTargetEncounter(variation float64) *proto.Encounter {
 	return &proto.Encounter{
-		Duration:          LongDuration,
-		DurationVariation: variation,
-		ExecuteProportion: 0.2,
+		Duration:             LongDuration,
+		DurationVariation:    variation,
+		ExecuteProportion_20: 0.2,
+		ExecuteProportion_35: 0.35,
 		Targets: []*proto.Target{
 			NewDefaultTarget(),
 		},
