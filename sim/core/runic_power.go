@@ -33,7 +33,7 @@ type runicPowerBar struct {
 	bloodRunes  [2]Rune
 	frostRunes  [2]Rune
 	unholyRunes [2]Rune
-	deathRunes  [3]DeathRune
+	deathRunes  [6]DeathRune
 
 	runeGainTrackers [4]int32
 
@@ -94,18 +94,30 @@ func (unit *Unit) EnableRunicPowerBar(maxRunicPower float64,
 			},
 		},
 
-		deathRunes: [3]DeathRune{
+		deathRunes: [6]DeathRune{
 			DeathRune{
 				unit: unit,
-				cd:   Cooldown{unit.NewTimer(), -10.0 * time.Second},
+				cd:   Cooldown{unit.NewTimer(), 20.0 * time.Second},
 			},
 			DeathRune{
 				unit: unit,
-				cd:   Cooldown{unit.NewTimer(), -10.0 * time.Second},
+				cd:   Cooldown{unit.NewTimer(), 20.0 * time.Second},
 			},
 			DeathRune{
 				unit: unit,
-				cd:   Cooldown{unit.NewTimer(), -10.0 * time.Second},
+				cd:   Cooldown{unit.NewTimer(), 20.0 * time.Second},
+			},
+			DeathRune{
+				unit: unit,
+				cd:   Cooldown{unit.NewTimer(), 20.0 * time.Second},
+			},
+			DeathRune{
+				unit: unit,
+				cd:   Cooldown{unit.NewTimer(), 20.0 * time.Second},
+			},
+			DeathRune{
+				unit: unit,
+				cd:   Cooldown{unit.NewTimer(), 20.0 * time.Second},
 			},
 		},
 
@@ -126,6 +138,9 @@ func (unit *Unit) EnableRunicPowerBar(maxRunicPower float64,
 	unit.runicPowerBar.deathRunes[0].cd.Set(1<<63 - 1)
 	unit.runicPowerBar.deathRunes[1].cd.Set(1<<63 - 1)
 	unit.runicPowerBar.deathRunes[2].cd.Set(1<<63 - 1)
+	unit.runicPowerBar.deathRunes[3].cd.Set(1<<63 - 1)
+	unit.runicPowerBar.deathRunes[4].cd.Set(1<<63 - 1)
+	unit.runicPowerBar.deathRunes[5].cd.Set(1<<63 - 1)
 }
 
 func (unit *Unit) HasRunicPower() bool {
@@ -179,6 +194,15 @@ func (rp *runicPowerBar) CurrentUnholyRunes(sim *Simulation) int32 {
 
 func (rp *runicPowerBar) CurrentDeathRunes(sim *Simulation) int32 {
 	total := int32(0)
+	if rp.deathRunes[5].IsReady(sim) {
+		total += 1
+	}
+	if rp.deathRunes[4].IsReady(sim) {
+		total += 1
+	}
+	if rp.deathRunes[3].IsReady(sim) {
+		total += 1
+	}
 	if rp.deathRunes[2].IsReady(sim) {
 		total += 1
 	}
@@ -327,10 +351,10 @@ func (rp *runicPowerBar) SpendBloodRune(sim *Simulation, metrics *ResourceMetric
 	currentBloodRunes := rp.CurrentBloodRunes(sim)
 
 	slot := int32(-1)
-	if rp.bloodRunes[1].IsReady(sim) {
-		slot = 1
-	} else if rp.bloodRunes[0].IsReady(sim) {
+	if rp.bloodRunes[0].IsReady(sim) {
 		slot = 0
+	} else if rp.bloodRunes[1].IsReady(sim) {
+		slot = 1
 	} else {
 		panic("Trying to spend blood rune but we have none!")
 	}
@@ -343,10 +367,10 @@ func (rp *runicPowerBar) SpendFrostRune(sim *Simulation, metrics *ResourceMetric
 	currentFrostRunes := rp.CurrentFrostRunes(sim)
 
 	slot := int32(-1)
-	if rp.frostRunes[1].IsReady(sim) {
-		slot = 1
-	} else if rp.frostRunes[0].IsReady(sim) {
+	if rp.frostRunes[0].IsReady(sim) {
 		slot = 0
+	} else if rp.frostRunes[1].IsReady(sim) {
+		slot = 1
 	} else {
 		panic("Trying to spend frost rune but we have none!")
 	}
@@ -359,10 +383,10 @@ func (rp *runicPowerBar) SpendUnholyRune(sim *Simulation, metrics *ResourceMetri
 	currentUnholyRunes := rp.CurrentUnholyRunes(sim)
 
 	slot := int32(-1)
-	if rp.unholyRunes[1].IsReady(sim) {
-		slot = 1
-	} else if rp.unholyRunes[0].IsReady(sim) {
+	if rp.unholyRunes[0].IsReady(sim) {
 		slot = 0
+	} else if rp.unholyRunes[1].IsReady(sim) {
+		slot = 1
 	} else {
 		panic("Trying to spend unholy rune but we have none!")
 	}
@@ -375,12 +399,18 @@ func (rp *runicPowerBar) SpendDeathRune(sim *Simulation, metrics *ResourceMetric
 	currentDeathRunes := rp.CurrentDeathRunes(sim)
 
 	slot := int32(-1)
-	if rp.deathRunes[2].IsReady(sim) {
-		slot = 2
+	if rp.deathRunes[0].IsReady(sim) {
+		slot = 0
 	} else if rp.deathRunes[1].IsReady(sim) {
 		slot = 1
-	} else if rp.deathRunes[0].IsReady(sim) {
-		slot = 0
+	} else if rp.deathRunes[2].IsReady(sim) {
+		slot = 2
+	} else if rp.deathRunes[3].IsReady(sim) {
+		slot = 3
+	} else if rp.deathRunes[4].IsReady(sim) {
+		slot = 4
+	} else if rp.deathRunes[5].IsReady(sim) {
+		slot = 5
 	} else {
 		panic("Trying to spend death rune but we have none!")
 	}
