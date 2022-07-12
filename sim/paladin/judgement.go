@@ -67,17 +67,12 @@ func (paladin *Paladin) CanJudgementOfBlood(sim *core.Simulation) bool {
 }
 
 func (paladin *Paladin) registerJudgementOfTheCrusaderSpell(cdTimer *core.Timer, sanctifiedJudgementMetrics *core.ResourceMetrics) {
-	percentBonus := 1.0
-	if paladin.HasSetBonus(ItemSetJusticarBattlegear, 2) {
-		percentBonus = 1.15
-	}
 	flatBonus := 0.0
 	if paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 23203 {
 		flatBonus += 33.0
 	} else if paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 27949 {
 		flatBonus += 47.0
 	}
-	paladin.JudgementOfTheCrusaderAura = core.JudgementOfTheCrusaderAura(paladin.CurrentTarget, paladin.Talents.ImprovedSealOfTheCrusader, flatBonus, percentBonus)
 
 	baseCost := core.TernaryFloat64(paladin.HasSetBonus(ItemSetCrystalforgeBattlegear, 2), JudgementManaCost-35, JudgementManaCost)
 	paladin.JudgementOfTheCrusader = paladin.RegisterSpell(core.SpellConfig{
@@ -98,7 +93,6 @@ func (paladin *Paladin) registerJudgementOfTheCrusaderSpell(cdTimer *core.Timer,
 			},
 			OnCastComplete: func(sim *core.Simulation, spell *core.Spell) {
 				paladin.sanctifiedJudgement(sim, sanctifiedJudgementMetrics, paladin.SealOfTheCrusader.DefaultCast.Cost)
-				paladin.SealOfTheCrusaderAura.Deactivate(sim)
 				paladin.CurrentSeal = nil
 			},
 		},
@@ -111,15 +105,13 @@ func (paladin *Paladin) registerJudgementOfTheCrusaderSpell(cdTimer *core.Timer,
 				if !spellEffect.Landed() {
 					return
 				}
-				paladin.JudgementOfTheCrusaderAura.Activate(sim)
-				paladin.CurrentJudgement = paladin.JudgementOfTheCrusaderAura
 			},
 		}),
 	})
 }
 
 func (paladin *Paladin) CanJudgementOfTheCrusader(sim *core.Simulation) bool {
-	return paladin.canJudgement(sim) && paladin.CurrentSeal == paladin.SealOfTheCrusaderAura
+	return false // just disable JoC because its not in wotlk
 }
 
 func (paladin *Paladin) registerJudgementOfWisdomSpell(cdTimer *core.Timer, sanctifiedJudgementMetrics *core.ResourceMetrics) {
