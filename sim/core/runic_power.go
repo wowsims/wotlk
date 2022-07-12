@@ -312,7 +312,7 @@ func (rp *runicPowerBar) GenerateDeathRuneFromBloodRune(sim *Simulation, metrics
 	rp.bloodRunes[spendSlot].pas[0] = nil
 
 	pa := &PendingAction{
-		NextActionAt: sim.CurrentTime + 30*time.Second,
+		NextActionAt: sim.CurrentTime + 20.0*time.Second,
 		Priority:     ActionPriorityRegen,
 	}
 
