@@ -61,7 +61,6 @@ export class HunterPetTalentsPicker extends Component {
 	private readonly player: Player<Spec.SpecHunter>;
 	private curCategory: PetCategory | null;
 	private curTalents: HunterPetTalents;
-	//private isBM: boolean;
 
 	// Not saved to storage, just holds last-used values for this session.
 	private savedSets: Array<HunterPetTalents>;
@@ -161,14 +160,12 @@ export class HunterPetTalentsPicker extends Component {
 			}
 		});
 
-		//this.isBM = this.getIsBM();
-		//player.talentsChangeEmitter.on(() => {
-		//	const isBM = this.getIsBM();
-		//	if (isBM != this.isBM) {
-		//		this.isBM = isBM;
-		//		pickers.forEach(picker => picker.setMaxTalents(isBM ? 20 : 16));
-		//	}
-		//});
+		const updateIsBM = () => {
+			const maxPoints = this.player.getTalents().beastMastery ? 20 : 16;
+			pickers.forEach(picker => picker.setMaxPoints(maxPoints));
+		};
+		player.talentsChangeEmitter.on(updateIsBM);
+		updateIsBM();
 	}
 
 	getPetTalentsFromPlayer(): HunterPetTalents {
@@ -179,10 +176,6 @@ export class HunterPetTalentsPicker extends Component {
 		const petType = this.player.getSpecOptions().petType;
 		return petCategories[petType];
 	}
-
-	//getIsBM(): boolean {
-	//	return this.player.getTalents().beastMastery
-	//}
 }
 
 const cunningDefault: HunterPetTalents = HunterPetTalents.create({
