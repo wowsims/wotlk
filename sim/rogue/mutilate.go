@@ -22,7 +22,7 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 		BonusCritRating: 5 * core.CritRatingPerCritChance * float64(rogue.Talents.PuncturingWounds),
 		DamageMultiplier: 1 +
 			0.04*float64(rogue.Talents.Opportunity) +
-			core.TernaryFloat64(ItemSetSlayers.CharacterHasSetBonus(&rogue.Character, 4), 0.06, 0),
+			core.TernaryFloat64(rogue.HasSetBonus(ItemSetSlayers, 4), 0.06, 0),
 		ThreatMultiplier: 1,
 
 		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 101, 1, false),

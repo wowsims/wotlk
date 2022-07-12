@@ -50,7 +50,7 @@ func (shaman *Shaman) newChainLightningSpell(isLightningOverload bool) *core.Spe
 		}
 	}
 
-	hasTidefury := ItemSetTidefury.CharacterHasSetBonus(&shaman.Character, 2)
+	hasTidefury := shaman.HasSetBonus(ItemSetTidefury, 2)
 	numHits := core.MinInt32(core.TernaryInt32(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfChainLightning), 4, 3), shaman.Env.GetNumTargets())
 	effects := make([]core.SpellEffect, 0, numHits)
 

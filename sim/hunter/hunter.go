@@ -151,7 +151,7 @@ func NewHunter(character core.Character, options proto.Player) *Hunter {
 
 		latency: time.Millisecond * time.Duration(hunterOptions.Options.LatencyMs),
 
-		hasGronnstalker2Pc: ItemSetGronnstalker.CharacterHasSetBonus(&character, 2),
+		hasGronnstalker2Pc: character.HasSetBonus(ItemSetGronnstalker, 2),
 	}
 	hunter.EnableManaBar()
 

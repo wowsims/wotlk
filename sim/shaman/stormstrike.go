@@ -39,7 +39,7 @@ func (shaman *Shaman) newStormstrikeHitSpell(isMH bool) *core.Spell {
 		OutcomeApplier:   shaman.OutcomeFuncMeleeSpecialCritOnly(shaman.DefaultMeleeCritMultiplier()),
 	}
 
-	flatDamageBonus := core.TernaryFloat64(ItemSetCycloneHarness.CharacterHasSetBonus(&shaman.Character, 4), 30, 0)
+	flatDamageBonus := core.TernaryFloat64(shaman.HasSetBonus(ItemSetCycloneHarness, 4), 30, 0)
 	if isMH {
 		effect.ProcMask = core.ProcMaskMeleeMHSpecial
 		effect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.MainHand, false, flatDamageBonus, 1, true)
@@ -69,7 +69,7 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 	ssDebuffAura := shaman.stormstrikeDebuffAura(shaman.CurrentTarget)
 
 	var skyshatterAura *core.Aura
-	if ItemSetSkyshatterHarness.CharacterHasSetBonus(&shaman.Character, 4) {
+	if shaman.HasSetBonus(ItemSetSkyshatterHarness, 4) {
 		skyshatterAura = shaman.NewTemporaryStatsAura("Skyshatter 4pc AP Bonus", core.ActionID{SpellID: 38432}, stats.Stats{stats.AttackPower: 70}, time.Second*12)
 	}
 

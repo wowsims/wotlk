@@ -38,7 +38,7 @@ func (warrior *Warrior) registerShieldSlamSpell(cdTimer *core.Timer) {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeMHSpecial, // TODO: Is this right?
 
-			DamageMultiplier: 1 * core.TernaryFloat64(ItemSetOnslaughtArmor.CharacterHasSetBonus(&warrior.Character, 4), 1.1, 1),
+			DamageMultiplier: 1 * core.TernaryFloat64(warrior.HasSetBonus(ItemSetOnslaughtArmor, 4), 1.1, 1),
 			ThreatMultiplier: 1,
 			FlatThreatBonus:  305,
 

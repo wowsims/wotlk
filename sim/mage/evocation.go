@@ -11,7 +11,7 @@ func (mage *Mage) registerEvocationCD() {
 	manaMetrics := mage.NewManaMetrics(actionID)
 
 	maxTicks := int32(4)
-	if ItemSetTempestRegalia.CharacterHasSetBonus(&mage.Character, 2) {
+	if mage.HasSetBonus(ItemSetTempestRegalia, 2) {
 		maxTicks++
 	}
 
