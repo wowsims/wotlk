@@ -3,7 +3,6 @@ package shadow
 import (
 	"time"
 	//"sort"
-	"fmt"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -31,7 +30,6 @@ var swdidx int
 var remain_fight float64
 
 func (spriest *ShadowPriest) OnGCDReady(sim *core.Simulation) {
-	//fmt.Println("remain_fight", remain_fight*math.Pow(10, -9))
 	spriest.tryUseGCD(sim)
 }
 
@@ -74,9 +72,6 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 	DotTickSpeed := float64(spriest.ApplyCastSpeed(time.Second * 3))
 	critChance := (spriest.GetStat(stats.SpellCrit) / (core.CritRatingPerCritChance * 100))
 	remain_fight := float64(sim.GetRemainingDuration())
-	fmt.Println("current_time", sim.CurrentTime)
-	fmt.Println("remain_time", remain_fight*math.Pow(10, -9))
-	//fmt.Println("current_time", sim_current_time*math.Pow(10, -9))
 	castmf2 := 0 // if SW stacks = 3, and we want to get SWP up at 5 stacks exactly, then we want to hard code a MF2
 	bestIdx := -1
 
@@ -107,10 +102,6 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 	}
 
 	if rottype == proto.ShadowPriest_Rotation_Basic || rottype == proto.ShadowPriest_Rotation_Clipping {
-		//fmt.Println("MB Time:", allCDs[mbidx])
-		//fmt.Println("DP Time:", spriest.DevouringPlagueDot.RemainingDuration(sim) )
-		//fmt.Println("VT Time:", allCDs[vtidx])
-		//fmt.Println("SWD Time:", allCDs[swdidx])
 
 		if spriest.DevouringPlagueDot.RemainingDuration(sim) <= 0 {
 			bestIdx = 1
@@ -124,7 +115,6 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 			bestIdx = 4
 		}
 	} else {
-		//fmt.Println("remain_fight", remain_fight*math.Pow(10, -9))
 		// Need a way to track spell power and haste procs and remaining duration between each spell to see if it's worth overwriting a current dot to snap shot a buff based on equations from discord
 		// prev_haste = getprevhaste
 		//prev_sp = getprevsp
@@ -163,8 +153,6 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		// need to add if glyph of mind flay and swp is active increase mf by another 10%
 
 		// need to add a check that counts the number of shadow weaving stacks on a target.. if stacks > 2 && < 5,then determine if swp should be cast
-
-		//fmt.Println("SWstacks", SWstacks)
 
 		// Reduce number of DP/VT ticks based on remaining duration
 		num_DP_ticks = math.Floor(remain_fight / DotTickSpeed)
@@ -223,13 +211,6 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 			}
 		}
 
-		// Make sure the CDs are not < 0
-
-		//fmt.Println("MB Time:", allCDs[mbidx])
-		//fmt.Println("DP Time:", allCDs[dpidx])
-		//fmt.Println("VT Time:", allCDs[vtidx])
-		//fmt.Println("SWD Time:", allCDs[swdidx])
-
 		// Make an array of DPCT per spell that will be used to find the optimal spell to cast
 		spellDPCT := []float64{
 			// MB dps
@@ -244,12 +225,6 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 			mf_dmg / float64((tickLength * 3).Seconds()),
 		}
 
-		//fmt.Println("MB DPS:", spellDPCT[mbidx])
-		//fmt.Println("DP DPS:", spellDPCT[dpidx])
-		//fmt.Println("VT DPS:", spellDPCT[vtidx])
-		//fmt.Println("SWD DPS:", spellDPCT[swdidx])
-		//fmt.Println("MF DPS:", spellDPCT[4])
-
 		// Find the maximum DPCT spell
 		bestDmg := 0.0
 		for i, v := range spellDPCT {
@@ -263,20 +238,18 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 			}
 		}
 
-		////fmt.Println("Chosen damage:", spellDPCT[bestIdx])
 		// Find the minimum CD ability to make sure that shouldnt be cast first
 		nextCD := core.NeverExpires
 		nextIdx := -1
 		for i, v := range allCDs[1 : len(allCDs)-1] {
 			if v < nextCD {
 				nextCD = v
-				nextIdx = i
+				nextIdx = i + 1
 			}
 		}
 		var Waitmin time.Duration
 		Waitmin = nextCD
 
-		// //fmt.Println("Minimum Wait:", Waitmin)
 		// Now it's possible that the wait time for the chosen spell is long, if that's the case, then it might be better to investigate the dps over a 2 spell window to see if casting something else will benefit
 		var CurrentWait time.Duration
 		CurrentWait = 0
@@ -309,22 +282,16 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 			total_dps__poss0 := (cd_dpso * float64((CurrentWait + gcd).Seconds())) / float64((gcd + CurrentWait).Seconds())
 			total_dps__poss1 := (cd_dpso*float64((CurrentWait+gcd).Seconds()) + cd_dps*float64((Waitmin+gcd).Seconds())) / float64((Waitmin + gcd + gcd).Seconds())
 
-			////fmt.Println("total_dps__poss0", total_dps__poss0)
-			////fmt.Println("total_dps__poss1", total_dps__poss1)
-
 			if total_dps__poss1 > total_dps__poss0 {
 				bestIdx = nextIdx // if choosing the minimum wait time spell first is highest dps, then change the index and current wait
 				CurrentWait = Waitmin
 			}
 		}
-		////fmt.Println("CurrentWait", CurrentWait)
 		// Now it's possible that the wait time is > 1 gcd and is the minimum wait time.. this is unlikely in wrath given how good MF is, but still might be worth to check
 
 		// if chosen wait time is > 0.3*GCD (this was optimized in private sim, but might want to reoptimize with procs/ect) then check if it's more dps to to add a mf sequence
 		if bestIdx != 4 && float64(CurrentWait.Seconds()) > 0.3*float64(gcd.Seconds()) {
 
-			//fmt.Println("CurrentWait", float64(CurrentWait.Seconds()))
-			////fmt.Println("Check Time", 0.3*float64(gcd.Seconds()))
 			if bestIdx == 2 { // MB VT DP SWD
 				cd_dpso = vt_dmg
 			} else if bestIdx == 0 {
@@ -353,19 +320,7 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 				(cd_dpso + mf_dmg/3*2) / float64((delta_2mf + tickLength*2 + gcd).Seconds()),
 				(cd_dpso + mf_dmg) / float64((delta_3mf + tickLength*3 + gcd).Seconds()),
 			}
-			//fmt.Println("Total Time 0", float64((gcd + CurrentWait).Seconds()))
-			//fmt.Println("Total Time 1", float64((delta_1mf + gcd + gcd).Seconds()))
-			//fmt.Println("Total Time 2", float64((delta_2mf + tickLength*2 + gcd).Seconds()))
-			//fmt.Println("Total Time 3", float64((delta_3mf + tickLength*3 + gcd).Seconds()))
-			//fmt.Println("dpsPossibleshort1", cd_dpso)
-			//fmt.Println("dpsPossibleshort2", (cd_dpso + mf_dmg/3))
-			//fmt.Println("dpsPossibleshort3", (cd_dpso + mf_dmg/3*2))
-			//fmt.Println("dpsPossibleshort4", (cd_dpso + mf_dmg))
 
-			// //fmt.Println("dpsPossibleshort1", dpsPossibleshort[0])
-			// //fmt.Println("dpsPossibleshort2", dpsPossibleshort[1])
-			// //fmt.Println("dpsPossibleshort3", dpsPossibleshort[2])
-			// //fmt.Println("dpsPossibleshort4", dpsPossibleshort[3])
 			// Find the highest possible dps and its index
 			highestPossibleIdx := 0
 			highestPossibleDmg := 0.0
@@ -408,22 +363,12 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 			bestIdx = 5
 		}
 
-		////fmt.Println("CurrentWait", CurrentWait)
-		fmt.Println("bestIdx", bestIdx)
-		fmt.Println("CurrentWait", float64(CurrentWait.Seconds()))
 		if CurrentWait > 0 && bestIdx != 5 && bestIdx != 4 {
 			spriest.WaitUntil(sim, sim.CurrentTime+CurrentWait)
 			return
 		}
-		// //fmt.Println("MB Damage:", spellDPCT[mbidx])
-		// //fmt.Println("DP Damage:", spellDPCT[dpidx])
-		// //fmt.Println("VT Damage:", spellDPCT[vtidx])
-		// //fmt.Println("SWD Damage:", spellDPCT[swdidx])
-		// //fmt.Println("MF Damage:", spellDPCT[4])
-		////fmt.Println("bestIdx:", bestIdx)
-	}
 
-	//
+	}
 
 	if bestIdx == 0 {
 		spell = spriest.MindBlast
@@ -444,20 +389,20 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		var numTicks int
 
 		if rottype == proto.ShadowPriest_Rotation_Basic || rottype == proto.ShadowPriest_Rotation_Clipping {
+
 			if spriest.MindBlast.TimeToReady(sim) == 0 {
-				//fmt.Println("bestIdx", 0)
 				spell = spriest.MindBlast
 				if success := spell.Cast(sim, spriest.CurrentTarget); !success {
 					spriest.WaitForMana(sim, spell.CurCast.Cost)
 				}
+				return
 			} else if spriest.ShadowWordDeath.TimeToReady(sim) == 0 {
-				//fmt.Println("bestIdx", 3)
 				spell = spriest.ShadowWordDeath
 				if success := spell.Cast(sim, spriest.CurrentTarget); !success {
 					spriest.WaitForMana(sim, spell.CurCast.Cost)
 				}
+				return
 			} else {
-				//switch spriest.rotation.RotationType {
 				if rottype == proto.ShadowPriest_Rotation_Basic {
 					numTicks = spriest.BasicMindflayRotation(sim, allCDs, gcd, tickLength)
 				} else if rottype == proto.ShadowPriest_Rotation_Clipping {
@@ -486,7 +431,6 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 			return
 		}
 
-		//fmt.Println("numTicks_final", numTicks)
 		spell = spriest.MindFlay[numTicks]
 	} else {
 
@@ -499,7 +443,6 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		wait2 = core.MinDuration(dpidx, wait1)
 		wait3 = core.MinDuration(vtidx, swpidx)
 		wait = core.MinDuration(wait3, wait2)
-		//fmt.Println("wait:", wait)
 		spriest.WaitUntil(sim, sim.CurrentTime+wait)
 		return
 	}
@@ -507,19 +450,6 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		spriest.WaitForMana(sim, spell.CurCast.Cost)
 	}
 }
-
-//}// else {
-// what do you even do... i guess just sit around
-//	mbcd := spriest.MindBlast.TimeToReady(sim)
-//swdcd := spriest.ShadowWordDeath.TimeToReady(sim)
-//vtidx := spriest.VampiricTouchDot.RemainingDuration(sim) - vtCastTime
-//	dpidx := spriest.DevouringPlagueDot.RemainingDuration(sim),
-//	wait1 = core.MinDuration(mbcd, swdcd)
-//wait2 = core.MinDuration(vtidx, dpidx)
-//	wait = core.MinDuration(wait1, wait2)
-//	spriest.WaitUntil(sim, sim.CurrentTime+wait)
-//	return
-//}
 
 // Returns the number of MF ticks to use, or 0 to wait for next CD.
 func (spriest *ShadowPriest) BasicMindflayRotation(sim *core.Simulation, allCDs []time.Duration, gcd time.Duration, tickLength time.Duration) int {
@@ -585,10 +515,6 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 		if cdDiffs[swdidx] < 0 {
 			cdDiffs[swdidx] = 0
 		}
-		//fmt.Println("cdDiffs1", cdDiffs[mbidx])
-		//fmt.Println("cdDiffs2", cdDiffs[dpidx])
-		//fmt.Println("cdDiffs3", cdDiffs[vtidx])
-		//fmt.Println("cdDiffs4", cdDiffs[swdidx])
 
 		spellDamages := []float64{
 			// MB dps
@@ -603,12 +529,6 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 			mf_dmg / ((tickLength * 3).Seconds()),
 		}
 
-		//fmt.Println("MB", spellDamages[0])
-		//fmt.Println("DP", spellDamages[1])
-		//fmt.Println("VT", spellDamages[2])
-		//fmt.Println("SWD", spellDamages[3])
-		//fmt.Println("MF3", spellDamages[4])
-
 		bestIdx := 0
 		bestDmg := 0.0
 		for i, v := range spellDamages {
@@ -617,8 +537,7 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 				bestDmg = v
 			}
 		}
-		//fmt.Println("bestIdx", bestIdx)
-		//fmt.Println("bestDmg", bestDmg)
+
 		if numTicks < 1 && bestIdx == 4 {
 			numTicks = 3
 			return numTicks
@@ -636,29 +555,18 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 		}
 
 		chosenWait := cdDiffs[bestIdx]
-		//if chosenWait > cdDiffs[nextIdx] && cdDiffs[nextIdx] < time.Millisecond*100 && spellDamages[nextIdx] > spellDamages[bestIdx] {
-		//	chosenWait = cdDiffs[nextIdx]
-		//	}
-		//fmt.Println("numTicks_middle", numTicks)
+
 		var new_ind int
 		if chosenWait > gcd {
 			check_CDs := cdDiffs
 			check_CDs[bestIdx] = time.Second * 15
 			// need to find a way to sort the cdDiffs and find the next highest dps cast with lower wait time
-			//nextCDc := core.NeverExpires
 			for i, v := range check_CDs {
 				if v < nextCD {
 					//nextCDc = v
 					new_ind = i
 				}
 			}
-			//fmt.Println("nextIdxc", new_ind)
-			//newDmg := spellDamages[new_ind]
-			//fmt.Println("chosenWait", chosenWait)
-			//fmt.Println("gcd", gcd)
-			//fmt.Println("chosenDmg", bestDmg)
-			//fmt.Println("newWait", nextCDc)
-			//fmt.Println("newDmg", newDmg)
 		}
 		skip_next := 0
 		var total_wait_curr float64
@@ -727,11 +635,7 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 			dpsPossible0[0] = (num_ticks_avail*mfDamage + cd_dpsb*float64(gcd.Seconds()) + cd_dpsn*float64(gcd.Seconds())) / (num_ticks_avail*float64(tickLength.Seconds()) + 2*float64(gcd.Seconds()) + add_time1)
 			dpsPossible0[1] = (tick_var*mfDamage + cd_dpsb*(float64(cdDiffs[bestIdx].Seconds())+float64(gcd.Seconds())) + cd_dpsn*(float64(cdDiffs[new_ind].Seconds()))) / (tick_var*float64(tickLength.Seconds()) + (float64(cdDiffs[bestIdx].Seconds()) + float64(gcd.Seconds())) + (float64(cdDiffs[new_ind].Seconds()) + add_time2))
 			dpsPossible0[2] = ((tick_var+1)*mfDamage + cd_dpsb*(float64(cdDiffs[len(cdDiffs)-1-1].Seconds())+float64(gcd.Seconds())) + cd_dpsn*(float64(cdDiffs[len(cdDiffs)-1].Seconds())-float64(tickLength.Seconds()))) / ((tick_var+1)*float64(tickLength.Seconds()) + (float64(cdDiffs[bestIdx].Seconds()) + float64(gcd.Seconds())) + (float64(cdDiffs[new_ind].Seconds()) + add_time3))
-			//fmt.Println("OG dps", cd_dpsb)
-			//fmt.Println("Newsp dps", cd_dpsn)
-			//fmt.Println("dpsPossible0", dpsPossible0[0])
-			//fmt.Println("dpsPossible1", dpsPossible0[1])
-			//fmt.Println("dpsPossible2", dpsPossible0[2])
+
 			highestPossibleDmg := 0.0
 			highestPossibleIdx := -1
 			if highestPossibleIdx == 0 {
@@ -826,9 +730,7 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 					}
 				}
 			}
-			//fmt.Println("numTicks_middle2", numTicks)
 			numTicks += highestPossibleIdx
-			//fmt.Println("numTicks_end", numTicks)
 			//  Now that the number of optimal ticks has been determined to optimize dps
 			//  Now optimize mf2s and mf3s
 			if numTicks == 1 {
@@ -844,9 +746,10 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 	}
 	return numTicks
 }
+
 func (spriest *ShadowPriest) ClippingMindflayRotation(sim *core.Simulation, allCDs []time.Duration, gcd time.Duration, tickLength time.Duration) int {
 	nextCD := core.NeverExpires
-	for _, v := range allCDs[:2] {
+	for _, v := range allCDs[1 : len(allCDs)-1] {
 		if v < nextCD {
 			nextCD = v
 		}
@@ -855,6 +758,7 @@ func (spriest *ShadowPriest) ClippingMindflayRotation(sim *core.Simulation, allC
 	if sim.Log != nil {
 		spriest.Log(sim, "<spriest> NextCD: %0.2f", nextCD.Seconds())
 	}
+
 	// This means a CD is coming up before we could cast a single MF
 	if nextCD < gcd {
 		return 0
@@ -862,7 +766,6 @@ func (spriest *ShadowPriest) ClippingMindflayRotation(sim *core.Simulation, allC
 
 	// How many ticks we have time for.
 	numTicks := int((nextCD - time.Duration(spriest.rotation.Latency)) / tickLength)
-
 	if numTicks == 1 {
 		return 1
 	} else if numTicks == 2 || numTicks == 4 {
