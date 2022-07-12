@@ -16,9 +16,9 @@ func (hp *HunterPet) ApplyTalents() {
 	hp.AddStat(stats.MeleeCrit, 3*core.CritRatingPerCritChance*float64(talents.SpidersBite))
 	hp.AddStat(stats.SpellCrit, 3*core.CritRatingPerCritChance*float64(talents.SpidersBite))
 	hp.PseudoStats.MeleeSpeedMultiplier *= 1 + 0.15*float64(talents.CobraReflexes)
+	hp.PseudoStats.DamageDealtMultiplier *= 1 + 0.03*float64(talents.SpikedCollar)
+	hp.PseudoStats.DamageDealtMultiplier *= 1 + 0.03*float64(talents.SharkAttack)
 	hp.AutoAttacks.MHEffect.DamageMultiplier *= 1 - 0.075*float64(talents.CobraReflexes)
-	hp.AutoAttacks.MHEffect.DamageMultiplier *= 1 + 0.03*float64(talents.SpikedCollar)
-	hp.AutoAttacks.MHEffect.DamageMultiplier *= 1 + 0.03*float64(talents.SharkAttack)
 
 	hp.PseudoStats.ArcaneDamageTakenMultiplier *= 1 + 0.05*float64(talents.GreatResistance)
 	hp.PseudoStats.FireDamageTakenMultiplier *= 1 + 0.05*float64(talents.GreatResistance)
@@ -222,7 +222,7 @@ func (hp *HunterPet) registerRabidCD() {
 
 	hunter := hp.hunterOwner
 	actionID := core.ActionID{SpellID: 53401}
-	ppmm := hp.AutoAttacks.NewPPMManager(10.0, core.ProcMaskMelee)
+	procChance := 0.2
 
 	var curBonusPerStack float64
 
@@ -253,8 +253,7 @@ func (hp *HunterPet) registerRabidCD() {
 			if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
 				return
 			}
-
-			if !ppmm.Proc(sim, spellEffect.ProcMask, "Rabid") {
+			if sim.RandomFloat("Rabid") > procChance {
 				return
 			}
 
