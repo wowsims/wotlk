@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	//	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -58,37 +58,44 @@ func (warlock *Warlock) ApplyTalents() {
 
 	warlock.PseudoStats.BonusCritRating += float64(warlock.Talents.DemonicTactics) * 1 * core.CritRatingPerCritChance
 
-	// if !warlock.Options.SacrificeSummon && warlock.Options.Summon != proto.Warlock_Options_NoSummon {
-	// 	if warlock.Talents.MasterDemonologist > 0 {
-	// 		switch warlock.Options.Summon {
-	// 		case proto.Warlock_Options_Imp:
-	// 			warlock.PseudoStats.ThreatMultiplier *= 0.96 * float64(warlock.Talents.MasterDemonologist)
-	// 		case proto.Warlock_Options_Succubus:
-	// 			warlock.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.02*float64(warlock.Talents.MasterDemonologist)
-	// 		case proto.Warlock_Options_Felguard:
-	// 			warlock.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
-	// 			// 		Felguard - Increases all damage caused by 1% and all resistances by .1 per level.
-	// 			// 		Voidwalker - Reduces physical damage taken by 2%.
-	// 			// 		Felhunter - Increases all resistances by .2 per level.
-	// 		}
-	// 	}
+	if warlock.Options.Summon != proto.Warlock_Options_NoSummon {
+		if warlock.Talents.MasterDemonologist > 0 {
+			switch warlock.Options.Summon {
+			case proto.Warlock_Options_Imp:
+				warlock.PseudoStats.FireDamageDealtMultiplier *= 1.0 + 0.01 * float64(warlock.Talents.MasterDemonologist)
+				warlock.PseudoStats.BonusFireCritRating *= 1.0 + 0.01 * float64(warlock.Talents.MasterDemonologist)
+			case proto.Warlock_Options_Succubus:
+				warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + 0.01 * float64(warlock.Talents.MasterDemonologist)
+				warlock.PseudoStats.BonusShadowCritRating *= 1.0 + 0.01 * float64(warlock.Talents.MasterDemonologist)
+			case proto.Warlock_Options_Felguard:
+				warlock.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
+			}
+		}
+		// Extract stats for demonic knowledge
+		if warlock.Talents.DemonicKnowledge > 0 {
+			petChar := warlock.Pets[0].GetCharacter()
+			bonus := (petChar.GetStat(stats.Stamina) + petChar.GetStat(stats.Intellect)) * (0.04 * float64(warlock.Talents.DemonicKnowledge))
+			warlock.AddStat(stats.SpellPower, bonus)
+ 		}
+	}
 
-	// 	if warlock.Talents.SoulLink {
-	// 		warlock.PseudoStats.DamageDealtMultiplier *= 1.05
-	// 	}
+	// demonic tactics, applies even without pet out
+	if warlock.Talents.DemonicTactics > 0 {
+		warlock.AddStats(stats.Stats{
+			stats.MeleeCrit: float64(warlock.Talents.DemonicTactics) * 2 * core.CritRatingPerCritChance,
+			stats.SpellCrit: float64(warlock.Talents.DemonicTactics) * 2 * core.CritRatingPerCritChance,
+		})
+	}
 
-	// 	// Extract stats for demonic knowledge
-	// 	petChar := warlock.Pets[0].GetCharacter()
-	// 	bonus := (petChar.GetStat(stats.Stamina) + petChar.GetStat(stats.Intellect)) * (0.04 * float64(warlock.Talents.DemonicKnowledge))
-	// 	warlock.AddStat(stats.SpellPower, bonus)
-	// }
+	if warlock.Talents.DemonicPact > 0 {
+		spBonus := 0.02 * float64(warlock.Talents.DemonicPact) * float64(stats.SpellPower)
+		warlock.AddStat(stats.SpellPower, spBonus)
+	}
 
-	// // demonic tactics, applies even without pet out
-	// warlock.AddStats(stats.Stats{
-	// 	stats.MeleeCrit: float64(warlock.Talents.DemonicTactics) * 1 * core.CritRatingPerCritChance,
-	// 	stats.SpellCrit: float64(warlock.Talents.DemonicTactics) * 1 * core.CritRatingPerCritChance,
-	// })
-
+ 	if warlock.Talents.MoltenSkin > 0 {
+ 		warlock.PseudoStats.DamageTakenMultiplier /= 1 + 0.02 * float64(warlock.Talents.MoltenSkin)
+ 	}
+ 	
 	if warlock.Talents.Nightfall > 0 {
 		warlock.setupNightfall()
 	}

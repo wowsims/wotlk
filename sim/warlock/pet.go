@@ -58,8 +58,10 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		},
 	})
 	wp.AddStats(stats.Stats{
-		stats.MeleeCrit: float64(warlock.Talents.DemonicTactics) * 1 * core.CritRatingPerCritChance,
-		stats.SpellCrit: float64(warlock.Talents.DemonicTactics) * 1 * core.CritRatingPerCritChance,
+		stats.MeleeCrit: float64(warlock.Talents.DemonicTactics) * 2 * core.CritRatingPerCritChance +
+			float64(wp.owner.Talents.ImprovedDemonicTactics) * 0.3 * wp.owner.GetStats()[stats.SpellCrit],
+		stats.SpellCrit: float64(warlock.Talents.DemonicTactics) * 2 * core.CritRatingPerCritChance +
+			float64(wp.owner.Talents.ImprovedDemonicTactics) * 0.3 * wp.owner.GetStats()[stats.SpellCrit],
 	})
 
 	wp.PseudoStats.DamageDealtMultiplier *= 1.0 + (0.04 * float64(warlock.Talents.UnholyPower))
@@ -119,12 +121,19 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 	}
 
 	if warlock.Talents.FelVitality > 0 {
-		intBonus := 1 + (0.05)*float64(warlock.Talents.FelVitality)
+		bonus := 1 + (0.05)*float64(warlock.Talents.FelVitality)
 		wp.AddStatDependency(stats.StatDependency{
 			SourceStat:   stats.Intellect,
 			ModifiedStat: stats.Intellect,
 			Modifier: func(in float64, _ float64) float64 {
-				return in * intBonus
+				return in * bonus
+			},
+		})
+		wp.AddStatDependency(stats.StatDependency{
+			SourceStat:   stats.Stamina,
+			ModifiedStat: stats.Stamina,
+			Modifier: func(sta float64, _ float64) float64 {
+				return sta * bonus
 			},
 		})
 	}
@@ -245,13 +254,13 @@ var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
 		PrimaryAbility: LashOfPain,
 		Stats: stats.Stats{
 			stats.AttackPower: 20,
-			stats.Stamina:     280,
-			stats.Strength:    153,
-			stats.Agility:     108,
-			stats.Intellect:   133,
-			stats.Mana:        893,
-			stats.Spirit:      122,
-			stats.MP5:         48,
+			stats.Stamina:     328,
+			stats.Strength:    314,
+			stats.Agility:     90,
+			stats.Intellect:   150,
+			stats.Mana:        1109,
+			stats.Spirit:      209,
+			stats.MP5:         11,
 		},
 	},
 	proto.Warlock_Options_Felhunter: {
@@ -260,23 +269,16 @@ var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
 		Melee:          true,
 		PrimaryAbility: ShadowBite,
 		Stats: stats.Stats{
-			stats.AttackPower: 286,
-			stats.Stamina:     280,
-			stats.Strength:    153,
-			stats.Agility:     108,
-			stats.Intellect:   133,
+			stats.AttackPower: 20,
+			stats.Stamina:     328,
+			stats.Strength:    314,
+			stats.Agility:     90,
+			stats.Intellect:   150,
 			stats.Mana:        1109,
-			stats.Spirit:      122,
-			stats.MP5:         15,
+			stats.Spirit:      209,
+			stats.MP5:         11,
+			stats.SpellCrit:   0.01,
+			stats.MeleeCrit:   0.03,
 		},
 	},
 }
-
-// Minion 		Health per bonus stamina 	Mana per bonus intellect
-// Imp 			~8.4 						~4.9
-// Voidwalker 	~11.0 						~11.5
-// Sayaad			~9.1 						~11.5
-// Felhunter 	~9.5 						~11.5
-// Felguard 	~11.0 						~11.5
-
-// Spell hit 	Spell hit, physical hit, expertise, being capped will cap your minion for all three stats, see below for details

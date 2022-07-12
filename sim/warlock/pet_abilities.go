@@ -55,9 +55,9 @@ func (wp *WarlockPet) newIntercept() *core.Spell {
 }
 
 func (wp *WarlockPet) newFirebolt() *core.Spell {
-	baseCost := 190.0
+	baseCost := 180.0
 	return wp.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 27267},
+		ActionID:    core.ActionID{SpellID: 47964},
 		SpellSchool: core.SpellSchoolFire,
 
 		ResourceType: stats.Mana,
@@ -67,7 +67,7 @@ func (wp *WarlockPet) newFirebolt() *core.Spell {
 			DefaultCast: core.Cast{
 				Cost:     baseCost,
 				GCD:      core.GCDDefault,
-				CastTime: time.Millisecond*2000 - (time.Millisecond * time.Duration(250*wp.owner.Talents.DemonicPower)),
+				CastTime: time.Millisecond * (2500 - time.Duration(250*wp.owner.Talents.DemonicPower)),
 			},
 			IgnoreHaste: true,
 		},
@@ -75,7 +75,7 @@ func (wp *WarlockPet) newFirebolt() *core.Spell {
 			ProcMask:         core.ProcMaskSpellDamage,
 			DamageMultiplier: 1.0 + (0.1 * float64(wp.owner.Talents.ImprovedImp)),
 			ThreatMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMagic(112, 127, 0.571),
+			BaseDamage:       core.BaseDamageConfigMagic(203, 227, 0.571),
 			OutcomeApplier:   wp.OutcomeFuncMagicHitAndCrit(2),
 		}),
 	})
