@@ -41,7 +41,7 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 		} else if deathKnight.CanPlagueStrike(sim) {
 			deathKnight.PlagueStrike.Cast(sim, target)
 		} else {
-			nextCD := deathKnight.IcyTouch.ReadyAt()
+			nextCD := core.MinDuration(deathKnight.IcyTouch.ReadyAt(), deathKnight.PlagueStrike.ReadyAt())
 
 			if nextCD > sim.CurrentTime {
 				deathKnight.WaitUntil(sim, nextCD)

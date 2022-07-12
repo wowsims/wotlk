@@ -199,61 +199,55 @@ func (rp *runicPowerBar) GenerateUnholyRune(sim *Simulation, metrics *ResourceMe
 func (rp *runicPowerBar) SpendBloodRune(sim *Simulation, metrics *ResourceMetrics) {
 	currRunes := rp.CurrentBloodRunes()
 	rp.SpendRuneMetrics(sim, metrics, "Blood", currRunes, currRunes-1)
-	spendSlot := SpendRuneFromType(&rp.bloodRunes, RuneState_Normal)
+	SpendRuneFromType(&rp.bloodRunes, RuneState_Normal)
 
-	pa := &rp.bloodRunes[spendSlot].pas[0]
-	if *pa == nil {
-		*pa = &PendingAction{}
+	pa := &PendingAction{
+		NextActionAt: sim.CurrentTime + 10*time.Second,
+		Priority:     ActionPriorityRegen,
 	}
 
-	(*pa).NextActionAt = sim.CurrentTime + 10*time.Second
-	(*pa).Priority = ActionPriorityRegen
-	(*pa).OnAction = func(sim *Simulation) {
+	pa.OnAction = func(sim *Simulation) {
 		rp.GenerateBloodRune(sim, metrics)
 		rp.onBloodRuneGain(sim)
 	}
 
-	sim.AddPendingAction(*pa)
+	sim.AddPendingAction(pa)
 }
 
 func (rp *runicPowerBar) SpendFrostRune(sim *Simulation, metrics *ResourceMetrics) {
 	currRunes := rp.CurrentFrostRunes()
 	rp.SpendRuneMetrics(sim, metrics, "Frost", currRunes, currRunes-1)
-	spendSlot := SpendRuneFromType(&rp.frostRunes, RuneState_Normal)
+	SpendRuneFromType(&rp.frostRunes, RuneState_Normal)
 
-	pa := &rp.frostRunes[spendSlot].pas[0]
-	if *pa == nil {
-		*pa = &PendingAction{}
+	pa := &PendingAction{
+		NextActionAt: sim.CurrentTime + 10*time.Second,
+		Priority:     ActionPriorityRegen,
 	}
 
-	(*pa).NextActionAt = sim.CurrentTime + 10*time.Second
-	(*pa).Priority = ActionPriorityRegen
-	(*pa).OnAction = func(sim *Simulation) {
+	pa.OnAction = func(sim *Simulation) {
 		rp.GenerateFrostRune(sim, metrics)
 		rp.onFrostRuneGain(sim)
 	}
 
-	sim.AddPendingAction(*pa)
+	sim.AddPendingAction(pa)
 }
 
 func (rp *runicPowerBar) SpendUnholyRune(sim *Simulation, metrics *ResourceMetrics) {
 	currRunes := rp.CurrentUnholyRunes()
 	rp.SpendRuneMetrics(sim, metrics, "Unholy", currRunes, currRunes-1)
-	spendSlot := SpendRuneFromType(&rp.unholyRunes, RuneState_Normal)
+	SpendRuneFromType(&rp.unholyRunes, RuneState_Normal)
 
-	pa := &rp.unholyRunes[spendSlot].pas[0]
-	if *pa == nil {
-		*pa = &PendingAction{}
+	pa := &PendingAction{
+		NextActionAt: sim.CurrentTime + 10*time.Second,
+		Priority:     ActionPriorityRegen,
 	}
 
-	(*pa).NextActionAt = sim.CurrentTime + 10*time.Second
-	(*pa).Priority = ActionPriorityRegen
-	(*pa).OnAction = func(sim *Simulation) {
+	pa.OnAction = func(sim *Simulation) {
 		rp.GenerateUnholyRune(sim, metrics)
 		rp.onUnholyRuneGain(sim)
 	}
 
-	sim.AddPendingAction(*pa)
+	sim.AddPendingAction(pa)
 }
 
 // TODO: Implement this
