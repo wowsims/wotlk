@@ -171,22 +171,12 @@ func (rogue *Rogue) MeleeCritMultiplier(isMH bool, applyLethality bool) float64 
 	primaryModifier := rogue.murderMultiplier()
 	secondaryModifier := 0.0
 
-	isMace := false
-	if weapon := rogue.Equip[proto.ItemSlot_ItemSlotMainHand]; isMH && weapon.ID != 0 {
-		if weapon.WeaponType == proto.WeaponType_WeaponTypeMace {
-			isMace = true
-		}
-	} else if weapon := rogue.Equip[proto.ItemSlot_ItemSlotOffHand]; !isMH && weapon.ID != 0 {
-		if weapon.WeaponType == proto.WeaponType_WeaponTypeMace {
-			isMace = true
-		}
-	}
-	if isMace {
-		primaryModifier *= 1 + 0.01*float64(rogue.Talents.MaceSpecialization)
-	}
-
 	if applyLethality {
 		secondaryModifier += 0.06 * float64(rogue.Talents.Lethality)
+	}
+
+	if rogue.CurrentTarget != nil && rogue.CurrentTarget.HasHealthBar() && rogue.CurrentTarget.CurrentHealthPercent() < rogue.CurrentHealthPercent() {
+		secondaryModifier += 0.04 * float64(rogue.Talents.PreyOnTheWeak)
 	}
 
 	return rogue.Character.MeleeCritMultiplier(primaryModifier, secondaryModifier)
