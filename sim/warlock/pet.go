@@ -88,7 +88,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 				return spellCrit + (0.0125*intellect/100)*core.CritRatingPerCritChance
 			},
 		})
-	case proto.Warlock_Options_Felgaurd:
+	case proto.Warlock_Options_Felguard:
 		wp.PseudoStats.DamageDealtMultiplier *= 1.0 + (0.01 * float64(warlock.Talents.MasterDemonologist))
 		// Simulates a pre-stacked demonic frenzy
 		wp.AddStatDependency(stats.StatDependency{
@@ -197,7 +197,7 @@ type PetConfig struct {
 }
 
 var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
-	proto.Warlock_Options_Felgaurd: {
+	proto.Warlock_Options_Felguard: {
 		Name:             "Felguard",
 		Melee:            true,
 		PrimaryAbility:   Cleave,

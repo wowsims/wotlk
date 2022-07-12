@@ -22,10 +22,11 @@ type Warlock struct {
 	CorruptionDot  *core.Dot
 	Haunt		   *core.Spell
 	HauntAura	   *core.Aura
+	LifeTap 	   *core.Spell
+	ChaosBolt 	   *core.Spell
 
 	// DemonicEmpowerment		   *core.Aura
 	
-	LifeTap *core.Spell
 
 	CurseOfElements     *core.Spell
 	CurseOfElementsAura *core.Aura
@@ -69,12 +70,15 @@ func (warlock *Warlock) Initialize() {
 	warlock.registerCurseOfAgonySpell()
 	warlock.registerCurseOfDoomSpell()
 	warlock.registerLifeTapSpell()
+	warlock.registerSeedSpell()
 	if warlock.Talents.UnstableAffliction {
 		warlock.registerUnstableAffSpell()
 	}
-	warlock.registerSeedSpell()
 	if warlock.Talents.Haunt {
 		warlock.registerHauntSpell()
+	}
+	if warlock.Talents.ChaosBolt {
+		warlock.registerChaosBoltSpell()
 	}
 }
 
@@ -123,7 +127,7 @@ func NewWarlock(character core.Character, options proto.Player) *Warlock {
 			warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.15
 		case proto.Warlock_Options_Imp:
 			warlock.PseudoStats.FireDamageDealtMultiplier *= 1.15
-		case proto.Warlock_Options_Felgaurd:
+		case proto.Warlock_Options_Felguard:
 			warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.10
 		}
 	} else*/

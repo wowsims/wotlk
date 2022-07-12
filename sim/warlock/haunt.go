@@ -51,6 +51,10 @@ func (warlock *Warlock) registerHauntSpell() {
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond*1500,
 			},
+			CD: core.Cooldown{
+				Timer:    warlock.NewTimer(),
+				Duration: time.Second * 8,
+			},
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),

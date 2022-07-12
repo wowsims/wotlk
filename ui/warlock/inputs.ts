@@ -68,7 +68,7 @@ export const DemonSummon = {
 		// { actionId: ActionId.fromSpellId(697), value: Summon.Voidwalker },
 		{ actionId: ActionId.fromSpellId(712), value: Summon.Succubus },
 		// { actionId: ActionId.fromSpellId(691), value: Summon.Felhound },
-		{ actionId: ActionId.fromSpellId(30146), value: Summon.Felgaurd },
+		{ actionId: ActionId.fromSpellId(30146), value: Summon.Felguard },
 	],
 	equals: (a: Summon, b: Summon) => a == b,
 	zeroValue: Summon.NoSummon,
@@ -164,6 +164,26 @@ export const WarlockRotationConfig = {
 					newRotation.haunt = newValue;
 					player.setRotation(eventID, newRotation);
 				},
+				enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalents().haunt,
+			},
+		},
+		{
+			type: 'boolean' as const,
+			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
+			config: {
+				extraCssClasses: [
+					'ChaosBolt-picker',
+				],
+				label: 'Use Chaos Bolt',
+				labelTooltip: 'Use Chaos Bolt as the next cast when CD is up.',
+				changedEvent: (player: Player<Spec.SpecWarlock>) => player.rotationChangeEmitter,
+				getValue: (player: Player<Spec.SpecWarlock>) => player.getRotation().chaosBolt,
+				setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: boolean) => {
+					const newRotation = player.getRotation();
+					newRotation.chaosBolt = newValue;
+					player.setRotation(eventID, newRotation);
+				},
+				enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalents().chaosBolt,
 			},
 		},
 		{
