@@ -140,7 +140,49 @@ func (warrior *Warrior) applyTasteForBlood() {
 			warrior.overpowerValidUntil = sim.CurrentTime + time.Second*5
 		},
 	})
+}
 
+func (warrior *Warrior) applyBloodsurge() {
+	if warrior.Talents.Bloodsurge == 0 {
+		return
+	}
+	procChance := 0.0
+	if warrior.Talents.Bloodsurge == 1 {
+		procChance := 0.07
+	} else if warrior.Talents.Bloodsurge == 2 {
+		procChance := 0.13
+	} else if warrior.Talents.Bloodsurge == 3 {
+		procChance := 0.20
+	}
+	icd := core.Cooldown{
+		Timer:    warrior.NewTimer(),
+		Duration: time.Second * 6,
+	}
+	warrior.RegisterAura(core.Aura{
+		Label: "Taste for Blood",
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.Landed() {
+				return
+			}
+
+			if spell != warrior.HeroicStrike || warrior.Bloodthirst || warrior.Whirlwind {
+				return
+			}
+
+			if !icd.IsReady(sim) {
+				return
+			}
+
+			if sim.RandomFloat("Bloodsurge") > procChance {
+				return
+			}
+			icd.Use(sim)
+			warrior.overpowerValidUntil = sim.CurrentTime + time.Second*5
+		},
+	})
 }
 func (warrior *Warrior) applyBloodFrenzy() {
 	if warrior.Talents.BloodFrenzy == 0 {

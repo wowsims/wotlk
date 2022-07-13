@@ -24,11 +24,12 @@ type Warrior struct {
 	WarriorInputs
 
 	// Current state
-	Stance              Stance
-	overpowerValidUntil time.Duration
-	rendValidUntil      time.Duration
-	RevengeValidUntil   time.Duration
-	shoutExpiresAt      time.Duration
+	Stance               Stance
+	overpowerValidUntil  time.Duration
+	rendValidUntil       time.Duration
+	RevengeValidUntil    time.Duration
+	shoutExpiresAt       time.Duration
+	bloodsurgeValidUntil time.Duration
 
 	// Cached values
 	shoutDuration time.Duration
@@ -58,9 +59,10 @@ type Warrior struct {
 	Whirlwind            *core.Spell
 	RendDot              *core.Dot
 
-	HeroicStrikeOrCleave *core.Spell
-	HSOrCleaveQueueAura  *core.Aura
-	HSRageThreshold      float64
+	HeroicStrike        *core.Spell
+	Cleave              *core.Spell
+	HSOrCleaveQueueAura *core.Aura
+	HSRageThreshold     float64
 
 	BattleStanceAura    *core.Aura
 	DefensiveStanceAura *core.Aura
