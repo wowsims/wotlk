@@ -42,6 +42,12 @@ func (bear *FeralTankDruid) doRotation(sim *core.Simulation) {
 	}
 
 	bear.tryQueueMaul(sim)
+
+	if bear.GCD.IsReady(sim) && !bear.IsWaiting() {
+		// This means we have nothing to do for now.
+		// Wait until our next auto attack to decide again.
+		bear.WaitUntil(sim, bear.AutoAttacks.MainhandSwingAt)
+	}
 }
 
 func (bear *FeralTankDruid) shouldSaveLacerateStacks(sim *core.Simulation) bool {

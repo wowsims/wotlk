@@ -395,8 +395,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-EnigmaticStarflareDiamond"
  value: {
-  dps: 596.4150545054955
-  tps: 828.5231064273933
+  dps: 598.9205006956
+  tps: 831.7944596101003
  }
 }
 dps_results: {
@@ -556,8 +556,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-ImpassiveStarflareDiamond"
  value: {
-  dps: 596.4150545054955
-  tps: 828.5231064273933
+  dps: 598.9205006956
+  tps: 831.7944596101003
  }
 }
 dps_results: {
@@ -885,8 +885,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-SpellstrikeInfusion"
  value: {
-  dps: 526.863648755231
-  tps: 798.2459233307934
+  dps: 527.8467475026812
+  tps: 799.9373215570253
  }
 }
 dps_results: {
@@ -1095,9 +1095,9 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-Average-Default"
  value: {
-  dps: 665.464855779585
-  tps: 985.4724310717035
-  dtps: 669.6322880520785
+  dps: 665.5436724731294
+  tps: 985.4355573864771
+  dtps: 669.7259715585634
  }
 }
 dps_results: {
@@ -1145,8 +1145,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 777.95206982541
-  tps: 1145.5381297862018
-  dtps: 631.8126785882483
+  dps: 779.3781200308431
+  tps: 1145.9766171741626
+  dtps: 631.7892281926313
  }
 }

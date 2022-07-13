@@ -38,6 +38,16 @@ func (war *ProtectionWarrior) doRotation(sim *core.Simulation) {
 
 	war.tryShieldBlock(sim)
 	war.tryQueueHsCleave(sim)
+
+	if war.GCD.IsReady(sim) {
+		nextSwing := war.AutoAttacks.MainhandSwingAt
+		if war.AutoAttacks.OffhandSwingAt != 0 {
+			nextSwing = core.MinDuration(nextSwing, war.AutoAttacks.OffhandSwingAt)
+		}
+		// This means we have nothing to do for now.
+		// Wait until our next auto attack to decide again.
+		war.WaitUntil(sim, nextSwing)
+	}
 }
 
 func (war *ProtectionWarrior) tryShieldBlock(sim *core.Simulation) {

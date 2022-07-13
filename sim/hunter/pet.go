@@ -1,6 +1,7 @@
 package hunter
 
 import (
+	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -149,8 +150,23 @@ func (hp *HunterPet) OnGCDReady(sim *core.Simulation) {
 
 	if !hp.primaryAbility.TryCast(sim, target, hp) {
 		if hp.secondaryAbility.Type != Unknown {
-			hp.secondaryAbility.TryCast(sim, target, hp)
+			if !hp.secondaryAbility.TryCast(sim, target, hp) {
+				hp.WaitForAbility(sim, hp.secondaryAbility)
+			}
+		} else {
+			hp.WaitForAbility(sim, hp.primaryAbility)
 		}
+	}
+}
+
+func (hp *HunterPet) WaitForAbility(sim *core.Simulation, ability PetAbility) {
+	if hp.currentFocus < ability.Cost {
+		diff := ability.Cost - hp.currentFocus
+		ticks := math.Ceil(diff / hp.focusPerTick)
+		hp.WaitUntil(sim, sim.CurrentTime+(time.Duration(ticks)*tickDuration))
+	}
+	if !ability.IsReady(sim) {
+		hp.WaitUntil(sim, ability.ReadyAt())
 	}
 }
 

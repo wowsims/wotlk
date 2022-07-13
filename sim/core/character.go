@@ -306,6 +306,11 @@ func (character *Character) initialize(agent Agent) {
 			character.TryUseCooldowns(sim)
 			if character.GCD.IsReady(sim) {
 				agent.OnGCDReady(sim)
+
+				if character.GCD.IsReady(sim) && (!character.IsWaiting() && !character.IsWaitingForMana()) && !character.gcdAction.cancelled {
+					msg := fmt.Sprintf("Character `%s` did not perform any actions. Either this is a bug or agent should use 'WaitUntil' or 'WaitForMana' to do explicitly do nothing.", character.Label)
+					panic(msg)
+				}
 			}
 		},
 	}
