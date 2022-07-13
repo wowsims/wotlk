@@ -442,6 +442,8 @@ type PseudoStats struct {
 	BonusFireCritRating   float64 // Crit rating for fire spells only (Combustion).
 	BonusMHCritRating     float64 // Talents, e.g. Rogue Dagger specialization
 	BonusOHCritRating     float64 // Talents, e.g. Rogue Dagger specialization
+	BonusMHArmorPenRating float64 // Talents, e.g. Rogue Mace specialization
+	BonusOHArmorPenRating float64 // Talents, e.g. Rogue Mace specialization
 
 	DisableDWMissPenalty bool    // Used by Heroic Strike and Cleave
 	IncreasedMissChance  float64 // Insect Swarm and Scorpid Sting

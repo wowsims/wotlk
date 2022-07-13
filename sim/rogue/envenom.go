@@ -36,7 +36,7 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			DamageMultiplier: 1 + 0.04*float64(rogue.Talents.VilePoisons),
+			DamageMultiplier: 1 + []float64{0.0, 0.07, 0.14, 0.2}[rogue.Talents.VilePoisons],
 			ThreatMultiplier: 1,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
