@@ -70,5 +70,5 @@ func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 }
 
 func (deathKnight *DeathKnight) CanHowlingBlast(sim *core.Simulation) bool {
-	return deathKnight.CastCostPossible(sim, 15.0, 0, 1, 1) && deathKnight.HowlingBlast.IsReady(sim)
+	return deathKnight.CastCostPossible(sim, 0.0, 0, 1, 1) && deathKnight.HowlingBlast.IsReady(sim)
 }

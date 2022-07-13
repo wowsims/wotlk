@@ -54,5 +54,5 @@ func (deathKnight *DeathKnight) registerObliterateSpell() {
 }
 
 func (deathKnight *DeathKnight) CanObliterate(sim *core.Simulation) bool {
-	return deathKnight.CastCostPossible(sim, 15.0, 0, 1, 1) && deathKnight.Obliterate.IsReady(sim)
+	return deathKnight.CastCostPossible(sim, 0.0, 0, 1, 1) && deathKnight.Obliterate.IsReady(sim)
 }

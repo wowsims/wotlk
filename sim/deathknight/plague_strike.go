@@ -47,5 +47,5 @@ func (deathKnight *DeathKnight) registerPlagueStrikeSpell() {
 }
 
 func (deathKnight *DeathKnight) CanPlagueStrike(sim *core.Simulation) bool {
-	return deathKnight.CastCostPossible(sim, 10.0, 0, 0, 1) && deathKnight.PlagueStrike.IsReady(sim)
+	return deathKnight.CastCostPossible(sim, 0.0, 0, 0, 1) && deathKnight.PlagueStrike.IsReady(sim)
 }

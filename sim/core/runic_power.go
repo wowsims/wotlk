@@ -17,6 +17,7 @@ type RuneState uint8
 const (
 	RuneState_Spent RuneState = iota
 	RuneState_Normal
+	RuneState_DeathSpent
 	RuneState_Death
 )
 
@@ -350,12 +351,17 @@ func GenerateRuneOfType(rb *[2]Rune, runeState RuneState) int32 {
 }
 
 func SpendRuneFromType(rb *[2]Rune, runeState RuneState) int32 {
+	spendState := RuneState_Spent
+	if runeState == RuneState_Death {
+		spendState = RuneState_DeathSpent
+	}
+
 	slot := int32(-1)
 	if rb[0].state == runeState {
-		rb[0].state = RuneState_Spent
+		rb[0].state = spendState
 		slot = 0
 	} else if rb[1].state == runeState {
-		rb[1].state = RuneState_Spent
+		rb[1].state = spendState
 		slot = 1
 	} else {
 		panic("Trying to spend rune that does not exist!")
@@ -363,16 +369,61 @@ func SpendRuneFromType(rb *[2]Rune, runeState RuneState) int32 {
 	return slot
 }
 
+func ConvertOptimalDeathRuneSlot(runes *[2]Rune, sim *Simulation) int32 {
+	slot := int32(-1)
+	if runes[0].state == RuneState_Spent {
+		slot = 0
+		// Handled
+	} else if runes[1].state == RuneState_Spent {
+		slot = 1
+		// Handled
+	}
+
+	if runes[0].state == RuneState_DeathSpent {
+		slot = 0
+		if runes[1].state == RuneState_Spent {
+
+		}
+		// Handled
+	} else if runes[1].state == RuneState_Spent {
+		slot = 1
+		// Handled
+	}
+
+	if slot < 0 {
+		// didn't find a spent rune, prio left normal -> death
+		if runes[0].state == RuneState_Normal {
+			slot = 0
+			SetRuneAtSlotToState(runes, slot, RuneState_Death)
+		} else if runes[0].state == RuneState_Death {
+			if runes[1].state == RuneState_Normal {
+				slot = 1
+				SetRuneAtSlotToState(runes, slot, RuneState_Death)
+			} else if runes[1].state == RuneState_Death { // both death
+				slot = 1
+
+			}
+		}
+	} else {
+		SetRuneAtSlotToState(runes, slot, RuneState_Death)
+		runes[slot].pas[0].Cancel(sim)
+		runes[slot].pas[0] = nil
+	}
+
+	return slot
+}
+
 func (rp *runicPowerBar) GenerateDeathRuneFromBloodRune(sim *Simulation, metrics *ResourceMetrics, spell *Spell) {
 	currRunes := rp.CurrentDeathRunes()
 	rp.GenerateRuneMetrics(sim, metrics, "Death", currRunes, currRunes+1)
 	spendSlot := rp.SpendBloodRune(sim, spell.BloodRuneMetrics())
+
 	SetRuneAtSlotToState(&rp.bloodRunes, spendSlot, RuneState_Death)
 	rp.bloodRunes[spendSlot].pas[0].Cancel(sim)
 	rp.bloodRunes[spendSlot].pas[0] = nil
 
 	pa := &PendingAction{
-		NextActionAt: sim.CurrentTime + 20.0*time.Second,
+		NextActionAt: sim.CurrentTime + 30.0*time.Second,
 		Priority:     ActionPriorityRegen,
 	}
 
