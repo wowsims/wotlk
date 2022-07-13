@@ -150,3 +150,7 @@ func (deathKnight *DeathKnight) applyIcyTalons() {
 		},
 	})
 }
+
+func (deathKnight *DeathKnight) applyThreatOfThassarian() {
+
+}
