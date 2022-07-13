@@ -281,10 +281,10 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestShadow-AllItems-CrimsonAcolyte'sRaiment"
+ key: "TestShadow-AllItems-CrimsonAcolyte'sRegalia"
  value: {
-  dps: 3652.2939869156876
-  tps: 2740.830712078596
+  dps: 3563.9797550991193
+  tps: 2675.7026699456374
  }
 }
 dps_results: {
@@ -1030,10 +1030,10 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestShadow-AllItems-Zabra'sRaiment"
+ key: "TestShadow-AllItems-Zabra'sRegalia"
  value: {
-  dps: 2367.432878810903
-  tps: 1783.0861868764505
+  dps: 2331.6023055304277
+  tps: 1756.212011129164
  }
 }
 dps_results: {

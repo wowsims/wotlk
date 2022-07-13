@@ -130,7 +130,7 @@ var ItemSetConquerorSanct = core.NewItemSet(core.ItemSet{
 })
 
 var ItemSetZabras = core.NewItemSet(core.ItemSet{
-	Name: "Zabra's Raiment",
+	Name: "Zabra's Regalia",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
 			// this is implemented in vampiric_touch.go
@@ -142,7 +142,7 @@ var ItemSetZabras = core.NewItemSet(core.ItemSet{
 })
 
 var ItemSetCrimsonAcolyte = core.NewItemSet(core.ItemSet{
-	Name: "Crimson Acolyte's Raiment",
+	Name: "Crimson Acolyte's Regalia",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
 			// this is implemented in vampiric_touch.go/devouring_plague.go/swp.go
