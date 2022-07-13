@@ -98,7 +98,14 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 	} else if deathKnight.Talents.RunicPowerMastery == 2 {
 		maxRunicPower = 130.0
 	}
+
+	currentRunicPower := deathKnightOptions.Options.StartingRunicPower
+	if currentRunicPower > maxRunicPower {
+		currentRunicPower = maxRunicPower
+	}
+
 	deathKnight.EnableRunicPowerBar(
+		currentRunicPower,
 		maxRunicPower,
 		func(sim *core.Simulation) {},
 		func(sim *core.Simulation) {
