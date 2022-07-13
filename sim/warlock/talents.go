@@ -303,7 +303,7 @@ func (warlock *Warlock) setupNightfall() {
 		Duration: time.Second * 10,
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 			// Check for an instant cast shadowbolt to disable aura
-			if spell == warlock.Shadowbolt && spell.CurCast.CastTime = 0 {
+			if spell == warlock.Shadowbolt && spell.CurCast.CastTime == 0 {
 				aura.Deactivate(sim)
 			}
 		},
