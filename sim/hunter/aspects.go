@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -11,7 +12,10 @@ func (hunter *Hunter) registerAspectOfTheDragonhawkSpell() {
 	var impHawkAura *core.Aura
 	const improvedHawkProcChance = 0.1
 	if hunter.Talents.ImprovedAspectOfTheHawk > 0 {
-		improvedHawkBonus := 1 + 0.03*float64(hunter.Talents.ImprovedAspectOfTheHawk)
+		improvedHawkBonus := 1 +
+			0.03*float64(hunter.Talents.ImprovedAspectOfTheHawk) +
+			core.TernaryFloat64(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfTheHawk), 0.06, 0)
+
 		impHawkAura = hunter.GetOrRegisterAura(core.Aura{
 			Label:    "Improved Aspect of the Hawk",
 			ActionID: core.ActionID{SpellID: 19556},
@@ -75,21 +79,46 @@ func (hunter *Hunter) registerAspectOfTheViperSpell() {
 
 	damagePenalty := core.TernaryFloat64(hunter.Talents.AspectMastery, 0.6, 0.5)
 
+	baseManaRegen := 0.02 * hunter.BaseMana * core.TernaryFloat64(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfAspectOfTheViper), 1.1, 1)
+	manaPerRangedHit := baseManaRegen * hunter.AutoAttacks.Ranged.SwingSpeed
+	manaPerMHHit := baseManaRegen * hunter.AutoAttacks.MH.SwingSpeed
+	manaPerOHHit := baseManaRegen * hunter.AutoAttacks.OH.SwingSpeed
+	var tickPA *core.PendingAction
+
+	hasCryptstalker4pc := hunter.HasSetBonus(ItemSetCryptstalkerBattlegear, 4)
+
 	auraConfig := core.Aura{
 		Label:    "Aspect of the Viper",
 		ActionID: actionID,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.DamageDealtMultiplier *= damagePenalty
+			if hasCryptstalker4pc {
+				aura.Unit.PseudoStats.RangedSpeedMultiplier *= 1.2
+			}
+
+			tickPA = core.StartPeriodicAction(sim, core.PeriodicActionOptions{
+				Period: time.Second * 3,
+				OnAction: func(sim *core.Simulation) {
+					hunter.AddMana(sim, 0.04*hunter.MaxMana(), hunter.AspectOfTheViper.ResourceMetrics, false)
+				},
+			})
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.DamageDealtMultiplier /= damagePenalty
+			if hasCryptstalker4pc {
+				aura.Unit.PseudoStats.RangedSpeedMultiplier /= 1.2
+			}
+			tickPA.Cancel(sim)
+			tickPA = nil
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
-				return
+			if spellEffect.ProcMask.Matches(core.ProcMaskRanged) {
+				hunter.AddMana(sim, manaPerRangedHit, hunter.AspectOfTheViper.ResourceMetrics, false)
+			} else if spellEffect.ProcMask.Matches(core.ProcMaskMeleeMH) {
+				hunter.AddMana(sim, manaPerMHHit, hunter.AspectOfTheViper.ResourceMetrics, false)
+			} else if spellEffect.ProcMask.Matches(core.ProcMaskMeleeOH) {
+				hunter.AddMana(sim, manaPerOHHit, hunter.AspectOfTheViper.ResourceMetrics, false)
 			}
-
-			// TODO: Mana gain
 		},
 	}
 	hunter.applySharedAspectConfig(false, &auraConfig)

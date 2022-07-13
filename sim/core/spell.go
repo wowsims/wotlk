@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"time"
+	"math"
 
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
@@ -57,6 +58,11 @@ type Spell struct {
 	ResourceType      stats.Stat
 	ResourceMetrics   *ResourceMetrics
 	comboPointMetrics *ResourceMetrics
+	runicPowerMetrics *ResourceMetrics
+	bloodRuneMetrics  *ResourceMetrics
+	frostRuneMetrics  *ResourceMetrics
+	unholyRuneMetrics *ResourceMetrics
+	deathRuneMetrics  *ResourceMetrics
 
 	// Base cost. Many effects in the game which 'reduce mana cost by X%'
 	// are calculated using the base cost.
@@ -107,6 +113,16 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		spell.ResourceMetrics = spell.Unit.NewRageMetrics(spell.ActionID)
 	case stats.Energy:
 		spell.ResourceMetrics = spell.Unit.NewEnergyMetrics(spell.ActionID)
+	case stats.RunicPower:
+		spell.ResourceMetrics = spell.Unit.NewRunicPowerMetrics(spell.ActionID)
+	case stats.BloodRune:
+		spell.ResourceMetrics = spell.Unit.NewBloodRuneMetrics(spell.ActionID)
+	case stats.FrostRune:
+		spell.ResourceMetrics = spell.Unit.NewFrostRuneMetrics(spell.ActionID)
+	case stats.UnholyRune:
+		spell.ResourceMetrics = spell.Unit.NewUnholyRuneMetrics(spell.ActionID)
+	case stats.DeathRune:
+		spell.ResourceMetrics = spell.Unit.NewDeathRuneMetrics(spell.ActionID)
 	}
 
 	spell.castFn = spell.makeCastFunc(config.Cast, spell.applyEffects)
@@ -170,6 +186,41 @@ func (spell *Spell) ComboPointMetrics() *ResourceMetrics {
 		spell.comboPointMetrics = spell.Unit.NewComboPointMetrics(spell.ActionID)
 	}
 	return spell.comboPointMetrics
+}
+
+func (spell *Spell) RunicPowerMetrics() *ResourceMetrics {
+	if spell.runicPowerMetrics == nil {
+		spell.runicPowerMetrics = spell.Unit.NewRunicPowerMetrics(spell.ActionID)
+	}
+	return spell.runicPowerMetrics
+}
+
+func (spell *Spell) BloodRuneMetrics() *ResourceMetrics {
+	if spell.bloodRuneMetrics == nil {
+		spell.bloodRuneMetrics = spell.Unit.NewBloodRuneMetrics(spell.ActionID)
+	}
+	return spell.bloodRuneMetrics
+}
+
+func (spell *Spell) FrostRuneMetrics() *ResourceMetrics {
+	if spell.frostRuneMetrics == nil {
+		spell.frostRuneMetrics = spell.Unit.NewFrostRuneMetrics(spell.ActionID)
+	}
+	return spell.frostRuneMetrics
+}
+
+func (spell *Spell) UnholyRuneMetrics() *ResourceMetrics {
+	if spell.unholyRuneMetrics == nil {
+		spell.unholyRuneMetrics = spell.Unit.NewUnholyRuneMetrics(spell.ActionID)
+	}
+	return spell.unholyRuneMetrics
+}
+
+func (spell *Spell) DeathRuneMetrics() *ResourceMetrics {
+	if spell.deathRuneMetrics == nil {
+		spell.deathRuneMetrics = spell.Unit.NewDeathRuneMetrics(spell.ActionID)
+	}
+	return spell.deathRuneMetrics
 }
 
 func (spell *Spell) ReadyAt() time.Duration {
@@ -242,7 +293,7 @@ func ApplyEffectFuncDirectDamage(baseEffect SpellEffect) ApplySpellEffects {
 			attackTable := spell.Unit.AttackTables[target.TableIndex]
 			effect.init(sim, spell)
 
-			effect.Damage = effect.calculateBaseDamage(sim, spell) * effect.DamageMultiplier
+			effect.Damage = effect.calculateBaseDamage(sim, spell)
 			effect.calcDamageSingle(sim, spell, attackTable)
 			effect.finalize(sim, spell)
 		}
@@ -256,7 +307,7 @@ func ApplyEffectFuncDirectDamageTargetModifiersOnly(baseEffect SpellEffect) Appl
 		effect.Target = target
 		attackTable := spell.Unit.AttackTables[target.TableIndex]
 
-		effect.Damage = effect.calculateBaseDamage(sim, spell) * effect.DamageMultiplier
+		effect.Damage = effect.calculateBaseDamage(sim, spell)
 		effect.calcDamageTargetOnly(sim, spell, attackTable)
 		effect.finalize(sim, spell)
 	}
@@ -277,7 +328,7 @@ func ApplyEffectFuncDamageMultiple(baseEffects []SpellEffect) ApplySpellEffects 
 		for i := range baseEffects {
 			effect := &baseEffects[i]
 			effect.init(sim, spell)
-			effect.Damage = effect.calculateBaseDamage(sim, spell) * effect.DamageMultiplier
+			effect.Damage = effect.calculateBaseDamage(sim, spell)
 			attackTable := spell.Unit.AttackTables[effect.Target.TableIndex]
 			effect.calcDamageSingle(sim, spell, attackTable)
 		}
@@ -304,7 +355,7 @@ func ApplyEffectFuncDamageMultipleTargeted(baseEffects []SpellEffect) ApplySpell
 			effect.Target = target
 			attackTable := spell.Unit.AttackTables[target.TableIndex]
 			effect.init(sim, spell)
-			effect.Damage = effect.calculateBaseDamage(sim, spell) * effect.DamageMultiplier
+			effect.Damage = effect.calculateBaseDamage(sim, spell)
 			effect.calcDamageSingle(sim, spell, attackTable)
 		}
 		for i := range baseEffects {
@@ -386,7 +437,7 @@ func ApplyEffectFuncMultipleDamageCapped(baseEffects []SpellEffect, aoeCap float
 			effect := &baseEffects[i]
 			effect.init(sim, spell)
 			attackTable := spell.Unit.AttackTables[effect.Target.TableIndex]
-			effect.Damage = effect.calculateBaseDamage(sim, spell) * effect.DamageMultiplier
+			effect.Damage = effect.calculateBaseDamage(sim, spell)
 
 			effect.applyAttackerModifiers(sim, spell)
 			effect.applyResistances(sim, spell, attackTable)
@@ -397,10 +448,34 @@ func ApplyEffectFuncMultipleDamageCapped(baseEffects []SpellEffect, aoeCap float
 		applyAOECap(baseEffects, outcomeMultipliers, aoeCap)
 		for i := range baseEffects {
 			effect := &baseEffects[i]
-			effect.applyTargetModifiers(sim, spell)
+			attackTable := spell.Unit.AttackTables[effect.Target.TableIndex]
+			effect.applyTargetModifiers(sim, spell, attackTable)
 		}
 		for i := range baseEffects {
 			effect := &baseEffects[i]
+			effect.finalize(sim, spell)
+		}
+	}
+}
+
+func ApplyEffectFuncMultipleDamageCappedWotLK(baseEffects []SpellEffect) ApplySpellEffects {
+	numTargets := len(baseEffects)
+	for _, effect := range baseEffects {
+		effect.Validate()
+	}
+
+	return func(sim *Simulation, _ *Unit, spell *Spell) {
+		capMultiplier := math.Min(10.0 / float64(numTargets), 1.0)
+		for i := range baseEffects {
+			effect := &baseEffects[i]
+			effect.init(sim, spell)
+			attackTable := spell.Unit.AttackTables[effect.Target.TableIndex]
+			effect.Damage = effect.calculateBaseDamage(sim, spell)
+			effect.Damage *= capMultiplier
+			effect.applyAttackerModifiers(sim, spell)
+			effect.applyResistances(sim, spell, attackTable)
+			effect.OutcomeApplier(sim, spell, effect, attackTable)
+			effect.applyTargetModifiers(sim, spell, attackTable)
 			effect.finalize(sim, spell)
 		}
 	}

@@ -68,7 +68,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P4_DESTRO.gear,
+				gear: Presets.P5_DESTRO.gear,
 
 				// TODO: FIND EPS FOR WARLOCKS
 				// Default EP weights for sorting gear in the gear picker.
@@ -85,13 +85,13 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,
 				// Default rotation settings.
-				rotation: Presets.DefaultRotation,
+				rotation: Presets.AfflictionRotation,
 				// Default talents.
 				talents: Presets.AfflictionTalents.data,
 				// Default spec-specific settings.
 				specOptions: WarlockOptions.create({
 					armor: Warlock_Options_Armor.FelArmor,
-					summon: Warlock_Options_Summon.Succubus,
+					summon: Warlock_Options_Summon.Felhunter,
 				}),
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
@@ -120,8 +120,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 
 			// IconInputs to include in the 'Self Buffs' section on the settings tab.
 			selfBuffInputs: [
-				WarlockInputs.FelArmor,
-				WarlockInputs.DemonArmor,
+				WarlockInputs.WarlockArmor,
 				WarlockInputs.DemonSummon,
 			],
 			// IconInputs to include in the 'Other Buffs' section on the settings tab.
@@ -227,10 +226,9 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				// Preset talents that the user can quickly select.
 				talents: [
 					Presets.AfflictionTalents,
-/*					Presets.DemonologistTalents,
+					Presets.DemonologyTalents,
 					Presets.DestructionTalents,
-					Presets.T6DestroTalents,
-*/				],
+				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
 					Presets.P1_DESTRO,

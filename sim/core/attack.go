@@ -184,25 +184,27 @@ type AutoAttacks struct {
 
 // Options for initializing auto attacks.
 type AutoAttackOptions struct {
-	MainHand       Weapon
-	OffHand        Weapon
-	Ranged         Weapon
-	AutoSwingMelee bool // If true, core engine will handle calling SwingMelee() for you.
-	DelayOHSwings  bool
-	ReplaceMHSwing ReplaceMHSwing
+	MainHand        Weapon
+	OffHand         Weapon
+	Ranged          Weapon
+	AutoSwingMelee  bool // If true, core engine will handle calling SwingMelee() for you.
+	AutoSwingRanged bool // If true, core engine will handle calling SwingMelee() for you.
+	DelayOHSwings   bool
+	ReplaceMHSwing  ReplaceMHSwing
 }
 
 func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 	unit.AutoAttacks = AutoAttacks{
-		agent:          agent,
-		unit:           unit,
-		MH:             options.MainHand,
-		OH:             options.OffHand,
-		Ranged:         options.Ranged,
-		AutoSwingMelee: options.AutoSwingMelee,
-		DelayOHSwings:  options.DelayOHSwings,
-		ReplaceMHSwing: options.ReplaceMHSwing,
-		IsDualWielding: options.MainHand.SwingSpeed != 0 && options.OffHand.SwingSpeed != 0,
+		agent:           agent,
+		unit:            unit,
+		MH:              options.MainHand,
+		OH:              options.OffHand,
+		Ranged:          options.Ranged,
+		AutoSwingMelee:  options.AutoSwingMelee,
+		AutoSwingRanged: options.AutoSwingRanged,
+		DelayOHSwings:   options.DelayOHSwings,
+		ReplaceMHSwing:  options.ReplaceMHSwing,
+		IsDualWielding:  options.MainHand.SwingSpeed != 0 && options.OffHand.SwingSpeed != 0,
 	}
 
 	if unit.Type == EnemyUnit {
@@ -332,7 +334,7 @@ func (aa *AutoAttacks) reset(sim *Simulation) {
 }
 
 func (aa *AutoAttacks) resetAutoSwing(sim *Simulation) {
-	if aa.autoSwingCancelled || !aa.AutoSwingMelee {
+	if aa.autoSwingCancelled || (!aa.AutoSwingMelee && !aa.AutoSwingRanged) {
 		return
 	}
 
@@ -341,17 +343,29 @@ func (aa *AutoAttacks) resetAutoSwing(sim *Simulation) {
 	}
 
 	pa := &PendingAction{
-		NextActionAt: aa.NextAttackAt(),
+		NextActionAt: TernaryDuration(aa.AutoSwingMelee, aa.NextAttackAt(), aa.RangedSwingAt),
 		Priority:     ActionPriorityAuto,
 	}
 
-	pa.OnAction = func(sim *Simulation) {
-		aa.SwingMelee(sim, aa.unit.CurrentTarget)
-		pa.NextActionAt = aa.NextAttackAt()
+	if aa.AutoSwingMelee {
+		pa.OnAction = func(sim *Simulation) {
+			aa.SwingMelee(sim, aa.unit.CurrentTarget)
+			pa.NextActionAt = aa.NextAttackAt()
 
-		// Cancelled means we made a new one because of a swing speed change.
-		if !pa.cancelled {
-			sim.AddPendingAction(pa)
+			// Cancelled means we made a new one because of a swing speed change.
+			if !pa.cancelled {
+				sim.AddPendingAction(pa)
+			}
+		}
+	} else { // Ranged
+		pa.OnAction = func(sim *Simulation) {
+			aa.SwingRanged(sim, aa.unit.CurrentTarget)
+			pa.NextActionAt = aa.RangedSwingAt
+
+			// Cancelled means we made a new one because of a swing speed change.
+			if !pa.cancelled {
+				sim.AddPendingAction(pa)
+			}
 		}
 	}
 
@@ -493,13 +507,6 @@ func (aa *AutoAttacks) TrySwingRanged(sim *Simulation, target *Unit) {
 	aa.RangedAuto.Cast(sim, target)
 	aa.RangedSwingAt = sim.CurrentTime + aa.RangedSwingSpeed()
 	aa.RangedSwingInProgress = true
-
-	// It's important that we update the GCD timer AFTER starting the ranged auto.
-	// Otherwise the hardcast action won't be created separately.
-	nextGCD := sim.CurrentTime + aa.RangedAuto.CurCast.CastTime
-	if nextGCD > aa.unit.NextGCDAt() {
-		aa.unit.SetGCDTimer(sim, nextGCD)
-	}
 }
 
 func (aa *AutoAttacks) ModifySwingTime(sim *Simulation, amount float64) {
@@ -526,7 +533,7 @@ func (aa *AutoAttacks) ModifySwingTime(sim *Simulation, amount float64) {
 }
 
 // Delays all swing timers until the specified time.
-func (aa *AutoAttacks) DelayAllUntil(sim *Simulation, readyAt time.Duration) {
+func (aa *AutoAttacks) DelayMeleeUntil(sim *Simulation, readyAt time.Duration) {
 	autoChanged := false
 
 	if readyAt > aa.MainhandSwingAt {
@@ -540,12 +547,6 @@ func (aa *AutoAttacks) DelayAllUntil(sim *Simulation, readyAt time.Duration) {
 		if aa.AutoSwingMelee {
 			autoChanged = true
 		}
-	}
-	if readyAt > aa.RangedSwingAt {
-		if aa.RangedSwingInProgress {
-			panic("Ranged swing already in progress!")
-		}
-		aa.RangedSwingAt = readyAt
 	}
 
 	if autoChanged {
@@ -596,11 +597,6 @@ type PPMManager struct {
 	mhProcChance     float64
 	ohProcChance     float64
 	rangedProcChance float64
-
-	// For feral druids, certain PPM effects use their equipped weapon speed
-	// instead of their paw attack speed.
-	mhSpecialProcChance float64
-	ohSpecialProcChance float64
 }
 
 // Returns whether the effect procced.
@@ -615,49 +611,17 @@ func (ppmm *PPMManager) Proc(sim *Simulation, procMask ProcMask, label string) b
 	return false
 }
 
-// Returns whether the effect procced.
-// This is different from Proc() in that yellow melee hits use a proc chance based on the equipped
-// weapon speed rather than the base attack speed. This distinction matters for feral druids.
-func (ppmm *PPMManager) ProcWithWeaponSpecials(sim *Simulation, procMask ProcMask, label string) bool {
-	if procMask.Matches(ProcMaskMeleeMHAuto) {
-		return ppmm.mhProcChance > 0 && sim.RandomFloat(label) < ppmm.mhProcChance
-	} else if procMask.Matches(ProcMaskMeleeMHSpecial) {
-		return ppmm.mhSpecialProcChance > 0 && sim.RandomFloat(label) < ppmm.mhSpecialProcChance
-	} else if procMask.Matches(ProcMaskMeleeOHAuto) {
-		return ppmm.ohProcChance > 0 && sim.RandomFloat(label) < ppmm.ohProcChance
-	} else if procMask.Matches(ProcMaskMeleeOHSpecial) {
-		return ppmm.ohSpecialProcChance > 0 && sim.RandomFloat(label) < ppmm.ohSpecialProcChance
-	} else if procMask.Matches(ProcMaskRanged) {
-		return ppmm.rangedProcChance > 0 && sim.RandomFloat(label) < ppmm.rangedProcChance
-	}
-	return false
-}
-
 func (aa *AutoAttacks) NewPPMManager(ppm float64, procMask ProcMask) PPMManager {
 	if !aa.IsEnabled() {
 		return PPMManager{}
 	}
 
-	character := aa.agent.GetCharacter()
-
 	ppmm := PPMManager{}
 	if procMask.Matches(ProcMaskMeleeMH) {
 		ppmm.mhProcChance = ppm * aa.MH.SwingSpeed / 60.0
-		ppmm.mhSpecialProcChance = ppmm.mhProcChance
-		if character != nil {
-			if mhWeapon := character.GetMHWeapon(); mhWeapon != nil {
-				ppmm.mhSpecialProcChance = ppm * mhWeapon.SwingSpeed / 60.0
-			}
-		}
 	}
 	if procMask.Matches(ProcMaskMeleeOH) {
 		ppmm.ohProcChance = ppm * aa.OH.SwingSpeed / 60.0
-		ppmm.ohSpecialProcChance = ppmm.ohProcChance
-		if character != nil {
-			if ohWeapon := character.GetOHWeapon(); ohWeapon != nil {
-				ppmm.ohSpecialProcChance = ppm * ohWeapon.SwingSpeed / 60.0
-			}
-		}
 	}
 	if procMask.Matches(ProcMaskRanged) {
 		ppmm.rangedProcChance = ppm * aa.Ranged.SwingSpeed / 60.0

@@ -68,6 +68,12 @@ func (dot *Dot) TakeSnapshot(sim *Simulation) {
 	dot.tickFn = dot.TickEffects(sim, dot.Spell)
 }
 
+// Forces an instant tick. Does not reset the tick timer or aura duration,
+// the tick is simply an extra tick.
+func (dot *Dot) TickOnce() {
+	dot.tickFn()
+}
+
 func NewDot(config Dot) *Dot {
 	dot := &Dot{}
 	*dot = config

@@ -20,12 +20,13 @@ type Warlock struct {
 	UnstableAffDot *core.Dot
 	Corruption     *core.Spell
 	CorruptionDot  *core.Dot
-	/*	Haunt		   *core.Spell
-		Haunt		   *core.Aura
+	Haunt		   *core.Spell
+	HauntAura	   *core.Aura
+	LifeTap 	   *core.Spell
+	ChaosBolt 	   *core.Spell
 
-		DemonicEmpowerment		   *core.Aura
-	*/
-	LifeTap *core.Spell
+	// DemonicEmpowerment		   *core.Aura
+	
 
 	CurseOfElements     *core.Spell
 	CurseOfElementsAura *core.Aura
@@ -43,6 +44,7 @@ type Warlock struct {
 
 	NightfallProcAura *core.Aura
 	ShadowEmbraceAura *core.Aura
+	EradicationAura	  *core.Aura
 
 	Pet *WarlockPet
 
@@ -68,10 +70,17 @@ func (warlock *Warlock) Initialize() {
 	warlock.registerCurseOfAgonySpell()
 	warlock.registerCurseOfDoomSpell()
 	warlock.registerLifeTapSpell()
+	warlock.registerSeedSpell()
 	if warlock.Talents.UnstableAffliction {
 		warlock.registerUnstableAffSpell()
 	}
-	warlock.registerSeedSpell()
+	warlock.registerUnstableAffDot()
+	if warlock.Talents.Haunt {
+		warlock.registerHauntSpell()
+	}
+	if warlock.Talents.ChaosBolt {
+		warlock.registerChaosBoltSpell()
+	}
 }
 
 func (warlock *Warlock) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
@@ -113,16 +122,18 @@ func NewWarlock(character core.Character, options proto.Player) *Warlock {
 		warlock.AddStat(stats.SpellPower, amount)
 	}
 
-	/*	if warlock.Talents.DemonicSacrifice && warlock.Options.SacrificeSummon {
-		switch warlock.Options.Summon {
-		case proto.Warlock_Options_Succubus:
-			warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.15
-		case proto.Warlock_Options_Imp:
-			warlock.PseudoStats.FireDamageDealtMultiplier *= 1.15
-		case proto.Warlock_Options_Felgaurd:
-			warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.10
-		}
-	} else*/
+	// 	if warlock.Talents.DemonicSacrifice && warlock.Options.SacrificeSummon {
+	// 	switch warlock.Options.Summon {
+	// 	case proto.Warlock_Options_Succubus:
+	// 		warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.15
+	// 	case proto.Warlock_Options_Imp:
+	// 		warlock.PseudoStats.FireDamageDealtMultiplier *= 1.15
+	// 	case proto.Warlock_Options_Felguard:
+	// 		warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.10
+	// 	case proto.Warlock_Options_Felhunter:
+	// 		warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.0
+	// 	}
+	// } else
 	if warlock.Options.Summon != proto.Warlock_Options_NoSummon {
 		warlock.Pet = warlock.NewWarlockPet()
 	}

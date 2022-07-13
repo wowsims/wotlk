@@ -147,7 +147,7 @@ func (mage *Mage) registerPresenceOfMindCD() {
 	}
 
 	cooldown := time.Minute * 3
-	if ItemSetAldorRegalia.CharacterHasSetBonus(&mage.Character, 4) {
+	if mage.HasSetBonus(ItemSetAldorRegalia, 4) {
 		cooldown -= time.Second * 24
 	}
 
@@ -354,7 +354,7 @@ func (mage *Mage) registerIcyVeinsCD() {
 	}
 
 	actionID := core.ActionID{SpellID: 12472}
-	manaCost := mage.BaseMana() * 0.03
+	manaCost := mage.BaseMana * 0.03
 
 	icyVeinsAura := mage.RegisterAura(core.Aura{
 		Label:    "Icy Veins",
@@ -465,8 +465,10 @@ func (mage *Mage) applyMoltenFury() {
 	multiplier := 1.0 + 0.1*float64(mage.Talents.MoltenFury)
 
 	mage.RegisterResetEffect(func(sim *core.Simulation) {
-		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation) {
-			mage.PseudoStats.DamageDealtMultiplier *= multiplier
+		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute20 bool) {
+			if isExecute20 {
+				mage.PseudoStats.DamageDealtMultiplier *= multiplier
+			}
 		})
 	})
 }

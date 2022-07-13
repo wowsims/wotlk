@@ -45,7 +45,7 @@ func (shaman *Shaman) registerGraceOfAirTotemSpell() {
 }
 
 func (shaman *Shaman) registerTranquilAirTotemSpell() {
-	baseCost := shaman.BaseMana() * 0.06
+	baseCost := shaman.BaseMana * 0.06
 	config := shaman.newTotemSpellConfig(baseCost, 25908)
 	config.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 		shaman.NextTotemDrops[AirTotem] = sim.CurrentTime + time.Second*300

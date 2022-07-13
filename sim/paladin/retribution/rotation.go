@@ -12,12 +12,6 @@ func (ret *RetributionPaladin) OnGCDReady(sim *core.Simulation) {
 	ret.tryUseGCD(sim)
 }
 
-func (ret *RetributionPaladin) OnManaTick(sim *core.Simulation) {
-	if ret.FinishedWaitingForManaAndGCDReady(sim) {
-		ret.tryUseGCD(sim)
-	}
-}
-
 func (ret *RetributionPaladin) tryUseGCD(sim *core.Simulation) {
 	if !ret.openerCompleted {
 		ret.openingRotation(sim)

@@ -56,6 +56,7 @@ import { Warrior, Warrior_Rotation as WarriorRotation, WarriorTalents, Warrior_O
 import { DeathKnight, DeathKnight_Rotation as DeathKnightRotation, DeathKnightTalents, DeathKnight_Options as DeathKnightOptions } from '/wotlk/core/proto/deathknight.js';
 import { ProtectionWarrior, ProtectionWarrior_Rotation as ProtectionWarriorRotation, ProtectionWarrior_Options as ProtectionWarriorOptions } from '/wotlk/core/proto/warrior.js';
 
+export type DeathKnightSpecs = Spec.SpecDeathKnight;
 export type DruidSpecs = [Spec.SpecBalanceDruid, Spec.SpecFeralDruid, Spec.SpecFeralTankDruid];
 export type HunterSpecs = Spec.SpecHunter;
 export type MageSpecs = Spec.SpecMage;
@@ -284,7 +285,8 @@ export type TalentsUnion =
 	PriestTalents |
 	ShamanTalents |
 	WarlockTalents |
-	WarriorTalents;
+	WarriorTalents |
+	DeathKnightTalents;
 export type SpecTalents<T extends Spec> =
 	T extends Spec.SpecBalanceDruid ? DruidTalents :
 	T extends Spec.SpecElementalShaman ? ShamanTalents :
@@ -993,6 +995,7 @@ const dualWieldSpecs: Array<Spec> = [
 	Spec.SpecRogue,
 	Spec.SpecWarrior,
 	Spec.SpecProtectionWarrior,
+	Spec.SpecDeathKnight,
 ];
 export function isDualWieldSpec(spec: Spec): boolean {
 	return dualWieldSpecs.includes(spec);
@@ -1258,7 +1261,7 @@ const classToEligibleRangedWeaponTypes: Record<Class, Array<RangedWeaponType>> =
 		RangedWeaponType.RangedWeaponTypeThrown,
 	],
 	[Class.ClassDeathKnight]: [
-		// TODO: what does DK put in ranged slot?
+		RangedWeaponType.RangedWeaponTypeSigil,
 	],
 };
 
@@ -1589,6 +1592,7 @@ export function makeDefaultBlessings(numPaladins: number): BlessingsAssignments 
 		{ spec: Spec.SpecWarlock, blessings: [Blessings.BlessingOfKings, Blessings.BlessingOfWisdom] },
 		{ spec: Spec.SpecWarrior, blessings: [Blessings.BlessingOfKings, Blessings.BlessingOfMight] },
 		{ spec: Spec.SpecProtectionWarrior, blessings: [Blessings.BlessingOfKings, Blessings.BlessingOfMight, Blessings.BlessingOfSanctuary] },
+		{ spec: Spec.SpecDeathKnight, blessings: [Blessings.BlessingOfKings, Blessings.BlessingOfMight, Blessings.BlessingOfSalvation] },
 	]);
 };
 
@@ -1599,4 +1603,9 @@ export const orderedResourceTypes: Array<ResourceType> = [
 	ResourceType.ResourceTypeRage,
 	ResourceType.ResourceTypeComboPoints,
 	ResourceType.ResourceTypeFocus,
+	ResourceType.ResourceTypeRunicPower,
+	ResourceType.ResourceTypeBloodRune,
+	ResourceType.ResourceTypeFrostRune,
+	ResourceType.ResourceTypeUnholyRune,
+	ResourceType.ResourceTypeDeathRune,
 ];

@@ -14,47 +14,37 @@ func (warlock *Warlock) registerSeedSpell() {
 	warlock.Seeds = make([]*core.Spell, numTargets)
 	warlock.SeedDots = make([]*core.Dot, numTargets)
 
-	numHit := float64(numTargets - 1)
 	// For this simulation we always assume the seed target didn't die to trigger the seed because we don't simulate health.
 	// This effectively lowers the seed AOE cap using the function:
-	cap := 13580.0 * numHit / (numHit + 1)
-
 	for i := 0; i < numTargets; i++ {
-		warlock.makeSeed(i, cap)
+		warlock.makeSeed(i, numTargets)
 	}
 }
 
-func (warlock *Warlock) makeSeed(targetIdx int, cap float64) {
-	baseCost := 0.34 * warlock.BaseMana()
+func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
+	baseCost := 0.34 * warlock.BaseMana
 
 	flatBonus := 0.0
-	if ItemSetOblivionRaiment.CharacterHasSetBonus(&warlock.Character, 4) {
+	if warlock.HasSetBonus(ItemSetOblivionRaiment, 4) {
 		flatBonus += 180
 	}
+
 	baseSeedExplosionEffect := core.SpellEffect{
-		ProcMask:         core.ProcMaskSpellDamage,
-		DamageMultiplier: 1 * (1 + 0.02*float64(warlock.Talents.ShadowMastery)) * (1 + 0.01*float64(warlock.Talents.Contagion)),
-		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-		BaseDamage:       core.BaseDamageConfigMagic(1633+flatBonus, 1897+flatBonus, 0.143),
-		OutcomeApplier:   warlock.OutcomeFuncMagicHitAndCrit(1.5),
+		ProcMask:         	  core.ProcMaskSpellDamage,
+		DamageMultiplier: 	  1 + 0.01*float64(warlock.Talents.Contagion),
+		ThreatMultiplier:	  1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+		BaseDamage:      	  core.BaseDamageConfigMagic(1633+flatBonus, 1897+flatBonus, 0.2129),
+		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(1.5),
 		BonusSpellCritRating: float64(warlock.Talents.ImprovedCorruption) * core.CritRatingPerCritChance,
 	}
 
 	// Use a custom aoe effect list that does not include the seeded target.
-	baseEffects := make([]core.SpellEffect, warlock.Env.GetNumTargets()-1)
-	skipped := false
+	baseEffects := make([]core.SpellEffect, warlock.Env.GetNumTargets())
 	for i := range baseEffects {
 		baseEffects[i] = baseSeedExplosionEffect
-		expTarget := i
-		if i == targetIdx {
-			skipped = true
-		}
-		if skipped {
-			expTarget++
-		}
-		baseEffects[i].Target = warlock.Env.GetTargetUnit(int32(expTarget))
+		baseEffects[i].Target = warlock.Env.GetTargetUnit(int32(i))
 	}
-	seedActionID := core.ActionID{SpellID: 27243}
+	seedActionID := core.ActionID{SpellID: 47836}
 
 	explosionId := seedActionID
 	explosionId.Tag = 1
@@ -63,7 +53,7 @@ func (warlock *Warlock) makeSeed(targetIdx int, cap float64) {
 		ActionID:     explosionId,
 		SpellSchool:  core.SpellSchoolShadow,
 		Cast:         core.CastConfig{},
-		ApplyEffects: core.ApplyEffectFuncMultipleDamageCapped(baseEffects, cap),
+		ApplyEffects: core.ApplyEffectFuncMultipleDamageCappedWotLK(baseEffects),
 	})
 
 	effect := core.SpellEffect{
@@ -133,9 +123,9 @@ func (warlock *Warlock) makeSeed(targetIdx int, cap float64) {
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * (1 + 0.02*float64(warlock.Talents.ShadowMastery)) * (1 + 0.01*float64(warlock.Talents.Contagion)),
+			DamageMultiplier: 1 * (1 + 0.01*float64(warlock.Talents.Contagion)) * (1 + 0.05*core.TernaryFloat64(warlock.Talents.SiphonLife, 0, 1)),
 			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(174, 0.25),
+			BaseDamage:       core.BaseDamageConfigMagicNoRoll(1518/6, 0.25),
 			OutcomeApplier:   warlock.OutcomeFuncTick(),
 			IsPeriodic:       true,
 		}),

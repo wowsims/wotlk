@@ -58,6 +58,11 @@ const (
 	FrostResistance
 	NatureResistance
 	ShadowResistance
+	RunicPower
+	BloodRune
+	FrostRune
+	UnholyRune
+	DeathRune
 
 	Len
 )
@@ -154,6 +159,16 @@ func (s Stat) StatName() string {
 		return "ShadowResistance"
 	case ArcaneResistance:
 		return "ArcaneResistance"
+	case RunicPower:
+		return "Runic Power"
+	case BloodRune:
+		return "Blood Rune"
+	case FrostRune:
+		return "Frost Rune"
+	case UnholyRune:
+		return "Unholy Rune"
+	case DeathRune:
+		return "Death Rune"
 	}
 
 	return "none"
@@ -428,6 +443,8 @@ type PseudoStats struct {
 	BonusMHCritRating         float64 // Talents, e.g. Rogue Dagger specialization
 	BonusOHCritRating         float64 // Talents, e.g. Rogue Dagger specialization
 	BonusMeleeSpellCritRating float64 // Crit rating for melee special attacks, used for Warrior Recklessness
+	BonusMHArmorPenRating     float64 // Talents, e.g. Rogue Mace specialization
+	BonusOHArmorPenRating     float64 // Talents, e.g. Rogue Mace specialization
 
 	DisableDWMissPenalty bool    // Used by Heroic Strike and Cleave
 	IncreasedMissChance  float64 // Insect Swarm and Scorpid Sting

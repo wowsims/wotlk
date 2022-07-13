@@ -267,7 +267,12 @@ func runServer(useFS bool, host string, launchBrowser bool, simName string, wasm
 
 	go func() {
 		// Launch server!
-		log.Printf("Closing: %s", http.ListenAndServe(host, nil))
+		if err := http.ListenAndServe(host, nil); err != nil {
+			log.Printf("Failed to shutdown server: %s", err)
+			os.Exit(1)
+		}
+		log.Printf("Server shutdown successfully.")
+		os.Exit(0)
 	}()
 
 	// used to read a CTRL+C

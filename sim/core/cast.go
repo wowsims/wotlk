@@ -156,6 +156,56 @@ func (spell *Spell) wrapCastFuncResources(config CastConfig, onCastComplete Cast
 			onCastComplete(sim, target)
 			return true
 		}
+	case stats.RunicPower:
+		return func(sim *Simulation, target *Unit) bool {
+			spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
+			if spell.Unit.runicPowerBar.CurrentRunicPower() < spell.CurCast.Cost {
+				return false
+			}
+			spell.Unit.runicPowerBar.SpendRunicPower(sim, spell.CurCast.Cost, spell.ResourceMetrics)
+			onCastComplete(sim, target)
+			return true
+		}
+		// case stats.BloodRune:
+		// 	return func(sim *Simulation, target *Unit) bool {
+		// 		spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
+		// 		if spell.Unit.CurrentBloodRunes() < spell.CurCast.Cost {
+		// 			return false
+		// 		}
+		// 		spell.Unit.SpendBloodRune(sim, spell.ResourceMetrics)
+		// 		onCastComplete(sim, target)
+		// 		return true
+		// 	}
+		// case stats.FrostRune:
+		// 	return func(sim *Simulation, target *Unit) bool {
+		// 		spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
+		// 		if spell.Unit.CurrentFrostRunes() < spell.CurCast.Cost {
+		// 			return false
+		// 		}
+		// 		spell.Unit.SpendRune(sim, spell.ResourceMetrics)
+		// 		onCastComplete(sim, target)
+		// 		return true
+		// 	}
+		// case stats.UnholyRune:
+		// 	return func(sim *Simulation, target *Unit) bool {
+		// 		spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
+		// 		if spell.Unit.CurrentUnholyRunes() < spell.CurCast.Cost {
+		// 			return false
+		// 		}
+		// 		spell.Unit.SpendRune(sim, spell.ResourceMetrics)
+		// 		onCastComplete(sim, target)
+		// 		return true
+		// 	}
+		// case stats.DeathRune:
+		// 	return func(sim *Simulation, target *Unit) bool {
+		// 		spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
+		// 		if spell.Unit.CurrentDeathRunes() < spell.CurCast.Cost {
+		// 			return false
+		// 		}
+		// 		spell.Unit.SpendRune(sim, spell.ResourceMetrics)
+		// 		onCastComplete(sim, target)
+		// 		return true
+		// 	}
 	}
 
 	panic("Invalid resource type")
@@ -319,7 +369,7 @@ func (spell *Spell) makeCastFuncWait(config CastConfig, onCastComplete CastFunc)
 
 				if spell.Unit.AutoAttacks.IsEnabled() {
 					// Delay autoattacks until the cast is complete.
-					spell.Unit.AutoAttacks.DelayAllUntil(sim, spell.Unit.Hardcast.Expires)
+					spell.Unit.AutoAttacks.DelayMeleeUntil(sim, spell.Unit.Hardcast.Expires)
 				}
 			}
 		}

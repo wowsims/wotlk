@@ -39,9 +39,6 @@ type Agent interface {
 	// Called whenever the GCD becomes ready for this Agent.
 	OnGCDReady(sim *Simulation)
 
-	// Called after each mana tick, if this Agent uses mana.
-	OnManaTick(sim *Simulation)
-
 	// Called after each auto attack performed by this Agent.
 	// This is different from Aura.OnSpellHit in that it is invoked fully after
 	// everything related to the attack is complete, and it is only invoked for

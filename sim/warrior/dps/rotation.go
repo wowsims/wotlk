@@ -183,7 +183,7 @@ func (war *DpsWarrior) tryMaintainDebuffs(sim *core.Simulation) bool {
 }
 
 func (war *DpsWarrior) tryQueueHsCleave(sim *core.Simulation) {
-	if sim.IsExecutePhase() && !war.Rotation.UseHsDuringExecute {
+	if sim.IsExecutePhase20() && !war.Rotation.UseHsDuringExecute {
 		return
 	}
 

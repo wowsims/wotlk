@@ -9,7 +9,7 @@ import (
 
 func (warrior *Warrior) registerBloodthirstSpell(cdTimer *core.Timer) {
 	cost := 20.0
-	if ItemSetDestroyerBattlegear.CharacterHasSetBonus(&warrior.Character, 4) {
+	if warrior.HasSetBonus(ItemSetDestroyerBattlegear, 4) {
 		cost -= 5
 	}
 	refundAmount := cost * 0.8
@@ -37,7 +37,7 @@ func (warrior *Warrior) registerBloodthirstSpell(cdTimer *core.Timer) {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeMHSpecial,
 
-			DamageMultiplier: 1 * core.TernaryFloat64(ItemSetOnslaughtBattlegear.CharacterHasSetBonus(&warrior.Character, 4), 1.05, 1) * 0.02 * float64(warrior.Talents.UnendingFury),
+			DamageMultiplier: 1 * core.TernaryFloat64(warrior.HasSetBonus(ItemSetOnslaughtBattlegear, 4), 1.05, 1) * 0.02 * float64(warrior.Talents.UnendingFury),
 			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{

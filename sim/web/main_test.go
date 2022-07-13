@@ -62,7 +62,7 @@ var p1Equip = &proto.EquipmentSpec{
 
 func init() {
 	go func() {
-		runServer(true, ":3333", false, "", false, bufio.NewReader(bytes.NewBuffer([]byte{})))
+		runServer(true, ":3339", false, "", false, bufio.NewReader(bytes.NewBuffer([]byte{})))
 	}()
 
 	time.Sleep(time.Second) // hack so we have time for server to startup. Probably could repeatedly curl the endpoint until it responds.
@@ -100,7 +100,7 @@ func TestIndividualSim(t *testing.T) {
 		t.Fatalf("Failed to encode request: %s", err.Error())
 	}
 
-	r, err := http.Post("http://localhost:3333/raidSim", "application/x-protobuf", bytes.NewReader(msgBytes))
+	r, err := http.Post("http://localhost:3339/raidSim", "application/x-protobuf", bytes.NewReader(msgBytes))
 	if err != nil {
 		t.Fatalf("Failed to POST request: %s", err.Error())
 	}

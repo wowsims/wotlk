@@ -27,8 +27,9 @@ type SpellEffect struct {
 	BonusSpellPower      float64
 	BonusSpellCritRating float64
 
-	BonusAttackPower float64
-	BonusCritRating  float64
+	BonusArmorPenRating float64
+	BonusAttackPower    float64
+	BonusCritRating     float64
 
 	// Additional multiplier that is always applied.
 	DamageMultiplier float64
@@ -182,22 +183,39 @@ func (spellEffect *SpellEffect) calculateBaseDamage(sim *Simulation, spell *Spel
 	if spellEffect.BaseDamage.Calculator == nil {
 		return 0
 	} else {
-		return spellEffect.BaseDamage.Calculator(sim, spellEffect, spell)
+		return spellEffect.BaseDamage.Calculator(sim, spellEffect, spell) * spellEffect.DamageMultiplier
 	}
 }
 
 func (spellEffect *SpellEffect) calcDamageSingle(sim *Simulation, spell *Spell, attackTable *AttackTable) {
 	if !spell.Flags.Matches(SpellFlagIgnoreModifiers) {
-		spellEffect.applyAttackerModifiers(sim, spell)
-		spellEffect.applyResistances(sim, spell, attackTable)
-		spellEffect.applyTargetModifiers(sim, spell)
-		spellEffect.PreoutcomeDamage = spellEffect.Damage
-		spellEffect.OutcomeApplier(sim, spell, spellEffect, attackTable)
+		if sim.Log != nil {
+			baseDmg := spellEffect.Damage
+			spellEffect.applyAttackerModifiers(sim, spell)
+			afterAttackMods := spellEffect.Damage
+			spellEffect.applyResistances(sim, spell, attackTable)
+			afterResistances := spellEffect.Damage
+			spellEffect.applyTargetModifiers(sim, spell, attackTable)
+			afterTargetMods := spellEffect.Damage
+			spellEffect.PreoutcomeDamage = spellEffect.Damage
+			spellEffect.OutcomeApplier(sim, spell, spellEffect, attackTable)
+			afterOutcome := spellEffect.Damage
+			spell.Unit.Log(
+				sim,
+				"%s %s [DEBUG] BaseDamage:%0.01f, AfterAttackerMods:%0.01f, AfterResistances:%0.01f, AfterTargetMods:%0.01f, AfterOutcome:%0.01f",
+				spellEffect.Target.LogLabel(), spell.ActionID, baseDmg, afterAttackMods, afterResistances, afterTargetMods, afterOutcome)
+		} else {
+			spellEffect.applyAttackerModifiers(sim, spell)
+			spellEffect.applyResistances(sim, spell, attackTable)
+			spellEffect.applyTargetModifiers(sim, spell, attackTable)
+			spellEffect.PreoutcomeDamage = spellEffect.Damage
+			spellEffect.OutcomeApplier(sim, spell, spellEffect, attackTable)
+		}
 	}
 }
 func (spellEffect *SpellEffect) calcDamageTargetOnly(sim *Simulation, spell *Spell, attackTable *AttackTable) {
 	spellEffect.applyResistances(sim, spell, attackTable)
-	spellEffect.applyTargetModifiers(sim, spell)
+	spellEffect.applyTargetModifiers(sim, spell, attackTable)
 	spellEffect.OutcomeApplier(sim, spell, spellEffect, attackTable)
 }
 
@@ -255,6 +273,12 @@ func (spellEffect *SpellEffect) applyAttackerModifiers(sim *Simulation, spell *S
 	spellEffect.Damage *= attacker.PseudoStats.DamageDealtMultiplier
 	if spell.SpellSchool.Matches(SpellSchoolPhysical) {
 		spellEffect.Damage *= attacker.PseudoStats.PhysicalDamageDealtMultiplier
+		if spellEffect.ProcMask.Matches(ProcMaskMeleeMH) {
+			spellEffect.BonusArmorPenRating += attacker.PseudoStats.BonusMHArmorPenRating
+		}
+		if spellEffect.ProcMask.Matches(ProcMaskMeleeOH) {
+			spellEffect.BonusArmorPenRating += attacker.PseudoStats.BonusOHArmorPenRating
+		}
 	} else if spell.SpellSchool.Matches(SpellSchoolArcane) {
 		spellEffect.Damage *= attacker.PseudoStats.ArcaneDamageDealtMultiplier
 	} else if spell.SpellSchool.Matches(SpellSchoolFire) {
@@ -273,9 +297,10 @@ func (spellEffect *SpellEffect) applyAttackerModifiers(sim *Simulation, spell *S
 	}
 }
 
-func (spellEffect *SpellEffect) applyTargetModifiers(sim *Simulation, spell *Spell) {
+func (spellEffect *SpellEffect) applyTargetModifiers(sim *Simulation, spell *Spell, attackTable *AttackTable) {
 	target := spellEffect.Target
 
+	spellEffect.Damage *= attackTable.DamageDealtMultiplier
 	spellEffect.Damage *= target.PseudoStats.DamageTakenMultiplier
 	spellEffect.Damage = MaxFloat(0, spellEffect.Damage+target.PseudoStats.BonusDamageTaken)
 	if spell.SpellSchool.Matches(SpellSchoolPhysical) {

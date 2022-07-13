@@ -11,7 +11,7 @@ func (priest *Priest) registerPowerInfusionCD() {
 	}
 
 	actionID := core.ActionID{SpellID: 10060, Tag: int32(priest.Index)}
-	baseCost := priest.BaseMana() * 0.16
+	baseCost := priest.BaseMana * 0.16
 
 	powerInfusionTargetAgent := priest.Party.Raid.GetPlayerFromRaidTarget(priest.SelfBuffs.PowerInfusionTarget)
 	if powerInfusionTargetAgent == nil {

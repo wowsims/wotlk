@@ -177,6 +177,7 @@ enum RangedWeaponType {
 	RangedWeaponTypeThrown = 6;
 	RangedWeaponTypeTotem = 7;
 	RangedWeaponTypeWand = 8;
+	RangedWeaponTypeSigil = 9;
 }
 
 // All slots on the gear menu where a single item can be worn.
@@ -534,15 +535,17 @@ message Debuffs {
 	bool misery = 3;
 	TristateEffect faerie_fire = 4;
 
+	// 13% bonus spell damage
 	bool curse_of_elements = 5;
-	TristateEffect ebon_plaguebringer = 6;
-
+	bool ebon_plaguebringer = 6;
+	bool earth_and_moon = 29;
+	
 	// +3% to crit against target
 	bool heart_of_the_crusader = 7;
 	bool master_poisoner = 8;
 	bool totem_of_wrath = 9;
 
-	// 13% spell dmg
+	// 5% spell crit
 	bool improved_shadow_bolt = 10;
 	bool improved_scorch = 11;
 	bool winters_chill = 12;
@@ -610,18 +613,21 @@ message Encounter {
 	double duration = 1;
 
 	// Variation in the duration
-	double duration_variation = 4;
+	double duration_variation = 2;
 
 	// The ratio of the encounter duration, between 0 and 1, for which the targets
-	// will be in execute range for the purposes of Warrior Execute, Mage Molten
+	// will be in execute range (<= 20%) for the purposes of Warrior Execute, Mage Molten
 	// Fury, etc.
-	double execute_proportion = 3;
+	double execute_proportion_20 = 3;
+
+	// Same as execute_proportion but for 35%.
+	double execute_proportion_35 = 4;
 
 	// If set, will use the targets health value instead of a duration for fight length.
 	bool use_health = 5;
 
 	// If type != Simple or Custom, then this may be empty.
-	repeated Target targets = 2;
+	repeated Target targets = 6;
 }
 
 message ItemSpec {
@@ -732,6 +738,10 @@ enum OtherAction {
 	OtherActionRefund = 8; // Refund of a resource like Energy or Rage, when the ability didn't land.
 	OtherActionDamageTaken = 9; // Indicates damage taken; used for rage gen.
 	OtherActionHealingModel = 12; // Indicates healing received from healing model.
+	OtherActionBloodRuneGain = 13; // Indicates healing received from healing model.
+	OtherActionFrostRuneGain  = 14; // Indicates healing received from healing model.
+	OtherActionUnholyRuneGain  = 15; // Indicates healing received from healing model.
+	OtherActionDeathRuneGain  = 16; // Indicates healing received from healing model.
 }
 
 message ActionID {

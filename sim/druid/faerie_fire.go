@@ -8,7 +8,7 @@ import (
 )
 
 func (druid *Druid) registerFaerieFireSpell() {
-	actionID := core.ActionID{SpellID: 26993}
+	actionID := core.ActionID{SpellID: 770}
 	resourceType := stats.Mana
 	baseCost := 145.0
 	gcd := core.GCDDefault
@@ -19,7 +19,7 @@ func (druid *Druid) registerFaerieFireSpell() {
 		if !druid.Talents.FaerieFire {
 			return
 		}
-		actionID = core.ActionID{SpellID: 27011}
+		actionID = core.ActionID{SpellID: 16857}
 		resourceType = 0
 		baseCost = 0
 		gcd = time.Second
@@ -30,7 +30,7 @@ func (druid *Druid) registerFaerieFireSpell() {
 		}
 	}
 
-	druid.FaerieFireAura = core.FaerieFireAura(druid.CurrentTarget, druid.Talents.ImprovedFaerieFire)
+	druid.FaerieFireAura = core.FaerieFireAura(druid.CurrentTarget, druid.Talents.ImprovedFaerieFire > 0)
 
 	druid.FaerieFire = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,

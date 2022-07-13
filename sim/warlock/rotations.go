@@ -13,12 +13,6 @@ func (warlock *Warlock) OnGCDReady(sim *core.Simulation) {
 	warlock.tryUseGCD(sim)
 }
 
-func (warlock *Warlock) OnManaTick(sim *core.Simulation) {
-	if warlock.FinishedWaitingForManaAndGCDReady(sim) {
-		warlock.tryUseGCD(sim)
-	}
-}
-
 func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	var spell *core.Spell
 	var target = warlock.CurrentTarget
@@ -120,8 +114,12 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 
 	// main spells
 	// TODO: optimize so that cast time of DoT is included in calculation so you can cast right before falling off.
-	if warlock.Talents.UnstableAffliction && !warlock.UnstableAffDot.IsActive() {
+	if warlock.Talents.UnstableAffliction && warlock.Rotation.UnstableAffliction && !warlock.UnstableAffDot.IsActive() {
 		spell = warlock.UnstableAff
+	} else if warlock.Talents.Haunt && warlock.Rotation.Haunt && warlock.Haunt.CD.IsReady(sim) && !warlock.HauntAura.IsActive() {
+		spell = warlock.Haunt
+	} else if warlock.Talents.ChaosBolt && warlock.Rotation.ChaosBolt && warlock.ChaosBolt.CD.IsReady(sim) {
+		spell = warlock.ChaosBolt
 	} else if warlock.Rotation.Corruption && !warlock.CorruptionDot.IsActive() {
 		spell = warlock.Corruption
 	} else if warlock.Rotation.Immolate && !warlock.ImmolateDot.IsActive() {

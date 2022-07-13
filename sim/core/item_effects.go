@@ -47,7 +47,6 @@ func AddWeaponEffect(id int32, weaponEffect ApplyWeaponEffect) {
 	weaponEffects[id] = weaponEffect
 }
 
-
 // Helpers for making common types of active item effects.
 
 func NewSimpleStatItemActiveEffect(itemID int32, bonus stats.Stats, duration time.Duration, cooldown time.Duration, sharedCDFunc func(*Character) Cooldown) {

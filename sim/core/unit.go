@@ -65,15 +65,11 @@ type Unit struct {
 
 	PseudoStats stats.PseudoStats
 
-	// TODO: Put these inside a 'manaBar' object.
-	manaCastingMetrics    *ResourceMetrics
-	manaNotCastingMetrics *ResourceMetrics
-	JowManaMetrics        *ResourceMetrics
-	VtManaMetrics         *ResourceMetrics
-
 	healthBar
+	manaBar
 	rageBar
 	energyBar
+	runicPowerBar
 
 	// All spells that can be cast by this unit.
 	Spellbook []*Spell
@@ -290,7 +286,6 @@ func (unit *Unit) Armor() float64 {
 }
 
 func (unit *Unit) ArmorPenetration() float64 {
-	// TODO: talents (e.g. mace spec) and battle stance are additive here
 	return MinFloat(unit.stats[stats.ArmorPenetration]/ArmorPenPerPercentArmor, 1.0)
 }
 

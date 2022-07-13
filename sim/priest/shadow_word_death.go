@@ -8,7 +8,7 @@ import (
 )
 
 func (priest *Priest) registerShadowWordDeathSpell() {
-	baseCost := priest.BaseMana() * 0.12
+	baseCost := priest.BaseMana * 0.12
 
 	playerMod := (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01)
 	// target := priest.CurrentTarget // Add this section when we get target health simmed to investigate SWD glyph
@@ -41,8 +41,18 @@ func (priest *Priest) registerShadowWordDeathSpell() {
 			BonusSpellCritRating: float64(priest.Talents.MindMelt) * 2 * core.CritRatingPerCritChance,
 			DamageMultiplier:     playerMod,
 			ThreatMultiplier:     1 - 0.08*float64(priest.Talents.ShadowAffinity),
-			BaseDamage:           core.BaseDamageConfigMagic(750, 870, 0.429),
-			OutcomeApplier:       priest.OutcomeFuncMagicHitAndCrit(priest.SpellCritMultiplier(1, float64(priest.Talents.ShadowPower)/5)),
+			OnSpellHitDealt:      priest.OnSpellHitAddShadowWeaving(),
+			BaseDamage: core.WrapBaseDamageConfig(
+				core.BaseDamageConfigMagic(750, 870, 0.429),
+				func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
+					return func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
+						swMod := 1 + float64(priest.ShadowWeavingAura.GetStacks())*0.02
+						dmg := oldCalculator(sim, spellEffect, spell)
+
+						return dmg * swMod
+					}
+				}),
+			OutcomeApplier: priest.OutcomeFuncMagicHitAndCrit(priest.SpellCritMultiplier(1, float64(priest.Talents.ShadowPower)/5)),
 		}),
 	})
 }

@@ -55,7 +55,7 @@ func (druid *Druid) registerRipSpell() {
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 + core.TernaryFloat64(ItemSetThunderheartHarness.CharacterHasSetBonus(&druid.Character, 4), 0.15, 0),
+			DamageMultiplier: 1 + core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartHarness, 4), 0.15, 0),
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
 			BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {

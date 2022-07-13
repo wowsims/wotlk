@@ -39,7 +39,7 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 			petConfig.Name,
 			&hunter.Character,
 			hunterPetBaseStats,
-			hunterPetStatInheritance,
+			hunter.makeStatInheritance(),
 			true,
 		),
 		config:      petConfig,
@@ -66,10 +66,8 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 		AutoSwingMelee: true,
 	})
 
-	// Cobra reflexes
-	hp.PseudoStats.MeleeSpeedMultiplier *= 1.3
-	hp.AutoAttacks.MHEffect.DamageMultiplier *= petConfig.DamageMultiplier
-	hp.AutoAttacks.MHEffect.DamageMultiplier *= 0.85
+	// Pet family bonus is now the same for all pets.
+	hp.AutoAttacks.MHEffect.DamageMultiplier *= 1.05
 
 	hp.AddStatDependency(stats.StatDependency{
 		SourceStat:   stats.Strength,
@@ -97,6 +95,15 @@ func (hp *HunterPet) GetPet() *core.Pet {
 	return &hp.Pet
 }
 
+func (hp *HunterPet) Talents() proto.HunterPetTalents {
+	talents := hp.hunterOwner.Options.PetTalents
+	if talents == nil {
+		return proto.HunterPetTalents{}
+	} else {
+		return *talents
+	}
+}
+
 func (hp *HunterPet) Initialize() {
 	if hp.hunterOwner.Options.PetSingleAbility {
 		hp.primaryAbility = hp.NewPetAbility(hp.config.SecondaryAbility, true)
@@ -111,7 +118,7 @@ func (hp *HunterPet) Reset(sim *core.Simulation) {
 	hp.focusBar.reset(sim)
 	if sim.Log != nil {
 		hp.Log(sim, "Total Pet stats: %s", hp.GetStats())
-		inheritedStats := hunterPetStatInheritance(hp.hunterOwner.GetStats())
+		inheritedStats := hp.hunterOwner.makeStatInheritance()(hp.hunterOwner.GetStats())
 		hp.Log(sim, "Inherited Pet stats: %s", inheritedStats)
 	}
 
@@ -162,12 +169,19 @@ func (hp *HunterPet) specialDamageMod(baseDamageConfig core.BaseDamageConfig) co
 
 func (hp *HunterPet) specialOutcomeMod(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
 	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
-		if hp.CobraStrikesAura != nil && hp.CobraStrikesAura.IsActive() {
-			hp.AddStat(stats.MeleeCrit, 100*core.CritRatingPerCritChance)
-			hp.AddStat(stats.SpellCrit, 100*core.CritRatingPerCritChance)
+		if hp.CobraStrikesAura.IsActive() {
+			hp.AddStatDynamic(sim, stats.MeleeCrit, 100*core.CritRatingPerCritChance)
+			hp.AddStatDynamic(sim, stats.SpellCrit, 100*core.CritRatingPerCritChance)
 			outcomeApplier(sim, spell, spellEffect, attackTable)
-			hp.AddStat(stats.MeleeCrit, -100*core.CritRatingPerCritChance)
-			hp.AddStat(stats.SpellCrit, -100*core.CritRatingPerCritChance)
+			hp.AddStatDynamic(sim, stats.MeleeCrit, -100*core.CritRatingPerCritChance)
+			hp.AddStatDynamic(sim, stats.SpellCrit, -100*core.CritRatingPerCritChance)
+		} else if hp.KillCommandAura.IsActive() && hp.hunterOwner.Talents.FocusedFire > 0 {
+			bonusCrit := 10 * core.CritRatingPerCritChance * float64(hp.hunterOwner.Talents.FocusedFire)
+			hp.AddStatDynamic(sim, stats.MeleeCrit, bonusCrit)
+			hp.AddStatDynamic(sim, stats.SpellCrit, bonusCrit)
+			outcomeApplier(sim, spell, spellEffect, attackTable)
+			hp.AddStatDynamic(sim, stats.MeleeCrit, -bonusCrit)
+			hp.AddStatDynamic(sim, stats.SpellCrit, -bonusCrit)
 		} else {
 			outcomeApplier(sim, spell, spellEffect, attackTable)
 		}
@@ -183,19 +197,27 @@ var hunterPetBaseStats = stats.Stats{
 	stats.MeleeCrit: (1.1515 + 1.8) * core.CritRatingPerCritChance,
 }
 
-var hunterPetStatInheritance = func(ownerStats stats.Stats) stats.Stats {
-	return stats.Stats{
-		stats.Stamina:     ownerStats[stats.Stamina] * 0.3,
-		stats.Armor:       ownerStats[stats.Armor] * 0.35,
-		stats.AttackPower: ownerStats[stats.RangedAttackPower] * 0.22,
-		stats.SpellPower:  ownerStats[stats.RangedAttackPower] * 0.128,
+func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
+	hvw := 0.1 * float64(hunter.Talents.HunterVsWild)
+
+	petTalents := hunter.Options.PetTalents
+	var wildHunt int32
+	if petTalents != nil {
+		wildHunt = petTalents.WildHunt
+	}
+
+	return func(ownerStats stats.Stats) stats.Stats {
+		return stats.Stats{
+			stats.Stamina:     ownerStats[stats.Stamina]*0.3 + 0.2*float64(wildHunt),
+			stats.Armor:       ownerStats[stats.Armor] * 0.35,
+			stats.AttackPower: ownerStats[stats.RangedAttackPower]*0.22 + ownerStats[stats.Stamina]*hvw + 0.15*float64(wildHunt),
+			stats.SpellPower:  ownerStats[stats.RangedAttackPower]*0.128 + 0.15*float64(wildHunt),
+		}
 	}
 }
 
 type PetConfig struct {
 	Name string
-
-	DamageMultiplier float64
 
 	PrimaryAbility   PetAbilityType
 	SecondaryAbility PetAbilityType
@@ -209,49 +231,41 @@ type PetConfig struct {
 var PetConfigs = map[proto.Hunter_Options_PetType]PetConfig{
 	proto.Hunter_Options_Bat: PetConfig{
 		Name:             "Bat",
-		DamageMultiplier: 1.07,
 		PrimaryAbility:   Bite,
 		SecondaryAbility: Screech,
 	},
 	proto.Hunter_Options_Bear: PetConfig{
 		Name:             "Bear",
-		DamageMultiplier: 0.91,
 		PrimaryAbility:   Bite,
 		SecondaryAbility: Claw,
 	},
 	proto.Hunter_Options_Cat: PetConfig{
 		Name:             "Cat",
-		DamageMultiplier: 1.1,
 		PrimaryAbility:   Bite,
 		SecondaryAbility: Claw,
 	},
 	proto.Hunter_Options_Crab: PetConfig{
-		Name:             "Crab",
-		DamageMultiplier: 0.95,
-		PrimaryAbility:   Claw,
+		Name:           "Crab",
+		PrimaryAbility: Claw,
 	},
 	proto.Hunter_Options_Owl: PetConfig{
 		Name:             "Owl",
-		DamageMultiplier: 1.07,
 		PrimaryAbility:   Claw,
 		SecondaryAbility: Screech,
 		RandomSelection:  true,
 	},
 	proto.Hunter_Options_Raptor: PetConfig{
 		Name:             "Raptor",
-		DamageMultiplier: 1.1,
 		PrimaryAbility:   Bite,
 		SecondaryAbility: Claw,
 	},
 	proto.Hunter_Options_Ravager: PetConfig{
 		Name:             "Ravager",
-		DamageMultiplier: 1.1,
 		PrimaryAbility:   Bite,
 		SecondaryAbility: Gore,
 	},
 	proto.Hunter_Options_WindSerpent: PetConfig{
 		Name:             "Wind Serpent",
-		DamageMultiplier: 1.07,
 		PrimaryAbility:   Bite,
 		SecondaryAbility: LightningBreath,
 	},

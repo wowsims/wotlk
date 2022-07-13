@@ -13,7 +13,7 @@ func (druid *Druid) registerShredSpell() {
 	refundAmount := baseCost * 0.8
 
 	flatDamageBonus := 405 +
-		core.TernaryFloat64(ItemSetNordrassilHarness.CharacterHasSetBonus(&druid.Character, 4), 75, 0) +
+		core.TernaryFloat64(druid.HasSetBonus(ItemSetNordrassilHarness, 4), 75, 0) +
 		core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == 29390, 88, 0)
 
 	druid.Shred = druid.RegisterSpell(core.SpellConfig{

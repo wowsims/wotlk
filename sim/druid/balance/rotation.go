@@ -13,12 +13,6 @@ func (moonkin *BalanceDruid) OnGCDReady(sim *core.Simulation) {
 	moonkin.tryUseGCD(sim)
 }
 
-func (moonkin *BalanceDruid) OnManaTick(sim *core.Simulation) {
-	if moonkin.FinishedWaitingForManaAndGCDReady(sim) {
-		moonkin.tryUseGCD(sim)
-	}
-}
-
 func (moonkin *BalanceDruid) tryUseGCD(sim *core.Simulation) {
 	if moonkin.useSurplusRotation {
 		moonkin.manaTracker.Update(sim, moonkin.GetCharacter())
@@ -89,7 +83,7 @@ func (moonkin *BalanceDruid) GetDpsRotationHierarchy(baseRotation proto.BalanceD
 	currentRotation.PrimarySpell = proto.BalanceDruid_Rotation_Starfire6
 	rotations = append(rotations, currentRotation)
 
-	if druid.ItemSetNordrassilRegalia.CharacterHasSetBonus(&moonkin.Character, 4) {
+	if moonkin.HasSetBonus(druid.ItemSetNordrassilRegalia, 4) {
 		currentRotation.Moonfire = false
 		currentRotation.InsectSwarm = true
 		rotations = append(rotations, currentRotation)

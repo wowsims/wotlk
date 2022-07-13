@@ -280,7 +280,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			},
 		});
 		this.addWarning({
-			updateOn: this.player.gearChangeEmitter,
+			updateOn: TypedEvent.onAny([this.player.gearChangeEmitter, this.player.professionChangeEmitter]),
 			getContent: () => {
 				const failedProfReqs = this.player.getGear().getFailedProfessionRequirements(this.player.getProfessions());
 				if (failedProfReqs.length == 0) {
@@ -288,6 +288,17 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				}
 
 				return failedProfReqs.map(fpr => `${fpr.name} requires ${professionNames[fpr.requiredProfession]}, but it is not selected.`);
+			},
+		});
+		this.addWarning({
+			updateOn: this.player.gearChangeEmitter,
+			getContent: () => {
+				const jcGems = this.player.getGear().getJCGems();
+				if (jcGems.length <= 3) {
+					return '';
+				}
+
+				return `Only 3 Jewelcrafting Gems are allowed, but ${jcGems.length} are equipped.`;
 			},
 		});
 		(config.warnings || []).forEach(warning => this.addWarning(warning(this)));
@@ -588,8 +599,8 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			buffsSection,
 			[
 				this.individualConfig.raidBuffInputs
-						.concat([IconInputs.FerociousInspiration])
-						.map(iconInput => new IndividualSimIconPicker(buffsSection, this.sim.raid, iconInput, this)),
+					.concat([IconInputs.FerociousInspiration])
+					.map(iconInput => new IndividualSimIconPicker(buffsSection, this.sim.raid, iconInput, this)),
 				this.individualConfig.playerBuffInputs.map(iconInput => new IndividualSimIconPicker(buffsSection, this.player, iconInput, this)),
 				this.individualConfig.partyBuffInputs.map(iconInput => new IndividualSimIconPicker(buffsSection, this.player.getParty()!, iconInput, this)),
 			].flat(),

@@ -156,6 +156,9 @@ message Warlock {
 		bool immolate = 3;
 		bool corruption = 4;
 		bool detonate_seed = 5;
+		bool haunt = 6;
+		bool chaos_bolt = 7;
+		bool unstable_affliction = 8;
 	}
 	Rotation rotation = 1;
 
@@ -167,8 +170,8 @@ message Warlock {
 			Imp = 1;
 			Voidwalker = 2;
 			Succubus = 3;
-			Felhound = 4;
-			Felgaurd = 5;
+			Felhunter = 4;
+			Felguard = 5;
 		}
 		enum Armor {
 			NoArmor = 0;

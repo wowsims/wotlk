@@ -9,7 +9,7 @@ import (
 
 func (warrior *Warrior) registerWhirlwindSpell() {
 	cost := 25.0 - float64(warrior.Talents.FocusedRage)
-	if ItemSetWarbringerBattlegear.CharacterHasSetBonus(&warrior.Character, 2) {
+	if warrior.HasSetBonus(ItemSetWarbringerBattlegear, 2) {
 		cost -= 5
 	}
 

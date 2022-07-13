@@ -10,7 +10,7 @@ import (
 
 func (priest *Priest) registerVampiricTouchSpell() {
 	actionID := core.ActionID{SpellID: 48160}
-	baseCost := priest.BaseMana() * 0.16
+	baseCost := priest.BaseMana * 0.16
 
 	applier := priest.OutcomeFuncTick()
 	if priest.Talents.Shadowform {
@@ -39,6 +39,7 @@ func (priest *Priest) registerVampiricTouchSpell() {
 			OutcomeApplier:      priest.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
+					priest.AddShadowWeavingStack(sim)
 					priest.VampiricTouchDot.Apply(sim)
 				}
 			},
@@ -64,8 +65,17 @@ func (priest *Priest) registerVampiricTouchSpell() {
 			ThreatMultiplier:     1 - 0.08*float64(priest.Talents.ShadowAffinity),
 			IsPeriodic:           true,
 			ProcMask:             core.ProcMaskPeriodicDamage,
-			BaseDamage:           core.BaseDamageConfigMagicNoRoll(850/5, 0.4),
-			OutcomeApplier:       applier,
+			BaseDamage: core.WrapBaseDamageConfig(
+				core.BaseDamageConfigMagicNoRoll(850/5, 0.4),
+				func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
+					return func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
+						swMod := 1 + float64(priest.ShadowWeavingAura.GetStacks())*0.02
+						dmg := oldCalculator(sim, spellEffect, spell)
+
+						return dmg * swMod
+					}
+				}),
+			OutcomeApplier: applier,
 		}),
 	})
 }

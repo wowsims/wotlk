@@ -46,7 +46,10 @@ export class TalentsPicker<ModObject, TalentsProto> extends Input<ModObject, str
 	setInputValue(newValue: string) {
 		const parts = newValue.split('-');
 		this.trees.forEach((tree, idx) => tree.setTalentsString(parts[idx] || ''));
+		this.updateTrees();
+	}
 
+	updateTrees() {
 		if (this.isFull()) {
 			this.rootElem.classList.add('talents-full');
 		} else {
@@ -67,6 +70,13 @@ export class TalentsPicker<ModObject, TalentsProto> extends Input<ModObject, str
 	freeze() {
 		this.frozen = true;
 		this.rootElem.classList.add('frozen');
+	}
+
+	setMaxPoints(newMaxPoints: number) {
+		if (newMaxPoints != this.maxPoints) {
+			this.maxPoints = newMaxPoints;
+			this.updateTrees();
+		}
 	}
 }
 
@@ -101,7 +111,7 @@ class TalentTreePicker<TalentsProto> extends Component {
 		main.style.backgroundImage = `url('${config.backgroundUrl}')`;
 		main.style.gridTemplateRows = `repeat(${this.picker.numRows}, 1fr)`;
 
-		const iconSize = Math.max(70 / this.picker.numRows, 10);
+		const iconSize = Math.min(70 / this.picker.numRows, 10);
 		main.style.height = `${iconSize * this.picker.numRows}vh`
 		main.style.width = `${iconSize * 4}vh`
 

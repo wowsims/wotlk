@@ -53,6 +53,7 @@ export const DefaultOptions = HunterOptions.create({
 	ammo: Ammo.TimelessArrow,
 	petType: PetType.Ravager,
 	petUptime: 1,
+	sniperTrainingUptime: 0.8,
 	latencyMs: 30,
 });
 

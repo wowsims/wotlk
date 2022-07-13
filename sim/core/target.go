@@ -9,10 +9,11 @@ import (
 )
 
 type Encounter struct {
-	Duration           time.Duration
-	DurationVariation  time.Duration
-	executePhaseBegins time.Duration
-	Targets            []*Target
+	Duration             time.Duration
+	DurationVariation    time.Duration
+	executePhase20Begins time.Duration
+	executePhase35Begins time.Duration
+	Targets              []*Target
 
 	EndFightAtHealth float64
 	// DamgeTaken is used to track health fights instead of duration fights.
@@ -24,10 +25,11 @@ type Encounter struct {
 
 func NewEncounter(options proto.Encounter) Encounter {
 	encounter := Encounter{
-		Duration:           DurationFromSeconds(options.Duration),
-		DurationVariation:  DurationFromSeconds(options.DurationVariation),
-		executePhaseBegins: DurationFromSeconds(options.Duration * (1 - options.ExecuteProportion)),
-		Targets:            []*Target{},
+		Duration:             DurationFromSeconds(options.Duration),
+		DurationVariation:    DurationFromSeconds(options.DurationVariation),
+		executePhase20Begins: DurationFromSeconds(options.Duration * (1 - options.ExecuteProportion_20)),
+		executePhase35Begins: DurationFromSeconds(options.Duration * (1 - options.ExecuteProportion_35)),
+		Targets:              []*Target{},
 	}
 	// If UseHealth is set, we use the sum of targets health.
 	if options.UseHealth {
@@ -213,13 +215,17 @@ type AttackTable struct {
 	BinaryNatureHitChance float64
 	BinaryShadowHitChance float64
 
-	ArmorDamageReduction float64
+	ArmorDamageModifier float64
+
+	DamageDealtMultiplier float64
 }
 
 func NewAttackTable(attacker *Unit, defender *Unit) *AttackTable {
 	table := &AttackTable{
 		Attacker: attacker,
 		Defender: defender,
+
+		DamageDealtMultiplier: 1,
 	}
 
 	if defender.Type == EnemyUnit {

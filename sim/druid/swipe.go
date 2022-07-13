@@ -17,7 +17,7 @@ func (druid *Druid) registerSwipeSpell() {
 	baseEffect := core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeMHSpecial,
 
-		DamageMultiplier: 1 + core.TernaryFloat64(druid.InForm(Bear) && ItemSetThunderheartHarness.CharacterHasSetBonus(&druid.Character, 4), 0.15, 0),
+		DamageMultiplier: 1 + core.TernaryFloat64(druid.InForm(Bear) && druid.HasSetBonus(ItemSetThunderheartHarness, 4), 0.15, 0),
 		ThreatMultiplier: 1,
 
 		BaseDamage: core.BaseDamageConfig{

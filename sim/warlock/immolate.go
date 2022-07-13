@@ -9,15 +9,17 @@ import (
 )
 
 func (warlock *Warlock) registerImmolateSpell() {
-	actionID := core.ActionID{SpellID: 27215}
-	baseCost := 0.17 * warlock.BaseMana()
+	actionID := core.ActionID{SpellID: 47811}
+	baseCost := 0.17 * warlock.BaseMana
+	costReduction := 0.0
+	if float64(warlock.Talents.Cataclysm) > 0 {
+		costReduction += 0.01 + 0.03 * float64(warlock.Talents.Cataclysm)
+	}
 
 	effect := core.SpellEffect{
 		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 0, 1) * 5 * core.CritRatingPerCritChance,
-		DamageMultiplier: 1 *
-			(1 + (0.05 * float64(warlock.Talents.ImprovedImmolate))) *
-			(1 + (0.02 * float64(warlock.Talents.Emberstorm))),
-		ThreatMultiplier: 1 - 0.05*float64(warlock.Talents.DestructiveReach),
+		DamageMultiplier: (1 + (0.1 * float64(warlock.Talents.ImprovedImmolate))) * (1 + 0.03 * float64(warlock.Talents.Emberstorm)),
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
 		BaseDamage:       core.BaseDamageConfigMagic(460.0, 460.0, 0.2+0.04*float64(warlock.Talents.ShadowAndFlame)),
 		OutcomeApplier:   warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
 		OnSpellHitDealt:  applyDotOnLanded(&warlock.ImmolateDot),
@@ -29,11 +31,12 @@ func (warlock *Warlock) registerImmolateSpell() {
 		SpellSchool:  core.SpellSchoolFire,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
+		
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost * (1 - 0.01*float64(warlock.Talents.Cataclysm)),
+				Cost:     baseCost * (1 - costReduction),
 				GCD:      core.GCDDefault,
-				CastTime: time.Millisecond*2000 - (time.Millisecond * 100 * time.Duration(warlock.Talents.Bane)),
+				CastTime: time.Millisecond * (2000 - 100 * time.Duration(warlock.Talents.Bane) - 50 * time.Duration(warlock.Talents.Emberstorm)),
 			},
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
@@ -48,12 +51,12 @@ func (warlock *Warlock) registerImmolateSpell() {
 			Label:    "immolate-" + strconv.Itoa(int(warlock.Index)),
 			ActionID: actionID,
 		}),
-		NumberOfTicks: 5 + core.TernaryInt(ItemSetVoidheartRaiment.CharacterHasSetBonus(&warlock.Character, 4), 1, 0), // voidheart 4p gives 1 extra tick
+		NumberOfTicks: 5 + core.TernaryInt(warlock.HasSetBonus(ItemSetVoidheartRaiment, 4), 1, 0), // voidheart 4p gives 1 extra tick
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(785/5, 0.13),
+			DamageMultiplier: (1 + 0.03 * float64(warlock.Talents.Aftermath)) * (1 + 0.03 * float64(warlock.Talents.Emberstorm)),
+			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
+			BaseDamage:       core.BaseDamageConfigMagicNoRoll(785/5, 0.2),
 			OutcomeApplier:   warlock.OutcomeFuncTick(),
 			IsPeriodic:       true,
 			ProcMask:         core.ProcMaskPeriodicDamage,

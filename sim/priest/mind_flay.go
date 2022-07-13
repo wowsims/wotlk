@@ -13,7 +13,7 @@ func (priest *Priest) MindFlayActionID(numTicks int) core.ActionID {
 }
 
 func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
-	baseCost := priest.BaseMana() * 0.09
+	baseCost := priest.BaseMana * 0.09
 	channelTime := time.Second * time.Duration(numTicks)
 
 	return priest.RegisterSpell(core.SpellConfig{
@@ -76,20 +76,23 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 		BonusSpellCritRating: float64(priest.Talents.MindMelt) * 2 * core.CritRatingPerCritChance,
 		OutcomeApplier:       priest.OutcomeFuncMagicHitAndCrit(1 + float64(priest.Talents.ShadowPower)*0.2),
 		ProcMask:             core.ProcMaskSpellDamage,
+		OnSpellHitDealt:      priest.OnSpellHitAddShadowWeaving(),
 	}
 
 	normalCalc := core.BaseDamageFuncMagic(588/3, 588/3, 0.257)
 	miseryCalc := core.BaseDamageFuncMagic(588/3, 588/3, (1+float64(priest.Talents.Misery)*0.05)*0.257)
 
 	normMod := (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01) * // initialize modifier
-		core.TernaryFloat64(ItemSetIncarnate.CharacterHasSetBonus(&priest.Character, 4), 1.05, 1)
+		core.TernaryFloat64(priest.HasSetBonus(ItemSetIncarnate, 4), 1.05, 1)
 
 	swpMod := (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01 + float64(priest.Talents.TwistedFaith)*0.02) * // update modifier if SWP active
-		core.TernaryFloat64(ItemSetIncarnate.CharacterHasSetBonus(&priest.Character, 4), 1.05, 1)
+		core.TernaryFloat64(priest.HasSetBonus(ItemSetIncarnate, 4), 1.05, 1)
 
 	effect.BaseDamage = core.BaseDamageConfig{
 		Calculator: func(sim *core.Simulation, effect *core.SpellEffect, spell *core.Spell) float64 {
 			var dmg float64
+			shadowWeavingMod := 1 + float64(priest.ShadowWeavingAura.GetStacks())*0.02
+
 			if priest.MiseryAura.IsActive() {
 				dmg = miseryCalc(sim, effect, spell)
 			} else {
@@ -100,7 +103,7 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 			} else {
 				dmg *= normMod // multiply the damage
 			}
-			return dmg
+			return dmg * shadowWeavingMod
 		},
 		TargetSpellCoefficient: 0.0,
 	}
