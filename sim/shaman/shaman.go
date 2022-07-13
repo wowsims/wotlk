@@ -10,8 +10,8 @@ import (
 
 const baseMana = 4396.0
 
-// Start looking to refresh 2 minute totems at 1:55.
-const TotemRefreshTime2M = time.Second * 115
+// Start looking to refresh 5 minute totems at 4:55.
+const TotemRefreshTime5M = time.Second * 295
 
 const (
 	SpellFlagShock    = core.SpellFlagAgentReserved1
@@ -230,25 +230,25 @@ func (shaman *Shaman) Reset(sim *core.Simulation) {
 		switch i {
 		case AirTotem:
 			if shaman.Totems.Air != proto.AirTotem_NoAirTotem {
-				shaman.NextTotemDrops[i] = TotemRefreshTime2M
+				shaman.NextTotemDrops[i] = TotemRefreshTime5M
 				shaman.NextTotemDropType[i] = int32(shaman.Totems.Air)
 			}
 		case EarthTotem:
 			if shaman.Totems.Earth != proto.EarthTotem_NoEarthTotem {
-				shaman.NextTotemDrops[i] = TotemRefreshTime2M
+				shaman.NextTotemDrops[i] = TotemRefreshTime5M
 				shaman.NextTotemDropType[i] = int32(shaman.Totems.Earth)
 			}
 		case FireTotem:
 			shaman.NextTotemDropType[i] = int32(shaman.Totems.Fire)
 			if shaman.NextTotemDropType[i] != int32(proto.FireTotem_NoFireTotem) {
-				shaman.NextTotemDrops[i] = TotemRefreshTime2M
+				shaman.NextTotemDrops[i] = TotemRefreshTime5M
 				if shaman.NextTotemDropType[i] != int32(proto.FireTotem_TotemOfWrath) {
 					shaman.NextTotemDrops[i] = 0 // attack totems we drop immediately
 				}
 			}
 		case WaterTotem:
 			if shaman.Totems.Water == proto.WaterTotem_ManaSpringTotem {
-				shaman.NextTotemDrops[i] = TotemRefreshTime2M
+				shaman.NextTotemDrops[i] = TotemRefreshTime5M
 			}
 		}
 	}

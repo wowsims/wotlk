@@ -24,9 +24,8 @@ type Warlock struct {
 	HauntAura	   *core.Aura
 	LifeTap 	   *core.Spell
 	ChaosBolt 	   *core.Spell
-
-	// DemonicEmpowerment		   *core.Aura
-	
+	Soulfire 	   *core.Spell
+	Conflagrate    *core.Spell
 
 	CurseOfElements     *core.Spell
 	CurseOfElementsAura *core.Aura
@@ -42,9 +41,13 @@ type Warlock struct {
 	Seeds    []*core.Spell
 	SeedDots []*core.Dot
 
-	NightfallProcAura *core.Aura
-	ShadowEmbraceAura *core.Aura
-	EradicationAura	  *core.Aura
+	NightfallProcAura 		*core.Aura
+	ShadowEmbraceAura 		*core.Aura
+	EradicationAura	  		*core.Aura
+	DemonicEmpowerment		*core.Spell
+	DemonicEmpowermentAura	*core.Aura
+	Metamorphosis			*core.Spell
+	MetamorphosisAura		*core.Aura
 
 	Pet *WarlockPet
 
@@ -81,12 +84,23 @@ func (warlock *Warlock) Initialize() {
 	if warlock.Talents.ChaosBolt {
 		warlock.registerChaosBoltSpell()
 	}
+	if warlock.Talents.DemonicEmpowerment {
+		warlock.registerDemonicEmpowermentSpell()
+	}
+	if warlock.Talents.Metamorphosis {
+		warlock.registerMetamorphosisSpell()
+	}
 }
 
 func (warlock *Warlock) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	raidBuffs.BloodPact = core.MaxTristate(raidBuffs.BloodPact, core.MakeTristateValue(
 		warlock.Options.Summon == proto.Warlock_Options_Imp,
-		warlock.Talents.ImprovedImp == 2))
+		warlock.Talents.ImprovedImp == 2,
+	))
+
+	if warlock.Talents.DemonicPact > 0 {
+		raidBuffs.DemonicPact = int32(float64(stats.SpellPower) * 0.02 * float64(warlock.Talents.DemonicPact))
+	}
 }
 
 func (warlock *Warlock) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
@@ -117,7 +131,7 @@ func NewWarlock(character core.Character, options proto.Player) *Warlock {
 	})
 
 	if warlock.Options.Armor == proto.Warlock_Options_FelArmor {
-		amount := 100.0
+		amount := 180.0 + 0.3 * float64(stats.Spirit)
 		amount *= 1 + float64(warlock.Talents.DemonicAegis)*0.1
 		warlock.AddStat(stats.SpellPower, amount)
 	}

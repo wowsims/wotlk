@@ -439,9 +439,12 @@ type PseudoStats struct {
 	BonusRangedHitRating  float64 // Hit rating for ranged only.
 	BonusMeleeCritRating  float64 // Crit rating for melee only (not ranged).
 	BonusRangedCritRating float64 // Crit rating for ranged only.
-	BonusFireCritRating   float64 // Crit rating for fire spells only (Combustion).
+	BonusFireCritRating   float64 // Crit rating for fire spells only.
+	BonusShadowCritRating float64 // Crit rating for shadow spells only. Warlock stuff. You wouldn't understand.
 	BonusMHCritRating     float64 // Talents, e.g. Rogue Dagger specialization
 	BonusOHCritRating     float64 // Talents, e.g. Rogue Dagger specialization
+	BonusMHArmorPenRating float64 // Talents, e.g. Rogue Mace specialization
+	BonusOHArmorPenRating float64 // Talents, e.g. Rogue Mace specialization
 
 	DisableDWMissPenalty bool    // Used by Heroic Strike and Cleave
 	IncreasedMissChance  float64 // Insect Swarm and Scorpid Sting

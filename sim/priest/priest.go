@@ -74,7 +74,7 @@ func (priest *Priest) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 func (priest *Priest) Initialize() {
 
 	if priest.Talents.Misery > 0 {
-		priest.MiseryAura = core.MiseryAura(priest.CurrentTarget, priest.Talents.Misery)
+		priest.MiseryAura = core.MiseryAura(priest.CurrentTarget)
 	}
 
 	if priest.Talents.ShadowWeaving > 0 {

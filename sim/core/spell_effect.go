@@ -27,8 +27,9 @@ type SpellEffect struct {
 	BonusSpellPower      float64
 	BonusSpellCritRating float64
 
-	BonusAttackPower float64
-	BonusCritRating  float64
+	BonusArmorPenRating float64
+	BonusAttackPower    float64
+	BonusCritRating     float64
 
 	// Additional multiplier that is always applied.
 	DamageMultiplier float64
@@ -269,6 +270,12 @@ func (spellEffect *SpellEffect) applyAttackerModifiers(sim *Simulation, spell *S
 	spellEffect.Damage *= attacker.PseudoStats.DamageDealtMultiplier
 	if spell.SpellSchool.Matches(SpellSchoolPhysical) {
 		spellEffect.Damage *= attacker.PseudoStats.PhysicalDamageDealtMultiplier
+		if spellEffect.ProcMask.Matches(ProcMaskMeleeMH) {
+			spellEffect.BonusArmorPenRating += attacker.PseudoStats.BonusMHArmorPenRating
+		}
+		if spellEffect.ProcMask.Matches(ProcMaskMeleeOH) {
+			spellEffect.BonusArmorPenRating += attacker.PseudoStats.BonusOHArmorPenRating
+		}
 	} else if spell.SpellSchool.Matches(SpellSchoolArcane) {
 		spellEffect.Damage *= attacker.PseudoStats.ArcaneDamageDealtMultiplier
 	} else if spell.SpellSchool.Matches(SpellSchoolFire) {
