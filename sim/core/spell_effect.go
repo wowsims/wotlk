@@ -71,6 +71,10 @@ func (spellEffect *SpellEffect) Landed() bool {
 	return spellEffect.Outcome.Matches(OutcomeLanded)
 }
 
+func (spellEffect *SpellEffect) DidCrit() bool {
+	return spellEffect.Outcome.Matches(OutcomeCrit)
+}
+
 func (spell *Spell) TotalThreatMultiplier() float64 {
 	multiplier := spell.Unit.PseudoStats.ThreatMultiplier
 	if spell.SpellSchool == SpellSchoolHoly {

@@ -60,7 +60,7 @@ func (priest *Priest) registerVampiricTouchSpell() {
 		AffectedByCastSpeed: priest.Talents.Shadowform,
 
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			DamageMultiplier:     1 + float64(priest.Talents.Darkness)*0.02,
+			DamageMultiplier:     (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01),
 			BonusSpellCritRating: float64(priest.Talents.MindMelt) * 3 * core.CritRatingPerCritChance,
 			ThreatMultiplier:     1 - 0.08*float64(priest.Talents.ShadowAffinity),
 			IsPeriodic:           true,

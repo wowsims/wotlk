@@ -20,9 +20,11 @@ type Priest struct {
 	// cached cast stuff
 	// TODO: aoe multi-target situations will need multiple spells ticking for each target.
 
-	InnerFocusAura       *core.Aura
-	MiseryAura           *core.Aura
-	ShadowWeavingAura    *core.Aura
+	InnerFocusAura     *core.Aura
+	MiseryAura         *core.Aura
+	ShadowWeavingAura  *core.Aura
+	ShadowyInsightAura *core.Aura
+
 	SurgeOfLightProcAura *core.Aura
 
 	DevouringPlague *core.Spell
@@ -91,6 +93,15 @@ func (priest *Priest) Initialize() {
 		})
 	}
 
+	// Shadow Insight gained from Glyph of Shadow
+	// Finalized spirit off gear and not dynamic spirit (e.g. Spirit Tap does not increase this)
+	priest.ShadowyInsightAura = priest.NewTemporaryStatsAura(
+		"Shadowy Insight",
+		core.ActionID{SpellID: 61792},
+		stats.Stats{stats.SpellPower: priest.GetStat(stats.Spirit) * 0.30},
+		time.Second*10,
+	)
+
 	priest.registerDevouringPlagueSpell()
 	priest.registerHolyFireSpell()
 	priest.registerShadowWordPainSpell()
@@ -127,14 +138,6 @@ func (priest *Priest) AddShadowWeavingStack(sim *core.Simulation) {
 		priest.ShadowWeavingAura.Refresh(sim)
 	} else {
 		priest.ShadowWeavingAura.Activate(sim)
-	}
-}
-
-func (priest *Priest) OnSpellHitAddShadowWeaving() func(*core.Simulation, *core.Spell, *core.SpellEffect) {
-	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-		if spellEffect.Landed() {
-			priest.AddShadowWeavingStack(sim)
-		}
 	}
 }
 

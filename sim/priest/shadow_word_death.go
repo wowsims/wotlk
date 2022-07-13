@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -41,7 +42,14 @@ func (priest *Priest) registerShadowWordDeathSpell() {
 			BonusSpellCritRating: float64(priest.Talents.MindMelt) * 2 * core.CritRatingPerCritChance,
 			DamageMultiplier:     playerMod,
 			ThreatMultiplier:     1 - 0.08*float64(priest.Talents.ShadowAffinity),
-			OnSpellHitDealt:      priest.OnSpellHitAddShadowWeaving(),
+			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if spellEffect.Landed() {
+					priest.AddShadowWeavingStack(sim)
+				}
+				if spellEffect.DidCrit() && priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow)) {
+					priest.ShadowyInsightAura.Activate(sim)
+				}
+			},
 			BaseDamage: core.WrapBaseDamageConfig(
 				core.BaseDamageConfigMagic(750, 870, 0.429),
 				func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
