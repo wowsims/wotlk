@@ -142,20 +142,23 @@ func (warlock *Warlock) setupDecimation() {
 		Duration: time.Second * 10,
 	})
 
-	warlock.RegisterAura(core.Aura{
+	decimation:=warlock.RegisterAura(core.Aura{
 		Label: "Decimation Talent Hidden Aura",
 		Duration: core.NeverExpires,
-		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Activate(sim)
-		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if sim.executePhase35.IsActive() {
-				if spell == warlock.Shadowbolt || spell == warlock.Incinerate || spell == warlock.SoulFire {
-					warlock.DecimationAura.Activate(sim)
-					warlock.DecimationAura.Refresh(sim)
-				}
+			if spell == warlock.Shadowbolt || spell == warlock.Incinerate || spell == warlock.SoulFire {
+				warlock.DecimationAura.Activate(sim)
+				warlock.DecimationAura.Refresh(sim)
 			}
 		},
+	})
+
+	warlock.RegisterResetEffect(func(sim *core.Simulation) {
+		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute35 bool) {
+			if isExecute35 {
+				decimation.Activate(sim)
+			}
+		})
 	})
 }
 
