@@ -25,7 +25,9 @@ func (deathKnight *DeathKnight) registerPlagueStrikeSpell() {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return weaponBaseDamage(sim, hitEffect, spell)
+					return weaponBaseDamage(sim, hitEffect, spell) *
+						(1.0 +
+							0.10*float64(deathKnight.Talents.Outbreak))
 				},
 				TargetSpellCoefficient: 1,
 			},
@@ -39,7 +41,8 @@ func (deathKnight *DeathKnight) registerPlagueStrikeSpell() {
 
 					deathKnight.BloodPlagueDisease.Apply(sim)
 
-					deathKnight.AddRunicPower(sim, 10.0, spell.RunicPowerMetrics())
+					amountOfRunicPower := 10.0 + 2.5*float64(deathKnight.Talents.Dirge)
+					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 				}
 			},
 		}),
