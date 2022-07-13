@@ -45,11 +45,11 @@ func (war *DpsWarrior) doRotation(sim *core.Simulation) {
 		return
 	}
 
-	isExecutePhase := sim.IsExecutePhase()
+	IsExecutePhase20 := sim.IsExecutePhase20()
 	SpamExecute := war.Rotation.SpamExecute
 	highPrioSpellsOnly := !SpamExecute
 
-	if isExecutePhase {
+	if IsExecutePhase20 {
 		war.executeRotation(sim, highPrioSpellsOnly)
 	} else {
 		war.normalRotation(sim, highPrioSpellsOnly)

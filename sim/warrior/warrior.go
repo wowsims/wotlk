@@ -59,10 +59,9 @@ type Warrior struct {
 	Whirlwind            *core.Spell
 	RendDot              *core.Dot
 
-	HeroicStrike        *core.Spell
-	Cleave              *core.Spell
-	HSOrCleaveQueueAura *core.Aura
-	HSRageThreshold     float64
+	HeroicStrikeOrCleave *core.Spell
+	HSOrCleaveQueueAura  *core.Aura
+	HSRageThreshold      float64
 
 	BattleStanceAura    *core.Aura
 	DefensiveStanceAura *core.Aura

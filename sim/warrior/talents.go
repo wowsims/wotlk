@@ -148,11 +148,11 @@ func (warrior *Warrior) applyBloodsurge() {
 	}
 	procChance := 0.0
 	if warrior.Talents.Bloodsurge == 1 {
-		procChance := 0.07
+		procChance = 0.07
 	} else if warrior.Talents.Bloodsurge == 2 {
-		procChance := 0.13
+		procChance = 0.13
 	} else if warrior.Talents.Bloodsurge == 3 {
-		procChance := 0.20
+		procChance = 0.20
 	}
 	icd := core.Cooldown{
 		Timer:    warrior.NewTimer(),
@@ -168,7 +168,8 @@ func (warrior *Warrior) applyBloodsurge() {
 				return
 			}
 
-			if spell != warrior.HeroicStrike || warrior.Bloodthirst || warrior.Whirlwind {
+			// Using heroic strike SpellID for now as Cleave and HS is a single spell variable
+			if spell.ActionID.SpellID != 47450 || spell != warrior.Bloodthirst || spell != warrior.Whirlwind {
 				return
 			}
 
