@@ -117,6 +117,10 @@ func (warlock *Warlock) ApplyTalents() {
 		warlock.setupMoltenCore()
 	}
 
+	if warlock.Talents.Decimation > 0 {
+		warlock.setupDecimation()
+	}
+
 }
 
 func (warlock *Warlock) applyDeathsEmbrace() {
@@ -128,6 +132,30 @@ func (warlock *Warlock) applyDeathsEmbrace() {
 				warlock.PseudoStats.ShadowDamageDealtMultiplier *= multiplier
 			}
 		})
+	})
+}
+
+func (warlock *Warlock) setupDecimation() {
+	warlock.DecimationAura = warlock.RegisterAura(core.Aura{
+		Label:    "Decimation Proc Aura",
+		ActionID: core.ActionID{SpellID: 63167},
+		Duration: time.Second * 10,
+	})
+
+	warlock.RegisterAura(core.Aura{
+		Label: "Decimation Talent Hidden Aura",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if sim.executePhase35.IsActive() {
+				if spell == warlock.Shadowbolt || spell == warlock.Incinerate || spell == warlock.SoulFire {
+					warlock.DecimationAura.Activate(sim)
+					warlock.DecimationAura.Refresh(sim)
+				}
+			}
+		},
 	})
 }
 
