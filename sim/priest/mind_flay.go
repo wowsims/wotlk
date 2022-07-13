@@ -107,6 +107,11 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 		TargetSpellCoefficient: 0.0,
 	}
 
+	var mf_reduc_time time.Duration
+	if priest.HasSetBonus(ItemSetCrimsonAcolyte, 4) {
+		mf_reduc_time = time.Millisecond * 510
+	}
+
 	return core.NewDot(core.Dot{
 		Spell: priest.MindFlay[numTicks],
 		Aura: target.RegisterAura(core.Aura{
@@ -115,7 +120,7 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 		}),
 
 		NumberOfTicks:       numTicks,
-		TickLength:          time.Second, //* (1- core.TernaryFloat64(priest.HasSetBonus(ItemSetCrimsonAcolyte, 4), 0.51, 0)), need to do still
+		TickLength:          time.Second - mf_reduc_time,
 		AffectedByCastSpeed: true,
 
 		TickEffects: core.TickFuncSnapshot(target, effect),

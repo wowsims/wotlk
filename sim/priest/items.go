@@ -87,7 +87,7 @@ var ItemSetAbsolution = core.NewItemSet(core.ItemSet{
 })
 
 var ItemSetValorous = core.NewItemSet(core.ItemSet{
-	Name: "Valorous Garb of Faith",
+	Name: "Garb of Faith",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
 			// this is implemented in mind_blast.go
@@ -99,19 +99,38 @@ var ItemSetValorous = core.NewItemSet(core.ItemSet{
 })
 
 var ItemSetConquerorSanct = core.NewItemSet(core.ItemSet{
-	Name: "Conqueror's Sanctification Garb",
+	Name: "Sanctification Garb",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
 			// this is implemented in devouring_plague.go
 		},
 		4: func(agent core.Agent) {
-			// this is implemented in mind_blast.go
+			priest := agent.(PriestAgent).GetPriest()
+			const procrate = 0
+			procAura := priest.NewTemporaryStatsAura("Devious Mind Proc", core.ActionID{ItemID: 64907}, stats.Stats{stats.SpellPower: 240}, time.Second*4)
+
+			priest.RegisterAura(core.Aura{
+				Label:    "Devious Mind",
+				Duration: core.NeverExpires,
+				OnReset: func(aura *core.Aura, sim *core.Simulation) {
+					aura.Activate(sim)
+				},
+				OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+					if spell != priest.MindBlast {
+						return
+					}
+					if sim.RandomFloat("Devious Mind") > procrate {
+						return
+					}
+					procAura.Activate(sim)
+				},
+			})
 		},
 	},
 })
 
 var ItemSetZabras = core.NewItemSet(core.ItemSet{
-	Name: "Zabra's Regalia",
+	Name: "Zabra's Raiment",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
 			// this is implemented in vampiric_touch.go
@@ -123,7 +142,7 @@ var ItemSetZabras = core.NewItemSet(core.ItemSet{
 })
 
 var ItemSetCrimsonAcolyte = core.NewItemSet(core.ItemSet{
-	Name: "Crimson Acolyte's Regalia",
+	Name: "Crimson Acolyte's Raiment",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
 			// this is implemented in vampiric_touch.go/devouring_plague.go/swp.go
@@ -135,7 +154,6 @@ var ItemSetCrimsonAcolyte = core.NewItemSet(core.ItemSet{
 })
 
 func init() {
-
 	core.NewItemEffect(32490, func(agent core.Agent) {
 		priest := agent.(PriestAgent).GetPriest()
 		// Not in the game yet so cant test; this logic assumes that:

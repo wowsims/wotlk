@@ -281,6 +281,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSmite-AllItems-CrimsonAcolyte'sRaiment"
+ value: {
+  dps: 1413.179734449124
+  tps: 1355.8798171321773
+ }
+}
+dps_results: {
  key: "TestSmite-AllItems-CrystalforgedTrinket-32654"
  value: {
   dps: 763.4918534530811
@@ -481,6 +488,13 @@ dps_results: {
  value: {
   dps: 794.8510542211857
   tps: 770.0769862239079
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-GarbofFaith"
+ value: {
+  dps: 843.0403910597868
+  tps: 815.8780328745154
  }
 }
 dps_results: {
@@ -764,6 +778,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSmite-AllItems-SanctificationGarb"
+ value: {
+  dps: 916.2186636933061
+  tps: 885.1143936473964
+ }
+}
+dps_results: {
  key: "TestSmite-AllItems-ScarabofDisplacement-30629"
  value: {
   dps: 763.4918534530811
@@ -1006,6 +1027,13 @@ dps_results: {
  value: {
   dps: 774.7360907691544
   tps: 750.9088364946845
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-Zabra'sRaiment"
+ value: {
+  dps: 818.7470560097514
+  tps: 792.7657637459056
  }
 }
 dps_results: {
