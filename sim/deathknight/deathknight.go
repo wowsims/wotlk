@@ -1,6 +1,8 @@
 package deathknight
 
 import (
+	"math"
+
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -16,25 +18,39 @@ type DeathKnight struct {
 
 	IcyTouch     *core.Spell
 	PlagueStrike *core.Spell
-	//Obliterate *core.Spell
+	Obliterate   *core.Spell
+	BloodStrike  *core.Spell
+
+	HowlingBlastCostless bool
+	HowlingBlast         *core.Spell
 	//FrostStrike      *core.Spell
-	//BloodStrike      *core.Spell
-	//HowlingBlast     *core.Spell
 	//HornOfWinter     *core.Spell
 	//UnbreakableArmor *core.Spell
 	//ArmyOfTheDead    *core.Spell
 	//RaiseDead        *core.Spell
 
+	// "CDs"
+	BloodTap     *core.Spell
+	BloodTapAura *core.Aura
+
+	// Diseases
 	FrostFever         *core.Spell
 	FrostFeverDisease  *core.Dot
 	BloodPlague        *core.Spell
 	BloodPlagueDisease *core.Dot
 
+	// Talent Auras
 	KillingMachineAura *core.Aura
+	IcyTalonsAura      *core.Aura
+	DesolationAura     *core.Aura
 
+	// Presences
 	BloodPresenceAura  *core.Aura
 	FrostPresenceAura  *core.Aura
 	UnholyPresenceAura *core.Aura
+
+	// Debuffs
+	IcyTouchAura *core.Aura
 }
 
 func (deathKnight *DeathKnight) GetCharacter() *core.Character {
@@ -49,16 +65,31 @@ func (deathKnight *DeathKnight) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	if deathKnight.Talents.AbominationsMight > 0 {
 		raidBuffs.AbominationsMight = true
 	}
+
+	if deathKnight.Talents.ImprovedIcyTalons {
+		raidBuffs.IcyTalons = true
+	}
+}
+
+func (deathKnight *DeathKnight) ApplyTalents() {
+	deathKnight.ApplyBloodTalents()
+	deathKnight.ApplyFrostTalents()
+	deathKnight.ApplyUnholyTalents()
 }
 
 func (deathKnight *DeathKnight) Initialize() {
 	deathKnight.registerPresences()
 	deathKnight.registerIcyTouchSpell()
 	deathKnight.registerPlagueStrikeSpell()
+	deathKnight.registerObliterateSpell()
+	deathKnight.registerBloodStrikeSpell()
+	deathKnight.registerBloodTapSpell()
+	deathKnight.registerHowlingBlastSpell()
 	deathKnight.registerDiseaseDots()
 }
 
 func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
+	deathKnight.ResetRunicPowerBar(sim)
 	deathKnight.BloodPresenceAura.Activate(sim)
 	deathKnight.Presence = BloodPresence
 }
@@ -73,19 +104,37 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 		Rotation:  *deathKnightOptions.Rotation,
 	}
 
-	maxRunicPower := 100.0
-	if deathKnight.Talents.RunicPowerMastery == 1 {
-		maxRunicPower = 115.0
-	} else if deathKnight.Talents.RunicPowerMastery == 2 {
-		maxRunicPower = 130.0
-	}
+	maxRunicPower := 100.0 + 15.0*float64(deathKnight.Talents.RunicPowerMastery)
+	currentRunicPower := math.Min(maxRunicPower, deathKnightOptions.Options.StartingRunicPower)
+
 	deathKnight.EnableRunicPowerBar(
+		currentRunicPower,
 		maxRunicPower,
-		func(sim *core.Simulation) {},
-		func(sim *core.Simulation) {},
-		func(sim *core.Simulation) {},
-		func(sim *core.Simulation) {},
-		func(sim *core.Simulation) {},
+		func(sim *core.Simulation) {
+			if deathKnight.GCD.IsReady(sim) {
+				deathKnight.tryUseGCD(sim)
+			}
+		},
+		func(sim *core.Simulation) {
+			if deathKnight.GCD.IsReady(sim) {
+				deathKnight.tryUseGCD(sim)
+			}
+		},
+		func(sim *core.Simulation) {
+			if deathKnight.GCD.IsReady(sim) {
+				deathKnight.tryUseGCD(sim)
+			}
+		},
+		func(sim *core.Simulation) {
+			if deathKnight.GCD.IsReady(sim) {
+				deathKnight.tryUseGCD(sim)
+			}
+		},
+		func(sim *core.Simulation) {
+			if deathKnight.GCD.IsReady(sim) {
+				deathKnight.tryUseGCD(sim)
+			}
+		},
 	)
 
 	deathKnight.EnableAutoAttacks(deathKnight, core.AutoAttackOptions{
@@ -136,10 +185,23 @@ func RegisterDeathKnight() {
 	)
 }
 
-func (deathKnight *DeathKnight) DiseasesAreActive() {
-	//return deathKnight.FrostFeverDot.IsActive() || deathKnight.BloodPlagueDot.IsActive()
+func (deathKnight *DeathKnight) DiseasesAreActive() bool {
+	return deathKnight.FrostFeverDisease.IsActive() || deathKnight.BloodPlagueDisease.IsActive()
 }
 
+func (deathKnight *DeathKnight) secondaryCritModifier(applyGuile bool) float64 {
+	secondaryModifier := 0.0
+	if applyGuile {
+		secondaryModifier += 0.15 * float64(deathKnight.Talents.GuileOfGorefiend)
+	}
+	return secondaryModifier
+}
+func (deathKnight *DeathKnight) critMultiplier(applyGuile bool) float64 {
+	return deathKnight.MeleeCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile))
+}
+func (deathKnight *DeathKnight) spellCritMultiplier(applyGuile bool) float64 {
+	return deathKnight.SpellCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile))
+}
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
 		stats.Health:      7941,

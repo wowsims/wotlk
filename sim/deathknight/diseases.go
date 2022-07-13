@@ -19,25 +19,6 @@ func (deathKnight *DeathKnight) registerFrostFever() {
 	deathKnight.FrostFever = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolFrost,
-
-		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost: 0.0,
-				GCD:  core.GCDDefault,
-			},
-		},
-
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			OutcomeApplier:   deathKnight.OutcomeFuncMagicHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					deathKnight.FrostFeverDisease.Apply(sim)
-				}
-			},
-		}),
 	})
 
 	deathKnight.FrostFeverDisease = core.NewDot(core.Dot{
@@ -46,7 +27,7 @@ func (deathKnight *DeathKnight) registerFrostFever() {
 			Label:    "FrostFever-" + strconv.Itoa(int(deathKnight.Index)),
 			ActionID: actionID,
 		}),
-		NumberOfTicks: 5,
+		NumberOfTicks: 5 + int(deathKnight.Talents.Epidemic),
 		TickLength:    time.Second * 3,
 
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
@@ -72,25 +53,6 @@ func (deathKnight *DeathKnight) registerBloodPlague() {
 	deathKnight.BloodPlague = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
-
-		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost: 0.0,
-				GCD:  core.GCDDefault,
-			},
-		},
-
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			OutcomeApplier:   deathKnight.OutcomeFuncMagicHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					deathKnight.BloodPlagueDisease.Apply(sim)
-				}
-			},
-		}),
 	})
 
 	deathKnight.BloodPlagueDisease = core.NewDot(core.Dot{
@@ -99,7 +61,7 @@ func (deathKnight *DeathKnight) registerBloodPlague() {
 			Label:    "BloodPlague-" + strconv.Itoa(int(deathKnight.Index)),
 			ActionID: actionID,
 		}),
-		NumberOfTicks: 5,
+		NumberOfTicks: 5 + int(deathKnight.Talents.Epidemic),
 		TickLength:    time.Second * 3,
 
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{

@@ -112,6 +112,10 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		}
 	}
 
+	if warlock.Talents.DemonicEmpowerment && warlock.DemonicEmpowerment.CD.IsReady(sim) {
+		warlock.DemonicEmpowerment.Cast(sim, target)
+	}
+
 	// main spells
 	// TODO: optimize so that cast time of DoT is included in calculation so you can cast right before falling off.
 	if warlock.Talents.UnstableAffliction && warlock.Rotation.UnstableAffliction && !warlock.UnstableAffDot.IsActive() {
@@ -124,6 +128,8 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		spell = warlock.Corruption
 	} else if warlock.Rotation.Immolate && !warlock.ImmolateDot.IsActive() {
 		spell = warlock.Immolate
+	} else if warlock.CanConflagrate(sim) && warlock.ImmolateDot.TickCount > warlock.ImmolateDot.NumberOfTicks-2 {
+		spell = warlock.Conflagrate
 	} else {
 		switch mainSpell {
 		case proto.Warlock_Rotation_Shadowbolt:

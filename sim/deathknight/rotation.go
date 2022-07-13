@@ -16,20 +16,39 @@ func (deathKnight *DeathKnight) OnAutoAttack(sim *core.Simulation, spell *core.S
 }
 
 func (deathKnight *DeathKnight) OnGCDReady(sim *core.Simulation) {
-	deathKnight.CheckRuneGainTrackers(sim)
 	deathKnight.tryUseGCD(sim)
-	deathKnight.UpdateRuneGainTrackers(sim)
 }
+
+const (
+	DKRotation_Wait uint8 = iota
+	DKRotation_IT
+	DKRotation_PS
+	DKRotation_Obli
+	DKRotation_BS
+	DKRotation_BT
+	DKRotation_UA
+	DKRotation_Pesti
+	DKRotation_FS
+)
 
 func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 	//var spell *core.Spell
 	var target = deathKnight.CurrentTarget
 
 	if deathKnight.GCD.IsReady(sim) {
-		if deathKnight.CanIcyTouch(sim) {
+
+		if deathKnight.CanObliterate(sim) && deathKnight.FrostFeverDisease.IsActive() && deathKnight.BloodPlagueDisease.IsActive() {
+			deathKnight.Obliterate.Cast(sim, target)
+		} else if deathKnight.CanHowlingBlast(sim) && deathKnight.FrostFeverDisease.IsActive() && deathKnight.BloodPlagueDisease.IsActive() {
+			deathKnight.HowlingBlast.Cast(sim, target)
+		} else if deathKnight.CanIcyTouch(sim) {
 			deathKnight.IcyTouch.Cast(sim, target)
 		} else if deathKnight.CanPlagueStrike(sim) {
 			deathKnight.PlagueStrike.Cast(sim, target)
+		} else if deathKnight.CanBloodTap(sim) {
+			deathKnight.BloodTap.Cast(sim, target)
+		} else if deathKnight.CanBloodStrike(sim) {
+			deathKnight.BloodStrike.Cast(sim, target)
 		} else {
 			nextCD := deathKnight.IcyTouch.ReadyAt()
 
@@ -37,13 +56,6 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 				deathKnight.WaitUntil(sim, nextCD)
 			}
 		}
+
 	}
-}
-
-func (deathKnight *DeathKnight) CanIcyTouch(sim *core.Simulation) bool {
-	return deathKnight.CastCostPossible(sim, 10.0, 0, 1, 0, 0) && deathKnight.IcyTouch.IsReady(sim)
-}
-
-func (deathKnight *DeathKnight) CanPlagueStrike(sim *core.Simulation) bool {
-	return deathKnight.CastCostPossible(sim, 10.0, 0, 0, 1, 0) && deathKnight.PlagueStrike.IsReady(sim)
 }
