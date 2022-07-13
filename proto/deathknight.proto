@@ -114,6 +114,7 @@ message DeathKnight {
 	DeathKnightTalents talents = 2;
 	
 	message Options {
+		double starting_runic_power = 1;
 	}
 	Options options = 3;
 }

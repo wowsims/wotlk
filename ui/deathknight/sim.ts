@@ -198,6 +198,8 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
+					DeathKnightInputs.StartingRunicPower,
+
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],

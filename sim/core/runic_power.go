@@ -90,7 +90,7 @@ func (rp *runicPowerBar) ResetRunicPowerBar(sim *Simulation) {
 	ResetRune(sim, &rp.unholyRunes)
 }
 
-func (unit *Unit) EnableRunicPowerBar(maxRunicPower float64,
+func (unit *Unit) EnableRunicPowerBar(currentRunicPower float64, maxRunicPower float64,
 	onBloodRuneGain OnBloodRuneGain,
 	onFrostRuneGain OnFrostRuneGain,
 	onUnholyRuneGain OnUnholyRuneGain,
@@ -100,7 +100,7 @@ func (unit *Unit) EnableRunicPowerBar(maxRunicPower float64,
 		unit: unit,
 
 		maxRunicPower:     maxRunicPower,
-		currentRunicPower: maxRunicPower,
+		currentRunicPower: currentRunicPower,
 
 		bloodRunes:  [2]Rune{Rune{state: RuneState_Normal, pas: [2]*PendingAction{nil, nil}}, Rune{state: RuneState_Normal, pas: [2]*PendingAction{nil, nil}}},
 		frostRunes:  [2]Rune{Rune{state: RuneState_Normal, pas: [2]*PendingAction{nil, nil}}, Rune{state: RuneState_Normal, pas: [2]*PendingAction{nil, nil}}},
