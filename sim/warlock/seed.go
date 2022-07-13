@@ -25,7 +25,7 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 	baseCost := 0.34 * warlock.BaseMana
 
 	flatBonus := 0.0
-	if ItemSetOblivionRaiment.CharacterHasSetBonus(&warlock.Character, 4) {
+	if warlock.HasSetBonus(ItemSetOblivionRaiment, 4) {
 		flatBonus += 180
 	}
 

@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -12,11 +13,11 @@ const RuptureEnergyCost = 25.0
 
 func (rogue *Rogue) makeRupture(comboPoints int32) *core.Spell {
 	refundAmount := 0.4 * float64(rogue.Talents.QuickRecovery)
-	numTicks := int(comboPoints) + 3
+	numTicks := int(comboPoints) + 3 + core.TernaryInt(rogue.HasGlyph(int32(proto.RogueMajorGlyph_GlyphOfRupture)), 2, 0)
 	baseCost := RuptureEnergyCost
 
 	return rogue.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 26867, Tag: comboPoints},
+		ActionID:    core.ActionID{SpellID: 48672, Tag: comboPoints},
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreResists | rogue.finisherFlags(),
 
@@ -55,7 +56,9 @@ func (rogue *Rogue) makeRupture(comboPoints int32) *core.Spell {
 }
 
 func (rogue *Rogue) RuptureDuration(comboPoints int32) time.Duration {
-	return time.Second*6 + time.Second*2*time.Duration(comboPoints)
+	return time.Second*6 +
+		time.Second*2*time.Duration(comboPoints) +
+		core.TernaryDuration(rogue.HasGlyph(int32(proto.RogueMajorGlyph_GlyphOfRupture)), time.Second*4, 0)
 }
 
 func (rogue *Rogue) registerRupture() {
@@ -78,15 +81,17 @@ func (rogue *Rogue) registerRupture() {
 		NumberOfTicks: 0, // Set dynamically
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 + 0.1*float64(rogue.Talents.SerratedBlades),
+			ProcMask: core.ProcMaskPeriodicDamage,
+			DamageMultiplier: 1 +
+				0.15*float64(rogue.Talents.BloodSpatter) +
+				0.1*float64(rogue.Talents.SerratedBlades),
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
 			BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				comboPoints := rogue.ComboPoints()
 				attackPower := hitEffect.MeleeAttackPower(spell.Unit) + hitEffect.MeleeAttackPowerOnTarget()
 
-				return 70 + float64(comboPoints)*11 + attackPower*[]float64{0.01, 0.02, 0.03, 0.03, 0.03}[comboPoints-1]
+				return 127 + float64(comboPoints)*18 + attackPower*[]float64{0.015, 0.024, 0.03, 0.034286, 0.0375}[comboPoints-1]
 			}, 0),
 			OutcomeApplier: rogue.OutcomeFuncTick(),
 		}),

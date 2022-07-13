@@ -449,6 +449,8 @@ func (aura *Aura) Activate(sim *Simulation) {
 	if aura.Priority != 0 {
 		for _, otherAura := range aura.Unit.GetAurasWithTag(aura.Tag) {
 			if otherAura.Priority <= aura.Priority && otherAura != aura {
+				// TODO:  if the priorities are equal:
+				// does remaining duration vs new aura duration matter when deciding to override?
 				otherAura.Deactivate(sim)
 			}
 		}

@@ -5,7 +5,7 @@ import (
 )
 
 func (paladin *Paladin) registerSpiritualAttunement() {
-	coeff := 0.1 * core.TernaryFloat64(ItemSetLightbringerArmor.CharacterHasSetBonus(&paladin.Character, 2), 1.1, 1)
+	coeff := 0.1 * core.TernaryFloat64(paladin.HasSetBonus(ItemSetLightbringerArmor, 2), 1.1, 1)
 	paladin.SpiritualAttunementMetrics = paladin.NewManaMetrics(core.ActionID{SpellID: 33776})
 
 	paladin.RegisterAura(core.Aura{

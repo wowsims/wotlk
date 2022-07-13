@@ -9,11 +9,11 @@ import (
 
 func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 	refundAmount := 0.4 * float64(rogue.Talents.QuickRecovery)
-	baseDamage := 60.0 + (180+core.TernaryFloat64(ItemSetDeathmantle.CharacterHasSetBonus(&rogue.Character, 2), 40, 0))*float64(comboPoints)
+	baseDamage := 60.0 + (180+core.TernaryFloat64(rogue.HasSetBonus(ItemSetDeathmantle, 2), 40, 0))*float64(comboPoints)
 	apRatio := 0.03 * float64(comboPoints)
 
 	cost := 35.0
-	if ItemSetAssassination.CharacterHasSetBonus(&rogue.Character, 4) {
+	if rogue.HasSetBonus(ItemSetAssassination, 4) {
 		cost -= 10
 	}
 
@@ -36,7 +36,7 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			DamageMultiplier: 1 + 0.04*float64(rogue.Talents.VilePoisons),
+			DamageMultiplier: 1 + []float64{0.0, 0.07, 0.14, 0.2}[rogue.Talents.VilePoisons],
 			ThreatMultiplier: 1,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {

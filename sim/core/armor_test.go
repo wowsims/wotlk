@@ -152,9 +152,23 @@ func TestMajorAndMinorArmorReductionsApplyMultiplicatively(t *testing.T) {
 	if !WithinToleranceFloat64(expectedArmor, target.Armor(), tolerance) {
 		t.Fatalf("Armor value for target should be %f but found %f", expectedArmor, target.Armor())
 	}
-	faerieFireAura := FaerieFireAura(&target, 5)
+	faerieFireAura := FaerieFireAura(&target, false)
+	impFaerieFireAura := FaerieFireAura(&target, true)
 	faerieFireAura.Activate(&sim)
 	expectedArmor = baseArmor * (1.0 - 0.2) * (1.0 - 0.05)
+	if !WithinToleranceFloat64(expectedArmor, target.Armor(), tolerance) {
+		t.Fatalf("Armor value for target should be %f but found %f", expectedArmor, target.Armor())
+	}
+	impFaerieFireAura.Activate(&sim)
+	if !WithinToleranceFloat64(expectedArmor, target.Armor(), tolerance) {
+		t.Fatalf("Armor value for target should be %f but found %f", expectedArmor, target.Armor())
+	}
+	if faerieFireAura.IsActive() {
+		t.Fatalf("faeriefire not disabled when imp faerie fire applied")
+	}
+
+	impFaerieFireAura.Deactivate(&sim)
+	expectedArmor = baseArmor * (1.0 - 0.2)
 	if !WithinToleranceFloat64(expectedArmor, target.Armor(), tolerance) {
 		t.Fatalf("Armor value for target should be %f but found %f", expectedArmor, target.Armor())
 	}
@@ -194,7 +208,7 @@ func TestDamageReductionFromArmor(t *testing.T) {
 	}
 
 	// Major + Minor
-	faerieFireAura := FaerieFireAura(&target, 3)
+	faerieFireAura := FaerieFireAura(&target, true)
 	faerieFireAura.Activate(&sim)
 	attackTable.UpdateArmorDamageReduction()
 	expectedDamageReduction = 0.3468

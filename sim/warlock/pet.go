@@ -140,7 +140,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		})
 	}
 
-	if ItemSetOblivionRaiment.CharacterHasSetBonus(&warlock.Character, 2) {
+	if warlock.HasSetBonus(ItemSetOblivionRaiment, 2) {
 		wp.AddStat(stats.MP5, 45)
 	}
 

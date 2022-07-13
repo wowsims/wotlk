@@ -59,7 +59,7 @@ func (priest *Priest) registerShadowfiendSpell() {
 
 		// Dmg over 15 sec = shadow_dmg*.6 + 1191
 		// just simulate 10 1.5s long ticks
-		NumberOfTicks: 10 + core.TernaryInt(ItemSetIncarnate.CharacterHasSetBonus(&priest.Character, 2), 2, 0),
+		NumberOfTicks: 10 + core.TernaryInt(priest.HasSetBonus(ItemSetIncarnate, 2), 2, 0),
 		TickLength:    time.Millisecond * 1500,
 
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{

@@ -46,7 +46,7 @@ func NewElementalShaman(character core.Character, options proto.Player) *Element
 	ele := &ElementalShaman{
 		Shaman:   shaman.NewShaman(character, *eleShamOptions.Talents, totems, selfBuffs),
 		rotation: rotation,
-		has4pT6:  shaman.ItemSetSkyshatterRegalia.CharacterHasSetBonus(&character, 4),
+		has4pT6:  character.HasSetBonus(shaman.ItemSetSkyshatterRegalia, 4),
 	}
 	ele.EnableResumeAfterManaWait(ele.tryUseGCD)
 

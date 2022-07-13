@@ -8,7 +8,7 @@ import (
 )
 
 func (warlock *Warlock) registerShadowboltSpell() {
-	has4pMal := ItemSetMaleficRaiment.CharacterHasSetBonus(&warlock.Character, 4)
+	has4pMal := warlock.HasSetBonus(ItemSetMaleficRaiment, 4)
 
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,

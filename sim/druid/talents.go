@@ -290,7 +290,7 @@ func (druid *Druid) applyOmenOfClarity() {
 			if !icd.IsReady(sim) {
 				return
 			}
-			if !ppmm.ProcWithWeaponSpecials(sim, spellEffect.ProcMask, "Omen of Clarity") {
+			if !ppmm.Proc(sim, spellEffect.ProcMask, "Omen of Clarity") {
 				return
 			}
 			icd.Use(sim)

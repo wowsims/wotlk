@@ -54,7 +54,7 @@ func (paladin *Paladin) RegisterConsecrationSpell(rank int32) {
 			BonusSpellPower: core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 27917, 47*0.8, 0),
 
 			DamageMultiplier: 1 *
-				core.TernaryFloat64(ItemSetLightbringerArmor.CharacterHasSetBonus(&paladin.Character, 4), 1.1, 1),
+				core.TernaryFloat64(paladin.HasSetBonus(ItemSetLightbringerArmor, 4), 1.1, 1),
 			ThreatMultiplier: 1,
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(baseDamage, 0.119),
 			OutcomeApplier:   paladin.OutcomeFuncMagicHit(),

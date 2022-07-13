@@ -17,7 +17,7 @@ func (paladin *Paladin) setupSealOfBlood() {
 		ProcMask: core.ProcMaskEmpty,
 		DamageMultiplier: 1 *
 			paladin.WeaponSpecializationMultiplier() *
-			core.TernaryFloat64(ItemSetJusticarArmor.CharacterHasSetBonus(&paladin.Character, 2), 1.1, 1),
+			core.TernaryFloat64(paladin.HasSetBonus(ItemSetJusticarArmor, 2), 1.1, 1),
 		ThreatMultiplier: 1,
 
 		// should deal 35% weapon deamage
@@ -312,7 +312,7 @@ func (paladin *Paladin) setupSealOfRighteousness() {
 			DamageMultiplier: 1 *
 				paladin.WeaponSpecializationMultiplier() *
 				(1 + 0.03*float64(paladin.Talents.ImprovedSealOfRighteousness)) *
-				core.TernaryFloat64(ItemSetJusticarArmor.CharacterHasSetBonus(&paladin.Character, 2), 1.1, 1),
+				core.TernaryFloat64(paladin.HasSetBonus(ItemSetJusticarArmor, 2), 1.1, 1),
 			ThreatMultiplier: 1,
 
 			BaseDamage:     baseDamage,
