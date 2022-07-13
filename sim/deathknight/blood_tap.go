@@ -11,8 +11,21 @@ func (deathKnight *DeathKnight) registerBloodTapSpell() {
 	cdTimer := deathKnight.NewTimer()
 	cd := time.Minute * 1
 
+	deathKnight.BloodTapAura = deathKnight.RegisterAura(core.Aura{
+		Label:    "Blood Tap",
+		ActionID: actionID,
+		Duration: time.Second * 20,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			deathKnight.CorrectBloodTapConversion(sim,
+				deathKnight.BloodRuneGainMetrics(),
+				deathKnight.DeathRuneGainMetrics(),
+				deathKnight.BloodTap)
+		},
+	})
+
 	deathKnight.BloodTap = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
+		Flags:    core.SpellFlagNoOnCastComplete,
 
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
@@ -21,7 +34,8 @@ func (deathKnight *DeathKnight) registerBloodTapSpell() {
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			deathKnight.GenerateDeathRuneFromBloodRune(sim, deathKnight.DeathRuneGainMetrics(), spell)
+			deathKnight.BloodTapAura.Activate(sim)
+			deathKnight.BloodTapAura.Prioritize()
 		},
 	})
 }
