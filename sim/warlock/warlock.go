@@ -84,9 +84,9 @@ func (warlock *Warlock) Initialize() {
 	if warlock.Talents.ChaosBolt {
 		warlock.registerChaosBoltSpell()
 	}
-	// if warlock.Talents.DemonicEmpowerment {
-	// 	warlock.registerDemonicEmpowermentSpell()
-	// }
+	if warlock.Talents.DemonicEmpowerment {
+		warlock.registerDemonicEmpowermentSpell()
+	}
 	if warlock.Talents.Metamorphosis {
 		warlock.registerMetamorphosisSpell()
 	}

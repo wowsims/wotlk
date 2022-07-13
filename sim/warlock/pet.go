@@ -17,6 +17,8 @@ type WarlockPet struct {
 
 	primaryAbility   *core.Spell
 	secondaryAbility *core.Spell
+
+	DemonicEmpowermentAura *core.Aura
 }
 
 func (warlock *Warlock) NewWarlockPet() *WarlockPet {
