@@ -59,11 +59,11 @@ func (warlock *Warlock) ApplyTalents() {
 		if warlock.Talents.MasterDemonologist > 0 {
 			switch warlock.Options.Summon {
 			case proto.Warlock_Options_Imp:
-				warlock.PseudoStats.FireDamageDealtMultiplier *= 1.0 + 0.01 * float64(warlock.Talents.MasterDemonologist)
-				warlock.PseudoStats.BonusFireCritRating *= 1.0 + 0.01 * float64(warlock.Talents.MasterDemonologist)
+				warlock.PseudoStats.FireDamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
+				warlock.PseudoStats.BonusFireCritRating *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
 			case proto.Warlock_Options_Succubus:
-				warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + 0.01 * float64(warlock.Talents.MasterDemonologist)
-				warlock.PseudoStats.BonusShadowCritRating *= 1.0 + 0.01 * float64(warlock.Talents.MasterDemonologist)
+				warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
+				warlock.PseudoStats.BonusShadowCritRating *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
 			case proto.Warlock_Options_Felguard:
 				warlock.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
 			}
@@ -73,7 +73,7 @@ func (warlock *Warlock) ApplyTalents() {
 			petChar := warlock.Pets[0].GetCharacter()
 			bonus := (petChar.GetStat(stats.Stamina) + petChar.GetStat(stats.Intellect)) * (0.04 * float64(warlock.Talents.DemonicKnowledge))
 			warlock.AddStat(stats.SpellPower, bonus)
- 		}
+		}
 	}
 
 	// Demonic Tactics, applies even without pet out
@@ -90,10 +90,10 @@ func (warlock *Warlock) ApplyTalents() {
 		warlock.PseudoStats.FireDamageDealtMultiplier *= 1 + spellDmgBonus
 	}
 
- 	if warlock.Talents.MoltenSkin > 0 {
- 		warlock.PseudoStats.DamageTakenMultiplier /= 1 + 0.02 * float64(warlock.Talents.MoltenSkin)
- 	}
- 	
+	if warlock.Talents.MoltenSkin > 0 {
+		warlock.PseudoStats.DamageTakenMultiplier /= 1 + 0.02*float64(warlock.Talents.MoltenSkin)
+	}
+
 	if warlock.Talents.Nightfall > 0 {
 		warlock.setupNightfall()
 	}
@@ -127,7 +127,7 @@ func (warlock *Warlock) ApplyTalents() {
 	}
 
 	if warlock.Talents.EmpoweredImp > 0 && warlock.Options.Summon == proto.Warlock_Options_Imp {
-		warlock.Pet.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.1 * float64(warlock.Talents.EmpoweredImp)
+		warlock.Pet.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.1*float64(warlock.Talents.EmpoweredImp)
 		warlock.setupEmpoweredImp()
 	}
 }
@@ -151,7 +151,7 @@ func (warlock *Warlock) setupEmpoweredImp() {
 	})
 
 	warlock.Pet.RegisterAura(core.Aura{
-		Label: "Empowered Imp Hidden Aura",
+		Label:    "Empowered Imp Hidden Aura",
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
@@ -184,8 +184,8 @@ func (warlock *Warlock) setupDecimation() {
 		Duration: time.Second * 10,
 	})
 
-	decimation:=warlock.RegisterAura(core.Aura{
-		Label: "Decimation Talent Hidden Aura",
+	decimation := warlock.RegisterAura(core.Aura{
+		Label:    "Decimation Talent Hidden Aura",
 		Duration: core.NeverExpires,
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spell == warlock.Shadowbolt || spell == warlock.Incinerate || spell == warlock.SoulFire {
@@ -210,23 +210,23 @@ func (warlock *Warlock) setupPyroclasm() {
 		ActionID: core.ActionID{SpellID: 63244},
 		Duration: time.Second * 10,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.ShadowDamageDealtMultiplier *= 1 + 0.02 * float64(warlock.Talents.Pyroclasm)
-			aura.Unit.PseudoStats.FireDamageDealtMultiplier *= 1 + 0.02 * float64(warlock.Talents.Pyroclasm)
+			aura.Unit.PseudoStats.ShadowDamageDealtMultiplier *= 1 + 0.02*float64(warlock.Talents.Pyroclasm)
+			aura.Unit.PseudoStats.FireDamageDealtMultiplier *= 1 + 0.02*float64(warlock.Talents.Pyroclasm)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.ShadowDamageDealtMultiplier /= 1 + 0.02 * float64(warlock.Talents.Pyroclasm)
-			aura.Unit.PseudoStats.FireDamageDealtMultiplier /= 1 + 0.02 * float64(warlock.Talents.Pyroclasm)
+			aura.Unit.PseudoStats.ShadowDamageDealtMultiplier /= 1 + 0.02*float64(warlock.Talents.Pyroclasm)
+			aura.Unit.PseudoStats.FireDamageDealtMultiplier /= 1 + 0.02*float64(warlock.Talents.Pyroclasm)
 		},
 	})
 
 	warlock.RegisterAura(core.Aura{
-		Label: "Pyroclasm Talent Hidden Aura",
+		Label:    "Pyroclasm Talent Hidden Aura",
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spell == warlock.Conflagrate && spellEffect.Outcome.Matches(core.OutcomeCrit) { // || spell == warlock.SearingPain 
+			if spell == warlock.Conflagrate && spellEffect.Outcome.Matches(core.OutcomeCrit) { // || spell == warlock.SearingPain
 				warlock.PyroclasmAura.Activate(sim)
 			}
 		},
@@ -251,7 +251,7 @@ func (warlock *Warlock) setupEradication() {
 	})
 
 	warlock.RegisterAura(core.Aura{
-		Label: "Eradication Talent Hidden Aura",
+		Label:    "Eradication Talent Hidden Aura",
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
@@ -280,7 +280,7 @@ func (warlock *Warlock) setupShadowEmbrace() {
 	})
 
 	warlock.RegisterAura(core.Aura{
-		Label: "Shadow Embrace Talent Hidden Aura",
+		Label:    "Shadow Embrace Talent Hidden Aura",
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
@@ -310,7 +310,7 @@ func (warlock *Warlock) setupNightfall() {
 	})
 
 	warlock.RegisterAura(core.Aura{
-		Label: "Nightfall Hidden Aura",
+		Label:    "Nightfall Hidden Aura",
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
@@ -327,9 +327,9 @@ func (warlock *Warlock) setupNightfall() {
 
 func (warlock *Warlock) setupMoltenCore() {
 	warlock.MoltenCoreAura = warlock.RegisterAura(core.Aura{
-		Label:    "Molten Core Proc Aura",
-		ActionID: core.ActionID{SpellID: 71165},
-		Duration: time.Second * 15,
+		Label:     "Molten Core Proc Aura",
+		ActionID:  core.ActionID{SpellID: 71165},
+		Duration:  time.Second * 15,
 		MaxStacks: 3,
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 			if spell == warlock.Incinerate || spell == warlock.SoulFire {
@@ -339,7 +339,7 @@ func (warlock *Warlock) setupMoltenCore() {
 	})
 
 	warlock.RegisterAura(core.Aura{
-		Label: "Molten Core Hidden Aura",
+		Label:    "Molten Core Hidden Aura",
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
@@ -357,20 +357,20 @@ func (warlock *Warlock) setupMoltenCore() {
 
 func (warlock *Warlock) setupBackdraft() {
 	warlock.BackdraftAura = warlock.RegisterAura(core.Aura{
-		Label:    "Backdraft Proc Aura",
-		ActionID: core.ActionID{SpellID: 54277},
-		Duration: time.Second * 15,
+		Label:     "Backdraft Proc Aura",
+		ActionID:  core.ActionID{SpellID: 54277},
+		Duration:  time.Second * 15,
 		MaxStacks: 3,
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if spell == warlock.Incinerate || spell == warlock.SoulFire || spell == warlock.Shadowbolt || 
-			spell == warlock.ChaosBolt || spell == warlock.Immolate {
+			if spell == warlock.Incinerate || spell == warlock.SoulFire || spell == warlock.Shadowbolt ||
+				spell == warlock.ChaosBolt || spell == warlock.Immolate {
 				aura.RemoveStack(sim)
 			}
 		},
 	})
 
 	warlock.RegisterAura(core.Aura{
-		Label: "Backdraft Hidden Aura",
+		Label:    "Backdraft Hidden Aura",
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)

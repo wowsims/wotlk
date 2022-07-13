@@ -9,7 +9,7 @@ import (
 )
 
 func (priest *Priest) registerMindBlastSpell() {
-	baseCost := priest.BaseMana * 0.17
+	baseCost := priest.BaseMana*0.17 - core.TernaryFloat64(priest.HasSetBonus(ItemSetValorous, 2), (priest.BaseMana*0.17)*0.1, 0)
 
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
