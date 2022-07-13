@@ -28,7 +28,8 @@ type DeathKnight struct {
 	//RaiseDead        *core.Spell
 
 	// "CDs"
-	BloodTap *core.Spell
+	BloodTap     *core.Spell
+	BloodTapAura *core.Aura
 
 	// Diseases
 	FrostFever         *core.Spell
