@@ -1,14 +1,14 @@
 package deathknight
 
-//import {
-//"github.com/wowsims/wotlk/sim/core/proto"
+import (
+	//"github.com/wowsims/wotlk/sim/core/proto"
 
-//"time"
+	"time"
 
-//"github.com/wowsims/wotlk/sim/core"
-//"github.com/wowsims/wotlk/sim/core/proto"
-//"github.com/wowsims/wotlk/sim/core/stats"
-//}
+	"github.com/wowsims/wotlk/sim/core"
+	//"github.com/wowsims/wotlk/sim/core/proto"
+	//"github.com/wowsims/wotlk/sim/core/stats"
+)
 
 func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 	// Vicious Strikes
@@ -54,7 +54,7 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 	// TODO:
 
 	// Desolation
-	// TODO:
+	deathKnight.applyDesolation()
 
 	// Ghoul Frenzy
 	// TODO:
@@ -79,4 +79,24 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 
 	// Summon Gargoyle
 	// TODO:
+}
+
+func (deathKnight *DeathKnight) applyDesolation() {
+	if deathKnight.Talents.Desolation == 0 {
+		return
+	}
+
+	actionID := core.ActionID{SpellID: 66803}
+
+	deathKnight.DesolationAura = deathKnight.RegisterAura(core.Aura{
+		ActionID: actionID,
+		Label:    "Desolation",
+		Duration: time.Second * 20.0,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.01*float64(deathKnight.Talents.Desolation)
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.DamageDealtMultiplier /= 1.0 + 0.01*float64(deathKnight.Talents.Desolation)
+		},
+	})
 }
