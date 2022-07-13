@@ -5,12 +5,12 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (deathKnight *DeathKnight) registerObliterateSpell() {
-	baseCost := 15.0
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 467.0, 0.8, true)
+func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
+	baseCost := 10.0
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 764.0, 0.4, true)
 
-	deathKnight.Obliterate = deathKnight.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 51425},
+	deathKnight.BloodStrike = deathKnight.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 49930},
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 
@@ -26,7 +26,7 @@ func (deathKnight *DeathKnight) registerObliterateSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			BonusCritRating:  5.0*float64(deathKnight.Talents.Rime)*core.CritRatingPerCritChance + 3.0*float64(deathKnight.Talents.Subversion)*core.CritRatingPerCritChance,
+			BonusCritRating:  3.0*float64(deathKnight.Talents.Subversion)*core.CritRatingPerCritChance + 3.0*float64(deathKnight.Talents.Annihilation),
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 
@@ -35,8 +35,7 @@ func (deathKnight *DeathKnight) registerObliterateSpell() {
 					return weaponBaseDamage(sim, hitEffect, spell) *
 						(1.0 +
 							core.TernaryFloat64(deathKnight.FrostFeverDisease.IsActive(), 0.125, 0.0) +
-							core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 0.125, 0.0) +
-							core.TernaryFloat64(sim.IsExecutePhase35() && deathKnight.Talents.MercilessCombat > 0, 0.06*float64(deathKnight.Talents.MercilessCombat), 0.0))
+							core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 0.125, 0.0))
 				},
 				TargetSpellCoefficient: 1,
 			},
@@ -45,10 +44,10 @@ func (deathKnight *DeathKnight) registerObliterateSpell() {
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
-					dkSpellCost := deathKnight.DetermineOptimalCost(sim, baseCost, 0, 1, 1)
+					dkSpellCost := deathKnight.DetermineOptimalCost(sim, baseCost, 1, 0, 0)
 					deathKnight.Spend(sim, spell, dkSpellCost)
 
-					amountOfRunicPower := 10.0 + 2.5*float64(deathKnight.Talents.ChillOfTheGrave)
+					amountOfRunicPower := 10.0
 					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 				}
 			},
@@ -56,6 +55,6 @@ func (deathKnight *DeathKnight) registerObliterateSpell() {
 	})
 }
 
-func (deathKnight *DeathKnight) CanObliterate(sim *core.Simulation) bool {
-	return deathKnight.CastCostPossible(sim, 15.0, 0, 1, 1) && deathKnight.Obliterate.IsReady(sim)
+func (deathKnight *DeathKnight) CanBloodStrike(sim *core.Simulation) bool {
+	return deathKnight.CastCostPossible(sim, 10.0, 1, 0, 0) && deathKnight.BloodStrike.IsReady(sim)
 }

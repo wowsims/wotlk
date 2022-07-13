@@ -18,7 +18,7 @@ type DeathKnight struct {
 	PlagueStrike *core.Spell
 	Obliterate   *core.Spell
 	//FrostStrike      *core.Spell
-	//BloodStrike      *core.Spell
+	BloodStrike *core.Spell
 	//HowlingBlast     *core.Spell
 	//HornOfWinter     *core.Spell
 	//UnbreakableArmor *core.Spell
@@ -70,12 +70,13 @@ func (deathKnight *DeathKnight) Initialize() {
 	deathKnight.registerIcyTouchSpell()
 	deathKnight.registerPlagueStrikeSpell()
 	deathKnight.registerObliterateSpell()
+	deathKnight.registerBloodStrikeSpell()
 	deathKnight.registerBloodTapSpell()
 	deathKnight.registerDiseaseDots()
 }
 
 func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
-	deathKnight.ResetRunicPowerBar()
+	deathKnight.ResetRunicPowerBar(sim)
 	deathKnight.BloodPresenceAura.Activate(sim)
 	deathKnight.Presence = BloodPresence
 }
@@ -99,10 +100,26 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 	deathKnight.EnableRunicPowerBar(
 		maxRunicPower,
 		func(sim *core.Simulation) {},
-		func(sim *core.Simulation) {},
-		func(sim *core.Simulation) {},
-		func(sim *core.Simulation) {},
-		func(sim *core.Simulation) {},
+		func(sim *core.Simulation) {
+			if deathKnight.GCD.IsReady(sim) {
+				deathKnight.tryUseGCD(sim)
+			}
+		},
+		func(sim *core.Simulation) {
+			if deathKnight.GCD.IsReady(sim) {
+				deathKnight.tryUseGCD(sim)
+			}
+		},
+		func(sim *core.Simulation) {
+			if deathKnight.GCD.IsReady(sim) {
+				deathKnight.tryUseGCD(sim)
+			}
+		},
+		func(sim *core.Simulation) {
+			if deathKnight.GCD.IsReady(sim) {
+				deathKnight.tryUseGCD(sim)
+			}
+		},
 	)
 
 	deathKnight.EnableAutoAttacks(deathKnight, core.AutoAttackOptions{
