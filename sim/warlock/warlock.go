@@ -51,6 +51,8 @@ type Warlock struct {
 	MetamorphosisAura		*core.Aura
 	MoltenCoreAura			*core.Aura
 	DecimationAura			*core.Aura
+	PyroclasmAura			*core.Aura
+	BackdraftAura			*core.Aura
 
 	Pet *WarlockPet
 

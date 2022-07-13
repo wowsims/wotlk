@@ -121,6 +121,13 @@ func (warlock *Warlock) ApplyTalents() {
 		warlock.setupDecimation()
 	}
 
+	if warlock.Talents.Pyroclasm > 0 {
+		warlock.setupPyroclasm()
+	}
+
+	if warlock.Talents.Backdraft > 0 {
+		warlock.setupBackdraft()
+	}
 }
 
 func (warlock *Warlock) applyDeathsEmbrace() {
@@ -162,6 +169,35 @@ func (warlock *Warlock) setupDecimation() {
 	})
 }
 
+func (warlock *Warlock) setupPyroclasm() {
+	warlock.PyroclasmAura = warlock.RegisterAura(core.Aura{
+		Label:    "Pyroclasm",
+		ActionID: core.ActionID{SpellID: 63244},
+		Duration: time.Second * 10,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.ShadowDamageDealtMultiplier *= 1 + 0.02 * float64(warlock.Talents.Pyroclasm)
+			aura.Unit.PseudoStats.FireDamageDealtMultiplier *= 1 + 0.02 * float64(warlock.Talents.Pyroclasm)
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.ShadowDamageDealtMultiplier /= 1 + 0.02 * float64(warlock.Talents.Pyroclasm)
+			aura.Unit.PseudoStats.FireDamageDealtMultiplier /= 1 + 0.02 * float64(warlock.Talents.Pyroclasm)
+		},
+	})
+
+	warlock.RegisterAura(core.Aura{
+		Label: "Pyroclasm Talent Hidden Aura",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spell == warlock.Conflagrate { // || spell == warlock.SearingPain 
+				warlock.PyroclasmAura.Activate(sim)
+			}
+		},
+	})
+}
+
 func (warlock *Warlock) setupEradication() {
 	hasteBonusPercent := float64(warlock.Talents.Eradication) * 6
 	if warlock.Talents.Eradication == 3 {
@@ -181,7 +217,6 @@ func (warlock *Warlock) setupEradication() {
 
 	warlock.RegisterAura(core.Aura{
 		Label: "Eradication Talent Hidden Aura",
-		// ActionID:  core.ActionID{SpellID: 47197},
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
@@ -211,7 +246,6 @@ func (warlock *Warlock) setupShadowEmbrace() {
 
 	warlock.RegisterAura(core.Aura{
 		Label: "Shadow Embrace Talent Hidden Aura",
-		//		ActionID: core.ActionID{SpellID: 32394},
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
@@ -243,7 +277,6 @@ func (warlock *Warlock) setupNightfall() {
 
 	warlock.RegisterAura(core.Aura{
 		Label: "Nightfall Hidden Aura",
-		// ActionID: core.ActionID{SpellID: 18095},
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
@@ -262,7 +295,7 @@ func (warlock *Warlock) setupNightfall() {
 
 func (warlock *Warlock) setupMoltenCore() {
 	warlock.MoltenCoreAura = warlock.RegisterAura(core.Aura{
-		Label:    "Molten Core Aura",
+		Label:    "Molten Core Proc Aura",
 		ActionID: core.ActionID{SpellID: 71165},
 		Duration: time.Second * 15,
 		MaxStacks: 3,
@@ -275,7 +308,6 @@ func (warlock *Warlock) setupMoltenCore() {
 
 	warlock.RegisterAura(core.Aura{
 		Label: "Molten Core Hidden Aura",
-		// ActionID: core.ActionID{SpellID: 71165},
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
@@ -286,6 +318,35 @@ func (warlock *Warlock) setupMoltenCore() {
 					warlock.MoltenCoreAura.Activate(sim)
 					warlock.MoltenCoreAura.SetStacks(sim, 3)
 				}
+			}
+		},
+	})
+}
+
+func (warlock *Warlock) setupBackdraft() {
+	warlock.BackdraftAura = warlock.RegisterAura(core.Aura{
+		Label:    "Backdraft Proc Aura",
+		ActionID: core.ActionID{SpellID: 54277},
+		Duration: time.Second * 15,
+		MaxStacks: 3,
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if spell == warlock.Incinerate || spell == warlock.SoulFire || spell == warlock.Shadowbolt || 
+			spell == warlock.ChaosBolt || spell == warlock.Immolate {
+				aura.RemoveStack(sim)
+			}
+		},
+	})
+
+	warlock.RegisterAura(core.Aura{
+		Label: "Backdraft Hidden Aura",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spell == warlock.Conflagrate {
+				warlock.BackdraftAura.Activate(sim)
+				warlock.BackdraftAura.SetStacks(sim, 3)
 			}
 		},
 	})
