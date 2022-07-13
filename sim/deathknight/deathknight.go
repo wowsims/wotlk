@@ -20,7 +20,9 @@ type DeathKnight struct {
 	PlagueStrike *core.Spell
 	Obliterate   *core.Spell
 	BloodStrike  *core.Spell
-	HowlingBlast *core.Spell
+
+	HowlingBlastCostless bool
+	HowlingBlast         *core.Spell
 	//FrostStrike      *core.Spell
 	//HornOfWinter     *core.Spell
 	//UnbreakableArmor *core.Spell

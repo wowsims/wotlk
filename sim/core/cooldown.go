@@ -39,14 +39,6 @@ func (timer *Timer) Set(t time.Duration) {
 	*timer = Timer(t)
 }
 
-func (cd *Cooldown) SetToNow(sim *Simulation) {
-	*cd.Timer = Timer(sim.CurrentTime)
-}
-
-func (cd *Cooldown) SetToInf() {
-	*cd.Timer = Timer(1<<63 - 1)
-}
-
 func (timer *Timer) Reset() {
 	*timer = 0
 }

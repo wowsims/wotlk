@@ -49,6 +49,7 @@ func (deathKnight *DeathKnight) ApplyFrostTalents() {
 	// Pointless to Implement
 
 	// Annihilation
+
 	// TODO: Implement
 
 	// Killing Machine
@@ -148,4 +149,8 @@ func (deathKnight *DeathKnight) applyIcyTalons() {
 			aura.Unit.PseudoStats.MeleeSpeedMultiplier /= 1.0 + 0.04*float64(deathKnight.Talents.IcyTalons)
 		},
 	})
+}
+
+func (deathKnight *DeathKnight) applyThreatOfThassarian() {
+
 }

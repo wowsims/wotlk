@@ -58,8 +58,10 @@ func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
-					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 1, 1)
-					deathKnight.Spend(sim, spell, dkSpellCost)
+					if !deathKnight.HowlingBlastCostless {
+						dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 1, 1)
+						deathKnight.Spend(sim, spell, dkSpellCost)
+					}
 
 					amountOfRunicPower := 15.0 + 2.5*float64(deathKnight.Talents.ChillOfTheGrave)
 					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
@@ -70,5 +72,8 @@ func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 }
 
 func (deathKnight *DeathKnight) CanHowlingBlast(sim *core.Simulation) bool {
+	if deathKnight.HowlingBlastCostless {
+		return deathKnight.HowlingBlast.IsReady(sim)
+	}
 	return deathKnight.CastCostPossible(sim, 0.0, 0, 1, 1) && deathKnight.HowlingBlast.IsReady(sim)
 }
