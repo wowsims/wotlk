@@ -22,7 +22,7 @@ func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			BonusCritRating:  3.0*float64(deathKnight.Talents.Subversion)*core.CritRatingPerCritChance + 3.0*float64(deathKnight.Talents.Annihilation),
+			BonusCritRating:  (3.0*float64(deathKnight.Talents.Subversion) + 1.0*float64(deathKnight.Talents.Annihilation)) * core.CritRatingPerCritChance,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 

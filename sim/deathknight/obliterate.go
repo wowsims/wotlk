@@ -10,6 +10,15 @@ func (deathKnight *DeathKnight) registerObliterateSpell() {
 
 	guileOfGorefiend := deathKnight.Talents.GuileOfGorefiend > 0
 
+	diseaseConsumptionChance := 100.0
+	if deathKnight.Talents.Annihilation == 1 {
+		diseaseConsumptionChance = 67.0
+	} else if deathKnight.Talents.Annihilation == 2 {
+		diseaseConsumptionChance = 34.0
+	} else if deathKnight.Talents.Annihilation == 3 {
+		diseaseConsumptionChance = 0.0
+	}
+
 	deathKnight.Obliterate = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 51425},
 		SpellSchool: core.SpellSchoolPhysical,
@@ -23,7 +32,7 @@ func (deathKnight *DeathKnight) registerObliterateSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			BonusCritRating:  5.0*float64(deathKnight.Talents.Rime)*core.CritRatingPerCritChance + 3.0*float64(deathKnight.Talents.Subversion)*core.CritRatingPerCritChance,
+			BonusCritRating:  (5.0*float64(deathKnight.Talents.Rime) + 3.0*float64(deathKnight.Talents.Subversion) + 1.0*float64(deathKnight.Talents.Annihilation)) * core.CritRatingPerCritChance,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 
@@ -47,6 +56,11 @@ func (deathKnight *DeathKnight) registerObliterateSpell() {
 
 					amountOfRunicPower := 15.0 + 2.5*float64(deathKnight.Talents.ChillOfTheGrave)
 					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
+
+					if sim.RandomFloat("Annihilation") < diseaseConsumptionChance {
+						deathKnight.FrostFeverDisease.Deactivate(sim)
+						deathKnight.BloodPlagueDisease.Deactivate(sim)
+					}
 				}
 			},
 		}),

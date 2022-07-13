@@ -49,6 +49,7 @@ func (deathKnight *DeathKnight) ApplyFrostTalents() {
 	// Pointless to Implement
 
 	// Annihilation
+
 	// TODO: Implement
 
 	// Killing Machine

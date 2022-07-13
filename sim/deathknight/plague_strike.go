@@ -20,6 +20,7 @@ func (deathKnight *DeathKnight) registerPlagueStrikeSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeMHSpecial,
+			BonusCritRating:  (1.0 * float64(deathKnight.Talents.Annihilation)) * core.CritRatingPerCritChance,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 
