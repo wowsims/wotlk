@@ -1,4 +1,4 @@
-import { Consumes } from '/wotlk/core/proto/common.js';
+import { Consumes, PetFood } from '/wotlk/core/proto/common.js';
 import { EquipmentSpec } from '/wotlk/core/proto/common.js';
 import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
@@ -40,9 +40,14 @@ export const DefaultRotation = DeathKnightRotation.create({
 });
 
 export const DefaultOptions = DeathKnightOptions.create({
+	startingRunicPower: 0
 });
 
 export const DefaultConsumes = Consumes.create({
+	flask: Flask.FlaskOfEndlessRage,
+	food: Food.FoodDragonfinFilet,
+	defaultPotion: Potions.PotionOfSpeed,
+	petFood: PetFood.PetFoodKiblersBits
 });
 
 export const P1_FROST_PRE_BIS_PRESET = {

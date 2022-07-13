@@ -92,31 +92,31 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
-					giftOfTheWild: TristateEffect.TristateEffectMissing,
-					bloodlust: false,
-					strengthOfEarthTotem: TristateEffect.TristateEffectMissing,
-					windfuryTotem: TristateEffect.TristateEffectMissing,
-					leaderOfThePack: TristateEffect.TristateEffectMissing,
-					unleashedRage: false,
+					giftOfTheWild: TristateEffect.TristateEffectImproved,
+					bloodlust: true,
+					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
+					windfuryTotem: TristateEffect.TristateEffectImproved,
+					leaderOfThePack: TristateEffect.TristateEffectImproved,
+					unleashedRage: true,
 					abominationsMight: true,
 					icyTalons: true,
 				}),
 				partyBuffs: PartyBuffs.create({
+					heroicPresence: true,
 				}),
 				individualBuffs: IndividualBuffs.create({
-					blessingOfKings: false,
-					blessingOfWisdom: TristateEffect.TristateEffectMissing,
-					blessingOfMight: TristateEffect.TristateEffectMissing,
+					blessingOfKings: true,
+					blessingOfMight: TristateEffect.TristateEffectImproved,
 				}),
 				debuffs: Debuffs.create({
-					bloodFrenzy: false,
-					sunderArmor: false,
-					curseOfWeakness: TristateEffect.TristateEffectMissing,
-					curseOfElements: false,
-					faerieFire: TristateEffect.TristateEffectMissing,
-					judgementOfWisdom: false,
-					misery: false,
-					huntersMark: TristateEffect.TristateEffectMissing,
+					bloodFrenzy: true,
+					sunderArmor: true,
+					curseOfWeakness: TristateEffect.TristateEffectImproved,
+					curseOfElements: true,
+					faerieFire: TristateEffect.TristateEffectImproved,
+					judgementOfWisdom: true,
+					misery: true,
+					huntersMark: TristateEffect.TristateEffectImproved,
 				}),
 			},
 
@@ -159,6 +159,7 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 			// Which options are selectable in the 'Consumes' section.
 			consumeOptions: {
 				potions: [
+					Potions.PotionOfSpeed,
 					Potions.HastePotion,
 					Potions.InsaneStrengthPotion,
 					Potions.MightyRagePotion,
@@ -167,6 +168,7 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 					Conjured.ConjuredFlameCap,
 				],
 				flasks: [
+					Flask.FlaskOfEndlessRage,
 					Flask.FlaskOfRelentlessAssault,
 				],
 				battleElixirs: [
@@ -179,6 +181,7 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				guardianElixirs: [
 				],
 				food: [
+					Food.FoodDragonfinFilet,
 					Food.FoodRoastedClefthoof,
 					Food.FoodGrilledMudfish,
 					Food.FoodSpicyHotTalbuk,
