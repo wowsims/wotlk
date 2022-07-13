@@ -45,6 +45,10 @@ func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
 
 					amountOfRunicPower := 10.0
 					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
+
+					if deathKnight.DesolationAura != nil {
+						deathKnight.DesolationAura.Activate(sim)
+					}
 				}
 			},
 		}),

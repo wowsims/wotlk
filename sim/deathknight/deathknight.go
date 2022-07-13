@@ -1,6 +1,8 @@
 package deathknight
 
 import (
+	"math"
+
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -26,7 +28,8 @@ type DeathKnight struct {
 	//RaiseDead        *core.Spell
 
 	// "CDs"
-	BloodTap *core.Spell
+	BloodTap     *core.Spell
+	BloodTapAura *core.Aura
 
 	// Diseases
 	FrostFever         *core.Spell
@@ -37,6 +40,7 @@ type DeathKnight struct {
 	// Talent Auras
 	KillingMachineAura *core.Aura
 	IcyTalonsAura      *core.Aura
+	DesolationAura     *core.Aura
 
 	// Presences
 	BloodPresenceAura  *core.Aura
@@ -98,17 +102,8 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 		Rotation:  *deathKnightOptions.Rotation,
 	}
 
-	maxRunicPower := 100.0
-	if deathKnight.Talents.RunicPowerMastery == 1 {
-		maxRunicPower = 115.0
-	} else if deathKnight.Talents.RunicPowerMastery == 2 {
-		maxRunicPower = 130.0
-	}
-
-	currentRunicPower := deathKnightOptions.Options.StartingRunicPower
-	if currentRunicPower > maxRunicPower {
-		currentRunicPower = maxRunicPower
-	}
+	maxRunicPower := 100.0 + 15.0*float64(deathKnight.Talents.RunicPowerMastery)
+	currentRunicPower := math.Min(maxRunicPower, deathKnightOptions.Options.StartingRunicPower)
 
 	deathKnight.EnableRunicPowerBar(
 		currentRunicPower,

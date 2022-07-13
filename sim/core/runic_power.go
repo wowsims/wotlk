@@ -30,7 +30,7 @@ type DKRuneCost struct {
 
 type Rune struct {
 	state RuneState
-	pas   [2]*PendingAction
+	pas   [3]*PendingAction
 }
 
 type runicPowerBar struct {
@@ -69,6 +69,11 @@ func ResetRune(sim *Simulation, runes *[2]Rune) {
 	}
 	runes[0].pas[1] = nil
 
+	if runes[0].pas[2] != nil {
+		runes[0].pas[2].Cancel(sim)
+	}
+	runes[0].pas[2] = nil
+
 	if runes[1].pas[0] != nil {
 		runes[1].pas[0].Cancel(sim)
 	}
@@ -78,6 +83,11 @@ func ResetRune(sim *Simulation, runes *[2]Rune) {
 		runes[1].pas[1].Cancel(sim)
 	}
 	runes[1].pas[1] = nil
+
+	if runes[1].pas[2] != nil {
+		runes[1].pas[2].Cancel(sim)
+	}
+	runes[1].pas[2] = nil
 }
 
 func (rp *runicPowerBar) ResetRunicPowerBar(sim *Simulation) {
@@ -102,9 +112,9 @@ func (unit *Unit) EnableRunicPowerBar(currentRunicPower float64, maxRunicPower f
 		maxRunicPower:     maxRunicPower,
 		currentRunicPower: currentRunicPower,
 
-		bloodRunes:  [2]Rune{Rune{state: RuneState_Normal, pas: [2]*PendingAction{nil, nil}}, Rune{state: RuneState_Normal, pas: [2]*PendingAction{nil, nil}}},
-		frostRunes:  [2]Rune{Rune{state: RuneState_Normal, pas: [2]*PendingAction{nil, nil}}, Rune{state: RuneState_Normal, pas: [2]*PendingAction{nil, nil}}},
-		unholyRunes: [2]Rune{Rune{state: RuneState_Normal, pas: [2]*PendingAction{nil, nil}}, Rune{state: RuneState_Normal, pas: [2]*PendingAction{nil, nil}}},
+		bloodRunes:  [2]Rune{Rune{state: RuneState_Normal, pas: [3]*PendingAction{nil, nil, nil}}, Rune{state: RuneState_Normal, pas: [3]*PendingAction{nil, nil, nil}}},
+		frostRunes:  [2]Rune{Rune{state: RuneState_Normal, pas: [3]*PendingAction{nil, nil, nil}}, Rune{state: RuneState_Normal, pas: [3]*PendingAction{nil, nil, nil}}},
+		unholyRunes: [2]Rune{Rune{state: RuneState_Normal, pas: [3]*PendingAction{nil, nil, nil}}, Rune{state: RuneState_Normal, pas: [3]*PendingAction{nil, nil, nil}}},
 
 		onBloodRuneGain:  onBloodRuneGain,
 		onFrostRuneGain:  onFrostRuneGain,
@@ -369,61 +379,11 @@ func SpendRuneFromType(rb *[2]Rune, runeState RuneState) int32 {
 	return slot
 }
 
-func ConvertOptimalDeathRuneSlot(runes *[2]Rune, sim *Simulation) int32 {
-	slot := int32(-1)
-	if runes[0].state == RuneState_Spent {
-		slot = 0
-		// Handled
-	} else if runes[1].state == RuneState_Spent {
-		slot = 1
-		// Handled
-	}
-
-	if runes[0].state == RuneState_DeathSpent {
-		slot = 0
-		if runes[1].state == RuneState_Spent {
-
-		}
-		// Handled
-	} else if runes[1].state == RuneState_Spent {
-		slot = 1
-		// Handled
-	}
-
-	if slot < 0 {
-		// didn't find a spent rune, prio left normal -> death
-		if runes[0].state == RuneState_Normal {
-			slot = 0
-			SetRuneAtSlotToState(runes, slot, RuneState_Death)
-		} else if runes[0].state == RuneState_Death {
-			if runes[1].state == RuneState_Normal {
-				slot = 1
-				SetRuneAtSlotToState(runes, slot, RuneState_Death)
-			} else if runes[1].state == RuneState_Death { // both death
-				slot = 1
-
-			}
-		}
-	} else {
-		SetRuneAtSlotToState(runes, slot, RuneState_Death)
-		runes[slot].pas[0].Cancel(sim)
-		runes[slot].pas[0] = nil
-	}
-
-	return slot
-}
-
-func (rp *runicPowerBar) GenerateDeathRuneFromBloodRune(sim *Simulation, metrics *ResourceMetrics, spell *Spell) {
-	currRunes := rp.CurrentDeathRunes()
-	rp.GenerateRuneMetrics(sim, metrics, "Death", currRunes, currRunes+1)
-	spendSlot := rp.SpendBloodRune(sim, spell.BloodRuneMetrics())
-
-	SetRuneAtSlotToState(&rp.bloodRunes, spendSlot, RuneState_Death)
-	rp.bloodRunes[spendSlot].pas[0].Cancel(sim)
-	rp.bloodRunes[spendSlot].pas[0] = nil
+func (rp *runicPowerBar) LaunchBloodTapRegenPA(sim *Simulation, slot int32) {
+	r := &rp.bloodRunes[slot]
 
 	pa := &PendingAction{
-		NextActionAt: sim.CurrentTime + 30.0*time.Second,
+		NextActionAt: sim.CurrentTime + 20.0*time.Second,
 		Priority:     ActionPriorityRegen,
 	}
 
@@ -432,10 +392,10 @@ func (rp *runicPowerBar) GenerateDeathRuneFromBloodRune(sim *Simulation, metrics
 			rp.GenerateBloodRune(sim, rp.bloodRuneGainMetrics)
 			rp.onBloodRuneGain(sim)
 		}
-		rp.bloodRunes[spendSlot].pas[1] = nil
+		r.pas[2] = nil
 	}
 
-	rp.bloodRunes[spendSlot].pas[1] = pa
+	r.pas[2] = pa
 	sim.AddPendingAction(pa)
 }
 
