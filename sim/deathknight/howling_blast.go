@@ -7,24 +7,10 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (deathKnight *DeathKnight) killingMachineOutcomeMod(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
-	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
-		if deathKnight.KillingMachineAura.IsActive() {
-			deathKnight.AddStatDynamic(sim, stats.SpellCrit, 100*core.CritRatingPerCritChance)
-			outcomeApplier(sim, spell, spellEffect, attackTable)
-			deathKnight.AddStatDynamic(sim, stats.SpellCrit, -100*core.CritRatingPerCritChance)
-		} else {
-			outcomeApplier(sim, spell, spellEffect, attackTable)
-		}
-	}
-}
-
-func (deathKnight *DeathKnight) registerIcyTouchSpell() {
-	baseCost := 10.0
-	target := deathKnight.CurrentTarget
-
-	itAura := core.IcyTouchAura(target, deathKnight.Talents.ImprovedIcyTouch)
-	deathKnight.IcyTouchAura = itAura
+// TODO: make this an AoE spell, idk how to so for now its single target
+func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
+	baseCost := 15.0
+	//target := deathKnight.CurrentTarget
 
 	glacierRotCoeff := 0.0
 	if deathKnight.Talents.GlacierRot == 1 {
@@ -35,8 +21,10 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 		glacierRotCoeff = 0.20
 	}
 
-	deathKnight.IcyTouch = deathKnight.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 59131},
+	guileOfGorefiend := deathKnight.Talents.GuileOfGorefiend > 0
+
+	deathKnight.HowlingBlast = deathKnight.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 51411},
 		SpellSchool: core.SpellSchoolFrost,
 
 		ResourceType: stats.RunicPower,
@@ -49,15 +37,15 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 			},
 			CD: core.Cooldown{
 				Timer:    deathKnight.NewTimer(),
-				Duration: 6.0 * time.Second,
+				Duration: 8.0 * time.Second,
 			},
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:             core.ProcMaskSpellDamage,
-			BonusSpellCritRating: 5.0 * float64(deathKnight.Talents.Rime) * core.CritRatingPerCritChance,
+			BonusSpellCritRating: 0.0,
 			DamageMultiplier:     1.0,
-			ThreatMultiplier:     7.0,
+			ThreatMultiplier:     1.0,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
@@ -70,7 +58,7 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: deathKnight.killingMachineOutcomeMod(deathKnight.OutcomeFuncMagicHitAndCrit(deathKnight.spellCritMultiplier(false))),
+			OutcomeApplier: deathKnight.killingMachineOutcomeMod(deathKnight.OutcomeFuncMagicHitAndCrit(deathKnight.spellCritMultiplier(guileOfGorefiend))),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
@@ -93,6 +81,6 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 	})
 }
 
-func (deathKnight *DeathKnight) CanIcyTouch(sim *core.Simulation) bool {
-	return deathKnight.CastCostPossible(sim, 10.0, 0, 1, 0) && deathKnight.IcyTouch.IsReady(sim)
+func (deathKnight *DeathKnight) CanHowlingBlast(sim *core.Simulation) bool {
+	return deathKnight.CastCostPossible(sim, 15.0, 0, 1, 1) && deathKnight.HowlingBlast.IsReady(sim)
 }

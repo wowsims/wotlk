@@ -5,9 +5,12 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+// TODO: Add disease consumption
 func (deathKnight *DeathKnight) registerObliterateSpell() {
 	baseCost := 15.0
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 467.0, 0.8, true)
+
+	guileOfGorefiend := deathKnight.Talents.GuileOfGorefiend > 0
 
 	deathKnight.Obliterate = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 51425},
@@ -41,7 +44,7 @@ func (deathKnight *DeathKnight) registerObliterateSpell() {
 				TargetSpellCoefficient: 1,
 			},
 
-			OutcomeApplier: deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.DefaultMeleeCritMultiplier()),
+			OutcomeApplier: deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.critMultiplier(guileOfGorefiend)),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {

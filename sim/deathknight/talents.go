@@ -126,6 +126,13 @@ func (deathKnight *DeathKnight) ApplyTalents() {
 
 	// Nerves Of Cold Steel
 	deathKnight.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*float64(deathKnight.Talents.NervesOfColdSteel))
+	if deathKnight.Talents.NervesOfColdSteel == 1 {
+		deathKnight.AutoAttacks.OHEffect.BaseDamage.Calculator = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, 1.08, true)
+	} else if deathKnight.Talents.NervesOfColdSteel == 2 {
+		deathKnight.AutoAttacks.OHEffect.BaseDamage.Calculator = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, 1.16, true)
+	} else {
+		deathKnight.AutoAttacks.OHEffect.BaseDamage.Calculator = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, 1.25, true)
+	}
 
 	// Icy Talons
 	// Pointless to Implement

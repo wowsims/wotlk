@@ -9,6 +9,8 @@ func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
 	baseCost := 10.0
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 764.0, 0.4, true)
 
+	guileOfGorefiend := deathKnight.Talents.GuileOfGorefiend > 0
+
 	deathKnight.BloodStrike = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 49930},
 		SpellSchool: core.SpellSchoolPhysical,
@@ -40,7 +42,7 @@ func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
 				TargetSpellCoefficient: 1,
 			},
 
-			OutcomeApplier: deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.DefaultMeleeCritMultiplier()),
+			OutcomeApplier: deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.critMultiplier(guileOfGorefiend)),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {

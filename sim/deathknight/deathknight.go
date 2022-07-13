@@ -17,9 +17,9 @@ type DeathKnight struct {
 	IcyTouch     *core.Spell
 	PlagueStrike *core.Spell
 	Obliterate   *core.Spell
+	BloodStrike  *core.Spell
+	HowlingBlast *core.Spell
 	//FrostStrike      *core.Spell
-	BloodStrike *core.Spell
-	//HowlingBlast     *core.Spell
 	//HornOfWinter     *core.Spell
 	//UnbreakableArmor *core.Spell
 	//ArmyOfTheDead    *core.Spell
@@ -72,6 +72,7 @@ func (deathKnight *DeathKnight) Initialize() {
 	deathKnight.registerObliterateSpell()
 	deathKnight.registerBloodStrikeSpell()
 	deathKnight.registerBloodTapSpell()
+	deathKnight.registerHowlingBlastSpell()
 	deathKnight.registerDiseaseDots()
 }
 
@@ -174,6 +175,19 @@ func (deathKnight *DeathKnight) DiseasesAreActive() bool {
 	return deathKnight.FrostFeverDisease.IsActive() || deathKnight.BloodPlagueDisease.IsActive()
 }
 
+func (deathKnight *DeathKnight) secondaryCritModifier(applyGuile bool) float64 {
+	secondaryModifier := 0.0
+	if applyGuile {
+		secondaryModifier += 0.15 * float64(deathKnight.Talents.GuileOfGorefiend)
+	}
+	return secondaryModifier
+}
+func (deathKnight *DeathKnight) critMultiplier(applyGuile bool) float64 {
+	return deathKnight.MeleeCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile))
+}
+func (deathKnight *DeathKnight) spellCritMultiplier(applyGuile bool) float64 {
+	return deathKnight.SpellCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile))
+}
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
 		stats.Health:      7941,
