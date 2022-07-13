@@ -55,8 +55,6 @@ func (warlock *Warlock) ApplyTalents() {
 		})
 	}
 
-	warlock.PseudoStats.BonusCritRating += float64(warlock.Talents.DemonicTactics) * 1 * core.CritRatingPerCritChance
-
 	if warlock.Options.Summon != proto.Warlock_Options_NoSummon {
 		if warlock.Talents.MasterDemonologist > 0 {
 			switch warlock.Options.Summon {
@@ -305,10 +303,9 @@ func (warlock *Warlock) setupNightfall() {
 		Duration: time.Second * 10,
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 			// Check for an instant cast shadowbolt to disable aura
-			if spell != warlock.Shadowbolt || spell.CurCast.CastTime != 0 {
-				return
+			if spell == warlock.Shadowbolt && spell.CurCast.CastTime = 0 {
+				aura.Deactivate(sim)
 			}
-			aura.Deactivate(sim)
 		},
 	})
 
@@ -319,13 +316,11 @@ func (warlock *Warlock) setupNightfall() {
 			aura.Activate(sim)
 		},
 		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spell != warlock.Corruption { // TODO: also works on drain life...
-				return
+			if spell == warlock.Corruption { // TODO: also works on drain life...
+				if sim.RandomFloat("nightfall") < 0.02*float64(warlock.Talents.Nightfall) {
+					warlock.NightfallProcAura.Activate(sim)
+				}
 			}
-			if sim.RandomFloat("nightfall") > 0.02*float64(warlock.Talents.Nightfall) {
-				return
-			}
-			warlock.NightfallProcAura.Activate(sim)
 		},
 	})
 }
