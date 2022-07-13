@@ -65,6 +65,12 @@ func (deathKnight *DeathKnight) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	}
 }
 
+func (deathKnight *DeathKnight) ApplyTalents() {
+	deathKnight.ApplyBloodTalents()
+	deathKnight.ApplyFrostTalents()
+	deathKnight.ApplyUnholyTalents()
+}
+
 func (deathKnight *DeathKnight) Initialize() {
 	deathKnight.registerPresences()
 	deathKnight.registerIcyTouchSpell()
@@ -107,7 +113,11 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 	deathKnight.EnableRunicPowerBar(
 		currentRunicPower,
 		maxRunicPower,
-		func(sim *core.Simulation) {},
+		func(sim *core.Simulation) {
+			if deathKnight.GCD.IsReady(sim) {
+				deathKnight.tryUseGCD(sim)
+			}
+		},
 		func(sim *core.Simulation) {
 			if deathKnight.GCD.IsReady(sim) {
 				deathKnight.tryUseGCD(sim)
