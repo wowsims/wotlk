@@ -46,7 +46,7 @@ func (deathKnight *DeathKnight) registerFrostFever() {
 			Label:    "FrostFever-" + strconv.Itoa(int(deathKnight.Index)),
 			ActionID: actionID,
 		}),
-		NumberOfTicks: 5,
+		NumberOfTicks: 5 + int(deathKnight.Talents.Epidemic),
 		TickLength:    time.Second * 3,
 
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
@@ -99,7 +99,7 @@ func (deathKnight *DeathKnight) registerBloodPlague() {
 			Label:    "BloodPlague-" + strconv.Itoa(int(deathKnight.Index)),
 			ActionID: actionID,
 		}),
-		NumberOfTicks: 5,
+		NumberOfTicks: 5 + int(deathKnight.Talents.Epidemic),
 		TickLength:    time.Second * 3,
 
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{

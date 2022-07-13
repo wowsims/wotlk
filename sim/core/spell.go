@@ -2,8 +2,8 @@ package core
 
 import (
 	"fmt"
-	"time"
 	"math"
+	"time"
 
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
@@ -465,7 +465,7 @@ func ApplyEffectFuncMultipleDamageCappedWotLK(baseEffects []SpellEffect) ApplySp
 	}
 
 	return func(sim *Simulation, _ *Unit, spell *Spell) {
-		capMultiplier := math.Min(10.0 / float64(numTargets), 1.0)
+		capMultiplier := math.Min(10.0/float64(numTargets), 1.0)
 		for i := range baseEffects {
 			effect := &baseEffects[i]
 			effect.init(sim, spell)
