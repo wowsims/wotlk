@@ -49,7 +49,6 @@ func (warlock *Warlock) registerDemonicEmpowermentSpell() {
 	)
 	warlock.DemonicEmpowerment = warlock.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 47193},
-		Flags:    core.SpellFlagNoOnCastComplete,
 		ResourceType: stats.Mana,
 		Cast: 	  core.CastConfig{
 			CD: core.Cooldown{

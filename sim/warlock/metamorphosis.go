@@ -22,7 +22,6 @@ func (warlock *Warlock) registerMetamorphosisSpell() {
 
 	warlock.Metamorphosis = warlock.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 47241},
-		Flags:    core.SpellFlagNoOnCastComplete,
 		Cast: 	  core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    warlock.NewTimer(),

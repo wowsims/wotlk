@@ -273,8 +273,8 @@ func earthMoonEbonPlaguebringerAura(target *Unit, label string, id int32) *Aura 
 func ImprovedShadowBoltAura(target *Unit) *Aura {
 	bonusSpellCrit := 5.0 * CritRatingPerCritChance
 	config := Aura{
-		Label:    "ImprovedShadowBolt",
-		Tag:      "ImprovedShadowBolt",
+		Label:    "Shadow Mastery",
+		Tag:      "Shadow Mastery",
 		ActionID: ActionID{SpellID: 17800},
 		Duration: time.Second * 30,
 		OnGain: func(aura *Aura, sim *Simulation) {

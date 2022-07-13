@@ -12,20 +12,21 @@ type Warlock struct {
 	Options  proto.Warlock_Options
 	Rotation proto.Warlock_Rotation
 
-	Shadowbolt     *core.Spell
-	Incinerate     *core.Spell
-	Immolate       *core.Spell
-	ImmolateDot    *core.Dot
-	UnstableAff    *core.Spell
-	UnstableAffDot *core.Dot
-	Corruption     *core.Spell
-	CorruptionDot  *core.Dot
-	Haunt		   *core.Spell
-	HauntAura	   *core.Aura
-	LifeTap 	   *core.Spell
-	ChaosBolt 	   *core.Spell
-	Soulfire 	   *core.Spell
-	Conflagrate    *core.Spell
+	Shadowbolt     		*core.Spell
+	Incinerate     		*core.Spell
+	Immolate       		*core.Spell
+	ImmolateDot    		*core.Dot
+	UnstableAff    		*core.Spell
+	UnstableAffDot 		*core.Dot
+	Corruption     		*core.Spell
+	CorruptionDot  		*core.Dot
+	Haunt		   		*core.Spell
+	HauntAura	   		*core.Aura
+	LifeTap 	   		*core.Spell
+	ChaosBolt 	   		*core.Spell
+	SoulFire 	   		*core.Spell
+	Conflagrate    		*core.Spell
+	ConflagrateDot 		*core.Dot
 
 	CurseOfElements     *core.Spell
 	CurseOfElementsAura *core.Aura
@@ -38,8 +39,8 @@ type Warlock struct {
 	CurseOfDoom         *core.Spell
 	CurseOfDoomDot      *core.Dot
 
-	Seeds    []*core.Spell
-	SeedDots []*core.Dot
+	Seeds    			[]*core.Spell
+	SeedDots 			[]*core.Dot
 
 	NightfallProcAura 		*core.Aura
 	ShadowEmbraceAura 		*core.Aura
@@ -48,6 +49,11 @@ type Warlock struct {
 	DemonicEmpowermentAura	*core.Aura
 	Metamorphosis			*core.Spell
 	MetamorphosisAura		*core.Aura
+	MoltenCoreAura			*core.Aura
+	DecimationAura			*core.Aura
+	PyroclasmAura			*core.Aura
+	BackdraftAura			*core.Aura
+	EmpoweredImpAura		*core.Aura
 
 	Pet *WarlockPet
 
@@ -74,6 +80,10 @@ func (warlock *Warlock) Initialize() {
 	warlock.registerCurseOfDoomSpell()
 	warlock.registerLifeTapSpell()
 	warlock.registerSeedSpell()
+	warlock.registerSoulFireSpell()
+	if warlock.Talents.Conflagrate {
+		warlock.registerConflagrateSpell()
+	}
 	if warlock.Talents.UnstableAffliction {
 		warlock.registerUnstableAffSpell()
 	}
@@ -136,18 +146,6 @@ func NewWarlock(character core.Character, options proto.Player) *Warlock {
 		warlock.AddStat(stats.SpellPower, amount)
 	}
 
-	// 	if warlock.Talents.DemonicSacrifice && warlock.Options.SacrificeSummon {
-	// 	switch warlock.Options.Summon {
-	// 	case proto.Warlock_Options_Succubus:
-	// 		warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.15
-	// 	case proto.Warlock_Options_Imp:
-	// 		warlock.PseudoStats.FireDamageDealtMultiplier *= 1.15
-	// 	case proto.Warlock_Options_Felguard:
-	// 		warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.10
-	// 	case proto.Warlock_Options_Felhunter:
-	// 		warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.0
-	// 	}
-	// } else
 	if warlock.Options.Summon != proto.Warlock_Options_NoSummon {
 		warlock.Pet = warlock.NewWarlockPet()
 	}
