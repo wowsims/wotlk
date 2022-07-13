@@ -53,6 +53,7 @@ type Warlock struct {
 	DecimationAura			*core.Aura
 	PyroclasmAura			*core.Aura
 	BackdraftAura			*core.Aura
+	EmpoweredImpAura		*core.Aura
 
 	Pet *WarlockPet
 

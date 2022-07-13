@@ -71,16 +71,41 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 	wp.EnableManaBar()
 
 	if petConfig.Melee {
-		wp.EnableAutoAttacks(wp, core.AutoAttackOptions{
-			MainHand: core.Weapon{
-				BaseDamageMin:  83.4,
-				BaseDamageMax:  123.4,
-				SwingSpeed:     2,
-				SwingDuration:  time.Second * 2,
-				CritMultiplier: 2,
-			},
-			AutoSwingMelee: true,
-		})
+		switch warlock.Options.Summon {
+		case proto.Warlock_Options_Felguard :
+			wp.EnableAutoAttacks(wp, core.AutoAttackOptions{
+				MainHand: core.Weapon{
+					BaseDamageMin:  412.5,
+					BaseDamageMax:  412.5,
+					SwingSpeed:     2,
+					SwingDuration:  time.Second * 2,
+					CritMultiplier: 2,
+				},
+				AutoSwingMelee: true,
+			})
+		case proto.Warlock_Options_Succubus :
+			wp.EnableAutoAttacks(wp, core.AutoAttackOptions{
+				MainHand: core.Weapon{
+					BaseDamageMin:  412.5,
+					BaseDamageMax:  412.5,
+					SwingSpeed:     2,
+					SwingDuration:  time.Second * 2,
+					CritMultiplier: 2,
+				},
+				AutoSwingMelee: true,
+			})
+		case proto.Warlock_Options_Felhunter :
+			wp.EnableAutoAttacks(wp, core.AutoAttackOptions{
+				MainHand: core.Weapon{
+					BaseDamageMin:  309.6,
+					BaseDamageMax:  309.6,
+					SwingSpeed:     2,
+					SwingDuration:  time.Second * 2,
+					CritMultiplier: 2,
+				},
+				AutoSwingMelee: true,
+			})
+		}
 	}
 	// wp.AutoAttacks.MHEffect.DamageMultiplier *= petConfig.DamageMultiplier
 	switch warlock.Options.Summon {

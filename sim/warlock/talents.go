@@ -9,7 +9,7 @@ import (
 )
 
 func (warlock *Warlock) ApplyTalents() {
-	// demonic embrace
+	// Demonic Embrace
 	if warlock.Talents.DemonicEmbrace > 0 {
 		bonus := 1.01 + float64(warlock.Talents.DemonicEmbrace)*0.03
 		warlock.AddStatDependency(stats.StatDependency{
@@ -46,7 +46,6 @@ func (warlock *Warlock) ApplyTalents() {
 	if warlock.Talents.FelVitality > 0 {
 		bonus := 0.01 * float64(warlock.Talents.FelVitality)
 		// Adding a second 3% bonus int->mana dependency
-		// TODO: increases max health
 		warlock.AddStatDependency(stats.StatDependency{
 			SourceStat:   stats.Intellect,
 			ModifiedStat: stats.Mana,
@@ -79,7 +78,7 @@ func (warlock *Warlock) ApplyTalents() {
  		}
 	}
 
-	// demonic tactics, applies even without pet out
+	// Demonic Tactics, applies even without pet out
 	if warlock.Talents.DemonicTactics > 0 {
 		warlock.AddStats(stats.Stats{
 			stats.MeleeCrit: float64(warlock.Talents.DemonicTactics) * 2 * core.CritRatingPerCritChance,
@@ -128,6 +127,44 @@ func (warlock *Warlock) ApplyTalents() {
 	if warlock.Talents.Backdraft > 0 {
 		warlock.setupBackdraft()
 	}
+
+	if warlock.Talents.EmpoweredImp > 0 && warlock.Options.Summon == proto.Warlock_Options_Imp {
+		warlock.Pet.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.1 * float64(warlock.Talents.EmpoweredImp)
+		warlock.setupEmpoweredImp()
+	}
+}
+
+func (warlock *Warlock) setupEmpoweredImp() {
+	warlock.EmpoweredImpAura = warlock.RegisterAura(core.Aura{
+		Label:    "Empowered Imp Proc Aura",
+		ActionID: core.ActionID{SpellID: 47283},
+		Duration: time.Second * 8,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			warlock.AddStatDynamic(sim, stats.SpellCrit, 100*core.HasteRatingPerHastePercent)
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			warlock.AddStatDynamic(sim, stats.SpellCrit, -100*core.HasteRatingPerHastePercent)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
+				aura.Deactivate(sim)
+			}
+		},
+	})
+
+	warlock.Pet.RegisterAura(core.Aura{
+		Label: "Empowered Imp Hidden Aura",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
+				warlock.EmpoweredImpAura.Activate(sim)
+				warlock.EmpoweredImpAura.Refresh(sim)
+			}
+		},
+	})
 }
 
 func (warlock *Warlock) applyDeathsEmbrace() {
@@ -191,7 +228,7 @@ func (warlock *Warlock) setupPyroclasm() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spell == warlock.Conflagrate { // || spell == warlock.SearingPain 
+			if spell == warlock.Conflagrate && spellEffect.Outcome.Matches(core.OutcomeCrit) { // || spell == warlock.SearingPain 
 				warlock.PyroclasmAura.Activate(sim)
 			}
 		},
