@@ -263,7 +263,7 @@ func (rp *runicPowerBar) CastCostPossible(sim *Simulation, runicPowerAmount floa
 	return true
 }
 
-func (rp *runicPowerBar) DetermineOptimalCost(sim *Simulation, runicPowerAmount float64, bloodAmount int, frostAmount int, unholyAmount int) DKRuneCost {
+func (rp *runicPowerBar) DetermineOptimalCost(sim *Simulation, bloodAmount int, frostAmount int, unholyAmount int) DKRuneCost {
 	totalBloodRunes := int(rp.CurrentBloodRunes())
 	startingBloodRunes := totalBloodRunes
 	totalFrostRunes := int(rp.CurrentFrostRunes())

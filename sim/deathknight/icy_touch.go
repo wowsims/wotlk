@@ -20,7 +20,6 @@ func (deathKnight *DeathKnight) killingMachineOutcomeMod(outcomeApplier core.Out
 }
 
 func (deathKnight *DeathKnight) registerIcyTouchSpell() {
-	baseCost := 10.0
 	target := deathKnight.CurrentTarget
 
 	itAura := core.IcyTouchAura(target, deathKnight.Talents.ImprovedIcyTouch)
@@ -39,13 +38,9 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 		ActionID:    core.ActionID{SpellID: 59131},
 		SpellSchool: core.SpellSchoolFrost,
 
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
-
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    deathKnight.NewTimer(),
@@ -74,7 +69,7 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
-					dkSpellCost := deathKnight.DetermineOptimalCost(sim, baseCost, 0, 1, 0)
+					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 1, 0)
 					deathKnight.Spend(sim, spell, dkSpellCost)
 
 					deathKnight.FrostFeverDisease.Apply(sim)

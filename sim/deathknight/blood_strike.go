@@ -2,11 +2,9 @@ package deathknight
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
-	baseCost := 10.0
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 764.0, 0.4, true)
 
 	guileOfGorefiend := deathKnight.Talents.GuileOfGorefiend > 0
@@ -16,13 +14,9 @@ func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
-
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 		},
 
@@ -46,7 +40,7 @@ func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
-					dkSpellCost := deathKnight.DetermineOptimalCost(sim, baseCost, 1, 0, 0)
+					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 1, 0, 0)
 					deathKnight.Spend(sim, spell, dkSpellCost)
 
 					amountOfRunicPower := 10.0

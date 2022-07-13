@@ -4,12 +4,13 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // TODO: make this an AoE spell, idk how to so for now its single target
 func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
-	baseCost := 15.0
+	if !deathKnight.Talents.HowlingBlast {
+		return
+	}
 	//target := deathKnight.CurrentTarget
 
 	glacierRotCoeff := 0.0
@@ -27,13 +28,9 @@ func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 		ActionID:    core.ActionID{SpellID: 51411},
 		SpellSchool: core.SpellSchoolFrost,
 
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
-
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    deathKnight.NewTimer(),
@@ -49,10 +46,9 @@ func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					roll := (245.0-227.0)*sim.RandomFloat("Icy Touch") + 227.0
+					roll := (562.0-518.0)*sim.RandomFloat("Howling Blast") + 518.0
 					return (roll + hitEffect.MeleeAttackPower(spell.Unit)*0.1) *
 						(1.0 +
-							0.05*float64(deathKnight.Talents.ImprovedIcyTouch) +
 							core.TernaryFloat64(deathKnight.DiseasesAreActive() && deathKnight.Talents.GlacierRot > 0, glacierRotCoeff, 0.0) +
 							core.TernaryFloat64(sim.IsExecutePhase35() && deathKnight.Talents.MercilessCombat > 0, 0.06*float64(deathKnight.Talents.MercilessCombat), 0.0))
 				},
@@ -62,19 +58,11 @@ func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
-					dkSpellCost := deathKnight.DetermineOptimalCost(sim, baseCost, 0, 1, 0)
+					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 1, 1)
 					deathKnight.Spend(sim, spell, dkSpellCost)
 
-					deathKnight.FrostFeverDisease.Apply(sim)
-
-					amountOfRunicPower := 10.0 + 2.5*float64(deathKnight.Talents.ChillOfTheGrave)
+					amountOfRunicPower := 15.0 + 2.5*float64(deathKnight.Talents.ChillOfTheGrave)
 					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
-
-					deathKnight.IcyTouchAura.Activate(sim)
-
-					if deathKnight.IcyTouchAura.IsActive() {
-						deathKnight.IcyTalonsAura.Activate(sim)
-					}
 				}
 			},
 		}),

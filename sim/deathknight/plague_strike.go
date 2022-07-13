@@ -2,11 +2,9 @@ package deathknight
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (deathKnight *DeathKnight) registerPlagueStrikeSpell() {
-	baseCost := 10.0
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 0.0, 0.5, true)
 
 	deathKnight.PlagueStrike = deathKnight.RegisterSpell(core.SpellConfig{
@@ -14,13 +12,9 @@ func (deathKnight *DeathKnight) registerPlagueStrikeSpell() {
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
-
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 		},
 
@@ -40,7 +34,7 @@ func (deathKnight *DeathKnight) registerPlagueStrikeSpell() {
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
-					dkSpellCost := deathKnight.DetermineOptimalCost(sim, baseCost, 0, 0, 1)
+					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 0, 1)
 					deathKnight.Spend(sim, spell, dkSpellCost)
 
 					deathKnight.BloodPlagueDisease.Apply(sim)

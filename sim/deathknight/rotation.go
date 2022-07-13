@@ -39,6 +39,8 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 
 		if deathKnight.CanObliterate(sim) && deathKnight.FrostFeverDisease.IsActive() && deathKnight.BloodPlagueDisease.IsActive() {
 			deathKnight.Obliterate.Cast(sim, target)
+		} else if deathKnight.CanHowlingBlast(sim) && deathKnight.FrostFeverDisease.IsActive() && deathKnight.BloodPlagueDisease.IsActive() {
+			deathKnight.HowlingBlast.Cast(sim, target)
 		} else if deathKnight.CanIcyTouch(sim) {
 			deathKnight.IcyTouch.Cast(sim, target)
 		} else if deathKnight.CanPlagueStrike(sim) {
