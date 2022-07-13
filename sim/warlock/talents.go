@@ -94,7 +94,7 @@ func (warlock *Warlock) ApplyTalents() {
  		warlock.PseudoStats.DamageTakenMultiplier /= 1 + 0.02 * float64(warlock.Talents.MoltenSkin)
  	}
  	
-	if warlock.Talents.Nightfall > 0 {
+	if warlock.Talents.Nightfall > 0 || warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCorruption) {
 		warlock.setupNightfall()
 	}
 
@@ -131,6 +131,22 @@ func (warlock *Warlock) ApplyTalents() {
 		warlock.setupEmpoweredImp()
 	}
 }
+
+func (warlock *Warlock) applyGlyphOfLifeTapAura(spi int32) {
+	warlock.GlyphOfLifeTapAura = warlock.RegisterAura(core.Aura{
+		Label:    "Glyph Of LifeTap Aura",
+		ActionID: core.ActionID{SpellID: 45785},
+		Duration: time.Second * 40,
+		Priority: float64(spi),
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			warlock.AddStatDynamic(sim, stats.SpellPower, 0.2 * float64(spi))
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			warlock.AddStatDynamic(sim, stats.SpellPower, -0.2 * float64(spi))
+		},
+	})
+}
+
 
 func (warlock *Warlock) setupEmpoweredImp() {
 	warlock.EmpoweredImpAura = warlock.RegisterAura(core.Aura{
@@ -317,7 +333,9 @@ func (warlock *Warlock) setupNightfall() {
 		},
 		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spell == warlock.Corruption { // TODO: also works on drain life...
-				if sim.RandomFloat("nightfall") < 0.02*float64(warlock.Talents.Nightfall) {
+				if sim.RandomFloat("Nightfall") < 0.02*float64(warlock.Talents.Nightfall) {
+					warlock.NightfallProcAura.Activate(sim)
+				} else if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCorruption) && sim.RandomFloat("GlyphOfCorruption") < 0.04 {
 					warlock.NightfallProcAura.Activate(sim)
 				}
 			}

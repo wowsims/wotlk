@@ -54,6 +54,8 @@ type Warlock struct {
 	PyroclasmAura			*core.Aura
 	BackdraftAura			*core.Aura
 	EmpoweredImpAura		*core.Aura
+	
+	GlyphOfLifeTapAura		*core.Aura
 
 	Pet *WarlockPet
 
@@ -241,4 +243,12 @@ func init() {
 // Agent is a generic way to access underlying warlock on any of the agents.
 type WarlockAgent interface {
 	GetWarlock() *Warlock
+}
+
+func (warlock *Warlock) HasMajorGlyph(glyph proto.WarlockMajorGlyph) bool {
+	return warlock.HasGlyph(int32(glyph))
+}
+
+func (warlock *Warlock) HasMinorGlyph(glyph proto.WarlockMinorGlyph) bool {
+	return warlock.HasGlyph(int32(glyph))
 }
