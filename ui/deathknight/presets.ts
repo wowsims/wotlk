@@ -31,6 +31,11 @@ export const FrostTalents = {
 	data: '23050005-32005350352203012300033101351',
 };
 
+export const UnholyDualWieldTalents = {
+	name: 'Unholy Dual Wield Dps',
+	data: '-320033500002-2302303050032150000150013133151',
+};
+
 export const DefaultRotation = DeathKnightRotation.create({
 });
 
