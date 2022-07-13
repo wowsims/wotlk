@@ -55,13 +55,13 @@ func (priest *Priest) registerVampiricTouchSpell() {
 			ActionID: actionID,
 		}),
 
-		NumberOfTicks:       5,
+		NumberOfTicks:       5 + core.TernaryInt(priest.HasSetBonus(ItemSetZabras, 2), 2, 0),
 		TickLength:          time.Second * 3,
 		AffectedByCastSpeed: priest.Talents.Shadowform,
 
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			DamageMultiplier:     1 + float64(priest.Talents.Darkness)*0.02,
-			BonusSpellCritRating: float64(priest.Talents.MindMelt) * 3 * core.CritRatingPerCritChance,
+			BonusSpellCritRating: float64(priest.Talents.MindMelt)*3*core.CritRatingPerCritChance + core.TernaryFloat64(priest.HasSetBonus(ItemSetCrimsonAcolyte, 4), 5, 0)*core.CritRatingPerCritChance,
 			ThreatMultiplier:     1 - 0.08*float64(priest.Talents.ShadowAffinity),
 			IsPeriodic:           true,
 			ProcMask:             core.ProcMaskPeriodicDamage,

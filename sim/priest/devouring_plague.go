@@ -20,7 +20,8 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 
 	effect := core.SpellEffect{
 		DamageMultiplier: 8 * 0.1 * float64(priest.Talents.ImprovedDevouringPlague) *
-			(1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01 + float64(priest.Talents.ImprovedDevouringPlague)*0.05),
+			(1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01 + float64(priest.Talents.ImprovedDevouringPlague)*0.05) *
+			core.TernaryFloat64(priest.HasSetBonus(ItemSetConquerorSanct, 2), 1.15, 1),
 		BonusSpellHitRating: float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
 		ThreatMultiplier:    1 - 0.05*float64(priest.Talents.ShadowAffinity),
 		BaseDamage:          core.BaseDamageConfigMagic(172.0, 172.0, 0.1849),
@@ -63,8 +64,8 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:             core.ProcMaskPeriodicDamage,
-			BonusSpellCritRating: float64(priest.Talents.MindMelt) * 3 * core.CritRatingPerCritChance,
-			DamageMultiplier:     (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.ImprovedDevouringPlague)*0.05),
+			BonusSpellCritRating: float64(priest.Talents.MindMelt)*3*core.CritRatingPerCritChance + core.TernaryFloat64(priest.HasSetBonus(ItemSetCrimsonAcolyte, 4), 5, 0)*core.CritRatingPerCritChance,
+			DamageMultiplier:     (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01 + float64(priest.Talents.ImprovedDevouringPlague)*0.05 + core.TernaryFloat64(priest.HasSetBonus(ItemSetConquerorSanct, 2), 1.15, 1)),
 			ThreatMultiplier:     1 - 0.08*float64(priest.Talents.ShadowAffinity),
 			IsPeriodic:           true,
 			BaseDamage: core.WrapBaseDamageConfig(

@@ -86,6 +86,54 @@ var ItemSetAbsolution = core.NewItemSet(core.ItemSet{
 	},
 })
 
+var ItemSetValorous = core.NewItemSet(core.ItemSet{
+	Name: "Valorous Garb of Faith",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// this is implemented in mind_blast.go
+		},
+		4: func(agent core.Agent) {
+			// this is implemented in shadow_word_death.go
+		},
+	},
+})
+
+var ItemSetConquerorSanct = core.NewItemSet(core.ItemSet{
+	Name: "Conqueror's Sanctification Garb",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// this is implemented in devouring_plague.go
+		},
+		4: func(agent core.Agent) {
+			// this is implemented in mind_blast.go
+		},
+	},
+})
+
+var ItemSetZabras = core.NewItemSet(core.ItemSet{
+	Name: "Zabra's Regalia",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// this is implemented in vampiric_touch.go
+		},
+		4: func(agent core.Agent) {
+			// this is implemented in mind_flay.go
+		},
+	},
+})
+
+var ItemSetCrimsonAcolyte = core.NewItemSet(core.ItemSet{
+	Name: "Crimson Acolyte's Regalia",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// this is implemented in vampiric_touch.go/devouring_plague.go/swp.go
+		},
+		4: func(agent core.Agent) {
+			// this is implemented in mind_flay.go
+		},
+	},
+})
+
 func init() {
 
 	core.NewItemEffect(32490, func(agent core.Agent) {

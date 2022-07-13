@@ -38,7 +38,7 @@ func (priest *Priest) registerShadowWordDeathSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:             core.ProcMaskSpellDamage,
 			BonusSpellHitRating:  float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
-			BonusSpellCritRating: float64(priest.Talents.MindMelt) * 2 * core.CritRatingPerCritChance,
+			BonusSpellCritRating: float64(priest.Talents.MindMelt)*2*core.CritRatingPerCritChance + core.TernaryFloat64(priest.HasSetBonus(ItemSetValorous, 4), 10, 0)*core.CritRatingPerCritChance, // might be 0.1?
 			DamageMultiplier:     playerMod,
 			ThreatMultiplier:     1 - 0.08*float64(priest.Talents.ShadowAffinity),
 			OnSpellHitDealt:      priest.OnSpellHitAddShadowWeaving(),
