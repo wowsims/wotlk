@@ -24,7 +24,7 @@ type Warlock struct {
 	HauntAura	   *core.Aura
 	LifeTap 	   *core.Spell
 	ChaosBolt 	   *core.Spell
-	Soulfire 	   *core.Spell
+	SoulFire 	   *core.Spell
 	Conflagrate    *core.Spell
 	ConflagrateDot *core.Dot
 
@@ -49,6 +49,8 @@ type Warlock struct {
 	DemonicEmpowermentAura	*core.Aura
 	Metamorphosis			*core.Spell
 	MetamorphosisAura		*core.Aura
+	MoltenCoreAura			*core.Aura
+	DecimationAura			*core.Aura
 
 	Pet *WarlockPet
 

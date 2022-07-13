@@ -36,7 +36,7 @@ func (warlock *Warlock) registerImmolateSpell() {
 			DefaultCast: core.Cast{
 				Cost:     baseCost * (1 - costReduction),
 				GCD:      core.GCDDefault,
-				CastTime: time.Millisecond * (2000 - 100 * time.Duration(warlock.Talents.Bane) - 50 * time.Duration(warlock.Talents.Emberstorm)),
+				CastTime: time.Millisecond * (2000 - 100 * time.Duration(warlock.Talents.Bane)),
 			},
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
@@ -50,7 +50,8 @@ func (warlock *Warlock) registerImmolateSpell() {
 			Label:    "immolate-" + strconv.Itoa(int(warlock.Index)),
 			ActionID: actionID,
 		}),
-		NumberOfTicks: 5 + core.TernaryInt(warlock.HasSetBonus(ItemSetVoidheartRaiment, 4), 1, 0), // voidheart 4p gives 1 extra tick
+		NumberOfTicks: 5 + int(warlock.Talents.MoltenCore) * 3 +
+		core.TernaryInt(warlock.HasSetBonus(ItemSetVoidheartRaiment, 4), 1, 0), // voidheart 4p gives 1 extra tick
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			DamageMultiplier: (1 + 0.03 * float64(warlock.Talents.Aftermath)) * (1 + 0.03 * float64(warlock.Talents.Emberstorm)),

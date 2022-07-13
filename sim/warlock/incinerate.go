@@ -35,13 +35,21 @@ func (warlock *Warlock) registerIncinerateSpell() {
 			DefaultCast: core.Cast{
 				Cost: baseCost * (1 - costReduction),
 				GCD:  core.GCDDefault,
-				CastTime: time.Millisecond * 2500,
+				CastTime: warlock.incinerateCastTime(),
 			},
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})
 
+}
+
+func (warlock *Warlock) incinerateCastTime() time.Duration {
+	baseCastTime := 2500 - 50 * float64(warlock.Talents.Emberstorm)
+	if warlock.MoltenCoreAura.IsActive() {
+		baseCastTime *= 1.0 - 0.1 * float64(warlock.Talents.MoltenCore)
+	}
+	return (time.Millisecond * time.Duration(baseCastTime))
 }
 
 func (warlock *Warlock) incinerateDamage() core.BaseDamageConfig {
@@ -55,6 +63,9 @@ func (warlock *Warlock) incinerateDamage() core.BaseDamageConfig {
 				normalDamage += 157 //  145 to 169 averages to 157
 				normalDamage *= 1 + 0.02 * float64(warlock.Talents.FireAndBrimstone)
 			}
+			if warlock.MoltenCoreAura.IsActive() {
+				normalDamage *= 1 + 0.06 * float64(warlock.Talents.MoltenCore)
+			}			
 			return normalDamage
 		}
 	})

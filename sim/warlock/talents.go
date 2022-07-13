@@ -113,6 +113,10 @@ func (warlock *Warlock) ApplyTalents() {
 		warlock.applyDeathsEmbrace()
 	}
 
+	if warlock.Talents.MoltenCore > 0 {
+		warlock.setupMoltenCore()
+	}
+
 }
 
 func (warlock *Warlock) applyDeathsEmbrace() {
@@ -221,6 +225,37 @@ func (warlock *Warlock) setupNightfall() {
 				return
 			}
 			warlock.NightfallProcAura.Activate(sim)
+		},
+	})
+}
+
+func (warlock *Warlock) setupMoltenCore() {
+	warlock.MoltenCoreAura = warlock.RegisterAura(core.Aura{
+		Label:    "Molten Core Aura",
+		ActionID: core.ActionID{SpellID: 71165},
+		Duration: time.Second * 15,
+		MaxStacks: 3,
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if spell == warlock.Incinerate || spell == warlock.SoulFire {
+				aura.RemoveStack(sim)
+			}
+		},
+	})
+
+	warlock.RegisterAura(core.Aura{
+		Label: "Molten Core Hidden Aura",
+		// ActionID: core.ActionID{SpellID: 71165},
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spell == warlock.Corruption {
+				if sim.RandomFloat("Molten Core") < 0.04*float64(warlock.Talents.MoltenCore) {
+					warlock.MoltenCoreAura.Activate(sim)
+					warlock.MoltenCoreAura.SetStacks(sim, 3)
+				}
+			}
 		},
 	})
 }
