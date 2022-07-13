@@ -67,6 +67,7 @@ func (rogue *Rogue) ApplyTalents() {
 	rogue.registerColdBloodCD()
 	rogue.registerBladeFlurryCD()
 	rogue.registerAdrenalineRushCD()
+	rogue.registerKillingSpreeCD()
 }
 
 func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, numPoints int32) {
@@ -429,4 +430,11 @@ func (rogue *Rogue) registerAdrenalineRushCD() {
 			return true
 		},
 	})
+}
+
+func (rogue *Rogue) registerKillingSpreeCD() {
+	if !rogue.Talents.KillingSpree {
+		return
+	}
+	rogue.registerKillingSpreeSpell()
 }
