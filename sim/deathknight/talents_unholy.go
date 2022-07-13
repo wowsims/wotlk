@@ -70,6 +70,8 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 
 	// Ebon Plaguebringer
 	// TODO:
+	deathKnight.PseudoStats.BonusMeleeCritRating += core.CritRatingPerCritChance * float64(deathKnight.Talents.EbonPlaguebringer)
+	deathKnight.PseudoStats.BonusSpellCritRating += core.CritRatingPerCritChance * float64(deathKnight.Talents.EbonPlaguebringer)
 
 	// Scourge Strike
 	// TODO:
