@@ -26,6 +26,7 @@ type Warlock struct {
 	ChaosBolt 	   *core.Spell
 	Soulfire 	   *core.Spell
 	Conflagrate    *core.Spell
+	ConflagrateDot *core.Dot
 
 	CurseOfElements     *core.Spell
 	CurseOfElementsAura *core.Aura
@@ -75,6 +76,9 @@ func (warlock *Warlock) Initialize() {
 	warlock.registerLifeTapSpell()
 	warlock.registerSeedSpell()
 	warlock.registerSoulFireSpell()
+	if warlock.Talents.Conflagrate {
+		warlock.registerConflagrateSpell()
+	}
 	if warlock.Talents.UnstableAffliction {
 		warlock.registerUnstableAffSpell()
 	}

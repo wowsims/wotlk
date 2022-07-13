@@ -44,7 +44,6 @@ func (warlock *Warlock) registerImmolateSpell() {
 
 	target := warlock.CurrentTarget
 
-	// DOT: 615 dmg over 15s (123 every 3 sec, mod 0.13)
 	warlock.ImmolateDot = core.NewDot(core.Dot{
 		Spell: warlock.Immolate,
 		Aura: target.RegisterAura(core.Aura{
