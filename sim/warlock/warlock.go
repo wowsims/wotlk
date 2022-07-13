@@ -74,6 +74,7 @@ func (warlock *Warlock) Initialize() {
 	warlock.registerCurseOfDoomSpell()
 	warlock.registerLifeTapSpell()
 	warlock.registerSeedSpell()
+	warlock.registerSoulFireSpell()
 	if warlock.Talents.UnstableAffliction {
 		warlock.registerUnstableAffSpell()
 	}
@@ -136,18 +137,6 @@ func NewWarlock(character core.Character, options proto.Player) *Warlock {
 		warlock.AddStat(stats.SpellPower, amount)
 	}
 
-	// 	if warlock.Talents.DemonicSacrifice && warlock.Options.SacrificeSummon {
-	// 	switch warlock.Options.Summon {
-	// 	case proto.Warlock_Options_Succubus:
-	// 		warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.15
-	// 	case proto.Warlock_Options_Imp:
-	// 		warlock.PseudoStats.FireDamageDealtMultiplier *= 1.15
-	// 	case proto.Warlock_Options_Felguard:
-	// 		warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.10
-	// 	case proto.Warlock_Options_Felhunter:
-	// 		warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.0
-	// 	}
-	// } else
 	if warlock.Options.Summon != proto.Warlock_Options_NoSummon {
 		warlock.Pet = warlock.NewWarlockPet()
 	}
