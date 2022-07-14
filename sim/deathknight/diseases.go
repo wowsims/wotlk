@@ -7,6 +7,20 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
+func (deathKnight *DeathKnight) countActiveDiseases() int {
+	count := 0
+	if deathKnight.FrostFeverDisease.IsActive() {
+		count++
+	}
+	if deathKnight.BloodPlagueDisease.IsActive() {
+		count++
+	}
+	if deathKnight.EbonPlagueAura.IsActive() {
+		count++
+	}
+	return count
+}
+
 func (deathKnight *DeathKnight) registerDiseaseDots() {
 	deathKnight.registerFrostFever()
 	deathKnight.registerBloodPlague()
