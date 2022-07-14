@@ -50,13 +50,7 @@ func (deathKnight *DeathKnight) newBloodStrikeSpell(isMH bool) *core.Spell {
 		},
 	}
 
-	if isMH {
-		effect.ProcMask = core.ProcMaskMeleeMHSpecial
-		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.critMultiplier(guileOfGorefiend))
-	} else {
-		effect.ProcMask = core.ProcMaskMeleeOHSpecial
-		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialCritOnly(deathKnight.critMultiplier(guileOfGorefiend))
-	}
+	deathKnight.threatOfThassarianProcMasks(isMH, &effect, guileOfGorefiend)
 
 	return deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:     BloodStrikeActionID,
@@ -105,7 +99,7 @@ func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
 					deathKnight.BloodStrike.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 1
 				}
 
-				if BloodStrikeMHOutcome == core.OutcomeHit || BloodStrikeOHOutcome == core.OutcomeHit {
+				if deathKnight.threatOfThassarianHitCheck(BloodStrikeMHOutcome, BloodStrikeOHOutcome) {
 					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 1, 0, 0)
 					deathKnight.Spend(sim, spell, dkSpellCost)
 

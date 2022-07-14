@@ -63,13 +63,7 @@ func (deathKnight *DeathKnight) newObliterateHitSpell(isMH bool) *core.Spell {
 		},
 	}
 
-	if isMH {
-		effect.ProcMask = core.ProcMaskMeleeMHSpecial
-		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.critMultiplier(guileOfGorefiend))
-	} else {
-		effect.ProcMask = core.ProcMaskMeleeOHSpecial
-		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialNoBlockDodgeParry(deathKnight.critMultiplier(guileOfGorefiend))
-	}
+	deathKnight.threatOfThassarianProcMasks(isMH, &effect, guileOfGorefiend)
 
 	return deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:     ObliterateActionID,
@@ -118,7 +112,7 @@ func (deathKnight *DeathKnight) registerObliterateSpell() {
 					deathKnight.Obliterate.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 1
 				}
 
-				if ObliterateMHOutcome == core.OutcomeHit || ObliterateOHOutcome == core.OutcomeHit {
+				if deathKnight.threatOfThassarianHitCheck(ObliterateMHOutcome, ObliterateOHOutcome) {
 					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 1, 1)
 					deathKnight.Spend(sim, spell, dkSpellCost)
 
