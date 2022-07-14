@@ -21,9 +21,23 @@ type ApplyWeaponEffect func(Agent, proto.ItemSlot)
 var itemEffects = map[int32]ApplyEffect{}
 var weaponEffects = map[int32]ApplyWeaponEffect{}
 
+// IDs of item effects which should be used for tests.
+var itemEffectsForTest = []int32{}
+
+// This value can be set before adding item effects, to control whether they are included in tests.
+var AddEffectsToTest = true
+
 func HasItemEffect(id int32) bool {
 	_, ok := itemEffects[id]
 	return ok
+}
+func HasItemEffectForTest(id int32) bool {
+	for _, itemID := range itemEffectsForTest {
+		if id == itemID {
+			return true
+		}
+	}
+	return false
 }
 
 func HasWeaponEffect(id int32) bool {
@@ -37,7 +51,11 @@ func NewItemEffect(id int32, itemEffect ApplyEffect) {
 	if HasItemEffect(id) {
 		log.Fatalf("Cannot add multiple effects for one item: %d, %#v", id, itemEffect)
 	}
+
 	itemEffects[id] = itemEffect
+	if AddEffectsToTest {
+		itemEffectsForTest = append(itemEffectsForTest, id)
+	}
 }
 
 func AddWeaponEffect(id int32, weaponEffect ApplyWeaponEffect) {
