@@ -7,7 +7,7 @@ import (
 
 var PlayerOptionsArmsSlam = &proto.Player_Warrior{
 	Warrior: &proto.Warrior{
-		Talents:  ArmsSlamTalents,
+		Talents:  ArmsTalents,
 		Options:  warriorOptions,
 		Rotation: armsSlamRotation,
 	},
@@ -21,7 +21,7 @@ var PlayerOptionsFury = &proto.Player_Warrior{
 	},
 }
 
-var ArmsSlamTalents = &proto.WarriorTalents{
+var ArmsTalents = &proto.WarriorTalents{
 	ImprovedHeroicStrike:          3,
 	ImprovedRend:                  2,
 	TacticalMastery:               3,
@@ -54,18 +54,23 @@ var ArmsSlamTalents = &proto.WarriorTalents{
 }
 
 var FuryTalents = &proto.WarriorTalents{
-	ImprovedHeroicStrike: 3,
-	ImprovedRend:         2,
-	TacticalMastery:      3,
-	AngerManagement:      true,
-	Impale:               2,
-	DeepWounds:           3,
+	ImprovedHeroicStrike:          3,
+	ImprovedRend:                  2,
+	IronWill:                      2,
+	TacticalMastery:               3,
+	AngerManagement:               true,
+	Impale:                        2,
+	DeepWounds:                    3,
+	TwoHandedWeaponSpecialization: 3,
 
 	Cruelty:                 5,
 	ArmoredToTheTeeth:       3,
 	UnbridledWrath:          2,
 	ImprovedCleave:          3,
+	PiercingHowl:            true,
+	CommandingPresence:      1,
 	DualWieldSpecialization: 5,
+	Enrage:                  4,
 	Precision:               3,
 	DeathWish:               true,
 	ImprovedBerserkerRage:   1,
@@ -89,7 +94,7 @@ var armsSlamRotation = &proto.Warrior_Rotation{
 	SpamExecute: false,
 
 	MaintainDemoShout:   true,
-	MaintainThunderClap: true,
+	MaintainThunderClap: false,
 }
 
 var warriorRotation = &proto.Warrior_Rotation{

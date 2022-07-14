@@ -28,17 +28,14 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
-export const ArmsSlamTalents = {
-	name: 'Arms Slam',
-	data: '32003301352010500221-0550000500521203',
+export const ArmsTalents = {
+	name: 'Arms',
+	data: '3022032023335100102012213231251-305-2033',
 };
-export const ArmsDWTalents = {
-	name: 'Arms DW',
-	data: '33005301302010510321-0550000520501203',
-};
+
 export const FuryTalents = {
 	name: 'Fury',
-	data: '3500501130201-05050005505012050115',
+	data: '30202300233-325003101504310053120500351',
 };
 
 export const DefaultRotation = WarriorRotation.create({

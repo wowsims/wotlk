@@ -220,8 +220,7 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 			presets: {
 				// Preset talents that the user can quickly select.
 				talents: [
-					Presets.ArmsSlamTalents,
-					Presets.ArmsDWTalents,
+					Presets.ArmsTalents,
 					Presets.FuryTalents,
 				],
 				// Preset gear configurations that the user can quickly select.
