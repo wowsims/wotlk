@@ -9,9 +9,9 @@ var PlagueStrikeMHOutcome = core.OutcomeHit
 var PlagueStrikeOHOutcome = core.OutcomeHit
 
 func (deathKnight *DeathKnight) newPlagueStrikeSpell(isMH bool) *core.Spell {
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 0.0, 0.5, true)
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 189.0, 0.5, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0.0, 0.5, true)
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 189.0, 0.5, true)
 	}
 
 	viciousStrikes := 0.15 * float64(deathKnight.Talents.ViciousStrikes)
@@ -26,6 +26,7 @@ func (deathKnight *DeathKnight) newPlagueStrikeSpell(isMH bool) *core.Spell {
 				return weaponBaseDamage(sim, hitEffect, spell) *
 					(1.0 +
 						core.TernaryFloat64(deathKnight.DiseasesAreActive(), 0.05*float64(deathKnight.Talents.TundraStalker), 0.0) +
+						core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 0.02*float64(deathKnight.Talents.RageOfRivendare), 0.0) +
 						0.10*float64(deathKnight.Talents.Outbreak))
 			},
 			TargetSpellCoefficient: 1,
@@ -95,22 +96,17 @@ func (deathKnight *DeathKnight) registerPlagueStrikeSpell() {
 					deathKnight.PlagueStrike.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 1
 				}
 
-				if PlagueStrikeMHOutcome == core.OutcomeHit || PlagueStrikeOHOutcome == core.OutcomeHit {
+				if OutcomeEitherWeaponHitOrCrit(PlagueStrikeMHOutcome, PlagueStrikeOHOutcome) {
 					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 0, 1)
 					deathKnight.Spend(sim, spell, dkSpellCost)
 
 					deathKnight.BloodPlagueDisease.Apply(sim)
-
-					// TODO: Temporary application of ebon plague until dot auras
-					// properly run their events to control ebon plague
-					deathKnight.checkForEbonPlague(sim)
+					if deathKnight.Talents.EbonPlaguebringer > 0 {
+						deathKnight.EbonPlagueAura.Activate(sim)
+					}
 
 					amountOfRunicPower := 10.0 + 2.5*float64(deathKnight.Talents.Dirge)
 					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
-
-					if deathKnight.DesolationAura != nil {
-						deathKnight.DesolationAura.Activate(sim)
-					}
 				}
 			},
 		}),

@@ -56,6 +56,7 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 							0.05*float64(deathKnight.Talents.ImprovedIcyTouch) +
 							core.TernaryFloat64(deathKnight.DiseasesAreActive() && deathKnight.Talents.GlacierRot > 0, glacierRotCoeff, 0.0) +
 							core.TernaryFloat64(deathKnight.DiseasesAreActive(), 0.05*float64(deathKnight.Talents.TundraStalker), 0.0) +
+							core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 0.02*float64(deathKnight.Talents.RageOfRivendare), 0.0) +
 							core.TernaryFloat64(sim.IsExecutePhase35() && deathKnight.Talents.MercilessCombat > 0, 0.06*float64(deathKnight.Talents.MercilessCombat), 0.0))
 				},
 				TargetSpellCoefficient: 1,
@@ -68,10 +69,9 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 					deathKnight.Spend(sim, spell, dkSpellCost)
 
 					deathKnight.FrostFeverDisease.Apply(sim)
-
-					// TODO: Temporary application of ebon plague until dot auras
-					// properly run their events to control ebon plague
-					deathKnight.checkForEbonPlague(sim)
+					if deathKnight.Talents.EbonPlaguebringer > 0 {
+						deathKnight.EbonPlagueAura.Activate(sim)
+					}
 
 					amountOfRunicPower := 10.0 + 2.5*float64(deathKnight.Talents.ChillOfTheGrave)
 					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
