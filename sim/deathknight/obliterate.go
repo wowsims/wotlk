@@ -4,10 +4,14 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
+var ObliterateActionID = core.ActionID{SpellID: 51425}
+var ObliterateMHOutcome = core.OutcomeHit
+var ObliterateOHOutcome = core.OutcomeHit
+
 func (deathKnight *DeathKnight) newObliterateHitSpell(isMH bool) *core.Spell {
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 467.0, 0.8, true)
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 467.0, 0.8, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 467.0, 0.8, true)
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 467.0, 0.8, true)
 	}
 
 	guileOfGorefiend := deathKnight.Talents.GuileOfGorefiend > 0
@@ -23,10 +27,7 @@ func (deathKnight *DeathKnight) newObliterateHitSpell(isMH bool) *core.Spell {
 
 	hbResetCDChance := 0.05 * float64(deathKnight.Talents.Rime)
 
-	actionID := core.ActionID{SpellID: 51425}
-
 	effect := core.SpellEffect{
-		ProcMask:         core.ProcMaskMeleeMHSpecial,
 		BonusCritRating:  (5.0*float64(deathKnight.Talents.Rime) + 3.0*float64(deathKnight.Talents.Subversion) + 1.0*float64(deathKnight.Talents.Annihilation)) * core.CritRatingPerCritChance,
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
@@ -37,45 +38,44 @@ func (deathKnight *DeathKnight) newObliterateHitSpell(isMH bool) *core.Spell {
 					(1.0 +
 						core.TernaryFloat64(deathKnight.FrostFeverDisease.IsActive(), 0.125, 0.0) +
 						core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 0.125, 0.0) +
+						core.TernaryFloat64(deathKnight.EbonPlagueAura.IsActive(), 0.125, 0.0) +
+						core.TernaryFloat64(deathKnight.DiseasesAreActive(), 0.05*float64(deathKnight.Talents.TundraStalker), 0.0) +
 						core.TernaryFloat64(sim.IsExecutePhase35() && deathKnight.Talents.MercilessCombat > 0, 0.06*float64(deathKnight.Talents.MercilessCombat), 0.0))
 			},
 			TargetSpellCoefficient: 1,
 		},
 
-		OutcomeApplier: deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.critMultiplier(guileOfGorefiend)),
-
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Landed() {
-				if isMH {
-					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 1, 1)
-					deathKnight.Spend(sim, spell, dkSpellCost)
+			if isMH {
+				ObliterateMHOutcome = spellEffect.Outcome
+			} else {
+				ObliterateOHOutcome = spellEffect.Outcome
+			}
 
-					amountOfRunicPower := 15.0 + 2.5*float64(deathKnight.Talents.ChillOfTheGrave)
-					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
-				}
+			if sim.RandomFloat("Annihilation") < diseaseConsumptionChance {
+				deathKnight.FrostFeverDisease.Deactivate(sim)
+				deathKnight.BloodPlagueDisease.Deactivate(sim)
+			}
 
-				if sim.RandomFloat("Annihilation") < diseaseConsumptionChance {
-					deathKnight.FrostFeverDisease.Deactivate(sim)
-					deathKnight.BloodPlagueDisease.Deactivate(sim)
-				}
-
-				if sim.RandomFloat("Rime") < hbResetCDChance {
-					deathKnight.HowlingBlast.CD.Reset()
-					deathKnight.HowlingBlastCostless = true
-				}
+			if sim.RandomFloat("Rime") < hbResetCDChance {
+				deathKnight.HowlingBlast.CD.Reset()
+				deathKnight.HowlingBlastCostless = true
 			}
 		},
 	}
 
-	if !isMH {
+	if isMH {
+		effect.ProcMask = core.ProcMaskMeleeMHSpecial
+		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.critMultiplier(guileOfGorefiend))
+	} else {
 		effect.ProcMask = core.ProcMaskMeleeOHSpecial
+		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialNoBlockDodgeParry(deathKnight.critMultiplier(guileOfGorefiend))
 	}
 
 	return deathKnight.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics,
-
+		ActionID:     ObliterateActionID,
+		SpellSchool:  core.SpellSchoolPhysical,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})
 }
@@ -94,7 +94,7 @@ func (deathKnight *DeathKnight) registerObliterateSpell() {
 	}
 
 	deathKnight.Obliterate = deathKnight.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 51425},
+		ActionID:    ObliterateActionID,
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 
@@ -107,16 +107,24 @@ func (deathKnight *DeathKnight) registerObliterateSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeMHSpecial,
 			ThreatMultiplier: 1,
-			OutcomeApplier:   deathKnight.OutcomeFuncMeleeSpecialHit(),
+
+			OutcomeApplier: deathKnight.OutcomeFuncAlwaysHit(),
+
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				mhHitSpell.Cast(sim, spellEffect.Target)
+				deathKnight.Obliterate.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 1
+				deathKnight.Obliterate.SpellMetrics[spellEffect.Target.TableIndex].Hits -= 1
 				if sim.RandomFloat("Threat of Thassarian") < threatOfThassarianChance {
 					ohHitSpell.Cast(sim, spellEffect.Target)
-
-					deathKnight.Obliterate.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 2
-					deathKnight.Obliterate.SpellMetrics[spellEffect.Target.TableIndex].Hits--
-				} else {
 					deathKnight.Obliterate.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 1
+				}
+
+				if ObliterateMHOutcome == core.OutcomeHit || ObliterateOHOutcome == core.OutcomeHit {
+					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 1, 1)
+					deathKnight.Spend(sim, spell, dkSpellCost)
+
+					amountOfRunicPower := 15.0 + 2.5*float64(deathKnight.Talents.ChillOfTheGrave)
+					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 				}
 			},
 		}),

@@ -10,6 +10,26 @@ import (
 func (deathKnight *DeathKnight) registerDiseaseDots() {
 	deathKnight.registerFrostFever()
 	deathKnight.registerBloodPlague()
+	deathKnight.registerEbonPlague()
+}
+
+func (deathKnight *DeathKnight) registerEbonPlague() {
+	target := deathKnight.CurrentTarget
+
+	epAura := core.EbonPlaguebringerAura(target)
+	epAura.Duration = core.NeverExpires
+	deathKnight.EbonPlagueAura = epAura
+}
+
+func (deathKnight *DeathKnight) checkForEbonPlague(sim *core.Simulation) {
+	if deathKnight.Talents.EbonPlaguebringer == 0 {
+		return
+	}
+	if deathKnight.DiseasesAreActive() {
+		deathKnight.EbonPlagueAura.Activate(sim)
+	} else {
+		deathKnight.EbonPlagueAura.Deactivate(sim)
+	}
 }
 
 func (deathKnight *DeathKnight) registerFrostFever() {
@@ -26,6 +46,12 @@ func (deathKnight *DeathKnight) registerFrostFever() {
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "FrostFever-" + strconv.Itoa(int(deathKnight.Index)),
 			ActionID: actionID,
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				deathKnight.checkForEbonPlague(sim)
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				deathKnight.checkForEbonPlague(sim)
+			},
 		}),
 		NumberOfTicks: 5 + int(deathKnight.Talents.Epidemic),
 		TickLength:    time.Second * 3,
@@ -37,11 +63,12 @@ func (deathKnight *DeathKnight) registerFrostFever() {
 			IsPeriodic:       true,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return (127.0 + 80.0*0.32) + hitEffect.MeleeAttackPower(spell.Unit)*0.055
+					return ((127.0 + 80.0*0.32) + hitEffect.MeleeAttackPower(spell.Unit)*0.055) * (1.0 +
+						core.TernaryFloat64(deathKnight.DiseasesAreActive(), 0.05*float64(deathKnight.Talents.TundraStalker), 0.0))
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: deathKnight.OutcomeFuncTick(),
+			OutcomeApplier: deathKnight.OutcomeFuncAlwaysHit(),
 		}),
 	})
 }
@@ -60,6 +87,12 @@ func (deathKnight *DeathKnight) registerBloodPlague() {
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "BloodPlague-" + strconv.Itoa(int(deathKnight.Index)),
 			ActionID: actionID,
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				deathKnight.checkForEbonPlague(sim)
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				deathKnight.checkForEbonPlague(sim)
+			},
 		}),
 		NumberOfTicks: 5 + int(deathKnight.Talents.Epidemic),
 		TickLength:    time.Second * 3,
@@ -71,11 +104,12 @@ func (deathKnight *DeathKnight) registerBloodPlague() {
 			IsPeriodic:       true,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return (127.0 + 80.0*0.32) + hitEffect.MeleeAttackPower(spell.Unit)*0.055
+					return ((127.0 + 80.0*0.32) + hitEffect.MeleeAttackPower(spell.Unit)*0.055) * (1.0 +
+						core.TernaryFloat64(deathKnight.DiseasesAreActive(), 0.05*float64(deathKnight.Talents.TundraStalker), 0.0))
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: deathKnight.OutcomeFuncTick(),
+			OutcomeApplier: deathKnight.OutcomeFuncAlwaysHit(),
 		}),
 	})
 }
