@@ -78,13 +78,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestRogue-AllItems-AshtongueTalismanofLethality-32492"
- value: {
-  dps: 2191.4087249248223
-  tps: 1544.1961461053593
- }
-}
-dps_results: {
  key: "TestRogue-AllItems-Assassin'sAlchemistStone-35751"
  value: {
   dps: 2219.9846332811862
@@ -673,13 +666,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestRogue-AllItems-MarkoftheWarPrisoner-37873"
- value: {
-  dps: 2212.222705076418
-  tps: 1559.119508098073
- }
-}
-dps_results: {
  key: "TestRogue-AllItems-MercurialAlchemistStone-44322"
  value: {
   dps: 2186.1085679862576
@@ -1104,13 +1090,6 @@ dps_results: {
  value: {
   dps: 2214.429230455059
   tps: 1560.6058109036212
- }
-}
-dps_results: {
- key: "TestRogue-AllItems-Warp-SpringCoil-30450"
- value: {
-  dps: 2376.122321130843
-  tps: 1675.4040923837936
  }
 }
 dps_results: {

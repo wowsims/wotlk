@@ -123,7 +123,7 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * (1 + 0.01*float64(warlock.Talents.Contagion)) * (1 + 0.05*core.TernaryFloat64(warlock.Talents.SiphonLife, 0, 1)),
+			DamageMultiplier: 1 * (1 + 0.01*float64(warlock.Talents.Contagion)) * (1 + 0.05*core.TernaryFloat64(warlock.Talents.SiphonLife, 1, 0)),
 			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(1518/6, 0.25),
 			OutcomeApplier:   warlock.OutcomeFuncTick(),
