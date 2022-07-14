@@ -1,13 +1,14 @@
 package shadow
 
 import (
+	"math"
+	"time"
 	//"sort"
+
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 	"github.com/wowsims/wotlk/sim/priest"
-	"math"
-	"time"
 )
 
 // TODO: probably do something different instead of making it global?
@@ -73,11 +74,11 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 	if spriest.HasSetBonus(priest.ItemSetCrimsonAcolyte, 4) {
 		mf_reduc_time = time.Millisecond * 510
 	}
-	tickLength := spriest.ApplyCastSpeed(time.Second) - mf_reduc_time
+	tickLength := spriest.ApplyCastSpeed(time.Second - mf_reduc_time)
 	DotTickSpeed := float64(spriest.ApplyCastSpeed(time.Second * 3))
 	critChance := (spriest.GetStat(stats.SpellCrit) / (core.CritRatingPerCritChance * 100))
 	remain_fight := float64(sim.GetRemainingDuration())
-	bosshealth := float64(sim.GetRemainingDurationPercent())
+	//bosshealth := float64(sim.GetRemainingDurationPercent())
 	castmf2 := 0 // if SW stacks = 3, and we want to get SWP up at 5 stacks exactly, then we want to hard code a MF2
 	bestIdx := -1
 
@@ -161,7 +162,7 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 			mfglyphMod = 1.1
 		}
 		swdmfglyphMod := 1.0
-		if spriest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadowWordDeath)) && bosshealth < 0.35 {
+		if spriest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadowWordDeath)) && sim.IsExecutePhase35() {
 			swdmfglyphMod = 1.1
 		}
 		// need to add if glyph of mind flay and swp is active increase mf by another 10%

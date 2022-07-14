@@ -283,8 +283,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-CrimsonAcolyte'sRegalia"
  value: {
-  dps: 3748.6312651013245
-  tps: 2810.4433772112693
+  dps: 3859.136323558871
+  tps: 2893.1432278248753
  }
 }
 dps_results: {
