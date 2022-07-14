@@ -45,7 +45,7 @@ func (deathKnight *DeathKnight) registerDeathAndDecaySpell() {
 			},
 			CD: core.Cooldown{
 				Timer:    deathKnight.NewTimer(),
-				Duration: time.Second*30 - time.Millisecond*5000*time.Duration(deathKnight.Talents.Morbidity),
+				Duration: time.Second*30 - time.Second*5*time.Duration(deathKnight.Talents.Morbidity),
 			},
 		},
 
