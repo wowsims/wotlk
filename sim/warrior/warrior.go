@@ -62,6 +62,8 @@ type Warrior struct {
 	HeroicStrikeOrCleave *core.Spell
 	HSOrCleaveQueueAura  *core.Aura
 	HSRageThreshold      float64
+	RendRageThreshold    float64
+	MsRageThreshold      float64
 
 	BattleStanceAura    *core.Aura
 	DefensiveStanceAura *core.Aura
@@ -117,6 +119,7 @@ func (warrior *Warrior) Initialize() {
 	warrior.registerSlamSpell()
 	warrior.registerThunderClapSpell()
 	warrior.registerWhirlwindSpell()
+	warrior.RegisterRendSpell(warrior.RendRageThreshold)
 
 	warrior.SunderArmor = warrior.newSunderArmorSpell(false)
 	warrior.SunderArmorDevastate = warrior.newSunderArmorSpell(true)
