@@ -7,15 +7,17 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	//"github.com/wowsims/wotlk/sim/core/proto"
-	//"github.com/wowsims/wotlk/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 	// Vicious Strikes
-	// TODO:
+	// Implemented outside
 
 	// Virulence
-	// TODO:
+	if deathKnight.Talents.Virulence > 0 {
+		deathKnight.AddStat(stats.SpellHit, core.SpellHitRatingPerHitChance*float64(deathKnight.Talents.Virulence))
+	}
 
 	// Epidemic
 	// Implemented outside
@@ -24,10 +26,20 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 	// TODO:
 
 	// Ravenous Dead
-	// TODO:
+	// TODO: Ghoul part
+	if deathKnight.Talents.RavenousDead > 0 {
+		strengthCoeff := 0.01 * float64(deathKnight.Talents.RavenousDead)
+		deathKnight.AddStatDependency(stats.StatDependency{
+			SourceStat:   stats.Strength,
+			ModifiedStat: stats.Strength,
+			Modifier: func(strength float64, _ float64) float64 {
+				return strength * (1.0 + strengthCoeff)
+			},
+		})
+	}
 
 	// Outbreak
-	// TODO: Add damage to SS when implemented. PS done
+	// Implemented outside
 
 	// Necrosis
 	// TODO:
@@ -59,23 +71,29 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 	// Ghoul Frenzy
 	// TODO:
 
-	// Crypt Fever
-	// TODO:
-
 	// Bone Shield
 	// TODO:
 
 	// Wandering Plague
 	// TODO:
 
+	// Crypt Fever
 	// Ebon Plaguebringer
-	// TODO:
+	// TODO: Diseases damage increase still missing
+	if deathKnight.Talents.EbonPlaguebringer > 0 {
+		deathKnight.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*float64(deathKnight.Talents.EbonPlaguebringer))
+		deathKnight.AddStat(stats.SpellCrit, core.CritRatingPerCritChance*float64(deathKnight.Talents.EbonPlaguebringer))
+	}
 
 	// Scourge Strike
-	// TODO:
+	// Implemented outside. Still missing shadow damage part
 
 	// Rage of Rivendare
-	// TODO:
+	// TODO: % bonus damage to spells/abilities (not white hits)
+	if deathKnight.Talents.RageOfRivendare > 0 {
+		expertiseBonus := 1.0 * float64(deathKnight.Talents.RageOfRivendare)
+		deathKnight.AddStat(stats.Expertise, expertiseBonus*core.ExpertisePerQuarterPercentReduction)
+	}
 
 	// Summon Gargoyle
 	// TODO:

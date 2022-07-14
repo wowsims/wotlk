@@ -21,6 +21,9 @@ type DeathKnight struct {
 	Obliterate   *core.Spell
 	BloodStrike  *core.Spell
 
+	LastScourgeStrikeDamage float64
+	ScourgeStrike           *core.Spell
+
 	HowlingBlastCostless bool
 	HowlingBlast         *core.Spell
 	//FrostStrike      *core.Spell
@@ -50,7 +53,8 @@ type DeathKnight struct {
 	UnholyPresenceAura *core.Aura
 
 	// Debuffs
-	IcyTouchAura *core.Aura
+	IcyTouchAura   *core.Aura
+	EbonPlagueAura *core.Aura
 }
 
 func (deathKnight *DeathKnight) GetCharacter() *core.Character {
@@ -85,6 +89,7 @@ func (deathKnight *DeathKnight) Initialize() {
 	deathKnight.registerBloodStrikeSpell()
 	deathKnight.registerBloodTapSpell()
 	deathKnight.registerHowlingBlastSpell()
+	deathKnight.registerScourgeStrikeSpell()
 	deathKnight.registerDiseaseDots()
 }
 

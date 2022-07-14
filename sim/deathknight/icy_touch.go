@@ -1,8 +1,6 @@
 package deathknight
 
 import (
-	"time"
-
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
@@ -42,10 +40,6 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
 			},
-			CD: core.Cooldown{
-				Timer:    deathKnight.NewTimer(),
-				Duration: 6.0 * time.Second,
-			},
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -73,6 +67,10 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 					deathKnight.Spend(sim, spell, dkSpellCost)
 
 					deathKnight.FrostFeverDisease.Apply(sim)
+
+					// TODO: Temporary application of ebon plague until dot auras
+					// properly run their events to control ebon plague
+					deathKnight.checkForEbonPlague(sim)
 
 					amountOfRunicPower := 10.0 + 2.5*float64(deathKnight.Talents.ChillOfTheGrave)
 					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
