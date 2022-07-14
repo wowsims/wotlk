@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -43,10 +44,9 @@ func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:            core.ProcMaskEmpty,
-			BonusSpellHitRating: float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
-			ThreatMultiplier:    1 - 0.08*float64(priest.Talents.ShadowAffinity),
-			OutcomeApplier:      priest.OutcomeFuncMagicHitBinary(),
+			ProcMask:         core.ProcMaskEmpty,
+			ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
+			OutcomeApplier:   priest.OutcomeFuncMagicHitBinary(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if !spellEffect.Landed() {
 					return
@@ -73,10 +73,17 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 		DamageMultiplier:     1,
 		ThreatMultiplier:     1 - 0.08*float64(priest.Talents.ShadowAffinity),
 		IsPeriodic:           true,
-		BonusSpellCritRating: float64(priest.Talents.MindMelt) * 2 * core.CritRatingPerCritChance,
+		BonusSpellCritRating: float64(priest.Talents.MindMelt)*2*core.CritRatingPerCritChance + core.TernaryFloat64(priest.HasSetBonus(ItemSetZabras, 4), 5, 0)*core.CritRatingPerCritChance,
 		OutcomeApplier:       priest.OutcomeFuncMagicHitAndCrit(1 + float64(priest.Talents.ShadowPower)*0.2),
 		ProcMask:             core.ProcMaskSpellDamage,
-		OnSpellHitDealt:      priest.OnSpellHitAddShadowWeaving(),
+		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spellEffect.Landed() {
+				priest.AddShadowWeavingStack(sim)
+			}
+			if spellEffect.DidCrit() && priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow)) {
+				priest.ShadowyInsightAura.Activate(sim)
+			}
+		},
 	}
 
 	normalCalc := core.BaseDamageFuncMagic(588/3, 588/3, 0.257)
@@ -92,6 +99,11 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 		Calculator: func(sim *core.Simulation, effect *core.SpellEffect, spell *core.Spell) float64 {
 			var dmg float64
 			shadowWeavingMod := 1 + float64(priest.ShadowWeavingAura.GetStacks())*0.02
+			glyphMod := 1.0
+
+			if priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfMindFlay)) {
+				glyphMod = 1.1
+			}
 
 			if priest.MiseryAura.IsActive() {
 				dmg = miseryCalc(sim, effect, spell)
@@ -99,13 +111,18 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 				dmg = normalCalc(sim, effect, spell)
 			}
 			if priest.ShadowWordPainDot.IsActive() {
-				dmg *= swpMod // multiply the damage
+				dmg *= swpMod * glyphMod // multiply the damage
 			} else {
 				dmg *= normMod // multiply the damage
 			}
 			return dmg * shadowWeavingMod
 		},
 		TargetSpellCoefficient: 0.0,
+	}
+
+	var mf_reduc_time time.Duration
+	if priest.HasSetBonus(ItemSetCrimsonAcolyte, 4) {
+		mf_reduc_time = time.Millisecond * 510
 	}
 
 	return core.NewDot(core.Dot{
@@ -116,7 +133,7 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 		}),
 
 		NumberOfTicks:       numTicks,
-		TickLength:          time.Second,
+		TickLength:          time.Second - mf_reduc_time,
 		AffectedByCastSpeed: true,
 
 		TickEffects: core.TickFuncSnapshot(target, effect),

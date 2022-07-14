@@ -194,9 +194,12 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		})
 	}
 
-	if raidBuffs.WindfuryTotem > 0 || raidBuffs.IcyTalons > 0 {
-		val := MaxTristate(raidBuffs.WindfuryTotem, raidBuffs.IcyTalons)
-		character.PseudoStats.MeleeSpeedMultiplier *= GetTristateValueFloat(val, 1.16, 1.2)
+	if raidBuffs.IcyTalons {
+		character.PseudoStats.MeleeSpeedMultiplier *= 1.2
+	} else {
+		if raidBuffs.WindfuryTotem > 0 {
+			character.PseudoStats.MeleeSpeedMultiplier *= GetTristateValueFloat(raidBuffs.WindfuryTotem, 1.16, 1.2)
+		}
 	}
 
 	if raidBuffs.Bloodlust {

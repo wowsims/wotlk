@@ -85,13 +85,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestFrost-AllItems-AshtongueTalismanofInsight-32488"
- value: {
-  dps: 1410.2505631347633
-  tps: 1142.0051022191712
- }
-}
-dps_results: {
  key: "TestFrost-AllItems-Assassin'sAlchemistStone-35751"
  value: {
   dps: 1388.7199995236576
@@ -610,13 +603,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestFrost-AllItems-MarkoftheWarPrisoner-37873"
- value: {
-  dps: 1469.4642539782642
-  tps: 1190.6283024097752
- }
-}
-dps_results: {
  key: "TestFrost-AllItems-MercurialAlchemistStone-44322"
  value: {
   dps: 1441.741306208754
@@ -628,13 +614,6 @@ dps_results: {
  value: {
   dps: 1399.7133220333012
   tps: 1132.8787908947152
- }
-}
-dps_results: {
- key: "TestFrost-AllItems-MindQuickeningGem-19339"
- value: {
-  dps: 1403.7416452029324
-  tps: 1135.0111624121087
  }
 }
 dps_results: {
@@ -747,13 +726,6 @@ dps_results: {
  value: {
   dps: 1420.2095817836025
   tps: 1150.0725172032844
- }
-}
-dps_results: {
- key: "TestFrost-AllItems-Serpent-CoilBraid-30720"
- value: {
-  dps: 1412.4376596738812
-  tps: 1140.482271232464
  }
 }
 dps_results: {

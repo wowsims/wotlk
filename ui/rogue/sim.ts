@@ -114,10 +114,9 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
 					bloodlust: true,
 					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
-					windfuryTotem: TristateEffect.TristateEffectImproved,
+					icyTalons: true,
 					battleShout: TristateEffect.TristateEffectImproved,
 					leaderOfThePack: TristateEffect.TristateEffectImproved,
-					unleashedRage: true,
 				}),
 				partyBuffs: PartyBuffs.create({
 				}),
@@ -126,13 +125,13 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					blessingOfMight: TristateEffect.TristateEffectImproved,
 				}),
 				debuffs: Debuffs.create({
-					bloodFrenzy: true,
 					mangle: true,
 					sunderArmor: true,
-					curseOfWeakness: TristateEffect.TristateEffectRegular,
+					curseOfWeakness: TristateEffect.TristateEffectMissing,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					misery: true,
 					huntersMark: TristateEffect.TristateEffectImproved,
+					savageCombat: false,
 				}),
 			},
 
@@ -143,16 +142,15 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 			raidBuffInputs: [
 				IconInputs.GiftOfTheWild,
 				IconInputs.Bloodlust,
-				IconInputs.StrengthOfEarthTotem,
-				IconInputs.WindfuryTotem,
-				IconInputs.BattleShout,
+				IconInputs.HornOfWinter,
 				IconInputs.LeaderOfThePack,
-				IconInputs.TrueshotAura,
-				IconInputs.UnleashedRage,
+				IconInputs.AbominationsMight,
+				IconInputs.ImprovedIcyTalons,
+				IconInputs.SanctifiedRetribution,
+				IconInputs.SwiftRetribution,
 			],
 			partyBuffInputs: [
 				IconInputs.HeroicPresence,
-				IconInputs.BraidedEterniumChain,
 			],
 			playerBuffInputs: [
 				IconInputs.BlessingOfKings,
@@ -160,41 +158,35 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 			],
 			// IconInputs to include in the 'Debuffs' section on the settings tab.
 			debuffInputs: [
-				IconInputs.BloodFrenzy,
+				IconInputs.SavageCombat,
+				IconInputs.HeartOfTheCrusader,
 				IconInputs.Mangle,
-
-				IconInputs.HuntersMark,
 				IconInputs.FaerieFire,
-				IconInputs.SunderArmor,
 				IconInputs.ExposeArmor,
-				IconInputs.CurseOfWeakness,
 				IconInputs.Misery,
-				IconInputs.GiftOfArthas,
 			],
 			// Which options are selectable in the 'Consumes' section.
 			consumeOptions: {
 				potions: [
-					Potions.HastePotion,
+					Potions.PotionOfSpeed,
 				],
 				conjured: [
 					Conjured.ConjuredRogueThistleTea,
-					Conjured.ConjuredFlameCap,
 				],
 				flasks: [
-					Flask.FlaskOfRelentlessAssault,
+					Flask.FlaskOfEndlessRage,
 				],
 				battleElixirs: [
+					BattleElixir.ElixirOfAccuracy,
+					BattleElixir.ElixirOfArmorPiercing,
+					BattleElixir.ElixirOfDeadlyStrikes,
 					BattleElixir.ElixirOfDemonslaying,
-					BattleElixir.ElixirOfMajorAgility,
-					BattleElixir.ElixirOfTheMongoose,
 				],
 				guardianElixirs: [
 				],
 				food: [
-					Food.FoodGrilledMudfish,
-					Food.FoodSpicyHotTalbuk,
-					Food.FoodRavagerDog,
-					Food.FoodRoastedClefthoof,
+					Food.FoodFishFeast,
+					Food.FoodGreatFeast,
 				],
 				alcohol: [
 				],
@@ -240,17 +232,10 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 				// Preset talents that the user can quickly select.
 				talents: [
 					Presets.CombatTalents,
-					Presets.CombatMaceTalents,
-					Presets.MutilateTalents,
-					Presets.HemoTalents,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
 					Presets.P1_PRESET,
-					Presets.P2_PRESET,
-					Presets.P3_PRESET,
-					Presets.P4_PRESET,
-					Presets.P5_PRESET,
 				],
 			},
 		});

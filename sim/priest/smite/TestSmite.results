@@ -281,6 +281,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSmite-AllItems-CrimsonAcolyte'sRegalia"
+ value: {
+  dps: 1200.1060688430443
+  tps: 1154.0876093441125
+ }
+}
+dps_results: {
  key: "TestSmite-AllItems-CrystalforgedTrinket-32654"
  value: {
   dps: 763.4918534530811
@@ -484,6 +491,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSmite-AllItems-GarbofFaith"
+ value: {
+  dps: 843.0403910597868
+  tps: 815.8780328745154
+ }
+}
+dps_results: {
  key: "TestSmite-AllItems-GnomereganAuto-Blocker600-29387"
  value: {
   dps: 763.4918534530811
@@ -631,13 +645,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-MarkoftheWarPrisoner-37873"
- value: {
-  dps: 806.1568157598828
-  tps: 780.6000540638164
- }
-}
-dps_results: {
  key: "TestSmite-AllItems-MercurialAlchemistStone-44322"
  value: {
   dps: 785.3680408734715
@@ -761,6 +768,13 @@ dps_results: {
  value: {
   dps: 773.393001013876
   tps: 749.479859286382
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-SanctificationGarb"
+ value: {
+  dps: 916.2186636933061
+  tps: 885.1143936473964
  }
 }
 dps_results: {
@@ -1006,6 +1020,13 @@ dps_results: {
  value: {
   dps: 774.7360907691544
   tps: 750.9088364946845
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-Zabra'sRegalia"
+ value: {
+  dps: 801.7466653010587
+  tps: 776.7154162614912
  }
 }
 dps_results: {

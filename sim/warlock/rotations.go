@@ -128,7 +128,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		spell = warlock.Corruption
 	} else if warlock.Rotation.Immolate && !warlock.ImmolateDot.IsActive() {
 		spell = warlock.Immolate
-	} else if warlock.CanConflagrate(sim) && warlock.ImmolateDot.TickCount > warlock.ImmolateDot.NumberOfTicks - 2 {
+	} else if warlock.CanConflagrate(sim) && warlock.ImmolateDot.TickCount > warlock.ImmolateDot.NumberOfTicks-2 {
 		spell = warlock.Conflagrate
 	} else {
 		switch mainSpell {

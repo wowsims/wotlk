@@ -57,10 +57,10 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		},
 	})
 	wp.AddStats(stats.Stats{
-		stats.MeleeCrit: float64(warlock.Talents.DemonicTactics) * 2 * core.CritRatingPerCritChance +
-			float64(wp.owner.Talents.ImprovedDemonicTactics) * 0.3 * wp.owner.GetStats()[stats.SpellCrit],
-		stats.SpellCrit: float64(warlock.Talents.DemonicTactics) * 2 * core.CritRatingPerCritChance +
-			float64(wp.owner.Talents.ImprovedDemonicTactics) * 0.3 * wp.owner.GetStats()[stats.SpellCrit],
+		stats.MeleeCrit: float64(warlock.Talents.DemonicTactics)*2*core.CritRatingPerCritChance +
+			float64(wp.owner.Talents.ImprovedDemonicTactics)*0.3*wp.owner.GetStats()[stats.SpellCrit],
+		stats.SpellCrit: float64(warlock.Talents.DemonicTactics)*2*core.CritRatingPerCritChance +
+			float64(wp.owner.Talents.ImprovedDemonicTactics)*0.3*wp.owner.GetStats()[stats.SpellCrit],
 	})
 
 	wp.PseudoStats.DamageDealtMultiplier *= 1.0 + (0.04 * float64(warlock.Talents.UnholyPower))
@@ -69,7 +69,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 
 	if petConfig.Melee {
 		switch warlock.Options.Summon {
-		case proto.Warlock_Options_Felguard :
+		case proto.Warlock_Options_Felguard:
 			wp.EnableAutoAttacks(wp, core.AutoAttackOptions{
 				MainHand: core.Weapon{
 					BaseDamageMin:  412.5,
@@ -80,7 +80,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 				},
 				AutoSwingMelee: true,
 			})
-		case proto.Warlock_Options_Succubus :
+		case proto.Warlock_Options_Succubus:
 			wp.EnableAutoAttacks(wp, core.AutoAttackOptions{
 				MainHand: core.Weapon{
 					BaseDamageMin:  412.5,
@@ -91,7 +91,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 				},
 				AutoSwingMelee: true,
 			})
-		case proto.Warlock_Options_Felhunter :
+		case proto.Warlock_Options_Felhunter:
 			wp.EnableAutoAttacks(wp, core.AutoAttackOptions{
 				MainHand: core.Weapon{
 					BaseDamageMin:  309.6,

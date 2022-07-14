@@ -12,21 +12,21 @@ type Warlock struct {
 	Options  proto.Warlock_Options
 	Rotation proto.Warlock_Rotation
 
-	Shadowbolt     		*core.Spell
-	Incinerate     		*core.Spell
-	Immolate       		*core.Spell
-	ImmolateDot    		*core.Dot
-	UnstableAff    		*core.Spell
-	UnstableAffDot 		*core.Dot
-	Corruption     		*core.Spell
-	CorruptionDot  		*core.Dot
-	Haunt		   		*core.Spell
-	HauntAura	   		*core.Aura
-	LifeTap 	   		*core.Spell
-	ChaosBolt 	   		*core.Spell
-	SoulFire 	   		*core.Spell
-	Conflagrate    		*core.Spell
-	ConflagrateDot 		*core.Dot
+	Shadowbolt     *core.Spell
+	Incinerate     *core.Spell
+	Immolate       *core.Spell
+	ImmolateDot    *core.Dot
+	UnstableAff    *core.Spell
+	UnstableAffDot *core.Dot
+	Corruption     *core.Spell
+	CorruptionDot  *core.Dot
+	Haunt          *core.Spell
+	HauntAura      *core.Aura
+	LifeTap        *core.Spell
+	ChaosBolt      *core.Spell
+	SoulFire       *core.Spell
+	Conflagrate    *core.Spell
+	ConflagrateDot *core.Dot
 
 	CurseOfElements     *core.Spell
 	CurseOfElementsAura *core.Aura
@@ -143,7 +143,7 @@ func NewWarlock(character core.Character, options proto.Player) *Warlock {
 	})
 
 	if warlock.Options.Armor == proto.Warlock_Options_FelArmor {
-		amount := 180.0 + 0.3 * float64(stats.Spirit)
+		amount := 180.0 + 0.3*float64(stats.Spirit)
 		amount *= 1 + float64(warlock.Talents.DemonicAegis)*0.1
 		warlock.AddStat(stats.SpellPower, amount)
 	}

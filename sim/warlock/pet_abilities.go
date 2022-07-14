@@ -5,6 +5,7 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 type PetAbilityType byte
@@ -73,7 +74,8 @@ func (wp *WarlockPet) newFirebolt() *core.Spell {
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskSpellDamage,
-			DamageMultiplier: 1.0 + (0.1 * float64(wp.owner.Talents.ImprovedImp)),
+			DamageMultiplier: (1.0 + 0.1 * float64(wp.owner.Talents.ImprovedImp)) *
+				(1.0 + 0.2 * core.TernaryFloat64(wp.owner.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfImp), 1, 0)),
 			ThreatMultiplier: 1,
 			BaseDamage:       core.BaseDamageConfigMagic(203, 227, 0.571),
 			OutcomeApplier:   wp.OutcomeFuncMagicHitAndCrit(2),
@@ -128,7 +130,7 @@ func (wp *WarlockPet) newLashOfPain() *core.Spell {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    wp.NewTimer(),
-				Duration: time.Second*12 - (time.Second * time.Duration(3*wp.owner.Talents.DemonicPower)),
+				Duration: time.Second * (12 - time.Duration(3 * wp.owner.Talents.DemonicPower)),
 			},
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -159,15 +161,15 @@ func (wp *WarlockPet) newShadowBite() *core.Spell {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    wp.NewTimer(),
-				Duration: time.Second * (6 - time.Duration(2 * wp.owner.Talents.ImprovedFelhunter)),
+				Duration: time.Second * (6 - time.Duration(2*wp.owner.Talents.ImprovedFelhunter)),
 			},
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
-			DamageMultiplier: 1 + 0.15 * (core.TernaryFloat64(wp.owner.ImmolateDot.IsActive(), 0, 1) + //core.TernaryFloat64(wp.owner.ConflagrateDot.IsActive(), 0, 1) +
-				core.TernaryFloat64(wp.owner.CorruptionDot.IsActive(), 0, 1) + //core.TernaryFloat64(wp.owner.SeedDots.IsActive(), 0, 1) +
-				core.TernaryFloat64(wp.owner.CurseOfDoomDot.IsActive(), 0, 1) + core.TernaryFloat64(wp.owner.CurseOfAgonyDot.IsActive(), 0, 1)) +
-				core.TernaryFloat64(wp.owner.UnstableAffDot.IsActive(), 0, 1),
+			ProcMask: core.ProcMaskSpellDamage,
+			DamageMultiplier: 1 + 0.15*(core.TernaryFloat64(wp.owner.ImmolateDot.IsActive(), 1, 0)+ //core.TernaryFloat64(wp.owner.ConflagrateDot.IsActive(), 1, 0) +
+				core.TernaryFloat64(wp.owner.CorruptionDot.IsActive(), 1, 0)+ //core.TernaryFloat64(wp.owner.SeedDots.IsActive(), 1, 0) +
+				core.TernaryFloat64(wp.owner.CurseOfDoomDot.IsActive(), 1, 0)+core.TernaryFloat64(wp.owner.CurseOfAgonyDot.IsActive(), 1, 0)) +
+				core.TernaryFloat64(wp.owner.UnstableAffDot.IsActive(), 1, 0),
 			ThreatMultiplier: 1,
 			BaseDamage:       core.BaseDamageConfigMagic(98, 138, 0.429), //TODO : change spellpower coefficient
 			OutcomeApplier:   wp.OutcomeFuncMagicHitAndCrit(2),

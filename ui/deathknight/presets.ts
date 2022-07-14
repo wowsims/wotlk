@@ -1,4 +1,4 @@
-import { Consumes } from '/wotlk/core/proto/common.js';
+import { Consumes, PetFood } from '/wotlk/core/proto/common.js';
 import { EquipmentSpec } from '/wotlk/core/proto/common.js';
 import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
@@ -31,13 +31,23 @@ export const FrostTalents = {
 	data: '23050005-32005350352203012300033101351',
 };
 
+export const UnholyDualWieldTalents = {
+	name: 'Unholy Dual Wield Dps',
+	data: '-320033500002-2302303050032150000150013133151',
+};
+
 export const DefaultRotation = DeathKnightRotation.create({
 });
 
 export const DefaultOptions = DeathKnightOptions.create({
+	startingRunicPower: 0
 });
 
 export const DefaultConsumes = Consumes.create({
+	flask: Flask.FlaskOfEndlessRage,
+	food: Food.FoodDragonfinFilet,
+	defaultPotion: Potions.PotionOfSpeed,
+	petFood: PetFood.PetFoodKiblersBits
 });
 
 export const P1_FROST_PRE_BIS_PRESET = {
@@ -184,7 +194,7 @@ export const P1_FROST_BIS_PRESET = {
         },
         {
           "id": 40552,
-          "enchant": 54999,
+          "enchant": 60668,
           "gems": [
             39996,
             0
@@ -194,14 +204,14 @@ export const P1_FROST_BIS_PRESET = {
           "id": 40694,
           "gems": [
             39996,
-            39996
+            42142
           ]
         },
         {
           "id": 40556,
           "enchant": 38374,
           "gems": [
-            0,
+            42142,
             39996
           ]
         },
@@ -210,7 +220,7 @@ export const P1_FROST_BIS_PRESET = {
           "enchant": 55016
         },
         {
-          "id": 39401
+          "id": 40474
         },
         {
           "id": 40075

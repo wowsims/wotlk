@@ -10,19 +10,19 @@ import (
 func (warlock *Warlock) registerSoulFireSpell() {
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
-		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 0, 1) * 5 * core.CritRatingPerCritChance,
-		DamageMultiplier:     (1 + 0.03 * float64(warlock.Talents.Emberstorm)),
+		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) * 5 * core.CritRatingPerCritChance,
+		DamageMultiplier:     (1 + 0.03*float64(warlock.Talents.Emberstorm)),
 		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.DestructiveReach),
 		BaseDamage:           warlock.soulFireDamage(),
-		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin) / 5)),
+		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
 	}
 
 	baseCost := 0.09 * warlock.BaseMana
 	costReduction := 0.0
 	if float64(warlock.Talents.Cataclysm) > 0 {
-		costReduction += 0.01 + 0.03 * float64(warlock.Talents.Cataclysm)
+		costReduction += 0.01 + 0.03*float64(warlock.Talents.Cataclysm)
 	}
-	
+
 	warlock.SoulFire = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 47825},
 		SpellSchool:  core.SpellSchoolFire,
@@ -43,9 +43,9 @@ func (warlock *Warlock) registerSoulFireSpell() {
 }
 
 func (warlock *Warlock) soulFireCastTime() time.Duration {
-	baseCastTime := 6000 - 400 * float64(warlock.Talents.Bane)
+	baseCastTime := 6000 - 400*float64(warlock.Talents.Bane)
 	if warlock.DecimationAura.IsActive() {
-		baseCastTime *= 1.0 - 0.2 * float64(warlock.Talents.Decimation)
+		baseCastTime *= 1.0 - 0.2*float64(warlock.Talents.Decimation)
 	}
 	return (time.Millisecond * time.Duration(baseCastTime))
 }
@@ -61,8 +61,8 @@ func (warlock *Warlock) soulFireDamage() core.BaseDamageConfig {
 			normalDamage := oldCalculator(sim, hitEffect, spell)
 			// Boost damage if immolate is ticking
 			if warlock.MoltenCoreAura.IsActive() {
-				normalDamage *= 1 + 0.06 * float64(warlock.Talents.MoltenCore)
-			}			
+				normalDamage *= 1 + 0.06*float64(warlock.Talents.MoltenCore)
+			}
 			return normalDamage
 		}
 	})
