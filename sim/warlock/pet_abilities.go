@@ -159,14 +159,14 @@ func (wp *WarlockPet) newShadowBite() *core.Spell {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    wp.NewTimer(),
-				Duration: time.Second * (6 - time.Duration(2 * wp.owner.Talents.ImprovedFelhunter)),
+				Duration: time.Second * (6 - time.Duration(2*wp.owner.Talents.ImprovedFelhunter)),
 			},
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
-			DamageMultiplier: 1 + 0.15 * (core.TernaryFloat64(wp.owner.ImmolateDot.IsActive(), 0, 1) + //core.TernaryFloat64(wp.owner.ConflagrateDot.IsActive(), 0, 1) +
-				core.TernaryFloat64(wp.owner.CorruptionDot.IsActive(), 0, 1) + //core.TernaryFloat64(wp.owner.SeedDots.IsActive(), 0, 1) +
-				core.TernaryFloat64(wp.owner.CurseOfDoomDot.IsActive(), 0, 1) + core.TernaryFloat64(wp.owner.CurseOfAgonyDot.IsActive(), 0, 1)) +
+			ProcMask: core.ProcMaskSpellDamage,
+			DamageMultiplier: 1 + 0.15*(core.TernaryFloat64(wp.owner.ImmolateDot.IsActive(), 0, 1)+ //core.TernaryFloat64(wp.owner.ConflagrateDot.IsActive(), 0, 1) +
+				core.TernaryFloat64(wp.owner.CorruptionDot.IsActive(), 0, 1)+ //core.TernaryFloat64(wp.owner.SeedDots.IsActive(), 0, 1) +
+				core.TernaryFloat64(wp.owner.CurseOfDoomDot.IsActive(), 0, 1)+core.TernaryFloat64(wp.owner.CurseOfAgonyDot.IsActive(), 0, 1)) +
 				core.TernaryFloat64(wp.owner.UnstableAffDot.IsActive(), 0, 1),
 			ThreatMultiplier: 1,
 			BaseDamage:       core.BaseDamageConfigMagic(98, 138, 0.429), //TODO : change spellpower coefficient

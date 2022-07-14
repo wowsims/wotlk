@@ -1,12 +1,14 @@
 package shadow
 
 import (
+	"math"
 	"time"
 	//"sort"
+
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
-	"math"
+	"github.com/wowsims/wotlk/sim/priest"
 )
 
 // TODO: probably do something different instead of making it global?
@@ -68,10 +70,15 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 	// initialize helpful variables for calculations later
 	vtCastTime := spriest.ApplyCastSpeed(time.Millisecond * 1500)
 	gcd := spriest.SpellGCD()
-	tickLength := spriest.ApplyCastSpeed(time.Second)
+	var mf_reduc_time time.Duration
+	if spriest.HasSetBonus(priest.ItemSetCrimsonAcolyte, 4) {
+		mf_reduc_time = time.Millisecond * 510
+	}
+	tickLength := spriest.ApplyCastSpeed(time.Second - mf_reduc_time)
 	DotTickSpeed := float64(spriest.ApplyCastSpeed(time.Second * 3))
 	critChance := (spriest.GetStat(stats.SpellCrit) / (core.CritRatingPerCritChance * 100))
 	remain_fight := float64(sim.GetRemainingDuration())
+	//bosshealth := float64(sim.GetRemainingDurationPercent())
 	castmf2 := 0 // if SW stacks = 3, and we want to get SWP up at 5 stacks exactly, then we want to hard code a MF2
 	bestIdx := -1
 
@@ -150,6 +157,14 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 			TFmod = 0
 		}
 
+		mfglyphMod := 1.0
+		if spriest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfMindFlay)) {
+			mfglyphMod = 1.1
+		}
+		swdmfglyphMod := 1.0
+		if spriest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadowWordDeath)) && sim.IsExecutePhase35() {
+			swdmfglyphMod = 1.1
+		}
 		// need to add if glyph of mind flay and swp is active increase mf by another 10%
 
 		// need to add a check that counts the number of shadow weaving stacks on a target.. if stacks > 2 && < 5,then determine if swp should be cast
@@ -167,33 +182,32 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 
 		// Spell damage numbers that are updated before each cast in order to determine the most optimal next cast based on dps over a finite window
 		// This is needed throughout the code to determine the optimal spell(s) to cast next
-		// NEED TO GO IN AN ADD CHECKS FOR ITEM SETS FOR ALL THE SPELLS BELOW.. TEDIUS BUT NEEDED
 		// MB dmg
-		mb_dmg = (1025 + spriest.GetStat(stats.SpellPower)*(0.429*(1+float64(spriest.Talents.Misery)*0.05))) * (1 + float64(spriest.Talents.Darkness)*0.02) *
-			core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1 + TFmod) * (1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03))
+		mb_dmg = (1025 + spriest.GetStat(stats.SpellPower)*(0.429*(1+float64(spriest.Talents.Misery)*0.05))) * (1 + float64(spriest.Talents.Darkness)*0.02 + TFmod) *
+			core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03))
 
 		// DP dmg
 		dp_dmg = ((172+spriest.GetStat(stats.SpellPower)*0.1849)*8.0*float64(spriest.Talents.ImprovedDevouringPlague)*0.1*(1.0+(float64(spriest.Talents.Darkness)*0.02+
-			float64(spriest.Talents.TwinDisciplines)*0.01+float64(spriest.Talents.ImprovedDevouringPlague)*0.05))*core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1)*(1+0.5*(critChance)) + ((172 + spriest.GetStat(stats.SpellPower)*0.1849) * num_DP_ticks *
+			float64(spriest.Talents.TwinDisciplines)*0.01+float64(spriest.Talents.ImprovedDevouringPlague)*0.05))*core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1)*(1+0.5*(critChance+core.TernaryFloat64(spriest.HasSetBonus(priest.ItemSetCrimsonAcolyte, 4), 0.05, 0))) + ((172 + spriest.GetStat(stats.SpellPower)*0.1849) * num_DP_ticks *
 			(1.0 + (float64(spriest.Talents.Darkness)*0.02 + float64(spriest.Talents.TwinDisciplines)*0.01 + float64(spriest.Talents.ImprovedDevouringPlague)*0.05)) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) *
-			(1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03))))
+			(1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03) + core.TernaryFloat64(spriest.HasSetBonus(priest.ItemSetCrimsonAcolyte, 4), 0.05, 0))))
 
 		// VT dmg
 		vt_dmg = ((170 + spriest.GetStat(stats.SpellPower)*0.4) * num_VT_ticks *
 			(1.0 + float64(spriest.Talents.Darkness)*0.02) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03)))
 
 		// SWD dmg
-		swd_dmg = (618 + spriest.GetStat(stats.SpellPower)*0.429) * (1 + 0.5*(critChance+float64(spriest.Talents.MindMelt)*0.02)*float64(spriest.Talents.ShadowPower)*0.2) *
+		swd_dmg = (618 + spriest.GetStat(stats.SpellPower)*0.429) * (1 + 0.5*(critChance+float64(spriest.Talents.MindMelt)*0.02+core.TernaryFloat64(spriest.HasSetBonus(priest.ItemSetValorous, 4), 0.1, 0))*float64(spriest.Talents.ShadowPower)*0.2) *
 			(1.0 + (float64(spriest.Talents.Darkness)*0.02 + float64(spriest.Talents.TwinDisciplines)*0.01)) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1)
 
 		// MF dmg 3 ticks
 		mf_dmg = (588 + spriest.GetStat(stats.SpellPower)*(0.2570*3*(1+float64(spriest.Talents.Misery)*0.05))) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1.0 + (float64(spriest.Talents.Darkness)*0.02 +
-			float64(spriest.Talents.TwinDisciplines)*0.01)) * (1 + TFmod) * (1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.02)) // NEED TO UPDATE WITH GLYPH DAMAGE
+			float64(spriest.Talents.TwinDisciplines)*0.01)) * (1 + TFmod) * mfglyphMod * (1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.02))
 
 		// SWP is seperate because it doesnt follow the same logic for casting as the other spells
 		swp_Tdmg := ((230 + spriest.GetStat(stats.SpellPower)*0.1829) *
 			(1.0 + float64(spriest.Talents.Darkness)*0.02 + float64(spriest.Talents.TwinDisciplines)*0.01) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) *
-			(1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03)))
+			(1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03))) * swdmfglyphMod
 
 		// this should be cleaned up, but essentially we want to cast SWP either 3rd or 5th in the rotation which is fight length dependent
 
@@ -202,7 +216,7 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		if SWstacks > 2 && SWstacks <= 5 && !spriest.ShadowWordPainDot.IsActive() {
 			Added_dmg := mb_dmg*0.12 + mf_dmg*0.22*2/3 + swp_Tdmg*2*float64(gcd.Seconds())/3
 			numswptickstime = Added_dmg / (swp_Tdmg * 0.06) * 3 //if the fight lenght is < numswptickstime then use swp 3rd.. if > then use at weaving = 5
-			//	//fmt.Println("numswptickstime", numswptickstime)
+			//
 			if remain_fight*math.Pow(10, -9) < numswptickstime { //
 				cast_SPW_now = 1
 			} else {

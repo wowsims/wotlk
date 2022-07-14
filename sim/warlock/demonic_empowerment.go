@@ -10,14 +10,15 @@ import (
 
 func (warlock *Warlock) registerDemonicEmpowermentSpell() {
 
-	petAura:= core.Aura{
+	petAura := core.Aura{
 		Label:    "Demonic Empowerment Aura",
 		ActionID: core.ActionID{SpellID: 47193},
-		Duration: time.Second* 30,	
+		Duration: time.Second * 30,
 	}
 
 	switch warlock.Options.Summon {
-		case proto.Warlock_Options_Imp: petAura= core.Aura{
+	case proto.Warlock_Options_Imp:
+		petAura = core.Aura{
 			Label:    "Demonic Empowerment Aura",
 			ActionID: core.ActionID{SpellID: 47193},
 			Duration: time.Second * 30,
@@ -32,7 +33,8 @@ func (warlock *Warlock) registerDemonicEmpowermentSpell() {
 				})
 			},
 		}
-		case proto.Warlock_Options_Felguard: petAura= core.Aura{
+	case proto.Warlock_Options_Felguard:
+		petAura = core.Aura{
 			Label:    "Demonic Empowerment Aura",
 			ActionID: core.ActionID{SpellID: 47193},
 			Duration: time.Second * 15,
@@ -48,12 +50,12 @@ func (warlock *Warlock) registerDemonicEmpowermentSpell() {
 		petAura,
 	)
 	warlock.DemonicEmpowerment = warlock.RegisterSpell(core.SpellConfig{
-		ActionID: core.ActionID{SpellID: 47193},
+		ActionID:     core.ActionID{SpellID: 47193},
 		ResourceType: stats.Mana,
-		Cast: 	  core.CastConfig{
+		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    warlock.NewTimer(),
-				Duration: time.Second * (60.0 - 6.0 * time.Duration(warlock.Talents.Nemesis)),
+				Duration: time.Second * (60.0 - 6.0*time.Duration(warlock.Talents.Nemesis)),
 			},
 			DefaultCast: core.Cast{
 				Cost: 0.06 * warlock.BaseMana,

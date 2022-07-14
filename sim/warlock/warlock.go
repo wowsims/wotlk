@@ -12,21 +12,21 @@ type Warlock struct {
 	Options  proto.Warlock_Options
 	Rotation proto.Warlock_Rotation
 
-	Shadowbolt     		*core.Spell
-	Incinerate     		*core.Spell
-	Immolate       		*core.Spell
-	ImmolateDot    		*core.Dot
-	UnstableAff    		*core.Spell
-	UnstableAffDot 		*core.Dot
-	Corruption     		*core.Spell
-	CorruptionDot  		*core.Dot
-	Haunt		   		*core.Spell
-	HauntAura	   		*core.Aura
-	LifeTap 	   		*core.Spell
-	ChaosBolt 	   		*core.Spell
-	SoulFire 	   		*core.Spell
-	Conflagrate    		*core.Spell
-	ConflagrateDot 		*core.Dot
+	Shadowbolt     *core.Spell
+	Incinerate     *core.Spell
+	Immolate       *core.Spell
+	ImmolateDot    *core.Dot
+	UnstableAff    *core.Spell
+	UnstableAffDot *core.Dot
+	Corruption     *core.Spell
+	CorruptionDot  *core.Dot
+	Haunt          *core.Spell
+	HauntAura      *core.Aura
+	LifeTap        *core.Spell
+	ChaosBolt      *core.Spell
+	SoulFire       *core.Spell
+	Conflagrate    *core.Spell
+	ConflagrateDot *core.Dot
 
 	CurseOfElements     *core.Spell
 	CurseOfElementsAura *core.Aura
@@ -39,21 +39,21 @@ type Warlock struct {
 	CurseOfDoom         *core.Spell
 	CurseOfDoomDot      *core.Dot
 
-	Seeds    			[]*core.Spell
-	SeedDots 			[]*core.Dot
+	Seeds    []*core.Spell
+	SeedDots []*core.Dot
 
-	NightfallProcAura 		*core.Aura
-	ShadowEmbraceAura 		*core.Aura
-	EradicationAura	  		*core.Aura
-	DemonicEmpowerment		*core.Spell
-	DemonicEmpowermentAura	*core.Aura
-	Metamorphosis			*core.Spell
-	MetamorphosisAura		*core.Aura
-	MoltenCoreAura			*core.Aura
-	DecimationAura			*core.Aura
-	PyroclasmAura			*core.Aura
-	BackdraftAura			*core.Aura
-	EmpoweredImpAura		*core.Aura
+	NightfallProcAura      *core.Aura
+	ShadowEmbraceAura      *core.Aura
+	EradicationAura        *core.Aura
+	DemonicEmpowerment     *core.Spell
+	DemonicEmpowermentAura *core.Aura
+	Metamorphosis          *core.Spell
+	MetamorphosisAura      *core.Aura
+	MoltenCoreAura         *core.Aura
+	DecimationAura         *core.Aura
+	PyroclasmAura          *core.Aura
+	BackdraftAura          *core.Aura
+	EmpoweredImpAura       *core.Aura
 
 	Pet *WarlockPet
 
@@ -141,7 +141,7 @@ func NewWarlock(character core.Character, options proto.Player) *Warlock {
 	})
 
 	if warlock.Options.Armor == proto.Warlock_Options_FelArmor {
-		amount := 180.0 + 0.3 * float64(stats.Spirit)
+		amount := 180.0 + 0.3*float64(stats.Spirit)
 		amount *= 1 + float64(warlock.Talents.DemonicAegis)*0.1
 		warlock.AddStat(stats.SpellPower, amount)
 	}

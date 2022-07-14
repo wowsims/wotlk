@@ -68,8 +68,9 @@ type Rogue struct {
 	Rupture      [6]*core.Spell
 	SliceAndDice [6]*core.Spell
 
-	DeadlyPoisonDot *core.Dot
-	RuptureDot      *core.Dot
+	LastDeadlyPoisonProcMask core.ProcMask
+	DeadlyPoisonDot          *core.Dot
+	RuptureDot               *core.Dot
 
 	AdrenalineRushAura  *core.Aura
 	BladeFlurryAura     *core.Aura
