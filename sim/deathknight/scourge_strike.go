@@ -21,7 +21,7 @@ func (deathKnight *DeathKnight) registerScourgeStrikeShadowDamageSpell() *core.S
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return deathKnight.LastScourgeStrikeDamage * (1 + float64(deathKnight.countActiveDiseases())*0.12)
+					return deathKnight.LastScourgeStrikeDamage * (float64(deathKnight.countActiveDiseases()) * 0.12)
 				},
 			},
 		}),
