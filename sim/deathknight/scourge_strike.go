@@ -45,7 +45,7 @@ func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
 		outbreakBonus = 0.20
 	}
 
-	shadowDamagePartSpell := deathKnight.registerScourgeStrikeShadowDamageSpell()
+	shadowDamageSpell := deathKnight.registerScourgeStrikeShadowDamageSpell()
 
 	deathKnight.ScourgeStrike = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -83,7 +83,7 @@ func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
 
 					if deathKnight.DiseasesAreActive() {
 						deathKnight.LastScourgeStrikeDamage = spellEffect.Damage
-						shadowDamagePartSpell.Cast(sim, spellEffect.Target)
+						shadowDamageSpell.Cast(sim, spellEffect.Target)
 					}
 				}
 			},

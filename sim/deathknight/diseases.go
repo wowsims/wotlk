@@ -10,48 +10,22 @@ import (
 func (deathKnight *DeathKnight) registerDiseaseDots() {
 	deathKnight.registerFrostFever()
 	deathKnight.registerBloodPlague()
-	deathKnight.registerEbonPlague()
-}
-
-func (deathKnight *DeathKnight) registerEbonPlague() {
-	target := deathKnight.CurrentTarget
-
-	epAura := core.EbonPlaguebringerAura(target)
-	epAura.Duration = core.NeverExpires
-	deathKnight.EbonPlagueAura = epAura
-}
-
-func (deathKnight *DeathKnight) checkForEbonPlague(sim *core.Simulation) {
-	if deathKnight.Talents.EbonPlaguebringer == 0 {
-		return
-	}
-	if deathKnight.DiseasesAreActive() {
-		deathKnight.EbonPlagueAura.Activate(sim)
-	} else {
-		deathKnight.EbonPlagueAura.Deactivate(sim)
-	}
 }
 
 func (deathKnight *DeathKnight) registerFrostFever() {
 	actionID := core.ActionID{SpellID: 55095}
 	target := deathKnight.CurrentTarget
 
-	deathKnight.FrostFever = deathKnight.RegisterSpell(core.SpellConfig{
+	frostFeverSpell := deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolFrost,
 	})
 
 	deathKnight.FrostFeverDisease = core.NewDot(core.Dot{
-		Spell: deathKnight.FrostFever,
+		Spell: frostFeverSpell,
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "FrostFever-" + strconv.Itoa(int(deathKnight.Index)),
 			ActionID: actionID,
-			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				deathKnight.checkForEbonPlague(sim)
-			},
-			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				deathKnight.checkForEbonPlague(sim)
-			},
 		}),
 		NumberOfTicks: 5 + int(deathKnight.Talents.Epidemic),
 		TickLength:    time.Second * 3,
@@ -77,22 +51,16 @@ func (deathKnight *DeathKnight) registerBloodPlague() {
 	actionID := core.ActionID{SpellID: 55078}
 	target := deathKnight.CurrentTarget
 
-	deathKnight.BloodPlague = deathKnight.RegisterSpell(core.SpellConfig{
+	bloodPlagueSpell := deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 	})
 
 	deathKnight.BloodPlagueDisease = core.NewDot(core.Dot{
-		Spell: deathKnight.BloodPlague,
+		Spell: bloodPlagueSpell,
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "BloodPlague-" + strconv.Itoa(int(deathKnight.Index)),
 			ActionID: actionID,
-			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				deathKnight.checkForEbonPlague(sim)
-			},
-			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				deathKnight.checkForEbonPlague(sim)
-			},
 		}),
 		NumberOfTicks: 5 + int(deathKnight.Talents.Epidemic),
 		TickLength:    time.Second * 3,

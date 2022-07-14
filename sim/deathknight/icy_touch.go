@@ -68,10 +68,9 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 					deathKnight.Spend(sim, spell, dkSpellCost)
 
 					deathKnight.FrostFeverDisease.Apply(sim)
-
-					// TODO: Temporary application of ebon plague until dot auras
-					// properly run their events to control ebon plague
-					deathKnight.checkForEbonPlague(sim)
+					if deathKnight.Talents.EbonPlaguebringer > 0 {
+						deathKnight.EbonPlagueAura.Activate(sim)
+					}
 
 					amountOfRunicPower := 10.0 + 2.5*float64(deathKnight.Talents.ChillOfTheGrave)
 					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())

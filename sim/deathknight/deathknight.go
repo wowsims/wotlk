@@ -25,6 +25,9 @@ type DeathKnight struct {
 	LastScourgeStrikeDamage float64
 	ScourgeStrike           *core.Spell
 
+	LastDeathCoilDamage float64
+	DeathCoil           *core.Spell
+
 	HowlingBlastCostless bool
 	HowlingBlast         *core.Spell
 	//HornOfWinter     *core.Spell
@@ -37,10 +40,10 @@ type DeathKnight struct {
 	BloodTapAura *core.Aura
 
 	// Diseases
-	FrostFever         *core.Spell
 	FrostFeverDisease  *core.Dot
-	BloodPlague        *core.Spell
 	BloodPlagueDisease *core.Dot
+
+	UnholyBlight *core.Dot
 
 	// Talent Auras
 	KillingMachineAura *core.Aura
@@ -90,6 +93,7 @@ func (deathKnight *DeathKnight) Initialize() {
 	deathKnight.registerBloodTapSpell()
 	deathKnight.registerHowlingBlastSpell()
 	deathKnight.registerScourgeStrikeSpell()
+	deathKnight.registerDeathCoilSpell()
 	deathKnight.registerFrostStrikeSpell()
 	deathKnight.registerDiseaseDots()
 }

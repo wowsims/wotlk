@@ -60,6 +60,8 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 				deathKnight.ScourgeStrike.Cast(sim, target)
 			} else if deathKnight.CanBloodStrike(sim) {
 				deathKnight.BloodStrike.Cast(sim, target)
+			} else if deathKnight.CanDeathCoil(sim) {
+				deathKnight.DeathCoil.Cast(sim, target)
 			} else {
 				nextCD := deathKnight.IcyTouch.ReadyAt()
 
