@@ -4,6 +4,33 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
+func (deathKnight *DeathKnight) registerScourgeStrikeShadowDamageSpell() *core.Spell {
+	actionID := core.ActionID{SpellID: 55270}
+	return deathKnight.RegisterSpell(core.SpellConfig{
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolShadow,
+		Flags:       core.SpellFlagIgnoreResists,
+
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+			ProcMask:         core.ProcMaskSpellDamage,
+			BonusCritRating:  -100 * core.CritRatingPerCritChance, // Disable criticals for shadow hit
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
+
+			OutcomeApplier: deathKnight.CurrentTarget.OutcomeFuncAlwaysHit(),
+
+			BaseDamage: core.BaseDamageConfig{
+				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+					return (deathKnight.LastScourgeStrikeDamage *
+						(core.TernaryFloat64(deathKnight.FrostFeverDisease.IsActive(), 0.12, 0.0) +
+							core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 0.12, 0.0) +
+							core.TernaryFloat64(deathKnight.EbonPlagueAura.IsActive(), 0.12, 0.0)))
+				},
+			},
+		}),
+	})
+}
+
 func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 560.0, 0.7, true)
 	viciousStrikes := 0.15 * float64(deathKnight.Talents.ViciousStrikes)
@@ -17,6 +44,8 @@ func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
 	} else if deathKnight.Talents.Outbreak == 3 {
 		outbreakBonus = 0.20
 	}
+
+	shadowDamagePartSpell := deathKnight.registerScourgeStrikeShadowDamageSpell()
 
 	deathKnight.ScourgeStrike = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -53,12 +82,8 @@ func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
 					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 
 					if deathKnight.DiseasesAreActive() {
-						//damage := spellEffect.Damage *
-						//	(core.TernaryFloat64(deathKnight.FrostFeverDisease.IsActive(), 0.12, 0.0) +
-						//		core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 0.12, 0.0) +
-						//		core.TernaryFloat64(deathKnight.EbonPlagueAura.IsActive(), 0.12, 0.0))
-
-						// TODO: deal damage as shadow
+						deathKnight.LastScourgeStrikeDamage = spellEffect.Damage
+						shadowDamagePartSpell.Cast(sim, spellEffect.Target)
 					}
 				}
 			},

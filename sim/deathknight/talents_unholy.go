@@ -81,15 +81,19 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 	// Ebon Plaguebringer
 	// TODO: Diseases damage increase still missing
 	if deathKnight.Talents.EbonPlaguebringer > 0 {
-		deathKnight.PseudoStats.BonusMeleeCritRating += core.CritRatingPerCritChance * float64(deathKnight.Talents.EbonPlaguebringer)
-		deathKnight.PseudoStats.BonusSpellCritRating += core.CritRatingPerCritChance * float64(deathKnight.Talents.EbonPlaguebringer)
+		deathKnight.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*float64(deathKnight.Talents.EbonPlaguebringer))
+		deathKnight.AddStat(stats.SpellCrit, core.CritRatingPerCritChance*float64(deathKnight.Talents.EbonPlaguebringer))
 	}
 
 	// Scourge Strike
 	// Implemented outside. Still missing shadow damage part
 
 	// Rage of Rivendare
-	// TODO:
+	// TODO: % bonus damage to spells/abilities (not white hits)
+	if deathKnight.Talents.RageOfRivendare > 0 {
+		expertiseBonus := 1.0 * float64(deathKnight.Talents.RageOfRivendare)
+		deathKnight.AddStat(stats.Expertise, expertiseBonus*core.ExpertisePerQuarterPercentReduction)
+	}
 
 	// Summon Gargoyle
 	// TODO:

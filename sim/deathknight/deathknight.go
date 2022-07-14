@@ -16,11 +16,13 @@ type DeathKnight struct {
 
 	Presence Presence
 
-	IcyTouch      *core.Spell
-	PlagueStrike  *core.Spell
-	Obliterate    *core.Spell
-	BloodStrike   *core.Spell
-	ScourgeStrike *core.Spell
+	IcyTouch     *core.Spell
+	PlagueStrike *core.Spell
+	Obliterate   *core.Spell
+	BloodStrike  *core.Spell
+
+	LastScourgeStrikeDamage float64
+	ScourgeStrike           *core.Spell
 
 	HowlingBlastCostless bool
 	HowlingBlast         *core.Spell
