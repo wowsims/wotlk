@@ -26,6 +26,7 @@ func (deathKnight *DeathKnight) newPlagueStrikeSpell(isMH bool) *core.Spell {
 				return weaponBaseDamage(sim, hitEffect, spell) *
 					(1.0 +
 						core.TernaryFloat64(deathKnight.DiseasesAreActive(), 0.05*float64(deathKnight.Talents.TundraStalker), 0.0) +
+						core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 0.02*float64(deathKnight.Talents.RageOfRivendare), 0.0) +
 						0.10*float64(deathKnight.Talents.Outbreak))
 			},
 			TargetSpellCoefficient: 1,

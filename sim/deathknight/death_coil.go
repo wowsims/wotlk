@@ -29,7 +29,9 @@ func (deathKnight *DeathKnight) registerDeathCoilSpell() {
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return (443.0 + hitEffect.MeleeAttackPower(spell.Unit)*0.15) *
-						(1.0 + 0.05*float64(deathKnight.Talents.Morbidity))
+						(1.0 +
+							0.05*float64(deathKnight.Talents.Morbidity) +
+							core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 0.02*float64(deathKnight.Talents.RageOfRivendare), 0.0))
 				},
 				TargetSpellCoefficient: 1,
 			},
