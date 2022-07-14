@@ -49,10 +49,11 @@ type DeathKnight struct {
 	UnholyBlight *core.Dot
 
 	// Talent Auras
-	KillingMachineAura *core.Aura
-	IcyTalonsAura      *core.Aura
-	DesolationAura     *core.Aura
-	NecrosisAura       *core.Aura
+	KillingMachineAura  *core.Aura
+	IcyTalonsAura       *core.Aura
+	DesolationAura      *core.Aura
+	NecrosisAura        *core.Aura
+	BloodCakedBladeAura *core.Aura
 
 	// Presences
 	BloodPresenceAura  *core.Aura

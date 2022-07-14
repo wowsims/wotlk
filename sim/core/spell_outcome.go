@@ -228,6 +228,33 @@ func (unit *Unit) OutcomeFuncMeleeWeaponSpecialHitAndCrit(critMultiplier float64
 	}
 }
 
+func (unit *Unit) OutcomeFuncMeleeWeaponSpecialNoHitNoCrit() OutcomeApplier {
+	if unit.PseudoStats.InFrontOfTarget {
+		return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
+			unit := spell.Unit
+			roll := sim.RandomFloat("White Hit Table")
+			chance := 0.0
+
+			if (spell.Flags.Matches(SpellFlagCannotBeDodged) || !spellEffect.applyAttackTableDodge(spell, unit, attackTable, roll, &chance)) &&
+				!spellEffect.applyAttackTableParry(spell, unit, attackTable, roll, &chance) &&
+				!spellEffect.applyAttackTableBlock(spell, unit, attackTable, roll, &chance) {
+				spellEffect.applyAttackTableHit(spell)
+			}
+		}
+	} else {
+		return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
+			unit := spell.Unit
+			roll := sim.RandomFloat("White Hit Table")
+			chance := 0.0
+
+			if (spell.Flags.Matches(SpellFlagCannotBeDodged) || !spellEffect.applyAttackTableDodge(spell, unit, attackTable, roll, &chance)) &&
+				!spellEffect.applyAttackTableParry(spell, unit, attackTable, roll, &chance) {
+				spellEffect.applyAttackTableHit(spell)
+			}
+		}
+	}
+}
+
 func (unit *Unit) OutcomeFuncMeleeSpecialNoBlockDodgeParry(critMultiplier float64) OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
 		unit := spell.Unit

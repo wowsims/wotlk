@@ -44,7 +44,7 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 	deathKnight.applyNecrosis()
 
 	// Blood-Caked Blade
-	// TODO:
+	deathKnight.applyBloodCakedBlade()
 
 	// Night of the Dead
 	// TODO:
@@ -136,6 +136,62 @@ func (deathKnight *DeathKnight) applyNecrosis() {
 
 			curDmg = spellEffect.Damage
 			necrosisHit.Cast(sim, target)
+		},
+	})
+}
+
+func (deathKnight *DeathKnight) applyBloodCakedBlade() {
+	if deathKnight.Talents.BloodCakedBlade == 0 {
+		return
+	}
+
+	target := deathKnight.CurrentTarget
+
+	mhBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 0, 1.0, true)
+	ohBaseDamage := core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, 1.0, true)
+
+	var isMH = false
+	bloodCakedBladeHit := deathKnight.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 50463},
+		SpellSchool: core.SpellSchoolPhysical,
+		Flags:       core.SpellFlagMeleeMetrics,
+
+		ApplyEffects: core.ApplyEffectFuncDirectDamageTargetModifiersOnly(core.SpellEffect{
+			// No proc mask, so it won't proc itself.
+			ProcMask: core.ProcMaskEmpty,
+
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
+
+			BaseDamage: core.BaseDamageConfig{
+				Calculator: func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
+					if isMH {
+						return mhBaseDamage(sim, spellEffect, spell) * (0.25 + float64(deathKnight.countActiveDiseases())*0.125)
+					} else {
+						return ohBaseDamage(sim, spellEffect, spell) * (0.25 + float64(deathKnight.countActiveDiseases())*0.125)
+					}
+				},
+			},
+			OutcomeApplier: deathKnight.OutcomeFuncMeleeWeaponSpecialNoHitNoCrit(),
+		}),
+	})
+
+	deathKnight.BloodCakedBladeAura = deathKnight.RegisterAura(core.Aura{
+		Label:    "Blood-Caked Blade",
+		ActionID: core.ActionID{SpellID: 49628},
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			deathKnight.BloodCakedBladeAura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spellEffect.Damage == 0 || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+				return
+			}
+
+			if sim.RandomFloat("Blood-Caked Blade Roll") < 0.30 {
+				isMH = spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHAuto)
+				bloodCakedBladeHit.Cast(sim, target)
+			}
 		},
 	})
 }
