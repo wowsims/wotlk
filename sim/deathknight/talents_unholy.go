@@ -15,7 +15,9 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 	// Implemented outside
 
 	// Virulence
-	deathKnight.AddStat(stats.SpellHit, core.SpellHitRatingPerHitChance*float64(deathKnight.Talents.Virulence))
+	if deathKnight.Talents.Virulence > 0 {
+		deathKnight.AddStat(stats.SpellHit, core.SpellHitRatingPerHitChance*float64(deathKnight.Talents.Virulence))
+	}
 
 	// Epidemic
 	// Implemented outside
@@ -24,6 +26,7 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 	// TODO:
 
 	// Ravenous Dead
+	// TODO: Ghoul part
 	if deathKnight.Talents.RavenousDead > 0 {
 		strengthCoeff := 0.01 * float64(deathKnight.Talents.RavenousDead)
 		deathKnight.AddStatDependency(stats.StatDependency{
@@ -77,8 +80,10 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 	// Crypt Fever
 	// Ebon Plaguebringer
 	// TODO: Diseases damage increase still missing
-	deathKnight.PseudoStats.BonusMeleeCritRating += core.CritRatingPerCritChance * float64(deathKnight.Talents.EbonPlaguebringer)
-	deathKnight.PseudoStats.BonusSpellCritRating += core.CritRatingPerCritChance * float64(deathKnight.Talents.EbonPlaguebringer)
+	if deathKnight.Talents.EbonPlaguebringer > 0 {
+		deathKnight.PseudoStats.BonusMeleeCritRating += core.CritRatingPerCritChance * float64(deathKnight.Talents.EbonPlaguebringer)
+		deathKnight.PseudoStats.BonusSpellCritRating += core.CritRatingPerCritChance * float64(deathKnight.Talents.EbonPlaguebringer)
+	}
 
 	// Scourge Strike
 	// Implemented outside. Still missing shadow damage part
