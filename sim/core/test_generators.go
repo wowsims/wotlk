@@ -223,7 +223,7 @@ func (filter *ItemFilter) Matches(item items.Item, equipChecksOnly bool) bool {
 	}
 
 	if !equipChecksOnly {
-		if !HasItemEffect(item.ID) {
+		if !HasItemEffectForTest(item.ID) {
 			return false
 		}
 
