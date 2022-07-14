@@ -12,91 +12,92 @@ import { Target } from '/wotlk/core/target.js';
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
 
-// export const FelArmor = {
-// 	id: ActionId.fromSpellId(47893),
-// 	states: 2,
-// 	extraCssClasses: [
-// 		'fel-armor-picker',
-// 	],
-// 	changedEvent: (player: Player<Spec.SpecWarlock>) => player.specOptionsChangeEmitter,
-// 	getValue: (player: Player<Spec.SpecWarlock>) => player.getSpecOptions().armor == Armor.FelArmor,
-// 	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: boolean) => {
-// 		const newOptions = player.getSpecOptions();
-// 		newOptions.armor = newValue ? Armor.FelArmor : Armor.NoArmor;
-// 		player.setSpecOptions(eventID, newOptions);
-// 	},
-// };
-
-// export const DemonArmor = {
-// 	id: ActionId.fromSpellId(47889),
-// 	states: 2,
-// 	extraCssClasses: [
-// 		'demon-armor-picker',
-// 	],
-// 	changedEvent: (player: Player<Spec.SpecWarlock>) => player.specOptionsChangeEmitter,
-// 	getValue: (player: Player<Spec.SpecWarlock>) => player.getSpecOptions().armor == Armor.DemonArmor,
-// 	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: boolean) => {
-// 		const newOptions = player.getSpecOptions();
-// 		newOptions.armor = newValue ? Armor.DemonArmor : Armor.NoArmor;
-// 		player.setSpecOptions(eventID, newOptions);
-// 	},
-// };
-export const WarlockArmor = {
-	extraCssClasses: [
-		'warlock-armor-picker',
-	],
-	numColumns: 2,
-	values: [
-		{ actionId: ActionId.fromSpellId(47893), value: Armor.FelArmor },
-		{ actionId: ActionId.fromSpellId(47889), value: Armor.DemonArmor },
-	],
-	equals: (a: Armor, b: Armor) => a == b,
-	zeroValue: Armor.NoArmor,
-	changedEvent: (player: Player<Spec.SpecWarlock>) => player.specOptionsChangeEmitter,
-	getValue: (player: Player<Spec.SpecWarlock>) => player.getSpecOptions().armor,
-	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: number) => {
-		const newOptions = player.getSpecOptions();
-		newOptions.armor = newValue;
-		player.setSpecOptions(eventID, newOptions);
-	},
-};
-
-
-/*export const Sacrifice = {
-	id: ActionId.fromSpellId(18788),
+export const FelArmor = {
+	id: ActionId.fromSpellId(47893),
 	states: 2,
 	extraCssClasses: [
-		'sac-picker',
+		'fel-armor-picker',
 	],
-	changedEvent: (player: Player<Spec.SpecWarlock>) => player.changeEmitter,
-	getValue: (player: Player<Spec.SpecWarlock>) => player.getSpecOptions().sacrificeSummon && player.getTalents().demonicSacrifice && player.getSpecOptions().summon != Summon.NoSummon,
+	changedEvent: (player: Player<Spec.SpecWarlock>) => player.specOptionsChangeEmitter,
+	getValue: (player: Player<Spec.SpecWarlock>) => player.getSpecOptions().armor == Armor.FelArmor,
 	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: boolean) => {
 		const newOptions = player.getSpecOptions();
-		newOptions.sacrificeSummon = newValue;
+		newOptions.armor = newValue ? Armor.FelArmor : Armor.NoArmor;
 		player.setSpecOptions(eventID, newOptions);
 	},
 };
-*/
-export const DemonSummon = {
+
+export const DemonArmor = {
+	id: ActionId.fromSpellId(47889),
+	states: 2,
 	extraCssClasses: [
-		'warlock-summon-picker',
+		'demon-armor-picker',
 	],
-	numColumns: 3,
-	values: [
-		{ color: '808080', value: Summon.NoSummon },
-		{ actionId: ActionId.fromSpellId(688), value: Summon.Imp },
-		// { actionId: ActionId.fromSpellId(697), value: Summon.Voidwalker },
-		{ actionId: ActionId.fromSpellId(712), value: Summon.Succubus },
-		{ actionId: ActionId.fromSpellId(691), value: Summon.Felhunter },
-		{ actionId: ActionId.fromSpellId(30146), value: Summon.Felguard },
-	],
-	equals: (a: Summon, b: Summon) => a == b,
-	zeroValue: Summon.NoSummon,
 	changedEvent: (player: Player<Spec.SpecWarlock>) => player.specOptionsChangeEmitter,
-	getValue: (player: Player<Spec.SpecWarlock>) => player.getSpecOptions().summon,
-	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: number) => {
+	getValue: (player: Player<Spec.SpecWarlock>) => player.getSpecOptions().armor == Armor.DemonArmor,
+	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: boolean) => {
 		const newOptions = player.getSpecOptions();
-		newOptions.summon = newValue;
+		newOptions.armor = newValue ? Armor.DemonArmor : Armor.NoArmor;
+		player.setSpecOptions(eventID, newOptions);
+	},
+};
+
+export const SummonImp = {
+	id: ActionId.fromSpellId(688),
+	states: 2,
+	extraCssClasses: [
+		'SummonImp-picker',
+	],
+	changedEvent: (player: Player<Spec.SpecWarlock>) => player.specOptionsChangeEmitter,
+	getValue: (player: Player<Spec.SpecWarlock>) => player.getSpecOptions().summon == Summon.Imp,
+	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: boolean) => {
+		const newOptions = player.getSpecOptions();
+		newOptions.summon = newValue ? Summon.Imp : Summon.NoSummon;
+		player.setSpecOptions(eventID, newOptions);
+	},
+};
+
+export const SummonSuccubus = {
+	id: ActionId.fromSpellId(712),
+	states: 2,
+	extraCssClasses: [
+		'SummonSuccubus-picker',
+	],
+	changedEvent: (player: Player<Spec.SpecWarlock>) => player.specOptionsChangeEmitter,
+	getValue: (player: Player<Spec.SpecWarlock>) => player.getSpecOptions().summon == Summon.Succubus,
+	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: boolean) => {
+		const newOptions = player.getSpecOptions();
+		newOptions.summon = newValue ? Summon.Succubus : Summon.NoSummon;
+		player.setSpecOptions(eventID, newOptions);
+	},
+};
+
+export const SummonFelhunter = {
+	id: ActionId.fromSpellId(691),
+	states: 2,
+	extraCssClasses: [
+		'SummonFelhunter-picker',
+	],
+	changedEvent: (player: Player<Spec.SpecWarlock>) => player.specOptionsChangeEmitter,
+	getValue: (player: Player<Spec.SpecWarlock>) => player.getSpecOptions().summon == Summon.Felhunter,
+	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: boolean) => {
+		const newOptions = player.getSpecOptions();
+		newOptions.summon = newValue ? Summon.Felhunter : Summon.NoSummon;
+		player.setSpecOptions(eventID, newOptions);
+	},
+};
+
+export const SummonFelguard = {
+	id: ActionId.fromSpellId(30146),
+	states: 2,
+	extraCssClasses: [
+		'SummonFelguard-picker',
+	],
+	changedEvent: (player: Player<Spec.SpecWarlock>) => player.specOptionsChangeEmitter,
+	getValue: (player: Player<Spec.SpecWarlock>) => player.getSpecOptions().summon == Summon.Felguard,
+	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: boolean) => {
+		const newOptions = player.getSpecOptions();
+		newOptions.summon = newValue ? Summon.Felguard : Summon.NoSummon;
 		player.setSpecOptions(eventID, newOptions);
 	},
 };
