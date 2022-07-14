@@ -97,7 +97,7 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 					TargetSpellCoefficient: 1,
 				},
 				dotAura),
-			OutcomeApplier: rogue.OutcomeFuncTick(),
+			OutcomeApplier: rogue.OutcomeFuncTickMagicHitAndCrit(rogue.SpellCritMultiplier()),
 		})),
 	})
 }

@@ -43,6 +43,21 @@ func (unit *Unit) OutcomeFuncTickHitAndCrit(critMultiplier float64) OutcomeAppli
 	}
 }
 
+func (unit *Unit) OutcomeFuncTickMagicHitAndCrit(critMultiplier float64) OutcomeApplier {
+	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
+		if spellEffect.MagicHitCheck(sim, spell, attackTable) {
+			if spellEffect.MagicCritCheck(sim, spell, attackTable) {
+				spellEffect.Outcome = OutcomeCrit
+				spellEffect.Damage *= critMultiplier
+			} else {
+				spellEffect.Outcome = OutcomeHit
+			}
+		} else {
+			spellEffect.Outcome = OutcomeHit
+		}
+	}
+}
+
 func (unit *Unit) OutcomeFuncMagicHitAndCrit(critMultiplier float64) OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
 		if spellEffect.MagicHitCheck(sim, spell, attackTable) {
