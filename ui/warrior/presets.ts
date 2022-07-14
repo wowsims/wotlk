@@ -40,7 +40,7 @@ export const FuryTalents = {
 
 export const DefaultRotation = WarriorRotation.create({
 	useRend: true,
-	prioritizeWw: false,
+	prioritizeWw: true,
 	sunderArmor: SunderArmor.SunderArmorMaintain,
 	hsRageThreshold: 40,
 	rendRageThreshold: 75,
@@ -60,6 +60,7 @@ export const ArmsRotation = WarriorRotation.create({
 	rendCdThreshold: 3,
 	useHsDuringExecute: true,
 	spamExecute: false,
+	maintainDemoShout: true,
 });
 
 export const DefaultOptions = WarriorOptions.create({

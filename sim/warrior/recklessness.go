@@ -29,12 +29,12 @@ func (warrior *Warrior) RegisterRecklessnessCD() {
 	})
 
 	cooldownDur := time.Minute * 30
-	if warrior.Talents.ImprovedDisciplines == 1 {
-		cooldownDur -= time.Minute * 4
-	} else if warrior.Talents.ImprovedDisciplines == 2 {
-		cooldownDur -= time.Minute * 7
-	} else if warrior.Talents.ImprovedDisciplines == 3 {
-		cooldownDur -= time.Minute * 10
+	if warrior.Talents.IntensifyRage == 1 {
+		cooldownDur *= (100 - 11) / 100
+	} else if warrior.Talents.IntensifyRage == 2 {
+		cooldownDur *= (100 - 22) / 100
+	} else if warrior.Talents.IntensifyRage == 3 {
+		cooldownDur *= (100 - 33) / 100
 	}
 	reckSpell := warrior.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
