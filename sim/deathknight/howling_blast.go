@@ -50,6 +50,7 @@ func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 					return (roll + hitEffect.MeleeAttackPower(spell.Unit)*0.1) *
 						(1.0 +
 							core.TernaryFloat64(deathKnight.DiseasesAreActive() && deathKnight.Talents.GlacierRot > 0, glacierRotCoeff, 0.0) +
+							core.TernaryFloat64(deathKnight.DiseasesAreActive(), 0.05*float64(deathKnight.Talents.TundraStalker), 0.0) +
 							core.TernaryFloat64(sim.IsExecutePhase35() && deathKnight.Talents.MercilessCombat > 0, 0.06*float64(deathKnight.Talents.MercilessCombat), 0.0))
 				},
 				TargetSpellCoefficient: 1,

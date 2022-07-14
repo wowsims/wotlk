@@ -9,9 +9,9 @@ var ObliterateMHOutcome = core.OutcomeHit
 var ObliterateOHOutcome = core.OutcomeHit
 
 func (deathKnight *DeathKnight) newObliterateHitSpell(isMH bool) *core.Spell {
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 467.0, 0.8, true)
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 467.0, 0.8, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 467.0, 0.8, true)
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 467.0, 0.8, true)
 	}
 
 	guileOfGorefiend := deathKnight.Talents.GuileOfGorefiend > 0
@@ -39,6 +39,7 @@ func (deathKnight *DeathKnight) newObliterateHitSpell(isMH bool) *core.Spell {
 						core.TernaryFloat64(deathKnight.FrostFeverDisease.IsActive(), 0.125, 0.0) +
 						core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 0.125, 0.0) +
 						core.TernaryFloat64(deathKnight.EbonPlagueAura.IsActive(), 0.125, 0.0) +
+						core.TernaryFloat64(deathKnight.DiseasesAreActive(), 0.05*float64(deathKnight.Talents.TundraStalker), 0.0) +
 						core.TernaryFloat64(sim.IsExecutePhase35() && deathKnight.Talents.MercilessCombat > 0, 0.06*float64(deathKnight.Talents.MercilessCombat), 0.0))
 			},
 			TargetSpellCoefficient: 1,
@@ -68,7 +69,7 @@ func (deathKnight *DeathKnight) newObliterateHitSpell(isMH bool) *core.Spell {
 		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.critMultiplier(guileOfGorefiend))
 	} else {
 		effect.ProcMask = core.ProcMaskMeleeOHSpecial
-		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialCritOnly(deathKnight.critMultiplier(guileOfGorefiend))
+		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialNoBlockDodgeParry(deathKnight.critMultiplier(guileOfGorefiend))
 	}
 
 	return deathKnight.RegisterSpell(core.SpellConfig{

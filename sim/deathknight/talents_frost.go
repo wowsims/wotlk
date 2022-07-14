@@ -86,6 +86,10 @@ func (deathKnight *DeathKnight) ApplyFrostTalents() {
 	}
 
 	// Merciless Combat
+	// Implemented Outside
+
+	// Tundra Stalker
+	deathKnight.AddStat(stats.Expertise, 1.0*float64(deathKnight.Talents.TundraStalker)*core.ExpertisePerQuarterPercentReduction)
 }
 
 func (deathKnight *DeathKnight) applyKillingMachine() {

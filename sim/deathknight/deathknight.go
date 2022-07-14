@@ -20,13 +20,13 @@ type DeathKnight struct {
 	PlagueStrike *core.Spell
 	Obliterate   *core.Spell
 	BloodStrike  *core.Spell
+	FrostStrike  *core.Spell
 
 	LastScourgeStrikeDamage float64
 	ScourgeStrike           *core.Spell
 
 	HowlingBlastCostless bool
 	HowlingBlast         *core.Spell
-	//FrostStrike      *core.Spell
 	//HornOfWinter     *core.Spell
 	//UnbreakableArmor *core.Spell
 	//ArmyOfTheDead    *core.Spell
@@ -90,6 +90,7 @@ func (deathKnight *DeathKnight) Initialize() {
 	deathKnight.registerBloodTapSpell()
 	deathKnight.registerHowlingBlastSpell()
 	deathKnight.registerScourgeStrikeSpell()
+	deathKnight.registerFrostStrikeSpell()
 	deathKnight.registerDiseaseDots()
 }
 
@@ -97,6 +98,13 @@ func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
 	deathKnight.ResetRunicPowerBar(sim)
 	deathKnight.BloodPresenceAura.Activate(sim)
 	deathKnight.Presence = BloodPresence
+}
+
+func (deathKnight *DeathKnight) HasMajorGlyph(glyph proto.DeathKnightMajorGlyph) bool {
+	return deathKnight.HasGlyph(int32(glyph))
+}
+func (deathKnight *DeathKnight) HasMinorGlyph(glyph proto.DeathKnightMajorGlyph) bool {
+	return deathKnight.HasGlyph(int32(glyph))
 }
 
 func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight {

@@ -63,7 +63,8 @@ func (deathKnight *DeathKnight) registerFrostFever() {
 			IsPeriodic:       true,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return (127.0 + 80.0*0.32) + hitEffect.MeleeAttackPower(spell.Unit)*0.055
+					return ((127.0 + 80.0*0.32) + hitEffect.MeleeAttackPower(spell.Unit)*0.055) * (1.0 +
+						core.TernaryFloat64(deathKnight.DiseasesAreActive(), 0.05*float64(deathKnight.Talents.TundraStalker), 0.0))
 				},
 				TargetSpellCoefficient: 1,
 			},
@@ -103,7 +104,8 @@ func (deathKnight *DeathKnight) registerBloodPlague() {
 			IsPeriodic:       true,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return (127.0 + 80.0*0.32) + hitEffect.MeleeAttackPower(spell.Unit)*0.055
+					return ((127.0 + 80.0*0.32) + hitEffect.MeleeAttackPower(spell.Unit)*0.055) * (1.0 +
+						core.TernaryFloat64(deathKnight.DiseasesAreActive(), 0.05*float64(deathKnight.Talents.TundraStalker), 0.0))
 				},
 				TargetSpellCoefficient: 1,
 			},

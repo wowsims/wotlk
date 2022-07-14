@@ -14,6 +14,14 @@ func (deathKnight *DeathKnight) newBloodStrikeSpell(isMH bool) *core.Spell {
 		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 764.0, 0.4, true)
 	}
 
+	bloodOfTheNorthCoeff := 0.0
+	if deathKnight.Talents.BloodOfTheNorth == 1 {
+		bloodOfTheNorthCoeff = 0.03
+	} else if deathKnight.Talents.BloodOfTheNorth == 2 {
+		bloodOfTheNorthCoeff = 0.06
+	} else if deathKnight.Talents.BloodOfTheNorth == 3 {
+		bloodOfTheNorthCoeff = 0.1
+	}
 	guileOfGorefiend := deathKnight.Talents.GuileOfGorefiend > 0
 
 	effect := core.SpellEffect{
@@ -25,8 +33,10 @@ func (deathKnight *DeathKnight) newBloodStrikeSpell(isMH bool) *core.Spell {
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				return weaponBaseDamage(sim, hitEffect, spell) *
 					(1.0 +
+						bloodOfTheNorthCoeff +
 						core.TernaryFloat64(deathKnight.FrostFeverDisease.IsActive(), 0.125, 0.0) +
 						core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 0.125, 0.0) +
+						core.TernaryFloat64(deathKnight.DiseasesAreActive(), 0.05*float64(deathKnight.Talents.TundraStalker), 0.0) +
 						core.TernaryFloat64(deathKnight.EbonPlagueAura.IsActive(), 0.125, 0.0))
 			},
 			TargetSpellCoefficient: 1,
