@@ -107,10 +107,6 @@ func (deathKnight *DeathKnight) registerPlagueStrikeSpell() {
 
 					amountOfRunicPower := 10.0 + 2.5*float64(deathKnight.Talents.Dirge)
 					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
-
-					if deathKnight.DesolationAura != nil {
-						deathKnight.DesolationAura.Activate(sim)
-					}
 				}
 			},
 		}),

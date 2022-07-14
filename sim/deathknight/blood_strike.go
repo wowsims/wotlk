@@ -36,9 +36,9 @@ func (deathKnight *DeathKnight) newBloodStrikeSpell(isMH bool) *core.Spell {
 						bloodOfTheNorthCoeff +
 						core.TernaryFloat64(deathKnight.FrostFeverDisease.IsActive(), 0.125, 0.0) +
 						core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 0.125, 0.0) +
+						core.TernaryFloat64(deathKnight.EbonPlagueAura.IsActive(), 0.125, 0.0) +
 						core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 0.02*float64(deathKnight.Talents.RageOfRivendare), 0.0) +
-						core.TernaryFloat64(deathKnight.DiseasesAreActive(), 0.05*float64(deathKnight.Talents.TundraStalker), 0.0) +
-						core.TernaryFloat64(deathKnight.EbonPlagueAura.IsActive(), 0.125, 0.0))
+						core.TernaryFloat64(deathKnight.DiseasesAreActive(), 0.05*float64(deathKnight.Talents.TundraStalker), 0.0))
 			},
 			TargetSpellCoefficient: 1,
 		},
