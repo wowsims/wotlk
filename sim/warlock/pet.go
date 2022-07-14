@@ -22,9 +22,6 @@ type WarlockPet struct {
 }
 
 func (warlock *Warlock) NewWarlockPet() *WarlockPet {
-	// if warlock.Options.PetUptime <= 0 {
-	// 	return nil
-	// }
 	petConfig := PetConfigs[warlock.Options.Summon]
 
 	wp := &WarlockPet{
@@ -124,6 +121,9 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 			SourceStat:   stats.AttackPower,
 			ModifiedStat: stats.AttackPower,
 			Modifier: func(ap float64, _ float64) float64 {
+				if wp.owner.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfFelguard) {
+					ap *= 1.2
+				}
 				return ap * 1.5 * 1.1 // demonic frenzy + hidden 10% boost
 			},
 		})

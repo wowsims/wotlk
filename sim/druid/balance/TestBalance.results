@@ -78,13 +78,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestBalance-AllItems-AshtongueTalismanofEquilibrium-32486"
- value: {
-  dps: 969.8798312382103
-  tps: 966.756198293337
- }
-}
-dps_results: {
  key: "TestBalance-AllItems-Assassin'sAlchemistStone-35751"
  value: {
   dps: 938.9289605457105
@@ -519,27 +512,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestBalance-AllItems-IdolofTerror-33509"
- value: {
-  dps: 939.4232301888817
-  tps: 936.9401745983282
- }
-}
-dps_results: {
- key: "TestBalance-AllItems-IdoloftheUnseenMoon-33510"
- value: {
-  dps: 957.8813110608816
-  tps: 955.0290938528883
- }
-}
-dps_results: {
- key: "TestBalance-AllItems-IdoloftheWhiteStag-32257"
- value: {
-  dps: 939.4232301888817
-  tps: 936.9401745983282
- }
-}
-dps_results: {
  key: "TestBalance-AllItems-ImbuedUnstableDiamond"
  value: {
   dps: 948.2042185006571
@@ -596,13 +568,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestBalance-AllItems-LivingRootoftheWildheart-30664"
- value: {
-  dps: 954.3566645839772
-  tps: 951.5434949721882
- }
-}
-dps_results: {
  key: "TestBalance-AllItems-MadnessoftheBetrayer-32505"
  value: {
   dps: 946.7733508743326
@@ -649,13 +614,6 @@ dps_results: {
  value: {
   dps: 979.7843366970436
   tps: 976.4626136429936
- }
-}
-dps_results: {
- key: "TestBalance-AllItems-MarkoftheWarPrisoner-37873"
- value: {
-  dps: 1008.6402439747652
-  tps: 1004.9503014418275
  }
 }
 dps_results: {

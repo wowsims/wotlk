@@ -39,21 +39,23 @@ type Warlock struct {
 	CurseOfDoom         *core.Spell
 	CurseOfDoomDot      *core.Dot
 
-	Seeds    []*core.Spell
-	SeedDots []*core.Dot
+	Seeds    			[]*core.Spell
+	SeedDots 			[]*core.Dot
 
-	NightfallProcAura      *core.Aura
-	ShadowEmbraceAura      *core.Aura
-	EradicationAura        *core.Aura
-	DemonicEmpowerment     *core.Spell
-	DemonicEmpowermentAura *core.Aura
-	Metamorphosis          *core.Spell
-	MetamorphosisAura      *core.Aura
-	MoltenCoreAura         *core.Aura
-	DecimationAura         *core.Aura
-	PyroclasmAura          *core.Aura
-	BackdraftAura          *core.Aura
-	EmpoweredImpAura       *core.Aura
+	NightfallProcAura 		*core.Aura
+	ShadowEmbraceAura 		*core.Aura
+	EradicationAura	  		*core.Aura
+	DemonicEmpowerment		*core.Spell
+	DemonicEmpowermentAura	*core.Aura
+	Metamorphosis			*core.Spell
+	MetamorphosisAura		*core.Aura
+	MoltenCoreAura			*core.Aura
+	DecimationAura			*core.Aura
+	PyroclasmAura			*core.Aura
+	BackdraftAura			*core.Aura
+	EmpoweredImpAura		*core.Aura
+	
+	GlyphOfLifeTapAura		*core.Aura
 
 	Pet *WarlockPet
 
@@ -241,4 +243,12 @@ func init() {
 // Agent is a generic way to access underlying warlock on any of the agents.
 type WarlockAgent interface {
 	GetWarlock() *Warlock
+}
+
+func (warlock *Warlock) HasMajorGlyph(glyph proto.WarlockMajorGlyph) bool {
+	return warlock.HasGlyph(int32(glyph))
+}
+
+func (warlock *Warlock) HasMinorGlyph(glyph proto.WarlockMinorGlyph) bool {
+	return warlock.HasGlyph(int32(glyph))
 }

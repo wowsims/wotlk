@@ -5,6 +5,7 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (warlock *Warlock) registerIncinerateSpell() {
@@ -13,11 +14,12 @@ func (warlock *Warlock) registerIncinerateSpell() {
 
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
-		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 0, 1) * 5 * core.CritRatingPerCritChance,
-		DamageMultiplier:     core.TernaryFloat64(has4pMal, 1.06, 1.0) * (1 + 0.03*float64(warlock.Talents.Emberstorm)),
+		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) * 5 * core.CritRatingPerCritChance,
+		DamageMultiplier:     (1 + 0.06 * core.TernaryFloat64(has4pMal, 1, 0)) * (1 + 0.03*float64(warlock.Talents.Emberstorm)) * 
+			(1 + 0.05 * core.TernaryFloat64(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfIncinerate), 1, 0)),
 		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.DestructiveReach),
 		BaseDamage:           warlock.incinerateDamage(),
-		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
+		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin) / 5)),
 	}
 
 	costReduction := 0.0
