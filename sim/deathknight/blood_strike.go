@@ -4,18 +4,19 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
+var BloodStrikeActionID = core.ActionID{SpellID: 49930}
+var BloodStrikeMHOutcome = core.OutcomeHit
+var BloodStrikeOHOutcome = core.OutcomeHit
+
 func (deathKnight *DeathKnight) newBloodStrikeSpell(isMH bool) *core.Spell {
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 764.0, 0.4, true)
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 764.0, 0.4, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 764.0, 0.4, true)
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 764.0, 0.4, true)
 	}
 
 	guileOfGorefiend := deathKnight.Talents.GuileOfGorefiend > 0
 
-	actionID := core.ActionID{SpellID: 49930}
-
 	effect := core.SpellEffect{
-		ProcMask:         core.ProcMaskMeleeMHSpecial,
 		BonusCritRating:  (3.0*float64(deathKnight.Talents.Subversion) + 1.0*float64(deathKnight.Talents.Annihilation)) * core.CritRatingPerCritChance,
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
@@ -31,34 +32,27 @@ func (deathKnight *DeathKnight) newBloodStrikeSpell(isMH bool) *core.Spell {
 			TargetSpellCoefficient: 1,
 		},
 
-		OutcomeApplier: deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.critMultiplier(guileOfGorefiend)),
-
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Landed() {
-				if isMH {
-					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 1, 0, 0)
-					deathKnight.Spend(sim, spell, dkSpellCost)
-
-					amountOfRunicPower := 10.0
-					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
-				}
-
-				if deathKnight.DesolationAura != nil {
-					deathKnight.DesolationAura.Activate(sim)
-				}
+			if isMH {
+				BloodStrikeMHOutcome = spellEffect.Outcome
+			} else {
+				BloodStrikeOHOutcome = spellEffect.Outcome
 			}
 		},
 	}
 
-	if !isMH {
+	if isMH {
+		effect.ProcMask = core.ProcMaskMeleeMHSpecial
+		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.critMultiplier(guileOfGorefiend))
+	} else {
 		effect.ProcMask = core.ProcMaskMeleeOHSpecial
+		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialCritOnly(deathKnight.critMultiplier(guileOfGorefiend))
 	}
 
 	return deathKnight.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics,
-
+		ActionID:     BloodStrikeActionID,
+		SpellSchool:  core.SpellSchoolPhysical,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})
 }
@@ -77,7 +71,7 @@ func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
 	}
 
 	deathKnight.BloodStrike = deathKnight.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 49930},
+		ActionID:    BloodStrikeActionID,
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 
@@ -90,17 +84,27 @@ func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeMHSpecial,
 			ThreatMultiplier: 1,
-			OutcomeApplier:   deathKnight.OutcomeFuncMeleeSpecialHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					mhHitSpell.Cast(sim, spellEffect.Target)
-					if sim.RandomFloat("Threat of Thassarian") < threatOfThassarianChance {
-						ohHitSpell.Cast(sim, spellEffect.Target)
 
-						deathKnight.BloodStrike.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 2
-						deathKnight.BloodStrike.SpellMetrics[spellEffect.Target.TableIndex].Hits--
-					} else {
-						deathKnight.BloodStrike.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 1
+			OutcomeApplier: deathKnight.OutcomeFuncAlwaysHit(),
+
+			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				mhHitSpell.Cast(sim, spellEffect.Target)
+				deathKnight.BloodStrike.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 1
+				deathKnight.BloodStrike.SpellMetrics[spellEffect.Target.TableIndex].Hits -= 1
+				if sim.RandomFloat("Threat of Thassarian") < threatOfThassarianChance {
+					ohHitSpell.Cast(sim, spellEffect.Target)
+					deathKnight.BloodStrike.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 1
+				}
+
+				if BloodStrikeMHOutcome == core.OutcomeHit || BloodStrikeOHOutcome == core.OutcomeHit {
+					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 1, 0, 0)
+					deathKnight.Spend(sim, spell, dkSpellCost)
+
+					amountOfRunicPower := 10.0
+					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
+
+					if deathKnight.DesolationAura != nil {
+						deathKnight.DesolationAura.Activate(sim)
 					}
 				}
 			},
