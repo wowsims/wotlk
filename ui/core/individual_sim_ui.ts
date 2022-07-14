@@ -189,6 +189,7 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 	},
 
 	selfBuffInputs: Array<IndividualSimIconPickerConfig<Player<any>, any>>,
+	petInputs?: Array<IndividualSimIconPickerConfig<Player<any>, any>>,
 	raidBuffInputs: Array<IndividualSimIconPickerConfig<Raid, any>>,
 	partyBuffInputs: Array<IndividualSimIconPickerConfig<Party, any>>,
 	playerBuffInputs: Array<IndividualSimIconPickerConfig<Player<any>, any>>,
@@ -211,6 +212,7 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 	presets: {
 		gear: Array<PresetGear>,
 		talents: Array<SavedDataConfig<Player<any>, string>>,
+		rotation?: Array<SavedDataConfig<Player<any>, string>>,
 	},
 }
 
@@ -264,7 +266,13 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		if (!launchedSpecs.includes(this.player.spec)) {
 			this.addWarning({
 				updateOn: new TypedEvent<void>(),
-				getContent: () => 'This sim has not yet been updated from its TBC state.',
+				getContent: () => {
+					if (this.player.getClass() == Class.ClassWarlock) {
+						return 'This sim is under current development for Wrath of the Lich King. Talents and Glyphs are mostly ready but rotations are under development.';
+					} else {
+						return 'This sim has not yet been updated from its TBC state.';
+					}
+				},
 			});
 		}
 
@@ -472,7 +480,15 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		});
 	}
 
+
 	private addSettingsTab() {
+		var petsSelectionSection=``
+		if (this.individualConfig.petInputs?.length) {
+			petsSelectionSection=`
+			   <fieldset class="settings-section pets-section">
+					<legend>Pets</legend>
+				</fieldset>`
+		}
 		this.addTab('SETTINGS', 'settings-tab', `
 			<div class="settings-inputs">
 				<div class="settings-section-container">
@@ -492,6 +508,11 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 					<fieldset class="settings-section self-buffs-section">
 						<legend>Self Buffs</legend>
 					</fieldset>
+		`
+		+
+		petsSelectionSection
+		+
+		`
 				</div>
 				<div class="settings-section-container within-raid-sim-hide">
 					<fieldset class="settings-section buffs-section">
@@ -593,6 +614,14 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			selfBuffsSection,
 			this.individualConfig.selfBuffInputs.map(iconInput => new IndividualSimIconPicker(selfBuffsSection, this.player, iconInput, this)),
 			Tooltips.SELF_BUFFS_SECTION);
+
+		if (this.individualConfig.petInputs?.length) {
+			const petsSection = this.rootElem.getElementsByClassName('pets-section')[0] as HTMLElement;
+			configureIconSection(
+				petsSection,
+				this.individualConfig.petInputs.map(iconInput => new IndividualSimIconPicker(petsSection, this.player, iconInput, this)),
+				Tooltips.PETS_SECTION);
+		}
 
 		const buffsSection = this.rootElem.getElementsByClassName('buffs-section')[0] as HTMLElement;
 		configureIconSection(
