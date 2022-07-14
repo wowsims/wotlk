@@ -22,7 +22,7 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 	// Implemented outside
 
 	// Morbidity
-	// TODO:
+	// Implemented outside
 
 	// Ravenous Dead
 	// TODO: Ghoul part
@@ -41,7 +41,7 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 	// Implemented outside
 
 	// Necrosis
-	// TODO:
+	deathKnight.applyNecrosis()
 
 	// Blood-Caked Blade
 	// TODO:
@@ -90,6 +90,54 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 
 	// Summon Gargoyle
 	// TODO:
+}
+
+func (deathKnight *DeathKnight) applyNecrosis() {
+	if deathKnight.Talents.Necrosis == 0 {
+		return
+	}
+
+	actionID := core.ActionID{SpellID: 51465}
+	target := deathKnight.CurrentTarget
+
+	var curDmg float64
+	necrosisHit := deathKnight.RegisterSpell(core.SpellConfig{
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolShadow,
+		Flags:       core.SpellFlagNone,
+
+		ApplyEffects: core.ApplyEffectFuncDirectDamageTargetModifiersOnly(core.SpellEffect{
+			// No proc mask, so it won't proc itself.
+			ProcMask: core.ProcMaskEmpty,
+
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
+
+			BaseDamage: core.BaseDamageConfig{
+				Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
+					return curDmg * 0.04 * float64(deathKnight.Talents.Necrosis)
+				},
+			},
+			OutcomeApplier: deathKnight.OutcomeFuncAlwaysHit(),
+		}),
+	})
+
+	deathKnight.NecrosisAura = deathKnight.RegisterAura(core.Aura{
+		Label:    "Necrosis",
+		ActionID: actionID,
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			deathKnight.NecrosisAura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spellEffect.Damage == 0 || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+				return
+			}
+
+			curDmg = spellEffect.Damage
+			necrosisHit.Cast(sim, target)
+		},
+	})
 }
 
 func (deathKnight *DeathKnight) applyEbonPlaguebringer() {

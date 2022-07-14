@@ -52,6 +52,7 @@ type DeathKnight struct {
 	KillingMachineAura *core.Aura
 	IcyTalonsAura      *core.Aura
 	DesolationAura     *core.Aura
+	NecrosisAura       *core.Aura
 
 	// Presences
 	BloodPresenceAura  *core.Aura
