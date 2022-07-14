@@ -67,6 +67,7 @@ export const HornOfWinter = makeBooleanRaidBuffInput(ActionId.fromSpellId(57623)
 export const StrengthOfEarthTotem = makeTristateRaidBuffInput(ActionId.fromSpellId(25528), ActionId.fromSpellId(52456), 'strengthOfEarthTotem');
 export const WindfuryTotem = makeTristateRaidBuffInput(ActionId.fromSpellId(25587), ActionId.fromSpellId(29193), 'windfuryTotem');
 export const ImprovedIcyTalons = makeBooleanRaidBuffInput(ActionId.fromSpellId(55610), 'icyTalons');
+export const SwiftRetribution = makeBooleanRaidBuffInput(ActionId.fromSpellId(53648), 'swiftRetribution');
 
 
 // Party Buffs
