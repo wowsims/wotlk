@@ -63,13 +63,7 @@ func (deathKnight *DeathKnight) newObliterateHitSpell(isMH bool) *core.Spell {
 		},
 	}
 
-	if isMH {
-		effect.ProcMask = core.ProcMaskMeleeMHSpecial
-		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.critMultiplier(guileOfGorefiend))
-	} else {
-		effect.ProcMask = core.ProcMaskMeleeOHSpecial
-		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialNoBlockDodgeParry(deathKnight.critMultiplier(guileOfGorefiend))
-	}
+	deathKnight.threatOfThassarianProcMasks(isMH, &effect, guileOfGorefiend)
 
 	return deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:     ObliterateActionID,

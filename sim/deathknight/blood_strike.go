@@ -50,13 +50,7 @@ func (deathKnight *DeathKnight) newBloodStrikeSpell(isMH bool) *core.Spell {
 		},
 	}
 
-	if isMH {
-		effect.ProcMask = core.ProcMaskMeleeMHSpecial
-		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.critMultiplier(guileOfGorefiend))
-	} else {
-		effect.ProcMask = core.ProcMaskMeleeOHSpecial
-		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialCritOnly(deathKnight.critMultiplier(guileOfGorefiend))
-	}
+	deathKnight.threatOfThassarianProcMasks(isMH, &effect, guileOfGorefiend)
 
 	return deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:     BloodStrikeActionID,

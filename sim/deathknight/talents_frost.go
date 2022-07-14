@@ -155,6 +155,20 @@ func (deathKnight *DeathKnight) applyIcyTalons() {
 	})
 }
 
+func (deathKnight *DeathKnight) threatOfThassarianProcMasks(isMH bool, effect *core.SpellEffect, guileOfGorefiend bool) {
+	if isMH {
+		effect.ProcMask = core.ProcMaskMeleeMHSpecial
+		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.critMultiplier(guileOfGorefiend))
+	} else {
+		effect.ProcMask = core.ProcMaskMeleeOHSpecial
+		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialCritOnly(deathKnight.critMultiplier(guileOfGorefiend))
+	}
+}
+
+func (deathKnight *DeathKnight) threatOfThassarianHitCheck(mhOutcome core.HitOutcome, ohOutcome core.HitOutcome) bool {
+	return mhOutcome == core.OutcomeHit || mhOutcome == core.OutcomeCrit || ohOutcome == core.OutcomeHit || ohOutcome == core.OutcomeCrit
+}
+
 func (deathKnight *DeathKnight) applyThreatOfThassarian() {
 
 }
