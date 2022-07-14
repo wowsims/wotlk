@@ -109,6 +109,14 @@ func (rogue *Rogue) ApplyFinisher(sim *core.Simulation, spell *core.Spell) {
 	rogue.finishingMoveEffectApplier(sim, numPoints)
 }
 
+func (rogue *Rogue) HasMajorGlyph(glyph proto.RogueMajorGlyph) bool {
+	return rogue.HasGlyph(int32(glyph))
+}
+
+func (rogue *Rogue) HasMinorGlyph(glyph proto.RogueMinorGlyph) bool {
+	return rogue.HasGlyph(int32(glyph))
+}
+
 func (rogue *Rogue) Initialize() {
 	// Update auto crit multipliers now that we have the targets.
 	rogue.AutoAttacks.MHEffect.OutcomeApplier = rogue.OutcomeFuncMeleeWhite(rogue.MeleeCritMultiplier(true, false))
