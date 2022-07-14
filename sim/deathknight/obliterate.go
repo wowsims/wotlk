@@ -118,7 +118,7 @@ func (deathKnight *DeathKnight) registerObliterateSpell() {
 					deathKnight.Obliterate.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 1
 				}
 
-				if ObliterateMHOutcome == core.OutcomeHit || ObliterateOHOutcome == core.OutcomeHit {
+				if OutcomeEitherWeaponHitOrCrit(ObliterateMHOutcome, ObliterateOHOutcome) {
 					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 1, 1)
 					deathKnight.Spend(sim, spell, dkSpellCost)
 

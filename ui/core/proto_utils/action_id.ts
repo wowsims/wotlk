@@ -92,6 +92,22 @@ export class ActionId {
 				baseName = 'Incoming HPS';
 				iconUrl = 'https://wow.zamimg.com/images/wow/icons/large/spell_holy_renew.jpg';
 				break;
+			case OtherAction.OtherActionBloodRuneGain:
+				baseName = 'Blood Rune Gain';
+				iconUrl = 'https://wow.zamimg.com/images/wow/icons/medium/spell_deathknight_deathstrike.jpg';
+				break;
+			case OtherAction.OtherActionFrostRuneGain:
+				baseName = 'Frost Rune Gain';
+				iconUrl = 'https://wow.zamimg.com/images/wow/icons/medium/spell_deathknight_deathstrike2.jpg';
+				break;
+			case OtherAction.OtherActionUnholyRuneGain:
+				baseName = 'Unholy Rune Gain';
+				iconUrl = 'https://wow.zamimg.com/images/wow/icons/medium/spell_deathknight_empowerruneblade.jpg';
+				break;
+			case OtherAction.OtherActionDeathRuneGain:
+				baseName = 'Death Rune Gain';
+				iconUrl = 'https://wow.zamimg.com/images/wow/icons/medium/spell_deathknight_empowerruneblade.jpg';
+				break;
 		}
 		this.baseName = baseName;
 		this.name = name || baseName;

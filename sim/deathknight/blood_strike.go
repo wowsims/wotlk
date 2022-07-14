@@ -105,7 +105,7 @@ func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
 					deathKnight.BloodStrike.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 1
 				}
 
-				if BloodStrikeMHOutcome == core.OutcomeHit || BloodStrikeOHOutcome == core.OutcomeHit {
+				if OutcomeEitherWeaponHitOrCrit(BloodStrikeMHOutcome, BloodStrikeOHOutcome) {
 					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 1, 0, 0)
 					deathKnight.Spend(sim, spell, dkSpellCost)
 

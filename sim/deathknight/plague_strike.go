@@ -96,7 +96,7 @@ func (deathKnight *DeathKnight) registerPlagueStrikeSpell() {
 					deathKnight.PlagueStrike.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 1
 				}
 
-				if PlagueStrikeMHOutcome == core.OutcomeHit || PlagueStrikeOHOutcome == core.OutcomeHit {
+				if OutcomeEitherWeaponHitOrCrit(PlagueStrikeMHOutcome, PlagueStrikeOHOutcome) {
 					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 0, 1)
 					deathKnight.Spend(sim, spell, dkSpellCost)
 
