@@ -2,6 +2,7 @@ package deathknight
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (deathKnight *DeathKnight) registerDeathCoilSpell() {
@@ -9,9 +10,13 @@ func (deathKnight *DeathKnight) registerDeathCoilSpell() {
 		ActionID:    core.ActionID{SpellID: 49895},
 		SpellSchool: core.SpellSchoolShadow,
 
+		ResourceType: stats.RunicPower,
+		BaseCost:     40.0,
+
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD: core.GCDDefault,
+				GCD:  core.GCDDefault,
+				Cost: 40.0,
 			},
 		},
 
@@ -31,7 +36,6 @@ func (deathKnight *DeathKnight) registerDeathCoilSpell() {
 			OutcomeApplier: deathKnight.OutcomeFuncMagicHitAndCrit(deathKnight.spellCritMultiplier(false)),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				deathKnight.SpendRunicPower(sim, 40.0, spell.RunicPowerMetrics())
 				if spellEffect.Landed() && deathKnight.Talents.UnholyBlight {
 					deathKnight.UnholyBlight.Apply(sim)
 				}
