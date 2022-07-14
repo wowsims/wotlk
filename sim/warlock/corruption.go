@@ -6,6 +6,7 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (warlock *Warlock) registerCorruptionSpell() {
@@ -44,12 +45,13 @@ func (warlock *Warlock) registerCorruptionSpell() {
 			Label:    "Corruption-" + strconv.Itoa(int(warlock.Index)),
 			ActionID: actionID,
 		}),
-		NumberOfTicks: ticksNumber,
-		TickLength:    time.Second * 3,
+		NumberOfTicks: 		 ticksNumber,
+		TickLength:    		 time.Second * 3,
+		AffectedByCastSpeed: warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfQuickDecay),
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
 			DamageMultiplier: (1 + 0.01*float64(warlock.Talents.Contagion)) *
-				(1 + 0.01*float64(warlock.Talents.ImprovedCorruption)) * (1 + 0.05*core.TernaryFloat64(warlock.Talents.SiphonLife, 0, 1)),
+				(1 + 0.01*float64(warlock.Talents.ImprovedCorruption)) * (1 + 0.05*core.TernaryFloat64(warlock.Talents.SiphonLife, 1, 0)),
 			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(1080/6, spellCoefficient),
 			BonusCritRating:  3 * core.CritRatingPerCritChance * float64(warlock.Talents.Malediction),

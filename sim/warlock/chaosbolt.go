@@ -5,14 +5,15 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (warlock *Warlock) registerChaosBoltSpell() {
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
-		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 0, 1) * 5 * core.CritRatingPerCritChance,
+		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) * 5 * core.CritRatingPerCritChance,
 		DamageMultiplier:     (1 + 0.03 * float64(warlock.Talents.Emberstorm)) *
-			(1 + 0.02 * float64(warlock.Talents.FireAndBrimstone) * core.TernaryFloat64(warlock.ImmolateDot.IsActive(), 0, 1)),
+			(1 + 0.02 * float64(warlock.Talents.FireAndBrimstone) * core.TernaryFloat64(warlock.ImmolateDot.IsActive(), 1, 0)),
 		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.DestructiveReach),
 		BaseDamage:           core.BaseDamageConfigMagic(1429.0, 1813.0, 0.7142*(1+0.04*float64(warlock.Talents.ShadowAndFlame))),
 		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin) / 5)),
@@ -39,7 +40,7 @@ func (warlock *Warlock) registerChaosBoltSpell() {
 			},
 			CD: core.Cooldown{
 				Timer:    warlock.NewTimer(),
-				Duration: time.Second * 12,
+				Duration: time.Second * (12 - 2 * core.TernaryDuration(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfChaosBolt), 1, 0)),
 			},
 		},
 
