@@ -9,6 +9,15 @@ func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
 	viciousStrikes := 0.15 * float64(deathKnight.Talents.ViciousStrikes)
 	actionID := core.ActionID{SpellID: 55271}
 
+	outbreakBonus := 0.0
+	if deathKnight.Talents.Outbreak == 1 {
+		outbreakBonus = 0.07
+	} else if deathKnight.Talents.Outbreak == 2 {
+		outbreakBonus = 0.13
+	} else if deathKnight.Talents.Outbreak == 3 {
+		outbreakBonus = 0.20
+	}
+
 	deathKnight.ScourgeStrike = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
@@ -28,9 +37,7 @@ func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return weaponBaseDamage(sim, hitEffect, spell) *
-						(1.0 +
-							0.07*float64(deathKnight.Talents.Outbreak))
+					return weaponBaseDamage(sim, hitEffect, spell) * (1.0 + outbreakBonus)
 				},
 				TargetSpellCoefficient: 1,
 			},
