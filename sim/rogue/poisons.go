@@ -8,7 +8,6 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-// Returns whether any Deadly Poisons are being used.
 func (rogue *Rogue) applyPoisons() {
 	rogue.applyDeadlyPoison()
 	rogue.applyInstantPoison()
@@ -29,6 +28,24 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					if rogue.DeadlyPoisonDot.IsActive() {
+						if rogue.DeadlyPoisonDot.GetStacks() == 5 {
+							if rogue.LastDeadlyPoisonProcMask.Matches(core.ProcMaskMeleeMH) {
+								switch rogue.Consumes.OffHandImbue {
+								case proto.WeaponImbue_WeaponImbueRogueDeadlyPoison:
+									rogue.DeadlyPoisonDot.Refresh(sim)
+								case proto.WeaponImbue_WeaponImbueRogueInstantPoison:
+									rogue.InstantPoison.Cast(sim, spellEffect.Target)
+								}
+							}
+							if rogue.LastDeadlyPoisonProcMask.Matches(core.ProcMaskMeleeOH) {
+								switch rogue.Consumes.MainHandImbue {
+								case proto.WeaponImbue_WeaponImbueRogueDeadlyPoison:
+									rogue.DeadlyPoisonDot.Refresh(sim)
+								case proto.WeaponImbue_WeaponImbueRogueInstantPoison:
+									rogue.InstantPoison.Cast(sim, spellEffect.Target)
+								}
+							}
+						}
 						rogue.DeadlyPoisonDot.Refresh(sim)
 						rogue.DeadlyPoisonDot.AddStack(sim)
 					} else {
@@ -36,6 +53,7 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 						rogue.DeadlyPoisonDot.SetStacks(sim, 1)
 					}
 				}
+				rogue.LastDeadlyPoisonProcMask = core.ProcMaskEmpty
 			},
 		}),
 	})
@@ -108,7 +126,7 @@ func (rogue *Rogue) applyDeadlyPoison() {
 			if sim.RandomFloat("Deadly Poison") > procChance {
 				return
 			}
-
+			rogue.LastDeadlyPoisonProcMask = spellEffect.ProcMask
 			rogue.DeadlyPoison.Cast(sim, spellEffect.Target)
 		},
 	})
