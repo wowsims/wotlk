@@ -25,7 +25,8 @@ func (deathKnight *DeathKnight) newBloodStrikeSpell(isMH bool) *core.Spell {
 				return weaponBaseDamage(sim, hitEffect, spell) *
 					(1.0 +
 						core.TernaryFloat64(deathKnight.FrostFeverDisease.IsActive(), 0.125, 0.0) +
-						core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 0.125, 0.0))
+						core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 0.125, 0.0) +
+						core.TernaryFloat64(deathKnight.EbonPlagueAura.IsActive(), 0.125, 0.0))
 			},
 			TargetSpellCoefficient: 1,
 		},
@@ -96,10 +97,10 @@ func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
 					if sim.RandomFloat("Threat of Thassarian") < threatOfThassarianChance {
 						ohHitSpell.Cast(sim, spellEffect.Target)
 
-						deathKnight.Obliterate.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 2
-						deathKnight.Obliterate.SpellMetrics[spellEffect.Target.TableIndex].Hits--
+						deathKnight.BloodStrike.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 2
+						deathKnight.BloodStrike.SpellMetrics[spellEffect.Target.TableIndex].Hits--
 					} else {
-						deathKnight.Obliterate.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 1
+						deathKnight.BloodStrike.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 1
 					}
 				}
 			},

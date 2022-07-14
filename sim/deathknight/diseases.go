@@ -25,7 +25,7 @@ func (deathKnight *DeathKnight) checkForEbonPlague(sim *core.Simulation) {
 	if deathKnight.Talents.EbonPlaguebringer == 0 {
 		return
 	}
-	if deathKnight.FrostFeverDisease.IsActive() || deathKnight.BloodPlagueDisease.IsActive() {
+	if deathKnight.DiseasesAreActive() {
 		deathKnight.EbonPlagueAura.Activate(sim)
 	} else {
 		deathKnight.EbonPlagueAura.Deactivate(sim)
