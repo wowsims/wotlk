@@ -101,9 +101,42 @@ message DeathKnightTalents {
 
 enum DeathKnightMajorGlyph {
 	DeathKnightMajorGlyphNone = 0;
+	GlyphOfAntiMagicShell = 43533;
+	GlyphOfBloodStrike = 43826;
+	GlyphOfBoneShield = 43536;
+	GlyphOfChainsOfIce = 43537;
+	GlyphOfDancingRuneWeapon = 45799;
+	GlyphOfDarkCommand = 43538;
+	GlyphOfDarkDeath = 45804;
+	GlyphOfDeathAndDecay = 43542;
+	GlyphOfDeathGrip = 43541;
+	GlyphOfDeathStrike = 43827;
+	GlyphOfDisease = 45805;
+	GlyphOfFrostStrike = 43543;
+	GlyphOfHeartStrike = 43534;
+	GlyphOfHowlingBlast = 45806;
+	GlyphOfHungeringCold = 45800;
+	GlyphOfIceboundFortitude = 43545;
+	GlyphOfIcyTouch = 43546;
+	GlyphOfObliterate = 43547;
+	GlyphOfPlagueStrike = 43548;
+	GlyphOfRuneStrike = 43550;
+	GlyphOfRuneTap = 43825;
+	GlyphOfScourgeStrike = 43551;
+	GlyphOfStrangulate = 43552;
+	GlyphOfTheGhoul = 43549;
+	GlyphOfUnbreakableArmor = 43553;
+	GlyphOfUnholyBlight = 45803;
+	GlyphOfVampiricBlood = 43554;
 }
 enum DeathKnightMinorGlyph {
 	DeathKnightMinorGlyphNone = 0;
+	GlyphOfBloodTap = 43535;
+	GlyphOfCorpseExplosion = 43671;
+	GlyphOfDeathSEmbrace = 43539;
+	GlyphOfHornOfWinter = 43544;
+	GlyphOfPestilence = 43672;
+	GlyphOfRaiseDead = 43673;
 }
 
 message DeathKnight {
@@ -114,6 +147,7 @@ message DeathKnight {
 	DeathKnightTalents talents = 2;
 	
 	message Options {
+		double starting_runic_power = 1;
 	}
 	Options options = 3;
 }

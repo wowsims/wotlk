@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (rogue *Rogue) makeKillingSpreeAttackSpell() *core.Spell {
@@ -61,7 +62,7 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    rogue.NewTimer(),
-				Duration: time.Minute * 2, // TODO: Glyph duration decrease
+				Duration: time.Minute*2 - core.TernaryDuration(rogue.HasGlyph(int32(proto.RogueMajorGlyph_GlyphOfKillingSpree)), time.Second*45, 0),
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, u *core.Unit, s2 *core.Spell) {

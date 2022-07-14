@@ -7,26 +7,24 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (warlock *Warlock) registerIncinerateSpell() {
-	baseCost := 0.14 * warlock.BaseMana
-	has4pMal := warlock.HasSetBonus(ItemSetMaleficRaiment, 4)
-
+func (warlock *Warlock) registerSoulFireSpell() {
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
 		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 0, 1) * 5 * core.CritRatingPerCritChance,
-		DamageMultiplier:     core.TernaryFloat64(has4pMal, 1.06, 1.0) * (1 + 0.03*float64(warlock.Talents.Emberstorm)),
+		DamageMultiplier:     (1 + 0.03*float64(warlock.Talents.Emberstorm)),
 		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.DestructiveReach),
-		BaseDamage:           warlock.incinerateDamage(),
+		BaseDamage:           warlock.soulFireDamage(),
 		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
 	}
 
+	baseCost := 0.09 * warlock.BaseMana
 	costReduction := 0.0
 	if float64(warlock.Talents.Cataclysm) > 0 {
 		costReduction += 0.01 + 0.03*float64(warlock.Talents.Cataclysm)
 	}
 
-	warlock.Incinerate = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 47838},
+	warlock.SoulFire = warlock.RegisterSpell(core.SpellConfig{
+		ActionID:     core.ActionID{SpellID: 47825},
 		SpellSchool:  core.SpellSchoolFire,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -35,7 +33,7 @@ func (warlock *Warlock) registerIncinerateSpell() {
 			DefaultCast: core.Cast{
 				Cost:     baseCost * (1 - costReduction),
 				GCD:      core.GCDDefault,
-				CastTime: warlock.incinerateCastTime(),
+				CastTime: warlock.soulFireCastTime(),
 			},
 		},
 
@@ -44,25 +42,24 @@ func (warlock *Warlock) registerIncinerateSpell() {
 
 }
 
-func (warlock *Warlock) incinerateCastTime() time.Duration {
-	baseCastTime := 2500 - 50*float64(warlock.Talents.Emberstorm)
-	if warlock.MoltenCoreAura.IsActive() {
-		baseCastTime *= 1.0 - 0.1*float64(warlock.Talents.MoltenCore)
+func (warlock *Warlock) soulFireCastTime() time.Duration {
+	baseCastTime := 6000 - 400*float64(warlock.Talents.Bane)
+	if warlock.DecimationAura.IsActive() {
+		baseCastTime *= 1.0 - 0.2*float64(warlock.Talents.Decimation)
 	}
 	return (time.Millisecond * time.Duration(baseCastTime))
 }
 
-func (warlock *Warlock) incinerateDamage() core.BaseDamageConfig {
-	base := core.BaseDamageConfigMagic(582.0, 676.0, 0.713*(1+0.04*float64(warlock.Talents.ShadowAndFlame)))
+func (warlock *Warlock) soulFireDamage() core.BaseDamageConfig {
+	base := core.BaseDamageConfigMagic(1323.0, 1657.0, 1.15)
 
 	return core.WrapBaseDamageConfig(base, func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
 		return func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+			if warlock.MoltenCoreAura.IsActive() {
+				hitEffect.BonusSpellCritRating += 5 * float64(warlock.Talents.MoltenCore) * core.CritRatingPerCritChance
+			}
 			normalDamage := oldCalculator(sim, hitEffect, spell)
 			// Boost damage if immolate is ticking
-			if warlock.ImmolateDot.IsActive() {
-				normalDamage += 157 //  145 to 169 averages to 157
-				normalDamage *= 1 + 0.02*float64(warlock.Talents.FireAndBrimstone)
-			}
 			if warlock.MoltenCoreAura.IsActive() {
 				normalDamage *= 1 + 0.06*float64(warlock.Talents.MoltenCore)
 			}

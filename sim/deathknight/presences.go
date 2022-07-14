@@ -86,6 +86,6 @@ func (deathKnight *DeathKnight) registerUnholyPresenceAura() {
 
 func (deathKnight *DeathKnight) registerPresences() {
 	deathKnight.registerBloodPresenceAura()
-	deathKnight.registerFrostPresenceAura()
-	deathKnight.registerUnholyPresenceAura()
+	//deathKnight.registerFrostPresenceAura()
+	//deathKnight.registerUnholyPresenceAura()
 }
