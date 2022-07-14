@@ -283,8 +283,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-CrimsonAcolyte'sRegalia"
  value: {
-  dps: 3563.9797550991193
-  tps: 2675.7026699456374
+  dps: 3748.6312651013245
+  tps: 2810.4433772112693
  }
 }
 dps_results: {
@@ -493,8 +493,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-GarbofFaith"
  value: {
-  dps: 2459.9632065043447
-  tps: 1851.8892311146258
+  dps: 2460.732037880969
+  tps: 1852.4984212932652
  }
 }
 dps_results: {
