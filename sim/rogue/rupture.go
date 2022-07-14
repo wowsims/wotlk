@@ -93,7 +93,7 @@ func (rogue *Rogue) registerRupture() {
 
 				return 127 + float64(comboPoints)*18 + attackPower*[]float64{0.015, 0.024, 0.03, 0.034286, 0.0375}[comboPoints-1]
 			}, 0),
-			OutcomeApplier: rogue.OutcomeFuncTick(),
+			OutcomeApplier: rogue.OutcomeFuncTickHitAndCrit(rogue.MeleeCritMultiplier(true, false)),
 		}),
 	})
 }
