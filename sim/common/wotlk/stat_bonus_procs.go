@@ -7,110 +7,42 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-type Callback uint16
-
-func (c Callback) Matches(other Callback) bool {
-	return (c & other) != 0
+type ProcStatBonusEffect struct {
+	Name       string
+	ID         int32
+	Bonus      stats.Stats
+	Duration   time.Duration
+	Callback   Callback
+	ProcMask   core.ProcMask
+	Outcome    core.HitOutcome
+	Harmful    bool
+	ProcChance float64
+	ICD        time.Duration
 }
 
-const (
-	CallbackEmpty Callback = 0
+func newProcStatBonusEffect(config ProcStatBonusEffect) {
+	core.NewItemEffect(config.ID, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		procAura := character.NewTemporaryStatsAura(config.Name+" Proc", core.ActionID{ItemID: config.ID}, config.Bonus, config.Duration)
 
-	// These bits are set by the hit roll
-	OnSpellHitDealt Callback = 1 << iota
-	OnSpellHitTaken
-	OnPeriodicDamageDealt
-	OnCastComplete
-)
+		makeProcTriggerAura(&character.Unit, ProcTrigger{
+			Name:       config.Name,
+			Callback:   config.Callback,
+			ProcMask:   config.ProcMask,
+			Outcome:    config.Outcome,
+			Harmful:    config.Harmful,
+			ProcChance: config.ProcChance,
+			ICD:        config.ICD,
+			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellEffect) {
+				procAura.Activate(sim)
+			},
+		})
+	})
+}
 
 func init() {
 	// Keep these separated by stat, ordered by item ID within each group.
 	core.AddEffectsToTest = false
-
-	type ProcStatBonusEffect struct {
-		Name       string
-		ID         int32
-		Bonus      stats.Stats
-		Duration   time.Duration
-		Callback   Callback
-		ProcMask   core.ProcMask
-		Outcome    core.HitOutcome
-		Harmful    bool
-		ProcChance float64
-		ICD        time.Duration
-	}
-	newProcStatBonusEffect := func(config ProcStatBonusEffect) {
-		core.NewItemEffect(config.ID, func(agent core.Agent) {
-			character := agent.GetCharacter()
-			procAura := character.NewTemporaryStatsAura(config.Name+" Proc", core.ActionID{ItemID: config.ID}, config.Bonus, config.Duration)
-
-			var icd core.Cooldown
-			if config.ICD != 0 {
-				icd = core.Cooldown{
-					Timer:    character.NewTimer(),
-					Duration: config.ICD,
-				}
-			}
-
-			aura := core.Aura{
-				Label:    config.Name,
-				Duration: core.NeverExpires,
-				OnReset: func(aura *core.Aura, sim *core.Simulation) {
-					aura.Activate(sim)
-				},
-			}
-
-			callback := func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.ProcMask.Matches(config.ProcMask) {
-					return
-				}
-				if config.Outcome != core.OutcomeEmpty && !spellEffect.Outcome.Matches(config.Outcome) {
-					return
-				}
-				if config.Harmful && spellEffect.Damage == 0 {
-					return
-				}
-				if icd.Duration != 0 && !icd.IsReady(sim) {
-					return
-				}
-				if config.ProcChance != 1 && sim.RandomFloat(config.Name) > config.ProcChance {
-					return
-				}
-
-				if icd.Duration != 0 {
-					icd.Use(sim)
-				}
-				procAura.Activate(sim)
-			}
-
-			if config.Callback.Matches(OnSpellHitDealt) {
-				aura.OnSpellHitDealt = callback
-			}
-			if config.Callback.Matches(OnSpellHitTaken) {
-				aura.OnSpellHitTaken = callback
-			}
-			if config.Callback.Matches(OnPeriodicDamageDealt) {
-				aura.OnPeriodicDamageDealt = callback
-			}
-			if config.Callback.Matches(OnCastComplete) {
-				aura.OnCastComplete = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-					if icd.Duration != 0 && !icd.IsReady(sim) {
-						return
-					}
-					if config.ProcChance != 1 && sim.RandomFloat(config.Name) > config.ProcChance {
-						return
-					}
-
-					if icd.Duration != 0 {
-						icd.Use(sim)
-					}
-					procAura.Activate(sim)
-				}
-			}
-
-			character.RegisterAura(aura)
-		})
-	}
 
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Meteorite Whetstone",
