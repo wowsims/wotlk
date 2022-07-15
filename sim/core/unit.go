@@ -86,7 +86,8 @@ type Unit struct {
 	AttackTables  []*AttackTable
 	DefenseTables []*AttackTable
 
-	GCD *Timer
+	GCD       *Timer
+	doNothing bool // flags that this character chose to do nothing.
 
 	// Used for applying the effects of hardcast / channeled spells at a later time.
 	// By definition there can be only 1 hardcast spell being cast at any moment.
@@ -107,6 +108,13 @@ type Unit struct {
 	CastSpeed float64
 
 	CurrentTarget *Unit
+}
+
+// DoNothing will explicitly declare that the character is intentionally doing nothing.
+//  If the GCD is not used during OnGCDReady and this flag is set, OnGCDReady will not be called again
+//  until it is used in some other way (like from an auto attack or resource regeneration).
+func (char *Character) DoNothing() {
+	char.doNothing = true
 }
 
 func (unit *Unit) LogLabel() string {

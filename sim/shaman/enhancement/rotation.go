@@ -157,4 +157,8 @@ func (enh *EnhancementShaman) SetupRotationSchedule() {
 
 func (enh *EnhancementShaman) OnGCDReady(sim *core.Simulation) {
 	enh.scheduler.DoNextAbility(sim, &enh.Character)
+
+	if enh.GCD.IsReady(sim) {
+		enh.DoNothing() // just do nothing and let scheduler handle everything
+	}
 }

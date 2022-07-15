@@ -18,6 +18,10 @@ func (ret *RetributionPaladin) tryUseGCD(sim *core.Simulation) {
 		return
 	}
 	ret.mainRotation(sim)
+
+	if ret.GCD.IsReady(sim) {
+		ret.DoNothing() // this means we had nothing to do and we are ok
+	}
 }
 
 func (ret *RetributionPaladin) openingRotation(sim *core.Simulation) {
@@ -210,12 +214,5 @@ func (ret *RetributionPaladin) waitUntilNextEvent(sim *core.Simulation, events [
 		return
 	}
 
-	// Otherwise add a pending action for the next time
-	pa := &core.PendingAction{
-		Priority:     core.ActionPriorityLow,
-		OnAction:     ret.mainRotation,
-		NextActionAt: nextEventAt,
-	}
-
-	sim.AddPendingAction(pa)
+	ret.WaitUntil(sim, nextEventAt)
 }
