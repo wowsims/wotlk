@@ -137,11 +137,15 @@ func (hp *HunterPet) OnGCDReady(sim *core.Simulation) {
 	if hp.config.RandomSelection {
 		if sim.RandomFloat("Hunter Pet Ability") < 0.5 {
 			if !hp.primaryAbility.TryCast(sim, target, hp) {
-				hp.secondaryAbility.TryCast(sim, target, hp)
+				if !hp.secondaryAbility.TryCast(sim, target, hp) {
+					hp.DoNothing()
+				}
 			}
 		} else {
 			if !hp.secondaryAbility.TryCast(sim, target, hp) {
-				hp.primaryAbility.TryCast(sim, target, hp)
+				if !hp.primaryAbility.TryCast(sim, target, hp) {
+					hp.DoNothing()
+				}
 			}
 		}
 		return
@@ -149,7 +153,11 @@ func (hp *HunterPet) OnGCDReady(sim *core.Simulation) {
 
 	if !hp.primaryAbility.TryCast(sim, target, hp) {
 		if hp.secondaryAbility.Type != Unknown {
-			hp.secondaryAbility.TryCast(sim, target, hp)
+			if !hp.secondaryAbility.TryCast(sim, target, hp) {
+				hp.DoNothing()
+			}
+		} else {
+			hp.DoNothing()
 		}
 	}
 }

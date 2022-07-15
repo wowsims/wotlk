@@ -42,6 +42,7 @@ func (bear *FeralTankDruid) doRotation(sim *core.Simulation) {
 	}
 
 	bear.tryQueueMaul(sim)
+	bear.DoNothing() // means we intionally have no other action if all else fails.
 }
 
 func (bear *FeralTankDruid) shouldSaveLacerateStacks(sim *core.Simulation) bool {
