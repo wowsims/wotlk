@@ -638,13 +638,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestFeral-AllItems-SundialoftheExiled-40682"
- value: {
-  dps: 1739.2909569647954
-  tps: 1261.5322248142047
- }
-}
-dps_results: {
  key: "TestFeral-AllItems-SyphonoftheNathrezim-32262"
  value: {
   dps: 1769.4038876266118
