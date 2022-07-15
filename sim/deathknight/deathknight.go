@@ -20,10 +20,19 @@ type DeathKnight struct {
 	PlagueStrike *core.Spell
 	Obliterate   *core.Spell
 	BloodStrike  *core.Spell
+	FrostStrike  *core.Spell
+
+	LastScourgeStrikeDamage float64
+	ScourgeStrike           *core.Spell
+
+	LastDeathCoilDamage float64
+	DeathCoil           *core.Spell
+
+	DeathAndDecay    *core.Spell
+	DeathAndDecayDot *core.Dot
 
 	HowlingBlastCostless bool
 	HowlingBlast         *core.Spell
-	//FrostStrike      *core.Spell
 	//HornOfWinter     *core.Spell
 	//UnbreakableArmor *core.Spell
 	//ArmyOfTheDead    *core.Spell
@@ -34,15 +43,16 @@ type DeathKnight struct {
 	BloodTapAura *core.Aura
 
 	// Diseases
-	FrostFever         *core.Spell
 	FrostFeverDisease  *core.Dot
-	BloodPlague        *core.Spell
 	BloodPlagueDisease *core.Dot
+
+	UnholyBlight *core.Dot
 
 	// Talent Auras
 	KillingMachineAura *core.Aura
 	IcyTalonsAura      *core.Aura
 	DesolationAura     *core.Aura
+	NecrosisAura       *core.Aura
 
 	// Presences
 	BloodPresenceAura  *core.Aura
@@ -50,7 +60,8 @@ type DeathKnight struct {
 	UnholyPresenceAura *core.Aura
 
 	// Debuffs
-	IcyTouchAura *core.Aura
+	IcyTouchAura   *core.Aura
+	EbonPlagueAura *core.Aura
 }
 
 func (deathKnight *DeathKnight) GetCharacter() *core.Character {
@@ -85,6 +96,10 @@ func (deathKnight *DeathKnight) Initialize() {
 	deathKnight.registerBloodStrikeSpell()
 	deathKnight.registerBloodTapSpell()
 	deathKnight.registerHowlingBlastSpell()
+	deathKnight.registerScourgeStrikeSpell()
+	deathKnight.registerDeathCoilSpell()
+	deathKnight.registerFrostStrikeSpell()
+	deathKnight.registerDeathAndDecaySpell()
 	deathKnight.registerDiseaseDots()
 }
 
@@ -92,6 +107,13 @@ func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
 	deathKnight.ResetRunicPowerBar(sim)
 	deathKnight.BloodPresenceAura.Activate(sim)
 	deathKnight.Presence = BloodPresence
+}
+
+func (deathKnight *DeathKnight) HasMajorGlyph(glyph proto.DeathKnightMajorGlyph) bool {
+	return deathKnight.HasGlyph(int32(glyph))
+}
+func (deathKnight *DeathKnight) HasMinorGlyph(glyph proto.DeathKnightMajorGlyph) bool {
+	return deathKnight.HasGlyph(int32(glyph))
 }
 
 func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight {
@@ -185,6 +207,10 @@ func RegisterDeathKnight() {
 	)
 }
 
+func (deathKnight *DeathKnight) AllDiseasesAreActive() bool {
+	return deathKnight.FrostFeverDisease.IsActive() && deathKnight.BloodPlagueDisease.IsActive()
+}
+
 func (deathKnight *DeathKnight) DiseasesAreActive() bool {
 	return deathKnight.FrostFeverDisease.IsActive() || deathKnight.BloodPlagueDisease.IsActive()
 }
@@ -200,7 +226,7 @@ func (deathKnight *DeathKnight) critMultiplier(applyGuile bool) float64 {
 	return deathKnight.MeleeCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile))
 }
 func (deathKnight *DeathKnight) spellCritMultiplier(applyGuile bool) float64 {
-	return deathKnight.SpellCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile))
+	return deathKnight.MeleeCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile))
 }
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassDeathKnight}] = stats.Stats{

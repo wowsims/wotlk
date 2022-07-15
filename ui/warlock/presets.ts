@@ -13,7 +13,7 @@ import { Warlock, Warlock_Rotation as WarlockRotation, WarlockTalents as Warlock
 import * as Enchants from '/wotlk/core/constants/enchants.js';
 import * as Gems from '/wotlk/core/proto_utils/gems.js';
 import * as Tooltips from '/wotlk/core/constants/tooltips.js';
-import { WarlockArmor } from './inputs';
+import { FelArmor, DemonArmor } from './inputs';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -38,32 +38,41 @@ export const DemonologyTalents = {
 };
 
 
-export const DestructionRotation = WarlockRotation.create({
-	primarySpell: Warlock_Rotation_PrimarySpell.Incinerate,
-	immolate: true,
-	chaosBolt: true,
-	curse: Warlock_Rotation_Curse.Doom,
-	detonateSeed: true,
-});
+export const DestructionRotation = {
+	name: 'Destruction',
+	rotation: WarlockRotation.create({
+		primarySpell: Warlock_Rotation_PrimarySpell.Incinerate,
+		immolate: true,
+		chaosBolt: true,
+		curse: Warlock_Rotation_Curse.Doom,
+		detonateSeed: true,
+	})
+};
 
-export const AfflictionRotation = WarlockRotation.create({
-	primarySpell: Warlock_Rotation_PrimarySpell.Shadowbolt,
-	corruption: true,
-	haunt: true,
-	curse: Warlock_Rotation_Curse.Doom,
-	detonateSeed: true,
-});
+export const AfflictionRotation = {
+	name: 'Affliction',
+	rotation: WarlockRotation.create({
+		primarySpell: Warlock_Rotation_PrimarySpell.Shadowbolt,
+		corruption: true,
+		haunt: true,
+		curse: Warlock_Rotation_Curse.Doom,
+		detonateSeed: true,
+	})
+};
 
-export const DemonologyRotation = WarlockRotation.create({
-	primarySpell: Warlock_Rotation_PrimarySpell.Shadowbolt,
-	corruption: true,
-	curse: Warlock_Rotation_Curse.Doom,
-	detonateSeed: true,
-});
+export const DemonologyRotation = {
+	name: 'Demonology',
+	rotation: WarlockRotation.create({
+		primarySpell: Warlock_Rotation_PrimarySpell.Shadowbolt,
+		corruption: true,
+		curse: Warlock_Rotation_Curse.Elements,
+		detonateSeed: true,
+	})
+};
 
-export const DefaultOptions = WarlockOptions.create({
+export const DestructionOptions = WarlockOptions.create({
 	armor: Armor.FelArmor,
-	summon: Summon.Succubus,
+	summon: Summon.Imp,
 });
 
 export const AfflictionOptions = WarlockOptions.create({

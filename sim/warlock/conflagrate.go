@@ -6,6 +6,7 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (warlock *Warlock) CanConflagrate(sim *core.Simulation) bool {
@@ -24,7 +25,7 @@ func (warlock *Warlock) registerConflagrateSpell() {
 
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
-		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 0, 1) * 5 * core.CritRatingPerCritChance,
+		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) * 5 * core.CritRatingPerCritChance,
 		DamageMultiplier: 0.6 * (1 + (0.1 * float64(warlock.Talents.ImprovedImmolate))) *
 			(1 + 0.03*float64(warlock.Talents.Aftermath)) * (1 + 0.03*float64(warlock.Talents.Emberstorm)),
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
@@ -49,7 +50,10 @@ func (warlock *Warlock) registerConflagrateSpell() {
 				Duration: time.Second * 10,
 			},
 			OnCastComplete: func(sim *core.Simulation, spell *core.Spell) {
-				warlock.ImmolateDot.Deactivate(sim)
+				if !warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfConflagrate) {
+					warlock.ImmolateDot.Deactivate(sim)
+					//warlock.ShadowflameDot.Deactivate(sim)
+				}
 			},
 		},
 

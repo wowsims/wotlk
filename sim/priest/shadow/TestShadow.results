@@ -645,13 +645,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestShadow-AllItems-MarkoftheWarPrisoner-37873"
- value: {
-  dps: 2451.672515465468
-  tps: 1843.3210265888054
- }
-}
-dps_results: {
  key: "TestShadow-AllItems-MercurialAlchemistStone-44322"
  value: {
   dps: 2399.46900056189

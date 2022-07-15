@@ -6,6 +6,7 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (warlock *Warlock) registerUnstableAffSpell() {
@@ -20,7 +21,7 @@ func (warlock *Warlock) registerUnstableAffSpell() {
 			DefaultCast: core.Cast{
 				Cost:     baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
 				GCD:      core.GCDDefault,
-				CastTime: time.Millisecond * 1500,
+				CastTime: time.Millisecond * (1500 - 200 * core.TernaryDuration(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfUnstableAffliction), 1, 0)),
 			},
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -49,7 +50,7 @@ func (warlock *Warlock) registerUnstableAffDot() {
 		NumberOfTicks: ticksNumber,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			DamageMultiplier: 1 * (1 + 0.05*core.TernaryFloat64(warlock.Talents.SiphonLife, 0, 1)),
+			DamageMultiplier: 1 * (1 + 0.05*core.TernaryFloat64(warlock.Talents.SiphonLife, 1, 0)),
 			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(1150/6, spellCoefficient),
 			BonusCritRating:  3 * core.CritRatingPerCritChance * float64(warlock.Talents.Malediction),

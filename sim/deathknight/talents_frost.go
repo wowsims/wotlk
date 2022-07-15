@@ -86,6 +86,10 @@ func (deathKnight *DeathKnight) ApplyFrostTalents() {
 	}
 
 	// Merciless Combat
+	// Implemented Outside
+
+	// Tundra Stalker
+	deathKnight.AddStat(stats.Expertise, 1.0*float64(deathKnight.Talents.TundraStalker)*core.ExpertisePerQuarterPercentReduction)
 }
 
 func (deathKnight *DeathKnight) applyKillingMachine() {
@@ -149,6 +153,20 @@ func (deathKnight *DeathKnight) applyIcyTalons() {
 			aura.Unit.PseudoStats.MeleeSpeedMultiplier /= 1.0 + 0.04*float64(deathKnight.Talents.IcyTalons)
 		},
 	})
+}
+
+func (deathKnight *DeathKnight) threatOfThassarianProcMasks(isMH bool, effect *core.SpellEffect, guileOfGorefiend bool) {
+	if isMH {
+		effect.ProcMask = core.ProcMaskMeleeMHSpecial
+		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.critMultiplier(guileOfGorefiend))
+	} else {
+		effect.ProcMask = core.ProcMaskMeleeOHSpecial
+		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialCritOnly(deathKnight.critMultiplier(guileOfGorefiend))
+	}
+}
+
+func (deathKnight *DeathKnight) threatOfThassarianHitCheck(mhOutcome core.HitOutcome, ohOutcome core.HitOutcome) bool {
+	return mhOutcome == core.OutcomeHit || mhOutcome == core.OutcomeCrit || ohOutcome == core.OutcomeHit || ohOutcome == core.OutcomeCrit
 }
 
 func (deathKnight *DeathKnight) applyThreatOfThassarian() {

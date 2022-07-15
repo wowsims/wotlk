@@ -645,13 +645,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-MarkoftheWarPrisoner-37873"
- value: {
-  dps: 806.1568157598828
-  tps: 780.6000540638164
- }
-}
-dps_results: {
  key: "TestSmite-AllItems-MercurialAlchemistStone-44322"
  value: {
   dps: 785.3680408734715

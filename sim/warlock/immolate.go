@@ -6,6 +6,7 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (warlock *Warlock) registerImmolateSpell() {
@@ -17,7 +18,7 @@ func (warlock *Warlock) registerImmolateSpell() {
 	}
 
 	effect := core.SpellEffect{
-		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 0, 1) * 5 * core.CritRatingPerCritChance,
+		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) * 5 * core.CritRatingPerCritChance,
 		DamageMultiplier:     (1 + (0.1 * float64(warlock.Talents.ImprovedImmolate))) * (1 + 0.03*float64(warlock.Talents.Emberstorm)),
 		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.DestructiveReach),
 		BaseDamage:           core.BaseDamageConfigMagic(460.0, 460.0, 0.2+0.04*float64(warlock.Talents.ShadowAndFlame)),
@@ -54,7 +55,8 @@ func (warlock *Warlock) registerImmolateSpell() {
 			core.TernaryInt(warlock.HasSetBonus(ItemSetVoidheartRaiment, 4), 1, 0), // voidheart 4p gives 1 extra tick
 		TickLength: time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			DamageMultiplier: (1 + 0.03*float64(warlock.Talents.Aftermath)) * (1 + 0.03*float64(warlock.Talents.Emberstorm)),
+			DamageMultiplier: (1 + 0.03*float64(warlock.Talents.Aftermath)) * (1 + 0.03*float64(warlock.Talents.Emberstorm)) *
+				(1 + 0.1*core.TernaryFloat64(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfQuickDecay), 1, 0)),
 			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(785/5, 0.2),
 			OutcomeApplier:   warlock.OutcomeFuncTick(),

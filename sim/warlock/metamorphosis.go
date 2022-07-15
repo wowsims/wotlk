@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (warlock *Warlock) registerMetamorphosisSpell() {
@@ -11,7 +12,7 @@ func (warlock *Warlock) registerMetamorphosisSpell() {
 	warlock.MetamorphosisAura = warlock.RegisterAura(core.Aura{
 		Label:    "Metamorphosis Aura",
 		ActionID: core.ActionID{SpellID: 47241},
-		Duration: time.Second * 30,
+		Duration: time.Second * (30 + 6 * core.TernaryDuration(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfMetamorphosis), 1, 0)),
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.DamageDealtMultiplier *= 1.2
 		},

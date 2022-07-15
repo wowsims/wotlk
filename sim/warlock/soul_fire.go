@@ -10,7 +10,7 @@ import (
 func (warlock *Warlock) registerSoulFireSpell() {
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
-		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 0, 1) * 5 * core.CritRatingPerCritChance,
+		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) * 5 * core.CritRatingPerCritChance,
 		DamageMultiplier:     (1 + 0.03*float64(warlock.Talents.Emberstorm)),
 		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.DestructiveReach),
 		BaseDamage:           warlock.soulFireDamage(),
