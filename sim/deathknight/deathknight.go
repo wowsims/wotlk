@@ -43,6 +43,8 @@ type DeathKnight struct {
 	BloodTapAura *core.Aura
 
 	// Diseases
+	FrostFeverSpell    *core.Spell
+	BloodPlagueSpell   *core.Spell
 	FrostFeverDisease  *core.Dot
 	BloodPlagueDisease *core.Dot
 
@@ -54,6 +56,10 @@ type DeathKnight struct {
 	DesolationAura      *core.Aura
 	NecrosisAura        *core.Aura
 	BloodCakedBladeAura *core.Aura
+
+	// Talent Spells
+	LastDiseaseDamage float64
+	WanderingPlague   *core.Spell
 
 	// Presences
 	BloodPresenceAura  *core.Aura

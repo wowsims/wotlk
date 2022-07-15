@@ -74,7 +74,7 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 	// TODO:
 
 	// Wandering Plague
-	// TODO:
+	deathKnight.applyWanderingPlague()
 
 	// Crypt Fever
 	// Ebon Plaguebringer
@@ -90,6 +90,35 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 
 	// Summon Gargoyle
 	// TODO:
+}
+
+func (deathKnight *DeathKnight) applyWanderingPlague() {
+	if deathKnight.Talents.WanderingPlague == 0 {
+		return
+	}
+
+	actionID := core.ActionID{SpellID: 49655}
+
+	deathKnight.WanderingPlague = deathKnight.RegisterSpell(core.SpellConfig{
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolShadow,
+		Flags:       core.SpellFlagNone,
+
+		ApplyEffects: core.ApplyEffectFuncAOEDamage(deathKnight.Env, core.SpellEffect{
+			// No proc mask, so it won't proc itself.
+			ProcMask: core.ProcMaskEmpty,
+
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
+
+			BaseDamage: core.BaseDamageConfig{
+				Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
+					return deathKnight.LastDiseaseDamage
+				},
+			},
+			OutcomeApplier: deathKnight.OutcomeFuncAlwaysHit(),
+		}),
+	})
 }
 
 func (deathKnight *DeathKnight) applyNecrosis() {
