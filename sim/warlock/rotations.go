@@ -16,9 +16,11 @@ func (warlock *Warlock) OnGCDReady(sim *core.Simulation) {
 func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	var spell *core.Spell
 	var target = warlock.CurrentTarget
+	mainSpell := warlock.Rotation.PrimarySpell
+	secondaryDot := warlock.Rotation.SecondaryDot
+	specSpell := warlock.Rotation.SpecSpell
 
 	// If doing seed, that is the priority spell.
-	mainSpell := warlock.Rotation.PrimarySpell
 	if mainSpell == proto.Warlock_Rotation_Seed {
 		if warlock.Rotation.DetonateSeed {
 			if success := warlock.Seeds[0].Cast(sim, target); !success {
@@ -59,7 +61,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	case proto.Warlock_Rotation_Doom:
 		if sim.GetRemainingDuration() < time.Minute {
 			// Can't cast agony until we are at end and both agony and doom are not ticking.
-			if sim.GetRemainingDuration() > time.Second*30 && !warlock.CurseOfAgonyDot.IsActive() && !warlock.CurseOfDoomDot.IsActive() {
+			if sim.GetRemainingDuration() > time.Second*24 && !warlock.CurseOfAgonyDot.IsActive() && !warlock.CurseOfDoomDot.IsActive() {
 				spell = warlock.CurseOfAgony
 			}
 		} else if warlock.CurseOfDoom.CD.IsReady(sim) && !warlock.CurseOfDoomDot.IsActive() {
@@ -91,7 +93,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 
 	// If big CD coming up and we don't have enough mana for it, lifetap
 	// Also, never do a big regen in the last few seconds of the fight.
-	if !warlock.DoingRegen && nextBigCD-sim.CurrentTime < time.Second*15 && sim.GetRemainingDuration() > time.Second*20 {
+	if !warlock.DoingRegen && nextBigCD-sim.CurrentTime < time.Second*5 && sim.GetRemainingDuration() > time.Second*30 {
 		if warlock.GetStat(stats.SpellPower) > warlock.GetInitialStat(stats.SpellPower) || warlock.HasTemporarySpellCastSpeedIncrease() {
 			// never start regen if you have boosted sp or boosted cast speed
 		} else if warlock.CurrentManaPercent() < 0.2 {
@@ -116,9 +118,12 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		warlock.DemonicEmpowerment.Cast(sim, target)
 	}
 
+
+	// Affliction Rotation
+	// Demonology Rotation
+	// Desttruction Rotation
+
 	// main spells
-	secondaryDot := warlock.Rotation.SecondaryDot
-	specSpell := warlock.Rotation.SpecSpell
 	// Spec Spell first
 	if warlock.Talents.ChaosBolt && specSpell == proto.Warlock_Rotation_ChaosBolt && warlock.ChaosBolt.CD.IsReady(sim) {
 		spell = warlock.ChaosBolt

@@ -1,4 +1,4 @@
-import { Warlock_Options as WarlockOptions, Warlock_Rotation_PrimarySpell as PrimarySpell, Warlock_Rotation_SecondaryDot as SecondaryDot, Warlock_Rotation_SpecSpell as SpecSpell, Warlock_Rotation_Curse as Curse, Warlock_Options_Armor as Armor, Warlock_Options_Summon as Summon } from '/wotlk/core/proto/warlock.js';
+import { Warlock_Options as WarlockOptions, Warlock_Rotation_Preset as RotationPreset, Warlock_Rotation_PrimarySpell as PrimarySpell, Warlock_Rotation_SecondaryDot as SecondaryDot, Warlock_Rotation_SpecSpell as SpecSpell, Warlock_Rotation_Curse as Curse, Warlock_Options_Armor as Armor, Warlock_Options_Summon as Summon } from '/wotlk/core/proto/warlock.js';
 import { RaidTarget } from '/wotlk/core/proto/common.js';
 import { Spec } from '/wotlk/core/proto/common.js';
 import { NO_TARGET } from '/wotlk/core/proto_utils/utils.js';
@@ -191,7 +191,7 @@ export const SecondaryDotUnstableAffliction= {
 	extraCssClasses: [
 		'UnstableAffliction-picker',
 	],
-	changedEvent: (player: Player<Spec.SpecWarlock>) => player.talentsChangeEmitter || player.specOptionsChangeEmitter || player.rotationChangeEmitter,
+	changedEvent: (player: Player<Spec.SpecWarlock>) => player.changeEmitter,
 	getValue: (player: Player<Spec.SpecWarlock>) => player.getRotation().secondaryDot == SecondaryDot.UnstableAffliction,
 	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: boolean) => {
 		const newRotation = player.getRotation();
@@ -207,7 +207,7 @@ export const SpecSpellChaosBolt = {
 	extraCssClasses: [
 		'ChaosBolt-picker',
 	],
-	changedEvent: (player: Player<Spec.SpecWarlock>) => player.talentsChangeEmitter,
+	changedEvent: (player: Player<Spec.SpecWarlock>) => player.changeEmitter,
 	getValue: (player: Player<Spec.SpecWarlock>) => player.getRotation().specSpell == SpecSpell.ChaosBolt,
 	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: boolean) => {
 		const newRotation = player.getRotation();
@@ -223,7 +223,7 @@ export const SpecSpellHaunt = {
 	extraCssClasses: [
 		'Haunt-picker',
 	],
-	changedEvent: (player: Player<Spec.SpecWarlock>) => player.talentsChangeEmitter,
+	changedEvent: (player: Player<Spec.SpecWarlock>) => player.changeEmitter,
 	getValue: (player: Player<Spec.SpecWarlock>) => player.getRotation().specSpell == SpecSpell.Haunt,
 	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: boolean) => {
 		const newRotation = player.getRotation();
@@ -319,25 +319,25 @@ export const WarlockRotationConfig = {
 		// 		},
 		// 	},
 		// },
-		{
-			type: 'boolean' as const,
-			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-			config: {
-				extraCssClasses: [
-					'unstableaffliction-picker',
-				],
-				label: 'Use Unstable Affliction',
-				labelTooltip: 'Use Unstable Affliction as the next cast after the dot expires.',
-				changedEvent: (player: Player<Spec.SpecWarlock>) => player.talentsChangeEmitter,
-				getValue: (player: Player<Spec.SpecWarlock>) => player.getRotation().secondaryDot == SecondaryDot.UnstableAffliction,
-				setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: boolean) => {
-					const newRotation = player.getRotation();
-					newRotation.secondaryDot = newValue ? SecondaryDot.UnstableAffliction : SecondaryDot.NoSecondaryDot;
-					player.setRotation(eventID, newRotation);
-				},
-				enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalents().unstableAffliction,
-			},
-		},
+		// {
+		// 	type: 'boolean' as const,
+		// 	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
+		// 	config: {
+		// 		extraCssClasses: [
+		// 			'unstableaffliction-picker',
+		// 		],
+		// 		label: 'Use Unstable Affliction',
+		// 		labelTooltip: 'Use Unstable Affliction as the next cast after the dot expires.',
+		// 		changedEvent: (player: Player<Spec.SpecWarlock>) => player.changeEmitter,
+		// 		getValue: (player: Player<Spec.SpecWarlock>) => player.getRotation().secondaryDot == SecondaryDot.UnstableAffliction,
+		// 		setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: boolean) => {
+		// 			const newRotation = player.getRotation();
+		// 			newRotation.secondaryDot = newValue ? SecondaryDot.UnstableAffliction : SecondaryDot.NoSecondaryDot;
+		// 			player.setRotation(eventID, newRotation);
+		// 		},
+		// 		enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalents().unstableAffliction,
+		// 	},
+		// },
 		// {
 		// 	type: 'boolean' as const,
 		// 	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
@@ -403,7 +403,7 @@ export const WarlockRotationConfig = {
 					'curse-enum-picker',
 				],
 				label: 'Curse',
-				labelTooltip: 'No tooltip yet',
+				labelTooltip: 'Please select your curse assignment.',
 				values: [
 					{
 						name: "None", value: Curse.NoCurse,
@@ -429,6 +429,38 @@ export const WarlockRotationConfig = {
 				setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: number) => {
 					const newRotation = player.getRotation();
 					newRotation.curse = newValue;
+					player.setRotation(eventID, newRotation);
+				},
+			},
+		},
+		{
+			type: 'enum' as const,
+			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
+			config: {
+				extraCssClasses: [
+					'rotation-preset-enum-picker',
+				],
+				label: 'Rotation Preset',
+				labelTooltip: 'Rotation presets for each spec.',
+				values: [
+					{
+						name: "Manual", value: RotationPreset.Manual,
+					},
+					{
+						name: "Affliction", value: RotationPreset.Affliction,
+					},
+					{
+						name: "Demonology", value: RotationPreset.Demonology,
+					},
+					{
+						name: "Destruction", value: RotationPreset.Destruction,
+					},
+				],
+				changedEvent: (player: Player<Spec.SpecWarlock>) => player.rotationChangeEmitter,
+				getValue: (player: Player<Spec.SpecWarlock>) => player.getRotation().preset,
+				setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: number) => {
+					const newRotation = player.getRotation();
+					newRotation.preset = newValue;
 					player.setRotation(eventID, newRotation);
 				},
 			},
