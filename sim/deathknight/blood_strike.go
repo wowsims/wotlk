@@ -66,6 +66,15 @@ func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
 
 	totChance := ToTChance(deathKnight)
 
+	botnChance := 0.0
+	if deathKnight.Talents.BloodOfTheNorth == 1 {
+		botnChance = 0.3
+	} else if deathKnight.Talents.BloodOfTheNorth == 2 {
+		botnChance = 0.6
+	} else if deathKnight.Talents.BloodOfTheNorth == 2 {
+		botnChance = 1.0
+	}
+
 	deathKnight.BloodStrike = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    BloodStrikeActionID,
 		SpellSchool: core.SpellSchoolPhysical,
@@ -93,6 +102,11 @@ func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
 				ToTAdjustMetrics(sim, spell, spellEffect, BloodStrikeMHOutcome)
 
 				if OutcomeEitherWeaponHitOrCrit(BloodStrikeMHOutcome, BloodStrikeOHOutcome) {
+
+					if sim.RandomFloat("Blood Of The North") <= botnChance {
+
+					}
+
 					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 1, 0, 0)
 					deathKnight.Spend(sim, spell, dkSpellCost)
 
