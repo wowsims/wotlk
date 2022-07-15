@@ -29,15 +29,17 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64) {
 			IgnoreHaste: true,
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
+			ProcMask:         core.ProcMaskMeleeMHSpecial,
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
+			OutcomeApplier:   warrior.OutcomeFuncMeleeSpecialHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() {
+				if spellEffect.Landed() {
+					warrior.RendDot.Apply(sim)
+					warrior.procBloodFrenzy(sim, spellEffect, time.Second*15)
+				} else {
 					warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
 				}
-				warrior.RendDot.Apply(sim)
-				warrior.procBloodFrenzy(sim, spellEffect, time.Second*15)
 			},
 		}),
 	})
