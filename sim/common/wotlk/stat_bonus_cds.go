@@ -129,5 +129,5 @@ func init() {
 	newResistsActive(50361, 239, time.Second*10, time.Minute*1) // Sindragona's Flawless Fang
 	newResistsActive(50364, 268, time.Second*10, time.Minute*1) // Sindragona's Flawless Fang H
 
-	core.AddEffectsToTest = false
+	core.AddEffectsToTest = true
 }

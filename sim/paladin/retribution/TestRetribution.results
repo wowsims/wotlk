@@ -988,13 +988,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestRetribution-AllItems-SundialoftheExiled-40682"
- value: {
-  dps: 1550.9113465527234
-  tps: 1591.2306233740476
- }
-}
-dps_results: {
  key: "TestRetribution-AllItems-SwiftSkyfireDiamond"
  value: {
   dps: 1550.4460271091632

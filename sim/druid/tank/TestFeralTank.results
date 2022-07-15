@@ -890,13 +890,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestFeralTank-AllItems-SundialoftheExiled-40682"
- value: {
-  dps: 627.6296476260877
-  tps: 874.3146557070942
- }
-}
-dps_results: {
  key: "TestFeralTank-AllItems-SwiftSkyfireDiamond"
  value: {
   dps: 603.5036161527819
