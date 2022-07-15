@@ -150,10 +150,10 @@ func MiseryAura(target *Unit) *Aura {
 		ActionID: ActionID{SpellID: 33198},
 		Duration: time.Second * 24,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			target.PseudoStats.BonusSpellHitRating += 3 * SpellHitRatingPerHitChance
+			target.PseudoStats.BonusSpellHitRatingTaken += 3 * SpellHitRatingPerHitChance
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			target.PseudoStats.BonusSpellHitRating -= 3 * SpellHitRatingPerHitChance
+			target.PseudoStats.BonusSpellHitRatingTaken -= 3 * SpellHitRatingPerHitChance
 		},
 	})
 }
@@ -373,11 +373,14 @@ func WintersChillAura(target *Unit, stacks int32) *Aura {
 			aura.SetStacks(sim, 5)
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.BonusSpellCritRating -= float64(aura.stacks) * CritRatingPerCritChance
+			aura.Unit.PseudoStats.BonusSpellCritRatingTaken -= float64(aura.stacks) * CritRatingPerCritChance
 		},
 		OnStacksChange: func(aura *Aura, sim *Simulation, oldStacks, newStacks int32) {
+			if !aura.active {
+				return
+			}
 			aura.Priority = float64(newStacks)
-			aura.Unit.PseudoStats.BonusSpellCritRating += (float64(newStacks) - float64(oldStacks)) * CritRatingPerCritChance
+			aura.Unit.PseudoStats.BonusSpellCritRatingTaken += (float64(newStacks) - float64(oldStacks)) * CritRatingPerCritChance
 		},
 	})
 }
@@ -391,10 +394,10 @@ func majorSpellCritDebuffAura(target *Unit, label string, actionID ActionID, per
 		ActionID: actionID,
 		Duration: time.Second * 30,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.BonusSpellCritRating += bonusSpellCrit
+			aura.Unit.PseudoStats.BonusSpellCritRatingTaken += bonusSpellCrit
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.BonusSpellCritRating -= bonusSpellCrit
+			aura.Unit.PseudoStats.BonusSpellCritRatingTaken -= bonusSpellCrit
 		},
 	})
 }
@@ -418,10 +421,10 @@ func FaerieFireAura(target *Unit, imp bool) *Aura {
 			Priority: 3,
 			// no ActionID to hide this secondary effect from stats
 			OnGain: func(aura *Aura, sim *Simulation) {
-				aura.Unit.PseudoStats.BonusSpellHitRating += 3 * SpellHitRatingPerHitChance
+				aura.Unit.PseudoStats.BonusSpellHitRatingTaken += 3 * SpellHitRatingPerHitChance
 			},
 			OnExpire: func(aura *Aura, sim *Simulation) {
-				aura.Unit.PseudoStats.BonusSpellHitRating -= 3 * SpellHitRatingPerHitChance
+				aura.Unit.PseudoStats.BonusSpellHitRatingTaken -= 3 * SpellHitRatingPerHitChance
 				if mainAura.IsActive() {
 					mainAura.Deactivate(sim)
 				}
@@ -621,10 +624,10 @@ func HuntersMarkAura(target *Unit, points int32, glyphed bool) *Aura {
 		Duration: NeverExpires,
 		Priority: priority,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.BonusRangedAttackPower += bonus
+			aura.Unit.PseudoStats.BonusRangedAttackPowerTaken += bonus
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.BonusRangedAttackPower -= bonus
+			aura.Unit.PseudoStats.BonusRangedAttackPowerTaken -= bonus
 		},
 	})
 }
@@ -796,10 +799,10 @@ func minorCritDebuffAura(target *Unit, label string, actionID ActionID) *Aura {
 		ActionID: actionID,
 		Duration: time.Minute * 5,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.BonusCritRating += 3 * CritRatingPerCritChance
+			aura.Unit.PseudoStats.BonusCritRatingTaken += 3 * CritRatingPerCritChance
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.BonusCritRating -= 3 * CritRatingPerCritChance
+			aura.Unit.PseudoStats.BonusCritRatingTaken -= 3 * CritRatingPerCritChance
 		},
 	})
 }

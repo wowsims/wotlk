@@ -445,6 +445,7 @@ type PseudoStats struct {
 	BonusOHCritRating     float64 // Talents, e.g. Rogue Dagger specialization
 	BonusMHArmorPenRating float64 // Talents, e.g. Rogue Mace specialization
 	BonusOHArmorPenRating float64 // Talents, e.g. Rogue Mace specialization
+	BonusSpellCritRating  float64 // Crit rating bonus to spells
 
 	DisableDWMissPenalty bool    // Used by Heroic Strike and Cleave
 	IncreasedMissChance  float64 // Insect Swarm and Scorpid Sting
@@ -488,13 +489,12 @@ type PseudoStats struct {
 
 	ReducedCritTakenChance float64 // Reduces chance to be crit.
 
-	BonusMeleeAttackPower  float64 // Imp Hunters mark, EW
-	BonusRangedAttackPower float64 // Hunters mark, EW
-	BonusSpellCritRating   float64 // Imp Shadow Bolt debuff
-	BonusCritRating        float64 // Totem of Wrath / Master Poisoner / Heart of the Crusader
-	BonusFrostCritRating   float64 // Winter's Chill
-	BonusMeleeHitRating    float64 //
-	BonusSpellHitRating    float64 // Imp FF
+	BonusMeleeAttackPowerTaken  float64 // Imp Hunters mark, EW
+	BonusRangedAttackPowerTaken float64 // Hunters mark, EW
+	BonusSpellCritRatingTaken   float64 // Imp Shadow Bolt / Imp Scorch / Winter's Chill debuff
+	BonusCritRatingTaken        float64 // Totem of Wrath / Master Poisoner / Heart of the Crusader
+	BonusMeleeHitRatingTaken    float64 //
+	BonusSpellHitRatingTaken    float64 // Imp FF
 
 	BonusDamageTaken         float64 // Blessing of Sanctuary
 	BonusPhysicalDamageTaken float64 // Hemo, Gift of Arthas, etc
