@@ -87,6 +87,8 @@ func (war *DpsWarrior) normalRotation(sim *core.Simulation, highPrioSpellsOnly b
 				war.BattleStance.Cast(sim, nil)
 			}
 			war.Overpower.Cast(sim, war.CurrentTarget)
+		} else if war.ShouldRend(sim) {
+			war.Rend.Cast(sim, war.CurrentTarget)
 		} else if war.CanSlam(sim) {
 			war.Slam.Cast(sim, war.CurrentTarget)
 		} else if !highPrioSpellsOnly {
