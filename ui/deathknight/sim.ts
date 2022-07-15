@@ -191,6 +191,9 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				],
 				weaponImbues: [
 				],
+				pet: [
+					IconInputs.KiblersBits,
+				],
 				other: [
 					IconInputs.ScrollOfAgilityV,
 					IconInputs.ScrollOfStrengthV,

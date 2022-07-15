@@ -247,8 +247,7 @@ func (unit *Unit) OutcomeFuncMeleeWeaponSpecialNoHitNoCrit() OutcomeApplier {
 			roll := sim.RandomFloat("White Hit Table")
 			chance := 0.0
 
-			if (spell.Flags.Matches(SpellFlagCannotBeDodged) || !spellEffect.applyAttackTableDodge(spell, unit, attackTable, roll, &chance)) &&
-				!spellEffect.applyAttackTableParry(spell, unit, attackTable, roll, &chance) {
+			if spell.Flags.Matches(SpellFlagCannotBeDodged) || !spellEffect.applyAttackTableDodge(spell, unit, attackTable, roll, &chance) {
 				spellEffect.applyAttackTableHit(spell)
 			}
 		}
