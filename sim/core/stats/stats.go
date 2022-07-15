@@ -491,7 +491,7 @@ type PseudoStats struct {
 	BonusMeleeAttackPower  float64 // Imp Hunters mark, EW
 	BonusRangedAttackPower float64 // Hunters mark, EW
 	BonusSpellCritRating   float64 // Imp Shadow Bolt debuff
-	BonusCritRating        float64 // Imp Judgement of the Crusader
+	BonusCritRating        float64 // Totem of Wrath / Master Poisoner / Heart of the Crusader
 	BonusFrostCritRating   float64 // Winter's Chill
 	BonusMeleeHitRating    float64 //
 	BonusSpellHitRating    float64 // Imp FF

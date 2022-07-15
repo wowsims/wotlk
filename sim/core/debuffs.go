@@ -35,7 +35,7 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 	}
 
 	if debuffs.ImprovedScorch {
-		MakePermanent(ImprovedScorchAura(target, 5))
+		MakePermanent(ImprovedScorchAura(target))
 	}
 
 	if debuffs.WintersChill {
@@ -116,6 +116,18 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 
 	if debuffs.Screech {
 		MakePermanent(ScreechAura(target))
+	}
+
+	if debuffs.TotemOfWrath {
+		MakePermanent(TotemOfWrathDebuff(target))
+	}
+
+	if debuffs.MasterPoisoner {
+		MakePermanent(MasterPoisonerDebuff(target))
+	}
+
+	if debuffs.HeartOfTheCrusader {
+		MakePermanent(HeartoftheCrusaderDebuff(target))
 	}
 }
 
@@ -270,24 +282,6 @@ func earthMoonEbonPlaguebringerAura(target *Unit, label string, id int32) *Aura 
 	})
 }
 
-func ImprovedShadowBoltAura(target *Unit) *Aura {
-	bonusSpellCrit := 5.0 * CritRatingPerCritChance
-	config := Aura{
-		Label:    "Shadow Mastery",
-		Tag:      "Shadow Mastery",
-		ActionID: ActionID{SpellID: 17800},
-		Duration: time.Second * 30,
-		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.BonusCritRating += bonusSpellCrit
-		},
-		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.BonusCritRating -= bonusSpellCrit
-		},
-	}
-
-	return target.GetOrRegisterAura(config)
-}
-
 var BloodFrenzyActionID = ActionID{SpellID: 29859}
 var phyDmgDebuff = `4%phydmg`
 
@@ -353,37 +347,54 @@ func MangleAura(target *Unit) *Aura {
 	})
 }
 
+const MajorSpellCritDebuffAuraTag = "majorspellcritdebuff"
+
+func ImprovedShadowBoltAura(target *Unit) *Aura {
+	return majorSpellCritDebuffAura(target, "Shadow Mastery", ActionID{SpellID: 17800}, 5)
+}
+
 var ImprovedScorchAuraLabel = "Improved Scorch"
 
-func ImprovedScorchAura(target *Unit, startingStacks int32) *Aura {
-	return target.GetOrRegisterAura(Aura{
-		Label:     ImprovedScorchAuraLabel,
-		ActionID:  ActionID{SpellID: 12873},
-		Duration:  time.Second * 30,
-		MaxStacks: 5,
-		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.SetStacks(sim, startingStacks)
-		},
-		OnStacksChange: func(aura *Aura, sim *Simulation, oldStacks int32, newStacks int32) {
-			aura.Unit.PseudoStats.FireDamageTakenMultiplier /= 1.0 + 0.03*float64(oldStacks)
-			aura.Unit.PseudoStats.FireDamageTakenMultiplier *= 1.0 + 0.03*float64(newStacks)
-		},
-	})
+func ImprovedScorchAura(target *Unit) *Aura {
+	return majorSpellCritDebuffAura(target, ImprovedScorchAuraLabel, ActionID{SpellID: 12873}, 5)
 }
 
 var WintersChillAuraLabel = "Winter's Chill"
 
-func WintersChillAura(target *Unit, startingStacks int32) *Aura {
+func WintersChillAura(target *Unit, stacks int32) *Aura {
 	return target.GetOrRegisterAura(Aura{
 		Label:     WintersChillAuraLabel,
+		Tag:       MajorSpellCritDebuffAuraTag,
+		Priority:  0,
 		ActionID:  ActionID{SpellID: 28595},
-		Duration:  time.Second * 15,
+		Duration:  time.Second * 30,
 		MaxStacks: 5,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.SetStacks(sim, startingStacks)
+			aura.SetStacks(sim, 5)
 		},
-		OnStacksChange: func(aura *Aura, sim *Simulation, oldStacks int32, newStacks int32) {
-			aura.Unit.PseudoStats.BonusFrostCritRating += 2 * CritRatingPerCritChance * float64(newStacks-oldStacks)
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.BonusSpellCritRating -= float64(aura.stacks) * CritRatingPerCritChance
+		},
+		OnStacksChange: func(aura *Aura, sim *Simulation, oldStacks, newStacks int32) {
+			aura.Priority = float64(newStacks)
+			aura.Unit.PseudoStats.BonusSpellCritRating += (float64(newStacks) - float64(oldStacks)) * CritRatingPerCritChance
+		},
+	})
+}
+
+func majorSpellCritDebuffAura(target *Unit, label string, actionID ActionID, percent float64) *Aura {
+	bonusSpellCrit := percent * CritRatingPerCritChance
+	return target.GetOrRegisterAura(Aura{
+		Label:    label,
+		Tag:      MajorSpellCritDebuffAuraTag,
+		Priority: percent,
+		ActionID: actionID,
+		Duration: time.Second * 30,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.BonusSpellCritRating += bonusSpellCrit
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.BonusSpellCritRating -= bonusSpellCrit
 		},
 	})
 }
@@ -759,6 +770,36 @@ func ScorpidStingAura(target *Unit) *Aura {
 			if aura.Unit.HasActiveAura("InsectSwarmMiss") {
 				aura.Unit.PseudoStats.IncreasedMissChance += 0.02
 			}
+		},
+	})
+}
+
+const MinorCritDebuffAuraTag = "minorcritdebuff"
+
+func TotemOfWrathDebuff(target *Unit) *Aura {
+	return minorCritDebuffAura(target, "Totem of Wrath Debuff", ActionID{SpellID: 30708})
+}
+
+func MasterPoisonerDebuff(target *Unit) *Aura {
+	return minorCritDebuffAura(target, "Master Poisoner", ActionID{SpellID: 58410})
+}
+
+func HeartoftheCrusaderDebuff(target *Unit) *Aura {
+	return minorCritDebuffAura(target, "Heart of the Crusader", ActionID{SpellID: 20337})
+}
+
+func minorCritDebuffAura(target *Unit, label string, actionID ActionID) *Aura {
+	return target.GetOrRegisterAura(Aura{
+		Label:    label,
+		Tag:      MinorCritDebuffAuraTag,
+		Priority: 3,
+		ActionID: actionID,
+		Duration: time.Minute * 5,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.BonusCritRating += 3 * CritRatingPerCritChance
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.BonusCritRating -= 3 * CritRatingPerCritChance
 		},
 	})
 }
