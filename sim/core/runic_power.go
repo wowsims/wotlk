@@ -31,16 +31,17 @@ const (
 )
 
 type DKRuneCost struct {
-	blood  int
-	frost  int
-	unholy int
-	death  int
+	Blood  int
+	Frost  int
+	Unholy int
+	Death  int
 }
 
 type Rune struct {
-	state RuneState
-	kind  RuneKind
-	pas   [3]*PendingAction
+	state    RuneState
+	kind     RuneKind
+	pas      [2]*PendingAction
+	botnFlag bool
 }
 
 type runicPowerBar struct {
@@ -68,8 +69,10 @@ type runicPowerBar struct {
 func ResetRune(sim *Simulation, runes *[2]Rune, runeKind RuneKind) {
 	runes[0].state = RuneState_Normal
 	runes[0].kind = runeKind
+	runes[0].botnFlag = false
 	runes[1].state = RuneState_Normal
 	runes[1].kind = runeKind
+	runes[1].botnFlag = false
 
 	if runes[0].pas[0] != nil {
 		runes[0].pas[0].Cancel(sim)
@@ -81,11 +84,6 @@ func ResetRune(sim *Simulation, runes *[2]Rune, runeKind RuneKind) {
 	}
 	runes[0].pas[1] = nil
 
-	if runes[0].pas[2] != nil {
-		runes[0].pas[2].Cancel(sim)
-	}
-	runes[0].pas[2] = nil
-
 	if runes[1].pas[0] != nil {
 		runes[1].pas[0].Cancel(sim)
 	}
@@ -96,10 +94,6 @@ func ResetRune(sim *Simulation, runes *[2]Rune, runeKind RuneKind) {
 	}
 	runes[1].pas[1] = nil
 
-	if runes[1].pas[2] != nil {
-		runes[1].pas[2].Cancel(sim)
-	}
-	runes[1].pas[2] = nil
 }
 
 func (rp *runicPowerBar) ResetRunicPowerBar(sim *Simulation) {
@@ -119,14 +113,12 @@ func (unit *Unit) EnableRunicPowerBar(currentRunicPower float64, maxRunicPower f
 	onDeathRuneGain OnDeathRuneGain,
 	onRunicPowerGain OnRunicPowerGain) {
 	unit.runicPowerBar = runicPowerBar{
-		unit: unit,
-
+		unit:              unit,
 		maxRunicPower:     maxRunicPower,
 		currentRunicPower: currentRunicPower,
-
-		bloodRunes:  [2]Rune{Rune{state: RuneState_Normal, kind: RuneKind_Blood, pas: [3]*PendingAction{nil, nil, nil}}, Rune{state: RuneState_Normal, kind: RuneKind_Blood, pas: [3]*PendingAction{nil, nil, nil}}},
-		frostRunes:  [2]Rune{Rune{state: RuneState_Normal, kind: RuneKind_Frost, pas: [3]*PendingAction{nil, nil, nil}}, Rune{state: RuneState_Normal, kind: RuneKind_Frost, pas: [3]*PendingAction{nil, nil, nil}}},
-		unholyRunes: [2]Rune{Rune{state: RuneState_Normal, kind: RuneKind_Unholy, pas: [3]*PendingAction{nil, nil, nil}}, Rune{state: RuneState_Normal, kind: RuneKind_Unholy, pas: [3]*PendingAction{nil, nil, nil}}},
+		bloodRunes:        [2]Rune{Rune{state: RuneState_Normal, kind: RuneKind_Blood, pas: [2]*PendingAction{nil, nil}, botnFlag: false}, Rune{state: RuneState_Normal, kind: RuneKind_Blood, pas: [2]*PendingAction{nil, nil}, botnFlag: false}},
+		frostRunes:        [2]Rune{Rune{state: RuneState_Normal, kind: RuneKind_Frost, pas: [2]*PendingAction{nil, nil}, botnFlag: false}, Rune{state: RuneState_Normal, kind: RuneKind_Frost, pas: [2]*PendingAction{nil, nil}, botnFlag: false}},
+		unholyRunes:       [2]Rune{Rune{state: RuneState_Normal, kind: RuneKind_Unholy, pas: [2]*PendingAction{nil, nil}, botnFlag: false}, Rune{state: RuneState_Normal, kind: RuneKind_Unholy, pas: [2]*PendingAction{nil, nil}, botnFlag: false}},
 
 		onBloodRuneGain:  onBloodRuneGain,
 		onFrostRuneGain:  onFrostRuneGain,
@@ -315,26 +307,26 @@ func (rp *runicPowerBar) DetermineOptimalCost(sim *Simulation, bloodAmount int, 
 	}
 
 	spellCost := DKRuneCost{
-		blood:  startingBloodRunes - totalBloodRunes,
-		frost:  startingFrostRunes - totalFrostRunes,
-		unholy: startingUnholyRunes - totalUnholyRunes,
-		death:  startingDeathRunes - totalDeathRunes,
+		Blood:  startingBloodRunes - totalBloodRunes,
+		Frost:  startingFrostRunes - totalFrostRunes,
+		Unholy: startingUnholyRunes - totalUnholyRunes,
+		Death:  startingDeathRunes - totalDeathRunes,
 	}
 
 	return spellCost
 }
 
 func (rp *runicPowerBar) Spend(sim *Simulation, spell *Spell, cost DKRuneCost) {
-	for i := 0; i < cost.blood; i++ {
+	for i := 0; i < cost.Blood; i++ {
 		rp.SpendBloodRune(sim, spell.BloodRuneMetrics())
 	}
-	for i := 0; i < cost.frost; i++ {
+	for i := 0; i < cost.Frost; i++ {
 		rp.SpendFrostRune(sim, spell.FrostRuneMetrics())
 	}
-	for i := 0; i < cost.unholy; i++ {
+	for i := 0; i < cost.Unholy; i++ {
 		rp.SpendUnholyRune(sim, spell.UnholyRuneMetrics())
 	}
-	for i := 0; i < cost.death; i++ {
+	for i := 0; i < cost.Death; i++ {
 		rp.SpendDeathRune(sim, spell.DeathRuneMetrics())
 	}
 }
@@ -353,6 +345,41 @@ func (rp *runicPowerBar) SpendRuneMetrics(sim *Simulation, metrics *ResourceMetr
 	if sim.Log != nil {
 		rp.unit.Log(sim, "Spent 1.000 %s rune from %s (%d --> %d).", name, metrics.ActionID, currRunes, newRunes)
 	}
+}
+
+func (rp *runicPowerBar) SetRuneToState(r *Rune, runeState RuneState, runeKind RuneKind) {
+	// TODO: safeguard this?
+	if (r.state == RuneState_Spent || r.state == RuneState_Normal) && (runeState == RuneState_Death || runeState == RuneState_DeathSpent) {
+		r.kind = RuneKind_Death
+	} else if (r.state == RuneState_DeathSpent || r.state == RuneState_Death) && (runeState != RuneState_Death && runeState != RuneState_DeathSpent) {
+		if runeKind == RuneKind_Undef {
+			panic("You have to set a rune kind here!")
+		}
+		r.kind = runeKind
+	}
+
+	r.state = runeState
+}
+
+func (rp *runicPowerBar) SetRuneAtSlotToState(runeBarIdx int32, slot int32, runeState RuneState, runeKind RuneKind) {
+	rb := &rp.bloodRunes
+	if runeBarIdx == 1 {
+		rb = &rp.frostRunes
+	} else if runeBarIdx == 2 {
+		rb = &rp.unholyRunes
+	}
+
+	// TODO: safeguard this?
+	if (rb[slot].state == RuneState_Spent || rb[slot].state == RuneState_Normal) && (runeState == RuneState_Death || runeState == RuneState_DeathSpent) {
+		rb[slot].kind = RuneKind_Death
+	} else if (rb[slot].state == RuneState_DeathSpent || rb[slot].state == RuneState_Death) && (runeState != RuneState_Death && runeState != RuneState_DeathSpent) {
+		if runeKind == RuneKind_Undef {
+			panic("You have to set a rune kind here!")
+		}
+		rb[slot].kind = runeKind
+	}
+
+	rb[slot].state = runeState
 }
 
 func SetRuneAtSlotToState(rb *[2]Rune, slot int32, runeState RuneState, runeKind RuneKind) {
@@ -411,8 +438,6 @@ func (rp *runicPowerBar) LaunchRuneRegenPA(sim *Simulation, r *Rune) {
 		if !pa.cancelled {
 			r.pas[0] = nil
 
-			rp.GenerateRune(r)
-
 			switch r.kind {
 			case RuneKind_Blood:
 				currB := rp.CurrentBloodRunes()
@@ -428,9 +453,11 @@ func (rp *runicPowerBar) LaunchRuneRegenPA(sim *Simulation, r *Rune) {
 				rp.onUnholyRuneGain(sim)
 			case RuneKind_Death:
 				currD := rp.CurrentDeathRunes()
-				rp.GainRuneMetrics(sim, rp.bloodRuneGainMetrics, "death", currD, currD+1)
+				rp.GainRuneMetrics(sim, rp.deathRuneGainMetrics, "death", currD, currD+1)
 				rp.onDeathRuneGain(sim)
 			}
+
+			rp.GenerateRune(r)
 		} else {
 			r.pas[0] = nil
 		}
@@ -510,5 +537,11 @@ func (rp *runicPowerBar) SpendDeathRune(sim *Simulation, metrics *ResourceMetric
 	} else if runeTypeIdx == 2 {
 		r = &rp.unholyRunes[spendSlot]
 	}
+
+	if r.botnFlag {
+		rp.SetRuneToState(r, RuneState_Spent, RuneKind_Blood)
+		r.botnFlag = false
+	}
+
 	rp.LaunchRuneRegenPA(sim, r)
 }

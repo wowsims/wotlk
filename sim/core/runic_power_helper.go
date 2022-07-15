@@ -10,6 +10,10 @@ func RunesAtleastOneOfState(sim *Simulation, runes *[2]Rune, runeState RuneState
 	return runes[0].state == runeState || runes[1].state == runeState
 }
 
+func (rp *runicPowerBar) FlagBloodRuneSlotAsBoTN(slot int32) {
+	rp.bloodRunes[slot].botnFlag = true
+}
+
 // TODO: Simplify this, its definitely possible
 func (rp *runicPowerBar) LaunchBloodTapRegenPA(sim *Simulation, slot int32, spell *Spell) {
 	r := &rp.bloodRunes[slot]
@@ -26,7 +30,7 @@ func (rp *runicPowerBar) LaunchBloodTapRegenPA(sim *Simulation, slot int32, spel
 
 				currRunes := rp.CurrentBloodRunes()
 				rp.GainRuneMetrics(sim, rp.bloodRuneGainMetrics, "blood", currRunes, currRunes+1)
-				SetRuneAtSlotToState(&rp.bloodRunes, slot, RuneState_Normal, RuneKind_Blood)
+				rp.SetRuneToState(r, RuneState_Normal, RuneKind_Blood)
 				rp.onBloodRuneGain(sim)
 
 				currRunes = rp.CurrentDeathRunes()
@@ -41,7 +45,7 @@ func (rp *runicPowerBar) LaunchBloodTapRegenPA(sim *Simulation, slot int32, spel
 
 				timeTillPA := currPA.NextActionAt
 				currPA.Cancel(sim)
-				SetRuneAtSlotToState(&rp.bloodRunes, slot, RuneState_Spent, RuneKind_Blood)
+				rp.SetRuneToState(r, RuneState_Spent, RuneKind_Blood)
 
 				pa := &PendingAction{
 					NextActionAt: timeTillPA,
@@ -53,7 +57,7 @@ func (rp *runicPowerBar) LaunchBloodTapRegenPA(sim *Simulation, slot int32, spel
 						r.pas[0] = nil
 						currRunes := rp.CurrentBloodRunes()
 						rp.GainRuneMetrics(sim, rp.bloodRuneGainMetrics, "blood", currRunes, currRunes+1)
-						SetRuneAtSlotToState(&rp.bloodRunes, slot, RuneState_Normal, RuneKind_Blood)
+						rp.SetRuneToState(r, RuneState_Normal, RuneKind_Blood)
 						rp.onBloodRuneGain(sim)
 					} else {
 						r.pas[0] = nil

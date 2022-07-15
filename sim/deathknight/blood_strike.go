@@ -71,7 +71,7 @@ func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
 		botnChance = 0.3
 	} else if deathKnight.Talents.BloodOfTheNorth == 2 {
 		botnChance = 0.6
-	} else if deathKnight.Talents.BloodOfTheNorth == 2 {
+	} else if deathKnight.Talents.BloodOfTheNorth == 3 {
 		botnChance = 1.0
 	}
 
@@ -102,13 +102,20 @@ func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
 				ToTAdjustMetrics(sim, spell, spellEffect, BloodStrikeMHOutcome)
 
 				if OutcomeEitherWeaponHitOrCrit(BloodStrikeMHOutcome, BloodStrikeOHOutcome) {
-
-					if sim.RandomFloat("Blood Of The North") <= botnChance {
+					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 1, 0, 0)
+					if dkSpellCost.Blood > 0 {
+						if sim.RandomFloat("Blood Of The North") <= botnChance {
+							slot := deathKnight.SpendBloodRune(sim, spell.BloodRuneMetrics())
+							deathKnight.SetRuneAtSlotToState(0, slot, core.RuneState_DeathSpent, core.RuneKind_Death)
+							deathKnight.FlagBloodRuneSlotAsBoTN(slot)
+						} else {
+							dkSpellCost := deathKnight.DetermineOptimalCost(sim, 1, 0, 0)
+							deathKnight.Spend(sim, spell, dkSpellCost)
+						}
+					} else {
+						deathKnight.Spend(sim, spell, dkSpellCost)
 
 					}
-
-					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 1, 0, 0)
-					deathKnight.Spend(sim, spell, dkSpellCost)
 
 					amountOfRunicPower := 10.0
 					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
