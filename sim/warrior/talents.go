@@ -503,11 +503,11 @@ func (warrior *Warrior) registerDeathWishCD() {
 	cost := 10.0
 	cooldownDur := time.Minute * 3
 	if warrior.Talents.IntensifyRage == 1 {
-		cooldownDur *= (100 - 11) / 100
+		cooldownDur = time.Duration(float64(cooldownDur) * 0.89)
 	} else if warrior.Talents.IntensifyRage == 2 {
-		cooldownDur *= (100 - 22) / 100
+		cooldownDur = time.Duration(float64(cooldownDur) * 0.78)
 	} else if warrior.Talents.IntensifyRage == 3 {
-		cooldownDur *= (100 - 33) / 100
+		cooldownDur = time.Duration(float64(cooldownDur) * 0.67)
 	}
 	deathWishSpell := warrior.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
@@ -523,7 +523,7 @@ func (warrior *Warrior) registerDeathWishCD() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    warrior.NewTimer(),
-				Duration: time.Minute * 3,
+				Duration: cooldownDur,
 			},
 		},
 
