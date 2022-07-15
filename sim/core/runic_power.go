@@ -364,10 +364,6 @@ func SetRuneAtSlotToState(rb *[2]Rune, slot int32, runeState RuneState, runeKind
 			panic("You have to set a rune kind here!")
 		}
 		rb[slot].kind = runeKind
-	} else if (rb[slot].state == RuneState_Spent || rb[slot].state == RuneState_Normal) && (runeState != RuneState_Death || runeState != RuneState_DeathSpent) {
-		// Do nothing
-	} else {
-		panic("Undefined behavior!")
 	}
 
 	rb[slot].state = runeState
