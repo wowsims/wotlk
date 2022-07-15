@@ -14,13 +14,8 @@ func (war *DpsWarrior) OnGCDReady(sim *core.Simulation) {
 	war.doRotation(sim)
 
 	if war.GCD.IsReady(sim) && !war.IsWaiting() {
-		// This means we did absolutely nothing.
-		// Wait until our next auto attack to decide again.
-		nextSwing := war.AutoAttacks.MainhandSwingAt
-		if war.AutoAttacks.OffhandSwingAt > sim.CurrentTime {
-			nextSwing = core.MinDuration(nextSwing, war.AutoAttacks.OffhandSwingAt)
-		}
-		war.WaitUntil(sim, nextSwing)
+		// This means we did nothing
+		war.DoNothing()
 	}
 }
 
