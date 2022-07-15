@@ -111,7 +111,7 @@ func (warrior *Warrior) Initialize() {
 	warrior.registerDemoralizingShoutSpell()
 	warrior.registerDevastateSpell()
 	warrior.registerExecuteSpell()
-	warrior.registerMortalStrikeSpell(primaryTimer)
+	warrior.registerMortalStrikeSpell(primaryTimer, warrior.MsRageThreshold)
 	warrior.registerOverpowerSpell(overpowerRevengeTimer)
 	warrior.registerRevengeSpell(overpowerRevengeTimer)
 	warrior.registerShieldBlockSpell()
