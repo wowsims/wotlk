@@ -93,14 +93,17 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 				} else if deathKnight.CanPlagueStrike(sim) {
 					deathKnight.PlagueStrike.Cast(sim, target)
 				} else {
-					nextCD := deathKnight.IcyTouch.ReadyAt()
-
-					if nextCD > sim.CurrentTime {
-						deathKnight.WaitUntil(sim, nextCD)
+					if deathKnight.GCD.IsReady(sim) && !deathKnight.IsWaiting() {
+						// This means we did absolutely nothing.
+						// Wait until our next auto attack to decide again.
+						nextSwing := deathKnight.AutoAttacks.MainhandSwingAt
+						if deathKnight.AutoAttacks.OffhandSwingAt > sim.CurrentTime {
+							nextSwing = core.MinDuration(nextSwing, deathKnight.AutoAttacks.OffhandSwingAt)
+						}
+						deathKnight.WaitUntil(sim, nextSwing)
 					}
 				}
 			}
 		}
-
 	}
 }
