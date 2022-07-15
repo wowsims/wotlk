@@ -85,6 +85,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestHunter-AllItems-AshtongueTalismanofSwiftness-32487"
+ value: {
+  dps: 1632.6843322271689
+  tps: 1221.5376450463211
+ }
+}
+dps_results: {
  key: "TestHunter-AllItems-Assassin'sAlchemistStone-35751"
  value: {
   dps: 1646.7387975959057
@@ -141,6 +148,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestHunter-AllItems-Beast-tamer'sShoulders-30892"
+ value: {
+  dps: 1680.2603016034002
+  tps: 1240.0158599014549
+ }
+}
+dps_results: {
  key: "TestHunter-AllItems-BeastLordArmor"
  value: {
   dps: 1535.5087434715103
@@ -152,6 +166,13 @@ dps_results: {
  value: {
   dps: 1670.8792187650622
   tps: 1251.0213552815649
+ }
+}
+dps_results: {
+ key: "TestHunter-AllItems-BlackBowoftheBetrayer-32336"
+ value: {
+  dps: 1681.6800142557884
+  tps: 1268.2482714912303
  }
 }
 dps_results: {
@@ -967,13 +988,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestHunter-AllItems-SundialoftheExiled-40682"
- value: {
-  dps: 1641.4772247069818
-  tps: 1229.1763346315183
- }
-}
-dps_results: {
  key: "TestHunter-AllItems-SwiftSkyfireDiamond"
  value: {
   dps: 1640.7241290479797
@@ -1013,6 +1027,13 @@ dps_results: {
  value: {
   dps: 1673.7441379603247
   tps: 1253.5267029131821
+ }
+}
+dps_results: {
+ key: "TestHunter-AllItems-TalonofAl'ar-30448"
+ value: {
+  dps: 1634.0127845877948
+  tps: 1224.30823159755
  }
 }
 dps_results: {

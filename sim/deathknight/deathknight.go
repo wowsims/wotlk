@@ -43,15 +43,24 @@ type DeathKnight struct {
 	BloodTapAura *core.Aura
 
 	// Diseases
+	FrostFeverSpell    *core.Spell
+	BloodPlagueSpell   *core.Spell
 	FrostFeverDisease  *core.Dot
 	BloodPlagueDisease *core.Dot
 
-	UnholyBlight *core.Dot
+	UnholyBlightSpell *core.Spell
+	UnholyBlightDot   *core.Dot
 
 	// Talent Auras
-	KillingMachineAura *core.Aura
-	IcyTalonsAura      *core.Aura
-	DesolationAura     *core.Aura
+	KillingMachineAura  *core.Aura
+	IcyTalonsAura       *core.Aura
+	DesolationAura      *core.Aura
+	NecrosisAura        *core.Aura
+	BloodCakedBladeAura *core.Aura
+
+	// Talent Spells
+	LastDiseaseDamage float64
+	WanderingPlague   *core.Spell
 
 	// Presences
 	BloodPresenceAura  *core.Aura

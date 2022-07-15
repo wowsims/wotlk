@@ -100,7 +100,7 @@ func (deathKnight *DeathKnight) registerPlagueStrikeSpell() {
 					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 0, 1)
 					deathKnight.Spend(sim, spell, dkSpellCost)
 
-					deathKnight.BloodPlagueDisease.Apply(sim)
+					deathKnight.BloodPlagueSpell.Cast(sim, spellEffect.Target)
 					if deathKnight.Talents.EbonPlaguebringer > 0 {
 						deathKnight.EbonPlagueAura.Activate(sim)
 					}
