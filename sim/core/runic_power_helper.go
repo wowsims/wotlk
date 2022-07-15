@@ -10,6 +10,10 @@ func RunesAtleastOneOfState(sim *Simulation, runes *[2]Rune, runeState RuneState
 	return runes[0].state == runeState || runes[1].state == runeState
 }
 
+func (rp *runicPowerBar) FlagBloodRuneSlotAsBoTN(slot int32) {
+	rp.bloodRunes[slot].botnFlag = true
+}
+
 // TODO: Simplify this, its definitely possible
 func (rp *runicPowerBar) LaunchBloodTapRegenPA(sim *Simulation, slot int32, spell *Spell) {
 	r := &rp.bloodRunes[slot]
@@ -26,7 +30,7 @@ func (rp *runicPowerBar) LaunchBloodTapRegenPA(sim *Simulation, slot int32, spel
 
 				currRunes := rp.CurrentBloodRunes()
 				rp.GainRuneMetrics(sim, rp.bloodRuneGainMetrics, "blood", currRunes, currRunes+1)
-				SetRuneAtSlotToState(&rp.bloodRunes, slot, RuneState_Normal, RuneKind_Blood)
+				rp.SetRuneToState(r, RuneState_Normal, RuneKind_Blood)
 				rp.onBloodRuneGain(sim)
 
 				currRunes = rp.CurrentDeathRunes()
@@ -41,7 +45,7 @@ func (rp *runicPowerBar) LaunchBloodTapRegenPA(sim *Simulation, slot int32, spel
 
 				timeTillPA := currPA.NextActionAt
 				currPA.Cancel(sim)
-				SetRuneAtSlotToState(&rp.bloodRunes, slot, RuneState_Spent, RuneKind_Blood)
+				rp.SetRuneToState(r, RuneState_Spent, RuneKind_Blood)
 
 				pa := &PendingAction{
 					NextActionAt: timeTillPA,
@@ -53,7 +57,7 @@ func (rp *runicPowerBar) LaunchBloodTapRegenPA(sim *Simulation, slot int32, spel
 						r.pas[0] = nil
 						currRunes := rp.CurrentBloodRunes()
 						rp.GainRuneMetrics(sim, rp.bloodRuneGainMetrics, "blood", currRunes, currRunes+1)
-						SetRuneAtSlotToState(&rp.bloodRunes, slot, RuneState_Normal, RuneKind_Blood)
+						rp.SetRuneToState(r, RuneState_Normal, RuneKind_Blood)
 						rp.onBloodRuneGain(sim)
 					} else {
 						r.pas[0] = nil
@@ -138,9 +142,8 @@ func (rp *runicPowerBar) CorrectBloodTapConversion(sim *Simulation, bloodGainMet
 			// Only one death rune is spent
 			slot = TernaryInt32(runes[0].state == RuneState_DeathSpent, 0, 1)
 			SetRuneAtSlotToState(runes, slot, RuneState_Death, RuneKind_Death)
+			// TODO: Verify this
 			rp.GainDeathRuneMetrics(sim, spell, currDeathRunes, currDeathRunes+1)
-			runes[slot].pas[0].Cancel(sim)
-			runes[slot].pas[0] = nil
 			rp.LaunchBloodTapRegenPA(sim, slot, spell)
 		}
 	} else if RunesAtleastOneOfState(sim, runes, RuneState_Spent) && RunesAtleastOneOfState(sim, runes, RuneState_DeathSpent) { // Point 5
@@ -174,16 +177,18 @@ func (rp *runicPowerBar) CorrectBloodTapConversion(sim *Simulation, bloodGainMet
 			rp.GainDeathRuneMetrics(sim, spell, currDeathRunes, currDeathRunes+2)
 			slot = TernaryInt32(runes[0].state == RuneState_DeathSpent, 0, 1)
 			SetRuneAtSlotToState(runes, slot, RuneState_Death, RuneKind_Death)
-			runes[slot].pas[0].Cancel(sim)
-			runes[slot].pas[0] = nil
+			// TODO: Verify this
+			// runes[slot].pas[0].Cancel(sim)
+			// runes[slot].pas[0] = nil
 			rp.LaunchBloodTapRegenPA(sim, slot, spell)
 		} else {
 			// We have an active death rune and a spent blood rune, we convert the blood rune into a death rune
 			slot = TernaryInt32(runes[0].state == RuneState_Spent, 0, 1)
 			SetRuneAtSlotToState(runes, slot, RuneState_Death, RuneKind_Death)
 			rp.GainDeathRuneMetrics(sim, spell, currDeathRunes, currDeathRunes+1)
-			runes[slot].pas[0].Cancel(sim)
-			runes[slot].pas[0] = nil
+			// TODO: Verify this
+			//runes[slot].pas[0].Cancel(sim)
+			//runes[slot].pas[0] = nil
 			rp.LaunchBloodTapRegenPA(sim, slot, spell)
 		}
 	}
