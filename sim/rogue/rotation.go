@@ -39,6 +39,11 @@ func (rogue *Rogue) doRotation(sim *core.Simulation) {
 	case PlanOpener:
 		rogue.doPlanOpener(sim)
 	}
+
+	// If rogue decided to not use GCD, mark exsplicitly this is ok.
+	if rogue.GCD.IsReady(sim) {
+		rogue.DoNothing()
+	}
 }
 
 // Opening rotation.

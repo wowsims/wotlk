@@ -862,13 +862,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-SundialoftheExiled-40682"
- value: {
-  dps: 787.0561440417796
-  tps: 762.5574806739975
- }
-}
-dps_results: {
  key: "TestSmite-AllItems-SwiftSkyfireDiamond"
  value: {
   dps: 777.2839605995978

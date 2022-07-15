@@ -12,6 +12,11 @@ const DebuffRefreshWindow = time.Second * 2
 
 func (war *DpsWarrior) OnGCDReady(sim *core.Simulation) {
 	war.doRotation(sim)
+
+	if war.GCD.IsReady(sim) && !war.IsWaiting() {
+		// This means we did nothing
+		war.DoNothing()
+	}
 }
 
 func (war *DpsWarrior) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
@@ -22,15 +27,16 @@ func (war *DpsWarrior) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
 func (war *DpsWarrior) doRotation(sim *core.Simulation) {
 	if war.thunderClapNext {
 		if war.CanThunderClap(sim) {
-			war.ThunderClap.Cast(sim, war.CurrentTarget)
-			if war.ThunderClapAura.RemainingDuration(sim) > DebuffRefreshWindow {
-				war.thunderClapNext = false
+			if war.ThunderClap.Cast(sim, war.CurrentTarget) {
+				if war.ThunderClapAura.RemainingDuration(sim) > DebuffRefreshWindow {
+					war.thunderClapNext = false
 
-				// Switching back to berserker immediately is unrealistic because the player needs
-				// to visually confirm the TC landed. Instead we add a delay to model that.
-				war.canSwapStanceAt = sim.CurrentTime + time.Millisecond*300
+					// Switching back to berserker immediately is unrealistic because the player needs
+					// to visually confirm the TC landed. Instead we add a delay to model that.
+					war.canSwapStanceAt = sim.CurrentTime + time.Millisecond*300
+				}
+				return
 			}
-			return
 		}
 	} else {
 		war.trySwapToBerserker(sim)

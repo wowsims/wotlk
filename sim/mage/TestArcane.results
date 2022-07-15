@@ -85,6 +85,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestArcane-AllItems-AshtongueTalismanofInsight-32488"
+ value: {
+  dps: 1105.716084602972
+  tps: 1108.2169755468826
+ }
+}
+dps_results: {
  key: "TestArcane-AllItems-Assassin'sAlchemistStone-35751"
  value: {
   dps: 1102.6076170870494
@@ -617,6 +624,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestArcane-AllItems-MindQuickeningGem-19339"
+ value: {
+  dps: 1104.8463472386609
+  tps: 1107.6911803840305
+ }
+}
+dps_results: {
  key: "TestArcane-AllItems-Moroes'LuckyPocketWatch-28528"
  value: {
   dps: 1104.8865533483693
@@ -729,6 +743,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestArcane-AllItems-Serpent-CoilBraid-30720"
+ value: {
+  dps: 1141.9563693864065
+  tps: 1146.681595260291
+ }
+}
+dps_results: {
  key: "TestArcane-AllItems-SextantofUnstableCurrents-30626"
  value: {
   dps: 1126.0927435836084
@@ -796,13 +817,6 @@ dps_results: {
  value: {
   dps: 1043.703144989236
   tps: 1047.8489185147553
- }
-}
-dps_results: {
- key: "TestArcane-AllItems-SundialoftheExiled-40682"
- value: {
-  dps: 1144.5714233383187
-  tps: 1146.100468254669
  }
 }
 dps_results: {

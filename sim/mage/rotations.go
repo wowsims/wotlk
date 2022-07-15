@@ -9,6 +9,10 @@ import (
 
 func (mage *Mage) OnGCDReady(sim *core.Simulation) {
 	mage.tryUseGCD(sim)
+
+	if mage.GCD.IsReady(sim) && (!mage.IsWaiting() && !mage.IsWaitingForMana()) {
+		panic("failed to use our gcd")
+	}
 }
 
 func (mage *Mage) tryUseGCD(sim *core.Simulation) {

@@ -78,6 +78,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestMutilate-AllItems-AshtongueTalismanofLethality-32492"
+ value: {
+  dps: 2043.1157993328286
+  tps: 1438.9351179543137
+ }
+}
+dps_results: {
  key: "TestMutilate-AllItems-Assassin'sAlchemistStone-35751"
  value: {
   dps: 2071.387960796048
@@ -799,13 +806,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestMutilate-AllItems-SundialoftheExiled-40682"
- value: {
-  dps: 2041.168574449766
-  tps: 1437.621783468889
- }
-}
-dps_results: {
  key: "TestMutilate-AllItems-SwiftSkyfireDiamond"
  value: {
   dps: 2056.655255437276
@@ -936,6 +936,13 @@ dps_results: {
  value: {
   dps: 2061.6470798428504
   tps: 1452.110602498614
+ }
+}
+dps_results: {
+ key: "TestMutilate-AllItems-Warp-SpringCoil-30450"
+ value: {
+  dps: 2209.6077544459877
+  tps: 1557.147410549186
  }
 }
 dps_results: {

@@ -78,6 +78,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-AshtongueTalismanofVision-32491"
+ value: {
+  dps: 4.810965404272825e+123
+  tps: 4.810965404272825e+123
+ }
+}
+dps_results: {
  key: "TestEnhancement-AllItems-Assassin'sAlchemistStone-35751"
  value: {
   dps: 3.497305017319431e+122
@@ -463,6 +470,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-Fathom-BroochoftheTidewalker-30663"
+ value: {
+  dps: 7.390808984295392e+125
+  tps: 7.390808984295392e+125
+ }
+}
+dps_results: {
  key: "TestEnhancement-AllItems-FelstalkerArmor"
  value: {
   dps: 8.637341936773441e+121
@@ -680,6 +694,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-NaturalAlignmentCrystal-19344"
+ value: {
+  dps: 7.323403407783293e+125
+  tps: 7.323403407783293e+125
+ }
+}
+dps_results: {
  key: "TestEnhancement-AllItems-NetherscaleArmor"
  value: {
   dps: 6.647059765502438e+122
@@ -862,6 +883,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-SkycallTotem-33506"
+ value: {
+  dps: 9.376339172217652e+121
+  tps: 9.376339172217652e+121
+ }
+}
+dps_results: {
  key: "TestEnhancement-AllItems-SkyshatterHarness"
  value: {
   dps: 4.046780559227931e+126
@@ -897,6 +925,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-Stonebreaker'sTotem-33507"
+ value: {
+  dps: 4.306843680393134e+124
+  tps: 4.306843680393134e+124
+ }
+}
+dps_results: {
  key: "TestEnhancement-AllItems-StormGauntlets-12632"
  value: {
   dps: inf
@@ -908,13 +943,6 @@ dps_results: {
  value: {
   dps: 5.678057435465467e+118
   tps: 5.678057435465467e+118
- }
-}
-dps_results: {
- key: "TestEnhancement-AllItems-SundialoftheExiled-40682"
- value: {
-  dps: 1.5638200050214703e+124
-  tps: 1.5638200050214703e+124
  }
 }
 dps_results: {
@@ -1062,6 +1090,20 @@ dps_results: {
  value: {
   dps: 2.419813204356111e+124
   tps: 2.419813204356111e+124
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-TotemoftheElementalPlane-40708"
+ value: {
+  dps: 9.376339172217652e+121
+  tps: 9.376339172217652e+121
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-TotemofthePulsingEarth-29389"
+ value: {
+  dps: 9.376339172217652e+121
+  tps: 9.376339172217652e+121
  }
 }
 dps_results: {
