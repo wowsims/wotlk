@@ -37,6 +37,7 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64) {
 				if spellEffect.Landed() {
 					warrior.RendDot.Apply(sim)
 					warrior.procBloodFrenzy(sim, spellEffect, time.Second*15)
+					warrior.rendValidUntil = sim.CurrentTime + time.Second*15
 				} else {
 					warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
 				}
@@ -72,7 +73,7 @@ func (warrior *Warrior) ShouldRend(sim *core.Simulation) bool {
 	}
 
 	if warrior.Talents.MortalStrike {
-		return sim.CurrentTime >= warrior.RendCdThreshold && warrior.CurrentRage() >= warrior.Rend.DefaultCast.Cost
+		return sim.CurrentTime >= (warrior.rendValidUntil-warrior.RendCdThreshold) && warrior.CurrentRage() >= warrior.Rend.DefaultCast.Cost
 	} else if warrior.Talents.Bloodthirst {
 		return warrior.CurrentRage() >= warrior.RendRageThreshold
 	}
