@@ -85,7 +85,6 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 	// Implemented outside
 
 	// Rage of Rivendare
-	// TODO: % bonus damage to spells/abilities (not white hits)
 	deathKnight.AddStat(stats.Expertise, float64(deathKnight.Talents.RageOfRivendare)*core.ExpertisePerQuarterPercentReduction)
 
 	// Summon Gargoyle
@@ -126,12 +125,11 @@ func (deathKnight *DeathKnight) applyNecrosis() {
 		return
 	}
 
-	actionID := core.ActionID{SpellID: 51465}
 	target := deathKnight.CurrentTarget
 
 	var curDmg float64
 	necrosisHit := deathKnight.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
+		ActionID:    core.ActionID{SpellID: 51460},
 		SpellSchool: core.SpellSchoolShadow,
 		Flags:       core.SpellFlagNone,
 
@@ -153,7 +151,7 @@ func (deathKnight *DeathKnight) applyNecrosis() {
 
 	deathKnight.NecrosisAura = deathKnight.RegisterAura(core.Aura{
 		Label:    "Necrosis",
-		ActionID: actionID,
+		ActionID: core.ActionID{SpellID: 51465},
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			deathKnight.NecrosisAura.Activate(sim)
@@ -266,14 +264,8 @@ func (deathKnight *DeathKnight) applyUnholyBlight() {
 	actionID := core.ActionID{SpellID: 50536}
 	target := deathKnight.CurrentTarget
 
-	unholyBlightSpell := deathKnight.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolShadow,
-	})
-
-	deathKnight.LastDeathCoilDamage = 1500
-	deathKnight.UnholyBlight = core.NewDot(core.Dot{
-		Spell: unholyBlightSpell,
+	var curDamage = 0.0
+	deathKnight.UnholyBlightDot = core.NewDot(core.Dot{
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "UnholyBlight-" + strconv.Itoa(int(deathKnight.Index)),
 			ActionID: actionID,
@@ -288,11 +280,22 @@ func (deathKnight *DeathKnight) applyUnholyBlight() {
 			IsPeriodic:       true,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return (0.10 * deathKnight.LastDeathCoilDamage) / 10
+					return (0.10 * curDamage) / 10
 				},
 				TargetSpellCoefficient: 1,
 			},
 			OutcomeApplier: deathKnight.OutcomeFuncAlwaysHit(),
 		}),
 	})
+
+	deathKnight.UnholyBlightSpell = deathKnight.RegisterSpell(core.SpellConfig{
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolShadow,
+		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+			curDamage = deathKnight.LastDeathCoilDamage
+			deathKnight.UnholyBlightDot.Apply(sim)
+		},
+	})
+
+	deathKnight.UnholyBlightDot.Spell = deathKnight.UnholyBlightSpell
 }

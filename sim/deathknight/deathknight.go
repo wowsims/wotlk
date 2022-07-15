@@ -48,7 +48,8 @@ type DeathKnight struct {
 	FrostFeverDisease  *core.Dot
 	BloodPlagueDisease *core.Dot
 
-	UnholyBlight *core.Dot
+	UnholyBlightSpell *core.Spell
+	UnholyBlightDot   *core.Dot
 
 	// Talent Auras
 	KillingMachineAura  *core.Aura

@@ -39,7 +39,8 @@ func (deathKnight *DeathKnight) registerDeathCoilSpell() {
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() && deathKnight.Talents.UnholyBlight {
-					deathKnight.UnholyBlight.Apply(sim)
+					deathKnight.LastDeathCoilDamage = spellEffect.Damage
+					deathKnight.UnholyBlightSpell.Cast(sim, spellEffect.Target)
 				}
 			},
 		}),
