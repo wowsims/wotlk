@@ -64,14 +64,7 @@ func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
 	mhHitSpell := deathKnight.newBloodStrikeSpell(true)
 	ohHitSpell := deathKnight.newBloodStrikeSpell(false)
 
-	threatOfThassarianChance := 0.0
-	if deathKnight.Talents.ThreatOfThassarian == 1 {
-		threatOfThassarianChance = 0.30
-	} else if deathKnight.Talents.ThreatOfThassarian == 2 {
-		threatOfThassarianChance = 0.60
-	} else if deathKnight.Talents.ThreatOfThassarian == 3 {
-		threatOfThassarianChance = 1.0
-	}
+	totChance := ToTChance(deathKnight)
 
 	deathKnight.BloodStrike = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    BloodStrikeActionID,
@@ -92,12 +85,12 @@ func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				mhHitSpell.Cast(sim, spellEffect.Target)
-				deathKnight.BloodStrike.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 1
-				deathKnight.BloodStrike.SpellMetrics[spellEffect.Target.TableIndex].Hits -= 1
-				if sim.RandomFloat("Threat of Thassarian") < threatOfThassarianChance {
+				totProcced := ToTWillCast(sim, totChance)
+				if totProcced {
 					ohHitSpell.Cast(sim, spellEffect.Target)
-					deathKnight.BloodStrike.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 1
 				}
+
+				ToTAdjustMetrics(sim, spell, spellEffect, BloodStrikeMHOutcome)
 
 				if OutcomeEitherWeaponHitOrCrit(BloodStrikeMHOutcome, BloodStrikeOHOutcome) {
 					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 1, 0, 0)

@@ -327,7 +327,7 @@ func (rp *runicPowerBar) Spend(sim *Simulation, spell *Spell, cost DKRuneCost) {
 	}
 }
 
-func (rp *runicPowerBar) GenerateRuneMetrics(sim *Simulation, metrics *ResourceMetrics, name string, currRunes int32, newRunes int32) {
+func (rp *runicPowerBar) GainRuneMetrics(sim *Simulation, metrics *ResourceMetrics, name string, currRunes int32, newRunes int32) {
 	metrics.AddEvent(1, float64(newRunes)-float64(currRunes))
 
 	if sim.Log != nil {
@@ -381,25 +381,25 @@ func SpendRuneFromType(rb *[2]Rune, runeState RuneState) int32 {
 
 func (rp *runicPowerBar) GenerateBloodRune(sim *Simulation, metrics *ResourceMetrics) {
 	currRunes := rp.CurrentBloodRunes()
-	rp.GenerateRuneMetrics(sim, metrics, "blood", currRunes, currRunes+1)
+	rp.GainRuneMetrics(sim, metrics, "blood", currRunes, currRunes+1)
 	GenerateRuneOfType(&rp.bloodRunes, RuneState_Normal)
 }
 
 func (rp *runicPowerBar) GenerateFrostRune(sim *Simulation, metrics *ResourceMetrics) {
 	currRunes := rp.CurrentFrostRunes()
-	rp.GenerateRuneMetrics(sim, metrics, "frost", currRunes, currRunes+1)
+	rp.GainRuneMetrics(sim, metrics, "frost", currRunes, currRunes+1)
 	GenerateRuneOfType(&rp.frostRunes, RuneState_Normal)
 }
 
 func (rp *runicPowerBar) GenerateUnholyRune(sim *Simulation, metrics *ResourceMetrics) {
 	currRunes := rp.CurrentUnholyRunes()
-	rp.GenerateRuneMetrics(sim, metrics, "unholy", currRunes, currRunes+1)
+	rp.GainRuneMetrics(sim, metrics, "unholy", currRunes, currRunes+1)
 	GenerateRuneOfType(&rp.unholyRunes, RuneState_Normal)
 }
 
 func (rp *runicPowerBar) GenerateDeathRuneAtSlot(sim *Simulation, metrics *ResourceMetrics, runes *[2]Rune, slot int32) {
 	currRunes := rp.CurrentDeathRunes()
-	rp.GenerateRuneMetrics(sim, metrics, "death", currRunes, currRunes+1)
+	rp.GainRuneMetrics(sim, metrics, "death", currRunes, currRunes+1)
 	SetRuneAtSlotToState(runes, slot, RuneState_Death)
 }
 
