@@ -151,14 +151,22 @@ message Warlock {
 			Agony = 4;
 			Tongues = 5;
 		}
+		enum SecondaryDot {
+			NoSecondaryDot = 0;
+			Immolate = 1;
+			UnstableAffliction = 2;
+		}
+		enum SpecSpell {
+			NoSpecSpell = 0;
+			ChaosBolt = 1;
+			Haunt = 2;
+		}
 		PrimarySpell primary_spell = 1;
 		Curse curse = 2;
-		bool immolate = 3;
+		SecondaryDot secondary_dot = 3;
 		bool corruption = 4;
 		bool detonate_seed = 5;
-		bool haunt = 6;
-		bool chaos_bolt = 7;
-		bool unstable_affliction = 8;
+		SpecSpell spec_spell = 6;
 	}
 	Rotation rotation = 1;
 
@@ -180,7 +188,6 @@ message Warlock {
 		}
 		Armor armor = 1;
 		Summon summon = 2;
-		bool sacrifice_summon = 3;
 	}
 	Options options = 3;
 }

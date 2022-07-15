@@ -1,13 +1,14 @@
 package warlock
 
 import (
+	// "fmt"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/stats"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
-
+	
 func (warlock *Warlock) registerIncinerateSpell() {
 	baseCost := 0.14 * warlock.BaseMana
 	has4pMal := warlock.HasSetBonus(ItemSetMaleficRaiment, 4)
@@ -37,7 +38,10 @@ func (warlock *Warlock) registerIncinerateSpell() {
 			DefaultCast: core.Cast{
 				Cost:     baseCost * (1 - costReduction),
 				GCD:      core.GCDDefault,
-				CastTime: warlock.incinerateCastTime(),
+				CastTime: time.Millisecond * time.Duration(2500 - 50*warlock.Talents.Emberstorm),
+			},
+			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
+				cast.CastTime = time.Duration(float64(cast.CastTime) * warlock.incinerateCastTimeModifier())
 			},
 		},
 
@@ -46,12 +50,15 @@ func (warlock *Warlock) registerIncinerateSpell() {
 
 }
 
-func (warlock *Warlock) incinerateCastTime() time.Duration {
-	baseCastTime := 2500 - 50*float64(warlock.Talents.Emberstorm)
+func (warlock *Warlock) incinerateCastTimeModifier() float64 {
+	castTimeModifier := 1.0
 	if warlock.MoltenCoreAura.IsActive() {
-		baseCastTime *= 1.0 - 0.1*float64(warlock.Talents.MoltenCore)
+		castTimeModifier *= (1.0 - 0.1*float64(warlock.Talents.MoltenCore))
 	}
-	return (time.Millisecond * time.Duration(baseCastTime))
+	if warlock.BackdraftAura.IsActive() {
+		castTimeModifier *= (1.0 - 0.1*float64(warlock.Talents.Backdraft))
+	}
+	return castTimeModifier
 }
 
 func (warlock *Warlock) incinerateDamage() core.BaseDamageConfig {

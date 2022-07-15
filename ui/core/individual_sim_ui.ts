@@ -195,6 +195,7 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 	playerBuffInputs: Array<IndividualSimIconPickerConfig<Player<any>, any>>,
 	debuffInputs: Array<IndividualSimIconPickerConfig<Raid, any>>;
 	rotationInputs: InputSection;
+	spellInputs?: Array<IndividualSimIconPickerConfig<Player<any>, any>>;
 	otherInputs?: InputSection;
 	consumeOptions?: ConsumeOptions;
 
@@ -489,6 +490,15 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 					<legend>Pets</legend>
 				</fieldset>`
 		}
+		
+		var spellSection=``
+		if (this.individualConfig.spellInputs?.length) {
+			spellSection=`
+			   <fieldset class="settings-section spell-section">
+					<legend>Spells</legend>
+				</fieldset>`
+		}
+		
 		this.addTab('SETTINGS', 'settings-tab', `
 			<div class="settings-inputs">
 				<div class="settings-section-container">
@@ -498,6 +508,11 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 					<fieldset class="settings-section race-section">
 						<legend>Player</legend>
 					</fieldset>
+			`
+			+
+			spellSection
+			+
+			`
 					<fieldset class="settings-section rotation-section">
 						<legend>Rotation</legend>
 					</fieldset>
@@ -508,11 +523,11 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 					<fieldset class="settings-section self-buffs-section">
 						<legend>Self Buffs</legend>
 					</fieldset>
-		`
-		+
-		petsSelectionSection
-		+
-		`
+			`
+			+
+			petsSelectionSection
+			+
+			`
 				</div>
 				<div class="settings-section-container within-raid-sim-hide">
 					<fieldset class="settings-section buffs-section">
@@ -726,7 +741,18 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				}
 			});
 		};
+
+		if (this.individualConfig.spellInputs?.length) {
+			const spellSection = this.rootElem.getElementsByClassName('spell-section')[0] as HTMLElement;
+			configureIconSection(
+				spellSection,
+				this.individualConfig.spellInputs.map(iconInput => new IndividualSimIconPicker(spellSection, this.player, iconInput, this)),
+				);
+		}
+
+
 		configureInputSection(this.rootElem.getElementsByClassName('rotation-section')[0] as HTMLElement, this.individualConfig.rotationInputs);
+
 		if (this.individualConfig.otherInputs?.inputs.length) {
 			configureInputSection(this.rootElem.getElementsByClassName('other-settings-section')[0] as HTMLElement, this.individualConfig.otherInputs);
 		}

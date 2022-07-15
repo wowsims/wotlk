@@ -117,19 +117,21 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	}
 
 	// main spells
-	// TODO: optimize so that cast time of DoT is included in calculation so you can cast right before falling off.
-	if warlock.Talents.UnstableAffliction && warlock.Rotation.UnstableAffliction && !warlock.UnstableAffDot.IsActive() {
-		spell = warlock.UnstableAff
-	} else if warlock.Talents.Haunt && warlock.Rotation.Haunt && warlock.Haunt.CD.IsReady(sim) && !warlock.HauntAura.IsActive() {
-		spell = warlock.Haunt
-	} else if warlock.Talents.ChaosBolt && warlock.Rotation.ChaosBolt && warlock.ChaosBolt.CD.IsReady(sim) {
+	secondaryDot := warlock.Rotation.SecondaryDot
+	specSpell := warlock.Rotation.SpecSpell
+	// Spec Spell first
+	if warlock.Talents.ChaosBolt && specSpell == proto.Warlock_Rotation_ChaosBolt && warlock.ChaosBolt.CD.IsReady(sim) {
 		spell = warlock.ChaosBolt
+	} else if warlock.Talents.Haunt && specSpell == proto.Warlock_Rotation_Haunt && warlock.Haunt.CD.IsReady(sim) && !warlock.HauntAura.IsActive() {
+		spell = warlock.Haunt
 	} else if warlock.Rotation.Corruption && !warlock.CorruptionDot.IsActive() {
 		spell = warlock.Corruption
-	} else if warlock.Rotation.Immolate && !warlock.ImmolateDot.IsActive() {
-		spell = warlock.Immolate
-	} else if warlock.CanConflagrate(sim) && warlock.ImmolateDot.TickCount > warlock.ImmolateDot.NumberOfTicks-2 {
+	} else if warlock.CanConflagrate(sim) && (warlock.ImmolateDot.TickCount > warlock.ImmolateDot.NumberOfTicks-2 || warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfConflagrate)) {
 		spell = warlock.Conflagrate
+	} else if warlock.Talents.UnstableAffliction && secondaryDot == proto.Warlock_Rotation_UnstableAffliction && !warlock.UnstableAffDot.IsActive() {
+		spell = warlock.UnstableAff
+	} else if secondaryDot == proto.Warlock_Rotation_Immolate && !warlock.ImmolateDot.IsActive() {
+		spell = warlock.Immolate
 	} else {
 		switch mainSpell {
 		case proto.Warlock_Rotation_Shadowbolt:
