@@ -49,7 +49,7 @@ func (deathKnight *DeathKnight) registerFrostFever() {
 					return
 				}
 
-				critRating := spell.Unit.GetStats()[stats.MeleeCrit] + spellEffect.BonusCritRating + spellEffect.Target.PseudoStats.BonusCritRating
+				critRating := spell.Unit.GetStats()[stats.MeleeCrit] + spellEffect.BonusCritRating + spellEffect.Target.PseudoStats.BonusCritRatingTaken
 				critRating += spell.Unit.PseudoStats.BonusMeleeCritRating
 				critChance := critRating / (core.CritRatingPerCritChance * 100)
 				if sim.RandomFloat("Wandering Plague Roll") < critChance {
@@ -100,7 +100,7 @@ func (deathKnight *DeathKnight) registerBloodPlague() {
 					return
 				}
 
-				critRating := spell.Unit.GetStats()[stats.MeleeCrit] + spellEffect.BonusCritRating + spellEffect.Target.PseudoStats.BonusCritRating
+				critRating := spell.Unit.GetStats()[stats.MeleeCrit] + spellEffect.BonusCritRating + spellEffect.Target.PseudoStats.BonusCritRatingTaken
 				critRating += spell.Unit.PseudoStats.BonusMeleeCritRating
 				critChance := critRating / (core.CritRatingPerCritChance * 100)
 				if sim.RandomFloat("Wandering Plague Roll") < critChance {
