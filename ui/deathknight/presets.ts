@@ -1,4 +1,4 @@
-import { Consumes } from '/wotlk/core/proto/common.js';
+import { Consumes, PetFood } from '/wotlk/core/proto/common.js';
 import { EquipmentSpec } from '/wotlk/core/proto/common.js';
 import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
@@ -31,14 +31,113 @@ export const FrostTalents = {
 	data: '23050005-32005350352203012300033101351',
 };
 
+export const UnholyDualWieldTalents = {
+	name: 'Unholy Dual Wield Dps',
+	data: '-320033500002-2302303050032150000150013133151',
+};
+
 export const DefaultRotation = DeathKnightRotation.create({
 });
 
 export const DefaultOptions = DeathKnightOptions.create({
+	startingRunicPower: 0
 });
 
 export const DefaultConsumes = Consumes.create({
+	flask: Flask.FlaskOfEndlessRage,
+	food: Food.FoodDragonfinFilet,
+	defaultPotion: Potions.PotionOfSpeed,
+	petFood: PetFood.PetFoodKiblersBits
 });
+
+export const P1_UNHOLY_DW_BIS_PRESET = {
+	name: 'P1 Unholy DW Bis',
+	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+		"id": 44006,
+		"enchant": 44879,
+		"gems": [
+			41400,
+			22459
+		]
+		},
+		{
+		"id": 44664,
+		"gems": [
+			39996
+		]
+		},
+		{
+		"id": 40414,
+		"enchant": 44871
+		},
+		{
+		"id": 40403,
+		"enchant": 44472
+		},
+		{
+		"id": 40550,
+		"enchant": 44623,
+		"gems": [
+			42142,
+			40038
+		]
+		},
+		{
+		"id": 40330,
+		"enchant": 60616,
+		"gems": [
+			39996,
+			0
+		]
+		},
+		{
+		"id": 40347,
+		"enchant": 54999,
+		"gems": [
+			39996,
+			0
+		]
+		},
+		{
+		"id": 40278,
+		"gems": [
+			42142,
+			42142
+		]
+		},
+		{
+		"id": 40294,
+		"enchant": 38374
+		},
+		{
+		"id": 40591,
+		"enchant": 55016
+		},
+		{
+		"id": 40717
+		},
+		{
+		"id": 40075
+		},
+		{
+		"id": 40431
+		},
+		{
+		"id": 42987
+		},
+		{
+		"id": 40189
+		},
+		{
+		"id": 40491
+		},
+		{
+		"id": 40715
+		}
+	]}`),
+};
 
 export const P1_FROST_PRE_BIS_PRESET = {
 	name: 'P1 Frost Pre-Raid Preset',
@@ -184,7 +283,7 @@ export const P1_FROST_BIS_PRESET = {
         },
         {
           "id": 40552,
-          "enchant": 54999,
+          "enchant": 60668,
           "gems": [
             39996,
             0
@@ -194,14 +293,14 @@ export const P1_FROST_BIS_PRESET = {
           "id": 40694,
           "gems": [
             39996,
-            39996
+            42142
           ]
         },
         {
           "id": 40556,
           "enchant": 38374,
           "gems": [
-            0,
+            42142,
             39996
           ]
         },
@@ -210,7 +309,7 @@ export const P1_FROST_BIS_PRESET = {
           "enchant": 55016
         },
         {
-          "id": 39401
+          "id": 40474
         },
         {
           "id": 40075

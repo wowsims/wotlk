@@ -294,7 +294,6 @@ func (unit *Unit) Armor() float64 {
 }
 
 func (unit *Unit) ArmorPenetration() float64 {
-	// TODO: talents (e.g. mace spec) and battle stance are additive here
 	return MinFloat(unit.stats[stats.ArmorPenetration]/ArmorPenPerPercentArmor, 1.0)
 }
 

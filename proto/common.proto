@@ -417,7 +417,7 @@ message RaidBuffs {
 	TristateEffect strength_of_earth_totem = 14; // none, normal, 15% improved
 	
 	// 20% Melee Haste
-	TristateEffect icy_talons = 15;
+	bool icy_talons = 15;
 	TristateEffect windfury_totem = 16; // none, 16%, 20%
 
 	// +AP

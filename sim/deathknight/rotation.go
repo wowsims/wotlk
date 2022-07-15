@@ -1,8 +1,7 @@
 package deathknight
 
 import (
-	//"math"
-	//"time"
+	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
 	//"github.com/wowsims/wotlk/sim/core/proto"
@@ -16,34 +15,92 @@ func (deathKnight *DeathKnight) OnAutoAttack(sim *core.Simulation, spell *core.S
 }
 
 func (deathKnight *DeathKnight) OnGCDReady(sim *core.Simulation) {
-	deathKnight.CheckRuneGainTrackers(sim)
 	deathKnight.tryUseGCD(sim)
-	deathKnight.UpdateRuneGainTrackers(sim)
 }
+
+const (
+	DKRotation_Wait uint8 = iota
+	DKRotation_IT
+	DKRotation_PS
+	DKRotation_Obli
+	DKRotation_BS
+	DKRotation_BT
+	DKRotation_UA
+	DKRotation_Pesti
+	DKRotation_FS
+)
 
 func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 	//var spell *core.Spell
 	var target = deathKnight.CurrentTarget
 
 	if deathKnight.GCD.IsReady(sim) {
-		if deathKnight.CanIcyTouch(sim) {
-			deathKnight.IcyTouch.Cast(sim, target)
-		} else if deathKnight.CanPlagueStrike(sim) {
-			deathKnight.PlagueStrike.Cast(sim, target)
-		} else {
-			nextCD := deathKnight.IcyTouch.ReadyAt()
+		// UH DK rota
+		if deathKnight.Talents.SummonGargoyle {
+			if (!deathKnight.FrostFeverDisease.IsActive() || deathKnight.FrostFeverDisease.RemainingDuration(sim) < 6*time.Second) && deathKnight.CanIcyTouch(sim) {
+				deathKnight.IcyTouch.Cast(sim, target)
+			} else if (!deathKnight.BloodPlagueDisease.IsActive() || deathKnight.BloodPlagueDisease.RemainingDuration(sim) < 6*time.Second) && deathKnight.CanPlagueStrike(sim) {
+				deathKnight.PlagueStrike.Cast(sim, target)
+			} else {
+				// Desolation check
+				if deathKnight.Talents.Desolation > 0 && !deathKnight.DesolationAura.IsActive() {
+					if deathKnight.CanBloodStrike(sim) {
+						deathKnight.BloodStrike.Cast(sim, target)
+					}
+				} else {
+					if deathKnight.CanDeathAndDecay(sim) && deathKnight.AllDiseasesAreActive() {
+						deathKnight.DeathAndDecay.Cast(sim, target)
+					} else if deathKnight.CanScourgeStrike(sim) && (!(deathKnight.DeathAndDecay.CD.IsReady(sim) || deathKnight.DeathAndDecay.CD.TimeToReady(sim) < 6*time.Second) || (deathKnight.CurrentFrostRunes() > 1 && deathKnight.CurrentUnholyRunes() > 1)) {
+						deathKnight.ScourgeStrike.Cast(sim, target)
+					} else if !deathKnight.Talents.ScourgeStrike && deathKnight.CanIcyTouch(sim) && (!(deathKnight.DeathAndDecay.CD.IsReady(sim) || deathKnight.DeathAndDecay.CD.TimeToReady(sim) < 6*time.Second) || (deathKnight.CurrentFrostRunes() > 1)) {
+						deathKnight.IcyTouch.Cast(sim, target)
+					} else if !deathKnight.Talents.ScourgeStrike && deathKnight.CanPlagueStrike(sim) && (!(deathKnight.DeathAndDecay.CD.IsReady(sim) || deathKnight.DeathAndDecay.CD.TimeToReady(sim) < 6*time.Second) || (deathKnight.CurrentUnholyRunes() > 1)) {
+						deathKnight.PlagueStrike.Cast(sim, target)
+					} else if deathKnight.CanBloodStrike(sim) && (!(deathKnight.DeathAndDecay.CD.IsReady(sim) || deathKnight.DeathAndDecay.CD.TimeToReady(sim) < 6*time.Second) || (deathKnight.CurrentBloodRunes() > 1)) {
+						deathKnight.BloodStrike.Cast(sim, target)
+					} else if deathKnight.CanDeathCoil(sim) {
+						deathKnight.DeathCoil.Cast(sim, target)
+					} else {
+						nextCD := deathKnight.IcyTouch.ReadyAt()
 
-			if nextCD > sim.CurrentTime {
-				deathKnight.WaitUntil(sim, nextCD)
+						if nextCD > sim.CurrentTime {
+							deathKnight.WaitUntil(sim, nextCD)
+						}
+					}
+				}
 			}
 		}
+
+		// Frost DK rota
+		if deathKnight.Talents.HowlingBlast {
+			if (!deathKnight.FrostFeverDisease.IsActive() || deathKnight.FrostFeverDisease.RemainingDuration(sim) < 6*time.Second) && deathKnight.CanIcyTouch(sim) {
+				deathKnight.IcyTouch.Cast(sim, target)
+			} else if (!deathKnight.BloodPlagueDisease.IsActive() || deathKnight.BloodPlagueDisease.RemainingDuration(sim) < 6*time.Second) && deathKnight.CanPlagueStrike(sim) {
+				deathKnight.PlagueStrike.Cast(sim, target)
+			} else {
+				if deathKnight.CanObliterate(sim) && deathKnight.FrostFeverDisease.IsActive() && deathKnight.BloodPlagueDisease.IsActive() {
+					deathKnight.Obliterate.Cast(sim, target)
+				} else if deathKnight.CanBloodTap(sim) && deathKnight.FrostFeverDisease.IsActive() && deathKnight.BloodPlagueDisease.IsActive() {
+					deathKnight.BloodTap.Cast(sim, target)
+				} else if deathKnight.CanHowlingBlast(sim) && deathKnight.FrostFeverDisease.IsActive() && deathKnight.BloodPlagueDisease.IsActive() {
+					deathKnight.HowlingBlast.Cast(sim, target)
+				} else if deathKnight.CanFrostStrike(sim) && deathKnight.FrostFeverDisease.IsActive() && deathKnight.BloodPlagueDisease.IsActive() {
+					deathKnight.FrostStrike.Cast(sim, target)
+				} else if deathKnight.CanBloodStrike(sim) && deathKnight.FrostFeverDisease.IsActive() && deathKnight.BloodPlagueDisease.IsActive() {
+					deathKnight.BloodStrike.Cast(sim, target)
+				} else if deathKnight.CanIcyTouch(sim) {
+					deathKnight.IcyTouch.Cast(sim, target)
+				} else if deathKnight.CanPlagueStrike(sim) {
+					deathKnight.PlagueStrike.Cast(sim, target)
+				} else {
+					nextCD := deathKnight.IcyTouch.ReadyAt()
+
+					if nextCD > sim.CurrentTime {
+						deathKnight.WaitUntil(sim, nextCD)
+					}
+				}
+			}
+		}
+
 	}
-}
-
-func (deathKnight *DeathKnight) CanIcyTouch(sim *core.Simulation) bool {
-	return deathKnight.CastCostPossible(sim, 10.0, 0, 1, 0, 0) && deathKnight.IcyTouch.IsReady(sim)
-}
-
-func (deathKnight *DeathKnight) CanPlagueStrike(sim *core.Simulation) bool {
-	return deathKnight.CastCostPossible(sim, 10.0, 0, 0, 1, 0) && deathKnight.PlagueStrike.IsReady(sim)
 }

@@ -99,18 +99,19 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 					leaderOfThePack: TristateEffect.TristateEffectImproved,
 					unleashedRage: true,
 					abominationsMight: true,
+					icyTalons: true,
 				}),
 				partyBuffs: PartyBuffs.create({
+					heroicPresence: true,
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
-					blessingOfWisdom: TristateEffect.TristateEffectImproved,
 					blessingOfMight: TristateEffect.TristateEffectImproved,
 				}),
 				debuffs: Debuffs.create({
 					bloodFrenzy: true,
 					sunderArmor: true,
-					curseOfWeakness: TristateEffect.TristateEffectRegular,
+					curseOfWeakness: TristateEffect.TristateEffectImproved,
 					curseOfElements: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					judgementOfWisdom: true,
@@ -158,6 +159,7 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 			// Which options are selectable in the 'Consumes' section.
 			consumeOptions: {
 				potions: [
+					Potions.PotionOfSpeed,
 					Potions.HastePotion,
 					Potions.InsaneStrengthPotion,
 					Potions.MightyRagePotion,
@@ -166,6 +168,7 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 					Conjured.ConjuredFlameCap,
 				],
 				flasks: [
+					Flask.FlaskOfEndlessRage,
 					Flask.FlaskOfRelentlessAssault,
 				],
 				battleElixirs: [
@@ -178,6 +181,7 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				guardianElixirs: [
 				],
 				food: [
+					Food.FoodDragonfinFilet,
 					Food.FoodRoastedClefthoof,
 					Food.FoodGrilledMudfish,
 					Food.FoodSpicyHotTalbuk,
@@ -186,6 +190,9 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				alcohol: [
 				],
 				weaponImbues: [
+				],
+				pet: [
+					IconInputs.KiblersBits,
 				],
 				other: [
 					IconInputs.ScrollOfAgilityV,
@@ -197,6 +204,8 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
+					DeathKnightInputs.StartingRunicPower,
+
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],
@@ -218,10 +227,12 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				// Preset talents that the user can quickly select.
 				talents: [
 					Presets.FrostTalents,
+					Presets.UnholyDualWieldTalents,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
 					Presets.P1_FROST_BIS_PRESET,
+					Presets.P1_UNHOLY_DW_BIS_PRESET,
 				],
 			},
 		});

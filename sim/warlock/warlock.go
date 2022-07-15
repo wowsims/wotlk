@@ -20,13 +20,13 @@ type Warlock struct {
 	UnstableAffDot *core.Dot
 	Corruption     *core.Spell
 	CorruptionDot  *core.Dot
-	Haunt		   *core.Spell
-	HauntAura	   *core.Aura
-	LifeTap 	   *core.Spell
-	ChaosBolt 	   *core.Spell
-
-	// DemonicEmpowerment		   *core.Aura
-	
+	Haunt          *core.Spell
+	HauntAura      *core.Aura
+	LifeTap        *core.Spell
+	ChaosBolt      *core.Spell
+	SoulFire       *core.Spell
+	Conflagrate    *core.Spell
+	ConflagrateDot *core.Dot
 
 	CurseOfElements     *core.Spell
 	CurseOfElementsAura *core.Aura
@@ -39,12 +39,23 @@ type Warlock struct {
 	CurseOfDoom         *core.Spell
 	CurseOfDoomDot      *core.Dot
 
-	Seeds    []*core.Spell
-	SeedDots []*core.Dot
+	Seeds    			[]*core.Spell
+	SeedDots 			[]*core.Dot
 
-	NightfallProcAura *core.Aura
-	ShadowEmbraceAura *core.Aura
-	EradicationAura	  *core.Aura
+	NightfallProcAura 		*core.Aura
+	ShadowEmbraceAura 		*core.Aura
+	EradicationAura	  		*core.Aura
+	DemonicEmpowerment		*core.Spell
+	DemonicEmpowermentAura	*core.Aura
+	Metamorphosis			*core.Spell
+	MetamorphosisAura		*core.Aura
+	MoltenCoreAura			*core.Aura
+	DecimationAura			*core.Aura
+	PyroclasmAura			*core.Aura
+	BackdraftAura			*core.Aura
+	EmpoweredImpAura		*core.Aura
+	
+	GlyphOfLifeTapAura		*core.Aura
 
 	Pet *WarlockPet
 
@@ -71,6 +82,10 @@ func (warlock *Warlock) Initialize() {
 	warlock.registerCurseOfDoomSpell()
 	warlock.registerLifeTapSpell()
 	warlock.registerSeedSpell()
+	warlock.registerSoulFireSpell()
+	if warlock.Talents.Conflagrate {
+		warlock.registerConflagrateSpell()
+	}
 	if warlock.Talents.UnstableAffliction {
 		warlock.registerUnstableAffSpell()
 	}
@@ -81,12 +96,23 @@ func (warlock *Warlock) Initialize() {
 	if warlock.Talents.ChaosBolt {
 		warlock.registerChaosBoltSpell()
 	}
+	if warlock.Talents.DemonicEmpowerment {
+		warlock.registerDemonicEmpowermentSpell()
+	}
+	if warlock.Talents.Metamorphosis {
+		warlock.registerMetamorphosisSpell()
+	}
 }
 
 func (warlock *Warlock) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	raidBuffs.BloodPact = core.MaxTristate(raidBuffs.BloodPact, core.MakeTristateValue(
 		warlock.Options.Summon == proto.Warlock_Options_Imp,
-		warlock.Talents.ImprovedImp == 2))
+		warlock.Talents.ImprovedImp == 2,
+	))
+
+	if warlock.Talents.DemonicPact > 0 {
+		raidBuffs.DemonicPact = int32(float64(stats.SpellPower) * 0.02 * float64(warlock.Talents.DemonicPact))
+	}
 }
 
 func (warlock *Warlock) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
@@ -117,23 +143,11 @@ func NewWarlock(character core.Character, options proto.Player) *Warlock {
 	})
 
 	if warlock.Options.Armor == proto.Warlock_Options_FelArmor {
-		amount := 100.0
+		amount := 180.0 + 0.3*float64(stats.Spirit)
 		amount *= 1 + float64(warlock.Talents.DemonicAegis)*0.1
 		warlock.AddStat(stats.SpellPower, amount)
 	}
 
-	// 	if warlock.Talents.DemonicSacrifice && warlock.Options.SacrificeSummon {
-	// 	switch warlock.Options.Summon {
-	// 	case proto.Warlock_Options_Succubus:
-	// 		warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.15
-	// 	case proto.Warlock_Options_Imp:
-	// 		warlock.PseudoStats.FireDamageDealtMultiplier *= 1.15
-	// 	case proto.Warlock_Options_Felguard:
-	// 		warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.10
-	// 	case proto.Warlock_Options_Felhunter:
-	// 		warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.0
-	// 	}
-	// } else
 	if warlock.Options.Summon != proto.Warlock_Options_NoSummon {
 		warlock.Pet = warlock.NewWarlockPet()
 	}
@@ -229,4 +243,12 @@ func init() {
 // Agent is a generic way to access underlying warlock on any of the agents.
 type WarlockAgent interface {
 	GetWarlock() *Warlock
+}
+
+func (warlock *Warlock) HasMajorGlyph(glyph proto.WarlockMajorGlyph) bool {
+	return warlock.HasGlyph(int32(glyph))
+}
+
+func (warlock *Warlock) HasMinorGlyph(glyph proto.WarlockMinorGlyph) bool {
+	return warlock.HasGlyph(int32(glyph))
 }

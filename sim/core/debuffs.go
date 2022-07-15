@@ -273,8 +273,8 @@ func earthMoonEbonPlaguebringerAura(target *Unit, label string, id int32) *Aura 
 func ImprovedShadowBoltAura(target *Unit) *Aura {
 	bonusSpellCrit := 5.0 * CritRatingPerCritChance
 	config := Aura{
-		Label:    "ImprovedShadowBolt",
-		Tag:      "ImprovedShadowBolt",
+		Label:    "Shadow Mastery",
+		Tag:      "Shadow Mastery",
 		ActionID: ActionID{SpellID: 17800},
 		Duration: time.Second * 30,
 		OnGain: func(aura *Aura, sim *Simulation) {
@@ -691,6 +691,30 @@ func ThunderClapAura(target *Unit, points int32) *Aura {
 		Tag:      ThunderClapAuraTag,
 		ActionID: ActionID{SpellID: 25264},
 		Duration: time.Second * 30,
+		Priority: inverseMult,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.MultiplyAttackSpeed(sim, speedMultiplier)
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.MultiplyAttackSpeed(sim, inverseMult)
+		},
+	})
+}
+
+const IcyTouchAuraTag = "IcyTouch"
+
+func IcyTouchAura(target *Unit, impIcyTouch int32) *Aura {
+	speedMultiplier := 0.85
+	if impIcyTouch > 0 {
+		speedMultiplier -= 0.02 * float64(impIcyTouch)
+	}
+
+	inverseMult := 1 / speedMultiplier
+	return target.GetOrRegisterAura(Aura{
+		Label:    "IcyTouch",
+		Tag:      IcyTouchAuraTag,
+		ActionID: ActionID{SpellID: 49909},
+		Duration: time.Second * 15,
 		Priority: inverseMult,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.MultiplyAttackSpeed(sim, speedMultiplier)

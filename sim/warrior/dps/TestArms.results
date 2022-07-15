@@ -715,13 +715,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestArms-AllItems-MarkoftheWarPrisoner-37873"
- value: {
-  dps: 612.9310827515634
-  tps: 521.3479748540425
- }
-}
-dps_results: {
  key: "TestArms-AllItems-MercurialAlchemistStone-44322"
  value: {
   dps: 590.3062103399868
@@ -985,13 +978,6 @@ dps_results: {
  value: {
   dps: 524.2065471647231
   tps: 446.9039149250808
- }
-}
-dps_results: {
- key: "TestArms-AllItems-SundialoftheExiled-40682"
- value: {
-  dps: 600.2834945520741
-  tps: 509.9362682325971
  }
 }
 dps_results: {

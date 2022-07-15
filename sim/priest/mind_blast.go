@@ -4,11 +4,12 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (priest *Priest) registerMindBlastSpell() {
-	baseCost := priest.BaseMana * 0.17
+	baseCost := priest.BaseMana*0.17 - core.TernaryFloat64(priest.HasSetBonus(ItemSetValorous, 2), (priest.BaseMana*0.17)*0.1, 0)
 
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
@@ -17,7 +18,14 @@ func (priest *Priest) registerMindBlastSpell() {
 		DamageMultiplier:     1,
 		ThreatMultiplier:     1 - 0.08*float64(priest.Talents.ShadowAffinity),
 		OutcomeApplier:       priest.OutcomeFuncMagicHitAndCrit(priest.SpellCritMultiplier(1, float64(priest.Talents.ShadowPower)/5)),
-		OnSpellHitDealt:      priest.OnSpellHitAddShadowWeaving(),
+		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spellEffect.Landed() {
+				priest.AddShadowWeavingStack(sim)
+			}
+			if spellEffect.DidCrit() && priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow)) {
+				priest.ShadowyInsightAura.Activate(sim)
+			}
+		},
 	}
 
 	normalCalc := core.BaseDamageFuncMagic(997, 1053, 0.429)

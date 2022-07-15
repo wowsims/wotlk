@@ -4,13 +4,14 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
-	baseDamage := 60.0 + (185+core.TernaryFloat64(rogue.HasSetBonus(ItemSetDeathmantle, 2), 40, 0))*float64(comboPoints)
+	baseDamage := 127.0 +
+		(370+core.TernaryFloat64(rogue.HasSetBonus(ItemSetDeathmantle, 2), 40, 0))*float64(comboPoints)
 	apRatio := 0.03 * float64(comboPoints)
-
 	cost := 35.0
 	if rogue.HasSetBonus(ItemSetAssassination, 4) {
 		cost -= 10
@@ -18,7 +19,7 @@ func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
 	refundAmount := 0.4 * float64(rogue.Talents.QuickRecovery)
 
 	return rogue.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 26865, Tag: comboPoints},
+		ActionID:    core.ActionID{SpellID: 48668, Tag: comboPoints},
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics | rogue.finisherFlags(),
 
@@ -35,12 +36,16 @@ func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			DamageMultiplier: 1 + 0.05*float64(rogue.Talents.ImprovedEviscerate) + 0.02*float64(rogue.Talents.Aggression),
+			ProcMask: core.ProcMaskMeleeMHSpecial,
+			DamageMultiplier: 1 +
+				[]float64{0.0, 0.07, 0.14, 0.2}[rogue.Talents.ImprovedEviscerate] +
+				0.03*float64(rogue.Talents.Aggression),
 			ThreatMultiplier: 1,
+			BonusCritRating: core.TernaryFloat64(
+				rogue.HasGlyph(int32(proto.RogueMajorGlyph_GlyphOfEviscerate)), 10*core.CritRatingPerCritChance, 0.0),
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					roll := sim.RandomFloat("Eviscerate") * 120.0
+					roll := sim.RandomFloat("Eviscerate") * 254.0
 					return baseDamage + roll + hitEffect.MeleeAttackPower(spell.Unit)*apRatio + hitEffect.BonusWeaponDamage(spell.Unit)
 				},
 				TargetSpellCoefficient: 1,

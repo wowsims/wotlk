@@ -22,6 +22,25 @@ import { SimUI } from '../core/sim_ui.js';
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
 
+export const StartingRunicPower = {
+	type: 'number' as const,
+	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
+	config: {
+		extraCssClasses: [
+			'starting-runic-power-picker',
+		],
+		label: 'Starting Runic Power',
+		labelTooltip: 'Initial RP at the start of each iteration.',
+		changedEvent: (player: Player<Spec.SpecDeathKnight>) => player.specOptionsChangeEmitter,
+		getValue: (player: Player<Spec.SpecDeathKnight>) => player.getSpecOptions().startingRunicPower,
+		setValue: (eventID: EventID, player: Player<Spec.SpecDeathKnight>, newValue: number) => {
+			const newOptions = player.getSpecOptions();
+			newOptions.startingRunicPower = newValue;
+			player.setSpecOptions(eventID, newOptions);
+		},
+	},
+};
+
 export const DeathKnightRotationConfig = {
 	inputs: [
 	],

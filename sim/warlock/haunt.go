@@ -5,18 +5,24 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (warlock *Warlock) registerHauntSpell() {
+	multiplier := 1.2
+	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfHaunt) {
+		multiplier += 0.03
+	}
+
 	warlock.HauntAura = warlock.RegisterAura(core.Aura{
 		Label:     "Haunt Buff",
 		ActionID:  core.ActionID{SpellID: 59164},
 		Duration:  time.Second * 12,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.PeriodicShadowDamageDealtMultiplier *= 1.2
+			aura.Unit.PseudoStats.PeriodicShadowDamageDealtMultiplier *= multiplier
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.PeriodicShadowDamageDealtMultiplier /= 1.2
+			aura.Unit.PseudoStats.PeriodicShadowDamageDealtMultiplier /= multiplier
 		},
 	})
 
@@ -25,7 +31,7 @@ func (warlock *Warlock) registerHauntSpell() {
 		ThreatMultiplier: 	  1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 		DamageMultiplier: 	  1,
 		BaseDamage:           core.BaseDamageConfigMagic(645.0, 753.0, 0.4286),
-		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, core.TernaryFloat64(warlock.Talents.Pandemic, 0, 1))),
+		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, core.TernaryFloat64(warlock.Talents.Pandemic, 1, 0))),
 		OnSpellHitDealt:  	  func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			// Everlasting Affliction Refresh
 			if warlock.CorruptionDot.IsActive() {
