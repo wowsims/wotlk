@@ -1,11 +1,33 @@
 package core
 
+import "time"
+
 func RunesBothOfState(sim *Simulation, runes *[2]Rune, runeState RuneState) bool {
 	return runes[0].state == runeState && runes[1].state == runeState
 }
 
 func RunesAtleastOneOfState(sim *Simulation, runes *[2]Rune, runeState RuneState) bool {
 	return runes[0].state == runeState || runes[1].state == runeState
+}
+
+func (rp *runicPowerBar) LaunchBloodTapRegenPA(sim *Simulation, slot int32) {
+	r := &rp.bloodRunes[slot]
+
+	pa := &PendingAction{
+		NextActionAt: sim.CurrentTime + 20.0*time.Second,
+		Priority:     ActionPriorityRegen,
+	}
+
+	pa.OnAction = func(sim *Simulation) {
+		if !pa.cancelled {
+			rp.GenerateBloodRune(sim, rp.bloodRuneGainMetrics)
+			rp.onBloodRuneGain(sim)
+		}
+		r.pas[2] = nil
+	}
+
+	r.pas[2] = pa
+	sim.AddPendingAction(pa)
 }
 
 func (rp *runicPowerBar) CorrectBloodTapConversion(sim *Simulation, bloodGainMetrics *ResourceMetrics, deathGainMetrics *ResourceMetrics, spell *Spell) {

@@ -20,6 +20,9 @@ func (deathKnight *DeathKnight) registerBloodTapSpell() {
 				deathKnight.BloodRuneGainMetrics(),
 				deathKnight.DeathRuneGainMetrics(),
 				deathKnight.BloodTap)
+
+			amountOfRunicPower := 10.0
+			deathKnight.AddRunicPower(sim, amountOfRunicPower, deathKnight.BloodTap.RunicPowerMetrics())
 		},
 	})
 
