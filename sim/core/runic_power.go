@@ -419,10 +419,11 @@ func (rp *runicPowerBar) SpendBloodRune(sim *Simulation, metrics *ResourceMetric
 
 	pa.OnAction = func(sim *Simulation) {
 		if !pa.cancelled {
+			rp.frostRunes[spendSlot].pas[0] = nil
 			rp.GenerateBloodRune(sim, rp.bloodRuneGainMetrics)
 			rp.onBloodRuneGain(sim)
-			rp.bloodRunes[spendSlot].pas[0] = nil
 		}
+		rp.bloodRunes[spendSlot].pas[0] = nil
 	}
 
 	rp.bloodRunes[spendSlot].pas[0] = pa
@@ -447,6 +448,7 @@ func (rp *runicPowerBar) SpendFrostRune(sim *Simulation, metrics *ResourceMetric
 
 	pa.OnAction = func(sim *Simulation) {
 		if !pa.cancelled {
+			rp.frostRunes[spendSlot].pas[0] = nil
 			rp.GenerateFrostRune(sim, rp.frostRuneGainMetrics)
 			rp.onFrostRuneGain(sim)
 		}
@@ -475,6 +477,7 @@ func (rp *runicPowerBar) SpendUnholyRune(sim *Simulation, metrics *ResourceMetri
 
 	pa.OnAction = func(sim *Simulation) {
 		if !pa.cancelled {
+			rp.unholyRunes[spendSlot].pas[0] = nil
 			rp.GenerateUnholyRune(sim, rp.unholyRuneGainMetrics)
 			rp.onUnholyRuneGain(sim)
 		}
@@ -502,7 +505,7 @@ func (rp *runicPowerBar) SpendDeathRune(sim *Simulation, metrics *ResourceMetric
 		spendSlot = SpendRuneFromType(&rp.frostRunes, RuneState_Death)
 		if spendSlot < 0 {
 			runeTypeIdx += 1
-			SpendRuneFromType(&rp.unholyRunes, RuneState_Death)
+			spendSlot = SpendRuneFromType(&rp.unholyRunes, RuneState_Death)
 		}
 	}
 
@@ -514,31 +517,37 @@ func (rp *runicPowerBar) SpendDeathRune(sim *Simulation, metrics *ResourceMetric
 	pa.OnAction = func(sim *Simulation) {
 		if runeTypeIdx == 0 {
 			if !pa.cancelled {
+				rp.bloodRunes[spendSlot].pas[0] = nil
 				rp.GenerateDeathRuneAtSlot(sim, rp.deathRuneGainMetrics, &rp.bloodRunes, spendSlot)
 				rp.onDeathRuneGain(sim)
+			} else {
+				rp.bloodRunes[spendSlot].pas[0] = nil
 			}
-			rp.bloodRunes[spendSlot].pas[1] = nil
 		} else if runeTypeIdx == 1 {
 			if !pa.cancelled {
+				rp.frostRunes[spendSlot].pas[0] = nil
 				rp.GenerateDeathRuneAtSlot(sim, rp.deathRuneGainMetrics, &rp.frostRunes, spendSlot)
 				rp.onDeathRuneGain(sim)
+			} else {
+				rp.frostRunes[spendSlot].pas[0] = nil
 			}
-			rp.frostRunes[spendSlot].pas[1] = nil
 		} else if runeTypeIdx == 2 {
 			if !pa.cancelled {
+				rp.unholyRunes[spendSlot].pas[0] = nil
 				rp.GenerateDeathRuneAtSlot(sim, rp.deathRuneGainMetrics, &rp.unholyRunes, spendSlot)
 				rp.onDeathRuneGain(sim)
+			} else {
+				rp.unholyRunes[spendSlot].pas[0] = nil
 			}
-			rp.unholyRunes[spendSlot].pas[1] = nil
 		}
 	}
 
 	if runeTypeIdx == 0 {
-		rp.bloodRunes[spendSlot].pas[1] = pa
+		rp.bloodRunes[spendSlot].pas[0] = pa
 	} else if runeTypeIdx == 1 {
-		rp.frostRunes[spendSlot].pas[1] = pa
+		rp.frostRunes[spendSlot].pas[0] = pa
 	} else if runeTypeIdx == 2 {
-		rp.unholyRunes[spendSlot].pas[1] = pa
+		rp.unholyRunes[spendSlot].pas[0] = pa
 	}
 	sim.AddPendingAction(pa)
 }
