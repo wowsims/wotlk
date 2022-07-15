@@ -161,32 +161,14 @@ func init() {
 			BonusPerStack: stats.Stats{stats.MeleeCrit: 15, stats.SpellCrit: 15},
 		})
 
-		const procChance = 0.1
-
-		icd := core.Cooldown{
-			Timer:    character.NewTimer(),
-			Duration: time.Second * 45,
-		}
-
-		character.RegisterAura(core.Aura{
-			Label:    "Death Knight's Anguish",
-			Duration: core.NeverExpires,
-			OnReset: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Activate(sim)
-			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				// mask 340
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
-					return
-				}
-				if !icd.IsReady(sim) {
-					return
-				}
-				if sim.RandomFloat("Death Knight's Anguish") > procChance {
-					return
-				}
-
-				icd.Use(sim)
+		makeProcTriggerAura(&character.Unit, ProcTrigger{
+			Name:       "Death Knight's Anguish",
+			Callback:   OnSpellHitDealt,
+			ProcMask:   core.ProcMaskMeleeOrRanged,
+			Outcome:    core.OutcomeLanded,
+			ProcChance: 0.1,
+			ICD:        time.Second * 45,
+			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellEffect) {
 				procAura.Activate(sim)
 			},
 		})

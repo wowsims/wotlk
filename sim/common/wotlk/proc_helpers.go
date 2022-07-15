@@ -111,3 +111,8 @@ func makeProcTriggerAura(unit *core.Unit, config ProcTrigger) *core.Aura {
 
 	return unit.RegisterAura(aura)
 }
+
+func newItemEffectWithHeroic(f func(isHeroic bool)) {
+	f(true)
+	f(false)
+}
