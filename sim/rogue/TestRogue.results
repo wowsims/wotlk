@@ -78,6 +78,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestRogue-AllItems-AshtongueTalismanofLethality-32492"
+ value: {
+  dps: 2191.4087249248223
+  tps: 1544.1961461053593
+ }
+}
+dps_results: {
  key: "TestRogue-AllItems-Assassin'sAlchemistStone-35751"
  value: {
   dps: 2219.9846332811862
@@ -911,13 +918,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestRogue-AllItems-SundialoftheExiled-40682"
- value: {
-  dps: 2189.878361938421
-  tps: 1543.1095883850146
- }
-}
-dps_results: {
  key: "TestRogue-AllItems-SwiftSkyfireDiamond"
  value: {
   dps: 2218.8736821513526
@@ -1090,6 +1090,13 @@ dps_results: {
  value: {
   dps: 2214.429230455059
   tps: 1560.6058109036212
+ }
+}
+dps_results: {
+ key: "TestRogue-AllItems-Warp-SpringCoil-30450"
+ value: {
+  dps: 2376.122321130843
+  tps: 1675.4040923837936
  }
 }
 dps_results: {
