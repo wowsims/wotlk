@@ -30,6 +30,10 @@ const (
 	DKRotation_FS
 )
 
+func (deathKnight *DeathKnight) shouldWaitForDnD(sim *core.Simulation, blood bool, frost bool, unholy bool) bool {
+	return !(deathKnight.Talents.Morbidity == 0 || !(deathKnight.DeathAndDecay.CD.IsReady(sim) || deathKnight.DeathAndDecay.CD.TimeToReady(sim) < 6*time.Second) || ((!blood || deathKnight.CurrentBloodRunes() > 1) && (!frost || deathKnight.CurrentFrostRunes() > 1) && (!unholy || deathKnight.CurrentUnholyRunes() > 1)))
+}
+
 func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 	//var spell *core.Spell
 	var target = deathKnight.CurrentTarget
@@ -48,23 +52,27 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 						deathKnight.BloodStrike.Cast(sim, target)
 					}
 				} else {
-					if deathKnight.CanDeathAndDecay(sim) && deathKnight.AllDiseasesAreActive() {
+					if deathKnight.Talents.Morbidity > 0 && deathKnight.CanDeathAndDecay(sim) && deathKnight.AllDiseasesAreActive() {
 						deathKnight.DeathAndDecay.Cast(sim, target)
-					} else if deathKnight.CanScourgeStrike(sim) && (!(deathKnight.DeathAndDecay.CD.IsReady(sim) || deathKnight.DeathAndDecay.CD.TimeToReady(sim) < 6*time.Second) || (deathKnight.CurrentFrostRunes() > 1 && deathKnight.CurrentUnholyRunes() > 1)) {
+					} else if deathKnight.CanScourgeStrike(sim) && (deathKnight.Talents.Morbidity == 0 || !deathKnight.shouldWaitForDnD(sim, false, true, true)) {
 						deathKnight.ScourgeStrike.Cast(sim, target)
-					} else if !deathKnight.Talents.ScourgeStrike && deathKnight.CanIcyTouch(sim) && (!(deathKnight.DeathAndDecay.CD.IsReady(sim) || deathKnight.DeathAndDecay.CD.TimeToReady(sim) < 6*time.Second) || (deathKnight.CurrentFrostRunes() > 1)) {
+					} else if !deathKnight.Talents.ScourgeStrike && deathKnight.CanIcyTouch(sim) && !deathKnight.shouldWaitForDnD(sim, false, true, false) {
 						deathKnight.IcyTouch.Cast(sim, target)
-					} else if !deathKnight.Talents.ScourgeStrike && deathKnight.CanPlagueStrike(sim) && (!(deathKnight.DeathAndDecay.CD.IsReady(sim) || deathKnight.DeathAndDecay.CD.TimeToReady(sim) < 6*time.Second) || (deathKnight.CurrentUnholyRunes() > 1)) {
+					} else if !deathKnight.Talents.ScourgeStrike && deathKnight.CanPlagueStrike(sim) && !deathKnight.shouldWaitForDnD(sim, false, false, true) {
 						deathKnight.PlagueStrike.Cast(sim, target)
-					} else if deathKnight.CanBloodStrike(sim) && (!(deathKnight.DeathAndDecay.CD.IsReady(sim) || deathKnight.DeathAndDecay.CD.TimeToReady(sim) < 6*time.Second) || (deathKnight.CurrentBloodRunes() > 1)) {
+					} else if deathKnight.CanBloodStrike(sim) && !deathKnight.shouldWaitForDnD(sim, true, false, false) {
 						deathKnight.BloodStrike.Cast(sim, target)
 					} else if deathKnight.CanDeathCoil(sim) {
 						deathKnight.DeathCoil.Cast(sim, target)
 					} else {
-						nextCD := deathKnight.IcyTouch.ReadyAt()
-
-						if nextCD > sim.CurrentTime {
-							deathKnight.WaitUntil(sim, nextCD)
+						if deathKnight.GCD.IsReady(sim) && !deathKnight.IsWaiting() {
+							// This means we did absolutely nothing.
+							// Wait until our next auto attack to decide again.
+							nextSwing := deathKnight.AutoAttacks.MainhandSwingAt
+							if deathKnight.AutoAttacks.OffhandSwingAt > sim.CurrentTime {
+								nextSwing = core.MinDuration(nextSwing, deathKnight.AutoAttacks.OffhandSwingAt)
+							}
+							deathKnight.WaitUntil(sim, nextSwing)
 						}
 					}
 				}

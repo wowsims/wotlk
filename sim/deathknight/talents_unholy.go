@@ -98,6 +98,15 @@ func (deathKnight *DeathKnight) applyWanderingPlague() {
 
 	actionID := core.ActionID{SpellID: 49655}
 
+	wanderingPlagueMultiplier := 0.0
+	if deathKnight.Talents.WanderingPlague == 1 {
+		wanderingPlagueMultiplier = 0.33
+	} else if deathKnight.Talents.WanderingPlague == 2 {
+		wanderingPlagueMultiplier = 0.66
+	} else if deathKnight.Talents.WanderingPlague == 3 {
+		wanderingPlagueMultiplier = 1.0
+	}
+
 	deathKnight.WanderingPlague = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
@@ -112,7 +121,7 @@ func (deathKnight *DeathKnight) applyWanderingPlague() {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
-					return deathKnight.LastDiseaseDamage
+					return deathKnight.LastDiseaseDamage * wanderingPlagueMultiplier
 				},
 			},
 			OutcomeApplier: deathKnight.OutcomeFuncAlwaysHit(),
@@ -192,10 +201,11 @@ func (deathKnight *DeathKnight) applyBloodCakedBlade() {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
+					diseaseMultiplier := (0.25 + float64(deathKnight.countActiveDiseases())*0.125)
 					if isMH {
-						return mhBaseDamage(sim, spellEffect, spell) * (0.25 + float64(deathKnight.countActiveDiseases())*0.125)
+						return mhBaseDamage(sim, spellEffect, spell) * diseaseMultiplier
 					} else {
-						return ohBaseDamage(sim, spellEffect, spell) * (0.25 + float64(deathKnight.countActiveDiseases())*0.125)
+						return ohBaseDamage(sim, spellEffect, spell) * diseaseMultiplier
 					}
 				},
 			},
