@@ -42,7 +42,7 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64) {
 		}),
 	})
 	target := warrior.CurrentTarget
-	tickDamage := 380 + 0.2*5*warrior.AutoAttacks.MH.AverageDamage()/15*(1+0.1*float64(warrior.Talents.ImprovedRend))
+	tickDamage := 380 + 0.2*5*warrior.AutoAttacks.MH.AverageDamage()/15
 	warrior.RendDot = core.NewDot(core.Dot{
 		Spell: warrior.Rend,
 		Aura: target.RegisterAura(core.Aura{
