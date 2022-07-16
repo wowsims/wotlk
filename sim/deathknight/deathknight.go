@@ -17,6 +17,9 @@ type DeathKnight struct {
 	Ghoul     *GhoulPet
 	RaiseDead *core.Spell
 
+	Gargoyle       *GargoylePet
+	SummonGargoyle *core.Spell
+
 	Presence Presence
 
 	IcyTouch     *core.Spell

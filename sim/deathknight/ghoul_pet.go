@@ -20,10 +20,6 @@ type GhoulPet struct {
 }
 
 func (deathKnight *DeathKnight) NewGhoulPet(permanent bool) *GhoulPet {
-	if deathKnight.Options.PetUptime <= 0 && permanent {
-		return nil
-	}
-
 	ghoulPet := &GhoulPet{
 		Pet: core.NewPet(
 			"Ghoul",
@@ -98,15 +94,22 @@ func (ghoulPet *GhoulPet) Reset(sim *core.Simulation) {
 		ghoulPet.Log(sim, "Inherited Pet stats: %s", inheritedStats)
 	}
 
-	ghoulPet.uptimePercent = core.MinFloat(1, core.MaxFloat(0, ghoulPet.dkOwner.Options.PetUptime))
+	if ghoulPet.dkOwner.Talents.MasterOfGhouls {
+		ghoulPet.uptimePercent = core.MinFloat(1, core.MaxFloat(0, ghoulPet.dkOwner.Options.PetUptime))
+	} else {
+		ghoulPet.uptimePercent = 1.0
+	}
 }
 
 func (ghoulPet *GhoulPet) OnGCDReady(sim *core.Simulation) {
-	percentRemaining := sim.GetRemainingDurationPercent()
-	if percentRemaining < 1.0-ghoulPet.uptimePercent { // once fight is % completed, disable pet.
-		ghoulPet.Disable(sim)
-		ghoulPet.focusBar.Cancel(sim)
-		return
+	// Apply uptime for permanent ghoul
+	if ghoulPet.dkOwner.Talents.MasterOfGhouls {
+		percentRemaining := sim.GetRemainingDurationPercent()
+		if percentRemaining < 1.0-ghoulPet.uptimePercent { // once fight is % completed, disable pet.
+			ghoulPet.Disable(sim)
+			ghoulPet.focusBar.Cancel(sim)
+			return
+		}
 	}
 
 	target := ghoulPet.CurrentTarget
