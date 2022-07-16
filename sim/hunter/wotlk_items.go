@@ -3,6 +3,7 @@ package hunter
 import (
 	"time"
 
+	"github.com/wowsims/wotlk/sim/common/wotlk"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
@@ -198,3 +199,48 @@ var ItemSetAhnKaharBloodHuntersBattlegear = core.NewItemSet(core.ItemSet{
 		},
 	},
 })
+
+func init() {
+
+	wotlk.NewItemEffectWithHeroic(func(isHeroic bool) {
+		name := "Zod's Repeating Longbow"
+		itemID := int32(50034)
+		procChance := 0.04
+		if isHeroic {
+			name += " H"
+			itemID = 50638
+			procChance = 0.05
+		}
+
+		core.NewItemEffect(itemID, func(agent core.Agent) {
+			hunter := agent.(HunterAgent).GetHunter()
+
+			var rangedSpell *core.Spell
+			initSpell := func() {
+				rangedEffect := hunter.AutoAttacks.RangedEffect
+				rangedEffect.DamageMultiplier *= 0.5
+				rangedSpell = hunter.GetOrRegisterSpell(core.SpellConfig{
+					ActionID:     core.ActionID{ItemID: itemID},
+					SpellSchool:  core.SpellSchoolPhysical,
+					Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
+					ApplyEffects: core.ApplyEffectFuncDirectDamage(rangedEffect),
+				})
+			}
+
+			triggerAura := wotlk.MakeProcTriggerAura(&hunter.Unit, wotlk.ProcTrigger{
+				Name:       name + " Trigger",
+				Callback:   wotlk.OnSpellHitDealt,
+				ProcMask:   core.ProcMaskRanged,
+				Outcome:    core.OutcomeLanded,
+				ProcChance: procChance,
+				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellEffect) {
+					rangedSpell.Cast(sim, hunter.CurrentTarget)
+				},
+			})
+			triggerAura.OnInit = func(aura *core.Aura, sim *core.Simulation) {
+				initSpell()
+			}
+		})
+	})
+
+}
