@@ -6,6 +6,7 @@ import (
 
 func (deathKnight *DeathKnight) registerScourgeStrikeShadowDamageSpell() *core.Spell {
 	actionID := core.ActionID{SpellID: 55271}
+
 	return deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
@@ -33,13 +34,13 @@ func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
 	viciousStrikes := 0.15 * float64(deathKnight.Talents.ViciousStrikes)
 	actionID := core.ActionID{SpellID: 55271}
 
-	outbreakBonus := 0.0
+	outbreakBonus := 1.0
 	if deathKnight.Talents.Outbreak == 1 {
-		outbreakBonus = 0.07
+		outbreakBonus = 1.07
 	} else if deathKnight.Talents.Outbreak == 2 {
-		outbreakBonus = 0.13
+		outbreakBonus = 1.13
 	} else if deathKnight.Talents.Outbreak == 3 {
-		outbreakBonus = 0.20
+		outbreakBonus = 1.20
 	}
 
 	shadowDamageSpell := deathKnight.registerScourgeStrikeShadowDamageSpell()
@@ -64,9 +65,8 @@ func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return weaponBaseDamage(sim, hitEffect, spell) *
-						(1.0 +
-							core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 0.02*float64(deathKnight.Talents.RageOfRivendare), 0.0) +
-							outbreakBonus)
+						outbreakBonus *
+						core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 1.0+0.02*float64(deathKnight.Talents.RageOfRivendare), 1.0)
 				},
 				TargetSpellCoefficient: 1,
 			},
