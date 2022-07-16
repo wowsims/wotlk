@@ -44,7 +44,7 @@ func NewElementalShaman(character core.Character, options proto.Player) *Element
 	}
 
 	ele := &ElementalShaman{
-		Shaman:   shaman.NewShaman(character, *eleShamOptions.Talents, totems, selfBuffs),
+		Shaman:   shaman.NewShaman(character, *eleShamOptions.Talents, totems, selfBuffs, eleShamOptions.Rotation.InThunderstormRange),
 		rotation: rotation,
 		has4pT6:  character.HasSetBonus(shaman.ItemSetSkyshatterRegalia, 4),
 	}

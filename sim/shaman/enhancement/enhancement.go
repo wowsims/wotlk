@@ -37,7 +37,7 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 		totems = *enhOptions.Rotation.Totems
 	}
 	enh := &EnhancementShaman{
-		Shaman:   shaman.NewShaman(character, *enhOptions.Talents, totems, selfBuffs),
+		Shaman:   shaman.NewShaman(character, *enhOptions.Talents, totems, selfBuffs, true),
 		Rotation: *enhOptions.Rotation,
 	}
 	// Enable Auto Attacks for this spec
