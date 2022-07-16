@@ -28,7 +28,7 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 // https://wotlk.wowhead.com/talent-calc and copy the numbers in the url.
 export const FrostTalents = {
 	name: 'Frost Dps',
-	data: '23050005-32005350352203012300033101351',
+	data: '23050005-32005350352203012300033101351_001s8q11s9f21xv6',
 };
 
 export const UnholyDualWieldTalents = {
