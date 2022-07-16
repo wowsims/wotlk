@@ -81,7 +81,7 @@ func (spell *Spell) ApplyCostModifiers(cost float64) float64 {
 	} else {
 		cost -= spell.BaseCost * (1 - spell.Unit.PseudoStats.CostMultiplier)
 		cost -= spell.Unit.PseudoStats.CostReduction
-		return MaxFloat(0, cost)
+		return MaxFloat(0, cost*spell.CostMultiplier)
 	}
 }
 

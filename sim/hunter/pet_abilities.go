@@ -56,8 +56,15 @@ type PetAbility struct {
 	*core.Spell
 }
 
+func (ability *PetAbility) IsEmpty() bool {
+	return ability.Spell == nil
+}
+
 // Returns whether the ability was successfully cast.
 func (ability *PetAbility) TryCast(sim *core.Simulation, target *core.Unit, hp *HunterPet) bool {
+	if ability.IsEmpty() {
+		return false
+	}
 	if hp.currentFocus < ability.Cost {
 		return false
 	}
@@ -160,7 +167,7 @@ func (hp *HunterPet) newFocusDump(pat PetAbilityType, spellID int32) PetAbility 
 				DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
 				ThreatMultiplier: 1,
 				BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(118, 168, 0.07)),
-				OutcomeApplier:   hp.specialOutcomeMod(hp.OutcomeFuncMeleeSpecialHitAndCrit(2)),
+				OutcomeApplier:   hp.OutcomeFuncMeleeSpecialHitAndCrit(2),
 			}),
 		}),
 	}
@@ -199,7 +206,7 @@ func (hp *HunterPet) newSpecialAbility(config PetSpecialAbilityConfig) PetAbilit
 			DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
 			ThreatMultiplier: 1,
 			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(config.MinDmg, config.MaxDmg, config.APRatio)),
-			OutcomeApplier:   hp.specialOutcomeMod(hp.OutcomeFuncMeleeSpecialHitAndCrit(2)),
+			OutcomeApplier:   hp.OutcomeFuncMeleeSpecialHitAndCrit(2),
 			OnSpellHitDealt:  config.OnSpellHitDealt,
 		})
 	} else {
@@ -208,7 +215,7 @@ func (hp *HunterPet) newSpecialAbility(config PetSpecialAbilityConfig) PetAbilit
 			DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
 			ThreatMultiplier: 1,
 			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(config.MinDmg, config.MaxDmg, config.APRatio)),
-			OutcomeApplier:   hp.specialOutcomeMod(hp.OutcomeFuncMagicHitAndCrit(2)),
+			OutcomeApplier:   hp.OutcomeFuncMagicHitAndCrit(2),
 			OnSpellHitDealt:  config.OnSpellHitDealt,
 		})
 	}

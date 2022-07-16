@@ -13,11 +13,25 @@ func (hunter *Hunter) registerKillCommandCD() {
 	}
 
 	actionID := core.ActionID{SpellID: 34026}
+	bonusPetSpecialCrit := 10 * core.CritRatingPerCritChance * float64(hunter.Talents.FocusedFire)
+
 	hunter.pet.KillCommandAura = hunter.pet.RegisterAura(core.Aura{
 		Label:     "Kill Command",
 		ActionID:  actionID,
 		Duration:  time.Second * 30,
 		MaxStacks: 3,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			hunter.pet.focusDump.BonusCritRating += bonusPetSpecialCrit
+			if !hunter.pet.specialAbility.IsEmpty() {
+				hunter.pet.specialAbility.BonusCritRating += bonusPetSpecialCrit
+			}
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			hunter.pet.focusDump.BonusCritRating -= bonusPetSpecialCrit
+			if !hunter.pet.specialAbility.IsEmpty() {
+				hunter.pet.specialAbility.BonusCritRating -= bonusPetSpecialCrit
+			}
+		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.ProcMask.Matches(core.ProcMaskMeleeSpecial | core.ProcMaskSpellDamage) {
 				aura.RemoveStack(sim)
