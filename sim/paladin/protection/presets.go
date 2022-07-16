@@ -29,8 +29,6 @@ var defaultProtTalents = &proto.PaladinTalents{
 }
 
 var defaultProtRotation = &proto.ProtectionPaladin_Rotation{
-	ConsecrationRank:  6,
-	UseExorcism:       false,
 	MaintainJudgement: proto.PaladinJudgement_JudgementOfWisdom,
 }
 

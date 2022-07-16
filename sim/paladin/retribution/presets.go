@@ -34,10 +34,7 @@ var defaultRetTalents = &proto.PaladinTalents{
 	DivineStorm:                   true,
 }
 
-var defaultRetRotation = &proto.RetributionPaladin_Rotation{
-	ConsecrationRank: proto.RetributionPaladin_Rotation_None,
-	UseExorcism:      false,
-}
+var defaultRetRotation = &proto.RetributionPaladin_Rotation{}
 
 var defaultRetOptions = &proto.RetributionPaladin_Options{
 	Judgement:            proto.RetributionPaladin_Options_Light,
