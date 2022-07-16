@@ -84,11 +84,9 @@ type Spell struct {
 	// The current or most recent cast data.
 	CurCast Cast
 
-	// Dynamic fields. These should never be set during initialization/reset.
-	// They will almost always be set via aura OnGain/OnExpire callbacks.
-	CostMultiplier   float64
-	DamageMultiplier float64
-	BonusCritRating  float64
+	CostMultiplier   float64 // For dynamic effects. Do not set during initialization.
+	DamageMultiplier float64 // For dynamic effects. Do not set during initialization.
+	BonusCritRating  float64 // For dynamic effects. Do not set during initialization.
 }
 
 // Registers a new spell to the unit. Returns the newly created spell.
