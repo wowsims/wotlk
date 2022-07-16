@@ -151,8 +151,7 @@ func (hp *HunterPet) applyCullingTheHerd() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			// TODO: Smack also
-			if spellEffect.Outcome.Matches(core.OutcomeCrit) && (spell.IsSpellAction(BiteSpellID) || spell.IsSpellAction(ClawSpellID)) {
+			if spellEffect.Outcome.Matches(core.OutcomeCrit) && (spell.IsSpellAction(BiteSpellID) || spell.IsSpellAction(ClawSpellID) || spell.IsSpellAction(SmackSpellID)) {
 				petAura.Activate(sim)
 				ownerAura.Activate(sim)
 			}
@@ -227,8 +226,8 @@ func (hp *HunterPet) registerRabidCD() {
 	var curBonusPerStack float64
 
 	procAura := hp.RegisterAura(core.Aura{
-		Label:     "Rabid Stacking",
-		ActionID:  actionID.WithTag(1),
+		Label:     "Rabid Power",
+		ActionID:  core.ActionID{SpellID: 53403},
 		Duration:  core.NeverExpires,
 		MaxStacks: 5,
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {

@@ -27,7 +27,12 @@ import { PetFood } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
 
-import { Hunter, Hunter_Rotation as HunterRotation, Hunter_Options as HunterOptions } from '/wotlk/core/proto/hunter.js';
+import {
+	Hunter,
+	Hunter_Rotation as HunterRotation,
+	Hunter_Options as HunterOptions,
+	Hunter_Options_PetType as PetType,
+} from '/wotlk/core/proto/hunter.js';
 
 import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
 import * as OtherInputs from '/wotlk/core/components/other_inputs.js';
@@ -42,6 +47,32 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 			cssClass: 'hunter-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
+			],
+			warnings: [
+				// Warning when using exotic pet without BM talented.
+				(simUI: IndividualSimUI<Spec.SpecHunter>) => {
+					return {
+						updateOn: TypedEvent.onAny([simUI.player.talentsChangeEmitter, simUI.player.specOptionsChangeEmitter]),
+						getContent: () => {
+							const petIsExotic = [
+								PetType.Chimaera,
+								PetType.CoreHound,
+								PetType.Devilsaur,
+								PetType.Silithid,
+								PetType.SpiritBeast,
+								PetType.Worm,
+							].includes(simUI.player.getSpecOptions().petType);
+
+							const isBM = simUI.player.getTalents().beastMastery;
+
+							if (petIsExotic && !isBM) {
+								return 'Cannot use exotic pets without the Beast Mastery talent.';
+							} else {
+								return '';
+							}
+						},
+					};
+				},
 			],
 
 			// All stats for which EP should be calculated.
@@ -215,7 +246,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				inputs: [
 					HunterInputs.PetTypeInput,
 					HunterInputs.PetUptime,
-					HunterInputs.PetSingleAbility,
+					//HunterInputs.PetSingleAbility,
 					HunterInputs.SniperTrainingUptime,
 					HunterInputs.LatencyMs,
 					OtherInputs.PrepopPotion,

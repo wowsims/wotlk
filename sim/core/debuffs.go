@@ -356,16 +356,36 @@ func GiftOfArthasAura(target *Unit) *Aura {
 	})
 }
 
+const BleedDamageAuraTag = "BleedDamage"
+
 func MangleAura(target *Unit) *Aura {
 	return target.GetOrRegisterAura(Aura{
 		Label:    "Mangle",
+		Tag:      BleedDamageAuraTag,
 		ActionID: ActionID{SpellID: 33876},
 		Duration: time.Second * 12,
+		Priority: 1.3,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.PeriodicPhysicalDamageTakenMultiplier *= 1.3
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.PeriodicPhysicalDamageTakenMultiplier /= 1.3
+		},
+	})
+}
+
+func StampedeAura(target *Unit) *Aura {
+	return target.GetOrRegisterAura(Aura{
+		Label:    "Stampede",
+		Tag:      BleedDamageAuraTag,
+		ActionID: ActionID{SpellID: 57393},
+		Duration: time.Second * 12,
+		Priority: 1.25,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.PeriodicPhysicalDamageTakenMultiplier *= 1.25
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.PeriodicPhysicalDamageTakenMultiplier /= 1.25
 		},
 	})
 }

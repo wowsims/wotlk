@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warlock *Warlock) registerImmolateSpell() {
@@ -58,7 +58,7 @@ func (warlock *Warlock) registerImmolateSpell() {
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			DamageMultiplier: (1 + 0.03*float64(warlock.Talents.Aftermath)) * (1 + 0.03*float64(warlock.Talents.Emberstorm)),
 			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(785/5 * (1 + 0.1*hasGoImmo), 0.2),
+			BaseDamage:       core.BaseDamageConfigMagicNoRoll(785/5*(1+0.1*hasGoImmo), 0.2),
 			OutcomeApplier:   warlock.OutcomeFuncTick(),
 			IsPeriodic:       true,
 			ProcMask:         core.ProcMaskPeriodicDamage,

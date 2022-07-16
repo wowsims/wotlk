@@ -33,7 +33,7 @@ func (warlock *Warlock) registerSoulFireSpell() {
 			DefaultCast: core.Cast{
 				Cost:     baseCost * (1 - costReduction),
 				GCD:      core.GCDDefault,
-				CastTime: time.Millisecond * time.Duration(6000 - 400*warlock.Talents.Bane),
+				CastTime: time.Millisecond * time.Duration(6000-400*warlock.Talents.Bane),
 			},
 			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
 				cast.CastTime = time.Duration(float64(cast.CastTime) * warlock.soulFireCastTime())
@@ -48,7 +48,7 @@ func (warlock *Warlock) registerSoulFireSpell() {
 func (warlock *Warlock) soulFireCastTime() float64 {
 	castTimeModifier := 1.0
 	if warlock.DecimationAura.IsActive() {
-		castTimeModifier *=  1.0 - 0.2*float64(warlock.Talents.Decimation)
+		castTimeModifier *= 1.0 - 0.2*float64(warlock.Talents.Decimation)
 	}
 	return castTimeModifier
 }

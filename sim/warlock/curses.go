@@ -120,7 +120,7 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 	effect := core.SpellEffect{
 		DamageMultiplier: 1 + 0.01*float64(warlock.Talents.Contagion),
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-		BaseDamage:       core.BaseDamageConfigMagicNoRoll(totalBaseDmg/float64(numberOfTicks), 0.1), //TODO : CoA ramp up effect 
+		BaseDamage:       core.BaseDamageConfigMagicNoRoll(totalBaseDmg/float64(numberOfTicks), 0.1), //TODO : CoA ramp up effect
 		OutcomeApplier:   warlock.OutcomeFuncTick(),
 		IsPeriodic:       true,
 		ProcMask:         core.ProcMaskPeriodicDamage,

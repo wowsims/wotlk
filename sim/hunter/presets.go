@@ -118,11 +118,11 @@ var basicOptions = &proto.Hunter_Options{
 }
 
 var windSerpentOptions = &proto.Hunter_Options{
-	Ammo:             proto.Hunter_Options_AdamantiteStinger,
-	PetType:          proto.Hunter_Options_WindSerpent,
-	PetUptime:        0.9,
-	PetSingleAbility: true,
-	LatencyMs:        15,
+	Ammo:      proto.Hunter_Options_AdamantiteStinger,
+	PetType:   proto.Hunter_Options_WindSerpent,
+	PetUptime: 0.9,
+	//PetSingleAbility: true,
+	LatencyMs: 15,
 }
 
 var FullRaidBuffs = &proto.RaidBuffs{
