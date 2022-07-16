@@ -96,5 +96,12 @@ func (ret *RetributionPaladin) waitUntilNextEvent(sim *core.Simulation, events [
 		return
 	}
 
-	ret.WaitUntil(sim, nextEventAt)
+	// Otherwise add a pending action for the next time
+	pa := &core.PendingAction{
+		Priority:     core.ActionPriorityLow,
+		OnAction:     ret.mainRotation,
+		NextActionAt: nextEventAt,
+	}
+
+	sim.AddPendingAction(pa)
 }
