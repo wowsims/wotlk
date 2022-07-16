@@ -1,0 +1,56 @@
+package deathknight
+
+import (
+	"time"
+
+	"github.com/wowsims/wotlk/sim/core"
+)
+
+func (deathKnight *DeathKnight) registerRaiseDeadCD() {
+	// If talented as permanent pet skip this spell
+	if deathKnight.Talents.MasterOfGhouls {
+		return
+	}
+
+	raiseDeadAura := deathKnight.RegisterAura(core.Aura{
+		Label:    "Raise Dead",
+		ActionID: core.ActionID{SpellID: 46584},
+		Duration: time.Minute * 1,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			deathKnight.Ghoul.Enable(sim, deathKnight.Ghoul)
+			deathKnight.Ghoul.focusBar.reset(sim)
+			deathKnight.Ghoul.AutoAttacks.EnableAutoSwing(sim)
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			deathKnight.Ghoul.Disable(sim)
+			deathKnight.Ghoul.focusBar.Cancel(sim)
+		},
+	})
+
+	deathKnight.RaiseDead = deathKnight.RegisterSpell(core.SpellConfig{
+		ActionID: core.ActionID{SpellID: 46584},
+
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				GCD: core.GCDDefault,
+			},
+			CD: core.Cooldown{
+				Timer:    deathKnight.NewTimer(),
+				Duration: time.Minute*3 - time.Second*45*time.Duration(deathKnight.Talents.NightOfTheDead),
+			},
+		},
+
+		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
+			raiseDeadAura.Activate(sim)
+		},
+	})
+
+	deathKnight.AddMajorCooldown(core.MajorCooldown{
+		Spell:    deathKnight.RaiseDead,
+		Priority: core.CooldownPriorityDrums - 1, // Always prefer to cast after drums or lust so the ghoul gets their benefits.
+		Type:     core.CooldownTypeDPS,
+		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
+			return !deathKnight.Ghoul.IsEnabled()
+		},
+	})
+}

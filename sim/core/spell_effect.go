@@ -271,6 +271,9 @@ func (spellEffect *SpellEffect) applyAttackerModifiers(sim *Simulation, spell *S
 	if spell.Flags.Matches(SpellFlagAgentReserved1) {
 		spellEffect.Damage *= attacker.PseudoStats.AgentReserved1DamageDealtMultiplier
 	}
+	if spell.Flags.Matches(SpellFlagDisease) {
+		spellEffect.Damage *= attacker.PseudoStats.DiseaseDamageDealtMultiplier
+	}
 
 	spellEffect.Damage *= attacker.PseudoStats.DamageDealtMultiplier
 	if spell.SpellSchool.Matches(SpellSchoolPhysical) {
@@ -305,6 +308,11 @@ func (spellEffect *SpellEffect) applyTargetModifiers(sim *Simulation, spell *Spe
 	spellEffect.Damage *= attackTable.DamageDealtMultiplier
 	spellEffect.Damage *= target.PseudoStats.DamageTakenMultiplier
 	spellEffect.Damage = MaxFloat(0, spellEffect.Damage+target.PseudoStats.BonusDamageTaken)
+
+	if spell.Flags.Matches(SpellFlagDisease) {
+		spellEffect.Damage *= target.PseudoStats.DiseaseDamageTakenMultiplier
+	}
+
 	if spell.SpellSchool.Matches(SpellSchoolPhysical) {
 		if spellEffect.IsPeriodic {
 			spellEffect.Damage *= target.PseudoStats.PeriodicPhysicalDamageTakenMultiplier

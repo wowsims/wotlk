@@ -15,6 +15,7 @@ func (deathKnight *DeathKnight) newPlagueStrikeSpell(isMH bool) *core.Spell {
 	}
 
 	viciousStrikes := 0.15 * float64(deathKnight.Talents.ViciousStrikes)
+	outbreakBonus := 1.0 + 0.1*float64(deathKnight.Talents.Outbreak)
 
 	effect := core.SpellEffect{
 		BonusCritRating:  (1.0*float64(deathKnight.Talents.Annihilation) + 3.0*float64(deathKnight.Talents.ViciousStrikes)) * core.CritRatingPerCritChance,
@@ -24,10 +25,9 @@ func (deathKnight *DeathKnight) newPlagueStrikeSpell(isMH bool) *core.Spell {
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				return weaponBaseDamage(sim, hitEffect, spell) *
-					(1.0 +
-						core.TernaryFloat64(deathKnight.DiseasesAreActive(), 0.05*float64(deathKnight.Talents.TundraStalker), 0.0) +
-						core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 0.02*float64(deathKnight.Talents.RageOfRivendare), 0.0) +
-						0.10*float64(deathKnight.Talents.Outbreak))
+					outbreakBonus *
+					core.TernaryFloat64(deathKnight.DiseasesAreActive(), 1.0+0.05*float64(deathKnight.Talents.TundraStalker), 1.0) *
+					core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 1.0+0.02*float64(deathKnight.Talents.RageOfRivendare), 1.0)
 			},
 			TargetSpellCoefficient: 1,
 		},
@@ -61,8 +61,6 @@ func (deathKnight *DeathKnight) registerPlagueStrikeSpell() {
 	mhHitSpell := deathKnight.newPlagueStrikeSpell(true)
 	ohHitSpell := deathKnight.newPlagueStrikeSpell(false)
 
-	totChance := ToTChance(deathKnight)
-
 	deathKnight.PlagueStrike = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    PlagueStrikeActionID,
 		SpellSchool: core.SpellSchoolPhysical,
@@ -81,15 +79,10 @@ func (deathKnight *DeathKnight) registerPlagueStrikeSpell() {
 			OutcomeApplier: deathKnight.OutcomeFuncAlwaysHit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				mhHitSpell.Cast(sim, spellEffect.Target)
-				totProcced := ToTWillCast(sim, totChance)
-				if totProcced {
-					ohHitSpell.Cast(sim, spellEffect.Target)
-				}
+				deathKnight.threatOfThassarianProc(sim, spellEffect, mhHitSpell, ohHitSpell)
+				deathKnight.threatOfThassarianAdjustMetrics(sim, spell, spellEffect, PlagueStrikeMHOutcome)
 
-				ToTAdjustMetrics(sim, spell, spellEffect, PlagueStrikeMHOutcome)
-
-				if OutcomeEitherWeaponHitOrCrit(PlagueStrikeMHOutcome, PlagueStrikeOHOutcome) {
+				if deathKnight.outcomeEitherWeaponHitOrCrit(PlagueStrikeMHOutcome, PlagueStrikeOHOutcome) {
 					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 0, 1)
 					deathKnight.Spend(sim, spell, dkSpellCost)
 

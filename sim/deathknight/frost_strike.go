@@ -16,22 +16,22 @@ func (deathKnight *DeathKnight) newFrostStrikeHitSpell(isMH bool) *core.Spell {
 		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 138.0, 0.55, true)
 	}
 
-	bloodOfTheNorthCoeff := 0.0
+	bloodOfTheNorthCoeff := 1.0
 	if deathKnight.Talents.BloodOfTheNorth == 1 {
-		bloodOfTheNorthCoeff = 0.03
+		bloodOfTheNorthCoeff = 1.03
 	} else if deathKnight.Talents.BloodOfTheNorth == 2 {
-		bloodOfTheNorthCoeff = 0.06
+		bloodOfTheNorthCoeff = 1.06
 	} else if deathKnight.Talents.BloodOfTheNorth == 3 {
-		bloodOfTheNorthCoeff = 0.1
+		bloodOfTheNorthCoeff = 1.1
 	}
 
-	glacierRotCoeff := 0.0
+	glacierRotCoeff := 1.0
 	if deathKnight.Talents.GlacierRot == 1 {
-		glacierRotCoeff = 0.07
+		glacierRotCoeff = 1.07
 	} else if deathKnight.Talents.GlacierRot == 2 {
-		glacierRotCoeff = 0.13
+		glacierRotCoeff = 1.13
 	} else if deathKnight.Talents.GlacierRot == 3 {
-		glacierRotCoeff = 0.20
+		glacierRotCoeff = 1.20
 	}
 
 	guileOfGorefiend := deathKnight.Talents.GuileOfGorefiend > 0
@@ -44,12 +44,11 @@ func (deathKnight *DeathKnight) newFrostStrikeHitSpell(isMH bool) *core.Spell {
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				return weaponBaseDamage(sim, hitEffect, spell) *
-					(1.0 +
-						bloodOfTheNorthCoeff +
-						core.TernaryFloat64(deathKnight.DiseasesAreActive() && deathKnight.Talents.GlacierRot > 0, glacierRotCoeff, 0.0) +
-						core.TernaryFloat64(deathKnight.DiseasesAreActive(), 0.05*float64(deathKnight.Talents.TundraStalker), 0.0) +
-						core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 0.02*float64(deathKnight.Talents.RageOfRivendare), 0.0) +
-						core.TernaryFloat64(sim.IsExecutePhase35() && deathKnight.Talents.MercilessCombat > 0, 0.06*float64(deathKnight.Talents.MercilessCombat), 0.0))
+					bloodOfTheNorthCoeff *
+					core.TernaryFloat64(deathKnight.DiseasesAreActive() && deathKnight.Talents.GlacierRot > 0, glacierRotCoeff, 1.0) *
+					core.TernaryFloat64(deathKnight.DiseasesAreActive(), 1.0+0.05*float64(deathKnight.Talents.TundraStalker), 1.0) *
+					core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 1.0+0.02*float64(deathKnight.Talents.RageOfRivendare), 1.0) *
+					core.TernaryFloat64(sim.IsExecutePhase35() && deathKnight.Talents.MercilessCombat > 0, 1.0+0.06*float64(deathKnight.Talents.MercilessCombat), 1.0)
 			},
 			TargetSpellCoefficient: 1,
 		},
@@ -88,8 +87,6 @@ func (deathKnight *DeathKnight) registerFrostStrikeSpell() {
 	mhHitSpell := deathKnight.newFrostStrikeHitSpell(true)
 	ohHitSpell := deathKnight.newFrostStrikeHitSpell(false)
 
-	totChance := ToTChance(deathKnight)
-
 	deathKnight.FrostStrike = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    FrostStrikeActionID,
 		SpellSchool: core.SpellSchoolFrost,
@@ -112,13 +109,8 @@ func (deathKnight *DeathKnight) registerFrostStrikeSpell() {
 			OutcomeApplier: deathKnight.OutcomeFuncAlwaysHit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				mhHitSpell.Cast(sim, spellEffect.Target)
-				totProcced := ToTWillCast(sim, totChance)
-				if totProcced {
-					ohHitSpell.Cast(sim, spellEffect.Target)
-				}
-
-				ToTAdjustMetrics(sim, spell, spellEffect, FrostStrikeMHOutcome)
+				deathKnight.threatOfThassarianProc(sim, spellEffect, mhHitSpell, ohHitSpell)
+				deathKnight.threatOfThassarianAdjustMetrics(sim, spell, spellEffect, FrostStrikeMHOutcome)
 			},
 		}),
 	})

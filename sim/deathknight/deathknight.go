@@ -14,6 +14,12 @@ type DeathKnight struct {
 	Options  proto.DeathKnight_Options
 	Rotation proto.DeathKnight_Rotation
 
+	Ghoul     *GhoulPet
+	RaiseDead *core.Spell
+
+	Gargoyle       *GargoylePet
+	SummonGargoyle *core.Spell
+
 	Presence Presence
 
 	IcyTouch     *core.Spell
@@ -21,6 +27,9 @@ type DeathKnight struct {
 	Obliterate   *core.Spell
 	BloodStrike  *core.Spell
 	FrostStrike  *core.Spell
+
+	GhoulFrenzy     *core.Spell
+	GhoulFrenzyAura *core.Aura
 
 	LastScourgeStrikeDamage float64
 	ScourgeStrike           *core.Spell
@@ -33,6 +42,7 @@ type DeathKnight struct {
 
 	HowlingBlastCostless bool
 	HowlingBlast         *core.Spell
+
 	//HornOfWinter     *core.Spell
 	//UnbreakableArmor *core.Spell
 	//ArmyOfTheDead    *core.Spell
@@ -109,6 +119,9 @@ func (deathKnight *DeathKnight) Initialize() {
 	deathKnight.registerFrostStrikeSpell()
 	deathKnight.registerDeathAndDecaySpell()
 	deathKnight.registerDiseaseDots()
+	deathKnight.registerGhoulFrenzySpell()
+	deathKnight.registerRaiseDeadCD()
+	deathKnight.registerSummonGargoyleCD()
 }
 
 func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
@@ -194,6 +207,11 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 			return attackPower + strength*2
 		},
 	})
+
+	deathKnight.Ghoul = deathKnight.NewGhoulPet(deathKnight.Talents.MasterOfGhouls)
+	if deathKnight.Talents.SummonGargoyle {
+		deathKnight.Gargoyle = deathKnight.NewGargoyle()
+	}
 
 	return deathKnight
 }
@@ -350,6 +368,11 @@ func init() {
 }
 
 // Agent is a generic way to access underlying warrior on any of the agents.
+
+func (deathKnight *DeathKnight) GetDeathKnight() *DeathKnight {
+	return deathKnight
+}
+
 type DeathKnightAgent interface {
 	GetDeathKnight() *DeathKnight
 }
