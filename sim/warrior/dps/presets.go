@@ -84,7 +84,7 @@ var FuryTalents = &proto.WarriorTalents{
 }
 
 var armsSlamRotation = &proto.Warrior_Rotation{
-	UseSlam: true,
+	UseRend: true,
 	UseMs:   true,
 
 	HsRageThreshold: 60,
@@ -101,7 +101,7 @@ var warriorRotation = &proto.Warrior_Rotation{
 	UseRend: true,
 
 	HsRageThreshold:   40,
-	RendRageThreshold: 70,
+	RendRageThreshold: 75,
 
 	UseHsDuringExecute: true,
 	UseWwDuringExecute: true,

@@ -51,12 +51,11 @@ export const DefaultRotation = WarriorRotation.create({
 });
 
 export const ArmsRotation = WarriorRotation.create({
-	useSlam: true,
+	useRend: true,
 	useMs: true,
 	sunderArmor: SunderArmor.SunderArmorMaintain,
 	msRageThreshold: 60,
 	hsRageThreshold: 60,
-	rendRageThreshold: 75,
 	rendCdThreshold: 3,
 	useHsDuringExecute: true,
 	spamExecute: false,

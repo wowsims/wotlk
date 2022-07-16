@@ -111,7 +111,6 @@ export const WarriorRotationConfig = {
 					newRotation.useRend = newValue;
 					player.setRotation(eventID, newRotation);
 				},
-				showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().bloodthirst,
 			},
 		},
 		{
@@ -126,23 +125,6 @@ export const WarriorRotationConfig = {
 				setValue: (eventID: EventID, player: Player<Spec.SpecWarrior>, newValue: boolean) => {
 					const newRotation = player.getRotation();
 					newRotation.useMs = newValue;
-					player.setRotation(eventID, newRotation);
-				},
-				showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().mortalStrike,
-			},
-		},
-		{
-			type: 'boolean' as const,
-			cssClass: 'slam-picker',
-			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-			config: {
-				label: 'Use Slam',
-				labelTooltip: 'Use Slam whenever possible.',
-				changedEvent: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-				getValue: (player: Player<Spec.SpecWarrior>) => player.getRotation().useSlam,
-				setValue: (eventID: EventID, player: Player<Spec.SpecWarrior>, newValue: boolean) => {
-					const newRotation = player.getRotation();
-					newRotation.useSlam = newValue;
 					player.setRotation(eventID, newRotation);
 				},
 				showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().mortalStrike,
@@ -229,7 +211,7 @@ export const WarriorRotationConfig = {
 					newRotation.rendCdThreshold = newValue;
 					player.setRotation(eventID, newRotation);
 				},
-				showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().mortalStrike,
+				showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().useRend && player.getTalents().mortalStrike,
 			},
 		},
 		{

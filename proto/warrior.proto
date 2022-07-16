@@ -153,7 +153,6 @@ enum WarriorShout {
 message Warrior {
 	message Rotation {
 		bool use_cleave = 1;
-		// Fury only: Use rend on free global (Arms warrior will always try to refresh Rend)
 		bool use_rend = 2;
 		bool use_ms = 18;
 		bool use_slam = 3;

@@ -38,7 +38,11 @@ func (war *DpsWarrior) doRotation(sim *core.Simulation) {
 			}
 		}
 	} else {
-		war.trySwapToBerserker(sim)
+		if war.Talents.Bloodthirst {
+			war.trySwapToBerserker(sim)
+		} else if war.Talents.MortalStrike {
+			war.trySwapToBattle(sim)
+		}
 	}
 
 	if war.shouldSunder(sim) {
@@ -79,7 +83,7 @@ func (war *DpsWarrior) normalRotation(sim *core.Simulation, highPrioSpellsOnly b
 			war.Whirlwind.Cast(sim, war.CurrentTarget)
 		} else if war.CanBloodthirst(sim) {
 			war.Bloodthirst.Cast(sim, war.CurrentTarget)
-		} else if war.CanMortalStrike(sim) {
+		} else if war.Rotation.UseMs && war.CanMortalStrike(sim) {
 			war.MortalStrike.Cast(sim, war.CurrentTarget)
 		} else if war.CanShieldSlam(sim) {
 			war.ShieldSlam.Cast(sim, war.CurrentTarget)
@@ -93,7 +97,7 @@ func (war *DpsWarrior) normalRotation(sim *core.Simulation, highPrioSpellsOnly b
 				war.BattleStance.Cast(sim, nil)
 			}
 			war.Overpower.Cast(sim, war.CurrentTarget)
-		} else if war.ShouldRend(sim) {
+		} else if war.Rotation.UseRend && war.ShouldRend(sim) {
 			war.Rend.Cast(sim, war.CurrentTarget)
 		} else if war.CanSlam(sim) {
 			war.Slam.Cast(sim, war.CurrentTarget)
@@ -115,12 +119,14 @@ func (war *DpsWarrior) executeRotation(sim *core.Simulation, highPrioSpellsOnly 
 			war.Whirlwind.Cast(sim, war.CurrentTarget)
 		} else if war.Rotation.UseBtDuringExecute && war.CanBloodthirst(sim) {
 			war.Bloodthirst.Cast(sim, war.CurrentTarget)
-		} else if war.Rotation.UseSlamOverExecute || war.Rotation.UseSlam {
+		} else if war.Rotation.UseSlamOverExecute {
 			war.Slam.Cast(sim, war.CurrentTarget)
-		} else if war.CanMortalStrike(sim) {
+		} else if war.Rotation.UseMs && war.CanMortalStrike(sim) {
 			war.MortalStrike.Cast(sim, war.CurrentTarget)
 		} else if !war.Rotation.PrioritizeWw && war.Rotation.UseWwDuringExecute && war.CanWhirlwind(sim) {
 			war.Whirlwind.Cast(sim, war.CurrentTarget)
+		} else if war.Rotation.UseRend && war.ShouldRend(sim) {
+			war.Rend.Cast(sim, war.CurrentTarget)
 		} else if !highPrioSpellsOnly {
 			if war.tryMaintainDebuffs(sim) {
 				// Do nothing, already cast
@@ -138,6 +144,14 @@ func (war *DpsWarrior) executeRotation(sim *core.Simulation, highPrioSpellsOnly 
 func (war *DpsWarrior) trySwapToBerserker(sim *core.Simulation) bool {
 	if !war.StanceMatches(warrior.BerserkerStance) && war.BerserkerStance.IsReady(sim) && sim.CurrentTime >= war.canSwapStanceAt {
 		war.BerserkerStance.Cast(sim, nil)
+		return true
+	}
+	return false
+}
+
+func (war *DpsWarrior) trySwapToBattle(sim *core.Simulation) bool {
+	if !war.StanceMatches(warrior.BattleStance) && war.BattleStance.IsReady(sim) && sim.CurrentTime >= war.canSwapStanceAt {
+		war.BattleStance.Cast(sim, nil)
 		return true
 	}
 	return false

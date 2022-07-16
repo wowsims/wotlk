@@ -51,9 +51,6 @@ func NewDpsWarrior(character core.Character, options proto.Player) *DpsWarrior {
 		Rotation: *warOptions.Rotation,
 		Options:  *warOptions.Options,
 	}
-	if war.Talents.ImprovedSlam != 2 {
-		war.Rotation.UseSlam = false
-	}
 
 	war.EnableRageBar(warOptions.Options.StartingRage, core.TernaryFloat64(war.Talents.EndlessRage, 1.25, 1), func(sim *core.Simulation) {
 		if war.GCD.IsReady(sim) {
@@ -61,7 +58,7 @@ func NewDpsWarrior(character core.Character, options proto.Player) *DpsWarrior {
 			if war.GCD.IsReady(sim) {
 				war.doRotation(sim)
 			}
-		} else if !war.thunderClapNext {
+		} else if !war.thunderClapNext && war.Talents.Bloodthirst {
 			war.trySwapToBerserker(sim)
 		}
 	})
