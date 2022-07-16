@@ -12,7 +12,7 @@ func init() {
 	core.AddEffectsToTest = false
 	// TODO: Essence of Gossamer
 
-	newItemEffectWithHeroic(func(isHeroic bool) {
+	NewItemEffectWithHeroic(func(isHeroic bool) {
 		name := "Deathbringer's Will"
 		itemID := int32(50362)
 		amount := 600.0
@@ -65,7 +65,7 @@ func init() {
 				return
 			}
 
-			makeProcTriggerAura(&character.Unit, ProcTrigger{
+			MakeProcTriggerAura(&character.Unit, ProcTrigger{
 				Name:       name,
 				Callback:   OnSpellHitDealt,
 				ProcMask:   core.ProcMaskMeleeOrRanged,
@@ -91,7 +91,7 @@ func init() {
 		actionID := core.ActionID{ItemID: 40382}
 		manaMetrics := character.NewManaMetrics(actionID)
 
-		makeProcTriggerAura(&character.Unit, ProcTrigger{
+		MakeProcTriggerAura(&character.Unit, ProcTrigger{
 			Name:       "Soul of the Dead",
 			Callback:   OnSpellHitDealt,
 			ProcMask:   core.ProcMaskSpellDamage,
@@ -208,7 +208,7 @@ func init() {
 		})
 	})
 
-	newItemEffectWithHeroic(func(isHeroic bool) { // Sliver of Pure Ice
+	NewItemEffectWithHeroic(func(isHeroic bool) { // Sliver of Pure Ice
 		itemID := int32(50339)
 		amount := 1625.0
 		if isHeroic {
@@ -241,7 +241,7 @@ func init() {
 		})
 	})
 
-	newItemEffectWithHeroic(func(isHeroic bool) {
+	NewItemEffectWithHeroic(func(isHeroic bool) {
 		name := "Corpse Tongue Coin"
 		itemID := int32(50352)
 		amount := 5712.0
@@ -263,7 +263,7 @@ func init() {
 				Duration: time.Second * 30,
 			}
 
-			makeProcTriggerAura(&character.Unit, ProcTrigger{
+			MakeProcTriggerAura(&character.Unit, ProcTrigger{
 				Name:     name + " Trigger",
 				Callback: OnSpellHitTaken,
 				ProcMask: core.ProcMaskMelee,
@@ -278,7 +278,7 @@ func init() {
 		})
 	})
 
-	newItemEffectWithHeroic(func(isHeroic bool) {
+	NewItemEffectWithHeroic(func(isHeroic bool) {
 		name := "Disloged Foreign Object"
 		itemID := int32(50353)
 		amount := 105.0
@@ -302,7 +302,7 @@ func init() {
 				BonusPerStack: stats.Stats{stats.SpellPower: amount, stats.HealingPower: amount},
 			})
 
-			makeProcTriggerAura(&character.Unit, ProcTrigger{
+			MakeProcTriggerAura(&character.Unit, ProcTrigger{
 				Name:       name + " Trigger",
 				Callback:   OnSpellHitDealt,
 				ProcMask:   core.ProcMaskSpellDamage,

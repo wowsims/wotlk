@@ -26,7 +26,7 @@ func newProcStatBonusEffect(config ProcStatBonusEffect) {
 		character := agent.GetCharacter()
 		procAura := character.NewTemporaryStatsAura(config.Name+" Proc", core.ActionID{ItemID: config.ID}, config.Bonus, config.Duration)
 
-		makeProcTriggerAura(&character.Unit, ProcTrigger{
+		MakeProcTriggerAura(&character.Unit, ProcTrigger{
 			Name:       config.Name,
 			Callback:   config.Callback,
 			ProcMask:   config.ProcMask,

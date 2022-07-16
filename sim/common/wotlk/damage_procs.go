@@ -34,7 +34,7 @@ func newProcDamageEffect(config ProcDamageEffect) {
 		triggerConfig.Handler = func(sim *core.Simulation, _ *core.Spell, _ *core.SpellEffect) {
 			damageSpell.Cast(sim, character.CurrentTarget)
 		}
-		makeProcTriggerAura(&character.Unit, triggerConfig)
+		MakeProcTriggerAura(&character.Unit, triggerConfig)
 	})
 }
 

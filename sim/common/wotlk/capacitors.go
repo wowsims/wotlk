@@ -69,7 +69,7 @@ func newCapacitorDamageEffect(config CapacitorDamageEffect) {
 			capacitorAura.Activate(sim)
 			capacitorAura.AddStack(sim)
 		}
-		makeProcTriggerAura(&character.Unit, config.Trigger)
+		MakeProcTriggerAura(&character.Unit, config.Trigger)
 	})
 }
 
@@ -142,7 +142,7 @@ func init() {
 		BaseDamage: core.BaseDamageConfigRoll(1959, 2275),
 	})
 
-	newItemEffectWithHeroic(func(isHeroic bool) {
+	NewItemEffectWithHeroic(func(isHeroic bool) {
 		name := "Tiny Abomination in a Jar"
 		itemID := int32(50351)
 		maxStacks := int32(8)
@@ -202,7 +202,7 @@ func init() {
 				},
 			})
 
-			makeProcTriggerAura(&character.Unit, ProcTrigger{
+			MakeProcTriggerAura(&character.Unit, ProcTrigger{
 				Name:       name + " Trigger",
 				Callback:   OnSpellHitDealt,
 				ProcMask:   core.ProcMaskMelee,

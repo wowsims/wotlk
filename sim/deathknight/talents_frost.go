@@ -167,10 +167,6 @@ func (deathKnight *DeathKnight) threatOfThassarianProcMasks(isMH bool, effect *c
 	}
 }
 
-func (deathKnight *DeathKnight) threatOfThassarianHitCheck(mhOutcome core.HitOutcome, ohOutcome core.HitOutcome) bool {
-	return mhOutcome == core.OutcomeHit || mhOutcome == core.OutcomeCrit || ohOutcome == core.OutcomeHit || ohOutcome == core.OutcomeCrit
-}
-
 func (deathKnight *DeathKnight) applyThreatOfThassarian() {
 
 }

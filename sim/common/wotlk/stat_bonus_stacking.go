@@ -50,7 +50,7 @@ func newStackingStatBonusEffect(config StackingStatBonusEffect) {
 			BonusPerStack: config.Bonus,
 		})
 
-		makeProcTriggerAura(&character.Unit, ProcTrigger{
+		MakeProcTriggerAura(&character.Unit, ProcTrigger{
 			Name:       config.Name,
 			Callback:   config.Callback,
 			ProcMask:   config.ProcMask,
@@ -161,7 +161,7 @@ func init() {
 			BonusPerStack: stats.Stats{stats.MeleeCrit: 15, stats.SpellCrit: 15},
 		})
 
-		makeProcTriggerAura(&character.Unit, ProcTrigger{
+		MakeProcTriggerAura(&character.Unit, ProcTrigger{
 			Name:       "Death Knight's Anguish",
 			Callback:   OnSpellHitDealt,
 			ProcMask:   core.ProcMaskMeleeOrRanged,

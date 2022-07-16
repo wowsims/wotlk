@@ -105,7 +105,7 @@ func applyProcTriggerCallback(unit *core.Unit, aura *core.Aura, config ProcTrigg
 	}
 }
 
-func makeProcTriggerAura(unit *core.Unit, config ProcTrigger) *core.Aura {
+func MakeProcTriggerAura(unit *core.Unit, config ProcTrigger) *core.Aura {
 	aura := core.Aura{
 		Label:    config.Name,
 		ActionID: config.ActionID,
@@ -120,7 +120,7 @@ func makeProcTriggerAura(unit *core.Unit, config ProcTrigger) *core.Aura {
 	return unit.RegisterAura(aura)
 }
 
-func newItemEffectWithHeroic(f func(isHeroic bool)) {
+func NewItemEffectWithHeroic(f func(isHeroic bool)) {
 	f(true)
 	f(false)
 }
