@@ -659,6 +659,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestMutilate-AllItems-PurifiedShardoftheGods"
+ value: {
+  dps: 2021.1316628123625
+  tps: 1423.36100696426
+ }
+}
+dps_results: {
  key: "TestMutilate-AllItems-Quagmirran'sEye-27683"
  value: {
   dps: 2021.1316628123625
@@ -768,6 +775,13 @@ dps_results: {
  value: {
   dps: 2040.4271854163774
   tps: 1437.0191148582867
+ }
+}
+dps_results: {
+ key: "TestMutilate-AllItems-ShinyShardoftheGods"
+ value: {
+  dps: 2021.1316628123625
+  tps: 1423.36100696426
  }
 }
 dps_results: {

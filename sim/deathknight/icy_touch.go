@@ -23,14 +23,15 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 	itAura := core.IcyTouchAura(target, deathKnight.Talents.ImprovedIcyTouch)
 	deathKnight.IcyTouchAura = itAura
 
-	glacierRotCoeff := 0.0
+	glacierRotCoeff := 1.0
 	if deathKnight.Talents.GlacierRot == 1 {
-		glacierRotCoeff = 0.07
+		glacierRotCoeff = 1.07
 	} else if deathKnight.Talents.GlacierRot == 2 {
-		glacierRotCoeff = 0.13
+		glacierRotCoeff = 1.13
 	} else if deathKnight.Talents.GlacierRot == 3 {
-		glacierRotCoeff = 0.20
+		glacierRotCoeff = 1.20
 	}
+	impHowlingTouchCoeff := 1.0 + 0.05*float64(deathKnight.Talents.ImprovedIcyTouch)
 
 	deathKnight.IcyTouch = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 59131},
@@ -52,12 +53,11 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					roll := (245.0-227.0)*sim.RandomFloat("Icy Touch") + 227.0
 					return (roll + hitEffect.MeleeAttackPower(spell.Unit)*0.1) *
-						(1.0 +
-							0.05*float64(deathKnight.Talents.ImprovedIcyTouch) +
-							core.TernaryFloat64(deathKnight.DiseasesAreActive() && deathKnight.Talents.GlacierRot > 0, glacierRotCoeff, 0.0) +
-							core.TernaryFloat64(deathKnight.DiseasesAreActive(), 0.05*float64(deathKnight.Talents.TundraStalker), 0.0) +
-							core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 0.02*float64(deathKnight.Talents.RageOfRivendare), 0.0) +
-							core.TernaryFloat64(sim.IsExecutePhase35() && deathKnight.Talents.MercilessCombat > 0, 0.06*float64(deathKnight.Talents.MercilessCombat), 0.0))
+						impHowlingTouchCoeff *
+						core.TernaryFloat64(deathKnight.DiseasesAreActive() && deathKnight.Talents.GlacierRot > 0, glacierRotCoeff, 1.0) *
+						core.TernaryFloat64(deathKnight.DiseasesAreActive(), 1.0+0.05*float64(deathKnight.Talents.TundraStalker), 1.0) *
+						core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 1.0+0.02*float64(deathKnight.Talents.RageOfRivendare), 1.0) *
+						core.TernaryFloat64(sim.IsExecutePhase35() && deathKnight.Talents.MercilessCombat > 0, 1.0+0.06*float64(deathKnight.Talents.MercilessCombat), 1.0)
 				},
 				TargetSpellCoefficient: 1,
 			},

@@ -384,14 +384,7 @@ func (hunter *Hunter) applyWildQuiver() {
 			DamageMultiplier: 0.8,
 			ThreatMultiplier: 1,
 
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return hunter.AutoAttacks.Ranged.BaseDamage(sim) +
-						hunter.AmmoDamageBonus +
-						hitEffect.BonusWeaponDamage(spell.Unit)
-				},
-				TargetSpellCoefficient: 1,
-			},
+			BaseDamage:     core.BaseDamageConfigRangedWeapon(0),
 			OutcomeApplier: hunter.OutcomeFuncAlwaysHit(),
 		}),
 	})
