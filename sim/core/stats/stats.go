@@ -471,6 +471,7 @@ type PseudoStats struct {
 	HolyDamageDealtMultiplier     float64
 	NatureDamageDealtMultiplier   float64
 	ShadowDamageDealtMultiplier   float64
+	DiseaseDamageDealtMultiplier  float64
 
 	PeriodicShadowDamageDealtMultiplier float64
 
@@ -511,6 +512,7 @@ type PseudoStats struct {
 	HolyDamageTakenMultiplier     float64
 	NatureDamageTakenMultiplier   float64
 	ShadowDamageTakenMultiplier   float64
+	DiseaseDamageTakenMultiplier  float64
 
 	ReducedPhysicalHitTakenChance float64
 	ReducedArcaneHitTakenChance   float64
@@ -546,6 +548,7 @@ func NewPseudoStats() PseudoStats {
 		HolyDamageDealtMultiplier:           1,
 		NatureDamageDealtMultiplier:         1,
 		ShadowDamageDealtMultiplier:         1,
+		DiseaseDamageDealtMultiplier:        1,
 		PeriodicShadowDamageDealtMultiplier: 1,
 		AgentReserved1DamageDealtMultiplier: 1,
 
@@ -561,6 +564,7 @@ func NewPseudoStats() PseudoStats {
 		HolyDamageTakenMultiplier:     1,
 		NatureDamageTakenMultiplier:   1,
 		ShadowDamageTakenMultiplier:   1,
+		DiseaseDamageTakenMultiplier:  1,
 
 		PeriodicPhysicalDamageTakenMultiplier: 1,
 

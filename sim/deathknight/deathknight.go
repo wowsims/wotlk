@@ -121,6 +121,7 @@ func (deathKnight *DeathKnight) Initialize() {
 	deathKnight.registerDiseaseDots()
 	deathKnight.registerGhoulFrenzySpell()
 	deathKnight.registerRaiseDeadCD()
+	deathKnight.registerSummonGargoyleCD()
 }
 
 func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
@@ -208,6 +209,9 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 	})
 
 	deathKnight.Ghoul = deathKnight.NewGhoulPet(deathKnight.Talents.MasterOfGhouls)
+	if deathKnight.Talents.SummonGargoyle {
+		deathKnight.Gargoyle = deathKnight.NewGargoyle()
+	}
 
 	return deathKnight
 }

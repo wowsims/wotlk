@@ -68,6 +68,7 @@ func (deathKnight *DeathKnight) registerFrostFever() {
 	deathKnight.FrostFeverSpell = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolFrost,
+		Flags:        core.SpellFlagDisease,
 		ApplyEffects: core.ApplyEffectFuncDot(deathKnight.FrostFeverDisease),
 	})
 
@@ -109,6 +110,7 @@ func (deathKnight *DeathKnight) registerBloodPlague() {
 	deathKnight.BloodPlagueSpell = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolShadow,
+		Flags:        core.SpellFlagDisease,
 		ApplyEffects: core.ApplyEffectFuncDot(deathKnight.BloodPlagueDisease),
 	})
 
