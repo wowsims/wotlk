@@ -762,6 +762,29 @@ func IcyTouchAura(target *Unit, impIcyTouch int32) *Aura {
 	})
 }
 
+const RuneOfRazoriceVulnerabilityTag = "RuneOfRazoriceVulnerability"
+
+func RuneOfRazoriceVulnerabilityAura(target *Unit) *Aura {
+	frostVulnPerStack := 0.02
+
+	return target.GetOrRegisterAura(Aura{
+		Label:     "RuneOfRazoriceVulnerability",
+		Tag:       RuneOfRazoriceVulnerabilityTag,
+		ActionID:  ActionID{SpellID: 53343},
+		Duration:  NeverExpires,
+		MaxStacks: 5,
+		Priority:  1.0 / 1.1,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.SetStacks(sim, 0)
+		},
+		OnStacksChange: func(aura *Aura, sim *Simulation, oldStacks int32, newStacks int32) {
+			oldMultiplier := 1.0 + float64(oldStacks)*frostVulnPerStack
+			newMultiplier := 1.0 + float64(newStacks)*frostVulnPerStack
+			aura.Unit.PseudoStats.FrostDamageTakenMultiplier *= (newMultiplier / oldMultiplier)
+		},
+	})
+}
+
 func InsectSwarmAura(target *Unit) *Aura {
 	return target.GetOrRegisterAura(Aura{
 		Label:    "InsectSwarmMiss",

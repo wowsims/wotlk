@@ -356,6 +356,124 @@ func init() {
 		})
 	})
 
+	core.NewItemEffect(53343, func(agent core.Agent) {
+		character := agent.GetCharacter()
+
+		target := character.CurrentTarget
+
+		vulnAura := core.RuneOfRazoriceVulnerabilityAura(target)
+
+		var isMH bool
+		var dmg float64
+		razoriceHit := character.RegisterSpell(core.SpellConfig{
+			ActionID:    core.ActionID{SpellID: 53343},
+			SpellSchool: core.SpellSchoolFrost,
+			Flags:       core.SpellFlagMeleeMetrics,
+
+			ApplyEffects: core.ApplyEffectFuncDirectDamageTargetModifiersOnly(core.SpellEffect{
+				// No proc mask, so it won't proc itself.
+				ProcMask: core.ProcMaskEmpty,
+
+				DamageMultiplier: 1,
+				ThreatMultiplier: 1,
+
+				BaseDamage: core.BaseDamageConfig{
+					Calculator: func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
+						if isMH {
+							return 0.02 * dmg
+						} else {
+							return 0.02 * dmg
+						}
+					},
+				},
+				OutcomeApplier: character.OutcomeFuncAlwaysHit(),
+			}),
+		})
+
+		var razoriceAura *core.Aura
+		razoriceAura = character.RegisterAura(core.Aura{
+			Label:    "Rune of Razorice",
+			ActionID: core.ActionID{SpellID: 53343},
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				razoriceAura.Activate(sim)
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if spellEffect.Damage == 0 || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+					return
+				}
+				isMH = spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHAuto)
+				dmg = spellEffect.Damage
+				razoriceHit.Cast(sim, target)
+				vulnAura.Activate(sim)
+			},
+		})
+	})
+
+	// TODO: Verify all of this
+	newRuneOfTheFallenCrusaderAura := func(character *core.Character, auraLabel string, actionID core.ActionID) *core.Aura {
+		return character.NewTemporaryStatsAuraWrapped(auraLabel, actionID, stats.Stats{}, time.Second*15, func(aura *core.Aura) {
+			oldOnGain := aura.OnGain
+			oldOnExpire := aura.OnExpire
+
+			var strengthBonus float64
+			var bonusStats stats.Stats
+			var minusBonusStats stats.Stats
+
+			aura.OnGain = func(aura *core.Aura, sim *core.Simulation) {
+				oldOnGain(aura, sim)
+				strengthBonus = 0.15 * character.GetStat(stats.Strength)
+				bonusStats = stats.Stats{stats.Strength: strengthBonus}
+				minusBonusStats = stats.Stats{stats.Strength: -strengthBonus}
+
+				character.AddStatsDynamic(sim, bonusStats)
+			}
+			aura.OnExpire = func(aura *core.Aura, sim *core.Simulation) {
+				oldOnExpire(aura, sim)
+				character.AddStatsDynamic(sim, minusBonusStats)
+			}
+		})
+	}
+
+	// ApplyRuneOfTheFallenCrusader will be applied twice if there is two weapons with this enchant.
+	//   However it will automatically overwrite one of them so it should be ok.
+	//   A single application of the aura will handle both mh and oh procs.
+	core.NewItemEffect(53344, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.ID == 53344
+		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.ID == 53344
+		if !mh && !oh {
+			return
+		}
+
+		procMask := core.GetMeleeProcMaskForHands(mh, oh)
+		ppmm := character.AutoAttacks.NewPPMManager(2.0, procMask)
+
+		mhAura := newRuneOfTheFallenCrusaderAura(character, "Rune Of The Fallen Crusader MH", core.ActionID{SpellID: 53344, Tag: 1})
+		ohAura := newRuneOfTheFallenCrusaderAura(character, "Rune Of The Fallen Crusader OH", core.ActionID{SpellID: 53344, Tag: 2})
+
+		character.GetOrRegisterAura(core.Aura{
+			Label:    "Rune Of The Fallen Crusader",
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+					return
+				}
+
+				if ppmm.Proc(sim, spellEffect.ProcMask, "rune of the fallen crusader") {
+					if spellEffect.IsMH() {
+						mhAura.Activate(sim)
+					} else {
+						ohAura.Activate(sim)
+					}
+				}
+			},
+		})
+	})
+
 	core.NewItemEffect(55642, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
