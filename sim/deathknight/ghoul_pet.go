@@ -82,7 +82,13 @@ func (ghoulPet *GhoulPet) Initialize() {
 }
 
 func (ghoulPet *GhoulPet) Reset(sim *core.Simulation) {
-	if ghoulPet.IsEnabled() {
+	if ghoulPet.dkOwner.Talents.MasterOfGhouls {
+		ghoulPet.uptimePercent = core.MinFloat(1, core.MaxFloat(0, ghoulPet.dkOwner.Options.PetUptime))
+	} else {
+		ghoulPet.uptimePercent = 1.0
+	}
+
+	if ghoulPet.IsEnabled() && ghoulPet.uptimePercent > 0.0 {
 		ghoulPet.focusBar.reset(sim)
 	} else {
 		ghoulPet.AutoAttacks.CancelAutoSwing(sim)
@@ -92,12 +98,6 @@ func (ghoulPet *GhoulPet) Reset(sim *core.Simulation) {
 		ghoulPet.Log(sim, "Total Pet stats: %s", ghoulPet.GetStats())
 		inheritedStats := ghoulPet.dkOwner.makeStatInheritance()(ghoulPet.dkOwner.GetStats())
 		ghoulPet.Log(sim, "Inherited Pet stats: %s", inheritedStats)
-	}
-
-	if ghoulPet.dkOwner.Talents.MasterOfGhouls {
-		ghoulPet.uptimePercent = core.MinFloat(1, core.MaxFloat(0, ghoulPet.dkOwner.Options.PetUptime))
-	} else {
-		ghoulPet.uptimePercent = 1.0
 	}
 }
 

@@ -42,7 +42,9 @@ export const DefaultRotation = DeathKnightRotation.create({
 });
 
 export const DefaultOptions = DeathKnightOptions.create({
-	startingRunicPower: 0
+	startingRunicPower: 0,
+	petUptime: 1,
+	precastGhoulFrenzy: true,
 });
 
 export const DefaultConsumes = Consumes.create({
