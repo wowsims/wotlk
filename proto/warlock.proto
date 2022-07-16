@@ -139,9 +139,7 @@ message Warlock {
 	message Rotation {
 		enum Preset {
 			Manual = 0;
-			Affliction = 1;
-			Demonology = 2;
-			Destruction = 3;
+			Automatic = 1;
 		}
 		enum PrimarySpell {
 			UnknownSpell = 0;

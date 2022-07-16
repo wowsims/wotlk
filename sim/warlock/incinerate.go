@@ -10,7 +10,6 @@ import (
 )
 	
 func (warlock *Warlock) registerIncinerateSpell() {
-	baseCost := 0.14 * warlock.BaseMana
 	has4pMal := warlock.HasSetBonus(ItemSetMaleficRaiment, 4)
 
 	effect := core.SpellEffect{
@@ -23,6 +22,7 @@ func (warlock *Warlock) registerIncinerateSpell() {
 		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin) / 5)),
 	}
 
+	baseCost := 0.14 * warlock.BaseMana
 	costReduction := 0.0
 	if float64(warlock.Talents.Cataclysm) > 0 {
 		costReduction += 0.01 + 0.03*float64(warlock.Talents.Cataclysm)

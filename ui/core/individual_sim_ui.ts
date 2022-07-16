@@ -747,7 +747,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			configureIconSection(
 				spellSection,
 				this.individualConfig.spellInputs.map(iconInput => new IndividualSimIconPicker(spellSection, this.player, iconInput, this)),
-				);
+				Tooltips.SPELLS_SECTION);
 		}
 
 
