@@ -247,20 +247,12 @@ func CurseOfElementsAura(target *Unit) *Aura {
 }
 
 func EarthAndMoonAura(target *Unit) *Aura {
-	return earthMoonEbonPlaguebringerAura(target, "Earth And Moon", 48511)
-}
-
-func EbonPlaguebringerAura(target *Unit) *Aura {
-	return earthMoonEbonPlaguebringerAura(target, "Ebon Plaguebringer", 51161)
-}
-
-func earthMoonEbonPlaguebringerAura(target *Unit, label string, id int32) *Aura {
 	multiplier := 1.13
 
 	return target.GetOrRegisterAura(Aura{
-		Label:    label,
+		Label:    "Earth And Moon",
 		Tag:      spelldmgtag,
-		ActionID: ActionID{SpellID: id},
+		ActionID: ActionID{SpellID: 48511},
 		OnGain: func(aura *Aura, sim *Simulation) {
 			if !target.HasActiveAuraWithTag(spelldmgtag) {
 				aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier *= multiplier
@@ -278,6 +270,37 @@ func earthMoonEbonPlaguebringerAura(target *Unit, label string, id int32) *Aura 
 				aura.Unit.PseudoStats.ShadowDamageTakenMultiplier /= multiplier
 				aura.Unit.PseudoStats.NatureDamageTakenMultiplier /= multiplier
 			}
+		},
+	})
+}
+
+func EbonPlaguebringerAura(target *Unit) *Aura {
+	magicMultiplier := 1.13
+	diseaseMultiplier := 1.3
+
+	return target.GetOrRegisterAura(Aura{
+		Label:    "Ebon Plaguebringer",
+		Tag:      spelldmgtag,
+		ActionID: ActionID{SpellID: 51161},
+		OnGain: func(aura *Aura, sim *Simulation) {
+			if !target.HasActiveAuraWithTag(spelldmgtag) {
+				aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier *= magicMultiplier
+				aura.Unit.PseudoStats.FireDamageTakenMultiplier *= magicMultiplier
+				aura.Unit.PseudoStats.FrostDamageTakenMultiplier *= magicMultiplier
+				aura.Unit.PseudoStats.ShadowDamageTakenMultiplier *= magicMultiplier
+				aura.Unit.PseudoStats.NatureDamageTakenMultiplier *= magicMultiplier
+			}
+			aura.Unit.PseudoStats.DiseaseDamageTakenMultiplier *= diseaseMultiplier
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			if !target.HasActiveAuraWithTag(spelldmgtag) {
+				aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier /= magicMultiplier
+				aura.Unit.PseudoStats.FireDamageTakenMultiplier /= magicMultiplier
+				aura.Unit.PseudoStats.FrostDamageTakenMultiplier /= magicMultiplier
+				aura.Unit.PseudoStats.ShadowDamageTakenMultiplier /= magicMultiplier
+				aura.Unit.PseudoStats.NatureDamageTakenMultiplier /= magicMultiplier
+			}
+			aura.Unit.PseudoStats.DiseaseDamageTakenMultiplier /= diseaseMultiplier
 		},
 	})
 }

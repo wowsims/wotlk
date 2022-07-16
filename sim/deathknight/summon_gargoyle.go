@@ -7,16 +7,20 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-// The numbers in this file are VERY rough approximations based on logs.
-
-func (deathknight *DeathKnight) registerSummonGargoyleCD() {
-	if !deathknight.Talents.SummonGargoyle {
+func (deathKnight *DeathKnight) registerSummonGargoyleCD() {
+	if !deathKnight.Talents.SummonGargoyle {
 		return
 	}
 
+	summonGargoyleAura := deathKnight.RegisterAura(core.Aura{
+		Label:    "Summon Gargoyle",
+		ActionID: core.ActionID{SpellID: 49206},
+		Duration: time.Second * 30,
+	})
+
 	baseCost := 60.0
-	deathknight.SummonGargoyle = deathknight.RegisterSpell(core.SpellConfig{
-		ActionID: core.ActionID{SpellID: 31687},
+	deathKnight.SummonGargoyle = deathKnight.RegisterSpell(core.SpellConfig{
+		ActionID: core.ActionID{SpellID: 49206},
 
 		ResourceType: stats.RunicPower,
 		BaseCost:     baseCost,
@@ -27,25 +31,42 @@ func (deathknight *DeathKnight) registerSummonGargoyleCD() {
 				GCD:  core.GCDDefault,
 			},
 			CD: core.Cooldown{
-				Timer:    deathknight.NewTimer(),
+				Timer:    deathKnight.NewTimer(),
 				Duration: time.Minute * 3,
 			},
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			deathknight.Gargoyle.EnableWithTimeout(sim, deathknight.Gargoyle, time.Second*30)
+			deathKnight.Gargoyle.EnableWithTimeout(sim, deathKnight.Gargoyle, time.Second*30)
+
+			// Add % atack speed modifiers
+			deathKnight.Gargoyle.MultiplyCastSpeed(deathKnight.PseudoStats.MeleeSpeedMultiplier)
+
+			// Add a dummy aura to show in metrics
+			summonGargoyleAura.Activate(sim)
+
+			// Start casting after a short 1 second delay to simulate the summon animation
+			// Might need tweaking after testing the exact possible delay
+			pa := core.PendingAction{
+				NextActionAt: sim.CurrentTime + time.Second*1,
+				Priority:     core.ActionPriorityAuto,
+				OnAction: func(s *core.Simulation) {
+					deathKnight.Gargoyle.GargoyleStrike.Cast(sim, deathKnight.CurrentTarget)
+				},
+			}
+			sim.AddPendingAction(&pa)
 		},
 	})
 
-	deathknight.AddMajorCooldown(core.MajorCooldown{
-		Spell:    deathknight.SummonGargoyle,
+	deathKnight.AddMajorCooldown(core.MajorCooldown{
+		Spell:    deathKnight.SummonGargoyle,
 		Priority: core.CooldownPriorityDrums - 1, // Always prefer to cast after drums or lust so the gargoyle gets their benefits.
 		Type:     core.CooldownTypeDPS,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			if deathknight.Gargoyle.IsEnabled() {
+			if deathKnight.Gargoyle.IsEnabled() {
 				return false
 			}
-			if character.CurrentRunicPower() < deathknight.SummonGargoyle.DefaultCast.Cost {
+			if character.CurrentRunicPower() < deathKnight.SummonGargoyle.DefaultCast.Cost {
 				return false
 			}
 			return true
@@ -55,6 +76,8 @@ func (deathknight *DeathKnight) registerSummonGargoyleCD() {
 
 type GargoylePet struct {
 	core.Pet
+
+	dkOwner *DeathKnight
 
 	GargoyleStrike *core.Spell
 }
@@ -68,8 +91,11 @@ func (deathKnight *DeathKnight) NewGargoyle() *GargoylePet {
 			gargoyleStatInheritance,
 			false,
 		),
+		dkOwner: deathKnight,
 	}
-	//gargoyle.EnableManaBar()
+
+	// NightOfTheDead
+	gargoyle.PseudoStats.DamageTakenMultiplier *= (1.0 - float64(deathKnight.Talents.NightOfTheDead)*0.45)
 
 	deathKnight.AddPet(gargoyle)
 
@@ -88,33 +114,38 @@ func (garg *GargoylePet) Reset(sim *core.Simulation) {
 }
 
 func (garg *GargoylePet) OnGCDReady(sim *core.Simulation) {
-	garg.GargoyleStrike.Cast(sim, garg.CurrentTarget)
+	// Gargoyle has no GCD on his cast so just do nothing here
+	// else we get the error that this unit is not using its gcd
+	garg.DoNothing()
 }
 
-// These numbers are just rough guesses based on looking at some logs.
+// These numbers are just rough guesses
 var gargoyleBaseStats = stats.Stats{
-	stats.Intellect:  100,
-	stats.SpellPower: 300,
-	stats.SpellHit:   3 * core.SpellHitRatingPerHitChance,
-	stats.SpellCrit:  8 * core.CritRatingPerCritChance,
+	stats.Stamina: 1000,
 }
 
 var gargoyleStatInheritance = func(ownerStats stats.Stats) stats.Stats {
-	return ownerStats.DotProduct(stats.Stats{
-		stats.MeleeHaste: ownerStats[stats.MeleeHaste],
-		stats.SpellHaste: ownerStats[stats.MeleeHaste],
-	})
+	return stats.Stats{
+		stats.AttackPower: ownerStats[stats.AttackPower],
+		stats.SpellHit:    ownerStats[stats.SpellHit],
+		stats.SpellHaste:  ownerStats[stats.MeleeHaste],
+	}
 }
 
 func (garg *GargoylePet) registerGargoyleStrikeSpell() {
+	attackPowerModifier := 0.3333333333333333 * (1.0 + 0.04*float64(garg.dkOwner.Talents.Impurity))
+
 	garg.GargoyleStrike = garg.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 69520},
 		SpellSchool: core.SpellSchoolNature,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:      0,
 				CastTime: time.Millisecond * 1500,
+			},
+			OnCastComplete: func(sim *core.Simulation, spell *core.Spell) {
+				// Gargoyle doesnt use GCD so we recast the spell over and over
+				garg.GargoyleStrike.Cast(sim, garg.CurrentTarget)
 			},
 		},
 
@@ -122,8 +153,13 @@ func (garg *GargoylePet) registerGargoyleStrikeSpell() {
 			ProcMask:         core.ProcMaskSpellDamage,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMagic(256, 328, 1),
-			OutcomeApplier:   garg.OutcomeFuncAlwaysHit(),
+			BaseDamage: core.BaseDamageConfig{
+				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+					return 120 + hitEffect.MeleeAttackPower(spell.Unit)*attackPowerModifier
+				},
+				TargetSpellCoefficient: 1,
+			},
+			OutcomeApplier: garg.OutcomeFuncMagicHit(),
 		}),
 	})
 }
