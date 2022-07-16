@@ -715,6 +715,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSmite-AllItems-PurifiedShardoftheGods"
+ value: {
+  dps: 763.4918534530811
+  tps: 740.222373386477
+ }
+}
+dps_results: {
  key: "TestSmite-AllItems-Quagmirran'sEye-27683"
  value: {
   dps: 772.0723338732247
@@ -838,6 +845,13 @@ dps_results: {
  value: {
   dps: 779.1977170328078
   tps: 755.07991375378
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-ShinyShardoftheGods"
+ value: {
+  dps: 763.4918534530811
+  tps: 740.222373386477
  }
 }
 dps_results: {
