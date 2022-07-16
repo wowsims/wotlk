@@ -356,6 +356,80 @@ func init() {
 		})
 	})
 
+	core.NewItemEffect(53343, func(agent core.Agent) {
+		character := agent.GetCharacter()
+
+		target := character.CurrentTarget
+
+		vulnAura := core.RuneOfRazoriceVulnerabilityAura(target)
+
+		var isMH bool
+		var dmg float64
+		razoriceHit := character.RegisterSpell(core.SpellConfig{
+			ActionID:    core.ActionID{SpellID: 53343},
+			SpellSchool: core.SpellSchoolFrost,
+			Flags:       core.SpellFlagMeleeMetrics,
+
+			ApplyEffects: core.ApplyEffectFuncDirectDamageTargetModifiersOnly(core.SpellEffect{
+				// No proc mask, so it won't proc itself.
+				ProcMask: core.ProcMaskEmpty,
+
+				DamageMultiplier: 1,
+				ThreatMultiplier: 1,
+
+				BaseDamage: core.BaseDamageConfig{
+					Calculator: func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
+						if isMH {
+							return 0.02 * dmg
+						} else {
+							return 0.02 * dmg
+						}
+					},
+				},
+				OutcomeApplier: character.OutcomeFuncAlwaysHit(),
+			}),
+		})
+
+		var razoriceAura *core.Aura
+		razoriceAura = character.RegisterAura(core.Aura{
+			Label:    "Rune of Razorice",
+			ActionID: core.ActionID{SpellID: 53343},
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				razoriceAura.Activate(sim)
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if spellEffect.Damage == 0 || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+					return
+				}
+				isMH = spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHAuto)
+				dmg = spellEffect.Damage
+				razoriceHit.Cast(sim, target)
+				vulnAura.Activate(sim)
+			},
+		})
+	})
+
+	//core.NewItemEffect(53343, func(agent core.Agent) {
+	//	character := agent.GetCharacter()
+	//
+	//	procAura := character.NewTemporaryStatsAura("Rune of Razorice", core.ActionID{SpellID: 53343}, stats.Stats{}, time.NeverExpires)
+	//
+	//	character.GetOrRegisterAura(core.Aura{
+	//		Label:    "Rune of Razorice",
+	//		Duration: core.NeverExpires,
+	//		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+	//			aura.Activate(sim)
+	//		},
+	//		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+	//			if icd.IsReady(sim) && sim.RandomFloat("Lightweave") < 0.35 {
+	//				icd.Use(sim)
+	//				procAura.Activate(sim)
+	//			}
+	//		},
+	//	})
+	//})
+
 	core.NewItemEffect(55642, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
