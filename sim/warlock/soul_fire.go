@@ -42,7 +42,6 @@ func (warlock *Warlock) registerSoulFireSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})
-
 }
 
 func (warlock *Warlock) soulFireCastTime() float64 {
@@ -58,9 +57,6 @@ func (warlock *Warlock) soulFireDamage() core.BaseDamageConfig {
 
 	return core.WrapBaseDamageConfig(base, func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
 		return func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-			// if warlock.MoltenCoreAura.IsActive() {
-			// 	spellEffect.BonusSpellCritRating += 5 * float64(warlock.Talents.MoltenCore) * core.CritRatingPerCritChance
-			// }
 			normalDamage := oldCalculator(sim, spellEffect, spell)
 			// Boost damage if immolate is ticking
 			if warlock.MoltenCoreAura.IsActive() {
