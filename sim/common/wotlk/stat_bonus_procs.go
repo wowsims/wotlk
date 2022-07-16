@@ -17,6 +17,7 @@ type ProcStatBonusEffect struct {
 	Outcome    core.HitOutcome
 	Harmful    bool
 	ProcChance float64
+	PPM        float64
 	ICD        time.Duration
 }
 
@@ -32,6 +33,7 @@ func newProcStatBonusEffect(config ProcStatBonusEffect) {
 			Outcome:    config.Outcome,
 			Harmful:    config.Harmful,
 			ProcChance: config.ProcChance,
+			PPM:        config.PPM,
 			ICD:        config.ICD,
 			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellEffect) {
 				procAura.Activate(sim)
@@ -199,6 +201,17 @@ func init() {
 		ID:         43838,
 		Bonus:      stats.Stats{stats.MeleeCrit: 258, stats.SpellCrit: 258},
 		Duration:   time.Second * 10,
+		Callback:   OnSpellHitDealt,
+		ProcMask:   core.ProcMaskMeleeOrRanged,
+		Outcome:    core.OutcomeLanded,
+		ProcChance: 0.15,
+		ICD:        time.Second * 45,
+	})
+	newProcStatBonusEffect(ProcStatBonusEffect{
+		Name:       "Signet of Edward the Odd",
+		ID:         44308,
+		Bonus:      stats.Stats{stats.MeleeHaste: 125, stats.SpellHaste: 125},
+		Duration:   time.Second * 13,
 		Callback:   OnSpellHitDealt,
 		ProcMask:   core.ProcMaskMeleeOrRanged,
 		Outcome:    core.OutcomeLanded,
@@ -405,6 +418,94 @@ func init() {
 		ProcMask:   core.ProcMaskPeriodicDamage,
 		ProcChance: 0.30,
 		ICD:        time.Second * 100,
+	})
+	newProcStatBonusEffect(ProcStatBonusEffect{
+		Name:       "Ashen Band of Unmatched Destruction",
+		ID:         50397,
+		Bonus:      stats.Stats{stats.SpellPower: 285, stats.HealingPower: 285},
+		Duration:   time.Second * 10,
+		Callback:   OnSpellHitDealt,
+		ProcMask:   core.ProcMaskSpellDamage,
+		Outcome:    core.OutcomeLanded,
+		ProcChance: 0.10,
+		ICD:        time.Second * 60,
+	})
+	newProcStatBonusEffect(ProcStatBonusEffect{
+		Name:       "Ashen Band of Endless Destruction",
+		ID:         50398,
+		Bonus:      stats.Stats{stats.SpellPower: 285, stats.HealingPower: 285},
+		Duration:   time.Second * 10,
+		Callback:   OnSpellHitDealt,
+		ProcMask:   core.ProcMaskSpellDamage,
+		Outcome:    core.OutcomeLanded,
+		ProcChance: 0.10,
+		ICD:        time.Second * 60,
+	})
+	newProcStatBonusEffect(ProcStatBonusEffect{
+		Name:     "Ashen Band of Unmatched Vengeance",
+		ID:       50401,
+		Bonus:    stats.Stats{stats.AttackPower: 480, stats.HealingPower: 480},
+		Duration: time.Second * 10,
+		Callback: OnSpellHitDealt,
+		ProcMask: core.ProcMaskMeleeOrRanged,
+		Outcome:  core.OutcomeLanded,
+		PPM:      1,
+		ICD:      time.Second * 60,
+	})
+	newProcStatBonusEffect(ProcStatBonusEffect{
+		Name:     "Ashen Band of Endless Vengeance",
+		ID:       50402,
+		Bonus:    stats.Stats{stats.AttackPower: 480, stats.HealingPower: 480},
+		Duration: time.Second * 10,
+		Callback: OnSpellHitDealt,
+		ProcMask: core.ProcMaskMeleeOrRanged,
+		Outcome:  core.OutcomeLanded,
+		PPM:      1,
+		ICD:      time.Second * 60,
+	})
+	newProcStatBonusEffect(ProcStatBonusEffect{
+		Name:       "Ashen Band of Unmatched Courage",
+		ID:         50403,
+		Bonus:      stats.Stats{stats.Armor: 2400},
+		Duration:   time.Second * 10,
+		Callback:   OnSpellHitTaken,
+		ProcMask:   core.ProcMaskMelee,
+		Outcome:    core.OutcomeLanded,
+		ProcChance: 0.03,
+		ICD:        time.Second * 60,
+	})
+	newProcStatBonusEffect(ProcStatBonusEffect{
+		Name:       "Ashen Band of Endless Courage",
+		ID:         50404,
+		Bonus:      stats.Stats{stats.Armor: 2400},
+		Duration:   time.Second * 10,
+		Callback:   OnSpellHitTaken,
+		ProcMask:   core.ProcMaskMelee,
+		Outcome:    core.OutcomeLanded,
+		ProcChance: 0.03,
+		ICD:        time.Second * 60,
+	})
+	newProcStatBonusEffect(ProcStatBonusEffect{
+		Name:     "Ashen Band of Unmatched Might",
+		ID:       52571,
+		Bonus:    stats.Stats{stats.AttackPower: 480, stats.HealingPower: 480},
+		Duration: time.Second * 10,
+		Callback: OnSpellHitDealt,
+		ProcMask: core.ProcMaskMeleeOrRanged,
+		Outcome:  core.OutcomeLanded,
+		PPM:      1,
+		ICD:      time.Second * 60,
+	})
+	newProcStatBonusEffect(ProcStatBonusEffect{
+		Name:     "Ashen Band of Endless Might",
+		ID:       52572,
+		Bonus:    stats.Stats{stats.AttackPower: 480, stats.HealingPower: 480},
+		Duration: time.Second * 10,
+		Callback: OnSpellHitDealt,
+		ProcMask: core.ProcMaskMeleeOrRanged,
+		Outcome:  core.OutcomeLanded,
+		PPM:      1,
+		ICD:      time.Second * 60,
 	})
 
 	core.AddEffectsToTest = true
