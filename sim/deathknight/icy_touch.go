@@ -68,7 +68,7 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 1, 0)
 					deathKnight.Spend(sim, spell, dkSpellCost)
 
-					deathKnight.FrostFeverDisease.Apply(sim)
+					deathKnight.FrostFeverSpell.Cast(sim, spellEffect.Target)
 					if deathKnight.Talents.EbonPlaguebringer > 0 {
 						deathKnight.EbonPlagueAura.Activate(sim)
 					}

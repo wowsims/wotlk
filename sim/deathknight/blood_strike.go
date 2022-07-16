@@ -64,13 +64,15 @@ func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
 	mhHitSpell := deathKnight.newBloodStrikeSpell(true)
 	ohHitSpell := deathKnight.newBloodStrikeSpell(false)
 
-	threatOfThassarianChance := 0.0
-	if deathKnight.Talents.ThreatOfThassarian == 1 {
-		threatOfThassarianChance = 0.30
-	} else if deathKnight.Talents.ThreatOfThassarian == 2 {
-		threatOfThassarianChance = 0.60
-	} else if deathKnight.Talents.ThreatOfThassarian == 3 {
-		threatOfThassarianChance = 1.0
+	totChance := ToTChance(deathKnight)
+
+	botnChance := 0.0
+	if deathKnight.Talents.BloodOfTheNorth == 1 {
+		botnChance = 0.3
+	} else if deathKnight.Talents.BloodOfTheNorth == 2 {
+		botnChance = 0.6
+	} else if deathKnight.Talents.BloodOfTheNorth == 3 {
+		botnChance = 1.0
 	}
 
 	deathKnight.BloodStrike = deathKnight.RegisterSpell(core.SpellConfig{
@@ -92,16 +94,28 @@ func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				mhHitSpell.Cast(sim, spellEffect.Target)
-				deathKnight.BloodStrike.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 1
-				deathKnight.BloodStrike.SpellMetrics[spellEffect.Target.TableIndex].Hits -= 1
-				if sim.RandomFloat("Threat of Thassarian") < threatOfThassarianChance {
+				totProcced := ToTWillCast(sim, totChance)
+				if totProcced {
 					ohHitSpell.Cast(sim, spellEffect.Target)
-					deathKnight.BloodStrike.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 1
 				}
+
+				ToTAdjustMetrics(sim, spell, spellEffect, BloodStrikeMHOutcome)
 
 				if OutcomeEitherWeaponHitOrCrit(BloodStrikeMHOutcome, BloodStrikeOHOutcome) {
 					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 1, 0, 0)
-					deathKnight.Spend(sim, spell, dkSpellCost)
+					if dkSpellCost.Blood > 0 {
+						if sim.RandomFloat("Blood Of The North") <= botnChance {
+							slot := deathKnight.SpendBloodRune(sim, spell.BloodRuneMetrics())
+							deathKnight.SetRuneAtSlotToState(0, slot, core.RuneState_DeathSpent, core.RuneKind_Death)
+							deathKnight.FlagBloodRuneSlotAsBoTN(slot)
+						} else {
+							dkSpellCost := deathKnight.DetermineOptimalCost(sim, 1, 0, 0)
+							deathKnight.Spend(sim, spell, dkSpellCost)
+						}
+					} else {
+						deathKnight.Spend(sim, spell, dkSpellCost)
+
+					}
 
 					amountOfRunicPower := 10.0
 					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())

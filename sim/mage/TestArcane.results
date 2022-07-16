@@ -687,6 +687,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestArcane-AllItems-PurifiedShardoftheGods"
+ value: {
+  dps: 1102.6076170870494
+  tps: 1105.6767946368716
+ }
+}
+dps_results: {
  key: "TestArcane-AllItems-Redeemer'sAlchemistStone-35750"
  value: {
   dps: 1130.0733746173494
@@ -796,6 +803,13 @@ dps_results: {
  value: {
   dps: 1137.502918688334
   tps: 1139.5105907535958
+ }
+}
+dps_results: {
+ key: "TestArcane-AllItems-ShinyShardoftheGods"
+ value: {
+  dps: 1102.6076170870494
+  tps: 1105.6767946368716
  }
 }
 dps_results: {

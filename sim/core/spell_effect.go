@@ -97,7 +97,7 @@ func (spellEffect *SpellEffect) MeleeAttackPower(unit *Unit) float64 {
 }
 
 func (spellEffect *SpellEffect) MeleeAttackPowerOnTarget() float64 {
-	return spellEffect.Target.PseudoStats.BonusMeleeAttackPower
+	return spellEffect.Target.PseudoStats.BonusMeleeAttackPowerTaken
 }
 
 func (spellEffect *SpellEffect) RangedAttackPower(unit *Unit) float64 {
@@ -105,7 +105,7 @@ func (spellEffect *SpellEffect) RangedAttackPower(unit *Unit) float64 {
 }
 
 func (spellEffect *SpellEffect) RangedAttackPowerOnTarget() float64 {
-	return spellEffect.Target.PseudoStats.BonusRangedAttackPower
+	return spellEffect.Target.PseudoStats.BonusRangedAttackPowerTaken
 }
 
 func (spellEffect *SpellEffect) BonusWeaponDamage(unit *Unit) float64 {
@@ -123,7 +123,7 @@ func (spellEffect *SpellEffect) ExpertisePercentage(unit *Unit) float64 {
 }
 
 func (spellEffect *SpellEffect) PhysicalHitChance(unit *Unit, attackTable *AttackTable) float64 {
-	hitRating := unit.stats[stats.MeleeHit] + spellEffect.Target.PseudoStats.BonusMeleeHitRating
+	hitRating := unit.stats[stats.MeleeHit] + spellEffect.Target.PseudoStats.BonusMeleeHitRatingTaken
 
 	if spellEffect.ProcMask.Matches(ProcMaskRanged) {
 		hitRating += unit.PseudoStats.BonusRangedHitRating
@@ -132,7 +132,7 @@ func (spellEffect *SpellEffect) PhysicalHitChance(unit *Unit, attackTable *Attac
 }
 
 func (spellEffect *SpellEffect) PhysicalCritChance(unit *Unit, spell *Spell, attackTable *AttackTable) float64 {
-	critRating := unit.stats[stats.MeleeCrit] + spellEffect.BonusCritRating + spellEffect.Target.PseudoStats.BonusCritRating
+	critRating := unit.stats[stats.MeleeCrit] + spellEffect.BonusCritRating + spellEffect.Target.PseudoStats.BonusCritRatingTaken
 
 	if spellEffect.ProcMask.Matches(ProcMaskRanged) {
 		critRating += unit.PseudoStats.BonusRangedCritRating
@@ -164,15 +164,16 @@ func (spellEffect *SpellEffect) SpellCritChance(unit *Unit, spell *Spell) float6
 	// periodic spells apply crit from snapshot at time of initial cast if capable of a crit
 	// ignoring units real time crit in this case
 	if spellEffect.IsPeriodic {
-		critRating += (spellEffect.BonusSpellCritRating + spellEffect.Target.PseudoStats.BonusCritRating)
+		critRating += (spellEffect.BonusSpellCritRating)
 	} else {
-		critRating += (unit.GetStat(stats.SpellCrit) + spellEffect.BonusSpellCritRating + spellEffect.Target.PseudoStats.BonusCritRating)
+		critRating += (unit.GetStat(stats.SpellCrit) + spellEffect.BonusSpellCritRating)
 	}
+	critRating += unit.PseudoStats.BonusSpellCritRating + spellEffect.Target.PseudoStats.BonusCritRatingTaken + spellEffect.Target.PseudoStats.BonusSpellCritRatingTaken
 
 	if spell.SpellSchool.Matches(SpellSchoolFire) {
 		critRating += unit.PseudoStats.BonusFireCritRating
-	} else if spell.SpellSchool.Matches(SpellSchoolFrost) {
-		critRating += spellEffect.Target.PseudoStats.BonusFrostCritRating
+	} else if spell.SpellSchool.Matches(SpellSchoolShadow) {
+		critRating += unit.PseudoStats.BonusShadowCritRating
 	}
 	return critRating / (CritRatingPerCritChance * 100)
 }

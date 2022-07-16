@@ -61,14 +61,7 @@ func (deathKnight *DeathKnight) registerPlagueStrikeSpell() {
 	mhHitSpell := deathKnight.newPlagueStrikeSpell(true)
 	ohHitSpell := deathKnight.newPlagueStrikeSpell(false)
 
-	threatOfThassarianChance := 0.0
-	if deathKnight.Talents.ThreatOfThassarian == 1 {
-		threatOfThassarianChance = 0.30
-	} else if deathKnight.Talents.ThreatOfThassarian == 2 {
-		threatOfThassarianChance = 0.60
-	} else if deathKnight.Talents.ThreatOfThassarian == 3 {
-		threatOfThassarianChance = 1.0
-	}
+	totChance := ToTChance(deathKnight)
 
 	deathKnight.PlagueStrike = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    PlagueStrikeActionID,
@@ -89,18 +82,18 @@ func (deathKnight *DeathKnight) registerPlagueStrikeSpell() {
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				mhHitSpell.Cast(sim, spellEffect.Target)
-				deathKnight.PlagueStrike.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 1
-				deathKnight.PlagueStrike.SpellMetrics[spellEffect.Target.TableIndex].Hits -= 1
-				if sim.RandomFloat("Threat of Thassarian") < threatOfThassarianChance {
+				totProcced := ToTWillCast(sim, totChance)
+				if totProcced {
 					ohHitSpell.Cast(sim, spellEffect.Target)
-					deathKnight.PlagueStrike.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 1
 				}
+
+				ToTAdjustMetrics(sim, spell, spellEffect, PlagueStrikeMHOutcome)
 
 				if OutcomeEitherWeaponHitOrCrit(PlagueStrikeMHOutcome, PlagueStrikeOHOutcome) {
 					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 0, 1)
 					deathKnight.Spend(sim, spell, dkSpellCost)
 
-					deathKnight.BloodPlagueDisease.Apply(sim)
+					deathKnight.BloodPlagueSpell.Cast(sim, spellEffect.Target)
 					if deathKnight.Talents.EbonPlaguebringer > 0 {
 						deathKnight.EbonPlagueAura.Activate(sim)
 					}

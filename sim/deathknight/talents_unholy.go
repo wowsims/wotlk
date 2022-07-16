@@ -44,7 +44,7 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 	deathKnight.applyNecrosis()
 
 	// Blood-Caked Blade
-	// TODO:
+	deathKnight.applyBloodCakedBlade()
 
 	// Night of the Dead
 	// TODO:
@@ -74,7 +74,7 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 	// TODO:
 
 	// Wandering Plague
-	// TODO:
+	deathKnight.applyWanderingPlague()
 
 	// Crypt Fever
 	// Ebon Plaguebringer
@@ -85,11 +85,39 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 	// Implemented outside
 
 	// Rage of Rivendare
-	// TODO: % bonus damage to spells/abilities (not white hits)
 	deathKnight.AddStat(stats.Expertise, float64(deathKnight.Talents.RageOfRivendare)*core.ExpertisePerQuarterPercentReduction)
 
 	// Summon Gargoyle
 	// TODO:
+}
+
+func (deathKnight *DeathKnight) applyWanderingPlague() {
+	if deathKnight.Talents.WanderingPlague == 0 {
+		return
+	}
+
+	actionID := core.ActionID{SpellID: 49655}
+
+	deathKnight.WanderingPlague = deathKnight.RegisterSpell(core.SpellConfig{
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolShadow,
+		Flags:       core.SpellFlagNone,
+
+		ApplyEffects: core.ApplyEffectFuncAOEDamage(deathKnight.Env, core.SpellEffect{
+			// No proc mask, so it won't proc itself.
+			ProcMask: core.ProcMaskEmpty,
+
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
+
+			BaseDamage: core.BaseDamageConfig{
+				Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
+					return deathKnight.LastDiseaseDamage
+				},
+			},
+			OutcomeApplier: deathKnight.OutcomeFuncAlwaysHit(),
+		}),
+	})
 }
 
 func (deathKnight *DeathKnight) applyNecrosis() {
@@ -97,12 +125,11 @@ func (deathKnight *DeathKnight) applyNecrosis() {
 		return
 	}
 
-	actionID := core.ActionID{SpellID: 51465}
 	target := deathKnight.CurrentTarget
 
 	var curDmg float64
 	necrosisHit := deathKnight.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
+		ActionID:    core.ActionID{SpellID: 51460},
 		SpellSchool: core.SpellSchoolShadow,
 		Flags:       core.SpellFlagNone,
 
@@ -124,7 +151,7 @@ func (deathKnight *DeathKnight) applyNecrosis() {
 
 	deathKnight.NecrosisAura = deathKnight.RegisterAura(core.Aura{
 		Label:    "Necrosis",
-		ActionID: actionID,
+		ActionID: core.ActionID{SpellID: 51465},
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			deathKnight.NecrosisAura.Activate(sim)
@@ -136,6 +163,62 @@ func (deathKnight *DeathKnight) applyNecrosis() {
 
 			curDmg = spellEffect.Damage
 			necrosisHit.Cast(sim, target)
+		},
+	})
+}
+
+func (deathKnight *DeathKnight) applyBloodCakedBlade() {
+	if deathKnight.Talents.BloodCakedBlade == 0 {
+		return
+	}
+
+	target := deathKnight.CurrentTarget
+
+	mhBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 0, 1.0, true)
+	ohBaseDamage := core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, 1.0, true)
+
+	var isMH = false
+	bloodCakedBladeHit := deathKnight.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 50463},
+		SpellSchool: core.SpellSchoolPhysical,
+		Flags:       core.SpellFlagMeleeMetrics,
+
+		ApplyEffects: core.ApplyEffectFuncDirectDamageTargetModifiersOnly(core.SpellEffect{
+			// No proc mask, so it won't proc itself.
+			ProcMask: core.ProcMaskEmpty,
+
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
+
+			BaseDamage: core.BaseDamageConfig{
+				Calculator: func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
+					if isMH {
+						return mhBaseDamage(sim, spellEffect, spell) * (0.25 + float64(deathKnight.countActiveDiseases())*0.125)
+					} else {
+						return ohBaseDamage(sim, spellEffect, spell) * (0.25 + float64(deathKnight.countActiveDiseases())*0.125)
+					}
+				},
+			},
+			OutcomeApplier: deathKnight.OutcomeFuncMeleeWeaponSpecialNoHitNoCrit(),
+		}),
+	})
+
+	deathKnight.BloodCakedBladeAura = deathKnight.RegisterAura(core.Aura{
+		Label:    "Blood-Caked Blade",
+		ActionID: core.ActionID{SpellID: 49628},
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			deathKnight.BloodCakedBladeAura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spellEffect.Damage == 0 || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+				return
+			}
+
+			if sim.RandomFloat("Blood-Caked Blade Roll") < 0.30 {
+				isMH = spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHAuto)
+				bloodCakedBladeHit.Cast(sim, target)
+			}
 		},
 	})
 }
@@ -181,14 +264,8 @@ func (deathKnight *DeathKnight) applyUnholyBlight() {
 	actionID := core.ActionID{SpellID: 50536}
 	target := deathKnight.CurrentTarget
 
-	unholyBlightSpell := deathKnight.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolShadow,
-	})
-
-	deathKnight.LastDeathCoilDamage = 1500
-	deathKnight.UnholyBlight = core.NewDot(core.Dot{
-		Spell: unholyBlightSpell,
+	var curDamage = 0.0
+	deathKnight.UnholyBlightDot = core.NewDot(core.Dot{
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "UnholyBlight-" + strconv.Itoa(int(deathKnight.Index)),
 			ActionID: actionID,
@@ -203,11 +280,22 @@ func (deathKnight *DeathKnight) applyUnholyBlight() {
 			IsPeriodic:       true,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return (0.10 * deathKnight.LastDeathCoilDamage) / 10
+					return (0.10 * curDamage) / 10
 				},
 				TargetSpellCoefficient: 1,
 			},
 			OutcomeApplier: deathKnight.OutcomeFuncAlwaysHit(),
 		}),
 	})
+
+	deathKnight.UnholyBlightSpell = deathKnight.RegisterSpell(core.SpellConfig{
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolShadow,
+		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+			curDamage = deathKnight.LastDeathCoilDamage
+			deathKnight.UnholyBlightDot.Apply(sim)
+		},
+	})
+
+	deathKnight.UnholyBlightDot.Spell = deathKnight.UnholyBlightSpell
 }

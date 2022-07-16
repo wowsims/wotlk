@@ -5,11 +5,11 @@ import (
 )
 
 func (deathKnight *DeathKnight) registerScourgeStrikeShadowDamageSpell() *core.Spell {
-	actionID := core.ActionID{SpellID: 55270}
+	actionID := core.ActionID{SpellID: 55271}
 	return deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
-		Flags:       core.SpellFlagIgnoreResists,
+		Flags:       core.SpellFlagIgnoreResists | core.SpellFlagMeleeMetrics,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskSpellDamage,
@@ -84,6 +84,8 @@ func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
 					if deathKnight.DiseasesAreActive() {
 						deathKnight.LastScourgeStrikeDamage = spellEffect.Damage
 						shadowDamageSpell.Cast(sim, spellEffect.Target)
+						deathKnight.ScourgeStrike.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 1
+						deathKnight.ScourgeStrike.SpellMetrics[spellEffect.Target.TableIndex].Hits -= 1
 					}
 				}
 			},

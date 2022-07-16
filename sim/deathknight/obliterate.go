@@ -77,14 +77,7 @@ func (deathKnight *DeathKnight) registerObliterateSpell() {
 	mhHitSpell := deathKnight.newObliterateHitSpell(true)
 	ohHitSpell := deathKnight.newObliterateHitSpell(false)
 
-	threatOfThassarianChance := 0.0
-	if deathKnight.Talents.ThreatOfThassarian == 1 {
-		threatOfThassarianChance = 0.30
-	} else if deathKnight.Talents.ThreatOfThassarian == 2 {
-		threatOfThassarianChance = 0.60
-	} else if deathKnight.Talents.ThreatOfThassarian == 3 {
-		threatOfThassarianChance = 1.0
-	}
+	totChance := ToTChance(deathKnight)
 
 	deathKnight.Obliterate = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    ObliterateActionID,
@@ -105,12 +98,12 @@ func (deathKnight *DeathKnight) registerObliterateSpell() {
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				mhHitSpell.Cast(sim, spellEffect.Target)
-				deathKnight.Obliterate.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 1
-				deathKnight.Obliterate.SpellMetrics[spellEffect.Target.TableIndex].Hits -= 1
-				if sim.RandomFloat("Threat of Thassarian") < threatOfThassarianChance {
+				totProcced := ToTWillCast(sim, totChance)
+				if totProcced {
 					ohHitSpell.Cast(sim, spellEffect.Target)
-					deathKnight.Obliterate.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 1
 				}
+
+				ToTAdjustMetrics(sim, spell, spellEffect, ObliterateMHOutcome)
 
 				if OutcomeEitherWeaponHitOrCrit(ObliterateMHOutcome, ObliterateOHOutcome) {
 					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 1, 1)

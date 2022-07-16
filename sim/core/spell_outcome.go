@@ -228,6 +228,32 @@ func (unit *Unit) OutcomeFuncMeleeWeaponSpecialHitAndCrit(critMultiplier float64
 	}
 }
 
+func (unit *Unit) OutcomeFuncMeleeWeaponSpecialNoHitNoCrit() OutcomeApplier {
+	if unit.PseudoStats.InFrontOfTarget {
+		return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
+			unit := spell.Unit
+			roll := sim.RandomFloat("White Hit Table")
+			chance := 0.0
+
+			if (spell.Flags.Matches(SpellFlagCannotBeDodged) || !spellEffect.applyAttackTableDodge(spell, unit, attackTable, roll, &chance)) &&
+				!spellEffect.applyAttackTableParry(spell, unit, attackTable, roll, &chance) &&
+				!spellEffect.applyAttackTableBlock(spell, unit, attackTable, roll, &chance) {
+				spellEffect.applyAttackTableHit(spell)
+			}
+		}
+	} else {
+		return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
+			unit := spell.Unit
+			roll := sim.RandomFloat("White Hit Table")
+			chance := 0.0
+
+			if spell.Flags.Matches(SpellFlagCannotBeDodged) || !spellEffect.applyAttackTableDodge(spell, unit, attackTable, roll, &chance) {
+				spellEffect.applyAttackTableHit(spell)
+			}
+		}
+	}
+}
+
 func (unit *Unit) OutcomeFuncMeleeSpecialNoBlockDodgeParry(critMultiplier float64) OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
 		unit := spell.Unit
@@ -310,7 +336,7 @@ func (unit *Unit) OutcomeFuncEnemyMeleeWhite() OutcomeApplier {
 
 // Calculates a hit check using the stats from this spell.
 func (spellEffect *SpellEffect) MagicHitCheck(sim *Simulation, spell *Spell, attackTable *AttackTable) bool {
-	missChance := attackTable.BaseSpellMissChance - (spell.Unit.GetStat(stats.SpellHit)+spellEffect.BonusSpellHitRating+spellEffect.Target.PseudoStats.BonusSpellHitRating)/(SpellHitRatingPerHitChance*100)
+	missChance := attackTable.BaseSpellMissChance - (spell.Unit.GetStat(stats.SpellHit)+spellEffect.BonusSpellHitRating+spellEffect.Target.PseudoStats.BonusSpellHitRatingTaken)/(SpellHitRatingPerHitChance*100)
 	return sim.RandomFloat("Magical Hit Roll") > missChance
 }
 func (spellEffect *SpellEffect) MagicHitCheckBinary(sim *Simulation, spell *Spell, attackTable *AttackTable) bool {

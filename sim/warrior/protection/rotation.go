@@ -38,6 +38,12 @@ func (war *ProtectionWarrior) doRotation(sim *core.Simulation) {
 
 	war.tryShieldBlock(sim)
 	war.tryQueueHsCleave(sim)
+
+	// if we did nothing else, mark we intentionally did nothing here.
+	if war.GCD.IsReady(sim) {
+		war.DoNothing()
+	}
+
 }
 
 func (war *ProtectionWarrior) tryShieldBlock(sim *core.Simulation) {
