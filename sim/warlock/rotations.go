@@ -234,6 +234,10 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			spell = warlock.UnstableAff
 		} else if secondaryDot == proto.Warlock_Rotation_Immolate && !warlock.ImmolateDot.IsActive() {
 			spell = warlock.Immolate
+		} else if warlock.Talents.Decimation > 0 && warlock.DecimationAura.IsActive() {
+			spell = warlock.SoulFire
+		} else if warlock.Talents.MoltenCore > 0 && warlock.MoltenCoreAura.IsActive() {
+			spell = warlock.Incinerate
 		} else {
 			switch mainSpell {
 			case proto.Warlock_Rotation_Shadowbolt:
@@ -246,7 +250,6 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		}
 
 	} 
-
 
 	// ------------------------------------------
 	// Spell casting
