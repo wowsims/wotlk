@@ -90,6 +90,14 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 	// TODO:
 }
 
+func (deathKnight *DeathKnight) rageOfRivendareBonus() float64 {
+	return core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 1.0+0.02*float64(deathKnight.Talents.RageOfRivendare), 1.0)
+}
+
+func (deathKnight *DeathKnight) applyImpurity(hitEffect *core.SpellEffect, unit *core.Unit) float64 {
+	return hitEffect.MeleeAttackPower(unit) * (1.0 + float64(deathKnight.Talents.Impurity)*0.04)
+}
+
 func (deathKnight *DeathKnight) applyWanderingPlague() {
 	if deathKnight.Talents.WanderingPlague == 0 {
 		return

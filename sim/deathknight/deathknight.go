@@ -22,13 +22,26 @@ type DeathKnight struct {
 
 	Presence Presence
 
-	IcyTouch     *core.Spell
-	PlagueStrike *core.Spell
-	Obliterate   *core.Spell
-	BloodStrike  *core.Spell
-	FrostStrike  *core.Spell
+	IcyTouch *core.Spell
 
-	GhoulFrenzy     *core.Spell
+	PlagueStrike      *core.Spell
+	PlagueStrikeMhHit *core.Spell
+	PlagueStrikeOhHit *core.Spell
+
+	Obliterate      *core.Spell
+	ObliterateMhHit *core.Spell
+	ObliterateOhHit *core.Spell
+
+	BloodStrike      *core.Spell
+	BloodStrikeMhHit *core.Spell
+	BloodStrikeOhHit *core.Spell
+
+	FrostStrike      *core.Spell
+	FrostStrikeMhHit *core.Spell
+	FrostStrikeOhHit *core.Spell
+
+	GhoulFrenzy *core.Spell
+	// Dummy aura for timeline metrics
 	GhoulFrenzyAura *core.Aura
 
 	LastScourgeStrikeDamage float64
@@ -80,6 +93,10 @@ type DeathKnight struct {
 	// Debuffs
 	IcyTouchAura   *core.Aura
 	EbonPlagueAura *core.Aura
+
+	// Dynamic trackers
+	RageOfRivendareActive bool
+	TundraStalkerActive   bool
 }
 
 func (deathKnight *DeathKnight) GetCharacter() *core.Character {

@@ -7,13 +7,6 @@ import (
 )
 
 func (deathKnight *DeathKnight) registerDeathCoilSpell() {
-
-	glyphBonusDamage := 1.0
-	if deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfDarkDeath) {
-		glyphBonusDamage = 1.15
-	}
-	morbidityBonusDamage := 1.0 + float64(deathKnight.Talents.Morbidity)*0.05
-
 	deathKnight.DeathCoil = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 49895},
 		SpellSchool: core.SpellSchoolShadow,
@@ -31,15 +24,15 @@ func (deathKnight *DeathKnight) registerDeathCoilSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:             core.ProcMaskSpellDamage,
 			BonusSpellCritRating: 0.0,
-			DamageMultiplier:     1.0,
-			ThreatMultiplier:     1.0,
+			DamageMultiplier: (1.0 + float64(deathKnight.Talents.Morbidity)*0.05) *
+				core.TernaryFloat64(deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfDeathAndDecay), 1.15, 1.0),
+			ThreatMultiplier: 1.0,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return (443.0 + hitEffect.MeleeAttackPower(spell.Unit)*0.15) *
-						glyphBonusDamage *
-						morbidityBonusDamage *
-						core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 1.0+0.02*float64(deathKnight.Talents.RageOfRivendare), 1.0)
+					return (443.0 + deathKnight.applyImpurity(hitEffect, spell.Unit)*0.15) *
+						deathKnight.rageOfRivendareBonus() *
+						deathKnight.tundraStalkerBonus()
 				},
 				TargetSpellCoefficient: 1,
 			},

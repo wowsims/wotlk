@@ -94,6 +94,27 @@ func (deathKnight *DeathKnight) ApplyFrostTalents() {
 	deathKnight.AddStat(stats.Expertise, 1.0*float64(deathKnight.Talents.TundraStalker)*core.ExpertisePerQuarterPercentReduction)
 }
 
+func (deathKnight *DeathKnight) glacielRotBonus() float64 {
+	glacierRotCoeff := 1.0
+	if deathKnight.Talents.GlacierRot == 1 {
+		glacierRotCoeff = 1.07
+	} else if deathKnight.Talents.GlacierRot == 2 {
+		glacierRotCoeff = 1.13
+	} else if deathKnight.Talents.GlacierRot == 3 {
+		glacierRotCoeff = 1.20
+	}
+
+	return core.TernaryFloat64(deathKnight.DiseasesAreActive() && deathKnight.Talents.GlacierRot > 0, glacierRotCoeff, 1.0)
+}
+
+func (deathKnight *DeathKnight) mercilessCombatBonus(sim *core.Simulation) float64 {
+	return core.TernaryFloat64(sim.IsExecutePhase35() && deathKnight.Talents.MercilessCombat > 0, 1.0+0.06*float64(deathKnight.Talents.MercilessCombat), 1.0)
+}
+
+func (deathKnight *DeathKnight) tundraStalkerBonus() float64 {
+	return core.TernaryFloat64(deathKnight.FrostFeverDisease.IsActive(), 1.0+0.03*float64(deathKnight.Talents.TundraStalker), 1.0)
+}
+
 func (deathKnight *DeathKnight) applyKillingMachine() {
 	if deathKnight.Talents.KillingMachine == 0 {
 		return
@@ -159,6 +180,18 @@ func (deathKnight *DeathKnight) applyIcyTalons() {
 
 func (deathKnight *DeathKnight) outcomeEitherWeaponHitOrCrit(mhOutcome core.HitOutcome, ohOutcome core.HitOutcome) bool {
 	return mhOutcome == core.OutcomeHit || mhOutcome == core.OutcomeCrit || ohOutcome == core.OutcomeHit || ohOutcome == core.OutcomeCrit
+}
+
+func (deathKnight *DeathKnight) bloodOfTheNorthCoeff() float64 {
+	bloodOfTheNorthCoeff := 1.0
+	if deathKnight.Talents.BloodOfTheNorth == 1 {
+		bloodOfTheNorthCoeff = 1.03
+	} else if deathKnight.Talents.BloodOfTheNorth == 2 {
+		bloodOfTheNorthCoeff = 1.06
+	} else if deathKnight.Talents.BloodOfTheNorth == 3 {
+		bloodOfTheNorthCoeff = 1.1
+	}
+	return bloodOfTheNorthCoeff
 }
 
 func (deathKnight *DeathKnight) bloodOfTheNorthChance() float64 {

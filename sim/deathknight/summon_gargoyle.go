@@ -159,7 +159,7 @@ func (garg *GargoylePet) registerGargoyleStrikeSpell() {
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: garg.OutcomeFuncMagicHit(),
+			OutcomeApplier: garg.OutcomeFuncCritFixedChance(0.05, 1.5),
 		}),
 	})
 }
