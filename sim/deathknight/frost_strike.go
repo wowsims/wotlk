@@ -87,8 +87,6 @@ func (deathKnight *DeathKnight) registerFrostStrikeSpell() {
 	mhHitSpell := deathKnight.newFrostStrikeHitSpell(true)
 	ohHitSpell := deathKnight.newFrostStrikeHitSpell(false)
 
-	totChance := ToTChance(deathKnight)
-
 	deathKnight.FrostStrike = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    FrostStrikeActionID,
 		SpellSchool: core.SpellSchoolFrost,
@@ -111,13 +109,8 @@ func (deathKnight *DeathKnight) registerFrostStrikeSpell() {
 			OutcomeApplier: deathKnight.OutcomeFuncAlwaysHit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				mhHitSpell.Cast(sim, spellEffect.Target)
-				totProcced := ToTWillCast(sim, totChance)
-				if totProcced {
-					ohHitSpell.Cast(sim, spellEffect.Target)
-				}
-
-				ToTAdjustMetrics(sim, spell, spellEffect, FrostStrikeMHOutcome)
+				deathKnight.threatOfThassarianProc(sim, spellEffect, mhHitSpell, ohHitSpell)
+				deathKnight.threatOfThassarianAdjustMetrics(sim, spell, spellEffect, FrostStrikeMHOutcome)
 			},
 		}),
 	})

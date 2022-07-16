@@ -20,7 +20,7 @@ type GhoulPet struct {
 }
 
 func (deathKnight *DeathKnight) NewGhoulPet(permanent bool) *GhoulPet {
-	if deathKnight.Options.PetUptime <= 0 {
+	if deathKnight.Options.PetUptime <= 0 && permanent {
 		return nil
 	}
 

@@ -157,6 +157,71 @@ func (deathKnight *DeathKnight) applyIcyTalons() {
 	})
 }
 
+func (deathKnight *DeathKnight) outcomeEitherWeaponHitOrCrit(mhOutcome core.HitOutcome, ohOutcome core.HitOutcome) bool {
+	return mhOutcome == core.OutcomeHit || mhOutcome == core.OutcomeCrit || ohOutcome == core.OutcomeHit || ohOutcome == core.OutcomeCrit
+}
+
+func (deathKnight *DeathKnight) bloodOfTheNorthChance() float64 {
+	botnChance := 0.0
+	if deathKnight.Talents.BloodOfTheNorth == 1 {
+		botnChance = 0.3
+	} else if deathKnight.Talents.BloodOfTheNorth == 2 {
+		botnChance = 0.6
+	} else if deathKnight.Talents.BloodOfTheNorth == 3 {
+		botnChance = 1.0
+	}
+	return botnChance
+}
+
+func (deathKnight *DeathKnight) bloodOfTheNorthWillProc(sim *core.Simulation, botnChance float64) bool {
+	ohWillCast := sim.RandomFloat("Blood of The North") <= botnChance
+	return ohWillCast
+}
+
+func (deathKnight *DeathKnight) bloodOfTheNorthProc(sim *core.Simulation, spell *core.Spell, runeCost core.DKRuneCost) {
+	botnChance := deathKnight.bloodOfTheNorthChance()
+
+	if runeCost.Blood > 0 {
+		if deathKnight.bloodOfTheNorthWillProc(sim, botnChance) {
+			slot := deathKnight.SpendBloodRune(sim, spell.BloodRuneMetrics())
+			deathKnight.SetRuneAtSlotToState(0, slot, core.RuneState_DeathSpent, core.RuneKind_Death)
+			deathKnight.FlagBloodRuneSlotAsBoTN(slot)
+		} else {
+			deathKnight.Spend(sim, spell, runeCost)
+		}
+	} else {
+		deathKnight.Spend(sim, spell, runeCost)
+	}
+}
+
+func (deathKnight *DeathKnight) threatOfThassarianChance() float64 {
+	threatOfThassarianChance := 0.0
+	if deathKnight.Talents.ThreatOfThassarian == 1 {
+		threatOfThassarianChance = 0.30
+	} else if deathKnight.Talents.ThreatOfThassarian == 2 {
+		threatOfThassarianChance = 0.60
+	} else if deathKnight.Talents.ThreatOfThassarian == 3 {
+		threatOfThassarianChance = 1.0
+	}
+	return threatOfThassarianChance
+}
+
+func (deathKnight *DeathKnight) threatOfThassarianWillProc(sim *core.Simulation, totChance float64) bool {
+	ohWillCast := sim.RandomFloat("Threat of Thassarian") <= totChance
+	return ohWillCast
+}
+
+func (deathKnight *DeathKnight) threatOfThassarianAdjustMetrics(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, mhOutcome core.HitOutcome) {
+	spell.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 1
+	if mhOutcome == core.OutcomeHit {
+		spell.SpellMetrics[spellEffect.Target.TableIndex].Hits -= 1
+	} else if mhOutcome == core.OutcomeCrit {
+		spell.SpellMetrics[spellEffect.Target.TableIndex].Hits -= 1
+	} else {
+		spell.SpellMetrics[spellEffect.Target.TableIndex].Hits -= 2
+	}
+}
+
 func (deathKnight *DeathKnight) threatOfThassarianProcMasks(isMH bool, effect *core.SpellEffect, guileOfGorefiend bool) {
 	if isMH {
 		effect.ProcMask = core.ProcMaskMeleeMHSpecial
@@ -167,6 +232,12 @@ func (deathKnight *DeathKnight) threatOfThassarianProcMasks(isMH bool, effect *c
 	}
 }
 
-func (deathKnight *DeathKnight) applyThreatOfThassarian() {
+func (deathKnight *DeathKnight) threatOfThassarianProc(sim *core.Simulation, spellEffect *core.SpellEffect, mhSpell *core.Spell, ohSpell *core.Spell) {
+	totChance := deathKnight.threatOfThassarianChance()
 
+	mhSpell.Cast(sim, spellEffect.Target)
+	totProcced := deathKnight.threatOfThassarianWillProc(sim, totChance)
+	if totProcced {
+		ohSpell.Cast(sim, spellEffect.Target)
+	}
 }

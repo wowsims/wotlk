@@ -28,20 +28,21 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 // https://wotlk.wowhead.com/talent-calc and copy the numbers in the url.
 export const FrostTalents = {
 	name: 'Frost Dps',
-	data: '23050005-32005350352203012300033101351_001s8q11s9f21xv6',
+	data: '23050005-32005350352203012300033101351',
 };
+
 
 export const UnholyDualWieldTalents = {
 	name: 'Unholy Dual Wield Dps',
 	data: '-320033500002-2302303050032150000150013133151',
 };
 
+
 export const DefaultRotation = DeathKnightRotation.create({
 });
 
 export const DefaultOptions = DeathKnightOptions.create({
-	startingRunicPower: 0,
-	petUptime: 1,
+	startingRunicPower: 0
 });
 
 export const DefaultConsumes = Consumes.create({

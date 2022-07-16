@@ -61,8 +61,6 @@ func (deathKnight *DeathKnight) registerPlagueStrikeSpell() {
 	mhHitSpell := deathKnight.newPlagueStrikeSpell(true)
 	ohHitSpell := deathKnight.newPlagueStrikeSpell(false)
 
-	totChance := ToTChance(deathKnight)
-
 	deathKnight.PlagueStrike = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    PlagueStrikeActionID,
 		SpellSchool: core.SpellSchoolPhysical,
@@ -81,15 +79,10 @@ func (deathKnight *DeathKnight) registerPlagueStrikeSpell() {
 			OutcomeApplier: deathKnight.OutcomeFuncAlwaysHit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				mhHitSpell.Cast(sim, spellEffect.Target)
-				totProcced := ToTWillCast(sim, totChance)
-				if totProcced {
-					ohHitSpell.Cast(sim, spellEffect.Target)
-				}
+				deathKnight.threatOfThassarianProc(sim, spellEffect, mhHitSpell, ohHitSpell)
+				deathKnight.threatOfThassarianAdjustMetrics(sim, spell, spellEffect, PlagueStrikeMHOutcome)
 
-				ToTAdjustMetrics(sim, spell, spellEffect, PlagueStrikeMHOutcome)
-
-				if OutcomeEitherWeaponHitOrCrit(PlagueStrikeMHOutcome, PlagueStrikeOHOutcome) {
+				if deathKnight.outcomeEitherWeaponHitOrCrit(PlagueStrikeMHOutcome, PlagueStrikeOHOutcome) {
 					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 0, 1)
 					deathKnight.Spend(sim, spell, dkSpellCost)
 
