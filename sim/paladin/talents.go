@@ -8,26 +8,26 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+// TODO:
+// Sanctified Wrath
+// Sanctified Retribution
+// Judgements of the Wise
+// Swift Retribution
+// Righteous Vengeance
+// Fanatacism threat reduction.
+
 func (paladin *Paladin) ApplyTalents() {
-	paladin.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*float64(paladin.Talents.SanctifiedSeals))
-	paladin.AddStat(stats.SpellCrit, core.CritRatingPerCritChance*float64(paladin.Talents.SanctifiedSeals))
-	paladin.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*float64(paladin.Talents.Precision))
-	paladin.AddStat(stats.SpellHit, core.SpellHitRatingPerHitChance*float64(paladin.Talents.Precision))
-	paladin.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*float64(paladin.Talents.Conviction))
+	paladin.AddStat(stats.MeleeCrit, float64(paladin.Talents.Conviction)*core.CritRatingPerCritChance)
+	paladin.AddStat(stats.SpellCrit, float64(paladin.Talents.Conviction)*core.CritRatingPerCritChance)
+	paladin.AddStat(stats.MeleeCrit, float64(paladin.Talents.SanctityOfBattle)*core.CritRatingPerCritChance)
+	paladin.AddStat(stats.SpellCrit, float64(paladin.Talents.SanctityOfBattle)*core.CritRatingPerCritChance)
+
 	paladin.AddStat(stats.Parry, core.ParryRatingPerParryChance*1*float64(paladin.Talents.Deflection))
 	paladin.AddStat(stats.Armor, paladin.Equip.Stats()[stats.Armor]*0.02*float64(paladin.Talents.Toughness))
 	paladin.AddStat(stats.Defense, core.DefenseRatingPerDefense*4*float64(paladin.Talents.Anticipation))
 
-	spellWardingMultiplier := 1 - 0.02*float64(paladin.Talents.SpellWarding)
-	paladin.PseudoStats.ArcaneDamageTakenMultiplier *= spellWardingMultiplier
-	paladin.PseudoStats.FireDamageTakenMultiplier *= spellWardingMultiplier
-	paladin.PseudoStats.FrostDamageTakenMultiplier *= spellWardingMultiplier
-	paladin.PseudoStats.HolyDamageTakenMultiplier *= spellWardingMultiplier
-	paladin.PseudoStats.NatureDamageTakenMultiplier *= spellWardingMultiplier
-	paladin.PseudoStats.ShadowDamageTakenMultiplier *= spellWardingMultiplier
-
 	if paladin.Talents.DivineStrength > 0 {
-		bonus := 1 + 0.02*float64(paladin.Talents.DivineStrength)
+		bonus := 1 + 0.03*float64(paladin.Talents.DivineStrength)
 		paladin.AddStatDependency(stats.StatDependency{
 			SourceStat:   stats.Strength,
 			ModifiedStat: stats.Strength,
@@ -47,16 +47,28 @@ func (paladin *Paladin) ApplyTalents() {
 		})
 	}
 
-	if paladin.Talents.ShieldSpecialization > 0 {
-		bonus := 1 + 0.1*float64(paladin.Talents.ShieldSpecialization)
+	if paladin.Talents.SheathOfLight > 0 {
+		// doesn't implement HOT
+		percentage := 0.10 * float64(paladin.Talents.SheathOfLight)
 		paladin.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.BlockValue,
-			ModifiedStat: stats.BlockValue,
-			Modifier: func(bv float64, _ float64) float64 {
-				return bv * bonus
+			SourceStat:   stats.AttackPower,
+			ModifiedStat: stats.SpellPower,
+			Modifier: func(attackPower float64, spellPower float64) float64 {
+				return spellPower + (attackPower * percentage)
 			},
 		})
 	}
+
+	// if paladin.Talents.ShieldSpecialization > 0 {
+	// 	bonus := 1 + 0.1*float64(paladin.Talents.ShieldSpecialization)
+	// 	paladin.AddStatDependency(stats.StatDependency{
+	// 		SourceStat:   stats.BlockValue,
+	// 		ModifiedStat: stats.BlockValue,
+	// 		Modifier: func(bv float64, _ float64) float64 {
+	// 			return bv * bonus
+	// 		},
+	// 	})
+	// }
 
 	if paladin.Talents.SacredDuty > 0 {
 		bonus := 1 + 0.03*float64(paladin.Talents.SacredDuty)
@@ -87,6 +99,9 @@ func (paladin *Paladin) ApplyTalents() {
 	paladin.applyCrusade()
 	paladin.applyWeaponSpecialization()
 	paladin.applyVengeance()
+	paladin.applyHeartOfTheCrusader()
+	paladin.applyArtOfWar()
+	paladin.applyJudgmentsOfTheWise()
 }
 
 func (paladin *Paladin) applyRedoubt() {
@@ -230,11 +245,14 @@ func (paladin *Paladin) crusadeMultiplier() float64 {
 	}
 }
 
+// Prior to WOTLK, behavior was to double dip.
 func (paladin *Paladin) MeleeCritMultiplier() float64 {
-	return paladin.Character.MeleeCritMultiplier(paladin.crusadeMultiplier(), 0)
+	// return paladin.Character.MeleeCritMultiplier(paladin.crusadeMultiplier(), 0)
+	return paladin.DefaultMeleeCritMultiplier()
 }
 func (paladin *Paladin) SpellCritMultiplier() float64 {
-	return paladin.Character.SpellCritMultiplier(paladin.crusadeMultiplier(), 0)
+	// return paladin.Character.SpellCritMultiplier(paladin.crusadeMultiplier(), 0)
+	return paladin.DefaultSpellCritMultiplier()
 }
 
 // Affects all physical damage or spells that can be rolled as physical
@@ -270,7 +288,7 @@ func (paladin *Paladin) applyVengeance() {
 	bonusPerStack := 0.01 * float64(paladin.Talents.Vengeance)
 	procAura := paladin.RegisterAura(core.Aura{
 		Label:     "Vengeance Proc",
-		ActionID:  core.ActionID{SpellID: 20059},
+		ActionID:  core.ActionID{SpellID: 20057},
 		Duration:  time.Second * 30,
 		MaxStacks: 3,
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
@@ -289,6 +307,114 @@ func (paladin *Paladin) applyVengeance() {
 			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
 				procAura.Activate(sim)
 				procAura.AddStack(sim)
+			}
+		},
+	})
+}
+
+func (paladin *Paladin) applyHeartOfTheCrusader() {
+	if paladin.Talents.HeartOfTheCrusader == 0 {
+		return
+	}
+
+	procAura := core.Aura{
+		Label:    "Heart of the Crusader Debuff",
+		ActionID: core.ActionID{SpellID: 54499},
+		Duration: time.Second * 20,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.BonusMeleeCritRating += float64(paladin.Talents.HeartOfTheCrusader) * core.CritRatingPerCritChance
+			aura.Unit.PseudoStats.BonusSpellCritRating += float64(paladin.Talents.HeartOfTheCrusader) * core.CritRatingPerCritChance
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.BonusMeleeCritRating -= float64(paladin.Talents.HeartOfTheCrusader) * core.CritRatingPerCritChance
+			aura.Unit.PseudoStats.BonusSpellCritRating -= float64(paladin.Talents.HeartOfTheCrusader) * core.CritRatingPerCritChance
+		},
+	}
+
+	paladin.RegisterAura(core.Aura{
+		Label:    "Heart of the Crusader",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spell.Flags.Matches(SpellFlagJudgement) {
+				return
+			}
+
+			var debuffAura *core.Aura
+			if spellEffect.Target.HasAura(procAura.Label) {
+				debuffAura = spellEffect.Target.GetAura(procAura.Label)
+			} else {
+				debuffAura = spellEffect.Target.RegisterAura(procAura)
+			}
+			debuffAura.Activate(sim)
+		},
+	})
+}
+
+func (paladin *Paladin) applyArtOfWar() {
+	if paladin.Talents.TheArtOfWar == 0 {
+		return
+	}
+
+	paladin.ArtOfWarInstantCast = paladin.RegisterAura(core.Aura{
+		Label:    "Art Of War",
+		ActionID: core.ActionID{SpellID: 53488},
+		Duration: time.Second * 15,
+	})
+
+	paladin.RegisterAura(core.Aura{
+		Label:    "The Art of War",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			// TODO: Check if only procs on white hits.
+			if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+				return
+			}
+
+			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+				return
+			}
+
+			paladin.ArtOfWarInstantCast.Activate(sim)
+		},
+	})
+}
+
+func (paladin *Paladin) applyJudgmentsOfTheWise() {
+	procSpell := paladin.RegisterSpell(core.SpellConfig{
+		ActionID: core.ActionID{SpellID: 31878},
+		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, _ *core.Spell) {
+			if paladin.JowiseManaMetrics == nil {
+				paladin.JowiseManaMetrics = paladin.NewManaMetrics(core.ActionID{SpellID: 31878})
+			}
+			// TODO: actually restore intended mana
+			unit.AddMana(sim, unit.BaseMana*0.25, paladin.JowiseManaMetrics, false)
+		},
+	})
+
+	paladin.RegisterAura(core.Aura{
+		Label:    "Judgements of the Wise",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spell.Flags.Matches(SpellFlagJudgement) || !spellEffect.Landed() {
+				return
+			}
+
+			if paladin.Talents.JudgementsOfTheWise == 3 {
+				procSpell.Cast(sim, &paladin.Unit)
+			} else {
+				if sim.RandomFloat("judgements of the wise") > (0.33)*float64(paladin.Talents.JudgementsOfTheWise) {
+					return
+				}
+				procSpell.Cast(sim, &paladin.Unit)
 			}
 		},
 	})

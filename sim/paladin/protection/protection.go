@@ -79,14 +79,14 @@ func (prot *ProtectionPaladin) Initialize() {
 func (prot *ProtectionPaladin) Reset(sim *core.Simulation) {
 	prot.Paladin.Reset(sim)
 
-	// Pre-activate seal before combat starts.
-	if prot.Rotation.MaintainJudgement == proto.PaladinJudgement_JudgementOfWisdom {
-		prot.UpdateSeal(sim, prot.SealOfWisdomAura)
-	} else if prot.Rotation.MaintainJudgement == proto.PaladinJudgement_JudgementOfLight {
-		prot.UpdateSeal(sim, prot.SealOfLightAura)
-	} else {
-		prot.UpdateSeal(sim, prot.SealOfRighteousnessAura)
-	}
+	// // Pre-activate seal before combat starts.
+	// if prot.Rotation.MaintainJudgement == proto.PaladinJudgement_JudgementOfWisdom {
+	// 	prot.UpdateSeal(sim, prot.SealOfWisdomAura)
+	// } else if prot.Rotation.MaintainJudgement == proto.PaladinJudgement_JudgementOfLight {
+	// 	prot.UpdateSeal(sim, prot.SealOfLightAura)
+	// } else {
+	// 	prot.UpdateSeal(sim, prot.SealOfRighteousnessAura)
+	// }
 
 	// Pre-activate Holy Shield before combat starts.
 	// Assume it gets cast 3s before entering combat.

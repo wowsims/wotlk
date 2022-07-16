@@ -16,20 +16,11 @@ func (paladin *Paladin) RegisterConsecrationSpell(rank int32) {
 	var baseDamage float64
 
 	switch rank {
-	case 6:
-		manaCost = 660
-		actionID.SpellID = 27173
-		baseDamage = 64
-	case 4:
-		manaCost = 390
-		actionID.SpellID = 20923
-		baseDamage = 35
-	case 1:
-		manaCost = 120
-		actionID.SpellID = 26573
-		baseDamage = 8
-	default:
-		manaCost = 0.0
+	case 8:
+		manaCost = 0.22 * paladin.BaseMana
+		manaCost = manaCost * (1 - 0.02*float64(paladin.Talents.Benediction))
+		actionID.SpellID = 48819
+		baseDamage = 113
 	}
 
 	switch paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID {
