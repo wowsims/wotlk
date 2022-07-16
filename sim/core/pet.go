@@ -80,10 +80,18 @@ func NewPet(name string, owner *Character, baseStats stats.Stats, statInheritanc
 // addedStats is the amount of stats added to the owner (will be negative if the
 // owner lost stats).
 func (pet *Pet) addOwnerStats(sim *Simulation, addedStats stats.Stats) {
+	// Temporary pets dont update stats in realtime so we use initialEnabled to detect that
+	if !pet.initialEnabled {
+		return
+	}
 	inheritedChange := pet.currentStatInheritance(addedStats)
 	pet.AddStatsDynamic(sim, inheritedChange)
 }
 func (pet *Pet) addOwnerStat(sim *Simulation, stat stats.Stat, addedAmount float64) {
+	// Temporary pets dont update stats in realtime so we use initialEnabled to detect that
+	if !pet.initialEnabled {
+		return
+	}
 	s := stats.Stats{}
 	s[stat] = addedAmount
 	pet.addOwnerStats(sim, s)

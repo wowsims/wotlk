@@ -261,7 +261,7 @@ var wotlkRangedWeaponTypePatterns = map[proto.RangedWeaponType]*regexp.Regexp{
 	proto.RangedWeaponType_RangedWeaponTypeThrown:   regexp.MustCompile("<th>Thrown</th>"),
 	proto.RangedWeaponType_RangedWeaponTypeTotem:    regexp.MustCompile("<th><!--asc9-->Totem</th>"),
 	proto.RangedWeaponType_RangedWeaponTypeWand:     regexp.MustCompile("<th>Wand</th>"),
-	proto.RangedWeaponType_RangedWeaponTypeSigil:    regexp.MustCompile("<th>Sigil</th>"),
+	proto.RangedWeaponType_RangedWeaponTypeSigil:    regexp.MustCompile("<th><!--asc10-->Sigil</th>"),
 }
 
 func (item WotlkItemResponse) GetRangedWeaponType() proto.RangedWeaponType {

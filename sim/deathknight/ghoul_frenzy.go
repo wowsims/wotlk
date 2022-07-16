@@ -56,5 +56,5 @@ func (deathKnight *DeathKnight) registerGhoulFrenzySpell() {
 }
 
 func (deathKnight *DeathKnight) CanGhoulFrenzy(sim *core.Simulation) bool {
-	return deathKnight.Talents.GhoulFrenzy && deathKnight.CastCostPossible(sim, 0.0, 0, 0, 1) && deathKnight.GhoulFrenzy.IsReady(sim)
+	return deathKnight.Talents.GhoulFrenzy && deathKnight.Ghoul.IsEnabled() && deathKnight.CastCostPossible(sim, 0.0, 0, 0, 1) && deathKnight.GhoulFrenzy.IsReady(sim)
 }
