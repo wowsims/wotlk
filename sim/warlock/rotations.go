@@ -169,7 +169,10 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			} else {
 				spell = warlock.Incinerate
 			}
-		} else { preset = proto.Warlock_Rotation_Manual }
+		} else {
+			preset = proto.Warlock_Rotation_Manual
+			warlock.Rotation.Preset = proto.Warlock_Rotation_Manual
+		}
 	}
 
 	// ------------------------------------------

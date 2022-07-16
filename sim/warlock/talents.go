@@ -1,7 +1,6 @@
 package warlock
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -140,7 +139,7 @@ func (warlock *Warlock) ApplyTalents() {
 func (warlock *Warlock) registerGlyphOfLifeTapAura() {
 	warlock.GlyphOfLifeTapAura = warlock.RegisterAura(core.Aura{
 		Label:    "Glyph Of LifeTap Aura",
-		Tag:      "Glyph Of LifeTap Aura" + strconv.Itoa(int(warlock.GetStat(stats.Spirit))),
+		Tag:      "Glyph Of LifeTap Aura",
 		ActionID: core.ActionID{SpellID: 63941},
 		Duration: time.Second * 40,
 		Priority: float64(warlock.GetStat(stats.Spirit)),
@@ -360,6 +359,12 @@ func (warlock *Warlock) setupMoltenCore() {
 				aura.RemoveStack(sim)
 			}
 		},
+		// OnGain: func(aura *core.Aura, sim *core.Simulation) {
+		// 	warlock.SoulFire.ApplyEffects.BonusSpellCritRating += 5 * float64(warlock.Talents.MoltenCore) * core.CritRatingPerCritChance
+		// },
+		// OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+		// 	warlock.SoulFire.ApplyEffects.BonusSpellCritRating -= 5 * float64(warlock.Talents.MoltenCore) * core.CritRatingPerCritChance
+		// },
 	})
 
 	warlock.RegisterAura(core.Aura{

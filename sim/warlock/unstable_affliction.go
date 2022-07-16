@@ -50,13 +50,13 @@ func (warlock *Warlock) registerUnstableAffDot() {
 		NumberOfTicks: ticksNumber,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			DamageMultiplier: 1 * (1 + 0.05*core.TernaryFloat64(warlock.Talents.SiphonLife, 1, 0)),
-			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(1150/6, spellCoefficient),
-			BonusCritRating:  3 * core.CritRatingPerCritChance * float64(warlock.Talents.Malediction),
-			OutcomeApplier:   applier,
-			IsPeriodic:       true,
-			ProcMask:         core.ProcMaskPeriodicDamage,
+			DamageMultiplier: 	  1 * (1 + 0.05*core.TernaryFloat64(warlock.Talents.SiphonLife, 1, 0)),
+			ThreatMultiplier: 	  1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+			BaseDamage:       	  core.BaseDamageConfigMagicNoRoll(1150/6, spellCoefficient),
+			BonusSpellCritRating: 3 * core.CritRatingPerCritChance * float64(warlock.Talents.Malediction),
+			OutcomeApplier:       applier,
+			IsPeriodic:      	  true,
+			ProcMask:        	  core.ProcMaskPeriodicDamage,
 		}),
 	})
 }

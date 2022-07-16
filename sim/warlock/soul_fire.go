@@ -14,7 +14,7 @@ func (warlock *Warlock) registerSoulFireSpell() {
 		DamageMultiplier:     (1 + 0.03*float64(warlock.Talents.Emberstorm)),
 		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.DestructiveReach),
 		BaseDamage:           warlock.soulFireDamage(),
-		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
+		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin) / 5)),
 	}
 
 	baseCost := 0.09 * warlock.BaseMana
@@ -57,11 +57,11 @@ func (warlock *Warlock) soulFireDamage() core.BaseDamageConfig {
 	base := core.BaseDamageConfigMagic(1323.0, 1657.0, 1.15)
 
 	return core.WrapBaseDamageConfig(base, func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
-		return func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-			if warlock.MoltenCoreAura.IsActive() {
-				hitEffect.BonusSpellCritRating += 5 * float64(warlock.Talents.MoltenCore) * core.CritRatingPerCritChance
-			}
-			normalDamage := oldCalculator(sim, hitEffect, spell)
+		return func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
+			// if warlock.MoltenCoreAura.IsActive() {
+			// 	spellEffect.BonusSpellCritRating += 5 * float64(warlock.Talents.MoltenCore) * core.CritRatingPerCritChance
+			// }
+			normalDamage := oldCalculator(sim, spellEffect, spell)
 			// Boost damage if immolate is ticking
 			if warlock.MoltenCoreAura.IsActive() {
 				normalDamage *= 1 + 0.06*float64(warlock.Talents.MoltenCore)
