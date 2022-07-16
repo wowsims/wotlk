@@ -368,6 +368,11 @@ func init() {
 }
 
 // Agent is a generic way to access underlying warrior on any of the agents.
+
+func (deathKnight *DeathKnight) GetDeathKnight() *DeathKnight {
+	return deathKnight
+}
+
 type DeathKnightAgent interface {
 	GetDeathKnight() *DeathKnight
 }

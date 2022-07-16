@@ -406,6 +406,9 @@ func init() {
 				dmg = spellEffect.Damage
 				razoriceHit.Cast(sim, target)
 				vulnAura.Activate(sim)
+				if vulnAura.IsActive() {
+					vulnAura.AddStack(sim)
+				}
 			},
 		})
 	})

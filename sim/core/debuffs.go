@@ -766,8 +766,7 @@ const RuneOfRazoriceVulnerabilityTag = "RuneOfRazoriceVulnerability"
 
 func RuneOfRazoriceVulnerabilityAura(target *Unit) *Aura {
 	frostVulnPerStack := 0.02
-
-	return target.GetOrRegisterAura(Aura{
+	aura := target.GetOrRegisterAura(Aura{
 		Label:     "RuneOfRazoriceVulnerability",
 		Tag:       RuneOfRazoriceVulnerabilityTag,
 		ActionID:  ActionID{SpellID: 53343},
@@ -778,11 +777,15 @@ func RuneOfRazoriceVulnerabilityAura(target *Unit) *Aura {
 			aura.SetStacks(sim, 0)
 		},
 		OnStacksChange: func(aura *Aura, sim *Simulation, oldStacks int32, newStacks int32) {
+			if !aura.active {
+				return
+			}
 			oldMultiplier := 1.0 + float64(oldStacks)*frostVulnPerStack
 			newMultiplier := 1.0 + float64(newStacks)*frostVulnPerStack
 			aura.Unit.PseudoStats.FrostDamageTakenMultiplier *= (newMultiplier / oldMultiplier)
 		},
 	})
+	return aura
 }
 
 func InsectSwarmAura(target *Unit) *Aura {
