@@ -70,16 +70,6 @@ func (ret *RetributionPaladin) Initialize() {
 	ret.Paladin.Initialize()
 	ret.RegisterAvengingWrathCD()
 
-	// // Register Consecration here so we can setup the right rank based on UI input
-	// switch ret.Rotation.ConsecrationRank {
-	// case proto.RetributionPaladin_Rotation_Rank6:
-	// 	ret.RegisterConsecrationSpell(6)
-	// case proto.RetributionPaladin_Rotation_Rank4:
-	// 	ret.RegisterConsecrationSpell(4)
-	// case proto.RetributionPaladin_Rotation_Rank1:
-	// 	ret.RegisterConsecrationSpell(1)
-	// }
-
 	ret.DelayDPSCooldownsForArmorDebuffs()
 }
 

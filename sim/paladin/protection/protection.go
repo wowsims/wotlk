@@ -65,15 +65,6 @@ func (prot *ProtectionPaladin) Initialize() {
 	if prot.Options.UseAvengingWrath {
 		prot.RegisterAvengingWrathCD()
 	}
-
-	switch prot.Rotation.ConsecrationRank {
-	case 6:
-		prot.RegisterConsecrationSpell(6)
-	case 4:
-		prot.RegisterConsecrationSpell(4)
-	case 1:
-		prot.RegisterConsecrationSpell(1)
-	}
 }
 
 func (prot *ProtectionPaladin) Reset(sim *core.Simulation) {

@@ -10,18 +10,17 @@ import (
 
 // Maybe could switch "rank" parameter type to some proto thing. Would require updates to proto files.
 // Prot guys do whatever you want here I guess
-func (paladin *Paladin) RegisterConsecrationSpell(rank int32) {
+func (paladin *Paladin) RegisterConsecrationSpell() {
+	// TODO: Properly implement max rank consecration.
+
 	var manaCost float64
 	var actionID core.ActionID
 	var baseDamage float64
 
-	switch rank {
-	case 8:
-		manaCost = 0.22 * paladin.BaseMana
-		manaCost = manaCost * (1 - 0.02*float64(paladin.Talents.Benediction))
-		actionID.SpellID = 48819
-		baseDamage = 113
-	}
+	manaCost = 0.22 * paladin.BaseMana
+	manaCost = manaCost * (1 - 0.02*float64(paladin.Talents.Benediction))
+	actionID.SpellID = 48819
+	baseDamage = 113
 
 	switch paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID {
 	case 27917:

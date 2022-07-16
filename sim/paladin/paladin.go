@@ -106,7 +106,7 @@ func (paladin *Paladin) Initialize() {
 
 	paladin.registerCrusaderStrikeSpell()
 	paladin.registerDivineStormSpell()
-	paladin.RegisterConsecrationSpell(8)
+	paladin.RegisterConsecrationSpell()
 
 	paladin.registerExorcismSpell()
 	paladin.registerHolyShieldSpell()
