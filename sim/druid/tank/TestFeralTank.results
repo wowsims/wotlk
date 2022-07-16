@@ -743,6 +743,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeralTank-AllItems-PurifiedShardoftheGods"
+ value: {
+  dps: 607.4729318645923
+  tps: 842.4668512776943
+ }
+}
+dps_results: {
  key: "TestFeralTank-AllItems-Quagmirran'sEye-27683"
  value: {
   dps: 607.4729318645923
@@ -859,6 +866,13 @@ dps_results: {
  value: {
   dps: 614.9144273404639
   tps: 856.537561840394
+ }
+}
+dps_results: {
+ key: "TestFeralTank-AllItems-ShinyShardoftheGods"
+ value: {
+  dps: 607.4729318645923
+  tps: 842.4668512776943
  }
 }
 dps_results: {

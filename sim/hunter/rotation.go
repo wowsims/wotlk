@@ -34,6 +34,8 @@ func (hunter *Hunter) chooseSpell(sim *core.Simulation) *core.Spell {
 		return hunter.ScorpidSting
 	} else if hunter.Rotation.Sting == proto.Hunter_Rotation_SerpentSting && !hunter.SerpentStingDot.IsActive() {
 		return hunter.SerpentSting
+	} else if sim.IsExecutePhase20() && hunter.KillShot.IsReady(sim) {
+		return hunter.KillShot
 	} else if hunter.ChimeraShot != nil && hunter.ChimeraShot.IsReady(sim) {
 		return hunter.ChimeraShot
 	} else if hunter.BlackArrow != nil && hunter.BlackArrow.IsReady(sim) {

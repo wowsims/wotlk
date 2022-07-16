@@ -15,6 +15,7 @@ func (deathKnight *DeathKnight) newPlagueStrikeSpell(isMH bool) *core.Spell {
 	}
 
 	viciousStrikes := 0.15 * float64(deathKnight.Talents.ViciousStrikes)
+	outbreakBonus := 1.0 + 0.1*float64(deathKnight.Talents.Outbreak)
 
 	effect := core.SpellEffect{
 		BonusCritRating:  (1.0*float64(deathKnight.Talents.Annihilation) + 3.0*float64(deathKnight.Talents.ViciousStrikes)) * core.CritRatingPerCritChance,
@@ -24,10 +25,9 @@ func (deathKnight *DeathKnight) newPlagueStrikeSpell(isMH bool) *core.Spell {
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				return weaponBaseDamage(sim, hitEffect, spell) *
-					(1.0 +
-						core.TernaryFloat64(deathKnight.DiseasesAreActive(), 0.05*float64(deathKnight.Talents.TundraStalker), 0.0) +
-						core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 0.02*float64(deathKnight.Talents.RageOfRivendare), 0.0) +
-						0.10*float64(deathKnight.Talents.Outbreak))
+					outbreakBonus *
+					core.TernaryFloat64(deathKnight.DiseasesAreActive(), 1.0+0.05*float64(deathKnight.Talents.TundraStalker), 1.0) *
+					core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 1.0+0.02*float64(deathKnight.Talents.RageOfRivendare), 1.0)
 			},
 			TargetSpellCoefficient: 1,
 		},
