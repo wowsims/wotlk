@@ -54,6 +54,8 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 				} else {
 					if deathKnight.Talents.Morbidity > 0 && deathKnight.CanDeathAndDecay(sim) && deathKnight.AllDiseasesAreActive() {
 						deathKnight.DeathAndDecay.Cast(sim, target)
+					} else if deathKnight.CanGhoulFrenzy(sim) && deathKnight.Talents.MasterOfGhouls && (!deathKnight.GhoulFrenzyAura.IsActive() || deathKnight.GhoulFrenzyAura.RemainingDuration(sim) < 6*time.Second) && !deathKnight.shouldWaitForDnD(sim, false, false, true) {
+						deathKnight.GhoulFrenzy.Cast(sim, target)
 					} else if deathKnight.CanScourgeStrike(sim) && (deathKnight.Talents.Morbidity == 0 || !deathKnight.shouldWaitForDnD(sim, false, true, true)) {
 						deathKnight.ScourgeStrike.Cast(sim, target)
 					} else if !deathKnight.Talents.ScourgeStrike && deathKnight.CanIcyTouch(sim) && !deathKnight.shouldWaitForDnD(sim, false, true, false) {

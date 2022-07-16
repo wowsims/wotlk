@@ -38,7 +38,8 @@ func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 			},
 		},
 
-		ApplyEffects: core.ApplyEffectFuncAOEDamage(deathKnight.Env, core.SpellEffect{
+		// TODO: Make AoE without breaking rune spending...
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:             core.ProcMaskSpellDamage,
 			BonusSpellCritRating: 0.0,
 			DamageMultiplier:     1.0,
@@ -56,7 +57,6 @@ func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 				TargetSpellCoefficient: 1,
 			},
 			OutcomeApplier: deathKnight.killingMachineOutcomeMod(deathKnight.OutcomeFuncMagicHitAndCrit(deathKnight.spellCritMultiplier(guileOfGorefiend))),
-
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					if !deathKnight.HowlingBlastCostless {

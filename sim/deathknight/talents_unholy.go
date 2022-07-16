@@ -25,7 +25,6 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 	// Implemented outside
 
 	// Ravenous Dead
-	// TODO: Ghoul part
 	if deathKnight.Talents.RavenousDead > 0 {
 		strengthCoeff := 0.01 * float64(deathKnight.Talents.RavenousDead)
 		deathKnight.AddStatDependency(stats.StatDependency{
@@ -47,7 +46,7 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 	deathKnight.applyBloodCakedBlade()
 
 	// Night of the Dead
-	// TODO:
+	// Implemented outside
 
 	// Unholy Blight
 	deathKnight.applyUnholyBlight()
@@ -62,13 +61,13 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 	// TODO:
 
 	// Master of Ghouls
-	// TODO:
+	// Implemented outside
 
 	// Desolation
 	deathKnight.applyDesolation()
 
 	// Ghoul Frenzy
-	// TODO:
+	// Implemented outside
 
 	// Bone Shield
 	// TODO:
