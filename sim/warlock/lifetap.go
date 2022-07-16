@@ -34,7 +34,7 @@ func (warlock *Warlock) registerLifeTapSpell() {
 			OutcomeApplier:   warlock.OutcomeFuncAlwaysHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				// Life tap adds 0.5*sp to mana restore
-				restore := baseRestore + (warlock.GetStat(stats.SpellPower)+warlock.GetStat(stats.ShadowSpellPower))*0.5
+				restore := baseRestore + (warlock.GetStat(stats.SpellPower) + warlock.GetStat(stats.ShadowSpellPower))*0.5
 				warlock.AddMana(sim, restore, manaMetrics, true)
 
 				if warlock.Talents.ManaFeed {
@@ -43,8 +43,7 @@ func (warlock *Warlock) registerLifeTapSpell() {
 					}
 				}
 				if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap) {
-					spiritSnapshot := int32(warlock.GetStat(stats.Spirit))
-					warlock.applyGlyphOfLifeTapAura(spiritSnapshot)
+					warlock.GlyphOfLifeTapAura.Activate(sim)
 				}
 			},
 		}),

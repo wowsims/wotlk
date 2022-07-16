@@ -50,8 +50,8 @@ var defaultDestroTalents = &proto.WarlockTalents{
 // }
 
 var defaultDestroRotation = &proto.Warlock_Rotation{
-	PrimarySpell: proto.Warlock_Rotation_Shadowbolt,
-	Immolate:     true,
+	PrimarySpell: proto.Warlock_Rotation_Incinerate,
+	SecondaryDot: proto.Warlock_Rotation_Immolate,
 }
 
 var defaultDestroOptions = &proto.Warlock_Options{

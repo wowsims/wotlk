@@ -13,7 +13,7 @@ func (warlock *Warlock) registerUnstableAffSpell() {
 	baseCost := 0.15 * warlock.BaseMana
 
 	warlock.UnstableAff = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 30405},
+		ActionID:     core.ActionID{SpellID: 47843},
 		SpellSchool:  core.SpellSchoolShadow,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -45,7 +45,7 @@ func (warlock *Warlock) registerUnstableAffDot() {
 		Spell: warlock.UnstableAff,
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "unstableaff-" + strconv.Itoa(int(warlock.Index)),
-			ActionID: core.ActionID{SpellID: 30405},
+			ActionID: core.ActionID{SpellID: 47843},
 		}),
 		NumberOfTicks: ticksNumber,
 		TickLength:    time.Second * 3,

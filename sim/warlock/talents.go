@@ -1,6 +1,7 @@
 package warlock
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -130,19 +131,24 @@ func (warlock *Warlock) ApplyTalents() {
 		warlock.Pet.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.1*float64(warlock.Talents.EmpoweredImp)
 		warlock.setupEmpoweredImp()
 	}
+
+	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap) {
+		warlock.registerGlyphOfLifeTapAura()
+	}
 }
 
-func (warlock *Warlock) applyGlyphOfLifeTapAura(spi int32) {
+func (warlock *Warlock) registerGlyphOfLifeTapAura() {
 	warlock.GlyphOfLifeTapAura = warlock.RegisterAura(core.Aura{
 		Label:    "Glyph Of LifeTap Aura",
-		ActionID: core.ActionID{SpellID: 45785},
+		Tag:      "Glyph Of LifeTap Aura" + strconv.Itoa(int(warlock.GetStat(stats.Spirit))),
+		ActionID: core.ActionID{SpellID: 63941},
 		Duration: time.Second * 40,
-		Priority: float64(spi),
+		Priority: float64(warlock.GetStat(stats.Spirit)),
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			warlock.AddStatDynamic(sim, stats.SpellPower, 0.2 * float64(spi))
+			warlock.AddStatDynamic(sim, stats.SpellPower, 0.2 * float64(warlock.GetStat(stats.Spirit)))
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			warlock.AddStatDynamic(sim, stats.SpellPower, -0.2 * float64(spi))
+			warlock.AddStatDynamic(sim, stats.SpellPower, -0.2 * float64(warlock.GetStat(stats.Spirit)))
 		},
 	})
 }
