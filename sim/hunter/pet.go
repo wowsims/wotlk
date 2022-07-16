@@ -19,8 +19,8 @@ type HunterPet struct {
 	CobraStrikesAura *core.Aura
 	KillCommandAura  *core.Aura
 
-	primaryAbility   PetAbility
-	secondaryAbility PetAbility
+	specialAbility PetAbility
+	focusDump      PetAbility
 
 	uptimePercent float64
 }
@@ -106,11 +106,11 @@ func (hp *HunterPet) Talents() proto.HunterPetTalents {
 
 func (hp *HunterPet) Initialize() {
 	//if hp.hunterOwner.Options.PetSingleAbility {
-	//	hp.primaryAbility = hp.NewPetAbility(hp.config.FocusDump, true)
+	//	hp.specialAbility = hp.NewPetAbility(hp.config.FocusDump, true)
 	//	hp.config.RandomSelection = false
 	//} else {
-	hp.primaryAbility = hp.NewPetAbility(hp.config.SpecialAbility, true)
-	hp.secondaryAbility = hp.NewPetAbility(hp.config.FocusDump, false)
+	hp.specialAbility = hp.NewPetAbility(hp.config.SpecialAbility, true)
+	hp.focusDump = hp.NewPetAbility(hp.config.FocusDump, false)
 	//}
 }
 
@@ -136,14 +136,14 @@ func (hp *HunterPet) OnGCDReady(sim *core.Simulation) {
 	target := hp.CurrentTarget
 	if hp.config.RandomSelection {
 		if sim.RandomFloat("Hunter Pet Ability") < 0.5 {
-			if !hp.primaryAbility.TryCast(sim, target, hp) {
-				if !hp.secondaryAbility.TryCast(sim, target, hp) {
+			if !hp.specialAbility.TryCast(sim, target, hp) {
+				if !hp.focusDump.TryCast(sim, target, hp) {
 					hp.DoNothing()
 				}
 			}
 		} else {
-			if !hp.secondaryAbility.TryCast(sim, target, hp) {
-				if !hp.primaryAbility.TryCast(sim, target, hp) {
+			if !hp.focusDump.TryCast(sim, target, hp) {
+				if !hp.specialAbility.TryCast(sim, target, hp) {
 					hp.DoNothing()
 				}
 			}
@@ -151,9 +151,9 @@ func (hp *HunterPet) OnGCDReady(sim *core.Simulation) {
 		return
 	}
 
-	if !hp.primaryAbility.TryCast(sim, target, hp) {
-		if hp.secondaryAbility.Type != Unknown {
-			if !hp.secondaryAbility.TryCast(sim, target, hp) {
+	if !hp.specialAbility.TryCast(sim, target, hp) {
+		if hp.focusDump.Type != Unknown {
+			if !hp.focusDump.TryCast(sim, target, hp) {
 				hp.DoNothing()
 			}
 		} else {
@@ -173,27 +173,6 @@ func (hp *HunterPet) specialDamageMod(baseDamageConfig core.BaseDamageConfig) co
 			}
 		}
 	})
-}
-
-func (hp *HunterPet) specialOutcomeMod(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
-	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
-		if hp.CobraStrikesAura.IsActive() {
-			hp.AddStatDynamic(sim, stats.MeleeCrit, 100*core.CritRatingPerCritChance)
-			hp.AddStatDynamic(sim, stats.SpellCrit, 100*core.CritRatingPerCritChance)
-			outcomeApplier(sim, spell, spellEffect, attackTable)
-			hp.AddStatDynamic(sim, stats.MeleeCrit, -100*core.CritRatingPerCritChance)
-			hp.AddStatDynamic(sim, stats.SpellCrit, -100*core.CritRatingPerCritChance)
-		} else if hp.KillCommandAura.IsActive() && hp.hunterOwner.Talents.FocusedFire > 0 {
-			bonusCrit := 10 * core.CritRatingPerCritChance * float64(hp.hunterOwner.Talents.FocusedFire)
-			hp.AddStatDynamic(sim, stats.MeleeCrit, bonusCrit)
-			hp.AddStatDynamic(sim, stats.SpellCrit, bonusCrit)
-			outcomeApplier(sim, spell, spellEffect, attackTable)
-			hp.AddStatDynamic(sim, stats.MeleeCrit, -bonusCrit)
-			hp.AddStatDynamic(sim, stats.SpellCrit, -bonusCrit)
-		} else {
-			outcomeApplier(sim, spell, spellEffect, attackTable)
-		}
-	}
 }
 
 var hunterPetBaseStats = stats.Stats{

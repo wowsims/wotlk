@@ -35,13 +35,6 @@ func (hunter *Hunter) registerArcaneShotSpell(timer *core.Timer) {
 				GCD:  core.GCDDefault + hunter.latency,
 			},
 			IgnoreHaste: true,
-			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
-				if hunter.LockAndLoadAura.IsActive() {
-					cast.Cost = 0
-				} else if hunter.ImprovedSteadyShotAura.IsActive() {
-					cast.Cost *= 0.8
-				}
-			},
 			CD: core.Cooldown{
 				Timer:    timer,
 				Duration: time.Second*6 - time.Millisecond*200*time.Duration(hunter.Talents.ImprovedArcaneShot),
@@ -59,12 +52,7 @@ func (hunter *Hunter) registerArcaneShotSpell(timer *core.Timer) {
 
 			BaseDamage: hunter.talonOfAlarDamageMod(core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					damage := (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.15 + 492
-					if hunter.ImprovedSteadyShotAura.IsActive() {
-						damage *= 1.15
-						hunter.ImprovedSteadyShotAura.Deactivate(sim)
-					}
-					return damage
+					return (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.15 + 492
 				},
 				TargetSpellCoefficient: 1,
 			}),

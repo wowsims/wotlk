@@ -352,6 +352,10 @@ func (unit *Unit) finalize() {
 	unit.initialRangedSwingSpeed = unit.RangedSwingSpeed()
 
 	unit.applyParryHaste()
+
+	for _, spell := range unit.Spellbook {
+		spell.finalize()
+	}
 }
 
 func (unit *Unit) init(sim *Simulation) {
