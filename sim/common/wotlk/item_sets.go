@@ -65,7 +65,7 @@ func applyShardOfTheGods(character *core.Character, isHeroic bool) {
 		}),
 	})
 
-	makeProcTriggerAura(&character.Unit, ProcTrigger{
+	MakeProcTriggerAura(&character.Unit, ProcTrigger{
 		Name:       name + " Trigger",
 		Callback:   OnSpellHitDealt,
 		ProcMask:   core.ProcMaskSpellDamage,

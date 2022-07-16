@@ -50,7 +50,10 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					damage := (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.2 +
-						1.2*hunter.AutoAttacks.Ranged.BaseDamage(sim)*2.8/hunter.AutoAttacks.Ranged.SwingSpeed
+						hunter.AutoAttacks.Ranged.BaseDamage(sim) +
+						hunter.AmmoDamageBonus +
+						hitEffect.BonusWeaponDamage(spell.Unit)
+					damage *= 1.25
 
 					if hunter.ImprovedSteadyShotAura.IsActive() {
 						damage *= 1.15
