@@ -31,7 +31,6 @@ func (deathKnight *DeathKnight) registerScourgeStrikeShadowDamageSpell() *core.S
 
 func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 560.0, 0.7, true)
-	viciousStrikes := 0.15 * float64(deathKnight.Talents.ViciousStrikes)
 	actionID := core.ActionID{SpellID: 55271}
 
 	outbreakBonus := 1.0
@@ -71,7 +70,7 @@ func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
 				TargetSpellCoefficient: 1,
 			},
 
-			OutcomeApplier: deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.MeleeCritMultiplier(1.0, viciousStrikes)),
+			OutcomeApplier: deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.MeleeCritMultiplier(1.0, deathKnight.viciousStrikesBonus())),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {

@@ -12,17 +12,8 @@ import (
 )
 
 func (deathKnight *DeathKnight) ApplyUnholyTalents() {
-	// Vicious Strikes
-	// Implemented outside
-
 	// Virulence
 	deathKnight.AddStat(stats.SpellHit, core.SpellHitRatingPerHitChance*float64(deathKnight.Talents.Virulence))
-
-	// Epidemic
-	// Implemented outside
-
-	// Morbidity
-	// Implemented outside
 
 	// Ravenous Dead
 	if deathKnight.Talents.RavenousDead > 0 {
@@ -36,38 +27,20 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 		})
 	}
 
-	// Outbreak
-	// Implemented outside
-
 	// Necrosis
 	deathKnight.applyNecrosis()
 
 	// Blood-Caked Blade
 	deathKnight.applyBloodCakedBlade()
 
-	// Night of the Dead
-	// Implemented outside
-
 	// Unholy Blight
 	deathKnight.applyUnholyBlight()
-
-	// Impurity
-	// TODO:
-
-	// Dirge
-	// Implemented outside
 
 	// Reaping
 	// TODO:
 
-	// Master of Ghouls
-	// Implemented outside
-
 	// Desolation
 	deathKnight.applyDesolation()
-
-	// Ghoul Frenzy
-	// Implemented outside
 
 	// Bone Shield
 	// TODO:
@@ -77,17 +50,14 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 
 	// Crypt Fever
 	// Ebon Plaguebringer
-	// TODO: Diseases damage increase still missing
 	deathKnight.applyEbonPlaguebringer()
-
-	// Scourge Strike
-	// Implemented outside
 
 	// Rage of Rivendare
 	deathKnight.AddStat(stats.Expertise, float64(deathKnight.Talents.RageOfRivendare)*core.ExpertisePerQuarterPercentReduction)
+}
 
-	// Summon Gargoyle
-	// TODO:
+func (deathKnight *DeathKnight) viciousStrikesBonus() float64 {
+	return 0.15 * float64(deathKnight.Talents.ViciousStrikes)
 }
 
 func (deathKnight *DeathKnight) rageOfRivendareBonus() float64 {
