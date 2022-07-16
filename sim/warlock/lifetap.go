@@ -2,8 +2,8 @@ package warlock
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warlock *Warlock) registerLifeTapSpell() {
@@ -34,7 +34,7 @@ func (warlock *Warlock) registerLifeTapSpell() {
 			OutcomeApplier:   warlock.OutcomeFuncAlwaysHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				// Life tap adds 0.5*sp to mana restore
-				restore := baseRestore + (warlock.GetStat(stats.SpellPower) + warlock.GetStat(stats.ShadowSpellPower))*0.5
+				restore := baseRestore + (warlock.GetStat(stats.SpellPower)+warlock.GetStat(stats.ShadowSpellPower))*0.5
 				warlock.AddMana(sim, restore, manaMetrics, true)
 
 				if warlock.Talents.ManaFeed {

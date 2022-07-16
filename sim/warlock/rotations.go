@@ -47,7 +47,6 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		mainSpell = proto.Warlock_Rotation_Shadowbolt
 	}
 
-
 	// ------------------------------------------
 	// Big CDs
 	// ------------------------------------------
@@ -90,7 +89,6 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		}
 	}
 
-
 	// ------------------------------------------
 	// Small CDs
 	// ------------------------------------------
@@ -129,9 +127,9 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			}
 		} else if warlock.Talents.Metamorphosis {
 
-		// ------------------------------------------
-		// Demonology Rotation
-		// ------------------------------------------
+			// ------------------------------------------
+			// Demonology Rotation
+			// ------------------------------------------
 			if warlock.CurseOfDoom.CD.IsReady(sim) && sim.GetRemainingDuration() > time.Minute {
 				spell = warlock.CurseOfDoom
 			} else if sim.GetRemainingDuration() > time.Second*24 && !warlock.CurseOfAgonyDot.IsActive() && !warlock.CurseOfDoomDot.IsActive() {
@@ -150,9 +148,9 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			}
 		} else if warlock.Talents.ChaosBolt {
 
-		// ------------------------------------------
-		// Destruction Rotation
-		// ------------------------------------------
+			// ------------------------------------------
+			// Destruction Rotation
+			// ------------------------------------------
 			if warlock.CurseOfDoom.CD.IsReady(sim) && sim.GetRemainingDuration() > time.Minute {
 				spell = warlock.CurseOfDoom
 			} else if sim.GetRemainingDuration() > time.Second*24 && !warlock.CurseOfAgonyDot.IsActive() && !warlock.CurseOfDoomDot.IsActive() {
@@ -183,7 +181,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		// ------------------------------------------
 		// Curses (priority)
 		// ------------------------------------------
-	
+
 		castCurse := func(spellToCast *core.Spell, aura *core.Aura) bool {
 			if !aura.IsActive() {
 				spell = spellToCast
@@ -252,7 +250,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			}
 		}
 
-	} 
+	}
 
 	// ------------------------------------------
 	// Spell casting

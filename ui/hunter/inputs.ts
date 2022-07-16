@@ -94,24 +94,24 @@ export const PetUptime = {
 	},
 };
 
-export const PetSingleAbility = {
-	type: 'boolean' as const,
-	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-	config: {
-		extraCssClasses: [
-			'pet-single-ability-picker',
-		],
-		label: 'Single Pet Ability',
-		labelTooltip: 'Pet will only use its primary ability.',
-		changedEvent: (player: Player<Spec.SpecHunter>) => player.specOptionsChangeEmitter,
-		getValue: (player: Player<Spec.SpecHunter>) => player.getSpecOptions().petSingleAbility,
-		setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: boolean) => {
-			const newOptions = player.getSpecOptions();
-			newOptions.petSingleAbility = newValue;
-			player.setSpecOptions(eventID, newOptions);
-		},
-	},
-};
+//export const PetSingleAbility = {
+//	type: 'boolean' as const,
+//	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
+//	config: {
+//		extraCssClasses: [
+//			'pet-single-ability-picker',
+//		],
+//		label: 'Single Pet Ability',
+//		labelTooltip: 'Pet will only use its primary ability.',
+//		changedEvent: (player: Player<Spec.SpecHunter>) => player.specOptionsChangeEmitter,
+//		getValue: (player: Player<Spec.SpecHunter>) => player.getSpecOptions().petSingleAbility,
+//		setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: boolean) => {
+//			const newOptions = player.getSpecOptions();
+//			newOptions.petSingleAbility = newValue;
+//			player.setSpecOptions(eventID, newOptions);
+//		},
+//	},
+//};
 
 export const SniperTrainingUptime = {
 	type: 'number' as const,

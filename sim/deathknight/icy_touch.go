@@ -78,7 +78,7 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 
 					deathKnight.IcyTouchAura.Activate(sim)
 
-					if deathKnight.IcyTouchAura.IsActive() {
+					if deathKnight.IcyTouchAura.IsActive() && deathKnight.IcyTalonsAura != nil {
 						deathKnight.IcyTalonsAura.Activate(sim)
 					}
 				}

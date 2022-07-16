@@ -90,10 +90,10 @@ func (warlock *Warlock) ApplyTalents() {
 		warlock.PseudoStats.FireDamageDealtMultiplier *= 1 + spellDmgBonus
 	}
 
- 	if warlock.Talents.MoltenSkin > 0 {
- 		warlock.PseudoStats.DamageTakenMultiplier /= 1 + 0.02 * float64(warlock.Talents.MoltenSkin)
- 	}
- 	
+	if warlock.Talents.MoltenSkin > 0 {
+		warlock.PseudoStats.DamageTakenMultiplier /= 1 + 0.02*float64(warlock.Talents.MoltenSkin)
+	}
+
 	if warlock.Talents.Nightfall > 0 || warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCorruption) {
 		warlock.setupNightfall()
 	}
@@ -144,14 +144,13 @@ func (warlock *Warlock) registerGlyphOfLifeTapAura() {
 		Duration: time.Second * 40,
 		Priority: float64(warlock.GetStat(stats.Spirit)),
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			warlock.AddStatDynamic(sim, stats.SpellPower, 0.2 * float64(warlock.GetStat(stats.Spirit)))
+			warlock.AddStatDynamic(sim, stats.SpellPower, 0.2*float64(warlock.GetStat(stats.Spirit)))
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			warlock.AddStatDynamic(sim, stats.SpellPower, -0.2 * float64(warlock.GetStat(stats.Spirit)))
+			warlock.AddStatDynamic(sim, stats.SpellPower, -0.2*float64(warlock.GetStat(stats.Spirit)))
 		},
 	})
 }
-
 
 func (warlock *Warlock) setupEmpoweredImp() {
 	warlock.EmpoweredImpAura = warlock.RegisterAura(core.Aura{
