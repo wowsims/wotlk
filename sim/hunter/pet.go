@@ -57,7 +57,7 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 
 	hp.EnableAutoAttacks(hp, core.AutoAttackOptions{
 		MainHand: core.Weapon{
-			BaseDamageMin:  42,
+			BaseDamageMin:  44,
 			BaseDamageMax:  68,
 			SwingSpeed:     2,
 			SwingDuration:  time.Second * 2,
@@ -80,7 +80,7 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 		SourceStat:   stats.Agility,
 		ModifiedStat: stats.MeleeCrit,
 		Modifier: func(agility float64, meleeCrit float64) float64 {
-			return meleeCrit + (agility/33)*core.CritRatingPerCritChance
+			return meleeCrit + (agility/30)*core.CritRatingPerCritChance
 		},
 	})
 
@@ -202,7 +202,7 @@ var hunterPetBaseStats = stats.Stats{
 	stats.AttackPower: -20, // Apparently pets and warriors have a AP penalty.
 
 	// Add 1.8% because pets aren't affected by that component of crit suppression.
-	stats.MeleeCrit: (1.1515 + 1.8) * core.CritRatingPerCritChance,
+	stats.MeleeCrit: (3.2 + 1.8) * core.CritRatingPerCritChance,
 }
 
 func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
