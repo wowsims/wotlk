@@ -362,6 +362,7 @@ func (hunter *Hunter) applyPiercingShots() {
 				OutcomeApplier:   hunter.OutcomeFuncTick(),
 			})
 			psDot.Apply(sim)
+			psSpell.SpellMetrics[spellEffect.Target.TableIndex].Casts++
 		},
 	})
 }

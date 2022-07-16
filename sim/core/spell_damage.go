@@ -92,6 +92,35 @@ func MultiplyByStacks(config BaseDamageConfig, aura *Aura) BaseDamageConfig {
 	})
 }
 
+func BaseDamageFuncMelee(minFlatDamage float64, maxFlatDamage float64, spellCoefficient float64) BaseDamageCalculator {
+	if spellCoefficient == 0 {
+		return BaseDamageFuncRoll(minFlatDamage, maxFlatDamage)
+	}
+
+	if minFlatDamage == 0 && maxFlatDamage == 0 {
+		return func(_ *Simulation, hitEffect *SpellEffect, spell *Spell) float64 {
+			ap := hitEffect.MeleeAttackPower(spell.Unit) + hitEffect.MeleeAttackPowerOnTarget()
+			return ap * spellCoefficient
+		}
+	} else if minFlatDamage == maxFlatDamage {
+		return func(sim *Simulation, hitEffect *SpellEffect, spell *Spell) float64 {
+			ap := hitEffect.MeleeAttackPower(spell.Unit) + hitEffect.MeleeAttackPowerOnTarget()
+			return ap*spellCoefficient + minFlatDamage
+		}
+	} else {
+		deltaDamage := maxFlatDamage - minFlatDamage
+		return func(sim *Simulation, hitEffect *SpellEffect, spell *Spell) float64 {
+			ap := hitEffect.MeleeAttackPower(spell.Unit) + hitEffect.MeleeAttackPowerOnTarget()
+			damage := ap * spellCoefficient
+			damage += damageRollOptimized(sim, minFlatDamage, deltaDamage)
+			return damage
+		}
+	}
+}
+func BaseDamageConfigMelee(minFlatDamage float64, maxFlatDamage float64, spellCoefficient float64) BaseDamageConfig {
+	return BuildBaseDamageConfig(BaseDamageFuncMelee(minFlatDamage, maxFlatDamage, spellCoefficient), spellCoefficient)
+}
+
 type Hand bool
 
 const MainHand Hand = true
