@@ -41,6 +41,8 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 	if ret.GCD.IsReady(sim) {
 		if nextSwingAt.Milliseconds() > 1500 {
 			switch {
+			case ret.CurrentMana() < (ret.MaxMana()*0.80) && ret.DivinePlea.IsReady(sim):
+				ret.DivinePlea.Cast(sim, &ret.Unit)
 			case ret.JudgementOfWisdom.IsReady(sim):
 				ret.JudgementOfWisdom.Cast(sim, target)
 			case ret.CrusaderStrike.IsReady(sim):
@@ -54,6 +56,8 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 			}
 		} else {
 			switch {
+			case ret.CurrentMana() < (ret.MaxMana()*0.80) && ret.DivinePlea.IsReady(sim):
+				ret.DivinePlea.Cast(sim, &ret.Unit)
 			case ret.DivineStorm.IsReady(sim):
 				ret.DivineStorm.Cast(sim, target)
 			case ret.JudgementOfWisdom.IsReady(sim):

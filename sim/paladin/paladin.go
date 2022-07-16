@@ -26,6 +26,7 @@ type Paladin struct {
 	CurrentSeal      *core.Aura
 	CurrentJudgement *core.Aura
 
+	DivinePlea        *core.Spell
 	DivineStorm       *core.Spell
 	Consecration      *core.Spell
 	CrusaderStrike    *core.Spell
@@ -113,6 +114,7 @@ func (paladin *Paladin) Initialize() {
 	paladin.registerJudgements()
 
 	paladin.registerSpiritualAttunement()
+	paladin.registerDivinePleaSpell()
 }
 
 func (paladin *Paladin) Reset(sim *core.Simulation) {
