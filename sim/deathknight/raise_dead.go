@@ -7,6 +7,7 @@ import (
 )
 
 func (deathKnight *DeathKnight) registerRaiseDeadCD() {
+	// If talented as permanent pet skip this spell
 	if deathKnight.Talents.MasterOfGhouls {
 		return
 	}
