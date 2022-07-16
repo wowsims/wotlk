@@ -358,12 +358,16 @@ func (warlock *Warlock) setupMoltenCore() {
 				aura.RemoveStack(sim)
 			}
 		},
-		// OnGain: func(aura *core.Aura, sim *core.Simulation) {
-		// 	warlock.SoulFire.ApplyEffects.BonusSpellCritRating += 5 * float64(warlock.Talents.MoltenCore) * core.CritRatingPerCritChance
-		// },
-		// OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-		// 	warlock.SoulFire.ApplyEffects.BonusSpellCritRating -= 5 * float64(warlock.Talents.MoltenCore) * core.CritRatingPerCritChance
-		// },
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			warlock.Incinerate.DamageMultiplier *= 1 + 0.06*float64(warlock.Talents.MoltenCore)
+			warlock.SoulFire.DamageMultiplier *= 1 + 0.06*float64(warlock.Talents.MoltenCore)
+			warlock.SoulFire.BonusCritRating += 5 * float64(warlock.Talents.MoltenCore) * core.CritRatingPerCritChance
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			warlock.Incinerate.DamageMultiplier /= 1 + 0.06*float64(warlock.Talents.MoltenCore)
+			warlock.SoulFire.DamageMultiplier /= 1 + 0.06*float64(warlock.Talents.MoltenCore)
+			warlock.SoulFire.BonusCritRating -= 5 * float64(warlock.Talents.MoltenCore) * core.CritRatingPerCritChance
+		},
 	})
 
 	warlock.RegisterAura(core.Aura{
