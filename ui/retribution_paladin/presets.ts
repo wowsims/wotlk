@@ -2,11 +2,13 @@ import { Conjured, Consumes } from '/wotlk/core/proto/common.js';
 import { EquipmentSpec } from '/wotlk/core/proto/common.js';
 import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
+import { Glyphs } from '/wotlk/core/proto/common.js';
 import { ItemSpec } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
 import { Spec } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
 import { Faction } from '/wotlk/core/proto/common.js';
+import { SavedTalents } from '/wotlk/core/proto/ui.js';
 import { Player } from '/wotlk/core/player.js';
 
 import {
@@ -29,13 +31,17 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 export const RetKingsPaladinTalents = {
 	name: 'Ret w/ Kings',
-	data: '5-503201-0523005130033125231051',
+	data: SavedTalents.create({
+		talentsString: '5-503201-0523005130033125231051',
+	}),
 };
 
 
 export const RetNoKingsPaladinTalents = {
 	name: 'Ret w/out Kings',
-	data: '52-503-0523005130033125331051',
+	data: SavedTalents.create({
+		talentsString: '52-503-0523005130033125331051',
+	}),
 };
 
 export const DefaultRotation = RetributionPaladinRotation.create({

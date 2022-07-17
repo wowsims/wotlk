@@ -179,7 +179,7 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 		epWeights: Stats,
 		consumes: Consumes,
 		rotation: SpecRotation<SpecType>,
-		talents: string,
+		talents: SavedTalents,
 		specOptions: SpecOptions<SpecType>,
 
 		raidBuffs: RaidBuffs,
@@ -213,7 +213,7 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 
 	presets: {
 		gear: Array<PresetGear>,
-		talents: Array<SavedDataConfig<Player<any>, string>>,
+		talents: Array<SavedDataConfig<Player<any>, SavedTalents>>,
 		rotation?: Array<SavedDataConfig<Player<any>, string>>,
 	},
 }
@@ -994,10 +994,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				savedTalentsManager.addSavedData({
 					name: config.name,
 					isPreset: true,
-					data: SavedTalents.create({
-						talentsString: config.data,
-						glyphs: Glyphs.create(),
-					}),
+					data: config.data,
 				});
 			});
 
@@ -1062,7 +1059,8 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.player.setGear(eventID, this.sim.lookupEquipmentSpec(this.individualConfig.defaults.gear));
 			this.player.setConsumes(eventID, this.individualConfig.defaults.consumes);
 			this.player.setRotation(eventID, this.individualConfig.defaults.rotation);
-			this.player.setTalentsString(eventID, this.individualConfig.defaults.talents);
+			this.player.setTalentsString(eventID, this.individualConfig.defaults.talents.talentsString);
+			this.player.setGlyphs(eventID, this.individualConfig.defaults.talents.glyphs || Glyphs.create());
 			this.player.setSpecOptions(eventID, this.individualConfig.defaults.specOptions);
 			this.player.setBuffs(eventID, this.individualConfig.defaults.individualBuffs);
 			this.player.getParty()!.setBuffs(eventID, this.individualConfig.defaults.partyBuffs);

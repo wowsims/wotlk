@@ -2,9 +2,11 @@ import { Consumes } from '/wotlk/core/proto/common.js';
 import { EquipmentSpec } from '/wotlk/core/proto/common.js';
 import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
+import { Glyphs } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
 import { Player } from '/wotlk/core/player.js';
+import { SavedTalents } from '/wotlk/core/proto/ui.js';
 import { ferocityDefault } from '/wotlk/core/talents/hunter_pet.js';
 
 import {
@@ -14,6 +16,8 @@ import {
 	Hunter_Options as HunterOptions,
 	Hunter_Options_Ammo as Ammo,
 	Hunter_Options_PetType as PetType,
+	HunterMajorGlyph as MajorGlyph,
+	HunterMinorGlyph as MinorGlyph,
 } from '/wotlk/core/proto/hunter.js';
 
 import * as Tooltips from '/wotlk/core/constants/tooltips.js';
@@ -26,17 +30,47 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 export const BeastMasteryTalents = {
 	name: 'Beast Mastery',
-	data: '51200201505112243120531251-00530513',
+	data: SavedTalents.create({
+		talentsString: '51200201505112243120531251-00530513',
+		glyphs: Glyphs.create({
+			major1: MajorGlyph.GlyphOfBestialWrath,
+			major2: MajorGlyph.GlyphOfSteadyShot,
+			major3: MajorGlyph.GlyphOfSerpentSting,
+			minor1: MinorGlyph.GlyphOfFeignDeath,
+			minor2: MinorGlyph.GlyphOfRevivePet,
+			minor3: MinorGlyph.GlyphOfMendPet,
+		}),
+	}),
 };
 
 export const MarksmanTalents = {
 	name: 'Marksman',
-	data: '502-035305101230013233135031351-5000002',
+	data: SavedTalents.create({
+		talentsString: '502-035305101230013233135031351-5000002',
+		glyphs: Glyphs.create({
+			major1: MajorGlyph.GlyphOfSerpentSting,
+			major2: MajorGlyph.GlyphOfSteadyShot,
+			major3: MajorGlyph.GlyphOfKillShot,
+			minor1: MinorGlyph.GlyphOfFeignDeath,
+			minor2: MinorGlyph.GlyphOfRevivePet,
+			minor3: MinorGlyph.GlyphOfMendPet,
+		}),
+	}),
 };
 
 export const SurvivalTalents = {
 	name: 'Survival',
-	data: '-025305101-5000032500033330522135301311',
+	data: SavedTalents.create({
+		talentsString: '-025305101-5000032500033330522135301311',
+		glyphs: Glyphs.create({
+			major1: MajorGlyph.GlyphOfSerpentSting,
+			major2: MajorGlyph.GlyphOfExplosiveShot,
+			major3: MajorGlyph.GlyphOfKillShot,
+			minor1: MinorGlyph.GlyphOfFeignDeath,
+			minor2: MinorGlyph.GlyphOfRevivePet,
+			minor3: MinorGlyph.GlyphOfMendPet,
+		}),
+	}),
 };
 
 export const DefaultRotation = HunterRotation.create({

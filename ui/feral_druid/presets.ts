@@ -1,12 +1,14 @@
 import { Consumes } from '/wotlk/core/proto/common.js';
 import { BattleElixir } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
+import { Glyphs } from '/wotlk/core/proto/common.js';
 import { EquipmentSpec } from '/wotlk/core/proto/common.js';
 import { ItemSpec } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
 import { Conjured } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
 import { Faction } from '/wotlk/core/proto/common.js';
+import { SavedTalents } from '/wotlk/core/proto/ui.js';
 import { Player } from '/wotlk/core/player.js';
 
 import { FeralDruid, FeralDruid_Rotation as FeralDruidRotation, DruidTalents as DruidTalents, FeralDruid_Options as FeralDruidOptions } from '/wotlk/core/proto/druid.js';
@@ -24,12 +26,9 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 export const StandardTalents = {
 	name: 'Standard',
-	data: '-503032132322105301251-05503301',
-};
-
-export const MonocatTalents = {
-	name: 'Monocat',
-	data: '-553002132322105301051-05503301',
+	data: SavedTalents.create({
+		talentsString: '-503032132322105301251-05503301',
+	}),
 };
 
 
