@@ -46,13 +46,14 @@ func (rotation *AdaptiveRotation) DoAction(eleShaman *ElementalShaman, sim *core
 		return
 	}
 
-	fsExpires := eleShaman.FlameShockDot.ExpiresAt()
-	if fsExpires < sim.CurrentTime+eleShaman.LavaBurst.CurCast.CastTime && eleShaman.FlameShock.IsReady(sim) {
+	// TODO: add rotation option to override FS if it won't be up when LvB is finished casting.
+	fsUp := eleShaman.FlameShockDot.IsActive()
+	if !fsUp && eleShaman.FlameShock.IsReady(sim) {
 		if !eleShaman.FlameShock.Cast(sim, target) {
 			eleShaman.WaitForMana(sim, eleShaman.FlameShock.CurCast.Cost)
 		}
 		return
-	} else if eleShaman.LavaBurst.IsReady(sim) { // probably better to cast LvB if we can't shock than cast LB
+	} else if fsUp && eleShaman.LavaBurst.IsReady(sim) {
 		if !eleShaman.LavaBurst.Cast(sim, target) {
 			eleShaman.WaitForMana(sim, eleShaman.LavaBurst.CurCast.Cost)
 		}
@@ -65,6 +66,7 @@ func (rotation *AdaptiveRotation) DoAction(eleShaman *ElementalShaman, sim *core
 		}
 		eleShaman.WaitForMana(sim, eleShaman.LightningBolt.CurCast.Cost)
 	}
+
 }
 
 func (rotation *AdaptiveRotation) Reset(eleShaman *ElementalShaman, sim *core.Simulation) {
