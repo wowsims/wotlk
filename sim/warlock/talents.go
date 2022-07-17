@@ -337,9 +337,8 @@ func (warlock *Warlock) setupNightfall() {
 		},
 		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spell == warlock.Corruption { // TODO: also works on drain life...
-				if sim.RandomFloat("Nightfall") < 0.02*float64(warlock.Talents.Nightfall) {
-					warlock.NightfallProcAura.Activate(sim)
-				} else if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCorruption) && sim.RandomFloat("GlyphOfCorruption") < 0.04 {
+				if sim.RandomFloat("Nightfall") < 0.02*float64(warlock.Talents.Nightfall) + 
+				0.04*core.TernaryFloat64(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCorruption), 1, 0) {
 					warlock.NightfallProcAura.Activate(sim)
 				}
 			}

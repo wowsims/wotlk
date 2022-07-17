@@ -20,6 +20,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	secondaryDot := warlock.Rotation.SecondaryDot
 	specSpell := warlock.Rotation.SpecSpell
 	preset := warlock.Rotation.Preset
+	rotationType := warlock.Rotation.Type
 	curse := warlock.Rotation.Curse
 
 	// ------------------------------------------
@@ -111,7 +112,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		// ------------------------------------------
 		// Affliction Rotation
 		// ------------------------------------------
-		if warlock.Talents.Haunt {
+		if rotationType == proto.Warlock_Rotation_Affliction {
 			if !warlock.CurseOfAgonyDot.IsActive() {
 				spell = warlock.CurseOfAgony
 			} else if !warlock.CorruptionDot.IsActive() && sim.GetRemainingDuration() > time.Second*24 {
@@ -125,7 +126,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			} else {
 				spell = warlock.Shadowbolt
 			}
-		} else if warlock.Talents.Metamorphosis {
+		} else if rotationType == proto.Warlock_Rotation_Demonology {
 
 			// ------------------------------------------
 			// Demonology Rotation
@@ -146,7 +147,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			} else {
 				spell = warlock.Shadowbolt
 			}
-		} else if warlock.Talents.ChaosBolt {
+		} else if rotationType == proto.Warlock_Rotation_Destruction {
 
 			// ------------------------------------------
 			// Destruction Rotation

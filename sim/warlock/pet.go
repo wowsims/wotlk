@@ -22,7 +22,21 @@ type WarlockPet struct {
 }
 
 func (warlock *Warlock) NewWarlockPet() *WarlockPet {
-	petConfig := PetConfigs[warlock.Options.Summon]
+
+	summonChoice := warlock.Options.Summon
+	preset := warlock.Rotation.Preset
+
+	if preset==proto.Warlock_Rotation_Automatic {
+		if warlock.Talents.Haunt {
+			summonChoice = proto.Warlock_Options_Felhunter
+		} else if warlock.Talents.Metamorphosis {
+			summonChoice = proto.Warlock_Options_Felguard
+		} else if warlock.Talents.ChaosBolt {
+			summonChoice = proto.Warlock_Options_Imp
+		}
+	}
+
+	petConfig := PetConfigs[summonChoice]
 
 	wp := &WarlockPet{
 		Pet: core.NewPet(
@@ -66,9 +80,9 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 	wp.PseudoStats.DamageDealtMultiplier *= 1.0 + (0.04 * float64(warlock.Talents.UnholyPower))
 
 	wp.EnableManaBar()
-
+	
 	if petConfig.Melee {
-		switch warlock.Options.Summon {
+		switch summonChoice {
 		case proto.Warlock_Options_Felguard:
 			wp.EnableAutoAttacks(wp, core.AutoAttackOptions{
 				MainHand: core.Weapon{
@@ -105,7 +119,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		}
 	}
 	// wp.AutoAttacks.MHEffect.DamageMultiplier *= petConfig.DamageMultiplier
-	switch warlock.Options.Summon {
+	switch summonChoice {
 	case proto.Warlock_Options_Imp:
 		wp.AddStatDependency(stats.StatDependency{
 			SourceStat:   stats.Intellect,

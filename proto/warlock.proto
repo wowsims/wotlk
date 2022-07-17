@@ -141,6 +141,11 @@ message Warlock {
 			Manual = 0;
 			Automatic = 1;
 		}
+		enum Type {
+			Affliction = 0;
+			Demonology = 1;
+			Destruction = 2;
+		}
 		enum PrimarySpell {
 			UnknownSpell = 0;
 			Shadowbolt = 1;
@@ -172,6 +177,7 @@ message Warlock {
 		bool corruption = 5;
 		bool detonate_seed = 6;
 		SpecSpell spec_spell = 7;
+		Type type = 8;
 	}
 
 	Rotation rotation = 1;
