@@ -115,6 +115,7 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 					faerieFire: TristateEffect.TristateEffectImproved,
 					judgementOfWisdom: true,
 					misery: true,
+					ebonPlaguebringer: true,
 				}),
 			},
 
@@ -229,6 +230,7 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
+					Presets.P1_FROST_PRE_BIS_PRESET,
 					Presets.P1_FROST_BIS_PRESET,
 					Presets.P1_UNHOLY_DW_BIS_PRESET,
 				],

@@ -57,13 +57,14 @@ type DeathKnight struct {
 	HowlingBlast         *core.Spell
 
 	//HornOfWinter     *core.Spell
-	//UnbreakableArmor *core.Spell
 	//ArmyOfTheDead    *core.Spell
-	//RaiseDead        *core.Spell
 
 	// "CDs"
 	BloodTap     *core.Spell
 	BloodTapAura *core.Aura
+
+	UnbreakableArmor     *core.Spell
+	UnbreakableArmorAura *core.Aura
 
 	BoneShield     *core.Spell
 	BoneShieldAura *core.Aura
@@ -141,6 +142,7 @@ func (deathKnight *DeathKnight) Initialize() {
 	deathKnight.registerDiseaseDots()
 	deathKnight.registerGhoulFrenzySpell()
 	deathKnight.registerBoneShieldSpell()
+	deathKnight.registerUnbreakableArmorSpell()
 
 	deathKnight.registerRaiseDeadCD()
 	deathKnight.registerSummonGargoyleCD()

@@ -438,6 +438,8 @@ func (rp *runicPowerBar) LaunchRuneRegenPA(sim *Simulation, r *Rune) {
 		if !pa.cancelled {
 			r.pas[0] = nil
 
+			rp.GenerateRune(r)
+
 			switch r.kind {
 			case RuneKind_Blood:
 				currB := rp.CurrentBloodRunes()
@@ -456,8 +458,6 @@ func (rp *runicPowerBar) LaunchRuneRegenPA(sim *Simulation, r *Rune) {
 				rp.GainRuneMetrics(sim, rp.deathRuneGainMetrics, "death", currD, currD+1)
 				rp.onDeathRuneGain(sim)
 			}
-
-			rp.GenerateRune(r)
 		} else {
 			r.pas[0] = nil
 		}
@@ -544,4 +544,8 @@ func (rp *runicPowerBar) SpendDeathRune(sim *Simulation, metrics *ResourceMetric
 	}
 
 	rp.LaunchRuneRegenPA(sim, r)
+
+	if r.pas[0] == nil {
+		panic("HOW")
+	}
 }
