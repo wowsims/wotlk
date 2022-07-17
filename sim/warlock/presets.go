@@ -35,20 +35,6 @@ var defaultDestroTalents = &proto.WarlockTalents{
 	ImprovedImp: 3,
 }
 
-// var defaultDestroMajorGlyphs = &proto.WarlockMajorGlyph{
-// 	WarlockMajorGlyph:
-// 		proto.WarlockMajorGlyph_GlyphOfFelguard,
-// 		proto.WarlockMajorGlyph_GlyphOfChaosBolt,
-// 		proto.WarlockMajorGlyph_GlyphOfCurseOfAgony,
-// }
-
-// var defaultDestroMinorGlyphs = &proto.WarlockMinorGlyph{
-// 	WarlockMinorGlyph:
-// 		proto.WarlockMinorGlyph_GlyphOfDrainSoul,
-// 		proto.WarlockMinorGlyph_GlyphOfEnslaveDemon,
-// 		proto.WarlockMinorGlyph_GlyphOfKilrogg,
-// }
-
 var defaultDestroRotation = &proto.Warlock_Rotation{
 	PrimarySpell: proto.Warlock_Rotation_Incinerate,
 	SecondaryDot: proto.Warlock_Rotation_Immolate,

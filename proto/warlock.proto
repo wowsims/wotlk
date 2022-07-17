@@ -202,4 +202,6 @@ message Warlock {
 		Summon summon = 2;
 	}
 	Options options = 3;
+
+//	WarlockMajorGlyph glyphs = 4;
 }

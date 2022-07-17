@@ -22,11 +22,6 @@ import { FelArmor, DemonArmor } from './inputs';
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 
-export const DestructionTalents = {
-	name: 'Destruction',
-	data: '-03310030002-05203205220331051335131351',
-};
-
 export const AfflictionTalents = {
 	name: 'Affliction',
 	data: '2350002030023510253510331151--55000005',
@@ -36,6 +31,17 @@ export const DemonologyTalents = {
 	name: 'Demonology',
 	data: '-203203301035012530135201351-550000052',
 };
+
+export const DestructionTalents = {
+	name: 'Destruction',
+	data: '030-03310030003-05203205220331051035031351',
+};
+
+// export const AfflictionGlyphs = {
+// 	name: 'Affliction'
+// 	glyphs: 
+// };
+
 
 export const AfflictionRotation = {
 	name: 'Affliction',
@@ -72,6 +78,14 @@ export const DestructionRotation = {
 		detonateSeed: true,
 	})
 };
+
+
+// var defaultDestroMinorGlyphs = &proto.WarlockMinorGlyph{
+// 	WarlockMinorGlyph:
+// 		proto.WarlockMinorGlyph_GlyphOfDrainSoul,
+// 		proto.WarlockMinorGlyph_GlyphOfEnslaveDemon,
+// 		proto.WarlockMinorGlyph_GlyphOfKilrogg,
+// }
 
 export const AfflictionOptions = WarlockOptions.create({
 	armor: Armor.FelArmor,
