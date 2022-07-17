@@ -22,7 +22,8 @@ type DeathKnight struct {
 
 	Presence Presence
 
-	IcyTouch *core.Spell
+	IcyTouch  *core.Spell
+	BloodBoil *core.Spell
 
 	PlagueStrike      *core.Spell
 	PlagueStrikeMhHit *core.Spell
@@ -146,6 +147,7 @@ func (deathKnight *DeathKnight) Initialize() {
 	deathKnight.registerGhoulFrenzySpell()
 	deathKnight.registerBoneShieldSpell()
 	deathKnight.registerUnbreakableArmorSpell()
+	deathKnight.registerBloodBoilSpell()
 	//deathKnight.registerIceboundFortitudeSpell()
 
 	deathKnight.registerRaiseDeadCD()
@@ -154,8 +156,14 @@ func (deathKnight *DeathKnight) Initialize() {
 
 func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
 	deathKnight.ResetRunicPowerBar(sim)
-	deathKnight.UnholyPresenceAura.Activate(sim)
-	deathKnight.Presence = UnholyPresence
+
+	if deathKnight.Rotation.UnholyPresenceOpener {
+		deathKnight.UnholyPresenceAura.Activate(sim)
+		deathKnight.Presence = UnholyPresence
+	} else {
+		deathKnight.BloodPresenceAura.Activate(sim)
+		deathKnight.Presence = BloodPresence
+	}
 }
 
 func (deathKnight *DeathKnight) HasMajorGlyph(glyph proto.DeathKnightMajorGlyph) bool {

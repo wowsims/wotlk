@@ -98,8 +98,28 @@ export const UseDeathAndDecay = {
 	},
 };
 
+export const UnholyPresenceOpener = {
+	type: 'boolean' as const,
+	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
+	config: {
+		extraCssClasses: [
+			'unholy-presence-opener-picker',
+		],
+		label: 'Unholy Presence Opener',
+		labelTooltip: 'Start fight in unholy presence and change to blood after gargoyle.',
+		changedEvent: (player: Player<Spec.SpecDeathKnight>) => player.specOptionsChangeEmitter,
+		getValue: (player: Player<Spec.SpecDeathKnight>) => player.getRotation().unholyPresenceOpener,
+		setValue: (eventID: EventID, player: Player<Spec.SpecDeathKnight>, newValue: boolean) => {
+			const newRotation = player.getRotation();
+			newRotation.unholyPresenceOpener = newValue;
+			player.setRotation(eventID, newRotation);
+		},
+	},
+};
+
 export const DeathKnightRotationConfig = {
 	inputs: [
 		UseDeathAndDecay,
+		UnholyPresenceOpener,
 	],
 };
