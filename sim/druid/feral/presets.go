@@ -85,7 +85,6 @@ var FullDebuffs = &proto.Debuffs{
 	SunderArmor:       true,
 	Mangle:            true,
 	CurseOfWeakness:   proto.TristateEffect_TristateEffectImproved,
-	HuntersMark:       proto.TristateEffect_TristateEffectImproved,
 }
 
 var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
