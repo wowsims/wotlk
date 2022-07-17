@@ -85,7 +85,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,
 				// Default rotation settings.
-				rotation: Presets.AfflictionRotation.rotation,
+				rotation: Presets.AfflictionRotation,
 				// Default talents.
 				talents: Presets.AfflictionTalents.data,
 				// Default spec-specific settings.
@@ -162,7 +162,6 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				IconInputs.ExposeArmor,
 				IconInputs.SunderArmor,
 				IconInputs.BloodFrenzy,
-				IconInputs.HuntersMark,
 				IconInputs.FaerieFire,
 				IconInputs.CurseOfWeakness,
 			],
@@ -235,10 +234,6 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
 				showExecuteProportion: false,
 			},
-
-			// If true, the talents on the talents tab will not be individually modifiable by the user.
-			// Note that the use can still pick between preset talents, if there is more than 1.
-			freezeTalents: false,
 
 			presets: {
 				// Preset talents that the user can quickly select.

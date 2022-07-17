@@ -14,6 +14,7 @@ import { Class } from '/wotlk/core/proto/common.js';
 import { Race } from '/wotlk/core/proto/common.js';
 import { Spec } from '/wotlk/core/proto/common.js';
 import { Faction } from '/wotlk/core/proto/common.js';
+import { Glyphs } from '/wotlk/core/proto/common.js';
 import { BuffBot as BuffBotProto } from '/wotlk/core/proto/ui.js';
 import { playerToSpec, specNames } from '/wotlk/core/proto_utils/utils.js';
 import { classColors } from '/wotlk/core/proto_utils/utils.js';
@@ -678,7 +679,8 @@ class NewPlayerPicker extends Component {
 						const newPlayer = new Player(matchingPreset.spec, this.raidPicker.raid.sim);
 						newPlayer.setRace(eventID, matchingPreset.defaultFactionRaces[this.raidPicker.getCurrentFaction()]);
 						newPlayer.setRotation(eventID, matchingPreset.rotation);
-						newPlayer.setTalentsString(eventID, matchingPreset.talents);
+						newPlayer.setTalentsString(eventID, matchingPreset.talents.talentsString);
+						newPlayer.setGlyphs(eventID, matchingPreset.talents.glyphs || Glyphs.create());
 						newPlayer.setSpecOptions(eventID, matchingPreset.specOptions);
 						newPlayer.setConsumes(eventID, matchingPreset.consumes);
 						newPlayer.setName(eventID, matchingPreset.defaultName);

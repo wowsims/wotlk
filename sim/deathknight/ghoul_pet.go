@@ -14,6 +14,8 @@ type GhoulPet struct {
 
 	dkOwner *DeathKnight
 
+	GhoulFrenzyAura *core.Aura
+
 	ClawAbility PetAbility
 
 	uptimePercent float64

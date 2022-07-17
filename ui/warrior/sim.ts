@@ -114,7 +114,6 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 					sunderArmor: true,
 					curseOfWeakness: TristateEffect.TristateEffectRegular,
 					faerieFire: TristateEffect.TristateEffectImproved,
-					huntersMark: TristateEffect.TristateEffectImproved,
 				}),
 			},
 
@@ -146,7 +145,6 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 			debuffInputs: [
 				IconInputs.BloodFrenzy,
 				IconInputs.Mangle,
-				IconInputs.HuntersMark,
 				IconInputs.FaerieFire,
 				IconInputs.SunderArmor,
 				IconInputs.ExposeArmor,
@@ -216,10 +214,6 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 				// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
 				showExecuteProportion: true,
 			},
-
-			// If true, the talents on the talents tab will not be individually modifiable by the user.
-			// Note that the use can still pick between preset talents, if there is more than 1.
-			freezeTalents: false,
 
 			presets: {
 				// Preset talents that the user can quickly select.

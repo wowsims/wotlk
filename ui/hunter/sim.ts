@@ -124,7 +124,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				// Default rotation settings.
 				rotation: Presets.DefaultRotation,
 				// Default talents.
-				talents: Presets.BeastMasteryTalents.data,
+				talents: Presets.SurvivalTalents.data,
 				// Default spec-specific settings.
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
@@ -184,7 +184,6 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 			debuffInputs: [
 				IconInputs.BloodFrenzy,
 				IconInputs.JudgementOfWisdom,
-				IconInputs.HuntersMark,
 				IconInputs.FaerieFire,
 				IconInputs.SunderArmor,
 				IconInputs.ExposeArmor,
@@ -248,7 +247,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 					HunterInputs.PetUptime,
 					//HunterInputs.PetSingleAbility,
 					HunterInputs.SniperTrainingUptime,
-					HunterInputs.LatencyMs,
+					//HunterInputs.LatencyMs,
 					OtherInputs.PrepopPotion,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
@@ -262,10 +261,6 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
 				showExecuteProportion: false,
 			},
-
-			// If true, the talents on the talents tab will not be individually modifiable by the user.
-			// Note that the use can still pick between preset talents, if there is more than 1.
-			freezeTalents: false,
 
 			presets: {
 				// Preset talents that the user can quickly select.

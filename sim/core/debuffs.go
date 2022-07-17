@@ -90,14 +90,6 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 		MakePermanent(FaerieFireAura(target, debuffs.FaerieFire == proto.TristateEffect_TristateEffectImproved))
 	}
 
-	if debuffs.HuntersMark != proto.TristateEffect_TristateEffectMissing {
-		if debuffs.HuntersMark == proto.TristateEffect_TristateEffectImproved {
-			MakePermanent(HuntersMarkAura(target, 3, true))
-		} else {
-			MakePermanent(HuntersMarkAura(target, 0, false))
-		}
-	}
-
 	if debuffs.DemoralizingRoar != proto.TristateEffect_TristateEffectMissing {
 		MakePermanent(DemoralizingRoarAura(target, GetTristateValueInt32(debuffs.DemoralizingRoar, 0, 5)))
 	}

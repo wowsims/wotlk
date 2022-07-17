@@ -230,7 +230,7 @@ export class HunterPetTalentsPicker extends Component {
 	}
 }
 
-const cunningDefault: HunterPetTalents = HunterPetTalents.create({
+export const cunningDefault: HunterPetTalents = HunterPetTalents.create({
 	cobraReflexes: 2,
 	dive: true,
 	boarsSpeed: true,
@@ -242,7 +242,7 @@ const cunningDefault: HunterPetTalents = HunterPetTalents.create({
 	bullheaded: true,
 	wildHunt: 1,
 });
-const ferocityDefault: HunterPetTalents = HunterPetTalents.create({
+export const ferocityDefault: HunterPetTalents = HunterPetTalents.create({
 	cobraReflexes: 2,
 	dive: true,
 	spikedCollar: 3,
@@ -253,7 +253,7 @@ const ferocityDefault: HunterPetTalents = HunterPetTalents.create({
 	callOfTheWild: true,
 	wildHunt: 1,
 });
-const tenacityDefault: HunterPetTalents = HunterPetTalents.create({
+export const tenacityDefault: HunterPetTalents = HunterPetTalents.create({
 	cobraReflexes: 2,
 	charge: true,
 	greatStamina: 3,

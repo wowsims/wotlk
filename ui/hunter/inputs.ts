@@ -15,7 +15,7 @@ import {
 	Hunter,
 	Hunter_Rotation as HunterRotation,
 	Hunter_Rotation_StingType as StingType,
-	Hunter_Rotation_WeaveType as WeaveType,
+	//Hunter_Rotation_WeaveType as WeaveType,
 	Hunter_Options as HunterOptions,
 	Hunter_Options_Ammo as Ammo,
 	Hunter_Options_PetType as PetType,
@@ -122,7 +122,7 @@ export const SniperTrainingUptime = {
 		],
 		label: 'ST Uptime (%)',
 		labelTooltip: 'Uptime for the Sniper Training talent, as a percent of the fight duration.',
-		changedEvent: (player: Player<Spec.SpecHunter>) => player.specOptionsChangeEmitter,
+		changedEvent: (player: Player<Spec.SpecHunter>) => TypedEvent.onAny([player.specOptionsChangeEmitter, player.talentsChangeEmitter]),
 		getValue: (player: Player<Spec.SpecHunter>) => player.getSpecOptions().sniperTrainingUptime * 100,
 		setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: number) => {
 			const newOptions = player.getSpecOptions();
@@ -135,36 +135,36 @@ export const SniperTrainingUptime = {
 
 export const HunterRotationConfig = {
 	inputs: [
-		{
-			type: 'boolean' as const, cssClass: 'use-multi-shot-picker',
-			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-			config: {
-				label: 'Use Multi Shot',
-				labelTooltip: 'Includes Multi Shot in the rotation.',
-				changedEvent: (player: Player<Spec.SpecHunter>) => player.rotationChangeEmitter,
-				getValue: (player: Player<Spec.SpecHunter>) => player.getRotation().useMultiShot,
-				setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: boolean) => {
-					const newRotation = player.getRotation();
-					newRotation.useMultiShot = newValue;
-					player.setRotation(eventID, newRotation);
-				},
-			},
-		},
-		{
-			type: 'boolean' as const, cssClass: 'use-arcane-shot-picker',
-			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-			config: {
-				label: 'Use Arcane Shot',
-				labelTooltip: 'Includes Arcane Shot in the rotation.',
-				changedEvent: (player: Player<Spec.SpecHunter>) => player.rotationChangeEmitter,
-				getValue: (player: Player<Spec.SpecHunter>) => player.getRotation().useArcaneShot,
-				setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: boolean) => {
-					const newRotation = player.getRotation();
-					newRotation.useArcaneShot = newValue;
-					player.setRotation(eventID, newRotation);
-				},
-			},
-		},
+		//{
+		//	type: 'boolean' as const, cssClass: 'use-multi-shot-picker',
+		//	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
+		//	config: {
+		//		label: 'Use Multi Shot',
+		//		labelTooltip: 'Includes Multi Shot in the rotation.',
+		//		changedEvent: (player: Player<Spec.SpecHunter>) => player.rotationChangeEmitter,
+		//		getValue: (player: Player<Spec.SpecHunter>) => player.getRotation().useMultiShot,
+		//		setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: boolean) => {
+		//			const newRotation = player.getRotation();
+		//			newRotation.useMultiShot = newValue;
+		//			player.setRotation(eventID, newRotation);
+		//		},
+		//	},
+		//},
+		//{
+		//	type: 'boolean' as const, cssClass: 'use-arcane-shot-picker',
+		//	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
+		//	config: {
+		//		label: 'Use Arcane Shot',
+		//		labelTooltip: 'Includes Arcane Shot in the rotation.',
+		//		changedEvent: (player: Player<Spec.SpecHunter>) => player.rotationChangeEmitter,
+		//		getValue: (player: Player<Spec.SpecHunter>) => player.getRotation().useArcaneShot,
+		//		setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: boolean) => {
+		//			const newRotation = player.getRotation();
+		//			newRotation.useArcaneShot = newValue;
+		//			player.setRotation(eventID, newRotation);
+		//		},
+		//	},
+		//},
 		{
 			type: 'enum' as const, cssClass: 'sting-picker',
 			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
@@ -185,21 +185,21 @@ export const HunterRotationConfig = {
 				},
 			},
 		},
-		{
-			type: 'boolean' as const, cssClass: 'lazy-rotation-picker',
-			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-			config: {
-				label: 'Lazy Rotation',
-				labelTooltip: 'Uses GCD immediately, even if it will clip the next auto.',
-				changedEvent: (player: Player<Spec.SpecHunter>) => player.rotationChangeEmitter,
-				getValue: (player: Player<Spec.SpecHunter>) => player.getRotation().lazyRotation,
-				setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: boolean) => {
-					const newRotation = player.getRotation();
-					newRotation.lazyRotation = newValue;
-					player.setRotation(eventID, newRotation);
-				},
-			},
-		},
+		//{
+		//	type: 'boolean' as const, cssClass: 'lazy-rotation-picker',
+		//	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
+		//	config: {
+		//		label: 'Lazy Rotation',
+		//		labelTooltip: 'Uses GCD immediately, even if it will clip the next auto.',
+		//		changedEvent: (player: Player<Spec.SpecHunter>) => player.rotationChangeEmitter,
+		//		getValue: (player: Player<Spec.SpecHunter>) => player.getRotation().lazyRotation,
+		//		setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: boolean) => {
+		//			const newRotation = player.getRotation();
+		//			newRotation.lazyRotation = newValue;
+		//			player.setRotation(eventID, newRotation);
+		//		},
+		//	},
+		//},
 		{
 			type: 'number' as const, cssClass: 'viper-start-picker',
 			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
@@ -230,58 +230,58 @@ export const HunterRotationConfig = {
 				},
 			},
 		},
-		{
-			type: 'enum' as const, cssClass: 'weave-picker',
-			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-			config: {
-				label: 'Melee Weaving',
-				labelTooltip: 'Uses melee weaving in the rotation.',
-				values: [
-					{ name: 'None', value: WeaveType.WeaveNone },
-					{ name: 'Autos Only', value: WeaveType.WeaveAutosOnly },
-					{ name: 'Raptor Only', value: WeaveType.WeaveRaptorOnly },
-					{ name: 'Full', value: WeaveType.WeaveFull },
-				],
-				changedEvent: (player: Player<Spec.SpecHunter>) => player.rotationChangeEmitter,
-				getValue: (player: Player<Spec.SpecHunter>) => player.getRotation().weave,
-				setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: number) => {
-					const newRotation = player.getRotation();
-					newRotation.weave = newValue;
-					player.setRotation(eventID, newRotation);
-				},
-			},
-		},
-		{
-			type: 'number' as const, cssClass: 'time-to-weave-picker',
-			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-			config: {
-				label: 'Time To Weave (ms)',
-				labelTooltip: 'Amount of time, in milliseconds, between when you start moving towards the boss and when you re-engage your ranged autos.',
-				changedEvent: (player: Player<Spec.SpecHunter>) => player.rotationChangeEmitter,
-				getValue: (player: Player<Spec.SpecHunter>) => player.getRotation().timeToWeaveMs,
-				setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: number) => {
-					const newRotation = player.getRotation();
-					newRotation.timeToWeaveMs = newValue;
-					player.setRotation(eventID, newRotation);
-				},
-				showWhen: (player: Player<Spec.SpecHunter>) => player.getRotation().weave != WeaveType.WeaveNone,
-			},
-		},
-		{
-			type: 'number' as const, cssClass: 'percent-weaved-picker',
-			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-			config: {
-				label: 'Time Weaved (%)',
-				labelTooltip: 'Percentage of fight to use melee weaving.',
-				changedEvent: (player: Player<Spec.SpecHunter>) => player.rotationChangeEmitter,
-				getValue: (player: Player<Spec.SpecHunter>) => player.getRotation().percentWeaved * 100,
-				setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: number) => {
-					const newRotation = player.getRotation();
-					newRotation.percentWeaved = newValue / 100;
-					player.setRotation(eventID, newRotation);
-				},
-				showWhen: (player: Player<Spec.SpecHunter>) => player.getRotation().weave != WeaveType.WeaveNone,
-			},
-		},
+		//{
+		//	type: 'enum' as const, cssClass: 'weave-picker',
+		//	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
+		//	config: {
+		//		label: 'Melee Weaving',
+		//		labelTooltip: 'Uses melee weaving in the rotation.',
+		//		values: [
+		//			{ name: 'None', value: WeaveType.WeaveNone },
+		//			{ name: 'Autos Only', value: WeaveType.WeaveAutosOnly },
+		//			{ name: 'Raptor Only', value: WeaveType.WeaveRaptorOnly },
+		//			{ name: 'Full', value: WeaveType.WeaveFull },
+		//		],
+		//		changedEvent: (player: Player<Spec.SpecHunter>) => player.rotationChangeEmitter,
+		//		getValue: (player: Player<Spec.SpecHunter>) => player.getRotation().weave,
+		//		setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: number) => {
+		//			const newRotation = player.getRotation();
+		//			newRotation.weave = newValue;
+		//			player.setRotation(eventID, newRotation);
+		//		},
+		//	},
+		//},
+		//{
+		//	type: 'number' as const, cssClass: 'time-to-weave-picker',
+		//	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
+		//	config: {
+		//		label: 'Time To Weave (ms)',
+		//		labelTooltip: 'Amount of time, in milliseconds, between when you start moving towards the boss and when you re-engage your ranged autos.',
+		//		changedEvent: (player: Player<Spec.SpecHunter>) => player.rotationChangeEmitter,
+		//		getValue: (player: Player<Spec.SpecHunter>) => player.getRotation().timeToWeaveMs,
+		//		setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: number) => {
+		//			const newRotation = player.getRotation();
+		//			newRotation.timeToWeaveMs = newValue;
+		//			player.setRotation(eventID, newRotation);
+		//		},
+		//		showWhen: (player: Player<Spec.SpecHunter>) => player.getRotation().weave != WeaveType.WeaveNone,
+		//	},
+		//},
+		//{
+		//	type: 'number' as const, cssClass: 'percent-weaved-picker',
+		//	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
+		//	config: {
+		//		label: 'Time Weaved (%)',
+		//		labelTooltip: 'Percentage of fight to use melee weaving.',
+		//		changedEvent: (player: Player<Spec.SpecHunter>) => player.rotationChangeEmitter,
+		//		getValue: (player: Player<Spec.SpecHunter>) => player.getRotation().percentWeaved * 100,
+		//		setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: number) => {
+		//			const newRotation = player.getRotation();
+		//			newRotation.percentWeaved = newValue / 100;
+		//			player.setRotation(eventID, newRotation);
+		//		},
+		//		showWhen: (player: Player<Spec.SpecHunter>) => player.getRotation().weave != WeaveType.WeaveNone,
+		//	},
+		//},
 	],
 };

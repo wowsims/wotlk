@@ -137,7 +137,6 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 					faerieFire: TristateEffect.TristateEffectImproved,
 					sunderArmor: true,
 					curseOfWeakness: TristateEffect.TristateEffectRegular,
-					huntersMark: TristateEffect.TristateEffectImproved,
 				}),
 			},
 
@@ -170,7 +169,6 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 			debuffInputs: [
 				IconInputs.JudgementOfWisdom,
 				IconInputs.BloodFrenzy,
-				IconInputs.HuntersMark,
 				IconInputs.CurseOfWeakness,
 				IconInputs.FaerieFire,
 				IconInputs.ExposeArmor,
@@ -235,15 +233,10 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 				showExecuteProportion: false,
 			},
 
-			// If true, the talents on the talents tab will not be individually modifiable by the user.
-			// Note that the use can still pick between preset talents, if there is more than 1.
-			freezeTalents: false,
-
 			presets: {
 				// Preset talents that the user can quickly select.
 				talents: [
 					Presets.StandardTalents,
-					Presets.MonocatTalents,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [

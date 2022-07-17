@@ -412,6 +412,7 @@ type CharacterSuiteConfig struct {
 	Race        proto.Race
 	GearSet     GearSetCombo
 	SpecOptions SpecOptionsCombo
+	Glyphs      *proto.Glyphs
 
 	RaidBuffs   *proto.RaidBuffs
 	PartyBuffs  *proto.PartyBuffs
@@ -444,6 +445,7 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 			Equipment: config.GearSet.GearSet,
 			Consumes:  config.Consumes,
 			Buffs:     config.PlayerBuffs,
+			Glyphs:    config.Glyphs,
 
 			InFrontOfTarget: config.InFrontOfTarget,
 		},

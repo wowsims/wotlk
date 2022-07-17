@@ -5,10 +5,12 @@ import { Consumes } from '/wotlk/core/proto/common.js';
 import { EquipmentSpec } from '/wotlk/core/proto/common.js';
 import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
+import { Glyphs } from '/wotlk/core/proto/common.js';
 import { ItemSpec } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
 import { Faction } from '/wotlk/core/proto/common.js';
+import { SavedTalents } from '/wotlk/core/proto/ui.js';
 import { Player } from '/wotlk/core/player.js';
 
 import {
@@ -30,7 +32,9 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 export const CombatTalents = {
 	name: 'Combat',
-	data: '00532000532-0252051000035015223100501251',
+	data: SavedTalents.create({
+		talentsString: '00532000532-0252051000035015223100501251',
+	}),
 };
 
 export const DefaultRotation = RogueRotation.create({

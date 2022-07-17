@@ -55,6 +55,12 @@ var DefaultDestroWarlock = &proto.Player_Warlock{
 	},
 }
 
+var DefaultGlyphs = &proto.Glyphs{
+	Major1: int32(proto.WarlockMajorGlyph_GlyphOfQuickDecay),
+	Major2: int32(proto.WarlockMajorGlyph_GlyphOfLifeTap),
+	Major3: int32(proto.WarlockMajorGlyph_GlyphOfHaunt),
+}
+
 var FullRaidBuffs = &proto.RaidBuffs{
 	ArcaneBrilliance: true,
 	GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
@@ -85,7 +91,6 @@ var FullDebuffs = &proto.Debuffs{
 	ExposeArmor:       proto.TristateEffect_TristateEffectImproved,
 	FaerieFire:        proto.TristateEffect_TristateEffectImproved,
 	CurseOfWeakness:   proto.TristateEffect_TristateEffectImproved,
-	HuntersMark:       proto.TristateEffect_TristateEffectImproved,
 }
 
 var Phase4Gear = items.EquipmentSpecFromJsonString(`{"items": [

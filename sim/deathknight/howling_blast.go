@@ -13,15 +13,6 @@ func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 	}
 	//target := deathKnight.CurrentTarget
 
-	glacierRotCoeff := 1.0
-	if deathKnight.Talents.GlacierRot == 1 {
-		glacierRotCoeff = 1.07
-	} else if deathKnight.Talents.GlacierRot == 2 {
-		glacierRotCoeff = 1.13
-	} else if deathKnight.Talents.GlacierRot == 3 {
-		glacierRotCoeff = 1.20
-	}
-
 	guileOfGorefiend := deathKnight.Talents.GuileOfGorefiend > 0
 
 	deathKnight.HowlingBlast = deathKnight.RegisterSpell(core.SpellConfig{
@@ -48,11 +39,11 @@ func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					roll := (562.0-518.0)*sim.RandomFloat("Howling Blast") + 518.0
-					return (roll + hitEffect.MeleeAttackPower(spell.Unit)*0.1) *
-						core.TernaryFloat64(deathKnight.DiseasesAreActive() && deathKnight.Talents.GlacierRot > 0, glacierRotCoeff, 1.0) *
-						core.TernaryFloat64(deathKnight.DiseasesAreActive(), 1.0+0.05*float64(deathKnight.Talents.TundraStalker), 1.0) *
-						core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 1.0+0.02*float64(deathKnight.Talents.RageOfRivendare), 1.0) *
-						core.TernaryFloat64(sim.IsExecutePhase35() && deathKnight.Talents.MercilessCombat > 0, 1.0+0.06*float64(deathKnight.Talents.MercilessCombat), 1.0)
+					return (roll + deathKnight.applyImpurity(hitEffect, spell.Unit)*0.1) *
+						deathKnight.glacielRotBonus() *
+						deathKnight.rageOfRivendareBonus() *
+						deathKnight.tundraStalkerBonus() *
+						deathKnight.mercilessCombatBonus(sim)
 				},
 				TargetSpellCoefficient: 1,
 			},
