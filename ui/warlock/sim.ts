@@ -20,7 +20,14 @@ import { Conjured } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
 
-import { Warlock, Warlock_Rotation as WarlockRotation, WarlockTalents as WarlockTalents, Warlock_Options as WarlockOptions, Warlock_Options_Armor, Warlock_Options_Summon } from '/wotlk/core/proto/warlock.js';
+import {
+	Warlock,
+	Warlock_Rotation as WarlockRotation,
+	WarlockTalents as WarlockTalents,
+	Warlock_Options as WarlockOptions,
+	Warlock_Options_Armor,
+	Warlock_Options_Summon,
+} from '/wotlk/core/proto/warlock.js';
 
 import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
 import * as OtherInputs from '/wotlk/core/components/other_inputs.js';

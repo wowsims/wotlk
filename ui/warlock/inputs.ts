@@ -1,4 +1,14 @@
-import { Warlock_Options as WarlockOptions,Warlock_Rotation_Type as RotationType, Warlock_Rotation_Preset as RotationPreset, Warlock_Rotation_PrimarySpell as PrimarySpell, Warlock_Rotation_SecondaryDot as SecondaryDot, Warlock_Rotation_SpecSpell as SpecSpell, Warlock_Rotation_Curse as Curse, Warlock_Options_Armor as Armor, Warlock_Options_Summon as Summon } from '/wotlk/core/proto/warlock.js';
+import {
+	Warlock_Options as WarlockOptions,
+	Warlock_Rotation_Type as RotationType,
+	Warlock_Rotation_Preset as RotationPreset,
+	Warlock_Rotation_PrimarySpell as PrimarySpell,
+	Warlock_Rotation_SecondaryDot as SecondaryDot,
+	Warlock_Rotation_SpecSpell as SpecSpell,
+	Warlock_Rotation_Curse as Curse,
+	Warlock_Options_Armor as Armor,
+	Warlock_Options_Summon as Summon,
+} from '/wotlk/core/proto/warlock.js';
 import { RaidTarget, Spec, Glyphs } from '/wotlk/core/proto/common.js';
 import { NO_TARGET } from '/wotlk/core/proto_utils/utils.js';
 import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
