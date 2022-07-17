@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warlock *Warlock) registerImmolateSpell() {
@@ -22,7 +22,7 @@ func (warlock *Warlock) registerImmolateSpell() {
 		DamageMultiplier:     (1 + (0.1 * float64(warlock.Talents.ImprovedImmolate))) * (1 + 0.03*float64(warlock.Talents.Emberstorm)),
 		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.DestructiveReach),
 		BaseDamage:           core.BaseDamageConfigMagic(460.0, 460.0, 0.2+0.04*float64(warlock.Talents.ShadowAndFlame)),
-		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
+		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin) / 5)),
 		OnSpellHitDealt:      applyDotOnLanded(&warlock.ImmolateDot),
 		ProcMask:             core.ProcMaskSpellDamage,
 	}
@@ -44,6 +44,11 @@ func (warlock *Warlock) registerImmolateSpell() {
 	})
 
 	target := warlock.CurrentTarget
+	hasGoImmo := core.TernaryFloat64(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfImmolate), 1, 0)
+	applier := warlock.OutcomeFuncTick()
+	if warlock.Talents.Pandemic {
+		applier = warlock.OutcomeFuncMagicCrit(warlock.SpellCritMultiplier(1, 1))
+	}
 
 	warlock.ImmolateDot = core.NewDot(core.Dot{
 		Spell: warlock.Immolate,
@@ -55,11 +60,10 @@ func (warlock *Warlock) registerImmolateSpell() {
 			core.TernaryInt(warlock.HasSetBonus(ItemSetVoidheartRaiment, 4), 1, 0), // voidheart 4p gives 1 extra tick
 		TickLength: time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			DamageMultiplier: (1 + 0.03*float64(warlock.Talents.Aftermath)) * (1 + 0.03*float64(warlock.Talents.Emberstorm)) *
-				(1 + 0.1*core.TernaryFloat64(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfQuickDecay), 1, 0)),
+			DamageMultiplier: (1 + 0.03*float64(warlock.Talents.Aftermath)) * (1 + 0.03*float64(warlock.Talents.Emberstorm)),
 			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(785/5, 0.2),
-			OutcomeApplier:   warlock.OutcomeFuncTick(),
+			BaseDamage:       core.BaseDamageConfigMagicNoRoll(785/5 * (1 + 0.1*hasGoImmo), 0.2),
+			OutcomeApplier:   applier,
 			IsPeriodic:       true,
 			ProcMask:         core.ProcMaskPeriodicDamage,
 		}),

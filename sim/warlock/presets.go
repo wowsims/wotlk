@@ -31,8 +31,8 @@ var defaultDestroTalents = &proto.WarlockTalents{
 	SoulLeech:          3,
 	ImprovedSoulLeech:  2,
 	// demo
-	FelSynergy:  		2,
-	ImprovedImp: 		3,
+	FelSynergy:  2,
+	ImprovedImp: 3,
 }
 
 // var defaultDestroMajorGlyphs = &proto.WarlockMajorGlyph{
@@ -50,8 +50,8 @@ var defaultDestroTalents = &proto.WarlockTalents{
 // }
 
 var defaultDestroRotation = &proto.Warlock_Rotation{
-	PrimarySpell: proto.Warlock_Rotation_Shadowbolt,
-	Immolate:     true,
+	PrimarySpell: proto.Warlock_Rotation_Incinerate,
+	SecondaryDot: proto.Warlock_Rotation_Immolate,
 }
 
 var defaultDestroOptions = &proto.Warlock_Options{
@@ -66,7 +66,7 @@ var DefaultDestroWarlock = &proto.Player_Warlock{
 		Rotation: defaultDestroRotation,
 		// MajorGlyph: defaultDestroMajorGlyphs,
 		// MinorGlyph: defaultDestroMinorGlyphs,
-		},
+	},
 }
 
 var FullRaidBuffs = &proto.RaidBuffs{

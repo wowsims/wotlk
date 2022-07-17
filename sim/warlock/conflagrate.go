@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warlock *Warlock) CanConflagrate(sim *core.Simulation) bool {
@@ -20,6 +20,9 @@ func (warlock *Warlock) registerConflagrateSpell() {
 	if float64(warlock.Talents.Cataclysm) > 0 {
 		costReduction += 0.01 + 0.03*float64(warlock.Talents.Cataclysm)
 	}
+
+	hasGoImmo := core.TernaryFloat64(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfImmolate), 1, 0)
+
 	actionID := core.ActionID{SpellID: 17962}
 	target := warlock.CurrentTarget
 
@@ -29,7 +32,7 @@ func (warlock *Warlock) registerConflagrateSpell() {
 		DamageMultiplier: 0.6 * (1 + (0.1 * float64(warlock.Talents.ImprovedImmolate))) *
 			(1 + 0.03*float64(warlock.Talents.Aftermath)) * (1 + 0.03*float64(warlock.Talents.Emberstorm)),
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
-		BaseDamage:       core.BaseDamageConfigMagicNoRoll(785, 0.2*5),
+		BaseDamage:       core.BaseDamageConfigMagicNoRoll(785*(1+0.1*hasGoImmo), 0.2*5),
 		OutcomeApplier:   warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
 		OnSpellHitDealt:  applyDotOnLanded(&warlock.ConflagrateDot),
 	}
@@ -71,7 +74,7 @@ func (warlock *Warlock) registerConflagrateSpell() {
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			DamageMultiplier: 0.4 * (1 + 0.03*float64(warlock.Talents.Aftermath)) * (1 + 0.03*float64(warlock.Talents.Emberstorm)),
 			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(785/3, 0.2*5/3),
+			BaseDamage:       core.BaseDamageConfigMagicNoRoll(785/5*(1+0.1*hasGoImmo), 0.2),
 			OutcomeApplier:   warlock.OutcomeFuncTick(),
 			IsPeriodic:       true,
 			ProcMask:         core.ProcMaskPeriodicDamage,

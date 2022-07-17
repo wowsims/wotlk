@@ -16,9 +16,16 @@ func (warlock *Warlock) OnGCDReady(sim *core.Simulation) {
 func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	var spell *core.Spell
 	var target = warlock.CurrentTarget
-
-	// If doing seed, that is the priority spell.
 	mainSpell := warlock.Rotation.PrimarySpell
+	secondaryDot := warlock.Rotation.SecondaryDot
+	specSpell := warlock.Rotation.SpecSpell
+	preset := warlock.Rotation.Preset
+	rotationType := warlock.Rotation.Type
+	curse := warlock.Rotation.Curse
+
+	// ------------------------------------------
+	// AoE (Seed)
+	// ------------------------------------------
 	if mainSpell == proto.Warlock_Rotation_Seed {
 		if warlock.Rotation.DetonateSeed {
 			if success := warlock.Seeds[0].Cast(sim, target); !success {
@@ -41,41 +48,9 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		mainSpell = proto.Warlock_Rotation_Shadowbolt
 	}
 
-	// Apply curses first
-	castCurse := func(spellToCast *core.Spell, aura *core.Aura) bool {
-		if !aura.IsActive() {
-			spell = spellToCast
-			return true
-		}
-		return false
-	}
-	switch warlock.Rotation.Curse {
-	case proto.Warlock_Rotation_Elements:
-		castCurse(warlock.CurseOfElements, warlock.CurseOfElementsAura)
-	case proto.Warlock_Rotation_Weakness:
-		castCurse(warlock.CurseOfWeakness, warlock.CurseOfWeaknessAura)
-	case proto.Warlock_Rotation_Tongues:
-		castCurse(warlock.CurseOfTongues, warlock.CurseOfTonguesAura)
-	case proto.Warlock_Rotation_Doom:
-		if sim.GetRemainingDuration() < time.Minute {
-			// Can't cast agony until we are at end and both agony and doom are not ticking.
-			if sim.GetRemainingDuration() > time.Second*30 && !warlock.CurseOfAgonyDot.IsActive() && !warlock.CurseOfDoomDot.IsActive() {
-				spell = warlock.CurseOfAgony
-			}
-		} else if warlock.CurseOfDoom.CD.IsReady(sim) && !warlock.CurseOfDoomDot.IsActive() {
-			spell = warlock.CurseOfDoom
-		}
-	case proto.Warlock_Rotation_Agony:
-		if !warlock.CurseOfAgonyDot.IsActive() {
-			spell = warlock.CurseOfAgony
-		}
-	}
-	if spell != nil {
-		if !spell.Cast(sim, target) {
-			warlock.LifeTap.Cast(sim, target)
-		}
-		return
-	}
+	// ------------------------------------------
+	// Big CDs
+	// ------------------------------------------
 
 	bigCDs := warlock.GetMajorCooldowns()
 	nextBigCD := time.Duration(math.MaxInt64)
@@ -89,9 +64,12 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		}
 	}
 
+	// ------------------------------------------
+	// Regen check
+	// ------------------------------------------
 	// If big CD coming up and we don't have enough mana for it, lifetap
 	// Also, never do a big regen in the last few seconds of the fight.
-	if !warlock.DoingRegen && nextBigCD-sim.CurrentTime < time.Second*15 && sim.GetRemainingDuration() > time.Second*20 {
+	if !warlock.DoingRegen && nextBigCD-sim.CurrentTime < time.Second*5 && sim.GetRemainingDuration() > time.Second*30 {
 		if warlock.GetStat(stats.SpellPower) > warlock.GetInitialStat(stats.SpellPower) || warlock.HasTemporarySpellCastSpeedIncrease() {
 			// never start regen if you have boosted sp or boosted cast speed
 		} else if warlock.CurrentManaPercent() < 0.2 {
@@ -112,39 +90,182 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		}
 	}
 
+	// ------------------------------------------
+	// Small CDs
+	// ------------------------------------------
 	if warlock.Talents.DemonicEmpowerment && warlock.DemonicEmpowerment.CD.IsReady(sim) {
 		warlock.DemonicEmpowerment.Cast(sim, target)
 	}
 
-	// main spells
-	// TODO: optimize so that cast time of DoT is included in calculation so you can cast right before falling off.
-	if warlock.Talents.UnstableAffliction && warlock.Rotation.UnstableAffliction && !warlock.UnstableAffDot.IsActive() {
-		spell = warlock.UnstableAff
-	} else if warlock.Talents.Haunt && warlock.Rotation.Haunt && warlock.Haunt.CD.IsReady(sim) && !warlock.HauntAura.IsActive() {
-		spell = warlock.Haunt
-	} else if warlock.Talents.ChaosBolt && warlock.Rotation.ChaosBolt && warlock.ChaosBolt.CD.IsReady(sim) {
-		spell = warlock.ChaosBolt
-	} else if warlock.Rotation.Corruption && !warlock.CorruptionDot.IsActive() {
-		spell = warlock.Corruption
-	} else if warlock.Rotation.Immolate && !warlock.ImmolateDot.IsActive() {
-		spell = warlock.Immolate
-	} else if warlock.CanConflagrate(sim) && warlock.ImmolateDot.TickCount > warlock.ImmolateDot.NumberOfTicks-2 {
-		spell = warlock.Conflagrate
-	} else {
-		switch mainSpell {
-		case proto.Warlock_Rotation_Shadowbolt:
-			spell = warlock.Shadowbolt
-		case proto.Warlock_Rotation_Incinerate:
-			spell = warlock.Incinerate
-		default:
-			panic("no primary spell set")
+	// ------------------------------------------
+	// Keep Glyph of Life Tap buff up
+	// ------------------------------------------
+	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap) && !warlock.GlyphOfLifeTapAura.IsActive() {
+		warlock.LifeTap.Cast(sim, target)
+		return
+	}
+
+	// ------------------------------------------
+	// Preset Rotations
+	// ------------------------------------------
+	if preset == proto.Warlock_Rotation_Automatic {
+		// ------------------------------------------
+		// Affliction Rotation
+		// ------------------------------------------
+		if rotationType == proto.Warlock_Rotation_Affliction {
+			if !warlock.CurseOfAgonyDot.IsActive() {
+				spell = warlock.CurseOfAgony
+			} else if !warlock.CorruptionDot.IsActive() && sim.GetRemainingDuration() > time.Second*24 {
+				spell = warlock.Corruption
+			} else if warlock.CorruptionDot.IsActive() && warlock.CorruptionDot.TickCount > warlock.CorruptionDot.NumberOfTicks-2 {
+				spell = warlock.Shadowbolt
+			} else if !warlock.UnstableAffDot.IsActive() {
+				spell = warlock.UnstableAff
+			} else if !warlock.HauntAura.IsActive() && warlock.Haunt.CD.IsReady(sim) {
+				spell = warlock.Haunt
+			} else {
+				spell = warlock.Shadowbolt
+			}
+		} else if rotationType == proto.Warlock_Rotation_Demonology {
+
+			// ------------------------------------------
+			// Demonology Rotation
+			// ------------------------------------------
+			if warlock.CurseOfDoom.CD.IsReady(sim) && sim.GetRemainingDuration() > time.Minute {
+				spell = warlock.CurseOfDoom
+			} else if sim.GetRemainingDuration() > time.Second*24 && !warlock.CurseOfAgonyDot.IsActive() && !warlock.CurseOfDoomDot.IsActive() {
+				// Can't cast agony until we are at end and both agony and doom are not ticking.
+				spell = warlock.CurseOfAgony
+			} else if !warlock.CorruptionDot.IsActive() {
+				spell = warlock.Corruption
+			} else if !warlock.ImmolateDot.IsActive() {
+				spell = warlock.Immolate
+			} else if warlock.DecimationAura.IsActive() {
+				spell = warlock.SoulFire
+			} else if warlock.MoltenCoreAura.IsActive() {
+				spell = warlock.Incinerate
+			} else {
+				spell = warlock.Shadowbolt
+			}
+		} else if rotationType == proto.Warlock_Rotation_Destruction {
+
+			// ------------------------------------------
+			// Destruction Rotation
+			// ------------------------------------------
+			if warlock.CurseOfDoom.CD.IsReady(sim) && sim.GetRemainingDuration() > time.Minute {
+				spell = warlock.CurseOfDoom
+			} else if sim.GetRemainingDuration() > time.Second*24 && !warlock.CurseOfAgonyDot.IsActive() && !warlock.CurseOfDoomDot.IsActive() {
+				// Can't cast agony until we are at end and both agony and doom are not ticking.
+				spell = warlock.CurseOfAgony
+			} else if warlock.CanConflagrate(sim) && (warlock.ImmolateDot.TickCount > warlock.ImmolateDot.NumberOfTicks-2 || warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfConflagrate)) {
+				spell = warlock.Conflagrate
+			} else if !warlock.CorruptionDot.IsActive() {
+				spell = warlock.Corruption
+			} else if !warlock.ImmolateDot.IsActive() {
+				spell = warlock.Immolate
+			} else if warlock.ChaosBolt.CD.IsReady(sim) {
+				spell = warlock.ChaosBolt
+			} else {
+				spell = warlock.Incinerate
+			}
+		} else {
+			preset = proto.Warlock_Rotation_Manual
+			warlock.Rotation.Preset = proto.Warlock_Rotation_Manual
 		}
 	}
+
+	// ------------------------------------------
+	// Manual Rotation
+	// ------------------------------------------
+	if preset == proto.Warlock_Rotation_Manual {
+
+		// ------------------------------------------
+		// Curses (priority)
+		// ------------------------------------------
+
+		castCurse := func(spellToCast *core.Spell, aura *core.Aura) bool {
+			if !aura.IsActive() {
+				spell = spellToCast
+				return true
+			}
+			return false
+		}
+
+		switch curse {
+		case proto.Warlock_Rotation_Elements:
+			castCurse(warlock.CurseOfElements, warlock.CurseOfElementsAura)
+		case proto.Warlock_Rotation_Weakness:
+			castCurse(warlock.CurseOfWeakness, warlock.CurseOfWeaknessAura)
+		case proto.Warlock_Rotation_Tongues:
+			castCurse(warlock.CurseOfTongues, warlock.CurseOfTonguesAura)
+		default:
+			fallthrough
+		case proto.Warlock_Rotation_Doom:
+			if sim.GetRemainingDuration() < time.Minute {
+				// Can't cast agony until we are at end and both agony and doom are not ticking.
+				if sim.GetRemainingDuration() > time.Second*24 && !warlock.CurseOfAgonyDot.IsActive() && !warlock.CurseOfDoomDot.IsActive() {
+					spell = warlock.CurseOfAgony
+				}
+			} else if warlock.CurseOfDoom.CD.IsReady(sim) && !warlock.CurseOfDoomDot.IsActive() {
+				spell = warlock.CurseOfDoom
+			}
+		case proto.Warlock_Rotation_Agony:
+			if !warlock.CurseOfAgonyDot.IsActive() {
+				spell = warlock.CurseOfAgony
+			}
+		}
+		if spell != nil {
+			if !spell.Cast(sim, target) {
+				warlock.LifeTap.Cast(sim, target)
+			}
+			return
+		}
+
+		// ------------------------------------------
+		// Main spells
+		// ------------------------------------------
+		if warlock.Talents.ChaosBolt && specSpell == proto.Warlock_Rotation_ChaosBolt && warlock.ChaosBolt.CD.IsReady(sim) {
+			spell = warlock.ChaosBolt
+		} else if warlock.Talents.Haunt && specSpell == proto.Warlock_Rotation_Haunt && warlock.Haunt.CD.IsReady(sim) && !warlock.HauntAura.IsActive() {
+			spell = warlock.Haunt
+		} else if warlock.Rotation.Corruption && !warlock.CorruptionDot.IsActive() {
+			spell = warlock.Corruption
+		} else if warlock.CanConflagrate(sim) && (warlock.ImmolateDot.TickCount > warlock.ImmolateDot.NumberOfTicks-2 || warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfConflagrate)) {
+			spell = warlock.Conflagrate
+		} else if warlock.Talents.UnstableAffliction && secondaryDot == proto.Warlock_Rotation_UnstableAffliction && !warlock.UnstableAffDot.IsActive() {
+			spell = warlock.UnstableAff
+		} else if secondaryDot == proto.Warlock_Rotation_Immolate && !warlock.ImmolateDot.IsActive() {
+			spell = warlock.Immolate
+		} else if warlock.Talents.Decimation > 0 && warlock.DecimationAura.IsActive() {
+			spell = warlock.SoulFire
+		} else if warlock.Talents.MoltenCore > 0 && warlock.MoltenCoreAura.IsActive() {
+			spell = warlock.Incinerate
+		} else {
+			switch mainSpell {
+			case proto.Warlock_Rotation_Shadowbolt:
+				spell = warlock.Shadowbolt
+			case proto.Warlock_Rotation_Incinerate:
+				spell = warlock.Incinerate
+			default:
+				panic("No primary spell set")
+			}
+		}
+
+	}
+
+	// ------------------------------------------
+	// Spell casting
+	// ------------------------------------------
 
 	if success := spell.Cast(sim, target); success {
 		return
 	}
 
-	// If we were not successful at anything else, lifetap.
-	warlock.LifeTap.Cast(sim, target)
+	// Lifetap if nothing else
+	if warlock.CurrentManaPercent() < 0.8 {
+		warlock.LifeTap.Cast(sim, target)
+		return
+	}
+
+	// If we get here, something's wrong
 }

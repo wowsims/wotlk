@@ -30,11 +30,6 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 				GCD: core.GCDDefault + hunter.latency,
 			},
 			IgnoreHaste: true, // Hunter GCD is locked at 1.5s
-			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
-				if hunter.ImprovedSteadyShotAura.IsActive() {
-					cast.Cost *= 0.8
-				}
-			},
 			CD: core.Cooldown{
 				Timer:    hunter.NewTimer(),
 				Duration: time.Second*10 - core.TernaryDuration(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfChimeraShot), time.Second*1, 0),
@@ -49,17 +44,10 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					damage := (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.2 +
+					return 1.25 * ((hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.2 +
 						hunter.AutoAttacks.Ranged.BaseDamage(sim) +
 						hunter.AmmoDamageBonus +
-						hitEffect.BonusWeaponDamage(spell.Unit)
-					damage *= 1.25
-
-					if hunter.ImprovedSteadyShotAura.IsActive() {
-						damage *= 1.15
-						hunter.ImprovedSteadyShotAura.Deactivate(sim)
-					}
-					return damage
+						hitEffect.BonusWeaponDamage(spell.Unit))
 				},
 				TargetSpellCoefficient: 1,
 			},

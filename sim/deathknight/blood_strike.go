@@ -14,28 +14,19 @@ func (deathKnight *DeathKnight) newBloodStrikeSpell(isMH bool) *core.Spell {
 		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 306.0, 0.4, true)
 	}
 
-	bloodOfTheNorthCoeff := 1.0
-	if deathKnight.Talents.BloodOfTheNorth == 1 {
-		bloodOfTheNorthCoeff = 1.03
-	} else if deathKnight.Talents.BloodOfTheNorth == 2 {
-		bloodOfTheNorthCoeff = 1.06
-	} else if deathKnight.Talents.BloodOfTheNorth == 3 {
-		bloodOfTheNorthCoeff = 1.1
-	}
 	guileOfGorefiend := deathKnight.Talents.GuileOfGorefiend > 0
 
 	effect := core.SpellEffect{
 		BonusCritRating:  (3.0*float64(deathKnight.Talents.Subversion) + 1.0*float64(deathKnight.Talents.Annihilation)) * core.CritRatingPerCritChance,
-		DamageMultiplier: 1,
+		DamageMultiplier: deathKnight.bloodOfTheNorthCoeff(),
 		ThreatMultiplier: 1,
 
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				return weaponBaseDamage(sim, hitEffect, spell) *
-					bloodOfTheNorthCoeff *
-					(1.0 + float64(deathKnight.countActiveDiseases())*0.125) *
-					core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 1.0+0.02*float64(deathKnight.Talents.RageOfRivendare), 1.0) *
-					core.TernaryFloat64(deathKnight.DiseasesAreActive(), 1.0+0.05*float64(deathKnight.Talents.TundraStalker), 1.0)
+					deathKnight.diseaseMultiplierBonus(0.125) *
+					deathKnight.rageOfRivendareBonus() *
+					deathKnight.tundraStalkerBonus()
 			},
 			TargetSpellCoefficient: 1,
 		},
@@ -60,19 +51,8 @@ func (deathKnight *DeathKnight) newBloodStrikeSpell(isMH bool) *core.Spell {
 }
 
 func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
-	mhHitSpell := deathKnight.newBloodStrikeSpell(true)
-	ohHitSpell := deathKnight.newBloodStrikeSpell(false)
-
-	totChance := ToTChance(deathKnight)
-
-	botnChance := 0.0
-	if deathKnight.Talents.BloodOfTheNorth == 1 {
-		botnChance = 0.3
-	} else if deathKnight.Talents.BloodOfTheNorth == 2 {
-		botnChance = 0.6
-	} else if deathKnight.Talents.BloodOfTheNorth == 3 {
-		botnChance = 1.0
-	}
+	deathKnight.BloodStrikeMhHit = deathKnight.newBloodStrikeSpell(true)
+	deathKnight.BloodStrikeOhHit = deathKnight.newBloodStrikeSpell(false)
 
 	deathKnight.BloodStrike = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    BloodStrikeActionID,
@@ -92,29 +72,12 @@ func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
 			OutcomeApplier: deathKnight.OutcomeFuncAlwaysHit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				mhHitSpell.Cast(sim, spellEffect.Target)
-				totProcced := ToTWillCast(sim, totChance)
-				if totProcced {
-					ohHitSpell.Cast(sim, spellEffect.Target)
-				}
+				deathKnight.threatOfThassarianProc(sim, spellEffect, deathKnight.BloodStrikeMhHit, deathKnight.BloodStrikeOhHit)
+				deathKnight.threatOfThassarianAdjustMetrics(sim, spell, spellEffect, BloodStrikeMHOutcome)
 
-				ToTAdjustMetrics(sim, spell, spellEffect, BloodStrikeMHOutcome)
-
-				if OutcomeEitherWeaponHitOrCrit(BloodStrikeMHOutcome, BloodStrikeOHOutcome) {
+				if deathKnight.outcomeEitherWeaponHitOrCrit(BloodStrikeMHOutcome, BloodStrikeOHOutcome) {
 					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 1, 0, 0)
-					if dkSpellCost.Blood > 0 {
-						if sim.RandomFloat("Blood Of The North") <= botnChance {
-							slot := deathKnight.SpendBloodRune(sim, spell.BloodRuneMetrics())
-							deathKnight.SetRuneAtSlotToState(0, slot, core.RuneState_DeathSpent, core.RuneKind_Death)
-							deathKnight.FlagBloodRuneSlotAsBoTN(slot)
-						} else {
-							dkSpellCost := deathKnight.DetermineOptimalCost(sim, 1, 0, 0)
-							deathKnight.Spend(sim, spell, dkSpellCost)
-						}
-					} else {
-						deathKnight.Spend(sim, spell, dkSpellCost)
-
-					}
+					deathKnight.bloodOfTheNorthProc(sim, spell, dkSpellCost)
 
 					amountOfRunicPower := 10.0
 					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())

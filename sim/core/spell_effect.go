@@ -132,7 +132,10 @@ func (spellEffect *SpellEffect) PhysicalHitChance(unit *Unit, attackTable *Attac
 }
 
 func (spellEffect *SpellEffect) PhysicalCritChance(unit *Unit, spell *Spell, attackTable *AttackTable) float64 {
-	critRating := unit.stats[stats.MeleeCrit] + spellEffect.BonusCritRating + spellEffect.Target.PseudoStats.BonusCritRatingTaken
+	critRating := unit.stats[stats.MeleeCrit] +
+		spellEffect.BonusCritRating +
+		spell.BonusCritRating +
+		spellEffect.Target.PseudoStats.BonusCritRatingTaken
 
 	if spellEffect.ProcMask.Matches(ProcMaskRanged) {
 		critRating += unit.PseudoStats.BonusRangedCritRating
@@ -159,7 +162,10 @@ func (spellEffect *SpellEffect) SpellPower(unit *Unit, spell *Spell) float64 {
 }
 
 func (spellEffect *SpellEffect) SpellCritChance(unit *Unit, spell *Spell) float64 {
-	critRating := float64(0)
+	critRating := spell.BonusCritRating +
+		unit.PseudoStats.BonusSpellCritRating +
+		spellEffect.Target.PseudoStats.BonusCritRatingTaken +
+		spellEffect.Target.PseudoStats.BonusSpellCritRatingTaken
 
 	// periodic spells apply crit from snapshot at time of initial cast if capable of a crit
 	// ignoring units real time crit in this case
@@ -168,7 +174,6 @@ func (spellEffect *SpellEffect) SpellCritChance(unit *Unit, spell *Spell) float6
 	} else {
 		critRating += (unit.GetStat(stats.SpellCrit) + spellEffect.BonusSpellCritRating)
 	}
-	critRating += unit.PseudoStats.BonusSpellCritRating + spellEffect.Target.PseudoStats.BonusCritRatingTaken + spellEffect.Target.PseudoStats.BonusSpellCritRatingTaken
 
 	if spell.SpellSchool.Matches(SpellSchoolFire) {
 		critRating += unit.PseudoStats.BonusFireCritRating
@@ -188,7 +193,7 @@ func (spellEffect *SpellEffect) calculateBaseDamage(sim *Simulation, spell *Spel
 	if spellEffect.BaseDamage.Calculator == nil {
 		return 0
 	} else {
-		return spellEffect.BaseDamage.Calculator(sim, spellEffect, spell) * spellEffect.DamageMultiplier
+		return spellEffect.BaseDamage.Calculator(sim, spellEffect, spell) * spellEffect.DamageMultiplier * spell.DamageMultiplier
 	}
 }
 
@@ -274,6 +279,9 @@ func (spellEffect *SpellEffect) applyAttackerModifiers(sim *Simulation, spell *S
 	if spell.Flags.Matches(SpellFlagAgentReserved1) {
 		spellEffect.Damage *= attacker.PseudoStats.AgentReserved1DamageDealtMultiplier
 	}
+	if spell.Flags.Matches(SpellFlagDisease) {
+		spellEffect.Damage *= attacker.PseudoStats.DiseaseDamageDealtMultiplier
+	}
 
 	spellEffect.Damage *= attacker.PseudoStats.DamageDealtMultiplier
 	if spell.SpellSchool.Matches(SpellSchoolPhysical) {
@@ -308,6 +316,11 @@ func (spellEffect *SpellEffect) applyTargetModifiers(sim *Simulation, spell *Spe
 	spellEffect.Damage *= attackTable.DamageDealtMultiplier
 	spellEffect.Damage *= target.PseudoStats.DamageTakenMultiplier
 	spellEffect.Damage = MaxFloat(0, spellEffect.Damage+target.PseudoStats.BonusDamageTaken)
+
+	if spell.Flags.Matches(SpellFlagDisease) {
+		spellEffect.Damage *= target.PseudoStats.DiseaseDamageTakenMultiplier
+	}
+
 	if spell.SpellSchool.Matches(SpellSchoolPhysical) {
 		if spellEffect.IsPeriodic {
 			spellEffect.Damage *= target.PseudoStats.PeriodicPhysicalDamageTakenMultiplier

@@ -102,6 +102,8 @@ func NewDot(config Dot) *Dot {
 	dot.tickPeriod = dot.TickLength
 	dot.Aura.Duration = dot.TickLength * time.Duration(dot.NumberOfTicks)
 
+	oldOnGain := dot.Aura.OnGain
+	oldOnExpire := dot.Aura.OnExpire
 	dot.Aura.OnGain = func(aura *Aura, sim *Simulation) {
 		dot.TakeSnapshot(sim)
 
@@ -109,11 +111,19 @@ func NewDot(config Dot) *Dot {
 		periodicOptions.Period = dot.tickPeriod
 		dot.tickAction = NewPeriodicAction(sim, periodicOptions)
 		sim.AddPendingAction(dot.tickAction)
+
+		if oldOnGain != nil {
+			oldOnGain(aura, sim)
+		}
 	}
 	dot.Aura.OnExpire = func(aura *Aura, sim *Simulation) {
 		if dot.tickAction != nil {
 			dot.tickAction.Cancel(sim)
 			dot.tickAction = nil
+		}
+
+		if oldOnExpire != nil {
+			oldOnExpire(aura, sim)
 		}
 	}
 

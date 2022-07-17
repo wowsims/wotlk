@@ -27,6 +27,7 @@ func (deathKnight *DeathKnight) registerGhoulFrenzySpell() {
 
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			deathKnight.GhoulFrenzyAura.Activate(sim)
+			deathKnight.Ghoul.GhoulFrenzyAura.Activate(sim)
 
 			dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 0, 1)
 			deathKnight.Spend(sim, spell, dkSpellCost)
@@ -36,7 +37,7 @@ func (deathKnight *DeathKnight) registerGhoulFrenzySpell() {
 		},
 	})
 
-	deathKnight.GhoulFrenzyAura = deathKnight.Ghoul.RegisterAura(core.Aura{
+	deathKnight.GhoulFrenzyAura = deathKnight.RegisterAura(core.Aura{
 		ActionID: core.ActionID{SpellID: 63560},
 		Label:    "Ghoul Frenzy",
 		Duration: time.Second * 30.0,
@@ -44,6 +45,18 @@ func (deathKnight *DeathKnight) registerGhoulFrenzySpell() {
 			if deathKnight.Options.PrecastGhoulFrenzy {
 				deathKnight.GhoulFrenzyAura.Activate(sim)
 				deathKnight.GhoulFrenzyAura.UpdateExpires(sim.CurrentTime + time.Second*20)
+			}
+		},
+	})
+
+	deathKnight.Ghoul.GhoulFrenzyAura = deathKnight.Ghoul.RegisterAura(core.Aura{
+		ActionID: core.ActionID{SpellID: 63560},
+		Label:    "Ghoul Frenzy",
+		Duration: time.Second * 30.0,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			if deathKnight.Options.PrecastGhoulFrenzy {
+				deathKnight.Ghoul.GhoulFrenzyAura.Activate(sim)
+				deathKnight.Ghoul.GhoulFrenzyAura.UpdateExpires(sim.CurrentTime + time.Second*20)
 			}
 		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
@@ -56,5 +69,5 @@ func (deathKnight *DeathKnight) registerGhoulFrenzySpell() {
 }
 
 func (deathKnight *DeathKnight) CanGhoulFrenzy(sim *core.Simulation) bool {
-	return deathKnight.Talents.GhoulFrenzy && deathKnight.CastCostPossible(sim, 0.0, 0, 0, 1) && deathKnight.GhoulFrenzy.IsReady(sim)
+	return deathKnight.Talents.GhoulFrenzy && deathKnight.Ghoul.IsEnabled() && deathKnight.CastCostPossible(sim, 0.0, 0, 0, 1) && deathKnight.GhoulFrenzy.IsReady(sim)
 }

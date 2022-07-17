@@ -57,11 +57,6 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 				GCD:  core.GCDDefault + hunter.latency,
 			},
 			IgnoreHaste: true,
-			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
-				if hunter.LockAndLoadAura.IsActive() {
-					cast.Cost = 0
-				}
-			},
 			CD: core.Cooldown{
 				Timer:    timer,
 				Duration: time.Second * 6,

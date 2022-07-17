@@ -137,6 +137,15 @@ enum WarlockMinorGlyph {
 
 message Warlock {
 	message Rotation {
+		enum Preset {
+			Manual = 0;
+			Automatic = 1;
+		}
+		enum Type {
+			Affliction = 0;
+			Demonology = 1;
+			Destruction = 2;
+		}
 		enum PrimarySpell {
 			UnknownSpell = 0;
 			Shadowbolt = 1;
@@ -151,15 +160,26 @@ message Warlock {
 			Agony = 4;
 			Tongues = 5;
 		}
-		PrimarySpell primary_spell = 1;
+		enum SecondaryDot {
+			NoSecondaryDot = 0;
+			Immolate = 1;
+			UnstableAffliction = 2;
+		}
+		enum SpecSpell {
+			NoSpecSpell = 0;
+			ChaosBolt = 1;
+			Haunt = 2;
+		}
+		Preset preset= 1;
 		Curse curse = 2;
-		bool immolate = 3;
-		bool corruption = 4;
-		bool detonate_seed = 5;
-		bool haunt = 6;
-		bool chaos_bolt = 7;
-		bool unstable_affliction = 8;
+		PrimarySpell primary_spell = 3;
+		SecondaryDot secondary_dot = 4;
+		bool corruption = 5;
+		bool detonate_seed = 6;
+		SpecSpell spec_spell = 7;
+		Type type = 8;
 	}
+
 	Rotation rotation = 1;
 
 	WarlockTalents talents = 2;
@@ -180,7 +200,6 @@ message Warlock {
 		}
 		Armor armor = 1;
 		Summon summon = 2;
-		bool sacrifice_summon = 3;
 	}
 	Options options = 3;
 }

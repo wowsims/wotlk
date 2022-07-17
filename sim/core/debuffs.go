@@ -247,20 +247,12 @@ func CurseOfElementsAura(target *Unit) *Aura {
 }
 
 func EarthAndMoonAura(target *Unit) *Aura {
-	return earthMoonEbonPlaguebringerAura(target, "Earth And Moon", 48511)
-}
-
-func EbonPlaguebringerAura(target *Unit) *Aura {
-	return earthMoonEbonPlaguebringerAura(target, "Ebon Plaguebringer", 51161)
-}
-
-func earthMoonEbonPlaguebringerAura(target *Unit, label string, id int32) *Aura {
 	multiplier := 1.13
 
 	return target.GetOrRegisterAura(Aura{
-		Label:    label,
+		Label:    "Earth And Moon",
 		Tag:      spelldmgtag,
-		ActionID: ActionID{SpellID: id},
+		ActionID: ActionID{SpellID: 48511},
 		OnGain: func(aura *Aura, sim *Simulation) {
 			if !target.HasActiveAuraWithTag(spelldmgtag) {
 				aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier *= multiplier
@@ -278,6 +270,37 @@ func earthMoonEbonPlaguebringerAura(target *Unit, label string, id int32) *Aura 
 				aura.Unit.PseudoStats.ShadowDamageTakenMultiplier /= multiplier
 				aura.Unit.PseudoStats.NatureDamageTakenMultiplier /= multiplier
 			}
+		},
+	})
+}
+
+func EbonPlaguebringerAura(target *Unit) *Aura {
+	magicMultiplier := 1.13
+	diseaseMultiplier := 1.3
+
+	return target.GetOrRegisterAura(Aura{
+		Label:    "Ebon Plaguebringer",
+		Tag:      spelldmgtag,
+		ActionID: ActionID{SpellID: 51161},
+		OnGain: func(aura *Aura, sim *Simulation) {
+			if !target.HasActiveAuraWithTag(spelldmgtag) {
+				aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier *= magicMultiplier
+				aura.Unit.PseudoStats.FireDamageTakenMultiplier *= magicMultiplier
+				aura.Unit.PseudoStats.FrostDamageTakenMultiplier *= magicMultiplier
+				aura.Unit.PseudoStats.ShadowDamageTakenMultiplier *= magicMultiplier
+				aura.Unit.PseudoStats.NatureDamageTakenMultiplier *= magicMultiplier
+			}
+			aura.Unit.PseudoStats.DiseaseDamageTakenMultiplier *= diseaseMultiplier
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			if !target.HasActiveAuraWithTag(spelldmgtag) {
+				aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier /= magicMultiplier
+				aura.Unit.PseudoStats.FireDamageTakenMultiplier /= magicMultiplier
+				aura.Unit.PseudoStats.FrostDamageTakenMultiplier /= magicMultiplier
+				aura.Unit.PseudoStats.ShadowDamageTakenMultiplier /= magicMultiplier
+				aura.Unit.PseudoStats.NatureDamageTakenMultiplier /= magicMultiplier
+			}
+			aura.Unit.PseudoStats.DiseaseDamageTakenMultiplier /= diseaseMultiplier
 		},
 	})
 }
@@ -333,16 +356,36 @@ func GiftOfArthasAura(target *Unit) *Aura {
 	})
 }
 
+const BleedDamageAuraTag = "BleedDamage"
+
 func MangleAura(target *Unit) *Aura {
 	return target.GetOrRegisterAura(Aura{
 		Label:    "Mangle",
+		Tag:      BleedDamageAuraTag,
 		ActionID: ActionID{SpellID: 33876},
 		Duration: time.Second * 12,
+		Priority: 1.3,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.PeriodicPhysicalDamageTakenMultiplier *= 1.3
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.PeriodicPhysicalDamageTakenMultiplier /= 1.3
+		},
+	})
+}
+
+func StampedeAura(target *Unit) *Aura {
+	return target.GetOrRegisterAura(Aura{
+		Label:    "Stampede",
+		Tag:      BleedDamageAuraTag,
+		ActionID: ActionID{SpellID: 57393},
+		Duration: time.Second * 12,
+		Priority: 1.25,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.PeriodicPhysicalDamageTakenMultiplier *= 1.25
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.PeriodicPhysicalDamageTakenMultiplier /= 1.25
 		},
 	})
 }
@@ -737,6 +780,32 @@ func IcyTouchAura(target *Unit, impIcyTouch int32) *Aura {
 			aura.Unit.MultiplyAttackSpeed(sim, inverseMult)
 		},
 	})
+}
+
+const RuneOfRazoriceVulnerabilityTag = "RuneOfRazoriceVulnerability"
+
+func RuneOfRazoriceVulnerabilityAura(target *Unit) *Aura {
+	frostVulnPerStack := 0.02
+	aura := target.GetOrRegisterAura(Aura{
+		Label:     "RuneOfRazoriceVulnerability",
+		Tag:       RuneOfRazoriceVulnerabilityTag,
+		ActionID:  ActionID{SpellID: 53343},
+		Duration:  NeverExpires,
+		MaxStacks: 5,
+		Priority:  1.0 / 1.1,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.SetStacks(sim, 0)
+		},
+		OnStacksChange: func(aura *Aura, sim *Simulation, oldStacks int32, newStacks int32) {
+			if !aura.active {
+				return
+			}
+			oldMultiplier := 1.0 + float64(oldStacks)*frostVulnPerStack
+			newMultiplier := 1.0 + float64(newStacks)*frostVulnPerStack
+			aura.Unit.PseudoStats.FrostDamageTakenMultiplier *= (newMultiplier / oldMultiplier)
+		},
+	})
+	return aura
 }
 
 func InsectSwarmAura(target *Unit) *Aura {
