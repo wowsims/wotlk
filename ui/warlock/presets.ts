@@ -10,7 +10,20 @@ import { Faction } from '/wotlk/core/proto/common.js';
 import { SavedTalents } from '/wotlk/core/proto/ui.js';
 import { Player } from '/wotlk/core/player.js';
 
-import { Warlock, Warlock_Rotation as WarlockRotation, WarlockTalents as WarlockTalents, Warlock_Options as WarlockOptions, Warlock_Rotation_PrimarySpell as PrimarySpell, Warlock_Rotation_SecondaryDot as SecondaryDot, Warlock_Rotation_SpecSpell as SpecSpell, Warlock_Rotation_Curse as Curse, Warlock_Options_Armor as Armor, Warlock_Options_Summon as Summon } from '/wotlk/core/proto/warlock.js';
+import {
+	Warlock,
+	Warlock_Rotation as WarlockRotation,
+	WarlockTalents as WarlockTalents,
+	Warlock_Options as WarlockOptions,
+	Warlock_Rotation_PrimarySpell as PrimarySpell,
+	Warlock_Rotation_SecondaryDot as SecondaryDot,
+	Warlock_Rotation_SpecSpell as SpecSpell,
+	Warlock_Rotation_Curse as Curse,
+	Warlock_Options_Armor as Armor,
+	Warlock_Options_Summon as Summon,
+	WarlockMajorGlyph as MajorGlyph,
+	WarlockMinorGlyph as MinorGlyph,
+} from '/wotlk/core/proto/warlock.js';
 
 import * as Enchants from '/wotlk/core/constants/enchants.js';
 import * as Gems from '/wotlk/core/proto_utils/gems.js';
@@ -24,17 +37,18 @@ import { FelArmor, DemonArmor } from './inputs';
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 
-export const DestructionTalents = {
-	name: 'Destruction',
-	data: SavedTalents.create({
-		talentsString: '-03310030002-05203205220331051335131351',
-	}),
-};
-
 export const AfflictionTalents = {
 	name: 'Affliction',
 	data: SavedTalents.create({
 		talentsString: '2350002030023510253510331151--55000005',
+		glyphs: Glyphs.create({
+			major1: MajorGlyph.GlyphOfQuickDecay,
+			major2: MajorGlyph.GlyphOfLifeTap,
+			major3: MajorGlyph.GlyphOfHaunt,
+			minor1: MinorGlyph.GlyphOfSouls,
+			minor2: MinorGlyph.GlyphOfDrainSoul,
+			minor3: MinorGlyph.GlyphOfEnslaveDemon,
+		}),
 	}),
 };
 
@@ -42,16 +56,40 @@ export const DemonologyTalents = {
 	name: 'Demonology',
 	data: SavedTalents.create({
 		talentsString: '-203203301035012530135201351-550000052',
+		glyphs: Glyphs.create({
+			major1: MajorGlyph.GlyphOfLifeTap,
+			major2: MajorGlyph.GlyphOfQuickDecay,
+			major3: MajorGlyph.GlyphOfMetamorphosis,
+			minor1: MinorGlyph.GlyphOfSouls,
+			minor2: MinorGlyph.GlyphOfDrainSoul,
+			minor3: MinorGlyph.GlyphOfEnslaveDemon,
+		}),
 	}),
 };
 
+export const DestructionTalents = {
+	name: 'Destruction',
+	data: SavedTalents.create({
+		talentsString: '030-03310030003-05203205220331051035031351',
+		glyphs: Glyphs.create({
+			major1: MajorGlyph.GlyphOfConflagrate,
+			major2: MajorGlyph.GlyphOfImp,
+			major3: MajorGlyph.GlyphOfIncinerate,
+			minor1: MinorGlyph.GlyphOfSouls,
+			minor2: MinorGlyph.GlyphOfDrainSoul,
+			minor3: MinorGlyph.GlyphOfEnslaveDemon,
+		}),
+	}),
+};
+
+
 export const AfflictionRotation = WarlockRotation.create({
-	primarySpell: PrimarySpell.Shadowbolt,
-	secondaryDot: SecondaryDot.UnstableAffliction,
-	specSpell: SpecSpell.Haunt,
-	curse: Curse.Agony,
-	corruption: true,
-	detonateSeed: true,
+		primarySpell: PrimarySpell.Shadowbolt,
+		secondaryDot: SecondaryDot.UnstableAffliction,
+		specSpell: SpecSpell.Haunt,
+		curse: Curse.Agony,
+		corruption: true,
+		detonateSeed: true,
 });
 
 export const DemonologyRotation = WarlockRotation.create({
@@ -71,6 +109,14 @@ export const DestructionRotation = WarlockRotation.create({
 	corruption: true,
 	detonateSeed: true,
 });
+
+
+// var defaultDestroMinorGlyphs = &proto.WarlockMinorGlyph{
+// 	WarlockMinorGlyph:
+// 		proto.WarlockMinorGlyph_GlyphOfDrainSoul,
+// 		proto.WarlockMinorGlyph_GlyphOfEnslaveDemon,
+// 		proto.WarlockMinorGlyph_GlyphOfKilrogg,
+// }
 
 export const AfflictionOptions = WarlockOptions.create({
 	armor: Armor.FelArmor,
