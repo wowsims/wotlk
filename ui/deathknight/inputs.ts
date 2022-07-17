@@ -79,7 +79,27 @@ export const PrecastGhoulFrenzy = {
 	},
 };
 
+export const UseDeathAndDecay = {
+	type: 'boolean' as const,
+	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
+	config: {
+		extraCssClasses: [
+			'use-death-and-decay-picker',
+		],
+		label: 'Death and Decay',
+		labelTooltip: 'Use Death and Decay based rotation.',
+		changedEvent: (player: Player<Spec.SpecDeathKnight>) => player.specOptionsChangeEmitter,
+		getValue: (player: Player<Spec.SpecDeathKnight>) => player.getRotation().useDeathAndDecay,
+		setValue: (eventID: EventID, player: Player<Spec.SpecDeathKnight>, newValue: boolean) => {
+			const newRotation = player.getRotation();
+			newRotation.useDeathAndDecay = newValue;
+			player.setRotation(eventID, newRotation);
+		},
+	},
+};
+
 export const DeathKnightRotationConfig = {
 	inputs: [
+		UseDeathAndDecay,
 	],
 };
