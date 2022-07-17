@@ -26,18 +26,18 @@ type Paladin struct {
 	CurrentSeal      *core.Aura
 	CurrentJudgement *core.Aura
 
-	DivinePlea        *core.Spell
-	DivineStorm       *core.Spell
-	Consecration      *core.Spell
-	CrusaderStrike    *core.Spell
-	Exorcism          *core.Spell
-	HolyShield        *core.Spell
-	JudgementOfWisdom *core.Spell
-	JudgementOfLight  *core.Spell
-	SealOfVengeance   *core.Spell
+	DivinePlea          *core.Spell
+	DivineStorm         *core.Spell
+	Consecration        *core.Spell
+	CrusaderStrike      *core.Spell
+	Exorcism            *core.Spell
+	HolyShield          *core.Spell
+	JudgementOfWisdom   *core.Spell
+	JudgementOfLight    *core.Spell
+	SealOfVengeance     *core.Spell
+	SealOfRighteousness *core.Spell
 	// SealOfWisdom        *core.Spell
 	// SealOfLight         *core.Spell
-	// SealOfRighteousness *core.Spell
 
 	ConsecrationDot *core.Dot
 	// SealOfVengeanceDot *core.Dot
@@ -45,7 +45,7 @@ type Paladin struct {
 	HolyShieldAura        *core.Aura
 	JudgementOfWisdomAura *core.Aura
 	JudgementOfLightAura  *core.Aura
-	SealOfVengeanceAura   *core.Aura
+	// SealOfVengeanceAura   *core.Aura
 	// SealOfCommandAura       *core.Aura
 	// SealOfWisdomAura        *core.Aura
 	// SealOfLightAura         *core.Aura
@@ -99,6 +99,7 @@ func (paladin *Paladin) Initialize() {
 	paladin.AutoAttacks.MHEffect.OutcomeApplier = paladin.OutcomeFuncMeleeWhite(paladin.MeleeCritMultiplier())
 
 	paladin.setupSealOfVengeance()
+	paladin.setupSealOfRighteousness()
 	// paladin.setupSealOfTheCrusader()
 	// paladin.setupSealOfWisdom()
 	// paladin.setupSealOfLight()

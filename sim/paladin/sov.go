@@ -222,13 +222,3 @@ func (paladin *Paladin) createSealOfVengeanceDot(multiplier float64) *core.Dot {
 		})),
 	})
 }
-
-func (paladin *Paladin) sealCostReduction() float64 { // this can probably be removed
-	switch paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID {
-	case 22401: // libram of hope
-		return -20
-	case 186067: // communal book of righteousness
-		return -5
-	}
-	return 0
-}
