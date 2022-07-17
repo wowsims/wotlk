@@ -121,6 +121,12 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 				spell = warlock.UnstableAff
 			} else if !warlock.HauntAura.IsActive() && warlock.Haunt.CD.IsReady(sim) {
 				spell = warlock.Haunt
+			} else if sim.IsExecutePhase20() {
+				// if warlock.DrainSoulDot[1].IsActive() {
+				// 	warlock.DrainSoulDot[1].Refresh(sim)
+				// } else {
+					spell = warlock.DrainSoul[1]
+				// }
 			} else {
 				spell = warlock.Shadowbolt
 			}

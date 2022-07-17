@@ -19,6 +19,9 @@ func (warlock *Warlock) registerShadowboltSpell() {
 		BaseDamage:           core.BaseDamageConfigMagic(694.0, 775.0, 0.857*(1+0.04*float64(warlock.Talents.ShadowAndFlame))),
 		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin) / 5)),
 		OnSpellHitDealt:  	  func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.Landed() {
+				return
+			}
 			// ISB debuff
 			if warlock.Talents.ImprovedShadowBolt > 0 {
 				if sim.RandomFloat("ISB") < 0.2 * float64(warlock.Talents.ImprovedShadowBolt) {

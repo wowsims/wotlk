@@ -33,13 +33,20 @@ func (warlock *Warlock) registerHauntSpell() {
 		BaseDamage:           core.BaseDamageConfigMagic(645.0, 753.0, 0.4286),
 		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, core.TernaryFloat64(warlock.Talents.Pandemic, 1, 0))),
 		OnSpellHitDealt:  	  func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.Landed() {
+				return
+			}
+			if !warlock.HauntAura.IsActive() {
+				warlock.HauntAura.Activate(sim)
+			} else {
+				warlock.HauntAura.Refresh(sim)
+			}
 			// Everlasting Affliction Refresh
 			if warlock.CorruptionDot.IsActive() {
 				if sim.RandomFloat("EverlastingAffliction") < 0.2 * float64(warlock.Talents.EverlastingAffliction) {
 					 warlock.CorruptionDot.Refresh(sim)
 				}
 			}
-			warlock.HauntAura.Activate(sim)
 		},
 	}
 

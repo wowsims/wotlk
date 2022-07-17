@@ -110,6 +110,8 @@ func (warlock *Warlock) ApplyTalents() {
 		warlock.applyDeathsEmbrace()
 	}
 
+	warlock.setupDrainSoulExecutePhase()
+
 	if warlock.Talents.MoltenCore > 0 {
 		warlock.setupMoltenCore()
 	}
