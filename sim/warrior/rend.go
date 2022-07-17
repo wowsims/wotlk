@@ -31,7 +31,6 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64) {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeMHSpecial,
 			ThreatMultiplier: 1,
-			IsPeriodic:       true,
 			OutcomeApplier:   warrior.OutcomeFuncMeleeSpecialHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
