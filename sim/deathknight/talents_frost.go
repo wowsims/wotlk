@@ -210,7 +210,7 @@ func (deathKnight *DeathKnight) bloodOfTheNorthWillProc(sim *core.Simulation, bo
 	return ohWillCast
 }
 
-func (deathKnight *DeathKnight) bloodOfTheNorthProc(sim *core.Simulation, spell *core.Spell, runeCost core.DKRuneCost) {
+func (deathKnight *DeathKnight) bloodOfTheNorthProc(sim *core.Simulation, spell *core.Spell, runeCost core.DKRuneCost) bool {
 	if deathKnight.Talents.BloodOfTheNorth > 0 {
 		if runeCost.Blood > 0 {
 			botnChance := deathKnight.bloodOfTheNorthChance()
@@ -225,7 +225,9 @@ func (deathKnight *DeathKnight) bloodOfTheNorthProc(sim *core.Simulation, spell 
 		} else {
 			deathKnight.Spend(sim, spell, runeCost)
 		}
+		return true
 	}
+	return false
 }
 
 func (deathKnight *DeathKnight) threatOfThassarianChance() float64 {

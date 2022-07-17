@@ -301,7 +301,7 @@ func (deathKnight *DeathKnight) reapingWillProc(sim *core.Simulation, reapingCha
 	return ohWillCast
 }
 
-func (deathKnight *DeathKnight) reapingProc(sim *core.Simulation, spell *core.Spell, runeCost core.DKRuneCost) {
+func (deathKnight *DeathKnight) reapingProc(sim *core.Simulation, spell *core.Spell, runeCost core.DKRuneCost) bool {
 	if deathKnight.Talents.Reaping > 0 {
 		if runeCost.Blood > 0 {
 			reapingChance := deathKnight.reapingChance()
@@ -316,5 +316,7 @@ func (deathKnight *DeathKnight) reapingProc(sim *core.Simulation, spell *core.Sp
 		} else {
 			deathKnight.Spend(sim, spell, runeCost)
 		}
+		return true
 	}
+	return false
 }

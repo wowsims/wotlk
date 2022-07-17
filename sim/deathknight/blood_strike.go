@@ -77,8 +77,11 @@ func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
 
 				if deathKnight.outcomeEitherWeaponHitOrCrit(BloodStrikeMHOutcome, BloodStrikeOHOutcome) {
 					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 1, 0, 0)
-					deathKnight.bloodOfTheNorthProc(sim, spell, dkSpellCost)
-					deathKnight.reapingProc(sim, spell, dkSpellCost)
+					if !deathKnight.bloodOfTheNorthProc(sim, spell, dkSpellCost) {
+						if !deathKnight.reapingProc(sim, spell, dkSpellCost) {
+							deathKnight.Spend(sim, spell, dkSpellCost)
+						}
+					}
 
 					amountOfRunicPower := 10.0
 					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
