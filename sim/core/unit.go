@@ -153,6 +153,8 @@ func (unit *Unit) AddStatsDynamic(sim *Simulation, stat stats.Stats) {
 		panic("Not finalized, use AddStats instead!")
 	}
 
+	oldStats := unit.GetStats()
+
 	stat[stats.Mana] = 0 // TODO: Mana needs special treatment
 
 	if stat[stats.MeleeHaste] != 0 {
@@ -180,11 +182,20 @@ func (unit *Unit) AddStatsDynamic(sim *Simulation, stat stats.Stats) {
 	if stat[stats.ArcaneResistance] != 0 || stat[stats.FireResistance] != 0 || stat[stats.FrostResistance] != 0 || stat[stats.NatureResistance] != 0 || stat[stats.ShadowResistance] != 0 {
 		unit.updateResistances()
 	}
+
+	newStats := unit.GetStats()
+	for _, unitAura := range unit.auras {
+		if unitAura.OnStatsChange != nil {
+			unitAura.OnStatsChange(unitAura, sim, oldStats, newStats)
+		}
+	}
 }
 func (unit *Unit) AddStatDynamic(sim *Simulation, stat stats.Stat, amount float64) {
 	if unit.Env == nil || !unit.Env.IsFinalized() {
 		panic("Not finalized, use AddStats instead!")
 	}
+
+	oldStats := unit.GetStats()
 
 	if stat == stats.MeleeHaste {
 		unit.AddMeleeHaste(sim, amount)
@@ -213,6 +224,13 @@ func (unit *Unit) AddStatDynamic(sim *Simulation, stat stats.Stat, amount float6
 		unit.updateResistances()
 	} else if stat == stats.ShadowResistance {
 		unit.updateResistances()
+	}
+
+	newStats := unit.GetStats()
+	for _, unitAura := range unit.auras {
+		if unitAura.OnStatsChange != nil {
+			unitAura.OnStatsChange(unitAura, sim, oldStats, newStats)
+		}
 	}
 }
 
