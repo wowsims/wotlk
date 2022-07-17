@@ -219,13 +219,9 @@ func (deathKnight *DeathKnight) bloodOfTheNorthProc(sim *core.Simulation, spell 
 				slot := deathKnight.SpendBloodRune(sim, spell.BloodRuneMetrics())
 				deathKnight.SetRuneAtSlotToState(0, slot, core.RuneState_DeathSpent, core.RuneKind_Death)
 				deathKnight.SetAsGeneratedByReapingOrBoTN(slot)
-			} else {
-				deathKnight.Spend(sim, spell, runeCost)
+				return true
 			}
-		} else {
-			deathKnight.Spend(sim, spell, runeCost)
 		}
-		return true
 	}
 	return false
 }

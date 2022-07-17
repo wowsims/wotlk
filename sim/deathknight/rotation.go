@@ -46,11 +46,13 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 			} else if (!deathKnight.BloodPlagueDisease.IsActive() || deathKnight.BloodPlagueDisease.RemainingDuration(sim) < 6*time.Second) && deathKnight.CanPlagueStrike(sim) {
 				deathKnight.PlagueStrike.Cast(sim, target)
 			} else {
-				// Desolation check
-				if deathKnight.Talents.Desolation > 0 && !deathKnight.DesolationAura.IsActive() {
-					if deathKnight.CanBloodStrike(sim) {
-						deathKnight.BloodStrike.Cast(sim, target)
-					}
+				if deathKnight.PresenceMatches(UnholyPresence) && !deathKnight.SummonGargoyle.CD.IsReady(sim) && deathKnight.CanBloodPresence(sim) {
+					// Swap to blood after gargoyle
+					deathKnight.BloodPressence.Cast(sim, target)
+					deathKnight.WaitUntil(sim, sim.CurrentTime+1)
+				} else if deathKnight.Talents.Desolation > 0 && !deathKnight.DesolationAura.IsActive() && deathKnight.CanBloodStrike(sim) {
+					// Desolation check
+					deathKnight.BloodStrike.Cast(sim, target)
 				} else {
 					if deathKnight.Rotation.UseDeathAndDecay {
 						// DW Rota

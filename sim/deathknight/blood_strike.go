@@ -63,6 +63,9 @@ func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
 			},
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				cast.GCD = deathKnight.getModifiedGCD()
+			},
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{

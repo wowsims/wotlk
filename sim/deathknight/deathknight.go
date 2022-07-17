@@ -90,8 +90,11 @@ type DeathKnight struct {
 	WanderingPlague   *core.Spell
 
 	// Presences
+	BloodPressence     *core.Spell
 	BloodPresenceAura  *core.Aura
+	FrostPressence     *core.Spell
 	FrostPresenceAura  *core.Aura
+	UnholyPressence    *core.Spell
 	UnholyPresenceAura *core.Aura
 
 	// Debuffs
@@ -151,8 +154,8 @@ func (deathKnight *DeathKnight) Initialize() {
 
 func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
 	deathKnight.ResetRunicPowerBar(sim)
-	deathKnight.BloodPresenceAura.Activate(sim)
-	deathKnight.Presence = BloodPresence
+	deathKnight.UnholyPresenceAura.Activate(sim)
+	deathKnight.Presence = UnholyPresence
 }
 
 func (deathKnight *DeathKnight) HasMajorGlyph(glyph proto.DeathKnightMajorGlyph) bool {

@@ -17,7 +17,10 @@ func (deathKnight *DeathKnight) registerDeathCoilSpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:  core.GCDDefault,
-				Cost: 40.0,
+				Cost: 40,
+			},
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				cast.GCD = deathKnight.getModifiedGCD()
 			},
 		},
 

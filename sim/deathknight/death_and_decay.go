@@ -43,6 +43,9 @@ func (deathKnight *DeathKnight) registerDeathAndDecaySpell() {
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
 			},
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				cast.GCD = deathKnight.getModifiedGCD()
+			},
 			CD: core.Cooldown{
 				Timer:    deathKnight.NewTimer(),
 				Duration: time.Second*30 - time.Second*5*time.Duration(deathKnight.Talents.Morbidity),
