@@ -19,7 +19,7 @@ func (warlock *Warlock) registerIncinerateSpell() {
 			(1 + 0.05*core.TernaryFloat64(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfIncinerate), 1, 0)),
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
 		BaseDamage:       warlock.incinerateDamage(),
-		OutcomeApplier:   warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
+		OutcomeApplier:   warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin) / 5)),
 	}
 
 	baseCost := 0.14 * warlock.BaseMana
@@ -71,9 +71,6 @@ func (warlock *Warlock) incinerateDamage() core.BaseDamageConfig {
 			if warlock.ImmolateDot.IsActive() {
 				normalDamage += 157 //  145 to 169 averages to 157
 				normalDamage *= 1 + 0.02*float64(warlock.Talents.FireAndBrimstone)
-			}
-			if warlock.MoltenCoreAura.IsActive() {
-				normalDamage *= 1 + 0.06*float64(warlock.Talents.MoltenCore)
 			}
 			return normalDamage
 		}

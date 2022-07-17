@@ -37,26 +37,14 @@ export const DemonologyTalents = {
 	data: '-203203301035012530135201351-550000052',
 };
 
-
-export const DestructionRotation = {
-	name: 'Destruction',
-	rotation: WarlockRotation.create({
-		primarySpell: PrimarySpell.Incinerate,
-		secondaryDot: SecondaryDot.Immolate,
-		specSpell: SpecSpell.ChaosBolt,
-		curse: Curse.Doom,
-		detonateSeed: true,
-	})
-};
-
 export const AfflictionRotation = {
 	name: 'Affliction',
 	rotation: WarlockRotation.create({
 		primarySpell: PrimarySpell.Shadowbolt,
 		secondaryDot: SecondaryDot.UnstableAffliction,
-		corruption: true,
 		specSpell: SpecSpell.Haunt,
-		curse: Curse.Doom,
+		curse: Curse.Agony,
+		corruption: true,
 		detonateSeed: true,
 	})
 };
@@ -66,17 +54,24 @@ export const DemonologyRotation = {
 	rotation: WarlockRotation.create({
 		primarySpell: PrimarySpell.Shadowbolt,
 		secondaryDot: SecondaryDot.Immolate,
-		corruption: true,
 		specSpell: SpecSpell.NoSpecSpell,
-		curse: Curse.Elements,
+		curse: Curse.Doom,
+		corruption: true,
 		detonateSeed: true,
 	})
 };
 
-export const DestructionOptions = WarlockOptions.create({
-	armor: Armor.FelArmor,
-	summon: Summon.Imp,
-});
+export const DestructionRotation = {
+	name: 'Destruction',
+	rotation: WarlockRotation.create({
+		primarySpell: PrimarySpell.Incinerate,
+		secondaryDot: SecondaryDot.Immolate,
+		specSpell: SpecSpell.ChaosBolt,
+		curse: Curse.Doom,
+		corruption: true,
+		detonateSeed: true,
+	})
+};
 
 export const AfflictionOptions = WarlockOptions.create({
 	armor: Armor.FelArmor,
@@ -86,6 +81,11 @@ export const AfflictionOptions = WarlockOptions.create({
 export const DemonologyOptions = WarlockOptions.create({
 	armor: Armor.FelArmor,
 	summon: Summon.Felguard,
+});
+
+export const DestructionOptions = WarlockOptions.create({
+	armor: Armor.FelArmor,
+	summon: Summon.Imp,
 });
 
 export const DefaultConsumes = Consumes.create({

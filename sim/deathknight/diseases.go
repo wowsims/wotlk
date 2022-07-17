@@ -23,6 +23,10 @@ func (deathKnight *DeathKnight) countActiveDiseases() int {
 	return count
 }
 
+func (deathKnight *DeathKnight) diseaseMultiplierBonus(multiplier float64) float64 {
+	return 1.0 + float64(deathKnight.countActiveDiseases())*multiplier
+}
+
 func (deathKnight *DeathKnight) registerDiseaseDots() {
 	deathKnight.registerFrostFever()
 	deathKnight.registerBloodPlague()
@@ -31,11 +35,6 @@ func (deathKnight *DeathKnight) registerDiseaseDots() {
 func (deathKnight *DeathKnight) registerFrostFever() {
 	actionID := core.ActionID{SpellID: 55095}
 	target := deathKnight.CurrentTarget
-
-	glyphDamageBonus := 1.0
-	if deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfIcyTouch) {
-		glyphDamageBonus = 1.2
-	}
 
 	deathKnight.FrostFeverDisease = core.NewDot(core.Dot{
 		Aura: target.RegisterAura(core.Aura{
@@ -47,7 +46,7 @@ func (deathKnight *DeathKnight) registerFrostFever() {
 
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1,
+			DamageMultiplier: core.TernaryFloat64(deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfIcyTouch), 1.2, 1.0),
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
 			OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
@@ -55,9 +54,9 @@ func (deathKnight *DeathKnight) registerFrostFever() {
 			},
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return ((127.0 + 80.0*0.32) + hitEffect.MeleeAttackPower(spell.Unit)*0.055) * glyphDamageBonus *
-						core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 1.0+0.02*float64(deathKnight.Talents.RageOfRivendare), 1.0) *
-						core.TernaryFloat64(deathKnight.DiseasesAreActive(), 1.0+0.05*float64(deathKnight.Talents.TundraStalker), 1.0)
+					return ((127.0 + 80.0*0.32) + deathKnight.applyImpurity(hitEffect, spell.Unit)*0.055) *
+						deathKnight.rageOfRivendareBonus() *
+						deathKnight.tundraStalkerBonus()
 				},
 				TargetSpellCoefficient: 1,
 			},
@@ -97,9 +96,9 @@ func (deathKnight *DeathKnight) registerBloodPlague() {
 			},
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return ((127.0 + 80.0*0.32) + hitEffect.MeleeAttackPower(spell.Unit)*0.055) *
-						core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 1.0+0.02*float64(deathKnight.Talents.RageOfRivendare), 1.0) *
-						core.TernaryFloat64(deathKnight.DiseasesAreActive(), 1.0+0.05*float64(deathKnight.Talents.TundraStalker), 1.0)
+					return ((127.0 + 80.0*0.32) + deathKnight.applyImpurity(hitEffect, spell.Unit)*0.055) *
+						deathKnight.rageOfRivendareBonus() *
+						deathKnight.tundraStalkerBonus()
 				},
 				TargetSpellCoefficient: 1,
 			},
