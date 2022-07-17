@@ -5,11 +5,11 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-var PlayerOptionsArmsSlam = &proto.Player_Warrior{
+var PlayerOptionsArms = &proto.Player_Warrior{
 	Warrior: &proto.Warrior{
 		Talents:  ArmsTalents,
 		Options:  warriorOptions,
-		Rotation: armsSlamRotation,
+		Rotation: armsRotation,
 	},
 }
 
@@ -83,7 +83,7 @@ var FuryTalents = &proto.WarriorTalents{
 	TitansGrip:              true,
 }
 
-var armsSlamRotation = &proto.Warrior_Rotation{
+var armsRotation = &proto.Warrior_Rotation{
 	UseRend: true,
 	UseMs:   true,
 
