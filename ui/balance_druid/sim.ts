@@ -218,8 +218,6 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 				// Preset talents that the user can quickly select.
 				talents: [
 					Presets.StandardTalents,
-					Presets.DreamstateTalents,
-					Presets.RestoTalents,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [

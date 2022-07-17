@@ -85,7 +85,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,
 				// Default rotation settings.
-				rotation: Presets.AfflictionRotation.rotation,
+				rotation: Presets.AfflictionRotation,
 				// Default talents.
 				talents: Presets.AfflictionTalents.data,
 				// Default spec-specific settings.

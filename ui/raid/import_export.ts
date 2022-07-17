@@ -738,7 +738,8 @@ class WCLSimPlayer implements wclSimPlayer {
 
 		player = withSpecProto(this.spec, player, matchingPreset.rotation, specFuncs.talentsCreate(), matchingPreset.specOptions);
 
-		player.talentsString = matchingPreset.talents;
+		player.talentsString = matchingPreset.talents.talentsString;
+		player.glyphs = matchingPreset.talents.glyphs;
 		player.consumes = matchingPreset.consumes;
 
 		player.name = this.name;
@@ -852,7 +853,7 @@ class WCLSimPlayer implements wclSimPlayer {
 				let presetTalents = [0, 0, 0];
 				let talentIdx = 0;
 				// First sum up the number of talents per tree for preset.
-				Array.from(preset.talents).forEach((v) => {
+				Array.from(preset.talents.talentsString).forEach((v) => {
 					if (v == '-') {
 						talentIdx++;
 						return;

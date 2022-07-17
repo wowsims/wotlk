@@ -100,17 +100,17 @@ export const MageRotationConfig = {
 
 					TypedEvent.freezeAllAndDo(() => {
 						if (newRotation.type == RotationType.Arcane) {
-							player.setTalentsString(eventID, Presets.ArcaneTalents.data);
+							player.setTalentsString(eventID, Presets.ArcaneTalents.data.talentsString);
 							if (!newRotation.arcane) {
 								newRotation.arcane = ArcaneRotation.clone(Presets.DefaultArcaneRotation.arcane!);
 							}
 						} else if (newRotation.type == RotationType.Fire) {
-							player.setTalentsString(eventID, Presets.FireTalents.data);
+							player.setTalentsString(eventID, Presets.FireTalents.data.talentsString);
 							if (!newRotation.fire) {
 								newRotation.fire = FireRotation.clone(Presets.DefaultFireRotation.fire!);
 							}
 						} else {
-							player.setTalentsString(eventID, Presets.DeepFrostTalents.data);
+							player.setTalentsString(eventID, Presets.DeepFrostTalents.data.talentsString);
 							if (!newRotation.frost) {
 								newRotation.frost = FrostRotation.clone(Presets.DefaultFrostRotation.frost!);
 							}

@@ -275,33 +275,33 @@ export const WarlockRotationConfig = {
 					newRotation.preset = RotationPreset.Automatic;
 					TypedEvent.freezeAllAndDo(() => {
 						if (newRotation.type == RotationType.Affliction) {
-							player.setTalentsString(eventID, Presets.AfflictionTalents.data);
-							newRotation.primarySpell = Presets.AfflictionRotation.rotation.primarySpell
-							newRotation.secondaryDot = Presets.AfflictionRotation.rotation.secondaryDot
-							newRotation.specSpell = Presets.AfflictionRotation.rotation.specSpell
-							newRotation.curse = Presets.AfflictionRotation.rotation.curse
-							newRotation.corruption = Presets.AfflictionRotation.rotation.corruption
-							newRotation.detonateSeed = Presets.AfflictionRotation.rotation.detonateSeed
+							player.setTalentsString(eventID, Presets.AfflictionTalents.data.talentsString);
+							newRotation.primarySpell = Presets.AfflictionRotation.primarySpell
+							newRotation.secondaryDot = Presets.AfflictionRotation.secondaryDot
+							newRotation.specSpell = Presets.AfflictionRotation.specSpell
+							newRotation.curse = Presets.AfflictionRotation.curse
+							newRotation.corruption = Presets.AfflictionRotation.corruption
+							newRotation.detonateSeed = Presets.AfflictionRotation.detonateSeed
 							newOptions.summon = Presets.AfflictionOptions.summon
 							newOptions.armor = Presets.AfflictionOptions.armor
 						} else if (newRotation.type == RotationType.Demonology) {
-							player.setTalentsString(eventID, Presets.DemonologyTalents.data);
-							newRotation.primarySpell = Presets.DemonologyRotation.rotation.primarySpell
-							newRotation.secondaryDot = Presets.DemonologyRotation.rotation.secondaryDot
-							newRotation.specSpell = Presets.DemonologyRotation.rotation.specSpell
-							newRotation.curse = Presets.DemonologyRotation.rotation.curse
-							newRotation.corruption = Presets.DemonologyRotation.rotation.corruption
-							newRotation.detonateSeed = Presets.DemonologyRotation.rotation.detonateSeed
+							player.setTalentsString(eventID, Presets.DemonologyTalents.data.talentsString);
+							newRotation.primarySpell = Presets.DemonologyRotation.primarySpell
+							newRotation.secondaryDot = Presets.DemonologyRotation.secondaryDot
+							newRotation.specSpell = Presets.DemonologyRotation.specSpell
+							newRotation.curse = Presets.DemonologyRotation.curse
+							newRotation.corruption = Presets.DemonologyRotation.corruption
+							newRotation.detonateSeed = Presets.DemonologyRotation.detonateSeed
 							newOptions.summon = Presets.DemonologyOptions.summon
 							newOptions.armor = Presets.DemonologyOptions.armor
 						} else {
-							player.setTalentsString(eventID, Presets.DestructionTalents.data);
-							newRotation.primarySpell = Presets.DestructionRotation.rotation.primarySpell
-							newRotation.secondaryDot = Presets.DestructionRotation.rotation.secondaryDot
-							newRotation.specSpell = Presets.DestructionRotation.rotation.specSpell
-							newRotation.curse = Presets.DestructionRotation.rotation.curse
-							newRotation.corruption = Presets.DestructionRotation.rotation.corruption
-							newRotation.detonateSeed = Presets.DestructionRotation.rotation.detonateSeed
+							player.setTalentsString(eventID, Presets.DestructionTalents.data.talentsString);
+							newRotation.primarySpell = Presets.DestructionRotation.primarySpell
+							newRotation.secondaryDot = Presets.DestructionRotation.secondaryDot
+							newRotation.specSpell = Presets.DestructionRotation.specSpell
+							newRotation.curse = Presets.DestructionRotation.curse
+							newRotation.corruption = Presets.DestructionRotation.corruption
+							newRotation.detonateSeed = Presets.DestructionRotation.detonateSeed
 							newOptions.summon = Presets.DestructionOptions.summon
 							newOptions.armor = Presets.DestructionOptions.armor
 						}
