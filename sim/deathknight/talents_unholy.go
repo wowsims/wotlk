@@ -283,3 +283,38 @@ func (deathKnight *DeathKnight) applyUnholyBlight() {
 
 	deathKnight.UnholyBlightDot.Spell = deathKnight.UnholyBlightSpell
 }
+
+func (deathKnight *DeathKnight) reapingChance() float64 {
+	reapingChance := 0.0
+	if deathKnight.Talents.Reaping == 1 {
+		reapingChance = 0.33
+	} else if deathKnight.Talents.Reaping == 2 {
+		reapingChance = 0.66
+	} else if deathKnight.Talents.Reaping == 3 {
+		reapingChance = 1.0
+	}
+	return reapingChance
+}
+
+func (deathKnight *DeathKnight) reapingWillProc(sim *core.Simulation, reapingChance float64) bool {
+	ohWillCast := sim.RandomFloat("Reaping") <= reapingChance
+	return ohWillCast
+}
+
+func (deathKnight *DeathKnight) reapingProc(sim *core.Simulation, spell *core.Spell, runeCost core.DKRuneCost) {
+	if deathKnight.Talents.Reaping > 0 {
+		if runeCost.Blood > 0 {
+			reapingChance := deathKnight.reapingChance()
+
+			if deathKnight.reapingWillProc(sim, reapingChance) {
+				slot := deathKnight.SpendBloodRune(sim, spell.BloodRuneMetrics())
+				deathKnight.SetRuneAtSlotToState(0, slot, core.RuneState_DeathSpent, core.RuneKind_Death)
+				deathKnight.SetAsGeneratedByReapingOrBoTN(slot)
+			} else {
+				deathKnight.Spend(sim, spell, runeCost)
+			}
+		} else {
+			deathKnight.Spend(sim, spell, runeCost)
+		}
+	}
+}

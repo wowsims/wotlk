@@ -10,8 +10,8 @@ func RunesAtleastOneOfState(sim *Simulation, runes *[2]Rune, runeState RuneState
 	return runes[0].state == runeState || runes[1].state == runeState
 }
 
-func (rp *runicPowerBar) FlagBloodRuneSlotAsBoTN(slot int32) {
-	rp.bloodRunes[slot].botnFlag = true
+func (rp *runicPowerBar) SetAsGeneratedByReapingOrBoTN(slot int32) {
+	rp.bloodRunes[slot].generatedByReapingOrBoTN = true
 }
 
 // TODO: Simplify this, its definitely possible

@@ -143,6 +143,7 @@ func (deathKnight *DeathKnight) Initialize() {
 	deathKnight.registerGhoulFrenzySpell()
 	deathKnight.registerBoneShieldSpell()
 	deathKnight.registerUnbreakableArmorSpell()
+	//deathKnight.registerIceboundFortitudeSpell()
 
 	deathKnight.registerRaiseDeadCD()
 	deathKnight.registerSummonGargoyleCD()

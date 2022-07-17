@@ -45,6 +45,20 @@ export const FrostTalents = {
 	}),
 };
 
+export const FrostUnholyTalents = {
+	name: 'Frost Unholy',
+	data: SavedTalents.create({
+		talentsString: '01-32002350351203012300033101351-230200305003',
+		glyphs: Glyphs.create({
+			major1: DeathKnightMajorGlyph.GlyphOfObliterate,
+			major2: DeathKnightMajorGlyph.GlyphOfFrostStrike,
+			major3: DeathKnightMajorGlyph.GlyphOfDisease,
+			minor1: DeathKnightMinorGlyph.GlyphOfHornOfWinter,
+			minor2: DeathKnightMinorGlyph.GlyphOfBloodTap,
+			minor3: DeathKnightMinorGlyph.GlyphOfRaiseDead,
+		}),
+	}),
+};
 
 export const UnholyDualWieldTalents = {
 	name: 'Unholy Dual Wield Dps',

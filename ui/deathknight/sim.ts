@@ -226,6 +226,7 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				// Preset talents that the user can quickly select.
 				talents: [
 					Presets.FrostTalents,
+					Presets.FrostUnholyTalents,
 					Presets.UnholyDualWieldTalents,
 				],
 				// Preset gear configurations that the user can quickly select.

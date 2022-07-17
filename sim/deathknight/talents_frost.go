@@ -211,18 +211,20 @@ func (deathKnight *DeathKnight) bloodOfTheNorthWillProc(sim *core.Simulation, bo
 }
 
 func (deathKnight *DeathKnight) bloodOfTheNorthProc(sim *core.Simulation, spell *core.Spell, runeCost core.DKRuneCost) {
-	botnChance := deathKnight.bloodOfTheNorthChance()
+	if deathKnight.Talents.BloodOfTheNorth > 0 {
+		if runeCost.Blood > 0 {
+			botnChance := deathKnight.bloodOfTheNorthChance()
 
-	if runeCost.Blood > 0 {
-		if deathKnight.bloodOfTheNorthWillProc(sim, botnChance) {
-			slot := deathKnight.SpendBloodRune(sim, spell.BloodRuneMetrics())
-			deathKnight.SetRuneAtSlotToState(0, slot, core.RuneState_DeathSpent, core.RuneKind_Death)
-			deathKnight.FlagBloodRuneSlotAsBoTN(slot)
+			if deathKnight.bloodOfTheNorthWillProc(sim, botnChance) {
+				slot := deathKnight.SpendBloodRune(sim, spell.BloodRuneMetrics())
+				deathKnight.SetRuneAtSlotToState(0, slot, core.RuneState_DeathSpent, core.RuneKind_Death)
+				deathKnight.SetAsGeneratedByReapingOrBoTN(slot)
+			} else {
+				deathKnight.Spend(sim, spell, runeCost)
+			}
 		} else {
 			deathKnight.Spend(sim, spell, runeCost)
 		}
-	} else {
-		deathKnight.Spend(sim, spell, runeCost)
 	}
 }
 
