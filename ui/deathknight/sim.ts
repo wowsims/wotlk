@@ -97,7 +97,6 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
 					windfuryTotem: TristateEffect.TristateEffectImproved,
 					leaderOfThePack: TristateEffect.TristateEffectImproved,
-					unleashedRage: true,
 					abominationsMight: true,
 					icyTalons: true,
 				}),
@@ -116,7 +115,6 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 					faerieFire: TristateEffect.TristateEffectImproved,
 					judgementOfWisdom: true,
 					misery: true,
-					huntersMark: TristateEffect.TristateEffectImproved,
 				}),
 			},
 
@@ -133,6 +131,8 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				IconInputs.LeaderOfThePack,
 				IconInputs.MoonkinAura,
 				IconInputs.TrueshotAura,
+				IconInputs.AbominationsMight,
+				IconInputs.IcyTalons,
 			],
 			partyBuffInputs: [
 			],
@@ -145,12 +145,12 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 			debuffInputs: [
 				IconInputs.BloodFrenzy,
 				IconInputs.JudgementOfWisdom,
-				IconInputs.HuntersMark,
 				IconInputs.FaerieFire,
 				IconInputs.SunderArmor,
 				IconInputs.ExposeArmor,
 				IconInputs.CurseOfWeakness,
 				IconInputs.CurseOfElements,
+				IconInputs.EbonPlagueBringer,
 				IconInputs.Misery,
 				IconInputs.ImprovedScorch,
 				IconInputs.WintersChill,
@@ -205,6 +205,8 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 			otherInputs: {
 				inputs: [
 					DeathKnightInputs.StartingRunicPower,
+					DeathKnightInputs.PetUptime,
+					DeathKnightInputs.PrecastGhoulFrenzy,
 
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
@@ -218,10 +220,6 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
 				showExecuteProportion: false,
 			},
-
-			// If true, the talents on the talents tab will not be individually modifiable by the user.
-			// Note that the use can still pick between preset talents, if there is more than 1.
-			freezeTalents: false,
 
 			presets: {
 				// Preset talents that the user can quickly select.

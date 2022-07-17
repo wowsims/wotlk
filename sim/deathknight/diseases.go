@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -20,6 +21,10 @@ func (deathKnight *DeathKnight) countActiveDiseases() int {
 		count++
 	}
 	return count
+}
+
+func (deathKnight *DeathKnight) diseaseMultiplierBonus(multiplier float64) float64 {
+	return 1.0 + float64(deathKnight.countActiveDiseases())*multiplier
 }
 
 func (deathKnight *DeathKnight) registerDiseaseDots() {
@@ -41,27 +46,17 @@ func (deathKnight *DeathKnight) registerFrostFever() {
 
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1,
+			DamageMultiplier: core.TernaryFloat64(deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfIcyTouch), 1.2, 1.0),
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
 			OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if deathKnight.Talents.WanderingPlague == 0 {
-					return
-				}
-
-				critRating := spell.Unit.GetStats()[stats.MeleeCrit] + spellEffect.BonusCritRating + spellEffect.Target.PseudoStats.BonusCritRatingTaken
-				critRating += spell.Unit.PseudoStats.BonusMeleeCritRating
-				critChance := critRating / (core.CritRatingPerCritChance * 100)
-				if sim.RandomFloat("Wandering Plague Roll") < critChance {
-					deathKnight.LastDiseaseDamage = spellEffect.Damage * float64(deathKnight.Talents.WanderingPlague) * 0.33
-					deathKnight.WanderingPlague.Cast(sim, spellEffect.Target)
-				}
+				deathKnight.doWanderingPlague(sim, spell, spellEffect)
 			},
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return ((127.0 + 80.0*0.32) + hitEffect.MeleeAttackPower(spell.Unit)*0.055) * (1.0 +
-						core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 0.02*float64(deathKnight.Talents.RageOfRivendare), 0.0) +
-						core.TernaryFloat64(deathKnight.DiseasesAreActive(), 0.05*float64(deathKnight.Talents.TundraStalker), 0.0))
+					return ((127.0 + 80.0*0.32) + deathKnight.applyImpurity(hitEffect, spell.Unit)*0.055) *
+						deathKnight.rageOfRivendareBonus() *
+						deathKnight.tundraStalkerBonus()
 				},
 				TargetSpellCoefficient: 1,
 			},
@@ -72,6 +67,7 @@ func (deathKnight *DeathKnight) registerFrostFever() {
 	deathKnight.FrostFeverSpell = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolFrost,
+		Flags:        core.SpellFlagDisease,
 		ApplyEffects: core.ApplyEffectFuncDot(deathKnight.FrostFeverDisease),
 	})
 
@@ -96,23 +92,13 @@ func (deathKnight *DeathKnight) registerBloodPlague() {
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
 			OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if deathKnight.Talents.WanderingPlague == 0 {
-					return
-				}
-
-				critRating := spell.Unit.GetStats()[stats.MeleeCrit] + spellEffect.BonusCritRating + spellEffect.Target.PseudoStats.BonusCritRatingTaken
-				critRating += spell.Unit.PseudoStats.BonusMeleeCritRating
-				critChance := critRating / (core.CritRatingPerCritChance * 100)
-				if sim.RandomFloat("Wandering Plague Roll") < critChance {
-					deathKnight.LastDiseaseDamage = spellEffect.Damage * float64(deathKnight.Talents.WanderingPlague) * 0.33
-					deathKnight.WanderingPlague.Cast(sim, spellEffect.Target)
-				}
+				deathKnight.doWanderingPlague(sim, spell, spellEffect)
 			},
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return ((127.0 + 80.0*0.32) + hitEffect.MeleeAttackPower(spell.Unit)*0.055) * (1.0 +
-						core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 0.02*float64(deathKnight.Talents.RageOfRivendare), 0.0) +
-						core.TernaryFloat64(deathKnight.DiseasesAreActive(), 0.05*float64(deathKnight.Talents.TundraStalker), 0.0))
+					return ((127.0 + 80.0*0.32) + deathKnight.applyImpurity(hitEffect, spell.Unit)*0.055) *
+						deathKnight.rageOfRivendareBonus() *
+						deathKnight.tundraStalkerBonus()
 				},
 				TargetSpellCoefficient: 1,
 			},
@@ -123,8 +109,23 @@ func (deathKnight *DeathKnight) registerBloodPlague() {
 	deathKnight.BloodPlagueSpell = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolShadow,
+		Flags:        core.SpellFlagDisease,
 		ApplyEffects: core.ApplyEffectFuncDot(deathKnight.BloodPlagueDisease),
 	})
 
 	deathKnight.BloodPlagueDisease.Spell = deathKnight.BloodPlagueSpell
+}
+
+func (deathKnight *DeathKnight) doWanderingPlague(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+	if deathKnight.Talents.WanderingPlague == 0 {
+		return
+	}
+
+	critRating := spell.Unit.GetStats()[stats.MeleeCrit] + spellEffect.BonusCritRating + spellEffect.Target.PseudoStats.BonusCritRatingTaken
+	critRating += spell.Unit.PseudoStats.BonusMeleeCritRating
+	critChance := critRating / (core.CritRatingPerCritChance * 100)
+	if sim.RandomFloat("Wandering Plague Roll") < critChance {
+		deathKnight.LastDiseaseDamage = spellEffect.Damage
+		deathKnight.WanderingPlague.Cast(sim, spellEffect.Target)
+	}
 }

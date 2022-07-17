@@ -17,6 +17,31 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 			Label:    "Improved Steady Shot",
 			ActionID: core.ActionID{SpellID: 53220},
 			Duration: time.Second * 12,
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				hunter.AimedShot.DamageMultiplier *= 1.15
+				hunter.AimedShot.CostMultiplier -= 0.2
+				hunter.ArcaneShot.DamageMultiplier *= 1.15
+				hunter.ArcaneShot.CostMultiplier -= 0.2
+				if hunter.ChimeraShot != nil {
+					hunter.ChimeraShot.DamageMultiplier *= 1.15
+					hunter.ChimeraShot.CostMultiplier -= 0.2
+				}
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				hunter.AimedShot.DamageMultiplier /= 1.15
+				hunter.AimedShot.CostMultiplier += 0.2
+				hunter.ArcaneShot.DamageMultiplier /= 1.15
+				hunter.ArcaneShot.CostMultiplier += 0.2
+				if hunter.ChimeraShot != nil {
+					hunter.ChimeraShot.DamageMultiplier /= 1.15
+					hunter.ChimeraShot.CostMultiplier += 0.2
+				}
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if spell == hunter.AimedShot || spell == hunter.ArcaneShot || spell == hunter.ChimeraShot {
+					aura.Deactivate(sim)
+				}
+			},
 		})
 	}
 
@@ -58,7 +83,7 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 			BaseDamage: core.WrapBaseDamageConfig(
 				core.BaseDamageConfig{
 					Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-						return (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.2 +
+						return (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.1 +
 							hunter.AutoAttacks.Ranged.BaseDamage(sim)*2.8/hunter.AutoAttacks.Ranged.SwingSpeed +
 							252
 					},
@@ -91,5 +116,5 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 }
 
 func (hunter *Hunter) SteadyShotCastTime() time.Duration {
-	return time.Duration(float64(time.Millisecond*1500)/hunter.RangedSwingSpeed()) + hunter.latency
+	return time.Duration(float64(time.Millisecond*2000)/hunter.RangedSwingSpeed()) + hunter.latency
 }

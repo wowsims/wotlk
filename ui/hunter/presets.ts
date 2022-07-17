@@ -2,16 +2,22 @@ import { Consumes } from '/wotlk/core/proto/common.js';
 import { EquipmentSpec } from '/wotlk/core/proto/common.js';
 import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
+import { Glyphs } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
 import { Player } from '/wotlk/core/player.js';
+import { SavedTalents } from '/wotlk/core/proto/ui.js';
+import { ferocityDefault } from '/wotlk/core/talents/hunter_pet.js';
 
 import {
 	Hunter_Rotation as HunterRotation,
-	Hunter_Rotation_WeaveType as WeaveType,
+	//Hunter_Rotation_WeaveType as WeaveType,
+	Hunter_Rotation_StingType as StingType,
 	Hunter_Options as HunterOptions,
 	Hunter_Options_Ammo as Ammo,
 	Hunter_Options_PetType as PetType,
+	HunterMajorGlyph as MajorGlyph,
+	HunterMinorGlyph as MinorGlyph,
 } from '/wotlk/core/proto/hunter.js';
 
 import * as Tooltips from '/wotlk/core/constants/tooltips.js';
@@ -23,46 +29,68 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 export const BeastMasteryTalents = {
-	name: 'BM',
-	// TODO
-	data: '5-035335001230013233105000351-4',
+	name: 'Beast Mastery',
+	data: SavedTalents.create({
+		talentsString: '51200201505112243120531251-00530513',
+		glyphs: Glyphs.create({
+			major1: MajorGlyph.GlyphOfBestialWrath,
+			major2: MajorGlyph.GlyphOfSteadyShot,
+			major3: MajorGlyph.GlyphOfSerpentSting,
+			minor1: MinorGlyph.GlyphOfFeignDeath,
+			minor2: MinorGlyph.GlyphOfRevivePet,
+			minor3: MinorGlyph.GlyphOfMendPet,
+		}),
+	}),
 };
 
 export const MarksmanTalents = {
 	name: 'Marksman',
-	data: '5-035335001230013233105000351-4',
+	data: SavedTalents.create({
+		talentsString: '502-035305101230013233135031351-5000002',
+		glyphs: Glyphs.create({
+			major1: MajorGlyph.GlyphOfSerpentSting,
+			major2: MajorGlyph.GlyphOfSteadyShot,
+			major3: MajorGlyph.GlyphOfKillShot,
+			minor1: MinorGlyph.GlyphOfFeignDeath,
+			minor2: MinorGlyph.GlyphOfRevivePet,
+			minor3: MinorGlyph.GlyphOfMendPet,
+		}),
+	}),
 };
 
 export const SurvivalTalents = {
 	name: 'Survival',
-	data: '-03502-5300032100233030523035001331',
+	data: SavedTalents.create({
+		talentsString: '-025305101-5000032500033330522135301311',
+		glyphs: Glyphs.create({
+			major1: MajorGlyph.GlyphOfSerpentSting,
+			major2: MajorGlyph.GlyphOfExplosiveShot,
+			major3: MajorGlyph.GlyphOfKillShot,
+			minor1: MinorGlyph.GlyphOfFeignDeath,
+			minor2: MinorGlyph.GlyphOfRevivePet,
+			minor3: MinorGlyph.GlyphOfMendPet,
+		}),
+	}),
 };
 
 export const DefaultRotation = HunterRotation.create({
-	useMultiShot: true,
-	useArcaneShot: true,
+	sting: StingType.SerpentSting,
 	viperStartManaPercent: 0.1,
 	viperStopManaPercent: 0.3,
-
-	weave: WeaveType.WeaveNone,
-	timeToWeaveMs: 500,
-	percentWeaved: 0.8,
 });
 
 export const DefaultOptions = HunterOptions.create({
-	ammo: Ammo.TimelessArrow,
-	petType: PetType.Ravager,
+	ammo: Ammo.SaroniteRazorheads,
+	petType: PetType.Wolf,
+	petTalents: ferocityDefault,
 	petUptime: 1,
 	sniperTrainingUptime: 0.8,
-	latencyMs: 30,
 });
 
 export const DefaultConsumes = Consumes.create({
 	defaultPotion: Potions.HastePotion,
 	flask: Flask.FlaskOfRelentlessAssault,
 	food: Food.FoodGrilledMudfish,
-	mainHandImbue: WeaponImbue.WeaponImbueAdamantiteSharpeningStone,
-	offHandImbue: WeaponImbue.WeaponImbueAdamantiteSharpeningStone,
 });
 
 export const P1_PRESET = {

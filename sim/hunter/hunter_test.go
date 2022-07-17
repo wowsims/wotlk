@@ -21,12 +21,13 @@ func TestHunter(t *testing.T) {
 
 		GearSet: core.GearSetCombo{Label: "P1", GearSet: P1Gear},
 
-		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
+		SpecOptions: core.SpecOptionsCombo{Label: "Marksman", SpecOptions: PlayerOptionsMM},
 		OtherSpecOptions: []core.SpecOptionsCombo{
-			core.SpecOptionsCombo{Label: "French", SpecOptions: PlayerOptionsFrench},
-			core.SpecOptionsCombo{Label: "MeleeWeave", SpecOptions: PlayerOptionsMeleeWeave},
+			core.SpecOptionsCombo{Label: "BM", SpecOptions: PlayerOptionsBM},
 			core.SpecOptionsCombo{Label: "SV", SpecOptions: PlayerOptionsSV},
 		},
+
+		Glyphs: DefaultGlyphs,
 
 		RaidBuffs:   FullRaidBuffs,
 		PartyBuffs:  FullPartyBuffs,
@@ -63,7 +64,7 @@ func BenchmarkSimulate(b *testing.B) {
 				Class:     proto.Class_ClassHunter,
 				Equipment: P1Gear,
 				Consumes:  FullConsumes,
-				Spec:      PlayerOptionsMeleeWeave,
+				Spec:      PlayerOptionsMM,
 				Buffs:     FullIndividualBuffs,
 			},
 			FullPartyBuffs,

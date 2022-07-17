@@ -6,6 +6,7 @@ import (
 
 func (deathKnight *DeathKnight) registerScourgeStrikeShadowDamageSpell() *core.Spell {
 	actionID := core.ActionID{SpellID: 55271}
+
 	return deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
@@ -30,16 +31,15 @@ func (deathKnight *DeathKnight) registerScourgeStrikeShadowDamageSpell() *core.S
 
 func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 560.0, 0.7, true)
-	viciousStrikes := 0.15 * float64(deathKnight.Talents.ViciousStrikes)
 	actionID := core.ActionID{SpellID: 55271}
 
-	outbreakBonus := 0.0
+	outbreakBonus := 1.0
 	if deathKnight.Talents.Outbreak == 1 {
-		outbreakBonus = 0.07
+		outbreakBonus = 1.07
 	} else if deathKnight.Talents.Outbreak == 2 {
-		outbreakBonus = 0.13
+		outbreakBonus = 1.13
 	} else if deathKnight.Talents.Outbreak == 3 {
-		outbreakBonus = 0.20
+		outbreakBonus = 1.20
 	}
 
 	shadowDamageSpell := deathKnight.registerScourgeStrikeShadowDamageSpell()
@@ -58,20 +58,19 @@ func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeMHSpecial,
 			BonusCritRating:  (3.0*float64(deathKnight.Talents.Subversion) + 3.0*float64(deathKnight.Talents.ViciousStrikes)) * core.CritRatingPerCritChance,
-			DamageMultiplier: 1,
+			DamageMultiplier: outbreakBonus,
 			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return weaponBaseDamage(sim, hitEffect, spell) *
-						(1.0 +
-							core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 0.02*float64(deathKnight.Talents.RageOfRivendare), 0.0) +
-							outbreakBonus)
+						deathKnight.rageOfRivendareBonus() *
+						deathKnight.tundraStalkerBonus()
 				},
 				TargetSpellCoefficient: 1,
 			},
 
-			OutcomeApplier: deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.MeleeCritMultiplier(1.0, viciousStrikes)),
+			OutcomeApplier: deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.MeleeCritMultiplier(1.0, deathKnight.viciousStrikesBonus())),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {

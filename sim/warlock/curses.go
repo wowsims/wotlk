@@ -46,9 +46,6 @@ func (warlock *Warlock) ShouldCastCurseOfElements(sim *core.Simulation, target *
 }
 
 func (warlock *Warlock) registerCurseOfWeaknessSpell() {
-	if warlock.Rotation.Curse != proto.Warlock_Rotation_Weakness {
-		return
-	}
 	baseCost := 0.1 * warlock.BaseMana
 	warlock.CurseOfWeaknessAura = core.CurseOfWeaknessAura(warlock.CurrentTarget, warlock.Talents.ImprovedCurseOfWeakness)
 	warlock.CurseOfWeaknessAura.Duration = time.Minute * 2
@@ -75,9 +72,6 @@ func (warlock *Warlock) registerCurseOfWeaknessSpell() {
 }
 
 func (warlock *Warlock) registerCurseOfTonguesSpell() {
-	if warlock.Rotation.Curse != proto.Warlock_Rotation_Tongues {
-		return
-	}
 	actionID := core.ActionID{SpellID: 11719}
 	baseCost := 0.04 * warlock.BaseMana
 
@@ -110,9 +104,6 @@ func (warlock *Warlock) registerCurseOfTonguesSpell() {
 }
 
 func (warlock *Warlock) registerCurseOfAgonySpell() {
-	if warlock.Rotation.Curse != proto.Warlock_Rotation_Agony && warlock.Rotation.Curse != proto.Warlock_Rotation_Doom {
-		return
-	}
 	actionID := core.ActionID{SpellID: 47864}
 	baseCost := 0.1 * warlock.BaseMana
 	target := warlock.CurrentTarget
@@ -123,14 +114,18 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 	agonyEffect := totalBaseDmg * 0.056
 	if hasGoCoA {
 		numberOfTicks += 2
-		totalBaseDmg += 2 * agonyEffect
+		totalBaseDmg += 2 * agonyEffect // Glyphed ticks
+	}
+	applier := warlock.OutcomeFuncTick()
+	if warlock.Talents.Pandemic {
+		applier = warlock.OutcomeFuncMagicCrit(warlock.SpellCritMultiplier(1, 1))
 	}
 
 	effect := core.SpellEffect{
 		DamageMultiplier: 1 + 0.01*float64(warlock.Talents.Contagion),
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 		BaseDamage:       core.BaseDamageConfigMagicNoRoll(totalBaseDmg/float64(numberOfTicks), 0.1), //TODO : CoA ramp up effect 
-		OutcomeApplier:   warlock.OutcomeFuncTick(),
+		OutcomeApplier:   applier,
 		IsPeriodic:       true,
 		ProcMask:         core.ProcMaskPeriodicDamage,
 	}
@@ -170,9 +165,6 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 }
 
 func (warlock *Warlock) registerCurseOfDoomSpell() {
-	if warlock.Rotation.Curse != proto.Warlock_Rotation_Doom {
-		return
-	}
 	actionID := core.ActionID{SpellID: 47867}
 	baseCost := 0.15 * warlock.BaseMana
 

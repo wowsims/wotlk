@@ -13,15 +13,6 @@ func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 	}
 	//target := deathKnight.CurrentTarget
 
-	glacierRotCoeff := 0.0
-	if deathKnight.Talents.GlacierRot == 1 {
-		glacierRotCoeff = 0.07
-	} else if deathKnight.Talents.GlacierRot == 2 {
-		glacierRotCoeff = 0.13
-	} else if deathKnight.Talents.GlacierRot == 3 {
-		glacierRotCoeff = 0.20
-	}
-
 	guileOfGorefiend := deathKnight.Talents.GuileOfGorefiend > 0
 
 	deathKnight.HowlingBlast = deathKnight.RegisterSpell(core.SpellConfig{
@@ -38,6 +29,7 @@ func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 			},
 		},
 
+		// TODO: Make AoE without breaking rune spending...
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:             core.ProcMaskSpellDamage,
 			BonusSpellCritRating: 0.0,
@@ -47,17 +39,15 @@ func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					roll := (562.0-518.0)*sim.RandomFloat("Howling Blast") + 518.0
-					return (roll + hitEffect.MeleeAttackPower(spell.Unit)*0.1) *
-						(1.0 +
-							core.TernaryFloat64(deathKnight.DiseasesAreActive() && deathKnight.Talents.GlacierRot > 0, glacierRotCoeff, 0.0) +
-							core.TernaryFloat64(deathKnight.DiseasesAreActive(), 0.05*float64(deathKnight.Talents.TundraStalker), 0.0) +
-							core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 0.02*float64(deathKnight.Talents.RageOfRivendare), 0.0) +
-							core.TernaryFloat64(sim.IsExecutePhase35() && deathKnight.Talents.MercilessCombat > 0, 0.06*float64(deathKnight.Talents.MercilessCombat), 0.0))
+					return (roll + deathKnight.applyImpurity(hitEffect, spell.Unit)*0.1) *
+						deathKnight.glacielRotBonus() *
+						deathKnight.rageOfRivendareBonus() *
+						deathKnight.tundraStalkerBonus() *
+						deathKnight.mercilessCombatBonus(sim)
 				},
 				TargetSpellCoefficient: 1,
 			},
 			OutcomeApplier: deathKnight.killingMachineOutcomeMod(deathKnight.OutcomeFuncMagicHitAndCrit(deathKnight.spellCritMultiplier(guileOfGorefiend))),
-
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					if !deathKnight.HowlingBlastCostless {

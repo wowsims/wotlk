@@ -21,6 +21,7 @@ import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
 import { Gear } from '/wotlk/core/proto_utils/gear.js';
 import { GearPicker } from '/wotlk/core/components/gear_picker.js';
+import { Glyphs } from '/wotlk/core/proto/common.js';
 import { GuardianElixir } from '/wotlk/core/proto/common.js';
 import { HealingModel } from '/wotlk/core/proto/common.js';
 import { HunterPetTalentsPicker } from '/wotlk/core/talents/hunter_pet.js';
@@ -178,7 +179,7 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 		epWeights: Stats,
 		consumes: Consumes,
 		rotation: SpecRotation<SpecType>,
-		talents: string,
+		talents: SavedTalents,
 		specOptions: SpecOptions<SpecType>,
 
 		raidBuffs: RaidBuffs,
@@ -195,6 +196,7 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 	playerBuffInputs: Array<IndividualSimIconPickerConfig<Player<any>, any>>,
 	debuffInputs: Array<IndividualSimIconPickerConfig<Raid, any>>;
 	rotationInputs: InputSection;
+	spellInputs?: Array<IndividualSimIconPickerConfig<Player<any>, any>>;
 	otherInputs?: InputSection;
 	consumeOptions?: ConsumeOptions;
 
@@ -207,11 +209,10 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 	customSections?: Array<(simUI: IndividualSimUI<SpecType>, parentElem: HTMLElement) => string>;
 
 	encounterPicker: EncounterPickerConfig,
-	freezeTalents?: boolean;
 
 	presets: {
 		gear: Array<PresetGear>,
-		talents: Array<SavedDataConfig<Player<any>, string>>,
+		talents: Array<SavedDataConfig<Player<any>, SavedTalents>>,
 		rotation?: Array<SavedDataConfig<Player<any>, string>>,
 	},
 }
@@ -489,6 +490,15 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 					<legend>Pets</legend>
 				</fieldset>`
 		}
+		
+		var spellSection=``
+		if (this.individualConfig.spellInputs?.length) {
+			spellSection=`
+			   <fieldset class="settings-section spell-section">
+					<legend>Spells</legend>
+				</fieldset>`
+		}
+		
 		this.addTab('SETTINGS', 'settings-tab', `
 			<div class="settings-inputs">
 				<div class="settings-section-container">
@@ -498,6 +508,11 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 					<fieldset class="settings-section race-section">
 						<legend>Player</legend>
 					</fieldset>
+			`
+			+
+			spellSection
+			+
+			`
 					<fieldset class="settings-section rotation-section">
 						<legend>Rotation</legend>
 					</fieldset>
@@ -508,11 +523,11 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 					<fieldset class="settings-section self-buffs-section">
 						<legend>Self Buffs</legend>
 					</fieldset>
-		`
-		+
-		petsSelectionSection
-		+
-		`
+			`
+			+
+			petsSelectionSection
+			+
+			`
 				</div>
 				<div class="settings-section-container within-raid-sim-hide">
 					<fieldset class="settings-section buffs-section">
@@ -642,9 +657,16 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			Tooltips.DEBUFFS_SECTION);
 
 		if (this.individualConfig.consumeOptions?.potions.length) {
+			const options = [
+				{ stats: [Stat.StatStamina], item: Potions.RunicHealingPotion },
+				{ stats: [Stat.StatIntellect], item: Potions.RunicManaPotion },
+				{ stats: [Stat.StatArmor], item: Potions.IndestructiblePotion },
+				{ stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste], item: Potions.PotionOfSpeed },
+				{ stats: [Stat.StatMeleeCrit, Stat.StatSpellCrit, Stat.StatSpellPower], item: Potions.PotionOfWildMagic },
+			];
 			const elem = this.rootElem.getElementsByClassName('consumes-potions')[0] as HTMLElement;
 			new IconEnumPicker(elem, this.player,
-				IconInputs.makePotionsInput(this.individualConfig.consumeOptions.potions));
+				IconInputs.makePotionsInput(this.splitRelevantOptions(options)));
 		}
 		if (this.individualConfig.consumeOptions?.conjured.length) {
 			const elem = this.rootElem.getElementsByClassName('consumes-conjured')[0] as HTMLElement;
@@ -726,7 +748,18 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				}
 			});
 		};
+
+		if (this.individualConfig.spellInputs?.length) {
+			const spellSection = this.rootElem.getElementsByClassName('spell-section')[0] as HTMLElement;
+			configureIconSection(
+				spellSection,
+				this.individualConfig.spellInputs.map(iconInput => new IndividualSimIconPicker(spellSection, this.player, iconInput, this)),
+				Tooltips.SPELLS_SECTION);
+		}
+
+
 		configureInputSection(this.rootElem.getElementsByClassName('rotation-section')[0] as HTMLElement, this.individualConfig.rotationInputs);
+
 		if (this.individualConfig.otherInputs?.inputs.length) {
 			configureInputSection(this.rootElem.getElementsByClassName('other-settings-section')[0] as HTMLElement, this.individualConfig.otherInputs);
 		}
@@ -939,20 +972,19 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			storageKey: this.getSavedTalentsStorageKey(),
 			getData: (player: Player<any>) => SavedTalents.create({
 				talentsString: player.getTalentsString(),
+				glyphs: player.getGlyphs(),
 			}),
-			setData: (eventID: EventID, player: Player<any>, newTalents: SavedTalents) => player.setTalentsString(eventID, newTalents.talentsString),
-			changeEmitters: [this.player.talentsChangeEmitter],
+			setData: (eventID: EventID, player: Player<any>, newTalents: SavedTalents) => {
+				TypedEvent.freezeAllAndDo(() => {
+					player.setTalentsString(eventID, newTalents.talentsString);
+					player.setGlyphs(eventID, newTalents.glyphs || Glyphs.create());
+				});
+			},
+			changeEmitters: [this.player.talentsChangeEmitter, this.player.glyphsChangeEmitter],
 			equals: (a: SavedTalents, b: SavedTalents) => SavedTalents.equals(a, b),
 			toJson: (a: SavedTalents) => SavedTalents.toJson(a),
 			fromJson: (obj: any) => SavedTalents.fromJson(obj),
 		});
-
-		// Add a url parameter to help people trapped in the wrong talents   ;)
-		const freezeTalents = this.individualConfig.freezeTalents && !(new URLSearchParams(window.location.search).has('unlockTalents'));
-		if (freezeTalents) {
-			savedTalentsManager.freeze();
-			talentsPicker.freeze();
-		}
 
 		this.sim.waitForInit().then(() => {
 			savedTalentsManager.loadUserData();
@@ -961,9 +993,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				savedTalentsManager.addSavedData({
 					name: config.name,
 					isPreset: true,
-					data: SavedTalents.create({
-						talentsString: config.data,
-					}),
+					data: config.data,
 				});
 			});
 
@@ -1028,7 +1058,8 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.player.setGear(eventID, this.sim.lookupEquipmentSpec(this.individualConfig.defaults.gear));
 			this.player.setConsumes(eventID, this.individualConfig.defaults.consumes);
 			this.player.setRotation(eventID, this.individualConfig.defaults.rotation);
-			this.player.setTalentsString(eventID, this.individualConfig.defaults.talents);
+			this.player.setTalentsString(eventID, this.individualConfig.defaults.talents.talentsString);
+			this.player.setGlyphs(eventID, this.individualConfig.defaults.talents.glyphs || Glyphs.create());
 			this.player.setSpecOptions(eventID, this.individualConfig.defaults.specOptions);
 			this.player.setBuffs(eventID, this.individualConfig.defaults.individualBuffs);
 			this.player.getParty()!.setBuffs(eventID, this.individualConfig.defaults.partyBuffs);
@@ -1140,6 +1171,12 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.sim.encounter.fromProto(eventID, settings.encounter || EncounterProto.create());
 		});
 	}
+
+	splitRelevantOptions<T>(options: Array<StatOption<T>>): Array<T> {
+		return options
+				.filter(option => option.stats.some(stat => this.individualConfig.epStats.includes(stat)))
+				.map(option => option.item);
+	}
 }
 
 export type ExclusivityTag =
@@ -1160,4 +1197,9 @@ export interface ExclusiveEffect {
 	changedEvent: TypedEvent<any>;
 	isActive: () => boolean;
 	deactivate: (eventID: EventID) => void;
+}
+
+export interface StatOption<T> {
+	stats: Array<Stat>,
+	item: T,
 }

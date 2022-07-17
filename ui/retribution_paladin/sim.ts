@@ -128,7 +128,6 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 					sunderArmor: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					curseOfWeakness: TristateEffect.TristateEffectRegular,
-					huntersMark: TristateEffect.TristateEffectImproved,
 				}),
 			},
 
@@ -165,7 +164,6 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 				IconInputs.ExposeArmor,
 				IconInputs.SunderArmor,
 				IconInputs.BloodFrenzy,
-				IconInputs.HuntersMark,
 				IconInputs.FaerieFire,
 				IconInputs.CurseOfWeakness,
 				IconInputs.CurseOfElements,
@@ -236,10 +234,6 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 				// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
 				showExecuteProportion: false,
 			},
-
-			// If true, the talents on the talents tab will not be individually modifiable by the user.
-			// Note that the use can still pick between preset talents, if there is more than 1.
-			freezeTalents: false,
 
 			presets: {
 				// Preset talents that the user can quickly select.

@@ -2,8 +2,8 @@ package warlock
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warlock *Warlock) registerLifeTapSpell() {
@@ -43,8 +43,7 @@ func (warlock *Warlock) registerLifeTapSpell() {
 					}
 				}
 				if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap) {
-					spiritSnapshot := int32(warlock.GetStat(stats.Spirit))
-					warlock.applyGlyphOfLifeTapAura(spiritSnapshot)
+					warlock.GlyphOfLifeTapAura.Activate(sim)
 				}
 			},
 		}),

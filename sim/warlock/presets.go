@@ -31,27 +31,13 @@ var defaultDestroTalents = &proto.WarlockTalents{
 	SoulLeech:          3,
 	ImprovedSoulLeech:  2,
 	// demo
-	FelSynergy:  		2,
-	ImprovedImp: 		3,
+	FelSynergy:  2,
+	ImprovedImp: 3,
 }
 
-// var defaultDestroMajorGlyphs = &proto.WarlockMajorGlyph{
-// 	WarlockMajorGlyph:
-// 		proto.WarlockMajorGlyph_GlyphOfFelguard,
-// 		proto.WarlockMajorGlyph_GlyphOfChaosBolt,
-// 		proto.WarlockMajorGlyph_GlyphOfCurseOfAgony,
-// }
-
-// var defaultDestroMinorGlyphs = &proto.WarlockMinorGlyph{
-// 	WarlockMinorGlyph:
-// 		proto.WarlockMinorGlyph_GlyphOfDrainSoul,
-// 		proto.WarlockMinorGlyph_GlyphOfEnslaveDemon,
-// 		proto.WarlockMinorGlyph_GlyphOfKilrogg,
-// }
-
 var defaultDestroRotation = &proto.Warlock_Rotation{
-	PrimarySpell: proto.Warlock_Rotation_Shadowbolt,
-	Immolate:     true,
+	PrimarySpell: proto.Warlock_Rotation_Incinerate,
+	SecondaryDot: proto.Warlock_Rotation_Immolate,
 }
 
 var defaultDestroOptions = &proto.Warlock_Options{
@@ -66,7 +52,13 @@ var DefaultDestroWarlock = &proto.Player_Warlock{
 		Rotation: defaultDestroRotation,
 		// MajorGlyph: defaultDestroMajorGlyphs,
 		// MinorGlyph: defaultDestroMinorGlyphs,
-		},
+	},
+}
+
+var DefaultGlyphs = &proto.Glyphs{
+	Major1: int32(proto.WarlockMajorGlyph_GlyphOfQuickDecay),
+	Major2: int32(proto.WarlockMajorGlyph_GlyphOfLifeTap),
+	Major3: int32(proto.WarlockMajorGlyph_GlyphOfHaunt),
 }
 
 var FullRaidBuffs = &proto.RaidBuffs{
@@ -99,7 +91,6 @@ var FullDebuffs = &proto.Debuffs{
 	ExposeArmor:       proto.TristateEffect_TristateEffectImproved,
 	FaerieFire:        proto.TristateEffect_TristateEffectImproved,
 	CurseOfWeakness:   proto.TristateEffect_TristateEffectImproved,
-	HuntersMark:       proto.TristateEffect_TristateEffectImproved,
 }
 
 var Phase4Gear = items.EquipmentSpecFromJsonString(`{"items": [

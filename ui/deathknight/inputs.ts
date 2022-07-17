@@ -41,7 +41,65 @@ export const StartingRunicPower = {
 	},
 };
 
+export const PetUptime = {
+	type: 'number' as const,
+	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
+	config: {
+		extraCssClasses: [
+			'ghoul-uptime-picker',
+		],
+		label: 'Ghoul Uptime (%)',
+		labelTooltip: 'Percent of the fight duration for which your ghoul will be on target.',
+		changedEvent: (player: Player<Spec.SpecDeathKnight>) => player.specOptionsChangeEmitter,
+		getValue: (player: Player<Spec.SpecDeathKnight>) => player.getSpecOptions().petUptime * 100,
+		setValue: (eventID: EventID, player: Player<Spec.SpecDeathKnight>, newValue: number) => {
+			const newOptions = player.getSpecOptions();
+			newOptions.petUptime = newValue / 100;
+			player.setSpecOptions(eventID, newOptions);
+		},
+	},
+};
+
+export const PrecastGhoulFrenzy = {
+	type: 'boolean' as const,
+	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
+	config: {
+		extraCssClasses: [
+			'precast-ghoul-frenzy-picker',
+		],
+		label: 'Pre-Cast Ghoul Frenzy',
+		labelTooltip: 'Cast Ghoul Frenzy 10 seconds before combat starts.',
+		changedEvent: (player: Player<Spec.SpecDeathKnight>) => player.specOptionsChangeEmitter,
+		getValue: (player: Player<Spec.SpecDeathKnight>) => player.getSpecOptions().precastGhoulFrenzy,
+		setValue: (eventID: EventID, player: Player<Spec.SpecDeathKnight>, newValue: boolean) => {
+			const newOptions = player.getSpecOptions();
+			newOptions.precastGhoulFrenzy = newValue;
+			player.setSpecOptions(eventID, newOptions);
+		},
+	},
+};
+
+export const UseDeathAndDecay = {
+	type: 'boolean' as const,
+	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
+	config: {
+		extraCssClasses: [
+			'use-death-and-decay-picker',
+		],
+		label: 'Death and Decay',
+		labelTooltip: 'Use Death and Decay based rotation.',
+		changedEvent: (player: Player<Spec.SpecDeathKnight>) => player.specOptionsChangeEmitter,
+		getValue: (player: Player<Spec.SpecDeathKnight>) => player.getRotation().useDeathAndDecay,
+		setValue: (eventID: EventID, player: Player<Spec.SpecDeathKnight>, newValue: boolean) => {
+			const newRotation = player.getRotation();
+			newRotation.useDeathAndDecay = newValue;
+			player.setRotation(eventID, newRotation);
+		},
+	},
+};
+
 export const DeathKnightRotationConfig = {
 	inputs: [
+		UseDeathAndDecay,
 	],
 };

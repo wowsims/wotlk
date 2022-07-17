@@ -23,14 +23,7 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 	itAura := core.IcyTouchAura(target, deathKnight.Talents.ImprovedIcyTouch)
 	deathKnight.IcyTouchAura = itAura
 
-	glacierRotCoeff := 0.0
-	if deathKnight.Talents.GlacierRot == 1 {
-		glacierRotCoeff = 0.07
-	} else if deathKnight.Talents.GlacierRot == 2 {
-		glacierRotCoeff = 0.13
-	} else if deathKnight.Talents.GlacierRot == 3 {
-		glacierRotCoeff = 0.20
-	}
+	impIcyTouchCoeff := 1.0 + 0.05*float64(deathKnight.Talents.ImprovedIcyTouch)
 
 	deathKnight.IcyTouch = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 59131},
@@ -45,19 +38,17 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:             core.ProcMaskSpellDamage,
 			BonusSpellCritRating: 5.0 * float64(deathKnight.Talents.Rime) * core.CritRatingPerCritChance,
-			DamageMultiplier:     1.0,
+			DamageMultiplier:     impIcyTouchCoeff,
 			ThreatMultiplier:     7.0,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					roll := (245.0-227.0)*sim.RandomFloat("Icy Touch") + 227.0
-					return (roll + hitEffect.MeleeAttackPower(spell.Unit)*0.1) *
-						(1.0 +
-							0.05*float64(deathKnight.Talents.ImprovedIcyTouch) +
-							core.TernaryFloat64(deathKnight.DiseasesAreActive() && deathKnight.Talents.GlacierRot > 0, glacierRotCoeff, 0.0) +
-							core.TernaryFloat64(deathKnight.DiseasesAreActive(), 0.05*float64(deathKnight.Talents.TundraStalker), 0.0) +
-							core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 0.02*float64(deathKnight.Talents.RageOfRivendare), 0.0) +
-							core.TernaryFloat64(sim.IsExecutePhase35() && deathKnight.Talents.MercilessCombat > 0, 0.06*float64(deathKnight.Talents.MercilessCombat), 0.0))
+					return (roll + deathKnight.applyImpurity(hitEffect, spell.Unit)*0.1) *
+						deathKnight.glacielRotBonus() *
+						deathKnight.rageOfRivendareBonus() *
+						deathKnight.tundraStalkerBonus() *
+						deathKnight.mercilessCombatBonus(sim)
 				},
 				TargetSpellCoefficient: 1,
 			},
@@ -78,7 +69,7 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 
 					deathKnight.IcyTouchAura.Activate(sim)
 
-					if deathKnight.IcyTouchAura.IsActive() {
+					if deathKnight.IcyTouchAura.IsActive() && deathKnight.IcyTalonsAura != nil {
 						deathKnight.IcyTalonsAura.Activate(sim)
 					}
 				}

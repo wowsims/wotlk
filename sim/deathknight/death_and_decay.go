@@ -4,11 +4,11 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (deathKnight *DeathKnight) registerDeathAndDecaySpell() {
 	var actionID = core.ActionID{SpellID: 49938}
-
 	deathKnight.DeathAndDecayDot = core.NewDot(core.Dot{
 		Aura: deathKnight.RegisterAura(core.Aura{
 			Label:    "Death and Decay",
@@ -20,13 +20,13 @@ func (deathKnight *DeathKnight) registerDeathAndDecaySpell() {
 			ProcMask:        core.ProcMaskEmpty,
 			BonusSpellPower: 0.0,
 
-			DamageMultiplier: 1,
+			DamageMultiplier: core.TernaryFloat64(deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfDeathAndDecay), 1.2, 1.0),
 			ThreatMultiplier: 1,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return (62.0 + hitEffect.MeleeAttackPower(spell.Unit)*0.0475) *
-						(1.0 +
-							core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 0.02*float64(deathKnight.Talents.RageOfRivendare), 0.0))
+					return (62.0 + deathKnight.applyImpurity(hitEffect, spell.Unit)*0.0475) *
+						deathKnight.rageOfRivendareBonus() *
+						deathKnight.tundraStalkerBonus()
 				},
 				TargetSpellCoefficient: 1,
 			},

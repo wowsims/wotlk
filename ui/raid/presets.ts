@@ -10,6 +10,7 @@ import { Race } from '/wotlk/core/proto/common.js';
 import { Spec } from '/wotlk/core/proto/common.js';
 import { TristateEffect } from '/wotlk/core/proto/common.js';
 import { Faction } from '/wotlk/core/proto/common.js';
+import { SavedTalents } from '/wotlk/core/proto/ui.js';
 import { SpecOptions } from '/wotlk/core/proto_utils/utils.js';
 import { SpecRotation } from '/wotlk/core/proto_utils/utils.js';
 import { playerToSpec } from '/wotlk/core/proto_utils/utils.js';
@@ -76,7 +77,7 @@ export const specSimFactories: Partial<Record<Spec, (parentElem: HTMLElement, pl
 export interface PresetSpecSettings<SpecType extends Spec> {
 	spec: Spec,
 	rotation: SpecRotation<SpecType>,
-	talents: string,
+	talents: SavedTalents,
 	specOptions: SpecOptions<SpecType>,
 	consumes: Consumes,
 

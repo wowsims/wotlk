@@ -2,11 +2,13 @@ import { Consumes, PetFood } from '/wotlk/core/proto/common.js';
 import { EquipmentSpec } from '/wotlk/core/proto/common.js';
 import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
+import { Glyphs } from '/wotlk/core/proto/common.js';
 import { ItemSpec } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
 import { Spec } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
 import { Faction } from '/wotlk/core/proto/common.js';
+import { SavedTalents } from '/wotlk/core/proto/ui.js';
 import { Player } from '/wotlk/core/player.js';
 
 import {
@@ -28,19 +30,27 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 // https://wotlk.wowhead.com/talent-calc and copy the numbers in the url.
 export const FrostTalents = {
 	name: 'Frost Dps',
-	data: '23050005-32005350352203012300033101351',
+	data: SavedTalents.create({
+		talentsString: '23050005-32005350352203012300033101351',
+	}),
 };
+
 
 export const UnholyDualWieldTalents = {
 	name: 'Unholy Dual Wield Dps',
-	data: '-320033500002-2302303050032150000150013133151',
+	data: SavedTalents.create({
+		talentsString: '-320033500002-2302303050032150000150013133151',
+	}),
 };
+
 
 export const DefaultRotation = DeathKnightRotation.create({
 });
 
 export const DefaultOptions = DeathKnightOptions.create({
-	startingRunicPower: 0
+	startingRunicPower: 0,
+	petUptime: 1,
+	precastGhoulFrenzy: true,
 });
 
 export const DefaultConsumes = Consumes.create({
@@ -263,7 +273,7 @@ export const P1_FROST_BIS_PRESET = {
         },
         {
           "id": 40403,
-          "enchant": 44472
+          "enchant": 55002
         },
         {
           "id": 40550,
@@ -283,7 +293,7 @@ export const P1_FROST_BIS_PRESET = {
         },
         {
           "id": 40552,
-          "enchant": 60668,
+          "enchant": 54999,
           "gems": [
             39996,
             0
@@ -309,7 +319,7 @@ export const P1_FROST_BIS_PRESET = {
           "enchant": 55016
         },
         {
-          "id": 40474
+          "id": 39401
         },
         {
           "id": 40075
@@ -321,10 +331,12 @@ export const P1_FROST_BIS_PRESET = {
           "id": 42987
         },
         {
-          "id": 42208
+          "id": 42208,
+          "enchant": 53343
         },
         {
-          "id": 42232
+          "id": 42232,
+          "enchant": 53344
         },
         {
           "id": 40715

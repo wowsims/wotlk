@@ -7,50 +7,123 @@ import (
 
 var BMTalents = &proto.HunterTalents{
 	ImprovedAspectOfTheHawk: 5,
+	EnduranceTraining:       1,
 	FocusedFire:             2,
+	ImprovedRevivePet:       2,
+	AspectMastery:           true,
 	UnleashedFury:           5,
 	Ferocity:                5,
+	SpiritBond:              1,
+	Intimidation:            true,
 	BestialDiscipline:       2,
-	AnimalHandler:           1,
-	Frenzy:                  5,
+	AnimalHandler:           2,
+	Frenzy:                  4,
 	FerociousInspiration:    3,
 	BestialWrath:            true,
+	CatlikeReflexes:         2,
 	SerpentsSwiftness:       5,
+	Longevity:               3,
 	TheBeastWithin:          true,
+	CobraStrikes:            2,
+	KindredSpirits:          5,
+	BeastMastery:            true,
 
 	LethalShots:    5,
-	Efficiency:     5,
+	CarefulAim:     3,
+	MortalShots:    5,
 	GoForTheThroat: 2,
 	AimedShot:      true,
-	RapidKilling:   2,
-	MortalShots:    5,
+
+	ImprovedTracking: 1,
 }
 
-var SVTalents = &proto.HunterTalents{
+var MMTalents = &proto.HunterTalents{
 	ImprovedAspectOfTheHawk: 5,
 	FocusedFire:             2,
 
-	LethalShots:         5,
-	ImprovedHuntersMark: 5,
-	GoForTheThroat:      2,
-	RapidKilling:        1,
+	FocusedAim:                 3,
+	LethalShots:                5,
+	CarefulAim:                 3,
+	MortalShots:                5,
+	GoForTheThroat:             1,
+	AimedShot:                  true,
+	RapidKilling:               2,
+	ImprovedStings:             3,
+	Readiness:                  true,
+	Barrage:                    3,
+	CombatExperience:           2,
+	RangedWeaponSpecialization: 3,
+	PiercingShots:              3,
+	TrueshotAura:               true,
+	ImprovedBarrage:            3,
+	MasterMarksman:             5,
+	WildQuiver:                 3,
+	SilencingShot:              true,
+	ImprovedSteadyShot:         3,
+	MarkedForDeath:             5,
+	ChimeraShot:                true,
 
-	//MonsterSlaying:    3,
-	//HumanoidSlaying:   3,
-	SavageStrikes: 2,
-	//CleverTraps:       2,
-	Survivalist:       2,
-	Surefooted:        3,
+	ImprovedTracking:  5,
 	SurvivalInstincts: 2,
-	KillerInstinct:    3,
-	LightningReflexes: 5,
-	ThrillOfTheHunt:   2,
-	ExposeWeakness:    3,
-	MasterTactician:   5,
-	Readiness:         true,
 }
 
-var PlayerOptionsBasic = &proto.Player_Hunter{
+var SVTalents = &proto.HunterTalents{
+	FocusedAim:     2,
+	LethalShots:    5,
+	CarefulAim:     3,
+	MortalShots:    5,
+	GoForTheThroat: 1,
+	AimedShot:      true,
+
+	ImprovedTracking:  5,
+	TrapMastery:       3,
+	SurvivalInstincts: 2,
+	Survivalist:       5,
+	TNT:               3,
+	LockAndLoad:       3,
+	HunterVsWild:      3,
+	KillerInstinct:    3,
+	LightningReflexes: 5,
+	Resourcefulness:   2,
+	ExposeWeakness:    2,
+	WyvernSting:       true,
+	ThrillOfTheHunt:   3,
+	MasterTactician:   5,
+	NoxiousStings:     3,
+	BlackArrow:        true,
+	SniperTraining:    3,
+	HuntingParty:      1,
+	ExplosiveShot:     true,
+}
+
+var FerocityTalents = &proto.HunterPetTalents{
+	CobraReflexes:  2,
+	Dive:           true,
+	SpikedCollar:   3,
+	BoarsSpeed:     true,
+	CullingTheHerd: 3,
+	SpidersBite:    3,
+	Rabid:          true,
+	CallOfTheWild:  true,
+	WildHunt:       1,
+}
+
+var DefaultGlyphs = &proto.Glyphs{
+	Major1: int32(proto.HunterMajorGlyph_GlyphOfSteadyShot),
+	Major2: int32(proto.HunterMajorGlyph_GlyphOfSerpentSting),
+	Major3: int32(proto.HunterMajorGlyph_GlyphOfKillShot),
+	// No interesting minor glyphs.
+}
+
+var PlayerOptionsMM = &proto.Player_Hunter{
+	Hunter: &proto.Hunter{
+		Talents:  MMTalents,
+		Options:  basicOptions,
+		Rotation: basicRotation,
+	},
+}
+
+var PlayerOptionsBM = &proto.Player_Hunter{
 	Hunter: &proto.Hunter{
 		Talents:  BMTalents,
 		Options:  basicOptions,
@@ -58,71 +131,27 @@ var PlayerOptionsBasic = &proto.Player_Hunter{
 	},
 }
 
-var PlayerOptionsFrench = &proto.Player_Hunter{
-	Hunter: &proto.Hunter{
-		Talents:  BMTalents,
-		Options:  windSerpentOptions,
-		Rotation: frenchRotation,
-	},
-}
-
-var PlayerOptionsMeleeWeave = &proto.Player_Hunter{
-	Hunter: &proto.Hunter{
-		Talents:  BMTalents,
-		Options:  windSerpentOptions,
-		Rotation: meleeWeaveRotation,
-	},
-}
-
 var PlayerOptionsSV = &proto.Player_Hunter{
 	Hunter: &proto.Hunter{
 		Talents:  SVTalents,
-		Options:  windSerpentOptions,
-		Rotation: meleeWeaveRotation,
+		Options:  basicOptions,
+		Rotation: basicRotation,
 	},
 }
 
 var basicRotation = &proto.Hunter_Rotation{
-	UseMultiShot:  true,
-	UseArcaneShot: false,
-	Sting:         proto.Hunter_Rotation_SerpentSting,
-	LazyRotation:  true,
+	Sting: proto.Hunter_Rotation_SerpentSting,
 
 	ViperStartManaPercent: 0.2,
 	ViperStopManaPercent:  0.3,
 }
-var frenchRotation = &proto.Hunter_Rotation{
-	UseMultiShot:  true,
-	UseArcaneShot: true,
-	Sting:         proto.Hunter_Rotation_SerpentSting,
-
-	ViperStartManaPercent: 0.3,
-	ViperStopManaPercent:  0.5,
-}
-var meleeWeaveRotation = &proto.Hunter_Rotation{
-	UseMultiShot:  true,
-	UseArcaneShot: true,
-	Weave:         proto.Hunter_Rotation_WeaveFull,
-	TimeToWeaveMs: 500,
-	PercentWeaved: 0.8,
-
-	ViperStartManaPercent: 0.3,
-	ViperStopManaPercent:  0.5,
-}
 
 var basicOptions = &proto.Hunter_Options{
-	Ammo:      proto.Hunter_Options_AdamantiteStinger,
-	PetType:   proto.Hunter_Options_Ravager,
-	PetUptime: 0.9,
-	LatencyMs: 15,
-}
-
-var windSerpentOptions = &proto.Hunter_Options{
-	Ammo:             proto.Hunter_Options_AdamantiteStinger,
-	PetType:          proto.Hunter_Options_WindSerpent,
-	PetUptime:        0.9,
-	PetSingleAbility: true,
-	LatencyMs:        15,
+	Ammo:       proto.Hunter_Options_SaroniteRazorheads,
+	PetType:    proto.Hunter_Options_Wolf,
+	PetTalents: FerocityTalents,
+	PetUptime:  0.9,
+	LatencyMs:  15,
 }
 
 var FullRaidBuffs = &proto.RaidBuffs{

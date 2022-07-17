@@ -2,6 +2,7 @@ package deathknight
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -23,15 +24,15 @@ func (deathKnight *DeathKnight) registerDeathCoilSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:             core.ProcMaskSpellDamage,
 			BonusSpellCritRating: 0.0,
-			DamageMultiplier:     1.0,
-			ThreatMultiplier:     1.0,
+			DamageMultiplier: (1.0 + float64(deathKnight.Talents.Morbidity)*0.05) *
+				core.TernaryFloat64(deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfDeathAndDecay), 1.15, 1.0),
+			ThreatMultiplier: 1.0,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return (443.0 + hitEffect.MeleeAttackPower(spell.Unit)*0.15) *
-						(1.0 +
-							0.05*float64(deathKnight.Talents.Morbidity) +
-							core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 0.02*float64(deathKnight.Talents.RageOfRivendare), 0.0))
+					return (443.0 + deathKnight.applyImpurity(hitEffect, spell.Unit)*0.15) *
+						deathKnight.rageOfRivendareBonus() *
+						deathKnight.tundraStalkerBonus()
 				},
 				TargetSpellCoefficient: 1,
 			},

@@ -12,7 +12,7 @@ type StackingProcAura struct {
 	BonusPerStack stats.Stats
 }
 
-func makeStackingAura(character *core.Character, config StackingProcAura) *core.Aura {
+func MakeStackingAura(character *core.Character, config StackingProcAura) *core.Aura {
 	var bonusPerStack stats.Stats
 	config.Aura.OnInit = func(aura *core.Aura, sim *core.Simulation) {
 		bonusPerStack = character.ApplyStatDependencies(config.BonusPerStack)
@@ -40,7 +40,7 @@ func newStackingStatBonusEffect(config StackingStatBonusEffect) {
 	core.NewItemEffect(config.ID, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
-		procAura := makeStackingAura(character, StackingProcAura{
+		procAura := MakeStackingAura(character, StackingProcAura{
 			Aura: core.Aura{
 				Label:     config.Name + " Proc",
 				ActionID:  core.ActionID{ItemID: config.ID},
@@ -50,7 +50,7 @@ func newStackingStatBonusEffect(config StackingStatBonusEffect) {
 			BonusPerStack: config.Bonus,
 		})
 
-		makeProcTriggerAura(&character.Unit, ProcTrigger{
+		MakeProcTriggerAura(&character.Unit, ProcTrigger{
 			Name:       config.Name,
 			Callback:   config.Callback,
 			ProcMask:   config.ProcMask,
@@ -84,7 +84,7 @@ func newStackingStatBonusCD(config StackingStatBonusCD) {
 	core.NewItemEffect(config.ID, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
-		buffAura := makeStackingAura(character, StackingProcAura{
+		buffAura := MakeStackingAura(character, StackingProcAura{
 			Aura: core.Aura{
 				Label:     config.Name + " Aura",
 				ActionID:  core.ActionID{ItemID: config.ID},
@@ -146,7 +146,7 @@ func init() {
 	core.NewItemEffect(38212, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
-		procAura := makeStackingAura(character, StackingProcAura{
+		procAura := MakeStackingAura(character, StackingProcAura{
 			Aura: core.Aura{
 				Label:     "Death Knight's Anguish Proc",
 				ActionID:  core.ActionID{ItemID: 38212},
@@ -161,7 +161,7 @@ func init() {
 			BonusPerStack: stats.Stats{stats.MeleeCrit: 15, stats.SpellCrit: 15},
 		})
 
-		makeProcTriggerAura(&character.Unit, ProcTrigger{
+		MakeProcTriggerAura(&character.Unit, ProcTrigger{
 			Name:       "Death Knight's Anguish",
 			Callback:   OnSpellHitDealt,
 			ProcMask:   core.ProcMaskMeleeOrRanged,

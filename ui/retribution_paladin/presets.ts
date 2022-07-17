@@ -2,11 +2,13 @@ import { Conjured, Consumes } from '/wotlk/core/proto/common.js';
 import { EquipmentSpec } from '/wotlk/core/proto/common.js';
 import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
+import { Glyphs } from '/wotlk/core/proto/common.js';
 import { ItemSpec } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
 import { Spec } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
 import { Faction } from '/wotlk/core/proto/common.js';
+import { SavedTalents } from '/wotlk/core/proto/ui.js';
 import { Player } from '/wotlk/core/player.js';
 
 import {
@@ -29,13 +31,17 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 export const RetKingsPaladinTalents = {
 	name: 'Basic w/Aura Mastery',
-	data: '050501-05-05232051203331302133231331',
+	data: SavedTalents.create({
+		talentsString: '050501-05-05232051203331302133231331',
+	}),
 };
 
 
 export const RetNoKingsPaladinTalents = {
 	name: 'Suboptimal w/Dsac',
-	data: '-552201002-05232050203331302133231331',
+	data: SavedTalents.create({
+		talentsString: '-552201002-05232050203331302133231331',
+	}),
 };
 
 export const DefaultRotation = RetributionPaladinRotation.create({

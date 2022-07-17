@@ -27,7 +27,12 @@ import { PetFood } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
 
-import { Hunter, Hunter_Rotation as HunterRotation, Hunter_Options as HunterOptions } from '/wotlk/core/proto/hunter.js';
+import {
+	Hunter,
+	Hunter_Rotation as HunterRotation,
+	Hunter_Options as HunterOptions,
+	Hunter_Options_PetType as PetType,
+} from '/wotlk/core/proto/hunter.js';
 
 import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
 import * as OtherInputs from '/wotlk/core/components/other_inputs.js';
@@ -42,6 +47,32 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 			cssClass: 'hunter-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
+			],
+			warnings: [
+				// Warning when using exotic pet without BM talented.
+				(simUI: IndividualSimUI<Spec.SpecHunter>) => {
+					return {
+						updateOn: TypedEvent.onAny([simUI.player.talentsChangeEmitter, simUI.player.specOptionsChangeEmitter]),
+						getContent: () => {
+							const petIsExotic = [
+								PetType.Chimaera,
+								PetType.CoreHound,
+								PetType.Devilsaur,
+								PetType.Silithid,
+								PetType.SpiritBeast,
+								PetType.Worm,
+							].includes(simUI.player.getSpecOptions().petType);
+
+							const isBM = simUI.player.getTalents().beastMastery;
+
+							if (petIsExotic && !isBM) {
+								return 'Cannot use exotic pets without the Beast Mastery talent.';
+							} else {
+								return '';
+							}
+						},
+					};
+				},
 			],
 
 			// All stats for which EP should be calculated.
@@ -93,7 +124,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				// Default rotation settings.
 				rotation: Presets.DefaultRotation,
 				// Default talents.
-				talents: Presets.BeastMasteryTalents.data,
+				talents: Presets.SurvivalTalents.data,
 				// Default spec-specific settings.
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
@@ -153,7 +184,6 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 			debuffInputs: [
 				IconInputs.BloodFrenzy,
 				IconInputs.JudgementOfWisdom,
-				IconInputs.HuntersMark,
 				IconInputs.FaerieFire,
 				IconInputs.SunderArmor,
 				IconInputs.ExposeArmor,
@@ -215,9 +245,9 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				inputs: [
 					HunterInputs.PetTypeInput,
 					HunterInputs.PetUptime,
-					HunterInputs.PetSingleAbility,
+					//HunterInputs.PetSingleAbility,
 					HunterInputs.SniperTrainingUptime,
-					HunterInputs.LatencyMs,
+					//HunterInputs.LatencyMs,
 					OtherInputs.PrepopPotion,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
@@ -231,10 +261,6 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
 				showExecuteProportion: false,
 			},
-
-			// If true, the talents on the talents tab will not be individually modifiable by the user.
-			// Note that the use can still pick between preset talents, if there is more than 1.
-			freezeTalents: false,
 
 			presets: {
 				// Preset talents that the user can quickly select.

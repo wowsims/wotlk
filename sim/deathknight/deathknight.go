@@ -14,13 +14,35 @@ type DeathKnight struct {
 	Options  proto.DeathKnight_Options
 	Rotation proto.DeathKnight_Rotation
 
+	Ghoul     *GhoulPet
+	RaiseDead *core.Spell
+
+	Gargoyle       *GargoylePet
+	SummonGargoyle *core.Spell
+
 	Presence Presence
 
-	IcyTouch     *core.Spell
-	PlagueStrike *core.Spell
-	Obliterate   *core.Spell
-	BloodStrike  *core.Spell
-	FrostStrike  *core.Spell
+	IcyTouch *core.Spell
+
+	PlagueStrike      *core.Spell
+	PlagueStrikeMhHit *core.Spell
+	PlagueStrikeOhHit *core.Spell
+
+	Obliterate      *core.Spell
+	ObliterateMhHit *core.Spell
+	ObliterateOhHit *core.Spell
+
+	BloodStrike      *core.Spell
+	BloodStrikeMhHit *core.Spell
+	BloodStrikeOhHit *core.Spell
+
+	FrostStrike      *core.Spell
+	FrostStrikeMhHit *core.Spell
+	FrostStrikeOhHit *core.Spell
+
+	GhoulFrenzy *core.Spell
+	// Dummy aura for timeline metrics
+	GhoulFrenzyAura *core.Aura
 
 	LastScourgeStrikeDamage float64
 	ScourgeStrike           *core.Spell
@@ -33,6 +55,7 @@ type DeathKnight struct {
 
 	HowlingBlastCostless bool
 	HowlingBlast         *core.Spell
+
 	//HornOfWinter     *core.Spell
 	//UnbreakableArmor *core.Spell
 	//ArmyOfTheDead    *core.Spell
@@ -41,6 +64,9 @@ type DeathKnight struct {
 	// "CDs"
 	BloodTap     *core.Spell
 	BloodTapAura *core.Aura
+
+	BoneShield     *core.Spell
+	BoneShieldAura *core.Aura
 
 	// Diseases
 	FrostFeverSpell    *core.Spell
@@ -70,6 +96,10 @@ type DeathKnight struct {
 	// Debuffs
 	IcyTouchAura   *core.Aura
 	EbonPlagueAura *core.Aura
+
+	// Dynamic trackers
+	RageOfRivendareActive bool
+	TundraStalkerActive   bool
 }
 
 func (deathKnight *DeathKnight) GetCharacter() *core.Character {
@@ -109,6 +139,11 @@ func (deathKnight *DeathKnight) Initialize() {
 	deathKnight.registerFrostStrikeSpell()
 	deathKnight.registerDeathAndDecaySpell()
 	deathKnight.registerDiseaseDots()
+	deathKnight.registerGhoulFrenzySpell()
+	deathKnight.registerBoneShieldSpell()
+
+	deathKnight.registerRaiseDeadCD()
+	deathKnight.registerSummonGargoyleCD()
 }
 
 func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
@@ -194,6 +229,11 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 			return attackPower + strength*2
 		},
 	})
+
+	deathKnight.Ghoul = deathKnight.NewGhoulPet(deathKnight.Talents.MasterOfGhouls)
+	if deathKnight.Talents.SummonGargoyle {
+		deathKnight.Gargoyle = deathKnight.NewGargoyle()
+	}
 
 	return deathKnight
 }
@@ -350,6 +390,11 @@ func init() {
 }
 
 // Agent is a generic way to access underlying warrior on any of the agents.
+
+func (deathKnight *DeathKnight) GetDeathKnight() *DeathKnight {
+	return deathKnight
+}
+
 type DeathKnightAgent interface {
 	GetDeathKnight() *DeathKnight
 }

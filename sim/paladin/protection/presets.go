@@ -76,7 +76,6 @@ var FullDebuffs = &proto.Debuffs{
 	ExposeArmor:     proto.TristateEffect_TristateEffectImproved,
 	FaerieFire:      proto.TristateEffect_TristateEffectImproved,
 	CurseOfWeakness: proto.TristateEffect_TristateEffectImproved,
-	HuntersMark:     proto.TristateEffect_TristateEffectImproved,
 }
 
 var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [

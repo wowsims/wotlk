@@ -2,6 +2,7 @@ package deathknight
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 var ObliterateActionID = core.ActionID{SpellID: 51425}
@@ -29,17 +30,16 @@ func (deathKnight *DeathKnight) newObliterateHitSpell(isMH bool) *core.Spell {
 
 	effect := core.SpellEffect{
 		BonusCritRating:  (5.0*float64(deathKnight.Talents.Rime) + 3.0*float64(deathKnight.Talents.Subversion) + 1.0*float64(deathKnight.Talents.Annihilation)) * core.CritRatingPerCritChance,
-		DamageMultiplier: 1,
+		DamageMultiplier: core.TernaryFloat64(deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfFrostStrike), 1.25, 1.0),
 		ThreatMultiplier: 1,
 
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				return weaponBaseDamage(sim, hitEffect, spell) *
-					(1.0 +
-						float64(deathKnight.countActiveDiseases())*0.125 +
-						core.TernaryFloat64(deathKnight.DiseasesAreActive(), 0.05*float64(deathKnight.Talents.TundraStalker), 0.0) +
-						core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 0.02*float64(deathKnight.Talents.RageOfRivendare), 0.0) +
-						core.TernaryFloat64(sim.IsExecutePhase35() && deathKnight.Talents.MercilessCombat > 0, 0.06*float64(deathKnight.Talents.MercilessCombat), 0.0))
+					deathKnight.diseaseMultiplierBonus(0.125) *
+					deathKnight.rageOfRivendareBonus() *
+					deathKnight.tundraStalkerBonus() *
+					deathKnight.mercilessCombatBonus(sim)
 			},
 			TargetSpellCoefficient: 1,
 		},
@@ -74,10 +74,8 @@ func (deathKnight *DeathKnight) newObliterateHitSpell(isMH bool) *core.Spell {
 }
 
 func (deathKnight *DeathKnight) registerObliterateSpell() {
-	mhHitSpell := deathKnight.newObliterateHitSpell(true)
-	ohHitSpell := deathKnight.newObliterateHitSpell(false)
-
-	totChance := ToTChance(deathKnight)
+	deathKnight.ObliterateMhHit = deathKnight.newObliterateHitSpell(true)
+	deathKnight.ObliterateOhHit = deathKnight.newObliterateHitSpell(false)
 
 	deathKnight.Obliterate = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    ObliterateActionID,
@@ -97,15 +95,10 @@ func (deathKnight *DeathKnight) registerObliterateSpell() {
 			OutcomeApplier: deathKnight.OutcomeFuncAlwaysHit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				mhHitSpell.Cast(sim, spellEffect.Target)
-				totProcced := ToTWillCast(sim, totChance)
-				if totProcced {
-					ohHitSpell.Cast(sim, spellEffect.Target)
-				}
+				deathKnight.threatOfThassarianProc(sim, spellEffect, deathKnight.ObliterateMhHit, deathKnight.ObliterateOhHit)
+				deathKnight.threatOfThassarianAdjustMetrics(sim, spell, spellEffect, ObliterateMHOutcome)
 
-				ToTAdjustMetrics(sim, spell, spellEffect, ObliterateMHOutcome)
-
-				if OutcomeEitherWeaponHitOrCrit(ObliterateMHOutcome, ObliterateOHOutcome) {
+				if deathKnight.outcomeEitherWeaponHitOrCrit(ObliterateMHOutcome, ObliterateOHOutcome) {
 					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 1, 1)
 					deathKnight.Spend(sim, spell, dkSpellCost)
 

@@ -12,20 +12,10 @@ import (
 )
 
 func (deathKnight *DeathKnight) ApplyUnholyTalents() {
-	// Vicious Strikes
-	// Implemented outside
-
 	// Virulence
 	deathKnight.AddStat(stats.SpellHit, core.SpellHitRatingPerHitChance*float64(deathKnight.Talents.Virulence))
 
-	// Epidemic
-	// Implemented outside
-
-	// Morbidity
-	// Implemented outside
-
 	// Ravenous Dead
-	// TODO: Ghoul part
 	if deathKnight.Talents.RavenousDead > 0 {
 		strengthCoeff := 0.01 * float64(deathKnight.Talents.RavenousDead)
 		deathKnight.AddStatDependency(stats.StatDependency{
@@ -37,38 +27,20 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 		})
 	}
 
-	// Outbreak
-	// Implemented outside
-
 	// Necrosis
 	deathKnight.applyNecrosis()
 
 	// Blood-Caked Blade
 	deathKnight.applyBloodCakedBlade()
 
-	// Night of the Dead
-	// TODO:
-
 	// Unholy Blight
 	deathKnight.applyUnholyBlight()
-
-	// Impurity
-	// TODO:
-
-	// Dirge
-	// Implemented outside
 
 	// Reaping
 	// TODO:
 
-	// Master of Ghouls
-	// TODO:
-
 	// Desolation
 	deathKnight.applyDesolation()
-
-	// Ghoul Frenzy
-	// TODO:
 
 	// Bone Shield
 	// TODO:
@@ -78,17 +50,22 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 
 	// Crypt Fever
 	// Ebon Plaguebringer
-	// TODO: Diseases damage increase still missing
 	deathKnight.applyEbonPlaguebringer()
-
-	// Scourge Strike
-	// Implemented outside
 
 	// Rage of Rivendare
 	deathKnight.AddStat(stats.Expertise, float64(deathKnight.Talents.RageOfRivendare)*core.ExpertisePerQuarterPercentReduction)
+}
 
-	// Summon Gargoyle
-	// TODO:
+func (deathKnight *DeathKnight) viciousStrikesBonus() float64 {
+	return 0.15 * float64(deathKnight.Talents.ViciousStrikes)
+}
+
+func (deathKnight *DeathKnight) rageOfRivendareBonus() float64 {
+	return core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 1.0+0.02*float64(deathKnight.Talents.RageOfRivendare), 1.0)
+}
+
+func (deathKnight *DeathKnight) applyImpurity(hitEffect *core.SpellEffect, unit *core.Unit) float64 {
+	return hitEffect.MeleeAttackPower(unit) * (1.0 + float64(deathKnight.Talents.Impurity)*0.04)
 }
 
 func (deathKnight *DeathKnight) applyWanderingPlague() {
@@ -97,6 +74,15 @@ func (deathKnight *DeathKnight) applyWanderingPlague() {
 	}
 
 	actionID := core.ActionID{SpellID: 49655}
+
+	wanderingPlagueMultiplier := 0.0
+	if deathKnight.Talents.WanderingPlague == 1 {
+		wanderingPlagueMultiplier = 0.33
+	} else if deathKnight.Talents.WanderingPlague == 2 {
+		wanderingPlagueMultiplier = 0.66
+	} else if deathKnight.Talents.WanderingPlague == 3 {
+		wanderingPlagueMultiplier = 1.0
+	}
 
 	deathKnight.WanderingPlague = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -112,7 +98,7 @@ func (deathKnight *DeathKnight) applyWanderingPlague() {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
-					return deathKnight.LastDiseaseDamage
+					return deathKnight.LastDiseaseDamage * wanderingPlagueMultiplier
 				},
 			},
 			OutcomeApplier: deathKnight.OutcomeFuncAlwaysHit(),
@@ -192,10 +178,11 @@ func (deathKnight *DeathKnight) applyBloodCakedBlade() {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
+					diseaseMultiplier := (0.25 + float64(deathKnight.countActiveDiseases())*0.125)
 					if isMH {
-						return mhBaseDamage(sim, spellEffect, spell) * (0.25 + float64(deathKnight.countActiveDiseases())*0.125)
+						return mhBaseDamage(sim, spellEffect, spell) * diseaseMultiplier
 					} else {
-						return ohBaseDamage(sim, spellEffect, spell) * (0.25 + float64(deathKnight.countActiveDiseases())*0.125)
+						return ohBaseDamage(sim, spellEffect, spell) * diseaseMultiplier
 					}
 				},
 			},

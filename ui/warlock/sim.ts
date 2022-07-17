@@ -85,7 +85,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,
 				// Default rotation settings.
-				rotation: Presets.AfflictionRotation.rotation,
+				rotation: Presets.AfflictionRotation,
 				// Default talents.
 				talents: Presets.AfflictionTalents.data,
 				// Default spec-specific settings.
@@ -162,7 +162,6 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				IconInputs.ExposeArmor,
 				IconInputs.SunderArmor,
 				IconInputs.BloodFrenzy,
-				IconInputs.HuntersMark,
 				IconInputs.FaerieFire,
 				IconInputs.CurseOfWeakness,
 			],
@@ -206,6 +205,18 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			},
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: WarlockInputs.WarlockRotationConfig,
+
+			spellInputs: [
+				WarlockInputs.PrimarySpellShadowbolt,
+				WarlockInputs.PrimarySpellIncinerate,
+				WarlockInputs.PrimarySpellSeed,
+				WarlockInputs.SecondaryDotImmolate,
+				WarlockInputs.SecondaryDotUnstableAffliction,
+				WarlockInputs.SpecSpellChaosBolt,
+				WarlockInputs.SpecSpellHaunt,
+				WarlockInputs.CorruptionSpell,
+			],
+			
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
@@ -224,10 +235,6 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				showExecuteProportion: false,
 			},
 
-			// If true, the talents on the talents tab will not be individually modifiable by the user.
-			// Note that the use can still pick between preset talents, if there is more than 1.
-			freezeTalents: false,
-
 			presets: {
 				// Preset talents that the user can quickly select.
 				talents: [
@@ -235,13 +242,13 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 					Presets.DemonologyTalents,
 					Presets.DestructionTalents,
 				],
-				// // Preset rotations that the user can quickly select.
+				// Preset rotations that the user can quickly select.
 				// rotation: [
 				// 	Presets.AfflictionRotation,
 				// 	Presets.DemonologyRotation,
 				// 	Presets.DestructionRotation,
 				// ],
-				// Preset gear configurations that the user can quickly select.
+				//Preset gear configurations that the user can quickly select.
 				gear: [
 					Presets.P1_DESTRO,
 					Presets.P2_DESTRO,

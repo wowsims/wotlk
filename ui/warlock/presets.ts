@@ -1,14 +1,29 @@
 import { Consumes } from '/wotlk/core/proto/common.js';
 import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
+import { Glyphs } from '/wotlk/core/proto/common.js';
 import { EquipmentSpec } from '/wotlk/core/proto/common.js';
 import { ItemSpec } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
 import { Faction } from '/wotlk/core/proto/common.js';
+import { SavedTalents } from '/wotlk/core/proto/ui.js';
 import { Player } from '/wotlk/core/player.js';
 
-import { Warlock, Warlock_Rotation as WarlockRotation, WarlockTalents as WarlockTalents, Warlock_Options as WarlockOptions, Warlock_Rotation_PrimarySpell, Warlock_Rotation_Curse, Warlock_Options_Armor as Armor, Warlock_Options_Summon as Summon } from '/wotlk/core/proto/warlock.js';
+import {
+	Warlock,
+	Warlock_Rotation as WarlockRotation,
+	WarlockTalents as WarlockTalents,
+	Warlock_Options as WarlockOptions,
+	Warlock_Rotation_PrimarySpell as PrimarySpell,
+	Warlock_Rotation_SecondaryDot as SecondaryDot,
+	Warlock_Rotation_SpecSpell as SpecSpell,
+	Warlock_Rotation_Curse as Curse,
+	Warlock_Options_Armor as Armor,
+	Warlock_Options_Summon as Summon,
+	WarlockMajorGlyph as MajorGlyph,
+	WarlockMinorGlyph as MinorGlyph,
+} from '/wotlk/core/proto/warlock.js';
 
 import * as Enchants from '/wotlk/core/constants/enchants.js';
 import * as Gems from '/wotlk/core/proto_utils/gems.js';
@@ -22,58 +37,86 @@ import { FelArmor, DemonArmor } from './inputs';
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 
-export const DestructionTalents = {
-	name: 'Destruction',
-	data: '-03310030002-05203205220331051335131351',
-};
-
 export const AfflictionTalents = {
 	name: 'Affliction',
-	data: '2350002030023510253510331151--55000005',
+	data: SavedTalents.create({
+		talentsString: '2350002030023510253510331151--55000005',
+		glyphs: Glyphs.create({
+			major1: MajorGlyph.GlyphOfQuickDecay,
+			major2: MajorGlyph.GlyphOfLifeTap,
+			major3: MajorGlyph.GlyphOfHaunt,
+			minor1: MinorGlyph.GlyphOfSouls,
+			minor2: MinorGlyph.GlyphOfDrainSoul,
+			minor3: MinorGlyph.GlyphOfEnslaveDemon,
+		}),
+	}),
 };
 
 export const DemonologyTalents = {
 	name: 'Demonology',
-	data: '-203203301035012530135201351-550000052',
+	data: SavedTalents.create({
+		talentsString: '-203203301035012530135201351-550000052',
+		glyphs: Glyphs.create({
+			major1: MajorGlyph.GlyphOfLifeTap,
+			major2: MajorGlyph.GlyphOfQuickDecay,
+			major3: MajorGlyph.GlyphOfMetamorphosis,
+			minor1: MinorGlyph.GlyphOfSouls,
+			minor2: MinorGlyph.GlyphOfDrainSoul,
+			minor3: MinorGlyph.GlyphOfEnslaveDemon,
+		}),
+	}),
 };
 
-
-export const DestructionRotation = {
+export const DestructionTalents = {
 	name: 'Destruction',
-	rotation: WarlockRotation.create({
-		primarySpell: Warlock_Rotation_PrimarySpell.Incinerate,
-		immolate: true,
-		chaosBolt: true,
-		curse: Warlock_Rotation_Curse.Doom,
-		detonateSeed: true,
-	})
+	data: SavedTalents.create({
+		talentsString: '030-03310030003-05203205220331051035031351',
+		glyphs: Glyphs.create({
+			major1: MajorGlyph.GlyphOfConflagrate,
+			major2: MajorGlyph.GlyphOfImp,
+			major3: MajorGlyph.GlyphOfIncinerate,
+			minor1: MinorGlyph.GlyphOfSouls,
+			minor2: MinorGlyph.GlyphOfDrainSoul,
+			minor3: MinorGlyph.GlyphOfEnslaveDemon,
+		}),
+	}),
 };
 
-export const AfflictionRotation = {
-	name: 'Affliction',
-	rotation: WarlockRotation.create({
-		primarySpell: Warlock_Rotation_PrimarySpell.Shadowbolt,
+
+export const AfflictionRotation = WarlockRotation.create({
+		primarySpell: PrimarySpell.Shadowbolt,
+		secondaryDot: SecondaryDot.UnstableAffliction,
+		specSpell: SpecSpell.Haunt,
+		curse: Curse.Agony,
 		corruption: true,
-		haunt: true,
-		curse: Warlock_Rotation_Curse.Doom,
 		detonateSeed: true,
-	})
-};
-
-export const DemonologyRotation = {
-	name: 'Demonology',
-	rotation: WarlockRotation.create({
-		primarySpell: Warlock_Rotation_PrimarySpell.Shadowbolt,
-		corruption: true,
-		curse: Warlock_Rotation_Curse.Elements,
-		detonateSeed: true,
-	})
-};
-
-export const DestructionOptions = WarlockOptions.create({
-	armor: Armor.FelArmor,
-	summon: Summon.Imp,
 });
+
+export const DemonologyRotation = WarlockRotation.create({
+	primarySpell: PrimarySpell.Shadowbolt,
+	secondaryDot: SecondaryDot.Immolate,
+	specSpell: SpecSpell.NoSpecSpell,
+	curse: Curse.Doom,
+	corruption: true,
+	detonateSeed: true,
+});
+
+export const DestructionRotation = WarlockRotation.create({
+	primarySpell: PrimarySpell.Incinerate,
+	secondaryDot: SecondaryDot.Immolate,
+	specSpell: SpecSpell.ChaosBolt,
+	curse: Curse.Doom,
+	corruption: true,
+	detonateSeed: true,
+});
+
+
+// var defaultDestroMinorGlyphs = &proto.WarlockMinorGlyph{
+// 	WarlockMinorGlyph:
+// 		proto.WarlockMinorGlyph_GlyphOfDrainSoul,
+// 		proto.WarlockMinorGlyph_GlyphOfEnslaveDemon,
+// 		proto.WarlockMinorGlyph_GlyphOfKilrogg,
+// }
 
 export const AfflictionOptions = WarlockOptions.create({
 	armor: Armor.FelArmor,
@@ -83,6 +126,11 @@ export const AfflictionOptions = WarlockOptions.create({
 export const DemonologyOptions = WarlockOptions.create({
 	armor: Armor.FelArmor,
 	summon: Summon.Felguard,
+});
+
+export const DestructionOptions = WarlockOptions.create({
+	armor: Armor.FelArmor,
+	summon: Summon.Imp,
 });
 
 export const DefaultConsumes = Consumes.create({

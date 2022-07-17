@@ -141,6 +141,7 @@ enum DeathKnightMinorGlyph {
 
 message DeathKnight {
 	message Rotation {
+		bool use_death_and_decay = 1;
 	}
 	Rotation rotation = 1;
 
@@ -148,6 +149,8 @@ message DeathKnight {
 	
 	message Options {
 		double starting_runic_power = 1;
+		double pet_uptime = 2;
+		bool precast_ghoul_frenzy = 3;
 	}
 	Options options = 3;
 }

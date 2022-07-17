@@ -2,11 +2,13 @@ import { Conjured, Consumes } from '/wotlk/core/proto/common.js';
 import { EquipmentSpec } from '/wotlk/core/proto/common.js';
 import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
+import { Glyphs } from '/wotlk/core/proto/common.js';
 import { ItemSpec } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
 import { Spec } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
 import { Faction } from '/wotlk/core/proto/common.js';
+import { SavedTalents } from '/wotlk/core/proto/ui.js';
 import { Player } from '/wotlk/core/player.js';
 
 import {
@@ -28,17 +30,23 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 export const AvengersShieldTalents = {
 	name: 'Avenger\'s Shield',
-	data: '-0530513050000142521051-052050003003',
+	data: SavedTalents.create({
+		talentsString: '-0530513050000142521051-052050003003',
+	}),
 };
 
 export const ArdentDefenderTalents = {
 	name: 'Ardent Defender',
-	data: '-0530503150000152521551-05205',
+	data: SavedTalents.create({
+		talentsString: '-0530503150000152521551-05205',
+	}),
 };
 
 export const SanctityTalents = {
 	name: 'Sanctity',
-	data: '-053050305000013252105-05205011300301',
+	data: SavedTalents.create({
+		talentsString: '-053050305000013252105-05205011300301',
+	}),
 };
 
 export const DefaultRotation = ProtectionPaladinRotation.create({

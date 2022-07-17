@@ -90,10 +90,10 @@ func (warlock *Warlock) ApplyTalents() {
 		warlock.PseudoStats.FireDamageDealtMultiplier *= 1 + spellDmgBonus
 	}
 
- 	if warlock.Talents.MoltenSkin > 0 {
- 		warlock.PseudoStats.DamageTakenMultiplier /= 1 + 0.02 * float64(warlock.Talents.MoltenSkin)
- 	}
- 	
+	if warlock.Talents.MoltenSkin > 0 {
+		warlock.PseudoStats.DamageTakenMultiplier /= 1 + 0.02*float64(warlock.Talents.MoltenSkin)
+	}
+
 	if warlock.Talents.Nightfall > 0 || warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCorruption) {
 		warlock.setupNightfall()
 	}
@@ -130,23 +130,27 @@ func (warlock *Warlock) ApplyTalents() {
 		warlock.Pet.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.1*float64(warlock.Talents.EmpoweredImp)
 		warlock.setupEmpoweredImp()
 	}
+
+	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap) {
+		warlock.registerGlyphOfLifeTapAura()
+	}
 }
 
-func (warlock *Warlock) applyGlyphOfLifeTapAura(spi int32) {
+func (warlock *Warlock) registerGlyphOfLifeTapAura() {
 	warlock.GlyphOfLifeTapAura = warlock.RegisterAura(core.Aura{
 		Label:    "Glyph Of LifeTap Aura",
-		ActionID: core.ActionID{SpellID: 45785},
+		Tag:      "Glyph Of LifeTap Aura",
+		ActionID: core.ActionID{SpellID: 63941},
 		Duration: time.Second * 40,
-		Priority: float64(spi),
+		Priority: float64(warlock.GetStat(stats.Spirit)),
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			warlock.AddStatDynamic(sim, stats.SpellPower, 0.2 * float64(spi))
+			warlock.AddStatDynamic(sim, stats.SpellPower, 0.2*float64(warlock.GetStat(stats.Spirit)))
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			warlock.AddStatDynamic(sim, stats.SpellPower, -0.2 * float64(spi))
+			warlock.AddStatDynamic(sim, stats.SpellPower, -0.2*float64(warlock.GetStat(stats.Spirit)))
 		},
 	})
 }
-
 
 func (warlock *Warlock) setupEmpoweredImp() {
 	warlock.EmpoweredImpAura = warlock.RegisterAura(core.Aura{
@@ -333,9 +337,8 @@ func (warlock *Warlock) setupNightfall() {
 		},
 		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spell == warlock.Corruption { // TODO: also works on drain life...
-				if sim.RandomFloat("Nightfall") < 0.02*float64(warlock.Talents.Nightfall) {
-					warlock.NightfallProcAura.Activate(sim)
-				} else if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCorruption) && sim.RandomFloat("GlyphOfCorruption") < 0.04 {
+				if sim.RandomFloat("Nightfall") < 0.02*float64(warlock.Talents.Nightfall) + 
+				0.04*core.TernaryFloat64(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCorruption), 1, 0) {
 					warlock.NightfallProcAura.Activate(sim)
 				}
 			}
@@ -353,6 +356,16 @@ func (warlock *Warlock) setupMoltenCore() {
 			if spell == warlock.Incinerate || spell == warlock.SoulFire {
 				aura.RemoveStack(sim)
 			}
+		},
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			warlock.Incinerate.DamageMultiplier *= 1 + 0.06*float64(warlock.Talents.MoltenCore)
+			warlock.SoulFire.DamageMultiplier *= 1 + 0.06*float64(warlock.Talents.MoltenCore)
+			warlock.SoulFire.BonusCritRating += 5 * float64(warlock.Talents.MoltenCore) * core.CritRatingPerCritChance
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			warlock.Incinerate.DamageMultiplier /= 1 + 0.06*float64(warlock.Talents.MoltenCore)
+			warlock.SoulFire.DamageMultiplier /= 1 + 0.06*float64(warlock.Talents.MoltenCore)
+			warlock.SoulFire.BonusCritRating -= 5 * float64(warlock.Talents.MoltenCore) * core.CritRatingPerCritChance
 		},
 	})
 

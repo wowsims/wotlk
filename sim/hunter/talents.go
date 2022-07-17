@@ -280,6 +280,18 @@ func (hunter *Hunter) applyCobraStrikes() {
 		ActionID:  actionID,
 		Duration:  time.Second * 10,
 		MaxStacks: 2,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			hunter.pet.focusDump.BonusCritRating += 100 * core.CritRatingPerCritChance
+			if !hunter.pet.specialAbility.IsEmpty() {
+				hunter.pet.specialAbility.BonusCritRating += 100 * core.CritRatingPerCritChance
+			}
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			hunter.pet.focusDump.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			if !hunter.pet.specialAbility.IsEmpty() {
+				hunter.pet.specialAbility.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			}
+		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.ProcMask.Matches(core.ProcMaskMeleeSpecial | core.ProcMaskSpellDamage) {
 				aura.RemoveStack(sim)
@@ -362,6 +374,7 @@ func (hunter *Hunter) applyPiercingShots() {
 				OutcomeApplier:   hunter.OutcomeFuncTick(),
 			})
 			psDot.Apply(sim)
+			psSpell.SpellMetrics[spellEffect.Target.TableIndex].Casts++
 		},
 	})
 }
@@ -384,14 +397,7 @@ func (hunter *Hunter) applyWildQuiver() {
 			DamageMultiplier: 0.8,
 			ThreatMultiplier: 1,
 
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return hunter.AutoAttacks.Ranged.BaseDamage(sim) +
-						hunter.AmmoDamageBonus +
-						hitEffect.BonusWeaponDamage(spell.Unit)
-				},
-				TargetSpellCoefficient: 1,
-			},
+			BaseDamage:     core.BaseDamageConfigRangedWeapon(0),
 			OutcomeApplier: hunter.OutcomeFuncAlwaysHit(),
 		}),
 	})
@@ -597,6 +603,18 @@ func (hunter *Hunter) applyLockAndLoad() {
 		ActionID:  actionID,
 		Duration:  time.Second * 12,
 		MaxStacks: 2,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			hunter.ArcaneShot.CostMultiplier -= 1
+			if hunter.ExplosiveShot != nil {
+				hunter.ExplosiveShot.CostMultiplier -= 1
+			}
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			hunter.ArcaneShot.CostMultiplier -= 1
+			if hunter.ExplosiveShot != nil {
+				hunter.ExplosiveShot.CostMultiplier -= 1
+			}
+		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spell == hunter.ArcaneShot || spell == hunter.ExplosiveShot {
 				aura.RemoveStack(sim)
