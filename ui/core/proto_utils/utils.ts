@@ -1412,7 +1412,8 @@ export function canEquipItem(item: Item, spec: Spec, slot: ItemSlot | undefined)
 			return false;
 		}
 
-		if ((item.handType == HandType.HandTypeOffHand || (item.handType == HandType.HandTypeOneHand && slot == ItemSlot.ItemSlotOffHand))
+		if ((item.handType == HandType.HandTypeOffHand || (item.handType == HandType.HandTypeOneHand && slot == ItemSlot.ItemSlotOffHand) 
+			|| playerClass != Class.ClassWarrior)
 			&& ![WeaponType.WeaponTypeShield, WeaponType.WeaponTypeOffHand].includes(item.weaponType)
 			&& !dualWieldSpecs.includes(spec)) {
 			return false;
