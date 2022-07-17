@@ -16,6 +16,8 @@ import {
 	DeathKnight,
 	DeathKnight_Rotation as DeathKnightRotation,
 	DeathKnight_Options as DeathKnightOptions,
+	DeathKnightMajorGlyph,
+	DeathKnightMinorGlyph,
 } from '/wotlk/core/proto/deathknight.js';
 
 import * as Enchants from '/wotlk/core/constants/enchants.js';
@@ -39,7 +41,15 @@ export const FrostTalents = {
 export const UnholyDualWieldTalents = {
 	name: 'Unholy Dual Wield Dps',
 	data: SavedTalents.create({
-		talentsString: '-320033500002-2302303050032150000150013133151',
+		talentsString: '-320023500002-2300303350032052000150003133151',
+		glyphs: Glyphs.create({
+			major1: DeathKnightMajorGlyph.GlyphOfTheGhoul,
+			major2: DeathKnightMajorGlyph.GlyphOfDarkDeath,
+			major3: DeathKnightMajorGlyph.GlyphOfDeathAndDecay,
+			minor1: DeathKnightMinorGlyph.GlyphOfHornOfWinter,
+			minor2: DeathKnightMinorGlyph.GlyphOfPestilence,
+			minor3: DeathKnightMinorGlyph.GlyphOfRaiseDead,
+		}),
 	}),
 };
 

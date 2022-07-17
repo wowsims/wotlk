@@ -57,7 +57,7 @@ func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			BonusCritRating:  (3.0*float64(deathKnight.Talents.Subversion) + 3.0*float64(deathKnight.Talents.ViciousStrikes)) * core.CritRatingPerCritChance,
+			BonusCritRating:  (3.0*float64(deathKnight.Talents.Subversion) + 3.0*float64(deathKnight.Talents.ViciousStrikes) + deathKnight.scourgeborneCritBonus()) * core.CritRatingPerCritChance,
 			DamageMultiplier: outbreakBonus,
 			ThreatMultiplier: 1,
 
@@ -77,7 +77,7 @@ func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
 					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 1, 1)
 					deathKnight.Spend(sim, spell, dkSpellCost)
 
-					amountOfRunicPower := 15.0 + 2.5*float64(deathKnight.Talents.Dirge)
+					amountOfRunicPower := 15.0 + 2.5*float64(deathKnight.Talents.Dirge) + deathKnight.scourgeborneRunicPowerBonus()
 					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 
 					if deathKnight.DiseasesAreActive() {

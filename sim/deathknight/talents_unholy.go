@@ -42,9 +42,6 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 	// Desolation
 	deathKnight.applyDesolation()
 
-	// Bone Shield
-	// TODO:
-
 	// Wandering Plague
 	deathKnight.applyWanderingPlague()
 

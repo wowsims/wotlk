@@ -25,7 +25,7 @@ func (deathKnight *DeathKnight) registerDeathCoilSpell() {
 			ProcMask:             core.ProcMaskSpellDamage,
 			BonusSpellCritRating: 0.0,
 			DamageMultiplier: (1.0 + float64(deathKnight.Talents.Morbidity)*0.05) *
-				core.TernaryFloat64(deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfDeathAndDecay), 1.15, 1.0),
+				core.TernaryFloat64(deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfDarkDeath), 1.15, 1.0),
 			ThreatMultiplier: 1.0,
 
 			BaseDamage: core.BaseDamageConfig{
