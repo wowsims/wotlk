@@ -148,6 +148,10 @@ func (unit *Unit) AddStat(stat stats.Stat, amount float64) {
 	unit.stats[stat] += amount
 }
 
+func (unit *Unit) SetStatChanging(changing bool) {
+	unit.statChanging = changing
+}
+
 func (unit *Unit) AddStatsDynamic(sim *Simulation, stat stats.Stats) {
 	if unit.Env == nil || !unit.Env.IsFinalized() {
 		panic("Not finalized, use AddStats instead!")

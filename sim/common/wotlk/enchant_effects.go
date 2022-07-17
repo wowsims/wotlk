@@ -363,8 +363,10 @@ func init() {
 
 		vulnAura := core.RuneOfRazoriceVulnerabilityAura(target)
 
+		mhBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 0, 1.0, true)
+		ohBaseDamage := core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, 1.0, true)
+
 		var isMH bool
-		var dmg float64
 		razoriceHit := character.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 53343},
 			SpellSchool: core.SpellSchoolFrost,
@@ -380,13 +382,13 @@ func init() {
 				BaseDamage: core.BaseDamageConfig{
 					Calculator: func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
 						if isMH {
-							return 0.02 * dmg
+							return mhBaseDamage(sim, spellEffect, spell) * 0.02
 						} else {
-							return 0.02 * dmg
+							return ohBaseDamage(sim, spellEffect, spell) * 0.02
 						}
 					},
 				},
-				OutcomeApplier: character.OutcomeFuncAlwaysHit(),
+				OutcomeApplier: character.OutcomeFuncMeleeWeaponSpecialNoHitNoCrit(),
 			}),
 		})
 
@@ -403,7 +405,6 @@ func init() {
 					return
 				}
 				isMH = spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHAuto)
-				dmg = spellEffect.Damage
 				razoriceHit.Cast(sim, target)
 				vulnAura.Activate(sim)
 				if vulnAura.IsActive() {
@@ -424,13 +425,21 @@ func init() {
 			aura.OnGain = func(aura *core.Aura, sim *core.Simulation) {
 				oldOnGain(aura, sim)
 				strengthBonus = 0.15 * character.GetStat(stats.Strength)
-
-				character.AddStatsDynamic(sim, stats.Stats{stats.Strength: strengthBonus})
+				bonusStats := character.ApplyStatDependencies(stats.Stats{stats.Strength: strengthBonus})
+				character.AddStatsDynamic(sim, bonusStats)
 			}
+
+			//aura.OnStatsChange = func(aura *core.Aura, sim *core.Simulation, oldStats stats.Stats, newStats stats.Stats) {
+			//	strengthWithoutBonus := newStats[stats.Strength] - strengthBonus
+			//	strengthBonus = 0.15 * strengthWithoutBonus
+			//	bonusStats := character.ApplyStatDependencies(stats.Stats{stats.Strength: strengthBonus})
+			//	character.AddStatsDynamic(sim, bonusStats)
+			//}
 
 			aura.OnExpire = func(aura *core.Aura, sim *core.Simulation) {
 				oldOnExpire(aura, sim)
-				character.AddStatsDynamic(sim, stats.Stats{stats.Strength: -strengthBonus})
+				bonusStats := character.ApplyStatDependencies(stats.Stats{stats.Strength: -strengthBonus})
+				character.AddStatsDynamic(sim, bonusStats)
 			}
 		})
 	}
@@ -449,8 +458,7 @@ func init() {
 		procMask := core.GetMeleeProcMaskForHands(mh, oh)
 		ppmm := character.AutoAttacks.NewPPMManager(2.0, procMask)
 
-		mhAura := newRuneOfTheFallenCrusaderAura(character, "Rune Of The Fallen Crusader MH", core.ActionID{SpellID: 53344, Tag: 1})
-		ohAura := newRuneOfTheFallenCrusaderAura(character, "Rune Of The Fallen Crusader OH", core.ActionID{SpellID: 53344, Tag: 2})
+		rfcAura := newRuneOfTheFallenCrusaderAura(character, "Rune Of The Fallen Crusader Proc", core.ActionID{SpellID: 53344})
 
 		character.GetOrRegisterAura(core.Aura{
 			Label:    "Rune Of The Fallen Crusader",
@@ -459,16 +467,26 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+				if !spellEffect.Landed() {
 					return
 				}
 
-				if ppmm.Proc(sim, spellEffect.ProcMask, "rune of the fallen crusader") {
-					if spellEffect.IsMH() {
-						mhAura.Activate(sim)
-					} else {
-						ohAura.Activate(sim)
+				if mh {
+					if !(spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHAuto) || spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHSpecial)) {
+						return
 					}
+				} else if oh {
+					if !(spellEffect.ProcMask.Matches(core.ProcMaskMeleeOHAuto) || spellEffect.ProcMask.Matches(core.ProcMaskMeleeOHSpecial)) {
+						return
+					}
+				} else {
+					if !(spellEffect.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeSpecial)) {
+						return
+					}
+				}
+
+				if ppmm.Proc(sim, spellEffect.ProcMask, "rune of the fallen crusader") {
+					rfcAura.Activate(sim)
 				}
 			},
 		})

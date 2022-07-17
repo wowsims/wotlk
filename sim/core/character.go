@@ -222,6 +222,10 @@ func (character *Character) GetPet(name string) PetAgent {
 	panic(character.Name + " has no pet with name " + name)
 }
 
+func (character *Character) SetStatChanging(changing bool) {
+	character.Unit.SetStatChanging(changing)
+}
+
 func (character *Character) AddStatsDynamic(sim *Simulation, stat stats.Stats) {
 	character.Unit.AddStatsDynamic(sim, stat)
 
