@@ -19,7 +19,6 @@ export class TalentsPicker<ModObject, TalentsProto> extends Input<ModObject, str
 	readonly pointsPerRow: number;
 	maxPoints: number;
 
-	frozen: boolean;
 	readonly trees: Array<TalentTreePicker<TalentsProto>>;
 
 	constructor(parent: HTMLElement, modObject: ModObject, config: TalentsPickerConfig<ModObject, TalentsProto>) {
@@ -28,7 +27,6 @@ export class TalentsPicker<ModObject, TalentsProto> extends Input<ModObject, str
 		this.maxPoints = config.maxPoints;
 		this.numRows = Math.max(...config.trees.map(treeConfig => treeConfig.talents.map(talentConfig => talentConfig.location.rowIdx).flat()).flat()) + 1;
 
-		this.frozen = false;
 		this.trees = config.trees.map(treeConfig => new TalentTreePicker(this.rootElem, treeConfig, this));
 		this.trees.forEach(tree => tree.talents.forEach(talent => talent.setPoints(0, false)));
 
@@ -64,12 +62,6 @@ export class TalentsPicker<ModObject, TalentsProto> extends Input<ModObject, str
 
 	isFull() {
 		return this.numPoints >= this.maxPoints;
-	}
-
-	// Freezes the talent calculator so that user input cannot change it.
-	freeze() {
-		this.frozen = true;
-		this.rootElem.classList.add('frozen');
 	}
 
 	setMaxPoints(newMaxPoints: number) {
@@ -124,10 +116,8 @@ class TalentTreePicker<TalentsProto> extends Component {
 
 		const reset = this.rootElem.getElementsByClassName('talent-tree-reset')[0] as HTMLElement;
 		reset.addEventListener('click', event => {
-			if (!this.picker.frozen) {
-				this.talents.forEach(talent => talent.setPoints(0, false));
-				this.picker.inputChanged(TypedEvent.nextEventID());
-			}
+			this.talents.forEach(talent => talent.setPoints(0, false));
+			this.picker.inputChanged(TypedEvent.nextEventID());
 		});
 	}
 
@@ -190,9 +180,6 @@ class TalentPicker<TalentsProto> extends Component {
 		});
 		this.rootElem.addEventListener('touchend', event => {
 			event.preventDefault();
-			if (this.tree.picker.frozen)
-				return;
-
 			if (this.longTouchTimer != undefined) {
 				clearTimeout(this.longTouchTimer);
 				this.longTouchTimer = undefined;
@@ -207,9 +194,6 @@ class TalentPicker<TalentsProto> extends Component {
 			this.tree.picker.inputChanged(TypedEvent.nextEventID());
 		});
 		this.rootElem.addEventListener('mousedown', event => {
-			if (this.tree.picker.frozen)
-				return;
-
 			const rightClick = isRightClick(event);
 			if (rightClick) {
 				this.setPoints(this.getPoints() - 1, true);

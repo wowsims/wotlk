@@ -209,7 +209,6 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 	customSections?: Array<(simUI: IndividualSimUI<SpecType>, parentElem: HTMLElement) => string>;
 
 	encounterPicker: EncounterPickerConfig,
-	freezeTalents?: boolean;
 
 	presets: {
 		gear: Array<PresetGear>,
@@ -979,13 +978,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			toJson: (a: SavedTalents) => SavedTalents.toJson(a),
 			fromJson: (obj: any) => SavedTalents.fromJson(obj),
 		});
-
-		// Add a url parameter to help people trapped in the wrong talents   ;)
-		const freezeTalents = this.individualConfig.freezeTalents && !(new URLSearchParams(window.location.search).has('unlockTalents'));
-		if (freezeTalents) {
-			savedTalentsManager.freeze();
-			talentsPicker.freeze();
-		}
 
 		this.sim.waitForInit().then(() => {
 			savedTalentsManager.loadUserData();

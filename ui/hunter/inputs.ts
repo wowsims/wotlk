@@ -122,7 +122,7 @@ export const SniperTrainingUptime = {
 		],
 		label: 'ST Uptime (%)',
 		labelTooltip: 'Uptime for the Sniper Training talent, as a percent of the fight duration.',
-		changedEvent: (player: Player<Spec.SpecHunter>) => player.specOptionsChangeEmitter,
+		changedEvent: (player: Player<Spec.SpecHunter>) => TypedEvent.onAny([player.specOptionsChangeEmitter, player.talentsChangeEmitter]),
 		getValue: (player: Player<Spec.SpecHunter>) => player.getSpecOptions().sniperTrainingUptime * 100,
 		setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: number) => {
 			const newOptions = player.getSpecOptions();
