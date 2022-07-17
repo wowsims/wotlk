@@ -142,7 +142,6 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 					sunderArmor: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					curseOfWeakness: TristateEffect.TristateEffectRegular,
-					huntersMark: TristateEffect.TristateEffectImproved,
 				}),
 			},
 
@@ -188,7 +187,6 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 				IconInputs.SunderArmor,
 				IconInputs.ExposeArmor,
 				IconInputs.BloodFrenzy,
-				IconInputs.HuntersMark,
 				IconInputs.FaerieFire,
 				IconInputs.CurseOfWeakness,
 				IconInputs.Misery,

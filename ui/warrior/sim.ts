@@ -114,7 +114,6 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 					sunderArmor: true,
 					curseOfWeakness: TristateEffect.TristateEffectRegular,
 					faerieFire: TristateEffect.TristateEffectImproved,
-					huntersMark: TristateEffect.TristateEffectImproved,
 				}),
 			},
 
@@ -146,7 +145,6 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 			debuffInputs: [
 				IconInputs.BloodFrenzy,
 				IconInputs.Mangle,
-				IconInputs.HuntersMark,
 				IconInputs.FaerieFire,
 				IconInputs.SunderArmor,
 				IconInputs.ExposeArmor,

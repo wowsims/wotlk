@@ -137,7 +137,6 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 					faerieFire: TristateEffect.TristateEffectImproved,
 					sunderArmor: true,
 					curseOfWeakness: TristateEffect.TristateEffectRegular,
-					huntersMark: TristateEffect.TristateEffectImproved,
 				}),
 			},
 
@@ -170,7 +169,6 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 			debuffInputs: [
 				IconInputs.JudgementOfWisdom,
 				IconInputs.BloodFrenzy,
-				IconInputs.HuntersMark,
 				IconInputs.CurseOfWeakness,
 				IconInputs.FaerieFire,
 				IconInputs.ExposeArmor,

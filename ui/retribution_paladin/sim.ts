@@ -128,7 +128,6 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 					sunderArmor: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					curseOfWeakness: TristateEffect.TristateEffectRegular,
-					huntersMark: TristateEffect.TristateEffectImproved,
 				}),
 			},
 
@@ -165,7 +164,6 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 				IconInputs.ExposeArmor,
 				IconInputs.SunderArmor,
 				IconInputs.BloodFrenzy,
-				IconInputs.HuntersMark,
 				IconInputs.FaerieFire,
 				IconInputs.CurseOfWeakness,
 				IconInputs.CurseOfElements,

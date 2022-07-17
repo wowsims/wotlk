@@ -130,7 +130,6 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					curseOfWeakness: TristateEffect.TristateEffectMissing,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					misery: true,
-					huntersMark: TristateEffect.TristateEffectImproved,
 					savageCombat: false,
 				}),
 			},
