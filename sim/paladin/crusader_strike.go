@@ -8,10 +8,13 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-// Do some research on the spell fields to make sure I'm doing this right
-// Need to add in judgement debuff refreshing feature at some point
 func (paladin *Paladin) registerCrusaderStrikeSpell() {
-	baseCost := 236.0
+	baseCost := paladin.BaseMana * 0.05
+
+	baseMultiplier := 1.0
+	// Additive bonuses
+	baseMultiplier += 0.05 * float64(paladin.Talents.SanctityOfBattle)
+	baseMultiplier += 0.05 * float64(paladin.Talents.TheArtOfWar)
 
 	paladin.CrusaderStrike = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 35395},
@@ -23,30 +26,31 @@ func (paladin *Paladin) registerCrusaderStrikeSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
+				Cost: baseCost * (1 - 0.02*float64(paladin.Talents.Benediction)),
 				GCD:  core.GCDDefault,
 			},
+			IgnoreHaste: true, // cs is on phys gcd, which cannot be hasted
 			CD: core.Cooldown{
 				Timer:    paladin.NewTimer(),
-				Duration: time.Second * 6,
+				Duration: time.Second * 4, // the cd is 4 seconds in 3.3
 			},
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeMHSpecial,
 
-			DamageMultiplier: 1, // Need to review to make sure I set these properly
+			DamageMultiplier: baseMultiplier,
 			ThreatMultiplier: 1,
 
-			// maybe this isn't the one that should be set to 1.1
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 31033, 36, 0), 1.1, true),
+			BaseDamage: core.BaseDamageConfigMeleeWeapon(
+				core.MainHand,
+				true, // cs is subject to normalisation
+				core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 31033, 36, 0), // theres librams that can improve cs damage (this is a 2.x one - 3.x wip)
+				(0.75), // base multiplier's .75, can be improved by sanctity (15%), taow (10%) & pvp gloves (5%), stacking additively
+				// for a grand total of .9375 / .975 multiplier, respectively, which is also UPDATED LIVE on the TOOLTIP.
+				true,
+			),
 			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(paladin.MeleeCritMultiplier()),
-
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() {
-					return
-				}
-			},
 		}),
 	})
 }

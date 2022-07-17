@@ -11,6 +11,11 @@ const (
 	SpellFlagJudgement = core.SpellFlagAgentReserved2
 )
 
+type hybridScaling struct {
+	AP float64
+	SP float64
+}
+
 type Paladin struct {
 	core.Character
 
@@ -21,34 +26,33 @@ type Paladin struct {
 	CurrentSeal      *core.Aura
 	CurrentJudgement *core.Aura
 
-	Consecration             *core.Spell
-	CrusaderStrike           *core.Spell
-	Exorcism                 *core.Spell
-	HolyShield               *core.Spell
-	JudgementOfBlood         *core.Spell
-	JudgementOfTheCrusader   *core.Spell
-	JudgementOfWisdom        *core.Spell
-	JudgementOfLight         *core.Spell
-	JudgementOfRighteousness *core.Spell
-	SealOfBlood              *core.Spell
-	SealOfCommand            *core.Spell
-	SealOfTheCrusader        *core.Spell
-	SealOfWisdom             *core.Spell
-	SealOfLight              *core.Spell
-	SealOfRighteousness      *core.Spell
+	DivinePlea          *core.Spell
+	DivineStorm         *core.Spell
+	Consecration        *core.Spell
+	CrusaderStrike      *core.Spell
+	Exorcism            *core.Spell
+	HolyShield          *core.Spell
+	JudgementOfWisdom   *core.Spell
+	JudgementOfLight    *core.Spell
+	SealOfVengeance     *core.Spell
+	SealOfRighteousness *core.Spell
+	SealOfCommand       *core.Spell
+	// SealOfWisdom        *core.Spell
+	// SealOfLight         *core.Spell
 
 	ConsecrationDot *core.Dot
+	// SealOfVengeanceDot *core.Dot
 
-	HolyShieldAura             *core.Aura
-	JudgementOfTheCrusaderAura *core.Aura
-	JudgementOfWisdomAura      *core.Aura
-	JudgementOfLightAura       *core.Aura
-	SealOfBloodAura            *core.Aura
-	SealOfCommandAura          *core.Aura
-	SealOfTheCrusaderAura      *core.Aura
-	SealOfWisdomAura           *core.Aura
-	SealOfLightAura            *core.Aura
-	SealOfRighteousnessAura    *core.Aura
+	HolyShieldAura        *core.Aura
+	JudgementOfWisdomAura *core.Aura
+	JudgementOfLightAura  *core.Aura
+	// SealOfVengeanceAura   *core.Aura
+	// SealOfCommandAura       *core.Aura
+	// SealOfWisdomAura        *core.Aura
+	// SealOfLightAura         *core.Aura
+	// SealOfRighteousnessAura *core.Aura
+
+	ArtOfWarInstantCast *core.Aura
 
 	SpiritualAttunementMetrics *core.ResourceMetrics
 }
@@ -62,6 +66,13 @@ func (paladin *Paladin) GetCharacter() *core.Character {
 	return &paladin.Character
 }
 
+func (paladin *Paladin) HasMajorGlyph(glyph proto.PaladinMajorGlyph) bool {
+	return paladin.HasGlyph(int32(glyph))
+}
+func (paladin *Paladin) HasMinorGlyph(glyph proto.PaladinMinorGlyph) bool {
+	return paladin.HasGlyph(int32(glyph))
+}
+
 func (paladin *Paladin) GetPaladin() *Paladin {
 	return paladin
 }
@@ -71,9 +82,10 @@ func (paladin *Paladin) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 		paladin.PaladinAura == proto.PaladinAura_DevotionAura,
 		paladin.Talents.ImprovedDevotionAura == 5))
 
+	// TODO: Fix
 	raidBuffs.RetributionAura = core.MaxTristate(raidBuffs.RetributionAura, core.MakeTristateValue(
 		paladin.PaladinAura == proto.PaladinAura_RetributionAura,
-		paladin.Talents.ImprovedRetributionAura == 2))
+		paladin.Talents.SanctifiedRetribution == true))
 
 	//if paladin.Talents.SanctifiedRetribution {
 	//	raidBuffs.SanctifiedRetribution = true
@@ -87,19 +99,25 @@ func (paladin *Paladin) Initialize() {
 	// Update auto crit multipliers now that we have the targets.
 	paladin.AutoAttacks.MHEffect.OutcomeApplier = paladin.OutcomeFuncMeleeWhite(paladin.MeleeCritMultiplier())
 
-	paladin.setupSealOfBlood()
-	paladin.setupSealOfTheCrusader()
-	paladin.setupSealOfWisdom()
-	paladin.setupSealOfLight()
+	paladin.setupSealOfVengeance()
 	paladin.setupSealOfRighteousness()
-	paladin.setupJudgementRefresh()
+	paladin.setupSealOfCommand()
+	// paladin.setupSealOfTheCrusader()
+	// paladin.setupSealOfWisdom()
+	// paladin.setupSealOfLight()
+	// paladin.setupSealOfRighteousness()
+	// paladin.setupJudgementRefresh()
 
 	paladin.registerCrusaderStrikeSpell()
+	paladin.registerDivineStormSpell()
+	paladin.RegisterConsecrationSpell()
+
 	paladin.registerExorcismSpell()
 	paladin.registerHolyShieldSpell()
 	paladin.registerJudgements()
 
 	paladin.registerSpiritualAttunement()
+	paladin.registerDivinePleaSpell()
 }
 
 func (paladin *Paladin) Reset(sim *core.Simulation) {
