@@ -657,9 +657,16 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			Tooltips.DEBUFFS_SECTION);
 
 		if (this.individualConfig.consumeOptions?.potions.length) {
+			const options = [
+				{ stats: [Stat.StatStamina], item: Potions.RunicHealingPotion },
+				{ stats: [Stat.StatIntellect], item: Potions.RunicManaPotion },
+				{ stats: [Stat.StatArmor], item: Potions.IndestructiblePotion },
+				{ stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste], item: Potions.PotionOfSpeed },
+				{ stats: [Stat.StatMeleeCrit, Stat.StatSpellCrit, Stat.StatSpellPower], item: Potions.PotionOfWildMagic },
+			];
 			const elem = this.rootElem.getElementsByClassName('consumes-potions')[0] as HTMLElement;
 			new IconEnumPicker(elem, this.player,
-				IconInputs.makePotionsInput(this.individualConfig.consumeOptions.potions));
+				IconInputs.makePotionsInput(this.splitRelevantOptions(options)));
 		}
 		if (this.individualConfig.consumeOptions?.conjured.length) {
 			const elem = this.rootElem.getElementsByClassName('consumes-conjured')[0] as HTMLElement;
@@ -1164,6 +1171,12 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.sim.encounter.fromProto(eventID, settings.encounter || EncounterProto.create());
 		});
 	}
+
+	splitRelevantOptions<T>(options: Array<StatOption<T>>): Array<T> {
+		return options
+				.filter(option => option.stats.some(stat => this.individualConfig.epStats.includes(stat)))
+				.map(option => option.item);
+	}
 }
 
 export type ExclusivityTag =
@@ -1184,4 +1197,9 @@ export interface ExclusiveEffect {
 	changedEvent: TypedEvent<any>;
 	isActive: () => boolean;
 	deactivate: (eventID: EventID) => void;
+}
+
+export interface StatOption<T> {
+	stats: Array<Stat>,
+	item: T,
 }

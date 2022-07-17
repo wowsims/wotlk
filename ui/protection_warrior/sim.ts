@@ -139,7 +139,6 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 					mangle: true,
 					curseOfWeakness: TristateEffect.TristateEffectRegular,
 					faerieFire: TristateEffect.TristateEffectImproved,
-					huntersMark: TristateEffect.TristateEffectImproved,
 				}),
 			},
 
@@ -181,7 +180,6 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 				IconInputs.Mangle,
 				IconInputs.JudgementOfLight,
 				IconInputs.JudgementOfWisdom,
-				IconInputs.HuntersMark,
 				IconInputs.FaerieFire,
 				IconInputs.SunderArmor,
 				IconInputs.ExposeArmor,

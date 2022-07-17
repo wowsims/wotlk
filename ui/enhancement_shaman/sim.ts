@@ -128,7 +128,6 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 					faerieFire: TristateEffect.TristateEffectImproved,
 					judgementOfWisdom: true,
 					misery: true,
-					huntersMark: TristateEffect.TristateEffectImproved,
 				}),
 			},
 
@@ -165,7 +164,6 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 			debuffInputs: [
 				IconInputs.BloodFrenzy,
 				IconInputs.JudgementOfWisdom,
-				IconInputs.HuntersMark,
 				IconInputs.FaerieFire,
 				IconInputs.SunderArmor,
 				IconInputs.ExposeArmor,
