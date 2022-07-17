@@ -11,10 +11,10 @@ func (warlock *Warlock) registerSoulFireSpell() {
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
 		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) * 5 * core.CritRatingPerCritChance,
-		DamageMultiplier:     (1 + 0.03*float64(warlock.Talents.Emberstorm)),
+		DamageMultiplier:     1 + 0.03*float64(warlock.Talents.Emberstorm),
 		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.DestructiveReach),
-		BaseDamage:           warlock.soulFireDamage(),
-		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
+		BaseDamage:           core.BaseDamageConfigMagic(1323.0, 1657.0, 1.15),
+		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin) / 5)),
 	}
 
 	baseCost := 0.09 * warlock.BaseMana
@@ -42,7 +42,6 @@ func (warlock *Warlock) registerSoulFireSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})
-
 }
 
 func (warlock *Warlock) soulFireCastTime() float64 {
@@ -51,22 +50,4 @@ func (warlock *Warlock) soulFireCastTime() float64 {
 		castTimeModifier *= 1.0 - 0.2*float64(warlock.Talents.Decimation)
 	}
 	return castTimeModifier
-}
-
-func (warlock *Warlock) soulFireDamage() core.BaseDamageConfig {
-	base := core.BaseDamageConfigMagic(1323.0, 1657.0, 1.15)
-
-	return core.WrapBaseDamageConfig(base, func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
-		return func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-			if warlock.MoltenCoreAura.IsActive() {
-				hitEffect.BonusSpellCritRating += 5 * float64(warlock.Talents.MoltenCore) * core.CritRatingPerCritChance
-			}
-			normalDamage := oldCalculator(sim, hitEffect, spell)
-			// Boost damage if immolate is ticking
-			if warlock.MoltenCoreAura.IsActive() {
-				normalDamage *= 1 + 0.06*float64(warlock.Talents.MoltenCore)
-			}
-			return normalDamage
-		}
-	})
 }

@@ -22,7 +22,21 @@ type WarlockPet struct {
 }
 
 func (warlock *Warlock) NewWarlockPet() *WarlockPet {
-	petConfig := PetConfigs[warlock.Options.Summon]
+
+	summonChoice := warlock.Options.Summon
+	preset := warlock.Rotation.Preset
+
+	if preset==proto.Warlock_Rotation_Automatic {
+		if warlock.Talents.Haunt {
+			summonChoice = proto.Warlock_Options_Felhunter
+		} else if warlock.Talents.Metamorphosis {
+			summonChoice = proto.Warlock_Options_Felguard
+		} else if warlock.Talents.ChaosBolt {
+			summonChoice = proto.Warlock_Options_Imp
+		}
+	}
+
+	petConfig := PetConfigs[summonChoice]
 
 	wp := &WarlockPet{
 		Pet: core.NewPet(
@@ -66,9 +80,9 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 	wp.PseudoStats.DamageDealtMultiplier *= 1.0 + (0.04 * float64(warlock.Talents.UnholyPower))
 
 	wp.EnableManaBar()
-
+	
 	if petConfig.Melee {
-		switch warlock.Options.Summon {
+		switch summonChoice {
 		case proto.Warlock_Options_Felguard:
 			wp.EnableAutoAttacks(wp, core.AutoAttackOptions{
 				MainHand: core.Weapon{
@@ -105,7 +119,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		}
 	}
 	// wp.AutoAttacks.MHEffect.DamageMultiplier *= petConfig.DamageMultiplier
-	switch warlock.Options.Summon {
+	switch summonChoice {
 	case proto.Warlock_Options_Imp:
 		wp.AddStatDependency(stats.StatDependency{
 			SourceStat:   stats.Intellect,
@@ -249,7 +263,7 @@ var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
 		SecondaryAbility: Intercept,
 		ManaIntRatio:     11.5,
 		Stats: stats.Stats{
-			stats.AttackPower: 20,
+			stats.AttackPower: -20,
 			stats.Stamina:     280,
 			stats.Strength:    153,
 			stats.Agility:     108,
@@ -265,13 +279,14 @@ var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
 		Melee:          false,
 		PrimaryAbility: Firebolt,
 		Stats: stats.Stats{
-			stats.MP5:       123,
-			stats.Stamina:   101,
-			stats.Strength:  145,
-			stats.Agility:   38,
-			stats.Intellect: 327,
-			stats.Mana:      756,
-			stats.Spirit:    263,
+			stats.AttackPower: -20,
+			stats.MP5:         123,
+			stats.Stamina:     101,
+			stats.Strength:    145,
+			stats.Agility:     38,
+			stats.Intellect:   327,
+			stats.Mana:        756,
+			stats.Spirit:      263,
 		},
 	},
 	proto.Warlock_Options_Succubus: {
@@ -280,7 +295,7 @@ var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
 		Melee:          true,
 		PrimaryAbility: LashOfPain,
 		Stats: stats.Stats{
-			stats.AttackPower: 20,
+			stats.AttackPower: -20,
 			stats.Stamina:     328,
 			stats.Strength:    314,
 			stats.Agility:     90,
@@ -296,7 +311,7 @@ var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
 		Melee:          true,
 		PrimaryAbility: ShadowBite,
 		Stats: stats.Stats{
-			stats.AttackPower: 20,
+			stats.AttackPower: -20,
 			stats.Stamina:     328,
 			stats.Strength:    314,
 			stats.Agility:     90,

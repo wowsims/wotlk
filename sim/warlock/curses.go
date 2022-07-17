@@ -114,14 +114,18 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 	agonyEffect := totalBaseDmg * 0.056
 	if hasGoCoA {
 		numberOfTicks += 2
-		totalBaseDmg += 2 * agonyEffect
+		totalBaseDmg += 2 * agonyEffect // Glyphed ticks
+	}
+	applier := warlock.OutcomeFuncTick()
+	if warlock.Talents.Pandemic {
+		applier = warlock.OutcomeFuncMagicCrit(warlock.SpellCritMultiplier(1, 1))
 	}
 
 	effect := core.SpellEffect{
 		DamageMultiplier: 1 + 0.01*float64(warlock.Talents.Contagion),
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-		BaseDamage:       core.BaseDamageConfigMagicNoRoll(totalBaseDmg/float64(numberOfTicks), 0.1), //TODO : CoA ramp up effect
-		OutcomeApplier:   warlock.OutcomeFuncTick(),
+		BaseDamage:       core.BaseDamageConfigMagicNoRoll(totalBaseDmg/float64(numberOfTicks), 0.1), //TODO : CoA ramp up effect 
+		OutcomeApplier:   applier,
 		IsPeriodic:       true,
 		ProcMask:         core.ProcMaskPeriodicDamage,
 	}

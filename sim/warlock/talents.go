@@ -1,7 +1,6 @@
 package warlock
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -140,7 +139,7 @@ func (warlock *Warlock) ApplyTalents() {
 func (warlock *Warlock) registerGlyphOfLifeTapAura() {
 	warlock.GlyphOfLifeTapAura = warlock.RegisterAura(core.Aura{
 		Label:    "Glyph Of LifeTap Aura",
-		Tag:      "Glyph Of LifeTap Aura" + strconv.Itoa(int(warlock.GetStat(stats.Spirit))),
+		Tag:      "Glyph Of LifeTap Aura",
 		ActionID: core.ActionID{SpellID: 63941},
 		Duration: time.Second * 40,
 		Priority: float64(warlock.GetStat(stats.Spirit)),
@@ -338,9 +337,8 @@ func (warlock *Warlock) setupNightfall() {
 		},
 		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spell == warlock.Corruption { // TODO: also works on drain life...
-				if sim.RandomFloat("Nightfall") < 0.02*float64(warlock.Talents.Nightfall) {
-					warlock.NightfallProcAura.Activate(sim)
-				} else if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCorruption) && sim.RandomFloat("GlyphOfCorruption") < 0.04 {
+				if sim.RandomFloat("Nightfall") < 0.02*float64(warlock.Talents.Nightfall) + 
+				0.04*core.TernaryFloat64(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCorruption), 1, 0) {
 					warlock.NightfallProcAura.Activate(sim)
 				}
 			}
@@ -358,6 +356,16 @@ func (warlock *Warlock) setupMoltenCore() {
 			if spell == warlock.Incinerate || spell == warlock.SoulFire {
 				aura.RemoveStack(sim)
 			}
+		},
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			warlock.Incinerate.DamageMultiplier *= 1 + 0.06*float64(warlock.Talents.MoltenCore)
+			warlock.SoulFire.DamageMultiplier *= 1 + 0.06*float64(warlock.Talents.MoltenCore)
+			warlock.SoulFire.BonusCritRating += 5 * float64(warlock.Talents.MoltenCore) * core.CritRatingPerCritChance
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			warlock.Incinerate.DamageMultiplier /= 1 + 0.06*float64(warlock.Talents.MoltenCore)
+			warlock.SoulFire.DamageMultiplier /= 1 + 0.06*float64(warlock.Talents.MoltenCore)
+			warlock.SoulFire.BonusCritRating -= 5 * float64(warlock.Talents.MoltenCore) * core.CritRatingPerCritChance
 		},
 	})
 
