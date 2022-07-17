@@ -46,7 +46,7 @@ func (warrior *Warrior) newDeepWoundsDot(target *core.Unit) *core.Dot {
 			Label:    "DeepWounds-" + strconv.Itoa(int(warrior.Index)),
 			ActionID: DeepWoundsActionID,
 		}),
-		NumberOfTicks: 3,
+		NumberOfTicks: 6,
 		TickLength:    time.Second * 1,
 	})
 }
