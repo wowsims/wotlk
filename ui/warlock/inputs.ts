@@ -268,45 +268,27 @@ export const WarlockRotationConfig = {
 				changedEvent: (player: Player<Spec.SpecWarlock>) => player.rotationChangeEmitter,
 				getValue: (player: Player<Spec.SpecWarlock>) => player.getRotation().type,
 				setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: number) => {
-					const newRotation = player.getRotation();
-					const newOptions = player.getSpecOptions();
-					newRotation.type = newValue;
-					newRotation.preset = RotationPreset.Automatic;
+					var newRotation = player.getRotation();
+					var newOptions = player.getSpecOptions();
 					TypedEvent.freezeAllAndDo(() => {
-						if (newRotation.type == RotationType.Affliction) {
+						if (newValue == RotationType.Affliction) {
 							player.setTalentsString(eventID, Presets.AfflictionTalents.data.talentsString);
 							player.setGlyphs(eventID, Presets.AfflictionTalents.data.glyphs || Glyphs.create());
-							newRotation.primarySpell = Presets.AfflictionRotation.primarySpell
-							newRotation.secondaryDot = Presets.AfflictionRotation.secondaryDot
-							newRotation.specSpell = Presets.AfflictionRotation.specSpell
-							newRotation.curse = Presets.AfflictionRotation.curse
-							newRotation.corruption = Presets.AfflictionRotation.corruption
-							newRotation.detonateSeed = Presets.AfflictionRotation.detonateSeed
-							newOptions.summon = Presets.AfflictionOptions.summon
-							newOptions.armor = Presets.AfflictionOptions.armor
-						} else if (newRotation.type == RotationType.Demonology) {
+							newRotation = Presets.AfflictionRotation
+							newOptions = Presets.AfflictionOptions
+						} else if (newValue == RotationType.Demonology) {
 							player.setTalentsString(eventID, Presets.DemonologyTalents.data.talentsString);
 							player.setGlyphs(eventID, Presets.DemonologyTalents.data.glyphs || Glyphs.create());
-							newRotation.primarySpell = Presets.DemonologyRotation.primarySpell
-							newRotation.secondaryDot = Presets.DemonologyRotation.secondaryDot
-							newRotation.specSpell = Presets.DemonologyRotation.specSpell
-							newRotation.curse = Presets.DemonologyRotation.curse
-							newRotation.corruption = Presets.DemonologyRotation.corruption
-							newRotation.detonateSeed = Presets.DemonologyRotation.detonateSeed
-							newOptions.summon = Presets.DemonologyOptions.summon
-							newOptions.armor = Presets.DemonologyOptions.armor
+							newRotation = Presets.DemonologyRotation
+							newOptions = Presets.DemonologyOptions
 						} else {
 							player.setTalentsString(eventID, Presets.DestructionTalents.data.talentsString);
 							player.setGlyphs(eventID, Presets.DestructionTalents.data.glyphs || Glyphs.create());
-							newRotation.primarySpell = Presets.DestructionRotation.primarySpell
-							newRotation.secondaryDot = Presets.DestructionRotation.secondaryDot
-							newRotation.specSpell = Presets.DestructionRotation.specSpell
-							newRotation.curse = Presets.DestructionRotation.curse
-							newRotation.corruption = Presets.DestructionRotation.corruption
-							newRotation.detonateSeed = Presets.DestructionRotation.detonateSeed
-							newOptions.summon = Presets.DestructionOptions.summon
-							newOptions.armor = Presets.DestructionOptions.armor
+							newRotation = Presets.DestructionRotation
+							newOptions = Presets.DestructionOptions
 						}
+						newRotation.type = newValue;
+						newRotation.preset = RotationPreset.Automatic;
 						player.setRotation(eventID, newRotation);
 						player.setSpecOptions(eventID, newOptions);
 					});
