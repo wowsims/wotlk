@@ -317,20 +317,6 @@ func (paladin *Paladin) applyHeartOfTheCrusader() {
 		return
 	}
 
-	procAura := core.Aura{
-		Label:    "Heart of the Crusader Debuff",
-		ActionID: core.ActionID{SpellID: 54499},
-		Duration: time.Second * 20,
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.BonusMeleeCritRating += float64(paladin.Talents.HeartOfTheCrusader) * core.CritRatingPerCritChance
-			aura.Unit.PseudoStats.BonusSpellCritRating += float64(paladin.Talents.HeartOfTheCrusader) * core.CritRatingPerCritChance
-		},
-		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.BonusMeleeCritRating -= float64(paladin.Talents.HeartOfTheCrusader) * core.CritRatingPerCritChance
-			aura.Unit.PseudoStats.BonusSpellCritRating -= float64(paladin.Talents.HeartOfTheCrusader) * core.CritRatingPerCritChance
-		},
-	}
-
 	paladin.RegisterAura(core.Aura{
 		Label:    "Heart of the Crusader",
 		Duration: core.NeverExpires,
@@ -341,13 +327,7 @@ func (paladin *Paladin) applyHeartOfTheCrusader() {
 			if !spell.Flags.Matches(SpellFlagJudgement) {
 				return
 			}
-
-			var debuffAura *core.Aura
-			if spellEffect.Target.HasAura(procAura.Label) {
-				debuffAura = spellEffect.Target.GetAura(procAura.Label)
-			} else {
-				debuffAura = spellEffect.Target.RegisterAura(procAura)
-			}
+			debuffAura := core.HeartoftheCrusaderDebuff(spellEffect.Target, float64(paladin.Talents.HeartOfTheCrusader))
 			debuffAura.Activate(sim)
 		},
 	})
