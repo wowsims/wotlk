@@ -260,10 +260,6 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 				showExecuteProportion: false,
 			},
 
-			// If true, the talents on the talents tab will not be individually modifiable by the user.
-			// Note that the use can still pick between preset talents, if there is more than 1.
-			freezeTalents: false,
-
 			presets: {
 				// Preset talents that the user can quickly select.
 				talents: [
