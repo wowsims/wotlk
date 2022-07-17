@@ -179,9 +179,9 @@ message HunterPetTalents {
 
 message Hunter {
 	message Rotation {
-		bool use_multi_shot = 1;
-		bool use_arcane_shot = 2;
-		bool lazy_rotation = 12; // Restricts to 1 action between each auto shot.
+		//bool use_multi_shot = 1;
+		//bool use_arcane_shot = 2;
+		//bool lazy_rotation = 12; // Restricts to 1 action between each auto shot.
 
 		enum StingType {
 			NoSting = 0;
@@ -195,19 +195,19 @@ message Hunter {
 		// Switch back to Aspect of the Hawk when mana goes above this percent.
 		double viper_stop_mana_percent = 7;
 
-		enum WeaveType {
-			WeaveNone = 0;
-			WeaveAutosOnly = 1;
-			WeaveRaptorOnly = 2;
-			WeaveFull = 3;
-		}
-		WeaveType weave = 11;
+		//enum WeaveType {
+		//	WeaveNone = 0;
+		//	WeaveAutosOnly = 1;
+		//	WeaveRaptorOnly = 2;
+		//	WeaveFull = 3;
+		//}
+		//WeaveType weave = 11;
 
-		// Time in milliseconds from when the hunter starts moving to when they reengage their ranged autos.
-		int32 time_to_weave_ms = 9;
+		//// Time in milliseconds from when the hunter starts moving to when they reengage their ranged autos.
+		//int32 time_to_weave_ms = 9;
 
-		// Percent of fight (0-1) to use melee weaving.
-		double percent_weaved = 10;
+		//// Percent of fight (0-1) to use melee weaving.
+		//double percent_weaved = 10;
 	}
 	Rotation rotation = 1;
 

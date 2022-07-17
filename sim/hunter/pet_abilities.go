@@ -972,7 +972,7 @@ func (hp *HunterPet) newVenomWebSpray() PetAbility {
 			ProcMask:         core.ProcMaskPeriodicDamage,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(33, 33, 0.07)),
+			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(46, 46, 0.07)),
 			OutcomeApplier:   hp.OutcomeFuncTick(),
 			IsPeriodic:       true,
 		}),
