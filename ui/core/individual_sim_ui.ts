@@ -21,6 +21,7 @@ import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
 import { Gear } from '/wotlk/core/proto_utils/gear.js';
 import { GearPicker } from '/wotlk/core/components/gear_picker.js';
+import { Glyphs } from '/wotlk/core/proto/common.js';
 import { GuardianElixir } from '/wotlk/core/proto/common.js';
 import { HealingModel } from '/wotlk/core/proto/common.js';
 import { HunterPetTalentsPicker } from '/wotlk/core/talents/hunter_pet.js';
@@ -965,9 +966,15 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			storageKey: this.getSavedTalentsStorageKey(),
 			getData: (player: Player<any>) => SavedTalents.create({
 				talentsString: player.getTalentsString(),
+				glyphs: player.getGlyphs(),
 			}),
-			setData: (eventID: EventID, player: Player<any>, newTalents: SavedTalents) => player.setTalentsString(eventID, newTalents.talentsString),
-			changeEmitters: [this.player.talentsChangeEmitter],
+			setData: (eventID: EventID, player: Player<any>, newTalents: SavedTalents) => {
+				TypedEvent.freezeAllAndDo(() => {
+					player.setTalentsString(eventID, newTalents.talentsString);
+					player.setGlyphs(eventID, newTalents.glyphs || Glyphs.create());
+				});
+			},
+			changeEmitters: [this.player.talentsChangeEmitter, this.player.glyphsChangeEmitter],
 			equals: (a: SavedTalents, b: SavedTalents) => SavedTalents.equals(a, b),
 			toJson: (a: SavedTalents) => SavedTalents.toJson(a),
 			fromJson: (obj: any) => SavedTalents.fromJson(obj),
@@ -989,6 +996,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 					isPreset: true,
 					data: SavedTalents.create({
 						talentsString: config.data,
+						glyphs: Glyphs.create(),
 					}),
 				});
 			});

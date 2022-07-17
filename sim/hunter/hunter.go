@@ -155,14 +155,14 @@ func NewHunter(character core.Character, options proto.Player) *Hunter {
 	}
 	hunter.EnableManaBar()
 
-	if hunter.Rotation.PercentWeaved <= 0 {
-		hunter.Rotation.Weave = proto.Hunter_Rotation_WeaveNone
-	}
-	if hunter.Rotation.Weave == proto.Hunter_Rotation_WeaveNone {
-		// Forces override of WF. When not weaving we'll be standing far back so weapon
-		// stone can be used.
-		hunter.HasMHWeaponImbue = true
-	}
+	//if hunter.Rotation.PercentWeaved <= 0 {
+	//	hunter.Rotation.Weave = proto.Hunter_Rotation_WeaveNone
+	//}
+	//if hunter.Rotation.Weave == proto.Hunter_Rotation_WeaveNone {
+	//	// Forces override of WF. When not weaving we'll be standing far back so weapon
+	//	// stone can be used.
+	//	hunter.HasMHWeaponImbue = true
+	//}
 
 	hunter.PseudoStats.CanParry = true
 

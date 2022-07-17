@@ -30,11 +30,6 @@ import { ExclusivityTag } from '/wotlk/core/individual_sim_ui.js';
 import { IconPickerConfig } from './icon_picker.js';
 import { IconEnumPicker, IconEnumPickerConfig, IconEnumValueConfig } from './icon_enum_picker.js';
 
-import {
-	Hunter_Rotation as HunterRotation,
-	Hunter_Rotation_WeaveType as WeaveType,
-} from '/wotlk/core/proto/hunter.js';
-
 // Keep each section in alphabetical order.
 
 // Raid Buffs

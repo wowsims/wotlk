@@ -124,7 +124,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				// Default rotation settings.
 				rotation: Presets.DefaultRotation,
 				// Default talents.
-				talents: Presets.BeastMasteryTalents.data,
+				talents: Presets.SurvivalTalents.data,
 				// Default spec-specific settings.
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
@@ -248,7 +248,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 					HunterInputs.PetUptime,
 					//HunterInputs.PetSingleAbility,
 					HunterInputs.SniperTrainingUptime,
-					HunterInputs.LatencyMs,
+					//HunterInputs.LatencyMs,
 					OtherInputs.PrepopPotion,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
