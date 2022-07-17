@@ -37,22 +37,19 @@ func (shaman *Shaman) newThunderstormSpell(doDamage bool) *core.Spell {
 	}
 
 	if doDamage {
-		magicAttackApplier := shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier())
 		effect := core.SpellEffect{
 			ProcMask:            core.ProcMaskSpellDamage,
 			BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * 2 * core.SpellHitRatingPerHitChance,
 			DamageMultiplier:    1 * (1 + 0.01*float64(shaman.Talents.Concussion)),
 			ThreatMultiplier:    1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
 			BaseDamage:          core.BaseDamageConfigMagic(566, 644, 0.172),
-			OutcomeApplier: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
-				magicAttackApplier(sim, spell, spellEffect, attackTable)
-				// Adds mana even if the dmg portion misses entirely
-				shaman.AddMana(sim, shaman.MaxMana()*manaRestore, manaMetrics, true)
-			},
+			OutcomeApplier:      shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier()),
 		}
-
-		// TODO: AOE caps should be implemented in core and not manually incorrectly calculated here.
-		spellConfig.ApplyEffects = core.ApplyEffectFuncAOEDamageCapped(shaman.Env, 605+0.172*shaman.GetStat(stats.NatureSpellPower), effect)
+		aoeApply := core.ApplyEffectFuncAOEDamageCapped(shaman.Env, 605+0.172*shaman.GetStat(stats.NatureSpellPower)*10, effect)
+		spellConfig.ApplyEffects = func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
+			aoeApply(sim, unit, spell)                                           // Calculates hits/crits/dmg on each target
+			shaman.AddMana(sim, shaman.MaxMana()*manaRestore, manaMetrics, true) // adds mana no matter what
+		}
 	}
 
 	return shaman.RegisterSpell(spellConfig)
