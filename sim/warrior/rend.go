@@ -34,7 +34,7 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64) {
 			OutcomeApplier:   warrior.OutcomeFuncMeleeSpecialHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
-					warrior.RendDot.Apply(sim)
+					warrior.RendDots.Apply(sim)
 					warrior.procBloodFrenzy(sim, spellEffect, time.Second*15)
 					warrior.rendValidUntil = sim.CurrentTime + time.Second*15
 				} else {
@@ -45,7 +45,7 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64) {
 	})
 	target := warrior.CurrentTarget
 	tickDamage := 380 + 0.2*5*warrior.AutoAttacks.MH.AverageDamage()/15
-	warrior.RendDot = core.NewDot(core.Dot{
+	warrior.RendDots = core.NewDot(core.Dot{
 		Spell: warrior.Rend,
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "Rends-" + strconv.Itoa(int(warrior.Index)),

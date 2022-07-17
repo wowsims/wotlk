@@ -57,7 +57,11 @@ type Warrior struct {
 	SunderArmorDevastate *core.Spell
 	ThunderClap          *core.Spell
 	Whirlwind            *core.Spell
-	RendDot              *core.Dot
+	DeepWounds           *core.Spell
+
+	RendDots             *core.Dot
+	DeepWoundsDots       []*core.Dot
+	DeepWoundsTickDamage []float64
 
 	HeroicStrikeOrCleave *core.Spell
 	HSOrCleaveQueueAura  *core.Aura
@@ -127,6 +131,15 @@ func (warrior *Warrior) Initialize() {
 	warrior.shoutDuration = time.Duration(float64(time.Minute*2) * (1 + 0.1*float64(warrior.Talents.BoomingVoice)))
 
 	warrior.registerBloodrageCD()
+
+	warrior.DeepWoundsTickDamage = []float64{}
+	for i := int32(0); i < warrior.Env.GetNumTargets(); i++ {
+		warrior.DeepWoundsTickDamage = append(warrior.DeepWoundsTickDamage, 0)
+	}
+	warrior.DeepWoundsDots = []*core.Dot{}
+	for i := int32(0); i < warrior.Env.GetNumTargets(); i++ {
+		warrior.DeepWoundsDots = append(warrior.DeepWoundsDots, warrior.newDeepWoundsDot(warrior.Env.GetTargetUnit(i)))
+	}
 }
 
 func (warrior *Warrior) Reset(sim *core.Simulation) {
