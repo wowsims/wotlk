@@ -212,9 +212,6 @@ type auraTracker struct {
 	// Maps MagicIDs to sim duration at which CD is done. Using array for perf.
 	cooldowns []time.Duration
 
-	// Flag for the OnStatsChange event to stop recursion stat changing
-	statChanging bool
-
 	// All registered auras, both active and inactive.
 	auras []*Aura
 
