@@ -42,15 +42,16 @@ func NewHighestStatAura(statOptions []stats.Stat, auraFactory func(stat stats.St
 func init() {
 	core.AddEffectsToTest = false
 
-	newDMCGreatnessEffect := func(itemID int32, mainStat stats.Stat) {
+	newDMCGreatnessEffect := func(itemID int32) {
 		core.NewItemEffect(itemID, func(agent core.Agent) {
 			character := agent.GetCharacter()
 
-			character.AddStat(mainStat, 90)
-
 			hsa := NewHighestStatAura(
 				[]stats.Stat{
-					mainStat,
+					stats.Strength,
+					stats.Agility,
+					stats.Intellect,
+					stats.Spirit,
 				},
 				func(stat stats.Stat) *core.Aura {
 					bonus := stats.Stats{}
@@ -59,7 +60,7 @@ func init() {
 				})
 
 			MakeProcTriggerAura(&character.Unit, ProcTrigger{
-				Name:       "DMC Greatness " + mainStat.StatName(),
+				Name:       "DMC Greatness",
 				Callback:   OnSpellHitDealt | OnPeriodicDamageDealt,
 				Harmful:    true,
 				ProcChance: 0.35,
@@ -70,10 +71,10 @@ func init() {
 			})
 		})
 	}
-	newDMCGreatnessEffect(42987, stats.Strength)
-	newDMCGreatnessEffect(44253, stats.Agility)
-	newDMCGreatnessEffect(44254, stats.Spirit)
-	newDMCGreatnessEffect(44255, stats.Intellect)
+	newDMCGreatnessEffect(42987)
+	newDMCGreatnessEffect(44253)
+	newDMCGreatnessEffect(44254)
+	newDMCGreatnessEffect(44255)
 
 	newDeathsChoiceEffect := func(itemID int32, name string, amount float64) {
 		core.NewItemEffect(itemID, func(agent core.Agent) {
