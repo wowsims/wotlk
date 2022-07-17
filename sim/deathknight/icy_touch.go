@@ -23,7 +23,7 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 	itAura := core.IcyTouchAura(target, deathKnight.Talents.ImprovedIcyTouch)
 	deathKnight.IcyTouchAura = itAura
 
-	impHowlingTouchCoeff := 1.0 + 0.05*float64(deathKnight.Talents.ImprovedIcyTouch)
+	impIcyTouchCoeff := 1.0 + 0.05*float64(deathKnight.Talents.ImprovedIcyTouch)
 
 	deathKnight.IcyTouch = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 59131},
@@ -38,7 +38,7 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:             core.ProcMaskSpellDamage,
 			BonusSpellCritRating: 5.0 * float64(deathKnight.Talents.Rime) * core.CritRatingPerCritChance,
-			DamageMultiplier:     impHowlingTouchCoeff,
+			DamageMultiplier:     impIcyTouchCoeff,
 			ThreatMultiplier:     7.0,
 
 			BaseDamage: core.BaseDamageConfig{

@@ -52,29 +52,53 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 						deathKnight.BloodStrike.Cast(sim, target)
 					}
 				} else {
-					if deathKnight.Talents.Morbidity > 0 && deathKnight.CanDeathAndDecay(sim) && deathKnight.AllDiseasesAreActive() {
-						deathKnight.DeathAndDecay.Cast(sim, target)
-					} else if deathKnight.CanGhoulFrenzy(sim) && deathKnight.Talents.MasterOfGhouls && (!deathKnight.Ghoul.GhoulFrenzyAura.IsActive() || deathKnight.Ghoul.GhoulFrenzyAura.RemainingDuration(sim) < 6*time.Second) && !deathKnight.shouldWaitForDnD(sim, false, false, true) {
-						deathKnight.GhoulFrenzy.Cast(sim, target)
-					} else if deathKnight.CanScourgeStrike(sim) && (deathKnight.Talents.Morbidity == 0 || !deathKnight.shouldWaitForDnD(sim, false, true, true)) {
-						deathKnight.ScourgeStrike.Cast(sim, target)
-					} else if !deathKnight.Talents.ScourgeStrike && deathKnight.CanIcyTouch(sim) && !deathKnight.shouldWaitForDnD(sim, false, true, false) {
-						deathKnight.IcyTouch.Cast(sim, target)
-					} else if !deathKnight.Talents.ScourgeStrike && deathKnight.CanPlagueStrike(sim) && !deathKnight.shouldWaitForDnD(sim, false, false, true) {
-						deathKnight.PlagueStrike.Cast(sim, target)
-					} else if deathKnight.CanBloodStrike(sim) && !deathKnight.shouldWaitForDnD(sim, true, false, false) {
-						deathKnight.BloodStrike.Cast(sim, target)
-					} else if deathKnight.CanDeathCoil(sim) {
-						deathKnight.DeathCoil.Cast(sim, target)
-					} else {
-						if deathKnight.GCD.IsReady(sim) && !deathKnight.IsWaiting() {
-							// This means we did absolutely nothing.
-							// Wait until our next auto attack to decide again.
-							nextSwing := deathKnight.AutoAttacks.MainhandSwingAt
-							if deathKnight.AutoAttacks.OffhandSwingAt > sim.CurrentTime {
-								nextSwing = core.MinDuration(nextSwing, deathKnight.AutoAttacks.OffhandSwingAt)
+					if deathKnight.Rotation.UseDeathAndDecay {
+						// DW Rota
+						if deathKnight.CanDeathAndDecay(sim) && deathKnight.AllDiseasesAreActive() {
+							deathKnight.DeathAndDecay.Cast(sim, target)
+						} else if deathKnight.CanGhoulFrenzy(sim) && deathKnight.Talents.MasterOfGhouls && (!deathKnight.Ghoul.GhoulFrenzyAura.IsActive() || deathKnight.Ghoul.GhoulFrenzyAura.RemainingDuration(sim) < 6*time.Second) && !deathKnight.shouldWaitForDnD(sim, false, false, true) {
+							deathKnight.GhoulFrenzy.Cast(sim, target)
+						} else if deathKnight.CanScourgeStrike(sim) && !deathKnight.shouldWaitForDnD(sim, false, true, true) {
+							deathKnight.ScourgeStrike.Cast(sim, target)
+						} else if !deathKnight.Talents.ScourgeStrike && deathKnight.CanIcyTouch(sim) && !deathKnight.shouldWaitForDnD(sim, false, true, false) {
+							deathKnight.IcyTouch.Cast(sim, target)
+						} else if !deathKnight.Talents.ScourgeStrike && deathKnight.CanPlagueStrike(sim) && !deathKnight.shouldWaitForDnD(sim, false, false, true) {
+							deathKnight.PlagueStrike.Cast(sim, target)
+						} else if deathKnight.CanBloodStrike(sim) && !deathKnight.shouldWaitForDnD(sim, true, false, false) {
+							deathKnight.BloodStrike.Cast(sim, target)
+						} else if deathKnight.CanDeathCoil(sim) {
+							deathKnight.DeathCoil.Cast(sim, target)
+						} else {
+							if deathKnight.GCD.IsReady(sim) && !deathKnight.IsWaiting() {
+								// This means we did absolutely nothing.
+								// Wait until our next auto attack to decide again.
+								nextSwing := deathKnight.AutoAttacks.MainhandSwingAt
+								if deathKnight.AutoAttacks.OffhandSwingAt > sim.CurrentTime {
+									nextSwing = core.MinDuration(nextSwing, deathKnight.AutoAttacks.OffhandSwingAt)
+								}
+								deathKnight.WaitUntil(sim, nextSwing)
 							}
-							deathKnight.WaitUntil(sim, nextSwing)
+						}
+					} else {
+						// No DnD Rota
+						if deathKnight.CanGhoulFrenzy(sim) && deathKnight.Talents.MasterOfGhouls && (!deathKnight.Ghoul.GhoulFrenzyAura.IsActive() || deathKnight.Ghoul.GhoulFrenzyAura.RemainingDuration(sim) < 6*time.Second) {
+							deathKnight.GhoulFrenzy.Cast(sim, target)
+						} else if deathKnight.CanScourgeStrike(sim) {
+							deathKnight.ScourgeStrike.Cast(sim, target)
+						} else if deathKnight.CanBloodStrike(sim) {
+							deathKnight.BloodStrike.Cast(sim, target)
+						} else if deathKnight.CanDeathCoil(sim) {
+							deathKnight.DeathCoil.Cast(sim, target)
+						} else {
+							if deathKnight.GCD.IsReady(sim) && !deathKnight.IsWaiting() {
+								// This means we did absolutely nothing.
+								// Wait until our next auto attack to decide again.
+								nextSwing := deathKnight.AutoAttacks.MainhandSwingAt
+								if deathKnight.AutoAttacks.OffhandSwingAt > sim.CurrentTime {
+									nextSwing = core.MinDuration(nextSwing, deathKnight.AutoAttacks.OffhandSwingAt)
+								}
+								deathKnight.WaitUntil(sim, nextSwing)
+							}
 						}
 					}
 				}

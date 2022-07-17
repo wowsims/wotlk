@@ -65,6 +65,9 @@ type DeathKnight struct {
 	BloodTap     *core.Spell
 	BloodTapAura *core.Aura
 
+	BoneShield     *core.Spell
+	BoneShieldAura *core.Aura
+
 	// Diseases
 	FrostFeverSpell    *core.Spell
 	BloodPlagueSpell   *core.Spell
@@ -137,6 +140,8 @@ func (deathKnight *DeathKnight) Initialize() {
 	deathKnight.registerDeathAndDecaySpell()
 	deathKnight.registerDiseaseDots()
 	deathKnight.registerGhoulFrenzySpell()
+	deathKnight.registerBoneShieldSpell()
+
 	deathKnight.registerRaiseDeadCD()
 	deathKnight.registerSummonGargoyleCD()
 }

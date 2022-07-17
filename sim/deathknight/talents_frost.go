@@ -43,7 +43,7 @@ func (deathKnight *DeathKnight) ApplyFrostTalents() {
 	}
 
 	// Icy Talons
-	// Pointless to Implement
+	deathKnight.applyIcyTalons()
 
 	// Lichborne
 	// Pointless to Implement
@@ -80,7 +80,6 @@ func (deathKnight *DeathKnight) ApplyFrostTalents() {
 	// TODO: Implement
 
 	// Improved Icy Talons
-	deathKnight.applyIcyTalons()
 	if deathKnight.Talents.ImprovedIcyTalons {
 		deathKnight.PseudoStats.MeleeSpeedMultiplier *= 1.05
 	}

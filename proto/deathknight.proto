@@ -141,6 +141,7 @@ enum DeathKnightMinorGlyph {
 
 message DeathKnight {
 	message Rotation {
+		bool use_death_and_decay = 1;
 	}
 	Rotation rotation = 1;
 
