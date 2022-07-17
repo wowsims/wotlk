@@ -562,8 +562,6 @@ message Debuffs {
 	bool sunder_armor = 18;
 	TristateEffect curse_of_weakness = 19;
 
-	TristateEffect hunters_mark = 20;
-
 	TristateEffect demoralizing_roar = 22;
 	TristateEffect demoralizing_shout = 23;
 	TristateEffect thunder_clap = 24;

@@ -20,9 +20,9 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		character.AddStat(stats.Intellect, val)
 	}
 
-	gotwAmount := GetTristateValueFloat(raidBuffs.GiftOfTheWild, 14.0, 18.0)
+	gotwAmount := GetTristateValueFloat(raidBuffs.GiftOfTheWild, 54, 75)
 	character.AddStats(stats.Stats{
-		stats.Armor:     GetTristateValueFloat(raidBuffs.GiftOfTheWild, 340, 459),
+		stats.Armor:     GetTristateValueFloat(raidBuffs.GiftOfTheWild, 750, 1050),
 		stats.Stamina:   gotwAmount,
 		stats.Agility:   gotwAmount,
 		stats.Strength:  gotwAmount,
@@ -181,7 +181,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 	}
 	if raidBuffs.StrengthOfEarthTotem > 0 || raidBuffs.HornOfWinter {
 		val := MaxTristate(proto.TristateEffect_TristateEffectRegular, raidBuffs.StrengthOfEarthTotem)
-		bonus := GetTristateValueFloat(val, 155, 155*1.15)
+		bonus := GetTristateValueFloat(val, 155, 186)
 		character.AddStats(stats.Stats{
 			stats.Strength: bonus,
 			stats.Agility:  bonus,
@@ -190,16 +190,14 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 
 	if individualBuffs.BlessingOfWisdom > 0 || raidBuffs.ManaSpringTotem > 0 {
 		character.AddStats(stats.Stats{
-			stats.MP5: GetTristateValueFloat(MaxTristate(individualBuffs.BlessingOfWisdom, raidBuffs.ManaSpringTotem), 91, 91*1.2),
+			stats.MP5: GetTristateValueFloat(MaxTristate(individualBuffs.BlessingOfWisdom, raidBuffs.ManaSpringTotem), 91, 109),
 		})
 	}
 
 	if raidBuffs.IcyTalons {
 		character.PseudoStats.MeleeSpeedMultiplier *= 1.2
-	} else {
-		if raidBuffs.WindfuryTotem > 0 {
-			character.PseudoStats.MeleeSpeedMultiplier *= GetTristateValueFloat(raidBuffs.WindfuryTotem, 1.16, 1.2)
-		}
+	} else if raidBuffs.WindfuryTotem > 0 {
+		character.PseudoStats.MeleeSpeedMultiplier *= GetTristateValueFloat(raidBuffs.WindfuryTotem, 1.16, 1.2)
 	}
 
 	if raidBuffs.Bloodlust {
@@ -297,22 +295,6 @@ func applyInspiration(character *Character, uptime float64) {
 				}
 			},
 		})
-	})
-}
-
-func SnapshotImprovedStrengthOfEarthTotemAura(character *Character) *Aura {
-	return character.NewTemporaryStatsAuraWrapped("Strength of Earth Totem Snapshot", ActionID{SpellID: 37223}, stats.Stats{stats.Strength: 12}, time.Second*110, func(config *Aura) {
-		config.OnReset = func(aura *Aura, sim *Simulation) {
-			aura.Activate(sim)
-		}
-	})
-}
-
-func SnapshotImprovedWrathOfAirTotemAura(character *Character) *Aura {
-	return character.NewTemporaryStatsAuraWrapped("Wrath of Air Totem Snapshot", ActionID{SpellID: 37212}, stats.Stats{stats.SpellPower: 20}, time.Second*110, func(config *Aura) {
-		config.OnReset = func(aura *Aura, sim *Simulation) {
-			aura.Activate(sim)
-		}
 	})
 }
 
