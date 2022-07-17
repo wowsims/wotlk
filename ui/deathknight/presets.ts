@@ -31,9 +31,17 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wotlk.wowhead.com/talent-calc and copy the numbers in the url.
 export const FrostTalents = {
-	name: 'Frost Dps',
+	name: 'Frost',
 	data: SavedTalents.create({
 		talentsString: '23050005-32005350352203012300033101351',
+		glyphs: Glyphs.create({
+			major1: DeathKnightMajorGlyph.GlyphOfObliterate,
+			major2: DeathKnightMajorGlyph.GlyphOfFrostStrike,
+			major3: DeathKnightMajorGlyph.GlyphOfDisease,
+			minor1: DeathKnightMinorGlyph.GlyphOfHornOfWinter,
+			minor2: DeathKnightMinorGlyph.GlyphOfBloodTap,
+			minor3: DeathKnightMinorGlyph.GlyphOfRaiseDead,
+		}),
 	}),
 };
 
