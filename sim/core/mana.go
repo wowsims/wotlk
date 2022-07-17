@@ -22,6 +22,8 @@ type manaBar struct {
 	manaNotCastingMetrics *ResourceMetrics
 	JowManaMetrics        *ResourceMetrics
 	VtManaMetrics         *ResourceMetrics
+	JowiseManaMetrics     *ResourceMetrics
+	PleaManaMetrics       *ResourceMetrics
 }
 
 // EnableManaBar will setup caster stat dependencies (int->mana and int->spellcrit)

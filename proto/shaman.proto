@@ -196,6 +196,7 @@ message ElementalShaman {
 			Adaptive = 1;
 		}
 		RotationType type = 1;
+		bool in_thunderstorm_range = 2;
 	}
 
 	message Options {

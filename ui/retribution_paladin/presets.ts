@@ -30,17 +30,17 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 export const RetKingsPaladinTalents = {
-	name: 'Ret w/ Kings',
+	name: 'Basic w/Aura Mastery',
 	data: SavedTalents.create({
-		talentsString: '5-503201-0523005130033125231051',
+		talentsString: '050501-05-05232051203331302133231331',
 	}),
 };
 
 
 export const RetNoKingsPaladinTalents = {
-	name: 'Ret w/out Kings',
+	name: 'Suboptimal w/Dsac',
 	data: SavedTalents.create({
-		talentsString: '52-503-0523005130033125331051',
+		talentsString: '-552201002-05232050203331302133231331',
 	}),
 };
 
@@ -51,9 +51,7 @@ export const DefaultRotation = RetributionPaladinRotation.create({
 
 export const DefaultOptions = RetributionPaladinOptions.create({
 	aura: PaladinAura.SanctityAura,
-	judgement: Judgement.Crusader,
-	crusaderStrikeDelayMs: 1700,
-	hasteLeewayMs: 0,
+	judgement: Judgement.Wisdom,
 	damageTakenPerSecond: 0,
 });
 
