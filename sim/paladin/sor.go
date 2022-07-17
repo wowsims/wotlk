@@ -10,6 +10,8 @@ func (paladin *Paladin) setupSealOfRighteousness() {
 	/*
 	 * Seal of Righteousness is an Spell/Aura that when active makes the paladin capable of procing
 	 * 2 different SpellIDs depending on a paladin's casted spell or melee swing.
+	 * NOTE:
+	 *   Seal of Righteousness is unique in that it is the only seal that can proc off its own judgements.
 	 *
 	 * SpellID 20187 (Judgement of Righteousness):
 	 *   - Procs off of any "Primary" Judgement (JoL, JoW, JoJ).
@@ -21,7 +23,7 @@ func (paladin *Paladin) setupSealOfRighteousness() {
 	 *   - Procs off of any melee special ability, or white hit.
 	 *   - Cannot miss or be dodged/parried.
 	 *   - Deals hybrid AP/SP damage * current weapon speed.
-	 *   - Crits off of a melee modifier.
+	 *   - CANNOT CRIT.
 	 */
 
 	baseMultiplier := 1.0
@@ -79,7 +81,7 @@ func (paladin *Paladin) setupSealOfRighteousness() {
 					return damage
 				},
 			},
-			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialCritOnly(paladin.MeleeCritMultiplier()), // can't miss if melee swing landed, but can crit
+			OutcomeApplier: paladin.OutcomeFuncAlwaysHit(), // can't miss if attack landed
 		}),
 	})
 
@@ -99,7 +101,9 @@ func (paladin *Paladin) setupSealOfRighteousness() {
 
 			// Differ between judgements and other melee abilities.
 			if spell.Flags.Matches(SpellFlagJudgement) {
+				// SoR is the only seal that can proc off its own judgement.
 				onJudgementProc.Cast(sim, spellEffect.Target)
+				onSpecialOrSwingProc.Cast(sim, spellEffect.Target)
 			} else {
 				if spellEffect.IsMelee() {
 					onSpecialOrSwingProc.Cast(sim, spellEffect.Target)

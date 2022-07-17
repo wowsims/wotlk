@@ -36,6 +36,7 @@ type Paladin struct {
 	JudgementOfLight    *core.Spell
 	SealOfVengeance     *core.Spell
 	SealOfRighteousness *core.Spell
+	SealOfCommand       *core.Spell
 	// SealOfWisdom        *core.Spell
 	// SealOfLight         *core.Spell
 
@@ -100,6 +101,7 @@ func (paladin *Paladin) Initialize() {
 
 	paladin.setupSealOfVengeance()
 	paladin.setupSealOfRighteousness()
+	paladin.setupSealOfCommand()
 	// paladin.setupSealOfTheCrusader()
 	// paladin.setupSealOfWisdom()
 	// paladin.setupSealOfLight()
