@@ -11,9 +11,7 @@ func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 	if !deathKnight.Talents.HowlingBlast {
 		return
 	}
-	//target := deathKnight.CurrentTarget
-
-	guileOfGorefiend := deathKnight.Talents.GuileOfGorefiend > 0
+	target := deathKnight.CurrentTarget
 
 	deathKnight.HowlingBlast = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 51411},
@@ -30,7 +28,7 @@ func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 		},
 
 		// TODO: Make AoE without breaking rune spending...
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+		ApplyEffects: core.ApplyEffectFuncAOEDamage(deathKnight.Env, core.SpellEffect{
 			ProcMask:             core.ProcMaskSpellDamage,
 			BonusSpellCritRating: 0.0,
 			DamageMultiplier:     1.0,
@@ -47,17 +45,19 @@ func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: deathKnight.killingMachineOutcomeMod(deathKnight.OutcomeFuncMagicHitAndCrit(deathKnight.spellCritMultiplier(guileOfGorefiend))),
+			OutcomeApplier: deathKnight.killingMachineOutcomeMod(deathKnight.OutcomeFuncMagicHitAndCrit(deathKnight.spellCritMultiplier())),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
+				if spellEffect.Landed() && target == spellEffect.Target {
 					if !deathKnight.HowlingBlastCostless {
 						dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 1, 1)
 						deathKnight.Spend(sim, spell, dkSpellCost)
+						amountOfRunicPower := 15.0 + 2.5*float64(deathKnight.Talents.ChillOfTheGrave)
+						deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 					} else {
 						deathKnight.HowlingBlastCostless = false
 					}
-
-					amountOfRunicPower := 15.0 + 2.5*float64(deathKnight.Talents.ChillOfTheGrave)
+				} else if spellEffect.Landed() && !deathKnight.HowlingBlastCostless {
+					amountOfRunicPower := 2.5 * float64(deathKnight.Talents.ChillOfTheGrave)
 					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 				}
 			},
