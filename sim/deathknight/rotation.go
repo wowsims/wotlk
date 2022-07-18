@@ -31,7 +31,7 @@ const (
 )
 
 func (deathKnight *DeathKnight) shouldWaitForDnD(sim *core.Simulation, blood bool, frost bool, unholy bool) bool {
-	return !(deathKnight.Talents.Morbidity == 0 || !(deathKnight.DeathAndDecay.CD.IsReady(sim) || deathKnight.DeathAndDecay.CD.TimeToReady(sim) < 6*time.Second) || ((!blood || deathKnight.CurrentBloodRunes() > 1) && (!frost || deathKnight.CurrentFrostRunes() > 1) && (!unholy || deathKnight.CurrentUnholyRunes() > 1)))
+	return deathKnight.Rotation.UseDeathAndDecay && !(deathKnight.Talents.Morbidity == 0 || !(deathKnight.DeathAndDecay.CD.IsReady(sim) || deathKnight.DeathAndDecay.CD.TimeToReady(sim) < 6*time.Second) || ((!blood || deathKnight.CurrentBloodRunes() > 1) && (!frost || deathKnight.CurrentFrostRunes() > 1) && (!unholy || deathKnight.CurrentUnholyRunes() > 1)))
 }
 
 var recastedFF = false
@@ -41,7 +41,7 @@ func (deathKnight *DeathKnight) shouldSpreadDisease() bool {
 	return recastedFF && recastedBP && deathKnight.Env.GetNumTargets() > 1
 }
 
-func (deathKnight *DeathKnight) spreadDisease(sim *core.Simulation, target *core.Unit) {
+func (deathKnight *DeathKnight) spreadDiseases(sim *core.Simulation, target *core.Unit) {
 	deathKnight.Pestilence.Cast(sim, target)
 	recastedFF = false
 	recastedBP = false
@@ -54,6 +54,10 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 	if deathKnight.GCD.IsReady(sim) {
 		// UH DK rota
 		if deathKnight.Talents.SummonGargoyle {
+			// Horn of Winter if you're the DK to refresh it and its not precasted/active
+			if deathKnight.ShouldHornOfWinter(sim) {
+				deathKnight.HornOfWinter.Cast(sim, target)
+			} // Diseases have topmost priority after that
 			if (!deathKnight.TargetHasDisease(FrostFeverAuraLabel, target) || deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim) < 6*time.Second) && deathKnight.CanIcyTouch(sim) {
 				deathKnight.IcyTouch.Cast(sim, target)
 				recastedFF = true
@@ -62,19 +66,19 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 				recastedBP = true
 			} else {
 				if deathKnight.PresenceMatches(UnholyPresence) && !deathKnight.SummonGargoyle.CD.IsReady(sim) && deathKnight.CanBloodPresence(sim) {
-					// Swap to blood after gargoyle
+					// Swap to blood presence after gargoyle cast
 					deathKnight.BloodPressence.Cast(sim, target)
 					deathKnight.WaitUntil(sim, sim.CurrentTime+1)
 				} else if deathKnight.Talents.Desolation > 0 && !deathKnight.DesolationAura.IsActive() && deathKnight.CanBloodStrike(sim) && !deathKnight.shouldWaitForDnD(sim, true, false, false) {
-					// Desolation check
+					// Desolation and Pestilence check
 					if deathKnight.shouldSpreadDisease() {
-						deathKnight.spreadDisease(sim, target)
+						deathKnight.spreadDiseases(sim, target)
 					} else {
 						deathKnight.BloodStrike.Cast(sim, target)
 					}
 				} else {
 					if deathKnight.Rotation.UseDeathAndDecay {
-						// DW Rota
+						// Death and Decay Rotation
 						if deathKnight.CanDeathAndDecay(sim) && deathKnight.AllDiseasesAreActive(target) {
 							deathKnight.DeathAndDecay.Cast(sim, target)
 						} else if deathKnight.CanGhoulFrenzy(sim) && deathKnight.Talents.MasterOfGhouls && (!deathKnight.Ghoul.GhoulFrenzyAura.IsActive() || deathKnight.Ghoul.GhoulFrenzyAura.RemainingDuration(sim) < 6*time.Second) && !deathKnight.shouldWaitForDnD(sim, false, false, true) {
@@ -87,7 +91,7 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 							deathKnight.PlagueStrike.Cast(sim, target)
 						} else if deathKnight.CanBloodStrike(sim) && !deathKnight.shouldWaitForDnD(sim, true, false, false) {
 							if deathKnight.shouldSpreadDisease() {
-								deathKnight.spreadDisease(sim, target)
+								deathKnight.spreadDiseases(sim, target)
 							} else if deathKnight.Env.GetNumTargets() > 2 {
 								deathKnight.BloodBoil.Cast(sim, target)
 							} else {
@@ -95,6 +99,8 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 							}
 						} else if deathKnight.CanDeathCoil(sim) && !deathKnight.SummonGargoyle.IsReady(sim) {
 							deathKnight.DeathCoil.Cast(sim, target)
+						} else if deathKnight.CanHornOfWinter(sim) {
+							deathKnight.HornOfWinter.Cast(sim, target)
 						} else {
 							if deathKnight.GCD.IsReady(sim) && !deathKnight.IsWaiting() {
 								// This means we did absolutely nothing.
@@ -107,14 +113,14 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 							}
 						}
 					} else {
-						// No DnD Rota
+						// Scourge Strike Rotation
 						if deathKnight.CanGhoulFrenzy(sim) && deathKnight.Talents.MasterOfGhouls && (!deathKnight.Ghoul.GhoulFrenzyAura.IsActive() || deathKnight.Ghoul.GhoulFrenzyAura.RemainingDuration(sim) < 6*time.Second) {
 							deathKnight.GhoulFrenzy.Cast(sim, target)
 						} else if deathKnight.CanScourgeStrike(sim) {
 							deathKnight.ScourgeStrike.Cast(sim, target)
 						} else if deathKnight.CanBloodStrike(sim) {
 							if deathKnight.shouldSpreadDisease() {
-								deathKnight.spreadDisease(sim, target)
+								deathKnight.spreadDiseases(sim, target)
 							} else if deathKnight.Env.GetNumTargets() > 2 {
 								deathKnight.BloodBoil.Cast(sim, target)
 							} else {
@@ -122,6 +128,8 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 							}
 						} else if deathKnight.CanDeathCoil(sim) && !deathKnight.SummonGargoyle.IsReady(sim) {
 							deathKnight.DeathCoil.Cast(sim, target)
+						} else if deathKnight.CanHornOfWinter(sim) {
+							deathKnight.HornOfWinter.Cast(sim, target)
 						} else {
 							if deathKnight.GCD.IsReady(sim) && !deathKnight.IsWaiting() {
 								// This means we did absolutely nothing.
