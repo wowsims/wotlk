@@ -152,6 +152,9 @@ message DeathKnight {
 		double starting_runic_power = 1;
 		double pet_uptime = 2;
 		bool precast_ghoul_frenzy = 3;
+
+		bool refresh_horn_of_winter = 4;
+		bool precast_horn_of_winter = 5;
 	}
 	Options options = 3;
 }

@@ -83,6 +83,8 @@ export const DefaultOptions = DeathKnightOptions.create({
 	startingRunicPower: 0,
 	petUptime: 1,
 	precastGhoulFrenzy: true,
+	refreshHornOfWinter: true,
+  precastHornOfWinter: true,
 });
 
 export const DefaultConsumes = Consumes.create({

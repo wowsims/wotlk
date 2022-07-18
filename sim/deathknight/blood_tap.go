@@ -35,6 +35,7 @@ func (deathKnight *DeathKnight) registerBloodTapSpell() {
 				Timer:    cdTimer,
 				Duration: cd,
 			},
+			IgnoreHaste: true,
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			deathKnight.BloodTapAura.Activate(sim)

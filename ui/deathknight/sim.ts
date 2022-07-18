@@ -32,7 +32,8 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
 				"<p>Rotation logic is just hit things on CGD. It is not good don't take it as actual data.</p>\
-				<p>Dynamic % multipliers to stat buffs snapshot at aura gain and don't dynamically update for now.</p>"
+				<p>Dynamic % multipliers to stat buffs snapshot at aura gain and don't dynamically update for now.</p>\
+				<p>Damage multipliers are also likely to not be properly stacking until further beta testing.</p>"
 			],
 
 			// All stats for which EP should be calculated.
@@ -128,6 +129,8 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 					DeathKnightInputs.StartingRunicPower,
 					DeathKnightInputs.PetUptime,
 					DeathKnightInputs.PrecastGhoulFrenzy,
+					DeathKnightInputs.RefreshHornOfWinter,
+					DeathKnightInputs.PrecastHornOfWinter,
 					
 					OtherInputs.PrepopPotion,
 

@@ -57,7 +57,9 @@ type DeathKnight struct {
 	HowlingBlastCostless bool
 	HowlingBlast         *core.Spell
 
-	//HornOfWinter     *core.Spell
+	EnhancingTotemsActive bool
+	HornOfWinter          *core.Spell
+	HornOfWinterAura      *core.Aura
 	//ArmyOfTheDead    *core.Spell
 
 	// "CDs"
@@ -112,7 +114,6 @@ func (deathKnight *DeathKnight) GetCharacter() *core.Character {
 }
 
 func (deathKnight *DeathKnight) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
-
 }
 
 func (deathKnight *DeathKnight) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
@@ -122,6 +123,14 @@ func (deathKnight *DeathKnight) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 
 	if deathKnight.Talents.ImprovedIcyTalons {
 		raidBuffs.IcyTalons = true
+	}
+
+	raidBuffs.HornOfWinter = !deathKnight.Options.RefreshHornOfWinter
+
+	if raidBuffs.StrengthOfEarthTotem == proto.TristateEffect_TristateEffectImproved {
+		deathKnight.EnhancingTotemsActive = true
+	} else {
+		deathKnight.EnhancingTotemsActive = false
 	}
 }
 
@@ -148,7 +157,7 @@ func (deathKnight *DeathKnight) Initialize() {
 	deathKnight.registerBoneShieldSpell()
 	deathKnight.registerUnbreakableArmorSpell()
 	deathKnight.registerBloodBoilSpell()
-	//deathKnight.registerIceboundFortitudeSpell()
+	deathKnight.registerHornOfWinterSpell()
 
 	deathKnight.registerRaiseDeadCD()
 	deathKnight.registerSummonGargoyleCD()
@@ -164,12 +173,19 @@ func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
 		deathKnight.BloodPresenceAura.Activate(sim)
 		deathKnight.Presence = BloodPresence
 	}
+
+	if deathKnight.Options.PrecastHornOfWinter && deathKnight.Options.RefreshHornOfWinter {
+		if deathKnight.HornOfWinterAura.IsActive() {
+			deathKnight.HornOfWinterAura.Deactivate(sim)
+			deathKnight.HornOfWinterAura.Activate(sim)
+		}
+	}
 }
 
 func (deathKnight *DeathKnight) HasMajorGlyph(glyph proto.DeathKnightMajorGlyph) bool {
 	return deathKnight.HasGlyph(int32(glyph))
 }
-func (deathKnight *DeathKnight) HasMinorGlyph(glyph proto.DeathKnightMajorGlyph) bool {
+func (deathKnight *DeathKnight) HasMinorGlyph(glyph proto.DeathKnightMinorGlyph) bool {
 	return deathKnight.HasGlyph(int32(glyph))
 }
 
@@ -184,7 +200,7 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 	}
 
 	maxRunicPower := 100.0 + 15.0*float64(deathKnight.Talents.RunicPowerMastery)
-	currentRunicPower := math.Min(maxRunicPower, deathKnightOptions.Options.StartingRunicPower)
+	currentRunicPower := math.Min(maxRunicPower, deathKnightOptions.Options.StartingRunicPower+core.TernaryFloat64(deathKnightOptions.Options.PrecastHornOfWinter, 10.0, 0.0))
 
 	deathKnight.EnableRunicPowerBar(
 		currentRunicPower,

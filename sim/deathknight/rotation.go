@@ -117,7 +117,9 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 
 		// Frost DK rota
 		if deathKnight.Talents.HowlingBlast {
-			if (!deathKnight.TargetHasDisease(FrostFeverAuraLabel, target) || deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim) < 6*time.Second) && deathKnight.CanIcyTouch(sim) {
+			if deathKnight.ShouldHornOfWinter(sim) {
+				deathKnight.HornOfWinter.Cast(sim, target)
+			} else if (!deathKnight.TargetHasDisease(FrostFeverAuraLabel, target) || deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim) < 6*time.Second) && deathKnight.CanIcyTouch(sim) {
 				deathKnight.IcyTouch.Cast(sim, target)
 			} else if (!deathKnight.TargetHasDisease(BloodPlagueAuraLabel, target) || deathKnight.BloodPlagueDisease[target.Index].RemainingDuration(sim) < 6*time.Second) && deathKnight.CanPlagueStrike(sim) {
 				deathKnight.PlagueStrike.Cast(sim, target)
@@ -138,6 +140,8 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 					deathKnight.IcyTouch.Cast(sim, target)
 				} else if deathKnight.CanPlagueStrike(sim) {
 					deathKnight.PlagueStrike.Cast(sim, target)
+				} else if deathKnight.CanHornOfWinter(sim) {
+					deathKnight.HornOfWinter.Cast(sim, target)
 				} else {
 					if deathKnight.GCD.IsReady(sim) && !deathKnight.IsWaiting() {
 						// This means we did absolutely nothing.
