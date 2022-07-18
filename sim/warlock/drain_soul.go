@@ -22,7 +22,7 @@ func (warlock *Warlock) registerDrainSoulChannellingSpell() {
 
 	channelTime := 3 * time.Second
 	warlock.DrainSoulChannelling = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 1},
+		ActionID:    core.ActionID{SpellID: 47855},
 		Flags:       core.SpellFlagNoLogs | core.SpellFlagNoMetrics,
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
