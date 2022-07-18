@@ -113,6 +113,10 @@ type DeathKnight struct {
 	// Dynamic trackers
 	RageOfRivendareActive bool
 	TundraStalkerActive   bool
+
+	// TODO: Is there a better way?
+	// Item Auras
+	SigilOfAwarenessAura *core.Aura
 }
 
 func (deathKnight *DeathKnight) GetCharacter() *core.Character {
