@@ -27,8 +27,11 @@ func (deathKnight *DeathKnight) registerSummonGargoyleCD() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
 				GCD:  core.GCDDefault,
+				Cost: baseCost,
+			},
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				cast.GCD = deathKnight.getModifiedGCD()
 			},
 			CD: core.Cooldown{
 				Timer:    deathKnight.NewTimer(),

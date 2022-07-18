@@ -25,8 +25,8 @@ func (deathKnight *DeathKnight) registerDeathAndDecaySpell() {
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return (62.0 + deathKnight.applyImpurity(hitEffect, spell.Unit)*0.0475) *
-						deathKnight.rageOfRivendareBonus() *
-						deathKnight.tundraStalkerBonus()
+						deathKnight.rageOfRivendareBonus(hitEffect.Target) *
+						deathKnight.tundraStalkerBonus(hitEffect.Target)
 				},
 				TargetSpellCoefficient: 1,
 			},
@@ -42,6 +42,9 @@ func (deathKnight *DeathKnight) registerDeathAndDecaySpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
+			},
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				cast.GCD = deathKnight.getModifiedGCD()
 			},
 			CD: core.Cooldown{
 				Timer:    deathKnight.NewTimer(),

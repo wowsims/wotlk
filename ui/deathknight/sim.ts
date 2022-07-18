@@ -31,6 +31,9 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 			cssClass: 'deathknight-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
+				"<p>Rotation logic is just hit things on CGD. It is not good don't take it as actual data.</p>\
+				<p>Dynamic % multipliers to stat buffs snapshot at aura gain and don't dynamically update for now.</p>\
+				<p>Damage multipliers are also likely to not be properly stacking until further beta testing.</p>"
 			],
 
 			// All stats for which EP should be calculated.
@@ -43,6 +46,10 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				Stat.StatMeleeCrit,
 				Stat.StatMeleeHaste,
 				Stat.StatArmorPenetration,
+
+				// TODO: Remove these when debuff categories support us
+				Stat.StatSpellPower,
+				Stat.StatSpellHit,
 			],
 			// Reference stat against which to calculate EP. I think all classes use either spell power or attack power.
 			epReferenceStat: Stat.StatAttackPower,
@@ -84,15 +91,16 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
-					bloodlust: true,
+					swiftRetribution: true,
 					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
-					windfuryTotem: TristateEffect.TristateEffectImproved,
-					leaderOfThePack: TristateEffect.TristateEffectImproved,
-					abominationsMight: true,
 					icyTalons: true,
+					abominationsMight: true,
+					leaderOfThePack: TristateEffect.TristateEffectRegular,
+					sanctifiedRetribution: true,
+					bloodlust: true
 				}),
 				partyBuffs: PartyBuffs.create({
-					heroicPresence: true,
+					heroicPresence: false,
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
@@ -100,13 +108,12 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				}),
 				debuffs: Debuffs.create({
 					bloodFrenzy: true,
+					faerieFire: TristateEffect.TristateEffectRegular,
 					sunderArmor: true,
-					curseOfWeakness: TristateEffect.TristateEffectImproved,
-					curseOfElements: true,
-					faerieFire: TristateEffect.TristateEffectImproved,
-					judgementOfWisdom: true,
 					misery: true,
 					ebonPlaguebringer: true,
+					mangle: true,
+					heartOfTheCrusader: true,
 				}),
 			},
 
@@ -121,6 +128,10 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 					DeathKnightInputs.StartingRunicPower,
 					DeathKnightInputs.PetUptime,
 					DeathKnightInputs.PrecastGhoulFrenzy,
+					DeathKnightInputs.RefreshHornOfWinter,
+					DeathKnightInputs.PrecastHornOfWinter,
+					
+					OtherInputs.PrepopPotion,
 
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,

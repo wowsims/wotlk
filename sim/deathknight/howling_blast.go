@@ -21,6 +21,9 @@ func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
 			},
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				cast.GCD = deathKnight.getModifiedGCD()
+			},
 			CD: core.Cooldown{
 				Timer:    deathKnight.NewTimer(),
 				Duration: 8.0 * time.Second,
@@ -38,9 +41,9 @@ func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					roll := (562.0-518.0)*sim.RandomFloat("Howling Blast") + 518.0
 					return (roll + deathKnight.applyImpurity(hitEffect, spell.Unit)*0.1) *
-						deathKnight.glacielRotBonus() *
-						deathKnight.rageOfRivendareBonus() *
-						deathKnight.tundraStalkerBonus() *
+						deathKnight.glacielRotBonus(hitEffect.Target) *
+						deathKnight.rageOfRivendareBonus(hitEffect.Target) *
+						deathKnight.tundraStalkerBonus(hitEffect.Target) *
 						deathKnight.mercilessCombatBonus(sim)
 				},
 				TargetSpellCoefficient: 1,
