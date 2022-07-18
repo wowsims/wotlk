@@ -28,9 +28,7 @@ var defaultProtTalents = &proto.PaladinTalents{
 	// Crusade:           3,
 }
 
-var defaultProtRotation = &proto.ProtectionPaladin_Rotation{
-	MaintainJudgement: proto.PaladinJudgement_JudgementOfWisdom,
-}
+var defaultProtRotation = &proto.ProtectionPaladin_Rotation{}
 
 var defaultProtOptions = &proto.ProtectionPaladin_Options{
 	Aura: proto.PaladinAura_RetributionAura,

@@ -1,8 +1,6 @@
 package retribution
 
 import (
-	"time"
-
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -32,7 +30,8 @@ func NewRetributionPaladin(character core.Character, options proto.Player) *Retr
 	ret := &RetributionPaladin{
 		Paladin:   paladin.NewPaladin(character, *retOptions.Talents),
 		Rotation:  *retOptions.Rotation,
-		judgement: retOptions.Options.Judgement,
+		Judgement: retOptions.Options.Judgement,
+		Seal:      retOptions.Options.Seal,
 	}
 	ret.PaladinAura = retOptions.Options.Aura
 
@@ -45,7 +44,7 @@ func NewRetributionPaladin(character core.Character, options proto.Player) *Retr
 		AutoSwingMelee: true,
 	})
 
-	ret.EnableResumeAfterManaWait(ret.tryUseGCD)
+	ret.EnableResumeAfterManaWait(ret.OnGCDReady)
 
 	return ret
 }
@@ -53,11 +52,9 @@ func NewRetributionPaladin(character core.Character, options proto.Player) *Retr
 type RetributionPaladin struct {
 	*paladin.Paladin
 
-	openerCompleted bool
-
-	hasteLeeway time.Duration
-
-	judgement proto.RetributionPaladin_Options_Judgement
+	Judgement        proto.PaladinJudgement
+	Seal             proto.PaladinSeal
+	SealInitComplete bool
 
 	Rotation proto.RetributionPaladin_Rotation
 }
@@ -75,7 +72,6 @@ func (ret *RetributionPaladin) Initialize() {
 
 func (ret *RetributionPaladin) Reset(sim *core.Simulation) {
 	ret.Paladin.Reset(sim)
-
 	ret.AutoAttacks.CancelAutoSwing(sim)
-	ret.openerCompleted = false
+	ret.SealInitComplete = false
 }

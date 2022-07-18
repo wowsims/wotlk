@@ -5,7 +5,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (paladin *Paladin) setupSealOfCommand() {
+func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 	/*
 	 * Seal of Command is an Spell/Aura that when active makes the paladin capable of procing
 	 * 2 different SpellIDs depending on a paladin's casted spell or melee swing.
@@ -102,7 +102,7 @@ func (paladin *Paladin) setupSealOfCommand() {
 
 	// Seal of Command aura.
 	auraActionID := core.ActionID{SpellID: 20375}
-	aura := paladin.RegisterAura(core.Aura{
+	paladin.SealOfCommandAura = paladin.RegisterAura(core.Aura{
 		Label:    "Seal of Command",
 		Tag:      "Seal",
 		ActionID: auraActionID,
@@ -130,6 +130,7 @@ func (paladin *Paladin) setupSealOfCommand() {
 		},
 	})
 
+	aura := paladin.SealOfCommandAura
 	baseCost := paladin.BaseMana * 0.14
 	paladin.SealOfCommand = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    auraActionID, // Seal of Command self buff.

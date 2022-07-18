@@ -22,10 +22,3 @@ func (prot *ProtectionPaladin) nextCDAt(sim *core.Simulation) time.Duration {
 	nextCDAt = core.MinDuration(nextCDAt, prot.Consecration.ReadyAt())
 	return nextCDAt
 }
-
-func (prot *ProtectionPaladin) shouldExorcism(sim *core.Simulation) bool {
-	return prot.Rotation.UseExorcism &&
-		prot.CanExorcism(prot.CurrentTarget) &&
-		prot.Exorcism.IsReady(sim) &&
-		prot.CurrentMana() > prot.MaxMana()*0.4
-}

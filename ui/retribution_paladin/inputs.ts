@@ -7,58 +7,14 @@ import {
 	PaladinAura as PaladinAura,
 	RetributionPaladin_Rotation as RetributionPaladinRotation,
 	RetributionPaladin_Options as RetributionPaladinOptions,
-	RetributionPaladin_Rotation_ConsecrationRank as ConsecrationRank,
-	RetributionPaladin_Options_Judgement as Judgement,
+	PaladinJudgement as PaladinJudgement,
+	PaladinSeal,
 } from '/wotlk/core/proto/paladin.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
 export const RetributionPaladinRotationConfig = {
 	inputs: [
-		{
-			type: 'enum' as const, cssClass: 'consecration-rank-picker',
-			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-			config: {
-				label: 'Consecration Rank',
-				labelTooltip: 'Use specified rank of Consecration during filler spell windows.',
-				values: [
-					{
-						name: 'None', value: ConsecrationRank.None,
-					},
-					{
-						name: 'Rank 1', value: ConsecrationRank.Rank1,
-					},
-					{
-						name: 'Rank 4', value: ConsecrationRank.Rank4,
-					},
-					{
-						name: 'Rank 6', value: ConsecrationRank.Rank6,
-					},
-				],
-				changedEvent: (player: Player<Spec.SpecRetributionPaladin>) => player.rotationChangeEmitter,
-				getValue: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().consecrationRank,
-				setValue: (eventID: EventID, player: Player<Spec.SpecRetributionPaladin>, newValue: number) => {
-					const newRotation = player.getRotation();
-					newRotation.consecrationRank = newValue;
-					player.setRotation(eventID, newRotation);
-				},
-			},
-		},
-		{
-			type: 'boolean' as const, cssClass: 'exorcism-picker',
-			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-			config: {
-				label: 'Use Exorcism',
-				labelTooltip: 'Use Exorcism during filler spell windows. Will only be used if the boss mob type is Undead or Demon.',
-				changedEvent: (player: Player<Spec.SpecRetributionPaladin>) => player.rotationChangeEmitter,
-				getValue: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().useExorcism,
-				setValue: (eventID: EventID, player: Player<Spec.SpecRetributionPaladin>, newValue: boolean) => {
-					const newRotation = player.getRotation();
-					newRotation.useExorcism = newValue;
-					player.setRotation(eventID, newRotation);
-				},
-			},
-		}
 	],
 }
 
@@ -69,8 +25,6 @@ export const AuraSelection = {
 		label: 'Aura',
 		values: [
 			{ name: 'None', value: PaladinAura.NoPaladinAura },
-			{ name: 'Sanctity Aura', value: PaladinAura.SanctityAura },
-			{ name: 'Devotion Aura', value: PaladinAura.DevotionAura },
 			{ name: 'Retribution Aura', value: PaladinAura.RetributionAura },
 		],
 		changedEvent: (player: Player<Spec.SpecRetributionPaladin>) => player.specOptionsChangeEmitter,
@@ -83,6 +37,30 @@ export const AuraSelection = {
 	},
 }
 
+export const StartingSealSelection = {
+	type: 'enum' as const, cssClass: 'starting-seal-picker',
+	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
+	config: {
+		label: 'Seal',
+		labelTooltip: 'The seal active before encounter',
+		values: [
+			{
+				name: 'Vengeance', value: PaladinSeal.Vengeance,
+			},
+			{
+				name: 'Command', value: PaladinSeal.Command,
+			},
+		],
+		changedEvent: (player: Player<Spec.SpecRetributionPaladin>) => player.specOptionsChangeEmitter,
+		getValue: (player: Player<Spec.SpecRetributionPaladin>) => player.getSpecOptions().seal,
+		setValue: (eventID: EventID, player: Player<Spec.SpecRetributionPaladin>, newValue: number) => {
+			const newOptions = player.getSpecOptions();
+			newOptions.seal = newValue;
+			player.setSpecOptions(eventID, newOptions);
+		},
+	},
+}
+
 export const JudgementSelection = {
 	type: 'enum' as const, cssClass: 'judgement-picker',
 	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
@@ -90,15 +68,8 @@ export const JudgementSelection = {
 		label: 'Judgement',
 		labelTooltip: 'Judgement debuff you will use on the target during the encounter.',
 		values: [
-			{
-				name: 'None', value: Judgement.None,
-			},
-			{
-				name: 'Judgement of Wisdom', value: Judgement.Wisdom,
-			},
-			{
-				name: 'Judgement of Light', value: Judgement.Light,
-			},
+			{ name: 'Wisdom', value: PaladinJudgement.JudgementOfWisdom },
+			{ name: 'Light', value: PaladinJudgement.JudgementOfLight },
 		],
 		changedEvent: (player: Player<Spec.SpecRetributionPaladin>) => player.specOptionsChangeEmitter,
 		getValue: (player: Player<Spec.SpecRetributionPaladin>) => player.getSpecOptions().judgement,
@@ -109,25 +80,6 @@ export const JudgementSelection = {
 		},
 	},
 }
-
-
-/*** Leave this for now. We'll ignore HasteLeeway for initial release, but we might come back to it at some point  ***/
-
-// export const HasteLeewayMS = {
-// 	type: 'number' as const, cssClass: 'haste-leeway-picker',
-// 	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-// 	config: {
-// 		label: 'Haste Leeway (MS)',
-// 		labelTooltip: "Arbitrary value used to account for haste procs preventing seal twists. Experiment with values between 100 - 200 miliseconds.\nDo not modify this value if you do not understand it's use.",
-// 		changedEvent: (player: Player<Spec.SpecRetributionPaladin>) => player.specOptionsChangeEmitter,
-// 		getValue: (player: Player<Spec.SpecRetributionPaladin>) => player.getSpecOptions().hasteLeewayMs,
-// 		setValue: (eventID: EventID, player: Player<Spec.SpecRetributionPaladin>, newValue: number) => {
-// 			const newOptions = player.getSpecOptions();
-// 			newOptions.hasteLeewayMs = newValue;
-// 			player.setSpecOptions(eventID, newOptions);
-// 		},
-// 	},
-// }
 
 export const DamgeTakenPerSecond = {
 	type: 'number' as const, cssClass: 'damage-taken-picker',
