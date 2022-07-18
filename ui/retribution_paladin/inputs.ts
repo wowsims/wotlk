@@ -50,6 +50,9 @@ export const StartingSealSelection = {
 			{
 				name: 'Command', value: PaladinSeal.Command,
 			},
+			{
+				name: 'Righteousness', value: PaladinSeal.Righteousness,
+			},
 		],
 		changedEvent: (player: Player<Spec.SpecRetributionPaladin>) => player.specOptionsChangeEmitter,
 		getValue: (player: Player<Spec.SpecRetributionPaladin>) => player.getSpecOptions().seal,
