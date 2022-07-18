@@ -524,7 +524,7 @@ var gemSocketColorPatterns = map[proto.GemColor]*regexp.Regexp{
 	proto.GemColor_GemColorOrange:    regexp.MustCompile("Matches a ((Yellow)|(Red)) or ((Yellow)|(Red)) (S|s)ocket\\."),
 	proto.GemColor_GemColorPurple:    regexp.MustCompile("Matches a ((Blue)|(Red)) or ((Blue)|(Red)) (S|s)ocket\\."),
 	proto.GemColor_GemColorGreen:     regexp.MustCompile("Matches a ((Yellow)|(Blue)) or ((Yellow)|(Blue)) (S|s)ocket\\."),
-	proto.GemColor_GemColorPrismatic: regexp.MustCompile("Matches a Red, Yellow or Blue (S|s)ocket\\."),
+	proto.GemColor_GemColorPrismatic: regexp.MustCompile("Matches a Red, Yellow or Blue (S|s)ocket\\."|"Matches any socket\\."|"Matches any Socket\\.  Maximum of one socketed in your equipment"),
 }
 
 func (item WowheadItemResponse) GetSocketColor() proto.GemColor {
