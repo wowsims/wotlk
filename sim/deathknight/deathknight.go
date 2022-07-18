@@ -22,8 +22,9 @@ type DeathKnight struct {
 
 	Presence Presence
 
-	IcyTouch  *core.Spell
-	BloodBoil *core.Spell
+	IcyTouch   *core.Spell
+	BloodBoil  *core.Spell
+	Pestilence *core.Spell
 
 	PlagueStrike      *core.Spell
 	PlagueStrikeMhHit *core.Spell
@@ -159,6 +160,7 @@ func (deathKnight *DeathKnight) Initialize() {
 	deathKnight.registerUnbreakableArmorSpell()
 	deathKnight.registerBloodBoilSpell()
 	deathKnight.registerHornOfWinterSpell()
+	deathKnight.registerPestilenceSpell()
 
 	deathKnight.registerRaiseDeadCD()
 	deathKnight.registerSummonGargoyleCD()

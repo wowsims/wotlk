@@ -41,7 +41,13 @@ func (deathKnight *DeathKnight) registerHornOfWinterSpell() {
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
 			},
-			IgnoreHaste: true,
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				cast.GCD = deathKnight.getModifiedGCD()
+			},
+			CD: core.Cooldown{
+				Timer:    deathKnight.NewTimer(),
+				Duration: 20 * time.Second,
+			},
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -51,7 +57,7 @@ func (deathKnight *DeathKnight) registerHornOfWinterSpell() {
 			}
 
 			amountOfRunicPower := 10.0
-			deathKnight.AddRunicPower(sim, amountOfRunicPower, deathKnight.UnbreakableArmor.RunicPowerMetrics())
+			deathKnight.AddRunicPower(sim, amountOfRunicPower, deathKnight.HornOfWinter.RunicPowerMetrics())
 		},
 	})
 }
