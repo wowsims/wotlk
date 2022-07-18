@@ -6,6 +6,7 @@ import {
 	Warlock_Rotation_SecondaryDot as SecondaryDot,
 	Warlock_Rotation_SpecSpell as SpecSpell,
 	Warlock_Rotation_Curse as Curse,
+	Warlock_Options_WeaponImbue as WarlockWeaponImbue,
 	Warlock_Options_Armor as Armor,
 	Warlock_Options_Summon as Summon,
 } from '/wotlk/core/proto/warlock.js';
@@ -55,6 +56,37 @@ export const DemonArmor = {
 		player.setSpecOptions(eventID, newOptions);
 	},
 };
+
+export const GrandFirestone = {
+	id: ActionId.fromItemId(41174),
+	states: 2,
+	extraCssClasses: [
+		'GrandFirestone-picker',
+	],
+	changedEvent: (player: Player<Spec.SpecWarlock>) => player.specOptionsChangeEmitter,
+	getValue: (player: Player<Spec.SpecWarlock>) => player.getSpecOptions().weaponImbue == WarlockWeaponImbue.GrandFirestone,
+	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: boolean) => {
+		const newOptions = player.getSpecOptions();
+		newOptions.weaponImbue = newValue ? WarlockWeaponImbue.GrandFirestone : WarlockWeaponImbue.NoWeaponImbue;
+		player.setSpecOptions(eventID, newOptions);
+	},
+};
+
+export const GrandSpellstone = {
+	id: ActionId.fromItemId(41196),
+	states: 2,
+	extraCssClasses: [
+		'GrandSpellstone-picker',
+	],
+	changedEvent: (player: Player<Spec.SpecWarlock>) => player.specOptionsChangeEmitter,
+	getValue: (player: Player<Spec.SpecWarlock>) => player.getSpecOptions().weaponImbue == WarlockWeaponImbue.GrandSpellstone,
+	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: boolean) => {
+		const newOptions = player.getSpecOptions();
+		newOptions.weaponImbue = newValue ? WarlockWeaponImbue.GrandSpellstone : WarlockWeaponImbue.NoWeaponImbue;
+		player.setSpecOptions(eventID, newOptions);
+	},
+};
+
 
 export const SummonImp = {
 	id: ActionId.fromSpellId(688),

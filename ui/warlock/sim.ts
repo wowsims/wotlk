@@ -1,10 +1,13 @@
-import { RaidBuffs } from '/wotlk/core/proto/common.js';
-import { PartyBuffs } from '/wotlk/core/proto/common.js';
-import { IndividualBuffs } from '/wotlk/core/proto/common.js';
-import { Debuffs } from '/wotlk/core/proto/common.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { Stat } from '/wotlk/core/proto/common.js';
-import { TristateEffect } from '/wotlk/core/proto/common.js'
+import { RaidBuffs,
+	PartyBuffs,
+	IndividualBuffs,
+	WeaponImbue,
+	Debuffs,
+	Spec,
+	Stat,
+	TristateEffect,
+} from '/wotlk/core/proto/common.js';
+
 import { Stats } from '/wotlk/core/proto_utils/stats.js';
 import { Player } from '/wotlk/core/player.js';
 import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
@@ -126,6 +129,10 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				WarlockInputs.SummonFelhunter,
 				WarlockInputs.SummonFelguard,
 			],
+			weaponImbueInputs: [
+				WarlockInputs.GrandSpellstone,
+				WarlockInputs.GrandFirestone,
+			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: WarlockInputs.WarlockRotationConfig,
 
@@ -165,12 +172,6 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 					Presets.DemonologyTalents,
 					Presets.DestructionTalents,
 				],
-				// Preset rotations that the user can quickly select.
-				// rotation: [
-				// 	Presets.AfflictionRotation,
-				// 	Presets.DemonologyRotation,
-				// 	Presets.DestructionRotation,
-				// ],
 				//Preset gear configurations that the user can quickly select.
 				gear: [
 					Presets.P1_DESTRO,

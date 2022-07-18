@@ -177,6 +177,7 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 
 	selfBuffInputs: Array<IndividualSimIconPickerConfig<Player<any>, any>>,
 	petInputs?: Array<IndividualSimIconPickerConfig<Player<any>, any>>,
+	weaponImbueInputs?: Array<IndividualSimIconPickerConfig<Player<any>, any>>,
 	rotationInputs: InputSection;
 	spellInputs?: Array<IndividualSimIconPickerConfig<Player<any>, any>>;
 	otherInputs?: InputSection;
@@ -775,16 +776,24 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			new IconEnumPicker(elem, this.player, IconInputs.makeFoodInput(foodOptions));
 		}
 
-		//if (this.individualConfig.consumeOptions?.weaponImbues.length) {
-		//	const mhImbueElem = this.rootElem.getElementsByClassName('consumes-imbue-mh')[0] as HTMLElement;
-		//	const ohImbueElem = this.rootElem.getElementsByClassName('consumes-imbue-oh')[0] as HTMLElement;
-		//	new IconEnumPicker(mhImbueElem, this.player,
-		//		IconInputs.makeWeaponImbueInput(true, this.individualConfig.consumeOptions.weaponImbues));
-		//	if (isDualWieldSpec(this.player.spec)) {
-		//		new IconEnumPicker(ohImbueElem, this.player,
-		//			IconInputs.makeWeaponImbueInput(false, this.individualConfig.consumeOptions.weaponImbues));
-		//	}
-		//}
+		if (this.individualConfig.weaponImbueInputs?.length) {
+			const weaponImbueSection = this.rootElem.getElementsByClassName('consumes-imbue-mh')[0] as HTMLElement;
+			configureIconSection(
+				weaponImbueSection,
+				this.individualConfig.weaponImbueInputs.map(iconInput => new IndividualSimIconPicker(weaponImbueSection, this.player, iconInput, this)),
+				);
+		}
+
+		// if (this.individualConfig.weaponImbueInputs?.length) {
+		// 	const mhImbueElem = this.rootElem.getElementsByClassName('consumes-imbue-mh')[0] as HTMLElement;
+		// 	const ohImbueElem = this.rootElem.getElementsByClassName('consumes-imbue-oh')[0] as HTMLElement;
+		// 	new IconEnumPicker(mhImbueElem, this.player,
+		// 		IconInputs.makeWeaponImbueInput(true, this.individualConfig.weaponImbueInputs));
+		// 	if (isDualWieldSpec(this.player.spec)) {
+		// 		new IconEnumPicker(ohImbueElem, this.player,
+		// 			IconInputs.makeWeaponImbueInput(false, this.individualConfig.weaponImbueInputs));
+		// 	}
+		// }
 
 		const tradeConsumesElem = this.rootElem.getElementsByClassName('consumes-trade')[0] as HTMLElement;
 		new IndividualSimIconPicker(tradeConsumesElem, this.player, IconInputs.SuperSapper, this);
