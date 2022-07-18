@@ -24,8 +24,8 @@ func (deathKnight *DeathKnight) newPlagueStrikeSpell(isMH bool) *core.Spell {
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				return weaponBaseDamage(sim, hitEffect, spell) *
-					deathKnight.rageOfRivendareBonus() *
-					deathKnight.tundraStalkerBonus()
+					deathKnight.rageOfRivendareBonus(hitEffect.Target) *
+					deathKnight.tundraStalkerBonus(hitEffect.Target)
 			},
 			TargetSpellCoefficient: 1,
 		},
@@ -67,6 +67,9 @@ func (deathKnight *DeathKnight) registerPlagueStrikeSpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
+			},
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				cast.GCD = deathKnight.getModifiedGCD()
 			},
 		},
 

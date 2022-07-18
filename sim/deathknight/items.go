@@ -58,4 +58,15 @@ func init() {
 		})
 	})
 
+	core.NewItemEffect(40207, func(agent core.Agent) {
+		deathKnight := agent.(DeathKnightAgent).GetDeathKnight()
+
+		deathKnight.SigilOfAwarenessAura = deathKnight.RegisterAura(core.Aura{
+			Label:    "Sigil of Awareness",
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				deathKnight.SigilOfAwarenessAura.Activate(sim)
+			},
+		})
+	})
 }

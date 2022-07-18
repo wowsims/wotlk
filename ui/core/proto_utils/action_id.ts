@@ -572,8 +572,8 @@ export const resourceTypeToIcon: Record<ResourceType, string> = {
 	[ResourceType.ResourceTypeComboPoints]: 'https://wow.zamimg.com/images/wow/icons/medium/inv_mace_2h_pvp410_c_01.jpg',
 	[ResourceType.ResourceTypeFocus]: 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_focusfire.jpg',
 	[ResourceType.ResourceTypeRunicPower]: 'https://wow.zamimg.com/images/wow/icons/medium/inv_sword_62.jpg',
-	[ResourceType.ResourceTypeBloodRune]: 'https://wow.zamimg.com/images/wow/icons/medium/spell_deathknight_deathstrike.jpg',
-	[ResourceType.ResourceTypeFrostRune]: 'https://wow.zamimg.com/images/wow/icons/medium/spell_deathknight_empowerruneblade2.jpg',
-	[ResourceType.ResourceTypeUnholyRune]: 'https://wow.zamimg.com/images/wow/icons/medium/spell_deathknight_empowerruneblade.jpg',
-	[ResourceType.ResourceTypeDeathRune]: 'https://wow.zamimg.com/images/wow/icons/medium/spell_deathknight_scourgestrike.jpg',
+	[ResourceType.ResourceTypeBloodRune]: '/wotlk/assets/blood_rune.png',
+	[ResourceType.ResourceTypeFrostRune]: '/wotlk/assets/frost_rune.png',
+	[ResourceType.ResourceTypeUnholyRune]: '/wotlk/assets/unholy_rune.png',
+	[ResourceType.ResourceTypeDeathRune]: '/wotlk/assets/death_rune.png',
 };

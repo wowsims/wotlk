@@ -6,12 +6,14 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-// TODO: make this an AoE spell, idk how to so for now its single target
+var HowlingBlastLastOutcomes []core.HitOutcome
+
 func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 	if !deathKnight.Talents.HowlingBlast {
 		return
 	}
 	target := deathKnight.CurrentTarget
+	HowlingBlastLastOutcomes = make([]core.HitOutcome, deathKnight.Env.GetNumTargets())
 
 	deathKnight.HowlingBlast = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 51411},
@@ -21,13 +23,15 @@ func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
 			},
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				cast.GCD = deathKnight.getModifiedGCD()
+			},
 			CD: core.Cooldown{
 				Timer:    deathKnight.NewTimer(),
 				Duration: 8.0 * time.Second,
 			},
 		},
 
-		// TODO: Make AoE without breaking rune spending...
 		ApplyEffects: core.ApplyEffectFuncAOEDamage(deathKnight.Env, core.SpellEffect{
 			ProcMask:             core.ProcMaskSpellDamage,
 			BonusSpellCritRating: 0.0,
@@ -38,15 +42,16 @@ func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					roll := (562.0-518.0)*sim.RandomFloat("Howling Blast") + 518.0
 					return (roll + deathKnight.applyImpurity(hitEffect, spell.Unit)*0.1) *
-						deathKnight.glacielRotBonus() *
-						deathKnight.rageOfRivendareBonus() *
-						deathKnight.tundraStalkerBonus() *
+						deathKnight.glacielRotBonus(hitEffect.Target) *
+						deathKnight.rageOfRivendareBonus(hitEffect.Target) *
+						deathKnight.tundraStalkerBonus(hitEffect.Target) *
 						deathKnight.mercilessCombatBonus(sim)
 				},
 				TargetSpellCoefficient: 1,
 			},
 			OutcomeApplier: deathKnight.killingMachineOutcomeMod(deathKnight.OutcomeFuncMagicHitAndCrit(deathKnight.spellCritMultiplier())),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				HowlingBlastLastOutcomes[deathKnight.getIndexForTarget(spellEffect.Target)] = spellEffect.Outcome
 				if spellEffect.Landed() && target == spellEffect.Target {
 					if !deathKnight.HowlingBlastCostless {
 						dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 1, 1)

@@ -10,7 +10,7 @@ import (
 
 func (warlock *Warlock) channelCheck(sim *core.Simulation, dot *core.Dot, maxTicks int) *core.Spell {
 
-	if dot.IsActive() && dot.TickCount + 1 < maxTicks {
+	if dot.IsActive() && dot.TickCount+1 < maxTicks {
 		return warlock.DrainSoulChannelling
 	} else {
 		return dot.Spell
@@ -22,13 +22,13 @@ func (warlock *Warlock) registerDrainSoulChannellingSpell() {
 
 	channelTime := 3 * time.Second
 	warlock.DrainSoulChannelling = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 47855},
-		Flags:       core.SpellFlagNoLogs | core.SpellFlagNoMetrics,
+		ActionID: core.ActionID{SpellID: 47855},
+		Flags:    core.SpellFlagNoLogs | core.SpellFlagNoMetrics,
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:         core.GCDDefault,
 				ChannelTime: channelTime,
-				CastTime:  	 0,
+				CastTime:    0,
 			},
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -74,8 +74,8 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 				}
 				// Everlasting Affliction Refresh
 				if warlock.CorruptionDot.IsActive() {
-					if sim.RandomFloat("EverlastingAffliction") < 0.2 * float64(warlock.Talents.EverlastingAffliction) {
-						 warlock.CorruptionDot.Refresh(sim)
+					if sim.RandomFloat("EverlastingAffliction") < 0.2*float64(warlock.Talents.EverlastingAffliction) {
+						warlock.CorruptionDot.Refresh(sim)
 					}
 				}
 				warlock.DrainSoulDot.Apply(sim)
@@ -85,15 +85,15 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 	})
 
 	target := warlock.CurrentTarget
-	afflictionSpellNumber:= 3.0
+	afflictionSpellNumber := 3.0
 
 	effect := core.SpellEffect{
-		DamageMultiplier:     1 + 0.03 * float64(warlock.Talents.SoulSiphon) * afflictionSpellNumber,
-		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-		IsPeriodic:           true,
-		OutcomeApplier:       warlock.OutcomeFuncTick(),
-		ProcMask:             core.ProcMaskSpellDamage,
-		BaseDamage:       	  core.BaseDamageConfigMagicNoRoll(710/5, 0.429),
+		DamageMultiplier: 1 + 0.03*float64(warlock.Talents.SoulSiphon)*afflictionSpellNumber,
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+		IsPeriodic:       true,
+		OutcomeApplier:   warlock.OutcomeFuncTick(),
+		ProcMask:         core.ProcMaskSpellDamage,
+		BaseDamage:       core.BaseDamageConfigMagicNoRoll(710/5, 0.429),
 	}
 
 	warlock.DrainSoulDot = core.NewDot(core.Dot{

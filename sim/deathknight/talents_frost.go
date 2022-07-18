@@ -93,7 +93,7 @@ func (deathKnight *DeathKnight) ApplyFrostTalents() {
 	deathKnight.AddStat(stats.Expertise, 1.0*float64(deathKnight.Talents.TundraStalker)*core.ExpertisePerQuarterPercentReduction)
 }
 
-func (deathKnight *DeathKnight) glacielRotBonus() float64 {
+func (deathKnight *DeathKnight) glacielRotBonus(target *core.Unit) float64 {
 	glacierRotCoeff := 1.0
 	if deathKnight.Talents.GlacierRot == 1 {
 		glacierRotCoeff = 1.07
@@ -103,15 +103,15 @@ func (deathKnight *DeathKnight) glacielRotBonus() float64 {
 		glacierRotCoeff = 1.20
 	}
 
-	return core.TernaryFloat64(deathKnight.DiseasesAreActive() && deathKnight.Talents.GlacierRot > 0, glacierRotCoeff, 1.0)
+	return core.TernaryFloat64(deathKnight.DiseasesAreActive(target) && deathKnight.Talents.GlacierRot > 0, glacierRotCoeff, 1.0)
 }
 
 func (deathKnight *DeathKnight) mercilessCombatBonus(sim *core.Simulation) float64 {
 	return core.TernaryFloat64(sim.IsExecutePhase35() && deathKnight.Talents.MercilessCombat > 0, 1.0+0.06*float64(deathKnight.Talents.MercilessCombat), 1.0)
 }
 
-func (deathKnight *DeathKnight) tundraStalkerBonus() float64 {
-	return core.TernaryFloat64(deathKnight.FrostFeverDisease.IsActive(), 1.0+0.03*float64(deathKnight.Talents.TundraStalker), 1.0)
+func (deathKnight *DeathKnight) tundraStalkerBonus(target *core.Unit) float64 {
+	return core.TernaryFloat64(deathKnight.TargetHasDisease(FrostFeverAuraLabel, target), 1.0+0.03*float64(deathKnight.Talents.TundraStalker), 1.0)
 }
 
 func (deathKnight *DeathKnight) applyKillingMachine() {
@@ -210,7 +210,7 @@ func (deathKnight *DeathKnight) bloodOfTheNorthWillProc(sim *core.Simulation, bo
 	return ohWillCast
 }
 
-func (deathKnight *DeathKnight) bloodOfTheNorthProc(sim *core.Simulation, spell *core.Spell, runeCost core.DKRuneCost) {
+func (deathKnight *DeathKnight) bloodOfTheNorthProc(sim *core.Simulation, spell *core.Spell, runeCost core.DKRuneCost) bool {
 	if deathKnight.Talents.BloodOfTheNorth > 0 {
 		if runeCost.Blood > 0 {
 			botnChance := deathKnight.bloodOfTheNorthChance()
@@ -219,13 +219,11 @@ func (deathKnight *DeathKnight) bloodOfTheNorthProc(sim *core.Simulation, spell 
 				slot := deathKnight.SpendBloodRune(sim, spell.BloodRuneMetrics())
 				deathKnight.SetRuneAtSlotToState(0, slot, core.RuneState_DeathSpent, core.RuneKind_Death)
 				deathKnight.SetAsGeneratedByReapingOrBoTN(slot)
-			} else {
-				deathKnight.Spend(sim, spell, runeCost)
+				return true
 			}
-		} else {
-			deathKnight.Spend(sim, spell, runeCost)
 		}
 	}
+	return false
 }
 
 func (deathKnight *DeathKnight) threatOfThassarianChance() float64 {

@@ -17,8 +17,11 @@ func (deathKnight *DeathKnight) killingMachineOutcomeMod(outcomeApplier core.Out
 	}
 }
 
+var IcyTouchLastOutcomes []core.HitOutcome
+
 func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 	target := deathKnight.CurrentTarget
+	IcyTouchLastOutcomes = make([]core.HitOutcome, deathKnight.Env.GetNumTargets())
 
 	itAura := core.IcyTouchAura(target, deathKnight.Talents.ImprovedIcyTouch)
 	deathKnight.IcyTouchAura = itAura
@@ -33,6 +36,9 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
 			},
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				cast.GCD = deathKnight.getModifiedGCD()
+			},
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -45,9 +51,9 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					roll := (245.0-227.0)*sim.RandomFloat("Icy Touch") + 227.0
 					return (roll + deathKnight.applyImpurity(hitEffect, spell.Unit)*0.1) *
-						deathKnight.glacielRotBonus() *
-						deathKnight.rageOfRivendareBonus() *
-						deathKnight.tundraStalkerBonus() *
+						deathKnight.glacielRotBonus(hitEffect.Target) *
+						deathKnight.rageOfRivendareBonus(hitEffect.Target) *
+						deathKnight.tundraStalkerBonus(hitEffect.Target) *
 						deathKnight.mercilessCombatBonus(sim)
 				},
 				TargetSpellCoefficient: 1,
@@ -55,6 +61,7 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 			OutcomeApplier: deathKnight.killingMachineOutcomeMod(deathKnight.OutcomeFuncMagicHitAndCrit(deathKnight.spellCritMultiplier())),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				IcyTouchLastOutcomes[deathKnight.getIndexForTarget(spellEffect.Target)] = spellEffect.Outcome
 				if spellEffect.Landed() {
 					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 1, 0)
 					deathKnight.Spend(sim, spell, dkSpellCost)
