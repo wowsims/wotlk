@@ -29,8 +29,8 @@ func (deathKnight *DeathKnight) ApplyFrostTalents() {
 	// Pointless to Implement
 
 	// Black Ice
-	deathKnight.PseudoStats.FrostDamageDealtMultiplier *= 1.02 * float64(deathKnight.Talents.BlackIce)
-	deathKnight.PseudoStats.ShadowDamageDealtMultiplier *= 1.02 * float64(deathKnight.Talents.BlackIce)
+	deathKnight.PseudoStats.FrostDamageDealtMultiplier *= 1.0 + 0.02*float64(deathKnight.Talents.BlackIce)
+	deathKnight.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + 0.02*float64(deathKnight.Talents.BlackIce)
 
 	// Nerves Of Cold Steel
 	deathKnight.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*float64(deathKnight.Talents.NervesOfColdSteel))

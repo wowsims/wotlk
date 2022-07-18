@@ -34,13 +34,11 @@ func (deathKnight *DeathKnight) registerBoneShieldSpell() {
 		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			deathKnight.ModifyAdditiveDamageModifier(sim, 0.02)
-			//aura.Unit.PseudoStats.DamageDealtMultiplier *= 1.02
 
 			aura.Unit.PseudoStats.DamageTakenMultiplier *= 0.8
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			deathKnight.ModifyAdditiveDamageModifier(sim, -0.02)
-			//aura.Unit.PseudoStats.DamageDealtMultiplier /= 1.02
 
 			aura.Unit.PseudoStats.DamageTakenMultiplier /= 0.8
 		},

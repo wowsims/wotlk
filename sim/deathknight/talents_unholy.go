@@ -238,11 +238,9 @@ func (deathKnight *DeathKnight) applyDesolation() {
 		Duration: time.Second * 20.0,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			deathKnight.ModifyAdditiveDamageModifier(sim, bonusDamageCoeff)
-			//aura.Unit.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.01*float64(deathKnight.Talents.Desolation)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			deathKnight.ModifyAdditiveDamageModifier(sim, -bonusDamageCoeff)
-			//aura.Unit.PseudoStats.DamageDealtMultiplier /= 1.0 + 0.01*float64(deathKnight.Talents.Desolation)
 		},
 	})
 }

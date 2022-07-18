@@ -82,13 +82,11 @@ func (deathKnight *DeathKnight) registerBloodPresenceAura() {
 			aura.Unit.PseudoStats.ThreatMultiplier *= threatMult
 
 			deathKnight.ModifyAdditiveDamageModifier(sim, damageBonusCoeff)
-			//aura.Unit.PseudoStats.DamageDealtMultiplier *= 1.0 + damageBonusCoeff
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier /= threatMult
 
 			deathKnight.ModifyAdditiveDamageModifier(sim, -damageBonusCoeff)
-			//aura.Unit.PseudoStats.DamageDealtMultiplier /= 1.0 + damageBonusCoeff
 		},
 	})
 }
