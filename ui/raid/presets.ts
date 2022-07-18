@@ -576,7 +576,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	{
 		spec: Spec.SpecRetributionPaladin,
 		rotation: RetributionPaladinPresets.DefaultRotation,
-		talents: RetributionPaladinPresets.RetKingsPaladinTalents.data,
+		talents: RetributionPaladinPresets.AuraMasteryTalents.data,
 		specOptions: RetributionPaladinPresets.DefaultOptions,
 		consumes: RetributionPaladinPresets.DefaultConsumes,
 		defaultName: 'Ret Paladin',
@@ -608,7 +608,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	{
 		spec: Spec.SpecProtectionPaladin,
 		rotation: ProtectionPaladinPresets.DefaultRotation,
-		talents: ProtectionPaladinPresets.SanctityTalents.data,
+		talents: ProtectionPaladinPresets.GenericAoeTalents.data,
 		specOptions: ProtectionPaladinPresets.DefaultOptions,
 		consumes: ProtectionPaladinPresets.DefaultConsumes,
 		defaultName: 'Prot Paladin',

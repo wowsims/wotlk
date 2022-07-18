@@ -384,12 +384,9 @@ enum Food {
 
 enum PetFood {
 	PetFoodUnknown = 0;
-	PetFoodKiblersBits = 1;
-}
-
-enum Alchohol {
-	AlchoholUnknown = 0;
-	AlchoholKreegsStoutBeatdown = 1;
+	PetFoodSpicyMammothTreats = 1;
+	// TBC
+	PetFoodKiblersBits = 2;
 }
 
 // Buffs that affect the entire raid.
@@ -501,7 +498,6 @@ message Consumes {
 
 	Food food = 41;
 	PetFood pet_food = 37;
-	Alchohol alchohol = 42;
 
 	// 0 means no scroll, otherwise value is the scroll level.
 	// E.g. 5 indicates Scroll of Agility V.

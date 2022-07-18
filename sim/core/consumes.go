@@ -435,14 +435,6 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 		})
 	}
 
-	switch consumes.Alchohol {
-	case proto.Alchohol_AlchoholKreegsStoutBeatdown:
-		character.AddStats(stats.Stats{
-			stats.Intellect: -5,
-			stats.Spirit:    25,
-		})
-	}
-
 	// Scrolls
 	character.AddStat(stats.Agility, []float64{0, 5, 9, 13, 17, 20}[consumes.ScrollOfAgility])
 	character.AddStat(stats.Strength, []float64{0, 5, 9, 13, 17, 20}[consumes.ScrollOfStrength])
@@ -471,6 +463,11 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 
 func ApplyPetConsumeEffects(pet *Character, ownerConsumes proto.Consumes) {
 	switch ownerConsumes.PetFood {
+	case proto.PetFood_PetFoodSpicyMammothTreats:
+		pet.AddStats(stats.Stats{
+			stats.Strength: 30,
+			stats.Spirit:   30,
+		})
 	case proto.PetFood_PetFoodKiblersBits:
 		pet.AddStats(stats.Stats{
 			stats.Strength: 20,
