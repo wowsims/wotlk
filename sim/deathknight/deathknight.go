@@ -92,6 +92,7 @@ type DeathKnight struct {
 	DesolationAura      *core.Aura
 	NecrosisAura        *core.Aura
 	BloodCakedBladeAura *core.Aura
+	ButcheryAura        *core.Aura
 
 	// Talent Spells
 	LastDiseaseDamage float64
@@ -175,6 +176,11 @@ func (deathKnight *DeathKnight) Initialize() {
 
 func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
 	deathKnight.ResetRunicPowerBar(sim)
+
+	if deathKnight.Talents.Butchery > 0 {
+		deathKnight.ButcheryAura.Deactivate(sim)
+		deathKnight.ButcheryAura.Activate(sim)
+	}
 
 	if deathKnight.Rotation.UnholyPresenceOpener {
 		deathKnight.UnholyPresenceAura.Activate(sim)
