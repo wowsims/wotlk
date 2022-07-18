@@ -93,7 +93,7 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 					bloodlust: true
 				}),
 				partyBuffs: PartyBuffs.create({
-					heroicPresence: true,
+					heroicPresence: false,
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,

@@ -438,24 +438,32 @@ func (rp *runicPowerBar) LaunchRuneRegenPA(sim *Simulation, r *Rune) {
 		if !pa.cancelled {
 			r.pas[0] = nil
 
+			currRunes := int32(-1)
+			switch r.kind {
+			case RuneKind_Blood:
+				currRunes = rp.CurrentBloodRunes()
+			case RuneKind_Frost:
+				currRunes = rp.CurrentFrostRunes()
+			case RuneKind_Unholy:
+				currRunes = rp.CurrentUnholyRunes()
+			case RuneKind_Death:
+				currRunes = rp.CurrentDeathRunes()
+			}
+
 			rp.GenerateRune(r)
 
 			switch r.kind {
 			case RuneKind_Blood:
-				currB := rp.CurrentBloodRunes()
-				rp.GainRuneMetrics(sim, rp.bloodRuneGainMetrics, "blood", currB, currB+1)
+				rp.GainRuneMetrics(sim, rp.bloodRuneGainMetrics, "blood", currRunes, currRunes+1)
 				rp.onBloodRuneGain(sim)
 			case RuneKind_Frost:
-				currF := rp.CurrentFrostRunes()
-				rp.GainRuneMetrics(sim, rp.frostRuneGainMetrics, "frost", currF, currF+1)
+				rp.GainRuneMetrics(sim, rp.frostRuneGainMetrics, "frost", currRunes, currRunes+1)
 				rp.onFrostRuneGain(sim)
 			case RuneKind_Unholy:
-				currU := rp.CurrentUnholyRunes()
-				rp.GainRuneMetrics(sim, rp.unholyRuneGainMetrics, "unholy", currU, currU+1)
+				rp.GainRuneMetrics(sim, rp.unholyRuneGainMetrics, "unholy", currRunes, currRunes+1)
 				rp.onUnholyRuneGain(sim)
 			case RuneKind_Death:
-				currD := rp.CurrentDeathRunes()
-				rp.GainRuneMetrics(sim, rp.deathRuneGainMetrics, "death", currD, currD+1)
+				rp.GainRuneMetrics(sim, rp.deathRuneGainMetrics, "death", currRunes, currRunes+1)
 				rp.onDeathRuneGain(sim)
 			}
 		} else {
