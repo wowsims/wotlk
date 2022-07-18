@@ -22,8 +22,6 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	preset := warlock.Rotation.Preset
 	rotationType := warlock.Rotation.Type
 	curse := warlock.Rotation.Curse
-	const epsilon = 1* time.Millisecond
-
 
 	// ------------------------------------------
 	// AoE (Seed)
@@ -118,7 +116,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			if !warlock.CurseOfAgonyDot.IsActive() && sim.GetRemainingDuration() > warlock.CurseOfAgonyDot.Duration {
 				spell = warlock.CurseOfAgony
 			} else if warlock.CorruptionDot.IsActive() && warlock.CorruptionDot.RemainingDuration(sim) < core.GCDDefault {
-				spell = warlock.DrainSoul[1]
+				spell = warlock.DrainSoul
 			} else if !warlock.CorruptionDot.IsActive() && core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() {
 				spell = warlock.Corruption
 			} else if (!warlock.UnstableAffDot.IsActive() || warlock.UnstableAffDot.RemainingDuration(sim) < warlock.UnstableAff.CurCast.CastTime) &&
@@ -129,13 +127,11 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			} else if sim.IsExecutePhase35() && time.Duration(warlock.CorruptionDot.TickCount) * warlock.CorruptionDot.TickLength > sim.CurrentTime {
 				spell = warlock.Corruption
 			} else if sim.IsExecutePhase20() {
-				if warlock.DrainSoulDot[1].IsActive() && warlock.DrainSoulDot[1].TickCount < 5 {
-					warlock.DrainSoulDot[1].Refresh(sim)
-					warlock.DrainSoulDot[1].Aura.UpdateExpires(warlock.DrainSoulDot[1].Aura.ExpiresAt() + epsilon)
-					warlock.WaitUntil(sim, sim.CurrentTime + warlock.DrainSoul[1].CurCast.ChannelTime)
-					return
+				if !warlock.channelCheck(sim, warlock.DrainSoulDot, 5) {
+					spell = warlock.DrainSoul
 				} else {
-					spell = warlock.DrainSoul[1]
+					warlock.WaitUntil(sim, sim.CurrentTime + warlock.DrainSoul.CurCast.ChannelTime)
+					return
 				}
 			} else {
 				spell = warlock.ShadowBolt

@@ -8,16 +8,24 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-// func (priest *Priest) MindFlayActionID(numTicks int) core.ActionID {
-// 	return core.ActionID{SpellID: 48156, Tag: int32(numTicks)}
-// }
+func (warlock *Warlock) channelCheck(sim *core.Simulation, dot *core.Dot, maxTicks int) bool {
+	const epsilon = 1* time.Millisecond
 
-func (warlock *Warlock) registerDrainSoulSpell(numTicks int) *core.Spell {
+	if dot.IsActive() && dot.TickCount + 1 < maxTicks {
+		dot.Refresh(sim)
+		dot.Aura.UpdateExpires(dot.Aura.ExpiresAt() + epsilon)
+		return true
+	} else {
+		return false
+	}
+}
+
+func (warlock *Warlock) registerDrainSoulSpell() {
 	baseCost := warlock.BaseMana * 0.14
-	channelTime := 3 * time.Second * time.Duration(numTicks)
-	epsilon := 1* time.Millisecond
+	channelTime := 3 * time.Second
+	epsilon := 1 * time.Millisecond
 
-	return warlock.RegisterSpell(core.SpellConfig{
+	warlock.DrainSoul = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 47855},
 		SpellSchool:  core.SpellSchoolShadow,
 		Flags:        core.SpellFlagBinary | core.SpellFlagChanneled,
@@ -46,14 +54,12 @@ func (warlock *Warlock) registerDrainSoulSpell(numTicks int) *core.Spell {
 						 warlock.CorruptionDot.Refresh(sim)
 					}
 				}
-				warlock.DrainSoulDot[numTicks].Apply(sim)
-				warlock.DrainSoulDot[numTicks].Aura.UpdateExpires(warlock.DrainSoulDot[numTicks].Aura.ExpiresAt() + epsilon)
+				warlock.DrainSoulDot.Apply(sim)
+				warlock.DrainSoulDot.Aura.UpdateExpires(warlock.DrainSoulDot.Aura.ExpiresAt() + epsilon)
 			},
 		}),
 	})
-}
-
-func (warlock *Warlock) registerDrainSoulDot(numTicks int) *core.Dot {
+	
 	target := warlock.CurrentTarget
 	afflictionSpellNumber:= 3.0
 
@@ -66,14 +72,14 @@ func (warlock *Warlock) registerDrainSoulDot(numTicks int) *core.Dot {
 		BaseDamage:       	  core.BaseDamageConfigMagicNoRoll(710/5, 0.429),
 	}
 
-	return core.NewDot(core.Dot{
-		Spell: warlock.DrainSoul[numTicks],
+	warlock.DrainSoulDot = core.NewDot(core.Dot{
+		Spell: warlock.DrainSoul,
 		Aura: target.RegisterAura(core.Aura{
-			Label:    "Drain Soul-" + strconv.Itoa(numTicks) + "-" + strconv.Itoa(int(warlock.Index)),
+			Label:    "Drain Soul-" + strconv.Itoa(int(warlock.Index)),
 			ActionID: core.ActionID{SpellID: 47855},
 		}),
 
-		NumberOfTicks:       numTicks,
+		NumberOfTicks:       1,
 		TickLength:          3 * time.Second,
 		AffectedByCastSpeed: true,
 
@@ -85,9 +91,7 @@ func (warlock *Warlock) setupDrainSoulExecutePhase() {
 	warlock.RegisterResetEffect(func(sim *core.Simulation) {
 		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute20 bool) {
 			if isExecute20 {
-				for i := 1;  i<=5; i++ {
-					warlock.DrainSoulDot[i].Spell.DamageMultiplier *= 2 //TODO : Fix (*=4) when DamageMultiplier is fixed
-				}
+				warlock.DrainSoulDot.Spell.DamageMultiplier *= 2 //TODO : Fix (*=4) when DamageMultiplier is fixed
 			}
 		})
 	})

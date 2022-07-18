@@ -27,8 +27,8 @@ type Warlock struct {
 	SoulFire       *core.Spell
 	Conflagrate    *core.Spell
 	ConflagrateDot *core.Dot
-	DrainSoul    []*core.Spell
-	DrainSoulDot []*core.Dot
+	DrainSoul      *core.Spell
+	DrainSoulDot   *core.Dot
 
 	CurseOfElements     *core.Spell
 	CurseOfElementsAura *core.Aura
@@ -85,6 +85,8 @@ func (warlock *Warlock) Initialize() {
 	warlock.registerLifeTapSpell()
 	warlock.registerSeedSpell()
 	warlock.registerSoulFireSpell()
+	warlock.registerDrainSoulSpell()
+
 	if warlock.Talents.Conflagrate {
 		warlock.registerConflagrateSpell()
 	}
@@ -103,24 +105,6 @@ func (warlock *Warlock) Initialize() {
 	}
 	if warlock.Talents.Metamorphosis {
 		warlock.registerMetamorphosisSpell()
-	}
-
-	warlock.DrainSoul = []*core.Spell{
-		nil, // So we can use # of ticks as the index
-		warlock.registerDrainSoulSpell(1),
-		warlock.registerDrainSoulSpell(2),
-		warlock.registerDrainSoulSpell(3),
-		warlock.registerDrainSoulSpell(4),
-		warlock.registerDrainSoulSpell(5),
-	}
-
-	warlock.DrainSoulDot = []*core.Dot{
-		nil, // So we can use # of ticks as the index
-		warlock.registerDrainSoulDot(1),
-		warlock.registerDrainSoulDot(2),
-		warlock.registerDrainSoulDot(3),
-		warlock.registerDrainSoulDot(4),
-		warlock.registerDrainSoulDot(5),
 	}
 }
 
