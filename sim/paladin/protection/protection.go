@@ -52,6 +52,10 @@ type ProtectionPaladin struct {
 
 	Rotation proto.ProtectionPaladin_Rotation
 	Options  proto.ProtectionPaladin_Options
+
+	Judgement proto.PaladinJudgement
+
+	Seal proto.PaladinSeal
 }
 
 func (prot *ProtectionPaladin) GetPaladin() *paladin.Paladin {
@@ -65,28 +69,10 @@ func (prot *ProtectionPaladin) Initialize() {
 	if prot.Options.UseAvengingWrath {
 		prot.RegisterAvengingWrathCD()
 	}
-
-	switch prot.Rotation.ConsecrationRank {
-	case 6:
-		prot.RegisterConsecrationSpell(6)
-	case 4:
-		prot.RegisterConsecrationSpell(4)
-	case 1:
-		prot.RegisterConsecrationSpell(1)
-	}
 }
 
 func (prot *ProtectionPaladin) Reset(sim *core.Simulation) {
 	prot.Paladin.Reset(sim)
-
-	// Pre-activate seal before combat starts.
-	if prot.Rotation.MaintainJudgement == proto.PaladinJudgement_JudgementOfWisdom {
-		prot.UpdateSeal(sim, prot.SealOfWisdomAura)
-	} else if prot.Rotation.MaintainJudgement == proto.PaladinJudgement_JudgementOfLight {
-		prot.UpdateSeal(sim, prot.SealOfLightAura)
-	} else {
-		prot.UpdateSeal(sim, prot.SealOfRighteousnessAura)
-	}
 
 	// Pre-activate Holy Shield before combat starts.
 	// Assume it gets cast 3s before entering combat.

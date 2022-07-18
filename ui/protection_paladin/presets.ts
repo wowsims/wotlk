@@ -13,6 +13,8 @@ import { Player } from '/wotlk/core/player.js';
 
 import {
 	PaladinAura as PaladinAura,
+	PaladinMajorGlyph,
+	PaladinMinorGlyph,
 	PaladinJudgement as PaladinJudgement,
 	ProtectionPaladin_Rotation as ProtectionPaladinRotation,
 	ProtectionPaladin_Options as ProtectionPaladinOptions,
@@ -28,36 +30,30 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
-export const AvengersShieldTalents = {
-	name: 'Avenger\'s Shield',
-	data: SavedTalents.create({
-		talentsString: '-0530513050000142521051-052050003003',
-	}),
-};
 
-export const ArdentDefenderTalents = {
+export const GenericAoeTalents = {
 	name: 'Ardent Defender',
 	data: SavedTalents.create({
-		talentsString: '-0530503150000152521551-05205',
-	}),
-};
-
-export const SanctityTalents = {
-	name: 'Sanctity',
-	data: SavedTalents.create({
-		talentsString: '-053050305000013252105-05205011300301',
+		talentsString: '-05005135203102321333312301-502300510003',
+		glyphs: {
+			major1: PaladinMajorGlyph.GlyphOfSealOfVengeance,
+			major2: PaladinMajorGlyph.GlyphOfRighteousDefense,
+			major3: PaladinMajorGlyph.GlyphOfDivinePlea,
+			minor1: PaladinMinorGlyph.GlyphOfSenseUndead,
+			minor2: PaladinMinorGlyph.GlyphOfLayOnHands,
+			minor3: PaladinMinorGlyph.GlyphOfBlessingOfKings
+		}
 	}),
 };
 
 export const DefaultRotation = ProtectionPaladinRotation.create({
 	prioritizeHolyShield: true,
-	consecrationRank: 6,
-	useExorcism: false,
-	maintainJudgement: PaladinJudgement.JudgementOfWisdom,
 });
 
 export const DefaultOptions = ProtectionPaladinOptions.create({
-	aura: PaladinAura.SanctityAura,
+	aura: PaladinAura.RetributionAura,
+	judgement: PaladinJudgement.JudgementOfWisdom,
+	damageTakenPerSecond: 0,
 });
 
 export const DefaultConsumes = Consumes.create({

@@ -102,7 +102,7 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 				// Default rotation settings.
 				rotation: Presets.DefaultRotation,
 				// Default talents.
-				talents: Presets.SanctityTalents.data,
+				talents: Presets.GenericAoeTalents.data,
 				// Default spec-specific settings.
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
@@ -148,6 +148,9 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 					OtherInputs.HpPercentForDefensives,
 					ProtectionPaladinInputs.AuraSelection,
 					ProtectionPaladinInputs.UseAvengingWrath,
+					ProtectionPaladinInputs.JudgementSelection,
+					ProtectionPaladinInputs.StartingSealSelection,
+					ProtectionPaladinInputs.DamgeTakenPerSecond,
 					OtherInputs.InFrontOfTarget,
 				],
 			},
@@ -163,9 +166,7 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 			presets: {
 				// Preset talents that the user can quickly select.
 				talents: [
-					Presets.ArdentDefenderTalents,
-					Presets.AvengersShieldTalents,
-					Presets.SanctityTalents,
+					Presets.GenericAoeTalents,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [

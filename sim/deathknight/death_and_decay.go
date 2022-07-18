@@ -30,7 +30,7 @@ func (deathKnight *DeathKnight) registerDeathAndDecaySpell() {
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: deathKnight.OutcomeFuncMagicHitAndCrit(deathKnight.spellCritMultiplier(false)),
+			OutcomeApplier: deathKnight.OutcomeFuncMagicHitAndCrit(deathKnight.spellCritMultiplier()),
 			IsPeriodic:     false,
 		}),
 	})

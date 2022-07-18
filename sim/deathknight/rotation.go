@@ -112,10 +112,12 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 			} else if (!deathKnight.BloodPlagueDisease.IsActive() || deathKnight.BloodPlagueDisease.RemainingDuration(sim) < 6*time.Second) && deathKnight.CanPlagueStrike(sim) {
 				deathKnight.PlagueStrike.Cast(sim, target)
 			} else {
-				if deathKnight.CanObliterate(sim) && deathKnight.FrostFeverDisease.IsActive() && deathKnight.BloodPlagueDisease.IsActive() {
-					deathKnight.Obliterate.Cast(sim, target)
-				} else if deathKnight.CanBloodTap(sim) && deathKnight.FrostFeverDisease.IsActive() && deathKnight.BloodPlagueDisease.IsActive() {
+				if deathKnight.CanBloodTap(sim) && deathKnight.FrostFeverDisease.IsActive() && deathKnight.BloodPlagueDisease.IsActive() {
 					deathKnight.BloodTap.Cast(sim, target)
+				} else if deathKnight.CanUnbreakableArmor(sim) && deathKnight.FrostFeverDisease.IsActive() && deathKnight.BloodPlagueDisease.IsActive() {
+					deathKnight.UnbreakableArmor.Cast(sim, target)
+				} else if deathKnight.CanObliterate(sim) && deathKnight.FrostFeverDisease.IsActive() && deathKnight.BloodPlagueDisease.IsActive() {
+					deathKnight.Obliterate.Cast(sim, target)
 				} else if deathKnight.CanHowlingBlast(sim) && deathKnight.FrostFeverDisease.IsActive() && deathKnight.BloodPlagueDisease.IsActive() {
 					deathKnight.HowlingBlast.Cast(sim, target)
 				} else if deathKnight.CanFrostStrike(sim) && deathKnight.FrostFeverDisease.IsActive() && deathKnight.BloodPlagueDisease.IsActive() {

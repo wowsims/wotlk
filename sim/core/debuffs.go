@@ -115,11 +115,11 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 	}
 
 	if debuffs.MasterPoisoner {
-		MakePermanent(MasterPoisonerDebuff(target))
+		MakePermanent(MasterPoisonerDebuff(target, 3))
 	}
 
 	if debuffs.HeartOfTheCrusader {
-		MakePermanent(HeartoftheCrusaderDebuff(target))
+		MakePermanent(HeartoftheCrusaderDebuff(target, 3))
 	}
 }
 
@@ -831,29 +831,29 @@ func ScorpidStingAura(target *Unit) *Aura {
 const MinorCritDebuffAuraTag = "minorcritdebuff"
 
 func TotemOfWrathDebuff(target *Unit) *Aura {
-	return minorCritDebuffAura(target, "Totem of Wrath Debuff", ActionID{SpellID: 30708})
+	return minorCritDebuffAura(target, "Totem of Wrath Debuff", ActionID{SpellID: 30708}, 3, time.Minute*5)
 }
 
-func MasterPoisonerDebuff(target *Unit) *Aura {
-	return minorCritDebuffAura(target, "Master Poisoner", ActionID{SpellID: 58410})
+func MasterPoisonerDebuff(target *Unit, points float64) *Aura {
+	return minorCritDebuffAura(target, "Master Poisoner", ActionID{SpellID: 58410}, points, time.Second*20)
 }
 
-func HeartoftheCrusaderDebuff(target *Unit) *Aura {
-	return minorCritDebuffAura(target, "Heart of the Crusader", ActionID{SpellID: 20337})
+func HeartoftheCrusaderDebuff(target *Unit, points float64) *Aura {
+	return minorCritDebuffAura(target, "Heart of the Crusader", ActionID{SpellID: 20337}, points, time.Second*20)
 }
 
-func minorCritDebuffAura(target *Unit, label string, actionID ActionID) *Aura {
+func minorCritDebuffAura(target *Unit, label string, actionID ActionID, points float64, duration time.Duration) *Aura {
 	return target.GetOrRegisterAura(Aura{
 		Label:    label,
 		Tag:      MinorCritDebuffAuraTag,
-		Priority: 3,
+		Priority: points,
 		ActionID: actionID,
-		Duration: time.Minute * 5,
+		Duration: duration,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.BonusCritRatingTaken += 3 * CritRatingPerCritChance
+			aura.Unit.PseudoStats.BonusCritRatingTaken += points * CritRatingPerCritChance
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.BonusCritRatingTaken -= 3 * CritRatingPerCritChance
+			aura.Unit.PseudoStats.BonusCritRatingTaken -= points * CritRatingPerCritChance
 		},
 	})
 }
