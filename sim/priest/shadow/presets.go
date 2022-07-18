@@ -26,7 +26,7 @@ var StandardTalents = &proto.PriestTalents{
 var FullRaidBuffs = &proto.RaidBuffs{
 	ArcaneBrilliance: true,
 	GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
-	MoonkinAura:      proto.TristateEffect_TristateEffectRegular,
+	MoonkinAura:      proto.TristateEffect_TristateEffectImproved,
 	TotemOfWrath:     true,
 	WrathOfAirTotem:  true,
 	ManaSpringTotem:  proto.TristateEffect_TristateEffectRegular,
@@ -35,6 +35,13 @@ var FullPartyBuffs = &proto.PartyBuffs{}
 var FullIndividualBuffs = &proto.IndividualBuffs{
 	BlessingOfKings:  true,
 	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
+}
+
+var DefaultGlyphs = &proto.Glyphs{
+	Major1: int32(proto.PriestMajorGlyph_GlyphOfShadow),
+	Major2: int32(proto.PriestMajorGlyph_GlyphOfMindFlay),
+	Major3: int32(proto.PriestMajorGlyph_GlyphOfDispersion),
+	// No dps increasing minor glyphs.
 }
 
 var FullConsumes = &proto.Consumes{
