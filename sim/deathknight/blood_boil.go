@@ -4,7 +4,11 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
+var BloodBoilOutcomes []core.HitOutcome
+
 func (deathKnight *DeathKnight) registerBloodBoilSpell() {
+	BloodBoilOutcomes = make([]core.HitOutcome, deathKnight.Env.GetNumTargets())
+
 	deathKnight.BloodBoil = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 49941},
 		SpellSchool: core.SpellSchoolShadow,
@@ -36,6 +40,7 @@ func (deathKnight *DeathKnight) registerBloodBoilSpell() {
 			OutcomeApplier: deathKnight.OutcomeFuncMagicHitAndCrit(deathKnight.spellCritMultiplier()),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				BloodBoilOutcomes[deathKnight.getIndexForTarget(spellEffect.Target)] = spellEffect.Outcome
 				if spellEffect.Landed() && spellEffect.Target == deathKnight.CurrentTarget {
 					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 1, 0, 0)
 					deathKnight.Spend(sim, spell, dkSpellCost)

@@ -8,6 +8,7 @@ import (
 )
 
 func (deathKnight *DeathKnight) registerDeathAndDecaySpell() {
+
 	var actionID = core.ActionID{SpellID: 49938}
 	deathKnight.DeathAndDecayDot = core.NewDot(core.Dot{
 		Aura: deathKnight.RegisterAura(core.Aura{
