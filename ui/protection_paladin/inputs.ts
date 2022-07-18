@@ -6,6 +6,7 @@ import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
 
 import {
 	PaladinAura as PaladinAura,
+	PaladinSeal,
 	PaladinJudgement as PaladinJudgement,
 	ProtectionPaladin_Rotation as ProtectionPaladinRotation,
 	ProtectionPaladin_Options as ProtectionPaladinOptions,
@@ -37,10 +38,10 @@ export const StartingSealSelection = {
 	type: 'enum' as const, cssClass: 'starting-seal-picker',
 	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
 	config: {
-		label: 'Judgement',
+		label: 'Seal',
 		values: [
-			{ name: 'Wisdom', value: PaladinJudgement.JudgementOfWisdom },
-			{ name: 'Light', value: PaladinJudgement.JudgementOfLight },
+			{ name: 'Vengeance', value: PaladinSeal.Vengeance },
+			{ name: 'Command', value: PaladinSeal.Command },
 		],
 		changedEvent: (player: Player<Spec.SpecProtectionPaladin>) => player.rotationChangeEmitter,
 		getValue: (player: Player<Spec.SpecProtectionPaladin>) => player.getSpecOptions().seal,
