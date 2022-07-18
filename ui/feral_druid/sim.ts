@@ -123,7 +123,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 					judgementOfWisdom: true,
 					bloodFrenzy: true,
 					giftOfArthas: true,
-					exposeArmor: TristateEffect.TristateEffectImproved,
+					exposeArmor: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					sunderArmor: true,
 					curseOfWeakness: TristateEffect.TristateEffectRegular,

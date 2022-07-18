@@ -97,7 +97,7 @@ export const DamagePercentBuff = makeMultiIconInput([
 ]);
 
 export const DamageReductionPercentBuff = makeMultiIconInput([
-	makeBooleanIndividualBuffInput2(ActionId.fromSpellId(25889), 'blessingOfSanctuary'),
+	makeBooleanIndividualBuffInput2(ActionId.fromSpellId(25899), 'blessingOfSanctuary'),
 	// vigilance
 	// renewed hope
 ]);
@@ -159,9 +159,9 @@ export const SpellPowerBuff = makeMultiIconInput([
 
 // Other buffs
 export const Bloodlust = makeBooleanRaidBuffInput(ActionId.fromSpellId(2825), 'bloodlust');
-export const RetributionAura = makeTristateRaidBuffInput(ActionId.fromSpellId(27150), ActionId.fromSpellId(20092), 'retributionAura');
-export const Thorns = makeTristateRaidBuffInput(ActionId.fromSpellId(26992), ActionId.fromSpellId(16840), 'thorns');
-export const ShadowProtection = makeBooleanRaidBuffInput(ActionId.fromSpellId(39374), 'shadowProtection');
+export const RetributionAura = makeBooleanRaidBuffInput(ActionId.fromSpellId(54043), 'retributionAura');
+export const Thorns = makeTristateRaidBuffInput(ActionId.fromSpellId(53307), ActionId.fromSpellId(16840), 'thorns');
+export const ShadowProtection = makeBooleanRaidBuffInput(ActionId.fromSpellId(41870), 'shadowProtection');
 
 
 // Party Buffs
