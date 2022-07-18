@@ -45,8 +45,8 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 			// Horn of Winter if you're the DK to refresh it and its not precasted/active
 			if deathKnight.ShouldHornOfWinter(sim) {
 				deathKnight.HornOfWinter.Cast(sim, target)
-			} // Diseases have topmost priority after that
-			if (!deathKnight.TargetHasDisease(FrostFeverAuraLabel, target) || deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim) < 6*time.Second) && deathKnight.CanIcyTouch(sim) {
+			} else if (!deathKnight.TargetHasDisease(FrostFeverAuraLabel, target) || deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim) < 6*time.Second) && deathKnight.CanIcyTouch(sim) {
+				// Diseases have topmost priority after that
 				deathKnight.IcyTouch.Cast(sim, target)
 				recastedFF = true
 			} else if (!deathKnight.TargetHasDisease(BloodPlagueAuraLabel, target) || deathKnight.BloodPlagueDisease[target.Index].RemainingDuration(sim) < 6*time.Second) && deathKnight.CanPlagueStrike(sim) {
