@@ -41,9 +41,9 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 	if deathKnight.GCD.IsReady(sim) {
 		// UH DK rota
 		if deathKnight.Talents.SummonGargoyle {
-			if (!deathKnight.FrostFeverDisease[target.Index].IsActive() || deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim) < 6*time.Second) && deathKnight.CanIcyTouch(sim) {
+			if (!deathKnight.TargetHasDisease(FrostFeverAuraLabel, target) || deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim) < 6*time.Second) && deathKnight.CanIcyTouch(sim) {
 				deathKnight.IcyTouch.Cast(sim, target)
-			} else if (!deathKnight.BloodPlagueDisease[target.Index].IsActive() || deathKnight.BloodPlagueDisease[target.Index].RemainingDuration(sim) < 6*time.Second) && deathKnight.CanPlagueStrike(sim) {
+			} else if (!deathKnight.TargetHasDisease(BloodPlagueAuraLabel, target) || deathKnight.BloodPlagueDisease[target.Index].RemainingDuration(sim) < 6*time.Second) && deathKnight.CanPlagueStrike(sim) {
 				deathKnight.PlagueStrike.Cast(sim, target)
 			} else {
 				if deathKnight.PresenceMatches(UnholyPresence) && !deathKnight.SummonGargoyle.CD.IsReady(sim) && deathKnight.CanBloodPresence(sim) {
@@ -117,9 +117,9 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 
 		// Frost DK rota
 		if deathKnight.Talents.HowlingBlast {
-			if (!deathKnight.FrostFeverDisease[target.Index].IsActive() || deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim) < 6*time.Second) && deathKnight.CanIcyTouch(sim) {
+			if (!deathKnight.TargetHasDisease(FrostFeverAuraLabel, target) || deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim) < 6*time.Second) && deathKnight.CanIcyTouch(sim) {
 				deathKnight.IcyTouch.Cast(sim, target)
-			} else if (!deathKnight.BloodPlagueDisease[target.Index].IsActive() || deathKnight.BloodPlagueDisease[target.Index].RemainingDuration(sim) < 6*time.Second) && deathKnight.CanPlagueStrike(sim) {
+			} else if (!deathKnight.TargetHasDisease(BloodPlagueAuraLabel, target) || deathKnight.BloodPlagueDisease[target.Index].RemainingDuration(sim) < 6*time.Second) && deathKnight.CanPlagueStrike(sim) {
 				deathKnight.PlagueStrike.Cast(sim, target)
 			} else {
 				if deathKnight.CanBloodTap(sim) && deathKnight.AllDiseasesAreActive(target) {

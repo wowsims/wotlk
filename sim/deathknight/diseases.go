@@ -14,10 +14,10 @@ const BloodPlagueAuraLabel = "BloodPlague-"
 
 func (deathKnight *DeathKnight) countActiveDiseases(target *core.Unit) int {
 	count := 0
-	if deathKnight.FrostFeverDisease[target.Index].IsActive() {
+	if deathKnight.TargetHasDisease(FrostFeverAuraLabel, target) {
 		count++
 	}
-	if deathKnight.BloodPlagueDisease[target.Index].IsActive() {
+	if deathKnight.TargetHasDisease(BloodPlagueAuraLabel, target) {
 		count++
 	}
 	// TODO: Figure out EbonPlague on multi targets
