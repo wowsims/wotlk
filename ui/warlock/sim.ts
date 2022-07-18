@@ -10,7 +10,14 @@ import { Player } from '/wotlk/core/player.js';
 import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
 import { TypedEvent } from '/wotlk/core/typed_event.js';
 
-import { Warlock, Warlock_Rotation as WarlockRotation, WarlockTalents as WarlockTalents, Warlock_Options as WarlockOptions, Warlock_Options_Armor, Warlock_Options_Summon } from '/wotlk/core/proto/warlock.js';
+import {
+	Warlock,
+	Warlock_Rotation as WarlockRotation,
+	WarlockTalents as WarlockTalents,
+	Warlock_Options as WarlockOptions,
+	Warlock_Options_Armor,
+	Warlock_Options_Summon,
+} from '/wotlk/core/proto/warlock.js';
 
 import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
 import * as OtherInputs from '/wotlk/core/components/other_inputs.js';
@@ -123,7 +130,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			rotationInputs: WarlockInputs.WarlockRotationConfig,
 
 			spellInputs: [
-				WarlockInputs.PrimarySpellShadowbolt,
+				WarlockInputs.PrimarySpellShadowBolt,
 				WarlockInputs.PrimarySpellIncinerate,
 				WarlockInputs.PrimarySpellSeed,
 				WarlockInputs.SecondaryDotImmolate,

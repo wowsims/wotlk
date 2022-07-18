@@ -1,4 +1,14 @@
-import { Warlock_Options as WarlockOptions,Warlock_Rotation_Type as RotationType, Warlock_Rotation_Preset as RotationPreset, Warlock_Rotation_PrimarySpell as PrimarySpell, Warlock_Rotation_SecondaryDot as SecondaryDot, Warlock_Rotation_SpecSpell as SpecSpell, Warlock_Rotation_Curse as Curse, Warlock_Options_Armor as Armor, Warlock_Options_Summon as Summon } from '/wotlk/core/proto/warlock.js';
+import {
+	Warlock_Options as WarlockOptions,
+	Warlock_Rotation_Type as RotationType,
+	Warlock_Rotation_Preset as RotationPreset,
+	Warlock_Rotation_PrimarySpell as PrimarySpell,
+	Warlock_Rotation_SecondaryDot as SecondaryDot,
+	Warlock_Rotation_SpecSpell as SpecSpell,
+	Warlock_Rotation_Curse as Curse,
+	Warlock_Options_Armor as Armor,
+	Warlock_Options_Summon as Summon,
+} from '/wotlk/core/proto/warlock.js';
 import { RaidTarget, Spec, Glyphs } from '/wotlk/core/proto/common.js';
 import { NO_TARGET } from '/wotlk/core/proto_utils/utils.js';
 import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
@@ -109,17 +119,17 @@ export const SummonFelguard = {
 
 
 
-export const PrimarySpellShadowbolt = {
+export const PrimarySpellShadowBolt = {
 	id: ActionId.fromSpellId(47809),
 	states: 2,
 	extraCssClasses: [
-		'Shadowbolt-picker',
+		'ShadowBolt-picker',
 	],
 	changedEvent: (player: Player<Spec.SpecWarlock>) => player.rotationChangeEmitter,
-	getValue: (player: Player<Spec.SpecWarlock>) => player.getRotation().primarySpell == PrimarySpell.Shadowbolt,
+	getValue: (player: Player<Spec.SpecWarlock>) => player.getRotation().primarySpell == PrimarySpell.ShadowBolt,
 	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: boolean) => {
 		const newRotation = player.getRotation();
-		newRotation.primarySpell = newValue ? PrimarySpell.Shadowbolt : PrimarySpell.Shadowbolt;
+		newRotation.primarySpell = newValue ? PrimarySpell.ShadowBolt : PrimarySpell.ShadowBolt;
 		newRotation.preset = RotationPreset.Manual;
 		player.setRotation(eventID, newRotation);
 	},
@@ -135,7 +145,7 @@ export const PrimarySpellIncinerate = {
 	getValue: (player: Player<Spec.SpecWarlock>) => player.getRotation().primarySpell == PrimarySpell.Incinerate,
 	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: boolean) => {
 		const newRotation = player.getRotation();
-		newRotation.primarySpell = newValue ? PrimarySpell.Incinerate : PrimarySpell.Shadowbolt;
+		newRotation.primarySpell = newValue ? PrimarySpell.Incinerate : PrimarySpell.ShadowBolt;
 		newRotation.preset = RotationPreset.Manual;
 		player.setRotation(eventID, newRotation);
 	},
@@ -151,7 +161,7 @@ export const PrimarySpellSeed = {
 	getValue: (player: Player<Spec.SpecWarlock>) => player.getRotation().primarySpell == PrimarySpell.Seed,
 	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: boolean) => {
 		const newRotation = player.getRotation();
-		newRotation.primarySpell = newValue ? PrimarySpell.Seed : PrimarySpell.Shadowbolt;
+		newRotation.primarySpell = newValue ? PrimarySpell.Seed : PrimarySpell.ShadowBolt;
 		newRotation.preset = RotationPreset.Manual;
 		newRotation.corruption = false;
 		player.setRotation(eventID, newRotation);
@@ -236,7 +246,7 @@ export const CorruptionSpell = {
 	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: boolean) => {
 		const newRotation = player.getRotation();
 		newRotation.corruption = newValue;
-		newRotation.primarySpell = PrimarySpell.Shadowbolt;
+		newRotation.primarySpell = PrimarySpell.ShadowBolt;
 		newRotation.preset = RotationPreset.Manual;
 		player.setRotation(eventID, newRotation);
 	},

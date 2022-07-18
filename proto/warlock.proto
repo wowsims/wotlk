@@ -148,7 +148,7 @@ message Warlock {
 		}
 		enum PrimarySpell {
 			UnknownSpell = 0;
-			Shadowbolt = 1;
+			ShadowBolt = 1;
 			Incinerate = 2;
 			Seed = 3;
 		}
