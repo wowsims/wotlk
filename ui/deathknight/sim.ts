@@ -108,13 +108,12 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				}),
 				debuffs: Debuffs.create({
 					bloodFrenzy: true,
+					faerieFire: TristateEffect.TristateEffectRegular,
 					sunderArmor: true,
-					curseOfWeakness: TristateEffect.TristateEffectImproved,
-					curseOfElements: true,
-					faerieFire: TristateEffect.TristateEffectImproved,
-					judgementOfWisdom: true,
 					misery: true,
 					ebonPlaguebringer: true,
+					mangle: true,
+					heartOfTheCrusader: true,
 				}),
 			},
 

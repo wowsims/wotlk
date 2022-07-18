@@ -57,9 +57,9 @@ type DeathKnight struct {
 	HowlingBlastCostless bool
 	HowlingBlast         *core.Spell
 
-	EnhancingTotemsActive bool
-	HornOfWinter          *core.Spell
-	HornOfWinterAura      *core.Aura
+	OtherRelevantStrAgiActive bool
+	HornOfWinter              *core.Spell
+	HornOfWinterAura          *core.Aura
 	//ArmyOfTheDead    *core.Spell
 
 	// "CDs"
@@ -127,10 +127,11 @@ func (deathKnight *DeathKnight) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 
 	raidBuffs.HornOfWinter = !deathKnight.Options.RefreshHornOfWinter
 
-	if raidBuffs.StrengthOfEarthTotem == proto.TristateEffect_TristateEffectImproved {
-		deathKnight.EnhancingTotemsActive = true
+	if raidBuffs.StrengthOfEarthTotem == proto.TristateEffect_TristateEffectImproved ||
+		raidBuffs.StrengthOfEarthTotem == proto.TristateEffect_TristateEffectRegular {
+		deathKnight.OtherRelevantStrAgiActive = true
 	} else {
-		deathKnight.EnhancingTotemsActive = false
+		deathKnight.OtherRelevantStrAgiActive = false
 	}
 }
 

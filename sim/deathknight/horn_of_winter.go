@@ -19,14 +19,14 @@ func (deathKnight *DeathKnight) registerHornOfWinterSpell() {
 		ActionID: actionID,
 		Duration: duration,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			if !deathKnight.EnhancingTotemsActive {
+			if !deathKnight.OtherRelevantStrAgiActive {
 				bonusStats := deathKnight.ApplyStatDependencies(stats.Stats{stats.Strength: strengthBonus, stats.Agility: agilityBonus})
 				deathKnight.HornOfWinterAura.Unit.AddStatsDynamic(sim, bonusStats)
 			}
 		},
 
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			if !deathKnight.EnhancingTotemsActive {
+			if !deathKnight.OtherRelevantStrAgiActive {
 				bonusStats := deathKnight.ApplyStatDependencies(stats.Stats{stats.Strength: -strengthBonus, stats.Agility: -agilityBonus})
 				deathKnight.HornOfWinterAura.Unit.AddStatsDynamic(sim, bonusStats)
 			}
