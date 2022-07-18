@@ -120,11 +120,11 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			} else if !warlock.CorruptionDot.IsActive() && core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() {
 				spell = warlock.Corruption
 			} else if (!warlock.UnstableAffDot.IsActive() || warlock.UnstableAffDot.RemainingDuration(sim) < warlock.UnstableAff.CurCast.CastTime) &&
-			sim.GetRemainingDuration() > warlock.UnstableAffDot.Duration {
+				sim.GetRemainingDuration() > warlock.UnstableAffDot.Duration {
 				spell = warlock.UnstableAff
-			} else if warlock.Haunt.CD.IsReady(sim) && 2 * sim.GetRemainingDuration() > warlock.HauntAura.Duration {
+			} else if warlock.Haunt.CD.IsReady(sim) && 2*sim.GetRemainingDuration() > warlock.HauntAura.Duration {
 				spell = warlock.Haunt
-			} else if sim.IsExecutePhase35() && time.Duration(warlock.CorruptionDot.TickCount) * warlock.CorruptionDot.TickLength > sim.CurrentTime {
+			} else if sim.IsExecutePhase35() && time.Duration(warlock.CorruptionDot.TickCount)*warlock.CorruptionDot.TickLength > sim.CurrentTime {
 				spell = warlock.Corruption
 			} else if sim.IsExecutePhase20() {
 				spell = warlock.channelCheck(sim, warlock.DrainSoulDot, 5)
