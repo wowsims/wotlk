@@ -275,8 +275,6 @@ func (character *Character) DefaultMeleeCritMultiplier() float64 {
 }
 
 func (character *Character) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
-	raidBuffs.DrumsOfKings = character.Consumes.DrumsOfKings
-	raidBuffs.DrumsOfWild = character.Consumes.DrumsOfWild
 }
 func (character *Character) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 	if character.Race == proto.Race_RaceDraenei {
