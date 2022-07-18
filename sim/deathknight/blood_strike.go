@@ -11,7 +11,7 @@ var BloodStrikeOHOutcome = core.OutcomeHit
 func (deathKnight *DeathKnight) newBloodStrikeSpell(isMH bool) *core.Spell {
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 306.0, 0.4, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 306.0, 0.4, true)
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 306.0, 0.4*deathKnight.nervesOfColdSteelBonus(), true)
 	}
 
 	guileOfGorefiend := deathKnight.Talents.GuileOfGorefiend > 0

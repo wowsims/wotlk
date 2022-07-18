@@ -111,12 +111,17 @@ type DeathKnight struct {
 	EbonPlagueAura *core.Aura
 
 	// Dynamic trackers
-	RageOfRivendareActive bool
-	TundraStalkerActive   bool
+	additiveDamageModifier float64
 
 	// TODO: Is there a better way?
 	// Item Auras
 	SigilOfAwarenessAura *core.Aura
+}
+
+func (deathKnight *DeathKnight) ModifyAdditiveDamageModifier(sim *core.Simulation, value float64) {
+	deathKnight.PseudoStats.DamageDealtMultiplier /= deathKnight.additiveDamageModifier
+	deathKnight.additiveDamageModifier += value
+	deathKnight.PseudoStats.DamageDealtMultiplier *= deathKnight.additiveDamageModifier
 }
 
 func (deathKnight *DeathKnight) GetCharacter() *core.Character {
@@ -219,6 +224,8 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 		Talents:   *deathKnightOptions.Talents,
 		Options:   *deathKnightOptions.Options,
 		Rotation:  *deathKnightOptions.Rotation,
+
+		additiveDamageModifier: 1,
 	}
 
 	maxRunicPower := 100.0 + 15.0*float64(deathKnight.Talents.RunicPowerMastery)

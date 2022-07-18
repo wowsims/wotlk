@@ -24,6 +24,7 @@ func (deathKnight *DeathKnight) registerBoneShieldSpell() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			deathKnight.BoneShieldAura.Activate(sim)
 			deathKnight.BoneShieldAura.UpdateExpires(sim.CurrentTime + time.Minute*4)
+			deathKnight.BoneShieldAura.SetStacks(sim, 3)
 		},
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			aura.RemoveStack(sim)
@@ -32,11 +33,15 @@ func (deathKnight *DeathKnight) registerBoneShieldSpell() {
 			}
 		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.DamageDealtMultiplier *= 1.02
+			deathKnight.ModifyAdditiveDamageModifier(sim, 0.02)
+			//aura.Unit.PseudoStats.DamageDealtMultiplier *= 1.02
+
 			aura.Unit.PseudoStats.DamageTakenMultiplier *= 0.8
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.DamageDealtMultiplier /= 1.02
+			deathKnight.ModifyAdditiveDamageModifier(sim, -0.02)
+			//aura.Unit.PseudoStats.DamageDealtMultiplier /= 1.02
+
 			aura.Unit.PseudoStats.DamageTakenMultiplier /= 0.8
 		},
 	})
