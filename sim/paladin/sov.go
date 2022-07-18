@@ -9,7 +9,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (paladin *Paladin) setupSealOfVengeance() {
+func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	/*
 	 * Seal of Vengeance is an Spell/Aura that when active makes the paladin capable of procing
 	 * 3 different SpellIDs depending on a paladin's casted spell or melee swing.
@@ -122,7 +122,7 @@ func (paladin *Paladin) setupSealOfVengeance() {
 
 	// Seal of Vengeance aura.
 	auraActionID := core.ActionID{SpellID: 31801}
-	aura := paladin.RegisterAura(core.Aura{
+	paladin.SealOfVengeanceAura = paladin.RegisterAura(core.Aura{
 		Label:    "Seal of Vengeance",
 		Tag:      "Seal",
 		ActionID: auraActionID,
@@ -152,6 +152,7 @@ func (paladin *Paladin) setupSealOfVengeance() {
 		},
 	})
 
+	aura := paladin.SealOfRighteousnessAura
 	baseCost := paladin.BaseMana * 0.14
 	paladin.SealOfVengeance = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    auraActionID, // Seal of Vengeance self buff.

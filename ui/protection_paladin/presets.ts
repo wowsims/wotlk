@@ -51,13 +51,12 @@ export const SanctityTalents = {
 
 export const DefaultRotation = ProtectionPaladinRotation.create({
 	prioritizeHolyShield: true,
-	consecrationRank: 6,
-	useExorcism: false,
-	maintainJudgement: PaladinJudgement.JudgementOfWisdom,
 });
 
 export const DefaultOptions = ProtectionPaladinOptions.create({
-	aura: PaladinAura.SanctityAura,
+	aura: PaladinAura.RetributionAura,
+	judgement: PaladinJudgement.JudgementOfWisdom,
+	damageTakenPerSecond: 0,
 });
 
 export const DefaultConsumes = Consumes.create({

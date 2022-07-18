@@ -37,8 +37,9 @@ var defaultRetTalents = &proto.PaladinTalents{
 var defaultRetRotation = &proto.RetributionPaladin_Rotation{}
 
 var defaultRetOptions = &proto.RetributionPaladin_Options{
-	Judgement:            proto.RetributionPaladin_Options_Light,
-	Aura:                 proto.PaladinAura_SanctityAura,
+	Judgement:            proto.PaladinJudgement_JudgementOfWisdom,
+	Seal:                 proto.PaladinSeal_Vengeance,
+	Aura:                 proto.PaladinAura_RetributionAura,
 	DamageTakenPerSecond: 0,
 }
 

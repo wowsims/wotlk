@@ -98,7 +98,7 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 				// Default rotation settings.
 				rotation: Presets.DefaultRotation,
 				// Default talents.
-				talents: Presets.RetKingsPaladinTalents.data,
+				talents: Presets.AuraMasteryTalents.data,
 				// Default spec-specific settings.
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
@@ -221,6 +221,7 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 				inputs: [
 					RetributionPaladinInputs.AuraSelection,
 					RetributionPaladinInputs.JudgementSelection,
+					RetributionPaladinInputs.StartingSealSelection,
 					RetributionPaladinInputs.DamgeTakenPerSecond,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
@@ -238,8 +239,8 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 			presets: {
 				// Preset talents that the user can quickly select.
 				talents: [
-					Presets.RetKingsPaladinTalents,
-					Presets.RetNoKingsPaladinTalents,
+					Presets.AuraMasteryTalents,
+					Presets.DivineSacTalents,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
