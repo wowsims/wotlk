@@ -20,9 +20,6 @@ func (deathKnight *DeathKnight) registerEmpowerRuneWeaponSpell() {
 				Timer:    cdTimer,
 				Duration: cd,
 			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = deathKnight.getModifiedGCD()
-			},
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			deathKnight.RegenAllRunes(sim)

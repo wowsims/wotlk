@@ -41,6 +41,7 @@ type Rune struct {
 	state                    RuneState
 	kind                     RuneKind
 	pas                      [2]*PendingAction
+	lastRegenTime            time.Duration
 	generatedByReapingOrBoTN bool
 }
 
@@ -69,9 +70,11 @@ type runicPowerBar struct {
 func ResetRune(sim *Simulation, runes *[2]Rune, runeKind RuneKind) {
 	runes[0].state = RuneState_Normal
 	runes[0].kind = runeKind
+	runes[0].lastRegenTime = -1
 	runes[0].generatedByReapingOrBoTN = false
 	runes[1].state = RuneState_Normal
 	runes[1].kind = runeKind
+	runes[1].lastRegenTime = -1
 	runes[1].generatedByReapingOrBoTN = false
 
 	if runes[0].pas[0] != nil {
@@ -116,9 +119,9 @@ func (unit *Unit) EnableRunicPowerBar(currentRunicPower float64, maxRunicPower f
 		unit:              unit,
 		maxRunicPower:     maxRunicPower,
 		currentRunicPower: currentRunicPower,
-		bloodRunes:        [2]Rune{Rune{state: RuneState_Normal, kind: RuneKind_Blood, pas: [2]*PendingAction{nil, nil}, generatedByReapingOrBoTN: false}, Rune{state: RuneState_Normal, kind: RuneKind_Blood, pas: [2]*PendingAction{nil, nil}, generatedByReapingOrBoTN: false}},
-		frostRunes:        [2]Rune{Rune{state: RuneState_Normal, kind: RuneKind_Frost, pas: [2]*PendingAction{nil, nil}, generatedByReapingOrBoTN: false}, Rune{state: RuneState_Normal, kind: RuneKind_Frost, pas: [2]*PendingAction{nil, nil}, generatedByReapingOrBoTN: false}},
-		unholyRunes:       [2]Rune{Rune{state: RuneState_Normal, kind: RuneKind_Unholy, pas: [2]*PendingAction{nil, nil}, generatedByReapingOrBoTN: false}, Rune{state: RuneState_Normal, kind: RuneKind_Unholy, pas: [2]*PendingAction{nil, nil}, generatedByReapingOrBoTN: false}},
+		bloodRunes:        [2]Rune{Rune{state: RuneState_Normal, kind: RuneKind_Blood, pas: [2]*PendingAction{nil, nil}, lastRegenTime: -1, generatedByReapingOrBoTN: false}, Rune{state: RuneState_Normal, kind: RuneKind_Blood, pas: [2]*PendingAction{nil, nil}, lastRegenTime: -1, generatedByReapingOrBoTN: false}},
+		frostRunes:        [2]Rune{Rune{state: RuneState_Normal, kind: RuneKind_Frost, pas: [2]*PendingAction{nil, nil}, lastRegenTime: -1, generatedByReapingOrBoTN: false}, Rune{state: RuneState_Normal, kind: RuneKind_Frost, pas: [2]*PendingAction{nil, nil}, lastRegenTime: -1, generatedByReapingOrBoTN: false}},
+		unholyRunes:       [2]Rune{Rune{state: RuneState_Normal, kind: RuneKind_Unholy, pas: [2]*PendingAction{nil, nil}, lastRegenTime: -1, generatedByReapingOrBoTN: false}, Rune{state: RuneState_Normal, kind: RuneKind_Unholy, pas: [2]*PendingAction{nil, nil}, lastRegenTime: -1, generatedByReapingOrBoTN: false}},
 
 		onBloodRuneGain:  onBloodRuneGain,
 		onFrostRuneGain:  onFrostRuneGain,
@@ -402,6 +405,7 @@ func RegenRuneAndCancelPAs(sim *Simulation, r *Rune) {
 	} else if r.state == RuneState_DeathSpent {
 		r.state = RuneState_Death
 	}
+	r.lastRegenTime = sim.CurrentTime
 
 	if r.pas[0] != nil {
 		r.pas[0].Cancel(sim)
@@ -425,17 +429,19 @@ func (rp *runicPowerBar) RegenAllRunes(sim *Simulation) {
 	RegenRuneAndCancelPAs(sim, &rp.unholyRunes[1])
 }
 
-func (rp *runicPowerBar) GenerateRune(r *Rune) {
+func (rp *runicPowerBar) GenerateRune(sim *Simulation, r *Rune) {
 	if r.state == RuneState_Spent {
 		if r.kind == RuneKind_Death {
 			panic("Rune has wrong type for state.")
 		}
 		r.state = RuneState_Normal
+		r.lastRegenTime = sim.CurrentTime
 	} else if r.state == RuneState_DeathSpent {
 		if r.kind != RuneKind_Death {
 			panic("Rune has wrong type for state.")
 		}
 		r.state = RuneState_Death
+		r.lastRegenTime = sim.CurrentTime
 	}
 }
 
@@ -459,8 +465,12 @@ func SpendRuneFromType(rb *[2]Rune, runeState RuneState) int32 {
 }
 
 func (rp *runicPowerBar) LaunchRuneRegenPA(sim *Simulation, r *Rune) {
+	runeGracePeriod := 0.0
+	if r.lastRegenTime != -1 {
+		runeGracePeriod = MinFloat(2.5, float64((sim.CurrentTime-r.lastRegenTime)/time.Second))
+	}
 	pa := &PendingAction{
-		NextActionAt: sim.CurrentTime + 10*time.Second,
+		NextActionAt: sim.CurrentTime + time.Second*time.Duration(10.0-runeGracePeriod),
 		Priority:     ActionPriorityRegen,
 	}
 	pa.OnAction = func(sim *Simulation) {
@@ -479,7 +489,7 @@ func (rp *runicPowerBar) LaunchRuneRegenPA(sim *Simulation, r *Rune) {
 				currRunes = rp.CurrentDeathRunes()
 			}
 
-			rp.GenerateRune(r)
+			rp.GenerateRune(sim, r)
 
 			switch r.kind {
 			case RuneKind_Blood:
