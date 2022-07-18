@@ -41,9 +41,9 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 	if deathKnight.GCD.IsReady(sim) {
 		// UH DK rota
 		if deathKnight.Talents.SummonGargoyle {
-			if (!deathKnight.FrostFeverDisease.IsActive() || deathKnight.FrostFeverDisease.RemainingDuration(sim) < 6*time.Second) && deathKnight.CanIcyTouch(sim) {
+			if (!deathKnight.FrostFeverDisease[target.Index].IsActive() || deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim) < 6*time.Second) && deathKnight.CanIcyTouch(sim) {
 				deathKnight.IcyTouch.Cast(sim, target)
-			} else if (!deathKnight.BloodPlagueDisease.IsActive() || deathKnight.BloodPlagueDisease.RemainingDuration(sim) < 6*time.Second) && deathKnight.CanPlagueStrike(sim) {
+			} else if (!deathKnight.BloodPlagueDisease[target.Index].IsActive() || deathKnight.BloodPlagueDisease[target.Index].RemainingDuration(sim) < 6*time.Second) && deathKnight.CanPlagueStrike(sim) {
 				deathKnight.PlagueStrike.Cast(sim, target)
 			} else {
 				if deathKnight.PresenceMatches(UnholyPresence) && !deathKnight.SummonGargoyle.CD.IsReady(sim) && deathKnight.CanBloodPresence(sim) {
@@ -56,7 +56,7 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 				} else {
 					if deathKnight.Rotation.UseDeathAndDecay {
 						// DW Rota
-						if deathKnight.CanDeathAndDecay(sim) && deathKnight.AllDiseasesAreActive() {
+						if deathKnight.CanDeathAndDecay(sim) && deathKnight.AllDiseasesAreActive(target) {
 							deathKnight.DeathAndDecay.Cast(sim, target)
 						} else if deathKnight.CanGhoulFrenzy(sim) && deathKnight.Talents.MasterOfGhouls && (!deathKnight.Ghoul.GhoulFrenzyAura.IsActive() || deathKnight.Ghoul.GhoulFrenzyAura.RemainingDuration(sim) < 6*time.Second) && !deathKnight.shouldWaitForDnD(sim, false, false, true) {
 							deathKnight.GhoulFrenzy.Cast(sim, target)
@@ -117,22 +117,22 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 
 		// Frost DK rota
 		if deathKnight.Talents.HowlingBlast {
-			if (!deathKnight.FrostFeverDisease.IsActive() || deathKnight.FrostFeverDisease.RemainingDuration(sim) < 6*time.Second) && deathKnight.CanIcyTouch(sim) {
+			if (!deathKnight.FrostFeverDisease[target.Index].IsActive() || deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim) < 6*time.Second) && deathKnight.CanIcyTouch(sim) {
 				deathKnight.IcyTouch.Cast(sim, target)
-			} else if (!deathKnight.BloodPlagueDisease.IsActive() || deathKnight.BloodPlagueDisease.RemainingDuration(sim) < 6*time.Second) && deathKnight.CanPlagueStrike(sim) {
+			} else if (!deathKnight.BloodPlagueDisease[target.Index].IsActive() || deathKnight.BloodPlagueDisease[target.Index].RemainingDuration(sim) < 6*time.Second) && deathKnight.CanPlagueStrike(sim) {
 				deathKnight.PlagueStrike.Cast(sim, target)
 			} else {
-				if deathKnight.CanBloodTap(sim) && deathKnight.FrostFeverDisease.IsActive() && deathKnight.BloodPlagueDisease.IsActive() {
+				if deathKnight.CanBloodTap(sim) && deathKnight.AllDiseasesAreActive(target) {
 					deathKnight.BloodTap.Cast(sim, target)
-				} else if deathKnight.CanUnbreakableArmor(sim) && deathKnight.FrostFeverDisease.IsActive() && deathKnight.BloodPlagueDisease.IsActive() {
+				} else if deathKnight.CanUnbreakableArmor(sim) && deathKnight.AllDiseasesAreActive(target) {
 					deathKnight.UnbreakableArmor.Cast(sim, target)
-				} else if deathKnight.CanObliterate(sim) && deathKnight.FrostFeverDisease.IsActive() && deathKnight.BloodPlagueDisease.IsActive() {
+				} else if deathKnight.CanObliterate(sim) && deathKnight.AllDiseasesAreActive(target) {
 					deathKnight.Obliterate.Cast(sim, target)
-				} else if deathKnight.CanHowlingBlast(sim) && deathKnight.FrostFeverDisease.IsActive() && deathKnight.BloodPlagueDisease.IsActive() {
+				} else if deathKnight.CanHowlingBlast(sim) && deathKnight.AllDiseasesAreActive(target) {
 					deathKnight.HowlingBlast.Cast(sim, target)
-				} else if deathKnight.CanFrostStrike(sim) && deathKnight.FrostFeverDisease.IsActive() && deathKnight.BloodPlagueDisease.IsActive() {
+				} else if deathKnight.CanFrostStrike(sim) && deathKnight.AllDiseasesAreActive(target) {
 					deathKnight.FrostStrike.Cast(sim, target)
-				} else if deathKnight.CanBloodStrike(sim) && deathKnight.FrostFeverDisease.IsActive() && deathKnight.BloodPlagueDisease.IsActive() {
+				} else if deathKnight.CanBloodStrike(sim) && deathKnight.AllDiseasesAreActive(target) {
 					deathKnight.BloodStrike.Cast(sim, target)
 				} else if deathKnight.CanIcyTouch(sim) {
 					deathKnight.IcyTouch.Cast(sim, target)

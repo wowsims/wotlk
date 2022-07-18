@@ -73,8 +73,8 @@ type DeathKnight struct {
 	// Diseases
 	FrostFeverSpell    *core.Spell
 	BloodPlagueSpell   *core.Spell
-	FrostFeverDisease  *core.Dot
-	BloodPlagueDisease *core.Dot
+	FrostFeverDisease  []*core.Dot
+	BloodPlagueDisease []*core.Dot
 
 	UnholyBlightSpell *core.Spell
 	UnholyBlightDot   *core.Dot
@@ -269,12 +269,12 @@ func RegisterDeathKnight() {
 	)
 }
 
-func (deathKnight *DeathKnight) AllDiseasesAreActive() bool {
-	return deathKnight.FrostFeverDisease.IsActive() && deathKnight.BloodPlagueDisease.IsActive()
+func (deathKnight *DeathKnight) AllDiseasesAreActive(target *core.Unit) bool {
+	return deathKnight.FrostFeverDisease[target.Index].IsActive() && deathKnight.BloodPlagueDisease[target.Index].IsActive()
 }
 
-func (deathKnight *DeathKnight) DiseasesAreActive() bool {
-	return deathKnight.FrostFeverDisease.IsActive() || deathKnight.BloodPlagueDisease.IsActive()
+func (deathKnight *DeathKnight) DiseasesAreActive(target *core.Unit) bool {
+	return deathKnight.FrostFeverDisease[target.Index].IsActive() || deathKnight.BloodPlagueDisease[target.Index].IsActive()
 }
 
 func (deathKnight *DeathKnight) secondaryCritModifier(applyGuile bool) float64 {

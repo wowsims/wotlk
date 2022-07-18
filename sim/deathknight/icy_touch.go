@@ -48,7 +48,7 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					roll := (245.0-227.0)*sim.RandomFloat("Icy Touch") + 227.0
 					return (roll + deathKnight.applyImpurity(hitEffect, spell.Unit)*0.1) *
-						deathKnight.glacielRotBonus() *
+						deathKnight.glacielRotBonus(hitEffect.Target) *
 						deathKnight.rageOfRivendareBonus(hitEffect.Target) *
 						deathKnight.tundraStalkerBonus(hitEffect.Target) *
 						deathKnight.mercilessCombatBonus(sim)

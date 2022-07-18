@@ -93,7 +93,7 @@ func (deathKnight *DeathKnight) ApplyFrostTalents() {
 	deathKnight.AddStat(stats.Expertise, 1.0*float64(deathKnight.Talents.TundraStalker)*core.ExpertisePerQuarterPercentReduction)
 }
 
-func (deathKnight *DeathKnight) glacielRotBonus() float64 {
+func (deathKnight *DeathKnight) glacielRotBonus(target *core.Unit) float64 {
 	glacierRotCoeff := 1.0
 	if deathKnight.Talents.GlacierRot == 1 {
 		glacierRotCoeff = 1.07
@@ -103,7 +103,7 @@ func (deathKnight *DeathKnight) glacielRotBonus() float64 {
 		glacierRotCoeff = 1.20
 	}
 
-	return core.TernaryFloat64(deathKnight.DiseasesAreActive() && deathKnight.Talents.GlacierRot > 0, glacierRotCoeff, 1.0)
+	return core.TernaryFloat64(deathKnight.DiseasesAreActive(target) && deathKnight.Talents.GlacierRot > 0, glacierRotCoeff, 1.0)
 }
 
 func (deathKnight *DeathKnight) mercilessCombatBonus(sim *core.Simulation) float64 {

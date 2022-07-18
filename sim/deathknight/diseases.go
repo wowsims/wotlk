@@ -12,14 +12,15 @@ import (
 const FrostFeverAuraLabel = "FrostFever-"
 const BloodPlagueAuraLabel = "BloodPlague-"
 
-func (deathKnight *DeathKnight) countActiveDiseases() int {
+func (deathKnight *DeathKnight) countActiveDiseases(target *core.Unit) int {
 	count := 0
-	if deathKnight.FrostFeverDisease.IsActive() {
+	if deathKnight.FrostFeverDisease[target.Index].IsActive() {
 		count++
 	}
-	if deathKnight.BloodPlagueDisease.IsActive() {
+	if deathKnight.BloodPlagueDisease[target.Index].IsActive() {
 		count++
 	}
+	// TODO: Figure out EbonPlague on multi targets
 	if deathKnight.EbonPlagueAura.IsActive() {
 		count++
 	}
@@ -30,8 +31,8 @@ func (deathKnight *DeathKnight) TargetHasDisease(label string, unit *core.Unit) 
 	return unit.HasActiveAura(label + strconv.Itoa(int(deathKnight.Index)))
 }
 
-func (deathKnight *DeathKnight) diseaseMultiplierBonus(multiplier float64) float64 {
-	return 1.0 + float64(deathKnight.countActiveDiseases())*multiplier
+func (deathKnight *DeathKnight) diseaseMultiplierBonus(target *core.Unit, multiplier float64) float64 {
+	return 1.0 + float64(deathKnight.countActiveDiseases(target))*multiplier
 }
 
 func (deathKnight *DeathKnight) registerDiseaseDots() {
@@ -41,86 +42,100 @@ func (deathKnight *DeathKnight) registerDiseaseDots() {
 
 func (deathKnight *DeathKnight) registerFrostFever() {
 	actionID := core.ActionID{SpellID: 55095}
-	target := deathKnight.CurrentTarget
-
-	deathKnight.FrostFeverDisease = core.NewDot(core.Dot{
-		Aura: target.RegisterAura(core.Aura{
-			Label:    FrostFeverAuraLabel + strconv.Itoa(int(deathKnight.Index)),
-			ActionID: actionID,
-		}),
-		NumberOfTicks: 5 + int(deathKnight.Talents.Epidemic),
-		TickLength:    time.Second * 3,
-
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: core.TernaryFloat64(deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfIcyTouch), 1.2, 1.0),
-			ThreatMultiplier: 1,
-			IsPeriodic:       true,
-			OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				deathKnight.doWanderingPlague(sim, spell, spellEffect)
-			},
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return ((127.0 + 80.0*0.32) + deathKnight.applyImpurity(hitEffect, spell.Unit)*0.055) *
-						deathKnight.rageOfRivendareBonus(hitEffect.Target) *
-						deathKnight.tundraStalkerBonus(hitEffect.Target)
-				},
-				TargetSpellCoefficient: 1,
-			},
-			OutcomeApplier: deathKnight.OutcomeFuncAlwaysHit(),
-		}),
-	})
 
 	deathKnight.FrostFeverSpell = deathKnight.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolFrost,
-		Flags:        core.SpellFlagDisease,
-		ApplyEffects: core.ApplyEffectFuncDot(deathKnight.FrostFeverDisease),
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolFrost,
+		Flags:       core.SpellFlagDisease,
+		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
+			deathKnight.FrostFeverDisease[unit.Index].Apply(sim)
+		},
 	})
 
-	deathKnight.FrostFeverDisease.Spell = deathKnight.FrostFeverSpell
+	deathKnight.FrostFeverDisease = make([]*core.Dot, deathKnight.Env.GetNumTargets())
+
+	for _, encounterTarget := range deathKnight.Env.Encounter.Targets {
+		target := &encounterTarget.Unit
+
+		deathKnight.FrostFeverDisease[target.Index] = core.NewDot(core.Dot{
+			Aura: target.RegisterAura(core.Aura{
+				Label:    FrostFeverAuraLabel + strconv.Itoa(int(deathKnight.Index)),
+				ActionID: actionID,
+			}),
+			NumberOfTicks: 5 + int(deathKnight.Talents.Epidemic),
+			TickLength:    time.Second * 3,
+
+			TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
+				ProcMask:         core.ProcMaskPeriodicDamage,
+				DamageMultiplier: core.TernaryFloat64(deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfIcyTouch), 1.2, 1.0),
+				ThreatMultiplier: 1,
+				IsPeriodic:       true,
+				OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+					deathKnight.doWanderingPlague(sim, spell, spellEffect)
+				},
+				BaseDamage: core.BaseDamageConfig{
+					Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+						return ((127.0 + 80.0*0.32) + deathKnight.applyImpurity(hitEffect, spell.Unit)*0.055) *
+							deathKnight.rageOfRivendareBonus(hitEffect.Target) *
+							deathKnight.tundraStalkerBonus(hitEffect.Target)
+					},
+					TargetSpellCoefficient: 1,
+				},
+				OutcomeApplier: deathKnight.OutcomeFuncAlwaysHit(),
+			}),
+		})
+
+		deathKnight.FrostFeverDisease[target.Index].Spell = deathKnight.FrostFeverSpell
+	}
 }
 
 func (deathKnight *DeathKnight) registerBloodPlague() {
 	actionID := core.ActionID{SpellID: 55078}
-	target := deathKnight.CurrentTarget
-
-	deathKnight.BloodPlagueDisease = core.NewDot(core.Dot{
-		Aura: target.RegisterAura(core.Aura{
-			Label:    BloodPlagueAuraLabel + strconv.Itoa(int(deathKnight.Index)),
-			ActionID: actionID,
-		}),
-		NumberOfTicks: 5 + int(deathKnight.Talents.Epidemic),
-		TickLength:    time.Second * 3,
-
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			IsPeriodic:       true,
-			OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				deathKnight.doWanderingPlague(sim, spell, spellEffect)
-			},
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return ((127.0 + 80.0*0.32) + deathKnight.applyImpurity(hitEffect, spell.Unit)*0.055) *
-						deathKnight.rageOfRivendareBonus(hitEffect.Target) *
-						deathKnight.tundraStalkerBonus(hitEffect.Target)
-				},
-				TargetSpellCoefficient: 1,
-			},
-			OutcomeApplier: deathKnight.OutcomeFuncAlwaysHit(),
-		}),
-	})
 
 	deathKnight.BloodPlagueSpell = deathKnight.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolShadow,
-		Flags:        core.SpellFlagDisease,
-		ApplyEffects: core.ApplyEffectFuncDot(deathKnight.BloodPlagueDisease),
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolShadow,
+		Flags:       core.SpellFlagDisease,
+		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
+			deathKnight.BloodPlagueDisease[unit.Index].Apply(sim)
+		},
 	})
 
-	deathKnight.BloodPlagueDisease.Spell = deathKnight.BloodPlagueSpell
+	deathKnight.BloodPlagueDisease = make([]*core.Dot, deathKnight.Env.GetNumTargets())
+
+	for _, encounterTarget := range deathKnight.Env.Encounter.Targets {
+		target := &encounterTarget.Unit
+
+		deathKnight.BloodPlagueDisease[target.Index] = core.NewDot(core.Dot{
+			Aura: target.RegisterAura(core.Aura{
+				Label:    BloodPlagueAuraLabel + strconv.Itoa(int(deathKnight.Index)),
+				ActionID: actionID,
+			}),
+			NumberOfTicks: 5 + int(deathKnight.Talents.Epidemic),
+			TickLength:    time.Second * 3,
+
+			TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
+				ProcMask:         core.ProcMaskPeriodicDamage,
+				DamageMultiplier: 1,
+				ThreatMultiplier: 1,
+				IsPeriodic:       true,
+				OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+					deathKnight.doWanderingPlague(sim, spell, spellEffect)
+				},
+				BaseDamage: core.BaseDamageConfig{
+					Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+						return ((127.0 + 80.0*0.32) + deathKnight.applyImpurity(hitEffect, spell.Unit)*0.055) *
+							deathKnight.rageOfRivendareBonus(hitEffect.Target) *
+							deathKnight.tundraStalkerBonus(hitEffect.Target)
+					},
+					TargetSpellCoefficient: 1,
+				},
+				OutcomeApplier: deathKnight.OutcomeFuncAlwaysHit(),
+			}),
+		})
+
+		deathKnight.BloodPlagueDisease[target.Index].Spell = deathKnight.BloodPlagueSpell
+	}
 }
 
 func (deathKnight *DeathKnight) doWanderingPlague(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
