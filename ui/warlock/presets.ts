@@ -19,6 +19,7 @@ import {
 	Warlock_Rotation_SecondaryDot as SecondaryDot,
 	Warlock_Rotation_SpecSpell as SpecSpell,
 	Warlock_Rotation_Curse as Curse,
+	Warlock_Options_WeaponImbue as WarlockWeaponImbue,
 	Warlock_Options_Armor as Armor,
 	Warlock_Options_Summon as Summon,
 	WarlockMajorGlyph as MajorGlyph,
@@ -131,13 +132,13 @@ export const DemonologyOptions = WarlockOptions.create({
 export const DestructionOptions = WarlockOptions.create({
 	armor: Armor.FelArmor,
 	summon: Summon.Imp,
+	weaponImbue: WarlockWeaponImbue.GrandFirestone,
 });
 
 export const DefaultConsumes = Consumes.create({
-	flask: Flask.FlaskOfPureDeath,
-	food: Food.FoodBlackenedBasilisk,
-	mainHandImbue: WeaponImbue.WeaponImbueBrilliantWizardOil,
-	defaultPotion: Potions.DestructionPotion,
+	flask: Flask.FlaskOfTheFrostWyrm,
+	food: Food.FoodFishFeast,
+	defaultPotion: Potions.PotionOfWildMagic,
 });
 
 export const P1_DESTRO = {

@@ -159,6 +159,8 @@ func NewWarlock(character core.Character, options proto.Player) *Warlock {
 		warlock.Pet = warlock.NewWarlockPet()
 	}
 
+	warlock.applyWeaponImbue()
+
 	return warlock
 }
 
