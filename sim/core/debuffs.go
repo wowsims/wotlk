@@ -301,35 +301,25 @@ var BloodFrenzyActionID = ActionID{SpellID: 29859}
 var phyDmgDebuff = `4%phydmg`
 
 func BloodFrenzyAura(target *Unit, points int32) *Aura {
-	return bloodFrenzySavageCombatAura(target, "Blood Frenzy", BloodFrenzyActionID, float64(points))
+	return bloodFrenzySavageCombatAura(target, "Blood Frenzy", BloodFrenzyActionID, points)
 }
 func SavageCombatAura(target *Unit, points int32) *Aura {
-	return bloodFrenzySavageCombatAura(target, "Savage Combat", ActionID{SpellID: 58413}, float64(points))
+	return bloodFrenzySavageCombatAura(target, "Savage Combat", ActionID{SpellID: 58413}, points)
 }
 
-func bloodFrenzySavageCombatAura(target *Unit, label string, id ActionID, points float64) *Aura {
-	multiplier := 1 + 0.02*points
+func bloodFrenzySavageCombatAura(target *Unit, label string, id ActionID, points int32) *Aura {
+	multiplier := 1 + 0.02*float64(points)
 	return target.GetOrRegisterAura(Aura{
 		Label:    label + "-" + strconv.Itoa(int(points)),
 		Tag:      phyDmgDebuff,
 		ActionID: id,
+		Priority: multiplier,
 		// No fixed duration, lasts as long as the bleed that activates it.
 		OnGain: func(aura *Aura, sim *Simulation) {
-			if oAura := target.GetActiveAuraWithTag(phyDmgDebuff); oAura == nil {
-				aura.Unit.PseudoStats.PhysicalDamageTakenMultiplier *= multiplier
-			} else if oAura.Priority < points {
-				// remove weaker debuff
-				aura.Unit.PseudoStats.PhysicalDamageTakenMultiplier /= 1.0 + (0.02 * oAura.Priority)
-				aura.Unit.PseudoStats.PhysicalDamageTakenMultiplier *= multiplier
-			}
+			aura.Unit.PseudoStats.PhysicalDamageTakenMultiplier *= multiplier
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			if oAura := target.GetActiveAuraWithTag(phyDmgDebuff); oAura == nil {
-				aura.Unit.PseudoStats.PhysicalDamageTakenMultiplier /= multiplier
-			} else if oAura.Priority < points {
-				aura.Unit.PseudoStats.PhysicalDamageTakenMultiplier /= multiplier
-				aura.Unit.PseudoStats.PhysicalDamageTakenMultiplier *= 1.0 + (0.02 * oAura.Priority)
-			}
+			aura.Unit.PseudoStats.PhysicalDamageTakenMultiplier /= multiplier
 		},
 	})
 }
