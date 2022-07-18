@@ -85,7 +85,7 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				// Default rotation settings.
 				rotation: Presets.DefaultRotation,
 				// Default talents.
-				talents: Presets.FrostTalents.data,
+				talents: Presets.FrostUnholyTalents.data,
 				// Default spec-specific settings.
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
@@ -149,8 +149,8 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 			presets: {
 				// Preset talents that the user can quickly select.
 				talents: [
-					Presets.FrostTalents,
 					Presets.FrostUnholyTalents,
+					Presets.FrostTalents,
 					Presets.UnholyDualWieldTalents,
 				],
 				// Preset gear configurations that the user can quickly select.

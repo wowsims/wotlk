@@ -5,7 +5,11 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
+var PestilenceLastOutcomes []core.HitOutcome
+
 func (deathKnight *DeathKnight) registerPestilenceSpell() {
+	PestilenceLastOutcomes = make([]core.HitOutcome, deathKnight.Env.GetNumTargets())
+
 	deathKnight.Pestilence = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 50842},
 		SpellSchool: core.SpellSchoolShadow,
@@ -30,6 +34,7 @@ func (deathKnight *DeathKnight) registerPestilenceSpell() {
 			OutcomeApplier: deathKnight.OutcomeFuncMagicHit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				PestilenceLastOutcomes[deathKnight.getIndexForTarget(spellEffect.Target)] = spellEffect.Outcome
 				if spellEffect.Landed() {
 					unitHit := spellEffect.Target
 					// Main target
