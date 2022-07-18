@@ -10,9 +10,7 @@ import (
 
 // TODO:
 // Sanctified Wrath
-// Sanctified Retribution
 // Judgements of the Wise
-// Swift Retribution
 // Righteous Vengeance
 // Fanatacism threat reduction.
 
