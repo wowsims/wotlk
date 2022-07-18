@@ -52,8 +52,6 @@ export const DefaultConsumes = Consumes.create({
 	mainHandImbue: WeaponImbue.WeaponImbueAdamantiteWeightstone,
 	defaultPotion: Potions.HastePotion,
 	defaultConjured: Conjured.ConjuredDarkRune,
-	scrollOfAgility: 5,
-	scrollOfStrength: 5,
 });
 
 export const P1_PRESET = {

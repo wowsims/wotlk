@@ -61,9 +61,6 @@ export const DefaultConsumes = Consumes.create({
 	food: Food.FoodFishermansFeast,
 	defaultPotion: Potions.IronshieldPotion,
 	mainHandImbue: WeaponImbue.WeaponImbueSuperiorWizardOil,
-	scrollOfAgility: 5,
-	scrollOfStrength: 5,
-	scrollOfProtection: 5,
 });
 
 export const P1_PRESET = {

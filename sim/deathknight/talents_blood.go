@@ -5,6 +5,8 @@ import (
 
 	//"time"
 
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -13,6 +15,7 @@ import (
 func (deathKnight *DeathKnight) ApplyBloodTalents() {
 	// Butchery
 	// Pointless to Implement - RaiN: Gives you passive 1 * rank runic power per 5 seconds so it needs to be implemented
+	deathKnight.applyButchery()
 
 	// Subversion
 	// TODO: Implement
@@ -97,4 +100,34 @@ func (deathKnight *DeathKnight) ApplyBloodTalents() {
 			},
 		})
 	}
+}
+
+var butcheryCanceled bool
+
+func (deathKnight *DeathKnight) applyButchery() {
+	if deathKnight.Talents.Butchery == 0 {
+		return
+	}
+
+	actionID := core.ActionID{SpellID: 49483}
+
+	rpMetrics := deathKnight.NewRunicPowerMetrics(actionID)
+
+	deathKnight.ButcheryAura = deathKnight.RegisterAura(core.Aura{
+		ActionID: actionID,
+		Label:    "Butchery",
+		Duration: core.NeverExpires,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			amountOfRunicPower := 1.0 * float64(deathKnight.Talents.Butchery)
+			core.StartPeriodicAction(sim, core.PeriodicActionOptions{
+				Period:   time.Second * 5,
+				NumTicks: 0,
+				OnAction: func(sim *core.Simulation) {
+					deathKnight.AddRunicPower(sim, amountOfRunicPower, rpMetrics)
+				},
+			})
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+		},
+	})
 }

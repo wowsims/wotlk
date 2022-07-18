@@ -88,6 +88,14 @@ func (paladin *Paladin) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 		paladin.PaladinAura == proto.PaladinAura_RetributionAura,
 		paladin.Talents.SanctifiedRetribution == true))
 
+	if paladin.Talents.SanctifiedRetribution {
+		raidBuffs.SanctifiedRetribution = true
+	}
+
+	if paladin.Talents.SwiftRetribution == 3 {
+		raidBuffs.SwiftRetribution = paladin.Talents.SwiftRetribution == 3 // TODO: Fix-- though having something between 0/3 and 3/3 is unlikely
+	}
+
 	//if paladin.Talents.SanctifiedRetribution {
 	//	raidBuffs.SanctifiedRetribution = true
 	//}

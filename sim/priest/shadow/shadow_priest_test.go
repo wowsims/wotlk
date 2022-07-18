@@ -30,6 +30,8 @@ func TestShadow(t *testing.T) {
 			core.SpecOptionsCombo{Label: "Clipping", SpecOptions: PlayerOptionsClipping},
 		},
 
+		Glyphs: DefaultGlyphs,
+
 		RaidBuffs:   FullRaidBuffs,
 		PartyBuffs:  FullPartyBuffs,
 		PlayerBuffs: FullIndividualBuffs,

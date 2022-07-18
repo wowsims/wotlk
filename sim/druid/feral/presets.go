@@ -66,14 +66,12 @@ var FullIndividualBuffs = &proto.IndividualBuffs{
 }
 
 var FullConsumes = &proto.Consumes{
-	BattleElixir:     proto.BattleElixir_ElixirOfMajorAgility,
-	GuardianElixir:   proto.GuardianElixir_ElixirOfMajorMageblood,
-	Food:             proto.Food_FoodGrilledMudfish,
-	DefaultPotion:    proto.Potions_HastePotion,
-	MainHandImbue:    proto.WeaponImbue_WeaponImbueAdamantiteWeightstone,
-	DefaultConjured:  proto.Conjured_ConjuredDarkRune,
-	ScrollOfStrength: 5,
-	ScrollOfAgility:  5,
+	BattleElixir:    proto.BattleElixir_ElixirOfMajorAgility,
+	GuardianElixir:  proto.GuardianElixir_ElixirOfMajorMageblood,
+	Food:            proto.Food_FoodGrilledMudfish,
+	DefaultPotion:   proto.Potions_HastePotion,
+	MainHandImbue:   proto.WeaponImbue_WeaponImbueAdamantiteWeightstone,
+	DefaultConjured: proto.Conjured_ConjuredDarkRune,
 }
 
 var FullDebuffs = &proto.Debuffs{

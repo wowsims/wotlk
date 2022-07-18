@@ -148,16 +148,10 @@ func (unit *Unit) AddStat(stat stats.Stat, amount float64) {
 	unit.stats[stat] += amount
 }
 
-func (unit *Unit) SetStatChanging(changing bool) {
-	unit.statChanging = changing
-}
-
 func (unit *Unit) AddStatsDynamic(sim *Simulation, stat stats.Stats) {
 	if unit.Env == nil || !unit.Env.IsFinalized() {
 		panic("Not finalized, use AddStats instead!")
 	}
-
-	oldStats := unit.GetStats().Add(stats.Stats{})
 
 	stat[stats.Mana] = 0 // TODO: Mana needs special treatment
 
@@ -186,30 +180,11 @@ func (unit *Unit) AddStatsDynamic(sim *Simulation, stat stats.Stats) {
 	if stat[stats.ArcaneResistance] != 0 || stat[stats.FireResistance] != 0 || stat[stats.FrostResistance] != 0 || stat[stats.NatureResistance] != 0 || stat[stats.ShadowResistance] != 0 {
 		unit.updateResistances()
 	}
-
-	// We have to make sure we are not entering an endless recursion
-	// if an aura applies more dynamic stat changes on a stat change
-	// Which is a very valid scenario for % based stat buffs
-	if unit.statChanging {
-		return
-	} else {
-		unit.statChanging = true
-
-		newStats := unit.GetStats()
-		for _, unitAura := range unit.auras {
-			if unitAura.OnStatsChange != nil {
-				unitAura.OnStatsChange(unitAura, sim, oldStats, newStats)
-			}
-		}
-		unit.statChanging = false
-	}
 }
 func (unit *Unit) AddStatDynamic(sim *Simulation, stat stats.Stat, amount float64) {
 	if unit.Env == nil || !unit.Env.IsFinalized() {
 		panic("Not finalized, use AddStats instead!")
 	}
-
-	oldStats := unit.GetStats().Add(stats.Stats{})
 
 	if stat == stats.MeleeHaste {
 		unit.AddMeleeHaste(sim, amount)
@@ -238,23 +213,6 @@ func (unit *Unit) AddStatDynamic(sim *Simulation, stat stats.Stat, amount float6
 		unit.updateResistances()
 	} else if stat == stats.ShadowResistance {
 		unit.updateResistances()
-	}
-
-	// We have to make sure we are not entering an endless recursion
-	// if an aura applies more dynamic stat changes on a stat change
-	// Which is a very valid scenario for % based stat buffs
-	if unit.statChanging {
-		return
-	} else {
-		unit.statChanging = true
-
-		newStats := unit.GetStats()
-		for _, unitAura := range unit.auras {
-			if unitAura.OnStatsChange != nil {
-				unitAura.OnStatsChange(unitAura, sim, oldStats, newStats)
-			}
-		}
-		unit.statChanging = false
 	}
 }
 

@@ -14,6 +14,8 @@ type DeathKnight struct {
 	Options  proto.DeathKnight_Options
 	Rotation proto.DeathKnight_Rotation
 
+	FrostRotation FrostRotation
+
 	Ghoul     *GhoulPet
 	RaiseDead *core.Spell
 
@@ -22,7 +24,9 @@ type DeathKnight struct {
 
 	Presence Presence
 
-	IcyTouch *core.Spell
+	IcyTouch   *core.Spell
+	BloodBoil  *core.Spell
+	Pestilence *core.Spell
 
 	PlagueStrike      *core.Spell
 	PlagueStrikeMhHit *core.Spell
@@ -56,12 +60,16 @@ type DeathKnight struct {
 	HowlingBlastCostless bool
 	HowlingBlast         *core.Spell
 
-	//HornOfWinter     *core.Spell
+	OtherRelevantStrAgiActive bool
+	HornOfWinter              *core.Spell
+	HornOfWinterAura          *core.Aura
 	//ArmyOfTheDead    *core.Spell
 
 	// "CDs"
 	BloodTap     *core.Spell
 	BloodTapAura *core.Aura
+
+	EmpowerRuneWeapon *core.Spell
 
 	UnbreakableArmor     *core.Spell
 	UnbreakableArmorAura *core.Aura
@@ -72,8 +80,8 @@ type DeathKnight struct {
 	// Diseases
 	FrostFeverSpell    *core.Spell
 	BloodPlagueSpell   *core.Spell
-	FrostFeverDisease  *core.Dot
-	BloodPlagueDisease *core.Dot
+	FrostFeverDisease  []*core.Dot
+	BloodPlagueDisease []*core.Dot
 
 	UnholyBlightSpell *core.Spell
 	UnholyBlightDot   *core.Dot
@@ -84,14 +92,18 @@ type DeathKnight struct {
 	DesolationAura      *core.Aura
 	NecrosisAura        *core.Aura
 	BloodCakedBladeAura *core.Aura
+	ButcheryAura        *core.Aura
 
 	// Talent Spells
 	LastDiseaseDamage float64
 	WanderingPlague   *core.Spell
 
 	// Presences
+	BloodPressence     *core.Spell
 	BloodPresenceAura  *core.Aura
+	FrostPressence     *core.Spell
 	FrostPresenceAura  *core.Aura
+	UnholyPressence    *core.Spell
 	UnholyPresenceAura *core.Aura
 
 	// Debuffs
@@ -101,6 +113,10 @@ type DeathKnight struct {
 	// Dynamic trackers
 	RageOfRivendareActive bool
 	TundraStalkerActive   bool
+
+	// TODO: Is there a better way?
+	// Item Auras
+	SigilOfAwarenessAura *core.Aura
 }
 
 func (deathKnight *DeathKnight) GetCharacter() *core.Character {
@@ -108,7 +124,6 @@ func (deathKnight *DeathKnight) GetCharacter() *core.Character {
 }
 
 func (deathKnight *DeathKnight) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
-
 }
 
 func (deathKnight *DeathKnight) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
@@ -118,6 +133,15 @@ func (deathKnight *DeathKnight) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 
 	if deathKnight.Talents.ImprovedIcyTalons {
 		raidBuffs.IcyTalons = true
+	}
+
+	raidBuffs.HornOfWinter = !deathKnight.Options.RefreshHornOfWinter
+
+	if raidBuffs.StrengthOfEarthTotem == proto.TristateEffect_TristateEffectImproved ||
+		raidBuffs.StrengthOfEarthTotem == proto.TristateEffect_TristateEffectRegular {
+		deathKnight.OtherRelevantStrAgiActive = true
+	} else {
+		deathKnight.OtherRelevantStrAgiActive = false
 	}
 }
 
@@ -143,22 +167,47 @@ func (deathKnight *DeathKnight) Initialize() {
 	deathKnight.registerGhoulFrenzySpell()
 	deathKnight.registerBoneShieldSpell()
 	deathKnight.registerUnbreakableArmorSpell()
-	//deathKnight.registerIceboundFortitudeSpell()
+	deathKnight.registerBloodBoilSpell()
+	deathKnight.registerHornOfWinterSpell()
+	deathKnight.registerPestilenceSpell()
+	deathKnight.registerEmpowerRuneWeaponSpell()
 
 	deathKnight.registerRaiseDeadCD()
 	deathKnight.registerSummonGargoyleCD()
+
+	deathKnight.setupFrostRotation()
 }
 
 func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
 	deathKnight.ResetRunicPowerBar(sim)
-	deathKnight.BloodPresenceAura.Activate(sim)
-	deathKnight.Presence = BloodPresence
+
+	if deathKnight.Talents.Butchery > 0 {
+		deathKnight.ButcheryAura.Deactivate(sim)
+		deathKnight.ButcheryAura.Activate(sim)
+	}
+
+	if deathKnight.Rotation.UnholyPresenceOpener {
+		deathKnight.UnholyPresenceAura.Activate(sim)
+		deathKnight.Presence = UnholyPresence
+	} else {
+		deathKnight.BloodPresenceAura.Activate(sim)
+		deathKnight.Presence = BloodPresence
+	}
+
+	if deathKnight.Options.PrecastHornOfWinter && deathKnight.Options.RefreshHornOfWinter {
+		if deathKnight.HornOfWinterAura.IsActive() {
+			deathKnight.HornOfWinterAura.Deactivate(sim)
+			deathKnight.HornOfWinterAura.Activate(sim)
+		}
+	}
+
+	deathKnight.resetFrostRotation(sim)
 }
 
 func (deathKnight *DeathKnight) HasMajorGlyph(glyph proto.DeathKnightMajorGlyph) bool {
 	return deathKnight.HasGlyph(int32(glyph))
 }
-func (deathKnight *DeathKnight) HasMinorGlyph(glyph proto.DeathKnightMajorGlyph) bool {
+func (deathKnight *DeathKnight) HasMinorGlyph(glyph proto.DeathKnightMinorGlyph) bool {
 	return deathKnight.HasGlyph(int32(glyph))
 }
 
@@ -173,7 +222,7 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 	}
 
 	maxRunicPower := 100.0 + 15.0*float64(deathKnight.Talents.RunicPowerMastery)
-	currentRunicPower := math.Min(maxRunicPower, deathKnightOptions.Options.StartingRunicPower)
+	currentRunicPower := math.Min(maxRunicPower, deathKnightOptions.Options.StartingRunicPower+core.TernaryFloat64(deathKnightOptions.Options.PrecastHornOfWinter, 10.0, 0.0))
 
 	deathKnight.EnableRunicPowerBar(
 		currentRunicPower,
@@ -258,12 +307,12 @@ func RegisterDeathKnight() {
 	)
 }
 
-func (deathKnight *DeathKnight) AllDiseasesAreActive() bool {
-	return deathKnight.FrostFeverDisease.IsActive() && deathKnight.BloodPlagueDisease.IsActive()
+func (deathKnight *DeathKnight) AllDiseasesAreActive(target *core.Unit) bool {
+	return deathKnight.FrostFeverDisease[target.Index].IsActive() && deathKnight.BloodPlagueDisease[target.Index].IsActive()
 }
 
-func (deathKnight *DeathKnight) DiseasesAreActive() bool {
-	return deathKnight.FrostFeverDisease.IsActive() || deathKnight.BloodPlagueDisease.IsActive()
+func (deathKnight *DeathKnight) DiseasesAreActive(target *core.Unit) bool {
+	return deathKnight.FrostFeverDisease[target.Index].IsActive() || deathKnight.BloodPlagueDisease[target.Index].IsActive()
 }
 
 func (deathKnight *DeathKnight) secondaryCritModifier(applyGuile bool) float64 {

@@ -71,9 +71,6 @@ export const DefaultConsumes = Consumes.create({
 	defaultPotion: Potions.IronshieldPotion,
 	mainHandImbue: WeaponImbue.WeaponImbueAdamantiteSharpeningStone,
 	offHandImbue: WeaponImbue.WeaponImbueAdamantiteSharpeningStone,
-	scrollOfAgility: 5,
-	scrollOfStrength: 5,
-	scrollOfProtection: 5,
 });
 
 export const P1_BALANCED_PRESET = {

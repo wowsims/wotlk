@@ -170,7 +170,7 @@ export class CharacterStats extends Component {
 			debuffStats = debuffStats.addStat(Stat.StatSpellCrit, 3 * Mechanics.SPELL_CRIT_RATING_PER_CRIT_CHANCE);
 			debuffStats = debuffStats.addStat(Stat.StatMeleeCrit, 3 * Mechanics.MELEE_CRIT_RATING_PER_CRIT_CHANCE);
 		}
-		if (debuffs.improvedScorch || debuffs.wintersChill || debuffs.improvedShadowBolt) {
+		if (debuffs.improvedScorch || debuffs.wintersChill || debuffs.shadowMastery) {
 			debuffStats = debuffStats.addStat(Stat.StatSpellCrit, 5 * Mechanics.SPELL_CRIT_RATING_PER_CRIT_CHANCE);
 		}
 

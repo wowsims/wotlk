@@ -24,9 +24,9 @@ func (deathKnight *DeathKnight) newBloodStrikeSpell(isMH bool) *core.Spell {
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				return weaponBaseDamage(sim, hitEffect, spell) *
-					deathKnight.diseaseMultiplierBonus(0.125) *
-					deathKnight.rageOfRivendareBonus() *
-					deathKnight.tundraStalkerBonus()
+					deathKnight.diseaseMultiplierBonus(hitEffect.Target, 0.125) *
+					deathKnight.rageOfRivendareBonus(hitEffect.Target) *
+					deathKnight.tundraStalkerBonus(hitEffect.Target)
 			},
 			TargetSpellCoefficient: 1,
 		},
@@ -63,6 +63,9 @@ func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
 			},
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				cast.GCD = deathKnight.getModifiedGCD()
+			},
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -77,8 +80,11 @@ func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
 
 				if deathKnight.outcomeEitherWeaponHitOrCrit(BloodStrikeMHOutcome, BloodStrikeOHOutcome) {
 					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 1, 0, 0)
-					deathKnight.bloodOfTheNorthProc(sim, spell, dkSpellCost)
-					deathKnight.reapingProc(sim, spell, dkSpellCost)
+					if !deathKnight.bloodOfTheNorthProc(sim, spell, dkSpellCost) {
+						if !deathKnight.reapingProc(sim, spell, dkSpellCost) {
+							deathKnight.Spend(sim, spell, dkSpellCost)
+						}
+					}
 
 					amountOfRunicPower := 10.0
 					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())

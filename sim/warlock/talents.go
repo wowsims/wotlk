@@ -110,6 +110,8 @@ func (warlock *Warlock) ApplyTalents() {
 		warlock.applyDeathsEmbrace()
 	}
 
+	warlock.setupDrainSoulExecutePhase()
+
 	if warlock.Talents.MoltenCore > 0 {
 		warlock.setupMoltenCore()
 	}
@@ -208,7 +210,7 @@ func (warlock *Warlock) setupDecimation() {
 		Label:    "Decimation Talent Hidden Aura",
 		Duration: core.NeverExpires,
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spell == warlock.Shadowbolt || spell == warlock.Incinerate || spell == warlock.SoulFire {
+			if spell == warlock.ShadowBolt || spell == warlock.Incinerate || spell == warlock.SoulFire {
 				warlock.DecimationAura.Activate(sim)
 				warlock.DecimationAura.Refresh(sim)
 			}
@@ -306,11 +308,12 @@ func (warlock *Warlock) setupShadowEmbrace() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spell == warlock.Shadowbolt || spell == warlock.Haunt {
+			if spell == warlock.ShadowBolt || spell == warlock.Haunt {
 				if !warlock.ShadowEmbraceAura.IsActive() {
 					warlock.ShadowEmbraceAura.Activate(sim)
 				}
 				warlock.ShadowEmbraceAura.AddStack(sim)
+				warlock.ShadowEmbraceAura.Refresh(sim)
 			}
 		},
 	})
@@ -323,7 +326,7 @@ func (warlock *Warlock) setupNightfall() {
 		Duration: time.Second * 10,
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 			// Check for an instant cast shadowbolt to disable aura
-			if spell == warlock.Shadowbolt && spell.CurCast.CastTime == 0 {
+			if spell == warlock.ShadowBolt && spell.CurCast.CastTime == 0 {
 				aura.Deactivate(sim)
 			}
 		},
@@ -337,8 +340,8 @@ func (warlock *Warlock) setupNightfall() {
 		},
 		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spell == warlock.Corruption { // TODO: also works on drain life...
-				if sim.RandomFloat("Nightfall") < 0.02*float64(warlock.Talents.Nightfall) + 
-				0.04*core.TernaryFloat64(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCorruption), 1, 0) {
+				if sim.RandomFloat("Nightfall") < 0.02*float64(warlock.Talents.Nightfall)+
+					0.04*core.TernaryFloat64(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCorruption), 1, 0) {
 					warlock.NightfallProcAura.Activate(sim)
 				}
 			}
@@ -393,7 +396,7 @@ func (warlock *Warlock) setupBackdraft() {
 		Duration:  time.Second * 15,
 		MaxStacks: 3,
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if spell == warlock.Incinerate || spell == warlock.SoulFire || spell == warlock.Shadowbolt ||
+			if spell == warlock.Incinerate || spell == warlock.SoulFire || spell == warlock.ShadowBolt ||
 				spell == warlock.ChaosBolt || spell == warlock.Immolate {
 				aura.RemoveStack(sim)
 			}

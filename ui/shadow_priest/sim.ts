@@ -1,9 +1,9 @@
 import { RaidBuffs } from '/wotlk/core/proto/common.js';
 import { PartyBuffs } from '/wotlk/core/proto/common.js';
 import { IndividualBuffs } from '/wotlk/core/proto/common.js';
+import { Debuffs } from '/wotlk/core/proto/common.js';
 import { Class } from '/wotlk/core/proto/common.js';
 import { Consumes } from '/wotlk/core/proto/common.js';
-import { Debuffs } from '/wotlk/core/proto/common.js';
 import { Encounter } from '/wotlk/core/proto/common.js';
 import { ItemSlot } from '/wotlk/core/proto/common.js';
 import { MobType } from '/wotlk/core/proto/common.js';
@@ -15,17 +15,6 @@ import { Stats } from '/wotlk/core/proto_utils/stats.js';
 import { Player } from '/wotlk/core/player.js';
 import { Sim } from '/wotlk/core/sim.js';
 import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
-
-import { Alchohol } from '/wotlk/core/proto/common.js';
-import { BattleElixir } from '/wotlk/core/proto/common.js';
-import { Flask } from '/wotlk/core/proto/common.js';
-import { Food } from '/wotlk/core/proto/common.js';
-import { GuardianElixir } from '/wotlk/core/proto/common.js';
-import { Conjured } from '/wotlk/core/proto/common.js';
-
-import { PetFood } from '/wotlk/core/proto/common.js';
-import { Potions } from '/wotlk/core/proto/common.js';
-import { WeaponImbue } from '/wotlk/core/proto/common.js';
 
 import { ShadowPriest, ShadowPriest_Rotation as Rotation, ShadowPriest_Options as Options, ShadowPriest_Rotation, ShadowPriest_Rotation_RotationType } from '/wotlk/core/proto/priest.js';
 
@@ -104,10 +93,12 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					arcaneBrilliance: true,
+					arcaneEmpowerment: true,
+					bloodlust: true,
 					divineSpirit: true,
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
-					bloodlust: true,
 					manaSpringTotem: TristateEffect.TristateEffectRegular,
+					moonkinAura: TristateEffect.TristateEffectImproved,
 					totemOfWrath: true,
 					wrathOfAirTotem: true,
 				}),
@@ -128,64 +119,6 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 			// IconInputs to include in the 'Self Buffs' section on the settings tab.
 			selfBuffInputs: [
 			],
-			// IconInputs to include in the 'Other Buffs' section on the settings tab.
-			raidBuffInputs: [
-				IconInputs.ArcaneBrilliance,
-				IconInputs.DivineSpirit,
-				IconInputs.GiftOfTheWild,
-				IconInputs.MoonkinAura,
-				IconInputs.Bloodlust,
-				IconInputs.WrathOfAirTotem,
-				IconInputs.TotemOfWrath,
-				IconInputs.ManaSpringTotem,
-			],
-			partyBuffInputs: [
-				IconInputs.ManaTideTotem,
-				IconInputs.HeroicPresence,
-			],
-			playerBuffInputs: [
-				IconInputs.BlessingOfKings,
-				IconInputs.BlessingOfWisdom,
-				IconInputs.Innervate,
-				IconInputs.PowerInfusion,
-			],
-			// IconInputs to include in the 'Debuffs' section on the settings tab.
-			debuffInputs: [
-				IconInputs.JudgementOfWisdom,
-
-				IconInputs.CurseOfElements,
-			],
-			// Which options are selectable in the 'Consumes' section.
-			consumeOptions: {
-				potions: [
-					Potions.PotionOfSpeed,
-					Potions.PotionOfWildMagic,
-					Potions.RunicManaPotion,
-				],
-				conjured: [
-				],
-				flasks: [
-					Flask.FlaskOfTheFrostWyrm,
-				],
-				battleElixirs: [
-					BattleElixir.SpellpowerElixir,
-				],
-				guardianElixirs: [
-					GuardianElixir.ElixirOfSpirit,
-					GuardianElixir.ElixirOfMightyThoughts,
-					GuardianElixir.ElixirOfMightyMageblood,
-				],
-				food: [
-					Food.FoodFishFeast,
-					Food.FoodSkullfishSoup,
-				],
-				alcohol: [
-				],
-				weaponImbues: [
-				],
-				other: [
-				],
-			},
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: ShadowPriestInputs.ShadowPriestRotationConfig,
 			// Inputs to include in the 'Other' section on the settings tab.
