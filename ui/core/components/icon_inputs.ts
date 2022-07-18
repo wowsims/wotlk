@@ -41,7 +41,7 @@ export const AllStatsBuff = makeMultiIconInput([
 export const AllStatsPercentBuff = makeMultiIconInput([
 	makeBooleanIndividualBuffInput2(ActionId.fromSpellId(25898), 'blessingOfKings'),
 	makeBooleanRaidBuffInput2(ActionId.fromItemId(49633), 'drumsOfForgottenKings'),
-	makeBooleanIndividualBuffInput2(ActionId.fromSpellId(27169), 'blessingOfSanctuary'),
+	makeBooleanIndividualBuffInput2(ActionId.fromSpellId(25889), 'blessingOfSanctuary'),
 ]);
 
 export const ArmorBuff = makeMultiIconInput([
@@ -97,7 +97,7 @@ export const DamagePercentBuff = makeMultiIconInput([
 ]);
 
 export const DamageReductionPercentBuff = makeMultiIconInput([
-	makeBooleanIndividualBuffInput2(ActionId.fromSpellId(27169), 'blessingOfSanctuary'),
+	makeBooleanIndividualBuffInput2(ActionId.fromSpellId(25889), 'blessingOfSanctuary'),
 	// vigilance
 	// renewed hope
 ]);
@@ -255,11 +255,6 @@ export const SuperSapper = makeBooleanConsumeInput(ActionId.fromItemId(23827), '
 export const GoblinSapper = makeBooleanConsumeInput(ActionId.fromItemId(10646), 'goblinSapper', [], onSetExplosives);
 
 export const KiblersBits = makeEnumValueConsumeInput(ActionId.fromItemId(33874), 'petFood', PetFood.PetFoodKiblersBits, ['Pet Food']);
-
-export const ScrollOfAgilityV = makeEnumValueConsumeInput(ActionId.fromItemId(27498), 'scrollOfAgility', 5);
-export const ScrollOfSpiritV = makeEnumValueConsumeInput(ActionId.fromItemId(27501), 'scrollOfSpirit', 5, ['Spirit']);
-export const ScrollOfStrengthV = makeEnumValueConsumeInput(ActionId.fromItemId(27503), 'scrollOfStrength', 5);
-export const ScrollOfProtectionV = makeEnumValueConsumeInput(ActionId.fromItemId(27500), 'scrollOfProtection', 5);
 
 export const PetScrollOfAgilityV = makeEnumValueConsumeInput(ActionId.fromItemId(27498), 'petScrollOfAgility', 5);
 export const PetScrollOfStrengthV = makeEnumValueConsumeInput(ActionId.fromItemId(27503), 'petScrollOfStrength', 5);
