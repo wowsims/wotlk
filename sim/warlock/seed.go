@@ -34,7 +34,7 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 		DamageMultiplier: 	  1 + 0.01*float64(warlock.Talents.Contagion),
 		ThreatMultiplier:	  1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 		BaseDamage:      	  core.BaseDamageConfigMagic(1633+flatBonus, 1897+flatBonus, 0.2129),
-		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(1.5),
+		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.DefaultSpellCritMultiplier()),
 		BonusSpellCritRating: float64(warlock.Talents.ImprovedCorruption) * core.CritRatingPerCritChance,
 	}
 

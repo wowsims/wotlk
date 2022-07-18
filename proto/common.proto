@@ -540,7 +540,7 @@ message Debuffs {
 	bool totem_of_wrath = 9;
 
 	// 5% spell crit
-	bool improved_shadow_bolt = 10;
+	bool shadow_mastery = 10;
 	bool improved_scorch = 11;
 	bool winters_chill = 12;
 
