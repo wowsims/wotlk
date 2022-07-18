@@ -54,7 +54,7 @@ export const FrostUnholyTalents = {
 			major2: DeathKnightMajorGlyph.GlyphOfFrostStrike,
 			major3: DeathKnightMajorGlyph.GlyphOfDisease,
 			minor1: DeathKnightMinorGlyph.GlyphOfHornOfWinter,
-			minor2: DeathKnightMinorGlyph.GlyphOfBloodTap,
+			minor2: DeathKnightMinorGlyph.GlyphOfPestilence,
 			minor3: DeathKnightMinorGlyph.GlyphOfRaiseDead,
 		}),
 	}),
@@ -83,7 +83,7 @@ export const DefaultOptions = DeathKnightOptions.create({
 	startingRunicPower: 0,
 	petUptime: 1,
 	precastGhoulFrenzy: true,
-	refreshHornOfWinter: true,
+	refreshHornOfWinter: false,
   precastHornOfWinter: true,
 });
 

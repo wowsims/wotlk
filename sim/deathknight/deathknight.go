@@ -14,6 +14,8 @@ type DeathKnight struct {
 	Options  proto.DeathKnight_Options
 	Rotation proto.DeathKnight_Rotation
 
+	FrostRotation FrostRotation
+
 	Ghoul     *GhoulPet
 	RaiseDead *core.Spell
 
@@ -66,6 +68,8 @@ type DeathKnight struct {
 	// "CDs"
 	BloodTap     *core.Spell
 	BloodTapAura *core.Aura
+
+	EmpowerRuneWeapon *core.Spell
 
 	UnbreakableArmor     *core.Spell
 	UnbreakableArmorAura *core.Aura
@@ -161,9 +165,12 @@ func (deathKnight *DeathKnight) Initialize() {
 	deathKnight.registerBloodBoilSpell()
 	deathKnight.registerHornOfWinterSpell()
 	deathKnight.registerPestilenceSpell()
+	deathKnight.registerEmpowerRuneWeaponSpell()
 
 	deathKnight.registerRaiseDeadCD()
 	deathKnight.registerSummonGargoyleCD()
+
+	deathKnight.setupFrostRotation()
 }
 
 func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
@@ -183,6 +190,8 @@ func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
 			deathKnight.HornOfWinterAura.Activate(sim)
 		}
 	}
+
+	deathKnight.resetFrostRotation(sim)
 }
 
 func (deathKnight *DeathKnight) HasMajorGlyph(glyph proto.DeathKnightMajorGlyph) bool {

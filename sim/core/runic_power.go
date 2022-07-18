@@ -396,6 +396,35 @@ func SetRuneAtSlotToState(rb *[2]Rune, slot int32, runeState RuneState, runeKind
 	rb[slot].state = runeState
 }
 
+func RegenRuneAndCancelPAs(sim *Simulation, r *Rune) {
+	if r.state == RuneState_Spent {
+		r.state = RuneState_Normal
+	} else if r.state == RuneState_DeathSpent {
+		r.state = RuneState_Death
+	}
+
+	if r.pas[0] != nil {
+		r.pas[0].Cancel(sim)
+		r.pas[0] = nil
+	}
+
+	if r.pas[1] != nil {
+		r.pas[1].Cancel(sim)
+		r.pas[1] = nil
+	}
+
+	r.generatedByReapingOrBoTN = false
+}
+
+func (rp *runicPowerBar) RegenAllRunes(sim *Simulation) {
+	RegenRuneAndCancelPAs(sim, &rp.bloodRunes[0])
+	RegenRuneAndCancelPAs(sim, &rp.bloodRunes[1])
+	RegenRuneAndCancelPAs(sim, &rp.frostRunes[0])
+	RegenRuneAndCancelPAs(sim, &rp.frostRunes[1])
+	RegenRuneAndCancelPAs(sim, &rp.unholyRunes[0])
+	RegenRuneAndCancelPAs(sim, &rp.unholyRunes[1])
+}
+
 func (rp *runicPowerBar) GenerateRune(r *Rune) {
 	if r.state == RuneState_Spent {
 		if r.kind == RuneKind_Death {
