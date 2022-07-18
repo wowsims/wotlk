@@ -10,7 +10,7 @@ import (
 
 // Maybe could switch "rank" parameter type to some proto thing. Would require updates to proto files.
 // Prot guys do whatever you want here I guess
-func (paladin *Paladin) RegisterConsecrationSpell() {
+func (paladin *Paladin) registerConsecrationSpell() {
 	// TODO: Properly implement max rank consecration.
 
 	var manaCost float64

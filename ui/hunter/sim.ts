@@ -1,9 +1,9 @@
 import { RaidBuffs } from '/wotlk/core/proto/common.js';
 import { PartyBuffs } from '/wotlk/core/proto/common.js';
 import { IndividualBuffs } from '/wotlk/core/proto/common.js';
+import { Debuffs } from '/wotlk/core/proto/common.js';
 import { Class } from '/wotlk/core/proto/common.js';
 import { Consumes } from '/wotlk/core/proto/common.js';
-import { Debuffs } from '/wotlk/core/proto/common.js';
 import { Encounter } from '/wotlk/core/proto/common.js';
 import { ItemSlot } from '/wotlk/core/proto/common.js';
 import { MobType } from '/wotlk/core/proto/common.js';
@@ -15,17 +15,6 @@ import { Stats } from '/wotlk/core/proto_utils/stats.js';
 import { Sim } from '/wotlk/core/sim.js';
 import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
 import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
-
-import { Alchohol } from '/wotlk/core/proto/common.js';
-import { BattleElixir } from '/wotlk/core/proto/common.js';
-import { Flask } from '/wotlk/core/proto/common.js';
-import { Food } from '/wotlk/core/proto/common.js';
-import { GuardianElixir } from '/wotlk/core/proto/common.js';
-import { Conjured } from '/wotlk/core/proto/common.js';
-
-import { PetFood } from '/wotlk/core/proto/common.js';
-import { Potions } from '/wotlk/core/proto/common.js';
-import { WeaponImbue } from '/wotlk/core/proto/common.js';
 
 import {
 	Hunter,
@@ -157,87 +146,6 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 			selfBuffInputs: [
 				HunterInputs.WeaponAmmo,
 			],
-			// IconInputs to include in the 'Other Buffs' section on the settings tab.
-			raidBuffInputs: [
-				IconInputs.ArcaneBrilliance,
-				IconInputs.DivineSpirit,
-				IconInputs.GiftOfTheWild,
-				IconInputs.Bloodlust,
-				IconInputs.WindfuryTotem,
-				IconInputs.StrengthOfEarthTotem,
-				IconInputs.ManaSpringTotem,
-				IconInputs.BattleShout,
-				IconInputs.LeaderOfThePack,
-				IconInputs.TrueshotAura,
-				IconInputs.UnleashedRage,
-			],
-			partyBuffInputs: [
-				IconInputs.HeroicPresence,
-				IconInputs.BraidedEterniumChain,
-			],
-			playerBuffInputs: [
-				IconInputs.BlessingOfKings,
-				IconInputs.BlessingOfWisdom,
-				IconInputs.BlessingOfMight,
-			],
-			// IconInputs to include in the 'Debuffs' section on the settings tab.
-			debuffInputs: [
-				IconInputs.BloodFrenzy,
-				IconInputs.JudgementOfWisdom,
-				IconInputs.FaerieFire,
-				IconInputs.SunderArmor,
-				IconInputs.ExposeArmor,
-				IconInputs.CurseOfWeakness,
-				IconInputs.CurseOfElements,
-				IconInputs.Misery,
-				IconInputs.GiftOfArthas,
-			],
-			// Which options are selectable in the 'Consumes' section.
-			consumeOptions: {
-				potions: [
-					Potions.HastePotion,
-					Potions.SuperManaPotion,
-					Potions.FelManaPotion,
-				],
-				conjured: [
-					Conjured.ConjuredDarkRune,
-					Conjured.ConjuredFlameCap,
-				],
-				flasks: [
-					Flask.FlaskOfRelentlessAssault,
-				],
-				battleElixirs: [
-					BattleElixir.ElixirOfDemonslaying,
-					BattleElixir.ElixirOfMajorAgility,
-					BattleElixir.ElixirOfTheMongoose,
-				],
-				guardianElixirs: [
-					GuardianElixir.ElixirOfDraenicWisdom,
-					GuardianElixir.ElixirOfMajorMageblood,
-				],
-				food: [
-					Food.FoodGrilledMudfish,
-					Food.FoodRavagerDog,
-					Food.FoodSpicyHotTalbuk,
-					Food.FoodRoastedClefthoof,
-				],
-				alcohol: [
-				],
-				weaponImbues: [
-					WeaponImbue.WeaponImbueAdamantiteSharpeningStone,
-					WeaponImbue.WeaponImbueAdamantiteWeightstone,
-					WeaponImbue.WeaponImbueRighteousWeaponCoating,
-				],
-				pet: [
-					IconInputs.KiblersBits,
-					IconInputs.PetScrollOfAgilityV,
-					IconInputs.PetScrollOfStrengthV,
-				],
-				other: [
-					IconInputs.ScrollOfAgilityV,
-					IconInputs.ScrollOfStrengthV,
-				],
-			},
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: HunterInputs.HunterRotationConfig,
 			// Inputs to include in the 'Other' section on the settings tab.

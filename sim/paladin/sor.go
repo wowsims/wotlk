@@ -6,7 +6,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (paladin *Paladin) setupSealOfRighteousness() {
+func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 	/*
 	 * Seal of Righteousness is an Spell/Aura that when active makes the paladin capable of procing
 	 * 2 different SpellIDs depending on a paladin's casted spell or melee swing.
@@ -87,7 +87,7 @@ func (paladin *Paladin) setupSealOfRighteousness() {
 
 	// Seal of Righteousness aura.
 	auraActionID := core.ActionID{SpellID: 21084}
-	aura := paladin.RegisterAura(core.Aura{
+	paladin.SealOfRighteousnessAura = paladin.RegisterAura(core.Aura{
 		Label:    "Seal of Righteousness",
 		Tag:      "Seal",
 		ActionID: auraActionID,
@@ -112,6 +112,7 @@ func (paladin *Paladin) setupSealOfRighteousness() {
 		},
 	})
 
+	aura := paladin.SealOfRighteousnessAura
 	baseCost := paladin.BaseMana * 0.14
 	paladin.SealOfRighteousness = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    auraActionID, // Seal of Righteousness self buff.

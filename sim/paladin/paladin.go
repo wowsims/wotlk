@@ -43,14 +43,15 @@ type Paladin struct {
 	ConsecrationDot *core.Dot
 	// SealOfVengeanceDot *core.Dot
 
-	HolyShieldAura        *core.Aura
-	JudgementOfWisdomAura *core.Aura
-	JudgementOfLightAura  *core.Aura
-	// SealOfVengeanceAura   *core.Aura
-	// SealOfCommandAura       *core.Aura
+	HolyShieldAura          *core.Aura
+	JudgementOfWisdomAura   *core.Aura
+	JudgementOfLightAura    *core.Aura
+	SealOfVengeanceAura     *core.Aura
+	SealOfCommandAura       *core.Aura
+	SealOfRighteousnessAura *core.Aura
+
 	// SealOfWisdomAura        *core.Aura
 	// SealOfLightAura         *core.Aura
-	// SealOfRighteousnessAura *core.Aura
 
 	ArtOfWarInstantCast *core.Aura
 
@@ -99,9 +100,9 @@ func (paladin *Paladin) Initialize() {
 	// Update auto crit multipliers now that we have the targets.
 	paladin.AutoAttacks.MHEffect.OutcomeApplier = paladin.OutcomeFuncMeleeWhite(paladin.MeleeCritMultiplier())
 
-	paladin.setupSealOfVengeance()
-	paladin.setupSealOfRighteousness()
-	paladin.setupSealOfCommand()
+	paladin.registerSealOfVengeanceSpellAndAura()
+	paladin.registerSealOfRighteousnessSpellAndAura()
+	paladin.registerSealOfCommandSpellAndAura()
 	// paladin.setupSealOfTheCrusader()
 	// paladin.setupSealOfWisdom()
 	// paladin.setupSealOfLight()
@@ -110,7 +111,7 @@ func (paladin *Paladin) Initialize() {
 
 	paladin.registerCrusaderStrikeSpell()
 	paladin.registerDivineStormSpell()
-	paladin.RegisterConsecrationSpell()
+	paladin.registerConsecrationSpell()
 
 	paladin.registerExorcismSpell()
 	paladin.registerHolyShieldSpell()

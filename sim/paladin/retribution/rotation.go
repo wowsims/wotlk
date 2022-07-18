@@ -5,28 +5,28 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (ret *RetributionPaladin) OnGCDReady(sim *core.Simulation) {
-	ret.tryUseGCD(sim)
-}
+	ret.AutoAttacks.EnableAutoSwing(sim)
 
-func (ret *RetributionPaladin) tryUseGCD(sim *core.Simulation) {
-	if !ret.openerCompleted {
-		ret.openingRotation(sim)
-		return
+	if !ret.SealInitComplete {
+		switch ret.Seal {
+		case proto.PaladinSeal_Vengeance:
+			ret.SealOfVengeanceAura.Activate(sim)
+		case proto.PaladinSeal_Command:
+			ret.SealOfCommandAura.Activate(sim)
+		case proto.PaladinSeal_Righteousness:
+			ret.SealOfRighteousnessAura.Activate(sim)
+		}
+		ret.SealInitComplete = true
 	}
 	ret.mainRotation(sim)
 
 	if ret.GCD.IsReady(sim) {
 		ret.DoNothing() // this means we had nothing to do and we are ok
 	}
-}
-
-func (ret *RetributionPaladin) openingRotation(sim *core.Simulation) {
-	ret.SealOfVengeance.Cast(sim, nil)
-	ret.AutoAttacks.EnableAutoSwing(sim)
-	ret.openerCompleted = true
 }
 
 func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {

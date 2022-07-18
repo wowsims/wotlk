@@ -11,16 +11,6 @@ import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
 import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
 import { TotemsSection } from '/wotlk/core/components/totem_inputs.js';
 
-import { Alchohol } from '/wotlk/core/proto/common.js';
-import { BattleElixir } from '/wotlk/core/proto/common.js';
-import { Flask } from '/wotlk/core/proto/common.js';
-import { Food } from '/wotlk/core/proto/common.js';
-import { GuardianElixir } from '/wotlk/core/proto/common.js';
-import { Conjured } from '/wotlk/core/proto/common.js';
-import { Potions } from '/wotlk/core/proto/common.js';
-import { WeaponImbue } from '/wotlk/core/proto/common.js';
-
-
 import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
 import * as OtherInputs from '/wotlk/core/components/other_inputs.js';
 import * as Mechanics from '/wotlk/core/constants/mechanics.js';
@@ -136,76 +126,6 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				ShamanInputs.IconWaterShield,
 				ShamanInputs.IconBloodlust,
 			],
-			// IconInputs to include in the 'Other Buffs' section on the settings tab.
-			raidBuffInputs: [
-				IconInputs.ArcaneBrilliance,
-				IconInputs.DivineSpirit,
-				IconInputs.GiftOfTheWild,
-				IconInputs.MoonkinAura,
-				IconInputs.WrathOfAirTotem,
-				IconInputs.TotemOfWrath,
-				IconInputs.ManaSpringTotem,
-			],
-			partyBuffInputs: [
-				IconInputs.ManaTideTotem,
-				IconInputs.EyeOfTheNight,
-				IconInputs.ChainOfTheTwilightOwl,
-				IconInputs.AtieshWarlock,
-				IconInputs.AtieshMage,
-			],
-			playerBuffInputs: [
-				IconInputs.BlessingOfKings,
-				IconInputs.BlessingOfWisdom,
-				IconInputs.Innervate,
-				IconInputs.PowerInfusion,
-				IconInputs.Replenishment,
-			],
-			// IconInputs to include in the 'Debuffs' section on the settings tab.
-			debuffInputs: [
-				IconInputs.ImprovedScorch,
-				IconInputs.CurseOfElements,
-				IconInputs.JudgementOfWisdom,
-				IconInputs.Misery,
-				IconInputs.FaerieFire,
-			],
-			// Which options are selectable in the 'Consumes' section.
-			consumeOptions: {
-				potions: [
-					Potions.RunicManaPotion,
-					Potions.DestructionPotion,
-				],
-				conjured: [
-					Conjured.ConjuredDarkRune,
-					Conjured.ConjuredFlameCap,
-				],
-				flasks: [
-					Flask.FlaskOfTheFrostWyrm,
-					Flask.FlaskOfBlindingLight,
-					Flask.FlaskOfSupremePower,
-				],
-				battleElixirs: [
-					BattleElixir.AdeptsElixir,
-				],
-				guardianElixirs: [
-					GuardianElixir.ElixirOfDraenicWisdom,
-					GuardianElixir.ElixirOfMajorMageblood,
-				],
-				food: [
-					Food.FoodFishFeast,
-					Food.FoodBlackenedBasilisk,
-					Food.FoodSkullfishSoup,
-				],
-				alcohol: [
-					Alchohol.AlchoholKreegsStoutBeatdown,
-				],
-				weaponImbues: [
-					WeaponImbue.WeaponImbueShamanWindfury,
-					WeaponImbue.WeaponImbueShamanFlametongue,
-					WeaponImbue.WeaponImbueShamanFrostbrand,
-				],
-				other: [
-				],
-			},
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: ShamanInputs.ElementalShamanRotationConfig,
 			// Inputs to include in the 'Other' section on the settings tab.
