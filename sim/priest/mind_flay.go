@@ -15,7 +15,11 @@ func (priest *Priest) MindFlayActionID(numTicks int) core.ActionID {
 
 func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 	baseCost := priest.BaseMana * 0.09
+
 	channelTime := time.Second * time.Duration(numTicks)
+	if priest.HasSetBonus(ItemSetCrimsonAcolyte, 4) {
+		channelTime = channelTime - (time.Millisecond * 510)
+	}
 
 	return priest.RegisterSpell(core.SpellConfig{
 		ActionID:     priest.MindFlayActionID(numTicks),
@@ -76,7 +80,7 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 		BonusSpellCritRating: float64(priest.Talents.MindMelt)*2*core.CritRatingPerCritChance + core.TernaryFloat64(priest.HasSetBonus(ItemSetZabras, 4), 5, 0)*core.CritRatingPerCritChance,
 		OutcomeApplier:       priest.OutcomeFuncMagicHitAndCrit(1 + float64(priest.Talents.ShadowPower)*0.2),
 		ProcMask:             core.ProcMaskSpellDamage,
-		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Landed() {
 				priest.AddShadowWeavingStack(sim)
 			}
@@ -122,7 +126,7 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 
 	var mf_reduc_time time.Duration
 	if priest.HasSetBonus(ItemSetCrimsonAcolyte, 4) {
-		mf_reduc_time = time.Millisecond * 510
+		mf_reduc_time = time.Millisecond * 170
 	}
 
 	return core.NewDot(core.Dot{
@@ -138,4 +142,10 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 
 		TickEffects: core.TickFuncSnapshot(target, effect),
 	})
+}
+
+func (priest *Priest) applySWforMF(sim *core.Simulation, damage float64) {
+	if damage >= 0 {
+		priest.AddShadowWeavingStack(sim)
+	}
 }
