@@ -60,9 +60,6 @@ export const DefaultConsumes = Consumes.create({
 	food: Food.FoodGrilledMudfish,
 	defaultPotion: Potions.IronshieldPotion,
 	defaultConjured: Conjured.ConjuredFlameCap,
-	scrollOfAgility: 5,
-	scrollOfStrength: 5,
-	scrollOfProtection: 5,
 });
 
 export const P1_PRESET = {

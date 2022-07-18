@@ -22,6 +22,8 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	preset := warlock.Rotation.Preset
 	rotationType := warlock.Rotation.Type
 	curse := warlock.Rotation.Curse
+	const epsilon = 1* time.Millisecond
+
 
 	// ------------------------------------------
 	// AoE (Seed)
@@ -45,7 +47,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		}
 
 		// If target has seed, fire a shadowbolt at main target so we start some explosions
-		mainSpell = proto.Warlock_Rotation_Shadowbolt
+		mainSpell = proto.Warlock_Rotation_ShadowBolt
 	}
 
 	// ------------------------------------------
@@ -113,22 +115,30 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		// Affliction Rotation
 		// ------------------------------------------
 		if rotationType == proto.Warlock_Rotation_Affliction && warlock.Talents.Haunt {
-			if !warlock.CurseOfAgonyDot.IsActive() && sim.GetRemainingDuration() > time.Second*24 {
+			if !warlock.CurseOfAgonyDot.IsActive() && sim.GetRemainingDuration() > warlock.CurseOfAgonyDot.Duration {
 				spell = warlock.CurseOfAgony
-			} else if !warlock.CorruptionDot.IsActive(){
+			} else if warlock.CorruptionDot.IsActive() && warlock.CorruptionDot.RemainingDuration(sim) < core.GCDDefault {
+				spell = warlock.DrainSoul[1]
+			} else if !warlock.CorruptionDot.IsActive() && core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() {
 				spell = warlock.Corruption
-			} else if !warlock.UnstableAffDot.IsActive() {
+			} else if (!warlock.UnstableAffDot.IsActive() || warlock.UnstableAffDot.RemainingDuration(sim) < warlock.UnstableAff.CurCast.CastTime) &&
+			sim.GetRemainingDuration() > warlock.UnstableAffDot.Duration {
 				spell = warlock.UnstableAff
-			} else if !warlock.HauntAura.IsActive() && warlock.Haunt.CD.IsReady(sim) {
+			} else if warlock.Haunt.CD.IsReady(sim) && 2 * sim.GetRemainingDuration() > warlock.HauntAura.Duration {
 				spell = warlock.Haunt
+			} else if sim.IsExecutePhase35() && time.Duration(warlock.CorruptionDot.TickCount) * warlock.CorruptionDot.TickLength > sim.CurrentTime {
+				spell = warlock.Corruption
 			} else if sim.IsExecutePhase20() {
-				// if warlock.DrainSoulDot[1].IsActive() {
-				// 	warlock.DrainSoulDot[1].Refresh(sim)
-				// } else {
+				if warlock.DrainSoulDot[1].IsActive() && warlock.DrainSoulDot[1].TickCount < 5 {
+					warlock.DrainSoulDot[1].Refresh(sim)
+					warlock.DrainSoulDot[1].Aura.UpdateExpires(warlock.DrainSoulDot[1].Aura.ExpiresAt() + epsilon)
+					warlock.WaitUntil(sim, sim.CurrentTime + warlock.DrainSoul[1].CurCast.ChannelTime)
+					return
+				} else {
 					spell = warlock.DrainSoul[1]
-				// }
+				}
 			} else {
-				spell = warlock.Shadowbolt
+				spell = warlock.ShadowBolt
 			}
 		} else if rotationType == proto.Warlock_Rotation_Demonology && warlock.Talents.Metamorphosis {
 
@@ -149,7 +159,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			} else if warlock.MoltenCoreAura.IsActive() {
 				spell = warlock.Incinerate
 			} else {
-				spell = warlock.Shadowbolt
+				spell = warlock.ShadowBolt
 			}
 		} else if rotationType == proto.Warlock_Rotation_Destruction && warlock.Talents.ChaosBolt {
 
@@ -246,8 +256,8 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			spell = warlock.Incinerate
 		} else {
 			switch mainSpell {
-			case proto.Warlock_Rotation_Shadowbolt:
-				spell = warlock.Shadowbolt
+			case proto.Warlock_Rotation_ShadowBolt:
+				spell = warlock.ShadowBolt
 			case proto.Warlock_Rotation_Incinerate:
 				spell = warlock.Incinerate
 			default:

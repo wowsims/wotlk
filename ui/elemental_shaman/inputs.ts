@@ -52,6 +52,23 @@ export const ElementalShamanRotationConfig = {
 				},
 			},
 		},
+		{
+			type: 'boolean' as const, 
+			cssClass: '',
+			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
+			config: {
+				label: 'In Thunderstorm Range',
+				labelTooltip: 'Thunderstorm will hit all targets when cast. Ignores knockback.',
+				changedEvent: (player: Player<Spec.SpecElementalShaman>) => player.talentsChangeEmitter,
+				getValue: (player: Player<Spec.SpecElementalShaman>) => player.getRotation().inThunderstormRange,
+				setValue: (eventID: EventID, player: Player<Spec.SpecElementalShaman>, newValue: boolean) => {
+					const newRotation = player.getRotation();
+					newRotation.inThunderstormRange = newValue
+					player.setRotation(eventID, newRotation);
+				},
+				enableWhen: (player: Player<Spec.SpecElementalShaman>) => player.getTalents().thunderstorm,
+			},			
+		}
 	],
 };
 

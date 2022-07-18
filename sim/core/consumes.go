@@ -435,26 +435,6 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 		})
 	}
 
-	switch consumes.Alchohol {
-	case proto.Alchohol_AlchoholKreegsStoutBeatdown:
-		character.AddStats(stats.Stats{
-			stats.Intellect: -5,
-			stats.Spirit:    25,
-		})
-	}
-
-	// Scrolls
-	character.AddStat(stats.Agility, []float64{0, 5, 9, 13, 17, 20}[consumes.ScrollOfAgility])
-	character.AddStat(stats.Strength, []float64{0, 5, 9, 13, 17, 20}[consumes.ScrollOfStrength])
-	if !character.HasRingEquipped(29297) {
-		// Proc from Band of Eternal Defender removes scroll.
-		character.AddStat(stats.Armor, []float64{0, 60, 120, 180, 240, 300}[consumes.ScrollOfProtection])
-	}
-	if raidBuffs.DivineSpirit {
-		// Doesn't stack with DS
-		character.AddStat(stats.Spirit, []float64{0, 3, 7, 11, 15, 30, 40, 64}[consumes.ScrollOfSpirit])
-	}
-
 	// Weapon Imbues
 	allowMHImbue := character.HasMHWeapon() && character.HasMHWeaponImbue
 	if allowMHImbue {
@@ -471,6 +451,11 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 
 func ApplyPetConsumeEffects(pet *Character, ownerConsumes proto.Consumes) {
 	switch ownerConsumes.PetFood {
+	case proto.PetFood_PetFoodSpicyMammothTreats:
+		pet.AddStats(stats.Stats{
+			stats.Strength: 30,
+			stats.Spirit:   30,
+		})
 	case proto.PetFood_PetFoodKiblersBits:
 		pet.AddStats(stats.Stats{
 			stats.Strength: 20,

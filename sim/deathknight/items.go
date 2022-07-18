@@ -7,6 +7,28 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+var ItemSetScourgeborne = core.NewItemSet(core.ItemSet{
+	Name: "Scourgeborne Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Increases the critical strike chance of your obliterate
+			// scourge strike and death strike abilities by 5%
+		},
+		4: func(agent core.Agent) {
+			// Your obliterate, scourge strike and death strike
+			// generate 5 additional runic power
+		},
+	},
+})
+
+func (deathKnight *DeathKnight) scourgeborneCritBonus() float64 {
+	return core.TernaryFloat64(deathKnight.HasSetBonus(ItemSetScourgeborne, 2), 5.0, 0.0)
+}
+
+func (deathKnight *DeathKnight) scourgeborneRunicPowerBonus() float64 {
+	return core.TernaryFloat64(deathKnight.HasSetBonus(ItemSetScourgeborne, 4), 5.0, 0.0)
+}
+
 func init() {
 	core.NewItemEffect(40715, func(agent core.Agent) {
 		deathKnight := agent.(DeathKnightAgent).GetDeathKnight()

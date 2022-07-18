@@ -57,13 +57,14 @@ type DeathKnight struct {
 	HowlingBlast         *core.Spell
 
 	//HornOfWinter     *core.Spell
-	//UnbreakableArmor *core.Spell
 	//ArmyOfTheDead    *core.Spell
-	//RaiseDead        *core.Spell
 
 	// "CDs"
 	BloodTap     *core.Spell
 	BloodTapAura *core.Aura
+
+	UnbreakableArmor     *core.Spell
+	UnbreakableArmorAura *core.Aura
 
 	BoneShield     *core.Spell
 	BoneShieldAura *core.Aura
@@ -141,6 +142,8 @@ func (deathKnight *DeathKnight) Initialize() {
 	deathKnight.registerDiseaseDots()
 	deathKnight.registerGhoulFrenzySpell()
 	deathKnight.registerBoneShieldSpell()
+	deathKnight.registerUnbreakableArmorSpell()
+	//deathKnight.registerIceboundFortitudeSpell()
 
 	deathKnight.registerRaiseDeadCD()
 	deathKnight.registerSummonGargoyleCD()
@@ -270,10 +273,12 @@ func (deathKnight *DeathKnight) secondaryCritModifier(applyGuile bool) float64 {
 	}
 	return secondaryModifier
 }
-func (deathKnight *DeathKnight) critMultiplier(applyGuile bool) float64 {
+func (deathKnight *DeathKnight) critMultiplier() float64 {
+	applyGuile := deathKnight.Talents.GuileOfGorefiend > 0
 	return deathKnight.MeleeCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile))
 }
-func (deathKnight *DeathKnight) spellCritMultiplier(applyGuile bool) float64 {
+func (deathKnight *DeathKnight) spellCritMultiplier() float64 {
+	applyGuile := deathKnight.Talents.GuileOfGorefiend > 0
 	return deathKnight.MeleeCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile))
 }
 func init() {

@@ -44,5 +44,5 @@ func (deathKnight *DeathKnight) registerBloodTapSpell() {
 }
 
 func (deathKnight *DeathKnight) CanBloodTap(sim *core.Simulation) bool {
-	return deathKnight.CastCostPossible(sim, 0.0, 1, 0, 0) && deathKnight.BloodTap.IsReady(sim)
+	return deathKnight.BloodTap.IsReady(sim) && deathKnight.BloodTap.CD.IsReady(sim)
 }

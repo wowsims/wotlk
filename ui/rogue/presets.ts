@@ -55,8 +55,6 @@ export const DefaultConsumes = Consumes.create({
 	food: Food.FoodFishFeast,
 	mainHandImbue: WeaponImbue.WeaponImbueRogueInstantPoison,
 	offHandImbue: WeaponImbue.WeaponImbueRogueDeadlyPoison,
-	scrollOfAgility: 5,
-	scrollOfStrength: 5,
 });
 
 export const P1_PRESET = {

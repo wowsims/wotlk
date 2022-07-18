@@ -15,6 +15,7 @@ import (
 func (warlock *Warlock) registerDrainSoulSpell(numTicks int) *core.Spell {
 	baseCost := warlock.BaseMana * 0.14
 	channelTime := 3 * time.Second * time.Duration(numTicks)
+	epsilon := 1* time.Millisecond
 
 	return warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 47855},
@@ -46,6 +47,7 @@ func (warlock *Warlock) registerDrainSoulSpell(numTicks int) *core.Spell {
 					}
 				}
 				warlock.DrainSoulDot[numTicks].Apply(sim)
+				warlock.DrainSoulDot[numTicks].Aura.UpdateExpires(warlock.DrainSoulDot[numTicks].Aura.ExpiresAt() + epsilon)
 			},
 		}),
 	})
@@ -59,7 +61,7 @@ func (warlock *Warlock) registerDrainSoulDot(numTicks int) *core.Dot {
 		DamageMultiplier:     1 + 0.03 * float64(warlock.Talents.SoulSiphon) * afflictionSpellNumber,
 		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 		IsPeriodic:           true,
-		OutcomeApplier:       warlock.OutcomeFuncMagicCrit(warlock.DefaultSpellCritMultiplier()),
+		OutcomeApplier:       warlock.OutcomeFuncTick(),
 		ProcMask:             core.ProcMaskSpellDamage,
 		BaseDamage:       	  core.BaseDamageConfigMagicNoRoll(710/5, 0.429),
 	}
@@ -84,7 +86,7 @@ func (warlock *Warlock) setupDrainSoulExecutePhase() {
 		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute20 bool) {
 			if isExecute20 {
 				for i := 1;  i<=5; i++ {
-					warlock.DrainSoulDot[i].Spell.DamageMultiplier *= 4
+					warlock.DrainSoulDot[i].Spell.DamageMultiplier *= 2 //TODO : Fix (*=4) when DamageMultiplier is fixed
 				}
 			}
 		})

@@ -12,7 +12,7 @@ type Warlock struct {
 	Options  proto.Warlock_Options
 	Rotation proto.Warlock_Rotation
 
-	Shadowbolt     *core.Spell
+	ShadowBolt     *core.Spell
 	Incinerate     *core.Spell
 	Immolate       *core.Spell
 	ImmolateDot    *core.Dot
@@ -74,7 +74,7 @@ func (warlock *Warlock) GetWarlock() *Warlock {
 
 func (warlock *Warlock) Initialize() {
 	warlock.registerIncinerateSpell()
-	warlock.registerShadowboltSpell()
+	warlock.registerShadowBoltSpell()
 	warlock.registerImmolateSpell()
 	warlock.registerCorruptionSpell()
 	warlock.registerCurseOfElementsSpell()

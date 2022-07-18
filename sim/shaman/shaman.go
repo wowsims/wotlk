@@ -19,16 +19,17 @@ const (
 	SpellFlagTotem    = core.SpellFlagAgentReserved3
 )
 
-func NewShaman(character core.Character, talents proto.ShamanTalents, totems proto.ShamanTotems, selfBuffs SelfBuffs) *Shaman {
+func NewShaman(character core.Character, talents proto.ShamanTalents, totems proto.ShamanTotems, selfBuffs SelfBuffs, thunderstormRange bool) *Shaman {
 	if totems.Fire == proto.FireTotem_TotemOfWrath && !talents.TotemOfWrath {
 		totems.Fire = proto.FireTotem_NoFireTotem
 	}
 
 	shaman := &Shaman{
-		Character: character,
-		Talents:   talents,
-		Totems:    totems,
-		SelfBuffs: selfBuffs,
+		Character:           character,
+		Talents:             talents,
+		Totems:              totems,
+		SelfBuffs:           selfBuffs,
+		thunderstormInRange: thunderstormRange,
 	}
 	shaman.EnableManaBar()
 
@@ -73,6 +74,8 @@ const (
 // Shaman represents a shaman character.
 type Shaman struct {
 	core.Character
+
+	thunderstormInRange bool // flag if thunderstorm will be in range.
 
 	Talents   proto.ShamanTalents
 	SelfBuffs SelfBuffs
@@ -206,7 +209,7 @@ func (shaman *Shaman) Initialize() {
 	}
 
 	if shaman.Talents.Thunderstorm {
-		shaman.Thunderstorm = shaman.newThunderstormSpell()
+		shaman.Thunderstorm = shaman.newThunderstormSpell(shaman.thunderstormInRange)
 	}
 	shaman.registerShocks()
 	shaman.registerGraceOfAirTotemSpell()

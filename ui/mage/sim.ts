@@ -1,12 +1,12 @@
+import { RaidBuffs } from '/wotlk/core/proto/common.js';
+import { PartyBuffs } from '/wotlk/core/proto/common.js';
 import { IndividualBuffs } from '/wotlk/core/proto/common.js';
+import { Debuffs } from '/wotlk/core/proto/common.js';
 import { Class } from '/wotlk/core/proto/common.js';
 import { Consumes } from '/wotlk/core/proto/common.js';
-import { Debuffs } from '/wotlk/core/proto/common.js';
 import { Encounter } from '/wotlk/core/proto/common.js';
 import { ItemSlot } from '/wotlk/core/proto/common.js';
 import { MobType } from '/wotlk/core/proto/common.js';
-import { PartyBuffs } from '/wotlk/core/proto/common.js';
-import { RaidBuffs } from '/wotlk/core/proto/common.js';
 import { RaidTarget } from '/wotlk/core/proto/common.js';
 import { Spec } from '/wotlk/core/proto/common.js';
 import { Stat } from '/wotlk/core/proto/common.js';
@@ -15,17 +15,6 @@ import { Stats } from '/wotlk/core/proto_utils/stats.js';
 import { Player } from '/wotlk/core/player.js';
 import { Sim } from '/wotlk/core/sim.js';
 import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
-
-import { Alchohol } from '/wotlk/core/proto/common.js';
-import { BattleElixir } from '/wotlk/core/proto/common.js';
-import { Flask } from '/wotlk/core/proto/common.js';
-import { Food } from '/wotlk/core/proto/common.js';
-import { GuardianElixir } from '/wotlk/core/proto/common.js';
-import { Conjured } from '/wotlk/core/proto/common.js';
-
-import { PetFood } from '/wotlk/core/proto/common.js';
-import { Potions } from '/wotlk/core/proto/common.js';
-import { WeaponImbue } from '/wotlk/core/proto/common.js';
 
 import { Mage, Mage_Rotation as MageRotation, MageTalents as MageTalents, Mage_Options as MageOptions } from '/wotlk/core/proto/mage.js';
 
@@ -125,79 +114,6 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 				MageInputs.MageArmor,
 				MageInputs.MoltenArmor,
 			],
-			// IconInputs to include in the 'Other Buffs' section on the settings tab.
-			raidBuffInputs: [
-				IconInputs.DivineSpirit,
-				IconInputs.GiftOfTheWild,
-				IconInputs.MoonkinAura,
-				IconInputs.Bloodlust,
-				IconInputs.WrathOfAirTotem,
-				IconInputs.TotemOfWrath,
-				IconInputs.ManaSpringTotem,
-			],
-			partyBuffInputs: [
-				IconInputs.ManaTideTotem,
-				IconInputs.HeroicPresence,
-				IconInputs.EyeOfTheNight,
-				IconInputs.ChainOfTheTwilightOwl,
-				IconInputs.AtieshWarlock,
-				IconInputs.AtieshMage,
-			],
-			playerBuffInputs: [
-				IconInputs.BlessingOfKings,
-				IconInputs.BlessingOfWisdom,
-				IconInputs.Innervate,
-				IconInputs.PowerInfusion,
-			],
-			// IconInputs to include in the 'Debuffs' section on the settings tab.
-			debuffInputs: [
-				IconInputs.JudgementOfWisdom,
-
-				IconInputs.CurseOfElements,
-				IconInputs.Misery,
-				IconInputs.ImprovedScorch,
-				IconInputs.WintersChill,
-			],
-			// Which options are selectable in the 'Consumes' section.
-			consumeOptions: {
-				potions: [
-					Potions.SuperManaPotion,
-					Potions.DestructionPotion,
-				],
-				conjured: [
-					Conjured.ConjuredMageManaEmerald,
-					Conjured.ConjuredDarkRune,
-					Conjured.ConjuredFlameCap,
-				],
-				flasks: [
-					Flask.FlaskOfBlindingLight,
-					Flask.FlaskOfPureDeath,
-					Flask.FlaskOfSupremePower,
-				],
-				battleElixirs: [
-					BattleElixir.AdeptsElixir,
-					BattleElixir.ElixirOfMajorFirePower,
-					BattleElixir.ElixirOfMajorFrostPower,
-				],
-				guardianElixirs: [
-					GuardianElixir.ElixirOfDraenicWisdom,
-					GuardianElixir.ElixirOfMajorMageblood,
-				],
-				food: [
-					Food.FoodBlackenedBasilisk,
-					Food.FoodSkullfishSoup,
-				],
-				alcohol: [
-					Alchohol.AlchoholKreegsStoutBeatdown,
-				],
-				weaponImbues: [
-					WeaponImbue.WeaponImbueBrilliantWizardOil,
-					WeaponImbue.WeaponImbueSuperiorWizardOil,
-				],
-				other: [
-					IconInputs.ScrollOfSpiritV,
-				],
-			},
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: MageInputs.MageRotationConfig,
 			// Inputs to include in the 'Other' section on the settings tab.

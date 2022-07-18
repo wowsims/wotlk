@@ -10,16 +10,6 @@ import { Player } from '/wotlk/core/player.js';
 import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
 import { TypedEvent } from '/wotlk/core/typed_event.js';
 
-import { Alchohol } from '/wotlk/core/proto/common.js';
-import { BattleElixir } from '/wotlk/core/proto/common.js';
-import { Flask } from '/wotlk/core/proto/common.js';
-import { Food } from '/wotlk/core/proto/common.js';
-import { GuardianElixir } from '/wotlk/core/proto/common.js';
-import { Conjured } from '/wotlk/core/proto/common.js';
-
-import { Potions } from '/wotlk/core/proto/common.js';
-import { WeaponImbue } from '/wotlk/core/proto/common.js';
-
 import {
 	Warlock,
 	Warlock_Rotation as WarlockRotation,
@@ -136,85 +126,11 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				WarlockInputs.SummonFelhunter,
 				WarlockInputs.SummonFelguard,
 			],
-			// IconInputs to include in the 'Other Buffs' section on the settings tab.
-			raidBuffInputs: [
-				IconInputs.ArcaneBrilliance,
-				IconInputs.DivineSpirit,
-				IconInputs.MoonkinAura,
-				IconInputs.Bloodlust,
-				IconInputs.WrathOfAirTotem,
-				IconInputs.TotemOfWrath,
-				IconInputs.ManaSpringTotem,
-			],
-			partyBuffInputs: [
-				IconInputs.ManaTideTotem,
-				IconInputs.HeroicPresence,
-				IconInputs.EyeOfTheNight,
-				IconInputs.ChainOfTheTwilightOwl,
-				IconInputs.AtieshWarlock,
-				IconInputs.AtieshMage,
-			],
-			playerBuffInputs: [
-				IconInputs.BlessingOfKings,
-				IconInputs.BlessingOfWisdom,
-				IconInputs.Innervate,
-				IconInputs.PowerInfusion,
-			],
-			// IconInputs to include in the 'Debuffs' section on the settings tab.
-			debuffInputs: [
-				IconInputs.JudgementOfWisdom,
-				IconInputs.Misery,
-				IconInputs.ImprovedScorch,
-				IconInputs.CurseOfElements,
-				IconInputs.ExposeArmor,
-				IconInputs.SunderArmor,
-				IconInputs.BloodFrenzy,
-				IconInputs.FaerieFire,
-				IconInputs.CurseOfWeakness,
-			],
-			// Which options are selectable in the 'Consumes' section.
-			consumeOptions: {
-				potions: [
-					Potions.SuperManaPotion,
-					Potions.DestructionPotion,
-				],
-				conjured: [
-					Conjured.ConjuredDarkRune,
-					Conjured.ConjuredFlameCap,
-				],
-				flasks: [
-					Flask.FlaskOfPureDeath,
-					Flask.FlaskOfSupremePower,
-				],
-				battleElixirs: [
-					BattleElixir.AdeptsElixir,
-					BattleElixir.ElixirOfMajorShadowPower,
-					BattleElixir.ElixirOfMajorFirePower,
-				],
-				guardianElixirs: [
-					GuardianElixir.ElixirOfDraenicWisdom,
-					GuardianElixir.ElixirOfMajorMageblood,
-				],
-				food: [
-					Food.FoodBlackenedBasilisk,
-					Food.FoodSkullfishSoup,
-				],
-				alcohol: [
-					Alchohol.AlchoholKreegsStoutBeatdown,
-				],
-				weaponImbues: [
-					WeaponImbue.WeaponImbueBrilliantWizardOil,
-					WeaponImbue.WeaponImbueSuperiorWizardOil,
-				],
-				other: [
-					IconInputs.ScrollOfSpiritV,
-				],
-			},
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: WarlockInputs.WarlockRotationConfig,
 
 			spellInputs: [
-				WarlockInputs.PrimarySpellShadowbolt,
+				WarlockInputs.PrimarySpellShadowBolt,
 				WarlockInputs.PrimarySpellIncinerate,
 				WarlockInputs.PrimarySpellSeed,
 				WarlockInputs.SecondaryDotImmolate,
