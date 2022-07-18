@@ -67,8 +67,8 @@ func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return weaponBaseDamage(sim, hitEffect, spell) *
-						deathKnight.rageOfRivendareBonus() *
-						deathKnight.tundraStalkerBonus()
+						deathKnight.rageOfRivendareBonus(hitEffect.Target) *
+						deathKnight.tundraStalkerBonus(hitEffect.Target)
 				},
 				TargetSpellCoefficient: 1,
 			},

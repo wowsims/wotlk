@@ -9,6 +9,9 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+const FrostFeverAuraLabel = "FrostFever-"
+const BloodPlagueAuraLabel = "BloodPlague-"
+
 func (deathKnight *DeathKnight) countActiveDiseases() int {
 	count := 0
 	if deathKnight.FrostFeverDisease.IsActive() {
@@ -21,6 +24,10 @@ func (deathKnight *DeathKnight) countActiveDiseases() int {
 		count++
 	}
 	return count
+}
+
+func (deathKnight *DeathKnight) TargetHasDisease(label string, unit *core.Unit) bool {
+	return unit.HasActiveAura(label + strconv.Itoa(int(deathKnight.Index)))
 }
 
 func (deathKnight *DeathKnight) diseaseMultiplierBonus(multiplier float64) float64 {
@@ -38,7 +45,7 @@ func (deathKnight *DeathKnight) registerFrostFever() {
 
 	deathKnight.FrostFeverDisease = core.NewDot(core.Dot{
 		Aura: target.RegisterAura(core.Aura{
-			Label:    "FrostFever-" + strconv.Itoa(int(deathKnight.Index)),
+			Label:    FrostFeverAuraLabel + strconv.Itoa(int(deathKnight.Index)),
 			ActionID: actionID,
 		}),
 		NumberOfTicks: 5 + int(deathKnight.Talents.Epidemic),
@@ -55,8 +62,8 @@ func (deathKnight *DeathKnight) registerFrostFever() {
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return ((127.0 + 80.0*0.32) + deathKnight.applyImpurity(hitEffect, spell.Unit)*0.055) *
-						deathKnight.rageOfRivendareBonus() *
-						deathKnight.tundraStalkerBonus()
+						deathKnight.rageOfRivendareBonus(hitEffect.Target) *
+						deathKnight.tundraStalkerBonus(hitEffect.Target)
 				},
 				TargetSpellCoefficient: 1,
 			},
@@ -80,7 +87,7 @@ func (deathKnight *DeathKnight) registerBloodPlague() {
 
 	deathKnight.BloodPlagueDisease = core.NewDot(core.Dot{
 		Aura: target.RegisterAura(core.Aura{
-			Label:    "BloodPlague-" + strconv.Itoa(int(deathKnight.Index)),
+			Label:    BloodPlagueAuraLabel + strconv.Itoa(int(deathKnight.Index)),
 			ActionID: actionID,
 		}),
 		NumberOfTicks: 5 + int(deathKnight.Talents.Epidemic),
@@ -97,8 +104,8 @@ func (deathKnight *DeathKnight) registerBloodPlague() {
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return ((127.0 + 80.0*0.32) + deathKnight.applyImpurity(hitEffect, spell.Unit)*0.055) *
-						deathKnight.rageOfRivendareBonus() *
-						deathKnight.tundraStalkerBonus()
+						deathKnight.rageOfRivendareBonus(hitEffect.Target) *
+						deathKnight.tundraStalkerBonus(hitEffect.Target)
 				},
 				TargetSpellCoefficient: 1,
 			},

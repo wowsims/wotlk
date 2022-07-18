@@ -34,8 +34,8 @@ func (deathKnight *DeathKnight) registerDeathCoilSpell() {
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return (443.0 + deathKnight.applyImpurity(hitEffect, spell.Unit)*0.15) *
-						deathKnight.rageOfRivendareBonus() *
-						deathKnight.tundraStalkerBonus()
+						deathKnight.rageOfRivendareBonus(hitEffect.Target) *
+						deathKnight.tundraStalkerBonus(hitEffect.Target)
 				},
 				TargetSpellCoefficient: 1,
 			},

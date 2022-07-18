@@ -49,8 +49,8 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 					roll := (245.0-227.0)*sim.RandomFloat("Icy Touch") + 227.0
 					return (roll + deathKnight.applyImpurity(hitEffect, spell.Unit)*0.1) *
 						deathKnight.glacielRotBonus() *
-						deathKnight.rageOfRivendareBonus() *
-						deathKnight.tundraStalkerBonus() *
+						deathKnight.rageOfRivendareBonus(hitEffect.Target) *
+						deathKnight.tundraStalkerBonus(hitEffect.Target) *
 						deathKnight.mercilessCombatBonus(sim)
 				},
 				TargetSpellCoefficient: 1,

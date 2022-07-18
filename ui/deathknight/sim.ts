@@ -84,12 +84,13 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
-					bloodlust: true,
+					swiftRetribution: true,
 					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
-					windfuryTotem: TristateEffect.TristateEffectImproved,
-					leaderOfThePack: TristateEffect.TristateEffectImproved,
-					abominationsMight: true,
 					icyTalons: true,
+					abominationsMight: true,
+					leaderOfThePack: TristateEffect.TristateEffectRegular,
+					sanctifiedRetribution: true,
+					bloodlust: true
 				}),
 				partyBuffs: PartyBuffs.create({
 					heroicPresence: true,

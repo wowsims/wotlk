@@ -67,7 +67,11 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 						} else if !deathKnight.Talents.ScourgeStrike && deathKnight.CanPlagueStrike(sim) && !deathKnight.shouldWaitForDnD(sim, false, false, true) {
 							deathKnight.PlagueStrike.Cast(sim, target)
 						} else if deathKnight.CanBloodStrike(sim) && !deathKnight.shouldWaitForDnD(sim, true, false, false) {
-							deathKnight.BloodStrike.Cast(sim, target)
+							if deathKnight.Env.GetNumTargets() > 2 {
+								deathKnight.BloodBoil.Cast(sim, target)
+							} else {
+								deathKnight.BloodStrike.Cast(sim, target)
+							}
 						} else if deathKnight.CanDeathCoil(sim) && !deathKnight.SummonGargoyle.IsReady(sim) {
 							deathKnight.DeathCoil.Cast(sim, target)
 						} else {

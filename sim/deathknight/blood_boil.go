@@ -27,9 +27,9 @@ func (deathKnight *DeathKnight) registerBloodBoilSpell() {
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					roll := (220.0-180.0)*sim.RandomFloat("Blood Boil") + 180.0
-					return (roll + deathKnight.applyImpurity(hitEffect, spell.Unit)*0.04) *
-						deathKnight.rageOfRivendareBonus() *
-						deathKnight.tundraStalkerBonus()
+					return (roll + deathKnight.applyImpurity(hitEffect, spell.Unit)*0.06) *
+						deathKnight.rageOfRivendareBonus(hitEffect.Target) *
+						deathKnight.tundraStalkerBonus(hitEffect.Target)
 				},
 				TargetSpellCoefficient: 1,
 			},

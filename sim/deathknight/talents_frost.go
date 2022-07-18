@@ -110,8 +110,8 @@ func (deathKnight *DeathKnight) mercilessCombatBonus(sim *core.Simulation) float
 	return core.TernaryFloat64(sim.IsExecutePhase35() && deathKnight.Talents.MercilessCombat > 0, 1.0+0.06*float64(deathKnight.Talents.MercilessCombat), 1.0)
 }
 
-func (deathKnight *DeathKnight) tundraStalkerBonus() float64 {
-	return core.TernaryFloat64(deathKnight.FrostFeverDisease.IsActive(), 1.0+0.03*float64(deathKnight.Talents.TundraStalker), 1.0)
+func (deathKnight *DeathKnight) tundraStalkerBonus(target *core.Unit) float64 {
+	return core.TernaryFloat64(deathKnight.TargetHasDisease(FrostFeverAuraLabel, target), 1.0+0.03*float64(deathKnight.Talents.TundraStalker), 1.0)
 }
 
 func (deathKnight *DeathKnight) applyKillingMachine() {

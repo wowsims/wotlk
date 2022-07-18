@@ -258,7 +258,8 @@ func (at *auraTracker) HasAura(label string) bool {
 	return aura != nil
 }
 func (at *auraTracker) HasActiveAura(label string) bool {
-	return at.GetAura(label).IsActive()
+	aura := at.GetAura(label)
+	return aura != nil && aura.IsActive()
 }
 
 func (at *auraTracker) registerAura(unit *Unit, aura Aura) *Aura {
