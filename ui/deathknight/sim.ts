@@ -31,6 +31,8 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 			cssClass: 'deathknight-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
+				"<p>Rotation logic is just hit things on CGD. It is not good don't take it as actual data.</p>\
+				<p>Dynamic % multipliers to stat buffs snapshot at aura gain and don't dynamically update for now.</p>"
 			],
 
 			// All stats for which EP should be calculated.
@@ -43,6 +45,10 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				Stat.StatMeleeCrit,
 				Stat.StatMeleeHaste,
 				Stat.StatArmorPenetration,
+
+				// TODO: Remove these when debuff categories support us
+				Stat.StatSpellPower,
+				Stat.StatSpellHit,
 			],
 			// Reference stat against which to calculate EP. I think all classes use either spell power or attack power.
 			epReferenceStat: Stat.StatAttackPower,
@@ -122,6 +128,8 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 					DeathKnightInputs.StartingRunicPower,
 					DeathKnightInputs.PetUptime,
 					DeathKnightInputs.PrecastGhoulFrenzy,
+					
+					OtherInputs.PrepopPotion,
 
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
