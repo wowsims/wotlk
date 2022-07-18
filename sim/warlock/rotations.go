@@ -127,12 +127,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			} else if sim.IsExecutePhase35() && time.Duration(warlock.CorruptionDot.TickCount) * warlock.CorruptionDot.TickLength > sim.CurrentTime {
 				spell = warlock.Corruption
 			} else if sim.IsExecutePhase20() {
-				if !warlock.channelCheck(sim, warlock.DrainSoulDot, 5) {
-					spell = warlock.DrainSoul
-				} else {
-					warlock.WaitUntil(sim, sim.CurrentTime + warlock.DrainSoul.CurCast.ChannelTime)
-					return
-				}
+				spell = warlock.channelCheck(sim, warlock.DrainSoulDot, 5)
 			} else {
 				spell = warlock.ShadowBolt
 			}

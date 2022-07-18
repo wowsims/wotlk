@@ -29,6 +29,7 @@ type Warlock struct {
 	ConflagrateDot *core.Dot
 	DrainSoul      *core.Spell
 	DrainSoulDot   *core.Dot
+	DrainSoulChannelling    *core.Spell
 
 	CurseOfElements     *core.Spell
 	CurseOfElementsAura *core.Aura
@@ -62,6 +63,7 @@ type Warlock struct {
 	Pet *WarlockPet
 
 	DoingRegen bool
+
 }
 
 func (warlock *Warlock) GetCharacter() *core.Character {
@@ -86,6 +88,7 @@ func (warlock *Warlock) Initialize() {
 	warlock.registerSeedSpell()
 	warlock.registerSoulFireSpell()
 	warlock.registerDrainSoulSpell()
+	warlock.registerDrainSoulChannellingSpell()
 
 	if warlock.Talents.Conflagrate {
 		warlock.registerConflagrateSpell()
@@ -256,3 +259,4 @@ func (warlock *Warlock) HasMajorGlyph(glyph proto.WarlockMajorGlyph) bool {
 func (warlock *Warlock) HasMinorGlyph(glyph proto.WarlockMinorGlyph) bool {
 	return warlock.HasGlyph(int32(glyph))
 }
+

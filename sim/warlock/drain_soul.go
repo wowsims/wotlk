@@ -8,16 +8,40 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (warlock *Warlock) channelCheck(sim *core.Simulation, dot *core.Dot, maxTicks int) bool {
-	const epsilon = 1* time.Millisecond
+func (warlock *Warlock) channelCheck(sim *core.Simulation, dot *core.Dot, maxTicks int) *core.Spell {
 
 	if dot.IsActive() && dot.TickCount + 1 < maxTicks {
-		dot.Refresh(sim)
-		dot.Aura.UpdateExpires(dot.Aura.ExpiresAt() + epsilon)
-		return true
+		return warlock.DrainSoulChannelling
 	} else {
-		return false
+		return dot.Spell
 	}
+}
+
+func (warlock *Warlock) registerDrainSoulChannellingSpell() {
+	epsilon := 1 * time.Millisecond
+
+	channelTime := 3 * time.Second
+	warlock.DrainSoulChannelling = warlock.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 1},
+		Flags:       core.SpellFlagNoLogs | core.SpellFlagNoMetrics,
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				GCD:         core.GCDDefault,
+				ChannelTime: channelTime,
+				CastTime:  	 0,
+			},
+		},
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+			ProcMask:         core.ProcMaskEmpty,
+			ThreatMultiplier: 1,
+			FlatThreatBonus:  1,
+			OutcomeApplier:   warlock.OutcomeFuncAlwaysHit(),
+			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				warlock.DrainSoulDot.Refresh(sim)
+				warlock.DrainSoulDot.Aura.UpdateExpires(warlock.DrainSoulDot.Aura.ExpiresAt() + epsilon)
+			},
+		}),
+	})
 }
 
 func (warlock *Warlock) registerDrainSoulSpell() {
@@ -59,7 +83,7 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 			},
 		}),
 	})
-	
+
 	target := warlock.CurrentTarget
 	afflictionSpellNumber:= 3.0
 
