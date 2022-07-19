@@ -165,9 +165,7 @@ func (deathKnight *DeathKnight) doDKRotation(sim *core.Simulation, allowAdvance 
 
 	target := deathKnight.CurrentTarget
 
-	const USE_BAD_ROTA = true
-
-	if USE_BAD_ROTA {
+	if !deathKnight.Rotation.GetWipFrostRotation() {
 		if deathKnight.ShouldHornOfWinter(sim) {
 			deathKnight.HornOfWinter.Cast(sim, target)
 		} else if (!deathKnight.TargetHasDisease(FrostFeverAuraLabel, target) || deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim) < 6*time.Second) && deathKnight.CanIcyTouch(sim) {
