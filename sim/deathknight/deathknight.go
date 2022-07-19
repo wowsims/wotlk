@@ -14,7 +14,8 @@ type DeathKnight struct {
 	Options  proto.DeathKnight_Options
 	Rotation proto.DeathKnight_Rotation
 
-	FrostRotation FrostRotation
+	LastCastOutcome core.HitOutcome
+	DKRotation      DKRotation
 
 	Ghoul     *GhoulPet
 	RaiseDead *core.Spell
@@ -180,7 +181,7 @@ func (deathKnight *DeathKnight) Initialize() {
 	deathKnight.registerRaiseDeadCD()
 	deathKnight.registerSummonGargoyleCD()
 
-	deathKnight.setupFrostRotation()
+	deathKnight.setupDKRotation()
 }
 
 func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
@@ -206,7 +207,7 @@ func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
 		}
 	}
 
-	deathKnight.resetFrostRotation(sim)
+	deathKnight.resetDKRotation(sim)
 }
 
 func (deathKnight *DeathKnight) HasMajorGlyph(glyph proto.DeathKnightMajorGlyph) bool {
