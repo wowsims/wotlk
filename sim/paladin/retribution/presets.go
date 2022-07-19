@@ -85,7 +85,7 @@ var FullDebuffs = &proto.Debuffs{
 	Misery:            true,
 	CurseOfElements:   true,
 	BloodFrenzy:       true,
-	ExposeArmor:       proto.TristateEffect_TristateEffectImproved,
+	SunderArmor:       true,
 	FaerieFire:        proto.TristateEffect_TristateEffectImproved,
 	CurseOfWeakness:   proto.TristateEffect_TristateEffectImproved,
 }

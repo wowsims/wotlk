@@ -12,12 +12,6 @@
 .protection-warrior-sim-ui .self-buffs-section {
   grid-template-columns: repeat(4, 1fr);
 }
-.protection-warrior-sim-ui .buffs-section {
-  grid-template-columns: repeat(5, 1fr);
-}
-.protection-warrior-sim-ui .debuffs-section {
-  grid-template-columns: repeat(5, 1fr);
-}
 
 // Prot has a lot of EP stats, so make the text smaller so it fits vertically.
 .protection-warrior-sim-ui .character-stats-table-row {

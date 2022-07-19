@@ -57,7 +57,7 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 		MakePermanent(MangleAura(target))
 	}
 
-	if debuffs.ExposeArmor != proto.TristateEffect_TristateEffectMissing {
+	if debuffs.ExposeArmor {
 		exposeArmorAura := ExposeArmorAura(target, false) // TODO: check glyph
 		ScheduledAura(exposeArmorAura, false, PeriodicActionOptions{
 			Period:   time.Duration(10.0 * float64(time.Second)),

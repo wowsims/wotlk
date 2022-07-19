@@ -473,8 +473,8 @@ type PseudoStats struct {
 	ShadowDamageDealtMultiplier   float64
 	DiseaseDamageDealtMultiplier  float64
 
-	DirectMagicDamageDealtMultiplier float64
-	PeriodicMagicDamageDealtMultiplier float64
+	DirectMagicDamageDealtMultiplier    float64
+	PeriodicMagicDamageDealtMultiplier  float64
 	PeriodicShadowDamageDealtMultiplier float64
 
 	// Modifiers for spells with the SpellFlagAgentReserved1 flag set.
@@ -551,8 +551,8 @@ func NewPseudoStats() PseudoStats {
 		NatureDamageDealtMultiplier:         1,
 		ShadowDamageDealtMultiplier:         1,
 		DiseaseDamageDealtMultiplier:        1,
-		DirectMagicDamageDealtMultiplier:	 1,
-		PeriodicMagicDamageDealtMultiplier:	 1,
+		DirectMagicDamageDealtMultiplier:    1,
+		PeriodicMagicDamageDealtMultiplier:  1,
 		PeriodicShadowDamageDealtMultiplier: 1,
 		AgentReserved1DamageDealtMultiplier: 1,
 

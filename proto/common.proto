@@ -444,7 +444,7 @@ message RaidBuffs {
 
 	TristateEffect thorns = 32;
 	TristateEffect devotion_aura = 33;
-	TristateEffect retribution_aura = 34;
+	bool retribution_aura = 34;
 
 	// Drums
 	bool drums_of_forgotten_kings = 38;
@@ -553,7 +553,7 @@ message Debuffs {
 	
 	bool mangle = 16;
 
-	TristateEffect expose_armor = 17;
+	bool expose_armor = 17;
 	bool sunder_armor = 18;
 	TristateEffect curse_of_weakness = 19;
 
