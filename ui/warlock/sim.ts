@@ -50,7 +50,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				Stat.StatSpellCrit,
 				Stat.StatSpellHaste,
 				Stat.StatMP5,
-				//Pet stats
+				//Pet stats for buffs in UI only
 				Stat.StatStrength,
 				Stat.StatAttackPower,
 				Stat.StatAgility,
@@ -98,44 +98,16 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				// Default talents.
 				talents: Presets.AfflictionTalents.data,
 				// Default spec-specific settings.
-				specOptions: WarlockOptions.create({
-					armor: Armor.FelArmor,
-					summon: Summon.Felhunter,
-					weaponImbue: WeaponImbue.GrandSpellstone,
-				}),
-				// Default raid/party buffs settings.
-				raidBuffs: RaidBuffs.create({
-					giftOfTheWild: TristateEffect.TristateEffectImproved,
-					powerWordFortitude: TristateEffect.TristateEffectImproved,
-					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
-					arcaneBrilliance: true,
-					divineSpirit: true,
-					trueshotAura: true,
-					leaderOfThePack: TristateEffect.TristateEffectImproved,
-					icyTalons: true,
-					totemOfWrath: true,
-					moonkinAura: TristateEffect.TristateEffectImproved,
-					wrathOfAirTotem: true,
-					swiftRetribution: true,
-					sanctifiedRetribution: true,
-					bloodlust: true,
-				}),
+				specOptions: Presets.DestructionOptions,
 
-				partyBuffs: PartyBuffs.create({
-				}),
-				individualBuffs: IndividualBuffs.create({
-					blessingOfKings: true,
-					blessingOfWisdom: TristateEffect.TristateEffectImproved,
-					blessingOfMight: TristateEffect.TristateEffectImproved,
-				}),
-				debuffs: Debuffs.create({
-					ebonPlaguebringer: true,
-					faerieFire: TristateEffect.TristateEffectImproved,
-					judgementOfWisdom: true,
-					misery: true,
-					heartOfTheCrusader: true,
-					sunderArmor: true,
-				}),
+				// Default buffs and debuffs settings.
+				raidBuffs: Presets.DefaultRaidBuffs,
+
+				partyBuffs: PartyBuffs.create({}),
+
+				individualBuffs: Presets.DefaultIndividualBuffs,
+
+				debuffs: Presets.DefaultDebuffs,
 			},
 
 			// IconInputs to include in the 'Self Buffs' section on the settings tab.
@@ -143,15 +115,15 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				WarlockInputs.FelArmor,
 				WarlockInputs.DemonArmor,
 			],
+			weaponImbueInputs: [
+				WarlockInputs.GrandSpellstone,
+				WarlockInputs.GrandFirestone,
+			],
 			petInputs: [
 				WarlockInputs.SummonImp,
 				WarlockInputs.SummonSuccubus,
 				WarlockInputs.SummonFelhunter,
 				WarlockInputs.SummonFelguard,
-			],
-			weaponImbueInputs: [
-				WarlockInputs.GrandSpellstone,
-				WarlockInputs.GrandFirestone,
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: WarlockInputs.WarlockRotationConfig,

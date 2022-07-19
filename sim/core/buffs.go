@@ -222,7 +222,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 	})
 
 	if raidBuffs.TotemOfWrath || raidBuffs.DemonicPact > 0 {
-		v := MaxFloat(280, float64(raidBuffs.DemonicPact))
+		v := MaxFloat(280*TernaryFloat64(raidBuffs.TotemOfWrath, 1, 0), float64(raidBuffs.DemonicPact))
 		character.AddStats(stats.Stats{
 			stats.SpellPower:   v,
 			stats.HealingPower: v,

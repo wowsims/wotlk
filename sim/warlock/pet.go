@@ -263,7 +263,6 @@ var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
 		SecondaryAbility: Intercept,
 		ManaIntRatio:     11.5,
 		Stats: stats.Stats{
-			stats.AttackPower: -20,
 			stats.Stamina:     280,
 			stats.Strength:    153,
 			stats.Agility:     108,
@@ -279,7 +278,6 @@ var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
 		Melee:          false,
 		PrimaryAbility: Firebolt,
 		Stats: stats.Stats{
-			stats.AttackPower: -20,
 			stats.MP5:         123,
 			stats.Stamina:     101,
 			stats.Strength:    145,
@@ -295,7 +293,6 @@ var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
 		Melee:          true,
 		PrimaryAbility: LashOfPain,
 		Stats: stats.Stats{
-			stats.AttackPower: -20,
 			stats.Stamina:     328,
 			stats.Strength:    314,
 			stats.Agility:     90,
@@ -311,7 +308,6 @@ var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
 		Melee:          true,
 		PrimaryAbility: ShadowBite,
 		Stats: stats.Stats{
-			stats.AttackPower: -20,
 			stats.Stamina:     328,
 			stats.Strength:    314,
 			stats.Agility:     90,

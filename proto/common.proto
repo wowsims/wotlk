@@ -396,7 +396,6 @@ message RaidBuffs {
 	// +Stats
 	TristateEffect gift_of_the_wild = 5;
 
-
 	// +Stam
 	TristateEffect power_word_fortitude = 1;
 
@@ -431,7 +430,7 @@ message RaidBuffs {
 
 	// +Spell Power
 	bool totem_of_wrath = 10; // shouldn't stack with demonic pact (does in beta right now)
-	int32 demonic_pact = 37; // SP buff
+	int32 demonic_pact = 37; // SP buff, variable : 10% of demonology warlock's own SP
 
 	// +5% Spell Crit and/or +3% Haste
 	bool swift_retribution = 7;
@@ -570,6 +569,7 @@ message Debuffs {
 	TristateEffect demoralizing_roar = 22;
 	TristateEffect demoralizing_shout = 23;
 	TristateEffect thunder_clap = 24;
+	TristateEffect icy_touch = 30;
 
 	bool insect_swarm = 25;
 	bool scorpid_sting = 26;
