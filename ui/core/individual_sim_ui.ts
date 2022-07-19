@@ -509,7 +509,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			+
 			`
 				</div>
-				<div class="settings-section-container within-raid-sim-hide">
+				<div class="settings-section-container labeled-icon-section within-raid-sim-hide">
 					<fieldset class="settings-section buffs-section">
 						<legend>Other Buffs</legend>
 					</fieldset>
@@ -570,7 +570,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 						</div>
 					</fieldset>
 				</div>
-				<div class="settings-section-container within-raid-sim-hide">
+				<div class="settings-section-container labeled-icon-section within-raid-sim-hide">
 					<fieldset class="settings-section debuffs-section">
 						<legend>Debuffs</legend>
 					</fieldset>
@@ -646,22 +646,31 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			buffOptions.map(multiIconInput => new MultiIconPicker(buffsSection, this.player, multiIconInput, this)),
 			Tooltips.OTHER_BUFFS_SECTION);
 
-		const otherRaidBuffOptions = this.splitRelevantOptions(([
+		const otherBuffOptions = this.splitRelevantOptions([
 			{ item: IconInputs.Bloodlust, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
-			{ item: IconInputs.Thorns, stats: [Stat.StatArmor] },
-			{ item: IconInputs.RetributionAura, stats: [Stat.StatArmor] },
-			{ item: IconInputs.ShadowProtection, stats: [Stat.StatShadowResistance] },
-		] as Array<StatOption<IndividualSimIconPickerConfig<Raid, any>>>));
-		otherRaidBuffOptions.forEach(iconInput => new IndividualSimIconPicker(buffsSection, this.sim.raid, iconInput, this));
+		] as Array<StatOption<IndividualSimIconPickerConfig<Player<any>, any>>>);
+		otherBuffOptions.forEach(iconInput => new IndividualSimIconPicker(buffsSection, this.player, iconInput, this));
 
-		const otherPartyBuffOptions = this.splitRelevantOptions(([
+		const miscBuffOptions = this.splitRelevantOptions([
 			{ item: IconInputs.HeroicPresence, stats: [Stat.StatMeleeHit, Stat.StatSpellHit] },
-			{ item: IconInputs.ManaTideTotem, stats: [Stat.StatMP5] },
 			{ item: IconInputs.BraidedEterniumChain, stats: [Stat.StatMeleeCrit] },
 			{ item: IconInputs.ChainOfTheTwilightOwl, stats: [Stat.StatSpellCrit] },
 			{ item: IconInputs.EyeOfTheNight, stats: [Stat.StatSpellPower] },
-		] as Array<StatOption<IndividualSimIconPickerConfig<Party, any>>>));
-		otherPartyBuffOptions.forEach(iconInput => new IndividualSimIconPicker(buffsSection, this.player.getParty()!, iconInput, this));
+			{ item: IconInputs.Thorns, stats: [Stat.StatArmor] },
+			{ item: IconInputs.RetributionAura, stats: [Stat.StatArmor] },
+			{ item: IconInputs.ShadowProtection, stats: [Stat.StatStamina] },
+			{ item: IconInputs.ManaTideTotem, stats: [Stat.StatMP5] },
+			{ item: IconInputs.Innervate, stats: [Stat.StatMP5] },
+			{ item: IconInputs.PowerInfusion, stats: [Stat.StatMP5, Stat.StatSpellPower] },
+		] as Array<StatOption<IconPickerConfig<Player<any>, any>>>);
+		if (miscBuffOptions.length > 0) {
+			new MultiIconPicker(buffsSection, this.player, {
+				inputs: miscBuffOptions,
+				numColumns: 3,
+				emptyColor: 'grey',
+				label: 'Misc',
+			}, this);
+		}
 
 		const debuffOptions = this.splitRelevantOptions([
 			{ item: IconInputs.MajorArmorDebuff, stats: [Stat.StatArmorPenetration] },
@@ -687,7 +696,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			{ item: IconInputs.JudgementOfLight, stats: [Stat.StatStamina] },
 			{ item: IconInputs.GiftOfArthas, stats: [Stat.StatStamina] },
 		]);
-		otherDebuffOptions.forEach(iconInput => new IndividualSimIconPicker(debuffsSection, this.sim.raid, iconInput, this));
+		otherDebuffOptions.forEach(iconInput => new IndividualSimIconPicker(debuffsSection, this.player, iconInput, this));
 
 		const potionOptions = this.splitRelevantOptions([
 			{ item: Potions.RunicHealingPotion, stats: [Stat.StatStamina] },

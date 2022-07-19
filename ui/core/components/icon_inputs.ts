@@ -33,218 +33,213 @@ import { MultiIconPickerConfig } from './multi_icon_picker.js';
 // Raid Buffs
 
 export const AllStatsBuff = makeMultiIconInput([
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(17051), 'giftOfTheWild', TristateEffect.TristateEffectImproved),
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(48470), 'giftOfTheWild', TristateEffect.TristateEffectRegular),
-	makeBooleanRaidBuffInput2(ActionId.fromItemId(49634), 'drumsOfTheWild'),
-]);
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(17051), 'giftOfTheWild', TristateEffect.TristateEffectImproved),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(48470), 'giftOfTheWild', TristateEffect.TristateEffectRegular),
+	makeBooleanRaidBuffInput(ActionId.fromItemId(49634), 'drumsOfTheWild'),
+], 'Stats');
 
 export const AllStatsPercentBuff = makeMultiIconInput([
-	makeBooleanIndividualBuffInput2(ActionId.fromSpellId(25898), 'blessingOfKings'),
-	makeBooleanRaidBuffInput2(ActionId.fromItemId(49633), 'drumsOfForgottenKings'),
-	makeBooleanIndividualBuffInput2(ActionId.fromSpellId(25889), 'blessingOfSanctuary'),
-]);
+	makeBooleanIndividualBuffInput(ActionId.fromSpellId(25898), 'blessingOfKings'),
+	makeBooleanRaidBuffInput(ActionId.fromItemId(49633), 'drumsOfForgottenKings'),
+	makeBooleanIndividualBuffInput(ActionId.fromSpellId(25889), 'blessingOfSanctuary'),
+], 'Stats %');
 
 export const ArmorBuff = makeMultiIconInput([
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(20140), 'devotionAura', TristateEffect.TristateEffectImproved),
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(48942), 'devotionAura', TristateEffect.TristateEffectRegular),
-	makeBooleanRaidBuffInput2(ActionId.fromItemId(43468), 'scrollOfProtection'),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(20140), 'devotionAura', TristateEffect.TristateEffectImproved),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(48942), 'devotionAura', TristateEffect.TristateEffectRegular),
+	makeBooleanRaidBuffInput(ActionId.fromItemId(43468), 'scrollOfProtection'),
 	// stoneskin?
-]);
+], 'Armor');
 
 export const StaminaBuff = makeMultiIconInput([
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(14767), 'powerWordFortitude', TristateEffect.TristateEffectImproved),
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(25389), 'powerWordFortitude', TristateEffect.TristateEffectRegular),
-	makeBooleanRaidBuffInput2(ActionId.fromItemId(37094), 'scrollOfStamina'),
-]);
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(14767), 'powerWordFortitude', TristateEffect.TristateEffectImproved),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(25389), 'powerWordFortitude', TristateEffect.TristateEffectRegular),
+	makeBooleanRaidBuffInput(ActionId.fromItemId(37094), 'scrollOfStamina'),
+], 'Stam');
 
 export const StrengthAndAgilityBuff = makeMultiIconInput([
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(52456), 'strengthOfEarthTotem', TristateEffect.TristateEffectImproved),
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(58643), 'strengthOfEarthTotem', TristateEffect.TristateEffectRegular),
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(57623), 'hornOfWinter'),
-	makeBooleanRaidBuffInput2(ActionId.fromItemId(43464), 'scrollOfAgility'),
-	makeBooleanRaidBuffInput2(ActionId.fromItemId(43466), 'scrollOfStrength'),
-]);
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(52456), 'strengthOfEarthTotem', TristateEffect.TristateEffectImproved),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(58643), 'strengthOfEarthTotem', TristateEffect.TristateEffectRegular),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(57623), 'hornOfWinter'),
+	makeBooleanRaidBuffInput(ActionId.fromItemId(43464), 'scrollOfAgility'),
+	makeBooleanRaidBuffInput(ActionId.fromItemId(43466), 'scrollOfStrength'),
+], 'Str/Agi');
 
 export const IntellectBuff = makeMultiIconInput([
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(43002), 'arcaneBrilliance'),
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(57567), 'felIntelligence'),
-	makeBooleanRaidBuffInput2(ActionId.fromItemId(37092), 'scrollOfIntellect'),
-]);
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(43002), 'arcaneBrilliance'),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(57567), 'felIntelligence'),
+	makeBooleanRaidBuffInput(ActionId.fromItemId(37092), 'scrollOfIntellect'),
+], 'Int');
 
 export const SpiritBuff = makeMultiIconInput([
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(48073), 'divineSpirit'),
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(57567), 'felIntelligence'),
-	makeBooleanRaidBuffInput2(ActionId.fromItemId(37098), 'scrollOfSpirit'),
-]);
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(48073), 'divineSpirit'),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(57567), 'felIntelligence'),
+	makeBooleanRaidBuffInput(ActionId.fromItemId(37098), 'scrollOfSpirit'),
+], 'Spi');
 
 export const AttackPowerBuff = makeMultiIconInput([
-	makeBooleanIndividualBuffInput2(ActionId.fromSpellId(20045), 'blessingOfMight', TristateEffect.TristateEffectImproved),
-	makeBooleanIndividualBuffInput2(ActionId.fromSpellId(48934), 'blessingOfMight', TristateEffect.TristateEffectRegular),
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(12861), 'battleShout', TristateEffect.TristateEffectImproved),
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(47436), 'battleShout', TristateEffect.TristateEffectRegular),
-]);
+	makeBooleanIndividualBuffInput(ActionId.fromSpellId(20045), 'blessingOfMight', TristateEffect.TristateEffectImproved),
+	makeBooleanIndividualBuffInput(ActionId.fromSpellId(48934), 'blessingOfMight', TristateEffect.TristateEffectRegular),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(12861), 'battleShout', TristateEffect.TristateEffectImproved),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(47436), 'battleShout', TristateEffect.TristateEffectRegular),
+], 'AP');
 
 export const AttackPowerPercentBuff = makeMultiIconInput([
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(53137), 'abominationsMight'),
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(30809), 'unleashedRage'),
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(19506), 'trueshotAura'),
-]);
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(53137), 'abominationsMight'),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(30809), 'unleashedRage'),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(19506), 'trueshotAura'),
+], 'AP %');
 
 export const DamagePercentBuff = makeMultiIconInput([
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(31869), 'sanctifiedRetribution'),
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(31583), 'arcaneEmpowerment'),
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(34460), 'ferociousInspiration'),
-]);
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(31869), 'sanctifiedRetribution'),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(31583), 'arcaneEmpowerment'),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(34460), 'ferociousInspiration'),
+], 'Dmg %');
 
 export const DamageReductionPercentBuff = makeMultiIconInput([
-	makeBooleanIndividualBuffInput2(ActionId.fromSpellId(25899), 'blessingOfSanctuary'),
+	makeBooleanIndividualBuffInput(ActionId.fromSpellId(25899), 'blessingOfSanctuary'),
 	// vigilance
 	// renewed hope
-]);
+], 'Mit %');
 
 export const HastePercentBuff = makeMultiIconInput([
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(53648), 'swiftRetribution'),
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(48396), 'moonkinAura', TristateEffect.TristateEffectImproved),
-]);
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(53648), 'swiftRetribution'),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(48396), 'moonkinAura', TristateEffect.TristateEffectImproved),
+], 'Haste %');
 
 export const HealthBuff = makeMultiIconInput([
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(12861), 'commandingShout', TristateEffect.TristateEffectImproved),
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(47440), 'commandingShout', TristateEffect.TristateEffectRegular),
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(18696), 'bloodPact', TristateEffect.TristateEffectImproved),
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(47982), 'bloodPact', TristateEffect.TristateEffectRegular),
-]);
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(12861), 'commandingShout', TristateEffect.TristateEffectImproved),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(47440), 'commandingShout', TristateEffect.TristateEffectRegular),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(18696), 'bloodPact', TristateEffect.TristateEffectImproved),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(47982), 'bloodPact', TristateEffect.TristateEffectRegular),
+], 'Health');
 
 export const MP5Buff = makeMultiIconInput([
-	makeBooleanIndividualBuffInput2(ActionId.fromSpellId(20245), 'blessingOfWisdom', TristateEffect.TristateEffectImproved),
-	makeBooleanIndividualBuffInput2(ActionId.fromSpellId(48938), 'blessingOfWisdom', TristateEffect.TristateEffectRegular),
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(16206), 'manaSpringTotem', TristateEffect.TristateEffectImproved),
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(58774), 'manaSpringTotem', TristateEffect.TristateEffectRegular),
-]);
+	makeBooleanIndividualBuffInput(ActionId.fromSpellId(20245), 'blessingOfWisdom', TristateEffect.TristateEffectImproved),
+	makeBooleanIndividualBuffInput(ActionId.fromSpellId(48938), 'blessingOfWisdom', TristateEffect.TristateEffectRegular),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(16206), 'manaSpringTotem', TristateEffect.TristateEffectImproved),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(58774), 'manaSpringTotem', TristateEffect.TristateEffectRegular),
+], 'MP5');
 
 export const MeleeCritBuff = makeMultiIconInput([
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(17007), 'leaderOfThePack', TristateEffect.TristateEffectRegular),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(17007), 'leaderOfThePack', TristateEffect.TristateEffectRegular),
 	// rampage
-]);
+], 'Melee Crit');
 
 export const MeleeHasteBuff = makeMultiIconInput([
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(55610), 'icyTalons'),
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(29193), 'windfuryTotem', TristateEffect.TristateEffectImproved),
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(65990), 'windfuryTotem', TristateEffect.TristateEffectRegular),
-]);
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(55610), 'icyTalons'),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(29193), 'windfuryTotem', TristateEffect.TristateEffectImproved),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(65990), 'windfuryTotem', TristateEffect.TristateEffectRegular),
+], 'Melee Haste');
 
 export const ReplenishmentBuff = makeMultiIconInput([
-	makeBooleanIndividualBuffInput2(ActionId.fromSpellId(57669), 'replenishment'),
+	makeBooleanIndividualBuffInput(ActionId.fromSpellId(57669), 'replenishment'),
 	// hunting party
 	// enduring winter
 	// judgements of the wise
 	// vampiric touch
 	// improved soul leech
-]);
+], 'Repl');
 
 export const SpellCritBuff = makeMultiIconInput([
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(24907), 'moonkinAura', TristateEffect.TristateEffectRegular),
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(51470), 'elementalOath'),
-]);
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(24907), 'moonkinAura', TristateEffect.TristateEffectRegular),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(51470), 'elementalOath'),
+], 'Spell Crit');
 
 export const SpellHasteBuff = makeMultiIconInput([
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(3738), 'wrathOfAirTotem'),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(3738), 'wrathOfAirTotem'),
 	// flametongue totem
 	// demonic pact
-]);
+], 'Spell Haste');
 
 export const SpellPowerBuff = makeMultiIconInput([
-	makeBooleanRaidBuffInput2(ActionId.fromSpellId(57722), 'totemOfWrath'),
-]);
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(57722), 'totemOfWrath'),
+], 'SP');
 
+export const Bloodlust = withLabel(makeBooleanRaidBuffInput(ActionId.fromSpellId(2825), 'bloodlust'), 'Lust');
 
-// Other buffs
-export const Bloodlust = makeBooleanRaidBuffInput(ActionId.fromSpellId(2825), 'bloodlust');
+// Misc Buffs
 export const RetributionAura = makeBooleanRaidBuffInput(ActionId.fromSpellId(54043), 'retributionAura');
-export const Thorns = makeTristateRaidBuffInput(ActionId.fromSpellId(53307), ActionId.fromSpellId(16840), 'thorns');
-export const ShadowProtection = makeBooleanRaidBuffInput(ActionId.fromSpellId(41870), 'shadowProtection');
-
-
-// Party Buffs
+export const ShadowProtection = makeBooleanRaidBuffInput(ActionId.fromSpellId(48170), 'shadowProtection');
 export const BraidedEterniumChain = makeBooleanPartyBuffInput(ActionId.fromSpellId(31025), 'braidedEterniumChain');
 export const ChainOfTheTwilightOwl = makeBooleanPartyBuffInput(ActionId.fromSpellId(31035), 'chainOfTheTwilightOwl');
 export const HeroicPresence = makeBooleanPartyBuffInput(ActionId.fromSpellId(6562), 'heroicPresence');
 export const EyeOfTheNight = makeBooleanPartyBuffInput(ActionId.fromSpellId(31033), 'eyeOfTheNight');
+export const Thorns = makeTristateRaidBuffInput(ActionId.fromSpellId(53307), ActionId.fromSpellId(16840), 'thorns');
 export const ManaTideTotem = makeMultistatePartyBuffInput(ActionId.fromSpellId(16190), 5, 'manaTideTotems');
-
-// Individual Buffs
 export const Innervate = makeMultistateIndividualBuffInput(ActionId.fromSpellId(29166), 11, 'innervates');
 export const PowerInfusion = makeMultistateIndividualBuffInput(ActionId.fromSpellId(10060), 11, 'powerInfusions');
 
 // Debuffs
 
 export const MajorArmorDebuff = makeMultiIconInput([
-	makeBooleanDebuffInput2(ActionId.fromSpellId(7386), 'sunderArmor'),
-	makeBooleanDebuffInput2(ActionId.fromSpellId(8647), 'exposeArmor'),
+	makeBooleanDebuffInput(ActionId.fromSpellId(7386), 'sunderArmor'),
+	makeBooleanDebuffInput(ActionId.fromSpellId(8647), 'exposeArmor'),
 	// acid spit
-]);
+], 'Major Ar');
 
 export const MinorArmorDebuff = makeMultiIconInput([
-	makeBooleanDebuffInput2(ActionId.fromSpellId(770), 'faerieFire', TristateEffect.TristateEffectRegular),
-	makeBooleanDebuffInput2(ActionId.fromSpellId(50511), 'curseOfWeakness', TristateEffect.TristateEffectRegular),
+	makeBooleanDebuffInput(ActionId.fromSpellId(770), 'faerieFire', TristateEffect.TristateEffectRegular),
+	makeBooleanDebuffInput(ActionId.fromSpellId(50511), 'curseOfWeakness', TristateEffect.TristateEffectRegular),
 	// sting
-]);
+], 'Minor Ar');
 
 export const AttackPowerDebuff = makeMultiIconInput([
-	makeBooleanDebuffInput2(ActionId.fromSpellId(16862), 'demoralizingRoar', TristateEffect.TristateEffectImproved),
-	makeBooleanDebuffInput2(ActionId.fromSpellId(12879), 'demoralizingShout', TristateEffect.TristateEffectImproved),
-	makeBooleanDebuffInput2(ActionId.fromSpellId(48560), 'demoralizingRoar', TristateEffect.TristateEffectRegular),
-	makeBooleanDebuffInput2(ActionId.fromSpellId(18180), 'curseOfWeakness', TristateEffect.TristateEffectImproved),
-	makeBooleanDebuffInput2(ActionId.fromSpellId(50511), 'curseOfWeakness', TristateEffect.TristateEffectRegular),
-	makeBooleanDebuffInput2(ActionId.fromSpellId(47437), 'demoralizingShout', TristateEffect.TristateEffectRegular),
-]);
+	makeBooleanDebuffInput(ActionId.fromSpellId(16862), 'demoralizingRoar', TristateEffect.TristateEffectImproved),
+	makeBooleanDebuffInput(ActionId.fromSpellId(12879), 'demoralizingShout', TristateEffect.TristateEffectImproved),
+	makeBooleanDebuffInput(ActionId.fromSpellId(48560), 'demoralizingRoar', TristateEffect.TristateEffectRegular),
+	makeBooleanDebuffInput(ActionId.fromSpellId(18180), 'curseOfWeakness', TristateEffect.TristateEffectImproved),
+	makeBooleanDebuffInput(ActionId.fromSpellId(50511), 'curseOfWeakness', TristateEffect.TristateEffectRegular),
+	makeBooleanDebuffInput(ActionId.fromSpellId(47437), 'demoralizingShout', TristateEffect.TristateEffectRegular),
+], 'AP');
 
 export const BleedDebuff = makeMultiIconInput([
-	makeBooleanDebuffInput2(ActionId.fromSpellId(33876), 'mangle'),
+	makeBooleanDebuffInput(ActionId.fromSpellId(33876), 'mangle'),
 	// trauma
 	// stampede
-]);
+], 'Bleed');
 
 export const CritDebuff = makeMultiIconInput([
-	makeBooleanDebuffInput2(ActionId.fromSpellId(30706), 'totemOfWrath'),
-	makeBooleanDebuffInput2(ActionId.fromSpellId(20337), 'heartOfTheCrusader'),
-	makeBooleanDebuffInput2(ActionId.fromSpellId(58410), 'masterPoisoner'),
-]);
+	makeBooleanDebuffInput(ActionId.fromSpellId(30706), 'totemOfWrath'),
+	makeBooleanDebuffInput(ActionId.fromSpellId(20337), 'heartOfTheCrusader'),
+	makeBooleanDebuffInput(ActionId.fromSpellId(58410), 'masterPoisoner'),
+], 'Crit');
 
 export const MeleeAttackSpeedDebuff = makeMultiIconInput([
-	makeBooleanDebuffInput2(ActionId.fromSpellId(12666), 'thunderClap', TristateEffect.TristateEffectImproved),
-	makeBooleanDebuffInput2(ActionId.fromSpellId(47502), 'thunderClap', TristateEffect.TristateEffectRegular),
+	makeBooleanDebuffInput(ActionId.fromSpellId(12666), 'thunderClap', TristateEffect.TristateEffectImproved),
+	makeBooleanDebuffInput(ActionId.fromSpellId(47502), 'thunderClap', TristateEffect.TristateEffectRegular),
 	// icy touch
 	// imp icy touch
 	// infected wounds
 	// judgements of the just
-]);
+], 'Atk Spd');
 
 export const MeleeHitDebuff = makeMultiIconInput([
-	makeBooleanDebuffInput2(ActionId.fromSpellId(48460), 'insectSwarm'),
-	makeBooleanDebuffInput2(ActionId.fromSpellId(3043), 'scorpidSting'),
-]);
+	makeBooleanDebuffInput(ActionId.fromSpellId(48460), 'insectSwarm'),
+	makeBooleanDebuffInput(ActionId.fromSpellId(3043), 'scorpidSting'),
+], 'Miss');
 
 export const PhysicalDamageDebuff = makeMultiIconInput([
-	makeBooleanDebuffInput2(ActionId.fromSpellId(29859), 'bloodFrenzy'),
-	makeBooleanDebuffInput2(ActionId.fromSpellId(58413), 'savageCombat'),
-]);
+	makeBooleanDebuffInput(ActionId.fromSpellId(29859), 'bloodFrenzy'),
+	makeBooleanDebuffInput(ActionId.fromSpellId(58413), 'savageCombat'),
+], 'Phys Vuln');
 
 export const SpellCritDebuff = makeMultiIconInput([
-	makeBooleanDebuffInput2(ActionId.fromSpellId(17800), 'shadowMastery'),
-	makeBooleanDebuffInput2(ActionId.fromSpellId(12873), 'improvedScorch'),
-	makeBooleanDebuffInput2(ActionId.fromSpellId(28593), 'wintersChill'),
-]);
+	makeBooleanDebuffInput(ActionId.fromSpellId(17800), 'shadowMastery'),
+	makeBooleanDebuffInput(ActionId.fromSpellId(12873), 'improvedScorch'),
+	makeBooleanDebuffInput(ActionId.fromSpellId(28593), 'wintersChill'),
+], 'Spell Crit');
 
 export const SpellHitDebuff = makeMultiIconInput([
-	makeBooleanDebuffInput2(ActionId.fromSpellId(33198), 'misery'),
-	makeBooleanDebuffInput2(ActionId.fromSpellId(33602), 'faerieFire', TristateEffect.TristateEffectImproved),
-]);
+	makeBooleanDebuffInput(ActionId.fromSpellId(33198), 'misery'),
+	makeBooleanDebuffInput(ActionId.fromSpellId(33602), 'faerieFire', TristateEffect.TristateEffectImproved),
+], 'Spell Hit');
 
 export const SpellDamageDebuff = makeMultiIconInput([
-	makeBooleanDebuffInput2(ActionId.fromSpellId(51161), 'ebonPlaguebringer'),
-	makeBooleanDebuffInput2(ActionId.fromSpellId(48511), 'earthAndMoon'),
-	makeBooleanDebuffInput2(ActionId.fromSpellId(47865), 'curseOfElements'),
-]);
+	makeBooleanDebuffInput(ActionId.fromSpellId(51161), 'ebonPlaguebringer'),
+	makeBooleanDebuffInput(ActionId.fromSpellId(48511), 'earthAndMoon'),
+	makeBooleanDebuffInput(ActionId.fromSpellId(47865), 'curseOfElements'),
+], 'Spell Dmg');
 
 export const JudgementOfWisdom = makeBooleanDebuffInput(ActionId.fromSpellId(53408), 'judgementOfWisdom');
 export const JudgementOfLight = makeBooleanDebuffInput(ActionId.fromSpellId(27163), 'judgementOfLight');
@@ -259,78 +254,130 @@ export const KiblersBits = makeEnumValueConsumeInput(ActionId.fromItemId(33874),
 export const PetScrollOfAgilityV = makeEnumValueConsumeInput(ActionId.fromItemId(27498), 'petScrollOfAgility', 5);
 export const PetScrollOfStrengthV = makeEnumValueConsumeInput(ActionId.fromItemId(27503), 'petScrollOfStrength', 5);
 
-function makeMultiIconInput<ModObject>(inputs: Array<IconPickerConfig<ModObject, any>>): MultiIconPickerConfig<ModObject> {
+function withLabel<ModObject, T>(config: IconPickerConfig<ModObject, T>, label: string): IconPickerConfig<ModObject, T> {
+	config.label = label;
+	return config;
+}
+
+export function makeMultiIconInput<ModObject>(inputs: Array<IconPickerConfig<ModObject, any>>, label: string): MultiIconPickerConfig<ModObject> {
 	return {
 		inputs: inputs,
 		numColumns: 1,
 		emptyColor: 'grey',
+		label: label,
 	};
 }
-function makeBooleanRaidBuffInput2(id: ActionId, buffsFieldName: keyof RaidBuffs, value?: number): IconPickerConfig<Player<any>, boolean> {
-	return makeWrappedIconInput<Raid, boolean>({
-		getModObject: (player: Player<any>): Raid => player.getRaid()!,
+function makeBooleanRaidBuffInput(id: ActionId, fieldName: keyof RaidBuffs, value?: number): IconPickerConfig<Player<any>, boolean> {
+	return makeBooleanInput<RaidBuffs, Raid>({
+		getModObject: (player: Player<any>) => player.getRaid()!,
+		getValue: (raid: Raid) => raid.getBuffs(),
+		setValue: (eventID: EventID, raid: Raid, newVal: RaidBuffs) => raid.setBuffs(eventID, newVal),
+		changeEmitter: (raid: Raid) => raid.buffsChangeEmitter,
+	}, id, fieldName, value);
+}
+function makeBooleanPartyBuffInput(id: ActionId, fieldName: keyof PartyBuffs, value?: number): IconPickerConfig<Player<any>, boolean> {
+	return makeBooleanInput<PartyBuffs, Party>({
+		getModObject: (player: Player<any>) => player.getParty()!,
+		getValue: (party: Party) => party.getBuffs(),
+		setValue: (eventID: EventID, party: Party, newVal: PartyBuffs) => party.setBuffs(eventID, newVal),
+		changeEmitter: (party: Party) => party.buffsChangeEmitter,
+	}, id, fieldName, value);
+}
+function makeBooleanIndividualBuffInput(id: ActionId, fieldName: keyof IndividualBuffs, value?: number): IconPickerConfig<Player<any>, boolean> {
+	return makeBooleanInput<IndividualBuffs, Player<any>>({
+		getModObject: (player: Player<any>) => player,
+		getValue: (player: Player<any>) => player.getBuffs(),
+		setValue: (eventID: EventID, player: Player<any>, newVal: IndividualBuffs) => player.setBuffs(eventID, newVal),
+		changeEmitter: (player: Player<any>) => player.buffsChangeEmitter,
+	}, id, fieldName, value);
+}
+function makeBooleanDebuffInput(id: ActionId, fieldName: keyof Debuffs, value?: number): IconPickerConfig<Player<any>, boolean> {
+	return makeBooleanInput<Debuffs, Raid>({
+		getModObject: (player: Player<any>) => player.getRaid()!,
+		getValue: (raid: Raid) => raid.getDebuffs(),
+		setValue: (eventID: EventID, raid: Raid, newVal: Debuffs) => raid.setDebuffs(eventID, newVal),
+		changeEmitter: (raid: Raid) => raid.debuffsChangeEmitter,
+	}, id, fieldName, value);
+}
+
+function makeBooleanInput<Message, ModObject>(config: WrappedTypedIconPickerConfig<Message, ModObject>, id: ActionId, fieldName: keyof Message, value?: number): IconPickerConfig<Player<any>, boolean> {
+	return makeWrappedIconInput<ModObject, boolean>({
+		getModObject: config.getModObject,
 		id: id,
 		states: 2,
-		changedEvent: (raid: Raid) => raid.buffsChangeEmitter,
-		getValue: (raid: Raid) => value ? (raid.getBuffs()[buffsFieldName] as number) == value : (raid.getBuffs()[buffsFieldName] as boolean),
-		setValue: (eventID: EventID, raid: Raid, newValue: boolean) => {
-			const newBuffs = raid.getBuffs();
+		changedEvent: config.changeEmitter,
+		getValue: (modObj: ModObject) => value ? (config.getValue(modObj)[fieldName] as unknown as number) == value : (config.getValue(modObj)[fieldName] as unknown as boolean),
+		setValue: (eventID: EventID, modObj: ModObject, newValue: boolean) => {
+			const newMessage = config.getValue(modObj);
 			if (value) {
 				if (newValue) {
-					(newBuffs[buffsFieldName] as number) = value;
-				} else if ((newBuffs[buffsFieldName] as number) == value) {
-					(newBuffs[buffsFieldName] as number) = 0;
+					(newMessage[fieldName] as unknown as number) = value;
+				} else if ((newMessage[fieldName] as unknown as number) == value) {
+					(newMessage[fieldName] as unknown as number) = 0;
 				}
 			} else {
-				(newBuffs[buffsFieldName] as boolean) = newValue;
+				(newMessage[fieldName] as unknown as boolean) = newValue;
 			}
-			raid.setBuffs(eventID, newBuffs);
+			config.setValue(eventID, modObj, newMessage);
 		},
 	});
 }
-function makeBooleanIndividualBuffInput2(id: ActionId, buffsFieldName: keyof IndividualBuffs, value?: number): IconPickerConfig<Player<any>, boolean> {
-	return makeWrappedIconInput<Player<any>, boolean>({
-		getModObject: (player: Player<any>): Player<any> => player,
+
+function makeTristateRaidBuffInput(id: ActionId, impId: ActionId, fieldName: keyof RaidBuffs): IconPickerConfig<Player<any>, number> {
+	return makeTristateInput<RaidBuffs, Raid>({
+		getModObject: (player: Player<any>) => player.getRaid()!,
+		getValue: (raid: Raid) => raid.getBuffs(),
+		setValue: (eventID: EventID, raid: Raid, newVal: RaidBuffs) => raid.setBuffs(eventID, newVal),
+		changeEmitter: (raid: Raid) => raid.buffsChangeEmitter,
+	}, id, impId, fieldName);
+}
+function makeMultistatePartyBuffInput(id: ActionId, numStates: number, fieldName: keyof PartyBuffs): IconPickerConfig<Player<any>, number> {
+	return makeMultistateInput<PartyBuffs, Party>({
+		getModObject: (player: Player<any>) => player.getParty()!,
+		getValue: (party: Party) => party.getBuffs(),
+		setValue: (eventID: EventID, party: Party, newVal: PartyBuffs) => party.setBuffs(eventID, newVal),
+		changeEmitter: (party: Party) => party.buffsChangeEmitter,
+	}, id, numStates, fieldName);
+}
+function makeMultistateIndividualBuffInput(id: ActionId, numStates: number, fieldName: keyof IndividualBuffs): IconPickerConfig<Player<any>, number> {
+	return makeMultistateInput<IndividualBuffs, Player<any>>({
+		getModObject: (player: Player<any>) => player,
+		getValue: (player: Player<any>) => player.getBuffs(),
+		setValue: (eventID: EventID, player: Player<any>, newVal: IndividualBuffs) => player.setBuffs(eventID, newVal),
+		changeEmitter: (player: Player<any>) => player.buffsChangeEmitter,
+	}, id, numStates, fieldName);
+}
+function makeTristateInput<Message, ModObject>(config: WrappedTypedIconPickerConfig<Message, ModObject>, id: ActionId, impId: ActionId, fieldName: keyof Message): IconPickerConfig<Player<any>, number> {
+	const input = makeNumberInput(config, id, fieldName);
+	input.states = 3;
+	input.improvedId = impId;
+	return input;
+}
+function makeMultistateInput<Message, ModObject>(config: WrappedTypedIconPickerConfig<Message, ModObject>, id: ActionId, numStates: number, fieldName: keyof Message): IconPickerConfig<Player<any>, number> {
+	const input = makeNumberInput(config, id, fieldName);
+	input.states = numStates;
+	return input;
+}
+function makeNumberInput<Message, ModObject>(config: WrappedTypedIconPickerConfig<Message, ModObject>, id: ActionId, fieldName: keyof Message): IconPickerConfig<Player<any>, number> {
+	return makeWrappedIconInput<ModObject, number>({
+		getModObject: config.getModObject,
 		id: id,
-		states: 2,
-		changedEvent: (player: Player<any>) => player.buffsChangeEmitter,
-		getValue: (player: Player<any>) => value ? (player.getBuffs()[buffsFieldName] as number) == value : (player.getBuffs()[buffsFieldName] as boolean),
-		setValue: (eventID: EventID, player: Player<any>, newValue: boolean) => {
-			const newBuffs = player.getBuffs();
-			if (value) {
-				if (newValue) {
-					(newBuffs[buffsFieldName] as number) = value;
-				} else if ((newBuffs[buffsFieldName] as number) == value) {
-					(newBuffs[buffsFieldName] as number) = 0;
-				}
-			} else {
-				(newBuffs[buffsFieldName] as boolean) = newValue;
-			}
-			player.setBuffs(eventID, newBuffs);
+		states: 0, // Must be assigned externally.
+		changedEvent: config.changeEmitter,
+		getValue: (modObj: ModObject) => config.getValue(modObj)[fieldName] as unknown as number,
+		setValue: (eventID: EventID, modObj: ModObject, newValue: number) => {
+			const newMessage = config.getValue(modObj);
+			(newMessage[fieldName] as unknown as number) = newValue;
+			config.setValue(eventID, modObj, newMessage);
 		},
 	});
 }
-function makeBooleanDebuffInput2(id: ActionId, debuffsFieldName: keyof Debuffs, value?: number): IconPickerConfig<Player<any>, boolean> {
-	return makeWrappedIconInput<Raid, boolean>({
-		getModObject: (player: Player<any>): Raid => player.getRaid()!,
-		id: id,
-		states: 2,
-		changedEvent: (raid: Raid) => raid.debuffsChangeEmitter,
-		getValue: (raid: Raid) => value ? (raid.getDebuffs()[debuffsFieldName] as number) == value : (raid.getDebuffs()[debuffsFieldName] as boolean),
-		setValue: (eventID: EventID, raid: Raid, newValue: boolean) => {
-			const newDebuffs = raid.getDebuffs();
-			if (value) {
-				if (newValue) {
-					(newDebuffs[debuffsFieldName] as number) = value;
-				} else if ((newDebuffs[debuffsFieldName] as number) == value) {
-					(newDebuffs[debuffsFieldName] as number) = 0;
-				}
-			} else {
-				(newDebuffs[debuffsFieldName] as boolean) = newValue;
-			}
-			raid.setDebuffs(eventID, newDebuffs);
-		},
-	});
+
+interface WrappedTypedIconPickerConfig<Message, ModObject> {
+	getModObject: (player: Player<any>) => ModObject,
+	getValue: (modObj: ModObject) => Message,
+	setValue: (eventID: EventID, modObj: ModObject, messageVal: Message) => void,
+	changeEmitter: (modObj: ModObject) => TypedEvent<any>,
 }
 
 interface WrappedIconPickerConfig<ModObject, T> extends IconPickerConfig<ModObject, T> {
@@ -347,154 +394,6 @@ function makeWrappedIconInput<ModObject, T>(config: WrappedIconPickerConfig<ModO
 	}
 }
 
-function makeBooleanRaidBuffInput(id: ActionId, buffsFieldName: keyof RaidBuffs, exclusivityTags?: Array<ExclusivityTag>): IndividualSimIconPickerConfig<Raid, boolean> {
-	return {
-		id: id,
-		states: 2,
-		exclusivityTags: exclusivityTags,
-		changedEvent: (raid: Raid) => raid.buffsChangeEmitter,
-		getValue: (raid: Raid) => raid.getBuffs()[buffsFieldName] as boolean,
-		setValue: (eventID: EventID, raid: Raid, newValue: boolean) => {
-			const newBuffs = raid.getBuffs();
-			(newBuffs[buffsFieldName] as boolean) = newValue;
-			raid.setBuffs(eventID, newBuffs);
-		},
-	}
-}
-
-function makeTristateRaidBuffInput(id: ActionId, impId: ActionId, buffsFieldName: keyof RaidBuffs, exclusivityTags?: Array<ExclusivityTag>): IndividualSimIconPickerConfig<Raid, number> {
-	return {
-		id: id,
-		states: 3,
-		improvedId: impId,
-		exclusivityTags: exclusivityTags,
-		changedEvent: (raid: Raid) => raid.buffsChangeEmitter,
-		getValue: (raid: Raid) => raid.getBuffs()[buffsFieldName] as number,
-		setValue: (eventID: EventID, raid: Raid, newValue: number) => {
-			const newBuffs = raid.getBuffs();
-			(newBuffs[buffsFieldName] as number) = newValue;
-			raid.setBuffs(eventID, newBuffs);
-		},
-	}
-}
-
-function makeBooleanPartyBuffInput(id: ActionId, buffsFieldName: keyof PartyBuffs, exclusivityTags?: Array<ExclusivityTag>): IndividualSimIconPickerConfig<Party, boolean> {
-	return {
-		id: id,
-		states: 2,
-		exclusivityTags: exclusivityTags,
-		changedEvent: (party: Party) => party.buffsChangeEmitter,
-		getValue: (party: Party) => party.getBuffs()[buffsFieldName] as boolean,
-		setValue: (eventID: EventID, party: Party, newValue: boolean) => {
-			const newBuffs = party.getBuffs();
-			(newBuffs[buffsFieldName] as boolean) = newValue;
-			party.setBuffs(eventID, newBuffs);
-		},
-	}
-}
-
-function makeTristatePartyBuffInput(id: ActionId, impId: ActionId, buffsFieldName: keyof PartyBuffs): IndividualSimIconPickerConfig<Party, number> {
-	return {
-		id: id,
-		states: 3,
-		improvedId: impId,
-		changedEvent: (party: Party) => party.buffsChangeEmitter,
-		getValue: (party: Party) => party.getBuffs()[buffsFieldName] as number,
-		setValue: (eventID: EventID, party: Party, newValue: number) => {
-			const newBuffs = party.getBuffs();
-			(newBuffs[buffsFieldName] as number) = newValue;
-			party.setBuffs(eventID, newBuffs);
-		},
-	}
-}
-
-function makeMultistatePartyBuffInput(id: ActionId, numStates: number, buffsFieldName: keyof PartyBuffs): IndividualSimIconPickerConfig<Party, number> {
-	return {
-		id: id,
-		states: numStates,
-		changedEvent: (party: Party) => party.buffsChangeEmitter,
-		getValue: (party: Party) => party.getBuffs()[buffsFieldName] as number,
-		setValue: (eventID: EventID, party: Party, newValue: number) => {
-			const newBuffs = party.getBuffs();
-			(newBuffs[buffsFieldName] as number) = newValue;
-			party.setBuffs(eventID, newBuffs);
-		},
-	}
-}
-
-function makeEnumValuePartyBuffInput(id: ActionId, buffsFieldName: keyof PartyBuffs, enumValue: number, exclusivityTags?: Array<ExclusivityTag>): IndividualSimIconPickerConfig<Party, boolean> {
-	return {
-		id: id,
-		states: 2,
-		exclusivityTags: exclusivityTags,
-		changedEvent: (party: Party) => party.buffsChangeEmitter,
-		getValue: (party: Party) => party.getBuffs()[buffsFieldName] == enumValue,
-		setValue: (eventID: EventID, party: Party, newValue: boolean) => {
-			const newBuffs = party.getBuffs();
-			(newBuffs[buffsFieldName] as number) = newValue ? enumValue : 0;
-			party.setBuffs(eventID, newBuffs);
-		},
-	}
-}
-
-function makeBooleanIndividualBuffInput(id: ActionId, buffsFieldName: keyof IndividualBuffs, exclusivityTags?: Array<ExclusivityTag>): IndividualSimIconPickerConfig<Player<any>, boolean> {
-	return {
-		id: id,
-		states: 2,
-		exclusivityTags: exclusivityTags,
-		changedEvent: (player: Player<any>) => player.buffsChangeEmitter,
-		getValue: (player: Player<any>) => player.getBuffs()[buffsFieldName] as boolean,
-		setValue: (eventID: EventID, player: Player<any>, newValue: boolean) => {
-			const newBuffs = player.getBuffs();
-			(newBuffs[buffsFieldName] as boolean) = newValue;
-			player.setBuffs(eventID, newBuffs);
-		},
-	}
-}
-
-function makeTristateIndividualBuffInput(id: ActionId, impId: ActionId, buffsFieldName: keyof IndividualBuffs): IndividualSimIconPickerConfig<Player<any>, number> {
-	return {
-		id: id,
-		states: 3,
-		improvedId: impId,
-		changedEvent: (player: Player<any>) => player.buffsChangeEmitter,
-		getValue: (player: Player<any>) => player.getBuffs()[buffsFieldName] as number,
-		setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
-			const newBuffs = player.getBuffs();
-			(newBuffs[buffsFieldName] as number) = newValue;
-			player.setBuffs(eventID, newBuffs);
-		},
-	}
-}
-
-function makeMultistateIndividualBuffInput(id: ActionId, numStates: number, buffsFieldName: keyof IndividualBuffs): IndividualSimIconPickerConfig<Player<any>, number> {
-	return {
-		id: id,
-		states: numStates,
-		changedEvent: (player: Player<any>) => player.buffsChangeEmitter,
-		getValue: (player: Player<any>) => player.getBuffs()[buffsFieldName] as number,
-		setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
-			const newBuffs = player.getBuffs();
-			(newBuffs[buffsFieldName] as number) = newValue;
-			player.setBuffs(eventID, newBuffs);
-		},
-	}
-}
-
-function makeBooleanDebuffInput(id: ActionId, debuffsFieldName: keyof Debuffs, exclusivityTags?: Array<ExclusivityTag>): IndividualSimIconPickerConfig<Raid, boolean> {
-	return {
-		id: id,
-		states: 2,
-		exclusivityTags: exclusivityTags,
-		changedEvent: (raid: Raid) => raid.debuffsChangeEmitter,
-		getValue: (raid: Raid) => raid.getDebuffs()[debuffsFieldName] as boolean,
-		setValue: (eventID: EventID, raid: Raid, newValue: boolean) => {
-			const newDebuffs = raid.getDebuffs();
-			(newDebuffs[debuffsFieldName] as boolean) = newValue;
-			raid.setDebuffs(eventID, newDebuffs);
-		},
-	}
-}
 
 function makeTristateDebuffInput(id: ActionId, impId: ActionId, debuffsFieldName: keyof Debuffs): IndividualSimIconPickerConfig<Raid, number> {
 	return {
