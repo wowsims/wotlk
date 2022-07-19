@@ -330,11 +330,14 @@ func (deathKnight *DeathKnight) secondaryCritModifier(applyGuile bool) float64 {
 	}
 	return secondaryModifier
 }
-func (deathKnight *DeathKnight) critMultiplier() float64 {
+func (deathKnight *DeathKnight) spellCritMultiplier() float64 {
+	return deathKnight.MeleeCritMultiplier(1.0, 0)
+}
+func (deathKnight *DeathKnight) spellCritMultiplierGuile() float64 {
 	applyGuile := deathKnight.Talents.GuileOfGorefiend > 0
 	return deathKnight.MeleeCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile))
 }
-func (deathKnight *DeathKnight) spellCritMultiplier() float64 {
+func (deathKnight *DeathKnight) critMultiplierGuile() float64 {
 	applyGuile := deathKnight.Talents.GuileOfGorefiend > 0
 	return deathKnight.MeleeCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile))
 }

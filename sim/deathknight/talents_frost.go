@@ -120,6 +120,10 @@ func (deathKnight *DeathKnight) tundraStalkerBonus(target *core.Unit) float64 {
 	return core.TernaryFloat64(deathKnight.TargetHasDisease(FrostFeverAuraLabel, target), 1.0+0.03*float64(deathKnight.Talents.TundraStalker), 1.0)
 }
 
+func (deathKnight *DeathKnight) annihilationCritBonus() float64 {
+	return 1.0 * float64(deathKnight.Talents.Annihilation)
+}
+
 func (deathKnight *DeathKnight) applyKillingMachine() {
 	if deathKnight.Talents.KillingMachine == 0 {
 		return
@@ -263,10 +267,10 @@ func (deathKnight *DeathKnight) threatOfThassarianAdjustMetrics(sim *core.Simula
 func (deathKnight *DeathKnight) threatOfThassarianProcMasks(isMH bool, effect *core.SpellEffect, guileOfGorefiend bool) {
 	if isMH {
 		effect.ProcMask = core.ProcMaskMeleeMHSpecial
-		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.critMultiplier())
+		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.critMultiplierGuile())
 	} else {
 		effect.ProcMask = core.ProcMaskMeleeOHSpecial
-		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialCritOnly(deathKnight.critMultiplier())
+		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialCritOnly(deathKnight.critMultiplierGuile())
 	}
 }
 
