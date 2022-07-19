@@ -475,7 +475,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		var spellSection=``
 		if (this.individualConfig.spellInputs?.length) {
 			spellSection=`
-			   <fieldset class="settings-section spell-section">
+			    <fieldset class="settings-section spell-section">
 					<legend>Spells</legend>
 				</fieldset>`
 		}
@@ -503,6 +503,11 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				<div class="settings-section-container">
 					<fieldset class="settings-section self-buffs-section">
 						<legend>Self Buffs</legend>
+					</fieldset>
+					<fieldset class="settings-section imbues-section">
+					<legend>Imbues</legend>
+						<div class="consumes-imbue-mh"></div>
+						<div class="consumes-imbue-oh"></div>
 					</fieldset>
 			`
 			+
@@ -532,13 +537,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 								<span>OR</span>
 								<div class="consumes-battle-elixirs"></div>
 								<div class="consumes-guardian-elixirs"></div>
-							</div>
-						</div>
-						<div class="consumes-row">
-							<span>Imbues</span>
-							<div class="consumes-row-inputs">
-								<div class="consumes-imbue-mh"></div>
-								<div class="consumes-imbue-oh"></div>
 							</div>
 						</div>
 						<div class="consumes-row">
@@ -777,23 +775,19 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		}
 
 		if (this.individualConfig.weaponImbueInputs?.length) {
-			const weaponImbueSection = this.rootElem.getElementsByClassName('consumes-imbue-mh')[0] as HTMLElement;
+			const mhImbueSection = this.rootElem.getElementsByClassName('consumes-imbue-mh')[0] as HTMLElement;
 			configureIconSection(
-				weaponImbueSection,
-				this.individualConfig.weaponImbueInputs.map(iconInput => new IndividualSimIconPicker(weaponImbueSection, this.player, iconInput, this)),
+				mhImbueSection,
+				this.individualConfig.weaponImbueInputs.map(iconInput => new IndividualSimIconPicker(mhImbueSection, this.player, iconInput, this)),
 				);
+			const ohImbueSection = this.rootElem.getElementsByClassName('consumes-imbue-oh')[0] as HTMLElement;
+			if (isDualWieldSpec(this.player.spec)) {
+				configureIconSection(
+					ohImbueSection,
+					this.individualConfig.weaponImbueInputs.map(iconInput => new IndividualSimIconPicker(ohImbueSection, this.player, iconInput, this)),
+					);
+			}
 		}
-
-		// if (this.individualConfig.weaponImbueInputs?.length) {
-		// 	const mhImbueElem = this.rootElem.getElementsByClassName('consumes-imbue-mh')[0] as HTMLElement;
-		// 	const ohImbueElem = this.rootElem.getElementsByClassName('consumes-imbue-oh')[0] as HTMLElement;
-		// 	new IconEnumPicker(mhImbueElem, this.player,
-		// 		IconInputs.makeWeaponImbueInput(true, this.individualConfig.weaponImbueInputs));
-		// 	if (isDualWieldSpec(this.player.spec)) {
-		// 		new IconEnumPicker(ohImbueElem, this.player,
-		// 			IconInputs.makeWeaponImbueInput(false, this.individualConfig.weaponImbueInputs));
-		// 	}
-		// }
 
 		const tradeConsumesElem = this.rootElem.getElementsByClassName('consumes-trade')[0] as HTMLElement;
 		new IndividualSimIconPicker(tradeConsumesElem, this.player, IconInputs.SuperSapper, this);
