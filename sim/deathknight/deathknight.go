@@ -112,10 +112,6 @@ type DeathKnight struct {
 
 	// Dynamic trackers
 	additiveDamageModifier float64
-
-	// TODO: Is there a better way?
-	// Item Auras
-	SigilOfAwarenessAura *core.Aura
 }
 
 func (deathKnight *DeathKnight) ModifyAdditiveDamageModifier(sim *core.Simulation, value float64) {
@@ -140,7 +136,7 @@ func (deathKnight *DeathKnight) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 		raidBuffs.IcyTalons = true
 	}
 
-	raidBuffs.HornOfWinter = !deathKnight.Options.RefreshHornOfWinter
+	raidBuffs.HornOfWinter = !deathKnight.Rotation.RefreshHornOfWinter
 
 	if raidBuffs.StrengthOfEarthTotem == proto.TristateEffect_TristateEffectImproved ||
 		raidBuffs.StrengthOfEarthTotem == proto.TristateEffect_TristateEffectRegular {
@@ -199,7 +195,7 @@ func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
 		deathKnight.Presence = BloodPresence
 	}
 
-	if deathKnight.Options.PrecastHornOfWinter && deathKnight.Options.RefreshHornOfWinter {
+	if deathKnight.Options.PrecastHornOfWinter && deathKnight.Rotation.RefreshHornOfWinter {
 		if deathKnight.HornOfWinterAura.IsActive() {
 			deathKnight.HornOfWinterAura.Deactivate(sim)
 			deathKnight.HornOfWinterAura.Activate(sim)
@@ -207,6 +203,10 @@ func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
 	}
 
 	deathKnight.resetFrostRotation(sim)
+}
+
+func (deathKnight *DeathKnight) IsFuStrike(spell *core.Spell) bool {
+	return spell == deathKnight.Obliterate || spell == deathKnight.ScourgeStrike // || spell == deathKnight.DeathStrike
 }
 
 func (deathKnight *DeathKnight) HasMajorGlyph(glyph proto.DeathKnightMajorGlyph) bool {

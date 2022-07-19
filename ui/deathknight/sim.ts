@@ -127,8 +127,8 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				inputs: [
 					DeathKnightInputs.StartingRunicPower,
 					DeathKnightInputs.PetUptime,
+					
 					DeathKnightInputs.PrecastGhoulFrenzy,
-					DeathKnightInputs.RefreshHornOfWinter,
 					DeathKnightInputs.PrecastHornOfWinter,
 					
 					OtherInputs.PrepopPotion,

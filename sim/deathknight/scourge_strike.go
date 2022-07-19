@@ -30,7 +30,6 @@ func (deathKnight *DeathKnight) registerScourgeStrikeShadowDamageSpell() *core.S
 }
 
 func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 560.0, 0.7, true)
 	actionID := core.ActionID{SpellID: 55271}
 
 	outbreakBonus := 1.0
@@ -66,6 +65,9 @@ func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+					bonusBaseDamage := deathKnight.sigilOfAwarenessBonus(Ability_ScourgeStrike)
+					bonusBaseDamage += deathKnight.sigilOfArthriticBindingBonus()
+					weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 560.0+bonusBaseDamage, 0.7, true)
 					return weaponBaseDamage(sim, hitEffect, spell) *
 						deathKnight.rageOfRivendareBonus(hitEffect.Target) *
 						deathKnight.tundraStalkerBonus(hitEffect.Target)
