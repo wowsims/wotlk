@@ -19,6 +19,9 @@ func (deathKnight *DeathKnight) registerGhoulFrenzySpell() {
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
 			},
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				cast.GCD = deathKnight.getModifiedGCD()
+			},
 			CD: core.Cooldown{
 				Timer:    deathKnight.NewTimer(),
 				Duration: time.Second * 10,

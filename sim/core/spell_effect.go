@@ -301,9 +301,15 @@ func (spellEffect *SpellEffect) applyAttackerModifiers(sim *Simulation, spell *S
 		spellEffect.Damage *= attacker.PseudoStats.NatureDamageDealtMultiplier
 	} else if spell.SpellSchool.Matches(SpellSchoolShadow) {
 		spellEffect.Damage *= attacker.PseudoStats.ShadowDamageDealtMultiplier
-		if spellEffect.IsPeriodic {
+	}
+
+	if spellEffect.IsPeriodic {
+		spellEffect.Damage *= attacker.PseudoStats.PeriodicMagicDamageDealtMultiplier
+		if spell.SpellSchool.Matches(SpellSchoolShadow) {
 			spellEffect.Damage *= attacker.PseudoStats.PeriodicShadowDamageDealtMultiplier
 		}
+	} else {
+		spellEffect.Damage *= attacker.PseudoStats.DirectMagicDamageDealtMultiplier
 	}
 }
 

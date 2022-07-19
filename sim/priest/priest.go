@@ -138,6 +138,7 @@ func (priest *Priest) AddShadowWeavingStack(sim *core.Simulation) {
 		priest.ShadowWeavingAura.Refresh(sim)
 	} else {
 		priest.ShadowWeavingAura.Activate(sim)
+		priest.ShadowWeavingAura.AddStack(sim)
 	}
 }
 

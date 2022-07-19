@@ -57,8 +57,8 @@ func (deathKnight *DeathKnight) viciousStrikesBonus() float64 {
 	return 0.15 * float64(deathKnight.Talents.ViciousStrikes)
 }
 
-func (deathKnight *DeathKnight) rageOfRivendareBonus() float64 {
-	return core.TernaryFloat64(deathKnight.BloodPlagueDisease.IsActive(), 1.0+0.02*float64(deathKnight.Talents.RageOfRivendare), 1.0)
+func (deathKnight *DeathKnight) rageOfRivendareBonus(target *core.Unit) float64 {
+	return core.TernaryFloat64(deathKnight.TargetHasDisease(BloodPlagueAuraLabel, target), 1.0+0.02*float64(deathKnight.Talents.RageOfRivendare), 1.0)
 }
 
 func (deathKnight *DeathKnight) applyImpurity(hitEffect *core.SpellEffect, unit *core.Unit) float64 {
@@ -175,7 +175,7 @@ func (deathKnight *DeathKnight) applyBloodCakedBlade() {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-					diseaseMultiplier := (0.25 + float64(deathKnight.countActiveDiseases())*0.125)
+					diseaseMultiplier := (0.25 + float64(deathKnight.countActiveDiseases(spellEffect.Target))*0.125)
 					if isMH {
 						return mhBaseDamage(sim, spellEffect, spell) * diseaseMultiplier
 					} else {
@@ -301,7 +301,7 @@ func (deathKnight *DeathKnight) reapingWillProc(sim *core.Simulation, reapingCha
 	return ohWillCast
 }
 
-func (deathKnight *DeathKnight) reapingProc(sim *core.Simulation, spell *core.Spell, runeCost core.DKRuneCost) {
+func (deathKnight *DeathKnight) reapingProc(sim *core.Simulation, spell *core.Spell, runeCost core.DKRuneCost) bool {
 	if deathKnight.Talents.Reaping > 0 {
 		if runeCost.Blood > 0 {
 			reapingChance := deathKnight.reapingChance()
@@ -310,11 +310,9 @@ func (deathKnight *DeathKnight) reapingProc(sim *core.Simulation, spell *core.Sp
 				slot := deathKnight.SpendBloodRune(sim, spell.BloodRuneMetrics())
 				deathKnight.SetRuneAtSlotToState(0, slot, core.RuneState_DeathSpent, core.RuneKind_Death)
 				deathKnight.SetAsGeneratedByReapingOrBoTN(slot)
-			} else {
-				deathKnight.Spend(sim, spell, runeCost)
+				return true
 			}
-		} else {
-			deathKnight.Spend(sim, spell, runeCost)
 		}
 	}
+	return false
 }

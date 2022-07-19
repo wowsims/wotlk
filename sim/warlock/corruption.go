@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warlock *Warlock) registerCorruptionSpell() {
@@ -32,7 +32,7 @@ func (warlock *Warlock) registerCorruptionSpell() {
 	})
 
 	target := warlock.CurrentTarget
-	spellCoefficient := (1.2 + 0.12 * float64(warlock.Talents.EmpoweredCorruption)) / 6 + 0.01 * float64(warlock.Talents.EverlastingAffliction)
+	spellCoefficient := (1.2+0.12*float64(warlock.Talents.EmpoweredCorruption))/6 + 0.01*float64(warlock.Talents.EverlastingAffliction)
 	applier := warlock.OutcomeFuncTick()
 	if warlock.Talents.Pandemic {
 		applier = warlock.OutcomeFuncMagicCrit(warlock.SpellCritMultiplier(1, 1))
@@ -44,18 +44,18 @@ func (warlock *Warlock) registerCorruptionSpell() {
 			Label:    "Corruption-" + strconv.Itoa(int(warlock.Index)),
 			ActionID: actionID,
 		}),
-		NumberOfTicks: 		 6,
-		TickLength:    		 time.Second * 3,
+		NumberOfTicks:       6,
+		TickLength:          time.Second * 3,
 		AffectedByCastSpeed: warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfQuickDecay),
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:         	  core.ProcMaskPeriodicDamage,
-			DamageMultiplier:	  (1 + 0.01*float64(warlock.Talents.Contagion)) *
+			ProcMask: core.ProcMaskPeriodicDamage,
+			DamageMultiplier: (1 + 0.01*float64(warlock.Talents.Contagion)) *
 				(1 + 0.02*float64(warlock.Talents.ImprovedCorruption)) * (1 + 0.05*core.TernaryFloat64(warlock.Talents.SiphonLife, 1, 0)),
-			ThreatMultiplier: 	  1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-			BaseDamage:       	  core.BaseDamageConfigMagicNoRoll(1080/6, spellCoefficient),
+			ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+			BaseDamage:           core.BaseDamageConfigMagicNoRoll(1080/6, spellCoefficient),
 			BonusSpellCritRating: 3 * core.CritRatingPerCritChance * float64(warlock.Talents.Malediction),
-			OutcomeApplier:   	  applier,
-			IsPeriodic:       	  true,
+			OutcomeApplier:       applier,
+			IsPeriodic:           true,
 		}),
 	})
 }

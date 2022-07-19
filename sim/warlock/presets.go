@@ -78,10 +78,9 @@ var FullIndividualBuffs = &proto.IndividualBuffs{
 }
 
 var FullConsumes = &proto.Consumes{
-	Flask:           proto.Flask_FlaskOfPureDeath,
-	DefaultPotion:   proto.Potions_DestructionPotion,
-	DefaultConjured: proto.Conjured_ConjuredDarkRune,
-	Food:            proto.Food_FoodBlackenedBasilisk,
+	Flask:         proto.Flask_FlaskOfTheFrostWyrm,
+	DefaultPotion: proto.Potions_PotionOfWildMagic,
+	Food:          proto.Food_FoodFishFeast,
 }
 
 var FullDebuffs = &proto.Debuffs{

@@ -25,9 +25,6 @@ func (deathKnight *DeathKnight) registerUnbreakableArmorSpell() {
 			strengthBonus = 0.2 * deathKnight.GetStat(stats.Strength)
 			bonusStats := deathKnight.ApplyStatDependencies(stats.Stats{stats.Strength: strengthBonus})
 			deathKnight.UnbreakableArmorAura.Unit.AddStatsDynamic(sim, bonusStats)
-
-			amountOfRunicPower := 10.0
-			deathKnight.AddRunicPower(sim, amountOfRunicPower, deathKnight.BloodTap.RunicPowerMetrics())
 		},
 
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
@@ -45,6 +42,7 @@ func (deathKnight *DeathKnight) registerUnbreakableArmorSpell() {
 				Timer:    cdTimer,
 				Duration: cd,
 			},
+			IgnoreHaste: true,
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			deathKnight.UnbreakableArmorAura.Activate(sim)

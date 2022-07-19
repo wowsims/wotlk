@@ -24,9 +24,9 @@ func (deathKnight *DeathKnight) newFrostStrikeHitSpell(isMH bool) *core.Spell {
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				return weaponBaseDamage(sim, hitEffect, spell) *
-					deathKnight.glacielRotBonus() *
-					deathKnight.rageOfRivendareBonus() *
-					deathKnight.tundraStalkerBonus() *
+					deathKnight.glacielRotBonus(hitEffect.Target) *
+					deathKnight.rageOfRivendareBonus(hitEffect.Target) *
+					deathKnight.tundraStalkerBonus(hitEffect.Target) *
 					deathKnight.mercilessCombatBonus(sim)
 			},
 			TargetSpellCoefficient: 1,
@@ -78,6 +78,9 @@ func (deathKnight *DeathKnight) registerFrostStrikeSpell() {
 			DefaultCast: core.Cast{
 				GCD:  core.GCDDefault,
 				Cost: baseCost,
+			},
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				cast.GCD = deathKnight.getModifiedGCD()
 			},
 		},
 

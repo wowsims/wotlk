@@ -281,15 +281,16 @@ enum WeaponImbue {
 	WeaponImbueElementalSharpeningStone = 2;
 	WeaponImbueBrilliantWizardOil = 3;
 	WeaponImbueSuperiorWizardOil = 4;
-	WeaponImbueRighteousWeaponCoating = 12;
-
-	WeaponImbueRogueDeadlyPoison = 10;
-	WeaponImbueRogueInstantPoison = 11;
 
 	WeaponImbueShamanFlametongue = 6;
 	WeaponImbueShamanFrostbrand = 7;
 	WeaponImbueShamanRockbiter = 8;
 	WeaponImbueShamanWindfury = 9;
+
+	WeaponImbueRogueDeadlyPoison = 10;
+	WeaponImbueRogueInstantPoison = 11;
+
+	WeaponImbueRighteousWeaponCoating = 12;
 }
 
 enum Flask {

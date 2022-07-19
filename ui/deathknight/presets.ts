@@ -54,7 +54,7 @@ export const FrostUnholyTalents = {
 			major2: DeathKnightMajorGlyph.GlyphOfFrostStrike,
 			major3: DeathKnightMajorGlyph.GlyphOfDisease,
 			minor1: DeathKnightMinorGlyph.GlyphOfHornOfWinter,
-			minor2: DeathKnightMinorGlyph.GlyphOfBloodTap,
+			minor2: DeathKnightMinorGlyph.GlyphOfPestilence,
 			minor3: DeathKnightMinorGlyph.GlyphOfRaiseDead,
 		}),
 	}),
@@ -83,6 +83,8 @@ export const DefaultOptions = DeathKnightOptions.create({
 	startingRunicPower: 0,
 	petUptime: 1,
 	precastGhoulFrenzy: true,
+	refreshHornOfWinter: false,
+  precastHornOfWinter: true,
 });
 
 export const DefaultConsumes = Consumes.create({
@@ -93,91 +95,96 @@ export const DefaultConsumes = Consumes.create({
 });
 
 export const P1_UNHOLY_DW_BIS_PRESET = {
-	name: 'P1 Unholy DW Bis',
+	name: 'P1 Unholy DW',
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
-		"id": 44006,
-		"enchant": 44879,
-		"gems": [
-			41400,
-			22459
-		]
-		},
-		{
-		"id": 44664,
-		"gems": [
-			39996
-		]
-		},
-		{
-		"id": 40414,
-		"enchant": 44871
-		},
-		{
-		"id": 40403,
-		"enchant": 44472
-		},
-		{
-		"id": 40550,
-		"enchant": 44623,
-		"gems": [
-			42142,
-			40038
-		]
-		},
-		{
-		"id": 40330,
-		"enchant": 60616,
-		"gems": [
-			39996,
-			0
-		]
-		},
-		{
-		"id": 40347,
-		"enchant": 54999,
-		"gems": [
-			39996,
-			0
-		]
-		},
-		{
-		"id": 40278,
-		"gems": [
-			42142,
-			42142
-		]
-		},
-		{
-		"id": 40294,
-		"enchant": 38374
-		},
-		{
-		"id": 40591,
-		"enchant": 55016
-		},
-		{
-		"id": 40717
-		},
-		{
-		"id": 40075
-		},
-		{
-		"id": 40431
-		},
-		{
-		"id": 42987
-		},
-		{
-		"id": 40189
-		},
-		{
-		"id": 40491
-		},
-		{
-		"id": 40715
-		}
+      "id": 44006,
+      "enchant": 44879,
+      "gems": [
+        41400,
+        22459
+      ]
+    },
+    {
+      "id": 44664,
+      "gems": [
+        39996
+      ]
+    },
+    {
+      "id": 40557,
+      "enchant": 44871,
+      "gems": [
+        39996
+      ]
+    },
+    {
+      "id": 40403,
+      "enchant": 44472
+    },
+    {
+      "id": 40550,
+      "enchant": 44623,
+      "gems": [
+        42142,
+        40038
+      ]
+    },
+    {
+      "id": 40330,
+      "enchant": 60616,
+      "gems": [
+        39996,
+        0
+      ]
+    },
+    {
+      "id": 40347,
+      "enchant": 54999,
+      "gems": [
+        39996,
+        0
+      ]
+    },
+    {
+      "id": 40278,
+      "gems": [
+        42142,
+        42142
+      ]
+    },
+    {
+      "id": 40294,
+      "enchant": 38374
+    },
+    {
+      "id": 40591,
+      "enchant": 55016
+    },
+    {
+      "id": 40717
+    },
+    {
+      "id": 40075
+    },
+    {
+      "id": 40431
+    },
+    {
+      "id": 42987
+    },
+    {
+      "id": 40189,
+      "enchant": 53344
+    },
+    {
+      "id": 40491,
+      "enchant": 44495
+    },
+    {
+      "id": 40207
+    }
 	]}`),
 };
 

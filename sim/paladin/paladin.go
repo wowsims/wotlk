@@ -90,6 +90,10 @@ func (paladin *Paladin) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	if paladin.Talents.SanctifiedRetribution {
 		raidBuffs.SanctifiedRetribution = true
 	}
+
+	if paladin.Talents.SwiftRetribution == 3 {
+		raidBuffs.SwiftRetribution = paladin.Talents.SwiftRetribution == 3 // TODO: Fix-- though having something between 0/3 and 3/3 is unlikely
+	}
 }
 
 func (paladin *Paladin) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
