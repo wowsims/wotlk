@@ -12,6 +12,9 @@ import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
 
 import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
 import * as OtherInputs from '/wotlk/core/components/other_inputs.js';
+import * as Mechanics from '/wotlk/core/constants/mechanics.js';
+
+import { PaladinMajorGlyph, PaladinSeal } from '/wotlk/core/proto/paladin.js';
 
 import * as RetributionPaladinInputs from './inputs.js';
 import * as Presets from './presets.js';
@@ -65,6 +68,20 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 				Stat.StatSpellCrit,
 				Stat.StatSpellHaste,
 			],
+			modifyDisplayStats: (player: Player<Spec.SpecRetributionPaladin>) => {
+				let stats = new Stats();
+
+				TypedEvent.freezeAllAndDo(() => {
+					if (player.getMajorGlyphs().includes(PaladinMajorGlyph.GlyphOfSealOfVengeance) && (player.getSpecOptions().seal == PaladinSeal.Vengeance)) {
+						stats = stats.addStat(Stat.StatExpertise, 10 * Mechanics.EXPERTISE_RATING_PER_EXPERTISE);
+					}
+				})
+
+				return {
+					talents: stats,
+				};
+			},
+
 			defaults: {
 				// Default equipped gear.
 				gear: Presets.P4_PRESET.gear,
