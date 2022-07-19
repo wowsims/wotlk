@@ -53,10 +53,10 @@ func (deathKnight *DeathKnight) registerPestilenceSpell() {
 					} else {
 						// Apply diseases on every other target
 						// TODO: Snapshot the current values of main target disease and roll over to off targets
-						if deathKnight.TargetHasDisease(FrostFeverAuraLabel, spellEffect.Target) {
+						if deathKnight.TargetHasDisease(FrostFeverAuraLabel, deathKnight.CurrentTarget) {
 							deathKnight.FrostFeverDisease[unitHit.Index].Apply(sim)
 						}
-						if deathKnight.TargetHasDisease(FrostFeverAuraLabel, spellEffect.Target) {
+						if deathKnight.TargetHasDisease(FrostFeverAuraLabel, deathKnight.CurrentTarget) {
 							deathKnight.BloodPlagueDisease[unitHit.Index].Apply(sim)
 						}
 					}
