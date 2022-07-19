@@ -10,7 +10,35 @@ import (
 
 func init() {
 	core.AddEffectsToTest = false
-	// TODO: Essence of Gossamer
+
+	core.NewItemEffect(37220, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		actionID := core.ActionID{ItemID: 37220}
+
+		procAura := character.RegisterAura(core.Aura{
+			Label:    "Essence of Gossamer",
+			ActionID: actionID,
+			Duration: time.Second * 10,
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				character.PseudoStats.BonusDamageTaken -= 140
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				character.PseudoStats.BonusDamageTaken += 140
+			},
+		})
+
+		MakeProcTriggerAura(&character.Unit, ProcTrigger{
+			Name:       "Essence of Gossamer Trigger",
+			Callback:   OnSpellHitTaken,
+			ProcMask:   core.ProcMaskMelee,
+			Harmful:    true,
+			ProcChance: 0.05,
+			ICD:        time.Second * 50,
+			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellEffect) {
+				procAura.Activate(sim)
+			},
+		})
+	})
 
 	NewItemEffectWithHeroic(func(isHeroic bool) {
 		name := "Deathbringer's Will"

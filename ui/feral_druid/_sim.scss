@@ -14,12 +14,6 @@
 .feral-druid-sim-ui .consumes-section {
   grid-template-columns: repeat(5, 1fr);
 }
-.feral-druid-sim-ui .buffs-section {
-  grid-template-columns: repeat(5, 1fr);
-}
-.feral-druid-sim-ui .debuffs-section {
-  grid-template-columns: repeat(4, 1fr);
-}
 
 // Balance has a lot of EP stats, so make the text smaller so it fits vertically.
 .feral-druid-sim-ui .character-stats-table-row {

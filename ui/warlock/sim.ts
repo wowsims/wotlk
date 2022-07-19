@@ -41,6 +41,8 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			// All stats for which EP should be calculated.
 			epStats: [
 				Stat.StatIntellect,
+				Stat.StatStamina,
+				Stat.StatSpirit,
 				Stat.StatSpellPower,
 				Stat.StatShadowSpellPower,
 				Stat.StatFireSpellPower,
@@ -48,13 +50,20 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				Stat.StatSpellCrit,
 				Stat.StatSpellHaste,
 				Stat.StatMP5,
+				//Pet stats for buffs in UI only
+				Stat.StatStrength,
+				Stat.StatAttackPower,
+				Stat.StatAgility,
+				Stat.StatMeleeHit,
+				Stat.StatMeleeCrit,
+				Stat.StatMeleeHaste,
+				Stat.StatArmorPenetration,
 			],
-			// Reference stat against which to calculate EP. I think all classes use either spell power or attack power.
+			// Reference stat against which to calculate EP. DPS classes use either spell power or attack power.
 			epReferenceStat: Stat.StatSpellPower,
 			// Which stats to display in the Character Stats section, at the bottom of the left-hand sidebar.
 			displayStats: [
 				Stat.StatHealth,
-				Stat.StatStamina,
 				Stat.StatIntellect,
 				Stat.StatSpirit,
 				Stat.StatSpellPower,
@@ -70,16 +79,16 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				// Default equipped gear.
 				gear: Presets.SWP_BIS.gear,
 
-				// TODO: FIND EPS FOR WARLOCKS
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatIntellect]: 0.4,
-					[Stat.StatSpirit]: 0.1,
+					[Stat.StatIntellect]: 0.15,
+					[Stat.StatSpirit]: 0.2,
 					[Stat.StatSpellPower]: 1,
 					[Stat.StatShadowSpellPower]: 1,
-					[Stat.StatFireSpellPower]: 1,
-					[Stat.StatSpellCrit]: 0.8,
-					[Stat.StatSpellHaste]: 1.2,
+					[Stat.StatFireSpellPower]: 0,
+					[Stat.StatSpellHit]: 0.6,
+					[Stat.StatSpellCrit]: 0.4,
+					[Stat.StatSpellHaste]: 0.6,
 					[Stat.StatMP5]: 0.00,
 				}),
 				// Default consumes settings.
@@ -89,38 +98,16 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				// Default talents.
 				talents: Presets.AfflictionTalents.data,
 				// Default spec-specific settings.
-				specOptions: WarlockOptions.create({
-					armor: Armor.FelArmor,
-					summon: Summon.Felhunter,
-					weaponImbue: WeaponImbue.GrandSpellstone,
-				}),
-				// Default raid/party buffs settings.
-				raidBuffs: RaidBuffs.create({
-					giftOfTheWild: TristateEffect.TristateEffectRegular,
-					arcaneBrilliance: true,
-					totemOfWrath: true,
-					moonkinAura: TristateEffect.TristateEffectRegular,
-					wrathOfAirTotem: true,
-					sanctifiedRetribution: true,
-					swiftRetribution: true,
-					divineSpirit: true,
-					bloodlust: true,
-				}),
+				specOptions: Presets.DestructionOptions,
 
-				partyBuffs: PartyBuffs.create({
-				}),
-				individualBuffs: IndividualBuffs.create({
-					blessingOfKings: true,
-					blessingOfWisdom: TristateEffect.TristateEffectImproved,
-				}),
-				debuffs: Debuffs.create({
-					judgementOfWisdom: true,
-					misery: true,
-					ebonPlaguebringer: true,
-					faerieFire: TristateEffect.TristateEffectImproved,
-					heartOfTheCrusader: true,
-					sunderArmor: true,
-				}),
+				// Default buffs and debuffs settings.
+				raidBuffs: Presets.DefaultRaidBuffs,
+
+				partyBuffs: PartyBuffs.create({}),
+
+				individualBuffs: Presets.DefaultIndividualBuffs,
+
+				debuffs: Presets.DefaultDebuffs,
 			},
 
 			// IconInputs to include in the 'Self Buffs' section on the settings tab.
@@ -128,15 +115,15 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				WarlockInputs.FelArmor,
 				WarlockInputs.DemonArmor,
 			],
+			weaponImbueInputs: [
+				WarlockInputs.GrandSpellstone,
+				WarlockInputs.GrandFirestone,
+			],
 			petInputs: [
 				WarlockInputs.SummonImp,
 				WarlockInputs.SummonSuccubus,
 				WarlockInputs.SummonFelhunter,
 				WarlockInputs.SummonFelguard,
-			],
-			weaponImbueInputs: [
-				WarlockInputs.GrandSpellstone,
-				WarlockInputs.GrandFirestone,
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: WarlockInputs.WarlockRotationConfig,

@@ -12,8 +12,8 @@ import (
 func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.PartyBuffs, individualBuffs proto.IndividualBuffs) {
 	character := agent.GetCharacter()
 
-	if raidBuffs.ArcaneBrilliance || raidBuffs.FelIntelligence {
-		val := 48.0
+	if raidBuffs.ArcaneBrilliance || raidBuffs.FelIntelligence > 0 {
+		val := GetTristateValueFloat(raidBuffs.FelIntelligence, 48.0, 48.0*1.1)
 		if raidBuffs.ArcaneBrilliance {
 			val = 60.0
 		}
@@ -108,11 +108,11 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 	}
 	if raidBuffs.ShadowProtection {
 		character.AddStats(stats.Stats{
-			stats.ShadowResistance: 70,
+			stats.ShadowResistance: 130,
 		})
 	}
-	if raidBuffs.DivineSpirit || raidBuffs.FelIntelligence {
-		v := 64.0
+	if raidBuffs.DivineSpirit || raidBuffs.FelIntelligence > 0 {
+		v := GetTristateValueFloat(raidBuffs.FelIntelligence, 64.0, 64.0*1.1)
 		if raidBuffs.DivineSpirit {
 			v = 80.0
 		}
@@ -136,15 +136,6 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 			},
 		})
 	}
-
-	character.AddStats(stats.Stats{
-		stats.MP5: GetTristateValueFloat(individualBuffs.BlessingOfWisdom, 42.0, 50.0),
-	})
-
-	character.AddStats(stats.Stats{
-		stats.AttackPower:       GetTristateValueFloat(individualBuffs.BlessingOfMight, 220, 264),
-		stats.RangedAttackPower: GetTristateValueFloat(individualBuffs.BlessingOfMight, 220, 264),
-	})
 
 	kingsAgiIntSpiAmount := 1.0
 	kingsStrStamAmount := 1.0
@@ -199,7 +190,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 	}
 
 	if individualBuffs.BlessingOfSanctuary {
-		character.PseudoStats.BonusDamageTaken -= 80
+		character.PseudoStats.DamageTakenMultiplier *= 0.97
 		BlessingOfSanctuaryAura(character)
 	}
 
@@ -212,10 +203,8 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 			stats.Armor: 750,
 		})
 	}
-	if raidBuffs.RetributionAura == proto.TristateEffect_TristateEffectImproved {
-		RetributionAura(character, 2)
-	} else if raidBuffs.RetributionAura == proto.TristateEffect_TristateEffectRegular {
-		RetributionAura(character, 0)
+	if raidBuffs.RetributionAura {
+		RetributionAura(character, raidBuffs.SanctifiedRetribution)
 	}
 
 	if raidBuffs.BattleShout > 0 || individualBuffs.BlessingOfMight > 0 {
@@ -233,7 +222,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 	})
 
 	if raidBuffs.TotemOfWrath || raidBuffs.DemonicPact > 0 {
-		v := MaxFloat(280, float64(raidBuffs.DemonicPact))
+		v := MaxFloat(280*TernaryFloat64(raidBuffs.TotemOfWrath, 1, 0), float64(raidBuffs.DemonicPact))
 		character.AddStats(stats.Stats{
 			stats.SpellPower:   v,
 			stats.HealingPower: v,
@@ -372,8 +361,13 @@ func applyInspiration(character *Character, uptime float64) {
 	})
 }
 
-func RetributionAura(character *Character, points int32) *Aura {
-	actionID := ActionID{SpellID: 27150}
+func RetributionAura(character *Character, sanctifiedRetribution bool) *Aura {
+	actionID := ActionID{SpellID: 54043}
+
+	damage := 112.0
+	if sanctifiedRetribution {
+		damage *= 1.5
+	}
 
 	procSpell := character.RegisterSpell(SpellConfig{
 		ActionID:    actionID,
@@ -385,7 +379,7 @@ func RetributionAura(character *Character, points int32) *Aura {
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 
-			BaseDamage:     BaseDamageConfigFlat(26 * (1 + 0.25*float64(points))),
+			BaseDamage:     BaseDamageConfigFlat(damage),
 			OutcomeApplier: character.OutcomeFuncMagicHitBinary(),
 		}),
 	})
@@ -406,7 +400,7 @@ func RetributionAura(character *Character, points int32) *Aura {
 }
 
 func ThornsAura(character *Character, points int32) *Aura {
-	actionID := ActionID{SpellID: 26992}
+	actionID := ActionID{SpellID: 53307}
 
 	procSpell := character.RegisterSpell(SpellConfig{
 		ActionID:    actionID,
@@ -418,7 +412,7 @@ func ThornsAura(character *Character, points int32) *Aura {
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 
-			BaseDamage:     BaseDamageConfigFlat(25 * (1 + 0.25*float64(points))),
+			BaseDamage:     BaseDamageConfigFlat(73 * (1 + 0.25*float64(points))),
 			OutcomeApplier: character.OutcomeFuncMagicHitBinary(),
 		}),
 	})
@@ -438,25 +432,14 @@ func ThornsAura(character *Character, points int32) *Aura {
 	})
 }
 
-func BlessingOfSanctuaryAura(character *Character) *Aura {
-	actionID := ActionID{SpellID: 27169}
+func BlessingOfSanctuaryAura(character *Character) {
+	if !character.HasManaBar() {
+		return
+	}
+	actionID := ActionID{SpellID: 25899}
+	manaMetrics := character.NewManaMetrics(actionID)
 
-	procSpell := character.RegisterSpell(SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: SpellSchoolHoly,
-		Flags:       SpellFlagBinary,
-
-		ApplyEffects: ApplyEffectFuncDirectDamage(SpellEffect{
-			ProcMask:         ProcMaskEmpty,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-
-			BaseDamage:     BaseDamageConfigFlat(46),
-			OutcomeApplier: character.OutcomeFuncMagicHitBinary(),
-		}),
-	})
-
-	return character.RegisterAura(Aura{
+	character.RegisterAura(Aura{
 		Label:    "Blessing of Sanctuary",
 		ActionID: actionID,
 		Duration: NeverExpires,
@@ -464,8 +447,8 @@ func BlessingOfSanctuaryAura(character *Character) *Aura {
 			aura.Activate(sim)
 		},
 		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
-			if spellEffect.Outcome.Matches(OutcomeBlock) {
-				procSpell.Cast(sim, spell.Unit)
+			if spellEffect.Outcome.Matches(OutcomeBlock | OutcomeDodge | OutcomeParry) {
+				character.AddMana(sim, 0.02*character.MaxMana(), manaMetrics, false)
 			}
 		},
 	})

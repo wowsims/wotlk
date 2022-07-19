@@ -30,10 +30,10 @@ func (deathKnight *DeathKnight) newObliterateHitSpell(isMH bool) *core.Spell {
 
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				bonusBaseDamage := core.TernaryFloat64(deathKnight.SigilOfAwarenessAura.IsActive(), 336.0, 0.0)
+				bonusBaseDamage := deathKnight.sigilOfAwarenessBonus(deathKnight.Obliterate)
 				weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 467.0+bonusBaseDamage, 0.8, true)
 				if !isMH {
-					weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 467.0+bonusBaseDamage, 0.8, true)
+					weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 467.0+bonusBaseDamage, 0.8*deathKnight.nervesOfColdSteelBonus(), true)
 				}
 
 				return weaponBaseDamage(sim, hitEffect, spell) *

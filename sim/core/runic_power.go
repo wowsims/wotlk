@@ -219,6 +219,21 @@ func RuneReadyAt(sim *Simulation, runes *[2]Rune) time.Duration {
 	return readyAt
 }
 
+func NextRuneReadyAt(sim *Simulation, runes *[2]Rune) time.Duration {
+	readyAt := NeverExpires
+	pa := runes[0].pas[0]
+	if pa != nil {
+		readyAt = MinDuration(readyAt, pa.NextActionAt)
+	}
+
+	pa = runes[1].pas[0]
+	if pa != nil {
+		readyAt = MinDuration(readyAt, pa.NextActionAt)
+	}
+
+	return readyAt
+}
+
 func (rp *runicPowerBar) BloodRuneReadyAt(sim *Simulation) time.Duration {
 	return RuneReadyAt(sim, &rp.bloodRunes)
 }
@@ -229,6 +244,18 @@ func (rp *runicPowerBar) FrostRuneReadyAt(sim *Simulation) time.Duration {
 
 func (rp *runicPowerBar) UnholyRuneReadyAt(sim *Simulation) time.Duration {
 	return RuneReadyAt(sim, &rp.unholyRunes)
+}
+
+func (rp *runicPowerBar) NextBloodRuneReadyAt(sim *Simulation) time.Duration {
+	return NextRuneReadyAt(sim, &rp.bloodRunes)
+}
+
+func (rp *runicPowerBar) NextFrostRuneReadyAt(sim *Simulation) time.Duration {
+	return NextRuneReadyAt(sim, &rp.frostRunes)
+}
+
+func (rp *runicPowerBar) NextUnholyRuneReadyAt(sim *Simulation) time.Duration {
+	return NextRuneReadyAt(sim, &rp.unholyRunes)
 }
 
 func (rp *runicPowerBar) CurrentBloodRunes() int32 {
@@ -405,9 +432,9 @@ func RegenRuneAndCancelPAs(sim *Simulation, r *Rune) {
 	} else if r.state == RuneState_DeathSpent {
 		r.state = RuneState_Death
 	}
-	r.lastRegenTime = sim.CurrentTime
 
 	if r.pas[0] != nil {
+		r.lastRegenTime = sim.CurrentTime
 		r.pas[0].Cancel(sim)
 		r.pas[0] = nil
 	}

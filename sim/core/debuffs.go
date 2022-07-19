@@ -57,7 +57,7 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 		MakePermanent(MangleAura(target))
 	}
 
-	if debuffs.ExposeArmor != proto.TristateEffect_TristateEffectMissing {
+	if debuffs.ExposeArmor {
 		exposeArmorAura := ExposeArmorAura(target, false) // TODO: check glyph
 		ScheduledAura(exposeArmorAura, false, PeriodicActionOptions{
 			Period:   time.Duration(10.0 * float64(time.Second)),
@@ -743,7 +743,7 @@ func ThunderClapAura(target *Unit, points int32) *Aura {
 const IcyTouchAuraTag = "IcyTouch"
 
 func IcyTouchAura(target *Unit, impIcyTouch int32) *Aura {
-	speedMultiplier := 0.85
+	speedMultiplier := 0.86
 	if impIcyTouch > 0 {
 		speedMultiplier -= 0.02 * float64(impIcyTouch)
 	}

@@ -185,6 +185,9 @@
 .buffs-section>div {
   display: grid;
 }
+.buffs-section {
+  grid-template-columns: repeat(3, 1fr);
+}
 
 .consumes-section>div {
   display: grid;
@@ -209,6 +212,9 @@
 
 .debuffs-section>div {
   display: grid;
+}
+.debuffs-section {
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .cooldowns-section-container {
