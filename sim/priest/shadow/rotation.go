@@ -202,7 +202,7 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 
 		// SWD dmg
 		swd_dmg = (618 + spriest.GetStat(stats.SpellPower)*0.429) * (1 + 0.5*(critChance+float64(spriest.Talents.MindMelt)*0.02+core.TernaryFloat64(spriest.HasSetBonus(priest.ItemSetValorous, 4), 0.1, 0))*float64(spriest.Talents.ShadowPower)*0.2) *
-			(1.0 + (float64(spriest.Talents.Darkness)*0.02 + float64(spriest.Talents.TwinDisciplines)*0.01)) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1)
+			(1.0 + (float64(spriest.Talents.Darkness)*0.02 + float64(spriest.Talents.TwinDisciplines)*0.01)) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * swdmfglyphMod
 
 		// MF dmg 3 ticks
 		mf_dmg = (588 + spriest.GetStat(stats.SpellPower)*(0.2570*3*(1+float64(spriest.Talents.Misery)*0.05))) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1.0 + (float64(spriest.Talents.Darkness)*0.02 +
@@ -211,7 +211,7 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		// SWP is seperate because it doesnt follow the same logic for casting as the other spells
 		swp_Tdmg := ((230 + spriest.GetStat(stats.SpellPower)*0.1829) *
 			(1.0 + float64(spriest.Talents.Darkness)*0.02 + float64(spriest.Talents.TwinDisciplines)*0.01) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) *
-			(1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03))) * swdmfglyphMod
+			(1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03)))
 
 		// this should be cleaned up, but essentially we want to cast SWP either 3rd or 5th in the rotation which is fight length dependent
 
@@ -327,7 +327,7 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 					bestIdx = nextIdx // if choosing the minimum wait time spell first is highest dps, then change the index and current wait
 					CurrentWait = Waitmin
 					if sim.Log != nil {
-						spriest.Log(sim, "best=next[%d]", bestIdx)
+						//spriest.Log(sim, "best=next[%d]", bestIdx)
 					}
 				}
 			}
@@ -716,6 +716,16 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 		}
 		if sim.Log != nil {
 			//spriest.Log(sim, "mid_ticks2 %d", numTicks)
+		}
+
+		if numTicks > 3 {
+			mfTime = core.MaxDuration(gcd, time.Duration(numTicks-1)*tickLength)
+			if (allCDs[bestIdx] - core.MaxDuration(gcd, time.Duration(numTicks-1)*tickLength) - gcd) > 0 {
+
+				numTicks = 3
+				return numTicks
+
+			}
 		}
 
 		if skip_next == 0 {
