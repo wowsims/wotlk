@@ -14,12 +14,6 @@
 .rogue-sim-ui .self-buffs-section {
   grid-template-columns: repeat(4, 1fr);
 }
-.rogue-sim-ui .buffs-section {
-  grid-template-columns: repeat(6, 1fr);
-}
-.rogue-sim-ui .debuffs-section {
-  grid-template-columns: repeat(4, 1fr);
-}
 
 // Rogue has a lot of EP stats, so make the text smaller so it fits vertically.
 .rogue-sim-ui .character-stats-table-row {

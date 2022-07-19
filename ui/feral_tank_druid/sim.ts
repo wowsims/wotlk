@@ -123,7 +123,7 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 				}),
 				debuffs: Debuffs.create({
 					bloodFrenzy: true,
-					exposeArmor: TristateEffect.TristateEffectImproved,
+					exposeArmor: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					sunderArmor: true,
 					curseOfWeakness: TristateEffect.TristateEffectRegular,

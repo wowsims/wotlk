@@ -117,7 +117,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 				// No doom with Affliction
 				spell = warlock.CurseOfAgony
 			} else if !warlock.CorruptionDot.IsActive() && core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() ||
-			sim.IsExecutePhase35() && time.Duration(warlock.CorruptionDot.TickCount) * warlock.CorruptionDot.TickLength > sim.CurrentTime {
+				sim.IsExecutePhase35() && time.Duration(warlock.CorruptionDot.TickCount)*warlock.CorruptionDot.TickLength > sim.CurrentTime {
 				// Cast Corruption as soon as the 5% crit debuff is up
 				// Cast Corruption again when you get the execute buff (Death's Embrace)
 				spell = warlock.Corruption
@@ -125,10 +125,10 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 				// Emergency Corruption refresh just in case
 				spell = warlock.DrainSoul
 			} else if (!warlock.UnstableAffDot.IsActive() || warlock.UnstableAffDot.RemainingDuration(sim) < warlock.UnstableAff.CurCast.CastTime) &&
-			sim.GetRemainingDuration() > warlock.UnstableAffDot.Duration && warlock.CorruptionDot.IsActive() {
+				sim.GetRemainingDuration() > warlock.UnstableAffDot.Duration && warlock.CorruptionDot.IsActive() {
 				// Keep UA up
 				spell = warlock.UnstableAff
-			} else if warlock.Haunt.CD.IsReady(sim) && 2 * sim.GetRemainingDuration() > warlock.HauntAura.Duration && warlock.CorruptionDot.IsActive() {
+			} else if warlock.Haunt.CD.IsReady(sim) && 2*sim.GetRemainingDuration() > warlock.HauntAura.Duration && warlock.CorruptionDot.IsActive() {
 				// Keep Haunt up
 				spell = warlock.Haunt
 			} else if sim.IsExecutePhase20() {

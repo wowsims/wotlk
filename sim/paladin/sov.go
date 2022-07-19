@@ -127,6 +127,17 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 		Tag:      "Seal",
 		ActionID: auraActionID,
 		Duration: SealDuration,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			if paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfSealOfVengeance) {
+				paladin.AddStatDynamic(sim, stats.Expertise, core.ExpertiseRatingPerExpertise*10)
+			}
+		},
+
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			if paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfSealOfVengeance) {
+				paladin.AddStatDynamic(sim, stats.Expertise, -(core.ExpertiseRatingPerExpertise * 10))
+			}
+		},
 
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			// Don't proc on misses or our own procs.
@@ -175,9 +186,6 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 			}
 			paladin.CurrentSeal = aura
 			paladin.CurrentSeal.Activate(sim)
-			if paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfSealOfVengeance) {
-				paladin.AddStatDynamic(sim, stats.Expertise, core.ExpertiseRatingPerExpertise*10) // 82? Should be 10 exper *rating* not *value*.
-			}
 		},
 	})
 }

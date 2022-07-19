@@ -1,7 +1,6 @@
 import { RaidBuffs,
 	PartyBuffs,
 	IndividualBuffs,
-	WeaponImbue,
 	Debuffs,
 	Spec,
 	Stat,
@@ -18,8 +17,9 @@ import {
 	Warlock_Rotation as WarlockRotation,
 	WarlockTalents as WarlockTalents,
 	Warlock_Options as WarlockOptions,
-	Warlock_Options_Armor,
-	Warlock_Options_Summon,
+	Warlock_Options_Armor as Armor,
+	Warlock_Options_Summon as Summon,
+	Warlock_Options_WeaponImbue as WeaponImbue,
 } from '/wotlk/core/proto/warlock.js';
 
 import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
@@ -68,7 +68,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P5_DESTRO.gear,
+				gear: Presets.SWP_BIS.gear,
 
 				// TODO: FIND EPS FOR WARLOCKS
 				// Default EP weights for sorting gear in the gear picker.
@@ -90,30 +90,35 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				talents: Presets.AfflictionTalents.data,
 				// Default spec-specific settings.
 				specOptions: WarlockOptions.create({
-					armor: Warlock_Options_Armor.FelArmor,
-					summon: Warlock_Options_Summon.Felhunter,
+					armor: Armor.FelArmor,
+					summon: Summon.Felhunter,
+					weaponImbue: WeaponImbue.GrandSpellstone,
 				}),
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
+					giftOfTheWild: TristateEffect.TristateEffectRegular,
 					arcaneBrilliance: true,
+					totemOfWrath: true,
+					moonkinAura: TristateEffect.TristateEffectRegular,
+					wrathOfAirTotem: true,
+					sanctifiedRetribution: true,
+					swiftRetribution: true,
 					divineSpirit: true,
 					bloodlust: true,
-					manaSpringTotem: TristateEffect.TristateEffectRegular,
-					totemOfWrath: true,
-					wrathOfAirTotem: true,
 				}),
+
 				partyBuffs: PartyBuffs.create({
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
 					blessingOfWisdom: TristateEffect.TristateEffectImproved,
-
 				}),
 				debuffs: Debuffs.create({
 					judgementOfWisdom: true,
 					misery: true,
-					curseOfElements: true,
+					ebonPlaguebringer: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
+					heartOfTheCrusader: true,
 					sunderArmor: true,
 				}),
 			},
@@ -174,11 +179,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				],
 				//Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.P1_DESTRO,
-					Presets.P2_DESTRO,
-					Presets.P3_DESTRO,
-					Presets.P4_DESTRO,
-					Presets.P5_DESTRO,
+					Presets.SWP_BIS,
 				],
 			},
 		});
