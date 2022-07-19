@@ -155,7 +155,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 				onJudgementProc.Cast(sim, spellEffect.Target)
 			} else {
 				if spellEffect.IsMelee() {
-					if dot.GetStacks() > 0 {
+					if dot.GetStacks() > 0 && spellEffect.Target == paladin.CurrentTarget {
 						onSpecialOrSwingProc.Cast(sim, spellEffect.Target)
 					}
 				}
