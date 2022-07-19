@@ -47,5 +47,12 @@ func (warrior *Warrior) registerSlamSpell() {
 	})
 }
 func (warrior *Warrior) CanSlam(sim *core.Simulation) bool {
-	return warrior.CurrentRage() >= warrior.Slam.DefaultCast.Cost && warrior.Slam.IsReady(sim) && (warrior.Talents.ImprovedSlam >= 1 || sim.CurrentTime < warrior.bloodsurgeValidUntil)
+	normalCastTime := warrior.Slam.DefaultCast.CastTime
+	if warrior.BloodsurgeAura.IsActive() {
+		warrior.Slam.DefaultCast.CastTime = 0
+	} else {
+		warrior.Slam.DefaultCast.CastTime = normalCastTime
+	}
+
+	return warrior.CurrentRage() >= warrior.Slam.DefaultCast.Cost && warrior.Slam.IsReady(sim) && (warrior.Talents.ImprovedSlam >= 1 || warrior.BloodsurgeAura.IsActive())
 }

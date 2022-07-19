@@ -24,12 +24,11 @@ type Warrior struct {
 	WarriorInputs
 
 	// Current state
-	Stance               Stance
-	overpowerValidUntil  time.Duration
-	rendValidUntil       time.Duration
-	RevengeValidUntil    time.Duration
-	shoutExpiresAt       time.Duration
-	bloodsurgeValidUntil time.Duration
+	Stance              Stance
+	overpowerValidUntil time.Duration
+	rendValidUntil      time.Duration
+	RevengeValidUntil   time.Duration
+	shoutExpiresAt      time.Duration
 
 	// Cached values
 	shoutDuration time.Duration
@@ -72,6 +71,9 @@ type Warrior struct {
 	BattleStanceAura    *core.Aura
 	DefensiveStanceAura *core.Aura
 	BerserkerStanceAura *core.Aura
+
+	BloodsurgeAura  *core.Aura
+	SuddenDeathAura *core.Aura
 
 	DemoralizingShoutAura *core.Aura
 	BloodFrenzyAuras      []*core.Aura

@@ -1457,7 +1457,7 @@ export function getEligibleItemSlots(item: Item): Array<ItemSlot> {
 	}
 
 	if (item.type == ItemType.ItemTypeWeapon) {
-		if ([HandType.HandTypeMainHand, HandType.HandTypeTwoHand].includes(item.handType)) {
+		if (item.handType == HandType.HandTypeMainHand) {
 			return [ItemSlot.ItemSlotMainHand];
 		} else if (item.handType == HandType.HandTypeOffHand) {
 			return [ItemSlot.ItemSlotOffHand];

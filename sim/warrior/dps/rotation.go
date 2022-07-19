@@ -89,6 +89,8 @@ func (war *DpsWarrior) normalRotation(sim *core.Simulation, highPrioSpellsOnly b
 			war.ShieldSlam.Cast(sim, war.CurrentTarget)
 		} else if !war.Rotation.PrioritizeWw && war.CanWhirlwind(sim) {
 			war.Whirlwind.Cast(sim, war.CurrentTarget)
+		} else if war.SuddenDeathAura.IsActive() && war.CanExecute() {
+			war.Execute.Cast(sim, war.CurrentTarget)
 		} else if war.ShouldOverpower(sim) {
 			if !war.StanceMatches(warrior.BattleStance) {
 				if !war.BattleStance.IsReady(sim) {
@@ -103,7 +105,7 @@ func (war *DpsWarrior) normalRotation(sim *core.Simulation, highPrioSpellsOnly b
 			war.Slam.Cast(sim, war.CurrentTarget)
 		} else if !highPrioSpellsOnly {
 			if war.tryMaintainDebuffs(sim) {
-				// Do nothing, already cast
+				war.DoNothing()
 			} else if war.ShouldBerserkerRage(sim) {
 				war.BerserkerRage.Cast(sim, nil)
 			}
@@ -125,11 +127,13 @@ func (war *DpsWarrior) executeRotation(sim *core.Simulation, highPrioSpellsOnly 
 			war.MortalStrike.Cast(sim, war.CurrentTarget)
 		} else if !war.Rotation.PrioritizeWw && war.Rotation.UseWwDuringExecute && war.CanWhirlwind(sim) {
 			war.Whirlwind.Cast(sim, war.CurrentTarget)
+		} else if war.CanSlam(sim) {
+			war.Slam.Cast(sim, war.CurrentTarget)
 		} else if war.Rotation.UseRend && war.ShouldRend(sim) {
 			war.Rend.Cast(sim, war.CurrentTarget)
 		} else if !highPrioSpellsOnly {
 			if war.tryMaintainDebuffs(sim) {
-				// Do nothing, already cast
+				war.DoNothing()
 			} else if war.CanExecute() {
 				war.Execute.Cast(sim, war.CurrentTarget)
 			} else if war.ShouldBerserkerRage(sim) {

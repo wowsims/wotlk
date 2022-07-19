@@ -76,6 +76,7 @@ func (warrior *Warrior) ApplyTalents() {
 
 	warrior.applyAngerManagement()
 	warrior.applyDeepWounds()
+	warrior.applyTitansGrip()
 	warrior.applyOneHandedWeaponSpecialization()
 	warrior.applyTwoHandedWeaponSpecialization()
 	warrior.applyWeaponSpecializations()
@@ -87,6 +88,9 @@ func (warrior *Warrior) ApplyTalents() {
 	warrior.registerDeathWishCD()
 	warrior.registerSweepingStrikesCD()
 	warrior.registerLastStandCD()
+	warrior.applyTasteForBlood()
+	warrior.applyBloodsurge()
+	warrior.applySuddenDeath()
 }
 
 func (warrior *Warrior) applyAngerManagement() {
@@ -110,13 +114,23 @@ func (warrior *Warrior) applyTasteForBlood() {
 		return
 	}
 
-	procChance := 0.33 * float64(warrior.Talents.TasteForBlood)
+	var procChance float64
+	if warrior.Talents.TasteForBlood == 1 {
+		procChance = 0.33
+	} else if warrior.Talents.TasteForBlood == 2 {
+		procChance = 0.66
+	} else if warrior.Talents.TasteForBlood == 3 {
+		procChance = 1
+	}
+
 	icd := core.Cooldown{
 		Timer:    warrior.NewTimer(),
 		Duration: time.Second * 6,
 	}
+
 	warrior.RegisterAura(core.Aura{
-		Label: "Taste for Blood",
+		Label:    "Taste for Blood",
+		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
@@ -137,7 +151,7 @@ func (warrior *Warrior) applyTasteForBlood() {
 				return
 			}
 			icd.Use(sim)
-			warrior.overpowerValidUntil = sim.CurrentTime + time.Second*5
+			warrior.overpowerValidUntil = sim.CurrentTime + time.Second*9
 		},
 	})
 }
@@ -147,6 +161,7 @@ func (warrior *Warrior) applyBloodsurge() {
 		return
 	}
 	procChance := 0.0
+
 	if warrior.Talents.Bloodsurge == 1 {
 		procChance = 0.07
 	} else if warrior.Talents.Bloodsurge == 2 {
@@ -154,16 +169,25 @@ func (warrior *Warrior) applyBloodsurge() {
 	} else if warrior.Talents.Bloodsurge == 3 {
 		procChance = 0.20
 	}
-	icd := core.Cooldown{
-		Timer:    warrior.NewTimer(),
-		Duration: time.Second * 6,
-	}
+
+	warrior.BloodsurgeAura = warrior.RegisterAura(core.Aura{
+		Label:    "Bloodsurge Proc",
+		ActionID: core.ActionID{SpellID: 46915},
+		Duration: time.Second * 5,
+	})
+
 	warrior.RegisterAura(core.Aura{
-		Label: "Taste for Blood",
+		Label:    "Bloodsurge",
+		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spell == warrior.Slam && warrior.BloodsurgeAura.IsActive() {
+				warrior.BloodsurgeAura.Deactivate(sim)
+				return
+			}
+
 			if !spellEffect.Landed() {
 				return
 			}
@@ -173,15 +197,11 @@ func (warrior *Warrior) applyBloodsurge() {
 				return
 			}
 
-			if !icd.IsReady(sim) {
-				return
-			}
-
 			if sim.RandomFloat("Bloodsurge") > procChance {
 				return
 			}
-			icd.Use(sim)
-			warrior.overpowerValidUntil = sim.CurrentTime + time.Second*5
+
+			warrior.BloodsurgeAura.Activate(sim)
 		},
 	})
 }
@@ -204,6 +224,17 @@ func (warrior *Warrior) procBloodFrenzy(sim *core.Simulation, effect *core.Spell
 	aura := warrior.BloodFrenzyAuras[effect.Target.Index]
 	aura.Duration = dur
 	aura.Activate(sim)
+}
+
+func (warrior *Warrior) applyTitansGrip() {
+	if !warrior.Talents.TitansGrip {
+		return
+	}
+	if warrior.Equip[proto.ItemSlot_ItemSlotOffHand].HandType != proto.HandType_HandTypeTwoHand {
+		return
+	}
+
+	warrior.PseudoStats.PhysicalDamageDealtMultiplier *= 1 - 0.1
 }
 
 func (warrior *Warrior) applyTwoHandedWeaponSpecialization() {
@@ -447,6 +478,53 @@ func (warrior *Warrior) applyWreckingCrew() {
 			}
 
 			procAura.Activate(sim)
+		},
+	})
+}
+
+func (warrior *Warrior) applySuddenDeath() {
+	if warrior.Talents.SuddenDeath == 0 {
+		return
+	}
+
+	var rage_refund float64
+	var procChance float64
+
+	if warrior.Talents.SuddenDeath == 1 {
+		rage_refund = 3.0
+		procChance = 0.03
+	} else if warrior.Talents.SuddenDeath == 2 {
+		rage_refund = 7.0
+		procChance = 0.06
+	} else if warrior.Talents.SuddenDeath == 3 {
+		rage_refund = 10.0
+		procChance = 0.09
+	}
+
+	warrior.SuddenDeathAura = warrior.RegisterAura(core.Aura{
+		Label:    "Sudden Death Proc",
+		ActionID: core.ActionID{SpellID: 29724},
+		Duration: core.NeverExpires,
+	})
+	warrior.RegisterAura(core.Aura{
+		Label:    "Sudden Death",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.Landed() {
+				return
+			}
+
+			if spellEffect.ProcMask.Matches(core.ProcMaskMelee) && sim.RandomFloat("Sudden Death") < procChance {
+				warrior.SuddenDeathAura.Activate(sim)
+			}
+
+			if warrior.SuddenDeathAura.IsActive() && spell == warrior.Execute {
+				warrior.SuddenDeathAura.Deactivate(sim)
+				warrior.AddRage(sim, rage_refund, warrior.RageRefundMetrics)
+			}
 		},
 	})
 }
