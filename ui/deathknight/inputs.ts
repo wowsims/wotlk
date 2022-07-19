@@ -79,6 +79,63 @@ export const PrecastGhoulFrenzy = {
 	},
 };
 
+export const PrecastHornOfWinter = {
+	type: 'boolean' as const,
+	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
+	config: {
+		extraCssClasses: [
+			'precast-horn-of-winter-picker',
+		],
+		label: 'Pre-Cast Horn of Winter',
+		labelTooltip: 'Precast Horn of Winter for 10 extra runic power before fight.',
+		changedEvent: (player: Player<Spec.SpecDeathKnight>) => player.specOptionsChangeEmitter,
+		getValue: (player: Player<Spec.SpecDeathKnight>) => player.getSpecOptions().precastHornOfWinter,
+		setValue: (eventID: EventID, player: Player<Spec.SpecDeathKnight>, newValue: boolean) => {
+			const newOptions = player.getSpecOptions();
+			newOptions.precastHornOfWinter = newValue;
+			player.setSpecOptions(eventID, newOptions);
+		},
+	},
+};
+
+export const RefreshHornOfWinter = {
+	type: 'boolean' as const,
+	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
+	config: {
+		extraCssClasses: [
+			'refresh-horn-of-winter-picker',
+		],
+		label: 'Refresh Horn of Winter',
+		labelTooltip: 'Refresh Horn of Winter on free GCDs.',
+		changedEvent: (player: Player<Spec.SpecDeathKnight>) => player.specOptionsChangeEmitter,
+		getValue: (player: Player<Spec.SpecDeathKnight>) => player.getRotation().refreshHornOfWinter,
+		setValue: (eventID: EventID, player: Player<Spec.SpecDeathKnight>, newValue: boolean) => {
+			const newRotation = player.getRotation();
+			newRotation.refreshHornOfWinter = newValue;
+			player.setRotation(eventID, newRotation);
+		},
+	},
+};
+
+export const DiseaseRefreshDuration = {
+	type: 'number' as const,
+	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
+	config: {
+		extraCssClasses: [
+			'disease-refresh-duration-picker',
+		],
+		label: 'Disease Refresh Duration',
+		labelTooltip: 'Minimum duration for refreshing a disease.',
+		changedEvent: (player: Player<Spec.SpecDeathKnight>) => player.specOptionsChangeEmitter,
+		getValue: (player: Player<Spec.SpecDeathKnight>) => player.getRotation().diseaseRefreshDuration,
+		setValue: (eventID: EventID, player: Player<Spec.SpecDeathKnight>, newValue: number) => {
+			const newRotation = player.getRotation();
+			newRotation.diseaseRefreshDuration = newValue;
+			player.setRotation(eventID, newRotation);
+		},
+	},
+};
+
 export const UseDeathAndDecay = {
 	type: 'boolean' as const,
 	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
@@ -117,47 +174,11 @@ export const UnholyPresenceOpener = {
 	},
 };
 
-export const RefreshHornOfWinter = {
-	type: 'boolean' as const,
-	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-	config: {
-		extraCssClasses: [
-			'refresh-horn-of-winter-picker',
-		],
-		label: 'Refresh Horn of Winter',
-		labelTooltip: 'Refresh Horn of Winter on free GCDs.',
-		changedEvent: (player: Player<Spec.SpecDeathKnight>) => player.specOptionsChangeEmitter,
-		getValue: (player: Player<Spec.SpecDeathKnight>) => player.getSpecOptions().refreshHornOfWinter,
-		setValue: (eventID: EventID, player: Player<Spec.SpecDeathKnight>, newValue: boolean) => {
-			const newOptions = player.getSpecOptions();
-			newOptions.refreshHornOfWinter = newValue;
-			player.setSpecOptions(eventID, newOptions);
-		},
-	},
-};
-
-export const PrecastHornOfWinter = {
-	type: 'boolean' as const,
-	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-	config: {
-		extraCssClasses: [
-			'precast-horn-of-winter-picker',
-		],
-		label: 'Pre-Cast Horn of Winter',
-		labelTooltip: 'Precast Horn of Winter for 10 extra runic power before fight.',
-		changedEvent: (player: Player<Spec.SpecDeathKnight>) => player.specOptionsChangeEmitter,
-		getValue: (player: Player<Spec.SpecDeathKnight>) => player.getSpecOptions().precastHornOfWinter,
-		setValue: (eventID: EventID, player: Player<Spec.SpecDeathKnight>, newValue: boolean) => {
-			const newOptions = player.getSpecOptions();
-			newOptions.precastHornOfWinter = newValue;
-			player.setSpecOptions(eventID, newOptions);
-		},
-	},
-};
-
 export const DeathKnightRotationConfig = {
 	inputs: [
 		UseDeathAndDecay,
 		UnholyPresenceOpener,
+		DiseaseRefreshDuration,
+		RefreshHornOfWinter,
 	],
 };

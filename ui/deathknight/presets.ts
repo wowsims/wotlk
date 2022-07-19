@@ -67,7 +67,7 @@ export const UnholyDualWieldTalents = {
 		glyphs: Glyphs.create({
 			major1: DeathKnightMajorGlyph.GlyphOfTheGhoul,
 			major2: DeathKnightMajorGlyph.GlyphOfDarkDeath,
-			major3: DeathKnightMajorGlyph.GlyphOfDeathAndDecay,
+			major3: DeathKnightMajorGlyph.GlyphOfIcyTouch,
 			minor1: DeathKnightMinorGlyph.GlyphOfHornOfWinter,
 			minor2: DeathKnightMinorGlyph.GlyphOfPestilence,
 			minor3: DeathKnightMinorGlyph.GlyphOfRaiseDead,
@@ -77,13 +77,16 @@ export const UnholyDualWieldTalents = {
 
 
 export const DefaultRotation = DeathKnightRotation.create({
+  diseaseRefreshDuration: 6,
+  unholyPresenceOpener: false,
+  useDeathAndDecay: false,
+	refreshHornOfWinter: false,
 });
 
 export const DefaultOptions = DeathKnightOptions.create({
 	startingRunicPower: 0,
 	petUptime: 1,
 	precastGhoulFrenzy: true,
-	refreshHornOfWinter: false,
   precastHornOfWinter: true,
 });
 
