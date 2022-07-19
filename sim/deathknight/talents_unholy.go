@@ -158,7 +158,7 @@ func (deathKnight *DeathKnight) applyBloodCakedBlade() {
 	target := deathKnight.CurrentTarget
 
 	mhBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 0, 1.0, true)
-	ohBaseDamage := core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, 1.0, true)
+	ohBaseDamage := core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, 1.0*deathKnight.nervesOfColdSteelBonus(), true)
 
 	var isMH = false
 	bloodCakedBladeHit := deathKnight.RegisterSpell(core.SpellConfig{
@@ -230,16 +230,17 @@ func (deathKnight *DeathKnight) applyDesolation() {
 	}
 
 	actionID := core.ActionID{SpellID: 66803}
+	bonusDamageCoeff := 0.01 * float64(deathKnight.Talents.Desolation)
 
 	deathKnight.DesolationAura = deathKnight.RegisterAura(core.Aura{
 		ActionID: actionID,
 		Label:    "Desolation",
 		Duration: time.Second * 20.0,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.01*float64(deathKnight.Talents.Desolation)
+			deathKnight.ModifyAdditiveDamageModifier(sim, bonusDamageCoeff)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.DamageDealtMultiplier /= 1.0 + 0.01*float64(deathKnight.Talents.Desolation)
+			deathKnight.ModifyAdditiveDamageModifier(sim, -bonusDamageCoeff)
 		},
 	})
 }

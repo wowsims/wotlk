@@ -108,7 +108,7 @@ func (deathKnight *DeathKnight) setupFrostRotation() {
 	}
 
 	fr.mainSequence.beginBuildingSequence()
-	if deathKnight.Options.RefreshHornOfWinter {
+	if deathKnight.Rotation.RefreshHornOfWinter {
 		fr.mainSequence.addToFrostRotationSequence(FrostRotationAction_HW)
 	}
 	fr.mainSequence.addToFrostRotationSequence(FrostRotationAction_IT)
