@@ -39,7 +39,7 @@ detailed_results: $(OUT_DIR)/detailed_results/index.js $(OUT_DIR)/detailed_resul
 $(OUT_DIR)/index.html:
 	cp ui/index.html $(OUT_DIR)
 
-.PHONY clean
+.PHONY: clean
 clean:
 	rm -rf ui/core/proto/*.ts \
 	  sim/core/proto/*.pb.go \
@@ -52,7 +52,7 @@ clean:
 	find . -name "*.results.tmp" -type f -delete
 
 # Host a local server, for dev testing
-.PHONY host
+.PHONY: host
 host: $(OUT_DIR)
 	# Intentionally serve one level up, so the local site has 'wotlk' as the first
 	# directory just like github pages.
@@ -79,7 +79,7 @@ $(OUT_DIR)/core/tsconfig.tsbuildinfo: $(call rwildcard,ui/core,*.ts) ui/core/pro
 	$(SED) "s/from \"(.*)\";/from '\1.js';/g" $(OUT_DIR)/core/proto/*.js
 
 # Generic rule for hosting any class directory
-.PHONY host_%
+.PHONY: host_%
 host_%: ui_shared %
 	npx http-server $(OUT_DIR)/..
 
@@ -137,10 +137,10 @@ binary_dist: $(OUT_DIR)
 	rm -rf binary_dist/wotlk/assets/item_data
 
 # Builds the web server with the compiled client.
-.PHONY wowsimwotlk
+.PHONY: wowsimwotlk
 wowsimwotlk: binary_dist devserver
 
-.PHONY devserver
+.PHONY: devserver
 devserver: sim/core/proto/api.pb.go sim/web/main.go binary_dist/dist.go
 	@echo "Starting server compile now..."
 	@if go build -o wowsimwotlk ./sim/web/main.go; then \
@@ -168,21 +168,21 @@ sim/core/items/all_items.go: generate_items/*.go $(call rwildcard,sim/core/proto
 	go run generate_items/*.go -outDir=sim/core/items
 	gofmt -w ./sim/core/items
 
-.PHONY test
+.PHONY: test
 test: $(OUT_DIR)/lib.wasm binary_dist/dist.go
 	go test ./...
 
-.PHONY update-test
+.PHONY: update-test
 update-tests:
 	find . -name "*.results" -type f -delete
 	find . -name "*.results.tmp" -exec bash -c 'cp "$$1" "$${1%.results.tmp}".results' _ {} \;
 
-.PHONY fmt
+.PHONY: fmt
 fmt: tsfmt
 	gofmt -w ./sim
 	gofmt -w ./generate_items
 
-.PHONY tsfmt
+.PHONY: tsfmt
 tsfmt:
 	for dir in $$(find ./ui -maxdepth 1 -type d -not -path "./ui" -not -path "./ui/worker"); do \
 		echo $$dir; \
