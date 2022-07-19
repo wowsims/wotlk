@@ -7,9 +7,7 @@ import (
 
 var BasicRaidBuffs = &proto.RaidBuffs{}
 var BasicPartyBuffs = &proto.PartyBuffs{}
-var BasicIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings: true,
-}
+var BasicIndividualBuffs = &proto.IndividualBuffs{}
 
 var StandardTalents = &proto.ShamanTalents{
 	Convection:     2,
@@ -64,12 +62,12 @@ var FullRaidBuffs = &proto.RaidBuffs{
 	BattleShout:          proto.TristateEffect_TristateEffectImproved,
 	LeaderOfThePack:      proto.TristateEffect_TristateEffectImproved,
 	TrueshotAura:         true,
-}
-var FullPartyBuffs = &proto.PartyBuffs{}
-var FullIndividualBuffs = &proto.IndividualBuffs{
 	BlessingOfKings:  true,
 	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
 	BlessingOfMight:  proto.TristateEffect_TristateEffectImproved,
+}
+var FullPartyBuffs = &proto.PartyBuffs{}
+var FullIndividualBuffs = &proto.IndividualBuffs{
 }
 
 var FullConsumes = &proto.Consumes{

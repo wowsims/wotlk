@@ -392,34 +392,32 @@ enum PetFood {
 
 // Buffs that affect the entire raid.
 message RaidBuffs {
-	TristateEffect power_word_fortitude = 1;
-	bool arcane_brilliance = 2;
-	bool fel_intelligence = 3;
-	bool divine_spirit = 4;
+
+	// +Stats
 	TristateEffect gift_of_the_wild = 5;
-	bool shadow_protection = 6;	
 
-	bool swift_retribution = 7;
-	TristateEffect moonkin_aura = 8;
-	bool elemental_oath = 9;
+	// 10% Stats
+	bool blessing_of_kings = 46;
 
-	bool totem_of_wrath = 10; // shouldn't stack with demonic pact (does in beta right now)
-	int32 demonic_pact = 37; // SP buff
+	// +Stam
+	TristateEffect power_word_fortitude = 1;
 
 	// +Health
 	TristateEffect commanding_shout = 11;
 	TristateEffect blood_pact = 12;	
 
-	// 155 agi/str
+	// + Agi and Str
 	bool horn_of_winter = 13;
 	TristateEffect strength_of_earth_totem = 14; // none, normal, 15% improved
 	
-	// 20% Melee Haste
-	bool icy_talons = 15;
-	TristateEffect windfury_totem = 16; // none, 16%, 20%
+	// +Intell and/or Spi
+	bool arcane_brilliance = 2;
+	TristateEffect fel_intelligence = 3;
+	bool divine_spirit = 4;
 
 	// +AP
-	TristateEffect battle_shout = 17; // does not stack with blessing_of_might
+	TristateEffect battle_shout = 17;
+	TristateEffect blessing_of_might = 48;
 	
 	// 10% AP
 	bool trueshot_aura = 18;
@@ -430,21 +428,38 @@ message RaidBuffs {
 	TristateEffect leader_of_the_pack = 21;
 	bool rampage = 22;
 
+	// 20% Melee Haste
+	bool icy_talons = 15;
+	TristateEffect windfury_totem = 16; // none, 16%, 20%
+
+	// +Spell Power
+	bool totem_of_wrath = 10; // shouldn't stack with demonic pact (does in beta right now)
+	int32 demonic_pact = 37; // SP buff
+
+	// +5% Spell Crit and/or +3% Haste
+	bool swift_retribution = 7;
+	TristateEffect moonkin_aura = 8;
+	bool elemental_oath = 9;
+
+	// 5% spell haste
+	bool wrath_of_air_totem = 27;
+
 	// 3% dmg
 	bool ferocious_inspiration = 23;
 	bool sanctified_retribution = 24;
 	bool arcane_empowerment = 25;
 
-	TristateEffect mana_spring_totem = 26; // does not stack with blessing of wis
+	// mp5
+	TristateEffect mana_spring_totem = 26;
+	TristateEffect blessing_of_wisdom = 47;
 	
-	// 5% spell haste
-	bool wrath_of_air_totem = 27;
-
+	// Miscellaneous
 	bool bloodlust = 29;
-
 	TristateEffect thorns = 32;
 	TristateEffect devotion_aura = 33;
 	bool retribution_aura = 34;
+	bool blessing_of_sanctuary = 49;
+	bool shadow_protection = 6;	
 
 	// Drums
 	bool drums_of_forgotten_kings = 38;
@@ -477,11 +492,6 @@ message PartyBuffs {
 // These are usually individual actions taken by other Characters.
 message IndividualBuffs {
 	// Blessings, used for raid sim and individual sim
-	bool blessing_of_kings = 1;
-	TristateEffect blessing_of_wisdom = 2;
-	TristateEffect blessing_of_might = 3;
-	bool blessing_of_sanctuary = 4;
-
 	// Only used in individual sims 
 	//   as the class that provides these would cast them in raid sim
 

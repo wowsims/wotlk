@@ -39,9 +39,9 @@ export const AllStatsBuff = makeMultiIconInput([
 ], 'Stats');
 
 export const AllStatsPercentBuff = makeMultiIconInput([
-	makeBooleanIndividualBuffInput(ActionId.fromSpellId(25898), 'blessingOfKings'),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(25898), 'blessingOfKings'),
 	makeBooleanRaidBuffInput(ActionId.fromItemId(49633), 'drumsOfForgottenKings'),
-	makeBooleanIndividualBuffInput(ActionId.fromSpellId(25889), 'blessingOfSanctuary'),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(25899), 'blessingOfSanctuary'),
 ], 'Stats %');
 
 export const ArmorBuff = makeMultiIconInput([
@@ -53,7 +53,7 @@ export const ArmorBuff = makeMultiIconInput([
 
 export const StaminaBuff = makeMultiIconInput([
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(14767), 'powerWordFortitude', TristateEffect.TristateEffectImproved),
-	makeBooleanRaidBuffInput(ActionId.fromSpellId(25389), 'powerWordFortitude', TristateEffect.TristateEffectRegular),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(48161), 'powerWordFortitude', TristateEffect.TristateEffectRegular),
 	makeBooleanRaidBuffInput(ActionId.fromItemId(37094), 'scrollOfStamina'),
 ], 'Stam');
 
@@ -67,19 +67,21 @@ export const StrengthAndAgilityBuff = makeMultiIconInput([
 
 export const IntellectBuff = makeMultiIconInput([
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(43002), 'arcaneBrilliance'),
-	makeBooleanRaidBuffInput(ActionId.fromSpellId(57567), 'felIntelligence'),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(54038), 'felIntelligence', TristateEffect.TristateEffectImproved),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(57567), 'felIntelligence', TristateEffect.TristateEffectRegular),
 	makeBooleanRaidBuffInput(ActionId.fromItemId(37092), 'scrollOfIntellect'),
 ], 'Int');
 
 export const SpiritBuff = makeMultiIconInput([
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(48073), 'divineSpirit'),
-	makeBooleanRaidBuffInput(ActionId.fromSpellId(57567), 'felIntelligence'),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(54038), 'felIntelligence', TristateEffect.TristateEffectImproved),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(57567), 'felIntelligence', TristateEffect.TristateEffectRegular),
 	makeBooleanRaidBuffInput(ActionId.fromItemId(37098), 'scrollOfSpirit'),
 ], 'Spi');
 
 export const AttackPowerBuff = makeMultiIconInput([
-	makeBooleanIndividualBuffInput(ActionId.fromSpellId(20045), 'blessingOfMight', TristateEffect.TristateEffectImproved),
-	makeBooleanIndividualBuffInput(ActionId.fromSpellId(48934), 'blessingOfMight', TristateEffect.TristateEffectRegular),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(20045), 'blessingOfMight', TristateEffect.TristateEffectImproved),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(48934), 'blessingOfMight', TristateEffect.TristateEffectRegular),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(12861), 'battleShout', TristateEffect.TristateEffectImproved),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(47436), 'battleShout', TristateEffect.TristateEffectRegular),
 ], 'AP');
@@ -97,7 +99,7 @@ export const DamagePercentBuff = makeMultiIconInput([
 ], 'Dmg %');
 
 export const DamageReductionPercentBuff = makeMultiIconInput([
-	makeBooleanIndividualBuffInput(ActionId.fromSpellId(25899), 'blessingOfSanctuary'),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(25899), 'blessingOfSanctuary'),
 	// vigilance
 	// renewed hope
 ], 'Mit %');
@@ -115,8 +117,8 @@ export const HealthBuff = makeMultiIconInput([
 ], 'Health');
 
 export const MP5Buff = makeMultiIconInput([
-	makeBooleanIndividualBuffInput(ActionId.fromSpellId(20245), 'blessingOfWisdom', TristateEffect.TristateEffectImproved),
-	makeBooleanIndividualBuffInput(ActionId.fromSpellId(48938), 'blessingOfWisdom', TristateEffect.TristateEffectRegular),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(20245), 'blessingOfWisdom', TristateEffect.TristateEffectImproved),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(48938), 'blessingOfWisdom', TristateEffect.TristateEffectRegular),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(16206), 'manaSpringTotem', TristateEffect.TristateEffectImproved),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(58774), 'manaSpringTotem', TristateEffect.TristateEffectRegular),
 ], 'MP5');

@@ -32,11 +32,11 @@ var FullRaidBuffs = &proto.RaidBuffs{
 	ArcaneBrilliance: true,
 	GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
 	MoonkinAura:      proto.TristateEffect_TristateEffectImproved,
+	BlessingOfKings:  true,
+	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
 }
 var FullPartyBuffs = &proto.PartyBuffs{}
 var FullIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings:  true,
-	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
 }
 
 var FullConsumes = &proto.Consumes{

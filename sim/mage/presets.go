@@ -166,20 +166,18 @@ var FullRaidBuffs = &proto.RaidBuffs{
 	ManaSpringTotem: proto.TristateEffect_TristateEffectRegular,
 	TotemOfWrath:    true,
 	WrathOfAirTotem: true,
+	BlessingOfKings:  true,
+	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
 }
 var FullFirePartyBuffs = &proto.PartyBuffs{}
 var FullFrostPartyBuffs = FullFirePartyBuffs
 var FullIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings:  true,
-	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
 }
 
 var FullArcanePartyBuffs = &proto.PartyBuffs{
 	ManaTideTotems: 1,
 }
 var FullArcaneIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings:  true,
-	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
 	Innervates:       1,
 }
 

@@ -571,16 +571,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 						<div class="cooldowns-section-content">
 						</div>
 					</fieldset>
-<<<<<<< HEAD
-				</div>
-				<div class="settings-section-container labeled-icon-section within-raid-sim-hide">
-					<fieldset class="settings-section debuffs-section">
-						<legend>Debuffs</legend>
-					</fieldset>
-				</div>
-				<div class="settings-section-container">
-=======
->>>>>>> bbfeb8c4ae5bfc08c7406a4edb21d0d36971cc67
 					<fieldset class="settings-section other-settings-section">
 						<legend>Other</legend>
 					</fieldset>

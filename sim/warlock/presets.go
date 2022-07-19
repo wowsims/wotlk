@@ -69,12 +69,12 @@ var FullRaidBuffs = &proto.RaidBuffs{
 	ManaSpringTotem:  proto.TristateEffect_TristateEffectRegular,
 	WrathOfAirTotem:  true,
 	TotemOfWrath:     true,
+	BlessingOfKings: true,
 }
 
 var FullPartyBuffs = &proto.PartyBuffs{}
 
 var FullIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings: true,
 }
 
 var FullConsumes = &proto.Consumes{

@@ -12,8 +12,8 @@ import (
 func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.PartyBuffs, individualBuffs proto.IndividualBuffs) {
 	character := agent.GetCharacter()
 
-	if raidBuffs.ArcaneBrilliance || raidBuffs.FelIntelligence {
-		val := 48.0
+	if raidBuffs.ArcaneBrilliance || raidBuffs.FelIntelligence > 0 {
+		val := GetTristateValueFloat(raidBuffs.FelIntelligence, 48.0, 48.0 * 1.1)
 		if raidBuffs.ArcaneBrilliance {
 			val = 60.0
 		}
@@ -111,8 +111,8 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 			stats.ShadowResistance: 130,
 		})
 	}
-	if raidBuffs.DivineSpirit || raidBuffs.FelIntelligence {
-		v := 64.0
+	if raidBuffs.DivineSpirit || raidBuffs.FelIntelligence > 0 {
+		v := GetTristateValueFloat(raidBuffs.FelIntelligence, 64.0, 64.0 * 1.1)
 		if raidBuffs.DivineSpirit {
 			v = 80.0
 		}
@@ -137,21 +137,12 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		})
 	}
 
-	character.AddStats(stats.Stats{
-		stats.MP5: GetTristateValueFloat(individualBuffs.BlessingOfWisdom, 42.0, 50.0),
-	})
-
-	character.AddStats(stats.Stats{
-		stats.AttackPower:       GetTristateValueFloat(individualBuffs.BlessingOfMight, 220, 264),
-		stats.RangedAttackPower: GetTristateValueFloat(individualBuffs.BlessingOfMight, 220, 264),
-	})
-
 	kingsAgiIntSpiAmount := 1.0
 	kingsStrStamAmount := 1.0
-	if individualBuffs.BlessingOfSanctuary {
+	if raidBuffs.BlessingOfSanctuary {
 		kingsStrStamAmount = 1.1
 	}
-	if individualBuffs.BlessingOfKings {
+	if raidBuffs.BlessingOfKings {
 		kingsAgiIntSpiAmount = 1.1
 		kingsStrStamAmount = 1.1
 	} else if raidBuffs.DrumsOfForgottenKings {
@@ -198,7 +189,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		})
 	}
 
-	if individualBuffs.BlessingOfSanctuary {
+	if raidBuffs.BlessingOfSanctuary {
 		character.PseudoStats.DamageTakenMultiplier *= 0.97
 		BlessingOfSanctuaryAura(character)
 	}
@@ -216,9 +207,9 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		RetributionAura(character, raidBuffs.SanctifiedRetribution)
 	}
 
-	if raidBuffs.BattleShout > 0 || individualBuffs.BlessingOfMight > 0 {
+	if raidBuffs.BattleShout > 0 || raidBuffs.BlessingOfMight > 0 {
 		bonusAP := 550 * GetTristateValueFloat(raidBuffs.BattleShout, 1, 1.25)
-		bomAP := 550 * GetTristateValueFloat(individualBuffs.BlessingOfMight, 1, 1.25)
+		bomAP := 550 * GetTristateValueFloat(raidBuffs.BlessingOfMight, 1, 1.25)
 		if bomAP > bonusAP {
 			bonusAP = bomAP
 		}
@@ -260,9 +251,9 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		}
 	}
 
-	if individualBuffs.BlessingOfWisdom > 0 || raidBuffs.ManaSpringTotem > 0 {
+	if raidBuffs.BlessingOfWisdom > 0 || raidBuffs.ManaSpringTotem > 0 {
 		character.AddStats(stats.Stats{
-			stats.MP5: GetTristateValueFloat(MaxTristate(individualBuffs.BlessingOfWisdom, raidBuffs.ManaSpringTotem), 91, 109),
+			stats.MP5: GetTristateValueFloat(MaxTristate(raidBuffs.BlessingOfWisdom, raidBuffs.ManaSpringTotem), 91, 109),
 		})
 	}
 
