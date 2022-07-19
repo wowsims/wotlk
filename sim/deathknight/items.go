@@ -144,4 +144,28 @@ func init() {
 			},
 		}))
 	})
+
+	CreateGladiatorsSigil(42619, "Hateful", 106, 6)
+	CreateGladiatorsSigil(42620, "Deadly", 120, 10)
+	CreateGladiatorsSigil(42621, "Furious", 144, 10)
+	CreateGladiatorsSigil(42622, "Relentless", 172, 10)
+	CreateGladiatorsSigil(51417, "Wrathful", 204, 10)
+}
+
+func CreateGladiatorsSigil(id int32, name string, ap float64, seconds time.Duration) {
+	core.NewItemEffect(id, func(agent core.Agent) {
+		deathKnight := agent.(DeathKnightAgent).GetDeathKnight()
+		procAura := deathKnight.NewTemporaryStatsAura(name+" Gladiator's Sigil of Strife Proc", core.ActionID{ItemID: id}, stats.Stats{stats.AttackPower: ap}, time.Second*seconds)
+
+		core.MakePermanent(deathKnight.GetOrRegisterAura(core.Aura{
+			Label: name + " Gladiator's Sigil of Strife",
+			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+				if spell != deathKnight.PlagueStrike {
+					return
+				}
+
+				procAura.Activate(sim)
+			},
+		}))
+	})
 }
