@@ -43,6 +43,7 @@ func (deathKnight *DeathKnight) registerSummonGargoyleCD() {
 			deathKnight.Gargoyle.EnableWithTimeout(sim, deathKnight.Gargoyle, time.Second*30)
 
 			// Add % atack speed modifiers
+			deathKnight.Gargoyle.PseudoStats.CastSpeedMultiplier = 1.0
 			deathKnight.Gargoyle.MultiplyCastSpeed(deathKnight.PseudoStats.MeleeSpeedMultiplier)
 
 			// Add a dummy aura to show in metrics
