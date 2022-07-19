@@ -31,8 +31,8 @@ var defaultDestroTalents = &proto.WarlockTalents{
 	SoulLeech:          3,
 	ImprovedSoulLeech:  2,
 	// demo
-	FelSynergy:  		2,
-	ImprovedImp: 		3,
+	FelSynergy:  2,
+	ImprovedImp: 3,
 }
 
 var defaultDestroRotation = &proto.Warlock_Rotation{
@@ -41,8 +41,8 @@ var defaultDestroRotation = &proto.Warlock_Rotation{
 }
 
 var defaultDestroOptions = &proto.Warlock_Options{
-	Armor:  proto.Warlock_Options_FelArmor,
-	Summon: proto.Warlock_Options_Imp,
+	Armor:       proto.Warlock_Options_FelArmor,
+	Summon:      proto.Warlock_Options_Imp,
 	WeaponImbue: proto.Warlock_Options_GrandFirestone,
 }
 

@@ -13,7 +13,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 	character := agent.GetCharacter()
 
 	if raidBuffs.ArcaneBrilliance || raidBuffs.FelIntelligence > 0 {
-		val := GetTristateValueFloat(raidBuffs.FelIntelligence, 48.0, 48.0 * 1.1)
+		val := GetTristateValueFloat(raidBuffs.FelIntelligence, 48.0, 48.0*1.1)
 		if raidBuffs.ArcaneBrilliance {
 			val = 60.0
 		}
@@ -112,7 +112,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		})
 	}
 	if raidBuffs.DivineSpirit || raidBuffs.FelIntelligence > 0 {
-		v := GetTristateValueFloat(raidBuffs.FelIntelligence, 64.0, 64.0 * 1.1)
+		v := GetTristateValueFloat(raidBuffs.FelIntelligence, 64.0, 64.0*1.1)
 		if raidBuffs.DivineSpirit {
 			v = 80.0
 		}
