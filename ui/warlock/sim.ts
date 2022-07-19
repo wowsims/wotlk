@@ -106,12 +106,10 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
-					blessingOfKings: true,
 					powerWordFortitude: TristateEffect.TristateEffectImproved,
 					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
 					arcaneBrilliance: true,
 					divineSpirit: true,
-					blessingOfMight: TristateEffect.TristateEffectImproved,
 					trueshotAura: true,
 					leaderOfThePack: TristateEffect.TristateEffectImproved,
 					icyTalons: true,
@@ -120,13 +118,15 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 					wrathOfAirTotem: true,
 					swiftRetribution: true,
 					sanctifiedRetribution: true,
-					blessingOfWisdom: TristateEffect.TristateEffectImproved,
 					bloodlust: true,
 				}),
 
 				partyBuffs: PartyBuffs.create({
 				}),
 				individualBuffs: IndividualBuffs.create({
+					blessingOfKings: true,
+					blessingOfWisdom: TristateEffect.TristateEffectImproved,
+					blessingOfMight: TristateEffect.TristateEffectImproved,
 				}),
 				debuffs: Debuffs.create({
 					ebonPlaguebringer: true,

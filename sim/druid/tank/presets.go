@@ -52,13 +52,13 @@ var FullRaidBuffs = &proto.RaidBuffs{
 	ManaSpringTotem:      proto.TristateEffect_TristateEffectRegular,
 	StrengthOfEarthTotem: proto.TristateEffect_TristateEffectImproved,
 	UnleashedRage:        true,
-	BlessingOfKings: true,
-	BlessingOfMight: proto.TristateEffect_TristateEffectImproved,
 }
 var FullPartyBuffs = &proto.PartyBuffs{
 	BraidedEterniumChain: true,
 }
 var FullIndividualBuffs = &proto.IndividualBuffs{
+	BlessingOfKings: true,
+	BlessingOfMight: proto.TristateEffect_TristateEffectImproved,
 }
 
 var FullConsumes = &proto.Consumes{

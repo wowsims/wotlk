@@ -113,12 +113,12 @@ var FullRaidBuffs = &proto.RaidBuffs{
 	GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
 	BattleShout:      proto.TristateEffect_TristateEffectImproved,
 	LeaderOfThePack:  proto.TristateEffect_TristateEffectImproved,
-	BlessingOfKings:  true,
-	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
-	BlessingOfMight:  proto.TristateEffect_TristateEffectImproved,
 }
 var FullPartyBuffs = &proto.PartyBuffs{}
 var FullIndividualBuffs = &proto.IndividualBuffs{
+	BlessingOfKings:  true,
+	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
+	BlessingOfMight:  proto.TristateEffect_TristateEffectImproved,
 }
 
 var FullConsumes = &proto.Consumes{}

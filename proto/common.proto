@@ -396,9 +396,6 @@ message RaidBuffs {
 	// +Stats
 	TristateEffect gift_of_the_wild = 5;
 
-	// 10% Stats
-	bool blessing_of_kings = 46;
-
 	// +Stam
 	TristateEffect power_word_fortitude = 1;
 
@@ -417,7 +414,6 @@ message RaidBuffs {
 
 	// +AP
 	TristateEffect battle_shout = 17;
-	TristateEffect blessing_of_might = 48;
 	
 	// 10% AP
 	bool trueshot_aura = 18;
@@ -451,14 +447,12 @@ message RaidBuffs {
 
 	// mp5
 	TristateEffect mana_spring_totem = 26;
-	TristateEffect blessing_of_wisdom = 47;
 	
 	// Miscellaneous
 	bool bloodlust = 29;
 	TristateEffect thorns = 32;
 	TristateEffect devotion_aura = 33;
 	bool retribution_aura = 34;
-	bool blessing_of_sanctuary = 49;
 	bool shadow_protection = 6;	
 
 	// Drums
@@ -491,7 +485,12 @@ message PartyBuffs {
 
 // These are usually individual actions taken by other Characters.
 message IndividualBuffs {
-	// Blessings, used for raid sim and individual sim
+	// 10% Stats
+	bool blessing_of_kings = 46;
+	TristateEffect blessing_of_wisdom = 47;
+	TristateEffect blessing_of_might = 48;
+	bool blessing_of_sanctuary = 49;
+
 	// Only used in individual sims 
 	//   as the class that provides these would cast them in raid sim
 

@@ -61,8 +61,6 @@ var FullRaidBuffs = &proto.RaidBuffs{
 	WindfuryTotem:        proto.TristateEffect_TristateEffectImproved,
 	BattleShout:          proto.TristateEffect_TristateEffectImproved,
 	UnleashedRage:        true,
-	BlessingOfKings: true,
-	BlessingOfMight: proto.TristateEffect_TristateEffectImproved,
 }
 
 var FullPartyBuffs = &proto.PartyBuffs{
@@ -70,6 +68,8 @@ var FullPartyBuffs = &proto.PartyBuffs{
 }
 
 var FullIndividualBuffs = &proto.IndividualBuffs{
+	BlessingOfKings: true,
+	BlessingOfMight: proto.TristateEffect_TristateEffectImproved,
 }
 
 var FullConsumes = &proto.Consumes{
