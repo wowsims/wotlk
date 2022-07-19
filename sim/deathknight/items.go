@@ -9,15 +9,6 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-// Used for filtering sigil bonuses based on skill
-type DeathKnightAbility uint8
-
-const (
-	Ability_Obliterate DeathKnightAbility = iota
-	Ability_ScourgeStrike
-	Ability_DeathStrike
-)
-
 var ItemSetScourgeborne = core.NewItemSet(core.ItemSet{
 	Name: "Scourgeborne Battlegear",
 	Bonuses: map[int32]core.ApplyEffect{
@@ -40,21 +31,19 @@ func (deathKnight *DeathKnight) scourgeborneRunicPowerBonus() float64 {
 	return core.TernaryFloat64(deathKnight.HasSetBonus(ItemSetScourgeborne, 4), 5.0, 0.0)
 }
 
-func (deathKnight *DeathKnight) sigilOfAwarenessBonus(skill DeathKnightAbility) float64 {
+func (deathKnight *DeathKnight) sigilOfAwarenessBonus(spell *core.Spell) float64 {
 	if deathKnight.Equip[proto.ItemSlot_ItemSlotRanged].ID != 40207 {
 		return 0
 	}
 
-	switch skill {
-	case Ability_Obliterate:
+	if spell == deathKnight.Obliterate {
 		return 336
-	case Ability_ScourgeStrike:
+	} else if spell == deathKnight.ScourgeStrike {
 		return 189
-	case Ability_DeathStrike:
-		return 315
-	default:
-		return 0
-	}
+	} // else if spell == deathKnight.DeathStrike {
+	// 	return 315
+	// }
+	return 0
 }
 
 func (deathKnight *DeathKnight) sigilOfTheFrozenConscienceBonus() float64 {
