@@ -134,6 +134,42 @@ var ItemSetLightbringerArmor = core.NewItemSet(core.ItemSet{
 	},
 })
 
+var ItemSetLightswornBattlegear = core.NewItemSet(core.ItemSet{
+	Name: "Lightsworn Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			paladin := agent.(PaladinAgent).GetPaladin()
+
+			procSpell := paladin.RegisterSpell(core.SpellConfig{
+				ActionID: core.ActionID{SpellID: 70765},
+				ApplyEffects: func(_ *core.Simulation, _ *core.Unit, _ *core.Spell) {
+					paladin.DivineStorm.CD.Reset()
+				},
+			})
+
+			paladin.RegisterAura(core.Aura{
+				Label:    "Lightsworn Battlegear 2pc",
+				Duration: core.NeverExpires,
+				OnReset: func(aura *core.Aura, sim *core.Simulation) {
+					aura.Activate(sim)
+				},
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+					if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+						return
+					}
+					if sim.RandomFloat("lightsworn 2pc") > 0.4 {
+						return
+					}
+					procSpell.Cast(sim, &paladin.Unit)
+				},
+			})
+		},
+		4: func(agent core.Agent) {
+			// Implemented in seals.go
+		},
+	},
+})
+
 func init() {
 	// Librams implemented in seals.go and judgement.go
 
@@ -150,9 +186,9 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spell == paladin.JudgementOfBlood || spell == paladin.JudgementOfRighteousness {
-					procAura.Activate(sim)
-				}
+				// if spell == paladin.JudgementOfBlood || spell == paladin.JudgementOfRighteousness {
+				procAura.Activate(sim)
+				// }
 			},
 		})
 	})

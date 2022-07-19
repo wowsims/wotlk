@@ -47,6 +47,7 @@ message SavedSettings {
 
 message SavedTalents {
 	string talents_string = 1;
+	Glyphs glyphs = 2;
 }
 
 // A buff bot placed in a raid.

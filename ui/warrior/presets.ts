@@ -2,11 +2,13 @@ import { Consumes } from '/wotlk/core/proto/common.js';
 import { EquipmentSpec } from '/wotlk/core/proto/common.js';
 import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
+import { Glyphs } from '/wotlk/core/proto/common.js';
 import { ItemSpec } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
 import { Spec } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
 import { Faction } from '/wotlk/core/proto/common.js';
+import { SavedTalents } from '/wotlk/core/proto/ui.js';
 import { Player } from '/wotlk/core/player.js';
 
 import {
@@ -30,12 +32,16 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 export const ArmsTalents = {
 	name: 'Arms',
-	data: '3022032023335100102012213231251-305-2033',
+	data: SavedTalents.create({
+		talentsString: '3022032023335100102012213231251-305-2033',
+	}),
 };
 
 export const FuryTalents = {
 	name: 'Fury',
-	data: '30202300233-325003101504310053120500351',
+	data: SavedTalents.create({
+		talentsString: '30202300233-325003101504310053120500351',
+	}),
 };
 
 export const DefaultRotation = WarriorRotation.create({

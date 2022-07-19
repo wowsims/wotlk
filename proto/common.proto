@@ -384,12 +384,9 @@ enum Food {
 
 enum PetFood {
 	PetFoodUnknown = 0;
-	PetFoodKiblersBits = 1;
-}
-
-enum Alchohol {
-	AlchoholUnknown = 0;
-	AlchoholKreegsStoutBeatdown = 1;
+	PetFoodSpicyMammothTreats = 1;
+	// TBC
+	PetFoodKiblersBits = 2;
 }
 
 // Buffs that affect the entire raid.
@@ -449,8 +446,16 @@ message RaidBuffs {
 	TristateEffect retribution_aura = 34;
 
 	// Drums
-	bool DrumsOfKings = 38;
-	bool DrumsOfWild = 39;
+	bool drums_of_forgotten_kings = 38;
+	bool drums_of_the_wild = 39;
+
+	// Scroll
+	bool scroll_of_protection = 40;
+	bool scroll_of_stamina = 41;
+	bool scroll_of_strength = 42;
+	bool scroll_of_agility = 43;
+	bool scroll_of_intellect = 44;
+	bool scroll_of_spirit = 45;
 }
 
 // Buffs that affect a single party.
@@ -501,14 +506,6 @@ message Consumes {
 
 	Food food = 41;
 	PetFood pet_food = 37;
-	Alchohol alchohol = 42;
-
-	// 0 means no scroll, otherwise value is the scroll level.
-	// E.g. 5 indicates Scroll of Agility V.
-	int32 scroll_of_agility = 44;
-	int32 scroll_of_strength = 43;
-	int32 scroll_of_spirit = 45;
-	int32 scroll_of_protection = 53;
 
 	int32 pet_scroll_of_agility = 46;
 	int32 pet_scroll_of_strength = 47;
@@ -523,9 +520,6 @@ message Consumes {
 	bool super_sapper = 50;
 	bool goblin_sapper = 51;
 	Explosive filler_explosive = 52;
-
-	bool DrumsOfKings = 54;
-	bool DrumsOfWild = 55;
 }
 
 message Debuffs {
@@ -561,8 +555,6 @@ message Debuffs {
 	TristateEffect expose_armor = 17;
 	bool sunder_armor = 18;
 	TristateEffect curse_of_weakness = 19;
-
-	TristateEffect hunters_mark = 20;
 
 	TristateEffect demoralizing_roar = 22;
 	TristateEffect demoralizing_shout = 23;

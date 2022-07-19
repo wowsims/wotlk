@@ -10,6 +10,7 @@ import { Race } from '/wotlk/core/proto/common.js';
 import { Spec } from '/wotlk/core/proto/common.js';
 import { TristateEffect } from '/wotlk/core/proto/common.js';
 import { Faction } from '/wotlk/core/proto/common.js';
+import { SavedTalents } from '/wotlk/core/proto/ui.js';
 import { SpecOptions } from '/wotlk/core/proto_utils/utils.js';
 import { SpecRotation } from '/wotlk/core/proto_utils/utils.js';
 import { playerToSpec } from '/wotlk/core/proto_utils/utils.js';
@@ -76,7 +77,7 @@ export const specSimFactories: Partial<Record<Spec, (parentElem: HTMLElement, pl
 export interface PresetSpecSettings<SpecType extends Spec> {
 	spec: Spec,
 	rotation: SpecRotation<SpecType>,
-	talents: string,
+	talents: SavedTalents,
 	specOptions: SpecOptions<SpecType>,
 	consumes: Consumes,
 
@@ -575,7 +576,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	{
 		spec: Spec.SpecRetributionPaladin,
 		rotation: RetributionPaladinPresets.DefaultRotation,
-		talents: RetributionPaladinPresets.RetKingsPaladinTalents.data,
+		talents: RetributionPaladinPresets.AuraMasteryTalents.data,
 		specOptions: RetributionPaladinPresets.DefaultOptions,
 		consumes: RetributionPaladinPresets.DefaultConsumes,
 		defaultName: 'Ret Paladin',
@@ -607,7 +608,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	{
 		spec: Spec.SpecProtectionPaladin,
 		rotation: ProtectionPaladinPresets.DefaultRotation,
-		talents: ProtectionPaladinPresets.SanctityTalents.data,
+		talents: ProtectionPaladinPresets.GenericAoeTalents.data,
 		specOptions: ProtectionPaladinPresets.DefaultOptions,
 		consumes: ProtectionPaladinPresets.DefaultConsumes,
 		defaultName: 'Prot Paladin',

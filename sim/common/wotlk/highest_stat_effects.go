@@ -55,7 +55,7 @@ func init() {
 				},
 				func(stat stats.Stat) *core.Aura {
 					bonus := stats.Stats{}
-					bonus[stat] = 90
+					bonus[stat] = 300
 					return character.NewTemporaryStatsAura("DMC Greatness "+stat.StatName()+" Proc", core.ActionID{ItemID: itemID}, bonus, time.Second*15)
 				})
 

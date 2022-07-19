@@ -2,6 +2,7 @@ import { Consumes } from '/wotlk/core/proto/common.js';
 import { BattleElixir } from '/wotlk/core/proto/common.js';
 import { GuardianElixir } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
+import { Glyphs } from '/wotlk/core/proto/common.js';
 import { EquipmentSpec } from '/wotlk/core/proto/common.js';
 import { ItemSpec } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
@@ -9,6 +10,7 @@ import { Conjured } from '/wotlk/core/proto/common.js';
 import { RaidTarget } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
 import { Faction } from '/wotlk/core/proto/common.js';
+import { SavedTalents } from '/wotlk/core/proto/ui.js';
 import { NO_TARGET } from '/wotlk/core/proto_utils/utils.js';
 import { Player } from '/wotlk/core/player.js';
 
@@ -32,12 +34,9 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 export const StandardTalents = {
 	name: 'Standard',
-	data: '-503032132322105301251-05503301',
-};
-
-export const DemoRoarTalents = {
-	name: 'DemoRoar',
-	data: '-553032132322105301051-05503001',
+	data: SavedTalents.create({
+		talentsString: '-503032132322105301251-05503301',
+	}),
 };
 
 export const DefaultRotation = DruidRotation.create({
@@ -61,9 +60,6 @@ export const DefaultConsumes = Consumes.create({
 	food: Food.FoodGrilledMudfish,
 	defaultPotion: Potions.IronshieldPotion,
 	defaultConjured: Conjured.ConjuredFlameCap,
-	scrollOfAgility: 5,
-	scrollOfStrength: 5,
-	scrollOfProtection: 5,
 });
 
 export const P1_PRESET = {

@@ -113,12 +113,10 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		// Affliction Rotation
 		// ------------------------------------------
 		if rotationType == proto.Warlock_Rotation_Affliction {
-			if !warlock.CurseOfAgonyDot.IsActive() {
+			if !warlock.CurseOfAgonyDot.IsActive() && sim.GetRemainingDuration() > time.Second*24 {
 				spell = warlock.CurseOfAgony
-			} else if !warlock.CorruptionDot.IsActive() && sim.GetRemainingDuration() > time.Second*24 {
+			} else if !warlock.CorruptionDot.IsActive() {
 				spell = warlock.Corruption
-			} else if warlock.CorruptionDot.IsActive() && warlock.CorruptionDot.TickCount > warlock.CorruptionDot.NumberOfTicks-2 {
-				spell = warlock.Shadowbolt
 			} else if !warlock.UnstableAffDot.IsActive() {
 				spell = warlock.UnstableAff
 			} else if !warlock.HauntAura.IsActive() && warlock.Haunt.CD.IsReady(sim) {
@@ -133,7 +131,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			// ------------------------------------------
 			if warlock.CurseOfDoom.CD.IsReady(sim) && sim.GetRemainingDuration() > time.Minute {
 				spell = warlock.CurseOfDoom
-			} else if sim.GetRemainingDuration() > time.Second*24 && !warlock.CurseOfAgonyDot.IsActive() && !warlock.CurseOfDoomDot.IsActive() {
+			} else if !warlock.CurseOfDoomDot.IsActive() && !warlock.CurseOfAgonyDot.IsActive() && sim.GetRemainingDuration() > time.Second*24 {
 				// Can't cast agony until we are at end and both agony and doom are not ticking.
 				spell = warlock.CurseOfAgony
 			} else if !warlock.CorruptionDot.IsActive() {

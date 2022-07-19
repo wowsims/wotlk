@@ -90,14 +90,6 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 		MakePermanent(FaerieFireAura(target, debuffs.FaerieFire == proto.TristateEffect_TristateEffectImproved))
 	}
 
-	if debuffs.HuntersMark != proto.TristateEffect_TristateEffectMissing {
-		if debuffs.HuntersMark == proto.TristateEffect_TristateEffectImproved {
-			MakePermanent(HuntersMarkAura(target, 3, true))
-		} else {
-			MakePermanent(HuntersMarkAura(target, 0, false))
-		}
-	}
-
 	if debuffs.DemoralizingRoar != proto.TristateEffect_TristateEffectMissing {
 		MakePermanent(DemoralizingRoarAura(target, GetTristateValueInt32(debuffs.DemoralizingRoar, 0, 5)))
 	}
@@ -123,11 +115,11 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 	}
 
 	if debuffs.MasterPoisoner {
-		MakePermanent(MasterPoisonerDebuff(target))
+		MakePermanent(MasterPoisonerDebuff(target, 3))
 	}
 
 	if debuffs.HeartOfTheCrusader {
-		MakePermanent(HeartoftheCrusaderDebuff(target))
+		MakePermanent(HeartoftheCrusaderDebuff(target, 3))
 	}
 }
 
@@ -309,35 +301,25 @@ var BloodFrenzyActionID = ActionID{SpellID: 29859}
 var phyDmgDebuff = `4%phydmg`
 
 func BloodFrenzyAura(target *Unit, points int32) *Aura {
-	return bloodFrenzySavageCombatAura(target, "Blood Frenzy", BloodFrenzyActionID, float64(points))
+	return bloodFrenzySavageCombatAura(target, "Blood Frenzy", BloodFrenzyActionID, points)
 }
 func SavageCombatAura(target *Unit, points int32) *Aura {
-	return bloodFrenzySavageCombatAura(target, "Savage Combat", ActionID{SpellID: 58413}, float64(points))
+	return bloodFrenzySavageCombatAura(target, "Savage Combat", ActionID{SpellID: 58413}, points)
 }
 
-func bloodFrenzySavageCombatAura(target *Unit, label string, id ActionID, points float64) *Aura {
-	multiplier := 1 + 0.02*points
+func bloodFrenzySavageCombatAura(target *Unit, label string, id ActionID, points int32) *Aura {
+	multiplier := 1 + 0.02*float64(points)
 	return target.GetOrRegisterAura(Aura{
 		Label:    label + "-" + strconv.Itoa(int(points)),
 		Tag:      phyDmgDebuff,
 		ActionID: id,
+		Priority: multiplier,
 		// No fixed duration, lasts as long as the bleed that activates it.
 		OnGain: func(aura *Aura, sim *Simulation) {
-			if oAura := target.GetActiveAuraWithTag(phyDmgDebuff); oAura == nil {
-				aura.Unit.PseudoStats.PhysicalDamageTakenMultiplier *= multiplier
-			} else if oAura.Priority < points {
-				// remove weaker debuff
-				aura.Unit.PseudoStats.PhysicalDamageTakenMultiplier /= 1.0 + (0.02 * oAura.Priority)
-				aura.Unit.PseudoStats.PhysicalDamageTakenMultiplier *= multiplier
-			}
+			aura.Unit.PseudoStats.PhysicalDamageTakenMultiplier *= multiplier
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			if oAura := target.GetActiveAuraWithTag(phyDmgDebuff); oAura == nil {
-				aura.Unit.PseudoStats.PhysicalDamageTakenMultiplier /= multiplier
-			} else if oAura.Priority < points {
-				aura.Unit.PseudoStats.PhysicalDamageTakenMultiplier /= multiplier
-				aura.Unit.PseudoStats.PhysicalDamageTakenMultiplier *= 1.0 + (0.02 * oAura.Priority)
-			}
+			aura.Unit.PseudoStats.PhysicalDamageTakenMultiplier /= multiplier
 		},
 	})
 }
@@ -849,29 +831,29 @@ func ScorpidStingAura(target *Unit) *Aura {
 const MinorCritDebuffAuraTag = "minorcritdebuff"
 
 func TotemOfWrathDebuff(target *Unit) *Aura {
-	return minorCritDebuffAura(target, "Totem of Wrath Debuff", ActionID{SpellID: 30708})
+	return minorCritDebuffAura(target, "Totem of Wrath Debuff", ActionID{SpellID: 30708}, 3, time.Minute*5)
 }
 
-func MasterPoisonerDebuff(target *Unit) *Aura {
-	return minorCritDebuffAura(target, "Master Poisoner", ActionID{SpellID: 58410})
+func MasterPoisonerDebuff(target *Unit, points float64) *Aura {
+	return minorCritDebuffAura(target, "Master Poisoner", ActionID{SpellID: 58410}, points, time.Second*20)
 }
 
-func HeartoftheCrusaderDebuff(target *Unit) *Aura {
-	return minorCritDebuffAura(target, "Heart of the Crusader", ActionID{SpellID: 20337})
+func HeartoftheCrusaderDebuff(target *Unit, points float64) *Aura {
+	return minorCritDebuffAura(target, "Heart of the Crusader", ActionID{SpellID: 20337}, points, time.Second*20)
 }
 
-func minorCritDebuffAura(target *Unit, label string, actionID ActionID) *Aura {
+func minorCritDebuffAura(target *Unit, label string, actionID ActionID, points float64, duration time.Duration) *Aura {
 	return target.GetOrRegisterAura(Aura{
 		Label:    label,
 		Tag:      MinorCritDebuffAuraTag,
-		Priority: 3,
+		Priority: points,
 		ActionID: actionID,
-		Duration: time.Minute * 5,
+		Duration: duration,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.BonusCritRatingTaken += 3 * CritRatingPerCritChance
+			aura.Unit.PseudoStats.BonusCritRatingTaken += points * CritRatingPerCritChance
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.BonusCritRatingTaken -= 3 * CritRatingPerCritChance
+			aura.Unit.PseudoStats.BonusCritRatingTaken -= points * CritRatingPerCritChance
 		},
 	})
 }

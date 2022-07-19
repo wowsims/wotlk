@@ -6,33 +6,29 @@ import (
 )
 
 var defaultProtTalents = &proto.PaladinTalents{
-	Redoubt:                       5,
-	Precision:                     3,
-	Toughness:                     5,
-	BlessingOfKings:               true,
-	ImprovedRighteousFury:         3,
-	Anticipation:                  5,
-	BlessingOfSanctuary:           true,
-	Reckoning:                     4,
-	SacredDuty:                    2,
-	OneHandedWeaponSpecialization: 5,
-	HolyShield:                    true,
-	ImprovedHolyShield:            2,
-	CombatExpertise:               5,
-	AvengersShield:                true,
+	// Redoubt:                       5,
+	// Precision:                     3,
+	// Toughness:                     5,
+	// BlessingOfKings:               true,
+	// ImprovedRighteousFury:         3,
+	// Anticipation:                  5,
+	// BlessingOfSanctuary:           true,
+	// Reckoning:                     4,
+	// SacredDuty:                    2,
+	// OneHandedWeaponSpecialization: 5,
+	// HolyShield:                    true,
+	// ImprovedHolyShield:            2,
+	// CombatExpertise:               5,
+	// AvengersShield:                true,
 
-	Benediction:       5,
-	ImprovedJudgement: 2,
-	Deflection:        5,
-	PursuitOfJustice:  3,
-	Crusade:           3,
+	// Benediction:       5,
+	// ImprovedJudgement: 2,
+	// Deflection:        5,
+	// PursuitOfJustice:  3,
+	// Crusade:           3,
 }
 
-var defaultProtRotation = &proto.ProtectionPaladin_Rotation{
-	ConsecrationRank:  6,
-	UseExorcism:       false,
-	MaintainJudgement: proto.PaladinJudgement_JudgementOfWisdom,
-}
+var defaultProtRotation = &proto.ProtectionPaladin_Rotation{}
 
 var defaultProtOptions = &proto.ProtectionPaladin_Options{
 	Aura: proto.PaladinAura_RetributionAura,
@@ -78,7 +74,6 @@ var FullDebuffs = &proto.Debuffs{
 	ExposeArmor:     proto.TristateEffect_TristateEffectImproved,
 	FaerieFire:      proto.TristateEffect_TristateEffectImproved,
 	CurseOfWeakness: proto.TristateEffect_TristateEffectImproved,
-	HuntersMark:     proto.TristateEffect_TristateEffectImproved,
 }
 
 var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [

@@ -1,6 +1,5 @@
 import { Warlock_Options as WarlockOptions,Warlock_Rotation_Type as RotationType, Warlock_Rotation_Preset as RotationPreset, Warlock_Rotation_PrimarySpell as PrimarySpell, Warlock_Rotation_SecondaryDot as SecondaryDot, Warlock_Rotation_SpecSpell as SpecSpell, Warlock_Rotation_Curse as Curse, Warlock_Options_Armor as Armor, Warlock_Options_Summon as Summon } from '/wotlk/core/proto/warlock.js';
-import { RaidTarget } from '/wotlk/core/proto/common.js';
-import { Spec } from '/wotlk/core/proto/common.js';
+import { RaidTarget, Spec, Glyphs } from '/wotlk/core/proto/common.js';
 import { NO_TARGET } from '/wotlk/core/proto_utils/utils.js';
 import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
 import { Player } from '/wotlk/core/player.js';
@@ -269,42 +268,27 @@ export const WarlockRotationConfig = {
 				changedEvent: (player: Player<Spec.SpecWarlock>) => player.rotationChangeEmitter,
 				getValue: (player: Player<Spec.SpecWarlock>) => player.getRotation().type,
 				setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: number) => {
-					const newRotation = player.getRotation();
-					const newOptions = player.getSpecOptions();
-					newRotation.type = newValue;
-					newRotation.preset = RotationPreset.Automatic;
+					var newRotation = player.getRotation();
+					var newOptions = player.getSpecOptions();
 					TypedEvent.freezeAllAndDo(() => {
-						if (newRotation.type == RotationType.Affliction) {
-							player.setTalentsString(eventID, Presets.AfflictionTalents.data);
-							newRotation.primarySpell = Presets.AfflictionRotation.rotation.primarySpell
-							newRotation.secondaryDot = Presets.AfflictionRotation.rotation.secondaryDot
-							newRotation.specSpell = Presets.AfflictionRotation.rotation.specSpell
-							newRotation.curse = Presets.AfflictionRotation.rotation.curse
-							newRotation.corruption = Presets.AfflictionRotation.rotation.corruption
-							newRotation.detonateSeed = Presets.AfflictionRotation.rotation.detonateSeed
-							newOptions.summon = Presets.AfflictionOptions.summon
-							newOptions.armor = Presets.AfflictionOptions.armor
-						} else if (newRotation.type == RotationType.Demonology) {
-							player.setTalentsString(eventID, Presets.DemonologyTalents.data);
-							newRotation.primarySpell = Presets.DemonologyRotation.rotation.primarySpell
-							newRotation.secondaryDot = Presets.DemonologyRotation.rotation.secondaryDot
-							newRotation.specSpell = Presets.DemonologyRotation.rotation.specSpell
-							newRotation.curse = Presets.DemonologyRotation.rotation.curse
-							newRotation.corruption = Presets.DemonologyRotation.rotation.corruption
-							newRotation.detonateSeed = Presets.DemonologyRotation.rotation.detonateSeed
-							newOptions.summon = Presets.DemonologyOptions.summon
-							newOptions.armor = Presets.DemonologyOptions.armor
+						if (newValue == RotationType.Affliction) {
+							player.setTalentsString(eventID, Presets.AfflictionTalents.data.talentsString);
+							player.setGlyphs(eventID, Presets.AfflictionTalents.data.glyphs || Glyphs.create());
+							newRotation = Presets.AfflictionRotation
+							newOptions = Presets.AfflictionOptions
+						} else if (newValue == RotationType.Demonology) {
+							player.setTalentsString(eventID, Presets.DemonologyTalents.data.talentsString);
+							player.setGlyphs(eventID, Presets.DemonologyTalents.data.glyphs || Glyphs.create());
+							newRotation = Presets.DemonologyRotation
+							newOptions = Presets.DemonologyOptions
 						} else {
-							player.setTalentsString(eventID, Presets.DestructionTalents.data);
-							newRotation.primarySpell = Presets.DestructionRotation.rotation.primarySpell
-							newRotation.secondaryDot = Presets.DestructionRotation.rotation.secondaryDot
-							newRotation.specSpell = Presets.DestructionRotation.rotation.specSpell
-							newRotation.curse = Presets.DestructionRotation.rotation.curse
-							newRotation.corruption = Presets.DestructionRotation.rotation.corruption
-							newRotation.detonateSeed = Presets.DestructionRotation.rotation.detonateSeed
-							newOptions.summon = Presets.DestructionOptions.summon
-							newOptions.armor = Presets.DestructionOptions.armor
+							player.setTalentsString(eventID, Presets.DestructionTalents.data.talentsString);
+							player.setGlyphs(eventID, Presets.DestructionTalents.data.glyphs || Glyphs.create());
+							newRotation = Presets.DestructionRotation
+							newOptions = Presets.DestructionOptions
 						}
+						newRotation.type = newValue;
+						newRotation.preset = RotationPreset.Automatic;
 						player.setRotation(eventID, newRotation);
 						player.setSpecOptions(eventID, newOptions);
 					});

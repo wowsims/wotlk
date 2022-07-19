@@ -82,7 +82,7 @@ var P1BMHunter = &proto.Player{
 	Class:     proto.Class_ClassHunter,
 	Equipment: hunter.P1Gear,
 	Consumes:  hunter.FullConsumes,
-	Spec:      hunter.PlayerOptionsBasic,
+	Spec:      hunter.PlayerOptionsMM,
 	Buffs:     hunter.FullIndividualBuffs,
 }
 

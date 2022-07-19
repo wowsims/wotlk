@@ -29,7 +29,7 @@ func (deathKnight *DeathKnight) newObliterateHitSpell(isMH bool) *core.Spell {
 	hbResetCDChance := 0.05 * float64(deathKnight.Talents.Rime)
 
 	effect := core.SpellEffect{
-		BonusCritRating:  (5.0*float64(deathKnight.Talents.Rime) + 3.0*float64(deathKnight.Talents.Subversion) + 1.0*float64(deathKnight.Talents.Annihilation)) * core.CritRatingPerCritChance,
+		BonusCritRating:  (5.0*float64(deathKnight.Talents.Rime) + 3.0*float64(deathKnight.Talents.Subversion) + 1.0*float64(deathKnight.Talents.Annihilation) + deathKnight.scourgeborneCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: core.TernaryFloat64(deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfFrostStrike), 1.25, 1.0),
 		ThreatMultiplier: 1,
 
@@ -102,7 +102,7 @@ func (deathKnight *DeathKnight) registerObliterateSpell() {
 					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 1, 1)
 					deathKnight.Spend(sim, spell, dkSpellCost)
 
-					amountOfRunicPower := 15.0 + 2.5*float64(deathKnight.Talents.ChillOfTheGrave)
+					amountOfRunicPower := 15.0 + 2.5*float64(deathKnight.Talents.ChillOfTheGrave) + deathKnight.scourgeborneRunicPowerBonus()
 					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 				}
 			},
