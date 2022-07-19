@@ -47,13 +47,4 @@ func (deathKnight *DeathKnight) registerRaiseDeadCD() {
 			raiseDeadAura.Activate(sim)
 		},
 	})
-
-	deathKnight.AddMajorCooldown(core.MajorCooldown{
-		Spell:    deathKnight.RaiseDead,
-		Priority: core.CooldownPriorityDrums - 1, // Always prefer to cast after drums or lust so the ghoul gets their benefits.
-		Type:     core.CooldownTypeDPS,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return !deathKnight.Ghoul.IsEnabled()
-		},
-	})
 }

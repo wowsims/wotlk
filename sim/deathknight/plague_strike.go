@@ -48,7 +48,7 @@ func (deathKnight *DeathKnight) newPlagueStrikeSpell(isMH bool) *core.Spell {
 	}
 
 	return deathKnight.RegisterSpell(core.SpellConfig{
-		ActionID:     PlagueStrikeActionID,
+		ActionID:     PlagueStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool:  core.SpellSchoolPhysical,
 		Flags:        core.SpellFlagMeleeMetrics,
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
@@ -60,9 +60,9 @@ func (deathKnight *DeathKnight) registerPlagueStrikeSpell() {
 	deathKnight.PlagueStrikeOhHit = deathKnight.newPlagueStrikeSpell(false)
 
 	deathKnight.PlagueStrike = deathKnight.RegisterSpell(core.SpellConfig{
-		ActionID:    PlagueStrikeActionID,
+		ActionID:    PlagueStrikeActionID.WithTag(3),
 		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagNoMetrics | core.SpellFlagNoLogs,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -74,15 +74,15 @@ func (deathKnight *DeathKnight) registerPlagueStrikeSpell() {
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskMeleeMHSpecial,
+			ProcMask:         core.ProcMaskEmpty,
 			ThreatMultiplier: 1,
 
 			OutcomeApplier: deathKnight.OutcomeFuncAlwaysHit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				deathKnight.threatOfThassarianProc(sim, spellEffect, deathKnight.PlagueStrikeMhHit, deathKnight.PlagueStrikeOhHit)
-				deathKnight.threatOfThassarianAdjustMetrics(sim, spell, spellEffect, PlagueStrikeMHOutcome)
 
+				deathKnight.LastCastOutcome = PlagueStrikeMHOutcome
 				if deathKnight.outcomeEitherWeaponHitOrCrit(PlagueStrikeMHOutcome, PlagueStrikeOHOutcome) {
 					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 0, 1)
 					deathKnight.Spend(sim, spell, dkSpellCost)

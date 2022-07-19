@@ -6,14 +6,11 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-var HowlingBlastLastOutcomes []core.HitOutcome
-
 func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 	if !deathKnight.Talents.HowlingBlast {
 		return
 	}
 	target := deathKnight.CurrentTarget
-	HowlingBlastLastOutcomes = make([]core.HitOutcome, deathKnight.Env.GetNumTargets())
 
 	deathKnight.HowlingBlast = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 51411},
@@ -51,7 +48,9 @@ func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 			},
 			OutcomeApplier: deathKnight.killingMachineOutcomeMod(deathKnight.OutcomeFuncMagicHitAndCrit(deathKnight.spellCritMultiplier())),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				HowlingBlastLastOutcomes[deathKnight.getIndexForTarget(spellEffect.Target)] = spellEffect.Outcome
+				if spellEffect.Target == deathKnight.CurrentTarget {
+					deathKnight.LastCastOutcome = spellEffect.Outcome
+				}
 				if spellEffect.Landed() && target == spellEffect.Target {
 					if !deathKnight.HowlingBlastCostless {
 						dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 1, 1)
