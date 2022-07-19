@@ -67,8 +67,11 @@ ui/core/proto/api.ts: proto/*.proto node_modules
 	npx protoc --ts_out ui/core/proto --proto_path proto proto/test.proto
 	npx protoc --ts_out ui/core/proto --proto_path proto proto/ui.proto
 
-node_modules: package-lock.json
+package-lock.json:
 	npm install
+
+node_modules: package-lock.json
+	npm ci
 
 $(OUT_DIR)/core/tsconfig.tsbuildinfo: $(call rwildcard,ui/core,*.ts) ui/core/proto/api.ts
 	npx tsc -p ui/core
