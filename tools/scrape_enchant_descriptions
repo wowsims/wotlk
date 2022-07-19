@@ -46,7 +46,7 @@ grep '^\s*{' |
 			effect=$(spell_effect_from_url "$spell_url_suffix")
 		fi
 
-		printf '\n  %d: "%s",' "$id" "$effect"
+		printf '\n  "%d": "%s",' "$id" "$effect"
 		sleep 2 # Avoid potential rate-limting
 	done |
 	sed '$s/\,//g'
