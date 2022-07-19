@@ -88,7 +88,7 @@ func (deathKnight *DeathKnight) setupDKRotation() {
 	deathKnight.setupTargets()
 
 	mainSequence := initSequence(false, []DKRotationAction{
-		TernaryRotationAction(deathKnight.Options.RefreshHornOfWinter, DKRotationAction_HW, DKRotationAction_Skip),
+		TernaryRotationAction(deathKnight.Rotation.RefreshHornOfWinter, DKRotationAction_HW, DKRotationAction_Skip),
 		DKRotationAction_IT,
 		DKRotationAction_PS,
 		DKRotationAction_BT,

@@ -30,8 +30,6 @@ func (deathKnight *DeathKnight) registerScourgeStrikeShadowDamageSpell() *core.S
 }
 
 func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 560.0, 0.7, true)
-
 	outbreakBonus := 1.0
 	if deathKnight.Talents.Outbreak == 1 {
 		outbreakBonus = 1.07
