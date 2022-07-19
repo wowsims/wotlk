@@ -124,6 +124,7 @@ export const MP5Buff = makeMultiIconInput([
 ], 'MP5');
 
 export const MeleeCritBuff = makeMultiIconInput([
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(34300), 'leaderOfThePack', TristateEffect.TristateEffectImproved),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(17007), 'leaderOfThePack', TristateEffect.TristateEffectRegular),
 	// rampage
 ], 'Melee Crit');
@@ -144,6 +145,7 @@ export const ReplenishmentBuff = makeMultiIconInput([
 ], 'Repl');
 
 export const SpellCritBuff = makeMultiIconInput([
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(48396), 'moonkinAura', TristateEffect.TristateEffectImproved),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(24907), 'moonkinAura', TristateEffect.TristateEffectRegular),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(51470), 'elementalOath'),
 ], 'Spell Crit');
@@ -151,11 +153,11 @@ export const SpellCritBuff = makeMultiIconInput([
 export const SpellHasteBuff = makeMultiIconInput([
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(3738), 'wrathOfAirTotem'),
 	// flametongue totem
-	// demonic pact
 ], 'Spell Haste');
 
 export const SpellPowerBuff = makeMultiIconInput([
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(57722), 'totemOfWrath'),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(47240), 'demonicPact'),
 ], 'SP');
 
 export const Bloodlust = withLabel(makeBooleanRaidBuffInput(ActionId.fromSpellId(2825), 'bloodlust'), 'Lust');
@@ -181,18 +183,20 @@ export const MajorArmorDebuff = makeMultiIconInput([
 ], 'Major Ar');
 
 export const MinorArmorDebuff = makeMultiIconInput([
+	makeBooleanDebuffInput(ActionId.fromSpellId(33602), 'faerieFire', TristateEffect.TristateEffectImproved),
 	makeBooleanDebuffInput(ActionId.fromSpellId(770), 'faerieFire', TristateEffect.TristateEffectRegular),
+	makeBooleanDebuffInput(ActionId.fromSpellId(50511), 'curseOfWeakness', TristateEffect.TristateEffectImproved),
 	makeBooleanDebuffInput(ActionId.fromSpellId(50511), 'curseOfWeakness', TristateEffect.TristateEffectRegular),
 	// sting
 ], 'Minor Ar');
 
 export const AttackPowerDebuff = makeMultiIconInput([
-	makeBooleanDebuffInput(ActionId.fromSpellId(16862), 'demoralizingRoar', TristateEffect.TristateEffectImproved),
 	makeBooleanDebuffInput(ActionId.fromSpellId(12879), 'demoralizingShout', TristateEffect.TristateEffectImproved),
+	makeBooleanDebuffInput(ActionId.fromSpellId(47437), 'demoralizingShout', TristateEffect.TristateEffectRegular),
+	makeBooleanDebuffInput(ActionId.fromSpellId(16862), 'demoralizingRoar', TristateEffect.TristateEffectImproved),
 	makeBooleanDebuffInput(ActionId.fromSpellId(48560), 'demoralizingRoar', TristateEffect.TristateEffectRegular),
 	makeBooleanDebuffInput(ActionId.fromSpellId(18180), 'curseOfWeakness', TristateEffect.TristateEffectImproved),
 	makeBooleanDebuffInput(ActionId.fromSpellId(50511), 'curseOfWeakness', TristateEffect.TristateEffectRegular),
-	makeBooleanDebuffInput(ActionId.fromSpellId(47437), 'demoralizingShout', TristateEffect.TristateEffectRegular),
 ], 'AP');
 
 export const BleedDebuff = makeMultiIconInput([
@@ -210,8 +214,8 @@ export const CritDebuff = makeMultiIconInput([
 export const MeleeAttackSpeedDebuff = makeMultiIconInput([
 	makeBooleanDebuffInput(ActionId.fromSpellId(12666), 'thunderClap', TristateEffect.TristateEffectImproved),
 	makeBooleanDebuffInput(ActionId.fromSpellId(47502), 'thunderClap', TristateEffect.TristateEffectRegular),
-	// icy touch
-	// imp icy touch
+	makeBooleanDebuffInput(ActionId.fromSpellId(51456), 'icyTouch', TristateEffect.TristateEffectImproved),
+	makeBooleanDebuffInput(ActionId.fromSpellId(55095), 'icyTouch', TristateEffect.TristateEffectRegular),
 	// infected wounds
 	// judgements of the just
 ], 'Atk Spd');
@@ -243,9 +247,12 @@ export const SpellDamageDebuff = makeMultiIconInput([
 	makeBooleanDebuffInput(ActionId.fromSpellId(47865), 'curseOfElements'),
 ], 'Spell Dmg');
 
+export const MiscellaneousDebuffs = makeMultiIconInput([
+	makeBooleanDebuffInput(ActionId.fromSpellId(20271), 'judgementOfLight'),
+	makeBooleanDebuffInput(ActionId.fromSpellId(11374), 'giftOfArthas'),
+], 'Misc.');
+
 export const JudgementOfWisdom = makeBooleanDebuffInput(ActionId.fromSpellId(53408), 'judgementOfWisdom');
-export const JudgementOfLight = makeBooleanDebuffInput(ActionId.fromSpellId(27163), 'judgementOfLight');
-export const GiftOfArthas = makeBooleanDebuffInput(ActionId.fromSpellId(11374), 'giftOfArthas');
 
 // Consumes
 export const SuperSapper = makeBooleanConsumeInput(ActionId.fromItemId(23827), 'superSapper', [], onSetExplosives);

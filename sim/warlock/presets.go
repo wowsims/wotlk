@@ -31,8 +31,8 @@ var defaultDestroTalents = &proto.WarlockTalents{
 	SoulLeech:          3,
 	ImprovedSoulLeech:  2,
 	// demo
-	FelSynergy:  2,
-	ImprovedImp: 3,
+	FelSynergy:  		2,
+	ImprovedImp: 		3,
 }
 
 var defaultDestroRotation = &proto.Warlock_Rotation{
@@ -43,6 +43,7 @@ var defaultDestroRotation = &proto.Warlock_Rotation{
 var defaultDestroOptions = &proto.Warlock_Options{
 	Armor:  proto.Warlock_Options_FelArmor,
 	Summon: proto.Warlock_Options_Imp,
+	WeaponImbue: proto.Warlock_Options_GrandFirestone,
 }
 
 var DefaultDestroWarlock = &proto.Player_Warlock{
@@ -56,9 +57,9 @@ var DefaultDestroWarlock = &proto.Player_Warlock{
 }
 
 var DefaultGlyphs = &proto.Glyphs{
-	Major1: int32(proto.WarlockMajorGlyph_GlyphOfQuickDecay),
-	Major2: int32(proto.WarlockMajorGlyph_GlyphOfLifeTap),
-	Major3: int32(proto.WarlockMajorGlyph_GlyphOfHaunt),
+	Major1: int32(proto.WarlockMajorGlyph_GlyphOfConflagrate),
+	Major2: int32(proto.WarlockMajorGlyph_GlyphOfImp),
+	Major3: int32(proto.WarlockMajorGlyph_GlyphOfIncinerate),
 }
 
 var FullRaidBuffs = &proto.RaidBuffs{
@@ -80,6 +81,7 @@ var FullIndividualBuffs = &proto.IndividualBuffs{
 var FullConsumes = &proto.Consumes{
 	Flask:         proto.Flask_FlaskOfTheFrostWyrm,
 	DefaultPotion: proto.Potions_PotionOfWildMagic,
+	PrepopPotion:  proto.Potions_PotionOfWildMagic,
 	Food:          proto.Food_FoodFishFeast,
 }
 

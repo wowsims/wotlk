@@ -743,7 +743,7 @@ func ThunderClapAura(target *Unit, points int32) *Aura {
 const IcyTouchAuraTag = "IcyTouch"
 
 func IcyTouchAura(target *Unit, impIcyTouch int32) *Aura {
-	speedMultiplier := 0.85
+	speedMultiplier := 0.86
 	if impIcyTouch > 0 {
 		speedMultiplier -= 0.02 * float64(impIcyTouch)
 	}

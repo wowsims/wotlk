@@ -679,6 +679,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			{ item: IconInputs.AttackPowerDebuff, stats: [Stat.StatArmor] },
 			{ item: IconInputs.MeleeAttackSpeedDebuff, stats: [Stat.StatArmor] },
 			{ item: IconInputs.MeleeHitDebuff, stats: [Stat.StatDodge] },
+			{ item: IconInputs.MiscellaneousDebuffs, stats: [Stat.StatStamina] },
 		]);
 		const debuffsSection = this.rootElem.getElementsByClassName('debuffs-section')[0] as HTMLElement;
 		configureIconSection(
@@ -688,8 +689,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 		const otherDebuffOptions = this.splitRelevantOptions([
 			{ item: IconInputs.JudgementOfWisdom, stats: [Stat.StatMP5, Stat.StatIntellect] },
-			{ item: IconInputs.JudgementOfLight, stats: [Stat.StatStamina] },
-			{ item: IconInputs.GiftOfArthas, stats: [Stat.StatStamina] },
 		]);
 		otherDebuffOptions.forEach(iconInput => new IndividualSimIconPicker(debuffsSection, this.player, iconInput, this));
 
