@@ -24,43 +24,19 @@ func (warrior *Warrior) ApplyTalents() {
 	// TODO: This should only be applied while berserker stance is active.
 	if warrior.Talents.ImprovedBerserkerStance > 0 {
 		bonus := 1 + 0.02*float64(warrior.Talents.ImprovedBerserkerStance)
-		warrior.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.AttackPower,
-			ModifiedStat: stats.AttackPower,
-			Modifier: func(ap float64, _ float64) float64 {
-				return ap * bonus
-			},
-		})
+		warrior.MultiplyStat(stats.AttackPower, bonus)
 	}
 
 	if warrior.Talents.ShieldMastery > 0 {
 		bonus := 1 + 0.1*float64(warrior.Talents.ShieldMastery)
-		warrior.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.BlockValue,
-			ModifiedStat: stats.BlockValue,
-			Modifier: func(bv float64, _ float64) float64 {
-				return bv * bonus
-			},
-		})
+		warrior.MultiplyStat(stats.BlockValue, bonus)
 	}
 
 	if warrior.Talents.Vitality > 0 {
 		stamBonus := 1 + 0.01*float64(warrior.Talents.Vitality)
-		warrior.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Stamina,
-			ModifiedStat: stats.Stamina,
-			Modifier: func(stamina float64, _ float64) float64 {
-				return stamina * stamBonus
-			},
-		})
+		warrior.MultiplyStat(stats.Stamina, stamBonus)
 		strBonus := 1 + 0.02*float64(warrior.Talents.Vitality)
-		warrior.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Strength,
-			ModifiedStat: stats.Strength,
-			Modifier: func(strength float64, _ float64) float64 {
-				return strength * strBonus
-			},
-		})
+		warrior.MultiplyStat(stats.Strength, strBonus)
 	}
 
 	warrior.applyAngerManagement()
