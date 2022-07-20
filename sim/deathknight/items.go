@@ -9,7 +9,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-var ItemSetScourgeborne = core.NewItemSet(core.ItemSet{
+var ItemSetScourgeborneBattlegear = core.NewItemSet(core.ItemSet{
 	Name: "Scourgeborne Battlegear",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
@@ -23,12 +23,105 @@ var ItemSetScourgeborne = core.NewItemSet(core.ItemSet{
 	},
 })
 
-func (deathKnight *DeathKnight) scourgeborneCritBonus() float64 {
-	return core.TernaryFloat64(deathKnight.HasSetBonus(ItemSetScourgeborne, 2), 5.0, 0.0)
+func (deathKnight *DeathKnight) scourgeborneBattlegearCritBonus() float64 {
+	return core.TernaryFloat64(deathKnight.HasSetBonus(ItemSetScourgeborneBattlegear, 2), 5.0, 0.0)
 }
 
-func (deathKnight *DeathKnight) scourgeborneRunicPowerBonus() float64 {
-	return core.TernaryFloat64(deathKnight.HasSetBonus(ItemSetScourgeborne, 4), 5.0, 0.0)
+func (deathKnight *DeathKnight) scourgeborneBattlegearRunicPowerBonus() float64 {
+	return core.TernaryFloat64(deathKnight.HasSetBonus(ItemSetScourgeborneBattlegear, 4), 5.0, 0.0)
+}
+
+var ItemSetScourgebornePlate = core.NewItemSet(core.ItemSet{
+	Name: "Scourgeborne Plate",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Increases the critical strike chance of your plague
+			// strike by 10%
+		},
+		4: func(agent core.Agent) {
+			// TODO:
+			// Increases the duration of your Icebound Fortitude by 3 seconds
+		},
+	},
+})
+
+func (deathKnight *DeathKnight) scourgebornePlateCritBonus() float64 {
+	return core.TernaryFloat64(deathKnight.HasSetBonus(ItemSetScourgebornePlate, 2), 10.0, 0.0)
+}
+
+var ItemSetDarkrunedBattlegear = core.NewItemSet(core.ItemSet{
+	Name: "Darkruned Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Increases the critical strike chance of Death Coil
+			// and Frost Strike by 8%
+		},
+		4: func(agent core.Agent) {
+			// Increases the damage bonus done per disease by 20%
+			// on Blood Strike, Heart Strike, Obliterate and Scourge Strike
+		},
+	},
+})
+
+func (deathKnight *DeathKnight) darkrunedBattlegearCritBonus() float64 {
+	return core.TernaryFloat64(deathKnight.HasSetBonus(ItemSetDarkrunedBattlegear, 2), 8.0, 0.0)
+}
+
+func (deathKnight *DeathKnight) darkrunedBattlegearDiseaseBonus(baseMultiplier float64) float64 {
+	return core.TernaryFloat64(deathKnight.HasSetBonus(ItemSetDarkrunedBattlegear, 4), baseMultiplier*1.2, baseMultiplier)
+}
+
+// TODO:
+var ItemSetDarkrunedPlate = core.NewItemSet(core.ItemSet{
+	Name: "Darkruned Plate",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Increases the damage done by Rune Strike by 10%
+		},
+		4: func(agent core.Agent) {
+			// Anti-magic shell also grants you 10% reduction
+			// to physical damage taken
+		},
+	},
+})
+
+var ItemSetThassariansBattlegear = core.NewItemSet(core.ItemSet{
+	Name: "Thassarian's Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Your Blood Strike and Heart Strike abilities have a
+			// chance to grant you 180 additional strength for 15 sec.
+			deathKnight := agent.(DeathKnightAgent).GetDeathKnight()
+			deathKnight.registerThassariansBattlegearProc()
+		},
+		4: func(agent core.Agent) {
+			// Your Blood Plague ability now has a chance for its
+			// damage to be critical strikes.
+		},
+	},
+})
+
+func (deathKnight *DeathKnight) registerThassariansBattlegearProc() {
+	procAura := deathKnight.NewTemporaryStatsAura("Unholy Might Proc", core.ActionID{SpellID: 67117}, stats.Stats{stats.Strength: 180.0}, time.Second*15)
+
+	icd := core.Cooldown{
+		Timer:    deathKnight.NewTimer(),
+		Duration: time.Second * 45.0,
+	}
+
+	core.MakePermanent(deathKnight.GetOrRegisterAura(core.Aura{
+		Label: "Unholy Might",
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if !icd.IsReady(sim) || (spell != deathKnight.BloodStrike /* && spell != deathKnight.HeartStrike*/) {
+				return
+			}
+
+			if sim.RandomFloat("UnholyMight") < 0.5 {
+				icd.Use(sim)
+				procAura.Activate(sim)
+			}
+		},
+	}))
 }
 
 func (deathKnight *DeathKnight) sigilOfAwarenessBonus(spell *core.Spell) float64 {
