@@ -257,15 +257,13 @@ func (deathKnight *DeathKnight) doDKRotation(sim *core.Simulation, advance bool)
 		}
 
 		if deathKnight.DKRotation.diseaseCheckEnabled && nextAction != DKRotationAction_ReapplyDiseases {
-			if !deathKnight.TargetHasDisease(FrostFeverAuraLabel, target) || deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim) < 2*time.Second ||
-				!deathKnight.TargetHasDisease(BloodPlagueAuraLabel, target) || deathKnight.BloodPlagueDisease[target.Index].RemainingDuration(sim) < 2*time.Second {
+			if !deathKnight.TargetHasDisease(FrostFeverAuraLabel, target) || deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim) < 5*time.Second ||
+				!deathKnight.TargetHasDisease(BloodPlagueAuraLabel, target) || deathKnight.BloodPlagueDisease[target.Index].RemainingDuration(sim) < 5*time.Second {
 				if deathKnight.CanPestilence(sim) {
 					deathKnight.Pestilence.Cast(sim, target)
 					deathKnight.DKRotation.lastFFApplication = sim.CurrentTime
 					deathKnight.DKRotation.lastBPApplication = sim.CurrentTime
 					skip = true
-				} else {
-
 				}
 			}
 		}
@@ -335,7 +333,7 @@ func (deathKnight *DeathKnight) doDKRotation(sim *core.Simulation, advance bool)
 					casted = true
 				}
 			case DKRotationAction_Pesti:
-				if deathKnight.CanPestilence(sim) && (sim.CurrentTime-deathKnight.DKRotation.lastFFApplication > 3*time.Second || sim.CurrentTime-deathKnight.DKRotation.lastBPApplication > 3*time.Second) {
+				if deathKnight.CanPestilence(sim) && (sim.CurrentTime-deathKnight.DKRotation.lastFFApplication > 4*time.Second || sim.CurrentTime-deathKnight.DKRotation.lastBPApplication > 4*time.Second) {
 					deathKnight.Pestilence.Cast(sim, target)
 					casted = true
 				} else {
@@ -384,7 +382,14 @@ func (deathKnight *DeathKnight) doDKRotation(sim *core.Simulation, advance bool)
 
 			if !casted {
 				// TODO: Prio stuff.
-				if deathKnight.CanObliterate(sim) {
+				if !deathKnight.TargetHasDisease(FrostFeverAuraLabel, target) || deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim) < 6*time.Second ||
+					!deathKnight.TargetHasDisease(BloodPlagueAuraLabel, target) || deathKnight.BloodPlagueDisease[target.Index].RemainingDuration(sim) < 6*time.Second {
+					if deathKnight.CanPestilence(sim) {
+						deathKnight.Pestilence.Cast(sim, target)
+						deathKnight.DKRotation.lastFFApplication = sim.CurrentTime
+						deathKnight.DKRotation.lastBPApplication = sim.CurrentTime
+					}
+				} else if deathKnight.CanObliterate(sim) {
 					deathKnight.Obliterate.Cast(sim, target)
 				} else if deathKnight.KillingMachineAura.IsActive() {
 					if deathKnight.CastCostPossible(sim, 0, 0, 1, 1) && deathKnight.RimeAura.IsActive() {
@@ -406,17 +411,15 @@ func (deathKnight *DeathKnight) doDKRotation(sim *core.Simulation, advance bool)
 					deathKnight.FrostStrike.Cast(sim, target)
 				} else if deathKnight.CanHornOfWinter(sim) {
 					deathKnight.HornOfWinter.Cast(sim, target)
-
-				}
-
-				if deathKnight.GCD.IsReady(sim) && !deathKnight.IsWaiting() {
-					// Wait until 1/10th of the swing
-					waitUntil := deathKnight.AutoAttacks.MainhandSwingAt
-					if deathKnight.AutoAttacks.OffhandSwingAt > sim.CurrentTime {
-						waitUntil = core.MinDuration(waitUntil, deathKnight.AutoAttacks.OffhandSwingAt)
+				} else {
+					if deathKnight.GCD.IsReady(sim) && !deathKnight.IsWaiting() {
+						waitUntil := deathKnight.AutoAttacks.MainhandSwingAt
+						if deathKnight.AutoAttacks.OffhandSwingAt > sim.CurrentTime {
+							waitUntil = core.MinDuration(waitUntil, deathKnight.AutoAttacks.OffhandSwingAt)
+						}
+						waitUntil = core.MinDuration(waitUntil, deathKnight.AnyRuneReadyAt(sim))
+						deathKnight.WaitUntil(sim, waitUntil)
 					}
-					waitUntil = core.MinDuration(time.Duration(0.1*float64(waitUntil)), deathKnight.AnyRuneReadyAt(sim))
-					deathKnight.WaitUntil(sim, waitUntil)
 				}
 			} else {
 				if !(deathKnight.LastCastOutcome == core.OutcomeMiss &&
