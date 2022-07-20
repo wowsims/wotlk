@@ -28,10 +28,11 @@ func NewRetributionPaladin(character core.Character, options proto.Player) *Retr
 	retOptions := options.GetRetributionPaladin()
 
 	ret := &RetributionPaladin{
-		Paladin:   paladin.NewPaladin(character, *retOptions.Talents),
-		Rotation:  *retOptions.Rotation,
-		Judgement: retOptions.Options.Judgement,
-		Seal:      retOptions.Options.Seal,
+		Paladin:       paladin.NewPaladin(character, *retOptions.Talents),
+		Rotation:      *retOptions.Rotation,
+		Judgement:     retOptions.Options.Judgement,
+		Seal:          retOptions.Options.Seal,
+		UseDivinePlea: retOptions.Options.UseDivinePlea,
 	}
 	ret.PaladinAura = retOptions.Options.Aura
 
@@ -52,8 +53,10 @@ func NewRetributionPaladin(character core.Character, options proto.Player) *Retr
 type RetributionPaladin struct {
 	*paladin.Paladin
 
-	Judgement        proto.PaladinJudgement
-	Seal             proto.PaladinSeal
+	Judgement     proto.PaladinJudgement
+	Seal          proto.PaladinSeal
+	UseDivinePlea bool
+
 	SealInitComplete bool
 
 	Rotation proto.RetributionPaladin_Rotation

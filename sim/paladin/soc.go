@@ -32,7 +32,7 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 	onJudgementProc := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 20467}, // Judgement of Command
 		SpellSchool: core.SpellSchoolHoly,
-		Flags:       core.SpellFlagMeleeMetrics | SpellFlagJudgement,
+		Flags:       core.SpellFlagMeleeMetrics | SpellFlagSecondaryJudgement,
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeOrRangedSpecial,
 			DamageMultiplier: baseMultiplier,
@@ -110,7 +110,7 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 			}
 
 			// Differ between judgements and other melee abilities.
-			if spell.Flags.Matches(SpellFlagJudgement) {
+			if spell.Flags.Matches(SpellFlagPrimaryJudgement) {
 				onJudgementProc.Cast(sim, spellEffect.Target)
 			} else {
 				if spellEffect.IsMelee() {
@@ -130,7 +130,6 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 	paladin.SealOfCommand = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    auraActionID, // Seal of Command self buff.
 		SpellSchool: core.SpellSchoolHoly,
-		Flags:       SpellFlagSeal,
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
