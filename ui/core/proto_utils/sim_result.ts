@@ -789,11 +789,6 @@ export class ActionMetrics {
 		}
 	}
 
-	// Groups similar metrics, i.e. metrics with the same unit
-	static groupByUnitName(actions: Array<ActionMetrics>): Array<Array<ActionMetrics>> {
-		return Object.values(bucket(actions, action => action.unit!.name));
-	}
-
 	// Merges action metrics that have the same name/ID, adding their stats together.
 	static joinById(actions: Array<ActionMetrics>, useTag?: boolean): Array<ActionMetrics> {
 		return ActionMetrics.groupById(actions, useTag).map(actionsToJoin => ActionMetrics.merge(actionsToJoin));
