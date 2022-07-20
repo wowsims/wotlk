@@ -25,10 +25,7 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 			cssClass: 'retribution-paladin-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"<p>Rotation logic can be optimized to use Judgement of Blood more frequently.</p>\
-				<p>Including fillers in rotation sometimes causes seal twists to be prevented at high haste values.</p>\
-				<p>Seal of Command aura will log at expiring at a longer duration than 400ms when changing seals.\
-				However, the 400ms duration is correctly calculated internally for determining procs and damage.</p>"
+				"<p>Work in progress</p>"
 			],
 
 			// All stats for which EP should be calculated.
@@ -147,6 +144,7 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 				inputs: [
 					RetributionPaladinInputs.AuraSelection,
 					RetributionPaladinInputs.JudgementSelection,
+					RetributionPaladinInputs.DivinePleaSelection,
 					RetributionPaladinInputs.StartingSealSelection,
 					RetributionPaladinInputs.DamgeTakenPerSecond,
 					OtherInputs.TankAssignment,
