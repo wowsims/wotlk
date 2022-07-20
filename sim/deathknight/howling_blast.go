@@ -58,6 +58,8 @@ func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 						amountOfRunicPower := 15.0 + 2.5*float64(deathKnight.Talents.ChillOfTheGrave)
 						deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 					} else {
+						amountOfRunicPower := 2.5 * float64(deathKnight.Talents.ChillOfTheGrave)
+						deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 						deathKnight.RimeAura.Deactivate(sim)
 					}
 				} else if spellEffect.Landed() {
