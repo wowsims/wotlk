@@ -78,13 +78,14 @@ func (deathKnight *DeathKnight) registerArmyOfTheDeadCD() {
 
 	aotdDot.Spell = deathKnight.ArmyOfTheDead
 
-	if deathKnight.Rotation.ArmyOfTheDead == proto.DeathKnight_Rotation_AsMajorCd {
+	// Temp stuff for testing
+	if deathKnight.Talents.SummonGargoyle && deathKnight.Rotation.ArmyOfTheDead == proto.DeathKnight_Rotation_AsMajorCd {
 		deathKnight.AddMajorCooldown(core.MajorCooldown{
 			Spell:    deathKnight.ArmyOfTheDead,
 			Priority: core.CooldownPriorityDefault,
 			Type:     core.CooldownTypeDPS,
 			CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-				if !deathKnight.Gargoyle.IsEnabled() {
+				if deathKnight.Gargoyle != nil && !deathKnight.Gargoyle.IsEnabled() {
 					return false
 				}
 				if !deathKnight.CanArmyOfTheDead(sim) {
