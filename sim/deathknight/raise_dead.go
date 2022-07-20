@@ -17,13 +17,10 @@ func (deathKnight *DeathKnight) registerRaiseDeadCD() {
 		ActionID: core.ActionID{SpellID: 46584},
 		Duration: time.Minute * 1,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			deathKnight.Ghoul.Enable(sim, deathKnight.Ghoul)
-			deathKnight.Ghoul.focusBar.reset(sim)
-			deathKnight.Ghoul.AutoAttacks.EnableAutoSwing(sim)
+			deathKnight.Ghoul.Pet.Enable(sim, deathKnight.Ghoul)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			deathKnight.Ghoul.Disable(sim)
-			deathKnight.Ghoul.focusBar.Cancel(sim)
+			deathKnight.Ghoul.Pet.Disable(sim)
 		},
 	})
 
@@ -47,4 +44,8 @@ func (deathKnight *DeathKnight) registerRaiseDeadCD() {
 			raiseDeadAura.Activate(sim)
 		},
 	})
+}
+
+func (deathKnight *DeathKnight) CanRaiseDead(sim *core.Simulation) bool {
+	return !deathKnight.Talents.MasterOfGhouls && deathKnight.RaiseDead.IsReady(sim)
 }

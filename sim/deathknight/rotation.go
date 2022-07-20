@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	//"github.com/wowsims/wotlk/sim/core/proto"
 	//"github.com/wowsims/wotlk/sim/core/stats"
 )
@@ -40,8 +41,16 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 	var target = deathKnight.CurrentTarget
 
 	if deathKnight.GCD.IsReady(sim) {
+		// if sim.CurrentTime < time.Millisecond {
+		// 	deathKnight.WaitUntil(sim, sim.CurrentTime+time.Millisecond)
+		// 	return
+		// }
 		// UH DK rota
 		if deathKnight.Talents.SummonGargoyle {
+			if deathKnight.CanRaiseDead(sim) {
+				deathKnight.RaiseDead.Cast(sim, target)
+				return
+			}
 			diseaseRefreshDuration := time.Duration(deathKnight.Rotation.DiseaseRefreshDuration) * time.Second
 			// Horn of Winter if you're the DK to refresh it and its not precasted/active
 			if deathKnight.ShouldHornOfWinter(sim) {
@@ -65,7 +74,7 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 					recastedBP = true
 				}
 			} else {
-				if deathKnight.PresenceMatches(UnholyPresence) && !deathKnight.SummonGargoyle.CD.IsReady(sim) && deathKnight.CanBloodPresence(sim) {
+				if deathKnight.PresenceMatches(UnholyPresence) && (deathKnight.Rotation.ArmyOfTheDead != proto.DeathKnight_Rotation_AsMajorCd || !deathKnight.ArmyOfTheDead.CD.IsReady(sim)) && !deathKnight.SummonGargoyle.CD.IsReady(sim) && deathKnight.CanBloodPresence(sim) {
 					// Swap to blood presence after gargoyle cast
 					deathKnight.BloodPressence.Cast(sim, target)
 					deathKnight.WaitUntil(sim, sim.CurrentTime+1)

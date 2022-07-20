@@ -36,6 +36,24 @@ func (deathKnight *DeathKnight) registerEmpowerRuneWeaponSpell() {
 			deathKnight.AddRunicPower(sim, amountOfRunicPower, deathKnight.EmpowerRuneWeapon.RunicPowerMetrics())
 		},
 	})
+
+	deathKnight.AddMajorCooldown(core.MajorCooldown{
+		Spell:    deathKnight.EmpowerRuneWeapon,
+		Priority: core.CooldownPriorityDefault,
+		Type:     core.CooldownTypeDPS,
+		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
+			if deathKnight.CurrentBloodRunes() > 0 {
+				return false
+			}
+			if deathKnight.CurrentFrostRunes() > 0 {
+				return false
+			}
+			if deathKnight.CurrentUnholyRunes() > 0 {
+				return false
+			}
+			return deathKnight.CanEmpowerRuneWeapon(sim)
+		},
+	})
 }
 
 func (deathKnight *DeathKnight) CanEmpowerRuneWeapon(sim *core.Simulation) bool {

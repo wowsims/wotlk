@@ -23,6 +23,9 @@ type DeathKnight struct {
 	Gargoyle       *GargoylePet
 	SummonGargoyle *core.Spell
 
+	ArmyOfTheDead *core.Spell
+	ArmyGhoul     []*GhoulPet
+
 	Presence Presence
 
 	IcyTouch   *core.Spell
@@ -176,6 +179,7 @@ func (deathKnight *DeathKnight) Initialize() {
 
 	deathKnight.registerRaiseDeadCD()
 	deathKnight.registerSummonGargoyleCD()
+	deathKnight.registerArmyOfTheDeadCD()
 
 	deathKnight.setupDKRotation()
 }
@@ -201,6 +205,10 @@ func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
 			deathKnight.HornOfWinterAura.Deactivate(sim)
 			deathKnight.HornOfWinterAura.Activate(sim)
 		}
+	}
+
+	if deathKnight.Rotation.ArmyOfTheDead == proto.DeathKnight_Rotation_PreCast {
+		deathKnight.PrecastArmyOfTheDead(sim)
 	}
 
 	deathKnight.resetDKRotation(sim)
@@ -293,6 +301,11 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 	deathKnight.Ghoul = deathKnight.NewGhoulPet(deathKnight.Talents.MasterOfGhouls)
 	if deathKnight.Talents.SummonGargoyle {
 		deathKnight.Gargoyle = deathKnight.NewGargoyle()
+	}
+
+	deathKnight.ArmyGhoul = make([]*GhoulPet, 8)
+	for i := 0; i < 8; i++ {
+		deathKnight.ArmyGhoul[i] = deathKnight.NewArmyGhoulPet(i)
 	}
 
 	return deathKnight

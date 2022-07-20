@@ -1,8 +1,10 @@
 import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
-import { ActionMetrics, SimResult, SimResultFilter } from '/wotlk/core/proto_utils/sim_result.js';
+import { ActionMetrics, UnitMetrics, SimResult, SimResultFilter } from '/wotlk/core/proto_utils/sim_result.js';
 
 import { ColumnSortType, MetricsTable } from './metrics_table.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
+import { forEachChild } from 'typescript';
+import { bucket } from '../core/utils.js';
 
 declare var $: any;
 declare var tippy: any;
@@ -125,9 +127,14 @@ export class MeleeMetricsTable extends MetricsTable<ActionMetrics> {
 
 		const actions = player.getMeleeActions().map(action => action.forTarget(resultData.filter));
 		const actionGroups = ActionMetrics.groupById(actions);
-		const petGroups = player.pets.map(pet => pet.getMeleeActions().map(action => action.forTarget(resultData.filter)));
 
-		return actionGroups.concat(petGroups);
+		const petActions = player.pets.flatMap(pet => pet.getMeleeActions().map(action => action.forTarget(resultData.filter)));
+		let combinedPets = ActionMetrics.groupByUnitName(petActions)
+		for (var i = 0; i < combinedPets.length; i++) {
+			combinedPets[i] = ActionMetrics.groupById(combinedPets[i]).flatMap(action => ActionMetrics.merge(action))
+		 }
+		
+		return actionGroups.concat(combinedPets);
 	}
 
 	mergeMetrics(metrics: Array<ActionMetrics>): ActionMetrics {

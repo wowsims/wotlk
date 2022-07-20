@@ -16,6 +16,8 @@ type PetAgent interface {
 	GetPet() *Pet
 }
 
+type OnPetEnable func(sim *Simulation)
+type OnPetDisable func(sim *Simulation)
 type PetStatInheritance func(ownerStats stats.Stats) stats.Stats
 
 // Pet is an extension of Character, for any entity created by a player that can
@@ -25,18 +27,23 @@ type Pet struct {
 
 	Owner *Character
 
+	PermanentPet bool
+
+	OnPetEnable  OnPetEnable
+	OnPetDisable OnPetDisable
+
 	// Calculates inherited stats based on owner stats or stat changes.
 	statInheritance PetStatInheritance
 
 	// No-op until finalized to prevent owner stats from affecting pet until we're ready.
 	currentStatInheritance PetStatInheritance
-
-	initialEnabled bool
+	inheritedStats         stats.Stats
 
 	// Whether this pet is currently active. Pets which are active throughout a whole
 	// encounter, like Hunter pets, are always enabled. Pets which are instead summoned,
 	// such as Mage Water Elemental, begin as disabled and are enabled when summoned.
 	enabled bool
+	isReset bool
 
 	// Some pets expire after a certain duration. This is the pending action that disables
 	// the pet on expiration.
@@ -62,7 +69,7 @@ func NewPet(name string, owner *Character, baseStats stats.Stats, statInheritanc
 		},
 		Owner:           owner,
 		statInheritance: statInheritance,
-		initialEnabled:  enabledOnStart,
+		PermanentPet:    enabledOnStart,
 	}
 	pet.GCD = pet.NewTimer()
 	pet.currentStatInheritance = func(ownerStats stats.Stats) stats.Stats {
@@ -80,16 +87,17 @@ func NewPet(name string, owner *Character, baseStats stats.Stats, statInheritanc
 // addedStats is the amount of stats added to the owner (will be negative if the
 // owner lost stats).
 func (pet *Pet) addOwnerStats(sim *Simulation, addedStats stats.Stats) {
-	// Temporary pets dont update stats in realtime so we use initialEnabled to detect that
-	if !pet.initialEnabled {
+	// Temporary pets dont update stats after summon
+	if !pet.PermanentPet {
 		return
 	}
+	// TODO: Should this apply stat dependencies?
 	inheritedChange := pet.currentStatInheritance(addedStats)
 	pet.AddStatsDynamic(sim, inheritedChange)
 }
 func (pet *Pet) addOwnerStat(sim *Simulation, stat stats.Stat, addedAmount float64) {
-	// Temporary pets dont update stats in realtime so we use initialEnabled to detect that
-	if !pet.initialEnabled {
+	// Temporary pets dont update stats after summon
+	if !pet.PermanentPet {
 		return
 	}
 	s := stats.Stats{}
@@ -100,16 +108,24 @@ func (pet *Pet) addOwnerStat(sim *Simulation, stat stats.Stat, addedAmount float
 // This needs to be called after owner stats are finalized so we can inherit the
 // final values.
 func (pet *Pet) Finalize() {
-	inheritedStats := pet.statInheritance(pet.Owner.GetStats())
-	pet.AddStats(inheritedStats)
-	pet.currentStatInheritance = pet.statInheritance
+	// Temporary pets should snapshot their stats when summoned and not at start
+	if pet.PermanentPet {
+		pet.inheritedStats = pet.statInheritance(pet.Owner.GetStats())
+		pet.AddStats(pet.inheritedStats)
+		pet.currentStatInheritance = pet.statInheritance
+	}
 	pet.Character.Finalize(nil)
 }
 
 func (pet *Pet) reset(sim *Simulation, agent PetAgent) {
+	if pet.isReset {
+		return
+	}
+	pet.isReset = true
 	pet.Character.reset(sim, agent)
+
 	pet.enabled = false
-	if pet.initialEnabled {
+	if pet.PermanentPet {
 		pet.Enable(sim, agent)
 	}
 }
@@ -118,29 +134,68 @@ func (pet *Pet) advance(sim *Simulation, elapsedTime time.Duration) {
 }
 func (pet *Pet) doneIteration(sim *Simulation) {
 	pet.Character.doneIteration(sim)
+	pet.isReset = false
 }
 
 func (pet *Pet) IsEnabled() bool {
 	return pet.enabled
 }
 
+func (pet *Pet) IsPermanent() bool {
+	return pet.PermanentPet
+}
+
 // petAgent should be the PetAgent which embeds this Pet.
 func (pet *Pet) Enable(sim *Simulation, petAgent PetAgent) {
 	if pet.enabled {
+		if sim.Log != nil {
+			pet.Log(sim, "Pet already summoned")
+		}
 		return
 	}
 
+	// In case of Pre-pull guardian summoning we need to reset
+	// TODO: Check if this has side effects
+	if !pet.isReset {
+		pet.reset(sim, petAgent)
+	}
+
+	// Inherit stats on summon for temporary pets
+	if !pet.PermanentPet {
+		pet.inheritedStats = pet.ApplyStatDependencies(pet.statInheritance(pet.Owner.GetStats()))
+		pet.AddStatsDynamic(sim, pet.inheritedStats)
+		pet.currentStatInheritance = pet.statInheritance
+	}
+
 	pet.SetGCDTimer(sim, sim.CurrentTime)
+	pet.AutoAttacks.EnableAutoSwing(sim)
 
 	pet.enabled = true
 
+	if pet.OnPetEnable != nil {
+		pet.OnPetEnable(sim)
+	}
+
 	if sim.Log != nil {
+		pet.Log(sim, pet.GetStats().String())
 		pet.Log(sim, "Pet summoned")
 	}
 }
 func (pet *Pet) Disable(sim *Simulation) {
 	if !pet.enabled {
+		if sim.Log != nil {
+			pet.Log(sim, "No pet summoned")
+		}
 		return
+	}
+
+	// Remove inherited stats on dismiss if not permanent
+	if !pet.PermanentPet {
+		pet.AddStatsDynamic(sim, pet.inheritedStats.Multiply(-1))
+		pet.inheritedStats = stats.Stats{}
+		pet.currentStatInheritance = func(ownerStats stats.Stats) stats.Stats {
+			return stats.Stats{}
+		}
 	}
 
 	pet.CancelGCDTimer(sim)
@@ -160,8 +215,16 @@ func (pet *Pet) Disable(sim *Simulation) {
 		pet.timeoutAction = nil
 	}
 
+	if pet.OnPetDisable != nil {
+		pet.OnPetDisable(sim)
+	}
+
 	if sim.Log != nil {
 		pet.Log(sim, "Pet dismissed")
+
+		if sim.Log != nil {
+			pet.Log(sim, pet.GetStats().String())
+		}
 	}
 }
 

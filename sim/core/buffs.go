@@ -13,7 +13,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 	character := agent.GetCharacter()
 
 	if raidBuffs.ArcaneBrilliance || raidBuffs.FelIntelligence > 0 {
-		val := GetTristateValueFloat(raidBuffs.FelIntelligence, 48.0, 48.0 * 1.1)
+		val := GetTristateValueFloat(raidBuffs.FelIntelligence, 48.0, 48.0*1.1)
 		if raidBuffs.ArcaneBrilliance {
 			val = 60.0
 		}
@@ -112,7 +112,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		})
 	}
 	if raidBuffs.DivineSpirit || raidBuffs.FelIntelligence > 0 {
-		v := GetTristateValueFloat(raidBuffs.FelIntelligence, 64.0, 64.0 * 1.1)
+		v := GetTristateValueFloat(raidBuffs.FelIntelligence, 64.0, 64.0*1.1)
 		if raidBuffs.DivineSpirit {
 			v = 80.0
 		}
@@ -293,7 +293,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 // Applies buffs to pets.
 func applyPetBuffEffects(petAgent PetAgent, raidBuffs proto.RaidBuffs, partyBuffs proto.PartyBuffs, individualBuffs proto.IndividualBuffs) {
 	// Summoned pets, like Mage Water Elemental, aren't around to receive raid buffs.
-	if !petAgent.GetPet().initialEnabled {
+	if !petAgent.GetPet().PermanentPet {
 		return
 	}
 
@@ -695,7 +695,7 @@ func BloodlustAura(character *Character, actionTag int32) *Aura {
 			if len(character.Pets) > 0 {
 				for _, petAgent := range character.Pets {
 					pet := petAgent.GetPet()
-					if pet.IsEnabled() {
+					if pet.IsEnabled() && pet.IsPermanent() {
 						BloodlustAura(&pet.Character, actionTag).Activate(sim)
 					}
 				}
