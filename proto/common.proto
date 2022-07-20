@@ -385,7 +385,7 @@ enum Food {
 
 enum PetFood {
 	PetFoodUnknown = 0;
-	PetFoodSpicyMammothTreats = 1;
+	PetFoodSpicedMammothTreats = 1;
 	// TBC
 	PetFoodKiblersBits = 2;
 }
@@ -430,6 +430,7 @@ message RaidBuffs {
 
 	// +Spell Power
 	bool totem_of_wrath = 10; // shouldn't stack with demonic pact (does in beta right now)
+	bool flametongue_totem = 46;
 	int32 demonic_pact = 37; // SP buff, variable : 10% of demonology warlock's own SP
 
 	// +5% Spell Crit and/or +3% Haste
@@ -490,6 +491,8 @@ message IndividualBuffs {
 	TristateEffect blessing_of_wisdom = 47;
 	TristateEffect blessing_of_might = 48;
 	bool blessing_of_sanctuary = 49;
+	bool vigilance = 50;
+	bool renewed_hope = 51;
 
 	// Only used in individual sims 
 	//   as the class that provides these would cast them in raid sim
@@ -503,7 +506,11 @@ message IndividualBuffs {
 	int32 unholy_frenzy = 10;
 	int32 revitalize = 11;
 
-	bool replenishment = 12; // vampiric touch, judgements of the wise, hunting party, imp soul leech, enduring winter
+	bool vampiric_touch = 12;
+	bool hunting_party = 13;
+	bool judgements_of_the_wise = 14;
+	bool improved_soul_leech = 15;
+	bool enduring_winter = 16;
 }
 
 message Consumes {
@@ -560,16 +567,25 @@ message Debuffs {
 	// TODO: validate these
 	bool gift_of_arthas = 15;
 	
+	// Bleed %
 	bool mangle = 16;
+	bool trauma = 32;
+	bool stampede = 33;
 
+	// Major armor
 	bool expose_armor = 17;
 	bool sunder_armor = 18;
+	bool acid_spit = 34;
+
 	TristateEffect curse_of_weakness = 19;
+	bool sting = 31;
 
 	TristateEffect demoralizing_roar = 22;
 	TristateEffect demoralizing_shout = 23;
 	TristateEffect thunder_clap = 24;
 	TristateEffect icy_touch = 30;
+	bool infected_wounds = 35;
+	bool judgements_of_the_just = 36;
 
 	bool insect_swarm = 25;
 	bool scorpid_sting = 26;

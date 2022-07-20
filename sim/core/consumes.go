@@ -451,7 +451,7 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 
 func ApplyPetConsumeEffects(pet *Character, ownerConsumes proto.Consumes) {
 	switch ownerConsumes.PetFood {
-	case proto.PetFood_PetFoodSpicyMammothTreats:
+	case proto.PetFood_PetFoodSpicedMammothTreats:
 		pet.AddStats(stats.Stats{
 			stats.Strength: 30,
 			stats.Spirit:   30,

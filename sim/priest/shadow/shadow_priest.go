@@ -46,7 +46,6 @@ func NewShadowPriest(character core.Character, options proto.Player) *ShadowPrie
 
 type ShadowPriest struct {
 	*priest.Priest
-
 	rotation proto.ShadowPriest_Rotation
 }
 
