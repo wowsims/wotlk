@@ -632,8 +632,8 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			{ item: IconInputs.HastePercentBuff, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
 			{ item: IconInputs.DamagePercentBuff, stats: [Stat.StatAttackPower, Stat.StatSpellPower] },
 			{ item: IconInputs.DamageReductionPercentBuff, stats: [Stat.StatStamina] },
-			{ item: IconInputs.MP5Buff, stats: [Stat.StatMP5] },
-			//{ item: IconInputs.ReplenishmentBuff, stats: [Stat.StatMP5] },
+			{ item: IconInputs.MP5Buff, stats: [Stat.StatMP5, Stat.StatIntellect] },
+			{ item: IconInputs.ReplenishmentBuff, stats: [Stat.StatMP5, Stat.StatIntellect] },
 		]);
 		const buffsSection = this.rootElem.getElementsByClassName('buffs-section')[0] as HTMLElement;
 		configureIconSection(
@@ -679,7 +679,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			{ item: IconInputs.AttackPowerDebuff, stats: [Stat.StatArmor] },
 			{ item: IconInputs.MeleeAttackSpeedDebuff, stats: [Stat.StatArmor] },
 			{ item: IconInputs.MeleeHitDebuff, stats: [Stat.StatDodge] },
-			{ item: IconInputs.MiscellaneousDebuffs, stats: [Stat.StatStamina] },
 		]);
 		const debuffsSection = this.rootElem.getElementsByClassName('debuffs-section')[0] as HTMLElement;
 		configureIconSection(
@@ -687,10 +686,19 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			debuffOptions.map(multiIconInput => new MultiIconPicker(debuffsSection, this.player, multiIconInput, this)),
 			Tooltips.DEBUFFS_SECTION);
 
-		const otherDebuffOptions = this.splitRelevantOptions([
+		const miscDebuffOptions = this.splitRelevantOptions([
 			{ item: IconInputs.JudgementOfWisdom, stats: [Stat.StatMP5, Stat.StatIntellect] },
-		]);
-		otherDebuffOptions.forEach(iconInput => new IndividualSimIconPicker(debuffsSection, this.player, iconInput, this));
+			{ item: IconInputs.JudgementOfLight, stats: [Stat.StatStamina] },
+			{ item: IconInputs.GiftOfArthas, stats: [Stat.StatStamina] },
+		] as Array<StatOption<IconPickerConfig<Player<any>, any>>>);
+		if (miscDebuffOptions.length > 0) {
+			new MultiIconPicker(debuffsSection, this.player, {
+				inputs: miscDebuffOptions,
+				numColumns: 3,
+				emptyColor: 'grey',
+				label: 'Misc',
+			}, this);
+		}
 
 		const potionOptions = this.splitRelevantOptions([
 			{ item: Potions.RunicHealingPotion, stats: [Stat.StatStamina] },
