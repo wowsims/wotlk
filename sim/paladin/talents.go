@@ -1,6 +1,7 @@
 package paladin
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -100,6 +101,7 @@ func (paladin *Paladin) ApplyTalents() {
 	paladin.applyHeartOfTheCrusader()
 	paladin.applyArtOfWar()
 	paladin.applyJudgmentsOfTheWise()
+	paladin.applyRighteousVengeance()
 }
 
 func (paladin *Paladin) applyRedoubt() {
@@ -364,6 +366,10 @@ func (paladin *Paladin) applyArtOfWar() {
 }
 
 func (paladin *Paladin) applyJudgmentsOfTheWise() {
+	if paladin.Talents.JudgementsOfTheWise == 0 {
+		return
+	}
+
 	procSpell := paladin.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 31878},
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, _ *core.Spell) {
@@ -393,6 +399,102 @@ func (paladin *Paladin) applyJudgmentsOfTheWise() {
 					return
 				}
 				procSpell.Cast(sim, &paladin.Unit)
+			}
+		},
+	})
+}
+
+func (paladin *Paladin) applyRighteousVengeance() {
+	// Righteous Vengeance is a MAGIC debuff that pools 10/20/30% crit damage from Crusader Strike, Divine Storm, and Judgements.
+	// It drains the pool every 2 seconds at a rate of 1/4 of the pool size.
+	// And then deals that 1/4 as PHYSICAL damage.
+	// TODO: Can crit with certain set bonuses.
+
+	if paladin.Talents.RighteousVengeance == 0 {
+		return
+	}
+
+	targets := paladin.Env.GetNumTargets()
+
+	dots := make([]*core.Dot, 0, targets)
+	effects := make([]func(*core.SpellEffect) core.TickEffects, 0, targets)
+
+	for i := 0; i < int(targets); i++ {
+		target := paladin.Env.GetTargetUnit(int32(i))
+
+		var pool float64
+
+		dotActionID := core.ActionID{SpellID: 61840} // Righteous Vengeance
+
+		effects = append(effects, func(spellEffect *core.SpellEffect) core.TickEffects {
+			return func(sim *core.Simulation, spell *core.Spell) func() {
+				return func() {
+					core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+						IsPeriodic:       true,
+						ProcMask:         core.ProcMaskPeriodicDamage,
+						DamageMultiplier: 1,
+						OutcomeApplier:   paladin.OutcomeFuncAlwaysHit(),
+						BaseDamage: core.BaseDamageConfig{
+							Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
+								pool += spellEffect.Damage * (0.10 * float64(paladin.Talents.RighteousVengeance))
+								damage := pool / 4
+								pool -= damage
+								return damage
+							},
+							TargetSpellCoefficient: 1,
+						},
+					})(sim, target, spell)
+				}
+			}
+		})
+
+		dots = append(dots, core.NewDot(core.Dot{
+			Spell: paladin.RegisterSpell(core.SpellConfig{
+				ActionID:    dotActionID,
+				SpellSchool: core.SpellSchoolPhysical,
+				Flags:       core.SpellFlagMeleeMetrics,
+			}),
+			Aura: target.RegisterAura(core.Aura{
+				Label:    "Righteous Vengeance (DoT) - " + strconv.Itoa(int(paladin.Index)) + " - " + strconv.Itoa(i),
+				ActionID: dotActionID,
+				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+					pool = 0
+				},
+			}),
+			TickEffects: func(sim *core.Simulation, spell *core.Spell) func() {
+				return func() {
+					core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+						IsPeriodic:       true,
+						ProcMask:         core.ProcMaskPeriodicDamage,
+						DamageMultiplier: 1,
+						OutcomeApplier:   paladin.OutcomeFuncAlwaysHit(),
+					})(sim, target, spell)
+				}
+			},
+			NumberOfTicks: 4,
+			TickLength:    time.Second * 2,
+		}))
+	}
+
+	paladin.RegisterAura(core.Aura{
+		Label:    "Righteous Vengeance",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.DidCrit() || !spellEffect.Landed() {
+				return
+			}
+
+			if spell.SpellID == paladin.CrusaderStrike.SpellID || spell.SpellID == paladin.DivineStorm.SpellID || spell.Flags.Matches(SpellFlagJudgement) {
+				dots[spellEffect.Target.Index].TickEffects = effects[spellEffect.Target.Index](spellEffect)
+
+				if !dots[spellEffect.Target.Index].IsActive() {
+					dots[spellEffect.Target.Index].Apply(sim)
+				}
+
+				dots[spellEffect.Target.Index].Refresh(sim)
 			}
 		},
 	})
