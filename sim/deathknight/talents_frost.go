@@ -156,8 +156,7 @@ func (deathKnight *DeathKnight) applyKillingMachine() {
 		ActionID: actionID,
 		Duration: time.Second * 30.0,
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			//TODO: add the other spells
-			if spell == deathKnight.IcyTouch {
+			if spell == deathKnight.IcyTouch || spell == deathKnight.FrostStrike || spell == deathKnight.HowlingBlast {
 				aura.Deactivate(sim)
 			}
 		},
@@ -170,11 +169,11 @@ func (deathKnight *DeathKnight) applyKillingMachine() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+			if !spellEffect.Landed() {
 				return
 			}
 
-			if spell != deathKnight.IcyTouch {
+			if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHAuto) && !spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHSpecial) {
 				return
 			}
 
@@ -282,13 +281,17 @@ func (deathKnight *DeathKnight) threatOfThassarianAdjustMetrics(sim *core.Simula
 	}
 }
 
-func (deathKnight *DeathKnight) threatOfThassarianProcMasks(isMH bool, effect *core.SpellEffect, guileOfGorefiend bool) {
+func (deathKnight *DeathKnight) threatOfThassarianProcMasks(isMH bool, effect *core.SpellEffect, isGuileOfGorefiendStrike bool, wrapper func(outcomeApplier core.OutcomeApplier) core.OutcomeApplier) {
+	critMultiplier := deathKnight.critMultiplier()
+	if isGuileOfGorefiendStrike {
+		critMultiplier = deathKnight.critMultiplierGuile()
+	}
 	if isMH {
 		effect.ProcMask = core.ProcMaskMeleeMHSpecial
-		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.critMultiplierGuile())
+		effect.OutcomeApplier = wrapper(deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(critMultiplier))
 	} else {
 		effect.ProcMask = core.ProcMaskMeleeOHSpecial
-		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialCritOnly(deathKnight.critMultiplierGuile())
+		effect.OutcomeApplier = wrapper(deathKnight.OutcomeFuncMeleeSpecialCritOnly(critMultiplier))
 	}
 }
 
