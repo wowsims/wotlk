@@ -58,7 +58,7 @@ func (deathKnight *DeathKnight) CanUnbreakableArmor(sim *core.Simulation) bool {
 	return deathKnight.UnbreakableArmor.IsReady(sim) && deathKnight.UnbreakableArmor.CD.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastUnbreakableArmor(sim *core.Simulation, target *core.Target) bool {
+func (deathKnight *DeathKnight) CastUnbreakableArmor(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanUnbreakableArmor(sim) {
 		deathKnight.CastUnbreakableArmor(sim, target)
 		return true

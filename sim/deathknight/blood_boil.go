@@ -66,7 +66,7 @@ func (deathKnight *DeathKnight) CanBloodBoil(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 1, 0, 0) && deathKnight.BloodBoil.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastBloodBoil(sim *core.Simulation, target *core.Target) bool {
+func (deathKnight *DeathKnight) CastBloodBoil(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanBloodBoil(sim) {
 		deathKnight.CastBloodBoil(sim, target)
 		return true

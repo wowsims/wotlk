@@ -75,7 +75,7 @@ func (deathKnight *DeathKnight) CanGhoulFrenzy(sim *core.Simulation) bool {
 	return deathKnight.Talents.GhoulFrenzy && deathKnight.Ghoul.IsEnabled() && deathKnight.CastCostPossible(sim, 0.0, 0, 0, 1) && deathKnight.GhoulFrenzy.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastGhoulFrenzy(sim *core.Simulation, target *core.Target) bool {
+func (deathKnight *DeathKnight) CastGhoulFrenzy(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanGhoulFrenzy(sim) {
 		deathKnight.CastGhoulFrenzy(sim, target)
 		return true

@@ -57,7 +57,7 @@ func (deathKnight *DeathKnight) CanDeathCoil(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 40.0, 0, 0, 0) && deathKnight.DeathCoil.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastDeathCoil(sim *core.Simulation, target *core.Target) bool {
+func (deathKnight *DeathKnight) CastDeathCoil(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanDeathCoil(sim) {
 		deathKnight.CastDeathCoil(sim, target)
 		return true

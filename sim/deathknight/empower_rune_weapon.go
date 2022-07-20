@@ -55,7 +55,7 @@ func (deathKnight *DeathKnight) CanEmpowerRuneWeapon(sim *core.Simulation) bool 
 	return deathKnight.EmpowerRuneWeapon.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastEmpowerRuneWeapon(sim *core.Simulation, target *core.Target) bool {
+func (deathKnight *DeathKnight) CastEmpowerRuneWeapon(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanEmpowerRuneWeapon(sim) {
 		deathKnight.CastEmpowerRuneWeapon(sim, target)
 		return true

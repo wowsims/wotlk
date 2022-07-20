@@ -70,7 +70,7 @@ func (deathKnight *DeathKnight) ShouldHornOfWinter(sim *core.Simulation) bool {
 	return deathKnight.Rotation.RefreshHornOfWinter && deathKnight.HornOfWinter.IsReady(sim) && !deathKnight.HornOfWinterAura.IsActive()
 }
 
-func (deathKnight *DeathKnight) CastHornOfWinter(sim *core.Simulation, target *core.Target) bool {
+func (deathKnight *DeathKnight) CastHornOfWinter(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanHornOfWinter(sim) {
 		deathKnight.CastHornOfWinter(sim, target)
 		return true

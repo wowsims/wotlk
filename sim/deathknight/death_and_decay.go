@@ -71,7 +71,7 @@ func (deathKnight *DeathKnight) CanDeathAndDecay(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 1, 1, 1) && deathKnight.DeathAndDecay.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastDeathAndDecay(sim *core.Simulation, target *core.Target) bool {
+func (deathKnight *DeathKnight) CastDeathAndDecay(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanDeathAndDecay(sim) {
 		deathKnight.CastDeathAndDecay(sim, target)
 		return true

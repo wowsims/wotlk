@@ -97,7 +97,7 @@ func (deathKnight *DeathKnight) CanFrostStrike(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 40.0, 0, 0, 0) && deathKnight.FrostStrike.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastFrostStrike(sim *core.Simulation, target *core.Target) bool {
+func (deathKnight *DeathKnight) CastFrostStrike(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanFrostStrike(sim) {
 		deathKnight.CastFrostStrike(sim, target)
 		return true

@@ -100,7 +100,7 @@ func (deathKnight *DeathKnight) CanPlagueStrike(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 0, 0, 1) && deathKnight.PlagueStrike.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastPlagueStrike(sim *core.Simulation, target *core.Target) bool {
+func (deathKnight *DeathKnight) CastPlagueStrike(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanPlagueStrike(sim) {
 		deathKnight.CastPlagueStrike(sim, target)
 		return true

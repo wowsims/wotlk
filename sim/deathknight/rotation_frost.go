@@ -127,9 +127,9 @@ func (deathKnight *DeathKnight) SetupRotation() {
 	r.opener = &r.openers[openerId]
 }
 
-func (deathKnight *DeathKnight) doDKRotation(sim *core.Simulation, advance bool) bool {
+func (deathKnight *DeathKnight) DoRotation(sim *core.Simulation) {
 	if !deathKnight.Talents.HowlingBlast {
-		return false
+		return
 	}
 
 	target := deathKnight.CurrentTarget
@@ -180,21 +180,39 @@ func (deathKnight *DeathKnight) doDKRotation(sim *core.Simulation, advance bool)
 			}
 		}
 
-		return false
 	} else {
-		r := &deathKnight.DKRotation
-		opener := r.opener
+		opener := deathKnight.DKRotation.opener
 
-		opener.DoNext()
+		if !opener.DoNext(sim, deathKnight) {
+			if deathKnight.GCD.IsReady(sim) && !deathKnight.IsWaiting() {
+				waitUntil := deathKnight.AutoAttacks.MainhandSwingAt
+				if deathKnight.AutoAttacks.OffhandSwingAt > sim.CurrentTime {
+					waitUntil = core.MinDuration(waitUntil, deathKnight.AutoAttacks.OffhandSwingAt)
+				}
+				waitUntil = core.MinDuration(waitUntil, deathKnight.AnyRuneReadyAt(sim))
+				deathKnight.WaitUntil(sim, waitUntil)
+			}
+		}
 
 	}
 }
 
-func (o *Opener) DoNext() bool {
+func (o *Opener) DoNext(sim *core.Simulation, deathKnight *DeathKnight) bool {
+	target := deathKnight.CurrentTarget
 
+	action := o.actions[o.idx]
+
+	castSuccessful := false
+	switch action {
+	case OpenerAction_IT:
+		castSuccessful = deathKnight.CastIcyTouch(sim, target)
+	case OpenerAction_PS:
+		castSuccessful = deathKnight.CastPlagueStrike(sim, target)
+	}
+
+	return castSuccessful
 }
 
 func (deathKnight *DeathKnight) resetDKRotation(sim *core.Simulation) {
-	//	r := &deathKnight.DKRotation
-
+	deathKnight.DKRotation.opener.idx = 0
 }

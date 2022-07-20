@@ -99,7 +99,8 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 					abominationsMight: true,
 					leaderOfThePack: TristateEffect.TristateEffectRegular,
 					sanctifiedRetribution: true,
-					bloodlust: true
+					bloodlust: true,
+					devotionAura: TristateEffect.TristateEffectImproved,
 				}),
 				partyBuffs: PartyBuffs.create({
 					heroicPresence: false,

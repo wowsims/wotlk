@@ -50,7 +50,7 @@ func (deathKnight *DeathKnight) CanRaiseDead(sim *core.Simulation) bool {
 	return !deathKnight.Talents.MasterOfGhouls && deathKnight.RaiseDead.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastRaiseDead(sim *core.Simulation, target *core.Target) bool {
+func (deathKnight *DeathKnight) CastRaiseDead(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanRaiseDead(sim) {
 		deathKnight.CastRaiseDead(sim, target)
 		return true
