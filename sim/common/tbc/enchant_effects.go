@@ -243,7 +243,7 @@ func init() {
 		for _, target := range character.Env.Encounter.Targets {
 			debuffs = append(debuffs, target.GetOrRegisterAura(core.Aura{
 				Label:    "Deathfrost",
-				Tag:      core.ThunderClapAuraTag,
+				Tag:      core.AtkSpeedReductionAuraTag,
 				ActionID: actionID,
 				Duration: time.Second * 8,
 				Priority: 1 / slowMultiplier,

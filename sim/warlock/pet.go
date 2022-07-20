@@ -26,7 +26,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 	summonChoice := warlock.Options.Summon
 	preset := warlock.Rotation.Preset
 
-	if preset==proto.Warlock_Rotation_Automatic {
+	if preset == proto.Warlock_Rotation_Automatic {
 		if warlock.Talents.Haunt {
 			summonChoice = proto.Warlock_Options_Felhunter
 		} else if warlock.Talents.Metamorphosis {
@@ -80,7 +80,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 	wp.PseudoStats.DamageDealtMultiplier *= 1.0 + (0.04 * float64(warlock.Talents.UnholyPower))
 
 	wp.EnableManaBar()
-	
+
 	if petConfig.Melee {
 		switch summonChoice {
 		case proto.Warlock_Options_Felguard:
@@ -263,14 +263,13 @@ var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
 		SecondaryAbility: Intercept,
 		ManaIntRatio:     11.5,
 		Stats: stats.Stats{
-			stats.AttackPower: -20,
-			stats.Stamina:     280,
-			stats.Strength:    153,
-			stats.Agility:     108,
-			stats.Intellect:   133,
-			stats.Mana:        893,
-			stats.Spirit:      122,
-			stats.MP5:         48,
+			stats.Stamina:   280,
+			stats.Strength:  153,
+			stats.Agility:   108,
+			stats.Intellect: 133,
+			stats.Mana:      893,
+			stats.Spirit:    122,
+			stats.MP5:       48,
 		},
 	},
 	proto.Warlock_Options_Imp: {
@@ -279,14 +278,13 @@ var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
 		Melee:          false,
 		PrimaryAbility: Firebolt,
 		Stats: stats.Stats{
-			stats.AttackPower: -20,
-			stats.MP5:         123,
-			stats.Stamina:     101,
-			stats.Strength:    145,
-			stats.Agility:     38,
-			stats.Intellect:   327,
-			stats.Mana:        756,
-			stats.Spirit:      263,
+			stats.MP5:       123,
+			stats.Stamina:   101,
+			stats.Strength:  145,
+			stats.Agility:   38,
+			stats.Intellect: 327,
+			stats.Mana:      756,
+			stats.Spirit:    263,
 		},
 	},
 	proto.Warlock_Options_Succubus: {
@@ -295,14 +293,13 @@ var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
 		Melee:          true,
 		PrimaryAbility: LashOfPain,
 		Stats: stats.Stats{
-			stats.AttackPower: -20,
-			stats.Stamina:     328,
-			stats.Strength:    314,
-			stats.Agility:     90,
-			stats.Intellect:   150,
-			stats.Mana:        1109,
-			stats.Spirit:      209,
-			stats.MP5:         11,
+			stats.Stamina:   328,
+			stats.Strength:  314,
+			stats.Agility:   90,
+			stats.Intellect: 150,
+			stats.Mana:      1109,
+			stats.Spirit:    209,
+			stats.MP5:       11,
 		},
 	},
 	proto.Warlock_Options_Felhunter: {
@@ -311,16 +308,15 @@ var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
 		Melee:          true,
 		PrimaryAbility: ShadowBite,
 		Stats: stats.Stats{
-			stats.AttackPower: -20,
-			stats.Stamina:     328,
-			stats.Strength:    314,
-			stats.Agility:     90,
-			stats.Intellect:   150,
-			stats.Mana:        1109,
-			stats.Spirit:      209,
-			stats.MP5:         11,
-			stats.SpellCrit:   0.01,
-			stats.MeleeCrit:   0.03,
+			stats.Stamina:   328,
+			stats.Strength:  314,
+			stats.Agility:   90,
+			stats.Intellect: 150,
+			stats.Mana:      1109,
+			stats.Spirit:    209,
+			stats.MP5:       11,
+			stats.SpellCrit: 0.01,
+			stats.MeleeCrit: 0.03,
 		},
 	},
 }

@@ -148,6 +148,9 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: HunterInputs.HunterRotationConfig,
+			petConsumeInputs: [
+				IconInputs.SpicedMammothTreats,
+			],
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
