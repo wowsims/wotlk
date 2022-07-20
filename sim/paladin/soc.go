@@ -2,6 +2,7 @@ package paladin
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -27,7 +28,12 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 	baseMultiplier := 1.0
 	// Additive bonuses
 	baseMultiplier += core.TernaryFloat64(paladin.HasSetBonus(ItemSetLightswornBattlegear, 4), .1, 0)
+
+	judgementMultiplier := baseMultiplier
+	judgementMultiplier += core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfJudgement), 0.10, 0)
+
 	baseMultiplier *= paladin.WeaponSpecializationMultiplier()
+	judgementMultiplier *= paladin.WeaponSpecializationMultiplier()
 
 	onJudgementProc := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 20467}, // Judgement of Command
@@ -35,7 +41,7 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 		Flags:       core.SpellFlagMeleeMetrics | SpellFlagSecondaryJudgement,
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeOrRangedSpecial,
-			DamageMultiplier: baseMultiplier,
+			DamageMultiplier: judgementMultiplier,
 			ThreatMultiplier: 1,
 
 			BonusCritRating: 6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance,

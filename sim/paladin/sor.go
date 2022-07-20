@@ -31,7 +31,12 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 	baseMultiplier += core.TernaryFloat64(paladin.HasSetBonus(ItemSetLightswornBattlegear, 4), .1, 0)
 	baseMultiplier += core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfSealOfRighteousness), .1, 0)
 	baseMultiplier += 0.03 * float64(paladin.Talents.SealsOfThePure)
+
+	judgementMultiplier := baseMultiplier
+	judgementMultiplier += core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfJudgement), 0.10, 0)
+
 	baseMultiplier *= paladin.WeaponSpecializationMultiplier()
+	judgementMultiplier *= paladin.WeaponSpecializationMultiplier()
 
 	onJudgementProc := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 20187}, // Judgement of Righteousness.
@@ -39,7 +44,7 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 		Flags:       core.SpellFlagMeleeMetrics | SpellFlagSecondaryJudgement,
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeOrRangedSpecial,
-			DamageMultiplier: baseMultiplier,
+			DamageMultiplier: judgementMultiplier,
 			ThreatMultiplier: 1,
 
 			BonusCritRating: 6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance,
