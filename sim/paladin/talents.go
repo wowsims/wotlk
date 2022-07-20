@@ -364,6 +364,10 @@ func (paladin *Paladin) applyArtOfWar() {
 }
 
 func (paladin *Paladin) applyJudgmentsOfTheWise() {
+	if paladin.Talents.JudgementsOfTheWise == 0 {
+		return
+	}
+
 	procSpell := paladin.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 31878},
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, _ *core.Spell) {
