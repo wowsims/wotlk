@@ -18,9 +18,11 @@ func (rp *runicPowerBar) SetAsGeneratedByReapingOrBoTN(slot int32) {
 func (rp *runicPowerBar) LaunchBloodTapRegenPA(sim *Simulation, slot int32, spell *Spell) {
 	r := &rp.bloodRunes[slot]
 
-	pa := rp.newPA(r)
-	pa.NextActionAt = sim.CurrentTime + 20.0*time.Second
-	pa.Priority = ActionPriorityRegen
+	pa := &PendingAction{
+		NextActionAt: sim.CurrentTime + 20.0*time.Second,
+		Priority:     ActionPriorityRegen,
+	}
+
 	pa.OnAction = func(sim *Simulation) {
 		if !pa.cancelled {
 			r.pas[1] = nil
