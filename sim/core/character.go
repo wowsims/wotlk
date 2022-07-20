@@ -32,9 +32,6 @@ type Character struct {
 	// Base stats for this Character.
 	baseStats stats.Stats
 
-	// Provides stat dependency management behavior.
-	stats.StatDependencyManager
-
 	professions [2]proto.Profession
 
 	glyphs [6]int32
@@ -132,20 +129,8 @@ func NewCharacter(party *Party, partyIndex int, player proto.Player) Character {
 }
 
 func (character *Character) addUniversalStatDependencies() {
-	character.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Stamina,
-		ModifiedStat: stats.Health,
-		Modifier: func(stamina float64, health float64) float64 {
-			return health + stamina*10
-		},
-	})
-	character.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Agility,
-		ModifiedStat: stats.Armor,
-		Modifier: func(agility float64, armor float64) float64 {
-			return armor + agility*2
-		},
-	})
+	character.AddStatDependency(stats.Stamina, stats.Health, 10)
+	character.AddStatDependency(stats.Agility, stats.Armor, 2)
 }
 
 // Empty implementation so its optional for Agents.
@@ -157,22 +142,22 @@ func (character *Character) applyAllEffects(agent Agent, raidBuffs proto.RaidBuf
 
 	applyRaceEffects(agent)
 	character.applyProfessionEffects()
-	playerStats.BaseStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
+	playerStats.BaseStats = character.ApplyStatDependencies(character.stats).ToFloatArray()
 
 	character.AddStats(character.Equip.Stats())
 	character.applyItemEffects(agent)
 	character.applyItemSetBonusEffects(agent)
 	agent.ApplyGearBonuses()
-	playerStats.GearStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
+	playerStats.GearStats = character.ApplyStatDependencies(character.stats).ToFloatArray()
 
 	agent.ApplyTalents()
-	playerStats.TalentsStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
+	playerStats.TalentsStats = character.ApplyStatDependencies(character.stats).ToFloatArray()
 
 	applyBuffEffects(agent, raidBuffs, partyBuffs, individualBuffs)
-	playerStats.BuffsStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
+	playerStats.BuffsStats = character.ApplyStatDependencies(character.stats).ToFloatArray()
 
 	applyConsumeEffects(agent, raidBuffs, partyBuffs)
-	playerStats.ConsumesStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
+	playerStats.ConsumesStats = character.ApplyStatDependencies(character.stats).ToFloatArray()
 
 	for _, petAgent := range character.Pets {
 		applyPetBuffEffects(petAgent, raidBuffs, partyBuffs, individualBuffs)
@@ -320,7 +305,7 @@ func (character *Character) Finalize(playerStats *proto.PlayerStats) {
 		return
 	}
 
-	character.StatDependencyManager.Finalize()
+	character.finalizeStatDeps()
 	character.stats = character.ApplyStatDependencies(character.stats)
 
 	character.PseudoStats.ParryHaste = character.PseudoStats.CanParry

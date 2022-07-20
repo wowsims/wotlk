@@ -63,6 +63,9 @@ type Unit struct {
 	// Current stats, including temporary effects.
 	stats stats.Stats
 
+	// Provides stat dependency management behavior.
+	statBonuses [stats.Len]stats.Bonuses
+
 	PseudoStats stats.PseudoStats
 
 	healthBar
@@ -155,30 +158,8 @@ func (unit *Unit) AddStatsDynamic(sim *Simulation, stat stats.Stats) {
 
 	stat[stats.Mana] = 0 // TODO: Mana needs special treatment
 
-	if stat[stats.MeleeHaste] != 0 {
-		unit.AddMeleeHaste(sim, stat[stats.MeleeHaste])
-		stat[stats.MeleeHaste] = 0
-	}
-
-	unit.stats = unit.stats.Add(stat)
-
-	if stat[stats.MP5] != 0 || stat[stats.Intellect] != 0 || stat[stats.Spirit] != 0 {
-		unit.UpdateManaRegenRates()
-	}
-	if stat[stats.SpellHaste] != 0 {
-		unit.updateCastSpeed()
-	}
-	if stat[stats.Armor] != 0 {
-		unit.updateArmor()
-	}
-	if stat[stats.ArmorPenetration] != 0 {
-		unit.updateArmorPen()
-	}
-	if stat[stats.SpellPenetration] != 0 {
-		unit.updateSpellPen()
-	}
-	if stat[stats.ArcaneResistance] != 0 || stat[stats.FireResistance] != 0 || stat[stats.FrostResistance] != 0 || stat[stats.NatureResistance] != 0 || stat[stats.ShadowResistance] != 0 {
-		unit.updateResistances()
+	for k, v := range stat {
+		unit.AddStatDynamic(sim, stats.Stat(k), v)
 	}
 }
 func (unit *Unit) AddStatDynamic(sim *Simulation, stat stats.Stat, amount float64) {
@@ -191,7 +172,8 @@ func (unit *Unit) AddStatDynamic(sim *Simulation, stat stats.Stat, amount float6
 		return
 	}
 
-	unit.stats[stat] += amount
+	added := amount * unit.statBonuses[stat].Multiplier
+	unit.stats[stat] += added
 
 	if stat == stats.MP5 || stat == stats.Intellect || stat == stats.Spirit {
 		unit.UpdateManaRegenRates()
@@ -213,6 +195,106 @@ func (unit *Unit) AddStatDynamic(sim *Simulation, stat stats.Stat, amount float6
 		unit.updateResistances()
 	} else if stat == stats.ShadowResistance {
 		unit.updateResistances()
+	}
+
+	for k, v := range unit.statBonuses[stat].Deps {
+		if v == 0 {
+			continue
+		}
+		unit.AddStatDynamic(sim, k, v*added) // this should handle descending
+	}
+}
+
+func (unit *Unit) ApplyStatDependencies(ss stats.Stats) stats.Stats {
+	news := stats.Stats{}
+
+	var addstat func(s stats.Stat, v float64)
+
+	addstat = func(s stats.Stat, v float64) {
+		if unit.statBonuses[s].Multiplier == 0 {
+			unit.statBonuses[s].Multiplier = 1
+		}
+		added := v * unit.statBonuses[s].Multiplier
+		news[s] += added
+		for k, v := range unit.statBonuses[s].Deps {
+			if v == 0 {
+				continue
+			}
+			addstat(k, v*added)
+		}
+	}
+
+	for s, v := range ss {
+		if v == 0 {
+			continue
+		}
+		addstat(stats.Stat(s), v)
+	}
+
+	return news
+}
+
+// AddStatDependency will add source stat * ratio to the modified stat.
+// Currently this is always done at start before sim starts.
+func (unit *Unit) AddStatDependency(source, modified stats.Stat, ratio float64) {
+	if unit.Env != nil && unit.Env.IsFinalized() {
+		panic("Already finalized, can't add more dependencies!")
+	}
+	if unit.statBonuses[source].Deps == nil {
+		unit.statBonuses[source].Deps = map[stats.Stat]float64{}
+	}
+	unit.statBonuses[source].Deps[modified] += ratio
+}
+
+// MultiplyStat will multiply final stat by given amount.
+func (unit *Unit) MultiplyStat(stat stats.Stat, multiplier float64) {
+	if unit.Env != nil && unit.Env.IsFinalized() {
+		panic("Already finalized, use MultiplyStatDynamic instead!!")
+	}
+	if unit.statBonuses[stat].Multiplier == 0 {
+		unit.statBonuses[stat].Multiplier = multiplier
+	} else {
+		unit.statBonuses[stat].Multiplier *= multiplier
+	}
+}
+
+func (unit *Unit) MultiplyStatDynamic(sim *Simulation, stat stats.Stat, multiplier float64) {
+	if unit.Env == nil || !unit.Env.IsFinalized() {
+		panic("Not finalized, use MultiplyStat instead!")
+	}
+	old := unit.statBonuses[stat].Multiplier
+	if old == 0 {
+		old = 1
+		unit.statBonuses[stat].Multiplier = 1
+	}
+	unit.statBonuses[stat].Multiplier *= multiplier
+	// Now modify the stat itself
+	bonus := (unit.stats[stat] * (unit.statBonuses[stat].Multiplier / old))
+	unit.AddStatDynamic(sim, stat, (bonus-unit.GetStat(stat))/unit.statBonuses[stat].Multiplier)
+}
+
+// finalizeStatDeps will descend the tree of each stat's depedencies and verify
+// there are no circular dependencies
+func (unit *Unit) finalizeStatDeps() {
+	seen := map[stats.Stat]struct{}{}
+
+	var walk func(m map[stats.Stat]float64)
+
+	walk = func(m map[stats.Stat]float64) {
+		for k := range m {
+			if _, ok := seen[k]; ok {
+				panic("circular dependency in stats")
+			}
+			seen[k] = struct{}{}
+			walk(unit.statBonuses[k].Deps)
+		}
+	}
+
+	for s := range unit.stats {
+		seen = map[stats.Stat]struct{}{
+			stats.Stat(s): struct{}{},
+		}
+		walk(unit.statBonuses[s].Deps)
 	}
 }
 

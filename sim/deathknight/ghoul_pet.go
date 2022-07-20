@@ -53,20 +53,8 @@ func (deathKnight *DeathKnight) NewGhoulPet(permanent bool) *GhoulPet {
 		AutoSwingMelee: true,
 	})
 
-	ghoulPet.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Strength,
-		ModifiedStat: stats.AttackPower,
-		Modifier: func(strength float64, attackPower float64) float64 {
-			return attackPower + strength
-		},
-	})
-	ghoulPet.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Agility,
-		ModifiedStat: stats.MeleeCrit,
-		Modifier: func(agility float64, meleeCrit float64) float64 {
-			return meleeCrit + (agility/83.3)*core.CritRatingPerCritChance
-		},
-	})
+	ghoulPet.AddStatDependency(stats.Strength, stats.AttackPower, 1)
+	ghoulPet.AddStatDependency(stats.Agility, stats.MeleeCrit, (core.CritRatingPerCritChance / 83.3))
 
 	core.ApplyPetConsumeEffects(&ghoulPet.Character, deathKnight.Consumes)
 

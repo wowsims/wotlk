@@ -26,23 +26,11 @@ func (mage *Mage) ApplyTalents() {
 	}
 
 	if mage.Talents.ArcaneMind > 0 {
-		mage.Character.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Intellect,
-			ModifiedStat: stats.Intellect,
-			Modifier: func(intellect float64, _ float64) float64 {
-				return intellect * (1.0 + 0.03*float64(mage.Talents.ArcaneMind))
-			},
-		})
+		mage.Character.MultiplyStat(stats.Intellect, 1+0.03*float64(mage.Talents.ArcaneMind))
 	}
 
 	if mage.Talents.MindMastery > 0 {
-		mage.Character.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Intellect,
-			ModifiedStat: stats.SpellPower,
-			Modifier: func(intellect float64, spellPower float64) float64 {
-				return spellPower + intellect*0.05*float64(mage.Talents.MindMastery)
-			},
-		})
+		mage.Character.AddStatDependency(stats.Intellect, stats.SpellPower, 0.05*float64(mage.Talents.MindMastery))
 	}
 
 	if mage.Talents.ArcaneInstability > 0 {

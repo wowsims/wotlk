@@ -28,50 +28,25 @@ func (hp *HunterPet) ApplyTalents() {
 
 	if talents.GreatStamina != 0 {
 		bonus := 1 + 0.04*float64(talents.GreatStamina)
-		hp.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Stamina,
-			ModifiedStat: stats.Stamina,
-			Modifier: func(stamina float64, _ float64) float64 {
-				return stamina * bonus
-			},
-		})
+		hp.MultiplyStat(stats.Stamina, bonus)
 	}
 
 	if talents.NaturalArmor != 0 {
 		bonus := 1 + 0.05*float64(talents.NaturalArmor)
-		hp.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Armor,
-			ModifiedStat: stats.Armor,
-			Modifier: func(armor float64, _ float64) float64 {
-				return armor * bonus
-			},
-		})
+		hp.MultiplyStat(stats.Armor, bonus)
 	}
 
 	if talents.BloodOfTheRhino != 0 {
 		hp.PseudoStats.HealingTakenMultiplier *= 1 + 0.2*float64(talents.BloodOfTheRhino)
 
 		bonus := 1 + 0.02*float64(talents.BloodOfTheRhino)
-		hp.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Stamina,
-			ModifiedStat: stats.Stamina,
-			Modifier: func(stamina float64, _ float64) float64 {
-				return stamina * bonus
-			},
-		})
+		hp.MultiplyStat(stats.Stamina, bonus)
 	}
 
 	if talents.PetBarding != 0 {
 		hp.AddStat(stats.Dodge, 1*core.DodgeRatingPerDodgeChance*float64(talents.PetBarding))
-
 		bonus := 1 + 0.05*float64(talents.PetBarding)
-		hp.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Armor,
-			ModifiedStat: stats.Armor,
-			Modifier: func(armor float64, _ float64) float64 {
-				return armor * bonus
-			},
-		})
+		hp.MultiplyStat(stats.Armor, bonus)
 	}
 
 	hp.applyOwlsFocus()

@@ -15,13 +15,7 @@ func init() {
 	// TODO: Invigorating Earthsiege (heal on crits)
 
 	core.NewItemEffect(41333, func(agent core.Agent) {
-		agent.GetCharacter().AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Intellect,
-			ModifiedStat: stats.Intellect,
-			Modifier: func(intellect float64, _ float64) float64 {
-				return intellect * 1.02
-			},
-		})
+		agent.GetCharacter().MultiplyStat(stats.Intellect, 1.02)
 	})
 
 	core.NewItemEffect(41377, func(agent core.Agent) {
@@ -40,13 +34,7 @@ func init() {
 	})
 
 	core.NewItemEffect(41389, func(agent core.Agent) {
-		agent.GetCharacter().AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Mana,
-			ModifiedStat: stats.Mana,
-			Modifier: func(mana float64, _ float64) float64 {
-				return mana * 1.02
-			},
-		})
+		agent.GetCharacter().MultiplyStat(stats.Mana, 1.02)
 	})
 
 	core.NewItemEffect(41395, func(agent core.Agent) {
@@ -55,13 +43,7 @@ func init() {
 	})
 
 	core.NewItemEffect(41396, func(agent core.Agent) {
-		agent.GetCharacter().AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.BlockValue,
-			ModifiedStat: stats.BlockValue,
-			Modifier: func(bv float64, _ float64) float64 {
-				return bv * 1.05
-			},
-		})
+		agent.GetCharacter().MultiplyStat(stats.BlockValue, 1.05)
 	})
 
 	core.NewItemEffect(41400, func(agent core.Agent) {

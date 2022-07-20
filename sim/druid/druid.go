@@ -156,29 +156,9 @@ func New(char core.Character, form DruidForm, selfBuffs SelfBuffs, talents proto
 	}
 	druid.EnableManaBar()
 
-	druid.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Strength,
-		ModifiedStat: stats.AttackPower,
-		Modifier: func(strength float64, attackPower float64) float64 {
-			return attackPower + strength*2
-		},
-	})
-
-	druid.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Agility,
-		ModifiedStat: stats.MeleeCrit,
-		Modifier: func(agility float64, meleeCrit float64) float64 {
-			return meleeCrit + (agility/25)*core.CritRatingPerCritChance
-		},
-	})
-
-	druid.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Agility,
-		ModifiedStat: stats.Dodge,
-		Modifier: func(agility float64, dodge float64) float64 {
-			return dodge + (agility/14.7059)*core.DodgeRatingPerDodgeChance
-		},
-	})
+	druid.AddStatDependency(stats.Strength, stats.AttackPower, 2)
+	druid.AddStatDependency(stats.Agility, stats.MeleeCrit, (core.CritRatingPerCritChance / 25))
+	druid.AddStatDependency(stats.Agility, stats.Dodge, (core.DodgeRatingPerDodgeChance / 14.7059))
 
 	return druid
 }

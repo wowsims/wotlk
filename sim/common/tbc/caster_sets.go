@@ -92,13 +92,7 @@ var ItemSetSpellfire = core.NewItemSet(core.ItemSet{
 	Bonuses: map[int32]core.ApplyEffect{
 		3: func(agent core.Agent) {
 			character := agent.GetCharacter()
-			character.AddStatDependency(stats.StatDependency{
-				SourceStat:   stats.Intellect,
-				ModifiedStat: stats.SpellPower,
-				Modifier: func(intellect float64, spellPower float64) float64 {
-					return spellPower + intellect*0.07 // 7% bonus to sp from int
-				},
-			})
+			character.AddStatDependency(stats.Intellect, stats.SpellPower, 0.07)
 		},
 	},
 })

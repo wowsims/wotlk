@@ -97,23 +97,11 @@ func init() {
 	})
 
 	core.NewItemEffect(35501, func(agent core.Agent) {
-		agent.GetCharacter().AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.BlockValue,
-			ModifiedStat: stats.BlockValue,
-			Modifier: func(bv float64, _ float64) float64 {
-				return bv * 1.1
-			},
-		})
+		agent.GetCharacter().MultiplyStat(stats.BlockValue, 1.1)
 	})
 
 	core.NewItemEffect(35503, func(agent core.Agent) {
-		agent.GetCharacter().AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Intellect,
-			ModifiedStat: stats.Intellect,
-			Modifier: func(intellect float64, _ float64) float64 {
-				return intellect * 1.02
-			},
-		})
+		agent.GetCharacter().MultiplyStat(stats.Intellect, 1.02)
 	})
 
 	// These are handled in character.go, but create empty effects so they are included in tests.
