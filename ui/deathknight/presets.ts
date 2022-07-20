@@ -81,7 +81,7 @@ export const DefaultRotation = DeathKnightRotation.create({
   unholyPresenceOpener: false,
   useDeathAndDecay: false,
 	refreshHornOfWinter: false,
-	wipFrostRotation: false,
+	wipFrostRotation: true,
 });
 
 export const DefaultOptions = DeathKnightOptions.create({
@@ -348,9 +348,8 @@ export const P1_FROST_BIS_PRESET = {
       ]
     },
     {
-      "id": 40694,
+      "id": 40317,
       "gems": [
-        39996,
         42142
       ]
     },

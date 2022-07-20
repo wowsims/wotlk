@@ -32,29 +32,28 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 	onJudgementProc := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 20467}, // Judgement of Command
 		SpellSchool: core.SpellSchoolHoly,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | SpellFlagJudgement,
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeOrRangedSpecial,
 			DamageMultiplier: baseMultiplier,
 			ThreatMultiplier: 1,
 
 			BonusCritRating: 6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance,
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+			BaseDamage: core.WrapBaseDamageConfig(core.BaseDamageConfigMeleeWeapon(
+				core.MainHand,
+				false,
+				0,
+				(0.19),
+				true,
+			), func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
+				return func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					scaling := hybridScaling{
 						AP: 0.08,
 						SP: 0.13,
 					}
-
-					minimum := (0.19 * paladin.GetMHWeapon().WeaponDamageMin) + (scaling.AP * hitEffect.MeleeAttackPower(spell.Unit)) + (scaling.SP * hitEffect.SpellPower(spell.Unit, spell))
-					maximum := (0.19 * paladin.GetMHWeapon().WeaponDamageMax) + (scaling.AP * hitEffect.MeleeAttackPower(spell.Unit)) + (scaling.SP * hitEffect.SpellPower(spell.Unit, spell))
-
-					deltaDamage := maximum - minimum
-					damage := minimum + deltaDamage*sim.RandomFloat("Damage Roll")
-
-					return damage
-				},
-			},
+					return oldCalculator(sim, hitEffect, spell) + (scaling.AP * hitEffect.MeleeAttackPower(spell.Unit)) + (scaling.SP * hitEffect.SpellPower(spell.Unit, spell))
+				}
+			}),
 			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialCritOnly(paladin.MeleeCritMultiplier()), // Secondary Judgements cannot miss if the Primary Judgement hit, only roll for crit.
 		}),
 	})
@@ -63,17 +62,13 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 		ProcMask:         core.ProcMaskEmpty,
 		DamageMultiplier: baseMultiplier,
 		ThreatMultiplier: 1,
-		BaseDamage: core.BaseDamageConfig{
-			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				minimum := (0.36 * paladin.GetMHWeapon().WeaponDamageMin)
-				maximum := (0.36 * paladin.GetMHWeapon().WeaponDamageMax)
-
-				deltaDamage := maximum - minimum
-				damage := minimum + deltaDamage*sim.RandomFloat("Damage Roll")
-
-				return damage
-			},
-		},
+		BaseDamage: core.BaseDamageConfigMeleeWeapon(
+			core.MainHand,
+			false,
+			0,
+			(0.36),
+			true,
+		),
 		OutcomeApplier: paladin.OutcomeFuncMeleeSpecialCritOnly(paladin.MeleeCritMultiplier()), // can't miss if melee swing landed, but can crit
 	}
 

@@ -53,10 +53,10 @@ var FullRaidBuffs = &proto.RaidBuffs{
 }
 var FullPartyBuffs = &proto.PartyBuffs{}
 var FullIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings: true,
-	//BlessingOfSanctuary: true,
-	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
-	BlessingOfMight:  proto.TristateEffect_TristateEffectImproved,
+	BlessingOfKings:     true,
+	BlessingOfSanctuary: true,
+	BlessingOfWisdom:    proto.TristateEffect_TristateEffectImproved,
+	BlessingOfMight:     proto.TristateEffect_TristateEffectImproved,
 }
 
 var FullConsumes = &proto.Consumes{

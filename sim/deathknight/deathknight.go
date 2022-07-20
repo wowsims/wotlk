@@ -61,8 +61,7 @@ type DeathKnight struct {
 	DeathAndDecay    *core.Spell
 	DeathAndDecayDot *core.Dot
 
-	HowlingBlastCostless bool
-	HowlingBlast         *core.Spell
+	HowlingBlast *core.Spell
 
 	OtherRelevantStrAgiActive bool
 	HornOfWinter              *core.Spell
@@ -97,6 +96,7 @@ type DeathKnight struct {
 	NecrosisAura        *core.Aura
 	BloodCakedBladeAura *core.Aura
 	ButcheryAura        *core.Aura
+	RimeAura            *core.Aura
 
 	// Talent Spells
 	LastDiseaseDamage float64
@@ -244,28 +244,38 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 		currentRunicPower,
 		maxRunicPower,
 		func(sim *core.Simulation) {
-			if deathKnight.GCD.IsReady(sim) {
-				deathKnight.tryUseGCD(sim)
+			if !deathKnight.Talents.HowlingBlast {
+				if deathKnight.GCD.IsReady(sim) {
+					deathKnight.tryUseGCD(sim)
+				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if deathKnight.GCD.IsReady(sim) {
-				deathKnight.tryUseGCD(sim)
+			if !deathKnight.Talents.HowlingBlast {
+				if deathKnight.GCD.IsReady(sim) {
+					deathKnight.tryUseGCD(sim)
+				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if deathKnight.GCD.IsReady(sim) {
-				deathKnight.tryUseGCD(sim)
+			if !deathKnight.Talents.HowlingBlast {
+				if deathKnight.GCD.IsReady(sim) {
+					deathKnight.tryUseGCD(sim)
+				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if deathKnight.GCD.IsReady(sim) {
-				deathKnight.tryUseGCD(sim)
+			if !deathKnight.Talents.HowlingBlast {
+				if deathKnight.GCD.IsReady(sim) {
+					deathKnight.tryUseGCD(sim)
+				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if deathKnight.GCD.IsReady(sim) {
-				deathKnight.tryUseGCD(sim)
+			if !deathKnight.Talents.HowlingBlast {
+				if deathKnight.GCD.IsReady(sim) {
+					deathKnight.tryUseGCD(sim)
+				}
 			}
 		},
 	)
@@ -344,11 +354,14 @@ func (deathKnight *DeathKnight) secondaryCritModifier(applyGuile bool) float64 {
 	return secondaryModifier
 }
 func (deathKnight *DeathKnight) spellCritMultiplier() float64 {
-	return deathKnight.MeleeCritMultiplier(1.0, 0)
+	return deathKnight.SpellCritMultiplier(1.0, 0)
 }
 func (deathKnight *DeathKnight) spellCritMultiplierGuile() float64 {
 	applyGuile := deathKnight.Talents.GuileOfGorefiend > 0
-	return deathKnight.MeleeCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile))
+	return deathKnight.SpellCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile))
+}
+func (deathKnight *DeathKnight) critMultiplier() float64 {
+	return deathKnight.MeleeCritMultiplier(1.0, 0)
 }
 func (deathKnight *DeathKnight) critMultiplierGuile() float64 {
 	applyGuile := deathKnight.Talents.GuileOfGorefiend > 0

@@ -7,9 +7,7 @@ import (
 
 var BasicRaidBuffs = &proto.RaidBuffs{}
 var BasicPartyBuffs = &proto.PartyBuffs{}
-var BasicIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings: true,
-}
+var BasicIndividualBuffs = &proto.IndividualBuffs{}
 
 var StandardTalents = &proto.ShamanTalents{
 	Convection:     2,

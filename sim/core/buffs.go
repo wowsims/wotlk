@@ -125,9 +125,12 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		})
 	}
 
-	// TODO: any way to validate that this is not a raid sim?
 	// TODO: convert this to a real mana replenishment aura we can use in raid sim.
-	if individualBuffs.Replenishment {
+	if individualBuffs.VampiricTouch ||
+		individualBuffs.HuntingParty ||
+		individualBuffs.JudgementsOfTheWise ||
+		individualBuffs.ImprovedSoulLeech ||
+		individualBuffs.EnduringWinter {
 		character.AddStatDependency(stats.StatDependency{
 			SourceStat:   stats.Mana,
 			ModifiedStat: stats.MP5,
@@ -192,6 +195,8 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 	if individualBuffs.BlessingOfSanctuary {
 		character.PseudoStats.DamageTakenMultiplier *= 0.97
 		BlessingOfSanctuaryAura(character)
+	} else if individualBuffs.Vigilance || individualBuffs.RenewedHope {
+		character.PseudoStats.DamageTakenMultiplier *= 0.97
 	}
 
 	if raidBuffs.DevotionAura != proto.TristateEffect_TristateEffectMissing {
@@ -221,11 +226,16 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		stats.Health: GetTristateValueFloat(raidBuffs.CommandingShout, 1080, 1080*1.25),
 	})
 
-	if raidBuffs.TotemOfWrath || raidBuffs.DemonicPact > 0 {
-		v := MaxFloat(280, float64(raidBuffs.DemonicPact))
+	spBonus := float64(raidBuffs.DemonicPact)
+	if raidBuffs.TotemOfWrath {
+		spBonus = MaxFloat(spBonus, 280)
+	} else if raidBuffs.FlametongueTotem {
+		spBonus = MaxFloat(spBonus, 144)
+	}
+	if spBonus > 0 {
 		character.AddStats(stats.Stats{
-			stats.SpellPower:   v,
-			stats.HealingPower: v,
+			stats.SpellPower:   spBonus,
+			stats.HealingPower: spBonus,
 		})
 	}
 	if raidBuffs.WrathOfAirTotem {

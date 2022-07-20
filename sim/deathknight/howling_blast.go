@@ -52,17 +52,21 @@ func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 					deathKnight.LastCastOutcome = spellEffect.Outcome
 				}
 				if spellEffect.Landed() && target == spellEffect.Target {
-					if !deathKnight.HowlingBlastCostless {
+					if !deathKnight.RimeAura.IsActive() {
 						dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 1, 1)
 						deathKnight.Spend(sim, spell, dkSpellCost)
 						amountOfRunicPower := 15.0 + 2.5*float64(deathKnight.Talents.ChillOfTheGrave)
 						deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 					} else {
-						deathKnight.HowlingBlastCostless = false
+						amountOfRunicPower := 2.5 * float64(deathKnight.Talents.ChillOfTheGrave)
+						deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
+						deathKnight.RimeAura.Deactivate(sim)
 					}
-				} else if spellEffect.Landed() && !deathKnight.HowlingBlastCostless {
+				} else if spellEffect.Landed() {
 					amountOfRunicPower := 2.5 * float64(deathKnight.Talents.ChillOfTheGrave)
 					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
+				} else {
+					deathKnight.RimeAura.Deactivate(sim)
 				}
 			},
 		}),
@@ -70,7 +74,7 @@ func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 }
 
 func (deathKnight *DeathKnight) CanHowlingBlast(sim *core.Simulation) bool {
-	if deathKnight.HowlingBlastCostless {
+	if deathKnight.RimeAura.IsActive() {
 		return deathKnight.HowlingBlast.IsReady(sim)
 	}
 	return deathKnight.CastCostPossible(sim, 0.0, 0, 1, 1) && deathKnight.HowlingBlast.IsReady(sim)

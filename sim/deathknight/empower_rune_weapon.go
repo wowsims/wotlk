@@ -22,15 +22,7 @@ func (deathKnight *DeathKnight) registerEmpowerRuneWeaponSpell() {
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			blood := deathKnight.CurrentBloodRunes()
-			frost := deathKnight.CurrentFrostRunes()
-			unholy := deathKnight.CurrentUnholyRunes()
-
 			deathKnight.RegenAllRunes(sim)
-
-			deathKnight.GainRuneMetrics(sim, deathKnight.EmpowerRuneWeapon.BloodRuneMetrics(), "blood", blood, deathKnight.CurrentBloodRunes())
-			deathKnight.GainRuneMetrics(sim, deathKnight.EmpowerRuneWeapon.FrostRuneMetrics(), "frost", frost, deathKnight.CurrentFrostRunes())
-			deathKnight.GainRuneMetrics(sim, deathKnight.EmpowerRuneWeapon.UnholyRuneMetrics(), "unholy", unholy, deathKnight.CurrentUnholyRunes())
 
 			amountOfRunicPower := 25.0
 			deathKnight.AddRunicPower(sim, amountOfRunicPower, deathKnight.EmpowerRuneWeapon.RunicPowerMetrics())

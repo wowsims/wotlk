@@ -14,8 +14,6 @@ func (deathKnight *DeathKnight) newBloodStrikeSpell(isMH bool) *core.Spell {
 		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 306.0, 0.4*deathKnight.nervesOfColdSteelBonus(), true)
 	}
 
-	guileOfGorefiend := deathKnight.Talents.GuileOfGorefiend > 0
-
 	effect := core.SpellEffect{
 		BonusCritRating:  (3.0*float64(deathKnight.Talents.Subversion) + deathKnight.annihilationCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: deathKnight.bloodOfTheNorthCoeff(),
@@ -40,7 +38,9 @@ func (deathKnight *DeathKnight) newBloodStrikeSpell(isMH bool) *core.Spell {
 		},
 	}
 
-	deathKnight.threatOfThassarianProcMasks(isMH, &effect, guileOfGorefiend)
+	deathKnight.threatOfThassarianProcMasks(isMH, &effect, true, func(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
+		return outcomeApplier
+	})
 
 	return deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:     BloodStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),

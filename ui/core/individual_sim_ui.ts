@@ -178,6 +178,7 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 	selfBuffInputs: Array<IndividualSimIconPickerConfig<Player<any>, any>>,
 	petInputs?: Array<IndividualSimIconPickerConfig<Player<any>, any>>,
 	weaponImbueInputs?: Array<IndividualSimIconPickerConfig<Player<any>, any>>,
+	petConsumeInputs?: Array<IconPickerConfig<Player<any>, any>>,
 	rotationInputs: InputSection;
 	spellInputs?: Array<IndividualSimIconPickerConfig<Player<any>, any>>;
 	otherInputs?: InputSection;
@@ -632,8 +633,8 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			{ item: IconInputs.HastePercentBuff, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
 			{ item: IconInputs.DamagePercentBuff, stats: [Stat.StatAttackPower, Stat.StatSpellPower] },
 			{ item: IconInputs.DamageReductionPercentBuff, stats: [Stat.StatStamina] },
-			{ item: IconInputs.MP5Buff, stats: [Stat.StatMP5] },
-			//{ item: IconInputs.ReplenishmentBuff, stats: [Stat.StatMP5] },
+			{ item: IconInputs.MP5Buff, stats: [Stat.StatMP5, Stat.StatIntellect] },
+			{ item: IconInputs.ReplenishmentBuff, stats: [Stat.StatMP5, Stat.StatIntellect] },
 		]);
 		const buffsSection = this.rootElem.getElementsByClassName('buffs-section')[0] as HTMLElement;
 		configureIconSection(
@@ -686,12 +687,19 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			debuffOptions.map(multiIconInput => new MultiIconPicker(debuffsSection, this.player, multiIconInput, this)),
 			Tooltips.DEBUFFS_SECTION);
 
-		const otherDebuffOptions = this.splitRelevantOptions([
+		const miscDebuffOptions = this.splitRelevantOptions([
 			{ item: IconInputs.JudgementOfWisdom, stats: [Stat.StatMP5, Stat.StatIntellect] },
 			{ item: IconInputs.JudgementOfLight, stats: [Stat.StatStamina] },
 			{ item: IconInputs.GiftOfArthas, stats: [Stat.StatStamina] },
-		]);
-		otherDebuffOptions.forEach(iconInput => new IndividualSimIconPicker(debuffsSection, this.player, iconInput, this));
+		] as Array<StatOption<IconPickerConfig<Player<any>, any>>>);
+		if (miscDebuffOptions.length > 0) {
+			new MultiIconPicker(debuffsSection, this.player, {
+				inputs: miscDebuffOptions,
+				numColumns: 3,
+				emptyColor: 'grey',
+				label: 'Misc',
+			}, this);
+		}
 
 		const potionOptions = this.splitRelevantOptions([
 			{ item: Potions.RunicHealingPotion, stats: [Stat.StatStamina] },
@@ -795,17 +803,18 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		}
 
 		const tradeConsumesElem = this.rootElem.getElementsByClassName('consumes-trade')[0] as HTMLElement;
-		new IndividualSimIconPicker(tradeConsumesElem, this.player, IconInputs.SuperSapper, this);
-		new IndividualSimIconPicker(tradeConsumesElem, this.player, IconInputs.GoblinSapper, this);
-		new IndividualSimIconPicker(tradeConsumesElem, this.player, IconInputs.FillerExplosiveInput, this);
+		tradeConsumesElem.parentElement!.style.display = 'none';
+		//new IndividualSimIconPicker(tradeConsumesElem, this.player, IconInputs.SuperSapper, this);
+		//new IndividualSimIconPicker(tradeConsumesElem, this.player, IconInputs.GoblinSapper, this);
+		//new IndividualSimIconPicker(tradeConsumesElem, this.player, IconInputs.FillerExplosiveInput, this);
 
-		//if (this.individualConfig.consumeOptions?.pet?.length) {
-		//	const petConsumesElem = this.rootElem.getElementsByClassName('consumes-pet')[0] as HTMLElement;
-		//	this.individualConfig.consumeOptions.pet.map(iconInput => new IndividualSimIconPicker(petConsumesElem, this.player, iconInput, this));
-		//} else {
-		//	const petRowElem = this.rootElem.getElementsByClassName('consumes-row-pet')[0] as HTMLElement;
-		//	petRowElem.style.display = 'none';
-		//}
+		if (this.individualConfig.petConsumeInputs?.length) {
+			const petConsumesElem = this.rootElem.getElementsByClassName('consumes-pet')[0] as HTMLElement;
+			this.individualConfig.petConsumeInputs.map(iconInput => new IndividualSimIconPicker(petConsumesElem, this.player, iconInput, this));
+		} else {
+			const petRowElem = this.rootElem.getElementsByClassName('consumes-row-pet')[0] as HTMLElement;
+			petRowElem.style.display = 'none';
+		}
 
 		//if (this.individualConfig.consumeOptions?.other?.length) {
 		//	const containerElem = this.rootElem.getElementsByClassName('consumes-other')[0] as HTMLElement;

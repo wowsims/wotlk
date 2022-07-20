@@ -44,8 +44,6 @@ func (deathKnight *DeathKnight) ApplyFrostTalents() {
 
 	// Annihilation
 
-	// TODO: Implement
-
 	// Killing Machine
 	deathKnight.applyKillingMachine()
 
@@ -82,6 +80,9 @@ func (deathKnight *DeathKnight) ApplyFrostTalents() {
 	// Implemented Outside
 
 	// Blood of the North
+
+	// Rime
+	deathKnight.applyRime()
 
 	// Tundra Stalker
 	deathKnight.AddStat(stats.Expertise, 1.0*float64(deathKnight.Talents.TundraStalker)*core.ExpertisePerQuarterPercentReduction)
@@ -120,6 +121,23 @@ func (deathKnight *DeathKnight) tundraStalkerBonus(target *core.Unit) float64 {
 	return core.TernaryFloat64(deathKnight.TargetHasDisease(FrostFeverAuraLabel, target), 1.0+0.03*float64(deathKnight.Talents.TundraStalker), 1.0)
 }
 
+func (deathKnight *DeathKnight) applyRime() {
+	if deathKnight.Talents.Rime == 0 {
+		return
+	}
+
+	actionID := core.ActionID{SpellID: 59057}
+
+	deathKnight.RimeAura = deathKnight.RegisterAura(core.Aura{
+		ActionID: actionID,
+		Label:    "Rime",
+		Duration: core.NeverExpires,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			deathKnight.HowlingBlast.CD.Reset()
+		},
+	})
+}
+
 func (deathKnight *DeathKnight) annihilationCritBonus() float64 {
 	return 1.0 * float64(deathKnight.Talents.Annihilation)
 }
@@ -130,16 +148,17 @@ func (deathKnight *DeathKnight) applyKillingMachine() {
 	}
 
 	actionID := core.ActionID{SpellID: 51130}
-	weaponMH := deathKnight.GetMHWeapon()
-	procChance := (weaponMH.SwingSpeed * 5.0 / 60.0) * float64(deathKnight.Talents.KillingMachine)
+	//weaponMH := deathKnight.GetMHWeapon()
+	//procChance := (weaponMH.SwingSpeed * 5.0 / 60.0) * float64(deathKnight.Talents.KillingMachine)
+
+	ppmm := deathKnight.AutoAttacks.NewPPMManager(float64(deathKnight.Talents.KillingMachine), core.ProcMaskMeleeMHAuto|core.ProcMaskMeleeMHSpecial)
 
 	deathKnight.KillingMachineAura = deathKnight.RegisterAura(core.Aura{
 		Label:    "Killing Machine Proc",
 		ActionID: actionID,
 		Duration: time.Second * 30.0,
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			//TODO: add the other spells
-			if spell == deathKnight.IcyTouch {
+			if spell == deathKnight.IcyTouch || spell == deathKnight.FrostStrike || spell == deathKnight.HowlingBlast {
 				aura.Deactivate(sim)
 			}
 		},
@@ -152,15 +171,15 @@ func (deathKnight *DeathKnight) applyKillingMachine() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+			if !spellEffect.Landed() {
 				return
 			}
 
-			if spell != deathKnight.IcyTouch {
+			if !ppmm.Proc(sim, spellEffect.ProcMask, "killing machine") {
 				return
 			}
 
-			if sim.RandomFloat("Killing Machine") < procChance {
+			if !deathKnight.KillingMachineAura.IsActive() {
 				deathKnight.KillingMachineAura.Activate(sim)
 			}
 		},
@@ -264,13 +283,17 @@ func (deathKnight *DeathKnight) threatOfThassarianAdjustMetrics(sim *core.Simula
 	}
 }
 
-func (deathKnight *DeathKnight) threatOfThassarianProcMasks(isMH bool, effect *core.SpellEffect, guileOfGorefiend bool) {
+func (deathKnight *DeathKnight) threatOfThassarianProcMasks(isMH bool, effect *core.SpellEffect, isGuileOfGorefiendStrike bool, wrapper func(outcomeApplier core.OutcomeApplier) core.OutcomeApplier) {
+	critMultiplier := deathKnight.critMultiplier()
+	if isGuileOfGorefiendStrike {
+		critMultiplier = deathKnight.critMultiplierGuile()
+	}
 	if isMH {
 		effect.ProcMask = core.ProcMaskMeleeMHSpecial
-		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.critMultiplierGuile())
+		effect.OutcomeApplier = wrapper(deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(critMultiplier))
 	} else {
 		effect.ProcMask = core.ProcMaskMeleeOHSpecial
-		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialCritOnly(deathKnight.critMultiplierGuile())
+		effect.OutcomeApplier = wrapper(deathKnight.OutcomeFuncMeleeSpecialCritOnly(critMultiplier))
 	}
 }
 

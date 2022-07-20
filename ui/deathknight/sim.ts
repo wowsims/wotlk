@@ -39,6 +39,7 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 			// All stats for which EP should be calculated.
 			epStats: [
 				Stat.StatStrength,
+				Stat.StatArmor,
 				Stat.StatAgility,
 				Stat.StatAttackPower,
 				Stat.StatExpertise,

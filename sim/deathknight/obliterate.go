@@ -10,8 +10,6 @@ var ObliterateMHOutcome = core.OutcomeHit
 var ObliterateOHOutcome = core.OutcomeHit
 
 func (deathKnight *DeathKnight) newObliterateHitSpell(isMH bool) *core.Spell {
-	guileOfGorefiend := deathKnight.Talents.GuileOfGorefiend > 0
-
 	diseaseConsumptionChance := 1.0
 	if deathKnight.Talents.Annihilation == 1 {
 		diseaseConsumptionChance = 0.67
@@ -25,7 +23,7 @@ func (deathKnight *DeathKnight) newObliterateHitSpell(isMH bool) *core.Spell {
 
 	effect := core.SpellEffect{
 		BonusCritRating:  (5.0*float64(deathKnight.Talents.Rime) + 3.0*float64(deathKnight.Talents.Subversion) + 1.0*float64(deathKnight.Talents.Annihilation) + deathKnight.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,
-		DamageMultiplier: core.TernaryFloat64(deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfFrostStrike), 1.25, 1.0),
+		DamageMultiplier: core.TernaryFloat64(deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfObliterate), 1.25, 1.0),
 		ThreatMultiplier: 1,
 
 		BaseDamage: core.BaseDamageConfig{
@@ -58,13 +56,14 @@ func (deathKnight *DeathKnight) newObliterateHitSpell(isMH bool) *core.Spell {
 			}
 
 			if sim.RandomFloat("Rime") < hbResetCDChance {
-				deathKnight.HowlingBlast.CD.Reset()
-				deathKnight.HowlingBlastCostless = true
+				deathKnight.RimeAura.Activate(sim)
 			}
 		},
 	}
 
-	deathKnight.threatOfThassarianProcMasks(isMH, &effect, guileOfGorefiend)
+	deathKnight.threatOfThassarianProcMasks(isMH, &effect, true, func(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
+		return outcomeApplier
+	})
 
 	return deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:     ObliterateActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
