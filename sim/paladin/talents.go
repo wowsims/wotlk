@@ -405,6 +405,10 @@ func (paladin *Paladin) applyJudgmentsOfTheWise() {
 }
 
 func (paladin *Paladin) applyRighteousVengeance() {
+	// Righteous Vengeance is a MAGIC debuff that pools 10/20/30% crit damage from Crusader Strike, Divine Storm, and Judgements.
+	// It drains the pool every 2 seconds at a rate of 1/4 of the pool size.
+	// And then deals that 1/4 as PHYSICAL damage.
+
 	if paladin.Talents.RighteousVengeance == 0 {
 		return
 	}
@@ -446,7 +450,7 @@ func (paladin *Paladin) applyRighteousVengeance() {
 		dots = append(dots, core.NewDot(core.Dot{
 			Spell: paladin.RegisterSpell(core.SpellConfig{
 				ActionID:    dotActionID,
-				SpellSchool: core.SpellSchoolHoly,
+				SpellSchool: core.SpellSchoolPhysical,
 				Flags:       core.SpellFlagMeleeMetrics,
 			}),
 			Aura: target.RegisterAura(core.Aura{
