@@ -60,7 +60,7 @@ func (deathKnight *DeathKnight) CanUnbreakableArmor(sim *core.Simulation) bool {
 
 func (deathKnight *DeathKnight) CastUnbreakableArmor(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanUnbreakableArmor(sim) {
-		deathKnight.CastUnbreakableArmor(sim, target)
+		deathKnight.UnbreakableArmor.Cast(sim, target)
 		return true
 	}
 	return false

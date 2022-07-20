@@ -119,7 +119,7 @@ func (deathKnight *DeathKnight) CanObliterate(sim *core.Simulation) bool {
 
 func (deathKnight *DeathKnight) CastObliterate(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanObliterate(sim) {
-		deathKnight.CastObliterate(sim, target)
+		deathKnight.Obliterate.Cast(sim, target)
 		return true
 	}
 	return false

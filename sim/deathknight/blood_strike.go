@@ -105,7 +105,7 @@ func (deathKnight *DeathKnight) CanBloodStrike(sim *core.Simulation) bool {
 
 func (deathKnight *DeathKnight) CastBloodStrike(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanBloodStrike(sim) {
-		deathKnight.CastBloodStrike(sim, target)
+		deathKnight.BloodStrike.Cast(sim, target)
 		return true
 	}
 	return false

@@ -103,7 +103,7 @@ func (deathKnight *DeathKnight) CanArmyOfTheDead(sim *core.Simulation) bool {
 
 func (deathKnight *DeathKnight) CastArmyOfTheDead(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanArmyOfTheDead(sim) {
-		deathKnight.CastArmyOfTheDead(sim, target)
+		deathKnight.ArmyOfTheDead.Cast(sim, target)
 		return true
 	}
 	return false

@@ -79,7 +79,7 @@ func (deathKnight *DeathKnight) CanBoneShield(sim *core.Simulation) bool {
 
 func (deathKnight *DeathKnight) CastBoneShield(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanBoneShield(sim) {
-		deathKnight.CastBoneShield(sim, target)
+		deathKnight.BoneShield.Cast(sim, target)
 		return true
 	}
 	return false

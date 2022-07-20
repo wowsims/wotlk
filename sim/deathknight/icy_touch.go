@@ -88,7 +88,7 @@ func (deathKnight *DeathKnight) CanIcyTouch(sim *core.Simulation) bool {
 
 func (deathKnight *DeathKnight) CastIcyTouch(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanIcyTouch(sim) {
-		deathKnight.CastIcyTouch(sim, target)
+		deathKnight.IcyTouch.Cast(sim, target)
 		return true
 	}
 	return false

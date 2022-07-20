@@ -72,7 +72,7 @@ func (deathKnight *DeathKnight) ShouldHornOfWinter(sim *core.Simulation) bool {
 
 func (deathKnight *DeathKnight) CastHornOfWinter(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanHornOfWinter(sim) {
-		deathKnight.CastHornOfWinter(sim, target)
+		deathKnight.HornOfWinter.Cast(sim, target)
 		return true
 	}
 	return false

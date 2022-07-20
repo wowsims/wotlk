@@ -50,7 +50,7 @@ func (deathKnight *DeathKnight) CanBloodTap(sim *core.Simulation) bool {
 
 func (deathKnight *DeathKnight) CastBloodTap(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanBloodTap(sim) {
-		deathKnight.CastBloodTap(sim, target)
+		deathKnight.BloodTap.Cast(sim, target)
 		return true
 	}
 	return false

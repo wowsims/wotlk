@@ -75,7 +75,7 @@ func (deathKnight *DeathKnight) CanPestilence(sim *core.Simulation) bool {
 
 func (deathKnight *DeathKnight) CastPestilence(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanPestilence(sim) {
-		deathKnight.CastPestilence(sim, target)
+		deathKnight.Pestilence.Cast(sim, target)
 		return true
 	}
 	return false

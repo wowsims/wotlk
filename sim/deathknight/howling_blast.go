@@ -82,7 +82,7 @@ func (deathKnight *DeathKnight) CanHowlingBlast(sim *core.Simulation) bool {
 
 func (deathKnight *DeathKnight) CastHowlingBlast(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanHowlingBlast(sim) {
-		deathKnight.CastHowlingBlast(sim, target)
+		deathKnight.HowlingBlast.Cast(sim, target)
 		return true
 	}
 	return false

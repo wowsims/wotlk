@@ -102,7 +102,7 @@ func (deathKnight *DeathKnight) CanPlagueStrike(sim *core.Simulation) bool {
 
 func (deathKnight *DeathKnight) CastPlagueStrike(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanPlagueStrike(sim) {
-		deathKnight.CastPlagueStrike(sim, target)
+		deathKnight.PlagueStrike.Cast(sim, target)
 		return true
 	}
 	return false

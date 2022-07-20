@@ -59,7 +59,7 @@ func (deathKnight *DeathKnight) CanDeathCoil(sim *core.Simulation) bool {
 
 func (deathKnight *DeathKnight) CastDeathCoil(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanDeathCoil(sim) {
-		deathKnight.CastDeathCoil(sim, target)
+		deathKnight.DeathCoil.Cast(sim, target)
 		return true
 	}
 	return false

@@ -120,7 +120,7 @@ func (deathKnight *DeathKnight) SetupRotation() {
 	openerId := OpenerID_FrostSubBlood_Full
 	if deathKnight.Talents.BloodCakedBlade > 0 {
 		openerId = OpenerID_FrostSubUnholy_Full
-	} else {
+	} else if deathKnight.Talents.SummonGargoyle {
 		openerId = OpenerID_Unholy_Full
 	}
 

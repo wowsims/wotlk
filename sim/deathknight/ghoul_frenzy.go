@@ -77,7 +77,7 @@ func (deathKnight *DeathKnight) CanGhoulFrenzy(sim *core.Simulation) bool {
 
 func (deathKnight *DeathKnight) CastGhoulFrenzy(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanGhoulFrenzy(sim) {
-		deathKnight.CastGhoulFrenzy(sim, target)
+		deathKnight.GhoulFrenzy.Cast(sim, target)
 		return true
 	}
 	return false
