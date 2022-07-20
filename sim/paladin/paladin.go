@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	SpellFlagSeal      = core.SpellFlagAgentReserved1
-	SpellFlagJudgement = core.SpellFlagAgentReserved2
+	SpellFlagSecondaryJudgement = core.SpellFlagAgentReserved1
+	SpellFlagPrimaryJudgement   = core.SpellFlagAgentReserved2
 )
 
 type hybridScaling struct {

@@ -324,7 +324,7 @@ func (paladin *Paladin) applyHeartOfTheCrusader() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spell.Flags.Matches(SpellFlagJudgement) {
+			if !spell.Flags.Matches(SpellFlagSecondaryJudgement) {
 				return
 			}
 			debuffAura := core.HeartoftheCrusaderDebuff(spellEffect.Target, float64(paladin.Talents.HeartOfTheCrusader))
@@ -388,7 +388,7 @@ func (paladin *Paladin) applyJudgmentsOfTheWise() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spell.Flags.Matches(SpellFlagJudgement) || !spellEffect.Landed() {
+			if !spell.Flags.Matches(SpellFlagSecondaryJudgement) || !spellEffect.Landed() {
 				return
 			}
 
@@ -487,7 +487,7 @@ func (paladin *Paladin) applyRighteousVengeance() {
 				return
 			}
 
-			if spell.SpellID == paladin.CrusaderStrike.SpellID || spell.SpellID == paladin.DivineStorm.SpellID || spell.Flags.Matches(SpellFlagJudgement) {
+			if spell.SpellID == paladin.CrusaderStrike.SpellID || spell.SpellID == paladin.DivineStorm.SpellID || spell.Flags.Matches(SpellFlagSecondaryJudgement) {
 				dots[spellEffect.Target.Index].TickEffects = effects[spellEffect.Target.Index](spellEffect)
 
 				if !dots[spellEffect.Target.Index].IsActive() {
