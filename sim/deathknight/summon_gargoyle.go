@@ -41,6 +41,7 @@ func (deathKnight *DeathKnight) registerSummonGargoyleCD() {
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			deathKnight.Gargoyle.EnableWithTimeout(sim, deathKnight.Gargoyle, time.Second*30)
+			deathKnight.Gargoyle.CancelGCDTimer(sim)
 
 			// Add % atack speed modifiers
 			deathKnight.Gargoyle.PseudoStats.CastSpeedMultiplier = 1.0
