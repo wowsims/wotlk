@@ -57,3 +57,11 @@ func (deathKnight *DeathKnight) registerUnbreakableArmorSpell() {
 func (deathKnight *DeathKnight) CanUnbreakableArmor(sim *core.Simulation) bool {
 	return deathKnight.UnbreakableArmor.IsReady(sim) && deathKnight.UnbreakableArmor.CD.IsReady(sim)
 }
+
+func (deathKnight *DeathKnight) CastUnbreakableArmor(sim *core.Simulation, target *core.Target) bool {
+	if deathKnight.CanUnbreakableArmor(sim) {
+		deathKnight.CastUnbreakableArmor(sim, target)
+		return true
+	}
+	return false
+}

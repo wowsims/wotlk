@@ -102,3 +102,11 @@ func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
 func (deathKnight *DeathKnight) CanBloodStrike(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 1, 0, 0) && deathKnight.BloodStrike.IsReady(sim)
 }
+
+func (deathKnight *DeathKnight) CastBloodStrike(sim *core.Simulation, target *core.Target) bool {
+	if deathKnight.CanBloodStrike(sim) {
+		deathKnight.CastBloodStrike(sim, target)
+		return true
+	}
+	return false
+}

@@ -56,3 +56,11 @@ func (deathKnight *DeathKnight) registerDeathCoilSpell() {
 func (deathKnight *DeathKnight) CanDeathCoil(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 40.0, 0, 0, 0) && deathKnight.DeathCoil.IsReady(sim)
 }
+
+func (deathKnight *DeathKnight) CastDeathCoil(sim *core.Simulation, target *core.Target) bool {
+	if deathKnight.CanDeathCoil(sim) {
+		deathKnight.CastDeathCoil(sim, target)
+		return true
+	}
+	return false
+}

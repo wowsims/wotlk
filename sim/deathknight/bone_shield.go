@@ -70,3 +70,11 @@ func (deathKnight *DeathKnight) registerBoneShieldSpell() {
 func (deathKnight *DeathKnight) CanBoneShield(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 0, 0, 1) && deathKnight.BoneShield.IsReady(sim)
 }
+
+func (deathKnight *DeathKnight) CastBoneShield(sim *core.Simulation, target *core.Target) bool {
+	if deathKnight.CanBoneShield(sim) {
+		deathKnight.CastBoneShield(sim, target)
+		return true
+	}
+	return false
+}
