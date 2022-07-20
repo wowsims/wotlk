@@ -21,24 +21,12 @@ func (priest *Priest) ApplyTalents() {
 
 	if priest.Talents.SpiritualGuidance > 0 {
 		bonus := (0.25 / 5) * float64(priest.Talents.SpiritualGuidance)
-		priest.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Spirit,
-			ModifiedStat: stats.SpellPower,
-			Modifier: func(spirit float64, spellPower float64) float64 {
-				return spellPower + spirit*bonus
-			},
-		})
+		priest.AddStatDependency(stats.Spirit, stats.SpellPower, bonus)
 	}
 
 	if priest.Talents.MentalStrength > 0 {
 		coeff := 0.02 * float64(priest.Talents.MentalStrength)
-		priest.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Mana,
-			ModifiedStat: stats.Mana,
-			Modifier: func(mana float64, _ float64) float64 {
-				return mana + mana*coeff
-			},
-		})
+		priest.MultiplyStat(stats.Mana, 1+coeff)
 	}
 
 	// if priest.Talents.ForceOfWill > 0 {
@@ -54,40 +42,14 @@ func (priest *Priest) ApplyTalents() {
 	//	}
 
 	if priest.Talents.Enlightenment > 0 {
-		coeff := 0.01 * float64(priest.Talents.Enlightenment)
-		priest.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Intellect,
-			ModifiedStat: stats.Intellect,
-			Modifier: func(intellect float64, _ float64) float64 {
-				return intellect + intellect*coeff
-			},
-		})
-
-		priest.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Stamina,
-			ModifiedStat: stats.Stamina,
-			Modifier: func(stamina float64, _ float64) float64 {
-				return stamina + stamina*coeff
-			},
-		})
-
-		priest.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Spirit,
-			ModifiedStat: stats.Spirit,
-			Modifier: func(spirit float64, _ float64) float64 {
-				return spirit + spirit*coeff
-			},
-		})
+		coeff := 1 + (0.01 * float64(priest.Talents.Enlightenment))
+		priest.MultiplyStat(stats.Intellect, coeff)
+		priest.MultiplyStat(stats.Stamina, coeff)
+		priest.MultiplyStat(stats.Spirit, coeff)
 	}
 
 	if priest.Talents.SpiritOfRedemption {
-		priest.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Spirit,
-			ModifiedStat: stats.Spirit,
-			Modifier: func(spirit float64, _ float64) float64 {
-				return spirit + spirit*0.05
-			},
-		})
+		priest.MultiplyStat(stats.Spirit, 1.05)
 	}
 }
 

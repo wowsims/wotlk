@@ -26,35 +26,17 @@ func (paladin *Paladin) ApplyTalents() {
 
 	if paladin.Talents.DivineStrength > 0 {
 		bonus := 1 + 0.03*float64(paladin.Talents.DivineStrength)
-		paladin.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Strength,
-			ModifiedStat: stats.Strength,
-			Modifier: func(str float64, _ float64) float64 {
-				return str * bonus
-			},
-		})
+		paladin.MultiplyStat(stats.Strength, bonus)
 	}
 	if paladin.Talents.DivineIntellect > 0 {
 		bonus := 1 + 0.02*float64(paladin.Talents.DivineIntellect)
-		paladin.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Intellect,
-			ModifiedStat: stats.Intellect,
-			Modifier: func(intellect float64, _ float64) float64 {
-				return intellect * bonus
-			},
-		})
+		paladin.MultiplyStat(stats.Intellect, bonus)
 	}
 
 	if paladin.Talents.SheathOfLight > 0 {
 		// doesn't implement HOT
 		percentage := 0.10 * float64(paladin.Talents.SheathOfLight)
-		paladin.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.AttackPower,
-			ModifiedStat: stats.SpellPower,
-			Modifier: func(attackPower float64, spellPower float64) float64 {
-				return spellPower + (attackPower * percentage)
-			},
-		})
+		paladin.AddStatDependency(stats.AttackPower, stats.SpellPower, percentage)
 	}
 
 	// if paladin.Talents.ShieldSpecialization > 0 {
@@ -70,25 +52,13 @@ func (paladin *Paladin) ApplyTalents() {
 
 	if paladin.Talents.SacredDuty > 0 {
 		bonus := 1 + 0.03*float64(paladin.Talents.SacredDuty)
-		paladin.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Stamina,
-			ModifiedStat: stats.Stamina,
-			Modifier: func(stam float64, _ float64) float64 {
-				return stam * bonus
-			},
-		})
+		paladin.MultiplyStat(stats.Stamina, bonus)
 	}
 
 	if paladin.Talents.CombatExpertise > 0 {
 		paladin.AddStat(stats.Expertise, core.ExpertisePerQuarterPercentReduction*1*float64(paladin.Talents.CombatExpertise))
 		bonus := 1 + 0.02*float64(paladin.Talents.CombatExpertise)
-		paladin.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Stamina,
-			ModifiedStat: stats.Stamina,
-			Modifier: func(stam float64, _ float64) float64 {
-				return stam * bonus
-			},
-		})
+		paladin.MultiplyStat(stats.Stamina, bonus)
 	}
 
 	paladin.applyRedoubt()
