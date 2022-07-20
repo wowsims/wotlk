@@ -40,8 +40,6 @@ type DKRuneCost struct {
 type Rune struct {
 	state                    RuneState
 	kind                     RuneKind
-	slot                     int
-	paPool                   [2]PendingAction
 	pas                      [2]*PendingAction
 	lastRegenTime            time.Duration
 	generatedByReapingOrBoTN bool
@@ -69,37 +67,36 @@ type runicPowerBar struct {
 	onRunicPowerGain OnRunicPowerGain
 }
 
-func (rp *runicPowerBar) newPA(r *Rune) *PendingAction {
-	pa := &r.paPool[r.slot]
-	*pa = PendingAction{}
-	return pa
-}
-
 func ResetRune(sim *Simulation, runes *[2]Rune, runeKind RuneKind) {
 	runes[0].state = RuneState_Normal
 	runes[0].kind = runeKind
-	runes[0].slot = 0
 	runes[0].lastRegenTime = -1
 	runes[0].generatedByReapingOrBoTN = false
 	runes[1].state = RuneState_Normal
 	runes[1].kind = runeKind
-	runes[1].slot = 1
 	runes[1].lastRegenTime = -1
 	runes[1].generatedByReapingOrBoTN = false
 
+	if runes[0].pas[0] != nil {
+		runes[0].pas[0].Cancel(sim)
+	}
 	runes[0].pas[0] = nil
+
+	if runes[0].pas[1] != nil {
+		runes[0].pas[1].Cancel(sim)
+	}
 	runes[0].pas[1] = nil
+
+	if runes[1].pas[0] != nil {
+		runes[1].pas[0].Cancel(sim)
+	}
 	runes[1].pas[0] = nil
+
+	if runes[1].pas[1] != nil {
+		runes[1].pas[1].Cancel(sim)
+	}
 	runes[1].pas[1] = nil
 
-	for i := 0; i < len(runes[0].paPool); i += 1 {
-		runes[0].paPool[i].Cancel(sim)
-		runes[0].paPool[i] = PendingAction{}
-	}
-	for i := 0; i < len(runes[1].paPool); i += 1 {
-		runes[1].paPool[i].Cancel(sim)
-		runes[1].paPool[i] = PendingAction{}
-	}
 }
 
 func (rp *runicPowerBar) ResetRunicPowerBar(sim *Simulation) {
@@ -122,10 +119,9 @@ func (unit *Unit) EnableRunicPowerBar(currentRunicPower float64, maxRunicPower f
 		unit:              unit,
 		maxRunicPower:     maxRunicPower,
 		currentRunicPower: currentRunicPower,
-
-		bloodRunes:  [2]Rune{Rune{state: RuneState_Normal, kind: RuneKind_Blood, slot: 0, pas: [2]*PendingAction{nil, nil}, lastRegenTime: -1, generatedByReapingOrBoTN: false, paPool: [2]PendingAction{}}, Rune{state: RuneState_Normal, kind: RuneKind_Blood, slot: 1, pas: [2]*PendingAction{nil, nil}, lastRegenTime: -1, generatedByReapingOrBoTN: false, paPool: [2]PendingAction{}}},
-		frostRunes:  [2]Rune{Rune{state: RuneState_Normal, kind: RuneKind_Frost, slot: 0, pas: [2]*PendingAction{nil, nil}, lastRegenTime: -1, generatedByReapingOrBoTN: false, paPool: [2]PendingAction{}}, Rune{state: RuneState_Normal, kind: RuneKind_Frost, slot: 1, pas: [2]*PendingAction{nil, nil}, lastRegenTime: -1, generatedByReapingOrBoTN: false, paPool: [2]PendingAction{}}},
-		unholyRunes: [2]Rune{Rune{state: RuneState_Normal, kind: RuneKind_Unholy, slot: 0, pas: [2]*PendingAction{nil, nil}, lastRegenTime: -1, generatedByReapingOrBoTN: false, paPool: [2]PendingAction{}}, Rune{state: RuneState_Normal, kind: RuneKind_Unholy, slot: 1, pas: [2]*PendingAction{nil, nil}, lastRegenTime: -1, generatedByReapingOrBoTN: false, paPool: [2]PendingAction{}}},
+		bloodRunes:        [2]Rune{Rune{state: RuneState_Normal, kind: RuneKind_Blood, pas: [2]*PendingAction{nil, nil}, lastRegenTime: -1, generatedByReapingOrBoTN: false}, Rune{state: RuneState_Normal, kind: RuneKind_Blood, pas: [2]*PendingAction{nil, nil}, lastRegenTime: -1, generatedByReapingOrBoTN: false}},
+		frostRunes:        [2]Rune{Rune{state: RuneState_Normal, kind: RuneKind_Frost, pas: [2]*PendingAction{nil, nil}, lastRegenTime: -1, generatedByReapingOrBoTN: false}, Rune{state: RuneState_Normal, kind: RuneKind_Frost, pas: [2]*PendingAction{nil, nil}, lastRegenTime: -1, generatedByReapingOrBoTN: false}},
+		unholyRunes:       [2]Rune{Rune{state: RuneState_Normal, kind: RuneKind_Unholy, pas: [2]*PendingAction{nil, nil}, lastRegenTime: -1, generatedByReapingOrBoTN: false}, Rune{state: RuneState_Normal, kind: RuneKind_Unholy, pas: [2]*PendingAction{nil, nil}, lastRegenTime: -1, generatedByReapingOrBoTN: false}},
 
 		onBloodRuneGain:  onBloodRuneGain,
 		onFrostRuneGain:  onFrostRuneGain,
@@ -542,10 +538,10 @@ func (rp *runicPowerBar) LaunchRuneRegenPA(sim *Simulation, r *Rune) {
 	if r.lastRegenTime != -1 {
 		runeGracePeriod = MinFloat(2.5, float64((sim.CurrentTime-r.lastRegenTime)/time.Second))
 	}
-
-	pa := rp.newPA(r)
-	pa.NextActionAt = sim.CurrentTime + time.Second*time.Duration(10.0-runeGracePeriod)
-	pa.Priority = ActionPriorityRegen
+	pa := &PendingAction{
+		NextActionAt: sim.CurrentTime + time.Second*time.Duration(10.0-runeGracePeriod),
+		Priority:     ActionPriorityRegen,
+	}
 	pa.OnAction = func(sim *Simulation) {
 		if !pa.cancelled {
 			r.pas[0] = nil
