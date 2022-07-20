@@ -58,8 +58,7 @@ func (deathKnight *DeathKnight) newObliterateHitSpell(isMH bool) *core.Spell {
 			}
 
 			if sim.RandomFloat("Rime") < hbResetCDChance {
-				deathKnight.HowlingBlast.CD.Reset()
-				deathKnight.HowlingBlastCostless = true
+				deathKnight.RimeAura.Activate(sim)
 			}
 		},
 	}

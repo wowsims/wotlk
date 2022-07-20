@@ -44,8 +44,6 @@ func (deathKnight *DeathKnight) ApplyFrostTalents() {
 
 	// Annihilation
 
-	// TODO: Implement
-
 	// Killing Machine
 	deathKnight.applyKillingMachine()
 
@@ -83,6 +81,9 @@ func (deathKnight *DeathKnight) ApplyFrostTalents() {
 
 	// Blood of the North
 
+	// Rime
+	deathKnight.applyRime()
+
 	// Tundra Stalker
 	deathKnight.AddStat(stats.Expertise, 1.0*float64(deathKnight.Talents.TundraStalker)*core.ExpertisePerQuarterPercentReduction)
 }
@@ -118,6 +119,23 @@ func (deathKnight *DeathKnight) mercilessCombatBonus(sim *core.Simulation) float
 
 func (deathKnight *DeathKnight) tundraStalkerBonus(target *core.Unit) float64 {
 	return core.TernaryFloat64(deathKnight.TargetHasDisease(FrostFeverAuraLabel, target), 1.0+0.03*float64(deathKnight.Talents.TundraStalker), 1.0)
+}
+
+func (deathKnight *DeathKnight) applyRime() {
+	if deathKnight.Talents.Rime == 0 {
+		return
+	}
+
+	actionID := core.ActionID{SpellID: 59057}
+
+	deathKnight.RimeAura = deathKnight.RegisterAura(core.Aura{
+		ActionID: actionID,
+		Label:    "Rime",
+		Duration: core.NeverExpires,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			deathKnight.HowlingBlast.CD.Reset()
+		},
+	})
 }
 
 func (deathKnight *DeathKnight) applyKillingMachine() {

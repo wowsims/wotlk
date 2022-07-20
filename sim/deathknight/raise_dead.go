@@ -48,3 +48,7 @@ func (deathKnight *DeathKnight) registerRaiseDeadCD() {
 		},
 	})
 }
+
+func (deathKnight *DeathKnight) CanRaiseDead(sim *core.Simulation) bool {
+	return deathKnight.RaiseDead.IsReady(sim)
+}

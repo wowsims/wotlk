@@ -45,7 +45,11 @@ func (deathKnight *DeathKnight) registerPestilenceSpell() {
 						}
 
 						dkSpellCost := deathKnight.DetermineOptimalCost(sim, 1, 0, 0)
-						deathKnight.Spend(sim, spell, dkSpellCost)
+						if !deathKnight.bloodOfTheNorthProc(sim, spell, dkSpellCost) {
+							if !deathKnight.reapingProc(sim, spell, dkSpellCost) {
+								deathKnight.Spend(sim, spell, dkSpellCost)
+							}
+						}
 
 						amountOfRunicPower := 10.0 + 2.5*float64(deathKnight.Talents.ChillOfTheGrave)
 						deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())

@@ -58,8 +58,7 @@ type DeathKnight struct {
 	DeathAndDecay    *core.Spell
 	DeathAndDecayDot *core.Dot
 
-	HowlingBlastCostless bool
-	HowlingBlast         *core.Spell
+	HowlingBlast *core.Spell
 
 	OtherRelevantStrAgiActive bool
 	HornOfWinter              *core.Spell
@@ -94,6 +93,7 @@ type DeathKnight struct {
 	NecrosisAura        *core.Aura
 	BloodCakedBladeAura *core.Aura
 	ButcheryAura        *core.Aura
+	RimeAura            *core.Aura
 
 	// Talent Spells
 	LastDiseaseDamage float64
@@ -236,28 +236,38 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 		currentRunicPower,
 		maxRunicPower,
 		func(sim *core.Simulation) {
-			if deathKnight.GCD.IsReady(sim) {
-				deathKnight.tryUseGCD(sim)
+			if !deathKnight.Talents.HowlingBlast {
+				if deathKnight.GCD.IsReady(sim) {
+					deathKnight.tryUseGCD(sim)
+				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if deathKnight.GCD.IsReady(sim) {
-				deathKnight.tryUseGCD(sim)
+			if !deathKnight.Talents.HowlingBlast {
+				if deathKnight.GCD.IsReady(sim) {
+					deathKnight.tryUseGCD(sim)
+				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if deathKnight.GCD.IsReady(sim) {
-				deathKnight.tryUseGCD(sim)
+			if !deathKnight.Talents.HowlingBlast {
+				if deathKnight.GCD.IsReady(sim) {
+					deathKnight.tryUseGCD(sim)
+				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if deathKnight.GCD.IsReady(sim) {
-				deathKnight.tryUseGCD(sim)
+			if !deathKnight.Talents.HowlingBlast {
+				if deathKnight.GCD.IsReady(sim) {
+					deathKnight.tryUseGCD(sim)
+				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if deathKnight.GCD.IsReady(sim) {
-				deathKnight.tryUseGCD(sim)
+			if !deathKnight.Talents.HowlingBlast {
+				if deathKnight.GCD.IsReady(sim) {
+					deathKnight.tryUseGCD(sim)
+				}
 			}
 		},
 	)
