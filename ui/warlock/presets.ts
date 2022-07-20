@@ -273,3 +273,119 @@ export const SWP_BIS = {
         }
       ]}`),
 };
+export const P1_PreBiS = {
+	name: 'Pre-BiS',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(`
+{"items": [
+        {
+          "id": 44910,
+          "enchant": 29191,
+          "gems": [
+            34220,
+            32215
+          ]
+        },
+        {
+          "id": 40680
+        },
+        {
+          "id": 34210,
+          "enchant": 28886,
+          "gems": [
+            32215,
+            35760
+          ]
+        },
+        {
+          "id": 41610,
+          "enchant": 55642
+        },
+        {
+          "id": 39497,
+          "enchant": 24003,
+          "gems": [
+            32196,
+            35760
+          ]
+        },
+        {
+          "id": 37361,
+          "enchant": 22534,
+          "gems": [
+            0
+          ]
+        },
+        {
+          "id": 42113,
+          "enchant": 28272,
+          "gems": [
+            0
+          ]
+        },
+        {
+          "id": 40696,
+          "gems": [
+            35760,
+            0
+          ]
+        },
+        {
+          "id": 34181,
+          "enchant": 24274,
+          "gems": [
+            32196,
+            32196,
+            35760
+          ]
+        },
+        {
+          "id": 44202,
+          "enchant": 35297,
+          "gems": [
+            35760
+          ]
+        },
+        {
+          "id": 43253,
+          "gems": [
+            40133
+          ]
+        },
+        {
+          "id": 40585
+        },
+        {
+          "id": 40682
+        },
+        {
+          "id": 49076
+        },
+        {
+          "id": 37360,
+          "enchant": 44487
+        },
+        {},
+        {
+          "id": 37177
+        }
+      ]
+    }`),
+}
+//   "player": {
+//     "name": "Player",
+//     "race": "RaceBloodElf",
+//     "class": "ClassWarlock",
+//     "equipment": {
+      
+//     "profession1": "Engineering",
+//     "profession2": "Tailoring",
+//   },
+//   "encounter": {
+//     "executeProportion20": 0.25,
+//   },
+//   "settings": {
+//     "iterations": 1000,
+//     "phase": 1,
+//     "faction": "Horde"
+//   },
