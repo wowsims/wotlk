@@ -112,7 +112,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
 					blessingOfWisdom: 2,
-					replenishment: true,
+					vampiricTouch: true,
 				}),
 				debuffs: Debuffs.create({
 					faerieFire: TristateEffect.TristateEffectImproved,
