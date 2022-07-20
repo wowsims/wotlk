@@ -17,7 +17,7 @@ func (deathKnight *DeathKnight) newFrostStrikeHitSpell(isMH bool) *core.Spell {
 	}
 
 	effect := core.SpellEffect{
-		BonusCritRating:  (1.0 * float64(deathKnight.Talents.Annihilation)) * core.CritRatingPerCritChance,
+		BonusCritRating:  (deathKnight.annihilationCritBonus() + deathKnight.darkrunedBattlegearCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: deathKnight.bloodOfTheNorthCoeff(),
 		ThreatMultiplier: 1,
 
@@ -43,10 +43,10 @@ func (deathKnight *DeathKnight) newFrostStrikeHitSpell(isMH bool) *core.Spell {
 
 	if isMH {
 		effect.ProcMask = core.ProcMaskMeleeMHSpecial
-		effect.OutcomeApplier = deathKnight.killingMachineOutcomeMod(deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.critMultiplier()))
+		effect.OutcomeApplier = deathKnight.killingMachineOutcomeMod(deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.critMultiplierGuile()))
 	} else {
 		effect.ProcMask = core.ProcMaskMeleeOHSpecial
-		effect.OutcomeApplier = deathKnight.killingMachineOutcomeMod(deathKnight.OutcomeFuncMeleeSpecialNoBlockDodgeParry(deathKnight.critMultiplier()))
+		effect.OutcomeApplier = deathKnight.killingMachineOutcomeMod(deathKnight.OutcomeFuncMeleeSpecialNoBlockDodgeParry(deathKnight.critMultiplierGuile()))
 	}
 
 	return deathKnight.RegisterSpell(core.SpellConfig{

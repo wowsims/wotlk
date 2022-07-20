@@ -53,8 +53,12 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 	deathKnight.AddStat(stats.Expertise, float64(deathKnight.Talents.RageOfRivendare)*core.ExpertisePerQuarterPercentReduction)
 }
 
-func (deathKnight *DeathKnight) viciousStrikesBonus() float64 {
+func (deathKnight *DeathKnight) viciousStrikesCritDamageBonus() float64 {
 	return 0.15 * float64(deathKnight.Talents.ViciousStrikes)
+}
+
+func (deathKnight *DeathKnight) viciousStrikesCritChanceBonus() float64 {
+	return 3 * float64(deathKnight.Talents.ViciousStrikes)
 }
 
 func (deathKnight *DeathKnight) rageOfRivendareBonus(target *core.Unit) float64 {

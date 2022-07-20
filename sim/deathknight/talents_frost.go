@@ -136,6 +136,8 @@ func (deathKnight *DeathKnight) applyRime() {
 			deathKnight.HowlingBlast.CD.Reset()
 		},
 	})
+func (deathKnight *DeathKnight) annihilationCritBonus() float64 {
+	return 1.0 * float64(deathKnight.Talents.Annihilation)
 }
 
 func (deathKnight *DeathKnight) applyKillingMachine() {
@@ -281,10 +283,10 @@ func (deathKnight *DeathKnight) threatOfThassarianAdjustMetrics(sim *core.Simula
 func (deathKnight *DeathKnight) threatOfThassarianProcMasks(isMH bool, effect *core.SpellEffect, guileOfGorefiend bool) {
 	if isMH {
 		effect.ProcMask = core.ProcMaskMeleeMHSpecial
-		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.critMultiplier())
+		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.critMultiplierGuile())
 	} else {
 		effect.ProcMask = core.ProcMaskMeleeOHSpecial
-		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialCritOnly(deathKnight.critMultiplier())
+		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialCritOnly(deathKnight.critMultiplierGuile())
 	}
 }
 

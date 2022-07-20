@@ -17,7 +17,7 @@ func (deathKnight *DeathKnight) newBloodStrikeSpell(isMH bool) *core.Spell {
 	guileOfGorefiend := deathKnight.Talents.GuileOfGorefiend > 0
 
 	effect := core.SpellEffect{
-		BonusCritRating:  (3.0*float64(deathKnight.Talents.Subversion) + 1.0*float64(deathKnight.Talents.Annihilation)) * core.CritRatingPerCritChance,
+		BonusCritRating:  (3.0*float64(deathKnight.Talents.Subversion) + deathKnight.annihilationCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: deathKnight.bloodOfTheNorthCoeff(),
 		ThreatMultiplier: 1,
 
