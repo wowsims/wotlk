@@ -136,6 +136,8 @@ func (deathKnight *DeathKnight) applyRime() {
 			deathKnight.HowlingBlast.CD.Reset()
 		},
 	})
+}
+
 func (deathKnight *DeathKnight) annihilationCritBonus() float64 {
 	return 1.0 * float64(deathKnight.Talents.Annihilation)
 }
