@@ -178,6 +178,7 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 	selfBuffInputs: Array<IndividualSimIconPickerConfig<Player<any>, any>>,
 	petInputs?: Array<IndividualSimIconPickerConfig<Player<any>, any>>,
 	weaponImbueInputs?: Array<IndividualSimIconPickerConfig<Player<any>, any>>,
+	petConsumeInputs?: Array<IconPickerConfig<Player<any>, any>>,
 	rotationInputs: InputSection;
 	spellInputs?: Array<IndividualSimIconPickerConfig<Player<any>, any>>;
 	otherInputs?: InputSection;
@@ -802,17 +803,18 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		}
 
 		const tradeConsumesElem = this.rootElem.getElementsByClassName('consumes-trade')[0] as HTMLElement;
-		new IndividualSimIconPicker(tradeConsumesElem, this.player, IconInputs.SuperSapper, this);
-		new IndividualSimIconPicker(tradeConsumesElem, this.player, IconInputs.GoblinSapper, this);
-		new IndividualSimIconPicker(tradeConsumesElem, this.player, IconInputs.FillerExplosiveInput, this);
+		tradeConsumesElem.parentElement!.style.display = 'none';
+		//new IndividualSimIconPicker(tradeConsumesElem, this.player, IconInputs.SuperSapper, this);
+		//new IndividualSimIconPicker(tradeConsumesElem, this.player, IconInputs.GoblinSapper, this);
+		//new IndividualSimIconPicker(tradeConsumesElem, this.player, IconInputs.FillerExplosiveInput, this);
 
-		//if (this.individualConfig.consumeOptions?.pet?.length) {
-		//	const petConsumesElem = this.rootElem.getElementsByClassName('consumes-pet')[0] as HTMLElement;
-		//	this.individualConfig.consumeOptions.pet.map(iconInput => new IndividualSimIconPicker(petConsumesElem, this.player, iconInput, this));
-		//} else {
-		//	const petRowElem = this.rootElem.getElementsByClassName('consumes-row-pet')[0] as HTMLElement;
-		//	petRowElem.style.display = 'none';
-		//}
+		if (this.individualConfig.petConsumeInputs?.length) {
+			const petConsumesElem = this.rootElem.getElementsByClassName('consumes-pet')[0] as HTMLElement;
+			this.individualConfig.petConsumeInputs.map(iconInput => new IndividualSimIconPicker(petConsumesElem, this.player, iconInput, this));
+		} else {
+			const petRowElem = this.rootElem.getElementsByClassName('consumes-row-pet')[0] as HTMLElement;
+			petRowElem.style.display = 'none';
+		}
 
 		//if (this.individualConfig.consumeOptions?.other?.length) {
 		//	const containerElem = this.rootElem.getElementsByClassName('consumes-other')[0] as HTMLElement;

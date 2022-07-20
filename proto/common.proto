@@ -385,7 +385,7 @@ enum Food {
 
 enum PetFood {
 	PetFoodUnknown = 0;
-	PetFoodSpicyMammothTreats = 1;
+	PetFoodSpicedMammothTreats = 1;
 	// TBC
 	PetFoodKiblersBits = 2;
 }

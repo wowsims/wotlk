@@ -251,13 +251,12 @@ export const JudgementOfLight = makeBooleanDebuffInput(ActionId.fromSpellId(2027
 export const GiftOfArthas = makeBooleanDebuffInput(ActionId.fromSpellId(11374), 'giftOfArthas');
 
 // Consumes
-export const SuperSapper = makeBooleanConsumeInput(ActionId.fromItemId(23827), 'superSapper', [], onSetExplosives);
-export const GoblinSapper = makeBooleanConsumeInput(ActionId.fromItemId(10646), 'goblinSapper', [], onSetExplosives);
+//export const SuperSapper = makeBooleanConsumeInput(ActionId.fromItemId(23827), 'superSapper', [], onSetExplosives);
+//export const GoblinSapper = makeBooleanConsumeInput(ActionId.fromItemId(10646), 'goblinSapper', [], onSetExplosives);
 
-export const KiblersBits = makeEnumValueConsumeInput(ActionId.fromItemId(33874), 'petFood', PetFood.PetFoodKiblersBits, ['Pet Food']);
-
-export const PetScrollOfAgilityV = makeEnumValueConsumeInput(ActionId.fromItemId(27498), 'petScrollOfAgility', 5);
-export const PetScrollOfStrengthV = makeEnumValueConsumeInput(ActionId.fromItemId(27503), 'petScrollOfStrength', 5);
+export const SpicedMammothTreats = makeBooleanConsumeInput(ActionId.fromItemId(43005), 'petFood', PetFood.PetFoodSpicedMammothTreats);
+export const PetScrollOfAgilityV = makeBooleanConsumeInput(ActionId.fromItemId(27498), 'petScrollOfAgility', 5);
+export const PetScrollOfStrengthV = makeBooleanConsumeInput(ActionId.fromItemId(27503), 'petScrollOfStrength', 5);
 
 function withLabel<ModObject, T>(config: IconPickerConfig<ModObject, T>, label: string): IconPickerConfig<ModObject, T> {
 	config.label = label;
@@ -294,6 +293,14 @@ function makeBooleanIndividualBuffInput(id: ActionId, fieldName: keyof Individua
 		getValue: (player: Player<any>) => player.getBuffs(),
 		setValue: (eventID: EventID, player: Player<any>, newVal: IndividualBuffs) => player.setBuffs(eventID, newVal),
 		changeEmitter: (player: Player<any>) => player.buffsChangeEmitter,
+	}, id, fieldName, value);
+}
+function makeBooleanConsumeInput(id: ActionId, fieldName: keyof Consumes, value?: number): IconPickerConfig<Player<any>, boolean> {
+	return makeBooleanInput<Consumes, Player<any>>({
+		getModObject: (player: Player<any>) => player,
+		getValue: (player: Player<any>) => player.getConsumes(),
+		setValue: (eventID: EventID, player: Player<any>, newVal: Consumes) => player.setConsumes(eventID, newVal),
+		changeEmitter: (player: Player<any>) => player.consumesChangeEmitter,
 	}, id, fieldName, value);
 }
 function makeBooleanDebuffInput(id: ActionId, fieldName: keyof Debuffs, value?: number): IconPickerConfig<Player<any>, boolean> {
@@ -399,62 +406,6 @@ function makeWrappedIconInput<ModObject, T>(config: WrappedIconPickerConfig<ModO
 	}
 }
 
-
-function makeTristateDebuffInput(id: ActionId, impId: ActionId, debuffsFieldName: keyof Debuffs): IndividualSimIconPickerConfig<Raid, number> {
-	return {
-		id: id,
-		states: 3,
-		improvedId: impId,
-		changedEvent: (raid: Raid) => raid.debuffsChangeEmitter,
-		getValue: (raid: Raid) => raid.getDebuffs()[debuffsFieldName] as number,
-		setValue: (eventID: EventID, raid: Raid, newValue: number) => {
-			const newDebuffs = raid.getDebuffs();
-			(newDebuffs[debuffsFieldName] as number) = newValue;
-			raid.setDebuffs(eventID, newDebuffs);
-		},
-	}
-}
-
-function makeBooleanConsumeInput(id: ActionId, consumesFieldName: keyof Consumes, exclusivityTags?: Array<ExclusivityTag>, onSet?: (eventID: EventID, player: Player<any>, newValue: boolean) => void): IndividualSimIconPickerConfig<Player<any>, boolean> {
-	return {
-		id: id,
-		states: 2,
-		exclusivityTags: exclusivityTags,
-		changedEvent: (player: Player<any>) => player.consumesChangeEmitter,
-		getValue: (player: Player<any>) => player.getConsumes()[consumesFieldName] as boolean,
-		setValue: (eventID: EventID, player: Player<any>, newValue: boolean) => {
-			const newConsumes = player.getConsumes();
-			(newConsumes[consumesFieldName] as boolean) = newValue;
-			TypedEvent.freezeAllAndDo(() => {
-				player.setConsumes(eventID, newConsumes);
-				if (onSet) {
-					onSet(eventID, player, newValue);
-				}
-			});
-		},
-	}
-}
-
-function makeEnumValueConsumeInput(id: ActionId, consumesFieldName: keyof Consumes, enumValue: number, exclusivityTags?: Array<ExclusivityTag>, onSet?: (eventID: EventID, player: Player<any>, newValue: boolean) => void, showWhen?: (player: Player<any>) => boolean): IndividualSimIconPickerConfig<Player<any>, boolean> {
-	return {
-		id: id,
-		states: 2,
-		exclusivityTags: exclusivityTags,
-		changedEvent: (player: Player<any>) => player.consumesChangeEmitter,
-		getValue: (player: Player<any>) => player.getConsumes()[consumesFieldName] == enumValue,
-		setValue: (eventID: EventID, player: Player<any>, newValue: boolean) => {
-			const newConsumes = player.getConsumes();
-			(newConsumes[consumesFieldName] as number) = newValue ? enumValue : 0;
-			TypedEvent.freezeAllAndDo(() => {
-				player.setConsumes(eventID, newConsumes);
-				if (onSet) {
-					onSet(eventID, player, newValue);
-				}
-			});
-		},
-		showWhen: showWhen,
-	}
-}
 
 //////////////////////////////////////////////////////////////////////
 // Custom buffs that don't fit into any of the helper functions above.
@@ -583,10 +534,6 @@ export const makeFoodInput = makeConsumeInputFactory('food', [
 	{ actionId: ActionId.fromItemId(33052), value: Food.FoodFishermansFeast },
 ] as Array<IconEnumValueConfig<Player<any>, Food>>);
 
-export const makePetFoodInput = makeConsumeInputFactory('petFood', [
-	{ actionId: ActionId.fromItemId(33874), value: PetFood.PetFoodKiblersBits },
-] as Array<IconEnumValueConfig<Player<any>, PetFood>>);
-
 function onSetExplosives(eventID: EventID, player: Player<any>, newValue: Explosive | boolean) {
 	if (newValue) {
 		const playerConsumes = player.getConsumes();
@@ -633,7 +580,7 @@ export function makeWeaponImbueInput(isMainHand: boolean, options: Array<WeaponI
 function makeConsumeInputFactory<T extends number>(consumesFieldName: keyof Consumes, allOptions: Array<IconEnumValueConfig<Player<any>, T>>, onSet?: (eventID: EventID, player: Player<any>, newValue: T) => void): (options: Array<T>) => IconEnumPickerConfig<Player<any>, T> {
 	return (options: Array<T>) => {
 		return {
-			numColumns: 1,
+			numColumns: options.length > 5 ? 2 : 1,
 			values: [
 				{ color: 'grey', value: 0 } as unknown as IconEnumValueConfig<Player<any>, T>,
 			].concat(options.map(option => allOptions.find(allOption => allOption.value == option)!)),
