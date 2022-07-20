@@ -41,10 +41,6 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 	var target = deathKnight.CurrentTarget
 
 	if deathKnight.GCD.IsReady(sim) {
-		// if sim.CurrentTime < time.Millisecond {
-		// 	deathKnight.WaitUntil(sim, sim.CurrentTime+time.Millisecond)
-		// 	return
-		// }
 		// UH DK rota
 		if deathKnight.Talents.SummonGargoyle {
 			if deathKnight.CanRaiseDead(sim) {
