@@ -14,6 +14,7 @@ func (paladin *Paladin) registerExorcismSpell() {
 
 	baseMultiplier := 1.0
 	baseMultiplier += 0.05 * float64(paladin.Talents.SanctityOfBattle)
+	baseMultiplier += core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfExorcism), 0.20, 0)
 
 	scaling := hybridScaling{
 		AP: 0.15,
