@@ -199,6 +199,7 @@ func (unit *Unit) AddStatDynamic(sim *Simulation, stat stats.Stat, amount float6
 		}
 	}
 
+	// Now apply stat dependencies
 	for k, v := range unit.statBonuses[stat].Deps {
 		if v == 0 {
 			continue
@@ -207,6 +208,7 @@ func (unit *Unit) AddStatDynamic(sim *Simulation, stat stats.Stat, amount float6
 	}
 }
 
+// ApplyStatDependencies will apply both stat multipliers as well as stat dependencies (and the multipliers to those values).
 func (unit *Unit) ApplyStatDependencies(ss stats.Stats) stats.Stats {
 	news := stats.Stats{}
 
@@ -245,7 +247,7 @@ func (unit *Unit) AddStatDependency(source, modified stats.Stat, ratio float64) 
 	if unit.statBonuses[source].Deps == nil {
 		unit.statBonuses[source].Deps = map[stats.Stat]float64{}
 	}
-	unit.statBonuses[source].Deps[modified] += ratio
+	unit.statBonuses[source].Deps[modified] = ((unit.statBonuses[source].Deps[modified] + 1) * (ratio + 1)) - 1
 }
 
 // MultiplyStat will multiply final stat by given amount.
@@ -298,7 +300,7 @@ func (unit *Unit) finalizeStatDeps() {
 
 	for s := range unit.stats {
 		seen = map[stats.Stat]struct{}{
-			stats.Stat(s): struct{}{},
+			stats.Stat(s): {}, // mark this stat already seen.
 		}
 		if err := walk(unit.statBonuses[s].Deps); err != nil {
 			panic(err)
