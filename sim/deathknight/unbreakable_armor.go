@@ -16,21 +16,16 @@ func (deathKnight *DeathKnight) registerUnbreakableArmorSpell() {
 	cdTimer := deathKnight.NewTimer()
 	cd := time.Minute * 1
 
-	// TODO: replace with true dynamic stats here
-	strengthBonus := 0.0
 	deathKnight.UnbreakableArmorAura = deathKnight.RegisterAura(core.Aura{
 		Label:    "Unbreakable Armor",
 		ActionID: actionID,
 		Duration: time.Second * 20,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			strengthBonus = 0.2 * deathKnight.GetStat(stats.Strength)
-			bonusStats := stats.Stats{stats.Strength: strengthBonus}
-			deathKnight.UnbreakableArmorAura.Unit.AddStatsDynamic(sim, bonusStats)
+			deathKnight.UnbreakableArmorAura.Unit.AddStatDependencyDynamic(sim, stats.Strength, stats.Strength, 0.2)
 		},
 
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			bonusStats := stats.Stats{stats.Strength: -strengthBonus}
-			deathKnight.UnbreakableArmorAura.Unit.AddStatsDynamic(sim, bonusStats)
+			deathKnight.UnbreakableArmorAura.Unit.AddStatDependencyDynamic(sim, stats.Strength, stats.Strength, -1.2)
 		},
 	})
 

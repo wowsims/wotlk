@@ -142,22 +142,22 @@ func (character *Character) applyAllEffects(agent Agent, raidBuffs proto.RaidBuf
 
 	applyRaceEffects(agent)
 	character.applyProfessionEffects()
-	playerStats.BaseStats = character.ApplyStatDependencies(character.stats).ToFloatArray()
+	playerStats.BaseStats = character.applyStatDependencies(character.stats).ToFloatArray()
 
 	character.AddStats(character.Equip.Stats())
 	character.applyItemEffects(agent)
 	character.applyItemSetBonusEffects(agent)
 	agent.ApplyGearBonuses()
-	playerStats.GearStats = character.ApplyStatDependencies(character.stats).ToFloatArray()
+	playerStats.GearStats = character.applyStatDependencies(character.stats).ToFloatArray()
 
 	agent.ApplyTalents()
-	playerStats.TalentsStats = character.ApplyStatDependencies(character.stats).ToFloatArray()
+	playerStats.TalentsStats = character.applyStatDependencies(character.stats).ToFloatArray()
 
 	applyBuffEffects(agent, raidBuffs, partyBuffs, individualBuffs)
-	playerStats.BuffsStats = character.ApplyStatDependencies(character.stats).ToFloatArray()
+	playerStats.BuffsStats = character.applyStatDependencies(character.stats).ToFloatArray()
 
 	applyConsumeEffects(agent, raidBuffs, partyBuffs)
-	playerStats.ConsumesStats = character.ApplyStatDependencies(character.stats).ToFloatArray()
+	playerStats.ConsumesStats = character.applyStatDependencies(character.stats).ToFloatArray()
 
 	for _, petAgent := range character.Pets {
 		applyPetBuffEffects(petAgent, raidBuffs, partyBuffs, individualBuffs)
@@ -306,7 +306,7 @@ func (character *Character) Finalize(playerStats *proto.PlayerStats) {
 	}
 
 	character.finalizeStatDeps()
-	character.stats = character.ApplyStatDependencies(character.stats)
+	character.stats = character.applyStatDependencies(character.stats)
 
 	character.PseudoStats.ParryHaste = character.PseudoStats.CanParry
 

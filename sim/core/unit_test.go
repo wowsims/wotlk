@@ -28,7 +28,7 @@ func TestStatDependencies(t *testing.T) {
 		stats.Agility:   2,
 	}
 
-	unit.stats = unit.ApplyStatDependencies(baseStat)
+	unit.stats = unit.applyStatDependencies(baseStat)
 
 	if !unit.stats.Equals(expectedResult) {
 		t.Fatalf("Stats do not match:\nActual: %s\nExpected: %s", unit.stats, expectedResult)

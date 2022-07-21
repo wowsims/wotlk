@@ -208,8 +208,8 @@ func (unit *Unit) AddStatDynamic(sim *Simulation, stat stats.Stat, amount float6
 	}
 }
 
-// ApplyStatDependencies will apply all stat dependencies.
-func (unit *Unit) ApplyStatDependencies(ss stats.Stats) stats.Stats {
+// applyStatDependencies will apply all stat dependencies.
+func (unit *Unit) applyStatDependencies(ss stats.Stats) stats.Stats {
 	news := stats.Stats{}
 
 	var addstat func(s stats.Stat, v float64)
@@ -250,6 +250,8 @@ func (unit *Unit) AddStatDependency(source, modified stats.Stat, ratio float64) 
 	unit.statBonuses[source].Deps[modified] = ((unit.statBonuses[source].Deps[modified] + 1) * (ratio + 1)) - 1
 }
 
+// AddStatDependencyDynamic will dynamically adjust stats based on the change to the dependency.
+//  To add use a positive ratio. To remove give the same ratio but negative and -1. (ie, to add 0.2 use -1.2 to remove)
 func (unit *Unit) AddStatDependencyDynamic(sim *Simulation, source, modified stats.Stat, ratio float64) {
 	if unit.Env == nil || !unit.Env.IsFinalized() {
 		panic("Not finalized, use AddStatDependency instead!")
