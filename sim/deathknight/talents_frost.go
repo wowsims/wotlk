@@ -138,6 +138,14 @@ func (deathKnight *DeathKnight) applyRime() {
 	})
 }
 
+func (deathKnight *DeathKnight) rimeCritBonus() float64 {
+	return 0.05 * float64(deathKnight.Talents.Rime)
+}
+
+func (deathKnight *DeathKnight) rimeHbChanceProc() float64 {
+	return 5.0 * float64(deathKnight.Talents.Rime)
+}
+
 func (deathKnight *DeathKnight) annihilationCritBonus() float64 {
 	return 1.0 * float64(deathKnight.Talents.Annihilation)
 }
@@ -181,6 +189,8 @@ func (deathKnight *DeathKnight) applyKillingMachine() {
 
 			if !deathKnight.KillingMachineAura.IsActive() {
 				deathKnight.KillingMachineAura.Activate(sim)
+			} else {
+				deathKnight.KillingMachineAura.Refresh(sim)
 			}
 		},
 	})

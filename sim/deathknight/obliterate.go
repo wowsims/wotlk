@@ -19,10 +19,8 @@ func (deathKnight *DeathKnight) newObliterateHitSpell(isMH bool) *core.Spell {
 		diseaseConsumptionChance = 0.0
 	}
 
-	hbResetCDChance := 0.05 * float64(deathKnight.Talents.Rime)
-
 	effect := core.SpellEffect{
-		BonusCritRating:  (5.0*float64(deathKnight.Talents.Rime) + 3.0*float64(deathKnight.Talents.Subversion) + 1.0*float64(deathKnight.Talents.Annihilation) + deathKnight.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,
+		BonusCritRating:  (deathKnight.rimeCritBonus() + deathKnight.subversionCritBonus() + deathKnight.annihilationCritBonus() + deathKnight.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: core.TernaryFloat64(deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfObliterate), 1.25, 1.0),
 		ThreatMultiplier: 1,
 
@@ -55,7 +53,7 @@ func (deathKnight *DeathKnight) newObliterateHitSpell(isMH bool) *core.Spell {
 				deathKnight.BloodPlagueDisease[spellEffect.Target.Index].Deactivate(sim)
 			}
 
-			if sim.RandomFloat("Rime") < hbResetCDChance {
+			if sim.RandomFloat("Rime") < deathKnight.rimeHbChanceProc() {
 				deathKnight.RimeAura.Activate(sim)
 			}
 		},

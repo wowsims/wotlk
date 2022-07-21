@@ -102,6 +102,10 @@ func (deathKnight *DeathKnight) ApplyBloodTalents() {
 	}
 }
 
+func (deathKnight *DeathKnight) subversionCritBonus() float64 {
+	return 3.0 * float64(deathKnight.Talents.Subversion)
+}
+
 var butcheryCanceled bool
 
 func (deathKnight *DeathKnight) applyButchery() {

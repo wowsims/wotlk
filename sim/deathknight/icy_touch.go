@@ -40,7 +40,7 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:             core.ProcMaskSpellDamage,
-			BonusSpellCritRating: 5.0 * float64(deathKnight.Talents.Rime) * core.CritRatingPerCritChance,
+			BonusSpellCritRating: deathKnight.rimeCritBonus() * core.CritRatingPerCritChance,
 			DamageMultiplier:     impIcyTouchCoeff,
 			ThreatMultiplier:     7.0,
 

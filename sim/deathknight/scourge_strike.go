@@ -57,7 +57,7 @@ func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			BonusCritRating:  (3.0*float64(deathKnight.Talents.Subversion) + 3.0*float64(deathKnight.Talents.ViciousStrikes) + deathKnight.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,
+			BonusCritRating:  (deathKnight.subversionCritBonus() + deathKnight.viciousStrikesCritChanceBonus() + deathKnight.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,
 			DamageMultiplier: outbreakBonus,
 			ThreatMultiplier: 1,
 
