@@ -71,7 +71,7 @@ var FullIndividualBuffs = &proto.IndividualBuffs{
 
 var FullConsumes = &proto.Consumes{
 	MainHandImbue:   proto.WeaponImbue_WeaponImbueShamanWindfury,
-	OffHandImbue:    proto.WeaponImbue_WeaponImbueShamanWindfury,
+	OffHandImbue:    proto.WeaponImbue_WeaponImbueShamanFlametongue,
 	DefaultConjured: proto.Conjured_ConjuredFlameCap,
 }
 
