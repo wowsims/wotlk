@@ -24,14 +24,7 @@ func (hunter *Hunter) ApplyTalents() {
 		// TODO: Beast Mastery (in UI)
 
 		if hunter.Talents.AnimalHandler != 0 {
-			bonus := 1 + 0.05*float64(hunter.Talents.AnimalHandler)
-			hunter.pet.AddStatDependency(stats.StatDependency{
-				SourceStat:   stats.AttackPower,
-				ModifiedStat: stats.AttackPower,
-				Modifier: func(ap float64, _ float64) float64 {
-					return ap * bonus
-				},
-			})
+			hunter.pet.AddStatDependency(stats.AttackPower, stats.AttackPower, 1.0+(0.05*float64(hunter.Talents.AnimalHandler)))
 		}
 		hunter.pet.ApplyTalents()
 	}
@@ -49,21 +42,9 @@ func (hunter *Hunter) ApplyTalents() {
 
 	if hunter.Talents.EnduranceTraining > 0 {
 		healthBonus := 0.01 * float64(hunter.Talents.EnduranceTraining)
-		hunter.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Health,
-			ModifiedStat: stats.Health,
-			Modifier: func(health float64, _ float64) float64 {
-				return health * (1 + healthBonus)
-			},
-		})
+		hunter.AddStatDependency(stats.Health, stats.Health, 1.0+healthBonus)
 		if hunter.pet != nil {
-			hunter.pet.AddStatDependency(stats.StatDependency{
-				SourceStat:   stats.Health,
-				ModifiedStat: stats.Health,
-				Modifier: func(health float64, _ float64) float64 {
-					return health * (1 + 2*healthBonus)
-				},
-			})
+			hunter.pet.AddStatDependency(stats.Health, stats.Health, 1.0+2*healthBonus)
 		}
 	}
 
@@ -81,108 +62,40 @@ func (hunter *Hunter) ApplyTalents() {
 		}
 		hunter.AddStat(stats.Armor, hunter.Equip.Stats()[stats.Armor]*hunterBonus)
 		if hunter.pet != nil {
-			hunter.pet.AddStatDependency(stats.StatDependency{
-				SourceStat:   stats.Armor,
-				ModifiedStat: stats.Armor,
-				Modifier: func(armor float64, _ float64) float64 {
-					return armor * (1 + petBonus)
-				},
-			})
+			hunter.pet.AddStatDependency(stats.Armor, stats.Armor, 1.0+petBonus)
 		}
 	}
 
 	if hunter.Talents.Survivalist > 0 {
-		healthBonus := 1 + 0.02*float64(hunter.Talents.Survivalist)
-		hunter.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Health,
-			ModifiedStat: stats.Health,
-			Modifier: func(health float64, _ float64) float64 {
-				return health * healthBonus
-			},
-		})
+		hunter.AddStatDependency(stats.Health, stats.Health, 1.0+0.02*float64(hunter.Talents.Survivalist))
 	}
 
 	if hunter.Talents.CombatExperience > 0 {
-		bonus := 1 + 0.02*float64(hunter.Talents.CombatExperience)
-		hunter.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Agility,
-			ModifiedStat: stats.Agility,
-			Modifier: func(agility float64, _ float64) float64 {
-				return agility * bonus
-			},
-		})
-		hunter.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Intellect,
-			ModifiedStat: stats.Intellect,
-			Modifier: func(intellect float64, _ float64) float64 {
-				return intellect * bonus
-			},
-		})
+		bonus := 1.0 + (0.02 * float64(hunter.Talents.CombatExperience))
+		hunter.AddStatDependency(stats.Agility, stats.Agility, bonus)
+		hunter.AddStatDependency(stats.Intellect, stats.Intellect, bonus)
 	}
 	if hunter.Talents.CarefulAim > 0 {
-		bonus := (1 / 3) * float64(hunter.Talents.CarefulAim)
-		hunter.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Intellect,
-			ModifiedStat: stats.RangedAttackPower,
-			Modifier: func(intellect float64, rap float64) float64 {
-				return rap + intellect*bonus
-			},
-		})
+		hunter.AddStatDependency(stats.Intellect, stats.RangedAttackPower, 1.0+((1.0/3.0)*float64(hunter.Talents.CarefulAim)))
 	}
 	if hunter.Talents.SurvivalInstincts > 0 {
-		apBonus := 1 + 0.02*float64(hunter.Talents.SurvivalInstincts)
-		hunter.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.AttackPower,
-			ModifiedStat: stats.AttackPower,
-			Modifier: func(ap float64, _ float64) float64 {
-				return ap * apBonus
-			},
-		})
-		hunter.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.RangedAttackPower,
-			ModifiedStat: stats.RangedAttackPower,
-			Modifier: func(rap float64, _ float64) float64 {
-				return rap * apBonus
-			},
-		})
+		apBonus := 1.0 + (0.02 * float64(hunter.Talents.SurvivalInstincts))
+		hunter.AddStatDependency(stats.AttackPower, stats.AttackPower, apBonus)
+		hunter.AddStatDependency(stats.RangedAttackPower, stats.RangedAttackPower, apBonus)
 	}
 	if hunter.Talents.HunterVsWild > 0 {
-		bonus := 1 + 0.1*float64(hunter.Talents.HunterVsWild)
-		hunter.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Stamina,
-			ModifiedStat: stats.AttackPower,
-			Modifier: func(stam float64, ap float64) float64 {
-				return ap + stam*bonus
-			},
-		})
-		hunter.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Stamina,
-			ModifiedStat: stats.RangedAttackPower,
-			Modifier: func(stam float64, rap float64) float64 {
-				return rap + stam*bonus
-			},
-		})
+		bonus := 1.0 + (0.1 * float64(hunter.Talents.HunterVsWild))
+		hunter.AddStatDependency(stats.Stamina, stats.AttackPower, bonus)
+		hunter.AddStatDependency(stats.Stamina, stats.RangedAttackPower, bonus)
 	}
 	if hunter.Talents.LightningReflexes > 0 {
-		agiBonus := 1 + 0.03*float64(hunter.Talents.LightningReflexes)
-		hunter.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Agility,
-			ModifiedStat: stats.Agility,
-			Modifier: func(agility float64, _ float64) float64 {
-				return agility * agiBonus
-			},
-		})
+		agiBonus := 0.03 * float64(hunter.Talents.LightningReflexes)
+		hunter.AddStatDependency(stats.Agility, stats.Agility, 1.0+agiBonus)
 	}
 	if hunter.Talents.HuntingParty > 0 {
 		// TODO: Activate replenishment
-		agiBonus := 1 + 0.01*float64(hunter.Talents.HuntingParty)
-		hunter.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Agility,
-			ModifiedStat: stats.Agility,
-			Modifier: func(agility float64, _ float64) float64 {
-				return agility * agiBonus
-			},
-		})
+		agiBonus := 0.01 * float64(hunter.Talents.HuntingParty)
+		hunter.AddStatDependency(stats.Agility, stats.Agility, 1.0+agiBonus)
 	}
 
 	hunter.applySpiritBond()

@@ -175,13 +175,7 @@ func NewMage(character core.Character, options proto.Player) *Mage {
 		mage.AoeRotation = *mageOptions.Rotation.Aoe
 	}
 
-	mage.Character.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Strength,
-		ModifiedStat: stats.AttackPower,
-		Modifier: func(strength float64, attackPower float64) float64 {
-			return attackPower + strength*2
-		},
-	})
+	mage.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
 
 	if mage.Options.Armor == proto.Mage_Options_MageArmor {
 		mage.PseudoStats.SpiritRegenRateCasting += 0.3

@@ -1200,9 +1200,9 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Average-Default"
  value: {
-  dps: 151.91663913225932
-  tps: 179.57669083788858
-  dtps: 978.0516219671155
+  dps: 151.9070470206774
+  tps: 179.56535026948873
+  dtps: 977.9894572018458
  }
 }
 dps_results: {

@@ -255,8 +255,8 @@ dps_results: {
 dps_results: {
  key: "TestRogue-AllItems-CloakofDarkness-33122"
  value: {
-  dps: 2137.862888149181
-  tps: 1506.3438675714674
+  dps: 2137.8628881491804
+  tps: 1506.3438675714672
  }
 }
 dps_results: {

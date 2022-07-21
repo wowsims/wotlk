@@ -71,13 +71,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 
 	if raidBuffs.TrueshotAura || raidBuffs.AbominationsMight || raidBuffs.UnleashedRage {
 		// Increases AP by 10%
-		character.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.AttackPower,
-			ModifiedStat: stats.AttackPower,
-			Modifier: func(ap float64, _ float64) float64 {
-				return ap * 1.1
-			},
-		})
+		character.AddStatDependency(stats.AttackPower, stats.AttackPower, 1.0+0.1)
 	}
 
 	if raidBuffs.ArcaneEmpowerment || raidBuffs.FerociousInspiration || raidBuffs.SanctifiedRetribution {
@@ -131,13 +125,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		individualBuffs.JudgementsOfTheWise ||
 		individualBuffs.ImprovedSoulLeech ||
 		individualBuffs.EnduringWinter {
-		character.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Mana,
-			ModifiedStat: stats.MP5,
-			Modifier: func(mana float64, mp5 float64) float64 {
-				return mp5 + mana*0.01 // adds 1% of max mana to mp5
-			},
-		})
+		character.AddStatDependency(stats.Mana, stats.MP5, 1.0+0.01)
 	}
 
 	kingsAgiIntSpiAmount := 1.0
@@ -153,43 +141,13 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		kingsStrStamAmount = MaxFloat(kingsStrStamAmount, 1.08)
 	}
 	if kingsStrStamAmount > 0 {
-		character.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Strength,
-			ModifiedStat: stats.Strength,
-			Modifier: func(curValue float64, _ float64) float64 {
-				return curValue * kingsStrStamAmount
-			},
-		})
-		character.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Stamina,
-			ModifiedStat: stats.Stamina,
-			Modifier: func(curValue float64, _ float64) float64 {
-				return curValue * kingsStrStamAmount
-			},
-		})
+		character.AddStatDependency(stats.Strength, stats.Strength, kingsStrStamAmount)
+		character.AddStatDependency(stats.Stamina, stats.Stamina, kingsStrStamAmount)
 	}
 	if kingsAgiIntSpiAmount > 0 {
-		character.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Agility,
-			ModifiedStat: stats.Agility,
-			Modifier: func(curValue float64, _ float64) float64 {
-				return curValue * kingsAgiIntSpiAmount
-			},
-		})
-		character.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Intellect,
-			ModifiedStat: stats.Intellect,
-			Modifier: func(curValue float64, _ float64) float64 {
-				return curValue * kingsAgiIntSpiAmount
-			},
-		})
-		character.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Spirit,
-			ModifiedStat: stats.Spirit,
-			Modifier: func(curValue float64, _ float64) float64 {
-				return curValue * kingsAgiIntSpiAmount
-			},
-		})
+		character.AddStatDependency(stats.Agility, stats.Agility, kingsAgiIntSpiAmount)
+		character.AddStatDependency(stats.Intellect, stats.Intellect, kingsAgiIntSpiAmount)
+		character.AddStatDependency(stats.Spirit, stats.Spirit, kingsAgiIntSpiAmount)
 	}
 
 	if individualBuffs.BlessingOfSanctuary {
@@ -331,7 +289,7 @@ func applyInspiration(character *Character, uptime float64) {
 		ActionID: ActionID{SpellID: 15363},
 		Duration: time.Second * 15,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			curBonus = character.ApplyStatDependencies(stats.Stats{stats.Armor: character.GetStat(stats.Armor) * 0.25})
+			curBonus = stats.Stats{stats.Armor: character.GetStat(stats.Armor) * 0.25}
 			aura.Unit.AddStatsDynamic(sim, curBonus)
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
