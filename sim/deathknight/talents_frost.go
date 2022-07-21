@@ -16,7 +16,7 @@ func (deathKnight *DeathKnight) ApplyFrostTalents() {
 	// Toughness
 	if deathKnight.Talents.Toughness > 0 {
 		armorCoeff := 0.02 * float64(deathKnight.Talents.Toughness)
-		deathKnight.MultiplyStat(stats.Armor, 1.0+armorCoeff)
+		deathKnight.AddStatDependency(stats.Armor, stats.Armor, armorCoeff)
 	}
 
 	// Icy Reach
@@ -55,7 +55,7 @@ func (deathKnight *DeathKnight) ApplyFrostTalents() {
 	// Endless Winter
 	if deathKnight.Talents.EndlessWinter > 0 {
 		strengthCoeff := 0.02 * float64(deathKnight.Talents.EndlessWinter)
-		deathKnight.MultiplyStat(stats.Strength, 1.0+strengthCoeff)
+		deathKnight.AddStatDependency(stats.Strength, stats.Strength, strengthCoeff)
 	}
 
 	// Frigid Dreadplate

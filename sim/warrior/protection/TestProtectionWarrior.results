@@ -19,7 +19,7 @@ character_stats_results: {
   final_stats: 51
   final_stats: 0
   final_stats: 0
-  final_stats: 3129.478000000001
+  final_stats: 3129.4780000000005
   final_stats: 107
   final_stats: 1234.2537333333335
   final_stats: 0
@@ -32,7 +32,7 @@ character_stats_results: {
   final_stats: 470
   final_stats: 254.4
   final_stats: 81.95
-  final_stats: 505.39445000000006
+  final_stats: 505.3944500000001
   final_stats: 900.8616666666668
   final_stats: 244.25
   final_stats: 10
@@ -52,7 +52,7 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestProtectionWarrior-StatWeights-Default"
  value: {
-  weights: 0.2442867778987204
+  weights: 0.24428677789871928
   weights: 0
   weights: 0
   weights: 0
@@ -117,8 +117,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-Alchemist'sStone-13503"
  value: {
-  dps: 545.1259722671375
-  tps: 944.368736328736
+  dps: 545.1259722671373
+  tps: 944.3687363287357
  }
 }
 dps_results: {
@@ -293,14 +293,14 @@ dps_results: {
  key: "TestProtectionWarrior-AllItems-BulwarkofAzzinoth-32375"
  value: {
   dps: 558.8713407527423
-  tps: 964.0508699638385
+  tps: 964.0508699638383
  }
 }
 dps_results: {
  key: "TestProtectionWarrior-AllItems-BulwarkofKings-28484"
  value: {
   dps: 562.2212841055346
-  tps: 972.2105259171548
+  tps: 972.2105259171545
  }
 }
 dps_results: {
@@ -355,7 +355,7 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-CoreofAr'kelos-29776"
  value: {
-  dps: 546.0379065617456
+  dps: 546.0379065617457
   tps: 946.3019507647412
  }
 }
@@ -405,7 +405,7 @@ dps_results: {
  key: "TestProtectionWarrior-AllItems-DesolationBattlegear"
  value: {
   dps: 525.4910123652861
-  tps: 894.7393749337588
+  tps: 894.7393749337587
  }
 }
 dps_results: {
@@ -418,8 +418,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-DestroyerArmor"
  value: {
-  dps: 551.5874847439725
-  tps: 931.8445315160914
+  dps: 552.4373482254085
+  tps: 933.115077420838
  }
 }
 dps_results: {
@@ -454,7 +454,7 @@ dps_results: {
  key: "TestProtectionWarrior-AllItems-DoomplateBattlegear"
  value: {
   dps: 541.5073935438235
-  tps: 919.799011370432
+  tps: 919.7990113704318
  }
 }
 dps_results: {
@@ -734,7 +734,7 @@ dps_results: {
  key: "TestProtectionWarrior-AllItems-LionheartChampion-28429"
  value: {
   dps: 662.0281443069794
-  tps: 1111.824542131269
+  tps: 1111.8245421312686
  }
 }
 dps_results: {
@@ -810,8 +810,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-NetherscaleArmor"
  value: {
-  dps: 550.6637730004555
-  tps: 952.7083609579656
+  dps: 550.6637730004554
+  tps: 952.7083609579655
  }
 }
 dps_results: {
@@ -880,8 +880,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-PrimalIntent"
  value: {
-  dps: 570.7173713732766
-  tps: 986.3462353598926
+  dps: 570.7173713732765
+  tps: 986.3462353598925
  }
 }
 dps_results: {
@@ -929,7 +929,7 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-RobeoftheElderScribes-28602"
  value: {
-  dps: 537.900191643204
+  dps: 537.9001916432043
   tps: 931.1916083489814
  }
 }
@@ -958,7 +958,7 @@ dps_results: {
  key: "TestProtectionWarrior-AllItems-Scryer'sBloodgem-29132"
  value: {
   dps: 543.6607205876076
-  tps: 942.4034622609253
+  tps: 942.4034622609255
  }
 }
 dps_results: {

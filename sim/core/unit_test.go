@@ -16,9 +16,9 @@ func TestStatDependencies(t *testing.T) {
 		stats.Agility:   2,
 	}
 
-	unit.MultiplyStat(stats.Intellect, 2)
+	unit.AddStatDependency(stats.Intellect, stats.Intellect, 1)
 	unit.AddStatDependency(stats.Stamina, stats.Intellect, 1)
-	unit.MultiplyStat(stats.Stamina, 2)
+	unit.AddStatDependency(stats.Stamina, stats.Stamina, 1)
 	unit.AddStatDependency(stats.Agility, stats.Stamina, 1)
 	unit.finalizeStatDeps()
 
@@ -35,7 +35,7 @@ func TestStatDependencies(t *testing.T) {
 	}
 
 	unit.Env, _ = NewEnvironment(proto.Raid{}, proto.Encounter{})
-	unit.MultiplyStatDynamic(nil, stats.Agility, 2)
+	unit.AddStatDependencyDynamic(nil, stats.Agility, stats.Agility, 1)
 
 	result2 := stats.Stats{
 		stats.Stamina:   10,

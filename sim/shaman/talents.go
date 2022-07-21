@@ -25,7 +25,7 @@ func (shaman *Shaman) ApplyTalents() {
 	}
 
 	if shaman.Talents.Toughness > 0 {
-		shaman.MultiplyStat(stats.Stamina, 1+0.02*float64(shaman.Talents.Toughness))
+		shaman.AddStatDependency(stats.Stamina, stats.Stamina, 0.02*float64(shaman.Talents.Toughness))
 	}
 
 	if shaman.Talents.UnrelentingStorm > 0 {
@@ -33,7 +33,7 @@ func (shaman *Shaman) ApplyTalents() {
 	}
 
 	if shaman.Talents.AncestralKnowledge > 0 {
-		shaman.MultiplyStat(stats.Intellect, 1+0.02*float64(shaman.Talents.AncestralKnowledge))
+		shaman.AddStatDependency(stats.Intellect, stats.Intellect, 0.02*float64(shaman.Talents.AncestralKnowledge))
 	}
 
 	if shaman.Talents.MentalQuickness > 0 {

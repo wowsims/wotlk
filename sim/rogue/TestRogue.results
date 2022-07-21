@@ -21,7 +21,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 3048.5
   final_stats: 423.15999999999997
-  final_stats: 1337.956225
+  final_stats: 1337.9562250000004
   final_stats: 0
   final_stats: 0
   final_stats: 95.96
@@ -655,7 +655,7 @@ dps_results: {
  key: "TestRogue-AllItems-ManualCrowdPummeler-9449"
  value: {
   dps: 883.070724562463
-  tps: 615.2513048868109
+  tps: 615.2513048868111
  }
 }
 dps_results: {
@@ -984,7 +984,7 @@ dps_results: {
  key: "TestRogue-AllItems-TheBladefist-29348"
  value: {
   dps: 2184.7602966235663
-  tps: 1539.5716673925212
+  tps: 1539.5716673925217
  }
 }
 dps_results: {

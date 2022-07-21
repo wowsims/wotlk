@@ -24,8 +24,7 @@ func (hunter *Hunter) ApplyTalents() {
 		// TODO: Beast Mastery (in UI)
 
 		if hunter.Talents.AnimalHandler != 0 {
-			bonus := 1 + 0.05*float64(hunter.Talents.AnimalHandler)
-			hunter.pet.MultiplyStat(stats.AttackPower, bonus)
+			hunter.pet.AddStatDependency(stats.AttackPower, stats.AttackPower, 0.05*float64(hunter.Talents.AnimalHandler))
 		}
 		hunter.pet.ApplyTalents()
 	}
@@ -43,9 +42,9 @@ func (hunter *Hunter) ApplyTalents() {
 
 	if hunter.Talents.EnduranceTraining > 0 {
 		healthBonus := 0.01 * float64(hunter.Talents.EnduranceTraining)
-		hunter.MultiplyStat(stats.Health, 1+healthBonus)
+		hunter.AddStatDependency(stats.Health, stats.Health, healthBonus)
 		if hunter.pet != nil {
-			hunter.pet.MultiplyStat(stats.Health, 1+2*healthBonus)
+			hunter.pet.AddStatDependency(stats.Health, stats.Health, 2*healthBonus)
 		}
 	}
 
@@ -63,42 +62,42 @@ func (hunter *Hunter) ApplyTalents() {
 		}
 		hunter.AddStat(stats.Armor, hunter.Equip.Stats()[stats.Armor]*hunterBonus)
 		if hunter.pet != nil {
-			hunter.pet.MultiplyStat(stats.Armor, (1 + petBonus))
+			hunter.pet.AddStatDependency(stats.Armor, stats.Armor, petBonus)
 		}
 	}
 
 	if hunter.Talents.Survivalist > 0 {
-		healthBonus := 1 + 0.02*float64(hunter.Talents.Survivalist)
-		hunter.MultiplyStat(stats.Health, healthBonus)
+		healthBonus := 0.02 * float64(hunter.Talents.Survivalist)
+		hunter.AddStatDependency(stats.Health, stats.Health, healthBonus)
 	}
 
 	if hunter.Talents.CombatExperience > 0 {
-		bonus := 1 + 0.02*float64(hunter.Talents.CombatExperience)
-		hunter.MultiplyStat(stats.Agility, bonus)
-		hunter.MultiplyStat(stats.Intellect, bonus)
+		bonus := 0.02 * float64(hunter.Talents.CombatExperience)
+		hunter.AddStatDependency(stats.Agility, stats.Agility, bonus)
+		hunter.AddStatDependency(stats.Intellect, stats.Intellect, bonus)
 	}
 	if hunter.Talents.CarefulAim > 0 {
 		bonus := (1 / 3) * float64(hunter.Talents.CarefulAim)
 		hunter.AddStatDependency(stats.Intellect, stats.RangedAttackPower, bonus)
 	}
 	if hunter.Talents.SurvivalInstincts > 0 {
-		apBonus := 1 + 0.02*float64(hunter.Talents.SurvivalInstincts)
-		hunter.MultiplyStat(stats.AttackPower, apBonus)
-		hunter.MultiplyStat(stats.RangedAttackPower, apBonus)
+		apBonus := 0.02 * float64(hunter.Talents.SurvivalInstincts)
+		hunter.AddStatDependency(stats.AttackPower, stats.AttackPower, apBonus)
+		hunter.AddStatDependency(stats.RangedAttackPower, stats.RangedAttackPower, apBonus)
 	}
 	if hunter.Talents.HunterVsWild > 0 {
-		bonus := 1 + 0.1*float64(hunter.Talents.HunterVsWild)
+		bonus := 0.1 * float64(hunter.Talents.HunterVsWild)
 		hunter.AddStatDependency(stats.Stamina, stats.AttackPower, bonus)
 		hunter.AddStatDependency(stats.Stamina, stats.RangedAttackPower, bonus)
 	}
 	if hunter.Talents.LightningReflexes > 0 {
-		agiBonus := 1 + 0.03*float64(hunter.Talents.LightningReflexes)
-		hunter.MultiplyStat(stats.Agility, agiBonus)
+		agiBonus := 0.03 * float64(hunter.Talents.LightningReflexes)
+		hunter.AddStatDependency(stats.Agility, stats.Agility, agiBonus)
 	}
 	if hunter.Talents.HuntingParty > 0 {
 		// TODO: Activate replenishment
-		agiBonus := 1 + 0.01*float64(hunter.Talents.HuntingParty)
-		hunter.MultiplyStat(stats.Agility, agiBonus)
+		agiBonus := 0.01 * float64(hunter.Talents.HuntingParty)
+		hunter.AddStatDependency(stats.Agility, stats.Agility, agiBonus)
 	}
 
 	hunter.applySpiritBond()

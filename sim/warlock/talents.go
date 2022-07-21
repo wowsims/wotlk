@@ -11,8 +11,7 @@ import (
 func (warlock *Warlock) ApplyTalents() {
 	// Demonic Embrace
 	if warlock.Talents.DemonicEmbrace > 0 {
-		multiplier := 1.01 + float64(warlock.Talents.DemonicEmbrace)*0.03
-		warlock.MultiplyStat(stats.Stamina, multiplier)
+		warlock.AddStatDependency(stats.Stamina, stats.Stamina, 0.01+float64(warlock.Talents.DemonicEmbrace)*0.03)
 	}
 
 	// Suppression
@@ -26,8 +25,7 @@ func (warlock *Warlock) ApplyTalents() {
 
 	// Malediction (SP bonus)
 	if warlock.Talents.Malediction > 0 {
-		multiplier := 1 + 0.01*float64(warlock.Talents.Malediction)
-		warlock.MultiplyStat(stats.SpellPower, multiplier)
+		warlock.AddStatDependency(stats.SpellPower, stats.SpellPower, 0.01*float64(warlock.Talents.Malediction))
 	}
 
 	// Fel Vitality

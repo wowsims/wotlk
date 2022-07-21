@@ -4,7 +4,7 @@ character_stats_results: {
   final_stats: 484.00000000000006
   final_stats: 675.4000000000001
   final_stats: 680.9000000000001
-  final_stats: 476.74
+  final_stats: 476.74000000000007
   final_stats: 247.50000000000003
   final_stats: 936.5400000000002
   final_stats: 0
@@ -25,7 +25,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 0
   final_stats: 35
-  final_stats: 11267.1
+  final_stats: 11267.100000000002
   final_stats: 0
   final_stats: 0
   final_stats: 6828.8
@@ -87,8 +87,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-Assassin'sAlchemistStone-35751"
  value: {
-  dps: 3.0128475326382906e+126
-  tps: 3.0128475326382906e+126
+  dps: 3.012847532638291e+126
+  tps: 3.012847532638291e+126
  }
 }
 dps_results: {
@@ -710,8 +710,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-NetherstrikeArmor"
  value: {
-  dps: 8.591832063212416e+122
-  tps: 8.591832063212416e+122
+  dps: 8.591832063212419e+122
+  tps: 8.591832063212419e+122
  }
 }
 dps_results: {
@@ -1256,8 +1256,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Troll-P2-Basic-NoBuffs-LongSingleTarget"
  value: {
-  dps: 7.240006742783275e+40
-  tps: 7.240006742783275e+40
+  dps: 7.240006742783276e+40
+  tps: 7.240006742783276e+40
  }
 }
 dps_results: {

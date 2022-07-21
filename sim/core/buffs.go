@@ -71,7 +71,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 
 	if raidBuffs.TrueshotAura || raidBuffs.AbominationsMight || raidBuffs.UnleashedRage {
 		// Increases AP by 10%
-		character.MultiplyStat(stats.AttackPower, 1.1)
+		character.AddStatDependency(stats.AttackPower, stats.AttackPower, 0.1)
 	}
 
 	if raidBuffs.ArcaneEmpowerment || raidBuffs.FerociousInspiration || raidBuffs.SanctifiedRetribution {
@@ -134,26 +134,26 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		stats.RangedAttackPower: GetTristateValueFloat(individualBuffs.BlessingOfMight, 220, 264),
 	})
 
-	kingsAgiIntSpiAmount := 1.0
-	kingsStrStamAmount := 1.0
+	kingsAgiIntSpiAmount := 0.0
+	kingsStrStamAmount := 0.0
 	if individualBuffs.BlessingOfSanctuary {
-		kingsStrStamAmount = 1.1
+		kingsStrStamAmount = 0.1
 	}
 	if individualBuffs.BlessingOfKings {
-		kingsAgiIntSpiAmount = 1.1
-		kingsStrStamAmount = 1.1
+		kingsAgiIntSpiAmount = 0.1
+		kingsStrStamAmount = 0.1
 	} else if raidBuffs.DrumsOfForgottenKings {
-		kingsAgiIntSpiAmount = 1.08
-		kingsStrStamAmount = MaxFloat(kingsStrStamAmount, 1.08)
+		kingsAgiIntSpiAmount = 0.08
+		kingsStrStamAmount = MaxFloat(kingsStrStamAmount, 0.08)
 	}
 	if kingsStrStamAmount > 0 {
-		character.MultiplyStat(stats.Strength, kingsStrStamAmount)
-		character.MultiplyStat(stats.Stamina, kingsStrStamAmount)
+		character.AddStatDependency(stats.Strength, stats.Strength, kingsStrStamAmount)
+		character.AddStatDependency(stats.Stamina, stats.Stamina, kingsStrStamAmount)
 	}
 	if kingsAgiIntSpiAmount > 0 {
-		character.MultiplyStat(stats.Agility, kingsAgiIntSpiAmount)
-		character.MultiplyStat(stats.Intellect, kingsAgiIntSpiAmount)
-		character.MultiplyStat(stats.Spirit, kingsAgiIntSpiAmount)
+		character.AddStatDependency(stats.Agility, stats.Agility, kingsAgiIntSpiAmount)
+		character.AddStatDependency(stats.Intellect, stats.Intellect, kingsAgiIntSpiAmount)
+		character.AddStatDependency(stats.Spirit, stats.Spirit, kingsAgiIntSpiAmount)
 	}
 
 	if individualBuffs.BlessingOfSanctuary {
@@ -290,7 +290,7 @@ func applyInspiration(character *Character, uptime float64) {
 		ActionID: ActionID{SpellID: 15363},
 		Duration: time.Second * 15,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			curBonus = character.ApplyStatDependencies(stats.Stats{stats.Armor: character.GetStat(stats.Armor) * 0.25})
+			curBonus = stats.Stats{stats.Armor: character.GetStat(stats.Armor) * 0.25}
 			aura.Unit.AddStatsDynamic(sim, curBonus)
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {

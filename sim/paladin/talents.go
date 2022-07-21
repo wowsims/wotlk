@@ -25,12 +25,10 @@ func (paladin *Paladin) ApplyTalents() {
 	paladin.AddStat(stats.Defense, core.DefenseRatingPerDefense*4*float64(paladin.Talents.Anticipation))
 
 	if paladin.Talents.DivineStrength > 0 {
-		bonus := 1 + 0.03*float64(paladin.Talents.DivineStrength)
-		paladin.MultiplyStat(stats.Strength, bonus)
+		paladin.AddStatDependency(stats.Strength, stats.Strength, 0.03*float64(paladin.Talents.DivineStrength))
 	}
 	if paladin.Talents.DivineIntellect > 0 {
-		bonus := 1 + 0.02*float64(paladin.Talents.DivineIntellect)
-		paladin.MultiplyStat(stats.Intellect, bonus)
+		paladin.AddStatDependency(stats.Intellect, stats.Intellect, 0.02*float64(paladin.Talents.DivineIntellect))
 	}
 
 	if paladin.Talents.SheathOfLight > 0 {
@@ -51,14 +49,12 @@ func (paladin *Paladin) ApplyTalents() {
 	// }
 
 	if paladin.Talents.SacredDuty > 0 {
-		bonus := 1 + 0.03*float64(paladin.Talents.SacredDuty)
-		paladin.MultiplyStat(stats.Stamina, bonus)
+		paladin.AddStatDependency(stats.Stamina, stats.Stamina, 0.03*float64(paladin.Talents.SacredDuty))
 	}
 
 	if paladin.Talents.CombatExpertise > 0 {
 		paladin.AddStat(stats.Expertise, core.ExpertisePerQuarterPercentReduction*1*float64(paladin.Talents.CombatExpertise))
-		bonus := 1 + 0.02*float64(paladin.Talents.CombatExpertise)
-		paladin.MultiplyStat(stats.Stamina, bonus)
+		paladin.AddStatDependency(stats.Stamina, stats.Stamina, 0.02*float64(paladin.Talents.CombatExpertise))
 	}
 
 	paladin.applyRedoubt()

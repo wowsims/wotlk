@@ -26,7 +26,7 @@ func (mage *Mage) ApplyTalents() {
 	}
 
 	if mage.Talents.ArcaneMind > 0 {
-		mage.Character.MultiplyStat(stats.Intellect, 1+0.03*float64(mage.Talents.ArcaneMind))
+		mage.Character.AddStatDependency(stats.Intellect, stats.Intellect, 0.03*float64(mage.Talents.ArcaneMind))
 	}
 
 	if mage.Talents.MindMastery > 0 {

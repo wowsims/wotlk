@@ -52,7 +52,8 @@ var BrutallusStomp = TargetAbility{
 				OutcomeApplier: target.OutcomeFuncEnemyMeleeWhite(),
 
 				OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					curReduction = characterTarget.ApplyStatDependencies(stats.Stats{stats.Armor: characterTarget.GetStat(stats.Armor) * 0.5})
+					// TODO: apply real dynamic stats here
+					curReduction = stats.Stats{stats.Armor: characterTarget.GetStat(stats.Armor) * 0.5}
 					stompDebuff.Activate(sim)
 				},
 			}),

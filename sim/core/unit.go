@@ -169,7 +169,7 @@ func (unit *Unit) AddStatDynamic(sim *Simulation, stat stats.Stat, amount float6
 		panic("Not finalized, use AddStats instead!")
 	}
 
-	added := amount * unit.statBonuses[stat].Multiplier
+	added := amount * (1 + unit.statBonuses[stat].Ratio)
 
 	if stat == stats.MeleeHaste {
 		unit.AddMeleeHaste(sim, added)
@@ -208,17 +208,14 @@ func (unit *Unit) AddStatDynamic(sim *Simulation, stat stats.Stat, amount float6
 	}
 }
 
-// ApplyStatDependencies will apply both stat multipliers as well as stat dependencies (and the multipliers to those values).
+// ApplyStatDependencies will apply all stat dependencies.
 func (unit *Unit) ApplyStatDependencies(ss stats.Stats) stats.Stats {
 	news := stats.Stats{}
 
 	var addstat func(s stats.Stat, v float64)
 
 	addstat = func(s stats.Stat, v float64) {
-		if unit.statBonuses[s].Multiplier == 0 {
-			unit.statBonuses[s].Multiplier = 1
-		}
-		added := v * unit.statBonuses[s].Multiplier
+		added := v * (unit.statBonuses[s].Ratio + 1)
 		news[s] += added
 		for k, v := range unit.statBonuses[s].Deps {
 			if v == 0 {
@@ -239,10 +236,13 @@ func (unit *Unit) ApplyStatDependencies(ss stats.Stats) stats.Stats {
 }
 
 // AddStatDependency will add source stat * ratio to the modified stat.
-// Currently this is always done at start before sim starts.
 func (unit *Unit) AddStatDependency(source, modified stats.Stat, ratio float64) {
 	if unit.Env != nil && unit.Env.IsFinalized() {
 		panic("Already finalized, can't add more dependencies!")
+	}
+	if source == modified {
+		unit.statBonuses[source].Ratio = ((unit.statBonuses[source].Ratio + 1) * (ratio + 1)) - 1
+		return
 	}
 	if unit.statBonuses[source].Deps == nil {
 		unit.statBonuses[source].Deps = map[stats.Stat]float64{}
@@ -250,31 +250,28 @@ func (unit *Unit) AddStatDependency(source, modified stats.Stat, ratio float64) 
 	unit.statBonuses[source].Deps[modified] = ((unit.statBonuses[source].Deps[modified] + 1) * (ratio + 1)) - 1
 }
 
-// MultiplyStat will multiply final stat by given amount.
-func (unit *Unit) MultiplyStat(stat stats.Stat, multiplier float64) {
-	if unit.Env != nil && unit.Env.IsFinalized() {
-		panic("Already finalized, use MultiplyStatDynamic instead!!")
-	}
-	if unit.statBonuses[stat].Multiplier == 0 {
-		unit.statBonuses[stat].Multiplier = multiplier
-	} else {
-		unit.statBonuses[stat].Multiplier *= multiplier
-	}
-}
-
-func (unit *Unit) MultiplyStatDynamic(sim *Simulation, stat stats.Stat, multiplier float64) {
+func (unit *Unit) AddStatDependencyDynamic(sim *Simulation, source, modified stats.Stat, ratio float64) {
 	if unit.Env == nil || !unit.Env.IsFinalized() {
-		panic("Not finalized, use MultiplyStat instead!")
+		panic("Not finalized, use AddStatDependency instead!")
 	}
-	old := unit.statBonuses[stat].Multiplier
-	if old == 0 {
-		old = 1
-		unit.statBonuses[stat].Multiplier = 1
+	if source == modified {
+		old := unit.statBonuses[source].Ratio + 1
+		new := ratio + 1
+		unit.statBonuses[source].Ratio = (old * new) - 1
+		bonus := (unit.stats[source] * ((new / old) - 1)) / new // divide again by new multiplier because its re-added in AddStatDynamic
+		// Now modify the stat itself
+		unit.AddStatDynamic(sim, source, bonus)
+		return
 	}
-	unit.statBonuses[stat].Multiplier *= multiplier
-	// Now modify the stat itself
-	bonus := (unit.stats[stat] * (unit.statBonuses[stat].Multiplier / old))
-	unit.AddStatDynamic(sim, stat, (bonus-unit.GetStat(stat))/unit.statBonuses[stat].Multiplier)
+
+	if unit.statBonuses[source].Deps == nil {
+		unit.statBonuses[source].Deps = map[stats.Stat]float64{}
+	}
+	oldMultiplier := unit.statBonuses[source].Deps[modified] + 1
+	newMultiplier := ((unit.statBonuses[source].Deps[modified] + 1) * (ratio + 1))
+	unit.statBonuses[source].Deps[modified] = newMultiplier - 1
+	// Now apply the newly gained stats
+	unit.AddStatDynamic(sim, modified, unit.stats[source]*((newMultiplier/oldMultiplier)-1))
 }
 
 // finalizeStatDeps will descend the tree of each stat's depedencies and verify

@@ -39,9 +39,9 @@ func applyRaceEffects(agent Agent) {
 		// TODO: Stoneform
 	case proto.Race_RaceGnome:
 		character.PseudoStats.ReducedArcaneHitTakenChance += 0.02
-		character.MultiplyStat(stats.Intellect, 1.05)
+		character.AddStatDependency(stats.Intellect, stats.Intellect, 0.05)
 	case proto.Race_RaceHuman:
-		character.MultiplyStat(stats.Spirit, 1.03)
+		character.AddStatDependency(stats.Spirit, stats.Spirit, 0.03)
 		applyWeaponSpecialization(
 			character,
 			3*ExpertisePerQuarterPercentReduction,

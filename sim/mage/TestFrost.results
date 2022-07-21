@@ -424,7 +424,7 @@ dps_results: {
  key: "TestFrost-AllItems-Figurine-LivingRubySerpent-24126"
  value: {
   dps: 1349.2870064108354
-  tps: 1089.1609624703574
+  tps: 1089.1609624703578
  }
 }
 dps_results: {
@@ -913,7 +913,7 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-TheTwinStars"
  value: {
-  dps: 1365.4610937856228
+  dps: 1365.461093785623
   tps: 1101.4220978879027
  }
 }

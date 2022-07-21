@@ -2,6 +2,6 @@ package stats
 
 // Bonuses for a single stat
 type Bonuses struct {
-	Multiplier float64          // multiplier added to all stat gains from this stat.
-	Deps       map[Stat]float64 // ratio added to Stat when this stat is changed.
+	Ratio float64          // ratio added to all stat gains from this stat.
+	Deps  map[Stat]float64 // ratio added to Stat when this stat is changed.
 }

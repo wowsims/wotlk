@@ -112,19 +112,19 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		if wp.owner.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfFelguard) {
 			multiplier *= 1.2
 		}
-		wp.MultiplyStat(stats.AttackPower, multiplier)
+		wp.AddStatDependency(stats.AttackPower, stats.AttackPower, multiplier-1)
 	case proto.Warlock_Options_Succubus:
 		wp.PseudoStats.DamageDealtMultiplier *= 1.0 + (0.02 * float64(warlock.Talents.MasterDemonologist))
-		wp.MultiplyStat(stats.AttackPower, 1.05)
+		wp.AddStatDependency(stats.AttackPower, stats.AttackPower, 0.05)
 	case proto.Warlock_Options_Felhunter:
 		wp.PseudoStats.DamageDealtMultiplier *= 1.0
-		wp.MultiplyStat(stats.AttackPower, 1.05)
+		wp.AddStatDependency(stats.AttackPower, stats.AttackPower, 0.05)
 	}
 
 	if warlock.Talents.FelVitality > 0 {
-		bonus := 1 + (0.05)*float64(warlock.Talents.FelVitality)
-		wp.MultiplyStat(stats.Intellect, bonus)
-		wp.MultiplyStat(stats.Stamina, bonus)
+		bonus := (0.05) * float64(warlock.Talents.FelVitality)
+		wp.AddStatDependency(stats.Intellect, stats.Intellect, bonus)
+		wp.AddStatDependency(stats.Stamina, stats.Stamina, bonus)
 	}
 
 	if warlock.HasSetBonus(ItemSetOblivionRaiment, 2) {

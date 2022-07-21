@@ -58,8 +58,8 @@ func (deathKnight *DeathKnight) ApplyBloodTalents() {
 		strengthCoeff := 0.02 * float64(deathKnight.Talents.VeteranOfTheThirdWar)
 		staminaCoeff := 0.01 * float64(deathKnight.Talents.VeteranOfTheThirdWar)
 		expertiseBonus := 2.0 * float64(deathKnight.Talents.VeteranOfTheThirdWar)
-		deathKnight.MultiplyStat(stats.Strength, 1.0+strengthCoeff)
-		deathKnight.MultiplyStat(stats.Stamina, 1.0+staminaCoeff)
+		deathKnight.AddStatDependency(stats.Strength, stats.Strength, strengthCoeff)
+		deathKnight.AddStatDependency(stats.Stamina, stats.Stamina, staminaCoeff)
 		deathKnight.AddStat(stats.Expertise, expertiseBonus*core.ExpertisePerQuarterPercentReduction)
 	}
 
@@ -72,7 +72,7 @@ func (deathKnight *DeathKnight) ApplyBloodTalents() {
 	// Abomination's Might
 	if deathKnight.Talents.AbominationsMight > 0 {
 		strengthCoeff := 0.01 * float64(deathKnight.Talents.AbominationsMight)
-		deathKnight.MultiplyStat(stats.Strength, 1.0+strengthCoeff)
+		deathKnight.AddStatDependency(stats.Strength, stats.Strength, strengthCoeff)
 	}
 }
 

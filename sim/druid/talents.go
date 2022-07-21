@@ -37,28 +37,28 @@ func (druid *Druid) ApplyTalents() {
 
 	if druid.Talents.HeartOfTheWild > 0 {
 		bonus := 0.04 * float64(druid.Talents.HeartOfTheWild)
-		druid.MultiplyStat(stats.Intellect, 1+bonus)
+		druid.AddStatDependency(stats.Intellect, stats.Intellect, bonus)
 
 		if druid.InForm(Cat) {
-			druid.MultiplyStat(stats.AttackPower, 1+(0.5*bonus))
+			druid.AddStatDependency(stats.AttackPower, stats.AttackPower, 0.5*bonus)
 		} else if druid.InForm(Bear) {
-			druid.MultiplyStat(stats.Stamina, 1+bonus)
+			druid.AddStatDependency(stats.Stamina, stats.Stamina, bonus)
 		}
 	}
 
 	if druid.Talents.SurvivalOfTheFittest > 0 {
 		bonus := 0.01 * float64(druid.Talents.SurvivalOfTheFittest)
-		druid.MultiplyStat(stats.Stamina, 1+bonus)
-		druid.MultiplyStat(stats.Strength, 1+bonus)
-		druid.MultiplyStat(stats.Agility, 1+bonus)
-		druid.MultiplyStat(stats.Intellect, 1+bonus)
-		druid.MultiplyStat(stats.Spirit, 1+bonus)
+		druid.AddStatDependency(stats.Stamina, stats.Stamina, bonus)
+		druid.AddStatDependency(stats.Strength, stats.Strength, bonus)
+		druid.AddStatDependency(stats.Agility, stats.Agility, bonus)
+		druid.AddStatDependency(stats.Intellect, stats.Intellect, bonus)
+		druid.AddStatDependency(stats.Spirit, stats.Spirit, bonus)
 		druid.PseudoStats.ReducedCritTakenChance += 0.01 * float64(druid.Talents.SurvivalOfTheFittest)
 	}
 
 	if druid.Talents.LivingSpirit > 0 {
 		bonus := 0.05 * float64(druid.Talents.LivingSpirit)
-		druid.MultiplyStat(stats.Spirit, 1+bonus)
+		druid.AddStatDependency(stats.Spirit, stats.Spirit, bonus)
 	}
 
 	druid.setupNaturesGrace()
