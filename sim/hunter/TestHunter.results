@@ -1067,8 +1067,8 @@ dps_results: {
 dps_results: {
  key: "TestHunter-AllItems-TheDecapitator-28767"
  value: {
-  dps: 2326.2085254845497
-  tps: 1708.8449402931926
+  dps: 2341.7697467291564
+  tps: 1713.3666589748204
  }
 }
 dps_results: {

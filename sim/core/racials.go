@@ -161,7 +161,7 @@ func applyWeaponSpecialization(character *Character, expertiseBonus float64, wea
 		isDW = true
 		for _, wt := range weaponTypes {
 			if weapon.WeaponType == wt {
-				mh = true
+				oh = true
 			}
 		}
 	}
