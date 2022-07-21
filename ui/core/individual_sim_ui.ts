@@ -175,12 +175,10 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 		debuffs: Debuffs,
 	},
 
-	selfBuffInputs: Array<IndividualSimIconPickerConfig<Player<any>, any>>,
-	petInputs?: Array<IndividualSimIconPickerConfig<Player<any>, any>>,
-	weaponImbueInputs?: Array<IndividualSimIconPickerConfig<Player<any>, any>>,
+	playerIconInputs: Array<IndividualSimIconPickerConfig<Player<any>, any>>,
 	petConsumeInputs?: Array<IconPickerConfig<Player<any>, any>>,
 	rotationInputs: InputSection;
-	spellInputs?: Array<IndividualSimIconPickerConfig<Player<any>, any>>;
+	rotationIconInputs?: Array<IndividualSimIconPickerConfig<Player<any>, any>>;
 	otherInputs?: InputSection;
 
 	// Extra UI sections with the same input config as other sections.
@@ -465,22 +463,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 
 	private addSettingsTab() {
-		var petsSelectionSection=``
-		if (this.individualConfig.petInputs?.length) {
-			petsSelectionSection=`
-			   <fieldset class="settings-section pets-section">
-					<legend>Pets</legend>
-				</fieldset>`
-		}
-		
-		var spellSection=``
-		if (this.individualConfig.spellInputs?.length) {
-			spellSection=`
-			    <fieldset class="settings-section spell-section">
-					<legend>Spells</legend>
-				</fieldset>`
-		}
-		
 		this.addTab('SETTINGS', 'settings-tab', `
 			<div class="settings-inputs">
 				<div class="settings-section-container">
@@ -489,32 +471,14 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 					</fieldset>
 					<fieldset class="settings-section race-section">
 						<legend>Player</legend>
+						<div class="settings-section-iconrow player-iconrow"></div>
 					</fieldset>
-			`
-			+
-			spellSection
-			+
-			`
 					<fieldset class="settings-section rotation-section">
 						<legend>Rotation</legend>
+						<div class="settings-section-iconrow rotation-iconrow"></div>
 					</fieldset>
 				</div>
 				<div class="settings-section-container custom-sections-container">
-				</div>
-				<div class="settings-section-container">
-					<fieldset class="settings-section self-buffs-section">
-						<legend>Self Buffs</legend>
-					</fieldset>
-					<fieldset class="settings-section imbues-section">
-					<legend>Imbues</legend>
-						<div class="consumes-imbue-mh"></div>
-						<div class="consumes-imbue-oh"></div>
-					</fieldset>
-			`
-			+
-			petsSelectionSection
-			+
-			`
 				</div>
 				<div class="settings-section-container labeled-icon-section within-raid-sim-hide">
 					<fieldset class="settings-section buffs-section">
@@ -547,7 +511,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 							<span>Food</span>
 							<div class="consumes-row-inputs">
 								<div class="consumes-food"></div>
-								<div class="consumes-alcohol"></div>
 							</div>
 						</div>
 						<div class="consumes-row">
@@ -600,19 +563,10 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			}
 		};
 
-		const selfBuffsSection = this.rootElem.getElementsByClassName('self-buffs-section')[0] as HTMLElement;
+		const playerIconsSection = this.rootElem.getElementsByClassName('player-iconrow')[0] as HTMLElement;
 		configureIconSection(
-			selfBuffsSection,
-			this.individualConfig.selfBuffInputs.map(iconInput => new IndividualSimIconPicker(selfBuffsSection, this.player, iconInput, this)),
-			Tooltips.SELF_BUFFS_SECTION);
-
-		if (this.individualConfig.petInputs?.length) {
-			const petsSection = this.rootElem.getElementsByClassName('pets-section')[0] as HTMLElement;
-			configureIconSection(
-				petsSection,
-				this.individualConfig.petInputs.map(iconInput => new IndividualSimIconPicker(petsSection, this.player, iconInput, this)),
-				Tooltips.PETS_SECTION);
-		}
+			playerIconsSection,
+			this.individualConfig.playerIconInputs.map(iconInput => new IndividualSimIconPicker(playerIconsSection, this.player, iconInput, this)));
 
 		const buffOptions = this.splitRelevantOptions([
 			{ item: IconInputs.AllStatsBuff, stats: [] },
@@ -787,21 +741,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			new IconEnumPicker(elem, this.player, IconInputs.makeFoodInput(foodOptions));
 		}
 
-		if (this.individualConfig.weaponImbueInputs?.length) {
-			const mhImbueSection = this.rootElem.getElementsByClassName('consumes-imbue-mh')[0] as HTMLElement;
-			configureIconSection(
-				mhImbueSection,
-				this.individualConfig.weaponImbueInputs.map(iconInput => new IndividualSimIconPicker(mhImbueSection, this.player, iconInput, this)),
-				);
-			const ohImbueSection = this.rootElem.getElementsByClassName('consumes-imbue-oh')[0] as HTMLElement;
-			if (isDualWieldSpec(this.player.spec)) {
-				configureIconSection(
-					ohImbueSection,
-					this.individualConfig.weaponImbueInputs.map(iconInput => new IndividualSimIconPicker(ohImbueSection, this.player, iconInput, this)),
-					);
-			}
-		}
-
 		const tradeConsumesElem = this.rootElem.getElementsByClassName('consumes-trade')[0] as HTMLElement;
 		tradeConsumesElem.parentElement!.style.display = 'none';
 		//new IndividualSimIconPicker(tradeConsumesElem, this.player, IconInputs.SuperSapper, this);
@@ -842,12 +781,11 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			});
 		};
 
-		if (this.individualConfig.spellInputs?.length) {
-			const spellSection = this.rootElem.getElementsByClassName('spell-section')[0] as HTMLElement;
+		if (this.individualConfig.rotationIconInputs?.length) {
+			const rotationIconSection = this.rootElem.getElementsByClassName('rotation-iconrow')[0] as HTMLElement;
 			configureIconSection(
-				spellSection,
-				this.individualConfig.spellInputs.map(iconInput => new IndividualSimIconPicker(spellSection, this.player, iconInput, this)),
-				Tooltips.SPELLS_SECTION);
+				rotationIconSection,
+				this.individualConfig.rotationIconInputs.map(iconInput => new IndividualSimIconPicker(rotationIconSection, this.player, iconInput, this)));
 		}
 
 
