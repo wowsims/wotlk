@@ -169,7 +169,7 @@ func (unit *Unit) AddStatDynamic(sim *Simulation, stat stats.Stat, amount float6
 		panic("Not finalized, use AddStats instead!")
 	}
 
-	added := amount * (1 + unit.statBonuses[stat].Ratio)
+	added := amount * unit.statBonuses[stat].Multiplier
 
 	if stat == stats.MeleeHaste {
 		unit.AddMeleeHaste(sim, added)
@@ -204,7 +204,7 @@ func (unit *Unit) AddStatDynamic(sim *Simulation, stat stats.Stat, amount float6
 		if v == 0 {
 			continue
 		}
-		unit.AddStatDynamic(sim, k, v*added) // this should handle descending
+		unit.AddStatDynamic(sim, k, (v-1)*added) // this should handle descending
 	}
 }
 
@@ -215,17 +215,20 @@ func (unit *Unit) applyStatDependencies(ss stats.Stats) stats.Stats {
 	var addstat func(s stats.Stat, v float64)
 
 	addstat = func(s stats.Stat, v float64) {
-		added := v * (unit.statBonuses[s].Ratio + 1)
+		added := v * unit.statBonuses[s].Multiplier
 		news[s] += added
 		for k, v := range unit.statBonuses[s].Deps {
 			if v == 0 {
 				continue
 			}
-			addstat(k, v*added)
+			addstat(k, (v-1)*added)
 		}
 	}
 
 	for s, v := range ss {
+		if unit.statBonuses[s].Multiplier == 0 {
+			unit.statBonuses[s].Multiplier = 1
+		}
 		if v == 0 {
 			continue
 		}
@@ -236,31 +239,45 @@ func (unit *Unit) applyStatDependencies(ss stats.Stats) stats.Stats {
 }
 
 // AddStatDependency will add source stat * ratio to the modified stat.
-func (unit *Unit) AddStatDependency(source, modified stats.Stat, ratio float64) {
+func (unit *Unit) AddStatDependency(source, modified stats.Stat, multiplier float64) {
 	if unit.Env != nil && unit.Env.IsFinalized() {
 		panic("Already finalized, can't add more dependencies!")
 	}
 	if source == modified {
-		unit.statBonuses[source].Ratio = ((unit.statBonuses[source].Ratio + 1) * (ratio + 1)) - 1
+		if unit.statBonuses[source].Multiplier == 0 {
+			unit.statBonuses[source].Multiplier = multiplier
+		} else {
+			unit.statBonuses[source].Multiplier *= multiplier
+		}
 		return
 	}
 	if unit.statBonuses[source].Deps == nil {
-		unit.statBonuses[source].Deps = map[stats.Stat]float64{}
+		unit.statBonuses[source].Deps = map[stats.Stat]float64{
+			modified: multiplier,
+		}
+	} else if unit.statBonuses[source].Deps[modified] == 0 {
+		unit.statBonuses[source].Deps[modified] = multiplier
+	} else {
+		unit.statBonuses[source].Deps[modified] *= multiplier
 	}
-	unit.statBonuses[source].Deps[modified] = ((unit.statBonuses[source].Deps[modified] + 1) * (ratio + 1)) - 1
 }
 
 // AddStatDependencyDynamic will dynamically adjust stats based on the change to the dependency.
-func (unit *Unit) AddStatDependencyDynamic(sim *Simulation, source, modified stats.Stat, ratio float64) {
+func (unit *Unit) AddStatDependencyDynamic(sim *Simulation, source, modified stats.Stat, multiplier float64) {
 	if unit.Env == nil || !unit.Env.IsFinalized() {
 		panic("Not finalized, use AddStatDependency instead!")
 	}
 	if source == modified {
-		old := unit.statBonuses[source].Ratio + 1
-		new := ratio + 1
-		unit.statBonuses[source].Ratio = (old * new) - 1
-		bonus := (unit.stats[source] * ((new / old) - 1)) / new // divide again by new multiplier because its re-added in AddStatDynamic
+		oldMultiplier := 1.0
+		if unit.statBonuses[source].Multiplier == 0 {
+			unit.statBonuses[source].Multiplier = multiplier
+		} else {
+			oldMultiplier = unit.statBonuses[source].Multiplier
+			unit.statBonuses[source].Multiplier *= multiplier
+		}
 		// Now modify the stat itself
+		stat := unit.stats[source]
+		bonus := ((stat * unit.statBonuses[source].Multiplier / oldMultiplier) - stat) / unit.statBonuses[source].Multiplier
 		unit.AddStatDynamic(sim, source, bonus)
 		return
 	}
@@ -268,11 +285,22 @@ func (unit *Unit) AddStatDependencyDynamic(sim *Simulation, source, modified sta
 	if unit.statBonuses[source].Deps == nil {
 		unit.statBonuses[source].Deps = map[stats.Stat]float64{}
 	}
-	oldMultiplier := unit.statBonuses[source].Deps[modified] + 1
-	newMultiplier := ((unit.statBonuses[source].Deps[modified] + 1) * (ratio + 1))
-	unit.statBonuses[source].Deps[modified] = newMultiplier - 1
+	oldMultiplier := 1.0
+	if unit.statBonuses[source].Deps == nil {
+		unit.statBonuses[source].Deps = map[stats.Stat]float64{
+			modified: multiplier,
+		}
+	} else if unit.statBonuses[source].Deps[modified] == 0 {
+		unit.statBonuses[source].Deps[modified] = multiplier
+	} else {
+		oldMultiplier = unit.statBonuses[source].Deps[modified]
+		unit.statBonuses[source].Deps[modified] *= multiplier
+	}
+
+	stat := unit.stats[source]
+	bonus := ((stat * unit.statBonuses[source].Deps[modified] / oldMultiplier) - stat) / unit.statBonuses[source].Deps[modified]
 	// Now apply the newly gained stats
-	unit.AddStatDynamic(sim, modified, unit.stats[source]*((newMultiplier/oldMultiplier)-1))
+	unit.AddStatDynamic(sim, modified, bonus)
 }
 
 // finalizeStatDeps will descend the tree of each stat's depedencies and verify
