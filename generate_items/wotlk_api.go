@@ -83,7 +83,7 @@ var wotlkdbExpertiseRegex = regexp.MustCompile("Increases expertise rating by <!
 
 var wotlkdbDefenseRegex = regexp.MustCompile("Equip: Increases defense rating by <!--rtg12-->([0-9]+)")
 var wotlkdbDefenseRegex2 = regexp.MustCompile("Equip: Increases defense rating by ([0-9]+)")
-var wotlkdbBlockRegex = regexp.MustCompile(`Equip: Increases your shield block rating by <!--rtg15-->([0-9]+)\.`)
+var wotlkdbBlockRegex = regexp.MustCompile(`Equip: Increases your shield block rating by <!--rtg15-->([0-9]+)`)
 var wotlkdbBlockRegex2 = regexp.MustCompile("Equip: Increases your shield block rating by ([0-9]+)")
 var wotlkdbBlockValueRegex = regexp.MustCompile(`Equip: Increases the block value of your shield by ([0-9]+)\.`)
 var wotlkdbBlockValueRegex2 = regexp.MustCompile("<span>([0-9]+) Block</span>")
@@ -91,7 +91,7 @@ var wotlkdbDodgeRegex = regexp.MustCompile("Increases your dodge rating by <!--r
 var wotlkdbDodgeRegex2 = regexp.MustCompile("Increases your dodge rating by ([0-9]+)")
 var wotlkdbParryRegex = regexp.MustCompile("Increases your parry rating by <!--rtg14-->([0-9]+)")
 var wotlkdbParryRegex2 = regexp.MustCompile("Increases your parry rating by ([0-9]+)")
-var wotlkdbResilienceRegex = regexp.MustCompile("Improves your resilience rating by <!--rtg35-->([0-9]+)")
+var wotlkdbResilienceRegex = regexp.MustCompile("Increases your resilience rating by <!--rtg35-->([0-9]+)")
 var wotlkdbArcaneResistanceRegex = regexp.MustCompile(`\+([0-9]+) Arcane Resistance`)
 var wotlkdbFireResistanceRegex = regexp.MustCompile(`\+([0-9]+) Fire Resistance`)
 var wotlkdbFrostResistanceRegex = regexp.MustCompile(`\+([0-9]+) Frost Resistance`)
