@@ -100,3 +100,11 @@ func (deathKnight *DeathKnight) registerArmyOfTheDeadCD() {
 func (deathKnight *DeathKnight) CanArmyOfTheDead(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 1, 1, 1) && deathKnight.ArmyOfTheDead.IsReady(sim)
 }
+
+func (deathKnight *DeathKnight) CastArmyOfTheDead(sim *core.Simulation, target *core.Unit) bool {
+	if deathKnight.CanArmyOfTheDead(sim) {
+		deathKnight.ArmyOfTheDead.Cast(sim, target)
+		return true
+	}
+	return false
+}

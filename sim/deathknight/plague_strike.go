@@ -99,3 +99,11 @@ func (deathKnight *DeathKnight) registerPlagueStrikeSpell() {
 func (deathKnight *DeathKnight) CanPlagueStrike(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 0, 0, 1) && deathKnight.PlagueStrike.IsReady(sim)
 }
+
+func (deathKnight *DeathKnight) CastPlagueStrike(sim *core.Simulation, target *core.Unit) bool {
+	if deathKnight.CanPlagueStrike(sim) {
+		deathKnight.PlagueStrike.Cast(sim, target)
+		return true
+	}
+	return false
+}

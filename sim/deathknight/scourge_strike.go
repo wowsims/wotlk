@@ -99,3 +99,11 @@ func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
 func (deathKnight *DeathKnight) CanScourgeStrike(sim *core.Simulation) bool {
 	return deathKnight.Talents.ScourgeStrike && deathKnight.CastCostPossible(sim, 0.0, 0, 1, 1) && deathKnight.ScourgeStrike.IsReady(sim)
 }
+
+func (deathKnight *DeathKnight) CastScourgeStrike(sim *core.Simulation, target *core.Unit) bool {
+	if deathKnight.CanScourgeStrike(sim) {
+		deathKnight.ScourgeStrike.Cast(sim, target)
+		return true
+	}
+	return false
+}

@@ -85,3 +85,11 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 func (deathKnight *DeathKnight) CanIcyTouch(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 0, 1, 0) && deathKnight.IcyTouch.IsReady(sim)
 }
+
+func (deathKnight *DeathKnight) CastIcyTouch(sim *core.Simulation, target *core.Unit) bool {
+	if deathKnight.CanIcyTouch(sim) {
+		deathKnight.IcyTouch.Cast(sim, target)
+		return true
+	}
+	return false
+}

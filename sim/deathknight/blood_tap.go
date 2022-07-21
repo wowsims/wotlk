@@ -47,3 +47,11 @@ func (deathKnight *DeathKnight) registerBloodTapSpell() {
 func (deathKnight *DeathKnight) CanBloodTap(sim *core.Simulation) bool {
 	return deathKnight.BloodTap.IsReady(sim) && deathKnight.BloodTap.CD.IsReady(sim)
 }
+
+func (deathKnight *DeathKnight) CastBloodTap(sim *core.Simulation, target *core.Unit) bool {
+	if deathKnight.CanBloodTap(sim) {
+		deathKnight.BloodTap.Cast(sim, target)
+		return true
+	}
+	return false
+}

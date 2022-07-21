@@ -154,6 +154,6 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 		// Start proper Frost rotation
 
 		// Frost DK rota
-		deathKnight.doDKRotation(sim, true)
+		deathKnight.DoRotation(sim)
 	}
 }

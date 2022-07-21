@@ -54,3 +54,11 @@ func (deathKnight *DeathKnight) registerEmpowerRuneWeaponSpell() {
 func (deathKnight *DeathKnight) CanEmpowerRuneWeapon(sim *core.Simulation) bool {
 	return deathKnight.EmpowerRuneWeapon.IsReady(sim)
 }
+
+func (deathKnight *DeathKnight) CastEmpowerRuneWeapon(sim *core.Simulation, target *core.Unit) bool {
+	if deathKnight.CanEmpowerRuneWeapon(sim) {
+		deathKnight.EmpowerRuneWeapon.Cast(sim, target)
+		return true
+	}
+	return false
+}

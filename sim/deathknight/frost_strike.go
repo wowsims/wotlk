@@ -96,3 +96,11 @@ func (deathKnight *DeathKnight) registerFrostStrikeSpell() {
 func (deathKnight *DeathKnight) CanFrostStrike(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 40.0, 0, 0, 0) && deathKnight.FrostStrike.IsReady(sim)
 }
+
+func (deathKnight *DeathKnight) CastFrostStrike(sim *core.Simulation, target *core.Unit) bool {
+	if deathKnight.CanFrostStrike(sim) {
+		deathKnight.FrostStrike.Cast(sim, target)
+		return true
+	}
+	return false
+}
