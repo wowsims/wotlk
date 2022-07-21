@@ -434,9 +434,9 @@ message RaidBuffs {
 	int32 demonic_pact = 37; // SP buff, variable : 10% of demonology warlock's own SP
 
 	// +5% Spell Crit and/or +3% Haste
-	bool swift_retribution = 7;
-	TristateEffect moonkin_aura = 8;
-	bool elemental_oath = 9;
+	bool swift_retribution = 7; //haste only
+	TristateEffect moonkin_aura = 8; //both crit and haste
+	bool elemental_oath = 9; //crit only
 
 	// 5% spell haste
 	bool wrath_of_air_totem = 27;

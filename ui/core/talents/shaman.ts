@@ -179,7 +179,7 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 					rowIdx: 7,
 					colIdx: 0,
 				},
-				spellIds: [63372],
+				spellIds: [63370, 63372],
 				maxPoints: 2,
 			},
 			{
@@ -210,7 +210,7 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 					rowIdx: 8,
 					colIdx: 0,
 				},
-				spellIds: [51474],
+				spellIds: [51474, 51478, 51479],
 				maxPoints: 3,
 			},
 			{
@@ -261,7 +261,7 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 					rowIdx: 0,
 					colIdx: 0,
 				},
-				spellIds: [16259, 16295, 16298],
+				spellIds: [16259, 16295, 52456],
 				maxPoints: 3,
 			},
 			{
@@ -270,7 +270,7 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 					rowIdx: 0,
 					colIdx: 1,
 				},
-				spellIds: [16043],
+				spellIds: [16043, 16130],
 				maxPoints: 2,
 			},
 			{
@@ -410,7 +410,7 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 					colIdx: 2,
 				},
 				spellIds: [29082, 29084, 29086],
-				maxPoints: 5,
+				maxPoints: 3,
 			},
 			{
 				fieldName: 'frozenPower',
@@ -462,7 +462,7 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 					rowIdx: 7,
 					colIdx: 0,
 				},
-				spellIds: [51527],
+				spellIds: [51525],
 				maxPoints: 3,
 			},
 			{
@@ -475,7 +475,7 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 					rowIdx: 6,
 					colIdx: 1,
 				},
-				spellIds: [51527],
+				spellIds: [60103],
 				maxPoints: 1,
 			},
 			{
@@ -745,7 +745,7 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 					rowIdx: 8,
 					colIdx: 0,
 				},
-				spellIds: [51558],
+				spellIds: [51556],
 				maxPoints: 3,
 			},
 			{

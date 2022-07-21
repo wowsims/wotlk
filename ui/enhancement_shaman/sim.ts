@@ -127,16 +127,9 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				ShamanInputs.IconWaterShield,
 				ShamanInputs.IconLightningShield,
 				ShamanInputs.IconBloodlust,
-			],
-			//	weaponImbues: [
-			//		WeaponImbue.WeaponImbueShamanWindfury,
-			//		WeaponImbue.WeaponImbueShamanFlametongue,
-			//		WeaponImbue.WeaponImbueShamanFrostbrand,
-			//		WeaponImbue.WeaponImbueShamanRockbiter,
-			//		WeaponImbue.WeaponImbueRighteousWeaponCoating,
-			//	],
+            ],
 			// Inputs to include in the 'Rotation' section on the settings tab.
-			rotationInputs: ShamanInputs.EnhancementShamanRotationConfig,
+			rotationInputs: ShamanInputs.EnhancementShamanRotationConfig, 
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [

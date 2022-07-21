@@ -63,14 +63,10 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 	enh.ApplyFrostbrandImbue(
 		enh.Consumes.MainHandImbue == proto.WeaponImbue_WeaponImbueShamanFrostbrand,
 		enh.Consumes.OffHandImbue == proto.WeaponImbue_WeaponImbueShamanFrostbrand)
-	enh.ApplyRockbiterImbue(
-		enh.Consumes.MainHandImbue == proto.WeaponImbue_WeaponImbueShamanRockbiter,
-		enh.Consumes.OffHandImbue == proto.WeaponImbue_WeaponImbueShamanRockbiter)
 
 	if enh.Consumes.MainHandImbue == proto.WeaponImbue_WeaponImbueShamanWindfury ||
 		enh.Consumes.MainHandImbue == proto.WeaponImbue_WeaponImbueShamanFlametongue ||
-		enh.Consumes.MainHandImbue == proto.WeaponImbue_WeaponImbueShamanFrostbrand ||
-		enh.Consumes.MainHandImbue == proto.WeaponImbue_WeaponImbueShamanRockbiter {
+		enh.Consumes.MainHandImbue == proto.WeaponImbue_WeaponImbueShamanFrostbrand {
 		enh.HasMHWeaponImbue = true
 	}
 

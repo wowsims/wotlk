@@ -15,3 +15,5 @@ sim/web/__debug_bin
 .dockerignore
 *.code-workspace
 wowsimwotlk
+
+package-lock.json
