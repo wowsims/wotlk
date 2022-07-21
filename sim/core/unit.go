@@ -404,7 +404,7 @@ func (unit *Unit) ApplyCastSpeed(dur time.Duration) time.Duration {
 }
 
 func (unit *Unit) SwingSpeed() float64 {
-	return unit.PseudoStats.MeleeSpeedMultiplier * (1 + (unit.stats[stats.MeleeHaste] / (HasteRatingPerHastePercent * 100)))
+	return unit.PseudoStats.MeleeSpeedMultiplier * (1 + (unit.stats[stats.MeleeHaste] / (unit.PseudoStats.MeleeHasteRatingPerHastePercent * 100)))
 }
 
 func (unit *Unit) Armor() float64 {
@@ -421,10 +421,10 @@ func (unit *Unit) RangedSwingSpeed() float64 {
 
 func (unit *Unit) AddMeleeHaste(sim *Simulation, amount float64) {
 	if amount > 0 {
-		mod := 1 + (amount / (HasteRatingPerHastePercent * 100))
+		mod := 1 + (amount / (unit.PseudoStats.MeleeHasteRatingPerHastePercent * 100))
 		unit.AutoAttacks.ModifySwingTime(sim, mod)
 	} else {
-		mod := 1 / (1 + (-amount / (HasteRatingPerHastePercent * 100)))
+		mod := 1 / (1 + (-amount / (unit.PseudoStats.MeleeHasteRatingPerHastePercent * 100)))
 		unit.AutoAttacks.ModifySwingTime(sim, mod)
 	}
 	unit.stats[stats.MeleeHaste] += amount

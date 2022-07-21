@@ -41,12 +41,9 @@ func (enh *EnhancementShaman) SetupRotationSchedule() {
 			var shock *core.Spell
 			if !enh.FlameShockDot.IsActive() {
 				shock = enh.FlameShock
-			} else if enh.Rotation.PrimaryShock == proto.EnhancementShaman_Rotation_Earth {
+			} else {
 				shock = enh.EarthShock
-			} else if enh.Rotation.PrimaryShock == proto.EnhancementShaman_Rotation_Frost {
-				shock = enh.FrostShock
-			}
-
+			} 
 			success := shock.Cast(sim, enh.CurrentTarget)
 			if !success {
 				enh.WaitForMana(sim, shock.CurCast.Cost)
@@ -54,16 +51,14 @@ func (enh *EnhancementShaman) SetupRotationSchedule() {
 			return success
 		},
 	}
-	if enh.Rotation.PrimaryShock != proto.EnhancementShaman_Rotation_None {
-		curTime = 0
-		for curTime <= maxDuration {
-			ability := shockAction
-			ability.DesiredCastAt = curTime
-			ability.MinCastAt = curTime
-			ability.MaxCastAt = curTime + time.Second*10
-			castAt := enh.scheduler.Schedule(ability)
-			curTime = castAt + shockCD
-		}
+	curTime = 0
+	for curTime <= maxDuration {
+		ability := shockAction
+		ability.DesiredCastAt = curTime
+		ability.MinCastAt = curTime
+		ability.MaxCastAt = curTime + time.Second*10
+		castAt := enh.scheduler.Schedule(ability)
+		curTime = castAt + shockCD
 	}
 	if enh.SelfBuffs.Bloodlust {
 		enh.scheduler.ScheduleMCD(enh.GetCharacter(), enh.BloodlustActionID())
