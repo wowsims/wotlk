@@ -494,7 +494,7 @@ export class ActionId {
 	}
 
 	static async getItemTooltipData(id: number): Promise<any> {
-		return await ActionId.getDbTooltipDataHelper(id, '/wotlk/assets/img/item_data/all_items_db.json');
+		return await ActionId.getDbTooltipDataHelper(id, '/wotlk/assets/item_data/all_items_db.json');
 		//if (USE_WOTLK_DB) {
 		//	return await ActionId.getWotlkdbTooltipDataHelper(id, 'item', itemToTooltipDataCache);
 		//} else {
@@ -503,7 +503,7 @@ export class ActionId {
 	}
 
 	static async getSpellTooltipData(id: number): Promise<any> {
-		return await ActionId.getDbTooltipDataHelper(id, '/wotlk/assets/img/spell_data/all_spells_db.json');
+		return await ActionId.getDbTooltipDataHelper(id, '/wotlk/assets/spell_data/all_spells_db.json');
 		//if (USE_WOTLK_DB) {
 		//	return await ActionId.getWotlkdbTooltipDataHelper(id, 'spell', spellToTooltipDataCache);
 		//} else {
