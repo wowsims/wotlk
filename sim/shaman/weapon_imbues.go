@@ -24,7 +24,7 @@ func (shaman *Shaman) newWindfuryImbueSpell(isMH bool) *core.Spell {
         apBonus += 212
     }
 
-	actionID := core.ActionID{SpellID: 258804}
+	actionID := core.ActionID{SpellID: 58804}
 
 	baseEffect := core.SpellEffect{
 		BonusAttackPower: apBonus,
