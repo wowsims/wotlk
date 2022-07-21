@@ -17,7 +17,7 @@ func (deathKnight *DeathKnight) newBloodStrikeSpell(isMH bool) *core.Spell {
 	guileOfGorefiend := deathKnight.Talents.GuileOfGorefiend > 0
 
 	effect := core.SpellEffect{
-		BonusCritRating:  (3.0*float64(deathKnight.Talents.Subversion) + 1.0*float64(deathKnight.Talents.Annihilation)) * core.CritRatingPerCritChance,
+		BonusCritRating:  (3.0*float64(deathKnight.Talents.Subversion) + deathKnight.annihilationCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: deathKnight.bloodOfTheNorthCoeff(),
 		ThreatMultiplier: 1,
 
@@ -43,7 +43,7 @@ func (deathKnight *DeathKnight) newBloodStrikeSpell(isMH bool) *core.Spell {
 	deathKnight.threatOfThassarianProcMasks(isMH, &effect, guileOfGorefiend)
 
 	return deathKnight.RegisterSpell(core.SpellConfig{
-		ActionID:     BloodStrikeActionID,
+		ActionID:     BloodStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool:  core.SpellSchoolPhysical,
 		Flags:        core.SpellFlagMeleeMetrics,
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
@@ -55,9 +55,9 @@ func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
 	deathKnight.BloodStrikeOhHit = deathKnight.newBloodStrikeSpell(false)
 
 	deathKnight.BloodStrike = deathKnight.RegisterSpell(core.SpellConfig{
-		ActionID:    BloodStrikeActionID,
+		ActionID:    BloodStrikeActionID.WithTag(3),
+		Flags:       core.SpellFlagNoMetrics | core.SpellFlagNoLogs,
 		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -69,14 +69,15 @@ func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskMeleeMHSpecial,
+			ProcMask:         core.ProcMaskEmpty,
 			ThreatMultiplier: 1,
 
 			OutcomeApplier: deathKnight.OutcomeFuncAlwaysHit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				deathKnight.threatOfThassarianProc(sim, spellEffect, deathKnight.BloodStrikeMhHit, deathKnight.BloodStrikeOhHit)
-				deathKnight.threatOfThassarianAdjustMetrics(sim, spell, spellEffect, BloodStrikeMHOutcome)
+
+				deathKnight.LastCastOutcome = BloodStrikeMHOutcome
 
 				if deathKnight.outcomeEitherWeaponHitOrCrit(BloodStrikeMHOutcome, BloodStrikeOHOutcome) {
 					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 1, 0, 0)

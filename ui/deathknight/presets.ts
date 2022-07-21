@@ -81,6 +81,7 @@ export const DefaultRotation = DeathKnightRotation.create({
   unholyPresenceOpener: false,
   useDeathAndDecay: false,
 	refreshHornOfWinter: false,
+	wipFrostRotation: true,
 });
 
 export const DefaultOptions = DeathKnightOptions.create({
@@ -296,97 +297,96 @@ export const P1_FROST_PRE_BIS_PRESET = {
 export const P1_FROST_BIS_PRESET = {
 	name: 'P1 Frost BiS Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-        {
-          "id": 44006,
-          "enchant": 44879,
-          "gems": [
-            41398,
-            40022
-          ]
-        },
-        {
-          "id": 44664,
-          "gems": [
-            39996
-          ]
-        },
-        {
-          "id": 40557,
-          "enchant": 44871,
-          "gems": [
-            39996
-          ]
-        },
-        {
-          "id": 40403,
-          "enchant": 55002
-        },
-        {
-          "id": 40550,
-          "enchant": 44623,
-          "gems": [
-            42142,
-            39996
-          ]
-        },
-        {
-          "id": 40330,
-          "enchant": 60616,
-          "gems": [
-            39996,
-            0
-          ]
-        },
-        {
-          "id": 40552,
-          "enchant": 54999,
-          "gems": [
-            39996,
-            0
-          ]
-        },
-        {
-          "id": 40694,
-          "gems": [
-            39996,
-            42142
-          ]
-        },
-        {
-          "id": 40556,
-          "enchant": 38374,
-          "gems": [
-            42142,
-            39996
-          ]
-        },
-        {
-          "id": 40591,
-          "enchant": 55016
-        },
-        {
-          "id": 39401
-        },
-        {
-          "id": 40075
-        },
-        {
-          "id": 40431
-        },
-        {
-          "id": 42987
-        },
-        {
-          "id": 40189,
-          "enchant": 53343
-        },
-        {
-          "id": 40407,
-          "enchant": 53344
-        },
-        {
-          "id": 40715
-        }
-      ]}`),
+	gear: EquipmentSpec.fromJsonString(`{ "items": [
+    {
+      "id": 44006,
+      "enchant": 44879,
+      "gems": [
+        41398,
+        40022
+      ]
+    },
+    {
+      "id": 44664,
+      "gems": [
+        39996
+      ]
+    },
+    {
+      "id": 40557,
+      "enchant": 44871,
+      "gems": [
+        39996
+      ]
+    },
+    {
+      "id": 40403,
+      "enchant": 55002
+    },
+    {
+      "id": 40550,
+      "enchant": 44623,
+      "gems": [
+        42142,
+        39996
+      ]
+    },
+    {
+      "id": 40330,
+      "enchant": 60616,
+      "gems": [
+        39996,
+        0
+      ]
+    },
+    {
+      "id": 40552,
+      "enchant": 54999,
+      "gems": [
+        39996,
+        0
+      ]
+    },
+    {
+      "id": 40317,
+      "gems": [
+        42142
+      ]
+    },
+    {
+      "id": 40556,
+      "enchant": 38374,
+      "gems": [
+        42142,
+        39996
+      ]
+    },
+    {
+      "id": 40591,
+      "enchant": 55016
+    },
+    {
+      "id": 39401
+    },
+    {
+      "id": 40075
+    },
+    {
+      "id": 40684
+    },
+    {
+      "id": 42987
+    },
+    {
+      "id": 40189,
+      "enchant": 53343
+    },
+    {
+      "id": 40189,
+      "enchant": 53344
+    },
+    {
+      "id": 40207
+    }
+  ]}`),
 };

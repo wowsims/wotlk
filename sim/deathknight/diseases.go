@@ -32,7 +32,7 @@ func (deathKnight *DeathKnight) TargetHasDisease(label string, unit *core.Unit) 
 }
 
 func (deathKnight *DeathKnight) diseaseMultiplierBonus(target *core.Unit, multiplier float64) float64 {
-	return 1.0 + float64(deathKnight.countActiveDiseases(target))*multiplier
+	return 1.0 + float64(deathKnight.countActiveDiseases(target))*deathKnight.darkrunedBattlegearDiseaseBonus(multiplier)
 }
 
 func (deathKnight *DeathKnight) registerDiseaseDots() {
@@ -106,6 +106,11 @@ func (deathKnight *DeathKnight) registerBloodPlague() {
 	for _, encounterTarget := range deathKnight.Env.Encounter.Targets {
 		target := &encounterTarget.Unit
 
+		// Tier9 4Piece
+		outcomeApplier := deathKnight.OutcomeFuncAlwaysHit()
+		if deathKnight.HasSetBonus(ItemSetThassariansBattlegear, 4) {
+			outcomeApplier = deathKnight.OutcomeFuncMagicCrit(deathKnight.spellCritMultiplier())
+		}
 		deathKnight.BloodPlagueDisease[target.Index] = core.NewDot(core.Dot{
 			Aura: target.RegisterAura(core.Aura{
 				Label:    BloodPlagueAuraLabel + strconv.Itoa(int(deathKnight.Index)),
@@ -119,6 +124,8 @@ func (deathKnight *DeathKnight) registerBloodPlague() {
 				DamageMultiplier: 1,
 				ThreatMultiplier: 1,
 				IsPeriodic:       true,
+				OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				},
 				OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 					deathKnight.doWanderingPlague(sim, spell, spellEffect)
 				},
@@ -130,7 +137,7 @@ func (deathKnight *DeathKnight) registerBloodPlague() {
 					},
 					TargetSpellCoefficient: 1,
 				},
-				OutcomeApplier: deathKnight.OutcomeFuncAlwaysHit(),
+				OutcomeApplier: outcomeApplier,
 			}),
 		})
 

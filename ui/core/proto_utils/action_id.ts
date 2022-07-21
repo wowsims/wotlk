@@ -250,6 +250,23 @@ export class ActionId {
 					name += ' (Spell)';
 				}
 				break;
+			case 'Frost Strike':
+			case 'Plague Strike':
+			case 'Blood Strike':
+			case 'Obliterate':
+					if (this.tag == 1) {
+						name += ' (Main Hand)';
+					} else if (this.tag == 2) {
+						name += ' (Off Hand)';
+					}
+					break;
+			case 'Scourge Strike':
+				if (this.tag == 1) {
+					name += ' (Physical)';
+				} else if (this.tag == 2) {
+					name += ' (Shadow)';
+				}
+				break;
 			case 'Lightning Speed':
 			case 'Windfury Weapon':
 				if (this.tag == 1) {
