@@ -22,7 +22,7 @@ func (paladin *Paladin) RegisterAvengingWrathCD() {
 		},
 	})
 
-	baseCost := 236.0
+	baseCost := paladin.BaseMana * 0.08
 
 	spell := paladin.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
