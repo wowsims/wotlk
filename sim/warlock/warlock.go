@@ -143,7 +143,7 @@ func NewWarlock(character core.Character, options proto.Player) *Warlock {
 	warlock.Character.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
 
 	if warlock.Options.Armor == proto.Warlock_Options_FelArmor {
-		amount := 180.0 + 0.3*float64(stats.Spirit)
+		amount := 180.0 + 0.3*float64(stats.Spirit) // TODO: does this need to be dynamic with spirit?
 		amount *= 1 + float64(warlock.Talents.DemonicAegis)*0.1
 		warlock.AddStat(stats.SpellPower, amount)
 	}
