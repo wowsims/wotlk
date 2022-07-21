@@ -21,7 +21,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 2755.948800000001
   final_stats: 57
-  final_stats: 2190.9516760000006
+  final_stats: 2190.951676
   final_stats: 0
   final_stats: 0
   final_stats: 0
@@ -33,7 +33,7 @@ character_stats_results: {
   final_stats: 78
   final_stats: 0
   final_stats: 0
-  final_stats: 2480.3353760565487
+  final_stats: 2480.3353760565496
   final_stats: 0
   final_stats: 0
   final_stats: 16572.885
@@ -1095,9 +1095,9 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-Average-Default"
  value: {
-  dps: 655.1510145127479
-  tps: 967.6569845521476
-  dtps: 603.5972378457267
+  dps: 658.3011291079828
+  tps: 978.0192040426853
+  dtps: 677.7782006857819
  }
 }
 dps_results: {
@@ -1145,8 +1145,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 764.3387822112928
-  tps: 1121.2654279274038
-  dtps: 573.891739365873
+  dps: 769.096843508428
+  tps: 1135.3702456282533
+  dtps: 644.3562730204628
  }
 }
