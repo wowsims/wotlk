@@ -116,16 +116,12 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			playerIconInputs: [
 				WarlockInputs.FelArmor,
 				WarlockInputs.DemonArmor,
-			],
-			imbueInputs: [
-				WarlockInputs.GrandSpellstone,
-				WarlockInputs.GrandFirestone,
-			],
-			petInputs: [
 				WarlockInputs.SummonImp,
 				WarlockInputs.SummonSuccubus,
 				WarlockInputs.SummonFelhunter,
 				WarlockInputs.SummonFelguard,
+				WarlockInputs.GrandSpellstone,
+				WarlockInputs.GrandFirestone,
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationIconInputs: [

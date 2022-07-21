@@ -178,9 +178,7 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 	playerIconInputs: Array<IndividualSimIconPickerConfig<Player<any>, any>>,
 	petConsumeInputs?: Array<IconPickerConfig<Player<any>, any>>,
 	rotationInputs: InputSection;
-	rotationIconInputs?: Array<IndividualSimIconPickerConfig<Player<any>, any>>,
-	imbueInputs: Array<IndividualSimIconPickerConfig<Player<any>, any>>,
-	petInputs: Array<IndividualSimIconPickerConfig<Player<any>, any>>,
+	rotationIconInputs?: Array<IndividualSimIconPickerConfig<Player<any>, any>>;
 	otherInputs?: InputSection;
 
 	// Extra UI sections with the same input config as other sections.
@@ -474,33 +472,11 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 					</fieldset>
 					<fieldset class="settings-section race-section">
 						<legend>Player</legend>
-						<div class="player-row">
-							<span>Self-Buffs</span>
-							<div class="player-row-inputs">
-								<div class="settings-section-iconrow player-iconrow"></div>
-							</div>
-						</div>
-						<div class="player-row">
-							<span>Imbues</span>
-							<div class="player-row-inputs">
-								<div class="settings-section-iconrow imbue-iconrow"></div>
-							</div>
-						</div>
-						<div class="player-row">
-							<span>Pets</span>
-							<div class="player-row-inputs">
-								<div class="settings-section-iconrow pet-iconrow"></div>
-							</div>
-						</div>
+						<div class="settings-section-iconrow player-iconrow"></div>
 					</fieldset>
 					<fieldset class="settings-section rotation-section">
 						<legend>Rotation</legend>
-						<div class="player-row">
-							<span>Spells</span>
-							<div class="player-row-inputs">
-								<div class="settings-section-iconrow rotation-iconrow"></div>
-							</div>
-						</div>
+						<div class="settings-section-iconrow rotation-iconrow"></div>
 					</fieldset>
 				</div>
 				<div class="settings-section-container custom-sections-container">
@@ -591,20 +567,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		const playerIconsSection = this.rootElem.getElementsByClassName('player-iconrow')[0] as HTMLElement;
 		configureIconSection(
 			playerIconsSection,
-			this.individualConfig.playerIconInputs.map(iconInput => new IndividualSimIconPicker(playerIconsSection, this.player, iconInput, this)),
-			);
-
-		const imbueSection = this.rootElem.getElementsByClassName('imbue-iconrow')[0] as HTMLElement;
-		configureIconSection(
-			imbueSection,
-			this.individualConfig.imbueInputs.map(iconInput => new IndividualSimIconPicker(imbueSection, this.player, iconInput, this)),
-			);
-
-		const petSection = this.rootElem.getElementsByClassName('pet-iconrow')[0] as HTMLElement;
-		configureIconSection(
-			petSection,
-			this.individualConfig.petInputs.map(iconInput => new IndividualSimIconPicker(petSection, this.player, iconInput, this)),
-			);
+			this.individualConfig.playerIconInputs.map(iconInput => new IndividualSimIconPicker(playerIconsSection, this.player, iconInput, this)));
 
 		const buffOptions = this.splitRelevantOptions([
 			{ item: IconInputs.AllStatsBuff, stats: [] },

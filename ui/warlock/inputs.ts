@@ -357,7 +357,24 @@ export const WarlockRotationConfig = {
 				changedEvent: (player: Player<Spec.SpecWarlock>) => player.rotationChangeEmitter,
 				getValue: (player: Player<Spec.SpecWarlock>) => player.getRotation().preset,
 				setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: number) => {
-					const newRotation = player.getRotation();
+					var newRotation = player.getRotation();
+					var newOptions = player.getSpecOptions();
+						if (newRotation.type == RotationType.Affliction) {
+							player.setTalentsString(eventID, Presets.AfflictionTalents.data.talentsString);
+							player.setGlyphs(eventID, Presets.AfflictionTalents.data.glyphs || Glyphs.create());
+							newRotation = Presets.AfflictionRotation
+							newOptions = Presets.AfflictionOptions
+						} else if (newRotation.type == RotationType.Demonology) {
+							player.setTalentsString(eventID, Presets.DemonologyTalents.data.talentsString);
+							player.setGlyphs(eventID, Presets.DemonologyTalents.data.glyphs || Glyphs.create());
+							newRotation = Presets.DemonologyRotation
+							newOptions = Presets.DemonologyOptions
+						} else if (newRotation.type == RotationType.Destruction) {
+							player.setTalentsString(eventID, Presets.DestructionTalents.data.talentsString);
+							player.setGlyphs(eventID, Presets.DestructionTalents.data.glyphs || Glyphs.create());
+							newRotation = Presets.DestructionRotation
+							newOptions = Presets.DestructionOptions
+						}
 					newRotation.preset = newValue;
 					player.setRotation(eventID, newRotation);
 				},
