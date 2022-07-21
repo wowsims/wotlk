@@ -13,6 +13,7 @@ import { Consumes,
 	Spec,
 	Stat,
 	TristateEffect,
+	Race,
 } from '/wotlk/core/proto/common.js';
 import { SavedTalents } from '/wotlk/core/proto/ui.js';
 import { Player } from '/wotlk/core/player.js';
@@ -157,6 +158,7 @@ export const DefaultIndividualBuffs = IndividualBuffs.create({
 	blessingOfKings: true,
 	blessingOfWisdom: TristateEffect.TristateEffectImproved,
 	blessingOfMight: TristateEffect.TristateEffectImproved,
+	vampiricTouch: true,
 });
 
 export const DefaultDebuffs = Debuffs.create({
@@ -171,7 +173,8 @@ export const DefaultDebuffs = Debuffs.create({
 export const SWP_BIS = {
 	name: 'SWP BiS',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
+	gear: EquipmentSpec.fromJsonString(`
+{"items": [
         {
           "id": 34340,
           "enchant": 29191,
@@ -271,7 +274,8 @@ export const SWP_BIS = {
             35760
           ]
         }
-      ]}`),
+      ]}
+    `),
 };
 export const P1_PreBiS = {
 	name: 'Pre-BiS',
@@ -282,19 +286,22 @@ export const P1_PreBiS = {
           "id": 44910,
           "enchant": 29191,
           "gems": [
-            34220,
-            32215
+            41285,
+            40113
           ]
         },
         {
-          "id": 40680
+          "id": 42647,
+          "gems": [
+            40113
+          ]
         },
         {
           "id": 34210,
           "enchant": 28886,
           "gems": [
-            32215,
-            35760
+            40113,
+            40155
           ]
         },
         {
@@ -305,8 +312,8 @@ export const P1_PreBiS = {
           "id": 39497,
           "enchant": 24003,
           "gems": [
-            32196,
-            35760
+            40113,
+            40155
           ]
         },
         {
@@ -317,16 +324,18 @@ export const P1_PreBiS = {
           ]
         },
         {
-          "id": 42113,
-          "enchant": 28272,
+          "id": 34344,
+          "enchant": 54999,
           "gems": [
+            40155,
+            40113,
             0
           ]
         },
         {
           "id": 40696,
           "gems": [
-            35760,
+            40155,
             0
           ]
         },
@@ -334,16 +343,16 @@ export const P1_PreBiS = {
           "id": 34181,
           "enchant": 24274,
           "gems": [
-            32196,
-            32196,
-            35760
+            40113,
+            40113,
+            40155
           ]
         },
         {
           "id": 44202,
           "enchant": 35297,
           "gems": [
-            35760
+            40133
           ]
         },
         {
@@ -359,7 +368,7 @@ export const P1_PreBiS = {
           "id": 40682
         },
         {
-          "id": 49076
+          "id": 37873
         },
         {
           "id": 37360,
@@ -367,25 +376,12 @@ export const P1_PreBiS = {
         },
         {},
         {
-          "id": 37177
+          "id": 34347,
+          "gems": [
+            40155
+          ]
         }
       ]
-    }`),
+    }
+    `),
 }
-//   "player": {
-//     "name": "Player",
-//     "race": "RaceBloodElf",
-//     "class": "ClassWarlock",
-//     "equipment": {
-      
-//     "profession1": "Engineering",
-//     "profession2": "Tailoring",
-//   },
-//   "encounter": {
-//     "executeProportion20": 0.25,
-//   },
-//   "settings": {
-//     "iterations": 1000,
-//     "phase": 1,
-//     "faction": "Horde"
-//   },

@@ -23,6 +23,8 @@ import { SimUI } from '../sim_ui.js';
 export interface EncounterPickerConfig {
 	simpleTargetStats?: Array<Stat>;
 	showExecuteProportion: boolean;
+	executeProportion20?: number;
+	executeProportion35?: number;
 }
 
 export class EncounterPicker extends Component {

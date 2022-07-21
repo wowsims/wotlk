@@ -326,11 +326,11 @@ func init() {
 		character := agent.GetCharacter()
 		actionID := core.ActionID{SpellID: 54758}
 
-		procAura := character.NewTemporaryStatsAura("Hyperspeed Acceleration", actionID, stats.Stats{stats.MeleeHaste: 340, stats.SpellHaste: 340}, time.Second*10)
+		procAura := character.NewTemporaryStatsAura("Hyperspeed Acceleration", actionID, stats.Stats{stats.MeleeHaste: 340, stats.SpellHaste: 340}, time.Second*12)
 
 		spell := character.GetOrRegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
-			SpellSchool: core.SpellSchoolPhysical,
+			SpellSchool: core.SpellSchoolPhysical | core.SpellSchoolMagic,
 			Flags:       core.SpellFlagNoOnCastComplete,
 
 			Cast: core.CastConfig{
@@ -340,7 +340,7 @@ func init() {
 				},
 				SharedCD: core.Cooldown{
 					Timer:    character.GetOffensiveTrinketCD(),
-					Duration: time.Second * 10,
+					Duration: time.Second * 12,
 				},
 			},
 

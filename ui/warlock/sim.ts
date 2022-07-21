@@ -5,6 +5,7 @@ import { RaidBuffs,
 	Spec,
 	Stat,
 	TristateEffect,
+	Race,
 } from '/wotlk/core/proto/common.js';
 
 import { Stats } from '/wotlk/core/proto_utils/stats.js';
@@ -37,6 +38,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			knownIssues: [
 
 			],
+			// race: Race.RaceOrc,
 
 			// All stats for which EP should be calculated.
 			epStats: [
@@ -154,7 +156,8 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 					Stat.StatArmor,
 				],
 				// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
-				showExecuteProportion: false,
+				showExecuteProportion: true,
+				executeProportion20: 0.25,
 			},
 
 			presets: {
