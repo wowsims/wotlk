@@ -215,6 +215,9 @@ func (unit *Unit) applyStatDependencies(ss stats.Stats) stats.Stats {
 	var addstat func(s stats.Stat, v float64)
 
 	addstat = func(s stats.Stat, v float64) {
+		if unit.statBonuses[s].Multiplier == 0 {
+			unit.statBonuses[s].Multiplier = 1
+		}
 		added := v * unit.statBonuses[s].Multiplier
 		news[s] += added
 		for k, v := range unit.statBonuses[s].Deps {
@@ -226,9 +229,6 @@ func (unit *Unit) applyStatDependencies(ss stats.Stats) stats.Stats {
 	}
 
 	for s, v := range ss {
-		if unit.statBonuses[s].Multiplier == 0 {
-			unit.statBonuses[s].Multiplier = 1
-		}
 		if v == 0 {
 			continue
 		}
@@ -322,6 +322,9 @@ func (unit *Unit) finalizeStatDeps() {
 	}
 
 	for s := range unit.stats {
+		if unit.statBonuses[s].Multiplier == 0 {
+			unit.statBonuses[s].Multiplier = 1
+		}
 		seen = map[stats.Stat]struct{}{
 			stats.Stat(s): {}, // mark this stat already seen.
 		}

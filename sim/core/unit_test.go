@@ -86,3 +86,28 @@ func TestCircularStatDependencies(t *testing.T) {
 	unit.AddStatDependency(stats.Intellect, stats.Agility, 1.0+1)
 	unit.finalizeStatDeps()
 }
+
+func TestMultipleStatDep(t *testing.T) {
+	unit := Unit{}
+
+	baseStat := stats.Stats{
+		stats.Intellect:  100,
+		stats.SpellPower: 100,
+	}
+
+	unit.AddStatDependency(stats.Intellect, stats.SpellPower, 1.2)
+	unit.AddStatDependency(stats.Intellect, stats.SpellPower, 1.2)
+	unit.AddStatDependency(stats.Intellect, stats.Intellect, 1.2)
+	unit.finalizeStatDeps()
+
+	expectedResult := stats.Stats{
+		stats.Intellect:  100 * 1.2,
+		stats.SpellPower: 100 + ((100 * 1.2) * ((1.2 * 1.2) - 1)),
+	}
+
+	unit.stats = unit.applyStatDependencies(baseStat)
+
+	if !unit.stats.Equals(expectedResult) {
+		t.Fatalf("Stats do not match:\nActual: %s\nExpected: %s", unit.stats, expectedResult)
+	}
+}
