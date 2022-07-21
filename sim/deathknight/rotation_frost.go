@@ -200,8 +200,11 @@ func (deathKnight *DeathKnight) DoRotation(sim *core.Simulation) {
 }
 
 func (o *Opener) DoNext(sim *core.Simulation, deathKnight *DeathKnight) bool {
-	target := deathKnight.CurrentTarget
+	if o.idx >= o.numActions {
+		return false
+	}
 
+	target := deathKnight.CurrentTarget
 	action := o.actions[o.idx]
 
 	castSuccessful := false
@@ -210,6 +213,29 @@ func (o *Opener) DoNext(sim *core.Simulation, deathKnight *DeathKnight) bool {
 		castSuccessful = deathKnight.CastIcyTouch(sim, target)
 	case OpenerAction_PS:
 		castSuccessful = deathKnight.CastPlagueStrike(sim, target)
+	case OpenerAction_UA:
+		castSuccessful = deathKnight.CastUnbreakableArmor(sim, target)
+		deathKnight.WaitUntil(sim, sim.CurrentTime)
+	case OpenerAction_BT:
+		castSuccessful = deathKnight.CastBloodTap(sim, target)
+		deathKnight.WaitUntil(sim, sim.CurrentTime)
+	case OpenerAction_Obli:
+		castSuccessful = deathKnight.CastObliterate(sim, target)
+	case OpenerAction_FS:
+		castSuccessful = deathKnight.CastFrostStrike(sim, target)
+	case OpenerAction_Pesti:
+		castSuccessful = deathKnight.CastPestilence(sim, target)
+	case OpenerAction_ERW:
+		castSuccessful = deathKnight.CastEmpowerRuneWeapon(sim, target)
+		deathKnight.WaitUntil(sim, sim.CurrentTime)
+	case OpenerAction_HB_Ghoul_FS_RimeCheck:
+		if deathKnight.RimeAura.IsActive() {
+			castSuccessful = deathKnight.CastHowlingBlast(sim, target)
+		} else {
+			castSuccessful = deathKnight.CastRaiseDead(sim, target)
+		}
+	case OpenerAction_BS:
+		castSuccessful = deathKnight.CastBloodStrike(sim, target)
 	}
 
 	return castSuccessful

@@ -536,7 +536,7 @@ func SpendRuneFromType(rb *[2]Rune, runeState RuneState) int32 {
 func (rp *runicPowerBar) LaunchRuneRegenPA(sim *Simulation, r *Rune) {
 	runeGracePeriod := 0.0
 	if r.lastRegenTime != -1 {
-		runeGracePeriod = MinFloat(2.5, float64((sim.CurrentTime-r.lastRegenTime)/time.Second))
+		runeGracePeriod = MinFloat(2.5, float64(sim.CurrentTime-r.lastRegenTime)/float64(1*time.Second))
 	}
 	pa := &PendingAction{
 		NextActionAt: sim.CurrentTime + time.Second*time.Duration(10.0-runeGracePeriod),
