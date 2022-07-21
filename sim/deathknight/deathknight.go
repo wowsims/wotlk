@@ -249,12 +249,11 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 				if deathKnight.GCD.IsReady(sim) {
 					deathKnight.tryUseGCD(sim)
 				}
-			}
-		},
-		func(sim *core.Simulation) {
-			if !deathKnight.Talents.HowlingBlast {
-				if deathKnight.GCD.IsReady(sim) {
-					deathKnight.tryUseGCD(sim)
+			} else {
+				if !deathKnight.DKRotation.onOpener {
+					if deathKnight.GCD.IsReady(sim) {
+						deathKnight.tryUseGCD(sim)
+					}
 				}
 			}
 		},
@@ -263,12 +262,11 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 				if deathKnight.GCD.IsReady(sim) {
 					deathKnight.tryUseGCD(sim)
 				}
-			}
-		},
-		func(sim *core.Simulation) {
-			if !deathKnight.Talents.HowlingBlast {
-				if deathKnight.GCD.IsReady(sim) {
-					deathKnight.tryUseGCD(sim)
+			} else {
+				if !deathKnight.DKRotation.onOpener {
+					if deathKnight.GCD.IsReady(sim) {
+						deathKnight.tryUseGCD(sim)
+					}
 				}
 			}
 		},
@@ -276,6 +274,38 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 			if !deathKnight.Talents.HowlingBlast {
 				if deathKnight.GCD.IsReady(sim) {
 					deathKnight.tryUseGCD(sim)
+				}
+			} else {
+				if !deathKnight.DKRotation.onOpener {
+					if deathKnight.GCD.IsReady(sim) {
+						deathKnight.tryUseGCD(sim)
+					}
+				}
+			}
+		},
+		func(sim *core.Simulation) {
+			if !deathKnight.Talents.HowlingBlast {
+				if deathKnight.GCD.IsReady(sim) {
+					deathKnight.tryUseGCD(sim)
+				}
+			} else {
+				if !deathKnight.DKRotation.onOpener {
+					if deathKnight.GCD.IsReady(sim) {
+						deathKnight.tryUseGCD(sim)
+					}
+				}
+			}
+		},
+		func(sim *core.Simulation) {
+			if !deathKnight.Talents.HowlingBlast {
+				if deathKnight.GCD.IsReady(sim) {
+					deathKnight.tryUseGCD(sim)
+				}
+			} else {
+				if !deathKnight.DKRotation.onOpener {
+					if deathKnight.GCD.IsReady(sim) {
+						deathKnight.tryUseGCD(sim)
+					}
 				}
 			}
 		},
@@ -370,6 +400,97 @@ func (deathKnight *DeathKnight) critMultiplierGuile() float64 {
 	applyGuile := deathKnight.Talents.GuileOfGorefiend > 0
 	return deathKnight.MeleeCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile))
 }
+
+func DetermineOptimalCostForSpell(rp *core.CalcRunicPowerBar, sim *core.Simulation, deathKnight *DeathKnight, spell *core.Spell) core.DKRuneCost {
+	blood := 0
+	frost := 0
+	unholy := 0
+	switch spell {
+	case deathKnight.DeathAndDecay:
+		blood = 1
+		frost = 1
+		unholy = 1
+	case deathKnight.ArmyOfTheDead:
+		blood = 1
+		frost = 1
+		unholy = 1
+	case deathKnight.Pestilence:
+		blood = 1
+	case deathKnight.BloodStrike:
+		blood = 1
+	case deathKnight.BloodBoil:
+		blood = 1
+	case deathKnight.UnbreakableArmor:
+		frost = 1
+	case deathKnight.IcyTouch:
+		frost = 1
+	case deathKnight.PlagueStrike:
+		unholy = 1
+	case deathKnight.GhoulFrenzy:
+		unholy = 1
+	case deathKnight.BoneShield:
+		unholy = 1
+	case deathKnight.ScourgeStrike:
+		frost = 1
+		unholy = 1
+	case deathKnight.Obliterate:
+		frost = 1
+		unholy = 1
+	case deathKnight.HowlingBlast:
+		frost = 1
+		unholy = 1
+	}
+
+	return rp.DetermineOptimalCost(sim, blood, frost, unholy)
+}
+
+func (deathKnight *DeathKnight) CanCast(sim *core.Simulation, spell *core.Spell) bool {
+	switch spell {
+	case deathKnight.DeathAndDecay:
+		return deathKnight.CanDeathAndDecay(sim)
+	case deathKnight.ArmyOfTheDead:
+		return deathKnight.CanArmyOfTheDead(sim)
+	case deathKnight.Pestilence:
+		return deathKnight.CanPestilence(sim)
+	case deathKnight.BloodStrike:
+		return deathKnight.CanBloodStrike(sim)
+	case deathKnight.BloodBoil:
+		return deathKnight.CanBloodBoil(sim)
+	case deathKnight.UnbreakableArmor:
+		return deathKnight.CanUnbreakableArmor(sim)
+	case deathKnight.IcyTouch:
+		return deathKnight.CanIcyTouch(sim)
+	case deathKnight.PlagueStrike:
+		return deathKnight.CanPlagueStrike(sim)
+	case deathKnight.GhoulFrenzy:
+		return deathKnight.CanGhoulFrenzy(sim)
+	case deathKnight.BoneShield:
+		return deathKnight.CanBoneShield(sim)
+	case deathKnight.ScourgeStrike:
+		return deathKnight.CanScourgeStrike(sim)
+	case deathKnight.Obliterate:
+		return deathKnight.CanObliterate(sim)
+	case deathKnight.HowlingBlast:
+		return deathKnight.CanHowlingBlast(sim)
+	case deathKnight.FrostStrike:
+		return deathKnight.CanFrostStrike(sim)
+	case deathKnight.DeathCoil:
+		return deathKnight.CanDeathCoil(sim)
+	case deathKnight.BloodTap:
+		return deathKnight.CanBloodTap(sim)
+	case deathKnight.EmpowerRuneWeapon:
+		return deathKnight.CanEmpowerRuneWeapon(sim)
+	case deathKnight.HornOfWinter:
+		return deathKnight.CanHornOfWinter(sim)
+	case deathKnight.RaiseDead:
+		return deathKnight.CanRaiseDead(sim)
+	default:
+		panic("Not in cost list.")
+	}
+
+	return false
+}
+
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
 		stats.Health:      7941,

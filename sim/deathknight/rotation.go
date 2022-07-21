@@ -10,7 +10,7 @@ import (
 )
 
 func (deathKnight *DeathKnight) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
-	if deathKnight.GCD.IsReady(sim) {
+	if !deathKnight.Talents.HowlingBlast {
 		deathKnight.tryUseGCD(sim)
 	}
 }
