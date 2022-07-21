@@ -15,10 +15,10 @@ func (paladin *Paladin) RegisterAvengingWrathCD() {
 		ActionID: actionID,
 		Duration: time.Second * 20,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.DamageDealtMultiplier *= 1.3
+			aura.Unit.PseudoStats.DamageDealtMultiplier *= 1.2
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.DamageDealtMultiplier /= 1.3
+			aura.Unit.PseudoStats.DamageDealtMultiplier /= 1.2
 		},
 	})
 
