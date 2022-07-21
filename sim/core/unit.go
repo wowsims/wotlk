@@ -169,34 +169,34 @@ func (unit *Unit) AddStatDynamic(sim *Simulation, stat stats.Stat, amount float6
 		panic("Not finalized, use AddStats instead!")
 	}
 
-	if stat == stats.MeleeHaste {
-		unit.AddMeleeHaste(sim, amount)
-		return
-	}
-
 	added := amount * unit.statBonuses[stat].Multiplier
-	unit.stats[stat] += added
 
-	if stat == stats.MP5 || stat == stats.Intellect || stat == stats.Spirit {
-		unit.UpdateManaRegenRates()
-	} else if stat == stats.SpellHaste {
-		unit.updateCastSpeed()
-	} else if stat == stats.Armor {
-		unit.updateArmor()
-	} else if stat == stats.ArmorPenetration {
-		unit.updateArmorPen()
-	} else if stat == stats.SpellPenetration {
-		unit.updateSpellPen()
-	} else if stat == stats.ArcaneResistance {
-		unit.updateResistances()
-	} else if stat == stats.FireResistance {
-		unit.updateResistances()
-	} else if stat == stats.FrostResistance {
-		unit.updateResistances()
-	} else if stat == stats.NatureResistance {
-		unit.updateResistances()
-	} else if stat == stats.ShadowResistance {
-		unit.updateResistances()
+	if stat == stats.MeleeHaste {
+		unit.AddMeleeHaste(sim, added)
+	} else {
+		unit.stats[stat] += added
+
+		if stat == stats.MP5 || stat == stats.Intellect || stat == stats.Spirit {
+			unit.UpdateManaRegenRates()
+		} else if stat == stats.SpellHaste {
+			unit.updateCastSpeed()
+		} else if stat == stats.Armor {
+			unit.updateArmor()
+		} else if stat == stats.ArmorPenetration {
+			unit.updateArmorPen()
+		} else if stat == stats.SpellPenetration {
+			unit.updateSpellPen()
+		} else if stat == stats.ArcaneResistance {
+			unit.updateResistances()
+		} else if stat == stats.FireResistance {
+			unit.updateResistances()
+		} else if stat == stats.FrostResistance {
+			unit.updateResistances()
+		} else if stat == stats.NatureResistance {
+			unit.updateResistances()
+		} else if stat == stats.ShadowResistance {
+			unit.updateResistances()
+		}
 	}
 
 	for k, v := range unit.statBonuses[stat].Deps {
