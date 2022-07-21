@@ -1,6 +1,8 @@
 package core
 
 import (
+	"errors"
+	"fmt"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -278,23 +280,29 @@ func (unit *Unit) MultiplyStatDynamic(sim *Simulation, stat stats.Stat, multipli
 func (unit *Unit) finalizeStatDeps() {
 	seen := map[stats.Stat]struct{}{}
 
-	var walk func(m map[stats.Stat]float64)
+	var walk func(m map[stats.Stat]float64) error
 
-	walk = func(m map[stats.Stat]float64) {
+	walk = func(m map[stats.Stat]float64) error {
 		for k := range m {
 			if _, ok := seen[k]; ok {
-				panic("circular dependency in stats")
+				return errors.New("circular dependency in stats: " + k.StatName())
 			}
 			seen[k] = struct{}{}
-			walk(unit.statBonuses[k].Deps)
+			err := walk(unit.statBonuses[k].Deps)
+			if err != nil {
+				return fmt.Errorf("%w from: %s", err, k.StatName())
+			}
 		}
+		return nil
 	}
 
 	for s := range unit.stats {
 		seen = map[stats.Stat]struct{}{
 			stats.Stat(s): struct{}{},
 		}
-		walk(unit.statBonuses[s].Deps)
+		if err := walk(unit.statBonuses[s].Deps); err != nil {
+			panic(err)
+		}
 	}
 }
 
