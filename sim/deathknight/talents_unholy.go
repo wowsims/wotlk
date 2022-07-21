@@ -112,8 +112,6 @@ func (deathKnight *DeathKnight) applyNecrosis() {
 		return
 	}
 
-	target := deathKnight.CurrentTarget
-
 	var curDmg float64
 	necrosisHit := deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 51460},
@@ -149,7 +147,7 @@ func (deathKnight *DeathKnight) applyNecrosis() {
 			}
 
 			curDmg = spellEffect.Damage
-			necrosisHit.Cast(sim, target)
+			necrosisHit.Cast(sim, spellEffect.Target)
 		},
 	})
 }
@@ -158,8 +156,6 @@ func (deathKnight *DeathKnight) applyBloodCakedBlade() {
 	if deathKnight.Talents.BloodCakedBlade == 0 {
 		return
 	}
-
-	target := deathKnight.CurrentTarget
 
 	mhBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 0, 1.0, true)
 	ohBaseDamage := core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, 1.0*deathKnight.nervesOfColdSteelBonus(), true)
@@ -205,7 +201,7 @@ func (deathKnight *DeathKnight) applyBloodCakedBlade() {
 
 			if sim.RandomFloat("Blood-Caked Blade Roll") < 0.30 {
 				isMH = spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHAuto)
-				bloodCakedBladeHit.Cast(sim, target)
+				bloodCakedBladeHit.Cast(sim, spellEffect.Target)
 			}
 		},
 	})
@@ -220,8 +216,8 @@ func (deathKnight *DeathKnight) applyEbonPlaguebringer() {
 	deathKnight.AddStat(stats.MeleeCrit, ebonPlaguebringerBonusCrit)
 	deathKnight.AddStat(stats.SpellCrit, ebonPlaguebringerBonusCrit)
 
+	// TODO: Support multiple targets like diseases
 	target := deathKnight.CurrentTarget
-
 	epAura := core.EbonPlaguebringerAura(target)
 	epAura.Duration = time.Second * (15 + 3*time.Duration(deathKnight.Talents.Epidemic))
 
@@ -251,6 +247,8 @@ func (deathKnight *DeathKnight) applyDesolation() {
 
 func (deathKnight *DeathKnight) applyUnholyBlight() {
 	actionID := core.ActionID{SpellID: 50536}
+
+	// TODO: Support multiple targets like diseases
 	target := deathKnight.CurrentTarget
 
 	var curDamage = 0.0

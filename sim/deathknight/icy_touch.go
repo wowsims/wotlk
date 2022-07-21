@@ -18,8 +18,8 @@ func (deathKnight *DeathKnight) killingMachineOutcomeMod(outcomeApplier core.Out
 }
 
 func (deathKnight *DeathKnight) registerIcyTouchSpell() {
+	// TODO: Support multiple targets like diseases
 	target := deathKnight.CurrentTarget
-
 	itAura := core.IcyTouchAura(target, deathKnight.Talents.ImprovedIcyTouch)
 	deathKnight.IcyTouchAura = itAura
 
