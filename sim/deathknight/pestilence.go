@@ -72,3 +72,11 @@ func (deathKnight *DeathKnight) registerPestilenceSpell() {
 func (deathKnight *DeathKnight) CanPestilence(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 1, 0, 0) && deathKnight.Pestilence.IsReady(sim)
 }
+
+func (deathKnight *DeathKnight) CastPestilence(sim *core.Simulation, target *core.Unit) bool {
+	if deathKnight.CanPestilence(sim) {
+		deathKnight.Pestilence.Cast(sim, target)
+		return true
+	}
+	return false
+}

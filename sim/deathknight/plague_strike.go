@@ -39,13 +39,9 @@ func (deathKnight *DeathKnight) newPlagueStrikeSpell(isMH bool) *core.Spell {
 		},
 	}
 
-	if isMH {
-		effect.ProcMask = core.ProcMaskMeleeMHSpecial
-		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.MeleeCritMultiplier(1.0, deathKnight.viciousStrikesCritDamageBonus()))
-	} else {
-		effect.ProcMask = core.ProcMaskMeleeOHSpecial
-		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialCritOnly(deathKnight.MeleeCritMultiplier(1.0, deathKnight.viciousStrikesCritDamageBonus()))
-	}
+	deathKnight.threatOfThassarianProcMasks(isMH, &effect, false, func(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
+		return outcomeApplier
+	})
 
 	return deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:     PlagueStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
@@ -88,8 +84,11 @@ func (deathKnight *DeathKnight) registerPlagueStrikeSpell() {
 					deathKnight.Spend(sim, spell, dkSpellCost)
 
 					deathKnight.BloodPlagueSpell.Cast(sim, spellEffect.Target)
+					if deathKnight.Talents.CryptFever > 0 {
+						deathKnight.CryptFeverAura[spellEffect.Target.Index].Activate(sim)
+					}
 					if deathKnight.Talents.EbonPlaguebringer > 0 {
-						deathKnight.EbonPlagueAura.Activate(sim)
+						deathKnight.EbonPlagueAura[spellEffect.Target.Index].Activate(sim)
 					}
 
 					amountOfRunicPower := 10.0 + 2.5*float64(deathKnight.Talents.Dirge)
@@ -102,4 +101,12 @@ func (deathKnight *DeathKnight) registerPlagueStrikeSpell() {
 
 func (deathKnight *DeathKnight) CanPlagueStrike(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 0, 0, 1) && deathKnight.PlagueStrike.IsReady(sim)
+}
+
+func (deathKnight *DeathKnight) CastPlagueStrike(sim *core.Simulation, target *core.Unit) bool {
+	if deathKnight.CanPlagueStrike(sim) {
+		deathKnight.PlagueStrike.Cast(sim, target)
+		return true
+	}
+	return false
 }

@@ -12,23 +12,22 @@ func (deathKnight *DeathKnight) registerHornOfWinterSpell() {
 	actionID := core.ActionID{SpellID: 57623}
 	duration := time.Minute * time.Duration((2.0 + core.TernaryFloat64(deathKnight.HasMinorGlyph(proto.DeathKnightMinorGlyph_GlyphOfHornOfWinter), 1.0, 0.0)))
 
-	strengthBonus := 155.0
-	agilityBonus := 155.0
+	bonusStats := stats.Stats{stats.Strength: 155.0, stats.Agility: 155.0}
+	negativeStats := bonusStats.Multiply(-1)
+
 	deathKnight.HornOfWinterAura = deathKnight.RegisterAura(core.Aura{
 		Label:    "Horn of Winter",
 		ActionID: actionID,
 		Duration: duration,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			if !deathKnight.OtherRelevantStrAgiActive {
-				bonusStats := deathKnight.ApplyStatDependencies(stats.Stats{stats.Strength: strengthBonus, stats.Agility: agilityBonus})
 				deathKnight.HornOfWinterAura.Unit.AddStatsDynamic(sim, bonusStats)
 			}
 		},
 
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			if !deathKnight.OtherRelevantStrAgiActive {
-				bonusStats := deathKnight.ApplyStatDependencies(stats.Stats{stats.Strength: -strengthBonus, stats.Agility: -agilityBonus})
-				deathKnight.HornOfWinterAura.Unit.AddStatsDynamic(sim, bonusStats)
+				deathKnight.HornOfWinterAura.Unit.AddStatsDynamic(sim, negativeStats)
 			}
 		},
 	})
@@ -68,4 +67,12 @@ func (deathKnight *DeathKnight) CanHornOfWinter(sim *core.Simulation) bool {
 
 func (deathKnight *DeathKnight) ShouldHornOfWinter(sim *core.Simulation) bool {
 	return deathKnight.Rotation.RefreshHornOfWinter && deathKnight.HornOfWinter.IsReady(sim) && !deathKnight.HornOfWinterAura.IsActive()
+}
+
+func (deathKnight *DeathKnight) CastHornOfWinter(sim *core.Simulation, target *core.Unit) bool {
+	if deathKnight.CanHornOfWinter(sim) {
+		deathKnight.HornOfWinter.Cast(sim, target)
+		return true
+	}
+	return false
 }

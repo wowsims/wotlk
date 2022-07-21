@@ -23,6 +23,9 @@ type DeathKnight struct {
 	Gargoyle       *GargoylePet
 	SummonGargoyle *core.Spell
 
+	ArmyOfTheDead *core.Spell
+	ArmyGhoul     []*GhoulPet
+
 	Presence Presence
 
 	IcyTouch   *core.Spell
@@ -84,7 +87,7 @@ type DeathKnight struct {
 	BloodPlagueDisease []*core.Dot
 
 	UnholyBlightSpell *core.Spell
-	UnholyBlightDot   *core.Dot
+	UnholyBlightDot   []*core.Dot
 
 	// Talent Auras
 	KillingMachineAura  *core.Aura
@@ -108,8 +111,9 @@ type DeathKnight struct {
 	UnholyPresenceAura *core.Aura
 
 	// Debuffs
-	IcyTouchAura   *core.Aura
-	EbonPlagueAura *core.Aura
+	IcyTouchAura   []*core.Aura
+	CryptFeverAura []*core.Aura
+	EbonPlagueAura []*core.Aura
 
 	// Dynamic trackers
 	additiveDamageModifier float64
@@ -176,8 +180,9 @@ func (deathKnight *DeathKnight) Initialize() {
 
 	deathKnight.registerRaiseDeadCD()
 	deathKnight.registerSummonGargoyleCD()
+	deathKnight.registerArmyOfTheDeadCD()
 
-	deathKnight.setupDKRotation()
+	deathKnight.SetupRotation()
 }
 
 func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
@@ -201,6 +206,10 @@ func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
 			deathKnight.HornOfWinterAura.Deactivate(sim)
 			deathKnight.HornOfWinterAura.Activate(sim)
 		}
+	}
+
+	if deathKnight.Rotation.ArmyOfTheDead == proto.DeathKnight_Rotation_PreCast {
+		deathKnight.PrecastArmyOfTheDead(sim)
 	}
 
 	deathKnight.resetDKRotation(sim)
@@ -278,31 +287,18 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 		AutoSwingMelee: true,
 	})
 
-	deathKnight.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Agility,
-		ModifiedStat: stats.MeleeCrit,
-		Modifier: func(agility float64, meleecrit float64) float64 {
-			return meleecrit + (agility/62.5)*core.CritRatingPerCritChance
-		},
-	})
-	deathKnight.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Agility,
-		ModifiedStat: stats.Dodge,
-		Modifier: func(agility float64, dodge float64) float64 {
-			return dodge + (agility/84.74576271)*core.DodgeRatingPerDodgeChance
-		},
-	})
-	deathKnight.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Strength,
-		ModifiedStat: stats.AttackPower,
-		Modifier: func(strength float64, attackPower float64) float64 {
-			return attackPower + strength*2
-		},
-	})
+	deathKnight.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/62.5))
+	deathKnight.AddStatDependency(stats.Agility, stats.Dodge, 1.0+(core.DodgeRatingPerDodgeChance/84.74576271))
+	deathKnight.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
 
 	deathKnight.Ghoul = deathKnight.NewGhoulPet(deathKnight.Talents.MasterOfGhouls)
 	if deathKnight.Talents.SummonGargoyle {
 		deathKnight.Gargoyle = deathKnight.NewGargoyle()
+	}
+
+	deathKnight.ArmyGhoul = make([]*GhoulPet, 8)
+	for i := 0; i < 8; i++ {
+		deathKnight.ArmyGhoul[i] = deathKnight.NewArmyGhoulPet(i)
 	}
 
 	return deathKnight
@@ -340,12 +336,17 @@ func (deathKnight *DeathKnight) secondaryCritModifier(applyGuile bool) float64 {
 	}
 	return secondaryModifier
 }
+
+// TODO: DKs have x2 modifier on spell crit as a passive. Is this the best way to do it?
 func (deathKnight *DeathKnight) spellCritMultiplier() float64 {
 	return deathKnight.MeleeCritMultiplier(1.0, 0)
 }
 func (deathKnight *DeathKnight) spellCritMultiplierGuile() float64 {
 	applyGuile := deathKnight.Talents.GuileOfGorefiend > 0
 	return deathKnight.MeleeCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile))
+}
+func (deathKnight *DeathKnight) critMultiplier() float64 {
+	return deathKnight.MeleeCritMultiplier(1.0, 0)
 }
 func (deathKnight *DeathKnight) critMultiplierGuile() float64 {
 	applyGuile := deathKnight.Talents.GuileOfGorefiend > 0
@@ -354,11 +355,11 @@ func (deathKnight *DeathKnight) critMultiplierGuile() float64 {
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
 		stats.Health:      7941,
-		stats.Strength:    180,
-		stats.Agility:     112,
+		stats.Strength:    176,
+		stats.Agility:     109,
 		stats.Stamina:     160,
 		stats.Intellect:   35,
-		stats.Spirit:      63,
+		stats.Spirit:      61,
 		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
@@ -366,18 +367,18 @@ func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDwarf, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
 		stats.Health:      7941,
 		stats.Strength:    180,
-		stats.Agility:     112,
-		stats.Stamina:     160,
-		stats.Intellect:   35,
-		stats.Spirit:      63,
+		stats.Agility:     108,
+		stats.Stamina:     161,
+		stats.Intellect:   34,
+		stats.Spirit:      58,
 		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceGnome, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
 		stats.Health:      7941,
-		stats.Strength:    180,
-		stats.Agility:     112,
+		stats.Strength:    170,
+		stats.Agility:     114,
 		stats.Stamina:     160,
 		stats.Intellect:   35,
 		stats.Spirit:      63,
@@ -387,7 +388,7 @@ func init() {
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceHuman, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
 		stats.Health:      7941,
-		stats.Strength:    180,
+		stats.Strength:    175,
 		stats.Agility:     112,
 		stats.Stamina:     160,
 		stats.Intellect:   35,
@@ -398,22 +399,22 @@ func init() {
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
 		stats.Health:      7941,
-		stats.Strength:    180,
-		stats.Agility:     112,
+		stats.Strength:    171,
+		stats.Agility:     116,
 		stats.Stamina:     160,
 		stats.Intellect:   35,
-		stats.Spirit:      63,
+		stats.Spirit:      59,
 		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceOrc, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
 		stats.Health:      7941,
-		stats.Strength:    180,
-		stats.Agility:     112,
-		stats.Stamina:     160,
-		stats.Intellect:   35,
-		stats.Spirit:      63,
+		stats.Strength:    178,
+		stats.Agility:     109,
+		stats.Stamina:     161,
+		stats.Intellect:   32,
+		stats.Spirit:      61,
 		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
@@ -421,43 +422,43 @@ func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTauren, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
 		stats.Health:      7941,
 		stats.Strength:    180,
-		stats.Agility:     112,
-		stats.Stamina:     160,
-		stats.Intellect:   35,
-		stats.Spirit:      63,
+		stats.Agility:     108,
+		stats.Stamina:     161,
+		stats.Intellect:   31,
+		stats.Spirit:      61,
 		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
 		stats.Health:      7941,
-		stats.Strength:    180,
-		stats.Agility:     112,
+		stats.Strength:    176,
+		stats.Agility:     114,
 		stats.Stamina:     160,
-		stats.Intellect:   35,
-		stats.Spirit:      63,
+		stats.Intellect:   31,
+		stats.Spirit:      60,
 		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceUndead, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
 		stats.Health:      7941,
-		stats.Strength:    180,
-		stats.Agility:     112,
+		stats.Strength:    174,
+		stats.Agility:     110,
 		stats.Stamina:     160,
-		stats.Intellect:   35,
-		stats.Spirit:      63,
+		stats.Intellect:   33,
+		stats.Spirit:      64,
 		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
 		stats.Health:      7941,
-		stats.Strength:    180,
-		stats.Agility:     112,
+		stats.Strength:    172,
+		stats.Agility:     114,
 		stats.Stamina:     160,
-		stats.Intellect:   35,
-		stats.Spirit:      63,
+		stats.Intellect:   38,
+		stats.Spirit:      57,
 		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,

@@ -16,20 +16,16 @@ func (deathKnight *DeathKnight) registerUnbreakableArmorSpell() {
 	cdTimer := deathKnight.NewTimer()
 	cd := time.Minute * 1
 
-	strengthBonus := 0.0
 	deathKnight.UnbreakableArmorAura = deathKnight.RegisterAura(core.Aura{
 		Label:    "Unbreakable Armor",
 		ActionID: actionID,
 		Duration: time.Second * 20,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			strengthBonus = 0.2 * deathKnight.GetStat(stats.Strength)
-			bonusStats := deathKnight.ApplyStatDependencies(stats.Stats{stats.Strength: strengthBonus})
-			deathKnight.UnbreakableArmorAura.Unit.AddStatsDynamic(sim, bonusStats)
+			deathKnight.UnbreakableArmorAura.Unit.AddStatDependencyDynamic(sim, stats.Strength, stats.Strength, 1.2)
 		},
 
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			bonusStats := deathKnight.ApplyStatDependencies(stats.Stats{stats.Strength: -strengthBonus})
-			deathKnight.UnbreakableArmorAura.Unit.AddStatsDynamic(sim, bonusStats)
+			deathKnight.UnbreakableArmorAura.Unit.AddStatDependencyDynamic(sim, stats.Strength, stats.Strength, 1/1.2)
 		},
 	})
 
@@ -56,4 +52,12 @@ func (deathKnight *DeathKnight) registerUnbreakableArmorSpell() {
 
 func (deathKnight *DeathKnight) CanUnbreakableArmor(sim *core.Simulation) bool {
 	return deathKnight.UnbreakableArmor.IsReady(sim) && deathKnight.UnbreakableArmor.CD.IsReady(sim)
+}
+
+func (deathKnight *DeathKnight) CastUnbreakableArmor(sim *core.Simulation, target *core.Unit) bool {
+	if deathKnight.CanUnbreakableArmor(sim) {
+		deathKnight.UnbreakableArmor.Cast(sim, target)
+		return true
+	}
+	return false
 }

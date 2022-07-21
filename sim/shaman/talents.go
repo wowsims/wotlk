@@ -14,7 +14,7 @@ func (shaman *Shaman) ApplyTalents() {
 	}
 
 	shaman.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*1*float64(shaman.Talents.Anticipation))
-	shaman.PseudoStats.PhysicalDamageDealtMultiplier *= []float64{0, 1.04, 1.07, 1.1}[shaman.Talents.WeaponMastery]
+	shaman.PseudoStats.PhysicalDamageDealtMultiplier *= []float64{1, 1.04, 1.07, 1.1}[shaman.Talents.WeaponMastery]
 
 	if shaman.Talents.DualWieldSpecialization > 0 && shaman.HasOHWeapon() {
 		shaman.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*2*float64(shaman.Talents.DualWieldSpecialization))
@@ -25,69 +25,27 @@ func (shaman *Shaman) ApplyTalents() {
 	}
 
 	if shaman.Talents.Toughness > 0 {
-		coeff := 1 + 0.02*float64(shaman.Talents.Toughness)
-		shaman.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Stamina,
-			ModifiedStat: stats.Stamina,
-			Modifier: func(stm float64, _ float64) float64 {
-				return stm * coeff
-			},
-		})
+		shaman.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+0.02*float64(shaman.Talents.Toughness))
 	}
 
 	if shaman.Talents.UnrelentingStorm > 0 {
-		coeff := 0.04 * float64(shaman.Talents.UnrelentingStorm)
-		shaman.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Intellect,
-			ModifiedStat: stats.MP5,
-			Modifier: func(intellect float64, mp5 float64) float64 {
-				return mp5 + intellect*coeff
-			},
-		})
+		shaman.AddStatDependency(stats.Intellect, stats.MP5, 1.0+0.04*float64(shaman.Talents.UnrelentingStorm))
 	}
 
 	if shaman.Talents.AncestralKnowledge > 0 {
-		coeff := 0.02 * float64(shaman.Talents.AncestralKnowledge)
-		shaman.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Intellect,
-			ModifiedStat: stats.Intellect,
-			Modifier: func(mana float64, _ float64) float64 {
-				return mana + mana*coeff
-			},
-		})
+		shaman.AddStatDependency(stats.Intellect, stats.Intellect, 1.0+0.02*float64(shaman.Talents.AncestralKnowledge))
 	}
 
 	if shaman.Talents.MentalQuickness > 0 {
-		coeff := 0.1 * float64(shaman.Talents.MentalQuickness)
-		shaman.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.AttackPower,
-			ModifiedStat: stats.SpellPower,
-			Modifier: func(attackPower float64, spellPower float64) float64 {
-				return spellPower + attackPower*coeff
-			},
-		})
+		shaman.AddStatDependency(stats.AttackPower, stats.SpellPower, 1.0+0.1*float64(shaman.Talents.MentalQuickness))
 	}
 
 	if shaman.Talents.MentalDexterity > 0 {
-		coeff := 0.3333 * float64(shaman.Talents.MentalDexterity)
-		shaman.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Intellect,
-			ModifiedStat: stats.AttackPower,
-			Modifier: func(intellect float64, attackPower float64) float64 {
-				return attackPower + intellect*coeff
-			},
-		})
+		shaman.AddStatDependency(stats.Intellect, stats.AttackPower, 1.0+0.3333*float64(shaman.Talents.MentalDexterity))
 	}
 
 	if shaman.Talents.NaturesBlessing > 0 {
-		coeff := 0.1 * float64(shaman.Talents.NaturesBlessing)
-		shaman.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Intellect,
-			ModifiedStat: stats.SpellPower,
-			Modifier: func(intellect float64, spellPower float64) float64 {
-				return spellPower + intellect*coeff
-			},
-		})
+		shaman.AddStatDependency(stats.Intellect, stats.SpellPower, 1.0+0.1*float64(shaman.Talents.NaturesBlessing))
 	}
 
 	if shaman.Talents.SpiritWeapons {
@@ -306,7 +264,7 @@ func (shaman *Shaman) applyFlurry() {
 
 	// I believe there is a set in wotlk that improves flurry.
 
-	// if shaman.HasSetBonus(ItemSetCataclysmHarness, 4) {
+	// if shaman.HasSetBonus(ItemSetEarthshatterBattlegear, 4) { //NYI
 	// 	bonus += 0.05
 	// }
 

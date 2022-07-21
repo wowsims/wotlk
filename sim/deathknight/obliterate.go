@@ -10,8 +10,6 @@ var ObliterateMHOutcome = core.OutcomeHit
 var ObliterateOHOutcome = core.OutcomeHit
 
 func (deathKnight *DeathKnight) newObliterateHitSpell(isMH bool) *core.Spell {
-	guileOfGorefiend := deathKnight.Talents.GuileOfGorefiend > 0
-
 	diseaseConsumptionChance := 1.0
 	if deathKnight.Talents.Annihilation == 1 {
 		diseaseConsumptionChance = 0.67
@@ -21,11 +19,9 @@ func (deathKnight *DeathKnight) newObliterateHitSpell(isMH bool) *core.Spell {
 		diseaseConsumptionChance = 0.0
 	}
 
-	hbResetCDChance := 0.05 * float64(deathKnight.Talents.Rime)
-
 	effect := core.SpellEffect{
-		BonusCritRating:  (5.0*float64(deathKnight.Talents.Rime) + 3.0*float64(deathKnight.Talents.Subversion) + 1.0*float64(deathKnight.Talents.Annihilation) + deathKnight.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,
-		DamageMultiplier: core.TernaryFloat64(deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfFrostStrike), 1.25, 1.0),
+		BonusCritRating:  (deathKnight.rimeCritBonus() + deathKnight.subversionCritBonus() + deathKnight.annihilationCritBonus() + deathKnight.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,
+		DamageMultiplier: core.TernaryFloat64(deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfObliterate), 1.25, 1.0),
 		ThreatMultiplier: 1,
 
 		BaseDamage: core.BaseDamageConfig{
@@ -57,13 +53,15 @@ func (deathKnight *DeathKnight) newObliterateHitSpell(isMH bool) *core.Spell {
 				deathKnight.BloodPlagueDisease[spellEffect.Target.Index].Deactivate(sim)
 			}
 
-			if sim.RandomFloat("Rime") < hbResetCDChance {
+			if sim.RandomFloat("Rime") < deathKnight.rimeHbChanceProc() {
 				deathKnight.RimeAura.Activate(sim)
 			}
 		},
 	}
 
-	deathKnight.threatOfThassarianProcMasks(isMH, &effect, guileOfGorefiend)
+	deathKnight.threatOfThassarianProcMasks(isMH, &effect, true, func(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
+		return outcomeApplier
+	})
 
 	return deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:     ObliterateActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
@@ -115,4 +113,12 @@ func (deathKnight *DeathKnight) registerObliterateSpell() {
 
 func (deathKnight *DeathKnight) CanObliterate(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 0, 1, 1) && deathKnight.Obliterate.IsReady(sim)
+}
+
+func (deathKnight *DeathKnight) CastObliterate(sim *core.Simulation, target *core.Unit) bool {
+	if deathKnight.CanObliterate(sim) {
+		deathKnight.Obliterate.Cast(sim, target)
+		return true
+	}
+	return false
 }

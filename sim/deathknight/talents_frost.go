@@ -16,13 +16,7 @@ func (deathKnight *DeathKnight) ApplyFrostTalents() {
 	// Toughness
 	if deathKnight.Talents.Toughness > 0 {
 		armorCoeff := 0.02 * float64(deathKnight.Talents.Toughness)
-		deathKnight.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Armor,
-			ModifiedStat: stats.Armor,
-			Modifier: func(armor float64, _ float64) float64 {
-				return armor * (1.0 + armorCoeff)
-			},
-		})
+		deathKnight.AddStatDependency(stats.Armor, stats.Armor, 1.0+armorCoeff)
 	}
 
 	// Icy Reach
@@ -53,13 +47,7 @@ func (deathKnight *DeathKnight) ApplyFrostTalents() {
 	// Endless Winter
 	if deathKnight.Talents.EndlessWinter > 0 {
 		strengthCoeff := 0.02 * float64(deathKnight.Talents.EndlessWinter)
-		deathKnight.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Strength,
-			ModifiedStat: stats.Strength,
-			Modifier: func(strength float64, _ float64) float64 {
-				return strength * (1.0 + strengthCoeff)
-			},
-		})
+		deathKnight.AddStatDependency(stats.Strength, stats.Strength, 1.0+strengthCoeff)
 	}
 
 	// Frigid Dreadplate
@@ -138,6 +126,14 @@ func (deathKnight *DeathKnight) applyRime() {
 	})
 }
 
+func (deathKnight *DeathKnight) rimeCritBonus() float64 {
+	return 0.05 * float64(deathKnight.Talents.Rime)
+}
+
+func (deathKnight *DeathKnight) rimeHbChanceProc() float64 {
+	return 5.0 * float64(deathKnight.Talents.Rime)
+}
+
 func (deathKnight *DeathKnight) annihilationCritBonus() float64 {
 	return 1.0 * float64(deathKnight.Talents.Annihilation)
 }
@@ -148,16 +144,17 @@ func (deathKnight *DeathKnight) applyKillingMachine() {
 	}
 
 	actionID := core.ActionID{SpellID: 51130}
-	weaponMH := deathKnight.GetMHWeapon()
-	procChance := (weaponMH.SwingSpeed * 5.0 / 60.0) * float64(deathKnight.Talents.KillingMachine)
+	//weaponMH := deathKnight.GetMHWeapon()
+	//procChance := (weaponMH.SwingSpeed * 5.0 / 60.0) * float64(deathKnight.Talents.KillingMachine)
+
+	ppmm := deathKnight.AutoAttacks.NewPPMManager(float64(deathKnight.Talents.KillingMachine), core.ProcMaskMeleeMHAuto|core.ProcMaskMeleeMHSpecial)
 
 	deathKnight.KillingMachineAura = deathKnight.RegisterAura(core.Aura{
 		Label:    "Killing Machine Proc",
 		ActionID: actionID,
 		Duration: time.Second * 30.0,
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			//TODO: add the other spells
-			if spell == deathKnight.IcyTouch {
+			if spell == deathKnight.IcyTouch || spell == deathKnight.FrostStrike || spell == deathKnight.HowlingBlast {
 				aura.Deactivate(sim)
 			}
 		},
@@ -170,16 +167,18 @@ func (deathKnight *DeathKnight) applyKillingMachine() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+			if !spellEffect.Landed() {
 				return
 			}
 
-			if spell != deathKnight.IcyTouch {
+			if !ppmm.Proc(sim, spellEffect.ProcMask, "killing machine") {
 				return
 			}
 
-			if sim.RandomFloat("Killing Machine") < procChance {
+			if !deathKnight.KillingMachineAura.IsActive() {
 				deathKnight.KillingMachineAura.Activate(sim)
+			} else {
+				deathKnight.KillingMachineAura.Refresh(sim)
 			}
 		},
 	})
@@ -282,13 +281,17 @@ func (deathKnight *DeathKnight) threatOfThassarianAdjustMetrics(sim *core.Simula
 	}
 }
 
-func (deathKnight *DeathKnight) threatOfThassarianProcMasks(isMH bool, effect *core.SpellEffect, guileOfGorefiend bool) {
+func (deathKnight *DeathKnight) threatOfThassarianProcMasks(isMH bool, effect *core.SpellEffect, isGuileOfGorefiendStrike bool, wrapper func(outcomeApplier core.OutcomeApplier) core.OutcomeApplier) {
+	critMultiplier := deathKnight.critMultiplier()
+	if isGuileOfGorefiendStrike {
+		critMultiplier = deathKnight.critMultiplierGuile()
+	}
 	if isMH {
 		effect.ProcMask = core.ProcMaskMeleeMHSpecial
-		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.critMultiplierGuile())
+		effect.OutcomeApplier = wrapper(deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(critMultiplier))
 	} else {
 		effect.ProcMask = core.ProcMaskMeleeOHSpecial
-		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialCritOnly(deathKnight.critMultiplierGuile())
+		effect.OutcomeApplier = wrapper(deathKnight.OutcomeFuncMeleeSpecialCritOnly(critMultiplier))
 	}
 }
 

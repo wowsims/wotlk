@@ -46,7 +46,6 @@ var enhShamRotation = &proto.EnhancementShaman_Rotation{
 		Water: proto.WaterTotem_ManaSpringTotem,
 		Fire:  proto.FireTotem_MagmaTotem,
 	},
-	PrimaryShock: proto.EnhancementShaman_Rotation_Earth,
 }
 
 var enhShamOptions = &proto.EnhancementShaman_Options{
@@ -72,7 +71,7 @@ var FullIndividualBuffs = &proto.IndividualBuffs{
 
 var FullConsumes = &proto.Consumes{
 	MainHandImbue:   proto.WeaponImbue_WeaponImbueShamanWindfury,
-	OffHandImbue:    proto.WeaponImbue_WeaponImbueShamanWindfury,
+	OffHandImbue:    proto.WeaponImbue_WeaponImbueShamanFlametongue,
 	DefaultConjured: proto.Conjured_ConjuredFlameCap,
 }
 

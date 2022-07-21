@@ -32,7 +32,7 @@ character_stats_results: {
   final_stats: 506
   final_stats: 0
   final_stats: 0
-  final_stats: 29.040000000000003
+  final_stats: 29.040000000000028
   final_stats: 609.6683333333334
   final_stats: 90.5
   final_stats: 0
@@ -1235,43 +1235,43 @@ dps_results: {
 dps_results: {
  key: "TestArms-Settings-Human-Arms P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 1005.4108425262316
-  tps: 964.482906740102
+  dps: 1002.5576660495968
+  tps: 962.8503268331092
  }
 }
 dps_results: {
  key: "TestArms-Settings-Human-Arms P1-Basic-FullBuffs-LongSingleTarget"
  value: {
-  dps: 591.7693613485372
-  tps: 504.02187765052963
+  dps: 593.2824032479227
+  tps: 505.1863812079467
  }
 }
 dps_results: {
  key: "TestArms-Settings-Human-Arms P1-Basic-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 717.047126285142
-  tps: 609.9088036477492
+  dps: 706.0142722669973
+  tps: 600.0649603799736
  }
 }
 dps_results: {
  key: "TestArms-Settings-Human-Arms P1-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 675.1105742680281
-  tps: 684.5686362885513
+  dps: 674.1266981675551
+  tps: 683.447704782457
  }
 }
 dps_results: {
  key: "TestArms-Settings-Human-Arms P1-Basic-NoBuffs-LongSingleTarget"
  value: {
-  dps: 392.56882300917204
-  tps: 338.08525632386767
+  dps: 393.62695953487264
+  tps: 338.7286867230261
  }
 }
 dps_results: {
  key: "TestArms-Settings-Human-Arms P1-Basic-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 496.9510558069983
-  tps: 426.10149796120277
+  dps: 486.16298688821
+  tps: 417.3958385999393
  }
 }
 dps_results: {

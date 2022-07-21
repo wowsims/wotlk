@@ -41,13 +41,7 @@ func (deathKnight *DeathKnight) newFrostStrikeHitSpell(isMH bool) *core.Spell {
 		},
 	}
 
-	if isMH {
-		effect.ProcMask = core.ProcMaskMeleeMHSpecial
-		effect.OutcomeApplier = deathKnight.killingMachineOutcomeMod(deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.critMultiplierGuile()))
-	} else {
-		effect.ProcMask = core.ProcMaskMeleeOHSpecial
-		effect.OutcomeApplier = deathKnight.killingMachineOutcomeMod(deathKnight.OutcomeFuncMeleeSpecialNoBlockDodgeParry(deathKnight.critMultiplierGuile()))
-	}
+	deathKnight.threatOfThassarianProcMasks(isMH, &effect, true, deathKnight.killingMachineOutcomeMod)
 
 	return deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:     FrostStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
@@ -101,4 +95,12 @@ func (deathKnight *DeathKnight) registerFrostStrikeSpell() {
 
 func (deathKnight *DeathKnight) CanFrostStrike(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 40.0, 0, 0, 0) && deathKnight.FrostStrike.IsReady(sim)
+}
+
+func (deathKnight *DeathKnight) CastFrostStrike(sim *core.Simulation, target *core.Unit) bool {
+	if deathKnight.CanFrostStrike(sim) {
+		deathKnight.FrostStrike.Cast(sim, target)
+		return true
+	}
+	return false
 }

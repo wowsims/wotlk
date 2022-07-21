@@ -18,7 +18,7 @@ func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 
 	channelTime := time.Second * time.Duration(numTicks)
 	if priest.HasSetBonus(ItemSetCrimsonAcolyte, 4) {
-		channelTime = channelTime - (time.Millisecond * 510)
+		channelTime = channelTime - time.Duration(numTicks)*(time.Millisecond*170)
 	}
 
 	return priest.RegisterSpell(core.SpellConfig{
