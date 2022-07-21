@@ -27,22 +27,22 @@ func (hp *HunterPet) ApplyTalents() {
 	hp.PseudoStats.ShadowDamageTakenMultiplier *= 1 + 0.05*float64(talents.GreatResistance)
 
 	if talents.GreatStamina != 0 {
-		hp.AddStatDependency(stats.Stamina, stats.Stamina, 0.04*float64(talents.GreatStamina))
+		hp.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+0.04*float64(talents.GreatStamina))
 	}
 
 	if talents.NaturalArmor != 0 {
-		hp.AddStatDependency(stats.Armor, stats.Armor, 0.05*float64(talents.NaturalArmor))
+		hp.AddStatDependency(stats.Armor, stats.Armor, 1.0+0.05*float64(talents.NaturalArmor))
 	}
 
 	if talents.BloodOfTheRhino != 0 {
 		hp.PseudoStats.HealingTakenMultiplier *= 1 + 0.2*float64(talents.BloodOfTheRhino)
 
-		hp.AddStatDependency(stats.Stamina, stats.Stamina, 0.02*float64(talents.BloodOfTheRhino))
+		hp.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+0.02*float64(talents.BloodOfTheRhino))
 	}
 
 	if talents.PetBarding != 0 {
 		hp.AddStat(stats.Dodge, 1*core.DodgeRatingPerDodgeChance*float64(talents.PetBarding))
-		hp.AddStatDependency(stats.Armor, stats.Armor, 0.05*float64(talents.PetBarding))
+		hp.AddStatDependency(stats.Armor, stats.Armor, 1.0+0.05*float64(talents.PetBarding))
 	}
 
 	hp.applyOwlsFocus()

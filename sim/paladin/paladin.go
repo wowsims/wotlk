@@ -144,9 +144,9 @@ func NewPaladin(character core.Character, talents proto.PaladinTalents) *Paladin
 	paladin.EnableManaBar()
 
 	// Add paladin stat dependencies
-	paladin.AddStatDependency(stats.Strength, stats.AttackPower, 2)
-	paladin.AddStatDependency(stats.Agility, stats.MeleeCrit, (core.CritRatingPerCritChance / 25))
-	paladin.AddStatDependency(stats.Agility, stats.Dodge, (core.DodgeRatingPerDodgeChance / 25))
+	paladin.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
+	paladin.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/25))
+	paladin.AddStatDependency(stats.Agility, stats.Dodge, 1.0+(core.DodgeRatingPerDodgeChance/25))
 
 	return paladin
 }

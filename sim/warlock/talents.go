@@ -11,41 +11,41 @@ import (
 func (warlock *Warlock) ApplyTalents() {
 	// Demonic Embrace
 	if warlock.Talents.DemonicEmbrace > 0 {
-		warlock.AddStatDependency(stats.Stamina, stats.Stamina, 0.01+float64(warlock.Talents.DemonicEmbrace)*0.03)
+		warlock.AddStatDependency(stats.Stamina, stats.Stamina, 1.01+(float64(warlock.Talents.DemonicEmbrace)*0.03))
 	}
 
 	// Suppression
 	warlock.AddStat(stats.SpellHit, float64(warlock.Talents.Suppression)*core.SpellHitRatingPerHitChance)
 
 	// Shadow Mastery
-	warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + 0.03*float64(warlock.Talents.ShadowMastery)
+	warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + (0.03 * float64(warlock.Talents.ShadowMastery))
 
 	// Backlash (Add 1% crit per level)
 	warlock.AddStat(stats.SpellCrit, float64(warlock.Talents.Backlash)*core.CritRatingPerCritChance)
 
 	// Malediction (SP bonus)
 	if warlock.Talents.Malediction > 0 {
-		warlock.AddStatDependency(stats.SpellPower, stats.SpellPower, 0.01*float64(warlock.Talents.Malediction))
+		warlock.AddStatDependency(stats.SpellPower, stats.SpellPower, 1.0+(0.01*float64(warlock.Talents.Malediction)))
 	}
 
 	// Fel Vitality
 	if warlock.Talents.FelVitality > 0 {
 		bonus := 0.01 * float64(warlock.Talents.FelVitality)
 		// Adding a second 3% bonus int->mana dependency
-		warlock.AddStatDependency(stats.Intellect, stats.Mana, 15*bonus)
+		warlock.AddStatDependency(stats.Intellect, stats.Mana, 1.0+(15*bonus))
 	}
 
 	if warlock.Options.Summon != proto.Warlock_Options_NoSummon {
 		if warlock.Talents.MasterDemonologist > 0 {
 			switch warlock.Options.Summon {
 			case proto.Warlock_Options_Imp:
-				warlock.PseudoStats.FireDamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
-				warlock.PseudoStats.BonusFireCritRating *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
+				warlock.PseudoStats.FireDamageDealtMultiplier *= 1.0 + (0.01 * float64(warlock.Talents.MasterDemonologist))
+				warlock.PseudoStats.BonusFireCritRating *= 1.0 + (0.01 * float64(warlock.Talents.MasterDemonologist))
 			case proto.Warlock_Options_Succubus:
-				warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
-				warlock.PseudoStats.BonusShadowCritRating *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
+				warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + (0.01 * float64(warlock.Talents.MasterDemonologist))
+				warlock.PseudoStats.BonusShadowCritRating *= 1.0 + (0.01 * float64(warlock.Talents.MasterDemonologist))
 			case proto.Warlock_Options_Felguard:
-				warlock.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
+				warlock.PseudoStats.DamageDealtMultiplier *= 1.0 + (0.01 * float64(warlock.Talents.MasterDemonologist))
 			}
 		}
 		// Extract stats for demonic knowledge

@@ -70,7 +70,7 @@ func NewFeralDruid(character core.Character, options proto.Player) *FeralDruid {
 
 	// Cat Form adds (2 x Level) AP + 1 AP per Agi
 	cat.AddStat(stats.AttackPower, 140)
-	cat.AddStatDependency(stats.Agility, stats.AttackPower, 1)
+	cat.AddStatDependency(stats.Agility, stats.AttackPower, 1.0+1)
 
 	// TODO: Make AP depend on weapon DPS instead of FAP
 	// cat.AddStatDependency(stats.StatDependency{

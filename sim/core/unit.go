@@ -201,7 +201,7 @@ func (unit *Unit) AddStatDynamic(sim *Simulation, stat stats.Stat, amount float6
 
 	// Now apply stat dependencies
 	for k, v := range unit.statBonuses[stat].Deps {
-		if v == 0 {
+		if v == 1 {
 			continue
 		}
 		unit.AddStatDynamic(sim, k, (v-1)*added) // this should handle descending
@@ -218,7 +218,7 @@ func (unit *Unit) applyStatDependencies(ss stats.Stats) stats.Stats {
 		added := v * unit.statBonuses[s].Multiplier
 		news[s] += added
 		for k, v := range unit.statBonuses[s].Deps {
-			if v == 0 {
+			if v == 1 {
 				continue
 			}
 			addstat(k, (v-1)*added)

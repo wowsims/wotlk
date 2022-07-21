@@ -17,10 +17,10 @@ func TestStatDependencies(t *testing.T) {
 		stats.Spirit:    1,
 	}
 
-	unit.AddStatDependency\(stats.Intellect, stats.Intellect, 1.0+2)
-	unit.AddStatDependency\(stats.Stamina, stats.Intellect, 1.0+2)
-	unit.AddStatDependency\(stats.Stamina, stats.Stamina, 1.0+2)
-	unit.AddStatDependency\(stats.Agility, stats.Stamina, 1.0+2)
+	unit.AddStatDependency(stats.Intellect, stats.Intellect, 1.0+1)
+	unit.AddStatDependency(stats.Stamina, stats.Intellect, 1.0+1)
+	unit.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+1)
+	unit.AddStatDependency(stats.Agility, stats.Stamina, 1.0+1)
 	unit.finalizeStatDeps()
 
 	expectedResult := stats.Stats{
@@ -81,8 +81,8 @@ func TestCircularStatDependencies(t *testing.T) {
 		}
 	}()
 	unit := Unit{}
-	unit.AddStatDependency\(stats.Stamina, stats.Intellect, 1.0+1)
-	unit.AddStatDependency\(stats.Agility, stats.Stamina, 1.0+1)
-	unit.AddStatDependency\(stats.Intellect, stats.Agility, 1.0+1)
+	unit.AddStatDependency(stats.Stamina, stats.Intellect, 1.0+1)
+	unit.AddStatDependency(stats.Agility, stats.Stamina, 1.0+1)
+	unit.AddStatDependency(stats.Intellect, stats.Agility, 1.0+1)
 	unit.finalizeStatDeps()
 }

@@ -23,7 +23,7 @@ func (deathKnight *DeathKnight) ApplyBloodTalents() {
 	// Bladed Armor
 	if deathKnight.Talents.BladedArmor > 0 {
 		coeff := float64(deathKnight.Talents.BladedArmor)
-		deathKnight.AddStatDependency(stats.Armor, stats.AttackPower, coeff/180.0)
+		deathKnight.AddStatDependency(stats.Armor, stats.AttackPower, 1.0+coeff/180.0)
 	}
 
 	// Two Handed Specialization
@@ -58,8 +58,8 @@ func (deathKnight *DeathKnight) ApplyBloodTalents() {
 		strengthCoeff := 0.02 * float64(deathKnight.Talents.VeteranOfTheThirdWar)
 		staminaCoeff := 0.01 * float64(deathKnight.Talents.VeteranOfTheThirdWar)
 		expertiseBonus := 2.0 * float64(deathKnight.Talents.VeteranOfTheThirdWar)
-		deathKnight.AddStatDependency(stats.Strength, stats.Strength, strengthCoeff)
-		deathKnight.AddStatDependency(stats.Stamina, stats.Stamina, staminaCoeff)
+		deathKnight.AddStatDependency(stats.Strength, stats.Strength, 1.0+strengthCoeff)
+		deathKnight.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+staminaCoeff)
 		deathKnight.AddStat(stats.Expertise, expertiseBonus*core.ExpertisePerQuarterPercentReduction)
 	}
 
@@ -72,7 +72,7 @@ func (deathKnight *DeathKnight) ApplyBloodTalents() {
 	// Abomination's Might
 	if deathKnight.Talents.AbominationsMight > 0 {
 		strengthCoeff := 0.01 * float64(deathKnight.Talents.AbominationsMight)
-		deathKnight.AddStatDependency(stats.Strength, stats.Strength, strengthCoeff)
+		deathKnight.AddStatDependency(stats.Strength, stats.Strength, 1.0+strengthCoeff)
 	}
 }
 

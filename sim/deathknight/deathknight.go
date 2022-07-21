@@ -278,9 +278,9 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 		AutoSwingMelee: true,
 	})
 
-	deathKnight.AddStatDependency(stats.Agility, stats.MeleeCrit, (core.CritRatingPerCritChance / 62.5))
-	deathKnight.AddStatDependency(stats.Agility, stats.Dodge, (core.DodgeRatingPerDodgeChance / 84.74576271))
-	deathKnight.AddStatDependency(stats.Strength, stats.AttackPower, 2)
+	deathKnight.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/62.5))
+	deathKnight.AddStatDependency(stats.Agility, stats.Dodge, 1.0+(core.DodgeRatingPerDodgeChance/84.74576271))
+	deathKnight.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
 
 	deathKnight.Ghoul = deathKnight.NewGhoulPet(deathKnight.Talents.MasterOfGhouls)
 	if deathKnight.Talents.SummonGargoyle {

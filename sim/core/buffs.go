@@ -71,7 +71,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 
 	if raidBuffs.TrueshotAura || raidBuffs.AbominationsMight || raidBuffs.UnleashedRage {
 		// Increases AP by 10%
-		character.AddStatDependency(stats.AttackPower, stats.AttackPower, 0.1)
+		character.AddStatDependency(stats.AttackPower, stats.AttackPower, 1.0+0.1)
 	}
 
 	if raidBuffs.ArcaneEmpowerment || raidBuffs.FerociousInspiration || raidBuffs.SanctifiedRetribution {
@@ -125,20 +125,20 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		individualBuffs.JudgementsOfTheWise ||
 		individualBuffs.ImprovedSoulLeech ||
 		individualBuffs.EnduringWinter {
-		character.AddStatDependency(stats.Mana, stats.MP5, 0.01)
+		character.AddStatDependency(stats.Mana, stats.MP5, 1.0+0.01)
 	}
 
-	kingsAgiIntSpiAmount := 0.0
-	kingsStrStamAmount := 0.0
+	kingsAgiIntSpiAmount := 1.0
+	kingsStrStamAmount := 1.0
 	if individualBuffs.BlessingOfSanctuary {
-		kingsStrStamAmount = 0.1
+		kingsStrStamAmount = 1.1
 	}
 	if individualBuffs.BlessingOfKings {
-		kingsAgiIntSpiAmount = 0.1
-		kingsStrStamAmount = 0.1
+		kingsAgiIntSpiAmount = 1.1
+		kingsStrStamAmount = 1.1
 	} else if raidBuffs.DrumsOfForgottenKings {
-		kingsAgiIntSpiAmount = 0.08
-		kingsStrStamAmount = MaxFloat(kingsStrStamAmount, 0.08)
+		kingsAgiIntSpiAmount = 1.08
+		kingsStrStamAmount = MaxFloat(kingsStrStamAmount, 1.08)
 	}
 	if kingsStrStamAmount > 0 {
 		character.AddStatDependency(stats.Strength, stats.Strength, kingsStrStamAmount)

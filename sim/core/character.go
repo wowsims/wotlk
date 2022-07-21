@@ -129,8 +129,8 @@ func NewCharacter(party *Party, partyIndex int, player proto.Player) Character {
 }
 
 func (character *Character) addUniversalStatDependencies() {
-	character.AddStatDependency(stats.Stamina, stats.Health, 10)
-	character.AddStatDependency(stats.Agility, stats.Armor, 2)
+	character.AddStatDependency(stats.Stamina, stats.Health, 1.0+10)
+	character.AddStatDependency(stats.Agility, stats.Armor, 1.0+2)
 }
 
 // Empty implementation so its optional for Agents.

@@ -140,7 +140,7 @@ func NewWarlock(character core.Character, options proto.Player) *Warlock {
 	}
 	warlock.EnableManaBar()
 
-	warlock.Character.AddStatDependency(stats.Strength, stats.AttackPower, 2)
+	warlock.Character.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
 
 	if warlock.Options.Armor == proto.Warlock_Options_FelArmor {
 		amount := 180.0 + 0.3*float64(stats.Spirit)

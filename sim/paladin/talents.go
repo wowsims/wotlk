@@ -26,16 +26,16 @@ func (paladin *Paladin) ApplyTalents() {
 	paladin.AddStat(stats.Defense, core.DefenseRatingPerDefense*4*float64(paladin.Talents.Anticipation))
 
 	if paladin.Talents.DivineStrength > 0 {
-		paladin.AddStatDependency(stats.Strength, stats.Strength, 0.03*float64(paladin.Talents.DivineStrength))
+		paladin.AddStatDependency(stats.Strength, stats.Strength, 1.0+0.03*float64(paladin.Talents.DivineStrength))
 	}
 	if paladin.Talents.DivineIntellect > 0 {
-		paladin.AddStatDependency(stats.Intellect, stats.Intellect, 0.02*float64(paladin.Talents.DivineIntellect))
+		paladin.AddStatDependency(stats.Intellect, stats.Intellect, 1.0+0.02*float64(paladin.Talents.DivineIntellect))
 	}
 
 	if paladin.Talents.SheathOfLight > 0 {
 		// doesn't implement HOT
 		percentage := 0.10 * float64(paladin.Talents.SheathOfLight)
-		paladin.AddStatDependency(stats.AttackPower, stats.SpellPower, percentage)
+		paladin.AddStatDependency(stats.AttackPower, stats.SpellPower, 1.0+percentage)
 	}
 
 	// if paladin.Talents.ShieldSpecialization > 0 {
@@ -50,12 +50,12 @@ func (paladin *Paladin) ApplyTalents() {
 	// }
 
 	if paladin.Talents.SacredDuty > 0 {
-		paladin.AddStatDependency(stats.Stamina, stats.Stamina, 0.03*float64(paladin.Talents.SacredDuty))
+		paladin.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+0.03*float64(paladin.Talents.SacredDuty))
 	}
 
 	if paladin.Talents.CombatExpertise > 0 {
 		paladin.AddStat(stats.Expertise, core.ExpertisePerQuarterPercentReduction*1*float64(paladin.Talents.CombatExpertise))
-		paladin.AddStatDependency(stats.Stamina, stats.Stamina, 0.02*float64(paladin.Talents.CombatExpertise))
+		paladin.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+0.02*float64(paladin.Talents.CombatExpertise))
 	}
 
 	paladin.applyRedoubt()

@@ -21,12 +21,12 @@ func (priest *Priest) ApplyTalents() {
 
 	if priest.Talents.SpiritualGuidance > 0 {
 		bonus := (0.25 / 5) * float64(priest.Talents.SpiritualGuidance)
-		priest.AddStatDependency(stats.Spirit, stats.SpellPower, bonus)
+		priest.AddStatDependency(stats.Spirit, stats.SpellPower, 1.0+bonus)
 	}
 
 	if priest.Talents.MentalStrength > 0 {
 		coeff := 0.02 * float64(priest.Talents.MentalStrength)
-		priest.AddStatDependency(stats.Mana, stats.Mana, coeff)
+		priest.AddStatDependency(stats.Mana, stats.Mana, 1.0+coeff)
 	}
 
 	// if priest.Talents.ForceOfWill > 0 {
@@ -43,13 +43,13 @@ func (priest *Priest) ApplyTalents() {
 
 	if priest.Talents.Enlightenment > 0 {
 		coeff := (0.01 * float64(priest.Talents.Enlightenment))
-		priest.AddStatDependency(stats.Intellect, stats.Intellect, coeff)
-		priest.AddStatDependency(stats.Stamina, stats.Stamina, coeff)
-		priest.AddStatDependency(stats.Spirit, stats.Spirit, coeff)
+		priest.AddStatDependency(stats.Intellect, stats.Intellect, 1.0+coeff)
+		priest.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+coeff)
+		priest.AddStatDependency(stats.Spirit, stats.Spirit, 1.0+coeff)
 	}
 
 	if priest.Talents.SpiritOfRedemption {
-		priest.AddStatDependency(stats.Spirit, stats.Spirit, 0.05)
+		priest.AddStatDependency(stats.Spirit, stats.Spirit, 1.0+0.05)
 	}
 }
 

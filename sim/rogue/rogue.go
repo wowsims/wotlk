@@ -249,9 +249,9 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 		AutoSwingMelee: true,
 	})
 
-	rogue.AddStatDependency(stats.Strength, stats.AttackPower, 1)
-	rogue.AddStatDependency(stats.Agility, stats.AttackPower, 1)
-	rogue.AddStatDependency(stats.Agility, stats.MeleeCrit, (core.CritRatingPerCritChance / 40))
+	rogue.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+1)
+	rogue.AddStatDependency(stats.Agility, stats.AttackPower, 1.0+1)
+	rogue.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/40))
 
 	return rogue
 }

@@ -21,11 +21,11 @@ func (deathKnight *DeathKnight) registerUnbreakableArmorSpell() {
 		ActionID: actionID,
 		Duration: time.Second * 20,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			deathKnight.UnbreakableArmorAura.Unit.AddStatDependencyDynamic(sim, stats.Strength, stats.Strength, 0.2)
+			deathKnight.UnbreakableArmorAura.Unit.AddStatDependencyDynamic(sim, stats.Strength, stats.Strength, 1.2)
 		},
 
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			deathKnight.UnbreakableArmorAura.Unit.AddStatDependencyDynamic(sim, stats.Strength, stats.Strength, -1.2)
+			deathKnight.UnbreakableArmorAura.Unit.AddStatDependencyDynamic(sim, stats.Strength, stats.Strength, 1/1.2)
 		},
 	})
 

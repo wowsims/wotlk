@@ -76,7 +76,7 @@ func NewFeralTankDruid(character core.Character, options proto.Player) *FeralTan
 	bear.AddStat(stats.AttackPower, 3*float64(core.CharacterLevel))
 
 	// Dire Bear Form bonuses.
-	bear.AddStatDependency(stats.Stamina, stats.Stamina, 0.25)
+	bear.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+0.25)
 
 	// TODO: make AP depend on weapon DPS instead of FAP
 	// bear.AddStatDependency(stats.StatDependency{

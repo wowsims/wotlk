@@ -156,9 +156,9 @@ func New(char core.Character, form DruidForm, selfBuffs SelfBuffs, talents proto
 	}
 	druid.EnableManaBar()
 
-	druid.AddStatDependency(stats.Strength, stats.AttackPower, 2)
-	druid.AddStatDependency(stats.Agility, stats.MeleeCrit, (core.CritRatingPerCritChance / 25))
-	druid.AddStatDependency(stats.Agility, stats.Dodge, (core.DodgeRatingPerDodgeChance / 14.7059))
+	druid.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
+	druid.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/25))
+	druid.AddStatDependency(stats.Agility, stats.Dodge, 1.0+(core.DodgeRatingPerDodgeChance/14.7059))
 
 	return druid
 }
