@@ -148,7 +148,7 @@ export abstract class SimUI extends Component {
 		}
 
 		const downloadBinary = document.createElement('span');
-		// downloadBinary.src = "/wotlk/assets/gauge.svg"
+		// downloadBinary.src = "/wotlk/assets/img/gauge.svg"
 		downloadBinary.classList.add('downbin');
 		downloadBinary.addEventListener('click', event => {
 			window.open('https://github.com/wowsims/wotlk/releases', '_blank');
