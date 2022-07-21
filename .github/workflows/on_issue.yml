@@ -8,5 +8,8 @@ jobs:
     steps:
       - name: Send webhook
         uses: Ilshidur/action-discord@master
+        continue-on-error: true
         env:
           DISCORD_WEBHOOK: ${{ secrets.WEBHOOK_URL }}
+      - name: Exit 0
+        run: exit 0
