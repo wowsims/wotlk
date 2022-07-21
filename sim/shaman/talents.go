@@ -262,11 +262,9 @@ func (shaman *Shaman) applyFlurry() {
 
 	bonus := 1.0 + 0.06*float64(shaman.Talents.Flurry)
 
-	// I believe there is a set in wotlk that improves flurry.
-
-	// if shaman.HasSetBonus(ItemSetEarthshatterBattlegear, 4) { //NYI
-	// 	bonus += 0.05
-	// }
+	if shaman.HasSetBonus(ItemSetEarthshatterBattlegear, 4) { //NYI
+		bonus += 0.05
+	}
 
 	inverseBonus := 1 / bonus
 

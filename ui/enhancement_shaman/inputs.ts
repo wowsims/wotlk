@@ -71,33 +71,9 @@ export const DelayOffhandSwings = {
 };
 
 export const EnhancementShamanRotationConfig = {
-	inputs: [
-//		{
-//			type: 'enum' as const, cssClass: 'primary-shock-picker',
-//			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-//			config: {
-//				label: 'Mainhand Imbue', //very temporary, just as a way to be able to make sure imbues are working in the meantime,
-//				values: [                //and primary shocks arent a thing anymore
-//					{
-//						name: 'None', value: WeaponImbue.None,
-//					},
-//					{
-//						name: 'Windfury', value: WeaponImbue.WeaponImbueShamanWindfury,
-//					},
-//					{
-//						name: 'Flametongue', value: WeaponImbue.WeaponImbueShamanFlametongue,
-//					},
-//				],
-//				changedEvent: (player: Player<Spec.SpecEnhancementShaman>) => player.rotationChangeEmitter,
-//				getValue: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().WeaponImbue,
-//				setValue: (eventID: EventID, player: Player<Spec.SpecEnhancementShaman>, newValue: number) => {
-//					const newRotation = player.getRotation();
-//					newRotation.WeaponImbue = newValue;
-//					player.setRotation(eventID, newRotation);
-//				},
-//			},
-//		}
-	],
+    inputs: [
+
+    ],
 };
 
 function makeBooleanShamanBuffInput(id: ActionId, optionsFieldName: keyof ShamanOptions): IconPickerConfig<Player<any>, boolean> {
