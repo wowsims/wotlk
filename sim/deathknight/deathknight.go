@@ -14,7 +14,8 @@ type DeathKnight struct {
 	Options  proto.DeathKnight_Options
 	Rotation proto.DeathKnight_Rotation
 
-	FrostRotation FrostRotation
+	LastCastOutcome core.HitOutcome
+	DKRotation      DKRotation
 
 	Ghoul     *GhoulPet
 	RaiseDead *core.Spell
@@ -57,8 +58,7 @@ type DeathKnight struct {
 	DeathAndDecay    *core.Spell
 	DeathAndDecayDot *core.Dot
 
-	HowlingBlastCostless bool
-	HowlingBlast         *core.Spell
+	HowlingBlast *core.Spell
 
 	OtherRelevantStrAgiActive bool
 	HornOfWinter              *core.Spell
@@ -93,6 +93,7 @@ type DeathKnight struct {
 	NecrosisAura        *core.Aura
 	BloodCakedBladeAura *core.Aura
 	ButcheryAura        *core.Aura
+	RimeAura            *core.Aura
 
 	// Talent Spells
 	LastDiseaseDamage float64
@@ -176,7 +177,7 @@ func (deathKnight *DeathKnight) Initialize() {
 	deathKnight.registerRaiseDeadCD()
 	deathKnight.registerSummonGargoyleCD()
 
-	deathKnight.setupFrostRotation()
+	deathKnight.setupDKRotation()
 }
 
 func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
@@ -202,7 +203,7 @@ func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
 		}
 	}
 
-	deathKnight.resetFrostRotation(sim)
+	deathKnight.resetDKRotation(sim)
 }
 
 func (deathKnight *DeathKnight) IsFuStrike(spell *core.Spell) bool {
@@ -235,28 +236,38 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 		currentRunicPower,
 		maxRunicPower,
 		func(sim *core.Simulation) {
-			if deathKnight.GCD.IsReady(sim) {
-				deathKnight.tryUseGCD(sim)
+			if !deathKnight.Talents.HowlingBlast {
+				if deathKnight.GCD.IsReady(sim) {
+					deathKnight.tryUseGCD(sim)
+				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if deathKnight.GCD.IsReady(sim) {
-				deathKnight.tryUseGCD(sim)
+			if !deathKnight.Talents.HowlingBlast {
+				if deathKnight.GCD.IsReady(sim) {
+					deathKnight.tryUseGCD(sim)
+				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if deathKnight.GCD.IsReady(sim) {
-				deathKnight.tryUseGCD(sim)
+			if !deathKnight.Talents.HowlingBlast {
+				if deathKnight.GCD.IsReady(sim) {
+					deathKnight.tryUseGCD(sim)
+				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if deathKnight.GCD.IsReady(sim) {
-				deathKnight.tryUseGCD(sim)
+			if !deathKnight.Talents.HowlingBlast {
+				if deathKnight.GCD.IsReady(sim) {
+					deathKnight.tryUseGCD(sim)
+				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if deathKnight.GCD.IsReady(sim) {
-				deathKnight.tryUseGCD(sim)
+			if !deathKnight.Talents.HowlingBlast {
+				if deathKnight.GCD.IsReady(sim) {
+					deathKnight.tryUseGCD(sim)
+				}
 			}
 		},
 	)
@@ -329,11 +340,14 @@ func (deathKnight *DeathKnight) secondaryCritModifier(applyGuile bool) float64 {
 	}
 	return secondaryModifier
 }
-func (deathKnight *DeathKnight) critMultiplier() float64 {
+func (deathKnight *DeathKnight) spellCritMultiplier() float64 {
+	return deathKnight.MeleeCritMultiplier(1.0, 0)
+}
+func (deathKnight *DeathKnight) spellCritMultiplierGuile() float64 {
 	applyGuile := deathKnight.Talents.GuileOfGorefiend > 0
 	return deathKnight.MeleeCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile))
 }
-func (deathKnight *DeathKnight) spellCritMultiplier() float64 {
+func (deathKnight *DeathKnight) critMultiplierGuile() float64 {
 	applyGuile := deathKnight.Talents.GuileOfGorefiend > 0
 	return deathKnight.MeleeCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile))
 }

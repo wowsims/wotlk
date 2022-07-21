@@ -145,6 +145,8 @@ message DeathKnight {
 		bool unholy_presence_opener = 2;
 		double disease_refresh_duration = 3;
 		bool refresh_horn_of_winter = 4;
+
+		bool wip_frost_rotation = 5;
 	}
 	Rotation rotation = 1;
 

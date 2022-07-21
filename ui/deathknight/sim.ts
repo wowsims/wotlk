@@ -85,7 +85,7 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				// Default rotation settings.
 				rotation: Presets.DefaultRotation,
 				// Default talents.
-				talents: Presets.FrostUnholyTalents.data,
+				talents: Presets.FrostTalents.data,
 				// Default spec-specific settings.
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
@@ -117,8 +117,8 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				}),
 			},
 
-			// IconInputs to include in the 'Self Buffs' section on the settings tab.
-			selfBuffInputs: [
+			// IconInputs to include in the 'Player' section on the settings tab.
+			playerIconInputs: [
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: DeathKnightInputs.DeathKnightRotationConfig,
@@ -138,10 +138,6 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				],
 			},
 			encounterPicker: {
-				// Target stats to show for 'Simple' encounters.
-				simpleTargetStats: [
-					Stat.StatArmor,
-				],
 				// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
 				showExecuteProportion: false,
 			},
@@ -149,8 +145,8 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 			presets: {
 				// Preset talents that the user can quickly select.
 				talents: [
-					Presets.FrostUnholyTalents,
 					Presets.FrostTalents,
+					Presets.FrostUnholyTalents,
 					Presets.UnholyDualWieldTalents,
 				],
 				// Preset gear configurations that the user can quickly select.

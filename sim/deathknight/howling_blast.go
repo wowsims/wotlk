@@ -6,14 +6,11 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-var HowlingBlastLastOutcomes []core.HitOutcome
-
 func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 	if !deathKnight.Talents.HowlingBlast {
 		return
 	}
 	target := deathKnight.CurrentTarget
-	HowlingBlastLastOutcomes = make([]core.HitOutcome, deathKnight.Env.GetNumTargets())
 
 	deathKnight.HowlingBlast = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 51411},
@@ -49,21 +46,25 @@ func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: deathKnight.killingMachineOutcomeMod(deathKnight.OutcomeFuncMagicHitAndCrit(deathKnight.spellCritMultiplier())),
+			OutcomeApplier: deathKnight.killingMachineOutcomeMod(deathKnight.OutcomeFuncMagicHitAndCrit(deathKnight.spellCritMultiplierGuile())),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				HowlingBlastLastOutcomes[deathKnight.getIndexForTarget(spellEffect.Target)] = spellEffect.Outcome
+				if spellEffect.Target == deathKnight.CurrentTarget {
+					deathKnight.LastCastOutcome = spellEffect.Outcome
+				}
 				if spellEffect.Landed() && target == spellEffect.Target {
-					if !deathKnight.HowlingBlastCostless {
+					if !deathKnight.RimeAura.IsActive() {
 						dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 1, 1)
 						deathKnight.Spend(sim, spell, dkSpellCost)
 						amountOfRunicPower := 15.0 + 2.5*float64(deathKnight.Talents.ChillOfTheGrave)
 						deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 					} else {
-						deathKnight.HowlingBlastCostless = false
+						deathKnight.RimeAura.Deactivate(sim)
 					}
-				} else if spellEffect.Landed() && !deathKnight.HowlingBlastCostless {
+				} else if spellEffect.Landed() {
 					amountOfRunicPower := 2.5 * float64(deathKnight.Talents.ChillOfTheGrave)
 					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
+				} else {
+					deathKnight.RimeAura.Deactivate(sim)
 				}
 			},
 		}),
@@ -71,7 +72,7 @@ func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 }
 
 func (deathKnight *DeathKnight) CanHowlingBlast(sim *core.Simulation) bool {
-	if deathKnight.HowlingBlastCostless {
+	if deathKnight.RimeAura.IsActive() {
 		return deathKnight.HowlingBlast.IsReady(sim)
 	}
 	return deathKnight.CastCostPossible(sim, 0.0, 0, 1, 1) && deathKnight.HowlingBlast.IsReady(sim)

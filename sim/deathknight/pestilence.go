@@ -5,10 +5,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-var PestilenceLastOutcomes []core.HitOutcome
-
 func (deathKnight *DeathKnight) registerPestilenceSpell() {
-	PestilenceLastOutcomes = make([]core.HitOutcome, deathKnight.Env.GetNumTargets())
 
 	deathKnight.Pestilence = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 50842},
@@ -34,7 +31,9 @@ func (deathKnight *DeathKnight) registerPestilenceSpell() {
 			OutcomeApplier: deathKnight.OutcomeFuncMagicHit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				PestilenceLastOutcomes[deathKnight.getIndexForTarget(spellEffect.Target)] = spellEffect.Outcome
+				if spellEffect.Target == deathKnight.CurrentTarget {
+					deathKnight.LastCastOutcome = spellEffect.Outcome
+				}
 				if spellEffect.Landed() {
 					unitHit := spellEffect.Target
 					// Main target
@@ -46,7 +45,11 @@ func (deathKnight *DeathKnight) registerPestilenceSpell() {
 						}
 
 						dkSpellCost := deathKnight.DetermineOptimalCost(sim, 1, 0, 0)
-						deathKnight.Spend(sim, spell, dkSpellCost)
+						if !deathKnight.bloodOfTheNorthProc(sim, spell, dkSpellCost) {
+							if !deathKnight.reapingProc(sim, spell, dkSpellCost) {
+								deathKnight.Spend(sim, spell, dkSpellCost)
+							}
+						}
 
 						amountOfRunicPower := 10.0 + 2.5*float64(deathKnight.Talents.ChillOfTheGrave)
 						deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())

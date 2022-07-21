@@ -13,6 +13,7 @@ import { Consumes,
 	Spec,
 	Stat,
 	TristateEffect,
+	Race,
 } from '/wotlk/core/proto/common.js';
 import { SavedTalents } from '/wotlk/core/proto/ui.js';
 import { Player } from '/wotlk/core/player.js';
@@ -157,6 +158,7 @@ export const DefaultIndividualBuffs = IndividualBuffs.create({
 	blessingOfKings: true,
 	blessingOfWisdom: TristateEffect.TristateEffectImproved,
 	blessingOfMight: TristateEffect.TristateEffectImproved,
+	vampiricTouch: true,
 });
 
 export const DefaultDebuffs = Debuffs.create({
@@ -171,7 +173,8 @@ export const DefaultDebuffs = Debuffs.create({
 export const SWP_BIS = {
 	name: 'SWP BiS',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
+	gear: EquipmentSpec.fromJsonString(`
+{"items": [
         {
           "id": 34340,
           "enchant": 29191,
@@ -271,5 +274,114 @@ export const SWP_BIS = {
             35760
           ]
         }
-      ]}`),
+      ]}
+    `),
 };
+export const P1_PreBiS = {
+	name: 'Pre-BiS',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(`
+{"items": [
+        {
+          "id": 44910,
+          "enchant": 29191,
+          "gems": [
+            41285,
+            40113
+          ]
+        },
+        {
+          "id": 42647,
+          "gems": [
+            40113
+          ]
+        },
+        {
+          "id": 34210,
+          "enchant": 28886,
+          "gems": [
+            40113,
+            40155
+          ]
+        },
+        {
+          "id": 41610,
+          "enchant": 55642
+        },
+        {
+          "id": 39497,
+          "enchant": 24003,
+          "gems": [
+            40113,
+            40155
+          ]
+        },
+        {
+          "id": 37361,
+          "enchant": 22534,
+          "gems": [
+            0
+          ]
+        },
+        {
+          "id": 34344,
+          "enchant": 54999,
+          "gems": [
+            40155,
+            40113,
+            0
+          ]
+        },
+        {
+          "id": 40696,
+          "gems": [
+            40155,
+            0
+          ]
+        },
+        {
+          "id": 34181,
+          "enchant": 24274,
+          "gems": [
+            40113,
+            40113,
+            40155
+          ]
+        },
+        {
+          "id": 44202,
+          "enchant": 35297,
+          "gems": [
+            40133
+          ]
+        },
+        {
+          "id": 43253,
+          "gems": [
+            40133
+          ]
+        },
+        {
+          "id": 40585
+        },
+        {
+          "id": 40682
+        },
+        {
+          "id": 37873
+        },
+        {
+          "id": 37360,
+          "enchant": 44487
+        },
+        {},
+        {
+          "id": 34347,
+          "gems": [
+            40155
+          ]
+        }
+      ]
+    }
+    `),
+}

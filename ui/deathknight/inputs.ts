@@ -117,6 +117,25 @@ export const RefreshHornOfWinter = {
 	},
 };
 
+export const WIPFrostRotation = {
+	type: 'boolean' as const,
+	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
+	config: {
+		extraCssClasses: [
+			'wip-frost-rotation-picker',
+		],
+		label: 'Use WIP frost rotation',
+		labelTooltip: 'Use sequence based rotation for frost, ***currently WIP***.',
+		changedEvent: (player: Player<Spec.SpecDeathKnight>) => player.specOptionsChangeEmitter,
+		getValue: (player: Player<Spec.SpecDeathKnight>) => player.getRotation().wipFrostRotation,
+		setValue: (eventID: EventID, player: Player<Spec.SpecDeathKnight>, newValue: boolean) => {
+			const newRotation = player.getRotation();
+			newRotation.wipFrostRotation = newValue;
+			player.setRotation(eventID, newRotation);
+		},
+	},
+};
+
 export const DiseaseRefreshDuration = {
 	type: 'number' as const,
 	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
@@ -180,5 +199,6 @@ export const DeathKnightRotationConfig = {
 		UnholyPresenceOpener,
 		RefreshHornOfWinter,
 		DiseaseRefreshDuration,
+		WIPFrostRotation,
 	],
 };

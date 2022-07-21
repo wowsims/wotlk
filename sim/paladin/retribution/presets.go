@@ -40,6 +40,7 @@ var defaultRetOptions = &proto.RetributionPaladin_Options{
 	Judgement:            proto.PaladinJudgement_JudgementOfWisdom,
 	Seal:                 proto.PaladinSeal_Vengeance,
 	Aura:                 proto.PaladinAura_RetributionAura,
+	UseDivinePlea:        true,
 	DamageTakenPerSecond: 0,
 }
 
