@@ -205,9 +205,6 @@ export class RaidSimUI extends SimUI {
 
 		const encounterSectionElem = this.rootElem.getElementsByClassName('raid-encounter-section')[0] as HTMLElement;
 		new EncounterPicker(encounterSectionElem, this.sim.encounter, {
-			simpleTargetStats: [
-				Stat.StatArmor,
-			],
 			showExecuteProportion: true,
 		}, this);
 		const savedEncounterManager = new SavedDataManager<Encounter, SavedEncounter>(this.rootElem.getElementsByClassName('saved-encounter-manager')[0] as HTMLElement, this.sim.encounter, {

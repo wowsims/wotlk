@@ -110,25 +110,19 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				debuffs: Presets.DefaultDebuffs,
 			},
 
-			// IconInputs to include in the 'Self Buffs' section on the settings tab.
-			selfBuffInputs: [
+			// IconInputs to include in the 'Player' section on the settings tab.
+			playerIconInputs: [
 				WarlockInputs.FelArmor,
 				WarlockInputs.DemonArmor,
-			],
-			weaponImbueInputs: [
-				WarlockInputs.GrandSpellstone,
-				WarlockInputs.GrandFirestone,
-			],
-			petInputs: [
 				WarlockInputs.SummonImp,
 				WarlockInputs.SummonSuccubus,
 				WarlockInputs.SummonFelhunter,
 				WarlockInputs.SummonFelguard,
+				WarlockInputs.GrandSpellstone,
+				WarlockInputs.GrandFirestone,
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
-			rotationInputs: WarlockInputs.WarlockRotationConfig,
-
-			spellInputs: [
+			rotationIconInputs: [
 				WarlockInputs.PrimarySpellShadowBolt,
 				WarlockInputs.PrimarySpellIncinerate,
 				WarlockInputs.PrimarySpellSeed,
@@ -138,6 +132,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				WarlockInputs.SpecSpellHaunt,
 				WarlockInputs.CorruptionSpell,
 			],
+			rotationInputs: WarlockInputs.WarlockRotationConfig,
 			
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
@@ -147,12 +142,6 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				],
 			},
 			encounterPicker: {
-				// Target stats to show for 'Simple' encounters.
-				simpleTargetStats: [
-					Stat.StatShadowResistance,
-					Stat.StatFireResistance,
-					Stat.StatArmor,
-				],
 				// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
 				showExecuteProportion: false,
 			},

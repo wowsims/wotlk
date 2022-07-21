@@ -21,8 +21,7 @@ import { IndividualSimUI } from '../individual_sim_ui.js';
 import { SimUI } from '../sim_ui.js';
 
 export interface EncounterPickerConfig {
-	simpleTargetStats?: Array<Stat>;
-	showExecuteProportion: boolean;
+	showExecuteProportion: boolean,
 }
 
 export class EncounterPicker extends Component {
@@ -55,43 +54,45 @@ export class EncounterPicker extends Component {
 				},
 			});
 
-			new EnumPicker<Encounter>(this.rootElem, modEncounter, {
-				label: 'Target Level',
-				values: [
-					{ name: '83', value: 83 },
-					{ name: '82', value: 82 },
-					{ name: '81', value: 81 },
-					{ name: '80', value: 80 },
-				],
-				changedEvent: (encounter: Encounter) => encounter.changeEmitter,
-				getValue: (encounter: Encounter) => encounter.primaryTarget.getLevel(),
-				setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
-					encounter.primaryTarget.setLevel(eventID, newValue);
-				},
-			});
+			//new EnumPicker<Encounter>(this.rootElem, modEncounter, {
+			//	label: 'Target Level',
+			//	values: [
+			//		{ name: '83', value: 83 },
+			//		{ name: '82', value: 82 },
+			//		{ name: '81', value: 81 },
+			//		{ name: '80', value: 80 },
+			//	],
+			//	changedEvent: (encounter: Encounter) => encounter.changeEmitter,
+			//	getValue: (encounter: Encounter) => encounter.primaryTarget.getLevel(),
+			//	setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
+			//		encounter.primaryTarget.setLevel(eventID, newValue);
+			//	},
+			//});
 
-			new EnumPicker(this.rootElem, modEncounter, {
-				label: 'Mob Type',
-				values: mobTypeEnumValues,
-				changedEvent: (encounter: Encounter) => encounter.changeEmitter,
-				getValue: (encounter: Encounter) => encounter.primaryTarget.getMobType(),
-				setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
-					encounter.primaryTarget.setMobType(eventID, newValue);
-				},
-			});
+			//new EnumPicker(this.rootElem, modEncounter, {
+			//	label: 'Mob Type',
+			//	values: mobTypeEnumValues,
+			//	changedEvent: (encounter: Encounter) => encounter.changeEmitter,
+			//	getValue: (encounter: Encounter) => encounter.primaryTarget.getMobType(),
+			//	setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
+			//		encounter.primaryTarget.setMobType(eventID, newValue);
+			//	},
+			//});
 
-			if (config.simpleTargetStats) {
-				config.simpleTargetStats.forEach(stat => {
-					new NumberPicker(this.rootElem, modEncounter, {
-						label: statNames[stat],
-						changedEvent: (encounter: Encounter) => encounter.changeEmitter,
-						getValue: (encounter: Encounter) => encounter.primaryTarget.getStats().getStat(stat),
-						setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
-							encounter.primaryTarget.setStats(eventID, encounter.primaryTarget.getStats().withStat(stat, newValue));
-						},
-					});
-				});
-			}
+			// Leaving this commented in case we want it later. But it takes up a lot of
+			// screen space and none of these fields get changed much.
+			//if (config.simpleTargetStats) {
+			//	config.simpleTargetStats.forEach(stat => {
+			//		new NumberPicker(this.rootElem, modEncounter, {
+			//			label: statNames[stat],
+			//			changedEvent: (encounter: Encounter) => encounter.changeEmitter,
+			//			getValue: (encounter: Encounter) => encounter.primaryTarget.getStats().getStat(stat),
+			//			setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
+			//				encounter.primaryTarget.setStats(eventID, encounter.primaryTarget.getStats().withStat(stat, newValue));
+			//			},
+			//		});
+			//	});
+			//}
 
 			if (simUI.isIndividualSim() && isTankSpec((simUI as IndividualSimUI<any>).player.spec)) {
 				new NumberPicker(this.rootElem, modEncounter, {
