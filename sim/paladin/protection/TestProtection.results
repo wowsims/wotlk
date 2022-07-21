@@ -31,7 +31,7 @@ character_stats_results: {
   final_stats: 18195.4
   final_stats: 0
   final_stats: 320
-  final_stats: 0
+  final_stats: 77
   final_stats: 432
   final_stats: 786.1044999999999
   final_stats: 30
@@ -171,8 +171,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-BlazefuryMedallion-17111"
  value: {
-  dps: 110.98245455098905
-  tps: 113.20210364200882
+  dps: 111.07661138432236
+  tps: 113.29814361200889
  }
 }
 dps_results: {
@@ -542,8 +542,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-GlaiveofthePit-28774"
  value: {
-  dps: 150.79956052773818
-  tps: 153.815551738293
+  dps: 151.27670203205687
+  tps: 154.302236072698
  }
 }
 dps_results: {
@@ -892,8 +892,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-Romulo'sPoisonVial-28579"
  value: {
-  dps: 115.2094582834306
-  tps: 117.51364744909921
+  dps: 115.64628384436777
+  tps: 117.95920952125516
  }
 }
 dps_results: {
@@ -990,8 +990,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-StormGauntlets-12632"
  value: {
-  dps: 107.43230840528594
-  tps: 107.43230840528594
+  dps: 107.57582840528592
+  tps: 107.57582840528592
  }
 }
 dps_results: {
@@ -1200,9 +1200,9 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Average-Default"
  value: {
-  dps: 151.9070470206774
-  tps: 179.56535026948873
-  dtps: 977.9894572018458
+  dps: 152.1244287032227
+  tps: 179.9763995638013
+  dtps: 967.4769370264131
  }
 }
 dps_results: {
@@ -1292,8 +1292,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 173.68302768631744
-  tps: 200.80175086189317
-  dtps: 943.850327279712
+  dps: 173.8346769750763
+  tps: 201.15259001642713
+  dtps: 933.338327279712
  }
 }

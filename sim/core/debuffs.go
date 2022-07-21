@@ -24,7 +24,11 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 		MakePermanent(CurseOfElementsAura(target))
 	}
 	if debuffs.EbonPlaguebringer {
-		MakePermanent(EbonPlaguebringerAura(target))
+		// Crypt fever is embedded in EP but due to aura stacking
+		// and tags we need it as a separate aura with its unique tag
+		// for the disease damage
+		MakePermanent(CryptFeverAura(target, -1))
+		MakePermanent(EbonPlaguebringerAura(target, -1))
 	}
 	if debuffs.EarthAndMoon {
 		MakePermanent(EarthAndMoonAura(target))
@@ -257,7 +261,7 @@ func CurseOfElementsAura(target *Unit) *Aura {
 		Tag:      spelldmgtag,
 		ActionID: ActionID{SpellID: 47865},
 		OnGain: func(aura *Aura, sim *Simulation) {
-			if !target.HasActiveAuraWithTag(spelldmgtag) {
+			if !target.HasActiveAuraWithTagExcludingAura(spelldmgtag, aura) {
 				aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier *= multiplier
 				aura.Unit.PseudoStats.FireDamageTakenMultiplier *= multiplier
 				aura.Unit.PseudoStats.FrostDamageTakenMultiplier *= multiplier
@@ -267,7 +271,7 @@ func CurseOfElementsAura(target *Unit) *Aura {
 			aura.Unit.AddStatsDynamic(sim, stats.Stats{stats.ArcaneResistance: -165, stats.FireResistance: -165, stats.FrostResistance: -165, stats.ShadowResistance: -165, stats.NatureResistance: -165})
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			if !target.HasActiveAuraWithTag(spelldmgtag) {
+			if !target.HasActiveAuraWithTagExcludingAura(spelldmgtag, aura) {
 				aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier /= multiplier
 				aura.Unit.PseudoStats.FireDamageTakenMultiplier /= multiplier
 				aura.Unit.PseudoStats.FrostDamageTakenMultiplier /= multiplier
@@ -287,7 +291,7 @@ func EarthAndMoonAura(target *Unit) *Aura {
 		Tag:      spelldmgtag,
 		ActionID: ActionID{SpellID: 48511},
 		OnGain: func(aura *Aura, sim *Simulation) {
-			if !target.HasActiveAuraWithTag(spelldmgtag) {
+			if !target.HasActiveAuraWithTagExcludingAura(spelldmgtag, aura) {
 				aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier *= multiplier
 				aura.Unit.PseudoStats.FireDamageTakenMultiplier *= multiplier
 				aura.Unit.PseudoStats.FrostDamageTakenMultiplier *= multiplier
@@ -296,7 +300,7 @@ func EarthAndMoonAura(target *Unit) *Aura {
 			}
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			if !target.HasActiveAuraWithTag(spelldmgtag) {
+			if !target.HasActiveAuraWithTagExcludingAura(spelldmgtag, aura) {
 				aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier /= multiplier
 				aura.Unit.PseudoStats.FireDamageTakenMultiplier /= multiplier
 				aura.Unit.PseudoStats.FrostDamageTakenMultiplier /= multiplier
@@ -307,33 +311,55 @@ func EarthAndMoonAura(target *Unit) *Aura {
 	})
 }
 
-func EbonPlaguebringerAura(target *Unit) *Aura {
-	magicMultiplier := 1.13
+const diseasedmgtag = "diseasedmg"
+const CryptFeverAuraLabel = "Crypt Fever-"
+
+func CryptFeverAura(target *Unit, dkIndex int) *Aura {
 	diseaseMultiplier := 1.3
 
 	return target.GetOrRegisterAura(Aura{
-		Label:    "Ebon Plaguebringer",
+		Label:    CryptFeverAuraLabel + strconv.Itoa(dkIndex), // Support multiple DKs having their CF up
+		Tag:      diseasedmgtag,
+		ActionID: ActionID{SpellID: 49632},
+		OnGain: func(aura *Aura, sim *Simulation) {
+			if !target.HasActiveAuraWithTagExcludingAura(diseasedmgtag, aura) {
+				aura.Unit.PseudoStats.DiseaseDamageTakenMultiplier *= diseaseMultiplier
+			}
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			if !target.HasActiveAuraWithTagExcludingAura(diseasedmgtag, aura) {
+				aura.Unit.PseudoStats.DiseaseDamageTakenMultiplier /= diseaseMultiplier
+			}
+		},
+	})
+}
+
+const EbonPlaguebringerAuraLabel = "Ebon Plaguebringer-"
+
+func EbonPlaguebringerAura(target *Unit, dkIndex int) *Aura {
+	magicMultiplier := 1.13
+
+	return target.GetOrRegisterAura(Aura{
+		Label:    EbonPlaguebringerAuraLabel + strconv.Itoa(dkIndex), // Support multiple DKs having their EP up
 		Tag:      spelldmgtag,
 		ActionID: ActionID{SpellID: 51161},
 		OnGain: func(aura *Aura, sim *Simulation) {
-			if !target.HasActiveAuraWithTag(spelldmgtag) {
+			if !target.HasActiveAuraWithTagExcludingAura(spelldmgtag, aura) {
 				aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier *= magicMultiplier
 				aura.Unit.PseudoStats.FireDamageTakenMultiplier *= magicMultiplier
 				aura.Unit.PseudoStats.FrostDamageTakenMultiplier *= magicMultiplier
 				aura.Unit.PseudoStats.ShadowDamageTakenMultiplier *= magicMultiplier
 				aura.Unit.PseudoStats.NatureDamageTakenMultiplier *= magicMultiplier
 			}
-			aura.Unit.PseudoStats.DiseaseDamageTakenMultiplier *= diseaseMultiplier
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			if !target.HasActiveAuraWithTag(spelldmgtag) {
+			if !target.HasActiveAuraWithTagExcludingAura(spelldmgtag, aura) {
 				aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier /= magicMultiplier
 				aura.Unit.PseudoStats.FireDamageTakenMultiplier /= magicMultiplier
 				aura.Unit.PseudoStats.FrostDamageTakenMultiplier /= magicMultiplier
 				aura.Unit.PseudoStats.ShadowDamageTakenMultiplier /= magicMultiplier
 				aura.Unit.PseudoStats.NatureDamageTakenMultiplier /= magicMultiplier
 			}
-			aura.Unit.PseudoStats.DiseaseDamageTakenMultiplier /= diseaseMultiplier
 		},
 	})
 }
@@ -531,7 +557,7 @@ func FaerieFireAura(target *Unit, imp bool) *Aura {
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 / (1.0 - armorReduction))
 			aura.Unit.updateArmor()
-			if secondaryAura.IsActive() {
+			if imp && secondaryAura.IsActive() {
 				secondaryAura.Deactivate(sim)
 			}
 		},

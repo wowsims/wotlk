@@ -1235,43 +1235,43 @@ dps_results: {
 dps_results: {
  key: "TestFury-Settings-Human-Fury P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 1382.0147893690557
-  tps: 1174.3816401073132
+  dps: 1386.305329765465
+  tps: 1177.8649386147974
  }
 }
 dps_results: {
  key: "TestFury-Settings-Human-Fury P1-Basic-FullBuffs-LongSingleTarget"
  value: {
-  dps: 788.3379556684731
-  tps: 596.7276075757452
+  dps: 797.783464882255
+  tps: 604.201399851
  }
 }
 dps_results: {
  key: "TestFury-Settings-Human-Fury P1-Basic-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 851.4426537998888
-  tps: 641.3149181429201
+  dps: 861.0825110497005
+  tps: 649.9976454270131
  }
 }
 dps_results: {
  key: "TestFury-Settings-Human-Fury P1-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 852.8739895235813
-  tps: 764.4770140257596
+  dps: 856.585637537382
+  tps: 768.0084424707707
  }
 }
 dps_results: {
  key: "TestFury-Settings-Human-Fury P1-Basic-NoBuffs-LongSingleTarget"
  value: {
-  dps: 483.0598776030961
-  tps: 364.5317270896305
+  dps: 481.13888828791937
+  tps: 362.8387021955673
  }
 }
 dps_results: {
  key: "TestFury-Settings-Human-Fury P1-Basic-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 535.0959358200453
-  tps: 403.22007491479087
+  dps: 540.1914707189073
+  tps: 408.11756342179535
  }
 }
 dps_results: {

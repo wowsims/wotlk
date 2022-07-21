@@ -1056,7 +1056,7 @@ func registerConjuredCD(agent Agent, consumes proto.Consumes) {
 			ActivationFactory: func(sim *Simulation) CooldownActivation {
 				expectedManaPerUsage := float64((900 + 600) / 2)
 
-				remainingUsages := int(1 + (MaxDuration(0, sim.Duration))/(time.Minute*2))
+				remainingUsages := int(1 + (MaxDuration(0, sim.Duration))/(darkRuneCD))
 
 				if consumes.DefaultConjured == proto.Conjured_ConjuredDarkRune {
 					character.ExpectedBonusMana += expectedManaPerUsage * float64(remainingUsages)
@@ -1067,7 +1067,7 @@ func registerConjuredCD(agent Agent, consumes proto.Consumes) {
 
 					if consumes.DefaultConjured == proto.Conjured_ConjuredDarkRune {
 						// Update expected bonus mana
-						newRemainingUsages := int(sim.GetRemainingDuration() / (time.Minute * 2))
+						newRemainingUsages := int(sim.GetRemainingDuration() / (darkRuneCD))
 						character.ExpectedBonusMana -= expectedManaPerUsage * float64(remainingUsages-newRemainingUsages)
 						remainingUsages = newRemainingUsages
 					}
@@ -1076,6 +1076,8 @@ func registerConjuredCD(agent Agent, consumes proto.Consumes) {
 		})
 	}
 }
+
+const darkRuneCD = time.Minute * 15
 
 func makeConjuredActivation(conjuredType proto.Conjured, character *Character) (MajorCooldown, *Spell) {
 	if conjuredType == proto.Conjured_ConjuredDarkRune {
@@ -1102,7 +1104,7 @@ func makeConjuredActivation(conjuredType proto.Conjured, character *Character) (
 				Cast: CastConfig{
 					CD: Cooldown{
 						Timer:    character.GetConjuredCD(),
-						Duration: time.Minute * 2,
+						Duration: darkRuneCD,
 					},
 				},
 				ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {

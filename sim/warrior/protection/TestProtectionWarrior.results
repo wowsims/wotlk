@@ -31,11 +31,11 @@ character_stats_results: {
   final_stats: 16905.4
   final_stats: 206
   final_stats: 254.4
-  final_stats: 81.95
+  final_stats: 123.95
   final_stats: 505.3944500000001
   final_stats: 900.8616666666668
   final_stats: 244.25
-  final_stats: 10
+  final_stats: 68
   final_stats: 18952.65
   final_stats: 0
   final_stats: 0
@@ -52,7 +52,7 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestProtectionWarrior-StatWeights-Default"
  value: {
-  weights: 0.24585561584204813
+  weights: 0.24596969620161074
   weights: 0
   weights: 0
   weights: 0
@@ -70,7 +70,7 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.09871462276991225
+  weights: 0.10055499244287944
   weights: 0
   weights: 0
   weights: 0
@@ -79,12 +79,12 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: -0.015696157986923254
+  weights: -0.010154954239335438
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.13671472730317305
-  weights: -0.02716267732473625
+  weights: 0.12221186674645082
+  weights: -0.02442916803405524
   weights: 0
   weights: 0
   weights: 0
@@ -1293,9 +1293,9 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-Average-Default"
  value: {
-  dps: 668.6722211072232
-  tps: 1289.7759850059156
-  dtps: 685.6430951712148
+  dps: 668.9935868958158
+  tps: 1290.610466163126
+  dtps: 682.3063063561544
  }
 }
 dps_results: {
@@ -1385,8 +1385,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 750.8247667566127
-  tps: 1425.7803650001024
-  dtps: 614.8407787635233
+  dps: 750.009446037848
+  tps: 1424.7869537538309
+  dtps: 617.7150436471401
  }
 }

@@ -20,8 +20,7 @@ func (deathKnight *DeathKnight) countActiveDiseases(target *core.Unit) int {
 	if deathKnight.TargetHasDisease(BloodPlagueAuraLabel, target) {
 		count++
 	}
-	// TODO: Figure out EbonPlague on multi targets
-	if deathKnight.EbonPlagueAura.IsActive() {
+	if deathKnight.TargetHasDisease(core.EbonPlaguebringerAuraLabel, target) || deathKnight.TargetHasDisease(core.CryptFeverAuraLabel, target) {
 		count++
 	}
 	return count
