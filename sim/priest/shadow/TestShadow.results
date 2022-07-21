@@ -283,8 +283,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-CrimsonAcolyte'sRegalia"
  value: {
-  dps: 3302.4449627275653
-  tps: 2481.2343591361073
+  dps: 3299.3327216477587
+  tps: 2478.7437591445496
  }
 }
 dps_results: {
@@ -780,8 +780,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-SanctificationGarb"
  value: {
-  dps: 2447.13041312288
-  tps: 1842.149847180879
+  dps: 2448.1136564713015
+  tps: 1842.9521749343257
  }
 }
 dps_results: {
@@ -1781,15 +1781,15 @@ dps_results: {
 dps_results: {
  key: "TestShadow-Settings-Undead-P3-Ideal-NoBuffs-LongMultiTarget"
  value: {
-  dps: 861.8984242543626
-  tps: 876.2815287133608
+  dps: 862.6129894960208
+  tps: 876.9418738873505
  }
 }
 dps_results: {
  key: "TestShadow-Settings-Undead-P3-Ideal-NoBuffs-LongSingleTarget"
  value: {
-  dps: 861.8984242543626
-  tps: 645.2258076945645
+  dps: 862.6129894960208
+  tps: 645.7538688339556
  }
 }
 dps_results: {
