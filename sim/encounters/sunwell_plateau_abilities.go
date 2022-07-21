@@ -16,18 +16,15 @@ var BrutallusStomp = TargetAbility{
 
 		characterTarget := target.Env.Raid.GetPlayerFromUnit(target.CurrentTarget).GetCharacter()
 
-		// TODO: If player's armor changes dynamically during the debuff, the value
-		// will be incorrect.
-		var curReduction stats.Stats
 		stompDebuff := characterTarget.RegisterAura(core.Aura{
 			Label:    "Stomp",
 			ActionID: actionID,
 			Duration: time.Second * 10,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Unit.AddStatsDynamic(sim, curReduction.Multiply(-1))
+				aura.Unit.AddStatDependencyDynamic(sim, stats.Armor, stats.Armor, 0.5)
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Unit.AddStatsDynamic(sim, curReduction)
+				aura.Unit.AddStatDependencyDynamic(sim, stats.Armor, stats.Armor, 1/0.5)
 			},
 		})
 
@@ -52,7 +49,6 @@ var BrutallusStomp = TargetAbility{
 				OutcomeApplier: target.OutcomeFuncEnemyMeleeWhite(),
 
 				OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					curReduction = characterTarget.ApplyStatDependencies(stats.Stats{stats.Armor: characterTarget.GetStat(stats.Armor) * 0.5})
 					stompDebuff.Activate(sim)
 				},
 			}),

@@ -67,7 +67,7 @@ dps_results: {
  key: "TestFrost-AllItems-Alchemist'sStone-13503"
  value: {
   dps: 1513.0880791585494
-  tps: 1226.302581757181
+  tps: 1226.3025817571813
  }
 }
 dps_results: {
@@ -424,7 +424,7 @@ dps_results: {
  key: "TestFrost-AllItems-Figurine-LivingRubySerpent-24126"
  value: {
   dps: 1523.3341896145423
-  tps: 1235.9589481654
+  tps: 1235.9589481654002
  }
 }
 dps_results: {
@@ -536,7 +536,7 @@ dps_results: {
  key: "TestFrost-AllItems-InsightfulEarthsiegeDiamond"
  value: {
   dps: 1528.6679311846317
-  tps: 1245.2372298695136
+  tps: 1245.237229869514
  }
 }
 dps_results: {
@@ -914,7 +914,7 @@ dps_results: {
  key: "TestFrost-AllItems-TheTwinStars"
  value: {
   dps: 1539.2441051992034
-  tps: 1247.9439567957568
+  tps: 1247.943956795757
  }
 }
 dps_results: {

@@ -317,27 +317,9 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 		AutoSwingMelee: true,
 	})
 
-	deathKnight.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Agility,
-		ModifiedStat: stats.MeleeCrit,
-		Modifier: func(agility float64, meleecrit float64) float64 {
-			return meleecrit + (agility/62.5)*core.CritRatingPerCritChance
-		},
-	})
-	deathKnight.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Agility,
-		ModifiedStat: stats.Dodge,
-		Modifier: func(agility float64, dodge float64) float64 {
-			return dodge + (agility/84.74576271)*core.DodgeRatingPerDodgeChance
-		},
-	})
-	deathKnight.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Strength,
-		ModifiedStat: stats.AttackPower,
-		Modifier: func(strength float64, attackPower float64) float64 {
-			return attackPower + strength*2
-		},
-	})
+	deathKnight.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/62.5))
+	deathKnight.AddStatDependency(stats.Agility, stats.Dodge, 1.0+(core.DodgeRatingPerDodgeChance/84.74576271))
+	deathKnight.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
 
 	deathKnight.Ghoul = deathKnight.NewGhoulPet(deathKnight.Talents.MasterOfGhouls)
 	if deathKnight.Talents.SummonGargoyle {
@@ -494,11 +476,11 @@ func (deathKnight *DeathKnight) CanCast(sim *core.Simulation, spell *core.Spell)
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
 		stats.Health:      7941,
-		stats.Strength:    180,
-		stats.Agility:     112,
+		stats.Strength:    176,
+		stats.Agility:     109,
 		stats.Stamina:     160,
 		stats.Intellect:   35,
-		stats.Spirit:      63,
+		stats.Spirit:      61,
 		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
@@ -506,18 +488,18 @@ func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDwarf, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
 		stats.Health:      7941,
 		stats.Strength:    180,
-		stats.Agility:     112,
-		stats.Stamina:     160,
-		stats.Intellect:   35,
-		stats.Spirit:      63,
+		stats.Agility:     108,
+		stats.Stamina:     161,
+		stats.Intellect:   34,
+		stats.Spirit:      58,
 		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceGnome, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
 		stats.Health:      7941,
-		stats.Strength:    180,
-		stats.Agility:     112,
+		stats.Strength:    170,
+		stats.Agility:     114,
 		stats.Stamina:     160,
 		stats.Intellect:   35,
 		stats.Spirit:      63,
@@ -527,7 +509,7 @@ func init() {
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceHuman, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
 		stats.Health:      7941,
-		stats.Strength:    180,
+		stats.Strength:    175,
 		stats.Agility:     112,
 		stats.Stamina:     160,
 		stats.Intellect:   35,
@@ -538,22 +520,22 @@ func init() {
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
 		stats.Health:      7941,
-		stats.Strength:    180,
-		stats.Agility:     112,
+		stats.Strength:    171,
+		stats.Agility:     116,
 		stats.Stamina:     160,
 		stats.Intellect:   35,
-		stats.Spirit:      63,
+		stats.Spirit:      59,
 		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceOrc, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
 		stats.Health:      7941,
-		stats.Strength:    180,
-		stats.Agility:     112,
-		stats.Stamina:     160,
-		stats.Intellect:   35,
-		stats.Spirit:      63,
+		stats.Strength:    178,
+		stats.Agility:     109,
+		stats.Stamina:     161,
+		stats.Intellect:   32,
+		stats.Spirit:      61,
 		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
@@ -561,43 +543,43 @@ func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTauren, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
 		stats.Health:      7941,
 		stats.Strength:    180,
-		stats.Agility:     112,
-		stats.Stamina:     160,
-		stats.Intellect:   35,
-		stats.Spirit:      63,
+		stats.Agility:     108,
+		stats.Stamina:     161,
+		stats.Intellect:   31,
+		stats.Spirit:      61,
 		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
 		stats.Health:      7941,
-		stats.Strength:    180,
-		stats.Agility:     112,
+		stats.Strength:    176,
+		stats.Agility:     114,
 		stats.Stamina:     160,
-		stats.Intellect:   35,
-		stats.Spirit:      63,
+		stats.Intellect:   31,
+		stats.Spirit:      60,
 		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceUndead, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
 		stats.Health:      7941,
-		stats.Strength:    180,
-		stats.Agility:     112,
+		stats.Strength:    174,
+		stats.Agility:     110,
 		stats.Stamina:     160,
-		stats.Intellect:   35,
-		stats.Spirit:      63,
+		stats.Intellect:   33,
+		stats.Spirit:      64,
 		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
 		stats.Health:      7941,
-		stats.Strength:    180,
-		stats.Agility:     112,
+		stats.Strength:    172,
+		stats.Agility:     114,
 		stats.Stamina:     160,
-		stats.Intellect:   35,
-		stats.Spirit:      63,
+		stats.Intellect:   38,
+		stats.Spirit:      57,
 		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,

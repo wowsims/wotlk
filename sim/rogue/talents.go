@@ -30,36 +30,15 @@ func (rogue *Rogue) ApplyTalents() {
 	rogue.EnergyTickMultiplier *= (1 + []float64{0, 0.08, 0.16, 0.25}[rogue.Talents.Vitality])
 
 	if rogue.Talents.Deadliness > 0 {
-		apBonus := 1 + 0.02*float64(rogue.Talents.Deadliness)
-		rogue.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.AttackPower,
-			ModifiedStat: stats.AttackPower,
-			Modifier: func(ap float64, _ float64) float64 {
-				return ap * apBonus
-			},
-		})
+		rogue.AddStatDependency(stats.AttackPower, stats.AttackPower, 1.0+0.02*float64(rogue.Talents.Deadliness))
 	}
 
 	if rogue.Talents.SavageCombat > 0 {
-		apBonus := 1 + 0.02*float64(rogue.Talents.SavageCombat)
-		rogue.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.AttackPower,
-			ModifiedStat: stats.AttackPower,
-			Modifier: func(ap float64, _ float64) float64 {
-				return ap * apBonus
-			},
-		})
+		rogue.AddStatDependency(stats.AttackPower, stats.AttackPower, 1.0+0.02*float64(rogue.Talents.SavageCombat))
 	}
 
 	if rogue.Talents.SinisterCalling > 0 {
-		agiBonus := 1 + 0.03*float64(rogue.Talents.SinisterCalling)
-		rogue.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Agility,
-			ModifiedStat: stats.Agility,
-			Modifier: func(agi float64, _ float64) float64 {
-				return agi * agiBonus
-			},
-		})
+		rogue.AddStatDependency(stats.Agility, stats.Agility, 1.0+0.03*float64(rogue.Talents.SinisterCalling))
 	}
 
 	rogue.PseudoStats.AgentReserved1DamageDealtMultiplier *= (1 + float64(rogue.Talents.FindWeakness)*0.02)

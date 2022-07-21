@@ -66,8 +66,8 @@ dps_results: {
 dps_results: {
  key: "TestFire-AllItems-Alchemist'sStone-13503"
  value: {
-  dps: 1177.884241358816
-  tps: 1005.4436649222059
+  dps: 1177.8842413588166
+  tps: 1005.4436649222063
  }
 }
 dps_results: {
@@ -136,7 +136,7 @@ dps_results: {
 dps_results: {
  key: "TestFire-AllItems-BandoftheEternalSage-29305"
  value: {
-  dps: 1209.90790141737
+  dps: 1209.9079014173703
   tps: 1031.5268854086096
  }
 }
@@ -424,7 +424,7 @@ dps_results: {
  key: "TestFire-AllItems-Figurine-LivingRubySerpent-24126"
  value: {
   dps: 1184.8941350289563
-  tps: 1011.4533161489862
+  tps: 1011.4533161489863
  }
 }
 dps_results: {
@@ -536,7 +536,7 @@ dps_results: {
  key: "TestFire-AllItems-InsightfulEarthsiegeDiamond"
  value: {
   dps: 1185.4293869290716
-  tps: 1022.7101835257178
+  tps: 1022.7101835257179
  }
 }
 dps_results: {
@@ -914,7 +914,7 @@ dps_results: {
  key: "TestFire-AllItems-TheTwinStars"
  value: {
   dps: 1195.9210130055526
-  tps: 1021.8226709611845
+  tps: 1021.8226709611848
  }
 }
 dps_results: {

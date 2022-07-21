@@ -728,7 +728,7 @@ func (character *Character) NewTemporaryStatsAuraWrapped(auraLabel string, actio
 		ActionID: actionID,
 		Duration: duration,
 		OnInit: func(aura *Aura, sim *Simulation) {
-			buffs = character.ApplyStatDependencies(tempStats)
+			buffs = tempStats
 			unbuffs = buffs.Multiply(-1)
 		},
 		OnGain: func(aura *Aura, sim *Simulation) {

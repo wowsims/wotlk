@@ -25,7 +25,7 @@ character_stats_results: {
   final_stats: 146
   final_stats: 0
   final_stats: 0
-  final_stats: 12574.65
+  final_stats: 12574.650000000001
   final_stats: 0
   final_stats: 0
   final_stats: 2800.6
@@ -179,7 +179,7 @@ dps_results: {
  key: "TestSmite-AllItems-Bladefist'sBreadth-28041"
  value: {
   dps: 812.9434999230887
-  tps: 787.979730694842
+  tps: 787.9797306948421
  }
 }
 dps_results: {
@@ -802,7 +802,7 @@ dps_results: {
  key: "TestSmite-AllItems-SextantofUnstableCurrents-30626"
  value: {
   dps: 811.512236370231
-  tps: 786.5372366928416
+  tps: 786.5372366928417
  }
 }
 dps_results: {
@@ -1047,7 +1047,7 @@ dps_results: {
  key: "TestSmite-Settings-Undead-P3-Basic-FullBuffs-LongMultiTarget"
  value: {
   dps: 825.7138306215883
-  tps: 1236.9321915547757
+  tps: 1236.932191554776
  }
 }
 dps_results: {

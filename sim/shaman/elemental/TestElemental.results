@@ -14,7 +14,7 @@ character_stats_results: {
   final_stats: 80
   final_stats: 80
   final_stats: 0
-  final_stats: 317.96
+  final_stats: 317.96000000000004
   final_stats: 36
   final_stats: 815.6348719306693
   final_stats: 0
@@ -286,7 +286,7 @@ dps_results: {
  key: "TestElemental-AllItems-CataclysmHarness"
  value: {
   dps: 935.7621076710698
-  tps: 763.686797000224
+  tps: 763.6867970002241
  }
 }
 dps_results: {

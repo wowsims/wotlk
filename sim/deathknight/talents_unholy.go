@@ -18,13 +18,7 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 	// Ravenous Dead
 	if deathKnight.Talents.RavenousDead > 0 {
 		strengthCoeff := 0.01 * float64(deathKnight.Talents.RavenousDead)
-		deathKnight.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Strength,
-			ModifiedStat: stats.Strength,
-			Modifier: func(strength float64, _ float64) float64 {
-				return strength * (1.0 + strengthCoeff)
-			},
-		})
+		deathKnight.AddStatDependency(stats.Strength, stats.Strength, 1.0+strengthCoeff)
 	}
 
 	// Necrosis

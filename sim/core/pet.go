@@ -91,7 +91,6 @@ func (pet *Pet) addOwnerStats(sim *Simulation, addedStats stats.Stats) {
 	if !pet.PermanentPet {
 		return
 	}
-	// TODO: Should this apply stat dependencies?
 	inheritedChange := pet.currentStatInheritance(addedStats)
 	pet.AddStatsDynamic(sim, inheritedChange)
 }
@@ -162,7 +161,7 @@ func (pet *Pet) Enable(sim *Simulation, petAgent PetAgent) {
 
 	// Inherit stats on summon for temporary pets
 	if !pet.PermanentPet {
-		pet.inheritedStats = pet.ApplyStatDependencies(pet.statInheritance(pet.Owner.GetStats()))
+		pet.inheritedStats = pet.statInheritance(pet.Owner.GetStats())
 		pet.AddStatsDynamic(sim, pet.inheritedStats)
 		pet.currentStatInheritance = pet.statInheritance
 	}

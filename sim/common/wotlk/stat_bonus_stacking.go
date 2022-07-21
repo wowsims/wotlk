@@ -15,7 +15,7 @@ type StackingProcAura struct {
 func MakeStackingAura(character *core.Character, config StackingProcAura) *core.Aura {
 	var bonusPerStack stats.Stats
 	config.Aura.OnInit = func(aura *core.Aura, sim *core.Simulation) {
-		bonusPerStack = character.ApplyStatDependencies(config.BonusPerStack)
+		bonusPerStack = config.BonusPerStack
 	}
 	config.Aura.OnStacksChange = func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
 		character.AddStatsDynamic(sim, bonusPerStack.Multiply(float64(newStacks-oldStacks)))
