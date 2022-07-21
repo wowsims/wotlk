@@ -46,6 +46,7 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 	deathKnight.applyWanderingPlague()
 
 	// Crypt Fever
+	deathKnight.applyCryptFever()
 	// Ebon Plaguebringer
 	deathKnight.applyEbonPlaguebringer()
 
@@ -207,6 +208,22 @@ func (deathKnight *DeathKnight) applyBloodCakedBlade() {
 	})
 }
 
+func (deathKnight *DeathKnight) applyCryptFever() {
+	if deathKnight.Talents.CryptFever == 0 {
+		return
+	}
+
+	deathKnight.CryptFeverAura = make([]*core.Aura, deathKnight.Env.GetNumTargets())
+	for _, encounterTarget := range deathKnight.Env.Encounter.Targets {
+		target := &encounterTarget.Unit
+
+		cfAura := core.CryptFeverAura(target, int(deathKnight.Index))
+		cfAura.Duration = time.Second * (15 + 3*time.Duration(deathKnight.Talents.Epidemic))
+
+		deathKnight.CryptFeverAura[target.Index] = cfAura
+	}
+}
+
 func (deathKnight *DeathKnight) applyEbonPlaguebringer() {
 	if deathKnight.Talents.EbonPlaguebringer == 0 {
 		return
@@ -216,12 +233,15 @@ func (deathKnight *DeathKnight) applyEbonPlaguebringer() {
 	deathKnight.AddStat(stats.MeleeCrit, ebonPlaguebringerBonusCrit)
 	deathKnight.AddStat(stats.SpellCrit, ebonPlaguebringerBonusCrit)
 
-	// TODO: Support multiple targets like diseases
-	target := deathKnight.CurrentTarget
-	epAura := core.EbonPlaguebringerAura(target)
-	epAura.Duration = time.Second * (15 + 3*time.Duration(deathKnight.Talents.Epidemic))
+	deathKnight.EbonPlagueAura = make([]*core.Aura, deathKnight.Env.GetNumTargets())
+	for _, encounterTarget := range deathKnight.Env.Encounter.Targets {
+		target := &encounterTarget.Unit
 
-	deathKnight.EbonPlagueAura = epAura
+		epAura := core.EbonPlaguebringerAura(target, int(deathKnight.Index))
+		epAura.Duration = time.Second * (15 + 3*time.Duration(deathKnight.Talents.Epidemic))
+
+		deathKnight.EbonPlagueAura[target.Index] = epAura
+	}
 }
 
 func (deathKnight *DeathKnight) applyDesolation() {
@@ -248,43 +268,45 @@ func (deathKnight *DeathKnight) applyDesolation() {
 func (deathKnight *DeathKnight) applyUnholyBlight() {
 	actionID := core.ActionID{SpellID: 50536}
 
-	// TODO: Support multiple targets like diseases
-	target := deathKnight.CurrentTarget
-
-	var curDamage = 0.0
-	deathKnight.UnholyBlightDot = core.NewDot(core.Dot{
-		Aura: target.RegisterAura(core.Aura{
-			Label:    "UnholyBlight-" + strconv.Itoa(int(deathKnight.Index)),
-			ActionID: actionID,
-		}),
-		NumberOfTicks: 10,
-		TickLength:    time.Second * 1,
-
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			IsPeriodic:       true,
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return (0.10 * curDamage) / 10
-				},
-				TargetSpellCoefficient: 1,
-			},
-			OutcomeApplier: deathKnight.OutcomeFuncAlwaysHit(),
-		}),
-	})
-
+	var curDamage = make([]float64, deathKnight.Env.GetNumTargets())
 	deathKnight.UnholyBlightSpell = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
-		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			curDamage = deathKnight.LastDeathCoilDamage
-			deathKnight.UnholyBlightDot.Apply(sim)
+		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
+			curDamage[deathKnight.CurrentTarget.Index] = deathKnight.LastDeathCoilDamage
+			deathKnight.UnholyBlightDot[deathKnight.CurrentTarget.Index].Apply(sim)
 		},
 	})
 
-	deathKnight.UnholyBlightDot.Spell = deathKnight.UnholyBlightSpell
+	deathKnight.UnholyBlightDot = make([]*core.Dot, deathKnight.Env.GetNumTargets())
+	for _, encounterTarget := range deathKnight.Env.Encounter.Targets {
+		target := &encounterTarget.Unit
+
+		deathKnight.UnholyBlightDot[target.Index] = core.NewDot(core.Dot{
+			Aura: target.RegisterAura(core.Aura{
+				Label:    "UnholyBlight-" + strconv.Itoa(int(deathKnight.Index)),
+				ActionID: actionID,
+			}),
+			NumberOfTicks: 10,
+			TickLength:    time.Second * 1,
+
+			TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
+				ProcMask:         core.ProcMaskPeriodicDamage,
+				DamageMultiplier: 1,
+				ThreatMultiplier: 1,
+				IsPeriodic:       true,
+				BaseDamage: core.BaseDamageConfig{
+					Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+						return (0.10 * curDamage[target.Index]) / 10
+					},
+					TargetSpellCoefficient: 1,
+				},
+				OutcomeApplier: deathKnight.OutcomeFuncAlwaysHit(),
+			}),
+		})
+
+		deathKnight.UnholyBlightDot[target.Index].Spell = deathKnight.UnholyBlightSpell
+	}
 }
 
 func (deathKnight *DeathKnight) reapingChance() float64 {

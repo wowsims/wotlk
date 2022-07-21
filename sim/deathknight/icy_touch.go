@@ -18,10 +18,12 @@ func (deathKnight *DeathKnight) killingMachineOutcomeMod(outcomeApplier core.Out
 }
 
 func (deathKnight *DeathKnight) registerIcyTouchSpell() {
-	// TODO: Support multiple targets like diseases
-	target := deathKnight.CurrentTarget
-	itAura := core.IcyTouchAura(target, deathKnight.Talents.ImprovedIcyTouch)
-	deathKnight.IcyTouchAura = itAura
+	deathKnight.IcyTouchAura = make([]*core.Aura, deathKnight.Env.GetNumTargets())
+	for _, encounterTarget := range deathKnight.Env.Encounter.Targets {
+		target := &encounterTarget.Unit
+		itAura := core.IcyTouchAura(target, deathKnight.Talents.ImprovedIcyTouch)
+		deathKnight.IcyTouchAura[target.Index] = itAura
+	}
 
 	impIcyTouchCoeff := 1.0 + 0.05*float64(deathKnight.Talents.ImprovedIcyTouch)
 
@@ -64,16 +66,21 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 					deathKnight.Spend(sim, spell, dkSpellCost)
 
 					deathKnight.FrostFeverSpell.Cast(sim, spellEffect.Target)
+					if deathKnight.Talents.CryptFever > 0 {
+						deathKnight.CryptFeverAura[spellEffect.Target.Index].Activate(sim)
+					}
 					if deathKnight.Talents.EbonPlaguebringer > 0 {
-						deathKnight.EbonPlagueAura.Activate(sim)
+						deathKnight.EbonPlagueAura[spellEffect.Target.Index].Activate(sim)
 					}
 
 					amountOfRunicPower := 10.0 + 2.5*float64(deathKnight.Talents.ChillOfTheGrave)
 					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 
-					deathKnight.IcyTouchAura.Activate(sim)
+					deathKnight.IcyTouchAura[spellEffect.Target.Index].Activate(sim)
 
-					if deathKnight.IcyTouchAura.IsActive() && deathKnight.IcyTalonsAura != nil {
+					// In reality if you have the talent just casting IT
+					// activates the aura, no need to check for enemy debuff
+					if deathKnight.IcyTalonsAura != nil {
 						deathKnight.IcyTalonsAura.Activate(sim)
 					}
 				}

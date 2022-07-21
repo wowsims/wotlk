@@ -43,19 +43,8 @@ func (deathKnight *DeathKnight) registerBloodBoilSpell() {
 					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 1, 0, 0)
 					deathKnight.Spend(sim, spell, dkSpellCost)
 
-					deathKnight.FrostFeverSpell.Cast(sim, spellEffect.Target)
-					if deathKnight.Talents.EbonPlaguebringer > 0 {
-						deathKnight.EbonPlagueAura.Activate(sim)
-					}
-
 					amountOfRunicPower := 10.0 + 2.5*float64(deathKnight.Talents.ChillOfTheGrave)
 					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
-
-					deathKnight.IcyTouchAura.Activate(sim)
-
-					if deathKnight.IcyTouchAura.IsActive() && deathKnight.IcyTalonsAura != nil {
-						deathKnight.IcyTalonsAura.Activate(sim)
-					}
 				}
 			},
 		}),

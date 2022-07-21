@@ -1,6 +1,8 @@
 package deathknight
 
 import (
+	"strconv"
+
 	"github.com/wowsims/wotlk/sim/core"
 )
 
@@ -22,6 +24,9 @@ func (deathKnight *DeathKnight) registerScourgeStrikeShadowDamageSpell() *core.S
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+					if sim.Log != nil {
+						sim.Log("Scourge strike hit: " + strconv.FormatFloat(hitEffect.Target.PseudoStats.DiseaseDamageTakenMultiplier, 'f', 3, 64))
+					}
 					return deathKnight.LastScourgeStrikeDamage * (deathKnight.diseaseMultiplierBonus(hitEffect.Target, 0.12) - 1.0)
 				},
 			},

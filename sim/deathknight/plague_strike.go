@@ -84,8 +84,11 @@ func (deathKnight *DeathKnight) registerPlagueStrikeSpell() {
 					deathKnight.Spend(sim, spell, dkSpellCost)
 
 					deathKnight.BloodPlagueSpell.Cast(sim, spellEffect.Target)
+					if deathKnight.Talents.CryptFever > 0 {
+						deathKnight.CryptFeverAura[spellEffect.Target.Index].Activate(sim)
+					}
 					if deathKnight.Talents.EbonPlaguebringer > 0 {
-						deathKnight.EbonPlagueAura.Activate(sim)
+						deathKnight.EbonPlagueAura[spellEffect.Target.Index].Activate(sim)
 					}
 
 					amountOfRunicPower := 10.0 + 2.5*float64(deathKnight.Talents.Dirge)

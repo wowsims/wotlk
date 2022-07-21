@@ -87,7 +87,7 @@ type DeathKnight struct {
 	BloodPlagueDisease []*core.Dot
 
 	UnholyBlightSpell *core.Spell
-	UnholyBlightDot   *core.Dot
+	UnholyBlightDot   []*core.Dot
 
 	// Talent Auras
 	KillingMachineAura  *core.Aura
@@ -111,8 +111,9 @@ type DeathKnight struct {
 	UnholyPresenceAura *core.Aura
 
 	// Debuffs
-	IcyTouchAura   *core.Aura
-	EbonPlagueAura *core.Aura
+	IcyTouchAura   []*core.Aura
+	CryptFeverAura []*core.Aura
+	EbonPlagueAura []*core.Aura
 
 	// Dynamic trackers
 	additiveDamageModifier float64
