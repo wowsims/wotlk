@@ -353,12 +353,14 @@ func (deathKnight *DeathKnight) secondaryCritModifier(applyGuile bool) float64 {
 	}
 	return secondaryModifier
 }
+
+// TODO: DKs have x2 modifier on spell crit as a passive. Is this the best way to do it?
 func (deathKnight *DeathKnight) spellCritMultiplier() float64 {
-	return deathKnight.SpellCritMultiplier(1.0, 0)
+	return deathKnight.MeleeCritMultiplier(1.0, 0)
 }
 func (deathKnight *DeathKnight) spellCritMultiplierGuile() float64 {
 	applyGuile := deathKnight.Talents.GuileOfGorefiend > 0
-	return deathKnight.SpellCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile))
+	return deathKnight.MeleeCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile))
 }
 func (deathKnight *DeathKnight) critMultiplier() float64 {
 	return deathKnight.MeleeCritMultiplier(1.0, 0)
