@@ -42,16 +42,28 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 	if deathKnight.GCD.IsReady(sim) {
 		// UH DK rota
 		if deathKnight.Talents.SummonGargoyle {
+			diseaseRefreshDuration := time.Duration(deathKnight.Rotation.DiseaseRefreshDuration) * time.Second
 			// Horn of Winter if you're the DK to refresh it and its not precasted/active
 			if deathKnight.ShouldHornOfWinter(sim) {
 				deathKnight.HornOfWinter.Cast(sim, target)
-			} else if (!deathKnight.TargetHasDisease(FrostFeverAuraLabel, target) || deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim) < 6*time.Second) && deathKnight.CanIcyTouch(sim) {
-				// Diseases have topmost priority after that
-				deathKnight.IcyTouch.Cast(sim, target)
-				recastedFF = true
-			} else if (!deathKnight.TargetHasDisease(BloodPlagueAuraLabel, target) || deathKnight.BloodPlagueDisease[target.Index].RemainingDuration(sim) < 6*time.Second) && deathKnight.CanPlagueStrike(sim) {
-				deathKnight.PlagueStrike.Cast(sim, target)
-				recastedBP = true
+			} else if (!deathKnight.TargetHasDisease(FrostFeverAuraLabel, target) || deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim) < diseaseRefreshDuration) && deathKnight.CanIcyTouch(sim) {
+				// Dont clip if theres half a second left to tick
+				remainingDuration := deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim)
+				if remainingDuration < time.Millisecond*500 && remainingDuration > 0 {
+					deathKnight.WaitUntil(sim, sim.CurrentTime+remainingDuration+1)
+				} else {
+					deathKnight.IcyTouch.Cast(sim, target)
+					recastedFF = true
+				}
+			} else if (!deathKnight.TargetHasDisease(BloodPlagueAuraLabel, target) || deathKnight.BloodPlagueDisease[target.Index].RemainingDuration(sim) < diseaseRefreshDuration) && deathKnight.CanPlagueStrike(sim) {
+				// Dont clip if theres half a second left to tick
+				remainingDuration := deathKnight.BloodPlagueDisease[target.Index].RemainingDuration(sim)
+				if remainingDuration < time.Millisecond*500 && remainingDuration > 0 {
+					deathKnight.WaitUntil(sim, sim.CurrentTime+remainingDuration+1)
+				} else {
+					deathKnight.PlagueStrike.Cast(sim, target)
+					recastedBP = true
+				}
 			} else {
 				if deathKnight.PresenceMatches(UnholyPresence) && !deathKnight.SummonGargoyle.CD.IsReady(sim) && deathKnight.CanBloodPresence(sim) {
 					// Swap to blood presence after gargoyle cast
@@ -137,6 +149,6 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 		// Start proper Frost rotation
 
 		// Frost DK rota
-		deathKnight.doFrostRotation(sim)
+		deathKnight.doDKRotation(sim, true)
 	}
 }

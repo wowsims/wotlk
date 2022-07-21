@@ -172,18 +172,28 @@
   text-align: left;
 }
 
-.race-section > div, .rotation-section > div, .other-settings-section > div {
+.race-section > div:not(.settings-section-iconrow), .rotation-section > div:not(.settings-section-iconrow), .other-settings-section > div:not(.settings-section-iconrow) {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 }
 
-.self-buffs-section>div {
-  display: grid;
+.settings-section-iconrow {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	justify-content: space-evenly;
+	flex-wrap: wrap;
+	align-items: center;
+}
+.settings-section-iconrow>div {
+	margin: auto !important;
 }
 
 .buffs-section>div {
   display: grid;
+}
+.buffs-section {
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .consumes-section>div {
@@ -209,6 +219,9 @@
 
 .debuffs-section>div {
   display: grid;
+}
+.debuffs-section {
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .cooldowns-section-container {

@@ -55,12 +55,24 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 
 	if debuffs.Mangle {
 		MakePermanent(MangleAura(target))
+	} else if debuffs.Trauma {
+		MakePermanent(TraumaAura(target, 2))
+	} else if debuffs.Stampede {
+		stampedeAura := StampedeAura(target)
+		target.RegisterResetEffect(func(sim *Simulation) {
+			StartPeriodicAction(sim, PeriodicActionOptions{
+				Period: time.Second * 60,
+				OnAction: func(sim *Simulation) {
+					stampedeAura.Activate(sim)
+				},
+			})
+		})
 	}
 
-	if debuffs.ExposeArmor != proto.TristateEffect_TristateEffectMissing {
+	if debuffs.ExposeArmor {
 		exposeArmorAura := ExposeArmorAura(target, false) // TODO: check glyph
 		ScheduledAura(exposeArmorAura, false, PeriodicActionOptions{
-			Period:   time.Duration(10.0 * float64(time.Second)),
+			Period:   time.Second * 10,
 			NumTicks: 1,
 			OnAction: func(sim *Simulation) {
 				exposeArmorAura.Activate(sim)
@@ -68,14 +80,10 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 		})
 	}
 
-	if debuffs.CurseOfWeakness != proto.TristateEffect_TristateEffectMissing {
-		MakePermanent(CurseOfWeaknessAura(target, 2))
-	}
-
 	if debuffs.SunderArmor {
 		sunderArmorAura := SunderArmorAura(target, 1)
 		ScheduledAura(sunderArmorAura, true, PeriodicActionOptions{
-			Period:   time.Duration(1.5 * float64(time.Second)),
+			Period:   time.Millisecond * 1500,
 			NumTicks: 4,
 			Priority: ActionPriorityDOT, // High prio so it comes before actual warrior sunders.
 			OnAction: func(sim *Simulation) {
@@ -84,6 +92,26 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 				}
 			},
 		})
+	}
+
+	if debuffs.AcidSpit {
+		acidSpitAura := AcidSpitAura(target, 1)
+		ScheduledAura(acidSpitAura, true, PeriodicActionOptions{
+			Period:   time.Second * 10,
+			NumTicks: 1,
+			OnAction: func(sim *Simulation) {
+				if acidSpitAura.IsActive() {
+					acidSpitAura.AddStack(sim)
+				}
+			},
+		})
+	}
+
+	if debuffs.CurseOfWeakness != proto.TristateEffect_TristateEffectMissing {
+		MakePermanent(CurseOfWeaknessAura(target, 2))
+	}
+	if debuffs.Sting {
+		MakePermanent(StingAura(target))
 	}
 
 	if debuffs.FaerieFire != proto.TristateEffect_TristateEffectMissing {
@@ -96,9 +124,22 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 	if debuffs.DemoralizingShout != proto.TristateEffect_TristateEffectMissing {
 		MakePermanent(DemoralizingShoutAura(target, 0, GetTristateValueInt32(debuffs.DemoralizingShout, 0, 5)))
 	}
+
+	// Atk spd reduction
 	if debuffs.ThunderClap != proto.TristateEffect_TristateEffectMissing {
 		MakePermanent(ThunderClapAura(target, GetTristateValueInt32(debuffs.ThunderClap, 0, 3)))
 	}
+	if debuffs.IcyTouch != proto.TristateEffect_TristateEffectMissing {
+		MakePermanent(IcyTouchAura(target, GetTristateValueInt32(debuffs.IcyTouch, 0, 3)))
+	}
+	if debuffs.InfectedWounds {
+		MakePermanent(InfectedWoundsAura(target, 3))
+	}
+	if debuffs.JudgementsOfTheJust {
+		MakePermanent(JudgementsOfTheJustAura(target, 2))
+	}
+
+	// Miss
 	if debuffs.InsectSwarm {
 		MakePermanent(InsectSwarmAura(target))
 	}
@@ -356,6 +397,23 @@ func MangleAura(target *Unit) *Aura {
 	})
 }
 
+func TraumaAura(target *Unit, points int) *Aura {
+	multiplier := 1 + 0.15*float64(points)
+	return target.GetOrRegisterAura(Aura{
+		Label:    "Trauma",
+		Tag:      BleedDamageAuraTag,
+		ActionID: ActionID{SpellID: 46855},
+		Duration: time.Second * 60,
+		Priority: multiplier,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.PeriodicPhysicalDamageTakenMultiplier *= multiplier
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.PeriodicPhysicalDamageTakenMultiplier /= multiplier
+		},
+	})
+}
+
 func StampedeAura(target *Unit) *Aura {
 	return target.GetOrRegisterAura(Aura{
 		Label:    "Stampede",
@@ -460,7 +518,7 @@ func FaerieFireAura(target *Unit, imp bool) *Aura {
 	mainAura = target.GetOrRegisterAura(Aura{
 		Label:    label,
 		Tag:      MinorArmorReductionAuraTag,
-		Priority: armorReduction,
+		Priority: armorReduction + 1,
 		ActionID: ActionID{SpellID: 770},
 		Duration: time.Minute * 5,
 		OnGain: func(aura *Aura, sim *Simulation) {
@@ -561,7 +619,7 @@ func CurseOfWeaknessAura(target *Unit, points int32) *Aura {
 	return target.GetOrRegisterAura(Aura{
 		Label:    "Curse of Weakness",
 		Tag:      MinorArmorReductionAuraTag,
-		Priority: armorReduction,
+		Priority: armorReduction + 1,
 		ActionID: ActionID{SpellID: 50511},
 		Duration: time.Minute * 2,
 		OnGain: func(aura *Aura, sim *Simulation) {
@@ -712,7 +770,7 @@ func ScreechAura(target *Unit) *Aura {
 	})
 }
 
-const ThunderClapAuraTag = "ThunderClap"
+const AtkSpeedReductionAuraTag = "AtkSpdReduction"
 
 func ThunderClapAura(target *Unit, points int32) *Aura {
 	speedMultiplier := 0.9
@@ -727,7 +785,7 @@ func ThunderClapAura(target *Unit, points int32) *Aura {
 
 	return target.GetOrRegisterAura(Aura{
 		Label:    "ThunderClap-" + strconv.Itoa(int(points)),
-		Tag:      ThunderClapAuraTag,
+		Tag:      AtkSpeedReductionAuraTag,
 		ActionID: ActionID{SpellID: 25264},
 		Duration: time.Second * 30,
 		Priority: inverseMult,
@@ -740,10 +798,60 @@ func ThunderClapAura(target *Unit, points int32) *Aura {
 	})
 }
 
-const IcyTouchAuraTag = "IcyTouch"
+func InfectedWoundsAura(target *Unit, points int32) *Aura {
+	speedMultiplier := 1.0
+	if points == 1 {
+		speedMultiplier = 0.94
+	} else if points == 2 {
+		speedMultiplier = 0.86
+	} else if points == 3 {
+		speedMultiplier = 0.8
+	}
+	inverseMult := 1 / speedMultiplier
+
+	return target.GetOrRegisterAura(Aura{
+		Label:    "InfectedWounds-" + strconv.Itoa(int(points)),
+		Tag:      AtkSpeedReductionAuraTag,
+		ActionID: ActionID{SpellID: 48485},
+		Duration: time.Second * 12,
+		Priority: inverseMult,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.MultiplyAttackSpeed(sim, speedMultiplier)
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.MultiplyAttackSpeed(sim, inverseMult)
+		},
+	})
+}
+
+// Note: Paladin code might apply this as part of their judgement auras instead
+// of using another separate aura.
+func JudgementsOfTheJustAura(target *Unit, points int32) *Aura {
+	speedMultiplier := 1.0
+	if points == 1 {
+		speedMultiplier = 0.9
+	} else if points == 2 {
+		speedMultiplier = 0.8
+	}
+	inverseMult := 1 / speedMultiplier
+
+	return target.GetOrRegisterAura(Aura{
+		Label:    "JudgementsOfTheJust-" + strconv.Itoa(int(points)),
+		Tag:      AtkSpeedReductionAuraTag,
+		ActionID: ActionID{SpellID: 53696},
+		Duration: time.Second * 30,
+		Priority: inverseMult,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.MultiplyAttackSpeed(sim, speedMultiplier)
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.MultiplyAttackSpeed(sim, inverseMult)
+		},
+	})
+}
 
 func IcyTouchAura(target *Unit, impIcyTouch int32) *Aura {
-	speedMultiplier := 0.85
+	speedMultiplier := 0.86
 	if impIcyTouch > 0 {
 		speedMultiplier -= 0.02 * float64(impIcyTouch)
 	}
@@ -751,7 +859,7 @@ func IcyTouchAura(target *Unit, impIcyTouch int32) *Aura {
 	inverseMult := 1 / speedMultiplier
 	return target.GetOrRegisterAura(Aura{
 		Label:    "IcyTouch",
-		Tag:      IcyTouchAuraTag,
+		Tag:      AtkSpeedReductionAuraTag,
 		ActionID: ActionID{SpellID: 49909},
 		Duration: time.Second * 15,
 		Priority: inverseMult,

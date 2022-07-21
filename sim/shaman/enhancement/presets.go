@@ -7,9 +7,7 @@ import (
 
 var BasicRaidBuffs = &proto.RaidBuffs{}
 var BasicPartyBuffs = &proto.PartyBuffs{}
-var BasicIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings: true,
-}
+var BasicIndividualBuffs = &proto.IndividualBuffs{}
 
 var StandardTalents = &proto.ShamanTalents{
 	Convection:     2,
@@ -80,7 +78,7 @@ var FullConsumes = &proto.Consumes{
 
 var FullDebuffs = &proto.Debuffs{
 	BloodFrenzy:       true,
-	ExposeArmor:       proto.TristateEffect_TristateEffectImproved,
+	SunderArmor:       true,
 	FaerieFire:        proto.TristateEffect_TristateEffectImproved,
 	JudgementOfWisdom: true,
 	Misery:            true,

@@ -14,7 +14,8 @@ type DeathKnight struct {
 	Options  proto.DeathKnight_Options
 	Rotation proto.DeathKnight_Rotation
 
-	FrostRotation FrostRotation
+	LastCastOutcome core.HitOutcome
+	DKRotation      DKRotation
 
 	Ghoul     *GhoulPet
 	RaiseDead *core.Spell
@@ -57,8 +58,7 @@ type DeathKnight struct {
 	DeathAndDecay    *core.Spell
 	DeathAndDecayDot *core.Dot
 
-	HowlingBlastCostless bool
-	HowlingBlast         *core.Spell
+	HowlingBlast *core.Spell
 
 	OtherRelevantStrAgiActive bool
 	HornOfWinter              *core.Spell
@@ -93,6 +93,7 @@ type DeathKnight struct {
 	NecrosisAura        *core.Aura
 	BloodCakedBladeAura *core.Aura
 	ButcheryAura        *core.Aura
+	RimeAura            *core.Aura
 
 	// Talent Spells
 	LastDiseaseDamage float64
@@ -111,12 +112,13 @@ type DeathKnight struct {
 	EbonPlagueAura *core.Aura
 
 	// Dynamic trackers
-	RageOfRivendareActive bool
-	TundraStalkerActive   bool
+	additiveDamageModifier float64
+}
 
-	// TODO: Is there a better way?
-	// Item Auras
-	SigilOfAwarenessAura *core.Aura
+func (deathKnight *DeathKnight) ModifyAdditiveDamageModifier(sim *core.Simulation, value float64) {
+	deathKnight.PseudoStats.DamageDealtMultiplier /= deathKnight.additiveDamageModifier
+	deathKnight.additiveDamageModifier += value
+	deathKnight.PseudoStats.DamageDealtMultiplier *= deathKnight.additiveDamageModifier
 }
 
 func (deathKnight *DeathKnight) GetCharacter() *core.Character {
@@ -135,7 +137,7 @@ func (deathKnight *DeathKnight) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 		raidBuffs.IcyTalons = true
 	}
 
-	raidBuffs.HornOfWinter = !deathKnight.Options.RefreshHornOfWinter
+	raidBuffs.HornOfWinter = !deathKnight.Rotation.RefreshHornOfWinter
 
 	if raidBuffs.StrengthOfEarthTotem == proto.TristateEffect_TristateEffectImproved ||
 		raidBuffs.StrengthOfEarthTotem == proto.TristateEffect_TristateEffectRegular {
@@ -175,7 +177,7 @@ func (deathKnight *DeathKnight) Initialize() {
 	deathKnight.registerRaiseDeadCD()
 	deathKnight.registerSummonGargoyleCD()
 
-	deathKnight.setupFrostRotation()
+	deathKnight.setupDKRotation()
 }
 
 func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
@@ -194,14 +196,18 @@ func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
 		deathKnight.Presence = BloodPresence
 	}
 
-	if deathKnight.Options.PrecastHornOfWinter && deathKnight.Options.RefreshHornOfWinter {
+	if deathKnight.Options.PrecastHornOfWinter && deathKnight.Rotation.RefreshHornOfWinter {
 		if deathKnight.HornOfWinterAura.IsActive() {
 			deathKnight.HornOfWinterAura.Deactivate(sim)
 			deathKnight.HornOfWinterAura.Activate(sim)
 		}
 	}
 
-	deathKnight.resetFrostRotation(sim)
+	deathKnight.resetDKRotation(sim)
+}
+
+func (deathKnight *DeathKnight) IsFuStrike(spell *core.Spell) bool {
+	return spell == deathKnight.Obliterate || spell == deathKnight.ScourgeStrike // || spell == deathKnight.DeathStrike
 }
 
 func (deathKnight *DeathKnight) HasMajorGlyph(glyph proto.DeathKnightMajorGlyph) bool {
@@ -219,6 +225,8 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 		Talents:   *deathKnightOptions.Talents,
 		Options:   *deathKnightOptions.Options,
 		Rotation:  *deathKnightOptions.Rotation,
+
+		additiveDamageModifier: 1,
 	}
 
 	maxRunicPower := 100.0 + 15.0*float64(deathKnight.Talents.RunicPowerMastery)
@@ -228,28 +236,38 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 		currentRunicPower,
 		maxRunicPower,
 		func(sim *core.Simulation) {
-			if deathKnight.GCD.IsReady(sim) {
-				deathKnight.tryUseGCD(sim)
+			if !deathKnight.Talents.HowlingBlast {
+				if deathKnight.GCD.IsReady(sim) {
+					deathKnight.tryUseGCD(sim)
+				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if deathKnight.GCD.IsReady(sim) {
-				deathKnight.tryUseGCD(sim)
+			if !deathKnight.Talents.HowlingBlast {
+				if deathKnight.GCD.IsReady(sim) {
+					deathKnight.tryUseGCD(sim)
+				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if deathKnight.GCD.IsReady(sim) {
-				deathKnight.tryUseGCD(sim)
+			if !deathKnight.Talents.HowlingBlast {
+				if deathKnight.GCD.IsReady(sim) {
+					deathKnight.tryUseGCD(sim)
+				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if deathKnight.GCD.IsReady(sim) {
-				deathKnight.tryUseGCD(sim)
+			if !deathKnight.Talents.HowlingBlast {
+				if deathKnight.GCD.IsReady(sim) {
+					deathKnight.tryUseGCD(sim)
+				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if deathKnight.GCD.IsReady(sim) {
-				deathKnight.tryUseGCD(sim)
+			if !deathKnight.Talents.HowlingBlast {
+				if deathKnight.GCD.IsReady(sim) {
+					deathKnight.tryUseGCD(sim)
+				}
 			}
 		},
 	)
@@ -304,11 +322,14 @@ func (deathKnight *DeathKnight) secondaryCritModifier(applyGuile bool) float64 {
 	}
 	return secondaryModifier
 }
-func (deathKnight *DeathKnight) critMultiplier() float64 {
+func (deathKnight *DeathKnight) spellCritMultiplier() float64 {
+	return deathKnight.MeleeCritMultiplier(1.0, 0)
+}
+func (deathKnight *DeathKnight) spellCritMultiplierGuile() float64 {
 	applyGuile := deathKnight.Talents.GuileOfGorefiend > 0
 	return deathKnight.MeleeCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile))
 }
-func (deathKnight *DeathKnight) spellCritMultiplier() float64 {
+func (deathKnight *DeathKnight) critMultiplierGuile() float64 {
 	applyGuile := deathKnight.Talents.GuileOfGorefiend > 0
 	return deathKnight.MeleeCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile))
 }

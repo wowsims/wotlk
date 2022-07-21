@@ -40,6 +40,7 @@ var defaultRetOptions = &proto.RetributionPaladin_Options{
 	Judgement:            proto.PaladinJudgement_JudgementOfWisdom,
 	Seal:                 proto.PaladinSeal_Vengeance,
 	Aura:                 proto.PaladinAura_RetributionAura,
+	UseDivinePlea:        true,
 	DamageTakenPerSecond: 0,
 }
 
@@ -85,7 +86,7 @@ var FullDebuffs = &proto.Debuffs{
 	Misery:            true,
 	CurseOfElements:   true,
 	BloodFrenzy:       true,
-	ExposeArmor:       proto.TristateEffect_TristateEffectImproved,
+	SunderArmor:       true,
 	FaerieFire:        proto.TristateEffect_TristateEffectImproved,
 	CurseOfWeakness:   proto.TristateEffect_TristateEffectImproved,
 }

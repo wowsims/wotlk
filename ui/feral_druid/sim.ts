@@ -123,15 +123,15 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 					judgementOfWisdom: true,
 					bloodFrenzy: true,
 					giftOfArthas: true,
-					exposeArmor: TristateEffect.TristateEffectImproved,
+					exposeArmor: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					sunderArmor: true,
 					curseOfWeakness: TristateEffect.TristateEffectRegular,
 				}),
 			},
 
-			// IconInputs to include in the 'Self Buffs' section on the settings tab.
-			selfBuffInputs: [
+			// IconInputs to include in the 'Player' section on the settings tab.
+			playerIconInputs: [
 				DruidInputs.SelfInnervate,
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
@@ -146,10 +146,6 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 				],
 			},
 			encounterPicker: {
-				// Target stats to show for 'Simple' encounters.
-				simpleTargetStats: [
-					Stat.StatArmor,
-				],
 				// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
 				showExecuteProportion: false,
 			},

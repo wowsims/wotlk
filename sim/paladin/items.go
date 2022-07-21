@@ -204,7 +204,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spell.Flags.Matches(SpellFlagJudgement) {
+				if spell.Flags.Matches(SpellFlagPrimaryJudgement) {
 					procAura.Activate(sim)
 				}
 			},
@@ -227,7 +227,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-				if !spell.Flags.Matches(SpellFlagSeal|SpellFlagJudgement) && spell.SpellSchool != core.SpellSchoolPhysical {
+				if !spell.Flags.Matches(SpellFlagSecondaryJudgement|SpellFlagPrimaryJudgement) && spell.SpellSchool != core.SpellSchoolPhysical {
 					return
 				}
 				if !icd.IsReady(sim) || sim.RandomFloat("TomeOfFieryRedemption") > 0.15 {
@@ -275,7 +275,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spell.Flags.Matches(SpellFlagJudgement) && sim.RandomFloat("AshtongueTalismanOfZeal") < 0.5 {
+				if spell.Flags.Matches(SpellFlagPrimaryJudgement) && sim.RandomFloat("AshtongueTalismanOfZeal") < 0.5 {
 					judgementDot.Apply(sim)
 				}
 			},

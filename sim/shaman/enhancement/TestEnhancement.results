@@ -6,7 +6,7 @@ character_stats_results: {
   final_stats: 680.9000000000001
   final_stats: 476.74000000000007
   final_stats: 247.50000000000003
-  final_stats: 936.5400000000002
+  final_stats: 849.4200000000003
   final_stats: 0
   final_stats: 0
   final_stats: 0
@@ -14,12 +14,12 @@ character_stats_results: {
   final_stats: 0
   final_stats: 0
   final_stats: 0
-  final_stats: 259
+  final_stats: 209
   final_stats: 160
   final_stats: 593.275239046702
   final_stats: 0
   final_stats: 0
-  final_stats: 3121.8
+  final_stats: 2831.4000000000005
   final_stats: 333.392
   final_stats: 1118.397464105642
   final_stats: 0
@@ -29,7 +29,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 0
   final_stats: 6828.8
-  final_stats: 1088
+  final_stats: 824
   final_stats: 0
   final_stats: 0
   final_stats: 0
@@ -52,897 +52,897 @@ character_stats_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-AbacusofViolentOdds-28288"
  value: {
-  dps: 3.933442574577436e+126
-  tps: 3.933442574577436e+126
+  dps: 2.9085895860804224e+122
+  tps: 2.9085895860804224e+122
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-AdamantineFigurine-27891"
  value: {
-  dps: 6.330805376474931e+124
-  tps: 6.330805376474931e+124
+  dps: 1.5991264085183267e+121
+  tps: 1.5991264085183267e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Alchemist'sStone-13503"
  value: {
-  dps: 1.7731592130055934e+124
-  tps: 1.7731592130055934e+124
+  dps: 1.3332882211241878e+123
+  tps: 1.3332882211241878e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-AncientAqirArtifact-33830"
  value: {
-  dps: 6.330805376474931e+124
-  tps: 6.330805376474931e+124
+  dps: 1.5991264085183267e+121
+  tps: 1.5991264085183267e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-AshtongueTalismanofVision-32491"
  value: {
-  dps: 6.3935979230942735e+125
-  tps: 6.3935979230942735e+125
+  dps: 3.6901202059435037e+123
+  tps: 3.6901202059435037e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Assassin'sAlchemistStone-35751"
  value: {
-  dps: 3.012847532638291e+126
-  tps: 3.012847532638291e+126
+  dps: 1.131431818253506e+121
+  tps: 1.131431818253506e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-AustereEarthsiegeDiamond"
  value: {
-  dps: 5.934738239317587e+126
-  tps: 5.934738239317587e+126
+  dps: 2.2367017327601804e+123
+  tps: 2.2367017327601804e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-BadgeofTenacity-32658"
  value: {
-  dps: 1.821948390890884e+125
-  tps: 1.821948390890884e+125
+  dps: 6.240761195917438e+122
+  tps: 6.240761195917438e+122
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-BadgeoftheSwarmguard-21670"
  value: {
-  dps: 6.330805376474931e+124
-  tps: 6.330805376474931e+124
+  dps: 1.5991264085183267e+121
+  tps: 1.5991264085183267e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-BandoftheEternalChampion-29301"
  value: {
-  dps: 7.6935558655578095e+124
-  tps: 7.6935558655578095e+124
+  dps: 3.433913914675762e+122
+  tps: 3.433913914675762e+122
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-BandoftheEternalDefender-29297"
  value: {
-  dps: 7.145097281507984e+123
-  tps: 7.145097281507984e+123
+  dps: 4.186957662230554e+122
+  tps: 4.186957662230554e+122
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-BandoftheEternalSage-29305"
  value: {
-  dps: 1.499180631937254e+122
-  tps: 1.499180631937254e+122
+  dps: 1.069401923999725e+122
+  tps: 1.069401923999725e+122
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-BeamingEarthsiegeDiamond"
  value: {
-  dps: 7.11922162523374e+125
-  tps: 7.11922162523374e+125
+  dps: 1.256346854747559e+121
+  tps: 1.256346854747559e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Berserker'sCall-33831"
  value: {
-  dps: 1.5792391590341635e+126
-  tps: 1.5792391590341635e+126
+  dps: 5.580924355579884e+123
+  tps: 5.580924355579884e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-BlackenedNaaruSliver-34427"
  value: {
-  dps: 6.1660950659099615e+125
-  tps: 6.1660950659099615e+125
+  dps: 3.7124194593765335e+123
+  tps: 3.7124194593765335e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-BlackoutTruncheon-27901"
  value: {
-  dps: 4.680508734299896e+125
-  tps: 4.680508734299896e+125
+  dps: 8.679785187051801e+121
+  tps: 8.679785187051801e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Bladefist'sBreadth-28041"
  value: {
-  dps: 6.333030784162246e+122
-  tps: 6.333030784162246e+122
+  dps: 6.067279775712289e+121
+  tps: 6.067279775712289e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-BladeofUnquenchedThirst-31193"
  value: {
-  dps: 4.680508734299896e+125
-  tps: 4.680508734299896e+125
+  dps: 8.679785187051801e+121
+  tps: 8.679785187051801e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-BlazefuryMedallion-17111"
  value: {
-  dps: 8.160898927306973e+125
-  tps: 8.160898927306973e+125
+  dps: 1.4624424128721055e+120
+  tps: 1.4624424128721055e+120
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-BracingEarthsiegeDiamond"
  value: {
-  dps: 5.989418423048849e+126
-  tps: 5.869630054587872e+126
+  dps: 2.25803918963419e+123
+  tps: 2.212878405841506e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-BracingEarthstormDiamond"
  value: {
-  dps: 5.965359142207092e+126
-  tps: 5.965359142207092e+126
+  dps: 2.2486507086096253e+123
+  tps: 2.2486507086096253e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-BraidedEterniumChain-24114"
  value: {
-  dps: 7.068051522507634e+124
-  tps: 7.068051522507634e+124
+  dps: 8.522750481565536e+122
+  tps: 8.522750481565536e+122
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-BroochoftheImmortalKing-32534"
  value: {
-  dps: 6.330805376474931e+124
-  tps: 6.330805376474931e+124
+  dps: 1.5991264085183267e+121
+  tps: 1.5991264085183267e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-BrutalEarthstormDiamond"
  value: {
-  dps: 5.934738239317587e+126
-  tps: 5.934738239317587e+126
+  dps: 2.2367017327601804e+123
+  tps: 2.2367017327601804e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-BulwarkofAzzinoth-32375"
  value: {
-  dps: 1.3838922013303735e+107
-  tps: 1.3838922013303735e+107
+  dps: 5.273625459171999e+98
+  tps: 5.273625459171999e+98
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-CataclysmHarness"
  value: {
-  dps: 1.183333124595296e+125
-  tps: 1.183333124595296e+125
+  dps: 2.83867733714943e+122
+  tps: 2.83867733714943e+122
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-CataclysmRegalia"
  value: {
-  dps: 3.348402699383012e+123
-  tps: 3.348402699383012e+123
+  dps: 8.566930372653495e+121
+  tps: 8.566930372653495e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ChaoticSkyfireDiamond"
  value: {
-  dps: 2.4502936482121793e+126
-  tps: 2.4502936482121793e+126
+  dps: 1.0873256128831825e+123
+  tps: 1.0873256128831825e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ChaoticSkyflareDiamond"
  value: {
-  dps: 1.2579320865963173e+126
-  tps: 1.2579320865963173e+126
+  dps: 5.950521077702954e+122
+  tps: 5.950521077702954e+122
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-CloakofDarkness-33122"
  value: {
-  dps: 7.84289567813655e+122
-  tps: 7.84289567813655e+122
+  dps: 2.7461555412475983e+124
+  tps: 2.7461555412475983e+124
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-CommendationofKael'thas-34473"
  value: {
-  dps: 6.330805376474931e+124
-  tps: 6.330805376474931e+124
+  dps: 1.5991264085183267e+121
+  tps: 1.5991264085183267e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Coren'sLuckyCoin-38289"
  value: {
-  dps: 6.330805376474931e+124
-  tps: 6.330805376474931e+124
+  dps: 1.5991264085183267e+121
+  tps: 1.5991264085183267e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-CoreofAr'kelos-29776"
  value: {
-  dps: 1.7447759277857296e+124
-  tps: 1.7447759277857296e+124
+  dps: 3.37382225276365e+123
+  tps: 3.37382225276365e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-CrystalforgedTrinket-32654"
  value: {
-  dps: 1.6524565933750024e+124
-  tps: 1.6524565933750024e+124
+  dps: 5.772266221884189e+121
+  tps: 5.772266221884189e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-CycloneHarness"
  value: {
-  dps: 1.0025506005714663e+122
-  tps: 1.0025506005714663e+122
+  dps: 2.7992259179877997e+118
+  tps: 2.7992259179877997e+118
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-CycloneRegalia"
  value: {
-  dps: 1.3764247103998593e+121
-  tps: 1.3764247103998593e+121
+  dps: 1.110497836855334e+121
+  tps: 1.110497836855334e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Dabiri'sEnigma-30300"
  value: {
-  dps: 6.330805376474931e+124
-  tps: 6.330805376474931e+124
+  dps: 1.5991264085183267e+121
+  tps: 1.5991264085183267e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-DarkIronSmokingPipe-38290"
  value: {
-  dps: 6.492378171828332e+124
-  tps: 6.492378171828332e+124
+  dps: 1.6543128541344817e+121
+  tps: 1.6543128541344817e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-DarkmoonCard:Crusade-31856"
  value: {
-  dps: 1.3565666505644011e+125
-  tps: 1.3565666505644011e+125
+  dps: 7.905894627566029e+120
+  tps: 7.905894627566029e+120
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-DarkmoonCard:Vengeance-31858"
  value: {
-  dps: 6.324959385062097e+124
-  tps: 6.324959385062097e+124
+  dps: 1.591229528782422e+121
+  tps: 1.591229528782422e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-DarkmoonCard:Wrath-31857"
  value: {
-  dps: 3.1782789119168633e+125
-  tps: 3.1782789119168633e+125
+  dps: 9.60426477986401e+123
+  tps: 9.60426477986401e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-DesolationBattlegear"
  value: {
-  dps: 5.573649603922809e+118
-  tps: 5.573649603922809e+118
+  dps: 3.8497137124048936e+115
+  tps: 3.8497137124048936e+115
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-DestructiveSkyfireDiamond"
  value: {
-  dps: 1.2752485513045095e+125
-  tps: 1.2752485513045095e+125
+  dps: 4.792041771324589e+121
+  tps: 4.792041771324589e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-DestructiveSkyflareDiamond"
  value: {
-  dps: 1.5674941753546048e+124
-  tps: 1.5674941753546048e+124
+  dps: 3.979614541218449e+124
+  tps: 3.979614541218449e+124
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Devastation-30316"
  value: {
-  dps: 6.736556570668736e+107
-  tps: 6.736556570668736e+107
+  dps: 5.666608461395397e+95
+  tps: 5.666608461395397e+95
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Dragonmaw-28438"
  value: {
-  dps: 4.680508734299896e+125
-  tps: 4.680508734299896e+125
+  dps: 8.679785187051801e+121
+  tps: 8.679785187051801e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Dragonstrike-28439"
  value: {
-  dps: 4.680508734299896e+125
-  tps: 4.680508734299896e+125
+  dps: 8.679785187051801e+121
+  tps: 8.679785187051801e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-DrakefistHammer-28437"
  value: {
-  dps: 4.680508734299896e+125
-  tps: 4.680508734299896e+125
+  dps: 8.679785187051801e+121
+  tps: 8.679785187051801e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-EffulgentSkyflareDiamond"
  value: {
-  dps: 5.934738239317587e+126
-  tps: 5.934738239317587e+126
+  dps: 2.2367017327601804e+123
+  tps: 2.2367017327601804e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-EmberSkyfireDiamond"
  value: {
-  dps: 4.800291710242264e+124
-  tps: 4.800291710242264e+124
+  dps: 5.941240693738703e+122
+  tps: 5.941240693738703e+122
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-EmberSkyflareDiamond"
  value: {
-  dps: 4.8198521857580345e+124
-  tps: 4.8198521857580345e+124
+  dps: 5.966063821485181e+122
+  tps: 5.966063821485181e+122
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-EmptyMugofDirebrew-38287"
  value: {
-  dps: 4.680508734299896e+125
-  tps: 4.680508734299896e+125
+  dps: 8.679785187051801e+121
+  tps: 8.679785187051801e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-EmpyreanDemolisher-17112"
  value: {
-  dps: 4.680508734299896e+125
-  tps: 4.680508734299896e+125
+  dps: 8.679785187051801e+121
+  tps: 8.679785187051801e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-EnigmaticSkyfireDiamond"
  value: {
-  dps: 2.431234139414887e+126
-  tps: 2.431234139414887e+126
+  dps: 1.0816179926034548e+123
+  tps: 1.0816179926034548e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-EnigmaticSkyflareDiamond"
  value: {
-  dps: 1.2570294625427864e+126
-  tps: 1.2570294625427864e+126
+  dps: 5.947049797242888e+122
+  tps: 5.947049797242888e+122
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-EnigmaticStarflareDiamond"
  value: {
-  dps: 2.6682405573273978e+125
-  tps: 2.6682405573273978e+125
+  dps: 6.093832536235621e+121
+  tps: 6.093832536235621e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-EssenceoftheMartyr-29376"
  value: {
-  dps: 6.473259861894654e+124
-  tps: 6.473259861894654e+124
+  dps: 1.6446149978182615e+121
+  tps: 1.6446149978182615e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-EternalEarthsiegeDiamond"
  value: {
-  dps: 5.934738239317587e+126
-  tps: 5.934738239317587e+126
+  dps: 2.2367017327601804e+123
+  tps: 2.2367017327601804e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-EternalEarthstormDiamond"
  value: {
-  dps: 5.934738239317587e+126
-  tps: 5.934738239317587e+126
+  dps: 2.2367017327601804e+123
+  tps: 2.2367017327601804e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-EyeofMagtheridon-28789"
  value: {
-  dps: 6.465219517266853e+124
-  tps: 6.465219517266853e+124
+  dps: 1.6509551288084357e+121
+  tps: 1.6509551288084357e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Fathom-BroochoftheTidewalker-30663"
  value: {
-  dps: 2.729326500118454e+125
-  tps: 2.729326500118454e+125
+  dps: 3.8983900663264957e+121
+  tps: 3.8983900663264957e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-FelstalkerArmor"
  value: {
-  dps: 4.16616143703211e+121
-  tps: 4.16616143703211e+121
+  dps: 1.6527517202564983e+120
+  tps: 1.6527517202564983e+120
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Figurine-LivingRubySerpent-24126"
  value: {
-  dps: 6.983151891561802e+122
-  tps: 6.983151891561802e+122
+  dps: 8.146636382566331e+120
+  tps: 8.146636382566331e+120
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Figurine-NightseyePanther-24128"
  value: {
-  dps: 2.947496143020984e+125
-  tps: 2.947496143020984e+125
+  dps: 5.992701093853692e+123
+  tps: 5.992701093853692e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Figurine-ShadowsongPanther-35702"
  value: {
-  dps: 5.987096853419054e+124
-  tps: 5.987096853419054e+124
+  dps: 4.865771184305019e+121
+  tps: 4.865771184305019e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ForlornSkyflareDiamond"
  value: {
-  dps: 5.989418423048849e+126
-  tps: 5.989418423048849e+126
+  dps: 2.25803918963419e+123
+  tps: 2.25803918963419e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ForlornStarflareDiamond"
  value: {
-  dps: 5.978482386302596e+126
-  tps: 5.978482386302596e+126
+  dps: 2.253771698259388e+123
+  tps: 2.253771698259388e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-GnomereganAuto-Blocker600-29387"
  value: {
-  dps: 6.330805376474931e+124
-  tps: 6.330805376474931e+124
+  dps: 1.5991264085183267e+121
+  tps: 1.5991264085183267e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Guardian'sAlchemistStone-35748"
  value: {
-  dps: 6.330805376474931e+124
-  tps: 6.330805376474931e+124
+  dps: 1.5991264085183267e+121
+  tps: 1.5991264085183267e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-HandofJustice-11815"
  value: {
-  dps: 4.368492332083536e+124
-  tps: 4.368492332083536e+124
+  dps: 1.223092421321685e+123
+  tps: 1.223092421321685e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Heartrazor-29962"
  value: {
-  dps: 4.680508734299896e+125
-  tps: 4.680508734299896e+125
+  dps: 8.679785187051801e+121
+  tps: 8.679785187051801e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-HexShrunkenHead-33829"
  value: {
-  dps: 6.5376112392730425e+124
-  tps: 6.5376112392730425e+124
+  dps: 1.6708230418905752e+121
+  tps: 1.6708230418905752e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-HourglassoftheUnraveller-28034"
  value: {
-  dps: 2.0525072771751334e+124
-  tps: 2.0525072771751334e+124
+  dps: 8.50578542517402e+122
+  tps: 8.50578542517402e+122
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-IconofUnyieldingCourage-28121"
  value: {
-  dps: 1.6940962338876132e+127
-  tps: 1.6940962338876132e+127
+  dps: 1.5799318109895072e+123
+  tps: 1.5799318109895072e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-IconoftheSilverCrescent-29370"
  value: {
-  dps: 6.494752240692974e+124
-  tps: 6.494752240692974e+124
+  dps: 1.654932156992652e+121
+  tps: 1.654932156992652e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ImbuedUnstableDiamond"
  value: {
-  dps: 5.965359142207092e+126
-  tps: 5.965359142207092e+126
+  dps: 2.2486507086096253e+123
+  tps: 2.2486507086096253e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ImpassiveSkyflareDiamond"
  value: {
-  dps: 1.2570294625427864e+126
-  tps: 1.2570294625427864e+126
+  dps: 5.947049797242888e+122
+  tps: 5.947049797242888e+122
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ImpassiveStarflareDiamond"
  value: {
-  dps: 2.6682405573273978e+125
-  tps: 2.6682405573273978e+125
+  dps: 6.093832536235621e+121
+  tps: 6.093832536235621e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-IndestructibleAlchemist'sStone-44323"
  value: {
-  dps: 6.330805376474931e+124
-  tps: 6.330805376474931e+124
+  dps: 1.5991264085183267e+121
+  tps: 1.5991264085183267e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-InsightfulEarthsiegeDiamond"
  value: {
-  dps: 2.2119590815559265e+127
-  tps: 2.2119590815559265e+127
+  dps: 1.244334439306807e+124
+  tps: 1.244334439306807e+124
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-InsightfulEarthstormDiamond"
  value: {
-  dps: 2.3912783343307577e+123
-  tps: 2.3912783343307577e+123
+  dps: 1.904796117247887e+126
+  tps: 1.904796117247887e+126
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-InvigoratingEarthsiegeDiamond"
  value: {
-  dps: 1.8275210273844282e+125
-  tps: 1.8275210273844282e+125
+  dps: 5.899001259937057e+123
+  tps: 5.899001259937057e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-KissoftheSpider-22954"
  value: {
-  dps: 7.622025973274713e+125
-  tps: 7.622025973274713e+125
+  dps: 7.218121580809374e+121
+  tps: 7.218121580809374e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-MadnessoftheBetrayer-32505"
  value: {
-  dps: 2.3483170736391345e+124
-  tps: 2.3483170736391345e+124
+  dps: 6.377135817561563e+122
+  tps: 6.377135817561563e+122
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Mana-EtchedRegalia"
  value: {
-  dps: 1.3105029025544745e+119
-  tps: 1.3105029025544745e+119
+  dps: 3.773389499099991e+117
+  tps: 3.773389499099991e+117
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ManualCrowdPummeler-9449"
  value: {
-  dps: 5.168194848249639e+116
-  tps: 5.168194848249639e+116
+  dps: 7.64531815207522e+107
+  tps: 7.64531815207522e+107
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-MarkoftheChampion-23206"
  value: {
-  dps: 6.330805376474931e+124
-  tps: 6.330805376474931e+124
+  dps: 1.5991264085183267e+121
+  tps: 1.5991264085183267e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-MarkoftheChampion-23207"
  value: {
-  dps: 6.532601229969266e+124
-  tps: 6.532601229969266e+124
+  dps: 1.6517671514628062e+121
+  tps: 1.6517671514628062e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-MercurialAlchemistStone-44322"
  value: {
-  dps: 8.320365406263057e+124
-  tps: 8.320365406263057e+124
+  dps: 2.375822788340638e+122
+  tps: 2.375822788340638e+122
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-MightyAlchemist'sStone-44324"
  value: {
-  dps: 3.733567217462473e+124
-  tps: 3.733567217462473e+124
+  dps: 2.3310941724375808e+121
+  tps: 2.3310941724375808e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Moroes'LuckyPocketWatch-28528"
  value: {
-  dps: 6.330805376474931e+124
-  tps: 6.330805376474931e+124
+  dps: 1.5991264085183267e+121
+  tps: 1.5991264085183267e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-MysticalSkyfireDiamond"
  value: {
-  dps: 7.310343719373051e+124
-  tps: 7.310343719373051e+124
+  dps: 3.387247008970873e+122
+  tps: 3.387247008970873e+122
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-NaturalAlignmentCrystal-19344"
  value: {
-  dps: 1.9085809021760367e+122
-  tps: 1.9085809021760367e+122
+  dps: 5.884125138343965e+123
+  tps: 5.884125138343965e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-NetherscaleArmor"
  value: {
-  dps: 6.290788089442148e+122
-  tps: 6.290788089442148e+122
+  dps: 7.870746762181741e+119
+  tps: 7.870746762181741e+119
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-NetherstrikeArmor"
  value: {
-  dps: 8.591832063212419e+122
-  tps: 8.591832063212419e+122
+  dps: 1.136506969018118e+121
+  tps: 1.136506969018118e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-PersistentEarthshatterDiamond"
  value: {
-  dps: 8.549665287955207e+125
-  tps: 8.549665287955207e+125
+  dps: 2.013253570573906e+123
+  tps: 2.013253570573906e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-PersistentEarthsiegeDiamond"
  value: {
-  dps: 1.8275210273844282e+125
-  tps: 1.8275210273844282e+125
+  dps: 5.899001259937057e+123
+  tps: 5.899001259937057e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-PotentUnstableDiamond"
  value: {
-  dps: 1.8599879026102923e+125
-  tps: 1.8599879026102923e+125
+  dps: 1.572841525166173e+123
+  tps: 1.572841525166173e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-PowerfulEarthshatterDiamond"
  value: {
-  dps: 5.934738239317587e+126
-  tps: 5.934738239317587e+126
+  dps: 2.2367017327601804e+123
+  tps: 2.2367017327601804e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-PowerfulEarthsiegeDiamond"
  value: {
-  dps: 5.934738239317587e+126
-  tps: 5.934738239317587e+126
+  dps: 2.2367017327601804e+123
+  tps: 2.2367017327601804e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-PowerfulEarthstormDiamond"
  value: {
-  dps: 5.934738239317587e+126
-  tps: 5.934738239317587e+126
+  dps: 2.2367017327601804e+123
+  tps: 2.2367017327601804e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-PrimalIntent"
  value: {
-  dps: 1.8878658650204628e+121
-  tps: 1.8878658650204628e+121
+  dps: 1.1849279525041983e+122
+  tps: 1.1849279525041983e+122
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-PurifiedShardoftheGods"
  value: {
-  dps: 6.330805376474931e+124
-  tps: 6.330805376474931e+124
+  dps: 1.5991264085183267e+121
+  tps: 1.5991264085183267e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Quagmirran'sEye-27683"
  value: {
-  dps: 1.4860401052378956e+125
-  tps: 1.4860401052378956e+125
+  dps: 5.1886189775438455e+122
+  tps: 5.1886189775438455e+122
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Redeemer'sAlchemistStone-35750"
  value: {
-  dps: 6.480371714947202e+124
-  tps: 6.480371714947202e+124
+  dps: 1.6381424885830583e+121
+  tps: 1.6381424885830583e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-RelentlessEarthsiegeDiamond"
  value: {
-  dps: 2.0182257833918373e+124
-  tps: 2.0182257833918373e+124
+  dps: 2.733320468323843e+124
+  tps: 2.733320468323843e+124
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-RelentlessEarthstormDiamond"
  value: {
-  dps: 4.680508734299896e+125
-  tps: 4.680508734299896e+125
+  dps: 8.679785187051801e+121
+  tps: 8.679785187051801e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-RevitalizingSkyflareDiamond"
  value: {
-  dps: 3.5726744875004517e+123
-  tps: 3.5726744875004517e+123
+  dps: 3.70088047114952e+123
+  tps: 3.70088047114952e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-RobeoftheElderScribes-28602"
  value: {
-  dps: 1.589663232523164e+123
-  tps: 1.589663232523164e+123
+  dps: 1.6494749693766394e+123
+  tps: 1.6494749693766394e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Romulo'sPoisonVial-28579"
  value: {
-  dps: 1.8160018363955074e+128
-  tps: 1.8160018363955074e+128
+  dps: 9.18023761706298e+124
+  tps: 9.18023761706298e+124
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ScarabofDisplacement-30629"
  value: {
-  dps: 2.5618924666093926e+124
-  tps: 2.5618924666093926e+124
+  dps: 1.5972465669190227e+121
+  tps: 1.5972465669190227e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Scryer'sBloodgem-29132"
  value: {
-  dps: 1.9231280111061384e+126
-  tps: 1.9231280111061384e+126
+  dps: 3.915834951593623e+122
+  tps: 3.915834951593623e+122
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-SextantofUnstableCurrents-30626"
  value: {
-  dps: 7.429727182613389e+123
-  tps: 7.429727182613389e+123
+  dps: 2.5879481622900658e+123
+  tps: 2.5879481622900658e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ShadowmoonInsignia-32501"
  value: {
-  dps: 6.330805376474931e+124
-  tps: 6.330805376474931e+124
+  dps: 1.5991264085183267e+121
+  tps: 1.5991264085183267e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ShardofContempt-34472"
  value: {
-  dps: 6.821716963580713e+126
-  tps: 6.821716963580713e+126
+  dps: 1.3617893934986636e+121
+  tps: 1.3617893934986636e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ShatteredSunPendantofAcumen-34678"
  value: {
-  dps: 8.196010687965738e+123
-  tps: 8.196010687965738e+123
+  dps: 9.74161353996297e+121
+  tps: 9.74161353996297e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ShatteredSunPendantofMight-34679"
  value: {
-  dps: 4.528409976449274e+124
-  tps: 4.528409976449274e+124
+  dps: 8.09776780226838e+121
+  tps: 8.09776780226838e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Shiffar'sNexus-Horn-28418"
  value: {
-  dps: 3.049517620355786e+127
-  tps: 3.049517620355786e+127
+  dps: 1.0042757038258733e+124
+  tps: 1.0042757038258733e+124
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ShiftingNaaruSliver-34429"
  value: {
-  dps: 1.2471936385374669e+126
-  tps: 1.2471936385374669e+126
+  dps: 7.774172137319108e+122
+  tps: 7.774172137319108e+122
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ShinyShardoftheGods"
  value: {
-  dps: 6.330805376474931e+124
-  tps: 6.330805376474931e+124
+  dps: 1.5991264085183267e+121
+  tps: 1.5991264085183267e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-SingingCrystalAxe-31318"
  value: {
-  dps: 1.760543999539333e+100
-  tps: 1.760543999539333e+100
+  dps: 2.128080483720313e+91
+  tps: 2.128080483720313e+91
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-SkycallTotem-33506"
  value: {
-  dps: 4.680508734299896e+125
-  tps: 4.680508734299896e+125
+  dps: 8.679785187051801e+121
+  tps: 8.679785187051801e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-SkyshatterHarness"
  value: {
-  dps: 7.549656232128157e+126
-  tps: 7.549656232128157e+126
+  dps: 1.0730663429996454e+125
+  tps: 1.0730663429996454e+125
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-SkyshatterRegalia"
  value: {
-  dps: 1.956143973297642e+123
-  tps: 1.956143973297642e+123
+  dps: 3.0770162909653743e+122
+  tps: 3.0770162909653743e+122
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Slayer'sCrest-23041"
  value: {
-  dps: 1.6140116926055646e+125
-  tps: 1.6140116926055646e+125
+  dps: 1.854807854315082e+122
+  tps: 1.854807854315082e+122
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Sorcerer'sAlchemistStone-35749"
  value: {
-  dps: 6.480371714947202e+124
-  tps: 6.480371714947202e+124
+  dps: 1.6381424885830583e+121
+  tps: 1.6381424885830583e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-SpellstrikeInfusion"
  value: {
-  dps: 2.9906613876419553e+124
-  tps: 2.9906613876419553e+124
+  dps: 6.292682496105073e+122
+  tps: 6.292682496105073e+122
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Stonebreaker'sTotem-33507"
  value: {
-  dps: 3.9034299664007356e+123
-  tps: 3.9034299664007356e+123
+  dps: 3.279140034018237e+123
+  tps: 3.279140034018237e+123
  }
 }
 dps_results: {
@@ -955,225 +955,225 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-StrengthoftheClefthoof"
  value: {
-  dps: 2.1571421160983514e+120
-  tps: 2.1571421160983514e+120
+  dps: 5.7270687829302574e+119
+  tps: 5.7270687829302574e+119
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-SwiftSkyfireDiamond"
  value: {
-  dps: 1.8599879026102923e+125
-  tps: 1.8599879026102923e+125
+  dps: 1.572841525166173e+123
+  tps: 1.572841525166173e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-SwiftSkyflareDiamond"
  value: {
-  dps: 1.8275210273844282e+125
-  tps: 1.8275210273844282e+125
+  dps: 5.899001259937057e+123
+  tps: 5.899001259937057e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-SwiftStarfireDiamond"
  value: {
-  dps: 5.960984727508593e+126
-  tps: 5.960984727508593e+126
+  dps: 2.246943712059705e+123
+  tps: 2.246943712059705e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-SwiftStarflareDiamond"
  value: {
-  dps: 8.549665287955207e+125
-  tps: 8.549665287955207e+125
+  dps: 2.013253570573906e+123
+  tps: 2.013253570573906e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-SwiftWindfireDiamond"
  value: {
-  dps: 1.859089307774029e+125
-  tps: 1.859089307774029e+125
+  dps: 7.532779786806483e+122
+  tps: 7.532779786806483e+122
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-SyphonoftheNathrezim-32262"
  value: {
-  dps: 4.680508734299896e+125
-  tps: 4.680508734299896e+125
+  dps: 8.679785187051801e+121
+  tps: 8.679785187051801e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TenaciousEarthstormDiamond"
  value: {
-  dps: 5.934738239317587e+126
-  tps: 5.934738239317587e+126
+  dps: 2.2367017327601804e+123
+  tps: 2.2367017327601804e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TheBladefist-29348"
  value: {
-  dps: 1.5372478588702516e+123
-  tps: 1.5372478588702516e+123
+  dps: 6.203555794015379e+119
+  tps: 6.203555794015379e+119
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TheDecapitator-28767"
  value: {
-  dps: 4.680508734299896e+125
-  tps: 4.680508734299896e+125
+  dps: 8.679785187051801e+121
+  tps: 8.679785187051801e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TheFistsofFury"
  value: {
-  dps: 1.3882142319055386e+123
-  tps: 1.3882142319055386e+123
+  dps: 1.4161221243840017e+119
+  tps: 1.4161221243840017e+119
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TheLightningCapacitor-28785"
  value: {
-  dps: 1.6954594313372423e+126
-  tps: 1.6954594313372423e+126
+  dps: 1.1529470754207415e+122
+  tps: 1.1529470754207415e+122
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TheNightBlade-31331"
  value: {
-  dps: 4.680508734299896e+125
-  tps: 4.680508734299896e+125
+  dps: 8.679785187051801e+121
+  tps: 8.679785187051801e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TheRestrainedEssenceofSapphiron-23046"
  value: {
-  dps: 6.475661153270881e+124
-  tps: 6.475661153270881e+124
+  dps: 1.6478490709285466e+121
+  tps: 1.6478490709285466e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TheSkullofGul'dan-32483"
  value: {
-  dps: 4.076994719095819e+126
-  tps: 4.076994719095819e+126
+  dps: 8.469008286541176e+123
+  tps: 8.469008286541176e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TheTwinStars"
  value: {
-  dps: 3.3108914171017677e+124
-  tps: 3.3108914171017677e+124
+  dps: 5.591810977466492e+121
+  tps: 5.591810977466492e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ThunderingSkyfireDiamond"
  value: {
-  dps: 4.1974425788785034e+124
-  tps: 4.1974425788785034e+124
+  dps: 1.4820223915907654e+121
+  tps: 1.4820223915907654e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 4.6240332479786065e+125
-  tps: 4.6240332479786065e+125
+  dps: 3.3289957527689975e+122
+  tps: 3.3289957527689975e+122
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TidefuryRaiment"
  value: {
-  dps: 7.115317710340129e+118
-  tps: 7.115317710340129e+118
+  dps: 2.351708620051759e+116
+  tps: 2.351708620051759e+116
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Timbal'sFocusingCrystal-34470"
  value: {
-  dps: 6.203777512836974e+124
-  tps: 6.203777512836974e+124
+  dps: 1.524196066497358e+122
+  tps: 1.524196066497358e+122
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TirelessSkyflareDiamond"
  value: {
-  dps: 5.989418423048849e+126
-  tps: 5.989418423048849e+126
+  dps: 2.25803918963419e+123
+  tps: 2.25803918963419e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TirelessStarflareDiamond"
  value: {
-  dps: 5.978482386302596e+126
-  tps: 5.978482386302596e+126
+  dps: 2.253771698259388e+123
+  tps: 2.253771698259388e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TotemoftheElementalPlane-40708"
  value: {
-  dps: 4.680508734299896e+125
-  tps: 4.680508734299896e+125
+  dps: 8.679785187051801e+121
+  tps: 8.679785187051801e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TotemofthePulsingEarth-29389"
  value: {
-  dps: 4.680508734299896e+125
-  tps: 4.680508734299896e+125
+  dps: 8.679785187051801e+121
+  tps: 8.679785187051801e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TrenchantEarthshatterDiamond"
  value: {
-  dps: 5.978482386302596e+126
-  tps: 5.978482386302596e+126
+  dps: 2.253771698259388e+123
+  tps: 2.253771698259388e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TrenchantEarthsiegeDiamond"
  value: {
-  dps: 5.989418423048849e+126
-  tps: 5.989418423048849e+126
+  dps: 2.25803918963419e+123
+  tps: 2.25803918963419e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TsunamiTalisman-30627"
  value: {
-  dps: 3.9258267611263107e+127
-  tps: 3.9258267611263107e+127
+  dps: 8.347741580411397e+122
+  tps: 8.347741580411397e+122
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-WastewalkerArmor"
  value: {
-  dps: 4.388001077368808e+123
-  tps: 4.388001077368808e+123
+  dps: 1.3360300374186659e+118
+  tps: 1.3360300374186659e+118
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-WindhawkArmor"
  value: {
-  dps: 6.732235125548584e+122
-  tps: 6.732235125548584e+122
+  dps: 1.2835569299938448e+121
+  tps: 1.2835569299938448e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-WorldBreaker-30090"
  value: {
-  dps: 1.1016588376976615e+104
-  tps: 1.1016588376976615e+104
+  dps: 1.775341348827766e+90
+  tps: 1.775341348827766e+90
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-WrathofSpellfire"
  value: {
-  dps: 4.740586094500516e+121
-  tps: 4.740586094500516e+121
+  dps: 9.876579517202216e+116
+  tps: 9.876579517202216e+116
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Xi'ri'sGift-29179"
  value: {
-  dps: 5.7361735374884e+126
-  tps: 5.7361735374884e+126
+  dps: 5.91647360041469e+123
+  tps: 5.91647360041469e+123
  }
 }
 dps_results: {
@@ -1186,22 +1186,22 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Orc-P2-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 7.437158351551932e+126
-  tps: 7.437158351551932e+126
+  dps: 5.561201630940964e+121
+  tps: 5.561201630940964e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Orc-P2-Basic-FullBuffs-LongSingleTarget"
  value: {
-  dps: 1.998832092770012e+126
-  tps: 1.998832092770012e+126
+  dps: 2.590206928441375e+123
+  tps: 2.590206928441375e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Orc-P2-Basic-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 7.507099279822064e+20
-  tps: 7.507099279822064e+20
+  dps: 7.274281714833701e+20
+  tps: 7.274281714833701e+20
  }
 }
 dps_results: {
@@ -1228,22 +1228,22 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Troll-P2-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 1.3885766902512677e+122
-  tps: 1.3885766902512677e+122
+  dps: 1.7716793605520078e+120
+  tps: 1.7716793605520078e+120
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Troll-P2-Basic-FullBuffs-LongSingleTarget"
  value: {
-  dps: 4.680508734299896e+125
-  tps: 4.680508734299896e+125
+  dps: 8.679785187051801e+121
+  tps: 8.679785187051801e+121
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Troll-P2-Basic-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 4.79819009511702e+20
-  tps: 4.79819009511702e+20
+  dps: 4.6451244071656043e+20
+  tps: 4.6451244071656043e+20
  }
 }
 dps_results: {
@@ -1270,7 +1270,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 6.169566749347427e+111
-  tps: 6.169566749347427e+111
+  dps: 1.3712650070364617e+109
+  tps: 1.3712650070364617e+109
  }
 }

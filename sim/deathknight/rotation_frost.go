@@ -1,65 +1,59 @@
 package deathknight
 
 import (
+	"container/list"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-type FrostRotationAction uint8
+type DKRotationAction uint8
 
 const (
-	FrostRotationAction_Wait FrostRotationAction = iota
-	FrostRotationAction_IT
-	FrostRotationAction_PS
-	FrostRotationAction_Obli
-	FrostRotationAction_BS
-	FrostRotationAction_BT
-	FrostRotationAction_UA
-	FrostRotationAction_Pesti
-	FrostRotationAction_FS
-	FrostRotationAction_HW
-	FrostRotationAction_ERW
+	DKRotationAction_Skip DKRotationAction = iota
+	DKRotationAction_EnableDiseaseCheck
+	DKRotationAction_DisableDiseaseCheck
+	DKRotationAction_ReapplyDiseases
+	DKRotationAction_IT
+	DKRotationAction_PS
+	DKRotationAction_Obli
+	DKRotationAction_BS
+	DKRotationAction_BT
+	DKRotationAction_UA
+	DKRotationAction_RD
+	DKRotationAction_Pesti
+	DKRotationAction_FS
+	DKRotationAction_HW
+	DKRotationAction_ERW
+	DKRotationAction_HB_Ghoul_FS_RimeCheck
+	DKRotationAction_PrioMode
 )
 
-type FrostRotationSequence struct {
-	building   bool
+type DKRotationSequence struct {
 	idx        int
 	numActions int
-	actions    []FrostRotationAction
+	repeatable bool
+	actions    []DKRotationAction
 }
 
-func (frs *FrostRotationSequence) beginBuildingSequence() {
-	if frs.building {
-		panic("Started building inside sequence!")
-	}
-	frs.idx = 0
-	frs.building = true
-}
-
-func (frs *FrostRotationSequence) endBuildingSequence() {
-	if !frs.building {
-		panic("Ended building without a start!")
-	}
-	frs.idx = 0
-	frs.building = false
-}
-
-type FrostRotation struct {
+type DKRotation struct {
 	numTargets int
 	targets    []*core.Unit
 
-	currSequence *FrostRotationSequence
+	currSequence      *list.Element
+	mainSequenceList  *list.List
+	bloodSequenceList *list.List
 
-	mainSequence  FrostRotationSequence
-	constSequence FrostRotationSequence
+	lastFFApplication   time.Duration
+	lastBPApplication   time.Duration
+	diseaseCheckEnabled bool
 }
 
 func (deathKnight *DeathKnight) getIndexForTarget(t *core.Unit) int {
-	fr := &deathKnight.FrostRotation
+	r := &deathKnight.DKRotation
 	idx := -1
-	for i := 0; i < fr.numTargets; i++ {
-		if t == fr.targets[i] {
+	for i := 0; i < r.numTargets; i++ {
+		if t == r.targets[i] {
 			idx = i
 			break
 		}
@@ -70,99 +64,124 @@ func (deathKnight *DeathKnight) getIndexForTarget(t *core.Unit) int {
 	return idx
 }
 
-func (frs *FrostRotationSequence) resetFrostRotationSequence() {
-	frs.idx = 0
+func (rs *DKRotationSequence) resetSequence() {
+	rs.idx = 0
 }
 
-func (frs *FrostRotationSequence) addToFrostRotationSequence(action FrostRotationAction) {
-	frs.actions[frs.idx] = action
-	frs.idx += 1
-	frs.numActions += 1
+func TernaryRotationAction(condition bool, t DKRotationAction, f DKRotationAction) DKRotationAction {
+	if condition {
+		return t
+	} else {
+		return f
+	}
 }
 
-func (deathKnight *DeathKnight) setCurrentFrostRotationSequence(frs *FrostRotationSequence) {
-	deathKnight.FrostRotation.currSequence = frs
+func initSequence(repeatable bool, actions []DKRotationAction) *DKRotationSequence {
+	var seq DKRotationSequence
+	seq.idx = 0
+	seq.numActions = len(actions)
+	seq.actions = actions
+	seq.repeatable = repeatable
+	return &seq
 }
 
-func (deathKnight *DeathKnight) advanceFrostRotationSequence() {
-	deathKnight.FrostRotation.currSequence.idx += 1
-	if deathKnight.FrostRotation.currSequence.idx == deathKnight.FrostRotation.currSequence.numActions {
-		if deathKnight.FrostRotation.currSequence == &deathKnight.FrostRotation.mainSequence {
-			deathKnight.FrostRotation.currSequence.idx = 0
-			deathKnight.FrostRotation.currSequence = &deathKnight.FrostRotation.constSequence
+func (deathKnight *DeathKnight) setupTargets() {
+	r := &deathKnight.DKRotation
+	r.numTargets = int(deathKnight.Env.GetNumTargets())
+	r.targets = make([]*core.Unit, r.numTargets)
+	for i := 0; i < r.numTargets; i++ {
+		r.targets[i] = deathKnight.Env.GetTargetUnit(int32(i))
+	}
+}
+
+func (deathKnight *DeathKnight) setupDKRotation() {
+	r := &deathKnight.DKRotation
+	deathKnight.setupTargets()
+
+	mainSequence := initSequence(false, []DKRotationAction{
+		DKRotationAction_IT,
+		DKRotationAction_PS,
+		DKRotationAction_EnableDiseaseCheck,
+		DKRotationAction_UA,
+		DKRotationAction_BT,
+		DKRotationAction_Obli,
+		DKRotationAction_FS,
+		DKRotationAction_Pesti,
+		DKRotationAction_ERW,
+		DKRotationAction_Obli,
+		DKRotationAction_Obli,
+		DKRotationAction_Obli,
+		DKRotationAction_FS,
+		DKRotationAction_HB_Ghoul_FS_RimeCheck,
+		DKRotationAction_FS,
+		DKRotationAction_Obli,
+		DKRotationAction_Obli,
+		DKRotationAction_Pesti,
+		DKRotationAction_FS,
+		DKRotationAction_BS,
+		DKRotationAction_FS,
+	})
+
+	constSequence := initSequence(true, []DKRotationAction{
+		DKRotationAction_Obli,
+		DKRotationAction_FS,
+		DKRotationAction_Obli,
+		DKRotationAction_FS,
+		DKRotationAction_BS,
+		DKRotationAction_FS,
+		DKRotationAction_Pesti,
+		DKRotationAction_FS,
+		DKRotationAction_PrioMode,
+	})
+
+	r.mainSequenceList = list.New()
+	r.mainSequenceList.PushBack(mainSequence)
+	r.mainSequenceList.PushBack(constSequence)
+
+	r.currSequence = r.mainSequenceList.Front()
+
+	r.diseaseCheckEnabled = false
+}
+
+func (deathKnight *DeathKnight) nextDKRotationSequenceAction() DKRotationAction {
+	seq := deathKnight.DKRotation.currSequence.Value.(*DKRotationSequence)
+	return seq.actions[seq.idx]
+}
+
+func (deathKnight *DeathKnight) advanceDKRotationSequenceAction() bool {
+	seq := deathKnight.DKRotation.currSequence.Value.(*DKRotationSequence)
+	if seq.idx+1 >= seq.numActions {
+		return true
+	} else {
+		seq.idx += 1
+		return false
+	}
+}
+
+func (deathKnight *DeathKnight) advanceDKRotation() {
+	if deathKnight.advanceDKRotationSequenceAction() {
+		r := &deathKnight.DKRotation
+		seq := r.currSequence.Value.(*DKRotationSequence)
+		if !seq.repeatable {
+			r.currSequence = r.currSequence.Next()
 		} else {
-			deathKnight.FrostRotation.currSequence.idx = 0
+			seq.resetSequence()
 		}
 	}
 }
 
-func (deathKnight *DeathKnight) setupFrostRotation() {
-	fr := &deathKnight.FrostRotation
-	fr.numTargets = int(deathKnight.Env.GetNumTargets())
-	fr.targets = make([]*core.Unit, fr.numTargets)
-	// TODO: make this nicer
-	fr.mainSequence.actions = make([]FrostRotationAction, 64)
-	fr.constSequence.actions = make([]FrostRotationAction, 64)
-	for i := 0; i < fr.numTargets; i++ {
-		fr.targets[i] = deathKnight.Env.GetTargetUnit(int32(i))
-	}
-
-	fr.mainSequence.beginBuildingSequence()
-	if deathKnight.Options.RefreshHornOfWinter {
-		fr.mainSequence.addToFrostRotationSequence(FrostRotationAction_HW)
-	}
-	fr.mainSequence.addToFrostRotationSequence(FrostRotationAction_IT)
-	fr.mainSequence.addToFrostRotationSequence(FrostRotationAction_PS)
-	fr.mainSequence.addToFrostRotationSequence(FrostRotationAction_BT)
-	fr.mainSequence.addToFrostRotationSequence(FrostRotationAction_Pesti)
-	fr.mainSequence.addToFrostRotationSequence(FrostRotationAction_Obli)
-	fr.mainSequence.addToFrostRotationSequence(FrostRotationAction_FS)
-	fr.mainSequence.addToFrostRotationSequence(FrostRotationAction_ERW)
-	fr.mainSequence.addToFrostRotationSequence(FrostRotationAction_Obli)
-	fr.mainSequence.addToFrostRotationSequence(FrostRotationAction_Obli)
-	fr.mainSequence.addToFrostRotationSequence(FrostRotationAction_Obli)
-	fr.mainSequence.addToFrostRotationSequence(FrostRotationAction_FS)
-	fr.mainSequence.addToFrostRotationSequence(FrostRotationAction_FS)
-	fr.mainSequence.addToFrostRotationSequence(FrostRotationAction_FS)
-	fr.mainSequence.addToFrostRotationSequence(FrostRotationAction_Obli)
-	fr.mainSequence.addToFrostRotationSequence(FrostRotationAction_Obli)
-	fr.mainSequence.addToFrostRotationSequence(FrostRotationAction_BS)
-	fr.mainSequence.addToFrostRotationSequence(FrostRotationAction_Pesti)
-	fr.mainSequence.addToFrostRotationSequence(FrostRotationAction_FS)
-	fr.mainSequence.endBuildingSequence()
-
-	fr.constSequence.beginBuildingSequence()
-	fr.constSequence.addToFrostRotationSequence(FrostRotationAction_Obli)
-	fr.constSequence.addToFrostRotationSequence(FrostRotationAction_Obli)
-	fr.constSequence.addToFrostRotationSequence(FrostRotationAction_Pesti)
-	fr.constSequence.addToFrostRotationSequence(FrostRotationAction_BS)
-	fr.constSequence.addToFrostRotationSequence(FrostRotationAction_FS)
-	fr.constSequence.addToFrostRotationSequence(FrostRotationAction_FS)
-	fr.constSequence.addToFrostRotationSequence(FrostRotationAction_Obli)
-	fr.constSequence.addToFrostRotationSequence(FrostRotationAction_Obli)
-	fr.constSequence.addToFrostRotationSequence(FrostRotationAction_FS)
-	fr.constSequence.addToFrostRotationSequence(FrostRotationAction_Obli)
-	fr.constSequence.addToFrostRotationSequence(FrostRotationAction_FS)
-	fr.constSequence.addToFrostRotationSequence(FrostRotationAction_FS)
-	fr.constSequence.endBuildingSequence()
-
-	deathKnight.setCurrentFrostRotationSequence(&fr.mainSequence)
+func (seq *DKRotationSequence) doNothing() {
+	return
 }
 
-func (deathKnight *DeathKnight) nextFrostRotationSequenceAction() FrostRotationAction {
-	return deathKnight.FrostRotation.currSequence.actions[deathKnight.FrostRotation.currSequence.idx]
-}
-
-func (deathKnight *DeathKnight) doFrostRotation(sim *core.Simulation) {
+func (deathKnight *DeathKnight) doDKRotation(sim *core.Simulation, advance bool) bool {
 	if !deathKnight.Talents.HowlingBlast {
-		return
+		return false
 	}
 
 	target := deathKnight.CurrentTarget
 
-	const USE_BAD_ROTA = true
-
-	if USE_BAD_ROTA {
+	if !deathKnight.Rotation.GetWipFrostRotation() {
 		if deathKnight.ShouldHornOfWinter(sim) {
 			deathKnight.HornOfWinter.Cast(sim, target)
 		} else if (!deathKnight.TargetHasDisease(FrostFeverAuraLabel, target) || deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim) < 6*time.Second) && deathKnight.CanIcyTouch(sim) {
@@ -174,8 +193,10 @@ func (deathKnight *DeathKnight) doFrostRotation(sim *core.Simulation) {
 		} else {
 			if deathKnight.CanBloodTap(sim) && deathKnight.AllDiseasesAreActive(target) {
 				deathKnight.BloodTap.Cast(sim, target)
+				deathKnight.WaitUntil(sim, sim.CurrentTime+1)
 			} else if deathKnight.CanUnbreakableArmor(sim) && deathKnight.AllDiseasesAreActive(target) {
 				deathKnight.UnbreakableArmor.Cast(sim, target)
+				deathKnight.WaitUntil(sim, sim.CurrentTime+1)
 			} else if deathKnight.CanPestilence(sim) && deathKnight.shouldSpreadDisease(sim) {
 				deathKnight.spreadDiseases(sim, target)
 			} else if deathKnight.CanObliterate(sim) && deathKnight.AllDiseasesAreActive(target) {
@@ -196,88 +217,243 @@ func (deathKnight *DeathKnight) doFrostRotation(sim *core.Simulation) {
 				if deathKnight.GCD.IsReady(sim) && !deathKnight.IsWaiting() {
 					// This means we did absolutely nothing.
 					// Wait until our next auto attack to decide again.
-					nextSwing := deathKnight.AutoAttacks.MainhandSwingAt
+					waitUntil := deathKnight.AutoAttacks.MainhandSwingAt
 					if deathKnight.AutoAttacks.OffhandSwingAt > sim.CurrentTime {
-						nextSwing = core.MinDuration(nextSwing, deathKnight.AutoAttacks.OffhandSwingAt)
+						waitUntil = core.MinDuration(waitUntil, deathKnight.AutoAttacks.OffhandSwingAt)
 					}
-					deathKnight.WaitUntil(sim, nextSwing)
+					waitUntil = core.MinDuration(time.Duration(0.1*float64(waitUntil-sim.CurrentTime)+float64(waitUntil)), deathKnight.AnyRuneReadyAt(sim))
+					deathKnight.WaitUntil(sim, waitUntil)
 				}
-			}
-		}
-	} else {
-		nextFRAction := deathKnight.nextFrostRotationSequenceAction()
-		casted := false
-		// TODO: Check for hits on main disease appliers && have a prio bracket for when we're "lost"
-		switch nextFRAction {
-		case FrostRotationAction_Wait:
-			// TODO:
-		case FrostRotationAction_IT:
-			if deathKnight.CanIcyTouch(sim) {
-				deathKnight.IcyTouch.Cast(sim, target)
-				casted = true
-			}
-		case FrostRotationAction_PS:
-			if deathKnight.CanPlagueStrike(sim) {
-				deathKnight.PlagueStrike.Cast(sim, target)
-				casted = true
-			}
-		case FrostRotationAction_Obli:
-			if deathKnight.CanObliterate(sim) {
-				deathKnight.Obliterate.Cast(sim, target)
-				casted = true
-			}
-		case FrostRotationAction_BS:
-			if deathKnight.CanBloodStrike(sim) {
-				deathKnight.BloodStrike.Cast(sim, target)
-				casted = true
-			}
-		case FrostRotationAction_BT:
-			if deathKnight.CanBloodTap(sim) {
-				deathKnight.BloodTap.Cast(sim, target)
-				casted = true
-			}
-		case FrostRotationAction_UA:
-			if deathKnight.CanUnbreakableArmor(sim) {
-				deathKnight.UnbreakableArmor.Cast(sim, target)
-				casted = true
-			}
-		case FrostRotationAction_Pesti:
-			if deathKnight.CanPestilence(sim) {
-				deathKnight.Pestilence.Cast(sim, target)
-				casted = true
-			}
-		case FrostRotationAction_FS:
-			if deathKnight.CanFrostStrike(sim) {
-				deathKnight.FrostStrike.Cast(sim, target)
-				casted = true
-			}
-		case FrostRotationAction_HW:
-			if deathKnight.CanHornOfWinter(sim) {
-				deathKnight.HornOfWinter.Cast(sim, target)
-				casted = true
-			}
-		case FrostRotationAction_ERW:
-			if deathKnight.CanEmpowerRuneWeapon(sim) {
-				deathKnight.EmpowerRuneWeapon.Cast(sim, target)
-				casted = true
 			}
 		}
 
-		if !casted {
-			if deathKnight.GCD.IsReady(sim) && !deathKnight.IsWaiting() {
-				nextSwing := deathKnight.AutoAttacks.MainhandSwingAt
-				if deathKnight.AutoAttacks.OffhandSwingAt > sim.CurrentTime {
-					nextSwing = core.MinDuration(nextSwing, deathKnight.AutoAttacks.OffhandSwingAt)
+		return false
+	} else {
+		seq := deathKnight.DKRotation.currSequence.Value.(*DKRotationSequence)
+		seq.doNothing()
+		nextAction := deathKnight.nextDKRotationSequenceAction()
+		casted := false
+		skip := false
+
+		if nextAction == DKRotationAction_EnableDiseaseCheck {
+			if deathKnight.DKRotation.diseaseCheckEnabled {
+				panic("Enable disease check inside another enable disease check.")
+			}
+			deathKnight.DKRotation.diseaseCheckEnabled = true
+			deathKnight.advanceDKRotation()
+			skip = true
+
+		} else if nextAction == DKRotationAction_DisableDiseaseCheck {
+			if !deathKnight.DKRotation.diseaseCheckEnabled {
+				panic("Disable disease check while not enabled.")
+			}
+			deathKnight.DKRotation.diseaseCheckEnabled = false
+			deathKnight.advanceDKRotation()
+			skip = true
+		}
+
+		if deathKnight.DKRotation.diseaseCheckEnabled && (!deathKnight.TargetHasDisease(FrostFeverAuraLabel, target) || !deathKnight.TargetHasDisease(BloodPlagueAuraLabel, target)) {
+			nextAction = DKRotationAction_ReapplyDiseases
+		}
+
+		if deathKnight.DKRotation.diseaseCheckEnabled && nextAction != DKRotationAction_ReapplyDiseases {
+			if !deathKnight.TargetHasDisease(FrostFeverAuraLabel, target) || deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim) < 5*time.Second ||
+				!deathKnight.TargetHasDisease(BloodPlagueAuraLabel, target) || deathKnight.BloodPlagueDisease[target.Index].RemainingDuration(sim) < 5*time.Second {
+				if deathKnight.CanPestilence(sim) {
+					deathKnight.Pestilence.Cast(sim, target)
+					deathKnight.DKRotation.lastFFApplication = sim.CurrentTime
+					deathKnight.DKRotation.lastBPApplication = sim.CurrentTime
+					skip = true
 				}
-				deathKnight.WaitUntil(sim, nextSwing)
+			}
+		}
+
+		if !skip {
+			// TODO: Check for hits on main disease appliers && have a prio bracket for when we're "lost"
+			switch nextAction {
+			case DKRotationAction_Skip:
+				deathKnight.advanceDKRotation()
+				casted = deathKnight.doDKRotation(sim, false)
+			case DKRotationAction_IT:
+				if deathKnight.CanIcyTouch(sim) {
+					deathKnight.IcyTouch.Cast(sim, target)
+					if deathKnight.LastCastOutcome != core.OutcomeMiss {
+						deathKnight.DKRotation.lastFFApplication = sim.CurrentTime
+					}
+					casted = true
+				}
+			case DKRotationAction_PS:
+				if deathKnight.CanPlagueStrike(sim) {
+					deathKnight.PlagueStrike.Cast(sim, target)
+					if deathKnight.LastCastOutcome != core.OutcomeMiss {
+						deathKnight.DKRotation.lastBPApplication = sim.CurrentTime
+					}
+					casted = true
+				}
+			case DKRotationAction_ReapplyDiseases:
+				if !deathKnight.TargetHasDisease(FrostFeverAuraLabel, target) {
+					if deathKnight.CanIcyTouch(sim) {
+						deathKnight.IcyTouch.Cast(sim, target)
+						if deathKnight.LastCastOutcome != core.OutcomeMiss {
+							deathKnight.DKRotation.lastFFApplication = sim.CurrentTime
+						}
+						casted = true
+						advance = false
+					}
+				} else if !deathKnight.TargetHasDisease(BloodPlagueAuraLabel, target) {
+					if deathKnight.CanPlagueStrike(sim) {
+						deathKnight.PlagueStrike.Cast(sim, target)
+						if deathKnight.LastCastOutcome != core.OutcomeMiss {
+							deathKnight.DKRotation.lastBPApplication = sim.CurrentTime
+						}
+						casted = true
+						advance = false
+					}
+				}
+			case DKRotationAction_Obli:
+				if deathKnight.CanObliterate(sim) {
+					deathKnight.Obliterate.Cast(sim, target)
+					casted = true
+				}
+			case DKRotationAction_BS:
+				if deathKnight.CanBloodStrike(sim) {
+					deathKnight.BloodStrike.Cast(sim, target)
+					casted = true
+				}
+			case DKRotationAction_BT:
+				if deathKnight.CanBloodTap(sim) {
+					deathKnight.BloodTap.Cast(sim, target)
+					deathKnight.WaitUntil(sim, sim.CurrentTime+1)
+					casted = true
+				}
+			case DKRotationAction_UA:
+				if deathKnight.CanUnbreakableArmor(sim) {
+					deathKnight.UnbreakableArmor.Cast(sim, target)
+					deathKnight.WaitUntil(sim, sim.CurrentTime+1)
+					casted = true
+				}
+			case DKRotationAction_Pesti:
+				if deathKnight.CanPestilence(sim) && (sim.CurrentTime-deathKnight.DKRotation.lastFFApplication > 4*time.Second || sim.CurrentTime-deathKnight.DKRotation.lastBPApplication > 4*time.Second) {
+					deathKnight.Pestilence.Cast(sim, target)
+					casted = true
+				} else {
+					deathKnight.advanceDKRotation()
+				}
+			case DKRotationAction_FS:
+				if deathKnight.CanFrostStrike(sim) {
+					deathKnight.FrostStrike.Cast(sim, target)
+					casted = true
+				}
+			case DKRotationAction_HW:
+				if deathKnight.CanHornOfWinter(sim) {
+					deathKnight.HornOfWinter.Cast(sim, target)
+					casted = true
+				}
+			case DKRotationAction_ERW:
+				if deathKnight.CanEmpowerRuneWeapon(sim) {
+					deathKnight.EmpowerRuneWeapon.Cast(sim, target)
+					deathKnight.WaitUntil(sim, sim.CurrentTime+1)
+					casted = true
+				}
+			case DKRotationAction_RD:
+				if deathKnight.CanRaiseDead(sim) {
+					deathKnight.RaiseDead.Cast(sim, target)
+					casted = true
+				}
+			case DKRotationAction_HB_Ghoul_FS_RimeCheck:
+				if deathKnight.RimeAura.IsActive() {
+					if deathKnight.CanHowlingBlast(sim) {
+						deathKnight.HowlingBlast.Cast(sim, target)
+						casted = true
+					}
+				} else {
+					if deathKnight.CanRaiseDead(sim) {
+						deathKnight.RaiseDead.Cast(sim, target)
+						casted = true
+					} else if deathKnight.CanFrostStrike(sim) {
+						deathKnight.FrostStrike.Cast(sim, target)
+						casted = true
+					}
+				}
+			case DKRotationAction_PrioMode:
+
+				casted = true
+			}
+
+			if !casted {
+				// TODO: Prio stuff.
+				if !deathKnight.TargetHasDisease(FrostFeverAuraLabel, target) || deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim) < 6*time.Second ||
+					!deathKnight.TargetHasDisease(BloodPlagueAuraLabel, target) || deathKnight.BloodPlagueDisease[target.Index].RemainingDuration(sim) < 6*time.Second {
+					if deathKnight.CanPestilence(sim) {
+						deathKnight.Pestilence.Cast(sim, target)
+						deathKnight.DKRotation.lastFFApplication = sim.CurrentTime
+						deathKnight.DKRotation.lastBPApplication = sim.CurrentTime
+					}
+				} else if deathKnight.CanObliterate(sim) {
+					deathKnight.Obliterate.Cast(sim, target)
+				} else if deathKnight.KillingMachineAura.IsActive() {
+					if deathKnight.CastCostPossible(sim, 0, 0, 1, 1) && deathKnight.RimeAura.IsActive() {
+						if deathKnight.CurrentRunicPower() < 110 {
+							if deathKnight.CanHowlingBlast(sim) {
+								deathKnight.HowlingBlast.Cast(sim, target)
+							}
+						} else {
+							if deathKnight.CanFrostStrike(sim) {
+								deathKnight.FrostStrike.Cast(sim, target)
+							}
+						}
+					} else {
+						if deathKnight.CanFrostStrike(sim) {
+							deathKnight.FrostStrike.Cast(sim, target)
+						}
+					}
+				} else if deathKnight.CanFrostStrike(sim) {
+					deathKnight.FrostStrike.Cast(sim, target)
+				} else if deathKnight.CanHornOfWinter(sim) {
+					deathKnight.HornOfWinter.Cast(sim, target)
+				} else {
+					if deathKnight.GCD.IsReady(sim) && !deathKnight.IsWaiting() {
+						waitUntil := deathKnight.AutoAttacks.MainhandSwingAt
+						if deathKnight.AutoAttacks.OffhandSwingAt > sim.CurrentTime {
+							waitUntil = core.MinDuration(waitUntil, deathKnight.AutoAttacks.OffhandSwingAt)
+						}
+						waitUntil = core.MinDuration(waitUntil, deathKnight.AnyRuneReadyAt(sim))
+						deathKnight.WaitUntil(sim, waitUntil)
+					}
+				}
+			} else {
+				if !(deathKnight.LastCastOutcome == core.OutcomeMiss &&
+					(nextAction == DKRotationAction_IT ||
+						nextAction == DKRotationAction_PS ||
+						nextAction == DKRotationAction_Pesti)) && advance {
+					deathKnight.advanceDKRotation()
+				}
 			}
 		} else {
-			deathKnight.advanceFrostRotationSequence()
+			if deathKnight.GCD.IsReady(sim) && !deathKnight.IsWaiting() {
+				// Wait until 1/10th of the swing
+				waitUntil := deathKnight.AutoAttacks.MainhandSwingAt
+				if deathKnight.AutoAttacks.OffhandSwingAt > sim.CurrentTime {
+					waitUntil = core.MinDuration(waitUntil, deathKnight.AutoAttacks.OffhandSwingAt)
+				}
+				waitUntil = core.MinDuration(time.Duration(0.1*float64(waitUntil-sim.CurrentTime)+float64(waitUntil)), deathKnight.AnyRuneReadyAt(sim))
+				deathKnight.WaitUntil(sim, waitUntil)
+			}
 		}
+
+		return casted
 	}
 }
 
-func (deathKnight *DeathKnight) resetFrostRotation(sim *core.Simulation) {
-	deathKnight.FrostRotation.mainSequence.resetFrostRotationSequence()
-	deathKnight.FrostRotation.constSequence.resetFrostRotationSequence()
+func (deathKnight *DeathKnight) resetDKRotation(sim *core.Simulation) {
+	r := &deathKnight.DKRotation
+
+	for e := r.mainSequenceList.Front(); e != nil; e = e.Next() {
+		seq := e.Value.(*DKRotationSequence)
+		seq.resetSequence()
+	}
+
+	r.currSequence = r.mainSequenceList.Front()
+
+	r.diseaseCheckEnabled = false
 }

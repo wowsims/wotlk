@@ -142,12 +142,15 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				}),
 			},
 
-			// IconInputs to include in the 'Self Buffs' section on the settings tab.
-			selfBuffInputs: [
+			// IconInputs to include in the 'Player' section on the settings tab.
+			playerIconInputs: [
 				HunterInputs.WeaponAmmo,
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: HunterInputs.HunterRotationConfig,
+			petConsumeInputs: [
+				IconInputs.SpicedMammothTreats,
+			],
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
@@ -162,10 +165,6 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				],
 			},
 			encounterPicker: {
-				// Target stats to show for 'Simple' encounters.
-				simpleTargetStats: [
-					Stat.StatArmor,
-				],
 				// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
 				showExecuteProportion: false,
 			},

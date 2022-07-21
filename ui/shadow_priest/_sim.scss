@@ -12,12 +12,6 @@
 .shadow-priest-sim-ui .self-buffs-section {
   grid-template-columns: repeat(3, 1fr);
 }
-.shadow-priest-sim-ui .buffs-section {
-  grid-template-columns: repeat(6, 1fr);
-}
-.shadow-priest-sim-ui .debuffs-section {
-  grid-template-columns: repeat(3, 1fr);
-}
 
 // Shadow has a lot of EP stats, so make the text smaller so it fits vertically.
 .shadow-priest-sim-ui .character-stats-table-row {

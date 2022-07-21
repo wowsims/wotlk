@@ -12,6 +12,9 @@ import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
 
 import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
 import * as OtherInputs from '/wotlk/core/components/other_inputs.js';
+import * as Mechanics from '/wotlk/core/constants/mechanics.js';
+
+import { PaladinMajorGlyph, PaladinSeal } from '/wotlk/core/proto/paladin.js';
 
 import * as RetributionPaladinInputs from './inputs.js';
 import * as Presets from './presets.js';
@@ -22,10 +25,7 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 			cssClass: 'retribution-paladin-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"<p>Rotation logic can be optimized to use Judgement of Blood more frequently.</p>\
-				<p>Including fillers in rotation sometimes causes seal twists to be prevented at high haste values.</p>\
-				<p>Seal of Command aura will log at expiring at a longer duration than 400ms when changing seals.\
-				However, the 400ms duration is correctly calculated internally for determining procs and damage.</p>"
+				"<p>Work in progress</p>"
 			],
 
 			// All stats for which EP should be calculated.
@@ -65,6 +65,20 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 				Stat.StatSpellCrit,
 				Stat.StatSpellHaste,
 			],
+			modifyDisplayStats: (player: Player<Spec.SpecRetributionPaladin>) => {
+				let stats = new Stats();
+
+				TypedEvent.freezeAllAndDo(() => {
+					if (player.getMajorGlyphs().includes(PaladinMajorGlyph.GlyphOfSealOfVengeance) && (player.getSpecOptions().seal == PaladinSeal.Vengeance)) {
+						stats = stats.addStat(Stat.StatExpertise, 10 * Mechanics.EXPERTISE_RATING_PER_EXPERTISE);
+					}
+				})
+
+				return {
+					talents: stats,
+				};
+			},
+
 			defaults: {
 				// Default equipped gear.
 				gear: Presets.P4_PRESET.gear,
@@ -113,15 +127,15 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 					misery: true,
 					curseOfElements: true,
 					bloodFrenzy: true,
-					exposeArmor: TristateEffect.TristateEffectImproved,
+					exposeArmor: true,
 					sunderArmor: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					curseOfWeakness: TristateEffect.TristateEffectRegular,
 				}),
 			},
 
-			// IconInputs to include in the 'Self Buffs' section on the settings tab.
-			selfBuffInputs: [
+			// IconInputs to include in the 'Player' section on the settings tab.
+			playerIconInputs: [
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: RetributionPaladinInputs.RetributionPaladinRotationConfig,
@@ -130,6 +144,7 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 				inputs: [
 					RetributionPaladinInputs.AuraSelection,
 					RetributionPaladinInputs.JudgementSelection,
+					RetributionPaladinInputs.DivinePleaSelection,
 					RetributionPaladinInputs.StartingSealSelection,
 					RetributionPaladinInputs.DamgeTakenPerSecond,
 					OtherInputs.TankAssignment,
@@ -137,10 +152,6 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 				],
 			},
 			encounterPicker: {
-				// Target stats to show for 'Simple' encounters.
-				simpleTargetStats: [
-					Stat.StatArmor,
-				],
 				// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
 				showExecuteProportion: false,
 			},

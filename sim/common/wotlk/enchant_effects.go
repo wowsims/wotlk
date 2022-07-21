@@ -356,24 +356,17 @@ func init() {
 		})
 	})
 
-	core.NewItemEffect(53343, func(agent core.Agent) {
-		character := agent.GetCharacter()
+	newRazoriceHitSpell := func(character *core.Character, isMH bool) *core.Spell {
+		baseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 0, 1.0, true)
+		if !isMH {
+			baseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, 1.0, true)
+		}
 
-		target := character.CurrentTarget
-
-		vulnAura := core.RuneOfRazoriceVulnerabilityAura(target)
-
-		mhBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 0, 1.0, true)
-		ohBaseDamage := core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, 1.0, true)
-
-		var isMH bool
-		razoriceHit := character.RegisterSpell(core.SpellConfig{
+		return character.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 53343},
 			SpellSchool: core.SpellSchoolFrost,
-			Flags:       core.SpellFlagMeleeMetrics,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamageTargetModifiersOnly(core.SpellEffect{
-				// No proc mask, so it won't proc itself.
 				ProcMask: core.ProcMaskEmpty,
 
 				DamageMultiplier: 1,
@@ -381,33 +374,70 @@ func init() {
 
 				BaseDamage: core.BaseDamageConfig{
 					Calculator: func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-						if isMH {
-							return mhBaseDamage(sim, spellEffect, spell) * 0.02
-						} else {
-							return ohBaseDamage(sim, spellEffect, spell) * 0.02
-						}
+						return baseDamage(sim, spellEffect, spell) * 0.02
 					},
 				},
 				OutcomeApplier: character.OutcomeFuncMeleeWeaponSpecialNoHitNoCrit(),
 			}),
 		})
+	}
 
-		var razoriceAura *core.Aura
-		razoriceAura = character.RegisterAura(core.Aura{
+	core.NewItemEffect(53343, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.ID == 53343
+		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.ID == 53343
+		if !mh && !oh {
+			return
+		}
+
+		actionID := core.ActionID{SpellID: 53343}
+		if spell := character.GetSpell(actionID); spell != nil {
+			// This function gets called twice when dual wielding this enchant, but we
+			// handle both in one call.
+			return
+		}
+
+		target := character.CurrentTarget
+
+		vulnAura := core.RuneOfRazoriceVulnerabilityAura(target)
+		mhRazoriceSpell := newRazoriceHitSpell(character, true)
+		ohRazoriceSpell := newRazoriceHitSpell(character, false)
+		character.GetOrRegisterAura(core.Aura{
 			Label:    "Rune of Razorice",
 			ActionID: core.ActionID{SpellID: 53343},
 			Duration: core.NeverExpires,
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
-				razoriceAura.Activate(sim)
+				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Damage == 0 || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+				if !spellEffect.Landed() {
 					return
 				}
-				isMH = spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHAuto)
-				razoriceHit.Cast(sim, target)
+
+				if mh && !oh {
+					if !(spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHAuto) || spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHSpecial)) {
+						return
+					}
+				} else if oh && !mh {
+					if !(spellEffect.ProcMask.Matches(core.ProcMaskMeleeOHAuto) || spellEffect.ProcMask.Matches(core.ProcMaskMeleeOHSpecial)) {
+						return
+					}
+				} else if mh && oh {
+					if !(spellEffect.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeSpecial)) {
+						return
+					}
+				}
+
 				vulnAura.Activate(sim)
-				if vulnAura.IsActive() {
+				isMH := spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHAuto) || spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHSpecial)
+				if isMH {
+					mhRazoriceSpell.Cast(sim, target)
+					vulnAura.AddStack(sim)
+				}
+
+				isOH := spellEffect.ProcMask.Matches(core.ProcMaskMeleeOHAuto) || spellEffect.ProcMask.Matches(core.ProcMaskMeleeOHSpecial)
+				if isOH {
+					ohRazoriceSpell.Cast(sim, target)
 					vulnAura.AddStack(sim)
 				}
 			},
@@ -469,15 +499,15 @@ func init() {
 					return
 				}
 
-				if mh {
+				if mh && !oh {
 					if !(spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHAuto) || spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHSpecial)) {
 						return
 					}
-				} else if oh {
+				} else if oh && !mh {
 					if !(spellEffect.ProcMask.Matches(core.ProcMaskMeleeOHAuto) || spellEffect.ProcMask.Matches(core.ProcMaskMeleeOHSpecial)) {
 						return
 					}
-				} else {
+				} else if mh && oh {
 					if !(spellEffect.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeSpecial)) {
 						return
 					}

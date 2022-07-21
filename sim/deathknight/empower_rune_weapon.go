@@ -25,11 +25,11 @@ func (deathKnight *DeathKnight) registerEmpowerRuneWeaponSpell() {
 			deathKnight.RegenAllRunes(sim)
 
 			amountOfRunicPower := 25.0
-			deathKnight.AddRunicPower(sim, amountOfRunicPower, deathKnight.UnbreakableArmor.RunicPowerMetrics())
+			deathKnight.AddRunicPower(sim, amountOfRunicPower, deathKnight.EmpowerRuneWeapon.RunicPowerMetrics())
 		},
 	})
 }
 
 func (deathKnight *DeathKnight) CanEmpowerRuneWeapon(sim *core.Simulation) bool {
-	return deathKnight.EmpowerRuneWeapon.IsReady(sim) && deathKnight.EmpowerRuneWeapon.CD.IsReady(sim)
+	return deathKnight.EmpowerRuneWeapon.IsReady(sim)
 }

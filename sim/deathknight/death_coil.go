@@ -26,14 +26,15 @@ func (deathKnight *DeathKnight) registerDeathCoilSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:             core.ProcMaskSpellDamage,
-			BonusSpellCritRating: 0.0,
+			BonusSpellCritRating: deathKnight.darkrunedBattlegearCritBonus() * core.CritRatingPerCritChance,
 			DamageMultiplier: (1.0 + float64(deathKnight.Talents.Morbidity)*0.05) *
 				core.TernaryFloat64(deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfDarkDeath), 1.15, 1.0),
 			ThreatMultiplier: 1.0,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return (443.0 + deathKnight.applyImpurity(hitEffect, spell.Unit)*0.15) *
+					baseDamage := 443.0 + deathKnight.sigilOfTheWildBuckBonus()
+					return (baseDamage + deathKnight.applyImpurity(hitEffect, spell.Unit)*0.15) *
 						deathKnight.rageOfRivendareBonus(hitEffect.Target) *
 						deathKnight.tundraStalkerBonus(hitEffect.Target)
 				},
@@ -42,6 +43,7 @@ func (deathKnight *DeathKnight) registerDeathCoilSpell() {
 			OutcomeApplier: deathKnight.OutcomeFuncMagicHitAndCrit(deathKnight.spellCritMultiplier()),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				deathKnight.LastCastOutcome = spellEffect.Outcome
 				if spellEffect.Landed() && deathKnight.Talents.UnholyBlight {
 					deathKnight.LastDeathCoilDamage = spellEffect.Damage
 					deathKnight.UnholyBlightSpell.Cast(sim, spellEffect.Target)

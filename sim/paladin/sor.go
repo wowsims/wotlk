@@ -36,7 +36,7 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 	onJudgementProc := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 20187}, // Judgement of Righteousness.
 		SpellSchool: core.SpellSchoolHoly,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | SpellFlagSecondaryJudgement,
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeOrRangedSpecial,
 			DamageMultiplier: baseMultiplier,
@@ -100,7 +100,7 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 			}
 
 			// Differ between judgements and other melee abilities.
-			if spell.Flags.Matches(SpellFlagJudgement) {
+			if spell.Flags.Matches(SpellFlagPrimaryJudgement) {
 				// SoR is the only seal that can proc off its own judgement.
 				onJudgementProc.Cast(sim, spellEffect.Target)
 				onSpecialOrSwingProc.Cast(sim, spellEffect.Target)
@@ -117,7 +117,6 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 	paladin.SealOfRighteousness = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    auraActionID, // Seal of Righteousness self buff.
 		SpellSchool: core.SpellSchoolHoly,
-		Flags:       SpellFlagSeal,
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,

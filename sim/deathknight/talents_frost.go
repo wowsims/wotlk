@@ -23,18 +23,12 @@ func (deathKnight *DeathKnight) ApplyFrostTalents() {
 	// Pointless to Implement
 
 	// Black Ice
-	deathKnight.PseudoStats.FrostDamageDealtMultiplier += 0.02 * float64(deathKnight.Talents.BlackIce)
-	deathKnight.PseudoStats.ShadowDamageDealtMultiplier += 0.02 * float64(deathKnight.Talents.BlackIce)
+	deathKnight.PseudoStats.FrostDamageDealtMultiplier *= 1.0 + 0.02*float64(deathKnight.Talents.BlackIce)
+	deathKnight.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + 0.02*float64(deathKnight.Talents.BlackIce)
 
 	// Nerves Of Cold Steel
 	deathKnight.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*float64(deathKnight.Talents.NervesOfColdSteel))
-	if deathKnight.Talents.NervesOfColdSteel == 1 {
-		deathKnight.AutoAttacks.OHEffect.BaseDamage.Calculator = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, 1.08, true)
-	} else if deathKnight.Talents.NervesOfColdSteel == 2 {
-		deathKnight.AutoAttacks.OHEffect.BaseDamage.Calculator = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, 1.16, true)
-	} else {
-		deathKnight.AutoAttacks.OHEffect.BaseDamage.Calculator = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, 1.25, true)
-	}
+	deathKnight.AutoAttacks.OHEffect.BaseDamage.Calculator = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, deathKnight.nervesOfColdSteelBonus(), true)
 
 	// Icy Talons
 	deathKnight.applyIcyTalons()
@@ -43,8 +37,6 @@ func (deathKnight *DeathKnight) ApplyFrostTalents() {
 	// Pointless to Implement
 
 	// Annihilation
-
-	// TODO: Implement
 
 	// Killing Machine
 	deathKnight.applyKillingMachine()
@@ -77,8 +69,23 @@ func (deathKnight *DeathKnight) ApplyFrostTalents() {
 
 	// Blood of the North
 
+	// Rime
+	deathKnight.applyRime()
+
 	// Tundra Stalker
 	deathKnight.AddStat(stats.Expertise, 1.0*float64(deathKnight.Talents.TundraStalker)*core.ExpertisePerQuarterPercentReduction)
+}
+
+func (deathKnight *DeathKnight) nervesOfColdSteelBonus() float64 {
+	bonusCoeff := 1.0
+	if deathKnight.Talents.NervesOfColdSteel == 1 {
+		bonusCoeff = 1.08
+	} else if deathKnight.Talents.NervesOfColdSteel == 2 {
+		bonusCoeff = 1.16
+	} else {
+		bonusCoeff = 1.25
+	}
+	return bonusCoeff
 }
 
 func (deathKnight *DeathKnight) glacielRotBonus(target *core.Unit) float64 {
@@ -100,6 +107,27 @@ func (deathKnight *DeathKnight) mercilessCombatBonus(sim *core.Simulation) float
 
 func (deathKnight *DeathKnight) tundraStalkerBonus(target *core.Unit) float64 {
 	return core.TernaryFloat64(deathKnight.TargetHasDisease(FrostFeverAuraLabel, target), 1.0+0.03*float64(deathKnight.Talents.TundraStalker), 1.0)
+}
+
+func (deathKnight *DeathKnight) applyRime() {
+	if deathKnight.Talents.Rime == 0 {
+		return
+	}
+
+	actionID := core.ActionID{SpellID: 59057}
+
+	deathKnight.RimeAura = deathKnight.RegisterAura(core.Aura{
+		ActionID: actionID,
+		Label:    "Rime",
+		Duration: core.NeverExpires,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			deathKnight.HowlingBlast.CD.Reset()
+		},
+	})
+}
+
+func (deathKnight *DeathKnight) annihilationCritBonus() float64 {
+	return 1.0 * float64(deathKnight.Talents.Annihilation)
 }
 
 func (deathKnight *DeathKnight) applyKillingMachine() {
@@ -245,10 +273,10 @@ func (deathKnight *DeathKnight) threatOfThassarianAdjustMetrics(sim *core.Simula
 func (deathKnight *DeathKnight) threatOfThassarianProcMasks(isMH bool, effect *core.SpellEffect, guileOfGorefiend bool) {
 	if isMH {
 		effect.ProcMask = core.ProcMaskMeleeMHSpecial
-		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.critMultiplier())
+		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.critMultiplierGuile())
 	} else {
 		effect.ProcMask = core.ProcMaskMeleeOHSpecial
-		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialCritOnly(deathKnight.critMultiplier())
+		effect.OutcomeApplier = deathKnight.OutcomeFuncMeleeSpecialCritOnly(deathKnight.critMultiplierGuile())
 	}
 }
 
