@@ -4,7 +4,7 @@ character_stats_results: {
   final_stats: 815.925
   final_stats: 739.2
   final_stats: 737.0000000000001
-  final_stats: 347.2700000000001
+  final_stats: 347.27000000000004
   final_stats: 313.5
   final_stats: 0
   final_stats: 0
@@ -16,7 +16,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 91
   final_stats: 50
-  final_stats: 855.5751842802118
+  final_stats: 855.5751842802119
   final_stats: 133
   final_stats: 0
   final_stats: 4361.335
@@ -25,7 +25,7 @@ character_stats_results: {
   final_stats: 133
   final_stats: 0
   final_stats: 73
-  final_stats: 10573.050000000001
+  final_stats: 10573.05
   final_stats: 0
   final_stats: 0
   final_stats: 5895.4
@@ -33,7 +33,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 0
   final_stats: 0
-  final_stats: 1565.5595
+  final_stats: 1565.5595000000003
   final_stats: 0
   final_stats: 0
   final_stats: 15534
@@ -66,7 +66,7 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-Alchemist'sStone-13503"
  value: {
-  dps: 2996.7486335714493
+  dps: 2996.748633571448
   tps: 2534.654198122765
  }
 }
@@ -283,7 +283,7 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-CrystalforgeArmor"
  value: {
-  dps: 2531.565483157019
+  dps: 2531.565483157018
   tps: 2178.2910216192645
  }
 }
@@ -493,8 +493,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-FelstalkerArmor"
  value: {
-  dps: 2834.735790013228
-  tps: 2411.909426205815
+  dps: 2834.735790013227
+  tps: 2411.9094262058147
  }
 }
 dps_results: {
@@ -641,13 +641,13 @@ dps_results: {
  key: "TestRetribution-AllItems-InvigoratingEarthsiegeDiamond"
  value: {
   dps: 2972.087895470299
-  tps: 2519.814899963838
+  tps: 2519.8148999638374
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-JusticarArmor"
  value: {
-  dps: 2531.565483157019
+  dps: 2531.565483157018
   tps: 2178.2910216192645
  }
 }
@@ -662,7 +662,7 @@ dps_results: {
  key: "TestRetribution-AllItems-KhoriumChampion-23541"
  value: {
   dps: 2845.713648061641
-  tps: 2396.739826006965
+  tps: 2396.7398260069654
  }
 }
 dps_results: {
@@ -704,7 +704,7 @@ dps_results: {
  key: "TestRetribution-AllItems-LionheartExecutioner-28430"
  value: {
   dps: 2918.485713340238
-  tps: 2466.386005043627
+  tps: 2466.3860050436265
  }
 }
 dps_results: {
@@ -773,8 +773,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-NetherscaleArmor"
  value: {
-  dps: 2801.039929624028
-  tps: 2388.674387342171
+  dps: 2801.0399296240275
+  tps: 2388.6743873421706
  }
 }
 dps_results: {
@@ -795,7 +795,7 @@ dps_results: {
  key: "TestRetribution-AllItems-PersistentEarthsiegeDiamond"
  value: {
   dps: 2972.087895470299
-  tps: 2519.814899963838
+  tps: 2519.8148999638374
  }
 }
 dps_results: {
@@ -829,8 +829,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-PrimalIntent"
  value: {
-  dps: 2912.9738003246975
-  tps: 2469.6109048623252
+  dps: 2912.973800324697
+  tps: 2469.6109048623243
  }
 }
 dps_results: {
@@ -858,7 +858,7 @@ dps_results: {
  key: "TestRetribution-AllItems-RelentlessEarthsiegeDiamond"
  value: {
   dps: 3019.3466886783135
-  tps: 2558.177350949789
+  tps: 2558.1773509497893
  }
 }
 dps_results: {
@@ -998,7 +998,7 @@ dps_results: {
  key: "TestRetribution-AllItems-StormGauntlets-12632"
  value: {
   dps: 2917.0407432518537
-  tps: 2476.4250496263
+  tps: 2476.4250496262994
  }
 }
 dps_results: {
@@ -1019,7 +1019,7 @@ dps_results: {
  key: "TestRetribution-AllItems-SwiftSkyflareDiamond"
  value: {
   dps: 2972.087895470299
-  tps: 2519.814899963838
+  tps: 2519.8148999638374
  }
 }
 dps_results: {
@@ -1180,7 +1180,7 @@ dps_results: {
  key: "TestRetribution-AllItems-WastewalkerArmor"
  value: {
   dps: 2563.3904334014364
-  tps: 2205.2816155252845
+  tps: 2205.281615525285
  }
 }
 dps_results: {
@@ -1271,14 +1271,14 @@ dps_results: {
  key: "TestRetribution-Settings-Draenei-P4-Retribution Paladin-FullBuffs-LongSingleTarget"
  value: {
   dps: 3042.1715305069874
-  tps: 2588.6136126541455
+  tps: 2588.613612654145
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Draenei-P4-Retribution Paladin-FullBuffs-ShortSingleTarget"
  value: {
   dps: 3310.201759822579
-  tps: 2880.7496347201663
+  tps: 2880.7496347201654
  }
 }
 dps_results: {

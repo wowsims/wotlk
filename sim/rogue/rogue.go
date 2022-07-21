@@ -249,29 +249,9 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 		AutoSwingMelee: true,
 	})
 
-	rogue.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Strength,
-		ModifiedStat: stats.AttackPower,
-		Modifier: func(strength float64, attackPower float64) float64 {
-			return attackPower + strength*1
-		},
-	})
-
-	rogue.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Agility,
-		ModifiedStat: stats.AttackPower,
-		Modifier: func(agility float64, attackPower float64) float64 {
-			return attackPower + agility*1
-		},
-	})
-
-	rogue.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Agility,
-		ModifiedStat: stats.MeleeCrit,
-		Modifier: func(agility float64, meleeCrit float64) float64 {
-			return meleeCrit + (agility/40)*core.CritRatingPerCritChance
-		},
-	})
+	rogue.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+1)
+	rogue.AddStatDependency(stats.Agility, stats.AttackPower, 1.0+1)
+	rogue.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/40))
 
 	return rogue
 }

@@ -1,6 +1,8 @@
 package core
 
 import (
+	"errors"
+	"fmt"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -62,6 +64,9 @@ type Unit struct {
 
 	// Current stats, including temporary effects.
 	stats stats.Stats
+
+	// Provides stat dependency management behavior.
+	statBonuses [stats.Len]stats.Bonuses
 
 	PseudoStats stats.PseudoStats
 
@@ -155,30 +160,8 @@ func (unit *Unit) AddStatsDynamic(sim *Simulation, stat stats.Stats) {
 
 	stat[stats.Mana] = 0 // TODO: Mana needs special treatment
 
-	if stat[stats.MeleeHaste] != 0 {
-		unit.AddMeleeHaste(sim, stat[stats.MeleeHaste])
-		stat[stats.MeleeHaste] = 0
-	}
-
-	unit.stats = unit.stats.Add(stat)
-
-	if stat[stats.MP5] != 0 || stat[stats.Intellect] != 0 || stat[stats.Spirit] != 0 {
-		unit.UpdateManaRegenRates()
-	}
-	if stat[stats.SpellHaste] != 0 {
-		unit.updateCastSpeed()
-	}
-	if stat[stats.Armor] != 0 {
-		unit.updateArmor()
-	}
-	if stat[stats.ArmorPenetration] != 0 {
-		unit.updateArmorPen()
-	}
-	if stat[stats.SpellPenetration] != 0 {
-		unit.updateSpellPen()
-	}
-	if stat[stats.ArcaneResistance] != 0 || stat[stats.FireResistance] != 0 || stat[stats.FrostResistance] != 0 || stat[stats.NatureResistance] != 0 || stat[stats.ShadowResistance] != 0 {
-		unit.updateResistances()
+	for k, v := range stat {
+		unit.AddStatDynamic(sim, stats.Stat(k), v)
 	}
 }
 func (unit *Unit) AddStatDynamic(sim *Simulation, stat stats.Stat, amount float64) {
@@ -186,33 +169,168 @@ func (unit *Unit) AddStatDynamic(sim *Simulation, stat stats.Stat, amount float6
 		panic("Not finalized, use AddStats instead!")
 	}
 
+	added := amount * unit.statBonuses[stat].Multiplier
+
 	if stat == stats.MeleeHaste {
-		unit.AddMeleeHaste(sim, amount)
+		unit.AddMeleeHaste(sim, added)
+	} else {
+		unit.stats[stat] += added
+
+		if stat == stats.MP5 || stat == stats.Intellect || stat == stats.Spirit {
+			unit.UpdateManaRegenRates()
+		} else if stat == stats.SpellHaste {
+			unit.updateCastSpeed()
+		} else if stat == stats.Armor {
+			unit.updateArmor()
+		} else if stat == stats.ArmorPenetration {
+			unit.updateArmorPen()
+		} else if stat == stats.SpellPenetration {
+			unit.updateSpellPen()
+		} else if stat == stats.ArcaneResistance {
+			unit.updateResistances()
+		} else if stat == stats.FireResistance {
+			unit.updateResistances()
+		} else if stat == stats.FrostResistance {
+			unit.updateResistances()
+		} else if stat == stats.NatureResistance {
+			unit.updateResistances()
+		} else if stat == stats.ShadowResistance {
+			unit.updateResistances()
+		}
+	}
+
+	// Now apply stat dependencies
+	for k, v := range unit.statBonuses[stat].Deps {
+		if v == 1 {
+			continue
+		}
+		unit.AddStatDynamic(sim, k, (v-1)*added) // this should handle descending
+	}
+}
+
+// applyStatDependencies will apply all stat dependencies.
+func (unit *Unit) applyStatDependencies(ss stats.Stats) stats.Stats {
+	news := stats.Stats{}
+
+	var addstat func(s stats.Stat, v float64)
+
+	addstat = func(s stats.Stat, v float64) {
+		if unit.statBonuses[s].Multiplier == 0 {
+			unit.statBonuses[s].Multiplier = 1
+		}
+		added := v * unit.statBonuses[s].Multiplier
+		news[s] += added
+		for k, v := range unit.statBonuses[s].Deps {
+			if v == 1 {
+				continue
+			}
+			addstat(k, (v-1)*added)
+		}
+	}
+
+	for s, v := range ss {
+		if v == 0 {
+			continue
+		}
+		addstat(stats.Stat(s), v)
+	}
+
+	return news
+}
+
+// AddStatDependency will add source stat * ratio to the modified stat.
+func (unit *Unit) AddStatDependency(source, modified stats.Stat, multiplier float64) {
+	if unit.Env != nil && unit.Env.IsFinalized() {
+		panic("Already finalized, can't add more dependencies!")
+	}
+	if source == modified {
+		if unit.statBonuses[source].Multiplier == 0 {
+			unit.statBonuses[source].Multiplier = multiplier
+		} else {
+			unit.statBonuses[source].Multiplier *= multiplier
+		}
+		return
+	}
+	if unit.statBonuses[source].Deps == nil {
+		unit.statBonuses[source].Deps = map[stats.Stat]float64{
+			modified: multiplier,
+		}
+	} else if unit.statBonuses[source].Deps[modified] == 0 {
+		unit.statBonuses[source].Deps[modified] = multiplier
+	} else {
+		unit.statBonuses[source].Deps[modified] *= multiplier
+	}
+}
+
+// AddStatDependencyDynamic will dynamically adjust stats based on the change to the dependency.
+func (unit *Unit) AddStatDependencyDynamic(sim *Simulation, source, modified stats.Stat, multiplier float64) {
+	if unit.Env == nil || !unit.Env.IsFinalized() {
+		panic("Not finalized, use AddStatDependency instead!")
+	}
+	if source == modified {
+		oldMultiplier := 1.0
+		if unit.statBonuses[source].Multiplier == 0 {
+			unit.statBonuses[source].Multiplier = multiplier
+		} else {
+			oldMultiplier = unit.statBonuses[source].Multiplier
+			unit.statBonuses[source].Multiplier *= multiplier
+		}
+		// Now modify the stat itself
+		stat := unit.stats[source]
+		bonus := ((stat * unit.statBonuses[source].Multiplier / oldMultiplier) - stat) / unit.statBonuses[source].Multiplier
+		unit.AddStatDynamic(sim, source, bonus)
 		return
 	}
 
-	unit.stats[stat] += amount
+	oldMultiplier := 1.0
+	if unit.statBonuses[source].Deps == nil {
+		unit.statBonuses[source].Deps = map[stats.Stat]float64{
+			modified: multiplier,
+		}
+	} else if unit.statBonuses[source].Deps[modified] == 0 {
+		unit.statBonuses[source].Deps[modified] = multiplier
+	} else {
+		oldMultiplier = unit.statBonuses[source].Deps[modified]
+		unit.statBonuses[source].Deps[modified] *= multiplier
+	}
 
-	if stat == stats.MP5 || stat == stats.Intellect || stat == stats.Spirit {
-		unit.UpdateManaRegenRates()
-	} else if stat == stats.SpellHaste {
-		unit.updateCastSpeed()
-	} else if stat == stats.Armor {
-		unit.updateArmor()
-	} else if stat == stats.ArmorPenetration {
-		unit.updateArmorPen()
-	} else if stat == stats.SpellPenetration {
-		unit.updateSpellPen()
-	} else if stat == stats.ArcaneResistance {
-		unit.updateResistances()
-	} else if stat == stats.FireResistance {
-		unit.updateResistances()
-	} else if stat == stats.FrostResistance {
-		unit.updateResistances()
-	} else if stat == stats.NatureResistance {
-		unit.updateResistances()
-	} else if stat == stats.ShadowResistance {
-		unit.updateResistances()
+	stat := unit.stats[source]
+	bonus := ((stat * unit.statBonuses[source].Deps[modified] / oldMultiplier) - stat) / unit.statBonuses[source].Deps[modified]
+	// Now apply the newly gained stats
+	unit.AddStatDynamic(sim, modified, bonus)
+}
+
+// finalizeStatDeps will descend the tree of each stat's depedencies and verify
+// there are no circular dependencies
+func (unit *Unit) finalizeStatDeps() {
+	seen := map[stats.Stat]struct{}{}
+
+	var walk func(m map[stats.Stat]float64) error
+
+	walk = func(m map[stats.Stat]float64) error {
+		for k := range m {
+			if _, ok := seen[k]; ok {
+				return errors.New("circular dependency in stats: " + k.StatName())
+			}
+			seen[k] = struct{}{}
+			err := walk(unit.statBonuses[k].Deps)
+			if err != nil {
+				return fmt.Errorf("%w from: %s", err, k.StatName())
+			}
+		}
+		return nil
+	}
+
+	for s := range unit.stats {
+		if unit.statBonuses[s].Multiplier == 0 {
+			unit.statBonuses[s].Multiplier = 1
+		}
+		seen = map[stats.Stat]struct{}{
+			stats.Stat(s): {}, // mark this stat already seen.
+		}
+		if err := walk(unit.statBonuses[s].Deps); err != nil {
+			panic(err)
+		}
 	}
 }
 

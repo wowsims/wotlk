@@ -20,7 +20,7 @@ func (warrior *Warrior) registerRampageSpell() {
 		Duration:  time.Second * 30,
 		MaxStacks: 5,
 		OnInit: func(aura *core.Aura, sim *core.Simulation) {
-			bonusPerStack = warrior.ApplyStatDependencies(stats.Stats{stats.AttackPower: 50})
+			bonusPerStack = stats.Stats{stats.AttackPower: 50}
 		},
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
 			warrior.AddStatsDynamic(sim, bonusPerStack.Multiply(float64(newStacks-oldStacks)))
