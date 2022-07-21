@@ -192,6 +192,8 @@ func (deathKnight *DeathKnight) DoRotation(sim *core.Simulation) {
 				waitUntil = core.MinDuration(waitUntil, deathKnight.AnyRuneReadyAt(sim))
 				deathKnight.WaitUntil(sim, waitUntil)
 			}
+		} else {
+			opener.idx += 1
 		}
 
 	}
