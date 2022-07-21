@@ -590,8 +590,8 @@ export const resourceTypeToIcon: Record<ResourceType, string> = {
 	[ResourceType.ResourceTypeComboPoints]: 'https://wow.zamimg.com/images/wow/icons/medium/inv_mace_2h_pvp410_c_01.jpg',
 	[ResourceType.ResourceTypeFocus]: 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_focusfire.jpg',
 	[ResourceType.ResourceTypeRunicPower]: 'https://wow.zamimg.com/images/wow/icons/medium/inv_sword_62.jpg',
-	[ResourceType.ResourceTypeBloodRune]: '/wotlk/assets/blood_rune.png',
-	[ResourceType.ResourceTypeFrostRune]: '/wotlk/assets/frost_rune.png',
-	[ResourceType.ResourceTypeUnholyRune]: '/wotlk/assets/unholy_rune.png',
-	[ResourceType.ResourceTypeDeathRune]: '/wotlk/assets/death_rune.png',
+	[ResourceType.ResourceTypeBloodRune]: '/wotlk/assets/img/blood_rune.png',
+	[ResourceType.ResourceTypeFrostRune]: '/wotlk/assets/img/frost_rune.png',
+	[ResourceType.ResourceTypeUnholyRune]: '/wotlk/assets/img/unholy_rune.png',
+	[ResourceType.ResourceTypeDeathRune]: '/wotlk/assets/img/death_rune.png',
 };
