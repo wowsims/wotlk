@@ -450,24 +450,14 @@ func init() {
 			oldOnGain := aura.OnGain
 			oldOnExpire := aura.OnExpire
 
-			var strengthBonus float64
-
 			aura.OnGain = func(aura *core.Aura, sim *core.Simulation) {
 				oldOnGain(aura, sim)
-				strengthBonus = 0.15 * character.GetStat(stats.Strength)
-				aura.Unit.AddStatsDynamic(sim, stats.Stats{stats.Strength: strengthBonus})
+				aura.Unit.AddStatDependencyDynamic(sim, stats.Strength, stats.Strength, 1.15)
 			}
-
-			//aura.OnStatsChange = func(aura *core.Aura, sim *core.Simulation, oldStats stats.Stats, newStats stats.Stats) {
-			//	strengthWithoutBonus := newStats[stats.Strength] - strengthBonus
-			//	strengthBonus = 0.15 * strengthWithoutBonus
-			//	bonusStats := stats.Stats{stats.Strength: strengthBonus}
-			//	aura.Unit.AddStatsDynamic(sim, bonusStats)
-			//}
 
 			aura.OnExpire = func(aura *core.Aura, sim *core.Simulation) {
 				oldOnExpire(aura, sim)
-				aura.Unit.AddStatsDynamic(sim, stats.Stats{stats.Strength: -strengthBonus})
+				aura.Unit.AddStatDependencyDynamic(sim, stats.Strength, stats.Strength, 1.0/1.15)
 			}
 		})
 	}

@@ -154,13 +154,13 @@ func (deathKnight *DeathKnight) applyKillingMachine() {
 		ActionID: actionID,
 		Duration: time.Second * 30.0,
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spell == deathKnight.IcyTouch || spell == deathKnight.FrostStrike || spell == deathKnight.HowlingBlast {
+			if spell == deathKnight.IcyTouch {
 				aura.Deactivate(sim)
 			}
 		},
 	})
 
-	deathKnight.RegisterAura(core.Aura{
+	deathKnight.GetOrRegisterAura(core.Aura{
 		Label:    "Killing Machine",
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {

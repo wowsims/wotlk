@@ -154,6 +154,13 @@ func (deathKnight *DeathKnight) DoRotation(sim *core.Simulation) {
 					}
 					waitUntil = core.MinDuration(time.Duration(0.1*float64(waitUntil-sim.CurrentTime)+float64(waitUntil)), deathKnight.AnyRuneReadyAt(sim))
 					deathKnight.WaitUntil(sim, waitUntil)
+				} else {
+					waitUntil := deathKnight.AutoAttacks.MainhandSwingAt
+					if deathKnight.AutoAttacks.OffhandSwingAt > sim.CurrentTime {
+						waitUntil = core.MinDuration(waitUntil, deathKnight.AutoAttacks.OffhandSwingAt)
+					}
+					waitUntil = core.MinDuration(time.Duration(0.1*float64(waitUntil-sim.CurrentTime)+float64(waitUntil)), deathKnight.AnyRuneReadyAt(sim))
+					deathKnight.WaitUntil(sim, waitUntil)
 				}
 			}
 		}
@@ -184,8 +191,8 @@ func (deathKnight *DeathKnight) DiseaseCheckWrapper(sim *core.Simulation, target
 		success = deathKnight.CastIcyTouch(sim, target)
 	} else if !deathKnight.TargetHasDisease(BloodPlagueAuraLabel, target) {
 		success = deathKnight.CastPlagueStrike(sim, target)
-	} else if deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim) < 4*time.Second ||
-		deathKnight.BloodPlagueDisease[target.Index].RemainingDuration(sim) < 4*time.Second {
+	} else if deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim) < spell.CurCast.GCD ||
+		deathKnight.BloodPlagueDisease[target.Index].RemainingDuration(sim) < spell.CurCast.GCD {
 		success = deathKnight.CastPestilence(sim, target)
 		if deathKnight.LastCastOutcome == core.OutcomeMiss {
 			// Deal with pestilence miss

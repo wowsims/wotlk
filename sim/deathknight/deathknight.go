@@ -188,24 +188,12 @@ func (deathKnight *DeathKnight) Initialize() {
 func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
 	deathKnight.ResetRunicPowerBar(sim)
 
-	if deathKnight.Talents.Butchery > 0 {
-		deathKnight.ButcheryAura.Deactivate(sim)
-		deathKnight.ButcheryAura.Activate(sim)
-	}
-
 	if deathKnight.Rotation.UnholyPresenceOpener {
 		deathKnight.UnholyPresenceAura.Activate(sim)
 		deathKnight.Presence = UnholyPresence
 	} else {
 		deathKnight.BloodPresenceAura.Activate(sim)
 		deathKnight.Presence = BloodPresence
-	}
-
-	if deathKnight.Options.PrecastHornOfWinter && deathKnight.Rotation.RefreshHornOfWinter {
-		if deathKnight.HornOfWinterAura.IsActive() {
-			deathKnight.HornOfWinterAura.Deactivate(sim)
-			deathKnight.HornOfWinterAura.Activate(sim)
-		}
 	}
 
 	if deathKnight.Rotation.ArmyOfTheDead == proto.DeathKnight_Rotation_PreCast {

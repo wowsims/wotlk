@@ -19,6 +19,14 @@ func (deathKnight *DeathKnight) registerHornOfWinterSpell() {
 		Label:    "Horn of Winter",
 		ActionID: actionID,
 		Duration: duration,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			if deathKnight.Options.PrecastHornOfWinter && deathKnight.Rotation.RefreshHornOfWinter {
+				if aura.IsActive() {
+					aura.Deactivate(sim)
+					aura.Activate(sim)
+				}
+			}
+		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			if !deathKnight.OtherRelevantStrAgiActive {
 				deathKnight.HornOfWinterAura.Unit.AddStatsDynamic(sim, bonusStats)

@@ -95,6 +95,9 @@ func (deathKnight *DeathKnight) applyButchery() {
 		ActionID: actionID,
 		Label:    "Butchery",
 		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			amountOfRunicPower := 1.0 * float64(deathKnight.Talents.Butchery)
 			core.StartPeriodicAction(sim, core.PeriodicActionOptions{
