@@ -34,7 +34,7 @@ func (priest *Priest) registerMindBlastSpell() {
 	normMod := (1 + float64(priest.Talents.Darkness)*0.02) * // initialize modifier
 		core.TernaryFloat64(priest.HasSetBonus(ItemSetAbsolution, 4), 1.1, 1)
 
-	swpMod := (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwistedFaith)*0.02) * // update modifier if SWP active
+	swpMod := (1 + float64(priest.Talents.Darkness)*0.02) * (1 + float64(priest.Talents.TwistedFaith)*0.02) *
 		core.TernaryFloat64(priest.HasSetBonus(ItemSetAbsolution, 4), 1.1, 1)
 
 	effect.BaseDamage = core.BaseDamageConfig{

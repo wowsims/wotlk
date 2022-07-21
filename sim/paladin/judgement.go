@@ -22,7 +22,7 @@ func (paladin *Paladin) registerJudgementOfWisdomSpell(cdTimer *core.Timer) {
 	paladin.JudgementOfWisdom = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 53408},
 		SpellSchool: core.SpellSchoolHoly,
-		Flags:       SpellFlagJudgement,
+		Flags:       SpellFlagPrimaryJudgement,
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
