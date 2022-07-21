@@ -28,12 +28,10 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 	baseMultiplier := 1.0
 	// Additive bonuses
 	baseMultiplier += core.TernaryFloat64(paladin.HasSetBonus(ItemSetLightswornBattlegear, 4), .1, 0)
+	baseMultiplier *= paladin.WeaponSpecializationMultiplier()
 
 	judgementMultiplier := baseMultiplier
-	judgementMultiplier += core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfJudgement), 0.10, 0)
-
-	baseMultiplier *= paladin.WeaponSpecializationMultiplier()
-	judgementMultiplier *= paladin.WeaponSpecializationMultiplier()
+	judgementMultiplier *= 1 + core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfJudgement), 0.10, 0)
 
 	onJudgementProc := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 20467}, // Judgement of Command

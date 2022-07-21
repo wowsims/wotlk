@@ -43,12 +43,10 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	// Additive bonuses
 	baseMultiplier += core.TernaryFloat64(paladin.HasSetBonus(ItemSetLightswornBattlegear, 4), .1, 0)
 	baseMultiplier += 0.03 * float64(paladin.Talents.SealsOfThePure)
+	baseMultiplier *= paladin.WeaponSpecializationMultiplier()
 
 	judgementMultiplier := baseMultiplier
-	judgementMultiplier += core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfJudgement), 0.10, 0)
-
-	baseMultiplier *= paladin.WeaponSpecializationMultiplier()
-	judgementMultiplier *= paladin.WeaponSpecializationMultiplier()
+	judgementMultiplier *= 1 + core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfJudgement), 0.10, 0)
 
 	dot := paladin.createSealOfVengeanceDot(baseMultiplier)
 
