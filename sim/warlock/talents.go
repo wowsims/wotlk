@@ -11,48 +11,28 @@ import (
 func (warlock *Warlock) ApplyTalents() {
 	// Demonic Embrace
 	if warlock.Talents.DemonicEmbrace > 0 {
-		bonus := 1.01 + float64(warlock.Talents.DemonicEmbrace)*0.03
-		warlock.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Stamina,
-			ModifiedStat: stats.Stamina,
-			Modifier: func(in float64, _ float64) float64 {
-				return in * bonus
-			},
-		})
+		warlock.AddStatDependency(stats.Stamina, stats.Stamina, 1.01+(float64(warlock.Talents.DemonicEmbrace)*0.03))
 	}
 
 	// Suppression
 	warlock.AddStat(stats.SpellHit, float64(warlock.Talents.Suppression)*core.SpellHitRatingPerHitChance)
 
 	// Shadow Mastery
-	warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + 0.03*float64(warlock.Talents.ShadowMastery)
+	warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + (0.03 * float64(warlock.Talents.ShadowMastery))
 
 	// Backlash (Add 1% crit per level)
 	warlock.AddStat(stats.SpellCrit, float64(warlock.Talents.Backlash)*core.CritRatingPerCritChance)
 
 	// Malediction (SP bonus)
 	if warlock.Talents.Malediction > 0 {
-		factor := 1 + 0.01*float64(warlock.Talents.Malediction)
-		warlock.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.SpellPower,
-			ModifiedStat: stats.SpellPower,
-			Modifier: func(sp float64, _ float64) float64 {
-				return sp * factor
-			},
-		})
+		warlock.AddStatDependency(stats.SpellPower, stats.SpellPower, 1.0+(0.01*float64(warlock.Talents.Malediction)))
 	}
 
 	// Fel Vitality
 	if warlock.Talents.FelVitality > 0 {
 		bonus := 0.01 * float64(warlock.Talents.FelVitality)
 		// Adding a second 3% bonus int->mana dependency
-		warlock.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Intellect,
-			ModifiedStat: stats.Mana,
-			Modifier: func(intellect float64, mana float64) float64 {
-				return mana + intellect*15*bonus
-			},
-		})
+		warlock.AddStatDependency(stats.Intellect, stats.Mana, 1.0+bonus)
 	}
 
 	if warlock.Options.Summon != proto.Warlock_Options_NoSummon {

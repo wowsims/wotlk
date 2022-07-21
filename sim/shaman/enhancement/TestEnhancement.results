@@ -4,9 +4,9 @@ character_stats_results: {
   final_stats: 484.00000000000006
   final_stats: 675.4000000000001
   final_stats: 680.9000000000001
-  final_stats: 476.74
+  final_stats: 476.74000000000007
   final_stats: 247.50000000000003
-  final_stats: 849.4200000000002
+  final_stats: 849.4200000000003
   final_stats: 0
   final_stats: 0
   final_stats: 0
@@ -19,13 +19,13 @@ character_stats_results: {
   final_stats: 593.275239046702
   final_stats: 0
   final_stats: 0
-  final_stats: 2831.4
+  final_stats: 2831.4000000000005
   final_stats: 333.392
-  final_stats: 1118.397464105642
+  final_stats: 1118.3974641056423
   final_stats: 0
   final_stats: 0
   final_stats: 35
-  final_stats: 11267.1
+  final_stats: 11267.100000000002
   final_stats: 0
   final_stats: 0
   final_stats: 6828.8
@@ -94,8 +94,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-AustereEarthsiegeDiamond"
  value: {
-  dps: 2.23670173276018e+123
-  tps: 2.23670173276018e+123
+  dps: 2.2367017327601804e+123
+  tps: 2.2367017327601804e+123
  }
 }
 dps_results: {
@@ -185,7 +185,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-BracingEarthsiegeDiamond"
  value: {
-  dps: 2.2580391896341894e+123
+  dps: 2.25803918963419e+123
   tps: 2.212878405841506e+123
  }
 }
@@ -213,8 +213,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-BrutalEarthstormDiamond"
  value: {
-  dps: 2.23670173276018e+123
-  tps: 2.23670173276018e+123
+  dps: 2.2367017327601804e+123
+  tps: 2.2367017327601804e+123
  }
 }
 dps_results: {
@@ -248,8 +248,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-ChaoticSkyflareDiamond"
  value: {
-  dps: 5.9505210777029536e+122
-  tps: 5.9505210777029536e+122
+  dps: 5.950521077702954e+122
+  tps: 5.950521077702954e+122
  }
 }
 dps_results: {
@@ -290,8 +290,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-CycloneHarness"
  value: {
-  dps: 2.799225917987799e+118
-  tps: 2.799225917987799e+118
+  dps: 2.7992259179877997e+118
+  tps: 2.7992259179877997e+118
  }
 }
 dps_results: {
@@ -360,8 +360,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-Devastation-30316"
  value: {
-  dps: 5.666608461395399e+95
-  tps: 5.666608461395399e+95
+  dps: 5.666608461395397e+95
+  tps: 5.666608461395397e+95
  }
 }
 dps_results: {
@@ -388,15 +388,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-EffulgentSkyflareDiamond"
  value: {
-  dps: 2.23670173276018e+123
-  tps: 2.23670173276018e+123
+  dps: 2.2367017327601804e+123
+  tps: 2.2367017327601804e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-EmberSkyfireDiamond"
  value: {
-  dps: 5.941240693738702e+122
-  tps: 5.941240693738702e+122
+  dps: 5.941240693738703e+122
+  tps: 5.941240693738703e+122
  }
 }
 dps_results: {
@@ -430,8 +430,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-EnigmaticSkyflareDiamond"
  value: {
-  dps: 5.947049797242887e+122
-  tps: 5.947049797242887e+122
+  dps: 5.947049797242888e+122
+  tps: 5.947049797242888e+122
  }
 }
 dps_results: {
@@ -451,15 +451,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-EternalEarthsiegeDiamond"
  value: {
-  dps: 2.23670173276018e+123
-  tps: 2.23670173276018e+123
+  dps: 2.2367017327601804e+123
+  tps: 2.2367017327601804e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-EternalEarthstormDiamond"
  value: {
-  dps: 2.23670173276018e+123
-  tps: 2.23670173276018e+123
+  dps: 2.2367017327601804e+123
+  tps: 2.2367017327601804e+123
  }
 }
 dps_results: {
@@ -507,8 +507,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-ForlornSkyflareDiamond"
  value: {
-  dps: 2.2580391896341894e+123
-  tps: 2.2580391896341894e+123
+  dps: 2.25803918963419e+123
+  tps: 2.25803918963419e+123
  }
 }
 dps_results: {
@@ -584,8 +584,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-ImpassiveSkyflareDiamond"
  value: {
-  dps: 5.947049797242887e+122
-  tps: 5.947049797242887e+122
+  dps: 5.947049797242888e+122
+  tps: 5.947049797242888e+122
  }
 }
 dps_results: {
@@ -612,8 +612,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-InsightfulEarthstormDiamond"
  value: {
-  dps: 1.9047961172478868e+126
-  tps: 1.9047961172478868e+126
+  dps: 1.904796117247887e+126
+  tps: 1.904796117247887e+126
  }
 }
 dps_results: {
@@ -647,8 +647,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-ManualCrowdPummeler-9449"
  value: {
-  dps: 7.645318152075219e+107
-  tps: 7.645318152075219e+107
+  dps: 7.64531815207522e+107
+  tps: 7.64531815207522e+107
  }
 }
 dps_results: {
@@ -738,29 +738,29 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-PowerfulEarthshatterDiamond"
  value: {
-  dps: 2.23670173276018e+123
-  tps: 2.23670173276018e+123
+  dps: 2.2367017327601804e+123
+  tps: 2.2367017327601804e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-PowerfulEarthsiegeDiamond"
  value: {
-  dps: 2.23670173276018e+123
-  tps: 2.23670173276018e+123
+  dps: 2.2367017327601804e+123
+  tps: 2.2367017327601804e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-PowerfulEarthstormDiamond"
  value: {
-  dps: 2.23670173276018e+123
-  tps: 2.23670173276018e+123
+  dps: 2.2367017327601804e+123
+  tps: 2.2367017327601804e+123
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-PrimalIntent"
  value: {
-  dps: 1.1849279525041981e+122
-  tps: 1.1849279525041981e+122
+  dps: 1.1849279525041983e+122
+  tps: 1.1849279525041983e+122
  }
 }
 dps_results: {
@@ -801,8 +801,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-RevitalizingSkyflareDiamond"
  value: {
-  dps: 3.700880471149519e+123
-  tps: 3.700880471149519e+123
+  dps: 3.70088047114952e+123
+  tps: 3.70088047114952e+123
  }
 }
 dps_results: {
@@ -976,8 +976,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-SwiftStarfireDiamond"
  value: {
-  dps: 2.2469437120597043e+123
-  tps: 2.2469437120597043e+123
+  dps: 2.246943712059705e+123
+  tps: 2.246943712059705e+123
  }
 }
 dps_results: {
@@ -1004,8 +1004,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-TenaciousEarthstormDiamond"
  value: {
-  dps: 2.23670173276018e+123
-  tps: 2.23670173276018e+123
+  dps: 2.2367017327601804e+123
+  tps: 2.2367017327601804e+123
  }
 }
 dps_results: {
@@ -1067,8 +1067,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-ThunderingSkyfireDiamond"
  value: {
-  dps: 1.4820223915907652e+121
-  tps: 1.4820223915907652e+121
+  dps: 1.4820223915907654e+121
+  tps: 1.4820223915907654e+121
  }
 }
 dps_results: {
@@ -1081,8 +1081,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-TidefuryRaiment"
  value: {
-  dps: 2.3517086200517586e+116
-  tps: 2.3517086200517586e+116
+  dps: 2.351708620051759e+116
+  tps: 2.351708620051759e+116
  }
 }
 dps_results: {
@@ -1095,8 +1095,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-TirelessSkyflareDiamond"
  value: {
-  dps: 2.2580391896341894e+123
-  tps: 2.2580391896341894e+123
+  dps: 2.25803918963419e+123
+  tps: 2.25803918963419e+123
  }
 }
 dps_results: {
@@ -1130,8 +1130,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-TrenchantEarthsiegeDiamond"
  value: {
-  dps: 2.2580391896341894e+123
-  tps: 2.2580391896341894e+123
+  dps: 2.25803918963419e+123
+  tps: 2.25803918963419e+123
  }
 }
 dps_results: {
@@ -1228,8 +1228,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Troll-P2-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 1.7716793605520075e+120
-  tps: 1.7716793605520075e+120
+  dps: 1.7716793605520078e+120
+  tps: 1.7716793605520078e+120
  }
 }
 dps_results: {
@@ -1256,8 +1256,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Troll-P2-Basic-NoBuffs-LongSingleTarget"
  value: {
-  dps: 7.240006742783275e+40
-  tps: 7.240006742783275e+40
+  dps: 7.240006742783276e+40
+  tps: 7.240006742783276e+40
  }
 }
 dps_results: {
