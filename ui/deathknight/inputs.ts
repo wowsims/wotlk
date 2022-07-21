@@ -12,6 +12,7 @@ import { Target } from '/wotlk/core/target.js';
 import {
 	DeathKnightTalents as DeathKnightTalents,
 	DeathKnight,
+	DeathKnight_Rotation_ArmyOfTheDead as ArmyOfTheDead,
 	DeathKnight_Rotation as DeathKnightRotation,
 	DeathKnight_Options as DeathKnightOptions,
 } from '/wotlk/core/proto/deathknight.js';
@@ -155,6 +156,36 @@ export const DiseaseRefreshDuration = {
 	},
 };
 
+export const UseArmyOfTheDead = {
+	type: 'enum' as const,
+	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
+	config: {
+		extraCssClasses: [
+			'army-of-the-dead-enum-picker',
+		],
+		label: 'Army of the Dead',
+		labelTooltip: 'Chose how to use Army of the Dead.',
+		values: [
+			{
+				name: 'Do not use', value: ArmyOfTheDead.DoNotUse,
+			},
+			{
+				name: 'Pre pull', value: ArmyOfTheDead.PreCast,
+			},
+			{
+				name: 'As Major CD', value: ArmyOfTheDead.AsMajorCd,
+			},
+		],
+		changedEvent: (player: Player<Spec.SpecDeathKnight>) => player.rotationChangeEmitter,
+		getValue: (player: Player<Spec.SpecDeathKnight>) => player.getRotation().armyOfTheDead,
+		setValue: (eventID: EventID, player: Player<Spec.SpecDeathKnight>, newValue: number) => {
+			const newRotation = player.getRotation();
+			newRotation.armyOfTheDead = newValue;
+			player.setRotation(eventID, newRotation);
+		},
+	},
+}
+
 export const UseDeathAndDecay = {
 	type: 'boolean' as const,
 	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
@@ -195,10 +226,11 @@ export const UnholyPresenceOpener = {
 
 export const DeathKnightRotationConfig = {
 	inputs: [
+		UseArmyOfTheDead,
 		UseDeathAndDecay,
 		UnholyPresenceOpener,
 		RefreshHornOfWinter,
-		DiseaseRefreshDuration,
 		WIPFrostRotation,
+		DiseaseRefreshDuration,
 	],
 };

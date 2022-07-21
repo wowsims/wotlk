@@ -171,8 +171,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-BlazefuryMedallion-17111"
  value: {
-  dps: 110.98245455098905
-  tps: 113.20210364200882
+  dps: 111.07661138432236
+  tps: 113.29814361200889
  }
 }
 dps_results: {
@@ -542,8 +542,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-GlaiveofthePit-28774"
  value: {
-  dps: 150.79956052773818
-  tps: 153.815551738293
+  dps: 151.27670203205687
+  tps: 154.302236072698
  }
 }
 dps_results: {
@@ -892,8 +892,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-Romulo'sPoisonVial-28579"
  value: {
-  dps: 115.2094582834306
-  tps: 117.51364744909921
+  dps: 115.64628384436777
+  tps: 117.95920952125516
  }
 }
 dps_results: {
@@ -990,8 +990,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-StormGauntlets-12632"
  value: {
-  dps: 107.43230840528594
-  tps: 107.43230840528594
+  dps: 107.57582840528592
+  tps: 107.57582840528592
  }
 }
 dps_results: {

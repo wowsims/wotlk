@@ -141,12 +141,19 @@ enum DeathKnightMinorGlyph {
 
 message DeathKnight {
 	message Rotation {
-		bool use_death_and_decay = 1;
-		bool unholy_presence_opener = 2;
-		double disease_refresh_duration = 3;
-		bool refresh_horn_of_winter = 4;
+		enum ArmyOfTheDead {
+			DoNotUse = 0;
+			PreCast = 1;
+			AsMajorCd = 2;
+		}
 
-		bool wip_frost_rotation = 5;
+		ArmyOfTheDead army_of_the_dead = 1;
+		bool use_death_and_decay = 2;
+		bool unholy_presence_opener = 3;
+		double disease_refresh_duration = 4;
+		bool refresh_horn_of_winter = 5;
+
+		bool wip_frost_rotation = 6;
 	}
 	Rotation rotation = 1;
 
