@@ -282,9 +282,6 @@ func (unit *Unit) AddStatDependencyDynamic(sim *Simulation, source, modified sta
 		return
 	}
 
-	if unit.statBonuses[source].Deps == nil {
-		unit.statBonuses[source].Deps = map[stats.Stat]float64{}
-	}
 	oldMultiplier := 1.0
 	if unit.statBonuses[source].Deps == nil {
 		unit.statBonuses[source].Deps = map[stats.Stat]float64{
