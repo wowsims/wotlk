@@ -251,7 +251,6 @@ func (unit *Unit) AddStatDependency(source, modified stats.Stat, ratio float64) 
 }
 
 // AddStatDependencyDynamic will dynamically adjust stats based on the change to the dependency.
-//  To add use a positive ratio. To remove give the same ratio but negative and -1. (ie, to add 0.2 use -1.2 to remove)
 func (unit *Unit) AddStatDependencyDynamic(sim *Simulation, source, modified stats.Stat, ratio float64) {
 	if unit.Env == nil || !unit.Env.IsFinalized() {
 		panic("Not finalized, use AddStatDependency instead!")
