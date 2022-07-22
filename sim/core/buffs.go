@@ -55,9 +55,11 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		character.AddStat(stats.SpellCrit, 5*CritRatingPerCritChance)
 	}
 	if raidBuffs.MoonkinAura == proto.TristateEffect_TristateEffectImproved || raidBuffs.SwiftRetribution {
-		character.PseudoStats.CastSpeedMultiplier *= 1.03
-		character.PseudoStats.MeleeSpeedMultiplier *= 1.03
-		character.PseudoStats.RangedSpeedMultiplier *= 1.03
+		hastePercentBonus := 3.0
+		character.AddStats(stats.Stats{
+			stats.SpellHaste: hastePercentBonus*HasteRatingPerHastePercent,
+			stats.MeleeHaste: hastePercentBonus*HasteRatingPerHastePercent,
+		})
 	}
 
 	if raidBuffs.LeaderOfThePack > 0 || raidBuffs.Rampage {
@@ -197,7 +199,9 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		})
 	}
 	if raidBuffs.WrathOfAirTotem {
-		character.PseudoStats.CastSpeedMultiplier *= 1.05
+		character.AddStats(stats.Stats{
+			stats.SpellHaste: 5.0*HasteRatingPerHastePercent,
+		})
 	}
 	if raidBuffs.StrengthOfEarthTotem > 0 || raidBuffs.HornOfWinter {
 		val := MaxTristate(proto.TristateEffect_TristateEffectRegular, raidBuffs.StrengthOfEarthTotem)
@@ -226,9 +230,13 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 	}
 
 	if raidBuffs.IcyTalons {
-		character.PseudoStats.MeleeSpeedMultiplier *= 1.2
+		character.AddStats(stats.Stats{
+			stats.MeleeHaste: 20*HasteRatingPerHastePercent,
+		})
 	} else if raidBuffs.WindfuryTotem > 0 {
-		character.PseudoStats.MeleeSpeedMultiplier *= GetTristateValueFloat(raidBuffs.WindfuryTotem, 1.16, 1.2)
+		character.AddStats(stats.Stats{
+			stats.MeleeHaste: GetTristateValueFloat(raidBuffs.WindfuryTotem, 16, 20)*HasteRatingPerHastePercent,
+		})
 	}
 
 	if raidBuffs.Bloodlust {
