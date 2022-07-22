@@ -147,8 +147,6 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 					OtherInputs.HpPercentForDefensives,
 					ProtectionWarriorInputs.StartingRage,
 					ProtectionWarriorInputs.PrecastShout,
-					ProtectionWarriorInputs.PrecastShoutWithSapphire,
-					ProtectionWarriorInputs.PrecastShoutWithT2,
 					OtherInputs.InFrontOfTarget,
 				],
 			},

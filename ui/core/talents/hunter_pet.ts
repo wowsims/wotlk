@@ -9,11 +9,11 @@ import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
 import { TalentsConfig, TalentsPicker, newTalentsConfig } from './talents_picker.js';
 import { protoToTalentString, talentStringToProto } from './factory.js';
 
-export function makePetTypeInputConfig(includeLabel: boolean): EnumPickerConfig<Player<Spec.SpecHunter>> {
-	return {
-		extraCssClasses: [
-			'pet-type-picker',
-		],
+import * as InputHelpers from '/wotlk/core/components/input_helpers.js';
+
+export function makePetTypeInputConfig(includeLabel: boolean): InputHelpers.TypedEnumPickerConfig<Player<Spec.SpecHunter>> {
+	return InputHelpers.makeSpecOptionsEnumInput<Spec.SpecHunter, PetType>({
+		fieldName: 'petType',
 		label: includeLabel ? 'Pet' : '',
 		values: [
 			{ name: 'None', value: PetType.PetNone },
@@ -54,14 +54,7 @@ export function makePetTypeInputConfig(includeLabel: boolean): EnumPickerConfig<
 			{ name: 'Wolf', value: PetType.Wolf },
 			{ name: 'Worm', value: PetType.Worm },
 		],
-		changedEvent: (player: Player<Spec.SpecHunter>) => player.specOptionsChangeEmitter,
-		getValue: (player: Player<Spec.SpecHunter>) => player.getSpecOptions().petType,
-		setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: number) => {
-			const newOptions = player.getSpecOptions();
-			newOptions.petType = newValue;
-			player.setSpecOptions(eventID, newOptions);
-		},
-	};
+	});
 }
 
 enum PetCategory {

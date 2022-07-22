@@ -8,10 +8,10 @@ import {
 	EarthTotem,
 	FireTotem,
 	WaterTotem,
+	EnhancementShaman_Options as ShamanOptions,
 	ShamanTotems,
 	ShamanShield
 } from '/wotlk/core/proto/shaman.js';
-import { EnhancementShaman_Options as ShamanOptions } from '/wotlk/core/proto/shaman.js';
 import { Spec } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
 import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
@@ -21,54 +21,29 @@ import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
 import { Target } from '/wotlk/core/target.js';
 import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
 
+import * as InputHelpers from '/wotlk/core/components/input_helpers.js';
+
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
 
-export const IconBloodlust = makeBooleanShamanBuffInput(ActionId.fromSpellId(2825), 'bloodlust');
+export const Bloodlust = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.SpecEnhancementShaman>({
+	fieldName: 'bloodlust',
+	id: ActionId.fromSpellId(2825),
+});
+export const ShamanShieldInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecEnhancementShaman, ShamanShield>({
+	fieldName: 'shield',
+	values: [
+		{ color: 'grey', value: ShamanShield.NoShield },
+		{ actionId: ActionId.fromItemId(33736), value: ShamanShield.WaterShield },
+		{ actionId: ActionId.fromItemId(49281), value: ShamanShield.LightningShield },
+	],
+});
 
-export const IconLightningShield = {
-	id: ActionId.fromSpellId(49281),
-	states: 2,
-	changedEvent: (player: Player<Spec.SpecEnhancementShaman>) => player.specOptionsChangeEmitter,
-	getValue: (player: Player<Spec.SpecEnhancementShaman>) => player.getSpecOptions().shield == ShamanShield.LightningShield,
-	setValue: (eventID: EventID, player: Player<Spec.SpecEnhancementShaman>, newValue: boolean) => {
-		const newOptions = player.getSpecOptions();
-		newOptions.shield = ShamanShield.LightningShield;
-		player.setSpecOptions(eventID, newOptions);
-	},
-}
-
-export const IconWaterShield = {
-	id: ActionId.fromSpellId(57960),
-	states: 2,
-	changedEvent: (player: Player<Spec.SpecEnhancementShaman>) => player.specOptionsChangeEmitter,
-	getValue: (player: Player<Spec.SpecEnhancementShaman>) => player.getSpecOptions().shield == ShamanShield.WaterShield,
-	setValue: (eventID: EventID, player: Player<Spec.SpecEnhancementShaman>, newValue: boolean) => {
-		const newOptions = player.getSpecOptions();
-		newOptions.shield = ShamanShield.WaterShield;
-		player.setSpecOptions(eventID, newOptions);
-	},
-}
-
-
-export const DelayOffhandSwings = {
-	type: 'boolean' as const,
-	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-	config: {
-		extraCssClasses: [
-			'delay-offhand-swings-picker',
-		],
-		label: 'Delay Offhand Swings',
-		labelTooltip: 'Uses the startattack macro to delay OH swings, so they always follow within 0.5s of a MH swing.',
-		changedEvent: (player: Player<Spec.SpecEnhancementShaman>) => player.specOptionsChangeEmitter,
-		getValue: (player: Player<Spec.SpecEnhancementShaman>) => player.getSpecOptions().delayOffhandSwings,
-		setValue: (eventID: EventID, player: Player<Spec.SpecEnhancementShaman>, newValue: boolean) => {
-			const newOptions = player.getSpecOptions();
-			newOptions.delayOffhandSwings = newValue;
-			player.setSpecOptions(eventID, newOptions);
-		},
-	},
-};
+export const DelayOffhandSwings = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecEnhancementShaman>({
+	fieldName: 'delayOffhandSwings',
+	label: 'Delay Offhand Swings',
+	labelTooltip: 'Uses the startattack macro to delay OH swings, so they always follow within 0.5s of a MH swing.',
+});
 
 export const EnhancementShamanRotationConfig = {
 	inputs: [
@@ -99,17 +74,3 @@ export const EnhancementShamanRotationConfig = {
 //		}
 	],
 };
-
-function makeBooleanShamanBuffInput(id: ActionId, optionsFieldName: keyof ShamanOptions): IconPickerConfig<Player<any>, boolean> {
-	return {
-		id: id,
-		states: 2,
-		changedEvent: (player: Player<Spec.SpecEnhancementShaman>) => player.specOptionsChangeEmitter,
-		getValue: (player: Player<Spec.SpecEnhancementShaman>) => player.getSpecOptions()[optionsFieldName] as boolean,
-		setValue: (eventID: EventID, player: Player<Spec.SpecEnhancementShaman>, newValue: boolean) => {
-			const newOptions = player.getSpecOptions();
-			(newOptions[optionsFieldName] as boolean) = newValue;
-			player.setSpecOptions(eventID, newOptions);
-		},
-	};
-}
