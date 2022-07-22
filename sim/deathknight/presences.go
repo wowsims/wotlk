@@ -52,7 +52,7 @@ func (deathKnight *DeathKnight) CanUnholyPresence(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 0, 0, 1) && deathKnight.UnholyPressence.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) registerBloodPresenceAura() {
+func (deathKnight *DeathKnight) registerBloodPresenceAura(timer *core.Timer) {
 	threatMult := 0.8
 	//TODO: Include hps bonus
 	damageBonusCoeff := 0.15
@@ -61,7 +61,7 @@ func (deathKnight *DeathKnight) registerBloodPresenceAura() {
 		ActionID: core.ActionID{SpellID: 50689},
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
-				Timer:    deathKnight.NewTimer(),
+				Timer:    timer,
 				Duration: time.Millisecond * 1500,
 			},
 		},
@@ -91,7 +91,7 @@ func (deathKnight *DeathKnight) registerBloodPresenceAura() {
 	})
 }
 
-func (deathKnight *DeathKnight) registerFrostPresenceAura() {
+func (deathKnight *DeathKnight) registerFrostPresenceAura(timer *core.Timer) {
 	threatMult := 2.0735
 	staminaBonusCoeff := 0.08
 	armorBonusCoeff := 0.6
@@ -100,7 +100,7 @@ func (deathKnight *DeathKnight) registerFrostPresenceAura() {
 		ActionID: core.ActionID{SpellID: 48263},
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
-				Timer:    deathKnight.NewTimer(),
+				Timer:    timer,
 				Duration: time.Millisecond * 1500,
 			},
 		},
@@ -137,12 +137,12 @@ func (deathKnight *DeathKnight) registerFrostPresenceAura() {
 	})
 }
 
-func (deathKnight *DeathKnight) registerUnholyPresenceAura() {
+func (deathKnight *DeathKnight) registerUnholyPresenceAura(timer *core.Timer) {
 	deathKnight.UnholyPressence = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 48265},
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
-				Timer:    deathKnight.NewTimer(),
+				Timer:    timer,
 				Duration: time.Millisecond * 1500,
 			},
 		},
@@ -177,7 +177,8 @@ func (deathKnight *DeathKnight) getModifiedGCD() time.Duration {
 }
 
 func (deathKnight *DeathKnight) registerPresences() {
-	deathKnight.registerBloodPresenceAura()
-	deathKnight.registerUnholyPresenceAura()
-	deathKnight.registerFrostPresenceAura()
+	presenceTimer := deathKnight.NewTimer()
+	deathKnight.registerBloodPresenceAura(presenceTimer)
+	deathKnight.registerUnholyPresenceAura(presenceTimer)
+	deathKnight.registerFrostPresenceAura(presenceTimer)
 }

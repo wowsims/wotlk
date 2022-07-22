@@ -2,22 +2,7 @@ package deathknight
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
-
-func (deathKnight *DeathKnight) killingMachineOutcomeMod(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
-	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
-		if deathKnight.KillingMachineAura.IsActive() {
-			deathKnight.AddStatDynamic(sim, stats.MeleeCrit, 100*core.CritRatingPerCritChance)
-			deathKnight.AddStatDynamic(sim, stats.SpellCrit, 100*core.CritRatingPerCritChance)
-			outcomeApplier(sim, spell, spellEffect, attackTable)
-			deathKnight.AddStatDynamic(sim, stats.MeleeCrit, -100*core.CritRatingPerCritChance)
-			deathKnight.AddStatDynamic(sim, stats.SpellCrit, -100*core.CritRatingPerCritChance)
-		} else {
-			outcomeApplier(sim, spell, spellEffect, attackTable)
-		}
-	}
-}
 
 func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 	deathKnight.FrostFeverDebuffAura = make([]*core.Aura, deathKnight.Env.GetNumTargets())

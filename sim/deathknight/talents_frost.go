@@ -175,6 +175,20 @@ func (deathKnight *DeathKnight) applyKillingMachine() {
 	}))
 }
 
+func (deathKnight *DeathKnight) killingMachineOutcomeMod(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
+	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
+		if deathKnight.KillingMachineAura.IsActive() {
+			deathKnight.AddStatDynamic(sim, stats.MeleeCrit, 100*core.CritRatingPerCritChance)
+			deathKnight.AddStatDynamic(sim, stats.SpellCrit, 100*core.CritRatingPerCritChance)
+			outcomeApplier(sim, spell, spellEffect, attackTable)
+			deathKnight.AddStatDynamic(sim, stats.MeleeCrit, -100*core.CritRatingPerCritChance)
+			deathKnight.AddStatDynamic(sim, stats.SpellCrit, -100*core.CritRatingPerCritChance)
+		} else {
+			outcomeApplier(sim, spell, spellEffect, attackTable)
+		}
+	}
+}
+
 func (deathKnight *DeathKnight) applyIcyTalons() {
 	if deathKnight.Talents.IcyTalons == 0 {
 		return

@@ -128,8 +128,6 @@ func (deathKnight *DeathKnight) registerBloodPlague() {
 				DamageMultiplier: 1,
 				ThreatMultiplier: 1,
 				IsPeriodic:       true,
-				OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				},
 				OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 					deathKnight.doWanderingPlague(sim, spell, spellEffect)
 				},
