@@ -9,6 +9,7 @@ import (
 )
 
 func init() {
+	core.AddEffectsToTest = false
 	//// Battlemasters trinkets
 	//sharedBattlemasterCooldownID := core.NewCooldownID()
 	//addBattlemasterEffect := func(itemID int32) {
@@ -543,4 +544,5 @@ func init() {
 		})
 	})
 
+	core.AddEffectsToTest = true
 }
