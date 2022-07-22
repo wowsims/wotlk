@@ -1121,6 +1121,21 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		});
 	}
 
+	toLink(): string {
+		const proto = this.toProto();
+		// When sharing links, people generally don't intend to share settings/ep weights.
+		proto.settings = undefined;
+		proto.epWeights = [];
+
+		const protoBytes = IndividualSimSettings.toBinary(proto);
+		const deflated = pako.deflate(protoBytes, { to: 'string' });
+		const encoded = btoa(String.fromCharCode(...deflated));
+
+		const linkUrl = new URL(window.location.href);
+		linkUrl.hash = encoded;
+		return linkUrl.toString();
+	}
+
 	fromProto(eventID: EventID, settings: IndividualSimSettings) {
 		TypedEvent.freezeAllAndDo(() => {
 			if (!settings.player) {
