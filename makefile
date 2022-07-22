@@ -2,7 +2,9 @@
 rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 
 OUT_DIR=dist/wotlk
-GOROOT:=$(shell go env GOROOT)
+ASSETS_INPUT := $(shell find assets/ -type f)
+ASSETS := $(patsubst assets/%,$(OUT_DIR)/assets/%,$(ASSETS_INPUT))
+GOROOT := $(shell go env GOROOT)
 
 ifeq ($(shell go env GOOS),darwin)
     SED:=sed -i "" -E -e
@@ -11,30 +13,33 @@ else
 endif
 
 # Make everything. Keep this first so it's the default rule.
-$(OUT_DIR): ui_shared balance_druid feral_druid feral_tank_druid elemental_shaman enhancement_shaman hunter mage rogue retribution_paladin protection_paladin shadow_priest smite_priest warlock warrior protection_warrior deathknight raid
+$(OUT_DIR): ui_shared \
+ $(OUT_DIR)/balance_druid/index.js $(OUT_DIR)/balance_druid/index.css $(OUT_DIR)/balance_druid/index.html \
+ $(OUT_DIR)/feral_druid/index.js $(OUT_DIR)/feral_druid/index.css $(OUT_DIR)/feral_druid/index.html \
+ $(OUT_DIR)/feral_tank_druid/index.js $(OUT_DIR)/feral_tank_druid/index.css $(OUT_DIR)/feral_tank_druid/index.html \
+ $(OUT_DIR)/elemental_shaman/index.js $(OUT_DIR)/elemental_shaman/index.css $(OUT_DIR)/elemental_shaman/index.html \
+ $(OUT_DIR)/enhancement_shaman/index.js $(OUT_DIR)/enhancement_shaman/index.css $(OUT_DIR)/enhancement_shaman/index.html \
+ $(OUT_DIR)/hunter/index.js $(OUT_DIR)/hunter/index.css $(OUT_DIR)/hunter/index.html \
+ $(OUT_DIR)/mage/index.js $(OUT_DIR)/mage/index.css $(OUT_DIR)/mage/index.html \
+ $(OUT_DIR)/rogue/index.js $(OUT_DIR)/rogue/index.css $(OUT_DIR)/rogue/index.html \
+ $(OUT_DIR)/retribution_paladin/index.js $(OUT_DIR)/retribution_paladin/index.css $(OUT_DIR)/retribution_paladin/index.html \
+ $(OUT_DIR)/protection_paladin/index.js $(OUT_DIR)/protection_paladin/index.css $(OUT_DIR)/protection_paladin/index.html \
+ $(OUT_DIR)/shadow_priest/index.js $(OUT_DIR)/shadow_priest/index.css $(OUT_DIR)/shadow_priest/index.html \
+ $(OUT_DIR)/smite_priest/index.js $(OUT_DIR)/smite_priest/index.css $(OUT_DIR)/smite_priest/index.html \
+ $(OUT_DIR)/warlock/index.js $(OUT_DIR)/warlock/index.css $(OUT_DIR)/warlock/index.html \
+ $(OUT_DIR)/warrior/index.js $(OUT_DIR)/warrior/index.css $(OUT_DIR)/warrior/index.html \
+ $(OUT_DIR)/protection_warrior/index.js $(OUT_DIR)/protection_warrior/index.css $(OUT_DIR)/protection_warrior/index.html \
+ $(OUT_DIR)/deathknight/index.js $(OUT_DIR)/deathknight/index.css $(OUT_DIR)/deathknight/index.html \
+ $(OUT_DIR)/raid/index.js $(OUT_DIR)/raid/index.css $(OUT_DIR)/raid/index.html
 
-# Add new sim rules here! Don't forget to add it as a dependency to the default rule above.
-balance_druid: $(OUT_DIR)/balance_druid/index.js $(OUT_DIR)/balance_druid/index.css $(OUT_DIR)/balance_druid/index.html
-feral_druid: $(OUT_DIR)/feral_druid/index.js $(OUT_DIR)/feral_druid/index.css $(OUT_DIR)/feral_druid/index.html
-feral_tank_druid: $(OUT_DIR)/feral_tank_druid/index.js $(OUT_DIR)/feral_tank_druid/index.css $(OUT_DIR)/feral_tank_druid/index.html
-elemental_shaman: $(OUT_DIR)/elemental_shaman/index.js $(OUT_DIR)/elemental_shaman/index.css $(OUT_DIR)/elemental_shaman/index.html
-enhancement_shaman: $(OUT_DIR)/enhancement_shaman/index.js $(OUT_DIR)/enhancement_shaman/index.css $(OUT_DIR)/enhancement_shaman/index.html
-hunter: $(OUT_DIR)/hunter/index.js $(OUT_DIR)/hunter/index.css $(OUT_DIR)/hunter/index.html
-mage: $(OUT_DIR)/mage/index.js $(OUT_DIR)/mage/index.css $(OUT_DIR)/mage/index.html
-rogue: $(OUT_DIR)/rogue/index.js $(OUT_DIR)/rogue/index.css $(OUT_DIR)/rogue/index.html
-retribution_paladin: $(OUT_DIR)/retribution_paladin/index.js $(OUT_DIR)/retribution_paladin/index.css $(OUT_DIR)/retribution_paladin/index.html
-protection_paladin: $(OUT_DIR)/protection_paladin/index.js $(OUT_DIR)/protection_paladin/index.css $(OUT_DIR)/protection_paladin/index.html
-shadow_priest: $(OUT_DIR)/shadow_priest/index.js $(OUT_DIR)/shadow_priest/index.css $(OUT_DIR)/shadow_priest/index.html
-smite_priest: $(OUT_DIR)/smite_priest/index.js $(OUT_DIR)/smite_priest/index.css $(OUT_DIR)/smite_priest/index.html
-warlock: $(OUT_DIR)/warlock/index.js $(OUT_DIR)/warlock/index.css $(OUT_DIR)/warlock/index.html
-warrior: $(OUT_DIR)/warrior/index.js $(OUT_DIR)/warrior/index.css $(OUT_DIR)/warrior/index.html
-protection_warrior: $(OUT_DIR)/protection_warrior/index.js $(OUT_DIR)/protection_warrior/index.css $(OUT_DIR)/protection_warrior/index.html
-deathknight: $(OUT_DIR)/deathknight/index.js $(OUT_DIR)/deathknight/index.css $(OUT_DIR)/deathknight/index.html
-
-raid: $(OUT_DIR)/raid/index.js $(OUT_DIR)/raid/index.css $(OUT_DIR)/raid/index.html
-
-ui_shared: $(OUT_DIR)/lib.wasm $(OUT_DIR)/sim_worker.js $(OUT_DIR)/net_worker.js detailed_results $(OUT_DIR)/index.html
-detailed_results: $(OUT_DIR)/detailed_results/index.js $(OUT_DIR)/detailed_results/index.css $(OUT_DIR)/detailed_results/index.html
+ui_shared: $(OUT_DIR)/lib.wasm \
+ $(OUT_DIR)/core/tsconfig.tsbuildinfo \
+ $(OUT_DIR)/index.html \
+ $(OUT_DIR)/sim_worker.js \
+ $(OUT_DIR)/net_worker.js \
+ $(OUT_DIR)/detailed_results/index.js \
+ $(OUT_DIR)/detailed_results/index.css \
+ $(OUT_DIR)/detailed_results/index.html
 
 $(OUT_DIR)/index.html:
 	cp ui/index.html $(OUT_DIR)
@@ -86,6 +91,7 @@ host_%: ui_shared %
 # Generic rule for building index.js for any class directory
 $(OUT_DIR)/%/index.js: ui/%/index.ts ui/%/*.ts $(OUT_DIR)/core/tsconfig.tsbuildinfo
 	npx tsc -p $(<D) 
+	touch $@ # TSC does not guarantee a file touch.
 
 # Generic rule for building index.css for any class directory
 $(OUT_DIR)/%/index.css: ui/%/index.scss ui/%/*.scss $(call rwildcard,ui/core,*.scss)
@@ -93,7 +99,7 @@ $(OUT_DIR)/%/index.css: ui/%/index.scss ui/%/*.scss $(call rwildcard,ui/core,*.s
 	npx sass $< $@
 
 # Generic rule for building index.html for any class directory
-$(OUT_DIR)/%/index.html: ui/index_template.html $(OUT_DIR)/assets
+$(OUT_DIR)/%/index.html: ui/index_template.html $(ASSETS)
 	$(eval title := $(shell echo $(shell basename $(@D)) | sed -r 's/(^|_)([a-z])/\U \2/g' | cut -c 2-))
 	echo $(title)
 	mkdir -p $(@D)
@@ -121,8 +127,9 @@ $(OUT_DIR)/sim_worker.js: ui/worker/sim_worker.js
 $(OUT_DIR)/net_worker.js: ui/worker/net_worker.js
 	cp ui/worker/net_worker.js $(OUT_DIR)
 
-$(OUT_DIR)/assets: assets/*
-	cp -r assets $(OUT_DIR)
+$(OUT_DIR)/assets/%: assets/%
+	mkdir -p $(@D)
+	cp $< $@
 
 binary_dist/dist.go: sim/web/dist.go.tmpl
 	mkdir -p binary_dist/wotlk
