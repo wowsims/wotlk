@@ -41,14 +41,6 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 		},
 	}
 
-	var modCast func(*core.Simulation, *core.Spell, *core.Cast)
-
-	if warlock.Talents.Nightfall > 0 {
-		modCast = func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
-			warlock.applyNightfall(cast)
-		}
-	}
-
 	baseCost := 0.17 * warlock.BaseMana
 	costReduction := 0.0
 	if float64(warlock.Talents.Cataclysm) > 0 {
@@ -69,10 +61,14 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond * (3000 - 100*time.Duration(warlock.Talents.Bane)),
 			},
-			ModifyCast: modCast,
+			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
+				cast.GCD = time.Duration(float64(cast.GCD) * warlock.backdraftModifier())
+				cast.CastTime = time.Duration(float64(cast.CastTime) * warlock.backdraftModifier())
+				if warlock.Talents.Nightfall > 0 {
+					warlock.applyNightfall(cast)
+				}
+			},
 		},
-
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})
-
 }

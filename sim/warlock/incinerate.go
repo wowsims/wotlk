@@ -41,7 +41,8 @@ func (warlock *Warlock) registerIncinerateSpell() {
 				CastTime: time.Millisecond * time.Duration(2500-50*warlock.Talents.Emberstorm),
 			},
 			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
-				cast.CastTime = time.Duration(float64(cast.CastTime) * warlock.incinerateCastTimeModifier())
+				cast.GCD = time.Duration(float64(cast.GCD) * warlock.backdraftModifier())
+				cast.CastTime = time.Duration(float64(cast.CastTime) * warlock.moltenCoreIncinerateModifier() * warlock.backdraftModifier())
 			},
 		},
 
@@ -50,13 +51,10 @@ func (warlock *Warlock) registerIncinerateSpell() {
 
 }
 
-func (warlock *Warlock) incinerateCastTimeModifier() float64 {
+func (warlock *Warlock) moltenCoreIncinerateModifier() float64 {
 	castTimeModifier := 1.0
 	if warlock.MoltenCoreAura.IsActive() {
 		castTimeModifier *= (1.0 - 0.1*float64(warlock.Talents.MoltenCore))
-	}
-	if warlock.BackdraftAura.IsActive() {
-		castTimeModifier *= (1.0 - 0.1*float64(warlock.Talents.Backdraft))
 	}
 	return castTimeModifier
 }

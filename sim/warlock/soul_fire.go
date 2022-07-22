@@ -36,7 +36,8 @@ func (warlock *Warlock) registerSoulFireSpell() {
 				CastTime: time.Millisecond * time.Duration(6000-400*warlock.Talents.Bane),
 			},
 			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
-				cast.CastTime = time.Duration(float64(cast.CastTime) * warlock.soulFireCastTime())
+				cast.GCD = time.Duration(float64(cast.GCD) * warlock.backdraftModifier())
+				cast.CastTime = time.Duration(float64(cast.CastTime) * warlock.backdraftModifier() * warlock.soulFireCastTime())
 			},
 		},
 

@@ -236,19 +236,19 @@ func (warlock *Warlock) setupPyroclasm() {
 }
 
 func (warlock *Warlock) setupEradication() {
-	hasteBonusPercent := float64(warlock.Talents.Eradication) * 6
+	castSpeedPercentBonus := float64(warlock.Talents.Eradication) * 6
 	if warlock.Talents.Eradication == 3 {
-		hasteBonusPercent += 2
+		castSpeedPercentBonus += 2
 	}
 	warlock.EradicationAura = warlock.RegisterAura(core.Aura{
 		Label:    "Eradication",
 		ActionID: core.ActionID{SpellID: 64371},
 		Duration: time.Second * 10,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.MultiplyCastSpeed(1 + hasteBonusPercent/100)
+			aura.Unit.MultiplyCastSpeed(1 + castSpeedPercentBonus/100)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.MultiplyCastSpeed(1 / (1 + hasteBonusPercent/100))
+			aura.Unit.MultiplyCastSpeed(1 / (1 + castSpeedPercentBonus/100))
 		},
 	})
 
@@ -329,6 +329,12 @@ func (warlock *Warlock) setupNightfall() {
 	})
 }
 
+func (warlock *Warlock) applyNightfall(cast *core.Cast) {
+	if warlock.NightfallProcAura.IsActive() {
+		cast.CastTime = 0
+	}
+}
+
 func (warlock *Warlock) setupMoltenCore() {
 	warlock.MoltenCoreAura = warlock.RegisterAura(core.Aura{
 		Label:     "Molten Core Proc Aura",
@@ -398,8 +404,12 @@ func (warlock *Warlock) setupBackdraft() {
 	})
 }
 
-func (warlock *Warlock) applyNightfall(cast *core.Cast) {
-	if warlock.NightfallProcAura.IsActive() {
-		cast.CastTime = 0
+func (warlock *Warlock) backdraftModifier() float64 {
+	castTimeModifier := 1.0
+	if warlock.BackdraftAura.IsActive() {
+		castTimeModifier *= (1.0 - 0.1*float64(warlock.Talents.Backdraft))
 	}
+	return castTimeModifier
 }
+
+
