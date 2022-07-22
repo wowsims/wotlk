@@ -12,6 +12,12 @@ import (
 func (deathKnight *DeathKnight) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
 	if !deathKnight.Talents.HowlingBlast {
 		deathKnight.tryUseGCD(sim)
+	} else {
+		if !deathKnight.DKRotation.onOpener {
+			if deathKnight.GCD.IsReady(sim) {
+				deathKnight.tryUseGCD(sim)
+			}
+		}
 	}
 }
 

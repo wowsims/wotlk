@@ -46,7 +46,6 @@ type DKRotation struct {
 	opener   *Opener
 	openers  []Opener
 
-	canAdvance         bool
 	castSuccessful     bool
 	justCastPestilence bool
 }
@@ -196,6 +195,8 @@ func (deathKnight *DeathKnight) DiseaseCheckWrapper(sim *core.Simulation, target
 		success = deathKnight.CastPestilence(sim, target)
 		if deathKnight.LastCastOutcome == core.OutcomeMiss {
 			// Deal with pestilence miss
+		} else {
+
 		}
 	} else {
 		if deathKnight.CanCast(sim, spell) {
