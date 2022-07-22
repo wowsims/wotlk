@@ -379,7 +379,8 @@ export const P1_BiS = {
 	name: 'P1 BiS',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`
-{"items": [
+    {"items":
+      [
         {
           "id": 40421,
           "enchant": 44877,
@@ -470,5 +471,31 @@ export const P1_BiS = {
         }
       ]
     }
-    `),
+  `),
+}
+export const Naked = {
+  name: 'The Naked Bolt',
+  gear: EquipmentSpec.fromJsonString(`
+    {"items":
+      [
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {}
+      ]
+    }
+  `),
 }

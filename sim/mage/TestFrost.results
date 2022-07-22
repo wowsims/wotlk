@@ -536,7 +536,7 @@ dps_results: {
  key: "TestFrost-AllItems-InsightfulEarthsiegeDiamond"
  value: {
   dps: 1350.2817425685043
-  tps: 1094.2590527354196
+  tps: 1094.2590527354198
  }
 }
 dps_results: {
@@ -913,8 +913,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-TheTwinStars"
  value: {
-  dps: 1365.4610937856228
-  tps: 1104.1415632028113
+  dps: 1365.461093785623
+  tps: 1104.1415632028118
  }
 }
 dps_results: {

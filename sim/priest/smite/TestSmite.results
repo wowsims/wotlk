@@ -25,7 +25,7 @@ character_stats_results: {
   final_stats: 146
   final_stats: 0
   final_stats: 0
-  final_stats: 12574.65
+  final_stats: 12574.650000000001
   final_stats: 0
   final_stats: 0
   final_stats: 2800.6
@@ -305,7 +305,7 @@ dps_results: {
  key: "TestSmite-AllItems-DarkIronSmokingPipe-38290"
  value: {
   dps: 788.0641053107244
-  tps: 763.3580102521576
+  tps: 763.3580102521577
  }
 }
 dps_results: {
@@ -1047,7 +1047,7 @@ dps_results: {
  key: "TestSmite-Settings-Undead-P3-Basic-FullBuffs-LongMultiTarget"
  value: {
   dps: 802.8356873843512
-  tps: 1203.4902948897395
+  tps: 1203.4902948897397
  }
 }
 dps_results: {
