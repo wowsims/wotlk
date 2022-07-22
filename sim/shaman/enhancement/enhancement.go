@@ -30,6 +30,8 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 	selfBuffs := shaman.SelfBuffs{
 		Bloodlust: enhOptions.Options.Bloodlust,
 		Shield:    enhOptions.Options.Shield,
+		//ImbueMH:   enhOptions.Options.ImbueMH,
+		//ImbueOH:   enhOptions.Options.ImbueOH,
 	}
 
 	totems := proto.ShamanTotems{}

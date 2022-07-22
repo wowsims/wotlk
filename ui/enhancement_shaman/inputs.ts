@@ -10,7 +10,8 @@ import {
 	WaterTotem,
 	EnhancementShaman_Options as ShamanOptions,
 	ShamanTotems,
-	ShamanShield
+	ShamanShield,
+    ShamanImbue
 } from '/wotlk/core/proto/shaman.js';
 import { Spec } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
@@ -34,9 +35,29 @@ export const ShamanShieldInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.
 	fieldName: 'shield',
 	values: [
 		{ color: 'grey', value: ShamanShield.NoShield },
-		{ actionId: ActionId.fromItemId(33736), value: ShamanShield.WaterShield },
-		{ actionId: ActionId.fromItemId(49281), value: ShamanShield.LightningShield },
+		{ actionId: ActionId.fromSpellId(33736), value: ShamanShield.WaterShield },
+		{ actionId: ActionId.fromSpellId(49281), value: ShamanShield.LightningShield },
 	],
+});
+
+export const ShamanImbueMH = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecEnhancementShaman, ShamanImbue>({
+    fieldName: 'imbueMH',
+    values: [
+        { color: 'grey', value: ShamanImbue.NoImbue },
+        { actionId: ActionId.fromSpellId(58804), value: ShamanImbue.WindfuryWeapon },
+        { actionId: ActionId.fromSpellId(58790), value: ShamanImbue.FlametongueWeapon },
+        { actionId: ActionId.fromSpellId(58796), value: ShamanImbue.FrostbrandWeapon },
+    ],
+});
+
+export const ShamanImbueOH = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecEnhancementShaman, ShamanImbue>({
+    fieldName: 'imbueOH',
+    values: [
+        { color: 'grey', value: ShamanImbue.NoImbue },
+        { actionId: ActionId.fromSpellId(58804), value: ShamanImbue.WindfuryWeapon },
+        { actionId: ActionId.fromSpellId(58790), value: ShamanImbue.FlametongueWeapon },
+        { actionId: ActionId.fromSpellId(58796), value: ShamanImbue.FrostbrandWeapon },
+    ],
 });
 
 export const DelayOffhandSwings = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecEnhancementShaman>({
@@ -46,7 +67,8 @@ export const DelayOffhandSwings = InputHelpers.makeSpecOptionsBooleanInput<Spec.
 });
 
 export const EnhancementShamanRotationConfig = {
-    inputs: [
+    inputs: 
+        [
 
     ],
 };

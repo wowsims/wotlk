@@ -64,7 +64,7 @@ export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfRelentlessAssault,
 	food: Food.FoodRoastedClefthoof,
 	mainHandImbue: WeaponImbue.WeaponImbueShamanWindfury,
-	offHandImbue: WeaponImbue.WeaponImbueShamanWindfury,
+	offHandImbue: WeaponImbue.WeaponImbueShamanFlametongue,
 });
 
 export const P1_PRESET = {
