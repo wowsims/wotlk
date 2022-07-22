@@ -67,6 +67,15 @@ export const PrimarySpellInput = InputHelpers.makeRotationEnumIconInput<Spec.Spe
 		{ actionId: ActionId.fromSpellId(47838), value: PrimarySpell.Incinerate },
 		{ actionId: ActionId.fromSpellId(47836), value: PrimarySpell.Seed },
 	],
+	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: number) => {
+		const newRotation = player.getRotation();
+		if (newValue == PrimarySpell.Seed && newRotation.corruption == true) {
+			newRotation.corruption = false
+		}
+		newRotation.primarySpell = newValue
+		newRotation.preset = RotationPreset.Manual
+		player.setRotation(eventID, newRotation);
+	},
 });
 
 export const SecondaryDotInput = InputHelpers.makeRotationEnumIconInput<Spec.SpecWarlock, SecondaryDot>({
@@ -109,8 +118,10 @@ export const CorruptionSpell = {
 	getValue: (player: Player<Spec.SpecWarlock>) => player.getRotation().corruption,
 	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: boolean) => {
 		const newRotation = player.getRotation();
+		if (newRotation.primarySpell == PrimarySpell.Seed && newValue == true) {
+			newRotation.primarySpell = PrimarySpell.ShadowBolt
+		}
 		newRotation.corruption = newValue;
-		newRotation.primarySpell = PrimarySpell.ShadowBolt;
 		newRotation.preset = RotationPreset.Manual;
 		player.setRotation(eventID, newRotation);
 	},

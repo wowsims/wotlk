@@ -210,11 +210,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.addWarning({
 				updateOn: new TypedEvent<void>(),
 				getContent: () => {
-					if (this.player.getClass() == Class.ClassWarlock) {
-						return 'This sim is under current development for Wrath of the Lich King. Talents and Glyphs are mostly ready but rotations are under development.';
-					} else {
-						return 'This sim has not yet been updated from its TBC state.';
-					}
+					return 'This sim has not yet been updated from its TBC state.';
 				},
 			});
 		}

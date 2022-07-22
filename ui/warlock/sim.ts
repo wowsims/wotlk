@@ -36,7 +36,8 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			cssClass: 'warlock-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-
+				"<p>This sim is under current development for Wrath of the Lich King.</p>\
+				<p>Talents and Glyphs are mostly ready but rotations are under development.</p>"
 			],
 			// race: Race.RaceOrc,
 
