@@ -48,6 +48,11 @@ func (deathKnight *DeathKnight) registerFrostFever() {
 		Flags:       core.SpellFlagDisease,
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			deathKnight.FrostFeverDisease[unit.Index].Apply(sim)
+			deathKnight.FrostFeverDebuffAura[unit.Index].Activate(sim)
+
+			if deathKnight.IcyTalonsAura != nil {
+				deathKnight.IcyTalonsAura.Activate(sim)
+			}
 		},
 	})
 

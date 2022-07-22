@@ -41,6 +41,11 @@ func (deathKnight *DeathKnight) registerPestilenceSpell() {
 						if deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfDisease) {
 							// Update expire instead of Apply to keep old snapshotted value
 							deathKnight.FrostFeverDisease[unitHit.Index].UpdateExpires(sim.CurrentTime + deathKnight.FrostFeverDisease[unitHit.Index].Duration)
+							deathKnight.FrostFeverDebuffAura[unitHit.Index].Activate(sim)
+							if deathKnight.IcyTalonsAura != nil {
+								deathKnight.IcyTalonsAura.Activate(sim)
+							}
+
 							deathKnight.BloodPlagueDisease[unitHit.Index].UpdateExpires(sim.CurrentTime + deathKnight.BloodPlagueDisease[unitHit.Index].Duration)
 						}
 

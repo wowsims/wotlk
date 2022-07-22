@@ -55,12 +55,6 @@ export const RefreshHornOfWinter = InputHelpers.makeRotationBooleanInput<Spec.Sp
 	labelTooltip: 'Refresh Horn of Winter on free GCDs.',
 });
 
-export const WIPFrostRotation = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathKnight>({
-	fieldName: 'wipFrostRotation',
-	label: 'Use WIP frost rotation',
-	labelTooltip: 'Use sequence based rotation for frost, ***currently WIP***.',
-});
-
 export const DiseaseRefreshDuration = InputHelpers.makeRotationNumberInput<Spec.SpecDeathKnight>({
 	fieldName: 'diseaseRefreshDuration',
 	label: 'Disease Refresh Duration',
@@ -96,7 +90,6 @@ export const DeathKnightRotationConfig = {
 		UseDeathAndDecay,
 		UnholyPresenceOpener,
 		RefreshHornOfWinter,
-		WIPFrostRotation,
 		DiseaseRefreshDuration,
 	],
 };

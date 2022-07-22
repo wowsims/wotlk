@@ -81,7 +81,6 @@ export const DefaultRotation = DeathKnightRotation.create({
   unholyPresenceOpener: false,
   useDeathAndDecay: false,
 	refreshHornOfWinter: false,
-	wipFrostRotation: true,
 });
 
 export const DefaultOptions = DeathKnightOptions.create({
@@ -95,7 +94,8 @@ export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfEndlessRage,
 	food: Food.FoodDragonfinFilet,
 	defaultPotion: Potions.PotionOfSpeed,
-	petFood: PetFood.PetFoodKiblersBits
+	petFood: PetFood.PetFoodKiblersBits,
+	prepopPotion:  Potions.PotionOfSpeed,
 });
 
 export const P1_UNHOLY_DW_BIS_PRESET = {
