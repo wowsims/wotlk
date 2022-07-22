@@ -99,7 +99,7 @@ func (o *Opener) DoNext(sim *core.Simulation, deathKnight *DeathKnight) bool {
 	} else {
 		deathKnight.onOpener = false
 
-		if deathKnight.opener.id == OpenerID_FrostSubBlood_Full {
+		if deathKnight.opener.id == OpenerID_FrostSubBlood_Full || deathKnight.opener.id == OpenerID_FrostSubUnholy_Full {
 			if deathKnight.ShouldHornOfWinter(sim) {
 				*casted = deathKnight.CastHornOfWinter(sim, target)
 			} else {

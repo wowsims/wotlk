@@ -91,6 +91,28 @@ func (deathKnight *DeathKnight) SetupRotation() {
 		OpenerAction_FS,
 	})
 
+	deathKnight.DefineOpener(OpenerID_FrostSubUnholy_Full, []OpenerAction{
+		OpenerAction_IT,
+		OpenerAction_PS,
+		OpenerAction_BT,
+		OpenerAction_Pesti,
+		OpenerAction_UA,
+		OpenerAction_Obli,
+		OpenerAction_FS,
+		OpenerAction_ERW,
+		OpenerAction_Obli,
+		OpenerAction_Obli,
+		OpenerAction_Obli,
+		OpenerAction_FS,
+		OpenerAction_FS,
+		OpenerAction_FS,
+		OpenerAction_Obli,
+		OpenerAction_Obli,
+		OpenerAction_BS,
+		OpenerAction_Pesti,
+		OpenerAction_FS,
+	})
+
 	// To define the opener for Unholy for example (or any other UH tree you want
 	// just define the enum accordingly) it goes as follows:
 	deathKnight.DefineOpener(OpenerID_Unholy_Full, []OpenerAction{})
