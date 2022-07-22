@@ -8,8 +8,10 @@ import (
 func (deathKnight *DeathKnight) killingMachineOutcomeMod(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
 	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
 		if deathKnight.KillingMachineAura.IsActive() {
+			deathKnight.AddStatDynamic(sim, stats.MeleeCrit, 100*core.CritRatingPerCritChance)
 			deathKnight.AddStatDynamic(sim, stats.SpellCrit, 100*core.CritRatingPerCritChance)
 			outcomeApplier(sim, spell, spellEffect, attackTable)
+			deathKnight.AddStatDynamic(sim, stats.MeleeCrit, -100*core.CritRatingPerCritChance)
 			deathKnight.AddStatDynamic(sim, stats.SpellCrit, -100*core.CritRatingPerCritChance)
 		} else {
 			outcomeApplier(sim, spell, spellEffect, attackTable)
@@ -62,6 +64,10 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				deathKnight.LastCastOutcome = spellEffect.Outcome
 				if spellEffect.Landed() {
+					if deathKnight.KillingMachineAura.IsActive() {
+						deathKnight.KillingMachineAura.Deactivate(sim)
+					}
+
 					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 1, 0)
 					deathKnight.Spend(sim, spell, dkSpellCost)
 

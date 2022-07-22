@@ -119,7 +119,7 @@ func (deathKnight *DeathKnight) applyRime() {
 	deathKnight.RimeAura = deathKnight.RegisterAura(core.Aura{
 		ActionID: actionID,
 		Label:    "Rime",
-		Duration: core.NeverExpires,
+		Duration: time.Second * 15,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			deathKnight.HowlingBlast.CD.Reset()
 		},
@@ -153,19 +153,10 @@ func (deathKnight *DeathKnight) applyKillingMachine() {
 		Label:    "Killing Machine Proc",
 		ActionID: actionID,
 		Duration: time.Second * 30.0,
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spell == deathKnight.IcyTouch {
-				aura.Deactivate(sim)
-			}
-		},
 	})
 
-	deathKnight.GetOrRegisterAura(core.Aura{
-		Label:    "Killing Machine",
-		Duration: core.NeverExpires,
-		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Activate(sim)
-		},
+	core.MakePermanent(deathKnight.GetOrRegisterAura(core.Aura{
+		Label: "Killing Machine",
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if !spellEffect.Landed() {
 				return
@@ -181,7 +172,7 @@ func (deathKnight *DeathKnight) applyKillingMachine() {
 				deathKnight.KillingMachineAura.Refresh(sim)
 			}
 		},
-	})
+	}))
 }
 
 func (deathKnight *DeathKnight) applyIcyTalons() {
