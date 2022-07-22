@@ -1,0 +1,17 @@
+# nodejs modules
+node_modules
+
+# IDE folders
+.vscode
+.idea
+
+# binaries
+dist
+binary_dist
+sim/web/__debug_bin
+
+# temporary files
+*.results.tmp
+.dockerignore
+*.code-workspace
+wowsimwotlk
