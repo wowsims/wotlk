@@ -29,6 +29,7 @@ import { TanksPicker } from "./tanks_picker.js";
 
 declare var Muuri: any;
 declare var tippy: any;
+declare var pako: any;
 
 export interface RaidSimConfig {
 	knownIssues?: Array<string>,
@@ -368,6 +369,20 @@ export class RaidSimUI extends SimUI {
 			blessings: this.blessingsPicker!.getAssignments(),
 			encounter: this.sim.encounter.toProto(),
 		});
+	}
+
+	toLink(): string {
+		const proto = this.toProto();
+		// When sharing links, people generally don't intend to share settings.
+		proto.settings = undefined;
+
+		const protoBytes = RaidSimSettings.toBinary(proto);
+		const deflated = pako.deflate(protoBytes, { to: 'string' });
+		const encoded = btoa(String.fromCharCode(...deflated));
+
+		const linkUrl = new URL(window.location.href);
+		linkUrl.hash = encoded;
+		return linkUrl.toString();
 	}
 
 	fromProto(eventID: EventID, settings: RaidSimSettings) {

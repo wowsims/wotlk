@@ -83,6 +83,8 @@ func init() {
 		BaseDamage: core.BaseDamageConfigRoll(1024, 1536),
 	})
 
+	core.AddEffectsToTest = true
+
 	newProcDamageEffect(ProcDamageEffect{
 		ID: 40371,
 		Trigger: ProcTrigger{
@@ -122,6 +124,4 @@ func init() {
 		School:     core.SpellSchoolShadow,
 		BaseDamage: core.BaseDamageConfigRoll(1750, 2250),
 	})
-
-	core.AddEffectsToTest = true
 }
