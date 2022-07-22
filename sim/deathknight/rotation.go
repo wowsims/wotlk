@@ -44,58 +44,74 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 	}
 }
 
+func (o *Sequence) IsOngoing() bool {
+	return o.idx < o.numActions
+}
+
+func (o *Sequence) DoAction(sim *core.Simulation, target *core.Unit, deathKnight *DeathKnight) bool {
+	casted := false
+	advance := true
+	action := o.actions[o.idx]
+
+	switch action {
+	case RotationAction_IT:
+		casted = deathKnight.CastIcyTouch(sim, target)
+		// Add this line if you care about recasting a spell in the opener in
+		// case it missed
+		advance = deathKnight.LastCastOutcome != core.OutcomeMiss
+	case RotationAction_PS:
+		casted = deathKnight.CastPlagueStrike(sim, target)
+		advance = deathKnight.LastCastOutcome != core.OutcomeMiss
+	case RotationAction_UA:
+		casted = deathKnight.CastUnbreakableArmor(sim, target)
+		// Add this line if your spell does not incur a GCD or you will hang!
+		deathKnight.WaitUntil(sim, sim.CurrentTime)
+	case RotationAction_BT:
+		casted = deathKnight.CastBloodTap(sim, target)
+		deathKnight.WaitUntil(sim, sim.CurrentTime)
+	case RotationAction_Obli:
+		casted = deathKnight.CastObliterate(sim, target)
+	case RotationAction_FS:
+		casted = deathKnight.CastFrostStrike(sim, target)
+	case RotationAction_Pesti:
+		casted = deathKnight.CastPestilence(sim, target)
+		if deathKnight.LastCastOutcome == core.OutcomeMiss {
+			advance = false
+		}
+	case RotationAction_ERW:
+		casted = deathKnight.CastEmpowerRuneWeapon(sim, target)
+		deathKnight.WaitUntil(sim, sim.CurrentTime)
+	case RotationAction_HB_Ghoul_RimeCheck:
+		// You can do custom actions, this is deciding whether to HB or raise dead
+		if deathKnight.RimeAura.IsActive() {
+			casted = deathKnight.CastHowlingBlast(sim, target)
+		} else {
+			casted = deathKnight.CastRaiseDead(sim, target)
+		}
+	case RotationAction_BS:
+		casted = deathKnight.CastBloodStrike(sim, target)
+	}
+
+	// Advances the opener
+	if casted && advance {
+		o.idx += 1
+	}
+
+	return casted
+}
+
 func (o *Sequence) DoNext(sim *core.Simulation, deathKnight *DeathKnight) bool {
 	target := deathKnight.CurrentTarget
 	casted := &deathKnight.castSuccessful
-	advance := true
 	*casted = false
 
-	if o.idx < o.numActions {
-		action := o.actions[o.idx]
-
-		switch action {
-		case RotationAction_IT:
-			*casted = deathKnight.CastIcyTouch(sim, target)
-			// Add this line if you care about recasting a spell in the opener in
-			// case it missed
-			advance = deathKnight.LastCastOutcome != core.OutcomeMiss
-		case RotationAction_PS:
-			*casted = deathKnight.CastPlagueStrike(sim, target)
-			advance = deathKnight.LastCastOutcome != core.OutcomeMiss
-		case RotationAction_UA:
-			*casted = deathKnight.CastUnbreakableArmor(sim, target)
-			// Add this line if your spell does not incur a GCD or you will hang!
-			deathKnight.WaitUntil(sim, sim.CurrentTime)
-		case RotationAction_BT:
-			*casted = deathKnight.CastBloodTap(sim, target)
-			deathKnight.WaitUntil(sim, sim.CurrentTime)
-		case RotationAction_Obli:
-			*casted = deathKnight.CastObliterate(sim, target)
-		case RotationAction_FS:
-			*casted = deathKnight.CastFrostStrike(sim, target)
-		case RotationAction_Pesti:
-			*casted = deathKnight.CastPestilence(sim, target)
-			if deathKnight.LastCastOutcome == core.OutcomeMiss {
-				advance = false
-			}
-		case RotationAction_ERW:
-			*casted = deathKnight.CastEmpowerRuneWeapon(sim, target)
-			deathKnight.WaitUntil(sim, sim.CurrentTime)
-		case RotationAction_HB_Ghoul_RimeCheck:
-			// You can do custom actions, this is deciding whether to HB or raise dead
-			if deathKnight.RimeAura.IsActive() {
-				*casted = deathKnight.CastHowlingBlast(sim, target)
-			} else {
-				*casted = deathKnight.CastRaiseDead(sim, target)
-			}
-		case RotationAction_BS:
-			*casted = deathKnight.CastBloodStrike(sim, target)
+	if deathKnight.sequence != nil {
+		*casted = deathKnight.sequence.DoAction(sim, target, deathKnight)
+		if !deathKnight.sequence.IsOngoing() {
+			deathKnight.sequence = nil
 		}
-
-		// Advances the opener
-		if *casted && advance {
-			o.idx += 1
-		}
+	} else if o.IsOngoing() {
+		*casted = deathKnight.opener.DoAction(sim, target, deathKnight)
 	} else {
 		deathKnight.onOpener = false
 
