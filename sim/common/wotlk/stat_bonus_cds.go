@@ -7,13 +7,29 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+type StatCDFactory func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration)
+
 func init() {
 	// Keep these separated by stat, ordered by item ID within each group.
-	core.AddEffectsToTest = false
 
-	newHasteActive := func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
-		core.NewSimpleStatOffensiveTrinketEffect(itemID, stats.Stats{stats.MeleeHaste: bonus, stats.SpellHaste: bonus}, duration, cooldown)
+	// Wraps factory functions so that only the first item is included in tests.
+	testFirstOnly := func(factory StatCDFactory) StatCDFactory {
+		first := true
+		return func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
+			if first {
+				first = false
+				factory(itemID, bonus, duration, cooldown)
+			} else {
+				core.AddEffectsToTest = false
+				factory(itemID, bonus, duration, cooldown)
+				core.AddEffectsToTest = true
+			}
+		}
 	}
+
+	newHasteActive := testFirstOnly(func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
+		core.NewSimpleStatOffensiveTrinketEffect(itemID, stats.Stats{stats.MeleeHaste: bonus, stats.SpellHaste: bonus}, duration, cooldown)
+	})
 	newHasteActive(36972, 256, time.Second*20, time.Minute*2) // Tome of Arcane Phenomena
 	newHasteActive(37558, 122, time.Second*20, time.Minute*2) // Tidal Boon
 	newHasteActive(37560, 124, time.Second*20, time.Minute*2) // Vial of Renewal
@@ -27,9 +43,9 @@ func init() {
 	newHasteActive(48722, 512, time.Second*20, time.Minute*2) // Shard of the Crystal Heart
 	newHasteActive(50260, 464, time.Second*20, time.Minute*2) // Ephemeral Snowflake
 
-	newAttackPowerActive := func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
+	newAttackPowerActive := testFirstOnly(func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
 		core.NewSimpleStatOffensiveTrinketEffect(itemID, stats.Stats{stats.AttackPower: bonus, stats.RangedAttackPower: bonus}, duration, cooldown)
-	}
+	})
 	newAttackPowerActive(35937, 328, time.Second*20, time.Minute*2)  // Braxley's Backyard Moonshine
 	newAttackPowerActive(36871, 280, time.Second*20, time.Minute*2)  // Fury of the Encroaching Storm
 	newAttackPowerActive(37166, 670, time.Second*20, time.Minute*2)  // Sphere of Red Dragon's Blood
@@ -42,9 +58,9 @@ func init() {
 	newAttackPowerActive(46086, 752, time.Second*20, time.Minute*2)  // Platinum Disks of Battle
 	newAttackPowerActive(47734, 1024, time.Second*20, time.Minute*2) // Mark of Supremacy
 
-	newSpellPowerActive := func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
+	newSpellPowerActive := testFirstOnly(func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
 		core.NewSimpleStatOffensiveTrinketEffect(itemID, stats.Stats{stats.SpellPower: bonus, stats.HealingPower: bonus}, duration, cooldown)
-	}
+	})
 	newSpellPowerActive(35935, 178, time.Second*20, time.Minute*2) // Infused Coldstone Rune
 	newSpellPowerActive(36872, 173, time.Second*20, time.Minute*2) // Mender of the Oncoming Dawn
 	newSpellPowerActive(36874, 183, time.Second*20, time.Minute*2) // Horn of the Herald
@@ -66,14 +82,14 @@ func init() {
 	newSpellPowerActive(48724, 599, time.Second*20, time.Minute*2) // Talisman of Resurgence
 	newSpellPowerActive(50357, 716, time.Second*20, time.Minute*2) // Maghia's Misguided Quill
 
-	newArmorPenActive := func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
+	newArmorPenActive := testFirstOnly(func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
 		core.NewSimpleStatOffensiveTrinketEffect(itemID, stats.Stats{stats.ArmorPenetration: bonus}, duration, cooldown)
-	}
+	})
 	newArmorPenActive(37723, 291, time.Second*20, time.Minute*2) // Incisor Fragment
 
-	newHealthActive := func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
+	newHealthActive := testFirstOnly(func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
 		core.NewSimpleStatDefensiveTrinketEffect(itemID, stats.Stats{stats.Health: bonus}, duration, cooldown)
-	}
+	})
 	newHealthActive(37638, 3025, time.Second*15, time.Minute*3) // Offering of Sacrifice
 	newHealthActive(39292, 3025, time.Second*15, time.Minute*3) // Repelling Charge
 	newHealthActive(42128, 3385, time.Second*15, time.Minute*3) // Battlemaster's Hostility
@@ -92,19 +108,19 @@ func init() {
 	newHealthActive(47451, 5186, time.Second*15, time.Minute*3) // Juggernaut's Vitality H
 	newHealthActive(50235, 4104, time.Second*15, time.Minute*3) // Ick's Rotting Thumb
 
-	newArmorActive := func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
+	newArmorActive := testFirstOnly(func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
 		core.NewSimpleStatDefensiveTrinketEffect(itemID, stats.Stats{stats.Armor: bonus}, duration, cooldown)
-	}
+	})
 	newArmorActive(36993, 3570, time.Second*20, time.Minute*2) // Seal of the Pantheon
 
-	newBlockValueActive := func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
+	newBlockValueActive := testFirstOnly(func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
 		core.NewSimpleStatDefensiveTrinketEffect(itemID, stats.Stats{stats.BlockValue: bonus}, duration, cooldown)
-	}
+	})
 	newBlockValueActive(37872, 440, time.Second*40, time.Minute*2) // Lavanthor's Talisman
 
-	newDodgeActive := func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
+	newDodgeActive := testFirstOnly(func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
 		core.NewSimpleStatDefensiveTrinketEffect(itemID, stats.Stats{stats.Dodge: bonus}, duration, cooldown)
-	}
+	})
 	newDodgeActive(40257, 455, time.Second*20, time.Minute*2) // Defender's Code
 	newDodgeActive(40683, 335, time.Second*20, time.Minute*2) // Valor Medal of the First War
 	newDodgeActive(44063, 300, time.Second*10, time.Minute*1) // Figurine - Monarch Crab
@@ -112,22 +128,20 @@ func init() {
 	newDodgeActive(49080, 335, time.Second*20, time.Minute*2) // Brawler's Souvenir
 	newDodgeActive(47735, 512, time.Second*20, time.Minute*2) // Glyph of Indomitability
 
-	newParryActive := func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
+	newParryActive := testFirstOnly(func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
 		core.NewSimpleStatDefensiveTrinketEffect(itemID, stats.Stats{stats.Parry: bonus}, duration, cooldown)
-	}
+	})
 	newParryActive(40372, 375, time.Second*20, time.Minute*2) // Rune of Repulsion
 	newParryActive(46021, 380, time.Second*20, time.Minute*2) // Royal Seal of King Llane
 
-	newSpiritActive := func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
+	newSpiritActive := testFirstOnly(func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
 		core.NewSimpleStatDefensiveTrinketEffect(itemID, stats.Stats{stats.Spirit: bonus}, duration, cooldown)
-	}
+	})
 	newSpiritActive(39388, 336, time.Second*20, time.Minute*2) // Spirit-World Glass
 
-	newResistsActive := func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
+	newResistsActive := testFirstOnly(func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
 		core.NewSimpleStatDefensiveTrinketEffect(itemID, stats.Stats{stats.ArcaneResistance: bonus, stats.FireResistance: bonus, stats.FrostResistance: bonus, stats.NatureResistance: bonus, stats.ShadowResistance: bonus}, duration, cooldown)
-	}
+	})
 	newResistsActive(50361, 239, time.Second*10, time.Minute*1) // Sindragona's Flawless Fang
 	newResistsActive(50364, 268, time.Second*10, time.Minute*1) // Sindragona's Flawless Fang H
-
-	core.AddEffectsToTest = true
 }

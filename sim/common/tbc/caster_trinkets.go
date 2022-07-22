@@ -9,6 +9,7 @@ import (
 )
 
 func init() {
+	core.AddEffectsToTest = false
 	// Offensive trinkets. Keep these in order by item ID.
 	core.NewSimpleStatOffensiveTrinketEffect(23046, stats.Stats{stats.SpellPower: 130}, time.Second*20, time.Minute*2)  // Restrained Essence of Sapphiron
 	core.NewSimpleStatOffensiveTrinketEffect(24126, stats.Stats{stats.SpellPower: 150}, time.Second*20, time.Minute*5)  // Living Ruby Serpent
@@ -210,4 +211,5 @@ func init() {
 		core.NewItemEffect(itemID, func(core.Agent) {})
 	}
 
+	core.AddEffectsToTest = true
 }

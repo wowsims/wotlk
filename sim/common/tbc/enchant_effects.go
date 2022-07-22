@@ -9,6 +9,7 @@ import (
 )
 
 func init() {
+	core.AddEffectsToTest = false
 	// Keep these in order by item ID.
 
 	// TODO: Crusader, Mongoose, and Executioner could also be modelled as AddWeaponEffect instead
@@ -283,4 +284,5 @@ func init() {
 		}
 	})
 
+	core.AddEffectsToTest = true
 }

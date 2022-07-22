@@ -1023,7 +1023,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 						updateToggle();
 					},
 				});
-				const petTypeToggle = new EnumPicker(toggleContainer, this.player as Player<Spec.SpecHunter>, makePetTypeInputConfig(false));
+				const petTypeToggle = new IconEnumPicker(toggleContainer, this.player as Player<Spec.SpecHunter>, makePetTypeInputConfig(false));
 				updateToggle();
 			}
 		});
