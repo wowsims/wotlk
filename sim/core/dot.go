@@ -51,11 +51,10 @@ type Dot struct {
 // However sp and haste are recalculated.
 func (dot *Dot) Rollover(sim *Simulation) {
 	oldCrit := dot.snapshotEffect.BonusSpellCritRating
-	oldDmg := dot.snapshotEffect.DamageMultiplier
 
-	dot.TakeSnapshot(sim)
+	// by not calling 'dot.TakeSnapshot' we dont recalculate dmg multiplier
+	dot.tickFn = dot.TickEffects(sim, dot)
 
-	dot.snapshotEffect.DamageMultiplier = oldDmg
 	dot.snapshotEffect.BonusSpellCritRating = oldCrit
 
 	dot.RecomputeAuraDuration()
@@ -99,6 +98,7 @@ func (dot *Dot) RecomputeAuraDuration() {
 // In most cases this will be called automatically, and should only be called
 // to force a new snapshot to be taken.
 func (dot *Dot) TakeSnapshot(sim *Simulation) {
+	dot.snapshotMultiplier = dot.snapshotEffect.snapshotAttackModifiers(dot.Spell)
 	dot.tickFn = dot.TickEffects(sim, dot)
 }
 
@@ -168,11 +168,9 @@ func NewDot(config Dot) *Dot {
 func TickFuncSnapshot(target *Unit, baseEffect SpellEffect) TickEffects {
 	return func(sim *Simulation, dot *Dot) func() {
 		*dot.snapshotEffect = baseEffect
-		dot.snapshotMultiplier = baseEffect.snapshotAttackModifiers(dot.Spell)
 		dot.snapshotEffect.DamageMultiplier *= dot.snapshotMultiplier
 		dot.snapshotEffect.Target = target
 		baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell) // * dot.snapshotEffect.DamageMultiplier
-
 		dot.snapshotEffect.BonusSpellCritRating = dot.snapshotEffect.BonusSpellCritRating + dot.Spell.Unit.GetStat(stats.SpellCrit) + dot.Spell.Unit.PseudoStats.BonusSpellCritRating
 		// dot.snapshotEffect.DamageMultiplier = 1
 		dot.snapshotEffect.BaseDamage = BaseDamageConfigFlat(baseDamage)
