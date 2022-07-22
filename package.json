@@ -2,7 +2,11 @@
     "name": "wotlk",
     "version": "0.1.0",
     "private": true,
-    "devDependencies": {},
+    "devDependencies": {
+        "@types/jest": "^28.1.6",
+        "jest": "^28.1.3",
+        "ts-jest": "^28.0.7"
+    },
     "scripts": {
         "build": "bazel build //...",
         "test": "bazel test //..."

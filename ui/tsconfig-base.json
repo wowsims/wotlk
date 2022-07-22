@@ -8,6 +8,7 @@
 			"DOM",
 			"ES2021",
 		],
+        "types": [],
 		"allowJs": true,
 		"esModuleInterop": true,
 		"baseUrl": ".",
