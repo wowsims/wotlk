@@ -583,7 +583,7 @@ message Debuffs {
 	TristateEffect demoralizing_roar = 22;
 	TristateEffect demoralizing_shout = 23;
 	TristateEffect thunder_clap = 24;
-	TristateEffect icy_touch = 30;
+	TristateEffect frost_fever = 30;
 	bool infected_wounds = 35;
 	bool judgements_of_the_just = 36;
 

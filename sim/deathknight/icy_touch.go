@@ -5,11 +5,11 @@ import (
 )
 
 func (deathKnight *DeathKnight) registerIcyTouchSpell() {
-	deathKnight.IcyTouchAura = make([]*core.Aura, deathKnight.Env.GetNumTargets())
+	deathKnight.FrostFeverDebuffAura = make([]*core.Aura, deathKnight.Env.GetNumTargets())
 	for _, encounterTarget := range deathKnight.Env.Encounter.Targets {
 		target := &encounterTarget.Unit
-		itAura := core.IcyTouchAura(target, deathKnight.Talents.ImprovedIcyTouch)
-		deathKnight.IcyTouchAura[target.Index] = itAura
+		ffAura := core.FrostFeverAura(target, deathKnight.Talents.ImprovedIcyTouch)
+		deathKnight.FrostFeverDebuffAura[target.Index] = ffAura
 	}
 
 	impIcyTouchCoeff := 1.0 + 0.05*float64(deathKnight.Talents.ImprovedIcyTouch)
@@ -66,14 +66,6 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 
 					amountOfRunicPower := 10.0 + 2.5*float64(deathKnight.Talents.ChillOfTheGrave)
 					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
-
-					deathKnight.IcyTouchAura[spellEffect.Target.Index].Activate(sim)
-
-					// In reality if you have the talent just casting IT
-					// activates the aura, no need to check for enemy debuff
-					if deathKnight.IcyTalonsAura != nil {
-						deathKnight.IcyTalonsAura.Activate(sim)
-					}
 				}
 			},
 		}),
