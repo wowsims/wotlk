@@ -1,54 +1,55 @@
 package deathknight
 
-import "github.com/wowsims/wotlk/sim/core"
-
-type OpenerAction uint8
+type RotationAction uint8
 
 // Add your UH rotation Actions here and then on the DoNext function
 const (
-	OpenerAction_Skip OpenerAction = iota
-	OpenerAction_IT
-	OpenerAction_PS
-	OpenerAction_Obli
-	OpenerAction_BS
-	OpenerAction_BT
-	OpenerAction_UA
-	OpenerAction_RD
-	OpenerAction_Pesti
-	OpenerAction_FS
-	OpenerAction_HW
-	OpenerAction_ERW
-	OpenerAction_HB_Ghoul_RimeCheck
-	OpenerAction_PrioMode
+	RotationAction_Skip RotationAction = iota
+	RotationAction_IT
+	RotationAction_PS
+	RotationAction_Obli
+	RotationAction_BS
+	RotationAction_BT
+	RotationAction_UA
+	RotationAction_RD
+	RotationAction_Pesti
+	RotationAction_FS
+	RotationAction_HW
+	RotationAction_ERW
+	RotationAction_HB_Ghoul_RimeCheck
+	RotationAction_PrioMode
 )
 
-type OpenerID uint8
+type RotationID uint8
 
 const (
-	OpenerID_FrostSubBlood_Full OpenerID = iota
-	OpenerID_FrostSubUnholy_Full
-	OpenerID_Unholy_Full
-	OpenerID_Count
-	OpenerID_Unknown
+	RotationID_Default RotationID = iota
+	RotationID_FrostSubBlood_Full
+	RotationID_FrostSubUnholy_Full
+	RotationID_Unholy_Full
+	RotationID_Count
+	RotationID_Unknown
 )
 
-type Opener struct {
-	id         OpenerID
+type Sequence struct {
+	id         RotationID
 	idx        int
 	numActions int
-	actions    []OpenerAction
+	actions    []RotationAction
 }
 
 type RotationHelper struct {
 	onOpener bool
-	opener   *Opener
-	openers  []Opener
+	opener   *Sequence
+	openers  []Sequence
+
+	sequence *Sequence
 
 	castSuccessful     bool
 	justCastPestilence bool
 }
 
-func TernaryOpenerAction(condition bool, t OpenerAction, f OpenerAction) OpenerAction {
+func TernaryRotationAction(condition bool, t RotationAction, f RotationAction) RotationAction {
 	if condition {
 		return t
 	} else {
@@ -56,7 +57,7 @@ func TernaryOpenerAction(condition bool, t OpenerAction, f OpenerAction) OpenerA
 	}
 }
 
-func (r *RotationHelper) DefineOpener(id OpenerID, actions []OpenerAction) {
+func (r *RotationHelper) DefineOpener(id RotationID, actions []RotationAction) {
 	o := &r.openers[id]
 	o.id = id
 	o.idx = 0
@@ -64,134 +65,34 @@ func (r *RotationHelper) DefineOpener(id OpenerID, actions []OpenerAction) {
 	o.actions = actions
 }
 
-func (deathKnight *DeathKnight) SetupRotation() {
-	deathKnight.openers = make([]Opener, OpenerID_Count)
-
-	// This defines the Sub Blood opener
-	deathKnight.DefineOpener(OpenerID_FrostSubBlood_Full, []OpenerAction{
-		OpenerAction_IT,
-		OpenerAction_PS,
-		OpenerAction_UA,
-		OpenerAction_BT,
-		OpenerAction_Obli,
-		OpenerAction_FS,
-		OpenerAction_Pesti,
-		OpenerAction_ERW,
-		OpenerAction_Obli,
-		OpenerAction_Obli,
-		OpenerAction_Obli,
-		OpenerAction_FS,
-		OpenerAction_HB_Ghoul_RimeCheck,
-		OpenerAction_FS,
-		OpenerAction_Obli,
-		OpenerAction_Obli,
-		OpenerAction_Pesti,
-		OpenerAction_FS,
-		OpenerAction_BS,
-		OpenerAction_FS,
-	})
-
-	deathKnight.DefineOpener(OpenerID_FrostSubUnholy_Full, []OpenerAction{
-		OpenerAction_IT,
-		OpenerAction_PS,
-		OpenerAction_BT,
-		OpenerAction_Pesti,
-		OpenerAction_UA,
-		OpenerAction_Obli,
-		OpenerAction_FS,
-		OpenerAction_ERW,
-		OpenerAction_Obli,
-		OpenerAction_Obli,
-		OpenerAction_Obli,
-		OpenerAction_FS,
-		OpenerAction_FS,
-		OpenerAction_FS,
-		OpenerAction_Obli,
-		OpenerAction_Obli,
-		OpenerAction_BS,
-		OpenerAction_Pesti,
-		OpenerAction_FS,
-	})
-
-	// To define the opener for Unholy for example (or any other UH tree you want
-	// just define the enum accordingly) it goes as follows:
-	deathKnight.DefineOpener(OpenerID_Unholy_Full, []OpenerAction{})
-
-	// IMPORTANT
-	openerId := OpenerID_Unknown
-	// Also you need to update this to however you define spec
-	if deathKnight.Talents.DarkConviction > 0 && deathKnight.Talents.HowlingBlast {
-		openerId = OpenerID_FrostSubBlood_Full
-	} else if deathKnight.Talents.BloodCakedBlade > 0 && deathKnight.Talents.HowlingBlast {
-		openerId = OpenerID_FrostSubUnholy_Full
-	} else if deathKnight.Talents.SummonGargoyle {
-		openerId = OpenerID_Unholy_Full
-	} else {
-		panic("Unknown spec for rotation!")
-	}
-
-	deathKnight.opener = &deathKnight.openers[openerId]
-	deathKnight.onOpener = true
+func (r *RotationHelper) PushSequence(actions []RotationAction) {
+	seq := &Sequence{}
+	seq.id = RotationID_Unknown
+	seq.idx = 0
+	seq.numActions = len(actions)
+	seq.actions = actions
+	r.sequence = seq
 }
 
-func (deathKnight *DeathKnight) DiseaseCheckWrapper(sim *core.Simulation, target *core.Unit, spell *core.Spell) bool {
-	success := false
+func (deathKnight *DeathKnight) SetupRotation() {
+	deathKnight.openers = make([]Sequence, RotationID_Count)
 
-	if !deathKnight.TargetHasDisease(FrostFeverAuraLabel, target) {
-		success = deathKnight.CastIcyTouch(sim, target)
-	} else if !deathKnight.TargetHasDisease(BloodPlagueAuraLabel, target) {
-		success = deathKnight.CastPlagueStrike(sim, target)
-	} else if deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim) < spell.CurCast.GCD ||
-		deathKnight.BloodPlagueDisease[target.Index].RemainingDuration(sim) < spell.CurCast.GCD {
-		success = deathKnight.CastPestilence(sim, target)
-		if deathKnight.LastCastOutcome == core.OutcomeMiss {
-			// Deal with pestilence miss
-			// TODO:
-		} else {
+	deathKnight.setupFrostRotations()
+	deathKnight.setupUnholyRotations()
 
-		}
+	// IMPORTANT
+	rotationId := RotationID_Unknown
+	// Also you need to update this to however you define spec
+	if deathKnight.Talents.DarkConviction > 0 && deathKnight.Talents.HowlingBlast {
+		rotationId = RotationID_FrostSubBlood_Full
+	} else if deathKnight.Talents.BloodCakedBlade > 0 && deathKnight.Talents.HowlingBlast {
+		rotationId = RotationID_FrostSubUnholy_Full
+	} else if deathKnight.Talents.SummonGargoyle {
+		rotationId = RotationID_Unholy_Full
 	} else {
-		if deathKnight.CanCast(sim, spell) {
-			ffExpiresIn := deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim)
-			bpExpiresIn := deathKnight.BloodPlagueDisease[target.Index].RemainingDuration(sim)
-			ffExpiresAt := ffExpiresIn + sim.CurrentTime
-			bpExpiresAt := bpExpiresIn + sim.CurrentTime
-			if spell.CurCast.GCD > ffExpiresIn || spell.CurCast.GCD > bpExpiresIn {
-				return success
-			}
-
-			crpb := deathKnight.GetCalcRunicPowerBar()
-			spellCost := DetermineOptimalCostForSpell(&crpb, sim, deathKnight, spell)
-
-			// Add whichever non-frost specific checks you want here, I guess you'll need them.
-
-			if !(deathKnight.RimeAura.IsActive() && spell == deathKnight.HowlingBlast) {
-				crpb.Spend(sim, spellCost)
-			}
-
-			if crpb.CurrentBloodRunes() == 0 && crpb.CurrentDeathRunes() == 0 {
-				nextBloodRuneAt := crpb.BloodRuneReadyAt(sim)
-				nextDeathRuneAt := crpb.DeathRuneReadyAt(sim)
-
-				ff1 := (float64(ffExpiresAt) > nextBloodRuneAt) && (float64(ffExpiresAt)-nextBloodRuneAt < float64(spell.CurCast.GCD))
-				ff2 := (float64(ffExpiresAt) > nextDeathRuneAt) && (float64(ffExpiresAt)-nextDeathRuneAt < float64(spell.CurCast.GCD))
-				bp1 := (float64(bpExpiresAt) > nextBloodRuneAt) && (float64(bpExpiresAt)-nextBloodRuneAt < float64(spell.CurCast.GCD))
-				bp2 := (float64(bpExpiresAt) > nextDeathRuneAt) && (float64(bpExpiresAt)-nextDeathRuneAt < float64(spell.CurCast.GCD))
-
-				if (ff1 || ff2) && (bp1 || bp2) {
-					if deathKnight.CanCast(sim, spell) {
-						spell.Cast(sim, target)
-						success = true
-					}
-				} else {
-					return success
-				}
-			} else {
-				spell.Cast(sim, target)
-				success = true
-			}
-		}
+		rotationId = RotationID_Default
 	}
 
-	return success
+	deathKnight.opener = &deathKnight.openers[rotationId]
+	deathKnight.onOpener = true
 }

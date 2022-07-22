@@ -150,8 +150,8 @@ dps_results: {
 dps_results: {
  key: "TestHunter-AllItems-CryptstalkerBattlegear"
  value: {
-  dps: 3231.3160758760478
-  tps: 2532.462714465362
+  dps: 2639.7279348628444
+  tps: 1940.8745734521572
  }
 }
 dps_results: {
@@ -339,8 +339,8 @@ dps_results: {
 dps_results: {
  key: "TestHunter-AllItems-Gronnstalker'sArmor"
  value: {
-  dps: 2915.7377377422854
-  tps: 2283.3836043966166
+  dps: 2396.249083629057
+  tps: 1763.8949502833877
  }
 }
 dps_results: {
@@ -374,8 +374,8 @@ dps_results: {
 dps_results: {
  key: "TestHunter-AllItems-IncisorFragment-37723"
  value: {
-  dps: 2406.8134213900344
-  tps: 1795.1878142571547
+  dps: 2295.86767197637
+  tps: 1684.2420648434904
  }
 }
 dps_results: {

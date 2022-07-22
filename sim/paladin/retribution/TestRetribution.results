@@ -360,8 +360,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-IncisorFragment-37723"
  value: {
-  dps: 3097.540108359117
-  tps: 2629.4084908744485
+  dps: 2989.830161461611
+  tps: 2530.4656907621657
  }
 }
 dps_results: {

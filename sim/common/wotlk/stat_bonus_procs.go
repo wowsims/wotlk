@@ -160,7 +160,7 @@ func init() {
 		Duration:   time.Second * 10,
 		Callback:   OnSpellHitDealt,
 		ProcMask:   core.ProcMaskMeleeOrRanged,
-		Outcome:    core.OutcomeLanded,
+		Outcome:    core.OutcomeCrit,
 		ProcChance: 0.10,
 		ICD:        time.Second * 50,
 	})
