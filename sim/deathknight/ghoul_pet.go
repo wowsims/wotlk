@@ -24,7 +24,7 @@ type GhoulPet struct {
 func (deathKnight *DeathKnight) NewArmyGhoulPet(index int) *GhoulPet {
 	ghoulPet := &GhoulPet{
 		Pet: core.NewPet(
-			"Army of the Dead Ghoul", //+strconv.Itoa(index),
+			"Army of the Dead", //+strconv.Itoa(index),
 			&deathKnight.Character,
 			ghoulPetBaseStats,
 			deathKnight.armyGhoulStatInheritance(),
