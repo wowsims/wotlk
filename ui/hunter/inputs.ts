@@ -6,10 +6,11 @@ import { Spec } from '/wotlk/core/proto/common.js';
 import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
 import { Player } from '/wotlk/core/player.js';
 import { Sim } from '/wotlk/core/sim.js';
-import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
 import { Target } from '/wotlk/core/target.js';
 import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
 import { makePetTypeInputConfig } from '/wotlk/core/talents/hunter_pet.js';
+
+import * as InputHelpers from '/wotlk/core/components/input_helpers.js';
 
 import {
 	Hunter,
@@ -24,11 +25,8 @@ import {
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
 
-export const WeaponAmmo = {
-	extraCssClasses: [
-		'ammo-picker',
-	],
-	numColumns: 1,
+export const WeaponAmmo = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecHunter, Ammo>({
+	fieldName: 'ammo',
 	values: [
 		{ color: 'grey', value: Ammo.AmmoNone },
 		{ actionId: ActionId.fromItemId(52021), value: Ammo.IcebladeArrow },
@@ -39,60 +37,22 @@ export const WeaponAmmo = {
 		{ actionId: ActionId.fromItemId(33803), value: Ammo.AdamantiteStinger },
 		{ actionId: ActionId.fromItemId(28056), value: Ammo.BlackflightArrow },
 	],
-	equals: (a: Ammo, b: Ammo) => a == b,
-	zeroValue: Ammo.AmmoNone,
-	changedEvent: (player: Player<Spec.SpecHunter>) => player.specOptionsChangeEmitter,
-	getValue: (player: Player<Spec.SpecHunter>) => player.getSpecOptions().ammo,
-	setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: number) => {
-		const newOptions = player.getSpecOptions();
-		newOptions.ammo = newValue;
-		player.setSpecOptions(eventID, newOptions);
-	},
-};
+});
 
-export const LatencyMs = {
-	type: 'number' as const,
-	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-	config: {
-		extraCssClasses: [
-			'latency-ms-picker',
-		],
-		label: 'Latency',
-		labelTooltip: 'Player latency, in milliseconds. Adds a delay to actions other than auto shot.',
-		changedEvent: (player: Player<Spec.SpecHunter>) => player.specOptionsChangeEmitter,
-		getValue: (player: Player<Spec.SpecHunter>) => player.getSpecOptions().latencyMs,
-		setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: number) => {
-			const newOptions = player.getSpecOptions();
-			newOptions.latencyMs = newValue;
-			player.setSpecOptions(eventID, newOptions);
-		},
-	},
-};
+export const LatencyMs = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecHunter>({
+	fieldName: 'latencyMs',
+	label: 'Latency',
+	labelTooltip: 'Player latency, in milliseconds. Adds a delay to actions other than auto shot.',
+});
 
-export const PetTypeInput = {
-	type: 'enum' as const,
-	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-	config: makePetTypeInputConfig(true),
-};
+export const PetTypeInput = makePetTypeInputConfig(true);
 
-export const PetUptime = {
-	type: 'number' as const,
-	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-	config: {
-		extraCssClasses: [
-			'pet-uptime-picker',
-		],
-		label: 'Pet Uptime (%)',
-		labelTooltip: 'Percent of the fight duration for which your pet will be alive.',
-		changedEvent: (player: Player<Spec.SpecHunter>) => player.specOptionsChangeEmitter,
-		getValue: (player: Player<Spec.SpecHunter>) => player.getSpecOptions().petUptime * 100,
-		setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: number) => {
-			const newOptions = player.getSpecOptions();
-			newOptions.petUptime = newValue / 100;
-			player.setSpecOptions(eventID, newOptions);
-		},
-	},
-};
+export const PetUptime = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecHunter>({
+	fieldName: 'petUptime',
+	label: 'Pet Uptime (%)',
+	labelTooltip: 'Percent of the fight duration for which your pet will be alive.',
+	percent: true,
+});
 
 //export const PetSingleAbility = {
 //	type: 'boolean' as const,
@@ -113,25 +73,13 @@ export const PetUptime = {
 //	},
 //};
 
-export const SniperTrainingUptime = {
-	type: 'number' as const,
-	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-	config: {
-		extraCssClasses: [
-			'sniper-training-uptime-picker',
-		],
-		label: 'ST Uptime (%)',
-		labelTooltip: 'Uptime for the Sniper Training talent, as a percent of the fight duration.',
-		changedEvent: (player: Player<Spec.SpecHunter>) => TypedEvent.onAny([player.specOptionsChangeEmitter, player.talentsChangeEmitter]),
-		getValue: (player: Player<Spec.SpecHunter>) => player.getSpecOptions().sniperTrainingUptime * 100,
-		setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: number) => {
-			const newOptions = player.getSpecOptions();
-			newOptions.sniperTrainingUptime = newValue / 100;
-			player.setSpecOptions(eventID, newOptions);
-		},
-		showWhen: (player: Player<Spec.SpecHunter>) => player.getTalents().sniperTraining > 0,
-	},
-};
+export const SniperTrainingUptime = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecHunter>({
+	fieldName: 'sniperTrainingUptime',
+	label: 'ST Uptime (%)',
+	labelTooltip: 'Uptime for the Sniper Training talent, as a percent of the fight duration.',
+	percent: true,
+	showWhen: (player: Player<Spec.SpecHunter>) => player.getTalents().sniperTraining > 0,
+});
 
 export const HunterRotationConfig = {
 	inputs: [
@@ -165,26 +113,16 @@ export const HunterRotationConfig = {
 		//		},
 		//	},
 		//},
-		{
-			type: 'enum' as const, cssClass: 'sting-picker',
-			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-			config: {
-				label: 'Sting',
-				labelTooltip: 'Maintains the selected Sting on the primary target.',
-				values: [
-					{ name: 'None', value: StingType.NoSting },
-					{ name: 'Scorpid Sting', value: StingType.ScorpidSting },
-					{ name: 'Serpent Sting', value: StingType.SerpentSting },
-				],
-				changedEvent: (player: Player<Spec.SpecHunter>) => player.rotationChangeEmitter,
-				getValue: (player: Player<Spec.SpecHunter>) => player.getRotation().sting,
-				setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: number) => {
-					const newRotation = player.getRotation();
-					newRotation.sting = newValue;
-					player.setRotation(eventID, newRotation);
-				},
-			},
-		},
+		InputHelpers.makeRotationEnumInput<Spec.SpecHunter, StingType>({
+			fieldName: 'sting',
+			label: 'Sting',
+			labelTooltip: 'Maintains the selected Sting on the primary target.',
+			values: [
+				{ name: 'None', value: StingType.NoSting },
+				{ name: 'Scorpid Sting', value: StingType.ScorpidSting },
+				{ name: 'Serpent Sting', value: StingType.SerpentSting },
+			],
+		}),
 		//{
 		//	type: 'boolean' as const, cssClass: 'lazy-rotation-picker',
 		//	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
@@ -200,36 +138,18 @@ export const HunterRotationConfig = {
 		//		},
 		//	},
 		//},
-		{
-			type: 'number' as const, cssClass: 'viper-start-picker',
-			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-			config: {
-				label: 'Viper Start Mana %',
-				labelTooltip: 'Switch to Aspect of the Viper when mana goes below this amount.',
-				changedEvent: (player: Player<Spec.SpecHunter>) => player.rotationChangeEmitter,
-				getValue: (player: Player<Spec.SpecHunter>) => player.getRotation().viperStartManaPercent * 100,
-				setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: number) => {
-					const newRotation = player.getRotation();
-					newRotation.viperStartManaPercent = newValue / 100;
-					player.setRotation(eventID, newRotation);
-				},
-			},
-		},
-		{
-			type: 'number' as const, cssClass: 'viper-stop-picker',
-			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-			config: {
-				label: 'Viper Stop Mana %',
-				labelTooltip: 'Switch back to Aspect of the Hawk when mana goes above this amount.',
-				changedEvent: (player: Player<Spec.SpecHunter>) => player.rotationChangeEmitter,
-				getValue: (player: Player<Spec.SpecHunter>) => player.getRotation().viperStopManaPercent * 100,
-				setValue: (eventID: EventID, player: Player<Spec.SpecHunter>, newValue: number) => {
-					const newRotation = player.getRotation();
-					newRotation.viperStopManaPercent = newValue / 100;
-					player.setRotation(eventID, newRotation);
-				},
-			},
-		},
+		InputHelpers.makeRotationNumberInput<Spec.SpecHunter>({
+			fieldName: 'viperStartManaPercent',
+			label: 'Viper Start Mana %',
+			labelTooltip: 'Switch to Aspect of the Viper when mana goes below this amount.',
+			percent: true,
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecHunter>({
+			fieldName: 'viperStopManaPercent',
+			label: 'Viper Stop Mana %',
+			labelTooltip: 'Switch back to Aspect of the Hawk when mana goes above this amount.',
+			percent: true,
+		}),
 		//{
 		//	type: 'enum' as const, cssClass: 'weave-picker',
 		//	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,

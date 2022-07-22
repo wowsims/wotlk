@@ -16,13 +16,13 @@ func (shaman *Shaman) stormstrikeDebuffAura(target *core.Unit) *core.Aura {
 		ActionID:  StormstrikeActionID,
 		Duration:  time.Second * 12,
 		MaxStacks: 4,
-        OnGain: func(aura *core.Aura, sim *core.Simulation) {
-            shaman.PseudoStats.NatureDamageDealtMultiplier *= 1.2
-        },
-        OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-            shaman.PseudoStats.NatureDamageDealtMultiplier /= 1.2
-        },
-        OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			shaman.PseudoStats.NatureDamageDealtMultiplier *= 1.2
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			shaman.PseudoStats.NatureDamageDealtMultiplier /= 1.2
+		},
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spell.Unit != &shaman.Unit {
 				return
 			}
@@ -32,7 +32,7 @@ func (shaman *Shaman) stormstrikeDebuffAura(target *core.Unit) *core.Aura {
 			if !spellEffect.Landed() || spellEffect.Damage == 0 {
 				return
 			}
-            aura.RemoveStack(sim)
+			aura.RemoveStack(sim)
 		},
 	})
 }
@@ -66,7 +66,7 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 	mhHit := shaman.newStormstrikeHitSpell(true)
 	ohHit := shaman.newStormstrikeHitSpell(false)
 
-	baseCost := baseMana*0.08
+	baseCost := baseMana * 0.08
 	if shaman.Equip[items.ItemSlotRanged].ID == StormfuryTotem {
 		baseCost -= 22
 	}

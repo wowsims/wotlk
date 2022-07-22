@@ -154,13 +154,13 @@ func (deathKnight *DeathKnight) applyKillingMachine() {
 		ActionID: actionID,
 		Duration: time.Second * 30.0,
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spell == deathKnight.IcyTouch || spell == deathKnight.FrostStrike || spell == deathKnight.HowlingBlast {
+			if spell == deathKnight.IcyTouch {
 				aura.Deactivate(sim)
 			}
 		},
 	})
 
-	deathKnight.RegisterAura(core.Aura{
+	deathKnight.GetOrRegisterAura(core.Aura{
 		Label:    "Killing Machine",
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
@@ -244,7 +244,7 @@ func (deathKnight *DeathKnight) bloodOfTheNorthProc(sim *core.Simulation, spell 
 
 			if deathKnight.bloodOfTheNorthWillProc(sim, botnChance) {
 				slot := deathKnight.SpendBloodRune(sim, spell.BloodRuneMetrics())
-				deathKnight.SetRuneAtSlotToState(0, slot, core.RuneState_DeathSpent, core.RuneKind_Death)
+				deathKnight.SetRuneAtIdxSlotToState(0, slot, core.RuneState_DeathSpent, core.RuneKind_Death)
 				deathKnight.SetAsGeneratedByReapingOrBoTN(slot)
 				return true
 			}

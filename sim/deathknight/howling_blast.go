@@ -51,6 +51,9 @@ func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 					deathKnight.LastCastOutcome = spellEffect.Outcome
 				}
 				if spellEffect.Landed() {
+					if deathKnight.KillingMachineAura.IsActive() {
+						deathKnight.KillingMachineAura.Deactivate(sim)
+					}
 					if deathKnight.CurrentTarget == spellEffect.Target {
 						if !deathKnight.RimeAura.IsActive() {
 							dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 1, 1)

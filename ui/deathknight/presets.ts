@@ -81,7 +81,7 @@ export const DefaultRotation = DeathKnightRotation.create({
   unholyPresenceOpener: false,
   useDeathAndDecay: false,
 	refreshHornOfWinter: false,
-	wipFrostRotation: false,
+	wipFrostRotation: true,
 });
 
 export const DefaultOptions = DeathKnightOptions.create({
