@@ -44,7 +44,7 @@ func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
 	}
 }
 
-func (o *Opener) DoNext(sim *core.Simulation, deathKnight *DeathKnight) bool {
+func (o *Sequence) DoNext(sim *core.Simulation, deathKnight *DeathKnight) bool {
 	target := deathKnight.CurrentTarget
 	casted := &deathKnight.castSuccessful
 	advance := true
@@ -54,41 +54,41 @@ func (o *Opener) DoNext(sim *core.Simulation, deathKnight *DeathKnight) bool {
 		action := o.actions[o.idx]
 
 		switch action {
-		case OpenerAction_IT:
+		case RotationAction_IT:
 			*casted = deathKnight.CastIcyTouch(sim, target)
 			// Add this line if you care about recasting a spell in the opener in
 			// case it missed
 			advance = deathKnight.LastCastOutcome != core.OutcomeMiss
-		case OpenerAction_PS:
+		case RotationAction_PS:
 			*casted = deathKnight.CastPlagueStrike(sim, target)
 			advance = deathKnight.LastCastOutcome != core.OutcomeMiss
-		case OpenerAction_UA:
+		case RotationAction_UA:
 			*casted = deathKnight.CastUnbreakableArmor(sim, target)
 			// Add this line if your spell does not incur a GCD or you will hang!
 			deathKnight.WaitUntil(sim, sim.CurrentTime)
-		case OpenerAction_BT:
+		case RotationAction_BT:
 			*casted = deathKnight.CastBloodTap(sim, target)
 			deathKnight.WaitUntil(sim, sim.CurrentTime)
-		case OpenerAction_Obli:
+		case RotationAction_Obli:
 			*casted = deathKnight.CastObliterate(sim, target)
-		case OpenerAction_FS:
+		case RotationAction_FS:
 			*casted = deathKnight.CastFrostStrike(sim, target)
-		case OpenerAction_Pesti:
+		case RotationAction_Pesti:
 			*casted = deathKnight.CastPestilence(sim, target)
 			if deathKnight.LastCastOutcome == core.OutcomeMiss {
 				advance = false
 			}
-		case OpenerAction_ERW:
+		case RotationAction_ERW:
 			*casted = deathKnight.CastEmpowerRuneWeapon(sim, target)
 			deathKnight.WaitUntil(sim, sim.CurrentTime)
-		case OpenerAction_HB_Ghoul_RimeCheck:
+		case RotationAction_HB_Ghoul_RimeCheck:
 			// You can do custom actions, this is deciding whether to HB or raise dead
 			if deathKnight.RimeAura.IsActive() {
 				*casted = deathKnight.CastHowlingBlast(sim, target)
 			} else {
 				*casted = deathKnight.CastRaiseDead(sim, target)
 			}
-		case OpenerAction_BS:
+		case RotationAction_BS:
 			*casted = deathKnight.CastBloodStrike(sim, target)
 		}
 
@@ -99,7 +99,7 @@ func (o *Opener) DoNext(sim *core.Simulation, deathKnight *DeathKnight) bool {
 	} else {
 		deathKnight.onOpener = false
 
-		if deathKnight.opener.id == OpenerID_FrostSubBlood_Full || deathKnight.opener.id == OpenerID_FrostSubUnholy_Full {
+		if deathKnight.opener.id == RotationID_FrostSubBlood_Full || deathKnight.opener.id == RotationID_FrostSubUnholy_Full {
 			if deathKnight.ShouldHornOfWinter(sim) {
 				*casted = deathKnight.CastHornOfWinter(sim, target)
 			} else {
@@ -131,7 +131,7 @@ func (o *Opener) DoNext(sim *core.Simulation, deathKnight *DeathKnight) bool {
 					}
 				}
 			}
-		} else if deathKnight.opener.id == OpenerID_Unholy_Full {
+		} else if deathKnight.opener.id == RotationID_Unholy_Full {
 			// I suggest adding the a wrapper around each spell you cast like this:
 			// deathKnight.YourWrapper(sim, target, deathKnight.FrostStrike) that returns a bool for when you casted
 			// since the waiting code relies on knowing if you actually casted
