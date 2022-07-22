@@ -74,14 +74,6 @@ func (rp *runicPowerBar) CopyRunicPowerBar() runicPowerBar {
 	return crp
 }
 
-func (pa *PendingAction) HardCancel(sim *Simulation) {
-	if pa.NextActionAt >= 0 {
-		pa.Cancel(sim)
-	}
-	*pa = PendingAction{}
-	pa.NextActionAt = -1
-}
-
 func ResetRunes(sim *Simulation, runes *[2]Rune, runeKind RuneKind) {
 	runes[0].state = RuneState_Normal
 	runes[0].kind = runeKind
@@ -93,16 +85,20 @@ func ResetRunes(sim *Simulation, runes *[2]Rune, runeKind RuneKind) {
 	runes[1].generatedByReapingOrBoTN = false
 
 	if runes[0].pas[0] != nil {
-		runes[0].pas[0].HardCancel(sim)
+		runes[0].pas[0].Cancel(sim)
+		runes[0].pas[0] = nil
 	}
 	if runes[0].pas[1] != nil {
-		runes[0].pas[1].HardCancel(sim)
+		runes[0].pas[1].Cancel(sim)
+		runes[0].pas[1] = nil
 	}
 	if runes[1].pas[0] != nil {
-		runes[1].pas[0].HardCancel(sim)
+		runes[1].pas[0].Cancel(sim)
+		runes[1].pas[0] = nil
 	}
 	if runes[1].pas[1] != nil {
-		runes[1].pas[1].HardCancel(sim)
+		runes[1].pas[1].Cancel(sim)
+		runes[1].pas[1] = nil
 	}
 }
 
@@ -528,7 +524,8 @@ func (rp *runicPowerBar) RegenRuneAndCancelPAs(sim *Simulation, r *Rune) {
 
 		if r.pas[0] != nil {
 			r.lastRegenTime = sim.CurrentTime
-			r.pas[0].HardCancel(sim)
+			r.pas[0].Cancel(sim)
+			r.pas[0] = nil
 		}
 
 		r.generatedByReapingOrBoTN = false
@@ -538,7 +535,8 @@ func (rp *runicPowerBar) RegenRuneAndCancelPAs(sim *Simulation, r *Rune) {
 
 		if r.pas[0] != nil {
 			r.lastRegenTime = sim.CurrentTime
-			r.pas[0].HardCancel(sim)
+			r.pas[0].Cancel(sim)
+			r.pas[0] = nil
 		}
 
 		r.generatedByReapingOrBoTN = false
@@ -624,7 +622,6 @@ func (rp *runicPowerBar) LaunchRuneRegenPA(sim *Simulation, r *Rune) {
 		NextActionAt: sim.CurrentTime + time.Second*time.Duration(10.0-runeGracePeriod),
 		Priority:     ActionPriorityRegen,
 	}
-
 	pa.OnAction = func(sim *Simulation) {
 		if !pa.cancelled {
 			r.pas[0] = nil
@@ -670,6 +667,7 @@ func (rp *runicPowerBar) LaunchRuneRegenPA(sim *Simulation, r *Rune) {
 		}
 	}
 
+	r.pas[0] = pa
 	if !rp.isACopy {
 		sim.AddPendingAction(pa)
 	}
