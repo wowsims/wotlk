@@ -65,18 +65,7 @@ func (deathKnight *DeathKnight) FrostDiseaseCheckWrapper(sim *core.Simulation, t
 		if deathKnight.LastCastOutcome == core.OutcomeMiss {
 			// Deal with pestilence miss
 			// TODO:
-			if deathKnight.opener.id == RotationID_FrostSubUnholy_Full {
-				deathKnight.PushSequence([]RotationAction{
-					RotationAction_BS,
-					RotationAction_FS,
-					RotationAction_IT,
-					RotationAction_PS,
-					RotationAction_Obli,
-					RotationAction_Obli,
-					RotationAction_FS,
-					RotationAction_FS,
-				})
-			}
+
 		}
 	} else {
 		if deathKnight.CanCast(sim, spell) {
