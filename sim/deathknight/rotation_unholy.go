@@ -49,18 +49,19 @@ func (deathKnight *DeathKnight) UnholyDiseaseCheckWrapper(sim *core.Simulation, 
 				return success
 			}
 
-			crpb := deathKnight.GetCalcRunicPowerBar()
-			spellCost := DetermineOptimalCostForSpell(&crpb, sim, deathKnight, spell)
+			crpb := deathKnight.CopyRunicPowerBar()
+			runeCostForSpell := deathKnight.RuneAmountForSpell(spell)
+			spellCost := crpb.DetermineOptimalCost(sim, runeCostForSpell.Blood, runeCostForSpell.Frost, runeCostForSpell.Unholy)
 
 			// Add whichever non-frost specific checks you want here, I guess you'll need them.
 
 			if !(deathKnight.RimeAura.IsActive() && spell == deathKnight.HowlingBlast) {
-				crpb.Spend(sim, spellCost)
+				crpb.Spend(sim, spell, spellCost)
 			}
 
 			if crpb.CurrentBloodRunes() == 0 && crpb.CurrentDeathRunes() == 0 {
-				nextBloodRuneAt := crpb.BloodRuneReadyAt(sim)
-				nextDeathRuneAt := crpb.DeathRuneReadyAt(sim)
+				nextBloodRuneAt := float64(crpb.BloodRuneReadyAt(sim))
+				nextDeathRuneAt := float64(crpb.DeathRuneReadyAt(sim))
 
 				ff1 := (float64(ffExpiresAt) > nextBloodRuneAt) && (float64(ffExpiresAt)-nextBloodRuneAt < float64(spell.CurCast.GCD))
 				ff2 := (float64(ffExpiresAt) > nextDeathRuneAt) && (float64(ffExpiresAt)-nextDeathRuneAt < float64(spell.CurCast.GCD))

@@ -242,7 +242,7 @@ func (deathKnight *DeathKnight) bloodOfTheNorthWillProc(sim *core.Simulation, bo
 	return ohWillCast
 }
 
-func (deathKnight *DeathKnight) bloodOfTheNorthProc(sim *core.Simulation, spell *core.Spell, runeCost core.DKRuneCost) bool {
+func (deathKnight *DeathKnight) bloodOfTheNorthProc(sim *core.Simulation, spell *core.Spell, runeCost core.RuneAmount) bool {
 	if deathKnight.Talents.BloodOfTheNorth > 0 {
 		if runeCost.Blood > 0 {
 			botnChance := deathKnight.bloodOfTheNorthChance()
