@@ -303,17 +303,20 @@ func (unit *Unit) AddStatDependencyDynamic(sim *Simulation, source, modified sta
 // finalizeStatDeps will descend the tree of each stat's depedencies and verify
 // there are no circular dependencies
 func (unit *Unit) finalizeStatDeps() {
-	seen := map[stats.Stat]struct{}{}
+	var walk func(m map[stats.Stat]float64, seen map[stats.Stat]struct{}) error
 
-	var walk func(m map[stats.Stat]float64) error
-
-	walk = func(m map[stats.Stat]float64) error {
+	walk = func(m map[stats.Stat]float64, seen map[stats.Stat]struct{}) error {
+		// by cloning the seen map we avoid failing on a diamond dependency graph
+		innerSeen := map[stats.Stat]struct{}{}
+		for ok, ov := range seen {
+			innerSeen[ok] = ov
+		}
 		for k := range m {
 			if _, ok := seen[k]; ok {
 				return errors.New("circular dependency in stats: " + k.StatName())
 			}
-			seen[k] = struct{}{}
-			err := walk(unit.statBonuses[k].Deps)
+			innerSeen[k] = struct{}{}
+			err := walk(unit.statBonuses[k].Deps, innerSeen)
 			if err != nil {
 				return fmt.Errorf("%w from: %s", err, k.StatName())
 			}
@@ -325,10 +328,10 @@ func (unit *Unit) finalizeStatDeps() {
 		if unit.statBonuses[s].Multiplier == 0 {
 			unit.statBonuses[s].Multiplier = 1
 		}
-		seen = map[stats.Stat]struct{}{
+		seen := map[stats.Stat]struct{}{
 			stats.Stat(s): {}, // mark this stat already seen.
 		}
-		if err := walk(unit.statBonuses[s].Deps); err != nil {
+		if err := walk(unit.statBonuses[s].Deps, seen); err != nil {
 			panic(err)
 		}
 	}

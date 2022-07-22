@@ -75,16 +75,31 @@ func TestStatDependencies(t *testing.T) {
 }
 
 func TestCircularStatDependencies(t *testing.T) {
-	defer func() {
-		if r := recover(); r == nil {
-			t.Fatalf("Did not catch circular dependency in stats")
-		}
-	}()
 	unit := Unit{}
 	unit.AddStatDependency(stats.Stamina, stats.Intellect, 1.0+1)
 	unit.AddStatDependency(stats.Agility, stats.Stamina, 1.0+1)
 	unit.AddStatDependency(stats.Intellect, stats.Agility, 1.0+1)
+
+	validateFail := func() {
+		defer func() {
+			if r := recover(); r == nil {
+				t.Fatalf("Did not catch circular dependency in stats")
+			}
+		}()
+		unit.finalizeStatDeps()
+	}
+
+	validateFail()
+
+	// clear circle
+	unit.statBonuses[stats.Intellect].Deps = map[stats.Stat]float64{}
 	unit.finalizeStatDeps()
+
+	// Now add diamond dependency
+	unit.AddStatDependency(stats.Agility, stats.Spirit, 1.0+1)
+	unit.AddStatDependency(stats.Spirit, stats.Intellect, 1.0+1)
+	unit.finalizeStatDeps()
+
 }
 
 func TestMultipleStatDep(t *testing.T) {
