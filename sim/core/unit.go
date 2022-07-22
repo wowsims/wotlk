@@ -317,6 +317,7 @@ func (unit *Unit) finalizeStatDeps() {
 			if err != nil {
 				return fmt.Errorf("%w from: %s", err, k.StatName())
 			}
+			delete(seen, k)
 		}
 		return nil
 	}
@@ -325,12 +326,11 @@ func (unit *Unit) finalizeStatDeps() {
 		if unit.statBonuses[s].Multiplier == 0 {
 			unit.statBonuses[s].Multiplier = 1
 		}
-		seen = map[stats.Stat]struct{}{
-			stats.Stat(s): {}, // mark this stat already seen.
-		}
+		seen[stats.Stat(s)] = struct{}{}
 		if err := walk(unit.statBonuses[s].Deps); err != nil {
 			panic(err)
 		}
+		delete(seen, stats.Stat(s))
 	}
 }
 
