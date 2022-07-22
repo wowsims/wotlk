@@ -40,8 +40,12 @@ func (deathKnight *DeathKnight) registerPestilenceSpell() {
 					if unitHit == deathKnight.CurrentTarget {
 						if deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfDisease) {
 							// Update expire instead of Apply to keep old snapshotted value
-							deathKnight.FrostFeverDisease[unitHit.Index].UpdateExpires(sim.CurrentTime + deathKnight.FrostFeverDisease[unitHit.Index].Duration)
-							deathKnight.BloodPlagueDisease[unitHit.Index].UpdateExpires(sim.CurrentTime + deathKnight.BloodPlagueDisease[unitHit.Index].Duration)
+							if deathKnight.FrostFeverDisease[unitHit.Index].IsActive() {
+								deathKnight.FrostFeverDisease[unitHit.Index].UpdateExpires(sim.CurrentTime + deathKnight.FrostFeverDisease[unitHit.Index].Duration)
+							}
+							if deathKnight.BloodPlagueDisease[unitHit.Index].IsActive() {
+								deathKnight.BloodPlagueDisease[unitHit.Index].UpdateExpires(sim.CurrentTime + deathKnight.BloodPlagueDisease[unitHit.Index].Duration)
+							}
 						}
 
 						dkSpellCost := deathKnight.DetermineOptimalCost(sim, 1, 0, 0)
@@ -54,8 +58,7 @@ func (deathKnight *DeathKnight) registerPestilenceSpell() {
 						amountOfRunicPower := 10.0 + 2.5*float64(deathKnight.Talents.ChillOfTheGrave)
 						deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 					} else {
-						// Apply diseases on every other target
-						// TODO: Snapshot the current values of main target disease and roll over to off targets
+						// Apply diseases on every other target if main target has them
 						if deathKnight.TargetHasDisease(FrostFeverAuraLabel, deathKnight.CurrentTarget) {
 							deathKnight.FrostFeverDisease[unitHit.Index].Apply(sim)
 						}
