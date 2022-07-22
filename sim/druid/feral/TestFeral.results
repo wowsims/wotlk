@@ -171,8 +171,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-IncisorFragment-37723"
  value: {
-  dps: 1877.014687844462
-  tps: 1356.2915233477484
+  dps: 1753.1377727306449
+  tps: 1268.3389136169383
  }
 }
 dps_results: {
@@ -353,8 +353,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-ThunderheartHarness"
  value: {
-  dps: 2289.4691062495694
-  tps: 1648.3614217202066
+  dps: 1695.8140238845285
+  tps: 1226.866313241028
  }
 }
 dps_results: {
