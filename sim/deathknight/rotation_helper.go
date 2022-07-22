@@ -25,7 +25,8 @@ const (
 type RotationID uint8
 
 const (
-	RotationID_FrostSubBlood_Full RotationID = iota
+	RotationID_Default RotationID = iota
+	RotationID_FrostSubBlood_Full
 	RotationID_FrostSubUnholy_Full
 	RotationID_Unholy_Full
 	RotationID_Count
@@ -79,6 +80,8 @@ func (deathKnight *DeathKnight) SetupRotation() {
 	deathKnight.openers = make([]Sequence, RotationID_Count)
 
 	// This defines the Sub Blood opener
+	deathKnight.DefineOpener(RotationID_Default, []RotationAction{})
+
 	deathKnight.DefineOpener(RotationID_FrostSubBlood_Full, []RotationAction{
 		RotationAction_IT,
 		RotationAction_PS,
@@ -138,7 +141,7 @@ func (deathKnight *DeathKnight) SetupRotation() {
 	} else if deathKnight.Talents.SummonGargoyle {
 		rotationId = RotationID_Unholy_Full
 	} else {
-		panic("Unknown spec for rotation!")
+		rotationId = RotationID_Default
 	}
 
 	deathKnight.opener = &deathKnight.openers[rotationId]
@@ -158,7 +161,7 @@ func (deathKnight *DeathKnight) DiseaseCheckWrapper(sim *core.Simulation, target
 		if deathKnight.LastCastOutcome == core.OutcomeMiss {
 			// Deal with pestilence miss
 			// TODO:
-			if deathKnight.opener.id == RotationID_FrostSubUnholy_Full {
+			if deathKnight.opener.id == RotationID_FrostSubUnholy_Full && deathKnight.onOpener {
 				deathKnight.PushSequence([]RotationAction{
 					RotationAction_BS,
 					RotationAction_FS,

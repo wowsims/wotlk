@@ -105,13 +105,15 @@ func (o *Sequence) DoNext(sim *core.Simulation, deathKnight *DeathKnight) bool {
 	casted := &deathKnight.castSuccessful
 	*casted = false
 
-	if deathKnight.sequence != nil {
-		*casted = deathKnight.sequence.DoAction(sim, target, deathKnight)
-		if !deathKnight.sequence.IsOngoing() {
-			deathKnight.sequence = nil
-		}
-	} else if o.IsOngoing() {
+	if o.IsOngoing() {
 		*casted = deathKnight.opener.DoAction(sim, target, deathKnight)
+	} else if deathKnight.sequence != nil {
+		if deathKnight.sequence.IsOngoing() {
+			*casted = deathKnight.sequence.DoAction(sim, target, deathKnight)
+			if !deathKnight.sequence.IsOngoing() {
+				deathKnight.sequence = nil
+			}
+		}
 	} else {
 		deathKnight.onOpener = false
 
