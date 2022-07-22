@@ -412,7 +412,7 @@ func (unit *Unit) Armor() float64 {
 }
 
 func (unit *Unit) ArmorPenetrationPercentage() float64 {
-	return MaxFloat(((unit.stats[stats.ArmorPenetration])/ArmorPenPerPercentArmor)*0.01, 0.0)
+	return MaxFloat(MinFloat(unit.stats[stats.ArmorPenetration]/ArmorPenPerPercentArmor, 100.0)*0.01, 0.0)
 }
 
 func (unit *Unit) RangedSwingSpeed() float64 {
