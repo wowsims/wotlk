@@ -59,104 +59,108 @@ export const DefaultConsumes = Consumes.create({
 	defaultPotion: Potions.PotionOfSpeed,
 });
 
-export const P1_PRESET = {
-	name: 'P1 Preset',
+export const P5_PRESET = {
+	name: 'P5 Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
-			"id": 24266,
+			"id": 34340,
 			"enchant": 29191,
 			"gems": [
-				28118,
-				24030,
-				24030
+				25893,
+				32215
 			]
 		},
 		{
-			"id": 30666
+			"id": 34204
 		},
 		{
-			"id": 21869,
+			"id": 31070,
 			"enchant": 28886,
 			"gems": [
-				24030,
-				24030
+				32196,
+				32196
 			]
 		},
 		{
-			"id": 28570,
-			"enchant": 33150
-		},
-		{
-			"id": 21871,
-			"enchant": 24003,
+			"id": 34242,
+			"enchant": 33150,
 			"gems": [
-				24030,
-				24030
+				32196
 			]
 		},
 		{
-			"id": 24250,
+			"id": 34232,
+			"enchant": 33990,
+			"gems": [
+				32196,
+				32196,
+				32196
+			]
+		},
+		{
+			"id": 34434,
 			"enchant": 22534,
 			"gems": [
-				24030
+				32196
 			]
 		},
 		{
-			"id": 28507,
+			"id": 34344,
 			"enchant": 28272,
 			"gems": [
-				24030,
-				24030
+				32196,
+				32196
 			]
 		},
 		{
-			"id": 28799,
+			"id": 34528,
 			"gems": [
-				24030,
-				24030
+				32196
 			]
 		},
 		{
-			"id": 24262,
+			"id": 34181,
 			"enchant": 24274,
 			"gems": [
-				24030,
-				24030,
-				24030
+				32196,
+				32196,
+				32196
 			]
 		},
 		{
-			"id": 21870,
+			"id": 34563,
 			"enchant": 35297,
 			"gems": [
-				24030,
-				24030
+				32196
 			]
 		},
 		{
-			"id": 29352,
+			"id": 34230,
 			"enchant": 22536
 		},
 		{
-			"id": 28793,
+			"id": 32527,
 			"enchant": 22536
 		},
 		{
-			"id": 28789
+			"id": 33829
 		},
 		{
-			"id": 29370
+			"id": 34429
 		},
 		{
-			"id": 28770,
+			"id": 34336,
 			"enchant": 22561
 		},
 		{
-			"id": 29272
+			"id": 34179
 		},
 		{
-			"id": 29350
+			"id": 34347,
+			"gems": [
+				32196
+			]
 		}
 	]}`),
 };
