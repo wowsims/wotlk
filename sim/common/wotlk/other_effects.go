@@ -9,8 +9,6 @@ import (
 )
 
 func init() {
-	core.AddEffectsToTest = false
-
 	core.NewItemEffect(37220, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		actionID := core.ActionID{ItemID: 37220}
@@ -384,6 +382,4 @@ func init() {
 			Spell: spell,
 		})
 	})
-
-	core.AddEffectsToTest = true
 }

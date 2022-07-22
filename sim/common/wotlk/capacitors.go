@@ -115,6 +115,9 @@ func init() {
 		School:     core.SpellSchoolFire,
 		BaseDamage: core.BaseDamageConfigRoll(1959, 2275),
 	})
+
+	core.AddEffectsToTest = true
+
 	newCapacitorDamageEffect(CapacitorDamageEffect{
 		Name:      "Reign of the Dead",
 		ID:        47316,
@@ -154,6 +157,9 @@ func init() {
 
 		core.NewItemEffect(itemID, func(agent core.Agent) {
 			character := agent.GetCharacter()
+			if !character.AutoAttacks.IsEnabled() {
+				return
+			}
 
 			var mhSpell *core.Spell
 			var ohSpell *core.Spell
@@ -215,6 +221,4 @@ func init() {
 			})
 		})
 	})
-
-	core.AddEffectsToTest = true
 }

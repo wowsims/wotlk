@@ -141,8 +141,6 @@ func newStackingStatBonusCD(config StackingStatBonusCD) {
 }
 
 func init() {
-	core.AddEffectsToTest = false
-
 	core.NewItemEffect(38212, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
@@ -210,6 +208,9 @@ func init() {
 		Harmful:    true,
 		ProcChance: 0.5,
 	})
+
+	core.AddEffectsToTest = false
+
 	newStackingStatBonusEffect(StackingStatBonusEffect{
 		Name:      "Solance of the Defeated",
 		ID:        47041,
