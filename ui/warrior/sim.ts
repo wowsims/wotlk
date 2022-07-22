@@ -118,8 +118,6 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 				inputs: [
 					WarriorInputs.StartingRage,
 					WarriorInputs.PrecastShout,
-					WarriorInputs.PrecastShoutWithSapphire,
-					WarriorInputs.PrecastShoutWithT2,
 
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
