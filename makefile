@@ -14,7 +14,6 @@ endif
 
 # Make everything. Keep this first so it's the default rule.
 $(OUT_DIR): ui_shared \
- $(OUT_DIR)/core/tsconfig.tsbuildinfo \
  $(OUT_DIR)/balance_druid/index.js $(OUT_DIR)/balance_druid/index.css $(OUT_DIR)/balance_druid/index.html \
  $(OUT_DIR)/feral_druid/index.js $(OUT_DIR)/feral_druid/index.css $(OUT_DIR)/feral_druid/index.html \
  $(OUT_DIR)/feral_tank_druid/index.js $(OUT_DIR)/feral_tank_druid/index.css $(OUT_DIR)/feral_tank_druid/index.html \
@@ -83,7 +82,6 @@ $(OUT_DIR)/core/tsconfig.tsbuildinfo: $(call rwildcard,ui/core,*.ts) ui/core/pro
 	npx tsc -p ui/core
 	$(SED) 's#@protobuf-ts/runtime#/wotlk/protobuf-ts/index#g' $(OUT_DIR)/core/proto/*.js
 	$(SED) "s/from \"(.*)\";/from '\1.js';/g" $(OUT_DIR)/core/proto/*.js
-	touch $@ # This file is not always built, so to avoid re-running this step touch it manually.
 
 # Generic rule for hosting any class directory
 .PHONY: host_%
@@ -91,8 +89,9 @@ host_%: ui_shared %
 	npx http-server $(OUT_DIR)/..
 
 # Generic rule for building index.js for any class directory
-$(OUT_DIR)/%/index.js: ui/%/index.ts ui/%/*.ts
+$(OUT_DIR)/%/index.js: ui/%/index.ts ui/%/*.ts $(OUT_DIR)/core/tsconfig.tsbuildinfo
 	npx tsc -p $(<D) 
+	touch $@ # TSC does not guarantee a file touch.
 
 # Generic rule for building index.css for any class directory
 $(OUT_DIR)/%/index.css: ui/%/index.scss ui/%/*.scss $(call rwildcard,ui/core,*.scss)
