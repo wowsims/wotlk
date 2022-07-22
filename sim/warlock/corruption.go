@@ -9,6 +9,17 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+func (warlock *Warlock) everlastingRollover(sim *core.Simulation) {
+	if warlock.CorruptionDot.IsActive() && warlock.Talents.EverlastingAffliction > 0 {
+		if warlock.Talents.EverlastingAffliction < 5 { // This will return early if we 'miss' the refresh, 5 pts can't 'miss'.
+			if sim.RandomFloat("EverlastingAffliction") > 0.2*float64(warlock.Talents.EverlastingAffliction) {
+				return
+			}
+		}
+		warlock.CorruptionDot.Rollover(sim)
+	}
+}
+
 func (warlock *Warlock) registerCorruptionSpell() {
 	actionID := core.ActionID{SpellID: 47813}
 	baseCost := 0.14 * warlock.BaseMana
@@ -48,14 +59,14 @@ func (warlock *Warlock) registerCorruptionSpell() {
 		TickLength:          time.Second * 3,
 		AffectedByCastSpeed: warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfQuickDecay),
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask: core.ProcMaskPeriodicDamage,
-			DamageMultiplier: (1 + 0.01*float64(warlock.Talents.Contagion)) *
-				(1 + 0.02*float64(warlock.Talents.ImprovedCorruption)) * (1 + 0.05*core.TernaryFloat64(warlock.Talents.SiphonLife, 1, 0)),
+			ProcMask:             core.ProcMaskPeriodicDamage,
 			ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 			BaseDamage:           core.BaseDamageConfigMagicNoRoll(1080/6, spellCoefficient),
 			BonusSpellCritRating: 3 * core.CritRatingPerCritChance * float64(warlock.Talents.Malediction),
-			OutcomeApplier:       applier,
-			IsPeriodic:           true,
+			DamageMultiplier: (1 + 0.01*float64(warlock.Talents.Contagion)) *
+				(1 + 0.02*float64(warlock.Talents.ImprovedCorruption)) * (1 + 0.05*core.TernaryFloat64(warlock.Talents.SiphonLife, 1, 0)),
+			OutcomeApplier: applier,
+			IsPeriodic:     true,
 		}),
 	})
 }

@@ -37,7 +37,7 @@ func (warlock *Warlock) registerDrainSoulChannellingSpell() {
 			FlatThreatBonus:  1,
 			OutcomeApplier:   warlock.OutcomeFuncAlwaysHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				warlock.DrainSoulDot.Refresh(sim)
+				warlock.DrainSoulDot.Reapply(sim)
 				warlock.DrainSoulDot.Aura.UpdateExpires(warlock.DrainSoulDot.Aura.ExpiresAt() + epsilon)
 			},
 		}),
@@ -75,7 +75,7 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 				// Everlasting Affliction Refresh
 				if warlock.CorruptionDot.IsActive() {
 					if sim.RandomFloat("EverlastingAffliction") < 0.2*float64(warlock.Talents.EverlastingAffliction) {
-						warlock.CorruptionDot.Refresh(sim)
+						warlock.CorruptionDot.Reapply(sim)
 					}
 				}
 				warlock.DrainSoulDot.Apply(sim)

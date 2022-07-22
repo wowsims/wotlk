@@ -54,8 +54,7 @@ func (druid *Druid) registerRakeSpell() {
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					if druid.RakeDot.IsActive() {
-						druid.RakeDot.Refresh(sim)
-						druid.RakeDot.TakeSnapshot(sim)
+						druid.RakeDot.Reapply(sim)
 					} else {
 						druid.RakeDot.Apply(sim)
 					}

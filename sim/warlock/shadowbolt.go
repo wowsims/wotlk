@@ -24,20 +24,14 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 			}
 			// ISB debuff
 			if warlock.Talents.ImprovedShadowBolt > 0 {
-				if sim.RandomFloat("ISB") < 0.2*float64(warlock.Talents.ImprovedShadowBolt) {
-					if !core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() {
-						core.ShadowMasteryAura(warlock.CurrentTarget).Activate(sim)
-					} else {
-						core.ShadowMasteryAura(warlock.CurrentTarget).Refresh(sim)
+				if warlock.Talents.ImprovedShadowBolt < 5 { // This will return early if we 'miss' the refresh, 5 pts can't 'miss'.
+					if sim.RandomFloat("ISB") > 0.2*float64(warlock.Talents.ImprovedShadowBolt) {
+						return
 					}
 				}
+				core.ShadowMasteryAura(warlock.CurrentTarget).Activate(sim) // calls refresh if already active.
 			}
-			// Everlasting Affliction Refresh
-			if warlock.CorruptionDot.IsActive() {
-				if sim.RandomFloat("EverlastingAffliction") < 0.2*float64(warlock.Talents.EverlastingAffliction) {
-					warlock.CorruptionDot.Refresh(sim)
-				}
-			}
+			warlock.everlastingRollover(sim) // Everlasting Affliction Refresh
 		},
 	}
 

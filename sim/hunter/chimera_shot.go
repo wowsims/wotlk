@@ -58,7 +58,7 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 				}
 
 				if hunter.SerpentStingDot.IsActive() {
-					hunter.SerpentStingDot.Refresh(sim)
+					hunter.SerpentStingDot.Reapply(sim)
 					// SS has 5 ticks, so 2 ticks is 40%
 					hunter.SerpentStingDot.TickOnce()
 					hunter.SerpentStingDot.TickOnce()

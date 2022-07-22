@@ -62,7 +62,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 						dot.Apply(sim)
 					}
 					dot.AddStack(sim)
-					dot.Refresh(sim)
+					dot.Reapply(sim)
 					return 0 // Does no damage, just applies dot and rolls.
 				},
 			},
