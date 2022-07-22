@@ -147,17 +147,12 @@ func (deathKnight *DeathKnight) applyNecrosis() {
 	})
 }
 
-func (deathKnight *DeathKnight) applyBloodCakedBlade() {
-	if deathKnight.Talents.BloodCakedBlade == 0 {
-		return
-	}
-
+func (deathKnight *DeathKnight) bloodCakedBladeHit(isMh bool) *core.Spell {
 	mhBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 0, 1.0, true)
 	ohBaseDamage := core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, 1.0*deathKnight.nervesOfColdSteelBonus(), true)
 
-	var isMH = false
-	bloodCakedBladeHit := deathKnight.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 50463},
+	return deathKnight.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 50463}.WithTag(core.TernaryInt32(isMh, 1, 2)),
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 
@@ -171,7 +166,7 @@ func (deathKnight *DeathKnight) applyBloodCakedBlade() {
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
 					diseaseMultiplier := (0.25 + float64(deathKnight.countActiveDiseases(spellEffect.Target))*0.125)
-					if isMH {
+					if isMh {
 						return mhBaseDamage(sim, spellEffect, spell) * diseaseMultiplier
 					} else {
 						return ohBaseDamage(sim, spellEffect, spell) * diseaseMultiplier
@@ -181,6 +176,15 @@ func (deathKnight *DeathKnight) applyBloodCakedBlade() {
 			OutcomeApplier: deathKnight.OutcomeFuncMeleeWeaponSpecialNoHitNoCrit(),
 		}),
 	})
+}
+
+func (deathKnight *DeathKnight) applyBloodCakedBlade() {
+	if deathKnight.Talents.BloodCakedBlade == 0 {
+		return
+	}
+
+	bloodCakedBladeHitMh := deathKnight.bloodCakedBladeHit(true)
+	bloodCakedBladeHitOh := deathKnight.bloodCakedBladeHit(false)
 
 	deathKnight.BloodCakedBladeAura = deathKnight.RegisterAura(core.Aura{
 		Label:    "Blood-Caked Blade",
@@ -195,8 +199,12 @@ func (deathKnight *DeathKnight) applyBloodCakedBlade() {
 			}
 
 			if sim.RandomFloat("Blood-Caked Blade Roll") < 0.30 {
-				isMH = spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHAuto)
-				bloodCakedBladeHit.Cast(sim, spellEffect.Target)
+				isMh := spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHAuto)
+				if isMh {
+					bloodCakedBladeHitMh.Cast(sim, spellEffect.Target)
+				} else {
+					bloodCakedBladeHitOh.Cast(sim, spellEffect.Target)
+				}
 			}
 		},
 	})
