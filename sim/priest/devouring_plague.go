@@ -36,9 +36,9 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 	}
 
 	priest.DevouringPlague = priest.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolShadow,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolShadow,
+		Flags:        core.SpellFlagDisease,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
