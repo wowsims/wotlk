@@ -14,7 +14,7 @@ func (shaman *Shaman) ApplyTalents() {
 	}
 
 	shaman.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*1*float64(shaman.Talents.Anticipation))
-	shaman.PseudoStats.PhysicalDamageDealtMultiplier *= []float64{0, 1.04, 1.07, 1.1}[shaman.Talents.WeaponMastery]
+	shaman.PseudoStats.PhysicalDamageDealtMultiplier *= []float64{1, 1.04, 1.07, 1.1}[shaman.Talents.WeaponMastery]
 
 	if shaman.Talents.DualWieldSpecialization > 0 && shaman.HasOHWeapon() {
 		shaman.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*2*float64(shaman.Talents.DualWieldSpecialization))
@@ -264,7 +264,7 @@ func (shaman *Shaman) applyFlurry() {
 
 	// I believe there is a set in wotlk that improves flurry.
 
-	// if shaman.HasSetBonus(ItemSetCataclysmHarness, 4) {
+	// if shaman.HasSetBonus(ItemSetEarthshatterBattlegear, 4) { //NYI
 	// 	bonus += 0.05
 	// }
 

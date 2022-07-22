@@ -17,7 +17,6 @@ import {
 	EarthTotem,
 	FireTotem,
 	WaterTotem,
-	EnhancementShaman_Rotation_PrimaryShock as PrimaryShock,
 	ShamanTotems,
 } from '/wotlk/core/proto/shaman.js';
 
@@ -52,7 +51,6 @@ export const DefaultRotation = EnhancementShamanRotation.create({
 		fire: FireTotem.SearingTotem,
 		water: WaterTotem.ManaSpringTotem,
 	}),
-	primaryShock: PrimaryShock.Frost,
 });
 
 export const DefaultOptions = EnhancementShamanOptions.create({

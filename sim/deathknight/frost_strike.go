@@ -35,8 +35,18 @@ func (deathKnight *DeathKnight) newFrostStrikeHitSpell(isMH bool) *core.Spell {
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if isMH {
 				FrostStrikeMHOutcome = spellEffect.Outcome
+				if spellEffect.Landed() {
+					if deathKnight.KillingMachineAura.IsActive() {
+						deathKnight.KillingMachineAura.Deactivate(sim)
+					}
+				}
 			} else {
 				FrostStrikeOHOutcome = spellEffect.Outcome
+				if spellEffect.Landed() {
+					if deathKnight.KillingMachineAura.IsActive() {
+						deathKnight.KillingMachineAura.Deactivate(sim)
+					}
+				}
 			}
 		},
 	}

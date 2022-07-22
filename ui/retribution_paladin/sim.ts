@@ -146,7 +146,7 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 					RetributionPaladinInputs.JudgementSelection,
 					RetributionPaladinInputs.DivinePleaSelection,
 					RetributionPaladinInputs.StartingSealSelection,
-					RetributionPaladinInputs.DamgeTakenPerSecond,
+					RetributionPaladinInputs.DamageTakenPerSecond,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],
