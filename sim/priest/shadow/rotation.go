@@ -161,9 +161,9 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 			TFmod = 0
 		}
 
-		mfglyphMod := 1.0
+		mfglyphMod := 0.0
 		if spriest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfMindFlay)) {
-			mfglyphMod = 1.1
+			mfglyphMod = 0.1
 		}
 		swdmfglyphMod := 1.0
 		if spriest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadowWordDeath)) && sim.IsExecutePhase35() {
@@ -187,18 +187,18 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		// Spell damage numbers that are updated before each cast in order to determine the most optimal next cast based on dps over a finite window
 		// This is needed throughout the code to determine the optimal spell(s) to cast next
 		// MB dmg
-		mb_dmg = (1025 + spriest.GetStat(stats.SpellPower)*(0.429*(1+float64(spriest.Talents.Misery)*0.05))) * (1 + float64(spriest.Talents.Darkness)*0.02 + TFmod) *
+		mb_dmg = (1025 + spriest.GetStat(stats.SpellPower)*(0.429*(1+float64(spriest.Talents.Misery)*0.05))) * (1 + float64(spriest.Talents.Darkness)*0.02) * (1 + TFmod) *
 			core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03))
 
 		// DP dmg
 		dp_dmg = ((172+spriest.GetStat(stats.SpellPower)*0.1849)*8.0*float64(spriest.Talents.ImprovedDevouringPlague)*0.1*(1.0+(float64(spriest.Talents.Darkness)*0.02+
-			float64(spriest.Talents.TwinDisciplines)*0.01+float64(spriest.Talents.ImprovedDevouringPlague)*0.05+core.TernaryFloat64(spriest.HasSetBonus(priest.ItemSetConquerorSanct, 2), 1.15/8, 1)))*core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1)*(1+0.5*(critChance+core.TernaryFloat64(spriest.HasSetBonus(priest.ItemSetCrimsonAcolyte, 4), 0.05, 0))) + ((172 + spriest.GetStat(stats.SpellPower)*0.1849) * num_DP_ticks *
-			(1.0 + (float64(spriest.Talents.Darkness)*0.02 + float64(spriest.Talents.TwinDisciplines)*0.01 + float64(spriest.Talents.ImprovedDevouringPlague)*0.05 + core.TernaryFloat64(spriest.HasSetBonus(priest.ItemSetConquerorSanct, 2), 1.15/8, 1))) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) *
+			float64(spriest.Talents.TwinDisciplines)*0.01+float64(spriest.Talents.ImprovedDevouringPlague)*0.05))*core.TernaryFloat64(spriest.HasSetBonus(priest.ItemSetConquerorSanct, 2), 1.15, 1)*core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1)*(1+0.5*(critChance+core.TernaryFloat64(spriest.HasSetBonus(priest.ItemSetCrimsonAcolyte, 4), 0.05, 0))) + ((172 + spriest.GetStat(stats.SpellPower)*0.1849) * num_DP_ticks *
+			(1.0 + (float64(spriest.Talents.Darkness)*0.02 + float64(spriest.Talents.TwinDisciplines)*0.01 + float64(spriest.Talents.ImprovedDevouringPlague)*0.05 + core.TernaryFloat64(spriest.HasSetBonus(priest.ItemSetConquerorSanct, 2), 0.15, 0))) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) *
 			(1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03) + core.TernaryFloat64(spriest.HasSetBonus(priest.ItemSetCrimsonAcolyte, 4), 0.05, 0))))
 
 		// VT dmg
-		vt_dmg = ((170 + spriest.GetStat(stats.SpellPower)*0.4) * num_VT_ticks *
-			(1.0 + float64(spriest.Talents.Darkness)*0.02) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03)))
+		vt_dmg = (170 + spriest.GetStat(stats.SpellPower)*0.4) * num_VT_ticks *
+			(1.0 + float64(spriest.Talents.Darkness)*0.02) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03+core.TernaryFloat64(spriest.HasSetBonus(priest.ItemSetCrimsonAcolyte, 4), 0.05, 0)))
 
 		// SWD dmg
 		swd_dmg = (618 + spriest.GetStat(stats.SpellPower)*0.429) * (1 + 0.5*(critChance+float64(spriest.Talents.MindMelt)*0.02+core.TernaryFloat64(spriest.HasSetBonus(priest.ItemSetValorous, 4), 0.1, 0))*float64(spriest.Talents.ShadowPower)*0.2) *
@@ -206,7 +206,7 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 
 		// MF dmg 3 ticks
 		mf_dmg = (588 + spriest.GetStat(stats.SpellPower)*(0.2570*3*(1+float64(spriest.Talents.Misery)*0.05))) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1.0 + (float64(spriest.Talents.Darkness)*0.02 +
-			float64(spriest.Talents.TwinDisciplines)*0.01)) * (1 + TFmod) * mfglyphMod * (1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.02))
+			float64(spriest.Talents.TwinDisciplines)*0.01)) * (1 + TFmod + mfglyphMod) * (1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.02))
 
 		// SWP is seperate because it doesnt follow the same logic for casting as the other spells
 		swp_Tdmg := ((230 + spriest.GetStat(stats.SpellPower)*0.1829) *
@@ -402,6 +402,11 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		//if recast_DP > 0{ // override all previous analysis and just cast DP right now to snap shot new buffs. We'd rather do DP > VT, so if both want be recast, then do DP first. Need a way to cast VT on the next gcd, but dont have that yet
 		// bestIdx = 4
 		//}
+		if chosen_mfs == 1 && allCDs[swdidx] == 0 {
+			bestIdx = 3
+			CurrentWait = 0
+		}
+
 		if castmf2 > 0 {
 			bestIdx = 4
 		}
@@ -414,6 +419,11 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		if wait_for_5 == 1 && SWstacks == 5 {
 			bestIdx = 5
 		}
+
+		//if bestIdx == 4 && CurrentWait > 0 && CurrentWait < tickLength*3 && allCDs[swdidx] == 0{
+		//bestIdx = 3
+		//	CurrentWait = 0
+		//	}
 
 		if CurrentWait > 0 && bestIdx != 5 && bestIdx != 4 {
 			spriest.WaitUntil(sim, sim.CurrentTime+CurrentWait)
@@ -714,17 +724,13 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 				skip_next = 1
 			}
 		}
-		if sim.Log != nil {
-			//spriest.Log(sim, "mid_ticks2 %d", numTicks)
-		}
 
 		if numTicks > 3 {
-			mfTime = core.MaxDuration(gcd, time.Duration(numTicks-1)*tickLength)
-			if (allCDs[bestIdx] - core.MaxDuration(gcd, time.Duration(numTicks-1)*tickLength) - gcd) > 0 {
-
-				numTicks = 3
-				return numTicks
-
+			if (allCDs[bestIdx] - time.Duration(numTicks-1)*tickLength - gcd) >= 0 {
+				if (allCDs[3]-time.Duration(numTicks-1)*tickLength <= 0) || (allCDs[0]-time.Duration(numTicks-1)*tickLength <= 0) {
+					numTicks = 3
+					return numTicks
+				}
 			}
 		}
 

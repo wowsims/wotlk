@@ -326,11 +326,11 @@ func init() {
 		character := agent.GetCharacter()
 		actionID := core.ActionID{SpellID: 54758}
 
-		procAura := character.NewTemporaryStatsAura("Hyperspeed Acceleration", actionID, stats.Stats{stats.MeleeHaste: 340, stats.SpellHaste: 340}, time.Second*10)
+		procAura := character.NewTemporaryStatsAura("Hyperspeed Acceleration", actionID, stats.Stats{stats.MeleeHaste: 340, stats.SpellHaste: 340}, time.Second*12)
 
 		spell := character.GetOrRegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
-			SpellSchool: core.SpellSchoolPhysical,
+			SpellSchool: core.SpellSchoolPhysical | core.SpellSchoolMagic,
 			Flags:       core.SpellFlagNoOnCastComplete,
 
 			Cast: core.CastConfig{
@@ -340,7 +340,7 @@ func init() {
 				},
 				SharedCD: core.Cooldown{
 					Timer:    character.GetOffensiveTrinketCD(),
-					Duration: time.Second * 10,
+					Duration: time.Second * 12,
 				},
 			},
 
@@ -450,26 +450,14 @@ func init() {
 			oldOnGain := aura.OnGain
 			oldOnExpire := aura.OnExpire
 
-			var strengthBonus float64
-
 			aura.OnGain = func(aura *core.Aura, sim *core.Simulation) {
 				oldOnGain(aura, sim)
-				strengthBonus = 0.15 * character.GetStat(stats.Strength)
-				bonusStats := character.ApplyStatDependencies(stats.Stats{stats.Strength: strengthBonus})
-				aura.Unit.AddStatsDynamic(sim, bonusStats)
+				aura.Unit.AddStatDependencyDynamic(sim, stats.Strength, stats.Strength, 1.15)
 			}
-
-			//aura.OnStatsChange = func(aura *core.Aura, sim *core.Simulation, oldStats stats.Stats, newStats stats.Stats) {
-			//	strengthWithoutBonus := newStats[stats.Strength] - strengthBonus
-			//	strengthBonus = 0.15 * strengthWithoutBonus
-			//	bonusStats := character.ApplyStatDependencies(stats.Stats{stats.Strength: strengthBonus})
-			//	aura.Unit.AddStatsDynamic(sim, bonusStats)
-			//}
 
 			aura.OnExpire = func(aura *core.Aura, sim *core.Simulation) {
 				oldOnExpire(aura, sim)
-				bonusStats := character.ApplyStatDependencies(stats.Stats{stats.Strength: -strengthBonus})
-				aura.Unit.AddStatsDynamic(sim, bonusStats)
+				aura.Unit.AddStatDependencyDynamic(sim, stats.Strength, stats.Strength, 1.0/1.15)
 			}
 		})
 	}

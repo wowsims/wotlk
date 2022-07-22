@@ -12,6 +12,7 @@ import { Target } from '/wotlk/core/target.js';
 import {
 	DeathKnightTalents as DeathKnightTalents,
 	DeathKnight,
+	DeathKnight_Rotation_ArmyOfTheDead as ArmyOfTheDead,
 	DeathKnight_Rotation as DeathKnightRotation,
 	DeathKnight_Options as DeathKnightOptions,
 } from '/wotlk/core/proto/deathknight.js';
@@ -72,6 +73,17 @@ export const UseDeathAndDecay = InputHelpers.makeRotationBooleanInput<Spec.SpecD
 	labelTooltip: 'Use Death and Decay based rotation.',
 });
 
+export const UseArmyOfTheDead = InputHelpers.makeRotationEnumInput<Spec.SpecDeathKnight, ArmyOfTheDead>({
+	fieldName: 'armyOfTheDead',
+	label: 'Army of the Dead',
+	labelTooltip: 'Chose how to use Army of the Dead.',
+	values: [
+		{ name: 'Do not use', value: ArmyOfTheDead.DoNotUse },
+		{ name: 'Pre pull', value: ArmyOfTheDead.PreCast },
+		{ name: 'As Major CD', value: ArmyOfTheDead.AsMajorCd },
+	],
+});
+
 export const UnholyPresenceOpener = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathKnight>({
 	fieldName: 'unholyPresenceOpener',
 	label: 'Unholy Presence Opener',
@@ -80,10 +92,11 @@ export const UnholyPresenceOpener = InputHelpers.makeRotationBooleanInput<Spec.S
 
 export const DeathKnightRotationConfig = {
 	inputs: [
+		UseArmyOfTheDead,
 		UseDeathAndDecay,
 		UnholyPresenceOpener,
 		RefreshHornOfWinter,
-		DiseaseRefreshDuration,
 		WIPFrostRotation,
+		DiseaseRefreshDuration,
 	],
 };

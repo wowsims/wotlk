@@ -9,7 +9,6 @@ import {
 	FireTotem,
 	WaterTotem,
 	EnhancementShaman_Options as ShamanOptions,
-	EnhancementShaman_Rotation_PrimaryShock as PrimaryShock,
 	ShamanTotems,
 	ShamanShield
 } from '/wotlk/core/proto/shaman.js';
@@ -48,14 +47,30 @@ export const DelayOffhandSwings = InputHelpers.makeSpecOptionsBooleanInput<Spec.
 
 export const EnhancementShamanRotationConfig = {
 	inputs: [
-		InputHelpers.makeRotationEnumInput<Spec.SpecEnhancementShaman, PrimaryShock>({
-			fieldName: 'primaryShock',
-			label: 'Primary Shock',
-			values: [
-				{ name: 'None', value: PrimaryShock.None },
-				{ name: 'Earth Shock', value: PrimaryShock.Earth },
-				{ name: 'Frost Shock', value: PrimaryShock.Frost },
-			],
-		}),
+//		{
+//			type: 'enum' as const, cssClass: 'primary-shock-picker',
+//			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
+//			config: {
+//				label: 'Mainhand Imbue', //very temporary, just as a way to be able to make sure imbues are working in the meantime,
+//				values: [                //and primary shocks arent a thing anymore
+//					{
+//						name: 'None', value: WeaponImbue.None,
+//					},
+//					{
+//						name: 'Windfury', value: WeaponImbue.WeaponImbueShamanWindfury,
+//					},
+//					{
+//						name: 'Flametongue', value: WeaponImbue.WeaponImbueShamanFlametongue,
+//					},
+//				],
+//				changedEvent: (player: Player<Spec.SpecEnhancementShaman>) => player.rotationChangeEmitter,
+//				getValue: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().WeaponImbue,
+//				setValue: (eventID: EventID, player: Player<Spec.SpecEnhancementShaman>, newValue: number) => {
+//					const newRotation = player.getRotation();
+//					newRotation.WeaponImbue = newValue;
+//					player.setRotation(eventID, newRotation);
+//				},
+//			},
+//		}
 	],
 };

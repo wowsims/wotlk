@@ -45,6 +45,9 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	baseMultiplier += 0.03 * float64(paladin.Talents.SealsOfThePure)
 	baseMultiplier *= paladin.WeaponSpecializationMultiplier()
 
+	judgementMultiplier := baseMultiplier
+	judgementMultiplier *= 1 + core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfJudgement), 0.10, 0)
+
 	dot := paladin.createSealOfVengeanceDot(baseMultiplier)
 
 	onSwingProc := paladin.RegisterSpell(core.SpellConfig{
@@ -73,7 +76,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 		Flags:       core.SpellFlagMeleeMetrics | SpellFlagSecondaryJudgement,
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeOrRangedSpecial,
-			DamageMultiplier: baseMultiplier,
+			DamageMultiplier: judgementMultiplier,
 			ThreatMultiplier: 1,
 
 			BonusCritRating: 6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance,

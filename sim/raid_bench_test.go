@@ -248,7 +248,6 @@ func BenchmarkSimulate(b *testing.B) {
 											Fire:  proto.FireTotem_TotemOfWrath,
 											Water: proto.WaterTotem_ManaSpringTotem,
 										},
-										PrimaryShock: proto.EnhancementShaman_Rotation_Frost,
 									},
 									Options: &proto.EnhancementShaman_Options{
 										Shield:             proto.ShamanShield_LightningShield,

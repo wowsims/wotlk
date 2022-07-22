@@ -49,6 +49,12 @@ func (deathKnight *DeathKnight) registerBoneShieldSpell() {
 		Flags:    core.SpellFlagNoOnCastComplete,
 
 		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				GCD: core.GCDDefault,
+			},
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				cast.GCD = deathKnight.getModifiedGCD()
+			},
 			CD: core.Cooldown{
 				Timer:    cdTimer,
 				Duration: cd,
@@ -69,4 +75,12 @@ func (deathKnight *DeathKnight) registerBoneShieldSpell() {
 
 func (deathKnight *DeathKnight) CanBoneShield(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 0, 0, 1) && deathKnight.BoneShield.IsReady(sim)
+}
+
+func (deathKnight *DeathKnight) CastBoneShield(sim *core.Simulation, target *core.Unit) bool {
+	if deathKnight.CanBoneShield(sim) {
+		deathKnight.BoneShield.Cast(sim, target)
+		return true
+	}
+	return false
 }

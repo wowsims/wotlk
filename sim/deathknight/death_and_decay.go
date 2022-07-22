@@ -70,3 +70,11 @@ func (deathKnight *DeathKnight) registerDeathAndDecaySpell() {
 func (deathKnight *DeathKnight) CanDeathAndDecay(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 1, 1, 1) && deathKnight.DeathAndDecay.IsReady(sim)
 }
+
+func (deathKnight *DeathKnight) CastDeathAndDecay(sim *core.Simulation, target *core.Unit) bool {
+	if deathKnight.CanDeathAndDecay(sim) {
+		deathKnight.DeathAndDecay.Cast(sim, target)
+		return true
+	}
+	return false
+}

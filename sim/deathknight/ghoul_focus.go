@@ -70,7 +70,7 @@ func (fb *focusBar) SpendFocus(sim *core.Simulation, amount float64, actionID co
 	fb.currentFocus = newFocus
 }
 
-func (fb *focusBar) reset(sim *core.Simulation) {
+func (fb *focusBar) Enable(sim *core.Simulation) {
 	if fb.ghoulPet == nil {
 		return
 	}
@@ -91,7 +91,7 @@ func (fb *focusBar) reset(sim *core.Simulation) {
 	sim.AddPendingAction(pa)
 }
 
-func (fb *focusBar) Cancel(sim *core.Simulation) {
+func (fb *focusBar) Disable(sim *core.Simulation) {
 	if fb.tickAction != nil {
 		fb.tickAction.Cancel(sim)
 		fb.tickAction = nil

@@ -1,0 +1,15 @@
+name: New issue webhook
+on:
+  issues:
+    types: [opened]
+jobs:
+  send_webhook:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send webhook
+        uses: Ilshidur/action-discord@master
+        continue-on-error: true
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.WEBHOOK_URL }}
+      - name: Exit 0
+        run: exit 0
