@@ -21,8 +21,8 @@ func (shaman *Shaman) newWindfuryImbueSpell(isMH bool) *core.Spell {
 	if shaman.Equip[proto.ItemSlot_ItemSlotRanged].ID == TotemOfTheAstralWinds {
 		apBonus += 80
 	} else if shaman.Equip[proto.ItemSlot_ItemSlotRanged].ID == TotemOfSplintering {
-        apBonus += 212
-    }
+		apBonus += 212
+	}
 
 	actionID := core.ActionID{SpellID: 58804}
 
@@ -66,7 +66,7 @@ func (shaman *Shaman) ApplyWindfuryImbue(mh bool, oh bool) {
 		return
 	}
 
-    var proc = 0.2 // TODO: update this for wrath, likely still 36% with wf/wf but unconfirmed, as well as glyph effect
+	var proc = 0.2 // TODO: update this for wrath, likely still 36% with wf/wf but unconfirmed, as well as glyph effect
 	if mh && oh {
 		proc = 0.36
 	}
@@ -118,19 +118,19 @@ func (shaman *Shaman) newFlametongueImbueSpell(isMH bool) *core.Spell {
 		BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * 2 * core.SpellHitRatingPerHitChance,
 
 		DamageMultiplier: 1,
-        ThreatMultiplier: 1, // TODO: add spirit weapons modifier when that's fixed
+		ThreatMultiplier: 1, // TODO: add spirit weapons modifier when that's fixed
 		OutcomeApplier:   shaman.OutcomeFuncMagicHitAndCrit(shaman.DefaultSpellCritMultiplier()),
 	}
 
 	if isMH {
 		if weapon := shaman.GetMHWeapon(); weapon != nil {
 			baseDamage := weapon.SwingSpeed * 68.5
-			effect.BaseDamage = core.BaseDamageConfigMagic(baseDamage, baseDamage, (0.1/2.6 * weapon.SwingSpeed))
+			effect.BaseDamage = core.BaseDamageConfigMagic(baseDamage, baseDamage, (0.1 / 2.6 * weapon.SwingSpeed))
 		}
 	} else {
 		if weapon := shaman.GetOHWeapon(); weapon != nil {
 			baseDamage := weapon.SwingSpeed * 68.5
-			effect.BaseDamage = core.BaseDamageConfigMagic(baseDamage, baseDamage, (0.1/2.6 * weapon.SwingSpeed))
+			effect.BaseDamage = core.BaseDamageConfigMagic(baseDamage, baseDamage, (0.1 / 2.6 * weapon.SwingSpeed))
 		}
 	}
 
@@ -146,19 +146,19 @@ func (shaman *Shaman) ApplyFlametongueImbue(mh bool, oh bool) {
 		return
 	}
 
-    imbueCount := 1.0
-    spBonus := 211.0
-    spMod := 1.0 + 0.1*float64(shaman.Talents.ElementalWeapons)
-    if shaman.HasSetBonus(ItemSetCycloneRegalia, 2) {
-        spBonus += 20.0
-    }
-    if mh && oh { // grant double SP+Crit bonuses for ft/ft (possible bug, but currently working on beta, its unclear)
-        imbueCount +=1.0
-    }
-	shaman.AddStat(stats.SpellPower, spBonus * spMod * imbueCount)
-    if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfFlametongueWeapon) {
-        shaman.AddStat(stats.SpellCrit, 2 * core.CritRatingPerCritChance * imbueCount)
-    }
+	imbueCount := 1.0
+	spBonus := 211.0
+	spMod := 1.0 + 0.1*float64(shaman.Talents.ElementalWeapons)
+	if shaman.HasSetBonus(ItemSetCycloneRegalia, 2) {
+		spBonus += 20.0
+	}
+	if mh && oh { // grant double SP+Crit bonuses for ft/ft (possible bug, but currently working on beta, its unclear)
+		imbueCount += 1.0
+	}
+	shaman.AddStat(stats.SpellPower, spBonus*spMod*imbueCount)
+	if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfFlametongueWeapon) {
+		shaman.AddStat(stats.SpellCrit, 2*core.CritRatingPerCritChance*imbueCount)
+	}
 
 	mhSpell := shaman.newFlametongueImbueSpell(true)
 	ohSpell := shaman.newFlametongueImbueSpell(false)
@@ -198,7 +198,7 @@ func (shaman *Shaman) newFrostbrandImbueSpell(isMH bool) *core.Spell {
 			BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * 2 * core.SpellHitRatingPerHitChance,
 
 			DamageMultiplier: 1,
-            ThreatMultiplier: 1, // TODO: come back here and set spirit weapons modifier when that bug gets fixed
+			ThreatMultiplier: 1, // TODO: come back here and set spirit weapons modifier when that bug gets fixed
 
 			BaseDamage:     core.BaseDamageConfigMagic(530, 530, 0.1),
 			OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(shaman.DefaultSpellCritMultiplier()),

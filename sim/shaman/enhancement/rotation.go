@@ -43,7 +43,7 @@ func (enh *EnhancementShaman) SetupRotationSchedule() {
 				shock = enh.FlameShock
 			} else {
 				shock = enh.EarthShock
-			} 
+			}
 			success := shock.Cast(sim, enh.CurrentTarget)
 			if !success {
 				enh.WaitForMana(sim, shock.CurCast.Cost)

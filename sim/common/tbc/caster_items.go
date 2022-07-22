@@ -11,6 +11,7 @@ import (
 // Keep these (and their functions) in alphabetical order.
 func init() {
 	// Proc effects. Keep these in order by item ID.
+	core.AddEffectsToTest = false
 
 	core.NewItemEffect(28602, func(agent core.Agent) {
 		character := agent.GetCharacter()
@@ -174,4 +175,5 @@ func init() {
 		})
 	})
 
+	core.AddEffectsToTest = true
 }
