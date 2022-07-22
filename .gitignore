@@ -16,4 +16,3 @@ sim/web/__debug_bin
 *.code-workspace
 wowsimwotlk
 
-package-lock.json

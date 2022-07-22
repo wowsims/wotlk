@@ -44,7 +44,7 @@ func (shaman *Shaman) registerShamanisticRageCD() {
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    shaman.NewTimer(),
-				Duration: time.Minute * 2,
+				Duration: time.Minute * 1,
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
