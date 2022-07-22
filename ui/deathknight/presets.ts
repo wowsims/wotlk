@@ -95,7 +95,7 @@ export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfEndlessRage,
 	food: Food.FoodDragonfinFilet,
 	defaultPotion: Potions.PotionOfSpeed,
-	petFood: PetFood.PetFoodKiblersBits
+	petFood: PetFood.PetFoodSpicedMammothTreats
 });
 
 export const P1_UNHOLY_DW_BIS_PRESET = {
