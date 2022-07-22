@@ -170,10 +170,21 @@ func (warlock *Warlock) setupEmpoweredImp() {
 func (warlock *Warlock) applyDeathsEmbrace() {
 	multiplier := 1.0 + 0.04*float64(warlock.Talents.DeathsEmbrace)
 
+	deathsEmbraceAura := warlock.RegisterAura(core.Aura{
+		Label:    "Death's Embrace Hidden Aura",
+		Duration: core.NeverExpires,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			warlock.PseudoStats.ShadowDamageDealtMultiplier *= multiplier
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			warlock.PseudoStats.ShadowDamageDealtMultiplier /= multiplier
+		},
+	})
+
 	warlock.RegisterResetEffect(func(sim *core.Simulation) {
-		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute20 bool) {
-			if isExecute20 {
-				warlock.PseudoStats.ShadowDamageDealtMultiplier *= multiplier
+		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute35 bool) {
+			if isExecute35 {
+				deathsEmbraceAura.Activate(sim)
 			}
 		})
 	})
