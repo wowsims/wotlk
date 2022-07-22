@@ -50,1018 +50,661 @@ character_stats_results: {
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-AbacusofViolentOdds-28288"
- value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
- }
-}
-dps_results: {
  key: "TestSmite-AllItems-AbsolutionRegalia"
  value: {
-  dps: 777.2856695603487
-  tps: 753.3407080852252
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-AdamantineFigurine-27891"
- value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-Alchemist'sStone-13503"
- value: {
-  dps: 790.311214138738
-  tps: 765.7050070324258
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-AncientAqirArtifact-33830"
- value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
+  dps: 758.8681848595808
+  tps: 732.5393198626022
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-AshtongueTalismanofAcumen-32490"
  value: {
-  dps: 781.2132891717883
-  tps: 756.7551924249249
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-Assassin'sAlchemistStone-35751"
- value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
+  dps: 776.4454015665793
+  tps: 749.2572964704132
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-AustereEarthsiegeDiamond"
  value: {
-  dps: 789.1608158551265
-  tps: 764.5163401750088
+  dps: 780.4041424066824
+  tps: 753.1790706573664
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-AvatarRegalia"
  value: {
-  dps: 725.316554373358
-  tps: 705.9403485505894
+  dps: 710.7034396846897
+  tps: 688.705050305088
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-BadgeofTenacity-32658"
+ key: "TestSmite-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-BadgeoftheSwarmguard-21670"
- value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-BandoftheEternalChampion-29301"
- value: {
-  dps: 773.0062924424979
-  tps: 749.2549381087041
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-BandoftheEternalDefender-29297"
- value: {
-  dps: 773.0062924424979
-  tps: 749.2549381087041
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-BandoftheEternalSage-29305"
- value: {
-  dps: 804.9233357769749
-  tps: 779.5624083834826
+  dps: 755.7190263332155
+  tps: 729.5680887057126
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-BeamingEarthsiegeDiamond"
  value: {
-  dps: 802.8923566566416
-  tps: 777.7255191620719
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-Berserker'sCall-33831"
- value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-BlackenedNaaruSliver-34427"
- value: {
-  dps: 769.1455616869258
-  tps: 745.5207334729619
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-BlackoutTruncheon-27901"
- value: {
-  dps: 802.8356873843512
-  tps: 777.5382262218138
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-Bladefist'sBreadth-28041"
- value: {
-  dps: 775.0950704847087
-  tps: 751.1309759522884
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-BladeofUnquenchedThirst-31193"
- value: {
-  dps: 802.8356873843512
-  tps: 777.5382262218138
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-BlazefuryMedallion-17111"
- value: {
-  dps: 776.9385946263217
-  tps: 753.0073604633887
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-BloodlustBrooch-29383"
- value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
+  dps: 786.3455076544221
+  tps: 758.7106421130804
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-BracingEarthsiegeDiamond"
  value: {
-  dps: 801.6980247009831
-  tps: 761.437256953655
+  dps: 783.8037085416015
+  tps: 741.5711662802661
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-BracingEarthstormDiamond"
  value: {
-  dps: 798.0361364707825
-  tps: 773.0980985485279
+  dps: 788.3522981338107
+  tps: 760.82645261685
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-BraidedEterniumChain-24114"
+ key: "TestSmite-AllItems-Braxley'sBackyardMoonshine-35937"
  value: {
-  dps: 784.373896940514
-  tps: 760.0834001881983
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-BroochoftheImmortalKing-32534"
- value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
+  dps: 750.3168393633058
+  tps: 724.3082606018288
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-BrutalEarthstormDiamond"
  value: {
-  dps: 789.1608158551265
-  tps: 764.5163401750088
+  dps: 780.4041424066824
+  tps: 753.1790706573664
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-ChaoticSkyfireDiamond"
  value: {
-  dps: 802.8356873843512
-  tps: 777.5382262218138
+  dps: 793.6828099005662
+  tps: 765.8924064440308
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-ChaoticSkyflareDiamond"
  value: {
-  dps: 802.2506196032243
-  tps: 777.0027053562342
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-CloakofDarkness-33122"
- value: {
-  dps: 777.9082358521655
-  tps: 768.7668153631497
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-CommendationofKael'thas-34473"
- value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-Coren'sLuckyCoin-38289"
- value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-CoreofAr'kelos-29776"
- value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
+  dps: 785.4879434558379
+  tps: 757.8656858886445
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-CrimsonAcolyte'sRegalia"
  value: {
-  dps: 1210.9461260637554
-  tps: 1164.259897972776
+  dps: 1202.7830505399063
+  tps: 1153.7641580593158
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-CrystalforgedTrinket-32654"
+ key: "TestSmite-AllItems-DarkmoonCard:Berserker!-42989"
  value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
+  dps: 763.2766722119362
+  tps: 736.7227322527236
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-Dabiri'sEnigma-30300"
+ key: "TestSmite-AllItems-DarkmoonCard:Death-42990"
  value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
+  dps: 805.0479388596733
+  tps: 777.5351990883905
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-DarkIronSmokingPipe-38290"
+ key: "TestSmite-AllItems-DarkmoonCard:Greatness-42987"
  value: {
-  dps: 788.0641053107244
-  tps: 763.3580102521577
+  dps: 686.0129772784449
+  tps: 657.1953395852116
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-DarkmoonCard:Crusade-31856"
+ key: "TestSmite-AllItems-DarkmoonCard:Greatness-44253"
  value: {
-  dps: 803.597245114167
-  tps: 778.4111171450872
+  dps: 686.0129772784449
+  tps: 657.1953395852116
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-DarkmoonCard:Vengeance-31858"
+ key: "TestSmite-AllItems-DarkmoonCard:Greatness-44254"
  value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
+  dps: 722.9315272145509
+  tps: 691.9871765448268
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-DarkmoonCard:Wrath-31857"
+ key: "TestSmite-AllItems-DeathKnight'sAnguish-38212"
  value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
+  dps: 764.1007441655676
+  tps: 737.5538290652098
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-Defender'sCode-40257"
+ value: {
+  dps: 755.7190263332155
+  tps: 729.5680887057126
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-DestructiveSkyfireDiamond"
  value: {
-  dps: 797.5244602281731
-  tps: 772.5414237132818
+  dps: 788.6034371060391
+  tps: 761.1137325189396
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-DestructiveSkyflareDiamond"
  value: {
-  dps: 790.8745370382683
-  tps: 766.2120744697128
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-Dragonmaw-28438"
- value: {
-  dps: 802.8356873843512
-  tps: 777.5382262218138
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-DragonspineTrophy-28830"
- value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-Dragonstrike-28439"
- value: {
-  dps: 802.8356873843512
-  tps: 777.5382262218138
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-DrakefistHammer-28437"
- value: {
-  dps: 802.8356873843512
-  tps: 777.5382262218138
+  dps: 784.3693337456671
+  tps: 757.0034825925292
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-EffulgentSkyflareDiamond"
  value: {
-  dps: 789.1608158551265
-  tps: 764.5163401750088
+  dps: 780.4041424066824
+  tps: 753.1790706573664
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-EmberSkyfireDiamond"
  value: {
-  dps: 802.9388133368375
-  tps: 777.7212776298431
+  dps: 786.0734786087982
+  tps: 758.4445702700339
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-EmberSkyflareDiamond"
  value: {
-  dps: 808.6473304003671
-  tps: 783.1839637508042
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-EmptyMugofDirebrew-38287"
- value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-EmpyreanDemolisher-17112"
- value: {
-  dps: 802.8356873843512
-  tps: 777.5382262218138
+  dps: 783.7451882633255
+  tps: 756.1957142548366
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-EnigmaticSkyfireDiamond"
  value: {
-  dps: 797.5244602281731
-  tps: 772.5414237132818
+  dps: 788.6034371060391
+  tps: 761.1137325189396
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-EnigmaticSkyflareDiamond"
  value: {
-  dps: 796.9490800133407
-  tps: 772.0150169100718
+  dps: 780.4487636388574
+  tps: 753.1248255168298
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-EnigmaticStarflareDiamond"
  value: {
-  dps: 794.162577474595
-  tps: 769.3402187337063
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-EssenceoftheMartyr-29376"
- value: {
-  dps: 790.3836177833438
-  tps: 765.6005726421089
+  dps: 779.9386356808379
+  tps: 752.6589348771658
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-EternalEarthsiegeDiamond"
  value: {
-  dps: 789.1608158551265
-  tps: 764.5163401750088
+  dps: 780.4041424066824
+  tps: 753.1790706573664
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-EternalEarthstormDiamond"
  value: {
-  dps: 789.1608158551265
-  tps: 764.5163401750088
+  dps: 780.4041424066824
+  tps: 753.1790706573664
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-EyeofMagtheridon-28789"
+ key: "TestSmite-AllItems-ExtractofNecromanticPower-40373"
  value: {
-  dps: 800.843689304629
-  tps: 775.4422235809625
+  dps: 798.5564010073747
+  tps: 771.0365491404601
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-Figurine-LivingRubySerpent-24126"
+ key: "TestSmite-AllItems-ForgeEmber-37660"
  value: {
-  dps: 789.7615502648576
-  tps: 765.0731214900675
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-Figurine-NightseyePanther-24128"
- value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-Figurine-ShadowsongPanther-35702"
- value: {
-  dps: 766.628393190562
-  tps: 743.1189186445298
+  dps: 785.1127393776659
+  tps: 757.4919071623174
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-ForlornSkyflareDiamond"
  value: {
-  dps: 801.6980247009831
-  tps: 776.5184077942763
+  dps: 783.8037085416015
+  tps: 756.3219863054056
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-ForlornStarflareDiamond"
  value: {
-  dps: 799.3185222840061
-  tps: 774.2017450245871
+  dps: 787.0449027115159
+  tps: 759.5440763850893
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-FuryoftheFiveFlights-40431"
+ value: {
+  dps: 755.7190263332155
+  tps: 729.5680887057126
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-GarbofFaith"
  value: {
-  dps: 854.8888927022173
-  tps: 827.0610114207192
+  dps: 834.82399395523
+  tps: 804.7689304546385
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-GnomereganAuto-Blocker600-29387"
+ key: "TestSmite-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-Guardian'sAlchemistStone-35748"
- value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-HandofJustice-11815"
- value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-Heartrazor-29962"
- value: {
-  dps: 802.8356873843512
-  tps: 777.5382262218138
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-HexShrunkenHead-33829"
- value: {
-  dps: 794.7181315887993
-  tps: 769.6315386755807
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-HourglassoftheUnraveller-28034"
- value: {
-  dps: 770.2327996384979
-  tps: 746.3746368798983
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-IconofUnyieldingCourage-28121"
- value: {
-  dps: 781.6752468312682
-  tps: 757.3053040606203
+  dps: 824.2630625794163
+  tps: 794.8456344642213
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-ImbuedUnstableDiamond"
  value: {
-  dps: 798.0361364707825
-  tps: 773.0980985485279
+  dps: 788.3522981338107
+  tps: 760.82645261685
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-ImpassiveSkyflareDiamond"
  value: {
-  dps: 796.9490800133407
-  tps: 772.0150169100718
+  dps: 780.4487636388574
+  tps: 753.1248255168298
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-ImpassiveStarflareDiamond"
  value: {
-  dps: 794.162577474595
-  tps: 769.3402187337063
+  dps: 779.9386356808379
+  tps: 752.6589348771658
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-IncarnateRaiment"
  value: {
-  dps: 687.927269077428
-  tps: 668.989513188462
+  dps: 670.7727090172344
+  tps: 649.3345864330477
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-IndestructibleAlchemist'sStone-44323"
+ key: "TestSmite-AllItems-IncisorFragment-37723"
  value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
+  dps: 755.7190263332155
+  tps: 729.5680887057126
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-InfusedColdstoneRune-35935"
+ value: {
+  dps: 773.6103244718923
+  tps: 746.5627089783568
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-InsightfulEarthsiegeDiamond"
  value: {
-  dps: 857.7387214997497
-  tps: 834.4947216865788
+  dps: 845.2097054413224
+  tps: 819.36926561707
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-InsightfulEarthstormDiamond"
  value: {
-  dps: 820.0706667721513
-  tps: 795.8515764937744
+  dps: 803.3016808376005
+  tps: 776.7593515013662
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-InvigoratingEarthsiegeDiamond"
  value: {
-  dps: 789.1608158551265
-  tps: 764.5163401750088
+  dps: 780.4041424066824
+  tps: 753.1790706573664
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-KissoftheSpider-22954"
+ key: "TestSmite-AllItems-Lavanthor'sTalisman-37872"
  value: {
-  dps: 781.7189397164634
-  tps: 757.540504571525
+  dps: 755.7190263332155
+  tps: 729.5680887057126
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-MadnessoftheBetrayer-32505"
+ key: "TestSmite-AllItems-MajesticDragonFigurine-40430"
  value: {
-  dps: 779.1243708988692
-  tps: 755.0621588749622
+  dps: 846.2084523805602
+  tps: 815.5548243990343
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-Mana-EtchedRegalia"
  value: {
-  dps: 592.4214779409143
-  tps: 577.9148476518152
+  dps: 581.3623542867882
+  tps: 564.208081160305
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-ManualCrowdPummeler-9449"
+ key: "TestSmite-AllItems-MeteoriteWhetstone-37390"
  value: {
-  dps: 676.7226503986765
-  tps: 657.8170487237109
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-MarkoftheChampion-23206"
- value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-MarkoftheChampion-23207"
- value: {
-  dps: 795.9925919835289
-  tps: 770.8945832699744
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-MercurialAlchemistStone-44322"
- value: {
-  dps: 791.5367448887293
-  tps: 766.8230785259773
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-MightyAlchemist'sStone-44324"
- value: {
-  dps: 776.9457821302702
-  tps: 752.8004740256408
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-Moroes'LuckyPocketWatch-28528"
- value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
+  dps: 770.4153280285517
+  tps: 743.6071727898591
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-MysticalSkyfireDiamond"
  value: {
-  dps: 791.136903188298
-  tps: 766.4439215847907
+  dps: 778.3283109602567
+  tps: 751.0990212103362
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-OfferingofSacrifice-37638"
+ value: {
+  dps: 755.7190263332155
+  tps: 729.5680887057126
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-PersistentEarthshatterDiamond"
  value: {
-  dps: 789.1608158551265
-  tps: 764.5163401750088
+  dps: 780.4041424066824
+  tps: 753.1790706573664
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-PersistentEarthsiegeDiamond"
  value: {
-  dps: 789.1608158551265
-  tps: 764.5163401750088
+  dps: 780.4041424066824
+  tps: 753.1790706573664
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-PotentUnstableDiamond"
  value: {
-  dps: 789.1608158551265
-  tps: 764.5163401750088
+  dps: 780.4041424066824
+  tps: 753.1790706573664
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-PowerfulEarthshatterDiamond"
  value: {
-  dps: 789.1608158551265
-  tps: 764.5163401750088
+  dps: 780.4041424066824
+  tps: 753.1790706573664
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-PowerfulEarthsiegeDiamond"
  value: {
-  dps: 789.1608158551265
-  tps: 764.5163401750088
+  dps: 780.4041424066824
+  tps: 753.1790706573664
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-PowerfulEarthstormDiamond"
  value: {
-  dps: 789.1608158551265
-  tps: 764.5163401750088
+  dps: 780.4041424066824
+  tps: 753.1790706573664
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-PurifiedShardoftheGods"
  value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
+  dps: 755.7190263332155
+  tps: 729.5680887057126
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-Quagmirran'sEye-27683"
+ key: "TestSmite-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 785.500652020215
-  tps: 761.0953585096851
+  dps: 842.4914833328285
+  tps: 813.063066414577
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-Redeemer'sAlchemistStone-35750"
+ key: "TestSmite-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 788.2181544401044
-  tps: 763.5221006727926
+  dps: 847.1860453020959
+  tps: 817.6300953085791
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-RelentlessEarthsiegeDiamond"
  value: {
-  dps: 794.3266448770338
-  tps: 769.3763521188192
+  dps: 785.3468770837385
+  tps: 757.8291954415413
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-RelentlessEarthstormDiamond"
  value: {
-  dps: 794.3266448770338
-  tps: 769.3763521188192
+  dps: 785.3468770837385
+  tps: 757.8291954415413
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-RevitalizingSkyflareDiamond"
  value: {
-  dps: 803.2474765975861
-  tps: 778.0332313429219
+  dps: 794.3077536094864
+  tps: 766.4473209679204
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-RobeoftheElderScribes-28602"
+ key: "TestSmite-AllItems-RuneofRepulsion-40372"
  value: {
-  dps: 777.929012537751
-  tps: 753.7846530902556
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-RodoftheSunKing-29996"
- value: {
-  dps: 802.8356873843512
-  tps: 777.5382262218138
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-Romulo'sPoisonVial-28579"
- value: {
-  dps: 788.777951660996
-  tps: 764.2000816592438
+  dps: 755.7190263332155
+  tps: 729.5680887057126
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-SanctificationGarb"
  value: {
-  dps: 926.0081219206738
-  tps: 894.4253155493234
+  dps: 905.5537175260528
+  tps: 871.8178123776868
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-ScarabofDisplacement-30629"
+ key: "TestSmite-AllItems-SealofthePantheon-36993"
  value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
+  dps: 755.7190263332155
+  tps: 729.5680887057126
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-Scryer'sBloodgem-29132"
+ key: "TestSmite-AllItems-Serrah'sStar-37559"
  value: {
-  dps: 796.2567367612386
-  tps: 771.3629415387704
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-SextantofUnstableCurrents-30626"
- value: {
-  dps: 783.5721421728266
-  tps: 759.2070394267002
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-ShadowmoonInsignia-32501"
- value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-ShardofContempt-34472"
- value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-ShatteredSunPendantofAcumen-34678"
- value: {
-  dps: 800.6009405088948
-  tps: 775.3853089064564
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-ShatteredSunPendantofMight-34679"
- value: {
-  dps: 776.9385946263217
-  tps: 753.0073604633887
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-Shiffar'sNexus-Horn-28418"
- value: {
-  dps: 777.7375257216643
-  tps: 753.6134893369596
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-ShiftingNaaruSliver-34429"
- value: {
-  dps: 784.2751345366761
-  tps: 759.8590915834466
+  dps: 769.0882425491615
+  tps: 742.3832949430305
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-ShinyShardoftheGods"
  value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
+  dps: 755.7190263332155
+  tps: 729.5680887057126
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-Slayer'sCrest-23041"
+ key: "TestSmite-AllItems-Sindragosa'sFlawlessFang-50361"
  value: {
-  dps: 766.2969290091121
-  tps: 742.801322866822
+  dps: 755.7190263332155
+  tps: 729.5680887057126
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-Sorcerer'sAlchemistStone-35749"
+ key: "TestSmite-AllItems-SparkofLife-37657"
  value: {
-  dps: 788.2181544401044
-  tps: 763.5221006727926
+  dps: 800.228579089992
+  tps: 771.8268447985186
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-SpellstrikeInfusion"
  value: {
-  dps: 716.9894246285545
-  tps: 696.0824099957946
+  dps: 704.7147751943224
+  tps: 681.2175558871904
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-Spirit-WorldGlass-39388"
+ value: {
+  dps: 826.0050491467621
+  tps: 796.2090723053037
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-SwiftSkyfireDiamond"
  value: {
-  dps: 789.1608158551265
-  tps: 764.5163401750088
+  dps: 780.4041424066824
+  tps: 753.1790706573664
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-SwiftSkyflareDiamond"
  value: {
-  dps: 789.1608158551265
-  tps: 764.5163401750088
+  dps: 780.4041424066824
+  tps: 753.1790706573664
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-SwiftStarfireDiamond"
  value: {
-  dps: 797.3467339595647
-  tps: 772.3809714048226
+  dps: 779.5194387307378
+  tps: 752.1655919578988
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-SwiftStarflareDiamond"
  value: {
-  dps: 789.1608158551265
-  tps: 764.5163401750088
+  dps: 780.4041424066824
+  tps: 753.1790706573664
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-SwiftWindfireDiamond"
  value: {
-  dps: 789.1608158551265
-  tps: 764.5163401750088
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-SyphonoftheNathrezim-32262"
- value: {
-  dps: 802.8356873843512
-  tps: 777.5382262218138
+  dps: 780.4041424066824
+  tps: 753.1790706573664
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-TenaciousEarthstormDiamond"
  value: {
-  dps: 789.1608158551265
-  tps: 764.5163401750088
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-TheLightningCapacitor-28785"
- value: {
-  dps: 777.9131156494778
-  tps: 754.0841322127251
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-TheNightBlade-31331"
- value: {
-  dps: 802.8356873843512
-  tps: 777.5382262218138
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-TheRestrainedEssenceofSapphiron-23046"
- value: {
-  dps: 795.5307220875018
-  tps: 770.6799254702474
+  dps: 780.4041424066824
+  tps: 753.1790706573664
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-TheTwinStars"
  value: {
-  dps: 804.233788566432
-  tps: 778.9651974750532
+  dps: 791.207462892857
+  tps: 763.4849008946782
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-ThunderingSkyfireDiamond"
  value: {
-  dps: 789.1608158551265
-  tps: 764.5163401750088
+  dps: 780.4041424066824
+  tps: 753.1790706573664
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 789.1608158551265
-  tps: 764.5163401750088
+  dps: 780.4041424066824
+  tps: 753.1790706573664
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-Timbal'sFocusingCrystal-34470"
+ key: "TestSmite-AllItems-TinyAbominationinaJar-50351"
  value: {
-  dps: 799.3559951392966
-  tps: 774.5128858013609
+  dps: 796.5771149108332
+  tps: 768.5846242962597
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-TinyAbominationinaJar-50706"
+ value: {
+  dps: 796.5771149108332
+  tps: 768.5846242962597
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-TirelessSkyflareDiamond"
  value: {
-  dps: 801.6980247009831
-  tps: 776.5184077942763
+  dps: 783.8037085416015
+  tps: 756.3219863054056
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-TirelessStarflareDiamond"
  value: {
-  dps: 799.3185222840061
-  tps: 774.2017450245871
+  dps: 787.0449027115159
+  tps: 759.5440763850893
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-TrenchantEarthshatterDiamond"
  value: {
-  dps: 799.3185222840061
-  tps: 774.2017450245871
+  dps: 787.0449027115159
+  tps: 759.5440763850893
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-TrenchantEarthsiegeDiamond"
  value: {
-  dps: 801.6980247009831
-  tps: 776.5184077942763
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-TsunamiTalisman-30627"
- value: {
-  dps: 782.8625717079844
-  tps: 758.6328022472388
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-WorldBreaker-30090"
- value: {
-  dps: 676.7226503986765
-  tps: 657.8170487237109
+  dps: 783.8037085416015
+  tps: 756.3219863054056
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-WrathofSpellfire"
  value: {
-  dps: 718.9407840447122
-  tps: 698.1854680765845
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-Xi'ri'sGift-29179"
- value: {
-  dps: 777.31624514096
-  tps: 753.104024398115
+  dps: 713.576191553823
+  tps: 690.0679630441673
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-Zabra'sRegalia"
  value: {
-  dps: 810.5597871796822
-  tps: 785.0257794328334
+  dps: 802.9057505603679
+  tps: 774.5443784727972
  }
 }
 dps_results: {
  key: "TestSmite-Average-Default"
  value: {
-  dps: 798.6318213305973
-  tps: 773.3981984318046
+  dps: 784.3235820734709
+  tps: 756.6585415100382
  }
 }
 dps_results: {
  key: "TestSmite-Settings-Undead-P3-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 802.8356873843512
-  tps: 1203.4902948897397
+  dps: 793.6828099005662
+  tps: 1144.7009554516192
  }
 }
 dps_results: {
  key: "TestSmite-Settings-Undead-P3-Basic-FullBuffs-LongSingleTarget"
  value: {
-  dps: 802.8356873843512
-  tps: 777.5382262218138
+  dps: 793.6828099005662
+  tps: 765.8924064440308
  }
 }
 dps_results: {
  key: "TestSmite-Settings-Undead-P3-Basic-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 1181.4029591689093
-  tps: 1155.4498754291171
+  dps: 1202.564163897859
+  tps: 1176.1929809910878
  }
 }
 dps_results: {
@@ -1088,7 +731,7 @@ dps_results: {
 dps_results: {
  key: "TestSmite-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 802.8356873843512
-  tps: 777.5382262218138
+  dps: 793.6828099005662
+  tps: 765.8924064440308
  }
 }

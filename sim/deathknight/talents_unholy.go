@@ -40,6 +40,7 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 	deathKnight.applyWanderingPlague()
 
 	// Crypt Fever
+	deathKnight.applyCryptFever()
 	// Ebon Plaguebringer
 	deathKnight.applyEbonPlaguebringer()
 
@@ -106,8 +107,6 @@ func (deathKnight *DeathKnight) applyNecrosis() {
 		return
 	}
 
-	target := deathKnight.CurrentTarget
-
 	var curDmg float64
 	necrosisHit := deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 51460},
@@ -143,7 +142,7 @@ func (deathKnight *DeathKnight) applyNecrosis() {
 			}
 
 			curDmg = spellEffect.Damage
-			necrosisHit.Cast(sim, target)
+			necrosisHit.Cast(sim, spellEffect.Target)
 		},
 	})
 }
@@ -152,8 +151,6 @@ func (deathKnight *DeathKnight) applyBloodCakedBlade() {
 	if deathKnight.Talents.BloodCakedBlade == 0 {
 		return
 	}
-
-	target := deathKnight.CurrentTarget
 
 	mhBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 0, 1.0, true)
 	ohBaseDamage := core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, 1.0*deathKnight.nervesOfColdSteelBonus(), true)
@@ -199,10 +196,26 @@ func (deathKnight *DeathKnight) applyBloodCakedBlade() {
 
 			if sim.RandomFloat("Blood-Caked Blade Roll") < 0.30 {
 				isMH = spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHAuto)
-				bloodCakedBladeHit.Cast(sim, target)
+				bloodCakedBladeHit.Cast(sim, spellEffect.Target)
 			}
 		},
 	})
+}
+
+func (deathKnight *DeathKnight) applyCryptFever() {
+	if deathKnight.Talents.CryptFever == 0 {
+		return
+	}
+
+	deathKnight.CryptFeverAura = make([]*core.Aura, deathKnight.Env.GetNumTargets())
+	for _, encounterTarget := range deathKnight.Env.Encounter.Targets {
+		target := &encounterTarget.Unit
+
+		cfAura := core.CryptFeverAura(target, int(deathKnight.Index))
+		cfAura.Duration = time.Second * (15 + 3*time.Duration(deathKnight.Talents.Epidemic))
+
+		deathKnight.CryptFeverAura[target.Index] = cfAura
+	}
 }
 
 func (deathKnight *DeathKnight) applyEbonPlaguebringer() {
@@ -214,12 +227,15 @@ func (deathKnight *DeathKnight) applyEbonPlaguebringer() {
 	deathKnight.AddStat(stats.MeleeCrit, ebonPlaguebringerBonusCrit)
 	deathKnight.AddStat(stats.SpellCrit, ebonPlaguebringerBonusCrit)
 
-	target := deathKnight.CurrentTarget
+	deathKnight.EbonPlagueAura = make([]*core.Aura, deathKnight.Env.GetNumTargets())
+	for _, encounterTarget := range deathKnight.Env.Encounter.Targets {
+		target := &encounterTarget.Unit
 
-	epAura := core.EbonPlaguebringerAura(target)
-	epAura.Duration = time.Second * (15 + 3*time.Duration(deathKnight.Talents.Epidemic))
+		epAura := core.EbonPlaguebringerAura(target, int(deathKnight.Index))
+		epAura.Duration = time.Second * (15 + 3*time.Duration(deathKnight.Talents.Epidemic))
 
-	deathKnight.EbonPlagueAura = epAura
+		deathKnight.EbonPlagueAura[target.Index] = epAura
+	}
 }
 
 func (deathKnight *DeathKnight) applyDesolation() {
@@ -245,42 +261,46 @@ func (deathKnight *DeathKnight) applyDesolation() {
 
 func (deathKnight *DeathKnight) applyUnholyBlight() {
 	actionID := core.ActionID{SpellID: 50536}
-	target := deathKnight.CurrentTarget
 
-	var curDamage = 0.0
-	deathKnight.UnholyBlightDot = core.NewDot(core.Dot{
-		Aura: target.RegisterAura(core.Aura{
-			Label:    "UnholyBlight-" + strconv.Itoa(int(deathKnight.Index)),
-			ActionID: actionID,
-		}),
-		NumberOfTicks: 10,
-		TickLength:    time.Second * 1,
-
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			IsPeriodic:       true,
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return (0.10 * curDamage) / 10
-				},
-				TargetSpellCoefficient: 1,
-			},
-			OutcomeApplier: deathKnight.OutcomeFuncAlwaysHit(),
-		}),
-	})
-
+	var curDamage = make([]float64, deathKnight.Env.GetNumTargets())
 	deathKnight.UnholyBlightSpell = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
-		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			curDamage = deathKnight.LastDeathCoilDamage
-			deathKnight.UnholyBlightDot.Apply(sim)
+		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
+			curDamage[deathKnight.CurrentTarget.Index] = deathKnight.LastDeathCoilDamage
+			deathKnight.UnholyBlightDot[deathKnight.CurrentTarget.Index].Apply(sim)
 		},
 	})
 
-	deathKnight.UnholyBlightDot.Spell = deathKnight.UnholyBlightSpell
+	deathKnight.UnholyBlightDot = make([]*core.Dot, deathKnight.Env.GetNumTargets())
+	for _, encounterTarget := range deathKnight.Env.Encounter.Targets {
+		target := &encounterTarget.Unit
+
+		deathKnight.UnholyBlightDot[target.Index] = core.NewDot(core.Dot{
+			Aura: target.RegisterAura(core.Aura{
+				Label:    "UnholyBlight-" + strconv.Itoa(int(deathKnight.Index)),
+				ActionID: actionID,
+			}),
+			NumberOfTicks: 10,
+			TickLength:    time.Second * 1,
+
+			TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
+				ProcMask:         core.ProcMaskPeriodicDamage,
+				DamageMultiplier: 1,
+				ThreatMultiplier: 1,
+				IsPeriodic:       true,
+				BaseDamage: core.BaseDamageConfig{
+					Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+						return (0.10 * curDamage[target.Index]) / 10
+					},
+					TargetSpellCoefficient: 1,
+				},
+				OutcomeApplier: deathKnight.OutcomeFuncAlwaysHit(),
+			}),
+		})
+
+		deathKnight.UnholyBlightDot[target.Index].Spell = deathKnight.UnholyBlightSpell
+	}
 }
 
 func (deathKnight *DeathKnight) reapingChance() float64 {
@@ -307,7 +327,7 @@ func (deathKnight *DeathKnight) reapingProc(sim *core.Simulation, spell *core.Sp
 
 			if deathKnight.reapingWillProc(sim, reapingChance) {
 				slot := deathKnight.SpendBloodRune(sim, spell.BloodRuneMetrics())
-				deathKnight.SetRuneAtSlotToState(0, slot, core.RuneState_DeathSpent, core.RuneKind_Death)
+				deathKnight.SetRuneAtIdxSlotToState(0, slot, core.RuneState_DeathSpent, core.RuneKind_Death)
 				deathKnight.SetAsGeneratedByReapingOrBoTN(slot)
 				return true
 			}

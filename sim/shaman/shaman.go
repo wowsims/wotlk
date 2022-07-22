@@ -36,6 +36,8 @@ func NewShaman(character core.Character, talents proto.ShamanTalents, totems pro
 	// Add Shaman stat dependencies
 	shaman.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
 	shaman.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+core.CritRatingPerCritChance/83.3)
+	// Set proper Melee Haste scaling
+	shaman.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
 
 	if selfBuffs.Shield == proto.ShamanShield_WaterShield {
 		shaman.AddStat(stats.MP5, 100)

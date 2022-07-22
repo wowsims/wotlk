@@ -14,10 +14,8 @@ func (deathKnight *DeathKnight) newBloodStrikeSpell(isMH bool) *core.Spell {
 		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 306.0, 0.4*deathKnight.nervesOfColdSteelBonus(), true)
 	}
 
-	guileOfGorefiend := deathKnight.Talents.GuileOfGorefiend > 0
-
 	effect := core.SpellEffect{
-		BonusCritRating:  (3.0*float64(deathKnight.Talents.Subversion) + deathKnight.annihilationCritBonus()) * core.CritRatingPerCritChance,
+		BonusCritRating:  (deathKnight.subversionCritBonus() + deathKnight.annihilationCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: deathKnight.bloodOfTheNorthCoeff(),
 		ThreatMultiplier: 1,
 
@@ -40,7 +38,9 @@ func (deathKnight *DeathKnight) newBloodStrikeSpell(isMH bool) *core.Spell {
 		},
 	}
 
-	deathKnight.threatOfThassarianProcMasks(isMH, &effect, guileOfGorefiend)
+	deathKnight.threatOfThassarianProcMasks(isMH, &effect, true, func(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
+		return outcomeApplier
+	})
 
 	return deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:     BloodStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
@@ -101,4 +101,12 @@ func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
 
 func (deathKnight *DeathKnight) CanBloodStrike(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 1, 0, 0) && deathKnight.BloodStrike.IsReady(sim)
+}
+
+func (deathKnight *DeathKnight) CastBloodStrike(sim *core.Simulation, target *core.Unit) bool {
+	if deathKnight.CanBloodStrike(sim) {
+		deathKnight.BloodStrike.Cast(sim, target)
+		return true
+	}
+	return false
 }

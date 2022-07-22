@@ -6,7 +6,7 @@ import { Spec } from '/wotlk/core/proto/common.js';
 import { SimOptions } from '/wotlk/core/proto/api.js';
 import { specToLocalStorageKey } from '/wotlk/core/proto_utils/utils.js';
 
-import { Sim } from './sim.js';
+import { Sim, SimError } from './sim.js';
 import { Target } from './target.js';
 import { EventID, TypedEvent } from './typed_event.js';
 
@@ -54,6 +54,8 @@ export abstract class SimUI extends Component {
 		this.changeEmitter = TypedEvent.onAny([
 			this.sim.changeEmitter,
 		], 'SimUIChange');
+
+		this.sim.crashEmitter.on((eventID: EventID, error: SimError) => this.handleCrash(error));
 
 		const updateShowThreatMetrics = () => {
 			if (this.sim.getShowThreatMetrics()) {
@@ -148,7 +150,7 @@ export abstract class SimUI extends Component {
 		}
 
 		const downloadBinary = document.createElement('span');
-		// downloadBinary.src = "/wotlk/assets/gauge.svg"
+		// downloadBinary.src = "/wotlk/assets/img/gauge.svg"
 		downloadBinary.classList.add('downbin');
 		downloadBinary.addEventListener('click', event => {
 			window.open('https://github.com/wowsims/wotlk/releases', '_blank');
@@ -269,7 +271,7 @@ export abstract class SimUI extends Component {
 			await this.sim.runRaidSim(TypedEvent.nextEventID(), onProgress);
 		} catch (e) {
 			this.resultsViewer.hideAll();
-			alert(e);
+			this.handleCrash(e);
 		}
 	}
 
@@ -279,11 +281,56 @@ export abstract class SimUI extends Component {
 			await this.sim.runRaidSimWithLogs(TypedEvent.nextEventID());
 		} catch (e) {
 			this.resultsViewer.hideAll();
-			alert(e);
+			this.handleCrash(e);
 		}
 	}
 
+	handleCrash(error: any) {
+		if (!(error instanceof SimError)) {
+			alert(error);
+			return;
+		}
+
+		const errorStr = (error as SimError).errorStr;
+		if (window.confirm('Simulation Failure:\n' + errorStr + '\nPress Ok to file crash report')) {
+			// Splice out just the line numbers
+			let filteredError = errorStr.substring(0, errorStr.indexOf('Stack Trace:'));
+			const rExp: RegExp = /(.*\.go:\d+)/g;
+			filteredError += errorStr.match(rExp)?.join(' ');
+
+			const hash = this.hashCode(errorStr);
+			const link = this.toLink();
+			const rngSeed = this.sim.getLastUsedRngSeed();
+			fetch('https://api.github.com/search/issues?q=is:issue+is:open+repo:wowsims/wotlk+' + hash).then(resp => {
+				resp.json().then((issues) => {
+					if (issues.total_count > 0) {
+						window.open(issues.items[0].html_url, '_blank');
+					} else {
+						window.open(
+							'https://github.com/wowsims/wotlk/issues/new?assignees=&labels=&title=Crash%20Report%20' + hash +
+								'&body=' + encodeURIComponent(errorStr + '\n\nLink:\n' + link + '\n\nRNG Seed: ' + rngSeed + '\n'),
+							'_blank');
+					}
+				});
+			}).catch(fetchErr => {
+				alert('Failed to file report... try again another time:' + fetchErr);
+			});
+		}
+		return;
+	}
+
+	hashCode(str: string): number {
+		let hash = 0;
+		for (let i = 0, len = str.length; i < len; i++) {
+			let chr = str.charCodeAt(i);
+			hash = (hash << 5) - hash + chr;
+			hash |= 0; // Convert to 32bit integer
+		}
+		return hash;
+	}
+
 	abstract applyDefaults(eventID: EventID): void;
+	abstract toLink(): string;
 }
 
 const simHTML = `

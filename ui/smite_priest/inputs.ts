@@ -9,17 +9,17 @@ import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
 import { Target } from '/wotlk/core/target.js';
 import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
 
+import * as InputHelpers from '/wotlk/core/components/input_helpers.js';
+
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
 
-export const SelfPowerInfusion = {
+export const SelfPowerInfusion = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.SpecSmitePriest>({
+	fieldName: 'powerInfusionTarget',
 	id: ActionId.fromSpellId(10060),
-	states: 2,
 	extraCssClasses: [
-		'self-power-infusion-picker',
 		'within-raid-sim-hide',
 	],
-	changedEvent: (player: Player<Spec.SpecSmitePriest>) => player.specOptionsChangeEmitter,
 	getValue: (player: Player<Spec.SpecSmitePriest>) => player.getSpecOptions().powerInfusionTarget?.targetIndex != NO_TARGET,
 	setValue: (eventID: EventID, player: Player<Spec.SpecSmitePriest>, newValue: boolean) => {
 		const newOptions = player.getSpecOptions();
@@ -28,80 +28,33 @@ export const SelfPowerInfusion = {
 		});
 		player.setSpecOptions(eventID, newOptions);
 	},
-};
+});
 
 export const SmitePriestRotationConfig = {
 	inputs: [
-		{
-			type: 'enum' as const, cssClass: 'rotation-enum-picker',
-			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-			config: {
-				label: 'Rotation Type',
-				labelTooltip: 'Choose whether to weave optionally weave holy fire for increase Shadow Word: Pain uptime',
-				values: [
-					{
-						name: 'Basic', value: RotationType.Basic,
-					},
-					{
-						name: 'HF Weave', value: RotationType.HolyFireWeave,
-					},
-				],
-				changedEvent: (player: Player<Spec.SpecSmitePriest>) => player.rotationChangeEmitter,
-				getValue: (player: Player<Spec.SpecSmitePriest>) => player.getRotation().rotationType,
-				setValue: (eventID: EventID, player: Player<Spec.SpecSmitePriest>, newValue: number) => {
-					const newRotation = player.getRotation();
-					newRotation.rotationType = newValue;
-					player.setRotation(eventID, newRotation);
-				},
-			},
-		},
-		{
-			type: 'boolean' as const,
-			cssClass: 'shadowfiend-picker',
-			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-			config: {
-				label: 'Use Shadowfiend',
-				labelTooltip: 'Use Shadowfiend when low mana and off CD.',
-				changedEvent: (player: Player<Spec.SpecSmitePriest>) => player.rotationChangeEmitter,
-				getValue: (player: Player<Spec.SpecSmitePriest>) => player.getSpecOptions().useShadowfiend,
-				setValue: (eventID: EventID, player: Player<Spec.SpecSmitePriest>, newValue: boolean) => {
-					const newOptions = player.getSpecOptions();
-					newOptions.useShadowfiend = newValue;
-					player.setSpecOptions(eventID, newOptions);
-				},
-			},
-		},
-		{
-			type: 'boolean' as const,
-			cssClass: 'mindblast-picker',
-			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-			config: {
-				label: 'Use Mind Blast',
-				labelTooltip: 'Use Mind Blast whenever off CD.',
-				changedEvent: (player: Player<Spec.SpecSmitePriest>) => player.rotationChangeEmitter,
-				getValue: (player: Player<Spec.SpecSmitePriest>) => player.getRotation().useMindBlast,
-				setValue: (eventID: EventID, player: Player<Spec.SpecSmitePriest>, newValue: boolean) => {
-					const newRotation = player.getRotation();
-					newRotation.useMindBlast = newValue;
-					player.setRotation(eventID, newRotation);
-				},
-			},
-		},
-		{
-			type: 'boolean' as const,
-			cssClass: 'swd-picker',
-			getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
-			config: {
-				label: 'Use Shadow Word: Death',
-				labelTooltip: 'Use Shadow Word: Death whenever off CD.',
-				changedEvent: (player: Player<Spec.SpecSmitePriest>) => player.rotationChangeEmitter,
-				getValue: (player: Player<Spec.SpecSmitePriest>) => player.getRotation().useShadowWordDeath,
-				setValue: (eventID: EventID, player: Player<Spec.SpecSmitePriest>, newValue: boolean) => {
-					const newRotation = player.getRotation();
-					newRotation.useShadowWordDeath = newValue;
-					player.setRotation(eventID, newRotation);
-				},
-			},
-		},
+		InputHelpers.makeRotationEnumInput<Spec.SpecSmitePriest, RotationType>({
+			fieldName: 'rotationType',
+			label: 'Rotation Type',
+			labelTooltip: 'Choose whether to weave optionally weave holy fire for increase Shadow Word: Pain uptime',
+			values: [
+				{ name: 'Basic', value: RotationType.Basic },
+				{ name: 'HF Weave', value: RotationType.HolyFireWeave },
+			],
+		}),
+		InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecSmitePriest>({
+			fieldName: 'useShadowfiend',
+			label: 'Use Shadowfiend',
+			labelTooltip: 'Use Shadowfiend when low mana and off CD.',
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecSmitePriest>({
+			fieldName: 'useMindBlast',
+			label: 'Use Mind Blast',
+			labelTooltip: 'Use Mind Blast whenever off CD.',
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecSmitePriest>({
+			fieldName: 'useShadowWordDeath',
+			label: 'Use Shadow Word: Death',
+			labelTooltip: 'Use Shadow Word: Death whenever off CD.',
+		}),
 	],
 };

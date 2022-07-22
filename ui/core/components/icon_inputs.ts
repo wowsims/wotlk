@@ -16,7 +16,6 @@ import { Potions } from '/wotlk/core/proto/common.js';
 import { Spec } from '/wotlk/core/proto/common.js';
 import { TristateEffect } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
-import { IndividualSimIconPickerConfig } from '/wotlk/core/individual_sim_ui.js';
 import { Party } from '/wotlk/core/party.js';
 import { Player } from '/wotlk/core/player.js';
 import { Raid } from '/wotlk/core/raid.js';
@@ -25,103 +24,104 @@ import { Target } from '/wotlk/core/target.js';
 import { Encounter } from '/wotlk/core/encounter.js';
 import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
 
-import { ExclusivityTag } from '/wotlk/core/individual_sim_ui.js';
 import { IconPickerConfig } from './icon_picker.js';
 import { IconEnumPicker, IconEnumPickerConfig, IconEnumValueConfig } from './icon_enum_picker.js';
 import { MultiIconPickerConfig } from './multi_icon_picker.js';
 
+import * as InputHelpers from './input_helpers.js';
+
 // Raid Buffs
 
-export const AllStatsBuff = makeMultiIconInput([
+export const AllStatsBuff = InputHelpers.makeMultiIconInput([
 	makeTristateRaidBuffInput(ActionId.fromSpellId(48470), ActionId.fromSpellId(17051), 'giftOfTheWild'),
 	makeBooleanRaidBuffInput(ActionId.fromItemId(49634), 'drumsOfTheWild'),
 ], 'Stats');
 
-export const AllStatsPercentBuff = makeMultiIconInput([
+export const AllStatsPercentBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanIndividualBuffInput(ActionId.fromSpellId(25898), 'blessingOfKings'),
 	makeBooleanRaidBuffInput(ActionId.fromItemId(49633), 'drumsOfForgottenKings'),
 	makeBooleanIndividualBuffInput(ActionId.fromSpellId(25899), 'blessingOfSanctuary'),
 ], 'Stats %');
 
-export const ArmorBuff = makeMultiIconInput([
+export const ArmorBuff = InputHelpers.makeMultiIconInput([
 	makeTristateRaidBuffInput(ActionId.fromSpellId(48942), ActionId.fromSpellId(20140), 'devotionAura'),
 	makeBooleanRaidBuffInput(ActionId.fromItemId(43468), 'scrollOfProtection'),
 	// stoneskin?
 ], 'Armor');
 
-export const StaminaBuff = makeMultiIconInput([
+export const StaminaBuff = InputHelpers.makeMultiIconInput([
 	makeTristateRaidBuffInput(ActionId.fromSpellId(48161), ActionId.fromSpellId(14767), 'powerWordFortitude'),
 	makeBooleanRaidBuffInput(ActionId.fromItemId(37094), 'scrollOfStamina'),
 ], 'Stam');
 
-export const StrengthAndAgilityBuff = makeMultiIconInput([
+export const StrengthAndAgilityBuff = InputHelpers.makeMultiIconInput([
 	makeTristateRaidBuffInput(ActionId.fromSpellId(58643), ActionId.fromSpellId(52456), 'strengthOfEarthTotem'),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(57623), 'hornOfWinter'),
 	makeBooleanRaidBuffInput(ActionId.fromItemId(43464), 'scrollOfAgility'),
 	makeBooleanRaidBuffInput(ActionId.fromItemId(43466), 'scrollOfStrength'),
 ], 'Str/Agi');
 
-export const IntellectBuff = makeMultiIconInput([
+export const IntellectBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(43002), 'arcaneBrilliance'),
 	makeTristateRaidBuffInput(ActionId.fromSpellId(57567), ActionId.fromSpellId(54038), 'felIntelligence'),
 	makeBooleanRaidBuffInput(ActionId.fromItemId(37092), 'scrollOfIntellect'),
 ], 'Int');
 
-export const SpiritBuff = makeMultiIconInput([
+export const SpiritBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(48073), 'divineSpirit'),
 	makeTristateRaidBuffInput(ActionId.fromSpellId(57567), ActionId.fromSpellId(54038), 'felIntelligence'),
 	makeBooleanRaidBuffInput(ActionId.fromItemId(37098), 'scrollOfSpirit'),
 ], 'Spi');
 
-export const AttackPowerBuff = makeMultiIconInput([
+export const AttackPowerBuff = InputHelpers.makeMultiIconInput([
 	makeTristateIndividualBuffInput(ActionId.fromSpellId(48934), ActionId.fromSpellId(20045), 'blessingOfMight'),
 	makeTristateRaidBuffInput(ActionId.fromSpellId(47436), ActionId.fromSpellId(12861), 'battleShout'),
 ], 'AP');
 
-export const AttackPowerPercentBuff = makeMultiIconInput([
+export const AttackPowerPercentBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(53138), 'abominationsMight'),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(30809), 'unleashedRage'),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(19506), 'trueshotAura'),
 ], 'AP %');
 
-export const DamagePercentBuff = makeMultiIconInput([
+export const DamagePercentBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(31869), 'sanctifiedRetribution'),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(31583), 'arcaneEmpowerment'),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(34460), 'ferociousInspiration'),
 ], 'Dmg %');
 
-export const DamageReductionPercentBuff = makeMultiIconInput([
+export const DamageReductionPercentBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanIndividualBuffInput(ActionId.fromSpellId(57472), 'renewedHope'),
 	makeBooleanIndividualBuffInput(ActionId.fromSpellId(25899), 'blessingOfSanctuary'),
 	makeBooleanIndividualBuffInput(ActionId.fromSpellId(50720), 'vigilance'),
 ], 'Mit %');
 
-export const HastePercentBuff = makeMultiIconInput([
+export const HastePercentBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(53648), 'swiftRetribution'),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(48396), 'moonkinAura', TristateEffect.TristateEffectImproved),
 ], 'Haste %');
 
-export const HealthBuff = makeMultiIconInput([
+export const HealthBuff = InputHelpers.makeMultiIconInput([
 	makeTristateRaidBuffInput(ActionId.fromSpellId(47440), ActionId.fromSpellId(12861), 'commandingShout'),
 	makeTristateRaidBuffInput(ActionId.fromSpellId(47982), ActionId.fromSpellId(18696), 'bloodPact'),
 ], 'Health');
 
-export const MP5Buff = makeMultiIconInput([
+export const MP5Buff = InputHelpers.makeMultiIconInput([
 	makeTristateIndividualBuffInput(ActionId.fromSpellId(48938), ActionId.fromSpellId(20245), 'blessingOfWisdom'),
 	makeTristateRaidBuffInput(ActionId.fromSpellId(58774), ActionId.fromSpellId(16206), 'manaSpringTotem'),
 ], 'MP5');
 
-export const MeleeCritBuff = makeMultiIconInput([
+export const MeleeCritBuff = InputHelpers.makeMultiIconInput([
 	makeTristateRaidBuffInput(ActionId.fromSpellId(17007), ActionId.fromSpellId(34300), 'leaderOfThePack'),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(29801), 'rampage'),
 ], 'Melee Crit');
 
-export const MeleeHasteBuff = makeMultiIconInput([
+export const MeleeHasteBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(55610), 'icyTalons'),
 	makeTristateRaidBuffInput(ActionId.fromSpellId(65990), ActionId.fromSpellId(29193), 'windfuryTotem'),
 ], 'Melee Haste');
 
-export const ReplenishmentBuff = makeMultiIconInput([
+export const ReplenishmentBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanIndividualBuffInput(ActionId.fromSpellId(48160), 'vampiricTouch'),
 	makeBooleanIndividualBuffInput(ActionId.fromSpellId(31878), 'judgementsOfTheWise'),
 	makeBooleanIndividualBuffInput(ActionId.fromSpellId(53292), 'huntingParty'),
@@ -129,16 +129,16 @@ export const ReplenishmentBuff = makeMultiIconInput([
 	makeBooleanIndividualBuffInput(ActionId.fromSpellId(44561), 'enduringWinter'),
 ], 'Repl');
 
-export const SpellCritBuff = makeMultiIconInput([
+export const SpellCritBuff = InputHelpers.makeMultiIconInput([
 	makeTristateRaidBuffInput(ActionId.fromSpellId(24907), ActionId.fromSpellId(48396), 'moonkinAura'),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(51470), 'elementalOath'),
 ], 'Spell Crit');
 
-export const SpellHasteBuff = makeMultiIconInput([
+export const SpellHasteBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(3738), 'wrathOfAirTotem'),
 ], 'Spell Haste');
 
-export const SpellPowerBuff = makeMultiIconInput([
+export const SpellPowerBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(57722), 'totemOfWrath'),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(58656), 'flametongueTotem'),
 	// Not a boolean
@@ -161,65 +161,65 @@ export const PowerInfusion = makeMultistateIndividualBuffInput(ActionId.fromSpel
 
 // Debuffs
 
-export const MajorArmorDebuff = makeMultiIconInput([
+export const MajorArmorDebuff = InputHelpers.makeMultiIconInput([
 	makeBooleanDebuffInput(ActionId.fromSpellId(7386), 'sunderArmor'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(8647), 'exposeArmor'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(55754), 'acidSpit'),
 ], 'Major Ar');
 
-export const MinorArmorDebuff = makeMultiIconInput([
+export const MinorArmorDebuff = InputHelpers.makeMultiIconInput([
 	makeTristateDebuffInput(ActionId.fromSpellId(770), ActionId.fromSpellId(33602), 'faerieFire'),
 	makeTristateDebuffInput(ActionId.fromSpellId(50511), ActionId.fromSpellId(18180), 'curseOfWeakness'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(56631), 'sting'),
 ], 'Minor Ar');
 
-export const AttackPowerDebuff = makeMultiIconInput([
+export const AttackPowerDebuff = InputHelpers.makeMultiIconInput([
 	makeTristateDebuffInput(ActionId.fromSpellId(47437), ActionId.fromSpellId(12879), 'demoralizingShout'),
 	makeTristateDebuffInput(ActionId.fromSpellId(48560), ActionId.fromSpellId(16862), 'demoralizingRoar'),
 	makeTristateDebuffInput(ActionId.fromSpellId(50511), ActionId.fromSpellId(18180), 'curseOfWeakness'),
 ], 'AP');
 
-export const BleedDebuff = makeMultiIconInput([
+export const BleedDebuff = InputHelpers.makeMultiIconInput([
 	makeBooleanDebuffInput(ActionId.fromSpellId(33876), 'mangle'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(46855), 'trauma'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(57393), 'stampede'),
 ], 'Bleed');
 
-export const CritDebuff = makeMultiIconInput([
+export const CritDebuff = InputHelpers.makeMultiIconInput([
 	makeBooleanDebuffInput(ActionId.fromSpellId(30706), 'totemOfWrath'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(20337), 'heartOfTheCrusader'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(58410), 'masterPoisoner'),
 ], 'Crit');
 
-export const MeleeAttackSpeedDebuff = makeMultiIconInput([
+export const MeleeAttackSpeedDebuff = InputHelpers.makeMultiIconInput([
 	makeTristateDebuffInput(ActionId.fromSpellId(47502), ActionId.fromSpellId(12666), 'thunderClap'),
 	makeTristateDebuffInput(ActionId.fromSpellId(55095), ActionId.fromSpellId(51456), 'icyTouch'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(53696), 'judgementsOfTheJust'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(48485), 'infectedWounds'),
 ], 'Atk Spd');
 
-export const MeleeHitDebuff = makeMultiIconInput([
+export const MeleeHitDebuff = InputHelpers.makeMultiIconInput([
 	makeBooleanDebuffInput(ActionId.fromSpellId(48460), 'insectSwarm'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(3043), 'scorpidSting'),
 ], 'Miss');
 
-export const PhysicalDamageDebuff = makeMultiIconInput([
+export const PhysicalDamageDebuff = InputHelpers.makeMultiIconInput([
 	makeBooleanDebuffInput(ActionId.fromSpellId(29859), 'bloodFrenzy'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(58413), 'savageCombat'),
 ], 'Phys Vuln');
 
-export const SpellCritDebuff = makeMultiIconInput([
+export const SpellCritDebuff = InputHelpers.makeMultiIconInput([
 	makeBooleanDebuffInput(ActionId.fromSpellId(17800), 'shadowMastery'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(12873), 'improvedScorch'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(28593), 'wintersChill'),
 ], 'Spell Crit');
 
-export const SpellHitDebuff = makeMultiIconInput([
+export const SpellHitDebuff = InputHelpers.makeMultiIconInput([
 	makeBooleanDebuffInput(ActionId.fromSpellId(33198), 'misery'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(33602), 'faerieFire', TristateEffect.TristateEffectImproved),
 ], 'Spell Hit');
 
-export const SpellDamageDebuff = makeMultiIconInput([
+export const SpellDamageDebuff = InputHelpers.makeMultiIconInput([
 	makeBooleanDebuffInput(ActionId.fromSpellId(51161), 'ebonPlaguebringer'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(48511), 'earthAndMoon'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(47865), 'curseOfElements'),
@@ -237,53 +237,45 @@ export const SpicedMammothTreats = makeBooleanConsumeInput(ActionId.fromItemId(4
 export const PetScrollOfAgilityV = makeBooleanConsumeInput(ActionId.fromItemId(27498), 'petScrollOfAgility', 5);
 export const PetScrollOfStrengthV = makeBooleanConsumeInput(ActionId.fromItemId(27503), 'petScrollOfStrength', 5);
 
-function withLabel<ModObject, T>(config: IconPickerConfig<ModObject, T>, label: string): IconPickerConfig<ModObject, T> {
+function withLabel<ModObject, T>(config: InputHelpers.TypedIconPickerConfig<ModObject, T>, label: string): InputHelpers.TypedIconPickerConfig<ModObject, T> {
 	config.label = label;
 	return config;
 }
 
-export function makeMultiIconInput<ModObject>(inputs: Array<IconPickerConfig<ModObject, any>>, label: string): MultiIconPickerConfig<ModObject> {
-	return {
-		inputs: inputs,
-		numColumns: 1,
-		emptyColor: 'grey',
-		label: label,
-	};
-}
-function makeBooleanRaidBuffInput(id: ActionId, fieldName: keyof RaidBuffs, value?: number): IconPickerConfig<Player<any>, boolean> {
-	return makeBooleanInput<RaidBuffs, Raid>({
+function makeBooleanRaidBuffInput(id: ActionId, fieldName: keyof RaidBuffs, value?: number): InputHelpers.TypedIconPickerConfig<Player<any>, boolean> {
+	return InputHelpers.makeBooleanIconInput<any, RaidBuffs, Raid>({
 		getModObject: (player: Player<any>) => player.getRaid()!,
 		getValue: (raid: Raid) => raid.getBuffs(),
 		setValue: (eventID: EventID, raid: Raid, newVal: RaidBuffs) => raid.setBuffs(eventID, newVal),
 		changeEmitter: (raid: Raid) => raid.buffsChangeEmitter,
 	}, id, fieldName, value);
 }
-function makeBooleanPartyBuffInput(id: ActionId, fieldName: keyof PartyBuffs, value?: number): IconPickerConfig<Player<any>, boolean> {
-	return makeBooleanInput<PartyBuffs, Party>({
+function makeBooleanPartyBuffInput(id: ActionId, fieldName: keyof PartyBuffs, value?: number): InputHelpers.TypedIconPickerConfig<Player<any>, boolean> {
+	return InputHelpers.makeBooleanIconInput<any, PartyBuffs, Party>({
 		getModObject: (player: Player<any>) => player.getParty()!,
 		getValue: (party: Party) => party.getBuffs(),
 		setValue: (eventID: EventID, party: Party, newVal: PartyBuffs) => party.setBuffs(eventID, newVal),
 		changeEmitter: (party: Party) => party.buffsChangeEmitter,
 	}, id, fieldName, value);
 }
-function makeBooleanIndividualBuffInput(id: ActionId, fieldName: keyof IndividualBuffs, value?: number): IconPickerConfig<Player<any>, boolean> {
-	return makeBooleanInput<IndividualBuffs, Player<any>>({
+function makeBooleanIndividualBuffInput(id: ActionId, fieldName: keyof IndividualBuffs, value?: number): InputHelpers.TypedIconPickerConfig<Player<any>, boolean> {
+	return InputHelpers.makeBooleanIconInput<any, IndividualBuffs, Player<any>>({
 		getModObject: (player: Player<any>) => player,
 		getValue: (player: Player<any>) => player.getBuffs(),
 		setValue: (eventID: EventID, player: Player<any>, newVal: IndividualBuffs) => player.setBuffs(eventID, newVal),
 		changeEmitter: (player: Player<any>) => player.buffsChangeEmitter,
 	}, id, fieldName, value);
 }
-function makeBooleanConsumeInput(id: ActionId, fieldName: keyof Consumes, value?: number): IconPickerConfig<Player<any>, boolean> {
-	return makeBooleanInput<Consumes, Player<any>>({
+function makeBooleanConsumeInput(id: ActionId, fieldName: keyof Consumes, value?: number): InputHelpers.TypedIconPickerConfig<Player<any>, boolean> {
+	return InputHelpers.makeBooleanIconInput<any, Consumes, Player<any>>({
 		getModObject: (player: Player<any>) => player,
 		getValue: (player: Player<any>) => player.getConsumes(),
 		setValue: (eventID: EventID, player: Player<any>, newVal: Consumes) => player.setConsumes(eventID, newVal),
 		changeEmitter: (player: Player<any>) => player.consumesChangeEmitter,
 	}, id, fieldName, value);
 }
-function makeBooleanDebuffInput(id: ActionId, fieldName: keyof Debuffs, value?: number): IconPickerConfig<Player<any>, boolean> {
-	return makeBooleanInput<Debuffs, Raid>({
+function makeBooleanDebuffInput(id: ActionId, fieldName: keyof Debuffs, value?: number): InputHelpers.TypedIconPickerConfig<Player<any>, boolean> {
+	return InputHelpers.makeBooleanIconInput<any, Debuffs, Raid>({
 		getModObject: (player: Player<any>) => player.getRaid()!,
 		getValue: (raid: Raid) => raid.getDebuffs(),
 		setValue: (eventID: EventID, raid: Raid, newVal: Debuffs) => raid.setDebuffs(eventID, newVal),
@@ -291,114 +283,45 @@ function makeBooleanDebuffInput(id: ActionId, fieldName: keyof Debuffs, value?: 
 	}, id, fieldName, value);
 }
 
-function makeBooleanInput<Message, ModObject>(config: WrappedTypedIconPickerConfig<Message, ModObject>, id: ActionId, fieldName: keyof Message, value?: number): IconPickerConfig<Player<any>, boolean> {
-	return makeWrappedIconInput<ModObject, boolean>({
-		getModObject: config.getModObject,
-		id: id,
-		states: 2,
-		changedEvent: config.changeEmitter,
-		getValue: (modObj: ModObject) => value ? (config.getValue(modObj)[fieldName] as unknown as number) == value : (config.getValue(modObj)[fieldName] as unknown as boolean),
-		setValue: (eventID: EventID, modObj: ModObject, newValue: boolean) => {
-			const newMessage = config.getValue(modObj);
-			if (value) {
-				if (newValue) {
-					(newMessage[fieldName] as unknown as number) = value;
-				} else if ((newMessage[fieldName] as unknown as number) == value) {
-					(newMessage[fieldName] as unknown as number) = 0;
-				}
-			} else {
-				(newMessage[fieldName] as unknown as boolean) = newValue;
-			}
-			config.setValue(eventID, modObj, newMessage);
-		},
-	});
-}
-
-function makeTristateRaidBuffInput(id: ActionId, impId: ActionId, fieldName: keyof RaidBuffs): IconPickerConfig<Player<any>, number> {
-	return makeTristateInput<RaidBuffs, Raid>({
+function makeTristateRaidBuffInput(id: ActionId, impId: ActionId, fieldName: keyof RaidBuffs): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
+	return InputHelpers.makeTristateIconInput<any, RaidBuffs, Raid>({
 		getModObject: (player: Player<any>) => player.getRaid()!,
 		getValue: (raid: Raid) => raid.getBuffs(),
 		setValue: (eventID: EventID, raid: Raid, newVal: RaidBuffs) => raid.setBuffs(eventID, newVal),
 		changeEmitter: (raid: Raid) => raid.buffsChangeEmitter,
 	}, id, impId, fieldName);
 }
-function makeTristateIndividualBuffInput(id: ActionId, impId: ActionId, fieldName: keyof IndividualBuffs): IconPickerConfig<Player<any>, number> {
-	return makeTristateInput<IndividualBuffs, Player<any>>({
+function makeTristateIndividualBuffInput(id: ActionId, impId: ActionId, fieldName: keyof IndividualBuffs): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
+	return InputHelpers.makeTristateIconInput<any, IndividualBuffs, Player<any>>({
 		getModObject: (player: Player<any>) => player,
 		getValue: (player: Player<any>) => player.getBuffs(),
 		setValue: (eventID: EventID, player: Player<any>, newVal: IndividualBuffs) => player.setBuffs(eventID, newVal),
 		changeEmitter: (player: Player<any>) => player.buffsChangeEmitter,
 	}, id, impId, fieldName);
 }
-function makeTristateDebuffInput(id: ActionId, impId: ActionId, fieldName: keyof Debuffs): IconPickerConfig<Player<any>, number> {
-	return makeTristateInput<Debuffs, Raid>({
+function makeTristateDebuffInput(id: ActionId, impId: ActionId, fieldName: keyof Debuffs): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
+	return InputHelpers.makeTristateIconInput<any, Debuffs, Raid>({
 		getModObject: (player: Player<any>) => player.getRaid()!,
 		getValue: (raid: Raid) => raid.getDebuffs(),
 		setValue: (eventID: EventID, raid: Raid, newVal: Debuffs) => raid.setDebuffs(eventID, newVal),
 		changeEmitter: (raid: Raid) => raid.debuffsChangeEmitter,
 	}, id, impId, fieldName);
 }
-function makeMultistatePartyBuffInput(id: ActionId, numStates: number, fieldName: keyof PartyBuffs): IconPickerConfig<Player<any>, number> {
-	return makeMultistateInput<PartyBuffs, Party>({
+function makeMultistatePartyBuffInput(id: ActionId, numStates: number, fieldName: keyof PartyBuffs): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
+	return InputHelpers.makeMultistateIconInput<any, PartyBuffs, Party>({
 		getModObject: (player: Player<any>) => player.getParty()!,
 		getValue: (party: Party) => party.getBuffs(),
 		setValue: (eventID: EventID, party: Party, newVal: PartyBuffs) => party.setBuffs(eventID, newVal),
 		changeEmitter: (party: Party) => party.buffsChangeEmitter,
 	}, id, numStates, fieldName);
 }
-function makeMultistateIndividualBuffInput(id: ActionId, numStates: number, fieldName: keyof IndividualBuffs): IconPickerConfig<Player<any>, number> {
-	return makeMultistateInput<IndividualBuffs, Player<any>>({
+function makeMultistateIndividualBuffInput(id: ActionId, numStates: number, fieldName: keyof IndividualBuffs): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
+	return InputHelpers.makeMultistateIconInput<any, IndividualBuffs, Player<any>>({
 		getModObject: (player: Player<any>) => player,
 		getValue: (player: Player<any>) => player.getBuffs(),
 		setValue: (eventID: EventID, player: Player<any>, newVal: IndividualBuffs) => player.setBuffs(eventID, newVal),
 		changeEmitter: (player: Player<any>) => player.buffsChangeEmitter,
 	}, id, numStates, fieldName);
-}
-function makeTristateInput<Message, ModObject>(config: WrappedTypedIconPickerConfig<Message, ModObject>, id: ActionId, impId: ActionId, fieldName: keyof Message): IconPickerConfig<Player<any>, number> {
-	const input = makeNumberInput(config, id, fieldName);
-	input.states = 3;
-	input.improvedId = impId;
-	return input;
-}
-function makeMultistateInput<Message, ModObject>(config: WrappedTypedIconPickerConfig<Message, ModObject>, id: ActionId, numStates: number, fieldName: keyof Message): IconPickerConfig<Player<any>, number> {
-	const input = makeNumberInput(config, id, fieldName);
-	input.states = numStates;
-	return input;
-}
-function makeNumberInput<Message, ModObject>(config: WrappedTypedIconPickerConfig<Message, ModObject>, id: ActionId, fieldName: keyof Message): IconPickerConfig<Player<any>, number> {
-	return makeWrappedIconInput<ModObject, number>({
-		getModObject: config.getModObject,
-		id: id,
-		states: 0, // Must be assigned externally.
-		changedEvent: config.changeEmitter,
-		getValue: (modObj: ModObject) => config.getValue(modObj)[fieldName] as unknown as number,
-		setValue: (eventID: EventID, modObj: ModObject, newValue: number) => {
-			const newMessage = config.getValue(modObj);
-			(newMessage[fieldName] as unknown as number) = newValue;
-			config.setValue(eventID, modObj, newMessage);
-		},
-	});
-}
-
-interface WrappedTypedIconPickerConfig<Message, ModObject> {
-	getModObject: (player: Player<any>) => ModObject,
-	getValue: (modObj: ModObject) => Message,
-	setValue: (eventID: EventID, modObj: ModObject, messageVal: Message) => void,
-	changeEmitter: (modObj: ModObject) => TypedEvent<any>,
-}
-
-interface WrappedIconPickerConfig<ModObject, T> extends IconPickerConfig<ModObject, T> {
-	getModObject: (player: Player<any>) => ModObject,
-}
-function makeWrappedIconInput<ModObject, T>(config: WrappedIconPickerConfig<ModObject, T>): IconPickerConfig<Player<any>, T> {
-	const getModObject = config.getModObject;
-	return {
-		id: config.id,
-		states: config.states,
-		changedEvent: (player: Player<any>) => config.changedEvent(getModObject(player)),
-		getValue: (player: Player<any>) => config.getValue(getModObject(player)),
-		setValue: (eventID: EventID, player: Player<any>, newValue: T) => config.setValue(eventID, getModObject(player), newValue),
-	}
 }
 
 
@@ -543,7 +466,7 @@ export const FillerExplosiveInput = makeConsumeInput('fillerExplosive', [
 	{ actionId: ActionId.fromItemId(13180), value: Explosive.ExplosiveHolyWater },
 ] as Array<IconEnumValueConfig<Player<any>, Explosive>>, onSetExplosives);
 
-export function makeWeaponImbueInput(isMainHand: boolean, options: Array<WeaponImbue>): IconEnumPickerConfig<Player<any>, WeaponImbue> {
+export function makeWeaponImbueInput(isMainHand: boolean, options: Array<WeaponImbue>): InputHelpers.TypedIconEnumPickerConfig<Player<any>, WeaponImbue> {
 	const allOptions = [
 		{ actionId: ActionId.fromItemId(18262), value: WeaponImbue.WeaponImbueElementalSharpeningStone },
 		{ actionId: ActionId.fromItemId(20749), value: WeaponImbue.WeaponImbueBrilliantWizardOil },
@@ -572,9 +495,10 @@ export function makeWeaponImbueInput(isMainHand: boolean, options: Array<WeaponI
 	}
 }
 
-function makeConsumeInputFactory<T extends number>(consumesFieldName: keyof Consumes, allOptions: Array<IconEnumValueConfig<Player<any>, T>>, onSet?: (eventID: EventID, player: Player<any>, newValue: T) => void): (options: Array<T>) => IconEnumPickerConfig<Player<any>, T> {
+function makeConsumeInputFactory<T extends number>(consumesFieldName: keyof Consumes, allOptions: Array<IconEnumValueConfig<Player<any>, T>>, onSet?: (eventID: EventID, player: Player<any>, newValue: T) => void): (options: Array<T>) => InputHelpers.TypedIconEnumPickerConfig<Player<any>, T> {
 	return (options: Array<T>) => {
 		return {
+			type: 'iconEnum',
 			numColumns: options.length > 5 ? 2 : 1,
 			values: [
 				{ color: 'grey', value: 0 } as unknown as IconEnumValueConfig<Player<any>, T>,
@@ -597,7 +521,7 @@ function makeConsumeInputFactory<T extends number>(consumesFieldName: keyof Cons
 	};
 }
 
-function makeConsumeInput<T extends number>(consumesFieldName: keyof Consumes, allOptions: Array<IconEnumValueConfig<Player<any>, T>>, onSet?: (eventID: EventID, player: Player<any>, newValue: T) => void): IconEnumPickerConfig<Player<any>, T> {
+function makeConsumeInput<T extends number>(consumesFieldName: keyof Consumes, allOptions: Array<IconEnumValueConfig<Player<any>, T>>, onSet?: (eventID: EventID, player: Player<any>, newValue: T) => void): InputHelpers.TypedIconEnumPickerConfig<Player<any>, T> {
 	const factory = makeConsumeInputFactory(consumesFieldName, allOptions, onSet);
 	return factory(allOptions.map(option => option.value));
 }

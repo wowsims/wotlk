@@ -41,15 +41,25 @@ func (deathKnight *DeathKnight) registerUnbreakableArmorSpell() {
 			IgnoreHaste: true,
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			deathKnight.UnbreakableArmorAura.Activate(sim)
-			deathKnight.UnbreakableArmorAura.Prioritize()
-
+			dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 1, 0)
+			deathKnight.Spend(sim, spell, dkSpellCost)
 			amountOfRunicPower := 10.0
 			deathKnight.AddRunicPower(sim, amountOfRunicPower, deathKnight.UnbreakableArmor.RunicPowerMetrics())
+
+			deathKnight.UnbreakableArmorAura.Activate(sim)
+			deathKnight.UnbreakableArmorAura.Prioritize()
 		},
 	})
 }
 
 func (deathKnight *DeathKnight) CanUnbreakableArmor(sim *core.Simulation) bool {
-	return deathKnight.UnbreakableArmor.IsReady(sim) && deathKnight.UnbreakableArmor.CD.IsReady(sim)
+	return deathKnight.CastCostPossible(sim, 0, 0, 1, 0) && deathKnight.UnbreakableArmor.IsReady(sim)
+}
+
+func (deathKnight *DeathKnight) CastUnbreakableArmor(sim *core.Simulation, target *core.Unit) bool {
+	if deathKnight.CanUnbreakableArmor(sim) {
+		deathKnight.UnbreakableArmor.Cast(sim, target)
+		return true
+	}
+	return false
 }
