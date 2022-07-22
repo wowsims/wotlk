@@ -57,6 +57,7 @@ export const PetType = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecWarloc
 			showWhen: (player: Player<Spec.SpecWarlock>) => player.getTalents().summonFelguard,
 		},
 	],
+	changeEmitter: (player: Player<Spec.SpecWarlock>) => player.changeEmitter,
 });
 
 export const PrimarySpellInput = InputHelpers.makeRotationEnumIconInput<Spec.SpecWarlock, PrimarySpell>({
