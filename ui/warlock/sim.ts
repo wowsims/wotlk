@@ -36,8 +36,10 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			cssClass: 'warlock-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"<p>This sim is under current development for Wrath of the Lich King.</p>\
-				<p>Talents and Glyphs are mostly ready but rotations are under development.</p>"
+				"<p>This sim is under current development for Wrath of the Lich King. Take the dps numbers with a salt shaker.</p>\
+				<p>Talents and Glyphs are ready.</p>\
+				<p>Rotations are almost ready.</p>\
+				<p>Additive damage multipliers need to be fixed.</p>"
 			],
 			// race: Race.RaceOrc,
 
@@ -115,16 +117,16 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 
 			// IconInputs to include in the 'Player' section on the settings tab.
 			playerIconInputs: [
-				WarlockInputs.PetType,
+				WarlockInputs.PetInput,
 				WarlockInputs.ArmorInput,
-				WarlockInputs.WeaponImbue,
+				WarlockInputs.WeaponImbueInput,
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationIconInputs: [
 				WarlockInputs.PrimarySpellInput,
+				WarlockInputs.CorruptionSpell,
 				WarlockInputs.SecondaryDotInput,
 				WarlockInputs.SpecSpellInput,
-				WarlockInputs.CorruptionSpell,
 			],
 			rotationInputs: WarlockInputs.WarlockRotationConfig,
 			

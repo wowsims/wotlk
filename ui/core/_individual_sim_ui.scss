@@ -197,7 +197,7 @@
 }
 
 .settings-section-iconrow {
-	display: grid;
+	display: flex;
 	grid-template-columns: repeat(5, 1fr);
 	justify-content: space-evenly;
 	flex-wrap: wrap;

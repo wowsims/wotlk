@@ -6,7 +6,7 @@ import {
 	Warlock_Rotation_SecondaryDot as SecondaryDot,
 	Warlock_Rotation_SpecSpell as SpecSpell,
 	Warlock_Rotation_Curse as Curse,
-	Warlock_Options_WeaponImbue as WarlockWeaponImbue,
+	Warlock_Options_WeaponImbue as WeaponImbue,
 	Warlock_Options_Armor as Armor,
 	Warlock_Options_Summon as Summon,
 } from '/wotlk/core/proto/warlock.js';
@@ -36,16 +36,16 @@ export const ArmorInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecWar
 	],
 });
 
-export const WeaponImbue = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecWarlock, WarlockWeaponImbue>({
+export const WeaponImbueInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecWarlock, WeaponImbue>({
 	fieldName: 'weaponImbue',
 	values: [
-		{ color: 'grey', value: WarlockWeaponImbue.NoWeaponImbue },
-		{ actionId: ActionId.fromItemId(41174), value: WarlockWeaponImbue.GrandFirestone },
-		{ actionId: ActionId.fromItemId(41196), value: WarlockWeaponImbue.GrandSpellstone },
+		{ color: 'grey', value: WeaponImbue.NoWeaponImbue },
+		{ actionId: ActionId.fromItemId(41174), value: WeaponImbue.GrandFirestone },
+		{ actionId: ActionId.fromItemId(41196), value: WeaponImbue.GrandSpellstone },
 	],
 });
 
-export const PetType = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecWarlock, Summon>({
+export const PetInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecWarlock, Summon>({
 	fieldName: 'summon',
 	values: [
 		{ color: 'grey', value: Summon.NoSummon },
@@ -73,7 +73,6 @@ export const PrimarySpellInput = InputHelpers.makeRotationEnumIconInput<Spec.Spe
 			newRotation.corruption = false
 		}
 		newRotation.primarySpell = newValue
-		newRotation.preset = RotationPreset.Manual
 		player.setRotation(eventID, newRotation);
 	},
 });
@@ -107,6 +106,7 @@ export const SpecSpellInput = InputHelpers.makeRotationEnumIconInput<Spec.SpecWa
 	changeEmitter: (player: Player<Spec.SpecWarlock>) => player.changeEmitter,
 });
 
+
 export const CorruptionSpell = {
 	type: 'icon' as const,
 	id: ActionId.fromSpellId(47813),
@@ -122,7 +122,6 @@ export const CorruptionSpell = {
 			newRotation.primarySpell = PrimarySpell.ShadowBolt
 		}
 		newRotation.corruption = newValue;
-		newRotation.preset = RotationPreset.Manual;
 		player.setRotation(eventID, newRotation);
 	},
 };
@@ -169,19 +168,48 @@ export const WarlockRotationConfig = {
 				});
 			},
 		},
-		InputHelpers.makeRotationEnumInput<Spec.SpecWarlock, RotationPreset>({
-			fieldName: 'preset',
+
+		{
+			type: 'enum' as const,
 			label: 'Rotation Preset',
 			labelTooltip: 'Automatic will select the spells for you if you have the last talent in a one of the trees. Otherwise you will have to manually select the spells you want to cast.',
 			values: [
-				{ name: "Manual", value: RotationPreset.Manual },
-				{ name: "Automatic", value: RotationPreset.Automatic },
+				{name: "Manual", value: RotationPreset.Manual},
+				{name: "Automatic", value: RotationPreset.Automatic},
 			],
-		}),
+			changedEvent: (player: Player<Spec.SpecWarlock>) => player.rotationChangeEmitter,
+			getValue: (player: Player<Spec.SpecWarlock>) => player.getRotation().preset,
+			setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: number) => {
+				var newRotation = player.getRotation();
+				var newOptions = player.getSpecOptions();
+				TypedEvent.freezeAllAndDo(() => {
+					if (newValue == RotationPreset.Automatic) {
+						if (newRotation.type == RotationType.Affliction) {
+							player.setTalentsString(eventID, Presets.AfflictionTalents.data.talentsString);
+							player.setGlyphs(eventID, Presets.AfflictionTalents.data.glyphs || Glyphs.create());
+							newRotation = Presets.AfflictionRotation
+							newOptions = Presets.AfflictionOptions
+						} else if (newRotation.type == RotationType.Demonology) {
+							player.setTalentsString(eventID, Presets.DemonologyTalents.data.talentsString);
+							player.setGlyphs(eventID, Presets.DemonologyTalents.data.glyphs || Glyphs.create());
+							newRotation = Presets.DemonologyRotation
+							newOptions = Presets.DemonologyOptions
+						} else if (newRotation.type == RotationType.Destruction) {
+							player.setTalentsString(eventID, Presets.DestructionTalents.data.talentsString);
+							player.setGlyphs(eventID, Presets.DestructionTalents.data.glyphs || Glyphs.create());
+							newRotation = Presets.DestructionRotation
+							newOptions = Presets.DestructionOptions
+						}
+						newRotation.preset = newValue;
+						player.setRotation(eventID, newRotation);
+					}
+				});
+			},
+		},
 		{
 			type: 'enum' as const,
 			label: 'Curse',
-			labelTooltip: 'Manual curse selection. Choice ignored for an Automatic Rotation.',
+			labelTooltip: 'Manual curse selection.',
 			values: [
 				{ name: "None", value: Curse.NoCurse },
 				{ name: "Elements", value: Curse.Elements },
@@ -195,7 +223,6 @@ export const WarlockRotationConfig = {
 			setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: number) => {
 				const newRotation = player.getRotation();
 				newRotation.curse = newValue;
-				newRotation.preset = RotationPreset.Manual;
 				player.setRotation(eventID, newRotation);
 			},
 		},

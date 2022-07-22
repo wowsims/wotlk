@@ -241,11 +241,11 @@ export function makeRotationEnumInput<SpecType extends Spec, T>(config: PlayerEn
 		values: config.values,
 		getModObject: (player: Player<SpecType>) => player,
 		getValue: (player: Player<SpecType>) => player.getRotation()[config.fieldName] as unknown as number,
-		setValue: (eventID: EventID, player: Player<SpecType>, newVal: number) => {
+		setValue: config.setValue || ((eventID: EventID, player: Player<SpecType>, newVal: number) => {
 			const newMessage = player.getRotation();
 			(newMessage[config.fieldName] as unknown as number) = newVal;
 			player.setRotation(eventID, newMessage);
-		},
+		}),
 		changedEvent: (player: Player<SpecType>) => player.rotationChangeEmitter,
 		enableWhen: config.enableWhen,
 		showWhen: config.showWhen,
