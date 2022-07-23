@@ -103,7 +103,7 @@ export function TotemsSection(simUI: IndividualSimUI<DpsShaman>, parentElem: HTM
 		numColumns: 1,
 		values: [
 			{ color: '#bae1ff', value: WaterTotem.NoWaterTotem },
-			{ actionId: ActionId.fromSpellId(58744), value: WaterTotem.ManaSpringTotem },
+			{ actionId: ActionId.fromSpellId(58774), value: WaterTotem.ManaSpringTotem },
 		],
 		equals: (a: WaterTotem, b: WaterTotem) => a == b,
 		zeroValue: WaterTotem.NoWaterTotem,
