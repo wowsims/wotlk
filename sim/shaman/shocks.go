@@ -31,9 +31,9 @@ func (shaman *Shaman) newShockSpellConfig(spellID int32, spellSchool core.SpellS
 
 			Cast: core.CastConfig{
 				DefaultCast: core.Cast{
-					Cost: baseCost -
-						baseCost*float64(shaman.Talents.Convection)*0.02 -
-						baseCost*float64(shaman.Talents.MentalQuickness)*0.02 -
+					Cost: cost -
+						cost*float64(shaman.Talents.Convection)*0.02 -
+						cost*float64(shaman.Talents.MentalQuickness)*0.02 -
 						core.TernaryFloat64(shaman.HasSetBonus(ItemSetSkyshatterHarness, 2), baseCost*0.1, 0),
 					GCD: core.GCDDefault,
 				},
@@ -73,6 +73,8 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 
 	config.Cast.CD.Duration -= time.Duration(shaman.Talents.BoomingEchoes) * time.Second
 
+	effect.DamageMultiplier *= 1 + 0.1*float64(shaman.Talents.BoomingEchoes)
+
 	effect.BaseDamage = core.BaseDamageConfigMagic(500, 500, 0.214)
 	critMult := shaman.ElementalCritMultiplier()
 	effect.OutcomeApplier = shaman.OutcomeFuncMagicHitAndCrit(critMult)
@@ -102,7 +104,7 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 			Label:    "FlameShock-" + strconv.Itoa(int(shaman.Index)),
 			ActionID: core.ActionID{SpellID: flameshockID},
 		}),
-		NumberOfTicks:       4,
+		NumberOfTicks:       6,
 		TickLength:          time.Second * 3,
 		AffectedByCastSpeed: true,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
@@ -120,6 +122,8 @@ func (shaman *Shaman) registerFrostShockSpell(shockTimer *core.Timer) {
 	config, effect := shaman.newShockSpellConfig(49326, core.SpellSchoolFrost, baseMana*0.18, shockTimer)
 	config.Flags |= core.SpellFlagBinary
 	config.Cast.CD.Duration -= time.Duration(shaman.Talents.BoomingEchoes) * time.Second
+
+	effect.DamageMultiplier *= 1 + 0.1*float64(shaman.Talents.BoomingEchoes)
 
 	effect.ThreatMultiplier *= 2
 	effect.BaseDamage = core.BaseDamageConfigMagic(812, 858, 0.386)

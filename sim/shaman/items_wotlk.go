@@ -26,3 +26,15 @@ func init() {
 		})
 	})
 }
+
+var ItemSetEarthshatterBattlegear = core.NewItemSet(core.ItemSet{
+	Name: "Earthshatter Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// 10% damage to lightning shield, handle in wherever its stored
+		},
+		4: func(agent core.Agent) {
+			// +5% to flurry, handle in talents.go
+		},
+	},
+})
