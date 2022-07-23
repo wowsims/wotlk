@@ -207,6 +207,8 @@ func (warrior *Warrior) applyBloodFrenzy() {
 		target := warrior.Env.GetTargetUnit(i)
 		warrior.BloodFrenzyAuras = append(warrior.BloodFrenzyAuras, core.BloodFrenzyAura(target, warrior.Talents.BloodFrenzy))
 	}
+
+	warrior.PseudoStats.MeleeSpeedMultiplier *= 1 + 0.05*float64(warrior.Talents.BloodFrenzy)
 }
 
 func (warrior *Warrior) procBloodFrenzy(sim *core.Simulation, effect *core.SpellEffect, dur time.Duration) {

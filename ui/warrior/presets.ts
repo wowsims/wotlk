@@ -50,6 +50,8 @@ export const DefaultRotation = WarriorRotation.create({
 	sunderArmor: SunderArmor.SunderArmorMaintain,
 	hsRageThreshold: 40,
 	rendRageThreshold: 75,
+	msRageThreshold: 60,
+	rendCdThreshold: 3,
 	useHsDuringExecute: true,
 	useBtDuringExecute: true,
 	useWwDuringExecute: true,
@@ -75,11 +77,9 @@ export const DefaultOptions = WarriorOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	flask: Flask.FlaskOfRelentlessAssault,
-	food: Food.FoodRoastedClefthoof,
-	defaultPotion: Potions.HastePotion,
-	mainHandImbue: WeaponImbue.WeaponImbueAdamantiteSharpeningStone,
-	offHandImbue: WeaponImbue.WeaponImbueAdamantiteSharpeningStone,
+	flask: Flask.FlaskOfEndlessRage,
+	food: Food.FoodHeartyRhino,
+	defaultPotion: Potions.IndestructiblePotion,
 });
 
 export const P1_FURY_PRESET = {
