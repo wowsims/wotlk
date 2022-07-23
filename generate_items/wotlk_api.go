@@ -288,6 +288,12 @@ func (item WotlkItemResponse) GetWeaponDamage() (float64, float64) {
 			log.Fatalf("Invalid weapon damage for item %s: min = %0.1f, max = %0.1f", item.Name, min, max)
 		}
 		return min, max
+	} else if matches := weaponDamageRegex2.FindStringSubmatch(item.Tooltip); len(matches) > 0 {
+		val, err := strconv.ParseFloat(matches[1], 64)
+		if err != nil {
+			log.Fatalf("Failed to parse weapon damage: %s", err)
+		}
+		return val, val
 	}
 	return 0, 0
 }

@@ -263,6 +263,8 @@ func (hunter *Hunter) applyPiercingShots() {
 		TickLength:    time.Second * 1,
 	})
 
+	var currentTickDmg float64
+
 	hunter.RegisterAura(core.Aura{
 		Label:    "Piercing Shots Talent",
 		Duration: core.NeverExpires,
@@ -278,12 +280,19 @@ func (hunter *Hunter) applyPiercingShots() {
 			}
 
 			totalDmg := spellEffect.Damage * dmgMultiplier
+			if psDot.IsActive() {
+				remainingTicks := 8 - psDot.TickCount
+				totalDmg += currentTickDmg * float64(remainingTicks)
+			}
+			currentTickDmg = totalDmg / 8
+
+			// Reassign tick effect to update the damage.
 			psDot.TickEffects = core.TickFuncSnapshot(target, core.SpellEffect{
 				ProcMask:         core.ProcMaskPeriodicDamage,
 				DamageMultiplier: 1,
 				ThreatMultiplier: 1,
 				IsPeriodic:       true,
-				BaseDamage:       core.BaseDamageConfigFlat(totalDmg / 8),
+				BaseDamage:       core.BaseDamageConfigFlat(currentTickDmg),
 				OutcomeApplier:   hunter.OutcomeFuncTick(),
 			})
 			psDot.Apply(sim)

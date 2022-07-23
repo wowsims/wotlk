@@ -1,159 +1,98 @@
 package enhancement
 
 import (
-	"time"
-
-	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-func (enh *EnhancementShaman) SetupRotationSchedule() {
-	// Fill the GCD schedule based on our settings.
-	maxDuration := enh.Env.GetMaxDuration()
-
-	var curTime time.Duration
-
-	if enh.Talents.Stormstrike {
-		ssAction := common.ScheduledAbility{
-			Duration: core.GCDDefault,
-			TryCast: func(sim *core.Simulation) bool {
-				ss := enh.Stormstrike
-				success := ss.Cast(sim, enh.CurrentTarget)
-				if !success {
-					enh.WaitForMana(sim, ss.CurCast.Cost)
-				}
-				return success
-			},
-		}
-		for curTime <= maxDuration {
-			ability := ssAction
-			ability.DesiredCastAt = curTime
-			castAt := enh.scheduler.Schedule(ability)
-			curTime = castAt + time.Second*10
-		}
-	}
-
-	shockCD := enh.ShockCD()
-	shockAction := common.ScheduledAbility{
-		Duration: core.GCDDefault,
-		TryCast: func(sim *core.Simulation) bool {
-			var shock *core.Spell
-			if !enh.FlameShockDot.IsActive() {
-				shock = enh.FlameShock
-			} else {
-				shock = enh.EarthShock
-			}
-			success := shock.Cast(sim, enh.CurrentTarget)
-			if !success {
-				enh.WaitForMana(sim, shock.CurCast.Cost)
-			}
-			return success
-		},
-	}
-	curTime = 0
-	for curTime <= maxDuration {
-		ability := shockAction
-		ability.DesiredCastAt = curTime
-		ability.MinCastAt = curTime
-		ability.MaxCastAt = curTime + time.Second*10
-		castAt := enh.scheduler.Schedule(ability)
-		curTime = castAt + shockCD
-	}
-	if enh.SelfBuffs.Bloodlust {
-		enh.scheduler.ScheduleMCD(enh.GetCharacter(), enh.BloodlustActionID())
-	}
-
-	scheduleTotem := func(duration time.Duration, prioritizeEarlier bool, precast bool, tryCast func(sim *core.Simulation) (bool, float64)) {
-		totemAction := common.ScheduledAbility{
-			Duration: time.Second * 1,
-			TryCast: func(sim *core.Simulation) bool {
-				success, manaCost := tryCast(sim)
-				if !success {
-					enh.WaitForMana(sim, manaCost)
-				}
-				return success
-			},
-			PrioritizeEarlierForConflicts: prioritizeEarlier,
-		}
-
-		curTime := time.Duration(0)
-		if precast {
-			curTime = duration
-		}
-		for curTime <= maxDuration {
-			ability := totemAction
-			ability.DesiredCastAt = curTime
-			if prioritizeEarlier {
-				ability.MinCastAt = curTime - time.Second*30
-				ability.MaxCastAt = curTime + time.Second*15
-			} else {
-				ability.MinCastAt = curTime - time.Second*5
-				ability.MaxCastAt = curTime + time.Second*30
-			}
-			castAt := enh.scheduler.Schedule(ability)
-			if castAt == common.Unresolved {
-				panic("No timeslot found for totem")
-			}
-			curTime = castAt + duration
-		}
-	}
-	scheduleSpellTotem := func(duration time.Duration, spell *core.Spell) {
-		scheduleTotem(duration, false, false, func(sim *core.Simulation) (bool, float64) {
-			success := spell.Cast(sim, enh.CurrentTarget)
-			return success, spell.CurCast.Cost
-		})
-	}
-	schedule5MTotem := func(castFactory func(sim *core.Simulation) *core.Spell) {
-		scheduleTotem(time.Minute*5, true, true, func(sim *core.Simulation) (bool, float64) {
-			spell := castFactory(sim)
-			return spell.Cast(sim, enh.CurrentTarget), spell.CurCast.Cost
-		})
-	}
-
-	switch enh.Totems.Fire {
-	case proto.FireTotem_MagmaTotem:
-		scheduleSpellTotem(time.Second*20+1, enh.MagmaTotem)
-	case proto.FireTotem_SearingTotem:
-		scheduleSpellTotem(time.Minute*1+1, enh.SearingTotem)
-	case proto.FireTotem_TotemOfWrath:
-		schedule5MTotem(func(sim *core.Simulation) *core.Spell { return enh.TotemOfWrath })
-	}
-
-	if enh.Totems.Air != proto.AirTotem_NoAirTotem {
-		var defaultCastFactory func(sim *core.Simulation) *core.Spell
-		switch enh.Totems.Air {
-		case proto.AirTotem_TranquilAirTotem:
-			defaultCastFactory = func(sim *core.Simulation) *core.Spell { return enh.TranquilAirTotem }
-		case proto.AirTotem_WindfuryTotem:
-			defaultCastFactory = func(sim *core.Simulation) *core.Spell { return enh.WindfuryTotem }
-		case proto.AirTotem_WrathOfAirTotem:
-			defaultCastFactory = func(sim *core.Simulation) *core.Spell { return enh.WrathOfAirTotem }
-		}
-
-		schedule5MTotem(defaultCastFactory)
-	}
-
-	if enh.Totems.Earth != proto.EarthTotem_NoEarthTotem {
-		switch enh.Totems.Earth {
-		case proto.EarthTotem_StrengthOfEarthTotem:
-			schedule5MTotem(func(sim *core.Simulation) *core.Spell { return enh.StrengthOfEarthTotem })
-		case proto.EarthTotem_TremorTotem:
-			schedule5MTotem(func(sim *core.Simulation) *core.Spell { return enh.TremorTotem })
-		}
-	}
-
-	if enh.Totems.Water != proto.WaterTotem_NoWaterTotem {
-		if enh.Totems.Water == proto.WaterTotem_ManaSpringTotem {
-			schedule5MTotem(func(sim *core.Simulation) *core.Spell { return enh.ManaSpringTotem })
-		}
+func (enh *EnhancementShaman) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
+	if enh.GCD.IsReady(sim) {
+		enh.tryUseGCD(sim)
 	}
 }
 
 func (enh *EnhancementShaman) OnGCDReady(sim *core.Simulation) {
-	enh.scheduler.DoNextAbility(sim, &enh.Character)
+	enh.tryUseGCD(sim)
+}
 
-	if enh.GCD.IsReady(sim) {
-		enh.DoNothing() // just do nothing and let scheduler handle everything
+func (enh *EnhancementShaman) tryUseGCD(sim *core.Simulation) {
+	if enh.TryDropTotems(sim) {
+		return
 	}
+	enh.rotation.DoAction(enh, sim)
+}
+
+type Rotation interface {
+	DoAction(*EnhancementShaman, *core.Simulation)
+	Reset(*EnhancementShaman, *core.Simulation)
+}
+
+//adaptive rotation, shamelessly stolen from elemental shaman
+type AdaptiveRotation struct {
+}
+
+func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Simulation) {
+	target := sim.GetTargetUnit(0)
+
+	if enh.Talents.Stormstrike {
+		if (enh.StormstrikeDebuffAura(target).GetStacks() > 0) && enh.Stormstrike.IsReady(sim) {
+			if !enh.Stormstrike.Cast(sim, target) {
+				enh.WaitForMana(sim, enh.Stormstrike.CurCast.Cost)
+			}
+			return
+		}
+	}
+
+	if enh.Talents.MaelstromWeapon > 0 {
+		if enh.MaelstromWeaponAura.GetStacks() == 5 {
+			if !enh.LightningBolt.Cast(sim, target) {
+				enh.WaitForMana(sim, enh.LightningBolt.CurCast.Cost)
+			}
+			return
+		}
+	}
+
+	if enh.Talents.Stormstrike {
+		if enh.Stormstrike.IsReady(sim) {
+			if !enh.Stormstrike.Cast(sim, target) {
+				enh.WaitForMana(sim, enh.Stormstrike.CurCast.Cost)
+			}
+			return
+		}
+	}
+
+	if !enh.FlameShockDot.IsActive() && enh.FlameShock.IsReady(sim) {
+		if !enh.FlameShock.Cast(sim, target) {
+			enh.WaitForMana(sim, enh.FlameShock.CurCast.Cost)
+		}
+		return
+	}
+
+	if enh.EarthShock.IsReady(sim) {
+		if !enh.EarthShock.Cast(sim, target) {
+			enh.WaitForMana(sim, enh.EarthShock.CurCast.Cost)
+		}
+		return
+	}
+
+	enh.LightningShield.Cast(sim, nil)
+
+	enh.DoNothing()
+	return
+}
+
+func (rotation *AdaptiveRotation) Reset(enh *EnhancementShaman, sim *core.Simulation) {
+
+}
+
+func NewAdaptiveRotation(talents *proto.ShamanTalents) *AdaptiveRotation {
+	return &AdaptiveRotation{}
+}
+
+type AgentAction interface {
+	GetActionID() core.ActionID
+
+	GetManaCost() float64
+
+	Cast(sim *core.Simulation) bool
 }
