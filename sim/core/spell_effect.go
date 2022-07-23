@@ -290,27 +290,22 @@ func (spellEffect *SpellEffect) applyAttackerModifiers(sim *Simulation, spell *S
 			spellEffect.BonusArmorPenRating += attacker.PseudoStats.BonusOHArmorPenRating
 		}
 	} else if spell.SpellSchool.Matches(SpellSchoolArcane) {
-		spellEffect.Damage *= attacker.PseudoStats.ArcaneDamageDealtMultiplier
+		spellEffect.Damage *= attacker.PseudoStats.ArcaneDamageDealtMultiplier * attacker.PseudoStats.MagicDamageDealtMultiplier
 	} else if spell.SpellSchool.Matches(SpellSchoolFire) {
-		spellEffect.Damage *= attacker.PseudoStats.FireDamageDealtMultiplier
+		spellEffect.Damage *= attacker.PseudoStats.FireDamageDealtMultiplier * attacker.PseudoStats.MagicDamageDealtMultiplier
 	} else if spell.SpellSchool.Matches(SpellSchoolFrost) {
-		spellEffect.Damage *= attacker.PseudoStats.FrostDamageDealtMultiplier
+		spellEffect.Damage *= attacker.PseudoStats.FrostDamageDealtMultiplier * attacker.PseudoStats.MagicDamageDealtMultiplier
 	} else if spell.SpellSchool.Matches(SpellSchoolHoly) {
-		spellEffect.Damage *= attacker.PseudoStats.HolyDamageDealtMultiplier
+		spellEffect.Damage *= attacker.PseudoStats.HolyDamageDealtMultiplier * attacker.PseudoStats.MagicDamageDealtMultiplier
 	} else if spell.SpellSchool.Matches(SpellSchoolNature) {
-		spellEffect.Damage *= attacker.PseudoStats.NatureDamageDealtMultiplier
+		spellEffect.Damage *= attacker.PseudoStats.NatureDamageDealtMultiplier * attacker.PseudoStats.MagicDamageDealtMultiplier
 	} else if spell.SpellSchool.Matches(SpellSchoolShadow) {
-		spellEffect.Damage *= attacker.PseudoStats.ShadowDamageDealtMultiplier
-	}
-
-	if spellEffect.IsPeriodic {
-		spellEffect.Damage *= attacker.PseudoStats.PeriodicMagicDamageDealtMultiplier
-		if spell.SpellSchool.Matches(SpellSchoolShadow) {
+		spellEffect.Damage *= attacker.PseudoStats.ShadowDamageDealtMultiplier * attacker.PseudoStats.MagicDamageDealtMultiplier
+		if spellEffect.IsPeriodic {
 			spellEffect.Damage *= attacker.PseudoStats.PeriodicShadowDamageDealtMultiplier
 		}
-	} else {
-		spellEffect.Damage *= attacker.PseudoStats.DirectMagicDamageDealtMultiplier
 	}
+
 }
 
 func (spellEffect *SpellEffect) applyTargetModifiers(sim *Simulation, spell *Spell, attackTable *AttackTable) {

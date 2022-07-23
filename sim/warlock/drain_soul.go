@@ -3,7 +3,6 @@ package warlock
 import (
 	"strconv"
 	"time"
-	"math"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -86,10 +85,9 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 	})
 
 	target := warlock.CurrentTarget
-	afflictionSpellNumber := 3.0
 
 	effect := core.SpellEffect{
-		DamageMultiplier: 1 + 0.03*float64(warlock.Talents.SoulSiphon)*afflictionSpellNumber,
+		DamageMultiplier: 1,
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 		IsPeriodic:       true,
 		OutcomeApplier:   warlock.OutcomeFuncTick(),
@@ -109,31 +107,5 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 		AffectedByCastSpeed: true,
 
 		TickEffects: core.TickFuncSnapshot(target, effect),
-	})
-}
-
-func (warlock *Warlock) setupDrainSoulExecutePhase() {
-	deathsEmbraceMultiplier:= 1.0 + 0.04*float64(warlock.Talents.DeathsEmbrace)
-	drainSoulExecutePhaseMultiplier := math.Sqrt((deathsEmbraceMultiplier - 1 + 4) / deathsEmbraceMultiplier)
-	// Because Death's Embrace and Drain Soul Execute bonus work additive and not multiplicative
-	//TODO : Fix (no square root) when DamageMultiplier is fixed
-	drainSoulExecutePhaseAura := warlock.RegisterAura(core.Aura{
-		Label:    "Drain Soul Execute Phase Hidden Aura",
-		Duration: core.NeverExpires,
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			warlock.DrainSoulDot.Spell.DamageMultiplier *=  drainSoulExecutePhaseMultiplier 
-		},
-		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			warlock.DrainSoulDot.Spell.DamageMultiplier /= drainSoulExecutePhaseMultiplier
-		},
-	})
-
-
-	warlock.RegisterResetEffect(func(sim *core.Simulation) {
-		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute20 bool) {
-			if isExecute20 {
-				drainSoulExecutePhaseAura.Activate(sim)
-			}
-		})
 	})
 }

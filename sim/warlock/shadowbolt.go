@@ -9,12 +9,12 @@ import (
 )
 
 func (warlock *Warlock) registerShadowBoltSpell() {
-	has4pMal := warlock.HasSetBonus(ItemSetMaleficRaiment, 4)
 
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
-		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) * 5 * core.CritRatingPerCritChance,
-		DamageMultiplier:     (1 + 0.06*core.TernaryFloat64(has4pMal, 1, 0)) * (1 + 0.02*float64(warlock.Talents.ImprovedShadowBolt)),
+		BonusSpellCritRating: core.CritRatingPerCritChance * 5 * (core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) +
+			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDeathbringerGarb, 4), 1, 0) + core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 1, 0)),
+		DamageMultiplier:     1,
 		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.DestructiveReach),
 		BaseDamage:           core.BaseDamageConfigMagic(694.0, 775.0, 0.857*(1+0.04*float64(warlock.Talents.ShadowAndFlame))),
 		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
@@ -42,13 +42,14 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 	}
 
 	baseCost := 0.17 * warlock.BaseMana
-	costReduction := 0.0
+	costReductionFactor := 1.0
 	if float64(warlock.Talents.Cataclysm) > 0 {
-		costReduction += 0.01 + 0.03*float64(warlock.Talents.Cataclysm)
+		costReductionFactor -= 0.01 + 0.03*float64(warlock.Talents.Cataclysm)
 	}
 	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfShadowBolt) {
-		costReduction += 0.1
+		costReductionFactor -= 0.1
 	}
+
 	warlock.ShadowBolt = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 47809},
 		SpellSchool:  core.SpellSchoolShadow,
@@ -57,7 +58,7 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost * (1 - costReduction),
+				Cost:     baseCost * costReductionFactor,
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond * (3000 - 100*time.Duration(warlock.Talents.Bane)),
 			},

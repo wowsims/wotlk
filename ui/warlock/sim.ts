@@ -36,11 +36,11 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			cssClass: 'warlock-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"<p>This sim is under current development for Wrath of the Lich King. Take the dps numbers with a salt shaker.</p>",
+				"This sim is under current development for Wrath of the Lich King. Take the dps numbers with a salt shaker. If you spot a bug, please report it. Your input is very much welcome.",
 				"<p>Talents and Glyphs are ready.</p>",
+				"<p>Spells are ready.</p>",
 				"<p>Rotations are almost ready.</p>",
-				"<p>Additive damage multipliers need to be fixed.</p>",
-				"<p>If you spot a bug, please report it. Your input is very much welcome.</p>",
+				"<p>Some snapshotting mechanics needs to be fixed (mainly implementing rollover mechanic).</p>",
 			],
 
 			// All stats for which EP should be calculated.

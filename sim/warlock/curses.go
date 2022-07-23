@@ -107,19 +107,18 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 	actionID := core.ActionID{SpellID: 47864}
 	baseCost := 0.1 * warlock.BaseMana
 	target := warlock.CurrentTarget
-	hasGoCoA := warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCurseOfAgony)
 	numberOfTicks := 12
 	totalBaseDmg := 1740.0
 	agonyEffect := totalBaseDmg * 0.056
-	if hasGoCoA {
+	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCurseOfAgony) {
 		numberOfTicks += 2
 		totalBaseDmg += 2 * agonyEffect // Glyphed ticks
 	}
 
 	effect := core.SpellEffect{
-		DamageMultiplier: (1 + 0.01*float64(warlock.Talents.Contagion)) * (1 + 0.05*float64(warlock.Talents.ImprovedCurseOfAgony)),
+		DamageMultiplier: 1,
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-		BaseDamage:       core.BaseDamageConfigMagicNoRoll(totalBaseDmg/float64(numberOfTicks), 0.1), //TODO : CoA ramp up effect
+		BaseDamage:       core.BaseDamageConfigMagicNoRoll(totalBaseDmg/float64(numberOfTicks), 0.1), // Ignored: CoA ramp up effect
 		OutcomeApplier:   warlock.OutcomeFuncTick(),
 		IsPeriodic:       true,
 		ProcMask:         core.ProcMaskPeriodicDamage,

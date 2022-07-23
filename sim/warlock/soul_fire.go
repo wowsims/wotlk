@@ -10,17 +10,18 @@ import (
 func (warlock *Warlock) registerSoulFireSpell() {
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
-		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) * 5 * core.CritRatingPerCritChance,
-		DamageMultiplier:     1 + 0.03*float64(warlock.Talents.Emberstorm),
+		BonusSpellCritRating: core.CritRatingPerCritChance * 5 * (core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) +
+			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 1, 0)),
+		DamageMultiplier:     1,
 		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.DestructiveReach),
 		BaseDamage:           core.BaseDamageConfigMagic(1323.0, 1657.0, 1.15),
-		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin) / 5)),
+		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
 	}
 
 	baseCost := 0.09 * warlock.BaseMana
-	costReduction := 0.0
+	costReductionFactor := 1.0
 	if float64(warlock.Talents.Cataclysm) > 0 {
-		costReduction += 0.01 + 0.03*float64(warlock.Talents.Cataclysm)
+		costReductionFactor -= 0.01 + 0.03*float64(warlock.Talents.Cataclysm)
 	}
 
 	warlock.SoulFire = warlock.RegisterSpell(core.SpellConfig{
@@ -31,7 +32,7 @@ func (warlock *Warlock) registerSoulFireSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost * (1 - costReduction),
+				Cost:     baseCost * costReductionFactor,
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond * time.Duration(6000-400*warlock.Talents.Bane),
 			},

@@ -10,9 +10,16 @@ import (
 
 func (warlock *Warlock) ApplyTalents() {
 	// Demonic Embrace
-	if warlock.Talents.DemonicEmbrace > 0 {
-		warlock.AddStatDependency(stats.Stamina, stats.Stamina, 1.01+(float64(warlock.Talents.DemonicEmbrace)*0.03))
-	}
+	warlock.AddStatDependency(stats.Stamina, stats.Stamina, 1.01+(float64(warlock.Talents.DemonicEmbrace)*0.03))
+
+	// Molten Skin
+	warlock.PseudoStats.DamageTakenMultiplier /= 1 + 0.02*float64(warlock.Talents.MoltenSkin)
+
+	// Malediction
+	warlock.PseudoStats.MagicDamageDealtMultiplier *= 1 + 0.01*float64(warlock.Talents.Malediction)
+
+	// Demonic Pact
+	warlock.PseudoStats.MagicDamageDealtMultiplier *= 1 + 0.02*float64(warlock.Talents.DemonicPact)
 
 	// Suppression (Add 1% hit per point)
 	warlock.AddStat(stats.SpellHit, float64(warlock.Talents.Suppression)*core.SpellHitRatingPerHitChance)
@@ -20,19 +27,11 @@ func (warlock *Warlock) ApplyTalents() {
 	// Backlash (Add 1% crit per point)
 	warlock.AddStat(stats.SpellCrit, float64(warlock.Talents.Backlash)*core.CritRatingPerCritChance)
 
-	// Shadow Mastery
-	warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + (0.03 * float64(warlock.Talents.ShadowMastery))
-
-	// Malediction (SP bonus)
-	if warlock.Talents.Malediction > 0 {
-		warlock.PseudoStats.MagicDamageDealtMultiplier += 0.01*float64(warlock.Talents.Malediction)
-	}
-
 	// Fel Vitality
 	if warlock.Talents.FelVitality > 0 {
 		bonus := 0.01 * float64(warlock.Talents.FelVitality)
 		// Adding a second 3% bonus int->mana dependency
-		warlock.AddStatDependency(stats.Intellect, stats.Mana, 1.0+bonus)
+		warlock.AddStatDependency(stats.Intellect, stats.Mana, 1.0 + 15*bonus)
 	}
 
 	if warlock.Options.Summon != proto.Warlock_Options_NoSummon {
@@ -64,16 +63,6 @@ func (warlock *Warlock) ApplyTalents() {
 		})
 	}
 
-	if warlock.Talents.DemonicPact > 0 {
-		spellDmgBonus := 0.02 * float64(warlock.Talents.DemonicPact)
-		warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1 + spellDmgBonus
-		warlock.PseudoStats.FireDamageDealtMultiplier *= 1 + spellDmgBonus
-	}
-
-	if warlock.Talents.MoltenSkin > 0 {
-		warlock.PseudoStats.DamageTakenMultiplier /= 1 + 0.02*float64(warlock.Talents.MoltenSkin)
-	}
-
 	if warlock.Talents.Nightfall > 0 || warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCorruption) {
 		warlock.setupNightfall()
 	}
@@ -85,12 +74,6 @@ func (warlock *Warlock) ApplyTalents() {
 	if warlock.Talents.Eradication > 0 {
 		warlock.setupEradication()
 	}
-
-	if warlock.Talents.DeathsEmbrace > 0 {
-		warlock.applyDeathsEmbrace()
-	}
-
-	warlock.setupDrainSoulExecutePhase()
 
 	if warlock.Talents.MoltenCore > 0 {
 		warlock.setupMoltenCore()
@@ -115,6 +98,15 @@ func (warlock *Warlock) ApplyTalents() {
 
 	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap) {
 		warlock.registerGlyphOfLifeTapAura()
+	}
+}
+
+func (warlock *Warlock) applyWeaponImbue() {
+	if warlock.Options.WeaponImbue == proto.Warlock_Options_GrandFirestone {
+		warlock.AddStat(stats.SpellCrit, 49*(1+1.5*float64(warlock.Talents.MasterConjuror)))
+	}
+	if warlock.Options.WeaponImbue == proto.Warlock_Options_GrandSpellstone {
+		warlock.AddStat(stats.SpellHaste, 60*(1+1.5*float64(warlock.Talents.MasterConjuror)))
 	}
 }
 
@@ -164,29 +156,6 @@ func (warlock *Warlock) setupEmpoweredImp() {
 				warlock.EmpoweredImpAura.Refresh(sim)
 			}
 		},
-	})
-}
-
-func (warlock *Warlock) applyDeathsEmbrace() {
-	multiplier := 1.0 + 0.04*float64(warlock.Talents.DeathsEmbrace)
-
-	deathsEmbraceAura := warlock.RegisterAura(core.Aura{
-		Label:    "Death's Embrace Hidden Aura",
-		Duration: core.NeverExpires,
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			warlock.PseudoStats.ShadowDamageDealtMultiplier *= multiplier
-		},
-		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			warlock.PseudoStats.ShadowDamageDealtMultiplier /= multiplier
-		},
-	})
-
-	warlock.RegisterResetEffect(func(sim *core.Simulation) {
-		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute35 bool) {
-			if isExecute35 {
-				deathsEmbraceAura.Activate(sim)
-			}
-		})
 	})
 }
 
@@ -288,7 +257,8 @@ func (warlock *Warlock) setupShadowEmbrace() {
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
 			aura.Unit.PseudoStats.PeriodicShadowDamageDealtMultiplier /= 1.0 + 0.01*float64(warlock.Talents.ShadowEmbrace)*float64(oldStacks)
 			aura.Unit.PseudoStats.PeriodicShadowDamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.ShadowEmbrace)*float64(newStacks)
-			// TO DO : Healing over time reduction part
+			// TODO: make it a debuff
+			// Healing over time reduction part
 		},
 	})
 
@@ -331,7 +301,7 @@ func (warlock *Warlock) setupNightfall() {
 		},
 		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spell == warlock.Corruption { // TODO: also works on drain life...
-				if sim.RandomFloat("Nightfall") < 0.02*float64(warlock.Talents.Nightfall)+
+				if sim.RandomFloat("Nightfall") < 0.02*float64(warlock.Talents.Nightfall) +
 					0.04*core.TernaryFloat64(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCorruption), 1, 0) {
 					warlock.NightfallProcAura.Activate(sim)
 				}
@@ -423,19 +393,3 @@ func (warlock *Warlock) backdraftModifier() float64 {
 	return castTimeModifier
 }
 
-
-// func (warlock *Warlock) spellDamageModifierHelper(spell *core.Spell) {
-// 	deathsEmbraceMultiplier:= 1.0 + 0.04*float64(warlock.Talents.DeathsEmbrace)
-// 	drainSoulExecutePhaseMultiplier := math.Sqrt((deathsEmbraceMultiplier - 1 + 4) / deathsEmbraceMultiplier)
-// 	// Because Death's Embrace and Drain Soul Execute bonus work additive and not multiplicative
-// 	//TODO : Fix (no square root) when DamageMultiplier is fixed
-
-// 	// Shadow Mastery
-// 	warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + (0.03 * float64(warlock.Talents.ShadowMastery))
-// 	// Emberstorm
-//  	(1 + 0.03*float64(warlock.Talents.Emberstorm))
-//  	//Imbues
-// 	warlock.PseudoStats.DirectMagicDamageDealtMultiplier += 0.01
-// 	warlock.PseudoStats.PeriodicMagicDamageDealtMultiplier += 0.01
-// 	//
-// }

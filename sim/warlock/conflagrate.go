@@ -16,23 +16,21 @@ func (warlock *Warlock) CanConflagrate(sim *core.Simulation) bool {
 func (warlock *Warlock) registerConflagrateSpell() {
 
 	baseCost := 0.16 * warlock.BaseMana
-	costReduction := 0.0
+	costReductionFactor := 1.0
 	if float64(warlock.Talents.Cataclysm) > 0 {
-		costReduction += 0.01 + 0.03*float64(warlock.Talents.Cataclysm)
+		costReductionFactor -= 0.01 + 0.03*float64(warlock.Talents.Cataclysm)
 	}
-
-	hasGoImmo := core.TernaryFloat64(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfImmolate), 1, 0)
+	spellCoefficient:= 0.2 + 0.04*float64(warlock.Talents.ShadowAndFlame)
 
 	actionID := core.ActionID{SpellID: 17962}
 	target := warlock.CurrentTarget
 
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
-		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) * 5 * core.CritRatingPerCritChance,
-		DamageMultiplier: 0.6 * (1 + (0.1 * float64(warlock.Talents.ImprovedImmolate))) *
-			(1 + 0.03*float64(warlock.Talents.Aftermath)) * (1 + 0.03*float64(warlock.Talents.Emberstorm)),
+		BonusSpellCritRating: 5*(core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) + float64(warlock.Talents.FireAndBrimstone))*core.CritRatingPerCritChance,
+		DamageMultiplier: 0.6,
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
-		BaseDamage:       core.BaseDamageConfigMagicNoRoll(785*(1+0.1*hasGoImmo), 0.2*5),
+		BaseDamage:       core.BaseDamageConfigMagicNoRoll(785, spellCoefficient*5),
 		OutcomeApplier:   warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
 		OnSpellHitDealt:  applyDotOnLanded(&warlock.ConflagrateDot),
 	}
@@ -45,7 +43,7 @@ func (warlock *Warlock) registerConflagrateSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - costReduction),
+				Cost: baseCost * costReductionFactor,
 				GCD:  core.GCDDefault,
 			},
 			CD: core.Cooldown{
@@ -72,9 +70,9 @@ func (warlock *Warlock) registerConflagrateSpell() {
 		NumberOfTicks: 3,
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			DamageMultiplier: 0.4 * (1 + 0.03*float64(warlock.Talents.Aftermath)) * (1 + 0.03*float64(warlock.Talents.Emberstorm)),
+			DamageMultiplier: 0.4/3,
 			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(785/5*(1+0.1*hasGoImmo), 0.2),
+			BaseDamage:       core.BaseDamageConfigMagicNoRoll(785, spellCoefficient*5),
 			OutcomeApplier:   warlock.OutcomeFuncTick(),
 			IsPeriodic:       true,
 			ProcMask:         core.ProcMaskPeriodicDamage,
