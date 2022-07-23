@@ -33,7 +33,7 @@ type AdaptiveRotation struct {
 
 func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Simulation) {
 	target := sim.GetTargetUnit(0)
-
+	nextSwingAt := enh.AutoAttacks.NextAttackAt()
 	if enh.Talents.Stormstrike {
 		if (enh.StormstrikeDebuffAura(target).GetStacks() > 0) && enh.Stormstrike.IsReady(sim) {
 			if !enh.Stormstrike.Cast(sim, target) {
@@ -44,7 +44,16 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 	}
 
 	if enh.Talents.MaelstromWeapon > 0 {
-		if enh.MaelstromWeaponAura.GetStacks() == 5 {
+		castLb := (enh.MaelstromWeaponAura.GetStacks() == 5)
+		/* TODO MW4 weave param */
+		if (!castLb && true) {
+			castLb = ((enh.MaelstromWeaponAura.GetStacks() == 4) && (nextSwingAt.Milliseconds() > 500))
+		}
+		/* TODO MW3 weave param */
+		if (!castLb && true) {
+			castLb = ((enh.MaelstromWeaponAura.GetStacks() == 3) && (nextSwingAt.Milliseconds() > 1000))
+		}
+		if (castLb) {
 			if !enh.LightningBolt.Cast(sim, target) {
 				enh.WaitForMana(sim, enh.LightningBolt.CurCast.Cost)
 			}
