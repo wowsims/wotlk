@@ -255,15 +255,6 @@ func (shaman *Shaman) ElementalCritMultiplier() float64 {
 	return critMultiplier
 }
 
-func (shaman *Shaman) EnhancementCritMultiplier() float64 {
-	critMultiplier := shaman.DefaultMeleeCritMultiplier()
-
-	// FIXME: Is flametongueImbueCrit handled in sim/shaman/weapon_imbues.go ?
-	// Looks like it.
-
-	return critMultiplier
-}
-
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassShaman}] = stats.Stats{
 		stats.Health:      2979,

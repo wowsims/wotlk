@@ -44,7 +44,7 @@ func (shaman *Shaman) newFireNovaSpell() {
 			ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
 
 			BaseDamage:     core.BaseDamageConfigMagic(893, 997, 0.2142), // FIXME: double check spell coefficients
-			OutcomeApplier: core.OutcomeFuncMagicHitAndCrit(shaman.EnhancementCritMultiplier()),
+			OutcomeApplier: core.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier()),
 		}),
 	})
 }
