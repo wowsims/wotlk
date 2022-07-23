@@ -44,12 +44,36 @@ func (deathKnight *DeathKnight) CanBloodPresence(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 1, 0, 0) && deathKnight.BloodPressence.IsReady(sim)
 }
 
+func (deathKnight *DeathKnight) CastBloodPresence(sim *core.Simulation, target *core.Unit) bool {
+	if deathKnight.CanBloodPresence(sim) {
+		deathKnight.BloodPressence.Cast(sim, target)
+		return true
+	}
+	return false
+}
+
 func (deathKnight *DeathKnight) CanFrostPresence(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 0, 1, 0) && deathKnight.FrostPressence.IsReady(sim)
 }
 
+func (deathKnight *DeathKnight) CastFrostPresence(sim *core.Simulation, target *core.Unit) bool {
+	if deathKnight.CanFrostPresence(sim) {
+		deathKnight.FrostPressence.Cast(sim, target)
+		return true
+	}
+	return false
+}
+
 func (deathKnight *DeathKnight) CanUnholyPresence(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 0, 0, 1) && deathKnight.UnholyPressence.IsReady(sim)
+}
+
+func (deathKnight *DeathKnight) CastUnholyPresence(sim *core.Simulation, target *core.Unit) bool {
+	if deathKnight.CanUnholyPresence(sim) {
+		deathKnight.UnholyPressence.Cast(sim, target)
+		return true
+	}
+	return false
 }
 
 func (deathKnight *DeathKnight) registerBloodPresenceAura(timer *core.Timer) {
