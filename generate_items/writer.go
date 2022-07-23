@@ -312,6 +312,7 @@ var allowList = map[int]bool{
 	9449:  true, // Manual Crowd Pummeler
 	11815: true, // Hand of Justice
 	12632: true, // Storm Gauntlets
+	15808: true, // Fine Light Crossbow (for hunter testing).
 	17111: true, // Blazefury Medallion
 	17112: true, // Empyrean Demolisher
 	19808: true, // Rockhide Strongfish
