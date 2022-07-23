@@ -92,7 +92,7 @@ var ItemSetLightswornBattlegear = core.NewItemSet(core.ItemSet{
 			})
 		},
 		4: func(agent core.Agent) {
-			// Implemented in seals.go
+			// Implemented in soc.go, sor.go, sov.go
 		},
 	},
 })
