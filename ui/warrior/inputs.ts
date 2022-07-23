@@ -49,6 +49,7 @@ export const WarriorRotationConfig = {
 			fieldName: 'useMs',
 			label: 'Use Mortal Strike',
 			labelTooltip: 'Use Mortal Strike when rage threshold is met.',
+			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().mortalStrike,
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecWarrior>({
 			fieldName: 'useCleave',
@@ -69,6 +70,7 @@ export const WarriorRotationConfig = {
 			fieldName: 'msRageThreshold',
 			label: 'Mortal Strike rage threshold',
 			labelTooltip: 'Mortal Strike when rage is above:',
+			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().mortalStrike,
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecWarrior>({
 			fieldName: 'hsRageThreshold',
