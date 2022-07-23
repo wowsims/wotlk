@@ -2,8 +2,8 @@
 rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 
 OUT_DIR=dist/wotlk
-ASSETS_INPUT := $(shell find assets/ -type f)
-ASSETS := $(patsubst assets/%,$(OUT_DIR)/assets/%,$(ASSETS_INPUT))
+#ASSETS_INPUT := $(shell find assets/ -type f)
+#ASSETS := $(patsubst assets/%,$(OUT_DIR)/assets/%,$(ASSETS_INPUT))
 GOROOT := $(shell go env GOROOT)
 
 ifeq ($(shell go env GOOS),darwin)
@@ -99,7 +99,7 @@ $(OUT_DIR)/%/index.css: ui/%/index.scss ui/%/*.scss $(call rwildcard,ui/core,*.s
 	npx sass $< $@
 
 # Generic rule for building index.html for any class directory
-$(OUT_DIR)/%/index.html: ui/index_template.html $(ASSETS)
+$(OUT_DIR)/%/index.html: ui/index_template.html $(OUT_DIR)/assets
 	$(eval title := $(shell echo $(shell basename $(@D)) | sed -r 's/(^|_)([a-z])/\U \2/g' | cut -c 2-))
 	echo $(title)
 	mkdir -p $(@D)
@@ -127,9 +127,8 @@ $(OUT_DIR)/sim_worker.js: ui/worker/sim_worker.js
 $(OUT_DIR)/net_worker.js: ui/worker/net_worker.js
 	cp ui/worker/net_worker.js $(OUT_DIR)
 
-$(OUT_DIR)/assets/%: assets/%
-	mkdir -p $(@D)
-	cp $< $@
+$(OUT_DIR)/assets: assets/*
+	cp -r assets $(OUT_DIR)
 
 binary_dist/dist.go: sim/web/dist.go.tmpl
 	mkdir -p binary_dist/wotlk
