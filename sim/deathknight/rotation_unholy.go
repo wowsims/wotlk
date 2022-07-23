@@ -84,7 +84,7 @@ func (deathKnight *DeathKnight) UnholyDiseaseCheckWrapper(sim *core.Simulation, 
 			runeCostForSpell := deathKnight.RuneAmountForSpell(spell)
 			spellCost := crpb.DetermineOptimalCost(sim, runeCostForSpell.Blood, runeCostForSpell.Frost, runeCostForSpell.Unholy)
 
-			crpb.Spend(sim, spellCost)
+			crpb.Spend(sim, spell, spellCost)
 
 			if crpb.CurrentBloodRunes() == 0 && crpb.CurrentDeathRunes() == 0 {
 				nextBloodRuneAt := float64(crpb.BloodRuneReadyAt(sim))
