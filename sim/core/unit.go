@@ -317,6 +317,7 @@ func (unit *Unit) finalizeStatDeps() {
 			if err != nil {
 				return fmt.Errorf("%w from: %s", err, k.StatName())
 			}
+			delete(seen, k)
 		}
 		return nil
 	}
@@ -325,12 +326,11 @@ func (unit *Unit) finalizeStatDeps() {
 		if unit.statBonuses[s].Multiplier == 0 {
 			unit.statBonuses[s].Multiplier = 1
 		}
-		seen = map[stats.Stat]struct{}{
-			stats.Stat(s): {}, // mark this stat already seen.
-		}
+		seen[stats.Stat(s)] = struct{}{}
 		if err := walk(unit.statBonuses[s].Deps); err != nil {
 			panic(err)
 		}
+		delete(seen, stats.Stat(s))
 	}
 }
 
@@ -411,8 +411,8 @@ func (unit *Unit) Armor() float64 {
 	return unit.PseudoStats.ArmorMultiplier * unit.stats[stats.Armor]
 }
 
-func (unit *Unit) ArmorPenetration() float64 {
-	return MinFloat(unit.stats[stats.ArmorPenetration]/ArmorPenPerPercentArmor, 1.0)
+func (unit *Unit) ArmorPenetrationPercentage() float64 {
+	return MaxFloat(MinFloat(unit.stats[stats.ArmorPenetration]/ArmorPenPerPercentArmor, 100.0)*0.01, 0.0)
 }
 
 func (unit *Unit) RangedSwingSpeed() float64 {

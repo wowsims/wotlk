@@ -250,16 +250,6 @@ export class ActionId {
 					name += ' (Spell)';
 				}
 				break;
-			case 'Frost Strike':
-			case 'Plague Strike':
-			case 'Blood Strike':
-			case 'Obliterate':
-					if (this.tag == 1) {
-						name += ' (Main Hand)';
-					} else if (this.tag == 2) {
-						name += ' (Off Hand)';
-					}
-					break;
 			case 'Scourge Strike':
 				if (this.tag == 1) {
 					name += ' (Physical)';
@@ -267,6 +257,11 @@ export class ActionId {
 					name += ' (Shadow)';
 				}
 				break;
+			case 'Frost Strike':
+			case 'Plague Strike':
+			case 'Blood Strike':
+			case 'Obliterate':
+			case 'Blood-Caked Strike':
 			case 'Lightning Speed':
 			case 'Windfury Weapon':
 				if (this.tag == 1) {
@@ -555,7 +550,7 @@ const petNameToIcon: Record<string, string> = {
 	'Felhunter': 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_summonfelhunter.jpg',
 	'Gargoyle': 'https://wow.zamimg.com/images/wow/icons/large/ability_hunter_pet_bat.jpg',
 	'Ghoul': 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_raisedead.jpg',
-	'Army of the Dead Ghoul': 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_raisedead.jpg',
+	'Army of the Dead': 'https://wow.zamimg.com/images/wow/icons/large/spell_deathknight_armyofthedead.jpg',
 	'Gorilla': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_gorilla.jpg',
 	'Hyena': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_hyena.jpg',
 	'Imp': 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_summonimp.jpg',

@@ -4,6 +4,7 @@ import { ResultsViewer } from '/wotlk/core/components/results_viewer.js';
 import { Title } from '/wotlk/core/components/title.js';
 import { Spec } from '/wotlk/core/proto/common.js';
 import { SimOptions } from '/wotlk/core/proto/api.js';
+import { LaunchStatus } from '/wotlk/core/launched_sims.js';
 import { specToLocalStorageKey } from '/wotlk/core/proto_utils/utils.js';
 
 import { Sim, SimError } from './sim.js';
@@ -25,7 +26,7 @@ export interface SimWarning {
 export interface SimUIConfig {
 	// The spec, if an individual sim, or null if the raid sim.
 	spec: Spec | null,
-
+	launchStatus: LaunchStatus,
 	knownIssues?: Array<string>,
 }
 
@@ -96,6 +97,17 @@ export abstract class SimUI extends Component {
 		});
 		this.updateWarnings();
 
+		let statusStr = '';
+		if (config.launchStatus == LaunchStatus.Unlaunched) {
+			statusStr = 'This sim is a WORK IN PROGRESS. It is not fully developed and should not be used for general purposes.';
+		} else if (config.launchStatus == LaunchStatus.Alpha) {
+			statusStr = 'This sim is in ALPHA. Bugs are expected; please let us know if you find one!.';
+		} else if (config.launchStatus == LaunchStatus.Beta) {
+			statusStr = 'This sim is in BETA. There may still be a few bugs; please let us know if you find one!.';
+		}
+		if (statusStr) {
+			config.knownIssues = [statusStr].concat(config.knownIssues || []);
+		}
 		if (config.knownIssues && config.knownIssues.length) {
 			const knownIssuesContainer = document.getElementsByClassName('known-issues')[0] as HTMLElement;
 			knownIssuesContainer.style.display = 'initial';

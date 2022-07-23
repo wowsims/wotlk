@@ -353,8 +353,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-IncisorFragment-37723"
  value: {
-  dps: 1536.7123191576154
-  tps: 1160.5468526326895
+  dps: 1461.585462016178
+  tps: 1107.9580526336833
  }
 }
 dps_results: {

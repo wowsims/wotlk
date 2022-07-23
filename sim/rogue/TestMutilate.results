@@ -318,8 +318,8 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-IncisorFragment-37723"
  value: {
-  dps: 2061.1085747103502
-  tps: 1451.8386621752848
+  dps: 1982.7768945013534
+  tps: 1396.223169226896
  }
 }
 dps_results: {
@@ -528,8 +528,8 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-Slayer'sArmor"
  value: {
-  dps: 2520.958827757652
-  tps: 1778.1817548044646
+  dps: 2061.866826819746
+  tps: 1452.2264341385512
  }
 }
 dps_results: {
@@ -668,8 +668,8 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-Warp-SpringCoil-30450"
  value: {
-  dps: 2161.147385141214
-  tps: 1522.8009636724269
+  dps: 2093.3036320297715
+  tps: 1474.6318989633035
  }
 }
 dps_results: {

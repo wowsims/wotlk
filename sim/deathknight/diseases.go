@@ -48,6 +48,11 @@ func (deathKnight *DeathKnight) registerFrostFever() {
 		Flags:       core.SpellFlagDisease,
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			deathKnight.FrostFeverDisease[unit.Index].Apply(sim)
+			deathKnight.FrostFeverDebuffAura[unit.Index].Activate(sim)
+
+			if deathKnight.IcyTalonsAura != nil {
+				deathKnight.IcyTalonsAura.Activate(sim)
+			}
 		},
 	})
 
@@ -123,8 +128,6 @@ func (deathKnight *DeathKnight) registerBloodPlague() {
 				DamageMultiplier: 1,
 				ThreatMultiplier: 1,
 				IsPeriodic:       true,
-				OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				},
 				OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 					deathKnight.doWanderingPlague(sim, spell, spellEffect)
 				},

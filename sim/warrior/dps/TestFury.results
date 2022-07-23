@@ -367,8 +367,8 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-IncisorFragment-37723"
  value: {
-  dps: 864.7472065721735
-  tps: 655.0039299232448
+  dps: 794.2247177576037
+  tps: 601.7036257697877
  }
 }
 dps_results: {
@@ -465,8 +465,8 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-OnslaughtBattlegear"
  value: {
-  dps: 1256.8655494021662
-  tps: 950.1040811500948
+  dps: 819.3474816529124
+  tps: 619.2166488736725
  }
 }
 dps_results: {

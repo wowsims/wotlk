@@ -16,6 +16,29 @@ type hybridScaling struct {
 	SP float64
 }
 
+type Modifier []float64
+type Modifiers []Modifier
+
+func (mod *Modifiers) Get() float64 {
+	value := 1.0
+	for _, m := range *mod {
+		sum := 1.0
+
+		// Combine additive bonuses.
+		for _, a := range m {
+			sum += a
+		}
+
+		// Combine multiplicative bonuses.
+		value *= sum
+	}
+	return value
+}
+
+func (mod *Modifiers) Clone() Modifiers {
+	return (*mod)[:]
+}
+
 type Paladin struct {
 	core.Character
 

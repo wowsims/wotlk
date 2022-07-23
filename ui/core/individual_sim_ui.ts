@@ -70,7 +70,7 @@ import { addStatWeightsAction } from '/wotlk/core/components/stat_weights_action
 import { equalsOrBothNull, getEnumValues } from '/wotlk/core/utils.js';
 import { getMetaGemConditionDescription } from '/wotlk/core/proto_utils/gems.js';
 import { isDualWieldSpec } from '/wotlk/core/proto_utils/utils.js';
-import { launchedSpecs } from '/wotlk/core/launched_sims.js';
+import { simLaunchStatuses } from '/wotlk/core/launched_sims.js';
 import { makePetTypeInputConfig } from '/wotlk/core/talents/hunter_pet.js';
 import { newIndividualExporters } from '/wotlk/core/components/exporters.js';
 import { newIndividualImporters } from '/wotlk/core/components/importers.js';
@@ -197,6 +197,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		super(parentElem, player.sim, {
 			spec: player.spec,
 			knownIssues: config.knownIssues,
+			launchStatus: simLaunchStatuses[player.spec],
 		});
 		this.rootElem.classList.add('individual-sim-ui', config.cssClass);
 		this.player = player;
@@ -205,15 +206,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		this.settingsMuuri = null;
 		this.prevEpIterations = 0;
 		this.prevEpSimResult = null;
-
-		if (!launchedSpecs.includes(this.player.spec)) {
-			this.addWarning({
-				updateOn: new TypedEvent<void>(),
-				getContent: () => {
-					return 'This sim has not yet been updated from its TBC state.';
-				},
-			});
-		}
 
 		this.addWarning({
 			updateOn: this.player.gearChangeEmitter,
