@@ -85,7 +85,7 @@ $(OUT_DIR)/core/tsconfig.tsbuildinfo: $(call rwildcard,ui/core,*.ts) ui/core/pro
 
 # Generic rule for hosting any class directory
 .PHONY: host_%
-host_%: ui_shared %
+host_%: ui_shared $(OUT_DIR)/%/index.js $(OUT_DIR)/%/index.css $(OUT_DIR)/%/index.html
 	npx http-server $(OUT_DIR)/..
 
 # Generic rule for building index.js for any class directory
