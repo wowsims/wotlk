@@ -385,142 +385,157 @@ enum Food {
 
 enum PetFood {
 	PetFoodUnknown = 0;
-	PetFoodSpicyMammothTreats = 1;
+	PetFoodSpicedMammothTreats = 1;
 	// TBC
 	PetFoodKiblersBits = 2;
 }
 
 // Buffs that affect the entire raid.
 message RaidBuffs {
-	TristateEffect power_word_fortitude = 1;
-	bool arcane_brilliance = 2;
-	bool fel_intelligence = 3;
-	bool divine_spirit = 4;
-	TristateEffect gift_of_the_wild = 5;
-	bool shadow_protection = 6;	
+	// +Stats
+	TristateEffect gift_of_the_wild = 1;
 
-	bool swift_retribution = 7;
-	TristateEffect moonkin_aura = 8;
-	bool elemental_oath = 9;
-
-	bool totem_of_wrath = 10; // shouldn't stack with demonic pact (does in beta right now)
-	int32 demonic_pact = 37; // SP buff
+	// +Stam
+	TristateEffect power_word_fortitude = 2;
 
 	// +Health
-	TristateEffect commanding_shout = 11;
-	TristateEffect blood_pact = 12;	
+	TristateEffect commanding_shout = 3;
+	TristateEffect blood_pact = 4;	
 
-	// 155 agi/str
-	bool horn_of_winter = 13;
-	TristateEffect strength_of_earth_totem = 14; // none, normal, 15% improved
+	// + Agi and Str
+	bool horn_of_winter = 5;
+	TristateEffect strength_of_earth_totem = 6; // none, normal, 15% improved
 	
-	// 20% Melee Haste
-	bool icy_talons = 15;
-	TristateEffect windfury_totem = 16; // none, 16%, 20%
+	// +Intell and/or Spi
+	bool arcane_brilliance = 7;
+	TristateEffect fel_intelligence = 8;
+	bool divine_spirit = 9;
 
 	// +AP
-	TristateEffect battle_shout = 17; // does not stack with blessing_of_might
+	TristateEffect battle_shout = 10;
 	
 	// 10% AP
-	bool trueshot_aura = 18;
-	bool unleashed_rage = 19;
-	bool abominations_might = 20;
+	bool trueshot_aura = 11;
+	bool unleashed_rage = 12;
+	bool abominations_might = 13;
 
 	// 5% phy crit
-	TristateEffect leader_of_the_pack = 21;
-	bool rampage = 22;
+	TristateEffect leader_of_the_pack = 14;
+	bool rampage = 15;
+
+	// 20% Melee Haste
+	bool icy_talons = 16;
+	TristateEffect windfury_totem = 17; // none, 16%, 20%
+
+	// +Spell Power
+	bool totem_of_wrath = 18; // shouldn't stack with demonic pact (does in beta right now)
+	bool flametongue_totem = 19;
+	int32 demonic_pact = 20; // SP buff, variable : 10% of demonology warlock's own SP
+
+	// +5% Spell Crit and/or +3% Haste
+	bool swift_retribution = 21; //haste only
+	TristateEffect moonkin_aura = 22; //both crit and haste
+	bool elemental_oath = 23; //crit only
+
+	// 5% spell haste
+	bool wrath_of_air_totem = 24;
 
 	// 3% dmg
-	bool ferocious_inspiration = 23;
-	bool sanctified_retribution = 24;
-	bool arcane_empowerment = 25;
+	bool ferocious_inspiration = 25;
+	bool sanctified_retribution = 26;
+	bool arcane_empowerment = 27;
 
-	TristateEffect mana_spring_totem = 26; // does not stack with blessing of wis
+	// mp5
+	TristateEffect mana_spring_totem = 28;
 	
-	// 5% spell haste
-	bool wrath_of_air_totem = 27;
-
+	// Miscellaneous
 	bool bloodlust = 29;
-
-	TristateEffect thorns = 32;
-	TristateEffect devotion_aura = 33;
-	bool retribution_aura = 34;
+	TristateEffect thorns = 30;
+	TristateEffect devotion_aura = 31;
+	bool retribution_aura = 32;
+	bool shadow_protection = 33;	
 
 	// Drums
-	bool drums_of_forgotten_kings = 38;
-	bool drums_of_the_wild = 39;
+	bool drums_of_forgotten_kings = 34;
+	bool drums_of_the_wild = 35;
 
 	// Scroll
-	bool scroll_of_protection = 40;
-	bool scroll_of_stamina = 41;
-	bool scroll_of_strength = 42;
-	bool scroll_of_agility = 43;
-	bool scroll_of_intellect = 44;
-	bool scroll_of_spirit = 45;
+	bool scroll_of_protection = 36;
+	bool scroll_of_stamina = 37;
+	bool scroll_of_strength = 38;
+	bool scroll_of_agility = 39;
+	bool scroll_of_intellect = 40;
+	bool scroll_of_spirit = 41;
 }
 
 // Buffs that affect a single party.
 message PartyBuffs {
 	// Item Buffs
-	int32 atiesh_mage = 6;
-	int32 atiesh_warlock = 7;
+	int32 atiesh_mage = 1;
+	int32 atiesh_warlock = 2;
 
-	bool braided_eternium_chain = 8;
-	bool eye_of_the_night = 9;
-	bool chain_of_the_twilight_owl = 10;
+	bool braided_eternium_chain = 3;
+	bool eye_of_the_night = 4;
+	bool chain_of_the_twilight_owl = 5;
 	
 	// Group buffs
-	int32 mana_tide_totems = 11;
-	bool heroic_presence = 30;
+	int32 mana_tide_totems = 6;
+	bool heroic_presence = 7;
 }
 
 // These are usually individual actions taken by other Characters.
 message IndividualBuffs {
-	// Blessings, used for raid sim and individual sim
+	// 10% Stats
 	bool blessing_of_kings = 1;
 	TristateEffect blessing_of_wisdom = 2;
 	TristateEffect blessing_of_might = 3;
 	bool blessing_of_sanctuary = 4;
+	bool vigilance = 5;
+	bool renewed_hope = 6;
 
 	// Only used in individual sims 
 	//   as the class that provides these would cast them in raid sim
 
 	// How many of each of these buffs the player will be receiving.
-	int32 hymn_of_hope = 5;
-	int32 hand_of_salvation = 6;
-	int32 rapture = 7;
-	int32 innervates = 8;
-	int32 power_infusions = 9;
-	int32 unholy_frenzy = 10;
-	int32 revitalize = 11;
+	int32 hymn_of_hope = 7;
+	int32 hand_of_salvation = 8;
+	int32 rapture = 9;
+	int32 innervates = 10;
+	int32 power_infusions = 11;
+	int32 unholy_frenzy = 12;
+	int32 revitalize = 13;
 
-	bool replenishment = 12; // vampiric touch, judgements of the wise, hunting party, imp soul leech, enduring winter
+	bool vampiric_touch = 14;
+	bool hunting_party = 15;
+	bool judgements_of_the_wise = 16;
+	bool improved_soul_leech = 17;
+	bool enduring_winter = 18;
 }
 
 message Consumes {
-	Flask flask = 38;
-	BattleElixir battle_elixir = 39;
-	GuardianElixir guardian_elixir = 40;
+	Flask flask = 1;
+	BattleElixir battle_elixir = 2;
+	GuardianElixir guardian_elixir = 3;
 
-	WeaponImbue main_hand_imbue = 32;
-	WeaponImbue off_hand_imbue = 33;
+	WeaponImbue main_hand_imbue = 4;
+	WeaponImbue off_hand_imbue = 5;
 
-	Food food = 41;
-	PetFood pet_food = 37;
+	Food food = 6;
+	PetFood pet_food = 7;
 
-	int32 pet_scroll_of_agility = 46;
-	int32 pet_scroll_of_strength = 47;
+	int32 pet_scroll_of_agility = 8;
+	int32 pet_scroll_of_strength = 9;
 
-	Potions default_potion = 15;
-	Potions prepop_potion = 16;
+	Potions default_potion = 10;
+	Potions prepop_potion = 11;
 
-	Conjured default_conjured = 27;
-	Conjured starting_conjured = 48;
-	int32 num_starting_conjured = 49;
+	Conjured default_conjured = 12;
+	Conjured starting_conjured = 13;
+	int32 num_starting_conjured = 14;
 
-	bool super_sapper = 50;
-	bool goblin_sapper = 51;
-	Explosive filler_explosive = 52;
+	bool super_sapper = 15;
+	bool goblin_sapper = 16;
+	Explosive filler_explosive = 17;
 }
 
 message Debuffs {
@@ -533,38 +548,48 @@ message Debuffs {
 	// 13% bonus spell damage
 	bool curse_of_elements = 5;
 	bool ebon_plaguebringer = 6;
-	bool earth_and_moon = 29;
+	bool earth_and_moon = 7;
 	
 	// +3% to crit against target
-	bool heart_of_the_crusader = 7;
-	bool master_poisoner = 8;
-	bool totem_of_wrath = 9;
+	bool heart_of_the_crusader = 8;
+	bool master_poisoner = 9;
+	bool totem_of_wrath = 10;
 
 	// 5% spell crit
-	bool shadow_mastery = 10;
-	bool improved_scorch = 11;
-	bool winters_chill = 12;
+	bool shadow_mastery = 11;
+	bool improved_scorch = 12;
+	bool winters_chill = 13;
 
-	bool blood_frenzy = 13;
-	bool savage_combat = 14;
+	bool blood_frenzy = 14;
+	bool savage_combat = 15;
 
 	// TODO: validate these
-	bool gift_of_arthas = 15;
+	bool gift_of_arthas = 16;
 	
-	bool mangle = 16;
+	// Bleed %
+	bool mangle = 17;
+	bool trauma = 18;
+	bool stampede = 19;
 
-	bool expose_armor = 17;
-	bool sunder_armor = 18;
-	TristateEffect curse_of_weakness = 19;
+	// Major armor
+	bool expose_armor = 20;
+	bool sunder_armor = 21;
+	bool acid_spit = 22;
 
-	TristateEffect demoralizing_roar = 22;
-	TristateEffect demoralizing_shout = 23;
-	TristateEffect thunder_clap = 24;
+	TristateEffect curse_of_weakness = 23;
+	bool sting = 24;
 
-	bool insect_swarm = 25;
-	bool scorpid_sting = 26;
-	bool shadow_embrace = 27;
-	bool screech = 28;
+	TristateEffect demoralizing_roar = 25;
+	TristateEffect demoralizing_shout = 26;
+	TristateEffect thunder_clap = 27;
+	TristateEffect frost_fever = 28;
+	bool infected_wounds = 29;
+	bool judgements_of_the_just = 30;
+
+	bool insect_swarm = 31;
+	bool scorpid_sting = 32;
+	bool shadow_embrace = 33;
+	bool screech = 34;
 }
 
 enum MobType {

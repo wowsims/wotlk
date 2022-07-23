@@ -88,10 +88,106 @@ export const DefaultOptions = HunterOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	defaultPotion: Potions.HastePotion,
-	flask: Flask.FlaskOfRelentlessAssault,
-	food: Food.FoodGrilledMudfish,
+	defaultPotion: Potions.PotionOfSpeed,
+	flask: Flask.FlaskOfEndlessRage,
+	food: Food.FoodFishFeast,
 });
+
+export const PRERAID_PRESET = {
+	name: 'Preraid Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	//enableWhen: (player: Player<any>) => player.getTalentTree() == 2,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 42551,
+			"enchant": 44879,
+			"gems": [
+				41398,
+				40043
+			]
+		},
+		{
+			"id": 42645,
+			"gems": [
+				39997
+			]
+		},
+		{
+			"id": 37679,
+			"enchant": 44871,
+			"gems": [
+				39997
+			]
+		},
+		{
+			"id": 43566,
+			"enchant": 55002
+		},
+		{
+			"id": 37144,
+			"enchant": 44623,
+			"gems": [
+				40023
+			]
+		},
+		{
+			"id": 37170,
+			"enchant": 60616,
+			"gems": [
+				0
+			]
+		},
+		{
+			"id": 37886,
+			"enchant": 54999,
+			"gems": [
+				0
+			]
+		},
+		{
+			"id": 37407,
+			"gems": [
+				39997
+			]
+		},
+		{
+			"id": 37669,
+			"enchant": 38374
+		},
+		{
+			"id": 37167,
+			"enchant": 55016,
+			"gems": [
+				39997,
+				39997
+			]
+		},
+		{
+			"id": 37685
+		},
+		{
+			"id": 42642,
+			"gems": [
+				40043
+			]
+		},
+		{
+			"id": 40684
+		},
+		{
+			"id": 44253
+		},
+		{
+			"id": 44249,
+			"enchant": 44630
+		},
+		{},
+		{
+			"id": 43284,
+			"enchant": 41167
+		}
+	]}`),
+};
 
 export const P1_PRESET = {
 	name: 'P1 Preset',
@@ -99,99 +195,91 @@ export const P1_PRESET = {
 	//enableWhen: (player: Player<any>) => player.getTalentTree() == 2,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
-			"id": 34333,
-			"enchant": 29192,
+			"id": 40505,
+			"enchant": 44879,
 			"gems": [
-				32194,
-				32409
+				41398,
+				40023
 			]
 		},
 		{
-			"id": 34177
-		},
-		{
-			"id": 31006,
-			"enchant": 23548,
+			"id": 44664,
 			"gems": [
-				32194,
-				32194
+				40023
 			]
 		},
 		{
-			"id": 34241,
-			"enchant": 34004,
+			"id": 40507,
+			"enchant": 44871,
 			"gems": [
-				32194
+				39997
 			]
 		},
 		{
-			"id": 34397,
-			"enchant": 24003,
+			"id": 40403,
+			"enchant": 55002
+		},
+		{
+			"id": 43998,
+			"enchant": 44623,
 			"gems": [
-				32194,
-				32194,
-				32194
+				39997,
+				40023
 			]
 		},
 		{
-			"id": 34443,
-			"enchant": 34002,
+			"id": 40282,
+			"enchant": 60616,
 			"gems": [
-				32194
+				40086,
+				0
 			]
 		},
 		{
-			"id": 34343,
-			"enchant": 19445,
+			"id": 40541,
+			"enchant": 54999,
 			"gems": [
-				32194,
-				32226
+				0
 			]
 		},
 		{
-			"id": 34549,
+			"id": 39762,
 			"gems": [
-				32194
+				39997
 			]
 		},
 		{
-			"id": 34188,
-			"enchant": 29535,
+			"id": 40331,
+			"enchant": 38374,
 			"gems": [
-				32194,
-				32194,
-				32194
+				39997,
+				40023
 			]
 		},
 		{
-			"id": 34570,
-			"enchant": 22544,
-			"gems": [
-				32226
-			]
+			"id": 40549,
+			"enchant": 55016
 		},
 		{
-			"id": 34887
+			"id": 40074
 		},
 		{
-			"id": 34361
+			"id": 40474
 		},
 		{
-			"id": 34427
+			"id": 40431
 		},
 		{
-			"id": 28830
+			"id": 44253
 		},
 		{
-			"id": 34183,
-			"enchant": 22556,
-			"gems": [
-				32194
-			]
+			"id": 40388,
+			"enchant": 44630
 		},
+		{},
 		{
-			"id": 34334,
-			"enchant": 23766
+			"id": 40385,
+			"enchant": 41167
 		}
 	]}`),
 };

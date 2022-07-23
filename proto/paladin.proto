@@ -175,6 +175,8 @@ message RetributionPaladin {
 		double damage_taken_per_second = 4;
 
 		bool use_avenging_wrath = 5;
+
+		bool use_divine_plea = 6;
 	}
 	Options options = 3;
 }

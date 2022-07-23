@@ -197,25 +197,25 @@ export const talentTreeIcons: Record<Class, Array<string>> = {
 };
 
 export const titleIcons: Record<Spec, string> = {
-	[Spec.SpecBalanceDruid]: '/wotlk/assets/balance_druid_icon.png',
-	[Spec.SpecElementalShaman]: '/wotlk/assets/elemental_shaman_icon.png',
-	[Spec.SpecEnhancementShaman]: '/wotlk/assets/enhancement_shaman_icon.png',
-	[Spec.SpecFeralDruid]: '/wotlk/assets/feral_druid_icon.png',
-	[Spec.SpecFeralTankDruid]: '/wotlk/assets/feral_druid_tank_icon.png',
-	[Spec.SpecHunter]: '/wotlk/assets/hunter_icon.png',
-	[Spec.SpecMage]: '/wotlk/assets/mage_icon.png',
-	[Spec.SpecRogue]: '/wotlk/assets/rogue_icon.png',
-	[Spec.SpecRetributionPaladin]: '/wotlk/assets/retribution_icon.png',
-	[Spec.SpecProtectionPaladin]: '/wotlk/assets/protection_paladin_icon.png',
-	[Spec.SpecShadowPriest]: '/wotlk/assets/shadow_priest_icon.png',
-	[Spec.SpecWarlock]: '/wotlk/assets/warlock_icon.png',
-	[Spec.SpecWarrior]: '/wotlk/assets/warrior_icon.png',
-	[Spec.SpecProtectionWarrior]: '/wotlk/assets/protection_warrior_icon.png',
-	[Spec.SpecSmitePriest]: '/wotlk/assets/smite_priest_icon.png',
+	[Spec.SpecBalanceDruid]: '/wotlk/assets/img/balance_druid_icon.png',
+	[Spec.SpecElementalShaman]: '/wotlk/assets/img/elemental_shaman_icon.png',
+	[Spec.SpecEnhancementShaman]: '/wotlk/assets/img/enhancement_shaman_icon.png',
+	[Spec.SpecFeralDruid]: '/wotlk/assets/img/feral_druid_icon.png',
+	[Spec.SpecFeralTankDruid]: '/wotlk/assets/img/feral_druid_tank_icon.png',
+	[Spec.SpecHunter]: '/wotlk/assets/img/hunter_icon.png',
+	[Spec.SpecMage]: '/wotlk/assets/img/mage_icon.png',
+	[Spec.SpecRogue]: '/wotlk/assets/img/rogue_icon.png',
+	[Spec.SpecRetributionPaladin]: '/wotlk/assets/img/retribution_icon.png',
+	[Spec.SpecProtectionPaladin]: '/wotlk/assets/img/protection_paladin_icon.png',
+	[Spec.SpecShadowPriest]: '/wotlk/assets/img/shadow_priest_icon.png',
+	[Spec.SpecWarlock]: '/wotlk/assets/img/warlock_icon.png',
+	[Spec.SpecWarrior]: '/wotlk/assets/img/warrior_icon.png',
+	[Spec.SpecProtectionWarrior]: '/wotlk/assets/img/protection_warrior_icon.png',
+	[Spec.SpecSmitePriest]: '/wotlk/assets/img/smite_priest_icon.png',
 	[Spec.SpecDeathKnight]: 'https://wow.zamimg.com/images/wow/icons/medium/class_deathknight.jpg',
 };
 
-export const raidSimIcon: string = '/wotlk/assets/raid_icon.png';
+export const raidSimIcon: string = '/wotlk/assets/img/raid_icon.png';
 
 // Returns the index of the talent tree (0, 1, or 2) that has the most points.
 export function getTalentTree(talentsString: string): number {

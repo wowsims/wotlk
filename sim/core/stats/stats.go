@@ -269,8 +269,7 @@ func (stats Stats) FlatString() string {
 		if name == "none" || statValue == 0 {
 			continue
 		}
-
-		fmt.Fprintf(&sb, "%s: %0.3f,", name, statValue)
+		fmt.Fprintf(&sb, "\"%s\": %0.3f,", name, statValue)
 	}
 
 	sb.WriteString("}")
@@ -283,130 +282,6 @@ func (stats Stats) ToFloatArray() []float64 {
 		arr[i] = v
 	}
 	return arr
-}
-
-// Given the current values for source and mod stats, should return the new
-// value for the mod stat.
-type StatModifier func(sourceValue float64, modValue float64) float64
-
-// Represents a dependency between two stats, whereby the value of one stat
-// modifies the value of the other.
-//
-// For example, many casters have a talent to increase their spell power by
-// a percentage of their intellect.
-type StatDependency struct {
-	// The stat which will be used to control the amount of increase.
-	SourceStat Stat
-
-	// The stat which will be modified, depending on the value of SourceStat.
-	ModifiedStat Stat
-
-	// Applies the stat modification.
-	Modifier StatModifier
-}
-
-type StatDependencyManager struct {
-	// Stat dependencies for each stat.
-	// First dimension is the modified stat. For each modified stat, stores a list of
-	// dependencies for that stat.
-	deps [Len][]StatDependency
-
-	// Whether Finalize() has been called.
-	finalized bool
-
-	// Dependencies being managed, sorted so that their modifiers can be applied
-	// in-order without any issues.
-	sortedDeps []StatDependency
-}
-
-func (sdm *StatDependencyManager) AddStatDependency(dep StatDependency) {
-	if sdm.finalized {
-		panic("Stat dependencies may not be added once finalized!")
-	}
-
-	sdm.deps[dep.ModifiedStat] = append(sdm.deps[dep.ModifiedStat], dep)
-}
-
-// Populates sortedDeps. Panics if there are any dependency cycles.
-// TODO: Figure out if we need to separate additive / multiplicative dependencies.
-func (sdm *StatDependencyManager) Sort() {
-	sdm.sortedDeps = []StatDependency{}
-
-	// Set of stats we're done processing.
-	processedStats := map[Stat]struct{}{}
-
-	for len(processedStats) < int(Len) {
-		numNewlyProcessed := 0
-		for i := 0; i < int(Len); i++ {
-			stat := Stat(i)
-
-			if _, alreadyProcessed := processedStats[stat]; alreadyProcessed {
-				continue
-			}
-
-			// If all deps for this stat have been processed or are the same stat, we can process it.
-			allDepsProcessed := true
-			for _, dep := range sdm.deps[stat] {
-				_, depAlreadyProcessed := processedStats[dep.SourceStat]
-
-				if !depAlreadyProcessed && dep.SourceStat != stat {
-					allDepsProcessed = false
-				}
-			}
-			if !allDepsProcessed {
-				continue
-			}
-
-			// Process this stat by adding its deps to sortedDeps.
-
-			// Add deps from other stats first.
-			for _, dep := range sdm.deps[stat] {
-				if dep.SourceStat != stat {
-					sdm.sortedDeps = append(sdm.sortedDeps, dep)
-				}
-			}
-
-			// Now add deps from the same stat.
-			for _, dep := range sdm.deps[stat] {
-				if dep.SourceStat == stat {
-					sdm.sortedDeps = append(sdm.sortedDeps, dep)
-				}
-			}
-
-			// Mark this stat as processed.
-			processedStats[stat] = struct{}{}
-			numNewlyProcessed++
-		}
-
-		// If we couldn't process any new stats but there are still stats left,
-		// there must be a circular dependency.
-		if numNewlyProcessed == 0 {
-			panic("Circular stat dependency detected")
-		}
-	}
-}
-
-func (sdm *StatDependencyManager) Finalize() {
-	if sdm.finalized {
-		return
-	}
-	sdm.finalized = true
-
-	sdm.Sort()
-}
-
-// Applies all stat dependencies and returns the new Stats.
-func (sdm *StatDependencyManager) ApplyStatDependencies(stats Stats) Stats {
-	newStats := stats
-	for _, dep := range sdm.sortedDeps {
-		newStats[dep.ModifiedStat] = dep.Modifier(newStats[dep.SourceStat], newStats[dep.ModifiedStat])
-	}
-
-	return newStats
-}
-func (sdm *StatDependencyManager) SortAndApplyStatDependencies(stats Stats) Stats {
-	sdm.Sort()
-	return sdm.ApplyStatDependencies(stats)
 }
 
 type PseudoStats struct {
@@ -482,6 +357,9 @@ type PseudoStats struct {
 	BonusCritRatingAgentReserved1       float64
 	AgentReserved1DamageDealtMultiplier float64
 
+	// Treat melee haste as a pseudostat so that shamans, death knights, paladins, and druids can get the correct scaling
+	MeleeHasteRatingPerHastePercent float64
+
 	///////////////////////////////////////////////////
 	// Effects that apply when this unit is the target.
 	///////////////////////////////////////////////////
@@ -556,6 +434,8 @@ func NewPseudoStats() PseudoStats {
 		PeriodicMagicDamageDealtMultiplier:  1,
 		PeriodicShadowDamageDealtMultiplier: 1,
 		AgentReserved1DamageDealtMultiplier: 1,
+
+		MeleeHasteRatingPerHastePercent: 32.79,
 
 		// Target effects.
 		DamageTakenMultiplier: 1,

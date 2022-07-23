@@ -112,7 +112,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
 					blessingOfWisdom: 2,
-					replenishment: true,
+					vampiricTouch: true,
 				}),
 				debuffs: Debuffs.create({
 					faerieFire: TristateEffect.TristateEffectImproved,
@@ -121,10 +121,10 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 					curseOfElements: true,
 				}),
 			},
-			// IconInputs to include in the 'Self Buffs' section on the settings tab.
-			selfBuffInputs: [
-				ShamanInputs.IconWaterShield,
-				ShamanInputs.IconBloodlust,
+			// IconInputs to include in the 'Player' section on the settings tab.
+			playerIconInputs: [
+				ShamanInputs.ShamanShieldInput,
+				ShamanInputs.Bloodlust,
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: ShamanInputs.ElementalShamanRotationConfig,
@@ -139,10 +139,6 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				TotemsSection,
 			],
 			encounterPicker: {
-				// Target stats to show for 'Simple' encounters.
-				simpleTargetStats: [
-					Stat.StatNatureResistance,
-				],
 				// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
 				showExecuteProportion: false,
 			},

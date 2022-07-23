@@ -39,6 +39,7 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 			// All stats for which EP should be calculated.
 			epStats: [
 				Stat.StatStrength,
+				Stat.StatArmor,
 				Stat.StatAgility,
 				Stat.StatAttackPower,
 				Stat.StatExpertise,
@@ -71,21 +72,22 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				gear: Presets.P1_FROST_BIS_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatStrength]: 2.17,
-					[Stat.StatAgility]: 1.4,
+					[Stat.StatStrength]: 2.61,
+					[Stat.StatAgility]: 1.14,
+					[Stat.StatArmor]: 0.027,
 					[Stat.StatAttackPower]: 1,
-					[Stat.StatExpertise]: 3.29,
-					[Stat.StatMeleeHit]: 0.41,
+					[Stat.StatExpertise]: 1.73,
+					[Stat.StatMeleeHaste]: 1.26,
+					[Stat.StatMeleeHit]: 1.71,
 					[Stat.StatMeleeCrit]: 1.83,
-					[Stat.StatMeleeHaste]: 2.07,
-					[Stat.StatArmorPenetration]: 0.5,
+					[Stat.StatArmorPenetration]: 1.425,
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,
 				// Default rotation settings.
 				rotation: Presets.DefaultRotation,
 				// Default talents.
-				talents: Presets.FrostUnholyTalents.data,
+				talents: Presets.FrostTalents.data,
 				// Default spec-specific settings.
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
@@ -97,10 +99,11 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 					abominationsMight: true,
 					leaderOfThePack: TristateEffect.TristateEffectRegular,
 					sanctifiedRetribution: true,
-					bloodlust: true
+					bloodlust: true,
+					devotionAura: TristateEffect.TristateEffectImproved,
 				}),
 				partyBuffs: PartyBuffs.create({
-					heroicPresence: false,
+					heroicPresence: true,
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
@@ -117,8 +120,8 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				}),
 			},
 
-			// IconInputs to include in the 'Self Buffs' section on the settings tab.
-			selfBuffInputs: [
+			// IconInputs to include in the 'Player' section on the settings tab.
+			playerIconInputs: [
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: DeathKnightInputs.DeathKnightRotationConfig,
@@ -127,8 +130,8 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				inputs: [
 					DeathKnightInputs.StartingRunicPower,
 					DeathKnightInputs.PetUptime,
+					
 					DeathKnightInputs.PrecastGhoulFrenzy,
-					DeathKnightInputs.RefreshHornOfWinter,
 					DeathKnightInputs.PrecastHornOfWinter,
 					
 					OtherInputs.PrepopPotion,
@@ -138,10 +141,6 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				],
 			},
 			encounterPicker: {
-				// Target stats to show for 'Simple' encounters.
-				simpleTargetStats: [
-					Stat.StatArmor,
-				],
 				// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
 				showExecuteProportion: false,
 			},
@@ -149,8 +148,8 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 			presets: {
 				// Preset talents that the user can quickly select.
 				talents: [
-					Presets.FrostUnholyTalents,
 					Presets.FrostTalents,
+					Presets.FrostUnholyTalents,
 					Presets.UnholyDualWieldTalents,
 				],
 				// Preset gear configurations that the user can quickly select.

@@ -13,11 +13,11 @@ var FrostStrikeOHOutcome = core.OutcomeHit
 func (deathKnight *DeathKnight) newFrostStrikeHitSpell(isMH bool) *core.Spell {
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 138.0, 0.55, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 138.0, 0.55, true)
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 138.0, 0.55*deathKnight.nervesOfColdSteelBonus(), true)
 	}
 
 	effect := core.SpellEffect{
-		BonusCritRating:  (1.0 * float64(deathKnight.Talents.Annihilation)) * core.CritRatingPerCritChance,
+		BonusCritRating:  (deathKnight.annihilationCritBonus() + deathKnight.darkrunedBattlegearCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: deathKnight.bloodOfTheNorthCoeff(),
 		ThreatMultiplier: 1,
 
@@ -41,16 +41,10 @@ func (deathKnight *DeathKnight) newFrostStrikeHitSpell(isMH bool) *core.Spell {
 		},
 	}
 
-	if isMH {
-		effect.ProcMask = core.ProcMaskMeleeMHSpecial
-		effect.OutcomeApplier = deathKnight.killingMachineOutcomeMod(deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.critMultiplier()))
-	} else {
-		effect.ProcMask = core.ProcMaskMeleeOHSpecial
-		effect.OutcomeApplier = deathKnight.killingMachineOutcomeMod(deathKnight.OutcomeFuncMeleeSpecialNoBlockDodgeParry(deathKnight.critMultiplier()))
-	}
+	deathKnight.threatOfThassarianProcMasks(isMH, &effect, true, deathKnight.killingMachineOutcomeMod)
 
 	return deathKnight.RegisterSpell(core.SpellConfig{
-		ActionID:     FrostStrikeActionID,
+		ActionID:     FrostStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool:  core.SpellSchoolFrost,
 		Flags:        core.SpellFlagMeleeMetrics,
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
@@ -67,9 +61,9 @@ func (deathKnight *DeathKnight) registerFrostStrikeSpell() {
 	deathKnight.FrostStrikeOhHit = deathKnight.newFrostStrikeHitSpell(false)
 
 	deathKnight.FrostStrike = deathKnight.RegisterSpell(core.SpellConfig{
-		ActionID:    FrostStrikeActionID,
+		ActionID:    FrostStrikeActionID.WithTag(3),
 		SpellSchool: core.SpellSchoolFrost,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagNoMetrics | core.SpellFlagNoLogs,
 
 		ResourceType: stats.RunicPower,
 		BaseCost:     baseCost,
@@ -85,7 +79,7 @@ func (deathKnight *DeathKnight) registerFrostStrikeSpell() {
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskMeleeMHSpecial,
+			ProcMask:         core.ProcMaskEmpty,
 			ThreatMultiplier: 1,
 
 			OutcomeApplier: deathKnight.OutcomeFuncAlwaysHit(),
@@ -93,6 +87,14 @@ func (deathKnight *DeathKnight) registerFrostStrikeSpell() {
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				deathKnight.threatOfThassarianProc(sim, spellEffect, deathKnight.FrostStrikeMhHit, deathKnight.FrostStrikeOhHit)
 				deathKnight.threatOfThassarianAdjustMetrics(sim, spell, spellEffect, FrostStrikeMHOutcome)
+				deathKnight.LastCastOutcome = FrostStrikeMHOutcome
+
+				// Check for KM after both hits have passed
+				if deathKnight.LastCastOutcome.Matches(core.OutcomeLanded) {
+					if deathKnight.KillingMachineAura.IsActive() {
+						deathKnight.KillingMachineAura.Deactivate(sim)
+					}
+				}
 			},
 		}),
 	})
@@ -100,4 +102,12 @@ func (deathKnight *DeathKnight) registerFrostStrikeSpell() {
 
 func (deathKnight *DeathKnight) CanFrostStrike(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 40.0, 0, 0, 0) && deathKnight.FrostStrike.IsReady(sim)
+}
+
+func (deathKnight *DeathKnight) CastFrostStrike(sim *core.Simulation, target *core.Unit) bool {
+	if deathKnight.CanFrostStrike(sim) {
+		deathKnight.FrostStrike.Cast(sim, target)
+		return true
+	}
+	return false
 }

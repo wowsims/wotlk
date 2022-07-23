@@ -27,104 +27,38 @@ func (druid *Druid) ApplyTalents() {
 
 	if druid.Talents.LunarGuidance > 0 {
 		bonus := (0.25 / 3) * float64(druid.Talents.LunarGuidance)
-		druid.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Intellect,
-			ModifiedStat: stats.SpellPower,
-			Modifier: func(intellect float64, spellPower float64) float64 {
-				return spellPower + intellect*bonus
-			},
-		})
+		druid.AddStatDependency(stats.Intellect, stats.SpellPower, 1.0+bonus)
 	}
 
 	if druid.Talents.Dreamstate > 0 {
 		bonus := (0.1 / 3) * float64(druid.Talents.Dreamstate)
-		druid.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Intellect,
-			ModifiedStat: stats.MP5,
-			Modifier: func(intellect float64, mp5 float64) float64 {
-				return mp5 + intellect*bonus
-			},
-		})
+		druid.AddStatDependency(stats.Intellect, stats.MP5, 1.0+bonus)
 	}
 
 	if druid.Talents.HeartOfTheWild > 0 {
 		bonus := 0.04 * float64(druid.Talents.HeartOfTheWild)
-		druid.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Intellect,
-			ModifiedStat: stats.Intellect,
-			Modifier: func(intellect float64, _ float64) float64 {
-				return intellect + intellect*bonus
-			},
-		})
+		druid.AddStatDependency(stats.Intellect, stats.Intellect, 1.0+bonus)
 
 		if druid.InForm(Cat) {
-			druid.AddStatDependency(stats.StatDependency{
-				SourceStat:   stats.AttackPower,
-				ModifiedStat: stats.AttackPower,
-				Modifier: func(attackPower float64, _ float64) float64 {
-					return attackPower + attackPower*0.5*bonus
-				},
-			})
+			druid.AddStatDependency(stats.AttackPower, stats.AttackPower, 1.0+0.5*bonus)
 		} else if druid.InForm(Bear) {
-			druid.AddStatDependency(stats.StatDependency{
-				SourceStat:   stats.Stamina,
-				ModifiedStat: stats.Stamina,
-				Modifier: func(stamina float64, _ float64) float64 {
-					return stamina + stamina*bonus
-				},
-			})
+			druid.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+bonus)
 		}
 	}
 
 	if druid.Talents.SurvivalOfTheFittest > 0 {
 		bonus := 0.01 * float64(druid.Talents.SurvivalOfTheFittest)
-		druid.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Stamina,
-			ModifiedStat: stats.Stamina,
-			Modifier: func(stat float64, _ float64) float64 {
-				return stat + stat*bonus
-			},
-		})
-		druid.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Strength,
-			ModifiedStat: stats.Strength,
-			Modifier: func(stat float64, _ float64) float64 {
-				return stat + stat*bonus
-			},
-		})
-		druid.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Agility,
-			ModifiedStat: stats.Agility,
-			Modifier: func(stat float64, _ float64) float64 {
-				return stat + stat*bonus
-			},
-		})
-		druid.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Intellect,
-			ModifiedStat: stats.Intellect,
-			Modifier: func(stat float64, _ float64) float64 {
-				return stat + stat*bonus
-			},
-		})
-		druid.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Spirit,
-			ModifiedStat: stats.Spirit,
-			Modifier: func(stat float64, _ float64) float64 {
-				return stat + stat*bonus
-			},
-		})
+		druid.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+bonus)
+		druid.AddStatDependency(stats.Strength, stats.Strength, 1.0+bonus)
+		druid.AddStatDependency(stats.Agility, stats.Agility, 1.0+bonus)
+		druid.AddStatDependency(stats.Intellect, stats.Intellect, 1.0+bonus)
+		druid.AddStatDependency(stats.Spirit, stats.Spirit, 1.0+bonus)
 		druid.PseudoStats.ReducedCritTakenChance += 0.01 * float64(druid.Talents.SurvivalOfTheFittest)
 	}
 
 	if druid.Talents.LivingSpirit > 0 {
 		bonus := 0.05 * float64(druid.Talents.LivingSpirit)
-		druid.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Spirit,
-			ModifiedStat: stats.Spirit,
-			Modifier: func(spirit float64, _ float64) float64 {
-				return spirit + spirit*bonus
-			},
-		})
+		druid.AddStatDependency(stats.Spirit, stats.Spirit, 1.0+bonus)
 	}
 
 	druid.setupNaturesGrace()

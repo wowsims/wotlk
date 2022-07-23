@@ -4,11 +4,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-var BloodBoilOutcomes []core.HitOutcome
-
 func (deathKnight *DeathKnight) registerBloodBoilSpell() {
-	BloodBoilOutcomes = make([]core.HitOutcome, deathKnight.Env.GetNumTargets())
-
 	deathKnight.BloodBoil = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 49941},
 		SpellSchool: core.SpellSchoolShadow,
@@ -40,24 +36,15 @@ func (deathKnight *DeathKnight) registerBloodBoilSpell() {
 			OutcomeApplier: deathKnight.OutcomeFuncMagicHitAndCrit(deathKnight.spellCritMultiplier()),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				BloodBoilOutcomes[deathKnight.getIndexForTarget(spellEffect.Target)] = spellEffect.Outcome
+				if spellEffect.Target == deathKnight.CurrentTarget {
+					deathKnight.LastCastOutcome = spellEffect.Outcome
+				}
 				if spellEffect.Landed() && spellEffect.Target == deathKnight.CurrentTarget {
 					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 1, 0, 0)
 					deathKnight.Spend(sim, spell, dkSpellCost)
 
-					deathKnight.FrostFeverSpell.Cast(sim, spellEffect.Target)
-					if deathKnight.Talents.EbonPlaguebringer > 0 {
-						deathKnight.EbonPlagueAura.Activate(sim)
-					}
-
 					amountOfRunicPower := 10.0 + 2.5*float64(deathKnight.Talents.ChillOfTheGrave)
 					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
-
-					deathKnight.IcyTouchAura.Activate(sim)
-
-					if deathKnight.IcyTouchAura.IsActive() && deathKnight.IcyTalonsAura != nil {
-						deathKnight.IcyTalonsAura.Activate(sim)
-					}
 				}
 			},
 		}),
@@ -66,4 +53,12 @@ func (deathKnight *DeathKnight) registerBloodBoilSpell() {
 
 func (deathKnight *DeathKnight) CanBloodBoil(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 1, 0, 0) && deathKnight.BloodBoil.IsReady(sim)
+}
+
+func (deathKnight *DeathKnight) CastBloodBoil(sim *core.Simulation, target *core.Unit) bool {
+	if deathKnight.CanBloodBoil(sim) {
+		deathKnight.BloodBoil.Cast(sim, target)
+		return true
+	}
+	return false
 }

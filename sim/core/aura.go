@@ -339,6 +339,14 @@ func (at *auraTracker) HasActiveAuraWithTag(tag string) bool {
 	}
 	return false
 }
+func (at *auraTracker) HasActiveAuraWithTagExcludingAura(tag string, excludeAura *Aura) bool {
+	for _, aura := range at.aurasByTag[tag] {
+		if aura.active && aura != excludeAura {
+			return true
+		}
+	}
+	return false
+}
 
 // Returns if an aura should be refreshed at a specific priority, i.e. the aura
 // is about to expire AND the replacement aura has at least as high priority.
@@ -720,7 +728,7 @@ func (character *Character) NewTemporaryStatsAuraWrapped(auraLabel string, actio
 		ActionID: actionID,
 		Duration: duration,
 		OnInit: func(aura *Aura, sim *Simulation) {
-			buffs = character.ApplyStatDependencies(tempStats)
+			buffs = tempStats
 			unbuffs = buffs.Multiply(-1)
 		},
 		OnGain: func(aura *Aura, sim *Simulation) {

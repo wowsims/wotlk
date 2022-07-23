@@ -196,55 +196,151 @@ func (rp *runicPowerBar) SpendRunicPower(sim *Simulation, amount float64, metric
 
 }
 
-func CurrentRunesOfType(rb *[2]Rune, runeState RuneState) int32 {
+func (rp *runicPowerBar) CurrentRunesOfType(rb *[2]Rune, runeState RuneState) int32 {
 	return TernaryInt32(rb[0].state == runeState, 1, 0) + TernaryInt32(rb[1].state == runeState, 1, 0)
 }
 
-func RuneReadyAt(sim *Simulation, runes *[2]Rune) time.Duration {
-	readyAt := NeverExpires
-	pa := runes[0].pas[0]
-	if pa != nil {
-		readyAt = MinDuration(readyAt, pa.NextActionAt)
-	} else {
-		return sim.CurrentTime
-	}
+func (rp *runicPowerBar) DeathRuneRegenAt(r *Rune) time.Duration {
+	readyAt := time.Duration(NeverExpires)
 
-	pa = runes[1].pas[0]
-	if pa != nil {
-		readyAt = MinDuration(readyAt, pa.NextActionAt)
-	} else {
-		return sim.CurrentTime
+	if r.state == RuneState_DeathSpent {
+		if r.pas[1] != nil {
+			readyAt = time.Duration(TernaryDuration(r.pas[0].NextActionAt < r.pas[1].NextActionAt, r.pas[0].NextActionAt, readyAt))
+		} else {
+			readyAt = r.pas[0].NextActionAt
+		}
 	}
 
 	return readyAt
 }
 
+func (rp *runicPowerBar) SpentDeathRuneReadyAt(sim *Simulation) time.Duration {
+	readyAt := time.Duration(NeverExpires)
+
+	readyAt = MinDuration(readyAt, rp.DeathRuneRegenAt(&rp.bloodRunes[0]))
+	readyAt = MinDuration(readyAt, rp.DeathRuneRegenAt(&rp.bloodRunes[1]))
+	readyAt = MinDuration(readyAt, rp.DeathRuneRegenAt(&rp.frostRunes[0]))
+	readyAt = MinDuration(readyAt, rp.DeathRuneRegenAt(&rp.frostRunes[1]))
+	readyAt = MinDuration(readyAt, rp.DeathRuneRegenAt(&rp.unholyRunes[0]))
+	readyAt = MinDuration(readyAt, rp.DeathRuneRegenAt(&rp.unholyRunes[1]))
+
+	return readyAt
+}
+func (rp *runicPowerBar) DeathRuneReadyAt(sim *Simulation) time.Duration {
+	readyAt := time.Duration(NeverExpires)
+
+	if rp.bloodRunes[0].state == RuneState_Death || rp.bloodRunes[1].state == RuneState_Death ||
+		rp.frostRunes[0].state == RuneState_Death || rp.frostRunes[1].state == RuneState_Death ||
+		rp.unholyRunes[0].state == RuneState_Death || rp.unholyRunes[1].state == RuneState_Death {
+		readyAt = sim.CurrentTime
+		return readyAt
+	}
+
+	return rp.SpentDeathRuneReadyAt(sim)
+}
+
+func (rp *runicPowerBar) SpentRuneReadyAt(sim *Simulation, runes *[2]Rune) time.Duration {
+	readyAt := rp.SpentDeathRuneReadyAt(sim)
+
+	if runes[0].pas[0] != nil {
+		readyAt = MinDuration(readyAt, runes[0].pas[0].NextActionAt)
+	}
+
+	if runes[1].pas[0] != nil {
+		readyAt = MinDuration(readyAt, runes[1].pas[0].NextActionAt)
+	}
+
+	return readyAt
+}
+
+func (rp *runicPowerBar) RuneReadyAt(sim *Simulation, runes *[2]Rune) time.Duration {
+	readyAt := rp.DeathRuneReadyAt(sim)
+
+	if runes[0].state == RuneState_Normal || runes[0].state == RuneState_Death ||
+		runes[1].state == RuneState_Normal || runes[1].state == RuneState_Death {
+		readyAt = sim.CurrentTime
+		return readyAt
+	}
+
+	return rp.SpentRuneReadyAt(sim, runes)
+}
+
+func (rp *runicPowerBar) SpentBloodRuneReadyAt(sim *Simulation) time.Duration {
+	return rp.SpentRuneReadyAt(sim, &rp.bloodRunes)
+}
+
+func (rp *runicPowerBar) SpentFrostRuneReadyAt(sim *Simulation) time.Duration {
+	return rp.SpentRuneReadyAt(sim, &rp.frostRunes)
+}
+
+func (rp *runicPowerBar) SpentUnholyRuneReadyAt(sim *Simulation) time.Duration {
+	return rp.SpentRuneReadyAt(sim, &rp.unholyRunes)
+}
+
 func (rp *runicPowerBar) BloodRuneReadyAt(sim *Simulation) time.Duration {
-	return RuneReadyAt(sim, &rp.bloodRunes)
+	return rp.RuneReadyAt(sim, &rp.bloodRunes)
 }
 
 func (rp *runicPowerBar) FrostRuneReadyAt(sim *Simulation) time.Duration {
-	return RuneReadyAt(sim, &rp.frostRunes)
+	return rp.RuneReadyAt(sim, &rp.frostRunes)
 }
 
 func (rp *runicPowerBar) UnholyRuneReadyAt(sim *Simulation) time.Duration {
-	return RuneReadyAt(sim, &rp.unholyRunes)
+	return rp.RuneReadyAt(sim, &rp.unholyRunes)
+}
+
+func (rp *runicPowerBar) AnySpentRuneReadyAt(sim *Simulation) time.Duration {
+	return MinDuration(MinDuration(rp.SpentRuneReadyAt(sim, &rp.bloodRunes), rp.SpentRuneReadyAt(sim, &rp.frostRunes)), rp.SpentRuneReadyAt(sim, &rp.unholyRunes))
+}
+
+func (rp *runicPowerBar) AnyRuneReadyAt(sim *Simulation) time.Duration {
+	return MinDuration(MinDuration(rp.RuneReadyAt(sim, &rp.bloodRunes), rp.RuneReadyAt(sim, &rp.frostRunes)), rp.RuneReadyAt(sim, &rp.unholyRunes))
 }
 
 func (rp *runicPowerBar) CurrentBloodRunes() int32 {
-	return CurrentRunesOfType(&rp.bloodRunes, RuneState_Normal)
+	return rp.CurrentRunesOfType(&rp.bloodRunes, RuneState_Normal)
 }
 
 func (rp *runicPowerBar) CurrentFrostRunes() int32 {
-	return CurrentRunesOfType(&rp.frostRunes, RuneState_Normal)
+	return rp.CurrentRunesOfType(&rp.frostRunes, RuneState_Normal)
 }
 
 func (rp *runicPowerBar) CurrentUnholyRunes() int32 {
-	return CurrentRunesOfType(&rp.unholyRunes, RuneState_Normal)
+	return rp.CurrentRunesOfType(&rp.unholyRunes, RuneState_Normal)
 }
 
 func (rp *runicPowerBar) CurrentDeathRunes() int32 {
-	return CurrentRunesOfType(&rp.bloodRunes, RuneState_Death) + CurrentRunesOfType(&rp.frostRunes, RuneState_Death) + CurrentRunesOfType(&rp.unholyRunes, RuneState_Death)
+	return rp.CurrentRunesOfType(&rp.bloodRunes, RuneState_Death) + rp.CurrentRunesOfType(&rp.frostRunes, RuneState_Death) + rp.CurrentRunesOfType(&rp.unholyRunes, RuneState_Death)
+}
+
+func (rp *runicPowerBar) CastCostPossibleFor(sim *Simulation, currentRunes *DKRuneCost, bloodAmount int, frostAmount int, unholyAmount int) bool {
+	totalDeathRunes := currentRunes.Death
+
+	if currentRunes.Blood < bloodAmount {
+		if totalDeathRunes > 0 {
+			totalDeathRunes -= 1
+		} else {
+			return false
+		}
+	}
+
+	if currentRunes.Frost < frostAmount {
+		if totalDeathRunes > 0 {
+			totalDeathRunes -= 1
+		} else {
+			return false
+		}
+	}
+
+	if currentRunes.Unholy < unholyAmount {
+		if totalDeathRunes > 0 {
+			totalDeathRunes -= 1
+		} else {
+			return false
+		}
+	}
+
+	return true
 }
 
 func (rp *runicPowerBar) CastCostPossible(sim *Simulation, runicPowerAmount float64, bloodAmount int32, frostAmount int32, unholyAmount int32) bool {
@@ -319,6 +415,47 @@ func (rp *runicPowerBar) DetermineOptimalCost(sim *Simulation, bloodAmount int, 
 	return spellCost
 }
 
+func (rc *DKRuneCost) IsValid() bool {
+	return rc.Blood >= 0 && rc.Frost >= 0 && rc.Unholy >= 0 && rc.Death >= 0
+}
+
+func (rp *runicPowerBar) DetermineRunesAfterCost(sim *Simulation, bloodAmount int, frostAmount int, unholyAmount int) DKRuneCost {
+	spellCost := DKRuneCost{-1, -1, -1, -1}
+	if rp.CastCostPossible(sim, 0, int32(bloodAmount), int32(frostAmount), int32(unholyAmount)) {
+		totalBloodRunes := int(rp.CurrentBloodRunes())
+		totalFrostRunes := int(rp.CurrentFrostRunes())
+		totalUnholyRunes := int(rp.CurrentUnholyRunes())
+		totalDeathRunes := int(rp.CurrentDeathRunes())
+
+		if int(rp.CurrentBloodRunes()) >= bloodAmount {
+			totalBloodRunes -= bloodAmount
+		} else {
+			totalDeathRunes -= bloodAmount
+		}
+
+		if int(rp.CurrentFrostRunes()) >= frostAmount {
+			totalFrostRunes -= frostAmount
+		} else {
+			totalDeathRunes -= frostAmount
+		}
+
+		if int(rp.CurrentUnholyRunes()) >= unholyAmount {
+			totalUnholyRunes -= unholyAmount
+		} else {
+			totalDeathRunes -= unholyAmount
+		}
+
+		spellCost = DKRuneCost{
+			Blood:  totalBloodRunes,
+			Frost:  totalFrostRunes,
+			Unholy: totalUnholyRunes,
+			Death:  totalDeathRunes,
+		}
+	}
+
+	return spellCost
+}
+
 func (rp *runicPowerBar) Spend(sim *Simulation, spell *Spell, cost DKRuneCost) {
 	for i := 0; i < cost.Blood; i++ {
 		rp.SpendBloodRune(sim, spell.BloodRuneMetrics())
@@ -364,7 +501,7 @@ func (rp *runicPowerBar) SetRuneToState(r *Rune, runeState RuneState, runeKind R
 	r.state = runeState
 }
 
-func (rp *runicPowerBar) SetRuneAtSlotToState(runeBarIdx int32, slot int32, runeState RuneState, runeKind RuneKind) {
+func (rp *runicPowerBar) SetRuneAtIdxSlotToState(runeBarIdx int32, slot int32, runeState RuneState, runeKind RuneKind) {
 	rb := &rp.bloodRunes
 	if runeBarIdx == 1 {
 		rb = &rp.frostRunes
@@ -385,7 +522,7 @@ func (rp *runicPowerBar) SetRuneAtSlotToState(runeBarIdx int32, slot int32, rune
 	rb[slot].state = runeState
 }
 
-func SetRuneAtSlotToState(rb *[2]Rune, slot int32, runeState RuneState, runeKind RuneKind) {
+func (rp *runicPowerBar) SetRuneAtSlotToState(rb *[2]Rune, slot int32, runeState RuneState, runeKind RuneKind) {
 	// TODO: safeguard this?
 	if (rb[slot].state == RuneState_Spent || rb[slot].state == RuneState_Normal) && (runeState == RuneState_Death || runeState == RuneState_DeathSpent) {
 		rb[slot].kind = RuneKind_Death
@@ -399,34 +536,69 @@ func SetRuneAtSlotToState(rb *[2]Rune, slot int32, runeState RuneState, runeKind
 	rb[slot].state = runeState
 }
 
-func RegenRuneAndCancelPAs(sim *Simulation, r *Rune) {
+func (rp *runicPowerBar) RegenRuneAndCancelPAs(sim *Simulation, r *Rune) {
+	currRunes := int32(-1)
+	switch r.kind {
+	case RuneKind_Blood:
+		currRunes = rp.CurrentBloodRunes()
+	case RuneKind_Frost:
+		currRunes = rp.CurrentFrostRunes()
+	case RuneKind_Unholy:
+		currRunes = rp.CurrentUnholyRunes()
+	case RuneKind_Death:
+		currRunes = rp.CurrentDeathRunes()
+	}
+
+	regened := false
 	if r.state == RuneState_Spent {
 		r.state = RuneState_Normal
+
+		if r.pas[0] != nil {
+			r.lastRegenTime = sim.CurrentTime
+			r.pas[0].Cancel(sim)
+			r.pas[0] = nil
+		}
+
+		r.generatedByReapingOrBoTN = false
+		regened = true
 	} else if r.state == RuneState_DeathSpent {
 		r.state = RuneState_Death
-	}
-	r.lastRegenTime = sim.CurrentTime
 
-	if r.pas[0] != nil {
-		r.pas[0].Cancel(sim)
-		r.pas[0] = nil
-	}
+		if r.pas[0] != nil {
+			r.lastRegenTime = sim.CurrentTime
+			r.pas[0].Cancel(sim)
+			r.pas[0] = nil
+		}
 
-	if r.pas[1] != nil {
-		r.pas[1].Cancel(sim)
-		r.pas[1] = nil
+		r.generatedByReapingOrBoTN = false
+		regened = true
 	}
 
-	r.generatedByReapingOrBoTN = false
+	if regened {
+		switch r.kind {
+		case RuneKind_Blood:
+			rp.GainRuneMetrics(sim, rp.bloodRuneGainMetrics, "blood", currRunes, currRunes+1)
+			rp.onBloodRuneGain(sim)
+		case RuneKind_Frost:
+			rp.GainRuneMetrics(sim, rp.frostRuneGainMetrics, "frost", currRunes, currRunes+1)
+			rp.onFrostRuneGain(sim)
+		case RuneKind_Unholy:
+			rp.GainRuneMetrics(sim, rp.unholyRuneGainMetrics, "unholy", currRunes, currRunes+1)
+			rp.onUnholyRuneGain(sim)
+		case RuneKind_Death:
+			rp.GainRuneMetrics(sim, rp.deathRuneGainMetrics, "death", currRunes, currRunes+1)
+			rp.onDeathRuneGain(sim)
+		}
+	}
 }
 
 func (rp *runicPowerBar) RegenAllRunes(sim *Simulation) {
-	RegenRuneAndCancelPAs(sim, &rp.bloodRunes[0])
-	RegenRuneAndCancelPAs(sim, &rp.bloodRunes[1])
-	RegenRuneAndCancelPAs(sim, &rp.frostRunes[0])
-	RegenRuneAndCancelPAs(sim, &rp.frostRunes[1])
-	RegenRuneAndCancelPAs(sim, &rp.unholyRunes[0])
-	RegenRuneAndCancelPAs(sim, &rp.unholyRunes[1])
+	rp.RegenRuneAndCancelPAs(sim, &rp.bloodRunes[0])
+	rp.RegenRuneAndCancelPAs(sim, &rp.bloodRunes[1])
+	rp.RegenRuneAndCancelPAs(sim, &rp.frostRunes[0])
+	rp.RegenRuneAndCancelPAs(sim, &rp.frostRunes[1])
+	rp.RegenRuneAndCancelPAs(sim, &rp.unholyRunes[0])
+	rp.RegenRuneAndCancelPAs(sim, &rp.unholyRunes[1])
 }
 
 func (rp *runicPowerBar) GenerateRune(sim *Simulation, r *Rune) {
@@ -445,7 +617,7 @@ func (rp *runicPowerBar) GenerateRune(sim *Simulation, r *Rune) {
 	}
 }
 
-func SpendRuneFromType(rb *[2]Rune, runeState RuneState) int32 {
+func (rp *runicPowerBar) SpendRuneFromType(rb *[2]Rune, runeState RuneState) int32 {
 	spendState := RuneState_Spent
 	if runeState == RuneState_Death {
 		spendState = RuneState_DeathSpent
@@ -467,7 +639,7 @@ func SpendRuneFromType(rb *[2]Rune, runeState RuneState) int32 {
 func (rp *runicPowerBar) LaunchRuneRegenPA(sim *Simulation, r *Rune) {
 	runeGracePeriod := 0.0
 	if r.lastRegenTime != -1 {
-		runeGracePeriod = MinFloat(2.5, float64((sim.CurrentTime-r.lastRegenTime)/time.Second))
+		runeGracePeriod = MinFloat(2.5, float64(sim.CurrentTime-r.lastRegenTime)/float64(1*time.Second))
 	}
 	pa := &PendingAction{
 		NextActionAt: sim.CurrentTime + time.Second*time.Duration(10.0-runeGracePeriod),
@@ -521,7 +693,7 @@ func (rp *runicPowerBar) SpendBloodRune(sim *Simulation, metrics *ResourceMetric
 	}
 
 	rp.SpendRuneMetrics(sim, metrics, "blood", currRunes, currRunes-1)
-	spendSlot := SpendRuneFromType(&rp.bloodRunes, RuneState_Normal)
+	spendSlot := rp.SpendRuneFromType(&rp.bloodRunes, RuneState_Normal)
 
 	r := &rp.bloodRunes[spendSlot]
 	rp.LaunchRuneRegenPA(sim, r)
@@ -536,7 +708,7 @@ func (rp *runicPowerBar) SpendFrostRune(sim *Simulation, metrics *ResourceMetric
 	}
 
 	rp.SpendRuneMetrics(sim, metrics, "frost", currRunes, currRunes-1)
-	spendSlot := SpendRuneFromType(&rp.frostRunes, RuneState_Normal)
+	spendSlot := rp.SpendRuneFromType(&rp.frostRunes, RuneState_Normal)
 
 	r := &rp.frostRunes[spendSlot]
 	rp.LaunchRuneRegenPA(sim, r)
@@ -551,7 +723,7 @@ func (rp *runicPowerBar) SpendUnholyRune(sim *Simulation, metrics *ResourceMetri
 	}
 
 	rp.SpendRuneMetrics(sim, metrics, "unholy", currRunes, currRunes-1)
-	spendSlot := SpendRuneFromType(&rp.unholyRunes, RuneState_Normal)
+	spendSlot := rp.SpendRuneFromType(&rp.unholyRunes, RuneState_Normal)
 
 	r := &rp.unholyRunes[spendSlot]
 	rp.LaunchRuneRegenPA(sim, r)
@@ -568,13 +740,13 @@ func (rp *runicPowerBar) SpendDeathRune(sim *Simulation, metrics *ResourceMetric
 	rp.SpendRuneMetrics(sim, metrics, "death", currRunes, currRunes-1)
 
 	runeTypeIdx := 0
-	spendSlot := SpendRuneFromType(&rp.bloodRunes, RuneState_Death)
+	spendSlot := rp.SpendRuneFromType(&rp.bloodRunes, RuneState_Death)
 	if spendSlot < 0 {
 		runeTypeIdx += 1
-		spendSlot = SpendRuneFromType(&rp.frostRunes, RuneState_Death)
+		spendSlot = rp.SpendRuneFromType(&rp.frostRunes, RuneState_Death)
 		if spendSlot < 0 {
 			runeTypeIdx += 1
-			spendSlot = SpendRuneFromType(&rp.unholyRunes, RuneState_Death)
+			spendSlot = rp.SpendRuneFromType(&rp.unholyRunes, RuneState_Death)
 		}
 	}
 

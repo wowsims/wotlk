@@ -122,21 +122,13 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				}),
 			},
 
-			// IconInputs to include in the 'Self Buffs' section on the settings tab.
-			selfBuffInputs: [
-				ShamanInputs.IconWaterShield,
-				ShamanInputs.IconLightningShield,
-				ShamanInputs.IconBloodlust,
+			// IconInputs to include in the 'Player' section on the settings tab.
+			playerIconInputs: [
+				ShamanInputs.ShamanShieldInput,
+				ShamanInputs.Bloodlust,
 			],
-			//	weaponImbues: [
-			//		WeaponImbue.WeaponImbueShamanWindfury,
-			//		WeaponImbue.WeaponImbueShamanFlametongue,
-			//		WeaponImbue.WeaponImbueShamanFrostbrand,
-			//		WeaponImbue.WeaponImbueShamanRockbiter,
-			//		WeaponImbue.WeaponImbueRighteousWeaponCoating,
-			//	],
 			// Inputs to include in the 'Rotation' section on the settings tab.
-			rotationInputs: ShamanInputs.EnhancementShamanRotationConfig,
+			rotationInputs: ShamanInputs.EnhancementShamanRotationConfig, 
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
@@ -150,10 +142,6 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				TotemsSection,
 			],
 			encounterPicker: {
-				// Target stats to show for 'Simple' encounters.
-				simpleTargetStats: [
-					Stat.StatArmor,
-				],
 				// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
 				showExecuteProportion: false,
 			},

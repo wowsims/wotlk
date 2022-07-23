@@ -15,14 +15,14 @@ func (paladin *Paladin) RegisterAvengingWrathCD() {
 		ActionID: actionID,
 		Duration: time.Second * 20,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.DamageDealtMultiplier *= 1.3
+			aura.Unit.PseudoStats.DamageDealtMultiplier *= 1.2
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.DamageDealtMultiplier /= 1.3
+			aura.Unit.PseudoStats.DamageDealtMultiplier /= 1.2
 		},
 	})
 
-	baseCost := 236.0
+	baseCost := paladin.BaseMana * 0.08
 
 	spell := paladin.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
@@ -37,7 +37,7 @@ func (paladin *Paladin) RegisterAvengingWrathCD() {
 			},
 			CD: core.Cooldown{
 				Timer:    paladin.NewTimer(),
-				Duration: time.Minute * 3,
+				Duration: time.Minute*3 - (time.Second * time.Duration(30*paladin.Talents.SanctifiedWrath)),
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {

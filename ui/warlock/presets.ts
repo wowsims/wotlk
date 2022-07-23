@@ -1,4 +1,20 @@
-import { Consumes, Flask, Food, Glyphs, EquipmentSpec, ItemSpec, Potions, Faction } from '/wotlk/core/proto/common.js';
+import { Consumes,
+	Flask,
+	Food,
+	Glyphs,
+	EquipmentSpec,
+	ItemSpec,
+	Potions,
+	Faction,
+	RaidBuffs,
+	PartyBuffs,
+	IndividualBuffs,
+	Debuffs,
+	Spec,
+	Stat,
+	TristateEffect,
+	Race,
+} from '/wotlk/core/proto/common.js';
 import { SavedTalents } from '/wotlk/core/proto/ui.js';
 import { Player } from '/wotlk/core/player.js';
 
@@ -11,7 +27,7 @@ import {
 	Warlock_Rotation_SecondaryDot as SecondaryDot,
 	Warlock_Rotation_SpecSpell as SpecSpell,
 	Warlock_Rotation_Curse as Curse,
-	Warlock_Options_WeaponImbue as WarlockWeaponImbue,
+	Warlock_Options_WeaponImbue as WeaponImbue,
 	Warlock_Options_Armor as Armor,
 	Warlock_Options_Summon as Summon,
 	WarlockMajorGlyph as MajorGlyph,
@@ -21,8 +37,6 @@ import {
 import * as Enchants from '/wotlk/core/constants/enchants.js';
 import * as Gems from '/wotlk/core/proto_utils/gems.js';
 import * as Tooltips from '/wotlk/core/constants/tooltips.js';
-
-// Preset options for this spec.
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
@@ -72,7 +86,6 @@ export const DestructionTalents = {
 	}),
 };
 
-
 export const AfflictionRotation = WarlockRotation.create({
 		primarySpell: PrimarySpell.ShadowBolt,
 		secondaryDot: SecondaryDot.UnstableAffliction,
@@ -103,30 +116,65 @@ export const DestructionRotation = WarlockRotation.create({
 export const AfflictionOptions = WarlockOptions.create({
 	armor: Armor.FelArmor,
 	summon: Summon.Felhunter,
+	weaponImbue: WeaponImbue.GrandSpellstone,
 });
 
 export const DemonologyOptions = WarlockOptions.create({
 	armor: Armor.FelArmor,
 	summon: Summon.Felguard,
+	weaponImbue: WeaponImbue.GrandSpellstone,
 });
 
 export const DestructionOptions = WarlockOptions.create({
 	armor: Armor.FelArmor,
 	summon: Summon.Imp,
-	weaponImbue: WarlockWeaponImbue.GrandFirestone,
+	weaponImbue: WeaponImbue.GrandFirestone,
 });
 
 export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfTheFrostWyrm,
 	food: Food.FoodFishFeast,
 	defaultPotion: Potions.PotionOfWildMagic,
+	prepopPotion:  Potions.PotionOfWildMagic,
 });
 
+export const DefaultRaidBuffs = RaidBuffs.create({
+	giftOfTheWild: TristateEffect.TristateEffectImproved,
+	powerWordFortitude: TristateEffect.TristateEffectImproved,
+	strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
+	arcaneBrilliance: true,
+	divineSpirit: true,
+	trueshotAura: true,
+	leaderOfThePack: TristateEffect.TristateEffectImproved,
+	icyTalons: true,
+	totemOfWrath: true,
+	moonkinAura: TristateEffect.TristateEffectImproved,
+	wrathOfAirTotem: true,
+	sanctifiedRetribution: true,
+	bloodlust: true,
+});
+
+export const DefaultIndividualBuffs = IndividualBuffs.create({
+	blessingOfKings: true,
+	blessingOfWisdom: TristateEffect.TristateEffectImproved,
+	blessingOfMight: TristateEffect.TristateEffectImproved,
+	vampiricTouch: true,
+});
+
+export const DefaultDebuffs = Debuffs.create({
+	sunderArmor: true,
+	faerieFire: TristateEffect.TristateEffectImproved,
+	bloodFrenzy: true,
+	ebonPlaguebringer: true,
+	heartOfTheCrusader: true,
+	judgementOfWisdom: true,
+});
 
 export const SWP_BIS = {
 	name: 'SWP BiS',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
+	gear: EquipmentSpec.fromJsonString(`
+{"items": [
         {
           "id": 34340,
           "enchant": 29191,
@@ -226,5 +274,114 @@ export const SWP_BIS = {
             35760
           ]
         }
-      ]}`),
+      ]}
+    `),
 };
+export const P1_PreBiS = {
+	name: 'Pre-BiS',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(`
+{"items": [
+        {
+          "id": 44910,
+          "enchant": 29191,
+          "gems": [
+            41285,
+            40113
+          ]
+        },
+        {
+          "id": 42647,
+          "gems": [
+            40113
+          ]
+        },
+        {
+          "id": 34210,
+          "enchant": 28886,
+          "gems": [
+            40113,
+            40155
+          ]
+        },
+        {
+          "id": 41610,
+          "enchant": 55642
+        },
+        {
+          "id": 39497,
+          "enchant": 24003,
+          "gems": [
+            40113,
+            40155
+          ]
+        },
+        {
+          "id": 37361,
+          "enchant": 22534,
+          "gems": [
+            0
+          ]
+        },
+        {
+          "id": 34344,
+          "enchant": 54999,
+          "gems": [
+            40155,
+            40113,
+            0
+          ]
+        },
+        {
+          "id": 40696,
+          "gems": [
+            40155,
+            0
+          ]
+        },
+        {
+          "id": 34181,
+          "enchant": 24274,
+          "gems": [
+            40113,
+            40113,
+            40155
+          ]
+        },
+        {
+          "id": 44202,
+          "enchant": 35297,
+          "gems": [
+            40133
+          ]
+        },
+        {
+          "id": 43253,
+          "gems": [
+            40133
+          ]
+        },
+        {
+          "id": 40585
+        },
+        {
+          "id": 40682
+        },
+        {
+          "id": 37873
+        },
+        {
+          "id": 37360,
+          "enchant": 44487
+        },
+        {},
+        {
+          "id": 34347,
+          "gems": [
+            40155
+          ]
+        }
+      ]
+    }
+    `),
+}

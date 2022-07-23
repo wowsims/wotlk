@@ -7,6 +7,7 @@ import (
 )
 
 func init() {
+	core.AddEffectsToTest = false
 	core.NewItemEffect(core.ItemIDTheLightningCapacitor, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
@@ -58,4 +59,5 @@ func init() {
 			},
 		})
 	})
+	core.AddEffectsToTest = true
 }

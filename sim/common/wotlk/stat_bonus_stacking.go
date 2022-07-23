@@ -15,7 +15,7 @@ type StackingProcAura struct {
 func MakeStackingAura(character *core.Character, config StackingProcAura) *core.Aura {
 	var bonusPerStack stats.Stats
 	config.Aura.OnInit = func(aura *core.Aura, sim *core.Simulation) {
-		bonusPerStack = character.ApplyStatDependencies(config.BonusPerStack)
+		bonusPerStack = config.BonusPerStack
 	}
 	config.Aura.OnStacksChange = func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
 		character.AddStatsDynamic(sim, bonusPerStack.Multiply(float64(newStacks-oldStacks)))
@@ -141,8 +141,6 @@ func newStackingStatBonusCD(config StackingStatBonusCD) {
 }
 
 func init() {
-	core.AddEffectsToTest = false
-
 	core.NewItemEffect(38212, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
@@ -210,6 +208,9 @@ func init() {
 		Harmful:    true,
 		ProcChance: 0.5,
 	})
+
+	core.AddEffectsToTest = false
+
 	newStackingStatBonusEffect(StackingStatBonusEffect{
 		Name:      "Solance of the Defeated",
 		ID:        47041,

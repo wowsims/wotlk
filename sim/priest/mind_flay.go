@@ -18,7 +18,7 @@ func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 
 	channelTime := time.Second * time.Duration(numTicks)
 	if priest.HasSetBonus(ItemSetCrimsonAcolyte, 4) {
-		channelTime = channelTime - (time.Millisecond * 510)
+		channelTime = channelTime - time.Duration(numTicks)*(time.Millisecond*170)
 	}
 
 	return priest.RegisterSpell(core.SpellConfig{
@@ -48,9 +48,10 @@ func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskEmpty,
-			ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
-			OutcomeApplier:   priest.OutcomeFuncMagicHitBinary(),
+			ProcMask:            core.ProcMaskEmpty,
+			BonusSpellHitRating: float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
+			ThreatMultiplier:    1 - 0.08*float64(priest.Talents.ShadowAffinity),
+			OutcomeApplier:      priest.OutcomeFuncMagicHitBinary(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if !spellEffect.Landed() {
 					return
@@ -76,6 +77,7 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 	effect := core.SpellEffect{
 		DamageMultiplier:     1,
 		ThreatMultiplier:     1 - 0.08*float64(priest.Talents.ShadowAffinity),
+		BonusSpellHitRating:  float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
 		IsPeriodic:           true,
 		BonusSpellCritRating: float64(priest.Talents.MindMelt)*2*core.CritRatingPerCritChance + core.TernaryFloat64(priest.HasSetBonus(ItemSetZabras, 4), 5, 0)*core.CritRatingPerCritChance,
 		OutcomeApplier:       priest.OutcomeFuncMagicHitAndCrit(1 + float64(priest.Talents.ShadowPower)*0.2),
@@ -96,17 +98,17 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 	normMod := (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01) * // initialize modifier
 		core.TernaryFloat64(priest.HasSetBonus(ItemSetIncarnate, 4), 1.05, 1)
 
-	swpMod := (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01 + float64(priest.Talents.TwistedFaith)*0.02) * // update modifier if SWP active
-		core.TernaryFloat64(priest.HasSetBonus(ItemSetIncarnate, 4), 1.05, 1)
+	//swpMod := (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01 + float64(priest.Talents.TwistedFaith)*0.02) * // update modifier if SWP active
+	//core.TernaryFloat64(priest.HasSetBonus(ItemSetIncarnate, 4), 1.05, 1)
 
 	effect.BaseDamage = core.BaseDamageConfig{
 		Calculator: func(sim *core.Simulation, effect *core.SpellEffect, spell *core.Spell) float64 {
 			var dmg float64
 			shadowWeavingMod := 1 + float64(priest.ShadowWeavingAura.GetStacks())*0.02
-			glyphMod := 1.0
+			glyphMod := 0.0
 
 			if priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfMindFlay)) {
-				glyphMod = 1.1
+				glyphMod = 0.1
 			}
 
 			if priest.MiseryAura.IsActive() {
@@ -115,7 +117,7 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 				dmg = normalCalc(sim, effect, spell)
 			}
 			if priest.ShadowWordPainDot.IsActive() {
-				dmg *= swpMod * glyphMod // multiply the damage
+				dmg *= normMod * (1 + glyphMod + float64(priest.Talents.TwistedFaith)*0.02) // multiply the damage
 			} else {
 				dmg *= normMod // multiply the damage
 			}

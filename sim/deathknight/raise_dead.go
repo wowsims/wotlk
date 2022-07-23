@@ -17,13 +17,10 @@ func (deathKnight *DeathKnight) registerRaiseDeadCD() {
 		ActionID: core.ActionID{SpellID: 46584},
 		Duration: time.Minute * 1,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			deathKnight.Ghoul.Enable(sim, deathKnight.Ghoul)
-			deathKnight.Ghoul.focusBar.reset(sim)
-			deathKnight.Ghoul.AutoAttacks.EnableAutoSwing(sim)
+			deathKnight.Ghoul.Pet.Enable(sim, deathKnight.Ghoul)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			deathKnight.Ghoul.Disable(sim)
-			deathKnight.Ghoul.focusBar.Cancel(sim)
+			deathKnight.Ghoul.Pet.Disable(sim)
 		},
 	})
 
@@ -47,13 +44,16 @@ func (deathKnight *DeathKnight) registerRaiseDeadCD() {
 			raiseDeadAura.Activate(sim)
 		},
 	})
+}
 
-	deathKnight.AddMajorCooldown(core.MajorCooldown{
-		Spell:    deathKnight.RaiseDead,
-		Priority: core.CooldownPriorityDrums - 1, // Always prefer to cast after drums or lust so the ghoul gets their benefits.
-		Type:     core.CooldownTypeDPS,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return !deathKnight.Ghoul.IsEnabled()
-		},
-	})
+func (deathKnight *DeathKnight) CanRaiseDead(sim *core.Simulation) bool {
+	return !deathKnight.Talents.MasterOfGhouls && deathKnight.RaiseDead.IsReady(sim)
+}
+
+func (deathKnight *DeathKnight) CastRaiseDead(sim *core.Simulation, target *core.Unit) bool {
+	if deathKnight.CanRaiseDead(sim) {
+		deathKnight.RaiseDead.Cast(sim, target)
+		return true
+	}
+	return false
 }

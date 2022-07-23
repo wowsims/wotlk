@@ -12,8 +12,8 @@ import (
 func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.PartyBuffs, individualBuffs proto.IndividualBuffs) {
 	character := agent.GetCharacter()
 
-	if raidBuffs.ArcaneBrilliance || raidBuffs.FelIntelligence {
-		val := 48.0
+	if raidBuffs.ArcaneBrilliance || raidBuffs.FelIntelligence > 0 {
+		val := GetTristateValueFloat(raidBuffs.FelIntelligence, 48.0, 48.0*1.1)
 		if raidBuffs.ArcaneBrilliance {
 			val = 60.0
 		}
@@ -71,13 +71,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 
 	if raidBuffs.TrueshotAura || raidBuffs.AbominationsMight || raidBuffs.UnleashedRage {
 		// Increases AP by 10%
-		character.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.AttackPower,
-			ModifiedStat: stats.AttackPower,
-			Modifier: func(ap float64, _ float64) float64 {
-				return ap * 1.1
-			},
-		})
+		character.AddStatDependency(stats.AttackPower, stats.AttackPower, 1.0+0.1)
 	}
 
 	if raidBuffs.ArcaneEmpowerment || raidBuffs.FerociousInspiration || raidBuffs.SanctifiedRetribution {
@@ -111,8 +105,8 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 			stats.ShadowResistance: 130,
 		})
 	}
-	if raidBuffs.DivineSpirit || raidBuffs.FelIntelligence {
-		v := 64.0
+	if raidBuffs.DivineSpirit || raidBuffs.FelIntelligence > 0 {
+		v := GetTristateValueFloat(raidBuffs.FelIntelligence, 64.0, 64.0*1.1)
 		if raidBuffs.DivineSpirit {
 			v = 80.0
 		}
@@ -125,26 +119,14 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		})
 	}
 
-	// TODO: any way to validate that this is not a raid sim?
 	// TODO: convert this to a real mana replenishment aura we can use in raid sim.
-	if individualBuffs.Replenishment {
-		character.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Mana,
-			ModifiedStat: stats.MP5,
-			Modifier: func(mana float64, mp5 float64) float64 {
-				return mp5 + mana*0.01 // adds 1% of max mana to mp5
-			},
-		})
+	if individualBuffs.VampiricTouch ||
+		individualBuffs.HuntingParty ||
+		individualBuffs.JudgementsOfTheWise ||
+		individualBuffs.ImprovedSoulLeech ||
+		individualBuffs.EnduringWinter {
+		character.AddStatDependency(stats.Mana, stats.MP5, 1.0+0.01)
 	}
-
-	character.AddStats(stats.Stats{
-		stats.MP5: GetTristateValueFloat(individualBuffs.BlessingOfWisdom, 42.0, 50.0),
-	})
-
-	character.AddStats(stats.Stats{
-		stats.AttackPower:       GetTristateValueFloat(individualBuffs.BlessingOfMight, 220, 264),
-		stats.RangedAttackPower: GetTristateValueFloat(individualBuffs.BlessingOfMight, 220, 264),
-	})
 
 	kingsAgiIntSpiAmount := 1.0
 	kingsStrStamAmount := 1.0
@@ -159,48 +141,20 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		kingsStrStamAmount = MaxFloat(kingsStrStamAmount, 1.08)
 	}
 	if kingsStrStamAmount > 0 {
-		character.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Strength,
-			ModifiedStat: stats.Strength,
-			Modifier: func(curValue float64, _ float64) float64 {
-				return curValue * kingsStrStamAmount
-			},
-		})
-		character.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Stamina,
-			ModifiedStat: stats.Stamina,
-			Modifier: func(curValue float64, _ float64) float64 {
-				return curValue * kingsStrStamAmount
-			},
-		})
+		character.AddStatDependency(stats.Strength, stats.Strength, kingsStrStamAmount)
+		character.AddStatDependency(stats.Stamina, stats.Stamina, kingsStrStamAmount)
 	}
 	if kingsAgiIntSpiAmount > 0 {
-		character.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Agility,
-			ModifiedStat: stats.Agility,
-			Modifier: func(curValue float64, _ float64) float64 {
-				return curValue * kingsAgiIntSpiAmount
-			},
-		})
-		character.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Intellect,
-			ModifiedStat: stats.Intellect,
-			Modifier: func(curValue float64, _ float64) float64 {
-				return curValue * kingsAgiIntSpiAmount
-			},
-		})
-		character.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Spirit,
-			ModifiedStat: stats.Spirit,
-			Modifier: func(curValue float64, _ float64) float64 {
-				return curValue * kingsAgiIntSpiAmount
-			},
-		})
+		character.AddStatDependency(stats.Agility, stats.Agility, kingsAgiIntSpiAmount)
+		character.AddStatDependency(stats.Intellect, stats.Intellect, kingsAgiIntSpiAmount)
+		character.AddStatDependency(stats.Spirit, stats.Spirit, kingsAgiIntSpiAmount)
 	}
 
 	if individualBuffs.BlessingOfSanctuary {
 		character.PseudoStats.DamageTakenMultiplier *= 0.97
 		BlessingOfSanctuaryAura(character)
+	} else if individualBuffs.Vigilance || individualBuffs.RenewedHope {
+		character.PseudoStats.DamageTakenMultiplier *= 0.97
 	}
 
 	if raidBuffs.DevotionAura != proto.TristateEffect_TristateEffectMissing {
@@ -230,11 +184,16 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		stats.Health: GetTristateValueFloat(raidBuffs.CommandingShout, 1080, 1080*1.25),
 	})
 
-	if raidBuffs.TotemOfWrath || raidBuffs.DemonicPact > 0 {
-		v := MaxFloat(280, float64(raidBuffs.DemonicPact))
+	spBonus := float64(raidBuffs.DemonicPact)
+	if raidBuffs.TotemOfWrath {
+		spBonus = MaxFloat(spBonus, 280)
+	} else if raidBuffs.FlametongueTotem {
+		spBonus = MaxFloat(spBonus, 144)
+	}
+	if spBonus > 0 {
 		character.AddStats(stats.Stats{
-			stats.SpellPower:   v,
-			stats.HealingPower: v,
+			stats.SpellPower:   spBonus,
+			stats.HealingPower: spBonus,
 		})
 	}
 	if raidBuffs.WrathOfAirTotem {
@@ -302,7 +261,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 // Applies buffs to pets.
 func applyPetBuffEffects(petAgent PetAgent, raidBuffs proto.RaidBuffs, partyBuffs proto.PartyBuffs, individualBuffs proto.IndividualBuffs) {
 	// Summoned pets, like Mage Water Elemental, aren't around to receive raid buffs.
-	if !petAgent.GetPet().initialEnabled {
+	if !petAgent.GetPet().PermanentPet {
 		return
 	}
 
@@ -330,7 +289,7 @@ func applyInspiration(character *Character, uptime float64) {
 		ActionID: ActionID{SpellID: 15363},
 		Duration: time.Second * 15,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			curBonus = character.ApplyStatDependencies(stats.Stats{stats.Armor: character.GetStat(stats.Armor) * 0.25})
+			curBonus = stats.Stats{stats.Armor: character.GetStat(stats.Armor) * 0.25}
 			aura.Unit.AddStatsDynamic(sim, curBonus)
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
@@ -704,7 +663,7 @@ func BloodlustAura(character *Character, actionTag int32) *Aura {
 			if len(character.Pets) > 0 {
 				for _, petAgent := range character.Pets {
 					pet := petAgent.GetPet()
-					if pet.IsEnabled() {
+					if pet.IsEnabled() && pet.IsPermanent() {
 						BloodlustAura(&pet.Character, actionTag).Activate(sim)
 					}
 				}

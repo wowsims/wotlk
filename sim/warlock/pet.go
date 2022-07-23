@@ -26,7 +26,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 	summonChoice := warlock.Options.Summon
 	preset := warlock.Rotation.Preset
 
-	if preset==proto.Warlock_Rotation_Automatic {
+	if preset == proto.Warlock_Rotation_Automatic {
 		if warlock.Talents.Haunt {
 			summonChoice = proto.Warlock_Options_Felhunter
 		} else if warlock.Talents.Metamorphosis {
@@ -49,27 +49,9 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		config: petConfig,
 		owner:  warlock,
 	}
-	wp.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Intellect,
-		ModifiedStat: stats.Mana,
-		Modifier: func(intellect float64, mana float64) float64 {
-			return mana + intellect*petConfig.ManaIntRatio
-		},
-	})
-	wp.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Strength,
-		ModifiedStat: stats.AttackPower,
-		Modifier: func(strength float64, attackPower float64) float64 {
-			return attackPower + (strength-10)*2
-		},
-	})
-	wp.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Agility,
-		ModifiedStat: stats.MeleeCrit,
-		Modifier: func(agility float64, meleeCrit float64) float64 {
-			return meleeCrit + (agility*0.04)*core.CritRatingPerCritChance
-		},
-	})
+	wp.AddStatDependency(stats.Intellect, stats.Mana, 1.0+petConfig.ManaIntRatio)
+	wp.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
+	wp.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance*0.04))
 	wp.AddStats(stats.Stats{
 		stats.MeleeCrit: float64(warlock.Talents.DemonicTactics)*2*core.CritRatingPerCritChance +
 			float64(wp.owner.Talents.ImprovedDemonicTactics)*0.3*wp.owner.GetStats()[stats.SpellCrit],
@@ -80,7 +62,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 	wp.PseudoStats.DamageDealtMultiplier *= 1.0 + (0.04 * float64(warlock.Talents.UnholyPower))
 
 	wp.EnableManaBar()
-	
+
 	if petConfig.Melee {
 		switch summonChoice {
 		case proto.Warlock_Options_Felguard:
@@ -121,62 +103,28 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 	// wp.AutoAttacks.MHEffect.DamageMultiplier *= petConfig.DamageMultiplier
 	switch summonChoice {
 	case proto.Warlock_Options_Imp:
-		wp.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Intellect,
-			ModifiedStat: stats.SpellCrit,
-			Modifier: func(intellect float64, spellCrit float64) float64 {
-				return spellCrit + (0.0125*intellect/100)*core.CritRatingPerCritChance
-			},
-		})
+		// TODO: Does imp have different int->crit ratio than other casters? If so, we need to undo and then redo int->crit.
+		// wp.AddStatDependency(stats.Intellect, stats.SpellCrit, 1.0+(0.0125*core.CritRatingPerCritChance/100))
 	case proto.Warlock_Options_Felguard:
 		wp.PseudoStats.DamageDealtMultiplier *= 1.0 + (0.01 * float64(warlock.Talents.MasterDemonologist))
 		// Simulates a pre-stacked demonic frenzy
-		wp.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.AttackPower,
-			ModifiedStat: stats.AttackPower,
-			Modifier: func(ap float64, _ float64) float64 {
-				if wp.owner.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfFelguard) {
-					ap *= 1.2
-				}
-				return ap * 1.5 * 1.1 // demonic frenzy + hidden 10% boost
-			},
-		})
+		multiplier := 1.5 * 1.1 // demonic frenzy + hidden 10% boost
+		if wp.owner.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfFelguard) {
+			multiplier *= 1.2
+		}
+		wp.AddStatDependency(stats.AttackPower, stats.AttackPower, multiplier)
 	case proto.Warlock_Options_Succubus:
 		wp.PseudoStats.DamageDealtMultiplier *= 1.0 + (0.02 * float64(warlock.Talents.MasterDemonologist))
-		wp.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.AttackPower,
-			ModifiedStat: stats.AttackPower,
-			Modifier: func(ap float64, _ float64) float64 {
-				return ap * 1.05 // hidden 5% boost
-			},
-		})
+		wp.AddStatDependency(stats.AttackPower, stats.AttackPower, 1.05)
 	case proto.Warlock_Options_Felhunter:
 		wp.PseudoStats.DamageDealtMultiplier *= 1.0
-		wp.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.AttackPower,
-			ModifiedStat: stats.AttackPower,
-			Modifier: func(ap float64, _ float64) float64 {
-				return ap * 1.05 // hidden 5% boost
-			},
-		})
+		wp.AddStatDependency(stats.AttackPower, stats.AttackPower, 1.05)
 	}
 
 	if warlock.Talents.FelVitality > 0 {
-		bonus := 1 + (0.05)*float64(warlock.Talents.FelVitality)
-		wp.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Intellect,
-			ModifiedStat: stats.Intellect,
-			Modifier: func(in float64, _ float64) float64 {
-				return in * bonus
-			},
-		})
-		wp.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Stamina,
-			ModifiedStat: stats.Stamina,
-			Modifier: func(sta float64, _ float64) float64 {
-				return sta * bonus
-			},
-		})
+		bonus := 1.0 + (0.05 * float64(warlock.Talents.FelVitality))
+		wp.AddStatDependency(stats.Intellect, stats.Intellect, bonus)
+		wp.AddStatDependency(stats.Stamina, stats.Stamina, bonus)
 	}
 
 	if warlock.HasSetBonus(ItemSetOblivionRaiment, 2) {
@@ -263,14 +211,13 @@ var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
 		SecondaryAbility: Intercept,
 		ManaIntRatio:     11.5,
 		Stats: stats.Stats{
-			stats.AttackPower: -20,
-			stats.Stamina:     280,
-			stats.Strength:    153,
-			stats.Agility:     108,
-			stats.Intellect:   133,
-			stats.Mana:        893,
-			stats.Spirit:      122,
-			stats.MP5:         48,
+			stats.Stamina:   280,
+			stats.Strength:  153,
+			stats.Agility:   108,
+			stats.Intellect: 133,
+			stats.Mana:      893,
+			stats.Spirit:    122,
+			stats.MP5:       48,
 		},
 	},
 	proto.Warlock_Options_Imp: {
@@ -279,14 +226,13 @@ var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
 		Melee:          false,
 		PrimaryAbility: Firebolt,
 		Stats: stats.Stats{
-			stats.AttackPower: -20,
-			stats.MP5:         123,
-			stats.Stamina:     101,
-			stats.Strength:    145,
-			stats.Agility:     38,
-			stats.Intellect:   327,
-			stats.Mana:        756,
-			stats.Spirit:      263,
+			stats.MP5:       123,
+			stats.Stamina:   101,
+			stats.Strength:  145,
+			stats.Agility:   38,
+			stats.Intellect: 327,
+			stats.Mana:      756,
+			stats.Spirit:    263,
 		},
 	},
 	proto.Warlock_Options_Succubus: {
@@ -295,14 +241,13 @@ var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
 		Melee:          true,
 		PrimaryAbility: LashOfPain,
 		Stats: stats.Stats{
-			stats.AttackPower: -20,
-			stats.Stamina:     328,
-			stats.Strength:    314,
-			stats.Agility:     90,
-			stats.Intellect:   150,
-			stats.Mana:        1109,
-			stats.Spirit:      209,
-			stats.MP5:         11,
+			stats.Stamina:   328,
+			stats.Strength:  314,
+			stats.Agility:   90,
+			stats.Intellect: 150,
+			stats.Mana:      1109,
+			stats.Spirit:    209,
+			stats.MP5:       11,
 		},
 	},
 	proto.Warlock_Options_Felhunter: {
@@ -311,16 +256,15 @@ var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
 		Melee:          true,
 		PrimaryAbility: ShadowBite,
 		Stats: stats.Stats{
-			stats.AttackPower: -20,
-			stats.Stamina:     328,
-			stats.Strength:    314,
-			stats.Agility:     90,
-			stats.Intellect:   150,
-			stats.Mana:        1109,
-			stats.Spirit:      209,
-			stats.MP5:         11,
-			stats.SpellCrit:   0.01,
-			stats.MeleeCrit:   0.03,
+			stats.Stamina:   328,
+			stats.Strength:  314,
+			stats.Agility:   90,
+			stats.Intellect: 150,
+			stats.Mana:      1109,
+			stats.Spirit:    209,
+			stats.MP5:       11,
+			stats.SpellCrit: 0.01,
+			stats.MeleeCrit: 0.03,
 		},
 	},
 }

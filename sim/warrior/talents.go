@@ -22,56 +22,21 @@ func (warrior *Warrior) ApplyTalents() {
 	}
 
 	if warrior.Talents.StrengthOfArms > 0 {
-		bonus := 1 + 0.02*float64(warrior.Talents.StrengthOfArms)
-		warrior.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Strength,
-			ModifiedStat: stats.Strength,
-			Modifier: func(str float64, _ float64) float64 {
-				return str * bonus
-			},
-		})
+		warrior.AddStatDependency(stats.Strength, stats.Strength, 1.0+0.01*float64(warrior.Talents.ImprovedBerserkerStance))
 	}
 
 	// TODO: This should only be applied while berserker stance is active.
 	if warrior.Talents.ImprovedBerserkerStance > 0 {
-		bonus := 1 + 0.04*float64(warrior.Talents.ImprovedBerserkerStance)
-		warrior.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Strength,
-			ModifiedStat: stats.Strength,
-			Modifier: func(str float64, _ float64) float64 {
-				return str * bonus
-			},
-		})
+		warrior.AddStatDependency(stats.Strength, stats.Strength, 1.0+0.04*float64(warrior.Talents.ImprovedBerserkerStance))
 	}
 
 	if warrior.Talents.ShieldMastery > 0 {
-		bonus := 1 + 0.1*float64(warrior.Talents.ShieldMastery)
-		warrior.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.BlockValue,
-			ModifiedStat: stats.BlockValue,
-			Modifier: func(bv float64, _ float64) float64 {
-				return bv * bonus
-			},
-		})
+		warrior.AddStatDependency(stats.BlockValue, stats.BlockValue, 1.0+0.1*float64(warrior.Talents.ShieldMastery))
 	}
 
 	if warrior.Talents.Vitality > 0 {
-		stamBonus := 1 + 0.01*float64(warrior.Talents.Vitality)
-		warrior.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Stamina,
-			ModifiedStat: stats.Stamina,
-			Modifier: func(stamina float64, _ float64) float64 {
-				return stamina * stamBonus
-			},
-		})
-		strBonus := 1 + 0.02*float64(warrior.Talents.Vitality)
-		warrior.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Strength,
-			ModifiedStat: stats.Strength,
-			Modifier: func(strength float64, _ float64) float64 {
-				return strength * strBonus
-			},
-		})
+		warrior.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+0.01*float64(warrior.Talents.Vitality))
+		warrior.AddStatDependency(stats.Strength, stats.Strength, 1.0+0.02*float64(warrior.Talents.Vitality))
 	}
 
 	warrior.applyAngerManagement()

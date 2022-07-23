@@ -9,8 +9,10 @@ import (
 )
 
 func (deathKnight *DeathKnight) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
-	if deathKnight.GCD.IsReady(sim) {
-		deathKnight.tryUseGCD(sim)
+	if !deathKnight.onOpener {
+		if deathKnight.GCD.IsReady(sim) {
+			deathKnight.tryUseGCD(sim)
+		}
 	}
 }
 
@@ -36,107 +38,112 @@ func (deathKnight *DeathKnight) spreadDiseases(sim *core.Simulation, target *cor
 }
 
 func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
-	//var spell *core.Spell
-	var target = deathKnight.CurrentTarget
-
 	if deathKnight.GCD.IsReady(sim) {
-		// UH DK rota
-		if deathKnight.Talents.SummonGargoyle {
-			// Horn of Winter if you're the DK to refresh it and its not precasted/active
-			if deathKnight.ShouldHornOfWinter(sim) {
-				deathKnight.HornOfWinter.Cast(sim, target)
-			} else if (!deathKnight.TargetHasDisease(FrostFeverAuraLabel, target) || deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim) < 6*time.Second) && deathKnight.CanIcyTouch(sim) {
-				// Diseases have topmost priority after that
-				deathKnight.IcyTouch.Cast(sim, target)
-				recastedFF = true
-			} else if (!deathKnight.TargetHasDisease(BloodPlagueAuraLabel, target) || deathKnight.BloodPlagueDisease[target.Index].RemainingDuration(sim) < 6*time.Second) && deathKnight.CanPlagueStrike(sim) {
-				deathKnight.PlagueStrike.Cast(sim, target)
-				recastedBP = true
-			} else {
-				if deathKnight.PresenceMatches(UnholyPresence) && !deathKnight.SummonGargoyle.CD.IsReady(sim) && deathKnight.CanBloodPresence(sim) {
-					// Swap to blood presence after gargoyle cast
-					deathKnight.BloodPressence.Cast(sim, target)
-					deathKnight.WaitUntil(sim, sim.CurrentTime+1)
-				} else if deathKnight.Talents.Desolation > 0 && !deathKnight.DesolationAura.IsActive() && deathKnight.CanBloodStrike(sim) && !deathKnight.shouldWaitForDnD(sim, true, false, false) {
-					// Desolation and Pestilence check
-					if deathKnight.shouldSpreadDisease(sim) {
-						deathKnight.spreadDiseases(sim, target)
-					} else {
-						deathKnight.BloodStrike.Cast(sim, target)
-					}
-				} else {
-					if deathKnight.Rotation.UseDeathAndDecay {
-						// Death and Decay Rotation
-						if deathKnight.CanDeathAndDecay(sim) && deathKnight.AllDiseasesAreActive(target) {
-							deathKnight.DeathAndDecay.Cast(sim, target)
-						} else if deathKnight.CanGhoulFrenzy(sim) && deathKnight.Talents.MasterOfGhouls && (!deathKnight.Ghoul.GhoulFrenzyAura.IsActive() || deathKnight.Ghoul.GhoulFrenzyAura.RemainingDuration(sim) < 6*time.Second) && !deathKnight.shouldWaitForDnD(sim, false, false, true) {
-							deathKnight.GhoulFrenzy.Cast(sim, target)
-						} else if deathKnight.CanScourgeStrike(sim) && !deathKnight.shouldWaitForDnD(sim, false, true, true) {
-							deathKnight.ScourgeStrike.Cast(sim, target)
-						} else if !deathKnight.Talents.ScourgeStrike && deathKnight.CanIcyTouch(sim) && !deathKnight.shouldWaitForDnD(sim, false, true, false) {
-							deathKnight.IcyTouch.Cast(sim, target)
-						} else if !deathKnight.Talents.ScourgeStrike && deathKnight.CanPlagueStrike(sim) && !deathKnight.shouldWaitForDnD(sim, false, false, true) {
-							deathKnight.PlagueStrike.Cast(sim, target)
-						} else if deathKnight.CanBloodStrike(sim) && !deathKnight.shouldWaitForDnD(sim, true, false, false) {
-							if deathKnight.shouldSpreadDisease(sim) {
-								deathKnight.spreadDiseases(sim, target)
-							} else if deathKnight.Env.GetNumTargets() > 2 {
-								deathKnight.BloodBoil.Cast(sim, target)
-							} else {
-								deathKnight.BloodStrike.Cast(sim, target)
-							}
-						} else if deathKnight.CanDeathCoil(sim) && !deathKnight.SummonGargoyle.IsReady(sim) {
-							deathKnight.DeathCoil.Cast(sim, target)
-						} else if deathKnight.CanHornOfWinter(sim) {
-							deathKnight.HornOfWinter.Cast(sim, target)
-						} else {
-							if deathKnight.GCD.IsReady(sim) && !deathKnight.IsWaiting() {
-								// This means we did absolutely nothing.
-								// Wait until our next auto attack to decide again.
-								nextSwing := deathKnight.AutoAttacks.MainhandSwingAt
-								if deathKnight.AutoAttacks.OffhandSwingAt > sim.CurrentTime {
-									nextSwing = core.MinDuration(nextSwing, deathKnight.AutoAttacks.OffhandSwingAt)
-								}
-								deathKnight.WaitUntil(sim, nextSwing)
-							}
-						}
-					} else {
-						// Scourge Strike Rotation
-						if deathKnight.CanGhoulFrenzy(sim) && deathKnight.Talents.MasterOfGhouls && (!deathKnight.Ghoul.GhoulFrenzyAura.IsActive() || deathKnight.Ghoul.GhoulFrenzyAura.RemainingDuration(sim) < 6*time.Second) {
-							deathKnight.GhoulFrenzy.Cast(sim, target)
-						} else if deathKnight.CanScourgeStrike(sim) {
-							deathKnight.ScourgeStrike.Cast(sim, target)
-						} else if deathKnight.CanBloodStrike(sim) {
-							if deathKnight.shouldSpreadDisease(sim) {
-								deathKnight.spreadDiseases(sim, target)
-							} else if deathKnight.Env.GetNumTargets() > 2 {
-								deathKnight.BloodBoil.Cast(sim, target)
-							} else {
-								deathKnight.BloodStrike.Cast(sim, target)
-							}
-						} else if deathKnight.CanDeathCoil(sim) && !deathKnight.SummonGargoyle.IsReady(sim) {
-							deathKnight.DeathCoil.Cast(sim, target)
-						} else if deathKnight.CanHornOfWinter(sim) {
-							deathKnight.HornOfWinter.Cast(sim, target)
-						} else {
-							if deathKnight.GCD.IsReady(sim) && !deathKnight.IsWaiting() {
-								// This means we did absolutely nothing.
-								// Wait until our next auto attack to decide again.
-								nextSwing := deathKnight.AutoAttacks.MainhandSwingAt
-								if deathKnight.AutoAttacks.OffhandSwingAt > sim.CurrentTime {
-									nextSwing = core.MinDuration(nextSwing, deathKnight.AutoAttacks.OffhandSwingAt)
-								}
-								deathKnight.WaitUntil(sim, nextSwing)
-							}
-						}
-					}
-				}
+		deathKnight.DoRotation(sim)
+	}
+}
+
+func (o *Sequence) IsOngoing() bool {
+	return o.idx < o.numActions
+}
+
+func (o *Sequence) DoAction(sim *core.Simulation, target *core.Unit, deathKnight *DeathKnight) bool {
+	casted := false
+	advance := true
+	action := o.actions[o.idx]
+
+	switch action {
+	case RotationAction_IT:
+		casted = deathKnight.CastIcyTouch(sim, target)
+		// Add this line if you care about recasting a spell in the opener in
+		// case it missed
+		advance = deathKnight.LastCastOutcome != core.OutcomeMiss
+	case RotationAction_PS:
+		casted = deathKnight.CastPlagueStrike(sim, target)
+		advance = deathKnight.LastCastOutcome != core.OutcomeMiss
+	case RotationAction_UA:
+		casted = deathKnight.CastUnbreakableArmor(sim, target)
+		// Add this line if your spell does not incur a GCD or you will hang!
+		deathKnight.WaitUntil(sim, sim.CurrentTime)
+	case RotationAction_BT:
+		casted = deathKnight.CastBloodTap(sim, target)
+		deathKnight.WaitUntil(sim, sim.CurrentTime)
+	case RotationAction_Obli:
+		casted = deathKnight.CastObliterate(sim, target)
+	case RotationAction_FS:
+		casted = deathKnight.CastFrostStrike(sim, target)
+	case RotationAction_Pesti:
+		casted = deathKnight.CastPestilence(sim, target)
+		if deathKnight.LastCastOutcome == core.OutcomeMiss {
+			advance = false
+		}
+	case RotationAction_ERW:
+		casted = deathKnight.CastEmpowerRuneWeapon(sim, target)
+		deathKnight.WaitUntil(sim, sim.CurrentTime)
+	case RotationAction_HB_Ghoul_RimeCheck:
+		// You can do custom actions, this is deciding whether to HB or raise dead
+		if deathKnight.RimeAura.IsActive() {
+			casted = deathKnight.CastHowlingBlast(sim, target)
+		} else {
+			casted = deathKnight.CastRaiseDead(sim, target)
+		}
+	case RotationAction_BS:
+		casted = deathKnight.CastBloodStrike(sim, target)
+	}
+
+	// Advances the opener
+	if casted && advance {
+		o.idx += 1
+	}
+
+	return casted
+}
+
+func (o *Sequence) DoNext(sim *core.Simulation, deathKnight *DeathKnight) bool {
+	target := deathKnight.CurrentTarget
+	casted := &deathKnight.castSuccessful
+	*casted = false
+
+	if o.IsOngoing() {
+		*casted = deathKnight.opener.DoAction(sim, target, deathKnight)
+	} else if deathKnight.sequence != nil {
+		if deathKnight.sequence.IsOngoing() {
+			*casted = deathKnight.sequence.DoAction(sim, target, deathKnight)
+			if !deathKnight.sequence.IsOngoing() {
+				deathKnight.sequence = nil
 			}
 		}
+	} else {
+		deathKnight.onOpener = false
 
-		// Start proper Frost rotation
-
-		// Frost DK rota
-		deathKnight.doFrostRotation(sim)
+		if deathKnight.opener.id == RotationID_FrostSubBlood_Full || deathKnight.opener.id == RotationID_FrostSubUnholy_Full {
+			deathKnight.doFrostRotation(sim, target)
+		} else if deathKnight.opener.id == RotationID_Unholy_Full {
+			deathKnight.doUnholyRotation(sim, target)
+		}
+		// Other prio lists for other specs here just else if {...
 	}
+
+	return *casted
+}
+
+func (deathKnight *DeathKnight) DoRotation(sim *core.Simulation) {
+	opener := deathKnight.opener
+	if !opener.DoNext(sim, deathKnight) {
+		if deathKnight.GCD.IsReady(sim) && !deathKnight.IsWaiting() {
+			waitUntil := deathKnight.AutoAttacks.MainhandSwingAt
+			if deathKnight.AutoAttacks.OffhandSwingAt > sim.CurrentTime {
+				waitUntil = core.MinDuration(waitUntil, deathKnight.AutoAttacks.OffhandSwingAt)
+			}
+			waitUntil = core.MinDuration(waitUntil, deathKnight.AnyRuneReadyAt(sim))
+			deathKnight.WaitUntil(sim, waitUntil)
+		} else { // No resources
+			waitUntil := deathKnight.AnySpentRuneReadyAt(sim)
+			deathKnight.WaitUntil(sim, waitUntil)
+		}
+	}
+}
+
+func (deathKnight *DeathKnight) ResetRotation(sim *core.Simulation) {
+	deathKnight.opener.idx = 0
 }

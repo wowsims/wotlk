@@ -44,8 +44,6 @@ func newProcStatBonusEffect(config ProcStatBonusEffect) {
 
 func init() {
 	// Keep these separated by stat, ordered by item ID within each group.
-	core.AddEffectsToTest = false
-
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Meteorite Whetstone",
 		ID:         37390,
@@ -88,6 +86,9 @@ func init() {
 		ProcChance: 0.10,
 		ICD:        time.Second * 45,
 	})
+
+	core.AddEffectsToTest = false
+
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Je'Tze's Bell",
 		ID:         37835,
@@ -159,7 +160,7 @@ func init() {
 		Duration:   time.Second * 10,
 		Callback:   OnSpellHitDealt,
 		ProcMask:   core.ProcMaskMeleeOrRanged,
-		Outcome:    core.OutcomeLanded,
+		Outcome:    core.OutcomeCrit,
 		ProcChance: 0.10,
 		ICD:        time.Second * 50,
 	})

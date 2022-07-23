@@ -23,13 +23,7 @@ func (deathKnight *DeathKnight) ApplyBloodTalents() {
 	// Bladed Armor
 	if deathKnight.Talents.BladedArmor > 0 {
 		coeff := float64(deathKnight.Talents.BladedArmor)
-		deathKnight.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Armor,
-			ModifiedStat: stats.AttackPower,
-			Modifier: func(armor float64, attackPower float64) float64 {
-				return attackPower + coeff*armor/180.0
-			},
-		})
+		deathKnight.AddStatDependency(stats.Armor, stats.AttackPower, 1.0+coeff/180.0)
 	}
 
 	// Two Handed Specialization
@@ -64,22 +58,8 @@ func (deathKnight *DeathKnight) ApplyBloodTalents() {
 		strengthCoeff := 0.02 * float64(deathKnight.Talents.VeteranOfTheThirdWar)
 		staminaCoeff := 0.01 * float64(deathKnight.Talents.VeteranOfTheThirdWar)
 		expertiseBonus := 2.0 * float64(deathKnight.Talents.VeteranOfTheThirdWar)
-		deathKnight.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Strength,
-			ModifiedStat: stats.Strength,
-			Modifier: func(strength float64, _ float64) float64 {
-				return strength * (1.0 + strengthCoeff)
-			},
-		})
-
-		deathKnight.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Stamina,
-			ModifiedStat: stats.Stamina,
-			Modifier: func(stamina float64, _ float64) float64 {
-				return stamina * (1.0 + staminaCoeff)
-			},
-		})
-
+		deathKnight.AddStatDependency(stats.Strength, stats.Strength, 1.0+strengthCoeff)
+		deathKnight.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+staminaCoeff)
 		deathKnight.AddStat(stats.Expertise, expertiseBonus*core.ExpertisePerQuarterPercentReduction)
 	}
 
@@ -92,14 +72,12 @@ func (deathKnight *DeathKnight) ApplyBloodTalents() {
 	// Abomination's Might
 	if deathKnight.Talents.AbominationsMight > 0 {
 		strengthCoeff := 0.01 * float64(deathKnight.Talents.AbominationsMight)
-		deathKnight.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Strength,
-			ModifiedStat: stats.Strength,
-			Modifier: func(strength float64, _ float64) float64 {
-				return strength * (1.0 + strengthCoeff)
-			},
-		})
+		deathKnight.AddStatDependency(stats.Strength, stats.Strength, 1.0+strengthCoeff)
 	}
+}
+
+func (deathKnight *DeathKnight) subversionCritBonus() float64 {
+	return 3.0 * float64(deathKnight.Talents.Subversion)
 }
 
 var butcheryCanceled bool
@@ -113,10 +91,9 @@ func (deathKnight *DeathKnight) applyButchery() {
 
 	rpMetrics := deathKnight.NewRunicPowerMetrics(actionID)
 
-	deathKnight.ButcheryAura = deathKnight.RegisterAura(core.Aura{
+	deathKnight.ButcheryAura = core.MakePermanent(deathKnight.RegisterAura(core.Aura{
 		ActionID: actionID,
 		Label:    "Butchery",
-		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			amountOfRunicPower := 1.0 * float64(deathKnight.Talents.Butchery)
 			core.StartPeriodicAction(sim, core.PeriodicActionOptions{
@@ -129,5 +106,5 @@ func (deathKnight *DeathKnight) applyButchery() {
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 		},
-	})
+	}))
 }

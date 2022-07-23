@@ -45,8 +45,15 @@ func NewShadowPriest(character core.Character, options proto.Player) *ShadowPrie
 }
 
 type ShadowPriest struct {
-	*priest.Priest
+	DPstatH  float64
+	DPstatpH float64
+	DPstatSp float64
 
+	VTstatH  float64
+	VTstatpH float64
+	VTstatSp float64
+
+	*priest.Priest
 	rotation proto.ShadowPriest_Rotation
 }
 

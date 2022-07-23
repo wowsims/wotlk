@@ -3,18 +3,7 @@
 	--theme-color-primary: #a35ec0;
 	--theme-color-background: rgb(24, 18, 27);
 	--theme-color-background-raw: 24, 18, 27;
-	--theme-background-image: url('/wotlk/assets/warlock_background.jpg');
+	--theme-background-image: url('/wotlk/assets/img/warlock_background.jpg');
 	--theme-background-opacity: 0.87;
 	--main-text-color: White;
-}
-
-// Set grid width for icon sections based on how many buffs we configured.
-.warlock-sim-ui .self-buffs-section {
-  grid-template-columns: repeat(2, 1fr);
-}
-.warlock-sim-ui .pets-section {
-  grid-template-columns: repeat(2, 1fr);
-}
-.warlock-sim-ui .spell-section {
-  grid-template-columns: repeat(5, 2fr);
 }

@@ -109,10 +109,9 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 				}),
 			},
 
-			// IconInputs to include in the 'Self Buffs' section on the settings tab.
-			selfBuffInputs: [
-				MageInputs.MageArmor,
-				MageInputs.MoltenArmor,
+			// IconInputs to include in the 'Player' section on the settings tab.
+			playerIconInputs: [
+				MageInputs.Armor,
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: MageInputs.MageRotationConfig,
@@ -128,12 +127,6 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 				],
 			},
 			encounterPicker: {
-				// Target stats to show for 'Simple' encounters.
-				simpleTargetStats: [
-					Stat.StatArcaneResistance,
-					Stat.StatFireResistance,
-					Stat.StatFrostResistance,
-				],
 				// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
 				showExecuteProportion: true,
 			},

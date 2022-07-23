@@ -95,17 +95,17 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P1_PRESET.gear,
+				gear: Presets.PRERAID_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatIntellect]: 0.01,
-					[Stat.StatAgility]: 2.5,
-					[Stat.StatStrength]: 0.15,
-					[Stat.StatAttackPower]: 0.15,
+					[Stat.StatIntellect]: 0.7,
+					[Stat.StatAgility]: 3.2,
+					[Stat.StatStrength]: 0.05,
+					[Stat.StatAttackPower]: 0.05,
 					[Stat.StatRangedAttackPower]: 1.0,
-					[Stat.StatMeleeHit]: 0.3,
-					[Stat.StatMeleeCrit]: 2.3,
-					[Stat.StatMeleeHaste]: 1.97,
+					[Stat.StatMeleeHit]: 3,
+					[Stat.StatMeleeCrit]: 1.2,
+					[Stat.StatMeleeHaste]: 2.4,
 					[Stat.StatArmorPenetration]: 0.4,
 				}),
 				// Default consumes settings.
@@ -125,6 +125,9 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 					windfuryTotem: TristateEffect.TristateEffectImproved,
 					battleShout: TristateEffect.TristateEffectImproved,
 					leaderOfThePack: TristateEffect.TristateEffectImproved,
+					sanctifiedRetribution: true,
+					unleashedRage: true,
+					moonkinAura: TristateEffect.TristateEffectImproved,
 				}),
 				partyBuffs: PartyBuffs.create({
 				}),
@@ -135,23 +138,27 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				}),
 				debuffs: Debuffs.create({
 					sunderArmor: true,
-					curseOfWeakness: TristateEffect.TristateEffectRegular,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					judgementOfWisdom: true,
 					curseOfElements: true,
+					heartOfTheCrusader: true,
+					savageCombat: true,
 				}),
 			},
 
-			// IconInputs to include in the 'Self Buffs' section on the settings tab.
-			selfBuffInputs: [
+			// IconInputs to include in the 'Player' section on the settings tab.
+			playerIconInputs: [
+				HunterInputs.PetTypeInput,
 				HunterInputs.WeaponAmmo,
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: HunterInputs.HunterRotationConfig,
+			petConsumeInputs: [
+				IconInputs.SpicedMammothTreats,
+			],
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
-					HunterInputs.PetTypeInput,
 					HunterInputs.PetUptime,
 					//HunterInputs.PetSingleAbility,
 					HunterInputs.SniperTrainingUptime,
@@ -162,10 +169,6 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				],
 			},
 			encounterPicker: {
-				// Target stats to show for 'Simple' encounters.
-				simpleTargetStats: [
-					Stat.StatArmor,
-				],
 				// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
 				showExecuteProportion: false,
 			},
@@ -179,6 +182,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
+					Presets.PRERAID_PRESET,
 					Presets.P1_PRESET,
 				],
 			},

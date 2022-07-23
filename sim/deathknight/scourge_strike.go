@@ -4,11 +4,11 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-func (deathKnight *DeathKnight) registerScourgeStrikeShadowDamageSpell() *core.Spell {
-	actionID := core.ActionID{SpellID: 55271}
+var ScourgeStrikeActionID = core.ActionID{SpellID: 55271}
 
+func (deathKnight *DeathKnight) registerScourgeStrikeShadowDamageSpell() *core.Spell {
 	return deathKnight.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
+		ActionID:    ScourgeStrikeActionID.WithTag(2),
 		SpellSchool: core.SpellSchoolShadow,
 		Flags:       core.SpellFlagIgnoreResists | core.SpellFlagMeleeMetrics,
 
@@ -22,7 +22,7 @@ func (deathKnight *DeathKnight) registerScourgeStrikeShadowDamageSpell() *core.S
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return deathKnight.LastScourgeStrikeDamage * (float64(deathKnight.countActiveDiseases(hitEffect.Target)) * 0.12)
+					return deathKnight.LastScourgeStrikeDamage * (deathKnight.diseaseMultiplierBonus(hitEffect.Target, 0.12) - 1.0)
 				},
 			},
 		}),
@@ -30,9 +30,6 @@ func (deathKnight *DeathKnight) registerScourgeStrikeShadowDamageSpell() *core.S
 }
 
 func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 560.0, 0.7, true)
-	actionID := core.ActionID{SpellID: 55271}
-
 	outbreakBonus := 1.0
 	if deathKnight.Talents.Outbreak == 1 {
 		outbreakBonus = 1.07
@@ -45,7 +42,7 @@ func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
 	shadowDamageSpell := deathKnight.registerScourgeStrikeShadowDamageSpell()
 
 	deathKnight.ScourgeStrike = deathKnight.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
+		ActionID:    ScourgeStrikeActionID.WithTag(1),
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 
@@ -60,12 +57,15 @@ func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			BonusCritRating:  (3.0*float64(deathKnight.Talents.Subversion) + 3.0*float64(deathKnight.Talents.ViciousStrikes) + deathKnight.scourgeborneCritBonus()) * core.CritRatingPerCritChance,
+			BonusCritRating:  (deathKnight.subversionCritBonus() + deathKnight.viciousStrikesCritChanceBonus() + deathKnight.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,
 			DamageMultiplier: outbreakBonus,
 			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+					bonusBaseDamage := deathKnight.sigilOfAwarenessBonus(deathKnight.ScourgeStrike)
+					bonusBaseDamage += deathKnight.sigilOfArthriticBindingBonus()
+					weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 560.0+bonusBaseDamage, 0.7, true)
 					return weaponBaseDamage(sim, hitEffect, spell) *
 						deathKnight.rageOfRivendareBonus(hitEffect.Target) *
 						deathKnight.tundraStalkerBonus(hitEffect.Target)
@@ -73,21 +73,22 @@ func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
 				TargetSpellCoefficient: 1,
 			},
 
-			OutcomeApplier: deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.MeleeCritMultiplier(1.0, deathKnight.viciousStrikesBonus())),
+			OutcomeApplier: deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(deathKnight.MeleeCritMultiplier(1.0, deathKnight.viciousStrikesCritDamageBonus())),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				deathKnight.LastCastOutcome = spellEffect.Outcome
 				if spellEffect.Landed() {
 					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 1, 1)
 					deathKnight.Spend(sim, spell, dkSpellCost)
 
-					amountOfRunicPower := 15.0 + 2.5*float64(deathKnight.Talents.Dirge) + deathKnight.scourgeborneRunicPowerBonus()
+					amountOfRunicPower := 15.0 + 2.5*float64(deathKnight.Talents.Dirge) + deathKnight.scourgeborneBattlegearRunicPowerBonus()
 					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 
 					if deathKnight.DiseasesAreActive(spellEffect.Target) {
 						deathKnight.LastScourgeStrikeDamage = spellEffect.Damage
 						shadowDamageSpell.Cast(sim, spellEffect.Target)
-						deathKnight.ScourgeStrike.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 1
-						deathKnight.ScourgeStrike.SpellMetrics[spellEffect.Target.TableIndex].Hits -= 1
+						//deathKnight.ScourgeStrike.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 1
+						//deathKnight.ScourgeStrike.SpellMetrics[spellEffect.Target.TableIndex].Hits -= 1
 					}
 				}
 			},
@@ -97,4 +98,12 @@ func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
 
 func (deathKnight *DeathKnight) CanScourgeStrike(sim *core.Simulation) bool {
 	return deathKnight.Talents.ScourgeStrike && deathKnight.CastCostPossible(sim, 0.0, 0, 1, 1) && deathKnight.ScourgeStrike.IsReady(sim)
+}
+
+func (deathKnight *DeathKnight) CastScourgeStrike(sim *core.Simulation, target *core.Unit) bool {
+	if deathKnight.CanScourgeStrike(sim) {
+		deathKnight.ScourgeStrike.Cast(sim, target)
+		return true
+	}
+	return false
 }

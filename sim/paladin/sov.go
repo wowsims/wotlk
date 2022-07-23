@@ -45,6 +45,9 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	baseMultiplier += 0.03 * float64(paladin.Talents.SealsOfThePure)
 	baseMultiplier *= paladin.WeaponSpecializationMultiplier()
 
+	judgementMultiplier := baseMultiplier
+	judgementMultiplier *= 1 + core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfJudgement), 0.10, 0)
+
 	dot := paladin.createSealOfVengeanceDot(baseMultiplier)
 
 	onSwingProc := paladin.RegisterSpell(core.SpellConfig{
@@ -52,7 +55,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 		SpellSchool: core.SpellSchoolHoly,
 		Flags:       core.SpellFlagMeleeMetrics,
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeSpecial,
+			ProcMask: core.ProcMaskEmpty, // Might need to be changed later if SOV secondary rolls can proc other things.
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					if !dot.IsActive() {
@@ -70,10 +73,10 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	onJudgementProc := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 31804}, // Judgement of Vengeance.
 		SpellSchool: core.SpellSchoolHoly,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | SpellFlagSecondaryJudgement,
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeOrRangedSpecial,
-			DamageMultiplier: baseMultiplier,
+			DamageMultiplier: judgementMultiplier,
 			ThreatMultiplier: 1,
 
 			BonusCritRating: 6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance,
@@ -151,11 +154,11 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 			}
 
 			// Differ between judgements and other melee abilities.
-			if spell.Flags.Matches(SpellFlagJudgement) {
+			if spell.Flags.Matches(SpellFlagPrimaryJudgement) {
 				onJudgementProc.Cast(sim, spellEffect.Target)
 			} else {
 				if spellEffect.IsMelee() {
-					if dot.GetStacks() > 0 {
+					if dot.GetStacks() > 0 && spellEffect.Target == paladin.CurrentTarget {
 						onSpecialOrSwingProc.Cast(sim, spellEffect.Target)
 					}
 				}
@@ -168,7 +171,6 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	paladin.SealOfVengeance = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    auraActionID, // Seal of Vengeance self buff.
 		SpellSchool: core.SpellSchoolHoly,
-		Flags:       SpellFlagSeal,
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,

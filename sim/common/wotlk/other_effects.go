@@ -9,8 +9,6 @@ import (
 )
 
 func init() {
-	core.AddEffectsToTest = false
-
 	core.NewItemEffect(37220, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		actionID := core.ActionID{ItemID: 37220}
@@ -307,7 +305,7 @@ func init() {
 	})
 
 	NewItemEffectWithHeroic(func(isHeroic bool) {
-		name := "Disloged Foreign Object"
+		name := "Dislodged Foreign Object"
 		itemID := int32(50353)
 		amount := 105.0
 		if isHeroic {
@@ -343,6 +341,9 @@ func init() {
 						NumTicks:        10,
 						Period:          time.Second * 2,
 						TickImmediately: true,
+						CleanUp: func(s *core.Simulation) {
+							procAura.Deactivate(sim)
+						},
 						OnAction: func(sim *core.Simulation) {
 							procAura.AddStack(sim)
 						},
@@ -381,6 +382,4 @@ func init() {
 			Spell: spell,
 		})
 	})
-
-	core.AddEffectsToTest = true
 }

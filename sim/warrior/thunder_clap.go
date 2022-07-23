@@ -91,5 +91,5 @@ func (warrior *Warrior) ShouldThunderClap(sim *core.Simulation, filler bool, mai
 	}
 
 	return maintainOnly &&
-		warrior.CurrentTarget.ShouldRefreshAuraWithTagAtPriority(sim, core.ThunderClapAuraTag, warrior.ThunderClapAura.Priority, time.Second*2)
+		warrior.CurrentTarget.ShouldRefreshAuraWithTagAtPriority(sim, core.AtkSpeedReductionAuraTag, warrior.ThunderClapAura.Priority, time.Second*2)
 }
