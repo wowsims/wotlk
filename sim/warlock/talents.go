@@ -14,18 +14,18 @@ func (warlock *Warlock) ApplyTalents() {
 		warlock.AddStatDependency(stats.Stamina, stats.Stamina, 1.01+(float64(warlock.Talents.DemonicEmbrace)*0.03))
 	}
 
-	// Suppression
+	// Suppression (Add 1% hit per point)
 	warlock.AddStat(stats.SpellHit, float64(warlock.Talents.Suppression)*core.SpellHitRatingPerHitChance)
+
+	// Backlash (Add 1% crit per point)
+	warlock.AddStat(stats.SpellCrit, float64(warlock.Talents.Backlash)*core.CritRatingPerCritChance)
 
 	// Shadow Mastery
 	warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + (0.03 * float64(warlock.Talents.ShadowMastery))
 
-	// Backlash (Add 1% crit per level)
-	warlock.AddStat(stats.SpellCrit, float64(warlock.Talents.Backlash)*core.CritRatingPerCritChance)
-
 	// Malediction (SP bonus)
 	if warlock.Talents.Malediction > 0 {
-		warlock.AddStatDependency(stats.SpellPower, stats.SpellPower, 1.0+(0.01*float64(warlock.Talents.Malediction)))
+		warlock.PseudoStats.MagicDamageDealtMultiplier += 0.01*float64(warlock.Talents.Malediction)
 	}
 
 	// Fel Vitality
@@ -126,10 +126,10 @@ func (warlock *Warlock) registerGlyphOfLifeTapAura() {
 		Duration: time.Second * 40,
 		Priority: float64(warlock.GetStat(stats.Spirit)),
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			warlock.AddStatDynamic(sim, stats.SpellPower, 0.2*float64(warlock.GetStat(stats.Spirit)))
+			warlock.AddStatDependency(stats.Spirit, stats.SpellPower, 1.2)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			warlock.AddStatDynamic(sim, stats.SpellPower, -0.2*float64(warlock.GetStat(stats.Spirit)))
+			warlock.AddStatDependency(stats.Spirit, stats.SpellPower, 1/1.2)
 		},
 	})
 }
@@ -424,3 +424,18 @@ func (warlock *Warlock) backdraftModifier() float64 {
 }
 
 
+// func (warlock *Warlock) spellDamageModifierHelper(spell *core.Spell) {
+// 	deathsEmbraceMultiplier:= 1.0 + 0.04*float64(warlock.Talents.DeathsEmbrace)
+// 	drainSoulExecutePhaseMultiplier := math.Sqrt((deathsEmbraceMultiplier - 1 + 4) / deathsEmbraceMultiplier)
+// 	// Because Death's Embrace and Drain Soul Execute bonus work additive and not multiplicative
+// 	//TODO : Fix (no square root) when DamageMultiplier is fixed
+
+// 	// Shadow Mastery
+// 	warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + (0.03 * float64(warlock.Talents.ShadowMastery))
+// 	// Emberstorm
+//  	(1 + 0.03*float64(warlock.Talents.Emberstorm))
+//  	//Imbues
+// 	warlock.PseudoStats.DirectMagicDamageDealtMultiplier += 0.01
+// 	warlock.PseudoStats.PeriodicMagicDamageDealtMultiplier += 0.01
+// 	//
+// }

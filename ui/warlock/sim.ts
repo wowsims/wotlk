@@ -36,12 +36,12 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			cssClass: 'warlock-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"<p>This sim is under current development for Wrath of the Lich King. Take the dps numbers with a salt shaker.</p>\
-				<p>Talents and Glyphs are ready.</p>\
-				<p>Rotations are almost ready.</p>\
-				<p>Additive damage multipliers need to be fixed.</p>"
+				"<p>This sim is under current development for Wrath of the Lich King. Take the dps numbers with a salt shaker.</p>",
+				"<p>Talents and Glyphs are ready.</p>",
+				"<p>Rotations are almost ready.</p>",
+				"<p>Additive damage multipliers need to be fixed.</p>",
+				"<p>If you spot a bug, please report it. Your input is very much welcome.</p>",
 			],
-			// race: Race.RaceOrc,
 
 			// All stats for which EP should be calculated.
 			epStats: [
@@ -140,7 +140,6 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			encounterPicker: {
 				// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
 				showExecuteProportion: false,
-				// executeProportion20: 0.25,
 			},
 
 			presets: {

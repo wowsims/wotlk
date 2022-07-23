@@ -8,10 +8,10 @@ import (
 func (warlock *Warlock) applyWeaponImbue() {
 	if warlock.Options.WeaponImbue == proto.Warlock_Options_GrandFirestone {
 		warlock.AddStat(stats.SpellCrit, 49*(1+1.5*float64(warlock.Talents.MasterConjuror)))
-		warlock.PseudoStats.DirectMagicDamageDealtMultiplier *= 1.01
+		warlock.PseudoStats.DirectMagicDamageDealtMultiplier += 0.01
 	}
 	if warlock.Options.WeaponImbue == proto.Warlock_Options_GrandSpellstone {
 		warlock.AddStat(stats.SpellHaste, 60*(1+1.5*float64(warlock.Talents.MasterConjuror)))
-		warlock.PseudoStats.PeriodicMagicDamageDealtMultiplier *= 1.01
+		warlock.PseudoStats.PeriodicMagicDamageDealtMultiplier += 0.01
 	}
 }
