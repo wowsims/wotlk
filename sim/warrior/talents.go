@@ -45,6 +45,7 @@ func (warrior *Warrior) ApplyTalents() {
 	warrior.applyOneHandedWeaponSpecialization()
 	warrior.applyTwoHandedWeaponSpecialization()
 	warrior.applyWeaponSpecializations()
+	warrior.applyTrauma()
 	warrior.applyBloodFrenzy()
 	warrior.applyUnbridledWrath()
 	warrior.applyFlurry()
@@ -117,6 +118,33 @@ func (warrior *Warrior) applyTasteForBlood() {
 			}
 			icd.Use(sim)
 			warrior.overpowerValidUntil = sim.CurrentTime + time.Second*9
+		},
+	})
+}
+
+func (warrior *Warrior) applyTrauma() {
+	if warrior.Talents.Trauma == 0 {
+		return
+	}
+
+	for i := int32(0); i < warrior.Env.GetNumTargets(); i++ {
+		target := warrior.Env.GetTargetUnit(i)
+		warrior.TraumaAuras = append(warrior.TraumaAuras, core.TraumaAura(target, int(warrior.Talents.Trauma)))
+	}
+
+	warrior.RegisterAura(core.Aura{
+		Label:    "Trauma",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+				return
+			}
+			proc := warrior.TraumaAuras[spellEffect.Target.Index]
+			proc.Duration = time.Minute * 1
+			aura.Activate(sim)
 		},
 	})
 }

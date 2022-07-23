@@ -64,7 +64,8 @@ export const WarriorRotationConfig = {
 		InputHelpers.makeRotationBooleanInput<Spec.SpecWarrior>({
 			fieldName: 'prioritizeWw',
 			label: 'Prioritize WW',
-			labelTooltip: 'Prioritize Whirlwind over Bloodthirst or Mortal Strike.',
+			labelTooltip: 'Prioritize Whirlwind over Bloodthirst.',
+			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().bloodthirst,
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecWarrior>({
 			fieldName: 'msRageThreshold',
@@ -106,6 +107,7 @@ export const WarriorRotationConfig = {
 			fieldName: 'useWwDuringExecute',
 			label: 'WW during Execute Phase',
 			labelTooltip: 'Use Whirlwind during Execute Phase.',
+			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().bloodthirst,
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecWarrior>({
 			fieldName: 'useSlamOverExecute',
