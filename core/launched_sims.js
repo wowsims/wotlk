@@ -16,7 +16,7 @@ export const simLaunchStatuses = {
     [Spec.SpecEnhancementShaman]: LaunchStatus.Unlaunched,
     [Spec.SpecFeralDruid]: LaunchStatus.Unlaunched,
     [Spec.SpecFeralTankDruid]: LaunchStatus.Unlaunched,
-    [Spec.SpecHunter]: LaunchStatus.Unlaunched,
+    [Spec.SpecHunter]: LaunchStatus.Alpha,
     [Spec.SpecMage]: LaunchStatus.Unlaunched,
     [Spec.SpecRogue]: LaunchStatus.Unlaunched,
     [Spec.SpecRetributionPaladin]: LaunchStatus.Unlaunched,
