@@ -11,12 +11,12 @@ import (
 func (shaman *Shaman) newFireNovaSpell() {
 	manaCost := 0.22 * shaman.BaseMana
 
-	fireNovaGlyphCDReduction := core.TernaryInt32(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfFireNova), 3, 0)
+	fireNovaGlyphCDReduction := core.TernaryDuration(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfFireNova), 3, 0)
 	impFireNovaCDReduction := 2 * shaman.Talents.ImprovedFireNova
 	fireNovaCooldown := time.Second * (10 - fireNovaGlyphCDReduction - impFireNovaCDReduction)
 
 	shaman.FireNova = shaman.RegisterSpell(core.SpellConfig{
-		ActionId:    core.ActionID{SpellID: 61657},
+		ActionID:    core.ActionID{SpellID: 61657},
 		SpellSchool: core.SpellSchoolFire,
 
 		ResourceType: stats.Mana,
@@ -42,7 +42,7 @@ func (shaman *Shaman) newFireNovaSpell() {
 			ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
 
 			BaseDamage:     core.BaseDamageConfigMagic(893, 997, 0.2142), // FIXME: double check spell coefficients
-			OutcomeApplier: core.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier()),
+			OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier()),
 		}),
 	})
 }
