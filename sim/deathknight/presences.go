@@ -86,7 +86,7 @@ func (deathKnight *DeathKnight) registerBloodPresenceAura(timer *core.Timer) {
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    timer,
-				Duration: time.Millisecond * 1500,
+				Duration: time.Second,
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
@@ -125,7 +125,7 @@ func (deathKnight *DeathKnight) registerFrostPresenceAura(timer *core.Timer) {
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    timer,
-				Duration: time.Millisecond * 1500,
+				Duration: time.Second,
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
@@ -167,7 +167,7 @@ func (deathKnight *DeathKnight) registerUnholyPresenceAura(timer *core.Timer) {
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    timer,
-				Duration: time.Millisecond * 1500,
+				Duration: time.Second,
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
