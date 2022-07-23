@@ -76,9 +76,9 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				gear: Presets.P1_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatIntellect]: 0.078,
-					[Stat.StatAgility]: 1.317,
-					[Stat.StatStrength]: 2.2,
+					[Stat.StatIntellect]: 1.378,
+					[Stat.StatAgility]: 1.517,
+					[Stat.StatStrength]: 1.1,
 					[Stat.StatSpellPower]: 0.433,
 					[Stat.StatNatureSpellPower]: 0.216,
 					[Stat.StatAttackPower]: 1.0,
@@ -127,6 +127,7 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				ShamanInputs.ShamanShieldInput,
 				ShamanInputs.Bloodlust,
                 ShamanInputs.ShamanImbueMH,
+                ShamanInputs.ShamanImbueOH,
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: ShamanInputs.EnhancementShamanRotationConfig, 
@@ -151,7 +152,6 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				// Preset talents that the user can quickly select.
 				talents: [
 					Presets.StandardTalents,
-					Presets.RestoSubspecTalents,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [

@@ -31,16 +31,9 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 export const StandardTalents = {
-	name: 'Ele Sub',
+	name: 'Standard',
 	data: SavedTalents.create({
-		talentsString: '250030502-502500210501133531151',
-	}),
-};
-
-export const RestoSubspecTalents = {
-	name: 'Resto Sub',
-	data: SavedTalents.create({
-		talentsString: '02-502500210502133531151-05005301',
+		talentsString: '053030152-30205023105021333031131031051',
 	}),
 };
 
