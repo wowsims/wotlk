@@ -5,6 +5,12 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
+func (enh *EnhancementShaman) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
+	if enh.GCD.IsReady(sim) {
+		enh.tryUseGCD(sim)
+	}
+}
+
 func (enh *EnhancementShaman) OnGCDReady(sim *core.Simulation) {
 	enh.tryUseGCD(sim)
 }
@@ -29,7 +35,7 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 	target := sim.GetTargetUnit(0)
 
 	if enh.Talents.Stormstrike {
-		if enh.Stormstrike.IsReady(sim) {
+		if (enh.StormstrikeDebuffAura(target).GetStacks() > 0) && enh.Stormstrike.IsReady(sim) {
 			if !enh.Stormstrike.Cast(sim, target) {
 				enh.WaitForMana(sim, enh.Stormstrike.CurCast.Cost)
 			}
@@ -46,6 +52,15 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 		}
 	}
 
+	if enh.Talents.Stormstrike {
+		if enh.Stormstrike.IsReady(sim) {
+			if !enh.Stormstrike.Cast(sim, target) {
+				enh.WaitForMana(sim, enh.Stormstrike.CurCast.Cost)
+			}
+			return
+		}
+	}
+
 	if !enh.FlameShockDot.IsActive() && enh.FlameShock.IsReady(sim) {
 		if !enh.FlameShock.Cast(sim, target) {
 			enh.WaitForMana(sim, enh.FlameShock.CurCast.Cost)
@@ -54,13 +69,14 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 	}
 
 	if enh.EarthShock.IsReady(sim) {
-		if !enh.FlameShock.Cast(sim, target) {
+		if !enh.EarthShock.Cast(sim, target) {
 			enh.WaitForMana(sim, enh.EarthShock.CurCast.Cost)
 		}
 		return
 	}
 
 	enh.LightningShield.Cast(sim, nil)
+
 	enh.DoNothing()
 	return
 }
