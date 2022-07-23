@@ -46,7 +46,8 @@ type Rune struct {
 }
 
 type runicPowerBar struct {
-	unit *Unit
+	unit         *Unit
+	bladeBarrier bool
 
 	maxRunicPower     float64
 	currentRunicPower float64
@@ -112,14 +113,15 @@ func (rp *runicPowerBar) reset(sim *Simulation) {
 	ResetRunes(sim, &rp.unholyRunes, RuneKind_Unholy)
 }
 
-func (unit *Unit) EnableRunicPowerBar(currentRunicPower float64, maxRunicPower float64,
+func (unit *Unit) EnableRunicPowerBar(bladeBarrier bool, currentRunicPower float64, maxRunicPower float64,
 	onBloodRuneGain OnBloodRuneGain,
 	onFrostRuneGain OnFrostRuneGain,
 	onUnholyRuneGain OnUnholyRuneGain,
 	onDeathRuneGain OnDeathRuneGain,
 	onRunicPowerGain OnRunicPowerGain) {
 	unit.runicPowerBar = runicPowerBar{
-		unit: unit,
+		unit:         unit,
+		bladeBarrier: bladeBarrier,
 
 		maxRunicPower:     maxRunicPower,
 		currentRunicPower: currentRunicPower,
@@ -141,6 +143,9 @@ func (unit *Unit) EnableRunicPowerBar(currentRunicPower float64, maxRunicPower f
 	unit.frostRuneGainMetrics = unit.NewFrostRuneMetrics(ActionID{OtherID: proto.OtherAction_OtherActionFrostRuneGain, Tag: 1})
 	unit.unholyRuneGainMetrics = unit.NewUnholyRuneMetrics(ActionID{OtherID: proto.OtherAction_OtherActionUnholyRuneGain, Tag: 1})
 	unit.deathRuneGainMetrics = unit.NewDeathRuneMetrics(ActionID{OtherID: proto.OtherAction_OtherActionDeathRuneGain, Tag: 1})
+
+	unit.runicPowerBar.unit = unit
+
 }
 
 func (unit *Unit) HasRunicPowerBar() bool {
@@ -685,6 +690,13 @@ func (rp *runicPowerBar) SpendBloodRune(sim *Simulation, metrics *ResourceMetric
 	r := &rp.bloodRunes[spendSlot]
 	rp.LaunchRuneRegenPA(sim, r)
 
+	if rp.bladeBarrier {
+		if (rp.bloodRunes[0].state == RuneState_Spent || rp.bloodRunes[0].state == RuneState_DeathSpent) ||
+			(rp.bloodRunes[1].state == RuneState_Spent || rp.bloodRunes[1].state == RuneState_DeathSpent) {
+			rp.unit.GetAura("Blade Barrier").Activate(sim)
+		}
+	}
+
 	return spendSlot
 }
 
@@ -750,4 +762,11 @@ func (rp *runicPowerBar) SpendDeathRune(sim *Simulation, metrics *ResourceMetric
 	}
 
 	rp.LaunchRuneRegenPA(sim, r)
+
+	if rp.bladeBarrier {
+		if (rp.bloodRunes[0].state == RuneState_Spent || rp.bloodRunes[0].state == RuneState_DeathSpent) ||
+			(rp.bloodRunes[1].state == RuneState_Spent || rp.bloodRunes[1].state == RuneState_DeathSpent) {
+			rp.unit.GetAura("Blade Barrier").Activate(sim)
+		}
+	}
 }

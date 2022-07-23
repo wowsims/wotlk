@@ -20,6 +20,9 @@ func (deathKnight *DeathKnight) ApplyBloodTalents() {
 	// Subversion
 	// TODO: Implement
 
+	// Blade barrier
+	deathKnight.applyBladeBarrier()
+
 	// Bladed Armor
 	if deathKnight.Talents.BladedArmor > 0 {
 		coeff := float64(deathKnight.Talents.BladedArmor)
@@ -80,7 +83,28 @@ func (deathKnight *DeathKnight) subversionCritBonus() float64 {
 	return 3.0 * float64(deathKnight.Talents.Subversion)
 }
 
-var butcheryCanceled bool
+func (deathKnight *DeathKnight) applyBladeBarrier() {
+	if deathKnight.Talents.BladeBarrier == 0 {
+		return
+	}
+
+	damageTakenMult := 1.0 - 0.01*float64(deathKnight.Talents.BladeBarrier)
+
+	actionID := core.ActionID{SpellID: 55226}
+
+	deathKnight.BladeBarrierAura = deathKnight.RegisterAura(core.Aura{
+		Label:    "Blade Barrier",
+		ActionID: actionID,
+		Duration: time.Second * 10.0,
+
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.DamageTakenMultiplier *= damageTakenMult
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.DamageTakenMultiplier /= damageTakenMult
+		},
+	})
+}
 
 func (deathKnight *DeathKnight) applyButchery() {
 	if deathKnight.Talents.Butchery == 0 {

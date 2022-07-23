@@ -103,6 +103,8 @@ func (deathKnight *DeathKnight) SetupRotation() {
 		rotationId = RotationID_FrostSubBlood_Full
 	} else if deathKnight.Talents.BloodCakedBlade > 0 && deathKnight.Talents.HowlingBlast {
 		rotationId = RotationID_FrostSubUnholy_Full
+	} else if deathKnight.Talents.HowlingBlast {
+		rotationId = RotationID_FrostSubBlood_Full
 	} else if deathKnight.Talents.SummonGargoyle {
 		if deathKnight.Rotation.UseDeathAndDecay {
 			rotationId = RotationID_UnholyDnd_Full

@@ -97,17 +97,18 @@ type DeathKnight struct {
 	BloodCakedBladeAura *core.Aura
 	ButcheryAura        *core.Aura
 	RimeAura            *core.Aura
+	BladeBarrierAura    *core.Aura
 
 	// Talent Spells
 	LastDiseaseDamage float64
 	WanderingPlague   *core.Spell
 
 	// Presences
-	BloodPressence     *core.Spell
+	BloodPresence      *core.Spell
 	BloodPresenceAura  *core.Aura
-	FrostPressence     *core.Spell
+	FrostPresence      *core.Spell
 	FrostPresenceAura  *core.Aura
-	UnholyPressence    *core.Spell
+	UnholyPresence     *core.Spell
 	UnholyPresenceAura *core.Aura
 
 	// Debuffs
@@ -228,6 +229,7 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 	currentRunicPower := math.Min(maxRunicPower, deathKnightOptions.Options.StartingRunicPower+core.TernaryFloat64(deathKnightOptions.Options.PrecastHornOfWinter, 10.0, 0.0))
 
 	deathKnight.EnableRunicPowerBar(
+		deathKnight.Talents.BladeBarrier > 0,
 		currentRunicPower,
 		maxRunicPower,
 		func(sim *core.Simulation) {

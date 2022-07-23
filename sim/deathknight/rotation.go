@@ -106,21 +106,21 @@ func (o *Sequence) DoAction(sim *core.Simulation, target *core.Unit, deathKnight
 	case RotationAction_BP:
 		casted = deathKnight.CastBloodPresence(sim, target)
 		if !casted {
-			deathKnight.WaitUntil(sim, deathKnight.BloodPressence.CD.ReadyAt())
+			deathKnight.WaitUntil(sim, deathKnight.BloodPresence.CD.ReadyAt())
 		} else {
 			deathKnight.WaitUntil(sim, sim.CurrentTime)
 		}
 	case RotationAction_FP:
 		casted = deathKnight.CastFrostPresence(sim, target)
 		if !casted {
-			deathKnight.WaitUntil(sim, deathKnight.FrostPressence.CD.ReadyAt())
+			deathKnight.WaitUntil(sim, deathKnight.FrostPresence.CD.ReadyAt())
 		} else {
 			deathKnight.WaitUntil(sim, sim.CurrentTime)
 		}
 	case RotationAction_UP:
 		casted = deathKnight.CastUnholyPresence(sim, target)
 		if !casted {
-			deathKnight.WaitUntil(sim, deathKnight.UnholyPressence.CD.ReadyAt())
+			deathKnight.WaitUntil(sim, deathKnight.UnholyPresence.CD.ReadyAt())
 		} else {
 			deathKnight.WaitUntil(sim, sim.CurrentTime)
 		}

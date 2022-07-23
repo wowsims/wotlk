@@ -51,7 +51,9 @@ func (deathKnight *DeathKnight) ApplyFrostTalents() {
 	}
 
 	// Frigid Dreadplate
-	// TODO: Implement
+	if deathKnight.Talents.FrigidDreadplate > 0 {
+		deathKnight.PseudoStats.BonusMeleeHitRatingTaken -= core.MeleeHitRatingPerHitChance * float64(deathKnight.Talents.FrigidDreadplate)
+	}
 
 	// Glacier rot
 	// Implemented outside
