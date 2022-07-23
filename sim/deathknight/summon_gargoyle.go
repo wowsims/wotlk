@@ -68,6 +68,9 @@ func (deathKnight *DeathKnight) registerSummonGargoyleCD() {
 		Priority: core.CooldownPriorityDrums - 1, // Always prefer to cast after drums or lust so the gargoyle gets their benefits.
 		Type:     core.CooldownTypeDPS,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
+			if deathKnight.opener.IsOngoing() {
+				return false
+			}
 			if deathKnight.Gargoyle.IsEnabled() {
 				return false
 			}
@@ -77,6 +80,18 @@ func (deathKnight *DeathKnight) registerSummonGargoyleCD() {
 			return true
 		},
 	})
+}
+
+func (deathKnight *DeathKnight) CanSummonGargoyle(sim *core.Simulation) bool {
+	return deathKnight.CastCostPossible(sim, 60.0, 0, 0, 0) && deathKnight.SummonGargoyle.IsReady(sim)
+}
+
+func (deathKnight *DeathKnight) CastSummonGargoyle(sim *core.Simulation, target *core.Unit) bool {
+	if deathKnight.CanSummonGargoyle(sim) {
+		deathKnight.SummonGargoyle.Cast(sim, target)
+		return true
+	}
+	return false
 }
 
 type GargoylePet struct {
