@@ -130,42 +130,6 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		}
 	} else {
 
-		// Need a way to track spell power and haste procs and remaining duration between each spell to see if it's worth overwriting a current dot to snap shot a buff based on equations from discord
-
-		//spriest.VTstatH =  spriest.CastSpeed
-
-		//spriest.VTstatSp = spriest.GetStat(stats.SpellPower) + spriest.GetStat(stats.ShadowSpellPower)
-
-		//spriest.DPstatH =  spriest.CastSpeed
-		//spriest.DPstatSp = spriest.GetStat(stats.SpellPower) + spriest.GetStat(stats.ShadowSpellPower)
-
-		// prev_haste = getprevhaste
-		//prev_sp = getprevsp
-
-		//curr_haste = stats.haste
-		//curr_sp = stats.spellpower
-
-		//delta_sp = curr_sp - prev_sp
-		// delta_haste = curr_haste - prev_haste
-
-		// check if we should overwrite the current DP
-		//dp_check =  2.8897e-04*delta_sp^2 - 1.1083*delta_sp+ 516.09
-
-		//if delta_haste > dp_check{
-		//recast_DP = 1
-		//	}else{
-		//recast_DP = 0
-		//}
-
-		// check if we should overwrite the current DP
-		//	vt_check =  1.9459e-04*delta_sp ^2 + -1.0042*delta_sp + 1.2606e+03
-
-		//	if delta_haste > vt_check{
-		//recast_vt = 1
-		//}else{
-		//recast_vt = 0
-		//	}
-
 		// if shadow word pain is active on the target, then increase damage of MB/MF by 10%
 		if spriest.ShadowWordPainDot.IsActive() {
 			TFmod = float64(spriest.Talents.TwistedFaith) * 0.02
@@ -177,13 +141,11 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		if spriest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfMindFlay)) {
 			mfglyphMod = 0.1
 		}
+
 		swdmfglyphMod := 1.0
 		if spriest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadowWordDeath)) && sim.IsExecutePhase35() {
 			swdmfglyphMod = 1.1
 		}
-		// need to add if glyph of mind flay and swp is active increase mf by another 10%
-
-		// need to add a check that counts the number of shadow weaving stacks on a target.. if stacks > 2 && < 5,then determine if swp should be cast
 
 		// Reduce number of DP/VT ticks based on remaining duration
 		num_DP_ticks = math.Floor(remain_fight / DotTickSpeed)
@@ -199,8 +161,8 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		// Spell damage numbers that are updated before each cast in order to determine the most optimal next cast based on dps over a finite window
 		// This is needed throughout the code to determine the optimal spell(s) to cast next
 		// MB dmg
-		mb_dmg = (1025 + spriest.GetStat(stats.SpellPower)*(0.429*(1+float64(spriest.Talents.Misery)*0.05))) * (1 + float64(spriest.Talents.Darkness)*0.02) * (1 + TFmod) *
-			core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03))
+		mb_dmg = (1025 + spriest.GetStat(stats.SpellPower)*(0.428*(1+float64(spriest.Talents.Misery)*0.05))) * (1 + float64(spriest.Talents.Darkness)*0.02) * (1 + TFmod) *
+			core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.02))
 
 		// DP dmg
 		dp_init := ((172 + spriest.GetStat(stats.SpellPower)*0.1849) * 8.0 * float64(spriest.Talents.ImprovedDevouringPlague) * 0.1 * (1.0 + (float64(spriest.Talents.Darkness)*0.02 +
@@ -283,7 +245,9 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		if spriest.VampiricTouchDot.IsActive() {
 
 		}
-
+		if sim.Log != nil {
+			//priest.Log(sim, "spriest.PseudoStats.CastSpeedMultiplier %d", spriest.PseudoStats.CastSpeedMultiplier)
+		}
 		// Make an array of DPCT per spell that will be used to find the optimal spell to cast
 		spellDPCT := []float64{
 			// MB dps
@@ -310,11 +274,18 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 				bestDmg = v
 			}
 		}
-
+		if sim.Log != nil {
+			//spriest.Log(sim, "best=next[%d]", bestIdx)
+			//spriest.Log(sim, "best=dmg[%d]", bestDmg)
+		}
 		// Find the minimum CD ability to make sure that shouldnt be cast first
 		nextCD := core.NeverExpires
 		nextIdx := -1
 		for i, v := range allCDs[1 : len(allCDs)-1] {
+			if sim.Log != nil {
+				//spriest.Log(sim, "\tallCDs[%d]: %01.f", i, v)
+				//spriest.Log(sim, "\tcdDiffs[%d]: %0.1f", i, cdDiffs[i].Seconds())
+			}
 			if v < nextCD {
 				nextCD = v
 				nextIdx = i + 1
@@ -471,6 +442,13 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		//if recast_DP > 0{ // override all previous analysis and just cast DP right now to snap shot new buffs. We'd rather do DP > VT, so if both want be recast, then do DP first. Need a way to cast VT on the next gcd, but dont have that yet
 		// bestIdx = 4
 		//}
+
+		if bestIdx == 3 && tickLength*2 <= gcd {
+			if spellDPCT[3] < spellDPCT[4]*2/3 {
+				bestIdx = 4
+			}
+		}
+
 		if chosen_mfs == 1 && allCDs[swdidx] == 0 {
 			bestIdx = 3
 			CurrentWait = 0
@@ -703,7 +681,7 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 		for i, v := range spellDamages {
 			if v > bestDmg {
 				if sim.Log != nil {
-					//	spriest.Log(sim, "\tspellDamages[%d]: %01.f", i, v)
+					spriest.Log(sim, "\tspellDamages[%d]: %01.f", i, v)
 				}
 				bestIdx = i
 				bestDmg = v
@@ -931,7 +909,12 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 			if sim.Log != nil {
 				//	spriest.Log(sim, "final_ticks %d", numTicks)
 			}
-
+			if numTicks == 1 && tickLength*3 <= gcd {
+				numTicks = numTicks + 2
+			}
+			if numTicks == 1 && tickLength*2 <= gcd {
+				numTicks = numTicks + 1
+			}
 			//  Now that the number of optimal ticks has been determined to optimize dps
 			//  Now optimize mf2s and mf3s
 			if numTicks == 1 {
