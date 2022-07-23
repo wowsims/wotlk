@@ -10,7 +10,7 @@ var StandardTalents = &proto.PriestTalents{
 	Meditation:             3,
 	ShadowAffinity:         3,
 	ImprovedShadowWordPain: 2,
-	ShadowFocus:            5,
+	ShadowFocus:            3,
 	ImprovedMindBlast:      5,
 	MindFlay:               true,
 	ShadowWeaving:          5,

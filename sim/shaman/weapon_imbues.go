@@ -28,7 +28,7 @@ func (shaman *Shaman) newWindfuryImbueSpell(isMH bool) *core.Spell {
 
 	baseEffect := core.SpellEffect{
 		BonusAttackPower: apBonus,
-		ProcMask:         core.ProcMaskEmpty,
+		ProcMask:         core.ProcMaskMelee,
 		DamageMultiplier: 1.0,
 		ThreatMultiplier: core.TernaryFloat64(shaman.Talents.SpiritWeapons, 0.7, 1),
 		OutcomeApplier:   shaman.OutcomeFuncMeleeSpecialHitAndCrit(shaman.DefaultMeleeCritMultiplier()),

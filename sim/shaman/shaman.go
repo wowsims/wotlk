@@ -34,7 +34,8 @@ func NewShaman(character core.Character, talents proto.ShamanTalents, totems pro
 	shaman.EnableManaBar()
 
 	// Add Shaman stat dependencies
-	shaman.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
+	shaman.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+1)
+	shaman.AddStatDependency(stats.Agility, stats.AttackPower, 1.0+1)
 	shaman.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+core.CritRatingPerCritChance/83.3)
 	// Set proper Melee Haste scaling
 	shaman.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
@@ -50,6 +51,8 @@ func NewShaman(character core.Character, talents proto.ShamanTalents, totems pro
 type SelfBuffs struct {
 	Bloodlust bool
 	Shield    proto.ShamanShield
+	ImbueMH   proto.ShamanImbue
+	ImbueOH   proto.ShamanImbue
 }
 
 // Indexes into NextTotemDrops for self buffs
@@ -86,6 +89,8 @@ type Shaman struct {
 	FireNova    *core.Spell
 	LavaLash    *core.Spell
 	Stormstrike *core.Spell
+
+	LightningShield *core.Spell
 
 	Thunderstorm *core.Spell
 
@@ -170,6 +175,7 @@ func (shaman *Shaman) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 
 	if shaman.Talents.UnleashedRage > 0 {
 		raidBuffs.UnleashedRage = true
+		shaman.AddStat(stats.Expertise, 3*float64(shaman.Talents.UnleashedRage))
 	}
 
 	if shaman.Talents.ElementalOath > 0 {
@@ -188,6 +194,7 @@ func (shaman *Shaman) Initialize() {
 	shaman.LightningBolt = shaman.newLightningBoltSpell(false)
 	shaman.LightningBoltLO = shaman.newLightningBoltSpell(true)
 	shaman.LavaBurst = shaman.newLavaBurstSpell()
+	shaman.registerLightningShieldSpell()
 	// shaman.FireNova = shaman.newFireNovaSpell()
 
 	shaman.ChainLightning = shaman.newChainLightningSpell(false)
