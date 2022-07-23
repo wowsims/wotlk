@@ -38,7 +38,7 @@ func (shaman *Shaman) newFireNovaSpell() *core.Spell {
 			BonusSpellHitRating:  float64(shaman.Talents.ElementalPrecision) * 2 * core.SpellHitRatingPerHitChance,
 			BonusSpellCritRating: float64(1.0) * 2 * core.CritRatingPerCritChance,
 
-			DamageMultiplier: 1 + float64(shaman.Talents.CallOfFlame)*0.05,
+			DamageMultiplier: 1 + float64(shaman.Talents.CallOfFlame)*0.05 + float64(shaman.Talents.ImprovedFireNova)*0.1,
 			ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
 
 			BaseDamage:     core.BaseDamageConfigMagic(893, 997, 0.2142), // FIXME: double check spell coefficients
