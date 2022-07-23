@@ -141,6 +141,7 @@ class GlyphSelectorModal extends Popup {
 		super(parent);
 
 		this.rootElem.classList.add('selector-modal');
+		this.rootElem.classList.add('glyph-modal');
 		this.rootElem.innerHTML = `
 			<div class="selector-modal-tab-content-header">
 				<input class="selector-modal-search" type="text" placeholder="Search...">
