@@ -12,9 +12,10 @@ func (paladin *Paladin) registerExorcismSpell() {
 	// From the perspective of max rank.
 	baseCost := paladin.BaseMana * 0.08
 
-	baseMultiplier := 1.0
-	baseMultiplier += 0.05 * float64(paladin.Talents.SanctityOfBattle)
-	baseMultiplier += core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfExorcism), 0.20, 0)
+	baseModifiers := Modifiers{
+		{0.05 * float64(paladin.Talents.SanctityOfBattle), core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfExorcism), 0.20, 0)},
+	}
+	baseMultiplier := baseModifiers.Get()
 
 	scaling := hybridScaling{
 		AP: 0.15,

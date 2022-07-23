@@ -11,9 +11,10 @@ import (
 func (paladin *Paladin) registerDivineStormSpell() {
 	baseCost := paladin.BaseMana * 0.12
 
-	baseMultiplier := 1.0
-	// Additive bonuses
-	baseMultiplier += 0.05 * float64(paladin.Talents.TheArtOfWar)
+	baseModifiers := Modifiers{
+		{0.05 * float64(paladin.Talents.TheArtOfWar)},
+	}
+	baseMultiplier := baseModifiers.Get()
 
 	baseEffectMH := core.SpellEffect{ // wait how will this work, something like whirlwind
 		ProcMask: core.ProcMaskMeleeMHSpecial,

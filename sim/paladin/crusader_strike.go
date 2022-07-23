@@ -11,10 +11,10 @@ import (
 func (paladin *Paladin) registerCrusaderStrikeSpell() {
 	baseCost := paladin.BaseMana * 0.05
 
-	baseMultiplier := 1.0
-	// Additive bonuses
-	baseMultiplier += 0.05 * float64(paladin.Talents.SanctityOfBattle)
-	baseMultiplier += 0.05 * float64(paladin.Talents.TheArtOfWar)
+	baseModifiers := Modifiers{
+		{0.05 * float64(paladin.Talents.SanctityOfBattle), 0.05 * float64(paladin.Talents.TheArtOfWar)},
+	}
+	baseMultiplier := baseModifiers.Get()
 
 	paladin.CrusaderStrike = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 35395},
