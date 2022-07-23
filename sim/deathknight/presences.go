@@ -78,7 +78,7 @@ func (deathKnight *DeathKnight) CastUnholyPresence(sim *core.Simulation, target 
 
 func (deathKnight *DeathKnight) registerBloodPresenceAura(timer *core.Timer) {
 	threatMult := 0.8
-	threatMultSubversion := 0.75
+	threatMultSubversion := 1.0 - deathKnight.subversionThreatBonus()
 	//TODO: Include hps bonus
 	damageBonusCoeff := 0.15
 	staminaMult := 1.0 + 0.04*float64(deathKnight.Talents.ImprovedFrostPresence)
@@ -166,7 +166,7 @@ func (deathKnight *DeathKnight) registerFrostPresenceAura(timer *core.Timer) {
 }
 
 func (deathKnight *DeathKnight) registerUnholyPresenceAura(timer *core.Timer) {
-	threatMultiplierSubversion := 0.75
+	threatMultSubversion := 1.0 - deathKnight.subversionThreatBonus()
 	staminaMult := 1.0 + 0.04*float64(deathKnight.Talents.ImprovedFrostPresence)
 
 	deathKnight.UnholyPresence = deathKnight.RegisterSpell(core.SpellConfig{
@@ -191,12 +191,12 @@ func (deathKnight *DeathKnight) registerUnholyPresenceAura(timer *core.Timer) {
 		ActionID: core.ActionID{SpellID: 48265},
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.ThreatMultiplier *= threatMultiplierSubversion
+			aura.Unit.PseudoStats.ThreatMultiplier *= threatMultSubversion
 			aura.Unit.PseudoStats.MeleeSpeedMultiplier *= 1.15
 			aura.Unit.AddStatDependencyDynamic(sim, stats.Stamina, stats.Stamina, staminaMult)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.ThreatMultiplier /= threatMultiplierSubversion
+			aura.Unit.PseudoStats.ThreatMultiplier /= threatMultSubversion
 			aura.Unit.PseudoStats.MeleeSpeedMultiplier /= 1.15
 			aura.Unit.AddStatDependencyDynamic(sim, stats.Stamina, stats.Stamina, 1.0/staminaMult)
 		},

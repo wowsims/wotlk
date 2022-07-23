@@ -79,6 +79,18 @@ func (deathKnight *DeathKnight) ApplyBloodTalents() {
 	}
 }
 
+func (deathKnight *DeathKnight) subversionThreatBonus() float64 {
+	threatMultiplier := 0.0
+	if deathKnight.Talents.Subversion == 1 {
+		threatMultiplier = 0.08
+	} else if deathKnight.Talents.Subversion == 2 {
+		threatMultiplier = 0.16
+	} else if deathKnight.Talents.Subversion == 3 {
+		threatMultiplier = 0.25
+	}
+	return threatMultiplier
+}
+
 func (deathKnight *DeathKnight) subversionCritBonus() float64 {
 	return 3.0 * float64(deathKnight.Talents.Subversion)
 }
