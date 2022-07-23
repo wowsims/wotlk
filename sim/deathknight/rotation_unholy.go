@@ -4,41 +4,72 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (deathKnight *DeathKnight) setupUnholyRotations() {
 
-	// This defines the Sub Blood opener
-	deathKnight.DefineOpener(RotationID_Unholy_Full, []RotationAction{})
+	deathKnight.DefineOpener(RotationID_UnholySsUnholyPresence_Full, []RotationAction{
+		RotationAction_IT,
+		RotationAction_PS,
+		RotationAction_BS,
+		RotationAction_SS,
+		RotationAction_Garg,
+		RotationAction_ERW,
+		RotationAction_BP,
+		RotationAction_SS,
+		RotationAction_SS,
+		RotationAction_BS,
+	})
+
+	deathKnight.DefineOpener(RotationID_UnholySsArmyUnholyPresence_Full, []RotationAction{
+		RotationAction_IT,
+		RotationAction_PS,
+		RotationAction_BS,
+		RotationAction_SS,
+		RotationAction_Garg,
+		RotationAction_ERW,
+		RotationAction_AOTD,
+		RotationAction_BP,
+		RotationAction_SS,
+	})
+
+	deathKnight.DefineOpener(RotationID_UnholySsBloodPresence_Full, []RotationAction{
+		RotationAction_IT,
+		RotationAction_PS,
+		RotationAction_BS,
+		RotationAction_SS,
+		RotationAction_BT,
+		RotationAction_UP,
+		RotationAction_Garg,
+		RotationAction_ERW,
+		RotationAction_BP,
+		RotationAction_SS,
+		RotationAction_SS,
+		RotationAction_BS,
+	})
+
+	deathKnight.DefineOpener(RotationID_UnholySsArmyBloodPresence_Full, []RotationAction{
+		RotationAction_IT,
+		RotationAction_PS,
+		RotationAction_BS,
+		RotationAction_SS,
+		RotationAction_BT,
+		RotationAction_UP,
+		RotationAction_Garg,
+		RotationAction_ERW,
+		RotationAction_AOTD,
+		RotationAction_BP,
+		RotationAction_SS,
+	})
 }
 
 func (deathKnight *DeathKnight) UnholyDiseaseCheckWrapper(sim *core.Simulation, target *core.Unit, spell *core.Spell) bool {
 	success := false
 
-	if !deathKnight.TargetHasDisease(FrostFeverAuraLabel, target) {
+	if !deathKnight.TargetHasDisease(FrostFeverAuraLabel, target) || deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim) < spell.CurCast.GCD {
 		success = deathKnight.CastIcyTouch(sim, target)
-	} else if !deathKnight.TargetHasDisease(BloodPlagueAuraLabel, target) {
+	} else if !deathKnight.TargetHasDisease(BloodPlagueAuraLabel, target) || deathKnight.BloodPlagueDisease[target.Index].RemainingDuration(sim) < spell.CurCast.GCD {
 		success = deathKnight.CastPlagueStrike(sim, target)
-	} else if deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim) < spell.CurCast.GCD ||
-		deathKnight.BloodPlagueDisease[target.Index].RemainingDuration(sim) < spell.CurCast.GCD {
-		success = deathKnight.CastPestilence(sim, target)
-		if deathKnight.LastCastOutcome == core.OutcomeMiss {
-			// Deal with pestilence miss
-			// TODO:
-			if deathKnight.opener.id == RotationID_FrostSubUnholy_Full {
-				deathKnight.PushSequence([]RotationAction{
-					RotationAction_BS,
-					RotationAction_FS,
-					RotationAction_IT,
-					RotationAction_PS,
-					RotationAction_Obli,
-					RotationAction_Obli,
-					RotationAction_FS,
-					RotationAction_FS,
-				})
-			}
-		}
 	} else {
 		if deathKnight.CanCast(sim, spell) {
 			ffExpiresIn := deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim)
@@ -53,11 +84,7 @@ func (deathKnight *DeathKnight) UnholyDiseaseCheckWrapper(sim *core.Simulation, 
 			runeCostForSpell := deathKnight.RuneAmountForSpell(spell)
 			spellCost := crpb.DetermineOptimalCost(sim, runeCostForSpell.Blood, runeCostForSpell.Frost, runeCostForSpell.Unholy)
 
-			// Add whichever non-frost specific checks you want here, I guess you'll need them.
-
-			if !(deathKnight.RimeAura.IsActive() && spell == deathKnight.HowlingBlast) {
-				crpb.Spend(sim, spell, spellCost)
-			}
+			crpb.Spend(sim, spell, spellCost)
 
 			if crpb.CurrentBloodRunes() == 0 && crpb.CurrentDeathRunes() == 0 {
 				nextBloodRuneAt := float64(crpb.BloodRuneReadyAt(sim))
@@ -92,11 +119,6 @@ func (deathKnight *DeathKnight) doUnholyRotation(sim *core.Simulation, target *c
 	// deathKnight.YourWrapper(sim, target, deathKnight.FrostStrike) that returns a bool for when you casted
 	// since the waiting code relies on knowing if you actually casted
 
-	if deathKnight.CanRaiseDead(sim) {
-		deathKnight.RaiseDead.Cast(sim, target)
-		*casted = true
-		return *casted
-	}
 	diseaseRefreshDuration := time.Duration(deathKnight.Rotation.DiseaseRefreshDuration) * time.Second
 	// Horn of Winter if you're the DK to refresh it and its not precasted/active
 	if deathKnight.ShouldHornOfWinter(sim) {
@@ -123,11 +145,7 @@ func (deathKnight *DeathKnight) doUnholyRotation(sim *core.Simulation, target *c
 			recastedBP = true
 		}
 	} else {
-		if deathKnight.PresenceMatches(UnholyPresence) && (deathKnight.Rotation.ArmyOfTheDead != proto.DeathKnight_Rotation_AsMajorCd || !deathKnight.ArmyOfTheDead.CD.IsReady(sim)) && !deathKnight.SummonGargoyle.CD.IsReady(sim) && deathKnight.CanBloodPresence(sim) {
-			// Swap to blood presence after gargoyle cast
-			deathKnight.BloodPressence.Cast(sim, target)
-			deathKnight.WaitUntil(sim, sim.CurrentTime+1)
-		} else if deathKnight.Talents.Desolation > 0 && !deathKnight.DesolationAura.IsActive() && deathKnight.CanBloodStrike(sim) && !deathKnight.shouldWaitForDnD(sim, true, false, false) {
+		if deathKnight.Talents.Desolation > 0 && !deathKnight.DesolationAura.IsActive() && deathKnight.CanBloodStrike(sim) && !deathKnight.shouldWaitForDnD(sim, true, false, false) {
 			// Desolation and Pestilence check
 			if deathKnight.shouldSpreadDisease(sim) {
 				deathKnight.spreadDiseases(sim, target)
