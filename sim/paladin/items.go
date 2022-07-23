@@ -34,6 +34,32 @@ var ItemSetAegisBattlegear = core.NewItemSet(core.ItemSet{
 	},
 })
 
+// Tier 9 ret (Alliance)
+var ItemSetTuralyonsBattlegear = core.NewItemSet(core.ItemSet{
+	Name: "Turalyon's Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Implemented in talents.go (Righteous Vengeance)
+		},
+		4: func(agent core.Agent) {
+			// Implemented in soc.go, sor.go, sov.go
+		},
+	},
+})
+
+// Tier 9 ret (Horde)
+var ItemSetLiadrinsBattlegear = core.NewItemSet(core.ItemSet{
+	Name: "Liadrin's Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Implemented in talents.go (Righteous Vengeance)
+		},
+		4: func(agent core.Agent) {
+			// Implemented in soc.go, sor.go, sov.go
+		},
+	},
+})
+
 // Tier 10 ret
 var ItemSetLightswornBattlegear = core.NewItemSet(core.ItemSet{
 	Name: "Lightsworn Battlegear",

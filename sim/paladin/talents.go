@@ -368,9 +368,16 @@ func (paladin *Paladin) applyRighteousVengeance() {
 	// It drains the pool every 2 seconds at a rate of 1/4 of the pool size.
 	// And then deals that 1/4 as PHYSICAL damage.
 	// TODO: Can crit with certain set bonuses.
-
 	if paladin.Talents.RighteousVengeance == 0 {
 		return
+	}
+
+	var applier core.OutcomeApplier
+
+	if paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 2) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 2) {
+		applier = paladin.OutcomeFuncMeleeSpecialCritOnly(paladin.MeleeCritMultiplier())
+	} else {
+		applier = paladin.OutcomeFuncAlwaysHit()
 	}
 
 	targets := paladin.Env.GetNumTargets()
@@ -392,7 +399,7 @@ func (paladin *Paladin) applyRighteousVengeance() {
 						IsPeriodic:       true,
 						ProcMask:         core.ProcMaskPeriodicDamage,
 						DamageMultiplier: 1,
-						OutcomeApplier:   paladin.OutcomeFuncAlwaysHit(),
+						OutcomeApplier:   applier,
 						BaseDamage: core.BaseDamageConfig{
 							Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
 								pool += spellEffect.Damage * (0.10 * float64(paladin.Talents.RighteousVengeance))
@@ -426,7 +433,7 @@ func (paladin *Paladin) applyRighteousVengeance() {
 						IsPeriodic:       true,
 						ProcMask:         core.ProcMaskPeriodicDamage,
 						DamageMultiplier: 1,
-						OutcomeApplier:   paladin.OutcomeFuncAlwaysHit(),
+						OutcomeApplier:   applier,
 					})(sim, target, spell)
 				}
 			},
