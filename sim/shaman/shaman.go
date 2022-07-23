@@ -93,7 +93,6 @@ type Shaman struct {
 	FlameShock *core.Spell
 	FrostShock *core.Spell
 
-	FireNovaTotem        *core.Spell
 	GraceOfAirTotem      *core.Spell
 	MagmaTotem           *core.Spell
 	ManaSpringTotem      *core.Spell
@@ -188,7 +187,7 @@ func (shaman *Shaman) Initialize() {
 	shaman.LightningBolt = shaman.newLightningBoltSpell(false)
 	shaman.LightningBoltLO = shaman.newLightningBoltSpell(true)
 	shaman.LavaBurst = shaman.newLavaBurstSpell()
-	// shaman.FireNova = shaman.newFireNovaSpell()
+	shaman.FireNova = shaman.newFireNovaSpell()
 
 	shaman.ChainLightning = shaman.newChainLightningSpell(false)
 	numHits := core.MinInt32(3, shaman.Env.GetNumTargets())
@@ -253,6 +252,15 @@ func (shaman *Shaman) ElementalCritMultiplier() float64 {
 	if shaman.Talents.ElementalFury > 0 {
 		critMultiplier = shaman.SpellCritMultiplier(1, 0.2*float64(shaman.Talents.ElementalFury))
 	}
+	return critMultiplier
+}
+
+func (shaman *Shaman) EnhancementCritMultiplier() float64 {
+	critMultiplier := shaman.DefaultMeleeCritMultiplier()
+
+	// FIXME: Is flametongueImbueCrit handled in sim/shaman/weapon_imbues.go ?
+	// Looks like it.
+
 	return critMultiplier
 }
 
