@@ -186,8 +186,6 @@ func (deathKnight *DeathKnight) Initialize() {
 }
 
 func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
-	deathKnight.ResetRunicPowerBar(sim)
-
 	if deathKnight.Rotation.UnholyPresenceOpener {
 		deathKnight.UnholyPresenceAura.Activate(sim)
 		deathKnight.Presence = UnholyPresence
@@ -345,7 +343,7 @@ func (deathKnight *DeathKnight) critMultiplierGuile() float64 {
 	return deathKnight.MeleeCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile))
 }
 
-func DetermineOptimalCostForSpell(rp *core.CalcRunicPowerBar, sim *core.Simulation, deathKnight *DeathKnight, spell *core.Spell) core.DKRuneCost {
+func (deathKnight *DeathKnight) RuneAmountForSpell(spell *core.Spell) core.RuneAmount {
 	blood := 0
 	frost := 0
 	unholy := 0
@@ -385,7 +383,7 @@ func DetermineOptimalCostForSpell(rp *core.CalcRunicPowerBar, sim *core.Simulati
 		unholy = 1
 	}
 
-	return rp.DetermineOptimalCost(sim, blood, frost, unholy)
+	return core.RuneAmount{blood, frost, unholy, 0}
 }
 
 func (deathKnight *DeathKnight) CanCast(sim *core.Simulation, spell *core.Spell) bool {
