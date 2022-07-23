@@ -88,6 +88,8 @@ type Shaman struct {
 	LavaLash    *core.Spell
 	Stormstrike *core.Spell
 
+	LightningShield *core.Spell
+
 	Thunderstorm *core.Spell
 
 	EarthShock *core.Spell
@@ -190,6 +192,7 @@ func (shaman *Shaman) Initialize() {
 	shaman.LightningBolt = shaman.newLightningBoltSpell(false)
 	shaman.LightningBoltLO = shaman.newLightningBoltSpell(true)
 	shaman.LavaBurst = shaman.newLavaBurstSpell()
+	shaman.registerLightningShieldSpell()
 	// shaman.FireNova = shaman.newFireNovaSpell()
 
 	shaman.ChainLightning = shaman.newChainLightningSpell(false)

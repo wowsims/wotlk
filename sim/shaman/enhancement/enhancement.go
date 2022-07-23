@@ -38,10 +38,15 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 	if enhOptions.Rotation.Totems != nil {
 		totems = *enhOptions.Rotation.Totems
 	}
+
+	var rotation Rotation
+	rotation = NewAdaptiveRotation(enhOptions.Talents)
+
 	enh := &EnhancementShaman{
 		Shaman:   shaman.NewShaman(character, *enhOptions.Talents, totems, selfBuffs, true),
-		Rotation: *enhOptions.Rotation,
+		rotation: rotation,
 	}
+
 	// Enable Auto Attacks for this spec
 	enh.EnableAutoAttacks(enh, core.AutoAttackOptions{
 		MainHand:       enh.WeaponFromMainHand(enh.DefaultMeleeCritMultiplier()),
@@ -78,7 +83,7 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 type EnhancementShaman struct {
 	*shaman.Shaman
 
-	Rotation proto.EnhancementShaman_Rotation
+	rotation Rotation
 
 	scheduler common.GCDScheduler
 }
@@ -93,7 +98,7 @@ func (enh *EnhancementShaman) Initialize() {
 
 	// This needs to be called after DPS cooldowns are delayed, which also happens
 	// after finalization.
-	enh.Env.RegisterPostFinalizeEffect(enh.SetupRotationSchedule)
+	//enh.Env.RegisterPostFinalizeEffect(enh.SetupRotationSchedule)
 }
 
 func (enh *EnhancementShaman) Reset(sim *core.Simulation) {
