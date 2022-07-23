@@ -36,11 +36,14 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 
 	// gcdCD := ret.GCD.TimeToReady(sim)
 	nextSwingAt := ret.AutoAttacks.NextAttackAt()
+	isExecutePhase := sim.IsExecutePhase20()
 
 	// Needs 2pc t10 to be effective.
 	if ret.GCD.IsReady(sim) {
 		if nextSwingAt.Milliseconds() > 1500 {
 			switch {
+			case isExecutePhase && ret.HammerOfWrath.IsReady(sim):
+				ret.HammerOfWrath.Cast(sim, target)
 			case ret.UseDivinePlea && ret.CurrentMana() < (ret.MaxMana()*0.80) && ret.DivinePlea.IsReady(sim):
 				ret.DivinePlea.Cast(sim, &ret.Unit)
 			case ret.JudgementOfWisdom.IsReady(sim):
@@ -56,6 +59,8 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 			}
 		} else {
 			switch {
+			case isExecutePhase && ret.HammerOfWrath.IsReady(sim):
+				ret.HammerOfWrath.Cast(sim, target)
 			case ret.UseDivinePlea && ret.CurrentMana() < (ret.MaxMana()*0.80) && ret.DivinePlea.IsReady(sim):
 				ret.DivinePlea.Cast(sim, &ret.Unit)
 			case ret.DivineStorm.IsReady(sim):

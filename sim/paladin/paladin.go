@@ -57,6 +57,7 @@ type Paladin struct {
 	HolyShield          *core.Spell
 	JudgementOfWisdom   *core.Spell
 	JudgementOfLight    *core.Spell
+	HammerOfWrath       *core.Spell
 	SealOfVengeance     *core.Spell
 	SealOfRighteousness *core.Spell
 	SealOfCommand       *core.Spell
@@ -139,6 +140,7 @@ func (paladin *Paladin) Initialize() {
 	paladin.registerCrusaderStrikeSpell()
 	paladin.registerDivineStormSpell()
 	paladin.registerConsecrationSpell()
+	paladin.registerHammerOfWrathSpell()
 
 	paladin.registerExorcismSpell()
 	paladin.registerHolyShieldSpell()
