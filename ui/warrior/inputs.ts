@@ -112,7 +112,7 @@ export const WarriorRotationConfig = {
 		InputHelpers.makeRotationBooleanInput<Spec.SpecWarrior>({
 			fieldName: 'useSlamOverExecute',
 			label: 'Slam Over Execute',
-			labelTooltip: 'Use Slam Over Execute when Taste for Blood Procs in Execute Phase.',
+			labelTooltip: 'Use Slam Over Execute when Bloodsurge Procs in Execute Phase.',
 			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().bloodthirst,
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecWarrior>({

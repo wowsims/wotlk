@@ -5,7 +5,7 @@ import (
 )
 
 const MaxRage = 100.0
-const RageFactor = 274.7
+const RageFactor = 453.3
 const ThreatPerRageGained = 5
 
 // OnRageGain is called any time rage is increased.
@@ -65,7 +65,7 @@ func (unit *Unit) EnableRageBar(startingRage float64, rageMultiplier float64, on
 				damage = spellEffect.PreoutcomeDamage
 			}
 
-			generatedRage := damage*(3.75/RageFactor) + HitFactor*BaseSwingSpeed*rageMultiplier
+			generatedRage := MinFloat((damage*7.5/RageFactor+HitFactor)/2, damage*15/RageFactor)
 			// In practice this cap isn't reached so no need to compute it.
 			//generatedRage = MinFloat(generatedRage, damage * (15/RageFactor))
 
