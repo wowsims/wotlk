@@ -10,10 +10,7 @@ import (
 )
 
 // TODO:
-// Sanctified Wrath
-// Judgements of the Wise
-// Righteous Vengeance
-// Fanatacism threat reduction.
+// Sanctified Wrath (Damage penetration, questions over affected stats)
 
 func (paladin *Paladin) ApplyTalents() {
 	paladin.AddStat(stats.MeleeCrit, float64(paladin.Talents.Conviction)*core.CritRatingPerCritChance)
@@ -460,4 +457,13 @@ func (paladin *Paladin) applyRighteousVengeance() {
 			}
 		},
 	})
+}
+
+func (paladin *Paladin) applyFanaticism() {
+	// TODO: Possibly implement as aura.
+	if paladin.Talents.Fanaticism == 0 {
+		return
+	}
+
+	paladin.PseudoStats.ThreatMultiplier *= 1 - 0.10*float64(paladin.Talents.Fanaticism)
 }
