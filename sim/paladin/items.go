@@ -8,6 +8,19 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+// Tier 7 ret
+var ItemSetRedemptionBattlegear = core.NewItemSet(core.ItemSet{
+	Name: "Redemption Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Implemented in divine_storm.go
+		},
+		4: func(agent core.Agent) {
+			// Implemented in judgement.go
+		},
+	},
+})
+
 // Tier 10 ret
 var ItemSetLightswornBattlegear = core.NewItemSet(core.ItemSet{
 	Name: "Lightsworn Battlegear",

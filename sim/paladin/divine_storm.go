@@ -12,7 +12,7 @@ func (paladin *Paladin) registerDivineStormSpell() {
 	baseCost := paladin.BaseMana * 0.12
 
 	baseModifiers := Modifiers{
-		{0.05 * float64(paladin.Talents.TheArtOfWar)},
+		{0.05 * float64(paladin.Talents.TheArtOfWar), core.TernaryFloat64(paladin.HasSetBonus(ItemSetRedemptionBattlegear, 2), .1, 0)},
 	}
 	baseMultiplier := baseModifiers.Get()
 
