@@ -25,13 +25,17 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 	 *   - Crits off of a melee modifier.
 	 */
 
-	baseMultiplier := 1.0
-	// Additive bonuses
-	baseMultiplier += core.TernaryFloat64(paladin.HasSetBonus(ItemSetLightswornBattlegear, 4), .1, 0)
-	baseMultiplier *= paladin.WeaponSpecializationMultiplier()
+	baseModifiers := Modifiers{
+		{core.TernaryFloat64(paladin.HasSetBonus(ItemSetLightswornBattlegear, 4), .1, 0)},
+		{0.02 * float64(paladin.Talents.TwoHandedWeaponSpecialization)},
+	}
+	baseMultiplier := baseModifiers.Get()
 
-	judgementMultiplier := baseMultiplier
-	judgementMultiplier *= 1 + core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfJudgement), 0.10, 0)
+	judgementModifiers := baseModifiers.Clone()
+	judgementModifiers = append(judgementModifiers,
+		Modifier{core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfJudgement), 0.10, 0)},
+	)
+	judgementMultiplier := judgementModifiers.Get()
 
 	onJudgementProc := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 20467}, // Judgement of Command

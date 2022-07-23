@@ -226,22 +226,18 @@ func (paladin *Paladin) SpellCritMultiplier() float64 {
 func (paladin *Paladin) applyWeaponSpecialization() {
 	// This impacts Crusader Strike, Melee Attacks, WF attacks
 	// Seals + Judgements need to be implemented separately
-	paladin.PseudoStats.PhysicalDamageDealtMultiplier *= paladin.WeaponSpecializationMultiplier()
-
 	mhWeapon := paladin.GetMHWeapon()
-	if mhWeapon != nil && mhWeapon.HandType != proto.HandType_HandTypeTwoHand {
+
+	if mhWeapon == nil {
+		return
+	}
+
+	switch mhWeapon.HandType {
+	case proto.HandType_HandTypeTwoHand:
+		paladin.PseudoStats.PhysicalDamageDealtMultiplier *= 1 + 0.02*float64(paladin.Talents.TwoHandedWeaponSpecialization)
+	case proto.HandType_HandTypeOneHand:
 		paladin.PseudoStats.DamageDealtMultiplier *= 1 + 0.01*float64(paladin.Talents.OneHandedWeaponSpecialization)
 	}
-}
-func (paladin *Paladin) WeaponSpecializationMultiplier() float64 {
-	mhWeapon := paladin.GetMHWeapon()
-	if mhWeapon == nil {
-		return 1
-	}
-	if mhWeapon.HandType == proto.HandType_HandTypeTwoHand {
-		return 1 + 0.02*float64(paladin.Talents.TwoHandedWeaponSpecialization)
-	}
-	return 1
 }
 
 // I don't know if the new stack of vengeance applies to the crit that triggered it or not
