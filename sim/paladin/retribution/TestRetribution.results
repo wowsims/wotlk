@@ -50,6 +50,13 @@ character_stats_results: {
  }
 }
 dps_results: {
+ key: "TestRetribution-AllItems-AegisBattlegear"
+ value: {
+  dps: 3541.69450252675
+  tps: 2992.068965785742
+ }
+}
+dps_results: {
  key: "TestRetribution-AllItems-AshtongueTalismanofZeal-32489"
  value: {
   dps: 3149.9513105040446
@@ -124,20 +131,6 @@ dps_results: {
  value: {
   dps: 3130.497151422643
   tps: 2677.0482721766275
- }
-}
-dps_results: {
- key: "TestRetribution-AllItems-CrystalforgeArmor"
- value: {
-  dps: 2641.419352237938
-  tps: 2288.7201976775514
- }
-}
-dps_results: {
- key: "TestRetribution-AllItems-CrystalforgeBattlegear"
- value: {
-  dps: 2855.0551248916495
-  tps: 2456.549338426938
  }
 }
 dps_results: {
@@ -393,20 +386,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestRetribution-AllItems-JusticarArmor"
- value: {
-  dps: 2641.419352237938
-  tps: 2288.7201976775514
- }
-}
-dps_results: {
- key: "TestRetribution-AllItems-JusticarBattlegear"
- value: {
-  dps: 2770.7365751368116
-  tps: 2393.661401835795
- }
-}
-dps_results: {
  key: "TestRetribution-AllItems-Lavanthor'sTalisman-37872"
  value: {
   dps: 3120.8397308735043
@@ -414,17 +393,10 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestRetribution-AllItems-LightbringerArmor"
+ key: "TestRetribution-AllItems-Liadrin'sBattlegear"
  value: {
-  dps: 2543.83554814923
-  tps: 2215.396968981838
- }
-}
-dps_results: {
- key: "TestRetribution-AllItems-LightbringerBattlegear"
- value: {
-  dps: 2836.727543376725
-  tps: 2450.9732956980683
+  dps: 3530.1963142903032
+  tps: 2882.3339705483204
  }
 }
 dps_results: {
@@ -537,6 +509,13 @@ dps_results: {
  value: {
   dps: 3120.8397308735043
   tps: 2658.522113152235
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-RedemptionBattlegear"
+ value: {
+  dps: 3147.1624964273888
+  tps: 2694.202275809581
  }
 }
 dps_results: {
@@ -754,6 +733,13 @@ dps_results: {
  value: {
   dps: 3078.505240722545
   tps: 2622.3512160719047
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-Turalyon'sBattlegear"
+ value: {
+  dps: 3530.1963142903032
+  tps: 2882.3339705483204
  }
 }
 dps_results: {

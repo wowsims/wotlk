@@ -8,132 +8,59 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-var ItemSetJusticarBattlegear = core.NewItemSet(core.ItemSet{
-	Name: "Justicar Battlegear",
+// Tier 7 ret
+var ItemSetRedemptionBattlegear = core.NewItemSet(core.ItemSet{
+	Name: "Redemption Battlegear",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
-			// sim/debuffs.go handles this (and paladin/judgement.go)
+			// Implemented in divine_storm.go
 		},
 		4: func(agent core.Agent) {
-			// TODO: if we ever implemented judgement of command, add bonus from 4p
+			// Implemented in judgement.go
 		},
 	},
 })
 
-var ItemSetJusticarArmor = core.NewItemSet(core.ItemSet{
-	Name: "Justicar Armor",
+// Tier 8 ret
+var ItemSetAegisBattlegear = core.NewItemSet(core.ItemSet{
+	Name: "Aegis Battlegear",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
-			// Increases the damage dealt by your Seal of Righteousness, Seal of
-			// Vengeance, and Seal of Blood by 10%.
-			// Implemented in seals.go.
+			// Implemented in exorcism.go & hammer_of_wrath.go
 		},
 		4: func(agent core.Agent) {
-			// Increases the damage dealt by Holy Shield by 15.
-			// Implemented in holy_shield.go.
+			// Implemented in divine_storm.go & crusader_strike.go
 		},
 	},
 })
 
-var ItemSetCrystalforgeBattlegear = core.NewItemSet(core.ItemSet{
-	Name: "Crystalforge Battlegear",
+// Tier 9 ret (Alliance)
+var ItemSetTuralyonsBattlegear = core.NewItemSet(core.ItemSet{
+	Name: "Turalyon's Battlegear",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
-			// judgement.go
+			// Implemented in talents.go (Righteous Vengeance)
 		},
 		4: func(agent core.Agent) {
-			// TODO: if we implement healing, this heals party.
+			// Implemented in soc.go, sor.go, sov.go
 		},
 	},
 })
 
-var ItemSetCrystalforgeArmor = core.NewItemSet(core.ItemSet{
-	Name: "Crystalforge Armor",
+// Tier 9 ret (Horde)
+var ItemSetLiadrinsBattlegear = core.NewItemSet(core.ItemSet{
+	Name: "Liadrin's Battlegear",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
-			// Increases the damage from your Retribution Aura by 15.
-			// TODO
+			// Implemented in talents.go (Righteous Vengeance)
 		},
 		4: func(agent core.Agent) {
-			// Each time you use your Holy Shield ability, you gain 100 Block Value
-			// against a single attack in the next 6 seconds.
-			paladin := agent.(PaladinAgent).GetPaladin()
-
-			procAura := paladin.RegisterAura(core.Aura{
-				Label:    "Crystalforge 2pc Proc",
-				ActionID: core.ActionID{SpellID: 37191},
-				Duration: time.Second * 6,
-				OnGain: func(aura *core.Aura, sim *core.Simulation) {
-					paladin.AddStatDynamic(sim, stats.BlockValue, 100)
-				},
-				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-					paladin.AddStatDynamic(sim, stats.BlockValue, -100)
-				},
-				OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if spellEffect.Outcome.Matches(core.OutcomeBlock) {
-						aura.Deactivate(sim)
-					}
-				},
-			})
-
-			paladin.RegisterAura(core.Aura{
-				Label:    "Crystalforge 2pc",
-				Duration: core.NeverExpires,
-				OnReset: func(aura *core.Aura, sim *core.Simulation) {
-					aura.Activate(sim)
-				},
-				OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-					if spell == paladin.HolyShield {
-						procAura.Activate(sim)
-					}
-				},
-			})
+			// Implemented in soc.go, sor.go, sov.go
 		},
 	},
 })
 
-var ItemSetLightbringerBattlegear = core.NewItemSet(core.ItemSet{
-	Name: "Lightbringer Battlegear",
-	Bonuses: map[int32]core.ApplyEffect{
-		2: func(agent core.Agent) {
-			paladin := agent.(PaladinAgent).GetPaladin()
-			manaMetrics := paladin.NewManaMetrics(core.ActionID{SpellID: 38428})
-
-			paladin.RegisterAura(core.Aura{
-				Label:    "Lightbringer Battlegear 2pc",
-				Duration: core.NeverExpires,
-				OnReset: func(aura *core.Aura, sim *core.Simulation) {
-					aura.Activate(sim)
-				},
-				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
-						return
-					}
-					if sim.RandomFloat("lightbringer 2pc") > 0.2 {
-						return
-					}
-					paladin.AddMana(sim, 50, manaMetrics, true)
-				},
-			})
-		},
-		4: func(agent core.Agent) {
-			// TODO: if we implemented hammer of wrath.. this ups dmg
-		},
-	},
-})
-
-var ItemSetLightbringerArmor = core.NewItemSet(core.ItemSet{
-	Name: "Lightbringer Armor",
-	Bonuses: map[int32]core.ApplyEffect{
-		2: func(agent core.Agent) {
-			// Increases the mana gained from your Spiritual Attunement ability by 10%.
-		},
-		4: func(agent core.Agent) {
-			// Increases the damage dealt by Consecration by 10%.
-		},
-	},
-})
-
+// Tier 10 ret
 var ItemSetLightswornBattlegear = core.NewItemSet(core.ItemSet{
 	Name: "Lightsworn Battlegear",
 	Bonuses: map[int32]core.ApplyEffect{
@@ -165,7 +92,7 @@ var ItemSetLightswornBattlegear = core.NewItemSet(core.ItemSet{
 			})
 		},
 		4: func(agent core.Agent) {
-			// Implemented in seals.go
+			// Implemented in soc.go, sor.go, sov.go
 		},
 	},
 })
