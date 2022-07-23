@@ -9,20 +9,18 @@ import (
 )
 
 func (shaman *Shaman) newFireNovaSpell() {
-	var actionId core.ActionID
-
-	actionID.SpellID = 61657
+	manaCost := 0.22 * shaman.BaseMana
 
 	fireNovaGlyphCDReduction := core.TernaryInt32(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfFireNova), 3, 0)
 	impFireNovaCDReduction := 2 * shaman.Talents.ImprovedFireNova
 	fireNovaCooldown := time.Second * (10 - fireNovaGlyphCDReduction - impFireNovaCDReduction)
 
 	shaman.FireNova = shaman.RegisterSpell(core.SpellConfig{
-		ActionId:    actionID,
+		ActionId:    core.ActionID{SpellID: 61657},
 		SpellSchool: core.SpellSchoolFire,
 
 		ResourceType: stats.Mana,
-		BaseCost:     0.22 * shaman.BaseMana,
+		BaseCost:     manaCost,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
