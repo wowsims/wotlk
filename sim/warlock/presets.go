@@ -78,17 +78,16 @@ var FullIndividualBuffs = &proto.IndividualBuffs{
 }
 
 var FullConsumes = &proto.Consumes{
-	Flask:           proto.Flask_FlaskOfPureDeath,
-	DefaultPotion:   proto.Potions_DestructionPotion,
-	DefaultConjured: proto.Conjured_ConjuredDarkRune,
-	Food:            proto.Food_FoodBlackenedBasilisk,
+	Flask:         proto.Flask_FlaskOfTheFrostWyrm,
+	DefaultPotion: proto.Potions_PotionOfWildMagic,
+	Food:          proto.Food_FoodFishFeast,
 }
 
 var FullDebuffs = &proto.Debuffs{
 	JudgementOfWisdom: true,
 	Misery:            true,
 	BloodFrenzy:       true,
-	ExposeArmor:       proto.TristateEffect_TristateEffectImproved,
+	SunderArmor:       true,
 	FaerieFire:        proto.TristateEffect_TristateEffectImproved,
 	CurseOfWeakness:   proto.TristateEffect_TristateEffectImproved,
 }

@@ -281,15 +281,16 @@ enum WeaponImbue {
 	WeaponImbueElementalSharpeningStone = 2;
 	WeaponImbueBrilliantWizardOil = 3;
 	WeaponImbueSuperiorWizardOil = 4;
-	WeaponImbueRighteousWeaponCoating = 12;
-
-	WeaponImbueRogueDeadlyPoison = 10;
-	WeaponImbueRogueInstantPoison = 11;
 
 	WeaponImbueShamanFlametongue = 6;
 	WeaponImbueShamanFrostbrand = 7;
 	WeaponImbueShamanRockbiter = 8;
 	WeaponImbueShamanWindfury = 9;
+
+	WeaponImbueRogueDeadlyPoison = 10;
+	WeaponImbueRogueInstantPoison = 11;
+
+	WeaponImbueRighteousWeaponCoating = 12;
 }
 
 enum Flask {
@@ -443,7 +444,7 @@ message RaidBuffs {
 
 	TristateEffect thorns = 32;
 	TristateEffect devotion_aura = 33;
-	TristateEffect retribution_aura = 34;
+	bool retribution_aura = 34;
 
 	// Drums
 	bool drums_of_forgotten_kings = 38;
@@ -540,7 +541,7 @@ message Debuffs {
 	bool totem_of_wrath = 9;
 
 	// 5% spell crit
-	bool improved_shadow_bolt = 10;
+	bool shadow_mastery = 10;
 	bool improved_scorch = 11;
 	bool winters_chill = 12;
 
@@ -552,7 +553,7 @@ message Debuffs {
 	
 	bool mangle = 16;
 
-	TristateEffect expose_armor = 17;
+	bool expose_armor = 17;
 	bool sunder_armor = 18;
 	TristateEffect curse_of_weakness = 19;
 

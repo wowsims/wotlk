@@ -78,7 +78,6 @@ var FullDebuffs = &proto.Debuffs{
 	JudgementOfWisdom: true,
 	BloodFrenzy:       true,
 	GiftOfArthas:      true,
-	ExposeArmor:       proto.TristateEffect_TristateEffectImproved,
 	FaerieFire:        proto.TristateEffect_TristateEffectImproved,
 	SunderArmor:       true,
 	Mangle:            true,

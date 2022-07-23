@@ -10,7 +10,15 @@ import { Faction } from '/wotlk/core/proto/common.js';
 import { SavedTalents } from '/wotlk/core/proto/ui.js';
 import { Player } from '/wotlk/core/player.js';
 
-import { ShadowPriest, ShadowPriest_Rotation as Rotation, ShadowPriest_Options as Options, ShadowPriest_Rotation_RotationType } from '/wotlk/core/proto/priest.js';
+import { 
+	ShadowPriest, 
+	ShadowPriest_Rotation as Rotation, 
+	ShadowPriest_Options as Options, 
+	ShadowPriest_Rotation_RotationType,
+	PriestMajorGlyph as MajorGlyph,
+	PriestMinorGlyph as MinorGlyph,
+} from '/wotlk/core/proto/priest.js';
+
 
 import * as Enchants from '/wotlk/core/constants/enchants.js';
 import * as Gems from '/wotlk/core/proto_utils/gems.js';
@@ -26,6 +34,14 @@ export const StandardTalents = {
 	name: 'Standard',
 	data: SavedTalents.create({
 		talentsString: '05032031--325023051223010323151301351',
+		glyphs: Glyphs.create({
+			major1: MajorGlyph.GlyphOfShadow,
+			major2: MajorGlyph.GlyphOfMindFlay,
+			major3: MajorGlyph.GlyphOfDispersion,
+			minor1: MinorGlyph.GlyphOfFortitude,
+			minor2: MinorGlyph.GlyphOfShadowProtection,
+			minor3: MinorGlyph.GlyphOfShadowfiend,
+		}),
 	}),
 };
 

@@ -12,12 +12,6 @@
 .smite-priest-sim-ui .self-buffs-section {
   grid-template-columns: repeat(3, 1fr);
 }
-.smite-priest-sim-ui .buffs-section {
-  grid-template-columns: repeat(6, 1fr);
-}
-.smite-priest-sim-ui .debuffs-section {
-  grid-template-columns: repeat(3, 1fr);
-}
 
 // smite has a lot of EP stats, so make the text smaller so it fits vertically.
 .smite-priest-sim-ui .character-stats-table-row {

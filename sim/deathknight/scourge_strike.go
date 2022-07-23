@@ -22,7 +22,7 @@ func (deathKnight *DeathKnight) registerScourgeStrikeShadowDamageSpell() *core.S
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return deathKnight.LastScourgeStrikeDamage * (float64(deathKnight.countActiveDiseases()) * 0.12)
+					return deathKnight.LastScourgeStrikeDamage * (float64(deathKnight.countActiveDiseases(hitEffect.Target)) * 0.12)
 				},
 			},
 		}),
@@ -53,6 +53,9 @@ func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
 			},
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				cast.GCD = deathKnight.getModifiedGCD()
+			},
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -64,8 +67,8 @@ func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return weaponBaseDamage(sim, hitEffect, spell) *
-						deathKnight.rageOfRivendareBonus() *
-						deathKnight.tundraStalkerBonus()
+						deathKnight.rageOfRivendareBonus(hitEffect.Target) *
+						deathKnight.tundraStalkerBonus(hitEffect.Target)
 				},
 				TargetSpellCoefficient: 1,
 			},
@@ -80,7 +83,7 @@ func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
 					amountOfRunicPower := 15.0 + 2.5*float64(deathKnight.Talents.Dirge) + deathKnight.scourgeborneRunicPowerBonus()
 					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 
-					if deathKnight.DiseasesAreActive() {
+					if deathKnight.DiseasesAreActive(spellEffect.Target) {
 						deathKnight.LastScourgeStrikeDamage = spellEffect.Damage
 						shadowDamageSpell.Cast(sim, spellEffect.Target)
 						deathKnight.ScourgeStrike.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 1

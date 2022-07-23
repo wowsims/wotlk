@@ -30,8 +30,8 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 		MakePermanent(EarthAndMoonAura(target))
 	}
 
-	if debuffs.ImprovedShadowBolt {
-		MakePermanent(ImprovedShadowBoltAura(target))
+	if debuffs.ShadowMastery {
+		MakePermanent(ShadowMasteryAura(target))
 	}
 
 	if debuffs.ImprovedScorch {
@@ -57,7 +57,7 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 		MakePermanent(MangleAura(target))
 	}
 
-	if debuffs.ExposeArmor != proto.TristateEffect_TristateEffectMissing {
+	if debuffs.ExposeArmor {
 		exposeArmorAura := ExposeArmorAura(target, false) // TODO: check glyph
 		ScheduledAura(exposeArmorAura, false, PeriodicActionOptions{
 			Period:   time.Duration(10.0 * float64(time.Second)),
@@ -374,7 +374,7 @@ func StampedeAura(target *Unit) *Aura {
 
 const MajorSpellCritDebuffAuraTag = "majorspellcritdebuff"
 
-func ImprovedShadowBoltAura(target *Unit) *Aura {
+func ShadowMasteryAura(target *Unit) *Aura {
 	return majorSpellCritDebuffAura(target, "Shadow Mastery", ActionID{SpellID: 17800}, 5)
 }
 

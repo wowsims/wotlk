@@ -212,9 +212,6 @@ type auraTracker struct {
 	// Maps MagicIDs to sim duration at which CD is done. Using array for perf.
 	cooldowns []time.Duration
 
-	// Flag for the OnStatsChange event to stop recursion stat changing
-	statChanging bool
-
 	// All registered auras, both active and inactive.
 	auras []*Aura
 
@@ -261,7 +258,8 @@ func (at *auraTracker) HasAura(label string) bool {
 	return aura != nil
 }
 func (at *auraTracker) HasActiveAura(label string) bool {
-	return at.GetAura(label).IsActive()
+	aura := at.GetAura(label)
+	return aura != nil && aura.IsActive()
 }
 
 func (at *auraTracker) registerAura(unit *Unit, aura Aura) *Aura {

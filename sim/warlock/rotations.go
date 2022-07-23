@@ -45,7 +45,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		}
 
 		// If target has seed, fire a shadowbolt at main target so we start some explosions
-		mainSpell = proto.Warlock_Rotation_Shadowbolt
+		mainSpell = proto.Warlock_Rotation_ShadowBolt
 	}
 
 	// ------------------------------------------
@@ -112,40 +112,55 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		// ------------------------------------------
 		// Affliction Rotation
 		// ------------------------------------------
-		if rotationType == proto.Warlock_Rotation_Affliction {
-			if !warlock.CurseOfAgonyDot.IsActive() && sim.GetRemainingDuration() > time.Second*24 {
+		if rotationType == proto.Warlock_Rotation_Affliction && warlock.Talents.Haunt {
+			if !warlock.CurseOfAgonyDot.IsActive() && sim.GetRemainingDuration() > warlock.CurseOfAgonyDot.Duration {
+				// No doom with Affliction
 				spell = warlock.CurseOfAgony
-			} else if !warlock.CorruptionDot.IsActive() {
+			} else if !warlock.CorruptionDot.IsActive() && core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() ||
+				sim.IsExecutePhase35() && time.Duration(warlock.CorruptionDot.TickCount)*warlock.CorruptionDot.TickLength > sim.CurrentTime {
+				// Cast Corruption as soon as the 5% crit debuff is up
+				// Cast Corruption again when you get the execute buff (Death's Embrace)
 				spell = warlock.Corruption
-			} else if !warlock.UnstableAffDot.IsActive() {
+			} else if warlock.CorruptionDot.IsActive() && warlock.CorruptionDot.RemainingDuration(sim) < core.GCDDefault {
+				// Emergency Corruption refresh just in case
+				spell = warlock.DrainSoul
+			} else if (!warlock.UnstableAffDot.IsActive() || warlock.UnstableAffDot.RemainingDuration(sim) < warlock.UnstableAff.CurCast.CastTime) &&
+				sim.GetRemainingDuration() > warlock.UnstableAffDot.Duration && warlock.CorruptionDot.IsActive() {
+				// Keep UA up
 				spell = warlock.UnstableAff
-			} else if !warlock.HauntAura.IsActive() && warlock.Haunt.CD.IsReady(sim) {
+			} else if warlock.Haunt.CD.IsReady(sim) && 2*sim.GetRemainingDuration() > warlock.HauntAura.Duration && warlock.CorruptionDot.IsActive() {
+				// Keep Haunt up
 				spell = warlock.Haunt
+			} else if sim.IsExecutePhase20() {
+				// Drain Soul execute phase
+				spell = warlock.channelCheck(sim, warlock.DrainSoulDot, 5)
 			} else {
-				spell = warlock.Shadowbolt
+				// Filler
+				spell = warlock.ShadowBolt
 			}
-		} else if rotationType == proto.Warlock_Rotation_Demonology {
+		} else if rotationType == proto.Warlock_Rotation_Demonology && warlock.Talents.Metamorphosis {
 
 			// ------------------------------------------
 			// Demonology Rotation
 			// ------------------------------------------
 			if warlock.CurseOfDoom.CD.IsReady(sim) && sim.GetRemainingDuration() > time.Minute {
+				// Doom prio if enough time
 				spell = warlock.CurseOfDoom
 			} else if !warlock.CurseOfDoomDot.IsActive() && !warlock.CurseOfAgonyDot.IsActive() && sim.GetRemainingDuration() > time.Second*24 {
 				// Can't cast agony until we are at end and both agony and doom are not ticking.
 				spell = warlock.CurseOfAgony
 			} else if !warlock.CorruptionDot.IsActive() {
 				spell = warlock.Corruption
-			} else if !warlock.ImmolateDot.IsActive() {
+			} else if !warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime {
 				spell = warlock.Immolate
 			} else if warlock.DecimationAura.IsActive() {
 				spell = warlock.SoulFire
 			} else if warlock.MoltenCoreAura.IsActive() {
 				spell = warlock.Incinerate
 			} else {
-				spell = warlock.Shadowbolt
+				spell = warlock.ShadowBolt
 			}
-		} else if rotationType == proto.Warlock_Rotation_Destruction {
+		} else if rotationType == proto.Warlock_Rotation_Destruction && warlock.Talents.ChaosBolt {
 
 			// ------------------------------------------
 			// Destruction Rotation
@@ -153,13 +168,12 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			if warlock.CurseOfDoom.CD.IsReady(sim) && sim.GetRemainingDuration() > time.Minute {
 				spell = warlock.CurseOfDoom
 			} else if sim.GetRemainingDuration() > time.Second*24 && !warlock.CurseOfAgonyDot.IsActive() && !warlock.CurseOfDoomDot.IsActive() {
-				// Can't cast agony until we are at end and both agony and doom are not ticking.
 				spell = warlock.CurseOfAgony
 			} else if warlock.CanConflagrate(sim) && (warlock.ImmolateDot.TickCount > warlock.ImmolateDot.NumberOfTicks-2 || warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfConflagrate)) {
 				spell = warlock.Conflagrate
 			} else if !warlock.CorruptionDot.IsActive() {
 				spell = warlock.Corruption
-			} else if !warlock.ImmolateDot.IsActive() {
+			} else if !warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime {
 				spell = warlock.Immolate
 			} else if warlock.ChaosBolt.CD.IsReady(sim) {
 				spell = warlock.ChaosBolt
@@ -240,8 +254,8 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			spell = warlock.Incinerate
 		} else {
 			switch mainSpell {
-			case proto.Warlock_Rotation_Shadowbolt:
-				spell = warlock.Shadowbolt
+			case proto.Warlock_Rotation_ShadowBolt:
+				spell = warlock.ShadowBolt
 			case proto.Warlock_Rotation_Incinerate:
 				spell = warlock.Incinerate
 			default:

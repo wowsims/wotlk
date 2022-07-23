@@ -72,9 +72,13 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 	gcd := spriest.SpellGCD()
 	var mf_reduc_time time.Duration
 	if spriest.HasSetBonus(priest.ItemSetCrimsonAcolyte, 4) {
-		mf_reduc_time = time.Millisecond * 510
+		mf_reduc_time = time.Millisecond * 170
 	}
 	tickLength := spriest.ApplyCastSpeed(time.Second - mf_reduc_time)
+	//if tickLength<gcd/3{
+	//	tickLength = gcd/3
+	//}
+
 	DotTickSpeed := float64(spriest.ApplyCastSpeed(time.Second * 3))
 	critChance := (spriest.GetStat(stats.SpellCrit) / (core.CritRatingPerCritChance * 100))
 	remain_fight := float64(sim.GetRemainingDuration())
@@ -213,7 +217,10 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 
 		wait_for_5 := 0   // if SW stacks = 3, and we want to get SWP up at 5 stacks exactly, then this flag gets set to 1
 		cast_SPW_now := 0 // if SW stacks = 3, and we want to get SWP up immediately becaues fight length is low enough, then this flag gets set to 1
-		if SWstacks > 2 && SWstacks <= 5 && !spriest.ShadowWordPainDot.IsActive() {
+		if sim.Log != nil {
+			//spriest.Log(sim, "SWstacks %d", SWstacks)
+		}
+		if SWstacks > 2 && SWstacks < 5 && !spriest.ShadowWordPainDot.IsActive() {
 			Added_dmg := mb_dmg*0.12 + mf_dmg*0.22*2/3 + swp_Tdmg*2*float64(gcd.Seconds())/3
 			numswptickstime = Added_dmg / (swp_Tdmg * 0.06) * 3 //if the fight lenght is < numswptickstime then use swp 3rd.. if > then use at weaving = 5
 			//
@@ -398,7 +405,9 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		if castmf2 > 0 {
 			bestIdx = 4
 		}
-
+		if SWstacks == 5 && !spriest.ShadowWordPainDot.IsActive() {
+			bestIdx = 5
+		}
 		if cast_SPW_now > 0 {
 			bestIdx = 5
 		}
@@ -530,7 +539,10 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 	}
 
 	mfDamage := mf_dmg * 0.3333
-	////fmt.Println("start Tick", numTicks)
+	if sim.Log != nil {
+		//spriest.Log(sim, "start_ticks %d", numTicks)
+	}
+
 	if numTicks < 100 { // if the code entered this loop because mf is the higest dps spell, and the number of ticks that can fit in the remaining cd time is < 1, then just cast a mf3 as it essentially fits perfectly
 		// TODO: Should spriest latency be added to the second option here?
 		mfTime := core.MaxDuration(gcd, time.Duration(numTicks)*tickLength)
@@ -595,6 +607,9 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 				allCDs[2] - mfTime,
 				allCDs[3] - mfTime,
 			}
+		}
+		if sim.Log != nil {
+			//spriest.Log(sim, "mid_ticks %d", numTicks)
 		}
 
 		chosenWait := cdDiffs[bestIdx]
@@ -699,6 +714,9 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 				skip_next = 1
 			}
 		}
+		if sim.Log != nil {
+			//spriest.Log(sim, "mid_ticks2 %d", numTicks)
+		}
 
 		if skip_next == 0 {
 			finalMFStart := numTicks // Base ticks before adding additional
@@ -774,6 +792,10 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 				}
 			}
 			numTicks += highestPossibleIdx
+			if sim.Log != nil {
+				//spriest.Log(sim, "final_ticks %d", numTicks)
+			}
+
 			//  Now that the number of optimal ticks has been determined to optimize dps
 			//  Now optimize mf2s and mf3s
 			if numTicks == 1 {
@@ -799,7 +821,7 @@ func (spriest *ShadowPriest) ClippingMindflayRotation(sim *core.Simulation, allC
 	}
 
 	if sim.Log != nil {
-		spriest.Log(sim, "<spriest> NextCD: %0.2f", nextCD.Seconds())
+		//spriest.Log(sim, "<spriest> NextCD: %0.2f", nextCD.Seconds())
 	}
 
 	// This means a CD is coming up before we could cast a single MF
