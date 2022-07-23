@@ -21,6 +21,19 @@ var ItemSetRedemptionBattlegear = core.NewItemSet(core.ItemSet{
 	},
 })
 
+// Tier 8 ret
+var ItemSetAegisBattlegear = core.NewItemSet(core.ItemSet{
+	Name: "Aegis Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Implemented in exorcism.go & hammer_of_wrath.go
+		},
+		4: func(agent core.Agent) {
+			// Implemented in divine_storm.go & crusader_strike.go
+		},
+	},
+})
+
 // Tier 10 ret
 var ItemSetLightswornBattlegear = core.NewItemSet(core.ItemSet{
 	Name: "Lightsworn Battlegear",
