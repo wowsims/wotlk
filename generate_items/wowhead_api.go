@@ -140,6 +140,7 @@ var rangedAttackPowerRegex = regexp.MustCompile("Increases ranged attack power b
 var armorPenetrationRegex = regexp.MustCompile("Your attacks ignore ([0-9]+) of your opponent's armor\\.")
 var expertiseRegex = regexp.MustCompile("Increases your expertise rating by <!--rtg37-->([0-9]+)\\.")
 var weaponDamageRegex = regexp.MustCompile("<!--dmg-->([0-9]+) - ([0-9]+)")
+var weaponDamageRegex2 = regexp.MustCompile("<!--dmg-->([0-9]+) Damage")
 var weaponSpeedRegex = regexp.MustCompile("<!--spd-->(([0-9]+).([0-9]+))")
 
 var defenseRegex = regexp.MustCompile("Increases defense rating by <!--rtg12-->([0-9]+)\\.")
@@ -430,6 +431,12 @@ func (item WowheadItemResponse) GetWeaponDamage() (float64, float64) {
 			log.Fatalf("Invalid weapon damage for item %s: min = %0.1f, max = %0.1f", item.Name, min, max)
 		}
 		return min, max
+	} else if matches := weaponDamageRegex2.FindStringSubmatch(item.Tooltip); len(matches) > 0 {
+		val, err := strconv.ParseFloat(matches[1], 64)
+		if err != nil {
+			log.Fatalf("Failed to parse weapon damage: %s", err)
+		}
+		return val, val
 	}
 	return 0, 0
 }

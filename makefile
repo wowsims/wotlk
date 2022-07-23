@@ -178,7 +178,7 @@ sim/core/items/all_items.go: generate_items/*.go $(call rwildcard,sim/core/proto
 test: $(OUT_DIR)/lib.wasm binary_dist/dist.go
 	go test ./...
 
-.PHONY: update-test
+.PHONY: update-tests
 update-tests:
 	find . -name "*.results" -type f -delete
 	find . -name "*.results.tmp" -exec bash -c 'cp "$$1" "$${1%.results.tmp}".results' _ {} \;

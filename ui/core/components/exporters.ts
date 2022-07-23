@@ -46,7 +46,7 @@ export function newIndividualExporters<SpecType extends Spec>(simUI: IndividualS
 
 	addMenuItem('Link', () => new IndividualLinkExporter(menuElem, simUI), false);
 	addMenuItem('Json', () => new IndividualJsonExporter(menuElem, simUI), true);
-	addMenuItem('70U EP', () => new Individual70UEPExporter(menuElem, simUI), false);
+	addMenuItem('80U EP', () => new Individual80UEPExporter(menuElem, simUI), false);
 	addMenuItem('Pawn EP', () => new IndividualPawnEPExporter(menuElem, simUI), false);
 
 	return exportSettings;
@@ -130,11 +130,11 @@ class IndividualJsonExporter<SpecType extends Spec> extends Exporter {
 	}
 }
 
-class Individual70UEPExporter<SpecType extends Spec> extends Exporter {
+class Individual80UEPExporter<SpecType extends Spec> extends Exporter {
 	private readonly simUI: IndividualSimUI<SpecType>;
 
 	constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
-		super(parent, '70Upgrades EP Export', true);
+		super(parent, '80Upgrades EP Export', true);
 		this.simUI = simUI;
 		this.init();
 	}
@@ -142,10 +142,10 @@ class Individual70UEPExporter<SpecType extends Spec> extends Exporter {
 	getData(): string {
 		const epValues = this.simUI.player.getEpWeights();
 		const allStats = (getEnumValues(Stat) as Array<Stat>).filter(stat => ![Stat.StatEnergy, Stat.StatRage].includes(stat));
-		return `https://seventyupgrades.com/ep/import?name=${encodeURIComponent('WoWSims Weights')}` +
+		return `https://eightyupgrades.com/ep/import?name=${encodeURIComponent('WoWSims Weights')}` +
 			allStats
 				.filter(stat => epValues.getStat(stat) != 0)
-				.map(stat => `&${Individual70UEPExporter.linkNames[stat]}=${epValues.getStat(stat).toFixed(3)}`).join('');
+				.map(stat => `&${Individual80UEPExporter.linkNames[stat]}=${epValues.getStat(stat).toFixed(3)}`).join('');
 	}
 
 	static linkNames: Record<Stat, string> = {

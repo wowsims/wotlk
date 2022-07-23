@@ -36,6 +36,9 @@ func (deathKnight *DeathKnight) registerEmpowerRuneWeaponSpell() {
 			Priority: core.CooldownPriorityDefault,
 			Type:     core.CooldownTypeDPS,
 			CanActivate: func(sim *core.Simulation, character *core.Character) bool {
+				if deathKnight.opener.IsOngoing() {
+					return false
+				}
 				if deathKnight.CurrentBloodRunes() > 0 {
 					return false
 				}

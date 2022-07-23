@@ -69,7 +69,3 @@ func (paladin *Paladin) registerExorcismSpell() {
 		}),
 	})
 }
-
-func (paladin *Paladin) CanExorcism(target *core.Unit) bool {
-	return target.MobType == proto.MobType_MobTypeUndead || target.MobType == proto.MobType_MobTypeDemon
-}

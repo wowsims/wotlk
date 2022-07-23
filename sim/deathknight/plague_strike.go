@@ -39,7 +39,7 @@ func (deathKnight *DeathKnight) newPlagueStrikeSpell(isMH bool) *core.Spell {
 		},
 	}
 
-	deathKnight.threatOfThassarianProcMasks(isMH, &effect, false, func(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
+	deathKnight.threatOfThassarianProcMasks(isMH, &effect, false, false, func(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
 		return outcomeApplier
 	})
 

@@ -51,7 +51,9 @@ func (deathKnight *DeathKnight) ApplyFrostTalents() {
 	}
 
 	// Frigid Dreadplate
-	// TODO: Implement
+	if deathKnight.Talents.FrigidDreadplate > 0 {
+		deathKnight.PseudoStats.BonusMeleeHitRatingTaken -= core.MeleeHitRatingPerHitChance * float64(deathKnight.Talents.FrigidDreadplate)
+	}
 
 	// Glacier rot
 	// Implemented outside
@@ -242,7 +244,7 @@ func (deathKnight *DeathKnight) bloodOfTheNorthWillProc(sim *core.Simulation, bo
 	return ohWillCast
 }
 
-func (deathKnight *DeathKnight) bloodOfTheNorthProc(sim *core.Simulation, spell *core.Spell, runeCost core.DKRuneCost) bool {
+func (deathKnight *DeathKnight) bloodOfTheNorthProc(sim *core.Simulation, spell *core.Spell, runeCost core.RuneAmount) bool {
 	if deathKnight.Talents.BloodOfTheNorth > 0 {
 		if runeCost.Blood > 0 {
 			botnChance := deathKnight.bloodOfTheNorthChance()
@@ -286,11 +288,12 @@ func (deathKnight *DeathKnight) threatOfThassarianAdjustMetrics(sim *core.Simula
 	}
 }
 
-func (deathKnight *DeathKnight) threatOfThassarianProcMasks(isMH bool, effect *core.SpellEffect, isGuileOfGorefiendStrike bool, wrapper func(outcomeApplier core.OutcomeApplier) core.OutcomeApplier) {
+func (deathKnight *DeathKnight) threatOfThassarianProcMasks(isMH bool, effect *core.SpellEffect, isGuileOfGorefiendStrike bool, isMightOfMograineStrike bool, wrapper func(outcomeApplier core.OutcomeApplier) core.OutcomeApplier) {
 	critMultiplier := deathKnight.critMultiplier()
-	if isGuileOfGorefiendStrike {
-		critMultiplier = deathKnight.critMultiplierGuile()
+	if isGuileOfGorefiendStrike || isMightOfMograineStrike {
+		critMultiplier = deathKnight.critMultiplierGoGandMoM()
 	}
+
 	if isMH {
 		effect.ProcMask = core.ProcMaskMeleeMHSpecial
 		effect.OutcomeApplier = wrapper(deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(critMultiplier))
