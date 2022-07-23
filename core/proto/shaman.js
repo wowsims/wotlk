@@ -275,6 +275,28 @@ export var ShamanShield;
      */
     ShamanShield[ShamanShield["LightningShield"] = 2] = "LightningShield";
 })(ShamanShield || (ShamanShield = {}));
+/**
+ * @generated from protobuf enum proto.ShamanImbue
+ */
+export var ShamanImbue;
+(function (ShamanImbue) {
+    /**
+     * @generated from protobuf enum value: NoImbue = 0;
+     */
+    ShamanImbue[ShamanImbue["NoImbue"] = 0] = "NoImbue";
+    /**
+     * @generated from protobuf enum value: WindfuryWeapon = 1;
+     */
+    ShamanImbue[ShamanImbue["WindfuryWeapon"] = 1] = "WindfuryWeapon";
+    /**
+     * @generated from protobuf enum value: FlametongueWeapon = 2;
+     */
+    ShamanImbue[ShamanImbue["FlametongueWeapon"] = 2] = "FlametongueWeapon";
+    /**
+     * @generated from protobuf enum value: FrostbrandWeapon = 3;
+     */
+    ShamanImbue[ShamanImbue["FrostbrandWeapon"] = 3] = "FrostbrandWeapon";
+})(ShamanImbue || (ShamanImbue = {}));
 // @generated message type with reflection information, may provide speed optimized methods
 class ShamanTalents$Type extends MessageType {
     constructor() {
@@ -1261,11 +1283,13 @@ class EnhancementShaman_Options$Type extends MessageType {
         super("proto.EnhancementShaman.Options", [
             { no: 1, name: "shield", kind: "enum", T: () => ["proto.ShamanShield", ShamanShield] },
             { no: 2, name: "bloodlust", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 3, name: "delay_offhand_swings", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 3, name: "delay_offhand_swings", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 4, name: "imbueMH", kind: "enum", T: () => ["proto.ShamanImbue", ShamanImbue] },
+            { no: 5, name: "imbueOH", kind: "enum", T: () => ["proto.ShamanImbue", ShamanImbue] }
         ]);
     }
     create(value) {
-        const message = { shield: 0, bloodlust: false, delayOffhandSwings: false };
+        const message = { shield: 0, bloodlust: false, delayOffhandSwings: false, imbueMH: 0, imbueOH: 0 };
         Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial(this, message, value);
@@ -1284,6 +1308,12 @@ class EnhancementShaman_Options$Type extends MessageType {
                     break;
                 case /* bool delay_offhand_swings */ 3:
                     message.delayOffhandSwings = reader.bool();
+                    break;
+                case /* proto.ShamanImbue imbueMH */ 4:
+                    message.imbueMH = reader.int32();
+                    break;
+                case /* proto.ShamanImbue imbueOH */ 5:
+                    message.imbueOH = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1306,6 +1336,12 @@ class EnhancementShaman_Options$Type extends MessageType {
         /* bool delay_offhand_swings = 3; */
         if (message.delayOffhandSwings !== false)
             writer.tag(3, WireType.Varint).bool(message.delayOffhandSwings);
+        /* proto.ShamanImbue imbueMH = 4; */
+        if (message.imbueMH !== 0)
+            writer.tag(4, WireType.Varint).int32(message.imbueMH);
+        /* proto.ShamanImbue imbueOH = 5; */
+        if (message.imbueOH !== 0)
+            writer.tag(5, WireType.Varint).int32(message.imbueOH);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

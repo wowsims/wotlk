@@ -485,6 +485,14 @@ export interface EnhancementShaman_Options {
      * @generated from protobuf field: bool delay_offhand_swings = 3;
      */
     delayOffhandSwings: boolean;
+    /**
+     * @generated from protobuf field: proto.ShamanImbue imbueMH = 4;
+     */
+    imbueMH: ShamanImbue;
+    /**
+     * @generated from protobuf field: proto.ShamanImbue imbueOH = 5;
+     */
+    imbueOH: ShamanImbue;
 }
 /**
  * @generated from protobuf enum proto.ShamanMajorGlyph
@@ -736,6 +744,27 @@ export declare enum ShamanShield {
      * @generated from protobuf enum value: LightningShield = 2;
      */
     LightningShield = 2
+}
+/**
+ * @generated from protobuf enum proto.ShamanImbue
+ */
+export declare enum ShamanImbue {
+    /**
+     * @generated from protobuf enum value: NoImbue = 0;
+     */
+    NoImbue = 0,
+    /**
+     * @generated from protobuf enum value: WindfuryWeapon = 1;
+     */
+    WindfuryWeapon = 1,
+    /**
+     * @generated from protobuf enum value: FlametongueWeapon = 2;
+     */
+    FlametongueWeapon = 2,
+    /**
+     * @generated from protobuf enum value: FrostbrandWeapon = 3;
+     */
+    FrostbrandWeapon = 3
 }
 declare class ShamanTalents$Type extends MessageType<ShamanTalents> {
     constructor();
