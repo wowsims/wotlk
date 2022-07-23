@@ -45,14 +45,11 @@ func (unit *Unit) EnableRageBar(startingRage float64, rageMultiplier float64, on
 			}
 
 			var HitFactor float64
-			var BaseSwingSpeed float64
 
 			if spellEffect.IsMH() {
-				HitFactor = 3.5 / 2
-				BaseSwingSpeed = unit.AutoAttacks.MH.SwingSpeed
+				HitFactor = 3.5
 			} else {
-				HitFactor = 1.75 / 2
-				BaseSwingSpeed = unit.AutoAttacks.OH.SwingSpeed
+				HitFactor = 1.75
 			}
 
 			if spellEffect.Outcome.Matches(OutcomeCrit) {
