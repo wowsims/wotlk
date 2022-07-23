@@ -15,7 +15,7 @@ type DeathKnight struct {
 	Rotation proto.DeathKnight_Rotation
 
 	LastCastOutcome core.HitOutcome
-	DKRotation      DKRotation
+	RotationHelper
 
 	Ghoul     *GhoulPet
 	RaiseDead *core.Spell
@@ -111,9 +111,9 @@ type DeathKnight struct {
 	UnholyPresenceAura *core.Aura
 
 	// Debuffs
-	IcyTouchAura   []*core.Aura
-	CryptFeverAura []*core.Aura
-	EbonPlagueAura []*core.Aura
+	FrostFeverDebuffAura []*core.Aura
+	CryptFeverAura       []*core.Aura
+	EbonPlagueAura       []*core.Aura
 
 	// Dynamic trackers
 	additiveDamageModifier float64
@@ -200,7 +200,7 @@ func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
 		deathKnight.PrecastArmyOfTheDead(sim)
 	}
 
-	deathKnight.resetDKRotation(sim)
+	deathKnight.ResetRotation(sim)
 }
 
 func (deathKnight *DeathKnight) IsFuStrike(spell *core.Spell) bool {
@@ -233,67 +233,41 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 		currentRunicPower,
 		maxRunicPower,
 		func(sim *core.Simulation) {
-			if !deathKnight.Talents.HowlingBlast {
+			// I change this here because when using the opener sequence
+			// you do not want these to trigger a tryUseGCD, so after the opener
+			// its fine since you're running off a prio system, and rune generation
+			// can change your logic which we want.
+			if !deathKnight.onOpener {
 				if deathKnight.GCD.IsReady(sim) {
 					deathKnight.tryUseGCD(sim)
-				}
-			} else {
-				if !deathKnight.DKRotation.onOpener {
-					if deathKnight.GCD.IsReady(sim) {
-						deathKnight.tryUseGCD(sim)
-					}
 				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if !deathKnight.Talents.HowlingBlast {
+			if !deathKnight.onOpener {
 				if deathKnight.GCD.IsReady(sim) {
 					deathKnight.tryUseGCD(sim)
-				}
-			} else {
-				if !deathKnight.DKRotation.onOpener {
-					if deathKnight.GCD.IsReady(sim) {
-						deathKnight.tryUseGCD(sim)
-					}
 				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if !deathKnight.Talents.HowlingBlast {
+			if !deathKnight.onOpener {
 				if deathKnight.GCD.IsReady(sim) {
 					deathKnight.tryUseGCD(sim)
-				}
-			} else {
-				if !deathKnight.DKRotation.onOpener {
-					if deathKnight.GCD.IsReady(sim) {
-						deathKnight.tryUseGCD(sim)
-					}
 				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if !deathKnight.Talents.HowlingBlast {
+			if !deathKnight.onOpener {
 				if deathKnight.GCD.IsReady(sim) {
 					deathKnight.tryUseGCD(sim)
-				}
-			} else {
-				if !deathKnight.DKRotation.onOpener {
-					if deathKnight.GCD.IsReady(sim) {
-						deathKnight.tryUseGCD(sim)
-					}
 				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if !deathKnight.Talents.HowlingBlast {
+			if !deathKnight.onOpener {
 				if deathKnight.GCD.IsReady(sim) {
 					deathKnight.tryUseGCD(sim)
-				}
-			} else {
-				if !deathKnight.DKRotation.onOpener {
-					if deathKnight.GCD.IsReady(sim) {
-						deathKnight.tryUseGCD(sim)
-					}
 				}
 			}
 		},

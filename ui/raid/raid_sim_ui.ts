@@ -17,6 +17,7 @@ import { playerToSpec } from "/wotlk/core/proto_utils/utils.js";
 import { Raid } from "/wotlk/core/raid.js";
 import { Sim } from "/wotlk/core/sim.js";
 import { SimUI } from "/wotlk/core/sim_ui.js";
+import { LaunchStatus, raidSimLaunched } from '/wotlk/core/launched_sims.js';
 import { EventID, TypedEvent } from "/wotlk/core/typed_event.js";
 
 import { AssignmentsPicker } from "./assignments_picker.js";
@@ -29,6 +30,7 @@ import { TanksPicker } from "./tanks_picker.js";
 
 declare var Muuri: any;
 declare var tippy: any;
+declare var pako: any;
 
 export interface RaidSimConfig {
 	knownIssues?: Array<string>,
@@ -55,6 +57,7 @@ export class RaidSimUI extends SimUI {
 	constructor(parentElem: HTMLElement, config: RaidSimConfig) {
 		super(parentElem, new Sim(), {
 			spec: null,
+			launchStatus: raidSimLaunched ? LaunchStatus.Launched : LaunchStatus.Unlaunched,
 			knownIssues: (config.knownIssues || []).concat(extraKnownIssues),
 		});
 		this.rootElem.classList.add('raid-sim-ui');
@@ -368,6 +371,20 @@ export class RaidSimUI extends SimUI {
 			blessings: this.blessingsPicker!.getAssignments(),
 			encounter: this.sim.encounter.toProto(),
 		});
+	}
+
+	toLink(): string {
+		const proto = this.toProto();
+		// When sharing links, people generally don't intend to share settings.
+		proto.settings = undefined;
+
+		const protoBytes = RaidSimSettings.toBinary(proto);
+		const deflated = pako.deflate(protoBytes, { to: 'string' });
+		const encoded = btoa(String.fromCharCode(...deflated));
+
+		const linkUrl = new URL(window.location.href);
+		linkUrl.hash = encoded;
+		return linkUrl.toString();
 	}
 
 	fromProto(eventID: EventID, settings: RaidSimSettings) {

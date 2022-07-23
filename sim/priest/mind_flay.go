@@ -76,6 +76,7 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 	effect := core.SpellEffect{
 		DamageMultiplier:     1,
 		ThreatMultiplier:     1 - 0.08*float64(priest.Talents.ShadowAffinity),
+		BonusSpellHitRating:  0 + float64(priest.Talents.ShadowFocus)*1*core.SpellHitRatingPerHitChance,
 		IsPeriodic:           true,
 		BonusSpellCritRating: float64(priest.Talents.MindMelt)*2*core.CritRatingPerCritChance + core.TernaryFloat64(priest.HasSetBonus(ItemSetZabras, 4), 5, 0)*core.CritRatingPerCritChance,
 		OutcomeApplier:       priest.OutcomeFuncMagicHitAndCrit(1 + float64(priest.Talents.ShadowPower)*0.2),

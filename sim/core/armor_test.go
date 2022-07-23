@@ -246,7 +246,7 @@ func TestDamageReductionFromArmor(t *testing.T) {
 	// Cap armor pen
 	attacker.stats[stats.ArmorPenetration] = 1400
 	attackTable.UpdateArmorDamageReduction()
-	expectedDamageReduction = 0.0203
+	expectedDamageReduction = 0.02026
 	if !WithinToleranceFloat64(1-expectedDamageReduction, attackTable.ArmorDamageModifier, tolerance) {
 		t.Fatalf("Expected major & minor armor modifier to result in %f damage reduction got %f", expectedDamageReduction, 1-attackTable.ArmorDamageModifier)
 	}
@@ -254,7 +254,7 @@ func TestDamageReductionFromArmor(t *testing.T) {
 	// Verify going past Cap doesn't help
 	attacker.stats[stats.ArmorPenetration] = 1600
 	attackTable.UpdateArmorDamageReduction()
-	expectedDamageReduction = 0.0203
+	expectedDamageReduction = 0.02026
 	if !WithinToleranceFloat64(1-expectedDamageReduction, attackTable.ArmorDamageModifier, tolerance) {
 		t.Fatalf("Expected major & minor armor modifier to result in %f damage reduction got %f", expectedDamageReduction, 1-attackTable.ArmorDamageModifier)
 	}

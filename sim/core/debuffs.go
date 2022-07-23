@@ -133,8 +133,8 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 	if debuffs.ThunderClap != proto.TristateEffect_TristateEffectMissing {
 		MakePermanent(ThunderClapAura(target, GetTristateValueInt32(debuffs.ThunderClap, 0, 3)))
 	}
-	if debuffs.IcyTouch != proto.TristateEffect_TristateEffectMissing {
-		MakePermanent(IcyTouchAura(target, GetTristateValueInt32(debuffs.IcyTouch, 0, 3)))
+	if debuffs.FrostFever != proto.TristateEffect_TristateEffectMissing {
+		MakePermanent(FrostFeverAura(target, GetTristateValueInt32(debuffs.FrostFever, 0, 3)))
 	}
 	if debuffs.InfectedWounds {
 		MakePermanent(InfectedWoundsAura(target, 3))
@@ -876,7 +876,7 @@ func JudgementsOfTheJustAura(target *Unit, points int32) *Aura {
 	})
 }
 
-func IcyTouchAura(target *Unit, impIcyTouch int32) *Aura {
+func FrostFeverAura(target *Unit, impIcyTouch int32) *Aura {
 	speedMultiplier := 0.86
 	if impIcyTouch > 0 {
 		speedMultiplier -= 0.02 * float64(impIcyTouch)
@@ -884,9 +884,9 @@ func IcyTouchAura(target *Unit, impIcyTouch int32) *Aura {
 
 	inverseMult := 1 / speedMultiplier
 	return target.GetOrRegisterAura(Aura{
-		Label:    "IcyTouch",
+		Label:    "FrostFever",
 		Tag:      AtkSpeedReductionAuraTag,
-		ActionID: ActionID{SpellID: 49909},
+		ActionID: ActionID{SpellID: 55095},
 		Duration: time.Second * 15,
 		Priority: inverseMult,
 		OnGain: func(aura *Aura, sim *Simulation) {

@@ -193,7 +193,7 @@ export const CritDebuff = InputHelpers.makeMultiIconInput([
 
 export const MeleeAttackSpeedDebuff = InputHelpers.makeMultiIconInput([
 	makeTristateDebuffInput(ActionId.fromSpellId(47502), ActionId.fromSpellId(12666), 'thunderClap'),
-	makeTristateDebuffInput(ActionId.fromSpellId(55095), ActionId.fromSpellId(51456), 'icyTouch'),
+	makeTristateDebuffInput(ActionId.fromSpellId(55095), ActionId.fromSpellId(51456), 'frostFever'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(53696), 'judgementsOfTheJust'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(48485), 'infectedWounds'),
 ], 'Atk Spd');

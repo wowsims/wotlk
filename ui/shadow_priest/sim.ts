@@ -60,7 +60,7 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 			],
 			modifyDisplayStats: (player: Player<Spec.SpecShadowPriest>) => {
 				let stats = new Stats();
-				stats = stats.addStat(Stat.StatSpellHit, player.getTalents().shadowFocus * 3 * Mechanics.SPELL_HIT_RATING_PER_HIT_CHANCE);
+				stats = stats.addStat(Stat.StatSpellHit, player.getTalents().shadowFocus * 1 * Mechanics.SPELL_HIT_RATING_PER_HIT_CHANCE);
 
 				return {
 					talents: stats,

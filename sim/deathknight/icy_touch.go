@@ -2,27 +2,14 @@ package deathknight
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (deathKnight *DeathKnight) killingMachineOutcomeMod(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
-	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
-		if deathKnight.KillingMachineAura.IsActive() {
-			deathKnight.AddStatDynamic(sim, stats.SpellCrit, 100*core.CritRatingPerCritChance)
-			outcomeApplier(sim, spell, spellEffect, attackTable)
-			deathKnight.AddStatDynamic(sim, stats.SpellCrit, -100*core.CritRatingPerCritChance)
-		} else {
-			outcomeApplier(sim, spell, spellEffect, attackTable)
-		}
-	}
-}
-
 func (deathKnight *DeathKnight) registerIcyTouchSpell() {
-	deathKnight.IcyTouchAura = make([]*core.Aura, deathKnight.Env.GetNumTargets())
+	deathKnight.FrostFeverDebuffAura = make([]*core.Aura, deathKnight.Env.GetNumTargets())
 	for _, encounterTarget := range deathKnight.Env.Encounter.Targets {
 		target := &encounterTarget.Unit
-		itAura := core.IcyTouchAura(target, deathKnight.Talents.ImprovedIcyTouch)
-		deathKnight.IcyTouchAura[target.Index] = itAura
+		ffAura := core.FrostFeverAura(target, deathKnight.Talents.ImprovedIcyTouch)
+		deathKnight.FrostFeverDebuffAura[target.Index] = ffAura
 	}
 
 	impIcyTouchCoeff := 1.0 + 0.05*float64(deathKnight.Talents.ImprovedIcyTouch)
@@ -62,6 +49,10 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				deathKnight.LastCastOutcome = spellEffect.Outcome
 				if spellEffect.Landed() {
+					if deathKnight.KillingMachineAura.IsActive() {
+						deathKnight.KillingMachineAura.Deactivate(sim)
+					}
+
 					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 1, 0)
 					deathKnight.Spend(sim, spell, dkSpellCost)
 
@@ -75,14 +66,6 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 
 					amountOfRunicPower := 10.0 + 2.5*float64(deathKnight.Talents.ChillOfTheGrave)
 					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
-
-					deathKnight.IcyTouchAura[spellEffect.Target.Index].Activate(sim)
-
-					// In reality if you have the talent just casting IT
-					// activates the aura, no need to check for enemy debuff
-					if deathKnight.IcyTalonsAura != nil {
-						deathKnight.IcyTalonsAura.Activate(sim)
-					}
 				}
 			},
 		}),
