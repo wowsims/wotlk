@@ -288,11 +288,12 @@ func (deathKnight *DeathKnight) threatOfThassarianAdjustMetrics(sim *core.Simula
 	}
 }
 
-func (deathKnight *DeathKnight) threatOfThassarianProcMasks(isMH bool, effect *core.SpellEffect, isGuileOfGorefiendStrike bool, wrapper func(outcomeApplier core.OutcomeApplier) core.OutcomeApplier) {
+func (deathKnight *DeathKnight) threatOfThassarianProcMasks(isMH bool, effect *core.SpellEffect, isGuileOfGorefiendStrike bool, isMightOfMograineStrike bool, wrapper func(outcomeApplier core.OutcomeApplier) core.OutcomeApplier) {
 	critMultiplier := deathKnight.critMultiplier()
-	if isGuileOfGorefiendStrike {
-		critMultiplier = deathKnight.critMultiplierGuile()
+	if isGuileOfGorefiendStrike || isMightOfMograineStrike {
+		critMultiplier = deathKnight.critMultiplierGoGandMoM()
 	}
+
 	if isMH {
 		effect.ProcMask = core.ProcMaskMeleeMHSpecial
 		effect.OutcomeApplier = wrapper(deathKnight.OutcomeFuncMeleeSpecialHitAndCrit(critMultiplier))

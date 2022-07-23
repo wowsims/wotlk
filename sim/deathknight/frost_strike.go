@@ -41,7 +41,7 @@ func (deathKnight *DeathKnight) newFrostStrikeHitSpell(isMH bool) *core.Spell {
 		},
 	}
 
-	deathKnight.threatOfThassarianProcMasks(isMH, &effect, true, deathKnight.killingMachineOutcomeMod)
+	deathKnight.threatOfThassarianProcMasks(isMH, &effect, true, false, deathKnight.killingMachineOutcomeMod)
 
 	return deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:     FrostStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),

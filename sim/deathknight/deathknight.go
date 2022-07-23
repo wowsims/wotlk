@@ -36,6 +36,10 @@ type DeathKnight struct {
 	PlagueStrikeMhHit *core.Spell
 	PlagueStrikeOhHit *core.Spell
 
+	DeathStrike      *core.Spell
+	DeathStrikeMhHit *core.Spell
+	DeathStrikeOhHit *core.Spell
+
 	Obliterate      *core.Spell
 	ObliterateMhHit *core.Spell
 	ObliterateOhHit *core.Spell
@@ -66,9 +70,10 @@ type DeathKnight struct {
 	OtherRelevantStrAgiActive bool
 	HornOfWinter              *core.Spell
 	HornOfWinterAura          *core.Aura
-	//ArmyOfTheDead    *core.Spell
 
 	// "CDs"
+	RuneTap *core.Spell
+
 	BloodTap     *core.Spell
 	BloodTapAura *core.Aura
 
@@ -178,6 +183,7 @@ func (deathKnight *DeathKnight) Initialize() {
 	deathKnight.registerHornOfWinterSpell()
 	deathKnight.registerPestilenceSpell()
 	deathKnight.registerEmpowerRuneWeaponSpell()
+	deathKnight.registerRuneTapSpell()
 
 	deathKnight.registerRaiseDeadCD()
 	deathKnight.registerSummonGargoyleCD()
@@ -283,6 +289,8 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 	deathKnight.AddStatDependency(stats.Agility, stats.Dodge, 1.0+(core.DodgeRatingPerDodgeChance/84.74576271))
 	deathKnight.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
 
+	deathKnight.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
+
 	deathKnight.Ghoul = deathKnight.NewGhoulPet(deathKnight.Talents.MasterOfGhouls)
 	if deathKnight.Talents.SummonGargoyle {
 		deathKnight.Gargoyle = deathKnight.NewGargoyle()
@@ -321,10 +329,13 @@ func (deathKnight *DeathKnight) DiseasesAreActive(target *core.Unit) bool {
 	return deathKnight.FrostFeverDisease[target.Index].IsActive() || deathKnight.BloodPlagueDisease[target.Index].IsActive()
 }
 
-func (deathKnight *DeathKnight) secondaryCritModifier(applyGuile bool) float64 {
+func (deathKnight *DeathKnight) secondaryCritModifier(applyGuile bool, applyMoM bool) float64 {
 	secondaryModifier := 0.0
 	if applyGuile {
 		secondaryModifier += 0.15 * float64(deathKnight.Talents.GuileOfGorefiend)
+	}
+	if applyMoM {
+		secondaryModifier += 0.15 * float64(deathKnight.Talents.MightOfMograine)
 	}
 	return secondaryModifier
 }
@@ -333,16 +344,21 @@ func (deathKnight *DeathKnight) secondaryCritModifier(applyGuile bool) float64 {
 func (deathKnight *DeathKnight) spellCritMultiplier() float64 {
 	return deathKnight.MeleeCritMultiplier(1.0, 0)
 }
-func (deathKnight *DeathKnight) spellCritMultiplierGuile() float64 {
+
+func (deathKnight *DeathKnight) spellCritMultiplierGoGandMoM() float64 {
 	applyGuile := deathKnight.Talents.GuileOfGorefiend > 0
-	return deathKnight.MeleeCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile))
+	applyMightOfMograine := deathKnight.Talents.MightOfMograine > 0
+	return deathKnight.MeleeCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile, applyMightOfMograine))
 }
+
 func (deathKnight *DeathKnight) critMultiplier() float64 {
 	return deathKnight.MeleeCritMultiplier(1.0, 0)
 }
-func (deathKnight *DeathKnight) critMultiplierGuile() float64 {
+
+func (deathKnight *DeathKnight) critMultiplierGoGandMoM() float64 {
 	applyGuile := deathKnight.Talents.GuileOfGorefiend > 0
-	return deathKnight.MeleeCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile))
+	applyMightOfMograine := deathKnight.Talents.MightOfMograine > 0
+	return deathKnight.MeleeCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile, applyMightOfMograine))
 }
 
 func (deathKnight *DeathKnight) RuneAmountForSpell(spell *core.Spell) core.RuneAmount {

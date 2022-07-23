@@ -83,6 +83,10 @@ func (deathKnight *DeathKnight) subversionCritBonus() float64 {
 	return 3.0 * float64(deathKnight.Talents.Subversion)
 }
 
+func (deathKnight *DeathKnight) improvedDeathStrikeCritBonus() float64 {
+	return 3.0 * float64(deathKnight.Talents.ImprovedDeathStrike)
+}
+
 func (deathKnight *DeathKnight) applyBladeBarrier() {
 	if deathKnight.Talents.BladeBarrier == 0 {
 		return
