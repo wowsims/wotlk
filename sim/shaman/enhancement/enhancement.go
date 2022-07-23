@@ -30,8 +30,8 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 	selfBuffs := shaman.SelfBuffs{
 		Bloodlust: enhOptions.Options.Bloodlust,
 		Shield:    enhOptions.Options.Shield,
-		//ImbueMH:   enhOptions.Options.ImbueMH,
-		//ImbueOH:   enhOptions.Options.ImbueOH,
+		ImbueMH:   enhOptions.Options.ImbueMH,
+		ImbueOH:   enhOptions.Options.ImbueOH,
 	}
 
 	totems := proto.ShamanTotems{}
@@ -62,18 +62,18 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 		enh.Consumes.OffHandImbue = proto.WeaponImbue_WeaponImbueUnknown
 	}
 	enh.ApplyWindfuryImbue(
-		enh.Consumes.MainHandImbue == proto.WeaponImbue_WeaponImbueShamanWindfury,
-		enh.Consumes.OffHandImbue == proto.WeaponImbue_WeaponImbueShamanWindfury)
+		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_WindfuryWeapon,
+		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_WindfuryWeapon)
 	enh.ApplyFlametongueImbue(
-		enh.Consumes.MainHandImbue == proto.WeaponImbue_WeaponImbueShamanFlametongue,
-		enh.Consumes.OffHandImbue == proto.WeaponImbue_WeaponImbueShamanFlametongue)
+		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FlametongueWeapon,
+		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_FlametongueWeapon)
 	enh.ApplyFrostbrandImbue(
-		enh.Consumes.MainHandImbue == proto.WeaponImbue_WeaponImbueShamanFrostbrand,
-		enh.Consumes.OffHandImbue == proto.WeaponImbue_WeaponImbueShamanFrostbrand)
+		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FrostbrandWeapon,
+		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_FrostbrandWeapon)
 
-	if enh.Consumes.MainHandImbue == proto.WeaponImbue_WeaponImbueShamanWindfury ||
-		enh.Consumes.MainHandImbue == proto.WeaponImbue_WeaponImbueShamanFlametongue ||
-		enh.Consumes.MainHandImbue == proto.WeaponImbue_WeaponImbueShamanFrostbrand {
+	if enh.SelfBuffs.ImbueMH == proto.ShamanImbue_WindfuryWeapon ||
+		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FlametongueWeapon ||
+		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FrostbrandWeapon {
 		enh.HasMHWeaponImbue = true
 	}
 

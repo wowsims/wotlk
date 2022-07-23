@@ -51,6 +51,8 @@ func NewShaman(character core.Character, talents proto.ShamanTalents, totems pro
 type SelfBuffs struct {
 	Bloodlust bool
 	Shield    proto.ShamanShield
+	ImbueMH   proto.ShamanImbue
+	ImbueOH   proto.ShamanImbue
 }
 
 // Indexes into NextTotemDrops for self buffs
