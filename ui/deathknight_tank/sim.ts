@@ -12,9 +12,11 @@ import { Stat } from '/wotlk/core/proto/common.js';
 import { TristateEffect } from '/wotlk/core/proto/common.js'
 import { Player } from '/wotlk/core/player.js';
 import { Stats } from '/wotlk/core/proto_utils/stats.js';
+import { Sim } from '/wotlk/core/sim.js';
 import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
+import { TotemsSection } from '/wotlk/core/components/totem_inputs.js';
 
-import { DeathKnight, DeathKnight_Rotation as DeathKnightRotation, DeathKnightTalents as DeathKnightTalents, DeathKnight_Options as DeathKnightOptions } from '/wotlk/core/proto/deathknight.js';
+import { DeathKnightTank, DeathKnightTank_Rotation as DeathKnightRotation, DeathKnightTalents as DeathKnightTalents, DeathKnightTank_Options as DeathKnightOptions } from '/wotlk/core/proto/deathknight.js';
 
 import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
 import * as OtherInputs from '/wotlk/core/components/other_inputs.js';
@@ -23,10 +25,10 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 import * as DeathKnightInputs from './inputs.js';
 import * as Presets from './presets.js';
 
-export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
-	constructor(parentElem: HTMLElement, player: Player<Spec.SpecDeathKnight>) {
+export class DeathKnightTankSimUI extends IndividualSimUI<Spec.SpecDeathKnightTank> {
+	constructor(parentElem: HTMLElement, player: Player<Spec.SpecDeathKnightTank>) {
 		super(parentElem, player, {
-			cssClass: 'deathknight-sim-ui',
+			cssClass: 'deathknight-tank-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
 				"<p>Rotation logic is just hit things on CGD. It is not good don't take it as actual data.</p>\
@@ -67,7 +69,7 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 			],
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P1_FROST_BIS_PRESET.gear,
+				gear: Presets.P1_BLOOD_BIS_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatStrength]: 2.61,
@@ -85,7 +87,7 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 				// Default rotation settings.
 				rotation: Presets.DefaultRotation,
 				// Default talents.
-				talents: Presets.FrostTalents.data,
+				talents: Presets.BloodTalents.data,
 				// Default spec-specific settings.
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
@@ -126,11 +128,6 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
-					DeathKnightInputs.StartingRunicPower,
-					DeathKnightInputs.PetUptime,
-					
-					DeathKnightInputs.PrecastGhoulFrenzy,
-					DeathKnightInputs.PrecastHornOfWinter,
 					
 					OtherInputs.PrepopPotion,
 
@@ -146,15 +143,11 @@ export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
 			presets: {
 				// Preset talents that the user can quickly select.
 				talents: [
-					Presets.FrostTalents,
-					Presets.FrostUnholyTalents,
-					Presets.UnholyDualWieldTalents,
+					Presets.BloodTalents,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.P1_FROST_PRE_BIS_PRESET,
-					Presets.P1_FROST_BIS_PRESET,
-					Presets.P1_UNHOLY_DW_BIS_PRESET,
+					Presets.P1_BLOOD_BIS_PRESET,
 				],
 			},
 		});

@@ -3,25 +3,17 @@ import { EquipmentSpec } from '/wotlk/core/proto/common.js';
 import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
 import { Glyphs } from '/wotlk/core/proto/common.js';
-import { ItemSpec } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { WeaponImbue } from '/wotlk/core/proto/common.js';
-import { Faction } from '/wotlk/core/proto/common.js';
 import { SavedTalents } from '/wotlk/core/proto/ui.js';
-import { Player } from '/wotlk/core/player.js';
 
 import {
-	DeathKnightTalents as DeathKnightTalents,
-	DeathKnight,
+	DeathKnightTalents,
 	DeathKnight_Rotation as DeathKnightRotation,
 	DeathKnight_Options as DeathKnightOptions,
 	DeathKnightMajorGlyph,
 	DeathKnightMinorGlyph,
 } from '/wotlk/core/proto/deathknight.js';
 
-import * as Enchants from '/wotlk/core/constants/enchants.js';
-import * as Gems from '/wotlk/core/proto_utils/gems.js';
 import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 
 // Preset options for this spec.
@@ -61,7 +53,7 @@ export const FrostUnholyTalents = {
 };
 
 export const UnholyDualWieldTalents = {
-	name: 'Unholy Dual Wield Dps',
+	name: 'Unholy Dual Wield',
 	data: SavedTalents.create({
 		talentsString: '-320023500002-2300303350032052000150003133151',
 		glyphs: Glyphs.create({

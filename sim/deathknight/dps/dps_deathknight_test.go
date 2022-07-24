@@ -1,4 +1,4 @@
-package deathknight
+package dps
 
 import (
 	"testing"
@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	RegisterDeathKnight()
+	RegisterDpsDeathknight()
 }
 
 func TestUnholy(t *testing.T) {

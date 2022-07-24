@@ -1,63 +1,66 @@
-package deathknight
+package dps
 
-import "github.com/wowsims/wotlk/sim/core"
+import (
+	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/deathknight"
+)
 
-func (deathKnight *DeathKnight) setupFrostRotations() {
+func (deathKnight *DpsDeathKnight) setupFrostRotations() {
 
 	// This defines the Sub Blood opener
-	deathKnight.DefineOpener(RotationID_FrostSubBlood_Full, []RotationAction{
-		RotationAction_IT,
-		RotationAction_PS,
-		RotationAction_UA,
-		RotationAction_BT,
-		RotationAction_Obli,
-		RotationAction_FS,
-		RotationAction_Pesti,
-		RotationAction_ERW,
-		RotationAction_Obli,
-		RotationAction_Obli,
-		RotationAction_Obli,
-		RotationAction_FS,
-		RotationAction_HB_Ghoul_RimeCheck,
-		RotationAction_FS,
-		RotationAction_Obli,
-		RotationAction_Obli,
-		RotationAction_Pesti,
-		RotationAction_FS,
-		RotationAction_BS,
-		RotationAction_FS,
+	deathKnight.DefineOpener(deathknight.RotationID_FrostSubBlood_Full, []deathknight.RotationAction{
+		deathknight.RotationAction_IT,
+		deathknight.RotationAction_PS,
+		deathknight.RotationAction_UA,
+		deathknight.RotationAction_BT,
+		deathknight.RotationAction_Obli,
+		deathknight.RotationAction_FS,
+		deathknight.RotationAction_Pesti,
+		deathknight.RotationAction_ERW,
+		deathknight.RotationAction_Obli,
+		deathknight.RotationAction_Obli,
+		deathknight.RotationAction_Obli,
+		deathknight.RotationAction_FS,
+		deathknight.RotationAction_HB_Ghoul_RimeCheck,
+		deathknight.RotationAction_FS,
+		deathknight.RotationAction_Obli,
+		deathknight.RotationAction_Obli,
+		deathknight.RotationAction_Pesti,
+		deathknight.RotationAction_FS,
+		deathknight.RotationAction_BS,
+		deathknight.RotationAction_FS,
 	})
 
 	// This defines the Sub Unholy opener
-	deathKnight.DefineOpener(RotationID_FrostSubUnholy_Full, []RotationAction{
-		RotationAction_IT,
-		RotationAction_PS,
-		RotationAction_BT,
-		RotationAction_Pesti,
-		RotationAction_UA,
-		RotationAction_Obli,
-		RotationAction_FS,
-		RotationAction_ERW,
-		RotationAction_Obli,
-		RotationAction_Obli,
-		RotationAction_Obli,
-		RotationAction_FS,
-		RotationAction_FS,
-		RotationAction_FS,
-		RotationAction_Obli,
-		RotationAction_Obli,
-		RotationAction_BS,
-		RotationAction_Pesti,
-		RotationAction_FS,
+	deathKnight.DefineOpener(deathknight.RotationID_FrostSubUnholy_Full, []deathknight.RotationAction{
+		deathknight.RotationAction_IT,
+		deathknight.RotationAction_PS,
+		deathknight.RotationAction_BT,
+		deathknight.RotationAction_Pesti,
+		deathknight.RotationAction_UA,
+		deathknight.RotationAction_Obli,
+		deathknight.RotationAction_FS,
+		deathknight.RotationAction_ERW,
+		deathknight.RotationAction_Obli,
+		deathknight.RotationAction_Obli,
+		deathknight.RotationAction_Obli,
+		deathknight.RotationAction_FS,
+		deathknight.RotationAction_FS,
+		deathknight.RotationAction_FS,
+		deathknight.RotationAction_Obli,
+		deathknight.RotationAction_Obli,
+		deathknight.RotationAction_BS,
+		deathknight.RotationAction_Pesti,
+		deathknight.RotationAction_FS,
 	})
 }
 
-func (deathKnight *DeathKnight) FrostDiseaseCheckWrapper(sim *core.Simulation, target *core.Unit, spell *core.Spell) bool {
+func (deathKnight *DpsDeathKnight) FrostDiseaseCheckWrapper(sim *core.Simulation, target *core.Unit, spell *core.Spell) bool {
 	success := false
 
-	if !deathKnight.TargetHasDisease(FrostFeverAuraLabel, target) {
+	if !deathKnight.TargetHasDisease(deathknight.FrostFeverAuraLabel, target) {
 		success = deathKnight.CastIcyTouch(sim, target)
-	} else if !deathKnight.TargetHasDisease(BloodPlagueAuraLabel, target) {
+	} else if !deathKnight.TargetHasDisease(deathknight.BloodPlagueAuraLabel, target) {
 		success = deathKnight.CastPlagueStrike(sim, target)
 	} else if deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim) < spell.CurCast.GCD ||
 		deathKnight.BloodPlagueDisease[target.Index].RemainingDuration(sim) < spell.CurCast.GCD {
@@ -114,8 +117,8 @@ func (deathKnight *DeathKnight) FrostDiseaseCheckWrapper(sim *core.Simulation, t
 	return success
 }
 
-func (deathKnight *DeathKnight) doFrostRotation(sim *core.Simulation, target *core.Unit) {
-	casted := &deathKnight.castSuccessful
+func (deathKnight *DpsDeathKnight) doFrostRotation(sim *core.Simulation, target *core.Unit) {
+	casted := &deathKnight.CastSuccessful
 
 	if deathKnight.ShouldHornOfWinter(sim) {
 		*casted = deathKnight.CastHornOfWinter(sim, target)
