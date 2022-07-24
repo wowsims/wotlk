@@ -59,8 +59,8 @@ export const DefaultConsumes = Consumes.create({
 	defaultPotion: Potions.PotionOfSpeed,
 });
 
-export const P5_PRESET = {
-	name: 'P5 Preset',
+export const TBC_PRESET = {
+	name: 'TBC Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
@@ -164,120 +164,198 @@ export const P5_PRESET = {
 		}
 	]}`),
 };
-export const ICC_PRESET = {
-	name: 'ICC Preset',
+export const P1_PRESET = {
+	name: 'P1 Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
+	gear: EquipmentSpec.fromJsonString(`{ "items": [
         {
-          "id": 51255,
+          "id": 40562,
           "enchant": 44877,
           "gems": [
             41285,
-            40133
+            40026
           ]
         },
         {
-          "id": 50724,
+          "id": 44661,
           "gems": [
-            40113
+            39998
           ]
         },
         {
-          "id": 51257,
+          "id": 40459,
           "enchant": 44874,
           "gems": [
-            40155
+            39998
           ]
         },
         {
-          "id": 50628,
+          "id": 44005,
           "enchant": 55642,
           "gems": [
-            40155
+            40026
           ]
         },
         {
-          "id": 51259,
+          "id": 44002,
           "enchant": 33990,
           "gems": [
-            40113,
-            40155
+            39998,
+            39998
           ]
         },
         {
-          "id": 50651,
+          "id": 44008,
           "enchant": 44498,
           "gems": [
-            40155,
+            39998,
             0
           ]
         },
         {
-          "id": 51256,
+          "id": 40454,
           "enchant": 54999,
           "gems": [
-            40113,
+            40049,
             0
           ]
         },
         {
-          "id": 50613,
+          "id": 40561,
           "gems": [
-            40133,
-            40113,
-            40113
+            39998
           ]
         },
         {
-          "id": 50694,
+          "id": 40560,
+          "enchant": 41602
+        },
+        {
+          "id": 40558,
+          "enchant": 55016
+        },
+        {
+          "id": 40719
+        },
+        {
+          "id": 40399
+        },
+        {
+          "id": 40255
+        },
+        {
+          "id": 40432
+        },
+        {
+          "id": 40395,
+          "enchant": 44487
+        },
+        {
+          "id": 40273
+        },
+        {
+          "id": 39712
+        }
+      ]
+	}
+]}`),
+};
+export const PreBis_PRESET = {
+	name: 'PreBis Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(`{ "items": [
+        {
+          "id": 42553,
+          "enchant": 44877,
+          "gems": [
+            41285,
+            40051
+          ]
+        },
+        {
+          "id": 40680
+        },
+        {
+          "id": 34210,
+          "enchant": 44874,
+          "gems": [
+            39998,
+            40155
+          ]
+        },
+        {
+          "id": 41610,
+          "enchant": 55642
+        },
+        {
+          "id": 39523,
+          "enchant": 33990,
+          "gems": [
+            39998,
+            40051
+          ]
+        },
+        {
+          "id": 37361,
+          "enchant": 44498,
+          "gems": [
+            0
+          ]
+        },
+        {
+          "id": 39530,
+          "enchant": 54999,
+          "gems": [
+            40051,
+            0
+          ]
+        },
+        {
+          "id": 40696,
+          "gems": [
+            39998,
+            40026
+          ]
+        },
+        {
+          "id": 34181,
           "enchant": 41602,
           "gems": [
-            40113,
-            40133,
-            40155
+            39998,
+            39998,
+            40051
           ]
         },
         {
-          "id": 50699,
+          "id": 44202,
           "enchant": 55016,
           "gems": [
-            40133,
-            40113
+            40026
           ]
         },
         {
-          "id": 50664,
-          "gems": [
-            40113
-          ]
+          "id": 37694
         },
         {
-          "id": 50400,
-          "gems": [
-            40113
-          ]
+          "id": 37192
         },
         {
-          "id": 50365
+          "id": 40682
         },
         {
-          "id": 50348
+          "id": 37873
         },
         {
-          "id": 50734,
-          "enchant": 44487,
-          "gems": [
-            40113
-          ]
+          "id": 45085,
+          "enchant": 44487
         },
         {
-          "id": 50719
+          "id": 40698
         },
         {
-          "id": 50684,
-          "gems": [
-            40155
-		]
-	}
+          "id": 37177
+		}
+	]
+}
 ]}`),
 };
