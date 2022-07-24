@@ -55,6 +55,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	judgementMultiplier := judgementModifiers.Get()
 
 	dot := paladin.createSealOfVengeanceDot(baseMultiplier)
+	paladin.SealOfVengeanceDot = dot
 
 	onSwingProc := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 31803}, // Holy Vengeance.
