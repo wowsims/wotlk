@@ -1433,6 +1433,11 @@ input, select {
   display: block;
   font-size: clamp(16px, 17px, 18px);
   letter-spacing: normal;
+  color: white;
+}
+
+.item-picker-name:hover {
+  text-decoration: none;
 }
 
 .item-picker-enchant {

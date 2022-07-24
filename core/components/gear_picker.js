@@ -70,7 +70,7 @@ class ItemPicker extends Component {
         </div>
       </a>
       <div class="item-picker-labels-container">
-        <span class="item-picker-name"></span>
+        <a class="item-picker-name"></a>
         <span class="item-picker-enchant"></span>
       </div>
     `;
@@ -82,17 +82,19 @@ class ItemPicker extends Component {
         player.sim.waitForInit().then(() => {
             this._items = this.player.getItems(this.slot);
             this._enchants = this.player.getEnchants(this.slot);
-            this.iconElem.addEventListener('click', event => {
+            const onClickStart = (event) => {
                 event.preventDefault();
                 const selectorModal = new SelectorModal(this.rootElem.closest('.individual-sim-ui'), this.player, this.slot, this._equippedItem, this._items, this._enchants);
-            });
-            this.iconElem.addEventListener('touchstart', event => {
+            };
+            const onClickEnd = (event) => {
                 event.preventDefault();
-                const selectorModal = new SelectorModal(this.rootElem.closest('.individual-sim-ui'), this.player, this.slot, this._equippedItem, this._items, this._enchants);
-            });
-            this.iconElem.addEventListener('touchend', event => {
-                event.preventDefault();
-            });
+            };
+            this.iconElem.addEventListener('click', onClickStart);
+            this.iconElem.addEventListener('touchstart', onClickStart);
+            this.iconElem.addEventListener('touchend', onClickEnd);
+            this.nameElem.addEventListener('click', onClickStart);
+            this.nameElem.addEventListener('touchstart', onClickStart);
+            this.nameElem.addEventListener('touchend', onClickEnd);
         });
         player.gearChangeEmitter.on(() => {
             this.item = player.getEquippedItem(slot);
@@ -105,6 +107,8 @@ class ItemPicker extends Component {
     }
     set item(newItem) {
         // Clear everything first
+        this.nameElem.removeAttribute('data-wowhead');
+        this.nameElem.removeAttribute('href');
         this.iconElem.style.backgroundImage = `url('${getEmptySlotIconUrl(this.slot)}')`;
         this.iconElem.removeAttribute('data-wowhead');
         this.iconElem.removeAttribute('href');
@@ -116,7 +120,11 @@ class ItemPicker extends Component {
             this.nameElem.textContent = newItem.item.name;
             setItemQualityCssClass(this.nameElem, newItem.item.quality);
             this.player.setWowheadData(newItem, this.iconElem);
-            newItem.asActionId().fillAndSet(this.iconElem, true, true);
+            this.player.setWowheadData(newItem, this.nameElem);
+            newItem.asActionId().fill().then(filledId => {
+                filledId.setBackgroundAndHref(this.iconElem);
+                filledId.setWowheadHref(this.nameElem);
+            });
             if (newItem.enchant) {
                 this.enchantElem.textContent = enchantDescriptions.get(newItem.enchant.id) || newItem.enchant.name;
             }
