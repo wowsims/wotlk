@@ -43,7 +43,7 @@ func (o *Sequence) DoAction(sim *core.Simulation, target *core.Unit, deathKnight
 		advance = deathKnight.LastCastOutcome != core.OutcomeMiss
 	case RotationAction_PS:
 		casted = deathKnight.CastPlagueStrike(sim, target)
-		advance = deathKnight.LastCastOutcome != core.OutcomeMiss
+		advance = deathKnight.LastCastOutcome.Matches(core.OutcomeHit | core.OutcomeCrit)
 	case RotationAction_UA:
 		casted = deathKnight.CastUnbreakableArmor(sim, target)
 		// Add this line if your spell does not incur a GCD or you will hang!
@@ -75,7 +75,7 @@ func (o *Sequence) DoAction(sim *core.Simulation, target *core.Unit, deathKnight
 		advance = deathKnight.LastCastOutcome != core.OutcomeMiss
 	case RotationAction_SS:
 		casted = deathKnight.CastScourgeStrike(sim, target)
-		advance = deathKnight.LastCastOutcome != core.OutcomeMiss
+		advance = deathKnight.LastCastOutcome.Matches(core.OutcomeHit | core.OutcomeCrit)
 	case RotationAction_DND:
 		casted = deathKnight.CastDeathAndDecay(sim, target)
 	case RotationAction_GF:
@@ -162,4 +162,5 @@ func (deathKnight *DeathKnight) DoRotation(sim *core.Simulation) {
 
 func (deathKnight *DeathKnight) ResetRotation(sim *core.Simulation) {
 	deathKnight.opener.idx = 0
+	deathKnight.onOpener = true
 }
