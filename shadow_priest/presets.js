@@ -46,13 +46,13 @@ export const P1_PRESET = {
           "enchant": 44877,
           "gems": [
             41285,
-            40026
+            39998
           ]
         },
         {
           "id": 44661,
           "gems": [
-            39998
+            40026
           ]
         },
         {
@@ -152,7 +152,7 @@ export const PreBis_PRESET = {
           "enchant": 44874,
           "gems": [
             39998,
-            40155
+            40051
           ]
         },
         {
@@ -200,7 +200,7 @@ export const PreBis_PRESET = {
         },
         {
           "id": 44202,
-          "enchant": 55016,
+          "enchant": 60623,
           "gems": [
             40026
           ]
