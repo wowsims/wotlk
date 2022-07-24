@@ -58,7 +58,7 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 					ret.DivineStorm.Cast(sim, target)
 				case ret.Consecration.IsReady(sim):
 					ret.Consecration.Cast(sim, target)
-				case ret.Exorcism.IsReady(sim):
+				case ret.Exorcism.IsReady(sim) && ret.ArtOfWarInstantCast.IsActive():
 					ret.Exorcism.Cast(sim, target)
 				}
 			} else {
@@ -75,7 +75,7 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 					ret.CrusaderStrike.Cast(sim, target)
 				case ret.Consecration.IsReady(sim):
 					ret.Consecration.Cast(sim, target)
-				case ret.Exorcism.IsReady(sim):
+				case ret.Exorcism.IsReady(sim) && ret.ArtOfWarInstantCast.IsActive():
 					ret.Exorcism.Cast(sim, target)
 				}
 			}
@@ -91,7 +91,7 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 				ret.CrusaderStrike.Cast(sim, target)
 			case ret.DivineStorm.IsReady(sim):
 				ret.DivineStorm.Cast(sim, target)
-			case ret.Exorcism.IsReady(sim):
+			case ret.Exorcism.IsReady(sim) && ret.ArtOfWarInstantCast.IsActive():
 				ret.Exorcism.Cast(sim, target)
 			case ret.Consecration.IsReady(sim):
 				ret.Consecration.Cast(sim, target)

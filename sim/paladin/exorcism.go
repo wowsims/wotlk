@@ -34,8 +34,9 @@ func (paladin *Paladin) registerExorcismSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
+				Cost:     baseCost,
+				GCD:      core.GCDDefault,
+				CastTime: time.Millisecond * 1500,
 			},
 			CD: core.Cooldown{
 				Timer:    paladin.NewTimer(),
