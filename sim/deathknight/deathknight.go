@@ -209,12 +209,8 @@ func (deathKnight *Deathknight) Reset(sim *core.Simulation) {
 	deathKnight.Presence = UnsetPresence
 	if deathKnight.Inputs.UnholyPresenceOpener {
 		deathKnight.ChangePresence(sim, UnholyPresence)
-		//deathKnight.UnholyPresenceAura.Activate(sim)
-		//deathKnight.Presence = UnholyPresence
 	} else {
 		deathKnight.ChangePresence(sim, BloodPresence)
-		//deathKnight.BloodPresenceAura.Activate(sim)
-		//deathKnight.Presence = BloodPresence
 	}
 
 	if deathKnight.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_PreCast {
