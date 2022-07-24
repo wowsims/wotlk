@@ -119,7 +119,11 @@ func (dk *Deathknight) registerBloodPlague() {
 		SpellSchool: core.SpellSchoolShadow,
 		Flags:       core.SpellFlagDisease,
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
+			if dk.BloodPlagueDisease[unit.Index].IsActive() {
+				isRefreshing[unit.Index] = true
+			}
 			dk.BloodPlagueDisease[unit.Index].Apply(sim)
+			isRefreshing[unit.Index] = false
 		},
 	})
 
