@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -67,9 +68,23 @@ func (paladin *Paladin) registerExorcismSpell() {
 					return damage
 				},
 			},
-			// look up crit multiplier in the future
-			// TODO: What is this 0.25?
-			OutcomeApplier: paladin.OutcomeFuncMagicHitAndCrit(paladin.SpellCritMultiplier()),
+
+			OutcomeApplier: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
+				if spellEffect.MagicHitCheck(sim, spell, attackTable) {
+					if spellEffect.Target.MobType == proto.MobType_MobTypeDemon || spellEffect.Target.MobType == proto.MobType_MobTypeUndead || spellEffect.MagicCritCheck(sim, spell, attackTable) {
+						spellEffect.Outcome = core.OutcomeCrit
+						spell.SpellMetrics[spellEffect.Target.TableIndex].Crits++
+						spellEffect.Damage *= paladin.SpellCritMultiplier()
+					} else {
+						spellEffect.Outcome = core.OutcomeHit
+						spell.SpellMetrics[spellEffect.Target.TableIndex].Hits++
+					}
+				} else {
+					spellEffect.Outcome = core.OutcomeMiss
+					spell.SpellMetrics[spellEffect.Target.TableIndex].Misses++
+					spellEffect.Damage = 0
+				}
+			},
 		}),
 	})
 }
