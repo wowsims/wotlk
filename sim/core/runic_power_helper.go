@@ -33,7 +33,9 @@ func (rp *runicPowerBar) LaunchBloodTapRegenPA(sim *Simulation, slot int32, spel
 
 				currRunes = rp.CurrentDeathRunes()
 				rp.SpendRuneMetrics(sim, spell.DeathRuneMetrics(), "death", currRunes, currRunes-1)
-				rp.onBloodRuneGain(sim)
+				if !rp.isACopy {
+					rp.onBloodRuneGain(sim)
+				}
 			} else if r.state == RuneState_DeathSpent {
 
 				if r.pas[0] == nil {
@@ -48,34 +50,42 @@ func (rp *runicPowerBar) LaunchBloodTapRegenPA(sim *Simulation, slot int32, spel
 	}
 
 	r.pas[1] = pa
-	sim.AddPendingAction(pa)
+	if !rp.isACopy {
+		sim.AddPendingAction(pa)
+	}
 }
 
 func (rp *runicPowerBar) GainDeathRuneMetrics(sim *Simulation, spell *Spell, currRunes int32, newRunes int32) {
-	metrics := rp.deathRuneGainMetrics
-	metrics.AddEvent(1, float64(newRunes)-float64(currRunes))
+	if !rp.isACopy {
+		metrics := rp.deathRuneGainMetrics
+		metrics.AddEvent(1, float64(newRunes)-float64(currRunes))
 
-	if sim.Log != nil {
-		rp.unit.Log(sim, "Gained 1.000 death rune from %s (%d --> %d).", metrics.ActionID, currRunes, newRunes)
+		if sim.Log != nil {
+			rp.unit.Log(sim, "Gained 1.000 death rune from %s (%d --> %d).", metrics.ActionID, currRunes, newRunes)
+		}
 	}
 }
 
 func (rp *runicPowerBar) SpendBloodRuneMetrics(sim *Simulation, spell *Spell, currRunes int32, newRunes int32) {
-	metrics := spell.BloodRuneMetrics()
+	if !rp.isACopy {
+		metrics := spell.BloodRuneMetrics()
 
-	metrics.AddEvent(-1, -1)
+		metrics.AddEvent(-1, -1)
 
-	if sim.Log != nil {
-		rp.unit.Log(sim, "Spent 1.000 blood rune from %s (%d --> %d).", metrics.ActionID, currRunes, newRunes)
+		if sim.Log != nil {
+			rp.unit.Log(sim, "Spent 1.000 blood rune from %s (%d --> %d).", metrics.ActionID, currRunes, newRunes)
+		}
 	}
 }
 
 func (rp *runicPowerBar) CancelRuneRegenPA(sim *Simulation, r *Rune) {
-	if r.pas[0] == nil {
+	if r.pas[0] != nil {
 		panic("Trying to cancel non-existant regen PA.")
 	}
 
-	r.pas[0].Cancel(sim)
+	if r.pas[0] != nil {
+		r.pas[0].Cancel(sim)
+	}
 	r.pas[0] = nil
 }
 
@@ -169,5 +179,7 @@ func (rp *runicPowerBar) CorrectBloodTapConversion(sim *Simulation, bloodGainMet
 		}
 	}
 
-	rp.onDeathRuneGain(sim)
+	if !rp.isACopy {
+		rp.onDeathRuneGain(sim)
+	}
 }

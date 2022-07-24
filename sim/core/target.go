@@ -217,7 +217,8 @@ type AttackTable struct {
 
 	ArmorDamageModifier float64
 
-	DamageDealtMultiplier float64
+	DamageDealtMultiplier       float64
+	NatureDamageDealtMultiplier float64
 }
 
 func NewAttackTable(attacker *Unit, defender *Unit) *AttackTable {
@@ -225,7 +226,8 @@ func NewAttackTable(attacker *Unit, defender *Unit) *AttackTable {
 		Attacker: attacker,
 		Defender: defender,
 
-		DamageDealtMultiplier: 1,
+		DamageDealtMultiplier:       1,
+		NatureDamageDealtMultiplier: 1,
 	}
 
 	if defender.Type == EnemyUnit {

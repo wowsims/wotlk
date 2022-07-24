@@ -346,6 +346,7 @@ func (spellEffect *SpellEffect) applyTargetModifiers(sim *Simulation, spell *Spe
 		spellEffect.Damage *= target.PseudoStats.HolyDamageTakenMultiplier
 	} else if spell.SpellSchool.Matches(SpellSchoolNature) {
 		spellEffect.Damage *= target.PseudoStats.NatureDamageTakenMultiplier
+		spellEffect.Damage *= attackTable.NatureDamageDealtMultiplier
 	} else if spell.SpellSchool.Matches(SpellSchoolShadow) {
 		spellEffect.Damage *= target.PseudoStats.ShadowDamageTakenMultiplier
 	}

@@ -21,7 +21,6 @@ func (hunter *Hunter) ApplyTalents() {
 		hunter.pet.PseudoStats.DamageDealtMultiplier *= 1 + 0.03*float64(hunter.Talents.UnleashedFury)
 		hunter.pet.PseudoStats.DamageDealtMultiplier *= 1 + 0.04*float64(hunter.Talents.KindredSpirits)
 		hunter.pet.PseudoStats.MeleeSpeedMultiplier *= 1 + 0.04*float64(hunter.Talents.SerpentsSwiftness)
-		// TODO: Beast Mastery (in UI)
 
 		if hunter.Talents.AnimalHandler != 0 {
 			hunter.pet.AddStatDependency(stats.AttackPower, stats.AttackPower, 1.0+(0.05*float64(hunter.Talents.AnimalHandler)))
@@ -76,7 +75,7 @@ func (hunter *Hunter) ApplyTalents() {
 		hunter.AddStatDependency(stats.Intellect, stats.Intellect, bonus)
 	}
 	if hunter.Talents.CarefulAim > 0 {
-		hunter.AddStatDependency(stats.Intellect, stats.RangedAttackPower, 1.0+((1.0/3.0)*float64(hunter.Talents.CarefulAim)))
+		hunter.AddStatDependency(stats.Intellect, stats.RangedAttackPower, (1.0/3.0)*float64(hunter.Talents.CarefulAim))
 	}
 	if hunter.Talents.SurvivalInstincts > 0 {
 		apBonus := 1.0 + (0.02 * float64(hunter.Talents.SurvivalInstincts))
@@ -84,7 +83,7 @@ func (hunter *Hunter) ApplyTalents() {
 		hunter.AddStatDependency(stats.RangedAttackPower, stats.RangedAttackPower, apBonus)
 	}
 	if hunter.Talents.HunterVsWild > 0 {
-		bonus := 1.0 + (0.1 * float64(hunter.Talents.HunterVsWild))
+		bonus := 0.1 * float64(hunter.Talents.HunterVsWild)
 		hunter.AddStatDependency(stats.Stamina, stats.AttackPower, bonus)
 		hunter.AddStatDependency(stats.Stamina, stats.RangedAttackPower, bonus)
 	}
@@ -106,6 +105,7 @@ func (hunter *Hunter) ApplyTalents() {
 	hunter.applyWildQuiver()
 	hunter.applyImprovedTracking()
 	hunter.applyThrillOfTheHunt()
+	hunter.applyLockAndLoad()
 	hunter.applyExposeWeakness()
 	hunter.applyMasterTactician()
 
@@ -497,11 +497,17 @@ func (hunter *Hunter) applyImprovedTracking() {
 
 	switch hunter.CurrentTarget.MobType {
 	case proto.MobType_MobTypeBeast:
+		fallthrough
 	case proto.MobType_MobTypeDemon:
+		fallthrough
 	case proto.MobType_MobTypeDragonkin:
+		fallthrough
 	case proto.MobType_MobTypeElemental:
+		fallthrough
 	case proto.MobType_MobTypeGiant:
+		fallthrough
 	case proto.MobType_MobTypeHumanoid:
+		fallthrough
 	case proto.MobType_MobTypeUndead:
 		hunter.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.01*float64(hunter.Talents.ImprovedTracking)
 	}
@@ -520,7 +526,7 @@ func (hunter *Hunter) applyLockAndLoad() {
 		Duration: time.Second * 22,
 	}
 
-	hunter.LockAndLoadAura = hunter.pet.RegisterAura(core.Aura{
+	hunter.LockAndLoadAura = hunter.RegisterAura(core.Aura{
 		Label:     "Lock and Load Proc",
 		ActionID:  actionID,
 		Duration:  time.Second * 12,

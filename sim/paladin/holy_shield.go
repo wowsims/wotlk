@@ -13,7 +13,7 @@ func (paladin *Paladin) registerHolyShieldSpell() {
 
 	// numCharges := 4 + 2*paladin.Talents.ImprovedHolyShield
 	numCharges := int32(5) // TODO: fix
-	damage := 155 + core.TernaryFloat64(paladin.HasSetBonus(ItemSetJusticarArmor, 4), 15, 0)
+	damage := 155.0
 
 	procSpell := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID.WithTag(1),

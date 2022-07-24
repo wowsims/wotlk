@@ -16,7 +16,7 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 
 	hunter.ChimeraShot = hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 53209},
-		SpellSchool: core.SpellSchoolPhysical,
+		SpellSchool: core.SpellSchoolNature,
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		ResourceType: stats.Mana,
