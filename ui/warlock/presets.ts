@@ -171,7 +171,7 @@ export const DefaultDebuffs = Debuffs.create({
 });
 
 export const SWP_BIS = {
-	name: 'SWP BiS',
+	name: 'Outa SWP',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`
 {"items": [
@@ -278,13 +278,13 @@ export const SWP_BIS = {
     `),
 };
 export const P1_PreBiS = {
-	name: 'Pre-BiS',
+	name: 'Pre-Raid BiS',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`
 {"items": [
         {
           "id": 44910,
-          "enchant": 29191,
+          "enchant": 44877,
           "gems": [
             41285,
             40113
@@ -297,11 +297,10 @@ export const P1_PreBiS = {
           ]
         },
         {
-          "id": 34210,
-          "enchant": 28886,
+          "id": 37673,
+          "enchant": 44874,
           "gems": [
-            40113,
-            40155
+            40113
           ]
         },
         {
@@ -310,47 +309,40 @@ export const P1_PreBiS = {
         },
         {
           "id": 39497,
-          "enchant": 24003,
+          "enchant": 44623,
           "gems": [
             40113,
-            40155
+            40153
           ]
         },
         {
           "id": 37361,
-          "enchant": 22534,
+          "enchant": 44498,
           "gems": [
             0
           ]
         },
         {
-          "id": 34344,
+          "id": 42113,
           "enchant": 54999,
           "gems": [
-            40155,
-            40113,
             0
           ]
         },
         {
           "id": 40696,
           "gems": [
-            40155,
+            40153,
             0
           ]
         },
         {
-          "id": 34181,
-          "enchant": 24274,
-          "gems": [
-            40113,
-            40113,
-            40155
-          ]
+          "id": 37854,
+          "enchant": 41602
         },
         {
           "id": 44202,
-          "enchant": 35297,
+          "enchant": 55016,
           "gems": [
             40133
           ]
@@ -362,7 +354,7 @@ export const P1_PreBiS = {
           ]
         },
         {
-          "id": 40585
+          "id": 37694
         },
         {
           "id": 40682
@@ -376,12 +368,135 @@ export const P1_PreBiS = {
         },
         {},
         {
-          "id": 34347,
-          "gems": [
-            40155
-          ]
+          "id": 37177
         }
       ]
     }
     `),
 }
+
+export const P1_BiS = {
+	name: 'P1 BiS',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(`
+    {"items":
+      [
+        {
+          "id": 40421,
+          "enchant": 44877,
+          "gems": [
+            41285,
+            40155
+          ]
+        },
+        {
+          "id": 44661,
+          "gems": [
+            40133
+          ]
+        },
+        {
+          "id": 40424,
+          "enchant": 44874,
+          "gems": [
+            40113
+          ]
+        },
+        {
+          "id": 44005,
+          "enchant": 55642,
+          "gems": [
+            40133
+          ]
+        },
+        {
+          "id": 40423,
+          "enchant": 44623,
+          "gems": [
+            40113,
+            40155
+          ]
+        },
+        {
+          "id": 44008,
+          "enchant": 44498,
+          "gems": [
+            40113,
+            0
+          ]
+        },
+        {
+          "id": 40420,
+          "enchant": 54999,
+          "gems": [
+            40113,
+            0
+          ]
+        },
+        {
+          "id": 40561,
+          "gems": [
+            0
+          ]
+        },
+        {
+          "id": 40560,
+          "enchant": 41602
+        },
+        {
+          "id": 40558,
+          "enchant": 55016
+        },
+        {
+          "id": 40399
+        },
+        {
+          "id": 40719
+        },
+        {
+          "id": 40432
+        },
+        {
+          "id": 40255
+        },
+        {
+          "id": 40396,
+          "enchant": 44487
+        },
+        {
+          "id": 39766
+        },
+        {
+          "id": 39712
+        }
+      ]
+    }
+  `),
+}
+
+// export const Naked = {
+//   name: 'The Naked Bolt',
+//   gear: EquipmentSpec.fromJsonString(`
+//     {"items":
+//       [
+//         {},
+//         {},
+//         {},
+//         {},
+//         {},
+//         {},
+//         {},
+//         {},
+//         {},
+//         {},
+//         {},
+//         {},
+//         {},
+//         {},
+//         {},
+//         {},
+//         {}
+//       ]
+//     }
+//   `),
+// }
