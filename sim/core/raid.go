@@ -236,6 +236,18 @@ func (raid Raid) AddStats(s stats.Stats) {
 	}
 }
 
+func (raid Raid) GetPlayersOfClass(class proto.Class) []Agent {
+	classPlayers := []Agent{}
+	for _, party := range raid.Parties {
+		for _, agent := range party.Players {
+			if agent.GetCharacter().Class == class {
+				classPlayers = append(classPlayers, agent)
+			}
+		}
+	}
+	return classPlayers
+}
+
 func (raid Raid) GetPlayerFromUnit(unit *Unit) Agent {
 	for _, party := range raid.Parties {
 		for _, agent := range party.PlayersAndPets {

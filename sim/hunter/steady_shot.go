@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -80,30 +79,14 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 				core.TernaryFloat64(hunter.HasSetBonus(ItemSetGronnstalker, 4), 1.1, 1),
 			ThreatMultiplier: 1,
 
-			BaseDamage: core.WrapBaseDamageConfig(
-				core.BaseDamageConfig{
-					Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-						return (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.1 +
-							hunter.AutoAttacks.Ranged.BaseDamage(sim)*2.8/hunter.AutoAttacks.Ranged.SwingSpeed +
-							252
-					},
-					TargetSpellCoefficient: 1,
+			BaseDamage: core.BaseDamageConfig{
+				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+					return (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.1 +
+						hunter.AutoAttacks.Ranged.BaseDamage(sim)*2.8/hunter.AutoAttacks.Ranged.SwingSpeed +
+						252
 				},
-				func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
-					if hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfSteadyShot) {
-						return func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-							normalDamage := oldCalculator(sim, hitEffect, spell)
-							// TODO: Other hunters' stings should be allowed also
-							if hunter.SerpentStingDot.IsActive() {
-								return normalDamage * 1.1
-							} else {
-								return normalDamage
-							}
-						}
-					} else {
-						return oldCalculator
-					}
-				}),
+				TargetSpellCoefficient: 1,
+			},
 			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, true, hunter.CurrentTarget)),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
