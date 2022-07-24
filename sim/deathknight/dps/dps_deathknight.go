@@ -33,13 +33,18 @@ func NewDpsDeathknight(character core.Character, player proto.Player) *DpsDeathk
 	dk := player.GetDeathknight()
 
 	dpsDk := &DpsDeathknight{
-		Deathknight: deathknight.NewDeathknight(character, player),
-		Rotation:    *dk.Rotation,
-	}
+		Deathknight: deathknight.NewDeathknight(character, player, deathknight.DeathknightInputs{
+			StartingRunicPower:  dk.Options.StartingRunicPower,
+			PrecastGhoulFrenzy:  dk.Options.PrecastGhoulFrenzy,
+			PrecastHornOfWinter: dk.Options.PrecastHornOfWinter,
+			PetUptime:           dk.Options.PetUptime,
 
-	dpsDk.Deathknight.RefreshHornOfWinter = dk.Rotation.RefreshHornOfWinter
-	dpsDk.Deathknight.UnholyPresenceOpener = dk.Rotation.UnholyPresenceOpener
-	dpsDk.Deathknight.ArmyOfTheDeadType = dk.Rotation.ArmyOfTheDead
+			RefreshHornOfWinter:  dk.Rotation.RefreshHornOfWinter,
+			UnholyPresenceOpener: dk.Rotation.UnholyPresenceOpener,
+			ArmyOfTheDeadType:    dk.Rotation.ArmyOfTheDead,
+		}),
+		Rotation: *dk.Rotation,
+	}
 
 	dpsDk.SetupRotationEvent = dpsDk.SetupRotations
 	dpsDk.DoRotationEvent = dpsDk.DoRotations

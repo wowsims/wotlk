@@ -31,15 +31,17 @@ type TankDeathknight struct {
 }
 
 func NewTankDeathknight(character core.Character, options proto.Player) *TankDeathknight {
-	dkOptions := options.GetTankDeathknight()
+	dk := options.GetTankDeathknight()
 
-	dk := &TankDeathknight{
-		Deathknight: deathknight.NewDeathknight(character, options),
-		Rotation:    *dkOptions.Rotation,
-		Options:     *dkOptions.Options,
+	tankDk := &TankDeathknight{
+		Deathknight: deathknight.NewDeathknight(character, options, deathknight.DeathknightInputs{
+			StartingRunicPower: dk.Options.StartingRunicPower,
+		}),
+		Rotation: *dk.Rotation,
+		Options:  *dk.Options,
 	}
 
-	return dk
+	return tankDk
 }
 
 func (dk *TankDeathknight) GetDeathknight() *deathknight.Deathknight {

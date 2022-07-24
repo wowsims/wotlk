@@ -8,15 +8,24 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-type Deathknight struct {
-	core.Character
-	Talents proto.DeathknightTalents
-	Options proto.Deathknight_Options
+type DeathknightInputs struct {
+	// Option Vars
+	StartingRunicPower  float64
+	PrecastGhoulFrenzy  bool
+	PrecastHornOfWinter bool
+	PetUptime           float64
 
 	// Rotation Vars
 	RefreshHornOfWinter  bool
 	UnholyPresenceOpener bool
 	ArmyOfTheDeadType    proto.Deathknight_Rotation_ArmyOfTheDead
+}
+
+type Deathknight struct {
+	core.Character
+	Talents proto.DeathknightTalents
+
+	Inputs DeathknightInputs
 
 	LastCastOutcome core.HitOutcome
 	RotationHelper
@@ -151,7 +160,7 @@ func (deathKnight *Deathknight) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 		raidBuffs.IcyTalons = true
 	}
 
-	raidBuffs.HornOfWinter = !deathKnight.RefreshHornOfWinter
+	raidBuffs.HornOfWinter = !deathKnight.Inputs.RefreshHornOfWinter
 
 	if raidBuffs.StrengthOfEarthTotem == proto.TristateEffect_TristateEffectImproved ||
 		raidBuffs.StrengthOfEarthTotem == proto.TristateEffect_TristateEffectRegular {
@@ -198,7 +207,7 @@ func (deathKnight *Deathknight) Initialize() {
 
 func (deathKnight *Deathknight) Reset(sim *core.Simulation) {
 	deathKnight.Presence = UnsetPresence
-	if deathKnight.UnholyPresenceOpener {
+	if deathKnight.Inputs.UnholyPresenceOpener {
 		deathKnight.ChangePresence(sim, UnholyPresence)
 		//deathKnight.UnholyPresenceAura.Activate(sim)
 		//deathKnight.Presence = UnholyPresence
@@ -208,7 +217,7 @@ func (deathKnight *Deathknight) Reset(sim *core.Simulation) {
 		//deathKnight.Presence = BloodPresence
 	}
 
-	if deathKnight.ArmyOfTheDeadType == proto.Deathknight_Rotation_PreCast {
+	if deathKnight.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_PreCast {
 		deathKnight.PrecastArmyOfTheDead(sim)
 	}
 
@@ -226,19 +235,20 @@ func (deathKnight *Deathknight) HasMinorGlyph(glyph proto.DeathknightMinorGlyph)
 	return deathKnight.HasGlyph(int32(glyph))
 }
 
-func NewDeathknight(character core.Character, options proto.Player) *Deathknight {
+func NewDeathknight(character core.Character, options proto.Player, inputs DeathknightInputs) *Deathknight {
 	deathKnightOptions := options.GetDeathknight()
 
 	deathKnight := &Deathknight{
 		Character: character,
 		Talents:   *deathKnightOptions.Talents,
-		Options:   *deathKnightOptions.Options,
+
+		Inputs: inputs,
 
 		additiveDamageModifier: 1,
 	}
 
 	maxRunicPower := 100.0 + 15.0*float64(deathKnight.Talents.RunicPowerMastery)
-	currentRunicPower := math.Min(maxRunicPower, deathKnightOptions.Options.StartingRunicPower+core.TernaryFloat64(deathKnightOptions.Options.PrecastHornOfWinter, 10.0, 0.0))
+	currentRunicPower := math.Min(maxRunicPower, deathKnight.Inputs.StartingRunicPower+core.TernaryFloat64(deathKnight.Inputs.PrecastHornOfWinter, 10.0, 0.0))
 
 	deathKnight.EnableRunicPowerBar(
 		deathKnight.Talents.BladeBarrier > 0,

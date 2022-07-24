@@ -23,7 +23,7 @@ func (deathKnight *Deathknight) PrecastArmyOfTheDead(sim *core.Simulation) {
 }
 
 func (deathKnight *Deathknight) registerArmyOfTheDeadCD() {
-	if deathKnight.ArmyOfTheDeadType == proto.Deathknight_Rotation_DoNotUse {
+	if deathKnight.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_DoNotUse {
 		return
 	}
 

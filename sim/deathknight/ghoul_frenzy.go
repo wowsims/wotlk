@@ -45,7 +45,7 @@ func (deathKnight *Deathknight) registerGhoulFrenzySpell() {
 		Label:    "Ghoul Frenzy",
 		Duration: time.Second * 30.0,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-			if deathKnight.Options.PrecastGhoulFrenzy {
+			if deathKnight.Inputs.PrecastGhoulFrenzy {
 				deathKnight.GhoulFrenzyAura.Activate(sim)
 				deathKnight.GhoulFrenzyAura.UpdateExpires(sim.CurrentTime + time.Second*20)
 			}
@@ -57,7 +57,7 @@ func (deathKnight *Deathknight) registerGhoulFrenzySpell() {
 		Label:    "Ghoul Frenzy",
 		Duration: time.Second * 30.0,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-			if deathKnight.Options.PrecastGhoulFrenzy {
+			if deathKnight.Inputs.PrecastGhoulFrenzy {
 				deathKnight.Ghoul.GhoulFrenzyAura.Activate(sim)
 				deathKnight.Ghoul.GhoulFrenzyAura.UpdateExpires(sim.CurrentTime + time.Second*20)
 			}
