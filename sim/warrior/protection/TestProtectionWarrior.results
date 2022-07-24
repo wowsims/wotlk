@@ -22,7 +22,7 @@ character_stats_results: {
   final_stats: 2839.0780000000004
   final_stats: 107
   final_stats: 1234.2537333333335
-  final_stats: 0
+  final_stats: 655.8
   final_stats: 0
   final_stats: 84.185
   final_stats: 0
@@ -152,8 +152,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-Braxley'sBackyardMoonshine-35937"
  value: {
-  dps: 470.20987698952393
-  tps: 819.3623503630474
+  dps: 468.8744595253956
+  tps: 817.3596194688175
  }
 }
 dps_results: {
@@ -474,8 +474,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-MeteoriteWhetstone-37390"
  value: {
-  dps: 478.5157065261832
-  tps: 835.4342756266866
+  dps: 480.8164579568395
+  tps: 839.9186787267904
  }
 }
 dps_results: {
@@ -516,8 +516,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-OnslaughtBattlegear"
  value: {
-  dps: 573.554260955224
-  tps: 975.4280870952273
+  dps: 572.882380863461
+  tps: 974.5183327096278
  }
 }
 dps_results: {
@@ -649,8 +649,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-SparkofLife-37657"
  value: {
-  dps: 466.2193287503661
-  tps: 813.3397923323063
+  dps: 466.3845489467717
+  tps: 813.5605984439525
  }
 }
 dps_results: {
@@ -719,15 +719,15 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-TheFistsofFury"
  value: {
-  dps: 631.204412623069
-  tps: 1090.5168274408522
+  dps: 628.5183716760653
+  tps: 1086.0186563842813
  }
 }
 dps_results: {
  key: "TestProtectionWarrior-AllItems-TheTwinBladesofAzzinoth"
  value: {
-  dps: 691.6150991400541
-  tps: 1190.2898659088276
+  dps: 690.157447376333
+  tps: 1187.7802552387238
  }
 }
 dps_results: {
@@ -740,15 +740,15 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-ThunderingSkyfireDiamond"
  value: {
-  dps: 475.60421529556305
-  tps: 826.2922988035368
+  dps: 473.40497210214045
+  tps: 822.9166088103339
  }
 }
 dps_results: {
  key: "TestProtectionWarrior-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 477.3890457513922
-  tps: 830.0781664313055
+  dps: 476.67099695210914
+  tps: 828.7663344782802
  }
 }
 dps_results: {
