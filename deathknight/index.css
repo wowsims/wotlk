@@ -3500,8 +3500,8 @@ input, select {
 }
 
 .settings-section-iconrow {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  grid-template-columns: repeat(5, 1fr);
   justify-content: space-evenly;
   flex-wrap: wrap;
   align-items: center;
