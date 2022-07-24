@@ -32,7 +32,7 @@ func (paladin *Paladin) ApplyTalents() {
 	if paladin.Talents.SheathOfLight > 0 {
 		// doesn't implement HOT
 		percentage := 0.10 * float64(paladin.Talents.SheathOfLight)
-		paladin.AddStatDependency(stats.AttackPower, stats.SpellPower, percentage)
+		paladin.AddStatDependency(stats.AttackPower, stats.SpellPower, 1.0+percentage)
 	}
 
 	// if paladin.Talents.ShieldSpecialization > 0 {
