@@ -41,6 +41,7 @@ func (paladin *Paladin) registerCrusaderStrikeSpell() {
 
 			DamageMultiplier: baseMultiplier,
 			ThreatMultiplier: 1,
+			BonusCritRating:  core.TernaryFloat64(paladin.HasSetBonus(ItemSetAegisBattlegear, 4), 10, 0) * core.CritRatingPerCritChance,
 
 			BaseDamage: core.BaseDamageConfigMeleeWeapon(
 				core.MainHand,

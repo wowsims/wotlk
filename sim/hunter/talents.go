@@ -497,11 +497,17 @@ func (hunter *Hunter) applyImprovedTracking() {
 
 	switch hunter.CurrentTarget.MobType {
 	case proto.MobType_MobTypeBeast:
+		fallthrough
 	case proto.MobType_MobTypeDemon:
+		fallthrough
 	case proto.MobType_MobTypeDragonkin:
+		fallthrough
 	case proto.MobType_MobTypeElemental:
+		fallthrough
 	case proto.MobType_MobTypeGiant:
+		fallthrough
 	case proto.MobType_MobTypeHumanoid:
+		fallthrough
 	case proto.MobType_MobTypeUndead:
 		hunter.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.01*float64(hunter.Talents.ImprovedTracking)
 	}
