@@ -8,34 +8,34 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-func (deathKnight *Deathknight) PrecastArmyOfTheDead(sim *core.Simulation) {
+func (dk *Deathknight) PrecastArmyOfTheDead(sim *core.Simulation) {
 	// Mark the CD as used already
-	deathKnight.ArmyOfTheDead.CD.Use(sim)
-	deathKnight.ArmyOfTheDead.CD.Set(sim.CurrentTime + deathKnight.ArmyOfTheDead.CD.Duration - time.Second*10)
+	dk.ArmyOfTheDead.CD.Use(sim)
+	dk.ArmyOfTheDead.CD.Set(sim.CurrentTime + dk.ArmyOfTheDead.CD.Duration - time.Second*10)
 
 	for i := 0; i < 8; i++ {
 		timeLeft := (40 - (10 - 0.5*float64(i)))
 		if sim.Log != nil {
 			sim.Log("Precasting ghoul " + strconv.Itoa(i) + " with duration " + strconv.FormatFloat(timeLeft, 'f', 2, 64))
 		}
-		deathKnight.ArmyGhoul[i].EnableWithTimeout(sim, deathKnight.ArmyGhoul[i], time.Duration(timeLeft*1000)*time.Millisecond)
+		dk.ArmyGhoul[i].EnableWithTimeout(sim, dk.ArmyGhoul[i], time.Duration(timeLeft*1000)*time.Millisecond)
 	}
 }
 
-func (deathKnight *Deathknight) registerArmyOfTheDeadCD() {
-	if deathKnight.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_DoNotUse {
+func (dk *Deathknight) registerArmyOfTheDeadCD() {
+	if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_DoNotUse {
 		return
 	}
 
-	aotdAura := deathKnight.RegisterAura(core.Aura{
+	aotdAura := dk.RegisterAura(core.Aura{
 		Label:    "Army of the Dead",
 		ActionID: core.ActionID{SpellID: 42650},
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			deathKnight.AutoAttacks.CancelAutoSwing(sim)
+			dk.AutoAttacks.CancelAutoSwing(sim)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			deathKnight.AutoAttacks.EnableAutoSwing(sim)
+			dk.AutoAttacks.EnableAutoSwing(sim)
 		},
 	})
 
@@ -46,12 +46,12 @@ func (deathKnight *Deathknight) registerArmyOfTheDeadCD() {
 		TickLength:          time.Millisecond * 500,
 		AffectedByCastSpeed: true,
 		TickEffects: core.TickFuncApplyEffects(func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
-			deathKnight.ArmyGhoul[ghoulIndex].EnableWithTimeout(sim, deathKnight.ArmyGhoul[ghoulIndex], time.Second*40)
+			dk.ArmyGhoul[ghoulIndex].EnableWithTimeout(sim, dk.ArmyGhoul[ghoulIndex], time.Second*40)
 			ghoulIndex++
 		}),
 	})
 
-	deathKnight.ArmyOfTheDead = deathKnight.RegisterSpell(core.SpellConfig{
+	dk.ArmyOfTheDead = dk.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 42650},
 
 		Cast: core.CastConfig{
@@ -60,40 +60,40 @@ func (deathKnight *Deathknight) registerArmyOfTheDeadCD() {
 				GCD:         core.GCDDefault,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = deathKnight.getModifiedGCD()
+				cast.GCD = dk.getModifiedGCD()
 			},
 			CD: core.Cooldown{
-				Timer:    deathKnight.NewTimer(),
-				Duration: time.Minute*10 - time.Minute*2*time.Duration(deathKnight.Talents.NightOfTheDead),
+				Timer:    dk.NewTimer(),
+				Duration: time.Minute*10 - time.Minute*2*time.Duration(dk.Talents.NightOfTheDead),
 			},
 		},
 
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
-			dkSpellCost := deathKnight.DetermineOptimalCost(sim, 1, 1, 1)
-			deathKnight.Spend(sim, spell, dkSpellCost)
+			dkSpellCost := dk.DetermineOptimalCost(sim, 1, 1, 1)
+			dk.Spend(sim, spell, dkSpellCost)
 
 			amountOfRunicPower := 15.0
-			deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
+			dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 
 			ghoulIndex = 0
 			aotdDot.Apply(sim)
 		},
 	})
 
-	aotdDot.Spell = deathKnight.ArmyOfTheDead
+	aotdDot.Spell = dk.ArmyOfTheDead
 
-	deathKnight.AddMajorCooldown(core.MajorCooldown{
-		Spell:    deathKnight.ArmyOfTheDead,
+	dk.AddMajorCooldown(core.MajorCooldown{
+		Spell:    dk.ArmyOfTheDead,
 		Priority: core.CooldownPriorityDefault,
 		Type:     core.CooldownTypeDPS,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			if deathKnight.opener.IsOngoing() {
+			if dk.opener.IsOngoing() {
 				return false
 			}
-			if deathKnight.Gargoyle != nil && !deathKnight.Gargoyle.IsEnabled() {
+			if dk.Gargoyle != nil && !dk.Gargoyle.IsEnabled() {
 				return false
 			}
-			if !deathKnight.CanArmyOfTheDead(sim) {
+			if !dk.CanArmyOfTheDead(sim) {
 				return false
 			}
 			return true
@@ -101,13 +101,13 @@ func (deathKnight *Deathknight) registerArmyOfTheDeadCD() {
 	})
 }
 
-func (deathKnight *Deathknight) CanArmyOfTheDead(sim *core.Simulation) bool {
-	return deathKnight.CastCostPossible(sim, 0.0, 1, 1, 1) && deathKnight.ArmyOfTheDead.IsReady(sim)
+func (dk *Deathknight) CanArmyOfTheDead(sim *core.Simulation) bool {
+	return dk.CastCostPossible(sim, 0.0, 1, 1, 1) && dk.ArmyOfTheDead.IsReady(sim)
 }
 
-func (deathKnight *Deathknight) CastArmyOfTheDead(sim *core.Simulation, target *core.Unit) bool {
-	if deathKnight.CanArmyOfTheDead(sim) {
-		deathKnight.ArmyOfTheDead.Cast(sim, target)
+func (dk *Deathknight) CastArmyOfTheDead(sim *core.Simulation, target *core.Unit) bool {
+	if dk.CanArmyOfTheDead(sim) {
+		dk.ArmyOfTheDead.Cast(sim, target)
 		return true
 	}
 	return false

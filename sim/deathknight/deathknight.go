@@ -138,103 +138,103 @@ type Deathknight struct {
 	additiveDamageModifier float64
 }
 
-func (deathKnight *Deathknight) ModifyAdditiveDamageModifier(sim *core.Simulation, value float64) {
-	deathKnight.PseudoStats.DamageDealtMultiplier /= deathKnight.additiveDamageModifier
-	deathKnight.additiveDamageModifier += value
-	deathKnight.PseudoStats.DamageDealtMultiplier *= deathKnight.additiveDamageModifier
+func (dk *Deathknight) ModifyAdditiveDamageModifier(sim *core.Simulation, value float64) {
+	dk.PseudoStats.DamageDealtMultiplier /= dk.additiveDamageModifier
+	dk.additiveDamageModifier += value
+	dk.PseudoStats.DamageDealtMultiplier *= dk.additiveDamageModifier
 }
 
-func (deathKnight *Deathknight) GetCharacter() *core.Character {
-	return &deathKnight.Character
+func (dk *Deathknight) GetCharacter() *core.Character {
+	return &dk.Character
 }
 
-func (deathKnight *Deathknight) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
+func (dk *Deathknight) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
 
-func (deathKnight *Deathknight) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
-	if deathKnight.Talents.AbominationsMight > 0 {
+func (dk *Deathknight) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
+	if dk.Talents.AbominationsMight > 0 {
 		raidBuffs.AbominationsMight = true
 	}
 
-	if deathKnight.Talents.ImprovedIcyTalons {
+	if dk.Talents.ImprovedIcyTalons {
 		raidBuffs.IcyTalons = true
 	}
 
-	raidBuffs.HornOfWinter = !deathKnight.Inputs.RefreshHornOfWinter
+	raidBuffs.HornOfWinter = !dk.Inputs.RefreshHornOfWinter
 
 	if raidBuffs.StrengthOfEarthTotem == proto.TristateEffect_TristateEffectImproved ||
 		raidBuffs.StrengthOfEarthTotem == proto.TristateEffect_TristateEffectRegular {
-		deathKnight.OtherRelevantStrAgiActive = true
+		dk.OtherRelevantStrAgiActive = true
 	} else {
-		deathKnight.OtherRelevantStrAgiActive = false
+		dk.OtherRelevantStrAgiActive = false
 	}
 }
 
-func (deathKnight *Deathknight) ApplyTalents() {
-	deathKnight.ApplyBloodTalents()
-	deathKnight.ApplyFrostTalents()
-	deathKnight.ApplyUnholyTalents()
+func (dk *Deathknight) ApplyTalents() {
+	dk.ApplyBloodTalents()
+	dk.ApplyFrostTalents()
+	dk.ApplyUnholyTalents()
 }
 
-func (deathKnight *Deathknight) Initialize() {
-	deathKnight.registerPresences()
-	deathKnight.registerIcyTouchSpell()
-	deathKnight.registerPlagueStrikeSpell()
-	deathKnight.registerObliterateSpell()
-	deathKnight.registerBloodStrikeSpell()
-	deathKnight.registerBloodTapSpell()
-	deathKnight.registerHowlingBlastSpell()
-	deathKnight.registerScourgeStrikeSpell()
-	deathKnight.registerDeathCoilSpell()
-	deathKnight.registerFrostStrikeSpell()
-	deathKnight.registerDeathAndDecaySpell()
-	deathKnight.registerDiseaseDots()
-	deathKnight.registerGhoulFrenzySpell()
-	deathKnight.registerBoneShieldSpell()
-	deathKnight.registerUnbreakableArmorSpell()
-	deathKnight.registerBloodBoilSpell()
-	deathKnight.registerHornOfWinterSpell()
-	deathKnight.registerPestilenceSpell()
-	deathKnight.registerEmpowerRuneWeaponSpell()
-	deathKnight.registerRuneTapSpell()
+func (dk *Deathknight) Initialize() {
+	dk.registerPresences()
+	dk.registerIcyTouchSpell()
+	dk.registerPlagueStrikeSpell()
+	dk.registerObliterateSpell()
+	dk.registerBloodStrikeSpell()
+	dk.registerBloodTapSpell()
+	dk.registerHowlingBlastSpell()
+	dk.registerScourgeStrikeSpell()
+	dk.registerDeathCoilSpell()
+	dk.registerFrostStrikeSpell()
+	dk.registerDeathAndDecaySpell()
+	dk.registerDiseaseDots()
+	dk.registerGhoulFrenzySpell()
+	dk.registerBoneShieldSpell()
+	dk.registerUnbreakableArmorSpell()
+	dk.registerBloodBoilSpell()
+	dk.registerHornOfWinterSpell()
+	dk.registerPestilenceSpell()
+	dk.registerEmpowerRuneWeaponSpell()
+	dk.registerRuneTapSpell()
 
-	deathKnight.registerRaiseDeadCD()
-	deathKnight.registerSummonGargoyleCD()
-	deathKnight.registerArmyOfTheDeadCD()
+	dk.registerRaiseDeadCD()
+	dk.registerSummonGargoyleCD()
+	dk.registerArmyOfTheDeadCD()
 
-	deathKnight.SetupRotation()
+	dk.SetupRotation()
 }
 
-func (deathKnight *Deathknight) Reset(sim *core.Simulation) {
-	deathKnight.Presence = UnsetPresence
-	if deathKnight.Inputs.UnholyPresenceOpener {
-		deathKnight.ChangePresence(sim, UnholyPresence)
+func (dk *Deathknight) Reset(sim *core.Simulation) {
+	dk.Presence = UnsetPresence
+	if dk.Inputs.UnholyPresenceOpener {
+		dk.ChangePresence(sim, UnholyPresence)
 	} else {
-		deathKnight.ChangePresence(sim, BloodPresence)
+		dk.ChangePresence(sim, BloodPresence)
 	}
 
-	if deathKnight.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_PreCast {
-		deathKnight.PrecastArmyOfTheDead(sim)
+	if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_PreCast {
+		dk.PrecastArmyOfTheDead(sim)
 	}
 
-	deathKnight.ResetRotation(sim)
+	dk.ResetRotation(sim)
 }
 
-func (deathKnight *Deathknight) IsFuStrike(spell *core.Spell) bool {
-	return spell == deathKnight.Obliterate || spell == deathKnight.ScourgeStrike // || spell == deathKnight.DeathStrike
+func (dk *Deathknight) IsFuStrike(spell *core.Spell) bool {
+	return spell == dk.Obliterate || spell == dk.ScourgeStrike // || spell == dk.DeathStrike
 }
 
-func (deathKnight *Deathknight) HasMajorGlyph(glyph proto.DeathknightMajorGlyph) bool {
-	return deathKnight.HasGlyph(int32(glyph))
+func (dk *Deathknight) HasMajorGlyph(glyph proto.DeathknightMajorGlyph) bool {
+	return dk.HasGlyph(int32(glyph))
 }
-func (deathKnight *Deathknight) HasMinorGlyph(glyph proto.DeathknightMinorGlyph) bool {
-	return deathKnight.HasGlyph(int32(glyph))
+func (dk *Deathknight) HasMinorGlyph(glyph proto.DeathknightMinorGlyph) bool {
+	return dk.HasGlyph(int32(glyph))
 }
 
 func NewDeathknight(character core.Character, options proto.Player, inputs DeathknightInputs) *Deathknight {
 	deathKnightOptions := options.GetDeathknight()
 
-	deathKnight := &Deathknight{
+	dk := &Deathknight{
 		Character: character,
 		Talents:   *deathKnightOptions.Talents,
 
@@ -243,11 +243,11 @@ func NewDeathknight(character core.Character, options proto.Player, inputs Death
 		additiveDamageModifier: 1,
 	}
 
-	maxRunicPower := 100.0 + 15.0*float64(deathKnight.Talents.RunicPowerMastery)
-	currentRunicPower := math.Min(maxRunicPower, deathKnight.Inputs.StartingRunicPower+core.TernaryFloat64(deathKnight.Inputs.PrecastHornOfWinter, 10.0, 0.0))
+	maxRunicPower := 100.0 + 15.0*float64(dk.Talents.RunicPowerMastery)
+	currentRunicPower := math.Min(maxRunicPower, dk.Inputs.StartingRunicPower+core.TernaryFloat64(dk.Inputs.PrecastHornOfWinter, 10.0, 0.0))
 
-	deathKnight.EnableRunicPowerBar(
-		deathKnight.Talents.BladeBarrier > 0,
+	dk.EnableRunicPowerBar(
+		dk.Talents.BladeBarrier > 0,
 		currentRunicPower,
 		maxRunicPower,
 		func(sim *core.Simulation) {
@@ -255,143 +255,143 @@ func NewDeathknight(character core.Character, options proto.Player, inputs Death
 			// you do not want these to trigger a tryUseGCD, so after the opener
 			// its fine since you're running off a prio system, and rune generation
 			// can change your logic which we want.
-			if !deathKnight.onOpener {
-				if deathKnight.GCD.IsReady(sim) {
-					deathKnight.tryUseGCD(sim)
+			if !dk.onOpener {
+				if dk.GCD.IsReady(sim) {
+					dk.tryUseGCD(sim)
 				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if !deathKnight.onOpener {
-				if deathKnight.GCD.IsReady(sim) {
-					deathKnight.tryUseGCD(sim)
+			if !dk.onOpener {
+				if dk.GCD.IsReady(sim) {
+					dk.tryUseGCD(sim)
 				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if !deathKnight.onOpener {
-				if deathKnight.GCD.IsReady(sim) {
-					deathKnight.tryUseGCD(sim)
+			if !dk.onOpener {
+				if dk.GCD.IsReady(sim) {
+					dk.tryUseGCD(sim)
 				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if !deathKnight.onOpener {
-				if deathKnight.GCD.IsReady(sim) {
-					deathKnight.tryUseGCD(sim)
+			if !dk.onOpener {
+				if dk.GCD.IsReady(sim) {
+					dk.tryUseGCD(sim)
 				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if !deathKnight.onOpener {
-				if deathKnight.GCD.IsReady(sim) {
-					deathKnight.tryUseGCD(sim)
+			if !dk.onOpener {
+				if dk.GCD.IsReady(sim) {
+					dk.tryUseGCD(sim)
 				}
 			}
 		},
 	)
 
-	deathKnight.EnableAutoAttacks(deathKnight, core.AutoAttackOptions{
-		MainHand:       deathKnight.WeaponFromMainHand(deathKnight.DefaultMeleeCritMultiplier()),
-		OffHand:        deathKnight.WeaponFromOffHand(deathKnight.DefaultMeleeCritMultiplier()),
+	dk.EnableAutoAttacks(dk, core.AutoAttackOptions{
+		MainHand:       dk.WeaponFromMainHand(dk.DefaultMeleeCritMultiplier()),
+		OffHand:        dk.WeaponFromOffHand(dk.DefaultMeleeCritMultiplier()),
 		AutoSwingMelee: true,
 	})
 
-	deathKnight.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/62.5))
-	deathKnight.AddStatDependency(stats.Agility, stats.Dodge, 1.0+(core.DodgeRatingPerDodgeChance/84.74576271))
-	deathKnight.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
+	dk.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/62.5))
+	dk.AddStatDependency(stats.Agility, stats.Dodge, 1.0+(core.DodgeRatingPerDodgeChance/84.74576271))
+	dk.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
 
-	deathKnight.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
+	dk.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
 
-	deathKnight.Ghoul = deathKnight.NewGhoulPet(deathKnight.Talents.MasterOfGhouls)
-	if deathKnight.Talents.SummonGargoyle {
-		deathKnight.Gargoyle = deathKnight.NewGargoyle()
+	dk.Ghoul = dk.NewGhoulPet(dk.Talents.MasterOfGhouls)
+	if dk.Talents.SummonGargoyle {
+		dk.Gargoyle = dk.NewGargoyle()
 	}
 
-	deathKnight.ArmyGhoul = make([]*GhoulPet, 8)
+	dk.ArmyGhoul = make([]*GhoulPet, 8)
 	for i := 0; i < 8; i++ {
-		deathKnight.ArmyGhoul[i] = deathKnight.NewArmyGhoulPet(i)
+		dk.ArmyGhoul[i] = dk.NewArmyGhoulPet(i)
 	}
 
-	return deathKnight
+	return dk
 }
 
-func (deathKnight *Deathknight) AllDiseasesAreActive(target *core.Unit) bool {
-	return deathKnight.FrostFeverDisease[target.Index].IsActive() && deathKnight.BloodPlagueDisease[target.Index].IsActive()
+func (dk *Deathknight) AllDiseasesAreActive(target *core.Unit) bool {
+	return dk.FrostFeverDisease[target.Index].IsActive() && dk.BloodPlagueDisease[target.Index].IsActive()
 }
 
-func (deathKnight *Deathknight) DiseasesAreActive(target *core.Unit) bool {
-	return deathKnight.FrostFeverDisease[target.Index].IsActive() || deathKnight.BloodPlagueDisease[target.Index].IsActive()
+func (dk *Deathknight) DiseasesAreActive(target *core.Unit) bool {
+	return dk.FrostFeverDisease[target.Index].IsActive() || dk.BloodPlagueDisease[target.Index].IsActive()
 }
 
-func (deathKnight *Deathknight) secondaryCritModifier(applyGuile bool, applyMoM bool) float64 {
+func (dk *Deathknight) secondaryCritModifier(applyGuile bool, applyMoM bool) float64 {
 	secondaryModifier := 0.0
 	if applyGuile {
-		secondaryModifier += 0.15 * float64(deathKnight.Talents.GuileOfGorefiend)
+		secondaryModifier += 0.15 * float64(dk.Talents.GuileOfGorefiend)
 	}
 	if applyMoM {
-		secondaryModifier += 0.15 * float64(deathKnight.Talents.MightOfMograine)
+		secondaryModifier += 0.15 * float64(dk.Talents.MightOfMograine)
 	}
 	return secondaryModifier
 }
 
 // TODO: DKs have x2 modifier on spell crit as a passive. Is this the best way to do it?
-func (deathKnight *Deathknight) spellCritMultiplier() float64 {
-	return deathKnight.MeleeCritMultiplier(1.0, 0)
+func (dk *Deathknight) spellCritMultiplier() float64 {
+	return dk.MeleeCritMultiplier(1.0, 0)
 }
 
-func (deathKnight *Deathknight) spellCritMultiplierGoGandMoM() float64 {
-	applyGuile := deathKnight.Talents.GuileOfGorefiend > 0
-	applyMightOfMograine := deathKnight.Talents.MightOfMograine > 0
-	return deathKnight.MeleeCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile, applyMightOfMograine))
+func (dk *Deathknight) spellCritMultiplierGoGandMoM() float64 {
+	applyGuile := dk.Talents.GuileOfGorefiend > 0
+	applyMightOfMograine := dk.Talents.MightOfMograine > 0
+	return dk.MeleeCritMultiplier(1.0, dk.secondaryCritModifier(applyGuile, applyMightOfMograine))
 }
 
-func (deathKnight *Deathknight) critMultiplier() float64 {
-	return deathKnight.MeleeCritMultiplier(1.0, 0)
+func (dk *Deathknight) critMultiplier() float64 {
+	return dk.MeleeCritMultiplier(1.0, 0)
 }
 
-func (deathKnight *Deathknight) critMultiplierGoGandMoM() float64 {
-	applyGuile := deathKnight.Talents.GuileOfGorefiend > 0
-	applyMightOfMograine := deathKnight.Talents.MightOfMograine > 0
-	return deathKnight.MeleeCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile, applyMightOfMograine))
+func (dk *Deathknight) critMultiplierGoGandMoM() float64 {
+	applyGuile := dk.Talents.GuileOfGorefiend > 0
+	applyMightOfMograine := dk.Talents.MightOfMograine > 0
+	return dk.MeleeCritMultiplier(1.0, dk.secondaryCritModifier(applyGuile, applyMightOfMograine))
 }
 
-func (deathKnight *Deathknight) RuneAmountForSpell(spell *core.Spell) core.RuneAmount {
+func (dk *Deathknight) RuneAmountForSpell(spell *core.Spell) core.RuneAmount {
 	blood := 0
 	frost := 0
 	unholy := 0
 	switch spell {
-	case deathKnight.DeathAndDecay:
+	case dk.DeathAndDecay:
 		blood = 1
 		frost = 1
 		unholy = 1
-	case deathKnight.ArmyOfTheDead:
+	case dk.ArmyOfTheDead:
 		blood = 1
 		frost = 1
 		unholy = 1
-	case deathKnight.Pestilence:
+	case dk.Pestilence:
 		blood = 1
-	case deathKnight.BloodStrike:
+	case dk.BloodStrike:
 		blood = 1
-	case deathKnight.BloodBoil:
+	case dk.BloodBoil:
 		blood = 1
-	case deathKnight.UnbreakableArmor:
+	case dk.UnbreakableArmor:
 		frost = 1
-	case deathKnight.IcyTouch:
+	case dk.IcyTouch:
 		frost = 1
-	case deathKnight.PlagueStrike:
+	case dk.PlagueStrike:
 		unholy = 1
-	case deathKnight.GhoulFrenzy:
+	case dk.GhoulFrenzy:
 		unholy = 1
-	case deathKnight.BoneShield:
+	case dk.BoneShield:
 		unholy = 1
-	case deathKnight.ScourgeStrike:
-		frost = 1
-		unholy = 1
-	case deathKnight.Obliterate:
+	case dk.ScourgeStrike:
 		frost = 1
 		unholy = 1
-	case deathKnight.HowlingBlast:
+	case dk.Obliterate:
+		frost = 1
+		unholy = 1
+	case dk.HowlingBlast:
 		frost = 1
 		unholy = 1
 	}
@@ -399,46 +399,46 @@ func (deathKnight *Deathknight) RuneAmountForSpell(spell *core.Spell) core.RuneA
 	return core.RuneAmount{blood, frost, unholy, 0}
 }
 
-func (deathKnight *Deathknight) CanCast(sim *core.Simulation, spell *core.Spell) bool {
+func (dk *Deathknight) CanCast(sim *core.Simulation, spell *core.Spell) bool {
 	switch spell {
-	case deathKnight.DeathAndDecay:
-		return deathKnight.CanDeathAndDecay(sim)
-	case deathKnight.ArmyOfTheDead:
-		return deathKnight.CanArmyOfTheDead(sim)
-	case deathKnight.Pestilence:
-		return deathKnight.CanPestilence(sim)
-	case deathKnight.BloodStrike:
-		return deathKnight.CanBloodStrike(sim)
-	case deathKnight.BloodBoil:
-		return deathKnight.CanBloodBoil(sim)
-	case deathKnight.UnbreakableArmor:
-		return deathKnight.CanUnbreakableArmor(sim)
-	case deathKnight.IcyTouch:
-		return deathKnight.CanIcyTouch(sim)
-	case deathKnight.PlagueStrike:
-		return deathKnight.CanPlagueStrike(sim)
-	case deathKnight.GhoulFrenzy:
-		return deathKnight.CanGhoulFrenzy(sim)
-	case deathKnight.BoneShield:
-		return deathKnight.CanBoneShield(sim)
-	case deathKnight.ScourgeStrike:
-		return deathKnight.CanScourgeStrike(sim)
-	case deathKnight.Obliterate:
-		return deathKnight.CanObliterate(sim)
-	case deathKnight.HowlingBlast:
-		return deathKnight.CanHowlingBlast(sim)
-	case deathKnight.FrostStrike:
-		return deathKnight.CanFrostStrike(sim)
-	case deathKnight.DeathCoil:
-		return deathKnight.CanDeathCoil(sim)
-	case deathKnight.BloodTap:
-		return deathKnight.CanBloodTap(sim)
-	case deathKnight.EmpowerRuneWeapon:
-		return deathKnight.CanEmpowerRuneWeapon(sim)
-	case deathKnight.HornOfWinter:
-		return deathKnight.CanHornOfWinter(sim)
-	case deathKnight.RaiseDead:
-		return deathKnight.CanRaiseDead(sim)
+	case dk.DeathAndDecay:
+		return dk.CanDeathAndDecay(sim)
+	case dk.ArmyOfTheDead:
+		return dk.CanArmyOfTheDead(sim)
+	case dk.Pestilence:
+		return dk.CanPestilence(sim)
+	case dk.BloodStrike:
+		return dk.CanBloodStrike(sim)
+	case dk.BloodBoil:
+		return dk.CanBloodBoil(sim)
+	case dk.UnbreakableArmor:
+		return dk.CanUnbreakableArmor(sim)
+	case dk.IcyTouch:
+		return dk.CanIcyTouch(sim)
+	case dk.PlagueStrike:
+		return dk.CanPlagueStrike(sim)
+	case dk.GhoulFrenzy:
+		return dk.CanGhoulFrenzy(sim)
+	case dk.BoneShield:
+		return dk.CanBoneShield(sim)
+	case dk.ScourgeStrike:
+		return dk.CanScourgeStrike(sim)
+	case dk.Obliterate:
+		return dk.CanObliterate(sim)
+	case dk.HowlingBlast:
+		return dk.CanHowlingBlast(sim)
+	case dk.FrostStrike:
+		return dk.CanFrostStrike(sim)
+	case dk.DeathCoil:
+		return dk.CanDeathCoil(sim)
+	case dk.BloodTap:
+		return dk.CanBloodTap(sim)
+	case dk.EmpowerRuneWeapon:
+		return dk.CanEmpowerRuneWeapon(sim)
+	case dk.HornOfWinter:
+		return dk.CanHornOfWinter(sim)
+	case dk.RaiseDead:
+		return dk.CanRaiseDead(sim)
 	default:
 		panic("Not in cost list.")
 	}
@@ -561,8 +561,8 @@ func init() {
 
 // Agent is a generic way to access underlying warrior on any of the agents.
 
-func (deathKnight *Deathknight) GetDeathKnight() *Deathknight {
-	return deathKnight
+func (dk *Deathknight) GetDeathKnight() *Deathknight {
+	return dk
 }
 
 type DeathKnightAgent interface {

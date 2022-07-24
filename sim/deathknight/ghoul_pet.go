@@ -22,46 +22,46 @@ type GhoulPet struct {
 	uptimePercent float64
 }
 
-func (deathKnight *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
+func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
 	ghoulPet := &GhoulPet{
 		Pet: core.NewPet(
 			"Army of the Dead", //+strconv.Itoa(index),
-			&deathKnight.Character,
+			&dk.Character,
 			ghoulPetBaseStats,
-			deathKnight.armyGhoulStatInheritance(),
+			dk.armyGhoulStatInheritance(),
 			false,
 		),
-		dkOwner: deathKnight,
+		dkOwner: dk,
 	}
 
 	ghoulPet.PseudoStats.DamageTakenMultiplier *= 0.1
 
-	deathKnight.SetupGhoul(ghoulPet)
+	dk.SetupGhoul(ghoulPet)
 
 	return ghoulPet
 }
 
-func (deathKnight *Deathknight) NewGhoulPet(permanent bool) *GhoulPet {
+func (dk *Deathknight) NewGhoulPet(permanent bool) *GhoulPet {
 	ghoulPet := &GhoulPet{
 		Pet: core.NewPet(
 			"Ghoul",
-			&deathKnight.Character,
+			&dk.Character,
 			ghoulPetBaseStats,
-			deathKnight.ghoulStatInheritance(),
+			dk.ghoulStatInheritance(),
 			permanent,
 		),
-		dkOwner: deathKnight,
+		dkOwner: dk,
 	}
 
 	// NightOfTheDead
-	ghoulPet.PseudoStats.DamageTakenMultiplier *= (1.0 - float64(deathKnight.Talents.NightOfTheDead)*0.45)
+	ghoulPet.PseudoStats.DamageTakenMultiplier *= (1.0 - float64(dk.Talents.NightOfTheDead)*0.45)
 
-	deathKnight.SetupGhoul(ghoulPet)
+	dk.SetupGhoul(ghoulPet)
 
 	return ghoulPet
 }
 
-func (deathKnight *Deathknight) SetupGhoul(ghoulPet *GhoulPet) {
+func (dk *Deathknight) SetupGhoul(ghoulPet *GhoulPet) {
 	ghoulPet.Pet.OnPetEnable = ghoulPet.enable
 	ghoulPet.Pet.OnPetDisable = ghoulPet.disable
 
@@ -85,9 +85,9 @@ func (deathKnight *Deathknight) SetupGhoul(ghoulPet *GhoulPet) {
 	ghoulPet.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+1)
 	ghoulPet.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/83.3))
 
-	core.ApplyPetConsumeEffects(&ghoulPet.Character, deathKnight.Consumes)
+	core.ApplyPetConsumeEffects(&ghoulPet.Character, dk.Consumes)
 
-	deathKnight.AddPet(ghoulPet)
+	dk.AddPet(ghoulPet)
 }
 
 func (ghoulPet *GhoulPet) IsPetGhoul() bool {
@@ -159,10 +159,10 @@ var ghoulPetBaseStats = stats.Stats{
 	stats.MeleeCrit: (1.1515 + 1.8) * core.CritRatingPerCritChance,
 }
 
-func (deathKnight *Deathknight) ghoulStatInheritance() core.PetStatInheritance {
-	ravenousDead := 1.0 + 0.2*float64(deathKnight.Talents.RavenousDead)
+func (dk *Deathknight) ghoulStatInheritance() core.PetStatInheritance {
+	ravenousDead := 1.0 + 0.2*float64(dk.Talents.RavenousDead)
 	glyphBonus := 0.0
-	if deathKnight.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfTheGhoul) {
+	if dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfTheGhoul) {
 		glyphBonus = 0.4
 	}
 
@@ -180,10 +180,10 @@ func (deathKnight *Deathknight) ghoulStatInheritance() core.PetStatInheritance {
 	}
 }
 
-func (deathKnight *Deathknight) armyGhoulStatInheritance() core.PetStatInheritance {
-	ravenousDead := 1.0 + 0.2*float64(deathKnight.Talents.RavenousDead)
+func (dk *Deathknight) armyGhoulStatInheritance() core.PetStatInheritance {
+	ravenousDead := 1.0 + 0.2*float64(dk.Talents.RavenousDead)
 	glyphBonus := 0.0
-	if deathKnight.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfTheGhoul) {
+	if dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfTheGhoul) {
 		glyphBonus = 0.4
 	}
 

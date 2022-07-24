@@ -4,8 +4,8 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-func (deathKnight *Deathknight) registerBloodBoilSpell() {
-	deathKnight.BloodBoil = deathKnight.RegisterSpell(core.SpellConfig{
+func (dk *Deathknight) registerBloodBoilSpell() {
+	dk.BloodBoil = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 49941},
 		SpellSchool: core.SpellSchoolShadow,
 
@@ -14,11 +14,11 @@ func (deathKnight *Deathknight) registerBloodBoilSpell() {
 				GCD: core.GCDDefault,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = deathKnight.getModifiedGCD()
+				cast.GCD = dk.getModifiedGCD()
 			},
 		},
 
-		ApplyEffects: core.ApplyEffectFuncAOEDamage(deathKnight.Env, core.SpellEffect{
+		ApplyEffects: core.ApplyEffectFuncAOEDamage(dk.Env, core.SpellEffect{
 			ProcMask:             core.ProcMaskSpellDamage,
 			BonusSpellCritRating: 0.0,
 			DamageMultiplier:     1.0,
@@ -27,37 +27,37 @@ func (deathKnight *Deathknight) registerBloodBoilSpell() {
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					roll := (220.0-180.0)*sim.RandomFloat("Blood Boil") + 180.0
-					return (roll + deathKnight.applyImpurity(hitEffect, spell.Unit)*0.06) *
-						deathKnight.rageOfRivendareBonus(hitEffect.Target) *
-						deathKnight.tundraStalkerBonus(hitEffect.Target)
+					return (roll + dk.applyImpurity(hitEffect, spell.Unit)*0.06) *
+						dk.rageOfRivendareBonus(hitEffect.Target) *
+						dk.tundraStalkerBonus(hitEffect.Target)
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: deathKnight.OutcomeFuncMagicHitAndCrit(deathKnight.spellCritMultiplierGoGandMoM()),
+			OutcomeApplier: dk.OutcomeFuncMagicHitAndCrit(dk.spellCritMultiplierGoGandMoM()),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Target == deathKnight.CurrentTarget {
-					deathKnight.LastCastOutcome = spellEffect.Outcome
+				if spellEffect.Target == dk.CurrentTarget {
+					dk.LastCastOutcome = spellEffect.Outcome
 				}
-				if spellEffect.Landed() && spellEffect.Target == deathKnight.CurrentTarget {
-					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 1, 0, 0)
-					deathKnight.Spend(sim, spell, dkSpellCost)
+				if spellEffect.Landed() && spellEffect.Target == dk.CurrentTarget {
+					dkSpellCost := dk.DetermineOptimalCost(sim, 1, 0, 0)
+					dk.Spend(sim, spell, dkSpellCost)
 
-					amountOfRunicPower := 10.0 + 2.5*float64(deathKnight.Talents.ChillOfTheGrave)
-					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
+					amountOfRunicPower := 10.0 + 2.5*float64(dk.Talents.ChillOfTheGrave)
+					dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 				}
 			},
 		}),
 	})
 }
 
-func (deathKnight *Deathknight) CanBloodBoil(sim *core.Simulation) bool {
-	return deathKnight.CastCostPossible(sim, 0.0, 1, 0, 0) && deathKnight.BloodBoil.IsReady(sim)
+func (dk *Deathknight) CanBloodBoil(sim *core.Simulation) bool {
+	return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.BloodBoil.IsReady(sim)
 }
 
-func (deathKnight *Deathknight) CastBloodBoil(sim *core.Simulation, target *core.Unit) bool {
-	if deathKnight.CanBloodBoil(sim) {
-		deathKnight.BloodBoil.Cast(sim, target)
+func (dk *Deathknight) CastBloodBoil(sim *core.Simulation, target *core.Unit) bool {
+	if dk.CanBloodBoil(sim) {
+		dk.BloodBoil.Cast(sim, target)
 		return true
 	}
 	return false

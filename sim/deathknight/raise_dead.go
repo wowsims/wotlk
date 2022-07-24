@@ -6,25 +6,25 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-func (deathKnight *Deathknight) registerRaiseDeadCD() {
+func (dk *Deathknight) registerRaiseDeadCD() {
 	// If talented as permanent pet skip this spell
-	if deathKnight.Talents.MasterOfGhouls {
+	if dk.Talents.MasterOfGhouls {
 		return
 	}
 
-	raiseDeadAura := deathKnight.RegisterAura(core.Aura{
+	raiseDeadAura := dk.RegisterAura(core.Aura{
 		Label:    "Raise Dead",
 		ActionID: core.ActionID{SpellID: 46584},
 		Duration: time.Minute * 1,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			deathKnight.Ghoul.Pet.Enable(sim, deathKnight.Ghoul)
+			dk.Ghoul.Pet.Enable(sim, dk.Ghoul)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			deathKnight.Ghoul.Pet.Disable(sim)
+			dk.Ghoul.Pet.Disable(sim)
 		},
 	})
 
-	deathKnight.RaiseDead = deathKnight.RegisterSpell(core.SpellConfig{
+	dk.RaiseDead = dk.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 46584},
 
 		Cast: core.CastConfig{
@@ -32,11 +32,11 @@ func (deathKnight *Deathknight) registerRaiseDeadCD() {
 				GCD: core.GCDDefault,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = deathKnight.getModifiedGCD()
+				cast.GCD = dk.getModifiedGCD()
 			},
 			CD: core.Cooldown{
-				Timer:    deathKnight.NewTimer(),
-				Duration: time.Minute*3 - time.Second*45*time.Duration(deathKnight.Talents.NightOfTheDead),
+				Timer:    dk.NewTimer(),
+				Duration: time.Minute*3 - time.Second*45*time.Duration(dk.Talents.NightOfTheDead),
 			},
 		},
 
@@ -46,13 +46,13 @@ func (deathKnight *Deathknight) registerRaiseDeadCD() {
 	})
 }
 
-func (deathKnight *Deathknight) CanRaiseDead(sim *core.Simulation) bool {
-	return !deathKnight.Talents.MasterOfGhouls && deathKnight.RaiseDead.IsReady(sim)
+func (dk *Deathknight) CanRaiseDead(sim *core.Simulation) bool {
+	return !dk.Talents.MasterOfGhouls && dk.RaiseDead.IsReady(sim)
 }
 
-func (deathKnight *Deathknight) CastRaiseDead(sim *core.Simulation, target *core.Unit) bool {
-	if deathKnight.CanRaiseDead(sim) {
-		deathKnight.RaiseDead.Cast(sim, target)
+func (dk *Deathknight) CastRaiseDead(sim *core.Simulation, target *core.Unit) bool {
+	if dk.CanRaiseDead(sim) {
+		dk.RaiseDead.Cast(sim, target)
 		return true
 	}
 	return false

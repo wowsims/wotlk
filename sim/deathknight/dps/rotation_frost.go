@@ -5,10 +5,10 @@ import (
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
-func (deathKnight *DpsDeathknight) setupFrostRotations() {
+func (dk *DpsDeathknight) setupFrostRotations() {
 
 	// This defines the Sub Blood opener
-	deathKnight.DefineOpener(deathknight.RotationID_FrostSubBlood_Full, []deathknight.RotationAction{
+	dk.DefineOpener(deathknight.RotationID_FrostSubBlood_Full, []deathknight.RotationAction{
 		deathknight.RotationAction_IT,
 		deathknight.RotationAction_PS,
 		deathknight.RotationAction_UA,
@@ -32,7 +32,7 @@ func (deathKnight *DpsDeathknight) setupFrostRotations() {
 	})
 
 	// This defines the Sub Unholy opener
-	deathKnight.DefineOpener(deathknight.RotationID_FrostSubUnholy_Full, []deathknight.RotationAction{
+	dk.DefineOpener(deathknight.RotationID_FrostSubUnholy_Full, []deathknight.RotationAction{
 		deathknight.RotationAction_IT,
 		deathknight.RotationAction_PS,
 		deathknight.RotationAction_BT,
@@ -55,38 +55,38 @@ func (deathKnight *DpsDeathknight) setupFrostRotations() {
 	})
 }
 
-func (deathKnight *DpsDeathknight) FrostDiseaseCheckWrapper(sim *core.Simulation, target *core.Unit, spell *core.Spell) bool {
+func (dk *DpsDeathknight) FrostDiseaseCheckWrapper(sim *core.Simulation, target *core.Unit, spell *core.Spell) bool {
 	success := false
 
-	if !deathKnight.TargetHasDisease(deathknight.FrostFeverAuraLabel, target) {
-		success = deathKnight.CastIcyTouch(sim, target)
-	} else if !deathKnight.TargetHasDisease(deathknight.BloodPlagueAuraLabel, target) {
-		success = deathKnight.CastPlagueStrike(sim, target)
-	} else if deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim) < spell.CurCast.GCD ||
-		deathKnight.BloodPlagueDisease[target.Index].RemainingDuration(sim) < spell.CurCast.GCD {
-		success = deathKnight.CastPestilence(sim, target)
-		if deathKnight.LastCastOutcome == core.OutcomeMiss {
+	if !dk.TargetHasDisease(deathknight.FrostFeverAuraLabel, target) {
+		success = dk.CastIcyTouch(sim, target)
+	} else if !dk.TargetHasDisease(deathknight.BloodPlagueAuraLabel, target) {
+		success = dk.CastPlagueStrike(sim, target)
+	} else if dk.FrostFeverDisease[target.Index].RemainingDuration(sim) < spell.CurCast.GCD ||
+		dk.BloodPlagueDisease[target.Index].RemainingDuration(sim) < spell.CurCast.GCD {
+		success = dk.CastPestilence(sim, target)
+		if dk.LastCastOutcome == core.OutcomeMiss {
 			// Deal with pestilence miss
 			// TODO:
 
 		}
 	} else {
-		if deathKnight.CanCast(sim, spell) {
-			ffExpiresIn := deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim)
-			bpExpiresIn := deathKnight.BloodPlagueDisease[target.Index].RemainingDuration(sim)
+		if dk.CanCast(sim, spell) {
+			ffExpiresIn := dk.FrostFeverDisease[target.Index].RemainingDuration(sim)
+			bpExpiresIn := dk.BloodPlagueDisease[target.Index].RemainingDuration(sim)
 			ffExpiresAt := ffExpiresIn + sim.CurrentTime
 			bpExpiresAt := bpExpiresIn + sim.CurrentTime
 			if spell.CurCast.GCD > ffExpiresIn || spell.CurCast.GCD > bpExpiresIn {
 				return success
 			}
 
-			crpb := deathKnight.CopyRunicPowerBar()
-			runeCostForSpell := deathKnight.RuneAmountForSpell(spell)
+			crpb := dk.CopyRunicPowerBar()
+			runeCostForSpell := dk.RuneAmountForSpell(spell)
 			spellCost := crpb.DetermineOptimalCost(sim, runeCostForSpell.Blood, runeCostForSpell.Frost, runeCostForSpell.Unholy)
 
 			// Add whichever non-frost specific checks you want here, I guess you'll need them.
 
-			if !(deathKnight.RimeAura.IsActive() && spell == deathKnight.HowlingBlast) {
+			if !(dk.RimeAura.IsActive() && spell == dk.HowlingBlast) {
 				crpb.Spend(sim, spell, spellCost)
 			}
 
@@ -100,7 +100,7 @@ func (deathKnight *DpsDeathknight) FrostDiseaseCheckWrapper(sim *core.Simulation
 				bp2 := (float64(bpExpiresAt) > nextDeathRuneAt) && (float64(bpExpiresAt)-nextDeathRuneAt < float64(spell.CurCast.GCD))
 
 				if (ff1 || ff2) && (bp1 || bp2) {
-					if deathKnight.CanCast(sim, spell) {
+					if dk.CanCast(sim, spell) {
 						spell.Cast(sim, target)
 						success = true
 					}
@@ -117,36 +117,36 @@ func (deathKnight *DpsDeathknight) FrostDiseaseCheckWrapper(sim *core.Simulation
 	return success
 }
 
-func (deathKnight *DpsDeathknight) doFrostRotation(sim *core.Simulation, target *core.Unit) {
-	casted := &deathKnight.CastSuccessful
+func (dk *DpsDeathknight) doFrostRotation(sim *core.Simulation, target *core.Unit) {
+	casted := &dk.CastSuccessful
 
-	if deathKnight.ShouldHornOfWinter(sim) {
-		*casted = deathKnight.CastHornOfWinter(sim, target)
+	if dk.ShouldHornOfWinter(sim) {
+		*casted = dk.CastHornOfWinter(sim, target)
 	} else {
-		*casted = deathKnight.FrostDiseaseCheckWrapper(sim, target, deathKnight.Obliterate)
+		*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.Obliterate)
 		if !*casted {
-			if deathKnight.KillingMachineAura.IsActive() && !deathKnight.RimeAura.IsActive() {
-				*casted = deathKnight.FrostDiseaseCheckWrapper(sim, target, deathKnight.FrostStrike)
-			} else if deathKnight.KillingMachineAura.IsActive() && deathKnight.RimeAura.IsActive() {
-				if deathKnight.CastCostPossible(sim, 0, 0, 1, 1) && deathKnight.CurrentRunicPower() < 110 {
-					*casted = deathKnight.FrostDiseaseCheckWrapper(sim, target, deathKnight.HowlingBlast)
-				} else if deathKnight.CastCostPossible(sim, 0, 0, 1, 1) && deathKnight.CurrentRunicPower() > 110 {
-					*casted = deathKnight.FrostDiseaseCheckWrapper(sim, target, deathKnight.HowlingBlast)
-				} else if !deathKnight.CastCostPossible(sim, 0, 0, 1, 1) && deathKnight.CurrentRunicPower() > 110 {
-					*casted = deathKnight.FrostDiseaseCheckWrapper(sim, target, deathKnight.FrostStrike)
-				} else if !deathKnight.CastCostPossible(sim, 0, 0, 1, 1) && deathKnight.CurrentRunicPower() < 110 {
-					*casted = deathKnight.FrostDiseaseCheckWrapper(sim, target, deathKnight.FrostStrike)
+			if dk.KillingMachineAura.IsActive() && !dk.RimeAura.IsActive() {
+				*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
+			} else if dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
+				if dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() < 110 {
+					*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.HowlingBlast)
+				} else if dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() > 110 {
+					*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.HowlingBlast)
+				} else if !dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() > 110 {
+					*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
+				} else if !dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() < 110 {
+					*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
 				}
-			} else if !deathKnight.KillingMachineAura.IsActive() && deathKnight.RimeAura.IsActive() {
-				if deathKnight.CurrentRunicPower() < 110 {
-					*casted = deathKnight.FrostDiseaseCheckWrapper(sim, target, deathKnight.HowlingBlast)
+			} else if !dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
+				if dk.CurrentRunicPower() < 110 {
+					*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.HowlingBlast)
 				} else {
-					*casted = deathKnight.FrostDiseaseCheckWrapper(sim, target, deathKnight.FrostStrike)
+					*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
 				}
 			} else {
-				*casted = deathKnight.FrostDiseaseCheckWrapper(sim, target, deathKnight.FrostStrike)
+				*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
 				if !*casted {
-					*casted = deathKnight.FrostDiseaseCheckWrapper(sim, target, deathKnight.HornOfWinter)
+					*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.HornOfWinter)
 				}
 			}
 		}

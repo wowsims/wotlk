@@ -52,31 +52,31 @@ func NewDpsDeathknight(character core.Character, player proto.Player) *DpsDeathk
 	return dpsDk
 }
 
-func (deathKnight *DpsDeathknight) SetupRotations() deathknight.RotationID {
-	deathKnight.setupFrostRotations()
-	deathKnight.setupUnholyRotations()
+func (dk *DpsDeathknight) SetupRotations() deathknight.RotationID {
+	dk.setupFrostRotations()
+	dk.setupUnholyRotations()
 
 	// IMPORTANT
 	rotationId := deathknight.RotationID_Unknown
 	// Also you need to update this to however you define spec
-	if deathKnight.Talents.DarkConviction > 0 && deathKnight.Talents.HowlingBlast {
+	if dk.Talents.DarkConviction > 0 && dk.Talents.HowlingBlast {
 		rotationId = deathknight.RotationID_FrostSubBlood_Full
-	} else if deathKnight.Talents.BloodCakedBlade > 0 && deathKnight.Talents.HowlingBlast {
+	} else if dk.Talents.BloodCakedBlade > 0 && dk.Talents.HowlingBlast {
 		rotationId = deathknight.RotationID_FrostSubUnholy_Full
-	} else if deathKnight.Talents.HowlingBlast {
+	} else if dk.Talents.HowlingBlast {
 		rotationId = deathknight.RotationID_FrostSubBlood_Full
-	} else if deathKnight.Talents.SummonGargoyle {
-		if deathKnight.Rotation.UseDeathAndDecay {
+	} else if dk.Talents.SummonGargoyle {
+		if dk.Rotation.UseDeathAndDecay {
 			rotationId = deathknight.RotationID_UnholyDnd_Full
 		} else {
-			if deathKnight.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd {
-				if deathKnight.Rotation.UnholyPresenceOpener {
+			if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd {
+				if dk.Rotation.UnholyPresenceOpener {
 					rotationId = deathknight.RotationID_UnholySsArmyUnholyPresence_Full
 				} else {
 					rotationId = deathknight.RotationID_UnholySsArmyBloodPresence_Full
 				}
 			} else {
-				if deathKnight.Rotation.UnholyPresenceOpener {
+				if dk.Rotation.UnholyPresenceOpener {
 					rotationId = deathknight.RotationID_UnholySsUnholyPresence_Full
 				} else {
 					rotationId = deathknight.RotationID_UnholySsBloodPresence_Full

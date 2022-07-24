@@ -16,76 +16,76 @@ const (
 	UnsetPresence
 )
 
-func (deathKnight *Deathknight) PresenceMatches(other Presence) bool {
-	return (deathKnight.Presence & other) != 0
+func (dk *Deathknight) PresenceMatches(other Presence) bool {
+	return (dk.Presence & other) != 0
 }
 
-func (deathKnight *Deathknight) ChangePresence(sim *core.Simulation, newPresence Presence) {
-	if deathKnight.PresenceMatches(newPresence) {
+func (dk *Deathknight) ChangePresence(sim *core.Simulation, newPresence Presence) {
+	if dk.PresenceMatches(newPresence) {
 		return
 	}
 
-	deathKnight.Presence = newPresence
-	if deathKnight.PresenceMatches(BloodPresence) {
-		deathKnight.BloodPresenceAura.Activate(sim)
-		deathKnight.FrostPresenceAura.Deactivate(sim)
-		deathKnight.UnholyPresenceAura.Deactivate(sim)
-	} else if deathKnight.PresenceMatches(FrostPresence) {
-		deathKnight.FrostPresenceAura.Activate(sim)
-		deathKnight.BloodPresenceAura.Deactivate(sim)
-		deathKnight.UnholyPresenceAura.Deactivate(sim)
-	} else if deathKnight.PresenceMatches(UnholyPresence) {
-		deathKnight.UnholyPresenceAura.Activate(sim)
-		deathKnight.BloodPresenceAura.Deactivate(sim)
-		deathKnight.FrostPresenceAura.Deactivate(sim)
+	dk.Presence = newPresence
+	if dk.PresenceMatches(BloodPresence) {
+		dk.BloodPresenceAura.Activate(sim)
+		dk.FrostPresenceAura.Deactivate(sim)
+		dk.UnholyPresenceAura.Deactivate(sim)
+	} else if dk.PresenceMatches(FrostPresence) {
+		dk.FrostPresenceAura.Activate(sim)
+		dk.BloodPresenceAura.Deactivate(sim)
+		dk.UnholyPresenceAura.Deactivate(sim)
+	} else if dk.PresenceMatches(UnholyPresence) {
+		dk.UnholyPresenceAura.Activate(sim)
+		dk.BloodPresenceAura.Deactivate(sim)
+		dk.FrostPresenceAura.Deactivate(sim)
 	}
 }
 
-func (deathKnight *Deathknight) CanBloodPresence(sim *core.Simulation) bool {
-	return deathKnight.CastCostPossible(sim, 0.0, 1, 0, 0) && deathKnight.BloodPresence.IsReady(sim)
+func (dk *Deathknight) CanBloodPresence(sim *core.Simulation) bool {
+	return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.BloodPresence.IsReady(sim)
 }
 
-func (deathKnight *Deathknight) CastBloodPresence(sim *core.Simulation, target *core.Unit) bool {
-	if deathKnight.CanBloodPresence(sim) {
-		deathKnight.BloodPresence.Cast(sim, target)
+func (dk *Deathknight) CastBloodPresence(sim *core.Simulation, target *core.Unit) bool {
+	if dk.CanBloodPresence(sim) {
+		dk.BloodPresence.Cast(sim, target)
 		return true
 	}
 	return false
 }
 
-func (deathKnight *Deathknight) CanFrostPresence(sim *core.Simulation) bool {
-	return deathKnight.CastCostPossible(sim, 0.0, 0, 1, 0) && deathKnight.FrostPresence.IsReady(sim)
+func (dk *Deathknight) CanFrostPresence(sim *core.Simulation) bool {
+	return dk.CastCostPossible(sim, 0.0, 0, 1, 0) && dk.FrostPresence.IsReady(sim)
 }
 
-func (deathKnight *Deathknight) CastFrostPresence(sim *core.Simulation, target *core.Unit) bool {
-	if deathKnight.CanFrostPresence(sim) {
-		deathKnight.FrostPresence.Cast(sim, target)
+func (dk *Deathknight) CastFrostPresence(sim *core.Simulation, target *core.Unit) bool {
+	if dk.CanFrostPresence(sim) {
+		dk.FrostPresence.Cast(sim, target)
 		return true
 	}
 	return false
 }
 
-func (deathKnight *Deathknight) CanUnholyPresence(sim *core.Simulation) bool {
-	return deathKnight.CastCostPossible(sim, 0.0, 0, 0, 1) && deathKnight.UnholyPresence.IsReady(sim)
+func (dk *Deathknight) CanUnholyPresence(sim *core.Simulation) bool {
+	return dk.CastCostPossible(sim, 0.0, 0, 0, 1) && dk.UnholyPresence.IsReady(sim)
 }
 
-func (deathKnight *Deathknight) CastUnholyPresence(sim *core.Simulation, target *core.Unit) bool {
-	if deathKnight.CanUnholyPresence(sim) {
-		deathKnight.UnholyPresence.Cast(sim, target)
+func (dk *Deathknight) CastUnholyPresence(sim *core.Simulation, target *core.Unit) bool {
+	if dk.CanUnholyPresence(sim) {
+		dk.UnholyPresence.Cast(sim, target)
 		return true
 	}
 	return false
 }
 
-func (deathKnight *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
+func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 	threatMult := 0.8
-	threatMultSubversion := 1.0 - deathKnight.subversionThreatBonus()
+	threatMultSubversion := 1.0 - dk.subversionThreatBonus()
 	//TODO: Include hps bonus
 	damageBonusCoeff := 0.15
-	staminaMult := 1.0 + 0.04*float64(deathKnight.Talents.ImprovedFrostPresence)
-	damageTakenMult := 1.0 - 0.01*float64(deathKnight.Talents.ImprovedFrostPresence)
+	staminaMult := 1.0 + 0.04*float64(dk.Talents.ImprovedFrostPresence)
+	damageTakenMult := 1.0 - 0.01*float64(dk.Talents.ImprovedFrostPresence)
 
-	deathKnight.BloodPresence = deathKnight.RegisterSpell(core.SpellConfig{
+	dk.BloodPresence = dk.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 50689},
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
@@ -94,13 +94,13 @@ func (deathKnight *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
-			dkSpellCost := deathKnight.DetermineOptimalCost(sim, 1, 0, 0)
-			deathKnight.Spend(sim, spell, dkSpellCost)
-			deathKnight.ChangePresence(sim, BloodPresence)
+			dkSpellCost := dk.DetermineOptimalCost(sim, 1, 0, 0)
+			dk.Spend(sim, spell, dkSpellCost)
+			dk.ChangePresence(sim, BloodPresence)
 		},
 	})
 
-	deathKnight.BloodPresenceAura = deathKnight.GetOrRegisterAura(core.Aura{
+	dk.BloodPresenceAura = dk.GetOrRegisterAura(core.Aura{
 		Label:    "Blood Presence",
 		Tag:      "Presence",
 		Priority: 1,
@@ -111,7 +111,7 @@ func (deathKnight *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 			aura.Unit.PseudoStats.ThreatMultiplier *= threatMultSubversion
 			aura.Unit.PseudoStats.DamageTakenMultiplier *= damageTakenMult
 
-			deathKnight.ModifyAdditiveDamageModifier(sim, damageBonusCoeff)
+			dk.ModifyAdditiveDamageModifier(sim, damageBonusCoeff)
 			aura.Unit.AddStatDependencyDynamic(sim, stats.Stamina, stats.Stamina, staminaMult)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
@@ -119,18 +119,18 @@ func (deathKnight *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 			aura.Unit.PseudoStats.ThreatMultiplier /= threatMultSubversion
 			aura.Unit.PseudoStats.DamageTakenMultiplier /= damageTakenMult
 
-			deathKnight.ModifyAdditiveDamageModifier(sim, -damageBonusCoeff)
+			dk.ModifyAdditiveDamageModifier(sim, -damageBonusCoeff)
 			aura.Unit.AddStatDependencyDynamic(sim, stats.Stamina, stats.Stamina, 1.0/staminaMult)
 		},
 	})
 }
 
-func (deathKnight *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
+func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 	threatMult := 2.0735
 	staminaMult := 1.08
 	armorMult := 1.6
 
-	deathKnight.FrostPresence = deathKnight.RegisterSpell(core.SpellConfig{
+	dk.FrostPresence = dk.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 48263},
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
@@ -139,13 +139,13 @@ func (deathKnight *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
-			dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 1, 0)
-			deathKnight.Spend(sim, spell, dkSpellCost)
-			deathKnight.ChangePresence(sim, FrostPresence)
+			dkSpellCost := dk.DetermineOptimalCost(sim, 0, 1, 0)
+			dk.Spend(sim, spell, dkSpellCost)
+			dk.ChangePresence(sim, FrostPresence)
 		},
 	})
 
-	deathKnight.FrostPresenceAura = deathKnight.GetOrRegisterAura(core.Aura{
+	dk.FrostPresenceAura = dk.GetOrRegisterAura(core.Aura{
 		Label:    "Frost Presence",
 		Tag:      "Presence",
 		Priority: 1,
@@ -166,11 +166,11 @@ func (deathKnight *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 	})
 }
 
-func (deathKnight *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
-	threatMultSubversion := 1.0 - deathKnight.subversionThreatBonus()
-	staminaMult := 1.0 + 0.04*float64(deathKnight.Talents.ImprovedFrostPresence)
+func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
+	threatMultSubversion := 1.0 - dk.subversionThreatBonus()
+	staminaMult := 1.0 + 0.04*float64(dk.Talents.ImprovedFrostPresence)
 
-	deathKnight.UnholyPresence = deathKnight.RegisterSpell(core.SpellConfig{
+	dk.UnholyPresence = dk.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 48265},
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
@@ -179,13 +179,13 @@ func (deathKnight *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
-			dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 0, 1)
-			deathKnight.Spend(sim, spell, dkSpellCost)
-			deathKnight.ChangePresence(sim, UnholyPresence)
+			dkSpellCost := dk.DetermineOptimalCost(sim, 0, 0, 1)
+			dk.Spend(sim, spell, dkSpellCost)
+			dk.ChangePresence(sim, UnholyPresence)
 		},
 	})
 
-	deathKnight.UnholyPresenceAura = deathKnight.GetOrRegisterAura(core.Aura{
+	dk.UnholyPresenceAura = dk.GetOrRegisterAura(core.Aura{
 		Label:    "Unholy Presence",
 		Tag:      "Presence",
 		Priority: 1,
@@ -204,17 +204,17 @@ func (deathKnight *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 	})
 }
 
-func (deathKnight *Deathknight) getModifiedGCD() time.Duration {
-	if deathKnight.UnholyPresenceAura.IsActive() {
+func (dk *Deathknight) getModifiedGCD() time.Duration {
+	if dk.UnholyPresenceAura.IsActive() {
 		return time.Second
 	} else {
 		return core.GCDDefault
 	}
 }
 
-func (deathKnight *Deathknight) registerPresences() {
-	presenceTimer := deathKnight.NewTimer()
-	deathKnight.registerBloodPresenceAura(presenceTimer)
-	deathKnight.registerUnholyPresenceAura(presenceTimer)
-	deathKnight.registerFrostPresenceAura(presenceTimer)
+func (dk *Deathknight) registerPresences() {
+	presenceTimer := dk.NewTimer()
+	dk.registerBloodPresenceAura(presenceTimer)
+	dk.registerUnholyPresenceAura(presenceTimer)
+	dk.registerFrostPresenceAura(presenceTimer)
 }
