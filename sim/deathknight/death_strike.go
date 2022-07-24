@@ -9,6 +9,12 @@ var DeathStrikeMHOutcome = core.OutcomeHit
 var DeathStrikeOHOutcome = core.OutcomeHit
 
 func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *core.Spell {
+	bonusBaseDamage := dk.sigilOfAwarenessBonus(dk.DeathStrike)
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 223.0+bonusBaseDamage, 0.75, true)
+	if !isMH {
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 223.0+bonusBaseDamage, 0.75*dk.nervesOfColdSteelBonus(), true)
+	}
+
 	effect := core.SpellEffect{
 		BonusCritRating:  (dk.annihilationCritBonus() + dk.improvedDeathStrikeCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: 1,
@@ -16,11 +22,6 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *core.Spell {
 
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				bonusBaseDamage := dk.sigilOfAwarenessBonus(dk.DeathStrike)
-				weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 223.0+bonusBaseDamage, 0.75, true)
-				if !isMH {
-					weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 223.0+bonusBaseDamage, 0.75*dk.nervesOfColdSteelBonus(), true)
-				}
 				return weaponBaseDamage(sim, hitEffect, spell) *
 					dk.tundraStalkerBonus(hitEffect.Target) *
 					dk.rageOfRivendareBonus(hitEffect.Target)

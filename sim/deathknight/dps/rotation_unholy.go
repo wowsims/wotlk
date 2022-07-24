@@ -7,7 +7,7 @@ import (
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
-func (make *DpsDeathknight) setupUnholyRotations() {
+func (dk *DpsDeathknight) setupUnholyRotations() {
 
 	dk.DefineOpener(deathknight.RotationID_UnholySsUnholyPresence_Full, []deathknight.RotationAction{
 		deathknight.RotationAction_IT,
