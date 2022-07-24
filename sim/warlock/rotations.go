@@ -149,7 +149,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		// ------------------------------------------
 		// Affliction Rotation
 		// ------------------------------------------
-		if rotationType == proto.Warlock_Rotation_Affliction && warlock.Talents.Haunt {
+		if rotationType == proto.Warlock_Rotation_Affliction {
 			if !warlock.CorruptionDot.IsActive() && core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() ||
 				sim.IsExecutePhase35() && time.Duration(warlock.CorruptionDot.TickCount)*warlock.CorruptionDot.TickLength > sim.CurrentTime {
 				// Cast Corruption as soon as the 5% crit debuff is up
@@ -158,11 +158,11 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			} else if warlock.CorruptionDot.IsActive() && warlock.CorruptionDot.RemainingDuration(sim) < core.GCDDefault {
 				// Emergency Corruption refresh just in case
 				spell = warlock.DrainSoul
-			} else if (!warlock.UnstableAffDot.IsActive() || warlock.UnstableAffDot.RemainingDuration(sim) < warlock.UnstableAff.CurCast.CastTime) &&
+			} else if warlock.Talents.UnstableAffliction && (!warlock.UnstableAffDot.IsActive() || warlock.UnstableAffDot.RemainingDuration(sim) < warlock.UnstableAff.CurCast.CastTime) &&
 				sim.GetRemainingDuration() > warlock.UnstableAffDot.Duration {
 				// Keep UA up
 				spell = warlock.UnstableAff
-			} else if warlock.Haunt.CD.IsReady(sim) && 2*sim.GetRemainingDuration() > warlock.HauntAura.Duration && warlock.CorruptionDot.IsActive() {
+			} else if warlock.Talents.Haunt && specSpell == proto.Warlock_Rotation_Haunt && warlock.Haunt.CD.IsReady(sim) && 2*sim.GetRemainingDuration() > warlock.HauntAura.Duration && warlock.CorruptionDot.IsActive() {
 				// Keep Haunt up
 				spell = warlock.Haunt
 			} else if sim.IsExecutePhase20() {
@@ -172,14 +172,14 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 				// Filler
 				spell = warlock.ShadowBolt
 			}
-		} else if rotationType == proto.Warlock_Rotation_Demonology && warlock.Talents.Metamorphosis {
+		} else if rotationType == proto.Warlock_Rotation_Demonology {
 
 			// ------------------------------------------
 			// Demonology Rotation
 			// ------------------------------------------
 			if !warlock.CorruptionDot.IsActive() {
 				spell = warlock.Corruption
-			} else if !warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime {
+			} else if secondaryDot == proto.Warlock_Rotation_Immolate && (!warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime) {
 				spell = warlock.Immolate
 			} else if warlock.DecimationAura.IsActive() {
 				spell = warlock.SoulFire
@@ -188,7 +188,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			} else {
 				spell = warlock.ShadowBolt
 			}
-		} else if rotationType == proto.Warlock_Rotation_Destruction && warlock.Talents.ChaosBolt {
+		} else if rotationType == proto.Warlock_Rotation_Destruction {
 
 			// ------------------------------------------
 			// Destruction Rotation
@@ -197,9 +197,9 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 				spell = warlock.Conflagrate
 			} else if !warlock.CorruptionDot.IsActive() {
 				spell = warlock.Corruption
-			} else if !warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime {
+			} else if secondaryDot == proto.Warlock_Rotation_Immolate && (!warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime) {
 				spell = warlock.Immolate
-			} else if warlock.ChaosBolt.CD.IsReady(sim) {
+			} else if warlock.Talents.ChaosBolt && specSpell == proto.Warlock_Rotation_ChaosBolt && warlock.ChaosBolt.CD.IsReady(sim) {
 				spell = warlock.ChaosBolt
 			} else {
 				spell = warlock.Incinerate
