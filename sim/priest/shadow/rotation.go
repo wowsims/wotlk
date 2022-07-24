@@ -3,6 +3,7 @@ package shadow
 import (
 	"math"
 	"time"
+
 	//"sort"
 
 	"github.com/wowsims/wotlk/sim/core"
