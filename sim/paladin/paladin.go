@@ -16,26 +16,28 @@ type hybridScaling struct {
 	SP float64
 }
 
-type Modifier []float64
-type Modifiers []Modifier
+type Additive []float64
+type Multiplicative []Additive
 
-func (mod *Modifiers) Get() float64 {
-	value := 1.0
-	for _, m := range *mod {
-		sum := 1.0
-
-		// Combine additive bonuses.
-		for _, a := range m {
-			sum += a
-		}
-
-		// Combine multiplicative bonuses.
-		value *= sum
+func (mod *Additive) Get() float64 {
+	sum := 1.0
+	// Combine additive bonuses.
+	for _, value := range *mod {
+		sum += value
 	}
-	return value
+	return sum
 }
 
-func (mod *Modifiers) Clone() Modifiers {
+func (mod *Multiplicative) Get() float64 {
+	multiplier := 1.0
+	// Combine multiplicative bonuses.
+	for _, additive := range *mod {
+		multiplier *= additive.Get()
+	}
+	return multiplier
+}
+
+func (mod *Multiplicative) Clone() Multiplicative {
 	return (*mod)[:]
 }
 
@@ -57,16 +59,18 @@ type Paladin struct {
 	HolyShield          *core.Spell
 	JudgementOfWisdom   *core.Spell
 	JudgementOfLight    *core.Spell
+	HammerOfWrath       *core.Spell
 	SealOfVengeance     *core.Spell
 	SealOfRighteousness *core.Spell
 	SealOfCommand       *core.Spell
 	// SealOfWisdom        *core.Spell
 	// SealOfLight         *core.Spell
 
-	ConsecrationDot *core.Dot
-	// SealOfVengeanceDot *core.Dot
+	ConsecrationDot    *core.Dot
+	SealOfVengeanceDot *core.Dot
 
-	HolyShieldAura          *core.Aura
+	HolyShieldAura *core.Aura
+	// RighteousFuryAura       *core.Aura
 	JudgementOfWisdomAura   *core.Aura
 	JudgementOfLightAura    *core.Aura
 	SealOfVengeanceAura     *core.Aura
@@ -138,6 +142,7 @@ func (paladin *Paladin) Initialize() {
 	paladin.registerCrusaderStrikeSpell()
 	paladin.registerDivineStormSpell()
 	paladin.registerConsecrationSpell()
+	paladin.registerHammerOfWrathSpell()
 
 	paladin.registerExorcismSpell()
 	paladin.registerHolyShieldSpell()

@@ -2,7 +2,6 @@ package paladin
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -26,19 +25,18 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 	 *   - CANNOT CRIT.
 	 */
 
-	baseModifiers := Modifiers{
-		{
-			core.TernaryFloat64(paladin.HasSetBonus(ItemSetLightswornBattlegear, 4), .1, 0),
-			core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfSealOfRighteousness), .1, 0),
-			0.03 * float64(paladin.Talents.SealsOfThePure),
+	baseModifiers := Multiplicative{
+		Additive{
+			paladin.getItemSetLightswornBattlegearBonus4(),
+			paladin.getMajorGlyphSealOfRighteousnessBonus(),
+			paladin.getTalentSealsOfThePureBonus(),
 		},
-		{0.02 * float64(paladin.Talents.TwoHandedWeaponSpecialization)},
+		Additive{paladin.getTalentTwoHandedWeaponSpecializationBonus()},
 	}
 	baseMultiplier := baseModifiers.Get()
 
-	judgementModifiers := baseModifiers.Clone()
-	judgementModifiers = append(judgementModifiers,
-		Modifier{core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfJudgement), 0.10, 0)},
+	judgementModifiers := append(baseModifiers.Clone(),
+		Additive{paladin.getMajorGlyphOfJudgementBonus()},
 	)
 	judgementMultiplier := judgementModifiers.Get()
 
@@ -51,7 +49,8 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 			DamageMultiplier: judgementMultiplier,
 			ThreatMultiplier: 1,
 
-			BonusCritRating: 6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance,
+			BonusCritRating: (6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance) +
+				(core.TernaryFloat64(paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 4) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 4), 5, 0) * core.CritRatingPerCritChance),
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					// i = 1 + 0.2 * AP + 0.32 * HolP

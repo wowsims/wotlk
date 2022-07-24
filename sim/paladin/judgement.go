@@ -30,11 +30,14 @@ func (paladin *Paladin) registerJudgementOfWisdomSpell(cdTimer *core.Timer) {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost * (1 - 0.02*float64(paladin.Talents.Benediction)),
+				GCD:  core.GCDDefault,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
-				Timer:    cdTimer,
-				Duration: (time.Second * 10) - (time.Second * time.Duration(paladin.Talents.ImprovedJudgements)),
+				Timer: cdTimer,
+				Duration: (time.Second * 10) -
+					(time.Second * time.Duration(paladin.Talents.ImprovedJudgements)) -
+					core.TernaryDuration(paladin.HasSetBonus(ItemSetRedemptionBattlegear, 4), 1*time.Second, 0),
 			},
 		},
 

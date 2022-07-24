@@ -39,22 +39,22 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	 *  - Fix expertise rating on glyph application.
 	 */
 
-	baseModifiers := Modifiers{
-		{
-			core.TernaryFloat64(paladin.HasSetBonus(ItemSetLightswornBattlegear, 4), .1, 0),
-			0.03 * float64(paladin.Talents.SealsOfThePure),
+	baseModifiers := Multiplicative{
+		Additive{
+			paladin.getItemSetLightswornBattlegearBonus4(),
+			paladin.getTalentSealsOfThePureBonus(),
 		},
-		{0.02 * float64(paladin.Talents.TwoHandedWeaponSpecialization)},
+		Additive{paladin.getTalentTwoHandedWeaponSpecializationBonus()},
 	}
 	baseMultiplier := baseModifiers.Get()
 
-	judgementModifiers := baseModifiers.Clone()
-	judgementModifiers = append(judgementModifiers,
-		Modifier{core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfJudgement), 0.10, 0)},
+	judgementModifiers := append(baseModifiers.Clone(),
+		Additive{paladin.getMajorGlyphOfJudgementBonus()},
 	)
 	judgementMultiplier := judgementModifiers.Get()
 
 	dot := paladin.createSealOfVengeanceDot(baseMultiplier)
+	paladin.SealOfVengeanceDot = dot
 
 	onSwingProc := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 31803}, // Holy Vengeance.
@@ -85,7 +85,8 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 			DamageMultiplier: judgementMultiplier,
 			ThreatMultiplier: 1,
 
-			BonusCritRating: 6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance,
+			BonusCritRating: (6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance) +
+				(core.TernaryFloat64(paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 4) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 4), 5, 0) * core.CritRatingPerCritChance),
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					// i = 1 + 0.22 * HolP + 0.14 * AP
