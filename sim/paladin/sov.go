@@ -39,18 +39,18 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	 *  - Fix expertise rating on glyph application.
 	 */
 
-	baseModifiers := Modifiers{
-		{
+	baseModifiers := Multiplicative{
+		Additive{
 			core.TernaryFloat64(paladin.HasSetBonus(ItemSetLightswornBattlegear, 4), .1, 0),
 			0.03 * float64(paladin.Talents.SealsOfThePure),
 		},
-		{0.02 * float64(paladin.Talents.TwoHandedWeaponSpecialization)},
+		Additive{0.02 * float64(paladin.Talents.TwoHandedWeaponSpecialization)},
 	}
 	baseMultiplier := baseModifiers.Get()
 
 	judgementModifiers := baseModifiers.Clone()
 	judgementModifiers = append(judgementModifiers,
-		Modifier{core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfJudgement), 0.10, 0)},
+		Additive{core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfJudgement), 0.10, 0)},
 	)
 	judgementMultiplier := judgementModifiers.Get()
 

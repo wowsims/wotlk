@@ -16,26 +16,28 @@ type hybridScaling struct {
 	SP float64
 }
 
-type Modifier []float64
-type Modifiers []Modifier
+type Additive []float64
+type Multiplicative []Additive
 
-func (mod *Modifiers) Get() float64 {
-	value := 1.0
-	for _, m := range *mod {
-		sum := 1.0
-
-		// Combine additive bonuses.
-		for _, a := range m {
-			sum += a
-		}
-
-		// Combine multiplicative bonuses.
-		value *= sum
+func (mod *Additive) Get() float64 {
+	sum := 1.0
+	// Combine additive bonuses.
+	for _, value := range *mod {
+		sum += value
 	}
-	return value
+	return sum
 }
 
-func (mod *Modifiers) Clone() Modifiers {
+func (mod *Multiplicative) Get() float64 {
+	multiplier := 1.0
+	// Combine multiplicative bonuses.
+	for _, additive := range *mod {
+		multiplier *= additive.Get()
+	}
+	return multiplier
+}
+
+func (mod *Multiplicative) Clone() Multiplicative {
 	return (*mod)[:]
 }
 

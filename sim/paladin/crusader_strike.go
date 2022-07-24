@@ -11,8 +11,8 @@ import (
 func (paladin *Paladin) registerCrusaderStrikeSpell() {
 	baseCost := paladin.BaseMana * 0.05
 
-	baseModifiers := Modifiers{
-		{0.05 * float64(paladin.Talents.SanctityOfBattle), 0.05 * float64(paladin.Talents.TheArtOfWar)},
+	baseModifiers := Multiplicative{
+		Additive{0.05 * float64(paladin.Talents.SanctityOfBattle), 0.05 * float64(paladin.Talents.TheArtOfWar)},
 	}
 	baseMultiplier := baseModifiers.Get()
 
