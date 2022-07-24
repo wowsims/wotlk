@@ -5,28 +5,6 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-func (warlock *Warlock) dynamicMultiplier(sim *core.Simulation, spell *core.Spell, _ *core.SpellEffect) float64 {
-	dynamicMultiplier:= 1.0
-
-	// Execute Multipliers
-	if sim.IsExecutePhase20() && spell == warlock.DrainSoul {
-		dynamicMultiplier *= 4.0
-	}
-	if sim.IsExecutePhase35() && spell.SpellSchool == core.SpellSchoolShadow {
-		dynamicMultiplier += 0.04*float64(warlock.Talents.DeathsEmbrace)
-	}
-
-	// Normal Multipliers
-	if spell == warlock.DrainSoul {
-		afflictionSpellNumber := core.TernaryFloat64(warlock.DrainSoulDot.IsActive(), 1, 0) + //core.TernaryFloat64(warlock.ConflagrateDot.IsActive(), 1, 0) +
-			core.TernaryFloat64(warlock.CorruptionDot.IsActive(), 1, 0) + //core.TernaryFloat64(warlock.SeedDots.IsActive(), 1, 0) +
-			core.TernaryFloat64(warlock.CurseOfDoomDot.IsActive(), 1, 0) + core.TernaryFloat64(warlock.CurseOfAgonyDot.IsActive(), 1, 0) +
-			core.TernaryFloat64(warlock.UnstableAffDot.IsActive(), 1, 0) + core.TernaryFloat64(warlock.ImmolateDot.IsActive(), 1, 0)
-		dynamicMultiplier *= 1 + 0.03*float64(warlock.Talents.SoulSiphon) * core.MinFloat(3, afflictionSpellNumber)
-	}
-	return dynamicMultiplier
-}
-
 func (warlock *Warlock) staticAdditiveDamageMultiplier(actionID core.ActionID, spellSchool core.SpellSchool, IsPeriodic bool) float64 {
 	// actionID spellbook
 	actionID_Incinerate := core.ActionID{SpellID: 47838}

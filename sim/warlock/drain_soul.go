@@ -17,6 +17,24 @@ func (warlock *Warlock) channelCheck(sim *core.Simulation, dot *core.Dot, maxTic
 	}
 }
 
+func (warlock *Warlock) dynamicDrainSoulMultiplier(sim *core.Simulation) float64 {
+	dynamicMultiplier:= 1.0
+
+	// Execute Multiplier
+	if sim.IsExecutePhase20() {
+		dynamicMultiplier *= (4.0 + 0.04*float64(warlock.Talents.DeathsEmbrace))/(1 + 0.04*float64(warlock.Talents.DeathsEmbrace))
+	}
+
+	// Normal Multipliers
+	afflictionSpellNumber := core.TernaryFloat64(warlock.DrainSoulDot.IsActive(), 1, 0) + //core.TernaryFloat64(warlock.ConflagrateDot.IsActive(), 1, 0) +
+		core.TernaryFloat64(warlock.CorruptionDot.IsActive(), 1, 0) + //core.TernaryFloat64(warlock.SeedDots.IsActive(), 1, 0) +
+		core.TernaryFloat64(warlock.CurseOfDoomDot.IsActive(), 1, 0) + core.TernaryFloat64(warlock.CurseOfAgonyDot.IsActive(), 1, 0) +
+		core.TernaryFloat64(warlock.UnstableAffDot.IsActive(), 1, 0) + core.TernaryFloat64(warlock.ImmolateDot.IsActive(), 1, 0)
+	dynamicMultiplier *= 1 + 0.03*float64(warlock.Talents.SoulSiphon) * core.MinFloat(3, afflictionSpellNumber)
+
+	return dynamicMultiplier
+}
+
 func (warlock *Warlock) registerDrainSoulSpell() {
 	actionID := core.ActionID{SpellID: 47855}
 	spellSchool := core.SpellSchoolShadow
@@ -63,6 +81,9 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 		OutcomeApplier:   warlock.OutcomeFuncTick(),
 		ProcMask:         core.ProcMaskPeriodicDamage,
 		BaseDamage:       core.BaseDamageConfigMagicNoRoll(710/5, 0.429),
+		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			spellEffect.DamageMultiplier = baseAdditiveMultiplier * dynamicDrainSoulMultiplier(sim)
+		},
 	}
 
 	warlock.DrainSoulDot = core.NewDot(core.Dot{
@@ -101,3 +122,4 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 		}),
 	})
 }
+
