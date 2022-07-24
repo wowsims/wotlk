@@ -6,6 +6,7 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/paladin"
 )
 
 func (ret *RetributionPaladin) OnGCDReady(sim *core.Simulation) {
@@ -22,6 +23,7 @@ func (ret *RetributionPaladin) OnGCDReady(sim *core.Simulation) {
 		}
 		ret.SealInitComplete = true
 	}
+
 	ret.mainRotation(sim)
 
 	if ret.GCD.IsReady(sim) {
@@ -38,24 +40,44 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 	nextSwingAt := ret.AutoAttacks.NextAttackAt()
 	isExecutePhase := sim.IsExecutePhase20()
 
-	// Needs 2pc t10 to be effective.
 	if ret.GCD.IsReady(sim) {
-		if nextSwingAt.Milliseconds() > 1500 {
-			switch {
-			case isExecutePhase && ret.HammerOfWrath.IsReady(sim):
-				ret.HammerOfWrath.Cast(sim, target)
-			case ret.UseDivinePlea && ret.CurrentMana() < (ret.MaxMana()*0.80) && ret.DivinePlea.IsReady(sim):
-				ret.DivinePlea.Cast(sim, &ret.Unit)
-			case ret.JudgementOfWisdom.IsReady(sim):
-				ret.JudgementOfWisdom.Cast(sim, target)
-			case ret.CrusaderStrike.IsReady(sim):
-				ret.CrusaderStrike.Cast(sim, target)
-			case ret.DivineStorm.IsReady(sim):
-				ret.DivineStorm.Cast(sim, target)
-			case ret.Exorcism.IsReady(sim):
-				ret.Exorcism.Cast(sim, target)
-			case ret.Consecration.IsReady(sim):
-				ret.Consecration.Cast(sim, target)
+		if ret.HasSetBonus(paladin.ItemSetLightswornBattlegear, 2) {
+			// Needs 2pc t10 to be effective.
+
+			if nextSwingAt.Milliseconds() > 1500 {
+				switch {
+				case isExecutePhase && ret.HammerOfWrath.IsReady(sim):
+					ret.HammerOfWrath.Cast(sim, target)
+				case ret.UseDivinePlea && ret.CurrentMana() < (ret.MaxMana()*0.80) && ret.DivinePlea.IsReady(sim):
+					ret.DivinePlea.Cast(sim, &ret.Unit)
+				case ret.JudgementOfWisdom.IsReady(sim):
+					ret.JudgementOfWisdom.Cast(sim, target)
+				case ret.CrusaderStrike.IsReady(sim):
+					ret.CrusaderStrike.Cast(sim, target)
+				case ret.DivineStorm.IsReady(sim):
+					ret.DivineStorm.Cast(sim, target)
+				case ret.Consecration.IsReady(sim):
+					ret.Consecration.Cast(sim, target)
+				case ret.Exorcism.IsReady(sim):
+					ret.Exorcism.Cast(sim, target)
+				}
+			} else {
+				switch {
+				case isExecutePhase && ret.HammerOfWrath.IsReady(sim):
+					ret.HammerOfWrath.Cast(sim, target)
+				case ret.UseDivinePlea && ret.CurrentMana() < (ret.MaxMana()*0.80) && ret.DivinePlea.IsReady(sim):
+					ret.DivinePlea.Cast(sim, &ret.Unit)
+				case ret.DivineStorm.IsReady(sim):
+					ret.DivineStorm.Cast(sim, target)
+				case ret.JudgementOfWisdom.IsReady(sim):
+					ret.JudgementOfWisdom.Cast(sim, target)
+				case ret.CrusaderStrike.IsReady(sim):
+					ret.CrusaderStrike.Cast(sim, target)
+				case ret.Consecration.IsReady(sim):
+					ret.Consecration.Cast(sim, target)
+				case ret.Exorcism.IsReady(sim):
+					ret.Exorcism.Cast(sim, target)
+				}
 			}
 		} else {
 			switch {
@@ -63,12 +85,12 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 				ret.HammerOfWrath.Cast(sim, target)
 			case ret.UseDivinePlea && ret.CurrentMana() < (ret.MaxMana()*0.80) && ret.DivinePlea.IsReady(sim):
 				ret.DivinePlea.Cast(sim, &ret.Unit)
-			case ret.DivineStorm.IsReady(sim):
-				ret.DivineStorm.Cast(sim, target)
 			case ret.JudgementOfWisdom.IsReady(sim):
 				ret.JudgementOfWisdom.Cast(sim, target)
 			case ret.CrusaderStrike.IsReady(sim):
 				ret.CrusaderStrike.Cast(sim, target)
+			case ret.DivineStorm.IsReady(sim):
+				ret.DivineStorm.Cast(sim, target)
 			case ret.Exorcism.IsReady(sim):
 				ret.Exorcism.Cast(sim, target)
 			case ret.Consecration.IsReady(sim):
