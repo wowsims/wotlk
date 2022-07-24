@@ -8,6 +8,37 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+// Tier 6 ret
+var ItemSetLightbringerBattlegear = core.NewItemSet(core.ItemSet{
+	Name: "Lightbringer Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			paladin := agent.(PaladinAgent).GetPaladin()
+			manaMetrics := paladin.NewManaMetrics(core.ActionID{SpellID: 38428})
+
+			paladin.RegisterAura(core.Aura{
+				Label:    "Lightbringer Battlegear 2pc",
+				Duration: core.NeverExpires,
+				OnReset: func(aura *core.Aura, sim *core.Simulation) {
+					aura.Activate(sim)
+				},
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+					if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+						return
+					}
+					if sim.RandomFloat("lightbringer 2pc") > 0.2 {
+						return
+					}
+					paladin.AddMana(sim, 50, manaMetrics, true)
+				},
+			})
+		},
+		4: func(agent core.Agent) {
+			// Implemented in hammer_of_wrath.go
+		},
+	},
+})
+
 // Tier 7 ret
 var ItemSetRedemptionBattlegear = core.NewItemSet(core.ItemSet{
 	Name: "Redemption Battlegear",
