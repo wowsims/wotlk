@@ -1069,7 +1069,11 @@ export declare enum Spec {
     /**
      * @generated from protobuf enum value: SpecDeathKnight = 15;
      */
-    SpecDeathKnight = 15
+    SpecDeathKnight = 15,
+    /**
+     * @generated from protobuf enum value: SpecDeathKnightTank = 16;
+     */
+    SpecDeathKnightTank = 16
 }
 /**
  * @generated from protobuf enum proto.Race

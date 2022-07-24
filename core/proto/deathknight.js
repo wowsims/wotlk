@@ -1033,3 +1033,116 @@ class DeathKnight_Options$Type extends MessageType {
  * @generated MessageType for protobuf message proto.DeathKnight.Options
  */
 export const DeathKnight_Options = new DeathKnight_Options$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeathKnightTank$Type extends MessageType {
+    constructor() {
+        super("proto.DeathKnightTank", [
+            { no: 1, name: "rotation", kind: "message", T: () => DeathKnightTank_Rotation },
+            { no: 2, name: "talents", kind: "message", T: () => DeathKnightTalents },
+            { no: 3, name: "options", kind: "message", T: () => DeathKnightTank_Options }
+        ]);
+    }
+    create(value) {
+        const message = {};
+        Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader, length, options, target) {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* proto.DeathKnightTank.Rotation rotation */ 1:
+                    message.rotation = DeathKnightTank_Rotation.internalBinaryRead(reader, reader.uint32(), options, message.rotation);
+                    break;
+                case /* proto.DeathKnightTalents talents */ 2:
+                    message.talents = DeathKnightTalents.internalBinaryRead(reader, reader.uint32(), options, message.talents);
+                    break;
+                case /* proto.DeathKnightTank.Options options */ 3:
+                    message.options = DeathKnightTank_Options.internalBinaryRead(reader, reader.uint32(), options, message.options);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message, writer, options) {
+        /* proto.DeathKnightTank.Rotation rotation = 1; */
+        if (message.rotation)
+            DeathKnightTank_Rotation.internalBinaryWrite(message.rotation, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* proto.DeathKnightTalents talents = 2; */
+        if (message.talents)
+            DeathKnightTalents.internalBinaryWrite(message.talents, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* proto.DeathKnightTank.Options options = 3; */
+        if (message.options)
+            DeathKnightTank_Options.internalBinaryWrite(message.options, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message proto.DeathKnightTank
+ */
+export const DeathKnightTank = new DeathKnightTank$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeathKnightTank_Rotation$Type extends MessageType {
+    constructor() {
+        super("proto.DeathKnightTank.Rotation", []);
+    }
+    create(value) {
+        const message = {};
+        Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader, length, options, target) {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message, writer, options) {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message proto.DeathKnightTank.Rotation
+ */
+export const DeathKnightTank_Rotation = new DeathKnightTank_Rotation$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeathKnightTank_Options$Type extends MessageType {
+    constructor() {
+        super("proto.DeathKnightTank.Options", []);
+    }
+    create(value) {
+        const message = {};
+        Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader, length, options, target) {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message, writer, options) {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message proto.DeathKnightTank.Options
+ */
+export const DeathKnightTank_Options = new DeathKnightTank_Options$Type();

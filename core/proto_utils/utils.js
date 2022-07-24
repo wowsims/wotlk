@@ -36,6 +36,7 @@ import { ShadowPriest, SmitePriest_Rotation as SmitePriestRotation, ShadowPriest
 import { Warlock, Warlock_Rotation as WarlockRotation, WarlockTalents, Warlock_Options as WarlockOptions } from '/wotlk/core/proto/warlock.js';
 import { Warrior, Warrior_Rotation as WarriorRotation, WarriorTalents, Warrior_Options as WarriorOptions } from '/wotlk/core/proto/warrior.js';
 import { DeathKnight, DeathKnight_Rotation as DeathKnightRotation, DeathKnightTalents, DeathKnight_Options as DeathKnightOptions } from '/wotlk/core/proto/deathknight.js';
+import { DeathKnightTank, DeathKnightTank_Rotation as DeathKnightTankRotation, DeathKnightTank_Options as DeathKnightTankOptions } from '/wotlk/core/proto/deathknight.js';
 import { ProtectionWarrior, ProtectionWarrior_Rotation as ProtectionWarriorRotation, ProtectionWarrior_Options as ProtectionWarriorOptions } from '/wotlk/core/proto/warrior.js';
 export const NUM_SPECS = getEnumValues(Spec).length;
 // The order in which specs should be presented, when it matters.
@@ -57,6 +58,7 @@ export const naturalSpecOrder = [
     Spec.SpecWarrior,
     Spec.SpecProtectionWarrior,
     Spec.SpecDeathKnight,
+    Spec.SpecDeathKnightTank,
 ];
 export const specNames = {
     [Spec.SpecBalanceDruid]: 'Balance Druid',
@@ -75,6 +77,7 @@ export const specNames = {
     [Spec.SpecProtectionWarrior]: 'Protection Warrior',
     [Spec.SpecSmitePriest]: 'Smite Priest',
     [Spec.SpecDeathKnight]: 'Death Knight',
+    [Spec.SpecDeathKnightTank]: 'Death Knight Tank',
 };
 export const classColors = {
     [Class.ClassUnknown]: '#fff',
@@ -106,6 +109,7 @@ export const specIconsLarge = {
     [Spec.SpecProtectionWarrior]: 'https://wow.zamimg.com/images/wow/icons/large/ability_warrior_defensivestance.jpg',
     [Spec.SpecSmitePriest]: 'https://wow.zamimg.com/images/wow/icons/large/spell_holy_holysmite.jpg',
     [Spec.SpecDeathKnight]: 'https://wow.zamimg.com/images/wow/icons/medium/class_deathknight.jpg',
+    [Spec.SpecDeathKnightTank]: 'https://wow.zamimg.com/images/wow/icons/medium/class_deathknight.jpg',
 };
 export const talentTreeIcons = {
     [Class.ClassUnknown]: [],
@@ -177,6 +181,7 @@ export const titleIcons = {
     [Spec.SpecProtectionWarrior]: '/wotlk/assets/img/protection_warrior_icon.png',
     [Spec.SpecSmitePriest]: '/wotlk/assets/img/smite_priest_icon.png',
     [Spec.SpecDeathKnight]: 'https://wow.zamimg.com/images/wow/icons/medium/class_deathknight.jpg',
+    [Spec.SpecDeathKnightTank]: 'https://wow.zamimg.com/images/wow/icons/medium/class_deathknight.jpg',
 };
 export const raidSimIcon = '/wotlk/assets/img/raid_icon.png';
 // Returns the index of the talent tree (0, 1, or 2) that has the most points.
@@ -616,6 +621,32 @@ export const specTypeFunctions = {
             ? player.spec.deathKnight.options || DeathKnightOptions.create()
             : DeathKnightOptions.create(),
     },
+    [Spec.SpecDeathKnightTank]: {
+        rotationCreate: () => DeathKnightTankRotation.create(),
+        rotationEquals: (a, b) => DeathKnightTankRotation.equals(a, b),
+        rotationCopy: (a) => DeathKnightTankRotation.clone(a),
+        rotationToJson: (a) => DeathKnightTankRotation.toJson(a),
+        rotationFromJson: (obj) => DeathKnightTankRotation.fromJson(obj),
+        rotationFromPlayer: (player) => player.spec.oneofKind == 'deathKnightTank'
+            ? player.spec.deathKnightTank.rotation || DeathKnightTankRotation.create()
+            : DeathKnightTankRotation.create(),
+        talentsCreate: () => DeathKnightTalents.create(),
+        talentsEquals: (a, b) => DeathKnightTalents.equals(a, b),
+        talentsCopy: (a) => DeathKnightTalents.clone(a),
+        talentsToJson: (a) => DeathKnightTalents.toJson(a),
+        talentsFromJson: (obj) => DeathKnightTalents.fromJson(obj),
+        talentsFromPlayer: (player) => player.spec.oneofKind == 'deathKnightTank'
+            ? player.spec.deathKnightTank.talents || DeathKnightTalents.create()
+            : DeathKnightTalents.create(),
+        optionsCreate: () => DeathKnightTankOptions.create(),
+        optionsEquals: (a, b) => DeathKnightTankOptions.equals(a, b),
+        optionsCopy: (a) => DeathKnightTankOptions.clone(a),
+        optionsToJson: (a) => DeathKnightTankOptions.toJson(a),
+        optionsFromJson: (obj) => DeathKnightTankOptions.fromJson(obj),
+        optionsFromPlayer: (player) => player.spec.oneofKind == 'deathKnightTank'
+            ? player.spec.deathKnightTank.options || DeathKnightTankOptions.create()
+            : DeathKnightTankOptions.create(),
+    },
 };
 export const raceToFaction = {
     [Race.RaceUnknown]: Faction.Unknown,
@@ -647,6 +678,7 @@ export const specToClass = {
     [Spec.SpecWarrior]: Class.ClassWarrior,
     [Spec.SpecProtectionWarrior]: Class.ClassWarrior,
     [Spec.SpecDeathKnight]: Class.ClassDeathKnight,
+    [Spec.SpecDeathKnightTank]: Class.ClassDeathKnight,
 };
 const druidRaces = [
     Race.RaceNightElf,
@@ -748,6 +780,7 @@ export const specToEligibleRaces = {
     [Spec.SpecProtectionWarrior]: warriorRaces,
     [Spec.SpecSmitePriest]: priestRaces,
     [Spec.SpecDeathKnight]: deathKnightRaces,
+    [Spec.SpecDeathKnightTank]: deathKnightRaces,
 };
 // Specs that can dual wield. This could be based on class, except that
 // Enhancement Shaman learn dual wield from a talent.
@@ -758,6 +791,7 @@ const dualWieldSpecs = [
     Spec.SpecWarrior,
     Spec.SpecProtectionWarrior,
     Spec.SpecDeathKnight,
+    Spec.SpecDeathKnightTank,
 ];
 export function isDualWieldSpec(spec) {
     return dualWieldSpecs.includes(spec);
@@ -789,6 +823,7 @@ export const specToLocalStorageKey = {
     [Spec.SpecProtectionWarrior]: '__wotlk_protection_warrior',
     [Spec.SpecSmitePriest]: '__wotlk_smite_priest',
     [Spec.SpecDeathKnight]: '__wotlk_death_knight',
+    [Spec.SpecDeathKnightTank]: '__wotlk_death_knight_tank',
 };
 // Returns a copy of playerOptions, with the class field set.
 export function withSpecProto(spec, player, rotation, talents, specOptions) {
@@ -948,6 +983,16 @@ export function withSpecProto(spec, player, rotation, talents, specOptions) {
             copy.spec = {
                 oneofKind: 'deathKnight',
                 deathKnight: DeathKnight.create({
+                    rotation: rotation,
+                    talents: talents,
+                    options: specOptions,
+                }),
+            };
+            return copy;
+        case Spec.SpecDeathKnightTank:
+            copy.spec = {
+                oneofKind: 'deathKnightTank',
+                deathKnightTank: DeathKnightTank.create({
                     rotation: rotation,
                     talents: talents,
                     options: specOptions,
@@ -1303,6 +1348,7 @@ export function makeDefaultBlessings(numPaladins) {
         { spec: Spec.SpecWarrior, blessings: [Blessings.BlessingOfKings, Blessings.BlessingOfMight] },
         { spec: Spec.SpecProtectionWarrior, blessings: [Blessings.BlessingOfKings, Blessings.BlessingOfMight, Blessings.BlessingOfSanctuary] },
         { spec: Spec.SpecDeathKnight, blessings: [Blessings.BlessingOfKings, Blessings.BlessingOfMight, Blessings.BlessingOfSalvation] },
+        { spec: Spec.SpecDeathKnightTank, blessings: [Blessings.BlessingOfKings, Blessings.BlessingOfMight] },
     ]);
 }
 ;

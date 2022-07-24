@@ -41,7 +41,7 @@ export const FrostUnholyTalents = {
     }),
 };
 export const UnholyDualWieldTalents = {
-    name: 'Unholy Dual Wield Dps',
+    name: 'Unholy Dual Wield',
     data: SavedTalents.create({
         talentsString: '-320023500002-2300303350032052000150003133151',
         glyphs: Glyphs.create({
