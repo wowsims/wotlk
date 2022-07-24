@@ -319,7 +319,7 @@ func (hunter *Hunter) applyWildQuiver() {
 			DamageMultiplier: 0.8,
 			ThreatMultiplier: 1,
 
-			BaseDamage:     core.BaseDamageConfigRangedWeaponNormalized(0),
+			BaseDamage:     core.BaseDamageConfigRangedWeapon(0),
 			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(false, false, hunter.CurrentTarget)),
 		}),
 	})
