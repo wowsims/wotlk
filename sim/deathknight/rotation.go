@@ -4,42 +4,23 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	//"github.com/wowsims/wotlk/sim/core/proto"
-	//"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (deathKnight *DeathKnight) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
-	if !deathKnight.onOpener {
-		if deathKnight.GCD.IsReady(sim) {
-			deathKnight.tryUseGCD(sim)
+func (dk *Deathknight) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
+	if !dk.onOpener {
+		if dk.GCD.IsReady(sim) {
+			dk.tryUseGCD(sim)
 		}
 	}
 }
 
-func (deathKnight *DeathKnight) OnGCDReady(sim *core.Simulation) {
-	deathKnight.tryUseGCD(sim)
+func (dk *Deathknight) OnGCDReady(sim *core.Simulation) {
+	dk.tryUseGCD(sim)
 }
 
-func (deathKnight *DeathKnight) shouldWaitForDnD(sim *core.Simulation, blood bool, frost bool, unholy bool) bool {
-	return deathKnight.Rotation.UseDeathAndDecay && !(deathKnight.Talents.Morbidity == 0 || !(deathKnight.DeathAndDecay.CD.IsReady(sim) || deathKnight.DeathAndDecay.CD.TimeToReady(sim) < 4*time.Second) || ((!blood || deathKnight.CurrentBloodRunes() > 1) && (!frost || deathKnight.CurrentFrostRunes() > 1) && (!unholy || deathKnight.CurrentUnholyRunes() > 1)))
-}
-
-var recastedFF = false
-var recastedBP = false
-
-func (deathKnight *DeathKnight) shouldSpreadDisease(sim *core.Simulation) bool {
-	return recastedFF && recastedBP && deathKnight.Env.GetNumTargets() > 1
-}
-
-func (deathKnight *DeathKnight) spreadDiseases(sim *core.Simulation, target *core.Unit) {
-	deathKnight.Pestilence.Cast(sim, target)
-	recastedFF = false
-	recastedBP = false
-}
-
-func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
-	if deathKnight.GCD.IsReady(sim) {
-		deathKnight.DoRotation(sim)
+func (dk *Deathknight) tryUseGCD(sim *core.Simulation) {
+	if dk.GCD.IsReady(sim) {
+		dk.DoRotation(sim)
 	}
 }
 
@@ -47,84 +28,84 @@ func (o *Sequence) IsOngoing() bool {
 	return o.idx < o.numActions
 }
 
-func (o *Sequence) DoAction(sim *core.Simulation, target *core.Unit, deathKnight *DeathKnight) bool {
+func (o *Sequence) DoAction(sim *core.Simulation, target *core.Unit, dk *Deathknight) bool {
 	casted := false
 	advance := true
 	action := o.actions[o.idx]
 
-	minClickLatency := time.Millisecond * 150
+	minClickLatency := time.Millisecond * 0
 
 	switch action {
 	case RotationAction_IT:
-		casted = deathKnight.CastIcyTouch(sim, target)
+		casted = dk.CastIcyTouch(sim, target)
 		// Add this line if you care about recasting a spell in the opener in
 		// case it missed
-		advance = deathKnight.LastCastOutcome != core.OutcomeMiss
+		advance = dk.LastCastOutcome != core.OutcomeMiss
 	case RotationAction_PS:
-		casted = deathKnight.CastPlagueStrike(sim, target)
-		advance = deathKnight.LastCastOutcome != core.OutcomeMiss
+		casted = dk.CastPlagueStrike(sim, target)
+		advance = dk.LastCastOutcome.Matches(core.OutcomeHit | core.OutcomeCrit)
 	case RotationAction_UA:
-		casted = deathKnight.CastUnbreakableArmor(sim, target)
+		casted = dk.CastUnbreakableArmor(sim, target)
 		// Add this line if your spell does not incur a GCD or you will hang!
-		deathKnight.WaitUntil(sim, sim.CurrentTime+minClickLatency)
+		dk.WaitUntil(sim, sim.CurrentTime+minClickLatency)
 	case RotationAction_BT:
-		casted = deathKnight.CastBloodTap(sim, target)
-		deathKnight.WaitUntil(sim, sim.CurrentTime+minClickLatency)
+		casted = dk.CastBloodTap(sim, target)
+		dk.WaitUntil(sim, sim.CurrentTime+minClickLatency)
 	case RotationAction_Obli:
-		casted = deathKnight.CastObliterate(sim, target)
+		casted = dk.CastObliterate(sim, target)
 	case RotationAction_FS:
-		casted = deathKnight.CastFrostStrike(sim, target)
+		casted = dk.CastFrostStrike(sim, target)
 	case RotationAction_Pesti:
-		casted = deathKnight.CastPestilence(sim, target)
-		if deathKnight.LastCastOutcome == core.OutcomeMiss {
+		casted = dk.CastPestilence(sim, target)
+		if dk.LastCastOutcome == core.OutcomeMiss {
 			advance = false
 		}
 	case RotationAction_ERW:
-		casted = deathKnight.CastEmpowerRuneWeapon(sim, target)
-		deathKnight.WaitUntil(sim, sim.CurrentTime+minClickLatency)
+		casted = dk.CastEmpowerRuneWeapon(sim, target)
+		dk.WaitUntil(sim, sim.CurrentTime+minClickLatency)
 	case RotationAction_HB_Ghoul_RimeCheck:
 		// You can do custom actions, this is deciding whether to HB or raise dead
-		if deathKnight.RimeAura.IsActive() {
-			casted = deathKnight.CastHowlingBlast(sim, target)
+		if dk.RimeAura.IsActive() {
+			casted = dk.CastHowlingBlast(sim, target)
 		} else {
-			casted = deathKnight.CastRaiseDead(sim, target)
+			casted = dk.CastRaiseDead(sim, target)
 		}
 	case RotationAction_BS:
-		casted = deathKnight.CastBloodStrike(sim, target)
-		advance = deathKnight.LastCastOutcome != core.OutcomeMiss
+		casted = dk.CastBloodStrike(sim, target)
+		advance = dk.LastCastOutcome != core.OutcomeMiss
 	case RotationAction_SS:
-		casted = deathKnight.CastScourgeStrike(sim, target)
-		advance = deathKnight.LastCastOutcome != core.OutcomeMiss
+		casted = dk.CastScourgeStrike(sim, target)
+		advance = dk.LastCastOutcome.Matches(core.OutcomeHit | core.OutcomeCrit)
 	case RotationAction_DND:
-		casted = deathKnight.CastDeathAndDecay(sim, target)
+		casted = dk.CastDeathAndDecay(sim, target)
 	case RotationAction_GF:
-		casted = deathKnight.CastGhoulFrenzy(sim, target)
+		casted = dk.CastGhoulFrenzy(sim, target)
 	case RotationAction_DC:
-		casted = deathKnight.CastDeathCoil(sim, target)
+		casted = dk.CastDeathCoil(sim, target)
 	case RotationAction_Garg:
-		casted = deathKnight.CastSummonGargoyle(sim, target)
+		casted = dk.CastSummonGargoyle(sim, target)
 	case RotationAction_AOTD:
-		casted = deathKnight.CastArmyOfTheDead(sim, target)
+		casted = dk.CastArmyOfTheDead(sim, target)
 	case RotationAction_BP:
-		casted = deathKnight.CastBloodPresence(sim, target)
+		casted = dk.CastBloodPresence(sim, target)
 		if !casted {
-			deathKnight.WaitUntil(sim, deathKnight.BloodPresence.CD.ReadyAt())
+			dk.WaitUntil(sim, dk.BloodPresence.CD.ReadyAt())
 		} else {
-			deathKnight.WaitUntil(sim, sim.CurrentTime+minClickLatency)
+			dk.WaitUntil(sim, sim.CurrentTime+minClickLatency)
 		}
 	case RotationAction_FP:
-		casted = deathKnight.CastFrostPresence(sim, target)
+		casted = dk.CastFrostPresence(sim, target)
 		if !casted {
-			deathKnight.WaitUntil(sim, deathKnight.FrostPresence.CD.ReadyAt())
+			dk.WaitUntil(sim, dk.FrostPresence.CD.ReadyAt())
 		} else {
-			deathKnight.WaitUntil(sim, sim.CurrentTime+minClickLatency)
+			dk.WaitUntil(sim, sim.CurrentTime+minClickLatency)
 		}
 	case RotationAction_UP:
-		casted = deathKnight.CastUnholyPresence(sim, target)
+		casted = dk.CastUnholyPresence(sim, target)
 		if !casted {
-			deathKnight.WaitUntil(sim, deathKnight.UnholyPresence.CD.ReadyAt())
+			dk.WaitUntil(sim, dk.UnholyPresence.CD.ReadyAt())
 		} else {
-			deathKnight.WaitUntil(sim, sim.CurrentTime+minClickLatency)
+			dk.WaitUntil(sim, sim.CurrentTime+minClickLatency)
 		}
 	}
 
@@ -136,52 +117,50 @@ func (o *Sequence) DoAction(sim *core.Simulation, target *core.Unit, deathKnight
 	return casted
 }
 
-func (o *Sequence) DoNext(sim *core.Simulation, deathKnight *DeathKnight) bool {
-	target := deathKnight.CurrentTarget
-	casted := &deathKnight.castSuccessful
+func (o *Sequence) DoNext(sim *core.Simulation, dk *Deathknight) bool {
+	target := dk.CurrentTarget
+	casted := &dk.CastSuccessful
 	*casted = false
 
 	if o.IsOngoing() {
-		*casted = deathKnight.opener.DoAction(sim, target, deathKnight)
-	} else if deathKnight.sequence != nil {
-		if deathKnight.sequence.IsOngoing() {
-			*casted = deathKnight.sequence.DoAction(sim, target, deathKnight)
-			if !deathKnight.sequence.IsOngoing() {
-				deathKnight.sequence = nil
+		*casted = dk.opener.DoAction(sim, target, dk)
+	} else if dk.sequence != nil {
+		if dk.sequence.IsOngoing() {
+			*casted = dk.sequence.DoAction(sim, target, dk)
+			if !dk.sequence.IsOngoing() {
+				dk.sequence = nil
 			}
 		}
 	} else {
-		deathKnight.onOpener = false
+		dk.onOpener = false
 
-		if deathKnight.opener.id == RotationID_FrostSubBlood_Full || deathKnight.opener.id == RotationID_FrostSubUnholy_Full {
-			deathKnight.doFrostRotation(sim, target)
-		} else if deathKnight.opener.id == RotationID_UnholySsUnholyPresence_Full || deathKnight.opener.id == RotationID_UnholySsArmyUnholyPresence_Full ||
-			deathKnight.opener.id == RotationID_UnholySsBloodPresence_Full || deathKnight.opener.id == RotationID_UnholySsArmyBloodPresence_Full {
-			deathKnight.doUnholyRotation(sim, target)
+		if dk.DoRotationEvent == nil {
+			panic("Missing rotation event. Please assign one during spec creation")
 		}
-		// Other prio lists for other specs here just else if {...
+		dk.DoRotationEvent(sim, target)
 	}
 
 	return *casted
 }
 
-func (deathKnight *DeathKnight) DoRotation(sim *core.Simulation) {
-	opener := deathKnight.opener
-	if !opener.DoNext(sim, deathKnight) {
-		if deathKnight.GCD.IsReady(sim) && !deathKnight.IsWaiting() {
-			waitUntil := deathKnight.AutoAttacks.MainhandSwingAt
-			if deathKnight.AutoAttacks.OffhandSwingAt > sim.CurrentTime {
-				waitUntil = core.MinDuration(waitUntil, deathKnight.AutoAttacks.OffhandSwingAt)
+func (dk *Deathknight) DoRotation(sim *core.Simulation) {
+	opener := dk.opener
+	if !opener.DoNext(sim, dk) {
+		if dk.GCD.IsReady(sim) && !dk.IsWaiting() {
+			waitUntil := dk.AutoAttacks.MainhandSwingAt
+			if dk.AutoAttacks.OffhandSwingAt > sim.CurrentTime {
+				waitUntil = core.MinDuration(waitUntil, dk.AutoAttacks.OffhandSwingAt)
 			}
-			waitUntil = core.MinDuration(waitUntil, deathKnight.AnyRuneReadyAt(sim))
-			deathKnight.WaitUntil(sim, waitUntil)
+			waitUntil = core.MinDuration(waitUntil, dk.AnyRuneReadyAt(sim))
+			dk.WaitUntil(sim, waitUntil)
 		} else { // No resources
-			waitUntil := deathKnight.AnySpentRuneReadyAt(sim)
-			deathKnight.WaitUntil(sim, waitUntil)
+			waitUntil := dk.AnySpentRuneReadyAt(sim)
+			dk.WaitUntil(sim, waitUntil)
 		}
 	}
 }
 
-func (deathKnight *DeathKnight) ResetRotation(sim *core.Simulation) {
-	deathKnight.opener.idx = 0
+func (dk *Deathknight) ResetRotation(sim *core.Simulation) {
+	dk.opener.idx = 0
+	dk.onOpener = true
 }

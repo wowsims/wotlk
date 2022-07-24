@@ -6,8 +6,8 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (deathKnight *DeathKnight) registerDeathCoilSpell() {
-	deathKnight.DeathCoil = deathKnight.RegisterSpell(core.SpellConfig{
+func (dk *Deathknight) registerDeathCoilSpell() {
+	dk.DeathCoil = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 49895},
 		SpellSchool: core.SpellSchoolShadow,
 
@@ -20,46 +20,46 @@ func (deathKnight *DeathKnight) registerDeathCoilSpell() {
 				Cost: 40,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = deathKnight.getModifiedGCD()
+				cast.GCD = dk.getModifiedGCD()
 			},
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:             core.ProcMaskSpellDamage,
-			BonusSpellCritRating: deathKnight.darkrunedBattlegearCritBonus() * core.CritRatingPerCritChance,
-			DamageMultiplier: (1.0 + float64(deathKnight.Talents.Morbidity)*0.05) *
-				core.TernaryFloat64(deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfDarkDeath), 1.15, 1.0),
+			BonusSpellCritRating: dk.darkrunedBattlegearCritBonus() * core.CritRatingPerCritChance,
+			DamageMultiplier: (1.0 + float64(dk.Talents.Morbidity)*0.05) *
+				core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDarkDeath), 1.15, 1.0),
 			ThreatMultiplier: 1.0,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					baseDamage := 443.0 + deathKnight.sigilOfTheWildBuckBonus()
-					return (baseDamage + deathKnight.applyImpurity(hitEffect, spell.Unit)*0.15) *
-						deathKnight.rageOfRivendareBonus(hitEffect.Target) *
-						deathKnight.tundraStalkerBonus(hitEffect.Target)
+					baseDamage := 443.0 + dk.sigilOfTheWildBuckBonus()
+					return (baseDamage + dk.applyImpurity(hitEffect, spell.Unit)*0.15) *
+						dk.rageOfRivendareBonus(hitEffect.Target) *
+						dk.tundraStalkerBonus(hitEffect.Target)
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: deathKnight.OutcomeFuncMagicHitAndCrit(deathKnight.spellCritMultiplier()),
+			OutcomeApplier: dk.OutcomeFuncMagicHitAndCrit(dk.spellCritMultiplier()),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				deathKnight.LastCastOutcome = spellEffect.Outcome
-				if spellEffect.Landed() && deathKnight.Talents.UnholyBlight {
-					deathKnight.LastDeathCoilDamage = spellEffect.Damage
-					deathKnight.UnholyBlightSpell.Cast(sim, spellEffect.Target)
+				dk.LastCastOutcome = spellEffect.Outcome
+				if spellEffect.Landed() && dk.Talents.UnholyBlight {
+					dk.LastDeathCoilDamage = spellEffect.Damage
+					dk.UnholyBlightSpell.Cast(sim, spellEffect.Target)
 				}
 			},
 		}),
 	})
 }
 
-func (deathKnight *DeathKnight) CanDeathCoil(sim *core.Simulation) bool {
-	return deathKnight.CastCostPossible(sim, 40.0, 0, 0, 0) && deathKnight.DeathCoil.IsReady(sim)
+func (dk *Deathknight) CanDeathCoil(sim *core.Simulation) bool {
+	return dk.CastCostPossible(sim, 40.0, 0, 0, 0) && dk.DeathCoil.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastDeathCoil(sim *core.Simulation, target *core.Unit) bool {
-	if deathKnight.CanDeathCoil(sim) {
-		deathKnight.DeathCoil.Cast(sim, target)
+func (dk *Deathknight) CastDeathCoil(sim *core.Simulation, target *core.Unit) bool {
+	if dk.CanDeathCoil(sim) {
+		dk.DeathCoil.Cast(sim, target)
 		return true
 	}
 	return false

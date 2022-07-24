@@ -1,27 +1,27 @@
-package deathknight
+package dps
 
 import (
 	"github.com/wowsims/wotlk/sim/core/items"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-var PlayerOptionsUnholy = &proto.Player_DeathKnight{
-	DeathKnight: &proto.DeathKnight{
+var PlayerOptionsUnholy = &proto.Player_Deathknight{
+	Deathknight: &proto.Deathknight{
 		Talents:  UnholyTalents,
 		Options:  deathKnightOptions,
 		Rotation: unholyRotation,
 	},
 }
 
-var PlayerOptionsFrost = &proto.Player_DeathKnight{
-	DeathKnight: &proto.DeathKnight{
+var PlayerOptionsFrost = &proto.Player_Deathknight{
+	Deathknight: &proto.Deathknight{
 		Talents:  FrostTalents,
 		Options:  deathKnightOptions,
 		Rotation: frostRotation,
 	},
 }
 
-var UnholyTalents = &proto.DeathKnightTalents{
+var UnholyTalents = &proto.DeathknightTalents{
 	ImprovedIcyTouch:  3,
 	RunicPowerMastery: 2,
 	BlackIce:          2,
@@ -50,7 +50,7 @@ var UnholyTalents = &proto.DeathKnightTalents{
 	SummonGargoyle:    true,
 }
 
-var FrostTalents = &proto.DeathKnightTalents{
+var FrostTalents = &proto.DeathknightTalents{
 	Butchery:       2,
 	Subversion:     3,
 	BladedArmor:    5,
@@ -78,15 +78,15 @@ var FrostTalents = &proto.DeathKnightTalents{
 	HowlingBlast:       true,
 }
 
-var unholyRotation = &proto.DeathKnight_Rotation{
+var unholyRotation = &proto.Deathknight_Rotation{
 	UnholyPresenceOpener: true,
 }
 
-var frostRotation = &proto.DeathKnight_Rotation{
+var frostRotation = &proto.Deathknight_Rotation{
 	UnholyPresenceOpener: false,
 }
 
-var deathKnightOptions = &proto.DeathKnight_Options{
+var deathKnightOptions = &proto.Deathknight_Options{
 	StartingRunicPower:  0,
 	PetUptime:           1,
 	PrecastGhoulFrenzy:  true,

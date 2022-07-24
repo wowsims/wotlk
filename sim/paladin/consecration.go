@@ -40,8 +40,9 @@ func (paladin *Paladin) registerConsecrationSpell() {
 		NumberOfTicks: 8,
 		TickLength:    time.Second * 1,
 		TickEffects: core.TickFuncAOESnapshot(paladin.Env, core.SpellEffect{
-			ProcMask:        core.ProcMaskEmpty,
-			BonusSpellPower: core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 27917, 47*0.8, 0),
+			ProcMask: core.ProcMaskEmpty,
+			BonusSpellPower: core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 27917, 47*0.8, 0) +
+				core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 40337, 141, 0), // Libram of Resurgence
 
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,

@@ -43,7 +43,7 @@ export const classNames: Record<Class, string> = {
 	[Class.ClassShaman]: 'Shaman',
 	[Class.ClassWarlock]: 'Warlock',
 	[Class.ClassWarrior]: 'Warrior',
-	[Class.ClassDeathKnight]: 'Death Knight',
+	[Class.ClassDeathknight]: 'Death Knight',
 }
 
 export function nameToClass(name: string): Class {

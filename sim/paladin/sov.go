@@ -39,22 +39,22 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	 *  - Fix expertise rating on glyph application.
 	 */
 
-	baseModifiers := Modifiers{
-		{
-			core.TernaryFloat64(paladin.HasSetBonus(ItemSetLightswornBattlegear, 4), .1, 0),
-			0.03 * float64(paladin.Talents.SealsOfThePure),
+	baseModifiers := Multiplicative{
+		Additive{
+			paladin.getItemSetLightswornBattlegearBonus4(),
+			paladin.getTalentSealsOfThePureBonus(),
 		},
-		{0.02 * float64(paladin.Talents.TwoHandedWeaponSpecialization)},
+		Additive{paladin.getTalentTwoHandedWeaponSpecializationBonus()},
 	}
 	baseMultiplier := baseModifiers.Get()
 
-	judgementModifiers := baseModifiers.Clone()
-	judgementModifiers = append(judgementModifiers,
-		Modifier{core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfJudgement), 0.10, 0)},
+	judgementModifiers := append(baseModifiers.Clone(),
+		Additive{paladin.getMajorGlyphOfJudgementBonus()},
 	)
 	judgementMultiplier := judgementModifiers.Get()
 
 	dot := paladin.createSealOfVengeanceDot(baseMultiplier)
+	paladin.SealOfVengeanceDot = dot
 
 	onSwingProc := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 31803}, // Holy Vengeance.

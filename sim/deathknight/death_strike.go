@@ -8,22 +8,23 @@ var DeathStrikeActionID = core.ActionID{SpellID: 49924}
 var DeathStrikeMHOutcome = core.OutcomeHit
 var DeathStrikeOHOutcome = core.OutcomeHit
 
-func (deathKnight *DeathKnight) newDeathStrikeSpell(isMH bool) *core.Spell {
+func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *core.Spell {
+	bonusBaseDamage := dk.sigilOfAwarenessBonus(dk.DeathStrike)
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 223.0+bonusBaseDamage, 0.75, true)
+	if !isMH {
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 223.0+bonusBaseDamage, 0.75*dk.nervesOfColdSteelBonus(), true)
+	}
+
 	effect := core.SpellEffect{
-		BonusCritRating:  (deathKnight.annihilationCritBonus() + deathKnight.scourgebornePlateCritBonus() + deathKnight.viciousStrikesCritChanceBonus() + deathKnight.improvedDeathStrikeCritBonus()) * core.CritRatingPerCritChance,
+		BonusCritRating:  (dk.annihilationCritBonus() + dk.improvedDeathStrikeCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				bonusBaseDamage := deathKnight.sigilOfAwarenessBonus(deathKnight.DeathStrike)
-				weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 223.0+bonusBaseDamage, 0.75, true)
-				if !isMH {
-					weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 223.0+bonusBaseDamage, 0.75*deathKnight.nervesOfColdSteelBonus(), true)
-				}
 				return weaponBaseDamage(sim, hitEffect, spell) *
-					deathKnight.tundraStalkerBonus(hitEffect.Target) *
-					deathKnight.rageOfRivendareBonus(hitEffect.Target)
+					dk.tundraStalkerBonus(hitEffect.Target) *
+					dk.rageOfRivendareBonus(hitEffect.Target)
 			},
 			TargetSpellCoefficient: 1,
 		},
@@ -38,11 +39,11 @@ func (deathKnight *DeathKnight) newDeathStrikeSpell(isMH bool) *core.Spell {
 	}
 
 	// TODO: might of mograine crit damage bonus!
-	deathKnight.threatOfThassarianProcMasks(isMH, &effect, false, true, func(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
+	dk.threatOfThassarianProcMasks(isMH, &effect, false, true, func(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
 		return outcomeApplier
 	})
 
-	return deathKnight.RegisterSpell(core.SpellConfig{
+	return dk.RegisterSpell(core.SpellConfig{
 		ActionID:     DeathStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool:  core.SpellSchoolPhysical,
 		Flags:        core.SpellFlagMeleeMetrics,
@@ -50,10 +51,10 @@ func (deathKnight *DeathKnight) newDeathStrikeSpell(isMH bool) *core.Spell {
 	})
 }
 
-func (deathKnight *DeathKnight) registerDeathStrikeSpell() {
-	deathKnight.DeathStrikeMhHit = deathKnight.newDeathStrikeSpell(true)
-	deathKnight.DeathStrikeOhHit = deathKnight.newDeathStrikeSpell(false)
-	deathKnight.DeathStrike = deathKnight.RegisterSpell(core.SpellConfig{
+func (dk *Deathknight) registerDeathStrikeSpell() {
+	dk.DeathStrikeMhHit = dk.newDeathStrikeSpell(true)
+	dk.DeathStrikeOhHit = dk.newDeathStrikeSpell(false)
+	dk.DeathStrike = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    DeathStrikeActionID.WithTag(3),
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagNoMetrics | core.SpellFlagNoLogs,
@@ -63,7 +64,7 @@ func (deathKnight *DeathKnight) registerDeathStrikeSpell() {
 				GCD: core.GCDDefault,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = deathKnight.getModifiedGCD()
+				cast.GCD = dk.getModifiedGCD()
 			},
 		},
 
@@ -71,31 +72,31 @@ func (deathKnight *DeathKnight) registerDeathStrikeSpell() {
 			ProcMask:         core.ProcMaskEmpty,
 			ThreatMultiplier: 1,
 
-			OutcomeApplier: deathKnight.OutcomeFuncAlwaysHit(),
+			OutcomeApplier: dk.OutcomeFuncAlwaysHit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				deathKnight.threatOfThassarianProc(sim, spellEffect, deathKnight.DeathStrikeMhHit, deathKnight.DeathStrikeOhHit)
+				dk.threatOfThassarianProc(sim, spellEffect, dk.DeathStrikeMhHit, dk.DeathStrikeOhHit)
 
-				deathKnight.LastCastOutcome = DeathStrikeMHOutcome
-				if deathKnight.outcomeEitherWeaponHitOrCrit(DeathStrikeMHOutcome, DeathStrikeOHOutcome) {
-					dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 1, 1)
-					deathKnight.Spend(sim, spell, dkSpellCost)
+				dk.LastCastOutcome = DeathStrikeMHOutcome
+				if dk.outcomeEitherWeaponHitOrCrit(DeathStrikeMHOutcome, DeathStrikeOHOutcome) {
+					dkSpellCost := dk.DetermineOptimalCost(sim, 0, 1, 1)
+					dk.Spend(sim, spell, dkSpellCost)
 
-					amountOfRunicPower := 15.0 + 2.5*float64(deathKnight.Talents.Dirge)
-					deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
+					amountOfRunicPower := 15.0 + 2.5*float64(dk.Talents.Dirge)
+					dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 				}
 			},
 		}),
 	})
 }
 
-func (deathKnight *DeathKnight) CanDeathStrike(sim *core.Simulation) bool {
-	return deathKnight.CastCostPossible(sim, 0.0, 0, 1, 1) && deathKnight.DeathStrike.IsReady(sim)
+func (dk *Deathknight) CanDeathStrike(sim *core.Simulation) bool {
+	return dk.CastCostPossible(sim, 0.0, 0, 1, 1) && dk.DeathStrike.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastDeathStrike(sim *core.Simulation, target *core.Unit) bool {
-	if deathKnight.CanDeathStrike(sim) {
-		deathKnight.DeathStrike.Cast(sim, target)
+func (dk *Deathknight) CastDeathStrike(sim *core.Simulation, target *core.Unit) bool {
+	if dk.CanDeathStrike(sim) {
+		dk.DeathStrike.Cast(sim, target)
 		return true
 	}
 	return false
