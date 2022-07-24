@@ -33,7 +33,7 @@ func (o *Sequence) DoAction(sim *core.Simulation, target *core.Unit, deathKnight
 	advance := true
 	action := o.actions[o.idx]
 
-	minClickLatency := time.Millisecond * 150
+	minClickLatency := time.Millisecond * 0
 
 	switch action {
 	case RotationAction_IT:
