@@ -169,6 +169,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestRetribution-AllItems-DeadlyGladiator'sLibramofFortitude-42852"
+ value: {
+  dps: 3158.458743486086
+  tps: 2707.6752991127178
+ }
+}
+dps_results: {
  key: "TestRetribution-AllItems-DeathKnight'sAnguish-38212"
  value: {
   dps: 3126.7565894480085
@@ -316,10 +323,24 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestRetribution-AllItems-FuriousGladiator'sLibramofFortitude-42853"
+ value: {
+  dps: 3171.5185823127285
+  tps: 2717.782498268847
+ }
+}
+dps_results: {
  key: "TestRetribution-AllItems-FuryoftheFiveFlights-40431"
  value: {
   dps: 3268.2479723589513
   tps: 2775.3748958828683
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-HatefulGladiator'sLibramofFortitude-42851"
+ value: {
+  dps: 3148.8425624916454
+  tps: 2700.360644653119
  }
 }
 dps_results: {
@@ -397,6 +418,34 @@ dps_results: {
  value: {
   dps: 3522.8216713635406
   tps: 2871.528546863552
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-LibramofDivineJudgement-33503"
+ value: {
+  dps: 3093.1595493528757
+  tps: 2657.139303332074
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-LibramofReciprocation-40706"
+ value: {
+  dps: 3093.1595493528757
+  tps: 2657.139303332074
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-LibramofThreeTruths-50455"
+ value: {
+  dps: 3153.766438851834
+  tps: 2704.04389002898
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-LibramofValiance-47661"
+ value: {
+  dps: 3362.402328474971
+  tps: 2866.017335138371
  }
 }
 dps_results: {
@@ -554,6 +603,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestRetribution-AllItems-RelentlessGladiator'sLibramofFortitude-42854"
+ value: {
+  dps: 3186.7550609438103
+  tps: 2729.574230617663
+ }
+}
+dps_results: {
  key: "TestRetribution-AllItems-RevitalizingSkyflareDiamond"
  value: {
   dps: 3070.32355027892
@@ -565,6 +621,13 @@ dps_results: {
  value: {
   dps: 3098.3261167683686
   tps: 2645.1109453682166
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-SavageGladiator'sLibramofFortitude-42611"
+ value: {
+  dps: 3142.538627915857
+  tps: 2695.4674653774496
  }
 }
 dps_results: {
@@ -761,6 +824,13 @@ dps_results: {
  value: {
   dps: 2865.630314731284
   tps: 2452.640106229953
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-WrathfulGladiator'sLibramofFortitude-51478"
+ value: {
+  dps: 3204.168179379333
+  tps: 2743.050496159168
  }
 }
 dps_results: {
