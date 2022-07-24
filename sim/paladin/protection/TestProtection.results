@@ -407,6 +407,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestProtection-AllItems-LightbringerBattlegear"
+ value: {
+  dps: 139.36999636486337
+  tps: 139.36999636486337
+ }
+}
+dps_results: {
  key: "TestProtection-AllItems-LightswornBattlegear"
  value: {
   dps: 231.16291346893533
