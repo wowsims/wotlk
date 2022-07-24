@@ -34,6 +34,13 @@ type AdaptiveRotation struct {
 func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Simulation) {
 	target := sim.GetTargetUnit(0)
 
+	// if enh.IsFireNovaCastable(sim) {
+	// 	if !enh.FireNova.Cast(sim, target) {
+	// 		enh.WaitForMana(sim, enh.FireNova.CurCast.Cost)
+	// 	}
+	// 	return
+	// }
+
 	if enh.Talents.Stormstrike {
 		if (enh.StormstrikeDebuffAura(target).GetStacks() > 0) && enh.Stormstrike.IsReady(sim) {
 			if !enh.Stormstrike.Cast(sim, target) {
