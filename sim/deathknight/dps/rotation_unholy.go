@@ -7,76 +7,77 @@ import (
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
-func (dk *DpsDeathknight) setupUnholyRotations() {
-
-	dk.DefineOpener(deathknight.RotationID_UnholySsUnholyPresence_Full, []deathknight.RotationAction{
-		deathknight.RotationAction_IT,
-		deathknight.RotationAction_PS,
-		deathknight.RotationAction_BS,
-		deathknight.RotationAction_SS,
-		deathknight.RotationAction_Garg,
-		deathknight.RotationAction_ERW,
-		deathknight.RotationAction_BP,
-		deathknight.RotationAction_SS,
-		deathknight.RotationAction_SS,
-		deathknight.RotationAction_BS,
-	})
-
-	dk.DefineOpener(deathknight.RotationID_UnholySsArmyUnholyPresence_Full, []deathknight.RotationAction{
-		deathknight.RotationAction_IT,
-		deathknight.RotationAction_PS,
-		deathknight.RotationAction_BS,
-		deathknight.RotationAction_SS,
-		deathknight.RotationAction_Garg,
-		deathknight.RotationAction_ERW,
-		deathknight.RotationAction_AOTD,
-		deathknight.RotationAction_BP,
-		deathknight.RotationAction_SS,
-	})
-
-	dk.DefineOpener(deathknight.RotationID_UnholySsBloodPresence_Full, []deathknight.RotationAction{
-		deathknight.RotationAction_IT,
-		deathknight.RotationAction_PS,
-		deathknight.RotationAction_BS,
-		deathknight.RotationAction_SS,
-		deathknight.RotationAction_BT,
-		deathknight.RotationAction_UP,
-		deathknight.RotationAction_Garg,
-		deathknight.RotationAction_ERW,
-		deathknight.RotationAction_BP,
-		deathknight.RotationAction_SS,
-		deathknight.RotationAction_SS,
-		deathknight.RotationAction_BS,
-	})
-
-	dk.DefineOpener(deathknight.RotationID_UnholySsArmyBloodPresence_Full, []deathknight.RotationAction{
-		deathknight.RotationAction_IT,
-		deathknight.RotationAction_PS,
-		deathknight.RotationAction_BS,
-		deathknight.RotationAction_SS,
-		deathknight.RotationAction_BT,
-		deathknight.RotationAction_UP,
-		deathknight.RotationAction_Garg,
-		deathknight.RotationAction_ERW,
-		deathknight.RotationAction_AOTD,
-		deathknight.RotationAction_BP,
-		deathknight.RotationAction_SS,
-	})
-
-	dk.DefineOpener(deathknight.RotationID_UnholyDnd_Full, []deathknight.RotationAction{
-		deathknight.RotationAction_IT,
-		deathknight.RotationAction_PS,
-		deathknight.RotationAction_BS,
-		deathknight.RotationAction_DND,
-		deathknight.RotationAction_BT,
-		deathknight.RotationAction_UP,
-		deathknight.RotationAction_Garg,
-		deathknight.RotationAction_ERW,
-		deathknight.RotationAction_BP,
-		deathknight.RotationAction_SS,
-		deathknight.RotationAction_BS,
-		deathknight.RotationAction_SS,
-	})
+func (dk *DpsDeathknight) setupUnholyRotations(rotationId RotationID) {
+	if rotationId == RotationID_UnholySsUnholyPresence_Full {
+		dk.DefineOpener([]deathknight.RotationAction{
+			deathknight.RotationAction_IT,
+			deathknight.RotationAction_PS,
+			deathknight.RotationAction_BS,
+			deathknight.RotationAction_SS,
+			deathknight.RotationAction_Garg,
+			deathknight.RotationAction_ERW,
+			deathknight.RotationAction_BP,
+			deathknight.RotationAction_SS,
+			deathknight.RotationAction_SS,
+			deathknight.RotationAction_BS,
+		})
+	} else if rotationId == RotationID_UnholySsArmyUnholyPresence_Full {
+		dk.DefineOpener([]deathknight.RotationAction{
+			deathknight.RotationAction_IT,
+			deathknight.RotationAction_PS,
+			deathknight.RotationAction_BS,
+			deathknight.RotationAction_SS,
+			deathknight.RotationAction_Garg,
+			deathknight.RotationAction_ERW,
+			deathknight.RotationAction_AOTD,
+			deathknight.RotationAction_BP,
+			deathknight.RotationAction_SS,
+		})
+	} else if rotationId == RotationID_UnholySsBloodPresence_Full {
+		dk.DefineOpener([]deathknight.RotationAction{
+			deathknight.RotationAction_IT,
+			deathknight.RotationAction_PS,
+			deathknight.RotationAction_BS,
+			deathknight.RotationAction_SS,
+			deathknight.RotationAction_BT,
+			deathknight.RotationAction_UP,
+			deathknight.RotationAction_Garg,
+			deathknight.RotationAction_ERW,
+			deathknight.RotationAction_BP,
+			deathknight.RotationAction_SS,
+			deathknight.RotationAction_SS,
+			deathknight.RotationAction_BS,
+		})
+	} else if rotationId == RotationID_UnholySsArmyBloodPresence_Full {
+		dk.DefineOpener([]deathknight.RotationAction{
+			deathknight.RotationAction_IT,
+			deathknight.RotationAction_PS,
+			deathknight.RotationAction_BS,
+			deathknight.RotationAction_SS,
+			deathknight.RotationAction_BT,
+			deathknight.RotationAction_UP,
+			deathknight.RotationAction_Garg,
+			deathknight.RotationAction_ERW,
+			deathknight.RotationAction_AOTD,
+			deathknight.RotationAction_BP,
+			deathknight.RotationAction_SS,
+		})
+	} else if rotationId == RotationID_UnholyDnd_Full {
+		dk.DefineOpener([]deathknight.RotationAction{
+			deathknight.RotationAction_IT,
+			deathknight.RotationAction_PS,
+			deathknight.RotationAction_BS,
+			deathknight.RotationAction_DND,
+			deathknight.RotationAction_BT,
+			deathknight.RotationAction_UP,
+			deathknight.RotationAction_Garg,
+			deathknight.RotationAction_ERW,
+			deathknight.RotationAction_BP,
+			deathknight.RotationAction_SS,
+			deathknight.RotationAction_BS,
+			deathknight.RotationAction_SS,
+		})
+	}
 }
 
 func (dk *DpsDeathknight) UnholyDiseaseCheckWrapper(sim *core.Simulation, target *core.Unit, spell *core.Spell) bool {

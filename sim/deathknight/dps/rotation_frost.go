@@ -5,54 +5,56 @@ import (
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
-func (dk *DpsDeathknight) setupFrostRotations() {
+func (dk *DpsDeathknight) setupFrostRotations(rotationId RotationID) {
+	if rotationId == RotationID_FrostSubBlood_Full {
+		// This defines the Sub Blood opener
+		dk.DefineOpener([]deathknight.RotationAction{
+			deathknight.RotationAction_IT,
+			deathknight.RotationAction_PS,
+			deathknight.RotationAction_UA,
+			deathknight.RotationAction_BT,
+			deathknight.RotationAction_Obli,
+			deathknight.RotationAction_FS,
+			deathknight.RotationAction_Pesti,
+			deathknight.RotationAction_ERW,
+			deathknight.RotationAction_Obli,
+			deathknight.RotationAction_Obli,
+			deathknight.RotationAction_Obli,
+			deathknight.RotationAction_FS,
+			deathknight.RotationAction_HB_Ghoul_RimeCheck,
+			deathknight.RotationAction_FS,
+			deathknight.RotationAction_Obli,
+			deathknight.RotationAction_Obli,
+			deathknight.RotationAction_Pesti,
+			deathknight.RotationAction_FS,
+			deathknight.RotationAction_BS,
+			deathknight.RotationAction_FS,
+		})
+	} else if rotationId == RotationID_FrostSubUnholy_Full {
+		// This defines the Sub Unholy opener
+		dk.DefineOpener([]deathknight.RotationAction{
+			deathknight.RotationAction_IT,
+			deathknight.RotationAction_PS,
+			deathknight.RotationAction_BT,
+			deathknight.RotationAction_Pesti,
+			deathknight.RotationAction_UA,
+			deathknight.RotationAction_Obli,
+			deathknight.RotationAction_FS,
+			deathknight.RotationAction_ERW,
+			deathknight.RotationAction_Obli,
+			deathknight.RotationAction_Obli,
+			deathknight.RotationAction_Obli,
+			deathknight.RotationAction_FS,
+			deathknight.RotationAction_FS,
+			deathknight.RotationAction_FS,
+			deathknight.RotationAction_Obli,
+			deathknight.RotationAction_Obli,
+			deathknight.RotationAction_BS,
+			deathknight.RotationAction_Pesti,
+			deathknight.RotationAction_FS,
+		})
+	}
 
-	// This defines the Sub Blood opener
-	dk.DefineOpener(deathknight.RotationID_FrostSubBlood_Full, []deathknight.RotationAction{
-		deathknight.RotationAction_IT,
-		deathknight.RotationAction_PS,
-		deathknight.RotationAction_UA,
-		deathknight.RotationAction_BT,
-		deathknight.RotationAction_Obli,
-		deathknight.RotationAction_FS,
-		deathknight.RotationAction_Pesti,
-		deathknight.RotationAction_ERW,
-		deathknight.RotationAction_Obli,
-		deathknight.RotationAction_Obli,
-		deathknight.RotationAction_Obli,
-		deathknight.RotationAction_FS,
-		deathknight.RotationAction_HB_Ghoul_RimeCheck,
-		deathknight.RotationAction_FS,
-		deathknight.RotationAction_Obli,
-		deathknight.RotationAction_Obli,
-		deathknight.RotationAction_Pesti,
-		deathknight.RotationAction_FS,
-		deathknight.RotationAction_BS,
-		deathknight.RotationAction_FS,
-	})
-
-	// This defines the Sub Unholy opener
-	dk.DefineOpener(deathknight.RotationID_FrostSubUnholy_Full, []deathknight.RotationAction{
-		deathknight.RotationAction_IT,
-		deathknight.RotationAction_PS,
-		deathknight.RotationAction_BT,
-		deathknight.RotationAction_Pesti,
-		deathknight.RotationAction_UA,
-		deathknight.RotationAction_Obli,
-		deathknight.RotationAction_FS,
-		deathknight.RotationAction_ERW,
-		deathknight.RotationAction_Obli,
-		deathknight.RotationAction_Obli,
-		deathknight.RotationAction_Obli,
-		deathknight.RotationAction_FS,
-		deathknight.RotationAction_FS,
-		deathknight.RotationAction_FS,
-		deathknight.RotationAction_Obli,
-		deathknight.RotationAction_Obli,
-		deathknight.RotationAction_BS,
-		deathknight.RotationAction_Pesti,
-		deathknight.RotationAction_FS,
-	})
 }
 
 func (dk *DpsDeathknight) FrostDiseaseCheckWrapper(sim *core.Simulation, target *core.Unit, spell *core.Spell) bool {
