@@ -108,8 +108,6 @@ func (war *DpsWarrior) Reset(sim *core.Simulation) {
 		war.Warrior.Reset(sim)
 		war.BattleStanceAura.Activate(sim)
 		war.Stance = warrior.BattleStance
-	} else {
-		panic("Mortal Strike or Bloodthirst is not specced; cannot detect spec")
 	}
 
 	war.canSwapStanceAt = 0

@@ -76,5 +76,5 @@ func (warrior *Warrior) ShouldRend(sim *core.Simulation) bool {
 	} else if warrior.Talents.Bloodthirst {
 		return warrior.CurrentRage() >= warrior.RendRageThreshold
 	}
-	panic("No Spec found")
+	return false
 }
