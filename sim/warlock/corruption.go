@@ -11,11 +11,13 @@ import (
 
 func (warlock *Warlock) registerCorruptionSpell() {
 	actionID := core.ActionID{SpellID: 47813}
+	spellSchool := core.SpellSchoolShadow
+	baseAdditiveMultiplier:= warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true)
 	baseCost := 0.14 * warlock.BaseMana
 
 	warlock.Corruption = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolShadow,
+		SpellSchool:  spellSchool,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 		Cast: core.CastConfig{
@@ -49,16 +51,13 @@ func (warlock *Warlock) registerCorruptionSpell() {
 		AffectedByCastSpeed: warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfQuickDecay),
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask: 			  core.ProcMaskPeriodicDamage,
-			DamageMultiplier:	  1,
+			DamageMultiplier:	  baseAdditiveMultiplier,
 			ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 			BaseDamage:           core.BaseDamageConfigMagicNoRoll(1080/6, spellCoefficient),
 			BonusSpellCritRating: core.CritRatingPerCritChance * (3 * float64(warlock.Talents.Malediction) +
 				5 * core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 1, 0)),
 			OutcomeApplier:       applier,
 			IsPeriodic:           true,
-			OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				spellEffect.DamageMultiplier = warlock.spellDamageMultiplierHelper(sim, spell, spellEffect)
-			},
 		}),
 	})
 }

@@ -340,7 +340,6 @@ type PseudoStats struct {
 	RangedDamageDealtMultiplier float64
 
 	PhysicalDamageDealtMultiplier float64
-	MagicDamageDealtMultiplier    float64
 	ArcaneDamageDealtMultiplier   float64
 	FireDamageDealtMultiplier     float64
 	FrostDamageDealtMultiplier    float64
@@ -421,7 +420,6 @@ func NewPseudoStats() PseudoStats {
 		RangedDamageDealtMultiplier: 1,
 
 		PhysicalDamageDealtMultiplier:       1,
-		MagicDamageDealtMultiplier:          1,
 		ArcaneDamageDealtMultiplier:         1,
 		FireDamageDealtMultiplier:           1,
 		FrostDamageDealtMultiplier:          1,

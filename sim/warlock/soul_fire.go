@@ -8,17 +8,18 @@ import (
 )
 
 func (warlock *Warlock) registerSoulFireSpell() {
+	actionID:= core.ActionID{SpellID: 47825}
+	spellSchool := core.SpellSchoolFire
+	baseAdditiveMultiplier:= warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
+
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
 		BonusSpellCritRating: core.CritRatingPerCritChance * 5 * (core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) +
 			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 1, 0)),
-		DamageMultiplier:     1,
+		DamageMultiplier:     baseAdditiveMultiplier,
 		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.DestructiveReach),
 		BaseDamage:           core.BaseDamageConfigMagic(1323.0, 1657.0, 1.15),
 		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
-		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			spellEffect.DamageMultiplier = warlock.spellDamageMultiplierHelper(sim, spell, spellEffect)
-		},
 	}
 
 	baseCost := 0.09 * warlock.BaseMana
@@ -28,8 +29,8 @@ func (warlock *Warlock) registerSoulFireSpell() {
 	}
 
 	warlock.SoulFire = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 47825},
-		SpellSchool:  core.SpellSchoolFire,
+		ActionID:     actionID,
+		SpellSchool:  spellSchool,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

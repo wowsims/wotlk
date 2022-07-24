@@ -131,23 +131,6 @@
   position: absolute;
 }
 
-.player-row {
-	display: flex;
-	align-items: center;
-}
-.player-row > span {
-  padding: 4px;
-	margin: 5px;
-}
-.player-row-inputs {
-	display: flex;
-	align-items: center;
-	justify-content: space-around;
-}
-.player-row-inputs > * {
-	margin: 2px;
-}
-
 .settings-section {
   border: 2px solid var(--main-text-color);
   padding: 4px;

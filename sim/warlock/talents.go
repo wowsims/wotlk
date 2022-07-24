@@ -13,13 +13,15 @@ func (warlock *Warlock) ApplyTalents() {
 	warlock.AddStatDependency(stats.Stamina, stats.Stamina, 1.01+(float64(warlock.Talents.DemonicEmbrace)*0.03))
 
 	// Molten Skin
-	warlock.PseudoStats.DamageTakenMultiplier /= 1 + 0.02*float64(warlock.Talents.MoltenSkin)
+	warlock.PseudoStats.DamageTakenMultiplier *= 1 - 0.02*float64(warlock.Talents.MoltenSkin)
 
 	// Malediction
-	warlock.PseudoStats.MagicDamageDealtMultiplier *= 1 + 0.01*float64(warlock.Talents.Malediction)
+	warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1 + 0.01*float64(warlock.Talents.Malediction)
+	warlock.PseudoStats.FireDamageDealtMultiplier *= 1 + 0.01*float64(warlock.Talents.Malediction)
 
 	// Demonic Pact
-	warlock.PseudoStats.MagicDamageDealtMultiplier *= 1 + 0.02*float64(warlock.Talents.DemonicPact)
+	warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1 + 0.02*float64(warlock.Talents.DemonicPact)
+	warlock.PseudoStats.FireDamageDealtMultiplier *= 1 + 0.02*float64(warlock.Talents.DemonicPact)
 
 	// Suppression (Add 1% hit per point)
 	warlock.AddStat(stats.SpellHit, float64(warlock.Talents.Suppression)*core.SpellHitRatingPerHitChance)
@@ -114,12 +116,17 @@ func (warlock *Warlock) applyWeaponImbue() {
 }
 
 func (warlock *Warlock) registerGlyphOfLifeTapAura() {
-	warlock.GlyphOfLifeTapAura = warlock.NewTemporaryStatsAura(
-		"Glyph Of LifeTap Aura", 
-		core.ActionID{SpellID: 63321}, 
-		stats.Stats{stats.Spirit: 0.2*float64(warlock.GetStat(stats.Spirit))}, 
-		time.Second*40,
-	)
+	warlock.GlyphOfLifeTapAura = warlock.RegisterAura(core.Aura{
+		Label:    "Glyph Of LifeTap Aura",
+		ActionID: core.ActionID{SpellID: 63321},
+		Duration: time.Second * 40,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			warlock.AddStatDependencyDynamic(sim, stats.Spirit, stats.Spirit, 1.2)
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			warlock.AddStatDependencyDynamic(sim, stats.Spirit, stats.Spirit, 1/1.2)
+		},
+	})
 }
 
 func (warlock *Warlock) setupEmpoweredImp() {
@@ -183,17 +190,19 @@ func (warlock *Warlock) setupDecimation() {
 }
 
 func (warlock *Warlock) setupPyroclasm() {
+	pyroclasmDamageBonus := 1 + 0.02*float64(warlock.Talents.Pyroclasm)
+
 	warlock.PyroclasmAura = warlock.RegisterAura(core.Aura{
 		Label:    "Pyroclasm",
 		ActionID: core.ActionID{SpellID: 63244},
 		Duration: time.Second * 10,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.ShadowDamageDealtMultiplier *= 1 + 0.02*float64(warlock.Talents.Pyroclasm)
-			aura.Unit.PseudoStats.FireDamageDealtMultiplier *= 1 + 0.02*float64(warlock.Talents.Pyroclasm)
+			aura.Unit.PseudoStats.ShadowDamageDealtMultiplier *= pyroclasmDamageBonus
+			aura.Unit.PseudoStats.FireDamageDealtMultiplier *= pyroclasmDamageBonus
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.ShadowDamageDealtMultiplier /= 1 + 0.02*float64(warlock.Talents.Pyroclasm)
-			aura.Unit.PseudoStats.FireDamageDealtMultiplier /= 1 + 0.02*float64(warlock.Talents.Pyroclasm)
+			aura.Unit.PseudoStats.ShadowDamageDealtMultiplier /= pyroclasmDamageBonus
+			aura.Unit.PseudoStats.FireDamageDealtMultiplier /= pyroclasmDamageBonus
 		},
 	})
 
@@ -212,19 +221,19 @@ func (warlock *Warlock) setupPyroclasm() {
 }
 
 func (warlock *Warlock) setupEradication() {
-	castSpeedPercentBonus := float64(warlock.Talents.Eradication) * 6
+	castSpeedMultiplier := 1 + 0.06 * float64(warlock.Talents.Eradication)
 	if warlock.Talents.Eradication == 3 {
-		castSpeedPercentBonus += 2
+		castSpeedMultiplier += 0.02
 	}
 	warlock.EradicationAura = warlock.RegisterAura(core.Aura{
 		Label:    "Eradication",
 		ActionID: core.ActionID{SpellID: 64371},
 		Duration: time.Second * 10,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.MultiplyCastSpeed(1 + castSpeedPercentBonus/100)
+			aura.Unit.MultiplyCastSpeed(castSpeedMultiplier)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.MultiplyCastSpeed(1 / (1 + castSpeedPercentBonus/100))
+			aura.Unit.MultiplyCastSpeed(1/castSpeedMultiplier)
 		},
 	})
 
@@ -245,14 +254,16 @@ func (warlock *Warlock) setupEradication() {
 }
 
 func (warlock *Warlock) setupShadowEmbrace() {
+	shadowEmbraceBonus:= 0.01*float64(warlock.Talents.ShadowEmbrace)
+
 	warlock.ShadowEmbraceAura = warlock.RegisterAura(core.Aura{
 		Label:     "Shadow Embrace",
 		ActionID:  core.ActionID{SpellID: 32391},
 		Duration:  time.Second * 12,
 		MaxStacks: 3,
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
-			aura.Unit.PseudoStats.PeriodicShadowDamageDealtMultiplier /= 1.0 + 0.01*float64(warlock.Talents.ShadowEmbrace)*float64(oldStacks)
-			aura.Unit.PseudoStats.PeriodicShadowDamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.ShadowEmbrace)*float64(newStacks)
+			aura.Unit.PseudoStats.PeriodicShadowDamageDealtMultiplier /= 1.0 + shadowEmbraceBonus*float64(oldStacks)
+			aura.Unit.PseudoStats.PeriodicShadowDamageDealtMultiplier *= 1.0 + shadowEmbraceBonus*float64(newStacks)
 			// TODO: make it a debuff
 			// Healing over time reduction part
 		},
@@ -277,6 +288,10 @@ func (warlock *Warlock) setupShadowEmbrace() {
 }
 
 func (warlock *Warlock) setupNightfall() {
+
+	nightfallProcChance := 0.02*float64(warlock.Talents.Nightfall) +
+		0.04*core.TernaryFloat64(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCorruption), 1, 0)
+
 	warlock.NightfallProcAura = warlock.RegisterAura(core.Aura{
 		Label:    "Nightfall Shadow Trance",
 		ActionID: core.ActionID{SpellID: 17941},
@@ -297,8 +312,7 @@ func (warlock *Warlock) setupNightfall() {
 		},
 		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spell == warlock.Corruption { // TODO: also works on drain life...
-				if sim.RandomFloat("Nightfall") < 0.02*float64(warlock.Talents.Nightfall) +
-					0.04*core.TernaryFloat64(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCorruption), 1, 0) {
+				if sim.RandomFloat("Nightfall") < nightfallProcChance {
 					warlock.NightfallProcAura.Activate(sim)
 				}
 			}
@@ -313,6 +327,9 @@ func (warlock *Warlock) applyNightfall(cast *core.Cast) {
 }
 
 func (warlock *Warlock) setupMoltenCore() {
+	moltenCoreDamageBonus := 1 + 0.06*float64(warlock.Talents.MoltenCore)
+	moltenCoreCritBonus := 5 * float64(warlock.Talents.MoltenCore) * core.CritRatingPerCritChance
+
 	warlock.MoltenCoreAura = warlock.RegisterAura(core.Aura{
 		Label:     "Molten Core Proc Aura",
 		ActionID:  core.ActionID{SpellID: 71165},
@@ -324,14 +341,14 @@ func (warlock *Warlock) setupMoltenCore() {
 			}
 		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			warlock.Incinerate.DamageMultiplier *= 1 + 0.06*float64(warlock.Talents.MoltenCore)
-			warlock.SoulFire.DamageMultiplier *= 1 + 0.06*float64(warlock.Talents.MoltenCore)
-			warlock.SoulFire.BonusCritRating += 5 * float64(warlock.Talents.MoltenCore) * core.CritRatingPerCritChance
+			warlock.Incinerate.DamageMultiplier *= moltenCoreDamageBonus
+			warlock.SoulFire.DamageMultiplier *= moltenCoreDamageBonus
+			warlock.SoulFire.BonusCritRating += moltenCoreCritBonus
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			warlock.Incinerate.DamageMultiplier /= 1 + 0.06*float64(warlock.Talents.MoltenCore)
-			warlock.SoulFire.DamageMultiplier /= 1 + 0.06*float64(warlock.Talents.MoltenCore)
-			warlock.SoulFire.BonusCritRating -= 5 * float64(warlock.Talents.MoltenCore) * core.CritRatingPerCritChance
+			warlock.Incinerate.DamageMultiplier /= moltenCoreDamageBonus
+			warlock.SoulFire.DamageMultiplier /= moltenCoreDamageBonus
+			warlock.SoulFire.BonusCritRating -= moltenCoreCritBonus
 		},
 	})
 
@@ -390,6 +407,8 @@ func (warlock *Warlock) backdraftModifier() float64 {
 }
 
 func (warlock *Warlock) setupEverlastingAffliction() {
+	everlastingAfflictionProcChance := 0.2*float64(warlock.Talents.EverlastingAffliction)
+
 	warlock.RegisterAura(core.Aura{
 		Label:    "Everlasting Affliction Hidden Aura",
 		Duration: core.NeverExpires,
@@ -402,7 +421,7 @@ func (warlock *Warlock) setupEverlastingAffliction() {
 			}
 			if spell == warlock.ShadowBolt || spell == warlock.Haunt || spell == warlock.DrainSoul { // TODO: also works on drain life...
 				if warlock.CorruptionDot.IsActive() {
-					if sim.RandomFloat("EverlastingAffliction") < 0.2*float64(warlock.Talents.EverlastingAffliction) {
+					if sim.RandomFloat("EverlastingAffliction") < everlastingAfflictionProcChance {
 						warlock.CorruptionDot.Refresh(sim)
 					}
 				}

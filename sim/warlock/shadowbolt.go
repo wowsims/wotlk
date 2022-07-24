@@ -9,25 +9,26 @@ import (
 )
 
 func (warlock *Warlock) registerShadowBoltSpell() {
+	ISBProcChance := 0.2*float64(warlock.Talents.ImprovedShadowBolt)
+	actionID:= core.ActionID{SpellID: 47809}
+	spellSchool := core.SpellSchoolShadow
+	baseAdditiveMultiplier:= warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
 
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
 		BonusSpellCritRating: core.CritRatingPerCritChance * 5 * (core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) +
 			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDeathbringerGarb, 4), 1, 0) + core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 1, 0)),
-		DamageMultiplier:     1,
+		DamageMultiplier:     baseAdditiveMultiplier,
 		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.DestructiveReach),
 		BaseDamage:           core.BaseDamageConfigMagic(694.0, 775.0, 0.857*(1+0.04*float64(warlock.Talents.ShadowAndFlame))),
 		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
-		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			spellEffect.DamageMultiplier = warlock.spellDamageMultiplierHelper(sim, spell, spellEffect)
-		},
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if !spellEffect.Landed() {
 				return
 			}
 			// ISB debuff
 			if warlock.Talents.ImprovedShadowBolt > 0 {
-				if sim.RandomFloat("ISB") < 0.2*float64(warlock.Talents.ImprovedShadowBolt) {
+				if sim.RandomFloat("ISB") < ISBProcChance {
 					if !core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() {
 						core.ShadowMasteryAura(warlock.CurrentTarget).Activate(sim)
 					} else {
@@ -48,8 +49,8 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 	}
 
 	warlock.ShadowBolt = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 47809},
-		SpellSchool:  core.SpellSchoolShadow,
+		ActionID:     actionID,
+		SpellSchool:  spellSchool,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

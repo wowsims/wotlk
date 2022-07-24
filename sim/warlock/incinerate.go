@@ -8,17 +8,23 @@ import (
 )
 
 func (warlock *Warlock) registerIncinerateSpell() {
+	fireAndBrimstoneBonus:= 0.02*float64(warlock.Talents.FireAndBrimstone)
+	actionID:= core.ActionID{SpellID: 47838}
+	spellSchool := core.SpellSchoolFire
+	baseAdditiveMultiplier:= warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
 
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
 		BonusSpellCritRating: core.CritRatingPerCritChance * 5 * (core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) +
 			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDeathbringerGarb, 4), 1, 0) + core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 1, 0)),
-		DamageMultiplier:	  1,
+		DamageMultiplier:	  baseAdditiveMultiplier,
 		ThreatMultiplier: 	  1 - 0.1*float64(warlock.Talents.DestructiveReach),
 		BaseDamage:           warlock.incinerateDamage(),
 		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
 		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			spellEffect.DamageMultiplier = warlock.spellDamageMultiplierHelper(sim, spell, spellEffect)
+			if warlock.ImmolateDot.IsActive() {
+				spellEffect.DamageMultiplier = baseAdditiveMultiplier + fireAndBrimstoneBonus
+			}
 		},
 	}
 
@@ -29,8 +35,8 @@ func (warlock *Warlock) registerIncinerateSpell() {
 	}
 
 	warlock.Incinerate = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 47838},
-		SpellSchool:  core.SpellSchoolFire,
+		ActionID:     actionID,
+		SpellSchool:  spellSchool,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -47,6 +53,7 @@ func (warlock *Warlock) registerIncinerateSpell() {
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})
+
 }
 
 func (warlock *Warlock) moltenCoreIncinerateModifier() float64 {

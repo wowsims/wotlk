@@ -17,41 +17,17 @@ func (warlock *Warlock) channelCheck(sim *core.Simulation, dot *core.Dot, maxTic
 	}
 }
 
-func (warlock *Warlock) registerDrainSoulChannellingSpell() {
-	epsilon := 1 * time.Millisecond
-
-	channelTime := 3 * time.Second
-	warlock.DrainSoulChannelling = warlock.RegisterSpell(core.SpellConfig{
-		ActionID: core.ActionID{SpellID: 47855},
-		Flags:    core.SpellFlagNoLogs | core.SpellFlagNoMetrics,
-		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				GCD:         core.GCDDefault,
-				ChannelTime: channelTime,
-				CastTime:    0,
-			},
-		},
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskEmpty,
-			ThreatMultiplier: 1,
-			FlatThreatBonus:  1,
-			OutcomeApplier:   warlock.OutcomeFuncAlwaysHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				warlock.DrainSoulDot.Refresh(sim)
-				warlock.DrainSoulDot.Aura.UpdateExpires(warlock.DrainSoulDot.Aura.ExpiresAt() + epsilon)
-			},
-		}),
-	})
-}
-
 func (warlock *Warlock) registerDrainSoulSpell() {
+	actionID := core.ActionID{SpellID: 47855}
+	spellSchool := core.SpellSchoolShadow
+	baseAdditiveMultiplier:= warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true)
 	baseCost := warlock.BaseMana * 0.14
 	channelTime := 3 * time.Second
 	epsilon := 1 * time.Millisecond
 
 	warlock.DrainSoul = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 47855},
-		SpellSchool:  core.SpellSchoolShadow,
+		ActionID:     actionID,
+		SpellSchool:  spellSchool,
 		Flags:        core.SpellFlagBinary | core.SpellFlagChanneled,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -81,22 +57,19 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 	target := warlock.CurrentTarget
 
 	effect := core.SpellEffect{
-		DamageMultiplier: 1,
+		DamageMultiplier: baseAdditiveMultiplier,
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 		IsPeriodic:       true,
 		OutcomeApplier:   warlock.OutcomeFuncTick(),
 		ProcMask:         core.ProcMaskPeriodicDamage,
 		BaseDamage:       core.BaseDamageConfigMagicNoRoll(710/5, 0.429),
-		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			spellEffect.DamageMultiplier = warlock.spellDamageMultiplierHelper(sim, spell, spellEffect)
-		},
 	}
 
 	warlock.DrainSoulDot = core.NewDot(core.Dot{
 		Spell: warlock.DrainSoul,
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "Drain Soul-" + strconv.Itoa(int(warlock.Index)),
-			ActionID: core.ActionID{SpellID: 47855},
+			ActionID: actionID,
 		}),
 
 		NumberOfTicks:       1,
@@ -104,5 +77,27 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 		AffectedByCastSpeed: true,
 
 		TickEffects: core.TickFuncSnapshot(target, effect),
+	})
+
+	warlock.DrainSoulChannelling = warlock.RegisterSpell(core.SpellConfig{
+		ActionID: actionID,
+		Flags:    core.SpellFlagNoLogs | core.SpellFlagNoMetrics,
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				GCD:         core.GCDDefault,
+				ChannelTime: channelTime,
+				CastTime:    0,
+			},
+		},
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+			ProcMask:         core.ProcMaskEmpty,
+			ThreatMultiplier: 1,
+			FlatThreatBonus:  1,
+			OutcomeApplier:   warlock.OutcomeFuncAlwaysHit(),
+			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				warlock.DrainSoulDot.Refresh(sim)
+				warlock.DrainSoulDot.Aura.UpdateExpires(warlock.DrainSoulDot.Aura.ExpiresAt() + epsilon)
+			},
+		}),
 	})
 }

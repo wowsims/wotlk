@@ -87,15 +87,12 @@ func (warlock *Warlock) Initialize() {
 	warlock.registerSeedSpell()
 	warlock.registerSoulFireSpell()
 	warlock.registerDrainSoulSpell()
-	warlock.registerDrainSoulChannellingSpell()
+	warlock.registerUnstableAffSpell()
 
 	if warlock.Talents.Conflagrate {
 		warlock.registerConflagrateSpell()
 	}
-	if warlock.Talents.UnstableAffliction {
-		warlock.registerUnstableAffSpell()
-	}
-	warlock.registerUnstableAffDot()
+
 	if warlock.Talents.Haunt {
 		warlock.registerHauntSpell()
 	}
