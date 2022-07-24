@@ -276,6 +276,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestElemental-AllItems-EarthshatterGarb"
+ value: {
+  dps: 1374.9606646052018
+  tps: 1094.5935069766288
+ }
+}
+dps_results: {
  key: "TestElemental-AllItems-EffulgentSkyflareDiamond"
  value: {
   dps: 1091.4871889942724
@@ -371,6 +378,13 @@ dps_results: {
  value: {
   dps: 1098.9096333767723
   tps: 884.1830905836229
+ }
+}
+dps_results: {
+ key: "TestElemental-AllItems-FrostWitch'sRegalia"
+ value: {
+  dps: 2272.826908605028
+  tps: 1753.5839128719279
  }
 }
 dps_results: {
@@ -497,6 +511,13 @@ dps_results: {
  value: {
   dps: 1089.5592881389512
   tps: 880.7715457295858
+ }
+}
+dps_results: {
+ key: "TestElemental-AllItems-Nobundo'sRegalia"
+ value: {
+  dps: 1481.6727662704268
+  tps: 1140.713689046358
  }
 }
 dps_results: {
@@ -745,6 +766,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestElemental-AllItems-Thrall'sRegalia"
+ value: {
+  dps: 1481.6727662704268
+  tps: 1140.713689046358
+ }
+}
+dps_results: {
  key: "TestElemental-AllItems-ThunderingSkyfireDiamond"
  value: {
   dps: 1091.4871889942724
@@ -794,6 +822,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestElemental-AllItems-TotemofElectrifyingWind-47666"
+ value: {
+  dps: 1102.2118321212724
+  tps: 890.2665769067839
+ }
+}
+dps_results: {
  key: "TestElemental-AllItems-TotemoftheElementalPlane-40708"
  value: {
   dps: 1109.5482015383432
@@ -803,8 +838,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-TotemofthePulsingEarth-29389"
  value: {
-  dps: 1157.255147368739
-  tps: 929.0622854416372
+  dps: 1105.5835935391592
+  tps: 891.8970065474709
  }
 }
 dps_results: {
@@ -833,6 +868,13 @@ dps_results: {
  value: {
   dps: 1100.9943003634162
   tps: 885.1221903573772
+ }
+}
+dps_results: {
+ key: "TestElemental-AllItems-WorldbreakerGarb"
+ value: {
+  dps: 1604.429555941635
+  tps: 1257.514409213884
  }
 }
 dps_results: {

@@ -204,6 +204,19 @@ func (shaman *Shaman) registerElementalMasteryCD() {
 		Spell: spell,
 		Type:  core.CooldownTypeDPS,
 	})
+
+	if shaman.HasSetBonus(ItemSetFrostWitchRegalia, 2) {
+		shaman.RegisterAura(core.Aura{
+			Label:    "Shaman T10 Elemental 2P Bonus",
+			Duration: core.NeverExpires,
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if (spell == shaman.LightningBolt || spell == shaman.ChainLightning) && !spell.CD.IsReady(sim) { // doesnt proc on LO
+					*spell.CD.Timer = core.Timer(time.Duration(*spell.CD.Timer) - time.Second)
+					shaman.UpdateMajorCooldowns() // this could get expensive because it will be called all the time.
+				}
+			},
+		})
+	}
 }
 
 func (shaman *Shaman) registerNaturesSwiftnessCD() {

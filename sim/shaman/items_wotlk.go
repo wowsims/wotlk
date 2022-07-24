@@ -9,8 +9,10 @@ import (
 
 var itemSetT9Bonuses = map[int32]core.ApplyEffect{
 	2: func(agent core.Agent) {
+		//
 	},
 	4: func(agent core.Agent) {
+		//
 	},
 }
 
@@ -44,8 +46,8 @@ var ItemSetWorldbreakerGarb = core.NewItemSet(core.ItemSet{
 	},
 })
 
-var ItemSetFrostWitchRegalio = core.NewItemSet(core.ItemSet{
-	Name: "FrostWitch's Regalia",
+var ItemSetFrostWitchRegalia = core.NewItemSet(core.ItemSet{
+	Name: "Frost Witch's Regalia",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
 			// TODO: Your Lightning Bolt and Chain Lightning spells reduce the remaining cooldown on your Elemental Mastery talent by 2 sec.

@@ -80,11 +80,12 @@ func (shaman *Shaman) newLavaBurstSpell() *core.Spell {
 
 	if shaman.HasSetBonus(ItemSetThrallsRegalia, 4) || shaman.HasSetBonus(ItemSetNobundosRegalia, 4) {
 		lvbdotDmg := 0.0 // dynamically changing dmg
+		spell := shaman.RegisterSpell(core.SpellConfig{
+			Flags:    core.SpellFlagIgnoreModifiers,
+			ActionID: core.ActionID{SpellID: 71824},
+		})
 		lvbdot := core.NewDot(core.Dot{
-			Spell: &core.Spell{
-				Flags:    core.SpellFlagIgnoreModifiers,
-				ActionID: core.ActionID{SpellID: 71824},
-			},
+			Spell: spell,
 			Aura: shaman.CurrentTarget.RegisterAura(core.Aura{
 				Label:    "LavaBursted-" + strconv.Itoa(int(shaman.Index)),
 				ActionID: core.ActionID{SpellID: 71824},
