@@ -303,7 +303,7 @@ func init() {
 
 	core.NewItemEffect(50455, func(agent core.Agent) {
 		paladin := agent.(PaladinAgent).GetPaladin()
-		procAura := paladin.NewTemporaryStatsAura("Libram Of Three Truths", core.ActionID{SpellID: 71186}, stats.Stats{stats.Strength: 44}, time.Second*15)
+		procAura := paladin.NewTemporaryStatsAura("Libram Of Three Truths Proc", core.ActionID{SpellID: 71186}, stats.Stats{stats.Strength: 44}, time.Second*15)
 		procAura.MaxStacks = 5
 
 		paladin.RegisterAura(core.Aura{
@@ -323,7 +323,7 @@ func init() {
 
 	core.NewItemEffect(47661, func(agent core.Agent) {
 		paladin := agent.(PaladinAgent).GetPaladin()
-		procAura := paladin.NewTemporaryStatsAura("Libram Of Valiance", core.ActionID{SpellID: 67365}, stats.Stats{stats.Strength: 200}, time.Second*15)
+		procAura := paladin.NewTemporaryStatsAura("Libram Of Valiance Proc", core.ActionID{SpellID: 67365}, stats.Stats{stats.Strength: 200}, time.Second*15)
 
 		icd := core.Cooldown{
 			Timer:    paladin.NewTimer(),
