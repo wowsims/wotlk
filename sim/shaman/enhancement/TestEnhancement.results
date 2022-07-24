@@ -563,7 +563,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-Serrah'sStar-37559"
  value: {
-  dps: 1786.5383385954756
+  dps: 1786.5383385954763
   tps: 1368.8947169114253
  }
 }
@@ -598,7 +598,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-SkyshatterRegalia"
  value: {
-  dps: 1839.0427354021097
+  dps: 1839.0427354021094
   tps: 1421.0797459186645
  }
 }
