@@ -195,6 +195,16 @@ func BaseDamageFuncRangedWeapon(flatBonus float64) BaseDamageCalculator {
 func BaseDamageConfigRangedWeapon(flatBonus float64) BaseDamageConfig {
 	return BuildBaseDamageConfig(BaseDamageFuncRangedWeapon(flatBonus), 1)
 }
+func BaseDamageFuncRangedWeaponNormalized(flatBonus float64) BaseDamageCalculator {
+	return func(sim *Simulation, hitEffect *SpellEffect, spell *Spell) float64 {
+		return spell.Unit.AutoAttacks.Ranged.CalculateNormalizedWeaponDamage(sim, hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget()) +
+			flatBonus +
+			hitEffect.BonusWeaponDamage(spell.Unit)
+	}
+}
+func BaseDamageConfigRangedWeaponNormalized(flatBonus float64) BaseDamageConfig {
+	return BuildBaseDamageConfig(BaseDamageFuncRangedWeaponNormalized(flatBonus), 1)
+}
 
 func BaseDamageFuncEnemyWeapon(hand Hand) BaseDamageCalculator {
 	if hand == MainHand {
