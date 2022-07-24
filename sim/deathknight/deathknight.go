@@ -10,9 +10,13 @@ import (
 
 type DeathKnight struct {
 	core.Character
-	Talents  proto.DeathKnightTalents
-	Options  proto.DeathKnight_Options
-	Rotation proto.DeathKnight_Rotation
+	Talents proto.DeathKnightTalents
+	Options proto.DeathKnight_Options
+
+	// Rotation Vars
+	RefreshHornOfWinter  bool
+	UnholyPresenceOpener bool
+	ArmyOfTheDeadType    proto.DeathKnight_Rotation_ArmyOfTheDead
 
 	LastCastOutcome core.HitOutcome
 	RotationHelper
@@ -147,7 +151,7 @@ func (deathKnight *DeathKnight) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 		raidBuffs.IcyTalons = true
 	}
 
-	raidBuffs.HornOfWinter = !deathKnight.Rotation.RefreshHornOfWinter
+	raidBuffs.HornOfWinter = !deathKnight.RefreshHornOfWinter
 
 	if raidBuffs.StrengthOfEarthTotem == proto.TristateEffect_TristateEffectImproved ||
 		raidBuffs.StrengthOfEarthTotem == proto.TristateEffect_TristateEffectRegular {
@@ -193,7 +197,7 @@ func (deathKnight *DeathKnight) Initialize() {
 }
 
 func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
-	if deathKnight.Rotation.UnholyPresenceOpener {
+	if deathKnight.UnholyPresenceOpener {
 		deathKnight.UnholyPresenceAura.Activate(sim)
 		deathKnight.Presence = UnholyPresence
 	} else {
@@ -201,7 +205,7 @@ func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
 		deathKnight.Presence = BloodPresence
 	}
 
-	if deathKnight.Rotation.ArmyOfTheDead == proto.DeathKnight_Rotation_PreCast {
+	if deathKnight.ArmyOfTheDeadType == proto.DeathKnight_Rotation_PreCast {
 		deathKnight.PrecastArmyOfTheDead(sim)
 	}
 
@@ -226,7 +230,6 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 		Character: character,
 		Talents:   *deathKnightOptions.Talents,
 		Options:   *deathKnightOptions.Options,
-		Rotation:  *deathKnightOptions.Rotation,
 
 		additiveDamageModifier: 1,
 	}
@@ -302,23 +305,6 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 	}
 
 	return deathKnight
-}
-
-func RegisterDeathKnight() {
-	core.RegisterAgentFactory(
-		proto.Player_DeathKnight{},
-		proto.Spec_SpecDeathKnight,
-		func(character core.Character, options proto.Player) core.Agent {
-			return NewDeathKnight(character, options)
-		},
-		func(player *proto.Player, spec interface{}) {
-			playerSpec, ok := spec.(*proto.Player_DeathKnight)
-			if !ok {
-				panic("Invalid spec value for DeathKnight!")
-			}
-			player.Spec = playerSpec
-		},
-	)
 }
 
 func (deathKnight *DeathKnight) AllDiseasesAreActive(target *core.Unit) bool {

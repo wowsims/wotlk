@@ -20,6 +20,7 @@ enum Spec {
 	SpecWarrior = 6;
 	SpecProtectionWarrior = 11;
 	SpecDeathKnight = 15;
+	SpecDeathKnightTank = 16;
 }
 
 enum Race {
