@@ -151,6 +151,204 @@ func init() {
 		})
 	})
 
+	core.NewItemEffect(40706, func(agent core.Agent) {
+		paladin := agent.(PaladinAgent).GetPaladin()
+		procAura := paladin.NewTemporaryStatsAura("Libram of Reciprocation Proc", core.ActionID{SpellID: 60819}, stats.Stats{stats.MeleeCrit: 173, stats.SpellCrit: 173}, time.Second*10)
+
+		paladin.RegisterAura(core.Aura{
+			Label:    "Libram of Reciprocation",
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if paladin.CurrentSeal == paladin.SealOfCommandAura && spell.Flags.Matches(SpellFlagSecondaryJudgement) {
+					if sim.RandomFloat("Libram of Reciprocation") > 0.15 {
+						return
+					}
+					procAura.Activate(sim)
+				}
+			},
+		})
+	})
+
+	core.NewItemEffect(33503, func(agent core.Agent) {
+		paladin := agent.(PaladinAgent).GetPaladin()
+		procAura := paladin.NewTemporaryStatsAura("Libram of Divine Judgement Proc", core.ActionID{SpellID: 43745}, stats.Stats{stats.AttackPower: 200}, time.Second*10)
+
+		paladin.RegisterAura(core.Aura{
+			Label:    "Libram of Divine Judgement",
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if paladin.CurrentSeal == paladin.SealOfCommandAura && spell.Flags.Matches(SpellFlagSecondaryJudgement) {
+					if sim.RandomFloat("Libram of Divine Judgement") > 0.40 {
+						return
+					}
+					procAura.Activate(sim)
+				}
+			},
+		})
+	})
+
+	core.NewItemEffect(42611, func(agent core.Agent) {
+		paladin := agent.(PaladinAgent).GetPaladin()
+		procAura := paladin.NewTemporaryStatsAura("Savage Gladiator's Libram of Fortitude Proc", core.ActionID{SpellID: 60577}, stats.Stats{stats.AttackPower: 94}, time.Second*6)
+
+		paladin.RegisterAura(core.Aura{
+			Label:    "Savage Gladiator's Libram of Fortitude",
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if spell.SpellID == paladin.CrusaderStrike.SpellID {
+					procAura.Activate(sim)
+				}
+			},
+		})
+	})
+
+	core.NewItemEffect(42851, func(agent core.Agent) {
+		paladin := agent.(PaladinAgent).GetPaladin()
+		procAura := paladin.NewTemporaryStatsAura("Hateful Gladiator's Libram of Fortitude Proc", core.ActionID{SpellID: 60632}, stats.Stats{stats.AttackPower: 106}, time.Second*6)
+
+		paladin.RegisterAura(core.Aura{
+			Label:    "Savage Gladiator's Libram of Fortitude",
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if spell.SpellID == paladin.CrusaderStrike.SpellID {
+					procAura.Activate(sim)
+				}
+			},
+		})
+	})
+
+	core.NewItemEffect(42852, func(agent core.Agent) {
+		paladin := agent.(PaladinAgent).GetPaladin()
+		procAura := paladin.NewTemporaryStatsAura("Deadly Gladiator's Libram of Fortitude Proc", core.ActionID{SpellID: 60633}, stats.Stats{stats.AttackPower: 120}, time.Second*10)
+
+		paladin.RegisterAura(core.Aura{
+			Label:    "Deadly Gladiator's Libram of Fortitude",
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if spell.SpellID == paladin.CrusaderStrike.SpellID {
+					procAura.Activate(sim)
+				}
+			},
+		})
+	})
+
+	core.NewItemEffect(42853, func(agent core.Agent) {
+		paladin := agent.(PaladinAgent).GetPaladin()
+		procAura := paladin.NewTemporaryStatsAura("Furious Gladiator's Libram of Fortitude Proc", core.ActionID{SpellID: 60634}, stats.Stats{stats.AttackPower: 144}, time.Second*10)
+
+		paladin.RegisterAura(core.Aura{
+			Label:    "Furious Gladiator's Libram of Fortitude",
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if spell.SpellID == paladin.CrusaderStrike.SpellID {
+					procAura.Activate(sim)
+				}
+			},
+		})
+	})
+
+	core.NewItemEffect(42854, func(agent core.Agent) {
+		paladin := agent.(PaladinAgent).GetPaladin()
+		procAura := paladin.NewTemporaryStatsAura("Relentless Gladiator's Libram of Fortitude Proc", core.ActionID{SpellID: 60635}, stats.Stats{stats.AttackPower: 172}, time.Second*10)
+
+		paladin.RegisterAura(core.Aura{
+			Label:    "Relentless Gladiator's Libram of Fortitude",
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if spell.SpellID == paladin.CrusaderStrike.SpellID {
+					procAura.Activate(sim)
+				}
+			},
+		})
+	})
+
+	core.NewItemEffect(51478, func(agent core.Agent) {
+		paladin := agent.(PaladinAgent).GetPaladin()
+		procAura := paladin.NewTemporaryStatsAura("Wrathful Gladiator's Libram of Fortitude Proc", core.ActionID{SpellID: 60636}, stats.Stats{stats.AttackPower: 204}, time.Second*10)
+
+		paladin.RegisterAura(core.Aura{
+			Label:    "Wrathful Gladiator's Libram of Fortitude",
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if spell.SpellID == paladin.CrusaderStrike.SpellID {
+					procAura.Activate(sim)
+				}
+			},
+		})
+	})
+
+	core.NewItemEffect(50455, func(agent core.Agent) {
+		paladin := agent.(PaladinAgent).GetPaladin()
+		procAura := paladin.NewTemporaryStatsAura("Libram Of Three Truths Proc", core.ActionID{SpellID: 71186}, stats.Stats{stats.Strength: 44}, time.Second*15)
+		procAura.MaxStacks = 5
+
+		paladin.RegisterAura(core.Aura{
+			Label:    "Libram Of Three Truths",
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if spell.SpellID == paladin.CrusaderStrike.SpellID {
+					procAura.Activate(sim)
+					procAura.AddStack(sim)
+				}
+			},
+		})
+	})
+
+	core.NewItemEffect(47661, func(agent core.Agent) {
+		paladin := agent.(PaladinAgent).GetPaladin()
+		procAura := paladin.NewTemporaryStatsAura("Libram Of Valiance Proc", core.ActionID{SpellID: 67365}, stats.Stats{stats.Strength: 200}, time.Second*15)
+
+		icd := core.Cooldown{
+			Timer:    paladin.NewTimer(),
+			Duration: time.Second * 8,
+		}
+
+		paladin.RegisterAura(core.Aura{
+			Label:    "Libram Of Valiance",
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			},
+			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if spell == paladin.SealOfVengeanceDot.Spell {
+					if !icd.IsReady(sim) || sim.RandomFloat("Libram of Valiance") > 0.70 {
+						return
+					}
+					icd.Use(sim)
+
+					procAura.Activate(sim)
+				}
+			},
+		})
+	})
+
 	core.NewItemEffect(32368, func(agent core.Agent) {
 		paladin := agent.(PaladinAgent).GetPaladin()
 		procAura := paladin.NewTemporaryStatsAura("Tome of the Lightbringer Proc", core.ActionID{SpellID: 41042}, stats.Stats{stats.BlockValue: 186}, time.Second*5)
