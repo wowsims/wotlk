@@ -100,7 +100,7 @@ func (warlock *Warlock) spellDamageMultiplierHelper(sim *core.Simulation, spell 
 			core.TernaryFloat64(warlock.CorruptionDot.IsActive(), 1, 0) + //core.TernaryFloat64(warlock.SeedDots.IsActive(), 1, 0) +
 			core.TernaryFloat64(warlock.CurseOfDoomDot.IsActive(), 1, 0) + core.TernaryFloat64(warlock.CurseOfAgonyDot.IsActive(), 1, 0) +
 			core.TernaryFloat64(warlock.UnstableAffDot.IsActive(), 1, 0) + core.TernaryFloat64(warlock.ImmolateDot.IsActive(), 1, 0)
-		normalMultiplier *= 0.03*float64(warlock.Talents.SoulSiphon) * core.MinFloat(3, afflictionSpellNumber)
+		normalMultiplier *= 1 + 0.03*float64(warlock.Talents.SoulSiphon) * core.MinFloat(3, afflictionSpellNumber)
 	}
 	
 	return additiveDamageMultiplier * executeDamageMultiplier * normalMultiplier
