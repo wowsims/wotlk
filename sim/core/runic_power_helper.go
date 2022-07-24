@@ -79,7 +79,7 @@ func (rp *runicPowerBar) SpendBloodRuneMetrics(sim *Simulation, spell *Spell, cu
 }
 
 func (rp *runicPowerBar) CancelRuneRegenPA(sim *Simulation, r *Rune) {
-	if r.pas[0] != nil {
+	if r.pas[0] == nil {
 		panic("Trying to cancel non-existant regen PA.")
 	}
 

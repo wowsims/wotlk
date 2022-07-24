@@ -7,24 +7,24 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-func (deathKnight *DeathKnight) registerBoneShieldSpell() {
-	if !deathKnight.Talents.BoneShield {
+func (dk *Deathknight) registerBoneShieldSpell() {
+	if !dk.Talents.BoneShield {
 		return
 	}
 
 	actionID := core.ActionID{SpellID: 49222}
-	cdTimer := deathKnight.NewTimer()
+	cdTimer := dk.NewTimer()
 	cd := time.Minute * 1
 
-	deathKnight.BoneShieldAura = deathKnight.RegisterAura(core.Aura{
+	dk.BoneShieldAura = dk.RegisterAura(core.Aura{
 		Label:     "Bone Shield",
 		ActionID:  actionID,
 		Duration:  time.Minute * 5,
-		MaxStacks: 3 + core.TernaryInt32(deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfBoneShield), 1, 0),
+		MaxStacks: 3 + core.TernaryInt32(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfBoneShield), 1, 0),
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-			deathKnight.BoneShieldAura.Activate(sim)
-			deathKnight.BoneShieldAura.UpdateExpires(sim.CurrentTime + time.Minute*4)
-			deathKnight.BoneShieldAura.SetStacks(sim, 3)
+			dk.BoneShieldAura.Activate(sim)
+			dk.BoneShieldAura.UpdateExpires(sim.CurrentTime + time.Minute*4)
+			dk.BoneShieldAura.SetStacks(sim, 3)
 		},
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			aura.RemoveStack(sim)
@@ -33,18 +33,18 @@ func (deathKnight *DeathKnight) registerBoneShieldSpell() {
 			}
 		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			deathKnight.ModifyAdditiveDamageModifier(sim, 0.02)
+			dk.ModifyAdditiveDamageModifier(sim, 0.02)
 
 			aura.Unit.PseudoStats.DamageTakenMultiplier *= 0.8
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			deathKnight.ModifyAdditiveDamageModifier(sim, -0.02)
+			dk.ModifyAdditiveDamageModifier(sim, -0.02)
 
 			aura.Unit.PseudoStats.DamageTakenMultiplier /= 0.8
 		},
 	})
 
-	deathKnight.BoneShield = deathKnight.RegisterSpell(core.SpellConfig{
+	dk.BoneShield = dk.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 
@@ -53,7 +53,7 @@ func (deathKnight *DeathKnight) registerBoneShieldSpell() {
 				GCD: core.GCDDefault,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = deathKnight.getModifiedGCD()
+				cast.GCD = dk.getModifiedGCD()
 			},
 			CD: core.Cooldown{
 				Timer:    cdTimer,
@@ -61,25 +61,25 @@ func (deathKnight *DeathKnight) registerBoneShieldSpell() {
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			deathKnight.BoneShieldAura.Activate(sim)
-			deathKnight.BoneShieldAura.Prioritize()
+			dk.BoneShieldAura.Activate(sim)
+			dk.BoneShieldAura.Prioritize()
 
-			dkSpellCost := deathKnight.DetermineOptimalCost(sim, 0, 0, 1)
-			deathKnight.Spend(sim, spell, dkSpellCost)
+			dkSpellCost := dk.DetermineOptimalCost(sim, 0, 0, 1)
+			dk.Spend(sim, spell, dkSpellCost)
 
 			amountOfRunicPower := 10.0
-			deathKnight.AddRunicPower(sim, amountOfRunicPower, deathKnight.BoneShield.RunicPowerMetrics())
+			dk.AddRunicPower(sim, amountOfRunicPower, dk.BoneShield.RunicPowerMetrics())
 		},
 	})
 }
 
-func (deathKnight *DeathKnight) CanBoneShield(sim *core.Simulation) bool {
-	return deathKnight.CastCostPossible(sim, 0.0, 0, 0, 1) && deathKnight.BoneShield.IsReady(sim)
+func (dk *Deathknight) CanBoneShield(sim *core.Simulation) bool {
+	return dk.CastCostPossible(sim, 0.0, 0, 0, 1) && dk.BoneShield.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastBoneShield(sim *core.Simulation, target *core.Unit) bool {
-	if deathKnight.CanBoneShield(sim) {
-		deathKnight.BoneShield.Cast(sim, target)
+func (dk *Deathknight) CastBoneShield(sim *core.Simulation, target *core.Unit) bool {
+	if dk.CanBoneShield(sim) {
+		dk.BoneShield.Cast(sim, target)
 		return true
 	}
 	return false

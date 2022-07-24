@@ -128,7 +128,7 @@ func (spellEffect *SpellEffect) PhysicalHitChance(unit *Unit, attackTable *Attac
 	if spellEffect.ProcMask.Matches(ProcMaskRanged) {
 		hitRating += unit.PseudoStats.BonusRangedHitRating
 	}
-	return MaxFloat((hitRating/(MeleeHitRatingPerHitChance*100))-attackTable.HitSuppression, 0)
+	return hitRating / (MeleeHitRatingPerHitChance * 100)
 }
 
 func (spellEffect *SpellEffect) PhysicalCritChance(unit *Unit, spell *Spell, attackTable *AttackTable) float64 {
