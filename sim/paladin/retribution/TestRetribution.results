@@ -444,8 +444,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-LibramofValiance-47661"
  value: {
-  dps: 3363.2710127319624
-  tps: 2866.1895836030126
+  dps: 3362.402328474971
+  tps: 2866.017335138371
  }
 }
 dps_results: {
