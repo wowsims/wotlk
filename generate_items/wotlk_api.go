@@ -196,9 +196,9 @@ func (item WotlkItemResponse) GetPhase() int {
 		return 1
 	} else if ilvl == 219 || ilvl == 226 || ilvl == 239 {
 		return 2
-	} else if ilvl == 232 || ilvl == 245 || ilvl == 258 || ilvl == 272 {
+	} else if ilvl == 232 || ilvl == 245 || ilvl == 258 {
 		return 3
-	} else if ilvl == 251 || ilvl == 258 || ilvl == 264 || ilvl == 271 {
+	} else if ilvl == 251 || ilvl == 258 || ilvl == 259 || ilvl == 264 || ilvl == 268 || ilvl == 270 || ilvl == 271 || ilvl == 272 {
 		return 4
 	} else if ilvl == 277 || ilvl == 284 {
 		return 5

@@ -238,11 +238,13 @@ func (shaman *Shaman) Reset(sim *core.Simulation) {
 				shaman.NextTotemDropType[i] = int32(shaman.Totems.Earth)
 			}
 		case FireTotem:
-			shaman.NextTotemDropType[i] = int32(shaman.Totems.Fire)
-			if shaman.NextTotemDropType[i] != int32(proto.FireTotem_NoFireTotem) {
-				shaman.NextTotemDrops[i] = TotemRefreshTime5M
-				if shaman.NextTotemDropType[i] != int32(proto.FireTotem_TotemOfWrath) {
-					shaman.NextTotemDrops[i] = 0 // attack totems we drop immediately
+			shaman.NextTotemDropType[FireTotem] = int32(shaman.Totems.Fire)
+			if shaman.NextTotemDropType[FireTotem] != int32(proto.FireTotem_NoFireTotem) {
+				shaman.NextTotemDrops[FireTotem] = TotemRefreshTime5M
+				if shaman.NextTotemDropType[FireTotem] != int32(proto.FireTotem_TotemOfWrath) {
+					shaman.NextTotemDrops[FireTotem] = 0 // attack totems we drop immediately
+				} else if shaman.NextTotemDropType[FireTotem] == int32(proto.FireTotem_TotemOfWrath) {
+					shaman.applyToWDebuff(sim)
 				}
 			}
 		case WaterTotem:
