@@ -10,7 +10,7 @@ var DeathStrikeOHOutcome = core.OutcomeHit
 
 func (deathKnight *DeathKnight) newDeathStrikeSpell(isMH bool) *core.Spell {
 	effect := core.SpellEffect{
-		BonusCritRating:  (deathKnight.annihilationCritBonus() + deathKnight.scourgebornePlateCritBonus() + deathKnight.viciousStrikesCritChanceBonus() + deathKnight.improvedDeathStrikeCritBonus()) * core.CritRatingPerCritChance,
+		BonusCritRating:  (deathKnight.annihilationCritBonus() + deathKnight.improvedDeathStrikeCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
