@@ -6,7 +6,7 @@ import (
 
 var ScourgeStrikeActionID = core.ActionID{SpellID: 55271}
 
-func (deathKnight *DeathKnight) registerScourgeStrikeShadowDamageSpell() *core.Spell {
+func (deathKnight *Deathknight) registerScourgeStrikeShadowDamageSpell() *core.Spell {
 	return deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    ScourgeStrikeActionID.WithTag(2),
 		SpellSchool: core.SpellSchoolShadow,
@@ -29,7 +29,7 @@ func (deathKnight *DeathKnight) registerScourgeStrikeShadowDamageSpell() *core.S
 	})
 }
 
-func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
+func (deathKnight *Deathknight) registerScourgeStrikeSpell() {
 	outbreakBonus := 1.0
 	if deathKnight.Talents.Outbreak == 1 {
 		outbreakBonus = 1.07
@@ -96,11 +96,11 @@ func (deathKnight *DeathKnight) registerScourgeStrikeSpell() {
 	})
 }
 
-func (deathKnight *DeathKnight) CanScourgeStrike(sim *core.Simulation) bool {
+func (deathKnight *Deathknight) CanScourgeStrike(sim *core.Simulation) bool {
 	return deathKnight.Talents.ScourgeStrike && deathKnight.CastCostPossible(sim, 0.0, 0, 1, 1) && deathKnight.ScourgeStrike.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastScourgeStrike(sim *core.Simulation, target *core.Unit) bool {
+func (deathKnight *Deathknight) CastScourgeStrike(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanScourgeStrike(sim) {
 		deathKnight.ScourgeStrike.Cast(sim, target)
 		return true

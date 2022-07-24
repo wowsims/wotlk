@@ -8,9 +8,9 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (deathKnight *DeathKnight) registerHornOfWinterSpell() {
+func (deathKnight *Deathknight) registerHornOfWinterSpell() {
 	actionID := core.ActionID{SpellID: 57623}
-	duration := time.Minute * time.Duration((2.0 + core.TernaryFloat64(deathKnight.HasMinorGlyph(proto.DeathKnightMinorGlyph_GlyphOfHornOfWinter), 1.0, 0.0)))
+	duration := time.Minute * time.Duration((2.0 + core.TernaryFloat64(deathKnight.HasMinorGlyph(proto.DeathknightMinorGlyph_GlyphOfHornOfWinter), 1.0, 0.0)))
 
 	bonusStats := stats.Stats{stats.Strength: 155.0, stats.Agility: 155.0}
 	negativeStats := bonusStats.Multiply(-1)
@@ -69,15 +69,15 @@ func (deathKnight *DeathKnight) registerHornOfWinterSpell() {
 	})
 }
 
-func (deathKnight *DeathKnight) CanHornOfWinter(sim *core.Simulation) bool {
+func (deathKnight *Deathknight) CanHornOfWinter(sim *core.Simulation) bool {
 	return deathKnight.HornOfWinter.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) ShouldHornOfWinter(sim *core.Simulation) bool {
+func (deathKnight *Deathknight) ShouldHornOfWinter(sim *core.Simulation) bool {
 	return deathKnight.RefreshHornOfWinter && deathKnight.HornOfWinter.IsReady(sim) && !deathKnight.HornOfWinterAura.IsActive()
 }
 
-func (deathKnight *DeathKnight) CastHornOfWinter(sim *core.Simulation, target *core.Unit) bool {
+func (deathKnight *Deathknight) CastHornOfWinter(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanHornOfWinter(sim) {
 		deathKnight.HornOfWinter.Cast(sim, target)
 		return true

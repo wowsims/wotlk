@@ -14,7 +14,7 @@ import { Player } from '/wotlk/core/player.js';
 import { Stats } from '/wotlk/core/proto_utils/stats.js';
 import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
 
-import { DeathKnight, DeathKnight_Rotation as DeathKnightRotation, DeathKnightTalents as DeathKnightTalents, DeathKnight_Options as DeathKnightOptions } from '/wotlk/core/proto/deathknight.js';
+import { Deathknight, Deathknight_Rotation as DeathKnightRotation, DeathknightTalents as DeathKnightTalents, Deathknight_Options as DeathKnightOptions } from '/wotlk/core/proto/deathknight.js';
 
 import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
 import * as OtherInputs from '/wotlk/core/components/other_inputs.js';
@@ -23,8 +23,8 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 import * as DeathKnightInputs from './inputs.js';
 import * as Presets from './presets.js';
 
-export class DeathKnightSimUI extends IndividualSimUI<Spec.SpecDeathKnight> {
-	constructor(parentElem: HTMLElement, player: Player<Spec.SpecDeathKnight>) {
+export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
+	constructor(parentElem: HTMLElement, player: Player<Spec.SpecDeathknight>) {
 		super(parentElem, player, {
 			cssClass: 'deathknight-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.

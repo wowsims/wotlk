@@ -9,7 +9,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (deathKnight *DeathKnight) ApplyFrostTalents() {
+func (deathKnight *Deathknight) ApplyFrostTalents() {
 	// Improved Icy Touch
 	// Implemented outside
 
@@ -78,7 +78,7 @@ func (deathKnight *DeathKnight) ApplyFrostTalents() {
 	deathKnight.AddStat(stats.Expertise, 1.0*float64(deathKnight.Talents.TundraStalker)*core.ExpertisePerQuarterPercentReduction)
 }
 
-func (deathKnight *DeathKnight) nervesOfColdSteelBonus() float64 {
+func (deathKnight *Deathknight) nervesOfColdSteelBonus() float64 {
 	bonusCoeff := 1.0
 	if deathKnight.Talents.NervesOfColdSteel == 1 {
 		bonusCoeff = 1.08
@@ -90,7 +90,7 @@ func (deathKnight *DeathKnight) nervesOfColdSteelBonus() float64 {
 	return bonusCoeff
 }
 
-func (deathKnight *DeathKnight) glacielRotBonus(target *core.Unit) float64 {
+func (deathKnight *Deathknight) glacielRotBonus(target *core.Unit) float64 {
 	glacierRotCoeff := 1.0
 	if deathKnight.Talents.GlacierRot == 1 {
 		glacierRotCoeff = 1.07
@@ -103,15 +103,15 @@ func (deathKnight *DeathKnight) glacielRotBonus(target *core.Unit) float64 {
 	return core.TernaryFloat64(deathKnight.DiseasesAreActive(target) && deathKnight.Talents.GlacierRot > 0, glacierRotCoeff, 1.0)
 }
 
-func (deathKnight *DeathKnight) mercilessCombatBonus(sim *core.Simulation) float64 {
+func (deathKnight *Deathknight) mercilessCombatBonus(sim *core.Simulation) float64 {
 	return core.TernaryFloat64(sim.IsExecutePhase35() && deathKnight.Talents.MercilessCombat > 0, 1.0+0.06*float64(deathKnight.Talents.MercilessCombat), 1.0)
 }
 
-func (deathKnight *DeathKnight) tundraStalkerBonus(target *core.Unit) float64 {
+func (deathKnight *Deathknight) tundraStalkerBonus(target *core.Unit) float64 {
 	return core.TernaryFloat64(deathKnight.TargetHasDisease(FrostFeverAuraLabel, target), 1.0+0.03*float64(deathKnight.Talents.TundraStalker), 1.0)
 }
 
-func (deathKnight *DeathKnight) applyRime() {
+func (deathKnight *Deathknight) applyRime() {
 	if deathKnight.Talents.Rime == 0 {
 		return
 	}
@@ -128,19 +128,19 @@ func (deathKnight *DeathKnight) applyRime() {
 	})
 }
 
-func (deathKnight *DeathKnight) rimeCritBonus() float64 {
+func (deathKnight *Deathknight) rimeCritBonus() float64 {
 	return 0.05 * float64(deathKnight.Talents.Rime)
 }
 
-func (deathKnight *DeathKnight) rimeHbChanceProc() float64 {
+func (deathKnight *Deathknight) rimeHbChanceProc() float64 {
 	return 5.0 * float64(deathKnight.Talents.Rime)
 }
 
-func (deathKnight *DeathKnight) annihilationCritBonus() float64 {
+func (deathKnight *Deathknight) annihilationCritBonus() float64 {
 	return 1.0 * float64(deathKnight.Talents.Annihilation)
 }
 
-func (deathKnight *DeathKnight) applyKillingMachine() {
+func (deathKnight *Deathknight) applyKillingMachine() {
 	if deathKnight.Talents.KillingMachine == 0 {
 		return
 	}
@@ -177,7 +177,7 @@ func (deathKnight *DeathKnight) applyKillingMachine() {
 	}))
 }
 
-func (deathKnight *DeathKnight) killingMachineOutcomeMod(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
+func (deathKnight *Deathknight) killingMachineOutcomeMod(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
 	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
 		if deathKnight.KillingMachineAura.IsActive() {
 			deathKnight.AddStatDynamic(sim, stats.MeleeCrit, 100*core.CritRatingPerCritChance)
@@ -191,7 +191,7 @@ func (deathKnight *DeathKnight) killingMachineOutcomeMod(outcomeApplier core.Out
 	}
 }
 
-func (deathKnight *DeathKnight) applyIcyTalons() {
+func (deathKnight *Deathknight) applyIcyTalons() {
 	if deathKnight.Talents.IcyTalons == 0 {
 		return
 	}
@@ -211,11 +211,11 @@ func (deathKnight *DeathKnight) applyIcyTalons() {
 	})
 }
 
-func (deathKnight *DeathKnight) outcomeEitherWeaponHitOrCrit(mhOutcome core.HitOutcome, ohOutcome core.HitOutcome) bool {
+func (deathKnight *Deathknight) outcomeEitherWeaponHitOrCrit(mhOutcome core.HitOutcome, ohOutcome core.HitOutcome) bool {
 	return mhOutcome == core.OutcomeHit || mhOutcome == core.OutcomeCrit || ohOutcome == core.OutcomeHit || ohOutcome == core.OutcomeCrit
 }
 
-func (deathKnight *DeathKnight) bloodOfTheNorthCoeff() float64 {
+func (deathKnight *Deathknight) bloodOfTheNorthCoeff() float64 {
 	bloodOfTheNorthCoeff := 1.0
 	if deathKnight.Talents.BloodOfTheNorth == 1 {
 		bloodOfTheNorthCoeff = 1.03
@@ -227,7 +227,7 @@ func (deathKnight *DeathKnight) bloodOfTheNorthCoeff() float64 {
 	return bloodOfTheNorthCoeff
 }
 
-func (deathKnight *DeathKnight) bloodOfTheNorthChance() float64 {
+func (deathKnight *Deathknight) bloodOfTheNorthChance() float64 {
 	botnChance := 0.0
 	if deathKnight.Talents.BloodOfTheNorth == 1 {
 		botnChance = 0.3
@@ -239,12 +239,12 @@ func (deathKnight *DeathKnight) bloodOfTheNorthChance() float64 {
 	return botnChance
 }
 
-func (deathKnight *DeathKnight) bloodOfTheNorthWillProc(sim *core.Simulation, botnChance float64) bool {
+func (deathKnight *Deathknight) bloodOfTheNorthWillProc(sim *core.Simulation, botnChance float64) bool {
 	ohWillCast := sim.RandomFloat("Blood of The North") <= botnChance
 	return ohWillCast
 }
 
-func (deathKnight *DeathKnight) bloodOfTheNorthProc(sim *core.Simulation, spell *core.Spell, runeCost core.RuneAmount) bool {
+func (deathKnight *Deathknight) bloodOfTheNorthProc(sim *core.Simulation, spell *core.Spell, runeCost core.RuneAmount) bool {
 	if deathKnight.Talents.BloodOfTheNorth > 0 {
 		if runeCost.Blood > 0 {
 			botnChance := deathKnight.bloodOfTheNorthChance()
@@ -260,7 +260,7 @@ func (deathKnight *DeathKnight) bloodOfTheNorthProc(sim *core.Simulation, spell 
 	return false
 }
 
-func (deathKnight *DeathKnight) threatOfThassarianChance() float64 {
+func (deathKnight *Deathknight) threatOfThassarianChance() float64 {
 	threatOfThassarianChance := 0.0
 	if deathKnight.Talents.ThreatOfThassarian == 1 {
 		threatOfThassarianChance = 0.30
@@ -272,12 +272,12 @@ func (deathKnight *DeathKnight) threatOfThassarianChance() float64 {
 	return threatOfThassarianChance
 }
 
-func (deathKnight *DeathKnight) threatOfThassarianWillProc(sim *core.Simulation, totChance float64) bool {
+func (deathKnight *Deathknight) threatOfThassarianWillProc(sim *core.Simulation, totChance float64) bool {
 	ohWillCast := sim.RandomFloat("Threat of Thassarian") <= totChance
 	return ohWillCast
 }
 
-func (deathKnight *DeathKnight) threatOfThassarianAdjustMetrics(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, mhOutcome core.HitOutcome) {
+func (deathKnight *Deathknight) threatOfThassarianAdjustMetrics(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, mhOutcome core.HitOutcome) {
 	spell.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 1
 	if mhOutcome == core.OutcomeHit {
 		spell.SpellMetrics[spellEffect.Target.TableIndex].Hits -= 1
@@ -288,7 +288,7 @@ func (deathKnight *DeathKnight) threatOfThassarianAdjustMetrics(sim *core.Simula
 	}
 }
 
-func (deathKnight *DeathKnight) threatOfThassarianProcMasks(isMH bool, effect *core.SpellEffect, isGuileOfGorefiendStrike bool, isMightOfMograineStrike bool, wrapper func(outcomeApplier core.OutcomeApplier) core.OutcomeApplier) {
+func (deathKnight *Deathknight) threatOfThassarianProcMasks(isMH bool, effect *core.SpellEffect, isGuileOfGorefiendStrike bool, isMightOfMograineStrike bool, wrapper func(outcomeApplier core.OutcomeApplier) core.OutcomeApplier) {
 	critMultiplier := deathKnight.critMultiplier()
 	if isGuileOfGorefiendStrike || isMightOfMograineStrike {
 		critMultiplier = deathKnight.critMultiplierGoGandMoM()
@@ -303,7 +303,7 @@ func (deathKnight *DeathKnight) threatOfThassarianProcMasks(isMH bool, effect *c
 	}
 }
 
-func (deathKnight *DeathKnight) threatOfThassarianProc(sim *core.Simulation, spellEffect *core.SpellEffect, mhSpell *core.Spell, ohSpell *core.Spell) {
+func (deathKnight *Deathknight) threatOfThassarianProc(sim *core.Simulation, spellEffect *core.SpellEffect, mhSpell *core.Spell, ohSpell *core.Spell) {
 	totChance := deathKnight.threatOfThassarianChance()
 
 	mhSpell.Cast(sim, spellEffect.Target)

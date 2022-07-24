@@ -7,7 +7,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-func (deathKnight *DeathKnight) registerDeathAndDecaySpell() {
+func (deathKnight *Deathknight) registerDeathAndDecaySpell() {
 
 	var actionID = core.ActionID{SpellID: 49938}
 	deathKnight.DeathAndDecayDot = core.NewDot(core.Dot{
@@ -21,7 +21,7 @@ func (deathKnight *DeathKnight) registerDeathAndDecaySpell() {
 			ProcMask:        core.ProcMaskEmpty,
 			BonusSpellPower: 0.0,
 
-			DamageMultiplier: core.TernaryFloat64(deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfDeathAndDecay), 1.2, 1.0),
+			DamageMultiplier: core.TernaryFloat64(deathKnight.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDeathAndDecay), 1.2, 1.0),
 			ThreatMultiplier: 1,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
@@ -68,11 +68,11 @@ func (deathKnight *DeathKnight) registerDeathAndDecaySpell() {
 	deathKnight.DeathAndDecayDot.Spell = deathKnight.DeathAndDecay
 }
 
-func (deathKnight *DeathKnight) CanDeathAndDecay(sim *core.Simulation) bool {
+func (deathKnight *Deathknight) CanDeathAndDecay(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 1, 1, 1) && deathKnight.DeathAndDecay.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastDeathAndDecay(sim *core.Simulation, target *core.Unit) bool {
+func (deathKnight *Deathknight) CastDeathAndDecay(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanDeathAndDecay(sim) {
 		deathKnight.DeathAndDecay.Cast(sim, target)
 		return true

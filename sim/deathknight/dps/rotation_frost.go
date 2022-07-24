@@ -5,7 +5,7 @@ import (
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
-func (deathKnight *DpsDeathKnight) setupFrostRotations() {
+func (deathKnight *DpsDeathknight) setupFrostRotations() {
 
 	// This defines the Sub Blood opener
 	deathKnight.DefineOpener(deathknight.RotationID_FrostSubBlood_Full, []deathknight.RotationAction{
@@ -55,7 +55,7 @@ func (deathKnight *DpsDeathKnight) setupFrostRotations() {
 	})
 }
 
-func (deathKnight *DpsDeathKnight) FrostDiseaseCheckWrapper(sim *core.Simulation, target *core.Unit, spell *core.Spell) bool {
+func (deathKnight *DpsDeathknight) FrostDiseaseCheckWrapper(sim *core.Simulation, target *core.Unit, spell *core.Spell) bool {
 	success := false
 
 	if !deathKnight.TargetHasDisease(deathknight.FrostFeverAuraLabel, target) {
@@ -117,7 +117,7 @@ func (deathKnight *DpsDeathKnight) FrostDiseaseCheckWrapper(sim *core.Simulation
 	return success
 }
 
-func (deathKnight *DpsDeathKnight) doFrostRotation(sim *core.Simulation, target *core.Unit) {
+func (deathKnight *DpsDeathknight) doFrostRotation(sim *core.Simulation, target *core.Unit) {
 	casted := &deathKnight.CastSuccessful
 
 	if deathKnight.ShouldHornOfWinter(sim) {

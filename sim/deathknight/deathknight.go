@@ -8,15 +8,15 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-type DeathKnight struct {
+type Deathknight struct {
 	core.Character
-	Talents proto.DeathKnightTalents
-	Options proto.DeathKnight_Options
+	Talents proto.DeathknightTalents
+	Options proto.Deathknight_Options
 
 	// Rotation Vars
 	RefreshHornOfWinter  bool
 	UnholyPresenceOpener bool
-	ArmyOfTheDeadType    proto.DeathKnight_Rotation_ArmyOfTheDead
+	ArmyOfTheDeadType    proto.Deathknight_Rotation_ArmyOfTheDead
 
 	LastCastOutcome core.HitOutcome
 	RotationHelper
@@ -129,20 +129,20 @@ type DeathKnight struct {
 	additiveDamageModifier float64
 }
 
-func (deathKnight *DeathKnight) ModifyAdditiveDamageModifier(sim *core.Simulation, value float64) {
+func (deathKnight *Deathknight) ModifyAdditiveDamageModifier(sim *core.Simulation, value float64) {
 	deathKnight.PseudoStats.DamageDealtMultiplier /= deathKnight.additiveDamageModifier
 	deathKnight.additiveDamageModifier += value
 	deathKnight.PseudoStats.DamageDealtMultiplier *= deathKnight.additiveDamageModifier
 }
 
-func (deathKnight *DeathKnight) GetCharacter() *core.Character {
+func (deathKnight *Deathknight) GetCharacter() *core.Character {
 	return &deathKnight.Character
 }
 
-func (deathKnight *DeathKnight) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
+func (deathKnight *Deathknight) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
 
-func (deathKnight *DeathKnight) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
+func (deathKnight *Deathknight) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	if deathKnight.Talents.AbominationsMight > 0 {
 		raidBuffs.AbominationsMight = true
 	}
@@ -161,13 +161,13 @@ func (deathKnight *DeathKnight) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	}
 }
 
-func (deathKnight *DeathKnight) ApplyTalents() {
+func (deathKnight *Deathknight) ApplyTalents() {
 	deathKnight.ApplyBloodTalents()
 	deathKnight.ApplyFrostTalents()
 	deathKnight.ApplyUnholyTalents()
 }
 
-func (deathKnight *DeathKnight) Initialize() {
+func (deathKnight *Deathknight) Initialize() {
 	deathKnight.registerPresences()
 	deathKnight.registerIcyTouchSpell()
 	deathKnight.registerPlagueStrikeSpell()
@@ -196,37 +196,40 @@ func (deathKnight *DeathKnight) Initialize() {
 	deathKnight.SetupRotation()
 }
 
-func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
+func (deathKnight *Deathknight) Reset(sim *core.Simulation) {
+	deathKnight.Presence = UnsetPresence
 	if deathKnight.UnholyPresenceOpener {
-		deathKnight.UnholyPresenceAura.Activate(sim)
-		deathKnight.Presence = UnholyPresence
+		deathKnight.ChangePresence(sim, UnholyPresence)
+		//deathKnight.UnholyPresenceAura.Activate(sim)
+		//deathKnight.Presence = UnholyPresence
 	} else {
-		deathKnight.BloodPresenceAura.Activate(sim)
-		deathKnight.Presence = BloodPresence
+		deathKnight.ChangePresence(sim, BloodPresence)
+		//deathKnight.BloodPresenceAura.Activate(sim)
+		//deathKnight.Presence = BloodPresence
 	}
 
-	if deathKnight.ArmyOfTheDeadType == proto.DeathKnight_Rotation_PreCast {
+	if deathKnight.ArmyOfTheDeadType == proto.Deathknight_Rotation_PreCast {
 		deathKnight.PrecastArmyOfTheDead(sim)
 	}
 
 	deathKnight.ResetRotation(sim)
 }
 
-func (deathKnight *DeathKnight) IsFuStrike(spell *core.Spell) bool {
+func (deathKnight *Deathknight) IsFuStrike(spell *core.Spell) bool {
 	return spell == deathKnight.Obliterate || spell == deathKnight.ScourgeStrike // || spell == deathKnight.DeathStrike
 }
 
-func (deathKnight *DeathKnight) HasMajorGlyph(glyph proto.DeathKnightMajorGlyph) bool {
+func (deathKnight *Deathknight) HasMajorGlyph(glyph proto.DeathknightMajorGlyph) bool {
 	return deathKnight.HasGlyph(int32(glyph))
 }
-func (deathKnight *DeathKnight) HasMinorGlyph(glyph proto.DeathKnightMinorGlyph) bool {
+func (deathKnight *Deathknight) HasMinorGlyph(glyph proto.DeathknightMinorGlyph) bool {
 	return deathKnight.HasGlyph(int32(glyph))
 }
 
-func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight {
-	deathKnightOptions := options.GetDeathKnight()
+func NewDeathknight(character core.Character, options proto.Player) *Deathknight {
+	deathKnightOptions := options.GetDeathknight()
 
-	deathKnight := &DeathKnight{
+	deathKnight := &Deathknight{
 		Character: character,
 		Talents:   *deathKnightOptions.Talents,
 		Options:   *deathKnightOptions.Options,
@@ -307,15 +310,15 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 	return deathKnight
 }
 
-func (deathKnight *DeathKnight) AllDiseasesAreActive(target *core.Unit) bool {
+func (deathKnight *Deathknight) AllDiseasesAreActive(target *core.Unit) bool {
 	return deathKnight.FrostFeverDisease[target.Index].IsActive() && deathKnight.BloodPlagueDisease[target.Index].IsActive()
 }
 
-func (deathKnight *DeathKnight) DiseasesAreActive(target *core.Unit) bool {
+func (deathKnight *Deathknight) DiseasesAreActive(target *core.Unit) bool {
 	return deathKnight.FrostFeverDisease[target.Index].IsActive() || deathKnight.BloodPlagueDisease[target.Index].IsActive()
 }
 
-func (deathKnight *DeathKnight) secondaryCritModifier(applyGuile bool, applyMoM bool) float64 {
+func (deathKnight *Deathknight) secondaryCritModifier(applyGuile bool, applyMoM bool) float64 {
 	secondaryModifier := 0.0
 	if applyGuile {
 		secondaryModifier += 0.15 * float64(deathKnight.Talents.GuileOfGorefiend)
@@ -327,27 +330,27 @@ func (deathKnight *DeathKnight) secondaryCritModifier(applyGuile bool, applyMoM 
 }
 
 // TODO: DKs have x2 modifier on spell crit as a passive. Is this the best way to do it?
-func (deathKnight *DeathKnight) spellCritMultiplier() float64 {
+func (deathKnight *Deathknight) spellCritMultiplier() float64 {
 	return deathKnight.MeleeCritMultiplier(1.0, 0)
 }
 
-func (deathKnight *DeathKnight) spellCritMultiplierGoGandMoM() float64 {
+func (deathKnight *Deathknight) spellCritMultiplierGoGandMoM() float64 {
 	applyGuile := deathKnight.Talents.GuileOfGorefiend > 0
 	applyMightOfMograine := deathKnight.Talents.MightOfMograine > 0
 	return deathKnight.MeleeCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile, applyMightOfMograine))
 }
 
-func (deathKnight *DeathKnight) critMultiplier() float64 {
+func (deathKnight *Deathknight) critMultiplier() float64 {
 	return deathKnight.MeleeCritMultiplier(1.0, 0)
 }
 
-func (deathKnight *DeathKnight) critMultiplierGoGandMoM() float64 {
+func (deathKnight *Deathknight) critMultiplierGoGandMoM() float64 {
 	applyGuile := deathKnight.Talents.GuileOfGorefiend > 0
 	applyMightOfMograine := deathKnight.Talents.MightOfMograine > 0
 	return deathKnight.MeleeCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile, applyMightOfMograine))
 }
 
-func (deathKnight *DeathKnight) RuneAmountForSpell(spell *core.Spell) core.RuneAmount {
+func (deathKnight *Deathknight) RuneAmountForSpell(spell *core.Spell) core.RuneAmount {
 	blood := 0
 	frost := 0
 	unholy := 0
@@ -390,7 +393,7 @@ func (deathKnight *DeathKnight) RuneAmountForSpell(spell *core.Spell) core.RuneA
 	return core.RuneAmount{blood, frost, unholy, 0}
 }
 
-func (deathKnight *DeathKnight) CanCast(sim *core.Simulation, spell *core.Spell) bool {
+func (deathKnight *Deathknight) CanCast(sim *core.Simulation, spell *core.Spell) bool {
 	switch spell {
 	case deathKnight.DeathAndDecay:
 		return deathKnight.CanDeathAndDecay(sim)
@@ -438,7 +441,7 @@ func (deathKnight *DeathKnight) CanCast(sim *core.Simulation, spell *core.Spell)
 }
 
 func init() {
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassDeathknight}] = stats.Stats{
 		stats.Health:      7941,
 		stats.Strength:    176,
 		stats.Agility:     109,
@@ -449,7 +452,7 @@ func init() {
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDwarf, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDwarf, Class: proto.Class_ClassDeathknight}] = stats.Stats{
 		stats.Health:      7941,
 		stats.Strength:    180,
 		stats.Agility:     108,
@@ -460,7 +463,7 @@ func init() {
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceGnome, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceGnome, Class: proto.Class_ClassDeathknight}] = stats.Stats{
 		stats.Health:      7941,
 		stats.Strength:    170,
 		stats.Agility:     114,
@@ -471,7 +474,7 @@ func init() {
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceHuman, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceHuman, Class: proto.Class_ClassDeathknight}] = stats.Stats{
 		stats.Health:      7941,
 		stats.Strength:    175,
 		stats.Agility:     112,
@@ -482,7 +485,7 @@ func init() {
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassDeathknight}] = stats.Stats{
 		stats.Health:      7941,
 		stats.Strength:    171,
 		stats.Agility:     116,
@@ -493,7 +496,7 @@ func init() {
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceOrc, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceOrc, Class: proto.Class_ClassDeathknight}] = stats.Stats{
 		stats.Health:      7941,
 		stats.Strength:    178,
 		stats.Agility:     109,
@@ -504,7 +507,7 @@ func init() {
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTauren, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTauren, Class: proto.Class_ClassDeathknight}] = stats.Stats{
 		stats.Health:      7941,
 		stats.Strength:    180,
 		stats.Agility:     108,
@@ -515,7 +518,7 @@ func init() {
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassDeathknight}] = stats.Stats{
 		stats.Health:      7941,
 		stats.Strength:    176,
 		stats.Agility:     114,
@@ -526,7 +529,7 @@ func init() {
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceUndead, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceUndead, Class: proto.Class_ClassDeathknight}] = stats.Stats{
 		stats.Health:      7941,
 		stats.Strength:    174,
 		stats.Agility:     110,
@@ -537,7 +540,7 @@ func init() {
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassDeathKnight}] = stats.Stats{
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassDeathknight}] = stats.Stats{
 		stats.Health:      7941,
 		stats.Strength:    172,
 		stats.Agility:     114,
@@ -552,10 +555,10 @@ func init() {
 
 // Agent is a generic way to access underlying warrior on any of the agents.
 
-func (deathKnight *DeathKnight) GetDeathKnight() *DeathKnight {
+func (deathKnight *Deathknight) GetDeathKnight() *Deathknight {
 	return deathKnight
 }
 
 type DeathKnightAgent interface {
-	GetDeathKnight() *DeathKnight
+	GetDeathKnight() *Deathknight
 }

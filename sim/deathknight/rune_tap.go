@@ -6,7 +6,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-func (deathKnight *DeathKnight) registerRuneTapSpell() {
+func (deathKnight *Deathknight) registerRuneTapSpell() {
 	if !deathKnight.Talents.RuneTap {
 		return
 	}
@@ -46,11 +46,11 @@ func (deathKnight *DeathKnight) registerRuneTapSpell() {
 	})
 }
 
-func (deathKnight *DeathKnight) CanRuneTap(sim *core.Simulation) bool {
+func (deathKnight *Deathknight) CanRuneTap(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0, 1, 0, 0) && deathKnight.RuneTap.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastRuneTap(sim *core.Simulation, target *core.Unit) bool {
+func (deathKnight *Deathknight) CastRuneTap(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanRuneTap(sim) {
 		deathKnight.RuneTap.Cast(sim, target)
 		return true

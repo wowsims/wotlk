@@ -4,7 +4,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-func (deathKnight *DeathKnight) registerIcyTouchSpell() {
+func (deathKnight *Deathknight) registerIcyTouchSpell() {
 	deathKnight.FrostFeverDebuffAura = make([]*core.Aura, deathKnight.Env.GetNumTargets())
 	for _, encounterTarget := range deathKnight.Env.Encounter.Targets {
 		target := &encounterTarget.Unit
@@ -72,11 +72,11 @@ func (deathKnight *DeathKnight) registerIcyTouchSpell() {
 	})
 }
 
-func (deathKnight *DeathKnight) CanIcyTouch(sim *core.Simulation) bool {
+func (deathKnight *Deathknight) CanIcyTouch(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 0, 1, 0) && deathKnight.IcyTouch.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastIcyTouch(sim *core.Simulation, target *core.Unit) bool {
+func (deathKnight *Deathknight) CastIcyTouch(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanIcyTouch(sim) {
 		deathKnight.IcyTouch.Cast(sim, target)
 		return true

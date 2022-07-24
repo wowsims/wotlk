@@ -8,7 +8,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-func (deathKnight *DeathKnight) PrecastArmyOfTheDead(sim *core.Simulation) {
+func (deathKnight *Deathknight) PrecastArmyOfTheDead(sim *core.Simulation) {
 	// Mark the CD as used already
 	deathKnight.ArmyOfTheDead.CD.Use(sim)
 	deathKnight.ArmyOfTheDead.CD.Set(sim.CurrentTime + deathKnight.ArmyOfTheDead.CD.Duration - time.Second*10)
@@ -22,8 +22,8 @@ func (deathKnight *DeathKnight) PrecastArmyOfTheDead(sim *core.Simulation) {
 	}
 }
 
-func (deathKnight *DeathKnight) registerArmyOfTheDeadCD() {
-	if deathKnight.ArmyOfTheDeadType == proto.DeathKnight_Rotation_DoNotUse {
+func (deathKnight *Deathknight) registerArmyOfTheDeadCD() {
+	if deathKnight.ArmyOfTheDeadType == proto.Deathknight_Rotation_DoNotUse {
 		return
 	}
 
@@ -101,11 +101,11 @@ func (deathKnight *DeathKnight) registerArmyOfTheDeadCD() {
 	})
 }
 
-func (deathKnight *DeathKnight) CanArmyOfTheDead(sim *core.Simulation) bool {
+func (deathKnight *Deathknight) CanArmyOfTheDead(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 1, 1, 1) && deathKnight.ArmyOfTheDead.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastArmyOfTheDead(sim *core.Simulation, target *core.Unit) bool {
+func (deathKnight *Deathknight) CastArmyOfTheDead(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanArmyOfTheDead(sim) {
 		deathKnight.ArmyOfTheDead.Cast(sim, target)
 		return true

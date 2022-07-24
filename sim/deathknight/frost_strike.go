@@ -10,7 +10,7 @@ var FrostStrikeActionID = core.ActionID{SpellID: 55268}
 var FrostStrikeMHOutcome = core.OutcomeHit
 var FrostStrikeOHOutcome = core.OutcomeHit
 
-func (deathKnight *DeathKnight) newFrostStrikeHitSpell(isMH bool) *core.Spell {
+func (deathKnight *Deathknight) newFrostStrikeHitSpell(isMH bool) *core.Spell {
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 138.0, 0.55, true)
 	if !isMH {
 		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 138.0, 0.55*deathKnight.nervesOfColdSteelBonus(), true)
@@ -51,9 +51,9 @@ func (deathKnight *DeathKnight) newFrostStrikeHitSpell(isMH bool) *core.Spell {
 	})
 }
 
-func (deathKnight *DeathKnight) registerFrostStrikeSpell() {
+func (deathKnight *Deathknight) registerFrostStrikeSpell() {
 	baseCost := 40.0
-	if deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfFrostStrike) {
+	if deathKnight.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfFrostStrike) {
 		baseCost -= 8.0
 	}
 
@@ -100,11 +100,11 @@ func (deathKnight *DeathKnight) registerFrostStrikeSpell() {
 	})
 }
 
-func (deathKnight *DeathKnight) CanFrostStrike(sim *core.Simulation) bool {
+func (deathKnight *Deathknight) CanFrostStrike(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 40.0, 0, 0, 0) && deathKnight.FrostStrike.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastFrostStrike(sim *core.Simulation, target *core.Unit) bool {
+func (deathKnight *Deathknight) CastFrostStrike(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanFrostStrike(sim) {
 		deathKnight.FrostStrike.Cast(sim, target)
 		return true

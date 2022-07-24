@@ -6,7 +6,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-func (deathKnight *DeathKnight) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
+func (deathKnight *Deathknight) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
 	if !deathKnight.onOpener {
 		if deathKnight.GCD.IsReady(sim) {
 			deathKnight.tryUseGCD(sim)
@@ -14,11 +14,11 @@ func (deathKnight *DeathKnight) OnAutoAttack(sim *core.Simulation, spell *core.S
 	}
 }
 
-func (deathKnight *DeathKnight) OnGCDReady(sim *core.Simulation) {
+func (deathKnight *Deathknight) OnGCDReady(sim *core.Simulation) {
 	deathKnight.tryUseGCD(sim)
 }
 
-func (deathKnight *DeathKnight) tryUseGCD(sim *core.Simulation) {
+func (deathKnight *Deathknight) tryUseGCD(sim *core.Simulation) {
 	if deathKnight.GCD.IsReady(sim) {
 		deathKnight.DoRotation(sim)
 	}
@@ -28,7 +28,7 @@ func (o *Sequence) IsOngoing() bool {
 	return o.idx < o.numActions
 }
 
-func (o *Sequence) DoAction(sim *core.Simulation, target *core.Unit, deathKnight *DeathKnight) bool {
+func (o *Sequence) DoAction(sim *core.Simulation, target *core.Unit, deathKnight *Deathknight) bool {
 	casted := false
 	advance := true
 	action := o.actions[o.idx]
@@ -117,7 +117,7 @@ func (o *Sequence) DoAction(sim *core.Simulation, target *core.Unit, deathKnight
 	return casted
 }
 
-func (o *Sequence) DoNext(sim *core.Simulation, deathKnight *DeathKnight) bool {
+func (o *Sequence) DoNext(sim *core.Simulation, deathKnight *Deathknight) bool {
 	target := deathKnight.CurrentTarget
 	casted := &deathKnight.CastSuccessful
 	*casted = false
@@ -143,7 +143,7 @@ func (o *Sequence) DoNext(sim *core.Simulation, deathKnight *DeathKnight) bool {
 	return *casted
 }
 
-func (deathKnight *DeathKnight) DoRotation(sim *core.Simulation) {
+func (deathKnight *Deathknight) DoRotation(sim *core.Simulation) {
 	opener := deathKnight.opener
 	if !opener.DoNext(sim, deathKnight) {
 		if deathKnight.GCD.IsReady(sim) && !deathKnight.IsWaiting() {
@@ -160,7 +160,7 @@ func (deathKnight *DeathKnight) DoRotation(sim *core.Simulation) {
 	}
 }
 
-func (deathKnight *DeathKnight) ResetRotation(sim *core.Simulation) {
+func (deathKnight *Deathknight) ResetRotation(sim *core.Simulation) {
 	deathKnight.opener.idx = 0
 	deathKnight.onOpener = true
 }

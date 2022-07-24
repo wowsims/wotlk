@@ -6,7 +6,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (deathKnight *DeathKnight) registerDeathCoilSpell() {
+func (deathKnight *Deathknight) registerDeathCoilSpell() {
 	deathKnight.DeathCoil = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 49895},
 		SpellSchool: core.SpellSchoolShadow,
@@ -28,7 +28,7 @@ func (deathKnight *DeathKnight) registerDeathCoilSpell() {
 			ProcMask:             core.ProcMaskSpellDamage,
 			BonusSpellCritRating: deathKnight.darkrunedBattlegearCritBonus() * core.CritRatingPerCritChance,
 			DamageMultiplier: (1.0 + float64(deathKnight.Talents.Morbidity)*0.05) *
-				core.TernaryFloat64(deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfDarkDeath), 1.15, 1.0),
+				core.TernaryFloat64(deathKnight.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDarkDeath), 1.15, 1.0),
 			ThreatMultiplier: 1.0,
 
 			BaseDamage: core.BaseDamageConfig{
@@ -53,11 +53,11 @@ func (deathKnight *DeathKnight) registerDeathCoilSpell() {
 	})
 }
 
-func (deathKnight *DeathKnight) CanDeathCoil(sim *core.Simulation) bool {
+func (deathKnight *Deathknight) CanDeathCoil(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 40.0, 0, 0, 0) && deathKnight.DeathCoil.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastDeathCoil(sim *core.Simulation, target *core.Unit) bool {
+func (deathKnight *Deathknight) CastDeathCoil(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanDeathCoil(sim) {
 		deathKnight.DeathCoil.Cast(sim, target)
 		return true

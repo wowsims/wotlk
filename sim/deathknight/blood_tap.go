@@ -6,7 +6,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-func (deathKnight *DeathKnight) registerBloodTapSpell() {
+func (deathKnight *Deathknight) registerBloodTapSpell() {
 	actionID := core.ActionID{SpellID: 45529}
 	cdTimer := deathKnight.NewTimer()
 	cd := time.Minute * 1
@@ -44,11 +44,11 @@ func (deathKnight *DeathKnight) registerBloodTapSpell() {
 	})
 }
 
-func (deathKnight *DeathKnight) CanBloodTap(sim *core.Simulation) bool {
+func (deathKnight *Deathknight) CanBloodTap(sim *core.Simulation) bool {
 	return deathKnight.BloodTap.IsReady(sim) && deathKnight.BloodTap.CD.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastBloodTap(sim *core.Simulation, target *core.Unit) bool {
+func (deathKnight *Deathknight) CastBloodTap(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanBloodTap(sim) {
 		deathKnight.BloodTap.Cast(sim, target)
 		return true

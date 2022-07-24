@@ -9,7 +9,7 @@ var ObliterateActionID = core.ActionID{SpellID: 51425}
 var ObliterateMHOutcome = core.OutcomeHit
 var ObliterateOHOutcome = core.OutcomeHit
 
-func (deathKnight *DeathKnight) newObliterateHitSpell(isMH bool) *core.Spell {
+func (deathKnight *Deathknight) newObliterateHitSpell(isMH bool) *core.Spell {
 	diseaseConsumptionChance := 1.0
 	if deathKnight.Talents.Annihilation == 1 {
 		diseaseConsumptionChance = 0.67
@@ -21,7 +21,7 @@ func (deathKnight *DeathKnight) newObliterateHitSpell(isMH bool) *core.Spell {
 
 	effect := core.SpellEffect{
 		BonusCritRating:  (deathKnight.rimeCritBonus() + deathKnight.subversionCritBonus() + deathKnight.annihilationCritBonus() + deathKnight.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,
-		DamageMultiplier: core.TernaryFloat64(deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfObliterate), 1.25, 1.0),
+		DamageMultiplier: core.TernaryFloat64(deathKnight.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfObliterate), 1.25, 1.0),
 		ThreatMultiplier: 1,
 
 		BaseDamage: core.BaseDamageConfig{
@@ -71,7 +71,7 @@ func (deathKnight *DeathKnight) newObliterateHitSpell(isMH bool) *core.Spell {
 	})
 }
 
-func (deathKnight *DeathKnight) registerObliterateSpell() {
+func (deathKnight *Deathknight) registerObliterateSpell() {
 	deathKnight.ObliterateMhHit = deathKnight.newObliterateHitSpell(true)
 	deathKnight.ObliterateOhHit = deathKnight.newObliterateHitSpell(false)
 
@@ -111,11 +111,11 @@ func (deathKnight *DeathKnight) registerObliterateSpell() {
 	})
 }
 
-func (deathKnight *DeathKnight) CanObliterate(sim *core.Simulation) bool {
+func (deathKnight *Deathknight) CanObliterate(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 0, 1, 1) && deathKnight.Obliterate.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastObliterate(sim *core.Simulation, target *core.Unit) bool {
+func (deathKnight *Deathknight) CastObliterate(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanObliterate(sim) {
 		deathKnight.Obliterate.Cast(sim, target)
 		return true

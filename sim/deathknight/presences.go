@@ -13,13 +13,14 @@ const (
 	BloodPresence Presence = 1 << iota
 	FrostPresence
 	UnholyPresence
+	UnsetPresence
 )
 
-func (deathKnight *DeathKnight) PresenceMatches(other Presence) bool {
+func (deathKnight *Deathknight) PresenceMatches(other Presence) bool {
 	return (deathKnight.Presence & other) != 0
 }
 
-func (deathKnight *DeathKnight) ChangePresence(sim *core.Simulation, newPresence Presence) {
+func (deathKnight *Deathknight) ChangePresence(sim *core.Simulation, newPresence Presence) {
 	if deathKnight.PresenceMatches(newPresence) {
 		return
 	}
@@ -40,11 +41,11 @@ func (deathKnight *DeathKnight) ChangePresence(sim *core.Simulation, newPresence
 	}
 }
 
-func (deathKnight *DeathKnight) CanBloodPresence(sim *core.Simulation) bool {
+func (deathKnight *Deathknight) CanBloodPresence(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 1, 0, 0) && deathKnight.BloodPresence.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastBloodPresence(sim *core.Simulation, target *core.Unit) bool {
+func (deathKnight *Deathknight) CastBloodPresence(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanBloodPresence(sim) {
 		deathKnight.BloodPresence.Cast(sim, target)
 		return true
@@ -52,11 +53,11 @@ func (deathKnight *DeathKnight) CastBloodPresence(sim *core.Simulation, target *
 	return false
 }
 
-func (deathKnight *DeathKnight) CanFrostPresence(sim *core.Simulation) bool {
+func (deathKnight *Deathknight) CanFrostPresence(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 0, 1, 0) && deathKnight.FrostPresence.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastFrostPresence(sim *core.Simulation, target *core.Unit) bool {
+func (deathKnight *Deathknight) CastFrostPresence(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanFrostPresence(sim) {
 		deathKnight.FrostPresence.Cast(sim, target)
 		return true
@@ -64,11 +65,11 @@ func (deathKnight *DeathKnight) CastFrostPresence(sim *core.Simulation, target *
 	return false
 }
 
-func (deathKnight *DeathKnight) CanUnholyPresence(sim *core.Simulation) bool {
+func (deathKnight *Deathknight) CanUnholyPresence(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 0, 0, 1) && deathKnight.UnholyPresence.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastUnholyPresence(sim *core.Simulation, target *core.Unit) bool {
+func (deathKnight *Deathknight) CastUnholyPresence(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanUnholyPresence(sim) {
 		deathKnight.UnholyPresence.Cast(sim, target)
 		return true
@@ -76,7 +77,7 @@ func (deathKnight *DeathKnight) CastUnholyPresence(sim *core.Simulation, target 
 	return false
 }
 
-func (deathKnight *DeathKnight) registerBloodPresenceAura(timer *core.Timer) {
+func (deathKnight *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 	threatMult := 0.8
 	threatMultSubversion := 1.0 - deathKnight.subversionThreatBonus()
 	//TODO: Include hps bonus
@@ -124,7 +125,7 @@ func (deathKnight *DeathKnight) registerBloodPresenceAura(timer *core.Timer) {
 	})
 }
 
-func (deathKnight *DeathKnight) registerFrostPresenceAura(timer *core.Timer) {
+func (deathKnight *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 	threatMult := 2.0735
 	staminaMult := 1.08
 	armorMult := 1.6
@@ -165,7 +166,7 @@ func (deathKnight *DeathKnight) registerFrostPresenceAura(timer *core.Timer) {
 	})
 }
 
-func (deathKnight *DeathKnight) registerUnholyPresenceAura(timer *core.Timer) {
+func (deathKnight *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 	threatMultSubversion := 1.0 - deathKnight.subversionThreatBonus()
 	staminaMult := 1.0 + 0.04*float64(deathKnight.Talents.ImprovedFrostPresence)
 
@@ -203,7 +204,7 @@ func (deathKnight *DeathKnight) registerUnholyPresenceAura(timer *core.Timer) {
 	})
 }
 
-func (deathKnight *DeathKnight) getModifiedGCD() time.Duration {
+func (deathKnight *Deathknight) getModifiedGCD() time.Duration {
 	if deathKnight.UnholyPresenceAura.IsActive() {
 		return time.Second
 	} else {
@@ -211,7 +212,7 @@ func (deathKnight *DeathKnight) getModifiedGCD() time.Duration {
 	}
 }
 
-func (deathKnight *DeathKnight) registerPresences() {
+func (deathKnight *Deathknight) registerPresences() {
 	presenceTimer := deathKnight.NewTimer()
 	deathKnight.registerBloodPresenceAura(presenceTimer)
 	deathKnight.registerUnholyPresenceAura(presenceTimer)

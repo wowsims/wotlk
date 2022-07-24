@@ -7,7 +7,7 @@ import (
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
-func (deathKnight *DpsDeathKnight) setupUnholyRotations() {
+func (deathKnight *DpsDeathknight) setupUnholyRotations() {
 
 	deathKnight.DefineOpener(deathknight.RotationID_UnholySsUnholyPresence_Full, []deathknight.RotationAction{
 		deathknight.RotationAction_IT,
@@ -79,7 +79,7 @@ func (deathKnight *DpsDeathKnight) setupUnholyRotations() {
 	})
 }
 
-func (deathKnight *DpsDeathKnight) UnholyDiseaseCheckWrapper(sim *core.Simulation, target *core.Unit, spell *core.Spell) bool {
+func (deathKnight *DpsDeathknight) UnholyDiseaseCheckWrapper(sim *core.Simulation, target *core.Unit, spell *core.Spell) bool {
 	success := false
 
 	if !deathKnight.TargetHasDisease(deathknight.FrostFeverAuraLabel, target) || deathKnight.FrostFeverDisease[target.Index].RemainingDuration(sim) < spell.CurCast.GCD {
@@ -129,24 +129,24 @@ func (deathKnight *DpsDeathKnight) UnholyDiseaseCheckWrapper(sim *core.Simulatio
 	return success
 }
 
-func (deathKnight *DpsDeathKnight) shouldWaitForDnD(sim *core.Simulation, blood bool, frost bool, unholy bool) bool {
+func (deathKnight *DpsDeathknight) shouldWaitForDnD(sim *core.Simulation, blood bool, frost bool, unholy bool) bool {
 	return deathKnight.Rotation.UseDeathAndDecay && !(deathKnight.Talents.Morbidity == 0 || !(deathKnight.DeathAndDecay.CD.IsReady(sim) || deathKnight.DeathAndDecay.CD.TimeToReady(sim) < 4*time.Second) || ((!blood || deathKnight.CurrentBloodRunes() > 1) && (!frost || deathKnight.CurrentFrostRunes() > 1) && (!unholy || deathKnight.CurrentUnholyRunes() > 1)))
 }
 
 var recastedFF = false
 var recastedBP = false
 
-func (deathKnight *DpsDeathKnight) shouldSpreadDisease(sim *core.Simulation) bool {
+func (deathKnight *DpsDeathknight) shouldSpreadDisease(sim *core.Simulation) bool {
 	return recastedFF && recastedBP && deathKnight.Env.GetNumTargets() > 1
 }
 
-func (deathKnight *DpsDeathKnight) spreadDiseases(sim *core.Simulation, target *core.Unit) {
+func (deathKnight *DpsDeathknight) spreadDiseases(sim *core.Simulation, target *core.Unit) {
 	deathKnight.Pestilence.Cast(sim, target)
 	recastedFF = false
 	recastedBP = false
 }
 
-func (deathKnight *DpsDeathKnight) doUnholyRotation(sim *core.Simulation, target *core.Unit) bool {
+func (deathKnight *DpsDeathknight) doUnholyRotation(sim *core.Simulation, target *core.Unit) bool {
 	casted := &deathKnight.CastSuccessful
 	// I suggest adding the a wrapper around each spell you cast like this:
 	// deathKnight.YourWrapper(sim, target, deathKnight.FrostStrike) that returns a bool for when you casted

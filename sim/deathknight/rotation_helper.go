@@ -73,7 +73,7 @@ type RotationHelper struct {
 	DoRotationEvent    DoRotationEvent
 }
 
-func (deathKnight *DeathKnight) GetRotationId() RotationID {
+func (deathKnight *Deathknight) GetRotationId() RotationID {
 	return deathKnight.opener.id
 }
 
@@ -102,7 +102,7 @@ func (r *RotationHelper) PushSequence(actions []RotationAction) {
 	r.sequence = seq
 }
 
-func (deathKnight *DeathKnight) SetupRotation() {
+func (deathKnight *Deathknight) SetupRotation() {
 	deathKnight.openers = make([]Sequence, RotationID_Count)
 
 	rotationId := RotationID_Unknown

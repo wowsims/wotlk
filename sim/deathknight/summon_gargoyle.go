@@ -7,7 +7,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (deathKnight *DeathKnight) registerSummonGargoyleCD() {
+func (deathKnight *Deathknight) registerSummonGargoyleCD() {
 	if !deathKnight.Talents.SummonGargoyle {
 		return
 	}
@@ -82,11 +82,11 @@ func (deathKnight *DeathKnight) registerSummonGargoyleCD() {
 	})
 }
 
-func (deathKnight *DeathKnight) CanSummonGargoyle(sim *core.Simulation) bool {
+func (deathKnight *Deathknight) CanSummonGargoyle(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 60.0, 0, 0, 0) && deathKnight.SummonGargoyle.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastSummonGargoyle(sim *core.Simulation, target *core.Unit) bool {
+func (deathKnight *Deathknight) CastSummonGargoyle(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanSummonGargoyle(sim) {
 		deathKnight.SummonGargoyle.Cast(sim, target)
 		return true
@@ -97,12 +97,12 @@ func (deathKnight *DeathKnight) CastSummonGargoyle(sim *core.Simulation, target 
 type GargoylePet struct {
 	core.Pet
 
-	dkOwner *DeathKnight
+	dkOwner *Deathknight
 
 	GargoyleStrike *core.Spell
 }
 
-func (deathKnight *DeathKnight) NewGargoyle() *GargoylePet {
+func (deathKnight *Deathknight) NewGargoyle() *GargoylePet {
 	gargoyle := &GargoylePet{
 		Pet: core.NewPet(
 			"Gargoyle",

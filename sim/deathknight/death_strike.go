@@ -8,7 +8,7 @@ var DeathStrikeActionID = core.ActionID{SpellID: 49924}
 var DeathStrikeMHOutcome = core.OutcomeHit
 var DeathStrikeOHOutcome = core.OutcomeHit
 
-func (deathKnight *DeathKnight) newDeathStrikeSpell(isMH bool) *core.Spell {
+func (deathKnight *Deathknight) newDeathStrikeSpell(isMH bool) *core.Spell {
 	effect := core.SpellEffect{
 		BonusCritRating:  (deathKnight.annihilationCritBonus() + deathKnight.improvedDeathStrikeCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: 1,
@@ -50,7 +50,7 @@ func (deathKnight *DeathKnight) newDeathStrikeSpell(isMH bool) *core.Spell {
 	})
 }
 
-func (deathKnight *DeathKnight) registerDeathStrikeSpell() {
+func (deathKnight *Deathknight) registerDeathStrikeSpell() {
 	deathKnight.DeathStrikeMhHit = deathKnight.newDeathStrikeSpell(true)
 	deathKnight.DeathStrikeOhHit = deathKnight.newDeathStrikeSpell(false)
 	deathKnight.DeathStrike = deathKnight.RegisterSpell(core.SpellConfig{
@@ -89,11 +89,11 @@ func (deathKnight *DeathKnight) registerDeathStrikeSpell() {
 	})
 }
 
-func (deathKnight *DeathKnight) CanDeathStrike(sim *core.Simulation) bool {
+func (deathKnight *Deathknight) CanDeathStrike(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 0, 1, 1) && deathKnight.DeathStrike.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastDeathStrike(sim *core.Simulation, target *core.Unit) bool {
+func (deathKnight *Deathknight) CastDeathStrike(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanDeathStrike(sim) {
 		deathKnight.DeathStrike.Cast(sim, target)
 		return true

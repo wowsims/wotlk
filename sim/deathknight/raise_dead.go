@@ -6,7 +6,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-func (deathKnight *DeathKnight) registerRaiseDeadCD() {
+func (deathKnight *Deathknight) registerRaiseDeadCD() {
 	// If talented as permanent pet skip this spell
 	if deathKnight.Talents.MasterOfGhouls {
 		return
@@ -46,11 +46,11 @@ func (deathKnight *DeathKnight) registerRaiseDeadCD() {
 	})
 }
 
-func (deathKnight *DeathKnight) CanRaiseDead(sim *core.Simulation) bool {
+func (deathKnight *Deathknight) CanRaiseDead(sim *core.Simulation) bool {
 	return !deathKnight.Talents.MasterOfGhouls && deathKnight.RaiseDead.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastRaiseDead(sim *core.Simulation, target *core.Unit) bool {
+func (deathKnight *Deathknight) CastRaiseDead(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanRaiseDead(sim) {
 		deathKnight.RaiseDead.Cast(sim, target)
 		return true

@@ -7,7 +7,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-func (deathKnight *DeathKnight) registerBoneShieldSpell() {
+func (deathKnight *Deathknight) registerBoneShieldSpell() {
 	if !deathKnight.Talents.BoneShield {
 		return
 	}
@@ -20,7 +20,7 @@ func (deathKnight *DeathKnight) registerBoneShieldSpell() {
 		Label:     "Bone Shield",
 		ActionID:  actionID,
 		Duration:  time.Minute * 5,
-		MaxStacks: 3 + core.TernaryInt32(deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfBoneShield), 1, 0),
+		MaxStacks: 3 + core.TernaryInt32(deathKnight.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfBoneShield), 1, 0),
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			deathKnight.BoneShieldAura.Activate(sim)
 			deathKnight.BoneShieldAura.UpdateExpires(sim.CurrentTime + time.Minute*4)
@@ -73,11 +73,11 @@ func (deathKnight *DeathKnight) registerBoneShieldSpell() {
 	})
 }
 
-func (deathKnight *DeathKnight) CanBoneShield(sim *core.Simulation) bool {
+func (deathKnight *Deathknight) CanBoneShield(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 0, 0, 1) && deathKnight.BoneShield.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastBoneShield(sim *core.Simulation, target *core.Unit) bool {
+func (deathKnight *Deathknight) CastBoneShield(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanBoneShield(sim) {
 		deathKnight.BoneShield.Cast(sim, target)
 		return true

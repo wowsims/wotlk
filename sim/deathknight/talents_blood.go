@@ -12,7 +12,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (deathKnight *DeathKnight) ApplyBloodTalents() {
+func (deathKnight *Deathknight) ApplyBloodTalents() {
 	// Butchery
 	// Pointless to Implement - RaiN: Gives you passive 1 * rank runic power per 5 seconds so it needs to be implemented
 	deathKnight.applyButchery()
@@ -79,7 +79,7 @@ func (deathKnight *DeathKnight) ApplyBloodTalents() {
 	}
 }
 
-func (deathKnight *DeathKnight) subversionThreatBonus() float64 {
+func (deathKnight *Deathknight) subversionThreatBonus() float64 {
 	threatMultiplier := 0.0
 	if deathKnight.Talents.Subversion == 1 {
 		threatMultiplier = 0.08
@@ -91,15 +91,15 @@ func (deathKnight *DeathKnight) subversionThreatBonus() float64 {
 	return threatMultiplier
 }
 
-func (deathKnight *DeathKnight) subversionCritBonus() float64 {
+func (deathKnight *Deathknight) subversionCritBonus() float64 {
 	return 3.0 * float64(deathKnight.Talents.Subversion)
 }
 
-func (deathKnight *DeathKnight) improvedDeathStrikeCritBonus() float64 {
+func (deathKnight *Deathknight) improvedDeathStrikeCritBonus() float64 {
 	return 3.0 * float64(deathKnight.Talents.ImprovedDeathStrike)
 }
 
-func (deathKnight *DeathKnight) applyBladeBarrier() {
+func (deathKnight *Deathknight) applyBladeBarrier() {
 	if deathKnight.Talents.BladeBarrier == 0 {
 		return
 	}
@@ -122,7 +122,7 @@ func (deathKnight *DeathKnight) applyBladeBarrier() {
 	})
 }
 
-func (deathKnight *DeathKnight) applyButchery() {
+func (deathKnight *Deathknight) applyButchery() {
 	if deathKnight.Talents.Butchery == 0 {
 		return
 	}

@@ -11,7 +11,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (deathKnight *DeathKnight) ApplyUnholyTalents() {
+func (deathKnight *Deathknight) ApplyUnholyTalents() {
 	// Virulence
 	deathKnight.AddStat(stats.SpellHit, core.SpellHitRatingPerHitChance*float64(deathKnight.Talents.Virulence))
 
@@ -48,23 +48,23 @@ func (deathKnight *DeathKnight) ApplyUnholyTalents() {
 	deathKnight.AddStat(stats.Expertise, float64(deathKnight.Talents.RageOfRivendare)*core.ExpertisePerQuarterPercentReduction)
 }
 
-func (deathKnight *DeathKnight) viciousStrikesCritDamageBonus() float64 {
+func (deathKnight *Deathknight) viciousStrikesCritDamageBonus() float64 {
 	return 0.15 * float64(deathKnight.Talents.ViciousStrikes)
 }
 
-func (deathKnight *DeathKnight) viciousStrikesCritChanceBonus() float64 {
+func (deathKnight *Deathknight) viciousStrikesCritChanceBonus() float64 {
 	return 3 * float64(deathKnight.Talents.ViciousStrikes)
 }
 
-func (deathKnight *DeathKnight) rageOfRivendareBonus(target *core.Unit) float64 {
+func (deathKnight *Deathknight) rageOfRivendareBonus(target *core.Unit) float64 {
 	return core.TernaryFloat64(deathKnight.TargetHasDisease(BloodPlagueAuraLabel, target), 1.0+0.02*float64(deathKnight.Talents.RageOfRivendare), 1.0)
 }
 
-func (deathKnight *DeathKnight) applyImpurity(hitEffect *core.SpellEffect, unit *core.Unit) float64 {
+func (deathKnight *Deathknight) applyImpurity(hitEffect *core.SpellEffect, unit *core.Unit) float64 {
 	return hitEffect.MeleeAttackPower(unit) * (1.0 + float64(deathKnight.Talents.Impurity)*0.04)
 }
 
-func (deathKnight *DeathKnight) applyWanderingPlague() {
+func (deathKnight *Deathknight) applyWanderingPlague() {
 	if deathKnight.Talents.WanderingPlague == 0 {
 		return
 	}
@@ -102,7 +102,7 @@ func (deathKnight *DeathKnight) applyWanderingPlague() {
 	})
 }
 
-func (deathKnight *DeathKnight) applyNecrosis() {
+func (deathKnight *Deathknight) applyNecrosis() {
 	if deathKnight.Talents.Necrosis == 0 {
 		return
 	}
@@ -143,7 +143,7 @@ func (deathKnight *DeathKnight) applyNecrosis() {
 	}))
 }
 
-func (deathKnight *DeathKnight) applyBloodCakedBlade() {
+func (deathKnight *Deathknight) applyBloodCakedBlade() {
 	if deathKnight.Talents.BloodCakedBlade == 0 {
 		return
 	}
@@ -171,7 +171,7 @@ func (deathKnight *DeathKnight) applyBloodCakedBlade() {
 	}))
 }
 
-func (deathKnight *DeathKnight) bloodCakedBladeHit(isMh bool) *core.Spell {
+func (deathKnight *Deathknight) bloodCakedBladeHit(isMh bool) *core.Spell {
 	mhBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 0, 1.0, true)
 	ohBaseDamage := core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, 1.0*deathKnight.nervesOfColdSteelBonus(), true)
 
@@ -202,7 +202,7 @@ func (deathKnight *DeathKnight) bloodCakedBladeHit(isMh bool) *core.Spell {
 	})
 }
 
-func (deathKnight *DeathKnight) applyCryptFever() {
+func (deathKnight *Deathknight) applyCryptFever() {
 	if deathKnight.Talents.CryptFever == 0 {
 		return
 	}
@@ -218,7 +218,7 @@ func (deathKnight *DeathKnight) applyCryptFever() {
 	}
 }
 
-func (deathKnight *DeathKnight) applyEbonPlaguebringer() {
+func (deathKnight *Deathknight) applyEbonPlaguebringer() {
 	if deathKnight.Talents.EbonPlaguebringer == 0 {
 		return
 	}
@@ -238,7 +238,7 @@ func (deathKnight *DeathKnight) applyEbonPlaguebringer() {
 	}
 }
 
-func (deathKnight *DeathKnight) applyDesolation() {
+func (deathKnight *Deathknight) applyDesolation() {
 	if deathKnight.Talents.Desolation == 0 {
 		return
 	}
@@ -259,7 +259,7 @@ func (deathKnight *DeathKnight) applyDesolation() {
 	})
 }
 
-func (deathKnight *DeathKnight) applyUnholyBlight() {
+func (deathKnight *Deathknight) applyUnholyBlight() {
 	actionID := core.ActionID{SpellID: 50536}
 
 	var curDamage = make([]float64, deathKnight.Env.GetNumTargets())
@@ -303,7 +303,7 @@ func (deathKnight *DeathKnight) applyUnholyBlight() {
 	}
 }
 
-func (deathKnight *DeathKnight) reapingChance() float64 {
+func (deathKnight *Deathknight) reapingChance() float64 {
 	reapingChance := 0.0
 	if deathKnight.Talents.Reaping == 1 {
 		reapingChance = 0.33
@@ -315,12 +315,12 @@ func (deathKnight *DeathKnight) reapingChance() float64 {
 	return reapingChance
 }
 
-func (deathKnight *DeathKnight) reapingWillProc(sim *core.Simulation, reapingChance float64) bool {
+func (deathKnight *Deathknight) reapingWillProc(sim *core.Simulation, reapingChance float64) bool {
 	ohWillCast := sim.RandomFloat("Reaping") <= reapingChance
 	return ohWillCast
 }
 
-func (deathKnight *DeathKnight) reapingProc(sim *core.Simulation, spell *core.Spell, runeCost core.RuneAmount) bool {
+func (deathKnight *Deathknight) reapingProc(sim *core.Simulation, spell *core.Spell, runeCost core.RuneAmount) bool {
 	if deathKnight.Talents.Reaping > 0 {
 		if runeCost.Blood > 0 {
 			reapingChance := deathKnight.reapingChance()

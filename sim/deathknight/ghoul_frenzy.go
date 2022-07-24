@@ -6,7 +6,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-func (deathKnight *DeathKnight) registerGhoulFrenzySpell() {
+func (deathKnight *Deathknight) registerGhoulFrenzySpell() {
 	if !deathKnight.Talents.GhoulFrenzy {
 		return
 	}
@@ -71,11 +71,11 @@ func (deathKnight *DeathKnight) registerGhoulFrenzySpell() {
 	})
 }
 
-func (deathKnight *DeathKnight) CanGhoulFrenzy(sim *core.Simulation) bool {
+func (deathKnight *Deathknight) CanGhoulFrenzy(sim *core.Simulation) bool {
 	return deathKnight.Talents.GhoulFrenzy && deathKnight.Ghoul.IsEnabled() && deathKnight.CastCostPossible(sim, 0.0, 0, 0, 1) && deathKnight.GhoulFrenzy.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastGhoulFrenzy(sim *core.Simulation, target *core.Unit) bool {
+func (deathKnight *Deathknight) CastGhoulFrenzy(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanGhoulFrenzy(sim) {
 		deathKnight.GhoulFrenzy.Cast(sim, target)
 		return true

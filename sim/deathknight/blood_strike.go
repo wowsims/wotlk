@@ -8,7 +8,7 @@ var BloodStrikeActionID = core.ActionID{SpellID: 49930}
 var BloodStrikeMHOutcome = core.OutcomeHit
 var BloodStrikeOHOutcome = core.OutcomeHit
 
-func (deathKnight *DeathKnight) newBloodStrikeSpell(isMH bool) *core.Spell {
+func (deathKnight *Deathknight) newBloodStrikeSpell(isMH bool) *core.Spell {
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 306.0, 0.4, true)
 	if !isMH {
 		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 306.0, 0.4*deathKnight.nervesOfColdSteelBonus(), true)
@@ -50,7 +50,7 @@ func (deathKnight *DeathKnight) newBloodStrikeSpell(isMH bool) *core.Spell {
 	})
 }
 
-func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
+func (deathKnight *Deathknight) registerBloodStrikeSpell() {
 	deathKnight.BloodStrikeMhHit = deathKnight.newBloodStrikeSpell(true)
 	deathKnight.BloodStrikeOhHit = deathKnight.newBloodStrikeSpell(false)
 
@@ -99,11 +99,11 @@ func (deathKnight *DeathKnight) registerBloodStrikeSpell() {
 	})
 }
 
-func (deathKnight *DeathKnight) CanBloodStrike(sim *core.Simulation) bool {
+func (deathKnight *Deathknight) CanBloodStrike(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 1, 0, 0) && deathKnight.BloodStrike.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastBloodStrike(sim *core.Simulation, target *core.Unit) bool {
+func (deathKnight *Deathknight) CastBloodStrike(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanBloodStrike(sim) {
 		deathKnight.BloodStrike.Cast(sim, target)
 		return true

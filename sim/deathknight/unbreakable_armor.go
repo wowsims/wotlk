@@ -7,7 +7,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (deathKnight *DeathKnight) registerUnbreakableArmorSpell() {
+func (deathKnight *Deathknight) registerUnbreakableArmorSpell() {
 	if !deathKnight.Talents.UnbreakableArmor {
 		return
 	}
@@ -54,11 +54,11 @@ func (deathKnight *DeathKnight) registerUnbreakableArmorSpell() {
 	})
 }
 
-func (deathKnight *DeathKnight) CanUnbreakableArmor(sim *core.Simulation) bool {
+func (deathKnight *Deathknight) CanUnbreakableArmor(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0, 0, 1, 0) && deathKnight.UnbreakableArmor.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastUnbreakableArmor(sim *core.Simulation, target *core.Unit) bool {
+func (deathKnight *Deathknight) CastUnbreakableArmor(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanUnbreakableArmor(sim) {
 		deathKnight.UnbreakableArmor.Cast(sim, target)
 		return true

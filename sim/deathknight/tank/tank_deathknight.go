@@ -8,13 +8,13 @@ import (
 
 func RegisterTankDeathknight() {
 	core.RegisterAgentFactory(
-		proto.Player_DeathKnightTank{},
-		proto.Spec_SpecDeathKnightTank,
+		proto.Player_TankDeathknight{},
+		proto.Spec_SpecTankDeathknight,
 		func(character core.Character, options proto.Player) core.Agent {
 			return NewTankDeathknight(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
-			playerSpec, ok := spec.(*proto.Player_DeathKnight)
+			playerSpec, ok := spec.(*proto.Player_Deathknight)
 			if !ok {
 				panic("Invalid spec value for Deathknight!")
 			}
@@ -24,17 +24,17 @@ func RegisterTankDeathknight() {
 }
 
 type TankDeathknight struct {
-	*deathknight.DeathKnight
+	*deathknight.Deathknight
 
-	Options  proto.DeathKnightTank_Options
-	Rotation proto.DeathKnightTank_Rotation
+	Options  proto.TankDeathknight_Options
+	Rotation proto.TankDeathknight_Rotation
 }
 
 func NewTankDeathknight(character core.Character, options proto.Player) *TankDeathknight {
-	dkOptions := options.GetDeathKnightTank()
+	dkOptions := options.GetTankDeathknight()
 
 	dk := &TankDeathknight{
-		DeathKnight: deathknight.NewDeathKnight(character, options),
+		Deathknight: deathknight.NewDeathknight(character, options),
 		Rotation:    *dkOptions.Rotation,
 		Options:     *dkOptions.Options,
 	}
@@ -42,14 +42,14 @@ func NewTankDeathknight(character core.Character, options proto.Player) *TankDea
 	return dk
 }
 
-func (dk *TankDeathknight) GetDeathKnight() *deathknight.DeathKnight {
-	return dk.DeathKnight
+func (dk *TankDeathknight) GetDeathknight() *deathknight.Deathknight {
+	return dk.Deathknight
 }
 
 func (dk *TankDeathknight) Initialize() {
-	dk.DeathKnight.Initialize()
+	dk.Deathknight.Initialize()
 }
 
 func (dk *TankDeathknight) Reset(sim *core.Simulation) {
-	dk.DeathKnight.Reset(sim)
+	dk.Deathknight.Reset(sim)
 }

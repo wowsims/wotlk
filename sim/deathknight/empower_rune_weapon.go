@@ -6,7 +6,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-func (deathKnight *DeathKnight) registerEmpowerRuneWeaponSpell() {
+func (deathKnight *Deathknight) registerEmpowerRuneWeaponSpell() {
 	actionID := core.ActionID{SpellID: 47568}
 	cdTimer := deathKnight.NewTimer()
 	cd := time.Minute * 5
@@ -54,11 +54,11 @@ func (deathKnight *DeathKnight) registerEmpowerRuneWeaponSpell() {
 	}
 }
 
-func (deathKnight *DeathKnight) CanEmpowerRuneWeapon(sim *core.Simulation) bool {
+func (deathKnight *Deathknight) CanEmpowerRuneWeapon(sim *core.Simulation) bool {
 	return deathKnight.EmpowerRuneWeapon.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastEmpowerRuneWeapon(sim *core.Simulation, target *core.Unit) bool {
+func (deathKnight *Deathknight) CastEmpowerRuneWeapon(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanEmpowerRuneWeapon(sim) {
 		deathKnight.EmpowerRuneWeapon.Cast(sim, target)
 		return true

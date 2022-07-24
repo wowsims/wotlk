@@ -6,7 +6,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
+func (deathKnight *Deathknight) registerHowlingBlastSpell() {
 	if !deathKnight.Talents.HowlingBlast {
 		return
 	}
@@ -77,14 +77,14 @@ func (deathKnight *DeathKnight) registerHowlingBlastSpell() {
 	})
 }
 
-func (deathKnight *DeathKnight) CanHowlingBlast(sim *core.Simulation) bool {
+func (deathKnight *Deathknight) CanHowlingBlast(sim *core.Simulation) bool {
 	if deathKnight.RimeAura.IsActive() {
 		return deathKnight.HowlingBlast.IsReady(sim)
 	}
 	return deathKnight.CastCostPossible(sim, 0.0, 0, 1, 1) && deathKnight.HowlingBlast.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastHowlingBlast(sim *core.Simulation, target *core.Unit) bool {
+func (deathKnight *Deathknight) CastHowlingBlast(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanHowlingBlast(sim) {
 		deathKnight.HowlingBlast.Cast(sim, target)
 		return true

@@ -13,7 +13,7 @@ type GhoulPet struct {
 	core.Pet
 	focusBar
 
-	dkOwner *DeathKnight
+	dkOwner *Deathknight
 
 	GhoulFrenzyAura *core.Aura
 
@@ -22,7 +22,7 @@ type GhoulPet struct {
 	uptimePercent float64
 }
 
-func (deathKnight *DeathKnight) NewArmyGhoulPet(index int) *GhoulPet {
+func (deathKnight *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
 	ghoulPet := &GhoulPet{
 		Pet: core.NewPet(
 			"Army of the Dead", //+strconv.Itoa(index),
@@ -41,7 +41,7 @@ func (deathKnight *DeathKnight) NewArmyGhoulPet(index int) *GhoulPet {
 	return ghoulPet
 }
 
-func (deathKnight *DeathKnight) NewGhoulPet(permanent bool) *GhoulPet {
+func (deathKnight *Deathknight) NewGhoulPet(permanent bool) *GhoulPet {
 	ghoulPet := &GhoulPet{
 		Pet: core.NewPet(
 			"Ghoul",
@@ -61,7 +61,7 @@ func (deathKnight *DeathKnight) NewGhoulPet(permanent bool) *GhoulPet {
 	return ghoulPet
 }
 
-func (deathKnight *DeathKnight) SetupGhoul(ghoulPet *GhoulPet) {
+func (deathKnight *Deathknight) SetupGhoul(ghoulPet *GhoulPet) {
 	ghoulPet.Pet.OnPetEnable = ghoulPet.enable
 	ghoulPet.Pet.OnPetDisable = ghoulPet.disable
 
@@ -159,10 +159,10 @@ var ghoulPetBaseStats = stats.Stats{
 	stats.MeleeCrit: (1.1515 + 1.8) * core.CritRatingPerCritChance,
 }
 
-func (deathKnight *DeathKnight) ghoulStatInheritance() core.PetStatInheritance {
+func (deathKnight *Deathknight) ghoulStatInheritance() core.PetStatInheritance {
 	ravenousDead := 1.0 + 0.2*float64(deathKnight.Talents.RavenousDead)
 	glyphBonus := 0.0
-	if deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfTheGhoul) {
+	if deathKnight.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfTheGhoul) {
 		glyphBonus = 0.4
 	}
 
@@ -180,10 +180,10 @@ func (deathKnight *DeathKnight) ghoulStatInheritance() core.PetStatInheritance {
 	}
 }
 
-func (deathKnight *DeathKnight) armyGhoulStatInheritance() core.PetStatInheritance {
+func (deathKnight *Deathknight) armyGhoulStatInheritance() core.PetStatInheritance {
 	ravenousDead := 1.0 + 0.2*float64(deathKnight.Talents.RavenousDead)
 	glyphBonus := 0.0
-	if deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfTheGhoul) {
+	if deathKnight.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfTheGhoul) {
 		glyphBonus = 0.4
 	}
 

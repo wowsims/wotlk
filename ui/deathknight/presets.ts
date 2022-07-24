@@ -7,11 +7,11 @@ import { Potions } from '/wotlk/core/proto/common.js';
 import { SavedTalents } from '/wotlk/core/proto/ui.js';
 
 import {
-	DeathKnightTalents,
-	DeathKnight_Rotation as DeathKnightRotation,
-	DeathKnight_Options as DeathKnightOptions,
-	DeathKnightMajorGlyph,
-	DeathKnightMinorGlyph,
+	DeathknightTalents,
+	Deathknight_Rotation as DeathKnightRotation,
+	Deathknight_Options as DeathKnightOptions,
+	DeathknightMajorGlyph,
+	DeathknightMinorGlyph,
 } from '/wotlk/core/proto/deathknight.js';
 
 import * as Tooltips from '/wotlk/core/constants/tooltips.js';
@@ -27,12 +27,12 @@ export const FrostTalents = {
 	data: SavedTalents.create({
 		talentsString: '23050005-32005350352203012300033101351',
 		glyphs: Glyphs.create({
-			major1: DeathKnightMajorGlyph.GlyphOfObliterate,
-			major2: DeathKnightMajorGlyph.GlyphOfFrostStrike,
-			major3: DeathKnightMajorGlyph.GlyphOfDisease,
-			minor1: DeathKnightMinorGlyph.GlyphOfHornOfWinter,
-			minor2: DeathKnightMinorGlyph.GlyphOfBloodTap,
-			minor3: DeathKnightMinorGlyph.GlyphOfRaiseDead,
+			major1: DeathknightMajorGlyph.GlyphOfObliterate,
+			major2: DeathknightMajorGlyph.GlyphOfFrostStrike,
+			major3: DeathknightMajorGlyph.GlyphOfDisease,
+			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
+			minor2: DeathknightMinorGlyph.GlyphOfBloodTap,
+			minor3: DeathknightMinorGlyph.GlyphOfRaiseDead,
 		}),
 	}),
 };
@@ -42,12 +42,12 @@ export const FrostUnholyTalents = {
 	data: SavedTalents.create({
 		talentsString: '01-32002350351203012300033101351-230200305003',
 		glyphs: Glyphs.create({
-			major1: DeathKnightMajorGlyph.GlyphOfObliterate,
-			major2: DeathKnightMajorGlyph.GlyphOfFrostStrike,
-			major3: DeathKnightMajorGlyph.GlyphOfDisease,
-			minor1: DeathKnightMinorGlyph.GlyphOfHornOfWinter,
-			minor2: DeathKnightMinorGlyph.GlyphOfPestilence,
-			minor3: DeathKnightMinorGlyph.GlyphOfRaiseDead,
+			major1: DeathknightMajorGlyph.GlyphOfObliterate,
+			major2: DeathknightMajorGlyph.GlyphOfFrostStrike,
+			major3: DeathknightMajorGlyph.GlyphOfDisease,
+			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
+			minor2: DeathknightMinorGlyph.GlyphOfPestilence,
+			minor3: DeathknightMinorGlyph.GlyphOfRaiseDead,
 		}),
 	}),
 };
@@ -57,12 +57,12 @@ export const UnholyDualWieldTalents = {
 	data: SavedTalents.create({
 		talentsString: '-320023500002-2300303350032052000150003133151',
 		glyphs: Glyphs.create({
-			major1: DeathKnightMajorGlyph.GlyphOfTheGhoul,
-			major2: DeathKnightMajorGlyph.GlyphOfDarkDeath,
-			major3: DeathKnightMajorGlyph.GlyphOfIcyTouch,
-			minor1: DeathKnightMinorGlyph.GlyphOfHornOfWinter,
-			minor2: DeathKnightMinorGlyph.GlyphOfPestilence,
-			minor3: DeathKnightMinorGlyph.GlyphOfRaiseDead,
+			major1: DeathknightMajorGlyph.GlyphOfTheGhoul,
+			major2: DeathknightMajorGlyph.GlyphOfDarkDeath,
+			major3: DeathknightMajorGlyph.GlyphOfIcyTouch,
+			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
+			minor2: DeathknightMinorGlyph.GlyphOfPestilence,
+			minor3: DeathknightMinorGlyph.GlyphOfRaiseDead,
 		}),
 	}),
 };

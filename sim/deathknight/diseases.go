@@ -12,7 +12,7 @@ import (
 const FrostFeverAuraLabel = "FrostFever-"
 const BloodPlagueAuraLabel = "BloodPlague-"
 
-func (deathKnight *DeathKnight) countActiveDiseases(target *core.Unit) int {
+func (deathKnight *Deathknight) countActiveDiseases(target *core.Unit) int {
 	count := 0
 	if deathKnight.TargetHasDisease(FrostFeverAuraLabel, target) {
 		count++
@@ -26,20 +26,20 @@ func (deathKnight *DeathKnight) countActiveDiseases(target *core.Unit) int {
 	return count
 }
 
-func (deathKnight *DeathKnight) TargetHasDisease(label string, unit *core.Unit) bool {
+func (deathKnight *Deathknight) TargetHasDisease(label string, unit *core.Unit) bool {
 	return unit.HasActiveAura(label + strconv.Itoa(int(deathKnight.Index)))
 }
 
-func (deathKnight *DeathKnight) diseaseMultiplierBonus(target *core.Unit, multiplier float64) float64 {
+func (deathKnight *Deathknight) diseaseMultiplierBonus(target *core.Unit, multiplier float64) float64 {
 	return 1.0 + float64(deathKnight.countActiveDiseases(target))*deathKnight.darkrunedBattlegearDiseaseBonus(multiplier)
 }
 
-func (deathKnight *DeathKnight) registerDiseaseDots() {
+func (deathKnight *Deathknight) registerDiseaseDots() {
 	deathKnight.registerFrostFever()
 	deathKnight.registerBloodPlague()
 }
 
-func (deathKnight *DeathKnight) registerFrostFever() {
+func (deathKnight *Deathknight) registerFrostFever() {
 	actionID := core.ActionID{SpellID: 55095}
 
 	deathKnight.FrostFeverSpell = deathKnight.RegisterSpell(core.SpellConfig{
@@ -71,7 +71,7 @@ func (deathKnight *DeathKnight) registerFrostFever() {
 
 			TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 				ProcMask:         core.ProcMaskPeriodicDamage,
-				DamageMultiplier: core.TernaryFloat64(deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfIcyTouch), 1.2, 1.0),
+				DamageMultiplier: core.TernaryFloat64(deathKnight.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfIcyTouch), 1.2, 1.0),
 				ThreatMultiplier: 1,
 				IsPeriodic:       true,
 				OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
@@ -93,7 +93,7 @@ func (deathKnight *DeathKnight) registerFrostFever() {
 	}
 }
 
-func (deathKnight *DeathKnight) registerBloodPlague() {
+func (deathKnight *Deathknight) registerBloodPlague() {
 	actionID := core.ActionID{SpellID: 55078}
 
 	deathKnight.BloodPlagueSpell = deathKnight.RegisterSpell(core.SpellConfig{
@@ -147,7 +147,7 @@ func (deathKnight *DeathKnight) registerBloodPlague() {
 	}
 }
 
-func (deathKnight *DeathKnight) doWanderingPlague(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+func (deathKnight *Deathknight) doWanderingPlague(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 	if deathKnight.Talents.WanderingPlague == 0 {
 		return
 	}

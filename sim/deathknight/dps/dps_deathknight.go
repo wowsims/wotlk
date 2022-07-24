@@ -8,13 +8,13 @@ import (
 
 func RegisterDpsDeathknight() {
 	core.RegisterAgentFactory(
-		proto.Player_DeathKnight{},
-		proto.Spec_SpecDeathKnight,
+		proto.Player_Deathknight{},
+		proto.Spec_SpecDeathknight,
 		func(character core.Character, options proto.Player) core.Agent {
 			return NewDpsDeathknight(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
-			playerSpec, ok := spec.(*proto.Player_DeathKnight)
+			playerSpec, ok := spec.(*proto.Player_Deathknight)
 			if !ok {
 				panic("Invalid spec value for Deathknight!")
 			}
@@ -23,23 +23,23 @@ func RegisterDpsDeathknight() {
 	)
 }
 
-type DpsDeathKnight struct {
-	*deathknight.DeathKnight
+type DpsDeathknight struct {
+	*deathknight.Deathknight
 
-	Rotation proto.DeathKnight_Rotation
+	Rotation proto.Deathknight_Rotation
 }
 
-func NewDpsDeathknight(character core.Character, player proto.Player) *DpsDeathKnight {
-	dk := player.GetDeathKnight()
+func NewDpsDeathknight(character core.Character, player proto.Player) *DpsDeathknight {
+	dk := player.GetDeathknight()
 
-	dpsDk := &DpsDeathKnight{
-		DeathKnight: deathknight.NewDeathKnight(character, player),
+	dpsDk := &DpsDeathknight{
+		Deathknight: deathknight.NewDeathknight(character, player),
 		Rotation:    *dk.Rotation,
 	}
 
-	dpsDk.DeathKnight.RefreshHornOfWinter = dk.Rotation.RefreshHornOfWinter
-	dpsDk.DeathKnight.UnholyPresenceOpener = dk.Rotation.UnholyPresenceOpener
-	dpsDk.DeathKnight.ArmyOfTheDeadType = dk.Rotation.ArmyOfTheDead
+	dpsDk.Deathknight.RefreshHornOfWinter = dk.Rotation.RefreshHornOfWinter
+	dpsDk.Deathknight.UnholyPresenceOpener = dk.Rotation.UnholyPresenceOpener
+	dpsDk.Deathknight.ArmyOfTheDeadType = dk.Rotation.ArmyOfTheDead
 
 	dpsDk.SetupRotationEvent = dpsDk.SetupRotations
 	dpsDk.DoRotationEvent = dpsDk.DoRotations
@@ -47,7 +47,7 @@ func NewDpsDeathknight(character core.Character, player proto.Player) *DpsDeathK
 	return dpsDk
 }
 
-func (deathKnight *DpsDeathKnight) SetupRotations() deathknight.RotationID {
+func (deathKnight *DpsDeathknight) SetupRotations() deathknight.RotationID {
 	deathKnight.setupFrostRotations()
 	deathKnight.setupUnholyRotations()
 
@@ -64,7 +64,7 @@ func (deathKnight *DpsDeathKnight) SetupRotations() deathknight.RotationID {
 		if deathKnight.Rotation.UseDeathAndDecay {
 			rotationId = deathknight.RotationID_UnholyDnd_Full
 		} else {
-			if deathKnight.Rotation.ArmyOfTheDead == proto.DeathKnight_Rotation_AsMajorCd {
+			if deathKnight.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd {
 				if deathKnight.Rotation.UnholyPresenceOpener {
 					rotationId = deathknight.RotationID_UnholySsArmyUnholyPresence_Full
 				} else {
@@ -85,7 +85,7 @@ func (deathKnight *DpsDeathKnight) SetupRotations() deathknight.RotationID {
 	return rotationId
 }
 
-func (dk *DpsDeathKnight) DoRotations(sim *core.Simulation, target *core.Unit) {
+func (dk *DpsDeathknight) DoRotations(sim *core.Simulation, target *core.Unit) {
 	rotationId := dk.GetRotationId()
 
 	if rotationId == deathknight.RotationID_FrostSubBlood_Full || rotationId == deathknight.RotationID_FrostSubUnholy_Full {
@@ -95,14 +95,14 @@ func (dk *DpsDeathKnight) DoRotations(sim *core.Simulation, target *core.Unit) {
 	}
 }
 
-func (dk *DpsDeathKnight) GetDeathKnight() *deathknight.DeathKnight {
-	return dk.DeathKnight
+func (dk *DpsDeathknight) GetDeathknight() *deathknight.Deathknight {
+	return dk.Deathknight
 }
 
-func (dk *DpsDeathKnight) Initialize() {
-	dk.DeathKnight.Initialize()
+func (dk *DpsDeathknight) Initialize() {
+	dk.Deathknight.Initialize()
 }
 
-func (dk *DpsDeathKnight) Reset(sim *core.Simulation) {
-	dk.DeathKnight.Reset(sim)
+func (dk *DpsDeathknight) Reset(sim *core.Simulation) {
+	dk.Deathknight.Reset(sim)
 }

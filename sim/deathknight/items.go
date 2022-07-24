@@ -23,11 +23,11 @@ var ItemSetScourgeborneBattlegear = core.NewItemSet(core.ItemSet{
 	},
 })
 
-func (deathKnight *DeathKnight) scourgeborneBattlegearCritBonus() float64 {
+func (deathKnight *Deathknight) scourgeborneBattlegearCritBonus() float64 {
 	return core.TernaryFloat64(deathKnight.HasSetBonus(ItemSetScourgeborneBattlegear, 2), 5.0, 0.0)
 }
 
-func (deathKnight *DeathKnight) scourgeborneBattlegearRunicPowerBonus() float64 {
+func (deathKnight *Deathknight) scourgeborneBattlegearRunicPowerBonus() float64 {
 	return core.TernaryFloat64(deathKnight.HasSetBonus(ItemSetScourgeborneBattlegear, 4), 5.0, 0.0)
 }
 
@@ -45,7 +45,7 @@ var ItemSetScourgebornePlate = core.NewItemSet(core.ItemSet{
 	},
 })
 
-func (deathKnight *DeathKnight) scourgebornePlateCritBonus() float64 {
+func (deathKnight *Deathknight) scourgebornePlateCritBonus() float64 {
 	return core.TernaryFloat64(deathKnight.HasSetBonus(ItemSetScourgebornePlate, 2), 10.0, 0.0)
 }
 
@@ -63,11 +63,11 @@ var ItemSetDarkrunedBattlegear = core.NewItemSet(core.ItemSet{
 	},
 })
 
-func (deathKnight *DeathKnight) darkrunedBattlegearCritBonus() float64 {
+func (deathKnight *Deathknight) darkrunedBattlegearCritBonus() float64 {
 	return core.TernaryFloat64(deathKnight.HasSetBonus(ItemSetDarkrunedBattlegear, 2), 8.0, 0.0)
 }
 
-func (deathKnight *DeathKnight) darkrunedBattlegearDiseaseBonus(baseMultiplier float64) float64 {
+func (deathKnight *Deathknight) darkrunedBattlegearDiseaseBonus(baseMultiplier float64) float64 {
 	return core.TernaryFloat64(deathKnight.HasSetBonus(ItemSetDarkrunedBattlegear, 4), baseMultiplier*1.2, baseMultiplier)
 }
 
@@ -101,7 +101,7 @@ var ItemSetThassariansBattlegear = core.NewItemSet(core.ItemSet{
 	},
 })
 
-func (deathKnight *DeathKnight) registerThassariansBattlegearProc() {
+func (deathKnight *Deathknight) registerThassariansBattlegearProc() {
 	procAura := deathKnight.NewTemporaryStatsAura("Unholy Might Proc", core.ActionID{SpellID: 67117}, stats.Stats{stats.Strength: 180.0}, time.Second*15)
 
 	icd := core.Cooldown{
@@ -124,7 +124,7 @@ func (deathKnight *DeathKnight) registerThassariansBattlegearProc() {
 	}))
 }
 
-func (deathKnight *DeathKnight) sigilOfAwarenessBonus(spell *core.Spell) float64 {
+func (deathKnight *Deathknight) sigilOfAwarenessBonus(spell *core.Spell) float64 {
 	if deathKnight.Equip[proto.ItemSlot_ItemSlotRanged].ID != 40207 {
 		return 0
 	}
@@ -139,15 +139,15 @@ func (deathKnight *DeathKnight) sigilOfAwarenessBonus(spell *core.Spell) float64
 	return 0
 }
 
-func (deathKnight *DeathKnight) sigilOfTheFrozenConscienceBonus() float64 {
+func (deathKnight *Deathknight) sigilOfTheFrozenConscienceBonus() float64 {
 	return core.TernaryFloat64(deathKnight.Equip[proto.ItemSlot_ItemSlotRanged].ID == 40822, 111, 0)
 }
 
-func (deathKnight *DeathKnight) sigilOfTheWildBuckBonus() float64 {
+func (deathKnight *Deathknight) sigilOfTheWildBuckBonus() float64 {
 	return core.TernaryFloat64(deathKnight.Equip[proto.ItemSlot_ItemSlotRanged].ID == 40867, 80, 0)
 }
 
-func (deathKnight *DeathKnight) sigilOfArthriticBindingBonus() float64 {
+func (deathKnight *Deathknight) sigilOfArthriticBindingBonus() float64 {
 	return core.TernaryFloat64(deathKnight.Equip[proto.ItemSlot_ItemSlotRanged].ID == 40875, 91, 0)
 }
 

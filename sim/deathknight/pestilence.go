@@ -5,7 +5,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-func (deathKnight *DeathKnight) registerPestilenceSpell() {
+func (deathKnight *Deathknight) registerPestilenceSpell() {
 
 	deathKnight.Pestilence = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 50842},
@@ -38,7 +38,7 @@ func (deathKnight *DeathKnight) registerPestilenceSpell() {
 					unitHit := spellEffect.Target
 					// Main target
 					if unitHit == deathKnight.CurrentTarget {
-						if deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfDisease) {
+						if deathKnight.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease) {
 							// Update expire instead of Apply to keep old snapshotted value
 							if deathKnight.FrostFeverDisease[unitHit.Index].IsActive() {
 								deathKnight.FrostFeverDisease[unitHit.Index].UpdateExpires(sim.CurrentTime + deathKnight.FrostFeverDisease[unitHit.Index].Duration)
@@ -77,11 +77,11 @@ func (deathKnight *DeathKnight) registerPestilenceSpell() {
 	})
 }
 
-func (deathKnight *DeathKnight) CanPestilence(sim *core.Simulation) bool {
+func (deathKnight *Deathknight) CanPestilence(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 1, 0, 0) && deathKnight.Pestilence.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastPestilence(sim *core.Simulation, target *core.Unit) bool {
+func (deathKnight *Deathknight) CastPestilence(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanPestilence(sim) {
 		deathKnight.Pestilence.Cast(sim, target)
 		return true

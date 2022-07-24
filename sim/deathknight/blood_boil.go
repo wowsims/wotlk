@@ -4,7 +4,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-func (deathKnight *DeathKnight) registerBloodBoilSpell() {
+func (deathKnight *Deathknight) registerBloodBoilSpell() {
 	deathKnight.BloodBoil = deathKnight.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 49941},
 		SpellSchool: core.SpellSchoolShadow,
@@ -51,11 +51,11 @@ func (deathKnight *DeathKnight) registerBloodBoilSpell() {
 	})
 }
 
-func (deathKnight *DeathKnight) CanBloodBoil(sim *core.Simulation) bool {
+func (deathKnight *Deathknight) CanBloodBoil(sim *core.Simulation) bool {
 	return deathKnight.CastCostPossible(sim, 0.0, 1, 0, 0) && deathKnight.BloodBoil.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastBloodBoil(sim *core.Simulation, target *core.Unit) bool {
+func (deathKnight *Deathknight) CastBloodBoil(sim *core.Simulation, target *core.Unit) bool {
 	if deathKnight.CanBloodBoil(sim) {
 		deathKnight.BloodBoil.Cast(sim, target)
 		return true
