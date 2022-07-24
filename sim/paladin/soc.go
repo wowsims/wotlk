@@ -2,7 +2,6 @@ package paladin
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -26,14 +25,13 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 	 */
 
 	baseModifiers := Multiplicative{
-		Additive{core.TernaryFloat64(paladin.HasSetBonus(ItemSetLightswornBattlegear, 4), .1, 0)},
-		Additive{0.02 * float64(paladin.Talents.TwoHandedWeaponSpecialization)},
+		Additive{paladin.getItemSetLightswornBattlegearBonus4()},
+		Additive{paladin.getTalentTwoHandedWeaponSpecializationBonus()},
 	}
 	baseMultiplier := baseModifiers.Get()
 
-	judgementModifiers := baseModifiers.Clone()
-	judgementModifiers = append(judgementModifiers,
-		Additive{core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfJudgement), 0.10, 0)},
+	judgementModifiers := append(baseModifiers.Clone(),
+		Additive{paladin.getMajorGlyphOfJudgementBonus()},
 	)
 	judgementMultiplier := judgementModifiers.Get()
 

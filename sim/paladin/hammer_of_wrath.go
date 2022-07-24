@@ -13,8 +13,8 @@ func (paladin *Paladin) registerHammerOfWrathSpell() {
 
 	baseModifiers := Multiplicative{
 		Additive{
-			core.TernaryFloat64(paladin.HasSetBonus(ItemSetLightbringerBattlegear, 4), .1, 0),
-			core.TernaryFloat64(paladin.HasSetBonus(ItemSetAegisBattlegear, 2), .1, 0),
+			paladin.getItemSetLightbringerBattlegearBonus4(),
+			paladin.getItemSetAegisBattlegearBonus2(),
 		},
 	}
 	baseMultiplier := baseModifiers.Get()

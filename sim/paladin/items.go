@@ -39,6 +39,10 @@ var ItemSetLightbringerBattlegear = core.NewItemSet(core.ItemSet{
 	},
 })
 
+func (paladin *Paladin) getItemSetLightbringerBattlegearBonus4() float64 {
+	return core.TernaryFloat64(paladin.HasSetBonus(ItemSetLightbringerBattlegear, 4), .1, 0)
+}
+
 // Tier 7 ret
 var ItemSetRedemptionBattlegear = core.NewItemSet(core.ItemSet{
 	Name: "Redemption Battlegear",
@@ -52,6 +56,10 @@ var ItemSetRedemptionBattlegear = core.NewItemSet(core.ItemSet{
 	},
 })
 
+func (paladin *Paladin) getItemSetRedemptionBattlegearBonus2() float64 {
+	return core.TernaryFloat64(paladin.HasSetBonus(ItemSetRedemptionBattlegear, 2), .1, 0)
+}
+
 // Tier 8 ret
 var ItemSetAegisBattlegear = core.NewItemSet(core.ItemSet{
 	Name: "Aegis Battlegear",
@@ -64,6 +72,10 @@ var ItemSetAegisBattlegear = core.NewItemSet(core.ItemSet{
 		},
 	},
 })
+
+func (paladin *Paladin) getItemSetAegisBattlegearBonus2() float64 {
+	return core.TernaryFloat64(paladin.HasSetBonus(ItemSetAegisBattlegear, 2), .1, 0)
+}
 
 // Tier 9 ret (Alliance)
 var ItemSetTuralyonsBattlegear = core.NewItemSet(core.ItemSet{
@@ -127,6 +139,10 @@ var ItemSetLightswornBattlegear = core.NewItemSet(core.ItemSet{
 		},
 	},
 })
+
+func (paladin *Paladin) getItemSetLightswornBattlegearBonus4() float64 {
+	return core.TernaryFloat64(paladin.HasSetBonus(ItemSetLightswornBattlegear, 4), .1, 0)
+}
 
 func init() {
 	// Librams implemented in seals.go and judgement.go
