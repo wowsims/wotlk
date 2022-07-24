@@ -207,6 +207,11 @@ func (shaman *Shaman) Initialize() {
 	if shaman.Talents.Thunderstorm {
 		shaman.Thunderstorm = shaman.newThunderstormSpell(shaman.thunderstormInRange)
 	}
+
+	if shaman.Talents.LavaLash {
+		shaman.LavaLash = shaman.newLavaLashSpell()
+	}
+
 	shaman.registerShocks()
 	shaman.registerGraceOfAirTotemSpell()
 	shaman.registerMagmaTotemSpell()
