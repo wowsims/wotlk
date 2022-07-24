@@ -42,12 +42,20 @@ func (dk *Deathknight) registerDiseaseDots() {
 func (dk *Deathknight) registerFrostFever() {
 	actionID := core.ActionID{SpellID: 55095}
 
+	applyTS := make([]bool, dk.Env.GetNumTargets())
+	isRefreshing := make([]bool, dk.Env.GetNumTargets())
+
 	dk.FrostFeverSpell = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolFrost,
 		Flags:       core.SpellFlagDisease,
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
+			if dk.FrostFeverDisease[unit.Index].IsActive() {
+				isRefreshing[unit.Index] = true
+			}
 			dk.FrostFeverDisease[unit.Index].Apply(sim)
+			isRefreshing[unit.Index] = false
+
 			dk.FrostFeverDebuffAura[unit.Index].Activate(sim)
 
 			if dk.IcyTalonsAura != nil {
@@ -65,6 +73,11 @@ func (dk *Deathknight) registerFrostFever() {
 			Aura: target.RegisterAura(core.Aura{
 				Label:    FrostFeverAuraLabel + strconv.Itoa(int(dk.Index)),
 				ActionID: actionID,
+				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+					if !isRefreshing[aura.Unit.Index] {
+						applyTS[aura.Unit.Index] = false
+					}
+				},
 			}),
 			NumberOfTicks: 5 + int(dk.Talents.Epidemic),
 			TickLength:    time.Second * 3,
@@ -79,9 +92,11 @@ func (dk *Deathknight) registerFrostFever() {
 				},
 				BaseDamage: core.BaseDamageConfig{
 					Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+						applyTsBonus := !applyTS[hitEffect.Target.Index]
+						applyTS[hitEffect.Target.Index] = true
 						return ((127.0 + 80.0*0.32) + dk.applyImpurity(hitEffect, spell.Unit)*0.055) *
-							dk.rageOfRivendareBonus(hitEffect.Target) *
-							dk.tundraStalkerBonus(hitEffect.Target)
+							core.TernaryFloat64(applyTsBonus, 1.0, dk.rageOfRivendareBonus(hitEffect.Target)*
+								dk.tundraStalkerBonus(hitEffect.Target))
 					},
 					TargetSpellCoefficient: 1,
 				},
@@ -95,6 +110,9 @@ func (dk *Deathknight) registerFrostFever() {
 
 func (dk *Deathknight) registerBloodPlague() {
 	actionID := core.ActionID{SpellID: 55078}
+
+	applyRor := make([]bool, dk.Env.GetNumTargets())
+	isRefreshing := make([]bool, dk.Env.GetNumTargets())
 
 	dk.BloodPlagueSpell = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -119,6 +137,11 @@ func (dk *Deathknight) registerBloodPlague() {
 			Aura: target.RegisterAura(core.Aura{
 				Label:    BloodPlagueAuraLabel + strconv.Itoa(int(dk.Index)),
 				ActionID: actionID,
+				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+					if !isRefreshing[aura.Unit.Index] {
+						applyRor[aura.Unit.Index] = false
+					}
+				},
 			}),
 			NumberOfTicks: 5 + int(dk.Talents.Epidemic),
 			TickLength:    time.Second * 3,
@@ -133,9 +156,11 @@ func (dk *Deathknight) registerBloodPlague() {
 				},
 				BaseDamage: core.BaseDamageConfig{
 					Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+						applyRorBonus := !applyRor[hitEffect.Target.Index]
+						applyRor[hitEffect.Target.Index] = true
 						return ((127.0 + 80.0*0.32) + dk.applyImpurity(hitEffect, spell.Unit)*0.055) *
-							dk.rageOfRivendareBonus(hitEffect.Target) *
-							dk.tundraStalkerBonus(hitEffect.Target)
+							core.TernaryFloat64(applyRorBonus, 1.0, dk.rageOfRivendareBonus(hitEffect.Target)*
+								dk.tundraStalkerBonus(hitEffect.Target))
 					},
 					TargetSpellCoefficient: 1,
 				},
