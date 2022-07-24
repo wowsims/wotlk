@@ -11,9 +11,9 @@ import (
 func (shaman *Shaman) newFireNovaSpell() *core.Spell {
 	manaCost := 0.22 * shaman.BaseMana
 
-	fireNovaGlyphCDReduction := core.TernaryDuration(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfFireNova), 3, 0)
-	impFireNovaCDReduction := time.Duration(float64(shaman.Talents.ImprovedFireNova)) * 2
-	fireNovaCooldown := time.Second * (10 - fireNovaGlyphCDReduction - impFireNovaCDReduction)
+	fireNovaGlyphCDReduction := core.TernaryInt32(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfFireNova), 3, 0)
+	impFireNovaCDReduction := shaman.Talents.ImprovedFireNova * 2
+	fireNovaCooldown := 10 - fireNovaGlyphCDReduction - impFireNovaCDReduction
 
 	return shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 61657},
@@ -29,14 +29,16 @@ func (shaman *Shaman) newFireNovaSpell() *core.Spell {
 			},
 			CD: core.Cooldown{
 				Timer:    shaman.NewTimer(),
-				Duration: fireNovaCooldown,
+				Duration: time.Second * time.Duration(fireNovaCooldown),
+			},
+			ModifyCast: func(_ *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				shaman.modifyCastClearcasting(spell, cast)
 			},
 		},
 
 		ApplyEffects: core.ApplyEffectFuncAOEDamage(shaman.Env, core.SpellEffect{
-			ProcMask:             core.ProcMaskSpellDamage,
-			BonusSpellHitRating:  float64(shaman.Talents.ElementalPrecision) * 2 * core.SpellHitRatingPerHitChance,
-			BonusSpellCritRating: float64(1.0) * 2 * core.CritRatingPerCritChance,
+			ProcMask:            core.ProcMaskSpellDamage,
+			BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * 2 * core.SpellHitRatingPerHitChance,
 
 			DamageMultiplier: 1 + float64(shaman.Talents.CallOfFlame)*0.05 + float64(shaman.Talents.ImprovedFireNova)*0.1,
 			ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
@@ -45,4 +47,8 @@ func (shaman *Shaman) newFireNovaSpell() *core.Spell {
 			OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier()),
 		}),
 	})
+}
+
+func (shaman *Shaman) IsFireNovaCastable(sim *core.Simulation) bool {
+	return shaman.FireNova.IsReady(sim) && shaman.Totems.Fire > 0
 }
