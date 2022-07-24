@@ -36,15 +36,15 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 	// Setup
 	target := ret.CurrentTarget
 
-	// gcdCD := ret.GCD.TimeToReady(sim)
 	nextSwingAt := ret.AutoAttacks.NextAttackAt()
 	isExecutePhase := sim.IsExecutePhase20()
 
 	if ret.GCD.IsReady(sim) {
 		if ret.HasSetBonus(paladin.ItemSetLightswornBattlegear, 2) {
 			// Needs 2pc t10 to be effective.
+			swingDelta := nextSwingAt - sim.CurrentTime
 
-			if nextSwingAt.Milliseconds() > 1500 {
+			if swingDelta.Milliseconds() >= 1500 {
 				switch {
 				case isExecutePhase && ret.HammerOfWrath.IsReady(sim):
 					ret.HammerOfWrath.Cast(sim, target)

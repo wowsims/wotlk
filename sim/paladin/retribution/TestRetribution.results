@@ -458,8 +458,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-LightswornBattlegear"
  value: {
-  dps: 4513.036421868613
-  tps: 3806.299614529131
+  dps: 4440.00969000948
+  tps: 3727.1902779585107
  }
 }
 dps_results: {
