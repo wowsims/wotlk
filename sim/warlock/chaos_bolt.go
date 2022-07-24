@@ -18,6 +18,9 @@ func (warlock *Warlock) registerChaosBoltSpell() {
 		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.DestructiveReach),
 		BaseDamage:           core.BaseDamageConfigMagic(1429.0, 1813.0, spellCoefficient),
 		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
+		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			spellEffect.DamageMultiplier = warlock.spellDamageMultiplierHelper(sim, spell, spellEffect)
+		},
 	}
 
 	baseCost := 0.07 * warlock.BaseMana

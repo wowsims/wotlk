@@ -93,6 +93,9 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 		OutcomeApplier:   warlock.OutcomeFuncTick(),
 		ProcMask:         core.ProcMaskSpellDamage,
 		BaseDamage:       core.BaseDamageConfigMagicNoRoll(710/5, 0.429),
+		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			spellEffect.DamageMultiplier = warlock.spellDamageMultiplierHelper(sim, spell, spellEffect)
+		},
 	}
 
 	warlock.DrainSoulDot = core.NewDot(core.Dot{

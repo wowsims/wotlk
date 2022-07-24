@@ -56,6 +56,9 @@ func (warlock *Warlock) registerCorruptionSpell() {
 				5 * core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 1, 0)),
 			OutcomeApplier:       applier,
 			IsPeriodic:           true,
+			OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				spellEffect.DamageMultiplier = warlock.spellDamageMultiplierHelper(sim, spell, spellEffect)
+			},
 		}),
 	})
 }

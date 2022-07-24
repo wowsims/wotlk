@@ -111,19 +111,12 @@ func (warlock *Warlock) applyWeaponImbue() {
 }
 
 func (warlock *Warlock) registerGlyphOfLifeTapAura() {
-	warlock.GlyphOfLifeTapAura = warlock.RegisterAura(core.Aura{
-		Label:    "Glyph Of LifeTap Aura",
-		Tag:      "Glyph Of LifeTap Aura",
-		ActionID: core.ActionID{SpellID: 63941},
-		Duration: time.Second * 40,
-		Priority: float64(warlock.GetStat(stats.Spirit)),
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			warlock.AddStatDependency(stats.Spirit, stats.SpellPower, 1.2)
-		},
-		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			warlock.AddStatDependency(stats.Spirit, stats.SpellPower, 1/1.2)
-		},
-	})
+	warlock.GlyphOfLifeTapAura = warlock.NewTemporaryStatsAura(
+		"Glyph Of LifeTap Aura", 
+		core.ActionID{SpellID: 63321}, 
+		stats.Stats{stats.Spirit: 0.2*float64(warlock.GetStat(stats.Spirit))}, 
+		time.Second*40,
+	)
 }
 
 func (warlock *Warlock) setupEmpoweredImp() {

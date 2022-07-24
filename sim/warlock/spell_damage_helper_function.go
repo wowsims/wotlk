@@ -86,13 +86,13 @@ func (warlock *Warlock) spellDamageMultiplierHelper(sim *core.Simulation, spell 
 		}
 	}
 
-	// Execute Multipliers
-	if sim.IsExecutePhase20() && spell == warlock.DrainSoul {
-		executeDamageMultiplier *= 4
-	}
-	if sim.IsExecutePhase35() && spell.SpellSchool == core.SpellSchoolShadow {
-		executeDamageMultiplier+= 0.04*float64(warlock.Talents.DeathsEmbrace)
-	}
+	// // Execute Multipliers
+	// if sim.IsExecutePhase20() && spell == warlock.DrainSoul {
+	// 	executeDamageMultiplier *= 4
+	// }
+	// if sim.IsExecutePhase35() && spell.SpellSchool == core.SpellSchoolShadow {
+	// 	executeDamageMultiplier+= 0.04*float64(warlock.Talents.DeathsEmbrace)
+	// }
 
 	// Normal Multipliers
 	afflictionSpellNumber := core.TernaryFloat64(warlock.DrainSoulDot.IsActive(), 1, 0) + //core.TernaryFloat64(warlock.ConflagrateDot.IsActive(), 1, 0) +

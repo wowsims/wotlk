@@ -25,6 +25,9 @@ func (warlock *Warlock) registerImmolateSpell() {
 		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
 		OnSpellHitDealt:      applyDotOnLanded(&warlock.ImmolateDot),
 		ProcMask:             core.ProcMaskSpellDamage,
+		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			spellEffect.DamageMultiplier = warlock.spellDamageMultiplierHelper(sim, spell, spellEffect)
+		},
 	}
 
 	warlock.Immolate = warlock.RegisterSpell(core.SpellConfig{
@@ -69,6 +72,9 @@ func (warlock *Warlock) registerImmolateSpell() {
 			OutcomeApplier:   applier,
 			IsPeriodic:       true,
 			ProcMask:         core.ProcMaskPeriodicDamage,
+			OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				spellEffect.DamageMultiplier = warlock.spellDamageMultiplierHelper(sim, spell, spellEffect)
+			},
 		}),
 	})
 }

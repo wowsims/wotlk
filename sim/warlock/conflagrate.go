@@ -28,10 +28,13 @@ func (warlock *Warlock) registerConflagrateSpell() {
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
 		BonusSpellCritRating: 5*(core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) + float64(warlock.Talents.FireAndBrimstone))*core.CritRatingPerCritChance,
-		DamageMultiplier: 0.6,
-		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
-		BaseDamage:       core.BaseDamageConfigMagicNoRoll(785, spellCoefficient*5),
-		OutcomeApplier:   warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
+		DamageMultiplier: 	  0.6,
+		ThreatMultiplier: 	  1 - 0.1*float64(warlock.Talents.DestructiveReach),
+		BaseDamage:       	  core.BaseDamageConfigMagicNoRoll(785, spellCoefficient*5),
+		OutcomeApplier:   	  warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
+		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			spellEffect.DamageMultiplier = 0.6 * warlock.spellDamageMultiplierHelper(sim, spell, spellEffect)
+		},
 		OnSpellHitDealt:  applyDotOnLanded(&warlock.ConflagrateDot),
 	}
 
@@ -76,6 +79,9 @@ func (warlock *Warlock) registerConflagrateSpell() {
 			OutcomeApplier:   warlock.OutcomeFuncTick(),
 			IsPeriodic:       true,
 			ProcMask:         core.ProcMaskPeriodicDamage,
+			OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				spellEffect.DamageMultiplier = 0.4/3 * warlock.spellDamageMultiplierHelper(sim, spell, spellEffect)
+			},
 		}),
 	})
 }

@@ -122,6 +122,9 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 		OutcomeApplier:   warlock.OutcomeFuncTick(),
 		IsPeriodic:       true,
 		ProcMask:         core.ProcMaskPeriodicDamage,
+		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			spellEffect.DamageMultiplier = warlock.spellDamageMultiplierHelper(sim, spell, spellEffect)
+		},
 	}
 	warlock.CurseOfAgony = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -170,6 +173,9 @@ func (warlock *Warlock) registerCurseOfDoomSpell() {
 		OutcomeApplier:   warlock.OutcomeFuncMagicCrit(warlock.DefaultSpellCritMultiplier()),
 		IsPeriodic:       true,
 		ProcMask:         core.ProcMaskPeriodicDamage,
+		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			spellEffect.DamageMultiplier = warlock.spellDamageMultiplierHelper(sim, spell, spellEffect)
+		},
 	}
 
 	warlock.CurseOfDoom = warlock.RegisterSpell(core.SpellConfig{

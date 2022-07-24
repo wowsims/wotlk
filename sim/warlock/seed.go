@@ -31,11 +31,14 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 
 	baseSeedExplosionEffect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
-		DamageMultiplier:     1 + 0.01*float64(warlock.Talents.Contagion),
+		DamageMultiplier:     1,
 		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 		BaseDamage:           core.BaseDamageConfigMagic(1633+flatBonus, 1897+flatBonus, 0.2129),
 		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.DefaultSpellCritMultiplier()),
 		BonusSpellCritRating: float64(warlock.Talents.ImprovedCorruption) * core.CritRatingPerCritChance,
+		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			spellEffect.DamageMultiplier = warlock.spellDamageMultiplierHelper(sim, spell, spellEffect)
+		},
 	}
 
 	// Use a custom aoe effect list that does not include the seeded target.
@@ -128,6 +131,9 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(1518/6, 0.25),
 			OutcomeApplier:   warlock.OutcomeFuncTick(),
 			IsPeriodic:       true,
+			OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				spellEffect.DamageMultiplier = warlock.spellDamageMultiplierHelper(sim, spell, spellEffect)
+			},
 		}),
 	})
 }

@@ -27,8 +27,19 @@ var ItemSetVoidheartRaiment = core.NewItemSet(core.ItemSet{
 		2: func(agent core.Agent) {
 			warlock := agent.(WarlockAgent).GetWarlock()
 
-			shadowBonus := warlock.NewTemporaryStatsAura("Shadowflame", core.ActionID{SpellID: 37377}, stats.Stats{stats.ShadowSpellPower: 135}, time.Second*15)
-			fireBonus := warlock.NewTemporaryStatsAura("Shadowflame Hellfire", core.ActionID{SpellID: 39437}, stats.Stats{stats.ShadowSpellPower: 135}, time.Second*15)
+			shadowBonus := warlock.NewTemporaryStatsAura(
+				"Shadowflame", 
+				core.ActionID{SpellID: 37377}, 
+				stats.Stats{stats.ShadowSpellPower: 135}, 
+				time.Second*15,
+			)
+
+			fireBonus := warlock.NewTemporaryStatsAura(
+				"Shadowflame Hellfire", 
+				core.ActionID{SpellID: 39437}, 
+				stats.Stats{stats.ShadowSpellPower: 135}, 
+				time.Second*15,
+			)
 
 			warlock.RegisterAura(core.Aura{
 				Label:    "Voidheart Raiment 2pc",
@@ -127,7 +138,12 @@ var ItemSetPlagueheartGarb = core.NewItemSet(core.ItemSet{
 		4: func(agent core.Agent) {
 			warlock := agent.(WarlockAgent).GetWarlock()
 
-			SpiritsoftheDamnedAura := warlock.NewTemporaryStatsAura("Spirits of the Damned", core.ActionID{SpellID: 61082}, stats.Stats{stats.Spirit: 300}, time.Second*10)
+			SpiritsoftheDamnedAura := warlock.NewTemporaryStatsAura(
+				"Spirits of the Damned", 
+				core.ActionID{SpellID: 61082}, 
+				stats.Stats{stats.Spirit: 300}, 
+				time.Second*10,
+			)
 
 			warlock.RegisterAura(core.Aura{
 				Label:    "4pT7 Hidden Aura",
