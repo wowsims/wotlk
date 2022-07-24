@@ -30,8 +30,7 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 	}
 	baseMultiplier := baseModifiers.Get()
 
-	judgementModifiers := baseModifiers.Clone()
-	judgementModifiers = append(judgementModifiers,
+	judgementModifiers := append(baseModifiers.Clone(),
 		Additive{paladin.getMajorGlyphOfJudgementBonus()},
 	)
 	judgementMultiplier := judgementModifiers.Get()
