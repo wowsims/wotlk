@@ -1067,13 +1067,13 @@ export declare enum Spec {
      */
     SpecProtectionWarrior = 11,
     /**
-     * @generated from protobuf enum value: SpecDeathKnight = 15;
+     * @generated from protobuf enum value: SpecDeathknight = 15;
      */
-    SpecDeathKnight = 15,
+    SpecDeathknight = 15,
     /**
-     * @generated from protobuf enum value: SpecDeathKnightTank = 16;
+     * @generated from protobuf enum value: SpecTankDeathknight = 16;
      */
-    SpecDeathKnightTank = 16
+    SpecTankDeathknight = 16
 }
 /**
  * @generated from protobuf enum proto.Race
@@ -1199,9 +1199,9 @@ export declare enum Class {
      */
     ClassWarrior = 9,
     /**
-     * @generated from protobuf enum value: ClassDeathKnight = 10;
+     * @generated from protobuf enum value: ClassDeathknight = 10;
      */
-    ClassDeathKnight = 10
+    ClassDeathknight = 10
 }
 /**
  * @generated from protobuf enum proto.Profession

@@ -26,8 +26,8 @@ export const simLaunchStatuses = {
     [Spec.SpecWarrior]: LaunchStatus.Unlaunched,
     [Spec.SpecProtectionWarrior]: LaunchStatus.Unlaunched,
     [Spec.SpecSmitePriest]: LaunchStatus.Unlaunched,
-    [Spec.SpecDeathKnight]: LaunchStatus.Unlaunched,
-    [Spec.SpecDeathKnightTank]: LaunchStatus.Unlaunched,
+    [Spec.SpecDeathknight]: LaunchStatus.Unlaunched,
+    [Spec.SpecTankDeathknight]: LaunchStatus.Unlaunched,
 };
 export function getLaunchedSims() {
     return Object.keys(simLaunchStatuses)

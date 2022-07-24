@@ -9,15 +9,15 @@ import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
 import * as OtherInputs from '/wotlk/core/components/other_inputs.js';
 import * as DeathKnightInputs from './inputs.js';
 import * as Presets from './presets.js';
-export class DeathKnightSimUI extends IndividualSimUI {
+export class DeathknightSimUI extends IndividualSimUI {
     constructor(parentElem, player) {
         super(parentElem, player, {
             cssClass: 'deathknight-sim-ui',
             // List any known bugs / issues here and they'll be shown on the site.
             knownIssues: [
                 "<p>Rotation logic is just hit things on CGD. It is not good don't take it as actual data.</p>\
-				<p>Dynamic % multipliers to stat buffs snapshot at aura gain and don't dynamically update for now.</p>\
-				<p>Damage multipliers are also likely to not be properly stacking until further beta testing.</p>"
+				<p>Damage multipliers are also likely to not be properly stacking until further beta testing.</p>\
+				<p>Pet scaling is likely to not be properly working until further beta testing.</p>"
             ],
             // All stats for which EP should be calculated.
             epStats: [
