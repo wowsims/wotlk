@@ -1,6 +1,7 @@
 package deathknight
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -134,6 +135,9 @@ func (ghoulPet *GhoulPet) enable(sim *core.Simulation) {
 	// Snapshot extra % speed modifiers from dk owner
 	if !ghoulPet.PermanentPet {
 		ghoulPet.PseudoStats.MeleeSpeedMultiplier = ghoulPet.dkOwner.PseudoStats.MeleeSpeedMultiplier
+		if sim.Log != nil {
+			sim.Log("Scaling pet to " + strconv.FormatFloat(ghoulPet.PseudoStats.MeleeSpeedMultiplier, 'f', 3, 64))
+		}
 	}
 }
 

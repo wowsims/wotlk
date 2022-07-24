@@ -90,8 +90,7 @@ func (dk *DpsDeathKnight) DoRotations(sim *core.Simulation, target *core.Unit) {
 
 	if rotationId == deathknight.RotationID_FrostSubBlood_Full || rotationId == deathknight.RotationID_FrostSubUnholy_Full {
 		dk.doFrostRotation(sim, target)
-	} else if rotationId == deathknight.RotationID_UnholySsUnholyPresence_Full || rotationId == deathknight.RotationID_UnholySsArmyUnholyPresence_Full ||
-		rotationId == deathknight.RotationID_UnholySsBloodPresence_Full || rotationId == deathknight.RotationID_UnholySsArmyBloodPresence_Full {
+	} else {
 		dk.doUnholyRotation(sim, target)
 	}
 }

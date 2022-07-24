@@ -61,6 +61,7 @@ func (deathKnight *DeathKnight) registerDeathAndDecaySpell() {
 			deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 
 			deathKnight.DeathAndDecayDot.Apply(sim)
+			deathKnight.DeathAndDecayDot.TickOnce()
 		},
 	})
 

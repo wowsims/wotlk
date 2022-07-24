@@ -62,6 +62,21 @@ func (deathKnight *DpsDeathKnight) setupUnholyRotations() {
 		deathknight.RotationAction_BP,
 		deathknight.RotationAction_SS,
 	})
+
+	deathKnight.DefineOpener(deathknight.RotationID_UnholyDnd_Full, []deathknight.RotationAction{
+		deathknight.RotationAction_IT,
+		deathknight.RotationAction_PS,
+		deathknight.RotationAction_BS,
+		deathknight.RotationAction_DND,
+		deathknight.RotationAction_BT,
+		deathknight.RotationAction_UP,
+		deathknight.RotationAction_Garg,
+		deathknight.RotationAction_ERW,
+		deathknight.RotationAction_BP,
+		deathknight.RotationAction_SS,
+		deathknight.RotationAction_BS,
+		deathknight.RotationAction_SS,
+	})
 }
 
 func (deathKnight *DpsDeathKnight) UnholyDiseaseCheckWrapper(sim *core.Simulation, target *core.Unit, spell *core.Spell) bool {
