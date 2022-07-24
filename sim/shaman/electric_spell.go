@@ -18,6 +18,8 @@ const (
 	TotemOfTheVoid           = 28248
 	TotemOfRage              = 22395
 	TotemOfHex               = 40267
+	VentureCoLightningRod    = 38361
+	ThunderfallTotem         = 45255
 )
 
 const (
