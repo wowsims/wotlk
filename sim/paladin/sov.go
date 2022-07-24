@@ -41,16 +41,16 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 
 	baseModifiers := Multiplicative{
 		Additive{
-			core.TernaryFloat64(paladin.HasSetBonus(ItemSetLightswornBattlegear, 4), .1, 0),
-			0.03 * float64(paladin.Talents.SealsOfThePure),
+			paladin.getItemSetLightswornBattlegearBonus4(),
+			paladin.getTalentSealsOfThePureBonus(),
 		},
-		Additive{0.02 * float64(paladin.Talents.TwoHandedWeaponSpecialization)},
+		Additive{paladin.getTalentTwoHandedWeaponSpecializationBonus()},
 	}
 	baseMultiplier := baseModifiers.Get()
 
 	judgementModifiers := baseModifiers.Clone()
 	judgementModifiers = append(judgementModifiers,
-		Additive{core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfJudgement), 0.10, 0)},
+		Additive{paladin.getMajorGlyphOfJudgementBonus()},
 	)
 	judgementMultiplier := judgementModifiers.Get()
 
