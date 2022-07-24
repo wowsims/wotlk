@@ -162,7 +162,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 				sim.GetRemainingDuration() > warlock.UnstableAffDot.Duration {
 				// Keep UA up
 				spell = warlock.UnstableAff
-			} else if warlock.Talents.Haunt && specSpell == proto.Warlock_Rotation_Haunt && warlock.Haunt.CD.IsReady(sim) && 2*sim.GetRemainingDuration() > warlock.HauntAura.Duration && warlock.CorruptionDot.IsActive() {
+			} else if warlock.Talents.Haunt && warlock.Haunt.CD.IsReady(sim) && 2*sim.GetRemainingDuration() > warlock.HauntAura.Duration && warlock.CorruptionDot.IsActive() {
 				// Keep Haunt up
 				spell = warlock.Haunt
 			} else if sim.IsExecutePhase20() {
@@ -179,7 +179,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			// ------------------------------------------
 			if !warlock.CorruptionDot.IsActive() {
 				spell = warlock.Corruption
-			} else if secondaryDot == proto.Warlock_Rotation_Immolate && (!warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime) {
+			} else if (!warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime) {
 				spell = warlock.Immolate
 			} else if warlock.DecimationAura.IsActive() {
 				spell = warlock.SoulFire
@@ -197,14 +197,17 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 				spell = warlock.Conflagrate
 			} else if !warlock.CorruptionDot.IsActive() {
 				spell = warlock.Corruption
-			} else if secondaryDot == proto.Warlock_Rotation_Immolate && (!warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime) {
+			} else if (!warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime) {
 				spell = warlock.Immolate
-			} else if warlock.Talents.ChaosBolt && specSpell == proto.Warlock_Rotation_ChaosBolt && warlock.ChaosBolt.CD.IsReady(sim) {
+			} else if warlock.Talents.ChaosBolt && warlock.ChaosBolt.CD.IsReady(sim) {
 				spell = warlock.ChaosBolt
 			} else {
 				spell = warlock.Incinerate
 			}
 		}
+	} else {
+		preset = proto.Warlock_Rotation_Manual
+		warlock.Rotation.Preset = proto.Warlock_Rotation_Manual
 	}
 
 	// ------------------------------------------
