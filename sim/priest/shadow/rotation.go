@@ -421,7 +421,7 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		}
 
 		// if chosen wait time is > 0.3*GCD (this was optimized in private sim, but might want to reoptimize with procs/ect) then check if it's more dps to to add a mf sequence
-		if bestIdx != 4 && float64(CurrentWait.Seconds()) > 0.3*float64(gcd.Seconds()) {
+		if bestIdx != 4 && float64(CurrentWait.Seconds()) > 0.4*float64(gcd.Seconds()) {
 
 			if bestIdx == 2 { // MB VT DP SWD
 				cd_dpso = vt_dmg
