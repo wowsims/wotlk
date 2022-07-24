@@ -13,7 +13,11 @@ func (paladin *Paladin) registerExorcismSpell() {
 	baseCost := paladin.BaseMana * 0.08
 
 	baseModifiers := Modifiers{
-		{0.05 * float64(paladin.Talents.SanctityOfBattle), core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfExorcism), 0.20, 0)},
+		{
+			0.05 * float64(paladin.Talents.SanctityOfBattle),
+			core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfExorcism), 0.20, 0),
+			core.TernaryFloat64(paladin.HasSetBonus(ItemSetAegisBattlegear, 2), .1, 0),
+		},
 	}
 	baseMultiplier := baseModifiers.Get()
 
@@ -68,8 +72,4 @@ func (paladin *Paladin) registerExorcismSpell() {
 			OutcomeApplier: paladin.OutcomeFuncMagicHitAndCrit(paladin.SpellCritMultiplier()),
 		}),
 	})
-}
-
-func (paladin *Paladin) CanExorcism(target *core.Unit) bool {
-	return target.MobType == proto.MobType_MobTypeUndead || target.MobType == proto.MobType_MobTypeDemon
 }

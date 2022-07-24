@@ -1,5 +1,9 @@
 package deathknight
 
+import (
+	"github.com/wowsims/wotlk/sim/core"
+)
+
 type RotationAction uint8
 
 // Add your UH rotation Actions here and then on the DoNext function
@@ -18,6 +22,15 @@ const (
 	RotationAction_ERW
 	RotationAction_HB_Ghoul_RimeCheck
 	RotationAction_PrioMode
+	RotationAction_SS
+	RotationAction_DND
+	RotationAction_GF
+	RotationAction_DC
+	RotationAction_Garg
+	RotationAction_AOTD
+	RotationAction_BP
+	RotationAction_FP
+	RotationAction_UP
 )
 
 type RotationID uint8
@@ -26,7 +39,12 @@ const (
 	RotationID_Default RotationID = iota
 	RotationID_FrostSubBlood_Full
 	RotationID_FrostSubUnholy_Full
-	RotationID_Unholy_Full
+
+	RotationID_UnholySsUnholyPresence_Full
+	RotationID_UnholySsArmyUnholyPresence_Full
+	RotationID_UnholySsBloodPresence_Full
+	RotationID_UnholySsArmyBloodPresence_Full
+	RotationID_UnholyDnd_Full
 	RotationID_Count
 	RotationID_Unknown
 )
@@ -38,15 +56,25 @@ type Sequence struct {
 	actions    []RotationAction
 }
 
+type SetupRotationEvent func() RotationID
+type DoRotationEvent func(sim *core.Simulation, target *core.Unit)
+
 type RotationHelper struct {
-	onOpener bool
 	opener   *Sequence
 	openers  []Sequence
+	onOpener bool
 
 	sequence *Sequence
 
-	castSuccessful     bool
+	CastSuccessful     bool
 	justCastPestilence bool
+
+	SetupRotationEvent SetupRotationEvent
+	DoRotationEvent    DoRotationEvent
+}
+
+func (deathKnight *DeathKnight) GetRotationId() RotationID {
+	return deathKnight.opener.id
 }
 
 func TernaryRotationAction(condition bool, t RotationAction, f RotationAction) RotationAction {
@@ -77,20 +105,11 @@ func (r *RotationHelper) PushSequence(actions []RotationAction) {
 func (deathKnight *DeathKnight) SetupRotation() {
 	deathKnight.openers = make([]Sequence, RotationID_Count)
 
-	deathKnight.setupFrostRotations()
-	deathKnight.setupUnholyRotations()
-
-	// IMPORTANT
 	rotationId := RotationID_Unknown
-	// Also you need to update this to however you define spec
-	if deathKnight.Talents.DarkConviction > 0 && deathKnight.Talents.HowlingBlast {
-		rotationId = RotationID_FrostSubBlood_Full
-	} else if deathKnight.Talents.BloodCakedBlade > 0 && deathKnight.Talents.HowlingBlast {
-		rotationId = RotationID_FrostSubUnholy_Full
-	} else if deathKnight.Talents.SummonGargoyle {
-		rotationId = RotationID_Unholy_Full
+	if deathKnight.SetupRotationEvent != nil {
+		rotationId = deathKnight.SetupRotationEvent()
 	} else {
-		rotationId = RotationID_Default
+		panic("Missing SetupRotationEvent. Please assign during spec creation")
 	}
 
 	deathKnight.opener = &deathKnight.openers[rotationId]

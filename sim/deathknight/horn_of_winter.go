@@ -20,7 +20,7 @@ func (deathKnight *DeathKnight) registerHornOfWinterSpell() {
 		ActionID: actionID,
 		Duration: duration,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-			if deathKnight.Options.PrecastHornOfWinter && deathKnight.Rotation.RefreshHornOfWinter {
+			if deathKnight.Options.PrecastHornOfWinter && deathKnight.RefreshHornOfWinter {
 				if aura.IsActive() {
 					aura.Deactivate(sim)
 					aura.Activate(sim)
@@ -58,7 +58,7 @@ func (deathKnight *DeathKnight) registerHornOfWinterSpell() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			if deathKnight.Rotation.RefreshHornOfWinter {
+			if deathKnight.RefreshHornOfWinter {
 				deathKnight.HornOfWinterAura.Activate(sim)
 				deathKnight.HornOfWinterAura.Prioritize()
 			}
@@ -74,7 +74,7 @@ func (deathKnight *DeathKnight) CanHornOfWinter(sim *core.Simulation) bool {
 }
 
 func (deathKnight *DeathKnight) ShouldHornOfWinter(sim *core.Simulation) bool {
-	return deathKnight.Rotation.RefreshHornOfWinter && deathKnight.HornOfWinter.IsReady(sim) && !deathKnight.HornOfWinterAura.IsActive()
+	return deathKnight.RefreshHornOfWinter && deathKnight.HornOfWinter.IsReady(sim) && !deathKnight.HornOfWinterAura.IsActive()
 }
 
 func (deathKnight *DeathKnight) CastHornOfWinter(sim *core.Simulation, target *core.Unit) bool {

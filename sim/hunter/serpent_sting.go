@@ -72,10 +72,17 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 
 	if hunter.Talents.NoxiousStings > 0 {
 		multiplier := 1 + 0.01*float64(hunter.Talents.NoxiousStings)
+
+		// Preserve original Gain/Expire functions so that DoT effect ticks.
+		originalGain := hunter.SerpentStingDot.Aura.OnGain
+		originalExpire := hunter.SerpentStingDot.Aura.OnExpire
+
 		hunter.SerpentStingDot.Aura.OnGain = func(aura *core.Aura, sim *core.Simulation) {
+			originalGain(aura, sim)
 			hunter.AttackTables[aura.Unit.TableIndex].DamageDealtMultiplier *= multiplier
 		}
 		hunter.SerpentStingDot.Aura.OnExpire = func(aura *core.Aura, sim *core.Simulation) {
+			originalExpire(aura, sim)
 			hunter.AttackTables[aura.Unit.TableIndex].DamageDealtMultiplier /= multiplier
 		}
 	}

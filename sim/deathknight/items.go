@@ -133,9 +133,9 @@ func (deathKnight *DeathKnight) sigilOfAwarenessBonus(spell *core.Spell) float64
 		return 336
 	} else if spell == deathKnight.ScourgeStrike {
 		return 189
-	} // else if spell == deathKnight.DeathStrike {
-	// 	return 315
-	// }
+	} else if spell == deathKnight.DeathStrike {
+		return 315
+	}
 	return 0
 }
 

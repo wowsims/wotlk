@@ -1,4 +1,4 @@
-package deathknight
+package dps
 
 import (
 	"github.com/wowsims/wotlk/sim/core/items"

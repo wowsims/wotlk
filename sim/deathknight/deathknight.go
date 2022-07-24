@@ -10,9 +10,13 @@ import (
 
 type DeathKnight struct {
 	core.Character
-	Talents  proto.DeathKnightTalents
-	Options  proto.DeathKnight_Options
-	Rotation proto.DeathKnight_Rotation
+	Talents proto.DeathKnightTalents
+	Options proto.DeathKnight_Options
+
+	// Rotation Vars
+	RefreshHornOfWinter  bool
+	UnholyPresenceOpener bool
+	ArmyOfTheDeadType    proto.DeathKnight_Rotation_ArmyOfTheDead
 
 	LastCastOutcome core.HitOutcome
 	RotationHelper
@@ -35,6 +39,10 @@ type DeathKnight struct {
 	PlagueStrike      *core.Spell
 	PlagueStrikeMhHit *core.Spell
 	PlagueStrikeOhHit *core.Spell
+
+	DeathStrike      *core.Spell
+	DeathStrikeMhHit *core.Spell
+	DeathStrikeOhHit *core.Spell
 
 	Obliterate      *core.Spell
 	ObliterateMhHit *core.Spell
@@ -66,9 +74,10 @@ type DeathKnight struct {
 	OtherRelevantStrAgiActive bool
 	HornOfWinter              *core.Spell
 	HornOfWinterAura          *core.Aura
-	//ArmyOfTheDead    *core.Spell
 
 	// "CDs"
+	RuneTap *core.Spell
+
 	BloodTap     *core.Spell
 	BloodTapAura *core.Aura
 
@@ -97,17 +106,18 @@ type DeathKnight struct {
 	BloodCakedBladeAura *core.Aura
 	ButcheryAura        *core.Aura
 	RimeAura            *core.Aura
+	BladeBarrierAura    *core.Aura
 
 	// Talent Spells
 	LastDiseaseDamage float64
 	WanderingPlague   *core.Spell
 
 	// Presences
-	BloodPressence     *core.Spell
+	BloodPresence      *core.Spell
 	BloodPresenceAura  *core.Aura
-	FrostPressence     *core.Spell
+	FrostPresence      *core.Spell
 	FrostPresenceAura  *core.Aura
-	UnholyPressence    *core.Spell
+	UnholyPresence     *core.Spell
 	UnholyPresenceAura *core.Aura
 
 	// Debuffs
@@ -141,7 +151,7 @@ func (deathKnight *DeathKnight) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 		raidBuffs.IcyTalons = true
 	}
 
-	raidBuffs.HornOfWinter = !deathKnight.Rotation.RefreshHornOfWinter
+	raidBuffs.HornOfWinter = !deathKnight.RefreshHornOfWinter
 
 	if raidBuffs.StrengthOfEarthTotem == proto.TristateEffect_TristateEffectImproved ||
 		raidBuffs.StrengthOfEarthTotem == proto.TristateEffect_TristateEffectRegular {
@@ -177,6 +187,7 @@ func (deathKnight *DeathKnight) Initialize() {
 	deathKnight.registerHornOfWinterSpell()
 	deathKnight.registerPestilenceSpell()
 	deathKnight.registerEmpowerRuneWeaponSpell()
+	deathKnight.registerRuneTapSpell()
 
 	deathKnight.registerRaiseDeadCD()
 	deathKnight.registerSummonGargoyleCD()
@@ -186,9 +197,7 @@ func (deathKnight *DeathKnight) Initialize() {
 }
 
 func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
-	deathKnight.ResetRunicPowerBar(sim)
-
-	if deathKnight.Rotation.UnholyPresenceOpener {
+	if deathKnight.UnholyPresenceOpener {
 		deathKnight.UnholyPresenceAura.Activate(sim)
 		deathKnight.Presence = UnholyPresence
 	} else {
@@ -196,7 +205,7 @@ func (deathKnight *DeathKnight) Reset(sim *core.Simulation) {
 		deathKnight.Presence = BloodPresence
 	}
 
-	if deathKnight.Rotation.ArmyOfTheDead == proto.DeathKnight_Rotation_PreCast {
+	if deathKnight.ArmyOfTheDeadType == proto.DeathKnight_Rotation_PreCast {
 		deathKnight.PrecastArmyOfTheDead(sim)
 	}
 
@@ -221,7 +230,6 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 		Character: character,
 		Talents:   *deathKnightOptions.Talents,
 		Options:   *deathKnightOptions.Options,
-		Rotation:  *deathKnightOptions.Rotation,
 
 		additiveDamageModifier: 1,
 	}
@@ -230,6 +238,7 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 	currentRunicPower := math.Min(maxRunicPower, deathKnightOptions.Options.StartingRunicPower+core.TernaryFloat64(deathKnightOptions.Options.PrecastHornOfWinter, 10.0, 0.0))
 
 	deathKnight.EnableRunicPowerBar(
+		deathKnight.Talents.BladeBarrier > 0,
 		currentRunicPower,
 		maxRunicPower,
 		func(sim *core.Simulation) {
@@ -283,6 +292,8 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 	deathKnight.AddStatDependency(stats.Agility, stats.Dodge, 1.0+(core.DodgeRatingPerDodgeChance/84.74576271))
 	deathKnight.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
 
+	deathKnight.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
+
 	deathKnight.Ghoul = deathKnight.NewGhoulPet(deathKnight.Talents.MasterOfGhouls)
 	if deathKnight.Talents.SummonGargoyle {
 		deathKnight.Gargoyle = deathKnight.NewGargoyle()
@@ -296,23 +307,6 @@ func NewDeathKnight(character core.Character, options proto.Player) *DeathKnight
 	return deathKnight
 }
 
-func RegisterDeathKnight() {
-	core.RegisterAgentFactory(
-		proto.Player_DeathKnight{},
-		proto.Spec_SpecDeathKnight,
-		func(character core.Character, options proto.Player) core.Agent {
-			return NewDeathKnight(character, options)
-		},
-		func(player *proto.Player, spec interface{}) {
-			playerSpec, ok := spec.(*proto.Player_DeathKnight)
-			if !ok {
-				panic("Invalid spec value for DeathKnight!")
-			}
-			player.Spec = playerSpec
-		},
-	)
-}
-
 func (deathKnight *DeathKnight) AllDiseasesAreActive(target *core.Unit) bool {
 	return deathKnight.FrostFeverDisease[target.Index].IsActive() && deathKnight.BloodPlagueDisease[target.Index].IsActive()
 }
@@ -321,10 +315,13 @@ func (deathKnight *DeathKnight) DiseasesAreActive(target *core.Unit) bool {
 	return deathKnight.FrostFeverDisease[target.Index].IsActive() || deathKnight.BloodPlagueDisease[target.Index].IsActive()
 }
 
-func (deathKnight *DeathKnight) secondaryCritModifier(applyGuile bool) float64 {
+func (deathKnight *DeathKnight) secondaryCritModifier(applyGuile bool, applyMoM bool) float64 {
 	secondaryModifier := 0.0
 	if applyGuile {
 		secondaryModifier += 0.15 * float64(deathKnight.Talents.GuileOfGorefiend)
+	}
+	if applyMoM {
+		secondaryModifier += 0.15 * float64(deathKnight.Talents.MightOfMograine)
 	}
 	return secondaryModifier
 }
@@ -333,19 +330,24 @@ func (deathKnight *DeathKnight) secondaryCritModifier(applyGuile bool) float64 {
 func (deathKnight *DeathKnight) spellCritMultiplier() float64 {
 	return deathKnight.MeleeCritMultiplier(1.0, 0)
 }
-func (deathKnight *DeathKnight) spellCritMultiplierGuile() float64 {
+
+func (deathKnight *DeathKnight) spellCritMultiplierGoGandMoM() float64 {
 	applyGuile := deathKnight.Talents.GuileOfGorefiend > 0
-	return deathKnight.MeleeCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile))
+	applyMightOfMograine := deathKnight.Talents.MightOfMograine > 0
+	return deathKnight.MeleeCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile, applyMightOfMograine))
 }
+
 func (deathKnight *DeathKnight) critMultiplier() float64 {
 	return deathKnight.MeleeCritMultiplier(1.0, 0)
 }
-func (deathKnight *DeathKnight) critMultiplierGuile() float64 {
+
+func (deathKnight *DeathKnight) critMultiplierGoGandMoM() float64 {
 	applyGuile := deathKnight.Talents.GuileOfGorefiend > 0
-	return deathKnight.MeleeCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile))
+	applyMightOfMograine := deathKnight.Talents.MightOfMograine > 0
+	return deathKnight.MeleeCritMultiplier(1.0, deathKnight.secondaryCritModifier(applyGuile, applyMightOfMograine))
 }
 
-func DetermineOptimalCostForSpell(rp *core.CalcRunicPowerBar, sim *core.Simulation, deathKnight *DeathKnight, spell *core.Spell) core.DKRuneCost {
+func (deathKnight *DeathKnight) RuneAmountForSpell(spell *core.Spell) core.RuneAmount {
 	blood := 0
 	frost := 0
 	unholy := 0
@@ -385,7 +387,7 @@ func DetermineOptimalCostForSpell(rp *core.CalcRunicPowerBar, sim *core.Simulati
 		unholy = 1
 	}
 
-	return rp.DetermineOptimalCost(sim, blood, frost, unholy)
+	return core.RuneAmount{blood, frost, unholy, 0}
 }
 
 func (deathKnight *DeathKnight) CanCast(sim *core.Simulation, spell *core.Spell) bool {

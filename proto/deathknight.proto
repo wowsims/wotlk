@@ -167,3 +167,16 @@ message DeathKnight {
 	Options options = 3;
 }
 
+
+message DeathKnightTank {
+	message Rotation {
+
+	}
+	Rotation rotation = 1;
+
+	DeathKnightTalents talents = 2;
+	
+	message Options {
+	}
+	Options options = 3;
+}

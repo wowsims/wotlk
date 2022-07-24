@@ -1,4 +1,4 @@
-package deathknight
+package dps
 
 import (
 	"testing"
@@ -9,14 +9,10 @@ import (
 )
 
 func init() {
-	// Disabled until better rotations
-	return
-	RegisterDeathKnight()
+	RegisterDpsDeathknight()
 }
 
 func TestUnholy(t *testing.T) {
-	// Disabled until better rotations
-	return
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
 		Class: proto.Class_ClassDeathKnight,
 
@@ -46,8 +42,6 @@ func TestUnholy(t *testing.T) {
 }
 
 func TestFrost(t *testing.T) {
-	// Disabled until better rotations
-	return
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
 		Class: proto.Class_ClassDeathKnight,
 
