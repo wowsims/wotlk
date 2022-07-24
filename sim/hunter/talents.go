@@ -21,7 +21,6 @@ func (hunter *Hunter) ApplyTalents() {
 		hunter.pet.PseudoStats.DamageDealtMultiplier *= 1 + 0.03*float64(hunter.Talents.UnleashedFury)
 		hunter.pet.PseudoStats.DamageDealtMultiplier *= 1 + 0.04*float64(hunter.Talents.KindredSpirits)
 		hunter.pet.PseudoStats.MeleeSpeedMultiplier *= 1 + 0.04*float64(hunter.Talents.SerpentsSwiftness)
-		// TODO: Beast Mastery (in UI)
 
 		if hunter.Talents.AnimalHandler != 0 {
 			hunter.pet.AddStatDependency(stats.AttackPower, stats.AttackPower, 1.0+(0.05*float64(hunter.Talents.AnimalHandler)))
@@ -76,7 +75,7 @@ func (hunter *Hunter) ApplyTalents() {
 		hunter.AddStatDependency(stats.Intellect, stats.Intellect, bonus)
 	}
 	if hunter.Talents.CarefulAim > 0 {
-		hunter.AddStatDependency(stats.Intellect, stats.RangedAttackPower, 1.0+((1.0/3.0)*float64(hunter.Talents.CarefulAim)))
+		hunter.AddStatDependency(stats.Intellect, stats.RangedAttackPower, (1.0/3.0)*float64(hunter.Talents.CarefulAim))
 	}
 	if hunter.Talents.SurvivalInstincts > 0 {
 		apBonus := 1.0 + (0.02 * float64(hunter.Talents.SurvivalInstincts))
@@ -84,7 +83,7 @@ func (hunter *Hunter) ApplyTalents() {
 		hunter.AddStatDependency(stats.RangedAttackPower, stats.RangedAttackPower, apBonus)
 	}
 	if hunter.Talents.HunterVsWild > 0 {
-		bonus := 1.0 + (0.1 * float64(hunter.Talents.HunterVsWild))
+		bonus := 0.1 * float64(hunter.Talents.HunterVsWild)
 		hunter.AddStatDependency(stats.Stamina, stats.AttackPower, bonus)
 		hunter.AddStatDependency(stats.Stamina, stats.RangedAttackPower, bonus)
 	}
@@ -106,6 +105,7 @@ func (hunter *Hunter) ApplyTalents() {
 	hunter.applyWildQuiver()
 	hunter.applyImprovedTracking()
 	hunter.applyThrillOfTheHunt()
+	hunter.applyLockAndLoad()
 	hunter.applyExposeWeakness()
 	hunter.applyMasterTactician()
 
@@ -263,6 +263,8 @@ func (hunter *Hunter) applyPiercingShots() {
 		TickLength:    time.Second * 1,
 	})
 
+	var currentTickDmg float64
+
 	hunter.RegisterAura(core.Aura{
 		Label:    "Piercing Shots Talent",
 		Duration: core.NeverExpires,
@@ -278,12 +280,19 @@ func (hunter *Hunter) applyPiercingShots() {
 			}
 
 			totalDmg := spellEffect.Damage * dmgMultiplier
+			if psDot.IsActive() {
+				remainingTicks := 8 - psDot.TickCount
+				totalDmg += currentTickDmg * float64(remainingTicks)
+			}
+			currentTickDmg = totalDmg / 8
+
+			// Reassign tick effect to update the damage.
 			psDot.TickEffects = core.TickFuncSnapshot(target, core.SpellEffect{
 				ProcMask:         core.ProcMaskPeriodicDamage,
 				DamageMultiplier: 1,
 				ThreatMultiplier: 1,
 				IsPeriodic:       true,
-				BaseDamage:       core.BaseDamageConfigFlat(totalDmg / 8),
+				BaseDamage:       core.BaseDamageConfigFlat(currentTickDmg),
 				OutcomeApplier:   hunter.OutcomeFuncTick(),
 			})
 			psDot.Apply(sim)
@@ -311,7 +320,7 @@ func (hunter *Hunter) applyWildQuiver() {
 			ThreatMultiplier: 1,
 
 			BaseDamage:     core.BaseDamageConfigRangedWeapon(0),
-			OutcomeApplier: hunter.OutcomeFuncAlwaysHit(),
+			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(false, false, hunter.CurrentTarget)),
 		}),
 	})
 
@@ -488,11 +497,17 @@ func (hunter *Hunter) applyImprovedTracking() {
 
 	switch hunter.CurrentTarget.MobType {
 	case proto.MobType_MobTypeBeast:
+		fallthrough
 	case proto.MobType_MobTypeDemon:
+		fallthrough
 	case proto.MobType_MobTypeDragonkin:
+		fallthrough
 	case proto.MobType_MobTypeElemental:
+		fallthrough
 	case proto.MobType_MobTypeGiant:
+		fallthrough
 	case proto.MobType_MobTypeHumanoid:
+		fallthrough
 	case proto.MobType_MobTypeUndead:
 		hunter.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.01*float64(hunter.Talents.ImprovedTracking)
 	}
@@ -511,7 +526,7 @@ func (hunter *Hunter) applyLockAndLoad() {
 		Duration: time.Second * 22,
 	}
 
-	hunter.LockAndLoadAura = hunter.pet.RegisterAura(core.Aura{
+	hunter.LockAndLoadAura = hunter.RegisterAura(core.Aura{
 		Label:     "Lock and Load Proc",
 		ActionID:  actionID,
 		Duration:  time.Second * 12,

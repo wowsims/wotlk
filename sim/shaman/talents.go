@@ -76,7 +76,7 @@ func (shaman *Shaman) applyElementalFocus() {
 		Duration:  time.Second * 15,
 		MaxStacks: 2,
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if !spell.Flags.Matches(SpellFlagShock | SpellFlagElectric) {
+			if !spell.Flags.Matches(SpellFlagShock | SpellFlagElectric | SpellFlagFireNova) {
 				return
 			}
 			if spell.ActionID.Tag != 0 { // Filter LO casts
@@ -262,11 +262,9 @@ func (shaman *Shaman) applyFlurry() {
 
 	bonus := 1.0 + 0.06*float64(shaman.Talents.Flurry)
 
-	// I believe there is a set in wotlk that improves flurry.
-
-	// if shaman.HasSetBonus(ItemSetEarthshatterBattlegear, 4) { //NYI
-	// 	bonus += 0.05
-	// }
+	if shaman.HasSetBonus(ItemSetEarthshatterBattlegear, 4) {
+		bonus += 0.05
+	}
 
 	inverseBonus := 1 / bonus
 

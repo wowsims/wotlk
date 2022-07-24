@@ -30,6 +30,7 @@ $(OUT_DIR): ui_shared \
  $(OUT_DIR)/warrior/index.js $(OUT_DIR)/warrior/index.css $(OUT_DIR)/warrior/index.html \
  $(OUT_DIR)/protection_warrior/index.js $(OUT_DIR)/protection_warrior/index.css $(OUT_DIR)/protection_warrior/index.html \
  $(OUT_DIR)/deathknight/index.js $(OUT_DIR)/deathknight/index.css $(OUT_DIR)/deathknight/index.html \
+ $(OUT_DIR)/deathknight_tank/index.js $(OUT_DIR)/deathknight_tank/index.css $(OUT_DIR)/deathknight_tank/index.html \
  $(OUT_DIR)/raid/index.js $(OUT_DIR)/raid/index.css $(OUT_DIR)/raid/index.html
 
 ui_shared: $(OUT_DIR)/lib.wasm \
@@ -178,7 +179,7 @@ sim/core/items/all_items.go: generate_items/*.go $(call rwildcard,sim/core/proto
 test: $(OUT_DIR)/lib.wasm binary_dist/dist.go
 	go test ./...
 
-.PHONY: update-test
+.PHONY: update-tests
 update-tests:
 	find . -name "*.results" -type f -delete
 	find . -name "*.results.tmp" -exec bash -c 'cp "$$1" "$${1%.results.tmp}".results' _ {} \;

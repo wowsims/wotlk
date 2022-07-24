@@ -19,7 +19,7 @@ export const simLaunchStatuses: Record<Spec, LaunchStatus> = {
 	[Spec.SpecEnhancementShaman]: LaunchStatus.Unlaunched,
 	[Spec.SpecFeralDruid]: LaunchStatus.Unlaunched,
 	[Spec.SpecFeralTankDruid]: LaunchStatus.Unlaunched,
-	[Spec.SpecHunter]: LaunchStatus.Unlaunched,
+	[Spec.SpecHunter]: LaunchStatus.Alpha,
 	[Spec.SpecMage]: LaunchStatus.Unlaunched,
 	[Spec.SpecRogue]: LaunchStatus.Unlaunched,
 	[Spec.SpecRetributionPaladin]: LaunchStatus.Unlaunched,
@@ -30,6 +30,7 @@ export const simLaunchStatuses: Record<Spec, LaunchStatus> = {
 	[Spec.SpecProtectionWarrior]: LaunchStatus.Unlaunched,
 	[Spec.SpecSmitePriest]: LaunchStatus.Unlaunched,
 	[Spec.SpecDeathKnight]: LaunchStatus.Unlaunched,
+	[Spec.SpecDeathKnightTank]: LaunchStatus.Unlaunched,
 };
 
 export function getLaunchedSims(): Array<Spec> {

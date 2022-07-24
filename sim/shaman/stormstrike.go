@@ -5,22 +5,24 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/items"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 var StormstrikeActionID = core.ActionID{SpellID: 17364}
 
-func (shaman *Shaman) stormstrikeDebuffAura(target *core.Unit) *core.Aura {
+func (shaman *Shaman) StormstrikeDebuffAura(target *core.Unit) *core.Aura {
 	return target.GetOrRegisterAura(core.Aura{
 		Label:     "Stormstrike-" + shaman.Label,
 		ActionID:  StormstrikeActionID,
 		Duration:  time.Second * 12,
 		MaxStacks: 4,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			shaman.PseudoStats.NatureDamageDealtMultiplier *= 1.2
+			shaman.AttackTables[aura.Unit.TableIndex].NatureDamageDealtMultiplier *= core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfStormstrike), 1.28, 1.2)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			shaman.PseudoStats.NatureDamageDealtMultiplier /= 1.2
+			shaman.AttackTables[aura.Unit.TableIndex].NatureDamageDealtMultiplier /= core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfStormstrike), 1.28, 1.2)
+
 		},
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spell.Unit != &shaman.Unit {
@@ -71,7 +73,7 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 		baseCost -= 22
 	}
 
-	ssDebuffAura := shaman.stormstrikeDebuffAura(shaman.CurrentTarget)
+	ssDebuffAura := shaman.StormstrikeDebuffAura(shaman.CurrentTarget)
 
 	var skyshatterAura *core.Aura
 	if shaman.HasSetBonus(ItemSetSkyshatterHarness, 4) {

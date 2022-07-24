@@ -23,6 +23,10 @@ func (deathKnight *DeathKnight) PrecastArmyOfTheDead(sim *core.Simulation) {
 }
 
 func (deathKnight *DeathKnight) registerArmyOfTheDeadCD() {
+	if deathKnight.ArmyOfTheDeadType == proto.DeathKnight_Rotation_DoNotUse {
+		return
+	}
+
 	aotdAura := deathKnight.RegisterAura(core.Aura{
 		Label:    "Army of the Dead",
 		ActionID: core.ActionID{SpellID: 42650},
@@ -78,23 +82,23 @@ func (deathKnight *DeathKnight) registerArmyOfTheDeadCD() {
 
 	aotdDot.Spell = deathKnight.ArmyOfTheDead
 
-	// Temp stuff for testing
-	if deathKnight.Talents.SummonGargoyle && deathKnight.Rotation.ArmyOfTheDead == proto.DeathKnight_Rotation_AsMajorCd {
-		deathKnight.AddMajorCooldown(core.MajorCooldown{
-			Spell:    deathKnight.ArmyOfTheDead,
-			Priority: core.CooldownPriorityDefault,
-			Type:     core.CooldownTypeDPS,
-			CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-				if deathKnight.Gargoyle != nil && !deathKnight.Gargoyle.IsEnabled() {
-					return false
-				}
-				if !deathKnight.CanArmyOfTheDead(sim) {
-					return false
-				}
-				return true
-			},
-		})
-	}
+	deathKnight.AddMajorCooldown(core.MajorCooldown{
+		Spell:    deathKnight.ArmyOfTheDead,
+		Priority: core.CooldownPriorityDefault,
+		Type:     core.CooldownTypeDPS,
+		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
+			if deathKnight.opener.IsOngoing() {
+				return false
+			}
+			if deathKnight.Gargoyle != nil && !deathKnight.Gargoyle.IsEnabled() {
+				return false
+			}
+			if !deathKnight.CanArmyOfTheDead(sim) {
+				return false
+			}
+			return true
+		},
+	})
 }
 
 func (deathKnight *DeathKnight) CanArmyOfTheDead(sim *core.Simulation) bool {
