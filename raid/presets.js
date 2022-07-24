@@ -391,10 +391,10 @@ export const playerPresets = [
         defaultGear: {
             [Faction.Unknown]: {},
             [Faction.Alliance]: {
-                1: ShadowPriestPresets.P5_PRESET.gear,
+                1: ShadowPriestPresets.P1_PRESET.gear,
             },
             [Faction.Horde]: {
-                1: ShadowPriestPresets.P5_PRESET.gear,
+                1: ShadowPriestPresets.P1_PRESET.gear,
             },
         },
         tooltip: specNames[Spec.SpecShadowPriest],
