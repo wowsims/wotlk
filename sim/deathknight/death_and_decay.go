@@ -7,36 +7,36 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-func (deathKnight *DeathKnight) registerDeathAndDecaySpell() {
+func (dk *Deathknight) registerDeathAndDecaySpell() {
 
 	var actionID = core.ActionID{SpellID: 49938}
-	deathKnight.DeathAndDecayDot = core.NewDot(core.Dot{
-		Aura: deathKnight.RegisterAura(core.Aura{
+	dk.DeathAndDecayDot = core.NewDot(core.Dot{
+		Aura: dk.RegisterAura(core.Aura{
 			Label:    "Death and Decay",
 			ActionID: actionID,
 		}),
 		NumberOfTicks: 10,
 		TickLength:    time.Second * 1,
-		TickEffects: core.TickFuncAOESnapshot(deathKnight.Env, core.SpellEffect{
+		TickEffects: core.TickFuncAOESnapshot(dk.Env, core.SpellEffect{
 			ProcMask:        core.ProcMaskEmpty,
 			BonusSpellPower: 0.0,
 
-			DamageMultiplier: core.TernaryFloat64(deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfDeathAndDecay), 1.2, 1.0),
+			DamageMultiplier: core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDeathAndDecay), 1.2, 1.0),
 			ThreatMultiplier: 1,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return (62.0 + deathKnight.applyImpurity(hitEffect, spell.Unit)*0.0475) *
-						deathKnight.rageOfRivendareBonus(hitEffect.Target) *
-						deathKnight.tundraStalkerBonus(hitEffect.Target)
+					return (62.0 + dk.applyImpurity(hitEffect, spell.Unit)*0.0475) *
+						dk.rageOfRivendareBonus(hitEffect.Target) *
+						dk.tundraStalkerBonus(hitEffect.Target)
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: deathKnight.OutcomeFuncMagicHitAndCrit(deathKnight.spellCritMultiplier()),
+			OutcomeApplier: dk.OutcomeFuncMagicHitAndCrit(dk.spellCritMultiplier()),
 			IsPeriodic:     false,
 		}),
 	})
 
-	deathKnight.DeathAndDecay = deathKnight.RegisterSpell(core.SpellConfig{
+	dk.DeathAndDecay = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 
@@ -45,35 +45,36 @@ func (deathKnight *DeathKnight) registerDeathAndDecaySpell() {
 				GCD: core.GCDDefault,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = deathKnight.getModifiedGCD()
+				cast.GCD = dk.getModifiedGCD()
 			},
 			CD: core.Cooldown{
-				Timer:    deathKnight.NewTimer(),
-				Duration: time.Second*30 - time.Second*5*time.Duration(deathKnight.Talents.Morbidity),
+				Timer:    dk.NewTimer(),
+				Duration: time.Second*30 - time.Second*5*time.Duration(dk.Talents.Morbidity),
 			},
 		},
 
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
-			dkSpellCost := deathKnight.DetermineOptimalCost(sim, 1, 1, 1)
-			deathKnight.Spend(sim, spell, dkSpellCost)
+			dkSpellCost := dk.DetermineOptimalCost(sim, 1, 1, 1)
+			dk.Spend(sim, spell, dkSpellCost)
 
 			amountOfRunicPower := 15.0
-			deathKnight.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
+			dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 
-			deathKnight.DeathAndDecayDot.Apply(sim)
+			dk.DeathAndDecayDot.Apply(sim)
+			dk.DeathAndDecayDot.TickOnce()
 		},
 	})
 
-	deathKnight.DeathAndDecayDot.Spell = deathKnight.DeathAndDecay
+	dk.DeathAndDecayDot.Spell = dk.DeathAndDecay
 }
 
-func (deathKnight *DeathKnight) CanDeathAndDecay(sim *core.Simulation) bool {
-	return deathKnight.CastCostPossible(sim, 0.0, 1, 1, 1) && deathKnight.DeathAndDecay.IsReady(sim)
+func (dk *Deathknight) CanDeathAndDecay(sim *core.Simulation) bool {
+	return dk.CastCostPossible(sim, 0.0, 1, 1, 1) && dk.DeathAndDecay.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastDeathAndDecay(sim *core.Simulation, target *core.Unit) bool {
-	if deathKnight.CanDeathAndDecay(sim) {
-		deathKnight.DeathAndDecay.Cast(sim, target)
+func (dk *Deathknight) CastDeathAndDecay(sim *core.Simulation, target *core.Unit) bool {
+	if dk.CanDeathAndDecay(sim) {
+		dk.DeathAndDecay.Cast(sim, target)
 		return true
 	}
 	return false

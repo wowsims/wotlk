@@ -16,7 +16,7 @@ import { Sim } from '/wotlk/core/sim.js';
 import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
 import { TotemsSection } from '/wotlk/core/components/totem_inputs.js';
 
-import { DeathKnightTank, DeathKnightTank_Rotation as DeathKnightRotation, DeathKnightTalents as DeathKnightTalents, DeathKnightTank_Options as DeathKnightOptions } from '/wotlk/core/proto/deathknight.js';
+import { TankDeathknight, TankDeathknight_Rotation as DeathKnightRotation, DeathknightTalents as DeathKnightTalents, TankDeathknight_Options as DeathKnightOptions } from '/wotlk/core/proto/deathknight.js';
 
 import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
 import * as OtherInputs from '/wotlk/core/components/other_inputs.js';
@@ -25,10 +25,10 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 import * as DeathKnightInputs from './inputs.js';
 import * as Presets from './presets.js';
 
-export class DeathKnightTankSimUI extends IndividualSimUI<Spec.SpecDeathKnightTank> {
-	constructor(parentElem: HTMLElement, player: Player<Spec.SpecDeathKnightTank>) {
+export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknight> {
+	constructor(parentElem: HTMLElement, player: Player<Spec.SpecTankDeathknight>) {
 		super(parentElem, player, {
-			cssClass: 'deathknight-tank-sim-ui',
+			cssClass: 'tank-deathknight-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
 				"<p>Rotation logic is just hit things on CGD. It is not good don't take it as actual data.</p>\

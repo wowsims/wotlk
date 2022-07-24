@@ -12,12 +12,12 @@ import { SavedTalents } from '/wotlk/core/proto/ui.js';
 import { Player } from '/wotlk/core/player.js';
 
 import {
-	DeathKnightTalents as DeathKnightTalents,
-	DeathKnightTank,
-	DeathKnightTank_Rotation as DeathKnightTankRotation,
-	DeathKnightTank_Options as DeathKnightTankOptions,
-	DeathKnightMajorGlyph,
-	DeathKnightMinorGlyph,
+	DeathknightTalents as DeathKnightTalents,
+	TankDeathknight,
+	TankDeathknight_Rotation as TankDeathKnightRotation,
+	TankDeathknight_Options as TankDeathKnightOptions,
+	DeathknightMajorGlyph,
+	DeathknightMinorGlyph,
 } from '/wotlk/core/proto/deathknight.js';
 
 import * as Enchants from '/wotlk/core/constants/enchants.js';
@@ -35,21 +35,21 @@ export const BloodTalents = {
 	data: SavedTalents.create({
 		talentsString: '23050005-32005350352203012300033101351',
 		glyphs: Glyphs.create({
-			major1: DeathKnightMajorGlyph.GlyphOfObliterate,
-			major2: DeathKnightMajorGlyph.GlyphOfFrostStrike,
-			major3: DeathKnightMajorGlyph.GlyphOfDisease,
-			minor1: DeathKnightMinorGlyph.GlyphOfHornOfWinter,
-			minor2: DeathKnightMinorGlyph.GlyphOfBloodTap,
-			minor3: DeathKnightMinorGlyph.GlyphOfRaiseDead,
+			major1: DeathknightMajorGlyph.GlyphOfObliterate,
+			major2: DeathknightMajorGlyph.GlyphOfFrostStrike,
+			major3: DeathknightMajorGlyph.GlyphOfDisease,
+			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
+			minor2: DeathknightMinorGlyph.GlyphOfBloodTap,
+			minor3: DeathknightMinorGlyph.GlyphOfRaiseDead,
 		}),
 	}),
 };
 
 
-export const DefaultRotation = DeathKnightTankRotation.create({
+export const DefaultRotation = TankDeathKnightRotation.create({
 });
 
-export const DefaultOptions = DeathKnightTankOptions.create({
+export const DefaultOptions = TankDeathKnightOptions.create({
 	startingRunicPower: 0,
 });
 

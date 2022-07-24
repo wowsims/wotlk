@@ -2,7 +2,7 @@
 	"extends": "../tsconfig-base",
 	"compilerOptions": {
 		"composite": true,
-		"outDir": "../../dist/wotlk/deathknight_tank",
+		"outDir": "../../dist/wotlk/tank_deathknight",
 	},
 	"include": [
 		"**/*.ts",

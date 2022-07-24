@@ -1,5 +1,5 @@
 // Set color variables which control the site theme.
-.deathknight-tank-sim-ui {
+.tank-deathknight-sim-ui {
 	--theme-color-primary: #c12d46;
 	--theme-color-background: #1d1626;
 	--theme-color-background-raw: 19, 5, 7;
@@ -9,6 +9,6 @@
 }
 
 // Set grid width for icon sections based on how many buffs we configured.
-.deathknight-tank-sim-ui .self-buffs-section {
+.tank-deathknight-sim-ui .self-buffs-section {
   grid-template-columns: repeat(2, 1fr);
 }

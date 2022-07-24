@@ -7,11 +7,11 @@ import { Potions } from '/wotlk/core/proto/common.js';
 import { SavedTalents } from '/wotlk/core/proto/ui.js';
 
 import {
-	DeathKnightTalents,
-	DeathKnight_Rotation as DeathKnightRotation,
-	DeathKnight_Options as DeathKnightOptions,
-	DeathKnightMajorGlyph,
-	DeathKnightMinorGlyph,
+	DeathknightTalents,
+	Deathknight_Rotation as DeathKnightRotation,
+	Deathknight_Options as DeathKnightOptions,
+	DeathknightMajorGlyph,
+	DeathknightMinorGlyph,
 } from '/wotlk/core/proto/deathknight.js';
 
 import * as Tooltips from '/wotlk/core/constants/tooltips.js';
@@ -27,12 +27,12 @@ export const FrostTalents = {
 	data: SavedTalents.create({
 		talentsString: '23050005-32005350352203012300033101351',
 		glyphs: Glyphs.create({
-			major1: DeathKnightMajorGlyph.GlyphOfObliterate,
-			major2: DeathKnightMajorGlyph.GlyphOfFrostStrike,
-			major3: DeathKnightMajorGlyph.GlyphOfDisease,
-			minor1: DeathKnightMinorGlyph.GlyphOfHornOfWinter,
-			minor2: DeathKnightMinorGlyph.GlyphOfBloodTap,
-			minor3: DeathKnightMinorGlyph.GlyphOfRaiseDead,
+			major1: DeathknightMajorGlyph.GlyphOfObliterate,
+			major2: DeathknightMajorGlyph.GlyphOfFrostStrike,
+			major3: DeathknightMajorGlyph.GlyphOfDisease,
+			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
+			minor2: DeathknightMinorGlyph.GlyphOfBloodTap,
+			minor3: DeathknightMinorGlyph.GlyphOfRaiseDead,
 		}),
 	}),
 };
@@ -42,12 +42,12 @@ export const FrostUnholyTalents = {
 	data: SavedTalents.create({
 		talentsString: '01-32002350351203012300033101351-230200305003',
 		glyphs: Glyphs.create({
-			major1: DeathKnightMajorGlyph.GlyphOfObliterate,
-			major2: DeathKnightMajorGlyph.GlyphOfFrostStrike,
-			major3: DeathKnightMajorGlyph.GlyphOfDisease,
-			minor1: DeathKnightMinorGlyph.GlyphOfHornOfWinter,
-			minor2: DeathKnightMinorGlyph.GlyphOfPestilence,
-			minor3: DeathKnightMinorGlyph.GlyphOfRaiseDead,
+			major1: DeathknightMajorGlyph.GlyphOfObliterate,
+			major2: DeathknightMajorGlyph.GlyphOfFrostStrike,
+			major3: DeathknightMajorGlyph.GlyphOfDisease,
+			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
+			minor2: DeathknightMinorGlyph.GlyphOfPestilence,
+			minor3: DeathknightMinorGlyph.GlyphOfRaiseDead,
 		}),
 	}),
 };
@@ -57,12 +57,12 @@ export const UnholyDualWieldTalents = {
 	data: SavedTalents.create({
 		talentsString: '-320023500002-2300303350032052000150003133151',
 		glyphs: Glyphs.create({
-			major1: DeathKnightMajorGlyph.GlyphOfTheGhoul,
-			major2: DeathKnightMajorGlyph.GlyphOfDarkDeath,
-			major3: DeathKnightMajorGlyph.GlyphOfIcyTouch,
-			minor1: DeathKnightMinorGlyph.GlyphOfHornOfWinter,
-			minor2: DeathKnightMinorGlyph.GlyphOfPestilence,
-			minor3: DeathKnightMinorGlyph.GlyphOfRaiseDead,
+			major1: DeathknightMajorGlyph.GlyphOfTheGhoul,
+			major2: DeathknightMajorGlyph.GlyphOfDarkDeath,
+			major3: DeathknightMajorGlyph.GlyphOfIcyTouch,
+			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
+			minor2: DeathknightMinorGlyph.GlyphOfPestilence,
+			minor3: DeathknightMinorGlyph.GlyphOfRaiseDead,
 		}),
 	}),
 };
@@ -91,7 +91,7 @@ export const DefaultConsumes = Consumes.create({
 });
 
 export const P1_UNHOLY_DW_BIS_PRESET = {
-	name: 'P1 Unholy DW',
+	name: 'P1 Unholy DW BiS',
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
@@ -185,9 +185,9 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
 };
 
 export const P1_FROST_PRE_BIS_PRESET = {
-	name: 'P1 Frost Pre-Raid Preset',
+	name: 'P1 Frost Pre-Raid',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
+	gear: EquipmentSpec.fromJsonString(`{ "items": [
     {
       "id": 41386,
       "enchant": 44879,
@@ -197,18 +197,11 @@ export const P1_FROST_PRE_BIS_PRESET = {
       ]
     },
     {
-      "id": 42645,
-      "gems": [
-        42142
-      ]
+      "id": 37397
     },
     {
-      "id": 34388,
-      "enchant": 44871,
-      "gems": [
-        39996,
-        39996
-      ]
+      "id": 37593,
+      "enchant": 44871
     },
     {
       "id": 37647,
@@ -218,7 +211,7 @@ export const P1_FROST_PRE_BIS_PRESET = {
       "id": 39617,
       "enchant": 44623,
       "gems": [
-        39996,
+        42142,
         39996
       ]
     },
@@ -238,7 +231,7 @@ export const P1_FROST_PRE_BIS_PRESET = {
       ]
     },
     {
-      "id": 40694,
+      "id": 37194,
       "gems": [
         39996,
         42142
@@ -264,7 +257,7 @@ export const P1_FROST_PRE_BIS_PRESET = {
       "id": 37642
     },
     {
-      "id": 44935
+      "id": 37151
     },
     {
       "id": 40684
@@ -273,11 +266,11 @@ export const P1_FROST_PRE_BIS_PRESET = {
       "id": 42987
     },
     {
-      "id": 41383,
+      "id": 44250,
       "enchant": 53343
     },
     {
-      "id": 43611,
+      "id": 44250,
       "enchant": 53344
     },
     {
@@ -287,7 +280,7 @@ export const P1_FROST_PRE_BIS_PRESET = {
 };
 
 export const P1_FROST_BIS_PRESET = {
-	name: 'P1 Frost BiS Preset',
+	name: 'P1 Frost BiS',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{ "items": [
     {
@@ -299,10 +292,7 @@ export const P1_FROST_BIS_PRESET = {
       ]
     },
     {
-      "id": 44664,
-      "gems": [
-        39996
-      ]
+      "id": 40065
     },
     {
       "id": 40557,
@@ -358,7 +348,7 @@ export const P1_FROST_BIS_PRESET = {
       "enchant": 55016
     },
     {
-      "id": 39401
+      "id": 40474
     },
     {
       "id": 40075
