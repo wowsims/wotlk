@@ -47,7 +47,6 @@ func (paladin *Paladin) registerCrusaderStrikeSpell() {
 				core.MainHand,
 				true, // cs is subject to normalisation
 				core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 31033, 36, 0)+ // Libram of Righteous Power
-
 					core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 40191, 79, 0), // Libram of Radiance
 				(0.75), // base multiplier's .75, can be improved by sanctity (15%), taow (10%) & pvp gloves (5%), stacking additively
 				true,
