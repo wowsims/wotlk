@@ -82,7 +82,7 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 		ProcMask:         core.ProcMaskPeriodicDamage,
 		BaseDamage:       core.BaseDamageConfigMagicNoRoll(710/5, 0.429),
 		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			spellEffect.DamageMultiplier = baseAdditiveMultiplier * dynamicDrainSoulMultiplier(sim)
+			spellEffect.DamageMultiplier = baseAdditiveMultiplier * warlock.dynamicDrainSoulMultiplier(sim)
 		},
 	}
 

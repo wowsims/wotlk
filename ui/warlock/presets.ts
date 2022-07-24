@@ -171,7 +171,7 @@ export const DefaultDebuffs = Debuffs.create({
 });
 
 export const SWP_BIS = {
-	name: 'SWP BiS',
+	name: 'Outa SWP',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`
 {"items": [
@@ -364,7 +364,7 @@ export const P1_PreBiS = {
         },
         {
           "id": 37360,
-          "enchant": 44495
+          "enchant": 44487
         },
         {},
         {
@@ -461,7 +461,7 @@ export const P1_BiS = {
         },
         {
           "id": 40396,
-          "enchant": 44495
+          "enchant": 44487
         },
         {
           "id": 39766
@@ -473,29 +473,30 @@ export const P1_BiS = {
     }
   `),
 }
-export const Naked = {
-  name: 'The Naked Bolt',
-  gear: EquipmentSpec.fromJsonString(`
-    {"items":
-      [
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {}
-      ]
-    }
-  `),
-}
+
+// export const Naked = {
+//   name: 'The Naked Bolt',
+//   gear: EquipmentSpec.fromJsonString(`
+//     {"items":
+//       [
+//         {},
+//         {},
+//         {},
+//         {},
+//         {},
+//         {},
+//         {},
+//         {},
+//         {},
+//         {},
+//         {},
+//         {},
+//         {},
+//         {},
+//         {},
+//         {},
+//         {}
+//       ]
+//     }
+//   `),
+// }

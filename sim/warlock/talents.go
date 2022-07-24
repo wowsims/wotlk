@@ -29,6 +29,10 @@ func (warlock *Warlock) ApplyTalents() {
 	// Backlash (Add 1% crit per point)
 	warlock.AddStat(stats.SpellCrit, float64(warlock.Talents.Backlash)*core.CritRatingPerCritChance)
 
+	if warlock.Talents.DeathsEmbrace > 0 {
+		warlock.applyDeathsEmbrace()
+	}
+
 	// Fel Vitality
 	if warlock.Talents.FelVitality > 0 {
 		bonus := 0.01 * float64(warlock.Talents.FelVitality)
@@ -104,6 +108,18 @@ func (warlock *Warlock) ApplyTalents() {
 	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap) {
 		warlock.registerGlyphOfLifeTapAura()
 	}
+}
+
+func (warlock *Warlock) applyDeathsEmbrace() {
+	multiplier := 1.0 + 0.04*float64(warlock.Talents.DeathsEmbrace)
+
+	warlock.RegisterResetEffect(func(sim *core.Simulation) {
+		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute35 bool) {
+			if isExecute35 {
+				warlock.PseudoStats.ShadowDamageDealtMultiplier *= multiplier
+			}
+		})
+	})
 }
 
 func (warlock *Warlock) applyWeaponImbue() {
