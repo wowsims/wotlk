@@ -43,13 +43,13 @@ func (dk *Deathknight) registerUnbreakableArmorSpell() {
 			IgnoreHaste: true,
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			dk.UnbreakableArmorAura.Activate(sim)
+			dk.UnbreakableArmorAura.Prioritize()
+
 			dkSpellCost := dk.DetermineOptimalCost(sim, 0, 1, 0)
 			dk.Spend(sim, spell, dkSpellCost)
 			amountOfRunicPower := 10.0
 			dk.AddRunicPower(sim, amountOfRunicPower, dk.UnbreakableArmor.RunicPowerMetrics())
-
-			dk.UnbreakableArmorAura.Activate(sim)
-			dk.UnbreakableArmorAura.Prioritize()
 		},
 	})
 }

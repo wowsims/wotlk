@@ -7,6 +7,8 @@ import (
 
 func (dk *Deathknight) registerPestilenceSpell() {
 
+	hasGlyphOfDisease := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease)
+
 	dk.Pestilence = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 50842},
 		SpellSchool: core.SpellSchoolShadow,
@@ -38,7 +40,7 @@ func (dk *Deathknight) registerPestilenceSpell() {
 					unitHit := spellEffect.Target
 					// Main target
 					if unitHit == dk.CurrentTarget {
-						if dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease) {
+						if hasGlyphOfDisease {
 							// Update expire instead of Apply to keep old snapshotted value
 							if dk.FrostFeverDisease[unitHit.Index].IsActive() {
 								dk.FrostFeverDisease[unitHit.Index].UpdateExpires(sim.CurrentTime + dk.FrostFeverDisease[unitHit.Index].Duration)

@@ -26,6 +26,7 @@ func (dk *Deathknight) registerEmpowerRuneWeaponSpell() {
 
 			amountOfRunicPower := 25.0
 			dk.AddRunicPower(sim, amountOfRunicPower, dk.EmpowerRuneWeapon.RunicPowerMetrics())
+
 		},
 	})
 

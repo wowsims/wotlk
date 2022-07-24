@@ -80,9 +80,6 @@ func (dk *Deathknight) registerPlagueStrikeSpell() {
 
 				dk.LastCastOutcome = PlagueStrikeMHOutcome
 				if dk.outcomeEitherWeaponHitOrCrit(PlagueStrikeMHOutcome, PlagueStrikeOHOutcome) {
-					dkSpellCost := dk.DetermineOptimalCost(sim, 0, 0, 1)
-					dk.Spend(sim, spell, dkSpellCost)
-
 					dk.BloodPlagueSpell.Cast(sim, spellEffect.Target)
 					if dk.Talents.CryptFever > 0 {
 						dk.CryptFeverAura[spellEffect.Target.Index].Activate(sim)
@@ -90,6 +87,9 @@ func (dk *Deathknight) registerPlagueStrikeSpell() {
 					if dk.Talents.EbonPlaguebringer > 0 {
 						dk.EbonPlagueAura[spellEffect.Target.Index].Activate(sim)
 					}
+
+					dkSpellCost := dk.DetermineOptimalCost(sim, 0, 0, 1)
+					dk.Spend(sim, spell, dkSpellCost)
 
 					amountOfRunicPower := 10.0 + 2.5*float64(dk.Talents.Dirge)
 					dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())

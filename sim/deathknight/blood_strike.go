@@ -87,12 +87,13 @@ func (dk *Deathknight) registerBloodStrikeSpell() {
 						}
 					}
 
-					amountOfRunicPower := 10.0
-					dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
-
 					if dk.DesolationAura != nil {
 						dk.DesolationAura.Activate(sim)
 					}
+
+					// Gain at the end, to take into account previous effects for callback
+					amountOfRunicPower := 10.0
+					dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 				}
 			},
 		}),
