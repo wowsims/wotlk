@@ -400,6 +400,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestRetribution-AllItems-LightbringerBattlegear"
+ value: {
+  dps: 2848.1863260230516
+  tps: 2462.432078344395
+ }
+}
+dps_results: {
  key: "TestRetribution-AllItems-LightswornBattlegear"
  value: {
   dps: 4621.219134388521
