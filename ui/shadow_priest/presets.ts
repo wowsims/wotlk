@@ -59,111 +59,6 @@ export const DefaultConsumes = Consumes.create({
 	defaultPotion: Potions.PotionOfSpeed,
 });
 
-export const TBC_PRESET = {
-	name: 'TBC Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 34340,
-			"enchant": 29191,
-			"gems": [
-				25893,
-				32215
-			]
-		},
-		{
-			"id": 34204
-		},
-		{
-			"id": 31070,
-			"enchant": 28886,
-			"gems": [
-				32196,
-				32196
-			]
-		},
-		{
-			"id": 34242,
-			"enchant": 33150,
-			"gems": [
-				32196
-			]
-		},
-		{
-			"id": 34232,
-			"enchant": 33990,
-			"gems": [
-				32196,
-				32196,
-				32196
-			]
-		},
-		{
-			"id": 34434,
-			"enchant": 22534,
-			"gems": [
-				32196
-			]
-		},
-		{
-			"id": 34344,
-			"enchant": 28272,
-			"gems": [
-				32196,
-				32196
-			]
-		},
-		{
-			"id": 34528,
-			"gems": [
-				32196
-			]
-		},
-		{
-			"id": 34181,
-			"enchant": 24274,
-			"gems": [
-				32196,
-				32196,
-				32196
-			]
-		},
-		{
-			"id": 34563,
-			"enchant": 35297,
-			"gems": [
-				32196
-			]
-		},
-		{
-			"id": 34230,
-			"enchant": 22536
-		},
-		{
-			"id": 32527,
-			"enchant": 22536
-		},
-		{
-			"id": 33829
-		},
-		{
-			"id": 34429
-		},
-		{
-			"id": 34336,
-			"enchant": 22561
-		},
-		{
-			"id": 34179
-		},
-		{
-			"id": 34347,
-			"gems": [
-				32196
-			]
-		}
-	]}`),
-};
 export const P1_PRESET = {
 	name: 'P1 Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
@@ -257,8 +152,7 @@ export const P1_PRESET = {
           "id": 39712
         }
       ]
-	}
-]}`),
+    }`),
 };
 export const PreBis_PRESET = {
 	name: 'PreBis Preset',
@@ -355,7 +249,6 @@ export const PreBis_PRESET = {
         {
           "id": 37177
 		}
-	]
-}
-]}`),
+  ]
+}`),
 };
