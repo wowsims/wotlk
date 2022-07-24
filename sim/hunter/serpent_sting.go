@@ -85,8 +85,8 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 			IsPeriodic:       true,
 
 			BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-				attackPower := spellEffect.RangedAttackPower(spell.Unit) + spellEffect.RangedAttackPowerOnTarget()
-				return 242 + attackPower*0.04
+				rap := spellEffect.RangedAttackPower(spell.Unit) + spellEffect.RangedAttackPowerOnTarget()
+				return 242 + rap*0.04
 			}, 0),
 			OutcomeApplier: dotOutcome,
 		}),
