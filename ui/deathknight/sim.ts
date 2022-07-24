@@ -12,9 +12,7 @@ import { Stat } from '/wotlk/core/proto/common.js';
 import { TristateEffect } from '/wotlk/core/proto/common.js'
 import { Player } from '/wotlk/core/player.js';
 import { Stats } from '/wotlk/core/proto_utils/stats.js';
-import { Sim } from '/wotlk/core/sim.js';
 import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
-import { TotemsSection } from '/wotlk/core/components/totem_inputs.js';
 
 import { DeathKnight, DeathKnight_Rotation as DeathKnightRotation, DeathKnightTalents as DeathKnightTalents, DeathKnight_Options as DeathKnightOptions } from '/wotlk/core/proto/deathknight.js';
 

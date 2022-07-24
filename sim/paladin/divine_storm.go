@@ -12,7 +12,7 @@ func (paladin *Paladin) registerDivineStormSpell() {
 	baseCost := paladin.BaseMana * 0.12
 
 	baseModifiers := Modifiers{
-		{0.05 * float64(paladin.Talents.TheArtOfWar)},
+		{0.05 * float64(paladin.Talents.TheArtOfWar), core.TernaryFloat64(paladin.HasSetBonus(ItemSetRedemptionBattlegear, 2), .1, 0)},
 	}
 	baseMultiplier := baseModifiers.Get()
 
@@ -21,6 +21,7 @@ func (paladin *Paladin) registerDivineStormSpell() {
 
 		DamageMultiplier: baseMultiplier,
 		ThreatMultiplier: 1,
+		BonusCritRating:  core.TernaryFloat64(paladin.HasSetBonus(ItemSetAegisBattlegear, 4), 10, 0) * core.CritRatingPerCritChance,
 
 		BaseDamage: core.BaseDamageConfigMeleeWeapon(
 			core.MainHand,

@@ -50,6 +50,13 @@ character_stats_results: {
  }
 }
 dps_results: {
+ key: "TestProtection-AllItems-AegisBattlegear"
+ value: {
+  dps: 166.8055415357898
+  tps: 166.8055415357898
+ }
+}
+dps_results: {
  key: "TestProtection-AllItems-AshtongueTalismanofZeal-32489"
  value: {
   dps: 109.91115706271263
@@ -124,20 +131,6 @@ dps_results: {
  value: {
   dps: 111.51326240899924
   tps: 113.7435276571792
- }
-}
-dps_results: {
- key: "TestProtection-AllItems-CrystalforgeArmor"
- value: {
-  dps: 108.90481601809235
-  tps: 108.90481601809235
- }
-}
-dps_results: {
- key: "TestProtection-AllItems-CrystalforgeBattlegear"
- value: {
-  dps: 123.5706238161908
-  tps: 123.5706238161908
  }
 }
 dps_results: {
@@ -393,20 +386,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestProtection-AllItems-JusticarArmor"
- value: {
-  dps: 108.90481601809235
-  tps: 108.90481601809235
- }
-}
-dps_results: {
- key: "TestProtection-AllItems-JusticarBattlegear"
- value: {
-  dps: 118.33722288551904
-  tps: 118.33722288551904
- }
-}
-dps_results: {
  key: "TestProtection-AllItems-Lavanthor'sTalisman-37872"
  value: {
   dps: 109.91115706271263
@@ -414,17 +393,17 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestProtection-AllItems-Liadrin'sBattlegear"
+ value: {
+  dps: 166.0362722732971
+  tps: 166.0362722732971
+ }
+}
+dps_results: {
  key: "TestProtection-AllItems-LibramofAvengement-27484"
  value: {
   dps: 111.86296148156316
   tps: 114.10022071119438
- }
-}
-dps_results: {
- key: "TestProtection-AllItems-LightbringerArmor"
- value: {
-  dps: 112.4925739092972
-  tps: 112.4925739092972
  }
 }
 dps_results: {
@@ -544,6 +523,13 @@ dps_results: {
  value: {
   dps: 109.91115706271263
   tps: 112.10938020396686
+ }
+}
+dps_results: {
+ key: "TestProtection-AllItems-RedemptionBattlegear"
+ value: {
+  dps: 143.9766921639356
+  tps: 143.9766921639356
  }
 }
 dps_results: {
@@ -761,6 +747,13 @@ dps_results: {
  value: {
   dps: 109.91115706271263
   tps: 112.10938020396686
+ }
+}
+dps_results: {
+ key: "TestProtection-AllItems-Turalyon'sBattlegear"
+ value: {
+  dps: 166.0362722732971
+  tps: 166.0362722732971
  }
 }
 dps_results: {

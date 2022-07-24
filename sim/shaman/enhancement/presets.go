@@ -10,25 +10,34 @@ var BasicPartyBuffs = &proto.PartyBuffs{}
 var BasicIndividualBuffs = &proto.IndividualBuffs{}
 
 var StandardTalents = &proto.ShamanTalents{
-	Convection:     2,
-	Concussion:     5,
-	CallOfFlame:    3,
-	ElementalFocus: true,
-	Reverberation:  5,
+	Concussion:           5,
+	CallOfFlame:          3,
+	ElementalDevastation: 3,
+	ElementalFocus:       true,
+	ElementalFury:        5,
+	ImprovedFireNova:     2,
 
-	AncestralKnowledge:      5,
+	EnhancingTotems:         3,
+	AncestralKnowledge:      2,
 	ThunderingStrikes:       5,
-	EnhancingTotems:         2,
-	ShamanisticFocus:        true,
-	Flurry:                  5,
-	SpiritWeapons:           true,
+	ImprovedShields:         3,
 	ElementalWeapons:        3,
-	MentalQuickness:         3,
+	ShamanisticFocus:        true, //1/2 imp stormstrike might be better, yet to be determined
+	Flurry:                  5,
+	ImprovedWindfuryTotem:   2,
+	SpiritWeapons:           true,
+	MentalDexterity:         3,
+	UnleashedRage:           3,
 	WeaponMastery:           3,
 	DualWieldSpecialization: 3,
+	DualWield:               true,
 	Stormstrike:             true,
-	UnleashedRage:           5,
+	StaticShock:             3,
+	LavaLash:                true,
+	MentalQuickness:         3,
 	ShamanisticRage:         true,
+	MaelstromWeapon:         5,
+	FeralSpirit:             true,
 }
 
 var PlayerOptionsBasic = &proto.Player_EnhancementShaman{
@@ -49,9 +58,9 @@ var enhShamRotation = &proto.EnhancementShaman_Rotation{
 }
 
 var enhShamOptions = &proto.EnhancementShaman_Options{
-	Shield:             proto.ShamanShield_WaterShield, // lighting for enh?
+	Shield:             proto.ShamanShield_LightningShield,
 	Bloodlust:          true,
-	DelayOffhandSwings: true,
+	DelayOffhandSwings: true, //might not be default anymore, depending on what imbues we run. still useful regardless
 }
 
 var FullRaidBuffs = &proto.RaidBuffs{
