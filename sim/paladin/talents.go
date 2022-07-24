@@ -32,7 +32,7 @@ func (paladin *Paladin) ApplyTalents() {
 	if paladin.Talents.SheathOfLight > 0 {
 		// doesn't implement HOT
 		percentage := 0.10 * float64(paladin.Talents.SheathOfLight)
-		paladin.AddStatDependency(stats.AttackPower, stats.SpellPower, 1.0+percentage)
+		paladin.AddStatDependency(stats.AttackPower, stats.SpellPower, percentage)
 	}
 
 	// if paladin.Talents.ShieldSpecialization > 0 {
@@ -65,6 +65,34 @@ func (paladin *Paladin) ApplyTalents() {
 	paladin.applyArtOfWar()
 	paladin.applyJudgmentsOfTheWise()
 	paladin.applyRighteousVengeance()
+}
+
+func (paladin *Paladin) getTalentSealsOfThePureBonus() float64 {
+	return 0.03 * float64(paladin.Talents.SealsOfThePure)
+}
+
+func (paladin *Paladin) getTalentTwoHandedWeaponSpecializationBonus() float64 {
+	return 0.02 * float64(paladin.Talents.TwoHandedWeaponSpecialization)
+}
+
+func (paladin *Paladin) getTalentSanctityOfBattleBonus() float64 {
+	return 0.05 * float64(paladin.Talents.SanctityOfBattle)
+}
+
+func (paladin *Paladin) getTalentTheArtOfWarBonus() float64 {
+	return 0.05 * float64(paladin.Talents.TheArtOfWar)
+}
+
+func (paladin *Paladin) getMajorGlyphSealOfRighteousnessBonus() float64 {
+	return core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfSealOfRighteousness), .1, 0)
+}
+
+func (paladin *Paladin) getMajorGlyphOfExorcismBonus() float64 {
+	return core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfExorcism), 0.20, 0)
+}
+
+func (paladin *Paladin) getMajorGlyphOfJudgementBonus() float64 {
+	return core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfJudgement), 0.10, 0)
 }
 
 func (paladin *Paladin) applyRedoubt() {

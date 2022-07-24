@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -12,11 +11,11 @@ func (paladin *Paladin) registerExorcismSpell() {
 	// From the perspective of max rank.
 	baseCost := paladin.BaseMana * 0.08
 
-	baseModifiers := Modifiers{
-		{
-			0.05 * float64(paladin.Talents.SanctityOfBattle),
-			core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfExorcism), 0.20, 0),
-			core.TernaryFloat64(paladin.HasSetBonus(ItemSetAegisBattlegear, 2), .1, 0),
+	baseModifiers := Multiplicative{
+		Additive{
+			paladin.getTalentSanctityOfBattleBonus(),
+			paladin.getMajorGlyphOfExorcismBonus(),
+			paladin.getItemSetAegisBattlegearBonus2(),
 		},
 	}
 	baseMultiplier := baseModifiers.Get()

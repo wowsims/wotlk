@@ -11,10 +11,10 @@ func (paladin *Paladin) registerHammerOfWrathSpell() {
 	// From the perspective of max rank.
 	baseCost := paladin.BaseMana * 0.12
 
-	baseModifiers := Modifiers{
-		{
-			core.TernaryFloat64(paladin.HasSetBonus(ItemSetLightbringerBattlegear, 4), .1, 0),
-			core.TernaryFloat64(paladin.HasSetBonus(ItemSetAegisBattlegear, 2), .1, 0),
+	baseModifiers := Multiplicative{
+		Additive{
+			paladin.getItemSetLightbringerBattlegearBonus4(),
+			paladin.getItemSetAegisBattlegearBonus2(),
 		},
 	}
 	baseMultiplier := baseModifiers.Get()
