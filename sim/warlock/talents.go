@@ -66,6 +66,9 @@ func (warlock *Warlock) ApplyTalents() {
 	if warlock.Talents.Nightfall > 0 || warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCorruption) {
 		warlock.setupNightfall()
 	}
+	if warlock.Talents.EverlastingAffliction > 0 {
+		warlock.setupEverlastingAffliction()
+	}
 
 	if warlock.Talents.ShadowEmbrace > 0 {
 		warlock.setupShadowEmbrace()
@@ -386,3 +389,24 @@ func (warlock *Warlock) backdraftModifier() float64 {
 	return castTimeModifier
 }
 
+func (warlock *Warlock) setupEverlastingAffliction() {
+	warlock.RegisterAura(core.Aura{
+		Label:    "Everlasting Affliction Hidden Aura",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.Landed() {
+				return
+			}
+			if spell == warlock.ShadowBolt || spell == warlock.Haunt || spell == warlock.DrainSoul { // TODO: also works on drain life...
+				if warlock.CorruptionDot.IsActive() {
+					if sim.RandomFloat("EverlastingAffliction") < 0.2*float64(warlock.Talents.EverlastingAffliction) {
+						warlock.CorruptionDot.Refresh(sim)
+					}
+				}
+			}
+		},
+	})
+}

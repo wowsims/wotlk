@@ -32,6 +32,9 @@ func (warlock *Warlock) registerHauntSpell() {
 		DamageMultiplier: 1,
 		BaseDamage:       core.BaseDamageConfigMagic(645.0, 753.0, 0.4286),
 		OutcomeApplier:   warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, core.TernaryFloat64(warlock.Talents.Pandemic, 1, 0))),
+		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			spellEffect.DamageMultiplier = warlock.spellDamageMultiplierHelper(sim, spell, spellEffect)
+		},
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if !spellEffect.Landed() {
 				return
@@ -40,12 +43,6 @@ func (warlock *Warlock) registerHauntSpell() {
 				warlock.HauntAura.Activate(sim)
 			} else {
 				warlock.HauntAura.Refresh(sim)
-			}
-			// Everlasting Affliction Refresh
-			if warlock.CorruptionDot.IsActive() {
-				if sim.RandomFloat("EverlastingAffliction") < 0.2*float64(warlock.Talents.EverlastingAffliction) {
-					warlock.CorruptionDot.Refresh(sim)
-				}
 			}
 		},
 	}

@@ -72,12 +72,6 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 				if !spellEffect.Landed() {
 					return
 				}
-				// Everlasting Affliction Refresh
-				if warlock.CorruptionDot.IsActive() {
-					if sim.RandomFloat("EverlastingAffliction") < 0.2*float64(warlock.Talents.EverlastingAffliction) {
-						warlock.CorruptionDot.Refresh(sim)
-					}
-				}
 				warlock.DrainSoulDot.Apply(sim)
 				warlock.DrainSoulDot.Aura.UpdateExpires(warlock.DrainSoulDot.Aura.ExpiresAt() + epsilon)
 			},
@@ -91,7 +85,7 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 		IsPeriodic:       true,
 		OutcomeApplier:   warlock.OutcomeFuncTick(),
-		ProcMask:         core.ProcMaskSpellDamage,
+		ProcMask:         core.ProcMaskPeriodicDamage,
 		BaseDamage:       core.BaseDamageConfigMagicNoRoll(710/5, 0.429),
 		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			spellEffect.DamageMultiplier = warlock.spellDamageMultiplierHelper(sim, spell, spellEffect)

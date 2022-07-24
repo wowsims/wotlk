@@ -15,7 +15,7 @@ func (warlock *Warlock) registerImmolateSpell() {
 	if float64(warlock.Talents.Cataclysm) > 0 {
 		costReductionFactor -= 0.01 + 0.03*float64(warlock.Talents.Cataclysm)
 	}
-	spellCoefficient:= 0.2 + 0.04*float64(warlock.Talents.ShadowAndFlame)
+	spellCoefficient:= 0.2 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
 
 	effect := core.SpellEffect{
 		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) * 5 * core.CritRatingPerCritChance,
@@ -51,10 +51,6 @@ func (warlock *Warlock) registerImmolateSpell() {
 	})
 
 	target := warlock.CurrentTarget
-	applier := warlock.OutcomeFuncTick()
-	if warlock.Talents.Pandemic {
-		applier = warlock.OutcomeFuncMagicCrit(warlock.SpellCritMultiplier(1, 1))
-	}
 
 	warlock.ImmolateDot = core.NewDot(core.Dot{
 		Spell: warlock.Immolate,
@@ -69,7 +65,7 @@ func (warlock *Warlock) registerImmolateSpell() {
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(785/5, spellCoefficient),
-			OutcomeApplier:   applier,
+			OutcomeApplier:   warlock.OutcomeFuncTick(),
 			IsPeriodic:       true,
 			ProcMask:         core.ProcMaskPeriodicDamage,
 			OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

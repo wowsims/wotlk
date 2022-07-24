@@ -35,12 +35,6 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 					}
 				}
 			}
-			// Everlasting Affliction Refresh
-			if warlock.CorruptionDot.IsActive() {
-				if sim.RandomFloat("EverlastingAffliction") < 0.2*float64(warlock.Talents.EverlastingAffliction) {
-					warlock.CorruptionDot.Refresh(sim)
-				}
-			}
 		},
 	}
 
