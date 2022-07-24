@@ -275,9 +275,9 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 			currDPS2 = mb_dmg
 
 			if sim.Log != nil {
-				spriest.Log(sim, "currDPS2[%d]", currDPS2)
-				spriest.Log(sim, "overwriteDPS2[%d]", overwriteDPS2)
-				spriest.Log(sim, "dpRemainTicks[%d]", dpRemainTicks)
+				//spriest.Log(sim, "currDPS2[%d]", currDPS2)
+				//spriest.Log(sim, "overwriteDPS2[%d]", overwriteDPS2)
+				//spriest.Log(sim, "dpRemainTicks[%d]", dpRemainTicks)
 			}
 
 		}
@@ -316,7 +316,10 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		}
 		if sim.Log != nil {
 			//spriest.Log(sim, "best=next[%d]", bestIdx)
-			//spriest.Log(sim, "best=dmg[%d]", bestDmg)
+			//spriest.Log(sim, "Mf time[%d]", float64((tickLength * 3).Seconds()))
+			//spriest.Log(sim, "gcd[%d]", float64((gcd + allCDs[mbidx]).Seconds()))
+			//spriest.Log(sim, "mb_dmg[%d]", mb_dmg)
+			//spriest.Log(sim, "mf_dmg[%d]", mf_dmg)
 		}
 		// Find the minimum CD ability to make sure that shouldnt be cast first
 		nextCD := core.NeverExpires
@@ -339,7 +342,7 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 			CurrentWait = allCDs[bestIdx]
 		}
 		if sim.Log != nil {
-			spriest.Log(sim, "best=next[%d]", bestIdx)
+			//spriest.Log(sim, "best=next[%d]", bestIdx)
 		}
 		if nextIdx != 4 && bestIdx != 4 && bestIdx != 5 && CurrentWait > Waitmin && CurrentWait.Seconds() < 3 { // right now 3 might not be correct number, but we can study this to optimize
 
