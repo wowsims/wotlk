@@ -7,6 +7,19 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+var ItemSetXXX = core.NewItemSet(core.ItemSet{
+	Name: "",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// shaman := agent.(ShamanAgent).GetShaman()
+		},
+		4: func(agent core.Agent) {
+			// Increases damage done by Lightning Bolt by 5%.
+			// Implemented in lightning_bolt.go.
+		},
+	},
+})
+
 func init() {
 	core.NewItemEffect(40708, func(agent core.Agent) {
 		shaman := agent.(ShamanAgent).GetShaman()

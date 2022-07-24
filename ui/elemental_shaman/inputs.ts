@@ -40,7 +40,7 @@ export const ElementalShamanRotationConfig = {
 			],
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecElementalShaman>({
-			fieldName: 'type',
+			fieldName: 'inThunderstormRange',
 			label: 'In Thunderstorm Range',
 			labelTooltip: 'Thunderstorm will hit all targets when cast. Ignores knockback.',
 			enableWhen: (player: Player<Spec.SpecElementalShaman>) => player.getTalents().thunderstorm,

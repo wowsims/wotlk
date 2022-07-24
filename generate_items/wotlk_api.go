@@ -190,6 +190,21 @@ func (item WotlkItemResponse) GetItemLevel() int {
 
 // WOTLK DB has no phase info
 func (item WotlkItemResponse) GetPhase() int {
+
+	ilvl := item.GetItemLevel()
+	if ilvl < 200 || ilvl == 200 || ilvl == 213 || ilvl == 226 {
+		return 1
+	} else if ilvl == 219 || ilvl == 226 || ilvl == 239 {
+		return 2
+	} else if ilvl == 232 || ilvl == 245 || ilvl == 258 || ilvl == 272 {
+		return 3
+	} else if ilvl == 251 || ilvl == 258 || ilvl == 264 || ilvl == 271 {
+		return 4
+	} else if ilvl == 277 || ilvl == 284 {
+		return 5
+	}
+
+	// default to 1
 	return 1
 }
 
