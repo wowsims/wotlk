@@ -129,14 +129,15 @@ func (dk *Deathknight) registerBloodPlague() {
 
 	dk.BloodPlagueDisease = make([]*core.Dot, dk.Env.GetNumTargets())
 
+	// Tier9 4Piece
+	outcomeApplier := dk.OutcomeFuncAlwaysHit()
+	if dk.HasSetBonus(ItemSetThassariansBattlegear, 4) {
+		outcomeApplier = dk.OutcomeFuncMagicCrit(dk.spellCritMultiplier())
+	}
+
 	for _, encounterTarget := range dk.Env.Encounter.Targets {
 		target := &encounterTarget.Unit
 
-		// Tier9 4Piece
-		outcomeApplier := dk.OutcomeFuncAlwaysHit()
-		if dk.HasSetBonus(ItemSetThassariansBattlegear, 4) {
-			outcomeApplier = dk.OutcomeFuncMagicCrit(dk.spellCritMultiplier())
-		}
 		dk.BloodPlagueDisease[target.Index] = core.NewDot(core.Dot{
 			Aura: target.RegisterAura(core.Aura{
 				Label:    BloodPlagueAuraLabel + strconv.Itoa(int(dk.Index)),

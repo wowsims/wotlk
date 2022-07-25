@@ -7,77 +7,98 @@ import (
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
-func (dk *DpsDeathknight) setupUnholyRotations(rotationId RotationID) {
-	if rotationId == RotationID_UnholySsUnholyPresence_Full {
-		dk.DefineOpener([]deathknight.RotationAction{
-			deathknight.RotationAction_IT,
-			deathknight.RotationAction_PS,
-			deathknight.RotationAction_BS,
-			deathknight.RotationAction_SS,
-			deathknight.RotationAction_Garg,
-			deathknight.RotationAction_ERW,
-			deathknight.RotationAction_BP,
-			deathknight.RotationAction_SS,
-			deathknight.RotationAction_SS,
-			deathknight.RotationAction_BS,
-		})
-	} else if rotationId == RotationID_UnholySsArmyUnholyPresence_Full {
-		dk.DefineOpener([]deathknight.RotationAction{
-			deathknight.RotationAction_IT,
-			deathknight.RotationAction_PS,
-			deathknight.RotationAction_BS,
-			deathknight.RotationAction_SS,
-			deathknight.RotationAction_Garg,
-			deathknight.RotationAction_ERW,
-			deathknight.RotationAction_AOTD,
-			deathknight.RotationAction_BP,
-			deathknight.RotationAction_SS,
-		})
-	} else if rotationId == RotationID_UnholySsBloodPresence_Full {
-		dk.DefineOpener([]deathknight.RotationAction{
-			deathknight.RotationAction_IT,
-			deathknight.RotationAction_PS,
-			deathknight.RotationAction_BS,
-			deathknight.RotationAction_SS,
-			deathknight.RotationAction_BT,
-			deathknight.RotationAction_UP,
-			deathknight.RotationAction_Garg,
-			deathknight.RotationAction_ERW,
-			deathknight.RotationAction_BP,
-			deathknight.RotationAction_SS,
-			deathknight.RotationAction_SS,
-			deathknight.RotationAction_BS,
-		})
-	} else if rotationId == RotationID_UnholySsArmyBloodPresence_Full {
-		dk.DefineOpener([]deathknight.RotationAction{
-			deathknight.RotationAction_IT,
-			deathknight.RotationAction_PS,
-			deathknight.RotationAction_BS,
-			deathknight.RotationAction_SS,
-			deathknight.RotationAction_BT,
-			deathknight.RotationAction_UP,
-			deathknight.RotationAction_Garg,
-			deathknight.RotationAction_ERW,
-			deathknight.RotationAction_AOTD,
-			deathknight.RotationAction_BP,
-			deathknight.RotationAction_SS,
-		})
-	} else if rotationId == RotationID_UnholyDnd_Full {
-		dk.DefineOpener([]deathknight.RotationAction{
-			deathknight.RotationAction_IT,
-			deathknight.RotationAction_PS,
-			deathknight.RotationAction_BS,
-			deathknight.RotationAction_DND,
-			deathknight.RotationAction_BT,
-			deathknight.RotationAction_UP,
-			deathknight.RotationAction_Garg,
-			deathknight.RotationAction_ERW,
-			deathknight.RotationAction_BP,
-			deathknight.RotationAction_SS,
-			deathknight.RotationAction_BS,
-			deathknight.RotationAction_SS,
-		})
-	}
+func (dk *DpsDeathknight) setupUnholySsUnholyPresenceOpener() {
+	dk.DefineOpener([]deathknight.RotationAction{
+		deathknight.RotationAction_IT,
+		deathknight.RotationAction_PS,
+		deathknight.RotationAction_BS,
+		deathknight.RotationAction_SS,
+		deathknight.RotationAction_Garg,
+		deathknight.RotationAction_ERW,
+		deathknight.RotationAction_BP,
+		deathknight.RotationAction_SS,
+		deathknight.RotationAction_SS,
+		deathknight.RotationAction_BS,
+	})
+}
+
+func (dk *DpsDeathknight) setupUnholySsArmyUnholyPresenceOpener() {
+	dk.DefineOpener([]deathknight.RotationAction{
+		deathknight.RotationAction_IT,
+		deathknight.RotationAction_PS,
+		deathknight.RotationAction_BS,
+		deathknight.RotationAction_SS,
+		deathknight.RotationAction_Garg,
+		deathknight.RotationAction_ERW,
+		deathknight.RotationAction_AOTD,
+		deathknight.RotationAction_BP,
+		deathknight.RotationAction_SS,
+	})
+}
+
+func (dk *DpsDeathknight) setupUnholySsBloodPresenceOpener() {
+	dk.DefineOpener([]deathknight.RotationAction{
+		deathknight.RotationAction_IT,
+		deathknight.RotationAction_PS,
+		deathknight.RotationAction_BS,
+		deathknight.RotationAction_SS,
+		deathknight.RotationAction_BT,
+		deathknight.RotationAction_UP,
+		deathknight.RotationAction_Garg,
+		deathknight.RotationAction_ERW,
+		deathknight.RotationAction_BP,
+		deathknight.RotationAction_SS,
+		deathknight.RotationAction_SS,
+		deathknight.RotationAction_BS,
+	})
+}
+
+func (dk *DpsDeathknight) setupUnholySsArmyBloodPresenceOpener() {
+	dk.DefineOpener([]deathknight.RotationAction{
+		deathknight.RotationAction_IT,
+		deathknight.RotationAction_PS,
+		deathknight.RotationAction_BS,
+		deathknight.RotationAction_SS,
+		deathknight.RotationAction_BT,
+		deathknight.RotationAction_UP,
+		deathknight.RotationAction_Garg,
+		deathknight.RotationAction_ERW,
+		deathknight.RotationAction_AOTD,
+		deathknight.RotationAction_BP,
+		deathknight.RotationAction_SS,
+	})
+}
+
+func (dk *DpsDeathknight) setupUnholyDndUnholyPresenceOpener() {
+	dk.DefineOpener([]deathknight.RotationAction{
+		deathknight.RotationAction_IT,
+		deathknight.RotationAction_PS,
+		deathknight.RotationAction_BS,
+		deathknight.RotationAction_DND,
+		deathknight.RotationAction_Garg,
+		deathknight.RotationAction_ERW,
+		deathknight.RotationAction_BP,
+		deathknight.RotationAction_SS,
+		deathknight.RotationAction_SS,
+		deathknight.RotationAction_BS,
+	})
+}
+
+func (dk *DpsDeathknight) setupUnholyDndBloodPresenceOpener() {
+	dk.DefineOpener([]deathknight.RotationAction{
+		deathknight.RotationAction_IT,
+		deathknight.RotationAction_PS,
+		deathknight.RotationAction_BS,
+		deathknight.RotationAction_DND,
+		deathknight.RotationAction_BT,
+		deathknight.RotationAction_UP,
+		deathknight.RotationAction_Garg,
+		deathknight.RotationAction_ERW,
+		deathknight.RotationAction_BP,
+		deathknight.RotationAction_SS,
+		deathknight.RotationAction_SS,
+		deathknight.RotationAction_BS,
+	})
 }
 
 func (dk *DpsDeathknight) UnholyDiseaseCheckWrapper(sim *core.Simulation, target *core.Unit, spell *core.Spell) bool {
@@ -147,7 +168,7 @@ func (dk *DpsDeathknight) spreadDiseases(sim *core.Simulation, target *core.Unit
 	recastedBP = false
 }
 
-func (dk *DpsDeathknight) doUnholyRotation(sim *core.Simulation, target *core.Unit) bool {
+func (dk *DpsDeathknight) doUnholyRotation(sim *core.Simulation, target *core.Unit) {
 	casted := &dk.CastSuccessful
 	// I suggest adding the a wrapper around each spell you cast like this:
 	// dk.YourWrapper(sim, target, dk.FrostStrike) that returns a bool for when you casted
@@ -274,5 +295,4 @@ func (dk *DpsDeathknight) doUnholyRotation(sim *core.Simulation, target *core.Un
 			}
 		}
 	}
-	return true
 }
