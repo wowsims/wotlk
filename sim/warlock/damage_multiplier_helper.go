@@ -33,7 +33,7 @@ func (warlock *Warlock) staticAdditiveDamageMultiplier(actionID core.ActionID, s
 
 	// Talent & Glyphs Bonuses
 	if spellSchool == core.SpellSchoolShadow {
-		additiveDamageMultiplier *= 10//0.03 * float64(warlock.Talents.ShadowMastery)
+		additiveDamageMultiplier += 0.03 * float64(warlock.Talents.ShadowMastery)
 	} else if spellSchool == core.SpellSchoolFire {
 		additiveDamageMultiplier += 0.03*float64(warlock.Talents.Emberstorm)
 	}
