@@ -159,16 +159,14 @@ func (spellEffect *SpellEffect) SpellPower(unit *Unit, spell *Spell) float64 {
 }
 
 func (spellEffect *SpellEffect) SpellCritChance(unit *Unit, spell *Spell) float64 {
-	critRating := spell.BonusCritRating +
-		spellEffect.Target.PseudoStats.BonusCritRatingTaken +
-		spellEffect.Target.PseudoStats.BonusSpellCritRatingTaken
-
+	critRating := spell.BonusCritRating
 	// periodic spells apply crit from snapshot at time of initial cast if capable of a crit
 	// ignoring units real time crit in this case
 	if spellEffect.IsPeriodic {
 		critRating += (spellEffect.BonusSpellCritRating)
 	} else {
-		critRating += (unit.GetStat(stats.SpellCrit) + spellEffect.BonusSpellCritRating) + unit.PseudoStats.BonusSpellCritRating
+		critRating += (unit.GetStat(stats.SpellCrit) + spellEffect.BonusSpellCritRating) + unit.PseudoStats.BonusSpellCritRating +
+			spellEffect.Target.PseudoStats.BonusCritRatingTaken + spellEffect.Target.PseudoStats.BonusSpellCritRatingTaken
 	}
 
 	if spell.SpellSchool.Matches(SpellSchoolFire) {

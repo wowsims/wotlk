@@ -69,6 +69,13 @@ func (dot *Dot) Reapply(sim *Simulation) {
 	dot.Aura.Refresh(sim)       // resets aura with new duration
 }
 
+// func (dot *Dot) Refresh(sim *Simulation, restartTimer bool) {
+// 	dot.Aura.Refresh(sim)
+// 	if restartTimer {
+// 		dot.tickAction.NextActionAt = sim.CurrentTime + dot.tickPeriod
+// 	}
+// }
+
 func (dot *Dot) Apply(sim *Simulation) {
 	dot.Cancel(sim)
 	dot.TickCount = 0
@@ -172,7 +179,9 @@ func TickFuncSnapshot(target *Unit, baseEffect SpellEffect) TickEffects {
 		dot.snapshotEffect.Target = target
 
 		baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell)
-		dot.snapshotEffect.BonusSpellCritRating = dot.snapshotEffect.BonusSpellCritRating + dot.Spell.Unit.GetStat(stats.SpellCrit) + dot.Spell.Unit.PseudoStats.BonusSpellCritRating
+		dot.snapshotEffect.BonusSpellCritRating = dot.snapshotEffect.BonusSpellCritRating +
+			dot.Spell.Unit.GetStat(stats.SpellCrit) + dot.Spell.Unit.PseudoStats.BonusSpellCritRating +
+			target.PseudoStats.BonusCritRatingTaken + target.PseudoStats.BonusSpellCritRatingTaken
 		dot.snapshotEffect.DamageMultiplier = 1
 		dot.snapshotEffect.BaseDamage = BaseDamageConfigFlat(baseDamage)
 

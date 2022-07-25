@@ -466,7 +466,7 @@ dps_results: {
  key: "TestFrost-AllItems-PotentUnstableDiamond"
  value: {
   dps: 5658.3839912672065
-  tps: 4021.1373947575235
+  tps: 4021.137394757524
  }
 }
 dps_results: {
@@ -648,7 +648,7 @@ dps_results: {
  key: "TestFrost-AllItems-SwiftSkyfireDiamond"
  value: {
   dps: 5658.3839912672065
-  tps: 4021.1373947575235
+  tps: 4021.137394757524
  }
 }
 dps_results: {
@@ -696,8 +696,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-TheTwinStars"
  value: {
-  dps: 5485.523934807561
-  tps: 3920.4080146985575
+  dps: 5485.523934807562
+  tps: 3920.4080146985584
  }
 }
 dps_results: {
@@ -766,7 +766,7 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-WindhawkArmor"
  value: {
-  dps: 4870.273309986111
+  dps: 4870.2733099861125
   tps: 3475.4168422561406
  }
 }
