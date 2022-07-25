@@ -57,7 +57,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	paladin.SealOfVengeanceDot = dot
 
 	onSwingProc := paladin.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 31803}, // Holy Vengeance.
+		ActionID:    core.ActionID{SpellID: 31803, Tag: 1}, // Holy Vengeance.
 		SpellSchool: core.SpellSchoolHoly,
 		Flags:       core.SpellFlagMeleeMetrics,
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
