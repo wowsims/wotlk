@@ -135,7 +135,7 @@ func TickFuncSnapshot(target *Unit, baseEffect SpellEffect) TickEffects {
 	return func(sim *Simulation, spell *Spell) func() {
 		*snapshotEffect = baseEffect
 		snapshotEffect.Target = target
-		baseDamage := snapshotEffect.calculateBaseDamage(sim, spell) * snapshotEffect.DamageMultiplier
+		baseDamage := snapshotEffect.calculateBaseDamage(sim, spell)
 		snapshotEffect.BonusSpellCritRating = snapshotEffect.BonusSpellCritRating + spell.Unit.GetStat(stats.SpellCrit)
 		snapshotEffect.DamageMultiplier = 1
 		snapshotEffect.BaseDamage = BaseDamageConfigFlat(baseDamage)
@@ -152,7 +152,7 @@ func TickFuncAOESnapshot(env *Environment, baseEffect SpellEffect) TickEffects {
 		target := spell.Unit.CurrentTarget
 		*snapshotEffect = baseEffect
 		snapshotEffect.Target = target
-		baseDamage := snapshotEffect.calculateBaseDamage(sim, spell) * snapshotEffect.DamageMultiplier
+		baseDamage := snapshotEffect.calculateBaseDamage(sim, spell)
 		snapshotEffect.DamageMultiplier = 1
 		snapshotEffect.BaseDamage = BaseDamageConfigFlat(baseDamage)
 
@@ -168,7 +168,7 @@ func TickFuncAOESnapshotCapped(env *Environment, aoeCap float64, baseEffect Spel
 		target := spell.Unit.CurrentTarget
 		*snapshotEffect = baseEffect
 		snapshotEffect.Target = target
-		baseDamage := snapshotEffect.calculateBaseDamage(sim, spell) * snapshotEffect.DamageMultiplier
+		baseDamage := snapshotEffect.calculateBaseDamage(sim, spell)
 		snapshotEffect.DamageMultiplier = 1
 		snapshotEffect.BaseDamage = BaseDamageConfigFlat(baseDamage)
 
