@@ -6,6 +6,7 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/items"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 // newLightningBoltSpell returns a precomputed instance of lightning bolt to use for casting.
@@ -37,6 +38,9 @@ func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spel
 	}
 
 	effect := shaman.newElectricSpellEffect(719, 819, 0.7143, isLightningOverload)
+	if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfLightningBolt) {
+		effect.DamageMultiplier *= 1.04
+	}
 
 	if shaman.HasSetBonus(ItemSetSkyshatterRegalia, 4) {
 		effect.DamageMultiplier *= 1.05

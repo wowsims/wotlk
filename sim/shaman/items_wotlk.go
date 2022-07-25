@@ -64,6 +64,10 @@ func init() {
 		shaman := agent.(ShamanAgent).GetShaman()
 		procAura := shaman.NewTemporaryStatsAura("Totem of the Elemental Plane Proc", core.ActionID{ItemID: 40708}, stats.Stats{stats.SpellHaste: 196, stats.MeleeHaste: 196}, time.Second*10)
 
+		icd := core.Cooldown{
+			Timer:    shaman.NewTimer(),
+			Duration: time.Second * 30,
+		}
 		shaman.RegisterAura(core.Aura{
 			Label:    "Totem of the Elemental Plane",
 			Duration: core.NeverExpires,
@@ -71,8 +75,12 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+				if !icd.IsReady(sim) {
+					return
+				}
 				if (spell == shaman.LightningBolt || spell == shaman.LightningBoltLO) && sim.RandomFloat("totem of elemental plane") < 0.15 {
 					procAura.Activate(sim)
+					icd.Use(sim)
 				}
 			},
 		})

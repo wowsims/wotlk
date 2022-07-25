@@ -6,6 +6,7 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/items"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -49,16 +50,21 @@ func (shaman *Shaman) newLavaBurstSpell() *core.Spell {
 		critMultiplier *= 1.1
 	}
 
+	bonusBase := core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == VentureCoLightningRod, 121, 0) +
+		core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == ThunderfallTotem, 215, 0)
+
+	bonusCoeff := 0.0
+	if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfLava) {
+		bonusCoeff = 0.1
+	}
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
 		BonusSpellHitRating:  float64(shaman.Talents.ElementalPrecision) * 2 * core.SpellHitRatingPerHitChance,
 		BonusSpellCritRating: 0,
-		BonusSpellPower: 0 +
-			core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == VentureCoLightningRod, 121, 0) +
-			core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == ThunderfallTotem, 215, 0),
-		DamageMultiplier: 1 * (1 + 0.01*float64(shaman.Talents.Concussion)),
-		ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
-		BaseDamage:       core.BaseDamageConfigMagic(1192, 1518, 0.5714),
+		BonusSpellPower:      0,
+		DamageMultiplier:     1 * (1 + 0.01*float64(shaman.Talents.Concussion)),
+		ThreatMultiplier:     1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
+		BaseDamage:           core.BaseDamageConfigMagic(1192+bonusBase, 1518+bonusBase, 0.5714+(0.05*float64(shaman.Talents.Shamanism)+bonusCoeff)),
 		OutcomeApplier: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
 			if spellEffect.MagicHitCheck(sim, spell, attackTable) {
 				if shaman.FlameShockDot.IsActive() || spellEffect.MagicCritCheck(sim, spell, attackTable) {

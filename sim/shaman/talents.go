@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -152,6 +153,10 @@ func (shaman *Shaman) registerElementalMasteryCD() {
 	actionID := core.ActionID{SpellID: 16166}
 	cdTimer := shaman.NewTimer()
 	cd := time.Minute * 3
+
+	if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfElementalMastery) {
+		cd -= time.Second * 30
+	}
 
 	// TODO: Share CD with Natures Swiftness
 
