@@ -59,7 +59,7 @@ func (dot *Dot) Rollover(sim *Simulation) {
 	dot.snapshotEffect.BonusSpellCritRating = oldSpellCrit
 	dot.snapshotEffect.BonusCritRating = oldCrit
 
-	dot.RecomputeAuraDuration()
+	// Does not re-compute aura duration to cache the speed on cast.
 	dot.Aura.Refresh(sim)
 }
 
