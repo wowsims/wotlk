@@ -166,6 +166,18 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 	if debuffs.HeartOfTheCrusader {
 		MakePermanent(HeartoftheCrusaderDebuff(target, 3))
 	}
+
+	if debuffs.HuntersMark > 0 {
+		points := int32(0)
+		glyphed := false
+		if debuffs.HuntersMark > 1 {
+			points = 3
+			if debuffs.HuntersMark > 2 {
+				glyphed = true
+			}
+		}
+		MakePermanent(HuntersMarkAura(target, points, glyphed))
+	}
 }
 
 func ScheduledAura(aura *Aura, preActivate bool, options PeriodicActionOptions) *Aura {

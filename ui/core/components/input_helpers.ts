@@ -348,6 +348,13 @@ export function makeTristateIconInput<SpecType extends Spec, Message, ModObject>
 	input.improvedId = impId;
 	return input;
 }
+export function makeQuadstateIconInput<SpecType extends Spec, Message, ModObject>(config: WrappedTypedInputConfig<Message, ModObject, number>, id: ActionId, impId: ActionId, impId2: ActionId, fieldName: keyof Message): TypedIconPickerConfig<Player<SpecType>, number> {
+	const input = makeNumberIconInput(config, id, fieldName);
+	input.states = 4;
+	input.improvedId = impId;
+	input.improvedId2 = impId2;
+	return input;
+}
 export function makeMultistateIconInput<SpecType extends Spec, Message, ModObject>(config: WrappedTypedInputConfig<Message, ModObject, number>, id: ActionId, numStates: number, fieldName: keyof Message): TypedIconPickerConfig<Player<SpecType>, number> {
 	const input = makeNumberIconInput(config, id, fieldName);
 	input.states = numStates;
