@@ -139,13 +139,15 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 		Duration: SealDuration,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			if paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfSealOfVengeance) {
-				paladin.AddStatDynamic(sim, stats.Expertise, core.ExpertiseRatingPerExpertise*10)
+				expertise := core.ExpertisePerQuarterPercentReduction * 10
+				paladin.AddStatDynamic(sim, stats.Expertise, expertise)
 			}
 		},
 
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			if paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfSealOfVengeance) {
-				paladin.AddStatDynamic(sim, stats.Expertise, -(core.ExpertiseRatingPerExpertise * 10))
+				expertise := core.ExpertisePerQuarterPercentReduction * 10
+				paladin.AddStatDynamic(sim, stats.Expertise, -expertise)
 			}
 		},
 
