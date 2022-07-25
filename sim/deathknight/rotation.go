@@ -19,9 +19,7 @@ func (dk *Deathknight) OnGCDReady(sim *core.Simulation) {
 }
 
 func (dk *Deathknight) tryUseGCD(sim *core.Simulation) {
-	if dk.GCD.IsReady(sim) {
-		dk.DoRotation(sim)
-	}
+	dk.DoRotation(sim)
 }
 
 func (o *Sequence) IsOngoing() bool {

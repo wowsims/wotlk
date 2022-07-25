@@ -101,54 +101,92 @@ func (dk *DpsDeathknight) setupUnholyDndBloodPresenceOpener() {
 	})
 }
 
-func (dk *DpsDeathknight) UnholyDiseaseCheckWrapper(sim *core.Simulation, target *core.Unit, spell *core.Spell) bool {
+var syncBp = false
+
+func (dk *DpsDeathknight) UnholyDiseaseCheckWrapper(sim *core.Simulation, target *core.Unit, spell *core.Spell, costRunes bool) bool {
 	success := false
 
-	if !dk.TargetHasDisease(deathknight.FrostFeverAuraLabel, target) || dk.FrostFeverDisease[target.Index].RemainingDuration(sim) < spell.CurCast.GCD {
+	dropTimeAllowed := time.Millisecond * -100
+	ffRemaining := dk.FrostFeverDisease[target.Index].RemainingDuration(sim) + dropTimeAllowed
+	bpRemaining := dk.BloodPlagueDisease[target.Index].RemainingDuration(sim) + dropTimeAllowed
+
+	if !dk.TargetHasDisease(deathknight.FrostFeverAuraLabel, target) || ffRemaining < spell.CurCast.GCD {
+		// Refresh FF
 		success = dk.CastIcyTouch(sim, target)
-	} else if !dk.TargetHasDisease(deathknight.BloodPlagueAuraLabel, target) || dk.BloodPlagueDisease[target.Index].RemainingDuration(sim) < spell.CurCast.GCD {
+	} else if syncBp || !dk.TargetHasDisease(deathknight.BloodPlagueAuraLabel, target) || bpRemaining < spell.CurCast.GCD {
+		// Refresh BP
+		syncBp = false
 		success = dk.CastPlagueStrike(sim, target)
-	} else {
-		if dk.CanCast(sim, spell) {
-			ffExpiresIn := dk.FrostFeverDisease[target.Index].RemainingDuration(sim)
-			bpExpiresIn := dk.BloodPlagueDisease[target.Index].RemainingDuration(sim)
-			ffExpiresAt := ffExpiresIn + sim.CurrentTime
-			bpExpiresAt := bpExpiresIn + sim.CurrentTime
-			if spell.CurCast.GCD > ffExpiresIn || spell.CurCast.GCD > bpExpiresIn {
+	} else if dk.CanCast(sim, spell) {
+		ffExpiresAt := ffRemaining + sim.CurrentTime
+		bpExpiresAt := bpRemaining + sim.CurrentTime
+
+		crpb := dk.CopyRunicPowerBar()
+		runeCostForSpell := dk.RuneAmountForSpell(spell)
+		spellCost := crpb.DetermineOptimalCost(sim, runeCostForSpell.Blood, runeCostForSpell.Frost, runeCostForSpell.Unholy)
+
+		crpb.Spend(sim, spell, spellCost)
+
+		// Check FF
+		if spellCost.Frost > 0 && crpb.CurrentFrostRunes() == 0 && crpb.CurrentDeathRunes() == 0 {
+			nextFrostRuneAt := crpb.FrostRuneReadyAt(sim)
+			nextDeathRuneAt := crpb.DeathRuneReadyAt(sim)
+
+			// Can cast FF with frost before expire
+			ff1 := ffExpiresAt > nextFrostRuneAt && spell.CurCast.GCD < ffRemaining
+			// Can cast FF with death before expire
+			ff2 := ffExpiresAt > nextDeathRuneAt && spell.CurCast.GCD < ffRemaining
+
+			if !ff1 && !ff2 {
+				// Refresh FF
+				success = dk.CastIcyTouch(sim, target)
+				syncBp = success
 				return success
 			}
+		}
 
-			crpb := dk.CopyRunicPowerBar()
-			runeCostForSpell := dk.RuneAmountForSpell(spell)
-			spellCost := crpb.DetermineOptimalCost(sim, runeCostForSpell.Blood, runeCostForSpell.Frost, runeCostForSpell.Unholy)
+		// Check BP
+		if spellCost.Unholy > 0 && crpb.CurrentUnholyRunes() == 0 && crpb.CurrentDeathRunes() == 0 {
+			nextUnholyRuneAt := crpb.UnholyRuneReadyAt(sim)
+			nextDeathRuneAt := crpb.DeathRuneReadyAt(sim)
 
-			crpb.Spend(sim, spell, spellCost)
+			// Can cast BP with unholy before expire
+			bp1 := bpExpiresAt > nextUnholyRuneAt && spell.CurCast.GCD < bpRemaining
+			// Can cast BP with death before expire
+			bp2 := bpExpiresAt > nextDeathRuneAt && spell.CurCast.GCD < bpRemaining
 
-			if crpb.CurrentBloodRunes() == 0 && crpb.CurrentDeathRunes() == 0 {
-				nextBloodRuneAt := float64(crpb.BloodRuneReadyAt(sim))
-				nextDeathRuneAt := float64(crpb.DeathRuneReadyAt(sim))
-
-				ff1 := (float64(ffExpiresAt) > nextBloodRuneAt) && (float64(ffExpiresAt)-nextBloodRuneAt < float64(spell.CurCast.GCD))
-				ff2 := (float64(ffExpiresAt) > nextDeathRuneAt) && (float64(ffExpiresAt)-nextDeathRuneAt < float64(spell.CurCast.GCD))
-				bp1 := (float64(bpExpiresAt) > nextBloodRuneAt) && (float64(bpExpiresAt)-nextBloodRuneAt < float64(spell.CurCast.GCD))
-				bp2 := (float64(bpExpiresAt) > nextDeathRuneAt) && (float64(bpExpiresAt)-nextDeathRuneAt < float64(spell.CurCast.GCD))
-
-				if (ff1 || ff2) && (bp1 || bp2) {
-					if dk.CanCast(sim, spell) {
-						spell.Cast(sim, target)
-						success = true
-					}
-				} else {
-					return success
-				}
-			} else {
-				spell.Cast(sim, target)
-				success = true
+			if !bp1 && !bp2 {
+				// Refresh BP
+				success = dk.CastPlagueStrike(sim, target)
+				return success
 			}
 		}
+
+		// We have runes left for disease after this cast
+		spell.Cast(sim, target)
+		success = true
 	}
 
 	return success
+}
+
+func (dk *DpsDeathknight) doUnholySsRotation(sim *core.Simulation, target *core.Unit) {
+	casted := &dk.CastSuccessful
+
+	if dk.ShouldHornOfWinter(sim) {
+		*casted = dk.CastHornOfWinter(sim, target)
+	} else {
+		*casted = dk.UnholyDiseaseCheckWrapper(sim, target, dk.ScourgeStrike, true)
+		if !*casted {
+			*casted = dk.UnholyDiseaseCheckWrapper(sim, target, dk.BloodStrike, true)
+			if !*casted {
+				*casted = dk.UnholyDiseaseCheckWrapper(sim, target, dk.DeathCoil, false)
+				if !*casted {
+					*casted = dk.UnholyDiseaseCheckWrapper(sim, target, dk.HornOfWinter, false)
+				}
+			}
+		}
+	}
 }
 
 func (dk *DpsDeathknight) shouldWaitForDnD(sim *core.Simulation, blood bool, frost bool, unholy bool) bool {
@@ -215,7 +253,7 @@ func (dk *DpsDeathknight) doUnholyRotation(sim *core.Simulation, target *core.Un
 				if dk.CanDeathAndDecay(sim) && dk.AllDiseasesAreActive(target) {
 					dk.DeathAndDecay.Cast(sim, target)
 					*casted = true
-				} else if dk.CanGhoulFrenzy(sim) && dk.Talents.MasterOfGhouls && (!dk.Ghoul.GhoulFrenzyAura.IsActive() || dk.Ghoul.GhoulFrenzyAura.RemainingDuration(sim) < 6*time.Second) && !dk.shouldWaitForDnD(sim, false, false, true) {
+				} else if dk.CanGhoulFrenzy(sim) && (!dk.Ghoul.GhoulFrenzyAura.IsActive() || dk.Ghoul.GhoulFrenzyAura.RemainingDuration(sim) < 6*time.Second) && !dk.shouldWaitForDnD(sim, false, false, true) {
 					dk.GhoulFrenzy.Cast(sim, target)
 					*casted = true
 				} else if dk.CanScourgeStrike(sim) && !dk.shouldWaitForDnD(sim, false, true, true) {
@@ -258,7 +296,7 @@ func (dk *DpsDeathknight) doUnholyRotation(sim *core.Simulation, target *core.Un
 				}
 			} else {
 				// Scourge Strike Rotation
-				if dk.CanGhoulFrenzy(sim) && dk.Talents.MasterOfGhouls && (!dk.Ghoul.GhoulFrenzyAura.IsActive() || dk.Ghoul.GhoulFrenzyAura.RemainingDuration(sim) < 6*time.Second) {
+				if dk.CanGhoulFrenzy(sim) && (!dk.Ghoul.GhoulFrenzyAura.IsActive() || dk.Ghoul.GhoulFrenzyAura.RemainingDuration(sim) < 6*time.Second) {
 					dk.GhoulFrenzy.Cast(sim, target)
 					*casted = true
 				} else if dk.CanScourgeStrike(sim) {
