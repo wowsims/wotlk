@@ -197,9 +197,9 @@ func (spellEffect *SpellEffect) calcDamageSingle(sim *Simulation, spell *Spell, 
 	if !spell.Flags.Matches(SpellFlagIgnoreModifiers) {
 		if sim.Log != nil {
 			baseDmg := spellEffect.Damage
-			// if !spellEffect.IsPeriodic { // dots snapshot personal attack dmg bonuses
-			spellEffect.applyAttackerModifiers(sim, spell)
-			// }
+			if !spellEffect.IsPeriodic { // dots snapshot personal attack dmg bonuses
+				spellEffect.applyAttackerModifiers(sim, spell)
+			}
 			afterAttackMods := spellEffect.Damage
 			spellEffect.applyResistances(sim, spell, attackTable)
 			afterResistances := spellEffect.Damage
@@ -213,9 +213,9 @@ func (spellEffect *SpellEffect) calcDamageSingle(sim *Simulation, spell *Spell, 
 				"%s %s [DEBUG] BaseDamage:%0.01f, AfterAttackerMods:%0.01f, AfterResistances:%0.01f, AfterTargetMods:%0.01f, AfterOutcome:%0.01f",
 				spellEffect.Target.LogLabel(), spell.ActionID, baseDmg, afterAttackMods, afterResistances, afterTargetMods, afterOutcome)
 		} else {
-			// if !spellEffect.IsPeriodic { // dots snapshot personal attack dmg bonuses
-			spellEffect.applyAttackerModifiers(sim, spell)
-			// }
+			if !spellEffect.IsPeriodic { // dots snapshot personal attack dmg bonuses
+				spellEffect.applyAttackerModifiers(sim, spell)
+			}
 			spellEffect.applyResistances(sim, spell, attackTable)
 			spellEffect.applyTargetModifiers(sim, spell, attackTable)
 			spellEffect.PreoutcomeDamage = spellEffect.Damage
@@ -341,9 +341,9 @@ func (spellEffect *SpellEffect) snapshotAttackModifiers(spell *Spell) float64 {
 	} else if spell.SpellSchool.Matches(SpellSchoolNature) {
 		multiplier *= attacker.PseudoStats.NatureDamageDealtMultiplier
 	} else if spell.SpellSchool.Matches(SpellSchoolShadow) {
-		spellEffect.Damage *= attacker.PseudoStats.ShadowDamageDealtMultiplier
+		multiplier *= attacker.PseudoStats.ShadowDamageDealtMultiplier
 		if spellEffect.IsPeriodic {
-			spellEffect.Damage *= attacker.PseudoStats.PeriodicShadowDamageDealtMultiplier
+			multiplier *= attacker.PseudoStats.PeriodicShadowDamageDealtMultiplier
 		}
 	}
 

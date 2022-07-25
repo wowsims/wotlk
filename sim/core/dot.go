@@ -168,7 +168,7 @@ func NewDot(config Dot) *Dot {
 func TickFuncSnapshot(target *Unit, baseEffect SpellEffect) TickEffects {
 	return func(sim *Simulation, dot *Dot) func() {
 		*dot.snapshotEffect = baseEffect
-		// dot.snapshotEffect.DamageMultiplier *= dot.snapshotMultiplier
+		dot.snapshotEffect.DamageMultiplier *= dot.snapshotMultiplier
 		dot.snapshotEffect.Target = target
 
 		baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell)
