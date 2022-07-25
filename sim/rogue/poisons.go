@@ -92,7 +92,7 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 			BaseDamage: core.MultiplyByStacks(
 				core.BaseDamageConfig{
 					Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-						return 74/4 + hitEffect.MeleeAttackPower(spell.Unit)*0.12
+						return 74 + hitEffect.MeleeAttackPower(spell.Unit)*0.03
 					},
 					TargetSpellCoefficient: 1,
 				},
@@ -138,10 +138,9 @@ func (rogue *Rogue) registerInstantPoisonSpell() {
 		SpellSchool: core.SpellSchoolNature,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:            core.ProcMaskEmpty,
-			DamageMultiplier:    1 + []float64{0.0, 0.07, 0.14, 0.20}[rogue.Talents.VilePoisons],
-			ThreatMultiplier:    1,
-			BonusSpellHitRating: 5 * core.SpellHitRatingPerHitChance * float64(rogue.Talents.Precision),
+			ProcMask:         core.ProcMaskEmpty,
+			DamageMultiplier: 1 + []float64{0.0, 0.07, 0.14, 0.20}[rogue.Talents.VilePoisons],
+			ThreatMultiplier: 1,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return 300 + hitEffect.MeleeAttackPower(spell.Unit)*0.1
