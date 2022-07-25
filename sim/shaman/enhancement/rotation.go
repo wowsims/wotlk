@@ -103,11 +103,13 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 		}
 	}
 
-	if enh.LavaLash.IsReady(sim) {
-		if !enh.LavaLash.Cast(sim, target) {
-			enh.WaitForMana(sim, enh.LavaLash.CurCast.Cost)
+	if enh.Talents.LavaLash {
+		if enh.LavaLash.IsReady(sim) {
+			if !enh.LavaLash.Cast(sim, target) {
+				enh.WaitForMana(sim, enh.LavaLash.CurCast.Cost)
+			}
+			return
 		}
-		return
 	}
 
 	enh.LightningShield.Cast(sim, nil) // if nothing else, refresh lightning shield
