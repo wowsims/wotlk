@@ -42,7 +42,7 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 			rogue.PseudoStats.DamageDealtMultiplier *= 1.2
 			core.StartPeriodicAction(sim, core.PeriodicActionOptions{
 				Period:          time.Millisecond * 500,
-				NumTicks:        5,
+				NumTicks:        4,
 				TickImmediately: true,
 				OnAction: func(s *core.Simulation) {
 					attackSpell.Cast(sim, rogue.CurrentTarget)
