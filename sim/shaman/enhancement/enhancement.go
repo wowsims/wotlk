@@ -77,6 +77,11 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 		enh.HasMHWeaponImbue = true
 	}
 
+	if enh.Talents.FeralSpirit {
+		enh.SpiritWolves.SpiritWolf1 = enh.NewSpiritWolf(1)
+		enh.SpiritWolves.SpiritWolf2 = enh.NewSpiritWolf(2)
+	}
+
 	return enh
 }
 
