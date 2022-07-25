@@ -63,20 +63,20 @@ func (dot *Dot) Rollover(sim *Simulation) {
 	dot.Aura.Refresh(sim)
 }
 
-// Reapply will reset the current DOT by being reapplied.
-// This will re-snapshot.
+// Reapply will reset the current DoT's timer but keep the same Aura (so stacks are preserved)
+// This will re-snapshot, and restart the pending action.
 func (dot *Dot) Reapply(sim *Simulation) {
+	dot.tickAction.Cancel(sim)
 	dot.RecomputeAuraDuration() // calculate aura duration
 	dot.TakeSnapshot(sim)       // snapshots dmg / sp / crit
-	dot.Aura.Refresh(sim)       // resets aura with new duration
-}
 
-// func (dot *Dot) Refresh(sim *Simulation, restartTimer bool) {
-// 	dot.Aura.Refresh(sim)
-// 	if restartTimer {
-// 		dot.tickAction.NextActionAt = sim.CurrentTime + dot.tickPeriod
-// 	}
-// }
+	periodicOptions := dot.basePeriodicOptions()
+	periodicOptions.Period = dot.tickPeriod
+	dot.tickAction = NewPeriodicAction(sim, periodicOptions)
+	sim.AddPendingAction(dot.tickAction)
+
+	dot.Aura.Refresh(sim) // resets aura with new duration
+}
 
 func (dot *Dot) Apply(sim *Simulation) {
 	dot.Cancel(sim)
@@ -107,7 +107,7 @@ func (dot *Dot) RecomputeAuraDuration() {
 // In most cases this will be called automatically, and should only be called
 // to force a new snapshot to be taken.
 func (dot *Dot) TakeSnapshot(sim *Simulation) {
-	dot.snapshotMultiplier = dot.snapshotEffect.snapshotAttackModifiers(dot.Spell)
+	dot.snapshotMultiplier = dot.snapshotEffect.snapshotAttackModifiers(dot.Spell) * dot.Spell.DamageMultiplier
 	dot.tickFn = dot.TickEffects(sim, dot)
 }
 
@@ -117,11 +117,8 @@ func (dot *Dot) TickOnce() {
 	dot.tickFn()
 }
 
-func NewDot(config Dot) *Dot {
-	dot := &Dot{}
-	*dot = config
-
-	basePeriodicOptions := PeriodicActionOptions{
+func (dot *Dot) basePeriodicOptions() PeriodicActionOptions {
+	return PeriodicActionOptions{
 		OnAction: func(sim *Simulation) {
 			if dot.lastTickTime != sim.CurrentTime {
 				dot.lastTickTime = sim.CurrentTime
@@ -142,6 +139,12 @@ func NewDot(config Dot) *Dot {
 		},
 	}
 
+}
+
+func NewDot(config Dot) *Dot {
+	dot := &Dot{}
+	*dot = config
+
 	dot.tickPeriod = dot.TickLength
 	dot.Aura.Duration = dot.TickLength * time.Duration(dot.NumberOfTicks)
 
@@ -150,7 +153,7 @@ func NewDot(config Dot) *Dot {
 	dot.Aura.OnGain = func(aura *Aura, sim *Simulation) {
 		dot.TakeSnapshot(sim)
 
-		periodicOptions := basePeriodicOptions
+		periodicOptions := dot.basePeriodicOptions()
 		periodicOptions.Period = dot.tickPeriod
 		dot.tickAction = NewPeriodicAction(sim, periodicOptions)
 		sim.AddPendingAction(dot.tickAction)
@@ -180,7 +183,8 @@ func TickFuncSnapshot(target *Unit, baseEffect SpellEffect) TickEffects {
 		dot.snapshotEffect.DamageMultiplier *= dot.snapshotMultiplier
 		dot.snapshotEffect.Target = target
 
-		baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell)
+		// Divide by dot.Spell.DamageMultiplier because its snapshotted in the dot.snapshotMultiplier and should not be double applied.
+		baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell) / dot.Spell.DamageMultiplier
 		dot.snapshotEffect.BonusSpellCritRating = dot.snapshotEffect.BonusSpellCritRating +
 			dot.Spell.Unit.GetStat(stats.SpellCrit) + dot.Spell.Unit.PseudoStats.BonusSpellCritRating + target.PseudoStats.BonusSpellCritRatingTaken
 		dot.snapshotEffect.BonusCritRating = dot.snapshotEffect.BonusCritRating + target.PseudoStats.BonusCritRatingTaken + dot.Spell.BonusCritRating

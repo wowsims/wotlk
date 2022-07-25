@@ -32,7 +32,7 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 							if rogue.LastDeadlyPoisonProcMask.Matches(core.ProcMaskMeleeMH) {
 								switch rogue.Consumes.OffHandImbue {
 								case proto.WeaponImbue_WeaponImbueRogueDeadlyPoison:
-									rogue.DeadlyPoisonDot.Reapply(sim)
+									rogue.DeadlyPoisonDot.Refresh(sim)
 								case proto.WeaponImbue_WeaponImbueRogueInstantPoison:
 									rogue.InstantPoison.Cast(sim, spellEffect.Target)
 								}
@@ -40,13 +40,13 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 							if rogue.LastDeadlyPoisonProcMask.Matches(core.ProcMaskMeleeOH) {
 								switch rogue.Consumes.MainHandImbue {
 								case proto.WeaponImbue_WeaponImbueRogueDeadlyPoison:
-									rogue.DeadlyPoisonDot.Reapply(sim)
+									rogue.DeadlyPoisonDot.Refresh(sim)
 								case proto.WeaponImbue_WeaponImbueRogueInstantPoison:
 									rogue.InstantPoison.Cast(sim, spellEffect.Target)
 								}
 							}
 						}
-						rogue.DeadlyPoisonDot.Reapply(sim)
+						rogue.DeadlyPoisonDot.Refresh(sim)
 						rogue.DeadlyPoisonDot.AddStack(sim)
 					} else {
 						rogue.DeadlyPoisonDot.Apply(sim)

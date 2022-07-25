@@ -271,42 +271,15 @@ func (spellEffect *SpellEffect) String() string {
 func (spellEffect *SpellEffect) applyAttackerModifiers(sim *Simulation, spell *Spell) {
 	attacker := spell.Unit
 
-	if spellEffect.ProcMask.Matches(ProcMaskRanged) {
-		spellEffect.Damage *= attacker.PseudoStats.RangedDamageDealtMultiplier
-	}
-	if spell.Flags.Matches(SpellFlagAgentReserved1) {
-		spellEffect.Damage *= attacker.PseudoStats.AgentReserved1DamageDealtMultiplier
-	}
-	if spell.Flags.Matches(SpellFlagDisease) {
-		spellEffect.Damage *= attacker.PseudoStats.DiseaseDamageDealtMultiplier
-	}
-
-	spellEffect.Damage *= attacker.PseudoStats.DamageDealtMultiplier
 	if spell.SpellSchool.Matches(SpellSchoolPhysical) {
-		spellEffect.Damage *= attacker.PseudoStats.PhysicalDamageDealtMultiplier
 		if spellEffect.ProcMask.Matches(ProcMaskMeleeMH) {
 			spellEffect.BonusArmorPenRating += attacker.PseudoStats.BonusMHArmorPenRating
 		}
 		if spellEffect.ProcMask.Matches(ProcMaskMeleeOH) {
 			spellEffect.BonusArmorPenRating += attacker.PseudoStats.BonusOHArmorPenRating
 		}
-	} else if spell.SpellSchool.Matches(SpellSchoolArcane) {
-		spellEffect.Damage *= attacker.PseudoStats.ArcaneDamageDealtMultiplier
-	} else if spell.SpellSchool.Matches(SpellSchoolFire) {
-		spellEffect.Damage *= attacker.PseudoStats.FireDamageDealtMultiplier
-	} else if spell.SpellSchool.Matches(SpellSchoolFrost) {
-		spellEffect.Damage *= attacker.PseudoStats.FrostDamageDealtMultiplier
-	} else if spell.SpellSchool.Matches(SpellSchoolHoly) {
-		spellEffect.Damage *= attacker.PseudoStats.HolyDamageDealtMultiplier
-	} else if spell.SpellSchool.Matches(SpellSchoolNature) {
-		spellEffect.Damage *= attacker.PseudoStats.NatureDamageDealtMultiplier
-	} else if spell.SpellSchool.Matches(SpellSchoolShadow) {
-		spellEffect.Damage *= attacker.PseudoStats.ShadowDamageDealtMultiplier
-		if spellEffect.IsPeriodic {
-			spellEffect.Damage *= attacker.PseudoStats.PeriodicShadowDamageDealtMultiplier
-		}
 	}
-
+	spellEffect.Damage *= spellEffect.snapshotAttackModifiers(spell)
 }
 
 // snapshotAttackModifiers will calculate the total %dmg to add from attacker bonuses.
