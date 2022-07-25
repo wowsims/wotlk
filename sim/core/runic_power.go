@@ -258,6 +258,27 @@ func (rp *runicPowerBar) DeathRuneReadyAt(sim *Simulation) time.Duration {
 	return rp.SpentDeathRuneReadyAt(sim)
 }
 
+func (rp *runicPowerBar) CurrentRuneGrace(sim *Simulation, runes *[2]Rune) time.Duration {
+	if runes[0].pas[0] == nil {
+		return time.Millisecond*2500 - MinDuration(2500*time.Millisecond, sim.CurrentTime-runes[0].lastRegenTime)
+	} else if runes[1].pas[0] == nil {
+		return time.Millisecond*2500 - MinDuration(2500*time.Millisecond, sim.CurrentTime-runes[1].lastRegenTime)
+	}
+	return 0
+}
+
+func (rp *runicPowerBar) CurrentBloodRuneGrace(sim *Simulation) time.Duration {
+	return rp.CurrentRuneGrace(sim, &rp.bloodRunes)
+}
+
+func (rp *runicPowerBar) CurrentFrostRuneGrace(sim *Simulation) time.Duration {
+	return rp.CurrentRuneGrace(sim, &rp.frostRunes)
+}
+
+func (rp *runicPowerBar) CurrentUnholyRuneGrace(sim *Simulation) time.Duration {
+	return rp.CurrentRuneGrace(sim, &rp.unholyRunes)
+}
+
 func (rp *runicPowerBar) SpentRuneReadyAt(sim *Simulation, runes *[2]Rune) time.Duration {
 	readyAt := rp.SpentDeathRuneReadyAt(sim)
 

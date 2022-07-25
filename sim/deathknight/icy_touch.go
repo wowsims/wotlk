@@ -1,6 +1,8 @@
 package deathknight
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core"
 )
 
@@ -9,6 +11,7 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 	for _, encounterTarget := range dk.Env.Encounter.Targets {
 		target := &encounterTarget.Unit
 		ffAura := core.FrostFeverAura(target, dk.Talents.ImprovedIcyTouch)
+		ffAura.Duration = time.Second*15 + (time.Second * 3 * time.Duration(dk.Talents.Epidemic))
 		dk.FrostFeverDebuffAura[target.Index] = ffAura
 	}
 

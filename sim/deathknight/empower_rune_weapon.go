@@ -62,6 +62,7 @@ func (dk *Deathknight) CanEmpowerRuneWeapon(sim *core.Simulation) bool {
 func (dk *Deathknight) CastEmpowerRuneWeapon(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanEmpowerRuneWeapon(sim) {
 		dk.EmpowerRuneWeapon.Cast(sim, target)
+		dk.UpdateMajorCooldowns()
 		return true
 	}
 	return false

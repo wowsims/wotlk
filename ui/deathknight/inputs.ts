@@ -3,6 +3,7 @@ import { Spec } from '/wotlk/core/proto/common.js';
 import {
 	DeathknightTalents as DeathKnightTalents,
 	Deathknight_Rotation_ArmyOfTheDead as ArmyOfTheDead,
+	Deathknight_Rotation_FirstDisease as FirstDisease,
 	Deathknight_Rotation as DeathKnightRotation,
 	Deathknight_Options as DeathKnightOptions,
 } from '/wotlk/core/proto/deathknight.js';
@@ -55,6 +56,16 @@ export const UseDeathAndDecay = InputHelpers.makeRotationBooleanInput<Spec.SpecD
 	labelTooltip: 'Use Death and Decay based rotation.',
 });
 
+export const SetFirstDisease = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, FirstDisease>({
+	fieldName: 'firstDisease',
+	label: 'First Disease',
+	labelTooltip: 'Chose which disease to apply first.',
+	values: [
+		{ name: 'Frost Fever', value: FirstDisease.FrostFever },
+		{ name: 'Blood Plague', value: FirstDisease.BloodPlague },
+	],
+})
+
 export const UseArmyOfTheDead = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, ArmyOfTheDead>({
 	fieldName: 'armyOfTheDead',
 	label: 'Army of the Dead',
@@ -74,6 +85,7 @@ export const UnholyPresenceOpener = InputHelpers.makeRotationBooleanInput<Spec.S
 
 export const DeathKnightRotationConfig = {
 	inputs: [
+		SetFirstDisease,
 		UseArmyOfTheDead,
 		UseDeathAndDecay,
 		UnholyPresenceOpener,

@@ -147,6 +147,12 @@ message Deathknight {
 			AsMajorCd = 2;
 		}
 
+		enum FirstDisease {
+			FrostFever = 0;
+			BloodPlague = 1;
+		}
+
+		FirstDisease first_disease = 6;
 		ArmyOfTheDead army_of_the_dead = 1;
 		bool use_death_and_decay = 2;
 		bool unholy_presence_opener = 3;

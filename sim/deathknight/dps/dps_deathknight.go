@@ -42,6 +42,7 @@ func NewDpsDeathknight(character core.Character, player proto.Player) *DpsDeathk
 			RefreshHornOfWinter:  dk.Rotation.RefreshHornOfWinter,
 			UnholyPresenceOpener: dk.Rotation.UnholyPresenceOpener,
 			ArmyOfTheDeadType:    dk.Rotation.ArmyOfTheDead,
+			FirstDisease:         dk.Rotation.FirstDisease,
 		}),
 		Rotation: *dk.Rotation,
 	}

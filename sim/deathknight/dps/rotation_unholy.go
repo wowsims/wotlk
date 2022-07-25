@@ -4,13 +4,28 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
+func (dk *DpsDeathknight) getFirstDiseaseAction() deathknight.RotationAction {
+	if dk.Inputs.FirstDisease == proto.Deathknight_Rotation_FrostFever {
+		return deathknight.RotationAction_IT
+	}
+	return deathknight.RotationAction_PS
+}
+
+func (dk *DpsDeathknight) getSecondDiseaseAction() deathknight.RotationAction {
+	if dk.Inputs.FirstDisease == proto.Deathknight_Rotation_FrostFever {
+		return deathknight.RotationAction_PS
+	}
+	return deathknight.RotationAction_IT
+}
+
 func (dk *DpsDeathknight) setupUnholySsUnholyPresenceOpener() {
 	dk.DefineOpener([]deathknight.RotationAction{
-		deathknight.RotationAction_IT,
-		deathknight.RotationAction_PS,
+		dk.getFirstDiseaseAction(),
+		dk.getSecondDiseaseAction(),
 		deathknight.RotationAction_BS,
 		deathknight.RotationAction_SS,
 		deathknight.RotationAction_Garg,
@@ -24,8 +39,8 @@ func (dk *DpsDeathknight) setupUnholySsUnholyPresenceOpener() {
 
 func (dk *DpsDeathknight) setupUnholySsArmyUnholyPresenceOpener() {
 	dk.DefineOpener([]deathknight.RotationAction{
-		deathknight.RotationAction_IT,
-		deathknight.RotationAction_PS,
+		dk.getFirstDiseaseAction(),
+		dk.getSecondDiseaseAction(),
 		deathknight.RotationAction_BS,
 		deathknight.RotationAction_SS,
 		deathknight.RotationAction_Garg,
@@ -38,8 +53,8 @@ func (dk *DpsDeathknight) setupUnholySsArmyUnholyPresenceOpener() {
 
 func (dk *DpsDeathknight) setupUnholySsBloodPresenceOpener() {
 	dk.DefineOpener([]deathknight.RotationAction{
-		deathknight.RotationAction_IT,
-		deathknight.RotationAction_PS,
+		dk.getFirstDiseaseAction(),
+		dk.getSecondDiseaseAction(),
 		deathknight.RotationAction_BS,
 		deathknight.RotationAction_SS,
 		deathknight.RotationAction_BT,
@@ -55,8 +70,8 @@ func (dk *DpsDeathknight) setupUnholySsBloodPresenceOpener() {
 
 func (dk *DpsDeathknight) setupUnholySsArmyBloodPresenceOpener() {
 	dk.DefineOpener([]deathknight.RotationAction{
-		deathknight.RotationAction_IT,
-		deathknight.RotationAction_PS,
+		dk.getFirstDiseaseAction(),
+		dk.getSecondDiseaseAction(),
 		deathknight.RotationAction_BS,
 		deathknight.RotationAction_SS,
 		deathknight.RotationAction_BT,
@@ -71,8 +86,8 @@ func (dk *DpsDeathknight) setupUnholySsArmyBloodPresenceOpener() {
 
 func (dk *DpsDeathknight) setupUnholyDndUnholyPresenceOpener() {
 	dk.DefineOpener([]deathknight.RotationAction{
-		deathknight.RotationAction_IT,
-		deathknight.RotationAction_PS,
+		dk.getFirstDiseaseAction(),
+		dk.getSecondDiseaseAction(),
 		deathknight.RotationAction_BS,
 		deathknight.RotationAction_DND,
 		deathknight.RotationAction_Garg,
@@ -86,8 +101,8 @@ func (dk *DpsDeathknight) setupUnholyDndUnholyPresenceOpener() {
 
 func (dk *DpsDeathknight) setupUnholyDndBloodPresenceOpener() {
 	dk.DefineOpener([]deathknight.RotationAction{
-		deathknight.RotationAction_IT,
-		deathknight.RotationAction_PS,
+		dk.getFirstDiseaseAction(),
+		dk.getSecondDiseaseAction(),
 		deathknight.RotationAction_BS,
 		deathknight.RotationAction_DND,
 		deathknight.RotationAction_BT,
@@ -101,23 +116,51 @@ func (dk *DpsDeathknight) setupUnholyDndBloodPresenceOpener() {
 	})
 }
 
-var syncBp = false
+var syncDisease = false
 
 func (dk *DpsDeathknight) UnholyDiseaseCheckWrapper(sim *core.Simulation, target *core.Unit, spell *core.Spell, costRunes bool) bool {
 	success := false
 
+	ffFirst := dk.Inputs.FirstDisease == proto.Deathknight_Rotation_FrostFever
+
 	dropTimeAllowed := time.Millisecond * -100
 	ffRemaining := dk.FrostFeverDisease[target.Index].RemainingDuration(sim) + dropTimeAllowed
 	bpRemaining := dk.BloodPlagueDisease[target.Index].RemainingDuration(sim) + dropTimeAllowed
+	castGcd := core.MinDuration(core.GCDMin, dk.ApplyCastSpeed(spell.CurCast.GCD))
+	gracePeriodFrost := dk.CurrentFrostRuneGrace(sim)
+	gracePeriodUnholy := dk.CurrentUnholyRuneGrace(sim)
 
-	if !dk.TargetHasDisease(deathknight.FrostFeverAuraLabel, target) || ffRemaining < spell.CurCast.GCD {
-		// Refresh FF
-		success = dk.CastIcyTouch(sim, target)
-	} else if syncBp || !dk.TargetHasDisease(deathknight.BloodPlagueAuraLabel, target) || bpRemaining < spell.CurCast.GCD {
-		// Refresh BP
-		syncBp = false
-		success = dk.CastPlagueStrike(sim, target)
-	} else if dk.CanCast(sim, spell) {
+	if ffFirst {
+		if !dk.TargetHasDisease(deathknight.FrostFeverAuraLabel, target) || ffRemaining < castGcd {
+			// Refresh FF
+			success = dk.CastIcyTouch(sim, target)
+		} else if syncDisease || !dk.TargetHasDisease(deathknight.BloodPlagueAuraLabel, target) || bpRemaining < castGcd {
+			// Refresh BP
+			if syncDisease {
+				dk.LastCastOutcome = core.OutcomeMiss
+				success = dk.castClipDisease(false, gracePeriodUnholy, sim, dk.CanPlagueStrike(sim), dk.PlagueStrike, dk.BloodPlagueDisease[target.Index], target)
+			} else {
+				success = dk.CastPlagueStrike(sim, target)
+			}
+			syncDisease = !(success && dk.LastCastOutcome.Matches(core.OutcomeHit|core.OutcomeCrit))
+		}
+	} else {
+		if !dk.TargetHasDisease(deathknight.BloodPlagueAuraLabel, target) || bpRemaining < castGcd {
+			// Refresh BP
+			success = dk.CastPlagueStrike(sim, target)
+		} else if syncDisease || !dk.TargetHasDisease(deathknight.FrostFeverAuraLabel, target) || ffRemaining < castGcd {
+			// Refresh FF
+			if syncDisease {
+				dk.LastCastOutcome = core.OutcomeMiss
+				success = dk.castClipDisease(false, gracePeriodFrost, sim, dk.CanIcyTouch(sim), dk.IcyTouch, dk.FrostFeverDisease[target.Index], target)
+			} else {
+				success = dk.CastIcyTouch(sim, target)
+			}
+			syncDisease = !(success && dk.LastCastOutcome.Matches(core.OutcomeHit|core.OutcomeCrit))
+		}
+	}
+
+	if !success && dk.CanCast(sim, spell) {
 		ffExpiresAt := ffRemaining + sim.CurrentTime
 		bpExpiresAt := bpRemaining + sim.CurrentTime
 
@@ -127,37 +170,34 @@ func (dk *DpsDeathknight) UnholyDiseaseCheckWrapper(sim *core.Simulation, target
 
 		crpb.Spend(sim, spell, spellCost)
 
-		// Check FF
-		if spellCost.Frost > 0 && crpb.CurrentFrostRunes() == 0 && crpb.CurrentDeathRunes() == 0 {
-			nextFrostRuneAt := crpb.FrostRuneReadyAt(sim)
-			nextDeathRuneAt := crpb.DeathRuneReadyAt(sim)
+		afterCastTime := sim.CurrentTime + castGcd
+		currentFrostRunes := crpb.CurrentFrostRunes()
+		currentUnholyRunes := crpb.CurrentUnholyRunes()
+		nextFrostRuneAt := crpb.FrostRuneReadyAt(sim)
+		nextUnholyRuneAt := crpb.UnholyRuneReadyAt(sim)
 
-			// Can cast FF with frost before expire
-			ff1 := ffExpiresAt > nextFrostRuneAt && spell.CurCast.GCD < ffRemaining
-			// Can cast FF with death before expire
-			ff2 := ffExpiresAt > nextDeathRuneAt && spell.CurCast.GCD < ffRemaining
-
-			if !ff1 && !ff2 {
-				// Refresh FF
-				success = dk.CastIcyTouch(sim, target)
-				syncBp = success
+		if ffFirst {
+			// Check FF
+			if dk.checkForDiseaseRecast(ffExpiresAt, afterCastTime, spellCost.Frost, currentFrostRunes, nextFrostRuneAt) {
+				success = dk.castClipDisease(true, gracePeriodFrost, sim, dk.CanIcyTouch(sim), dk.IcyTouch, dk.FrostFeverDisease[target.Index], target)
 				return success
 			}
-		}
 
-		// Check BP
-		if spellCost.Unholy > 0 && crpb.CurrentUnholyRunes() == 0 && crpb.CurrentDeathRunes() == 0 {
-			nextUnholyRuneAt := crpb.UnholyRuneReadyAt(sim)
-			nextDeathRuneAt := crpb.DeathRuneReadyAt(sim)
+			// Check BP
+			if dk.checkForDiseaseRecast(bpExpiresAt, afterCastTime, spellCost.Unholy, currentUnholyRunes, nextUnholyRuneAt) {
+				success = dk.castClipDisease(false, gracePeriodUnholy, sim, dk.CanPlagueStrike(sim), dk.PlagueStrike, dk.BloodPlagueDisease[target.Index], target)
+				return success
+			}
+		} else {
+			// Check BP
+			if dk.checkForDiseaseRecast(bpExpiresAt, afterCastTime, spellCost.Unholy, currentUnholyRunes, nextUnholyRuneAt) {
+				success = dk.castClipDisease(true, gracePeriodUnholy, sim, dk.CanPlagueStrike(sim), dk.PlagueStrike, dk.BloodPlagueDisease[target.Index], target)
+				return success
+			}
 
-			// Can cast BP with unholy before expire
-			bp1 := bpExpiresAt > nextUnholyRuneAt && spell.CurCast.GCD < bpRemaining
-			// Can cast BP with death before expire
-			bp2 := bpExpiresAt > nextDeathRuneAt && spell.CurCast.GCD < bpRemaining
-
-			if !bp1 && !bp2 {
-				// Refresh BP
-				success = dk.CastPlagueStrike(sim, target)
+			// Check FF
+			if dk.checkForDiseaseRecast(ffExpiresAt, afterCastTime, spellCost.Frost, currentFrostRunes, nextFrostRuneAt) {
+				success = dk.castClipDisease(false, gracePeriodFrost, sim, dk.CanIcyTouch(sim), dk.IcyTouch, dk.FrostFeverDisease[target.Index], target)
 				return success
 			}
 		}
@@ -168,6 +208,40 @@ func (dk *DpsDeathknight) UnholyDiseaseCheckWrapper(sim *core.Simulation, target
 	}
 
 	return success
+}
+
+func (dk *DpsDeathknight) checkForDiseaseRecast(expiresAt time.Duration, afterCastTime time.Duration,
+	spellCost int, currentRunes int32, nextRuneAt time.Duration) bool {
+	if spellCost > 0 && currentRunes == 0 {
+		if expiresAt < nextRuneAt {
+			return true
+		}
+	} else if afterCastTime > expiresAt {
+		return true
+	}
+	return false
+}
+
+func (dk *DpsDeathknight) castClipDisease(mainDisease bool, gracePeriod time.Duration, sim *core.Simulation, canCast bool, spell *core.Spell, dot *core.Dot, target *core.Unit) bool {
+	if canCast {
+		// Dont drop disease due to %dmg modifiers
+		if dot.TickCount < dot.NumberOfTicks-1 {
+			nextTickAt := dot.ExpiresAt() - dot.TickLength*time.Duration((dot.NumberOfTicks-1)-dot.TickCount)
+			if nextTickAt < sim.CurrentTime+gracePeriod || nextTickAt < sim.CurrentTime+400*time.Millisecond {
+				// Delay disease for next tick
+				dk.WaitUntil(sim, nextTickAt+50*time.Millisecond)
+				return true
+			}
+		}
+
+		spell.Cast(sim, target)
+		success := dk.LastCastOutcome.Matches(core.OutcomeCrit | core.OutcomeHit)
+		if mainDisease {
+			syncDisease = success
+		}
+		return true
+	}
+	return false
 }
 
 func (dk *DpsDeathknight) doUnholySsRotation(sim *core.Simulation, target *core.Unit) {

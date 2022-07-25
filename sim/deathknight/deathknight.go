@@ -19,6 +19,7 @@ type DeathknightInputs struct {
 	RefreshHornOfWinter  bool
 	UnholyPresenceOpener bool
 	ArmyOfTheDeadType    proto.Deathknight_Rotation_ArmyOfTheDead
+	FirstDisease         proto.Deathknight_Rotation_FirstDisease
 }
 
 type Deathknight struct {
