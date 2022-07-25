@@ -780,8 +780,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-TotemoftheElementalPlane-40708"
  value: {
-  dps: 1869.7671671836663
-  tps: 1454.7436641446623
+  dps: 1844.2757893601656
+  tps: 1431.545798985834
  }
 }
 dps_results: {
