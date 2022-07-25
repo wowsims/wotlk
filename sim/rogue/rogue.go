@@ -259,7 +259,7 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 
 	rogue.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+1)
 	rogue.AddStatDependency(stats.Agility, stats.AttackPower, 1.0+1)
-	rogue.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/40))
+	rogue.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/83.15))
 
 	return rogue
 }
@@ -267,91 +267,99 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassRogue}] = stats.Stats{
 		stats.Health:    3524,
-		stats.Strength:  92,
-		stats.Agility:   160,
+		stats.Strength:  102,
+		stats.Agility:   180,
 		stats.Stamina:   88,
 		stats.Intellect: 43,
 		stats.Spirit:    57,
 
-		stats.AttackPower: 120,
+		stats.AttackPower: 140,
 		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
+		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDwarf, Class: proto.Class_ClassRogue}] = stats.Stats{
 		stats.Health:    3524,
-		stats.Strength:  97,
-		stats.Agility:   154,
+		stats.Strength:  107,
+		stats.Agility:   174,
 		stats.Stamina:   92,
 		stats.Intellect: 38,
 		stats.Spirit:    57,
 
-		stats.AttackPower: 120,
+		stats.AttackPower: 140,
 		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
+		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceGnome, Class: proto.Class_ClassRogue}] = stats.Stats{
 		stats.Health:    3524,
-		stats.Strength:  90,
-		stats.Agility:   161,
+		stats.Strength:  100,
+		stats.Agility:   181,
 		stats.Stamina:   88,
 		stats.Intellect: 45,
 		stats.Spirit:    58,
 
-		stats.AttackPower: 120,
+		stats.AttackPower: 140,
 		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
+		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceHuman, Class: proto.Class_ClassRogue}] = stats.Stats{
 		stats.Health:    3524,
-		stats.Strength:  95,
-		stats.Agility:   158,
+		stats.Strength:  105,
+		stats.Agility:   178,
 		stats.Stamina:   89,
 		stats.Intellect: 39,
 		stats.Spirit:    58,
 
-		stats.AttackPower: 120,
+		stats.AttackPower: 140,
 		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
+		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassRogue}] = stats.Stats{
 		stats.Health:    3524,
-		stats.Strength:  92,
-		stats.Agility:   163,
+		stats.Strength:  102,
+		stats.Agility:   183,
 		stats.Stamina:   88,
 		stats.Intellect: 39,
 		stats.Spirit:    58,
 
-		stats.AttackPower: 120,
+		stats.AttackPower: 140,
 		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
+		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceOrc, Class: proto.Class_ClassRogue}] = stats.Stats{
 		stats.Health:    3524,
-		stats.Strength:  98,
-		stats.Agility:   155,
+		stats.Strength:  108,
+		stats.Agility:   175,
 		stats.Stamina:   91,
 		stats.Intellect: 36,
 		stats.Spirit:    61,
 
-		stats.AttackPower: 120,
+		stats.AttackPower: 140,
 		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
+		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassRogue}] = stats.Stats{
 		stats.Health:    3524,
-		stats.Strength:  96,
-		stats.Agility:   160,
+		stats.Strength:  106,
+		stats.Agility:   180,
 		stats.Stamina:   90,
 		stats.Intellect: 35,
 		stats.Spirit:    59,
 
-		stats.AttackPower: 120,
+		stats.AttackPower: 140,
 		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
+		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceUndead, Class: proto.Class_ClassRogue}] = stats.Stats{
 		stats.Health:    3524,
-		stats.Strength:  94,
-		stats.Agility:   156,
+		stats.Strength:  99,
+		stats.Agility:   168,
 		stats.Stamina:   90,
 		stats.Intellect: 37,
 		stats.Spirit:    63,
 
-		stats.AttackPower: 120,
+		stats.AttackPower: 140,
 		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
+		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
 	}
 }
 
