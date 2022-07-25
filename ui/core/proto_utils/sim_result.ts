@@ -760,7 +760,7 @@ export class ActionMetrics {
 	// Merges an array of metrics into a single metric.
 	static merge(actions: Array<ActionMetrics>, removeTag?: boolean, actionIdOverride?: ActionId): ActionMetrics {
 		const firstAction = actions[0];
-		const unit = actions.every(action => action.unit == firstAction.unit) ? firstAction.unit : null;
+		const unit = firstAction.unit
 		let actionId = actionIdOverride || firstAction.actionId;
 		if (removeTag) {
 			actionId = actionId.withoutTag();
