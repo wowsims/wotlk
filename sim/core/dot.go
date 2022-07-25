@@ -50,12 +50,14 @@ type Dot struct {
 // This keeps the snapshotted crit and %dmg modifiers.
 // However sp and haste are recalculated.
 func (dot *Dot) Rollover(sim *Simulation) {
-	oldCrit := dot.snapshotEffect.BonusSpellCritRating
+	oldSpellCrit := dot.snapshotEffect.BonusSpellCritRating
+	oldCrit := dot.snapshotEffect.BonusCritRating
 
 	// by not calling 'dot.TakeSnapshot' we dont recalculate dmg multiplier
 	dot.tickFn = dot.TickEffects(sim, dot)
 
-	dot.snapshotEffect.BonusSpellCritRating = oldCrit
+	dot.snapshotEffect.BonusSpellCritRating = oldSpellCrit
+	dot.snapshotEffect.BonusCritRating = oldCrit
 
 	dot.RecomputeAuraDuration()
 	dot.Aura.Refresh(sim)
@@ -180,8 +182,8 @@ func TickFuncSnapshot(target *Unit, baseEffect SpellEffect) TickEffects {
 
 		baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell)
 		dot.snapshotEffect.BonusSpellCritRating = dot.snapshotEffect.BonusSpellCritRating +
-			dot.Spell.Unit.GetStat(stats.SpellCrit) + dot.Spell.Unit.PseudoStats.BonusSpellCritRating +
-			target.PseudoStats.BonusCritRatingTaken + target.PseudoStats.BonusSpellCritRatingTaken
+			dot.Spell.Unit.GetStat(stats.SpellCrit) + dot.Spell.Unit.PseudoStats.BonusSpellCritRating + target.PseudoStats.BonusSpellCritRatingTaken
+		dot.snapshotEffect.BonusCritRating = dot.snapshotEffect.BonusCritRating + target.PseudoStats.BonusCritRatingTaken + dot.Spell.BonusCritRating
 		dot.snapshotEffect.DamageMultiplier = 1
 		dot.snapshotEffect.BaseDamage = BaseDamageConfigFlat(baseDamage)
 
