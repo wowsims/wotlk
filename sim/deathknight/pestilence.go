@@ -55,7 +55,7 @@ func (dk *Deathknight) registerPestilenceSpell() {
 							}
 						}
 
-						dkSpellCost := dk.DetermineOptimalCost(sim, 1, 0, 0)
+						dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_B)
 						if !dk.bloodOfTheNorthProc(sim, spell, dkSpellCost) {
 							if !dk.reapingProc(sim, spell, dkSpellCost) {
 								dk.Spend(sim, spell, dkSpellCost)

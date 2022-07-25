@@ -40,7 +40,7 @@ func (dk *Deathknight) registerRuneTapSpell() {
 			maxHealth := dk.MaxHealth()
 			dk.GainHealth(sim, (1.0+healthGainMult)*(maxHealth*0.1), healthMetrics)
 
-			dkSpellCost := dk.DetermineOptimalCost(sim, 1, 0, 0)
+			dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_B)
 			dk.Spend(sim, spell, dkSpellCost)
 		},
 	})

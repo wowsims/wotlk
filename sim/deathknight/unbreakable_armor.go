@@ -46,7 +46,7 @@ func (dk *Deathknight) registerUnbreakableArmorSpell() {
 			dk.UnbreakableArmorAura.Activate(sim)
 			dk.UnbreakableArmorAura.Prioritize()
 
-			dkSpellCost := dk.DetermineOptimalCost(sim, 0, 1, 0)
+			dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_F)
 			dk.Spend(sim, spell, dkSpellCost)
 			amountOfRunicPower := 10.0
 			dk.AddRunicPower(sim, amountOfRunicPower, dk.UnbreakableArmor.RunicPowerMetrics())

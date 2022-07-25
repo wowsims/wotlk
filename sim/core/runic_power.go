@@ -24,10 +24,10 @@ const (
 )
 
 const (
-	RuneState_Spent RuneState = iota
-	RuneState_Normal
-	RuneState_DeathSpent
+	RuneState_Normal RuneState = iota
+	RuneState_Spent
 	RuneState_Death
+	RuneState_DeathSpent
 )
 
 type RuneAmount struct {
@@ -406,19 +406,19 @@ func (rp *runicPowerBar) DetermineOptimalCost(sim *Simulation, bloodAmount int, 
 	totalDeathRunes := int(rp.CurrentDeathRunes())
 	startingDeathRunes := totalDeathRunes
 
-	if int(rp.CurrentBloodRunes()) >= bloodAmount {
+	if startingBloodRunes >= bloodAmount {
 		totalBloodRunes -= bloodAmount
 	} else {
 		totalDeathRunes -= bloodAmount
 	}
 
-	if int(rp.CurrentFrostRunes()) >= frostAmount {
+	if startingFrostRunes >= frostAmount {
 		totalFrostRunes -= frostAmount
 	} else {
 		totalDeathRunes -= frostAmount
 	}
 
-	if int(rp.CurrentUnholyRunes()) >= unholyAmount {
+	if startingUnholyRunes >= unholyAmount {
 		totalUnholyRunes -= unholyAmount
 	} else {
 		totalDeathRunes -= unholyAmount

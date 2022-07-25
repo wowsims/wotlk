@@ -95,7 +95,7 @@ func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 		},
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			dk.ChangePresence(sim, BloodPresence)
-			dkSpellCost := dk.DetermineOptimalCost(sim, 1, 0, 0)
+			dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_B)
 			dk.Spend(sim, spell, dkSpellCost)
 		},
 	})
@@ -141,7 +141,7 @@ func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			dk.ChangePresence(sim, FrostPresence)
 
-			dkSpellCost := dk.DetermineOptimalCost(sim, 0, 1, 0)
+			dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_F)
 			dk.Spend(sim, spell, dkSpellCost)
 		},
 	})
@@ -181,7 +181,7 @@ func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 		},
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			dk.ChangePresence(sim, UnholyPresence)
-			dkSpellCost := dk.DetermineOptimalCost(sim, 0, 0, 1)
+			dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_U)
 			dk.Spend(sim, spell, dkSpellCost)
 		},
 	})
