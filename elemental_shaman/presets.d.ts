@@ -18,3 +18,8 @@ export declare const PRE_RAID_PRESET: {
     tooltip: string;
     gear: EquipmentSpec;
 };
+export declare const P1_PRESET: {
+    name: string;
+    tooltip: string;
+    gear: EquipmentSpec;
+};

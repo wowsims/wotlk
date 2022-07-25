@@ -335,10 +335,10 @@ export const playerPresets = [
         defaultGear: {
             [Faction.Unknown]: {},
             [Faction.Alliance]: {
-                1: ElementalShamanPresets.PRE_RAID_PRESET.gear,
+                1: ElementalShamanPresets.P1_PRESET.gear,
             },
             [Faction.Horde]: {
-                1: ElementalShamanPresets.PRE_RAID_PRESET.gear,
+                1: ElementalShamanPresets.P1_PRESET.gear,
             },
         },
         tooltip: specNames[Spec.SpecElementalShaman],

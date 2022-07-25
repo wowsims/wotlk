@@ -379,7 +379,7 @@ export class IndividualSimUI extends SimUI {
             { item: IconInputs.DamagePercentBuff, stats: [Stat.StatAttackPower, Stat.StatSpellPower] },
             { item: IconInputs.DamageReductionPercentBuff, stats: [Stat.StatStamina] },
             { item: IconInputs.MP5Buff, stats: [Stat.StatMP5] },
-            //{ item: IconInputs.ReplenishmentBuff, stats: [Stat.StatMP5] },
+            { item: IconInputs.ReplenishmentBuff, stats: [Stat.StatMP5] },
         ]);
         const buffsSection = this.rootElem.getElementsByClassName('buffs-section')[0];
         configureIconSection(buffsSection, buffOptions.map(multiIconInput => new MultiIconPicker(buffsSection, this.player, multiIconInput, this)), Tooltips.OTHER_BUFFS_SECTION);
