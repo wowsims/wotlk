@@ -72,8 +72,8 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 
 	if enh.Talents.MaelstromWeapon > 0 {
 		lbCastTime := enh.ApplyCastSpeed(time.Millisecond*2500 - time.Duration(500*enh.MaelstromWeaponAura.GetStacks()))
-		if enh.MaelstromWeaponAura.GetStacks() >= 1 {
-			if time.Duration(lbCastTime) <= sim.CurrentTime-(enh.AutoAttacks.NextAttackAt()+250*time.Millisecond) {
+		if enh.MaelstromWeaponAura.GetStacks() >= 3 {
+			if time.Duration(lbCastTime) < enh.AutoAttacks.NextAttackAt()+150*time.Millisecond {
 				if !enh.LightningBolt.Cast(sim, target) {
 					enh.WaitForMana(sim, enh.LightningBolt.CurCast.Cost)
 				}
@@ -89,14 +89,19 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 		return
 	}
 
-	//	if enh.Totems.Fire != proto.FireTotem_NoFireTotem {
-	//		if enh.FireNova.IsReady(sim) {
-	//			if !enh.FireNova.Cast(sim, target) {
-	//				enh.WaitForMana(sim, enh.FireNova.CurCast.Cost)
-	//			}
-	//			return
-	//		}
-	//	}
+	if !enh.LightningShieldAura.IsActive() {
+		enh.LightningShield.Cast(sim, nil)
+		return
+	}
+
+	if enh.Totems.Fire != proto.FireTotem_NoFireTotem {
+		if enh.FireNova.IsReady(sim) && enh.CurrentMana() > 4000 {
+			if !enh.FireNova.Cast(sim, target) {
+				enh.WaitForMana(sim, enh.FireNova.CurCast.Cost)
+			}
+			return
+		}
+	}
 
 	if enh.LavaLash.IsReady(sim) {
 		if !enh.LavaLash.Cast(sim, target) {
@@ -105,8 +110,7 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 		return
 	}
 
-	enh.LightningShield.Cast(sim, nil) //make a stack checker
-
+	enh.LightningShield.Cast(sim, nil) // if nothing else, refresh lightning shield
 	enh.DoNothing()
 	return
 }

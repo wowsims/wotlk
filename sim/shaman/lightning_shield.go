@@ -40,7 +40,7 @@ func (shaman *Shaman) registerLightningShieldSpell() *core.Spell {
 		procSpell.DamageMultiplier *= 1.08
 	}
 
-	LightningShieldAura := shaman.RegisterAura(core.Aura{
+	shaman.LightningShieldAura = shaman.RegisterAura(core.Aura{
 		Label:     "Lightning Shield",
 		ActionID:  actionID,
 		Duration:  time.Minute * 10,
@@ -65,8 +65,8 @@ func (shaman *Shaman) registerLightningShieldSpell() *core.Spell {
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			LightningShieldAura.Activate(sim)
-			LightningShieldAura.SetStacks(sim, 3+(2*shaman.Talents.StaticShock))
+			shaman.LightningShieldAura.Activate(sim)
+			shaman.LightningShieldAura.SetStacks(sim, 3+(2*shaman.Talents.StaticShock))
 		},
 	})
 
