@@ -20,9 +20,9 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool) *core.Spell {
 	}
 
 	bonusBaseDamage := dk.sigilOfAwarenessBonus(dk.Obliterate)
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 467.0+bonusBaseDamage, 0.8, true)
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 584.0+bonusBaseDamage, 0.8, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 467.0+bonusBaseDamage, 0.8*dk.nervesOfColdSteelBonus(), true)
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 584.0+bonusBaseDamage, 0.8*dk.nervesOfColdSteelBonus(), true)
 	}
 
 	effect := core.SpellEffect{

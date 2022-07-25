@@ -9,9 +9,9 @@ var BloodStrikeMHOutcome = core.OutcomeHit
 var BloodStrikeOHOutcome = core.OutcomeHit
 
 func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *core.Spell {
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 306.0, 0.4, true)
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 764.0, 0.4, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 306.0, 0.4*dk.nervesOfColdSteelBonus(), true)
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 764.0, 0.4*dk.nervesOfColdSteelBonus(), true)
 	}
 
 	effect := core.SpellEffect{

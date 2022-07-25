@@ -10,9 +10,9 @@ var DeathStrikeOHOutcome = core.OutcomeHit
 
 func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *core.Spell {
 	bonusBaseDamage := dk.sigilOfAwarenessBonus(dk.DeathStrike)
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 223.0+bonusBaseDamage, 0.75, true)
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 297.0+bonusBaseDamage, 0.75, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 223.0+bonusBaseDamage, 0.75*dk.nervesOfColdSteelBonus(), true)
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 297.0+bonusBaseDamage, 0.75*dk.nervesOfColdSteelBonus(), true)
 	}
 
 	effect := core.SpellEffect{

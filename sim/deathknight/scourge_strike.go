@@ -42,7 +42,7 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 	shadowDamageSpell := dk.registerScourgeStrikeShadowDamageSpell()
 	bonusBaseDamage := dk.sigilOfAwarenessBonus(dk.ScourgeStrike)
 	bonusBaseDamage += dk.sigilOfArthriticBindingBonus()
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 560.0+bonusBaseDamage, 0.7, true)
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 800.0+bonusBaseDamage, 0.7, true)
 
 	dk.ScourgeStrike = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    ScourgeStrikeActionID.WithTag(1),

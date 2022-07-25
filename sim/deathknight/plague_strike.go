@@ -9,9 +9,9 @@ var PlagueStrikeMHOutcome = core.OutcomeHit
 var PlagueStrikeOHOutcome = core.OutcomeHit
 
 func (dk *Deathknight) newPlagueStrikeSpell(isMH bool) *core.Spell {
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 189.0, 0.5, true)
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 378.0, 0.5, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 189.0, 0.5*dk.nervesOfColdSteelBonus(), true)
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 378.0, 0.5*dk.nervesOfColdSteelBonus(), true)
 	}
 
 	outbreakBonus := 1.0 + 0.1*float64(dk.Talents.Outbreak)
