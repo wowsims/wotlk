@@ -138,6 +138,11 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: ProtectionWarriorInputs.ProtectionWarriorRotationConfig,
+			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
+			includeBuffDebuffInputs: [
+			],
+			excludeBuffDebuffInputs: [
+			],
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
