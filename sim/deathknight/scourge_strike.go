@@ -83,7 +83,7 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 						shadowDamageSpell.Cast(sim, spellEffect.Target)
 					}
 
-					dkSpellCost := dk.DetermineOptimalCost(sim, 0, 1, 1)
+					dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_FU)
 					dk.Spend(sim, spell, dkSpellCost)
 
 					amountOfRunicPower := 15.0 + 2.5*float64(dk.Talents.Dirge) + dk.scourgeborneBattlegearRunicPowerBonus()

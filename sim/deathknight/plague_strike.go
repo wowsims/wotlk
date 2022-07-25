@@ -88,7 +88,7 @@ func (dk *Deathknight) registerPlagueStrikeSpell() {
 						dk.EbonPlagueAura[spellEffect.Target.Index].Activate(sim)
 					}
 
-					dkSpellCost := dk.DetermineOptimalCost(sim, 0, 0, 1)
+					dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_U)
 					dk.Spend(sim, spell, dkSpellCost)
 
 					amountOfRunicPower := 10.0 + 2.5*float64(dk.Talents.Dirge)

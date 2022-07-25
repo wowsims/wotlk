@@ -32,7 +32,7 @@ func (dk *Deathknight) registerGhoulFrenzySpell() {
 			dk.GhoulFrenzyAura.Activate(sim)
 			dk.Ghoul.GhoulFrenzyAura.Activate(sim)
 
-			dkSpellCost := dk.DetermineOptimalCost(sim, 0, 0, 1)
+			dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_U)
 			dk.Spend(sim, spell, dkSpellCost)
 
 			amountOfRunicPower := 10.0
