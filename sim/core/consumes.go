@@ -1083,7 +1083,19 @@ func makeConjuredActivation(conjuredType proto.Conjured, character *Character) (
 	if conjuredType == proto.Conjured_ConjuredDarkRune {
 		actionID := ActionID{ItemID: 20520}
 		manaMetrics := character.NewManaMetrics(actionID)
-		// damageTakenManaMetrics := character.NewManaMetrics(ActionID{SpellID: 33776})
+
+		// Character damages self on use.
+		feedback := character.RegisterSpell(SpellConfig{
+			ActionID: actionID,
+			ApplyEffects: ApplyEffectFuncDirectDamage(SpellEffect{
+				BaseDamage: BaseDamageConfig{
+					Calculator: func(_ *Simulation, _ *SpellEffect, _ *Spell) float64 {
+						return 0
+					},
+				},
+			}),
+		})
+
 		return MajorCooldown{
 				Type: CooldownTypeMana,
 				CanActivate: func(sim *Simulation, character *Character) bool {
@@ -1110,15 +1122,15 @@ func makeConjuredActivation(conjuredType proto.Conjured, character *Character) (
 				ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
 					// Restores 900 to 1500 mana. (2 Min Cooldown)
 					manaGain := 900 + (sim.RandomFloat("dark rune") * 600)
+					feedback.ApplyEffects = ApplyEffectFuncDirectDamage(SpellEffect{
+						BaseDamage: BaseDamageConfig{
+							Calculator: func(_ *Simulation, _ *SpellEffect, _ *Spell) float64 {
+								return manaGain * 2.0 / 3.0
+							},
+						},
+					})
 					character.AddMana(sim, manaGain, manaMetrics, true)
-
-					// if character.Class == proto.Class_ClassPaladin {
-					// 	// Paladins gain extra mana from self-inflicted damage
-					// 	// TO-DO: It is possible for damage to be resisted or to crit
-					// 	// This would affect mana returns for Paladins
-					// 	manaFromDamage := manaGain * 2.0 / 3.0 * 0.1
-					// 	character.AddMana(sim, manaFromDamage, damageTakenManaMetrics, false)
-					// }
+					feedback.Cast(sim, &character.Unit)
 				},
 			})
 	} else if conjuredType == proto.Conjured_ConjuredFlameCap {
