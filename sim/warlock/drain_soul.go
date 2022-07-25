@@ -75,12 +75,12 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 	target := warlock.CurrentTarget
 
 	effect := core.SpellEffect{
-		DamageMultiplier: baseAdditiveMultiplier,
+		DamageMultiplier: 1,
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 		IsPeriodic:       true,
 		OutcomeApplier:   warlock.OutcomeFuncTick(),
 		ProcMask:         core.ProcMaskPeriodicDamage,
-		BaseDamage:       core.BaseDamageConfigMagicNoRoll(710/5, 0.429),
+		BaseDamage:       core.BaseDamageConfigMagicNoRoll(710/5, 3./7.),
 		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			spellEffect.DamageMultiplier = baseAdditiveMultiplier * warlock.dynamicDrainSoulMultiplier(sim)
 		},
