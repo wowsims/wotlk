@@ -148,6 +148,7 @@ func (dk *Deathknight) applyBloodCakedBlade() {
 		return
 	}
 
+	procChance := float64(dk.Talents.BloodCakedBlade) * 0.10
 	bloodCakedBladeHitMh := dk.bloodCakedBladeHit(true)
 	bloodCakedBladeHitOh := dk.bloodCakedBladeHit(false)
 
@@ -159,7 +160,7 @@ func (dk *Deathknight) applyBloodCakedBlade() {
 				return
 			}
 
-			if sim.RandomFloat("Blood-Caked Blade Roll") < 0.30 {
+			if sim.RandomFloat("Blood-Caked Blade Roll") < procChance {
 				isMh := spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHAuto)
 				if isMh {
 					bloodCakedBladeHitMh.Cast(sim, spellEffect.Target)
