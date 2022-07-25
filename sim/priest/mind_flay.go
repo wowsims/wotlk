@@ -32,9 +32,9 @@ func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 			}
 			if priest.ShadowWordPainDot.IsActive() {
 				if priest.Talents.PainAndSuffering == 3 {
-					priest.ShadowWordPainDot.Reapply(sim)
+					priest.ShadowWordPainDot.Rollover(sim)
 				} else if sim.RandomFloat("Pain and Suffering") < (float64(priest.Talents.PainAndSuffering) * 0.33) {
-					priest.ShadowWordPainDot.Reapply(sim)
+					priest.ShadowWordPainDot.Rollover(sim)
 				}
 			}
 			priest.MindFlayDot[numTicks].Apply(sim)
