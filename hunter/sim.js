@@ -10,6 +10,7 @@ import { TypedEvent } from '/wotlk/core/typed_event.js';
 import { Hunter_Options_PetType as PetType, } from '/wotlk/core/proto/hunter.js';
 import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
 import * as OtherInputs from '/wotlk/core/components/other_inputs.js';
+import * as Mechanics from '/wotlk/core/constants/mechanics.js';
 import * as HunterInputs from './inputs.js';
 import * as Presets from './presets.js';
 export class HunterSimUI extends IndividualSimUI {
@@ -74,6 +75,13 @@ export class HunterSimUI extends IndividualSimUI {
                 Stat.StatMeleeHaste,
                 Stat.StatArmorPenetration,
             ],
+            modifyDisplayStats: (player) => {
+                let stats = new Stats();
+                stats = stats.addStat(Stat.StatMeleeCrit, player.getTalents().lethalShots * 1 * Mechanics.MELEE_CRIT_RATING_PER_CRIT_CHANCE);
+                return {
+                    talents: stats,
+                };
+            },
             defaults: {
                 // Default equipped gear.
                 gear: Presets.PRERAID_PRESET.gear,
