@@ -20,7 +20,7 @@ func (warlock *Warlock) channelCheck(sim *core.Simulation, dot *core.Dot, maxTic
 func (warlock *Warlock) dynamicDrainSoulMultiplier(sim *core.Simulation) float64 {
 	dynamicMultiplier:= 1.0
 
-	// Execute Multiplier
+	// Execute Multiplier - Additive with Death's Embrace so we need to remove its effect to add it again with the spell's own execution multiplier.
 	if sim.IsExecutePhase20() {
 		dynamicMultiplier *= (4.0 + 0.04*float64(warlock.Talents.DeathsEmbrace))/(1 + 0.04*float64(warlock.Talents.DeathsEmbrace))
 	}
