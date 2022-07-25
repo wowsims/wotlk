@@ -71,13 +71,13 @@ export class Gear {
 		newInternalGear[newSlot] = newItem;
 
 		// Check for valid weapon combos.
-		if (!validWeaponCombo(newInternalGear[ItemSlot.ItemSlotMainHand]?.item, newInternalGear[ItemSlot.ItemSlotOffHand]?.item)) {
-			if (newSlot == ItemSlot.ItemSlotMainHand) {
-				newInternalGear[ItemSlot.ItemSlotOffHand] = null;
-			} else {
-				newInternalGear[ItemSlot.ItemSlotMainHand] = null;
-			}
-		}
+		// if (!validWeaponCombo(newInternalGear[ItemSlot.ItemSlotMainHand]?.item, newInternalGear[ItemSlot.ItemSlotOffHand]?.item)) {
+		// 	if (newSlot == ItemSlot.ItemSlotMainHand) {
+		// 		newInternalGear[ItemSlot.ItemSlotOffHand] = null;
+		// 	} else {
+		// 		newInternalGear[ItemSlot.ItemSlotMainHand] = null;
+		// 	}
+		// }
 
 		return new Gear(newInternalGear);
 	}

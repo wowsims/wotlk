@@ -25,6 +25,7 @@ func (warrior *Warrior) registerThunderClapSpell() {
 		ProcMask:         core.ProcMaskSpellDamage,
 		DamageMultiplier: impTCDamageMult,
 		ThreatMultiplier: 1.75,
+		BonusCritRating:  float64(warrior.Talents.Incite) * 5 * core.CritRatingPerCritChance,
 		BaseDamage:       core.BaseDamageConfigFlat(123),
 		OutcomeApplier:   warrior.OutcomeFuncMagicHitAndCrit(warrior.spellCritMultiplier(true)),
 	}
@@ -48,7 +49,7 @@ func (warrior *Warrior) registerThunderClapSpell() {
 	}
 
 	warrior.ThunderClap = warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 25264},
+		ActionID:    core.ActionID{SpellID: 47502},
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagBinary,
 

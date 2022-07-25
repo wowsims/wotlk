@@ -22,7 +22,7 @@ func (warlock *Warlock) staticAdditiveDamageMultiplier(actionID core.ActionID, s
 	// actionID_DrainSoul := core.ActionID{SpellID: 47855}
 
 	// Aura bonuses are treated separately as they function like normal multipliers
-	staticAdditiveDamageMultiplier:= 1.0
+	staticAdditiveDamageMultiplier := 1.0
 
 	// Additive Multipliers
 	// Weapon Imbues
@@ -35,11 +35,11 @@ func (warlock *Warlock) staticAdditiveDamageMultiplier(actionID core.ActionID, s
 	if spellSchool == core.SpellSchoolShadow {
 		staticAdditiveDamageMultiplier += 0.03 * float64(warlock.Talents.ShadowMastery)
 	} else if spellSchool == core.SpellSchoolFire {
-		staticAdditiveDamageMultiplier += 0.03*float64(warlock.Talents.Emberstorm)
+		staticAdditiveDamageMultiplier += 0.03 * float64(warlock.Talents.Emberstorm)
 	}
 
 	if actionID == actionID_CurseOfAgony || actionID == actionID_Corruption || actionID == actionID_Seed {
-		staticAdditiveDamageMultiplier += 0.01*float64(warlock.Talents.Contagion)
+		staticAdditiveDamageMultiplier += 0.01 * float64(warlock.Talents.Contagion)
 	}
 
 	if warlock.Talents.SiphonLife && (actionID == actionID_UnstableAffliction || actionID == actionID_Corruption || (actionID == actionID_Seed && IsPeriodic)) {
@@ -47,7 +47,7 @@ func (warlock *Warlock) staticAdditiveDamageMultiplier(actionID core.ActionID, s
 	}
 
 	if actionID == actionID_ShadowBolt {
-		staticAdditiveDamageMultiplier += 0.02*float64(warlock.Talents.ImprovedShadowBolt)
+		staticAdditiveDamageMultiplier += 0.02 * float64(warlock.Talents.ImprovedShadowBolt)
 	}
 
 	if actionID == actionID_Incinerate && warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfIncinerate) {
@@ -55,11 +55,11 @@ func (warlock *Warlock) staticAdditiveDamageMultiplier(actionID core.ActionID, s
 	}
 
 	if actionID == actionID_CurseOfAgony {
-		staticAdditiveDamageMultiplier += 0.05*float64(warlock.Talents.ImprovedCurseOfAgony)
+		staticAdditiveDamageMultiplier += 0.05 * float64(warlock.Talents.ImprovedCurseOfAgony)
 	}
 
 	if actionID == actionID_Corruption {
-		staticAdditiveDamageMultiplier += 0.02*float64(warlock.Talents.ImprovedCorruption)
+		staticAdditiveDamageMultiplier += 0.02 * float64(warlock.Talents.ImprovedCorruption)
 	}
 
 	if actionID == actionID_Immolate || actionID == actionID_Conflagrate {
@@ -67,7 +67,7 @@ func (warlock *Warlock) staticAdditiveDamageMultiplier(actionID core.ActionID, s
 	}
 
 	if (actionID == actionID_Immolate && IsPeriodic) || actionID == actionID_Conflagrate {
-		staticAdditiveDamageMultiplier += 0.03*float64(warlock.Talents.Aftermath)
+		staticAdditiveDamageMultiplier += 0.03 * float64(warlock.Talents.Aftermath)
 		if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfImmolate) {
 			staticAdditiveDamageMultiplier += 0.1
 		}
@@ -97,4 +97,3 @@ func (warlock *Warlock) staticAdditiveDamageMultiplier(actionID core.ActionID, s
 
 	return staticAdditiveDamageMultiplier
 }
-

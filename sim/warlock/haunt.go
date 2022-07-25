@@ -11,7 +11,7 @@ import (
 func (warlock *Warlock) registerHauntSpell() {
 	actionID := core.ActionID{SpellID: 59164}
 	spellSchool := core.SpellSchoolShadow
-	baseAdditiveMultiplier:= warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
+	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
 	shadowDotMultiplier := 1.2
 	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfHaunt) {
 		shadowDotMultiplier += 0.03

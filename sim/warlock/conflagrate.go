@@ -20,22 +20,22 @@ func (warlock *Warlock) registerConflagrateSpell() {
 	if float64(warlock.Talents.Cataclysm) > 0 {
 		costReductionFactor -= 0.01 + 0.03*float64(warlock.Talents.Cataclysm)
 	}
-	spellCoefficient:= 0.2 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
+	spellCoefficient := 0.2 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
 
 	actionID := core.ActionID{SpellID: 17962}
 	spellSchool := core.SpellSchoolFire
-	baseAdditiveMultiplier:= warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
-	baseAdditiveMultiplierDot:= warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true)
+	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
+	baseAdditiveMultiplierDot := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true)
 	target := warlock.CurrentTarget
 
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
-		BonusSpellCritRating: 5*(core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) + float64(warlock.Talents.FireAndBrimstone))*core.CritRatingPerCritChance,
-		DamageMultiplier: 	  baseAdditiveMultiplier,
-		ThreatMultiplier: 	  1 - 0.1*float64(warlock.Talents.DestructiveReach),
-		BaseDamage:       	  core.BaseDamageConfigMagicNoRoll(0.6*785, 0.6 *spellCoefficient*5),
-		OutcomeApplier:   	  warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
-		OnSpellHitDealt:  applyDotOnLanded(&warlock.ConflagrateDot),
+		BonusSpellCritRating: 5 * (core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) + float64(warlock.Talents.FireAndBrimstone)) * core.CritRatingPerCritChance,
+		DamageMultiplier:     baseAdditiveMultiplier,
+		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.DestructiveReach),
+		BaseDamage:           core.BaseDamageConfigMagicNoRoll(0.6*785, 0.6*spellCoefficient*5),
+		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
+		OnSpellHitDealt:      applyDotOnLanded(&warlock.ConflagrateDot),
 	}
 
 	warlock.Conflagrate = warlock.RegisterSpell(core.SpellConfig{
@@ -75,7 +75,7 @@ func (warlock *Warlock) registerConflagrateSpell() {
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			DamageMultiplier: baseAdditiveMultiplierDot,
 			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(0.4/3 * 785, 0.4/3*spellCoefficient*5),
+			BaseDamage:       core.BaseDamageConfigMagicNoRoll(0.4/3*785, 0.4/3*spellCoefficient*5),
 			OutcomeApplier:   warlock.OutcomeFuncTick(),
 			IsPeriodic:       true,
 			ProcMask:         core.ProcMaskPeriodicDamage,

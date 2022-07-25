@@ -106,7 +106,7 @@ func (warlock *Warlock) registerCurseOfTonguesSpell() {
 func (warlock *Warlock) registerCurseOfAgonySpell() {
 	actionID := core.ActionID{SpellID: 47864}
 	spellSchool := core.SpellSchoolShadow
-	baseAdditiveMultiplier:= warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true)
+	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true)
 	baseCost := 0.1 * warlock.BaseMana
 	target := warlock.CurrentTarget
 	numberOfTicks := 12
@@ -163,7 +163,7 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 func (warlock *Warlock) registerCurseOfDoomSpell() {
 	actionID := core.ActionID{SpellID: 47867}
 	spellSchool := core.SpellSchoolShadow
-	baseAdditiveMultiplier:= warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true)
+	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true)
 	baseCost := 0.15 * warlock.BaseMana
 
 	target := warlock.CurrentTarget

@@ -179,7 +179,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			// ------------------------------------------
 			if !warlock.CorruptionDot.IsActive() {
 				spell = warlock.Corruption
-			} else if (!warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime) {
+			} else if !warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime {
 				spell = warlock.Immolate
 			} else if warlock.DecimationAura.IsActive() {
 				spell = warlock.SoulFire
@@ -197,7 +197,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 				spell = warlock.Conflagrate
 			} else if !warlock.CorruptionDot.IsActive() {
 				spell = warlock.Corruption
-			} else if (!warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime) {
+			} else if !warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime {
 				spell = warlock.Immolate
 			} else if warlock.Talents.ChaosBolt && warlock.ChaosBolt.CD.IsReady(sim) {
 				spell = warlock.ChaosBolt
@@ -214,9 +214,9 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// Manual Rotation
 	// ------------------------------------------
 
-		// ------------------------------------------
-		// Main spells
-		// ------------------------------------------
+	// ------------------------------------------
+	// Main spells
+	// ------------------------------------------
 	if preset == proto.Warlock_Rotation_Manual {
 		if warlock.Rotation.Corruption && (!warlock.CorruptionDot.IsActive() && core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() ||
 			sim.IsExecutePhase35() && time.Duration(warlock.CorruptionDot.TickCount)*warlock.CorruptionDot.TickLength > sim.CurrentTime) {
@@ -228,8 +228,8 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		} else if secondaryDot == proto.Warlock_Rotation_Immolate && (!warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime) {
 			spell = warlock.Immolate
 		} else if warlock.Talents.UnstableAffliction && secondaryDot == proto.Warlock_Rotation_UnstableAffliction &&
-		(!warlock.UnstableAffDot.IsActive() || warlock.UnstableAffDot.RemainingDuration(sim) < warlock.UnstableAff.CurCast.CastTime) &&
-		sim.GetRemainingDuration() > warlock.UnstableAffDot.Duration {
+			(!warlock.UnstableAffDot.IsActive() || warlock.UnstableAffDot.RemainingDuration(sim) < warlock.UnstableAff.CurCast.CastTime) &&
+			sim.GetRemainingDuration() > warlock.UnstableAffDot.Duration {
 			spell = warlock.UnstableAff
 		} else if warlock.Talents.Decimation > 0 && warlock.DecimationAura.IsActive() {
 			spell = warlock.SoulFire

@@ -20,7 +20,7 @@ func (warrior *Warrior) registerExecuteSpell() {
 	var extraRage float64
 
 	warrior.Execute = warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 25236},
+		ActionID:    core.ActionID{SpellID: 47471},
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 
@@ -47,7 +47,7 @@ func (warrior *Warrior) registerExecuteSpell() {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return 925 + 21*extraRage
+					return 1456 + hitEffect.MeleeAttackPower(spell.Unit)*0.2 + 38*extraRage
 				},
 				TargetSpellCoefficient: 1,
 			},

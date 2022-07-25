@@ -10,15 +10,23 @@ func (warrior *Warrior) registerBloodrageCD() {
 	actionID := core.ActionID{SpellID: 2687}
 	rageMetrics := warrior.NewRageMetrics(actionID)
 
-	instantRage := 10.0 + 3*float64(warrior.Talents.ImprovedBloodrage)
+	instantRage := 20.0 + 3*float64(warrior.Talents.ImprovedBloodrage)
 
+	cooldownDur := time.Minute
+	if warrior.Talents.IntensifyRage == 1 {
+		cooldownDur = time.Duration(float64(cooldownDur) * 0.89)
+	} else if warrior.Talents.IntensifyRage == 2 {
+		cooldownDur = time.Duration(float64(cooldownDur) * 0.78)
+	} else if warrior.Talents.IntensifyRage == 3 {
+		cooldownDur = time.Duration(float64(cooldownDur) * 0.67)
+	}
 	brSpell := warrior.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    warrior.NewTimer(),
-				Duration: time.Minute,
+				Duration: cooldownDur,
 			},
 		},
 

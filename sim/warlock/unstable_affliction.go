@@ -11,9 +11,9 @@ import (
 
 func (warlock *Warlock) registerUnstableAffSpell() {
 	baseCost := 0.15 * warlock.BaseMana
-	actionID:= core.ActionID{SpellID: 47843}
+	actionID := core.ActionID{SpellID: 47843}
 	spellSchool := core.SpellSchoolShadow
-	baseAdditiveMultiplier:= warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true)
+	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true)
 
 	warlock.UnstableAff = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -33,7 +33,7 @@ func (warlock *Warlock) registerUnstableAffSpell() {
 			OnSpellHitDealt: applyDotOnLanded(&warlock.UnstableAffDot),
 		}),
 	})
-	
+
 	target := warlock.CurrentTarget
 	spellCoefficient := 0.2 + 0.01*float64(warlock.Talents.EverlastingAffliction)
 	applier := warlock.OutcomeFuncTick()
@@ -50,13 +50,13 @@ func (warlock *Warlock) registerUnstableAffSpell() {
 		NumberOfTicks: 6,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			DamageMultiplier: 	  baseAdditiveMultiplier,
-			ThreatMultiplier: 	  1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-			BaseDamage:       	  core.BaseDamageConfigMagicNoRoll(1150/6, spellCoefficient),
+			DamageMultiplier:     baseAdditiveMultiplier,
+			ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+			BaseDamage:           core.BaseDamageConfigMagicNoRoll(1150/6, spellCoefficient),
 			BonusSpellCritRating: 3 * core.CritRatingPerCritChance * float64(warlock.Talents.Malediction),
 			OutcomeApplier:       applier,
-			IsPeriodic:      	  true,
-			ProcMask:        	  core.ProcMaskPeriodicDamage,
+			IsPeriodic:           true,
+			ProcMask:             core.ProcMaskPeriodicDamage,
 		}),
 	})
 }
