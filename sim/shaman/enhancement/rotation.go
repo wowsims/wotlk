@@ -82,6 +82,13 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 		return
 	}
 
+	if enh.IsLavaLashCastable(sim) {
+		if !enh.LavaLash.Cast(sim, target) {
+			enh.WaitForMana(sim, enh.LavaLash.CurCast.Cost)
+		}
+		return
+	}
+
 	enh.LightningShield.Cast(sim, nil)
 
 	enh.DoNothing()

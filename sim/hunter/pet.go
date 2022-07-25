@@ -139,7 +139,18 @@ func (hp *HunterPet) OnGCDReady(sim *core.Simulation) {
 		return
 	}
 
-	if !hp.specialAbility.TryCast(sim, target, hp) {
+	if hp.specialAbility.TryCast(sim, target, hp) {
+		// For abilities that don't use the GCD.
+		if hp.GCD.IsReady(sim) {
+			if hp.focusDump.Type != Unknown {
+				if !hp.focusDump.TryCast(sim, target, hp) {
+					hp.DoNothing()
+				}
+			} else {
+				hp.DoNothing()
+			}
+		}
+	} else {
 		if hp.focusDump.Type != Unknown {
 			if !hp.focusDump.TryCast(sim, target, hp) {
 				hp.DoNothing()

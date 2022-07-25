@@ -105,28 +105,29 @@ func (warlock *Warlock) registerCurseOfTonguesSpell() {
 
 func (warlock *Warlock) registerCurseOfAgonySpell() {
 	actionID := core.ActionID{SpellID: 47864}
+	spellSchool := core.SpellSchoolShadow
+	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true)
 	baseCost := 0.1 * warlock.BaseMana
 	target := warlock.CurrentTarget
-	hasGoCoA := warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCurseOfAgony)
 	numberOfTicks := 12
 	totalBaseDmg := 1740.0
 	agonyEffect := totalBaseDmg * 0.056
-	if hasGoCoA {
+	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCurseOfAgony) {
 		numberOfTicks += 2
 		totalBaseDmg += 2 * agonyEffect // Glyphed ticks
 	}
 
 	effect := core.SpellEffect{
-		DamageMultiplier: (1 + 0.01*float64(warlock.Talents.Contagion)) * (1 + 0.05*float64(warlock.Talents.ImprovedCurseOfAgony)),
+		DamageMultiplier: baseAdditiveMultiplier,
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-		BaseDamage:       core.BaseDamageConfigMagicNoRoll(totalBaseDmg/float64(numberOfTicks), 0.1), //TODO : CoA ramp up effect
+		BaseDamage:       core.BaseDamageConfigMagicNoRoll(totalBaseDmg/float64(numberOfTicks), 0.1), // Ignored: CoA ramp up effect
 		OutcomeApplier:   warlock.OutcomeFuncTick(),
 		IsPeriodic:       true,
 		ProcMask:         core.ProcMaskPeriodicDamage,
 	}
 	warlock.CurseOfAgony = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolShadow,
+		SpellSchool:  spellSchool,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 		Cast: core.CastConfig{
@@ -161,21 +162,23 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 
 func (warlock *Warlock) registerCurseOfDoomSpell() {
 	actionID := core.ActionID{SpellID: 47867}
+	spellSchool := core.SpellSchoolShadow
+	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true)
 	baseCost := 0.15 * warlock.BaseMana
 
 	target := warlock.CurrentTarget
 	effect := core.SpellEffect{
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-		DamageMultiplier: 1,
+		DamageMultiplier: baseAdditiveMultiplier,
 		BaseDamage:       core.BaseDamageConfigMagicNoRoll(7300, 2),
-		OutcomeApplier:   warlock.OutcomeFuncMagicCrit(warlock.DefaultSpellCritMultiplier()),
+		OutcomeApplier:   warlock.OutcomeFuncTick(),
 		IsPeriodic:       true,
 		ProcMask:         core.ProcMaskPeriodicDamage,
 	}
 
 	warlock.CurseOfDoom = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolShadow,
+		SpellSchool:  spellSchool,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 		Cast: core.CastConfig{

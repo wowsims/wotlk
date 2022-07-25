@@ -19,8 +19,8 @@ enum Spec {
 	SpecWarlock = 5;
 	SpecWarrior = 6;
 	SpecProtectionWarrior = 11;
-	SpecDeathKnight = 15;
-	SpecDeathKnightTank = 16;
+	SpecDeathknight = 15;
+	SpecTankDeathknight = 16;
 }
 
 enum Race {
@@ -59,7 +59,7 @@ enum Class {
 	ClassShaman = 7;
 	ClassWarlock = 8;
 	ClassWarrior = 9;
-	ClassDeathKnight = 10;
+	ClassDeathknight = 10;
 }
 
 enum Profession {

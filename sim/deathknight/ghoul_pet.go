@@ -1,6 +1,7 @@
 package deathknight
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -12,7 +13,7 @@ type GhoulPet struct {
 	core.Pet
 	focusBar
 
-	dkOwner *DeathKnight
+	dkOwner *Deathknight
 
 	GhoulFrenzyAura *core.Aura
 
@@ -21,46 +22,46 @@ type GhoulPet struct {
 	uptimePercent float64
 }
 
-func (deathKnight *DeathKnight) NewArmyGhoulPet(index int) *GhoulPet {
+func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
 	ghoulPet := &GhoulPet{
 		Pet: core.NewPet(
 			"Army of the Dead", //+strconv.Itoa(index),
-			&deathKnight.Character,
+			&dk.Character,
 			ghoulPetBaseStats,
-			deathKnight.armyGhoulStatInheritance(),
+			dk.armyGhoulStatInheritance(),
 			false,
 		),
-		dkOwner: deathKnight,
+		dkOwner: dk,
 	}
 
 	ghoulPet.PseudoStats.DamageTakenMultiplier *= 0.1
 
-	deathKnight.SetupGhoul(ghoulPet)
+	dk.SetupGhoul(ghoulPet)
 
 	return ghoulPet
 }
 
-func (deathKnight *DeathKnight) NewGhoulPet(permanent bool) *GhoulPet {
+func (dk *Deathknight) NewGhoulPet(permanent bool) *GhoulPet {
 	ghoulPet := &GhoulPet{
 		Pet: core.NewPet(
 			"Ghoul",
-			&deathKnight.Character,
+			&dk.Character,
 			ghoulPetBaseStats,
-			deathKnight.ghoulStatInheritance(),
+			dk.ghoulStatInheritance(),
 			permanent,
 		),
-		dkOwner: deathKnight,
+		dkOwner: dk,
 	}
 
 	// NightOfTheDead
-	ghoulPet.PseudoStats.DamageTakenMultiplier *= (1.0 - float64(deathKnight.Talents.NightOfTheDead)*0.45)
+	ghoulPet.PseudoStats.DamageTakenMultiplier *= (1.0 - float64(dk.Talents.NightOfTheDead)*0.45)
 
-	deathKnight.SetupGhoul(ghoulPet)
+	dk.SetupGhoul(ghoulPet)
 
 	return ghoulPet
 }
 
-func (deathKnight *DeathKnight) SetupGhoul(ghoulPet *GhoulPet) {
+func (dk *Deathknight) SetupGhoul(ghoulPet *GhoulPet) {
 	ghoulPet.Pet.OnPetEnable = ghoulPet.enable
 	ghoulPet.Pet.OnPetDisable = ghoulPet.disable
 
@@ -84,9 +85,9 @@ func (deathKnight *DeathKnight) SetupGhoul(ghoulPet *GhoulPet) {
 	ghoulPet.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+1)
 	ghoulPet.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/83.3))
 
-	core.ApplyPetConsumeEffects(&ghoulPet.Character, deathKnight.Consumes)
+	core.ApplyPetConsumeEffects(&ghoulPet.Character, dk.Consumes)
 
-	deathKnight.AddPet(ghoulPet)
+	dk.AddPet(ghoulPet)
 }
 
 func (ghoulPet *GhoulPet) IsPetGhoul() bool {
@@ -103,7 +104,7 @@ func (ghoulPet *GhoulPet) Initialize() {
 
 func (ghoulPet *GhoulPet) Reset(sim *core.Simulation) {
 	if ghoulPet.IsPetGhoul() {
-		ghoulPet.uptimePercent = core.MinFloat(1, core.MaxFloat(0, ghoulPet.dkOwner.Options.PetUptime))
+		ghoulPet.uptimePercent = core.MinFloat(1, core.MaxFloat(0, ghoulPet.dkOwner.Inputs.PetUptime))
 	} else {
 		ghoulPet.uptimePercent = 1.0
 	}
@@ -134,6 +135,9 @@ func (ghoulPet *GhoulPet) enable(sim *core.Simulation) {
 	// Snapshot extra % speed modifiers from dk owner
 	if !ghoulPet.PermanentPet {
 		ghoulPet.PseudoStats.MeleeSpeedMultiplier = ghoulPet.dkOwner.PseudoStats.MeleeSpeedMultiplier
+		if sim.Log != nil {
+			sim.Log("Scaling pet to " + strconv.FormatFloat(ghoulPet.PseudoStats.MeleeSpeedMultiplier, 'f', 3, 64))
+		}
 	}
 }
 
@@ -155,10 +159,10 @@ var ghoulPetBaseStats = stats.Stats{
 	stats.MeleeCrit: (1.1515 + 1.8) * core.CritRatingPerCritChance,
 }
 
-func (deathKnight *DeathKnight) ghoulStatInheritance() core.PetStatInheritance {
-	ravenousDead := 1.0 + 0.2*float64(deathKnight.Talents.RavenousDead)
+func (dk *Deathknight) ghoulStatInheritance() core.PetStatInheritance {
+	ravenousDead := 1.0 + 0.2*float64(dk.Talents.RavenousDead)
 	glyphBonus := 0.0
-	if deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfTheGhoul) {
+	if dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfTheGhoul) {
 		glyphBonus = 0.4
 	}
 
@@ -176,10 +180,10 @@ func (deathKnight *DeathKnight) ghoulStatInheritance() core.PetStatInheritance {
 	}
 }
 
-func (deathKnight *DeathKnight) armyGhoulStatInheritance() core.PetStatInheritance {
-	ravenousDead := 1.0 + 0.2*float64(deathKnight.Talents.RavenousDead)
+func (dk *Deathknight) armyGhoulStatInheritance() core.PetStatInheritance {
+	ravenousDead := 1.0 + 0.2*float64(dk.Talents.RavenousDead)
 	glyphBonus := 0.0
-	if deathKnight.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfTheGhoul) {
+	if dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfTheGhoul) {
 		glyphBonus = 0.4
 	}
 

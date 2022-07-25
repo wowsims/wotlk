@@ -45,8 +45,8 @@ message Player {
 		Warlock warlock = 13;
 		Warrior warrior = 14;
 		ProtectionWarrior protection_warrior = 21;
-		DeathKnight death_knight = 31;
-		DeathKnightTank death_knight_tank = 32;
+		Deathknight deathknight = 31;
+		TankDeathknight tank_deathknight = 32;
 	}
 
 	// Only used by the UI. Sim uses talents within the spec protos.

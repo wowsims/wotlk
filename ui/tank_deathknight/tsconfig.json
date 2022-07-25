@@ -1,0 +1,13 @@
+{
+	"extends": "../tsconfig-base",
+	"compilerOptions": {
+		"composite": true,
+		"outDir": "../../dist/wotlk/tank_deathknight",
+	},
+	"include": [
+		"**/*.ts",
+	],
+	"references": [
+		{ "path": "../core" },
+	],
+}

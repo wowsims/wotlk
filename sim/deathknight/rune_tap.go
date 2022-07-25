@@ -6,26 +6,26 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-func (deathKnight *DeathKnight) registerRuneTapSpell() {
-	if !deathKnight.Talents.RuneTap {
+func (dk *Deathknight) registerRuneTapSpell() {
+	if !dk.Talents.RuneTap {
 		return
 	}
 
 	actionID := core.ActionID{SpellID: 48982}
-	cdTimer := deathKnight.NewTimer()
+	cdTimer := dk.NewTimer()
 	cd := time.Minute * 1
-	healthMetrics := deathKnight.NewHealthMetrics(actionID)
+	healthMetrics := dk.NewHealthMetrics(actionID)
 
 	healthGainMult := 0.0
-	if deathKnight.Talents.ImprovedRuneTap == 1 {
+	if dk.Talents.ImprovedRuneTap == 1 {
 		healthGainMult = 0.33
-	} else if deathKnight.Talents.ImprovedRuneTap == 2 {
+	} else if dk.Talents.ImprovedRuneTap == 2 {
 		healthGainMult = 0.66
-	} else if deathKnight.Talents.ImprovedRuneTap == 3 {
+	} else if dk.Talents.ImprovedRuneTap == 3 {
 		healthGainMult = 1.0
 	}
 
-	deathKnight.RuneTap = deathKnight.RegisterSpell(core.SpellConfig{
+	dk.RuneTap = dk.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 
@@ -37,22 +37,22 @@ func (deathKnight *DeathKnight) registerRuneTapSpell() {
 			IgnoreHaste: true,
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			dkSpellCost := deathKnight.DetermineOptimalCost(sim, 1, 0, 0)
-			deathKnight.Spend(sim, spell, dkSpellCost)
+			dkSpellCost := dk.DetermineOptimalCost(sim, 1, 0, 0)
+			dk.Spend(sim, spell, dkSpellCost)
 
-			maxHealth := deathKnight.MaxHealth()
-			deathKnight.GainHealth(sim, (1.0+healthGainMult)*(maxHealth*0.1), healthMetrics)
+			maxHealth := dk.MaxHealth()
+			dk.GainHealth(sim, (1.0+healthGainMult)*(maxHealth*0.1), healthMetrics)
 		},
 	})
 }
 
-func (deathKnight *DeathKnight) CanRuneTap(sim *core.Simulation) bool {
-	return deathKnight.CastCostPossible(sim, 0, 1, 0, 0) && deathKnight.RuneTap.IsReady(sim)
+func (dk *Deathknight) CanRuneTap(sim *core.Simulation) bool {
+	return dk.CastCostPossible(sim, 0, 1, 0, 0) && dk.RuneTap.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastRuneTap(sim *core.Simulation, target *core.Unit) bool {
-	if deathKnight.CanRuneTap(sim) {
-		deathKnight.RuneTap.Cast(sim, target)
+func (dk *Deathknight) CastRuneTap(sim *core.Simulation, target *core.Unit) bool {
+	if dk.CanRuneTap(sim) {
+		dk.RuneTap.Cast(sim, target)
 		return true
 	}
 	return false

@@ -73,8 +73,8 @@ type RotationHelper struct {
 	DoRotationEvent    DoRotationEvent
 }
 
-func (deathKnight *DeathKnight) GetRotationId() RotationID {
-	return deathKnight.opener.id
+func (dk *Deathknight) GetRotationId() RotationID {
+	return dk.opener.id
 }
 
 func TernaryRotationAction(condition bool, t RotationAction, f RotationAction) RotationAction {
@@ -102,16 +102,16 @@ func (r *RotationHelper) PushSequence(actions []RotationAction) {
 	r.sequence = seq
 }
 
-func (deathKnight *DeathKnight) SetupRotation() {
-	deathKnight.openers = make([]Sequence, RotationID_Count)
+func (dk *Deathknight) SetupRotation() {
+	dk.openers = make([]Sequence, RotationID_Count)
 
 	rotationId := RotationID_Unknown
-	if deathKnight.SetupRotationEvent != nil {
-		rotationId = deathKnight.SetupRotationEvent()
+	if dk.SetupRotationEvent != nil {
+		rotationId = dk.SetupRotationEvent()
 	} else {
 		panic("Missing SetupRotationEvent. Please assign during spec creation")
 	}
 
-	deathKnight.opener = &deathKnight.openers[rotationId]
-	deathKnight.onOpener = true
+	dk.opener = &dk.openers[rotationId]
+	dk.onOpener = true
 }

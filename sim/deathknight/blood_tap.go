@@ -6,27 +6,27 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-func (deathKnight *DeathKnight) registerBloodTapSpell() {
+func (dk *Deathknight) registerBloodTapSpell() {
 	actionID := core.ActionID{SpellID: 45529}
-	cdTimer := deathKnight.NewTimer()
+	cdTimer := dk.NewTimer()
 	cd := time.Minute * 1
 
-	deathKnight.BloodTapAura = deathKnight.RegisterAura(core.Aura{
+	dk.BloodTapAura = dk.RegisterAura(core.Aura{
 		Label:    "Blood Tap",
 		ActionID: actionID,
 		Duration: time.Second * 20,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			deathKnight.CorrectBloodTapConversion(sim,
-				deathKnight.BloodRuneGainMetrics(),
-				deathKnight.DeathRuneGainMetrics(),
-				deathKnight.BloodTap)
+			dk.CorrectBloodTapConversion(sim,
+				dk.BloodRuneGainMetrics(),
+				dk.DeathRuneGainMetrics(),
+				dk.BloodTap)
 
 			amountOfRunicPower := 10.0
-			deathKnight.AddRunicPower(sim, amountOfRunicPower, deathKnight.BloodTap.RunicPowerMetrics())
+			dk.AddRunicPower(sim, amountOfRunicPower, dk.BloodTap.RunicPowerMetrics())
 		},
 	})
 
-	deathKnight.BloodTap = deathKnight.RegisterSpell(core.SpellConfig{
+	dk.BloodTap = dk.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 
@@ -38,19 +38,19 @@ func (deathKnight *DeathKnight) registerBloodTapSpell() {
 			IgnoreHaste: true,
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			deathKnight.BloodTapAura.Activate(sim)
-			deathKnight.BloodTapAura.Prioritize()
+			dk.BloodTapAura.Activate(sim)
+			dk.BloodTapAura.Prioritize()
 		},
 	})
 }
 
-func (deathKnight *DeathKnight) CanBloodTap(sim *core.Simulation) bool {
-	return deathKnight.BloodTap.IsReady(sim) && deathKnight.BloodTap.CD.IsReady(sim)
+func (dk *Deathknight) CanBloodTap(sim *core.Simulation) bool {
+	return dk.BloodTap.IsReady(sim) && dk.BloodTap.CD.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastBloodTap(sim *core.Simulation, target *core.Unit) bool {
-	if deathKnight.CanBloodTap(sim) {
-		deathKnight.BloodTap.Cast(sim, target)
+func (dk *Deathknight) CastBloodTap(sim *core.Simulation, target *core.Unit) bool {
+	if dk.CanBloodTap(sim) {
+		dk.BloodTap.Cast(sim, target)
 		return true
 	}
 	return false
