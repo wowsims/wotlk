@@ -41,6 +41,15 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 	// 	return
 	// }
 
+	if enh.Talents.FeralSpirit {
+		if enh.FeralSpirit.IsReady(sim) {
+			if !enh.FeralSpirit.Cast(sim, target) {
+				enh.WaitForMana(sim, enh.FeralSpirit.CurCast.Cost)
+			}
+			return
+		}
+	}
+
 	if enh.Talents.Stormstrike {
 		if (enh.StormstrikeDebuffAura(target).GetStacks() > 0) && enh.Stormstrike.IsReady(sim) {
 			if !enh.Stormstrike.Cast(sim, target) {
