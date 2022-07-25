@@ -36,9 +36,9 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			cssClass: 'warlock-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-
+				"Some snapshotting mechanics needs to be fixed (mainly implementing rollover mechanic).",
+				"Some secondary spells need to be implemented.",
 			],
-			// race: Race.RaceOrc,
 
 			// All stats for which EP should be calculated.
 			epStats: [
@@ -114,17 +114,16 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 
 			// IconInputs to include in the 'Player' section on the settings tab.
 			playerIconInputs: [
-				WarlockInputs.PetType,
+				WarlockInputs.PetInput,
 				WarlockInputs.ArmorInput,
-				WarlockInputs.WeaponImbue,
+				WarlockInputs.WeaponImbueInput,
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationIconInputs: [
 				WarlockInputs.PrimarySpellInput,
-				WarlockInputs.SecondaryDotInput,
-				WarlockInputs.SpecSpellChaosBolt,
-				WarlockInputs.SpecSpellHaunt,
 				WarlockInputs.CorruptionSpell,
+				WarlockInputs.SecondaryDotInput,
+				WarlockInputs.SpecSpellInput,
 			],
 			rotationInputs: WarlockInputs.WarlockRotationConfig,
 			
@@ -137,8 +136,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			},
 			encounterPicker: {
 				// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
-				showExecuteProportion: true,
-				// executeProportion20: 0.25,
+				showExecuteProportion: false,
 			},
 
 			presets: {
@@ -150,8 +148,10 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				],
 				//Preset gear configurations that the user can quickly select.
 				gear: [
+					// Presets.Naked,
 					Presets.SWP_BIS,
 					Presets.P1_PreBiS,
+					Presets.P1_BiS,
 				],
 			},
 		});

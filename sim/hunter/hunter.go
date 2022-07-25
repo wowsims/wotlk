@@ -48,6 +48,8 @@ type Hunter struct {
 	manaSpentPerSecondAtFirstAspectSwap float64
 	permaHawk                           bool
 
+	serpentStingDamageMultiplier float64
+
 	AspectOfTheDragonhawk *core.Spell
 	AspectOfTheViper      *core.Spell
 

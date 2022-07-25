@@ -9,12 +9,16 @@ import (
 )
 
 func (warlock *Warlock) registerShadowBoltSpell() {
-	has4pMal := warlock.HasSetBonus(ItemSetMaleficRaiment, 4)
+	ISBProcChance := 0.2*float64(warlock.Talents.ImprovedShadowBolt)
+	actionID:= core.ActionID{SpellID: 47809}
+	spellSchool := core.SpellSchoolShadow
+	baseAdditiveMultiplier:= warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
 
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
-		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) * 5 * core.CritRatingPerCritChance,
-		DamageMultiplier:     (1 + 0.06*core.TernaryFloat64(has4pMal, 1, 0)) * (1 + 0.02*float64(warlock.Talents.ImprovedShadowBolt)),
+		BonusSpellCritRating: core.CritRatingPerCritChance * 5 * (core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) +
+			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDeathbringerGarb, 4), 1, 0) + core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 1, 0)),
+		DamageMultiplier:     baseAdditiveMultiplier,
 		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.DestructiveReach),
 		BaseDamage:           core.BaseDamageConfigMagic(694.0, 775.0, 0.857*(1+0.04*float64(warlock.Talents.ShadowAndFlame))),
 		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
@@ -24,7 +28,7 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 			}
 			// ISB debuff
 			if warlock.Talents.ImprovedShadowBolt > 0 {
-				if sim.RandomFloat("ISB") < 0.2*float64(warlock.Talents.ImprovedShadowBolt) {
+				if sim.RandomFloat("ISB") < ISBProcChance {
 					if !core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() {
 						core.ShadowMasteryAura(warlock.CurrentTarget).Activate(sim)
 					} else {
@@ -32,47 +36,38 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 					}
 				}
 			}
-			// Everlasting Affliction Refresh
-			if warlock.CorruptionDot.IsActive() {
-				if sim.RandomFloat("EverlastingAffliction") < 0.2*float64(warlock.Talents.EverlastingAffliction) {
-					warlock.CorruptionDot.Refresh(sim)
-				}
-			}
 		},
 	}
 
-	var modCast func(*core.Simulation, *core.Spell, *core.Cast)
-
-	if warlock.Talents.Nightfall > 0 {
-		modCast = func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
-			warlock.applyNightfall(cast)
-		}
-	}
-
 	baseCost := 0.17 * warlock.BaseMana
-	costReduction := 0.0
+	costReductionFactor := 1.0
 	if float64(warlock.Talents.Cataclysm) > 0 {
-		costReduction += 0.01 + 0.03*float64(warlock.Talents.Cataclysm)
+		costReductionFactor -= 0.01 + 0.03*float64(warlock.Talents.Cataclysm)
 	}
 	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfShadowBolt) {
-		costReduction += 0.1
+		costReductionFactor -= 0.1
 	}
+
 	warlock.ShadowBolt = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 47809},
-		SpellSchool:  core.SpellSchoolShadow,
+		ActionID:     actionID,
+		SpellSchool:  spellSchool,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost * (1 - costReduction),
+				Cost:     baseCost * costReductionFactor,
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond * (3000 - 100*time.Duration(warlock.Talents.Bane)),
 			},
-			ModifyCast: modCast,
+			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
+				cast.GCD = time.Duration(float64(cast.GCD) * warlock.backdraftModifier())
+				cast.CastTime = time.Duration(float64(cast.CastTime) * warlock.backdraftModifier())
+				if warlock.Talents.Nightfall > 0 {
+					warlock.applyNightfall(cast)
+				}
+			},
 		},
-
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})
-
 }

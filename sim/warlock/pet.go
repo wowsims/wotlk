@@ -49,6 +49,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		config: petConfig,
 		owner:  warlock,
 	}
+	
 	wp.AddStatDependency(stats.Intellect, stats.Mana, 1.0+petConfig.ManaIntRatio)
 	wp.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
 	wp.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance*0.04))
