@@ -435,6 +435,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestProtection-AllItems-LibramofFuriousBlows-37574"
+ value: {
+  dps: 110.4629532608983
+  tps: 112.67221232611631
+ }
+}
+dps_results: {
  key: "TestProtection-AllItems-LibramofReciprocation-40706"
  value: {
   dps: 110.4629532608983
