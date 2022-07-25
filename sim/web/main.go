@@ -171,6 +171,7 @@ func setupAsyncServer() {
 	addNewSim := func() (string, progReport) {
 		newID := uuid.NewV4().String()
 		simProgress := &asyncProgress{}
+		simProgress.latestProgress.Store(&proto.ProgressMetrics{})
 		progMut.Lock()
 		progresses[newID] = simProgress
 		progMut.Unlock()

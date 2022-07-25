@@ -96,18 +96,27 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 	config.ApplyEffects = core.ApplyEffectFuncDirectDamage(effect)
 	shaman.FlameShock = shaman.RegisterSpell(config)
 
+	dmgMult := 1 * (1 + 0.01*float64(shaman.Talents.Concussion)) * (1.0 + float64(shaman.Talents.StormEarthAndFire)*0.2) // 20% bonus dmg per SE&F
+	if shaman.HasSetBonus(ItemSetWorldbreakerGarb, 2) {
+		dmgMult *= 1.2
+	}
 	target := shaman.CurrentTarget
+	bonusTicks := 0
+	if shaman.HasSetBonus(ItemSetNobundosRegalia, 2) || shaman.HasSetBonus(ItemSetThrallsRegalia, 2) {
+		bonusTicks += 3
+	}
+
 	shaman.FlameShockDot = core.NewDot(core.Dot{
 		Spell: shaman.FlameShock,
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "FlameShock-" + strconv.Itoa(int(shaman.Index)),
 			ActionID: core.ActionID{SpellID: flameshockID},
 		}),
-		NumberOfTicks:       6,
+		NumberOfTicks:       6 + bonusTicks,
 		TickLength:          time.Second * 3,
 		AffectedByCastSpeed: true,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			DamageMultiplier: 1 * (1 + 0.01*float64(shaman.Talents.Concussion)) * (1.0 + float64(shaman.Talents.StormEarthAndFire)*0.2), // 20% bonus dmg per SE&F
+			DamageMultiplier: dmgMult,
 			ThreatMultiplier: 1,
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(834/6, 0.1),
 			OutcomeApplier:   shaman.OutcomeFuncMagicCrit(critMult),

@@ -12,6 +12,10 @@ type Warlock struct {
 	Options  proto.Warlock_Options
 	Rotation proto.Warlock_Rotation
 
+	Pet *WarlockPet
+
+	DoingRegen bool
+
 	ShadowBolt           *core.Spell
 	Incinerate           *core.Spell
 	Immolate             *core.Spell
@@ -59,10 +63,6 @@ type Warlock struct {
 	EmpoweredImpAura       *core.Aura
 
 	GlyphOfLifeTapAura *core.Aura
-
-	Pet *WarlockPet
-
-	DoingRegen bool
 }
 
 func (warlock *Warlock) GetCharacter() *core.Character {
@@ -87,15 +87,12 @@ func (warlock *Warlock) Initialize() {
 	warlock.registerSeedSpell()
 	warlock.registerSoulFireSpell()
 	warlock.registerDrainSoulSpell()
-	warlock.registerDrainSoulChannellingSpell()
+	warlock.registerUnstableAffSpell()
 
 	if warlock.Talents.Conflagrate {
 		warlock.registerConflagrateSpell()
 	}
-	if warlock.Talents.UnstableAffliction {
-		warlock.registerUnstableAffSpell()
-	}
-	warlock.registerUnstableAffDot()
+
 	if warlock.Talents.Haunt {
 		warlock.registerHauntSpell()
 	}
@@ -140,12 +137,13 @@ func NewWarlock(character core.Character, options proto.Player) *Warlock {
 	}
 	warlock.EnableManaBar()
 
-	warlock.Character.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
+	warlock.Character.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+1)
 
 	if warlock.Options.Armor == proto.Warlock_Options_FelArmor {
-		amount := 180.0 + 0.3*float64(stats.Spirit) // TODO: does this need to be dynamic with spirit?
-		amount *= 1 + float64(warlock.Talents.DemonicAegis)*0.1
+		demonicAegisMultiplier := 1 + float64(warlock.Talents.DemonicAegis)*0.1
+		amount := 180.0 * demonicAegisMultiplier
 		warlock.AddStat(stats.SpellPower, amount)
+		warlock.AddStatDependency(stats.Spirit, stats.SpellPower, 1+0.3*demonicAegisMultiplier)
 	}
 
 	if warlock.Options.Summon != proto.Warlock_Options_NoSummon {

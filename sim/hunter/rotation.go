@@ -44,7 +44,7 @@ func (hunter *Hunter) chooseSpell(sim *core.Simulation) *core.Spell {
 		return hunter.ExplosiveShot
 	} else if hunter.AimedShot != nil && hunter.AimedShot.IsReady(sim) {
 		return hunter.AimedShot
-	} else if hunter.ArcaneShot != nil && hunter.ArcaneShot.IsReady(sim) {
+	} else if hunter.ArcaneShot.IsReady(sim) && (hunter.ExplosiveShotDot == nil || !hunter.ExplosiveShotDot.IsActive()) {
 		return hunter.ArcaneShot
 	} else {
 		return hunter.SteadyShot
