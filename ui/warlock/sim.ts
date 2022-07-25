@@ -150,7 +150,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				],
 				//Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.Naked,
+					// Presets.Naked,
 					Presets.SWP_BIS,
 					Presets.P1_PreBiS,
 					Presets.P1_BiS,
