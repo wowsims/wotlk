@@ -17,7 +17,7 @@ func (warlock *Warlock) registerIncinerateSpell() {
 		ProcMask: core.ProcMaskSpellDamage,
 		BonusSpellCritRating: core.CritRatingPerCritChance * 5 * (core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) +
 			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDeathbringerGarb, 4), 1, 0) + core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 1, 0)),
-		DamageMultiplier: baseAdditiveMultiplier,
+		DamageMultiplier: 1,
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
 		BaseDamage:       warlock.incinerateDamage(),
 		OutcomeApplier:   warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
