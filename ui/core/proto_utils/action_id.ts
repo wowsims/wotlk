@@ -224,6 +224,13 @@ export class ActionId {
 			case 'Lightning Bolt':
 				if (this.tag) name += ' (LO)';
 				break;
+			case 'Holy Vengeance':
+				if (this.tag == 1) {
+					name += ' (Swing Roll)'
+				} else if (this.tag == 2) {
+					name += ' (DoT)'
+				}
+				break;
 			case 'Holy Shield':
 				if (this.tag == 1) {
 					name += ' (Proc)';

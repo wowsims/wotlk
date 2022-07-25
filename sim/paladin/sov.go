@@ -57,7 +57,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	paladin.SealOfVengeanceDot = dot
 
 	onSwingProc := paladin.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 31803}, // Holy Vengeance.
+		ActionID:    core.ActionID{SpellID: 31803, Tag: 1}, // Holy Vengeance.
 		SpellSchool: core.SpellSchoolHoly,
 		Flags:       core.SpellFlagMeleeMetrics,
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -139,13 +139,15 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 		Duration: SealDuration,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			if paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfSealOfVengeance) {
-				paladin.AddStatDynamic(sim, stats.Expertise, core.ExpertiseRatingPerExpertise*10)
+				expertise := core.ExpertisePerQuarterPercentReduction * 10
+				paladin.AddStatDynamic(sim, stats.Expertise, expertise)
 			}
 		},
 
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			if paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfSealOfVengeance) {
-				paladin.AddStatDynamic(sim, stats.Expertise, -(core.ExpertiseRatingPerExpertise * 10))
+				expertise := core.ExpertisePerQuarterPercentReduction * 10
+				paladin.AddStatDynamic(sim, stats.Expertise, -expertise)
 			}
 		},
 

@@ -24,7 +24,7 @@ character_stats_results: {
   final_stats: 1337.956225
   final_stats: 0
   final_stats: 0
-  final_stats: 120.5525
+  final_stats: 120.5675
   final_stats: 0
   final_stats: 0
   final_stats: 0
@@ -605,15 +605,15 @@ dps_results: {
 dps_results: {
  key: "TestRogue-AllItems-TheFistsofFury"
  value: {
-  dps: 2019.9774817612683
-  tps: 1422.5948270537815
+  dps: 2023.0430688356487
+  tps: 1424.7304943133763
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-TheTwinBladesofAzzinoth"
  value: {
-  dps: 2324.015885992761
-  tps: 1638.3723780635348
+  dps: 2324.3693522084372
+  tps: 1638.6495226112725
  }
 }
 dps_results: {
