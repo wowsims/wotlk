@@ -38,3 +38,7 @@ export declare const P1_BiS: {
     tooltip: string;
     gear: EquipmentSpec;
 };
+export declare const Naked: {
+    name: string;
+    gear: EquipmentSpec;
+};

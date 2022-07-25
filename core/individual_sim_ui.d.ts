@@ -33,6 +33,7 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
     knownIssues?: Array<string>;
     warnings?: Array<(simUI: IndividualSimUI<SpecType>) => SimWarning>;
     epStats: Array<Stat>;
+    buffStats?: Array<Stat>;
     epReferenceStat: Stat;
     displayStats: Array<Stat>;
     modifyDisplayStats?: (player: Player<SpecType>) => StatMods;

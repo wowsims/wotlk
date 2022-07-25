@@ -377,7 +377,7 @@ export class IndividualSimUI extends SimUI {
             { item: IconInputs.SpellHasteBuff, stats: [Stat.StatSpellHaste] },
             { item: IconInputs.HastePercentBuff, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
             { item: IconInputs.DamagePercentBuff, stats: [Stat.StatAttackPower, Stat.StatSpellPower] },
-            { item: IconInputs.DamageReductionPercentBuff, stats: [Stat.StatStamina] },
+            { item: IconInputs.DamageReductionPercentBuff, stats: [Stat.StatArmor] },
             { item: IconInputs.MP5Buff, stats: [Stat.StatMP5] },
             { item: IconInputs.ReplenishmentBuff, stats: [Stat.StatMP5] },
         ]);
@@ -930,7 +930,8 @@ export class IndividualSimUI extends SimUI {
     }
     splitRelevantOptions(options) {
         return options
-            .filter(option => option.stats.length == 0 || option.stats.some(stat => this.individualConfig.epStats.includes(stat)))
+            .filter(option => option.stats.length == 0 || option.stats.some(stat => this.individualConfig.epStats.includes(stat)) ||
+            option.stats.some(stat => this.individualConfig.buffStats?.includes(stat)))
             .map(option => option.item);
     }
 }
