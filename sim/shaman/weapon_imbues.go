@@ -116,10 +116,9 @@ func (shaman *Shaman) newFlametongueImbueSpell(isMH bool) *core.Spell {
 	effect := core.SpellEffect{
 		ProcMask:            core.ProcMaskEmpty,
 		BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * 2 * core.SpellHitRatingPerHitChance,
-
-		DamageMultiplier: 1,
-		ThreatMultiplier: 1, // TODO: add spirit weapons modifier when that's fixed
-		OutcomeApplier:   shaman.OutcomeFuncMagicHitAndCrit(shaman.DefaultSpellCritMultiplier()),
+		DamageMultiplier:    1,
+		ThreatMultiplier:    1, // TODO: add spirit weapons modifier when that's fixed
+		OutcomeApplier:      shaman.OutcomeFuncMagicHitAndCrit(shaman.DefaultSpellCritMultiplier()),
 	}
 
 	if isMH {

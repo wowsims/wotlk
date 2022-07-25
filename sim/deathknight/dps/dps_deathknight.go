@@ -46,57 +46,46 @@ func NewDpsDeathknight(character core.Character, player proto.Player) *DpsDeathk
 		Rotation: *dk.Rotation,
 	}
 
-	dpsDk.SetupRotationEvent = dpsDk.SetupRotations
-	dpsDk.DoRotationEvent = dpsDk.DoRotations
+	dpsDk.SetupRotations()
 
 	return dpsDk
 }
 
-func (dk *DpsDeathknight) SetupRotations() deathknight.RotationID {
-	dk.setupFrostRotations()
-	dk.setupUnholyRotations()
-
-	// IMPORTANT
-	rotationId := deathknight.RotationID_Unknown
-	// Also you need to update this to however you define spec
+func (dk *DpsDeathknight) SetupRotations() {
 	if dk.Talents.DarkConviction > 0 && dk.Talents.HowlingBlast {
-		rotationId = deathknight.RotationID_FrostSubBlood_Full
+		dk.setupFrostSubBloodOpener()
+		dk.DoRotationEvent = dk.doFrostRotation
 	} else if dk.Talents.BloodCakedBlade > 0 && dk.Talents.HowlingBlast {
-		rotationId = deathknight.RotationID_FrostSubUnholy_Full
+		dk.setupFrostSubUnholyOpener()
+		dk.DoRotationEvent = dk.doFrostRotation
 	} else if dk.Talents.HowlingBlast {
-		rotationId = deathknight.RotationID_FrostSubBlood_Full
+		dk.setupFrostSubBloodOpener()
+		dk.DoRotationEvent = dk.doFrostRotation
 	} else if dk.Talents.SummonGargoyle {
+		dk.DoRotationEvent = dk.doUnholyRotation
 		if dk.Rotation.UseDeathAndDecay {
-			rotationId = deathknight.RotationID_UnholyDnd_Full
+			if dk.Rotation.UnholyPresenceOpener {
+				dk.setupUnholyDndUnholyPresenceOpener()
+			} else {
+				dk.setupUnholyDndBloodPresenceOpener()
+			}
 		} else {
 			if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd {
 				if dk.Rotation.UnholyPresenceOpener {
-					rotationId = deathknight.RotationID_UnholySsArmyUnholyPresence_Full
+					dk.setupUnholySsArmyUnholyPresenceOpener()
 				} else {
-					rotationId = deathknight.RotationID_UnholySsArmyBloodPresence_Full
+					dk.setupUnholySsArmyBloodPresenceOpener()
 				}
 			} else {
 				if dk.Rotation.UnholyPresenceOpener {
-					rotationId = deathknight.RotationID_UnholySsUnholyPresence_Full
+					dk.setupUnholySsUnholyPresenceOpener()
 				} else {
-					rotationId = deathknight.RotationID_UnholySsBloodPresence_Full
+					dk.setupUnholySsBloodPresenceOpener()
 				}
 			}
 		}
 	} else {
-		rotationId = deathknight.RotationID_Default
-	}
-
-	return rotationId
-}
-
-func (dk *DpsDeathknight) DoRotations(sim *core.Simulation, target *core.Unit) {
-	rotationId := dk.GetRotationId()
-
-	if rotationId == deathknight.RotationID_FrostSubBlood_Full || rotationId == deathknight.RotationID_FrostSubUnholy_Full {
-		dk.doFrostRotation(sim, target)
-	} else {
-		dk.doUnholyRotation(sim, target)
+		panic("No valid rotataion initialized!")
 	}
 }
 

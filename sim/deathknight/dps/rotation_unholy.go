@@ -7,9 +7,8 @@ import (
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
-func (dk *DpsDeathknight) setupUnholyRotations() {
-
-	dk.DefineOpener(deathknight.RotationID_UnholySsUnholyPresence_Full, []deathknight.RotationAction{
+func (dk *DpsDeathknight) setupUnholySsUnholyPresenceOpener() {
+	dk.DefineOpener([]deathknight.RotationAction{
 		deathknight.RotationAction_IT,
 		deathknight.RotationAction_PS,
 		deathknight.RotationAction_BS,
@@ -21,8 +20,10 @@ func (dk *DpsDeathknight) setupUnholyRotations() {
 		deathknight.RotationAction_SS,
 		deathknight.RotationAction_BS,
 	})
+}
 
-	dk.DefineOpener(deathknight.RotationID_UnholySsArmyUnholyPresence_Full, []deathknight.RotationAction{
+func (dk *DpsDeathknight) setupUnholySsArmyUnholyPresenceOpener() {
+	dk.DefineOpener([]deathknight.RotationAction{
 		deathknight.RotationAction_IT,
 		deathknight.RotationAction_PS,
 		deathknight.RotationAction_BS,
@@ -33,8 +34,10 @@ func (dk *DpsDeathknight) setupUnholyRotations() {
 		deathknight.RotationAction_BP,
 		deathknight.RotationAction_SS,
 	})
+}
 
-	dk.DefineOpener(deathknight.RotationID_UnholySsBloodPresence_Full, []deathknight.RotationAction{
+func (dk *DpsDeathknight) setupUnholySsBloodPresenceOpener() {
+	dk.DefineOpener([]deathknight.RotationAction{
 		deathknight.RotationAction_IT,
 		deathknight.RotationAction_PS,
 		deathknight.RotationAction_BS,
@@ -48,8 +51,10 @@ func (dk *DpsDeathknight) setupUnholyRotations() {
 		deathknight.RotationAction_SS,
 		deathknight.RotationAction_BS,
 	})
+}
 
-	dk.DefineOpener(deathknight.RotationID_UnholySsArmyBloodPresence_Full, []deathknight.RotationAction{
+func (dk *DpsDeathknight) setupUnholySsArmyBloodPresenceOpener() {
+	dk.DefineOpener([]deathknight.RotationAction{
 		deathknight.RotationAction_IT,
 		deathknight.RotationAction_PS,
 		deathknight.RotationAction_BS,
@@ -62,8 +67,25 @@ func (dk *DpsDeathknight) setupUnholyRotations() {
 		deathknight.RotationAction_BP,
 		deathknight.RotationAction_SS,
 	})
+}
 
-	dk.DefineOpener(deathknight.RotationID_UnholyDnd_Full, []deathknight.RotationAction{
+func (dk *DpsDeathknight) setupUnholyDndUnholyPresenceOpener() {
+	dk.DefineOpener([]deathknight.RotationAction{
+		deathknight.RotationAction_IT,
+		deathknight.RotationAction_PS,
+		deathknight.RotationAction_BS,
+		deathknight.RotationAction_DND,
+		deathknight.RotationAction_Garg,
+		deathknight.RotationAction_ERW,
+		deathknight.RotationAction_BP,
+		deathknight.RotationAction_SS,
+		deathknight.RotationAction_SS,
+		deathknight.RotationAction_BS,
+	})
+}
+
+func (dk *DpsDeathknight) setupUnholyDndBloodPresenceOpener() {
+	dk.DefineOpener([]deathknight.RotationAction{
 		deathknight.RotationAction_IT,
 		deathknight.RotationAction_PS,
 		deathknight.RotationAction_BS,
@@ -74,8 +96,8 @@ func (dk *DpsDeathknight) setupUnholyRotations() {
 		deathknight.RotationAction_ERW,
 		deathknight.RotationAction_BP,
 		deathknight.RotationAction_SS,
-		deathknight.RotationAction_BS,
 		deathknight.RotationAction_SS,
+		deathknight.RotationAction_BS,
 	})
 }
 
@@ -146,7 +168,7 @@ func (dk *DpsDeathknight) spreadDiseases(sim *core.Simulation, target *core.Unit
 	recastedBP = false
 }
 
-func (dk *DpsDeathknight) doUnholyRotation(sim *core.Simulation, target *core.Unit) bool {
+func (dk *DpsDeathknight) doUnholyRotation(sim *core.Simulation, target *core.Unit) {
 	casted := &dk.CastSuccessful
 	// I suggest adding the a wrapper around each spell you cast like this:
 	// dk.YourWrapper(sim, target, dk.FrostStrike) that returns a bool for when you casted
@@ -273,5 +295,4 @@ func (dk *DpsDeathknight) doUnholyRotation(sim *core.Simulation, target *core.Un
 			}
 		}
 	}
-	return true
 }

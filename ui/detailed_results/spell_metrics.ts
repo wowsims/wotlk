@@ -1,5 +1,6 @@
 import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
 import { ActionMetrics, SimResult, SimResultFilter } from '/wotlk/core/proto_utils/sim_result.js';
+import { bucket } from '/wotlk/core/utils.js';
 
 import { ColumnSortType, MetricsTable } from './metrics_table.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
@@ -99,7 +100,9 @@ export class SpellMetricsTable extends MetricsTable<ActionMetrics> {
 
 		const actions = player.getSpellActions().map(action => action.forTarget(resultData.filter));
 		const actionGroups = ActionMetrics.groupById(actions);
-		const petGroups = player.pets.map(pet => pet.getSpellActions().map(action => action.forTarget(resultData.filter)));
+
+		const petsByName = bucket(player.pets, pet => pet.name);
+		const petGroups = Object.values(petsByName).map(pets => ActionMetrics.joinById(pets.map(pet => pet.getSpellActions().map(action => action.forTarget(resultData.filter))).flat(), true));
 
 		return actionGroups.concat(petGroups);
 	}

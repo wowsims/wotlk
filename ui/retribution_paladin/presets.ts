@@ -31,13 +31,13 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 export const AuraMasteryTalents = {
-	name: 'Basic w/Aura Mastery',
+	name: 'Basic w/Aura Mastery+LoH buff',
 	data: SavedTalents.create({
 		talentsString: '050501-05-05232051203331302133231331',
 		glyphs: Glyphs.create({
 			major1: PaladinMajorGlyph.GlyphOfSealOfVengeance,
 			major2: PaladinMajorGlyph.GlyphOfJudgement,
-			major3: PaladinMajorGlyph.GlyphOfExorcism,
+			major3: PaladinMajorGlyph.GlyphOfConsecration,
 			minor1: PaladinMinorGlyph.GlyphOfSenseUndead,
 			minor2: PaladinMinorGlyph.GlyphOfLayOnHands,
 			minor3: PaladinMinorGlyph.GlyphOfBlessingOfKings
@@ -47,13 +47,13 @@ export const AuraMasteryTalents = {
 
 
 export const DivineSacTalents = {
-	name: 'Suboptimal w/Dsac',
+	name: 'Basic w/Dsac',
 	data: SavedTalents.create({
-		talentsString: '-552201002-05232050203331302133231331',
+		talentsString: '03-453201002-05222051203331302133201331',
 		glyphs: Glyphs.create({
 			major1: PaladinMajorGlyph.GlyphOfSealOfVengeance,
 			major2: PaladinMajorGlyph.GlyphOfJudgement,
-			major3: PaladinMajorGlyph.GlyphOfExorcism,
+			major3: PaladinMajorGlyph.GlyphOfConsecration,
 			minor1: PaladinMinorGlyph.GlyphOfSenseUndead,
 			minor2: PaladinMinorGlyph.GlyphOfLayOnHands,
 			minor3: PaladinMinorGlyph.GlyphOfBlessingOfKings

@@ -201,8 +201,6 @@ func (dk *Deathknight) Initialize() {
 	dk.registerRaiseDeadCD()
 	dk.registerSummonGargoyleCD()
 	dk.registerArmyOfTheDeadCD()
-
-	dk.SetupRotation()
 }
 
 func (dk *Deathknight) Reset(sim *core.Simulation) {
