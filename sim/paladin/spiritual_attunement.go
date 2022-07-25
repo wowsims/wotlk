@@ -5,6 +5,10 @@ import (
 )
 
 func (paladin *Paladin) registerSpiritualAttunement() {
+	if paladin.Talents.SpiritualAttunement == 0 {
+		return
+	}
+
 	paladin.SpiritualAttunementMetrics = paladin.NewManaMetrics(core.ActionID{SpellID: 33776})
 
 	paladin.RegisterAura(core.Aura{

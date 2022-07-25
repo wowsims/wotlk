@@ -36,15 +36,15 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 	// Setup
 	target := ret.CurrentTarget
 
-	// gcdCD := ret.GCD.TimeToReady(sim)
 	nextSwingAt := ret.AutoAttacks.NextAttackAt()
 	isExecutePhase := sim.IsExecutePhase20()
 
 	if ret.GCD.IsReady(sim) {
 		if ret.HasSetBonus(paladin.ItemSetLightswornBattlegear, 2) {
 			// Needs 2pc t10 to be effective.
+			swingDelta := nextSwingAt - sim.CurrentTime
 
-			if nextSwingAt.Milliseconds() > 1500 {
+			if swingDelta.Milliseconds() >= 1500 {
 				switch {
 				case isExecutePhase && ret.HammerOfWrath.IsReady(sim):
 					ret.HammerOfWrath.Cast(sim, target)
@@ -58,7 +58,7 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 					ret.DivineStorm.Cast(sim, target)
 				case ret.Consecration.IsReady(sim):
 					ret.Consecration.Cast(sim, target)
-				case ret.Exorcism.IsReady(sim):
+				case ret.Exorcism.IsReady(sim) && ret.ArtOfWarInstantCast.IsActive():
 					ret.Exorcism.Cast(sim, target)
 				}
 			} else {
@@ -75,7 +75,7 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 					ret.CrusaderStrike.Cast(sim, target)
 				case ret.Consecration.IsReady(sim):
 					ret.Consecration.Cast(sim, target)
-				case ret.Exorcism.IsReady(sim):
+				case ret.Exorcism.IsReady(sim) && ret.ArtOfWarInstantCast.IsActive():
 					ret.Exorcism.Cast(sim, target)
 				}
 			}
@@ -91,7 +91,7 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 				ret.CrusaderStrike.Cast(sim, target)
 			case ret.DivineStorm.IsReady(sim):
 				ret.DivineStorm.Cast(sim, target)
-			case ret.Exorcism.IsReady(sim):
+			case ret.Exorcism.IsReady(sim) && ret.ArtOfWarInstantCast.IsActive():
 				ret.Exorcism.Cast(sim, target)
 			case ret.Consecration.IsReady(sim):
 				ret.Consecration.Cast(sim, target)
