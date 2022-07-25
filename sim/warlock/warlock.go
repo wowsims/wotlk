@@ -8,42 +8,46 @@ import (
 
 type Warlock struct {
 	core.Character
-	Talents  proto.WarlockTalents
-	Options  proto.Warlock_Options
-	Rotation proto.Warlock_Rotation
+	Talents  				proto.WarlockTalents
+	Options  				proto.Warlock_Options
+	Rotation 				proto.Warlock_Rotation
 
-	ShadowBolt           *core.Spell
-	Incinerate           *core.Spell
-	Immolate             *core.Spell
-	ImmolateDot          *core.Dot
-	UnstableAff          *core.Spell
-	UnstableAffDot       *core.Dot
-	Corruption           *core.Spell
-	CorruptionDot        *core.Dot
-	Haunt                *core.Spell
-	HauntAura            *core.Aura
-	LifeTap              *core.Spell
-	ChaosBolt            *core.Spell
-	SoulFire             *core.Spell
-	Conflagrate          *core.Spell
-	ConflagrateDot       *core.Dot
-	DrainSoul            *core.Spell
-	DrainSoulDot         *core.Dot
-	DrainSoulChannelling *core.Spell
+	Pet 				   *WarlockPet
 
-	CurseOfElements     *core.Spell
-	CurseOfElementsAura *core.Aura
-	CurseOfWeakness     *core.Spell
-	CurseOfWeaknessAura *core.Aura
-	CurseOfTongues      *core.Spell
-	CurseOfTonguesAura  *core.Aura
-	CurseOfAgony        *core.Spell
-	CurseOfAgonyDot     *core.Dot
-	CurseOfDoom         *core.Spell
-	CurseOfDoomDot      *core.Dot
+	DoingRegen bool
 
-	Seeds    []*core.Spell
-	SeedDots []*core.Dot
+	ShadowBolt             *core.Spell
+	Incinerate             *core.Spell
+	Immolate               *core.Spell
+	ImmolateDot            *core.Dot
+	UnstableAff            *core.Spell
+	UnstableAffDot         *core.Dot
+	Corruption             *core.Spell
+	CorruptionDot          *core.Dot
+	Haunt                  *core.Spell
+	HauntAura              *core.Aura
+	LifeTap                *core.Spell
+	ChaosBolt              *core.Spell
+	SoulFire               *core.Spell
+	Conflagrate            *core.Spell
+	ConflagrateDot         *core.Dot
+	DrainSoul              *core.Spell
+	DrainSoulDot           *core.Dot
+	DrainSoulChannelling   *core.Spell
+
+	CurseOfElements        *core.Spell
+	CurseOfElementsAura    *core.Aura
+	CurseOfWeakness        *core.Spell
+	CurseOfWeaknessAura    *core.Aura
+	CurseOfTongues         *core.Spell
+	CurseOfTonguesAura     *core.Aura
+	CurseOfAgony           *core.Spell
+	CurseOfAgonyDot        *core.Dot
+	CurseOfDoom        	   *core.Spell
+	CurseOfDoomDot         *core.Dot
+
+	Seeds    			 []*core.Spell
+	SeedDots 			 []*core.Dot
 
 	NightfallProcAura      *core.Aura
 	ShadowEmbraceAura      *core.Aura
@@ -58,11 +62,7 @@ type Warlock struct {
 	BackdraftAura          *core.Aura
 	EmpoweredImpAura       *core.Aura
 
-	GlyphOfLifeTapAura *core.Aura
-
-	Pet *WarlockPet
-
-	DoingRegen bool
+	GlyphOfLifeTapAura     *core.Aura
 }
 
 func (warlock *Warlock) GetCharacter() *core.Character {
@@ -137,7 +137,7 @@ func NewWarlock(character core.Character, options proto.Player) *Warlock {
 	}
 	warlock.EnableManaBar()
 
-	warlock.Character.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
+	warlock.Character.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+1)
 
 	if warlock.Options.Armor == proto.Warlock_Options_FelArmor {
 		demonicAegisMultiplier := 1 + float64(warlock.Talents.DemonicAegis)*0.1
