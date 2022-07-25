@@ -540,7 +540,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			{ item: IconInputs.DamagePercentBuff, stats: [Stat.StatAttackPower, Stat.StatSpellPower] },
 			{ item: IconInputs.DamageReductionPercentBuff, stats: [Stat.StatArmor] },
 			{ item: IconInputs.MP5Buff, stats: [Stat.StatMP5] },
-			//{ item: IconInputs.ReplenishmentBuff, stats: [Stat.StatMP5] },
+			{ item: IconInputs.ReplenishmentBuff, stats: [Stat.StatMP5] },
 		]);
 		const buffsSection = this.rootElem.getElementsByClassName('buffs-section')[0] as HTMLElement;
 		configureIconSection(

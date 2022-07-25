@@ -23,7 +23,7 @@ func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 
 	effect := core.SpellEffect{
 		ProcMask:            core.ProcMaskEmpty,
-		BonusSpellHitRating: float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
+		BonusSpellHitRating: float64(priest.Talents.ShadowFocus)*1*core.SpellHitRatingPerHitChance + 3*core.SpellHitRatingPerHitChance, //not sure if misery is applying to this bonus spell hit so adding it here
 		ThreatMultiplier:    1 - 0.08*float64(priest.Talents.ShadowAffinity),
 		OutcomeApplier:      priest.OutcomeFuncMagicHitBinary(),
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
