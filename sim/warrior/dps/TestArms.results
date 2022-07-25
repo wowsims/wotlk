@@ -668,8 +668,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-TheFistsofFury"
  value: {
-  dps: 552.972090715071
-  tps: 470.4527257207794
+  dps: 556.3616112706331
+  tps: 473.79162908854806
  }
 }
 dps_results: {
