@@ -248,10 +248,10 @@ class TargetPicker extends Component {
 		new EnumPicker<Target>(section1, modTarget, {
 			label: 'Level',
 			values: [
-				{ name: '73', value: 73 },
-				{ name: '72', value: 72 },
-				{ name: '71', value: 71 },
-				{ name: '70', value: 70 },
+				{ name: '83', value: 83 },
+				{ name: '82', value: 82 },
+				{ name: '81', value: 81 },
+				{ name: '80', value: 80 },
 			],
 			changedEvent: (target: Target) => target.levelChangeEmitter,
 			getValue: (target: Target) => target.getLevel(),

@@ -17,6 +17,7 @@ const (
 	SpellFlagShock    = core.SpellFlagAgentReserved1
 	SpellFlagElectric = core.SpellFlagAgentReserved2
 	SpellFlagTotem    = core.SpellFlagAgentReserved3
+	SpellFlagFireNova = core.SpellFlagAgentReserved4
 )
 
 func NewShaman(character core.Character, talents proto.ShamanTalents, totems proto.ShamanTotems, selfBuffs SelfBuffs, thunderstormRange bool) *Shaman {
@@ -98,7 +99,6 @@ type Shaman struct {
 	FlameShock *core.Spell
 	FrostShock *core.Spell
 
-	FireNovaTotem        *core.Spell
 	GraceOfAirTotem      *core.Spell
 	MagmaTotem           *core.Spell
 	ManaSpringTotem      *core.Spell
@@ -197,8 +197,8 @@ func (shaman *Shaman) Initialize() {
 	shaman.LightningBolt = shaman.newLightningBoltSpell(false)
 	shaman.LightningBoltLO = shaman.newLightningBoltSpell(true)
 	shaman.LavaBurst = shaman.newLavaBurstSpell()
+	shaman.FireNova = shaman.newFireNovaSpell()
 	shaman.registerLightningShieldSpell()
-	// shaman.FireNova = shaman.newFireNovaSpell()
 
 	shaman.ChainLightning = shaman.newChainLightningSpell(false)
 	numHits := core.MinInt32(3, shaman.Env.GetNumTargets())
@@ -210,6 +210,11 @@ func (shaman *Shaman) Initialize() {
 	if shaman.Talents.Thunderstorm {
 		shaman.Thunderstorm = shaman.newThunderstormSpell(shaman.thunderstormInRange)
 	}
+
+	if shaman.Talents.LavaLash {
+		shaman.LavaLash = shaman.newLavaLashSpell()
+	}
+
 	shaman.registerShocks()
 	shaman.registerGraceOfAirTotemSpell()
 	shaman.registerMagmaTotemSpell()

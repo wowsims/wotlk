@@ -18,9 +18,7 @@ func (shaman *Shaman) newShockSpellConfig(spellID int32, spellSchool core.SpellS
 	actionID := core.ActionID{SpellID: spellID}
 
 	cost := baseCost
-	if shaman.Talents.ShamanisticFocus {
-		cost -= baseCost * 0.45
-	}
+
 	return core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: spellSchool,
@@ -32,9 +30,10 @@ func (shaman *Shaman) newShockSpellConfig(spellID int32, spellSchool core.SpellS
 			Cast: core.CastConfig{
 				DefaultCast: core.Cast{
 					Cost: cost -
-						cost*float64(shaman.Talents.Convection)*0.02 -
-						cost*float64(shaman.Talents.MentalQuickness)*0.02 -
-						core.TernaryFloat64(shaman.HasSetBonus(ItemSetSkyshatterHarness, 2), baseCost*0.1, 0),
+						baseCost*(core.TernaryFloat64(shaman.Talents.ShamanisticFocus, 0.45, 0)+
+							float64(shaman.Talents.Convection)*0.02+
+							float64(shaman.Talents.MentalQuickness)*0.02+
+							core.TernaryFloat64(shaman.HasSetBonus(ItemSetSkyshatterHarness, 2), 0.1, 0)),
 					GCD: core.GCDDefault,
 				},
 				ModifyCast: func(_ *core.Simulation, spell *core.Spell, cast *core.Cast) {

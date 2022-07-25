@@ -159,6 +159,11 @@ func (shaman *Shaman) ApplyFlametongueImbue(mh bool, oh bool) {
 		shaman.AddStat(stats.SpellCrit, 2*core.CritRatingPerCritChance*imbueCount)
 	}
 
+	ftIcd := core.Cooldown{
+		Timer:    shaman.NewTimer(),
+		Duration: time.Millisecond,
+	}
+
 	mhSpell := shaman.newFlametongueImbueSpell(true)
 	ohSpell := shaman.newFlametongueImbueSpell(false)
 
@@ -177,6 +182,10 @@ func (shaman *Shaman) ApplyFlametongueImbue(mh bool, oh bool) {
 			if (isMHHit && !mh) || (!isMHHit && !oh) {
 				return // cant proc if not enchanted
 			}
+			if !ftIcd.IsReady(sim) {
+				return
+			}
+			ftIcd.Use(sim)
 
 			if isMHHit {
 				mhSpell.Cast(sim, spellEffect.Target)
