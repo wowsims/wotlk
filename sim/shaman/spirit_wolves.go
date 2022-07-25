@@ -2,6 +2,7 @@ package shaman
 
 import (
 	"math"
+	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -43,7 +44,7 @@ var spiritWolfBaseStats = stats.Stats{
 func (shaman *Shaman) NewSpiritWolf(index int) *SpiritWolf {
 	spiritWolf := &SpiritWolf{
 		Pet: core.NewPet(
-			"Spirit Wolf", //+strconv.Itoa(index),
+			"Spirit Wolf "+strconv.Itoa(index),
 			&shaman.Character,
 			spiritWolfBaseStats,
 			shaman.makeStatInheritance(),
@@ -56,7 +57,7 @@ func (shaman *Shaman) NewSpiritWolf(index int) *SpiritWolf {
 		MainHand: core.Weapon{
 			BaseDamageMin:  218,
 			BaseDamageMax:  311,
-			SwingSpeed:     2,
+			SwingSpeed:     1.5,
 			SwingDuration:  time.Millisecond * 1500,
 			CritMultiplier: 2,
 		},
@@ -64,7 +65,7 @@ func (shaman *Shaman) NewSpiritWolf(index int) *SpiritWolf {
 	})
 
 	spiritWolf.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
-	spiritWolf.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/30))
+	spiritWolf.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/83.3))
 	core.ApplyPetConsumeEffects(&spiritWolf.Character, shaman.Consumes)
 
 	shaman.AddPet(spiritWolf)
