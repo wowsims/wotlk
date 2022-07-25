@@ -12,9 +12,14 @@ func (paladin *Paladin) registerExorcismSpell() {
 	// From the perspective of max rank.
 	baseCost := paladin.BaseMana * 0.08
 
-	baseMultiplier := 1.0
-	baseMultiplier += 0.05 * float64(paladin.Talents.SanctityOfBattle)
-	baseMultiplier += core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfExorcism), 0.20, 0)
+	baseModifiers := Multiplicative{
+		Additive{
+			paladin.getTalentSanctityOfBattleBonus(),
+			paladin.getMajorGlyphOfExorcismBonus(),
+			paladin.getItemSetAegisBattlegearBonus2(),
+		},
+	}
+	baseMultiplier := baseModifiers.Get()
 
 	scaling := hybridScaling{
 		AP: 0.15,
@@ -30,8 +35,9 @@ func (paladin *Paladin) registerExorcismSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
+				Cost:     baseCost,
+				GCD:      core.GCDDefault,
+				CastTime: time.Millisecond * 1500,
 			},
 			CD: core.Cooldown{
 				Timer:    paladin.NewTimer(),
@@ -62,13 +68,23 @@ func (paladin *Paladin) registerExorcismSpell() {
 					return damage
 				},
 			},
-			// look up crit multiplier in the future
-			// TODO: What is this 0.25?
-			OutcomeApplier: paladin.OutcomeFuncMagicHitAndCrit(paladin.SpellCritMultiplier()),
+
+			OutcomeApplier: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
+				if spellEffect.MagicHitCheck(sim, spell, attackTable) {
+					if spellEffect.Target.MobType == proto.MobType_MobTypeDemon || spellEffect.Target.MobType == proto.MobType_MobTypeUndead || spellEffect.MagicCritCheck(sim, spell, attackTable) {
+						spellEffect.Outcome = core.OutcomeCrit
+						spell.SpellMetrics[spellEffect.Target.TableIndex].Crits++
+						spellEffect.Damage *= paladin.SpellCritMultiplier()
+					} else {
+						spellEffect.Outcome = core.OutcomeHit
+						spell.SpellMetrics[spellEffect.Target.TableIndex].Hits++
+					}
+				} else {
+					spellEffect.Outcome = core.OutcomeMiss
+					spell.SpellMetrics[spellEffect.Target.TableIndex].Misses++
+					spellEffect.Damage = 0
+				}
+			},
 		}),
 	})
-}
-
-func (paladin *Paladin) CanExorcism(target *core.Unit) bool {
-	return target.MobType == proto.MobType_MobTypeUndead || target.MobType == proto.MobType_MobTypeDemon
 }

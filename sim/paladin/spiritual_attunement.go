@@ -5,7 +5,10 @@ import (
 )
 
 func (paladin *Paladin) registerSpiritualAttunement() {
-	coeff := 0.1 * core.TernaryFloat64(paladin.HasSetBonus(ItemSetLightbringerArmor, 2), 1.1, 1)
+	if paladin.Talents.SpiritualAttunement == 0 {
+		return
+	}
+
 	paladin.SpiritualAttunementMetrics = paladin.NewManaMetrics(core.ActionID{SpellID: 33776})
 
 	paladin.RegisterAura(core.Aura{
@@ -15,8 +18,15 @@ func (paladin *Paladin) registerSpiritualAttunement() {
 			aura.Activate(sim)
 		},
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			// We assume we were instantly healed for the damage.
 			if spellEffect.Damage > 0 {
-				paladin.AddMana(sim, spellEffect.Damage*coeff, paladin.SpiritualAttunementMetrics, false)
+				paladin.AddMana(sim, spellEffect.Damage*.10, paladin.SpiritualAttunementMetrics, false)
+			}
+		},
+		OnPeriodicDamageTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			// We assume we were instantly healed for the damage.
+			if spellEffect.Damage > 0 {
+				paladin.AddMana(sim, spellEffect.Damage*.10, paladin.SpiritualAttunementMetrics, false)
 			}
 		},
 	})

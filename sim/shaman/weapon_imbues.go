@@ -28,7 +28,7 @@ func (shaman *Shaman) newWindfuryImbueSpell(isMH bool) *core.Spell {
 
 	baseEffect := core.SpellEffect{
 		BonusAttackPower: apBonus,
-		ProcMask:         core.ProcMaskEmpty,
+		ProcMask:         core.ProcMaskMelee,
 		DamageMultiplier: 1.0,
 		ThreatMultiplier: core.TernaryFloat64(shaman.Talents.SpiritWeapons, 0.7, 1),
 		OutcomeApplier:   shaman.OutcomeFuncMeleeSpecialHitAndCrit(shaman.DefaultMeleeCritMultiplier()),
@@ -116,10 +116,9 @@ func (shaman *Shaman) newFlametongueImbueSpell(isMH bool) *core.Spell {
 	effect := core.SpellEffect{
 		ProcMask:            core.ProcMaskEmpty,
 		BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * 2 * core.SpellHitRatingPerHitChance,
-
-		DamageMultiplier: 1,
-		ThreatMultiplier: 1, // TODO: add spirit weapons modifier when that's fixed
-		OutcomeApplier:   shaman.OutcomeFuncMagicHitAndCrit(shaman.DefaultSpellCritMultiplier()),
+		DamageMultiplier:    1,
+		ThreatMultiplier:    1, // TODO: add spirit weapons modifier when that's fixed
+		OutcomeApplier:      shaman.OutcomeFuncMagicHitAndCrit(shaman.DefaultSpellCritMultiplier()),
 	}
 
 	if isMH {
@@ -160,6 +159,11 @@ func (shaman *Shaman) ApplyFlametongueImbue(mh bool, oh bool) {
 		shaman.AddStat(stats.SpellCrit, 2*core.CritRatingPerCritChance*imbueCount)
 	}
 
+	ftIcd := core.Cooldown{
+		Timer:    shaman.NewTimer(),
+		Duration: time.Millisecond,
+	}
+
 	mhSpell := shaman.newFlametongueImbueSpell(true)
 	ohSpell := shaman.newFlametongueImbueSpell(false)
 
@@ -178,6 +182,10 @@ func (shaman *Shaman) ApplyFlametongueImbue(mh bool, oh bool) {
 			if (isMHHit && !mh) || (!isMHHit && !oh) {
 				return // cant proc if not enchanted
 			}
+			if !ftIcd.IsReady(sim) {
+				return
+			}
+			ftIcd.Use(sim)
 
 			if isMHHit {
 				mhSpell.Cast(sim, spellEffect.Target)

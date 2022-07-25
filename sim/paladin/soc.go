@@ -2,7 +2,6 @@ package paladin
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -25,13 +24,16 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 	 *   - Crits off of a melee modifier.
 	 */
 
-	baseMultiplier := 1.0
-	// Additive bonuses
-	baseMultiplier += core.TernaryFloat64(paladin.HasSetBonus(ItemSetLightswornBattlegear, 4), .1, 0)
-	baseMultiplier *= paladin.WeaponSpecializationMultiplier()
+	baseModifiers := Multiplicative{
+		Additive{paladin.getItemSetLightswornBattlegearBonus4()},
+		Additive{paladin.getTalentTwoHandedWeaponSpecializationBonus()},
+	}
+	baseMultiplier := baseModifiers.Get()
 
-	judgementMultiplier := baseMultiplier
-	judgementMultiplier *= 1 + core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfJudgement), 0.10, 0)
+	judgementModifiers := append(baseModifiers.Clone(),
+		Additive{paladin.getMajorGlyphOfJudgementBonus()},
+	)
+	judgementMultiplier := judgementModifiers.Get()
 
 	onJudgementProc := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 20467}, // Judgement of Command
@@ -42,7 +44,8 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 			DamageMultiplier: judgementMultiplier,
 			ThreatMultiplier: 1,
 
-			BonusCritRating: 6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance,
+			BonusCritRating: (6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance) +
+				(core.TernaryFloat64(paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 4) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 4), 5, 0) * core.CritRatingPerCritChance),
 			BaseDamage: core.WrapBaseDamageConfig(core.BaseDamageConfigMeleeWeapon(
 				core.MainHand,
 				false,

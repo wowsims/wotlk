@@ -140,6 +140,7 @@ var rangedAttackPowerRegex = regexp.MustCompile("Increases ranged attack power b
 var armorPenetrationRegex = regexp.MustCompile("Your attacks ignore ([0-9]+) of your opponent's armor\\.")
 var expertiseRegex = regexp.MustCompile("Increases your expertise rating by <!--rtg37-->([0-9]+)\\.")
 var weaponDamageRegex = regexp.MustCompile("<!--dmg-->([0-9]+) - ([0-9]+)")
+var weaponDamageRegex2 = regexp.MustCompile("<!--dmg-->([0-9]+) Damage")
 var weaponSpeedRegex = regexp.MustCompile("<!--spd-->(([0-9]+).([0-9]+))")
 
 var defenseRegex = regexp.MustCompile("Increases defense rating by <!--rtg12-->([0-9]+)\\.")
@@ -217,8 +218,8 @@ var classPatterns = []classPattern{
 	{class: proto.Class_ClassRogue, pattern: regexp.MustCompile("<a href=\\\"\\?class=4\\\" class=\\\"c4\\\">Rogue</a>")},
 	{class: proto.Class_ClassPriest, pattern: regexp.MustCompile("<a href=\\\"/class=5\\\" class=\\\"c5\\\">Priest</a>")},
 	{class: proto.Class_ClassPriest, pattern: regexp.MustCompile("<a href=\\\"\\?class=5\\\" class=\\\"c5\\\">Priest</a>")},
-	{class: proto.Class_ClassDeathKnight, pattern: regexp.MustCompile("<a href=\\\"/class=6\\\" class=\\\"c6\\\">Death Knight</a>")},
-	{class: proto.Class_ClassDeathKnight, pattern: regexp.MustCompile("<a href=\\\"\\?class=6\\\" class=\\\"c6\\\">Death Knight</a>")},
+	{class: proto.Class_ClassDeathknight, pattern: regexp.MustCompile("<a href=\\\"/class=6\\\" class=\\\"c6\\\">Death Knight</a>")},
+	{class: proto.Class_ClassDeathknight, pattern: regexp.MustCompile("<a href=\\\"\\?class=6\\\" class=\\\"c6\\\">Death Knight</a>")},
 	{class: proto.Class_ClassShaman, pattern: regexp.MustCompile("<a href=\\\"/class=7\\\" class=\\\"c7\\\">Shaman</a>")},
 	{class: proto.Class_ClassShaman, pattern: regexp.MustCompile("<a href=\\\"\\?class=7\\\" class=\\\"c7\\\">Shaman</a>")},
 	{class: proto.Class_ClassMage, pattern: regexp.MustCompile("<a href=\\\"/class=8\\\" class=\\\"c8\\\">Mage</a>")},
@@ -430,6 +431,12 @@ func (item WowheadItemResponse) GetWeaponDamage() (float64, float64) {
 			log.Fatalf("Invalid weapon damage for item %s: min = %0.1f, max = %0.1f", item.Name, min, max)
 		}
 		return min, max
+	} else if matches := weaponDamageRegex2.FindStringSubmatch(item.Tooltip); len(matches) > 0 {
+		val, err := strconv.ParseFloat(matches[1], 64)
+		if err != nil {
+			log.Fatalf("Failed to parse weapon damage: %s", err)
+		}
+		return val, val
 	}
 	return 0, 0
 }
@@ -476,6 +483,7 @@ var mp5SocketBonusRegexes = []*regexp.Regexp{
 	regexp.MustCompile("([0-9]+) mana per 5 sec"),
 }
 var attackPowerSocketBonusRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Attack Power")}
+var expertiseSocketBonusRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Expertise Rating")}
 var defenseSocketBonusRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Defense Rating")}
 var blockSocketBonusRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Block Rating")}
 var dodgeSocketBonusRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Dodge Rating")}
@@ -506,6 +514,7 @@ func (item WowheadItemResponse) GetSocketBonus() Stats {
 		proto.Stat_StatMP5:               float64(GetBestRegexIntValue(bonusStr, mp5SocketBonusRegexes, 1)),
 		proto.Stat_StatAttackPower:       float64(GetBestRegexIntValue(bonusStr, attackPowerSocketBonusRegexes, 1)),
 		proto.Stat_StatRangedAttackPower: float64(GetBestRegexIntValue(bonusStr, attackPowerSocketBonusRegexes, 1)),
+		proto.Stat_StatExpertise:         float64(GetBestRegexIntValue(bonusStr, expertiseSocketBonusRegexes, 1)),
 		proto.Stat_StatDefense:           float64(GetBestRegexIntValue(bonusStr, defenseSocketBonusRegexes, 1)),
 		proto.Stat_StatBlock:             float64(GetBestRegexIntValue(bonusStr, blockSocketBonusRegexes, 1)),
 		proto.Stat_StatDodge:             float64(GetBestRegexIntValue(bonusStr, dodgeSocketBonusRegexes, 1)),
@@ -524,7 +533,7 @@ var gemSocketColorPatterns = map[proto.GemColor]*regexp.Regexp{
 	proto.GemColor_GemColorOrange:    regexp.MustCompile("Matches a ((Yellow)|(Red)) or ((Yellow)|(Red)) (S|s)ocket\\."),
 	proto.GemColor_GemColorPurple:    regexp.MustCompile("Matches a ((Blue)|(Red)) or ((Blue)|(Red)) (S|s)ocket\\."),
 	proto.GemColor_GemColorGreen:     regexp.MustCompile("Matches a ((Yellow)|(Blue)) or ((Yellow)|(Blue)) (S|s)ocket\\."),
-	proto.GemColor_GemColorPrismatic: regexp.MustCompile("Matches a Red, Yellow or Blue (S|s)ocket\\."),
+	proto.GemColor_GemColorPrismatic: regexp.MustCompile("(Matches any socket)|(Matches a Red, Yellow or Blue (S|s)ocket)\\."),
 }
 
 func (item WowheadItemResponse) GetSocketColor() proto.GemColor {
@@ -537,11 +546,11 @@ func (item WowheadItemResponse) GetSocketColor() proto.GemColor {
 	return proto.GemColor_GemColorUnknown
 }
 
-var strengthGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Strength")}
-var agilityGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Agility")}
-var staminaGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Stamina")}
-var intellectGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Intellect")}
-var spiritGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Spirit")}
+var strengthGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Strength"), regexp.MustCompile("\\+([0-9]+) All Stats")}
+var agilityGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Agility"), regexp.MustCompile("\\+([0-9]+) All Stats")}
+var staminaGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Stamina"), regexp.MustCompile("\\+([0-9]+) All Stats")}
+var intellectGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Intellect"), regexp.MustCompile("\\+([0-9]+) All Stats")}
+var spiritGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Spirit"), regexp.MustCompile("\\+([0-9]+) All Stats")}
 var spellPowerGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Spell Power")}
 var hitGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Hit Rating")}
 var critGemStatRegexes = []*regexp.Regexp{
@@ -561,6 +570,7 @@ var mp5GemStatRegexes = []*regexp.Regexp{
 	regexp.MustCompile("([0-9]+) Mana every 5 seconds"),
 }
 var attackPowerGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Attack Power")}
+var expertiseGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Expertise Rating")}
 var defenseGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Defense Rating")}
 var dodgeGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Dodge Rating")}
 var parryGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Parry Rating")}
@@ -588,6 +598,7 @@ func (item WowheadItemResponse) GetGemStats() Stats {
 		proto.Stat_StatRangedAttackPower: float64(GetBestRegexIntValue(item.Tooltip, attackPowerGemStatRegexes, 1)),
 		proto.Stat_StatSpellPenetration:  float64(GetBestRegexIntValue(item.Tooltip, spellPenetrationGemStatRegexes, 1)),
 		proto.Stat_StatMP5:               float64(GetBestRegexIntValue(item.Tooltip, mp5GemStatRegexes, 1)),
+		proto.Stat_StatExpertise:         float64(GetBestRegexIntValue(item.Tooltip, expertiseGemStatRegexes, 1)),
 		proto.Stat_StatDefense:           float64(GetBestRegexIntValue(item.Tooltip, defenseGemStatRegexes, 1)),
 		proto.Stat_StatDodge:             float64(GetBestRegexIntValue(item.Tooltip, dodgeGemStatRegexes, 1)),
 		proto.Stat_StatParry:             float64(GetBestRegexIntValue(item.Tooltip, parryGemStatRegexes, 1)),

@@ -171,7 +171,7 @@ func TickFuncSnapshot(target *Unit, baseEffect SpellEffect) TickEffects {
 		// dot.snapshotEffect.DamageMultiplier *= dot.snapshotMultiplier
 		dot.snapshotEffect.Target = target
 
-		baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell) * dot.snapshotEffect.DamageMultiplier
+		baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell)
 		dot.snapshotEffect.BonusSpellCritRating = dot.snapshotEffect.BonusSpellCritRating + dot.Spell.Unit.GetStat(stats.SpellCrit) + dot.Spell.Unit.PseudoStats.BonusSpellCritRating
 		dot.snapshotEffect.DamageMultiplier = 1
 		dot.snapshotEffect.BaseDamage = BaseDamageConfigFlat(baseDamage)
@@ -188,7 +188,7 @@ func TickFuncAOESnapshot(env *Environment, baseEffect SpellEffect) TickEffects {
 		target := dot.Spell.Unit.CurrentTarget
 		*dot.snapshotEffect = baseEffect
 		dot.snapshotEffect.Target = target
-		baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell) * dot.snapshotEffect.DamageMultiplier
+		baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell)
 		dot.snapshotEffect.DamageMultiplier = 1
 		dot.snapshotEffect.BaseDamage = BaseDamageConfigFlat(baseDamage)
 
@@ -203,7 +203,7 @@ func TickFuncAOESnapshotCapped(env *Environment, aoeCap float64, baseEffect Spel
 		target := dot.Spell.Unit.CurrentTarget
 		*dot.snapshotEffect = baseEffect
 		dot.snapshotEffect.Target = target
-		baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell) * dot.snapshotEffect.DamageMultiplier
+		baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell)
 		dot.snapshotEffect.DamageMultiplier = 1
 		dot.snapshotEffect.BaseDamage = BaseDamageConfigFlat(baseDamage)
 

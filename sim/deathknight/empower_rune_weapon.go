@@ -6,12 +6,12 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-func (deathKnight *DeathKnight) registerEmpowerRuneWeaponSpell() {
+func (dk *Deathknight) registerEmpowerRuneWeaponSpell() {
 	actionID := core.ActionID{SpellID: 47568}
-	cdTimer := deathKnight.NewTimer()
+	cdTimer := dk.NewTimer()
 	cd := time.Minute * 5
 
-	deathKnight.EmpowerRuneWeapon = deathKnight.RegisterSpell(core.SpellConfig{
+	dk.EmpowerRuneWeapon = dk.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 
@@ -22,42 +22,45 @@ func (deathKnight *DeathKnight) registerEmpowerRuneWeaponSpell() {
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			deathKnight.RegenAllRunes(sim)
+			dk.RegenAllRunes(sim)
 
 			amountOfRunicPower := 25.0
-			deathKnight.AddRunicPower(sim, amountOfRunicPower, deathKnight.EmpowerRuneWeapon.RunicPowerMetrics())
+			dk.AddRunicPower(sim, amountOfRunicPower, dk.EmpowerRuneWeapon.RunicPowerMetrics())
 		},
 	})
 
 	// Temp stuff for testing
-	if deathKnight.Talents.SummonGargoyle {
-		deathKnight.AddMajorCooldown(core.MajorCooldown{
-			Spell:    deathKnight.EmpowerRuneWeapon,
+	if dk.Talents.SummonGargoyle {
+		dk.AddMajorCooldown(core.MajorCooldown{
+			Spell:    dk.EmpowerRuneWeapon,
 			Priority: core.CooldownPriorityDefault,
 			Type:     core.CooldownTypeDPS,
 			CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-				if deathKnight.CurrentBloodRunes() > 0 {
+				if dk.opener.IsOngoing() {
 					return false
 				}
-				if deathKnight.CurrentFrostRunes() > 0 {
+				if dk.CurrentBloodRunes() > 0 {
 					return false
 				}
-				if deathKnight.CurrentUnholyRunes() > 0 {
+				if dk.CurrentFrostRunes() > 0 {
 					return false
 				}
-				return deathKnight.CanEmpowerRuneWeapon(sim)
+				if dk.CurrentUnholyRunes() > 0 {
+					return false
+				}
+				return dk.CanEmpowerRuneWeapon(sim)
 			},
 		})
 	}
 }
 
-func (deathKnight *DeathKnight) CanEmpowerRuneWeapon(sim *core.Simulation) bool {
-	return deathKnight.EmpowerRuneWeapon.IsReady(sim)
+func (dk *Deathknight) CanEmpowerRuneWeapon(sim *core.Simulation) bool {
+	return dk.EmpowerRuneWeapon.IsReady(sim)
 }
 
-func (deathKnight *DeathKnight) CastEmpowerRuneWeapon(sim *core.Simulation, target *core.Unit) bool {
-	if deathKnight.CanEmpowerRuneWeapon(sim) {
-		deathKnight.EmpowerRuneWeapon.Cast(sim, target)
+func (dk *Deathknight) CastEmpowerRuneWeapon(sim *core.Simulation, target *core.Unit) bool {
+	if dk.CanEmpowerRuneWeapon(sim) {
+		dk.EmpowerRuneWeapon.Cast(sim, target)
 		return true
 	}
 	return false

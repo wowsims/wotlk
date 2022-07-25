@@ -10,10 +10,7 @@ import (
 )
 
 // TODO:
-// Sanctified Wrath
-// Judgements of the Wise
-// Righteous Vengeance
-// Fanatacism threat reduction.
+// Sanctified Wrath (Damage penetration, questions over affected stats)
 
 func (paladin *Paladin) ApplyTalents() {
 	paladin.AddStat(stats.MeleeCrit, float64(paladin.Talents.Conviction)*core.CritRatingPerCritChance)
@@ -68,6 +65,34 @@ func (paladin *Paladin) ApplyTalents() {
 	paladin.applyArtOfWar()
 	paladin.applyJudgmentsOfTheWise()
 	paladin.applyRighteousVengeance()
+}
+
+func (paladin *Paladin) getTalentSealsOfThePureBonus() float64 {
+	return 0.03 * float64(paladin.Talents.SealsOfThePure)
+}
+
+func (paladin *Paladin) getTalentTwoHandedWeaponSpecializationBonus() float64 {
+	return 0.02 * float64(paladin.Talents.TwoHandedWeaponSpecialization)
+}
+
+func (paladin *Paladin) getTalentSanctityOfBattleBonus() float64 {
+	return 0.05 * float64(paladin.Talents.SanctityOfBattle)
+}
+
+func (paladin *Paladin) getTalentTheArtOfWarBonus() float64 {
+	return 0.05 * float64(paladin.Talents.TheArtOfWar)
+}
+
+func (paladin *Paladin) getMajorGlyphSealOfRighteousnessBonus() float64 {
+	return core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfSealOfRighteousness), .1, 0)
+}
+
+func (paladin *Paladin) getMajorGlyphOfExorcismBonus() float64 {
+	return core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfExorcism), 0.20, 0)
+}
+
+func (paladin *Paladin) getMajorGlyphOfJudgementBonus() float64 {
+	return core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfJudgement), 0.10, 0)
 }
 
 func (paladin *Paladin) applyRedoubt() {
@@ -226,22 +251,18 @@ func (paladin *Paladin) SpellCritMultiplier() float64 {
 func (paladin *Paladin) applyWeaponSpecialization() {
 	// This impacts Crusader Strike, Melee Attacks, WF attacks
 	// Seals + Judgements need to be implemented separately
-	paladin.PseudoStats.PhysicalDamageDealtMultiplier *= paladin.WeaponSpecializationMultiplier()
-
 	mhWeapon := paladin.GetMHWeapon()
-	if mhWeapon != nil && mhWeapon.HandType != proto.HandType_HandTypeTwoHand {
+
+	if mhWeapon == nil {
+		return
+	}
+
+	switch mhWeapon.HandType {
+	case proto.HandType_HandTypeTwoHand:
+		paladin.PseudoStats.PhysicalDamageDealtMultiplier *= 1 + 0.02*float64(paladin.Talents.TwoHandedWeaponSpecialization)
+	case proto.HandType_HandTypeOneHand:
 		paladin.PseudoStats.DamageDealtMultiplier *= 1 + 0.01*float64(paladin.Talents.OneHandedWeaponSpecialization)
 	}
-}
-func (paladin *Paladin) WeaponSpecializationMultiplier() float64 {
-	mhWeapon := paladin.GetMHWeapon()
-	if mhWeapon == nil {
-		return 1
-	}
-	if mhWeapon.HandType == proto.HandType_HandTypeTwoHand {
-		return 1 + 0.02*float64(paladin.Talents.TwoHandedWeaponSpecialization)
-	}
-	return 1
 }
 
 // I don't know if the new stack of vengeance applies to the crit that triggered it or not
@@ -375,9 +396,16 @@ func (paladin *Paladin) applyRighteousVengeance() {
 	// It drains the pool every 2 seconds at a rate of 1/4 of the pool size.
 	// And then deals that 1/4 as PHYSICAL damage.
 	// TODO: Can crit with certain set bonuses.
-
 	if paladin.Talents.RighteousVengeance == 0 {
 		return
+	}
+
+	var applier core.OutcomeApplier
+
+	if paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 2) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 2) {
+		applier = paladin.OutcomeFuncMeleeSpecialCritOnly(paladin.MeleeCritMultiplier())
+	} else {
+		applier = paladin.OutcomeFuncAlwaysHit()
 	}
 
 	targets := paladin.Env.GetNumTargets()
@@ -399,7 +427,7 @@ func (paladin *Paladin) applyRighteousVengeance() {
 						IsPeriodic:       true,
 						ProcMask:         core.ProcMaskPeriodicDamage,
 						DamageMultiplier: 1,
-						OutcomeApplier:   paladin.OutcomeFuncAlwaysHit(),
+						OutcomeApplier:   applier,
 						BaseDamage: core.BaseDamageConfig{
 							Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
 								pool += spellEffect.Damage * (0.10 * float64(paladin.Talents.RighteousVengeance))
@@ -433,7 +461,7 @@ func (paladin *Paladin) applyRighteousVengeance() {
 						IsPeriodic:       true,
 						ProcMask:         core.ProcMaskPeriodicDamage,
 						DamageMultiplier: 1,
-						OutcomeApplier:   paladin.OutcomeFuncAlwaysHit(),
+						OutcomeApplier:   applier,
 					})(sim, target, dot.Spell)
 				}
 			},
@@ -464,4 +492,13 @@ func (paladin *Paladin) applyRighteousVengeance() {
 			}
 		},
 	})
+}
+
+func (paladin *Paladin) applyFanaticism() {
+	// TODO: Possibly implement as aura.
+	if paladin.Talents.Fanaticism == 0 {
+		return
+	}
+
+	paladin.PseudoStats.ThreatMultiplier *= 1 - 0.10*float64(paladin.Talents.Fanaticism)
 }

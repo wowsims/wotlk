@@ -17,7 +17,7 @@ import { rogueTalentsConfig, rogueGlyphsConfig } from './rogue.js';
 import { shamanTalentsConfig, shamanGlyphsConfig } from './shaman.js';
 import { warlockTalentsConfig, warlockGlyphsConfig } from './warlock.js';
 import { warriorTalentsConfig, warriorGlyphsConfig } from './warrior.js';
-import { deathKnightTalentsConfig, deathKnightGlyphsConfig } from './deathknight.js';
+import { deathknightTalentsConfig, deathknightGlyphsConfig } from './deathknight.js';
 import { TalentsConfig, TalentsPicker } from './talents_picker.js';
 import { GlyphsConfig, GlyphsPicker } from './glyphs_picker.js';
 
@@ -42,7 +42,7 @@ export function newGlyphsPicker(parent: HTMLElement, player: Player<any>): Glyph
 
 const classTalentsConfig: Record<Class, TalentsConfig<any>> = {
 	[Class.ClassUnknown]: [],
-	[Class.ClassDeathKnight]: deathKnightTalentsConfig,
+	[Class.ClassDeathknight]: deathknightTalentsConfig,
 	[Class.ClassDruid]: druidTalentsConfig,
 	[Class.ClassShaman]: shamanTalentsConfig,
 	[Class.ClassHunter]: hunterTalentsConfig,
@@ -56,7 +56,7 @@ const classTalentsConfig: Record<Class, TalentsConfig<any>> = {
 
 const classGlyphsConfig: Record<Class, GlyphsConfig> = {
 	[Class.ClassUnknown]: { majorGlyphs: [], minorGlyphs: [] },
-	[Class.ClassDeathKnight]: deathKnightGlyphsConfig,
+	[Class.ClassDeathknight]: deathknightGlyphsConfig,
 	[Class.ClassDruid]: druidGlyphsConfig,
 	[Class.ClassShaman]: shamanGlyphsConfig,
 	[Class.ClassHunter]: hunterGlyphsConfig,

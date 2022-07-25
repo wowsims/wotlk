@@ -181,7 +181,6 @@ export const PRERAID_PRESET = {
 			"id": 44249,
 			"enchant": 44630
 		},
-		{},
 		{
 			"id": 43284,
 			"enchant": 41167
@@ -276,7 +275,6 @@ export const P1_PRESET = {
 			"id": 40388,
 			"enchant": 44630
 		},
-		{},
 		{
 			"id": 40385,
 			"enchant": 41167

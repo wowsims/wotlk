@@ -494,6 +494,7 @@ func (unit *Unit) reset(sim *Simulation, agent Agent) {
 
 	unit.energyBar.reset(sim)
 	unit.rageBar.reset(sim)
+	unit.runicPowerBar.reset(sim)
 
 	unit.AutoAttacks.reset(sim)
 }

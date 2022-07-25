@@ -3,7 +3,7 @@ package proto;
 
 option go_package = "./proto";
 
-message DeathKnightTalents {
+message DeathknightTalents {
 	// Blood
 	int32 butchery = 1;
 	int32 subversion = 2;
@@ -99,8 +99,8 @@ message DeathKnightTalents {
 	bool summon_gargoyle = 88; 
 }
 
-enum DeathKnightMajorGlyph {
-	DeathKnightMajorGlyphNone = 0;
+enum DeathknightMajorGlyph {
+	DeathknightMajorGlyphNone = 0;
 	GlyphOfAntiMagicShell = 43533;
 	GlyphOfBloodStrike = 43826;
 	GlyphOfBoneShield = 43536;
@@ -129,8 +129,8 @@ enum DeathKnightMajorGlyph {
 	GlyphOfUnholyBlight = 45803;
 	GlyphOfVampiricBlood = 43554;
 }
-enum DeathKnightMinorGlyph {
-	DeathKnightMinorGlyphNone = 0;
+enum DeathknightMinorGlyph {
+	DeathknightMinorGlyphNone = 0;
 	GlyphOfBloodTap = 43535;
 	GlyphOfCorpseExplosion = 43671;
 	GlyphOfDeathSEmbrace = 43539;
@@ -139,7 +139,7 @@ enum DeathKnightMinorGlyph {
 	GlyphOfRaiseDead = 43673;
 }
 
-message DeathKnight {
+message Deathknight {
 	message Rotation {
 		enum ArmyOfTheDead {
 			DoNotUse = 0;
@@ -155,7 +155,7 @@ message DeathKnight {
 	}
 	Rotation rotation = 1;
 
-	DeathKnightTalents talents = 2;
+	DeathknightTalents talents = 2;
 	
 	message Options {
 		double starting_runic_power = 1;
@@ -167,3 +167,17 @@ message DeathKnight {
 	Options options = 3;
 }
 
+
+message TankDeathknight {
+	message Rotation {
+
+	}
+	Rotation rotation = 1;
+
+	DeathknightTalents talents = 2;
+	
+	message Options {
+		double starting_runic_power = 1;
+	}
+	Options options = 3;
+}

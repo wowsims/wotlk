@@ -21,6 +21,26 @@ func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 		channelTime = channelTime - time.Duration(numTicks)*(time.Millisecond*170)
 	}
 
+	effect := core.SpellEffect{
+		ProcMask:            core.ProcMaskEmpty,
+		BonusSpellHitRating: float64(priest.Talents.ShadowFocus)*1*core.SpellHitRatingPerHitChance + 3*core.SpellHitRatingPerHitChance, //not sure if misery is applying to this bonus spell hit so adding it here
+		ThreatMultiplier:    1 - 0.08*float64(priest.Talents.ShadowAffinity),
+		OutcomeApplier:      priest.OutcomeFuncMagicHitBinary(),
+		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.Landed() {
+				return
+			}
+			if priest.ShadowWordPainDot.IsActive() {
+				if priest.Talents.PainAndSuffering == 3 {
+					priest.ShadowWordPainDot.Reapply(sim)
+				} else if sim.RandomFloat("Pain and Suffering") < (float64(priest.Talents.PainAndSuffering) * 0.33) {
+					priest.ShadowWordPainDot.Reapply(sim)
+				}
+			}
+			priest.MindFlayDot[numTicks].Apply(sim)
+		},
+	}
+
 	return priest.RegisterSpell(core.SpellConfig{
 		ActionID:     priest.MindFlayActionID(numTicks),
 		SpellSchool:  core.SpellSchoolShadow,
@@ -39,34 +59,14 @@ func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 				wait := priest.ApplyCastSpeed(channelTime)
 				gcd := core.MaxDuration(core.GCDMin, priest.ApplyCastSpeed(core.GCDDefault))
 				if wait > gcd && priest.Latency > 0 {
-					base := priest.Latency * 0.66
+					base := priest.Latency * 0.25
 					variation := base + sim.RandomFloat("spriest latency")*base // should vary from 0.66 - 1.33 of given latency
 					variation = core.MaxFloat(variation, 10)                    // no player can go under XXXms response time
 					cast.AfterCastDelay += time.Duration(variation) * time.Millisecond
 				}
 			},
 		},
-
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskEmpty,
-			ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
-			OutcomeApplier:   priest.OutcomeFuncMagicHitBinary(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() {
-					return
-				}
-
-				if priest.ShadowWordPainDot.IsActive() {
-					if priest.Talents.PainAndSuffering == 3 {
-						priest.ShadowWordPainDot.Reapply(sim)
-					} else if sim.RandomFloat("Pain and Suffering") < (float64(priest.Talents.PainAndSuffering) * 0.33) {
-						priest.ShadowWordPainDot.Reapply(sim)
-					}
-				}
-
-				priest.MindFlayDot[numTicks].Apply(sim)
-			},
-		}),
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})
 }
 
@@ -76,6 +76,7 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 	effect := core.SpellEffect{
 		DamageMultiplier:     1,
 		ThreatMultiplier:     1 - 0.08*float64(priest.Talents.ShadowAffinity),
+		BonusSpellHitRating:  float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
 		IsPeriodic:           true,
 		BonusSpellCritRating: float64(priest.Talents.MindMelt)*2*core.CritRatingPerCritChance + core.TernaryFloat64(priest.HasSetBonus(ItemSetZabras, 4), 5, 0)*core.CritRatingPerCritChance,
 		OutcomeApplier:       priest.OutcomeFuncMagicHitAndCrit(1 + float64(priest.Talents.ShadowPower)*0.2),
@@ -95,9 +96,6 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 
 	normMod := (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01) * // initialize modifier
 		core.TernaryFloat64(priest.HasSetBonus(ItemSetIncarnate, 4), 1.05, 1)
-
-	//swpMod := (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01 + float64(priest.Talents.TwistedFaith)*0.02) * // update modifier if SWP active
-	//core.TernaryFloat64(priest.HasSetBonus(ItemSetIncarnate, 4), 1.05, 1)
 
 	effect.BaseDamage = core.BaseDamageConfig{
 		Calculator: func(sim *core.Simulation, effect *core.SpellEffect, spell *core.Spell) float64 {

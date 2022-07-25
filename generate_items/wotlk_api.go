@@ -190,6 +190,21 @@ func (item WotlkItemResponse) GetItemLevel() int {
 
 // WOTLK DB has no phase info
 func (item WotlkItemResponse) GetPhase() int {
+
+	ilvl := item.GetItemLevel()
+	if ilvl < 200 || ilvl == 200 || ilvl == 213 || ilvl == 226 {
+		return 1
+	} else if ilvl == 219 || ilvl == 226 || ilvl == 239 {
+		return 2
+	} else if ilvl == 232 || ilvl == 245 || ilvl == 258 {
+		return 3
+	} else if ilvl == 251 || ilvl == 258 || ilvl == 259 || ilvl == 264 || ilvl == 268 || ilvl == 270 || ilvl == 271 || ilvl == 272 {
+		return 4
+	} else if ilvl == 277 || ilvl == 284 {
+		return 5
+	}
+
+	// default to 1
 	return 1
 }
 
@@ -288,6 +303,12 @@ func (item WotlkItemResponse) GetWeaponDamage() (float64, float64) {
 			log.Fatalf("Invalid weapon damage for item %s: min = %0.1f, max = %0.1f", item.Name, min, max)
 		}
 		return min, max
+	} else if matches := weaponDamageRegex2.FindStringSubmatch(item.Tooltip); len(matches) > 0 {
+		val, err := strconv.ParseFloat(matches[1], 64)
+		if err != nil {
+			log.Fatalf("Failed to parse weapon damage: %s", err)
+		}
+		return val, val
 	}
 	return 0, 0
 }
@@ -383,6 +404,7 @@ func (item WotlkItemResponse) GetGemStats() Stats {
 		proto.Stat_StatRangedAttackPower: float64(GetBestRegexIntValue(item.Tooltip, attackPowerGemStatRegexes, 1)),
 		proto.Stat_StatSpellPenetration:  float64(GetBestRegexIntValue(item.Tooltip, spellPenetrationGemStatRegexes, 1)),
 		proto.Stat_StatMP5:               float64(GetBestRegexIntValue(item.Tooltip, mp5GemStatRegexes, 1)),
+		proto.Stat_StatExpertise:         float64(GetBestRegexIntValue(item.Tooltip, expertiseGemStatRegexes, 1)),
 		proto.Stat_StatDefense:           float64(GetBestRegexIntValue(item.Tooltip, defenseGemStatRegexes, 1)),
 		proto.Stat_StatDodge:             float64(GetBestRegexIntValue(item.Tooltip, dodgeGemStatRegexes, 1)),
 		proto.Stat_StatParry:             float64(GetBestRegexIntValue(item.Tooltip, parryGemStatRegexes, 1)),

@@ -130,6 +130,7 @@
 .settings-section-container {
   position: absolute;
 }
+
 .settings-section {
   border: 2px solid var(--main-text-color);
   padding: 4px;
@@ -179,8 +180,8 @@
 }
 
 .settings-section-iconrow {
-	display: grid;
-	grid-template-columns: repeat(4, 1fr);
+	display: flex;
+	grid-template-columns: repeat(5, 1fr);
 	justify-content: space-evenly;
 	flex-wrap: wrap;
 	align-items: center;
@@ -249,6 +250,7 @@
 .player-pet-toggle {
 	display: flex;
 	justify-content: center;
+	margin: 10px;
 }
 .player-pet-toggle > * {
 	margin: 0 10px;

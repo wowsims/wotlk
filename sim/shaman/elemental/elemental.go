@@ -50,9 +50,8 @@ func NewElementalShaman(character core.Character, options proto.Player) *Element
 	}
 	ele.EnableResumeAfterManaWait(ele.tryUseGCD)
 
-	ele.ApplyFlametongueImbue(
-		ele.Consumes.MainHandImbue == proto.WeaponImbue_WeaponImbueShamanFlametongue,
-		ele.Consumes.OffHandImbue == proto.WeaponImbue_WeaponImbueShamanFlametongue)
+	hasOffhand := ele.Equip[proto.ItemSlot_ItemSlotOffHand].WeaponType != proto.WeaponType_WeaponTypeUnknown && ele.Equip[proto.ItemSlot_ItemSlotOffHand].WeaponType != proto.WeaponType_WeaponTypeShield
+	ele.ApplyFlametongueImbue(true, hasOffhand)
 
 	return ele
 }

@@ -17,6 +17,7 @@ import { playerToSpec } from "/wotlk/core/proto_utils/utils.js";
 import { Raid } from "/wotlk/core/raid.js";
 import { Sim } from "/wotlk/core/sim.js";
 import { SimUI } from "/wotlk/core/sim_ui.js";
+import { LaunchStatus, raidSimLaunched } from '/wotlk/core/launched_sims.js';
 import { EventID, TypedEvent } from "/wotlk/core/typed_event.js";
 
 import { AssignmentsPicker } from "./assignments_picker.js";
@@ -56,6 +57,7 @@ export class RaidSimUI extends SimUI {
 	constructor(parentElem: HTMLElement, config: RaidSimConfig) {
 		super(parentElem, new Sim(), {
 			spec: null,
+			launchStatus: raidSimLaunched ? LaunchStatus.Launched : LaunchStatus.Unlaunched,
 			knownIssues: (config.knownIssues || []).concat(extraKnownIssues),
 		});
 		this.rootElem.classList.add('raid-sim-ui');

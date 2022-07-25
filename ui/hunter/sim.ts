@@ -25,6 +25,7 @@ import {
 
 import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
 import * as OtherInputs from '/wotlk/core/components/other_inputs.js';
+import * as Mechanics from '/wotlk/core/constants/mechanics.js';
 import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 
 import * as HunterInputs from './inputs.js';
@@ -36,6 +37,8 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 			cssClass: 'hunter-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
+				'Sim uses a simple priority-based rotation.',
+				'Melee weaving and trap weaving are not included in the rotation.',
 			],
 			warnings: [
 				// Warning when using exotic pet without BM talented.
@@ -92,6 +95,14 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				Stat.StatMeleeHaste,
 				Stat.StatArmorPenetration,
 			],
+			modifyDisplayStats: (player: Player<Spec.SpecHunter>) => {
+				let stats = new Stats();
+				stats = stats.addStat(Stat.StatMeleeCrit, player.getTalents().lethalShots * 1 * Mechanics.MELEE_CRIT_RATING_PER_CRIT_CHANCE);
+
+				return {
+					talents: stats,
+				};
+			},
 
 			defaults: {
 				// Default equipped gear.

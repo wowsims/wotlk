@@ -16,6 +16,7 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 	hunter.SerpentSting = hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolNature,
+		Flags:       core.SpellFlagBinary,
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -45,12 +46,33 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 		dotOutcome = hunter.OutcomeFuncMeleeSpecialCritOnly(hunter.critMultiplier(false, false, hunter.CurrentTarget))
 	}
 
+	noxiousStingsMultiplier := 1 + 0.01*float64(hunter.Talents.NoxiousStings)
+	huntersWithGlyphOfSteadyShot := hunter.GetAllHuntersWithGlyphOfSteadyShot()
+
 	target := hunter.CurrentTarget
 	hunter.SerpentStingDot = core.NewDot(core.Dot{
 		Spell: hunter.SerpentSting,
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "SerpentSting-" + strconv.Itoa(int(hunter.Index)),
+			Tag:      "SerpentSting",
 			ActionID: actionID,
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				hunter.AttackTables[aura.Unit.TableIndex].DamageDealtMultiplier *= noxiousStingsMultiplier
+				// Check for 1 because this aura will always be active inside OnGain.
+				if aura.Unit.NumActiveAurasWithTag("SerpentSting") == 1 {
+					for _, otherHunter := range huntersWithGlyphOfSteadyShot {
+						otherHunter.SteadyShot.DamageMultiplier *= 1.1
+					}
+				}
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				hunter.AttackTables[aura.Unit.TableIndex].DamageDealtMultiplier /= noxiousStingsMultiplier
+				if !aura.Unit.HasActiveAuraWithTag("SerpentSting") {
+					for _, otherHunter := range huntersWithGlyphOfSteadyShot {
+						otherHunter.SteadyShot.DamageMultiplier /= 1.1
+					}
+				}
+			},
 		}),
 		NumberOfTicks: 5 + int(core.TernaryInt32(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfSerpentSting), 2, 0)),
 		TickLength:    time.Second * 3,
@@ -63,20 +85,23 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 			IsPeriodic:       true,
 
 			BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-				attackPower := spellEffect.RangedAttackPower(spell.Unit) + spellEffect.RangedAttackPowerOnTarget()
-				return 242 + attackPower*0.04
+				rap := spellEffect.RangedAttackPower(spell.Unit) + spellEffect.RangedAttackPowerOnTarget()
+				return 242 + rap*0.04
 			}, 0),
 			OutcomeApplier: dotOutcome,
 		}),
 	})
+}
 
-	if hunter.Talents.NoxiousStings > 0 {
-		multiplier := 1 + 0.01*float64(hunter.Talents.NoxiousStings)
-		hunter.SerpentStingDot.Aura.OnGain = func(aura *core.Aura, sim *core.Simulation) {
-			hunter.AttackTables[aura.Unit.TableIndex].DamageDealtMultiplier *= multiplier
-		}
-		hunter.SerpentStingDot.Aura.OnExpire = func(aura *core.Aura, sim *core.Simulation) {
-			hunter.AttackTables[aura.Unit.TableIndex].DamageDealtMultiplier /= multiplier
+func (hunter *Hunter) GetAllHuntersWithGlyphOfSteadyShot() []*Hunter {
+	allHunterAgents := hunter.Env.Raid.GetPlayersOfClass(proto.Class_ClassHunter)
+
+	hunters := []*Hunter{}
+	for _, agent := range allHunterAgents {
+		h := agent.(HunterAgent).GetHunter()
+		if h.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfSteadyShot) {
+			hunters = append(hunters, h)
 		}
 	}
+	return hunters
 }

@@ -48,6 +48,8 @@ type Hunter struct {
 	manaSpentPerSecondAtFirstAspectSwap float64
 	permaHawk                           bool
 
+	serpentStingDamageMultiplier float64
+
 	AspectOfTheDragonhawk *core.Spell
 	AspectOfTheViper      *core.Spell
 
@@ -218,7 +220,7 @@ func NewHunter(character core.Character, options proto.Player) *Hunter {
 
 	hunter.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+1)
 	hunter.AddStatDependency(stats.Agility, stats.RangedAttackPower, 1.0+1)
-	hunter.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/40))
+	hunter.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/83.33))
 
 	return hunter
 }

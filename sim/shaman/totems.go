@@ -73,8 +73,16 @@ func (shaman *Shaman) registerTotemOfWrathSpell() {
 	config := shaman.newTotemSpellConfig(baseMana*0.05, 57722)
 	config.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 		shaman.NextTotemDrops[FireTotem] = sim.CurrentTime + time.Second*300
+		shaman.applyToWDebuff(sim)
 	}
 	shaman.TotemOfWrath = shaman.RegisterSpell(config)
+}
+
+func (shaman *Shaman) applyToWDebuff(sim *core.Simulation) {
+	for _, target := range sim.Encounter.Targets {
+		auraDef := core.TotemOfWrathDebuff(&target.Unit)
+		auraDef.Activate(sim)
+	}
 }
 
 func (shaman *Shaman) registerStrengthOfEarthTotemSpell() {

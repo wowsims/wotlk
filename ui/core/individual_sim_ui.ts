@@ -70,7 +70,7 @@ import { addStatWeightsAction } from '/wotlk/core/components/stat_weights_action
 import { equalsOrBothNull, getEnumValues } from '/wotlk/core/utils.js';
 import { getMetaGemConditionDescription } from '/wotlk/core/proto_utils/gems.js';
 import { isDualWieldSpec } from '/wotlk/core/proto_utils/utils.js';
-import { launchedSpecs } from '/wotlk/core/launched_sims.js';
+import { simLaunchStatuses } from '/wotlk/core/launched_sims.js';
 import { makePetTypeInputConfig } from '/wotlk/core/talents/hunter_pet.js';
 import { newIndividualExporters } from '/wotlk/core/components/exporters.js';
 import { newIndividualImporters } from '/wotlk/core/components/importers.js';
@@ -118,6 +118,7 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 	warnings?: Array<(simUI: IndividualSimUI<SpecType>) => SimWarning>,
 
 	epStats: Array<Stat>;
+	buffStats?: Array<Stat>;
 	epReferenceStat: Stat;
 	displayStats: Array<Stat>;
 	modifyDisplayStats?: (player: Player<SpecType>) => StatMods,
@@ -197,6 +198,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		super(parentElem, player.sim, {
 			spec: player.spec,
 			knownIssues: config.knownIssues,
+			launchStatus: simLaunchStatuses[player.spec],
 		});
 		this.rootElem.classList.add('individual-sim-ui', config.cssClass);
 		this.player = player;
@@ -205,19 +207,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		this.settingsMuuri = null;
 		this.prevEpIterations = 0;
 		this.prevEpSimResult = null;
-
-		if (!launchedSpecs.includes(this.player.spec)) {
-			this.addWarning({
-				updateOn: new TypedEvent<void>(),
-				getContent: () => {
-					if (this.player.getClass() == Class.ClassWarlock) {
-						return 'This sim is under current development for Wrath of the Lich King. Talents and Glyphs are mostly ready but rotations are under development.';
-					} else {
-						return 'This sim has not yet been updated from its TBC state.';
-					}
-				},
-			});
-		}
 
 		this.addWarning({
 			updateOn: this.player.gearChangeEmitter,
@@ -549,9 +538,9 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			{ item: IconInputs.SpellHasteBuff, stats: [Stat.StatSpellHaste] },
 			{ item: IconInputs.HastePercentBuff, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
 			{ item: IconInputs.DamagePercentBuff, stats: [Stat.StatAttackPower, Stat.StatSpellPower] },
-			{ item: IconInputs.DamageReductionPercentBuff, stats: [Stat.StatStamina] },
+			{ item: IconInputs.DamageReductionPercentBuff, stats: [Stat.StatArmor] },
 			{ item: IconInputs.MP5Buff, stats: [Stat.StatMP5] },
-			//{ item: IconInputs.ReplenishmentBuff, stats: [Stat.StatMP5] },
+			{ item: IconInputs.ReplenishmentBuff, stats: [Stat.StatMP5] },
 		]);
 		const buffsSection = this.rootElem.getElementsByClassName('buffs-section')[0] as HTMLElement;
 		configureIconSection(
@@ -1164,7 +1153,8 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 	splitRelevantOptions<T>(options: Array<StatOption<T>>): Array<T> {
 		return options
-				.filter(option => option.stats.length == 0 || option.stats.some(stat => this.individualConfig.epStats.includes(stat)))
+				.filter(option => option.stats.length == 0 || option.stats.some(stat => this.individualConfig.epStats.includes(stat)) ||
+					option.stats.some(stat => this.individualConfig.buffStats?.includes(stat)))
 				.map(option => option.item);
 	}
 }

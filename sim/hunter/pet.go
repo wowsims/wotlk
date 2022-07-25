@@ -1,6 +1,7 @@
 package hunter
 
 import (
+	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -138,7 +139,18 @@ func (hp *HunterPet) OnGCDReady(sim *core.Simulation) {
 		return
 	}
 
-	if !hp.specialAbility.TryCast(sim, target, hp) {
+	if hp.specialAbility.TryCast(sim, target, hp) {
+		// For abilities that don't use the GCD.
+		if hp.GCD.IsReady(sim) {
+			if hp.focusDump.Type != Unknown {
+				if !hp.focusDump.TryCast(sim, target, hp) {
+					hp.DoNothing()
+				}
+			} else {
+				hp.DoNothing()
+			}
+		}
+	} else {
 		if hp.focusDump.Type != Unknown {
 			if !hp.focusDump.TryCast(sim, target, hp) {
 				hp.DoNothing()
@@ -171,6 +183,8 @@ var hunterPetBaseStats = stats.Stats{
 	stats.MeleeCrit: (3.2 + 1.8) * core.CritRatingPerCritChance,
 }
 
+const PetExpertiseScale = 3.25
+
 func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
 	hvw := 0.1 * float64(hunter.Talents.HunterVsWild)
 
@@ -181,11 +195,18 @@ func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
 	}
 
 	return func(ownerStats stats.Stats) stats.Stats {
+		ownerHitChance := ownerStats[stats.MeleeHit] / core.MeleeHitRatingPerHitChance
+		hitRatingFromOwner := math.Floor(ownerHitChance) * core.MeleeHitRatingPerHitChance
+
 		return stats.Stats{
 			stats.Stamina:     ownerStats[stats.Stamina]*0.3 + 0.2*float64(wildHunt),
 			stats.Armor:       ownerStats[stats.Armor] * 0.35,
 			stats.AttackPower: ownerStats[stats.RangedAttackPower]*0.22 + ownerStats[stats.Stamina]*hvw + 0.15*float64(wildHunt),
 			stats.SpellPower:  ownerStats[stats.RangedAttackPower]*0.128 + 0.15*float64(wildHunt),
+
+			stats.MeleeHit:  hitRatingFromOwner,
+			stats.SpellHit:  hitRatingFromOwner * 2,
+			stats.Expertise: math.Floor((math.Floor(ownerHitChance) * PetExpertiseScale)) * core.ExpertisePerQuarterPercentReduction,
 		}
 	}
 }

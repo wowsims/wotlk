@@ -7,19 +7,19 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (deathKnight *DeathKnight) registerSummonGargoyleCD() {
-	if !deathKnight.Talents.SummonGargoyle {
+func (dk *Deathknight) registerSummonGargoyleCD() {
+	if !dk.Talents.SummonGargoyle {
 		return
 	}
 
-	summonGargoyleAura := deathKnight.RegisterAura(core.Aura{
+	summonGargoyleAura := dk.RegisterAura(core.Aura{
 		Label:    "Summon Gargoyle",
 		ActionID: core.ActionID{SpellID: 49206},
 		Duration: time.Second * 30,
 	})
 
 	baseCost := 60.0
-	deathKnight.SummonGargoyle = deathKnight.RegisterSpell(core.SpellConfig{
+	dk.SummonGargoyle = dk.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 49206},
 
 		ResourceType: stats.RunicPower,
@@ -31,21 +31,21 @@ func (deathKnight *DeathKnight) registerSummonGargoyleCD() {
 				Cost: baseCost,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = deathKnight.getModifiedGCD()
+				cast.GCD = dk.getModifiedGCD()
 			},
 			CD: core.Cooldown{
-				Timer:    deathKnight.NewTimer(),
+				Timer:    dk.NewTimer(),
 				Duration: time.Minute * 3,
 			},
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			deathKnight.Gargoyle.EnableWithTimeout(sim, deathKnight.Gargoyle, time.Second*30)
-			deathKnight.Gargoyle.CancelGCDTimer(sim)
+			dk.Gargoyle.EnableWithTimeout(sim, dk.Gargoyle, time.Second*30)
+			dk.Gargoyle.CancelGCDTimer(sim)
 
 			// Add % atack speed modifiers
-			deathKnight.Gargoyle.PseudoStats.CastSpeedMultiplier = 1.0
-			deathKnight.Gargoyle.MultiplyCastSpeed(deathKnight.PseudoStats.MeleeSpeedMultiplier)
+			dk.Gargoyle.PseudoStats.CastSpeedMultiplier = 1.0
+			dk.Gargoyle.MultiplyCastSpeed(dk.PseudoStats.MeleeSpeedMultiplier)
 
 			// Add a dummy aura to show in metrics
 			summonGargoyleAura.Activate(sim)
@@ -56,22 +56,25 @@ func (deathKnight *DeathKnight) registerSummonGargoyleCD() {
 				NextActionAt: sim.CurrentTime + time.Second*1,
 				Priority:     core.ActionPriorityAuto,
 				OnAction: func(s *core.Simulation) {
-					deathKnight.Gargoyle.GargoyleStrike.Cast(sim, deathKnight.CurrentTarget)
+					dk.Gargoyle.GargoyleStrike.Cast(sim, dk.CurrentTarget)
 				},
 			}
 			sim.AddPendingAction(&pa)
 		},
 	})
 
-	deathKnight.AddMajorCooldown(core.MajorCooldown{
-		Spell:    deathKnight.SummonGargoyle,
+	dk.AddMajorCooldown(core.MajorCooldown{
+		Spell:    dk.SummonGargoyle,
 		Priority: core.CooldownPriorityDrums - 1, // Always prefer to cast after drums or lust so the gargoyle gets their benefits.
 		Type:     core.CooldownTypeDPS,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			if deathKnight.Gargoyle.IsEnabled() {
+			if dk.opener.IsOngoing() {
 				return false
 			}
-			if character.CurrentRunicPower() < deathKnight.SummonGargoyle.DefaultCast.Cost {
+			if dk.Gargoyle.IsEnabled() {
+				return false
+			}
+			if character.CurrentRunicPower() < dk.SummonGargoyle.DefaultCast.Cost {
 				return false
 			}
 			return true
@@ -79,30 +82,42 @@ func (deathKnight *DeathKnight) registerSummonGargoyleCD() {
 	})
 }
 
+func (dk *Deathknight) CanSummonGargoyle(sim *core.Simulation) bool {
+	return dk.CastCostPossible(sim, 60.0, 0, 0, 0) && dk.SummonGargoyle.IsReady(sim)
+}
+
+func (dk *Deathknight) CastSummonGargoyle(sim *core.Simulation, target *core.Unit) bool {
+	if dk.CanSummonGargoyle(sim) {
+		dk.SummonGargoyle.Cast(sim, target)
+		return true
+	}
+	return false
+}
+
 type GargoylePet struct {
 	core.Pet
 
-	dkOwner *DeathKnight
+	dkOwner *Deathknight
 
 	GargoyleStrike *core.Spell
 }
 
-func (deathKnight *DeathKnight) NewGargoyle() *GargoylePet {
+func (dk *Deathknight) NewGargoyle() *GargoylePet {
 	gargoyle := &GargoylePet{
 		Pet: core.NewPet(
 			"Gargoyle",
-			&deathKnight.Character,
+			&dk.Character,
 			gargoyleBaseStats,
 			gargoyleStatInheritance,
 			false,
 		),
-		dkOwner: deathKnight,
+		dkOwner: dk,
 	}
 
 	// NightOfTheDead
-	gargoyle.PseudoStats.DamageTakenMultiplier *= (1.0 - float64(deathKnight.Talents.NightOfTheDead)*0.45)
+	gargoyle.PseudoStats.DamageTakenMultiplier *= (1.0 - float64(dk.Talents.NightOfTheDead)*0.45)
 
-	deathKnight.AddPet(gargoyle)
+	dk.AddPet(gargoyle)
 
 	return gargoyle
 }
