@@ -27,6 +27,7 @@ type Priest struct {
 	MiseryAura         *core.Aura
 	ShadowWeavingAura  *core.Aura
 	ShadowyInsightAura *core.Aura
+	ImprovedSpiritTap  *core.Aura
 
 	SurgeOfLightProcAura *core.Aura
 
@@ -98,6 +99,12 @@ func (priest *Priest) Initialize() {
 		core.ActionID{SpellID: 61792},
 		stats.Stats{stats.SpellPower: priest.GetStat(stats.Spirit) * 0.30},
 		time.Second*10,
+	)
+	priest.ImprovedSpiritTap = priest.NewTemporaryStatsAura(
+		"Improved Spirit Tap",
+		core.ActionID{SpellID: 59000},
+		stats.Stats{stats.Spirit: priest.GetStat(stats.Spirit) * 1.1},
+		time.Second*8,
 	)
 
 	priest.registerDevouringPlagueSpell()
