@@ -75,9 +75,6 @@ func (dk *DpsDeathknight) FrostDiseaseCheckWrapper(sim *core.Simulation, target 
 			bpExpiresIn := dk.BloodPlagueDisease[target.Index].RemainingDuration(sim)
 			ffExpiresAt := ffExpiresIn + sim.CurrentTime
 			bpExpiresAt := bpExpiresIn + sim.CurrentTime
-			if spell.CurCast.GCD > ffExpiresIn || spell.CurCast.GCD > bpExpiresIn {
-				return success
-			}
 
 			crpb := dk.CopyRunicPowerBar()
 			runeCostForSpell := dk.RuneAmountForSpell(spell)
