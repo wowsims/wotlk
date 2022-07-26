@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -12,7 +13,21 @@ import (
 )
 
 func main() {
-	f, err := os.Create("all_item_tooltips.csv")
+	var maxParam = flag.Int("maxid", 52205, "maximum ID to scan for")
+	var minParam = flag.Int("minid", 1, "ID of item to start scan at")
+	var numThreads = flag.Int("threads", 8, "number of parallel workers to fetch tooltips with")
+	var output = flag.String("output", "all_item_tooltips.csv", "name of file to output results to")
+
+	flag.Parse()
+
+	maxID := *maxParam
+	startMinID := *minParam
+
+	threads := *numThreads
+	numPer := (maxID - startMinID) / threads
+
+	fmt.Printf("Starting tooltip fetching.\n\tStart ID: %d, End ID: %d\n\tWorkers: %d\n\tOutput File: %s\n\n", startMinID, maxID, threads, *output)
+	f, err := os.Create(*output)
 	if err != nil {
 		log.Fatalf("failed to open file to write: %s", err)
 	}
@@ -22,15 +37,13 @@ func main() {
 	}
 	results := make(chan result, 10)
 
-	maxID := 52205
-	threads := 8
-	numPer := maxID / threads
-
-	minID := 1
-
+	currentMinID := startMinID
 	wg := &sync.WaitGroup{}
 	for crawler := 0; crawler < threads; crawler++ {
 		wg.Add(1)
+		if crawler == threads-1 {
+			numPer = maxID - currentMinID // last thread gets the odd extras
+		}
 		go func(min, max int) {
 			client := http.Client{}
 			for i := min; i < max; i++ {
@@ -41,8 +54,8 @@ func main() {
 					continue
 				}
 				body, _ := ioutil.ReadAll(resp.Body)
-				bstr := string(body)
-				bstr = strings.Replace(bstr, fmt.Sprintf("$WowheadPower.registerItem('%d', 0, ", i), "", 1)
+				bodyString := string(body)
+				bstr := strings.Replace(bodyString, fmt.Sprintf("$WowheadPower.registerItem('%d', 0, ", i), "", 1)
 				bstr = strings.TrimSuffix(bstr, ";")
 				bstr = strings.TrimSuffix(bstr, ")")
 				bstr = strings.ReplaceAll(bstr, "\n", "")
@@ -59,11 +72,15 @@ func main() {
 				}
 
 				// fmt.Printf("Found tooltip for %d\n%s\n", i, bstr)
+				if len(bstr) < 2 {
+					fmt.Printf("Missing tooltip data for %d\nOriginal Value: %s\n You may have to manually insert this value.\n", i, bodyString)
+				}
 				results <- result{id: i, value: bstr}
 			}
-		}(minID, minID+numPer)
-		fmt.Printf("Started thread %d, %d to %d\n", crawler, minID, minID+numPer-1)
-		minID += numPer
+			wg.Done()
+		}(currentMinID, currentMinID+numPer)
+		fmt.Printf("Started thread %d, %d to %d\n", crawler, currentMinID, currentMinID+numPer-1)
+		currentMinID += numPer
 	}
 
 	go func() {
@@ -78,7 +95,7 @@ func main() {
 
 		if time.Since(lastUpdate).Seconds() > 2 {
 			lastUpdate = time.Now()
-			fmt.Printf("Tooltips %d/%d complete\n", total, maxID)
+			fmt.Printf("Tooltips %d/%d complete\n", total, (maxID - startMinID))
 		}
 
 		if strings.Contains(res.value, "\"error\":") {
@@ -89,4 +106,5 @@ func main() {
 		url := fmt.Sprintf("https://wotlkdb.com/?item=%d&power", res.id)
 		f.WriteString(fmt.Sprintf("%d, %s, %s\n", res.id, url, res.value))
 	}
+	fmt.Printf("Tooltips %d/%d complete\n", total, (maxID - startMinID))
 }
