@@ -9,6 +9,13 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+// TODO: T7 Tank missing Icebound Fortitude
+// TODO: T8 Dps missing Heart Strike
+// TODO: T8 Tank missing Rune Strike and AMS
+// TODO: T9 Dps missing Heart Strike
+// TODO: T9 Tank missing Heart Strike and Vampiric Blood and Dark Command
+// TODO: T10 Dps missing Heart Strike
+
 var ItemSetScourgeborneBattlegear = core.NewItemSet(core.ItemSet{
 	Name: "Scourgeborne Battlegear",
 	Bonuses: map[int32]core.ApplyEffect{
@@ -39,7 +46,6 @@ var ItemSetScourgebornePlate = core.NewItemSet(core.ItemSet{
 			// strike by 10%
 		},
 		4: func(agent core.Agent) {
-			// TODO:
 			// Increases the duration of your Icebound Fortitude by 3 seconds
 		},
 	},
@@ -71,7 +77,6 @@ func (dk *Deathknight) darkrunedBattlegearDiseaseBonus(baseMultiplier float64) f
 	return core.TernaryFloat64(dk.HasSetBonus(ItemSetDarkrunedBattlegear, 4), baseMultiplier*1.2, baseMultiplier)
 }
 
-// TODO:
 var ItemSetDarkrunedPlate = core.NewItemSet(core.ItemSet{
 	Name: "Darkruned Plate",
 	Bonuses: map[int32]core.ApplyEffect{
@@ -119,6 +124,132 @@ func (dk *Deathknight) registerThassariansBattlegearProc() {
 			if sim.RandomFloat("UnholyMight") < 0.5 {
 				icd.Use(sim)
 				procAura.Activate(sim)
+			}
+		},
+	}))
+}
+
+var ItemSetThassariansPlate = core.NewItemSet(core.ItemSet{
+	Name: "Thassarian's Plate",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Decreases the cooldown on your Dark Command ability by 2 sec and
+			// increases the damage done by your Blood Strike and Heart Strike abilities by 5%.
+		},
+		4: func(agent core.Agent) {
+			// Decreases the cooldown on your Unbreakable Armor, Vampiric Blood
+			// and Bone Shield abilities by 10 sec.
+		},
+	},
+})
+
+func (dk *Deathknight) thassariansPlateDamageBonus() float64 {
+	return core.TernaryFloat64(dk.HasSetBonus(ItemSetThassariansPlate, 2), 1.05, 1.0)
+}
+
+func (dk *Deathknight) thassariansPlateCooldownReduction(spell *core.Spell) time.Duration {
+	if !dk.HasSetBonus(ItemSetThassariansPlate, 4) {
+		return 0
+	}
+
+	if spell == dk.UnbreakableArmor || spell == dk.BoneShield /* || spell == dk.VampiricBlood*/ {
+		return 10 * time.Second
+	} /* else if spell == dk.DarkCommand {
+		return 2 * time.Second
+	}*/
+	return 0
+}
+
+var ItemSetScourgelordsBattlegear = core.NewItemSet(core.ItemSet{
+	Name: "Scourgelord's Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Your Obliterate and Scourge Strike abilities deal 10% increased damage
+			// and your Heart Strike ability deals 7% increased damage.
+		},
+		4: func(agent core.Agent) {
+			// Whenever all your runes are on cooldown, you gain 3% increased
+			// damage done with weapons, spells, and abilities for the next 15 sec.
+			dk := agent.(DeathKnightAgent).GetDeathKnight()
+			dk.registerScourgelordsBattlegearProc()
+		},
+	},
+})
+
+func (dk *Deathknight) scourgelordsBattlegearDamageBonus(spell *core.Spell) float64 {
+	if !dk.HasSetBonus(ItemSetScourgelordsBattlegear, 2) {
+		return 1.0
+	}
+
+	if spell == dk.Obliterate || spell == dk.ScourgeStrike {
+		return 1.1
+	} /* else if spell == dk.HeartStrike {
+		return 1.07
+	}*/
+	return 1.0
+}
+
+func (dk *Deathknight) registerScourgelordsBattlegearProc() {
+	bonusCoeff := 1.03
+
+	damageAura := dk.RegisterAura(core.Aura{
+		Label:    "Advantage",
+		ActionID: core.ActionID{SpellID: 70657},
+		Duration: 15 * time.Second,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.DamageDealtMultiplier *= bonusCoeff
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.DamageDealtMultiplier /= bonusCoeff
+		},
+	})
+
+	dk.onRuneSpendT10 = func(sim *core.Simulation) {
+		if dk.CurrentBloodRunes() == 0 && dk.CurrentFrostRunes() == 0 && dk.CurrentUnholyRunes() == 0 && dk.CurrentDeathRunes() == 0 {
+			damageAura.Activate(sim)
+		}
+	}
+}
+
+var ItemSetScourgelordsPlate = core.NewItemSet(core.ItemSet{
+	Name: "Scourgelord's Plate",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Increases the damage done by your Death and Decay ability by 20%.
+		},
+		4: func(agent core.Agent) {
+			// When you activate Blood Tap, you gain 12% damage reduction from all attacks for 10 sec.
+			dk := agent.(DeathKnightAgent).GetDeathKnight()
+			dk.registerScourgelordsPlateProc()
+		},
+	},
+})
+
+func (dk *Deathknight) scourgelordsPlateDamageBonus() float64 {
+	return core.TernaryFloat64(dk.HasSetBonus(ItemSetScourgelordsPlate, 2), 1.2, 1.0)
+}
+
+func (dk *Deathknight) registerScourgelordsPlateProc() {
+	damageTakenMult := 0.88
+
+	bonusAura := dk.RegisterAura(core.Aura{
+		Label:    "Blood Armor",
+		ActionID: core.ActionID{SpellID: 70654},
+		Duration: time.Second * 10.0,
+
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.DamageTakenMultiplier *= damageTakenMult
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.DamageTakenMultiplier /= damageTakenMult
+		},
+	})
+
+	core.MakePermanent(dk.RegisterAura(core.Aura{
+		Label: "Blood Armor Proc",
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if spell == dk.BloodTap {
+				bonusAura.Activate(sim)
 			}
 		},
 	}))
