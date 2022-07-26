@@ -274,6 +274,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestUnholy-AllItems-EyeoftheBroodmother-45308"
+ value: {
+  dps: 7083.733583006882
+  tps: 5339.427464897189
+ }
+}
+dps_results: {
  key: "TestUnholy-AllItems-FaithinFelsteel"
  value: {
   dps: 6072.239276859441
@@ -320,6 +327,13 @@ dps_results: {
  value: {
   dps: 7600.202184709983
   tps: 5640.365925599381
+ }
+}
+dps_results: {
+ key: "TestUnholy-AllItems-FuturesightRune-38763"
+ value: {
+  dps: 6998.176244767238
+  tps: 5255.725135520939
  }
 }
 dps_results: {
@@ -642,13 +656,6 @@ dps_results: {
  value: {
   dps: 6500.186397943005
   tps: 4787.901744281469
- }
-}
-dps_results: {
- key: "TestUnholy-AllItems-Spirit-WorldGlass-39388"
- value: {
-  dps: 6998.176244767238
-  tps: 5255.725135520939
  }
 }
 dps_results: {

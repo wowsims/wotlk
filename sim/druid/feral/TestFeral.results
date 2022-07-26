@@ -127,6 +127,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeral-AllItems-EyeoftheBroodmother-45308"
+ value: {
+  dps: 1772.586559061833
+  tps: 1282.1676756821425
+ }
+}
+dps_results: {
  key: "TestFeral-AllItems-ForgeEmber-37660"
  value: {
   dps: 1763.9012067262918
@@ -138,6 +145,13 @@ dps_results: {
  value: {
   dps: 1831.6649390266332
   tps: 1324.0910058575005
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-FuturesightRune-38763"
+ value: {
+  dps: 1757.2522163059066
+  tps: 1271.2778239587135
  }
 }
 dps_results: {
@@ -327,13 +341,6 @@ dps_results: {
  value: {
   dps: 1489.3250459926421
   tps: 1079.9999539280338
- }
-}
-dps_results: {
- key: "TestFeral-AllItems-Spirit-WorldGlass-39388"
- value: {
-  dps: 1781.9402795324643
-  tps: 1288.9133749371765
  }
 }
 dps_results: {
