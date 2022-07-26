@@ -76,8 +76,7 @@ type Deathknight struct {
 	LastScourgeStrikeDamage float64
 	ScourgeStrike           *core.Spell
 
-	LastDeathCoilDamage float64
-	DeathCoil           *core.Spell
+	DeathCoil *core.Spell
 
 	DeathAndDecay    *core.Spell
 	DeathAndDecayDot *core.Dot
@@ -108,8 +107,9 @@ type Deathknight struct {
 	FrostFeverDisease  []*core.Dot
 	BloodPlagueDisease []*core.Dot
 
-	UnholyBlightSpell *core.Spell
-	UnholyBlightDot   []*core.Dot
+	UnholyBlightSpell      *core.Spell
+	UnholyBlightDot        []*core.Dot
+	UnholyBlightTickDamage []float64
 
 	// Talent Auras
 	KillingMachineAura  *core.Aura
