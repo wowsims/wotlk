@@ -45,11 +45,12 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 			petConfig.Stats,
 			petStatInheritance,
 			true,
+			false,
 		),
 		config: petConfig,
 		owner:  warlock,
 	}
-	
+
 	wp.EnableManaBar()
 	wp.AddStatDependency(stats.Intellect, stats.Mana, 1/(1+15))
 	wp.AddStatDependency(stats.Intellect, stats.Mana, 1.0+petConfig.ManaIntRatio)
@@ -62,8 +63,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 			float64(wp.owner.Talents.ImprovedDemonicTactics)*0.3*wp.owner.GetStats()[stats.SpellCrit],
 	})
 
-	wp.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.04 * float64(warlock.Talents.UnholyPower)
-
+	wp.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.04*float64(warlock.Talents.UnholyPower)
 
 	if petConfig.Melee {
 		switch summonChoice {
@@ -123,7 +123,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 	}
 
 	if warlock.Talents.FelVitality > 0 {
-		bonus := 1.0 + 0.05 * float64(warlock.Talents.FelVitality)
+		bonus := 1.0 + 0.05*float64(warlock.Talents.FelVitality)
 		wp.AddStatDependency(stats.Intellect, stats.Intellect, bonus)
 		wp.AddStatDependency(stats.Stamina, stats.Stamina, bonus)
 	}

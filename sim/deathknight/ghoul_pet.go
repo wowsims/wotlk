@@ -31,6 +31,7 @@ func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
 			armyGhoulPetBaseStats,
 			dk.armyGhoulStatInheritance(),
 			false,
+			true,
 		),
 		dkOwner: dk,
 	}
@@ -64,6 +65,7 @@ func (dk *Deathknight) NewGhoulPet(permanent bool) *GhoulPet {
 			ghoulPetBaseStats,
 			dk.ghoulStatInheritance(),
 			permanent,
+			!permanent,
 		),
 		dkOwner: dk,
 	}
@@ -148,7 +150,7 @@ func (ghoulPet *GhoulPet) enable(sim *core.Simulation) {
 	ghoulPet.focusBar.Enable(sim)
 
 	// Snapshot extra % speed modifiers from dk owner
-	if !ghoulPet.PermanentPet {
+	if ghoulPet.IsGuardian() {
 		ghoulPet.PseudoStats.MeleeSpeedMultiplier = ghoulPet.dkOwner.PseudoStats.MeleeSpeedMultiplier
 		if sim.Log != nil {
 			ghoulPet.Log(sim, "Setting attack speed multiplier to "+strconv.FormatFloat(ghoulPet.PseudoStats.MeleeSpeedMultiplier, 'f', 3, 64))
@@ -160,7 +162,7 @@ func (ghoulPet *GhoulPet) disable(sim *core.Simulation) {
 	ghoulPet.focusBar.Disable(sim)
 
 	// Clear snapshot speed
-	if !ghoulPet.PermanentPet {
+	if ghoulPet.IsGuardian() {
 		ghoulPet.PseudoStats.MeleeSpeedMultiplier = 1
 	}
 }
