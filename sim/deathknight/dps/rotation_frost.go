@@ -5,10 +5,8 @@ import (
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
-func (dk *DpsDeathknight) setupFrostRotations() {
-
-	// This defines the Sub Blood opener
-	dk.DefineOpener(deathknight.RotationID_FrostSubBlood_Full, []deathknight.RotationAction{
+func (dk *DpsDeathknight) setupFrostSubBloodOpener() {
+	dk.DefineOpener([]deathknight.RotationAction{
 		deathknight.RotationAction_IT,
 		deathknight.RotationAction_PS,
 		deathknight.RotationAction_UA,
@@ -30,9 +28,10 @@ func (dk *DpsDeathknight) setupFrostRotations() {
 		deathknight.RotationAction_BS,
 		deathknight.RotationAction_FS,
 	})
+}
 
-	// This defines the Sub Unholy opener
-	dk.DefineOpener(deathknight.RotationID_FrostSubUnholy_Full, []deathknight.RotationAction{
+func (dk *DpsDeathknight) setupFrostSubUnholyOpener() {
+	dk.DefineOpener([]deathknight.RotationAction{
 		deathknight.RotationAction_IT,
 		deathknight.RotationAction_PS,
 		deathknight.RotationAction_BT,
