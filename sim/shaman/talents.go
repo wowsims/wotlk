@@ -146,11 +146,13 @@ func (shaman *Shaman) applyElementalDevastation() {
 	})
 }
 
+var eleMasterActionID = core.ActionID{SpellID: 16166}
+
 func (shaman *Shaman) registerElementalMasteryCD() {
 	if !shaman.Talents.ElementalMastery {
 		return
 	}
-	actionID := core.ActionID{SpellID: 16166}
+
 	cdTimer := shaman.NewTimer()
 	cd := time.Minute * 3
 
@@ -174,7 +176,7 @@ func (shaman *Shaman) registerElementalMasteryCD() {
 
 	shaman.ElementalMasteryAura = shaman.RegisterAura(core.Aura{
 		Label:    "Elemental Mastery",
-		ActionID: actionID,
+		ActionID: eleMasterActionID,
 		Duration: core.NeverExpires,
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if !spell.Flags.Matches(SpellFlagElectric) {
@@ -191,7 +193,7 @@ func (shaman *Shaman) registerElementalMasteryCD() {
 	})
 
 	spell := shaman.RegisterSpell(core.SpellConfig{
-		ActionID: actionID,
+		ActionID: eleMasterActionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
@@ -209,19 +211,6 @@ func (shaman *Shaman) registerElementalMasteryCD() {
 		Spell: spell,
 		Type:  core.CooldownTypeDPS,
 	})
-
-	if shaman.HasSetBonus(ItemSetFrostWitchRegalia, 2) {
-		shaman.RegisterAura(core.Aura{
-			Label:    "Shaman T10 Elemental 2P Bonus",
-			Duration: core.NeverExpires,
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if (spell == shaman.LightningBolt || spell == shaman.ChainLightning) && !spell.CD.IsReady(sim) { // doesnt proc on LO
-					*spell.CD.Timer = core.Timer(time.Duration(*spell.CD.Timer) - time.Second)
-					shaman.UpdateMajorCooldowns() // this could get expensive because it will be called all the time.
-				}
-			},
-		})
-	}
 }
 
 func (shaman *Shaman) registerNaturesSwiftnessCD() {
@@ -248,7 +237,7 @@ func (shaman *Shaman) registerNaturesSwiftnessCD() {
 		},
 	})
 
-	spell := shaman.RegisterSpell(core.SpellConfig{
+	eleMastSpell := shaman.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 		Cast: core.CastConfig{
@@ -263,7 +252,7 @@ func (shaman *Shaman) registerNaturesSwiftnessCD() {
 	})
 
 	shaman.AddMajorCooldown(core.MajorCooldown{
-		Spell: spell,
+		Spell: eleMastSpell,
 		Type:  core.CooldownTypeDPS,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
 			// Don't use NS unless we're casting a full-length lightning bolt, which is
@@ -271,6 +260,22 @@ func (shaman *Shaman) registerNaturesSwiftnessCD() {
 			return !character.HasTemporarySpellCastSpeedIncrease()
 		},
 	})
+
+	if shaman.HasSetBonus(ItemSetFrostWitchRegalia, 2) {
+		shaman.RegisterAura(core.Aura{
+			Label:    "Shaman T10 Elemental 2P Bonus",
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if (spell == shaman.LightningBolt || spell == shaman.ChainLightning) && !eleMastSpell.CD.IsReady(sim) {
+					*eleMastSpell.CD.Timer = core.Timer(time.Duration(*eleMastSpell.CD.Timer) - time.Second)
+					shaman.UpdateMajorCooldowns() // this could get expensive because it will be called all the time.
+				}
+			},
+		})
+	}
 }
 
 func (shaman *Shaman) applyFlurry() {
