@@ -83,7 +83,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.PRE_RAID_PRESET.gear,
+				gear: Presets.P1_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatIntellect]: 0.17,
@@ -152,6 +152,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				// Preset gear configurations that the user can quickly select.
 				gear: [
 					Presets.PRE_RAID_PRESET,
+					Presets.P1_PRESET,
 				],
 			},
 		});

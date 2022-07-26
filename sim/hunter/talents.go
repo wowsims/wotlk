@@ -75,15 +75,10 @@ func (hunter *Hunter) ApplyTalents() {
 		hunter.AddStatDependency(stats.Intellect, stats.Intellect, bonus)
 	}
 	if hunter.Talents.CarefulAim > 0 {
-		hunter.AddStatDependency(stats.Intellect, stats.RangedAttackPower, (1.0/3.0)*float64(hunter.Talents.CarefulAim))
-	}
-	if hunter.Talents.SurvivalInstincts > 0 {
-		apBonus := 1.0 + (0.02 * float64(hunter.Talents.SurvivalInstincts))
-		hunter.AddStatDependency(stats.AttackPower, stats.AttackPower, apBonus)
-		hunter.AddStatDependency(stats.RangedAttackPower, stats.RangedAttackPower, apBonus)
+		hunter.AddStatDependency(stats.Intellect, stats.RangedAttackPower, 1+(1.0/3.0)*float64(hunter.Talents.CarefulAim))
 	}
 	if hunter.Talents.HunterVsWild > 0 {
-		bonus := 0.1 * float64(hunter.Talents.HunterVsWild)
+		bonus := 1.0 + 0.1*float64(hunter.Talents.HunterVsWild)
 		hunter.AddStatDependency(stats.Stamina, stats.AttackPower, bonus)
 		hunter.AddStatDependency(stats.Stamina, stats.RangedAttackPower, bonus)
 	}
