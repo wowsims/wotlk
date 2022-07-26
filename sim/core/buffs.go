@@ -166,9 +166,11 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 
 	if raidBuffs.DevotionAura != proto.TristateEffect_TristateEffectMissing {
 		character.AddStats(stats.Stats{
-			stats.Armor: GetTristateValueFloat(raidBuffs.DevotionAura, 861, 1205),
+			stats.Armor: GetTristateValueFloat(raidBuffs.DevotionAura, 1205, 1807.5),
 		})
-	} else if raidBuffs.ScrollOfProtection {
+	}
+
+	if raidBuffs.ScrollOfProtection && raidBuffs.DevotionAura == proto.TristateEffect_TristateEffectMissing {
 		character.AddStats(stats.Stats{
 			stats.Armor: 750,
 		})
