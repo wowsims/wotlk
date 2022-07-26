@@ -9,9 +9,9 @@ var BloodStrikeMHOutcome = core.OutcomeHit
 var BloodStrikeOHOutcome = core.OutcomeHit
 
 func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *core.Spell {
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 306.0, 0.4, true)
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 764.0, 0.4, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 306.0, 0.4*dk.nervesOfColdSteelBonus(), true)
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 764.0, 0.4*dk.nervesOfColdSteelBonus(), true)
 	}
 
 	effect := core.SpellEffect{
@@ -80,19 +80,20 @@ func (dk *Deathknight) registerBloodStrikeSpell() {
 				dk.LastCastOutcome = BloodStrikeMHOutcome
 
 				if dk.outcomeEitherWeaponHitOrCrit(BloodStrikeMHOutcome, BloodStrikeOHOutcome) {
-					dkSpellCost := dk.DetermineOptimalCost(sim, 1, 0, 0)
+					dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_B)
 					if !dk.bloodOfTheNorthProc(sim, spell, dkSpellCost) {
 						if !dk.reapingProc(sim, spell, dkSpellCost) {
 							dk.Spend(sim, spell, dkSpellCost)
 						}
 					}
 
-					amountOfRunicPower := 10.0
-					dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
-
 					if dk.DesolationAura != nil {
 						dk.DesolationAura.Activate(sim)
 					}
+
+					// Gain at the end, to take into account previous effects for callback
+					amountOfRunicPower := 10.0
+					dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 				}
 			},
 		}),

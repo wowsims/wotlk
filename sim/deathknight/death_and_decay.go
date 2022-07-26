@@ -54,14 +54,14 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
-			dkSpellCost := dk.DetermineOptimalCost(sim, 1, 1, 1)
+			dk.DeathAndDecayDot.Apply(sim)
+			dk.DeathAndDecayDot.TickOnce()
+
+			dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_BFU)
 			dk.Spend(sim, spell, dkSpellCost)
 
 			amountOfRunicPower := 15.0
 			dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
-
-			dk.DeathAndDecayDot.Apply(sim)
-			dk.DeathAndDecayDot.TickOnce()
 		},
 	})
 

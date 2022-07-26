@@ -64,7 +64,7 @@ func (dk *Deathknight) registerBoneShieldSpell() {
 			dk.BoneShieldAura.Activate(sim)
 			dk.BoneShieldAura.Prioritize()
 
-			dkSpellCost := dk.DetermineOptimalCost(sim, 0, 0, 1)
+			dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_U)
 			dk.Spend(sim, spell, dkSpellCost)
 
 			amountOfRunicPower := 10.0

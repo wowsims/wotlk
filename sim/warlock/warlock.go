@@ -12,6 +12,10 @@ type Warlock struct {
 	Options  proto.Warlock_Options
 	Rotation proto.Warlock_Rotation
 
+	Pet *WarlockPet
+
+	DoingRegen bool
+
 	ShadowBolt           *core.Spell
 	Incinerate           *core.Spell
 	Immolate             *core.Spell
@@ -59,10 +63,6 @@ type Warlock struct {
 	EmpoweredImpAura       *core.Aura
 
 	GlyphOfLifeTapAura *core.Aura
-
-	Pet *WarlockPet
-
-	DoingRegen bool
 }
 
 func (warlock *Warlock) GetCharacter() *core.Character {
@@ -137,7 +137,7 @@ func NewWarlock(character core.Character, options proto.Player) *Warlock {
 	}
 	warlock.EnableManaBar()
 
-	warlock.Character.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
+	warlock.Character.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+1)
 
 	if warlock.Options.Armor == proto.Warlock_Options_FelArmor {
 		demonicAegisMultiplier := 1 + float64(warlock.Talents.DemonicAegis)*0.1

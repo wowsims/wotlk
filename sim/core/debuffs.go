@@ -166,6 +166,18 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 	if debuffs.HeartOfTheCrusader {
 		MakePermanent(HeartoftheCrusaderDebuff(target, 3))
 	}
+
+	if debuffs.HuntersMark > 0 {
+		points := int32(0)
+		glyphed := false
+		if debuffs.HuntersMark > 1 {
+			points = 3
+			if debuffs.HuntersMark > 2 {
+				glyphed = true
+			}
+		}
+		MakePermanent(HuntersMarkAura(target, points, glyphed))
+	}
 }
 
 func ScheduledAura(aura *Aura, preActivate bool, options PeriodicActionOptions) *Aura {
@@ -187,10 +199,10 @@ func MiseryAura(target *Unit) *Aura {
 		ActionID: ActionID{SpellID: 33198},
 		Duration: time.Second * 24,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			target.PseudoStats.BonusSpellHitRatingTaken += 3 * SpellHitRatingPerHitChance
+			aura.Unit.PseudoStats.BonusSpellHitRatingTaken += 3 * SpellHitRatingPerHitChance
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			target.PseudoStats.BonusSpellHitRatingTaken -= 3 * SpellHitRatingPerHitChance
+			aura.Unit.PseudoStats.BonusSpellHitRatingTaken -= 3 * SpellHitRatingPerHitChance
 		},
 	})
 }

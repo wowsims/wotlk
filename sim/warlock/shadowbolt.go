@@ -28,13 +28,12 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 			}
 			// ISB debuff
 			if warlock.Talents.ImprovedShadowBolt > 0 {
-				if sim.RandomFloat("ISB") < ISBProcChance {
-					if !core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() {
-						core.ShadowMasteryAura(warlock.CurrentTarget).Activate(sim)
-					} else {
-						core.ShadowMasteryAura(warlock.CurrentTarget).Refresh(sim)
+				if warlock.Talents.ImprovedShadowBolt < 5 { // This will return early if we 'miss' the refresh, 5 pts can't 'miss'.
+					if sim.RandomFloat("ISB") > ISBProcChance {
+						return
 					}
 				}
+				core.ShadowMasteryAura(warlock.CurrentTarget).Activate(sim) // calls refresh if already active.
 			}
 		},
 	}

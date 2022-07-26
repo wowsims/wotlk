@@ -43,7 +43,6 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			// All stats for which EP should be calculated.
 			epStats: [
 				Stat.StatIntellect,
-				Stat.StatStamina,
 				Stat.StatSpirit,
 				Stat.StatSpellPower,
 				Stat.StatShadowSpellPower,
@@ -51,15 +50,6 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				Stat.StatSpellHit,
 				Stat.StatSpellCrit,
 				Stat.StatSpellHaste,
-				Stat.StatMP5,
-				//Pet stats for buffs in UI only
-				Stat.StatStrength,
-				Stat.StatAttackPower,
-				Stat.StatAgility,
-				Stat.StatMeleeHit,
-				Stat.StatMeleeCrit,
-				Stat.StatMeleeHaste,
-				Stat.StatArmorPenetration,
 			],
 			// Reference stat against which to calculate EP. DPS classes use either spell power or attack power.
 			epReferenceStat: Stat.StatSpellPower,
@@ -83,14 +73,14 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatIntellect]: 0.15,
-					[Stat.StatSpirit]: 0.2,
+					[Stat.StatIntellect]: 0.2,
+					[Stat.StatSpirit]: 0.4,
 					[Stat.StatSpellPower]: 1,
 					[Stat.StatShadowSpellPower]: 1,
 					[Stat.StatFireSpellPower]: 0,
-					[Stat.StatSpellHit]: 0.6,
+					[Stat.StatSpellHit]: 0.75,
 					[Stat.StatSpellCrit]: 0.4,
-					[Stat.StatSpellHaste]: 0.6,
+					[Stat.StatSpellHaste]: 0.8,
 					[Stat.StatMP5]: 0.00,
 				}),
 				// Default consumes settings.
@@ -127,6 +117,23 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			],
 			rotationInputs: WarlockInputs.WarlockRotationConfig,
 			
+			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
+			includeBuffDebuffInputs: [
+			],
+			//buffStats: [
+			//	// For buffs in UI only
+			//	Stat.StatMP5,
+			//	Stat.StatStamina,
+			//	Stat.StatStrength,
+			//	Stat.StatAttackPower,
+			//	Stat.StatAgility,
+			//	Stat.StatMeleeHit,
+			//	Stat.StatMeleeCrit,
+			//	Stat.StatMeleeHaste,
+			//	Stat.StatArmorPenetration,
+			//],
+			excludeBuffDebuffInputs: [
+			],
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [

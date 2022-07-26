@@ -10,9 +10,9 @@ var DeathStrikeOHOutcome = core.OutcomeHit
 
 func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *core.Spell {
 	bonusBaseDamage := dk.sigilOfAwarenessBonus(dk.DeathStrike)
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 223.0+bonusBaseDamage, 0.75, true)
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 297.0+bonusBaseDamage, 0.75, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 223.0+bonusBaseDamage, 0.75*dk.nervesOfColdSteelBonus(), true)
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 297.0+bonusBaseDamage, 0.75*dk.nervesOfColdSteelBonus(), true)
 	}
 
 	effect := core.SpellEffect{
@@ -79,7 +79,7 @@ func (dk *Deathknight) registerDeathStrikeSpell() {
 
 				dk.LastCastOutcome = DeathStrikeMHOutcome
 				if dk.outcomeEitherWeaponHitOrCrit(DeathStrikeMHOutcome, DeathStrikeOHOutcome) {
-					dkSpellCost := dk.DetermineOptimalCost(sim, 0, 1, 1)
+					dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_FU)
 					dk.Spend(sim, spell, dkSpellCost)
 
 					amountOfRunicPower := 15.0 + 2.5*float64(dk.Talents.Dirge)

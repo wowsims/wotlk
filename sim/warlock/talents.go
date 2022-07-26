@@ -437,9 +437,12 @@ func (warlock *Warlock) setupEverlastingAffliction() {
 			}
 			if spell == warlock.ShadowBolt || spell == warlock.Haunt || spell == warlock.DrainSoul { // TODO: also works on drain life...
 				if warlock.CorruptionDot.IsActive() {
-					if sim.RandomFloat("EverlastingAffliction") < everlastingAfflictionProcChance {
-						warlock.CorruptionDot.Refresh(sim)
+					if warlock.Talents.EverlastingAffliction < 5 { // This will return early if we 'miss' the refresh, 5 pts can't 'miss'.
+						if sim.RandomFloat("EverlastingAffliction") > everlastingAfflictionProcChance {
+							return
+						}
 					}
+					warlock.CorruptionDot.Rollover(sim)
 				}
 			}
 		},

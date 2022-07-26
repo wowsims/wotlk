@@ -6,7 +6,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-type TickEffects func(*Simulation, *Spell) func()
+type TickEffects func(*Simulation, *Dot) func()
 
 type Dot struct {
 	Spell *Spell
@@ -20,7 +20,9 @@ type Dot struct {
 	// If true, tick length will be shortened based on casting speed.
 	AffectedByCastSpeed bool
 
-	TickEffects TickEffects
+	TickEffects        TickEffects
+	snapshotEffect     *SpellEffect
+	snapshotMultiplier float64
 
 	tickFn     func()
 	tickAction *PendingAction
@@ -32,14 +34,39 @@ type Dot struct {
 	lastTickTime time.Duration
 }
 
+// Roll over = gets carried over with everlasting refresh and doesn't get applied if triggered when the spell is already up.
+// - Example: critical strike rating, internal % damage modifiers: buffs or debuffs on player
+// Nevermelting Ice, Shadow Mastery (ISB), Trick of the Trades, Deaths Embrace, Thadius Polarity, Hera Spores, Crit on weapons from swapping
+
+// Snapshot = calculation happens at refresh and application (stays up even if buff falls of, until new refresh or application)
+// - Example: Spell power, Haste rating
+// Blood Fury, Lightweave Embroid, Eradication, Bloodlust
+
+// Dynamic = realtime update
+// - Example: external % damage modifier debuffs on target
+// Haunt, Curse of Shadow, Shadow Embrace
+
+// Rollover is used to reset the duration of a dot from an external spell (not casting the dot itself)
+// This keeps the snapshotted crit and %dmg modifiers.
+// However sp and haste are recalculated.
+func (dot *Dot) Rollover(sim *Simulation) {
+	oldSpellCrit := dot.snapshotEffect.BonusSpellCritRating
+	oldCrit := dot.snapshotEffect.BonusCritRating
+
+	// by not calling 'dot.TakeSnapshot' we dont recalculate dmg multiplier
+	dot.tickFn = dot.TickEffects(sim, dot)
+
+	dot.snapshotEffect.BonusSpellCritRating = oldSpellCrit
+	dot.snapshotEffect.BonusCritRating = oldCrit
+
+	dot.RecomputeAuraDuration()
+	dot.Aura.Refresh(sim)
+}
+
 func (dot *Dot) Apply(sim *Simulation) {
 	dot.Cancel(sim)
-
 	dot.TickCount = 0
-	if dot.AffectedByCastSpeed {
-		dot.tickPeriod = dot.Spell.Unit.ApplyCastSpeed(dot.TickLength)
-		dot.Aura.Duration = dot.tickPeriod * time.Duration(dot.NumberOfTicks)
-	}
+	dot.RecomputeAuraDuration()
 	dot.Aura.Activate(sim)
 }
 
@@ -65,7 +92,8 @@ func (dot *Dot) RecomputeAuraDuration() {
 // In most cases this will be called automatically, and should only be called
 // to force a new snapshot to be taken.
 func (dot *Dot) TakeSnapshot(sim *Simulation) {
-	dot.tickFn = dot.TickEffects(sim, dot.Spell)
+	dot.snapshotMultiplier = dot.snapshotEffect.snapshotAttackModifiers(dot.Spell) * dot.Spell.DamageMultiplier
+	dot.tickFn = dot.TickEffects(sim, dot)
 }
 
 // Forces an instant tick. Does not reset the tick timer or aura duration,
@@ -74,11 +102,8 @@ func (dot *Dot) TickOnce() {
 	dot.tickFn()
 }
 
-func NewDot(config Dot) *Dot {
-	dot := &Dot{}
-	*dot = config
-
-	basePeriodicOptions := PeriodicActionOptions{
+func (dot *Dot) basePeriodicOptions() PeriodicActionOptions {
+	return PeriodicActionOptions{
 		OnAction: func(sim *Simulation) {
 			if dot.lastTickTime != sim.CurrentTime {
 				dot.lastTickTime = sim.CurrentTime
@@ -99,6 +124,12 @@ func NewDot(config Dot) *Dot {
 		},
 	}
 
+}
+
+func NewDot(config Dot) *Dot {
+	dot := &Dot{}
+	*dot = config
+
 	dot.tickPeriod = dot.TickLength
 	dot.Aura.Duration = dot.TickLength * time.Duration(dot.NumberOfTicks)
 
@@ -107,7 +138,7 @@ func NewDot(config Dot) *Dot {
 	dot.Aura.OnGain = func(aura *Aura, sim *Simulation) {
 		dot.TakeSnapshot(sim)
 
-		periodicOptions := basePeriodicOptions
+		periodicOptions := dot.basePeriodicOptions()
 		periodicOptions.Period = dot.tickPeriod
 		dot.tickAction = NewPeriodicAction(sim, periodicOptions)
 		sim.AddPendingAction(dot.tickAction)
@@ -126,63 +157,67 @@ func NewDot(config Dot) *Dot {
 			oldOnExpire(aura, sim)
 		}
 	}
+	dot.snapshotEffect = &SpellEffect{}
 
 	return dot
 }
 
 func TickFuncSnapshot(target *Unit, baseEffect SpellEffect) TickEffects {
-	snapshotEffect := &SpellEffect{}
-	return func(sim *Simulation, spell *Spell) func() {
-		*snapshotEffect = baseEffect
-		snapshotEffect.Target = target
-		baseDamage := snapshotEffect.calculateBaseDamage(sim, spell) * snapshotEffect.DamageMultiplier
-		snapshotEffect.BonusSpellCritRating = snapshotEffect.BonusSpellCritRating + spell.Unit.GetStat(stats.SpellCrit)
-		snapshotEffect.DamageMultiplier = 1
-		snapshotEffect.BaseDamage = BaseDamageConfigFlat(baseDamage)
+	return func(sim *Simulation, dot *Dot) func() {
+		*dot.snapshotEffect = baseEffect
+		dot.snapshotEffect.DamageMultiplier *= dot.snapshotMultiplier
+		dot.snapshotEffect.Target = target
 
-		effectsFunc := ApplyEffectFuncDirectDamage(*snapshotEffect)
+		// Divide by dot.Spell.DamageMultiplier because its snapshotted in the dot.snapshotMultiplier and should not be double applied.
+		baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell) / dot.Spell.DamageMultiplier
+		dot.snapshotEffect.BonusSpellCritRating = dot.snapshotEffect.BonusSpellCritRating +
+			dot.Spell.Unit.GetStat(stats.SpellCrit) + dot.Spell.Unit.PseudoStats.BonusSpellCritRating + target.PseudoStats.BonusSpellCritRatingTaken
+		dot.snapshotEffect.BonusCritRating = dot.snapshotEffect.BonusCritRating + target.PseudoStats.BonusCritRatingTaken + dot.Spell.BonusCritRating
+		dot.snapshotEffect.DamageMultiplier = 1
+		dot.snapshotEffect.BaseDamage = BaseDamageConfigFlat(baseDamage)
+
+		effectsFunc := ApplyEffectFuncDirectDamage(*dot.snapshotEffect)
 		return func() {
-			effectsFunc(sim, target, spell)
+			effectsFunc(sim, target, dot.Spell)
 		}
 	}
 }
-func TickFuncAOESnapshot(env *Environment, baseEffect SpellEffect) TickEffects {
-	snapshotEffect := &SpellEffect{}
-	return func(sim *Simulation, spell *Spell) func() {
-		target := spell.Unit.CurrentTarget
-		*snapshotEffect = baseEffect
-		snapshotEffect.Target = target
-		baseDamage := snapshotEffect.calculateBaseDamage(sim, spell) * snapshotEffect.DamageMultiplier
-		snapshotEffect.DamageMultiplier = 1
-		snapshotEffect.BaseDamage = BaseDamageConfigFlat(baseDamage)
 
-		effectsFunc := ApplyEffectFuncAOEDamage(env, *snapshotEffect)
+func TickFuncAOESnapshot(env *Environment, baseEffect SpellEffect) TickEffects {
+	return func(sim *Simulation, dot *Dot) func() {
+		target := dot.Spell.Unit.CurrentTarget
+		*dot.snapshotEffect = baseEffect
+		dot.snapshotEffect.Target = target
+		baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell)
+		dot.snapshotEffect.DamageMultiplier = 1
+		dot.snapshotEffect.BaseDamage = BaseDamageConfigFlat(baseDamage)
+
+		effectsFunc := ApplyEffectFuncAOEDamage(env, *dot.snapshotEffect)
 		return func() {
-			effectsFunc(sim, target, spell)
+			effectsFunc(sim, target, dot.Spell)
 		}
 	}
 }
 func TickFuncAOESnapshotCapped(env *Environment, aoeCap float64, baseEffect SpellEffect) TickEffects {
-	snapshotEffect := &SpellEffect{}
-	return func(sim *Simulation, spell *Spell) func() {
-		target := spell.Unit.CurrentTarget
-		*snapshotEffect = baseEffect
-		snapshotEffect.Target = target
-		baseDamage := snapshotEffect.calculateBaseDamage(sim, spell) * snapshotEffect.DamageMultiplier
-		snapshotEffect.DamageMultiplier = 1
-		snapshotEffect.BaseDamage = BaseDamageConfigFlat(baseDamage)
+	return func(sim *Simulation, dot *Dot) func() {
+		target := dot.Spell.Unit.CurrentTarget
+		*dot.snapshotEffect = baseEffect
+		dot.snapshotEffect.Target = target
+		baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell)
+		dot.snapshotEffect.DamageMultiplier = 1
+		dot.snapshotEffect.BaseDamage = BaseDamageConfigFlat(baseDamage)
 
-		effectsFunc := ApplyEffectFuncAOEDamageCapped(env, aoeCap, *snapshotEffect)
+		effectsFunc := ApplyEffectFuncAOEDamageCapped(env, aoeCap, *dot.snapshotEffect)
 		return func() {
-			effectsFunc(sim, target, spell)
+			effectsFunc(sim, target, dot.Spell)
 		}
 	}
 }
 
 func TickFuncApplyEffects(effectsFunc ApplySpellEffects) TickEffects {
-	return func(sim *Simulation, spell *Spell) func() {
+	return func(sim *Simulation, dot *Dot) func() {
 		return func() {
-			effectsFunc(sim, spell.Unit.CurrentTarget, spell)
+			effectsFunc(sim, dot.Spell.Unit.CurrentTarget, dot.Spell)
 		}
 	}
 }

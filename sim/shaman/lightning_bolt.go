@@ -76,7 +76,7 @@ func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spel
 			}),
 		})
 		applyDot = func(sim *core.Simulation, dmg float64) {
-			lbdotDmg = dmg * 0.08
+			lbdotDmg = dmg * 0.08   // TODO: does this pool with a currently ticking dot?
 			lbdot.TakeSnapshot(sim) // reset dmg snapshot
 			lbdot.Apply(sim)
 		}

@@ -70,7 +70,7 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 
 				TypedEvent.freezeAllAndDo(() => {
 					if (player.getMajorGlyphs().includes(PaladinMajorGlyph.GlyphOfSealOfVengeance) && (player.getSpecOptions().seal == PaladinSeal.Vengeance)) {
-						stats = stats.addStat(Stat.StatExpertise, 10 * Mechanics.EXPERTISE_RATING_PER_EXPERTISE);
+						stats = stats.addStat(Stat.StatExpertise, 10 * Mechanics.EXPERTISE_PER_QUARTER_PERCENT_REDUCTION);
 					}
 				})
 
@@ -139,6 +139,11 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: RetributionPaladinInputs.RetributionPaladinRotationConfig,
+			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
+			includeBuffDebuffInputs: [
+			],
+			excludeBuffDebuffInputs: [
+			],
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [

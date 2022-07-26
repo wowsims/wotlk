@@ -24,8 +24,17 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 			core.TernaryFloat64(priest.HasSetBonus(ItemSetConquerorSanct, 2), 1.15, 1),
 		BonusSpellHitRating: float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
 		ThreatMultiplier:    1 - 0.05*float64(priest.Talents.ShadowAffinity),
-		BaseDamage:          core.BaseDamageConfigMagic(172.0, 172.0, 0.1849),
-		OutcomeApplier:      priest.OutcomeFuncMagicHitAndCrit(priest.DefaultSpellCritMultiplier()),
+		BaseDamage: core.WrapBaseDamageConfig(
+			core.BaseDamageConfigMagicNoRoll(1376/8, 0.1849),
+			func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
+				return func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
+					swMod := 1 + float64(priest.ShadowWeavingAura.GetStacks())*0.02
+					dmg := oldCalculator(sim, spellEffect, spell)
+
+					return dmg * swMod
+				}
+			}),
+		OutcomeApplier: priest.OutcomeFuncMagicHitAndCrit(priest.DefaultSpellCritMultiplier()),
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Landed() {
 				priest.AddShadowWeavingStack(sim)

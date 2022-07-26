@@ -141,7 +141,9 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 	petConsumeInputs?: Array<IconInputConfig<Player<SpecType>, any>>,
 	rotationInputs: InputSection;
 	rotationIconInputs?: Array<IconInputConfig<Player<any>, any>>;
-	otherInputs?: InputSection;
+	includeBuffDebuffInputs: Array<any>,
+	excludeBuffDebuffInputs: Array<any>,
+	otherInputs: InputSection;
 
 	// Extra UI sections with the same input config as other sections.
 	additionalSections?: Record<string, InputSection>;
@@ -537,7 +539,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			{ item: IconInputs.SpellHasteBuff, stats: [Stat.StatSpellHaste] },
 			{ item: IconInputs.HastePercentBuff, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
 			{ item: IconInputs.DamagePercentBuff, stats: [Stat.StatAttackPower, Stat.StatSpellPower] },
-			{ item: IconInputs.DamageReductionPercentBuff, stats: [Stat.StatStamina] },
+			{ item: IconInputs.DamageReductionPercentBuff, stats: [Stat.StatArmor] },
 			{ item: IconInputs.MP5Buff, stats: [Stat.StatMP5] },
 			{ item: IconInputs.ReplenishmentBuff, stats: [Stat.StatMP5] },
 		]);
@@ -594,7 +596,8 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 		const otherDebuffOptions = this.splitRelevantOptions([
 			{ item: IconInputs.JudgementOfWisdom, stats: [Stat.StatMP5, Stat.StatIntellect] },
-		]);
+			{ item: IconInputs.HuntersMark, stats: [Stat.StatRangedAttackPower] },
+		] as Array<StatOption<InputHelpers.TypedIconPickerConfig<Player<any>, any>>>);
 		otherDebuffOptions.forEach(iconInput => makeIconInput(debuffsSection, iconInput));
 		
 		const miscDebuffOptions = this.splitRelevantOptions([
@@ -1152,7 +1155,12 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 	splitRelevantOptions<T>(options: Array<StatOption<T>>): Array<T> {
 		return options
-				.filter(option => option.stats.length == 0 || option.stats.some(stat => this.individualConfig.epStats.includes(stat)))
+				.filter(option =>
+						this.individualConfig.includeBuffDebuffInputs.includes(option.item) ||
+						option.stats.length == 0 ||
+						option.stats.some(stat => this.individualConfig.epStats.includes(stat)))
+				.filter(option =>
+						!this.individualConfig.excludeBuffDebuffInputs.includes(option.item))
 				.map(option => option.item);
 	}
 }

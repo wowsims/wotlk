@@ -40,6 +40,9 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 	}
 
 	shadowDamageSpell := dk.registerScourgeStrikeShadowDamageSpell()
+	bonusBaseDamage := dk.sigilOfAwarenessBonus(dk.ScourgeStrike)
+	bonusBaseDamage += dk.sigilOfArthriticBindingBonus()
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 800.0+bonusBaseDamage, 0.7, true)
 
 	dk.ScourgeStrike = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    ScourgeStrikeActionID.WithTag(1),
@@ -63,9 +66,6 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					bonusBaseDamage := dk.sigilOfAwarenessBonus(dk.ScourgeStrike)
-					bonusBaseDamage += dk.sigilOfArthriticBindingBonus()
-					weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 560.0+bonusBaseDamage, 0.7, true)
 					return weaponBaseDamage(sim, hitEffect, spell) *
 						dk.rageOfRivendareBonus(hitEffect.Target) *
 						dk.tundraStalkerBonus(hitEffect.Target)
@@ -78,18 +78,16 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				dk.LastCastOutcome = spellEffect.Outcome
 				if spellEffect.Landed() {
-					dkSpellCost := dk.DetermineOptimalCost(sim, 0, 1, 1)
+					if dk.DiseasesAreActive(spellEffect.Target) {
+						dk.LastScourgeStrikeDamage = spellEffect.Damage
+						shadowDamageSpell.Cast(sim, spellEffect.Target)
+					}
+
+					dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_FU)
 					dk.Spend(sim, spell, dkSpellCost)
 
 					amountOfRunicPower := 15.0 + 2.5*float64(dk.Talents.Dirge) + dk.scourgeborneBattlegearRunicPowerBonus()
 					dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
-
-					if dk.DiseasesAreActive(spellEffect.Target) {
-						dk.LastScourgeStrikeDamage = spellEffect.Damage
-						shadowDamageSpell.Cast(sim, spellEffect.Target)
-						//dk.ScourgeStrike.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 1
-						//dk.ScourgeStrike.SpellMetrics[spellEffect.Target.TableIndex].Hits -= 1
-					}
 				}
 			},
 		}),

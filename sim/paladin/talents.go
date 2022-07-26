@@ -421,7 +421,7 @@ func (paladin *Paladin) applyRighteousVengeance() {
 		dotActionID := core.ActionID{SpellID: 61840} // Righteous Vengeance
 
 		effects = append(effects, func(spellEffect *core.SpellEffect) core.TickEffects {
-			return func(sim *core.Simulation, spell *core.Spell) func() {
+			return func(sim *core.Simulation, dot *core.Dot) func() {
 				return func() {
 					core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 						IsPeriodic:       true,
@@ -437,7 +437,7 @@ func (paladin *Paladin) applyRighteousVengeance() {
 							},
 							TargetSpellCoefficient: 1,
 						},
-					})(sim, target, spell)
+					})(sim, target, dot.Spell)
 				}
 			}
 		})
@@ -455,14 +455,14 @@ func (paladin *Paladin) applyRighteousVengeance() {
 					pool = 0
 				},
 			}),
-			TickEffects: func(sim *core.Simulation, spell *core.Spell) func() {
+			TickEffects: func(sim *core.Simulation, dot *core.Dot) func() {
 				return func() {
 					core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 						IsPeriodic:       true,
 						ProcMask:         core.ProcMaskPeriodicDamage,
 						DamageMultiplier: 1,
 						OutcomeApplier:   applier,
-					})(sim, target, spell)
+					})(sim, target, dot.Spell)
 				}
 			},
 			NumberOfTicks: 4,
@@ -483,12 +483,7 @@ func (paladin *Paladin) applyRighteousVengeance() {
 
 			if spell.SpellID == paladin.CrusaderStrike.SpellID || spell.SpellID == paladin.DivineStorm.SpellID || spell.Flags.Matches(SpellFlagSecondaryJudgement) {
 				dots[spellEffect.Target.Index].TickEffects = effects[spellEffect.Target.Index](spellEffect)
-
-				if !dots[spellEffect.Target.Index].IsActive() {
-					dots[spellEffect.Target.Index].Apply(sim)
-				}
-
-				dots[spellEffect.Target.Index].Refresh(sim)
+				dots[spellEffect.Target.Index].Apply(sim)
 			}
 		},
 	})
