@@ -51,18 +51,6 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				Stat.StatSpellCrit,
 				Stat.StatSpellHaste,
 			],
-			buffStats: [
-				// For buffs in UI only
-				Stat.StatMP5,
-				Stat.StatStamina,
-				Stat.StatStrength,
-				Stat.StatAttackPower,
-				Stat.StatAgility,
-				Stat.StatMeleeHit,
-				Stat.StatMeleeCrit,
-				Stat.StatMeleeHaste,
-				Stat.StatArmorPenetration,
-			],
 			// Reference stat against which to calculate EP. DPS classes use either spell power or attack power.
 			epReferenceStat: Stat.StatSpellPower,
 			// Which stats to display in the Character Stats section, at the bottom of the left-hand sidebar.
@@ -129,6 +117,23 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			],
 			rotationInputs: WarlockInputs.WarlockRotationConfig,
 			
+			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
+			includeBuffDebuffInputs: [
+			],
+			//buffStats: [
+			//	// For buffs in UI only
+			//	Stat.StatMP5,
+			//	Stat.StatStamina,
+			//	Stat.StatStrength,
+			//	Stat.StatAttackPower,
+			//	Stat.StatAgility,
+			//	Stat.StatMeleeHit,
+			//	Stat.StatMeleeCrit,
+			//	Stat.StatMeleeHaste,
+			//	Stat.StatArmorPenetration,
+			//],
+			excludeBuffDebuffInputs: [
+			],
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
