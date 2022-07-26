@@ -557,8 +557,10 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		spell = spriest.ShadowWordPain // once swp is cast need a way for talents to refresh the duration
 	} else if bestIdx == 4 {
 
-		if spriest.InnerFocus != nil && spriest.InnerFocus.IsReady(sim) {
-			spriest.InnerFocus.Cast(sim, nil)
+		if castmf2 == 0 {
+			if spriest.InnerFocus != nil && spriest.InnerFocus.IsReady(sim) {
+				spriest.InnerFocus.Cast(sim, nil)
+			}
 		}
 
 		var numTicks int

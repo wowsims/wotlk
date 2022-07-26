@@ -27,7 +27,7 @@ func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
 		Pet: core.NewPet(
 			"Army of the Dead", //+strconv.Itoa(index),
 			&dk.Character,
-			ghoulPetBaseStats,
+			armyGhoulPetBaseStats,
 			dk.armyGhoulStatInheritance(),
 			false,
 		),
@@ -37,6 +37,20 @@ func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
 	ghoulPet.PseudoStats.DamageTakenMultiplier *= 0.1
 
 	dk.SetupGhoul(ghoulPet)
+
+	ghoulPet.EnableAutoAttacks(ghoulPet, core.AutoAttackOptions{
+		MainHand: core.Weapon{
+			BaseDamageMin:  120,
+			BaseDamageMax:  130,
+			SwingSpeed:     2,
+			SwingDuration:  time.Second * 2,
+			CritMultiplier: 2,
+		},
+		AutoSwingMelee: true,
+	})
+
+	ghoulPet.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+0.01)
+	ghoulPet.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/83.3))
 
 	return ghoulPet
 }
@@ -58,19 +72,6 @@ func (dk *Deathknight) NewGhoulPet(permanent bool) *GhoulPet {
 
 	dk.SetupGhoul(ghoulPet)
 
-	return ghoulPet
-}
-
-func (dk *Deathknight) SetupGhoul(ghoulPet *GhoulPet) {
-	ghoulPet.Pet.OnPetEnable = ghoulPet.enable
-	ghoulPet.Pet.OnPetDisable = ghoulPet.disable
-
-	ghoulPet.EnableFocusBar(func(sim *core.Simulation) {
-		if ghoulPet.GCD.IsReady(sim) {
-			ghoulPet.OnGCDReady(sim)
-		}
-	})
-
 	ghoulPet.EnableAutoAttacks(ghoulPet, core.AutoAttackOptions{
 		MainHand: core.Weapon{
 			BaseDamageMin:  42,
@@ -86,6 +87,19 @@ func (dk *Deathknight) SetupGhoul(ghoulPet *GhoulPet) {
 	ghoulPet.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/83.3))
 
 	core.ApplyPetConsumeEffects(&ghoulPet.Character, dk.Consumes)
+
+	return ghoulPet
+}
+
+func (dk *Deathknight) SetupGhoul(ghoulPet *GhoulPet) {
+	ghoulPet.Pet.OnPetEnable = ghoulPet.enable
+	ghoulPet.Pet.OnPetDisable = ghoulPet.disable
+
+	ghoulPet.EnableFocusBar(func(sim *core.Simulation) {
+		if ghoulPet.GCD.IsReady(sim) {
+			ghoulPet.OnGCDReady(sim)
+		}
+	})
 
 	dk.AddPet(ghoulPet)
 }
@@ -136,7 +150,7 @@ func (ghoulPet *GhoulPet) enable(sim *core.Simulation) {
 	if !ghoulPet.PermanentPet {
 		ghoulPet.PseudoStats.MeleeSpeedMultiplier = ghoulPet.dkOwner.PseudoStats.MeleeSpeedMultiplier
 		if sim.Log != nil {
-			sim.Log("Scaling pet to " + strconv.FormatFloat(ghoulPet.PseudoStats.MeleeSpeedMultiplier, 'f', 3, 64))
+			ghoulPet.Log(sim, "Setting attack speed multiplier to "+strconv.FormatFloat(ghoulPet.PseudoStats.MeleeSpeedMultiplier, 'f', 3, 64))
 		}
 	}
 }
@@ -156,7 +170,7 @@ var ghoulPetBaseStats = stats.Stats{
 	stats.AttackPower: 836,
 
 	// Add 1.8% because pets aren't affected by that component of crit suppression.
-	stats.MeleeCrit: (1.1515 + 1.8) * core.CritRatingPerCritChance,
+	stats.MeleeCrit: (3.2 + 1.8) * core.CritRatingPerCritChance,
 }
 
 func (dk *Deathknight) ghoulStatInheritance() core.PetStatInheritance {
@@ -178,6 +192,15 @@ func (dk *Deathknight) ghoulStatInheritance() core.PetStatInheritance {
 			stats.SpellHaste: ownerStats[stats.MeleeHaste],
 		}
 	}
+}
+
+var armyGhoulPetBaseStats = stats.Stats{
+	stats.Agility:     856,
+	stats.Strength:    331,
+	stats.AttackPower: 836,
+
+	// Add 1.8% because pets aren't affected by that component of crit suppression.
+	stats.MeleeCrit: (3.2 + 1.8) * core.CritRatingPerCritChance,
 }
 
 func (dk *Deathknight) armyGhoulStatInheritance() core.PetStatInheritance {

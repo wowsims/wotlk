@@ -26,6 +26,7 @@ func (dk *Deathknight) registerEmpowerRuneWeaponSpell() {
 
 			amountOfRunicPower := 25.0
 			dk.AddRunicPower(sim, amountOfRunicPower, dk.EmpowerRuneWeapon.RunicPowerMetrics())
+
 		},
 	})
 
@@ -61,6 +62,7 @@ func (dk *Deathknight) CanEmpowerRuneWeapon(sim *core.Simulation) bool {
 func (dk *Deathknight) CastEmpowerRuneWeapon(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanEmpowerRuneWeapon(sim) {
 		dk.EmpowerRuneWeapon.Cast(sim, target)
+		dk.UpdateMajorCooldowns()
 		return true
 	}
 	return false

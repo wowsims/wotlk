@@ -591,6 +591,9 @@ message Debuffs {
 	bool scorpid_sting = 32;
 	bool shadow_embrace = 33;
 	bool screech = 34;
+
+	// 1 = normal, 2 = talented, 3 = talented+glyphed
+	int32 hunters_mark = 35;
 }
 
 enum MobType {

@@ -13,6 +13,8 @@ func (dk *Deathknight) PrecastArmyOfTheDead(sim *core.Simulation) {
 	dk.ArmyOfTheDead.CD.Use(sim)
 	dk.ArmyOfTheDead.CD.Set(sim.CurrentTime + dk.ArmyOfTheDead.CD.Duration - time.Second*10)
 
+	dk.UpdateMajorCooldowns()
+
 	for i := 0; i < 8; i++ {
 		timeLeft := (40 - (10 - 0.5*float64(i)))
 		if sim.Log != nil {
@@ -69,7 +71,7 @@ func (dk *Deathknight) registerArmyOfTheDeadCD() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
-			dkSpellCost := dk.DetermineOptimalCost(sim, 1, 1, 1)
+			dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_BFU)
 			dk.Spend(sim, spell, dkSpellCost)
 
 			amountOfRunicPower := 15.0
@@ -108,6 +110,7 @@ func (dk *Deathknight) CanArmyOfTheDead(sim *core.Simulation) bool {
 func (dk *Deathknight) CastArmyOfTheDead(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanArmyOfTheDead(sim) {
 		dk.ArmyOfTheDead.Cast(sim, target)
+		dk.UpdateMajorCooldowns()
 		return true
 	}
 	return false

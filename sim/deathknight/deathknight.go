@@ -19,6 +19,7 @@ type DeathknightInputs struct {
 	RefreshHornOfWinter  bool
 	UnholyPresenceOpener bool
 	ArmyOfTheDeadType    proto.Deathknight_Rotation_ArmyOfTheDead
+	FirstDisease         proto.Deathknight_Rotation_FirstDisease
 }
 
 type Deathknight struct {
@@ -201,8 +202,6 @@ func (dk *Deathknight) Initialize() {
 	dk.registerRaiseDeadCD()
 	dk.registerSummonGargoyleCD()
 	dk.registerArmyOfTheDeadCD()
-
-	dk.SetupRotation()
 }
 
 func (dk *Deathknight) Reset(sim *core.Simulation) {
