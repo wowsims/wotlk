@@ -9,10 +9,11 @@ import (
 )
 
 func (warlock *Warlock) registerChaosBoltSpell() {
-	fireAndBrimstoneBonus:= 0.02*float64(warlock.Talents.FireAndBrimstone)
 	actionID:= core.ActionID{SpellID: 59172}
 	spellSchool := core.SpellSchoolFire
 	baseAdditiveMultiplier:= warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
+	fireAndBrimstoneBonus:= 0.02*float64(warlock.Talents.FireAndBrimstone)
+	normalMultiplier := baseAdditiveMultiplier + fireAndBrimstoneBonus
 	spellCoefficient:= 0.7142*(1+0.04*float64(warlock.Talents.ShadowAndFlame))
 	
 	effect := core.SpellEffect{
@@ -24,7 +25,9 @@ func (warlock *Warlock) registerChaosBoltSpell() {
 		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
 		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if warlock.ImmolateDot.IsActive() {
-				spellEffect.DamageMultiplier = baseAdditiveMultiplier + fireAndBrimstoneBonus
+				spellEffect.DamageMultiplier = normalMultiplier
+			} else {
+				spellEffect.DamageMultiplier = normalMultiplier - fireAndBrimstoneBonus
 			}
 		},
 	}

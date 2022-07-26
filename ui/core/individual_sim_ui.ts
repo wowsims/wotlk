@@ -565,6 +565,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			{ item: IconInputs.ManaTideTotem, stats: [Stat.StatMP5] },
 			{ item: IconInputs.Innervate, stats: [Stat.StatMP5] },
 			{ item: IconInputs.PowerInfusion, stats: [Stat.StatMP5, Stat.StatSpellPower] },
+			{ item: IconInputs.TricksOfTheTrade, stats: [Stat.StatAttackPower, Stat.StatSpellPower] },
 		] as Array<StatOption<IconPickerConfig<Player<any>, any>>>);
 		if (miscBuffOptions.length > 0) {
 			new MultiIconPicker(buffsSection, this.player, {

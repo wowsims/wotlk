@@ -22,12 +22,14 @@ export class AssignmentsPicker extends Component {
 
 	private readonly innervatesPicker: InnervatesPicker;
 	private readonly powerInfusionsPicker: PowerInfusionsPicker;
+	private readonly tricksOfTheTradesPicker: TricksOfTheTradesPicker;
 
 	constructor(parentElem: HTMLElement, raidSimUI: RaidSimUI) {
 		super(parentElem, 'assignments-picker-root');
 		this.raidSimUI = raidSimUI;
 		this.innervatesPicker = new InnervatesPicker(this.rootElem, raidSimUI);
 		this.powerInfusionsPicker = new PowerInfusionsPicker(this.rootElem, raidSimUI);
+		this.tricksOfTheTradesPicker = new TricksOfTheTradesPicker(this.rootElem, raidSimUI);
 	}
 }
 
@@ -208,5 +210,33 @@ class PowerInfusionsPicker extends AssignedBuffPicker {
 
 	setBuffBotValue(eventID: EventID, buffBot: BuffBot, newValue: RaidTarget) {
 		buffBot.setPowerInfusionAssignment(eventID, newValue);
+	}
+}
+
+class TricksOfTheTradesPicker extends AssignedBuffPicker {
+	getTitle(): string {
+		return 'Tricks of the Trades';
+	}
+
+	getSourcePlayers(): Array<Player<any> | BuffBot> {
+		return this.raidSimUI.getPlayersAndBuffBots().filter(playerOrBot => playerOrBot?.getClass() == Class.ClassRogue) as Array<Player<any> | BuffBot>;
+	}
+
+	getPlayerValue(player: Player<any>): RaidTarget {
+		return (player as Player<Spec.SpecRogue>).getSpecOptions().tricksOfTheTradeTarget || emptyRaidTarget();
+	}
+
+	setPlayerValue(eventID: EventID, player: Player<any>, newValue: RaidTarget) {
+		const newOptions = (player as Player<Spec.SpecRogue>).getSpecOptions();
+		newOptions.tricksOfTheTradeTarget = newValue;
+		player.setSpecOptions(eventID, newOptions);
+	}
+
+	getBuffBotValue(buffBot: BuffBot): RaidTarget {
+		return buffBot.getTricksOfTheTradeAssignment();
+	}
+
+	setBuffBotValue(eventID: EventID, buffBot: BuffBot, newValue: RaidTarget) {
+		buffBot.setTricksOfTheTradeAssignment(eventID, newValue);
 	}
 }
