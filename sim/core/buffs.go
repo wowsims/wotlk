@@ -157,6 +157,13 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		character.PseudoStats.DamageTakenMultiplier *= 0.97
 	}
 
+	// TODO: Is scroll exclusive to totem?
+	if raidBuffs.StoneskinTotem != proto.TristateEffect_TristateEffectMissing {
+		character.AddStats(stats.Stats{
+			stats.Armor: GetTristateValueFloat(raidBuffs.StoneskinTotem, 1150, 1380),
+		})
+	}
+
 	if raidBuffs.DevotionAura != proto.TristateEffect_TristateEffectMissing {
 		character.AddStats(stats.Stats{
 			stats.Armor: GetTristateValueFloat(raidBuffs.DevotionAura, 861, 1205),
@@ -166,6 +173,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 			stats.Armor: 750,
 		})
 	}
+
 	if raidBuffs.RetributionAura {
 		RetributionAura(character, raidBuffs.SanctifiedRetribution)
 	}
