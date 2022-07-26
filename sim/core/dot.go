@@ -63,21 +63,6 @@ func (dot *Dot) Rollover(sim *Simulation) {
 	dot.Aura.Refresh(sim)
 }
 
-// Reapply will reset the current DoT's timer but keep the same Aura (so stacks are preserved)
-// This will re-snapshot, and restart the pending action.
-func (dot *Dot) Reapply(sim *Simulation) {
-	dot.tickAction.Cancel(sim)
-	dot.RecomputeAuraDuration() // calculate aura duration
-	dot.TakeSnapshot(sim)       // snapshots dmg / sp / crit
-
-	periodicOptions := dot.basePeriodicOptions()
-	periodicOptions.Period = dot.tickPeriod
-	dot.tickAction = NewPeriodicAction(sim, periodicOptions)
-	sim.AddPendingAction(dot.tickAction)
-
-	dot.Aura.Refresh(sim) // resets aura with new duration
-}
-
 func (dot *Dot) Apply(sim *Simulation) {
 	dot.Cancel(sim)
 	dot.TickCount = 0

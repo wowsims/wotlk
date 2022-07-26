@@ -483,12 +483,7 @@ func (paladin *Paladin) applyRighteousVengeance() {
 
 			if spell.SpellID == paladin.CrusaderStrike.SpellID || spell.SpellID == paladin.DivineStorm.SpellID || spell.Flags.Matches(SpellFlagSecondaryJudgement) {
 				dots[spellEffect.Target.Index].TickEffects = effects[spellEffect.Target.Index](spellEffect)
-
-				if !dots[spellEffect.Target.Index].IsActive() {
-					dots[spellEffect.Target.Index].Apply(sim)
-				}
-
-				dots[spellEffect.Target.Index].Reapply(sim)
+				dots[spellEffect.Target.Index].Apply(sim)
 			}
 		},
 	})

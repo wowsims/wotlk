@@ -64,10 +64,10 @@ func (druid *Druid) registerLacerateSpell() {
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					if druid.LacerateDot.IsActive() {
-						druid.LacerateDot.Reapply(sim)
+						druid.LacerateDot.Refresh(sim)
 						druid.LacerateDot.AddStack(sim)
 					} else {
-						druid.LacerateDot.Apply(sim)
+						druid.LacerateDot.Refresh(sim)
 						druid.LacerateDot.SetStacks(sim, 1)
 					}
 				} else {

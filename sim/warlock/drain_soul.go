@@ -116,7 +116,7 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 			FlatThreatBonus:  1,
 			OutcomeApplier:   warlock.OutcomeFuncAlwaysHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				warlock.DrainSoulDot.Reapply(sim)
+				warlock.DrainSoulDot.Apply(sim) // TODO: do we want to just refresh and continue ticking with same snapshot or update snapshot?
 				warlock.DrainSoulDot.Aura.UpdateExpires(warlock.DrainSoulDot.Aura.ExpiresAt() + epsilon)
 			},
 		}),
