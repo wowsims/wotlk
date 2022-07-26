@@ -1,6 +1,7 @@
 package tank
 
 import (
+	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -78,14 +79,11 @@ func NewFeralTankDruid(character core.Character, options proto.Player) *FeralTan
 	// Dire Bear Form bonuses.
 	bear.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+0.25)
 
-	// TODO: make AP depend on weapon DPS instead of FAP
-	// bear.AddStatDependency(stats.StatDependency{
-	// 	SourceStat:   stats.FeralAttackPower,
-	// 	ModifiedStat: stats.AttackPower,
-	// 	Modifier: func(feralAttackPower float64, attackPower float64) float64 {
-	// 		return attackPower + feralAttackPower*1
-	// 	},
-	// })
+	dps := (((bear.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponDamageMax - bear.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponDamageMin) / 2.0) + bear.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponDamageMin) / bear.Equip[proto.ItemSlot_ItemSlotMainHand].SwingSpeed
+	fap := math.Floor((dps - 54.8) * 14)
+	if fap > 0 {
+		bear.AddStat(stats.AttackPower, fap)
+	}
 
 	return bear
 }
