@@ -453,20 +453,21 @@ message RaidBuffs {
 	bool bloodlust = 29;
 	TristateEffect thorns = 30;
 	TristateEffect devotion_aura = 31;
-	bool retribution_aura = 32;
-	bool shadow_protection = 33;	
+	TristateEffect stoneskin_totem = 32;
+	bool retribution_aura = 33;
+	bool shadow_protection = 34;	
 
 	// Drums
-	bool drums_of_forgotten_kings = 34;
-	bool drums_of_the_wild = 35;
+	bool drums_of_forgotten_kings = 35;
+	bool drums_of_the_wild = 36;
 
 	// Scroll
-	bool scroll_of_protection = 36;
-	bool scroll_of_stamina = 37;
-	bool scroll_of_strength = 38;
-	bool scroll_of_agility = 39;
-	bool scroll_of_intellect = 40;
-	bool scroll_of_spirit = 41;
+	bool scroll_of_protection = 37;
+	bool scroll_of_stamina = 38;
+	bool scroll_of_strength = 39;
+	bool scroll_of_agility = 40;
+	bool scroll_of_intellect = 41;
+	bool scroll_of_spirit = 42;
 }
 
 // Buffs that affect a single party.
