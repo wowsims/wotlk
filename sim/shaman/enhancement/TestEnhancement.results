@@ -295,6 +295,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-EyeoftheBroodmother-45308"
+ value: {
+  dps: 2075.7475035160032
+  tps: 1632.959184348835
+ }
+}
+dps_results: {
  key: "TestEnhancement-AllItems-Fathom-BroochoftheTidewalker-30663"
  value: {
   dps: 1945.393172282299
@@ -341,6 +348,13 @@ dps_results: {
  value: {
   dps: 2048.34626471948
   tps: 1606.952475755671
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-FuturesightRune-38763"
+ value: {
+  dps: 1960.5877895161213
+  tps: 1537.9171302799184
  }
 }
 dps_results: {
@@ -635,13 +649,6 @@ dps_results: {
  value: {
   dps: 1877.8708092827242
   tps: 1475.8524098498467
- }
-}
-dps_results: {
- key: "TestEnhancement-AllItems-Spirit-WorldGlass-39388"
- value: {
-  dps: 1949.383403236564
-  tps: 1527.5312394685086
  }
 }
 dps_results: {

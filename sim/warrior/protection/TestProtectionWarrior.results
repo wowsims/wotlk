@@ -339,6 +339,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestProtectionWarrior-AllItems-EyeoftheBroodmother-45308"
+ value: {
+  dps: 475.61011841399954
+  tps: 829.680661882449
+ }
+}
+dps_results: {
  key: "TestProtectionWarrior-AllItems-FaithinFelsteel"
  value: {
   dps: 440.2131643869914
@@ -385,6 +392,13 @@ dps_results: {
  value: {
   dps: 504.0369811340835
   tps: 877.1293210552113
+ }
+}
+dps_results: {
+ key: "TestProtectionWarrior-AllItems-FuturesightRune-38763"
+ value: {
+  dps: 463.27004541103275
+  tps: 808.2280527518325
  }
 }
 dps_results: {
@@ -658,13 +672,6 @@ dps_results: {
  value: {
   dps: 462.99180091479997
   tps: 807.0317920816855
- }
-}
-dps_results: {
- key: "TestProtectionWarrior-AllItems-Spirit-WorldGlass-39388"
- value: {
-  dps: 463.27004541103275
-  tps: 808.2280527518325
  }
 }
 dps_results: {

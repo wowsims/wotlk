@@ -281,6 +281,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestRetribution-AllItems-EyeoftheBroodmother-45308"
+ value: {
+  dps: 2557.331163635181
+  tps: 2339.9499480614863
+ }
+}
+dps_results: {
  key: "TestRetribution-AllItems-FaithinFelsteel"
  value: {
   dps: 2185.5921861832685
@@ -334,6 +341,13 @@ dps_results: {
  value: {
   dps: 2638.927303343124
   tps: 2410.2028054724583
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-FuturesightRune-38763"
+ value: {
+  dps: 2502.4451396462696
+  tps: 2294.3448316975664
  }
 }
 dps_results: {
@@ -677,13 +691,6 @@ dps_results: {
  value: {
   dps: 2286.1691049817578
   tps: 2102.4811989626833
- }
-}
-dps_results: {
- key: "TestRetribution-AllItems-Spirit-WorldGlass-39388"
- value: {
-  dps: 2492.71031955885
-  tps: 2287.1248933518486
  }
 }
 dps_results: {
