@@ -62,6 +62,8 @@ message BuffBot {
 
 	// The assigned player to PI. Only used for disc priest buffbots.
 	RaidTarget power_infusion_assignment = 4;
+
+	RaidTarget tricks_of_the_trade_assignment = 5;
 }
 
 message BlessingsAssignment {
