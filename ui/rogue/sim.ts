@@ -133,6 +133,11 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 			//	],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: RogueInputs.RogueRotationConfig,
+			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
+			includeBuffDebuffInputs: [
+			],
+			excludeBuffDebuffInputs: [
+			],
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [

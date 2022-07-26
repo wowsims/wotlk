@@ -13,6 +13,14 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 	actionID := core.ActionID{SpellID: 47809}
 	spellSchool := core.SpellSchoolShadow
 	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
+	baseCost := 0.17 * warlock.BaseMana
+	costReductionFactor := 1.0
+	if float64(warlock.Talents.Cataclysm) > 0 {
+		costReductionFactor -= 0.01 + 0.03*float64(warlock.Talents.Cataclysm)
+	}
+	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfShadowBolt) {
+		costReductionFactor -= 0.1
+	}
 
 	effect := core.SpellEffect{
 		ProcMask: core.ProcMaskSpellDamage,
@@ -28,24 +36,14 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 			}
 			// ISB debuff
 			if warlock.Talents.ImprovedShadowBolt > 0 {
-				if sim.RandomFloat("ISB") < ISBProcChance {
-					if !core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() {
-						core.ShadowMasteryAura(warlock.CurrentTarget).Activate(sim)
-					} else {
-						core.ShadowMasteryAura(warlock.CurrentTarget).Refresh(sim)
+				if warlock.Talents.ImprovedShadowBolt < 5 { // This will return early if we 'miss' the refresh, 5 pts can't 'miss'.
+					if sim.RandomFloat("ISB") > ISBProcChance {
+						return
 					}
 				}
+				core.ShadowMasteryAura(warlock.CurrentTarget).Activate(sim) // calls refresh if already active.
 			}
 		},
-	}
-
-	baseCost := 0.17 * warlock.BaseMana
-	costReductionFactor := 1.0
-	if float64(warlock.Talents.Cataclysm) > 0 {
-		costReductionFactor -= 0.01 + 0.03*float64(warlock.Talents.Cataclysm)
-	}
-	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfShadowBolt) {
-		costReductionFactor -= 0.1
 	}
 
 	warlock.ShadowBolt = warlock.RegisterSpell(core.SpellConfig{

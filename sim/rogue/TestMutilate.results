@@ -73,8 +73,8 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 1999.266559643247
-  tps: 1407.773838938478
+  dps: 2087.8185405722347
+  tps: 1470.6457453980574
  }
 }
 dps_results: {
@@ -260,6 +260,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestMutilate-AllItems-EyeoftheBroodmother-45308"
+ value: {
+  dps: 1976.178013012487
+  tps: 1391.4654584844425
+ }
+}
+dps_results: {
  key: "TestMutilate-AllItems-ForgeEmber-37660"
  value: {
   dps: 1975.8490432374272
@@ -285,6 +292,13 @@ dps_results: {
  value: {
   dps: 2108.171539824562
   tps: 1485.2261168112339
+ }
+}
+dps_results: {
+ key: "TestMutilate-AllItems-FuturesightRune-38763"
+ value: {
+  dps: 1960.8740554296799
+  tps: 1380.6449028908673
  }
 }
 dps_results: {
@@ -318,8 +332,8 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-IncisorFragment-37723"
  value: {
-  dps: 1974.6461598786377
-  tps: 1390.423097049628
+  dps: 2044.0610806876525
+  tps: 1439.707690824029
  }
 }
 dps_results: {
@@ -544,13 +558,6 @@ dps_results: {
  value: {
   dps: 1776.0567492849348
   tps: 1249.3877879220165
- }
-}
-dps_results: {
- key: "TestMutilate-AllItems-Spirit-WorldGlass-39388"
- value: {
-  dps: 1960.8740554296799
-  tps: 1380.6449028908673
  }
 }
 dps_results: {

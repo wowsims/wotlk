@@ -39,11 +39,7 @@ func (warlock *Warlock) registerHauntSpell() {
 			if !spellEffect.Landed() {
 				return
 			}
-			if !warlock.HauntAura.IsActive() {
-				warlock.HauntAura.Activate(sim)
-			} else {
-				warlock.HauntAura.Refresh(sim)
-			}
+			warlock.HauntAura.Activate(sim)
 		},
 	}
 

@@ -159,17 +159,14 @@ func (spellEffect *SpellEffect) SpellPower(unit *Unit, spell *Spell) float64 {
 }
 
 func (spellEffect *SpellEffect) SpellCritChance(unit *Unit, spell *Spell) float64 {
-	critRating := spell.BonusCritRating +
-		unit.PseudoStats.BonusSpellCritRating +
-		spellEffect.Target.PseudoStats.BonusCritRatingTaken +
-		spellEffect.Target.PseudoStats.BonusSpellCritRatingTaken
-
+	critRating := 0.0
 	// periodic spells apply crit from snapshot at time of initial cast if capable of a crit
 	// ignoring units real time crit in this case
 	if spellEffect.IsPeriodic {
 		critRating += (spellEffect.BonusSpellCritRating)
 	} else {
-		critRating += (unit.GetStat(stats.SpellCrit) + spellEffect.BonusSpellCritRating)
+		critRating += (unit.GetStat(stats.SpellCrit) + spellEffect.BonusSpellCritRating + spellEffect.BonusCritRating) + unit.PseudoStats.BonusSpellCritRating +
+			spellEffect.Target.PseudoStats.BonusCritRatingTaken + spellEffect.Target.PseudoStats.BonusSpellCritRatingTaken + spell.BonusCritRating
 	}
 
 	if spell.SpellSchool.Matches(SpellSchoolFire) {
@@ -198,7 +195,9 @@ func (spellEffect *SpellEffect) calcDamageSingle(sim *Simulation, spell *Spell, 
 	if !spell.Flags.Matches(SpellFlagIgnoreModifiers) {
 		if sim.Log != nil {
 			baseDmg := spellEffect.Damage
-			spellEffect.applyAttackerModifiers(sim, spell)
+			if !spellEffect.IsPeriodic { // dots snapshot personal attack dmg bonuses
+				spellEffect.applyAttackerModifiers(sim, spell)
+			}
 			afterAttackMods := spellEffect.Damage
 			spellEffect.applyResistances(sim, spell, attackTable)
 			afterResistances := spellEffect.Damage
@@ -212,7 +211,9 @@ func (spellEffect *SpellEffect) calcDamageSingle(sim *Simulation, spell *Spell, 
 				"%s %s [DEBUG] BaseDamage:%0.01f, AfterAttackerMods:%0.01f, AfterResistances:%0.01f, AfterTargetMods:%0.01f, AfterOutcome:%0.01f",
 				spellEffect.Target.LogLabel(), spell.ActionID, baseDmg, afterAttackMods, afterResistances, afterTargetMods, afterOutcome)
 		} else {
-			spellEffect.applyAttackerModifiers(sim, spell)
+			if !spellEffect.IsPeriodic { // dots snapshot personal attack dmg bonuses
+				spellEffect.applyAttackerModifiers(sim, spell)
+			}
 			spellEffect.applyResistances(sim, spell, attackTable)
 			spellEffect.applyTargetModifiers(sim, spell, attackTable)
 			spellEffect.PreoutcomeDamage = spellEffect.Damage
@@ -270,42 +271,54 @@ func (spellEffect *SpellEffect) String() string {
 func (spellEffect *SpellEffect) applyAttackerModifiers(sim *Simulation, spell *Spell) {
 	attacker := spell.Unit
 
-	if spellEffect.ProcMask.Matches(ProcMaskRanged) {
-		spellEffect.Damage *= attacker.PseudoStats.RangedDamageDealtMultiplier
-	}
-	if spell.Flags.Matches(SpellFlagAgentReserved1) {
-		spellEffect.Damage *= attacker.PseudoStats.AgentReserved1DamageDealtMultiplier
-	}
-	if spell.Flags.Matches(SpellFlagDisease) {
-		spellEffect.Damage *= attacker.PseudoStats.DiseaseDamageDealtMultiplier
-	}
-
-	spellEffect.Damage *= attacker.PseudoStats.DamageDealtMultiplier
 	if spell.SpellSchool.Matches(SpellSchoolPhysical) {
-		spellEffect.Damage *= attacker.PseudoStats.PhysicalDamageDealtMultiplier
 		if spellEffect.ProcMask.Matches(ProcMaskMeleeMH) {
 			spellEffect.BonusArmorPenRating += attacker.PseudoStats.BonusMHArmorPenRating
 		}
 		if spellEffect.ProcMask.Matches(ProcMaskMeleeOH) {
 			spellEffect.BonusArmorPenRating += attacker.PseudoStats.BonusOHArmorPenRating
 		}
+	}
+	spellEffect.Damage *= spellEffect.snapshotAttackModifiers(spell)
+}
+
+// snapshotAttackModifiers will calculate the total %dmg to add from attacker bonuses.
+func (spellEffect *SpellEffect) snapshotAttackModifiers(spell *Spell) float64 {
+	attacker := spell.Unit
+
+	multiplier := 1.0
+
+	if spellEffect.ProcMask.Matches(ProcMaskRanged) {
+		multiplier *= attacker.PseudoStats.RangedDamageDealtMultiplier
+	}
+	if spell.Flags.Matches(SpellFlagAgentReserved1) {
+		multiplier *= attacker.PseudoStats.AgentReserved1DamageDealtMultiplier
+	}
+	if spell.Flags.Matches(SpellFlagDisease) {
+		multiplier *= attacker.PseudoStats.DiseaseDamageDealtMultiplier
+	}
+
+	multiplier *= attacker.PseudoStats.DamageDealtMultiplier
+	if spell.SpellSchool.Matches(SpellSchoolPhysical) {
+		multiplier *= attacker.PseudoStats.PhysicalDamageDealtMultiplier
 	} else if spell.SpellSchool.Matches(SpellSchoolArcane) {
-		spellEffect.Damage *= attacker.PseudoStats.ArcaneDamageDealtMultiplier
+		multiplier *= attacker.PseudoStats.ArcaneDamageDealtMultiplier
 	} else if spell.SpellSchool.Matches(SpellSchoolFire) {
-		spellEffect.Damage *= attacker.PseudoStats.FireDamageDealtMultiplier
+		multiplier *= attacker.PseudoStats.FireDamageDealtMultiplier
 	} else if spell.SpellSchool.Matches(SpellSchoolFrost) {
-		spellEffect.Damage *= attacker.PseudoStats.FrostDamageDealtMultiplier
+		multiplier *= attacker.PseudoStats.FrostDamageDealtMultiplier
 	} else if spell.SpellSchool.Matches(SpellSchoolHoly) {
-		spellEffect.Damage *= attacker.PseudoStats.HolyDamageDealtMultiplier
+		multiplier *= attacker.PseudoStats.HolyDamageDealtMultiplier
 	} else if spell.SpellSchool.Matches(SpellSchoolNature) {
-		spellEffect.Damage *= attacker.PseudoStats.NatureDamageDealtMultiplier
+		multiplier *= attacker.PseudoStats.NatureDamageDealtMultiplier
 	} else if spell.SpellSchool.Matches(SpellSchoolShadow) {
-		spellEffect.Damage *= attacker.PseudoStats.ShadowDamageDealtMultiplier
+		multiplier *= attacker.PseudoStats.ShadowDamageDealtMultiplier
 		if spellEffect.IsPeriodic {
-			spellEffect.Damage *= attacker.PseudoStats.PeriodicShadowDamageDealtMultiplier
+			multiplier *= attacker.PseudoStats.PeriodicShadowDamageDealtMultiplier
 		}
 	}
 
+	return multiplier
 }
 
 func (spellEffect *SpellEffect) applyTargetModifiers(sim *Simulation, spell *Spell, attackTable *AttackTable) {

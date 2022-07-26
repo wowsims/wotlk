@@ -17,6 +17,9 @@ type Priest struct {
 
 	Latency float64
 
+	ShadowfiendAura *core.Aura
+	ShadowfiendPet  *Shadowfiend
+
 	// cached cast stuff
 	// TODO: aoe multi-target situations will need multiple spells ticking for each target.
 
@@ -24,6 +27,7 @@ type Priest struct {
 	MiseryAura         *core.Aura
 	ShadowWeavingAura  *core.Aura
 	ShadowyInsightAura *core.Aura
+	ImprovedSpiritTap  *core.Aura
 
 	SurgeOfLightProcAura *core.Aura
 
@@ -43,7 +47,6 @@ type Priest struct {
 	DevouringPlagueDot *core.Dot
 	HolyFireDot        *core.Dot
 	MindFlayDot        []*core.Dot
-	ShadowfiendDot     *core.Dot
 	StarshardsDot      *core.Dot
 	VampiricTouchDot   *core.Dot
 }
@@ -64,10 +67,6 @@ func (priest *Priest) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	raidBuffs.PowerWordFortitude = core.MaxTristate(raidBuffs.PowerWordFortitude, core.MakeTristateValue(
 		true,
 		priest.Talents.ImprovedPowerWordFortitude == 2))
-
-	//raidBuffs.DivineSpirit = core.MaxTristate(raidBuffs.DivineSpirit, core.MakeTristateValue(
-	//priest.Talents.DivineSpirit,
-	//priest.Talents.ImprovedDivineSpirit == 2))
 }
 
 func (priest *Priest) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
@@ -100,6 +99,12 @@ func (priest *Priest) Initialize() {
 		core.ActionID{SpellID: 61792},
 		stats.Stats{stats.SpellPower: priest.GetStat(stats.Spirit) * 0.30},
 		time.Second*10,
+	)
+	priest.ImprovedSpiritTap = priest.NewTemporaryStatsAura(
+		"Improved Spirit Tap",
+		core.ActionID{SpellID: 59000},
+		stats.Stats{stats.Spirit: priest.GetStat(stats.Spirit) * 1.1},
+		time.Second*8,
 	)
 
 	priest.registerDevouringPlagueSpell()
@@ -152,6 +157,7 @@ func New(char core.Character, selfBuffs SelfBuffs, talents proto.PriestTalents) 
 		Talents:   talents,
 	}
 	priest.EnableManaBar()
+	priest.ShadowfiendPet = priest.NewShadowfiend()
 
 	return priest
 }

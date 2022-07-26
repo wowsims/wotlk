@@ -49,6 +49,9 @@ func (priest *Priest) registerShadowWordDeathSpell() {
 				if spellEffect.DidCrit() && priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow)) {
 					priest.ShadowyInsightAura.Activate(sim)
 				}
+				if spellEffect.DidCrit() && float64(priest.Talents.ImprovedSpiritTap) > 0 {
+					priest.ImprovedSpiritTap.Activate(sim)
+				}
 			},
 			BaseDamage: core.WrapBaseDamageConfig(
 				core.BaseDamageConfigMagic(750, 870, 0.429),

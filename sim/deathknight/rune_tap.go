@@ -37,11 +37,11 @@ func (dk *Deathknight) registerRuneTapSpell() {
 			IgnoreHaste: true,
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			dkSpellCost := dk.DetermineOptimalCost(sim, 1, 0, 0)
-			dk.Spend(sim, spell, dkSpellCost)
-
 			maxHealth := dk.MaxHealth()
 			dk.GainHealth(sim, (1.0+healthGainMult)*(maxHealth*0.1), healthMetrics)
+
+			dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_B)
+			dk.Spend(sim, spell, dkSpellCost)
 		},
 	})
 }

@@ -214,6 +214,7 @@ export interface PlayerEnumInputConfig<SpecType extends Spec, Message> {
 	values: Array<EnumValueConfig>;
 	enableWhen?: (player: Player<SpecType>) => boolean,
 	showWhen?: (player: Player<SpecType>) => boolean,
+	changeEmitter?: (player: Player<SpecType>) => TypedEvent<any>,
 }
 // T is unused, but kept to have the same interface as the icon enum inputs.
 export function makeSpecOptionsEnumInput<SpecType extends Spec, T>(config: PlayerEnumInputConfig<SpecType, SpecOptions<SpecType>>): TypedEnumPickerConfig<Player<SpecType>> {
@@ -228,7 +229,7 @@ export function makeSpecOptionsEnumInput<SpecType extends Spec, T>(config: Playe
 			(newMessage[config.fieldName] as unknown as number) = newVal;
 			player.setSpecOptions(eventID, newMessage);
 		},
-		changedEvent: (player: Player<SpecType>) => player.specOptionsChangeEmitter,
+		changedEvent: config.changeEmitter || ((player: Player<SpecType>) => player.specOptionsChangeEmitter),
 		enableWhen: config.enableWhen,
 		showWhen: config.showWhen,
 	});
@@ -246,7 +247,7 @@ export function makeRotationEnumInput<SpecType extends Spec, T>(config: PlayerEn
 			(newMessage[config.fieldName] as unknown as number) = newVal;
 			player.setRotation(eventID, newMessage);
 		},
-		changedEvent: (player: Player<SpecType>) => player.rotationChangeEmitter,
+		changedEvent: config.changeEmitter || ((player: Player<SpecType>) => player.rotationChangeEmitter),
 		enableWhen: config.enableWhen,
 		showWhen: config.showWhen,
 	});
@@ -346,6 +347,13 @@ export function makeTristateIconInput<SpecType extends Spec, Message, ModObject>
 	const input = makeNumberIconInput(config, id, fieldName);
 	input.states = 3;
 	input.improvedId = impId;
+	return input;
+}
+export function makeQuadstateIconInput<SpecType extends Spec, Message, ModObject>(config: WrappedTypedInputConfig<Message, ModObject, number>, id: ActionId, impId: ActionId, impId2: ActionId, fieldName: keyof Message): TypedIconPickerConfig<Player<SpecType>, number> {
+	const input = makeNumberIconInput(config, id, fieldName);
+	input.states = 4;
+	input.improvedId = impId;
+	input.improvedId2 = impId2;
 	return input;
 }
 export function makeMultistateIconInput<SpecType extends Spec, Message, ModObject>(config: WrappedTypedInputConfig<Message, ModObject, number>, id: ActionId, numStates: number, fieldName: keyof Message): TypedIconPickerConfig<Player<SpecType>, number> {

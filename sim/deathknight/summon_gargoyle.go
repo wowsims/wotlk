@@ -89,6 +89,7 @@ func (dk *Deathknight) CanSummonGargoyle(sim *core.Simulation) bool {
 func (dk *Deathknight) CastSummonGargoyle(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanSummonGargoyle(sim) {
 		dk.SummonGargoyle.Cast(sim, target)
+		dk.UpdateMajorCooldowns()
 		return true
 	}
 	return false
@@ -110,6 +111,7 @@ func (dk *Deathknight) NewGargoyle() *GargoylePet {
 			gargoyleBaseStats,
 			gargoyleStatInheritance,
 			false,
+			true,
 		),
 		dkOwner: dk,
 	}

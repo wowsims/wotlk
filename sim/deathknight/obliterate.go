@@ -19,19 +19,19 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool) *core.Spell {
 		diseaseConsumptionChance = 0.0
 	}
 
+	bonusBaseDamage := dk.sigilOfAwarenessBonus(dk.Obliterate)
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 584.0+bonusBaseDamage, 0.8, true)
+	if !isMH {
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 584.0+bonusBaseDamage, 0.8*dk.nervesOfColdSteelBonus(), true)
+	}
+
 	effect := core.SpellEffect{
 		BonusCritRating:  (dk.rimeCritBonus() + dk.subversionCritBonus() + dk.annihilationCritBonus() + dk.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,
-		DamageMultiplier: core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfObliterate), 1.25, 1.0),
+		DamageMultiplier: core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfObliterate), 1.25, 1.0) * dk.scourgelordsBattlegearDamageBonus(dk.Obliterate),
 		ThreatMultiplier: 1,
 
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				bonusBaseDamage := dk.sigilOfAwarenessBonus(dk.Obliterate)
-				weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 467.0+bonusBaseDamage, 0.8, true)
-				if !isMH {
-					weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 467.0+bonusBaseDamage, 0.8*dk.nervesOfColdSteelBonus(), true)
-				}
-
 				return weaponBaseDamage(sim, hitEffect, spell) *
 					dk.diseaseMultiplierBonus(hitEffect.Target, 0.125) *
 					dk.rageOfRivendareBonus(hitEffect.Target) *
@@ -100,7 +100,7 @@ func (dk *Deathknight) registerObliterateSpell() {
 
 				dk.LastCastOutcome = ObliterateMHOutcome
 				if dk.outcomeEitherWeaponHitOrCrit(ObliterateMHOutcome, ObliterateOHOutcome) {
-					dkSpellCost := dk.DetermineOptimalCost(sim, 0, 1, 1)
+					dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_FU)
 					dk.Spend(sim, spell, dkSpellCost)
 
 					amountOfRunicPower := 15.0 + 2.5*float64(dk.Talents.ChillOfTheGrave) + dk.scourgeborneBattlegearRunicPowerBonus()

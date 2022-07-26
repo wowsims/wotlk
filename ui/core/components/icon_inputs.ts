@@ -45,6 +45,7 @@ export const AllStatsPercentBuff = InputHelpers.makeMultiIconInput([
 
 export const ArmorBuff = InputHelpers.makeMultiIconInput([
 	makeTristateRaidBuffInput(ActionId.fromSpellId(48942), ActionId.fromSpellId(20140), 'devotionAura'),
+	makeTristateRaidBuffInput(ActionId.fromSpellId(58753), ActionId.fromSpellId(16293), 'stoneskinTotem'),
 	makeBooleanRaidBuffInput(ActionId.fromItemId(43468), 'scrollOfProtection'),
 	// stoneskin?
 ], 'Armor');
@@ -158,6 +159,7 @@ export const Thorns = makeTristateRaidBuffInput(ActionId.fromSpellId(53307), Act
 export const ManaTideTotem = makeMultistatePartyBuffInput(ActionId.fromSpellId(16190), 5, 'manaTideTotems');
 export const Innervate = makeMultistateIndividualBuffInput(ActionId.fromSpellId(29166), 11, 'innervates');
 export const PowerInfusion = makeMultistateIndividualBuffInput(ActionId.fromSpellId(10060), 11, 'powerInfusions');
+export const TricksOfTheTrade = makeMultistateIndividualBuffInput(ActionId.fromSpellId(57934), 11, 'tricksOfTheTrades');
 
 // Debuffs
 
@@ -199,7 +201,7 @@ export const MeleeAttackSpeedDebuff = InputHelpers.makeMultiIconInput([
 ], 'Atk Spd');
 
 export const MeleeHitDebuff = InputHelpers.makeMultiIconInput([
-	makeBooleanDebuffInput(ActionId.fromSpellId(48460), 'insectSwarm'),
+	makeBooleanDebuffInput(ActionId.fromSpellId(65855), 'insectSwarm'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(3043), 'scorpidSting'),
 ], 'Miss');
 
@@ -225,7 +227,8 @@ export const SpellDamageDebuff = InputHelpers.makeMultiIconInput([
 	makeBooleanDebuffInput(ActionId.fromSpellId(47865), 'curseOfElements'),
 ], 'Spell Dmg');
 
-export const JudgementOfWisdom = makeBooleanDebuffInput(ActionId.fromSpellId(53408), 'judgementOfWisdom');
+export const HuntersMark = withLabel(makeQuadstateDebuffInput(ActionId.fromSpellId(53338), ActionId.fromSpellId(19423), ActionId.fromItemId(42907), 'huntersMark'), 'Mark');
+export const JudgementOfWisdom = withLabel(makeBooleanDebuffInput(ActionId.fromSpellId(53408), 'judgementOfWisdom'), 'JoW');
 export const JudgementOfLight = makeBooleanDebuffInput(ActionId.fromSpellId(20271), 'judgementOfLight');
 export const GiftOfArthas = makeBooleanDebuffInput(ActionId.fromSpellId(11374), 'giftOfArthas');
 
@@ -306,6 +309,14 @@ function makeTristateDebuffInput(id: ActionId, impId: ActionId, fieldName: keyof
 		setValue: (eventID: EventID, raid: Raid, newVal: Debuffs) => raid.setDebuffs(eventID, newVal),
 		changeEmitter: (raid: Raid) => raid.debuffsChangeEmitter,
 	}, id, impId, fieldName);
+}
+function makeQuadstateDebuffInput(id: ActionId, impId: ActionId, impId2: ActionId, fieldName: keyof Debuffs): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
+	return InputHelpers.makeQuadstateIconInput<any, Debuffs, Raid>({
+		getModObject: (player: Player<any>) => player.getRaid()!,
+		getValue: (raid: Raid) => raid.getDebuffs(),
+		setValue: (eventID: EventID, raid: Raid, newVal: Debuffs) => raid.setDebuffs(eventID, newVal),
+		changeEmitter: (raid: Raid) => raid.debuffsChangeEmitter,
+	}, id, impId, impId2, fieldName);
 }
 function makeMultistatePartyBuffInput(id: ActionId, numStates: number, fieldName: keyof PartyBuffs): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
 	return InputHelpers.makeMultistateIconInput<any, PartyBuffs, Party>({

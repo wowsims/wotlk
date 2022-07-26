@@ -9,7 +9,9 @@ import (
 
 func (dk *Deathknight) registerDeathAndDecaySpell() {
 
-	var actionID = core.ActionID{SpellID: 49938}
+	actionID := core.ActionID{SpellID: 49938}
+	glyphBonus := core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDeathAndDecay), 1.2, 1.0)
+
 	dk.DeathAndDecayDot = core.NewDot(core.Dot{
 		Aura: dk.RegisterAura(core.Aura{
 			Label:    "Death and Decay",
@@ -21,7 +23,7 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 			ProcMask:        core.ProcMaskEmpty,
 			BonusSpellPower: 0.0,
 
-			DamageMultiplier: core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDeathAndDecay), 1.2, 1.0),
+			DamageMultiplier: glyphBonus * dk.scourgelordsPlateDamageBonus(),
 			ThreatMultiplier: 1,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
@@ -54,14 +56,14 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
-			dkSpellCost := dk.DetermineOptimalCost(sim, 1, 1, 1)
+			dk.DeathAndDecayDot.Apply(sim)
+			dk.DeathAndDecayDot.TickOnce()
+
+			dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_BFU)
 			dk.Spend(sim, spell, dkSpellCost)
 
 			amountOfRunicPower := 15.0
 			dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
-
-			dk.DeathAndDecayDot.Apply(sim)
-			dk.DeathAndDecayDot.TickOnce()
 		},
 	})
 

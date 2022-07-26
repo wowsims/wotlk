@@ -14,7 +14,7 @@ func (dk *Deathknight) registerUnbreakableArmorSpell() {
 
 	actionID := core.ActionID{SpellID: 51271}
 	cdTimer := dk.NewTimer()
-	cd := time.Minute * 1
+	cd := time.Minute*1 - dk.thassariansPlateCooldownReduction(dk.UnbreakableArmor)
 
 	dk.UnbreakableArmorAura = dk.RegisterAura(core.Aura{
 		Label:    "Unbreakable Armor",
@@ -43,13 +43,13 @@ func (dk *Deathknight) registerUnbreakableArmorSpell() {
 			IgnoreHaste: true,
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			dkSpellCost := dk.DetermineOptimalCost(sim, 0, 1, 0)
+			dk.UnbreakableArmorAura.Activate(sim)
+			dk.UnbreakableArmorAura.Prioritize()
+
+			dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_F)
 			dk.Spend(sim, spell, dkSpellCost)
 			amountOfRunicPower := 10.0
 			dk.AddRunicPower(sim, amountOfRunicPower, dk.UnbreakableArmor.RunicPowerMetrics())
-
-			dk.UnbreakableArmorAura.Activate(sim)
-			dk.UnbreakableArmorAura.Prioritize()
 		},
 	})
 }

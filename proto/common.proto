@@ -453,6 +453,7 @@ message RaidBuffs {
 	bool bloodlust = 29;
 	TristateEffect thorns = 30;
 	TristateEffect devotion_aura = 31;
+	TristateEffect stoneskin_totem = 42;
 	bool retribution_aura = 32;
 	bool shadow_protection = 33;	
 
@@ -505,6 +506,7 @@ message IndividualBuffs {
 	int32 power_infusions = 11;
 	int32 unholy_frenzy = 12;
 	int32 revitalize = 13;
+	int32 tricks_of_the_trades = 19;
 
 	bool vampiric_touch = 14;
 	bool hunting_party = 15;
@@ -591,6 +593,9 @@ message Debuffs {
 	bool scorpid_sting = 32;
 	bool shadow_embrace = 33;
 	bool screech = 34;
+
+	// 1 = normal, 2 = talented, 3 = talented+glyphed
+	int32 hunters_mark = 35;
 }
 
 enum MobType {
@@ -691,6 +696,7 @@ message Item {
 	bool unique = 13;
 	int32 ilvl = 20;
 	Profession required_profession = 21;
+	bool heroic = 22;
 }
 
 // Extra enum for describing which items are eligible for an enchant, when

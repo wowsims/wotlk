@@ -21,6 +21,7 @@ func (dk *Deathknight) registerBloodTapSpell() {
 				dk.DeathRuneGainMetrics(),
 				dk.BloodTap)
 
+			// Gain at the end, to take into account previous effects for callback
 			amountOfRunicPower := 10.0
 			dk.AddRunicPower(sim, amountOfRunicPower, dk.BloodTap.RunicPowerMetrics())
 		},

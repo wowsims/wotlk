@@ -45,6 +45,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 			petConfig.Stats,
 			petStatInheritance,
 			true,
+			false,
 		),
 		config: petConfig,
 		owner:  warlock,

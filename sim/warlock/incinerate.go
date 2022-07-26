@@ -12,6 +12,7 @@ func (warlock *Warlock) registerIncinerateSpell() {
 	actionID := core.ActionID{SpellID: 47838}
 	spellSchool := core.SpellSchoolFire
 	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
+	normalMultiplier := baseAdditiveMultiplier + fireAndBrimstoneBonus
 
 	effect := core.SpellEffect{
 		ProcMask: core.ProcMaskSpellDamage,
@@ -23,7 +24,9 @@ func (warlock *Warlock) registerIncinerateSpell() {
 		OutcomeApplier:   warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
 		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if warlock.ImmolateDot.IsActive() {
-				spellEffect.DamageMultiplier = baseAdditiveMultiplier + fireAndBrimstoneBonus
+				spellEffect.DamageMultiplier = normalMultiplier
+			} else {
+				spellEffect.DamageMultiplier = normalMultiplier - fireAndBrimstoneBonus
 			}
 		},
 	}

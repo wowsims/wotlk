@@ -37,8 +37,10 @@ func init() {
 	newHasteActive(38070, 148, time.Second*20, time.Minute*2) // Foresight's Anticipation
 	newHasteActive(38258, 140, time.Second*20, time.Minute*2) // Sailor's Knotted Charm
 	newHasteActive(38259, 140, time.Second*20, time.Minute*2) // First Mate's Pocketwatch
+	newHasteActive(38764, 208, time.Second*20, time.Minute*2) // Rune of Finite Variation
 	newHasteActive(40531, 491, time.Second*20, time.Minute*2) // Mark of Norgannon
 	newHasteActive(43836, 212, time.Second*20, time.Minute*2) // Thorny Rose Brooch
+	newHasteActive(45466, 432, time.Second*20, time.Minute*2) // Scale of Fates
 	newHasteActive(46088, 375, time.Second*20, time.Minute*2) // Platinum Disks of Swiftness
 	newHasteActive(48722, 512, time.Second*20, time.Minute*2) // Shard of the Crystal Heart
 	newHasteActive(50260, 464, time.Second*20, time.Minute*2) // Ephemeral Snowflake
@@ -53,8 +55,10 @@ func init() {
 	newAttackPowerActive(37557, 304, time.Second*20, time.Minute*2)  // Warsong's Fervor
 	newAttackPowerActive(38080, 264, time.Second*20, time.Minute*2)  // Automated Weapon Coater
 	newAttackPowerActive(38081, 280, time.Second*20, time.Minute*2)  // Scarab of Isanoth
+	newAttackPowerActive(38761, 248, time.Second*20, time.Minute*2)  // Talon of Hatred
 	newAttackPowerActive(39257, 670, time.Second*20, time.Minute*2)  // Loatheb's Shadow
 	newAttackPowerActive(44014, 432, time.Second*15, time.Minute*2)  // Fezzik's Pocketwatch
+	newAttackPowerActive(45263, 856, time.Second*20, time.Minute*2)  // Wrathstone
 	newAttackPowerActive(46086, 752, time.Second*20, time.Minute*2)  // Platinum Disks of Battle
 	newAttackPowerActive(47734, 1024, time.Second*20, time.Minute*2) // Mark of Supremacy
 
@@ -70,6 +74,9 @@ func init() {
 	newSpellPowerActive(38073, 120, time.Second*15, time.Minute*2) // Will of the Red Dragonflight
 	newSpellPowerActive(38213, 149, time.Second*20, time.Minute*2) // Harbringer's Wrath
 	newSpellPowerActive(38527, 183, time.Second*20, time.Minute*2) // Strike of the Seas
+	newSpellPowerActive(38760, 145, time.Second*20, time.Minute*2) // Mendicant's Charm
+	newSpellPowerActive(38762, 145, time.Second*20, time.Minute*2) // Insignia of Bloody Fire
+	newSpellPowerActive(38765, 202, time.Second*20, time.Minute*2) // Rune of Infinite Power
 	newSpellPowerActive(39811, 183, time.Second*20, time.Minute*2) // Badge of the Infiltrator
 	newSpellPowerActive(39819, 145, time.Second*20, time.Minute*2) // Bloodbinder's Runestone
 	newSpellPowerActive(39821, 145, time.Second*20, time.Minute*2) // Spiritist's Focus
@@ -78,6 +85,7 @@ func init() {
 	newSpellPowerActive(44013, 281, time.Second*20, time.Minute*2) // Cannoneer's Fuselighter
 	newSpellPowerActive(44015, 281, time.Second*20, time.Minute*2) // Cannoneer's Morale
 	newSpellPowerActive(45148, 505, time.Second*20, time.Minute*2) // Living Flame
+	newSpellPowerActive(45292, 408, time.Second*20, time.Minute*2) // Energy Siphon
 	newSpellPowerActive(46087, 440, time.Second*20, time.Minute*2) // Platinum Disks of Sorcery
 	newSpellPowerActive(48724, 599, time.Second*20, time.Minute*2) // Talisman of Resurgence
 	newSpellPowerActive(50357, 716, time.Second*20, time.Minute*2) // Maghia's Misguided Quill
@@ -112,6 +120,7 @@ func init() {
 		core.NewSimpleStatDefensiveTrinketEffect(itemID, stats.Stats{stats.Armor: bonus}, duration, cooldown)
 	})
 	newArmorActive(36993, 3570, time.Second*20, time.Minute*2) // Seal of the Pantheon
+	newArmorActive(45313, 5152, time.Second*20, time.Minute*2) // Furnace Stone
 
 	newBlockValueActive := testFirstOnly(func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
 		core.NewSimpleStatDefensiveTrinketEffect(itemID, stats.Stats{stats.BlockValue: bonus}, duration, cooldown)
@@ -137,6 +146,7 @@ func init() {
 	newSpiritActive := testFirstOnly(func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
 		core.NewSimpleStatDefensiveTrinketEffect(itemID, stats.Stats{stats.Spirit: bonus}, duration, cooldown)
 	})
+	newSpiritActive(38763, 184, time.Second*20, time.Minute*2) // Futuresight Rune
 	newSpiritActive(39388, 336, time.Second*20, time.Minute*2) // Spirit-World Glass
 
 	newResistsActive := testFirstOnly(func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {

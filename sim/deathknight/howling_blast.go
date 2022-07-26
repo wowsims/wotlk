@@ -56,14 +56,14 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 					}
 					if dk.CurrentTarget == spellEffect.Target {
 						if !dk.RimeAura.IsActive() {
-							dkSpellCost := dk.DetermineOptimalCost(sim, 0, 1, 1)
+							dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_FU)
 							dk.Spend(sim, spell, dkSpellCost)
 							amountOfRunicPower := 15.0 + 2.5*float64(dk.Talents.ChillOfTheGrave)
 							dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 						} else {
+							dk.RimeAura.Deactivate(sim)
 							amountOfRunicPower := 2.5 * float64(dk.Talents.ChillOfTheGrave)
 							dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
-							dk.RimeAura.Deactivate(sim)
 						}
 					} else {
 						amountOfRunicPower := 2.5 * float64(dk.Talents.ChillOfTheGrave)

@@ -48,6 +48,7 @@ func (character *Character) NewGnomishFlameTurret() *GnomishFlameTurret {
 				return stats.Stats{}
 			},
 			false,
+			true,
 		),
 	}
 
