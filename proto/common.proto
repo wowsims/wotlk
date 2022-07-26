@@ -506,6 +506,7 @@ message IndividualBuffs {
 	int32 power_infusions = 11;
 	int32 unholy_frenzy = 12;
 	int32 revitalize = 13;
+	int32 tricks_of_the_trades = 19;
 
 	bool vampiric_touch = 14;
 	bool hunting_party = 15;

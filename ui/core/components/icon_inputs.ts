@@ -159,6 +159,7 @@ export const Thorns = makeTristateRaidBuffInput(ActionId.fromSpellId(53307), Act
 export const ManaTideTotem = makeMultistatePartyBuffInput(ActionId.fromSpellId(16190), 5, 'manaTideTotems');
 export const Innervate = makeMultistateIndividualBuffInput(ActionId.fromSpellId(29166), 11, 'innervates');
 export const PowerInfusion = makeMultistateIndividualBuffInput(ActionId.fromSpellId(10060), 11, 'powerInfusions');
+export const TricksOfTheTrade = makeMultistateIndividualBuffInput(ActionId.fromSpellId(57934), 11, 'tricksOfTheTrades');
 
 // Debuffs
 
