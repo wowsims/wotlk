@@ -31,7 +31,7 @@ func (dk *Deathknight) ApplyUnholyTalents() {
 	dk.applyUnholyBlight()
 
 	// Reaping
-	// TODO:
+	dk.applyReaping()
 
 	// Desolation
 	dk.applyDesolation()
@@ -71,14 +71,7 @@ func (dk *Deathknight) applyWanderingPlague() {
 
 	actionID := core.ActionID{SpellID: 49655}
 
-	wanderingPlagueMultiplier := 0.0
-	if dk.Talents.WanderingPlague == 1 {
-		wanderingPlagueMultiplier = 0.33
-	} else if dk.Talents.WanderingPlague == 2 {
-		wanderingPlagueMultiplier = 0.66
-	} else if dk.Talents.WanderingPlague == 3 {
-		wanderingPlagueMultiplier = 1.0
-	}
+	wanderingPlagueMultiplier := []float64{0.0, 0.33, 0.66, 1.0}[dk.Talents.WanderingPlague]
 
 	dk.WanderingPlague = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -304,19 +297,13 @@ func (dk *Deathknight) applyUnholyBlight() {
 	}
 }
 
-func (dk *Deathknight) reapingChance() float64 {
-	reapingChance := 0.0
-	if dk.Talents.Reaping == 1 {
-		reapingChance = 0.33
-	} else if dk.Talents.Reaping == 2 {
-		reapingChance = 0.66
-	} else if dk.Talents.Reaping == 3 {
-		reapingChance = 1.0
-	}
-	return reapingChance
+var reapingChance float64 = 0.0
+
+func (dk *Deathknight) applyReaping() {
+	reapingChance = []float64{0.0, 0.33, 0.66, 1.0}[dk.Talents.Reaping]
 }
 
-func (dk *Deathknight) reapingWillProc(sim *core.Simulation, reapingChance float64) bool {
+func (dk *Deathknight) reapingWillProc(sim *core.Simulation) bool {
 	ohWillCast := sim.RandomFloat("Reaping") <= reapingChance
 	return ohWillCast
 }
@@ -324,9 +311,7 @@ func (dk *Deathknight) reapingWillProc(sim *core.Simulation, reapingChance float
 func (dk *Deathknight) reapingProc(sim *core.Simulation, spell *core.Spell, runeCost core.RuneAmount) bool {
 	if dk.Talents.Reaping > 0 {
 		if runeCost.Blood > 0 {
-			reapingChance := dk.reapingChance()
-
-			if dk.reapingWillProc(sim, reapingChance) {
+			if dk.reapingWillProc(sim) {
 				slot := dk.SpendBloodRune(sim, spell.BloodRuneMetrics())
 				dk.SetRuneAtIdxSlotToState(0, slot, core.RuneState_DeathSpent, core.RuneKind_Death)
 				dk.SetAsGeneratedByReapingOrBoTN(slot)

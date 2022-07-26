@@ -14,7 +14,7 @@ func (dk *Deathknight) registerBoneShieldSpell() {
 
 	actionID := core.ActionID{SpellID: 49222}
 	cdTimer := dk.NewTimer()
-	cd := time.Minute * 1
+	cd := time.Minute*1 - dk.thassariansPlateCooldownReduction(dk.BoneShield)
 
 	dk.BoneShieldAura = dk.RegisterAura(core.Aura{
 		Label:     "Bone Shield",
