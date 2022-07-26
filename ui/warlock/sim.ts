@@ -119,19 +119,17 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
+				IconInputs.ReplenishmentBuff,
+				IconInputs.MajorArmorDebuff,
+				IconInputs.MinorArmorDebuff,
+				IconInputs.PhysicalDamageDebuff,
+				IconInputs.MeleeHasteBuff,
+				IconInputs.MeleeCritBuff,
+				IconInputs.MP5Buff,
+				IconInputs.AttackPowerPercentBuff,
+				IconInputs.AttackPowerBuff,
+				IconInputs.StaminaBuff,
 			],
-			//buffStats: [
-			//	// For buffs in UI only
-			//	Stat.StatMP5,
-			//	Stat.StatStamina,
-			//	Stat.StatStrength,
-			//	Stat.StatAttackPower,
-			//	Stat.StatAgility,
-			//	Stat.StatMeleeHit,
-			//	Stat.StatMeleeCrit,
-			//	Stat.StatMeleeHaste,
-			//	Stat.StatArmorPenetration,
-			//],
 			excludeBuffDebuffInputs: [
 			],
 			// Inputs to include in the 'Other' section on the settings tab.

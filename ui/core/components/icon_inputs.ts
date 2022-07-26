@@ -199,7 +199,7 @@ export const MeleeAttackSpeedDebuff = InputHelpers.makeMultiIconInput([
 ], 'Atk Spd');
 
 export const MeleeHitDebuff = InputHelpers.makeMultiIconInput([
-	makeBooleanDebuffInput(ActionId.fromSpellId(48460), 'insectSwarm'),
+	makeBooleanDebuffInput(ActionId.fromSpellId(65855), 'insectSwarm'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(3043), 'scorpidSting'),
 ], 'Miss');
 
