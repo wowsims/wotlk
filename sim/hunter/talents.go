@@ -66,7 +66,7 @@ func (hunter *Hunter) ApplyTalents() {
 	}
 
 	if hunter.Talents.Survivalist > 0 {
-		hunter.AddStatDependency(stats.Health, stats.Health, 1.0+0.02*float64(hunter.Talents.Survivalist))
+		hunter.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+0.02*float64(hunter.Talents.Survivalist))
 	}
 
 	if hunter.Talents.CombatExperience > 0 {
