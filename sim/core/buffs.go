@@ -270,7 +270,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 // Applies buffs to pets.
 func applyPetBuffEffects(petAgent PetAgent, raidBuffs proto.RaidBuffs, partyBuffs proto.PartyBuffs, individualBuffs proto.IndividualBuffs) {
 	// Summoned pets, like Mage Water Elemental, aren't around to receive raid buffs.
-	if !petAgent.GetPet().PermanentPet {
+	if petAgent.GetPet().IsGuardian() {
 		return
 	}
 
@@ -673,7 +673,7 @@ func BloodlustAura(character *Character, actionTag int32) *Aura {
 			if len(character.Pets) > 0 {
 				for _, petAgent := range character.Pets {
 					pet := petAgent.GetPet()
-					if pet.IsEnabled() && pet.IsPermanent() {
+					if pet.IsEnabled() && !pet.IsGuardian() {
 						BloodlustAura(&pet.Character, actionTag).Activate(sim)
 					}
 				}

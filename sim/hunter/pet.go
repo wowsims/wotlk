@@ -42,6 +42,7 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 			hunterPetBaseStats,
 			hunter.makeStatInheritance(),
 			true,
+			false,
 		),
 		config:      petConfig,
 		hunterOwner: hunter,

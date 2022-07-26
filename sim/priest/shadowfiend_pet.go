@@ -31,6 +31,7 @@ func (priest *Priest) NewShadowfiend() *Shadowfiend {
 			baseStats,
 			priest.shadowfiendStatInheritance(),
 			false,
+			true,
 		),
 		Priest: priest,
 	}
