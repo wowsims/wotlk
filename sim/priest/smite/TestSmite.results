@@ -136,8 +136,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-CrimsonAcolyte'sRegalia"
  value: {
-  dps: 1335.8117244441812
-  tps: 1284.8838692855647
+  dps: 888.5503558870482
+  tps: 862.4167952800076
  }
 }
 dps_results: {

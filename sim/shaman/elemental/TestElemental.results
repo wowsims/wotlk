@@ -383,8 +383,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-FrostWitch'sRegalia"
  value: {
-  dps: 2617.582826946635
-  tps: 2013.7903438477197
+  dps: 1858.8083167051059
+  tps: 1448.6569582989061
  }
 }
 dps_results: {

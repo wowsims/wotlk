@@ -47,7 +47,7 @@ func main() {
 		go func(min, max int) {
 			client := http.Client{}
 			for i := min; i < max; i++ {
-				url := fmt.Sprintf("https://wotlkdb.com/?item=%d&power", i)
+				url := fmt.Sprintf("https://wotlk.evowow.com/?item=%d&power", i)
 				resp, err := client.Get(url)
 				if err != nil {
 					fmt.Printf("Error fetching %d: %s\n", i, err)
@@ -103,7 +103,7 @@ func main() {
 			continue
 		}
 
-		url := fmt.Sprintf("https://wotlkdb.com/?item=%d&power", res.id)
+		url := fmt.Sprintf("https://wotlk.evowow.com/?item=%d&power", res.id)
 		f.WriteString(fmt.Sprintf("%d, %s, %s\n", res.id, url, res.value))
 	}
 	fmt.Printf("Tooltips %d/%d complete\n", total, (maxID - startMinID))

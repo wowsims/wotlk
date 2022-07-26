@@ -66,8 +66,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 613.3421783351896
-  tps: 519.8399544858291
+  dps: 642.7349529715436
+  tps: 544.5277481288335
  }
 }
 dps_results: {
@@ -367,8 +367,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-IncisorFragment-37723"
  value: {
-  dps: 588.6943281656613
-  tps: 500.44823736803295
+  dps: 611.1150673913186
+  tps: 519.2412317382456
  }
 }
 dps_results: {
