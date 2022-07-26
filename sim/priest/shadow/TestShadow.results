@@ -267,6 +267,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestShadow-AllItems-EyeoftheBroodmother-45308"
+ value: {
+  dps: 1969.6814559865338
+  tps: 1480.119388456436
+ }
+}
+dps_results: {
  key: "TestShadow-AllItems-ForgeEmber-37660"
  value: {
   dps: 1813.6615104652876
@@ -292,6 +299,13 @@ dps_results: {
  value: {
   dps: 1750.33051771528
   tps: 1317.2818199233907
+ }
+}
+dps_results: {
+ key: "TestShadow-AllItems-FuturesightRune-38763"
+ value: {
+  dps: 1833.5477307653075
+  tps: 1379.1751241405955
  }
 }
 dps_results: {
@@ -551,13 +565,6 @@ dps_results: {
  value: {
   dps: 1584.3602524955513
   tps: 1192.6398528523164
- }
-}
-dps_results: {
- key: "TestShadow-AllItems-Spirit-WorldGlass-39388"
- value: {
-  dps: 1894.7622991432117
-  tps: 1424.9506806126942
  }
 }
 dps_results: {

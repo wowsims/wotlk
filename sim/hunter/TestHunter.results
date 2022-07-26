@@ -288,6 +288,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestHunter-AllItems-EyeoftheBroodmother-45308"
+ value: {
+  dps: 4021.084932686067
+  tps: 3075.8182764073304
+ }
+}
+dps_results: {
  key: "TestHunter-AllItems-FelstalkerArmor"
  value: {
   dps: 3825.7294001967134
@@ -313,6 +320,13 @@ dps_results: {
  value: {
   dps: 4046.0893847286106
   tps: 3077.017382204167
+ }
+}
+dps_results: {
+ key: "TestHunter-AllItems-FuturesightRune-38763"
+ value: {
+  dps: 3964.7496309967723
+  tps: 3016.7085924606176
  }
 }
 dps_results: {
@@ -600,13 +614,6 @@ dps_results: {
  value: {
   dps: 3551.0522909525316
   tps: 2703.23822558252
- }
-}
-dps_results: {
- key: "TestHunter-AllItems-Spirit-WorldGlass-39388"
- value: {
-  dps: 3981.3698422211764
-  tps: 3027.1716830798514
  }
 }
 dps_results: {

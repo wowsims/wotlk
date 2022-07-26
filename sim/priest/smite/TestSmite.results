@@ -267,6 +267,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSmite-AllItems-EyeoftheBroodmother-45308"
+ value: {
+  dps: 878.7137664491161
+  tps: 845.4513671088166
+ }
+}
+dps_results: {
  key: "TestSmite-AllItems-ForgeEmber-37660"
  value: {
   dps: 823.5462454623453
@@ -292,6 +299,13 @@ dps_results: {
  value: {
   dps: 795.847113500492
   tps: 767.3790958044381
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-FuturesightRune-38763"
+ value: {
+  dps: 834.2893932071294
+  tps: 803.8363397848844
  }
 }
 dps_results: {
@@ -551,13 +565,6 @@ dps_results: {
  value: {
   dps: 731.1364224755924
   tps: 705.4046997240091
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-Spirit-WorldGlass-39388"
- value: {
-  dps: 867.2394924371307
-  tps: 835.1180021517706
  }
 }
 dps_results: {
