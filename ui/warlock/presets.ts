@@ -44,6 +44,7 @@ import * as WarlockTooltips from './tooltips.js';
 
 export const AfflictionTalents = {
 	name: 'Affliction',
+  tooltip: WarlockTooltips.AFF_TALENTS_TOOLTIP,
 	data: SavedTalents.create({
 		talentsString: '2350002030023510253510331151--55000005',
 		glyphs: Glyphs.create({
@@ -59,6 +60,7 @@ export const AfflictionTalents = {
 
 export const DemonologyTalents = {
 	name: 'Demonology',
+  tooltip: WarlockTooltips.DEMO_TALENTS_TOOLTIP,
 	data: SavedTalents.create({
 		talentsString: '-203203301035012530135201351-550000052',
 		glyphs: Glyphs.create({
@@ -74,6 +76,7 @@ export const DemonologyTalents = {
 
 export const DestructionTalents = {
 	name: 'Destruction',
+  tooltip: WarlockTooltips.DESTRO_TALENTS_TOOLTIP,
 	data: SavedTalents.create({
 		talentsString: '030-03310030003-05203205220331051035031351',
 		glyphs: Glyphs.create({
