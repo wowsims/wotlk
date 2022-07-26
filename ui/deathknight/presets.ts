@@ -103,10 +103,7 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
       ]
     },
     {
-      "id": 44664,
-      "gems": [
-        39996
-      ]
+      "id": 39421
     },
     {
       "id": 40557,
@@ -124,14 +121,14 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
       "enchant": 44623,
       "gems": [
         42142,
-        40058
+        39996
       ]
     },
     {
       "id": 40330,
       "enchant": 60616,
       "gems": [
-        40058,
+        39996,
         0
       ]
     },

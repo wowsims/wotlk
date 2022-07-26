@@ -72,6 +72,7 @@ func (dk *DpsDeathknight) SetupRotations() {
 			}
 		} else {
 			dk.DoRotationEvent = dk.doUnholySsRotation
+
 			if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd {
 				if dk.Rotation.UnholyPresenceOpener {
 					dk.setupUnholySsArmyUnholyPresenceOpener()
@@ -87,7 +88,8 @@ func (dk *DpsDeathknight) SetupRotations() {
 			}
 		}
 	} else {
-		panic("No valid rotataion initialized!")
+		// TODO: Add some default rotation that works without special talents
+		dk.setupFrostSubBloodOpener()
 	}
 }
 

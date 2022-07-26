@@ -16,7 +16,7 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *core.Spell {
 
 	effect := core.SpellEffect{
 		BonusCritRating:  (dk.subversionCritBonus() + dk.annihilationCritBonus()) * core.CritRatingPerCritChance,
-		DamageMultiplier: dk.bloodOfTheNorthCoeff(),
+		DamageMultiplier: dk.bloodOfTheNorthCoeff() * dk.thassariansPlateDamageBonus(),
 		ThreatMultiplier: 1,
 
 		BaseDamage: core.BaseDamageConfig{

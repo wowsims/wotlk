@@ -568,6 +568,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFrost-AllItems-Scourgelord'sBattlegear"
+ value: {
+  dps: 6494.1314953399215
+  tps: 4601.833354554857
+ }
+}
+dps_results: {
+ key: "TestFrost-AllItems-Scourgelord'sPlate"
+ value: {
+  dps: 5565.098917683211
+  tps: 3989.72311682271
+ }
+}
+dps_results: {
  key: "TestFrost-AllItems-SealofthePantheon-36993"
  value: {
   dps: 5786.513731030646
@@ -691,6 +705,13 @@ dps_results: {
  value: {
   dps: 5555.502450738914
   tps: 3931.460882503813
+ }
+}
+dps_results: {
+ key: "TestFrost-AllItems-Thassarian'sPlate"
+ value: {
+  dps: 4927.803423341361
+  tps: 3522.5011209604495
  }
 }
 dps_results: {

@@ -26,6 +26,9 @@ type Deathknight struct {
 	core.Character
 	Talents proto.DeathknightTalents
 
+	onRuneSpendT10          core.OnRuneSpend
+	onRuneSpendBladeBarrier core.OnRuneSpend
+
 	Inputs DeathknightInputs
 
 	LastCastOutcome core.HitOutcome
@@ -246,9 +249,16 @@ func NewDeathknight(character core.Character, options proto.Player, inputs Death
 	currentRunicPower := math.Min(maxRunicPower, dk.Inputs.StartingRunicPower+core.TernaryFloat64(dk.Inputs.PrecastHornOfWinter, 10.0, 0.0))
 
 	dk.EnableRunicPowerBar(
-		dk.Talents.BladeBarrier > 0,
 		currentRunicPower,
 		maxRunicPower,
+		func(sim *core.Simulation) {
+			if dk.onRuneSpendT10 != nil {
+				dk.onRuneSpendT10(sim)
+			}
+			if dk.onRuneSpendBladeBarrier != nil {
+				dk.onRuneSpendBladeBarrier(sim)
+			}
+		},
 		func(sim *core.Simulation) {
 			// I change this here because when using the opener sequence
 			// you do not want these to trigger a tryUseGCD, so after the opener

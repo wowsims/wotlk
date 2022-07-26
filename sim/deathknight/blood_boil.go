@@ -43,7 +43,7 @@ func (dk *Deathknight) registerBloodBoilSpell() {
 					dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_B)
 					dk.Spend(sim, spell, dkSpellCost)
 
-					amountOfRunicPower := 10.0 + 2.5*float64(dk.Talents.ChillOfTheGrave)
+					amountOfRunicPower := 10.0
 					dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 				}
 			},
