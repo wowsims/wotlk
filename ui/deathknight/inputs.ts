@@ -55,7 +55,8 @@ export const UseDeathAndDecay = InputHelpers.makeRotationBooleanInput<Spec.SpecD
 	fieldName: 'useDeathAndDecay',
 	label: 'Death and Decay',
 	labelTooltip: 'Use Death and Decay based rotation.',
-	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => player.talentsChangeEmitter,
 });
 
 export const SetFirstDisease = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, FirstDisease>({
@@ -66,7 +67,8 @@ export const SetFirstDisease = InputHelpers.makeRotationEnumInput<Spec.SpecDeath
 		{ name: 'Frost Fever', value: FirstDisease.FrostFever },
 		{ name: 'Blood Plague', value: FirstDisease.BloodPlague },
 	],
-	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => player.talentsChangeEmitter,
 })
 
 export const UseArmyOfTheDead = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, ArmyOfTheDead>({
@@ -84,7 +86,8 @@ export const UnholyPresenceOpener = InputHelpers.makeRotationBooleanInput<Spec.S
 	fieldName: 'unholyPresenceOpener',
 	label: 'Unholy Presence Opener',
 	labelTooltip: 'Start fight in unholy presence and change to blood after gargoyle.',
-	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => player.talentsChangeEmitter,
 });
 
 export const DeathKnightRotationConfig = {

@@ -214,6 +214,7 @@ export interface PlayerEnumInputConfig<SpecType extends Spec, Message> {
 	values: Array<EnumValueConfig>;
 	enableWhen?: (player: Player<SpecType>) => boolean,
 	showWhen?: (player: Player<SpecType>) => boolean,
+	changeEmitter?: (player: Player<SpecType>) => TypedEvent<any>,
 }
 // T is unused, but kept to have the same interface as the icon enum inputs.
 export function makeSpecOptionsEnumInput<SpecType extends Spec, T>(config: PlayerEnumInputConfig<SpecType, SpecOptions<SpecType>>): TypedEnumPickerConfig<Player<SpecType>> {
@@ -228,7 +229,7 @@ export function makeSpecOptionsEnumInput<SpecType extends Spec, T>(config: Playe
 			(newMessage[config.fieldName] as unknown as number) = newVal;
 			player.setSpecOptions(eventID, newMessage);
 		},
-		changedEvent: (player: Player<SpecType>) => player.specOptionsChangeEmitter,
+		changedEvent: config.changeEmitter || ((player: Player<SpecType>) => player.specOptionsChangeEmitter),
 		enableWhen: config.enableWhen,
 		showWhen: config.showWhen,
 	});
@@ -246,7 +247,7 @@ export function makeRotationEnumInput<SpecType extends Spec, T>(config: PlayerEn
 			(newMessage[config.fieldName] as unknown as number) = newVal;
 			player.setRotation(eventID, newMessage);
 		},
-		changedEvent: (player: Player<SpecType>) => player.rotationChangeEmitter,
+		changedEvent: config.changeEmitter || ((player: Player<SpecType>) => player.rotationChangeEmitter),
 		enableWhen: config.enableWhen,
 		showWhen: config.showWhen,
 	});
