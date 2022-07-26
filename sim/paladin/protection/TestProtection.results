@@ -73,8 +73,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 120.60351076043332
-  tps: 123.0155809756421
+  dps: 127.32062370592125
+  tps: 129.86703618003966
  }
 }
 dps_results: {
@@ -374,8 +374,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-IncisorFragment-37723"
  value: {
-  dps: 89.00122087126539
-  tps: 90.78124528869071
+  dps: 94.30694186553066
+  tps: 96.19308070284131
  }
 }
 dps_results: {
@@ -472,8 +472,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-LightswornBattlegear"
  value: {
-  dps: 196.24857601603549
-  tps: 196.24857601603549
+  dps: 154.426399410521
+  tps: 154.426399410521
  }
 }
 dps_results: {

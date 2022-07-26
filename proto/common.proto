@@ -696,6 +696,7 @@ message Item {
 	bool unique = 13;
 	int32 ilvl = 20;
 	Profession required_profession = 21;
+	bool heroic = 22;
 }
 
 // Extra enum for describing which items are eligible for an enchant, when

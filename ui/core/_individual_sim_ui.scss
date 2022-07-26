@@ -57,15 +57,15 @@
 }
 
 .left-gear-panel {
-  min-width: calc(500px + 2vw);
+  min-width: calc(550px + 2vw);
   flex: 3;
   padding-left: 1vw;
   padding-right: 1vw;
   padding-top: 1vh;
 }
-@media only screen and (max-width: calc(750px + 1vw)) {
+@media only screen and (max-width: calc(800px + 1vw)) {
   .left-gear-panel {
-    min-width: calc(250px + 1vw);
+    min-width: calc(275px + 1vw);
   }
 }
 
@@ -80,14 +80,9 @@
   margin-top: 10px;
   margin-bottom: 10px;
 }
-@media only screen and (max-width: calc(1000px + 2vw)) {
+@media only screen and (max-width: calc(1050px + 2vw)) {
   .right-gear-panel {
-    border-left: none;
-  }
-}
-@media only screen and (max-width: calc(750px + 1vw)) {
-  .right-gear-panel {
-    min-width: 250px;
+    min-width: 275px;
     border-left: none;
   }
 }
