@@ -19,7 +19,7 @@ character_stats_results: {
   final_stats: 887.2157554164661
   final_stats: 225
   final_stats: 0
-  final_stats: 2991.5600000000004
+  final_stats: 3741.76
   final_stats: 336.37
   final_stats: 2067.182567394696
   final_stats: 225
@@ -28,7 +28,7 @@ character_stats_results: {
   final_stats: 14169.68
   final_stats: 0
   final_stats: 0
-  final_stats: 11685.64
+  final_stats: 11728.64
   final_stats: 4039.232
   final_stats: 0
   final_stats: 0
@@ -52,8 +52,8 @@ character_stats_results: {
 dps_results: {
  key: "TestHunter-AllItems-Ahn'KaharBloodHunter'sBattlegear"
  value: {
-  dps: 4456.5025967400215
-  tps: 3503.8450734893836
+  dps: 4063.3917549539315
+  tps: 3168.9891301644575
  }
 }
 dps_results: {

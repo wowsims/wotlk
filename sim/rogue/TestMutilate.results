@@ -73,8 +73,8 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 1999.266559643247
-  tps: 1407.773838938478
+  dps: 2087.8185405722347
+  tps: 1470.6457453980574
  }
 }
 dps_results: {
@@ -318,8 +318,8 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-IncisorFragment-37723"
  value: {
-  dps: 1974.6461598786377
-  tps: 1390.423097049628
+  dps: 2044.0610806876525
+  tps: 1439.707690824029
  }
 }
 dps_results: {

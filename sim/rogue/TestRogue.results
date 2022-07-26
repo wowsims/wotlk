@@ -73,8 +73,8 @@ dps_results: {
 dps_results: {
  key: "TestRogue-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 2135.687413423386
-  tps: 1504.7454696688617
+  dps: 2232.1804850142826
+  tps: 1573.2555504983973
  }
 }
 dps_results: {
@@ -318,8 +318,8 @@ dps_results: {
 dps_results: {
  key: "TestRogue-AllItems-IncisorFragment-37723"
  value: {
-  dps: 2110.4936594678084
-  tps: 1486.8558263988903
+  dps: 2186.063927819264
+  tps: 1540.510716928424
  }
 }
 dps_results: {
