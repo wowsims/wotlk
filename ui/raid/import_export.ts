@@ -1,15 +1,15 @@
-import { Exporter } from '/wotlk/core/components/exporters.js';
-import { Importer } from '/wotlk/core/components/importers.js';
-import { MAX_PARTY_SIZE } from '/wotlk/core/party.js';
-import { BuffBot, RaidSimSettings } from '/wotlk/core/proto/ui.js';
-import { TypedEvent } from '/wotlk/core/typed_event.js';
-import { Party as PartyProto, Player as PlayerProto, Raid as RaidProto } from '/wotlk/core/proto/api.js';
-import { Encounter as EncounterProto, EquipmentSpec, ItemSpec, MobType, Spec, Target as TargetProto, RaidTarget, Faction } from '/wotlk/core/proto/common.js';
-import { nameToClass } from '/wotlk/core/proto_utils/names.js';
-import { makeDefaultBlessings, specTypeFunctions, withSpecProto, isTankSpec, playerToSpec } from '/wotlk/core/proto_utils/utils.js';
-import { MAX_NUM_PARTIES } from '/wotlk/core/raid.js';
-import { Player } from '/wotlk/core/player.js';
-import { Target } from '/wotlk/core/target.js';
+import { Exporter } from '../core/components/exporters.js';
+import { Importer } from '../core/components/importers.js';
+import { MAX_PARTY_SIZE } from '../core/party.js';
+import { BuffBot, RaidSimSettings } from '../core/proto/ui.js';
+import { TypedEvent } from '../core/typed_event.js';
+import { Party as PartyProto, Player as PlayerProto, Raid as RaidProto } from '../core/proto/api.js';
+import { Encounter as EncounterProto, EquipmentSpec, ItemSpec, MobType, Spec, Target as TargetProto, RaidTarget, Faction } from '../core/proto/common.js';
+import { nameToClass } from '../core/proto_utils/names.js';
+import { makeDefaultBlessings, specTypeFunctions, withSpecProto, isTankSpec, playerToSpec } from '../core/proto_utils/utils.js';
+import { MAX_NUM_PARTIES } from '../core/raid.js';
+import { Player } from '../core/player.js';
+import { Target } from '../core/target.js';
 
 import { playerPresets, PresetSpecSettings } from './presets.js';
 import { RaidSimUI } from './raid_sim_ui.js';

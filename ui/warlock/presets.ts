@@ -14,9 +14,9 @@ import { Consumes,
 	Stat,
 	TristateEffect,
 	Race,
-} from '/wotlk/core/proto/common.js';
-import { SavedTalents } from '/wotlk/core/proto/ui.js';
-import { Player } from '/wotlk/core/player.js';
+} from '../core/proto/common.js';
+import { SavedTalents } from '../core/proto/ui.js';
+import { Player } from '../core/player.js';
 
 import {
 	Warlock,
@@ -32,11 +32,11 @@ import {
 	Warlock_Options_Summon as Summon,
 	WarlockMajorGlyph as MajorGlyph,
 	WarlockMinorGlyph as MinorGlyph,
-} from '/wotlk/core/proto/warlock.js';
+} from '../core/proto/warlock.js';
 
-import * as Enchants from '/wotlk/core/constants/enchants.js';
-import * as Gems from '/wotlk/core/proto_utils/gems.js';
-import * as Tooltips from '/wotlk/core/constants/tooltips.js';
+import * as Enchants from '../core/constants/enchants.js';
+import * as Gems from '../core/proto_utils/gems.js';
+import * as Tooltips from '../core/constants/tooltips.js';
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.

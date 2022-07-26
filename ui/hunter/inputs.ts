@@ -1,16 +1,16 @@
-import { BooleanPicker } from '/wotlk/core/components/boolean_picker.js';
-import { EnumPicker } from '/wotlk/core/components/enum_picker.js';
-import { IconEnumPicker, IconEnumPickerConfig } from '/wotlk/core/components/icon_enum_picker.js';
-import { IconPickerConfig } from '/wotlk/core/components/icon_picker.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
-import { Player } from '/wotlk/core/player.js';
-import { Sim } from '/wotlk/core/sim.js';
-import { Target } from '/wotlk/core/target.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
-import { makePetTypeInputConfig } from '/wotlk/core/talents/hunter_pet.js';
+import { BooleanPicker } from '../core/components/boolean_picker.js';
+import { EnumPicker } from '../core/components/enum_picker.js';
+import { IconEnumPicker, IconEnumPickerConfig } from '../core/components/icon_enum_picker.js';
+import { IconPickerConfig } from '../core/components/icon_picker.js';
+import { Spec } from '../core/proto/common.js';
+import { ActionId } from '../core/proto_utils/action_id.js';
+import { Player } from '../core/player.js';
+import { Sim } from '../core/sim.js';
+import { Target } from '../core/target.js';
+import { EventID, TypedEvent } from '../core/typed_event.js';
+import { makePetTypeInputConfig } from '../core/talents/hunter_pet.js';
 
-import * as InputHelpers from '/wotlk/core/components/input_helpers.js';
+import * as InputHelpers from '../core/components/input_helpers.js';
 
 import {
 	Hunter,
@@ -20,7 +20,7 @@ import {
 	Hunter_Options as HunterOptions,
 	Hunter_Options_Ammo as Ammo,
 	Hunter_Options_PetType as PetType,
-} from '/wotlk/core/proto/hunter.js';
+} from '../core/proto/hunter.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.

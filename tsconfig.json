@@ -17,13 +17,5 @@
         "allowJs": true,
         "esModuleInterop": true,
         "baseUrl": ".",
-        "paths": {
-            "/protobuf-ts": [
-                "node_modules/@protobuf-ts/runtime"
-            ],
-            "/wotlk/*": [
-                "./ui/*"
-            ]
-        }
     }
 }

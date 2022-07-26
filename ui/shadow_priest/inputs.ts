@@ -1,10 +1,10 @@
-import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
-import { Player } from '/wotlk/core/player.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { ShadowPriest_Rotation_RotationType as RotationType } from '/wotlk/core/proto/priest.js';
-import { EventID } from '/wotlk/core/typed_event.js';
+import { IndividualSimUI } from '../core/individual_sim_ui.js';
+import { Player } from '../core/player.js';
+import { Spec } from '../core/proto/common.js';
+import { ShadowPriest_Rotation_RotationType as RotationType } from '../core/proto/priest.js';
+import { EventID } from '../core/typed_event.js';
 
-import * as InputHelpers from '/wotlk/core/components/input_helpers.js';
+import * as InputHelpers from '../core/components/input_helpers.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.

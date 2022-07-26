@@ -1,13 +1,13 @@
-import { IconPickerConfig } from '/wotlk/core/components/icon_picker.js';
-import { RaidTarget } from '/wotlk/core/proto/common.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { NO_TARGET } from '/wotlk/core/proto_utils/utils.js';
-import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
-import { Player } from '/wotlk/core/player.js';
-import { Sim } from '/wotlk/core/sim.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
-import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
-import { Target } from '/wotlk/core/target.js';
+import { IconPickerConfig } from '../core/components/icon_picker.js';
+import { RaidTarget } from '../core/proto/common.js';
+import { Spec } from '../core/proto/common.js';
+import { NO_TARGET } from '../core/proto_utils/utils.js';
+import { ActionId } from '../core/proto_utils/action_id.js';
+import { Player } from '../core/player.js';
+import { Sim } from '../core/sim.js';
+import { EventID, TypedEvent } from '../core/typed_event.js';
+import { IndividualSimUI } from '../core/individual_sim_ui.js';
+import { Target } from '../core/target.js';
 
 import {
 	WarriorShout,
@@ -18,9 +18,9 @@ import {
 	ProtectionWarrior_Rotation_ShieldBlock as ShieldBlock,
 	ProtectionWarrior_Rotation_ThunderClap as ThunderClap,
 	ProtectionWarrior_Options as ProtectionWarriorOptions
-} from '/wotlk/core/proto/warrior.js';
+} from '../core/proto/warrior.js';
 
-import * as InputHelpers from '/wotlk/core/components/input_helpers.js';
+import * as InputHelpers from '../core/components/input_helpers.js';
 import * as Presets from './presets.js';
 import { SimUI } from '../core/sim_ui.js';
 

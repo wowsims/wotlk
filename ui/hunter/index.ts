@@ -1,7 +1,7 @@
-import { Spec } from '/wotlk/core/proto/common.js';
-import { Sim } from '/wotlk/core/sim.js';
-import { Player } from '/wotlk/core/player.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
+import { Spec } from '../core/proto/common.js';
+import { Sim } from '../core/sim.js';
+import { Player } from '../core/player.js';
+import { EventID, TypedEvent } from '../core/typed_event.js';
 
 import { HunterSimUI } from './sim.js';
 

@@ -1,15 +1,15 @@
-import { Component } from '/wotlk/core/components/component.js';
-import { Input, InputConfig } from '/wotlk/core/components/input.js';
-import { RaidTargetPicker } from '/wotlk/core/components/raid_target_picker.js';
-import { Player } from '/wotlk/core/player.js';
-import { Raid } from '/wotlk/core/raid.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
-import { Class } from '/wotlk/core/proto/common.js';
-import { RaidTarget } from '/wotlk/core/proto/common.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { getEnumValues } from '/wotlk/core/utils.js';
-import { wait } from '/wotlk/core/utils.js';
-import { emptyRaidTarget } from '/wotlk/core/proto_utils/utils.js';
+import { Component } from '../core/components/component.js';
+import { Input, InputConfig } from '../core/components/input.js';
+import { RaidTargetPicker } from '../core/components/raid_target_picker.js';
+import { Player } from '../core/player.js';
+import { Raid } from '../core/raid.js';
+import { EventID, TypedEvent } from '../core/typed_event.js';
+import { Class } from '../core/proto/common.js';
+import { RaidTarget } from '../core/proto/common.js';
+import { Spec } from '../core/proto/common.js';
+import { getEnumValues } from '../core/utils.js';
+import { wait } from '../core/utils.js';
+import { emptyRaidTarget } from '../core/proto_utils/utils.js';
 
 import { BuffBot } from './buff_bot.js';
 import { RaidSimUI } from './raid_sim_ui.js';

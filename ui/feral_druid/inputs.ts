@@ -1,18 +1,18 @@
-import { FeralDruid_Rotation_FinishingMove as FinishingMove } from '/wotlk/core/proto/druid.js';
-import { FeralDruid_Options as DruidOptions } from '/wotlk/core/proto/druid.js';
-import { RaidTarget } from '/wotlk/core/proto/common.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { NO_TARGET } from '/wotlk/core/proto_utils/utils.js';
-import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
-import { Player } from '/wotlk/core/player.js';
-import { Sim } from '/wotlk/core/sim.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
-import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
-import { Target } from '/wotlk/core/target.js';
-import { getEnumValues } from '/wotlk/core/utils.js';
-import { ItemSlot } from '/wotlk/core/proto/common.js';
+import { FeralDruid_Rotation_FinishingMove as FinishingMove } from '../core/proto/druid.js';
+import { FeralDruid_Options as DruidOptions } from '../core/proto/druid.js';
+import { RaidTarget } from '../core/proto/common.js';
+import { Spec } from '../core/proto/common.js';
+import { NO_TARGET } from '../core/proto_utils/utils.js';
+import { ActionId } from '../core/proto_utils/action_id.js';
+import { Player } from '../core/player.js';
+import { Sim } from '../core/sim.js';
+import { EventID, TypedEvent } from '../core/typed_event.js';
+import { IndividualSimUI } from '../core/individual_sim_ui.js';
+import { Target } from '../core/target.js';
+import { getEnumValues } from '../core/utils.js';
+import { ItemSlot } from '../core/proto/common.js';
 
-import * as InputHelpers from '/wotlk/core/components/input_helpers.js';
+import * as InputHelpers from '../core/components/input_helpers.js';
 
 // Helper function for identifying whether 2pT6 is equipped, which impacts allowed rotation options
 function numThunderheartPieces(player: Player<Spec.SpecFeralDruid>): number {

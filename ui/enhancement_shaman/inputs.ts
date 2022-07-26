@@ -1,8 +1,8 @@
-import { BooleanPicker } from '/wotlk/core/components/boolean_picker.js';
-import { EnumPicker } from '/wotlk/core/components/enum_picker.js';
-import { IconEnumPicker, IconEnumPickerConfig } from '/wotlk/core/components/icon_enum_picker.js';
-import { IconPickerConfig } from '/wotlk/core/components/icon_picker.js';
-import { makeWeaponImbueInput } from '/wotlk/core/components/icon_inputs.js';
+import { BooleanPicker } from '../core/components/boolean_picker.js';
+import { EnumPicker } from '../core/components/enum_picker.js';
+import { IconEnumPicker, IconEnumPickerConfig } from '../core/components/icon_enum_picker.js';
+import { IconPickerConfig } from '../core/components/icon_picker.js';
+import { makeWeaponImbueInput } from '../core/components/icon_inputs.js';
 import {
 	AirTotem,
 	EarthTotem,
@@ -12,17 +12,17 @@ import {
 	ShamanTotems,
 	ShamanShield,
     ShamanImbue
-} from '/wotlk/core/proto/shaman.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { WeaponImbue } from '/wotlk/core/proto/common.js';
-import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
-import { Player } from '/wotlk/core/player.js';
-import { Sim } from '/wotlk/core/sim.js';
-import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
-import { Target } from '/wotlk/core/target.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
+} from '../core/proto/shaman.js';
+import { Spec } from '../core/proto/common.js';
+import { WeaponImbue } from '../core/proto/common.js';
+import { ActionId } from '../core/proto_utils/action_id.js';
+import { Player } from '../core/player.js';
+import { Sim } from '../core/sim.js';
+import { IndividualSimUI } from '../core/individual_sim_ui.js';
+import { Target } from '../core/target.js';
+import { EventID, TypedEvent } from '../core/typed_event.js';
 
-import * as InputHelpers from '/wotlk/core/components/input_helpers.js';
+import * as InputHelpers from '../core/components/input_helpers.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
