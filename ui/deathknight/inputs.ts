@@ -9,6 +9,7 @@ import {
 } from '/wotlk/core/proto/deathknight.js';
 
 import * as InputHelpers from '/wotlk/core/components/input_helpers.js';
+import { Player } from '../core/player';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
@@ -54,6 +55,7 @@ export const UseDeathAndDecay = InputHelpers.makeRotationBooleanInput<Spec.SpecD
 	fieldName: 'useDeathAndDecay',
 	label: 'Death and Decay',
 	labelTooltip: 'Use Death and Decay based rotation.',
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle
 });
 
 export const SetFirstDisease = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, FirstDisease>({
@@ -64,6 +66,7 @@ export const SetFirstDisease = InputHelpers.makeRotationEnumInput<Spec.SpecDeath
 		{ name: 'Frost Fever', value: FirstDisease.FrostFever },
 		{ name: 'Blood Plague', value: FirstDisease.BloodPlague },
 	],
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle
 })
 
 export const UseArmyOfTheDead = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, ArmyOfTheDead>({
@@ -81,6 +84,7 @@ export const UnholyPresenceOpener = InputHelpers.makeRotationBooleanInput<Spec.S
 	fieldName: 'unholyPresenceOpener',
 	label: 'Unholy Presence Opener',
 	labelTooltip: 'Start fight in unholy presence and change to blood after gargoyle.',
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle
 });
 
 export const DeathKnightRotationConfig = {
@@ -89,7 +93,5 @@ export const DeathKnightRotationConfig = {
 		UseArmyOfTheDead,
 		UseDeathAndDecay,
 		UnholyPresenceOpener,
-		RefreshHornOfWinter,
-		DiseaseRefreshDuration,
 	],
 };
