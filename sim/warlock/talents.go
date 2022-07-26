@@ -37,7 +37,7 @@ func (warlock *Warlock) ApplyTalents() {
 	if warlock.Talents.FelVitality > 0 {
 		bonus := 0.01 * float64(warlock.Talents.FelVitality)
 		// Adding a second 3% bonus int->mana dependency
-		warlock.AddStatDependency(stats.Intellect, stats.Mana, 1.0 + 15*bonus)
+		warlock.AddStatDependency(stats.Intellect, stats.Mana, 1.0+15*bonus)
 	}
 
 	if warlock.Options.Summon != proto.Warlock_Options_NoSummon {
@@ -237,7 +237,7 @@ func (warlock *Warlock) setupPyroclasm() {
 }
 
 func (warlock *Warlock) setupEradication() {
-	castSpeedMultiplier := 1 + 0.06 * float64(warlock.Talents.Eradication)
+	castSpeedMultiplier := 1 + 0.06*float64(warlock.Talents.Eradication)
 	if warlock.Talents.Eradication == 3 {
 		castSpeedMultiplier += 0.02
 	}
@@ -249,7 +249,7 @@ func (warlock *Warlock) setupEradication() {
 			aura.Unit.MultiplyCastSpeed(castSpeedMultiplier)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.MultiplyCastSpeed(1/castSpeedMultiplier)
+			aura.Unit.MultiplyCastSpeed(1 / castSpeedMultiplier)
 		},
 	})
 
@@ -270,7 +270,7 @@ func (warlock *Warlock) setupEradication() {
 }
 
 func (warlock *Warlock) setupShadowEmbrace() {
-	shadowEmbraceBonus:= 0.01*float64(warlock.Talents.ShadowEmbrace)
+	shadowEmbraceBonus := 0.01 * float64(warlock.Talents.ShadowEmbrace)
 
 	warlock.ShadowEmbraceAura = warlock.RegisterAura(core.Aura{
 		Label:     "Shadow Embrace",
@@ -423,7 +423,7 @@ func (warlock *Warlock) backdraftModifier() float64 {
 }
 
 func (warlock *Warlock) setupEverlastingAffliction() {
-	everlastingAfflictionProcChance := 0.2*float64(warlock.Talents.EverlastingAffliction)
+	everlastingAfflictionProcChance := 0.2 * float64(warlock.Talents.EverlastingAffliction)
 
 	warlock.RegisterAura(core.Aura{
 		Label:    "Everlasting Affliction Hidden Aura",
@@ -437,9 +437,12 @@ func (warlock *Warlock) setupEverlastingAffliction() {
 			}
 			if spell == warlock.ShadowBolt || spell == warlock.Haunt || spell == warlock.DrainSoul { // TODO: also works on drain life...
 				if warlock.CorruptionDot.IsActive() {
-					if sim.RandomFloat("EverlastingAffliction") < everlastingAfflictionProcChance {
-						warlock.CorruptionDot.Refresh(sim)
+					if warlock.Talents.EverlastingAffliction < 5 { // This will return early if we 'miss' the refresh, 5 pts can't 'miss'.
+						if sim.RandomFloat("EverlastingAffliction") > everlastingAfflictionProcChance {
+							return
+						}
 					}
+					warlock.CorruptionDot.Rollover(sim)
 				}
 			}
 		},

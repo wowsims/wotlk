@@ -61,7 +61,7 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 				}
 
 				if hunter.SerpentStingDot.IsActive() {
-					hunter.SerpentStingDot.Refresh(sim)
+					hunter.SerpentStingDot.Apply(sim)
 					ssProcSpell.Cast(sim, spellEffect.Target)
 				} else if hunter.ScorpidStingAura.IsActive() {
 					hunter.ScorpidStingAura.Refresh(sim)

@@ -43,7 +43,7 @@ func (dk *Deathknight) registerPestilenceSpell() {
 						if hasGlyphOfDisease {
 							// Update expire instead of Apply to keep old snapshotted value
 							if dk.FrostFeverDisease[unitHit.Index].IsActive() {
-								dk.FrostFeverDisease[unitHit.Index].UpdateExpires(sim.CurrentTime + dk.FrostFeverDisease[unitHit.Index].Duration)
+								dk.FrostFeverDisease[unitHit.Index].Rollover(sim)
 								dk.FrostFeverDebuffAura[unitHit.Index].Activate(sim)
 								if dk.IcyTalonsAura != nil {
 									dk.IcyTalonsAura.Activate(sim)
@@ -51,7 +51,7 @@ func (dk *Deathknight) registerPestilenceSpell() {
 							}
 
 							if dk.BloodPlagueDisease[unitHit.Index].IsActive() {
-								dk.BloodPlagueDisease[unitHit.Index].UpdateExpires(sim.CurrentTime + dk.BloodPlagueDisease[unitHit.Index].Duration)
+								dk.BloodPlagueDisease[unitHit.Index].Rollover(sim)
 							}
 						}
 

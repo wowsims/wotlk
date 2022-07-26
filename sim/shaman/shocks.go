@@ -103,7 +103,7 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 	target := shaman.CurrentTarget
 	bonusTicks := 0
 	if shaman.HasSetBonus(ItemSetNobundosRegalia, 2) || shaman.HasSetBonus(ItemSetThrallsRegalia, 2) {
-		bonusTicks += 3
+		bonusTicks += 3 // TODO: is this bonus ticks or bonus time that results in extra ticks?
 	}
 
 	shaman.FlameShockDot = core.NewDot(core.Dot{

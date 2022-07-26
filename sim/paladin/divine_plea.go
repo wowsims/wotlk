@@ -35,7 +35,7 @@ func (paladin *Paladin) registerDivinePleaSpell() {
 		NumberOfTicks: 5,
 		TickLength:    time.Second * 3,
 
-		TickEffects: func(sim *core.Simulation, _ *core.Spell) func() {
+		TickEffects: func(sim *core.Simulation, _ *core.Dot) func() {
 			return func() {
 				if paladin.PleaManaMetrics == nil {
 					paladin.PleaManaMetrics = paladin.NewManaMetrics(actionID)

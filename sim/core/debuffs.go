@@ -199,10 +199,10 @@ func MiseryAura(target *Unit) *Aura {
 		ActionID: ActionID{SpellID: 33198},
 		Duration: time.Second * 24,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			target.PseudoStats.BonusSpellHitRatingTaken += 3 * SpellHitRatingPerHitChance
+			aura.Unit.PseudoStats.BonusSpellHitRatingTaken += 3 * SpellHitRatingPerHitChance
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			target.PseudoStats.BonusSpellHitRatingTaken -= 3 * SpellHitRatingPerHitChance
+			aura.Unit.PseudoStats.BonusSpellHitRatingTaken -= 3 * SpellHitRatingPerHitChance
 		},
 	})
 }
