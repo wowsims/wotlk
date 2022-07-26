@@ -1,21 +1,21 @@
-import { Consumes } from '/wotlk/core/proto/common.js';
-import { Flask } from '/wotlk/core/proto/common.js';
-import { Food } from '/wotlk/core/proto/common.js';
-import { Glyphs } from '/wotlk/core/proto/common.js';
-import { EquipmentSpec } from '/wotlk/core/proto/common.js';
-import { ItemSpec } from '/wotlk/core/proto/common.js';
-import { Potions } from '/wotlk/core/proto/common.js';
-import { WeaponImbue } from '/wotlk/core/proto/common.js';
-import { Faction } from '/wotlk/core/proto/common.js';
-import { SavedTalents } from '/wotlk/core/proto/ui.js';
-import { Player } from '/wotlk/core/player.js';
+import { Consumes } from '../core/proto/common.js';
+import { Flask } from '../core/proto/common.js';
+import { Food } from '../core/proto/common.js';
+import { Glyphs } from '../core/proto/common.js';
+import { EquipmentSpec } from '../core/proto/common.js';
+import { ItemSpec } from '../core/proto/common.js';
+import { Potions } from '../core/proto/common.js';
+import { WeaponImbue } from '../core/proto/common.js';
+import { Faction } from '../core/proto/common.js';
+import { SavedTalents } from '../core/proto/ui.js';
+import { Player } from '../core/player.js';
 
-import { BalanceDruid, BalanceDruid_Rotation as BalanceDruidRotation, DruidTalents as DruidTalents, BalanceDruid_Options as BalanceDruidOptions } from '/wotlk/core/proto/druid.js';
-import { BalanceDruid_Rotation_PrimarySpell as PrimarySpell } from '/wotlk/core/proto/druid.js';
+import { BalanceDruid, BalanceDruid_Rotation as BalanceDruidRotation, DruidTalents as DruidTalents, BalanceDruid_Options as BalanceDruidOptions } from '../core/proto/druid.js';
+import { BalanceDruid_Rotation_PrimarySpell as PrimarySpell } from '../core/proto/druid.js';
 
-import * as Enchants from '/wotlk/core/constants/enchants.js';
-import * as Gems from '/wotlk/core/proto_utils/gems.js';
-import * as Tooltips from '/wotlk/core/constants/tooltips.js';
+import * as Enchants from '../core/constants/enchants.js';
+import * as Gems from '../core/proto_utils/gems.js';
+import * as Tooltips from '../core/constants/tooltips.js';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -24,32 +24,32 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 export const StandardTalents = {
-	name: 'Standard',
-	data: SavedTalents.create({
-		talentsString: '510022312503135231351--520033',
-	}),
+    name: 'Standard',
+    data: SavedTalents.create({
+        talentsString: '510022312503135231351--520033',
+    }),
 };
 
 export const DefaultRotation = BalanceDruidRotation.create({
-	primarySpell: PrimarySpell.Adaptive,
-	faerieFire: true,
+    primarySpell: PrimarySpell.Adaptive,
+    faerieFire: true,
 });
 
 export const DefaultOptions = BalanceDruidOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	flask: Flask.FlaskOfBlindingLight,
-	food: Food.FoodBlackenedBasilisk,
-	mainHandImbue: WeaponImbue.WeaponImbueBrilliantWizardOil,
-	defaultPotion: Potions.SuperManaPotion,
+    flask: Flask.FlaskOfBlindingLight,
+    food: Food.FoodBlackenedBasilisk,
+    mainHandImbue: WeaponImbue.WeaponImbueBrilliantWizardOil,
+    defaultPotion: Potions.SuperManaPotion,
 });
 
 export const P1_ALLIANCE_PRESET = {
-	name: 'P1 Alliance Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getFaction() == Faction.Alliance,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
+    name: 'P1 Alliance Preset',
+    tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+    enableWhen: (player: Player<any>) => player.getFaction() == Faction.Alliance,
+    gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 29093,
 			"enchant": 29191,
@@ -148,10 +148,10 @@ export const P1_ALLIANCE_PRESET = {
 };
 
 export const P1_HORDE_PRESET = {
-	name: 'P1 Horde Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getFaction() == Faction.Horde,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
+    name: 'P1 Horde Preset',
+    tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+    enableWhen: (player: Player<any>) => player.getFaction() == Faction.Horde,
+    gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 29093,
 			"enchant": 29191,
@@ -250,10 +250,10 @@ export const P1_HORDE_PRESET = {
 };
 
 export const P2_ALLIANCE_PRESET = {
-	name: 'P2 Alliance Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getFaction() == Faction.Alliance,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
+    name: 'P2 Alliance Preset',
+    tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+    enableWhen: (player: Player<any>) => player.getFaction() == Faction.Alliance,
+    gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 30233,
 			"enchant": 29191,
@@ -339,10 +339,10 @@ export const P2_ALLIANCE_PRESET = {
 };
 
 export const P2_HORDE_PRESET = {
-	name: 'P2 Horde Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getFaction() == Faction.Horde,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
+    name: 'P2 Horde Preset',
+    tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+    enableWhen: (player: Player<any>) => player.getFaction() == Faction.Horde,
+    gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 30233,
 			"enchant": 29191,
@@ -428,9 +428,9 @@ export const P2_HORDE_PRESET = {
 };
 
 export const P3_PRESET = {
-	name: 'P3 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
+    name: 'P3 Preset',
+    tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+    gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 31040,
 			"enchant": 29191,
@@ -519,9 +519,9 @@ export const P3_PRESET = {
 };
 
 export const P4_PRESET = {
-	name: 'P4 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
+    name: 'P4 Preset',
+    tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+    gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 31040,
 			"enchant": 29191,
@@ -610,9 +610,9 @@ export const P4_PRESET = {
 };
 
 export const P5_PRESET = {
-	name: 'P5 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
+    name: 'P5 Preset',
+    tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+    gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 34403,
 			"enchant": 29191,

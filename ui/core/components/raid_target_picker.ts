@@ -1,11 +1,11 @@
-import { Component } from '/wotlk/core/components/component.js';
-import { Input, InputConfig } from '/wotlk/core/components/input.js';
-import { Player } from '/wotlk/core/player.js';
-import { Raid } from '/wotlk/core/raid.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
-import { RaidTarget } from '/wotlk/core/proto/common.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { newRaidTarget, emptyRaidTarget } from '/wotlk/core/proto_utils/utils.js';
+import { Component } from '../components/component.js';
+import { Input, InputConfig } from '../components/input.js';
+import { Player } from '../player.js';
+import { Raid } from '../raid.js';
+import { EventID, TypedEvent } from '../typed_event.js';
+import { RaidTarget } from '../proto/common.js';
+import { Spec } from '../proto/common.js';
+import { newRaidTarget, emptyRaidTarget } from '../proto_utils/utils.js';
 
 declare var tippy: any;
 

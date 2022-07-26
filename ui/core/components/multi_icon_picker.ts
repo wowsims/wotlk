@@ -1,6 +1,6 @@
-import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
-import { SimUI } from '/wotlk/core/sim_ui.js';
+import { ActionId } from '../proto_utils/action_id.js';
+import { EventID, TypedEvent } from '../typed_event.js';
+import { SimUI } from '../sim_ui.js';
 
 import { Component } from './component.js';
 import { IconPicker, IconPickerConfig } from './icon_picker.js';

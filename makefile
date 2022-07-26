@@ -1,7 +1,9 @@
 # Recursive wildcard function
+OUT_DIR = dist/wotlk
+ASSETS_INPUT := $(shell find assets/ -type f)
+ASSETS := $(patsubst assets/%,$(OUT_DIR)/assets/%,$(ASSETS_INPUT))
 rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 
-OUT_DIR=dist/wotlk
 #ASSETS_INPUT := $(shell find assets/ -type f)
 #ASSETS := $(patsubst assets/%,$(OUT_DIR)/assets/%,$(ASSETS_INPUT))
 GOROOT := $(shell go env GOROOT)
@@ -79,6 +81,9 @@ package-lock.json:
 node_modules: package-lock.json
 	npm ci
 
+.PHONY: asset
+asset: $(ASSETS)
+
 $(OUT_DIR)/core/tsconfig.tsbuildinfo: $(call rwildcard,ui/core,*.ts) ui/core/proto/api.ts
 	npx tsc -p ui/core
 	$(SED) 's#@protobuf-ts/runtime#/wotlk/protobuf-ts/index#g' $(OUT_DIR)/core/proto/*.js
@@ -98,6 +103,9 @@ $(OUT_DIR)/%/index.js: ui/%/index.ts ui/%/*.ts $(OUT_DIR)/core/tsconfig.tsbuildi
 $(OUT_DIR)/%/index.css: ui/%/index.scss ui/%/*.scss $(call rwildcard,ui/core,*.scss)
 	mkdir -p $(@D)
 	npx sass $< $@
+
+ui/%/index.html: ui/index_template.html $(OUT_DIR)/assets
+	cat ui/index_template.html | sed 's/@@TITLE@@/WOTLK $* Simulator/g' > $@
 
 # Generic rule for building index.html for any class directory
 $(OUT_DIR)/%/index.html: ui/index_template.html $(OUT_DIR)/assets
@@ -128,8 +136,9 @@ $(OUT_DIR)/sim_worker.js: ui/worker/sim_worker.js
 $(OUT_DIR)/net_worker.js: ui/worker/net_worker.js
 	cp ui/worker/net_worker.js $(OUT_DIR)
 
-$(OUT_DIR)/assets: assets/*
-	cp -r assets $(OUT_DIR)
+$(OUT_DIR)/assets/%: assets/%
+	mkdir -p $(@D)
+	cp $< $@
 
 binary_dist/dist.go: sim/web/dist.go.tmpl
 	mkdir -p binary_dist/wotlk

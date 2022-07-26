@@ -2,7 +2,12 @@
     "name": "wotlk",
     "version": "0.1.0",
     "private": true,
-    "devDependencies": {},
+    "devDependencies": {
+        "@types/node": "^18.6.1",
+        "glob": "^8.0.3",
+        "terser": "^5.14.2",
+        "vite": "^3.0.3"
+    },
     "scripts": {
         "build": "bazel build //...",
         "test": "bazel test //..."

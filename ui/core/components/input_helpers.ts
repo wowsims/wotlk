@@ -1,14 +1,14 @@
-import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { TristateEffect } from '/wotlk/core/proto/common.js';
-import { Party } from '/wotlk/core/party.js';
-import { Player } from '/wotlk/core/player.js';
-import { Raid } from '/wotlk/core/raid.js';
-import { Sim } from '/wotlk/core/sim.js';
-import { Target } from '/wotlk/core/target.js';
-import { Encounter } from '/wotlk/core/encounter.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
-import { SpecOptions, SpecRotation } from '/wotlk/core/proto_utils/utils.js';
+import { ActionId } from '../proto_utils/action_id.js';
+import { Spec } from '../proto/common.js';
+import { TristateEffect } from '../proto/common.js';
+import { Party } from '../party.js';
+import { Player } from '../player.js';
+import { Raid } from '../raid.js';
+import { Sim } from '../sim.js';
+import { Target } from '../target.js';
+import { Encounter } from '../encounter.js';
+import { EventID, TypedEvent } from '../typed_event.js';
+import { SpecOptions, SpecRotation } from '../proto_utils/utils.js';
 
 import { IconPickerConfig } from './icon_picker.js';
 import { IconEnumPicker, IconEnumPickerConfig, IconEnumValueConfig } from './icon_enum_picker.js';

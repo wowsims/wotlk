@@ -1,5 +1,5 @@
-import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
+import { ActionId } from '../proto_utils/action_id.js';
+import { EventID, TypedEvent } from '../typed_event.js';
 
 import { Component } from './component.js';
 import { Input, InputConfig } from './input.js';
