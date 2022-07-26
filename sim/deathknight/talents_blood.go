@@ -80,15 +80,7 @@ func (dk *Deathknight) ApplyBloodTalents() {
 }
 
 func (dk *Deathknight) subversionThreatBonus() float64 {
-	threatMultiplier := 0.0
-	if dk.Talents.Subversion == 1 {
-		threatMultiplier = 0.08
-	} else if dk.Talents.Subversion == 2 {
-		threatMultiplier = 0.16
-	} else if dk.Talents.Subversion == 3 {
-		threatMultiplier = 0.25
-	}
-	return threatMultiplier
+	return []float64{0.0, 0.08, 0.16, 0.25}[dk.Talents.Subversion]
 }
 
 func (dk *Deathknight) subversionCritBonus() float64 {
@@ -120,6 +112,12 @@ func (dk *Deathknight) applyBladeBarrier() {
 			aura.Unit.PseudoStats.DamageTakenMultiplier /= damageTakenMult
 		},
 	})
+
+	dk.onRuneSpendBladeBarrier = func(sim *core.Simulation) {
+		if dk.AllBloodRunesSpent() {
+			dk.BladeBarrierAura.Activate(sim)
+		}
+	}
 }
 
 func (dk *Deathknight) applyButchery() {
@@ -128,14 +126,13 @@ func (dk *Deathknight) applyButchery() {
 	}
 
 	actionID := core.ActionID{SpellID: 49483}
-
+	amountOfRunicPower := 1.0 * float64(dk.Talents.Butchery)
 	rpMetrics := dk.NewRunicPowerMetrics(actionID)
 
 	dk.ButcheryAura = core.MakePermanent(dk.RegisterAura(core.Aura{
 		ActionID: actionID,
 		Label:    "Butchery",
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			amountOfRunicPower := 1.0 * float64(dk.Talents.Butchery)
 			core.StartPeriodicAction(sim, core.PeriodicActionOptions{
 				Period:   time.Second * 5,
 				NumTicks: 0,

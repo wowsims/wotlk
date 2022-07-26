@@ -101,6 +101,7 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 					sanctifiedRetribution: true,
 					bloodlust: true,
 					devotionAura: TristateEffect.TristateEffectImproved,
+					stoneskinTotem: TristateEffect.TristateEffectImproved,
 				}),
 				partyBuffs: PartyBuffs.create({
 					heroicPresence: true,

@@ -1,6 +1,7 @@
 package deathknight
 
 import (
+	"math"
 	"strconv"
 	"time"
 
@@ -173,6 +174,8 @@ var ghoulPetBaseStats = stats.Stats{
 	stats.MeleeCrit: (3.2 + 1.8) * core.CritRatingPerCritChance,
 }
 
+const PetExpertiseScale = 3.25
+
 func (dk *Deathknight) ghoulStatInheritance() core.PetStatInheritance {
 	ravenousDead := 1.0 + 0.2*float64(dk.Talents.RavenousDead)
 	glyphBonus := 0.0
@@ -181,13 +184,16 @@ func (dk *Deathknight) ghoulStatInheritance() core.PetStatInheritance {
 	}
 
 	return func(ownerStats stats.Stats) stats.Stats {
+		ownerHitChance := ownerStats[stats.MeleeHit] / core.MeleeHitRatingPerHitChance
+		hitRatingFromOwner := math.Floor(ownerHitChance) * core.MeleeHitRatingPerHitChance
+
 		return stats.Stats{
 			stats.Stamina:  ownerStats[stats.Stamina] * (glyphBonus + 0.7*ravenousDead),
 			stats.Strength: ownerStats[stats.Strength] * (glyphBonus + 0.7*ravenousDead),
 
-			stats.MeleeHit:   ownerStats[stats.MeleeHit],
-			stats.SpellHit:   ownerStats[stats.SpellHit],
-			stats.Expertise:  ownerStats[stats.Expertise],
+			stats.MeleeHit:   hitRatingFromOwner,
+			stats.SpellHit:   hitRatingFromOwner,
+			stats.Expertise:  math.Floor((math.Floor(ownerHitChance) * PetExpertiseScale)) * core.ExpertisePerQuarterPercentReduction,
 			stats.MeleeHaste: ownerStats[stats.MeleeHaste],
 			stats.SpellHaste: ownerStats[stats.MeleeHaste],
 		}
@@ -211,13 +217,16 @@ func (dk *Deathknight) armyGhoulStatInheritance() core.PetStatInheritance {
 	}
 
 	return func(ownerStats stats.Stats) stats.Stats {
+		ownerHitChance := ownerStats[stats.MeleeHit] / core.MeleeHitRatingPerHitChance
+		hitRatingFromOwner := math.Floor(ownerHitChance) * core.MeleeHitRatingPerHitChance
+
 		return stats.Stats{
 			stats.Stamina:  ownerStats[stats.Stamina] * (glyphBonus + 0.7*ravenousDead),
 			stats.Strength: ownerStats[stats.Strength] * (glyphBonus + 0.7*ravenousDead),
 
-			stats.MeleeHit:   ownerStats[stats.MeleeHit],
-			stats.SpellHit:   ownerStats[stats.SpellHit],
-			stats.Expertise:  ownerStats[stats.Expertise],
+			stats.MeleeHit:   hitRatingFromOwner,
+			stats.SpellHit:   hitRatingFromOwner,
+			stats.Expertise:  math.Floor((math.Floor(ownerHitChance) * PetExpertiseScale)) * core.ExpertisePerQuarterPercentReduction,
 			stats.MeleeHaste: ownerStats[stats.MeleeHaste],
 			stats.SpellHaste: ownerStats[stats.MeleeHaste],
 		}

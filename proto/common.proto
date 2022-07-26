@@ -453,6 +453,7 @@ message RaidBuffs {
 	bool bloodlust = 29;
 	TristateEffect thorns = 30;
 	TristateEffect devotion_aura = 31;
+	TristateEffect stoneskin_totem = 42;
 	bool retribution_aura = 32;
 	bool shadow_protection = 33;	
 
