@@ -13,6 +13,14 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 	actionID:= core.ActionID{SpellID: 47809}
 	spellSchool := core.SpellSchoolShadow
 	baseAdditiveMultiplier:= warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
+	baseCost := 0.17 * warlock.BaseMana
+	costReductionFactor := 1.0
+	if float64(warlock.Talents.Cataclysm) > 0 {
+		costReductionFactor -= 0.01 + 0.03*float64(warlock.Talents.Cataclysm)
+	}
+	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfShadowBolt) {
+		costReductionFactor -= 0.1
+	}
 
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
@@ -37,15 +45,6 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 				}
 			}
 		},
-	}
-
-	baseCost := 0.17 * warlock.BaseMana
-	costReductionFactor := 1.0
-	if float64(warlock.Talents.Cataclysm) > 0 {
-		costReductionFactor -= 0.01 + 0.03*float64(warlock.Talents.Cataclysm)
-	}
-	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfShadowBolt) {
-		costReductionFactor -= 0.1
 	}
 
 	warlock.ShadowBolt = warlock.RegisterSpell(core.SpellConfig{

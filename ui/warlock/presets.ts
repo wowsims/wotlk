@@ -37,6 +37,7 @@ import {
 import * as Enchants from '/wotlk/core/constants/enchants.js';
 import * as Gems from '/wotlk/core/proto_utils/gems.js';
 import * as Tooltips from '/wotlk/core/constants/tooltips.js';
+import * as WarlockTooltips from './tooltips.js';
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
@@ -171,8 +172,7 @@ export const DefaultDebuffs = Debuffs.create({
 });
 
 export const SWP_BIS = {
-	name: 'Outa SWP',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	name: 'Straight Outa SWP',
 	gear: EquipmentSpec.fromJsonString(`
 {"items": [
         {
@@ -282,7 +282,7 @@ export const SWP_BIS = {
 };
 export const P1_PreBiS = {
 	name: 'Pre-Raid BiS',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	tooltip: WarlockTooltips.BIS_TOOLTIP,
 	gear: EquipmentSpec.fromJsonString(`
     {"items":
       [
@@ -338,7 +338,7 @@ export const P1_PreBiS = {
           "id": 40696,
           "gems": [
             40155,
-            0
+            40113
           ]
         },
         {
@@ -392,7 +392,7 @@ export const P1_PreBiS = {
 
 export const P1_BiS = {
 	name: 'P1 BiS',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	tooltip: WarlockTooltips.BIS_TOOLTIP,
 	gear: EquipmentSpec.fromJsonString(`
     {"items":
       [
@@ -451,7 +451,7 @@ export const P1_BiS = {
         {
           "id": 40561,
           "gems": [
-            0
+            40113
           ]
         },
         {

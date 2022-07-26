@@ -20,7 +20,7 @@ func (warlock *Warlock) registerConflagrateSpell() {
 	if float64(warlock.Talents.Cataclysm) > 0 {
 		costReductionFactor -= 0.01 + 0.03*float64(warlock.Talents.Cataclysm)
 	}
-	spellCoefficient:= 0.2 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
+	spellCoefficient := 0.2 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
 
 	actionID := core.ActionID{SpellID: 17962}
 	spellSchool := core.SpellSchoolFire
