@@ -112,6 +112,12 @@ func (dk *Deathknight) applyBladeBarrier() {
 			aura.Unit.PseudoStats.DamageTakenMultiplier /= damageTakenMult
 		},
 	})
+
+	dk.onRuneSpendBladeBarrier = func(sim *core.Simulation) {
+		if dk.AllBloodRunesSpent() {
+			dk.BladeBarrierAura.Activate(sim)
+		}
+	}
 }
 
 func (dk *Deathknight) applyButchery() {

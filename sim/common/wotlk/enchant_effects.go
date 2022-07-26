@@ -336,7 +336,7 @@ func init() {
 			Cast: core.CastConfig{
 				CD: core.Cooldown{
 					Timer:    character.NewTimer(),
-					Duration: time.Minute,
+					Duration: time.Second * 60,
 				},
 				SharedCD: core.Cooldown{
 					Timer:    character.GetOffensiveTrinketCD(),
