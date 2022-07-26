@@ -25,6 +25,9 @@ func (priest *Priest) registerMindBlastSpell() {
 			if spellEffect.DidCrit() && priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow)) {
 				priest.ShadowyInsightAura.Activate(sim)
 			}
+			if spellEffect.DidCrit() && float64(priest.Talents.ImprovedSpiritTap) > 0 {
+				priest.ImprovedSpiritTap.Activate(sim)
+			}
 		},
 	}
 
