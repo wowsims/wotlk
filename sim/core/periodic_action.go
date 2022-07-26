@@ -56,6 +56,7 @@ func NewPeriodicAction(sim *Simulation, options PeriodicActionOptions) *PendingA
 				OnAction: options.OnAction,
 			})
 		} else {
+			tickIndex++
 			options.OnAction(sim)
 		}
 	}
