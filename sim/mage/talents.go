@@ -453,8 +453,8 @@ func (mage *Mage) applyMoltenFury() {
 	multiplier := 1.0 + 0.1*float64(mage.Talents.MoltenFury)
 
 	mage.RegisterResetEffect(func(sim *core.Simulation) {
-		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute20 bool) {
-			if isExecute20 {
+		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int) {
+			if isExecute == 20 {
 				mage.PseudoStats.DamageDealtMultiplier *= multiplier
 			}
 		})
