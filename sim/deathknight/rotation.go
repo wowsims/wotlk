@@ -39,6 +39,18 @@ func (o *Sequence) DoAction(sim *core.Simulation, target *core.Unit, dk *Deathkn
 	minClickLatency := time.Millisecond * 0
 
 	switch action {
+	case RotationAction_CUSTOM1:
+		if dk.ActionCustom1 != nil {
+			forceAdvance = dk.ActionCustom1(sim, target)
+		}
+	case RotationAction_CUSTOM2:
+		if dk.ActionCustom2 != nil {
+			forceAdvance = dk.ActionCustom2(sim, target)
+		}
+	case RotationAction_CUSTOM3:
+		if dk.ActionCustom3 != nil {
+			forceAdvance = dk.ActionCustom3(sim, target)
+		}
 	case RotationAction_IT:
 		casted = dk.CastIcyTouch(sim, target)
 		// Add this line if you care about recasting a spell in the opener in
@@ -113,32 +125,6 @@ func (o *Sequence) DoAction(sim *core.Simulation, target *core.Unit, dk *Deathkn
 		}
 	case RotationAction_RedoSequence:
 		o.Reset()
-	case RotationAction_FS_IF_KM:
-		if dk.KillingMachineAura.IsActive() && !dk.RimeAura.IsActive() {
-			casted = dk.CastFrostStrike(sim, target)
-		} else if dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
-			if dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() < 110 {
-				casted = dk.CastHowlingBlast(sim, target)
-			} else if dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() > 110 {
-				casted = dk.CastHowlingBlast(sim, target)
-			} else if !dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() > 110 {
-				casted = dk.CastFrostStrike(sim, target)
-			} else if !dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() < 110 {
-				casted = dk.CastFrostStrike(sim, target)
-			}
-		} else if !dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
-			if dk.CurrentRunicPower() < 110 {
-				casted = dk.CastHowlingBlast(sim, target)
-			} else {
-				casted = dk.CastFrostStrike(sim, target)
-			}
-		} else {
-			casted = dk.CastFrostStrike(sim, target)
-			if !casted {
-				casted = dk.CastHornOfWinter(sim, target)
-			}
-		}
-		forceAdvance = true
 	}
 
 	// Advances the opener

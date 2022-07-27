@@ -6,9 +6,11 @@ import (
 
 type RotationAction uint8
 
-// Add your UH rotation Actions here and then on the DoNext function
 const (
 	RotationAction_Skip RotationAction = iota
+	RotationAction_CUSTOM1
+	RotationAction_CUSTOM2
+	RotationAction_CUSTOM3
 	RotationAction_IT
 	RotationAction_PS
 	RotationAction_Obli
@@ -32,7 +34,6 @@ const (
 	RotationAction_FP
 	RotationAction_UP
 	RotationAction_RedoSequence
-	RotationAction_FS_IF_KM
 )
 
 type Sequence struct {
@@ -42,6 +43,7 @@ type Sequence struct {
 }
 
 type DoRotationEvent func(sim *core.Simulation, target *core.Unit)
+type RotationActionCustom func(sim *core.Simulation, target *core.Unit) bool
 
 type RotationHelper struct {
 	opener   *Sequence
@@ -53,6 +55,9 @@ type RotationHelper struct {
 	justCastPestilence bool
 
 	DoRotationEvent DoRotationEvent
+	ActionCustom1   RotationActionCustom
+	ActionCustom2   RotationActionCustom
+	ActionCustom3   RotationActionCustom
 }
 
 func TernaryRotationAction(condition bool, t RotationAction, f RotationAction) RotationAction {

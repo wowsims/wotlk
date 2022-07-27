@@ -6,6 +6,8 @@ import (
 )
 
 func (dk *DpsDeathknight) setupFrostSubBloodOpener() {
+	dk.setupCustomActions()
+
 	dk.DefineOpener([]deathknight.RotationAction{
 		deathknight.RotationAction_IT,
 		deathknight.RotationAction_PS,
@@ -31,6 +33,8 @@ func (dk *DpsDeathknight) setupFrostSubBloodOpener() {
 }
 
 func (dk *DpsDeathknight) setupFrostSubUnholyOpener() {
+	dk.setupCustomActions()
+
 	dk.DefineOpener([]deathknight.RotationAction{
 		deathknight.RotationAction_IT,
 		deathknight.RotationAction_PS,
@@ -121,7 +125,7 @@ func (dk *DpsDeathknight) doFrostRotation(sim *core.Simulation, target *core.Uni
 		if !dk.HasSequence() {
 			dk.PushSequence([]deathknight.RotationAction{
 				deathknight.RotationAction_Obli,
-				deathknight.RotationAction_FS_IF_KM,
+				deathknight.RotationAction_CUSTOM1,
 				deathknight.RotationAction_Obli,
 				deathknight.RotationAction_FS,
 				deathknight.RotationAction_BS,
@@ -164,4 +168,40 @@ func (dk *DpsDeathknight) doFrostRotation(sim *core.Simulation, target *core.Uni
 			}
 		}
 	}
+}
+
+func (dk *DpsDeathknight) setupCustomActions() {
+	dk.ActionCustom1 = dk.actionFsIfKm
+}
+
+func (dk *DpsDeathknight) actionFsIfKm(sim *core.Simulation, target *core.Unit) bool {
+	casted := &dk.CastSuccessful
+
+	if dk.KillingMachineAura.IsActive() && !dk.RimeAura.IsActive() {
+		*casted = dk.CastFrostStrike(sim, target)
+	} else if dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
+		if dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() < 110 {
+			*casted = dk.CastHowlingBlast(sim, target)
+		} else if dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() > 110 {
+			*casted = dk.CastHowlingBlast(sim, target)
+		} else if !dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() > 110 {
+			*casted = dk.CastFrostStrike(sim, target)
+		} else if !dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() < 110 {
+			*casted = dk.CastFrostStrike(sim, target)
+		}
+	} else if !dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
+		if dk.CurrentRunicPower() < 110 {
+			*casted = dk.CastHowlingBlast(sim, target)
+		} else {
+			*casted = dk.CastFrostStrike(sim, target)
+		}
+	} else {
+		*casted = dk.CastFrostStrike(sim, target)
+		if !*casted {
+			*casted = dk.CastHornOfWinter(sim, target)
+		}
+	}
+
+	// Returns value for forceAdvance
+	return true
 }
