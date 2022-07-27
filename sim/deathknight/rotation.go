@@ -26,6 +26,10 @@ func (o *Sequence) IsOngoing() bool {
 	return o.idx < o.numActions
 }
 
+func (o *Sequence) Reset() {
+	o.idx = 0
+}
+
 func (o *Sequence) DoAction(sim *core.Simulation, target *core.Unit, dk *Deathknight) bool {
 	casted := false
 	advance := true
@@ -122,13 +126,6 @@ func (o *Sequence) DoNext(sim *core.Simulation, dk *Deathknight) bool {
 
 	if o.IsOngoing() {
 		*casted = dk.opener.DoAction(sim, target, dk)
-	} else if dk.sequence != nil {
-		if dk.sequence.IsOngoing() {
-			*casted = dk.sequence.DoAction(sim, target, dk)
-			if !dk.sequence.IsOngoing() {
-				dk.sequence = nil
-			}
-		}
 	} else {
 		dk.onOpener = false
 
@@ -159,6 +156,6 @@ func (dk *Deathknight) DoRotation(sim *core.Simulation) {
 }
 
 func (dk *Deathknight) ResetRotation(sim *core.Simulation) {
-	dk.opener.idx = 0
+	dk.opener.Reset()
 	dk.onOpener = true
 }

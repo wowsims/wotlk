@@ -42,11 +42,8 @@ type Sequence struct {
 type DoRotationEvent func(sim *core.Simulation, target *core.Unit)
 
 type RotationHelper struct {
-	opener *Sequence
-	//openers  []Sequence
+	opener   *Sequence
 	onOpener bool
-
-	sequence *Sequence
 
 	CastSuccessful     bool
 	justCastPestilence bool
@@ -68,13 +65,4 @@ func (r *RotationHelper) DefineOpener(actions []RotationAction) {
 		numActions: len(actions),
 		actions:    actions,
 	}
-}
-
-func (r *RotationHelper) PushSequence(actions []RotationAction) {
-	seq := &Sequence{
-		idx:        0,
-		numActions: len(actions),
-		actions:    actions,
-	}
-	r.sequence = seq
 }
