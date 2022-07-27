@@ -125,6 +125,9 @@ func (pet *Pet) reset(sim *Simulation, agent PetAgent) {
 	pet.isReset = true
 	pet.Character.reset(sim, agent)
 
+	pet.CancelGCDTimer(sim)
+	pet.AutoAttacks.CancelAutoSwing(sim)
+
 	pet.enabled = false
 	if pet.enabledOnStart {
 		pet.Enable(sim, agent)
