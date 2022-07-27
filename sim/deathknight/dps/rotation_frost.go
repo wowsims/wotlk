@@ -5,31 +5,65 @@ import (
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
-func (dk *DpsDeathknight) setupFrostSubBloodOpener() {
-	dk.DefineOpener([]deathknight.RotationAction{
-		deathknight.RotationAction_IT,
-		deathknight.RotationAction_PS,
-		deathknight.RotationAction_UA,
-		deathknight.RotationAction_BT,
-		deathknight.RotationAction_Obli,
-		deathknight.RotationAction_FS,
-		deathknight.RotationAction_Pesti,
-		deathknight.RotationAction_ERW,
-		deathknight.RotationAction_Obli,
-		deathknight.RotationAction_Obli,
-		deathknight.RotationAction_Obli,
-		deathknight.RotationAction_FS,
-		deathknight.RotationAction_HB_Ghoul_RimeCheck,
-		deathknight.RotationAction_FS,
-		deathknight.RotationAction_Obli,
-		deathknight.RotationAction_Obli,
-		deathknight.RotationAction_Pesti,
-		deathknight.RotationAction_FS,
-		deathknight.RotationAction_BS,
-		deathknight.RotationAction_FS,
-	})
+func RotationActionCallback_HB_Ghoul_RimeCheck(sim *core.Simulation, target *core.Unit, dk *deathknight.Deathknight, s *deathknight.Sequence) bool {
+	casted := false
+	if dk.RimeAura.IsActive() {
+		casted = dk.CastHowlingBlast(sim, target)
+	} else {
+		casted = dk.CastRaiseDead(sim, target)
+	}
+
+	s.ConditionalAdvance(true)
+	return casted
 }
 
+func (dk *DpsDeathknight) setupFrostSubBloodOpener() {
+	dk.Opener.NewAction(deathknight.RotationActionCallback_IT)
+	dk.Opener.NewAction(deathknight.RotationActionCallback_PS)
+	dk.Opener.NewAction(deathknight.RotationActionCallback_UA)
+	dk.Opener.NewAction(deathknight.RotationActionCallback_BT)
+	dk.Opener.NewAction(deathknight.RotationActionCallback_Obli)
+	dk.Opener.NewAction(deathknight.RotationActionCallback_FS)
+	dk.Opener.NewAction(deathknight.RotationActionCallback_Pesti)
+	dk.Opener.NewAction(deathknight.RotationActionCallback_ERW)
+	dk.Opener.NewAction(deathknight.RotationActionCallback_Obli)
+	dk.Opener.NewAction(deathknight.RotationActionCallback_Obli)
+	dk.Opener.NewAction(deathknight.RotationActionCallback_Obli)
+	dk.Opener.NewAction(deathknight.RotationActionCallback_FS)
+	dk.Opener.NewAction(RotationActionCallback_HB_Ghoul_RimeCheck)
+	dk.Opener.NewAction(deathknight.RotationActionCallback_FS)
+	dk.Opener.NewAction(deathknight.RotationActionCallback_Obli)
+	dk.Opener.NewAction(deathknight.RotationActionCallback_Obli)
+	dk.Opener.NewAction(deathknight.RotationActionCallback_Pesti)
+	dk.Opener.NewAction(deathknight.RotationActionCallback_FS)
+	dk.Opener.NewAction(deathknight.RotationActionCallback_BS)
+	dk.Opener.NewAction(deathknight.RotationActionCallback_FS)
+}
+
+func (dk *DpsDeathknight) setupFrostSubUnholyOpener() {
+	dk.Opener.NewAction(deathknight.RotationActionCallback_IT)
+	dk.Opener.NewAction(deathknight.RotationActionCallback_PS)
+	//dk.Opener.NewAction(RotationActionCallback_UA)
+	//dk.Opener.NewAction(RotationActionCallback_BT)
+	//dk.Opener.NewAction(RotationActionCallback_Obli)
+	//dk.Opener.NewAction(RotationActionCallback_FS)
+	//dk.Opener.NewAction(RotationActionCallback_Pesti)
+	//dk.Opener.NewAction(RotationActionCallback_ERW)
+	//dk.Opener.NewAction(RotationActionCallback_Obli)
+	//dk.Opener.NewAction(RotationActionCallback_Obli)
+	//dk.Opener.NewAction(RotationActionCallback_Obli)
+	//dk.Opener.NewAction(RotationActionCallback_FS)
+	//dk.Opener.NewAction(RotationActionCallback_HB_Ghoul_RimeCheck)
+	//dk.Opener.NewAction(RotationActionCallback_FS)
+	//dk.Opener.NewAction(RotationActionCallback_Obli)
+	//dk.Opener.NewAction(RotationActionCallback_Obli)
+	//dk.Opener.NewAction(RotationActionCallback_Pesti)
+	//dk.Opener.NewAction(RotationActionCallback_FS)
+	//dk.Opener.NewAction(RotationActionCallback_BS)
+	//dk.Opener.NewAction(RotationActionCallback_FS)
+}
+
+/*
 func (dk *DpsDeathknight) setupFrostSubUnholyOpener() {
 	dk.DefineOpener([]deathknight.RotationAction{
 		deathknight.RotationAction_IT,
@@ -165,3 +199,4 @@ func (dk *DpsDeathknight) doFrostRotation(sim *core.Simulation, target *core.Uni
 		}
 	}
 }
+*/

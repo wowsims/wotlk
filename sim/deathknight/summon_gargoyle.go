@@ -68,7 +68,7 @@ func (dk *Deathknight) registerSummonGargoyleCD() {
 		Priority: core.CooldownPriorityDrums - 1, // Always prefer to cast after drums or lust so the gargoyle gets their benefits.
 		Type:     core.CooldownTypeDPS,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			if dk.opener.IsOngoing() {
+			if dk.Opener.IsOngoing() {
 				return false
 			}
 			if dk.Gargoyle.IsEnabled() {

@@ -55,35 +55,30 @@ func NewDpsDeathknight(character core.Character, player proto.Player) *DpsDeathk
 func (dk *DpsDeathknight) SetupRotations() {
 	if dk.Talents.DarkConviction > 0 && dk.Talents.HowlingBlast {
 		dk.setupFrostSubBloodOpener()
-		dk.DoRotationEvent = dk.doFrostRotation
 	} else if dk.Talents.BloodCakedBlade > 0 && dk.Talents.HowlingBlast {
 		dk.setupFrostSubUnholyOpener()
-		dk.DoRotationEvent = dk.doFrostRotation
 	} else if dk.Talents.HowlingBlast {
 		dk.setupFrostSubBloodOpener()
-		dk.DoRotationEvent = dk.doFrostRotation
 	} else if dk.Talents.SummonGargoyle {
 		if dk.Rotation.UseDeathAndDecay {
-			dk.DoRotationEvent = dk.doUnholyRotation
 			if dk.Rotation.UnholyPresenceOpener {
-				dk.setupUnholyDndUnholyPresenceOpener()
+				//dk.setupUnholyDndUnholyPresenceOpener()
 			} else {
-				dk.setupUnholyDndBloodPresenceOpener()
+				//dk.setupUnholyDndBloodPresenceOpener()
 			}
 		} else {
-			dk.DoRotationEvent = dk.doUnholySsRotation
 
 			if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd {
 				if dk.Rotation.UnholyPresenceOpener {
-					dk.setupUnholySsArmyUnholyPresenceOpener()
+					//dk.setupUnholySsArmyUnholyPresenceOpener()
 				} else {
-					dk.setupUnholySsArmyBloodPresenceOpener()
+					//dk.setupUnholySsArmyBloodPresenceOpener()
 				}
 			} else {
 				if dk.Rotation.UnholyPresenceOpener {
-					dk.setupUnholySsUnholyPresenceOpener()
+					//dk.setupUnholySsUnholyPresenceOpener()
 				} else {
-					dk.setupUnholySsBloodPresenceOpener()
+					//dk.setupUnholySsBloodPresenceOpener()
 				}
 			}
 		}

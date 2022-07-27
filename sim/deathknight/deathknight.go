@@ -268,35 +268,35 @@ func NewDeathknight(character core.Character, options proto.Player, inputs Death
 			// you do not want these to trigger a tryUseGCD, so after the opener
 			// its fine since you're running off a prio system, and rune generation
 			// can change your logic which we want.
-			if !dk.onOpener {
+			if !dk.Opener.IsOngoing() {
 				if dk.GCD.IsReady(sim) {
 					dk.tryUseGCD(sim)
 				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if !dk.onOpener {
+			if !dk.Opener.IsOngoing() {
 				if dk.GCD.IsReady(sim) {
 					dk.tryUseGCD(sim)
 				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if !dk.onOpener {
+			if !dk.Opener.IsOngoing() {
 				if dk.GCD.IsReady(sim) {
 					dk.tryUseGCD(sim)
 				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if !dk.onOpener {
+			if !dk.Opener.IsOngoing() {
 				if dk.GCD.IsReady(sim) {
 					dk.tryUseGCD(sim)
 				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if !dk.onOpener {
+			if !dk.Opener.IsOngoing() {
 				if dk.GCD.IsReady(sim) {
 					dk.tryUseGCD(sim)
 				}
@@ -325,6 +325,9 @@ func NewDeathknight(character core.Character, options proto.Player, inputs Death
 	for i := 0; i < 8; i++ {
 		dk.ArmyGhoul[i] = dk.NewArmyGhoulPet(i)
 	}
+
+	dk.Opener = &Sequence{}
+	dk.Main = &Sequence{}
 
 	return dk
 }

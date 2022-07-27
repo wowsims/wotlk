@@ -4,11 +4,20 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-type RotationAction uint8
+//type RotationAction func(sim *core.Simulation, target *core.Unit)
+
+type RotationAction func(sim *core.Simulation, target *core.Unit, dk *Deathknight, s *Sequence) bool
 
 // Add your UH rotation Actions here and then on the DoNext function
+
+func (s *Sequence) NewAction(action RotationAction) {
+	s.actions = append(s.actions, action)
+	s.numActions += 1
+}
+
+/*
 const (
-	RotationAction_Skip RotationAction = iota
+	RotationAction_Skip RotationActionCallback = Func_RotationAction_Skip
 	RotationAction_IT
 	RotationAction_PS
 	RotationAction_Obli
@@ -34,6 +43,7 @@ const (
 	RotationAction_RedoSequence
 	RotationAction_FS_IF_KM
 )
+*/
 
 type Sequence struct {
 	idx        int
@@ -41,18 +51,27 @@ type Sequence struct {
 	actions    []RotationAction
 }
 
-type DoRotationEvent func(sim *core.Simulation, target *core.Unit)
+func (o *Sequence) IsOngoing() bool {
+	return o.idx < o.numActions
+}
+
+func (o *Sequence) Reset() {
+	o.idx = 0
+}
+
+func (o *Sequence) Advance(condition bool) {
+	o.idx += 1
+}
+
+func (o *Sequence) ConditionalAdvance(condition bool) {
+	if condition {
+		o.idx += 1
+	}
+}
 
 type RotationHelper struct {
-	opener   *Sequence
-	onOpener bool
-
-	sequence *Sequence
-
-	CastSuccessful     bool
-	justCastPestilence bool
-
-	DoRotationEvent DoRotationEvent
+	Opener *Sequence
+	Main   *Sequence
 }
 
 func TernaryRotationAction(condition bool, t RotationAction, f RotationAction) RotationAction {
@@ -61,37 +80,4 @@ func TernaryRotationAction(condition bool, t RotationAction, f RotationAction) R
 	} else {
 		return f
 	}
-}
-
-func (r *RotationHelper) DefineOpener(actions []RotationAction) {
-	r.opener = &Sequence{
-		idx:        0,
-		numActions: len(actions),
-		actions:    actions,
-	}
-}
-
-func (r *RotationHelper) PushSequence(actions []RotationAction) {
-	if r.sequence == nil {
-		r.sequence = &Sequence{
-			idx:        0,
-			numActions: len(actions),
-			actions:    actions,
-		}
-	} else {
-		panic("Tried to push sequence but sequence is currently Ongoing!")
-	}
-}
-
-func (r *RotationHelper) RedoSequence(s *Sequence) {
-	if r.sequence != nil {
-		s.Reset()
-		r.sequence = s
-	} else {
-		panic("Tried to redo sequence that wasn't ongoing!")
-	}
-}
-
-func (r *RotationHelper) HasSequence() bool {
-	return r.sequence != nil
 }

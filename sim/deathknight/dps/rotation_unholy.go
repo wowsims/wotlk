@@ -1,13 +1,6 @@
 package dps
 
-import (
-	"time"
-
-	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/deathknight"
-)
-
+/*
 func (dk *DpsDeathknight) getFirstDiseaseAction() deathknight.RotationAction {
 	if dk.Inputs.FirstDisease == proto.Deathknight_Rotation_FrostFever {
 		return deathknight.RotationAction_IT
@@ -408,3 +401,4 @@ func (dk *DpsDeathknight) doUnholyRotation(sim *core.Simulation, target *core.Un
 		}
 	}
 }
+*/
