@@ -21,24 +21,26 @@ func (shaman *Shaman) registerLightningShieldSpell() *core.Spell {
 		t7bonus = 1.0
 	}
 
-	procSpell := shaman.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolNature,
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskEmpty,
-			DamageMultiplier: 1 * (1 + 0.05*float64(shaman.Talents.ImprovedShields)) * (1 + 0.2*lsGlyph) * (1 + 0.1*t7bonus),
-			ThreatMultiplier: 1, //fix when spirit weapons is fixed
-			BaseDamage:       core.BaseDamageConfigMagic(380, 380, 0.267),
-			OutcomeApplier:   shaman.OutcomeFuncMagicHitAndCrit(shaman.DefaultSpellCritMultiplier()),
-		}),
-	})
+	dmgMultBonus := 1.0
 
 	switch shaman.Equip[items.ItemSlotHands].ID { //s1 and s2 enh pvp gloves, probably unnessecary but its fun
 	case 26000:
 		fallthrough
 	case 32005:
-		procSpell.DamageMultiplier *= 1.08
+		dmgMultBonus = 1.08
 	}
+
+	procSpell := shaman.RegisterSpell(core.SpellConfig{
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolNature,
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+			ProcMask:         core.ProcMaskEmpty,
+			DamageMultiplier: 1 * (1 + 0.05*float64(shaman.Talents.ImprovedShields)) * (1 + 0.2*lsGlyph) * (1 + 0.1*t7bonus) * dmgMultBonus,
+			ThreatMultiplier: 1, //fix when spirit weapons is fixed
+			BaseDamage:       core.BaseDamageConfigMagic(380, 380, 0.267),
+			OutcomeApplier:   shaman.OutcomeFuncMagicHitAndCrit(shaman.DefaultSpellCritMultiplier()),
+		}),
+	})
 
 	LightningShieldAura := shaman.RegisterAura(core.Aura{
 		Label:     "Lightning Shield",
