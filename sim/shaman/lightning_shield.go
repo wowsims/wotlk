@@ -12,21 +12,15 @@ func (shaman *Shaman) registerLightningShieldSpell() *core.Spell {
 	actionID := core.ActionID{SpellID: 49281}
 	var proc = 0.02 * float64(shaman.Talents.StaticShock)
 
-	lsGlyph := 0.0
-	if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfLightningShield) {
-		lsGlyph = 1.0
-	}
-	t7bonus := 0.0
-	if shaman.HasSetBonus(ItemSetEarthshatterBattlegear, 2) {
-		t7bonus = 1.0
-	}
-
 	procSpell := shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolNature,
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskEmpty,
-			DamageMultiplier: 1 * (1 + 0.05*float64(shaman.Talents.ImprovedShields)) * (1 + 0.2*lsGlyph) * (1 + 0.1*t7bonus),
+			ProcMask: core.ProcMaskEmpty,
+			DamageMultiplier: 1 * (1 + 0.05*float64(shaman.Talents.ImprovedShields) +
+				core.TernaryFloat64(shaman.HasSetBonus(ItemSetEarthshatterBattlegear, 2), 0.1, 0)) *
+				core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfLightningShield), 1.2, 1), //possibly additive?
+
 			ThreatMultiplier: 1, //fix when spirit weapons is fixed
 			BaseDamage:       core.BaseDamageConfigMagic(380, 380, 0.267),
 			OutcomeApplier:   shaman.OutcomeFuncMagicHitAndCrit(shaman.DefaultSpellCritMultiplier()),

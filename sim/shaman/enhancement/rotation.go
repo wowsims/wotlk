@@ -1,8 +1,6 @@
 package enhancement
 
 import (
-	"time"
-
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
@@ -70,15 +68,17 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 		return
 	}
 
-	if enh.Talents.MaelstromWeapon > 0 {
-		lbCastTime := enh.ApplyCastSpeed(time.Millisecond*2500 - time.Duration(500*enh.MaelstromWeaponAura.GetStacks()))
-		if enh.MaelstromWeaponAura.GetStacks() >= 3 {
-			if time.Duration(lbCastTime) < enh.AutoAttacks.NextAttackAt()+150*time.Millisecond {
-				if !enh.LightningBolt.Cast(sim, target) {
-					enh.WaitForMana(sim, enh.LightningBolt.CurCast.Cost)
-				}
-				return
+	if enh.Talents.MaelstromWeapon > 0 && enh.MaelstromWeaponAura.GetStacks() >= 3 {
+		lbCastTime := enh.LightningBolt.CurCast.CastTime
+		timeUntilSwing := enh.AutoAttacks.NextAttackAt() - sim.CurrentTime
+		if sim.CurrentTime > enh.AutoAttacks.NextAttackAt() {
+			timeUntilSwing = enh.AutoAttacks.MH.SwingDuration
+		}
+		if lbCastTime < timeUntilSwing {
+			if !enh.LightningBolt.Cast(sim, target) {
+				enh.WaitForMana(sim, enh.LightningBolt.CurCast.Cost)
 			}
+			return
 		}
 	}
 
@@ -112,7 +112,7 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 		}
 	}
 
-	enh.LightningShield.Cast(sim, nil) // if nothing else, refresh lightning shield
+	//enh.LightningShield.Cast(sim, nil) // if nothing else, refresh lightning shield
 	enh.DoNothing()
 	return
 }
