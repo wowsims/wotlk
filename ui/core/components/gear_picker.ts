@@ -78,7 +78,7 @@ class ItemPicker extends Component {
 	private readonly player: Player<any>;
 	private readonly iconElem: HTMLAnchorElement;
 	private readonly nameElem: HTMLAnchorElement;
-	private readonly enchantElem: HTMLElement;
+	private readonly enchantElem: HTMLAnchorElement;
 	private readonly socketsContainerElem: HTMLElement;
 
 	// All items and enchants that are eligible for this slot
@@ -99,14 +99,14 @@ class ItemPicker extends Component {
         </div>
       </a>
       <div class="item-picker-labels-container">
-        <a class="item-picker-name"></a>
-        <span class="item-picker-enchant"></span>
+        <a class="item-picker-name"></a><br>
+        <a class="item-picker-enchant"></a>
       </div>
     `;
 
 		this.iconElem = this.rootElem.getElementsByClassName('item-picker-icon')[0] as HTMLAnchorElement;
 		this.nameElem = this.rootElem.getElementsByClassName('item-picker-name')[0] as HTMLAnchorElement;
-		this.enchantElem = this.rootElem.getElementsByClassName('item-picker-enchant')[0] as HTMLElement;
+		this.enchantElem = this.rootElem.getElementsByClassName('item-picker-enchant')[0] as HTMLAnchorElement;
 		this.socketsContainerElem = this.rootElem.getElementsByClassName('item-picker-sockets-container')[0] as HTMLElement;
 
 		this.item = player.getEquippedItem(slot);
@@ -173,6 +173,12 @@ class ItemPicker extends Component {
 
 			if (newItem.enchant) {
 				this.enchantElem.textContent = enchantDescriptions.get(newItem.enchant.id) || newItem.enchant.name;
+				newItem.enchant
+				if (newItem.enchant.isSpellId) {
+					ActionId.fromSpellId(newItem.enchant.id).setWowheadHref(this.enchantElem);
+				} else {
+					ActionId.fromItemId(newItem.enchant.id).setWowheadHref(this.enchantElem);
+				}
 			}
 
 			newItem.allSocketColors().forEach((socketColor, gemIdx) => {

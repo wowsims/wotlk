@@ -59,7 +59,6 @@
 }
 
 .item-picker-name {
-  display: block;
   font-size: clamp(16px, 17px, 18px);
 	letter-spacing: normal;
 	color: white;
@@ -70,10 +69,13 @@
 }
 
 .item-picker-enchant {
-  display: block;
   font-size: clamp(12px, 13px, 14px);;
   color: lawngreen;
 	letter-spacing: normal;
+}
+.item-picker-enchant:hover {
+  color: lawngreen;
+  text-decoration: none;
 }
 
 .selector-modal {
