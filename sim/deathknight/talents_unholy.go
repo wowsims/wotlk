@@ -254,6 +254,9 @@ func (dk *Deathknight) applyDesolation() {
 }
 
 func (dk *Deathknight) procUnholyBlight(sim *core.Simulation, target *core.Unit, damageFromProccingSpell float64) {
+	if !dk.Talents.UnholyBlight {
+		return
+	}
 
 	unholyBlightDot := dk.UnholyBlightDot[target.Index]
 
@@ -279,6 +282,10 @@ func (dk *Deathknight) procUnholyBlight(sim *core.Simulation, target *core.Unit,
 }
 
 func (dk *Deathknight) applyUnholyBlight() {
+	if !dk.Talents.UnholyBlight {
+		return
+	}
+
 	actionID := core.ActionID{SpellID: 50536}
 
 	dk.UnholyBlightSpell = dk.RegisterSpell(core.SpellConfig{
