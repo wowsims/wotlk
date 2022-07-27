@@ -42,7 +42,7 @@ func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
 				0.03*float64(rogue.Talents.Aggression),
 			ThreatMultiplier: 1,
 			BonusCritRating: core.TernaryFloat64(
-				rogue.HasGlyph(int32(proto.RogueMajorGlyph_GlyphOfEviscerate)), 10*core.CritRatingPerCritChance, 0.0),
+				rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfEviscerate), 10*core.CritRatingPerCritChance, 0.0),
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					roll := sim.RandomFloat("Eviscerate") * 254.0

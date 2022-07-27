@@ -42,7 +42,7 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 			rogue.PseudoStats.DamageDealtMultiplier *= 1.2
 			core.StartPeriodicAction(sim, core.PeriodicActionOptions{
 				Period:          time.Millisecond * 500,
-				NumTicks:        5,
+				NumTicks:        4,
 				TickImmediately: true,
 				OnAction: func(s *core.Simulation) {
 					attackSpell.Cast(sim, rogue.CurrentTarget)
@@ -62,7 +62,7 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    rogue.NewTimer(),
-				Duration: time.Minute*2 - core.TernaryDuration(rogue.HasGlyph(int32(proto.RogueMajorGlyph_GlyphOfKillingSpree)), time.Second*45, 0),
+				Duration: time.Minute*2 - core.TernaryDuration(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfKillingSpree), time.Second*45, 0),
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, u *core.Unit, s2 *core.Spell) {

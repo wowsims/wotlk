@@ -394,6 +394,7 @@ func bloodFrenzySavageCombatAura(target *Unit, label string, id ActionID, points
 		ActionID: id,
 		Priority: multiplier,
 		// No fixed duration, lasts as long as the bleed that activates it.
+		Duration: NeverExpires,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.PhysicalDamageTakenMultiplier *= multiplier
 		},
