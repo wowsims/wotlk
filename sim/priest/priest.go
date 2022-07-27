@@ -92,6 +92,23 @@ func (priest *Priest) Initialize() {
 		})
 	}
 
+	if priest.Talents.ImprovedSpiritTap > 0 {
+		increase := (1 + float64(priest.Talents.ImprovedSpiritTap)*0.05)
+		priest.ImprovedSpiritTap = priest.GetOrRegisterAura(core.Aura{
+			Label:    "Improved Spirit Tap",
+			ActionID: core.ActionID{SpellID: 59000},
+			Duration: time.Second * 8,
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				priest.AddStatDependencyDynamic(sim, stats.Spirit, stats.Spirit, increase)
+				priest.PseudoStats.SpiritRegenRateCasting += 0.33
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				priest.AddStatDependencyDynamic(sim, stats.Spirit, stats.Spirit, 1.0/increase)
+				priest.PseudoStats.SpiritRegenRateCasting -= 0.33
+			},
+		})
+	}
+
 	// Shadow Insight gained from Glyph of Shadow
 	// Finalized spirit off gear and not dynamic spirit (e.g. Spirit Tap does not increase this)
 	priest.ShadowyInsightAura = priest.NewTemporaryStatsAura(
@@ -99,12 +116,6 @@ func (priest *Priest) Initialize() {
 		core.ActionID{SpellID: 61792},
 		stats.Stats{stats.SpellPower: priest.GetStat(stats.Spirit) * 0.30},
 		time.Second*10,
-	)
-	priest.ImprovedSpiritTap = priest.NewTemporaryStatsAura(
-		"Improved Spirit Tap",
-		core.ActionID{SpellID: 59000},
-		stats.Stats{stats.Spirit: priest.GetStat(stats.Spirit) * 1.1},
-		time.Second*8,
 	)
 
 	priest.registerDevouringPlagueSpell()
