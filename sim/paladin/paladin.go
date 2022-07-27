@@ -171,7 +171,7 @@ func NewPaladin(character core.Character, talents proto.PaladinTalents) *Paladin
 
 	paladin.EnableManaBar()
 
-	// Add paladin stat dependencies
+	// Paladins get 2 AP per STR
 	paladin.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2.0)
 
 	// Paladins get 1% crit per 52.08 agil
@@ -179,6 +179,9 @@ func NewPaladin(character core.Character, talents proto.PaladinTalents) *Paladin
 
 	// Paladins get 1% dodge per 52.08 agil
 	paladin.AddStatDependency(stats.Agility, stats.Dodge, 1.0+((1.0/52.08)*core.DodgeRatingPerDodgeChance))
+
+	// Paladins get more melee haste from haste than other classes, 25.22/1%
+	paladin.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
 
 	return paladin
 }
