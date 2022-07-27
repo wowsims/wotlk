@@ -61,6 +61,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 				Stat.StatAttackPower,
 				Stat.StatExpertise,
 				Stat.StatMeleeHit,
+				Stat.StatSpellHit,
 				Stat.StatMeleeCrit,
 				Stat.StatMeleeHaste,
 				Stat.StatArmorPenetration,
@@ -102,7 +103,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 					stoneskinTotem: TristateEffect.TristateEffectImproved,
 				}),
 				partyBuffs: PartyBuffs.create({
-					heroicPresence: true,
+					heroicPresence: false,
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
