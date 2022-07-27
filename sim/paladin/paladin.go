@@ -189,7 +189,6 @@ func NewPaladin(character core.Character, talents proto.PaladinTalents) *Paladin
 }
 
 func init() {
-	// Paladin base mana for all classes is 4114
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassPaladin}] = stats.Stats{
 		stats.Health:      6754,
 		stats.Stamina:     141,
