@@ -160,6 +160,9 @@ func New(char core.Character, form DruidForm, selfBuffs SelfBuffs, talents proto
 	druid.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/25))
 	druid.AddStatDependency(stats.Agility, stats.Dodge, 1.0+(core.DodgeRatingPerDodgeChance/14.7059))
 
+	// Druids get extra melee haste
+	druid.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
+
 	return druid
 }
 
