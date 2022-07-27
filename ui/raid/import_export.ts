@@ -271,7 +271,7 @@ class RaidWCLImporter extends Importer {
 							}
 							innervates: table(fightIDs: [${fightID}], dataType:Casts, endTime: 99999999, sourceClass: "Druid", abilityID: 29166),
 							powerInfusion: table(fightIDs: [${fightID}], dataType:Casts, endTime: 99999999, sourceClass: "Priest", abilityID: 10060)
-							tricksOfTheTrade: table(fightIDs: [${fightID}], dataType:Casts, endTime: 99999999, sourceClass: "Rogue", abilityID: 57934)
+							tricksOfTheTrade: table(fightIDs: [${fightID}], dataType:Casts, endTime: 99999999, sourceClass: "Rogue", abilityID: 57933)
 						}
 					}
 				}
