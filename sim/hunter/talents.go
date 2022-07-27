@@ -495,15 +495,14 @@ func (hunter *Hunter) applyImprovedTracking() {
 	hunter.RegisterResetEffect(
 		func(s *core.Simulation) {
 			if !applied {
-				for i := int32(0); i < hunter.Env.GetNumTargets(); i++ {
-					unit := hunter.Env.GetTargetUnit(i)
-					switch unit.MobType {
+				for _, target := range hunter.Env.Encounter.Targets {
+					switch target.MobType {
 					case proto.MobType_MobTypeBeast, proto.MobType_MobTypeDemon,
 						proto.MobType_MobTypeDragonkin, proto.MobType_MobTypeElemental,
 						proto.MobType_MobTypeGiant, proto.MobType_MobTypeHumanoid,
 						proto.MobType_MobTypeUndead:
 
-						hunter.AttackTables[unit.TableIndex].DamageDealtMultiplier *= 1.0 + 0.01*float64(hunter.Talents.ImprovedTracking)
+						hunter.AttackTables[target.TableIndex].DamageDealtMultiplier *= 1.0 + 0.01*float64(hunter.Talents.ImprovedTracking)
 					}
 				}
 				applied = true
