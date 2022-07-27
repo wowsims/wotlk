@@ -88,6 +88,9 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 			if spellEffect.DidCrit() && priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow)) {
 				priest.ShadowyInsightAura.Activate(sim)
 			}
+			if spellEffect.DidCrit() && priest.ImprovedSpiritTap != nil && sim.RandomFloat("Improved Spirit Tap") > 0.5 {
+				priest.ImprovedSpiritTap.Activate(sim)
+			}
 		},
 	}
 
