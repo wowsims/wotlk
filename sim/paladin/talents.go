@@ -101,30 +101,21 @@ func (paladin *Paladin) applyMinorGlyphOfSenseUndead() {
 		return
 	}
 
-	paladin.RegisterAura(core.Aura{
-		Label:    "Sense Undead",
-		ActionID: core.ActionID{SpellID: 5502},
-		Duration: core.NeverExpires,
-		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Activate(sim)
-		},
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
-				unit := paladin.Env.GetTargetUnit(i)
-				if unit.MobType == proto.MobType_MobTypeUndead {
-					paladin.AttackTables[unit.TableIndex].DamageDealtMultiplier *= 1.01
+	var applied bool
+
+	paladin.RegisterResetEffect(
+		func(s *core.Simulation) {
+			if !applied {
+				for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
+					unit := paladin.Env.GetTargetUnit(i)
+					if unit.MobType == proto.MobType_MobTypeUndead {
+						paladin.AttackTables[unit.TableIndex].DamageDealtMultiplier *= 1.01
+					}
 				}
+				applied = true
 			}
 		},
-		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
-				unit := paladin.Env.GetTargetUnit(i)
-				if unit.MobType == proto.MobType_MobTypeUndead {
-					paladin.AttackTables[unit.TableIndex].DamageDealtMultiplier /= 1.01
-				}
-			}
-		},
-	})
+	)
 }
 
 func (paladin *Paladin) applyRedoubt() {
@@ -257,32 +248,22 @@ func (paladin *Paladin) applyCrusade() {
 		return
 	}
 
-	paladin.RegisterAura(core.Aura{
-		Label:    "Crusade",
-		ActionID: core.ActionID{SpellID: 31868},
-		Duration: core.NeverExpires,
-		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Activate(sim)
-		},
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
-				unit := paladin.Env.GetTargetUnit(i)
-				switch unit.MobType {
-				case proto.MobType_MobTypeHumanoid, proto.MobType_MobTypeDemon, proto.MobType_MobTypeUndead, proto.MobType_MobTypeElemental:
-					paladin.AttackTables[unit.TableIndex].DamageDealtMultiplier *= 1 + (0.01 * float64(paladin.Talents.Crusade))
+	var applied bool
+
+	paladin.RegisterResetEffect(
+		func(s *core.Simulation) {
+			if !applied {
+				for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
+					unit := paladin.Env.GetTargetUnit(i)
+					switch unit.MobType {
+					case proto.MobType_MobTypeHumanoid, proto.MobType_MobTypeDemon, proto.MobType_MobTypeUndead, proto.MobType_MobTypeElemental:
+						paladin.AttackTables[unit.TableIndex].DamageDealtMultiplier *= 1 + (0.01 * float64(paladin.Talents.Crusade))
+					}
 				}
+				applied = true
 			}
 		},
-		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
-				unit := paladin.Env.GetTargetUnit(i)
-				switch unit.MobType {
-				case proto.MobType_MobTypeHumanoid, proto.MobType_MobTypeDemon, proto.MobType_MobTypeUndead, proto.MobType_MobTypeElemental:
-					paladin.AttackTables[unit.TableIndex].DamageDealtMultiplier /= 1 + (0.01 * float64(paladin.Talents.Crusade))
-				}
-			}
-		},
-	})
+	)
 }
 
 // Prior to WOTLK, behavior was to double dip.
