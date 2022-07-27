@@ -75,7 +75,6 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 			DamageMultiplier: 1 *
 				(1 + 0.03*float64(hunter.Talents.FerociousInspiration)) *
 				(1 + 0.01*float64(hunter.Talents.MarkedForDeath)) *
-				hunter.sniperTrainingMultiplier() *
 				core.TernaryFloat64(hunter.HasSetBonus(ItemSetGronnstalker, 4), 1.1, 1),
 			ThreatMultiplier: 1,
 
@@ -99,5 +98,5 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 }
 
 func (hunter *Hunter) SteadyShotCastTime() time.Duration {
-	return time.Duration(float64(time.Millisecond*2000)/hunter.RangedSwingSpeed()) + hunter.latency
+	return time.Duration(float64(time.Millisecond*1500)/hunter.RangedSwingSpeed()) + hunter.latency
 }
