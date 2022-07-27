@@ -227,7 +227,7 @@ func (dk *DpsDeathknight) castClipDisease(mainDisease bool, gracePeriod time.Dur
 		// Dont drop disease due to %dmg modifiers
 		if dot.TickCount < dot.NumberOfTicks-1 {
 			nextTickAt := dot.ExpiresAt() - dot.TickLength*time.Duration((dot.NumberOfTicks-1)-dot.TickCount)
-			if nextTickAt < sim.CurrentTime+gracePeriod || nextTickAt < sim.CurrentTime+400*time.Millisecond {
+			if nextTickAt > sim.CurrentTime && (nextTickAt < sim.CurrentTime+gracePeriod || nextTickAt < sim.CurrentTime+400*time.Millisecond) {
 				// Delay disease for next tick
 				dk.WaitUntil(sim, nextTickAt+50*time.Millisecond)
 				return true

@@ -218,7 +218,7 @@ func (dk *Deathknight) applyIcyTalons() {
 }
 
 func (dk *Deathknight) outcomeEitherWeaponHitOrCrit(mhOutcome core.HitOutcome, ohOutcome core.HitOutcome) bool {
-	return mhOutcome == core.OutcomeHit || mhOutcome == core.OutcomeCrit || ohOutcome == core.OutcomeHit || ohOutcome == core.OutcomeCrit
+	return mhOutcome == core.OutcomeHit || mhOutcome == core.OutcomeCrit // TODO: Confirm that this should be gone || ohOutcome == core.OutcomeHit || ohOutcome == core.OutcomeCrit
 }
 
 func (dk *Deathknight) bloodOfTheNorthCoeff() float64 {
