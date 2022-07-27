@@ -434,7 +434,6 @@ func (paladin *Paladin) makeRighteousVengeanceEffectFactory() (func(), func(floa
 
 	return func() { pool = 0 }, func(spellDamage float64) core.TickEffects {
 		pool += spellDamage * (0.10 * float64(paladin.Talents.RighteousVengeance))
-		damage := pool / 4
 
 		return core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(
 			core.SpellEffect{
@@ -444,6 +443,7 @@ func (paladin *Paladin) makeRighteousVengeanceEffectFactory() (func(), func(floa
 				OutcomeApplier:   applier,
 				BaseDamage: core.BaseDamageConfig{
 					Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
+						damage := pool / 4
 						pool -= damage
 						return damage
 					},
