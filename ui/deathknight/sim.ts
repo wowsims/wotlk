@@ -164,6 +164,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 				gear: [
 					Presets.P1_FROST_PRE_BIS_PRESET,
 					Presets.P1_FROST_BIS_PRESET,
+					Presets.P1_FROST_HITCAP_PRESET,
 					Presets.P1_UNHOLY_DW_BIS_PRESET,
 				],
 			},

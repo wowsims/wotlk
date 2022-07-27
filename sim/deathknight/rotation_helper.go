@@ -32,6 +32,7 @@ const (
 	RotationAction_FP
 	RotationAction_UP
 	RotationAction_RedoSequence
+	RotationAction_FS_IF_KM
 )
 
 type Sequence struct {
@@ -89,4 +90,8 @@ func (r *RotationHelper) RedoSequence(s *Sequence) {
 	} else {
 		panic("Tried to redo sequence that wasn't ongoing!")
 	}
+}
+
+func (r *RotationHelper) HasSequence() bool {
+	return r.sequence != nil
 }

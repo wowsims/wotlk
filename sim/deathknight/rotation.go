@@ -58,6 +58,7 @@ func (o *Sequence) DoAction(sim *core.Simulation, target *core.Unit, dk *Deathkn
 		casted = dk.CastObliterate(sim, target)
 	case RotationAction_FS:
 		casted = dk.CastFrostStrike(sim, target)
+		forceAdvance = true
 	case RotationAction_Pesti:
 		casted = dk.CastPestilence(sim, target)
 		if dk.LastCastOutcome == core.OutcomeMiss {
@@ -111,6 +112,32 @@ func (o *Sequence) DoAction(sim *core.Simulation, target *core.Unit, dk *Deathkn
 			dk.WaitUntil(sim, sim.CurrentTime+minClickLatency)
 		}
 	case RotationAction_RedoSequence:
+		o.Reset()
+	case RotationAction_FS_IF_KM:
+		if dk.KillingMachineAura.IsActive() && !dk.RimeAura.IsActive() {
+			casted = dk.CastFrostStrike(sim, target)
+		} else if dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
+			if dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() < 110 {
+				casted = dk.CastHowlingBlast(sim, target)
+			} else if dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() > 110 {
+				casted = dk.CastHowlingBlast(sim, target)
+			} else if !dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() > 110 {
+				casted = dk.CastFrostStrike(sim, target)
+			} else if !dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() < 110 {
+				casted = dk.CastFrostStrike(sim, target)
+			}
+		} else if !dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
+			if dk.CurrentRunicPower() < 110 {
+				casted = dk.CastHowlingBlast(sim, target)
+			} else {
+				casted = dk.CastFrostStrike(sim, target)
+			}
+		} else {
+			casted = dk.CastFrostStrike(sim, target)
+			if !casted {
+				casted = dk.CastHornOfWinter(sim, target)
+			}
+		}
 		forceAdvance = true
 	}
 

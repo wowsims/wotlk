@@ -101,6 +101,9 @@ type Deathknight struct {
 	BoneShield     *core.Spell
 	BoneShieldAura *core.Aura
 
+	IceboundFortitude     *core.Spell
+	IceboundFortitudeAura *core.Aura
+
 	// Diseases
 	FrostFeverSpell    *core.Spell
 	BloodPlagueSpell   *core.Spell
@@ -201,6 +204,7 @@ func (dk *Deathknight) Initialize() {
 	dk.registerPestilenceSpell()
 	dk.registerEmpowerRuneWeaponSpell()
 	dk.registerRuneTapSpell()
+	dk.registerIceboundFortitudeSpell()
 
 	dk.registerRaiseDeadCD()
 	dk.registerSummonGargoyleCD()
