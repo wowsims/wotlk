@@ -509,7 +509,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:     "Ashen Band of Unmatched Vengeance",
 		ID:       50401,
-		Bonus:    stats.Stats{stats.AttackPower: 480},
+		Bonus:    stats.Stats{stats.AttackPower: 480, stats.RangedAttackPower: 480},
 		Duration: time.Second * 10,
 		Callback: OnSpellHitDealt,
 		ProcMask: core.ProcMaskMeleeOrRanged,
@@ -520,7 +520,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:     "Ashen Band of Endless Vengeance",
 		ID:       50402,
-		Bonus:    stats.Stats{stats.AttackPower: 480},
+		Bonus:    stats.Stats{stats.AttackPower: 480, stats.RangedAttackPower: 480},
 		Duration: time.Second * 10,
 		Callback: OnSpellHitDealt,
 		ProcMask: core.ProcMaskMeleeOrRanged,
@@ -553,7 +553,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:     "Ashen Band of Unmatched Might",
 		ID:       52571,
-		Bonus:    stats.Stats{stats.AttackPower: 480},
+		Bonus:    stats.Stats{stats.AttackPower: 480, stats.RangedAttackPower: 480},
 		Duration: time.Second * 10,
 		Callback: OnSpellHitDealt,
 		ProcMask: core.ProcMaskMeleeOrRanged,
@@ -564,7 +564,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:     "Ashen Band of Endless Might",
 		ID:       52572,
-		Bonus:    stats.Stats{stats.AttackPower: 480},
+		Bonus:    stats.Stats{stats.AttackPower: 480, stats.RangedAttackPower: 480},
 		Duration: time.Second * 10,
 		Callback: OnSpellHitDealt,
 		ProcMask: core.ProcMaskMeleeOrRanged,
@@ -575,7 +575,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Sharpened Twilight Scale",
 		ID:         54569,
-		Bonus:      stats.Stats{stats.AttackPower: 1304},
+		Bonus:      stats.Stats{stats.AttackPower: 1304, stats.RangedAttackPower: 1304},
 		Duration:   time.Second * 15,
 		Callback:   OnSpellHitDealt,
 		Harmful:    true, // doesn't matter what, just that 'when you deal damage'
@@ -585,7 +585,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Sharpened Twilight Scale H",
 		ID:         54590,
-		Bonus:      stats.Stats{stats.AttackPower: 1472},
+		Bonus:      stats.Stats{stats.AttackPower: 1472, stats.RangedAttackPower: 1472},
 		Duration:   time.Second * 15,
 		Callback:   OnSpellHitDealt,
 		Harmful:    true, // doesn't matter what, just that 'when you deal damage'
