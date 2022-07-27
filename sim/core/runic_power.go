@@ -556,8 +556,6 @@ func (rp *runicPowerBar) RegenRuneAndCancelPAs(sim *Simulation, r *Rune) {
 			r.pas[0].Cancel(sim)
 			r.pas[0] = nil
 		}
-
-		r.generatedByReapingOrBoTN = false
 	} else if r.state == RuneState_DeathSpent {
 		r.state = RuneState_Death
 
@@ -566,16 +564,14 @@ func (rp *runicPowerBar) RegenRuneAndCancelPAs(sim *Simulation, r *Rune) {
 			r.pas[0].Cancel(sim)
 			r.pas[0] = nil
 		}
-
-		r.generatedByReapingOrBoTN = false
 	}
 }
 
 func (rp *runicPowerBar) RegenAllRunes(sim *Simulation) {
 	startBlood := rp.CurrentBloodRunes()
-	startFrost := rp.CurrentBloodRunes()
-	startUnholy := rp.CurrentBloodRunes()
-	startDeath := rp.CurrentBloodRunes()
+	startFrost := rp.CurrentFrostRunes()
+	startUnholy := rp.CurrentUnholyRunes()
+	startDeath := rp.CurrentDeathRunes()
 
 	rp.RegenRuneAndCancelPAs(sim, &rp.bloodRunes[0])
 	rp.RegenRuneAndCancelPAs(sim, &rp.bloodRunes[1])
@@ -586,22 +582,22 @@ func (rp *runicPowerBar) RegenAllRunes(sim *Simulation) {
 
 	if !rp.isACopy {
 		if rp.CurrentBloodRunes()-startBlood > 0 {
-			rp.GainRuneMetrics(sim, rp.bloodRuneGainMetrics, "blood", startBlood, startBlood+1)
+			rp.GainRuneMetrics(sim, rp.bloodRuneGainMetrics, "blood", startBlood, rp.CurrentBloodRunes())
 			rp.onBloodRuneGain(sim)
 		}
 
 		if rp.CurrentFrostRunes()-startFrost > 0 {
-			rp.GainRuneMetrics(sim, rp.frostRuneGainMetrics, "frost", startFrost, startFrost+1)
+			rp.GainRuneMetrics(sim, rp.frostRuneGainMetrics, "frost", startFrost, rp.CurrentFrostRunes())
 			rp.onFrostRuneGain(sim)
 		}
 
-		if rp.CurrentUnholyRunes()-startDeath > 0 {
-			rp.GainRuneMetrics(sim, rp.unholyRuneGainMetrics, "unholy", startUnholy, startUnholy+1)
+		if rp.CurrentUnholyRunes()-startUnholy > 0 {
+			rp.GainRuneMetrics(sim, rp.unholyRuneGainMetrics, "unholy", startUnholy, rp.CurrentUnholyRunes())
 			rp.onUnholyRuneGain(sim)
 		}
 
 		if rp.CurrentDeathRunes()-startDeath > 0 {
-			rp.GainRuneMetrics(sim, rp.deathRuneGainMetrics, "death", startDeath, startDeath+1)
+			rp.GainRuneMetrics(sim, rp.deathRuneGainMetrics, "death", startDeath, rp.CurrentDeathRunes())
 			rp.onDeathRuneGain(sim)
 		}
 	}

@@ -26,14 +26,31 @@ func (o *Sequence) IsOngoing() bool {
 	return o.idx < o.numActions
 }
 
+func (o *Sequence) Reset() {
+	o.idx = 0
+}
+
 func (o *Sequence) DoAction(sim *core.Simulation, target *core.Unit, dk *Deathknight) bool {
 	casted := false
 	advance := true
+	forceAdvance := false
 	action := o.actions[o.idx]
 
 	minClickLatency := time.Millisecond * 0
 
 	switch action {
+	case RotationAction_CUSTOM1:
+		if dk.ActionCustom1 != nil {
+			forceAdvance = dk.ActionCustom1(sim, target)
+		}
+	case RotationAction_CUSTOM2:
+		if dk.ActionCustom2 != nil {
+			forceAdvance = dk.ActionCustom2(sim, target)
+		}
+	case RotationAction_CUSTOM3:
+		if dk.ActionCustom3 != nil {
+			forceAdvance = dk.ActionCustom3(sim, target)
+		}
 	case RotationAction_IT:
 		casted = dk.CastIcyTouch(sim, target)
 		// Add this line if you care about recasting a spell in the opener in
@@ -53,6 +70,7 @@ func (o *Sequence) DoAction(sim *core.Simulation, target *core.Unit, dk *Deathkn
 		casted = dk.CastObliterate(sim, target)
 	case RotationAction_FS:
 		casted = dk.CastFrostStrike(sim, target)
+		forceAdvance = true
 	case RotationAction_Pesti:
 		casted = dk.CastPestilence(sim, target)
 		if dk.LastCastOutcome == core.OutcomeMiss {
@@ -105,10 +123,12 @@ func (o *Sequence) DoAction(sim *core.Simulation, target *core.Unit, dk *Deathkn
 		} else {
 			dk.WaitUntil(sim, sim.CurrentTime+minClickLatency)
 		}
+	case RotationAction_RedoSequence:
+		o.Reset()
 	}
 
 	// Advances the opener
-	if casted && advance {
+	if (casted && advance) || forceAdvance {
 		o.idx += 1
 	}
 
@@ -159,6 +179,6 @@ func (dk *Deathknight) DoRotation(sim *core.Simulation) {
 }
 
 func (dk *Deathknight) ResetRotation(sim *core.Simulation) {
-	dk.opener.idx = 0
+	dk.opener.Reset()
 	dk.onOpener = true
 }

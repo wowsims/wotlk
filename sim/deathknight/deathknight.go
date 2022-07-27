@@ -76,8 +76,7 @@ type Deathknight struct {
 	LastScourgeStrikeDamage float64
 	ScourgeStrike           *core.Spell
 
-	LastDeathCoilDamage float64
-	DeathCoil           *core.Spell
+	DeathCoil *core.Spell
 
 	DeathAndDecay    *core.Spell
 	DeathAndDecayDot *core.Dot
@@ -102,14 +101,18 @@ type Deathknight struct {
 	BoneShield     *core.Spell
 	BoneShieldAura *core.Aura
 
+	IceboundFortitude     *core.Spell
+	IceboundFortitudeAura *core.Aura
+
 	// Diseases
 	FrostFeverSpell    *core.Spell
 	BloodPlagueSpell   *core.Spell
 	FrostFeverDisease  []*core.Dot
 	BloodPlagueDisease []*core.Dot
 
-	UnholyBlightSpell *core.Spell
-	UnholyBlightDot   []*core.Dot
+	UnholyBlightSpell      *core.Spell
+	UnholyBlightDot        []*core.Dot
+	UnholyBlightTickDamage []float64
 
 	// Talent Auras
 	KillingMachineAura  *core.Aura
@@ -201,6 +204,7 @@ func (dk *Deathknight) Initialize() {
 	dk.registerPestilenceSpell()
 	dk.registerEmpowerRuneWeaponSpell()
 	dk.registerRuneTapSpell()
+	dk.registerIceboundFortitudeSpell()
 
 	dk.registerRaiseDeadCD()
 	dk.registerSummonGargoyleCD()
