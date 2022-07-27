@@ -65,6 +65,7 @@ func (paladin *Paladin) ApplyTalents() {
 	paladin.applyArtOfWar()
 	paladin.applyJudgmentsOfTheWise()
 	paladin.applyRighteousVengeance()
+	paladin.applyMinorGlyphOfSenseUndead()
 }
 
 func (paladin *Paladin) getTalentSealsOfThePureBonus() float64 {
@@ -93,6 +94,37 @@ func (paladin *Paladin) getMajorGlyphOfExorcismBonus() float64 {
 
 func (paladin *Paladin) getMajorGlyphOfJudgementBonus() float64 {
 	return core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfJudgement), 0.10, 0)
+}
+
+func (paladin *Paladin) applyMinorGlyphOfSenseUndead() {
+	if !paladin.HasMinorGlyph(proto.PaladinMinorGlyph_GlyphOfSenseUndead) {
+		return
+	}
+
+	paladin.RegisterAura(core.Aura{
+		Label:    "Sense Undead",
+		ActionID: core.ActionID{SpellID: 5502},
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
+				unit := paladin.Env.GetTargetUnit(i)
+				if unit.MobType == proto.MobType_MobTypeUndead {
+					paladin.AttackTables[unit.TableIndex].DamageDealtMultiplier *= 1.01
+				}
+			}
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
+				unit := paladin.Env.GetTargetUnit(i)
+				if unit.MobType == proto.MobType_MobTypeUndead {
+					paladin.AttackTables[unit.TableIndex].DamageDealtMultiplier /= 1.01
+				}
+			}
+		},
+	})
 }
 
 func (paladin *Paladin) applyRedoubt() {
@@ -219,21 +251,38 @@ func (paladin *Paladin) applyArdentDefender() {
 	})
 }
 
+// Because Crusade modifies unit specific attack tables, it must be applied at start of sim.
 func (paladin *Paladin) applyCrusade() {
-	// TODO: This doesn't account for multiple targets
-	paladin.PseudoStats.DamageDealtMultiplier *= paladin.crusadeMultiplier()
-}
+	if paladin.Talents.Crusade == 0 {
+		return
+	}
 
-func (paladin *Paladin) crusadeMultiplier() float64 {
-	if paladin.CurrentTarget == nil {
-		return 1
-	}
-	switch paladin.CurrentTarget.MobType {
-	case proto.MobType_MobTypeHumanoid, proto.MobType_MobTypeDemon, proto.MobType_MobTypeUndead, proto.MobType_MobTypeElemental:
-		return 1 + (0.01 * float64(paladin.Talents.Crusade))
-	default:
-		return 1
-	}
+	paladin.RegisterAura(core.Aura{
+		Label:    "Crusade",
+		ActionID: core.ActionID{SpellID: 31868},
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
+				unit := paladin.Env.GetTargetUnit(i)
+				switch unit.MobType {
+				case proto.MobType_MobTypeHumanoid, proto.MobType_MobTypeDemon, proto.MobType_MobTypeUndead, proto.MobType_MobTypeElemental:
+					paladin.AttackTables[unit.TableIndex].DamageDealtMultiplier *= 1 + (0.01 * float64(paladin.Talents.Crusade))
+				}
+			}
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
+				unit := paladin.Env.GetTargetUnit(i)
+				switch unit.MobType {
+				case proto.MobType_MobTypeHumanoid, proto.MobType_MobTypeDemon, proto.MobType_MobTypeUndead, proto.MobType_MobTypeElemental:
+					paladin.AttackTables[unit.TableIndex].DamageDealtMultiplier /= 1 + (0.01 * float64(paladin.Talents.Crusade))
+				}
+			}
+		},
+	})
 }
 
 // Prior to WOTLK, behavior was to double dip.
