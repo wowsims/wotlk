@@ -53,8 +53,21 @@ var ItemSetFrostWitchRegalia = core.NewItemSet(core.ItemSet{
 			// TODO: Your Lightning Bolt and Chain Lightning spells reduce the remaining cooldown on your Elemental Mastery talent by 2 sec.
 		},
 		4: func(agent core.Agent) {
-			// TODO: Your Lava Burst spell causes your Flame Shock effect on the target to deal at least two additional periodic damage ticks before expiring.
-			//  This will actually just extend the FS by 6 seconds. This could be 2-4 more ticks depending on current haste.
+			shaman := agent.(ShamanAgent).GetShaman()
+			shaman.RegisterAura(core.Aura{
+				Label:    "Shaman T10 Elemental 4P Bonus",
+				Duration: core.NeverExpires,
+				OnReset: func(aura *core.Aura, sim *core.Simulation) {
+					aura.Activate(sim)
+				},
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+					if spell == shaman.LavaBurst && shaman.FlameShockDot.IsActive() { // Doesn't have to hit from tooltip
+						// Modify dot to last 6 more seconds than it has left, and refresh aura
+						shaman.FlameShockDot.Duration = shaman.FlameShockDot.RemainingDuration(sim) + time.Second*6
+						shaman.FlameShockDot.Refresh(sim)
+					}
+				},
+			})
 		},
 	},
 })

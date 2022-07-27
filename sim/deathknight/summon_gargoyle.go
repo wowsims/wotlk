@@ -111,6 +111,7 @@ func (dk *Deathknight) NewGargoyle() *GargoylePet {
 			gargoyleBaseStats,
 			gargoyleStatInheritance,
 			false,
+			true,
 		),
 		dkOwner: dk,
 	}

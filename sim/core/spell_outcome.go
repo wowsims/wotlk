@@ -24,6 +24,40 @@ func (unit *Unit) OutcomeFuncTick() OutcomeApplier {
 	}
 }
 
+func (unit *Unit) OutcomeFuncTickHitAndCrit(critMultiplier float64) OutcomeApplier {
+	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
+		roll := sim.RandomFloat("Physical Tick Hit")
+		chance := 0.0
+		missChance := attackTable.BaseMissChance - spellEffect.PhysicalHitChance(unit, attackTable)
+		chance = MaxFloat(0, missChance)
+		if roll < chance {
+			spellEffect.Outcome = OutcomeHit
+		} else {
+			if spellEffect.physicalCritRoll(sim, spell, attackTable) {
+				spellEffect.Outcome = OutcomeCrit
+				spellEffect.Damage *= critMultiplier
+			} else {
+				spellEffect.Outcome = OutcomeHit
+			}
+		}
+	}
+}
+
+func (unit *Unit) OutcomeFuncTickMagicHitAndCrit(critMultiplier float64) OutcomeApplier {
+	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
+		if spellEffect.MagicHitCheck(sim, spell, attackTable) {
+			if spellEffect.MagicCritCheck(sim, spell, attackTable) {
+				spellEffect.Outcome = OutcomeCrit
+				spellEffect.Damage *= critMultiplier
+			} else {
+				spellEffect.Outcome = OutcomeHit
+			}
+		} else {
+			spellEffect.Outcome = OutcomeHit
+		}
+	}
+}
+
 func (unit *Unit) OutcomeFuncMagicHitAndCrit(critMultiplier float64) OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
 		if spellEffect.MagicHitCheck(sim, spell, attackTable) {

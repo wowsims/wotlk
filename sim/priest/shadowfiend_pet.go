@@ -17,10 +17,10 @@ type Shadowfiend struct {
 }
 
 var baseStats = stats.Stats{
-	stats.Strength:  153,
-	stats.Agility:   108,
-	stats.Stamina:   280,
-	stats.Intellect: 133,
+	stats.Strength:  314,
+	stats.Agility:   90,
+	stats.Stamina:   348,
+	stats.Intellect: 201,
 }
 
 func (priest *Priest) NewShadowfiend() *Shadowfiend {
@@ -31,6 +31,7 @@ func (priest *Priest) NewShadowfiend() *Shadowfiend {
 			baseStats,
 			priest.shadowfiendStatInheritance(),
 			false,
+			true,
 		),
 		Priest: priest,
 	}
@@ -74,8 +75,8 @@ func (priest *Priest) NewShadowfiend() *Shadowfiend {
 
 	shadowfiend.EnableAutoAttacks(shadowfiend, core.AutoAttackOptions{
 		MainHand: core.Weapon{
-			BaseDamageMin:        180,
-			BaseDamageMax:        200,
+			BaseDamageMin:        176,
+			BaseDamageMax:        210,
 			SwingSpeed:           1.5,
 			NormalizedSwingSpeed: 1.5,
 			SwingDuration:        time.Millisecond * 1500,
@@ -85,7 +86,7 @@ func (priest *Priest) NewShadowfiend() *Shadowfiend {
 		AutoSwingMelee: true,
 	})
 
-	shadowfiend.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+1)
+	shadowfiend.AddStatDependency(stats.Strength, stats.AttackPower, 1.0)
 
 	core.ApplyPetConsumeEffects(&shadowfiend.Character, priest.Consumes)
 
@@ -96,12 +97,16 @@ func (priest *Priest) NewShadowfiend() *Shadowfiend {
 
 func (priest *Priest) shadowfiendStatInheritance() core.PetStatInheritance {
 	return func(ownerStats stats.Stats) stats.Stats {
+		hitPercentage := ownerStats[stats.SpellHit] / core.SpellHitRatingPerHitChance
+
 		return stats.Stats{
-			stats.AttackPower: ownerStats[stats.SpellPower] * 0.3,
-			stats.MeleeHit:    ownerStats[stats.SpellHit],
+			stats.AttackPower: ownerStats[stats.SpellPower] * 5.377,
+			stats.MeleeHit:    hitPercentage * core.MeleeHitRatingPerHitChance,
 			stats.SpellHit:    ownerStats[stats.SpellHit],
 			stats.MeleeCrit:   ownerStats[stats.SpellCrit],
 			stats.SpellCrit:   ownerStats[stats.SpellCrit],
+			stats.MeleeHaste:  ownerStats[stats.SpellHaste],
+			stats.SpellHaste:  ownerStats[stats.SpellHaste],
 		}
 	}
 }

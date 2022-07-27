@@ -43,6 +43,9 @@ func newProcStatBonusEffect(config ProcStatBonusEffect) {
 }
 
 func init() {
+	// TODO: <https://www.wowhead.com/wotlk/item=45507/the-generals-heart>
+	//  Equip: When struck in combat has a chance of shielding you in a protective barrier which will reduce damage from each attack by 205.  Lasts 10 secs. (Proc chance: 5%, 50s cooldown)
+
 	// Keep these separated by stat, ordered by item ID within each group.
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Meteorite Whetstone",
@@ -261,6 +264,67 @@ func init() {
 		ICD:        time.Second * 50,
 	})
 	newProcStatBonusEffect(ProcStatBonusEffect{
+		Name:       "Pyrite Infuser",
+		ID:         45286,
+		Bonus:      stats.Stats{stats.AttackPower: 1234},
+		Duration:   time.Second * 10,
+		Callback:   OnSpellHitDealt,
+		ProcMask:   core.ProcMaskMeleeOrRanged,
+		Outcome:    core.OutcomeCrit,
+		ProcChance: 0.1,
+		ICD:        time.Second * 50,
+	})
+	newProcStatBonusEffect(ProcStatBonusEffect{
+		Name:       "Pandora's Plea",
+		ID:         45490,
+		Bonus:      stats.Stats{stats.SpellPower: 751, stats.HealingPower: 751},
+		Duration:   time.Second * 10,
+		Callback:   OnCastComplete,
+		ProcChance: 0.1,
+		ICD:        time.Second * 45,
+	})
+	newProcStatBonusEffect(ProcStatBonusEffect{
+		Name:       "Blood of the Old God",
+		ID:         45522,
+		Bonus:      stats.Stats{stats.AttackPower: 1284},
+		Duration:   time.Second * 10,
+		Callback:   OnSpellHitDealt,
+		ProcMask:   core.ProcMaskMeleeOrRanged,
+		Outcome:    core.OutcomeCrit,
+		ProcChance: 0.1, // wowhead shows proc chance: 10% but a comment says 1.12PPM? TODO: validate.
+		ICD:        time.Second * 50,
+	})
+	newProcStatBonusEffect(ProcStatBonusEffect{
+		Name:       "Flare of the Heavens",
+		ID:         45518,
+		Bonus:      stats.Stats{stats.SpellPower: 850, stats.HealingPower: 850},
+		Duration:   time.Second * 10,
+		Callback:   OnSpellHitDealt,
+		ProcMask:   core.ProcMaskSpellDamage,
+		ProcChance: 0.1,
+		ICD:        time.Second * 45,
+	})
+	newProcStatBonusEffect(ProcStatBonusEffect{
+		Name:       "Show of Faith",
+		ID:         45535,
+		Bonus:      stats.Stats{stats.MP5: 241},
+		Duration:   time.Second * 15,
+		Callback:   OnCastComplete,
+		ProcChance: 0.10,
+		ICD:        time.Second * 50,
+	})
+	newProcStatBonusEffect(ProcStatBonusEffect{
+		Name:       "Comet's Trail",
+		ID:         45609,
+		Bonus:      stats.Stats{stats.SpellHaste: 726, stats.MeleeHaste: 726},
+		Duration:   time.Second * 10,
+		Callback:   OnSpellHitDealt,
+		ProcMask:   core.ProcMaskMeleeOrRanged,
+		Outcome:    core.OutcomeCrit,
+		ProcChance: 0.15,
+		ICD:        time.Second * 45,
+	})
+	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Elemental Focus Stone",
 		ID:         45866,
 		Bonus:      stats.Stats{stats.MeleeHaste: 522, stats.SpellHaste: 522},
@@ -445,7 +509,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:     "Ashen Band of Unmatched Vengeance",
 		ID:       50401,
-		Bonus:    stats.Stats{stats.AttackPower: 480, stats.HealingPower: 480},
+		Bonus:    stats.Stats{stats.AttackPower: 480},
 		Duration: time.Second * 10,
 		Callback: OnSpellHitDealt,
 		ProcMask: core.ProcMaskMeleeOrRanged,
@@ -456,7 +520,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:     "Ashen Band of Endless Vengeance",
 		ID:       50402,
-		Bonus:    stats.Stats{stats.AttackPower: 480, stats.HealingPower: 480},
+		Bonus:    stats.Stats{stats.AttackPower: 480},
 		Duration: time.Second * 10,
 		Callback: OnSpellHitDealt,
 		ProcMask: core.ProcMaskMeleeOrRanged,
@@ -489,7 +553,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:     "Ashen Band of Unmatched Might",
 		ID:       52571,
-		Bonus:    stats.Stats{stats.AttackPower: 480, stats.HealingPower: 480},
+		Bonus:    stats.Stats{stats.AttackPower: 480},
 		Duration: time.Second * 10,
 		Callback: OnSpellHitDealt,
 		ProcMask: core.ProcMaskMeleeOrRanged,
@@ -500,7 +564,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:     "Ashen Band of Endless Might",
 		ID:       52572,
-		Bonus:    stats.Stats{stats.AttackPower: 480, stats.HealingPower: 480},
+		Bonus:    stats.Stats{stats.AttackPower: 480},
 		Duration: time.Second * 10,
 		Callback: OnSpellHitDealt,
 		ProcMask: core.ProcMaskMeleeOrRanged,

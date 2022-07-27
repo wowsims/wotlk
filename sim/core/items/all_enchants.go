@@ -61,6 +61,7 @@ var Enchants = []Enchant{
 	{ID: 55642, EffectID: 3722, Name: "Lightweave Embroidery", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeBack, RequiredProfession: proto.Profession_Tailoring},
 	{ID: 55769, EffectID: 3728, Name: "Darkglow Embroidery", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeBack, RequiredProfession: proto.Profession_Tailoring},
 	{ID: 55777, EffectID: 3730, Name: "Swordguard Embroidery", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeBack, RequiredProfession: proto.Profession_Tailoring},
+	{ID: 63765, EffectID: 3859, Name: "Springy Arachnoweave", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{stats.SpellPower: 27}, ItemType: proto.ItemType_ItemTypeBack, RequiredProfession: proto.Profession_Engineering},
 
 	// Chest
 	{ID: 37340, EffectID: 3245, Name: "Exceptional Resilience", Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{stats.Resilience: 20}, ItemType: proto.ItemType_ItemTypeChest},

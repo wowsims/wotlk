@@ -253,47 +253,64 @@ func (dk *Deathknight) applyDesolation() {
 	})
 }
 
+func (dk *Deathknight) procUnholyBlight(sim *core.Simulation, target *core.Unit, damageFromProccingSpell float64) {
+	if !dk.Talents.UnholyBlight {
+		return
+	}
+
+	unholyBlightDot := dk.UnholyBlightDot[target.Index]
+
+	newUnholyBlightDamage := damageFromProccingSpell * 0.10
+	if unholyBlightDot.IsActive() {
+		newUnholyBlightDamage += dk.UnholyBlightTickDamage[target.Index] * float64(10-unholyBlightDot.TickCount)
+	}
+
+	newTickDamage := newUnholyBlightDamage / 10
+	dk.UnholyBlightTickDamage[target.Index] = newTickDamage
+
+	// Reassign the effect to apply the new damage value.
+	unholyBlightDot.TickEffects = core.TickFuncSnapshot(target, core.SpellEffect{
+		ProcMask:         core.ProcMaskPeriodicDamage,
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+		IsPeriodic:       true,
+		BaseDamage:       core.BaseDamageConfigFlat(newTickDamage),
+		OutcomeApplier:   dk.OutcomeFuncAlwaysHit(),
+	})
+
+	dk.UnholyBlightSpell.Cast(sim, target)
+}
+
 func (dk *Deathknight) applyUnholyBlight() {
+	if !dk.Talents.UnholyBlight {
+		return
+	}
+
 	actionID := core.ActionID{SpellID: 50536}
 
-	var curDamage = make([]float64, dk.Env.GetNumTargets())
 	dk.UnholyBlightSpell = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
-			curDamage[dk.CurrentTarget.Index] = dk.LastDeathCoilDamage
 			dk.UnholyBlightDot[dk.CurrentTarget.Index].Apply(sim)
 		},
 	})
 
 	dk.UnholyBlightDot = make([]*core.Dot, dk.Env.GetNumTargets())
+	dk.UnholyBlightTickDamage = make([]float64, dk.Env.GetNumTargets())
 	for _, encounterTarget := range dk.Env.Encounter.Targets {
 		target := &encounterTarget.Unit
 
+		dk.UnholyBlightTickDamage[target.Index] = 0
 		dk.UnholyBlightDot[target.Index] = core.NewDot(core.Dot{
+			Spell: dk.UnholyBlightSpell,
 			Aura: target.RegisterAura(core.Aura{
 				Label:    "UnholyBlight-" + strconv.Itoa(int(dk.Index)),
 				ActionID: actionID,
 			}),
 			NumberOfTicks: 10,
 			TickLength:    time.Second * 1,
-
-			TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-				ProcMask:         core.ProcMaskPeriodicDamage,
-				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
-				IsPeriodic:       true,
-				BaseDamage: core.BaseDamageConfig{
-					Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-						return (0.10 * curDamage[target.Index]) / 10
-					},
-					TargetSpellCoefficient: 1,
-				},
-				OutcomeApplier: dk.OutcomeFuncAlwaysHit(),
-			}),
 		})
-
-		dk.UnholyBlightDot[target.Index].Spell = dk.UnholyBlightSpell
 	}
 }
 

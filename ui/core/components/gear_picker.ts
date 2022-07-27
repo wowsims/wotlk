@@ -149,11 +149,19 @@ class ItemPicker extends Component {
 		this.nameElem.textContent = slotNames[this.slot];
 		setItemQualityCssClass(this.nameElem, null);
 
-		this.enchantElem.textContent = '';
+		this.enchantElem.innerHTML = '';
 		this.socketsContainerElem.innerHTML = '';
 
 		if (newItem != null) {
 			this.nameElem.textContent = newItem.item.name;
+			if (newItem.item.heroic) {
+				var heroic_span = document.createElement('span');
+				heroic_span.style.color = "green";
+				heroic_span.style.marginLeft = "3px";
+				heroic_span.innerText = "[H]";
+				this.nameElem.appendChild(heroic_span);
+			}
+			
 			setItemQualityCssClass(this.nameElem, newItem.item.quality);
 
 			this.player.setWowheadData(newItem, this.iconElem);
@@ -236,6 +244,7 @@ class SelectorModal extends Popup {
 					actionId: ActionId.fromItem(item),
 					name: item.name,
 					quality: item.quality,
+					heroic: item.heroic,
 					phase: item.phase,
 					baseEP: this.player.computeItemEP(item),
 					ignoreEPFilter: false,
@@ -270,6 +279,7 @@ class SelectorModal extends Popup {
 					phase: enchant.phase || 1,
 					baseEP: this.player.computeStatsEP(new Stats(enchant.stats)),
 					ignoreEPFilter: true,
+					heroic: false,
 					onEquip: (eventID, enchant: Enchant) => {
 						const equippedItem = this.player.getEquippedItem(slot);
 						if (equippedItem)
@@ -308,6 +318,7 @@ class SelectorModal extends Popup {
 						name: gem.name,
 						quality: gem.quality,
 						phase: gem.phase,
+						heroic: false,
 						baseEP: this.player.computeStatsEP(new Stats(gem.stats)),
 						ignoreEPFilter: true,
 						onEquip: (eventID, gem: Gem) => {
@@ -445,7 +456,7 @@ class SelectorModal extends Popup {
 
 			listItemElem.innerHTML = `
         <a class="selector-modal-list-item-icon"></a>
-        <a class="selector-modal-list-item-name">${itemData.name}</a>
+        <a class="selector-modal-list-item-name">${itemData.heroic ? itemData.name + "<span style=\"color:green\">[H]</span>" : itemData.name}</a>
         <div class="selector-modal-list-item-padding"></div>
         <div class="selector-modal-list-item-ep">
 					<span class="selector-modal-list-item-ep-value">${itemEP < 9.95 ? itemEP.toFixed(1) : Math.round(itemEP)}</span>
@@ -638,6 +649,7 @@ interface ItemData<T> {
 	phase: number,
 	baseEP: number,
 	ignoreEPFilter: boolean,
+	heroic: boolean,
 	onEquip: (eventID: EventID, item: T) => void,
 }
 

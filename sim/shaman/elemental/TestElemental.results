@@ -346,6 +346,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestElemental-AllItems-EyeoftheBroodmother-45308"
+ value: {
+  dps: 1430.031898936652
+  tps: 1129.5344005520203
+ }
+}
+dps_results: {
  key: "TestElemental-AllItems-Fathom-BroochoftheTidewalker-30663"
  value: {
   dps: 1356.1919120994726
@@ -383,8 +390,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-FrostWitch'sRegalia"
  value: {
-  dps: 2617.582826946635
-  tps: 2013.7903438477197
+  dps: 2029.9794738867654
+  tps: 1571.8268212541207
  }
 }
 dps_results: {
@@ -392,6 +399,13 @@ dps_results: {
  value: {
   dps: 1288.8414105720326
   tps: 1024.0176223313324
+ }
+}
+dps_results: {
+ key: "TestElemental-AllItems-FuturesightRune-38763"
+ value: {
+  dps: 1338.322458867776
+  tps: 1061.7794783364832
  }
 }
 dps_results: {
@@ -686,13 +700,6 @@ dps_results: {
  value: {
   dps: 1222.043870181722
   tps: 980.6787018270395
- }
-}
-dps_results: {
- key: "TestElemental-AllItems-Spirit-WorldGlass-39388"
- value: {
-  dps: 1318.202909434845
-  tps: 1046.058917049482
  }
 }
 dps_results: {

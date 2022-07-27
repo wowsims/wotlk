@@ -245,6 +245,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		registerBloodlustCD(agent)
 	}
 
+	registerTricksOfTheTradeCD(agent, individualBuffs.TricksOfTheTrades)
 	registerPowerInfusionCD(agent, individualBuffs.PowerInfusions)
 	registerManaTideTotemCD(agent, partyBuffs.ManaTideTotems)
 	registerInnervateCD(agent, individualBuffs.Innervates)
@@ -271,7 +272,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 // Applies buffs to pets.
 func applyPetBuffEffects(petAgent PetAgent, raidBuffs proto.RaidBuffs, partyBuffs proto.PartyBuffs, individualBuffs proto.IndividualBuffs) {
 	// Summoned pets, like Mage Water Elemental, aren't around to receive raid buffs.
-	if !petAgent.GetPet().PermanentPet {
+	if petAgent.GetPet().IsGuardian() {
 		return
 	}
 
@@ -280,6 +281,7 @@ func applyPetBuffEffects(petAgent PetAgent, raidBuffs proto.RaidBuffs, partyBuff
 	raidBuffs.Bloodlust = false
 	individualBuffs.Innervates = 0
 	individualBuffs.PowerInfusions = 0
+	individualBuffs.TricksOfTheTrades = 0
 
 	// For some reason pets don't benefit from buffs that are ratings, e.g. crit rating or haste rating.
 	partyBuffs.BraidedEterniumChain = false
@@ -673,7 +675,7 @@ func BloodlustAura(character *Character, actionTag int32) *Aura {
 			if len(character.Pets) > 0 {
 				for _, petAgent := range character.Pets {
 					pet := petAgent.GetPet()
-					if pet.IsEnabled() && pet.IsPermanent() {
+					if pet.IsEnabled() && !pet.IsGuardian() {
 						BloodlustAura(&pet.Character, actionTag).Activate(sim)
 					}
 				}
@@ -744,6 +746,53 @@ func PowerInfusionAura(character *Character, actionTag int32) *Aura {
 			if !character.HasActiveAuraWithTag(BloodlustAuraTag) {
 				character.MultiplyCastSpeed(1 / 1.2)
 			}
+		},
+	})
+}
+
+var TricksOfTheTradeAuraTag = "TricksOfTheTrade"
+
+const TricksOfTheTradeDuration = time.Second * 10 // Assuming rogues have Glyph of TotT by default (which might not be the case).
+const TricksOfTheTradeCD = time.Second * 3600 // CD is 30s from the time buff ends (so 40s with glyph) but that's in order to be able to set the number of TotT you'll have during the fight
+
+func registerTricksOfTheTradeCD(agent Agent, numTricksOfTheTrades int32) {
+	if numTricksOfTheTrades == 0 {
+		return
+	}
+
+	TotTAura := TricksOfTheTradeAura(agent.GetCharacter(), -1)
+
+	registerExternalConsecutiveCDApproximation(
+		agent,
+		externalConsecutiveCDApproximation{
+			ActionID:         ActionID{SpellID: 57934, Tag: -1},
+			AuraTag:          TricksOfTheTradeAuraTag,
+			CooldownPriority: CooldownPriorityDefault,
+			AuraDuration:     TricksOfTheTradeDuration,
+			AuraCD:           TricksOfTheTradeCD,
+			Type:             CooldownTypeDPS | CooldownTypeUsableShapeShifted,
+
+			ShouldActivate: func(sim *Simulation, character *Character) bool {
+				return true
+			},
+			AddAura: func(sim *Simulation, character *Character) { TotTAura.Activate(sim) },
+		},
+		numTricksOfTheTrades)
+}
+
+func TricksOfTheTradeAura(character *Character, actionTag int32) *Aura {
+	actionID := ActionID{SpellID: 57934, Tag: actionTag}
+
+	return character.GetOrRegisterAura(Aura{
+		Label:    "TricksOfTheTrade-" + actionID.String(),
+		Tag:      TricksOfTheTradeAuraTag,
+		ActionID: actionID,
+		Duration: TricksOfTheTradeDuration,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			character.PseudoStats.DamageDealtMultiplier *= 1.15
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			character.PseudoStats.DamageDealtMultiplier /= 1.15
 		},
 	})
 }
