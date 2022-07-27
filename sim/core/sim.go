@@ -32,6 +32,7 @@ type Simulation struct {
 	logs []string
 
 	executePhase20        bool
+	executePhase25        bool
 	executePhase35        bool
 	executePhaseCallbacks []func(*Simulation, bool) // 2nd parameter is false for 35%, true for 20%
 }
@@ -182,6 +183,7 @@ func (sim *Simulation) reset() {
 	sim.pendingActions = make([]*PendingAction, 0, 64)
 
 	sim.executePhase20 = false
+	sim.executePhase25 = false
 	sim.executePhase35 = false
 	sim.executePhaseCallbacks = []func(*Simulation, bool){}
 
@@ -333,6 +335,14 @@ func (sim *Simulation) advance(elapsedTime time.Duration) {
 				callback(sim, false)
 			}
 		}
+	} else if !sim.executePhase25 {
+		if (sim.Encounter.EndFightAtHealth == 0 && sim.CurrentTime >= sim.Encounter.executePhase25Begins) ||
+			(sim.Encounter.EndFightAtHealth > 0 && sim.GetRemainingDurationPercent() <= 0.25) {
+			sim.executePhase25 = true
+			// for _, callback := range sim.executePhaseCallbacks {
+			// 	callback(sim, true)
+			// }
+		}
 	} else if !sim.executePhase20 {
 		if (sim.Encounter.EndFightAtHealth == 0 && sim.CurrentTime >= sim.Encounter.executePhase20Begins) ||
 			(sim.Encounter.EndFightAtHealth > 0 && sim.GetRemainingDurationPercent() <= 0.2) {
@@ -359,6 +369,9 @@ func (sim *Simulation) RegisterExecutePhaseCallback(callback func(*Simulation, b
 }
 func (sim *Simulation) IsExecutePhase20() bool {
 	return sim.executePhase20
+}
+func (sim *Simulation) IsExecutePhase25() bool {
+	return sim.executePhase25
 }
 func (sim *Simulation) IsExecutePhase35() bool {
 	return sim.executePhase35
