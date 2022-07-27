@@ -490,22 +490,26 @@ func (hunter *Hunter) applyImprovedTracking() {
 		return
 	}
 
-	switch hunter.CurrentTarget.MobType {
-	case proto.MobType_MobTypeBeast:
-		fallthrough
-	case proto.MobType_MobTypeDemon:
-		fallthrough
-	case proto.MobType_MobTypeDragonkin:
-		fallthrough
-	case proto.MobType_MobTypeElemental:
-		fallthrough
-	case proto.MobType_MobTypeGiant:
-		fallthrough
-	case proto.MobType_MobTypeHumanoid:
-		fallthrough
-	case proto.MobType_MobTypeUndead:
-		hunter.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.01*float64(hunter.Talents.ImprovedTracking)
-	}
+	var applied bool
+
+	hunter.RegisterResetEffect(
+		func(s *core.Simulation) {
+			if !applied {
+				for i := int32(0); i < hunter.Env.GetNumTargets(); i++ {
+					unit := hunter.Env.GetTargetUnit(i)
+					switch unit.MobType {
+					case proto.MobType_MobTypeBeast, proto.MobType_MobTypeDemon,
+						proto.MobType_MobTypeDragonkin, proto.MobType_MobTypeElemental,
+						proto.MobType_MobTypeGiant, proto.MobType_MobTypeHumanoid,
+						proto.MobType_MobTypeUndead:
+
+						hunter.AttackTables[unit.TableIndex].DamageDealtMultiplier *= 1.0 + 0.01*float64(hunter.Talents.ImprovedTracking)
+					}
+				}
+				applied = true
+			}
+		},
+	)
 }
 
 func (hunter *Hunter) applyLockAndLoad() {
