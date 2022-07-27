@@ -31,6 +31,7 @@ const (
 	RotationAction_BP
 	RotationAction_FP
 	RotationAction_UP
+	RotationAction_RedoSequence
 )
 
 type Sequence struct {
@@ -44,6 +45,8 @@ type DoRotationEvent func(sim *core.Simulation, target *core.Unit)
 type RotationHelper struct {
 	opener   *Sequence
 	onOpener bool
+
+	sequence *Sequence
 
 	CastSuccessful     bool
 	justCastPestilence bool
@@ -64,5 +67,26 @@ func (r *RotationHelper) DefineOpener(actions []RotationAction) {
 		idx:        0,
 		numActions: len(actions),
 		actions:    actions,
+	}
+}
+
+func (r *RotationHelper) PushSequence(actions []RotationAction) {
+	if r.sequence == nil {
+		r.sequence = &Sequence{
+			idx:        0,
+			numActions: len(actions),
+			actions:    actions,
+		}
+	} else {
+		panic("Tried to push sequence but sequence is currently Ongoing!")
+	}
+}
+
+func (r *RotationHelper) RedoSequence(s *Sequence) {
+	if r.sequence != nil {
+		s.Reset()
+		r.sequence = s
+	} else {
+		panic("Tried to redo sequence that wasn't ongoing!")
 	}
 }

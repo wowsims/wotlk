@@ -33,6 +33,7 @@ func (o *Sequence) Reset() {
 func (o *Sequence) DoAction(sim *core.Simulation, target *core.Unit, dk *Deathknight) bool {
 	casted := false
 	advance := true
+	forceAdvance := false
 	action := o.actions[o.idx]
 
 	minClickLatency := time.Millisecond * 0
@@ -109,10 +110,12 @@ func (o *Sequence) DoAction(sim *core.Simulation, target *core.Unit, dk *Deathkn
 		} else {
 			dk.WaitUntil(sim, sim.CurrentTime+minClickLatency)
 		}
+	case RotationAction_RedoSequence:
+		forceAdvance = true
 	}
 
 	// Advances the opener
-	if casted && advance {
+	if (casted && advance) || forceAdvance {
 		o.idx += 1
 	}
 
@@ -126,6 +129,13 @@ func (o *Sequence) DoNext(sim *core.Simulation, dk *Deathknight) bool {
 
 	if o.IsOngoing() {
 		*casted = dk.opener.DoAction(sim, target, dk)
+	} else if dk.sequence != nil {
+		if dk.sequence.IsOngoing() {
+			*casted = dk.sequence.DoAction(sim, target, dk)
+			if !dk.sequence.IsOngoing() {
+				dk.sequence = nil
+			}
+		}
 	} else {
 		dk.onOpener = false
 
