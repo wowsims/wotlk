@@ -10,6 +10,9 @@ export const SPELL_HIT_RATING_PER_HIT_CHANCE = 26.23;
 
 export const HASTE_RATING_PER_HASTE_PERCENT = 32.79;
 
+// Shamans, Paladins, Druids, Deathknights get more haste than everyone else, for melee.
+export const SPECIAL_MELEE_HASTE_RATING_PER_HASTE_PERCENT = 25.22;
+
 export const DEFENSE_RATING_PER_DEFENSE = 2.3654;
 export const MISS_DODGE_PARRY_BLOCK_CRIT_CHANCE_PER_DEFENSE = 0.04;
 export const BLOCK_RATING_PER_BLOCK_CHANCE = 7.8846;

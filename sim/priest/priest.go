@@ -27,6 +27,7 @@ type Priest struct {
 	MiseryAura         *core.Aura
 	ShadowWeavingAura  *core.Aura
 	ShadowyInsightAura *core.Aura
+	ImprovedSpiritTap  *core.Aura
 
 	SurgeOfLightProcAura *core.Aura
 
@@ -88,6 +89,23 @@ func (priest *Priest) Initialize() {
 			// 	aura.Unit.PseudoStats.ShadowDamageDealtMultiplier /= 1.0 + 0.02*float64(oldStacks)
 			// 	aura.Unit.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + 0.02*float64(newStacks)
 			// },
+		})
+	}
+
+	if priest.Talents.ImprovedSpiritTap > 0 {
+		increase := (1 + float64(priest.Talents.ImprovedSpiritTap)*0.05)
+		priest.ImprovedSpiritTap = priest.GetOrRegisterAura(core.Aura{
+			Label:    "Improved Spirit Tap",
+			ActionID: core.ActionID{SpellID: 59000},
+			Duration: time.Second * 8,
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				priest.AddStatDependencyDynamic(sim, stats.Spirit, stats.Spirit, increase)
+				priest.PseudoStats.SpiritRegenRateCasting += 0.33
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				priest.AddStatDependencyDynamic(sim, stats.Spirit, stats.Spirit, 1.0/increase)
+				priest.PseudoStats.SpiritRegenRateCasting -= 0.33
+			},
 		})
 	}
 

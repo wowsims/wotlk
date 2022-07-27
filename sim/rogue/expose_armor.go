@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -11,7 +12,7 @@ func (rogue *Rogue) registerExposeArmorSpell() {
 	baseCost := 25.0
 	refundAmount := 0.4 * float64(rogue.Talents.QuickRecovery)
 
-	rogue.ExposeArmorAura = core.ExposeArmorAura(rogue.CurrentTarget, false) // TODO: check glyph
+	rogue.ExposeArmorAura = core.ExposeArmorAura(rogue.CurrentTarget, rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfExposeArmor))
 
 	rogue.ExposeArmor = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 26866, Tag: 5},

@@ -1440,6 +1440,17 @@ const metaGemEffectEPs: Partial<Record<Spec, (gem: Gem, playerStats: Stats) => n
 
 		return 0;
 	},
+	[Spec.SpecWarlock]: (gem, playerStats) => {
+		// TODO: make it gear dependant
+		if (gem.id == Gems.CHAOTIC_SKYFLARE_DIAMOND.id) {
+			return 84;
+		}
+		if (gem.id == Gems.CHAOTIC_SKYFIRE_DIAMOND.id) {
+			return 80;
+		}
+
+		return 0;
+	},
 };
 
 export function getMetaGemEffectEP(spec: Spec, gem: Gem, playerStats: Stats) {

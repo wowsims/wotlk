@@ -66,8 +66,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 613.3421783351896
-  tps: 519.8399544858291
+  dps: 642.7349529715436
+  tps: 544.5277481288335
  }
 }
 dps_results: {
@@ -288,6 +288,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestArms-AllItems-EyeoftheBroodmother-45308"
+ value: {
+  dps: 596.8702412185506
+  tps: 507.226817247808
+ }
+}
+dps_results: {
  key: "TestArms-AllItems-FaithinFelsteel"
  value: {
   dps: 501.54334776920217
@@ -337,6 +344,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestArms-AllItems-FuturesightRune-38763"
+ value: {
+  dps: 577.0184438910763
+  tps: 491.2838336129622
+ }
+}
+dps_results: {
  key: "TestArms-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
   dps: 577.0184438910763
@@ -367,8 +381,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-IncisorFragment-37723"
  value: {
-  dps: 588.6943281656613
-  tps: 500.44823736803295
+  dps: 611.1150673913186
+  tps: 519.2412317382456
  }
 }
 dps_results: {
@@ -607,13 +621,6 @@ dps_results: {
  value: {
   dps: 527.6202029821336
   tps: 449.6791629663967
- }
-}
-dps_results: {
- key: "TestArms-AllItems-Spirit-WorldGlass-39388"
- value: {
-  dps: 577.0184438910763
-  tps: 491.2838336129622
  }
 }
 dps_results: {

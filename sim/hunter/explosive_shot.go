@@ -37,10 +37,9 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 
 	initialEffect := baseEffect
 	initialEffect.OnSpellHitDealt = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-		// TODO: Is this just an always-applied dot that ticks instantly?
-		// if spellEffect.Landed() {
-		hunter.ExplosiveShotDot.Apply(sim)
-		// }
+		if spellEffect.Landed() {
+			hunter.ExplosiveShotDot.Apply(sim)
+		}
 	}
 
 	hunter.ExplosiveShot = hunter.RegisterSpell(core.SpellConfig{

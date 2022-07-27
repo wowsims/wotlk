@@ -73,6 +73,7 @@ func (mage *Mage) NewWaterElemental(disobeyChance float64) *WaterElemental {
 			waterElementalBaseStats,
 			waterElementalStatInheritance,
 			false,
+			true,
 		),
 		disobeyChance: disobeyChance,
 	}

@@ -208,6 +208,14 @@ func init() {
 		Harmful:    true,
 		ProcChance: 0.5,
 	})
+	newStackingStatBonusEffect(StackingStatBonusEffect{
+		Name:      "Eye of the Broodmother",
+		ID:        45308,
+		Duration:  time.Second * 10,
+		MaxStacks: 10,
+		Bonus:     stats.Stats{stats.SpellPower: 25, stats.HealingPower: 25},
+		Callback:  OnCastComplete,
+	})
 
 	core.AddEffectsToTest = false
 

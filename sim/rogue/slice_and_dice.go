@@ -53,7 +53,7 @@ func (rogue *Rogue) registerSliceAndDice() {
 	if rogue.HasSetBonus(ItemSetNetherblade, 2) {
 		durationBonus += time.Second * 3
 	}
-	if rogue.HasGlyph(int32(proto.RogueMajorGlyph_GlyphOfSinisterStrike)) {
+	if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfSinisterStrike) {
 		durationBonus += time.Second * 3
 	}
 	rogue.sliceAndDiceDurations = [6]time.Duration{

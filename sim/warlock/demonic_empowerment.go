@@ -55,7 +55,7 @@ func (warlock *Warlock) registerDemonicEmpowermentSpell() {
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    warlock.NewTimer(),
-				Duration: time.Second * (60.0 - 6.0*time.Duration(warlock.Talents.Nemesis)),
+				Duration: time.Second * time.Duration(60.*(1. - 0.1*float64(warlock.Talents.Nemesis))),
 			},
 			DefaultCast: core.Cast{
 				Cost: 0.06 * warlock.BaseMana,

@@ -117,8 +117,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 494.5196928643047
-  tps: 855.8769545802202
+  dps: 518.3948113453462
+  tps: 896.4804985067038
  }
 }
 dps_results: {
@@ -339,6 +339,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestProtectionWarrior-AllItems-EyeoftheBroodmother-45308"
+ value: {
+  dps: 475.61011841399954
+  tps: 829.680661882449
+ }
+}
+dps_results: {
  key: "TestProtectionWarrior-AllItems-FaithinFelsteel"
  value: {
   dps: 440.2131643869914
@@ -388,6 +395,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestProtectionWarrior-AllItems-FuturesightRune-38763"
+ value: {
+  dps: 463.27004541103275
+  tps: 808.2280527518325
+ }
+}
+dps_results: {
  key: "TestProtectionWarrior-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
   dps: 463.27004541103275
@@ -418,8 +432,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-IncisorFragment-37723"
  value: {
-  dps: 473.46431350149936
-  tps: 824.7820651376136
+  dps: 492.010782863926
+  tps: 856.3413733533649
  }
 }
 dps_results: {
@@ -658,13 +672,6 @@ dps_results: {
  value: {
   dps: 462.99180091479997
   tps: 807.0317920816855
- }
-}
-dps_results: {
- key: "TestProtectionWarrior-AllItems-Spirit-WorldGlass-39388"
- value: {
-  dps: 463.27004541103275
-  tps: 808.2280527518325
  }
 }
 dps_results: {
