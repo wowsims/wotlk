@@ -114,7 +114,7 @@ func (warlock *Warlock) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	))
 
 	if warlock.Talents.DemonicPact > 0 {
-		raidBuffs.DemonicPact = int32(float64(stats.SpellPower) * 0.02 * float64(warlock.Talents.DemonicPact))
+		raidBuffs.DemonicPact = int32(float64(stats.SpellPower) * 0.02 * float64(warlock.Talents.DemonicPact) * 10) // * 10 because the 10% multiplier is calculated later
 	}
 }
 
