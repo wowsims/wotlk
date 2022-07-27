@@ -192,7 +192,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		stats.Health: GetTristateValueFloat(raidBuffs.CommandingShout, 1080, 1080*1.25),
 	})
 
-	spBonus := float64(raidBuffs.DemonicPact)/10.
+	spBonus := float64(raidBuffs.DemonicPact)
 	if raidBuffs.TotemOfWrath {
 		spBonus = MaxFloat(spBonus, 280)
 	} else if raidBuffs.FlametongueTotem {

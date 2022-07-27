@@ -644,6 +644,9 @@ message Encounter {
 	// Fury, etc.
 	double execute_proportion_20 = 3;
 
+	// Key for Affliction warlock Drain Soul
+	double execute_proportion_25 = 7;
+
 	// Same as execute_proportion but for 35%.
 	double execute_proportion_35 = 4;
 

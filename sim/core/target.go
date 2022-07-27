@@ -12,6 +12,7 @@ type Encounter struct {
 	Duration             time.Duration
 	DurationVariation    time.Duration
 	executePhase20Begins time.Duration
+	executePhase25Begins time.Duration
 	executePhase35Begins time.Duration
 	Targets              []*Target
 
@@ -28,6 +29,7 @@ func NewEncounter(options proto.Encounter) Encounter {
 		Duration:             DurationFromSeconds(options.Duration),
 		DurationVariation:    DurationFromSeconds(options.DurationVariation),
 		executePhase20Begins: DurationFromSeconds(options.Duration * (1 - options.ExecuteProportion_20)),
+		executePhase25Begins: DurationFromSeconds(options.Duration * (1 - options.ExecuteProportion_25)),
 		executePhase35Begins: DurationFromSeconds(options.Duration * (1 - options.ExecuteProportion_35)),
 		Targets:              []*Target{},
 	}

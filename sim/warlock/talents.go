@@ -114,8 +114,8 @@ func (warlock *Warlock) applyDeathsEmbrace() {
 	multiplier := 1.0 + 0.04*float64(warlock.Talents.DeathsEmbrace)
 
 	warlock.RegisterResetEffect(func(sim *core.Simulation) {
-		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute35 bool) {
-			if isExecute35 {
+		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int) {
+			if isExecute == 35 {
 				warlock.PseudoStats.ShadowDamageDealtMultiplier *= multiplier
 			}
 		})
@@ -197,8 +197,8 @@ func (warlock *Warlock) setupDecimation() {
 	})
 
 	warlock.RegisterResetEffect(func(sim *core.Simulation) {
-		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute35 bool) {
-			if isExecute35 {
+		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int) {
+			if isExecute == 35 {
 				decimation.Activate(sim)
 			}
 		})
