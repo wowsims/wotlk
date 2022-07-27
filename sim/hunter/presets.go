@@ -152,6 +152,8 @@ var basicOptions = &proto.Hunter_Options{
 	PetTalents: FerocityTalents,
 	PetUptime:  0.9,
 	LatencyMs:  15,
+
+	SniperTrainingUptime: 0.8,
 }
 
 var FullRaidBuffs = &proto.RaidBuffs{

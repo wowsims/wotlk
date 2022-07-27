@@ -19,6 +19,7 @@ func (hunter *Hunter) registerBlackArrowSpell() {
 	hunter.BlackArrow = hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
+		Flags:       core.SpellFlagIgnoreResists,
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -68,8 +69,7 @@ func (hunter *Hunter) registerBlackArrowSpell() {
 			ProcMask: core.ProcMaskPeriodicDamage,
 			DamageMultiplier: 1 *
 				(1 + 0.1*float64(hunter.Talents.TrapMastery)) *
-				(1 + 0.02*float64(hunter.Talents.TNT)) *
-				hunter.sniperTrainingMultiplier(),
+				(1 + 0.02*float64(hunter.Talents.TNT)),
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
 

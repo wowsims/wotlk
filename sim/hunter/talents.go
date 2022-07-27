@@ -102,6 +102,7 @@ func (hunter *Hunter) ApplyTalents() {
 	hunter.applyLockAndLoad()
 	hunter.applyExposeWeakness()
 	hunter.applyMasterTactician()
+	hunter.applySniperTraining()
 
 	hunter.registerReadinessCD()
 }
@@ -682,8 +683,50 @@ func (hunter *Hunter) applyMasterTactician() {
 	})
 }
 
-func (hunter *Hunter) sniperTrainingMultiplier() float64 {
-	return 1 + 0.02*float64(hunter.Talents.SniperTraining)*hunter.Options.SniperTrainingUptime
+func (hunter *Hunter) applySniperTraining() {
+	if hunter.Talents.SniperTraining == 0 {
+		return
+	}
+
+	uptime := hunter.Options.SniperTrainingUptime
+	if uptime <= 0 {
+		return
+	}
+	uptime = core.MinFloat(1, uptime)
+
+	multiplier := 1 + 0.02*float64(hunter.Talents.SniperTraining)
+
+	stAura := hunter.RegisterAura(core.Aura{
+		Label:    "Sniper Training",
+		ActionID: core.ActionID{SpellID: 53304},
+		Duration: time.Second * 15,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			hunter.SteadyShot.DamageMultiplier *= multiplier
+			if hunter.AimedShot != nil {
+				hunter.AimedShot.DamageMultiplier *= multiplier
+			}
+			if hunter.BlackArrow != nil {
+				hunter.BlackArrow.DamageMultiplier *= multiplier
+			}
+			if hunter.ExplosiveShot != nil {
+				hunter.ExplosiveShot.DamageMultiplier *= multiplier
+			}
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			hunter.SteadyShot.DamageMultiplier /= multiplier
+			if hunter.AimedShot != nil {
+				hunter.AimedShot.DamageMultiplier /= multiplier
+			}
+			if hunter.BlackArrow != nil {
+				hunter.BlackArrow.DamageMultiplier /= multiplier
+			}
+			if hunter.ExplosiveShot != nil {
+				hunter.ExplosiveShot.DamageMultiplier /= multiplier
+			}
+		},
+	})
+
+	core.ApplyFixedUptimeAura(stAura, uptime, time.Second*15)
 }
 
 func (hunter *Hunter) registerReadinessCD() {
@@ -713,6 +756,9 @@ func (hunter *Hunter) registerReadinessCD() {
 			hunter.RaptorStrike.CD.Reset()
 			if hunter.AimedShot != nil {
 				hunter.AimedShot.CD.Reset()
+			}
+			if hunter.SilencingShot != nil {
+				hunter.SilencingShot.CD.Reset()
 			}
 			if hunter.ChimeraShot != nil {
 				hunter.ChimeraShot.CD.Reset()
