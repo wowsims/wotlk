@@ -327,7 +327,7 @@ func (sim *Simulation) advance(elapsedTime time.Duration) {
 
 	if !sim.executePhase35 {
 		if (sim.Encounter.EndFightAtHealth == 0 && sim.CurrentTime >= sim.Encounter.executePhase35Begins) ||
-			(sim.Encounter.EndFightAtHealth > 0 && sim.GetRemainingDurationPercent() <= 0.2) {
+			(sim.Encounter.EndFightAtHealth > 0 && sim.GetRemainingDurationPercent() <= 0.35) {
 			sim.executePhase35 = true
 			for _, callback := range sim.executePhaseCallbacks {
 				callback(sim, false)
