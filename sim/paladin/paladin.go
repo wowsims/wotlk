@@ -171,8 +171,10 @@ func NewPaladin(character core.Character, talents proto.PaladinTalents) *Paladin
 
 	paladin.EnableManaBar()
 
-	// Paladins get 2 AP per STR
+	// Paladins get 3 times their level in base AP
+	// then 2 AP per STR, then lose the first 20 AP
 	paladin.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2.0)
+	paladin.AddStat(stats.AttackPower, -20)
 
 	// Paladins get 1% crit per 52.08 agil
 	paladin.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+((1.0/52.08)*core.CritRatingPerCritChance))
@@ -195,7 +197,7 @@ func init() {
 		stats.Mana:        4394,
 		stats.Spirit:      104,
 		stats.Strength:    148,
-		stats.AttackPower: 100,
+		stats.AttackPower: 240,
 		stats.Agility:     92,
 		stats.MeleeCrit:   3.27 * core.CritRatingPerCritChance,
 		stats.SpellCrit:   3.27 * core.CritRatingPerCritChance,
@@ -208,7 +210,7 @@ func init() {
 		stats.Mana:        4394,
 		stats.Spirit:      107,
 		stats.Strength:    152,
-		stats.AttackPower: 100,
+		stats.AttackPower: 240,
 		stats.Agility:     87,
 		stats.MeleeCrit:   3.27 * core.CritRatingPerCritChance,
 		stats.SpellCrit:   3.27 * core.CritRatingPerCritChance,
@@ -222,7 +224,7 @@ func init() {
 		stats.Spirit:      113,
 		stats.Strength:    173,
 		stats.AttackPower: 566,
-		stats.Agility:     100,
+		stats.Agility:     240,
 		stats.MeleeCrit:   3.27 * core.CritRatingPerCritChance,
 		stats.SpellCrit:   3.27 * core.CritRatingPerCritChance,
 		stats.Dodge:       3.27 * core.DodgeRatingPerDodgeChance,
@@ -234,7 +236,7 @@ func init() {
 		stats.Mana:        4394,
 		stats.Spirit:      104,
 		stats.Strength:    175,
-		stats.AttackPower: 100,
+		stats.AttackPower: 240,
 		stats.Agility:     86,
 		stats.MeleeCrit:   3.27 * core.CritRatingPerCritChance,
 		stats.SpellCrit:   3.27 * core.CritRatingPerCritChance,
