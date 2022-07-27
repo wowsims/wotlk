@@ -25,7 +25,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 0
   final_stats: 0
-  final_stats: 8107.500000000001
+  final_stats: 8387.5
   final_stats: 0
   final_stats: 0
   final_stats: 18195.4
@@ -52,8 +52,8 @@ character_stats_results: {
 dps_results: {
  key: "TestProtection-AllItems-AegisBattlegear"
  value: {
-  dps: 137.26853449517893
-  tps: 137.26853449517893
+  dps: 138.7265277491722
+  tps: 138.7265277491722
  }
 }
 dps_results: {
@@ -101,8 +101,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-Braxley'sBackyardMoonshine-35937"
  value: {
-  dps: 90.5072578201171
-  tps: 92.31740297651946
+  dps: 91.06517737962193
+  tps: 92.88648092721438
  }
 }
 dps_results: {
@@ -430,8 +430,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-Liadrin'sBattlegear"
  value: {
-  dps: 136.86542941598307
-  tps: 136.86542941598307
+  dps: 138.60596903722578
+  tps: 138.60596903722578
  }
 }
 dps_results: {
@@ -479,15 +479,15 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-LightbringerBattlegear"
  value: {
-  dps: 113.65965261919558
-  tps: 113.65965261919558
+  dps: 114.26752426901268
+  tps: 114.26752426901268
  }
 }
 dps_results: {
  key: "TestProtection-AllItems-LightswornBattlegear"
  value: {
-  dps: 154.426399410521
-  tps: 154.426399410521
+  dps: 156.91803312606282
+  tps: 156.91803312606282
  }
 }
 dps_results: {
@@ -507,8 +507,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-MeteoriteWhetstone-37390"
  value: {
-  dps: 91.99563196486908
-  tps: 93.83554460416644
+  dps: 92.37719255378062
+  tps: 94.22473640485624
  }
 }
 dps_results: {
@@ -598,8 +598,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-RedemptionBattlegear"
  value: {
-  dps: 116.57814725691107
-  tps: 116.57814725691107
+  dps: 118.50234623811885
+  tps: 118.50234623811885
  }
 }
 dps_results: {
@@ -689,8 +689,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-SparkofLife-37657"
  value: {
-  dps: 89.7767342183036
-  tps: 91.57226890266968
+  dps: 90.27691197116184
+  tps: 92.08245021058512
  }
 }
 dps_results: {
@@ -759,15 +759,15 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-ThunderingSkyfireDiamond"
  value: {
-  dps: 88.25120286721284
-  tps: 90.01622692455709
+  dps: 88.43006335442857
+  tps: 90.19866462151714
  }
 }
 dps_results: {
  key: "TestProtection-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 88.5918308065342
-  tps: 90.36366742266483
+  dps: 88.70670612318409
+  tps: 90.48084024564776
  }
 }
 dps_results: {
@@ -829,8 +829,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-Turalyon'sBattlegear"
  value: {
-  dps: 136.86542941598307
-  tps: 136.86542941598307
+  dps: 138.60596903722578
+  tps: 138.60596903722578
  }
 }
 dps_results: {
