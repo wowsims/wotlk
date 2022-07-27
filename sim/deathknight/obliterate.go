@@ -6,8 +6,8 @@ import (
 )
 
 var ObliterateActionID = core.ActionID{SpellID: 51425}
-var ObliterateMHOutcome = core.OutcomeHit
-var ObliterateOHOutcome = core.OutcomeHit
+var ObliterateMHOutcome = core.OutcomeMiss
+var ObliterateOHOutcome = core.OutcomeMiss
 
 func (dk *Deathknight) newObliterateHitSpell(isMH bool) *core.Spell {
 	diseaseConsumptionChance := 1.0

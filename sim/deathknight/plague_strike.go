@@ -5,8 +5,8 @@ import (
 )
 
 var PlagueStrikeActionID = core.ActionID{SpellID: 49921}
-var PlagueStrikeMHOutcome = core.OutcomeHit
-var PlagueStrikeOHOutcome = core.OutcomeHit
+var PlagueStrikeMHOutcome = core.OutcomeMiss
+var PlagueStrikeOHOutcome = core.OutcomeMiss
 
 func (dk *Deathknight) newPlagueStrikeSpell(isMH bool) *core.Spell {
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 378.0, 0.5, true)
