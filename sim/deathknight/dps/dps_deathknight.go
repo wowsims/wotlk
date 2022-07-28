@@ -26,6 +26,8 @@ func RegisterDpsDeathknight() {
 type DpsDeathknight struct {
 	*deathknight.Deathknight
 
+	UnholyRotation
+
 	Rotation proto.Deathknight_Rotation
 }
 
@@ -45,8 +47,6 @@ func NewDpsDeathknight(character core.Character, player proto.Player) *DpsDeathk
 		}),
 		Rotation: *dk.Rotation,
 	}
-
-	dpsDk.SetupRotations()
 
 	return dpsDk
 }
@@ -81,6 +81,7 @@ func (dk *DpsDeathknight) GetDeathknight() *deathknight.Deathknight {
 
 func (dk *DpsDeathknight) Initialize() {
 	dk.Deathknight.Initialize()
+	dk.SetupRotations()
 }
 
 func (dk *DpsDeathknight) Reset(sim *core.Simulation) {
