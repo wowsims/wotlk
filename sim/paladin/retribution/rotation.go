@@ -24,6 +24,12 @@ func (ret *RetributionPaladin) OnGCDReady(sim *core.Simulation) {
 		ret.SealInitComplete = true
 	}
 
+	if !ret.DivinePleaInitComplete {
+		ret.DivinePleaAura.Activate(sim)
+		ret.DivinePlea.CD.Use(sim)
+		ret.DivinePleaInitComplete = true
+	}
+
 	ret.mainRotation(sim)
 
 	if ret.GCD.IsReady(sim) {
