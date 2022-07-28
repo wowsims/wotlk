@@ -338,42 +338,39 @@ func (dk *DpsDeathknight) recastDiseasesSequence(sim *core.Simulation) {
 func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
 	casted := false
 
-	if dk.ShouldHornOfWinter(sim) {
-		casted = dk.CastHornOfWinter(sim, target)
-	} else {
-		if dk.Talents.GhoulFrenzy && dk.CanGhoulFrenzy(sim) && dk.CanIcyTouch(sim) &&
-			(!dk.GhoulFrenzyAura.IsActive() || dk.GhoulFrenzyAura.RemainingDuration(sim) < 10*time.Second) {
-			if dk.UnholyDiseaseCheckWrapper(sim, target, dk.GhoulFrenzy, true, 5) && dk.UnholyDiseaseCheckWrapper(sim, target, dk.IcyTouch, true, 5) {
-				dk.ghoulFrenzySequence(sim)
-				return true
-			} else {
-				dk.recastDiseasesSequence(sim)
-				return true
-			}
+	if dk.Talents.GhoulFrenzy && dk.CanGhoulFrenzy(sim) && dk.CanIcyTouch(sim) &&
+		(!dk.GhoulFrenzyAura.IsActive() || dk.GhoulFrenzyAura.RemainingDuration(sim) < 10*time.Second) {
+		if dk.UnholyDiseaseCheckWrapper(sim, target, dk.GhoulFrenzy, true, 5) && dk.UnholyDiseaseCheckWrapper(sim, target, dk.IcyTouch, true, 5) {
+			dk.ghoulFrenzySequence(sim)
+			return true
+		} else {
+			dk.recastDiseasesSequence(sim)
+			return true
+		}
+	}
+
+	if !casted {
+		if dk.UnholyDiseaseCheckWrapper(sim, target, dk.ScourgeStrike, true, 1) {
+			casted = dk.CastScourgeStrike(sim, target)
+		} else {
+			dk.recastDiseasesSequence(sim)
+			return true
 		}
 		if !casted {
-			if dk.UnholyDiseaseCheckWrapper(sim, target, dk.ScourgeStrike, true, 1) {
-				casted = dk.CastScourgeStrike(sim, target)
+			if dk.shouldSpreadDisease(sim) {
+				casted = dk.spreadDiseases(sim, target, s)
 			} else {
-				dk.recastDiseasesSequence(sim)
-				return true
+				if dk.UnholyDiseaseCheckWrapper(sim, target, dk.BloodStrike, true, 1) {
+					casted = dk.CastBloodStrike(sim, target)
+				} else {
+					dk.recastDiseasesSequence(sim)
+					return true
+				}
 			}
 			if !casted {
-				if dk.shouldSpreadDisease(sim) {
-					casted = dk.spreadDiseases(sim, target, s)
-				} else {
-					if dk.UnholyDiseaseCheckWrapper(sim, target, dk.BloodStrike, true, 1) {
-						casted = dk.CastBloodStrike(sim, target)
-					} else {
-						dk.recastDiseasesSequence(sim)
-						return true
-					}
-				}
+				casted = dk.CastDeathCoil(sim, target)
 				if !casted {
-					casted = dk.CastDeathCoil(sim, target)
-					if !casted {
-						casted = dk.CastHornOfWinter(sim, target)
-					}
+					casted = dk.CastHornOfWinter(sim, target)
 				}
 			}
 		}
