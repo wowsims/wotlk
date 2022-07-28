@@ -14,7 +14,7 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *core.Spell {
 		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 764.0, 0.4*dk.nervesOfColdSteelBonus(), true)
 	}
 
-	diseaseMulti := dk.diseaseMultiplier(0.125, dk.HasSetBonus(ItemSetDarkrunedBattlegear, 4))
+	diseaseMulti := dk.diseaseMultiplier(0.125)
 
 	effect := core.SpellEffect{
 		BonusCritRating:  (dk.subversionCritBonus() + dk.annihilationCritBonus()) * core.CritRatingPerCritChance,

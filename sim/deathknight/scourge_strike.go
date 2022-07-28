@@ -7,7 +7,7 @@ import (
 var ScourgeStrikeActionID = core.ActionID{SpellID: 55271}
 
 func (dk *Deathknight) registerScourgeStrikeShadowDamageSpell() *core.Spell {
-	diseaseMulti := dk.diseaseMultiplier(0.12, dk.HasSetBonus(ItemSetDarkrunedBattlegear, 4))
+	diseaseMulti := dk.diseaseMultiplier(0.12)
 
 	return dk.RegisterSpell(core.SpellConfig{
 		ActionID:    ScourgeStrikeActionID.WithTag(2),

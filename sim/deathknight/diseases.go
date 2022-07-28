@@ -28,8 +28,13 @@ func (dk *Deathknight) countActiveDiseases(target *core.Unit) float64 {
 	return float64(count)
 }
 
-func (dk *Deathknight) diseaseMultiplier(multiplier float64, hasDarkrune4P bool) float64 {
-	if hasDarkrune4P {
+// diseaseMultiplier calculates the bonus based on if you have DarkrunedBattlegear 4p.
+//  This function is slow so should only be used during initialization.
+func (dk *Deathknight) diseaseMultiplier(multiplier float64) float64 {
+	if dk.Env.IsFinalized() {
+		panic("dont call dk.diseaseMultiplier function during runtime, cache result during initialization")
+	}
+	if dk.HasSetBonus(ItemSetDarkrunedBattlegear, 4) {
 		return multiplier * 1.2
 	}
 	return multiplier
