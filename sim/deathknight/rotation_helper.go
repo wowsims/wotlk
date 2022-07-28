@@ -69,6 +69,14 @@ func (o *Sequence) ConditionalAdvance(condition bool) {
 	}
 }
 
+func (o *Sequence) GetNextAction() RotationAction {
+	if o.idx+1 < o.numActions {
+		return o.actions[o.idx+1]
+	} else {
+		return nil
+	}
+}
+
 type RotationHelper struct {
 	Opener *Sequence
 	Main   *Sequence
