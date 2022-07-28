@@ -20,7 +20,7 @@ func (dk *Deathknight) tryUseGCD(sim *core.Simulation) {
 	dk.DoRotation(sim)
 }
 
-func RotationActionCallback_IT(sim *core.Simulation, target *core.Unit, dk *Deathknight, s *Sequence) bool {
+func (dk *Deathknight) RotationActionCallback_IT(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
 	casted := dk.CastIcyTouch(sim, target)
 	advance := dk.LastCastOutcome != core.OutcomeMiss
 
@@ -28,7 +28,7 @@ func RotationActionCallback_IT(sim *core.Simulation, target *core.Unit, dk *Deat
 	return casted
 }
 
-func RotationActionCallback_PS(sim *core.Simulation, target *core.Unit, dk *Deathknight, s *Sequence) bool {
+func (dk *Deathknight) RotationActionCallback_PS(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
 	casted := dk.CastPlagueStrike(sim, target)
 	advance := dk.LastCastOutcome != core.OutcomeMiss
 
@@ -36,7 +36,7 @@ func RotationActionCallback_PS(sim *core.Simulation, target *core.Unit, dk *Deat
 	return casted
 }
 
-func RotationActionCallback_UA(sim *core.Simulation, target *core.Unit, dk *Deathknight, s *Sequence) bool {
+func (dk *Deathknight) RotationActionCallback_UA(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
 	casted := dk.CastUnbreakableArmor(sim, target)
 	dk.WaitUntil(sim, sim.CurrentTime)
 
@@ -44,7 +44,7 @@ func RotationActionCallback_UA(sim *core.Simulation, target *core.Unit, dk *Deat
 	return casted
 }
 
-func RotationActionCallback_BT(sim *core.Simulation, target *core.Unit, dk *Deathknight, s *Sequence) bool {
+func (dk *Deathknight) RotationActionCallback_BT(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
 	casted := dk.CastBloodTap(sim, target)
 	dk.WaitUntil(sim, sim.CurrentTime)
 
@@ -52,7 +52,7 @@ func RotationActionCallback_BT(sim *core.Simulation, target *core.Unit, dk *Deat
 	return casted
 }
 
-func RotationActionCallback_ERW(sim *core.Simulation, target *core.Unit, dk *Deathknight, s *Sequence) bool {
+func (dk *Deathknight) RotationActionCallback_ERW(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
 	casted := dk.CastEmpowerRuneWeapon(sim, target)
 	dk.WaitUntil(sim, sim.CurrentTime)
 
@@ -60,38 +60,115 @@ func RotationActionCallback_ERW(sim *core.Simulation, target *core.Unit, dk *Dea
 	return casted
 }
 
-func RotationActionCallback_Obli(sim *core.Simulation, target *core.Unit, dk *Deathknight, s *Sequence) bool {
+func (dk *Deathknight) RotationActionCallback_Obli(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
 	casted := dk.CastObliterate(sim, target)
 
-	s.ConditionalAdvance(true)
+	s.ConditionalAdvance(casted)
 	return casted
 }
 
-func RotationActionCallback_FS(sim *core.Simulation, target *core.Unit, dk *Deathknight, s *Sequence) bool {
+func (dk *Deathknight) RotationActionCallback_FS(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
 	casted := dk.CastFrostStrike(sim, target)
 
 	s.ConditionalAdvance(true)
 	return casted
 }
 
-func RotationActionCallback_Pesti(sim *core.Simulation, target *core.Unit, dk *Deathknight, s *Sequence) bool {
+func (dk *Deathknight) RotationActionCallback_Pesti(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
 	casted := dk.CastPestilence(sim, target)
 	advance := dk.LastCastOutcome != core.OutcomeMiss
 
-	s.ConditionalAdvance(advance)
+	s.ConditionalAdvance(casted && advance)
 	return casted
 }
 
-func RotationActionCallback_BS(sim *core.Simulation, target *core.Unit, dk *Deathknight, s *Sequence) bool {
+func (dk *Deathknight) RotationActionCallback_BS(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
 	casted := dk.CastBloodStrike(sim, target)
+	advance := dk.LastCastOutcome != core.OutcomeMiss
+
+	s.ConditionalAdvance(casted && advance)
+	return casted
+}
+
+func (dk *Deathknight) RotationActionCallback_SS(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
+	casted := dk.CastScourgeStrike(sim, target)
+	advance := dk.LastCastOutcome != core.OutcomeMiss
+
+	s.ConditionalAdvance(casted && advance)
+	return casted
+}
+
+func (dk *Deathknight) RotationActionCallback_DND(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
+	casted := dk.CastDeathAndDecay(sim, target)
+
+	s.ConditionalAdvance(casted)
+	return casted
+}
+
+func (dk *Deathknight) RotationActionCallback_GF(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
+	casted := dk.CastGhoulFrenzy(sim, target)
+
+	s.ConditionalAdvance(casted)
+	return casted
+}
+
+func (dk *Deathknight) RotationActionCallback_DC(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
+	casted := dk.CastDeathCoil(sim, target)
 
 	s.ConditionalAdvance(true)
 	return casted
 }
 
+func (dk *Deathknight) RotationActionCallback_AOTD(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
+	casted := dk.CastArmyOfTheDead(sim, target)
+
+	s.ConditionalAdvance(casted)
+	return casted
+}
+
+func (dk *Deathknight) RotationActionCallback_Garg(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
+	casted := dk.CastSummonGargoyle(sim, target)
+
+	s.ConditionalAdvance(casted)
+	return casted
+}
+
+func (dk *Deathknight) RotationActionCallback_BP(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
+	casted := dk.CastBloodPresence(sim, target)
+	if !casted {
+		dk.WaitUntil(sim, dk.BloodPresence.CD.ReadyAt())
+	} else {
+		dk.WaitUntil(sim, sim.CurrentTime)
+	}
+	s.ConditionalAdvance(casted)
+	return casted
+}
+
+func (dk *Deathknight) RotationActionCallback_FP(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
+	casted := dk.CastFrostPresence(sim, target)
+	if !casted {
+		dk.WaitUntil(sim, dk.FrostPresence.CD.ReadyAt())
+	} else {
+		dk.WaitUntil(sim, sim.CurrentTime)
+	}
+	s.ConditionalAdvance(casted)
+	return casted
+}
+
+func (dk *Deathknight) RotationActionCallback_UP(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
+	casted := dk.CastUnholyPresence(sim, target)
+	if !casted {
+		dk.WaitUntil(sim, dk.UnholyPresence.CD.ReadyAt())
+	} else {
+		dk.WaitUntil(sim, sim.CurrentTime)
+	}
+	s.ConditionalAdvance(casted)
+	return casted
+}
+
 func (o *Sequence) DoAction(sim *core.Simulation, target *core.Unit, dk *Deathknight) bool {
 	action := o.actions[o.idx]
-	return action(sim, target, dk, o)
+	return action(sim, target, o)
 
 	/*
 			minClickLatency := time.Millisecond * 0
@@ -226,10 +303,14 @@ func (dk *Deathknight) DoRotation(sim *core.Simulation) {
 	target := dk.CurrentTarget
 
 	if dk.Opener.IsOngoing() {
-		dk.Opener.DoAction(sim, target, dk)
+		if !dk.Opener.DoAction(sim, target, dk) {
+			dk.WaitForResources(sim)
+		}
 	} else {
 		if dk.Main.IsOngoing() {
-			dk.Main.DoAction(sim, target, dk)
+			if !dk.Main.DoAction(sim, target, dk) {
+				dk.WaitForResources(sim)
+			}
 		} else {
 			if dk.GCD.IsReady(sim) && !dk.IsWaiting() {
 				dk.Wait(sim)

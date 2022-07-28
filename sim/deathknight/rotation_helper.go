@@ -6,7 +6,7 @@ import (
 
 //type RotationAction func(sim *core.Simulation, target *core.Unit)
 
-type RotationAction func(sim *core.Simulation, target *core.Unit, dk *Deathknight, s *Sequence) bool
+type RotationAction func(sim *core.Simulation, target *core.Unit, s *Sequence) bool
 
 // Add your UH rotation Actions here and then on the DoNext function
 

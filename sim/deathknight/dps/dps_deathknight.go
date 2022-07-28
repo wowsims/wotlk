@@ -62,23 +62,23 @@ func (dk *DpsDeathknight) SetupRotations() {
 	} else if dk.Talents.SummonGargoyle {
 		if dk.Rotation.UseDeathAndDecay {
 			if dk.Rotation.UnholyPresenceOpener {
-				//dk.setupUnholyDndUnholyPresenceOpener()
+				dk.setupUnholyDndUnholyPresenceOpener()
 			} else {
-				//dk.setupUnholyDndBloodPresenceOpener()
+				dk.setupUnholyDndBloodPresenceOpener()
 			}
 		} else {
 
 			if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd {
 				if dk.Rotation.UnholyPresenceOpener {
-					//dk.setupUnholySsArmyUnholyPresenceOpener()
+					dk.setupUnholySsArmyUnholyPresenceOpener()
 				} else {
-					//dk.setupUnholySsArmyBloodPresenceOpener()
+					dk.setupUnholySsArmyBloodPresenceOpener()
 				}
 			} else {
 				if dk.Rotation.UnholyPresenceOpener {
-					//dk.setupUnholySsUnholyPresenceOpener()
+					dk.setupUnholySsUnholyPresenceOpener()
 				} else {
-					//dk.setupUnholySsBloodPresenceOpener()
+					dk.setupUnholySsBloodPresenceOpener()
 				}
 			}
 		}
