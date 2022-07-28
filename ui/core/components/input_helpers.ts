@@ -342,6 +342,9 @@ function makeNumberIconInput<SpecType extends Spec, Message, ModObject>(config: 
 				const sign = newValue - (newMessage[fieldName] as unknown as number)
 				newValue += (multiplier-1)*sign
 			}
+			if (newValue < 0) {
+				newValue = 0
+			}
 			(newMessage[fieldName] as unknown as number) = newValue;
 			config.setValue(eventID, modObj, newMessage);
 		},

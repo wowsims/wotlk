@@ -147,9 +147,6 @@ func (shaman *Shaman) HasMinorGlyph(glyph proto.ShamanMinorGlyph) bool {
 func (shaman *Shaman) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	if shaman.Totems.Fire == proto.FireTotem_TotemOfWrath {
 		raidBuffs.TotemOfWrath = true
-		if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfTotemOfWrath) {
-			shaman.AddStat(stats.SpellPower, 280*0.3)
-		}
 	}
 
 	switch shaman.Totems.Water {
