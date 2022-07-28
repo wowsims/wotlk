@@ -7,8 +7,8 @@ import (
 )
 
 var FrostStrikeActionID = core.ActionID{SpellID: 55268}
-var FrostStrikeMHOutcome = core.OutcomeHit
-var FrostStrikeOHOutcome = core.OutcomeHit
+var FrostStrikeMHOutcome = core.OutcomeMiss
+var FrostStrikeOHOutcome = core.OutcomeMiss
 
 func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool) *core.Spell {
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 250.0, 0.55, true)

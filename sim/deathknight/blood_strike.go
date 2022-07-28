@@ -5,8 +5,8 @@ import (
 )
 
 var BloodStrikeActionID = core.ActionID{SpellID: 49930}
-var BloodStrikeMHOutcome = core.OutcomeHit
-var BloodStrikeOHOutcome = core.OutcomeHit
+var BloodStrikeMHOutcome = core.OutcomeMiss
+var BloodStrikeOHOutcome = core.OutcomeMiss
 
 func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *core.Spell {
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 764.0, 0.4, true)
