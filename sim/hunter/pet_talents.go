@@ -139,7 +139,7 @@ func (hp *HunterPet) applyFeedingFrenzy() {
 
 	hp.RegisterResetEffect(func(sim *core.Simulation) {
 		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int) {
-			if (isExecute == 35) {
+			if isExecute == 35 {
 				hp.PseudoStats.DamageDealtMultiplier *= multiplier
 			}
 		})

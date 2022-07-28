@@ -91,7 +91,8 @@ type Shaman struct {
 	LavaLash    *core.Spell
 	Stormstrike *core.Spell
 
-	LightningShield *core.Spell
+	LightningShield     *core.Spell
+	LightningShieldAura *core.Aura
 
 	Thunderstorm *core.Spell
 
@@ -181,7 +182,7 @@ func (shaman *Shaman) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 
 	if shaman.Talents.UnleashedRage > 0 {
 		raidBuffs.UnleashedRage = true
-		shaman.AddStat(stats.Expertise, 3*float64(shaman.Talents.UnleashedRage))
+		shaman.AddStat(stats.Expertise, 3*core.ExpertisePerQuarterPercentReduction*float64(shaman.Talents.UnleashedRage))
 	}
 
 	if shaman.Talents.ElementalOath > 0 {
