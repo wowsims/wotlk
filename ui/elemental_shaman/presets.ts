@@ -208,7 +208,7 @@ export const PRE_RAID_PRESET = {
       },
       {
         "id": 43410,
-        "enchant": 44623,
+        "enchant": 44489,
         "gems": [
           39998,
           40014
@@ -310,7 +310,7 @@ export const P1_PRESET = {
       },
       {
         "id": 40514,
-        "enchant": 44623,
+        "enchant": 44489,
         "gems": [
           39998,
           40025
@@ -325,10 +325,9 @@ export const P1_PRESET = {
         ]
       },
       {
-        "id": 40515,
+        "id": 40302,
         "enchant": 54999,
         "gems": [
-          40051,
           0
         ]
       },
@@ -342,7 +341,7 @@ export const P1_PRESET = {
         "id": 40517,
         "enchant": 41602,
         "gems": [
-          40051,
+          40049,
           40027
         ]
       },
