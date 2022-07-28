@@ -54,52 +54,56 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostPrioRotation(sim *core.Sim
 }
 
 func (dk *DpsDeathknight) setupFrostSubBloodOpener() {
-	dk.Opener.NewAction(dk.RotationActionCallback_IT)
-	dk.Opener.NewAction(dk.RotationActionCallback_PS)
-	dk.Opener.NewAction(dk.RotationActionCallback_UA)
-	dk.Opener.NewAction(dk.RotationActionCallback_BT)
-	dk.Opener.NewAction(dk.RotationActionCallback_Obli)
-	dk.Opener.NewAction(dk.RotationActionCallback_FS)
-	dk.Opener.NewAction(dk.RotationActionCallback_Pesti)
-	dk.Opener.NewAction(dk.RotationActionCallback_ERW)
-	dk.Opener.NewAction(dk.RotationActionCallback_Obli)
-	dk.Opener.NewAction(dk.RotationActionCallback_Obli)
-	dk.Opener.NewAction(dk.RotationActionCallback_Obli)
-	dk.Opener.NewAction(dk.RotationActionCallback_FS)
-	dk.Opener.NewAction(dk.RotationActionCallback_HB_Ghoul_RimeCheck)
-	dk.Opener.NewAction(dk.RotationActionCallback_FS)
-	dk.Opener.NewAction(dk.RotationActionCallback_Obli)
-	dk.Opener.NewAction(dk.RotationActionCallback_Obli)
-	dk.Opener.NewAction(dk.RotationActionCallback_Pesti)
-	dk.Opener.NewAction(dk.RotationActionCallback_FS)
-	dk.Opener.NewAction(dk.RotationActionCallback_BS)
-	dk.Opener.NewAction(dk.RotationActionCallback_FS)
+	dk.Opener.
+		NewAction(dk.RotationActionCallback_IT).
+		NewAction(dk.RotationActionCallback_PS).
+		NewAction(dk.RotationActionCallback_UA).
+		NewAction(dk.RotationActionCallback_BT).
+		NewAction(dk.RotationActionCallback_Obli).
+		NewAction(dk.RotationActionCallback_FS).
+		NewAction(dk.RotationActionCallback_Pesti).
+		NewAction(dk.RotationActionCallback_ERW).
+		NewAction(dk.RotationActionCallback_Obli).
+		NewAction(dk.RotationActionCallback_Obli).
+		NewAction(dk.RotationActionCallback_Obli).
+		NewAction(dk.RotationActionCallback_FS).
+		NewAction(dk.RotationActionCallback_HB_Ghoul_RimeCheck).
+		NewAction(dk.RotationActionCallback_FS).
+		NewAction(dk.RotationActionCallback_Obli).
+		NewAction(dk.RotationActionCallback_Obli).
+		NewAction(dk.RotationActionCallback_Pesti).
+		NewAction(dk.RotationActionCallback_FS).
+		NewAction(dk.RotationActionCallback_BS).
+		NewAction(dk.RotationActionCallback_FS)
 
-	dk.Main.NewAction(dk.RotationActionCallback_FrostPrioRotation)
+	dk.Main.
+		NewAction(dk.RotationActionCallback_FrostPrioRotation)
 }
 
 func (dk *DpsDeathknight) setupFrostSubUnholyOpener() {
-	dk.Opener.NewAction(dk.RotationActionCallback_IT)
-	dk.Opener.NewAction(dk.RotationActionCallback_PS)
-	dk.Opener.NewAction(dk.RotationActionCallback_BT)
-	dk.Opener.NewAction(dk.RotationActionCallback_Pesti)
-	dk.Opener.NewAction(dk.RotationActionCallback_UA)
-	dk.Opener.NewAction(dk.RotationActionCallback_Obli)
-	dk.Opener.NewAction(dk.RotationActionCallback_FS)
-	dk.Opener.NewAction(dk.RotationActionCallback_ERW)
-	dk.Opener.NewAction(dk.RotationActionCallback_Obli)
-	dk.Opener.NewAction(dk.RotationActionCallback_Obli)
-	dk.Opener.NewAction(dk.RotationActionCallback_Obli)
-	dk.Opener.NewAction(dk.RotationActionCallback_FS)
-	dk.Opener.NewAction(dk.RotationActionCallback_FS)
-	dk.Opener.NewAction(dk.RotationActionCallback_FS)
-	dk.Opener.NewAction(dk.RotationActionCallback_Obli)
-	dk.Opener.NewAction(dk.RotationActionCallback_Obli)
-	dk.Opener.NewAction(dk.RotationActionCallback_BS)
-	dk.Opener.NewAction(dk.RotationActionCallback_Pesti)
-	dk.Opener.NewAction(dk.RotationActionCallback_FS)
+	dk.Opener.
+		NewAction(dk.RotationActionCallback_IT).
+		NewAction(dk.RotationActionCallback_PS).
+		NewAction(dk.RotationActionCallback_BT).
+		NewAction(dk.RotationActionCallback_Pesti).
+		NewAction(dk.RotationActionCallback_UA).
+		NewAction(dk.RotationActionCallback_Obli).
+		NewAction(dk.RotationActionCallback_FS).
+		NewAction(dk.RotationActionCallback_ERW).
+		NewAction(dk.RotationActionCallback_Obli).
+		NewAction(dk.RotationActionCallback_Obli).
+		NewAction(dk.RotationActionCallback_Obli).
+		NewAction(dk.RotationActionCallback_FS).
+		NewAction(dk.RotationActionCallback_FS).
+		NewAction(dk.RotationActionCallback_FS).
+		NewAction(dk.RotationActionCallback_Obli).
+		NewAction(dk.RotationActionCallback_Obli).
+		NewAction(dk.RotationActionCallback_BS).
+		NewAction(dk.RotationActionCallback_Pesti).
+		NewAction(dk.RotationActionCallback_FS)
 
-	dk.Main.NewAction(dk.RotationActionCallback_FrostPrioRotation)
+	dk.Main.
+		NewAction(dk.RotationActionCallback_FrostPrioRotation)
 }
 
 func (dk *DpsDeathknight) FrostDiseaseCheckWrapper(sim *core.Simulation, target *core.Unit, spell *core.Spell) bool {
