@@ -81,7 +81,7 @@ func (dk *Deathknight) registerDeathStrikeSpell() {
 				dk.threatOfThassarianProc(sim, spellEffect, dk.DeathStrikeMhHit, dk.DeathStrikeOhHit)
 
 				dk.LastCastOutcome = DeathStrikeMHOutcome
-				if dk.outcomeEitherWeaponHitOrCrit(DeathStrikeMHOutcome, DeathStrikeOHOutcome) {
+				if dk.outcomeEitherWeaponLanded(DeathStrikeMHOutcome, DeathStrikeOHOutcome) {
 					dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_FU)
 					dk.Spend(sim, spell, dkSpellCost)
 

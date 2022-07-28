@@ -81,7 +81,7 @@ func (dk *Deathknight) registerPlagueStrikeSpell() {
 				dk.threatOfThassarianProc(sim, spellEffect, dk.PlagueStrikeMhHit, dk.PlagueStrikeOhHit)
 
 				dk.LastCastOutcome = PlagueStrikeMHOutcome
-				if dk.outcomeEitherWeaponHitOrCrit(PlagueStrikeMHOutcome, PlagueStrikeOHOutcome) {
+				if dk.outcomeEitherWeaponLanded(PlagueStrikeMHOutcome, PlagueStrikeOHOutcome) {
 					dk.BloodPlagueSpell.Cast(sim, spellEffect.Target)
 					if dk.Talents.CryptFever > 0 {
 						dk.CryptFeverAura[spellEffect.Target.Index].Activate(sim)
