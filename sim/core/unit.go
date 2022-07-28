@@ -161,6 +161,9 @@ func (unit *Unit) AddStatsDynamic(sim *Simulation, stat stats.Stats) {
 	stat[stats.Mana] = 0 // TODO: Mana needs special treatment
 
 	for k, v := range stat {
+		if v == 0 {
+			continue
+		}
 		unit.AddStatDynamic(sim, stats.Stat(k), v)
 	}
 }
@@ -170,6 +173,10 @@ func (unit *Unit) AddStatDynamic(sim *Simulation, stat stats.Stat, amount float6
 	}
 
 	added := amount * unit.statBonuses[stat].Multiplier
+
+	if added == 0 {
+		return
+	}
 
 	if stat == stats.MeleeHaste {
 		unit.AddMeleeHaste(sim, added)

@@ -27,7 +27,7 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 			ThreatMultiplier: 1,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return (62.0 + dk.applyImpurity(hitEffect, spell.Unit)*0.0475) *
+					return (62.0 + dk.getImpurityBonus(hitEffect, spell.Unit)*0.0475) *
 						dk.rageOfRivendareBonus(hitEffect.Target) *
 						dk.tundraStalkerBonus(hitEffect.Target)
 				},

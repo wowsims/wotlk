@@ -53,6 +53,8 @@ func (dk *Deathknight) registerArmyOfTheDeadCD() {
 		}),
 	})
 
+	amountOfRunicPower := 15.0
+
 	dk.ArmyOfTheDead = dk.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 42650},
 
@@ -74,7 +76,6 @@ func (dk *Deathknight) registerArmyOfTheDeadCD() {
 			dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_BFU)
 			dk.Spend(sim, spell, dkSpellCost)
 
-			amountOfRunicPower := 15.0
 			dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 
 			ghoulIndex = 0
@@ -89,7 +90,7 @@ func (dk *Deathknight) registerArmyOfTheDeadCD() {
 		Priority: core.CooldownPriorityDefault,
 		Type:     core.CooldownTypeDPS,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			if dk.opener.IsOngoing() {
+			if dk.Opener.IsOngoing() {
 				return false
 			}
 			if dk.Gargoyle != nil && !dk.Gargoyle.IsEnabled() {

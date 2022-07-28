@@ -78,13 +78,9 @@ var FrostTalents = &proto.DeathknightTalents{
 	HowlingBlast:       true,
 }
 
-var unholyRotation = &proto.Deathknight_Rotation{
-	UnholyPresenceOpener: true,
-}
+var unholyRotation = &proto.Deathknight_Rotation{}
 
-var frostRotation = &proto.Deathknight_Rotation{
-	UnholyPresenceOpener: false,
-}
+var frostRotation = &proto.Deathknight_Rotation{}
 
 var deathKnightOptions = &proto.Deathknight_Options{
 	StartingRunicPower:  0,

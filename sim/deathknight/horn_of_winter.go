@@ -60,7 +60,7 @@ func (dk *Deathknight) registerHornOfWinterSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			if dk.Inputs.RefreshHornOfWinter {
 				dk.HornOfWinterAura.Activate(sim)
-				dk.HornOfWinterAura.Prioritize()
+				// dk.HornOfWinterAura.Prioritize() // pretty sure we dont want this.
 			}
 
 			amountOfRunicPower := 10.0
