@@ -6,7 +6,7 @@ import { TalentsConfig, newTalentsConfig } from './talents_picker.js';
 export const mageTalentsConfig: TalentsConfig<MageTalents> = newTalentsConfig([
 	{
 		name: 'Arcane',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/81.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/81.jpg',
 		talents: [
 			{
 				fieldName: 'arcaneSubtlety',
@@ -231,7 +231,7 @@ export const mageTalentsConfig: TalentsConfig<MageTalents> = newTalentsConfig([
 	},
 	{
 		name: 'Fire',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/41.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/41.jpg',
 		talents: [
 			{
 				fieldName: 'improvedFireball',
@@ -447,7 +447,7 @@ export const mageTalentsConfig: TalentsConfig<MageTalents> = newTalentsConfig([
 	},
 	{
 		name: 'Frost',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/61.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/61.jpg',
 		talents: [
 			{
 				//fieldName: 'frostWarding',
