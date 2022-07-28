@@ -77,10 +77,7 @@ func (dk *Deathknight) registerBloodStrikeSpell() {
 			OutcomeApplier: dk.OutcomeFuncAlwaysHit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if dk.Talents.ThreatOfThassarian > 0 {
-					dk.threatOfThassarianProc(sim, spellEffect, dk.BloodStrikeMhHit, dk.BloodStrikeOhHit)
-				}
-
+				dk.threatOfThassarianProc(sim, spellEffect, dk.BloodStrikeMhHit, dk.BloodStrikeOhHit)
 				dk.LastCastOutcome = BloodStrikeMHOutcome
 
 				if dk.outcomeEitherWeaponHitOrCrit(BloodStrikeMHOutcome, BloodStrikeOHOutcome) {
