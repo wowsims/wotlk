@@ -52,6 +52,8 @@ func NewDpsDeathknight(character core.Character, player proto.Player) *DpsDeathk
 }
 
 func (dk *DpsDeathknight) SetupRotations() {
+	dk.ffFirst = dk.Inputs.FirstDisease == proto.Deathknight_Rotation_FrostFever
+
 	if dk.Talents.DarkConviction > 0 && dk.Talents.HowlingBlast {
 		dk.setupFrostSubBloodOpener()
 	} else if dk.Talents.BloodCakedBlade > 0 && dk.Talents.HowlingBlast {

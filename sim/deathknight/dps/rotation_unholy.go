@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
@@ -140,14 +139,14 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyPrioRotation(sim *core.Si
 }
 
 func (dk *DpsDeathknight) getFirstDiseaseAction() deathknight.RotationAction {
-	if dk.Inputs.FirstDisease == proto.Deathknight_Rotation_FrostFever {
+	if dk.ffFirst {
 		return dk.RotationActionCallback_IT
 	}
 	return dk.RotationActionCallback_PS
 }
 
 func (dk *DpsDeathknight) getSecondDiseaseAction() deathknight.RotationAction {
-	if dk.Inputs.FirstDisease == proto.Deathknight_Rotation_FrostFever {
+	if dk.ffFirst {
 		return dk.RotationActionCallback_PS
 	}
 	return dk.RotationActionCallback_IT
@@ -233,38 +232,105 @@ func (dk *DpsDeathknight) RotationAction_CancelBT(sim *core.Simulation, target *
 }
 
 func (dk *DpsDeathknight) RotationAction_ResetToMain(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
-	dk.Main.ResetSequence().
+	dk.Main.Clear().
 		NewAction(dk.RotationActionCallback_UnholySsRotation)
 
 	dk.WaitUntil(sim, sim.CurrentTime)
 	return true
 }
 
+func (dk *DpsDeathknight) RotationAction_PS_Custom(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
+	casted := dk.RotationActionCallback_PS(sim, target, s)
+	advance := dk.LastCastOutcome.Matches(core.OutcomeLanded)
+	dk.recastedBP = casted && advance
+	return casted
+}
+
+func (dk *DpsDeathknight) RotationAction_IT_Custom(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
+	casted := dk.RotationActionCallback_IT(sim, target, s)
+	advance := dk.LastCastOutcome.Matches(core.OutcomeLanded)
+	if casted && advance {
+		dk.recastedFF = true
+		dk.syncTimeFF = 0
+	}
+	return casted
+}
+
 func (dk *DpsDeathknight) RotationAction_IT_SetSync(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
 	ffRemaining := dk.FrostFeverDisease[target.Index].RemainingDuration(sim)
-	casted := dk.CastIcyTouch(sim, target)
+	casted := dk.RotationActionCallback_IT(sim, target, s)
 	advance := dk.LastCastOutcome.Matches(core.OutcomeLanded)
 	if casted && advance {
 		dk.syncTimeFF = dk.FrostFeverDisease[target.Index].Duration - ffRemaining
 	}
 
-	s.ConditionalAdvance(casted && advance)
 	return casted
 }
 
-func (dk *DpsDeathknight) ghoulFrenzySequence() {
-	ffFirst := dk.Inputs.FirstDisease == proto.Deathknight_Rotation_FrostFever
-	if ffFirst {
-		dk.Main.ResetSequence().
+func (dk *DpsDeathknight) RotationAction_FF_ClipCheck(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
+	dot := dk.FrostFeverDisease[target.Index]
+	gracePeriod := dk.CurrentFrostRuneGrace(sim)
+	return dk.RotationAction_DiseaseClipCheck(dot, gracePeriod, sim, target, s)
+}
+
+func (dk *DpsDeathknight) RotationAction_BP_ClipCheck(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
+	dot := dk.BloodPlagueDisease[target.Index]
+	gracePeriod := dk.CurrentUnholyRuneGrace(sim)
+	return dk.RotationAction_DiseaseClipCheck(dot, gracePeriod, sim, target, s)
+}
+
+func (dk *DpsDeathknight) RotationAction_DiseaseClipCheck(dot *core.Dot, gracePeriod time.Duration, sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
+	runeCdWaste := 0 * time.Millisecond
+	if dot.TickCount < dot.NumberOfTicks-1 {
+		nextTickAt := dot.ExpiresAt() - dot.TickLength*time.Duration((dot.NumberOfTicks-1)-dot.TickCount)
+		if nextTickAt > sim.CurrentTime && nextTickAt < sim.CurrentTime+gracePeriod+runeCdWaste {
+			// Delay disease for next tick
+			dk.LastCastOutcome = core.OutcomeMiss
+			dk.WaitUntil(sim, nextTickAt+50*time.Millisecond)
+		}
+	} else {
+		dk.WaitUntil(sim, sim.CurrentTime)
+	}
+
+	s.ConditionalAdvance(true)
+	return true
+}
+
+func (dk *DpsDeathknight) ghoulFrenzySequence(sim *core.Simulation) {
+	if dk.ffFirst {
+		dk.Main.Clear().
 			NewAction(dk.RotationAction_IT_SetSync).
 			NewAction(dk.RotationActionCallback_GF).
 			NewAction(dk.RotationAction_ResetToMain)
 	} else {
-		dk.Main.ResetSequence().
+		dk.Main.Clear().
 			NewAction(dk.RotationActionCallback_GF).
 			NewAction(dk.RotationAction_IT_SetSync).
 			NewAction(dk.RotationAction_ResetToMain)
 	}
+	dk.WaitUntil(sim, sim.CurrentTime)
+}
+
+func (dk *DpsDeathknight) recastDiseasesSequence(sim *core.Simulation) {
+	dk.Main.Clear()
+
+	if dk.ffFirst {
+		dk.Main.
+			NewAction(dk.RotationAction_FF_ClipCheck).
+			NewAction(dk.RotationAction_IT_Custom).
+			NewAction(dk.RotationAction_BP_ClipCheck).
+			NewAction(dk.RotationAction_PS_Custom).
+			NewAction(dk.RotationAction_ResetToMain)
+	} else {
+		dk.Main.
+			NewAction(dk.RotationAction_BP_ClipCheck).
+			NewAction(dk.RotationAction_PS_Custom).
+			NewAction(dk.RotationAction_FF_ClipCheck).
+			NewAction(dk.RotationAction_IT_Custom).
+			NewAction(dk.RotationAction_ResetToMain)
+	}
+
+	dk.WaitUntil(sim, sim.CurrentTime)
 }
 
 func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
@@ -273,32 +339,37 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 	if dk.ShouldHornOfWinter(sim) {
 		casted = dk.CastHornOfWinter(sim, target)
 	} else {
-		// Ghoul Frenzy usage with FF sync
 		if dk.Talents.GhoulFrenzy && (!dk.GhoulFrenzyAura.IsActive() || dk.GhoulFrenzyAura.RemainingDuration(sim) < 10*time.Second) {
-			ffRemaining := dk.FrostFeverDisease[target.Index].RemainingDuration(sim)
-			bpRemaining := dk.BloodPlagueDisease[target.Index].RemainingDuration(sim)
-			minRemaining := core.MinDuration(ffRemaining, bpRemaining)
-
-			if minRemaining > dk.SpellGCD()*2 {
-				casted = dk.UnholyDiseaseCheckWrapper(sim, target, dk.GhoulFrenzy, true)
-				if casted && dk.lastCastSpell == dk.GhoulFrenzy {
-					dk.ghoulFrenzySequence()
-					dk.WaitUntil(sim, sim.CurrentTime)
-				}
+			if dk.UnholyDiseaseCheckWrapper(sim, target, dk.GhoulFrenzy, true, 5) && dk.UnholyDiseaseCheckWrapper(sim, target, dk.IcyTouch, true, 5) {
+				dk.ghoulFrenzySequence(sim)
+				return true
+			} else {
+				dk.recastDiseasesSequence(sim)
+				return true
 			}
 		}
 		if !casted {
-			casted = dk.UnholyDiseaseCheckWrapper(sim, target, dk.ScourgeStrike, true)
+			if dk.UnholyDiseaseCheckWrapper(sim, target, dk.ScourgeStrike, true, 1) {
+				casted = dk.CastScourgeStrike(sim, target)
+			} else {
+				dk.recastDiseasesSequence(sim)
+				return true
+			}
 			if !casted {
 				if dk.shouldSpreadDisease(sim) {
 					casted = dk.spreadDiseases(sim, target, s)
 				} else {
-					casted = dk.UnholyDiseaseCheckWrapper(sim, target, dk.BloodStrike, true)
+					if dk.UnholyDiseaseCheckWrapper(sim, target, dk.BloodStrike, true, 1) {
+						casted = dk.CastBloodStrike(sim, target)
+					} else {
+						dk.recastDiseasesSequence(sim)
+						return true
+					}
 				}
 				if !casted {
-					casted = dk.UnholyDiseaseCheckWrapper(sim, target, dk.DeathCoil, false)
+					casted = dk.CastDeathCoil(sim, target)
 					if !casted {
-						casted = dk.UnholyDiseaseCheckWrapper(sim, target, dk.HornOfWinter, false)
+						casted = dk.CastHornOfWinter(sim, target)
 					}
 				}
 			}
