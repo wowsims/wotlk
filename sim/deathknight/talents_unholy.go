@@ -65,7 +65,7 @@ func (dk *Deathknight) applyRageOfRivendare() {
 }
 
 func (dk *Deathknight) rageOfRivendareBonus(target *core.Unit) float64 {
-	return core.TernaryFloat64(dk.TargetHasDisease(BloodPlagueAuraLabel, target), dk.bonusCoeffs.rageOfRivendareBonusCoeff, 1.0)
+	return core.TernaryFloat64(dk.BloodPlagueDisease[target.Index].IsActive(), dk.bonusCoeffs.rageOfRivendareBonusCoeff, 1.0)
 }
 
 func (dk *Deathknight) applyImpurity() {
@@ -195,7 +195,7 @@ func (dk *Deathknight) bloodCakedBladeHit(isMh bool) *core.Spell {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-					diseaseMultiplier := (0.25 + float64(dk.countActiveDiseases(spellEffect.Target))*0.125)
+					diseaseMultiplier := (0.25 + dk.countActiveDiseases(spellEffect.Target)*0.125)
 					if isMh {
 						return mhBaseDamage(sim, spellEffect, spell) * diseaseMultiplier
 					} else {

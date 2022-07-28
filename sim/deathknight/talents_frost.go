@@ -107,7 +107,7 @@ func (dk *Deathknight) applyTundaStalker() {
 }
 
 func (dk *Deathknight) tundraStalkerBonus(target *core.Unit) float64 {
-	return core.TernaryFloat64(dk.TargetHasDisease(FrostFeverAuraLabel, target), dk.bonusCoeffs.tundraStalkerBonusCoeff, 1.0)
+	return core.TernaryFloat64(dk.FrostFeverDisease[target.Index].IsActive(), dk.bonusCoeffs.tundraStalkerBonusCoeff, 1.0)
 }
 
 func (dk *Deathknight) applyRime() {
@@ -179,11 +179,9 @@ func (dk *Deathknight) applyKillingMachine() {
 func (dk *Deathknight) killingMachineOutcomeMod(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
 	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
 		if dk.KillingMachineAura.IsActive() {
-			dk.AddStatDynamic(sim, stats.MeleeCrit, 100*core.CritRatingPerCritChance)
-			dk.AddStatDynamic(sim, stats.SpellCrit, 100*core.CritRatingPerCritChance)
+			spell.BonusCritRating += 100 * core.CritRatingPerCritChance
 			outcomeApplier(sim, spell, spellEffect, attackTable)
-			dk.AddStatDynamic(sim, stats.MeleeCrit, -100*core.CritRatingPerCritChance)
-			dk.AddStatDynamic(sim, stats.SpellCrit, -100*core.CritRatingPerCritChance)
+			spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
 		} else {
 			outcomeApplier(sim, spell, spellEffect, attackTable)
 		}
@@ -279,8 +277,7 @@ func (dk *Deathknight) threatOfThassarianProcMasks(isMH bool, effect *core.Spell
 
 func (dk *Deathknight) threatOfThassarianProc(sim *core.Simulation, spellEffect *core.SpellEffect, mhSpell *core.Spell, ohSpell *core.Spell) {
 	mhSpell.Cast(sim, spellEffect.Target)
-	totProcced := dk.threatOfThassarianWillProc(sim)
-	if totProcced {
+	if dk.Talents.ThreatOfThassarian > 0 && dk.threatOfThassarianWillProc(sim) {
 		ohSpell.Cast(sim, spellEffect.Target)
 	}
 }

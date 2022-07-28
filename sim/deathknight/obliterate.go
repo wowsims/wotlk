@@ -25,6 +25,8 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool) *core.Spell {
 		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 584.0+bonusBaseDamage, 0.8*dk.nervesOfColdSteelBonus(), true)
 	}
 
+	diseaseMulti := dk.diseaseMultiplier(0.125)
+
 	effect := core.SpellEffect{
 		BonusCritRating:  (dk.rimeCritBonus() + dk.subversionCritBonus() + dk.annihilationCritBonus() + dk.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfObliterate), 1.25, 1.0) * dk.scourgelordsBattlegearDamageBonus(dk.Obliterate),
@@ -33,7 +35,7 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool) *core.Spell {
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				return weaponBaseDamage(sim, hitEffect, spell) *
-					dk.diseaseMultiplierBonus(hitEffect.Target, 0.125) *
+					(1.0 + dk.countActiveDiseases(hitEffect.Target)*diseaseMulti) *
 					dk.rageOfRivendareBonus(hitEffect.Target) *
 					dk.tundraStalkerBonus(hitEffect.Target) *
 					dk.mercilessCombatBonus(sim)
@@ -76,7 +78,6 @@ func (dk *Deathknight) registerObliterateSpell() {
 	dk.ObliterateOhHit = dk.newObliterateHitSpell(false)
 
 	amountOfRunicPower := 15.0 + 2.5*float64(dk.Talents.ChillOfTheGrave) + dk.scourgeborneBattlegearRunicPowerBonus()
-
 	dk.Obliterate = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    ObliterateActionID.WithTag(3),
 		Flags:       core.SpellFlagNoMetrics | core.SpellFlagNoLogs,

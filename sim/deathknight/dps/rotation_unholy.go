@@ -18,7 +18,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyPrioRotation(sim *core.Si
 	if dk.ShouldHornOfWinter(sim) {
 		dk.HornOfWinter.Cast(sim, target)
 		casted = true
-	} else if (!dk.TargetHasDisease(deathknight.FrostFeverAuraLabel, target) || dk.FrostFeverDisease[target.Index].RemainingDuration(sim) < diseaseRefreshDuration) && dk.CanIcyTouch(sim) {
+	} else if (!dk.FrostFeverDisease[target.Index].IsActive() || dk.FrostFeverDisease[target.Index].RemainingDuration(sim) < diseaseRefreshDuration) && dk.CanIcyTouch(sim) {
 		// Dont clip if theres half a second left to tick
 		remainingDuration := dk.FrostFeverDisease[target.Index].RemainingDuration(sim)
 		if remainingDuration < time.Millisecond*500 && remainingDuration > 0 {
@@ -28,7 +28,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyPrioRotation(sim *core.Si
 			casted = true
 			dk.recastedFF = true
 		}
-	} else if (!dk.TargetHasDisease(deathknight.BloodPlagueAuraLabel, target) || dk.BloodPlagueDisease[target.Index].RemainingDuration(sim) < diseaseRefreshDuration) && dk.CanPlagueStrike(sim) {
+	} else if (!dk.BloodPlagueDisease[target.Index].IsActive() || dk.BloodPlagueDisease[target.Index].RemainingDuration(sim) < diseaseRefreshDuration) && dk.CanPlagueStrike(sim) {
 		// Dont clip if theres half a second left to tick
 		remainingDuration := dk.BloodPlagueDisease[target.Index].RemainingDuration(sim)
 		if remainingDuration < time.Millisecond*500 && remainingDuration > 0 {
@@ -341,7 +341,8 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 	if dk.ShouldHornOfWinter(sim) {
 		casted = dk.CastHornOfWinter(sim, target)
 	} else {
-		if dk.Talents.GhoulFrenzy && (!dk.GhoulFrenzyAura.IsActive() || dk.GhoulFrenzyAura.RemainingDuration(sim) < 10*time.Second) {
+		if dk.Talents.GhoulFrenzy && dk.CanGhoulFrenzy(sim) && dk.CanIcyTouch(sim) &&
+			(!dk.GhoulFrenzyAura.IsActive() || dk.GhoulFrenzyAura.RemainingDuration(sim) < 10*time.Second) {
 			if dk.UnholyDiseaseCheckWrapper(sim, target, dk.GhoulFrenzy, true, 5) && dk.UnholyDiseaseCheckWrapper(sim, target, dk.IcyTouch, true, 5) {
 				dk.ghoulFrenzySequence(sim)
 				return true

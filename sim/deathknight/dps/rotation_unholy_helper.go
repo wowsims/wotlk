@@ -37,11 +37,11 @@ func (dk *DpsDeathknight) UnholyDiseaseCheckWrapper(sim *core.Simulation, target
 	bpRemaining := dk.BloodPlagueDisease[target.Index].RemainingDuration(sim)
 	castGcd := dk.SpellGCD() * time.Duration(casts)
 
-	if !dk.TargetHasDisease(deathknight.FrostFeverAuraLabel, target) || ffRemaining < castGcd {
+	if !dk.FrostFeverDisease[target.Index].IsActive() || ffRemaining < castGcd {
 		// Refresh FF
 		return false
 	}
-	if !dk.TargetHasDisease(deathknight.BloodPlagueAuraLabel, target) || bpRemaining < castGcd {
+	if !dk.BloodPlagueDisease[target.Index].IsActive() || bpRemaining < castGcd {
 		// Refresh BP
 		return false
 	}
@@ -83,30 +83,6 @@ func (dk *DpsDeathknight) checkForDiseaseRecast(expiresAt time.Duration, afterCa
 			return true
 		}
 	} else if afterCastTime > expiresAt {
-		return true
-	}
-	return false
-}
-
-func (dk *DpsDeathknight) castClipDisease(mainDisease bool, gracePeriod time.Duration, sim *core.Simulation, canCast bool, spell *core.Spell, dot *core.Dot, target *core.Unit) bool {
-	if canCast {
-		// Dont drop disease due to %dmg modifiers
-		if dot.TickCount < dot.NumberOfTicks-1 {
-			nextTickAt := dot.ExpiresAt() - dot.TickLength*time.Duration((dot.NumberOfTicks-1)-dot.TickCount)
-			if nextTickAt > sim.CurrentTime && (nextTickAt < sim.CurrentTime+gracePeriod || nextTickAt < sim.CurrentTime+400*time.Millisecond) {
-				// Delay disease for next tick
-				dk.LastCastOutcome = core.OutcomeMiss
-				dk.WaitUntil(sim, nextTickAt+50*time.Millisecond)
-				return true
-			}
-		}
-
-		spell.Cast(sim, target)
-		dk.lastCastSpell = spell
-		success := dk.LastCastOutcome.Matches(core.OutcomeLanded)
-		if success && spell == dk.IcyTouch {
-			dk.syncTimeFF = 0
-		}
 		return true
 	}
 	return false

@@ -73,10 +73,6 @@ func (dk *Deathknight) darkrunedBattlegearCritBonus() float64 {
 	return core.TernaryFloat64(dk.HasSetBonus(ItemSetDarkrunedBattlegear, 2), 8.0, 0.0)
 }
 
-func (dk *Deathknight) darkrunedBattlegearDiseaseBonus(baseMultiplier float64) float64 {
-	return core.TernaryFloat64(dk.HasSetBonus(ItemSetDarkrunedBattlegear, 4), baseMultiplier*1.2, baseMultiplier)
-}
-
 var ItemSetDarkrunedPlate = core.NewItemSet(core.ItemSet{
 	Name: "Darkruned Plate",
 	Bonuses: map[int32]core.ApplyEffect{

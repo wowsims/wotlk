@@ -109,9 +109,9 @@ func (dk *DpsDeathknight) setupFrostSubUnholyOpener() {
 func (dk *DpsDeathknight) FrostDiseaseCheckWrapper(sim *core.Simulation, target *core.Unit, spell *core.Spell) bool {
 	success := false
 
-	if !dk.TargetHasDisease(deathknight.FrostFeverAuraLabel, target) {
+	if !dk.FrostFeverDisease[target.Index].IsActive() {
 		success = dk.CastIcyTouch(sim, target)
-	} else if !dk.TargetHasDisease(deathknight.BloodPlagueAuraLabel, target) {
+	} else if !dk.BloodPlagueDisease[target.Index].IsActive() {
 		success = dk.CastPlagueStrike(sim, target)
 	} else if dk.FrostFeverDisease[target.Index].RemainingDuration(sim) < spell.CurCast.GCD ||
 		dk.BloodPlagueDisease[target.Index].RemainingDuration(sim) < spell.CurCast.GCD {
