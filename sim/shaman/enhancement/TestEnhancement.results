@@ -619,8 +619,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-SkycallTotem-33506"
  value: {
-  dps: 2285.4880382169517
-  tps: 1610.0449997409626
+  dps: 2279.423210239202
+  tps: 1607.9159606731191
  }
 }
 dps_results: {

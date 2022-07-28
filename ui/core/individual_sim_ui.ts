@@ -940,6 +940,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 					<div class="talents-picker">
 					</div>
 					<div class="glyphs-picker">
+					<span>Glyphs</span>
 					</div>
 				</div>
 				<div class="saved-talents-manager">
