@@ -57,7 +57,8 @@ type RetributionPaladin struct {
 	Seal          proto.PaladinSeal
 	UseDivinePlea bool
 
-	SealInitComplete bool
+	SealInitComplete       bool
+	DivinePleaInitComplete bool
 
 	Rotation proto.RetributionPaladin_Rotation
 }
@@ -77,4 +78,5 @@ func (ret *RetributionPaladin) Reset(sim *core.Simulation) {
 	ret.Paladin.Reset(sim)
 	ret.AutoAttacks.CancelAutoSwing(sim)
 	ret.SealInitComplete = false
+	ret.DivinePleaInitComplete = false
 }
