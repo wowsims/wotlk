@@ -16,10 +16,9 @@ type DeathknightInputs struct {
 	PetUptime           float64
 
 	// Rotation Vars
-	RefreshHornOfWinter  bool
-	UnholyPresenceOpener bool
-	ArmyOfTheDeadType    proto.Deathknight_Rotation_ArmyOfTheDead
-	FirstDisease         proto.Deathknight_Rotation_FirstDisease
+	RefreshHornOfWinter bool
+	ArmyOfTheDeadType   proto.Deathknight_Rotation_ArmyOfTheDead
+	FirstDisease        proto.Deathknight_Rotation_FirstDisease
 }
 
 type DeathknightCoeffs struct {
@@ -244,17 +243,11 @@ func (dk *Deathknight) ResetBonusCoeffs() {
 
 func (dk *Deathknight) Reset(sim *core.Simulation) {
 	dk.Presence = UnsetPresence
-	if dk.Inputs.UnholyPresenceOpener {
-		dk.ChangePresence(sim, UnholyPresence)
-	} else {
-		dk.ChangePresence(sim, BloodPresence)
-	}
+	dk.ChangePresence(sim, BloodPresence)
 
 	if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_PreCast {
 		dk.PrecastArmyOfTheDead(sim)
 	}
-
-	dk.ResetRotation(sim)
 }
 
 func (dk *Deathknight) IsFuStrike(spell *core.Spell) bool {
@@ -299,35 +292,35 @@ func NewDeathknight(character core.Character, options proto.Player, inputs Death
 			// you do not want these to trigger a tryUseGCD, so after the opener
 			// its fine since you're running off a prio system, and rune generation
 			// can change your logic which we want.
-			if !dk.onOpener {
+			if !dk.Opener.IsOngoing() {
 				if dk.GCD.IsReady(sim) {
 					dk.tryUseGCD(sim)
 				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if !dk.onOpener {
+			if !dk.Opener.IsOngoing() {
 				if dk.GCD.IsReady(sim) {
 					dk.tryUseGCD(sim)
 				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if !dk.onOpener {
+			if !dk.Opener.IsOngoing() {
 				if dk.GCD.IsReady(sim) {
 					dk.tryUseGCD(sim)
 				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if !dk.onOpener {
+			if !dk.Opener.IsOngoing() {
 				if dk.GCD.IsReady(sim) {
 					dk.tryUseGCD(sim)
 				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if !dk.onOpener {
+			if !dk.Opener.IsOngoing() {
 				if dk.GCD.IsReady(sim) {
 					dk.tryUseGCD(sim)
 				}
@@ -356,6 +349,9 @@ func NewDeathknight(character core.Character, options proto.Player, inputs Death
 	for i := 0; i < 8; i++ {
 		dk.ArmyGhoul[i] = dk.NewArmyGhoulPet(i)
 	}
+
+	dk.Opener = &Sequence{}
+	dk.Main = &Sequence{}
 
 	return dk
 }
