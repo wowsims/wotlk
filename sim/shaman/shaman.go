@@ -99,6 +99,9 @@ type Shaman struct {
 	FlameShock *core.Spell
 	FrostShock *core.Spell
 
+	FeralSpirit  *core.Spell
+	SpiritWolves *SpiritWolves
+
 	GraceOfAirTotem      *core.Spell
 	MagmaTotem           *core.Spell
 	ManaSpringTotem      *core.Spell
@@ -214,6 +217,8 @@ func (shaman *Shaman) Initialize() {
 	if shaman.Talents.LavaLash {
 		shaman.LavaLash = shaman.newLavaLashSpell()
 	}
+
+	shaman.registerFeralSpirit()
 
 	shaman.registerShocks()
 	shaman.registerGraceOfAirTotemSpell()
