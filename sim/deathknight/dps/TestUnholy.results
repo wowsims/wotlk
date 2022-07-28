@@ -795,7 +795,7 @@ dps_results: {
  key: "TestUnholy-AllItems-WindhawkArmor"
  value: {
   dps: 5935.567179642177
-  tps: 4560.745992221102
+  tps: 4560.745992221103
  }
 }
 dps_results: {
@@ -879,7 +879,7 @@ dps_results: {
  key: "TestUnholy-Settings-Orc-Unholy P1 -Basic-FullBuffs-ShortSingleTarget"
  value: {
   dps: 9428.827926297337
-  tps: 5950.627397661642
+  tps: 5950.627397661643
  }
 }
 dps_results: {
