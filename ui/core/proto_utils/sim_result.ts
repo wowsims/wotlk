@@ -833,7 +833,7 @@ export class TargetedActionMetrics {
 	}
 
 	get casts() {
-		return Math.max(this.data.casts, this.hitAttempts) / this.iterations;
+		return (this.data.casts || this.hitAttempts) / this.iterations;
 	}
 
 	get castsPerMinute() {

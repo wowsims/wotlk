@@ -17,6 +17,7 @@ import * as Mechanics from '/wotlk/core/constants/mechanics.js';
 
 import * as ShamanInputs from './inputs.js';
 import * as Presets from './presets.js';
+import { shamanGlyphsConfig } from '../core/talents/shaman.js';
 
 export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalShaman> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecElementalShaman>) {
@@ -106,6 +107,8 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 					arcaneBrilliance: true,
 					divineSpirit: true,
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
+					moonkinAura: TristateEffect.TristateEffectImproved,
+					sanctifiedRetribution: true,
 				}),
 				partyBuffs: PartyBuffs.create({
 				}),
@@ -119,6 +122,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 					judgementOfWisdom: true,
 					misery: true,
 					curseOfElements: true,
+					shadowMastery: true,
 				}),
 			},
 			// IconInputs to include in the 'Player' section on the settings tab.
@@ -152,10 +156,10 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				// Preset talents that the user can quickly select.
 				talents: [
 					Presets.StandardTalents,
-					Presets.RestoTalents,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
+					Presets.SWP_PRESET,
 					Presets.PRE_RAID_PRESET,
 					Presets.P1_PRESET,
 				],
