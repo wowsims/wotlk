@@ -294,35 +294,35 @@ func NewDeathknight(character core.Character, options proto.Player, inputs Death
 			// can change your logic which we want.
 			if !dk.Opener.IsOngoing() {
 				if dk.GCD.IsReady(sim) {
-					dk.tryUseGCD(sim)
+					//dk.tryUseGCD(sim)
 				}
 			}
 		},
 		func(sim *core.Simulation) {
 			if !dk.Opener.IsOngoing() {
 				if dk.GCD.IsReady(sim) {
-					dk.tryUseGCD(sim)
+					//dk.tryUseGCD(sim)
 				}
 			}
 		},
 		func(sim *core.Simulation) {
 			if !dk.Opener.IsOngoing() {
 				if dk.GCD.IsReady(sim) {
-					dk.tryUseGCD(sim)
+					//dk.tryUseGCD(sim)
 				}
 			}
 		},
 		func(sim *core.Simulation) {
 			if !dk.Opener.IsOngoing() {
 				if dk.GCD.IsReady(sim) {
-					dk.tryUseGCD(sim)
+					//dk.tryUseGCD(sim)
 				}
 			}
 		},
 		func(sim *core.Simulation) {
 			if !dk.Opener.IsOngoing() {
 				if dk.GCD.IsReady(sim) {
-					dk.tryUseGCD(sim)
+					//dk.tryUseGCD(sim)
 				}
 			}
 		},

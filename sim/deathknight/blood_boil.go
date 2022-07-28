@@ -31,7 +31,6 @@ func (dk *Deathknight) registerBloodBoilSpell() {
 						dk.rageOfRivendareBonus(hitEffect.Target) *
 						dk.tundraStalkerBonus(hitEffect.Target)
 				},
-				TargetSpellCoefficient: 1,
 			},
 			OutcomeApplier: dk.OutcomeFuncMagicHitAndCrit(dk.spellCritMultiplierGoGandMoM()),
 

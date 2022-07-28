@@ -86,4 +86,5 @@ func (dk *DpsDeathknight) Initialize() {
 
 func (dk *DpsDeathknight) Reset(sim *core.Simulation) {
 	dk.Deathknight.Reset(sim)
+	dk.ResetUnholyRotation(sim)
 }

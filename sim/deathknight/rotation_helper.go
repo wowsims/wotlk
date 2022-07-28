@@ -16,6 +16,13 @@ func (s *Sequence) NewAction(action RotationAction) *Sequence {
 	return s
 }
 
+func (s *Sequence) ResetSequence() *Sequence {
+	s.actions = make([]RotationAction, 0)
+	s.numActions = 0
+	s.idx = 0
+	return s
+}
+
 /*
 const (
 	RotationAction_Skip RotationActionCallback = Func_RotationAction_Skip
