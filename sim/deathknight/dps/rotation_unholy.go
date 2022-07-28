@@ -280,13 +280,15 @@ func (dk *DpsDeathknight) RotationAction_BP_ClipCheck(sim *core.Simulation, targ
 }
 
 func (dk *DpsDeathknight) RotationAction_DiseaseClipCheck(dot *core.Dot, gracePeriod time.Duration, sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
-	runeCdWaste := 0 * time.Millisecond
+	//runeCdWaste := 0 * time.Millisecond
 	if dot.TickCount < dot.NumberOfTicks-1 {
 		nextTickAt := dot.ExpiresAt() - dot.TickLength*time.Duration((dot.NumberOfTicks-1)-dot.TickCount)
-		if nextTickAt > sim.CurrentTime && nextTickAt < sim.CurrentTime+gracePeriod+runeCdWaste {
+		if nextTickAt > sim.CurrentTime && (nextTickAt < sim.CurrentTime+gracePeriod || nextTickAt < sim.CurrentTime+400*time.Millisecond) {
 			// Delay disease for next tick
 			dk.LastCastOutcome = core.OutcomeMiss
 			dk.WaitUntil(sim, nextTickAt+50*time.Millisecond)
+		} else {
+			dk.WaitUntil(sim, sim.CurrentTime)
 		}
 	} else {
 		dk.WaitUntil(sim, sim.CurrentTime)
