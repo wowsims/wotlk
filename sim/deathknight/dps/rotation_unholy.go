@@ -170,51 +170,54 @@ func (dk *DpsDeathknight) getBloodRuneAction(isFirst bool) deathknight.RotationA
 }
 
 func (dk *DpsDeathknight) setupUnholySsOpener() {
-	dk.Opener.NewAction(dk.getFirstDiseaseAction())
-	dk.Opener.NewAction(dk.getSecondDiseaseAction())
-	dk.Opener.NewAction(dk.getBloodRuneAction(true))
-	dk.Opener.NewAction(dk.RotationActionCallback_SS)
-	dk.Opener.NewAction(dk.RotationActionCallback_BT)
-	dk.Opener.NewAction(dk.RotationActionCallback_UP)
-	dk.Opener.NewAction(dk.RotationActionCallback_Garg)
-	dk.Opener.NewAction(dk.RotationActionCallback_ERW)
-	dk.Opener.NewAction(dk.RotationActionCallback_BP)
-	dk.Opener.NewAction(dk.RotationActionCallback_SS)
-	dk.Opener.NewAction(dk.RotationActionCallback_SS)
-	dk.Opener.NewAction(dk.getBloodRuneAction(false))
+	dk.Opener.
+		NewAction(dk.getFirstDiseaseAction()).
+		NewAction(dk.getSecondDiseaseAction()).
+		NewAction(dk.getBloodRuneAction(true)).
+		NewAction(dk.RotationActionCallback_SS).
+		NewAction(dk.RotationActionCallback_BT).
+		NewAction(dk.RotationActionCallback_UP).
+		NewAction(dk.RotationActionCallback_Garg).
+		NewAction(dk.RotationActionCallback_ERW).
+		NewAction(dk.RotationActionCallback_BP).
+		NewAction(dk.RotationActionCallback_SS).
+		NewAction(dk.RotationActionCallback_SS).
+		NewAction(dk.getBloodRuneAction(false))
 
 	dk.Main.NewAction(dk.RotationActionCallback_UnholySsRotation)
 }
 
 func (dk *DpsDeathknight) setupUnholySsArmyOpener() {
-	dk.Opener.NewAction(dk.getFirstDiseaseAction())
-	dk.Opener.NewAction(dk.getSecondDiseaseAction())
-	dk.Opener.NewAction(dk.getBloodRuneAction(true))
-	dk.Opener.NewAction(dk.RotationActionCallback_SS)
-	dk.Opener.NewAction(dk.RotationActionCallback_BT)
-	dk.Opener.NewAction(dk.RotationActionCallback_UP)
-	dk.Opener.NewAction(dk.RotationActionCallback_Garg)
-	dk.Opener.NewAction(dk.RotationActionCallback_ERW)
-	dk.Opener.NewAction(dk.RotationActionCallback_AOTD)
-	dk.Opener.NewAction(dk.RotationActionCallback_BP)
-	dk.Opener.NewAction(dk.RotationActionCallback_SS)
+	dk.Opener.
+		NewAction(dk.getFirstDiseaseAction()).
+		NewAction(dk.getSecondDiseaseAction()).
+		NewAction(dk.getBloodRuneAction(true)).
+		NewAction(dk.RotationActionCallback_SS).
+		NewAction(dk.RotationActionCallback_BT).
+		NewAction(dk.RotationActionCallback_UP).
+		NewAction(dk.RotationActionCallback_Garg).
+		NewAction(dk.RotationActionCallback_ERW).
+		NewAction(dk.RotationActionCallback_AOTD).
+		NewAction(dk.RotationActionCallback_BP).
+		NewAction(dk.RotationActionCallback_SS)
 
 	dk.Main.NewAction(dk.RotationActionCallback_UnholySsRotation)
 }
 
 func (dk *DpsDeathknight) setupUnholyDndOpener() {
-	dk.Opener.NewAction(dk.getFirstDiseaseAction())
-	dk.Opener.NewAction(dk.getSecondDiseaseAction())
-	dk.Opener.NewAction(dk.getBloodRuneAction(true))
-	dk.Opener.NewAction(dk.RotationActionCallback_DND)
-	dk.Opener.NewAction(dk.RotationActionCallback_BT)
-	dk.Opener.NewAction(dk.RotationActionCallback_UP)
-	dk.Opener.NewAction(dk.RotationActionCallback_Garg)
-	dk.Opener.NewAction(dk.RotationActionCallback_ERW)
-	dk.Opener.NewAction(dk.RotationActionCallback_BP)
-	dk.Opener.NewAction(dk.RotationActionCallback_SS)
-	dk.Opener.NewAction(dk.RotationActionCallback_SS)
-	dk.Opener.NewAction(dk.getBloodRuneAction(false))
+	dk.Opener.
+		NewAction(dk.getFirstDiseaseAction()).
+		NewAction(dk.getSecondDiseaseAction()).
+		NewAction(dk.getBloodRuneAction(true)).
+		NewAction(dk.RotationActionCallback_DND).
+		NewAction(dk.RotationActionCallback_BT).
+		NewAction(dk.RotationActionCallback_UP).
+		NewAction(dk.RotationActionCallback_Garg).
+		NewAction(dk.RotationActionCallback_ERW).
+		NewAction(dk.RotationActionCallback_BP).
+		NewAction(dk.RotationActionCallback_SS).
+		NewAction(dk.RotationActionCallback_SS).
+		NewAction(dk.getBloodRuneAction(false))
 
 	dk.Main.NewAction(dk.RotationActionCallback_UnholyPrioRotation)
 }
