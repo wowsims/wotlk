@@ -81,6 +81,11 @@ type Paladin struct {
 	// SealOfWisdomAura        *core.Aura
 	// SealOfLightAura         *core.Aura
 
+	RighteousVengeanceSpell  *core.Spell
+	RighteousVengeanceDots   []*core.Dot
+	RighteousVengeancePools  []float64
+	RighteousVengeanceDamage []float64
+
 	ArtOfWarInstantCast *core.Aura
 
 	SpiritualAttunementMetrics *core.ResourceMetrics
@@ -151,6 +156,23 @@ func (paladin *Paladin) Initialize() {
 
 	paladin.registerSpiritualAttunement()
 	paladin.registerDivinePleaSpell()
+	paladin.registerRighteousVengeanceSpell()
+
+	if paladin.Talents.RighteousVengeance > 0 {
+		targets := paladin.Env.GetNumTargets()
+		paladin.RighteousVengeanceDots = []*core.Dot{}
+		for i := int32(0); i < targets; i++ {
+			paladin.RighteousVengeanceDots = append(paladin.RighteousVengeanceDots, paladin.makeRighteousVengeanceDot(paladin.Env.GetTargetUnit(i)))
+		}
+		paladin.RighteousVengeancePools = []float64{}
+		for i := int32(0); i < targets; i++ {
+			paladin.RighteousVengeancePools = append(paladin.RighteousVengeancePools, 0.0)
+		}
+		paladin.RighteousVengeanceDamage = []float64{}
+		for i := int32(0); i < targets; i++ {
+			paladin.RighteousVengeanceDamage = append(paladin.RighteousVengeanceDamage, 0.0)
+		}
+	}
 }
 
 func (paladin *Paladin) Reset(sim *core.Simulation) {
