@@ -10,9 +10,10 @@ type RotationAction func(sim *core.Simulation, target *core.Unit, s *Sequence) b
 
 // Add your UH rotation Actions here and then on the DoNext function
 
-func (s *Sequence) NewAction(action RotationAction) {
+func (s *Sequence) NewAction(action RotationAction) *Sequence {
 	s.actions = append(s.actions, action)
 	s.numActions += 1
+	return s
 }
 
 /*
