@@ -51,6 +51,10 @@ func (priest *Priest) ApplyTalents() {
 	if priest.Talents.SpiritOfRedemption {
 		priest.AddStatDependency(stats.Spirit, stats.Spirit, 1.0+0.05)
 	}
+
+	if priest.Talents.TwistedFaith > 0 {
+		priest.AddStatDependency(stats.Spirit, stats.SpellPower, 1.0+0.04*float64(priest.Talents.TwistedFaith))
+	}
 }
 
 func (priest *Priest) setupSurgeOfLight() {

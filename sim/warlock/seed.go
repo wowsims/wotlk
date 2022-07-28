@@ -24,8 +24,8 @@ func (warlock *Warlock) registerSeedSpell() {
 func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 	actionID := core.ActionID{SpellID: 47836}
 	spellSchool := core.SpellSchoolShadow
-	baseAdditiveMultiplier:= warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
-	baseAdditiveMultiplierDot:= warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true)
+	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
+	baseAdditiveMultiplierDot := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true)
 
 	baseCost := 0.34 * warlock.BaseMana
 

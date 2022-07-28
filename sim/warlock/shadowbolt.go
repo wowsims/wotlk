@@ -12,7 +12,7 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 	ISBProcChance := 0.2 * float64(warlock.Talents.ImprovedShadowBolt)
 	actionID := core.ActionID{SpellID: 47809}
 	spellSchool := core.SpellSchoolShadow
-	baseAdditiveMultiplier:= warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
+	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
 	baseCost := 0.17 * warlock.BaseMana
 	costReductionFactor := 1.0
 	if float64(warlock.Talents.Cataclysm) > 0 {

@@ -28,16 +28,16 @@ var ItemSetVoidheartRaiment = core.NewItemSet(core.ItemSet{
 			warlock := agent.(WarlockAgent).GetWarlock()
 
 			shadowBonus := warlock.NewTemporaryStatsAura(
-				"Shadowflame", 
-				core.ActionID{SpellID: 37377}, 
-				stats.Stats{stats.ShadowSpellPower: 135}, 
+				"Shadowflame",
+				core.ActionID{SpellID: 37377},
+				stats.Stats{stats.ShadowSpellPower: 135},
 				time.Second*15,
 			)
 
 			fireBonus := warlock.NewTemporaryStatsAura(
-				"Shadowflame Hellfire", 
-				core.ActionID{SpellID: 39437}, 
-				stats.Stats{stats.ShadowSpellPower: 135}, 
+				"Shadowflame Hellfire",
+				core.ActionID{SpellID: 39437},
+				stats.Stats{stats.ShadowSpellPower: 135},
 				time.Second*15,
 			)
 
@@ -139,9 +139,9 @@ var ItemSetPlagueheartGarb = core.NewItemSet(core.ItemSet{
 			warlock := agent.(WarlockAgent).GetWarlock()
 
 			SpiritsoftheDamnedAura := warlock.NewTemporaryStatsAura(
-				"Spirits of the Damned", 
-				core.ActionID{SpellID: 61082}, 
-				stats.Stats{stats.Spirit: 300}, 
+				"Spirits of the Damned",
+				core.ActionID{SpellID: 61082},
+				stats.Stats{stats.Spirit: 300},
 				time.Second*10,
 			)
 
@@ -183,8 +183,8 @@ var ItemSetGuldansRegalia = core.NewItemSet(core.ItemSet{
 			warlock := agent.(WarlockAgent).GetWarlock()
 			pet := warlock.Pets[0].GetCharacter()
 			pet.AddStats(stats.Stats{
-				stats.MeleeCrit: 10*core.CritRatingPerCritChance,
-				stats.SpellCrit: 10*core.CritRatingPerCritChance,
+				stats.MeleeCrit: 10 * core.CritRatingPerCritChance,
+				stats.SpellCrit: 10 * core.CritRatingPerCritChance,
 			})
 		},
 		4: func(agent core.Agent) {

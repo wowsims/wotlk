@@ -689,15 +689,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Troll-P1Frost-AOE-FullBuffs-LongSingleTarget"
  value: {
-  dps: 543.899235140928
-  tps: 381.7707760424262
+  dps: 543.1501483226401
+  tps: 381.1100814686964
  }
 }
 dps_results: {
  key: "TestFrost-Settings-Troll-P1Frost-AOE-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 934.250928997445
-  tps: 620.8901501585154
+  dps: 932.9288930755079
+  tps: 619.7241144753665
  }
 }
 dps_results: {
@@ -710,15 +710,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Troll-P1Frost-AOE-NoBuffs-LongSingleTarget"
  value: {
-  dps: 212.70182197516505
-  tps: 134.71559848237533
+  dps: 212.31373456391498
+  tps: 134.37330538565283
  }
 }
 dps_results: {
  key: "TestFrost-Settings-Troll-P1Frost-AOE-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 560.8573563859951
-  tps: 345.98584968241335
+  dps: 558.9648532734951
+  tps: 344.3166619371882
  }
 }
 dps_results: {

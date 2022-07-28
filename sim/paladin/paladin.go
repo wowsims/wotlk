@@ -183,7 +183,7 @@ func NewPaladin(character core.Character, talents proto.PaladinTalents) *Paladin
 	paladin.AddStatDependency(stats.Agility, stats.Dodge, 1.0+((1.0/52.08)*core.DodgeRatingPerDodgeChance))
 
 	// Paladins get more melee haste from haste than other classes, 25.22/1%
-	paladin.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
+	paladin.PseudoStats.MeleeHasteRatingPerHastePercent = 25.22
 
 	return paladin
 }

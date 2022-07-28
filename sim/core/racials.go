@@ -88,7 +88,7 @@ func applyRaceEffects(agent Agent) {
 		applyWeaponSpecialization(
 			character,
 			5*ExpertisePerQuarterPercentReduction,
-			[]proto.WeaponType{proto.WeaponType_WeaponTypeAxe})
+			[]proto.WeaponType{proto.WeaponType_WeaponTypeAxe, proto.WeaponType_WeaponTypeFist})
 	case proto.Race_RaceTauren:
 		character.PseudoStats.ReducedNatureHitTakenChance += 0.02
 		character.AddStat(stats.Health, character.GetBaseStats()[stats.Health]*0.05)
