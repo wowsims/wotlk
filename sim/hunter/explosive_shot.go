@@ -22,8 +22,7 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 		BonusCritRating: 2*core.CritRatingPerCritChance*float64(hunter.Talents.SurvivalInstincts) +
 			core.TernaryFloat64(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfExplosiveShot), 4*core.CritRatingPerCritChance, 0),
 		DamageMultiplier: 1 *
-			(1 + 0.02*float64(hunter.Talents.TNT)) *
-			hunter.sniperTrainingMultiplier(),
+			(1 + 0.02*float64(hunter.Talents.TNT)),
 		ThreatMultiplier: 1,
 
 		BaseDamage: core.BaseDamageConfig{
@@ -37,10 +36,9 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 
 	initialEffect := baseEffect
 	initialEffect.OnSpellHitDealt = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-		// TODO: Is this just an always-applied dot that ticks instantly?
-		// if spellEffect.Landed() {
-		hunter.ExplosiveShotDot.Apply(sim)
-		// }
+		if spellEffect.Landed() {
+			hunter.ExplosiveShotDot.Apply(sim)
+		}
 	}
 
 	hunter.ExplosiveShot = hunter.RegisterSpell(core.SpellConfig{

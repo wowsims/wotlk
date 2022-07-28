@@ -28,7 +28,6 @@ func (dk *Deathknight) ApplyFrostTalents() {
 
 	// Nerves Of Cold Steel
 	dk.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*float64(dk.Talents.NervesOfColdSteel))
-	dk.applyNervesOfColdSteel()
 	dk.AutoAttacks.OHEffect.BaseDamage.Calculator = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, dk.nervesOfColdSteelBonus(), true)
 
 	// Icy Talons
@@ -83,14 +82,8 @@ func (dk *Deathknight) ApplyFrostTalents() {
 	dk.applyTundaStalker()
 }
 
-var nervesOfColdSteelBonusCoeff float64 = 1.0
-
-func (dk *Deathknight) applyNervesOfColdSteel() {
-	nervesOfColdSteelBonusCoeff = []float64{1.0, 1.08, 1.16, 1.25}[dk.Talents.NervesOfColdSteel]
-}
-
 func (dk *Deathknight) nervesOfColdSteelBonus() float64 {
-	return nervesOfColdSteelBonusCoeff
+	return []float64{1.0, 1.08, 1.16, 1.25}[dk.Talents.NervesOfColdSteel]
 }
 
 var glacierRotBonusCoeff float64 = 1.0
@@ -225,7 +218,7 @@ func (dk *Deathknight) applyIcyTalons() {
 }
 
 func (dk *Deathknight) outcomeEitherWeaponHitOrCrit(mhOutcome core.HitOutcome, ohOutcome core.HitOutcome) bool {
-	return mhOutcome == core.OutcomeHit || mhOutcome == core.OutcomeCrit || ohOutcome == core.OutcomeHit || ohOutcome == core.OutcomeCrit
+	return mhOutcome == core.OutcomeHit || mhOutcome == core.OutcomeCrit // TODO: Confirm that this should be gone || ohOutcome == core.OutcomeHit || ohOutcome == core.OutcomeCrit
 }
 
 func (dk *Deathknight) bloodOfTheNorthCoeff() float64 {

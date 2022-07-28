@@ -65,6 +65,7 @@ func (paladin *Paladin) ApplyTalents() {
 	paladin.applyArtOfWar()
 	paladin.applyJudgmentsOfTheWise()
 	paladin.applyRighteousVengeance()
+	paladin.applyMinorGlyphOfSenseUndead()
 }
 
 func (paladin *Paladin) getTalentSealsOfThePureBonus() float64 {
@@ -93,6 +94,28 @@ func (paladin *Paladin) getMajorGlyphOfExorcismBonus() float64 {
 
 func (paladin *Paladin) getMajorGlyphOfJudgementBonus() float64 {
 	return core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfJudgement), 0.10, 0)
+}
+
+func (paladin *Paladin) applyMinorGlyphOfSenseUndead() {
+	if !paladin.HasMinorGlyph(proto.PaladinMinorGlyph_GlyphOfSenseUndead) {
+		return
+	}
+
+	var applied bool
+
+	paladin.RegisterResetEffect(
+		func(s *core.Simulation) {
+			if !applied {
+				for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
+					unit := paladin.Env.GetTargetUnit(i)
+					if unit.MobType == proto.MobType_MobTypeUndead {
+						paladin.AttackTables[unit.TableIndex].DamageDealtMultiplier *= 1.01
+					}
+				}
+				applied = true
+			}
+		},
+	)
 }
 
 func (paladin *Paladin) applyRedoubt() {
@@ -219,21 +242,28 @@ func (paladin *Paladin) applyArdentDefender() {
 	})
 }
 
+// Because Crusade modifies unit specific attack tables, it must be applied at start of sim.
 func (paladin *Paladin) applyCrusade() {
-	// TODO: This doesn't account for multiple targets
-	paladin.PseudoStats.DamageDealtMultiplier *= paladin.crusadeMultiplier()
-}
+	if paladin.Talents.Crusade == 0 {
+		return
+	}
 
-func (paladin *Paladin) crusadeMultiplier() float64 {
-	if paladin.CurrentTarget == nil {
-		return 1
-	}
-	switch paladin.CurrentTarget.MobType {
-	case proto.MobType_MobTypeHumanoid, proto.MobType_MobTypeDemon, proto.MobType_MobTypeUndead, proto.MobType_MobTypeElemental:
-		return 1 + (0.01 * float64(paladin.Talents.Crusade))
-	default:
-		return 1
-	}
+	var applied bool
+
+	paladin.RegisterResetEffect(
+		func(s *core.Simulation) {
+			if !applied {
+				for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
+					unit := paladin.Env.GetTargetUnit(i)
+					switch unit.MobType {
+					case proto.MobType_MobTypeHumanoid, proto.MobType_MobTypeDemon, proto.MobType_MobTypeUndead, proto.MobType_MobTypeElemental:
+						paladin.AttackTables[unit.TableIndex].DamageDealtMultiplier *= 1 + (0.01 * float64(paladin.Talents.Crusade))
+					}
+				}
+				applied = true
+			}
+		},
+	)
 }
 
 // Prior to WOTLK, behavior was to double dip.
@@ -391,14 +421,8 @@ func (paladin *Paladin) applyJudgmentsOfTheWise() {
 	})
 }
 
-func (paladin *Paladin) applyRighteousVengeance() {
-	// Righteous Vengeance is a MAGIC debuff that pools 10/20/30% crit damage from Crusader Strike, Divine Storm, and Judgements.
-	// It drains the pool every 2 seconds at a rate of 1/4 of the pool size.
-	// And then deals that 1/4 as PHYSICAL damage.
-	// TODO: Can crit with certain set bonuses.
-	if paladin.Talents.RighteousVengeance == 0 {
-		return
-	}
+func (paladin *Paladin) makeRighteousVengeanceEffectFactory() (func(), func(float64) core.TickEffects) {
+	var pool float64
 
 	var applier core.OutcomeApplier
 
@@ -408,39 +432,50 @@ func (paladin *Paladin) applyRighteousVengeance() {
 		applier = paladin.OutcomeFuncAlwaysHit()
 	}
 
+	return func() { pool = 0 }, func(spellDamage float64) core.TickEffects {
+		pool += spellDamage * (0.10 * float64(paladin.Talents.RighteousVengeance))
+		damage := pool / 4
+
+		return core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(
+			core.SpellEffect{
+				IsPeriodic:       true,
+				ProcMask:         core.ProcMaskPeriodicDamage,
+				DamageMultiplier: 1,
+				OutcomeApplier:   applier,
+				BaseDamage: core.BaseDamageConfig{
+					Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
+						pool -= damage
+						return damage
+					},
+					TargetSpellCoefficient: 1,
+				},
+			},
+		))
+	}
+}
+
+func (paladin *Paladin) applyRighteousVengeance() {
+	// Righteous Vengeance is a MAGIC debuff that pools 10/20/30% crit damage from Crusader Strike, Divine Storm, and Judgements.
+	// It drains the pool every 2 seconds at a rate of 1/4 of the pool size.
+	// And then deals that 1/4 as PHYSICAL damage.
+	// TODO: Can crit with certain set bonuses.
+	if paladin.Talents.RighteousVengeance == 0 {
+		return
+	}
+
 	targets := paladin.Env.GetNumTargets()
 
 	dots := make([]*core.Dot, 0, targets)
-	effects := make([]func(*core.SpellEffect) core.TickEffects, 0, targets)
+	effectsFactories := make([]func(float64) core.TickEffects, 0, targets)
 
 	for i := 0; i < int(targets); i++ {
 		target := paladin.Env.GetTargetUnit(int32(i))
 
-		var pool float64
-
 		dotActionID := core.ActionID{SpellID: 61840} // Righteous Vengeance
 
-		effects = append(effects, func(spellEffect *core.SpellEffect) core.TickEffects {
-			return func(sim *core.Simulation, dot *core.Dot) func() {
-				return func() {
-					core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-						IsPeriodic:       true,
-						ProcMask:         core.ProcMaskPeriodicDamage,
-						DamageMultiplier: 1,
-						OutcomeApplier:   applier,
-						BaseDamage: core.BaseDamageConfig{
-							Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
-								pool += spellEffect.Damage * (0.10 * float64(paladin.Talents.RighteousVengeance))
-								damage := pool / 4
-								pool -= damage
-								return damage
-							},
-							TargetSpellCoefficient: 1,
-						},
-					})(sim, target, dot.Spell)
-				}
-			}
-		})
+		resetPool, effectFactory := paladin.makeRighteousVengeanceEffectFactory()
+
+		effectsFactories = append(effectsFactories, effectFactory)
 
 		dots = append(dots, core.NewDot(core.Dot{
 			Spell: paladin.RegisterSpell(core.SpellConfig{
@@ -452,19 +487,9 @@ func (paladin *Paladin) applyRighteousVengeance() {
 				Label:    "Righteous Vengeance (DoT) - " + strconv.Itoa(int(paladin.Index)) + " - " + strconv.Itoa(i),
 				ActionID: dotActionID,
 				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-					pool = 0
+					resetPool()
 				},
 			}),
-			TickEffects: func(sim *core.Simulation, dot *core.Dot) func() {
-				return func() {
-					core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-						IsPeriodic:       true,
-						ProcMask:         core.ProcMaskPeriodicDamage,
-						DamageMultiplier: 1,
-						OutcomeApplier:   applier,
-					})(sim, target, dot.Spell)
-				}
-			},
 			NumberOfTicks: 4,
 			TickLength:    time.Second * 2,
 		}))
@@ -482,7 +507,7 @@ func (paladin *Paladin) applyRighteousVengeance() {
 			}
 
 			if spell.SpellID == paladin.CrusaderStrike.SpellID || spell.SpellID == paladin.DivineStorm.SpellID || spell.Flags.Matches(SpellFlagSecondaryJudgement) {
-				dots[spellEffect.Target.Index].TickEffects = effects[spellEffect.Target.Index](spellEffect)
+				dots[spellEffect.Target.Index].TickEffects = effectsFactories[spellEffect.Target.Index](spellEffect.Damage)
 				dots[spellEffect.Target.Index].Apply(sim)
 			}
 		},

@@ -125,8 +125,6 @@ func (ghoulPet *GhoulPet) Reset(sim *core.Simulation) {
 	} else {
 		ghoulPet.uptimePercent = 1.0
 	}
-
-	ghoulPet.AutoAttacks.CancelAutoSwing(sim)
 }
 
 func (ghoulPet *GhoulPet) OnGCDReady(sim *core.Simulation) {

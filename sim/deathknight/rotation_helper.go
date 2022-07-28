@@ -6,9 +6,11 @@ import (
 
 type RotationAction uint8
 
-// Add your UH rotation Actions here and then on the DoNext function
 const (
 	RotationAction_Skip RotationAction = iota
+	RotationAction_CUSTOM1
+	RotationAction_CUSTOM2
+	RotationAction_CUSTOM3
 	RotationAction_IT
 	RotationAction_PS
 	RotationAction_Obli
@@ -31,6 +33,7 @@ const (
 	RotationAction_BP
 	RotationAction_FP
 	RotationAction_UP
+	RotationAction_RedoSequence
 )
 
 type Sequence struct {
@@ -40,10 +43,10 @@ type Sequence struct {
 }
 
 type DoRotationEvent func(sim *core.Simulation, target *core.Unit)
+type RotationActionCustom func(sim *core.Simulation, target *core.Unit) bool
 
 type RotationHelper struct {
-	opener *Sequence
-	//openers  []Sequence
+	opener   *Sequence
 	onOpener bool
 
 	sequence *Sequence
@@ -52,6 +55,9 @@ type RotationHelper struct {
 	justCastPestilence bool
 
 	DoRotationEvent DoRotationEvent
+	ActionCustom1   RotationActionCustom
+	ActionCustom2   RotationActionCustom
+	ActionCustom3   RotationActionCustom
 }
 
 func TernaryRotationAction(condition bool, t RotationAction, f RotationAction) RotationAction {
@@ -71,10 +77,26 @@ func (r *RotationHelper) DefineOpener(actions []RotationAction) {
 }
 
 func (r *RotationHelper) PushSequence(actions []RotationAction) {
-	seq := &Sequence{
-		idx:        0,
-		numActions: len(actions),
-		actions:    actions,
+	if r.sequence == nil {
+		r.sequence = &Sequence{
+			idx:        0,
+			numActions: len(actions),
+			actions:    actions,
+		}
+	} else {
+		panic("Tried to push sequence but sequence is currently Ongoing!")
 	}
-	r.sequence = seq
+}
+
+func (r *RotationHelper) RedoSequence(s *Sequence) {
+	if r.sequence != nil {
+		s.Reset()
+		r.sequence = s
+	} else {
+		panic("Tried to redo sequence that wasn't ongoing!")
+	}
+}
+
+func (r *RotationHelper) HasSequence() bool {
+	return r.sequence != nil
 }

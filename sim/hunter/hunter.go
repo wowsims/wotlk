@@ -65,6 +65,7 @@ type Hunter struct {
 	RaptorStrike  *core.Spell
 	ScorpidSting  *core.Spell
 	SerpentSting  *core.Spell
+	SilencingShot *core.Spell
 	SteadyShot    *core.Spell
 
 	BlackArrowDot    *core.Dot
@@ -126,6 +127,7 @@ func (hunter *Hunter) Initialize() {
 	hunter.registerRaptorStrikeSpell()
 	hunter.registerScorpidStingSpell()
 	hunter.registerSerpentStingSpell()
+	hunter.registerSilencingShotSpell()
 	hunter.registerSteadyShotSpell()
 
 	hunter.registerKillCommandCD()

@@ -5,8 +5,8 @@ import (
 )
 
 var DeathStrikeActionID = core.ActionID{SpellID: 49924}
-var DeathStrikeMHOutcome = core.OutcomeHit
-var DeathStrikeOHOutcome = core.OutcomeHit
+var DeathStrikeMHOutcome = core.OutcomeMiss
+var DeathStrikeOHOutcome = core.OutcomeMiss
 
 func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *core.Spell {
 	bonusBaseDamage := dk.sigilOfAwarenessBonus(dk.DeathStrike)

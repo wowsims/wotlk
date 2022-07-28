@@ -171,8 +171,10 @@ func NewPaladin(character core.Character, talents proto.PaladinTalents) *Paladin
 
 	paladin.EnableManaBar()
 
-	// Add paladin stat dependencies
+	// Paladins get 3 times their level in base AP
+	// then 2 AP per STR, then lose the first 20 AP
 	paladin.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2.0)
+	paladin.AddStat(stats.AttackPower, -20)
 
 	// Paladins get 1% crit per 52.08 agil
 	paladin.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+((1.0/52.08)*core.CritRatingPerCritChance))
@@ -180,19 +182,21 @@ func NewPaladin(character core.Character, talents proto.PaladinTalents) *Paladin
 	// Paladins get 1% dodge per 52.08 agil
 	paladin.AddStatDependency(stats.Agility, stats.Dodge, 1.0+((1.0/52.08)*core.DodgeRatingPerDodgeChance))
 
+	// Paladins get more melee haste from haste than other classes, 25.22/1%
+	paladin.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
+
 	return paladin
 }
 
 func init() {
-	// Paladin base mana for all classes is 4114
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassPaladin}] = stats.Stats{
 		stats.Health:      6754,
 		stats.Stamina:     141,
 		stats.Intellect:   102,
-		stats.Mana:        4114,
+		stats.Mana:        4394,
 		stats.Spirit:      104,
 		stats.Strength:    148,
-		stats.AttackPower: 100,
+		stats.AttackPower: 240,
 		stats.Agility:     92,
 		stats.MeleeCrit:   3.27 * core.CritRatingPerCritChance,
 		stats.SpellCrit:   3.27 * core.CritRatingPerCritChance,
@@ -202,10 +206,10 @@ func init() {
 		stats.Health:      6754,
 		stats.Stamina:     142,
 		stats.Intellect:   113,
-		stats.Mana:        4114,
+		stats.Mana:        4394,
 		stats.Spirit:      107,
 		stats.Strength:    152,
-		stats.AttackPower: 100,
+		stats.AttackPower: 240,
 		stats.Agility:     87,
 		stats.MeleeCrit:   3.27 * core.CritRatingPerCritChance,
 		stats.SpellCrit:   3.27 * core.CritRatingPerCritChance,
@@ -215,11 +219,11 @@ func init() {
 		stats.Health:      6754,
 		stats.Stamina:     160,
 		stats.Intellect:   98,
-		stats.Mana:        4114,
+		stats.Mana:        4394,
 		stats.Spirit:      113,
 		stats.Strength:    173,
 		stats.AttackPower: 566,
-		stats.Agility:     100,
+		stats.Agility:     240,
 		stats.MeleeCrit:   3.27 * core.CritRatingPerCritChance,
 		stats.SpellCrit:   3.27 * core.CritRatingPerCritChance,
 		stats.Dodge:       3.27 * core.DodgeRatingPerDodgeChance,
@@ -228,10 +232,10 @@ func init() {
 		stats.Health:      6754,
 		stats.Stamina:     146,
 		stats.Intellect:   97,
-		stats.Mana:        4114,
+		stats.Mana:        4394,
 		stats.Spirit:      104,
 		stats.Strength:    175,
-		stats.AttackPower: 100,
+		stats.AttackPower: 240,
 		stats.Agility:     86,
 		stats.MeleeCrit:   3.27 * core.CritRatingPerCritChance,
 		stats.SpellCrit:   3.27 * core.CritRatingPerCritChance,

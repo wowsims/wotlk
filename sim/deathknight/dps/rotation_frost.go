@@ -6,6 +6,8 @@ import (
 )
 
 func (dk *DpsDeathknight) setupFrostSubBloodOpener() {
+	dk.setupCustomActions()
+
 	dk.DefineOpener([]deathknight.RotationAction{
 		deathknight.RotationAction_IT,
 		deathknight.RotationAction_PS,
@@ -31,6 +33,8 @@ func (dk *DpsDeathknight) setupFrostSubBloodOpener() {
 }
 
 func (dk *DpsDeathknight) setupFrostSubUnholyOpener() {
+	dk.setupCustomActions()
+
 	dk.DefineOpener([]deathknight.RotationAction{
 		deathknight.RotationAction_IT,
 		deathknight.RotationAction_PS,
@@ -75,9 +79,6 @@ func (dk *DpsDeathknight) FrostDiseaseCheckWrapper(sim *core.Simulation, target 
 			bpExpiresIn := dk.BloodPlagueDisease[target.Index].RemainingDuration(sim)
 			ffExpiresAt := ffExpiresIn + sim.CurrentTime
 			bpExpiresAt := bpExpiresIn + sim.CurrentTime
-			if spell.CurCast.GCD > ffExpiresIn || spell.CurCast.GCD > bpExpiresIn {
-				return success
-			}
 
 			crpb := dk.CopyRunicPowerBar()
 			runeCostForSpell := dk.RuneAmountForSpell(spell)
@@ -118,36 +119,89 @@ func (dk *DpsDeathknight) FrostDiseaseCheckWrapper(sim *core.Simulation, target 
 
 func (dk *DpsDeathknight) doFrostRotation(sim *core.Simulation, target *core.Unit) {
 	casted := &dk.CastSuccessful
+	const hitCapped = false
 
-	if dk.ShouldHornOfWinter(sim) {
-		*casted = dk.CastHornOfWinter(sim, target)
+	if hitCapped {
+		if !dk.HasSequence() {
+			dk.PushSequence([]deathknight.RotationAction{
+				deathknight.RotationAction_Obli,
+				deathknight.RotationAction_CUSTOM1,
+				deathknight.RotationAction_Obli,
+				deathknight.RotationAction_FS,
+				deathknight.RotationAction_BS,
+				deathknight.RotationAction_FS,
+				deathknight.RotationAction_Pesti,
+				deathknight.RotationAction_FS,
+				deathknight.RotationAction_RedoSequence,
+			})
+		}
 	} else {
-		*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.Obliterate)
-		if !*casted {
-			if dk.KillingMachineAura.IsActive() && !dk.RimeAura.IsActive() {
-				*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
-			} else if dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
-				if dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() < 110 {
-					*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.HowlingBlast)
-				} else if dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() > 110 {
-					*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.HowlingBlast)
-				} else if !dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() > 110 {
+		if dk.ShouldHornOfWinter(sim) {
+			*casted = dk.CastHornOfWinter(sim, target)
+		} else {
+			*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.Obliterate)
+			if !*casted {
+				if dk.KillingMachineAura.IsActive() && !dk.RimeAura.IsActive() {
 					*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
-				} else if !dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() < 110 {
-					*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
-				}
-			} else if !dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
-				if dk.CurrentRunicPower() < 110 {
-					*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.HowlingBlast)
+				} else if dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
+					if dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() < 110 {
+						*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.HowlingBlast)
+					} else if dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() > 110 {
+						*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.HowlingBlast)
+					} else if !dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() > 110 {
+						*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
+					} else if !dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() < 110 {
+						*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
+					}
+				} else if !dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
+					if dk.CurrentRunicPower() < 110 {
+						*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.HowlingBlast)
+					} else {
+						*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
+					}
 				} else {
 					*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
-				}
-			} else {
-				*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
-				if !*casted {
-					*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.HornOfWinter)
+					if !*casted {
+						*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.HornOfWinter)
+					}
 				}
 			}
 		}
 	}
+}
+
+func (dk *DpsDeathknight) setupCustomActions() {
+	dk.ActionCustom1 = dk.actionFsIfKm
+}
+
+func (dk *DpsDeathknight) actionFsIfKm(sim *core.Simulation, target *core.Unit) bool {
+	casted := &dk.CastSuccessful
+
+	if dk.KillingMachineAura.IsActive() && !dk.RimeAura.IsActive() {
+		*casted = dk.CastFrostStrike(sim, target)
+	} else if dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
+		if dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() < 110 {
+			*casted = dk.CastHowlingBlast(sim, target)
+		} else if dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() > 110 {
+			*casted = dk.CastHowlingBlast(sim, target)
+		} else if !dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() > 110 {
+			*casted = dk.CastFrostStrike(sim, target)
+		} else if !dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() < 110 {
+			*casted = dk.CastFrostStrike(sim, target)
+		}
+	} else if !dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
+		if dk.CurrentRunicPower() < 110 {
+			*casted = dk.CastHowlingBlast(sim, target)
+		} else {
+			*casted = dk.CastFrostStrike(sim, target)
+		}
+	} else {
+		*casted = dk.CastFrostStrike(sim, target)
+		if !*casted {
+			*casted = dk.CastHornOfWinter(sim, target)
+		}
+	}
+
+	// Returns value for forceAdvance
+	return true
 }

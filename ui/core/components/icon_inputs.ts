@@ -142,8 +142,7 @@ export const SpellHasteBuff = InputHelpers.makeMultiIconInput([
 export const SpellPowerBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(57722), 'totemOfWrath'),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(58656), 'flametongueTotem'),
-	// Not a boolean
-	//makeBooleanRaidBuffInput(ActionId.fromSpellId(47240), 'demonicPact'),
+	makeMultistateRaidBuffInput(ActionId.fromSpellId(47240), 500, 'demonicPact', 10),
 ], 'SP');
 
 export const Bloodlust = withLabel(makeBooleanRaidBuffInput(ActionId.fromSpellId(2825), 'bloodlust'), 'Lust');
@@ -159,7 +158,7 @@ export const Thorns = makeTristateRaidBuffInput(ActionId.fromSpellId(53307), Act
 export const ManaTideTotem = makeMultistatePartyBuffInput(ActionId.fromSpellId(16190), 5, 'manaTideTotems');
 export const Innervate = makeMultistateIndividualBuffInput(ActionId.fromSpellId(29166), 11, 'innervates');
 export const PowerInfusion = makeMultistateIndividualBuffInput(ActionId.fromSpellId(10060), 11, 'powerInfusions');
-export const TricksOfTheTrade = makeMultistateIndividualBuffInput(ActionId.fromSpellId(57934), 11, 'tricksOfTheTrades');
+export const TricksOfTheTrade = makeMultistateIndividualBuffInput(ActionId.fromSpellId(57933), 20, 'tricksOfTheTrades');
 
 // Debuffs
 
@@ -317,6 +316,14 @@ function makeQuadstateDebuffInput(id: ActionId, impId: ActionId, impId2: ActionI
 		setValue: (eventID: EventID, raid: Raid, newVal: Debuffs) => raid.setDebuffs(eventID, newVal),
 		changeEmitter: (raid: Raid) => raid.debuffsChangeEmitter,
 	}, id, impId, impId2, fieldName);
+}
+function makeMultistateRaidBuffInput(id: ActionId, numStates: number, fieldName: keyof RaidBuffs, multiplier?: number): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
+	return InputHelpers.makeMultistateIconInput<any, RaidBuffs, Raid>({
+		getModObject: (player: Player<any>) => player.getRaid()!,
+		getValue: (raid: Raid) => raid.getBuffs(),
+		setValue: (eventID: EventID, raid: Raid, newVal: RaidBuffs) => raid.setBuffs(eventID, newVal),
+		changeEmitter: (raid: Raid) => raid.buffsChangeEmitter,
+	}, id, numStates, fieldName, multiplier);
 }
 function makeMultistatePartyBuffInput(id: ActionId, numStates: number, fieldName: keyof PartyBuffs): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
 	return InputHelpers.makeMultistateIconInput<any, PartyBuffs, Party>({
