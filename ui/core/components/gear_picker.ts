@@ -127,6 +127,19 @@ class ItemPicker extends Component {
 			this.nameElem.addEventListener('click', onClickStart);
 			this.nameElem.addEventListener('touchstart', onClickStart);
 			this.nameElem.addEventListener('touchend', onClickEnd);
+			
+			// Make enchant name open enchant tab.
+			this.enchantElem.addEventListener('click', (ev: Event) => { 
+				ev.preventDefault();
+				const selectorModal = new SelectorModal(this.rootElem.closest('.individual-sim-ui')!, this.player, this.slot, this._equippedItem, this._items, this._enchants);
+				selectorModal.openTab(1);
+			});
+			this.enchantElem.addEventListener('touchstart', (ev: Event) => { 
+				ev.preventDefault();
+				const selectorModal = new SelectorModal(this.rootElem.closest('.individual-sim-ui')!, this.player, this.slot, this._equippedItem, this._items, this._enchants);
+				selectorModal.openTab(1);
+			});
+			this.enchantElem.addEventListener('touchend', onClickEnd);
 		});
 		player.gearChangeEmitter.on(() => {
 			this.item = player.getEquippedItem(slot);
@@ -145,6 +158,7 @@ class ItemPicker extends Component {
 		this.iconElem.style.backgroundImage = `url('${getEmptySlotIconUrl(this.slot)}')`;
 		this.iconElem.removeAttribute('data-wowhead');
 		this.iconElem.removeAttribute('href');
+		this.enchantElem.removeAttribute('data-wowhead');
 
 		this.nameElem.textContent = slotNames[this.slot];
 		setItemQualityCssClass(this.nameElem, null);
@@ -174,10 +188,11 @@ class ItemPicker extends Component {
 			if (newItem.enchant) {
 				this.enchantElem.textContent = enchantDescriptions.get(newItem.enchant.id) || newItem.enchant.name;
 				newItem.enchant
+				// Make enchant text hover have a tooltip.
 				if (newItem.enchant.isSpellId) {
-					ActionId.fromSpellId(newItem.enchant.id).setWowheadHref(this.enchantElem);
+					this.enchantElem.setAttribute('data-wowhead', `spell=${newItem.enchant.id}`);
 				} else {
-					ActionId.fromItemId(newItem.enchant.id).setWowheadHref(this.enchantElem);
+					this.enchantElem.setAttribute('data-wowhead', `item=${newItem.enchant.id}`);
 				}
 			}
 
@@ -233,6 +248,11 @@ class SelectorModal extends Popup {
 		this.contentElem = this.rootElem.getElementsByClassName('selector-modal-tab-content')[0] as HTMLElement;
 
 		this.setData(slot, equippedItem, eligibleItems, eligibleEnchants);
+	}
+
+	openTab(idx: number) {
+		const elems = this.tabsElem.getElementsByClassName("selector-modal-item-tab");
+		(elems[idx] as HTMLElement).click();
 	}
 
 	setData(slot: ItemSlot, equippedItem: EquippedItem | null, eligibleItems: Array<Item>, eligibleEnchants: Array<Enchant>) {
