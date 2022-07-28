@@ -436,6 +436,7 @@ func (paladin *Paladin) makeRighteousVengeanceDot(target *core.Unit) *core.Dot {
 			Label:    "Righteous Vengeance (DoT) - " + strconv.Itoa(int(paladin.Index)) + " - " + strconv.Itoa(int(target.Index)),
 			ActionID: paladin.RighteousVengeanceSpell.ActionID,
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				paladin.RighteousVengeanceDamage[target.Index] = 0.0
 				paladin.RighteousVengeancePools[target.Index] = 0.0
 			},
 		}),
