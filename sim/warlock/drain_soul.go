@@ -13,7 +13,7 @@ func (warlock *Warlock) channelCheck(sim *core.Simulation, dot *core.Dot, maxTic
 	if dot.IsActive() && dot.TickCount+1 < maxTicks {
 		return warlock.DrainSoulChannelling
 	} else {
-		return dot.Spell
+		return warlock.DrainSoul
 	}
 }
 
