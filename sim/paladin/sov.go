@@ -175,7 +175,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 		},
 	})
 
-	aura := paladin.SealOfRighteousnessAura
+	aura := paladin.SealOfVengeanceAura
 	baseCost := paladin.BaseMana * 0.14
 	paladin.SealOfVengeance = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    auraActionID, // Seal of Vengeance self buff.
