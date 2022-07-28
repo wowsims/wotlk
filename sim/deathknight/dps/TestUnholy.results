@@ -52,861 +52,861 @@ character_stats_results: {
 dps_results: {
  key: "TestUnholy-AllItems-AustereEarthsiegeDiamond"
  value: {
-  dps: 7261.925267572792
-  tps: 5428.4853483042525
+  dps: 7011.7073812512945
+  tps: 5228.143755426149
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 7038.444753419933
-  tps: 5315.62117105828
+  dps: 6799.013392679902
+  tps: 5123.9153461618735
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-BeamingEarthsiegeDiamond"
  value: {
-  dps: 7279.2804683846825
-  tps: 5446.2171833297425
+  dps: 7028.669526079614
+  tps: 5245.550314007981
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-BracingEarthsiegeDiamond"
  value: {
-  dps: 7261.925267572792
-  tps: 5319.915641338171
+  dps: 7011.7073812512945
+  tps: 5123.580880317624
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-BracingEarthstormDiamond"
  value: {
-  dps: 7261.925267572792
-  tps: 5428.4853483042525
+  dps: 7011.7073812512945
+  tps: 5228.143755426149
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-Braxley'sBackyardMoonshine-35937"
  value: {
-  dps: 7030.948381822655
-  tps: 5309.891031683475
+  dps: 6786.938530772843
+  tps: 5114.52929782288
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-BrutalEarthstormDiamond"
  value: {
-  dps: 7272.141043032828
-  tps: 5436.7614907339475
+  dps: 7021.923156711328
+  tps: 5236.4198978558425
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-BurningRage"
  value: {
-  dps: 6230.521776796801
-  tps: 4668.637112290625
+  dps: 6005.80815143956
+  tps: 4488.725205505219
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-ChaoticSkyfireDiamond"
  value: {
-  dps: 7339.192388783111
-  tps: 5501.710309532052
+  dps: 7089.210701823995
+  tps: 5301.555123835876
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-ChaoticSkyflareDiamond"
  value: {
-  dps: 7346.972513977562
-  tps: 5511.539650592559
+  dps: 7096.361571672489
+  tps: 5310.8727812708
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-DarkmoonCard:Berserker!-42989"
  value: {
-  dps: 6929.815837107802
-  tps: 5237.055710908966
+  dps: 6691.655764492636
+  tps: 5046.375688820046
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-DarkmoonCard:Death-42990"
  value: {
-  dps: 6976.30813836694
-  tps: 5259.840477857684
+  dps: 6739.358283388366
+  tps: 5070.1193312065125
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-DarkmoonCard:Greatness-44253"
  value: {
-  dps: 7202.493535527489
-  tps: 5352.411296017192
+  dps: 6957.698319450219
+  tps: 5156.405969532227
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-DarkmoonCard:Greatness-44254"
  value: {
-  dps: 7139.073568492101
-  tps: 5309.982877881715
+  dps: 6897.43796905344
+  tps: 5116.508063723814
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-DarkrunedBattlegear"
  value: {
-  dps: 6896.820530343696
-  tps: 5202.835764874831
+  dps: 6651.264504744317
+  tps: 5006.218176640842
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-DarkrunedPlate"
  value: {
-  dps: 6227.49203241476
-  tps: 4650.283558124295
+  dps: 6003.303674247641
+  tps: 4470.795531544519
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-DeadlyGladiator'sSigilofStrife-42620"
  value: {
-  dps: 7393.269543538248
-  tps: 5497.549817355358
+  dps: 7141.197947060818
+  tps: 5295.720517530972
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-DeathKnight'sAnguish-38212"
  value: {
-  dps: 6913.276226178563
-  tps: 5216.368387185202
+  dps: 6676.559193250554
+  tps: 5026.834577374158
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-Defender'sCode-40257"
  value: {
-  dps: 6827.241714881817
-  tps: 5136.719811313408
+  dps: 6593.685653279549
+  tps: 4949.719760217395
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-DesolationBattlegear"
  value: {
-  dps: 5590.298907001237
-  tps: 4194.38736254636
+  dps: 5385.545056806823
+  tps: 4030.452900695122
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-DestructiveSkyfireDiamond"
  value: {
-  dps: 7269.444406847768
-  tps: 5434.367409526088
+  dps: 7018.873732632008
+  tps: 5233.740700643039
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-DestructiveSkyflareDiamond"
  value: {
-  dps: 7278.459595307901
-  tps: 5444.008506547189
+  dps: 7027.533415611469
+  tps: 5243.0960577194555
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-DoomplateBattlegear"
  value: {
-  dps: 5611.902641840451
-  tps: 4170.934239818138
+  dps: 5411.147689691703
+  tps: 4010.179162379194
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-EffulgentSkyflareDiamond"
  value: {
-  dps: 7261.925267572792
-  tps: 5428.4853483042525
+  dps: 7011.7073812512945
+  tps: 5228.143755426149
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-EmberSkyfireDiamond"
  value: {
-  dps: 7261.925267572792
-  tps: 5428.4853483042525
+  dps: 7011.7073812512945
+  tps: 5228.143755426149
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-EmberSkyflareDiamond"
  value: {
-  dps: 7261.925267572792
-  tps: 5428.4853483042525
+  dps: 7011.7073812512945
+  tps: 5228.143755426149
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-EnigmaticSkyfireDiamond"
  value: {
-  dps: 7272.036464938076
-  tps: 5437.058789508079
+  dps: 7022.054777978964
+  tps: 5236.903603811903
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-EnigmaticSkyflareDiamond"
  value: {
-  dps: 7279.2804683846825
-  tps: 5446.2171833297425
+  dps: 7028.669526079614
+  tps: 5245.550314007981
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-EnigmaticStarflareDiamond"
  value: {
-  dps: 7273.937943011308
-  tps: 5440.612974023613
+  dps: 7023.056028733272
+  tps: 5239.736981801351
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-EternalEarthsiegeDiamond"
  value: {
-  dps: 7261.925267572792
-  tps: 5428.4853483042525
+  dps: 7011.7073812512945
+  tps: 5228.143755426149
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-EternalEarthstormDiamond"
  value: {
-  dps: 7261.925267572792
-  tps: 5428.4853483042525
+  dps: 7011.7073812512945
+  tps: 5228.143755426149
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-ExtractofNecromanticPower-40373"
  value: {
-  dps: 6968.452158760744
-  tps: 5258.998345620679
+  dps: 6730.918037091568
+  tps: 5068.815068710461
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 6911.607579070716
-  tps: 5221.4211241753965
+  dps: 6673.697576820672
+  tps: 5030.939274709284
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-FaithinFelsteel"
  value: {
-  dps: 6063.4377253173025
-  tps: 4565.701361995125
+  dps: 5843.653947397577
+  tps: 4389.715593299912
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-FelstalkerArmor"
  value: {
-  dps: 6386.319914776941
-  tps: 4744.892466774098
+  dps: 6162.394753479544
+  tps: 4565.586917125506
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-FlameGuard"
  value: {
-  dps: 5856.206044355804
-  tps: 4364.507512316371
+  dps: 5645.789421673703
+  tps: 4196.035793603326
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-ForgeEmber-37660"
  value: {
-  dps: 6899.726475211645
-  tps: 5203.759446987713
+  dps: 6663.123110714623
+  tps: 5014.318698364346
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-ForlornSkyflareDiamond"
  value: {
-  dps: 7261.925267572792
-  tps: 5428.4853483042525
+  dps: 7011.7073812512945
+  tps: 5228.143755426149
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-ForlornStarflareDiamond"
  value: {
-  dps: 7261.925267572792
-  tps: 5428.4853483042525
+  dps: 7011.7073812512945
+  tps: 5228.143755426149
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-FuriousGladiator'sSigilofStrife-42621"
  value: {
-  dps: 7411.143691862988
-  tps: 5511.561843907655
+  dps: 7158.39613977226
+  tps: 5309.191531106685
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-FuturesightRune-38763"
  value: {
-  dps: 6827.241714881817
-  tps: 5136.719811313408
+  dps: 6593.685653279549
+  tps: 4949.719760217395
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-HatefulGladiator'sSigilofStrife-42619"
  value: {
-  dps: 7358.939315916239
-  tps: 5458.14949870229
+  dps: 7108.662447466574
+  tps: 5257.756126250249
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
-  dps: 6827.241714881817
-  tps: 5136.719811313408
+  dps: 6593.685653279549
+  tps: 4949.719760217395
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-ImbuedUnstableDiamond"
  value: {
-  dps: 7261.925267572792
-  tps: 5428.4853483042525
+  dps: 7011.7073812512945
+  tps: 5228.143755426149
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-ImpassiveSkyflareDiamond"
  value: {
-  dps: 7279.2804683846825
-  tps: 5446.2171833297425
+  dps: 7028.669526079614
+  tps: 5245.550314007981
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-ImpassiveStarflareDiamond"
  value: {
-  dps: 7273.937943011308
-  tps: 5440.612974023613
+  dps: 7023.056028733272
+  tps: 5239.736981801351
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-IncisorFragment-37723"
  value: {
-  dps: 7093.718240369291
-  tps: 5399.117664277624
+  dps: 6845.657398225985
+  tps: 5200.524548932632
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-InfusedColdstoneRune-35935"
  value: {
-  dps: 6946.56173345671
-  tps: 5290.328555812391
+  dps: 6703.118036655091
+  tps: 5095.431988526715
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-InsightfulEarthsiegeDiamond"
  value: {
-  dps: 7261.925267572792
-  tps: 5428.4853483042525
+  dps: 7011.7073812512945
+  tps: 5228.143755426149
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-InsightfulEarthstormDiamond"
  value: {
-  dps: 7261.925267572792
-  tps: 5428.4853483042525
+  dps: 7011.7073812512945
+  tps: 5228.143755426149
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-InvigoratingEarthsiegeDiamond"
  value: {
-  dps: 7294.3711417960185
-  tps: 5454.915840936817
+  dps: 7042.886783301917
+  tps: 5253.56022125813
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-Lavanthor'sTalisman-37872"
  value: {
-  dps: 6827.241714881817
-  tps: 5136.719811313408
+  dps: 6593.685653279549
+  tps: 4949.719760217395
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-MajesticDragonFigurine-40430"
  value: {
-  dps: 6827.241714881817
-  tps: 5136.719811313408
+  dps: 6593.685653279549
+  tps: 4949.719760217395
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-Mana-EtchedRegalia"
  value: {
-  dps: 5252.881192190145
-  tps: 3906.5693161854915
+  dps: 5064.981244666835
+  tps: 3756.0997730331705
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-MeteoriteWhetstone-37390"
  value: {
-  dps: 7130.224040167482
-  tps: 5331.830520222037
+  dps: 6889.043585739873
+  tps: 5138.745605461457
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-MysticalSkyfireDiamond"
  value: {
-  dps: 7447.003850463955
-  tps: 5554.798348324199
+  dps: 7188.997440582058
+  tps: 5348.242929771276
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-NetherscaleArmor"
  value: {
-  dps: 6430.1105991417135
-  tps: 4783.64085291329
+  dps: 6204.923921984461
+  tps: 4603.3284936226755
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-NetherstrikeArmor"
  value: {
-  dps: 6273.461732727537
-  tps: 4650.365915111452
+  dps: 6053.7325591041335
+  tps: 4474.429026739441
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-OfferingofSacrifice-37638"
  value: {
-  dps: 6827.241714881817
-  tps: 5136.719811313408
+  dps: 6593.685653279549
+  tps: 4949.719760217395
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-PersistentEarthshatterDiamond"
  value: {
-  dps: 7288.190975277306
-  tps: 5449.8814613877585
+  dps: 7036.947849577987
+  tps: 5248.718989671086
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-PersistentEarthsiegeDiamond"
  value: {
-  dps: 7294.3711417960185
-  tps: 5454.915840936817
+  dps: 7042.886783301917
+  tps: 5253.56022125813
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-PotentUnstableDiamond"
  value: {
-  dps: 7280.46576712892
-  tps: 5443.588486951431
+  dps: 7029.524182423075
+  tps: 5242.667450187279
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-PowerfulEarthshatterDiamond"
  value: {
-  dps: 7261.925267572792
-  tps: 5428.4853483042525
+  dps: 7011.7073812512945
+  tps: 5228.143755426149
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-PowerfulEarthsiegeDiamond"
  value: {
-  dps: 7261.925267572792
-  tps: 5428.4853483042525
+  dps: 7011.7073812512945
+  tps: 5228.143755426149
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-PowerfulEarthstormDiamond"
  value: {
-  dps: 7261.925267572792
-  tps: 5428.4853483042525
+  dps: 7011.7073812512945
+  tps: 5228.143755426149
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-PrimalIntent"
  value: {
-  dps: 6674.136362689216
-  tps: 4989.78556501736
+  dps: 6435.976886323654
+  tps: 4799.113335617001
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-PurifiedShardoftheGods"
  value: {
-  dps: 6827.241714881817
-  tps: 5136.719811313408
+  dps: 6593.685653279549
+  tps: 4949.719760217395
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 7133.936586535631
-  tps: 5390.837288381333
+  dps: 6899.704556405238
+  tps: 5203.296704865552
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 7171.744268605148
-  tps: 5421.366672778925
+  dps: 6937.51223847475
+  tps: 5233.826089263144
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-RelentlessEarthsiegeDiamond"
  value: {
-  dps: 7338.129929294507
-  tps: 5499.625680968565
+  dps: 7087.263822731321
+  tps: 5298.762334918182
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-RelentlessEarthstormDiamond"
  value: {
-  dps: 7334.7630088455835
-  tps: 5496.656275316806
+  dps: 7084.048094876643
+  tps: 5295.914797727974
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-RelentlessGladiator'sSigilofStrife-42622"
  value: {
-  dps: 7431.996864908517
-  tps: 5527.909208218668
+  dps: 7178.460697935606
+  tps: 5324.907713611686
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-RevitalizingSkyflareDiamond"
  value: {
-  dps: 7261.925267572792
-  tps: 5428.4853483042525
+  dps: 7011.7073812512945
+  tps: 5228.143755426149
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-RuneofRepulsion-40372"
  value: {
-  dps: 6827.241714881817
-  tps: 5136.719811313408
+  dps: 6593.685653279549
+  tps: 4949.719760217395
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-ScourgeborneBattlegear"
  value: {
-  dps: 6628.817722290849
-  tps: 5003.072705731488
+  dps: 6388.348523441823
+  tps: 4810.55550439797
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-ScourgebornePlate"
  value: {
-  dps: 6078.529485912493
-  tps: 4532.8569584541965
+  dps: 5859.349241230769
+  tps: 4357.380805918044
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-Scourgelord'sBattlegear"
  value: {
-  dps: 7369.097870953506
-  tps: 5641.240529098682
+  dps: 7078.040615393436
+  tps: 5408.2096118267045
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-Scourgelord'sPlate"
  value: {
-  dps: 6591.096012137395
-  tps: 4928.355152158015
+  dps: 6351.156901009122
+  tps: 4736.271836279672
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-SealofthePantheon-36993"
  value: {
-  dps: 6827.241714881817
-  tps: 5136.719811313408
+  dps: 6593.685653279549
+  tps: 4949.719760217395
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-Serrah'sStar-37559"
  value: {
-  dps: 6892.279556365194
-  tps: 5197.823947978012
+  dps: 6656.1329906526835
+  tps: 5008.748289794371
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-ShinyShardoftheGods"
  value: {
-  dps: 6827.241714881817
-  tps: 5136.719811313408
+  dps: 6593.685653279549
+  tps: 4949.719760217395
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-SigilofHauntedDreams-40715"
  value: {
-  dps: 7331.1474041120855
-  tps: 5448.032852687229
+  dps: 7080.3934628209445
+  tps: 5247.25595616878
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-SigilofVirulence-47673"
  value: {
-  dps: 7692.831921008382
-  tps: 5721.244489818597
+  dps: 7429.902658094702
+  tps: 5510.730299274923
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-SigiloftheHangedMan-50459"
  value: {
-  dps: 7738.123313749933
-  tps: 5774.262484462666
+  dps: 7472.514197833138
+  tps: 5561.604411516501
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-Sindragosa'sFlawlessFang-50361"
  value: {
-  dps: 6827.241714881817
-  tps: 5136.719811313408
+  dps: 6593.685653279549
+  tps: 4949.719760217395
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-SparkofLife-37657"
  value: {
-  dps: 7066.1908462273705
-  tps: 5308.232534520869
+  dps: 6824.682259803526
+  tps: 5114.8849441526345
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-SpellstrikeInfusion"
  value: {
-  dps: 6282.249052751765
-  tps: 4709.313633963986
+  dps: 6065.228662915402
+  tps: 4535.515094909695
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-StrengthoftheClefthoof"
  value: {
-  dps: 6288.048506444787
-  tps: 4667.06169183089
+  dps: 6063.5518679025
+  tps: 4487.331128175158
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-SwiftSkyfireDiamond"
  value: {
-  dps: 7280.46576712892
-  tps: 5443.588486951431
+  dps: 7029.524182423075
+  tps: 5242.667450187279
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-SwiftSkyflareDiamond"
  value: {
-  dps: 7294.3711417960185
-  tps: 5454.915840936817
+  dps: 7042.886783301917
+  tps: 5253.56022125813
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-SwiftStarfireDiamond"
  value: {
-  dps: 7261.925267572792
-  tps: 5428.4853483042525
+  dps: 7011.7073812512945
+  tps: 5228.143755426149
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-SwiftStarflareDiamond"
  value: {
-  dps: 7288.190975277306
-  tps: 5449.8814613877585
+  dps: 7036.947849577987
+  tps: 5248.718989671086
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-SwiftWindfireDiamond"
  value: {
-  dps: 7277.375683869568
-  tps: 5441.071297176904
+  dps: 7026.554715561112
+  tps: 5240.246834393758
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-TenaciousEarthstormDiamond"
  value: {
-  dps: 7261.925267572792
-  tps: 5428.4853483042525
+  dps: 7011.7073812512945
+  tps: 5228.143755426149
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-Thassarian'sBattlegear"
  value: {
-  dps: 6890.357070415829
-  tps: 5207.485149864801
+  dps: 6641.222363281108
+  tps: 5008.00227107236
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-Thassarian'sPlate"
  value: {
-  dps: 6271.959041750041
-  tps: 4645.516457597072
+  dps: 6046.217544632711
+  tps: 4464.785779665949
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-TheTwinStars"
  value: {
-  dps: 7023.624565013289
-  tps: 5203.207054083538
+  dps: 6785.0062374485915
+  tps: 5012.152873486188
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-ThunderingSkyfireDiamond"
  value: {
-  dps: 7221.819909793743
-  tps: 5381.728803170684
+  dps: 6976.594134744979
+  tps: 5185.352194039637
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 7342.70698726759
-  tps: 5458.74217122179
+  dps: 7094.015168856658
+  tps: 5259.617936280318
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-TinyAbominationinaJar-50351"
  value: {
-  dps: 7197.762598131313
-  tps: 5417.941117420178
+  dps: 6954.282555449264
+  tps: 5223.0248810397925
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-TinyAbominationinaJar-50706"
  value: {
-  dps: 7205.511437643682
-  tps: 5419.59441999142
+  dps: 6962.053390059795
+  tps: 5224.690963047786
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-TirelessSkyflareDiamond"
  value: {
-  dps: 7261.925267572792
-  tps: 5428.4853483042525
+  dps: 7011.7073812512945
+  tps: 5228.143755426149
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-TirelessStarflareDiamond"
  value: {
-  dps: 7261.925267572792
-  tps: 5428.4853483042525
+  dps: 7011.7073812512945
+  tps: 5228.143755426149
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-TrenchantEarthshatterDiamond"
  value: {
-  dps: 7261.925267572792
-  tps: 5428.4853483042525
+  dps: 7011.7073812512945
+  tps: 5228.143755426149
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-TrenchantEarthsiegeDiamond"
  value: {
-  dps: 7261.925267572792
-  tps: 5428.4853483042525
+  dps: 7011.7073812512945
+  tps: 5228.143755426149
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-WastewalkerArmor"
  value: {
-  dps: 5581.735698232253
-  tps: 4167.109831719253
+  dps: 5380.66614477862
+  tps: 4006.105002210906
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-WindhawkArmor"
  value: {
-  dps: 6257.158686984352
-  tps: 4638.437525136502
+  dps: 6037.844174510828
+  tps: 4462.829405445694
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-WrathfulGladiator'sSigilofStrife-51417"
  value: {
-  dps: 7455.82906267484
-  tps: 5546.591910288395
+  dps: 7201.391621550858
+  tps: 5342.8690650459685
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-WrathofSpellfire"
  value: {
-  dps: 6016.167918555103
-  tps: 4540.860745861477
+  dps: 5799.546749138851
+  tps: 4367.389642267372
  }
 }
 dps_results: {
  key: "TestUnholy-Average-Default"
  value: {
-  dps: 7451.896728783897
-  tps: 5530.344075505349
+  dps: 7197.307547288351
+  tps: 5326.509015766805
  }
 }
 dps_results: {
  key: "TestUnholy-Settings-Human-Unholy P1 -Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 14176.498816292673
-  tps: 11009.66577561525
+  dps: 12384.615279411495
+  tps: 9575.024288527178
  }
 }
 dps_results: {
  key: "TestUnholy-Settings-Human-Unholy P1 -Basic-FullBuffs-LongSingleTarget"
  value: {
-  dps: 7400.976141065057
-  tps: 5575.753785572739
+  dps: 7143.673547651088
+  tps: 5369.755168525419
  }
 }
 dps_results: {
  key: "TestUnholy-Settings-Human-Unholy P1 -Basic-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 10430.905751285936
-  tps: 6106.69471152336
+  dps: 10210.219977899207
+  tps: 5929.388842809572
  }
 }
 dps_results: {
  key: "TestUnholy-Settings-Human-Unholy P1 -Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6998.553607958842
-  tps: 5746.126411830501
+  dps: 6215.653699815474
+  tps: 5119.457502746175
  }
 }
 dps_results: {
  key: "TestUnholy-Settings-Human-Unholy P1 -Basic-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3882.9000520548707
-  tps: 3255.431585761643
+  dps: 3735.360073138652
+  tps: 3137.3347670959274
  }
 }
 dps_results: {
  key: "TestUnholy-Settings-Human-Unholy P1 -Basic-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 4712.766995499252
-  tps: 3280.8248391668626
+  dps: 4588.202509943652
+  tps: 3180.842395220628
  }
 }
 dps_results: {
  key: "TestUnholy-Settings-Orc-Unholy P1 -Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 13903.751085315318
-  tps: 10719.110171610497
+  dps: 12172.404472377919
+  tps: 9332.985316472405
  }
 }
 dps_results: {
  key: "TestUnholy-Settings-Orc-Unholy P1 -Basic-FullBuffs-LongSingleTarget"
  value: {
-  dps: 7342.70698726759
-  tps: 5458.74217122179
+  dps: 7094.015168856658
+  tps: 5259.617936280318
  }
 }
 dps_results: {
  key: "TestUnholy-Settings-Orc-Unholy P1 -Basic-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 10852.870959691636
-  tps: 6101.490122620079
+  dps: 10632.317975320702
+  tps: 5924.26848241658
  }
 }
 dps_results: {
  key: "TestUnholy-Settings-Orc-Unholy P1 -Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 7112.3275396671625
-  tps: 5804.46503463254
+  dps: 6317.355180229454
+  tps: 5168.1744714147735
  }
 }
 dps_results: {
  key: "TestUnholy-Settings-Orc-Unholy P1 -Basic-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3947.7027624759007
-  tps: 3273.558199134157
+  dps: 3799.0471264692706
+  tps: 3154.566721716831
  }
 }
 dps_results: {
  key: "TestUnholy-Settings-Orc-Unholy P1 -Basic-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 4867.834540603644
-  tps: 3294.9982420989045
+  dps: 4741.980203591779
+  tps: 3193.96171553409
  }
 }
 dps_results: {
  key: "TestUnholy-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 6920.567344188424
-  tps: 5013.557259642131
+  dps: 6685.749669879383
+  tps: 4825.499643297848
  }
 }
