@@ -16,10 +16,9 @@ type DeathknightInputs struct {
 	PetUptime           float64
 
 	// Rotation Vars
-	RefreshHornOfWinter  bool
-	UnholyPresenceOpener bool
-	ArmyOfTheDeadType    proto.Deathknight_Rotation_ArmyOfTheDead
-	FirstDisease         proto.Deathknight_Rotation_FirstDisease
+	RefreshHornOfWinter bool
+	ArmyOfTheDeadType   proto.Deathknight_Rotation_ArmyOfTheDead
+	FirstDisease        proto.Deathknight_Rotation_FirstDisease
 }
 
 type Deathknight struct {
@@ -213,11 +212,7 @@ func (dk *Deathknight) Initialize() {
 
 func (dk *Deathknight) Reset(sim *core.Simulation) {
 	dk.Presence = UnsetPresence
-	if dk.Inputs.UnholyPresenceOpener {
-		dk.ChangePresence(sim, UnholyPresence)
-	} else {
-		dk.ChangePresence(sim, BloodPresence)
-	}
+	dk.ChangePresence(sim, BloodPresence)
 
 	if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_PreCast {
 		dk.PrecastArmyOfTheDead(sim)

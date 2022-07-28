@@ -70,7 +70,6 @@ export const UnholyDualWieldTalents = {
 
 export const DefaultRotation = DeathKnightRotation.create({
   diseaseRefreshDuration: 6,
-  unholyPresenceOpener: false,
   useDeathAndDecay: false,
 	refreshHornOfWinter: false,
 });
