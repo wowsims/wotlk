@@ -77,6 +77,7 @@ func (dk *Deathknight) registerObliterateSpell() {
 	dk.ObliterateMhHit = dk.newObliterateHitSpell(true)
 	dk.ObliterateOhHit = dk.newObliterateHitSpell(false)
 
+	amountOfRunicPower := 15.0 + 2.5*float64(dk.Talents.ChillOfTheGrave) + dk.scourgeborneBattlegearRunicPowerBonus()
 	dk.Obliterate = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    ObliterateActionID.WithTag(3),
 		Flags:       core.SpellFlagNoMetrics | core.SpellFlagNoLogs,
@@ -105,7 +106,6 @@ func (dk *Deathknight) registerObliterateSpell() {
 					dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_FU)
 					dk.Spend(sim, spell, dkSpellCost)
 
-					amountOfRunicPower := 15.0 + 2.5*float64(dk.Talents.ChillOfTheGrave) + dk.scourgeborneBattlegearRunicPowerBonus()
 					dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 				}
 			},

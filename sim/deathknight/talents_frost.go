@@ -113,7 +113,7 @@ func (dk *Deathknight) applyTundaStalker() {
 }
 
 func (dk *Deathknight) tundraStalkerBonus(target *core.Unit) float64 {
-	return core.TernaryFloat64(dk.TargetHasDisease(FrostFeverAuraLabel, target), tundraStalkerBonusCoeff, 1.0)
+	return core.TernaryFloat64(dk.FrostFeverDisease[target.Index].IsActive(), tundraStalkerBonusCoeff, 1.0)
 }
 
 func (dk *Deathknight) applyRime() {
@@ -185,11 +185,9 @@ func (dk *Deathknight) applyKillingMachine() {
 func (dk *Deathknight) killingMachineOutcomeMod(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
 	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
 		if dk.KillingMachineAura.IsActive() {
-			dk.AddStatDynamic(sim, stats.MeleeCrit, 100*core.CritRatingPerCritChance)
-			dk.AddStatDynamic(sim, stats.SpellCrit, 100*core.CritRatingPerCritChance)
+			spell.BonusCritRating += 100 * core.CritRatingPerCritChance
 			outcomeApplier(sim, spell, spellEffect, attackTable)
-			dk.AddStatDynamic(sim, stats.MeleeCrit, -100*core.CritRatingPerCritChance)
-			dk.AddStatDynamic(sim, stats.SpellCrit, -100*core.CritRatingPerCritChance)
+			spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
 		} else {
 			outcomeApplier(sim, spell, spellEffect, attackTable)
 		}

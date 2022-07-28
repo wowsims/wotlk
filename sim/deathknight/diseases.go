@@ -14,20 +14,18 @@ const BloodPlagueAuraLabel = "BloodPlague-"
 
 func (dk *Deathknight) countActiveDiseases(target *core.Unit) float64 {
 	count := 0
-	if dk.TargetHasDisease(FrostFeverAuraLabel, target) {
+	if dk.FrostFeverDisease[target.Index].IsActive() {
 		count++
 	}
-	if dk.TargetHasDisease(BloodPlagueAuraLabel, target) {
+	if dk.BloodPlagueDisease[target.Index].IsActive() {
 		count++
 	}
-	if dk.TargetHasDisease(core.EbonPlaguebringerAuraLabel, target) || dk.TargetHasDisease(core.CryptFeverAuraLabel, target) {
+	if dk.Talents.CryptFever > 0 && dk.CryptFeverAura[target.Index].IsActive() {
+		count++
+	} else if dk.Talents.EbonPlaguebringer > 0 && dk.EbonPlagueAura[target.Index].IsActive() {
 		count++
 	}
 	return float64(count)
-}
-
-func (dk *Deathknight) TargetHasDisease(label string, unit *core.Unit) bool {
-	return unit.HasActiveAura(label + strconv.Itoa(int(dk.Index)))
 }
 
 func (dk *Deathknight) diseaseMultiplier(multiplier float64, hasDarkrune4P bool) float64 {
@@ -69,6 +67,10 @@ func (dk *Deathknight) registerFrostFever() {
 
 	dk.FrostFeverDisease = make([]*core.Dot, dk.Env.GetNumTargets())
 
+	var wpWrapper func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)
+	if dk.Talents.WanderingPlague > 0 {
+		wpWrapper = dk.wpWrapper
+	}
 	for _, encounterTarget := range dk.Env.Encounter.Targets {
 		target := &encounterTarget.Unit
 
@@ -86,13 +88,11 @@ func (dk *Deathknight) registerFrostFever() {
 			TickLength:    time.Second * 3,
 
 			TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-				ProcMask:         core.ProcMaskPeriodicDamage,
-				DamageMultiplier: core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfIcyTouch), 1.2, 1.0),
-				ThreatMultiplier: 1,
-				IsPeriodic:       true,
-				OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					dk.doWanderingPlague(sim, spell, spellEffect)
-				},
+				ProcMask:              core.ProcMaskPeriodicDamage,
+				DamageMultiplier:      core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfIcyTouch), 1.2, 1.0),
+				ThreatMultiplier:      1,
+				IsPeriodic:            true,
+				OnPeriodicDamageDealt: wpWrapper,
 				BaseDamage: core.BaseDamageConfig{
 					Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 						firstTsApply := !flagTs[hitEffect.Target.Index]
@@ -138,6 +138,10 @@ func (dk *Deathknight) registerBloodPlague() {
 		outcomeApplier = dk.OutcomeFuncMagicCrit(dk.spellCritMultiplier())
 	}
 
+	var wpWrapper func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)
+	if dk.Talents.WanderingPlague > 0 {
+		wpWrapper = dk.wpWrapper
+	}
 	for _, encounterTarget := range dk.Env.Encounter.Targets {
 		target := &encounterTarget.Unit
 
@@ -155,13 +159,11 @@ func (dk *Deathknight) registerBloodPlague() {
 			TickLength:    time.Second * 3,
 
 			TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-				ProcMask:         core.ProcMaskPeriodicDamage,
-				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
-				IsPeriodic:       true,
-				OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					dk.doWanderingPlague(sim, spell, spellEffect)
-				},
+				ProcMask:              core.ProcMaskPeriodicDamage,
+				DamageMultiplier:      1,
+				ThreatMultiplier:      1,
+				IsPeriodic:            true,
+				OnPeriodicDamageDealt: wpWrapper,
 				BaseDamage: core.BaseDamageConfig{
 					Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 						firstRorApply := !flagRor[hitEffect.Target.Index]
@@ -178,6 +180,10 @@ func (dk *Deathknight) registerBloodPlague() {
 
 		dk.BloodPlagueDisease[target.Index].Spell = dk.BloodPlagueSpell
 	}
+}
+
+func (dk *Deathknight) wpWrapper(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+	dk.doWanderingPlague(sim, spell, spellEffect)
 }
 
 func (dk *Deathknight) doWanderingPlague(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

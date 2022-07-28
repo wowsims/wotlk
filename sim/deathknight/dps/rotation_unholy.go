@@ -131,10 +131,10 @@ func (dk *DpsDeathknight) UnholyDiseaseCheckWrapper(sim *core.Simulation, target
 	gracePeriodUnholy := dk.CurrentUnholyRuneGrace(sim)
 
 	if ffFirst {
-		if !dk.TargetHasDisease(deathknight.FrostFeverAuraLabel, target) || ffRemaining < castGcd {
+		if !dk.FrostFeverDisease[target.Index].IsActive() || ffRemaining < castGcd {
 			// Refresh FF
 			success = dk.CastIcyTouch(sim, target)
-		} else if syncDisease || !dk.TargetHasDisease(deathknight.BloodPlagueAuraLabel, target) || bpRemaining < castGcd {
+		} else if syncDisease || !dk.BloodPlagueDisease[target.Index].IsActive() || bpRemaining < castGcd {
 			// Refresh BP
 			if syncDisease {
 				dk.LastCastOutcome = core.OutcomeMiss
@@ -145,10 +145,10 @@ func (dk *DpsDeathknight) UnholyDiseaseCheckWrapper(sim *core.Simulation, target
 			syncDisease = !(success && dk.LastCastOutcome.Matches(core.OutcomeHit|core.OutcomeCrit))
 		}
 	} else {
-		if !dk.TargetHasDisease(deathknight.BloodPlagueAuraLabel, target) || bpRemaining < castGcd {
+		if !dk.BloodPlagueDisease[target.Index].IsActive() || bpRemaining < castGcd {
 			// Refresh BP
 			success = dk.CastPlagueStrike(sim, target)
-		} else if syncDisease || !dk.TargetHasDisease(deathknight.FrostFeverAuraLabel, target) || ffRemaining < castGcd {
+		} else if syncDisease || !dk.FrostFeverDisease[target.Index].IsActive() || ffRemaining < castGcd {
 			// Refresh FF
 			if syncDisease {
 				dk.LastCastOutcome = core.OutcomeMiss
@@ -245,18 +245,16 @@ func (dk *DpsDeathknight) castClipDisease(mainDisease bool, gracePeriod time.Dur
 }
 
 func (dk *DpsDeathknight) doUnholySsRotation(sim *core.Simulation, target *core.Unit) {
-	casted := &dk.CastSuccessful
-
 	if dk.ShouldHornOfWinter(sim) {
-		*casted = dk.CastHornOfWinter(sim, target)
+		dk.CastSuccessful = dk.CastHornOfWinter(sim, target)
 	} else {
-		*casted = dk.UnholyDiseaseCheckWrapper(sim, target, dk.ScourgeStrike, true)
-		if !*casted {
-			*casted = dk.UnholyDiseaseCheckWrapper(sim, target, dk.BloodStrike, true)
-			if !*casted {
-				*casted = dk.UnholyDiseaseCheckWrapper(sim, target, dk.DeathCoil, false)
-				if !*casted {
-					*casted = dk.UnholyDiseaseCheckWrapper(sim, target, dk.HornOfWinter, false)
+		dk.CastSuccessful = dk.UnholyDiseaseCheckWrapper(sim, target, dk.ScourgeStrike, true)
+		if !dk.CastSuccessful {
+			dk.CastSuccessful = dk.UnholyDiseaseCheckWrapper(sim, target, dk.BloodStrike, true)
+			if !dk.CastSuccessful {
+				dk.CastSuccessful = dk.UnholyDiseaseCheckWrapper(sim, target, dk.DeathCoil, false)
+				if !dk.CastSuccessful {
+					dk.CastSuccessful = dk.UnholyDiseaseCheckWrapper(sim, target, dk.HornOfWinter, false)
 				}
 			}
 		}
@@ -291,7 +289,7 @@ func (dk *DpsDeathknight) doUnholyRotation(sim *core.Simulation, target *core.Un
 	if dk.ShouldHornOfWinter(sim) {
 		dk.HornOfWinter.Cast(sim, target)
 		*casted = true
-	} else if (!dk.TargetHasDisease(deathknight.FrostFeverAuraLabel, target) || dk.FrostFeverDisease[target.Index].RemainingDuration(sim) < diseaseRefreshDuration) && dk.CanIcyTouch(sim) {
+	} else if (!dk.FrostFeverDisease[target.Index].IsActive() || dk.FrostFeverDisease[target.Index].RemainingDuration(sim) < diseaseRefreshDuration) && dk.CanIcyTouch(sim) {
 		// Dont clip if theres half a second left to tick
 		remainingDuration := dk.FrostFeverDisease[target.Index].RemainingDuration(sim)
 		if remainingDuration < time.Millisecond*500 && remainingDuration > 0 {
@@ -301,7 +299,7 @@ func (dk *DpsDeathknight) doUnholyRotation(sim *core.Simulation, target *core.Un
 			*casted = true
 			recastedFF = true
 		}
-	} else if (!dk.TargetHasDisease(deathknight.BloodPlagueAuraLabel, target) || dk.BloodPlagueDisease[target.Index].RemainingDuration(sim) < diseaseRefreshDuration) && dk.CanPlagueStrike(sim) {
+	} else if (!dk.BloodPlagueDisease[target.Index].IsActive() || dk.BloodPlagueDisease[target.Index].RemainingDuration(sim) < diseaseRefreshDuration) && dk.CanPlagueStrike(sim) {
 		// Dont clip if theres half a second left to tick
 		remainingDuration := dk.BloodPlagueDisease[target.Index].RemainingDuration(sim)
 		if remainingDuration < time.Millisecond*500 && remainingDuration > 0 {

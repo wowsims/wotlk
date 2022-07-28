@@ -61,9 +61,9 @@ func (dk *DpsDeathknight) setupFrostSubUnholyOpener() {
 func (dk *DpsDeathknight) FrostDiseaseCheckWrapper(sim *core.Simulation, target *core.Unit, spell *core.Spell) bool {
 	success := false
 
-	if !dk.TargetHasDisease(deathknight.FrostFeverAuraLabel, target) {
+	if !dk.FrostFeverDisease[target.Index].IsActive() {
 		success = dk.CastIcyTouch(sim, target)
-	} else if !dk.TargetHasDisease(deathknight.BloodPlagueAuraLabel, target) {
+	} else if !dk.BloodPlagueDisease[target.Index].IsActive() {
 		success = dk.CastPlagueStrike(sim, target)
 	} else if dk.FrostFeverDisease[target.Index].RemainingDuration(sim) < spell.CurCast.GCD ||
 		dk.BloodPlagueDisease[target.Index].RemainingDuration(sim) < spell.CurCast.GCD {
@@ -118,7 +118,6 @@ func (dk *DpsDeathknight) FrostDiseaseCheckWrapper(sim *core.Simulation, target 
 }
 
 func (dk *DpsDeathknight) doFrostRotation(sim *core.Simulation, target *core.Unit) {
-	casted := &dk.CastSuccessful
 	const hitCapped = false
 
 	if hitCapped {
@@ -137,32 +136,32 @@ func (dk *DpsDeathknight) doFrostRotation(sim *core.Simulation, target *core.Uni
 		}
 	} else {
 		if dk.ShouldHornOfWinter(sim) {
-			*casted = dk.CastHornOfWinter(sim, target)
+			dk.CastSuccessful = dk.CastHornOfWinter(sim, target)
 		} else {
-			*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.Obliterate)
-			if !*casted {
+			dk.CastSuccessful = dk.FrostDiseaseCheckWrapper(sim, target, dk.Obliterate)
+			if !dk.CastSuccessful {
 				if dk.KillingMachineAura.IsActive() && !dk.RimeAura.IsActive() {
-					*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
+					dk.CastSuccessful = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
 				} else if dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
 					if dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() < 110 {
-						*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.HowlingBlast)
+						dk.CastSuccessful = dk.FrostDiseaseCheckWrapper(sim, target, dk.HowlingBlast)
 					} else if dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() > 110 {
-						*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.HowlingBlast)
+						dk.CastSuccessful = dk.FrostDiseaseCheckWrapper(sim, target, dk.HowlingBlast)
 					} else if !dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() > 110 {
-						*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
+						dk.CastSuccessful = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
 					} else if !dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() < 110 {
-						*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
+						dk.CastSuccessful = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
 					}
 				} else if !dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
 					if dk.CurrentRunicPower() < 110 {
-						*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.HowlingBlast)
+						dk.CastSuccessful = dk.FrostDiseaseCheckWrapper(sim, target, dk.HowlingBlast)
 					} else {
-						*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
+						dk.CastSuccessful = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
 					}
 				} else {
-					*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
-					if !*casted {
-						*casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.HornOfWinter)
+					dk.CastSuccessful = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
+					if !dk.CastSuccessful {
+						dk.CastSuccessful = dk.FrostDiseaseCheckWrapper(sim, target, dk.HornOfWinter)
 					}
 				}
 			}

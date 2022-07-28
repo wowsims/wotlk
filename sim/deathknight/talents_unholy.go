@@ -57,7 +57,7 @@ func (dk *Deathknight) viciousStrikesCritChanceBonus() float64 {
 }
 
 func (dk *Deathknight) rageOfRivendareBonus(target *core.Unit) float64 {
-	return core.TernaryFloat64(dk.TargetHasDisease(BloodPlagueAuraLabel, target), 1.0+0.02*float64(dk.Talents.RageOfRivendare), 1.0)
+	return core.TernaryFloat64(dk.BloodPlagueDisease[target.Index].IsActive(), 1.0+0.02*float64(dk.Talents.RageOfRivendare), 1.0)
 }
 
 func (dk *Deathknight) applyImpurity(hitEffect *core.SpellEffect, unit *core.Unit) float64 {
