@@ -80,7 +80,7 @@ func (dk *Deathknight) registerBloodStrikeSpell() {
 				dk.threatOfThassarianProc(sim, spellEffect, dk.BloodStrikeMhHit, dk.BloodStrikeOhHit)
 				dk.LastCastOutcome = BloodStrikeMHOutcome
 
-				if dk.outcomeEitherWeaponHitOrCrit(BloodStrikeMHOutcome, BloodStrikeOHOutcome) {
+				if dk.outcomeEitherWeaponLanded(BloodStrikeMHOutcome, BloodStrikeOHOutcome) {
 					dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_B)
 					if !dk.bloodOfTheNorthProc(sim, spell, dkSpellCost) {
 						if !dk.reapingProc(sim, spell, dkSpellCost) {

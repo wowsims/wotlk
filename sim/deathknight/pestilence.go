@@ -62,7 +62,7 @@ func (dk *Deathknight) registerPestilenceSpell() {
 							}
 						}
 
-						amountOfRunicPower := 10.0 + 2.5*float64(dk.Talents.ChillOfTheGrave)
+						amountOfRunicPower := 10.0
 						dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 					} else {
 						// Apply diseases on every other target

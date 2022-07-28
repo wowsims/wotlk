@@ -16,15 +16,30 @@ type DeathknightInputs struct {
 	PetUptime           float64
 
 	// Rotation Vars
-	RefreshHornOfWinter  bool
-	UnholyPresenceOpener bool
-	ArmyOfTheDeadType    proto.Deathknight_Rotation_ArmyOfTheDead
-	FirstDisease         proto.Deathknight_Rotation_FirstDisease
+	RefreshHornOfWinter bool
+	ArmyOfTheDeadType   proto.Deathknight_Rotation_ArmyOfTheDead
+	FirstDisease        proto.Deathknight_Rotation_FirstDisease
+}
+
+type DeathknightCoeffs struct {
+	glacierRotBonusCoeff      float64
+	mercilessCombatBonusCoeff float64
+	tundraStalkerBonusCoeff   float64
+	rageOfRivendareBonusCoeff float64
+	impurityBonusCoeff        float64
+
+	bloodOfTheNorthChance    float64
+	threatOfThassarianChance float64
+	reapingChance            float64
+
+	additiveDamageModifier float64
 }
 
 type Deathknight struct {
 	core.Character
 	Talents proto.DeathknightTalents
+
+	bonusCoeffs DeathknightCoeffs
 
 	onRuneSpendT10          core.OnRuneSpend
 	onRuneSpendBladeBarrier core.OnRuneSpend
@@ -140,16 +155,12 @@ type Deathknight struct {
 	FrostFeverDebuffAura []*core.Aura
 	CryptFeverAura       []*core.Aura
 	EbonPlagueAura       []*core.Aura
-
-	// Dynamic trackers
-	additiveDamageModifier   float64
-	threatOfThassarianChance float64
 }
 
 func (dk *Deathknight) ModifyAdditiveDamageModifier(sim *core.Simulation, value float64) {
-	dk.PseudoStats.DamageDealtMultiplier /= dk.additiveDamageModifier
-	dk.additiveDamageModifier += value
-	dk.PseudoStats.DamageDealtMultiplier *= dk.additiveDamageModifier
+	dk.PseudoStats.DamageDealtMultiplier /= dk.bonusCoeffs.additiveDamageModifier
+	dk.bonusCoeffs.additiveDamageModifier += value
+	dk.PseudoStats.DamageDealtMultiplier *= dk.bonusCoeffs.additiveDamageModifier
 }
 
 func (dk *Deathknight) GetCharacter() *core.Character {
@@ -179,6 +190,8 @@ func (dk *Deathknight) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 }
 
 func (dk *Deathknight) ApplyTalents() {
+	dk.ResetBonusCoeffs()
+
 	dk.ApplyBloodTalents()
 	dk.ApplyFrostTalents()
 	dk.ApplyUnholyTalents()
@@ -212,19 +225,29 @@ func (dk *Deathknight) Initialize() {
 	dk.registerArmyOfTheDeadCD()
 }
 
+func (dk *Deathknight) ResetBonusCoeffs() {
+	dk.bonusCoeffs = DeathknightCoeffs{
+		glacierRotBonusCoeff:      1.0,
+		mercilessCombatBonusCoeff: 1.0,
+		tundraStalkerBonusCoeff:   1.0,
+		impurityBonusCoeff:        1.0,
+		rageOfRivendareBonusCoeff: 1.0,
+
+		bloodOfTheNorthChance:    0.0,
+		threatOfThassarianChance: 0.0,
+		reapingChance:            0.0,
+
+		additiveDamageModifier: dk.bonusCoeffs.additiveDamageModifier,
+	}
+}
+
 func (dk *Deathknight) Reset(sim *core.Simulation) {
 	dk.Presence = UnsetPresence
-	if dk.Inputs.UnholyPresenceOpener {
-		dk.ChangePresence(sim, UnholyPresence)
-	} else {
-		dk.ChangePresence(sim, BloodPresence)
-	}
+	dk.ChangePresence(sim, BloodPresence)
 
 	if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_PreCast {
 		dk.PrecastArmyOfTheDead(sim)
 	}
-
-	dk.ResetRotation(sim)
 }
 
 func (dk *Deathknight) IsFuStrike(spell *core.Spell) bool {
@@ -246,9 +269,9 @@ func NewDeathknight(character core.Character, options proto.Player, inputs Death
 		Talents:   *deathKnightOptions.Talents,
 
 		Inputs: inputs,
-
-		additiveDamageModifier: 1,
 	}
+
+	dk.bonusCoeffs.additiveDamageModifier = 1
 
 	maxRunicPower := 100.0 + 15.0*float64(dk.Talents.RunicPowerMastery)
 	currentRunicPower := math.Min(maxRunicPower, dk.Inputs.StartingRunicPower+core.TernaryFloat64(dk.Inputs.PrecastHornOfWinter, 10.0, 0.0))
@@ -269,37 +292,37 @@ func NewDeathknight(character core.Character, options proto.Player, inputs Death
 			// you do not want these to trigger a tryUseGCD, so after the opener
 			// its fine since you're running off a prio system, and rune generation
 			// can change your logic which we want.
-			if !dk.onOpener {
+			if !dk.Opener.IsOngoing() {
 				if dk.GCD.IsReady(sim) {
-					dk.tryUseGCD(sim)
+					//dk.tryUseGCD(sim)
 				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if !dk.onOpener {
+			if !dk.Opener.IsOngoing() {
 				if dk.GCD.IsReady(sim) {
-					dk.tryUseGCD(sim)
+					//dk.tryUseGCD(sim)
 				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if !dk.onOpener {
+			if !dk.Opener.IsOngoing() {
 				if dk.GCD.IsReady(sim) {
-					dk.tryUseGCD(sim)
+					//dk.tryUseGCD(sim)
 				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if !dk.onOpener {
+			if !dk.Opener.IsOngoing() {
 				if dk.GCD.IsReady(sim) {
-					dk.tryUseGCD(sim)
+					//dk.tryUseGCD(sim)
 				}
 			}
 		},
 		func(sim *core.Simulation) {
-			if !dk.onOpener {
+			if !dk.Opener.IsOngoing() {
 				if dk.GCD.IsReady(sim) {
-					dk.tryUseGCD(sim)
+					//dk.tryUseGCD(sim)
 				}
 			}
 		},
@@ -326,6 +349,9 @@ func NewDeathknight(character core.Character, options proto.Player, inputs Death
 	for i := 0; i < 8; i++ {
 		dk.ArmyGhoul[i] = dk.NewArmyGhoulPet(i)
 	}
+
+	dk.Opener = &Sequence{}
+	dk.Main = &Sequence{}
 
 	return dk
 }

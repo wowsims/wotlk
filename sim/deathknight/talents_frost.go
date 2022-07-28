@@ -86,34 +86,28 @@ func (dk *Deathknight) nervesOfColdSteelBonus() float64 {
 	return []float64{1.0, 1.08, 1.16, 1.25}[dk.Talents.NervesOfColdSteel]
 }
 
-var glacierRotBonusCoeff float64 = 1.0
-
 func (dk *Deathknight) applyGlacierRot() {
-	glacierRotBonusCoeff = []float64{1.0, 1.07, 1.13, 1.20}[dk.Talents.GlacierRot]
+	dk.bonusCoeffs.glacierRotBonusCoeff = []float64{1.0, 1.07, 1.13, 1.20}[dk.Talents.GlacierRot]
 }
 
 func (dk *Deathknight) glacielRotBonus(target *core.Unit) float64 {
-	return core.TernaryFloat64(dk.DiseasesAreActive(target), glacierRotBonusCoeff, 1.0)
+	return core.TernaryFloat64(dk.DiseasesAreActive(target), dk.bonusCoeffs.glacierRotBonusCoeff, 1.0)
 }
 
-var mercilessCombatBonusCoeff float64 = 1.0
-
 func (dk *Deathknight) applyMercilessCombat() {
-	mercilessCombatBonusCoeff = 1.0 + 0.06*float64(dk.Talents.MercilessCombat)
+	dk.bonusCoeffs.mercilessCombatBonusCoeff = 1.0 + 0.06*float64(dk.Talents.MercilessCombat)
 }
 
 func (dk *Deathknight) mercilessCombatBonus(sim *core.Simulation) float64 {
-	return core.TernaryFloat64(sim.IsExecutePhase35() && dk.Talents.MercilessCombat > 0, mercilessCombatBonusCoeff, 1.0)
+	return core.TernaryFloat64(sim.IsExecutePhase35() && dk.Talents.MercilessCombat > 0, dk.bonusCoeffs.mercilessCombatBonusCoeff, 1.0)
 }
 
-var tundraStalkerBonusCoeff float64 = 1.0
-
 func (dk *Deathknight) applyTundaStalker() {
-	tundraStalkerBonusCoeff = 1.0 + 0.03*float64(dk.Talents.TundraStalker)
+	dk.bonusCoeffs.tundraStalkerBonusCoeff = 1.0 + 0.03*float64(dk.Talents.TundraStalker)
 }
 
 func (dk *Deathknight) tundraStalkerBonus(target *core.Unit) float64 {
-	return core.TernaryFloat64(dk.FrostFeverDisease[target.Index].IsActive(), tundraStalkerBonusCoeff, 1.0)
+	return core.TernaryFloat64(dk.FrostFeverDisease[target.Index].IsActive(), dk.bonusCoeffs.tundraStalkerBonusCoeff, 1.0)
 }
 
 func (dk *Deathknight) applyRime() {
@@ -215,22 +209,20 @@ func (dk *Deathknight) applyIcyTalons() {
 	})
 }
 
-func (dk *Deathknight) outcomeEitherWeaponHitOrCrit(mhOutcome core.HitOutcome, ohOutcome core.HitOutcome) bool {
-	return mhOutcome == core.OutcomeHit || mhOutcome == core.OutcomeCrit // TODO: Confirm that this should be gone || ohOutcome == core.OutcomeHit || ohOutcome == core.OutcomeCrit
+func (dk *Deathknight) outcomeEitherWeaponLanded(mhOutcome core.HitOutcome, ohOutcome core.HitOutcome) bool {
+	return mhOutcome.Matches(core.OutcomeLanded) // || ohOutcome.Matches(core.OutcomeLanded) TODO: Confirm that this should be gone
 }
 
 func (dk *Deathknight) bloodOfTheNorthCoeff() float64 {
 	return []float64{1.0, 1.03, 1.06, 1.10}[dk.Talents.BloodOfTheNorth]
 }
 
-var bloodOfTheNorthChance float64 = 0.0
-
 func (dk *Deathknight) applyBloodOfTheNorth() {
-	bloodOfTheNorthChance = []float64{0.0, 0.3, 0.6, 1.0}[dk.Talents.BloodOfTheNorth]
+	dk.bonusCoeffs.bloodOfTheNorthChance = []float64{0.0, 0.3, 0.6, 1.0}[dk.Talents.BloodOfTheNorth]
 }
 
 func (dk *Deathknight) bloodOfTheNorthWillProc(sim *core.Simulation) bool {
-	ohWillCast := sim.RandomFloat("Blood of The North") <= bloodOfTheNorthChance
+	ohWillCast := sim.RandomFloat("Blood of The North") <= dk.bonusCoeffs.bloodOfTheNorthChance
 	return ohWillCast
 }
 
@@ -249,11 +241,12 @@ func (dk *Deathknight) bloodOfTheNorthProc(sim *core.Simulation, spell *core.Spe
 }
 
 func (dk *Deathknight) applyThreatOfThassarian() {
-	dk.threatOfThassarianChance = []float64{0.0, 0.3, 0.6, 1.0}[dk.Talents.ThreatOfThassarian]
+	dk.bonusCoeffs.threatOfThassarianChance = []float64{0.0, 0.3, 0.6, 1.0}[dk.Talents.ThreatOfThassarian]
 }
 
 func (dk *Deathknight) threatOfThassarianWillProc(sim *core.Simulation) bool {
-	return sim.RandomFloat("Threat of Thassarian") <= dk.threatOfThassarianChance
+	ohWillCast := sim.RandomFloat("Threat of Thassarian") <= dk.bonusCoeffs.threatOfThassarianChance
+	return ohWillCast
 }
 
 func (dk *Deathknight) threatOfThassarianAdjustMetrics(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, mhOutcome core.HitOutcome) {

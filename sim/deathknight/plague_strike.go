@@ -55,6 +55,8 @@ func (dk *Deathknight) registerPlagueStrikeSpell() {
 	dk.PlagueStrikeMhHit = dk.newPlagueStrikeSpell(true)
 	dk.PlagueStrikeOhHit = dk.newPlagueStrikeSpell(false)
 
+	amountOfRunicPower := 10.0 + 2.5*float64(dk.Talents.Dirge)
+
 	dk.PlagueStrike = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    PlagueStrikeActionID.WithTag(3),
 		SpellSchool: core.SpellSchoolPhysical,
@@ -79,7 +81,7 @@ func (dk *Deathknight) registerPlagueStrikeSpell() {
 				dk.threatOfThassarianProc(sim, spellEffect, dk.PlagueStrikeMhHit, dk.PlagueStrikeOhHit)
 
 				dk.LastCastOutcome = PlagueStrikeMHOutcome
-				if dk.outcomeEitherWeaponHitOrCrit(PlagueStrikeMHOutcome, PlagueStrikeOHOutcome) {
+				if dk.outcomeEitherWeaponLanded(PlagueStrikeMHOutcome, PlagueStrikeOHOutcome) {
 					dk.BloodPlagueSpell.Cast(sim, spellEffect.Target)
 					if dk.Talents.CryptFever > 0 {
 						dk.CryptFeverAura[spellEffect.Target.Index].Activate(sim)
@@ -91,7 +93,6 @@ func (dk *Deathknight) registerPlagueStrikeSpell() {
 					dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_U)
 					dk.Spend(sim, spell, dkSpellCost)
 
-					amountOfRunicPower := 10.0 + 2.5*float64(dk.Talents.Dirge)
 					dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 				}
 			},

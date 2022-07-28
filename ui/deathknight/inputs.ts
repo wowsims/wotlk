@@ -82,19 +82,10 @@ export const UseArmyOfTheDead = InputHelpers.makeRotationEnumInput<Spec.SpecDeat
 	],
 });
 
-export const UnholyPresenceOpener = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
-	fieldName: 'unholyPresenceOpener',
-	label: 'Unholy Presence Opener',
-	labelTooltip: 'Start fight in unholy presence and change to blood after gargoyle.',
-	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle,
-	changeEmitter: (player: Player<Spec.SpecDeathknight>) => player.talentsChangeEmitter,
-});
-
 export const DeathKnightRotationConfig = {
 	inputs: [
 		SetFirstDisease,
 		UseArmyOfTheDead,
 		UseDeathAndDecay,
-		UnholyPresenceOpener,
 	],
 };

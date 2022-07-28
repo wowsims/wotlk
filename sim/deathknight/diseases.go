@@ -6,7 +6,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 const FrostFeverAuraLabel = "FrostFever-"
@@ -102,7 +101,7 @@ func (dk *Deathknight) registerFrostFever() {
 					Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 						firstTsApply := !flagTs[hitEffect.Target.Index]
 						flagTs[hitEffect.Target.Index] = true
-						return ((127.0 + 80.0*0.32) + dk.applyImpurity(hitEffect, spell.Unit)*0.055) *
+						return ((127.0 + 80.0*0.32) + dk.getImpurityBonus(hitEffect, spell.Unit)*0.055) *
 							core.TernaryFloat64(firstTsApply, 1.0, dk.rageOfRivendareBonus(hitEffect.Target)*
 								dk.tundraStalkerBonus(hitEffect.Target))
 					},
@@ -173,7 +172,7 @@ func (dk *Deathknight) registerBloodPlague() {
 					Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 						firstRorApply := !flagRor[hitEffect.Target.Index]
 						flagRor[hitEffect.Target.Index] = true
-						return ((127.0 + 80.0*0.32) + dk.applyImpurity(hitEffect, spell.Unit)*0.055) *
+						return ((127.0 + 80.0*0.32) + dk.getImpurityBonus(hitEffect, spell.Unit)*0.055) *
 							core.TernaryFloat64(firstRorApply, 1.0, dk.rageOfRivendareBonus(hitEffect.Target)*
 								dk.tundraStalkerBonus(hitEffect.Target))
 					},
@@ -196,10 +195,8 @@ func (dk *Deathknight) doWanderingPlague(sim *core.Simulation, spell *core.Spell
 		return
 	}
 
-	critRating := spell.Unit.GetStats()[stats.MeleeCrit] + spellEffect.BonusCritRating + spellEffect.Target.PseudoStats.BonusCritRatingTaken
-	critRating += spell.Unit.PseudoStats.BonusMeleeCritRating
-	critChance := critRating / (core.CritRatingPerCritChance * 100)
-	if sim.RandomFloat("Wandering Plague Roll") < critChance {
+	physCritChance := spellEffect.PhysicalCritChance(spell.Unit, spell, dk.AttackTables[spellEffect.Target.TableIndex])
+	if sim.RandomFloat("Wandering Plague Roll") < physCritChance {
 		dk.LastDiseaseDamage = spellEffect.Damage
 		dk.WanderingPlague.Cast(sim, spellEffect.Target)
 	}
