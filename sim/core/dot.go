@@ -219,6 +219,7 @@ func TickFuncSnapshot(target *Unit, baseEffect SpellEffect) TickEffects {
 func TickFuncAOESnapshot(env *Environment, baseEffect SpellEffect) TickEffects {
 	return func(sim *Simulation, dot *Dot) func() {
 		target := dot.Spell.Unit.CurrentTarget
+		*dot.snapshotEffect = baseEffect
 		if dot.useSnapshot {
 			dot.snapshotEffect.DamageMultiplier *= dot.snapshotMultiplier
 			dot.snapshotEffect.BonusSpellCritRating = dot.snapshotSpellCrit
@@ -252,6 +253,7 @@ func TickFuncAOESnapshot(env *Environment, baseEffect SpellEffect) TickEffects {
 func TickFuncAOESnapshotCapped(env *Environment, aoeCap float64, baseEffect SpellEffect) TickEffects {
 	return func(sim *Simulation, dot *Dot) func() {
 		target := dot.Spell.Unit.CurrentTarget
+		*dot.snapshotEffect = baseEffect
 		if dot.useSnapshot {
 			dot.snapshotEffect.DamageMultiplier *= dot.snapshotMultiplier
 			dot.snapshotEffect.BonusSpellCritRating = dot.snapshotSpellCrit
