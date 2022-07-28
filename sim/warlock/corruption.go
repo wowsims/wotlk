@@ -26,6 +26,8 @@ func (warlock *Warlock) registerCorruptionSpell() {
 				GCD:  core.GCDDefault,
 			},
 		},
+		// TODO: The application of the dot here is counting as a hit for 0 damage (not crit)
+		// This messes with final dmg and crit rate metrics.
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:        core.ProcMaskSpellDamage,
 			OutcomeApplier:  warlock.OutcomeFuncMagicHit(),
