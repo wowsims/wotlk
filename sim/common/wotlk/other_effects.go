@@ -345,9 +345,7 @@ func init() {
 							procAura.Deactivate(sim)
 						},
 						OnAction: func(sim *core.Simulation) {
-							if procAura.IsActive() {
-								procAura.AddStack(sim)
-							}
+							procAura.AddStack(sim)
 						},
 					})
 				},

@@ -116,8 +116,7 @@ func (shaman *Shaman) newLavaBurstSpell() *core.Spell {
 				return
 			}
 			lvbdotDmg = spellEffect.Damage * 0.1 // TODO: does this dot pool with the previous dot?
-			lvbdot.TakeSnapshot(sim)             // reset dmg snapshot
-			lvbdot.Apply(sim)
+			lvbdot.Apply(sim)                    // will resnapshot dmg
 		}
 	}
 
