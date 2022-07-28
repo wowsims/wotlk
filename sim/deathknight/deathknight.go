@@ -242,12 +242,15 @@ func (dk *Deathknight) ResetBonusCoeffs() {
 }
 
 func (dk *Deathknight) Reset(sim *core.Simulation) {
+	dk.ResetRotation(sim)
+
 	dk.Presence = UnsetPresence
 	dk.ChangePresence(sim, BloodPresence)
 
 	if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_PreCast {
 		dk.PrecastArmyOfTheDead(sim)
 	}
+
 }
 
 func (dk *Deathknight) IsFuStrike(spell *core.Spell) bool {
