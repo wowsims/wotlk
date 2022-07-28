@@ -166,6 +166,12 @@ func (dk *Deathknight) RotationActionCallback_UP(sim *core.Simulation, target *c
 	return casted
 }
 
+func (dk *Deathknight) RotationActionCallback_Reset(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
+	s.Reset()
+	s.ConditionalAdvance(false)
+	return false
+}
+
 func (o *Sequence) DoAction(sim *core.Simulation, target *core.Unit, dk *Deathknight) bool {
 	action := o.actions[o.idx]
 	return action(sim, target, o)
