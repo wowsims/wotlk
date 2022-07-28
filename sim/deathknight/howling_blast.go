@@ -37,7 +37,7 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					roll := (562.0-518.0)*sim.RandomFloat("Howling Blast") + 518.0
-					return (roll + dk.applyImpurity(hitEffect, spell.Unit)*0.1) *
+					return (roll + dk.getImpurityBonus(hitEffect, spell.Unit)*0.1) *
 						dk.glacielRotBonus(hitEffect.Target) *
 						dk.rageOfRivendareBonus(hitEffect.Target) *
 						dk.tundraStalkerBonus(hitEffect.Target) *
