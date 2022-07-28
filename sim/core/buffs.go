@@ -724,7 +724,7 @@ func PowerInfusionAura(character *Character, actionTag int32) *Aura {
 var TricksOfTheTradeAuraTag = "TricksOfTheTrade"
 
 const TricksOfTheTradeDuration = time.Second * 10 // Assuming rogues have Glyph of TotT by default (which might not be the case).
-const TricksOfTheTradeCD = time.Second * 3600 // CD is 30s from the time buff ends (so 40s with glyph) but that's in order to be able to set the number of TotT you'll have during the fight
+const TricksOfTheTradeCD = time.Second * 3600     // CD is 30s from the time buff ends (so 40s with glyph) but that's in order to be able to set the number of TotT you'll have during the fight
 
 func registerTricksOfTheTradeCD(agent Agent, numTricksOfTheTrades int32) {
 	if numTricksOfTheTrades == 0 {

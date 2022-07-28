@@ -14,10 +14,10 @@ func (warlock *Warlock) registerImmolateSpell() {
 	if float64(warlock.Talents.Cataclysm) > 0 {
 		costReductionFactor -= 0.01 + 0.03*float64(warlock.Talents.Cataclysm)
 	}
-	spellCoefficient:= 0.2 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
+	spellCoefficient := 0.2 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
 	actionID := core.ActionID{SpellID: 47811}
 	spellSchool := core.SpellSchoolFire
-	baseAdditiveMultiplier:= warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
+	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
 
 	effect := core.SpellEffect{
 		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) * 5 * core.CritRatingPerCritChance,
@@ -50,7 +50,7 @@ func (warlock *Warlock) registerImmolateSpell() {
 	})
 
 	target := warlock.CurrentTarget
-	baseAdditiveMultiplierDot:= warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true)
+	baseAdditiveMultiplierDot := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true)
 
 	warlock.ImmolateDot = core.NewDot(core.Dot{
 		Spell: warlock.Immolate,

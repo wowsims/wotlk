@@ -28,7 +28,7 @@ func (hunter *Hunter) registerSilencingShotSpell() {
 			},
 			CD: core.Cooldown{
 				Timer:    hunter.NewTimer(),
-				Duration: time.Second*20,
+				Duration: time.Second * 20,
 			},
 		},
 

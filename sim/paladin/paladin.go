@@ -71,6 +71,7 @@ type Paladin struct {
 
 	HolyShieldAura *core.Aura
 	// RighteousFuryAura       *core.Aura
+	DivinePleaAura          *core.Aura
 	JudgementOfWisdomAura   *core.Aura
 	JudgementOfLightAura    *core.Aura
 	SealOfVengeanceAura     *core.Aura
@@ -79,6 +80,11 @@ type Paladin struct {
 
 	// SealOfWisdomAura        *core.Aura
 	// SealOfLightAura         *core.Aura
+
+	RighteousVengeanceSpell  *core.Spell
+	RighteousVengeanceDots   []*core.Dot
+	RighteousVengeancePools  []float64
+	RighteousVengeanceDamage []float64
 
 	ArtOfWarInstantCast *core.Aura
 
@@ -150,6 +156,23 @@ func (paladin *Paladin) Initialize() {
 
 	paladin.registerSpiritualAttunement()
 	paladin.registerDivinePleaSpell()
+	paladin.registerRighteousVengeanceSpell()
+
+	if paladin.Talents.RighteousVengeance > 0 {
+		targets := paladin.Env.GetNumTargets()
+		paladin.RighteousVengeanceDots = []*core.Dot{}
+		for i := int32(0); i < targets; i++ {
+			paladin.RighteousVengeanceDots = append(paladin.RighteousVengeanceDots, paladin.makeRighteousVengeanceDot(paladin.Env.GetTargetUnit(i)))
+		}
+		paladin.RighteousVengeancePools = []float64{}
+		for i := int32(0); i < targets; i++ {
+			paladin.RighteousVengeancePools = append(paladin.RighteousVengeancePools, 0.0)
+		}
+		paladin.RighteousVengeanceDamage = []float64{}
+		for i := int32(0); i < targets; i++ {
+			paladin.RighteousVengeanceDamage = append(paladin.RighteousVengeanceDamage, 0.0)
+		}
+	}
 }
 
 func (paladin *Paladin) Reset(sim *core.Simulation) {
@@ -183,7 +206,7 @@ func NewPaladin(character core.Character, talents proto.PaladinTalents) *Paladin
 	paladin.AddStatDependency(stats.Agility, stats.Dodge, 1.0+((1.0/52.08)*core.DodgeRatingPerDodgeChance))
 
 	// Paladins get more melee haste from haste than other classes, 25.22/1%
-	paladin.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
+	paladin.PseudoStats.MeleeHasteRatingPerHastePercent = 25.22
 
 	return paladin
 }

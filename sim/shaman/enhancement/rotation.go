@@ -34,13 +34,6 @@ type AdaptiveRotation struct {
 func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Simulation) {
 	target := sim.GetTargetUnit(0)
 
-	// if enh.IsFireNovaCastable(sim) {
-	// 	if !enh.FireNova.Cast(sim, target) {
-	// 		enh.WaitForMana(sim, enh.FireNova.CurCast.Cost)
-	// 	}
-	// 	return
-	// }
-
 	if enh.Talents.Stormstrike {
 		if (enh.StormstrikeDebuffAura(target).GetStacks() > 0) && enh.Stormstrike.IsReady(sim) {
 			if !enh.Stormstrike.Cast(sim, target) {
@@ -75,6 +68,20 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 		return
 	}
 
+	if enh.Talents.MaelstromWeapon > 0 && enh.MaelstromWeaponAura.GetStacks() >= 3 {
+		lbCastTime := enh.LightningBolt.CurCast.CastTime
+		timeUntilSwing := enh.AutoAttacks.NextAttackAt() - sim.CurrentTime
+		if sim.CurrentTime > enh.AutoAttacks.NextAttackAt() {
+			timeUntilSwing = enh.AutoAttacks.MH.SwingDuration
+		}
+		if lbCastTime < timeUntilSwing {
+			if !enh.LightningBolt.Cast(sim, target) {
+				enh.WaitForMana(sim, enh.LightningBolt.CurCast.Cost)
+			}
+			return
+		}
+	}
+
 	if enh.EarthShock.IsReady(sim) {
 		if !enh.EarthShock.Cast(sim, target) {
 			enh.WaitForMana(sim, enh.EarthShock.CurCast.Cost)
@@ -82,15 +89,30 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 		return
 	}
 
-	if enh.IsLavaLashCastable(sim) {
-		if !enh.LavaLash.Cast(sim, target) {
-			enh.WaitForMana(sim, enh.LavaLash.CurCast.Cost)
-		}
+	if !enh.LightningShieldAura.IsActive() {
+		enh.LightningShield.Cast(sim, nil)
 		return
 	}
 
-	enh.LightningShield.Cast(sim, nil)
+	if enh.Totems.Fire != proto.FireTotem_NoFireTotem {
+		if enh.FireNova.IsReady(sim) && enh.CurrentMana() > 4000 {
+			if !enh.FireNova.Cast(sim, target) {
+				enh.WaitForMana(sim, enh.FireNova.CurCast.Cost)
+			}
+			return
+		}
+	}
 
+	if enh.Talents.LavaLash {
+		if enh.LavaLash.IsReady(sim) {
+			if !enh.LavaLash.Cast(sim, target) {
+				enh.WaitForMana(sim, enh.LavaLash.CurCast.Cost)
+			}
+			return
+		}
+	}
+
+	//enh.LightningShield.Cast(sim, nil) // if nothing else, refresh lightning shield
 	enh.DoNothing()
 	return
 }

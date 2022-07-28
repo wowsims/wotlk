@@ -745,15 +745,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-AOE-FullBuffs-LongMultiTarget"
  value: {
-  dps: 1928.1165752602674
-  tps: 2095.2871603073495
+  dps: 1923.8373163244344
+  tps: 2091.093486550233
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-AOE-FullBuffs-LongSingleTarget"
  value: {
-  dps: 874.4202958999178
-  tps: 868.0705870095336
+  dps: 874.1804104599177
+  tps: 867.8354992783337
  }
 }
 dps_results: {
@@ -913,15 +913,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-AOE-FullBuffs-LongMultiTarget"
  value: {
-  dps: 2079.3833432799443
-  tps: 2232.976726299967
+  dps: 2079.301778249944
+  tps: 2232.8967925705674
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-AOE-FullBuffs-LongSingleTarget"
  value: {
-  dps: 1017.468541308356
-  tps: 1007.7302741764694
+  dps: 1017.4635436950225
+  tps: 1007.7253765154029
  }
 }
 dps_results: {
@@ -934,15 +934,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-AOE-NoBuffs-LongMultiTarget"
  value: {
-  dps: 1293.2943608071243
-  tps: 1267.928665590982
+  dps: 1289.7551218071242
+  tps: 1264.4602113709818
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-AOE-NoBuffs-LongSingleTarget"
  value: {
-  dps: 482.94389472954913
-  tps: 473.78520883495804
+  dps: 482.7661588128824
+  tps: 473.6110276366246
  }
 }
 dps_results: {
