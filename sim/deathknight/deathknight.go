@@ -142,7 +142,8 @@ type Deathknight struct {
 	EbonPlagueAura       []*core.Aura
 
 	// Dynamic trackers
-	additiveDamageModifier float64
+	additiveDamageModifier   float64
+	threatOfThassarianChance float64
 }
 
 func (dk *Deathknight) ModifyAdditiveDamageModifier(sim *core.Simulation, value float64) {

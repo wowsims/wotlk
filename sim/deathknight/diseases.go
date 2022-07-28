@@ -12,7 +12,7 @@ import (
 const FrostFeverAuraLabel = "FrostFever-"
 const BloodPlagueAuraLabel = "BloodPlague-"
 
-func (dk *Deathknight) countActiveDiseases(target *core.Unit) int {
+func (dk *Deathknight) countActiveDiseases(target *core.Unit) float64 {
 	count := 0
 	if dk.TargetHasDisease(FrostFeverAuraLabel, target) {
 		count++
@@ -23,15 +23,18 @@ func (dk *Deathknight) countActiveDiseases(target *core.Unit) int {
 	if dk.TargetHasDisease(core.EbonPlaguebringerAuraLabel, target) || dk.TargetHasDisease(core.CryptFeverAuraLabel, target) {
 		count++
 	}
-	return count
+	return float64(count)
 }
 
 func (dk *Deathknight) TargetHasDisease(label string, unit *core.Unit) bool {
 	return unit.HasActiveAura(label + strconv.Itoa(int(dk.Index)))
 }
 
-func (dk *Deathknight) diseaseMultiplierBonus(target *core.Unit, multiplier float64) float64 {
-	return 1.0 + float64(dk.countActiveDiseases(target))*dk.darkrunedBattlegearDiseaseBonus(multiplier)
+func (dk *Deathknight) diseaseMultiplier(multiplier float64, hasDarkrune4P bool) float64 {
+	if hasDarkrune4P {
+		return multiplier * 1.2
+	}
+	return multiplier
 }
 
 func (dk *Deathknight) registerDiseaseDots() {

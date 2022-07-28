@@ -250,15 +250,12 @@ func (dk *Deathknight) bloodOfTheNorthProc(sim *core.Simulation, spell *core.Spe
 	return false
 }
 
-var threatOfThassarianChance float64 = 0.0
-
 func (dk *Deathknight) applyThreatOfThassarian() {
-	threatOfThassarianChance = []float64{0.0, 0.3, 0.6, 1.0}[dk.Talents.ThreatOfThassarian]
+	dk.threatOfThassarianChance = []float64{0.0, 0.3, 0.6, 1.0}[dk.Talents.ThreatOfThassarian]
 }
 
 func (dk *Deathknight) threatOfThassarianWillProc(sim *core.Simulation) bool {
-	ohWillCast := sim.RandomFloat("Threat of Thassarian") <= threatOfThassarianChance
-	return ohWillCast
+	return sim.RandomFloat("Threat of Thassarian") <= dk.threatOfThassarianChance
 }
 
 func (dk *Deathknight) threatOfThassarianAdjustMetrics(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, mhOutcome core.HitOutcome) {
@@ -289,8 +286,7 @@ func (dk *Deathknight) threatOfThassarianProcMasks(isMH bool, effect *core.Spell
 
 func (dk *Deathknight) threatOfThassarianProc(sim *core.Simulation, spellEffect *core.SpellEffect, mhSpell *core.Spell, ohSpell *core.Spell) {
 	mhSpell.Cast(sim, spellEffect.Target)
-	totProcced := dk.threatOfThassarianWillProc(sim)
-	if totProcced {
+	if dk.Talents.ThreatOfThassarian > 0 && dk.threatOfThassarianWillProc(sim) {
 		ohSpell.Cast(sim, spellEffect.Target)
 	}
 }

@@ -14,6 +14,8 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *core.Spell {
 		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 764.0, 0.4*dk.nervesOfColdSteelBonus(), true)
 	}
 
+	diseaseMulti := dk.diseaseMultiplier(0.125, dk.HasSetBonus(ItemSetDarkrunedBattlegear, 4))
+
 	effect := core.SpellEffect{
 		BonusCritRating:  (dk.subversionCritBonus() + dk.annihilationCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: dk.bloodOfTheNorthCoeff() * dk.thassariansPlateDamageBonus(),
@@ -22,7 +24,7 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *core.Spell {
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				return weaponBaseDamage(sim, hitEffect, spell) *
-					dk.diseaseMultiplierBonus(hitEffect.Target, 0.125) *
+					(1.0 + dk.countActiveDiseases(hitEffect.Target)*diseaseMulti) *
 					dk.rageOfRivendareBonus(hitEffect.Target) *
 					dk.tundraStalkerBonus(hitEffect.Target)
 			},
@@ -75,7 +77,9 @@ func (dk *Deathknight) registerBloodStrikeSpell() {
 			OutcomeApplier: dk.OutcomeFuncAlwaysHit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				dk.threatOfThassarianProc(sim, spellEffect, dk.BloodStrikeMhHit, dk.BloodStrikeOhHit)
+				if dk.Talents.ThreatOfThassarian > 0 {
+					dk.threatOfThassarianProc(sim, spellEffect, dk.BloodStrikeMhHit, dk.BloodStrikeOhHit)
+				}
 
 				dk.LastCastOutcome = BloodStrikeMHOutcome
 

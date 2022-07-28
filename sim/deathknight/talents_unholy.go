@@ -183,7 +183,7 @@ func (dk *Deathknight) bloodCakedBladeHit(isMh bool) *core.Spell {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-					diseaseMultiplier := (0.25 + float64(dk.countActiveDiseases(spellEffect.Target))*0.125)
+					diseaseMultiplier := (0.25 + dk.countActiveDiseases(spellEffect.Target)*0.125)
 					if isMh {
 						return mhBaseDamage(sim, spellEffect, spell) * diseaseMultiplier
 					} else {

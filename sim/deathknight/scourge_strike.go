@@ -7,6 +7,8 @@ import (
 var ScourgeStrikeActionID = core.ActionID{SpellID: 55271}
 
 func (dk *Deathknight) registerScourgeStrikeShadowDamageSpell() *core.Spell {
+	diseaseMulti := dk.diseaseMultiplier(0.12, dk.HasSetBonus(ItemSetDarkrunedBattlegear, 4))
+
 	return dk.RegisterSpell(core.SpellConfig{
 		ActionID:    ScourgeStrikeActionID.WithTag(2),
 		SpellSchool: core.SpellSchoolShadow,
@@ -22,7 +24,7 @@ func (dk *Deathknight) registerScourgeStrikeShadowDamageSpell() *core.Spell {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return dk.LastScourgeStrikeDamage * (dk.diseaseMultiplierBonus(hitEffect.Target, 0.12) - 1.0)
+					return dk.LastScourgeStrikeDamage * (diseaseMulti * dk.countActiveDiseases(hitEffect.Target))
 				},
 			},
 		}),
