@@ -29,7 +29,7 @@ func (warlock *Warlock) dynamicDrainSoulMultiplier(sim *core.Simulation) float64
 	afflictionSpellNumber := 1. + // you don't need to calculate that: core.TernaryFloat64(warlock.DrainSoulDot.IsActive(), 1, 0) +
 		core.TernaryFloat64(warlock.CorruptionDot.IsActive(), 1, 0) + core.TernaryFloat64(warlock.UnstableAffDot.IsActive(), 1, 0) +
 		core.TernaryFloat64(warlock.CurseOfAgonyDot.IsActive(), 1, 0) //you should doom, otherwise add "warlock.CurseOfDoomDot.IsActive() ||"
-	dynamicMultiplier := 1 + 0.03*float64(warlock.Talents.SoulSiphon) * core.MinFloat(3., afflictionSpellNumber)
+	dynamicMultiplier := 1 + 0.03*float64(warlock.Talents.SoulSiphon)*core.MinFloat(3., afflictionSpellNumber)
 
 	return dynamicMultiplier
 }
@@ -37,7 +37,7 @@ func (warlock *Warlock) dynamicDrainSoulMultiplier(sim *core.Simulation) float64
 func (warlock *Warlock) registerDrainSoulSpell() {
 	actionID := core.ActionID{SpellID: 47855}
 	spellSchool := core.SpellSchoolShadow
-	baseAdditiveMultiplier:= warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true)
+	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true)
 	// For performance optimization, the execute modifier is basekit since we never use it before execute
 	normalMultiplier := baseAdditiveMultiplier * (4.0 + 0.04*float64(warlock.Talents.DeathsEmbrace)) / (1 + 0.04*float64(warlock.Talents.DeathsEmbrace))
 	baseCost := warlock.BaseMana * 0.14

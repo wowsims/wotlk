@@ -38,6 +38,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			knownIssues: [
 				"Some snapshotting mechanics needs to be fixed (mainly implementing rollover mechanic).",
 				"Some secondary spells need to be implemented.",
+				"Rotations will be optimized.",
 			],
 
 			// All stats for which EP should be calculated.

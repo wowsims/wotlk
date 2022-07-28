@@ -509,7 +509,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:     "Ashen Band of Unmatched Vengeance",
 		ID:       50401,
-		Bonus:    stats.Stats{stats.AttackPower: 480},
+		Bonus:    stats.Stats{stats.AttackPower: 480, stats.RangedAttackPower: 480},
 		Duration: time.Second * 10,
 		Callback: OnSpellHitDealt,
 		ProcMask: core.ProcMaskMeleeOrRanged,
@@ -520,7 +520,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:     "Ashen Band of Endless Vengeance",
 		ID:       50402,
-		Bonus:    stats.Stats{stats.AttackPower: 480},
+		Bonus:    stats.Stats{stats.AttackPower: 480, stats.RangedAttackPower: 480},
 		Duration: time.Second * 10,
 		Callback: OnSpellHitDealt,
 		ProcMask: core.ProcMaskMeleeOrRanged,
@@ -553,7 +553,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:     "Ashen Band of Unmatched Might",
 		ID:       52571,
-		Bonus:    stats.Stats{stats.AttackPower: 480},
+		Bonus:    stats.Stats{stats.AttackPower: 480, stats.RangedAttackPower: 480},
 		Duration: time.Second * 10,
 		Callback: OnSpellHitDealt,
 		ProcMask: core.ProcMaskMeleeOrRanged,
@@ -564,7 +564,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:     "Ashen Band of Endless Might",
 		ID:       52572,
-		Bonus:    stats.Stats{stats.AttackPower: 480},
+		Bonus:    stats.Stats{stats.AttackPower: 480, stats.RangedAttackPower: 480},
 		Duration: time.Second * 10,
 		Callback: OnSpellHitDealt,
 		ProcMask: core.ProcMaskMeleeOrRanged,
@@ -572,6 +572,66 @@ func init() {
 		PPM:      1,
 		ICD:      time.Second * 60,
 	})
+	newProcStatBonusEffect(ProcStatBonusEffect{
+		Name:       "Sharpened Twilight Scale",
+		ID:         54569,
+		Bonus:      stats.Stats{stats.AttackPower: 1304, stats.RangedAttackPower: 1304},
+		Duration:   time.Second * 15,
+		Callback:   OnSpellHitDealt,
+		Harmful:    true, // doesn't matter what, just that 'when you deal damage'
+		ProcChance: 0.35,
+		ICD:        time.Second * 45,
+	})
+	newProcStatBonusEffect(ProcStatBonusEffect{
+		Name:       "Sharpened Twilight Scale H",
+		ID:         54590,
+		Bonus:      stats.Stats{stats.AttackPower: 1472, stats.RangedAttackPower: 1472},
+		Duration:   time.Second * 15,
+		Callback:   OnSpellHitDealt,
+		Harmful:    true, // doesn't matter what, just that 'when you deal damage'
+		ProcChance: 0.35,
+		ICD:        time.Second * 45,
+	})
+	newProcStatBonusEffect(ProcStatBonusEffect{
+		Name:       "Charred Twilight Scale",
+		ID:         54572,
+		Bonus:      stats.Stats{stats.SpellPower: 763, stats.HealingPower: 763},
+		Duration:   time.Second * 15,
+		Callback:   OnSpellHitDealt,
+		ProcMask:   core.ProcMaskSpellDamage,
+		ProcChance: 0.10,
+		ICD:        time.Second * 50,
+	})
+	newProcStatBonusEffect(ProcStatBonusEffect{
+		Name:       "Charred Twilight Scale H",
+		ID:         54588,
+		Bonus:      stats.Stats{stats.SpellPower: 861, stats.HealingPower: 861},
+		Duration:   time.Second * 15,
+		Callback:   OnSpellHitDealt,
+		ProcMask:   core.ProcMaskSpellDamage,
+		ProcChance: 0.10,
+		ICD:        time.Second * 50,
+	})
+	// TODO: Provides a hot on each heal cast. Add later when we do healing sim
+	// newProcStatBonusEffect(ProcStatBonusEffect{
+	// 	Name:       "Glowing Twilight Scale",
+	// 	ID:         54573,
+	// 	Duration:   time.Second * 15,
+	// 	Callback:   OnSpellHitDealt,
+	// 	ProcMask:   core.ProcMaskHealingDone,
+	// 	ProcChance: 0.10,
+	// 	ICD:        time.Second * 50,
+	// })
+	// TODO: adds dodge when hit taken which drops health under 35%
+	// newProcStatBonusEffect(ProcStatBonusEffect{
+	// 	Name:       "Petrified Twilight Scale",
+	// 	ID:         54571,
+	// 	Bonus:      stats.Stats{stats.Dodge: 733},
+	// 	Duration:   time.Second * 10,
+	// 	Callback:   OnSpellHitTaken,
+	// 	// TODO: when health < 35%
+	// 	ICD:        time.Second * 45,
+	// })
 
 	core.AddEffectsToTest = true
 }

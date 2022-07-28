@@ -114,7 +114,9 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 				}
 
 				if shaman.Talents.ImprovedStormstrike > 0 {
-					shaman.AddMana(sim, baseMana*0.2, manaMetrics, true)
+					if sim.RandomFloat("Improved Stormstrike") < 0.5*float64(shaman.Talents.ImprovedStormstrike) {
+						shaman.AddMana(sim, baseMana*0.2, manaMetrics, true)
+					}
 				}
 				ssDebuffAura.Activate(sim)
 				ssDebuffAura.SetStacks(sim, 4)

@@ -329,7 +329,7 @@ export function makeSpecOptionsBooleanIconInput<SpecType extends Spec>(config: P
 	}, config.id, config.fieldName, config.value);
 }
 
-function makeNumberIconInput<SpecType extends Spec, Message, ModObject>(config: WrappedTypedInputConfig<Message, ModObject, number>, id: ActionId, fieldName: keyof Message): TypedIconPickerConfig<Player<SpecType>, number> {
+function makeNumberIconInput<SpecType extends Spec, Message, ModObject>(config: WrappedTypedInputConfig<Message, ModObject, number>, id: ActionId, fieldName: keyof Message, multiplier?: number): TypedIconPickerConfig<Player<SpecType>, number> {
 	return makeWrappedIconInput<SpecType, ModObject, number>({
 		getModObject: config.getModObject,
 		id: id,
@@ -338,6 +338,10 @@ function makeNumberIconInput<SpecType extends Spec, Message, ModObject>(config: 
 		getValue: (modObj: ModObject) => config.getValue(modObj)[fieldName] as unknown as number,
 		setValue: (eventID: EventID, modObj: ModObject, newValue: number) => {
 			const newMessage = config.getValue(modObj);
+			if (multiplier) {
+				const sign = newValue - (newMessage[fieldName] as unknown as number)
+				newValue += (multiplier-1)*sign
+			}
 			(newMessage[fieldName] as unknown as number) = newValue;
 			config.setValue(eventID, modObj, newMessage);
 		},
@@ -356,8 +360,8 @@ export function makeQuadstateIconInput<SpecType extends Spec, Message, ModObject
 	input.improvedId2 = impId2;
 	return input;
 }
-export function makeMultistateIconInput<SpecType extends Spec, Message, ModObject>(config: WrappedTypedInputConfig<Message, ModObject, number>, id: ActionId, numStates: number, fieldName: keyof Message): TypedIconPickerConfig<Player<SpecType>, number> {
-	const input = makeNumberIconInput(config, id, fieldName);
+export function makeMultistateIconInput<SpecType extends Spec, Message, ModObject>(config: WrappedTypedInputConfig<Message, ModObject, number>, id: ActionId, numStates: number, fieldName: keyof Message, multiplier?: number): TypedIconPickerConfig<Player<SpecType>, number> {
+	const input = makeNumberIconInput(config, id, fieldName, multiplier);
 	input.states = numStates;
 	return input;
 }

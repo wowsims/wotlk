@@ -12,35 +12,31 @@ func (shaman *Shaman) registerLightningShieldSpell() *core.Spell {
 	actionID := core.ActionID{SpellID: 49281}
 	var proc = 0.02 * float64(shaman.Talents.StaticShock)
 
-	lsGlyph := 0.0
-	if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfLightningShield) {
-		lsGlyph = 1.0
-	}
-	t7bonus := 0.0
-	if shaman.HasSetBonus(ItemSetEarthshatterBattlegear, 2) {
-		t7bonus = 1.0
+	dmgMultBonus := 1.0
+
+	switch shaman.Equip[items.ItemSlotHands].ID { //s1 and s2 enh pvp gloves, probably unnessecary but its fun
+	case 26000:
+		fallthrough
+	case 32005:
+		dmgMultBonus = 1.08
 	}
 
 	procSpell := shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolNature,
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskEmpty,
-			DamageMultiplier: 1 * (1 + 0.05*float64(shaman.Talents.ImprovedShields)) * (1 + 0.2*lsGlyph) * (1 + 0.1*t7bonus),
+			ProcMask: core.ProcMaskEmpty,
+			DamageMultiplier: 1 * (1 + 0.05*float64(shaman.Talents.ImprovedShields) +
+				core.TernaryFloat64(shaman.HasSetBonus(ItemSetEarthshatterBattlegear, 2), 0.1, 0)) *
+				core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfLightningShield), 1.2, 1) * dmgMultBonus, //possibly additive?
+
 			ThreatMultiplier: 1, //fix when spirit weapons is fixed
 			BaseDamage:       core.BaseDamageConfigMagic(380, 380, 0.267),
 			OutcomeApplier:   shaman.OutcomeFuncMagicHitAndCrit(shaman.DefaultSpellCritMultiplier()),
 		}),
 	})
 
-	switch shaman.Equip[items.ItemSlotHands].ID { //s1 and s2 enh pvp gloves, probably unnessecary but its fun
-	case 26000:
-		fallthrough
-	case 32005:
-		procSpell.DamageMultiplier *= 1.08
-	}
-
-	LightningShieldAura := shaman.RegisterAura(core.Aura{
+	shaman.LightningShieldAura = shaman.RegisterAura(core.Aura{
 		Label:     "Lightning Shield",
 		ActionID:  actionID,
 		Duration:  time.Minute * 10,
@@ -65,8 +61,8 @@ func (shaman *Shaman) registerLightningShieldSpell() *core.Spell {
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			LightningShieldAura.Activate(sim)
-			LightningShieldAura.SetStacks(sim, 3+(2*shaman.Talents.StaticShock))
+			shaman.LightningShieldAura.Activate(sim)
+			shaman.LightningShieldAura.SetStacks(sim, 3+(2*shaman.Talents.StaticShock))
 		},
 	})
 

@@ -42,8 +42,7 @@ func (hunter *Hunter) registerAimedShotSpell() {
 				core.TernaryFloat64(hunter.Talents.TrueshotAura && hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfTrueshotAura), 10*core.CritRatingPerCritChance, 0),
 			DamageMultiplier: 1 *
 				(1 + 0.04*float64(hunter.Talents.Barrage)) *
-				(1 + 0.01*float64(hunter.Talents.MarkedForDeath)) *
-				hunter.sniperTrainingMultiplier(),
+				(1 + 0.01*float64(hunter.Talents.MarkedForDeath)),
 			ThreatMultiplier: 1,
 
 			BaseDamage: hunter.talonOfAlarDamageMod(core.BaseDamageConfig{

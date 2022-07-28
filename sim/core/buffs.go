@@ -309,36 +309,7 @@ func applyInspiration(character *Character, uptime float64) {
 		},
 	})
 
-	auraDuration := time.Second * 15
-	tickLength := time.Millisecond * 2500
-	ticksPerAura := float64(auraDuration) / float64(tickLength)
-	chancePerTick := TernaryFloat64(uptime == 1, 1, 1.0-math.Pow(1-uptime, 1/ticksPerAura))
-
-	character.RegisterResetEffect(func(sim *Simulation) {
-		StartPeriodicAction(sim, PeriodicActionOptions{
-			Period: tickLength,
-			OnAction: func(sim *Simulation) {
-				if sim.RandomFloat("Inspiration") < chancePerTick {
-					inspirationAura.Activate(sim)
-				}
-			},
-		})
-
-		// Also try once at the start.
-		StartPeriodicAction(sim, PeriodicActionOptions{
-			Period:   1,
-			NumTicks: 1,
-			OnAction: func(sim *Simulation) {
-				if sim.RandomFloat("Inspiration") < uptime {
-					// Use random duration to compensate for increased chance collapsed into single tick.
-					randomDur := tickLength + time.Duration(float64(auraDuration-tickLength)*sim.RandomFloat("InspirationDur"))
-					inspirationAura.Duration = randomDur
-					inspirationAura.Activate(sim)
-					inspirationAura.Duration = time.Second * 15
-				}
-			},
-		})
-	})
+	ApplyFixedUptimeAura(inspirationAura, uptime, time.Millisecond*2500)
 }
 
 func RetributionAura(character *Character, sanctifiedRetribution bool) *Aura {
@@ -753,7 +724,7 @@ func PowerInfusionAura(character *Character, actionTag int32) *Aura {
 var TricksOfTheTradeAuraTag = "TricksOfTheTrade"
 
 const TricksOfTheTradeDuration = time.Second * 10 // Assuming rogues have Glyph of TotT by default (which might not be the case).
-const TricksOfTheTradeCD = time.Second * 3600 // CD is 30s from the time buff ends (so 40s with glyph) but that's in order to be able to set the number of TotT you'll have during the fight
+const TricksOfTheTradeCD = time.Second * 3600     // CD is 30s from the time buff ends (so 40s with glyph) but that's in order to be able to set the number of TotT you'll have during the fight
 
 func registerTricksOfTheTradeCD(agent Agent, numTricksOfTheTrades int32) {
 	if numTricksOfTheTrades == 0 {

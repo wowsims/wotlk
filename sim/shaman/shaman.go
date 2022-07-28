@@ -91,13 +91,17 @@ type Shaman struct {
 	LavaLash    *core.Spell
 	Stormstrike *core.Spell
 
-	LightningShield *core.Spell
+	LightningShield     *core.Spell
+	LightningShieldAura *core.Aura
 
 	Thunderstorm *core.Spell
 
 	EarthShock *core.Spell
 	FlameShock *core.Spell
 	FrostShock *core.Spell
+
+	FeralSpirit  *core.Spell
+	SpiritWolves *SpiritWolves
 
 	GraceOfAirTotem      *core.Spell
 	MagmaTotem           *core.Spell
@@ -178,7 +182,7 @@ func (shaman *Shaman) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 
 	if shaman.Talents.UnleashedRage > 0 {
 		raidBuffs.UnleashedRage = true
-		shaman.AddStat(stats.Expertise, 3*float64(shaman.Talents.UnleashedRage))
+		shaman.AddStat(stats.Expertise, 3*core.ExpertisePerQuarterPercentReduction*float64(shaman.Talents.UnleashedRage))
 	}
 
 	if shaman.Talents.ElementalOath > 0 {
@@ -214,6 +218,8 @@ func (shaman *Shaman) Initialize() {
 	if shaman.Talents.LavaLash {
 		shaman.LavaLash = shaman.newLavaLashSpell()
 	}
+
+	shaman.registerFeralSpirit()
 
 	shaman.registerShocks()
 	shaman.registerGraceOfAirTotemSpell()

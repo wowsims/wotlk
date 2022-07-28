@@ -19,9 +19,9 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 	 * SpellID 20424 (Seal of Command):
 	 *   - Procs off of any melee special ability, or white hit.
 	 *   - If the ability is SINGLE TARGET, it hits up to 2 extra targets.
-	 *   - Cannot miss or be dodged/parried.
 	 *   - Deals hybrid AP/SP damage * current weapon speed.
 	 *   - Crits off of a melee modifier.
+	 *   - CAN MISS, BE DODGED/PARRIED/BLOCKED.
 	 */
 
 	baseModifiers := Multiplicative{
@@ -76,7 +76,7 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 			(0.36),
 			true,
 		),
-		OutcomeApplier: paladin.OutcomeFuncMeleeSpecialCritOnly(paladin.MeleeCritMultiplier()), // can't miss if melee swing landed, but can crit
+		OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(paladin.MeleeCritMultiplier()),
 	}
 
 	numHits := core.MinInt32(3, paladin.Env.GetNumTargets()) // primary target + 2 others
