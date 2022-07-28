@@ -93,7 +93,7 @@ export const shamanTalentsConfig: TalentsConfig<ShamanTalents> = newTalentsConfi
 				//fieldName: 'eyeOfTheStorm',
 				location: {
 					rowIdx: 3,
-					colIdx: 1,
+					colIdx: 3,
 				},
 				spellIds: [29062, 29064],
 				maxPoints: 3,

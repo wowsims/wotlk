@@ -71,100 +71,102 @@ var FullDebuffs = &proto.Debuffs{
 	Misery:            true,
 }
 
-var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
+var P1Gear = items.EquipmentSpecFromJsonString(`{
+"items": [
 	{
-		"id": 29035,
-		"enchant": 29191,
-		"gems": [
-			34220,
-			24059
-		]
+	  "id": 40516,
+	  "enchant": 44877,
+	  "gems": [
+		41285,
+		40025
+	  ]
 	},
 	{
-		"id": 28762
+	  "id": 44661,
+	  "gems": [
+		40027
+	  ]
 	},
 	{
-		"id": 29037,
-		"enchant": 28886,
-		"gems": [
-			24059,
-			24059
-		]
+	  "id": 40518,
+	  "enchant": 44874,
+	  "gems": [
+		39998
+	  ]
 	},
 	{
-		"id": 28797,
-		"enchant": 33150
+	  "id": 44005,
+	  "enchant": 44472,
+	  "gems": [
+		40025
+	  ]
 	},
 	{
-		"id": 29519,
-		"enchant": 24003,
-		"gems": [
-			24030,
-			24030,
-			24030
-		]
+	  "id": 40514,
+	  "enchant": 44623,
+	  "gems": [
+		39998,
+		40025
+	  ]
 	},
 	{
-		"id": 29521,
-		"enchant": 22534,
-		"gems": [
-			24059
-		]
+	  "id": 40324,
+	  "enchant": 44498,
+	  "gems": [
+		40025,
+		0
+	  ]
 	},
 	{
-		"id": 28780,
-		"enchant": 28272,
-		"gems": [
-			24059,
-			24056
-		]
+	  "id": 40302,
+	  "enchant": 54999,
+	  "gems": [
+		0
+	  ]
 	},
 	{
-		"id": 29520,
-		"gems": [
-			24056,
-			24059
-		]
+	  "id": 40327,
+	  "gems": [
+		39998
+	  ]
 	},
 	{
-		"id": 24262,
-		"enchant": 24274,
-		"gems": [
-			24030,
-			24030,
-			24030
-		]
+	  "id": 40517,
+	  "enchant": 41602,
+	  "gems": [
+		40049,
+		40027
+	  ]
 	},
 	{
-		"id": 28517,
-		"enchant": 35297,
-		"gems": [
-			24030,
-			24030
-		]
+	  "id": 40237,
+	  "enchant": 60623,
+	  "gems": [
+		40025
+	  ]
 	},
 	{
-		"id": 30667,
-		"enchant": 22536
+	  "id": 40399
 	},
 	{
-		"id": 28753,
-		"enchant": 22536
+	  "id": 48957
 	},
 	{
-		"id": 29370
+	  "id": 40255
 	},
 	{
-		"id": 28785
+	  "id": 39229
 	},
 	{
-		"id": 28770,
-		"enchant": 22555
+	  "id": 40395,
+	  "enchant": 44487
 	},
 	{
-		"id": 29273
+	  "id": 40401,
+	  "enchant": 60653
 	},
 	{
-		"id": 28248
+	  "id": 40708
 	}
-]}`)
+  ]
+}`)

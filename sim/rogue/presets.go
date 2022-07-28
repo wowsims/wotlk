@@ -172,7 +172,6 @@ var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	},
 	{
 		"id": 27531,
-		"enchant": 19445,
 		"gems": [
 			24061,
 			24061
@@ -261,7 +260,6 @@ var MutilateP1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	},
 	{
 		"id": 27531,
-		"enchant": 19445,
 		"gems": [
 			24061,
 			24061
