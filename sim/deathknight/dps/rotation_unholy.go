@@ -153,36 +153,7 @@ func (dk *DpsDeathknight) getSecondDiseaseAction() deathknight.RotationAction {
 	return dk.RotationActionCallback_IT
 }
 
-func (dk *DpsDeathknight) setupUnholySsUnholyPresenceOpener() {
-	dk.Opener.NewAction(dk.getFirstDiseaseAction())
-	dk.Opener.NewAction(dk.getSecondDiseaseAction())
-	dk.Opener.NewAction(dk.RotationActionCallback_BS)
-	dk.Opener.NewAction(dk.RotationActionCallback_SS)
-	dk.Opener.NewAction(dk.RotationActionCallback_Garg)
-	dk.Opener.NewAction(dk.RotationActionCallback_ERW)
-	dk.Opener.NewAction(dk.RotationActionCallback_BP)
-	dk.Opener.NewAction(dk.RotationActionCallback_SS)
-	dk.Opener.NewAction(dk.RotationActionCallback_SS)
-	dk.Opener.NewAction(dk.RotationActionCallback_BS)
-
-	dk.Main.NewAction(dk.RotationActionCallback_UnholyPrioRotation)
-}
-
-func (dk *DpsDeathknight) setupUnholySsArmyUnholyPresenceOpener() {
-	dk.Opener.NewAction(dk.getFirstDiseaseAction())
-	dk.Opener.NewAction(dk.getSecondDiseaseAction())
-	dk.Opener.NewAction(dk.RotationActionCallback_BS)
-	dk.Opener.NewAction(dk.RotationActionCallback_SS)
-	dk.Opener.NewAction(dk.RotationActionCallback_Garg)
-	dk.Opener.NewAction(dk.RotationActionCallback_ERW)
-	dk.Opener.NewAction(dk.RotationActionCallback_AOTD)
-	dk.Opener.NewAction(dk.RotationActionCallback_BP)
-	dk.Opener.NewAction(dk.RotationActionCallback_SS)
-
-	dk.Main.NewAction(dk.RotationActionCallback_UnholyPrioRotation)
-}
-
-func (dk *DpsDeathknight) setupUnholySsBloodPresenceOpener() {
+func (dk *DpsDeathknight) setupUnholySsOpener() {
 	dk.Opener.NewAction(dk.getFirstDiseaseAction())
 	dk.Opener.NewAction(dk.getSecondDiseaseAction())
 	dk.Opener.NewAction(dk.RotationActionCallback_BS)
@@ -196,10 +167,10 @@ func (dk *DpsDeathknight) setupUnholySsBloodPresenceOpener() {
 	dk.Opener.NewAction(dk.RotationActionCallback_SS)
 	dk.Opener.NewAction(dk.RotationActionCallback_BS)
 
-	dk.Main.NewAction(dk.RotationActionCallback_UnholyPrioRotation)
+	dk.Main.NewAction(dk.RotationActionCallback_UnholySsRotation)
 }
 
-func (dk *DpsDeathknight) setupUnholySsArmyBloodPresenceOpener() {
+func (dk *DpsDeathknight) setupUnholySsArmyOpener() {
 	dk.Opener.NewAction(dk.getFirstDiseaseAction())
 	dk.Opener.NewAction(dk.getSecondDiseaseAction())
 	dk.Opener.NewAction(dk.RotationActionCallback_BS)
@@ -212,25 +183,10 @@ func (dk *DpsDeathknight) setupUnholySsArmyBloodPresenceOpener() {
 	dk.Opener.NewAction(dk.RotationActionCallback_BP)
 	dk.Opener.NewAction(dk.RotationActionCallback_SS)
 
-	dk.Main.NewAction(dk.RotationActionCallback_UnholyPrioRotation)
+	dk.Main.NewAction(dk.RotationActionCallback_UnholySsRotation)
 }
 
-func (dk *DpsDeathknight) setupUnholyDndUnholyPresenceOpener() {
-	dk.Opener.NewAction(dk.getFirstDiseaseAction())
-	dk.Opener.NewAction(dk.getSecondDiseaseAction())
-	dk.Opener.NewAction(dk.RotationActionCallback_BS)
-	dk.Opener.NewAction(dk.RotationActionCallback_DND)
-	dk.Opener.NewAction(dk.RotationActionCallback_Garg)
-	dk.Opener.NewAction(dk.RotationActionCallback_ERW)
-	dk.Opener.NewAction(dk.RotationActionCallback_BP)
-	dk.Opener.NewAction(dk.RotationActionCallback_SS)
-	dk.Opener.NewAction(dk.RotationActionCallback_SS)
-	dk.Opener.NewAction(dk.RotationActionCallback_BS)
-
-	dk.Main.NewAction(dk.RotationActionCallback_UnholyPrioRotation)
-}
-
-func (dk *DpsDeathknight) setupUnholyDndBloodPresenceOpener() {
+func (dk *DpsDeathknight) setupUnholyDndOpener() {
 	dk.Opener.NewAction(dk.getFirstDiseaseAction())
 	dk.Opener.NewAction(dk.getSecondDiseaseAction())
 	dk.Opener.NewAction(dk.RotationActionCallback_BS)
@@ -248,6 +204,8 @@ func (dk *DpsDeathknight) setupUnholyDndBloodPresenceOpener() {
 }
 
 var syncDisease = false
+var recastedFF = false
+var recastedBP = false
 
 func (dk *DpsDeathknight) UnholyDiseaseCheckWrapper(sim *core.Simulation, target *core.Unit, spell *core.Spell, costRunes bool) bool {
 	success := false
@@ -265,6 +223,7 @@ func (dk *DpsDeathknight) UnholyDiseaseCheckWrapper(sim *core.Simulation, target
 		if !dk.TargetHasDisease(deathknight.FrostFeverAuraLabel, target) || ffRemaining < castGcd {
 			// Refresh FF
 			success = dk.CastIcyTouch(sim, target)
+			recastedFF = success
 		} else if syncDisease || !dk.TargetHasDisease(deathknight.BloodPlagueAuraLabel, target) || bpRemaining < castGcd {
 			// Refresh BP
 			if syncDisease {
@@ -273,12 +232,14 @@ func (dk *DpsDeathknight) UnholyDiseaseCheckWrapper(sim *core.Simulation, target
 			} else {
 				success = dk.CastPlagueStrike(sim, target)
 			}
-			syncDisease = !(success && dk.LastCastOutcome.Matches(core.OutcomeHit|core.OutcomeCrit))
+			recastedBP = success && dk.LastCastOutcome.Matches(core.OutcomeHit|core.OutcomeCrit)
+			syncDisease = !recastedBP
 		}
 	} else {
 		if !dk.TargetHasDisease(deathknight.BloodPlagueAuraLabel, target) || bpRemaining < castGcd {
 			// Refresh BP
 			success = dk.CastPlagueStrike(sim, target)
+			recastedBP = success
 		} else if syncDisease || !dk.TargetHasDisease(deathknight.FrostFeverAuraLabel, target) || ffRemaining < castGcd {
 			// Refresh FF
 			if syncDisease {
@@ -287,7 +248,8 @@ func (dk *DpsDeathknight) UnholyDiseaseCheckWrapper(sim *core.Simulation, target
 			} else {
 				success = dk.CastIcyTouch(sim, target)
 			}
-			syncDisease = !(success && dk.LastCastOutcome.Matches(core.OutcomeHit|core.OutcomeCrit))
+			recastedFF = success && dk.LastCastOutcome.Matches(core.OutcomeHit|core.OutcomeCrit)
+			syncDisease = !recastedFF
 		}
 	}
 
@@ -311,24 +273,28 @@ func (dk *DpsDeathknight) UnholyDiseaseCheckWrapper(sim *core.Simulation, target
 			// Check FF
 			if dk.checkForDiseaseRecast(ffExpiresAt, afterCastTime, spellCost.Frost, currentFrostRunes, nextFrostRuneAt) {
 				success = dk.castClipDisease(true, gracePeriodFrost, sim, dk.CanIcyTouch(sim), dk.IcyTouch, dk.FrostFeverDisease[target.Index], target)
+				recastedFF = success
 				return success
 			}
 
 			// Check BP
 			if dk.checkForDiseaseRecast(bpExpiresAt, afterCastTime, spellCost.Unholy, currentUnholyRunes, nextUnholyRuneAt) {
 				success = dk.castClipDisease(false, gracePeriodUnholy, sim, dk.CanPlagueStrike(sim), dk.PlagueStrike, dk.BloodPlagueDisease[target.Index], target)
+				recastedBP = success
 				return success
 			}
 		} else {
 			// Check BP
 			if dk.checkForDiseaseRecast(bpExpiresAt, afterCastTime, spellCost.Unholy, currentUnholyRunes, nextUnholyRuneAt) {
 				success = dk.castClipDisease(true, gracePeriodUnholy, sim, dk.CanPlagueStrike(sim), dk.PlagueStrike, dk.BloodPlagueDisease[target.Index], target)
+				recastedBP = success
 				return success
 			}
 
 			// Check FF
 			if dk.checkForDiseaseRecast(ffExpiresAt, afterCastTime, spellCost.Frost, currentFrostRunes, nextFrostRuneAt) {
 				success = dk.castClipDisease(false, gracePeriodFrost, sim, dk.CanIcyTouch(sim), dk.IcyTouch, dk.FrostFeverDisease[target.Index], target)
+				recastedFF = success
 				return success
 			}
 		}
@@ -358,7 +324,7 @@ func (dk *DpsDeathknight) castClipDisease(mainDisease bool, gracePeriod time.Dur
 		// Dont drop disease due to %dmg modifiers
 		if dot.TickCount < dot.NumberOfTicks-1 {
 			nextTickAt := dot.ExpiresAt() - dot.TickLength*time.Duration((dot.NumberOfTicks-1)-dot.TickCount)
-			if nextTickAt < sim.CurrentTime+gracePeriod || nextTickAt < sim.CurrentTime+400*time.Millisecond {
+			if nextTickAt > sim.CurrentTime && (nextTickAt < sim.CurrentTime+gracePeriod || nextTickAt < sim.CurrentTime+400*time.Millisecond) {
 				// Delay disease for next tick
 				dk.WaitUntil(sim, nextTickAt+50*time.Millisecond)
 				return true
@@ -375,7 +341,20 @@ func (dk *DpsDeathknight) castClipDisease(mainDisease bool, gracePeriod time.Dur
 	return false
 }
 
-func (dk *DpsDeathknight) doUnholySsRotation(sim *core.Simulation, target *core.Unit) bool {
+func (dk *DpsDeathknight) shouldSpreadDisease(sim *core.Simulation) bool {
+	return recastedFF && recastedBP && dk.Env.GetNumTargets() > 1
+}
+
+func (dk *DpsDeathknight) spreadDiseases(sim *core.Simulation, target *core.Unit) bool {
+	casted := dk.UnholyDiseaseCheckWrapper(sim, target, dk.Pestilence, true)
+
+	// Reset flags on succesfull cast
+	recastedFF = !casted
+	recastedBP = !casted
+	return casted
+}
+
+func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
 	casted := false
 
 	if dk.ShouldHornOfWinter(sim) {
@@ -383,7 +362,11 @@ func (dk *DpsDeathknight) doUnholySsRotation(sim *core.Simulation, target *core.
 	} else {
 		casted = dk.UnholyDiseaseCheckWrapper(sim, target, dk.ScourgeStrike, true)
 		if !casted {
-			casted = dk.UnholyDiseaseCheckWrapper(sim, target, dk.BloodStrike, true)
+			if dk.shouldSpreadDisease(sim) {
+				casted = dk.spreadDiseases(sim, target)
+			} else {
+				casted = dk.UnholyDiseaseCheckWrapper(sim, target, dk.BloodStrike, true)
+			}
 			if !casted {
 				casted = dk.UnholyDiseaseCheckWrapper(sim, target, dk.DeathCoil, false)
 				if !casted {
@@ -398,21 +381,4 @@ func (dk *DpsDeathknight) doUnholySsRotation(sim *core.Simulation, target *core.
 
 func (dk *DpsDeathknight) shouldWaitForDnD(sim *core.Simulation, blood bool, frost bool, unholy bool) bool {
 	return dk.Rotation.UseDeathAndDecay && !(dk.Talents.Morbidity == 0 || !(dk.DeathAndDecay.CD.IsReady(sim) || dk.DeathAndDecay.CD.TimeToReady(sim) < 4*time.Second) || ((!blood || dk.CurrentBloodRunes() > 1) && (!frost || dk.CurrentFrostRunes() > 1) && (!unholy || dk.CurrentUnholyRunes() > 1)))
-}
-
-var recastedFF = false
-var recastedBP = false
-
-func (dk *DpsDeathknight) shouldSpreadDisease(sim *core.Simulation) bool {
-	return recastedFF && recastedBP && dk.Env.GetNumTargets() > 1
-}
-
-func (dk *DpsDeathknight) spreadDiseases(sim *core.Simulation, target *core.Unit) {
-	dk.Pestilence.Cast(sim, target)
-	recastedFF = false
-	recastedBP = false
-}
-
-func (dk *DpsDeathknight) doUnholyRotation(sim *core.Simulation, target *core.Unit) {
-
 }

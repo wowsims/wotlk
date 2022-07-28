@@ -5,8 +5,8 @@ import (
 )
 
 var PlagueStrikeActionID = core.ActionID{SpellID: 49921}
-var PlagueStrikeMHOutcome = core.OutcomeHit
-var PlagueStrikeOHOutcome = core.OutcomeHit
+var PlagueStrikeMHOutcome = core.OutcomeMiss
+var PlagueStrikeOHOutcome = core.OutcomeMiss
 
 func (dk *Deathknight) newPlagueStrikeSpell(isMH bool) *core.Spell {
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 378.0, 0.5, true)
@@ -55,6 +55,8 @@ func (dk *Deathknight) registerPlagueStrikeSpell() {
 	dk.PlagueStrikeMhHit = dk.newPlagueStrikeSpell(true)
 	dk.PlagueStrikeOhHit = dk.newPlagueStrikeSpell(false)
 
+	amountOfRunicPower := 10.0 + 2.5*float64(dk.Talents.Dirge)
+
 	dk.PlagueStrike = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    PlagueStrikeActionID.WithTag(3),
 		SpellSchool: core.SpellSchoolPhysical,
@@ -91,7 +93,6 @@ func (dk *Deathknight) registerPlagueStrikeSpell() {
 					dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_U)
 					dk.Spend(sim, spell, dkSpellCost)
 
-					amountOfRunicPower := 10.0 + 2.5*float64(dk.Talents.Dirge)
 					dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 				}
 			},

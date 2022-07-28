@@ -39,10 +39,9 @@ func NewDpsDeathknight(character core.Character, player proto.Player) *DpsDeathk
 			PrecastHornOfWinter: dk.Options.PrecastHornOfWinter,
 			PetUptime:           dk.Options.PetUptime,
 
-			RefreshHornOfWinter:  dk.Rotation.RefreshHornOfWinter,
-			UnholyPresenceOpener: dk.Rotation.UnholyPresenceOpener,
-			ArmyOfTheDeadType:    dk.Rotation.ArmyOfTheDead,
-			FirstDisease:         dk.Rotation.FirstDisease,
+			RefreshHornOfWinter: dk.Rotation.RefreshHornOfWinter,
+			ArmyOfTheDeadType:   dk.Rotation.ArmyOfTheDead,
+			FirstDisease:        dk.Rotation.FirstDisease,
 		}),
 		Rotation: *dk.Rotation,
 	}
@@ -61,25 +60,13 @@ func (dk *DpsDeathknight) SetupRotations() {
 		dk.setupFrostSubBloodOpener()
 	} else if dk.Talents.SummonGargoyle {
 		if dk.Rotation.UseDeathAndDecay {
-			if dk.Rotation.UnholyPresenceOpener {
-				dk.setupUnholyDndUnholyPresenceOpener()
-			} else {
-				dk.setupUnholyDndBloodPresenceOpener()
-			}
+			dk.setupUnholyDndOpener()
 		} else {
 
 			if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd {
-				if dk.Rotation.UnholyPresenceOpener {
-					dk.setupUnholySsArmyUnholyPresenceOpener()
-				} else {
-					dk.setupUnholySsArmyBloodPresenceOpener()
-				}
+				dk.setupUnholySsArmyOpener()
 			} else {
-				if dk.Rotation.UnholyPresenceOpener {
-					dk.setupUnholySsUnholyPresenceOpener()
-				} else {
-					dk.setupUnholySsBloodPresenceOpener()
-				}
+				dk.setupUnholySsOpener()
 			}
 		}
 	} else {

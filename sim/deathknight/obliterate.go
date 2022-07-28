@@ -6,8 +6,8 @@ import (
 )
 
 var ObliterateActionID = core.ActionID{SpellID: 51425}
-var ObliterateMHOutcome = core.OutcomeHit
-var ObliterateOHOutcome = core.OutcomeHit
+var ObliterateMHOutcome = core.OutcomeMiss
+var ObliterateOHOutcome = core.OutcomeMiss
 
 func (dk *Deathknight) newObliterateHitSpell(isMH bool) *core.Spell {
 	diseaseConsumptionChance := 1.0
@@ -75,6 +75,8 @@ func (dk *Deathknight) registerObliterateSpell() {
 	dk.ObliterateMhHit = dk.newObliterateHitSpell(true)
 	dk.ObliterateOhHit = dk.newObliterateHitSpell(false)
 
+	amountOfRunicPower := 15.0 + 2.5*float64(dk.Talents.ChillOfTheGrave) + dk.scourgeborneBattlegearRunicPowerBonus()
+
 	dk.Obliterate = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    ObliterateActionID.WithTag(3),
 		Flags:       core.SpellFlagNoMetrics | core.SpellFlagNoLogs,
@@ -103,7 +105,6 @@ func (dk *Deathknight) registerObliterateSpell() {
 					dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_FU)
 					dk.Spend(sim, spell, dkSpellCost)
 
-					amountOfRunicPower := 15.0 + 2.5*float64(dk.Talents.ChillOfTheGrave) + dk.scourgeborneBattlegearRunicPowerBonus()
 					dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 				}
 			},

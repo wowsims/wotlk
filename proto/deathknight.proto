@@ -155,7 +155,7 @@ message Deathknight {
 		FirstDisease first_disease = 6;
 		ArmyOfTheDead army_of_the_dead = 1;
 		bool use_death_and_decay = 2;
-		bool unholy_presence_opener = 3;
+		
 		double disease_refresh_duration = 4;
 		bool refresh_horn_of_winter = 5;
 	}
