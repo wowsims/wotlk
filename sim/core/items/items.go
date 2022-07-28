@@ -13,12 +13,15 @@ var ByID = map[int32]Item{}
 var GemsByName = map[string]Gem{}
 var GemsByID = map[int32]Gem{}
 var EnchantsByName = map[string]Enchant{}
-var EnchantsByID = map[int32]Enchant{}
+var EnchantsByItemByID = map[proto.ItemType]map[int32]Enchant{}
 
 func init() {
 	for _, v := range Enchants {
 		EnchantsByName[v.Name] = v
-		EnchantsByID[v.ID] = v
+		if EnchantsByItemByID[v.ItemType] == nil {
+			EnchantsByItemByID[v.ItemType] = map[int32]Enchant{}
+		}
+		EnchantsByItemByID[v.ItemType][v.ID] = v
 	}
 	for _, v := range Gems {
 		GemsByName[v.Name] = v
@@ -285,7 +288,7 @@ func NewItem(itemSpec ItemSpec) Item {
 	}
 
 	if itemSpec.Enchant != 0 {
-		if enchant, ok := EnchantsByID[itemSpec.Enchant]; ok {
+		if enchant, ok := EnchantsByItemByID[item.Type][itemSpec.Enchant]; ok {
 			item.Enchant = enchant
 		} else {
 			panic(fmt.Sprintf("No enchant with id: %d", itemSpec.Enchant))
