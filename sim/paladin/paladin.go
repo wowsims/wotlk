@@ -71,6 +71,7 @@ type Paladin struct {
 
 	HolyShieldAura *core.Aura
 	// RighteousFuryAura       *core.Aura
+	DivinePleaAura          *core.Aura
 	JudgementOfWisdomAura   *core.Aura
 	JudgementOfLightAura    *core.Aura
 	SealOfVengeanceAura     *core.Aura

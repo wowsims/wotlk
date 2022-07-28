@@ -49,5 +49,6 @@ func (paladin *Paladin) registerDivinePleaSpell() {
 		plea.Activate(sim)
 	}
 
+	paladin.DivinePleaAura = plea.Aura
 	paladin.DivinePlea = plea.Spell
 }
