@@ -9,7 +9,6 @@
 }
 
 .talent-tree-picker-root {
-  background: #444;
   padding: 4px;
   border-radius: 6px;
   margin: 1px;
@@ -20,6 +19,8 @@
   padding: 6px;
   text-align: center;
   color: white;
+  background: #444;
+  width: 25.4545vh;
 }
 
 .talent-tree-title {
@@ -65,11 +66,14 @@ $talent-full-color: #ffd100;
 }
 
 .talent-picker-points {
-  @include vertical-bottom;
-  @include horizontal-right;
   margin: 0;
   color: $talent-partial-color;
   background-color: black;
+  position: absolute;
+  bottom: -8px;
+  right: -8px;
+  padding: 0px 2px;
+  font-size: 13px;
 }
 .talent-picker-root[data-points="0"]:not(.talent-picker-can-add) .talent-picker-points {
   filter: grayscale(100%);

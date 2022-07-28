@@ -6,7 +6,7 @@ import { TalentsConfig, newTalentsConfig } from './talents_picker.js';
 export const warriorTalentsConfig: TalentsConfig<WarriorTalents> = newTalentsConfig([
 	{
 		name: 'Arms',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/161.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/161.jpg',
 		talents: [
 			{
 				fieldName: 'improvedHeroicStrike',
@@ -231,7 +231,7 @@ export const warriorTalentsConfig: TalentsConfig<WarriorTalents> = newTalentsCon
 	},
 	{
 		name: 'Fury',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/164.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/164.jpg',
 		talents: [
 			{
 				fieldName: 'boomingVoice',
@@ -438,7 +438,7 @@ export const warriorTalentsConfig: TalentsConfig<WarriorTalents> = newTalentsCon
 	},
 	{
 		name: 'Protection',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/163.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/163.jpg',
 		talents: [
 			{
 				fieldName: 'improvedBloodrage',
