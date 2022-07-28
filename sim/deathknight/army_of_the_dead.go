@@ -53,6 +53,8 @@ func (dk *Deathknight) registerArmyOfTheDeadCD() {
 		}),
 	})
 
+	amountOfRunicPower := 15.0
+
 	dk.ArmyOfTheDead = dk.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 42650},
 
@@ -74,7 +76,6 @@ func (dk *Deathknight) registerArmyOfTheDeadCD() {
 			dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_BFU)
 			dk.Spend(sim, spell, dkSpellCost)
 
-			amountOfRunicPower := 15.0
 			dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 
 			ghoulIndex = 0

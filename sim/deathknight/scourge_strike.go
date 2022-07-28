@@ -32,10 +32,10 @@ func (dk *Deathknight) registerScourgeStrikeShadowDamageSpell() *core.Spell {
 func (dk *Deathknight) registerScourgeStrikeSpell() {
 
 	shadowDamageSpell := dk.registerScourgeStrikeShadowDamageSpell()
-	bonusBaseDamage := dk.sigilOfAwarenessBonus(dk.ScourgeStrike)
-	bonusBaseDamage += dk.sigilOfArthriticBindingBonus()
+	bonusBaseDamage := dk.sigilOfAwarenessBonus(dk.ScourgeStrike) + dk.sigilOfArthriticBindingBonus()
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 800.0+bonusBaseDamage, 0.7, true)
 	outbreakBonus := []float64{1.0, 1.07, 1.13, 1.2}[dk.Talents.Outbreak]
+	rpGain := 15.0 + 2.5*float64(dk.Talents.Dirge) + dk.scourgeborneBattlegearRunicPowerBonus()
 
 	dk.ScourgeStrike = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    ScourgeStrikeActionID.WithTag(1),
@@ -79,8 +79,7 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 					dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_FU)
 					dk.Spend(sim, spell, dkSpellCost)
 
-					amountOfRunicPower := 15.0 + 2.5*float64(dk.Talents.Dirge) + dk.scourgeborneBattlegearRunicPowerBonus()
-					dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
+					dk.AddRunicPower(sim, rpGain, spell.RunicPowerMetrics())
 				}
 			},
 		}),

@@ -54,6 +54,9 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *core.Spell {
 func (dk *Deathknight) registerDeathStrikeSpell() {
 	dk.DeathStrikeMhHit = dk.newDeathStrikeSpell(true)
 	dk.DeathStrikeOhHit = dk.newDeathStrikeSpell(false)
+
+	amountOfRunicPower := 15.0 + 2.5*float64(dk.Talents.Dirge)
+
 	dk.DeathStrike = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    DeathStrikeActionID.WithTag(3),
 		SpellSchool: core.SpellSchoolPhysical,
@@ -82,7 +85,6 @@ func (dk *Deathknight) registerDeathStrikeSpell() {
 					dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_FU)
 					dk.Spend(sim, spell, dkSpellCost)
 
-					amountOfRunicPower := 15.0 + 2.5*float64(dk.Talents.Dirge)
 					dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 				}
 			},

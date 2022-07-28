@@ -16,7 +16,8 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 	}
 
 	impIcyTouchCoeff := 1.0 + 0.05*float64(dk.Talents.ImprovedIcyTouch)
-	sigilBonus := +dk.sigilOfTheFrozenConscienceBonus()
+	sigilBonus := dk.sigilOfTheFrozenConscienceBonus()
+	amountOfRunicPower := 10.0 + 2.5*float64(dk.Talents.ChillOfTheGrave)
 
 	dk.IcyTouch = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 59131},
@@ -68,7 +69,6 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 					dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_F)
 					dk.Spend(sim, spell, dkSpellCost)
 
-					amountOfRunicPower := 10.0 + 2.5*float64(dk.Talents.ChillOfTheGrave)
 					dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 				}
 			},
