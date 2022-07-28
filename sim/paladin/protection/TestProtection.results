@@ -914,43 +914,43 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Settings-Human-P4-Protection Paladin-FullBuffs-LongMultiTarget"
  value: {
-  dps: 134.84294419228397
-  tps: 137.53980307612966
+  dps: 115.51251544848472
+  tps: 117.82276575745438
  }
 }
 dps_results: {
  key: "TestProtection-Settings-Human-P4-Protection Paladin-FullBuffs-LongSingleTarget"
  value: {
-  dps: 134.84294419228397
-  tps: 137.53980307612966
+  dps: 115.51251544848472
+  tps: 117.82276575745438
  }
 }
 dps_results: {
  key: "TestProtection-Settings-Human-P4-Protection Paladin-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 135.0432860198167
-  tps: 137.74415174021297
+  dps: 116.07305792661853
+  tps: 118.39451908515088
  }
 }
 dps_results: {
  key: "TestProtection-Settings-Human-P4-Protection Paladin-NoBuffs-LongMultiTarget"
  value: {
-  dps: 75.47306774779234
-  tps: 76.98252910274819
+  dps: 61.62204776902645
+  tps: 62.85448872440704
  }
 }
 dps_results: {
  key: "TestProtection-Settings-Human-P4-Protection Paladin-NoBuffs-LongSingleTarget"
  value: {
-  dps: 75.47306774779234
-  tps: 76.98252910274819
+  dps: 61.62204776902645
+  tps: 62.85448872440704
  }
 }
 dps_results: {
  key: "TestProtection-Settings-Human-P4-Protection Paladin-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 75.99423006091772
-  tps: 77.51411466213612
+  dps: 62.16245310467986
+  tps: 63.40570216677344
  }
 }
 dps_results: {
