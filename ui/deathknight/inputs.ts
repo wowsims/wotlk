@@ -71,8 +71,8 @@ export const SetDeathAndDecayPrio = InputHelpers.makeRotationEnumInput<Spec.Spec
 		{ name: 'Max Rune Downtime', value: DeathAndDecayPrio.MaxRuneDowntime },
 		{ name: 'Max Dnd Uptime', value: DeathAndDecayPrio.MaxDndUptime },
 	],
-	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle,
-	changeEmitter: (player: Player<Spec.SpecDeathknight>) => player.rotationChangeEmitter,
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && player.getRotation().useDeathAndDecay,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => player.changeEmitter,
 })
 
 export const BloodTapGhoulFrenzy = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
