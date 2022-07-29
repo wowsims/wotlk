@@ -78,7 +78,7 @@ var FullConsumes = &proto.Consumes{
 	DefaultPotion:   proto.Potions_HastePotion,
 	DefaultConjured: proto.Conjured_ConjuredDarkRune,
 	Food:            proto.Food_FoodRoastedClefthoof,
-	SuperSapper:     true,
+	ThermalSapper:   true,
 }
 
 var FullDebuffs = &proto.Debuffs{

@@ -5,15 +5,14 @@ package core
 import (
 	"time"
 
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // Creates any pets that come from item / consume effects.
 func (character *Character) addEffectPets() {
-	if character.Consumes.FillerExplosive == proto.Explosive_ExplosiveGnomishFlameTurret {
-		character.NewGnomishFlameTurret()
-	}
+	//if character.Consumes.FillerExplosive == proto.Explosive_ExplosiveGnomishFlameTurret {
+	//	character.NewGnomishFlameTurret()
+	//}
 }
 
 func (character *Character) newGnomishFlameTurretSpell() *Spell {

@@ -78,6 +78,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				Stat.StatMeleeCrit,
 				Stat.StatMeleeHaste,
 				Stat.StatArmorPenetration,
+				Stat.StatMP5,
 			],
 			// Reference stat against which to calculate EP.
 			epReferenceStat: Stat.StatRangedAttackPower,
@@ -94,6 +95,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				Stat.StatMeleeCrit,
 				Stat.StatMeleeHaste,
 				Stat.StatArmorPenetration,
+				Stat.StatMP5,
 			],
 			modifyDisplayStats: (player: Player<Spec.SpecHunter>) => {
 				let stats = new Stats();

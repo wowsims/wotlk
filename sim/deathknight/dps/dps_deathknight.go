@@ -52,6 +52,11 @@ func NewDpsDeathknight(character core.Character, player proto.Player) *DpsDeathk
 }
 
 func (dk *DpsDeathknight) SetupRotations() {
+	dk.ffFirst = dk.Inputs.FirstDisease == proto.Deathknight_Rotation_FrostFever
+
+	dk.Opener.Clear()
+	dk.Main.Clear()
+
 	if dk.Talents.DarkConviction > 0 && dk.Talents.HowlingBlast {
 		dk.setupFrostSubBloodOpener()
 	} else if dk.Talents.BloodCakedBlade > 0 && dk.Talents.HowlingBlast {
@@ -62,7 +67,6 @@ func (dk *DpsDeathknight) SetupRotations() {
 		if dk.Rotation.UseDeathAndDecay {
 			dk.setupUnholyDndOpener()
 		} else {
-
 			if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd {
 				dk.setupUnholySsArmyOpener()
 			} else {
@@ -81,10 +85,10 @@ func (dk *DpsDeathknight) GetDeathknight() *deathknight.Deathknight {
 
 func (dk *DpsDeathknight) Initialize() {
 	dk.Deathknight.Initialize()
-	dk.SetupRotations()
 }
 
 func (dk *DpsDeathknight) Reset(sim *core.Simulation) {
 	dk.Deathknight.Reset(sim)
+	dk.SetupRotations()
 	dk.ResetUnholyRotation(sim)
 }
