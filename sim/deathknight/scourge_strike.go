@@ -76,6 +76,8 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 					if dk.DiseasesAreActive(spellEffect.Target) {
 						dk.LastScourgeStrikeDamage = spellEffect.Damage
 						shadowDamageSpell.Cast(sim, spellEffect.Target)
+						shadowDamageSpell.SpellMetrics[spellEffect.Target.Index].Casts--
+						shadowDamageSpell.SpellMetrics[spellEffect.Target.Index].Hits--
 					}
 
 					dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_FU)

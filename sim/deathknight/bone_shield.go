@@ -23,8 +23,8 @@ func (dk *Deathknight) registerBoneShieldSpell() {
 		MaxStacks: 3 + core.TernaryInt32(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfBoneShield), 1, 0),
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			dk.BoneShieldAura.Activate(sim)
-			dk.BoneShieldAura.UpdateExpires(sim.CurrentTime + time.Minute*4)
-			dk.BoneShieldAura.SetStacks(sim, 3)
+			dk.BoneShieldAura.UpdateExpires(sim.CurrentTime + time.Minute*5)
+			dk.BoneShieldAura.SetStacks(sim, dk.BoneShieldAura.MaxStacks)
 		},
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			aura.RemoveStack(sim)
@@ -62,7 +62,6 @@ func (dk *Deathknight) registerBoneShieldSpell() {
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			dk.BoneShieldAura.Activate(sim)
-			dk.BoneShieldAura.Prioritize()
 
 			dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_U)
 			dk.Spend(sim, spell, dkSpellCost)

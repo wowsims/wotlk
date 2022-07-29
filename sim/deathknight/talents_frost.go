@@ -193,11 +193,10 @@ func (dk *Deathknight) applyIcyTalons() {
 		return
 	}
 
-	actionID := core.ActionID{SpellID: 50887}
 	icyTalonsCoeff := 1.0 + 0.04*float64(dk.Talents.IcyTalons)
 
 	dk.IcyTalonsAura = dk.RegisterAura(core.Aura{
-		ActionID: actionID,
+		ActionID: core.ActionID{SpellID: 50887}, // This probably doesnt need to be in metrics.
 		Label:    "Icy Talons",
 		Duration: time.Second * 20.0,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
