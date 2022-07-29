@@ -87,7 +87,7 @@ export class MultiIconPicker<ModObject> extends Component {
 
 		if (this.currentValue) {
 			this.dropdownRootElem.classList.add('active');
-			this.currentValue.fillAndSet(this.buttonElem, true, true);
+			this.currentValue.fillAndSet(this.buttonElem, false, true);
 		} else {
 			this.dropdownRootElem.classList.remove('active');
 			this.buttonElem.style.backgroundImage = '';
