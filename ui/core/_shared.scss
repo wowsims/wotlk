@@ -163,8 +163,10 @@ $sim-transitions: .2s ease-in;
 	margin-top: -10px;
 	z-index: 1;
 
-	box-shadow: 2px 4px 16px 4px #000;
+	box-shadow: 2px 4px 20px 5px #000;
 	background-color: #000;
+	border: 1px gray solid;
+	padding: 1px;
 }
 
 .dropdown-panel-column {

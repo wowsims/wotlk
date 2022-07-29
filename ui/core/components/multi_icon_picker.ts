@@ -27,8 +27,6 @@ export class MultiIconPicker<ModObject> extends Component {
 	private readonly buttonElem: HTMLAnchorElement;
 	private readonly pickers: Array<IconPicker<ModObject, any>>;
 
-	readonly changeEmitter = new TypedEvent<void>();
-
 	constructor(parent: HTMLElement, modObj: ModObject, config: MultiIconPickerConfig<ModObject>, simUI: SimUI) {
 		super(parent, 'multi-icon-picker-root');
 		this.config = config;
@@ -78,17 +76,13 @@ export class MultiIconPicker<ModObject> extends Component {
 			const option = document.createElement('a');
 			option.classList.add('dropdown-option', 'multi-icon-picker-option');
 			optionContainer.appendChild(option);
-			const picker = new IconPicker(option, modObj, pickerConfig);
-			picker.changeEmitter.on((eventID) => {
-				this.updateButtonImage();
-				this.changeEmitter.emit(eventID);
-			});
-			return picker;
+			return new IconPicker(option, modObj, pickerConfig);
 		});
 		simUI.sim.waitForInit().then(() => this.updateButtonImage());
+		simUI.changeEmitter.on(()=>this.updateButtonImage());
 	}
 
-	updateButtonImage() {
+	private updateButtonImage() {
 		this.currentValue = this.getMaxValue();
 
 		if (this.currentValue) {
