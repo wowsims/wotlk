@@ -27,6 +27,12 @@ export const RetributionPaladinRotationConsSlackConfig = InputHelpers.makeRotati
 	labelTooltip: "Amount of extra time in MS to give main abilities to come off cooldown before using Consecration on single target",
 })
 
+export const RetributionPaladinRotationDivinePleaPercentageConfig = InputHelpers.makeRotationNumberInput<Spec.SpecRetributionPaladin>({
+	fieldName: "divinePleaPercentage",
+	label: "Divine Plea Mana Threshold %",
+	labelTooltip: "% of max mana left before beginning to use Divine Plea",
+	percent: true
+})
 
 
 export const AuraSelection = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecRetributionPaladin, PaladinAura>({

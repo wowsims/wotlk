@@ -161,6 +161,7 @@ message RetributionPaladin {
 	message Rotation {
 		int32 exo_slack = 1;
 		int32 cons_slack = 2;
+		double divine_plea_percentage = 3;
 	}
 	Rotation rotation = 1;
 

@@ -59,7 +59,7 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 			ret.HammerOfWrath.Cast(sim, target)
 		case ret.Env.GetNumTargets() > 1 && ret.Consecration.IsReady(sim):
 			ret.Consecration.Cast(sim, target)
-		case ret.UseDivinePlea && ret.CurrentMana() < (ret.MaxMana()*0.75) && ret.DivinePlea.IsReady(sim):
+		case ret.UseDivinePlea && ret.CurrentMana() < (ret.MaxMana()*ret.DivinePleaPercentage) && ret.DivinePlea.IsReady(sim):
 			ret.DivinePlea.Cast(sim, &ret.Unit)
 		case ret.CrusaderStrike.IsReady(sim):
 			ret.CrusaderStrike.Cast(sim, target)

@@ -35,8 +35,9 @@ var defaultRetTalents = &proto.PaladinTalents{
 }
 
 var defaultRetRotation = &proto.RetributionPaladin_Rotation{
-	ConsSlack: 500,
-	ExoSlack:  500,
+	ConsSlack:            500,
+	ExoSlack:             500,
+	DivinePleaPercentage: 0.75,
 }
 
 var defaultRetOptions = &proto.RetributionPaladin_Options{

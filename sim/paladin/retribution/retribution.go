@@ -28,13 +28,14 @@ func NewRetributionPaladin(character core.Character, options proto.Player) *Retr
 	retOptions := options.GetRetributionPaladin()
 
 	ret := &RetributionPaladin{
-		Paladin:       paladin.NewPaladin(character, *retOptions.Talents),
-		Rotation:      *retOptions.Rotation,
-		Judgement:     retOptions.Options.Judgement,
-		Seal:          retOptions.Options.Seal,
-		UseDivinePlea: retOptions.Options.UseDivinePlea,
-		ExoSlack:      retOptions.Rotation.ExoSlack,
-		ConsSlack:     retOptions.Rotation.ConsSlack,
+		Paladin:              paladin.NewPaladin(character, *retOptions.Talents),
+		Rotation:             *retOptions.Rotation,
+		Judgement:            retOptions.Options.Judgement,
+		Seal:                 retOptions.Options.Seal,
+		UseDivinePlea:        retOptions.Options.UseDivinePlea,
+		DivinePleaPercentage: retOptions.Rotation.DivinePleaPercentage,
+		ExoSlack:             retOptions.Rotation.ExoSlack,
+		ConsSlack:            retOptions.Rotation.ConsSlack,
 	}
 	ret.PaladinAura = retOptions.Options.Aura
 
@@ -55,11 +56,12 @@ func NewRetributionPaladin(character core.Character, options proto.Player) *Retr
 type RetributionPaladin struct {
 	*paladin.Paladin
 
-	Judgement     proto.PaladinJudgement
-	Seal          proto.PaladinSeal
-	UseDivinePlea bool
-	ExoSlack      int32
-	ConsSlack     int32
+	Judgement            proto.PaladinJudgement
+	Seal                 proto.PaladinSeal
+	UseDivinePlea        bool
+	DivinePleaPercentage float64
+	ExoSlack             int32
+	ConsSlack            int32
 
 	SealInitComplete       bool
 	DivinePleaInitComplete bool
