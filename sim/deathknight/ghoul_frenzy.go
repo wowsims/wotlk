@@ -63,10 +63,10 @@ func (dk *Deathknight) registerGhoulFrenzySpell() {
 			}
 		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.MeleeSpeedMultiplier *= 1.25
+			aura.Unit.MultiplyAttackSpeed(sim, 1.25)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.MeleeSpeedMultiplier /= 1.25
+			aura.Unit.MultiplyAttackSpeed(sim, 1/1.25)
 		},
 	})
 }

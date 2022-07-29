@@ -4,6 +4,7 @@ import {
 	DeathknightTalents as DeathKnightTalents,
 	Deathknight_Rotation_ArmyOfTheDead as ArmyOfTheDead,
 	Deathknight_Rotation_FirstDisease as FirstDisease,
+	Deathknight_Rotation_DeathAndDecayPrio as DeathAndDecayPrio,
 	Deathknight_Rotation as DeathKnightRotation,
 	Deathknight_Options as DeathKnightOptions,
 } from '/wotlk/core/proto/deathknight.js';
@@ -60,12 +61,26 @@ export const UseDeathAndDecay = InputHelpers.makeRotationBooleanInput<Spec.SpecD
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => player.talentsChangeEmitter,
 });
 
+export const SetDeathAndDecayPrio = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, DeathAndDecayPrio>({
+	fieldName: 'deathAndDecayPrio',
+	label: 'Death and Decay Prio',
+	labelTooltip: 'Chose how to prioritize death and decay usage:\
+	<p><b>Max Rune Downtime</b>: Prioritizes spending runes over holding them for death and decay</p>\
+	<p><b>Max Dnd Uptime</b>: Prioritizes dnd uptime and can hold runes for longer then rune grace</p>',
+	values: [
+		{ name: 'Max Rune Downtime', value: DeathAndDecayPrio.MaxRuneDowntime },
+		{ name: 'Max Dnd Uptime', value: DeathAndDecayPrio.MaxDndUptime },
+	],
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => player.rotationChangeEmitter,
+})
+
 export const BloodTapGhoulFrenzy = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
 	fieldName: 'btGhoulFrenzy',
 	label: 'BT Ghoul Frenzy',
 	labelTooltip: 'Use Ghoul Frenzy only with Blood Tap.',
-	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().ghoulFrenzy && !player.getRotation().useDeathAndDecay,
-	changeEmitter: (player: Player<Spec.SpecDeathknight>) => player.changeEmitter, 
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().ghoulFrenzy,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => player.talentsChangeEmitter, 
 	// TODO find out why changeEmitter breaks web with: TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter])
 });
 
@@ -97,6 +112,7 @@ export const DeathKnightRotationConfig = {
 		SetFirstDisease,
 		UseArmyOfTheDead,
 		UseDeathAndDecay,
+		SetDeathAndDecayPrio,
 		BloodTapGhoulFrenzy,
 	],
 };
