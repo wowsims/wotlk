@@ -959,7 +959,6 @@ const priestRaces = [
 	Race.RaceDwarf,
 	Race.RaceHuman,
 	Race.RaceNightElf,
-	Race.RaceOrc,
 	Race.RaceTroll,
 	Race.RaceUndead,
 ];

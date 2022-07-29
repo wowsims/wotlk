@@ -135,9 +135,7 @@ export const SpellCritBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(51470), 'elementalOath'),
 ], 'Spell Crit');
 
-export const SpellHasteBuff = InputHelpers.makeMultiIconInput([
-	makeBooleanRaidBuffInput(ActionId.fromSpellId(3738), 'wrathOfAirTotem'),
-], 'Spell Haste');
+export const SpellHasteBuff = withLabel(makeBooleanRaidBuffInput(ActionId.fromSpellId(3738), 'wrathOfAirTotem'), 'Spell Haste');
 
 export const SpellPowerBuff = InputHelpers.makeMultiIconInput([
 	makeMultistateRaidBuffInput(ActionId.fromSpellId(47240), 5000, 'demonicPact', 500),
@@ -232,8 +230,8 @@ export const JudgementOfLight = makeBooleanDebuffInput(ActionId.fromSpellId(2027
 export const GiftOfArthas = makeBooleanDebuffInput(ActionId.fromSpellId(11374), 'giftOfArthas');
 
 // Consumes
-export const SuperSapper = makeBooleanConsumeInput(ActionId.fromItemId(23827), 'superSapper');
-export const GoblinSapper = makeBooleanConsumeInput(ActionId.fromItemId(10646), 'goblinSapper');
+export const ThermalSapper = makeBooleanConsumeInput(ActionId.fromItemId(42641), 'thermalSapper');
+export const ExplosiveDecoy = makeBooleanConsumeInput(ActionId.fromItemId(40536), 'explosiveDecoy');
 
 export const SpicedMammothTreats = makeBooleanConsumeInput(ActionId.fromItemId(43005), 'petFood', PetFood.PetFoodSpicedMammothTreats);
 export const PetScrollOfAgilityV = makeBooleanConsumeInput(ActionId.fromItemId(27498), 'petScrollOfAgility', 5);
@@ -470,19 +468,10 @@ export const makeFoodInput = makeConsumeInputFactory('food', [
 	{ actionId: ActionId.fromItemId(33052), value: Food.FoodFishermansFeast },
 ] as Array<IconEnumValueConfig<Player<any>, Food>>);
 
-function onSetExplosives(eventID: EventID, player: Player<any>, newValue: Explosive | boolean) {
-	if (newValue) {
-		const playerConsumes = player.getConsumes();
-		player.setConsumes(eventID, playerConsumes);
-	}
-};
-
 export const FillerExplosiveInput = makeConsumeInput('fillerExplosive', [
-	{ actionId: ActionId.fromItemId(23736), value: Explosive.ExplosiveFelIronBomb },
-	{ actionId: ActionId.fromItemId(23737), value: Explosive.ExplosiveAdamantiteGrenade },
-	{ actionId: ActionId.fromItemId(23841), value: Explosive.ExplosiveGnomishFlameTurret },
-	{ actionId: ActionId.fromItemId(13180), value: Explosive.ExplosiveHolyWater },
-] as Array<IconEnumValueConfig<Player<any>, Explosive>>, onSetExplosives);
+	{ actionId: ActionId.fromItemId(41119), value: Explosive.ExplosiveSaroniteBomb },
+	{ actionId: ActionId.fromItemId(40771), value: Explosive.ExplosiveCobaltFragBomb },
+] as Array<IconEnumValueConfig<Player<any>, Explosive>>);
 
 export function makeWeaponImbueInput(isMainHand: boolean, options: Array<WeaponImbue>): InputHelpers.TypedIconEnumPickerConfig<Player<any>, WeaponImbue> {
 	const allOptions = [

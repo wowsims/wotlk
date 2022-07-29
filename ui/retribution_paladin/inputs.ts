@@ -15,10 +15,25 @@ import * as InputHelpers from '/wotlk/core/components/input_helpers.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
-export const RetributionPaladinRotationConfig = {
-	inputs: [
-	],
-}
+export const RetributionPaladinRotationExoSlackConfig = InputHelpers.makeRotationNumberInput<Spec.SpecRetributionPaladin>({
+	fieldName: "exoSlack",
+	label: "Exo Slack (MS)",
+	labelTooltip: "Amount of extra time in MS to give main abilities to come off cooldown before using Exorcism on single target",
+})
+
+export const RetributionPaladinRotationConsSlackConfig = InputHelpers.makeRotationNumberInput<Spec.SpecRetributionPaladin>({
+	fieldName: "consSlack",
+	label: "Cons Slack (MS)",
+	labelTooltip: "Amount of extra time in MS to give main abilities to come off cooldown before using Consecration on single target",
+})
+
+export const RetributionPaladinRotationDivinePleaPercentageConfig = InputHelpers.makeRotationNumberInput<Spec.SpecRetributionPaladin>({
+	fieldName: "divinePleaPercentage",
+	label: "Divine Plea Mana Threshold %",
+	labelTooltip: "% of max mana left before beginning to use Divine Plea",
+	percent: true
+})
+
 
 export const AuraSelection = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecRetributionPaladin, PaladinAura>({
 	fieldName: 'aura',
