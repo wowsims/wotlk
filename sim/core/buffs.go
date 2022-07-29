@@ -24,24 +24,35 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		})
 	}
 
-	gotwAmount := GetTristateValueFloat(raidBuffs.GiftOfTheWild, 54, 75)
+	gotwAmount := GetTristateValueFloat(raidBuffs.GiftOfTheWild, 37, 37*1.4)
 	if gotwAmount > 0 {
+		resist := GetTristateValueFloat(raidBuffs.GiftOfTheWild, 54, 54*1.4)
 		character.AddStats(stats.Stats{
-			stats.Armor:     GetTristateValueFloat(raidBuffs.GiftOfTheWild, 750, 1050),
-			stats.Stamina:   gotwAmount,
-			stats.Agility:   gotwAmount,
-			stats.Strength:  gotwAmount,
-			stats.Intellect: gotwAmount,
-			stats.Spirit:    gotwAmount,
+			stats.Armor:            GetTristateValueFloat(raidBuffs.GiftOfTheWild, 750, 1050),
+			stats.Stamina:          gotwAmount,
+			stats.Agility:          gotwAmount,
+			stats.Strength:         gotwAmount,
+			stats.Intellect:        gotwAmount,
+			stats.Spirit:           gotwAmount,
+			stats.ArcaneResistance: resist,
+			stats.ShadowResistance: resist,
+			stats.NatureResistance: resist,
+			stats.FireResistance:   resist,
+			stats.FrostResistance:  resist,
 		})
 	} else if raidBuffs.DrumsOfTheWild {
 		character.AddStats(stats.Stats{
-			stats.Armor:     750,
-			stats.Stamina:   37,
-			stats.Agility:   37,
-			stats.Strength:  37,
-			stats.Intellect: 37,
-			stats.Spirit:    37,
+			stats.Armor:            750,
+			stats.Stamina:          37,
+			stats.Agility:          37,
+			stats.Strength:         37,
+			stats.Intellect:        37,
+			stats.Spirit:           37,
+			stats.ArcaneResistance: 54,
+			stats.ShadowResistance: 54,
+			stats.NatureResistance: 54,
+			stats.FireResistance:   54,
+			stats.FrostResistance:  54,
 		})
 	}
 

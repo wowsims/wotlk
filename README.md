@@ -20,6 +20,8 @@ echo 'export GOPATH=$HOME/go' >> $HOME/.bashrc
 echo 'export PATH=$PATH:$GOPATH/bin' >> $HOME/.bashrc
 source $HOME/.bashrc
 
+cd wotlk
+
 # Install protobuf compiler and Go plugins
 sudo apt update && sudo apt upgrade
 sudo apt install protobuf-compiler
@@ -31,7 +33,6 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
 nvm install 14.17.6
 
 # Install the npm package dependencies using node
-cd wotlk
 npm install
 ```
 
