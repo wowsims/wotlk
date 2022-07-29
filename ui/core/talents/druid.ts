@@ -6,7 +6,7 @@ import { TalentsConfig, newTalentsConfig } from './talents_picker.js';
 export const druidTalentsConfig: TalentsConfig<DruidTalents> = newTalentsConfig([
 	{
 		name: 'Balance',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/283.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/283.jpg',
 		talents: [
 			{
 				fieldName: 'starlightWrath',
@@ -213,7 +213,7 @@ export const druidTalentsConfig: TalentsConfig<DruidTalents> = newTalentsConfig(
 	},
 	{
 		name: 'Feral Combat',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/281.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/281.jpg',
 		talents: [
 			{
 				fieldName: 'ferocity',
@@ -420,7 +420,7 @@ export const druidTalentsConfig: TalentsConfig<DruidTalents> = newTalentsConfig(
 	},
 	{
 		name: 'Restoration',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/282.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/282.jpg',
 		talents: [
 			{
 				fieldName: 'improvedMarkOfTheWild',

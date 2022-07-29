@@ -25,6 +25,9 @@ func (dk *Deathknight) registerBloodTapSpell() {
 			amountOfRunicPower := 10.0
 			dk.AddRunicPower(sim, amountOfRunicPower, dk.BloodTap.RunicPowerMetrics())
 		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			dk.CancelBloodTap(sim)
+		},
 	})
 
 	dk.BloodTap = dk.RegisterSpell(core.SpellConfig{

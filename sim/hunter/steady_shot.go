@@ -98,5 +98,5 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 }
 
 func (hunter *Hunter) SteadyShotCastTime() time.Duration {
-	return time.Duration(float64(time.Millisecond*1500)/hunter.RangedSwingSpeed()) + hunter.latency
+	return time.Duration(float64(time.Millisecond*2000)/hunter.RangedSwingSpeed()) + hunter.latency
 }

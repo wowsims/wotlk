@@ -33,6 +33,9 @@ func (dk *Deathknight) ApplyUnholyTalents() {
 	// Reaping
 	dk.applyReaping()
 
+	// Impurity
+	dk.applyImpurity()
+
 	// Desolation
 	dk.applyDesolation()
 
@@ -45,6 +48,7 @@ func (dk *Deathknight) ApplyUnholyTalents() {
 	dk.applyEbonPlaguebringer()
 
 	// Rage of Rivendare
+	dk.applyRageOfRivendare()
 	dk.AddStat(stats.Expertise, float64(dk.Talents.RageOfRivendare)*core.ExpertisePerQuarterPercentReduction)
 }
 
@@ -56,12 +60,20 @@ func (dk *Deathknight) viciousStrikesCritChanceBonus() float64 {
 	return 3 * float64(dk.Talents.ViciousStrikes)
 }
 
-func (dk *Deathknight) rageOfRivendareBonus(target *core.Unit) float64 {
-	return core.TernaryFloat64(dk.TargetHasDisease(BloodPlagueAuraLabel, target), 1.0+0.02*float64(dk.Talents.RageOfRivendare), 1.0)
+func (dk *Deathknight) applyRageOfRivendare() {
+	dk.bonusCoeffs.rageOfRivendareBonusCoeff = 1.0 + 0.02*float64(dk.Talents.RageOfRivendare)
 }
 
-func (dk *Deathknight) applyImpurity(hitEffect *core.SpellEffect, unit *core.Unit) float64 {
-	return hitEffect.MeleeAttackPower(unit) * (1.0 + float64(dk.Talents.Impurity)*0.04)
+func (dk *Deathknight) rageOfRivendareBonus(target *core.Unit) float64 {
+	return core.TernaryFloat64(dk.BloodPlagueDisease[target.Index].IsActive(), dk.bonusCoeffs.rageOfRivendareBonusCoeff, 1.0)
+}
+
+func (dk *Deathknight) applyImpurity() {
+	dk.bonusCoeffs.impurityBonusCoeff = 1.0 + float64(dk.Talents.Impurity)*0.04
+}
+
+func (dk *Deathknight) getImpurityBonus(hitEffect *core.SpellEffect, unit *core.Unit) float64 {
+	return hitEffect.MeleeAttackPower(unit) * dk.bonusCoeffs.impurityBonusCoeff
 }
 
 func (dk *Deathknight) applyWanderingPlague() {
@@ -183,7 +195,7 @@ func (dk *Deathknight) bloodCakedBladeHit(isMh bool) *core.Spell {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-					diseaseMultiplier := (0.25 + float64(dk.countActiveDiseases(spellEffect.Target))*0.125)
+					diseaseMultiplier := (0.25 + dk.countActiveDiseases(spellEffect.Target)*0.125)
 					if isMh {
 						return mhBaseDamage(sim, spellEffect, spell) * diseaseMultiplier
 					} else {
@@ -314,14 +326,12 @@ func (dk *Deathknight) applyUnholyBlight() {
 	}
 }
 
-var reapingChance float64 = 0.0
-
 func (dk *Deathknight) applyReaping() {
-	reapingChance = []float64{0.0, 0.33, 0.66, 1.0}[dk.Talents.Reaping]
+	dk.bonusCoeffs.reapingChance = []float64{0.0, 0.33, 0.66, 1.0}[dk.Talents.Reaping]
 }
 
 func (dk *Deathknight) reapingWillProc(sim *core.Simulation) bool {
-	ohWillCast := sim.RandomFloat("Reaping") <= reapingChance
+	ohWillCast := sim.RandomFloat("Reaping") <= dk.bonusCoeffs.reapingChance
 	return ohWillCast
 }
 

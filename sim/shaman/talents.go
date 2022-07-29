@@ -9,6 +9,12 @@ import (
 )
 
 func (shaman *Shaman) ApplyTalents() {
+
+	// We are going to treat this like a snapshot if you have the glyph.
+	if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfTotemOfWrath) {
+		shaman.AddStat(stats.SpellPower, 280*0.3)
+	}
+
 	if shaman.Talents.ThunderingStrikes > 0 {
 		shaman.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*1*float64(shaman.Talents.ThunderingStrikes))
 		shaman.AddStat(stats.SpellCrit, core.CritRatingPerCritChance*1*float64(shaman.Talents.ThunderingStrikes))

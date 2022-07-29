@@ -375,7 +375,7 @@ func (spellEffect *SpellEffect) MagicHitCheck(sim *Simulation, spell *Spell, att
 }
 func (spellEffect *SpellEffect) MagicHitCheckBinary(sim *Simulation, spell *Spell, attackTable *AttackTable) bool {
 	baseHitChance := (1 - attackTable.BaseSpellMissChance) * attackTable.GetBinaryHitChance(spell.SpellSchool)
-	missChance := 1 - baseHitChance - (spell.Unit.GetStat(stats.SpellHit)+spellEffect.BonusSpellHitRating)/(SpellHitRatingPerHitChance*100)
+	missChance := 1 - baseHitChance - (spell.Unit.GetStat(stats.SpellHit)+spellEffect.BonusSpellHitRating+spellEffect.Target.PseudoStats.BonusSpellHitRatingTaken)/(SpellHitRatingPerHitChance*100)
 	return sim.RandomFloat("Magical Hit Roll") > missChance
 }
 

@@ -62,14 +62,14 @@ func (dk *Deathknight) registerPestilenceSpell() {
 							}
 						}
 
-						amountOfRunicPower := 10.0 + 2.5*float64(dk.Talents.ChillOfTheGrave)
+						amountOfRunicPower := 10.0
 						dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 					} else {
 						// Apply diseases on every other target
-						if dk.TargetHasDisease(FrostFeverAuraLabel, dk.CurrentTarget) {
+						if dk.FrostFeverDisease[dk.CurrentTarget.Index].IsActive() {
 							dk.FrostFeverDisease[unitHit.Index].Apply(sim)
 						}
-						if dk.TargetHasDisease(FrostFeverAuraLabel, dk.CurrentTarget) {
+						if dk.BloodPlagueDisease[dk.CurrentTarget.Index].IsActive() {
 							dk.BloodPlagueDisease[unitHit.Index].Apply(sim)
 						}
 					}

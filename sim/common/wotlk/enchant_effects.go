@@ -377,7 +377,7 @@ func init() {
 						return baseDamage(sim, spellEffect, spell) * 0.02
 					},
 				},
-				OutcomeApplier: character.OutcomeFuncMeleeWeaponSpecialNoHitNoCrit(),
+				OutcomeApplier: character.OutcomeFuncAlwaysHit(),
 			}),
 		})
 	}
