@@ -10,6 +10,7 @@ import {
 
 import * as InputHelpers from '/wotlk/core/components/input_helpers.js';
 import { Player } from '../core/player';
+import { TypedEvent } from '../core/typed_event';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
@@ -59,6 +60,15 @@ export const UseDeathAndDecay = InputHelpers.makeRotationBooleanInput<Spec.SpecD
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => player.talentsChangeEmitter,
 });
 
+export const BloodTapGhoulFrenzy = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
+	fieldName: 'btGhoulFrenzy',
+	label: 'BT Ghoul Frenzy',
+	labelTooltip: 'Use Ghoul Frenzy only with Blood Tap.',
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().ghoulFrenzy && !player.getRotation().useDeathAndDecay,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => player.changeEmitter, 
+	// TODO find out why changeEmitter breaks web with: TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter])
+});
+
 export const SetFirstDisease = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, FirstDisease>({
 	fieldName: 'firstDisease',
 	label: 'First Disease',
@@ -87,5 +97,6 @@ export const DeathKnightRotationConfig = {
 		SetFirstDisease,
 		UseArmyOfTheDead,
 		UseDeathAndDecay,
+		BloodTapGhoulFrenzy,
 	],
 };

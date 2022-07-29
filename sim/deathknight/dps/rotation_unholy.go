@@ -227,7 +227,7 @@ func (dk *DpsDeathknight) setupUnholyDndOpener() {
 func (dk *DpsDeathknight) RotationAction_CancelBT(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
 	dk.BloodTapAura.Deactivate(sim)
 	dk.WaitUntil(sim, sim.CurrentTime)
-	s.ConditionalAdvance(true)
+	s.Advance()
 	return true
 }
 
@@ -294,22 +294,28 @@ func (dk *DpsDeathknight) RotationAction_DiseaseClipCheck(dot *core.Dot, gracePe
 		dk.WaitUntil(sim, sim.CurrentTime)
 	}
 
-	s.ConditionalAdvance(true)
+	s.Advance()
 	return true
 }
 
-func (dk *DpsDeathknight) ghoulFrenzySequence(sim *core.Simulation) {
-	if dk.ffFirst {
+func (dk *DpsDeathknight) ghoulFrenzySequence(sim *core.Simulation, bloodTap bool) {
+	if bloodTap {
 		dk.Main.Clear().
-			NewAction(dk.RotationAction_IT_SetSync).
+			NewAction(dk.RotationActionCallback_BT).
 			NewAction(dk.RotationActionCallback_GF).
-			NewAction(dk.RotationAction_ResetToMain)
+			NewAction(dk.RotationAction_CancelBT)
 	} else {
-		dk.Main.Clear().
-			NewAction(dk.RotationActionCallback_GF).
-			NewAction(dk.RotationAction_IT_SetSync).
-			NewAction(dk.RotationAction_ResetToMain)
+		if dk.ffFirst {
+			dk.Main.Clear().
+				NewAction(dk.RotationAction_IT_SetSync).
+				NewAction(dk.RotationActionCallback_GF)
+		} else {
+			dk.Main.Clear().
+				NewAction(dk.RotationActionCallback_GF).
+				NewAction(dk.RotationAction_IT_SetSync)
+		}
 	}
+	dk.Main.NewAction(dk.RotationAction_ResetToMain)
 	dk.WaitUntil(sim, sim.CurrentTime)
 }
 
@@ -338,14 +344,32 @@ func (dk *DpsDeathknight) recastDiseasesSequence(sim *core.Simulation) {
 func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
 	casted := false
 
-	if dk.Talents.GhoulFrenzy && dk.CanGhoulFrenzy(sim) && dk.CanIcyTouch(sim) &&
-		(!dk.GhoulFrenzyAura.IsActive() || dk.GhoulFrenzyAura.RemainingDuration(sim) < 10*time.Second) {
-		if dk.UnholyDiseaseCheckWrapper(sim, target, dk.GhoulFrenzy, true, 5) && dk.UnholyDiseaseCheckWrapper(sim, target, dk.IcyTouch, true, 5) {
-			dk.ghoulFrenzySequence(sim)
-			return true
+	if dk.Talents.GhoulFrenzy {
+		if dk.Rotation.BtGhoulFrenzy && !dk.Rotation.UseDeathAndDecay {
+			// Use Ghoul Frenzy only with a Blood Tap and Blood rune.
+			// That means 50% uptime on GF at maximum but more Scourge Strikes
+			if dk.CanBloodTap(sim) && dk.GhoulFrenzy.IsReady(sim) && dk.AllBloodRunesSpent() {
+				if dk.UnholyDiseaseCheckWrapper(sim, target, dk.GhoulFrenzy, true, 1) {
+					dk.ghoulFrenzySequence(sim, true)
+					return true
+				} else {
+					dk.recastDiseasesSequence(sim)
+					return true
+				}
+			}
 		} else {
-			dk.recastDiseasesSequence(sim)
-			return true
+			// Use Ghoul Frenzy with an Unholy Rune and sync the frost rune with Icy Touch
+			// That means 100% uptime on GF at maximum but less Scourge Strikes
+			if dk.CanGhoulFrenzy(sim) && dk.CanIcyTouch(sim) &&
+				(!dk.GhoulFrenzyAura.IsActive() || dk.GhoulFrenzyAura.RemainingDuration(sim) < 10*time.Second) {
+				if dk.UnholyDiseaseCheckWrapper(sim, target, dk.GhoulFrenzy, true, 5) && dk.UnholyDiseaseCheckWrapper(sim, target, dk.IcyTouch, true, 5) {
+					dk.ghoulFrenzySequence(sim, false)
+					return true
+				} else {
+					dk.recastDiseasesSequence(sim)
+					return true
+				}
+			}
 		}
 	}
 

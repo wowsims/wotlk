@@ -67,7 +67,7 @@ func (o *Sequence) Reset() {
 	o.idx = 0
 }
 
-func (o *Sequence) Advance(condition bool) {
+func (o *Sequence) Advance() {
 	o.idx += 1
 }
 
