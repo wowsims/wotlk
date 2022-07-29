@@ -33,6 +33,8 @@ func NewRetributionPaladin(character core.Character, options proto.Player) *Retr
 		Judgement:     retOptions.Options.Judgement,
 		Seal:          retOptions.Options.Seal,
 		UseDivinePlea: retOptions.Options.UseDivinePlea,
+		ExoSlack:      retOptions.Rotation.ExoSlack,
+		ConsSlack:     retOptions.Rotation.ConsSlack,
 	}
 	ret.PaladinAura = retOptions.Options.Aura
 
@@ -56,6 +58,8 @@ type RetributionPaladin struct {
 	Judgement     proto.PaladinJudgement
 	Seal          proto.PaladinSeal
 	UseDivinePlea bool
+	ExoSlack      int32
+	ConsSlack     int32
 
 	SealInitComplete       bool
 	DivinePleaInitComplete bool

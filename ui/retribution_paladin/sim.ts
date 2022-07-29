@@ -139,7 +139,12 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 			playerIconInputs: [
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
-			rotationInputs: RetributionPaladinInputs.RetributionPaladinRotationConfig,
+			rotationInputs: {
+				inputs: [
+					RetributionPaladinInputs.RetributionPaladinRotationConsSlackConfig,
+					RetributionPaladinInputs.RetributionPaladinRotationExoSlackConfig
+				]
+			},
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
 			],
