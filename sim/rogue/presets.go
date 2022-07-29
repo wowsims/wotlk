@@ -121,8 +121,8 @@ var FullConsumes = &proto.Consumes{
 	Flask:           proto.Flask_FlaskOfRelentlessAssault,
 	DefaultPotion:   proto.Potions_HastePotion,
 	DefaultConjured: proto.Conjured_ConjuredRogueThistleTea,
-	SuperSapper:     true,
-	FillerExplosive: proto.Explosive_ExplosiveGnomishFlameTurret,
+	ThermalSapper:   true,
+	FillerExplosive: proto.Explosive_ExplosiveSaroniteBomb,
 }
 
 var FullDebuffs = &proto.Debuffs{
