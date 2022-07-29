@@ -159,8 +159,14 @@ $sim-transitions: .2s ease-in;
 .dropdown-panel {
 	display: none;
 	position: absolute;
-	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	margin-left: 10px;
+	margin-top: -10px;
 	z-index: 1;
+
+	box-shadow: 2px 4px 20px 5px #000;
+	background-color: #000;
+	border: 1px gray solid;
+	padding: 1px;
 }
 
 .dropdown-panel-column {
@@ -178,6 +184,7 @@ $sim-transitions: .2s ease-in;
 
 .dropdown-option-container {
 	background-color: gray;
+	margin: 2px;
 }
 
 .dropdown-option {

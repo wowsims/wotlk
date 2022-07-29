@@ -132,13 +132,17 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 
 	// Returns the ActionId of the currently selected value, or null if none selected.
 	getActionId(): ActionId | null {
-		if (this.currentValue == 0) {
+		
+		// Go directly to source because during event propogation 
+		//  the internal `this.currentValue` may not yet have been updated.
+		const v = Number(this.config.getValue(this.modObject));
+		if (v == 0) {
 			return null;
-		} else if (this.currentValue == 1) {
+		} else if (v == 1) {
 			return this.config.id;
-		} else if (this.currentValue == 2 && this.config.improvedId) {
+		} else if (v == 2 && this.config.improvedId) {
 			return this.config.improvedId;
-		} else if (this.currentValue == 3 && this.config.improvedId2) {
+		} else if (v == 3 && this.config.improvedId2) {
 			return this.config.improvedId2;
 		} else {
 			return this.config.id;

@@ -45,91 +45,41 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 	nextSwingAt := ret.AutoAttacks.NextAttackAt()
 	isExecutePhase := sim.IsExecutePhase20()
 
+	nextUsefulAbility := core.MinDuration(ret.CrusaderStrike.CD.ReadyAt(), ret.DivineStorm.CD.ReadyAt())
+	nextUsefulAbility = core.MinDuration(nextUsefulAbility, ret.JudgementOfWisdom.CD.ReadyAt())
+	nextUsefulDelta := nextUsefulAbility - sim.CurrentTime
+
 	if ret.GCD.IsReady(sim) {
 		switch {
 		case ret.JudgementOfWisdom.IsReady(sim):
 			ret.JudgementOfWisdom.Cast(sim, target)
+		case ret.HasSetBonus(paladin.ItemSetLightswornBattlegear, 2) && ret.DivineStorm.IsReady(sim):
+			ret.DivineStorm.Cast(sim, target)
 		case ret.Env.GetNumTargets() == 1 && isExecutePhase && ret.HammerOfWrath.IsReady(sim):
 			ret.HammerOfWrath.Cast(sim, target)
 		case ret.Env.GetNumTargets() > 1 && ret.Consecration.IsReady(sim):
 			ret.Consecration.Cast(sim, target)
-		case ret.UseDivinePlea && ret.CurrentMana() < (ret.MaxMana()*0.75) && ret.DivinePlea.IsReady(sim):
+		case ret.UseDivinePlea && ret.CurrentMana() < (ret.MaxMana()*ret.DivinePleaPercentage) && ret.DivinePlea.IsReady(sim):
 			ret.DivinePlea.Cast(sim, &ret.Unit)
-		case ret.HasSetBonus(paladin.ItemSetLightswornBattlegear, 2) && ret.DivineStorm.IsReady(sim):
-			ret.DivineStorm.Cast(sim, target)
 		case ret.CrusaderStrike.IsReady(sim):
 			ret.CrusaderStrike.Cast(sim, target)
 		case ret.DivineStorm.IsReady(sim):
 			ret.DivineStorm.Cast(sim, target)
-		case ret.Consecration.IsReady(sim):
+		case (target.MobType == proto.MobType_MobTypeDemon || target.MobType == proto.MobType_MobTypeUndead) &&
+			nextUsefulDelta.Milliseconds() > int64(ret.ExoSlack) && ret.Exorcism.IsReady(sim) && ret.ArtOfWarInstantCast.IsActive():
+			ret.Exorcism.Cast(sim, target)
+		case nextUsefulDelta.Milliseconds() > int64(ret.ConsSlack) && ret.Consecration.IsReady(sim):
 			ret.Consecration.Cast(sim, target)
-		case ret.Exorcism.IsReady(sim) && ret.ArtOfWarInstantCast.IsActive():
+		case nextUsefulDelta.Milliseconds() > int64(ret.ExoSlack) && ret.Exorcism.IsReady(sim) && ret.ArtOfWarInstantCast.IsActive():
 			ret.Exorcism.Cast(sim, target)
 		}
-
-		// if ret.HasSetBonus(paladin.ItemSetLightswornBattlegear, 2) {
-		// 	// Needs 2pc t10 to be effective.
-		// 	swingDelta := nextSwingAt - sim.CurrentTime
-
-		// 	if swingDelta.Milliseconds() >= 1500 {
-		// 		switch {
-		// 		case isExecutePhase && ret.HammerOfWrath.IsReady(sim):
-		// 			ret.HammerOfWrath.Cast(sim, target)
-		// 		case ret.UseDivinePlea && ret.CurrentMana() < (ret.MaxMana()*0.80) && ret.DivinePlea.IsReady(sim):
-		// 			ret.DivinePlea.Cast(sim, &ret.Unit)
-		// 		case ret.JudgementOfWisdom.IsReady(sim):
-		// 			ret.JudgementOfWisdom.Cast(sim, target)
-		// 		case ret.CrusaderStrike.IsReady(sim):
-		// 			ret.CrusaderStrike.Cast(sim, target)
-		// 		case ret.DivineStorm.IsReady(sim):
-		// 			ret.DivineStorm.Cast(sim, target)
-		// 		case ret.Consecration.IsReady(sim):
-		// 			ret.Consecration.Cast(sim, target)
-		// 		case ret.Exorcism.IsReady(sim) && ret.ArtOfWarInstantCast.IsActive():
-		// 			ret.Exorcism.Cast(sim, target)
-		// 		}
-		// 	} else {
-		// 		switch {
-		// 		case isExecutePhase && ret.HammerOfWrath.IsReady(sim):
-		// 			ret.HammerOfWrath.Cast(sim, target)
-		// 		case ret.UseDivinePlea && ret.CurrentMana() < (ret.MaxMana()*0.80) && ret.DivinePlea.IsReady(sim):
-		// 			ret.DivinePlea.Cast(sim, &ret.Unit)
-		// 		case ret.DivineStorm.IsReady(sim):
-		// 			ret.DivineStorm.Cast(sim, target)
-		// 		case ret.JudgementOfWisdom.IsReady(sim):
-		// 			ret.JudgementOfWisdom.Cast(sim, target)
-		// 		case ret.CrusaderStrike.IsReady(sim):
-		// 			ret.CrusaderStrike.Cast(sim, target)
-		// 		case ret.Consecration.IsReady(sim):
-		// 			ret.Consecration.Cast(sim, target)
-		// 		case ret.Exorcism.IsReady(sim) && ret.ArtOfWarInstantCast.IsActive():
-		// 			ret.Exorcism.Cast(sim, target)
-		// 		}
-		// 	}
-		// } else {
-		// 	switch {
-		// 	case isExecutePhase && ret.HammerOfWrath.IsReady(sim):
-		// 		ret.HammerOfWrath.Cast(sim, target)
-		// 	case ret.UseDivinePlea && ret.CurrentMana() < (ret.MaxMana()*0.80) && ret.DivinePlea.IsReady(sim):
-		// 		ret.DivinePlea.Cast(sim, &ret.Unit)
-		// 	case ret.JudgementOfWisdom.IsReady(sim):
-		// 		ret.JudgementOfWisdom.Cast(sim, target)
-		// 	case ret.CrusaderStrike.IsReady(sim):
-		// 		ret.CrusaderStrike.Cast(sim, target)
-		// 	case ret.DivineStorm.IsReady(sim):
-		// 		ret.DivineStorm.Cast(sim, target)
-		// 	case ret.Exorcism.IsReady(sim) && ret.ArtOfWarInstantCast.IsActive():
-		// 		ret.Exorcism.Cast(sim, target)
-		// 	case ret.Consecration.IsReady(sim):
-		// 		ret.Consecration.Cast(sim, target)
-		// 	}
-		// }
 	}
 
 	// All possible next events
 	events := []time.Duration{
 		nextSwingAt,
 		ret.GCD.ReadyAt(),
+		nextUsefulAbility,
 		// ret.JudgementOfWisdom.CD.ReadyAt(),
 		// ret.CrusaderStrike.CD.ReadyAt(),
 		// ret.DivineStorm.CD.ReadyAt(),

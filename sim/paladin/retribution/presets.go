@@ -34,7 +34,11 @@ var defaultRetTalents = &proto.PaladinTalents{
 	DivineStorm:                   true,
 }
 
-var defaultRetRotation = &proto.RetributionPaladin_Rotation{}
+var defaultRetRotation = &proto.RetributionPaladin_Rotation{
+	ConsSlack:            500,
+	ExoSlack:             500,
+	DivinePleaPercentage: 0.75,
+}
 
 var defaultRetOptions = &proto.RetributionPaladin_Options{
 	Judgement:            proto.PaladinJudgement_JudgementOfWisdom,
