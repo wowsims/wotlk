@@ -407,32 +407,6 @@ func BlessingOfSanctuaryAura(character *Character) {
 	})
 }
 
-var (
-	WindfuryTotemSpellRanks = []int32{
-		8512,
-		10613,
-		10614,
-		25585,
-		25587,
-	}
-
-	windfuryBuffSpellRanks = []int32{
-		8516,
-		10608,
-		10610,
-		25583,
-		25584,
-	}
-
-	windfuryAPBonuses = []float64{
-		122,
-		229,
-		315,
-		375,
-		445,
-	}
-)
-
 // Used for approximating cooldowns applied by other players to you, such as
 // bloodlust, innervate, power infusion, etc. This is specifically for buffs
 // which can be consecutively applied multiple times to a single player.
