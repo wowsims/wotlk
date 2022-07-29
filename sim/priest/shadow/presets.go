@@ -61,6 +61,7 @@ var PlayerOptionsBasic = &proto.Player_ShadowPriest{
 	ShadowPriest: &proto.ShadowPriest{
 		Talents: StandardTalents,
 		Options: &proto.ShadowPriest_Options{
+			Armor:          proto.ShadowPriest_Options_InnerFire,
 			UseShadowfiend: true,
 		},
 		Rotation: &proto.ShadowPriest_Rotation{
@@ -73,6 +74,7 @@ var PlayerOptionsClipping = &proto.Player_ShadowPriest{
 	ShadowPriest: &proto.ShadowPriest{
 		Talents: StandardTalents,
 		Options: &proto.ShadowPriest_Options{
+			Armor:          proto.ShadowPriest_Options_InnerFire,
 			UseShadowfiend: true,
 		},
 		Rotation: &proto.ShadowPriest_Rotation{
@@ -86,6 +88,7 @@ var PlayerOptionsIdeal = &proto.Player_ShadowPriest{
 	ShadowPriest: &proto.ShadowPriest{
 		Talents: StandardTalents,
 		Options: &proto.ShadowPriest_Options{
+			Armor:          proto.ShadowPriest_Options_InnerFire,
 			UseShadowfiend: true,
 		},
 		Rotation: &proto.ShadowPriest_Rotation{
