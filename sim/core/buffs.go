@@ -736,7 +736,7 @@ func registerTricksOfTheTradeCD(agent Agent, numTricksOfTheTrades int32) {
 	registerExternalConsecutiveCDApproximation(
 		agent,
 		externalConsecutiveCDApproximation{
-			ActionID:         ActionID{SpellID: 57934, Tag: -1},
+			ActionID:         ActionID{SpellID: 57933, Tag: -1},
 			AuraTag:          TricksOfTheTradeAuraTag,
 			CooldownPriority: CooldownPriorityDefault,
 			AuraDuration:     TricksOfTheTradeDuration,
@@ -752,7 +752,7 @@ func registerTricksOfTheTradeCD(agent Agent, numTricksOfTheTrades int32) {
 }
 
 func TricksOfTheTradeAura(character *Character, actionTag int32) *Aura {
-	actionID := ActionID{SpellID: 57934, Tag: actionTag}
+	actionID := ActionID{SpellID: 57933, Tag: actionTag}
 
 	return character.GetOrRegisterAura(Aura{
 		Label:    "TricksOfTheTrade-" + actionID.String(),

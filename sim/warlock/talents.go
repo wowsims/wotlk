@@ -9,6 +9,8 @@ import (
 )
 
 func (warlock *Warlock) ApplyTalents() {
+	// warlock.PseudoStats.DamageDealtMultiplier = 10000
+
 	// Demonic Embrace
 	warlock.AddStatDependency(stats.Stamina, stats.Stamina, 1.01+(float64(warlock.Talents.DemonicEmbrace)*0.03))
 
@@ -58,6 +60,7 @@ func (warlock *Warlock) ApplyTalents() {
 			petChar := warlock.Pets[0].GetCharacter()
 			bonus := (petChar.GetStat(stats.Stamina) + petChar.GetStat(stats.Intellect)) * (0.04 * float64(warlock.Talents.DemonicKnowledge))
 			warlock.AddStat(stats.SpellPower, bonus)
+			//TODO : pet buffs influence
 		}
 	}
 
