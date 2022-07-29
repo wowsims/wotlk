@@ -166,11 +166,7 @@ func (hp *HunterPet) specialDamageMod(baseDamageConfig core.BaseDamageConfig) co
 	return core.WrapBaseDamageConfig(baseDamageConfig, func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
 		return func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 			normalDamage := oldCalculator(sim, hitEffect, spell)
-			if hp.KillCommandAura.IsActive() {
-				return normalDamage * (1 + 0.2*float64(hp.KillCommandAura.GetStacks()))
-			} else {
-				return normalDamage
-			}
+			return normalDamage * (1 + 0.2*float64(hp.KillCommandAura.GetStacks()))
 		}
 	})
 }
