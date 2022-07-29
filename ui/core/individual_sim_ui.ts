@@ -488,6 +488,32 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 		const settingsTab = this.rootElem.getElementsByClassName('settings-inputs')[0] as HTMLElement;
 
+		const configureMIPSection = (sectionElem: HTMLElement, iconPickers: Array<MultiIconPicker<Player<any>>>, tooltip?: string, adjustColumns?: boolean) => {
+			if (tooltip) {
+				tippy(sectionElem, {
+					'content': tooltip,
+					'allowHTML': true,
+				});
+			}
+
+			// Have all multi icon-pickers in a section able to update each other.
+			//  We cannot rely on this.player.changeEmitter because that is the same event that will change the values
+			//  of the icons. If we get the event out of order the new value will not yet have been set.
+			//  If we use this we can ensure that we wait until the value has been set because the picker change emitter fires
+			//  after the main change has happened.
+			iconPickers.forEach(ip => ip.changeEmitter.on(() => iconPickers.forEach(ip => ip.updateButtonImage())));
+
+			if (iconPickers.length == 0) {
+				sectionElem.style.display = 'none';
+			} else if (adjustColumns) {
+				if (iconPickers.length < 4) {
+					sectionElem.style.gridTemplateColumns = `repeat(${iconPickers.length}, 1fr)`;
+				} else if (iconPickers.length > 4 && iconPickers.length < 8) {
+					sectionElem.style.gridTemplateColumns = `repeat(${Math.ceil(iconPickers.length/2)}, 1fr)`;
+				}
+			}
+		};
+
 		const configureIconSection = (sectionElem: HTMLElement, iconPickers: Array<any>, tooltip?: string, adjustColumns?: boolean) => {
 			if (tooltip) {
 				tippy(sectionElem, {
@@ -544,7 +570,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			{ item: IconInputs.ReplenishmentBuff, stats: [Stat.StatMP5] },
 		]);
 		const buffsSection = this.rootElem.getElementsByClassName('buffs-section')[0] as HTMLElement;
-		configureIconSection(
+		configureMIPSection(
 			buffsSection,
 			buffOptions.map(multiIconInput => new MultiIconPicker(buffsSection, this.player, multiIconInput, this)),
 			Tooltips.OTHER_BUFFS_SECTION);
@@ -590,7 +616,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			{ item: IconInputs.MeleeHitDebuff, stats: [Stat.StatDodge] },
 		]);
 		const debuffsSection = this.rootElem.getElementsByClassName('debuffs-section')[0] as HTMLElement;
-		configureIconSection(
+		configureMIPSection(
 			debuffsSection,
 			debuffOptions.map(multiIconInput => new MultiIconPicker(debuffsSection, this.player, multiIconInput, this)),
 			Tooltips.DEBUFFS_SECTION);
