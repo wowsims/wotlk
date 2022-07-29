@@ -24,24 +24,35 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		})
 	}
 
-	gotwAmount := GetTristateValueFloat(raidBuffs.GiftOfTheWild, 54, 75)
+	gotwAmount := GetTristateValueFloat(raidBuffs.GiftOfTheWild, 37, 37*1.4)
 	if gotwAmount > 0 {
+		resist := GetTristateValueFloat(raidBuffs.GiftOfTheWild, 54, 54*1.4)
 		character.AddStats(stats.Stats{
-			stats.Armor:     GetTristateValueFloat(raidBuffs.GiftOfTheWild, 750, 1050),
-			stats.Stamina:   gotwAmount,
-			stats.Agility:   gotwAmount,
-			stats.Strength:  gotwAmount,
-			stats.Intellect: gotwAmount,
-			stats.Spirit:    gotwAmount,
+			stats.Armor:            GetTristateValueFloat(raidBuffs.GiftOfTheWild, 750, 1050),
+			stats.Stamina:          gotwAmount,
+			stats.Agility:          gotwAmount,
+			stats.Strength:         gotwAmount,
+			stats.Intellect:        gotwAmount,
+			stats.Spirit:           gotwAmount,
+			stats.ArcaneResistance: resist,
+			stats.ShadowResistance: resist,
+			stats.NatureResistance: resist,
+			stats.FireResistance:   resist,
+			stats.FrostResistance:  resist,
 		})
 	} else if raidBuffs.DrumsOfTheWild {
 		character.AddStats(stats.Stats{
-			stats.Armor:     750,
-			stats.Stamina:   37,
-			stats.Agility:   37,
-			stats.Strength:  37,
-			stats.Intellect: 37,
-			stats.Spirit:    37,
+			stats.Armor:            750,
+			stats.Stamina:          37,
+			stats.Agility:          37,
+			stats.Strength:         37,
+			stats.Intellect:        37,
+			stats.Spirit:           37,
+			stats.ArcaneResistance: 54,
+			stats.ShadowResistance: 54,
+			stats.NatureResistance: 54,
+			stats.FireResistance:   54,
+			stats.FrostResistance:  54,
 		})
 	}
 
@@ -72,6 +83,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 	if raidBuffs.TrueshotAura || raidBuffs.AbominationsMight || raidBuffs.UnleashedRage {
 		// Increases AP by 10%
 		character.AddStatDependency(stats.AttackPower, stats.AttackPower, 1.0+0.1)
+		character.AddStatDependency(stats.RangedAttackPower, stats.RangedAttackPower, 1.0+0.1)
 	}
 
 	if raidBuffs.ArcaneEmpowerment || raidBuffs.FerociousInspiration || raidBuffs.SanctifiedRetribution {
@@ -187,14 +199,15 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 			bonusAP = bomAP
 		}
 		character.AddStats(stats.Stats{
-			stats.AttackPower: math.Floor(bomAP),
+			stats.AttackPower:       math.Floor(bomAP),
+			stats.RangedAttackPower: math.Floor(bomAP),
 		})
 	}
 	character.AddStats(stats.Stats{
 		stats.Health: GetTristateValueFloat(raidBuffs.CommandingShout, 1080, 1080*1.25),
 	})
 
-	spBonus := float64(raidBuffs.DemonicPact)/10.
+	spBonus := float64(raidBuffs.DemonicPact) / 10.
 	if raidBuffs.TotemOfWrath {
 		spBonus = MaxFloat(spBonus, 280)
 	} else if raidBuffs.FlametongueTotem {
@@ -211,7 +224,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 	}
 	if raidBuffs.StrengthOfEarthTotem > 0 || raidBuffs.HornOfWinter {
 		val := MaxTristate(proto.TristateEffect_TristateEffectRegular, raidBuffs.StrengthOfEarthTotem)
-		bonus := GetTristateValueFloat(val, 155, 186)
+		bonus := GetTristateValueFloat(val, 155, 155*1.15)
 		character.AddStats(stats.Stats{
 			stats.Strength: bonus,
 			stats.Agility:  bonus,
@@ -401,121 +414,6 @@ func BlessingOfSanctuaryAura(character *Character) {
 			if spellEffect.Outcome.Matches(OutcomeBlock | OutcomeDodge | OutcomeParry) {
 				character.AddMana(sim, 0.02*character.MaxMana(), manaMetrics, false)
 			}
-		},
-	})
-}
-
-var (
-	WindfuryTotemSpellRanks = []int32{
-		8512,
-		10613,
-		10614,
-		25585,
-		25587,
-	}
-
-	windfuryBuffSpellRanks = []int32{
-		8516,
-		10608,
-		10610,
-		25583,
-		25584,
-	}
-
-	windfuryAPBonuses = []float64{
-		122,
-		229,
-		315,
-		375,
-		445,
-	}
-)
-
-func IsEligibleForWindfuryTotem(character *Character) bool {
-	return character.AutoAttacks.IsEnabled() &&
-		character.HasMHWeapon() &&
-		!character.HasMHWeaponImbue
-}
-
-var WindfuryTotemAuraLabel = "Windfury Totem"
-
-func WindfuryTotemAura(character *Character, rank int32, iwtTalentPoints int32) *Aura {
-	buffActionID := ActionID{SpellID: windfuryBuffSpellRanks[rank-1]}
-	apBonus := windfuryAPBonuses[rank-1]
-	apBonus *= 1 + 0.15*float64(iwtTalentPoints)
-
-	var charges int32
-
-	wfBuffAura := character.NewTemporaryStatsAuraWrapped("Windfury Buff", buffActionID, stats.Stats{stats.AttackPower: apBonus}, time.Millisecond*1500, func(config *Aura) {
-		config.OnSpellHitDealt = func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
-			// *Special Case* Windfury should not proc on Seal of Command
-			if spell.ActionID.SpellID == 20424 {
-				return
-			}
-			if !spellEffect.ProcMask.Matches(ProcMaskMeleeWhiteHit) || spellEffect.ProcMask.Matches(ProcMaskMeleeSpecial) {
-				return
-			}
-			charges--
-			if charges == 0 {
-				aura.Deactivate(sim)
-			}
-		}
-	})
-
-	var wfSpell *Spell
-	icd := Cooldown{
-		Timer:    character.NewTimer(),
-		Duration: 1,
-	}
-	const procChance = 0.2
-
-	return character.RegisterAura(Aura{
-		Label:    WindfuryTotemAuraLabel,
-		Duration: NeverExpires,
-		OnInit: func(aura *Aura, sim *Simulation) {
-			wfSpell = character.GetOrRegisterSpell(SpellConfig{
-				ActionID:    buffActionID, // temporary buff ("Windfury Attack") spell id
-				SpellSchool: SpellSchoolPhysical,
-				Flags:       SpellFlagMeleeMetrics | SpellFlagNoOnCastComplete,
-
-				ApplyEffects: ApplyEffectFuncDirectDamage(character.AutoAttacks.MHEffect),
-			})
-		},
-		OnReset: func(aura *Aura, sim *Simulation) {
-			aura.Activate(sim)
-		},
-		OnSpellHitDealt: func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
-			// *Special Case* Windfury should not proc on Seal of Command
-			if spell.ActionID.SpellID == 20424 {
-				return
-			}
-			if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(ProcMaskMeleeMHAuto) {
-				return
-			}
-
-			if wfBuffAura.IsActive() {
-				return
-			}
-			if !icd.IsReady(sim) {
-				// Checking for WF buff aura isn't quite enough now that we refactored auras.
-				// TODO: Clean this up to remove the need for an instant ICD.
-				return
-			}
-
-			if sim.RandomFloat("Windfury Totem") > procChance {
-				return
-			}
-
-			// TODO: the current proc system adds auras after cast and damage, in game they're added after cast
-			startCharges := int32(2)
-			if !spellEffect.ProcMask.Matches(ProcMaskMeleeMHSpecial) {
-				startCharges--
-			}
-			charges = startCharges
-			wfBuffAura.Activate(sim)
-			icd.Use(sim)
-
-			aura.Unit.AutoAttacks.MaybeReplaceMHSwing(sim, wfSpell).Cast(sim, spellEffect.Target)
 		},
 	})
 }

@@ -536,7 +536,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			{ item: IconInputs.MeleeHasteBuff, stats: [Stat.StatMeleeHaste] },
 			{ item: IconInputs.SpellPowerBuff, stats: [Stat.StatSpellPower] },
 			{ item: IconInputs.SpellCritBuff, stats: [Stat.StatSpellCrit] },
-			{ item: IconInputs.SpellHasteBuff, stats: [Stat.StatSpellHaste] },
 			{ item: IconInputs.HastePercentBuff, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
 			{ item: IconInputs.DamagePercentBuff, stats: [Stat.StatAttackPower, Stat.StatSpellPower] },
 			{ item: IconInputs.DamageReductionPercentBuff, stats: [Stat.StatArmor] },
@@ -551,6 +550,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 		const otherBuffOptions = this.splitRelevantOptions([
 			{ item: IconInputs.Bloodlust, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
+			{ item: IconInputs.SpellHasteBuff, stats: [Stat.StatSpellHaste] },
 		] as Array<StatOption<IconInputConfig<Player<any>, any>>>);
 		otherBuffOptions.forEach(iconInput => makeIconInput(buffsSection, iconInput));
 

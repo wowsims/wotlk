@@ -61,11 +61,16 @@ export const DivineSacTalents = {
 	}),
 };
 
-export const DefaultRotation = RetributionPaladinRotation.create();
+export const DefaultRotation = RetributionPaladinRotation.create({
+	exoSlack: 500,
+	consSlack: 500,
+	divinePleaPercentage: 0.75,
+});
 
 export const DefaultOptions = RetributionPaladinOptions.create({
 	aura: PaladinAura.RetributionAura,
 	judgement: PaladinJudgement.JudgementOfWisdom,
+	useDivinePlea: true,
 	damageTakenPerSecond: 0,
 });
 

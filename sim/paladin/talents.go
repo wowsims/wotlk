@@ -309,8 +309,11 @@ func (paladin *Paladin) applyVengeance() {
 		Duration:  time.Second * 30,
 		MaxStacks: 3,
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
-			aura.Unit.PseudoStats.DamageDealtMultiplier /= 1 + (bonusPerStack * float64(oldStacks))
-			aura.Unit.PseudoStats.DamageDealtMultiplier *= 1 + (bonusPerStack * float64(newStacks))
+			aura.Unit.PseudoStats.HolyDamageDealtMultiplier /= 1 + (bonusPerStack * float64(oldStacks))
+			aura.Unit.PseudoStats.PhysicalDamageDealtMultiplier /= 1 + (bonusPerStack * float64(oldStacks))
+
+			aura.Unit.PseudoStats.HolyDamageDealtMultiplier *= 1 + (bonusPerStack * float64(newStacks))
+			aura.Unit.PseudoStats.PhysicalDamageDealtMultiplier *= 1 + (bonusPerStack * float64(newStacks))
 		},
 	})
 
