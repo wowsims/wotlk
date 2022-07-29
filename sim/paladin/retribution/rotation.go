@@ -49,14 +49,14 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 		switch {
 		case ret.JudgementOfWisdom.IsReady(sim):
 			ret.JudgementOfWisdom.Cast(sim, target)
+		case ret.HasSetBonus(paladin.ItemSetLightswornBattlegear, 2) && ret.DivineStorm.IsReady(sim):
+			ret.DivineStorm.Cast(sim, target)
 		case ret.Env.GetNumTargets() == 1 && isExecutePhase && ret.HammerOfWrath.IsReady(sim):
 			ret.HammerOfWrath.Cast(sim, target)
 		case ret.Env.GetNumTargets() > 1 && ret.Consecration.IsReady(sim):
 			ret.Consecration.Cast(sim, target)
 		case ret.UseDivinePlea && ret.CurrentMana() < (ret.MaxMana()*0.75) && ret.DivinePlea.IsReady(sim):
 			ret.DivinePlea.Cast(sim, &ret.Unit)
-		case ret.HasSetBonus(paladin.ItemSetLightswornBattlegear, 2) && ret.DivineStorm.IsReady(sim):
-			ret.DivineStorm.Cast(sim, target)
 		case ret.CrusaderStrike.IsReady(sim):
 			ret.CrusaderStrike.Cast(sim, target)
 		case ret.DivineStorm.IsReady(sim):
