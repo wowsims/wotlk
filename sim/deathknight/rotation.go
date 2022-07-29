@@ -77,7 +77,7 @@ func (dk *Deathknight) RotationActionCallback_Obli(sim *core.Simulation, target 
 func (dk *Deathknight) RotationActionCallback_FS(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
 	casted := dk.CastFrostStrike(sim, target)
 
-	s.ConditionalAdvance(true)
+	s.Advance()
 	return casted
 }
 
@@ -122,7 +122,7 @@ func (dk *Deathknight) RotationActionCallback_GF(sim *core.Simulation, target *c
 func (dk *Deathknight) RotationActionCallback_DC(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
 	casted := dk.CastDeathCoil(sim, target)
 
-	s.ConditionalAdvance(true)
+	s.Advance()
 	return casted
 }
 
@@ -175,7 +175,6 @@ func (dk *Deathknight) RotationActionCallback_UP(sim *core.Simulation, target *c
 
 func (dk *Deathknight) RotationActionCallback_Reset(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
 	s.Reset()
-	s.ConditionalAdvance(false)
 	return false
 }
 
