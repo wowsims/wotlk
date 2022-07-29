@@ -110,11 +110,12 @@ func (combos *SettingsCombos) GetTest(testIdx int) (string, *proto.ComputeStatsR
 	rsr := &proto.RaidSimRequest{
 		Raid: SinglePlayerRaidProto(
 			WithSpec(&proto.Player{
-				Race:      race,
-				Class:     combos.Class,
-				Equipment: gearSetCombo.GearSet,
-				Consumes:  buffsCombo.Consumes,
-				Buffs:     buffsCombo.Player,
+				Race:        race,
+				Class:       combos.Class,
+				Equipment:   gearSetCombo.GearSet,
+				Consumes:    buffsCombo.Consumes,
+				Buffs:       buffsCombo.Player,
+				Profession1: proto.Profession_Engineering,
 				// TODO: Allow cooldowns in tests
 				//Cooldowns: &proto.Cooldowns{
 				//	Cooldowns: []*proto.Cooldown{
@@ -440,12 +441,13 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 
 	defaultPlayer := WithSpec(
 		&proto.Player{
-			Class:     config.Class,
-			Race:      config.Race,
-			Equipment: config.GearSet.GearSet,
-			Consumes:  config.Consumes,
-			Buffs:     config.PlayerBuffs,
-			Glyphs:    config.Glyphs,
+			Class:       config.Class,
+			Race:        config.Race,
+			Equipment:   config.GearSet.GearSet,
+			Consumes:    config.Consumes,
+			Buffs:       config.PlayerBuffs,
+			Glyphs:      config.Glyphs,
+			Profession1: proto.Profession_Engineering,
 
 			InFrontOfTarget: config.InFrontOfTarget,
 		},

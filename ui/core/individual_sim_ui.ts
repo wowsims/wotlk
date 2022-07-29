@@ -452,7 +452,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 							</div>
 						</div>
 						<div class="consumes-row">
-							<span>Trade</span>
+							<span>Eng</span>
 							<div class="consumes-row-inputs consumes-trade">
 							</div>
 						</div>
@@ -702,9 +702,19 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 		const tradeConsumesElem = this.rootElem.getElementsByClassName('consumes-trade')[0] as HTMLElement;
 		//tradeConsumesElem.parentElement!.style.display = 'none';
-		makeIconInput(tradeConsumesElem, IconInputs.SuperSapper);
-		makeIconInput(tradeConsumesElem, IconInputs.GoblinSapper);
+		makeIconInput(tradeConsumesElem, IconInputs.ThermalSapper);
+		makeIconInput(tradeConsumesElem, IconInputs.ExplosiveDecoy);
 		makeIconInput(tradeConsumesElem, IconInputs.FillerExplosiveInput);
+
+		const updateProfession = () => {
+			if (this.player.hasProfession(Profession.Engineering)) {
+				tradeConsumesElem.parentElement!.style.removeProperty('display');
+			} else {
+				tradeConsumesElem.parentElement!.style.display = 'none';
+			}
+		};
+		this.player.professionChangeEmitter.on(updateProfession);
+		updateProfession();
 
 		if (this.individualConfig.petConsumeInputs?.length) {
 			const petConsumesElem = this.rootElem.getElementsByClassName('consumes-pet')[0] as HTMLElement;
@@ -713,11 +723,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			const petRowElem = this.rootElem.getElementsByClassName('consumes-row-pet')[0] as HTMLElement;
 			petRowElem.style.display = 'none';
 		}
-
-		//if (this.individualConfig.consumeOptions?.other?.length) {
-		//	const containerElem = this.rootElem.getElementsByClassName('consumes-other')[0] as HTMLElement;
-		//	this.individualConfig.consumeOptions.other.map(iconInput => makeIconInput(containerElem, iconInput));
-		//}
 
 		const configureInputSection = (sectionElem: HTMLElement, sectionConfig: InputSection) => {
 			if (sectionConfig.tooltip) {
