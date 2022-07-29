@@ -44,10 +44,10 @@ func (dk *Deathknight) registerPestilenceSpell() {
 							// Update expire instead of Apply to keep old snapshotted value
 							if dk.FrostFeverDisease[unitHit.Index].IsActive() {
 								dk.FrostFeverDisease[unitHit.Index].Rollover(sim)
-								dk.FrostFeverDebuffAura[unitHit.Index].Activate(sim)
-								if dk.IcyTalonsAura != nil {
+								if dk.Talents.IcyTalons > 0 {
 									dk.IcyTalonsAura.Activate(sim)
 								}
+								dk.FrostFeverDebuffAura[unitHit.Index].Activate(sim)
 							}
 
 							if dk.BloodPlagueDisease[unitHit.Index].IsActive() {

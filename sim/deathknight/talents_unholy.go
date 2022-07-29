@@ -135,8 +135,8 @@ func (dk *Deathknight) applyNecrosis() {
 	})
 
 	dk.NecrosisAura = core.MakePermanent(dk.RegisterAura(core.Aura{
-		Label:    "Necrosis",
-		ActionID: core.ActionID{SpellID: 51465},
+		Label: "Necrosis",
+		// ActionID: core.ActionID{SpellID: 51465}, // hide from metrics
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Damage == 0 || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
 				return
@@ -158,8 +158,8 @@ func (dk *Deathknight) applyBloodCakedBlade() {
 	bloodCakedBladeHitOh := dk.bloodCakedBladeHit(false)
 
 	dk.BloodCakedBladeAura = core.MakePermanent(dk.RegisterAura(core.Aura{
-		Label:    "Blood-Caked Blade",
-		ActionID: core.ActionID{SpellID: 49628},
+		Label: "Blood-Caked Blade",
+		// ActionID: core.ActionID{SpellID: 49628}, // Hide from metrics
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Damage == 0 || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
 				return

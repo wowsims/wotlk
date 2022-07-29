@@ -62,7 +62,6 @@ func (dk *DpsDeathknight) SetupRotations() {
 		if dk.Rotation.UseDeathAndDecay {
 			dk.setupUnholyDndOpener()
 		} else {
-
 			if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd {
 				dk.setupUnholySsArmyOpener()
 			} else {

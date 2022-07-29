@@ -60,12 +60,7 @@ func (dk *Deathknight) registerFrostFever() {
 			}
 			dk.FrostFeverDisease[unit.Index].Apply(sim)
 			isRefreshing[unit.Index] = false
-
 			dk.FrostFeverDebuffAura[unit.Index].Activate(sim)
-
-			if dk.IcyTalonsAura != nil {
-				dk.IcyTalonsAura.Activate(sim)
-			}
 		},
 	})
 
@@ -77,20 +72,24 @@ func (dk *Deathknight) registerFrostFever() {
 	}
 	for _, encounterTarget := range dk.Env.Encounter.Targets {
 		target := &encounterTarget.Unit
-
+		aura := core.Aura{
+			Label:    FrostFeverAuraLabel + strconv.Itoa(int(dk.Index)),
+			ActionID: actionID,
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				if !isRefreshing[aura.Unit.Index] {
+					flagTs[aura.Unit.Index] = false
+				}
+			},
+		}
+		if dk.Talents.IcyTalons > 0 {
+			aura.OnGain = func(aura *core.Aura, sim *core.Simulation) {
+				dk.IcyTalonsAura.Activate(sim)
+			}
+		}
 		dk.FrostFeverDisease[target.Index] = core.NewDot(core.Dot{
-			Aura: target.RegisterAura(core.Aura{
-				Label:    FrostFeverAuraLabel + strconv.Itoa(int(dk.Index)),
-				ActionID: actionID,
-				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-					if !isRefreshing[aura.Unit.Index] {
-						flagTs[aura.Unit.Index] = false
-					}
-				},
-			}),
+			Aura:          target.RegisterAura(aura),
 			NumberOfTicks: 5 + int(dk.Talents.Epidemic),
 			TickLength:    time.Second * 3,
-
 			TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 				ProcMask:              core.ProcMaskPeriodicDamage,
 				DamageMultiplier:      core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfIcyTouch), 1.2, 1.0),
