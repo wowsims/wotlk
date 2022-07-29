@@ -19,7 +19,7 @@ type UnholyRotation struct {
 	recastedBP bool
 }
 
-func (ur *UnholyRotation) ResetUnholyRotation(sim *core.Simulation) {
+func (ur *UnholyRotation) Reset(sim *core.Simulation) {
 	ur.syncFF = false
 
 	ur.syncTimeFF = 0
@@ -28,7 +28,7 @@ func (ur *UnholyRotation) ResetUnholyRotation(sim *core.Simulation) {
 	ur.recastedBP = false
 }
 
-func (dk *DpsDeathknight) shouldWaitForDnD(sim *core.Simulation, blood bool, frost bool, unholy bool) bool {
+func (dk *DpsDeathknight) uhShouldWaitForDnD(sim *core.Simulation, blood bool, frost bool, unholy bool) bool {
 	return dk.Rotation.UseDeathAndDecay && !(dk.Talents.Morbidity == 0 || !(dk.DeathAndDecay.CD.IsReady(sim) || dk.DeathAndDecay.CD.TimeToReady(sim) < 4*time.Second) || ((!blood || dk.CurrentBloodRunes() > 1) && (!frost || dk.CurrentFrostRunes() > 1) && (!unholy || dk.CurrentUnholyRunes() > 1)))
 }
 
@@ -63,12 +63,12 @@ func (dk *DpsDeathknight) UnholyDiseaseCheckWrapper(sim *core.Simulation, target
 		nextUnholyRuneAt := crpb.UnholyRuneReadyAt(sim)
 
 		// Check FF
-		if dk.checkForDiseaseRecast(ffExpiresAt-dk.syncTimeFF, afterCastTime, spellCost.Frost, currentFrostRunes, nextFrostRuneAt) {
+		if dk.uhCheckForDiseaseRecast(ffExpiresAt-dk.ur.syncTimeFF, afterCastTime, spellCost.Frost, currentFrostRunes, nextFrostRuneAt) {
 			return false
 		}
 
 		// Check BP
-		if dk.checkForDiseaseRecast(bpExpiresAt, afterCastTime, spellCost.Unholy, currentUnholyRunes, nextUnholyRuneAt) {
+		if dk.uhCheckForDiseaseRecast(bpExpiresAt, afterCastTime, spellCost.Unholy, currentUnholyRunes, nextUnholyRuneAt) {
 			return false
 		}
 	}
@@ -76,7 +76,7 @@ func (dk *DpsDeathknight) UnholyDiseaseCheckWrapper(sim *core.Simulation, target
 	return true
 }
 
-func (dk *DpsDeathknight) checkForDiseaseRecast(expiresAt time.Duration, afterCastTime time.Duration,
+func (dk *DpsDeathknight) uhCheckForDiseaseRecast(expiresAt time.Duration, afterCastTime time.Duration,
 	spellCost int, currentRunes int32, nextRuneAt time.Duration) bool {
 	if spellCost > 0 && currentRunes == 0 {
 		if expiresAt < nextRuneAt {
@@ -88,18 +88,18 @@ func (dk *DpsDeathknight) checkForDiseaseRecast(expiresAt time.Duration, afterCa
 	return false
 }
 
-func (dk *DpsDeathknight) shouldSpreadDisease(sim *core.Simulation) bool {
-	return dk.recastedFF && dk.recastedBP && dk.Env.GetNumTargets() > 1
+func (dk *DpsDeathknight) uhShouldSpreadDisease(sim *core.Simulation) bool {
+	return dk.ur.recastedFF && dk.ur.recastedBP && dk.Env.GetNumTargets() > 1
 }
 
-func (dk *DpsDeathknight) spreadDiseases(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
+func (dk *DpsDeathknight) uhSpreadDiseases(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
 	if dk.UnholyDiseaseCheckWrapper(sim, target, dk.Pestilence, true, 1) {
 		casted := dk.CastPestilence(sim, target)
 		landed := dk.LastCastOutcome.Matches(core.OutcomeLanded)
 
 		// Reset flags on succesfull cast
-		dk.recastedFF = !(casted && landed)
-		dk.recastedBP = !(casted && landed)
+		dk.ur.recastedFF = !(casted && landed)
+		dk.ur.recastedBP = !(casted && landed)
 		return casted
 	} else {
 		dk.recastDiseasesSequence(sim)

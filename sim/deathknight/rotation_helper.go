@@ -4,54 +4,17 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-//type RotationAction func(sim *core.Simulation, target *core.Unit)
-
 type RotationAction func(sim *core.Simulation, target *core.Unit, s *Sequence) bool
 
+func TernaryRotationAction(condition bool, t RotationAction, f RotationAction) RotationAction {
+	if condition {
+		return t
+	} else {
+		return f
+	}
+}
+
 // Add your UH rotation Actions here and then on the DoNext function
-
-func (s *Sequence) NewAction(action RotationAction) *Sequence {
-	s.actions = append(s.actions, action)
-	s.numActions += 1
-	return s
-}
-
-func (s *Sequence) Clear() *Sequence {
-	s.actions = make([]RotationAction, 0)
-	s.numActions = 0
-	s.idx = 0
-	return s
-}
-
-/*
-const (
-	RotationAction_Skip RotationActionCallback = Func_RotationAction_Skip
-	RotationAction_IT
-	RotationAction_PS
-	RotationAction_Obli
-	RotationAction_BS
-	RotationAction_BT
-	RotationAction_UA
-	RotationAction_RD
-	RotationAction_Pesti
-	RotationAction_FS
-	RotationAction_HW
-	RotationAction_ERW
-	RotationAction_HB_Ghoul_RimeCheck
-	RotationAction_PrioMode
-	RotationAction_SS
-	RotationAction_DND
-	RotationAction_GF
-	RotationAction_DC
-	RotationAction_Garg
-	RotationAction_AOTD
-	RotationAction_BP
-	RotationAction_FP
-	RotationAction_UP
-	RotationAction_RedoSequence
-	RotationAction_FS_IF_KM
-)
-*/
 
 type Sequence struct {
 	idx        int
@@ -85,15 +48,20 @@ func (o *Sequence) GetNextAction() RotationAction {
 	}
 }
 
+func (s *Sequence) NewAction(action RotationAction) *Sequence {
+	s.actions = append(s.actions, action)
+	s.numActions += 1
+	return s
+}
+
+func (s *Sequence) Clear() *Sequence {
+	s.actions = make([]RotationAction, 0)
+	s.numActions = 0
+	s.idx = 0
+	return s
+}
+
 type RotationHelper struct {
 	Opener *Sequence
 	Main   *Sequence
-}
-
-func TernaryRotationAction(condition bool, t RotationAction, f RotationAction) RotationAction {
-	if condition {
-		return t
-	} else {
-		return f
-	}
 }
