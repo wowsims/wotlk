@@ -233,7 +233,7 @@ func (dk *DpsDeathknight) RotationAction_CancelBT(sim *core.Simulation, target *
 	return true
 }
 
-func (dk *DpsDeathknight) RotationAction_ResetToMain(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
+func (dk *DpsDeathknight) RotationAction_ResetToSsMain(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
 	dk.Main.Clear().
 		NewAction(dk.RotationActionCallback_UnholySsRotation)
 
@@ -325,7 +325,7 @@ func (dk *DpsDeathknight) ghoulFrenzySequence(sim *core.Simulation, bloodTap boo
 		}
 	}
 
-	dk.Main.NewAction(dk.RotationAction_ResetToMain)
+	dk.Main.NewAction(dk.RotationAction_ResetToSsMain)
 	dk.WaitUntil(sim, sim.CurrentTime)
 }
 
@@ -346,7 +346,7 @@ func (dk *DpsDeathknight) recastDiseasesSequence(sim *core.Simulation) {
 			NewAction(dk.RotationAction_IT_Custom)
 	}
 
-	dk.Main.NewAction(dk.RotationAction_ResetToMain)
+	dk.Main.NewAction(dk.RotationAction_ResetToSsMain)
 	dk.WaitUntil(sim, sim.CurrentTime)
 }
 
@@ -356,8 +356,9 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 	if dk.Talents.GhoulFrenzy {
 		// If no Ghoul Frenzy Aura or duration less then 10 seconds we try recasting
 		if !dk.GhoulFrenzyAura.IsActive() || dk.GhoulFrenzyAura.RemainingDuration(sim) < 10*time.Second {
-			if dk.CanBloodTap(sim) && dk.GhoulFrenzy.IsReady(sim) && dk.AllBloodRunesSpent() {
-				// Use Ghoul Frenzy with a Blood Tap and Blood rune.
+			if dk.CanBloodTap(sim) && dk.GhoulFrenzy.IsReady(sim) && dk.AllBloodRunesSpent() && dk.SummonGargoyle.CD.TimeToReady(sim) > time.Second*60 {
+				// Use Ghoul Frenzy with a Blood Tap and Blood rune if all blood runes are on CD and Garg wont come off cd in less then a minute.
+				// The gargoyle check is there because you should BT -> UP -> Garg (Not in the sim yet)
 				if dk.UnholyDiseaseCheckWrapper(sim, target, dk.GhoulFrenzy, true, 1) {
 					dk.ghoulFrenzySequence(sim, true)
 					return true
