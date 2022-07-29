@@ -241,6 +241,7 @@ func (dk *DpsDeathknight) RotationAction_ResetToMain(sim *core.Simulation, targe
 	return true
 }
 
+// Custom PS callback for tracking recasts for pestilence disease sync
 func (dk *DpsDeathknight) RotationAction_PS_Custom(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
 	casted := dk.RotationActionCallback_PS(sim, target, s)
 	advance := dk.LastCastOutcome.Matches(core.OutcomeLanded)
@@ -248,6 +249,7 @@ func (dk *DpsDeathknight) RotationAction_PS_Custom(sim *core.Simulation, target 
 	return casted
 }
 
+// Custom IT callback for tracking recasts for pestilence disease sync
 func (dk *DpsDeathknight) RotationAction_IT_Custom(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
 	casted := dk.RotationActionCallback_IT(sim, target, s)
 	advance := dk.LastCastOutcome.Matches(core.OutcomeLanded)
@@ -258,6 +260,7 @@ func (dk *DpsDeathknight) RotationAction_IT_Custom(sim *core.Simulation, target 
 	return casted
 }
 
+// Custom IT callback for ghoul frenzy frost rune sync
 func (dk *DpsDeathknight) RotationAction_IT_SetSync(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
 	ffRemaining := dk.FrostFeverDisease[target.Index].RemainingDuration(sim)
 	casted := dk.RotationActionCallback_IT(sim, target, s)
@@ -281,7 +284,11 @@ func (dk *DpsDeathknight) RotationAction_BP_ClipCheck(sim *core.Simulation, targ
 	return dk.RotationAction_DiseaseClipCheck(dot, gracePeriod, sim, target, s)
 }
 
+// Check if we have enough rune grace period to delay the disease cast
+// so we get more ticks without losing on rune cd
 func (dk *DpsDeathknight) RotationAction_DiseaseClipCheck(dot *core.Dot, gracePeriod time.Duration, sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
+	// TODO: Play around with allowing rune cd to be wasted
+	// for more disease ticks and see if its a worth option for the ui
 	//runeCdWaste := 0 * time.Millisecond
 	if dot.TickCount < dot.NumberOfTicks-1 {
 		nextTickAt := dot.ExpiresAt() - dot.TickLength*time.Duration((dot.NumberOfTicks-1)-dot.TickCount)
@@ -307,7 +314,7 @@ func (dk *DpsDeathknight) ghoulFrenzySequence(sim *core.Simulation, bloodTap boo
 			NewAction(dk.RotationActionCallback_GF).
 			NewAction(dk.RotationAction_CancelBT)
 	} else {
-		if dk.ffFirst {
+		if dk.ur.ffFirst {
 			dk.Main.Clear().
 				NewAction(dk.RotationAction_IT_SetSync).
 				NewAction(dk.RotationActionCallback_GF)
@@ -317,6 +324,7 @@ func (dk *DpsDeathknight) ghoulFrenzySequence(sim *core.Simulation, bloodTap boo
 				NewAction(dk.RotationAction_IT_SetSync)
 		}
 	}
+
 	dk.Main.NewAction(dk.RotationAction_ResetToMain)
 	dk.WaitUntil(sim, sim.CurrentTime)
 }
@@ -329,17 +337,16 @@ func (dk *DpsDeathknight) recastDiseasesSequence(sim *core.Simulation) {
 			NewAction(dk.RotationAction_FF_ClipCheck).
 			NewAction(dk.RotationAction_IT_Custom).
 			NewAction(dk.RotationAction_BP_ClipCheck).
-			NewAction(dk.RotationAction_PS_Custom).
-			NewAction(dk.RotationAction_ResetToMain)
+			NewAction(dk.RotationAction_PS_Custom)
 	} else {
 		dk.Main.
 			NewAction(dk.RotationAction_BP_ClipCheck).
 			NewAction(dk.RotationAction_PS_Custom).
 			NewAction(dk.RotationAction_FF_ClipCheck).
-			NewAction(dk.RotationAction_IT_Custom).
-			NewAction(dk.RotationAction_ResetToMain)
+			NewAction(dk.RotationAction_IT_Custom)
 	}
 
+	dk.Main.NewAction(dk.RotationAction_ResetToMain)
 	dk.WaitUntil(sim, sim.CurrentTime)
 }
 
@@ -347,10 +354,10 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 	casted := false
 
 	if dk.Talents.GhoulFrenzy {
-		if dk.Rotation.BtGhoulFrenzy && !dk.Rotation.UseDeathAndDecay {
-			// Use Ghoul Frenzy only with a Blood Tap and Blood rune.
-			// That means 50% uptime on GF at maximum but more Scourge Strikes
+		// If no Ghoul Frenzy Aura or duration less then 10 seconds we try recasting
+		if !dk.GhoulFrenzyAura.IsActive() || dk.GhoulFrenzyAura.RemainingDuration(sim) < 10*time.Second {
 			if dk.CanBloodTap(sim) && dk.GhoulFrenzy.IsReady(sim) && dk.AllBloodRunesSpent() {
+				// Use Ghoul Frenzy with a Blood Tap and Blood rune.
 				if dk.UnholyDiseaseCheckWrapper(sim, target, dk.GhoulFrenzy, true, 1) {
 					dk.ghoulFrenzySequence(sim, true)
 					return true
@@ -358,12 +365,8 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 					dk.recastDiseasesSequence(sim)
 					return true
 				}
-			}
-		} else {
-			// Use Ghoul Frenzy with an Unholy Rune and sync the frost rune with Icy Touch
-			// That means 100% uptime on GF at maximum but less Scourge Strikes
-			if dk.CanGhoulFrenzy(sim) && dk.CanIcyTouch(sim) &&
-				(!dk.GhoulFrenzyAura.IsActive() || dk.GhoulFrenzyAura.RemainingDuration(sim) < 10*time.Second) {
+			} else if !dk.Rotation.BtGhoulFrenzy && dk.CanGhoulFrenzy(sim) && dk.CanIcyTouch(sim) {
+				// Use Ghoul Frenzy with an Unholy Rune and sync the frost rune with Icy Touch
 				if dk.UnholyDiseaseCheckWrapper(sim, target, dk.GhoulFrenzy, true, 5) && dk.UnholyDiseaseCheckWrapper(sim, target, dk.IcyTouch, true, 5) {
 					dk.ghoulFrenzySequence(sim, false)
 					return true
@@ -375,6 +378,10 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 		}
 	}
 
+	// What follows is a simple APL logic where every cast is checked against current diseses
+	// And if the cast would leave the DK with not enough runes to cast disease before falloff
+	// the cast is canceled and a disease recast is queued. Priority is as follows:
+	// Scourge Strike -> Blood Strike (or Pesti on Aoe) -> Death Coil -> Horn of Winter
 	if !casted {
 		if dk.UnholyDiseaseCheckWrapper(sim, target, dk.ScourgeStrike, true, 1) {
 			casted = dk.CastScourgeStrike(sim, target)
