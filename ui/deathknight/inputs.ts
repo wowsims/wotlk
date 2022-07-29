@@ -64,9 +64,9 @@ export const UseDeathAndDecay = InputHelpers.makeRotationBooleanInput<Spec.SpecD
 export const SetDeathAndDecayPrio = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, DeathAndDecayPrio>({
 	fieldName: 'deathAndDecayPrio',
 	label: 'Death and Decay Prio',
-	labelTooltip: 'Chose how to prioritize death and decay usage:\
-	<p><b>Max Rune Downtime</b>: Prioritizes spending runes over holding them for death and decay</p>\
-	<p><b>Max Dnd Uptime</b>: Prioritizes dnd uptime and can hold runes for longer then rune grace</p>',
+	labelTooltip: '<p>Chose how to prioritize death and decay usage:</p>\
+		<p><b>Max Rune Downtime</b>: Prioritizes spending runes over holding them for death and decay</p>\
+		<p><b>Max Dnd Uptime</b>: Prioritizes dnd uptime and can hold runes for longer then rune grace</p>',
 	values: [
 		{ name: 'Max Rune Downtime', value: DeathAndDecayPrio.MaxRuneDowntime },
 		{ name: 'Max Dnd Uptime', value: DeathAndDecayPrio.MaxDndUptime },
