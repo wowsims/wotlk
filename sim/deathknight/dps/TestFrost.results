@@ -822,8 +822,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Human-Frost P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 16225.748622689594
-  tps: 10355.598382871558
+  dps: 16442.42801741995
+  tps: 10483.018002066427
  }
 }
 dps_results: {
@@ -843,8 +843,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Human-Frost P1-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 11706.975237079705
-  tps: 7416.713721863442
+  dps: 11532.792790987227
+  tps: 7310.840125556561
  }
 }
 dps_results: {
@@ -864,8 +864,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Orc-Frost P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 16481.86374890851
-  tps: 10508.384439309239
+  dps: 16354.102986571044
+  tps: 10442.422296200451
  }
 }
 dps_results: {
@@ -885,8 +885,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Orc-Frost P1-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 11545.68960203248
-  tps: 7318.73313532141
+  dps: 11656.555194526803
+  tps: 7382.457753958883
  }
 }
 dps_results: {
