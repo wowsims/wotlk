@@ -366,6 +366,7 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 	})
 	shaman.MaelstromWeaponAura = procAura
 
+	ppmm := shaman.AutoAttacks.NewPPMManager(2.0*float64(shaman.Talents.MaelstromWeapon), core.ProcMaskMelee)
 	// This aura is hidden, just applies stacks of the proc aura.
 	shaman.RegisterAura(core.Aura{
 		Label:    "MaelstromWeapon",
@@ -374,7 +375,10 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+			if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.Landed() {
+				return
+			}
+			if !ppmm.Proc(sim, spellEffect.ProcMask, "Maelstrom Weapon") {
 				return
 			}
 			if !procAura.IsActive() {
