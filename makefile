@@ -142,6 +142,7 @@ binary_dist: $(OUT_DIR)
 	cp -r $(OUT_DIR) binary_dist/
 	rm binary_dist/wotlk/lib.wasm
 	rm -rf binary_dist/wotlk/assets/item_data
+	rm -rf binary_dist/wotlk/assets/spell_data
 
 # Builds the web server with the compiled client.
 .PHONY: wowsimwotlk
