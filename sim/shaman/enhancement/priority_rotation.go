@@ -9,15 +9,16 @@ import (
 // Priority Rotation - Configurable //
 //////////////////////////////////////
 type PriorityRotation struct {
+	order []uint32
 	BaseRotation
 }
 
 func (rotation *PriorityRotation) DoAction(enh *EnhancementShaman, sim *core.Simulation) {
 	target := sim.GetTargetUnit(0)
-	for i := 1; i <= 9; i++ {
-		if rotation.shouldCast(i, enh, sim, target) {
-			if !rotation.cast(i, enh, sim, target) {
-				enh.WaitForMana(sim, rotation.getCurrentCastCost(i, enh))
+	for i := 0; i < len(rotation.order); i++ {
+		if rotation.shouldCast(rotation.order[i], enh, sim, target) {
+			if !rotation.cast(rotation.order[i], enh, sim, target) {
+				enh.WaitForMana(sim, rotation.getCurrentCastCost(rotation.order[i], enh))
 			}
 			return
 		}
@@ -27,7 +28,7 @@ func (rotation *PriorityRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 	return
 }
 
-func (rotation *PriorityRotation) shouldCast(spell int, enh *EnhancementShaman, sim *core.Simulation, target *core.Unit) bool {
+func (rotation *PriorityRotation) shouldCast(spell uint32, enh *EnhancementShaman, sim *core.Simulation, target *core.Unit) bool {
 	switch spell {
 	case 1:
 		return rotation.shouldCastStormstrikeNoDebuff(enh, sim, target)
@@ -52,7 +53,7 @@ func (rotation *PriorityRotation) shouldCast(spell int, enh *EnhancementShaman, 
 	}
 }
 
-func (rotation *PriorityRotation) cast(spell int, enh *EnhancementShaman, sim *core.Simulation, target *core.Unit) bool {
+func (rotation *PriorityRotation) cast(spell uint32, enh *EnhancementShaman, sim *core.Simulation, target *core.Unit) bool {
 	switch spell {
 	case 1:
 		return enh.Stormstrike.Cast(sim, target)
@@ -77,7 +78,7 @@ func (rotation *PriorityRotation) cast(spell int, enh *EnhancementShaman, sim *c
 	}
 }
 
-func (rotation *PriorityRotation) getCurrentCastCost(spell int, enh *EnhancementShaman) float64 {
+func (rotation *PriorityRotation) getCurrentCastCost(spell uint32, enh *EnhancementShaman) float64 {
 	switch spell {
 	case 1:
 		return enh.Stormstrike.CurCast.Cost
@@ -102,7 +103,16 @@ func (rotation *PriorityRotation) getCurrentCastCost(spell int, enh *Enhancement
 	}
 }
 
-func NewPriorityRotation(talents *proto.ShamanTalents) *PriorityRotation {
+func (rotation *PriorityRotation) setOrder(order []uint32) {
+	if order == nil || len(order) == 0 {
+		rotation.order = []uint32{1, 2, 3, 4, 5, 6, 7, 8, 9}
+	} else {
+		rotation.order = order
+	}
+}
+
+func NewPriorityRotation(talents *proto.ShamanTalents, order []uint32) *PriorityRotation {
 	pr := new(PriorityRotation)
+	pr.setOrder(order)
 	return pr
 }
