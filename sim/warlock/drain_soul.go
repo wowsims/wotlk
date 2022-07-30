@@ -38,7 +38,7 @@ func (warlock *Warlock) dynamicDrainSoulMultiplier() float64 {
 		if warlock.Talents.UnstableAffliction && warlock.UnstableAffDot.IsActive() {
 			afflictionSpellNumber += 1.
 		}
-		if warlock.Talents.Haunt && warlock.HauntAura.IsActive() {
+		if warlock.Talents.Haunt && warlock.HauntDebuffAura(warlock.CurrentTarget).IsActive() {
 			afflictionSpellNumber += 1.
 		}
 		if afflictionSpellNumber < 3 {
