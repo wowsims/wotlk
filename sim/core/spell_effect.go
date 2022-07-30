@@ -317,9 +317,6 @@ func (spellEffect *SpellEffect) snapshotAttackModifiers(spell *Spell) float64 {
 		multiplier *= attacker.PseudoStats.NatureDamageDealtMultiplier
 	} else if spell.SpellSchool.Matches(SpellSchoolShadow) {
 		multiplier *= attacker.PseudoStats.ShadowDamageDealtMultiplier
-		if spellEffect.IsPeriodic {
-			multiplier *= attacker.PseudoStats.PeriodicShadowDamageDealtMultiplier
-		}
 	}
 
 	return multiplier

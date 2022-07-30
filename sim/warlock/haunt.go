@@ -9,25 +9,13 @@ import (
 )
 
 func (warlock *Warlock) registerHauntSpell() {
+
+	warlock.HauntAura = core.HauntAura(warlock.CurrentTarget, warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfHaunt), int(warlock.Index))
+	warlock.HauntAura.Duration = time.Second * 12
+
 	actionID := core.ActionID{SpellID: 59164}
 	spellSchool := core.SpellSchoolShadow
 	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
-	shadowDotMultiplier := 1.2
-	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfHaunt) {
-		shadowDotMultiplier += 0.03
-	}
-
-	warlock.HauntAura = warlock.RegisterAura(core.Aura{
-		Label:    "Haunt Buff",
-		ActionID: actionID,
-		Duration: time.Second * 12,
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.PeriodicShadowDamageDealtMultiplier *= shadowDotMultiplier
-		},
-		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.PeriodicShadowDamageDealtMultiplier /= shadowDotMultiplier
-		},
-	})
 
 	effect := core.SpellEffect{
 		ProcMask:         core.ProcMaskSpellDamage,
