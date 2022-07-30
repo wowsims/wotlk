@@ -35,7 +35,7 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 	target := sim.GetTargetUnit(0)
 
 	if enh.Talents.Stormstrike {
-		if (enh.StormstrikeDebuffAura(target).GetStacks() > 0) && enh.Stormstrike.IsReady(sim) {
+		if !enh.StormstrikeDebuffAura(target).IsActive() && enh.Stormstrike.IsReady(sim) {
 			if !enh.Stormstrike.Cast(sim, target) {
 				enh.WaitForMana(sim, enh.Stormstrike.CurCast.Cost)
 			}

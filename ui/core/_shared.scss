@@ -159,11 +159,20 @@ $sim-transitions: .2s ease-in;
 .dropdown-panel {
 	display: none;
 	position: absolute;
-	margin-left: 10px;
-	margin-top: -10px;
 	z-index: 1;
-
 	box-shadow: 2px 4px 20px 5px #000;
+}
+.multi-icon-picker-dropdown {
+	margin-left: 25px;
+	margin-top: -25px;
+	background-color: #000 !important;
+	border: 1px gray solid;
+	padding: 1px;
+}
+.multi-icon-dropdown-container {
+	margin: 2px;
+}
+.icon-enum-picker-dropdown {
 	background-color: #000;
 	border: 1px gray solid;
 	padding: 1px;
@@ -184,7 +193,6 @@ $sim-transitions: .2s ease-in;
 
 .dropdown-option-container {
 	background-color: gray;
-	margin: 2px;
 }
 
 .dropdown-option {

@@ -24,24 +24,25 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		})
 	}
 
-	gotwAmount := GetTristateValueFloat(raidBuffs.GiftOfTheWild, 54, 75)
+	if raidBuffs.DrumsOfTheWild {
+		raidBuffs.GiftOfTheWild = MaxTristate(raidBuffs.GiftOfTheWild, proto.TristateEffect_TristateEffectRegular)
+	}
+	gotwAmount := GetTristateValueFloat(raidBuffs.GiftOfTheWild, 37, 51)
+	gotwArmorAmount := GetTristateValueFloat(raidBuffs.GiftOfTheWild, 750, 1050)
+	gotwResistAmount := GetTristateValueFloat(raidBuffs.GiftOfTheWild, 54, 75)
 	if gotwAmount > 0 {
 		character.AddStats(stats.Stats{
-			stats.Armor:     GetTristateValueFloat(raidBuffs.GiftOfTheWild, 750, 1050),
-			stats.Stamina:   gotwAmount,
-			stats.Agility:   gotwAmount,
-			stats.Strength:  gotwAmount,
-			stats.Intellect: gotwAmount,
-			stats.Spirit:    gotwAmount,
-		})
-	} else if raidBuffs.DrumsOfTheWild {
-		character.AddStats(stats.Stats{
-			stats.Armor:     750,
-			stats.Stamina:   37,
-			stats.Agility:   37,
-			stats.Strength:  37,
-			stats.Intellect: 37,
-			stats.Spirit:    37,
+			stats.Armor:            gotwArmorAmount,
+			stats.Stamina:          gotwAmount,
+			stats.Agility:          gotwAmount,
+			stats.Strength:         gotwAmount,
+			stats.Intellect:        gotwAmount,
+			stats.Spirit:           gotwAmount,
+			stats.ArcaneResistance: gotwResistAmount,
+			stats.ShadowResistance: gotwResistAmount,
+			stats.NatureResistance: gotwResistAmount,
+			stats.FireResistance:   gotwResistAmount,
+			stats.FrostResistance:  gotwResistAmount,
 		})
 	}
 
@@ -103,7 +104,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 	}
 	if raidBuffs.ShadowProtection {
 		character.AddStats(stats.Stats{
-			stats.ShadowResistance: 130,
+			stats.ShadowResistance: 130 - gotwResistAmount,
 		})
 	}
 	if raidBuffs.DivineSpirit || raidBuffs.FelIntelligence > 0 {
@@ -213,7 +214,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 	}
 	if raidBuffs.StrengthOfEarthTotem > 0 || raidBuffs.HornOfWinter {
 		val := MaxTristate(proto.TristateEffect_TristateEffectRegular, raidBuffs.StrengthOfEarthTotem)
-		bonus := GetTristateValueFloat(val, 155, 186)
+		bonus := GetTristateValueFloat(val, 155, 178)
 		character.AddStats(stats.Stats{
 			stats.Strength: bonus,
 			stats.Agility:  bonus,

@@ -27,6 +27,7 @@ import {
 
 export const WeaponAmmo = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecHunter, Ammo>({
 	fieldName: 'ammo',
+	numColumns: 2,
 	values: [
 		{ color: 'grey', value: Ammo.AmmoNone },
 		{ actionId: ActionId.fromItemId(52021), value: Ammo.IcebladeArrow },
