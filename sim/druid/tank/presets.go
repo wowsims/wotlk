@@ -12,7 +12,6 @@ var StandardTalents = &proto.DruidTalents{
 	PredatoryStrikes:        3,
 	PrimalFury:              2,
 	SavageFury:              2,
-	FaerieFire:              true,
 	HeartOfTheWild:          5,
 	SurvivalOfTheFittest:    3,
 	LeaderOfThePack:         true,

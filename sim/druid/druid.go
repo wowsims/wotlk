@@ -29,8 +29,7 @@ type Druid struct {
 	Rake             *core.Spell
 	Rip              *core.Spell
 	Shred            *core.Spell
-	Starfire6        *core.Spell
-	Starfire8        *core.Spell
+	Starfire         *core.Spell
 	Swipe            *core.Spell
 	Wrath            *core.Spell
 
@@ -48,7 +47,6 @@ type Druid struct {
 	FaerieFireAura       *core.Aura
 	MangleAura           *core.Aura
 	MaulQueueAura        *core.Aura
-	NaturesGraceProcAura *core.Aura
 	NaturesSwiftnessAura *core.Aura
 	CatFormAura          *core.Aura
 	BearFormAura         *core.Aura
@@ -117,8 +115,7 @@ func (druid *Druid) RegisterBalanceSpells() {
 	druid.registerHurricaneSpell()
 	druid.registerInsectSwarmSpell()
 	druid.registerMoonfireSpell()
-	druid.Starfire8 = druid.newStarfireSpell(8)
-	druid.Starfire6 = druid.newStarfireSpell(6)
+	druid.Starfire = druid.newStarfireSpell()
 	druid.registerWrathSpell()
 }
 
