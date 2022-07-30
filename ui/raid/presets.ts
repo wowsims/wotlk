@@ -260,18 +260,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: MagePresets.P1_ARCANE_PRESET.gear,
-				2: MagePresets.P2_ARCANE_PRESET.gear,
-				3: MagePresets.P3_ARCANE_PRESET.gear,
-				4: MagePresets.P4_ARCANE_PRESET.gear,
-				5: MagePresets.P5_ARCANE_PRESET.gear,
+				0: MagePresets.P5_ARCANE_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				1: MagePresets.P1_ARCANE_PRESET.gear,
-				2: MagePresets.P2_ARCANE_PRESET.gear,
-				3: MagePresets.P3_ARCANE_PRESET.gear,
-				4: MagePresets.P4_ARCANE_PRESET.gear,
-				5: MagePresets.P5_ARCANE_PRESET.gear,
+				0: MagePresets.P5_ARCANE_PRESET.gear,
 			},
 		},
 		tooltip: 'Arcane Mage',
@@ -292,18 +284,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: MagePresets.P1_FIRE_PRESET.gear,
-				2: MagePresets.P2_FIRE_PRESET.gear,
-				3: MagePresets.P3_FIRE_PRESET.gear,
-				4: MagePresets.P4_FIRE_PRESET.gear,
-				5: MagePresets.P5_FIRE_PRESET.gear,
+				0: MagePresets.P5_FIRE_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				1: MagePresets.P1_FIRE_PRESET.gear,
-				2: MagePresets.P2_FIRE_PRESET.gear,
-				3: MagePresets.P3_FIRE_PRESET.gear,
-				4: MagePresets.P4_FIRE_PRESET.gear,
-				5: MagePresets.P5_FIRE_PRESET.gear,
+				0: MagePresets.P5_FIRE_PRESET.gear,
 			},
 		},
 		tooltip: 'Fire Mage',
@@ -324,18 +308,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: MagePresets.P1_FROST_PRESET.gear,
-				2: MagePresets.P2_FROST_PRESET.gear,
-				3: MagePresets.P3_FROST_PRESET.gear,
-				4: MagePresets.P4_FROST_PRESET.gear,
-				5: MagePresets.P5_FROST_PRESET.gear,
+				0: MagePresets.P5_FROST_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				1: MagePresets.P1_FROST_PRESET.gear,
-				2: MagePresets.P2_FROST_PRESET.gear,
-				3: MagePresets.P3_FROST_PRESET.gear,
-				4: MagePresets.P4_FROST_PRESET.gear,
-				5: MagePresets.P5_FROST_PRESET.gear,
+				0: MagePresets.P5_FROST_PRESET.gear,
 			},
 		},
 		tooltip: 'Frost Mage',

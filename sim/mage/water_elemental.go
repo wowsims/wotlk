@@ -23,10 +23,8 @@ func (mage *Mage) registerSummonWaterElementalCD() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost *
-					(1 - 0.05*float64(mage.Talents.FrostChanneling)) *
-					(1 - 0.01*float64(mage.Talents.ElementalPrecision)),
-				GCD: core.GCDDefault,
+				Cost: baseCost * (1 - 0.05*float64(mage.Talents.FrostChanneling)),
+				GCD:  core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    mage.NewTimer(),
