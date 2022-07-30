@@ -38,9 +38,9 @@ func (warlock *Warlock) ApplyTalents() {
 
 	// Fel Vitality
 	if warlock.Talents.FelVitality > 0 {
-		bonus := 0.01 * float64(warlock.Talents.FelVitality)
-		// Adding a second 3% bonus int->mana dependency
-		warlock.AddStatDependency(stats.Intellect, stats.Mana, 1.0+15*bonus)
+		bonus := 1.0 + 0.01*float64(warlock.Talents.FelVitality)
+		warlock.AddStatDependency(stats.Mana, stats.Mana, bonus)
+		warlock.AddStatDependency(stats.Health, stats.Health, bonus)
 	}
 
 	if warlock.Options.Summon != proto.Warlock_Options_NoSummon {
