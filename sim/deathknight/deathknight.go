@@ -95,6 +95,8 @@ type Deathknight struct {
 
 	DeathAndDecay    *core.Spell
 	DeathAndDecayDot *core.Dot
+	dndCritSnapshot  float64
+	dndApSnapshot    float64
 
 	HowlingBlast *core.Spell
 

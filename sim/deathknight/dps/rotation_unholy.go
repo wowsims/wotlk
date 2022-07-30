@@ -97,7 +97,7 @@ func (dk *DpsDeathknight) setupUnholyDndOpener() {
 func (dk *DpsDeathknight) dndStartSequence() {
 	dk.Main.Clear().NewAction(dk.getFirstDiseaseAction()).
 		NewAction(dk.getSecondDiseaseAction()).
-		NewAction(dk.RotationActionCallback_BS).
+		NewAction(dk.getBloodRuneAction(true)).
 		NewAction(dk.RotationAction_Dnd_Custom).
 		NewAction(dk.RotationAction_UnholyDndRotationGhoulFrenzyCheck)
 }
@@ -136,7 +136,11 @@ func (dk *DpsDeathknight) RotationAction_UnholyDndRotationGhoulFrenzyCheck(sim *
 		}
 	}
 
-	dk.Main.NewAction(dk.RotationActionCallback_BS)
+	if dk.desolationAuraCheck(sim) {
+		dk.Main.NewAction(dk.RotationActionCallback_BS)
+	} else {
+		dk.Main.NewAction(dk.RotationActionCallback_BB)
+	}
 	dk.Main.NewAction(dk.RotationAction_UnholyDndRotationEnd)
 
 	dk.WaitUntil(sim, sim.CurrentTime)
@@ -205,7 +209,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 					}
 				} else {
 					if !dk.uhShouldWaitForDnD(sim, true, false, false) {
-						if dk.DesolationAura.RemainingDuration(sim) < 10*time.Second || dk.Env.GetNumTargets() == 1 {
+						if dk.desolationAuraCheck(sim) {
 							casted = dk.CastBloodStrike(sim, target)
 						} else {
 							casted = dk.CastBloodBoil(sim, target)
@@ -223,6 +227,10 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 	}
 
 	return casted
+}
+
+func (dk *DpsDeathknight) desolationAuraCheck(sim *core.Simulation) bool {
+	return !dk.DesolationAura.IsActive() || dk.DesolationAura.RemainingDuration(sim) < 10*time.Second || dk.Env.GetNumTargets() == 1
 }
 
 func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
@@ -270,7 +278,11 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 				casted = dk.uhSpreadDiseases(sim, target, s)
 			} else {
 				if dk.uhDiseaseCheck(sim, target, dk.BloodStrike, true, 1) {
-					casted = dk.CastBloodStrike(sim, target)
+					if dk.Env.GetNumTargets() > 1 && dk.DesolationAura.IsActive() && dk.DesolationAura.RemainingDuration(sim) > time.Second*10 {
+						casted = dk.CastBloodBoil(sim, target)
+					} else {
+						casted = dk.CastBloodStrike(sim, target)
+					}
 				} else {
 					dk.recastDiseasesSequence(sim)
 					return true
