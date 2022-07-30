@@ -24,35 +24,25 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		})
 	}
 
-	gotwAmount := GetTristateValueFloat(raidBuffs.GiftOfTheWild, 37, 37*1.4)
+	if raidBuffs.DrumsOfTheWild {
+		raidBuffs.GiftOfTheWild = MaxTristate(raidBuffs.GiftOfTheWild, proto.TristateEffect_TristateEffectRegular)
+	}
+	gotwAmount := GetTristateValueFloat(raidBuffs.GiftOfTheWild, 37, 51)
+	gotwArmorAmount := GetTristateValueFloat(raidBuffs.GiftOfTheWild, 750, 1050)
+	gotwResistAmount := GetTristateValueFloat(raidBuffs.GiftOfTheWild, 54, 75)
 	if gotwAmount > 0 {
-		resist := GetTristateValueFloat(raidBuffs.GiftOfTheWild, 54, 54*1.4)
 		character.AddStats(stats.Stats{
-			stats.Armor:            GetTristateValueFloat(raidBuffs.GiftOfTheWild, 750, 1050),
+			stats.Armor:            gotwArmorAmount,
 			stats.Stamina:          gotwAmount,
 			stats.Agility:          gotwAmount,
 			stats.Strength:         gotwAmount,
 			stats.Intellect:        gotwAmount,
 			stats.Spirit:           gotwAmount,
-			stats.ArcaneResistance: resist,
-			stats.ShadowResistance: resist,
-			stats.NatureResistance: resist,
-			stats.FireResistance:   resist,
-			stats.FrostResistance:  resist,
-		})
-	} else if raidBuffs.DrumsOfTheWild {
-		character.AddStats(stats.Stats{
-			stats.Armor:            750,
-			stats.Stamina:          37,
-			stats.Agility:          37,
-			stats.Strength:         37,
-			stats.Intellect:        37,
-			stats.Spirit:           37,
-			stats.ArcaneResistance: 54,
-			stats.ShadowResistance: 54,
-			stats.NatureResistance: 54,
-			stats.FireResistance:   54,
-			stats.FrostResistance:  54,
+			stats.ArcaneResistance: gotwResistAmount,
+			stats.ShadowResistance: gotwResistAmount,
+			stats.NatureResistance: gotwResistAmount,
+			stats.FireResistance:   gotwResistAmount,
+			stats.FrostResistance:  gotwResistAmount,
 		})
 	}
 
@@ -114,7 +104,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 	}
 	if raidBuffs.ShadowProtection {
 		character.AddStats(stats.Stats{
-			stats.ShadowResistance: 130,
+			stats.ShadowResistance: 130 - gotwResistAmount,
 		})
 	}
 	if raidBuffs.DivineSpirit || raidBuffs.FelIntelligence > 0 {
@@ -224,7 +214,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 	}
 	if raidBuffs.StrengthOfEarthTotem > 0 || raidBuffs.HornOfWinter {
 		val := MaxTristate(proto.TristateEffect_TristateEffectRegular, raidBuffs.StrengthOfEarthTotem)
-		bonus := GetTristateValueFloat(val, 155, 155*1.15)
+		bonus := GetTristateValueFloat(val, 155, 178)
 		character.AddStats(stats.Stats{
 			stats.Strength: bonus,
 			stats.Agility:  bonus,
@@ -634,7 +624,7 @@ func registerTricksOfTheTradeCD(agent Agent, numTricksOfTheTrades int32) {
 	registerExternalConsecutiveCDApproximation(
 		agent,
 		externalConsecutiveCDApproximation{
-			ActionID:         ActionID{SpellID: 57934, Tag: -1},
+			ActionID:         ActionID{SpellID: 57933, Tag: -1},
 			AuraTag:          TricksOfTheTradeAuraTag,
 			CooldownPriority: CooldownPriorityDefault,
 			AuraDuration:     TricksOfTheTradeDuration,
@@ -650,7 +640,7 @@ func registerTricksOfTheTradeCD(agent Agent, numTricksOfTheTrades int32) {
 }
 
 func TricksOfTheTradeAura(character *Character, actionTag int32) *Aura {
-	actionID := ActionID{SpellID: 57934, Tag: actionTag}
+	actionID := ActionID{SpellID: 57933, Tag: actionTag}
 
 	return character.GetOrRegisterAura(Aura{
 		Label:    "TricksOfTheTrade-" + actionID.String(),

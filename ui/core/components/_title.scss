@@ -20,7 +20,7 @@
 .sim-title-dropdown {
 	position: fixed !important;
 	z-index: 9999 !important;
-	grid-template-columns: repeat(2, 1fr);
+	grid-template-columns: repeat(1, 1fr);
 	grid-auto-flow: column;
 }
 

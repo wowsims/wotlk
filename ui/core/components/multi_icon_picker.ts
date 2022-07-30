@@ -71,6 +71,7 @@ export class MultiIconPicker<ModObject> extends Component {
 		this.pickers = config.inputs.map((pickerConfig, i) => {
 			const optionContainer = document.createElement('div');
 			optionContainer.classList.add('dropdown-option-container');
+			optionContainer.classList.add('multi-icon-dropdown-container');
 			dropdownElem.appendChild(optionContainer);
 
 			const option = document.createElement('a');

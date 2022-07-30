@@ -56,8 +56,8 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 
 	hp.EnableAutoAttacks(hp, core.AutoAttackOptions{
 		MainHand: core.Weapon{
-			BaseDamageMin:  44,
-			BaseDamageMax:  68,
+			BaseDamageMin:  59,
+			BaseDamageMax:  87,
 			SwingSpeed:     2,
 			SwingDuration:  time.Second * 2,
 			CritMultiplier: 2,
@@ -72,7 +72,7 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 	hp.AutoAttacks.MHEffect.DamageMultiplier *= 1.05
 
 	hp.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
-	hp.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/30))
+	hp.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/62.77))
 	core.ApplyPetConsumeEffects(&hp.Character, hunter.Consumes)
 
 	hunter.AddPet(hp)
@@ -172,8 +172,8 @@ func (hp *HunterPet) specialDamageMod(baseDamageConfig core.BaseDamageConfig) co
 }
 
 var hunterPetBaseStats = stats.Stats{
-	stats.Agility:     127,
-	stats.Strength:    162,
+	stats.Agility:     113,
+	stats.Strength:    331,
 	stats.AttackPower: -20, // Apparently pets and warriors have a AP penalty.
 
 	// Add 1.8% because pets aren't affected by that component of crit suppression.
@@ -196,10 +196,9 @@ func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
 		hitRatingFromOwner := math.Floor(ownerHitChance) * core.MeleeHitRatingPerHitChance
 
 		return stats.Stats{
-			stats.Stamina:     ownerStats[stats.Stamina] * (0.3 + 0.2*float64(wildHunt)),
+			stats.Stamina:     ownerStats[stats.Stamina] * 0.3 * (1 + 0.2*float64(wildHunt)),
 			stats.Armor:       ownerStats[stats.Armor] * 0.35,
-			stats.AttackPower: ownerStats[stats.RangedAttackPower]*(0.22+0.15*float64(wildHunt)) + ownerStats[stats.Stamina]*0.1*float64(hvw),
-			stats.SpellPower:  ownerStats[stats.RangedAttackPower] * (0.128 + 0.15*float64(wildHunt)),
+			stats.AttackPower: ownerStats[stats.RangedAttackPower]*0.22*(1+0.15*float64(wildHunt)) + ownerStats[stats.Stamina]*0.1*float64(hvw),
 
 			stats.MeleeHit:  hitRatingFromOwner,
 			stats.SpellHit:  hitRatingFromOwner * 2,
