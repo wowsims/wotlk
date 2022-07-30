@@ -149,7 +149,9 @@ func (ghoulPet *GhoulPet) enable(sim *core.Simulation) {
 
 	// Snapshot extra % speed modifiers from dk owner
 	if ghoulPet.IsGuardian() {
-		ghoulPet.PseudoStats.MeleeSpeedMultiplier = ghoulPet.dkOwner.PseudoStats.MeleeSpeedMultiplier
+		ghoulPet.PseudoStats.MeleeSpeedMultiplier = 1
+		ghoulPet.Character.MultiplyMeleeSpeed(sim, ghoulPet.dkOwner.PseudoStats.MeleeSpeedMultiplier)
+
 		if sim.Log != nil {
 			ghoulPet.Log(sim, "Setting attack speed multiplier to "+strconv.FormatFloat(ghoulPet.PseudoStats.MeleeSpeedMultiplier, 'f', 3, 64))
 		}
@@ -162,6 +164,7 @@ func (ghoulPet *GhoulPet) disable(sim *core.Simulation) {
 	// Clear snapshot speed
 	if ghoulPet.IsGuardian() {
 		ghoulPet.PseudoStats.MeleeSpeedMultiplier = 1
+		ghoulPet.Character.MultiplyMeleeSpeed(sim, 1)
 	}
 }
 

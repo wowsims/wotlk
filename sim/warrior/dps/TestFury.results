@@ -703,8 +703,8 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 766.2805881908574
-  tps: 580.0480901565045
+  dps: 779.6931178183896
+  tps: 591.0788468117105
  }
 }
 dps_results: {

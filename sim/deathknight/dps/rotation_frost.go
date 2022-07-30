@@ -53,6 +53,46 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostPrioRotation(sim *core.Sim
 	return casted
 }
 
+// func (dk *DpsDeathknight) RotationActionCallback_FrostPrioRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
+// 	fr := &dk.fr
+
+// 	casted := false
+// 	numActions := fr.numActions
+// 	nextAction := fr.actions[fr.idx]
+// 	advance := true
+
+// 	switch nextAction {
+// 	case FrostRotationAction_Obli:
+// 		if dk.FrostDiseaseCheck(sim, target, dk.Obliterate, true, core.TernaryInt(fr.idx == 0, 2, 1)) {
+// 			casted = dk.CastObliterate(sim, target)
+// 		} else {
+// 			if !dk.FrostFeverDisease[target.Index].IsActive() {
+// 				casted = dk.CastIcyTouch(sim, target)
+// 			} else if !dk.BloodPlagueDisease[target.Index].IsActive() {
+// 				casted = dk.CastPlagueStrike(sim, target)
+// 			} else {
+// 				casted = dk.CastPestilence(sim, target)
+// 			}
+// 		}
+// 	case FrostRotationAction_BS:
+// 		casted = dk.CastBloodStrike(sim, target)
+// 		advance = casted && dk.LastCastOutcome.Matches(core.OutcomeLanded)
+// 	case FrostRotationAction_Pesti:
+// 		casted = dk.CastPestilence(sim, target)
+// 		advance = casted && dk.LastCastOutcome.Matches(core.OutcomeLanded)
+// 	}
+
+// 	if fr.idx+1 < numActions {
+// 		if advance {
+// 			fr.idx += 1
+// 		}
+// 	} else {
+// 		fr.Reset(sim)
+// 	}
+
+// 	return casted
+// }
+
 func (dk *DpsDeathknight) setupFrostSubBloodOpener() {
 	dk.Opener.
 		NewAction(dk.RotationActionCallback_IT).
@@ -69,6 +109,8 @@ func (dk *DpsDeathknight) setupFrostSubBloodOpener() {
 		NewAction(dk.RotationActionCallback_FS).
 		NewAction(dk.RotationActionCallback_HB_Ghoul_RimeCheck).
 		NewAction(dk.RotationActionCallback_FS).
+		NewAction(dk.RotationActionCallback_FS).
+		NewAction(dk.RotationActionCallback_HW).
 		NewAction(dk.RotationActionCallback_Obli).
 		NewAction(dk.RotationActionCallback_Obli).
 		NewAction(dk.RotationActionCallback_Pesti).
@@ -167,34 +209,3 @@ func (dk *DpsDeathknight) FrostDiseaseCheckWrapper(sim *core.Simulation, target 
 
 	return success
 }
-
-/*
-func (dk *DpsDeathknight) setupFrostSubUnholyOpener() {
-	dk.DefineOpener([]deathknight.RotationAction{
-		deathknight.RotationAction_IT,
-		deathknight.RotationAction_PS,
-		deathknight.RotationAction_BT,
-		deathknight.RotationAction_Pesti,
-		deathknight.RotationAction_UA,
-		deathknight.RotationAction_Obli,
-		deathknight.RotationAction_FS,
-		deathknight.RotationAction_ERW,
-		deathknight.RotationAction_Obli,
-		deathknight.RotationAction_Obli,
-		deathknight.RotationAction_Obli,
-		deathknight.RotationAction_FS,
-		deathknight.RotationAction_FS,
-		deathknight.RotationAction_FS,
-		deathknight.RotationAction_Obli,
-		deathknight.RotationAction_Obli,
-		deathknight.RotationAction_BS,
-		deathknight.RotationAction_Pesti,
-		deathknight.RotationAction_FS,
-	})
-}
-
-func (dk *DpsDeathknight) doFrostRotation(sim *core.Simulation, target *core.Unit) {
-	casted := &dk.CastSuccessful
-
-}
-*/

@@ -640,8 +640,8 @@ dps_results: {
 dps_results: {
  key: "TestRogue-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 1670.7611973549592
-  tps: 1186.2404501220199
+  dps: 1678.2961408363728
+  tps: 1191.590259993824
  }
 }
 dps_results: {
