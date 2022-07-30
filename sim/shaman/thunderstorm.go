@@ -43,7 +43,7 @@ func (shaman *Shaman) newThunderstormSpell(doDamage bool) *core.Spell {
 			DamageMultiplier:    1 * (1 + 0.01*float64(shaman.Talents.Concussion)),
 			ThreatMultiplier:    1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
 			BaseDamage:          core.BaseDamageConfigMagic(566, 644, 0.172),
-			OutcomeApplier:      shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier()),
+			OutcomeApplier:      shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
 		}
 		aoeApply := core.ApplyEffectFuncAOEDamageCapped(shaman.Env, (605+0.172*shaman.GetStat(stats.NatureSpellPower))*10, effect)
 		spellConfig.ApplyEffects = func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {

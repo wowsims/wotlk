@@ -56,7 +56,7 @@ func (shaman *Shaman) registerSearingTotemSpell() {
 			BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * 2 * core.SpellHitRatingPerHitChance,
 			DamageMultiplier:    1 + float64(shaman.Talents.CallOfFlame)*0.05,
 			BaseDamage:          core.BaseDamageConfigMagic(50, 66, 0.167),
-			OutcomeApplier:      shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier()),
+			OutcomeApplier:      shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
 		})),
 	})
 }
@@ -103,7 +103,7 @@ func (shaman *Shaman) registerMagmaTotemSpell() {
 			DamageMultiplier:    1 + float64(shaman.Talents.CallOfFlame)*0.05,
 			// TODO: find magma totem sp coeff
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(371, 0.067),
-			OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier()),
+			OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
 		})),
 	})
 }
