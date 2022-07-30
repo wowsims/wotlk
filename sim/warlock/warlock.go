@@ -86,8 +86,8 @@ func (warlock *Warlock) Initialize() {
 	warlock.registerLifeTapSpell()
 	warlock.registerSeedSpell()
 	warlock.registerSoulFireSpell()
-	warlock.registerDrainSoulSpell()
 	warlock.registerUnstableAffSpell()
+	warlock.registerDrainSoulSpell()
 
 	if warlock.Talents.Conflagrate {
 		warlock.registerConflagrateSpell()

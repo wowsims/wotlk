@@ -28,8 +28,19 @@ func (warlock *Warlock) dynamicDrainSoulMultiplier() float64 {
 	// Soul Siphon Multiplier
 	soulSiphonMultiplier := 1.
 	if warlock.Talents.SoulSiphon > 0 {
-		afflictionSpellNumber := 1. + core.TernaryFloat64(warlock.CorruptionDot.IsActive(), 1, 0) + core.TernaryFloat64(warlock.UnstableAffDot.IsActive(), 1, 0) +
-			core.TernaryFloat64(warlock.CurseOfDoomDot.IsActive() || warlock.CurseOfAgonyDot.IsActive(), 1, 0) // Counts Drain Soul/Drain Life itself
+		afflictionSpellNumber := 1.  // Counts Drain Soul/Drain Life itself
+		if warlock.CurseOfDoomDot.IsActive() || warlock.CurseOfAgonyDot.IsActive() {
+			afflictionSpellNumber += 1. 
+		}
+		if warlock.CorruptionDot.IsActive() {
+			afflictionSpellNumber += 1.
+		}
+		if warlock.Talents.UnstableAffliction && warlock.UnstableAffDot.IsActive() {
+			afflictionSpellNumber += 1.
+		}
+		if warlock.Talents.Haunt && warlock.HauntAura.IsActive() {
+			afflictionSpellNumber += 1.
+		}
 		if afflictionSpellNumber < 3 {
 			soulSiphonMultiplier = (1 + 0.03*float64(warlock.Talents.SoulSiphon)*afflictionSpellNumber)/(1 + 0.03*float64(warlock.Talents.SoulSiphon)*3.)
 		}
@@ -82,15 +93,12 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 	target := warlock.CurrentTarget
 
 	effect := core.SpellEffect{
-		DamageMultiplier: 1,
+		DamageMultiplier: drainSoulDamageMultiplier * warlock.dynamicDrainSoulMultiplier(),
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 		IsPeriodic:       true,
 		OutcomeApplier:   warlock.OutcomeFuncTick(),
 		ProcMask:         core.ProcMaskPeriodicDamage,
 		BaseDamage:       core.BaseDamageConfigMagicNoRoll(710/5, 3./7.),
-		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			spellEffect.DamageMultiplier = drainSoulDamageMultiplier * warlock.dynamicDrainSoulMultiplier()
-		},
 	}
 
 	warlock.DrainSoulDot = core.NewDot(core.Dot{
