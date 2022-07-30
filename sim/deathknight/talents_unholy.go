@@ -91,8 +91,7 @@ func (dk *Deathknight) applyWanderingPlague() {
 		Flags:       core.SpellFlagNone,
 
 		ApplyEffects: core.ApplyEffectFuncAOEDamage(dk.Env, core.SpellEffect{
-			// No proc mask, so it won't proc itself.
-			ProcMask: core.ProcMaskEmpty,
+			ProcMask: core.ProcMaskSpellDamage,
 
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
@@ -117,6 +116,7 @@ func (dk *Deathknight) applyNecrosis() {
 	necrosisHit := dk.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 51460},
 		SpellSchool: core.SpellSchoolShadow,
+		Flags:       core.SpellFlagNone,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskSpellDamage,

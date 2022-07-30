@@ -18,38 +18,80 @@ func (dk *DpsDeathknight) RotationActionCallback_HB_Ghoul_RimeCheck(sim *core.Si
 }
 
 func (dk *DpsDeathknight) RotationActionCallback_FrostPrioRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
-	fr := &dk.fr
-
 	casted := false
-	numActions := fr.numActions
-	nextAction := fr.actions[fr.idx]
-	advance := true
-
-	switch nextAction {
-	case FrostRotationAction_Obli:
-		if dk.FrostDiseaseCheck(sim, target, dk.Obliterate, true, core.TernaryInt(fr.idx == 0, 2, 1)) {
-			casted = dk.CastObliterate(sim, target)
-		} else {
-			casted = dk.CastPestilence(sim, target)
-		}
-	case FrostRotationAction_BS:
-		casted = dk.CastBloodStrike(sim, target)
-		advance = casted && dk.LastCastOutcome.Matches(core.OutcomeLanded)
-	case FrostRotationAction_Pesti:
-		casted = dk.CastPestilence(sim, target)
-		advance = casted && dk.LastCastOutcome.Matches(core.OutcomeLanded)
-	}
-
-	if fr.idx+1 < numActions {
-		if advance {
-			fr.idx += 1
-		}
+	if dk.ShouldHornOfWinter(sim) {
+		casted = dk.CastHornOfWinter(sim, target)
 	} else {
-		fr.Reset(sim)
+		casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.Obliterate)
+		if !casted {
+			if dk.KillingMachineAura.IsActive() && !dk.RimeAura.IsActive() {
+				casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
+			} else if dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
+				if dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() < 110 {
+					casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.HowlingBlast)
+				} else if dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() > 110 {
+					casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.HowlingBlast)
+				} else if !dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() > 110 {
+					casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
+				} else if !dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() < 110 {
+					casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
+				}
+			} else if !dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
+				if dk.CurrentRunicPower() < 110 {
+					casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.HowlingBlast)
+				} else {
+					casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
+				}
+			} else {
+				casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
+				if !casted {
+					casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.HornOfWinter)
+				}
+			}
+		}
 	}
-
 	return casted
 }
+
+// func (dk *DpsDeathknight) RotationActionCallback_FrostPrioRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
+// 	fr := &dk.fr
+
+// 	casted := false
+// 	numActions := fr.numActions
+// 	nextAction := fr.actions[fr.idx]
+// 	advance := true
+
+// 	switch nextAction {
+// 	case FrostRotationAction_Obli:
+// 		if dk.FrostDiseaseCheck(sim, target, dk.Obliterate, true, core.TernaryInt(fr.idx == 0, 2, 1)) {
+// 			casted = dk.CastObliterate(sim, target)
+// 		} else {
+// 			if !dk.FrostFeverDisease[target.Index].IsActive() {
+// 				casted = dk.CastIcyTouch(sim, target)
+// 			} else if !dk.BloodPlagueDisease[target.Index].IsActive() {
+// 				casted = dk.CastPlagueStrike(sim, target)
+// 			} else {
+// 				casted = dk.CastPestilence(sim, target)
+// 			}
+// 		}
+// 	case FrostRotationAction_BS:
+// 		casted = dk.CastBloodStrike(sim, target)
+// 		advance = casted && dk.LastCastOutcome.Matches(core.OutcomeLanded)
+// 	case FrostRotationAction_Pesti:
+// 		casted = dk.CastPestilence(sim, target)
+// 		advance = casted && dk.LastCastOutcome.Matches(core.OutcomeLanded)
+// 	}
+
+// 	if fr.idx+1 < numActions {
+// 		if advance {
+// 			fr.idx += 1
+// 		}
+// 	} else {
+// 		fr.Reset(sim)
+// 	}
+
+// 	return casted
+// }
 
 func (dk *DpsDeathknight) setupFrostSubBloodOpener() {
 	dk.Opener.
@@ -67,8 +109,8 @@ func (dk *DpsDeathknight) setupFrostSubBloodOpener() {
 		NewAction(dk.RotationActionCallback_FS).
 		NewAction(dk.RotationActionCallback_HB_Ghoul_RimeCheck).
 		NewAction(dk.RotationActionCallback_FS).
-		//NewAction(dk.RotationActionCallback_FS).
-		//NewAction(dk.RotationActionCallback_HW).
+		NewAction(dk.RotationActionCallback_FS).
+		NewAction(dk.RotationActionCallback_HW).
 		NewAction(dk.RotationActionCallback_Obli).
 		NewAction(dk.RotationActionCallback_Obli).
 		NewAction(dk.RotationActionCallback_Pesti).
