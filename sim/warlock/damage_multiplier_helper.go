@@ -22,7 +22,7 @@ func (warlock *Warlock) staticAdditiveDamageMultiplier(actionID core.ActionID, s
 	// actionID_DrainSoul := core.ActionID{SpellID: 47855}
 
 	// Aura bonuses are treated separately as they function like normal multipliers
-	additiveDamageMultiplier := 1.0
+	additiveDamageMultiplier := 1.
 
 	// Additive Multipliers
 	// Weapon Imbues
