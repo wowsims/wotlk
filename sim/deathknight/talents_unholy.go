@@ -61,11 +61,10 @@ func (dk *Deathknight) viciousStrikesCritChanceBonus() float64 {
 }
 
 func (dk *Deathknight) applyRageOfRivendare() {
-	dk.bonusCoeffs.rageOfRivendareBonusCoeff = 1.0 + 0.02*float64(dk.Talents.RageOfRivendare)
-}
-
-func (dk *Deathknight) rageOfRivendareBonus(target *core.Unit) float64 {
-	return core.TernaryFloat64(dk.BloodPlagueDisease[target.Index].IsActive(), dk.bonusCoeffs.rageOfRivendareBonusCoeff, 1.0)
+	bonus := 1.0 + 0.02*float64(dk.Talents.RageOfRivendare)
+	dk.RoRTSBonus = func(target *core.Unit) float64 {
+		return core.TernaryFloat64(dk.BloodPlagueDisease[target.Index].IsActive(), bonus, 1.0)
+	}
 }
 
 func (dk *Deathknight) applyImpurity() {
