@@ -161,7 +161,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 				sim.GetRemainingDuration() > warlock.UnstableAffDot.Duration {
 				// Keep UA up
 				spell = warlock.UnstableAff
-			} else if warlock.Talents.Haunt && warlock.Haunt.CD.IsReady(sim) && 2*sim.GetRemainingDuration() > warlock.HauntAura.Duration && warlock.CorruptionDot.IsActive() {
+			} else if warlock.Talents.Haunt && warlock.Haunt.CD.IsReady(sim) && 2*sim.GetRemainingDuration() > warlock.HauntDebuffAura(warlock.CurrentTarget).Duration && warlock.CorruptionDot.IsActive() {
 				// Keep Haunt up
 				spell = warlock.Haunt
 			} else if sim.IsExecutePhase25() {
@@ -236,7 +236,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			spell = warlock.Incinerate
 		} else if warlock.Talents.ChaosBolt && specSpell == proto.Warlock_Rotation_ChaosBolt && warlock.ChaosBolt.CD.IsReady(sim) {
 			spell = warlock.ChaosBolt
-		} else if warlock.Talents.Haunt && specSpell == proto.Warlock_Rotation_Haunt && warlock.Haunt.CD.IsReady(sim) && !warlock.HauntAura.IsActive() {
+		} else if warlock.Talents.Haunt && specSpell == proto.Warlock_Rotation_Haunt && warlock.Haunt.CD.IsReady(sim) && !warlock.HauntDebuffAura(warlock.CurrentTarget).IsActive() {
 			spell = warlock.Haunt
 		} else if sim.IsExecutePhase20() {
 			// Drain Soul execute phase

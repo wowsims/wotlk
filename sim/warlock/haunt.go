@@ -8,15 +8,31 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+func (warlock *Warlock) HauntDebuffAura(target *core.Unit) *core.Aura {
+	shadowDotMultiplier := 1.2
+	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfHaunt) {
+		shadowDotMultiplier += 0.03
+	}
+
+	return target.GetOrRegisterAura(core.Aura{
+		Label:     "Haunt-" + warlock.Label,
+		ActionID:  core.ActionID{SpellID: 59164},
+		Duration:  time.Second * 12,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			warlock.AttackTables[aura.Unit.TableIndex].PeriodicShadowDamageDealtMultiplier *= shadowDotMultiplier
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			warlock.AttackTables[aura.Unit.TableIndex].PeriodicShadowDamageDealtMultiplier /= shadowDotMultiplier
+		},
+	})
+}
+
 func (warlock *Warlock) registerHauntSpell() {
-
-	warlock.HauntAura = core.HauntAura(warlock.CurrentTarget, warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfHaunt), int(warlock.Index))
-	warlock.HauntAura.Duration = time.Second * 12
-
 	actionID := core.ActionID{SpellID: 59164}
 	spellSchool := core.SpellSchoolShadow
 	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
-
+	HauntDebuffAura := warlock.HauntDebuffAura(warlock.CurrentTarget)
+	
 	effect := core.SpellEffect{
 		ProcMask:         core.ProcMaskSpellDamage,
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
@@ -27,7 +43,7 @@ func (warlock *Warlock) registerHauntSpell() {
 			if !spellEffect.Landed() {
 				return
 			}
-			warlock.HauntAura.Activate(sim)
+			HauntDebuffAura.Activate(sim)
 		},
 	}
 

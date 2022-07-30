@@ -1010,38 +1010,3 @@ func minorCritDebuffAura(target *Unit, label string, actionID ActionID, points f
 		},
 	})
 }
-
-func ShadowEmbraceAura(target *Unit, points int32, warlockIndex int) *Aura {
-	shadowEmbraceBonus := 0.01 * float64(points)
-
-	return target.GetOrRegisterAura(Aura{
-		Label:     "Shadow Embrace" + strconv.Itoa(warlockIndex),
-		ActionID:  ActionID{SpellID: 32391},
-		Duration:  time.Second * 12,
-		MaxStacks: 3,
-		OnStacksChange: func(aura *Aura, sim *Simulation, oldStacks int32, newStacks int32) {
-			aura.Unit.PseudoStats.PeriodicShadowDamageTakenMultiplier /= 1.0 + shadowEmbraceBonus*float64(oldStacks)
-			aura.Unit.PseudoStats.PeriodicShadowDamageTakenMultiplier *= 1.0 + shadowEmbraceBonus*float64(newStacks)
-			// TODO: Healing over time reduction part
-		},
-	})
-}
-
-func HauntAura(target *Unit, glyphed bool, warlockIndex int) *Aura {
-	shadowDotMultiplier := 1.2
-	if glyphed {
-		shadowDotMultiplier += 0.03
-	}
-	return target.GetOrRegisterAura(Aura{
-		Label:    "Haunt Buff" + strconv.Itoa(warlockIndex),
-		ActionID: ActionID{SpellID: 59164},
-		Duration: time.Second * 12,
-		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.PeriodicShadowDamageTakenMultiplier *= shadowDotMultiplier
-		},
-		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.PeriodicShadowDamageTakenMultiplier /= shadowDotMultiplier
-		},
-	})
-
-}

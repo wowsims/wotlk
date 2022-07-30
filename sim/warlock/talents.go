@@ -273,16 +273,23 @@ func (warlock *Warlock) setupEradication() {
 	})
 }
 
+func (warlock *Warlock) ShadowEmbraceDebuffAura(target *core.Unit) *core.Aura {
+	shadowEmbraceBonus := 0.01 * float64(warlock.Talents.ShadowEmbrace)
+
+	return target.GetOrRegisterAura(core.Aura{
+		Label:     "Shadow Embrace-" + warlock.Label,
+		ActionID:  core.ActionID{SpellID: 32391},
+		Duration:  time.Second * 12,
+		MaxStacks: 3,
+		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
+			warlock.AttackTables[aura.Unit.TableIndex].PeriodicShadowDamageDealtMultiplier /= 1.0 + shadowEmbraceBonus*float64(oldStacks)
+			warlock.AttackTables[aura.Unit.TableIndex].PeriodicShadowDamageDealtMultiplier *= 1.0 + shadowEmbraceBonus*float64(newStacks)
+		},
+	})
+}
+
 func (warlock *Warlock) setupShadowEmbrace() {
-	warlock.ShadowEmbraceAura = make([]*core.Aura, warlock.Env.GetNumTargets())
-	for _, encounterTarget := range warlock.Env.Encounter.Targets {
-		target := &encounterTarget.Unit
-
-		seAura := core.ShadowEmbraceAura(target, warlock.Talents.ShadowEmbrace, int(warlock.Index))
-		seAura.Duration = time.Second * 12
-
-		warlock.ShadowEmbraceAura[target.Index] = seAura
-	}
+	ShadowEmbraceAura := warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget)
 
 	warlock.RegisterAura(core.Aura{
 		Label:    "Shadow Embrace Talent Hidden Aura",
@@ -292,12 +299,12 @@ func (warlock *Warlock) setupShadowEmbrace() {
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spell == warlock.ShadowBolt || spell == warlock.Haunt {
-				if !warlock.ShadowEmbraceAura[spellEffect.Target.Index].IsActive() {
-					warlock.ShadowEmbraceAura[spellEffect.Target.Index].Activate(sim)
+				if !ShadowEmbraceAura.IsActive() {
+					ShadowEmbraceAura.Activate(sim)
 				} else {
-					warlock.ShadowEmbraceAura[spellEffect.Target.Index].Refresh(sim)
+					ShadowEmbraceAura.Refresh(sim)
 				}
-				warlock.ShadowEmbraceAura[spellEffect.Target.Index].AddStack(sim)
+				ShadowEmbraceAura.AddStack(sim)
 			}
 		},
 	})
