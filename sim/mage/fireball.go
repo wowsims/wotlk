@@ -41,7 +41,7 @@ func (mage *Mage) registerFireballSpell() {
 
 			DamageMultiplier: mage.spellDamageMultiplier *
 				(1 + 0.02*float64(mage.Talents.FirePower)) *
-				core.TernaryFloat64(ItemSetTempestRegalia.CharacterHasSetBonus(&mage.Character, 4), 1.05, 1),
+				core.TernaryFloat64(mage.HasSetBonus(ItemSetTempestRegalia, 4), 1.05, 1),
 
 			ThreatMultiplier: 1 - 0.05*float64(mage.Talents.BurningSoul),
 
@@ -70,7 +70,7 @@ func (mage *Mage) registerFireballSpell() {
 
 			DamageMultiplier: mage.spellDamageMultiplier *
 				(1 + 0.02*float64(mage.Talents.FirePower)) *
-				core.TernaryFloat64(ItemSetTempestRegalia.CharacterHasSetBonus(&mage.Character, 4), 1.05, 1),
+				core.TernaryFloat64(mage.HasSetBonus(ItemSetTempestRegalia, 4), 1.05, 1),
 
 			ThreatMultiplier: 1 - 0.05*float64(mage.Talents.BurningSoul),
 

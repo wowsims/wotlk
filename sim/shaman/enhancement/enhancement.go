@@ -30,16 +30,23 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 	selfBuffs := shaman.SelfBuffs{
 		Bloodlust: enhOptions.Options.Bloodlust,
 		Shield:    enhOptions.Options.Shield,
+		ImbueMH:   enhOptions.Options.ImbueMH,
+		ImbueOH:   enhOptions.Options.ImbueOH,
 	}
 
 	totems := proto.ShamanTotems{}
 	if enhOptions.Rotation.Totems != nil {
 		totems = *enhOptions.Rotation.Totems
 	}
+
+	var rotation Rotation
+	rotation = NewAdaptiveRotation(enhOptions.Talents)
+
 	enh := &EnhancementShaman{
-		Shaman:   shaman.NewShaman(character, *enhOptions.Talents, totems, selfBuffs),
-		Rotation: *enhOptions.Rotation,
+		Shaman:   shaman.NewShaman(character, *enhOptions.Talents, totems, selfBuffs, true),
+		rotation: rotation,
 	}
+
 	// Enable Auto Attacks for this spec
 	enh.EnableAutoAttacks(enh, core.AutoAttackOptions{
 		MainHand:       enh.WeaponFromMainHand(enh.DefaultMeleeCritMultiplier()),
@@ -55,23 +62,24 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 		enh.Consumes.OffHandImbue = proto.WeaponImbue_WeaponImbueUnknown
 	}
 	enh.ApplyWindfuryImbue(
-		enh.Consumes.MainHandImbue == proto.WeaponImbue_WeaponImbueShamanWindfury,
-		enh.Consumes.OffHandImbue == proto.WeaponImbue_WeaponImbueShamanWindfury)
+		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_WindfuryWeapon,
+		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_WindfuryWeapon)
 	enh.ApplyFlametongueImbue(
-		enh.Consumes.MainHandImbue == proto.WeaponImbue_WeaponImbueShamanFlametongue,
-		enh.Consumes.OffHandImbue == proto.WeaponImbue_WeaponImbueShamanFlametongue)
+		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FlametongueWeapon,
+		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_FlametongueWeapon)
 	enh.ApplyFrostbrandImbue(
-		enh.Consumes.MainHandImbue == proto.WeaponImbue_WeaponImbueShamanFrostbrand,
-		enh.Consumes.OffHandImbue == proto.WeaponImbue_WeaponImbueShamanFrostbrand)
-	enh.ApplyRockbiterImbue(
-		enh.Consumes.MainHandImbue == proto.WeaponImbue_WeaponImbueShamanRockbiter,
-		enh.Consumes.OffHandImbue == proto.WeaponImbue_WeaponImbueShamanRockbiter)
+		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FrostbrandWeapon,
+		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_FrostbrandWeapon)
 
-	if enh.Consumes.MainHandImbue == proto.WeaponImbue_WeaponImbueShamanWindfury ||
-		enh.Consumes.MainHandImbue == proto.WeaponImbue_WeaponImbueShamanFlametongue ||
-		enh.Consumes.MainHandImbue == proto.WeaponImbue_WeaponImbueShamanFrostbrand ||
-		enh.Consumes.MainHandImbue == proto.WeaponImbue_WeaponImbueShamanRockbiter {
+	if enh.SelfBuffs.ImbueMH == proto.ShamanImbue_WindfuryWeapon ||
+		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FlametongueWeapon ||
+		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FrostbrandWeapon {
 		enh.HasMHWeaponImbue = true
+	}
+
+	enh.SpiritWolves = &shaman.SpiritWolves{
+		SpiritWolf1: enh.NewSpiritWolf(1),
+		SpiritWolf2: enh.NewSpiritWolf(2),
 	}
 
 	return enh
@@ -80,7 +88,7 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 type EnhancementShaman struct {
 	*shaman.Shaman
 
-	Rotation proto.EnhancementShaman_Rotation
+	rotation Rotation
 
 	scheduler common.GCDScheduler
 }
@@ -95,7 +103,7 @@ func (enh *EnhancementShaman) Initialize() {
 
 	// This needs to be called after DPS cooldowns are delayed, which also happens
 	// after finalization.
-	enh.Env.RegisterPostFinalizeEffect(enh.SetupRotationSchedule)
+	//enh.Env.RegisterPostFinalizeEffect(enh.SetupRotationSchedule)
 }
 
 func (enh *EnhancementShaman) Reset(sim *core.Simulation) {

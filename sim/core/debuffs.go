@@ -10,7 +10,7 @@ import (
 
 func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 	if debuffs.Misery {
-		MakePermanent(MiseryAura(target, 5))
+		MakePermanent(MiseryAura(target))
 	}
 
 	if debuffs.JudgementOfWisdom {
@@ -24,18 +24,22 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 		MakePermanent(CurseOfElementsAura(target))
 	}
 	if debuffs.EbonPlaguebringer {
-		MakePermanent(EbonPlaguebringerAura(target))
+		// Crypt fever is embedded in EP but due to aura stacking
+		// and tags we need it as a separate aura with its unique tag
+		// for the disease damage
+		MakePermanent(CryptFeverAura(target, -1))
+		MakePermanent(EbonPlaguebringerAura(target, -1))
 	}
 	if debuffs.EarthAndMoon {
 		MakePermanent(EarthAndMoonAura(target))
 	}
 
-	if debuffs.ImprovedShadowBolt {
-		MakePermanent(ImprovedShadowBoltAura(target))
+	if debuffs.ShadowMastery {
+		MakePermanent(ShadowMasteryAura(target))
 	}
 
 	if debuffs.ImprovedScorch {
-		MakePermanent(ImprovedScorchAura(target, 5))
+		MakePermanent(ImprovedScorchAura(target))
 	}
 
 	if debuffs.WintersChill {
@@ -45,6 +49,9 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 	if debuffs.BloodFrenzy {
 		MakePermanent(BloodFrenzyAura(target, 2))
 	}
+	if debuffs.SavageCombat {
+		MakePermanent(SavageCombatAura(target, 2))
+	}
 
 	if debuffs.GiftOfArthas {
 		MakePermanent(GiftOfArthasAura(target))
@@ -52,12 +59,24 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 
 	if debuffs.Mangle {
 		MakePermanent(MangleAura(target))
+	} else if debuffs.Trauma {
+		MakePermanent(TraumaAura(target, 2))
+	} else if debuffs.Stampede {
+		stampedeAura := StampedeAura(target)
+		target.RegisterResetEffect(func(sim *Simulation) {
+			StartPeriodicAction(sim, PeriodicActionOptions{
+				Period: time.Second * 60,
+				OnAction: func(sim *Simulation) {
+					stampedeAura.Activate(sim)
+				},
+			})
+		})
 	}
 
-	if debuffs.ExposeArmor != proto.TristateEffect_TristateEffectMissing {
+	if debuffs.ExposeArmor {
 		exposeArmorAura := ExposeArmorAura(target, false) // TODO: check glyph
 		ScheduledAura(exposeArmorAura, false, PeriodicActionOptions{
-			Period:   time.Duration(10.0 * float64(time.Second)),
+			Period:   time.Second * 10,
 			NumTicks: 1,
 			OnAction: func(sim *Simulation) {
 				exposeArmorAura.Activate(sim)
@@ -65,14 +84,10 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 		})
 	}
 
-	if debuffs.CurseOfWeakness != proto.TristateEffect_TristateEffectMissing {
-		MakePermanent(CurseOfWeaknessAura(target, 2))
-	}
-
 	if debuffs.SunderArmor {
 		sunderArmorAura := SunderArmorAura(target, 1)
 		ScheduledAura(sunderArmorAura, true, PeriodicActionOptions{
-			Period:   time.Duration(1.5 * float64(time.Second)),
+			Period:   time.Millisecond * 1500,
 			NumTicks: 4,
 			Priority: ActionPriorityDOT, // High prio so it comes before actual warrior sunders.
 			OnAction: func(sim *Simulation) {
@@ -83,16 +98,28 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 		})
 	}
 
-	if debuffs.FaerieFire != proto.TristateEffect_TristateEffectMissing {
-		MakePermanent(FaerieFireAura(target, GetTristateValueInt32(debuffs.FaerieFire, 0, 3)))
+	if debuffs.AcidSpit {
+		acidSpitAura := AcidSpitAura(target, 1)
+		ScheduledAura(acidSpitAura, true, PeriodicActionOptions{
+			Period:   time.Second * 10,
+			NumTicks: 1,
+			OnAction: func(sim *Simulation) {
+				if acidSpitAura.IsActive() {
+					acidSpitAura.AddStack(sim)
+				}
+			},
+		})
 	}
 
-	if debuffs.HuntersMark != proto.TristateEffect_TristateEffectMissing {
-		if debuffs.HuntersMark == proto.TristateEffect_TristateEffectImproved {
-			MakePermanent(HuntersMarkAura(target, 3, true))
-		} else {
-			MakePermanent(HuntersMarkAura(target, 0, false))
-		}
+	if debuffs.CurseOfWeakness != proto.TristateEffect_TristateEffectMissing {
+		MakePermanent(CurseOfWeaknessAura(target, 2))
+	}
+	if debuffs.Sting {
+		MakePermanent(StingAura(target))
+	}
+
+	if debuffs.FaerieFire != proto.TristateEffect_TristateEffectMissing {
+		MakePermanent(FaerieFireAura(target, debuffs.FaerieFire == proto.TristateEffect_TristateEffectImproved))
 	}
 
 	if debuffs.DemoralizingRoar != proto.TristateEffect_TristateEffectMissing {
@@ -101,9 +128,22 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 	if debuffs.DemoralizingShout != proto.TristateEffect_TristateEffectMissing {
 		MakePermanent(DemoralizingShoutAura(target, 0, GetTristateValueInt32(debuffs.DemoralizingShout, 0, 5)))
 	}
+
+	// Atk spd reduction
 	if debuffs.ThunderClap != proto.TristateEffect_TristateEffectMissing {
 		MakePermanent(ThunderClapAura(target, GetTristateValueInt32(debuffs.ThunderClap, 0, 3)))
 	}
+	if debuffs.FrostFever != proto.TristateEffect_TristateEffectMissing {
+		MakePermanent(FrostFeverAura(target, GetTristateValueInt32(debuffs.FrostFever, 0, 3)))
+	}
+	if debuffs.InfectedWounds {
+		MakePermanent(InfectedWoundsAura(target, 3))
+	}
+	if debuffs.JudgementsOfTheJust {
+		MakePermanent(JudgementsOfTheJustAura(target, 2))
+	}
+
+	// Miss
 	if debuffs.InsectSwarm {
 		MakePermanent(InsectSwarmAura(target))
 	}
@@ -113,6 +153,30 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 
 	if debuffs.Screech {
 		MakePermanent(ScreechAura(target))
+	}
+
+	if debuffs.TotemOfWrath {
+		MakePermanent(TotemOfWrathDebuff(target))
+	}
+
+	if debuffs.MasterPoisoner {
+		MakePermanent(MasterPoisonerDebuff(target, 3))
+	}
+
+	if debuffs.HeartOfTheCrusader {
+		MakePermanent(HeartoftheCrusaderDebuff(target, 3))
+	}
+
+	if debuffs.HuntersMark > 0 {
+		points := int32(0)
+		glyphed := false
+		if debuffs.HuntersMark > 1 {
+			points = 3
+			if debuffs.HuntersMark > 2 {
+				glyphed = true
+			}
+		}
+		MakePermanent(HuntersMarkAura(target, points, glyphed))
 	}
 }
 
@@ -127,20 +191,18 @@ func ScheduledAura(aura *Aura, preActivate bool, options PeriodicActionOptions) 
 	return aura
 }
 
-func MiseryAura(target *Unit, numPoints int32) *Aura {
-	multiplier := float64(numPoints)
-
+func MiseryAura(target *Unit) *Aura {
 	return target.GetOrRegisterAura(Aura{
-		Label:    "Misery-" + strconv.Itoa(int(numPoints)),
-		Tag:      "Misery",
+		Label:    "Misery",
+		Tag:      MinorSpellHitDebuffAuraTag,
+		Priority: 3,
 		ActionID: ActionID{SpellID: 33198},
 		Duration: time.Second * 24,
-		Priority: float64(numPoints),
 		OnGain: func(aura *Aura, sim *Simulation) {
-			target.PseudoStats.BonusSpellHitRating += multiplier * SpellHitRatingPerHitChance
+			aura.Unit.PseudoStats.BonusSpellHitRatingTaken += 3 * SpellHitRatingPerHitChance
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			target.PseudoStats.BonusSpellHitRating -= multiplier * SpellHitRatingPerHitChance
+			aura.Unit.PseudoStats.BonusSpellHitRatingTaken -= 3 * SpellHitRatingPerHitChance
 		},
 	})
 }
@@ -201,32 +263,6 @@ func JudgementOfLightAura(target *Unit) *Aura {
 	})
 }
 
-func JudgementOfTheCrusaderAura(target *Unit, level int32, flatBonus float64, percentBonus float64) *Aura {
-	bonusCrit := float64(level) * CritRatingPerCritChance
-
-	totalSP := 219*percentBonus + flatBonus
-	return target.GetOrRegisterAura(Aura{
-		Label:    "Judgement of the Crusader-" + strconv.Itoa(int(level)),
-		Tag:      "Judgement of the Crusader",
-		ActionID: ActionID{SpellID: 27159},
-		Duration: time.Second * 20,
-		Priority: float64(level),
-		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.BonusHolyDamageTaken += totalSP
-			aura.Unit.PseudoStats.BonusCritRating += bonusCrit
-		},
-		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.BonusHolyDamageTaken -= totalSP
-			aura.Unit.PseudoStats.BonusCritRating -= bonusCrit
-		},
-		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
-			if spell.ActionID.SpellID == 35395 {
-				aura.Refresh(sim)
-			}
-		},
-	})
-}
-
 const spelldmgtag = `13%dmg`
 
 func CurseOfElementsAura(target *Unit) *Aura {
@@ -236,24 +272,25 @@ func CurseOfElementsAura(target *Unit) *Aura {
 		Label:    "Curse of Elements",
 		Tag:      spelldmgtag,
 		ActionID: ActionID{SpellID: 47865},
-
 		OnGain: func(aura *Aura, sim *Simulation) {
-			if !target.HasActiveAuraWithTag(spelldmgtag) {
+			if !target.HasActiveAuraWithTagExcludingAura(spelldmgtag, aura) {
 				aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier *= multiplier
 				aura.Unit.PseudoStats.FireDamageTakenMultiplier *= multiplier
 				aura.Unit.PseudoStats.FrostDamageTakenMultiplier *= multiplier
 				aura.Unit.PseudoStats.ShadowDamageTakenMultiplier *= multiplier
 				aura.Unit.PseudoStats.NatureDamageTakenMultiplier *= multiplier
+				aura.Unit.PseudoStats.HolyDamageTakenMultiplier *= multiplier
 			}
 			aura.Unit.AddStatsDynamic(sim, stats.Stats{stats.ArcaneResistance: -165, stats.FireResistance: -165, stats.FrostResistance: -165, stats.ShadowResistance: -165, stats.NatureResistance: -165})
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			if !target.HasActiveAuraWithTag(spelldmgtag) {
+			if !target.HasActiveAuraWithTagExcludingAura(spelldmgtag, aura) {
 				aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier /= multiplier
 				aura.Unit.PseudoStats.FireDamageTakenMultiplier /= multiplier
 				aura.Unit.PseudoStats.FrostDamageTakenMultiplier /= multiplier
 				aura.Unit.PseudoStats.ShadowDamageTakenMultiplier /= multiplier
 				aura.Unit.PseudoStats.NatureDamageTakenMultiplier /= multiplier
+				aura.Unit.PseudoStats.HolyDamageTakenMultiplier /= multiplier
 			}
 			aura.Unit.AddStatsDynamic(sim, stats.Stats{stats.ArcaneResistance: 165, stats.FireResistance: 165, stats.FrostResistance: 165, stats.ShadowResistance: 165, stats.NatureResistance: 165})
 		},
@@ -261,70 +298,109 @@ func CurseOfElementsAura(target *Unit) *Aura {
 }
 
 func EarthAndMoonAura(target *Unit) *Aura {
-	return earthMoonEbonPlaguebringerAura(target, "Earth And Moon", 48511)
-}
-
-func EbonPlaguebringerAura(target *Unit) *Aura {
-	return earthMoonEbonPlaguebringerAura(target, "Ebon Plaguebringer", 51161)
-}
-
-func earthMoonEbonPlaguebringerAura(target *Unit, label string, id int32) *Aura {
 	multiplier := 1.13
 
 	return target.GetOrRegisterAura(Aura{
-		Label:    label,
+		Label:    "Earth And Moon",
 		Tag:      spelldmgtag,
-		ActionID: ActionID{SpellID: id},
-
+		ActionID: ActionID{SpellID: 48511},
 		OnGain: func(aura *Aura, sim *Simulation) {
-			if !target.HasActiveAuraWithTag(spelldmgtag) {
+			if !target.HasActiveAuraWithTagExcludingAura(spelldmgtag, aura) {
 				aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier *= multiplier
 				aura.Unit.PseudoStats.FireDamageTakenMultiplier *= multiplier
 				aura.Unit.PseudoStats.FrostDamageTakenMultiplier *= multiplier
 				aura.Unit.PseudoStats.ShadowDamageTakenMultiplier *= multiplier
 				aura.Unit.PseudoStats.NatureDamageTakenMultiplier *= multiplier
+				aura.Unit.PseudoStats.HolyDamageTakenMultiplier *= multiplier
 			}
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			if !target.HasActiveAuraWithTag(spelldmgtag) {
+			if !target.HasActiveAuraWithTagExcludingAura(spelldmgtag, aura) {
 				aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier /= multiplier
 				aura.Unit.PseudoStats.FireDamageTakenMultiplier /= multiplier
 				aura.Unit.PseudoStats.FrostDamageTakenMultiplier /= multiplier
 				aura.Unit.PseudoStats.ShadowDamageTakenMultiplier /= multiplier
 				aura.Unit.PseudoStats.NatureDamageTakenMultiplier /= multiplier
+				aura.Unit.PseudoStats.HolyDamageTakenMultiplier /= multiplier
 			}
 		},
 	})
 }
 
-func ImprovedShadowBoltAura(target *Unit) *Aura {
-	bonusSpellCrit := 5.0 * CritRatingPerCritChance
-	config := Aura{
-		Label:    "ImprovedShadowBolt",
-		Tag:      "ImprovedShadowBolt",
-		ActionID: ActionID{SpellID: 17800},
-		Duration: time.Second * 30,
+const diseasedmgtag = "diseasedmg"
+const CryptFeverAuraLabel = "Crypt Fever-"
+
+func CryptFeverAura(target *Unit, dkIndex int) *Aura {
+	diseaseMultiplier := 1.3
+
+	return target.GetOrRegisterAura(Aura{
+		Label:    CryptFeverAuraLabel + strconv.Itoa(dkIndex), // Support multiple DKs having their CF up
+		Tag:      diseasedmgtag,
+		ActionID: ActionID{SpellID: 49632},
 		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.BonusCritRating += bonusSpellCrit
+			if !target.HasActiveAuraWithTagExcludingAura(diseasedmgtag, aura) {
+				aura.Unit.PseudoStats.DiseaseDamageTakenMultiplier *= diseaseMultiplier
+			}
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.BonusCritRating -= bonusSpellCrit
+			if !target.HasActiveAuraWithTagExcludingAura(diseasedmgtag, aura) {
+				aura.Unit.PseudoStats.DiseaseDamageTakenMultiplier /= diseaseMultiplier
+			}
 		},
-	}
+	})
+}
 
-	return target.GetOrRegisterAura(config)
+const EbonPlaguebringerAuraLabel = "Ebon Plaguebringer-"
+
+func EbonPlaguebringerAura(target *Unit, dkIndex int) *Aura {
+	magicMultiplier := 1.13
+
+	return target.GetOrRegisterAura(Aura{
+		Label:    EbonPlaguebringerAuraLabel + strconv.Itoa(dkIndex), // Support multiple DKs having their EP up
+		Tag:      spelldmgtag,
+		ActionID: ActionID{SpellID: 51161},
+		OnGain: func(aura *Aura, sim *Simulation) {
+			if !target.HasActiveAuraWithTagExcludingAura(spelldmgtag, aura) {
+				aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier *= magicMultiplier
+				aura.Unit.PseudoStats.FireDamageTakenMultiplier *= magicMultiplier
+				aura.Unit.PseudoStats.FrostDamageTakenMultiplier *= magicMultiplier
+				aura.Unit.PseudoStats.ShadowDamageTakenMultiplier *= magicMultiplier
+				aura.Unit.PseudoStats.NatureDamageTakenMultiplier *= magicMultiplier
+				aura.Unit.PseudoStats.HolyDamageTakenMultiplier *= magicMultiplier
+			}
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			if !target.HasActiveAuraWithTagExcludingAura(spelldmgtag, aura) {
+				aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier /= magicMultiplier
+				aura.Unit.PseudoStats.FireDamageTakenMultiplier /= magicMultiplier
+				aura.Unit.PseudoStats.FrostDamageTakenMultiplier /= magicMultiplier
+				aura.Unit.PseudoStats.ShadowDamageTakenMultiplier /= magicMultiplier
+				aura.Unit.PseudoStats.NatureDamageTakenMultiplier /= magicMultiplier
+				aura.Unit.PseudoStats.HolyDamageTakenMultiplier /= magicMultiplier
+			}
+		},
+	})
 }
 
 var BloodFrenzyActionID = ActionID{SpellID: 29859}
+var phyDmgDebuff = `4%phydmg`
 
 func BloodFrenzyAura(target *Unit, points int32) *Aura {
+	return bloodFrenzySavageCombatAura(target, "Blood Frenzy", BloodFrenzyActionID, points)
+}
+func SavageCombatAura(target *Unit, points int32) *Aura {
+	return bloodFrenzySavageCombatAura(target, "Savage Combat", ActionID{SpellID: 58413}, points)
+}
+
+func bloodFrenzySavageCombatAura(target *Unit, label string, id ActionID, points int32) *Aura {
 	multiplier := 1 + 0.02*float64(points)
 	return target.GetOrRegisterAura(Aura{
-		Label:    "Blood Frenzy-" + strconv.Itoa(int(points)),
-		Tag:      "Blood Frenzy",
-		ActionID: BloodFrenzyActionID,
+		Label:    label + "-" + strconv.Itoa(int(points)),
+		Tag:      phyDmgDebuff,
+		ActionID: id,
+		Priority: multiplier,
 		// No fixed duration, lasts as long as the bleed that activates it.
-		Priority: float64(points),
+		Duration: NeverExpires,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.PhysicalDamageTakenMultiplier *= multiplier
 		},
@@ -348,11 +424,15 @@ func GiftOfArthasAura(target *Unit) *Aura {
 	})
 }
 
+const BleedDamageAuraTag = "BleedDamage"
+
 func MangleAura(target *Unit) *Aura {
 	return target.GetOrRegisterAura(Aura{
 		Label:    "Mangle",
+		Tag:      BleedDamageAuraTag,
 		ActionID: ActionID{SpellID: 33876},
 		Duration: time.Second * 12,
+		Priority: 1.3,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.PeriodicPhysicalDamageTakenMultiplier *= 1.3
 		},
@@ -362,65 +442,146 @@ func MangleAura(target *Unit) *Aura {
 	})
 }
 
-var ImprovedScorchAuraLabel = "Improved Scorch"
-
-func ImprovedScorchAura(target *Unit, startingStacks int32) *Aura {
+func TraumaAura(target *Unit, points int) *Aura {
+	multiplier := 1 + 0.15*float64(points)
 	return target.GetOrRegisterAura(Aura{
-		Label:     ImprovedScorchAuraLabel,
-		ActionID:  ActionID{SpellID: 12873},
-		Duration:  time.Second * 30,
-		MaxStacks: 5,
+		Label:    "Trauma",
+		Tag:      BleedDamageAuraTag,
+		ActionID: ActionID{SpellID: 46855},
+		Duration: time.Second * 60,
+		Priority: multiplier,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.SetStacks(sim, startingStacks)
+			aura.Unit.PseudoStats.PeriodicPhysicalDamageTakenMultiplier *= multiplier
 		},
-		OnStacksChange: func(aura *Aura, sim *Simulation, oldStacks int32, newStacks int32) {
-			aura.Unit.PseudoStats.FireDamageTakenMultiplier /= 1.0 + 0.03*float64(oldStacks)
-			aura.Unit.PseudoStats.FireDamageTakenMultiplier *= 1.0 + 0.03*float64(newStacks)
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.PeriodicPhysicalDamageTakenMultiplier /= multiplier
 		},
 	})
 }
 
+func StampedeAura(target *Unit) *Aura {
+	return target.GetOrRegisterAura(Aura{
+		Label:    "Stampede",
+		Tag:      BleedDamageAuraTag,
+		ActionID: ActionID{SpellID: 57393},
+		Duration: time.Second * 12,
+		Priority: 1.25,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.PeriodicPhysicalDamageTakenMultiplier *= 1.25
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.PeriodicPhysicalDamageTakenMultiplier /= 1.25
+		},
+	})
+}
+
+const MajorSpellCritDebuffAuraTag = "majorspellcritdebuff"
+
+func ShadowMasteryAura(target *Unit) *Aura {
+	return majorSpellCritDebuffAura(target, "Shadow Mastery", ActionID{SpellID: 17800}, 5)
+}
+
+var ImprovedScorchAuraLabel = "Improved Scorch"
+
+func ImprovedScorchAura(target *Unit) *Aura {
+	return majorSpellCritDebuffAura(target, ImprovedScorchAuraLabel, ActionID{SpellID: 12873}, 5)
+}
+
 var WintersChillAuraLabel = "Winter's Chill"
 
-func WintersChillAura(target *Unit, startingStacks int32) *Aura {
+func WintersChillAura(target *Unit, stacks int32) *Aura {
 	return target.GetOrRegisterAura(Aura{
 		Label:     WintersChillAuraLabel,
+		Tag:       MajorSpellCritDebuffAuraTag,
+		Priority:  0,
 		ActionID:  ActionID{SpellID: 28595},
-		Duration:  time.Second * 15,
+		Duration:  time.Second * 30,
 		MaxStacks: 5,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.SetStacks(sim, startingStacks)
+			aura.SetStacks(sim, 5)
 		},
-		OnStacksChange: func(aura *Aura, sim *Simulation, oldStacks int32, newStacks int32) {
-			aura.Unit.PseudoStats.BonusFrostCritRating += 2 * CritRatingPerCritChance * float64(newStacks-oldStacks)
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.BonusSpellCritRatingTaken -= float64(aura.stacks) * CritRatingPerCritChance
+		},
+		OnStacksChange: func(aura *Aura, sim *Simulation, oldStacks, newStacks int32) {
+			if !aura.active {
+				return
+			}
+			aura.Priority = float64(newStacks)
+			aura.Unit.PseudoStats.BonusSpellCritRatingTaken += (float64(newStacks) - float64(oldStacks)) * CritRatingPerCritChance
+		},
+	})
+}
+
+func majorSpellCritDebuffAura(target *Unit, label string, actionID ActionID, percent float64) *Aura {
+	bonusSpellCrit := percent * CritRatingPerCritChance
+	return target.GetOrRegisterAura(Aura{
+		Label:    label,
+		Tag:      MajorSpellCritDebuffAuraTag,
+		Priority: percent,
+		ActionID: actionID,
+		Duration: time.Second * 30,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.BonusSpellCritRatingTaken += bonusSpellCrit
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.BonusSpellCritRatingTaken -= bonusSpellCrit
 		},
 	})
 }
 
 var MinorArmorReductionAuraTag = "MinorArmorReductionAura"
+var MinorSpellHitDebuffAuraTag = "sphit3%"
 
-func FaerieFireAura(target *Unit, level int32) *Aura {
+func FaerieFireAura(target *Unit, imp bool) *Aura {
 	const armorReduction = 0.05
 
-	return target.GetOrRegisterAura(Aura{
-		Label:    "Faerie Fire-" + strconv.Itoa(int(level)),
+	var mainAura *Aura
+	var secondaryAura *Aura
+
+	label := "Faerie Fire"
+	if imp {
+		label = "Improved " + label
+		secondaryAura = target.GetOrRegisterAura(Aura{
+			Label:    "Improved Faerie Fire Secondary",
+			Tag:      MinorSpellHitDebuffAuraTag,
+			Duration: time.Minute * 5,
+			Priority: 3,
+			// no ActionID to hide this secondary effect from stats
+			OnGain: func(aura *Aura, sim *Simulation) {
+				aura.Unit.PseudoStats.BonusSpellHitRatingTaken += 3 * SpellHitRatingPerHitChance
+			},
+			OnExpire: func(aura *Aura, sim *Simulation) {
+				aura.Unit.PseudoStats.BonusSpellHitRatingTaken -= 3 * SpellHitRatingPerHitChance
+				if mainAura.IsActive() {
+					mainAura.Deactivate(sim)
+				}
+			},
+		})
+
+	}
+	mainAura = target.GetOrRegisterAura(Aura{
+		Label:    label,
 		Tag:      MinorArmorReductionAuraTag,
+		Priority: armorReduction + 1,
 		ActionID: ActionID{SpellID: 770},
-		Duration: time.Second * 40,
-		Priority: float64(level),
+		Duration: time.Minute * 5,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 - armorReduction)
 			aura.Unit.updateArmor()
-			aura.Unit.PseudoStats.BonusSpellHitRating += float64(level) * SpellHitRatingPerHitChance
-			aura.Unit.PseudoStats.BonusCritRating += float64(level) * CritRatingPerCritChance
+			if imp {
+				secondaryAura.Activate(sim)
+			}
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 / (1.0 - armorReduction))
 			aura.Unit.updateArmor()
-			aura.Unit.PseudoStats.BonusSpellHitRating -= float64(level) * SpellHitRatingPerHitChance
-			aura.Unit.PseudoStats.BonusCritRating += float64(level) * CritRatingPerCritChance
+			if imp && secondaryAura.IsActive() {
+				secondaryAura.Deactivate(sim)
+			}
 		},
 	})
+	return mainAura
 }
 
 var SunderArmorAuraLabel = "Sunder Armor"
@@ -496,13 +657,14 @@ func ExposeArmorAura(target *Unit, hasGlyph bool) *Aura {
 }
 
 func CurseOfWeaknessAura(target *Unit, points int32) *Aura {
-	APReduction := 478 * (1 + 0.1 * float64(points))
+	APReduction := 478 * (1 + 0.1*float64(points))
 	bonus := stats.Stats{stats.AttackPower: -APReduction}
 	armorReduction := 0.05
 
 	return target.GetOrRegisterAura(Aura{
 		Label:    "Curse of Weakness",
 		Tag:      MinorArmorReductionAuraTag,
+		Priority: armorReduction + 1,
 		ActionID: ActionID{SpellID: 50511},
 		Duration: time.Minute * 2,
 		OnGain: func(aura *Aura, sim *Simulation) {
@@ -512,7 +674,7 @@ func CurseOfWeaknessAura(target *Unit, points int32) *Aura {
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.AddStatsDynamic(sim, bonus.Multiply(-1))
-			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 / (1.0 - armorReduction))
+			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 - armorReduction)
 			aura.Unit.updateArmor()
 		},
 	})
@@ -524,6 +686,7 @@ func StingAura(target *Unit) *Aura {
 	return target.GetOrRegisterAura(Aura{
 		Label:    "Sting",
 		Tag:      MinorArmorReductionAuraTag,
+		Priority: armorReduction,
 		ActionID: ActionID{SpellID: 56631},
 		Duration: time.Second * 20,
 		OnGain: func(aura *Aura, sim *Simulation) {
@@ -531,7 +694,7 @@ func StingAura(target *Unit) *Aura {
 			aura.Unit.updateArmor()
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 / (1.0 - armorReduction))
+			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 - armorReduction)
 			aura.Unit.updateArmor()
 		},
 	})
@@ -589,10 +752,10 @@ func HuntersMarkAura(target *Unit, points int32, glyphed bool) *Aura {
 		Duration: NeverExpires,
 		Priority: priority,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.BonusRangedAttackPower += bonus
+			aura.Unit.PseudoStats.BonusRangedAttackPowerTaken += bonus
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.BonusRangedAttackPower -= bonus
+			aura.Unit.PseudoStats.BonusRangedAttackPowerTaken -= bonus
 		},
 	})
 }
@@ -652,7 +815,7 @@ func ScreechAura(target *Unit) *Aura {
 	})
 }
 
-const ThunderClapAuraTag = "ThunderClap"
+const AtkSpeedReductionAuraTag = "AtkSpdReduction"
 
 func ThunderClapAura(target *Unit, points int32) *Aura {
 	speedMultiplier := 0.9
@@ -667,7 +830,7 @@ func ThunderClapAura(target *Unit, points int32) *Aura {
 
 	return target.GetOrRegisterAura(Aura{
 		Label:    "ThunderClap-" + strconv.Itoa(int(points)),
-		Tag:      ThunderClapAuraTag,
+		Tag:      AtkSpeedReductionAuraTag,
 		ActionID: ActionID{SpellID: 25264},
 		Duration: time.Second * 30,
 		Priority: inverseMult,
@@ -678,6 +841,106 @@ func ThunderClapAura(target *Unit, points int32) *Aura {
 			aura.Unit.MultiplyAttackSpeed(sim, inverseMult)
 		},
 	})
+}
+
+func InfectedWoundsAura(target *Unit, points int32) *Aura {
+	speedMultiplier := 1.0
+	if points == 1 {
+		speedMultiplier = 0.94
+	} else if points == 2 {
+		speedMultiplier = 0.86
+	} else if points == 3 {
+		speedMultiplier = 0.8
+	}
+	inverseMult := 1 / speedMultiplier
+
+	return target.GetOrRegisterAura(Aura{
+		Label:    "InfectedWounds-" + strconv.Itoa(int(points)),
+		Tag:      AtkSpeedReductionAuraTag,
+		ActionID: ActionID{SpellID: 48485},
+		Duration: time.Second * 12,
+		Priority: inverseMult,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.MultiplyAttackSpeed(sim, speedMultiplier)
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.MultiplyAttackSpeed(sim, inverseMult)
+		},
+	})
+}
+
+// Note: Paladin code might apply this as part of their judgement auras instead
+// of using another separate aura.
+func JudgementsOfTheJustAura(target *Unit, points int32) *Aura {
+	speedMultiplier := 1.0
+	if points == 1 {
+		speedMultiplier = 0.9
+	} else if points == 2 {
+		speedMultiplier = 0.8
+	}
+	inverseMult := 1 / speedMultiplier
+
+	return target.GetOrRegisterAura(Aura{
+		Label:    "JudgementsOfTheJust-" + strconv.Itoa(int(points)),
+		Tag:      AtkSpeedReductionAuraTag,
+		ActionID: ActionID{SpellID: 53696},
+		Duration: time.Second * 30,
+		Priority: inverseMult,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.MultiplyAttackSpeed(sim, speedMultiplier)
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.MultiplyAttackSpeed(sim, inverseMult)
+		},
+	})
+}
+
+func FrostFeverAura(target *Unit, impIcyTouch int32) *Aura {
+	speedMultiplier := 0.86
+	if impIcyTouch > 0 {
+		speedMultiplier -= 0.02 * float64(impIcyTouch)
+	}
+
+	inverseMult := 1 / speedMultiplier
+	return target.GetOrRegisterAura(Aura{
+		Label:    "FrostFever",
+		Tag:      AtkSpeedReductionAuraTag,
+		ActionID: ActionID{SpellID: 55095},
+		Duration: time.Second * 15,
+		Priority: inverseMult,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.MultiplyAttackSpeed(sim, speedMultiplier)
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.MultiplyAttackSpeed(sim, inverseMult)
+		},
+	})
+}
+
+const RuneOfRazoriceVulnerabilityTag = "RuneOfRazoriceVulnerability"
+
+func RuneOfRazoriceVulnerabilityAura(target *Unit) *Aura {
+	frostVulnPerStack := 0.02
+	aura := target.GetOrRegisterAura(Aura{
+		Label:     "RuneOfRazoriceVulnerability",
+		Tag:       RuneOfRazoriceVulnerabilityTag,
+		ActionID:  ActionID{SpellID: 53343},
+		Duration:  NeverExpires,
+		MaxStacks: 5,
+		Priority:  1.0 / 1.1,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.SetStacks(sim, 0)
+		},
+		OnStacksChange: func(aura *Aura, sim *Simulation, oldStacks int32, newStacks int32) {
+			if !aura.active {
+				return
+			}
+			oldMultiplier := 1.0 + float64(oldStacks)*frostVulnPerStack
+			newMultiplier := 1.0 + float64(newStacks)*frostVulnPerStack
+			aura.Unit.PseudoStats.FrostDamageTakenMultiplier *= (newMultiplier / oldMultiplier)
+		},
+	})
+	return aura
 }
 
 func InsectSwarmAura(target *Unit) *Aura {
@@ -714,6 +977,36 @@ func ScorpidStingAura(target *Unit) *Aura {
 			if aura.Unit.HasActiveAura("InsectSwarmMiss") {
 				aura.Unit.PseudoStats.IncreasedMissChance += 0.02
 			}
+		},
+	})
+}
+
+const MinorCritDebuffAuraTag = "minorcritdebuff"
+
+func TotemOfWrathDebuff(target *Unit) *Aura {
+	return minorCritDebuffAura(target, "Totem of Wrath Debuff", ActionID{SpellID: 30708}, 3, time.Minute*5)
+}
+
+func MasterPoisonerDebuff(target *Unit, points float64) *Aura {
+	return minorCritDebuffAura(target, "Master Poisoner", ActionID{SpellID: 58410}, points, time.Second*20)
+}
+
+func HeartoftheCrusaderDebuff(target *Unit, points float64) *Aura {
+	return minorCritDebuffAura(target, "Heart of the Crusader", ActionID{SpellID: 20337}, points, time.Second*20)
+}
+
+func minorCritDebuffAura(target *Unit, label string, actionID ActionID, points float64, duration time.Duration) *Aura {
+	return target.GetOrRegisterAura(Aura{
+		Label:    label,
+		Tag:      MinorCritDebuffAuraTag,
+		Priority: points,
+		ActionID: actionID,
+		Duration: duration,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.BonusCritRatingTaken += points * CritRatingPerCritChance
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.BonusCritRatingTaken -= points * CritRatingPerCritChance
 		},
 	})
 }

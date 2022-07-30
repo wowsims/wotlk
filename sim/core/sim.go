@@ -31,8 +31,10 @@ type Simulation struct {
 	Log  func(string, ...interface{})
 	logs []string
 
-	executePhase          bool
-	executePhaseCallbacks []func(*Simulation)
+	executePhase20        bool
+	executePhase25        bool
+	executePhase35        bool
+	executePhaseCallbacks []func(*Simulation, int) // 2nd parameter is 35 for 35%, 25 for 25% and 20 for 20%
 }
 
 func RunSim(rsr proto.RaidSimRequest, progress chan *proto.ProgressMetrics) (result *proto.RaidSimResult) {
@@ -180,8 +182,10 @@ func (sim *Simulation) reset() {
 
 	sim.pendingActions = make([]*PendingAction, 0, 64)
 
-	sim.executePhase = false
-	sim.executePhaseCallbacks = []func(*Simulation){}
+	sim.executePhase20 = false
+	sim.executePhase25 = false
+	sim.executePhase35 = false
+	sim.executePhaseCallbacks = []func(*Simulation, int){}
 
 	// Targets need to be reset before the raid, so that players can check for
 	// the presence of permanent target auras in their Reset handlers.
@@ -323,12 +327,28 @@ func (sim *Simulation) AddPendingAction(pa *PendingAction) {
 func (sim *Simulation) advance(elapsedTime time.Duration) {
 	sim.CurrentTime += elapsedTime
 
-	if !sim.executePhase {
-		if (sim.Encounter.EndFightAtHealth == 0 && sim.CurrentTime >= sim.Encounter.executePhaseBegins) ||
-			(sim.Encounter.EndFightAtHealth > 0 && sim.GetRemainingDurationPercent() <= 0.2) {
-			sim.executePhase = true
+	if !sim.executePhase35 {
+		if (sim.Encounter.EndFightAtHealth == 0 && sim.CurrentTime >= sim.Encounter.executePhase35Begins) ||
+			(sim.Encounter.EndFightAtHealth > 0 && sim.GetRemainingDurationPercent() <= 0.35) {
+			sim.executePhase35 = true
 			for _, callback := range sim.executePhaseCallbacks {
-				callback(sim)
+				callback(sim, 35)
+			}
+		}
+	} else if !sim.executePhase25 {
+		if (sim.Encounter.EndFightAtHealth == 0 && sim.CurrentTime >= sim.Encounter.executePhase25Begins) ||
+			(sim.Encounter.EndFightAtHealth > 0 && sim.GetRemainingDurationPercent() <= 0.25) {
+			sim.executePhase25 = true
+			for _, callback := range sim.executePhaseCallbacks {
+				callback(sim, 25)
+			}
+		}
+	} else if !sim.executePhase20 {
+		if (sim.Encounter.EndFightAtHealth == 0 && sim.CurrentTime >= sim.Encounter.executePhase20Begins) ||
+			(sim.Encounter.EndFightAtHealth > 0 && sim.GetRemainingDurationPercent() <= 0.2) {
+			sim.executePhase20 = true
+			for _, callback := range sim.executePhaseCallbacks {
+				callback(sim, 20)
 			}
 		}
 	}
@@ -344,11 +364,17 @@ func (sim *Simulation) advance(elapsedTime time.Duration) {
 	}
 }
 
-func (sim *Simulation) RegisterExecutePhaseCallback(callback func(*Simulation)) {
+func (sim *Simulation) RegisterExecutePhaseCallback(callback func(*Simulation, int)) {
 	sim.executePhaseCallbacks = append(sim.executePhaseCallbacks, callback)
 }
-func (sim *Simulation) IsExecutePhase() bool {
-	return sim.executePhase
+func (sim *Simulation) IsExecutePhase20() bool {
+	return sim.executePhase20
+}
+func (sim *Simulation) IsExecutePhase25() bool {
+	return sim.executePhase25
+}
+func (sim *Simulation) IsExecutePhase35() bool {
+	return sim.executePhase35
 }
 
 func (sim *Simulation) GetRemainingDuration() time.Duration {

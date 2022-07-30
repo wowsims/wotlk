@@ -179,9 +179,9 @@ message HunterPetTalents {
 
 message Hunter {
 	message Rotation {
-		bool use_multi_shot = 1;
-		bool use_arcane_shot = 2;
-		bool lazy_rotation = 12; // Restricts to 1 action between each auto shot.
+		//bool use_multi_shot = 1;
+		//bool use_arcane_shot = 2;
+		//bool lazy_rotation = 12; // Restricts to 1 action between each auto shot.
 
 		enum StingType {
 			NoSting = 0;
@@ -195,19 +195,19 @@ message Hunter {
 		// Switch back to Aspect of the Hawk when mana goes above this percent.
 		double viper_stop_mana_percent = 7;
 
-		enum WeaveType {
-			WeaveNone = 0;
-			WeaveAutosOnly = 1;
-			WeaveRaptorOnly = 2;
-			WeaveFull = 3;
-		}
-		WeaveType weave = 11;
+		//enum WeaveType {
+		//	WeaveNone = 0;
+		//	WeaveAutosOnly = 1;
+		//	WeaveRaptorOnly = 2;
+		//	WeaveFull = 3;
+		//}
+		//WeaveType weave = 11;
 
-		// Time in milliseconds from when the hunter starts moving to when they reengage their ranged autos.
-		int32 time_to_weave_ms = 9;
+		//// Time in milliseconds from when the hunter starts moving to when they reengage their ranged autos.
+		//int32 time_to_weave_ms = 9;
 
-		// Percent of fight (0-1) to use melee weaving.
-		double percent_weaved = 10;
+		//// Percent of fight (0-1) to use melee weaving.
+		//double percent_weaved = 10;
 	}
 	Rotation rotation = 1;
 
@@ -228,20 +228,44 @@ message Hunter {
 
 		enum PetType {
 			PetNone = 0;
-			Bat = 5;
-			Bear = 7;
-			Cat = 2;
-			Crab = 8;
-			Owl = 4;
-			Raptor = 3;
-			Ravager = 1;
-			WindSerpent = 6;
+			Bat = 1;
+			Bear = 2;
+			BirdOfPrey = 3;
+			Boar = 4;
+			CarrionBird = 5;
+			Cat = 6;
+			Chimaera = 7;
+			CoreHound = 8;
+			Crab = 9;
+			Crocolisk = 10;
+			Devilsaur = 11;
+			Dragonhawk = 12;
+			Gorilla = 13;
+			Hyena = 14;
+			Moth = 15;
+			NetherRay = 16;
+			Raptor = 17;
+			Ravager = 18;
+			Rhino = 19;
+			Scorpid = 20;
+			Serpent = 21;
+			Silithid = 22;
+			Spider = 23;
+			SpiritBeast = 24;
+			SporeBat = 25;
+			Tallstrider = 26;
+			Turtle = 27;
+			WarpStalker = 28;
+			Wasp = 29;
+			WindSerpent = 30;
+			Wolf = 31;
+			Worm = 32;
 		}
 
 		PetType pet_type = 2;
 		HunterPetTalents pet_talents = 3;
 		double pet_uptime = 4;
-		bool pet_single_ability = 5;
+		//bool pet_single_ability = 5;
 
 		int32 latency_ms = 6;
 

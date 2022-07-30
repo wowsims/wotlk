@@ -9,10 +9,12 @@ import (
 )
 
 type Encounter struct {
-	Duration           time.Duration
-	DurationVariation  time.Duration
-	executePhaseBegins time.Duration
-	Targets            []*Target
+	Duration             time.Duration
+	DurationVariation    time.Duration
+	executePhase20Begins time.Duration
+	executePhase25Begins time.Duration
+	executePhase35Begins time.Duration
+	Targets              []*Target
 
 	EndFightAtHealth float64
 	// DamgeTaken is used to track health fights instead of duration fights.
@@ -23,11 +25,25 @@ type Encounter struct {
 }
 
 func NewEncounter(options proto.Encounter) Encounter {
+	if options.ExecuteProportion_20 == 0 {
+		options.ExecuteProportion_20 = 0.2
+	}
+	if options.ExecuteProportion_25 == 0 {
+		options.ExecuteProportion_25 = 0.25
+	}
+	options.ExecuteProportion_25 = MaxFloat(options.ExecuteProportion_25, options.ExecuteProportion_20)
+	if options.ExecuteProportion_35 == 0 {
+		options.ExecuteProportion_35 = 0.35
+	}
+	options.ExecuteProportion_35 = MaxFloat(options.ExecuteProportion_35, options.ExecuteProportion_25)
+
 	encounter := Encounter{
-		Duration:           DurationFromSeconds(options.Duration),
-		DurationVariation:  DurationFromSeconds(options.DurationVariation),
-		executePhaseBegins: DurationFromSeconds(options.Duration * (1 - options.ExecuteProportion)),
-		Targets:            []*Target{},
+		Duration:             DurationFromSeconds(options.Duration),
+		DurationVariation:    DurationFromSeconds(options.DurationVariation),
+		executePhase20Begins: DurationFromSeconds(options.Duration * (1 - options.ExecuteProportion_20)),
+		executePhase25Begins: DurationFromSeconds(options.Duration * (1 - options.ExecuteProportion_25)),
+		executePhase35Begins: DurationFromSeconds(options.Duration * (1 - options.ExecuteProportion_35)),
+		Targets:              []*Target{},
 	}
 	// If UseHealth is set, we use the sum of targets health.
 	if options.UseHealth {
@@ -184,7 +200,6 @@ type AttackTable struct {
 	BaseGlanceChance    float64
 
 	GlanceMultiplier float64
-	HitSuppression   float64
 	CritSuppression  float64
 
 	PartialResistArcaneRollThreshold00 float64
@@ -215,7 +230,8 @@ type AttackTable struct {
 
 	ArmorDamageModifier float64
 
-	DamageDealtMultiplier float64
+	DamageDealtMultiplier       float64
+	NatureDamageDealtMultiplier float64
 }
 
 func NewAttackTable(attacker *Unit, defender *Unit) *AttackTable {
@@ -223,7 +239,8 @@ func NewAttackTable(attacker *Unit, defender *Unit) *AttackTable {
 		Attacker: attacker,
 		Defender: defender,
 
-		DamageDealtMultiplier: 1,
+		DamageDealtMultiplier:       1,
+		NatureDamageDealtMultiplier: 1,
 	}
 
 	if defender.Type == EnemyUnit {
@@ -236,7 +253,6 @@ func NewAttackTable(attacker *Unit, defender *Unit) *AttackTable {
 		table.BaseGlanceChance = UnitLevelFloat64(defender.Level, 0.06, 0.12, 0.18, 0.24)
 
 		table.GlanceMultiplier = UnitLevelFloat64(defender.Level, 0.95, 0.95, 0.85, 0.75)
-		table.HitSuppression = UnitLevelFloat64(defender.Level, 0, 0, 0, 0.01)
 		table.CritSuppression = UnitLevelFloat64(defender.Level, 0, 0.01, 0.02, 0.048)
 	} else {
 		// Assumes defender (the Player) is level 70.

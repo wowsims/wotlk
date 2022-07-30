@@ -19,13 +19,15 @@ func (hunter *Hunter) OnGCDReady(sim *core.Simulation) {
 func (hunter *Hunter) rotation(sim *core.Simulation) {
 	hunter.trySwapAspect(sim)
 
+	if hunter.SilencingShot.IsReady(sim) {
+		hunter.SilencingShot.Cast(sim, hunter.CurrentTarget)
+	}
+
 	spell := hunter.chooseSpell(sim)
 
-	if spell != nil {
-		success := spell.Cast(sim, hunter.CurrentTarget)
-		if !success {
-			hunter.WaitForMana(sim, spell.CurCast.Cost)
-		}
+	success := spell.Cast(sim, hunter.CurrentTarget)
+	if !success {
+		hunter.WaitForMana(sim, spell.CurCast.Cost)
 	}
 }
 
@@ -34,15 +36,17 @@ func (hunter *Hunter) chooseSpell(sim *core.Simulation) *core.Spell {
 		return hunter.ScorpidSting
 	} else if hunter.Rotation.Sting == proto.Hunter_Rotation_SerpentSting && !hunter.SerpentStingDot.IsActive() {
 		return hunter.SerpentSting
-	} else if hunter.ChimeraShot != nil && hunter.ChimeraShot.IsReady(sim) {
+	} else if sim.IsExecutePhase20() && hunter.KillShot.IsReady(sim) {
+		return hunter.KillShot
+	} else if hunter.ChimeraShot.IsReady(sim) {
 		return hunter.ChimeraShot
-	} else if hunter.BlackArrow != nil && hunter.BlackArrow.IsReady(sim) {
+	} else if hunter.BlackArrow.IsReady(sim) {
 		return hunter.BlackArrow
-	} else if hunter.ExplosiveShot != nil && hunter.ExplosiveShot.IsReady(sim) && !hunter.ExplosiveShotDot.IsActive() {
+	} else if hunter.ExplosiveShot.IsReady(sim) && !hunter.ExplosiveShotDot.IsActive() {
 		return hunter.ExplosiveShot
-	} else if hunter.AimedShot != nil && hunter.AimedShot.IsReady(sim) {
+	} else if hunter.AimedShot.IsReady(sim) {
 		return hunter.AimedShot
-	} else if hunter.ArcaneShot != nil && hunter.ArcaneShot.IsReady(sim) {
+	} else if hunter.ArcaneShot.IsReady(sim) && (hunter.ExplosiveShotDot == nil || !hunter.ExplosiveShotDot.IsActive()) {
 		return hunter.ArcaneShot
 	} else {
 		return hunter.SteadyShot

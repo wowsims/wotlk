@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -49,8 +50,11 @@ func (rogue *Rogue) makeSliceAndDice(comboPoints int32) *core.Spell {
 func (rogue *Rogue) registerSliceAndDice() {
 	durationMultiplier := 1.0 + 0.15*float64(rogue.Talents.ImprovedSliceAndDice)
 	durationBonus := time.Duration(0)
-	if ItemSetNetherblade.CharacterHasSetBonus(&rogue.Character, 2) {
-		durationBonus = time.Second * 3
+	if rogue.HasSetBonus(ItemSetNetherblade, 2) {
+		durationBonus += time.Second * 3
+	}
+	if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfSinisterStrike) {
+		durationBonus += time.Second * 3
 	}
 	rogue.sliceAndDiceDurations = [6]time.Duration{
 		0,
@@ -62,7 +66,7 @@ func (rogue *Rogue) registerSliceAndDice() {
 	}
 
 	hasteBonus := 1.3
-	if ItemSetSlayers.CharacterHasSetBonus(&rogue.Character, 2) {
+	if rogue.HasSetBonus(ItemSetSlayers, 2) {
 		hasteBonus += 0.05
 	}
 	inverseHasteBonus := 1.0 / hasteBonus

@@ -1,5 +1,5 @@
 import { PlayerStats } from '/wotlk/core/proto/api.js';
-import { Stat } from '/wotlk/core/proto/common.js';
+import { Stat, 	Class } from '/wotlk/core/proto/common.js';
 import { TristateEffect } from '/wotlk/core/proto/common.js'
 import { statNames, statOrder } from '/wotlk/core/proto_utils/names.js';
 import { Stats } from '/wotlk/core/proto_utils/stats.js';
@@ -89,39 +89,39 @@ export class CharacterStats extends Component {
 		const consumesDelta = consumesStats.subtract(buffsStats);
 
 		this.stats.forEach((stat, idx) => {
-			this.valueElems[idx].textContent = CharacterStats.statDisplayString(finalStats, stat);
+			this.valueElems[idx].textContent = CharacterStats.statDisplayString(player, finalStats, stat);
 
 			tippy(this.tooltipElems[idx], {
 				'content': `
 					<div class="character-stats-tooltip-row">
 						<span>Base:</span>
-						<span>${CharacterStats.statDisplayString(baseStats, stat)}</span>
+						<span>${CharacterStats.statDisplayString(player, baseStats, stat)}</span>
 					</div>
 					<div class="character-stats-tooltip-row">
 						<span>Gear:</span>
-						<span>${CharacterStats.statDisplayString(gearDelta, stat)}</span>
+						<span>${CharacterStats.statDisplayString(player, gearDelta, stat)}</span>
 					</div>
 					<div class="character-stats-tooltip-row">
 						<span>Talents:</span>
-						<span>${CharacterStats.statDisplayString(talentsDelta, stat)}</span>
+						<span>${CharacterStats.statDisplayString(player, talentsDelta, stat)}</span>
 					</div>
 					<div class="character-stats-tooltip-row">
 						<span>Buffs:</span>
-						<span>${CharacterStats.statDisplayString(buffsDelta, stat)}</span>
+						<span>${CharacterStats.statDisplayString(player, buffsDelta, stat)}</span>
 					</div>
 					<div class="character-stats-tooltip-row">
 						<span>Consumes:</span>
-						<span>${CharacterStats.statDisplayString(consumesDelta, stat)}</span>
+						<span>${CharacterStats.statDisplayString(player, consumesDelta, stat)}</span>
 					</div>
 					${debuffStats.getStat(stat) == 0 ? '' : `
 					<div class="character-stats-tooltip-row">
 						<span>Debuffs:</span>
-						<span>${CharacterStats.statDisplayString(debuffStats, stat)}</span>
+						<span>${CharacterStats.statDisplayString(player, debuffStats, stat)}</span>
 					</div>
 					`}
 					<div class="character-stats-tooltip-row">
 						<span>Total:</span>
-						<span>${CharacterStats.statDisplayString(finalStats, stat)}</span>
+						<span>${CharacterStats.statDisplayString(player, finalStats, stat)}</span>
 					</div>
 				`,
 				'allowHTML': true,
@@ -129,7 +129,7 @@ export class CharacterStats extends Component {
 		});
 	}
 
-	static statDisplayString(stats: Stats, stat: Stat): string {
+	static statDisplayString(player: Player<any>, stats: Stats, stat: Stat): string {
 		let rawValue = stats.getStat(stat);
 		if (spellPowerTypeStats.includes(stat)) {
 			rawValue = rawValue + stats.getStat(Stat.StatSpellPower);
@@ -142,7 +142,13 @@ export class CharacterStats extends Component {
 			displayStr += ` (${(rawValue / Mechanics.SPELL_HIT_RATING_PER_HIT_CHANCE).toFixed(2)}%)`;
 		} else if (stat == Stat.StatMeleeCrit || stat == Stat.StatSpellCrit) {
 			displayStr += ` (${(rawValue / Mechanics.SPELL_CRIT_RATING_PER_CRIT_CHANCE).toFixed(2)}%)`;
-		} else if (stat == Stat.StatMeleeHaste || stat == Stat.StatSpellHaste) {
+		} else if (stat == Stat.StatMeleeHaste) {
+			if ([Class.ClassDruid, Class.ClassShaman, Class.ClassPaladin, Class.ClassDeathknight].includes(player.getClass())) {
+				displayStr += ` (${(rawValue / Mechanics.SPECIAL_MELEE_HASTE_RATING_PER_HASTE_PERCENT).toFixed(2)}%)`;
+			} else {
+				displayStr += ` (${(rawValue / Mechanics.HASTE_RATING_PER_HASTE_PERCENT).toFixed(2)}%)`;
+			}
+		} else if (stat == Stat.StatSpellHaste) {
 			displayStr += ` (${(rawValue / Mechanics.HASTE_RATING_PER_HASTE_PERCENT).toFixed(2)}%)`;
 		} else if (stat == Stat.StatExpertise) {
 			displayStr += ` (${(Math.floor(rawValue / Mechanics.EXPERTISE_PER_QUARTER_PERCENT_REDUCTION)).toFixed(0)})`;
@@ -170,7 +176,7 @@ export class CharacterStats extends Component {
 			debuffStats = debuffStats.addStat(Stat.StatSpellCrit, 3 * Mechanics.SPELL_CRIT_RATING_PER_CRIT_CHANCE);
 			debuffStats = debuffStats.addStat(Stat.StatMeleeCrit, 3 * Mechanics.MELEE_CRIT_RATING_PER_CRIT_CHANCE);
 		}
-		if (debuffs.improvedScorch || debuffs.wintersChill || debuffs.improvedShadowBolt) {
+		if (debuffs.improvedScorch || debuffs.wintersChill || debuffs.shadowMastery) {
 			debuffStats = debuffStats.addStat(Stat.StatSpellCrit, 5 * Mechanics.SPELL_CRIT_RATING_PER_CRIT_CHANCE);
 		}
 

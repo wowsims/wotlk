@@ -3,7 +3,7 @@
 	--theme-color-primary: #cc48a4;
 	--theme-color-background: rgb(20, 13, 18);
 	--theme-color-background-raw: 20, 13, 18;
-	--theme-background-image: url('/wotlk/assets/retribution_paladin.jpg');
+	--theme-background-image: url('/wotlk/assets/img/retribution_paladin.jpg');
 	--theme-background-opacity: 0.95;
 	--main-text-color: White;
 }
@@ -12,13 +12,7 @@
 .retribution-paladin-sim-ui .self-buffs-section {
 	grid-template-columns: repeat(2, 1fr);
 }
-.retribution-paladin-sim-ui .buffs-section {
-	grid-template-columns: repeat(7, 1fr);
-}
-.retribution-paladin-sim-ui .debuffs-section {
-	grid-template-columns: repeat(4, 1fr);
-}
 
 .retribution-paladin-sim-ui .character-stats-table-row {
-	font-size: 11px;
+	font-size: 12px;
 }

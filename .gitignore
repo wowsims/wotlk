@@ -8,6 +8,7 @@ node_modules
 # binaries
 dist
 binary_dist
+sim/web/__debug_bin
 
 # temporary files
 *.results.tmp

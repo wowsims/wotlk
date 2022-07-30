@@ -27,7 +27,7 @@ func (warlock *Warlock) registerCurseOfElementsSpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
-				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 0, 1)*500*time.Millisecond,
+				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 1, 0)*500*time.Millisecond,
 			},
 		},
 
@@ -46,9 +46,6 @@ func (warlock *Warlock) ShouldCastCurseOfElements(sim *core.Simulation, target *
 }
 
 func (warlock *Warlock) registerCurseOfWeaknessSpell() {
-	if warlock.Rotation.Curse != proto.Warlock_Rotation_Weakness {
-		return
-	}
 	baseCost := 0.1 * warlock.BaseMana
 	warlock.CurseOfWeaknessAura = core.CurseOfWeaknessAura(warlock.CurrentTarget, warlock.Talents.ImprovedCurseOfWeakness)
 	warlock.CurseOfWeaknessAura.Duration = time.Minute * 2
@@ -61,7 +58,7 @@ func (warlock *Warlock) registerCurseOfWeaknessSpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
-				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 0, 1)*500*time.Millisecond,
+				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 1, 0)*500*time.Millisecond,
 			},
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -75,9 +72,6 @@ func (warlock *Warlock) registerCurseOfWeaknessSpell() {
 }
 
 func (warlock *Warlock) registerCurseOfTonguesSpell() {
-	if warlock.Rotation.Curse != proto.Warlock_Rotation_Tongues {
-		return
-	}
 	actionID := core.ActionID{SpellID: 11719}
 	baseCost := 0.04 * warlock.BaseMana
 
@@ -96,7 +90,7 @@ func (warlock *Warlock) registerCurseOfTonguesSpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
-				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 0, 1)*500*time.Millisecond,
+				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 1, 0)*500*time.Millisecond,
 			},
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -110,37 +104,41 @@ func (warlock *Warlock) registerCurseOfTonguesSpell() {
 }
 
 func (warlock *Warlock) registerCurseOfAgonySpell() {
-	if warlock.Rotation.Curse != proto.Warlock_Rotation_Agony && warlock.Rotation.Curse != proto.Warlock_Rotation_Doom {
-		return
-	}
 	actionID := core.ActionID{SpellID: 47864}
+	spellSchool := core.SpellSchoolShadow
+	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true)
 	baseCost := 0.1 * warlock.BaseMana
 	target := warlock.CurrentTarget
-	baseDmg := 1740 / 12.0
-	baseDmg *= (1 + 0.05*float64(warlock.Talents.ImprovedCurseOfAgony))
+	numberOfTicks := 12
+	totalBaseDmg := 1740.0
+	agonyEffect := totalBaseDmg * 0.056
+	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCurseOfAgony) {
+		numberOfTicks += 2
+		totalBaseDmg += 2 * agonyEffect // Glyphed ticks
+	}
 
 	effect := core.SpellEffect{
-		DamageMultiplier: 1 + 0.01*float64(warlock.Talents.Contagion),
+		DamageMultiplier: baseAdditiveMultiplier,
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-		BaseDamage:       core.BaseDamageConfigMagicNoRoll(baseDmg, 0.1),
+		BaseDamage:       core.BaseDamageConfigMagicNoRoll(totalBaseDmg/float64(numberOfTicks), 0.1), // Ignored: CoA ramp up effect
 		OutcomeApplier:   warlock.OutcomeFuncTick(),
 		IsPeriodic:       true,
 		ProcMask:         core.ProcMaskPeriodicDamage,
 	}
 	warlock.CurseOfAgony = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolShadow,
+		SpellSchool:  spellSchool,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
-				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 0, 1)*500*time.Millisecond,
+				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 1, 0)*500*time.Millisecond,
 			},
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ThreatMultiplier: 1,
-			FlatThreatBonus:  0, // TODO
+			FlatThreatBonus:  0, // TODO : curses flat threat on application
 			OutcomeApplier:   warlock.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
@@ -156,23 +154,22 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 			Label:    "CurseofAgony-" + strconv.Itoa(int(warlock.Index)),
 			ActionID: actionID,
 		}),
-		NumberOfTicks: 12,
+		NumberOfTicks: numberOfTicks,
 		TickLength:    time.Second * 2,
 		TickEffects:   core.TickFuncSnapshot(target, effect),
 	})
 }
 
 func (warlock *Warlock) registerCurseOfDoomSpell() {
-	if warlock.Rotation.Curse != proto.Warlock_Rotation_Doom {
-		return
-	}
 	actionID := core.ActionID{SpellID: 47867}
+	spellSchool := core.SpellSchoolShadow
+	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true)
 	baseCost := 0.15 * warlock.BaseMana
 
 	target := warlock.CurrentTarget
 	effect := core.SpellEffect{
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-		DamageMultiplier: 1,
+		DamageMultiplier: baseAdditiveMultiplier,
 		BaseDamage:       core.BaseDamageConfigMagicNoRoll(7300, 2),
 		OutcomeApplier:   warlock.OutcomeFuncTick(),
 		IsPeriodic:       true,
@@ -181,13 +178,13 @@ func (warlock *Warlock) registerCurseOfDoomSpell() {
 
 	warlock.CurseOfDoom = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolShadow,
+		SpellSchool:  spellSchool,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
-				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 0, 1)*500*time.Millisecond,
+				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 1, 0)*500*time.Millisecond,
 			},
 			CD: core.Cooldown{
 				Timer:    warlock.NewTimer(),

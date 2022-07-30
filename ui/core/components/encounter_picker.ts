@@ -21,8 +21,7 @@ import { IndividualSimUI } from '../individual_sim_ui.js';
 import { SimUI } from '../sim_ui.js';
 
 export interface EncounterPickerConfig {
-	simpleTargetStats?: Array<Stat>;
-	showExecuteProportion: boolean;
+	showExecuteProportion: boolean,
 }
 
 export class EncounterPicker extends Component {
@@ -55,43 +54,45 @@ export class EncounterPicker extends Component {
 				},
 			});
 
-			new EnumPicker<Encounter>(this.rootElem, modEncounter, {
-				label: 'Target Level',
-				values: [
-					{ name: '83', value: 83 },
-					{ name: '82', value: 82 },
-					{ name: '81', value: 81 },
-					{ name: '80', value: 80 },
-				],
-				changedEvent: (encounter: Encounter) => encounter.changeEmitter,
-				getValue: (encounter: Encounter) => encounter.primaryTarget.getLevel(),
-				setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
-					encounter.primaryTarget.setLevel(eventID, newValue);
-				},
-			});
+			//new EnumPicker<Encounter>(this.rootElem, modEncounter, {
+			//	label: 'Target Level',
+			//	values: [
+			//		{ name: '83', value: 83 },
+			//		{ name: '82', value: 82 },
+			//		{ name: '81', value: 81 },
+			//		{ name: '80', value: 80 },
+			//	],
+			//	changedEvent: (encounter: Encounter) => encounter.changeEmitter,
+			//	getValue: (encounter: Encounter) => encounter.primaryTarget.getLevel(),
+			//	setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
+			//		encounter.primaryTarget.setLevel(eventID, newValue);
+			//	},
+			//});
 
-			new EnumPicker(this.rootElem, modEncounter, {
-				label: 'Mob Type',
-				values: mobTypeEnumValues,
-				changedEvent: (encounter: Encounter) => encounter.changeEmitter,
-				getValue: (encounter: Encounter) => encounter.primaryTarget.getMobType(),
-				setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
-					encounter.primaryTarget.setMobType(eventID, newValue);
-				},
-			});
+			//new EnumPicker(this.rootElem, modEncounter, {
+			//	label: 'Mob Type',
+			//	values: mobTypeEnumValues,
+			//	changedEvent: (encounter: Encounter) => encounter.changeEmitter,
+			//	getValue: (encounter: Encounter) => encounter.primaryTarget.getMobType(),
+			//	setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
+			//		encounter.primaryTarget.setMobType(eventID, newValue);
+			//	},
+			//});
 
-			if (config.simpleTargetStats) {
-				config.simpleTargetStats.forEach(stat => {
-					new NumberPicker(this.rootElem, modEncounter, {
-						label: statNames[stat],
-						changedEvent: (encounter: Encounter) => encounter.changeEmitter,
-						getValue: (encounter: Encounter) => encounter.primaryTarget.getStats().getStat(stat),
-						setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
-							encounter.primaryTarget.setStats(eventID, encounter.primaryTarget.getStats().withStat(stat, newValue));
-						},
-					});
-				});
-			}
+			// Leaving this commented in case we want it later. But it takes up a lot of
+			// screen space and none of these fields get changed much.
+			//if (config.simpleTargetStats) {
+			//	config.simpleTargetStats.forEach(stat => {
+			//		new NumberPicker(this.rootElem, modEncounter, {
+			//			label: statNames[stat],
+			//			changedEvent: (encounter: Encounter) => encounter.changeEmitter,
+			//			getValue: (encounter: Encounter) => encounter.primaryTarget.getStats().getStat(stat),
+			//			setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
+			//				encounter.primaryTarget.setStats(eventID, encounter.primaryTarget.getStats().withStat(stat, newValue));
+			//			},
+			//		});
+			//	});
+			//}
 
 			if (simUI.isIndividualSim() && isTankSpec((simUI as IndividualSimUI<any>).player.spec)) {
 				new NumberPicker(this.rootElem, modEncounter, {
@@ -247,10 +248,10 @@ class TargetPicker extends Component {
 		new EnumPicker<Target>(section1, modTarget, {
 			label: 'Level',
 			values: [
-				{ name: '73', value: 73 },
-				{ name: '72', value: 72 },
-				{ name: '71', value: 71 },
-				{ name: '70', value: 70 },
+				{ name: '83', value: 83 },
+				{ name: '82', value: 82 },
+				{ name: '81', value: 81 },
+				{ name: '80', value: 80 },
 			],
 			changedEvent: (target: Target) => target.levelChangeEmitter,
 			getValue: (target: Target) => target.getLevel(),
@@ -400,12 +401,32 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter, s
 
 	if (showExecuteProportion) {
 		new NumberPicker(rootElem, encounter, {
-			label: 'Execute Duration (%)',
+			label: 'Execute Duration 20 (%)',
 			labelTooltip: 'Percentage of the total encounter duration, for which the targets will be considered to be in execute range (< 20% HP) for the purpose of effects like Warrior Execute or Mage Molten Fury.',
 			changedEvent: (encounter: Encounter) => encounter.changeEmitter,
-			getValue: (encounter: Encounter) => encounter.getExecuteProportion() * 100,
+			getValue: (encounter: Encounter) => encounter.getExecuteProportion20() * 100,
 			setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
-				encounter.setExecuteProportion(eventID, newValue / 100);
+				encounter.setExecuteProportion20(eventID, newValue / 100);
+			},
+			enableWhen: (obj) => { return !encounter.getUseHealth() },
+		});
+		new NumberPicker(rootElem, encounter, {
+			label: 'Execute Duration 25 (%)',
+			labelTooltip: 'Percentage of the total encounter duration, for which the targets will be considered to be in execute range (< 25% HP) for the purpose of effects like Warlock\'s Drain Soul.',
+			changedEvent: (encounter: Encounter) => encounter.changeEmitter,
+			getValue: (encounter: Encounter) => encounter.getExecuteProportion25() * 100,
+			setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
+				encounter.setExecuteProportion25(eventID, newValue / 100);
+			},
+			enableWhen: (obj) => { return !encounter.getUseHealth() },
+		});
+		new NumberPicker(rootElem, encounter, {
+			label: 'Execute Duration 35 (%)',
+			labelTooltip: 'Percentage of the total encounter duration, for which the targets will be considered to be in execute range (< 35% HP) for the purpose of effects like Warrior Execute or Mage Molten Fury.',
+			changedEvent: (encounter: Encounter) => encounter.changeEmitter,
+			getValue: (encounter: Encounter) => encounter.getExecuteProportion35() * 100,
+			setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
+				encounter.setExecuteProportion35(eventID, newValue / 100);
 			},
 			enableWhen: (obj) => { return !encounter.getUseHealth() },
 		});

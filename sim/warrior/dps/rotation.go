@@ -12,6 +12,11 @@ const DebuffRefreshWindow = time.Second * 2
 
 func (war *DpsWarrior) OnGCDReady(sim *core.Simulation) {
 	war.doRotation(sim)
+
+	if war.GCD.IsReady(sim) && !war.IsWaiting() {
+		// This means we did nothing
+		war.DoNothing()
+	}
 }
 
 func (war *DpsWarrior) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
@@ -22,15 +27,16 @@ func (war *DpsWarrior) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
 func (war *DpsWarrior) doRotation(sim *core.Simulation) {
 	if war.thunderClapNext {
 		if war.CanThunderClap(sim) {
-			war.ThunderClap.Cast(sim, war.CurrentTarget)
-			if war.ThunderClapAura.RemainingDuration(sim) > DebuffRefreshWindow {
-				war.thunderClapNext = false
+			if war.ThunderClap.Cast(sim, war.CurrentTarget) {
+				if war.ThunderClapAura.RemainingDuration(sim) > DebuffRefreshWindow {
+					war.thunderClapNext = false
 
-				// Switching back to berserker immediately is unrealistic because the player needs
-				// to visually confirm the TC landed. Instead we add a delay to model that.
-				war.canSwapStanceAt = sim.CurrentTime + time.Millisecond*300
+					// Switching back to berserker immediately is unrealistic because the player needs
+					// to visually confirm the TC landed. Instead we add a delay to model that.
+					war.canSwapStanceAt = sim.CurrentTime + time.Millisecond*300
+				}
+				return
 			}
-			return
 		}
 	} else {
 		war.trySwapToBerserker(sim)
@@ -64,7 +70,7 @@ func (war *DpsWarrior) doRotation(sim *core.Simulation) {
 	}
 
 	// If using a GCD will clip the next slam, only allow high priority spells like BT/MS/WW/debuffs.
-	isExecutePhase := sim.IsExecutePhase()
+	isExecutePhase := sim.IsExecutePhase20()
 	canSlam := war.Rotation.UseSlam && (!isExecutePhase || war.Rotation.UseSlamDuringExecute)
 	highPrioSpellsOnly := canSlam && sim.CurrentTime+core.GCDDefault-war.slamGCDDelay > war.AutoAttacks.MainhandSwingAt+war.slamLatency
 
@@ -158,7 +164,7 @@ func (war *DpsWarrior) executeRotation(sim *core.Simulation, highPrioSpellsOnly 
 }
 
 func (war *DpsWarrior) slamInRotation(sim *core.Simulation) bool {
-	return war.Rotation.UseSlam && (!sim.IsExecutePhase() || war.Rotation.UseSlamDuringExecute)
+	return war.Rotation.UseSlam && (!sim.IsExecutePhase20() || war.Rotation.UseSlamDuringExecute)
 }
 
 func (war *DpsWarrior) tryQueueSlam(sim *core.Simulation) {
@@ -194,7 +200,7 @@ func (war *DpsWarrior) tryQueueSlam(sim *core.Simulation) {
 	gcdReadyAgainAt := slamAt + core.GCDDefault
 	msDelay := core.MaxDuration(0, gcdReadyAgainAt-core.MaxDuration(sim.CurrentTime, war.MortalStrike.ReadyAt()))
 	wwDelay := core.MaxDuration(0, gcdReadyAgainAt-core.MaxDuration(sim.CurrentTime, war.Whirlwind.ReadyAt()))
-	if sim.IsExecutePhase() {
+	if sim.IsExecutePhase20() {
 		if !war.Rotation.UseMsDuringExecute {
 			msDelay = 0
 		}
@@ -269,7 +275,7 @@ func (war *DpsWarrior) tryMaintainDebuffs(sim *core.Simulation) bool {
 }
 
 func (war *DpsWarrior) tryQueueHsCleave(sim *core.Simulation) {
-	if sim.IsExecutePhase() && !war.Rotation.UseHsDuringExecute {
+	if sim.IsExecutePhase20() && !war.Rotation.UseHsDuringExecute {
 		return
 	}
 

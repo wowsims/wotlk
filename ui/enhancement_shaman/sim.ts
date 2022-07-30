@@ -1,9 +1,9 @@
 import { RaidBuffs } from '/wotlk/core/proto/common.js';
 import { PartyBuffs } from '/wotlk/core/proto/common.js';
 import { IndividualBuffs } from '/wotlk/core/proto/common.js';
+import { Debuffs } from '/wotlk/core/proto/common.js';
 import { Class } from '/wotlk/core/proto/common.js';
 import { Consumes } from '/wotlk/core/proto/common.js';
-import { Debuffs } from '/wotlk/core/proto/common.js';
 import { Encounter } from '/wotlk/core/proto/common.js';
 import { ItemSlot } from '/wotlk/core/proto/common.js';
 import { MobType } from '/wotlk/core/proto/common.js';
@@ -15,15 +15,6 @@ import { Stats } from '/wotlk/core/proto_utils/stats.js';
 import { Sim } from '/wotlk/core/sim.js';
 import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
 import { TotemsSection } from '/wotlk/core/components/totem_inputs.js';
-
-import { Alchohol } from '/wotlk/core/proto/common.js';
-import { BattleElixir } from '/wotlk/core/proto/common.js';
-import { Flask } from '/wotlk/core/proto/common.js';
-import { Food } from '/wotlk/core/proto/common.js';
-import { GuardianElixir } from '/wotlk/core/proto/common.js';
-import { Conjured } from '/wotlk/core/proto/common.js';
-import { PetFood } from '/wotlk/core/proto/common.js';
-import { Potions } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
 
 import { EnhancementShaman, EnhancementShaman_Rotation as EnhancementShamanRotation, EnhancementShaman_Options as EnhancementShamanOptions } from '/wotlk/core/proto/shaman.js';
@@ -85,9 +76,9 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				gear: Presets.P1_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatIntellect]: 0.078,
-					[Stat.StatAgility]: 1.317,
-					[Stat.StatStrength]: 2.2,
+					[Stat.StatIntellect]: 1.378,
+					[Stat.StatAgility]: 1.517,
+					[Stat.StatStrength]: 1.1,
 					[Stat.StatSpellPower]: 0.433,
 					[Stat.StatNatureSpellPower]: 0.216,
 					[Stat.StatAttackPower]: 1.0,
@@ -128,104 +119,23 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 					faerieFire: TristateEffect.TristateEffectImproved,
 					judgementOfWisdom: true,
 					misery: true,
-					huntersMark: TristateEffect.TristateEffectImproved,
 				}),
 			},
 
-			// IconInputs to include in the 'Self Buffs' section on the settings tab.
-			selfBuffInputs: [
-				ShamanInputs.IconWaterShield,
-				ShamanInputs.IconLightningShield,
-				ShamanInputs.IconBloodlust,
+			// IconInputs to include in the 'Player' section on the settings tab.
+			playerIconInputs: [
+				ShamanInputs.ShamanShieldInput,
+				ShamanInputs.Bloodlust,
+                ShamanInputs.ShamanImbueMH,
+                ShamanInputs.ShamanImbueOH,
 			],
-			// IconInputs to include in the 'Other Buffs' section on the settings tab.
-			raidBuffInputs: [
-				IconInputs.ArcaneBrilliance,
-				IconInputs.GiftOfTheWild,
-				IconInputs.Bloodlust,
-				IconInputs.ManaSpringTotem,
-				IconInputs.WrathOfAirTotem,
-				IconInputs.TotemOfWrath,
-				IconInputs.BattleShout,
-				IconInputs.LeaderOfThePack,
-				IconInputs.MoonkinAura,
-				IconInputs.TrueshotAura,
-			],
-			partyBuffInputs: [
-				IconInputs.BraidedEterniumChain,
-				IconInputs.EyeOfTheNight,
-				IconInputs.ChainOfTheTwilightOwl,
-			],
-			playerBuffInputs: [
-				IconInputs.BlessingOfKings,
-				IconInputs.BlessingOfWisdom,
-				IconInputs.BlessingOfMight,
-			],
-			// IconInputs to include in the 'Debuffs' section on the settings tab.
-			debuffInputs: [
-				IconInputs.BloodFrenzy,
-				IconInputs.JudgementOfWisdom,
-				IconInputs.HuntersMark,
-				IconInputs.FaerieFire,
-				IconInputs.SunderArmor,
-				IconInputs.ExposeArmor,
-				IconInputs.CurseOfWeakness,
-				IconInputs.CurseOfElements,
-				IconInputs.Misery,
-				IconInputs.ImprovedScorch,
-				IconInputs.WintersChill,
-				IconInputs.GiftOfArthas,
-			],
-			// Which options are selectable in the 'Consumes' section.
-			consumeOptions: {
-				potions: [
-					Potions.HastePotion,
-					Potions.SuperManaPotion,
-					Potions.DestructionPotion,
-				],
-				conjured: [
-					Conjured.ConjuredDarkRune,
-					Conjured.ConjuredFlameCap,
-				],
-				flasks: [
-					Flask.FlaskOfRelentlessAssault,
-					Flask.FlaskOfSupremePower,
-					Flask.FlaskOfBlindingLight,
-				],
-				battleElixirs: [
-					BattleElixir.ElixirOfDemonslaying,
-					BattleElixir.FelStrengthElixir,
-					BattleElixir.ElixirOfMajorStrength,
-					BattleElixir.ElixirOfMajorAgility,
-					BattleElixir.ElixirOfTheMongoose,
-				],
-				guardianElixirs: [
-					GuardianElixir.ElixirOfDraenicWisdom,
-					GuardianElixir.ElixirOfMajorMageblood,
-				],
-				food: [
-					Food.FoodRoastedClefthoof,
-					Food.FoodGrilledMudfish,
-					Food.FoodSpicyHotTalbuk,
-					Food.FoodBlackenedBasilisk,
-				],
-				alcohol: [
-					Alchohol.AlchoholKreegsStoutBeatdown,
-				],
-				weaponImbues: [
-					WeaponImbue.WeaponImbueShamanWindfury,
-					WeaponImbue.WeaponImbueShamanFlametongue,
-					WeaponImbue.WeaponImbueShamanFrostbrand,
-					WeaponImbue.WeaponImbueShamanRockbiter,
-					WeaponImbue.WeaponImbueRighteousWeaponCoating,
-				],
-				other: [
-					IconInputs.ScrollOfStrengthV,
-					IconInputs.ScrollOfAgilityV,
-				],
-			},
 			// Inputs to include in the 'Rotation' section on the settings tab.
-			rotationInputs: ShamanInputs.EnhancementShamanRotationConfig,
+			rotationInputs: ShamanInputs.EnhancementShamanRotationConfig, 
+			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
+			includeBuffDebuffInputs: [
+			],
+			excludeBuffDebuffInputs: [
+			],
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
@@ -239,23 +149,14 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				TotemsSection,
 			],
 			encounterPicker: {
-				// Target stats to show for 'Simple' encounters.
-				simpleTargetStats: [
-					Stat.StatArmor,
-				],
 				// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
 				showExecuteProportion: false,
 			},
-
-			// If true, the talents on the talents tab will not be individually modifiable by the user.
-			// Note that the use can still pick between preset talents, if there is more than 1.
-			freezeTalents: false,
 
 			presets: {
 				// Preset talents that the user can quickly select.
 				talents: [
 					Presets.StandardTalents,
-					Presets.RestoSubspecTalents,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [

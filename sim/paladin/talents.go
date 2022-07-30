@@ -1,6 +1,7 @@
 package paladin
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -8,77 +9,50 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+// TODO:
+// Sanctified Wrath (Damage penetration, questions over affected stats)
+
 func (paladin *Paladin) ApplyTalents() {
-	paladin.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*float64(paladin.Talents.SanctifiedSeals))
-	paladin.AddStat(stats.SpellCrit, core.CritRatingPerCritChance*float64(paladin.Talents.SanctifiedSeals))
-	paladin.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*float64(paladin.Talents.Precision))
-	paladin.AddStat(stats.SpellHit, core.SpellHitRatingPerHitChance*float64(paladin.Talents.Precision))
-	paladin.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*float64(paladin.Talents.Conviction))
+	paladin.AddStat(stats.MeleeCrit, float64(paladin.Talents.Conviction)*core.CritRatingPerCritChance)
+	paladin.AddStat(stats.SpellCrit, float64(paladin.Talents.Conviction)*core.CritRatingPerCritChance)
+	paladin.AddStat(stats.MeleeCrit, float64(paladin.Talents.SanctityOfBattle)*core.CritRatingPerCritChance)
+	paladin.AddStat(stats.SpellCrit, float64(paladin.Talents.SanctityOfBattle)*core.CritRatingPerCritChance)
+
 	paladin.AddStat(stats.Parry, core.ParryRatingPerParryChance*1*float64(paladin.Talents.Deflection))
 	paladin.AddStat(stats.Armor, paladin.Equip.Stats()[stats.Armor]*0.02*float64(paladin.Talents.Toughness))
 	paladin.AddStat(stats.Defense, core.DefenseRatingPerDefense*4*float64(paladin.Talents.Anticipation))
 
-	spellWardingMultiplier := 1 - 0.02*float64(paladin.Talents.SpellWarding)
-	paladin.PseudoStats.ArcaneDamageTakenMultiplier *= spellWardingMultiplier
-	paladin.PseudoStats.FireDamageTakenMultiplier *= spellWardingMultiplier
-	paladin.PseudoStats.FrostDamageTakenMultiplier *= spellWardingMultiplier
-	paladin.PseudoStats.HolyDamageTakenMultiplier *= spellWardingMultiplier
-	paladin.PseudoStats.NatureDamageTakenMultiplier *= spellWardingMultiplier
-	paladin.PseudoStats.ShadowDamageTakenMultiplier *= spellWardingMultiplier
-
 	if paladin.Talents.DivineStrength > 0 {
-		bonus := 1 + 0.02*float64(paladin.Talents.DivineStrength)
-		paladin.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Strength,
-			ModifiedStat: stats.Strength,
-			Modifier: func(str float64, _ float64) float64 {
-				return str * bonus
-			},
-		})
+		paladin.AddStatDependency(stats.Strength, stats.Strength, 1.0+0.03*float64(paladin.Talents.DivineStrength))
 	}
 	if paladin.Talents.DivineIntellect > 0 {
-		bonus := 1 + 0.02*float64(paladin.Talents.DivineIntellect)
-		paladin.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Intellect,
-			ModifiedStat: stats.Intellect,
-			Modifier: func(intellect float64, _ float64) float64 {
-				return intellect * bonus
-			},
-		})
+		paladin.AddStatDependency(stats.Intellect, stats.Intellect, 1.0+0.02*float64(paladin.Talents.DivineIntellect))
 	}
 
-	if paladin.Talents.ShieldSpecialization > 0 {
-		bonus := 1 + 0.1*float64(paladin.Talents.ShieldSpecialization)
-		paladin.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.BlockValue,
-			ModifiedStat: stats.BlockValue,
-			Modifier: func(bv float64, _ float64) float64 {
-				return bv * bonus
-			},
-		})
+	if paladin.Talents.SheathOfLight > 0 {
+		// doesn't implement HOT
+		percentage := 0.10 * float64(paladin.Talents.SheathOfLight)
+		paladin.AddStatDependency(stats.AttackPower, stats.SpellPower, 1.0+percentage)
 	}
+
+	// if paladin.Talents.ShieldSpecialization > 0 {
+	// 	bonus := 1 + 0.1*float64(paladin.Talents.ShieldSpecialization)
+	// 	paladin.AddStatDependency(stats.StatDependency{
+	// 		SourceStat:   stats.BlockValue,
+	// 		ModifiedStat: stats.BlockValue,
+	// 		Modifier: func(bv float64, _ float64) float64 {
+	// 			return bv * bonus
+	// 		},
+	// 	})
+	// }
 
 	if paladin.Talents.SacredDuty > 0 {
-		bonus := 1 + 0.03*float64(paladin.Talents.SacredDuty)
-		paladin.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Stamina,
-			ModifiedStat: stats.Stamina,
-			Modifier: func(stam float64, _ float64) float64 {
-				return stam * bonus
-			},
-		})
+		paladin.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+0.03*float64(paladin.Talents.SacredDuty))
 	}
 
 	if paladin.Talents.CombatExpertise > 0 {
 		paladin.AddStat(stats.Expertise, core.ExpertisePerQuarterPercentReduction*1*float64(paladin.Talents.CombatExpertise))
-		bonus := 1 + 0.02*float64(paladin.Talents.CombatExpertise)
-		paladin.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Stamina,
-			ModifiedStat: stats.Stamina,
-			Modifier: func(stam float64, _ float64) float64 {
-				return stam * bonus
-			},
-		})
+		paladin.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+0.02*float64(paladin.Talents.CombatExpertise))
 	}
 
 	paladin.applyRedoubt()
@@ -87,6 +61,61 @@ func (paladin *Paladin) ApplyTalents() {
 	paladin.applyCrusade()
 	paladin.applyWeaponSpecialization()
 	paladin.applyVengeance()
+	paladin.applyHeartOfTheCrusader()
+	paladin.applyArtOfWar()
+	paladin.applyJudgmentsOfTheWise()
+	paladin.applyRighteousVengeance()
+	paladin.applyMinorGlyphOfSenseUndead()
+}
+
+func (paladin *Paladin) getTalentSealsOfThePureBonus() float64 {
+	return 0.03 * float64(paladin.Talents.SealsOfThePure)
+}
+
+func (paladin *Paladin) getTalentTwoHandedWeaponSpecializationBonus() float64 {
+	return 0.02 * float64(paladin.Talents.TwoHandedWeaponSpecialization)
+}
+
+func (paladin *Paladin) getTalentSanctityOfBattleBonus() float64 {
+	return 0.05 * float64(paladin.Talents.SanctityOfBattle)
+}
+
+func (paladin *Paladin) getTalentTheArtOfWarBonus() float64 {
+	return 0.05 * float64(paladin.Talents.TheArtOfWar)
+}
+
+func (paladin *Paladin) getMajorGlyphSealOfRighteousnessBonus() float64 {
+	return core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfSealOfRighteousness), .1, 0)
+}
+
+func (paladin *Paladin) getMajorGlyphOfExorcismBonus() float64 {
+	return core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfExorcism), 0.20, 0)
+}
+
+func (paladin *Paladin) getMajorGlyphOfJudgementBonus() float64 {
+	return core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfJudgement), 0.10, 0)
+}
+
+func (paladin *Paladin) applyMinorGlyphOfSenseUndead() {
+	if !paladin.HasMinorGlyph(proto.PaladinMinorGlyph_GlyphOfSenseUndead) {
+		return
+	}
+
+	var applied bool
+
+	paladin.RegisterResetEffect(
+		func(s *core.Simulation) {
+			if !applied {
+				for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
+					unit := paladin.Env.GetTargetUnit(i)
+					if unit.MobType == proto.MobType_MobTypeUndead {
+						paladin.AttackTables[unit.TableIndex].DamageDealtMultiplier *= 1.01
+					}
+				}
+				applied = true
+			}
+		},
+	)
 }
 
 func (paladin *Paladin) applyRedoubt() {
@@ -213,28 +242,38 @@ func (paladin *Paladin) applyArdentDefender() {
 	})
 }
 
+// Because Crusade modifies unit specific attack tables, it must be applied at start of sim.
 func (paladin *Paladin) applyCrusade() {
-	// TODO: This doesn't account for multiple targets
-	paladin.PseudoStats.DamageDealtMultiplier *= paladin.crusadeMultiplier()
+	if paladin.Talents.Crusade == 0 {
+		return
+	}
+
+	var applied bool
+
+	paladin.RegisterResetEffect(
+		func(s *core.Simulation) {
+			if !applied {
+				for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
+					unit := paladin.Env.GetTargetUnit(i)
+					switch unit.MobType {
+					case proto.MobType_MobTypeHumanoid, proto.MobType_MobTypeDemon, proto.MobType_MobTypeUndead, proto.MobType_MobTypeElemental:
+						paladin.AttackTables[unit.TableIndex].DamageDealtMultiplier *= 1 + (0.01 * float64(paladin.Talents.Crusade))
+					}
+				}
+				applied = true
+			}
+		},
+	)
 }
 
-func (paladin *Paladin) crusadeMultiplier() float64 {
-	if paladin.CurrentTarget == nil {
-		return 1
-	}
-	switch paladin.CurrentTarget.MobType {
-	case proto.MobType_MobTypeHumanoid, proto.MobType_MobTypeDemon, proto.MobType_MobTypeUndead, proto.MobType_MobTypeElemental:
-		return 1 + (0.01 * float64(paladin.Talents.Crusade))
-	default:
-		return 1
-	}
-}
-
+// Prior to WOTLK, behavior was to double dip.
 func (paladin *Paladin) MeleeCritMultiplier() float64 {
-	return paladin.Character.MeleeCritMultiplier(paladin.crusadeMultiplier(), 0)
+	// return paladin.Character.MeleeCritMultiplier(paladin.crusadeMultiplier(), 0)
+	return paladin.DefaultMeleeCritMultiplier()
 }
 func (paladin *Paladin) SpellCritMultiplier() float64 {
-	return paladin.Character.SpellCritMultiplier(paladin.crusadeMultiplier(), 0)
+	// return paladin.Character.SpellCritMultiplier(paladin.crusadeMultiplier(), 0)
+	return paladin.DefaultSpellCritMultiplier()
 }
 
 // Affects all physical damage or spells that can be rolled as physical
@@ -242,22 +281,18 @@ func (paladin *Paladin) SpellCritMultiplier() float64 {
 func (paladin *Paladin) applyWeaponSpecialization() {
 	// This impacts Crusader Strike, Melee Attacks, WF attacks
 	// Seals + Judgements need to be implemented separately
-	paladin.PseudoStats.PhysicalDamageDealtMultiplier *= paladin.WeaponSpecializationMultiplier()
-
 	mhWeapon := paladin.GetMHWeapon()
-	if mhWeapon != nil && mhWeapon.HandType != proto.HandType_HandTypeTwoHand {
+
+	if mhWeapon == nil {
+		return
+	}
+
+	switch mhWeapon.HandType {
+	case proto.HandType_HandTypeTwoHand:
+		paladin.PseudoStats.PhysicalDamageDealtMultiplier *= 1 + 0.02*float64(paladin.Talents.TwoHandedWeaponSpecialization)
+	case proto.HandType_HandTypeOneHand:
 		paladin.PseudoStats.DamageDealtMultiplier *= 1 + 0.01*float64(paladin.Talents.OneHandedWeaponSpecialization)
 	}
-}
-func (paladin *Paladin) WeaponSpecializationMultiplier() float64 {
-	mhWeapon := paladin.GetMHWeapon()
-	if mhWeapon == nil {
-		return 1
-	}
-	if mhWeapon.HandType == proto.HandType_HandTypeTwoHand {
-		return 1 + 0.02*float64(paladin.Talents.TwoHandedWeaponSpecialization)
-	}
-	return 1
 }
 
 // I don't know if the new stack of vengeance applies to the crit that triggered it or not
@@ -270,12 +305,15 @@ func (paladin *Paladin) applyVengeance() {
 	bonusPerStack := 0.01 * float64(paladin.Talents.Vengeance)
 	procAura := paladin.RegisterAura(core.Aura{
 		Label:     "Vengeance Proc",
-		ActionID:  core.ActionID{SpellID: 20059},
+		ActionID:  core.ActionID{SpellID: 20057},
 		Duration:  time.Second * 30,
 		MaxStacks: 3,
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
-			aura.Unit.PseudoStats.DamageDealtMultiplier /= 1 + (bonusPerStack * float64(oldStacks))
-			aura.Unit.PseudoStats.DamageDealtMultiplier *= 1 + (bonusPerStack * float64(newStacks))
+			aura.Unit.PseudoStats.HolyDamageDealtMultiplier /= 1 + (bonusPerStack * float64(oldStacks))
+			aura.Unit.PseudoStats.PhysicalDamageDealtMultiplier /= 1 + (bonusPerStack * float64(oldStacks))
+
+			aura.Unit.PseudoStats.HolyDamageDealtMultiplier *= 1 + (bonusPerStack * float64(newStacks))
+			aura.Unit.PseudoStats.PhysicalDamageDealtMultiplier *= 1 + (bonusPerStack * float64(newStacks))
 		},
 	})
 
@@ -292,4 +330,191 @@ func (paladin *Paladin) applyVengeance() {
 			}
 		},
 	})
+}
+
+func (paladin *Paladin) applyHeartOfTheCrusader() {
+	if paladin.Talents.HeartOfTheCrusader == 0 {
+		return
+	}
+
+	paladin.RegisterAura(core.Aura{
+		Label:    "Heart of the Crusader",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spell.Flags.Matches(SpellFlagSecondaryJudgement) {
+				return
+			}
+			debuffAura := core.HeartoftheCrusaderDebuff(spellEffect.Target, float64(paladin.Talents.HeartOfTheCrusader))
+			debuffAura.Activate(sim)
+		},
+	})
+}
+
+func (paladin *Paladin) applyArtOfWar() {
+	if paladin.Talents.TheArtOfWar == 0 {
+		return
+	}
+
+	paladin.ArtOfWarInstantCast = paladin.RegisterAura(core.Aura{
+		Label:    "Art Of War",
+		ActionID: core.ActionID{SpellID: 53488},
+		Duration: time.Second * 15,
+	})
+
+	paladin.RegisterAura(core.Aura{
+		Label:    "The Art of War",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			// TODO: Check if only procs on white hits.
+			if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+				return
+			}
+
+			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+				return
+			}
+
+			paladin.ArtOfWarInstantCast.Activate(sim)
+		},
+	})
+}
+
+func (paladin *Paladin) applyJudgmentsOfTheWise() {
+	if paladin.Talents.JudgementsOfTheWise == 0 {
+		return
+	}
+
+	procSpell := paladin.RegisterSpell(core.SpellConfig{
+		ActionID: core.ActionID{SpellID: 31878},
+		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, _ *core.Spell) {
+			if paladin.JowiseManaMetrics == nil {
+				paladin.JowiseManaMetrics = paladin.NewManaMetrics(core.ActionID{SpellID: 31878})
+			}
+			// TODO: actually restore intended mana
+			unit.AddMana(sim, unit.BaseMana*0.25, paladin.JowiseManaMetrics, false)
+		},
+	})
+
+	paladin.RegisterAura(core.Aura{
+		Label:    "Judgements of the Wise",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spell.Flags.Matches(SpellFlagSecondaryJudgement) || !spellEffect.Landed() {
+				return
+			}
+
+			if paladin.Talents.JudgementsOfTheWise == 3 {
+				procSpell.Cast(sim, &paladin.Unit)
+			} else {
+				if sim.RandomFloat("judgements of the wise") > (0.33)*float64(paladin.Talents.JudgementsOfTheWise) {
+					return
+				}
+				procSpell.Cast(sim, &paladin.Unit)
+			}
+		},
+	})
+}
+
+func (paladin *Paladin) makeRighteousVengeanceDot(target *core.Unit) *core.Dot {
+	var applier core.OutcomeApplier
+
+	if paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 2) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 2) {
+		applier = paladin.OutcomeFuncMeleeSpecialCritOnly(paladin.MeleeCritMultiplier())
+	} else {
+		applier = paladin.OutcomeFuncAlwaysHit()
+	}
+
+	return core.NewDot(core.Dot{
+		Spell: paladin.RighteousVengeanceSpell,
+		Aura: target.RegisterAura(core.Aura{
+			Label:    "Righteous Vengeance (DoT) - " + strconv.Itoa(int(paladin.Index)) + " - " + strconv.Itoa(int(target.Index)),
+			ActionID: paladin.RighteousVengeanceSpell.ActionID,
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				paladin.RighteousVengeanceDamage[target.Index] = 0.0
+				paladin.RighteousVengeancePools[target.Index] = 0.0
+			},
+		}),
+		NumberOfTicks: 4,
+		TickLength:    time.Second * 2,
+		TickEffects: func(sim *core.Simulation, dot *core.Dot) func() {
+			return func() {
+				core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+					IsPeriodic:       true,
+					ProcMask:         core.ProcMaskPeriodicDamage,
+					DamageMultiplier: 1,
+					OutcomeApplier:   applier,
+					BaseDamage: core.BaseDamageConfig{
+						Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
+							tick := paladin.RighteousVengeanceDamage[target.Index]
+							paladin.RighteousVengeancePools[target.Index] -= tick
+							return tick
+						},
+						TargetSpellCoefficient: 1,
+					},
+				})(sim, target, dot.Spell)
+			}
+		},
+	})
+}
+
+func (paladin *Paladin) registerRighteousVengeanceSpell() {
+	dotActionID := core.ActionID{SpellID: 61840} // Righteous Vengeance
+
+	paladin.RighteousVengeanceSpell = paladin.RegisterSpell(core.SpellConfig{
+		ActionID:    dotActionID,
+		SpellSchool: core.SpellSchoolPhysical,
+		Flags:       core.SpellFlagMeleeMetrics,
+	})
+}
+
+func (paladin *Paladin) applyRighteousVengeance() {
+	// Righteous Vengeance is a MAGIC debuff that pools 10/20/30% crit damage from Crusader Strike, Divine Storm, and Judgements.
+	// It drains the pool every 2 seconds at a rate of 1/4 of the pool size.
+	// And then deals that 1/4 as PHYSICAL damage.
+	// TODO: Can crit with certain set bonuses.
+	if paladin.Talents.RighteousVengeance == 0 {
+		return
+	}
+
+	paladin.RegisterAura(core.Aura{
+		Label:    "Righteous Vengeance",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.DidCrit() || !spellEffect.Landed() {
+				return
+			}
+
+			if spell.SpellID == paladin.CrusaderStrike.SpellID || spell.SpellID == paladin.DivineStorm.SpellID || spell.Flags.Matches(SpellFlagSecondaryJudgement) {
+				paladin.RighteousVengeancePools[spellEffect.Target.Index] += spellEffect.Damage * (0.10 * float64(paladin.Talents.RighteousVengeance))
+				paladin.RighteousVengeanceDamage[spellEffect.Target.Index] = paladin.RighteousVengeancePools[spellEffect.Target.Index] / 4
+
+				if !paladin.RighteousVengeanceDots[spellEffect.Target.Index].IsActive() {
+					paladin.RighteousVengeanceDots[spellEffect.Target.Index].Apply(sim)
+				}
+
+				paladin.RighteousVengeanceDots[spellEffect.Target.Index].Refresh(sim)
+			}
+		},
+	})
+}
+
+func (paladin *Paladin) applyFanaticism() {
+	// TODO: Possibly implement as aura.
+	if paladin.Talents.Fanaticism == 0 {
+		return
+	}
+
+	paladin.PseudoStats.ThreatMultiplier *= 1 - 0.10*float64(paladin.Talents.Fanaticism)
 }

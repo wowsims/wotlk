@@ -271,6 +271,7 @@ class RaidWCLImporter extends Importer {
 							}
 							innervates: table(fightIDs: [${fightID}], dataType:Casts, endTime: 99999999, sourceClass: "Druid", abilityID: 29166),
 							powerInfusion: table(fightIDs: [${fightID}], dataType:Casts, endTime: 99999999, sourceClass: "Priest", abilityID: 10060)
+							tricksOfTheTrade: table(fightIDs: [${fightID}], dataType:Casts, endTime: 99999999, sourceClass: "Rogue", abilityID: 57933)
 						}
 					}
 				}
@@ -291,6 +292,7 @@ class RaidWCLImporter extends Importer {
 		const playerData: wclPlayer[] = wclData.playerDetails.data.entries;
 		const innervateData: wclBuffCastsData[] = wclData.innervates.data.entries;
 		const powerInfusionData: wclBuffCastsData[] = wclData.powerInfusion.data.entries;
+		const tricksOfTheTradeData: wclBuffCastsData[] = wclData.tricksOfTheTrade.data.entries;
 
 		// Set up the general variables we need for import to be successful.
 		const fight: { startTime: number, endTime: number, id: number, name: string } = wclData.fights[0];
@@ -393,6 +395,7 @@ class RaidWCLImporter extends Importer {
 
 		processBuffCastData(innervateData).forEach((cast) => cast.player.innervateTarget = cast.target);
 		processBuffCastData(powerInfusionData).forEach((cast) => cast.player.powerInfusionTarget = cast.target);
+		processBuffCastData(tricksOfTheTradeData).forEach((cast) => cast.player.tricksOfTheTradeTarget = cast.target);
 
 		const wclPlayers: WCLSimPlayer[] = sortByProperty(sortByProperty(mappedPlayers, 'type'), 'sortPriority');
 
@@ -576,10 +579,10 @@ class RaidWCLImporter extends Importer {
 
 		// Insert the innervate / PI buffs into the options for the raid.
 		wclPlayers
-			.filter((player) => player.innervateTarget || player.powerInfusionTarget)
+			.filter((player) => player.innervateTarget || player.powerInfusionTarget || player.tricksOfTheTradeTarget)
 			.forEach((player) => {
 
-				const target: wclSimPlayer | undefined = wclPlayers.find((wclPlayer) => wclPlayer.name === player.innervateTarget || player.name === player.powerInfusionTarget);
+				const target: wclSimPlayer | undefined = wclPlayers.find((wclPlayer) => wclPlayer.name === player.innervateTarget || player.name === player.powerInfusionTarget || player.name === player.tricksOfTheTradeTarget);
 
 				if (!target) {
 					console.warn('Could not find target assignment player');
@@ -605,6 +608,9 @@ class RaidWCLImporter extends Importer {
 						} else if (player.powerInfusionTarget) {
 							buffBot.powerInfusionAssignment = RaidTarget.create();
 							buffBot.powerInfusionAssignment.targetIndex = targetRaidIndex
+						} else if (player.tricksOfTheTradeTarget) {
+							buffBot.tricksOfTheTradeAssignment = RaidTarget.create();
+							buffBot.tricksOfTheTradeAssignment.targetIndex = targetRaidIndex
 						}
 					}
 					return;
@@ -639,6 +645,8 @@ class RaidWCLImporter extends Importer {
 					}
 				} else if (player.powerInfusionTarget) {
 					// Pretty sure there is no shadow priest that has PI
+				} else if (player.tricksOfTheTradeTarget) {
+					// TODO: I'm not sure what I'm supposed to do here
 				}
 			});
 
@@ -681,6 +689,7 @@ class WCLSimPlayer implements wclSimPlayer {
 
 	public innervateTarget: string | undefined;
 	public powerInfusionTarget: string | undefined;
+	public tricksOfTheTradeTarget: string | undefined;
 
 	private simUI: RaidSimUI;
 	private spec: Spec;
@@ -738,7 +747,8 @@ class WCLSimPlayer implements wclSimPlayer {
 
 		player = withSpecProto(this.spec, player, matchingPreset.rotation, specFuncs.talentsCreate(), matchingPreset.specOptions);
 
-		player.talentsString = matchingPreset.talents;
+		player.talentsString = matchingPreset.talents.talentsString;
+		player.glyphs = matchingPreset.talents.glyphs;
 		player.consumes = matchingPreset.consumes;
 
 		player.name = this.name;
@@ -852,7 +862,7 @@ class WCLSimPlayer implements wclSimPlayer {
 				let presetTalents = [0, 0, 0];
 				let talentIdx = 0;
 				// First sum up the number of talents per tree for preset.
-				Array.from(preset.talents).forEach((v) => {
+				Array.from(preset.talents.talentsString).forEach((v) => {
 					if (v == '-') {
 						talentIdx++;
 						return;

@@ -3,7 +3,7 @@
 	--theme-color-primary: #e0a335;
 	--theme-color-background: #1d1510;
 	--theme-color-background-raw: 29, 21, 16;
-	--theme-background-image: url('/wotlk/assets/feral_druid_background.jpg');
+	--theme-background-image: url('/wotlk/assets/img/feral_druid_background.jpg');
 	--main-text-color: White;
 }
 
@@ -13,12 +13,6 @@
 }
 .feral-druid-sim-ui .consumes-section {
   grid-template-columns: repeat(5, 1fr);
-}
-.feral-druid-sim-ui .buffs-section {
-  grid-template-columns: repeat(5, 1fr);
-}
-.feral-druid-sim-ui .debuffs-section {
-  grid-template-columns: repeat(4, 1fr);
 }
 
 // Balance has a lot of EP stats, so make the text smaller so it fits vertically.

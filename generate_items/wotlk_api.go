@@ -77,13 +77,14 @@ var wotlkdbHasteRegex = regexp.MustCompile("Increases your haste rating by <!--r
 var wotlkdbSpellPenetrationRegex = regexp.MustCompile("Increases your spell penetration by ([0-9]+)")
 var wotlkdbMp5Regex = regexp.MustCompile("Restores ([0-9]+) mana per 5 sec")
 var wotlkdbAttackPowerRegex = regexp.MustCompile(`Increases attack power by ([0-9]+)\.`)
+var wotlkdbAttackPowerRegex2 = regexp.MustCompile(`Increases attack power by <!--rtg38-->([0-9]+)\.`)
 var wotlkdbRangedAttackPowerRegex = regexp.MustCompile("Increases ranged attack power by ([0-9]+)")
 var wotlkdbArmorPenetrationRegex = regexp.MustCompile("Increases armor penetration rating by <!--rtg44-->([0-9]+)")
 var wotlkdbExpertiseRegex = regexp.MustCompile("Increases expertise rating by <!--rtg37-->([0-9]+)")
 
 var wotlkdbDefenseRegex = regexp.MustCompile("Equip: Increases defense rating by <!--rtg12-->([0-9]+)")
 var wotlkdbDefenseRegex2 = regexp.MustCompile("Equip: Increases defense rating by ([0-9]+)")
-var wotlkdbBlockRegex = regexp.MustCompile(`Equip: Increases your shield block rating by <!--rtg15-->([0-9]+)\.`)
+var wotlkdbBlockRegex = regexp.MustCompile(`Equip: Increases your shield block rating by <!--rtg15-->([0-9]+)`)
 var wotlkdbBlockRegex2 = regexp.MustCompile("Equip: Increases your shield block rating by ([0-9]+)")
 var wotlkdbBlockValueRegex = regexp.MustCompile(`Equip: Increases the block value of your shield by ([0-9]+)\.`)
 var wotlkdbBlockValueRegex2 = regexp.MustCompile("<span>([0-9]+) Block</span>")
@@ -91,7 +92,7 @@ var wotlkdbDodgeRegex = regexp.MustCompile("Increases your dodge rating by <!--r
 var wotlkdbDodgeRegex2 = regexp.MustCompile("Increases your dodge rating by ([0-9]+)")
 var wotlkdbParryRegex = regexp.MustCompile("Increases your parry rating by <!--rtg14-->([0-9]+)")
 var wotlkdbParryRegex2 = regexp.MustCompile("Increases your parry rating by ([0-9]+)")
-var wotlkdbResilienceRegex = regexp.MustCompile("Improves your resilience rating by <!--rtg35-->([0-9]+)")
+var wotlkdbResilienceRegex = regexp.MustCompile("Increases your resilience rating by <!--rtg35-->([0-9]+)")
 var wotlkdbArcaneResistanceRegex = regexp.MustCompile(`\+([0-9]+) Arcane Resistance`)
 var wotlkdbFireResistanceRegex = regexp.MustCompile(`\+([0-9]+) Fire Resistance`)
 var wotlkdbFrostResistanceRegex = regexp.MustCompile(`\+([0-9]+) Frost Resistance`)
@@ -123,7 +124,7 @@ func (item WotlkItemResponse) GetStats() Stats {
 		proto.Stat_StatMeleeHaste:        float64(item.GetIntValue(wotlkdbHasteRegex)),
 		proto.Stat_StatSpellPenetration:  float64(item.GetIntValue(wotlkdbSpellPenetrationRegex)),
 		proto.Stat_StatMP5:               float64(item.GetIntValue(wotlkdbMp5Regex)),
-		proto.Stat_StatAttackPower:       float64(item.GetIntValue(wotlkdbAttackPowerRegex)),
+		proto.Stat_StatAttackPower:       float64(item.GetIntValue(wotlkdbAttackPowerRegex) + item.GetIntValue(wotlkdbAttackPowerRegex2)),
 		proto.Stat_StatRangedAttackPower: float64(item.GetIntValue(wotlkdbAttackPowerRegex) + item.GetIntValue(wotlkdbRangedAttackPowerRegex)),
 		proto.Stat_StatArmorPenetration:  float64(item.GetIntValue(wotlkdbArmorPenetrationRegex)),
 		proto.Stat_StatExpertise:         float64(item.GetIntValue(wotlkdbExpertiseRegex)),
@@ -190,11 +191,26 @@ func (item WotlkItemResponse) GetItemLevel() int {
 
 // WOTLK DB has no phase info
 func (item WotlkItemResponse) GetPhase() int {
+
+	ilvl := item.GetItemLevel()
+	if ilvl < 200 || ilvl == 200 || ilvl == 213 || ilvl == 226 {
+		return 1
+	} else if ilvl == 219 || ilvl == 226 || ilvl == 239 {
+		return 2
+	} else if ilvl == 232 || ilvl == 245 || ilvl == 258 {
+		return 3
+	} else if ilvl == 251 || ilvl == 258 || ilvl == 259 || ilvl == 264 || ilvl == 268 || ilvl == 270 || ilvl == 271 || ilvl == 272 {
+		return 4
+	} else if ilvl == 277 || ilvl == 284 {
+		return 5
+	}
+
+	// default to 1
 	return 1
 }
 
 func (item WotlkItemResponse) GetUnique() bool {
-	return uniqueRegex.MatchString(item.Tooltip)
+	return uniqueRegex.MatchString(item.Tooltip) && !jcGemsRegex.MatchString(item.Tooltip)
 }
 
 func (item WotlkItemResponse) GetItemType() proto.ItemType {
@@ -261,7 +277,7 @@ var wotlkRangedWeaponTypePatterns = map[proto.RangedWeaponType]*regexp.Regexp{
 	proto.RangedWeaponType_RangedWeaponTypeThrown:   regexp.MustCompile("<th>Thrown</th>"),
 	proto.RangedWeaponType_RangedWeaponTypeTotem:    regexp.MustCompile("<th><!--asc9-->Totem</th>"),
 	proto.RangedWeaponType_RangedWeaponTypeWand:     regexp.MustCompile("<th>Wand</th>"),
-	proto.RangedWeaponType_RangedWeaponTypeSigil:    regexp.MustCompile("<th>Sigil</th>"),
+	proto.RangedWeaponType_RangedWeaponTypeSigil:    regexp.MustCompile("<th><!--asc10-->Sigil</th>"),
 }
 
 func (item WotlkItemResponse) GetRangedWeaponType() proto.RangedWeaponType {
@@ -288,6 +304,12 @@ func (item WotlkItemResponse) GetWeaponDamage() (float64, float64) {
 			log.Fatalf("Invalid weapon damage for item %s: min = %0.1f, max = %0.1f", item.Name, min, max)
 		}
 		return min, max
+	} else if matches := weaponDamageRegex2.FindStringSubmatch(item.Tooltip); len(matches) > 0 {
+		val, err := strconv.ParseFloat(matches[1], 64)
+		if err != nil {
+			log.Fatalf("Failed to parse weapon damage: %s", err)
+		}
+		return val, val
 	}
 	return 0, 0
 }
@@ -383,6 +405,7 @@ func (item WotlkItemResponse) GetGemStats() Stats {
 		proto.Stat_StatRangedAttackPower: float64(GetBestRegexIntValue(item.Tooltip, attackPowerGemStatRegexes, 1)),
 		proto.Stat_StatSpellPenetration:  float64(GetBestRegexIntValue(item.Tooltip, spellPenetrationGemStatRegexes, 1)),
 		proto.Stat_StatMP5:               float64(GetBestRegexIntValue(item.Tooltip, mp5GemStatRegexes, 1)),
+		proto.Stat_StatExpertise:         float64(GetBestRegexIntValue(item.Tooltip, expertiseGemStatRegexes, 1)),
 		proto.Stat_StatDefense:           float64(GetBestRegexIntValue(item.Tooltip, defenseGemStatRegexes, 1)),
 		proto.Stat_StatDodge:             float64(GetBestRegexIntValue(item.Tooltip, dodgeGemStatRegexes, 1)),
 		proto.Stat_StatParry:             float64(GetBestRegexIntValue(item.Tooltip, parryGemStatRegexes, 1)),
@@ -477,4 +500,12 @@ func getWotlkItemResponse(itemID int, tooltipsDB map[int]string) WotlkItemRespon
 
 func (item WotlkItemResponse) IsHeroic() bool {
 	return strings.Contains(item.Tooltip, "<span class=\"q2\">Heroic</span>")
+}
+
+func (item WotlkItemResponse) GetRequiredProfession() proto.Profession {
+	if jcGemsRegex.MatchString(item.Tooltip) {
+		return proto.Profession_Jewelcrafting
+	}
+
+	return proto.Profession_ProfessionUnknown
 }

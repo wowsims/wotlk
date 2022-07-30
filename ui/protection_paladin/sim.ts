@@ -10,19 +10,11 @@ import { Player } from '/wotlk/core/player.js';
 import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
 import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
 
-import { Alchohol } from '/wotlk/core/proto/common.js';
-import { BattleElixir } from '/wotlk/core/proto/common.js';
-import { Flask } from '/wotlk/core/proto/common.js';
-import { Food } from '/wotlk/core/proto/common.js';
-import { GuardianElixir } from '/wotlk/core/proto/common.js';
-import { Conjured } from '/wotlk/core/proto/common.js';
-
-import { PetFood } from '/wotlk/core/proto/common.js';
-import { Potions } from '/wotlk/core/proto/common.js';
-import { WeaponImbue } from '/wotlk/core/proto/common.js';
-
 import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
 import * as OtherInputs from '/wotlk/core/components/other_inputs.js';
+import * as Mechanics from '/wotlk/core/constants/mechanics.js';
+
+import { PaladinMajorGlyph, PaladinSeal } from '/wotlk/core/proto/paladin.js';
 
 import * as ProtectionPaladinInputs from './inputs.js';
 import * as Presets from './presets.js';
@@ -87,6 +79,19 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 				Stat.StatParry,
 				Stat.StatResilience,
 			],
+			modifyDisplayStats: (player: Player<Spec.SpecProtectionPaladin>) => {
+				let stats = new Stats();
+
+				TypedEvent.freezeAllAndDo(() => {
+					if (player.getMajorGlyphs().includes(PaladinMajorGlyph.GlyphOfSealOfVengeance) && (player.getSpecOptions().seal == PaladinSeal.Vengeance)) {
+						stats = stats.addStat(Stat.StatExpertise, 10 * Mechanics.EXPERTISE_PER_QUARTER_PERCENT_REDUCTION);
+					}
+				})
+
+				return {
+					talents: stats,
+				};
+			},
 			defaults: {
 				// Default equipped gear.
 				gear: Presets.P4_PRESET.gear,
@@ -113,7 +118,7 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 				// Default rotation settings.
 				rotation: Presets.DefaultRotation,
 				// Default talents.
-				talents: Presets.SanctityTalents.data,
+				talents: Presets.GenericAoeTalents.data,
 				// Default spec-specific settings.
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
@@ -138,127 +143,23 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 
 					misery: true,
 					bloodFrenzy: true,
-					exposeArmor: TristateEffect.TristateEffectImproved,
+					exposeArmor: true,
 					sunderArmor: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					curseOfWeakness: TristateEffect.TristateEffectRegular,
-					huntersMark: TristateEffect.TristateEffectImproved,
 				}),
 			},
 
-			// IconInputs to include in the 'Self Buffs' section on the settings tab.
-			selfBuffInputs: [
+			// IconInputs to include in the 'Player' section on the settings tab.
+			playerIconInputs: [
 			],
-			// IconInputs to include in the 'Other Buffs' section on the settings tab.
-			raidBuffInputs: [
-				IconInputs.ArcaneBrilliance,
-				IconInputs.PowerWordFortitude,
-				IconInputs.ShadowProtection,
-				IconInputs.DivineSpirit,
-				IconInputs.GiftOfTheWild,
-				IconInputs.Thorns,
-				IconInputs.Bloodlust,
-				IconInputs.ManaSpringTotem,
-				IconInputs.TotemOfWrath,
-				IconInputs.WindfuryTotem,
-				IconInputs.StrengthOfEarthTotem,
-				IconInputs.BattleShout,
-				IconInputs.CommandingShout,
-				IconInputs.LeaderOfThePack,
-				IconInputs.TrueshotAura,
-				IconInputs.DevotionAura,
-				IconInputs.RetributionAura,
-				IconInputs.BloodPact,
-				IconInputs.UnleashedRage,
-			],
-			partyBuffInputs: [
-				IconInputs.HeroicPresence,
-				IconInputs.BraidedEterniumChain,
-			],
-			playerBuffInputs: [
-				IconInputs.BlessingOfKings,
-				IconInputs.BlessingOfWisdom,
-				IconInputs.BlessingOfMight,
-				IconInputs.BlessingOfSanctuary,
-			],
-			// IconInputs to include in the 'Debuffs' section on the settings tab.
-			debuffInputs: [
-				IconInputs.JudgementOfWisdom,
-				IconInputs.JudgementOfLight,
-				IconInputs.SunderArmor,
-				IconInputs.ExposeArmor,
-				IconInputs.BloodFrenzy,
-				IconInputs.HuntersMark,
-				IconInputs.FaerieFire,
-				IconInputs.CurseOfWeakness,
-				IconInputs.Misery,
-				IconInputs.GiftOfArthas,
-				IconInputs.DemoralizingRoar,
-				IconInputs.DemoralizingShout,
-				IconInputs.Screech,
-				IconInputs.ThunderClap,
-				IconInputs.InsectSwarm,
-				IconInputs.ScorpidSting,
-			],
-			// Which options are selectable in the 'Consumes' section.
-			consumeOptions: {
-				potions: [
-					Potions.IronshieldPotion,
-					Potions.SuperManaPotion,
-					Potions.DestructionPotion,
-					Potions.HastePotion,
-				],
-				conjured: [
-					Conjured.ConjuredDarkRune,
-					Conjured.ConjuredFlameCap,
-					Conjured.ConjuredHealthstone,
-				],
-				flasks: [
-					Flask.FlaskOfFortification,
-					Flask.FlaskOfBlindingLight,
-					Flask.FlaskOfRelentlessAssault,
-					Flask.FlaskOfChromaticWonder,
-				],
-				battleElixirs: [
-					BattleElixir.GreaterArcaneElixir,
-					BattleElixir.ElixirOfMastery,
-					BattleElixir.ElixirOfDemonslaying,
-					BattleElixir.ElixirOfMajorAgility,
-					BattleElixir.ElixirOfTheMongoose,
-				],
-				guardianElixirs: [
-					GuardianElixir.ElixirOfMajorFortitude,
-					GuardianElixir.ElixirOfMajorDefense,
-					GuardianElixir.ElixirOfIronskin,
-					GuardianElixir.GiftOfArthas,
-					GuardianElixir.ElixirOfDraenicWisdom,
-					GuardianElixir.ElixirOfMajorMageblood,
-				],
-				food: [
-					Food.FoodRoastedClefthoof,
-					Food.FoodGrilledMudfish,
-					Food.FoodSpicyHotTalbuk,
-					Food.FoodBlackenedBasilisk,
-					Food.FoodFishermansFeast,
-				],
-				alcohol: [
-					Alchohol.AlchoholKreegsStoutBeatdown,
-				],
-				weaponImbues: [
-					WeaponImbue.WeaponImbueAdamantiteSharpeningStone,
-					WeaponImbue.WeaponImbueAdamantiteWeightstone,
-					WeaponImbue.WeaponImbueBrilliantWizardOil,
-					WeaponImbue.WeaponImbueSuperiorWizardOil,
-					WeaponImbue.WeaponImbueRighteousWeaponCoating,
-				],
-				other: [
-					IconInputs.ScrollOfStrengthV,
-					IconInputs.ScrollOfAgilityV,
-					IconInputs.ScrollOfProtectionV,
-				],
-			},
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: ProtectionPaladinInputs.ProtectionPaladinRotationConfig,
+			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
+			includeBuffDebuffInputs: [
+			],
+			excludeBuffDebuffInputs: [
+			],
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
@@ -268,28 +169,21 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 					OtherInputs.HpPercentForDefensives,
 					ProtectionPaladinInputs.AuraSelection,
 					ProtectionPaladinInputs.UseAvengingWrath,
+					ProtectionPaladinInputs.JudgementSelection,
+					ProtectionPaladinInputs.StartingSealSelection,
+					ProtectionPaladinInputs.DamageTakenPerSecond,
 					OtherInputs.InFrontOfTarget,
 				],
 			},
 			encounterPicker: {
-				// Target stats to show for 'Simple' encounters.
-				simpleTargetStats: [
-					Stat.StatArmor,
-				],
 				// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
 				showExecuteProportion: false,
 			},
 
-			// If true, the talents on the talents tab will not be individually modifiable by the user.
-			// Note that the use can still pick between preset talents, if there is more than 1.
-			freezeTalents: false,
-
 			presets: {
 				// Preset talents that the user can quickly select.
 				talents: [
-					Presets.ArdentDefenderTalents,
-					Presets.AvengersShieldTalents,
-					Presets.SanctityTalents,
+					Presets.GenericAoeTalents,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [

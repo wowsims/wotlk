@@ -125,6 +125,10 @@ export class Gear {
 		return this.getAllGems().filter(gem => gem.color == color);
 	}
 
+	getJCGems(): Array<Gem> {
+		return this.getAllGems().filter(gem => gem.requiredProfession == Profession.Jewelcrafting);
+	}
+
 	getMetaGem(): Gem | null {
 		return this.getGemsOfColor(GemColor.GemColorMeta)[0] || null;
 	}

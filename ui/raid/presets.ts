@@ -10,6 +10,7 @@ import { Race } from '/wotlk/core/proto/common.js';
 import { Spec } from '/wotlk/core/proto/common.js';
 import { TristateEffect } from '/wotlk/core/proto/common.js';
 import { Faction } from '/wotlk/core/proto/common.js';
+import { SavedTalents } from '/wotlk/core/proto/ui.js';
 import { SpecOptions } from '/wotlk/core/proto_utils/utils.js';
 import { SpecRotation } from '/wotlk/core/proto_utils/utils.js';
 import { playerToSpec } from '/wotlk/core/proto_utils/utils.js';
@@ -76,7 +77,7 @@ export const specSimFactories: Partial<Record<Spec, (parentElem: HTMLElement, pl
 export interface PresetSpecSettings<SpecType extends Spec> {
 	spec: Spec,
 	rotation: SpecRotation<SpecType>,
-	talents: string,
+	talents: SavedTalents,
 	specOptions: SpecOptions<SpecType>,
 	consumes: Consumes,
 
@@ -364,53 +365,13 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: RoguePresets.P1_PRESET.gear,
-				2: RoguePresets.P2_PRESET.gear,
-				3: RoguePresets.P3_PRESET.gear,
-				4: RoguePresets.P4_PRESET.gear,
-				5: RoguePresets.P5_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: RoguePresets.P1_PRESET.gear,
-				2: RoguePresets.P2_PRESET.gear,
-				3: RoguePresets.P3_PRESET.gear,
-				4: RoguePresets.P4_PRESET.gear,
-				5: RoguePresets.P5_PRESET.gear,
 			},
 		},
 		tooltip: 'Combat Rogue',
 		iconUrl: specIconsLarge[Spec.SpecRogue],
-	},
-	{
-		spec: Spec.SpecRogue,
-		rotation: RoguePresets.DefaultRotation,
-		talents: RoguePresets.HemoTalents.data,
-		specOptions: RoguePresets.DefaultOptions,
-		consumes: RoguePresets.DefaultConsumes,
-		defaultName: 'Hemo Rogue',
-		defaultFactionRaces: {
-			[Faction.Unknown]: Race.RaceUnknown,
-			[Faction.Alliance]: Race.RaceHuman,
-			[Faction.Horde]: Race.RaceOrc,
-		},
-		defaultGear: {
-			[Faction.Unknown]: {},
-			[Faction.Alliance]: {
-				1: RoguePresets.P1_PRESET.gear,
-				2: RoguePresets.P2_PRESET.gear,
-				3: RoguePresets.P3_PRESET.gear,
-				4: RoguePresets.P4_PRESET.gear,
-				5: RoguePresets.P5_PRESET.gear,
-			},
-			[Faction.Horde]: {
-				1: RoguePresets.P1_PRESET.gear,
-				2: RoguePresets.P2_PRESET.gear,
-				3: RoguePresets.P3_PRESET.gear,
-				4: RoguePresets.P4_PRESET.gear,
-				5: RoguePresets.P5_PRESET.gear,
-			},
-		},
-		tooltip: 'Hemo Rogue',
-		iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_lifedrain.jpg',
 	},
 	{
 		spec: Spec.SpecElementalShaman,
@@ -427,10 +388,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: ElementalShamanPresets.PRE_RAID_PRESET.gear,
+				1: ElementalShamanPresets.P1_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				1: ElementalShamanPresets.PRE_RAID_PRESET.gear,
+				1: ElementalShamanPresets.P1_PRESET.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecElementalShaman],
@@ -615,7 +576,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	{
 		spec: Spec.SpecRetributionPaladin,
 		rotation: RetributionPaladinPresets.DefaultRotation,
-		talents: RetributionPaladinPresets.RetKingsPaladinTalents.data,
+		talents: RetributionPaladinPresets.AuraMasteryTalents.data,
 		specOptions: RetributionPaladinPresets.DefaultOptions,
 		consumes: RetributionPaladinPresets.DefaultConsumes,
 		defaultName: 'Ret Paladin',
@@ -647,7 +608,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	{
 		spec: Spec.SpecProtectionPaladin,
 		rotation: ProtectionPaladinPresets.DefaultRotation,
-		talents: ProtectionPaladinPresets.SanctityTalents.data,
+		talents: ProtectionPaladinPresets.GenericAoeTalents.data,
 		specOptions: ProtectionPaladinPresets.DefaultOptions,
 		consumes: ProtectionPaladinPresets.DefaultConsumes,
 		defaultName: 'Prot Paladin',
@@ -723,18 +684,18 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: WarlockPresets.P1_DESTRO.gear,
-				2: WarlockPresets.P2_DESTRO.gear,
-				3: WarlockPresets.P3_DESTRO.gear,
-				4: WarlockPresets.P4_DESTRO.gear,
-				5: WarlockPresets.P5_DESTRO.gear,
+// 				1: WarlockPresets.P1_DESTRO.gear,
+// 				2: WarlockPresets.P2_DESTRO.gear,
+// 				3: WarlockPresets.P3_DESTRO.gear,
+// 				4: WarlockPresets.P4_DESTRO.gear,
+// 				5: WarlockPresets.P5_DESTRO.gear,
 			},
 			[Faction.Horde]: {
-				1: WarlockPresets.P1_DESTRO.gear,
-				2: WarlockPresets.P2_DESTRO.gear,
-				3: WarlockPresets.P3_DESTRO.gear,
-				4: WarlockPresets.P4_DESTRO.gear,
-				5: WarlockPresets.P5_DESTRO.gear,
+// 				1: WarlockPresets.P1_DESTRO.gear,
+// 				2: WarlockPresets.P2_DESTRO.gear,
+// 				3: WarlockPresets.P3_DESTRO.gear,
+// 				4: WarlockPresets.P4_DESTRO.gear,
+// 				5: WarlockPresets.P5_DESTRO.gear,
 			},
 		},
 		tooltip: 'Affliction Warlock: by default casts CoE with Malediction',
@@ -913,6 +874,25 @@ export const buffBotPresets: Array<BuffBotSettings> = [
 				const playerProto = raidProto.parties[partyIndex].players[playerIndex];
 				if (playerProto.buffs) {
 					playerProto.buffs.powerInfusions++;
+				}
+			}
+		},
+	},
+	{
+		// The value of this field must never change, to preserve local storage data.
+		buffBotId: 'Rogue',
+		spec: Spec.SpecShadowPriest,
+		name: 'Rogue',
+		tooltip: 'Rogue: Adds TotT.',
+		iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/ability_rogue_tricksofthetrade.jpg',
+		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
+			const tricksOfTheTradeIndex = buffBot.getTricksOfTheTradeAssignment().targetIndex;
+			if (tricksOfTheTradeIndex != NO_TARGET) {
+				const partyIndex = Math.floor(tricksOfTheTradeIndex / 5);
+				const playerIndex = tricksOfTheTradeIndex % 5;
+				const playerProto = raidProto.parties[partyIndex].players[playerIndex];
+				if (playerProto.buffs) {
+					playerProto.buffs.tricksOfTheTrades++;
 				}
 			}
 		},

@@ -17,12 +17,17 @@ type Priest struct {
 
 	Latency float64
 
+	ShadowfiendAura *core.Aura
+	ShadowfiendPet  *Shadowfiend
+
 	// cached cast stuff
 	// TODO: aoe multi-target situations will need multiple spells ticking for each target.
+	InnerFocusAura     *core.Aura
+	MiseryAura         *core.Aura
+	ShadowWeavingAura  *core.Aura
+	ShadowyInsightAura *core.Aura
+	ImprovedSpiritTap  *core.Aura
 
-	InnerFocusAura       *core.Aura
-	MiseryAura           *core.Aura
-	ShadowWeavingAura    *core.Aura
 	SurgeOfLightProcAura *core.Aura
 
 	DevouringPlague *core.Spell
@@ -41,13 +46,13 @@ type Priest struct {
 	DevouringPlagueDot *core.Dot
 	HolyFireDot        *core.Dot
 	MindFlayDot        []*core.Dot
-	ShadowfiendDot     *core.Dot
 	StarshardsDot      *core.Dot
 	VampiricTouchDot   *core.Dot
 }
 
 type SelfBuffs struct {
 	UseShadowfiend bool
+	UseInnerFire   bool
 
 	PowerInfusionTarget proto.RaidTarget
 }
@@ -62,10 +67,6 @@ func (priest *Priest) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	raidBuffs.PowerWordFortitude = core.MaxTristate(raidBuffs.PowerWordFortitude, core.MakeTristateValue(
 		true,
 		priest.Talents.ImprovedPowerWordFortitude == 2))
-
-	//raidBuffs.DivineSpirit = core.MaxTristate(raidBuffs.DivineSpirit, core.MakeTristateValue(
-	//priest.Talents.DivineSpirit,
-	//priest.Talents.ImprovedDivineSpirit == 2))
 }
 
 func (priest *Priest) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
@@ -74,7 +75,7 @@ func (priest *Priest) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 func (priest *Priest) Initialize() {
 
 	if priest.Talents.Misery > 0 {
-		priest.MiseryAura = core.MiseryAura(priest.CurrentTarget, priest.Talents.Misery)
+		priest.MiseryAura = core.MiseryAura(priest.CurrentTarget)
 	}
 
 	if priest.Talents.ShadowWeaving > 0 {
@@ -90,6 +91,32 @@ func (priest *Priest) Initialize() {
 			// },
 		})
 	}
+
+	if priest.Talents.ImprovedSpiritTap > 0 {
+		increase := (1 + float64(priest.Talents.ImprovedSpiritTap)*0.05)
+		priest.ImprovedSpiritTap = priest.GetOrRegisterAura(core.Aura{
+			Label:    "Improved Spirit Tap",
+			ActionID: core.ActionID{SpellID: 59000},
+			Duration: time.Second * 8,
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				priest.AddStatDependencyDynamic(sim, stats.Spirit, stats.Spirit, increase)
+				priest.PseudoStats.SpiritRegenRateCasting += 0.33
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				priest.AddStatDependencyDynamic(sim, stats.Spirit, stats.Spirit, 1.0/increase)
+				priest.PseudoStats.SpiritRegenRateCasting -= 0.33
+			},
+		})
+	}
+
+	// Shadow Insight gained from Glyph of Shadow
+	// Finalized spirit off gear and not dynamic spirit (e.g. Spirit Tap does not increase this)
+	priest.ShadowyInsightAura = priest.NewTemporaryStatsAura(
+		"Shadowy Insight",
+		core.ActionID{SpellID: 61792},
+		stats.Stats{stats.SpellPower: priest.GetStat(stats.Spirit) * 0.30},
+		time.Second*10,
+	)
 
 	priest.registerDevouringPlagueSpell()
 	priest.registerHolyFireSpell()
@@ -127,14 +154,7 @@ func (priest *Priest) AddShadowWeavingStack(sim *core.Simulation) {
 		priest.ShadowWeavingAura.Refresh(sim)
 	} else {
 		priest.ShadowWeavingAura.Activate(sim)
-	}
-}
-
-func (priest *Priest) OnSpellHitAddShadowWeaving() func(*core.Simulation, *core.Spell, *core.SpellEffect) {
-	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-		if spellEffect.Landed() {
-			priest.AddShadowWeavingStack(sim)
-		}
+		priest.ShadowWeavingAura.AddStack(sim)
 	}
 }
 
@@ -148,79 +168,88 @@ func New(char core.Character, selfBuffs SelfBuffs, talents proto.PriestTalents) 
 		Talents:   talents,
 	}
 	priest.EnableManaBar()
+	priest.ShadowfiendPet = priest.NewShadowfiend()
+
+	if selfBuffs.UseInnerFire {
+		multi := 1 + float64(priest.Talents.ImprovedInnerFire)*0.15
+		sp := 120.0 * multi
+		armor := 2440 * multi
+		priest.AddStat(stats.SpellPower, sp)
+		priest.AddStat(stats.Armor, armor)
+	}
 
 	return priest
 }
 
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceHuman, Class: proto.Class_ClassPriest}] = stats.Stats{
-		stats.Health:    3211,
+		stats.Health:    6960,
 		stats.Strength:  39,
 		stats.Agility:   45,
 		stats.Stamina:   58,
 		stats.Intellect: 145,
 		stats.Spirit:    166,
-		stats.Mana:      2620,
+		stats.Mana:      3863,
 		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDwarf, Class: proto.Class_ClassPriest}] = stats.Stats{
-		stats.Health:    3211,
+		stats.Health:    6960,
 		stats.Strength:  41,
 		stats.Agility:   41,
 		stats.Stamina:   61,
 		stats.Intellect: 144,
 		stats.Spirit:    150,
-		stats.Mana:      2620,
+		stats.Mana:      3863,
 		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassPriest}] = stats.Stats{
-		stats.Health:    3211,
+		stats.Health:    6960,
 		stats.Strength:  36,
 		stats.Agility:   50,
 		stats.Stamina:   57,
 		stats.Intellect: 145,
 		stats.Spirit:    151,
-		stats.Mana:      2620,
+		stats.Mana:      3863,
 		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassPriest}] = stats.Stats{
-		stats.Health:    3211,
+		stats.Health:    6960,
 		stats.Strength:  40,
 		stats.Agility:   42,
 		stats.Stamina:   57,
 		stats.Intellect: 146,
 		stats.Spirit:    153,
-		stats.Mana:      2620,
+		stats.Mana:      3863,
 		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceUndead, Class: proto.Class_ClassPriest}] = stats.Stats{
-		stats.Health:    3211,
+		stats.Health:    6960,
 		stats.Strength:  38,
 		stats.Agility:   43,
 		stats.Stamina:   59,
 		stats.Intellect: 143,
 		stats.Spirit:    156,
-		stats.Mana:      2620,
+		stats.Mana:      3863,
 		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassPriest}] = stats.Stats{
-		stats.Health:    3211,
+		stats.Health:    6960,
 		stats.Strength:  40,
 		stats.Agility:   47,
 		stats.Stamina:   59,
 		stats.Intellect: 141,
 		stats.Spirit:    152,
-		stats.Mana:      2620,
+		stats.Mana:      3863,
 		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassPriest}] = stats.Stats{
-		stats.Health:    3211,
+		stats.Health:    6960,
 		stats.Strength:  36,
 		stats.Agility:   47,
 		stats.Stamina:   57,
 		stats.Intellect: 149,
 		stats.Spirit:    150,
-		stats.Mana:      2620,
+		stats.Mana:      3863,
 		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
 	}
 }

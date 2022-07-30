@@ -2,8 +2,8 @@ package core
 
 import (
 	"fmt"
-	"time"
 	"math"
+	"time"
 
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
@@ -83,6 +83,10 @@ type Spell struct {
 
 	// The current or most recent cast data.
 	CurCast Cast
+
+	CostMultiplier   float64 // For dynamic effects. Do not set during initialization.
+	DamageMultiplier float64 // For dynamic effects. Do not set during initialization.
+	BonusCritRating  float64 // For dynamic effects. Do not set during initialization.
 }
 
 // Registers a new spell to the unit. Returns the newly created spell.
@@ -104,6 +108,9 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		SharedCD:    config.Cast.SharedCD,
 
 		ApplyEffects: config.ApplyEffects,
+
+		CostMultiplier:   1,
+		DamageMultiplier: 1,
 	}
 
 	switch spell.ResourceType {
@@ -171,8 +178,26 @@ func (spell *Spell) CurDamagePerCast() float64 {
 	}
 }
 
+func (spell *Spell) finalize() {
+	// Assert that user doesn't set dynamic fields during static initialization.
+	if spell.CostMultiplier != 1 {
+		panic(spell.ActionID.String() + " has non-default CostMultiplier during finalize!")
+	}
+	if spell.DamageMultiplier != 1 {
+		panic(spell.ActionID.String() + " has non-default DamageMultiplier during finalize!")
+	}
+	if spell.BonusCritRating != 0 {
+		panic(spell.ActionID.String() + " has non-default BonusCritRating during finalize!")
+	}
+}
+
 func (spell *Spell) reset(sim *Simulation) {
 	spell.SpellMetrics = make([]SpellMetrics, len(spell.Unit.AttackTables))
+
+	// Reset dynamic effects.
+	spell.CostMultiplier = 1
+	spell.DamageMultiplier = 1
+	spell.BonusCritRating = 0
 }
 
 func (spell *Spell) doneIteration() {
@@ -458,13 +483,14 @@ func ApplyEffectFuncMultipleDamageCapped(baseEffects []SpellEffect, aoeCap float
 	}
 }
 
-func ApplyEffectFuncMultipleDamageCappedWotLK(baseEffects []SpellEffect, numTargets int) ApplySpellEffects {
+func ApplyEffectFuncMultipleDamageCappedWotLK(baseEffects []SpellEffect) ApplySpellEffects {
+	numTargets := len(baseEffects)
 	for _, effect := range baseEffects {
 		effect.Validate()
 	}
 
 	return func(sim *Simulation, _ *Unit, spell *Spell) {
-		capMultiplier := math.Min(10.0 / float64(numTargets), 1.0)
+		capMultiplier := math.Min(10.0/float64(numTargets), 1.0)
 		for i := range baseEffects {
 			effect := &baseEffects[i]
 			effect.init(sim, spell)

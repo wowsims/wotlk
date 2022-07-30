@@ -43,7 +43,7 @@ export const classNames: Record<Class, string> = {
 	[Class.ClassShaman]: 'Shaman',
 	[Class.ClassWarlock]: 'Warlock',
 	[Class.ClassWarrior]: 'Warrior',
-	[Class.ClassDeathKnight]: 'Death Knight',
+	[Class.ClassDeathknight]: 'Death Knight',
 }
 
 export function nameToClass(name: string): Class {
@@ -137,9 +137,9 @@ export const statNames: Record<Stat, string> = {
 	[Stat.StatSpellHaste]: 'Spell Haste',
 	[Stat.StatSpellPenetration]: 'Spell Pen',
 	[Stat.StatAttackPower]: 'Attack Power',
-	[Stat.StatMeleeHit]: 'Hit',
-	[Stat.StatMeleeCrit]: 'Crit',
-	[Stat.StatMeleeHaste]: 'Haste',
+	[Stat.StatMeleeHit]: 'Melee Hit',
+	[Stat.StatMeleeCrit]: 'Melee Crit',
+	[Stat.StatMeleeHaste]: 'Melee Haste',
 	[Stat.StatArmorPenetration]: 'Armor Pen',
 	[Stat.StatExpertise]: 'Expertise',
 	[Stat.StatMana]: 'Mana',

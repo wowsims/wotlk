@@ -31,31 +31,19 @@ var defaultDestroTalents = &proto.WarlockTalents{
 	SoulLeech:          3,
 	ImprovedSoulLeech:  2,
 	// demo
-	FelSynergy:  		2,
-	ImprovedImp: 		3,
+	FelSynergy:  2,
+	ImprovedImp: 3,
 }
 
-/*var defaultDestroMajorGlyphs = &proto.WarlockMajorGlyph{
-	WarlockMajorGlyph:
-	proto.GlyphOfConflagrate,
-	proto.GlyphOfImmolate,
-	proto.GlyphOfIncinerate,
-}
-
-var defaultDestroMinorGlyphs = &proto.WarlockMinorGlyph{
-	GlyphOfDrainSoul,
-	GlyphOfEnslaveDemon,
-	GlyphOfKilrogg,
-}
-*/
 var defaultDestroRotation = &proto.Warlock_Rotation{
-	PrimarySpell: proto.Warlock_Rotation_Shadowbolt,
-	Immolate:     true,
+	PrimarySpell: proto.Warlock_Rotation_Incinerate,
+	SecondaryDot: proto.Warlock_Rotation_Immolate,
 }
 
 var defaultDestroOptions = &proto.Warlock_Options{
-	Armor:  proto.Warlock_Options_FelArmor,
-	Summon: proto.Warlock_Options_Imp,
+	Armor:       proto.Warlock_Options_FelArmor,
+	Summon:      proto.Warlock_Options_Imp,
+	WeaponImbue: proto.Warlock_Options_GrandFirestone,
 }
 
 var DefaultDestroWarlock = &proto.Player_Warlock{
@@ -63,9 +51,15 @@ var DefaultDestroWarlock = &proto.Player_Warlock{
 		Talents:  defaultDestroTalents,
 		Options:  defaultDestroOptions,
 		Rotation: defaultDestroRotation,
-		/*		MajorGlyph: defaultDestroMajorGlyphs,
-				MinorGlyph: defaultDestroMinorGlyphs,
-		*/},
+		// MajorGlyph: defaultDestroMajorGlyphs,
+		// MinorGlyph: defaultDestroMinorGlyphs,
+	},
+}
+
+var DefaultGlyphs = &proto.Glyphs{
+	Major1: int32(proto.WarlockMajorGlyph_GlyphOfConflagrate),
+	Major2: int32(proto.WarlockMajorGlyph_GlyphOfImp),
+	Major3: int32(proto.WarlockMajorGlyph_GlyphOfIncinerate),
 }
 
 var FullRaidBuffs = &proto.RaidBuffs{
@@ -85,20 +79,19 @@ var FullIndividualBuffs = &proto.IndividualBuffs{
 }
 
 var FullConsumes = &proto.Consumes{
-	Flask:           proto.Flask_FlaskOfPureDeath,
-	DefaultPotion:   proto.Potions_DestructionPotion,
-	DefaultConjured: proto.Conjured_ConjuredDarkRune,
-	Food:            proto.Food_FoodBlackenedBasilisk,
+	Flask:         proto.Flask_FlaskOfTheFrostWyrm,
+	DefaultPotion: proto.Potions_PotionOfWildMagic,
+	PrepopPotion:  proto.Potions_PotionOfWildMagic,
+	Food:          proto.Food_FoodFishFeast,
 }
 
 var FullDebuffs = &proto.Debuffs{
 	JudgementOfWisdom: true,
 	Misery:            true,
 	BloodFrenzy:       true,
-	ExposeArmor:       proto.TristateEffect_TristateEffectImproved,
+	SunderArmor:       true,
 	FaerieFire:        proto.TristateEffect_TristateEffectImproved,
 	CurseOfWeakness:   proto.TristateEffect_TristateEffectImproved,
-	HuntersMark:       proto.TristateEffect_TristateEffectImproved,
 }
 
 var Phase4Gear = items.EquipmentSpecFromJsonString(`{"items": [

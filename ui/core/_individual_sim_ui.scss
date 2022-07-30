@@ -13,6 +13,7 @@
 @import "./components/icon_picker";
 @import "./components/importers";
 @import "./components/log_runner";
+@import "./components/multi_icon_picker";
 @import "./components/number_list_picker";
 @import "./components/number_picker";
 @import "./components/raid_sim_action";
@@ -56,15 +57,15 @@
 }
 
 .left-gear-panel {
-  min-width: calc(500px + 2vw);
+  min-width: calc(550px + 2vw);
   flex: 3;
   padding-left: 1vw;
   padding-right: 1vw;
   padding-top: 1vh;
 }
-@media only screen and (max-width: calc(750px + 1vw)) {
+@media only screen and (max-width: calc(800px + 1vw)) {
   .left-gear-panel {
-    min-width: calc(250px + 1vw);
+    min-width: calc(275px + 1vw);
   }
 }
 
@@ -79,14 +80,9 @@
   margin-top: 10px;
   margin-bottom: 10px;
 }
-@media only screen and (max-width: calc(1000px + 2vw)) {
+@media only screen and (max-width: calc(1050px + 2vw)) {
   .right-gear-panel {
-    border-left: none;
-  }
-}
-@media only screen and (max-width: calc(750px + 1vw)) {
-  .right-gear-panel {
-    min-width: 250px;
+    min-width: 275px;
     border-left: none;
   }
 }
@@ -129,6 +125,7 @@
 .settings-section-container {
   position: absolute;
 }
+
 .settings-section {
   border: 2px solid var(--main-text-color);
   padding: 4px;
@@ -171,18 +168,28 @@
   text-align: left;
 }
 
-.race-section > div, .rotation-section > div, .other-settings-section > div {
+.race-section > div:not(.settings-section-iconrow), .rotation-section > div:not(.settings-section-iconrow), .other-settings-section > div:not(.settings-section-iconrow) {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 }
 
-.self-buffs-section>div {
-  display: grid;
+.settings-section-iconrow {
+	display: flex;
+	grid-template-columns: repeat(5, 1fr);
+	justify-content: space-evenly;
+	flex-wrap: wrap;
+	align-items: center;
+}
+.settings-section-iconrow>div {
+	margin: auto !important;
 }
 
 .buffs-section>div {
   display: grid;
+}
+.buffs-section {
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .consumes-section>div {
@@ -208,6 +215,9 @@
 
 .debuffs-section>div {
   display: grid;
+}
+.debuffs-section {
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .cooldowns-section-container {
@@ -235,6 +245,7 @@
 .player-pet-toggle {
 	display: flex;
 	justify-content: center;
+	margin: 10px;
 }
 .player-pet-toggle > * {
 	margin: 0 10px;

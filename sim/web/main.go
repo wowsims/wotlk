@@ -13,6 +13,7 @@ import (
 	"runtime/pprof"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"syscall"
 	"time"
 
@@ -114,19 +115,27 @@ func handleAsyncAPI(w http.ResponseWriter, r *http.Request, addNewSim simProgRep
 		return
 	}
 
+	// reporter channel is handed into the core simulation.
+	//  as the simulation advances it will push changes to the channel
+	//  these changes will be consumed by the goroutine below so the asyncProgress endpoint can fetch the results.
 	reporter := make(chan *proto.ProgressMetrics, 100)
 	handler.handle(msg, reporter)
 
-	id, report := addNewSim()
+	// Generate a new async simulation, and get back the ID and reporting function.
+	id, cacheProgressFunc := addNewSim()
+
+	// Now launch a background process that pulls progress reports off the reporter channel
+	// and pushes it into the async progress cache.
 	go func() {
 		for {
-			// TODO: cleanup so we dont collect these
 			select {
+			case <-time.After(time.Hour):
+				return // if we get no progress after an hour, exit
 			case progMetric, ok := <-reporter:
 				if !ok {
 					return
 				}
-				report(progMetric)
+				cacheProgressFunc(progMetric)
 				if progMetric.FinalRaidResult != nil || progMetric.FinalWeightResult != nil {
 					return
 				}
@@ -150,32 +159,39 @@ func handleAsyncAPI(w http.ResponseWriter, r *http.Request, addNewSim simProgRep
 }
 
 func setupAsyncServer() {
+
+	// Hold all state for in-flight async processes here.
 	type asyncProgress struct {
-		mut            sync.Mutex
-		latestProgress proto.ProgressMetrics
+		latestProgress atomic.Value
 	}
+	progMut := &sync.RWMutex{} // mutex for progresses map
 	progresses := map[string]*asyncProgress{}
-	progMut := &sync.RWMutex{}
+
+	// addNewSim just stores progress data for a new running simulation into the state above.
 	addNewSim := func() (string, progReport) {
 		newID := uuid.NewV4().String()
+		simProgress := &asyncProgress{}
+		simProgress.latestProgress.Store(&proto.ProgressMetrics{})
 		progMut.Lock()
-		progresses[newID] = &asyncProgress{}
+		progresses[newID] = simProgress
 		progMut.Unlock()
 
 		return newID, func(newProg *proto.ProgressMetrics) {
-			progresses[newID].mut.Lock()
-			progresses[newID].latestProgress = *newProg
-			progresses[newID].mut.Unlock()
+			// caches progress into the progress map indexed by the ID.
+			// This can later be fetched by the async progress endpoint.
+			simProgress.latestProgress.Store(newProg)
 		}
 	}
-	type progReport func(progMetric *proto.ProgressMetrics)
 
+	// All async handlers here will call the addNewSim, generating a new UUID and cached progress state.
 	http.HandleFunc("/statWeightsAsync", func(w http.ResponseWriter, r *http.Request) {
 		handleAsyncAPI(w, r, addNewSim)
 	})
 	http.HandleFunc("/raidSimAsync", func(w http.ResponseWriter, r *http.Request) {
 		handleAsyncAPI(w, r, addNewSim)
 	})
+
+	// asyncProgress will fetch the current progress of a simulation by its UUID.
 	http.HandleFunc("/asyncProgress", func(w http.ResponseWriter, r *http.Request) {
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
@@ -188,6 +204,7 @@ func setupAsyncServer() {
 			return
 		}
 
+		// Read lock the map of all progress statuses, fetching current one.
 		progMut.RLock()
 		progress, ok := progresses[msg.ProgressId]
 		progMut.RUnlock()
@@ -195,15 +212,15 @@ func setupAsyncServer() {
 			w.WriteHeader(http.StatusNoContent)
 			return
 		}
-		progress.mut.Lock()
-		latest := progress.latestProgress
-		progress.mut.Unlock()
-		outbytes, err := googleProto.Marshal(&latest)
+		latest := progress.latestProgress.Load().(*proto.ProgressMetrics)
+		outbytes, err := googleProto.Marshal(latest)
 		if err != nil {
 			log.Printf("[ERROR] Failed to marshal result: %s", err.Error())
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+
+		// If this was the last result, delete the cache for this simulation.
 		if latest.FinalRaidResult != nil || latest.FinalWeightResult != nil {
 			progMut.Lock()
 			delete(progresses, msg.ProgressId)
@@ -267,7 +284,12 @@ func runServer(useFS bool, host string, launchBrowser bool, simName string, wasm
 
 	go func() {
 		// Launch server!
-		log.Printf("Closing: %s", http.ListenAndServe(host, nil))
+		if err := http.ListenAndServe(host, nil); err != nil {
+			log.Printf("Failed to shutdown server: %s", err)
+			os.Exit(1)
+		}
+		log.Printf("Server shutdown successfully.")
+		os.Exit(0)
 	}()
 
 	// used to read a CTRL+C

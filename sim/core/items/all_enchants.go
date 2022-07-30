@@ -61,6 +61,7 @@ var Enchants = []Enchant{
 	{ID: 55642, EffectID: 3722, Name: "Lightweave Embroidery", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeBack, RequiredProfession: proto.Profession_Tailoring},
 	{ID: 55769, EffectID: 3728, Name: "Darkglow Embroidery", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeBack, RequiredProfession: proto.Profession_Tailoring},
 	{ID: 55777, EffectID: 3730, Name: "Swordguard Embroidery", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeBack, RequiredProfession: proto.Profession_Tailoring},
+	{ID: 63765, EffectID: 3859, Name: "Springy Arachnoweave", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{stats.SpellPower: 27}, ItemType: proto.ItemType_ItemTypeBack, RequiredProfession: proto.Profession_Engineering},
 
 	// Chest
 	{ID: 37340, EffectID: 3245, Name: "Exceptional Resilience", Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{stats.Resilience: 20}, ItemType: proto.ItemType_ItemTypeChest},
@@ -144,21 +145,21 @@ var Enchants = []Enchant{
 	{ID: 44496, EffectID: 3788, Name: "Accuracy", Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{stats.MeleeHit: 25, stats.SpellHit: 25, stats.MeleeCrit: 25, stats.SpellCrit: 25}, ItemType: proto.ItemType_ItemTypeWeapon},
 	{ID: 44629, EffectID: 3830, Name: "Exceptional Spellpower", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{stats.SpellPower: 50, stats.HealingPower: 50}, ItemType: proto.ItemType_ItemTypeWeapon},
 	{ID: 60621, EffectID: 1606, Name: "Greater Potency", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{stats.AttackPower: 50, stats.RangedAttackPower: 50}, ItemType: proto.ItemType_ItemTypeWeapon},
-	{ID: 53343, EffectID: 3370, Name: "Rune of Razorice", Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, ClassAllowlist: []proto.Class{proto.Class_ClassDeathKnight}},
-	{ID: 53341, EffectID: 3369, Name: "Rune of Cinderglacier", Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, ClassAllowlist: []proto.Class{proto.Class_ClassDeathKnight}},
-	{ID: 53331, EffectID: 3366, Name: "Rune of Lichbane", Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, ClassAllowlist: []proto.Class{proto.Class_ClassDeathKnight}},
-	{ID: 54447, EffectID: 3595, Name: "Rune of Spellbreaking", Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, ClassAllowlist: []proto.Class{proto.Class_ClassDeathKnight}},
-	{ID: 54446, EffectID: 3594, Name: "Rune of Swordbreaking", Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, ClassAllowlist: []proto.Class{proto.Class_ClassDeathKnight}},
-	{ID: 53344, EffectID: 3368, Name: "Rune of the Fallen Crusader", Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, ClassAllowlist: []proto.Class{proto.Class_ClassDeathKnight}},
-	{ID: 70164, EffectID: 3883, Name: "Rune of the Nerubian Carapace", Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, ClassAllowlist: []proto.Class{proto.Class_ClassDeathKnight}},
+	{ID: 53343, EffectID: 3370, Name: "Rune of Razorice", IsSpellID: true, Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, ClassAllowlist: []proto.Class{proto.Class_ClassDeathknight}},
+	{ID: 53341, EffectID: 3369, Name: "Rune of Cinderglacier", IsSpellID: true, Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, ClassAllowlist: []proto.Class{proto.Class_ClassDeathknight}},
+	{ID: 53331, EffectID: 3366, Name: "Rune of Lichbane", IsSpellID: true, Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, ClassAllowlist: []proto.Class{proto.Class_ClassDeathknight}},
+	{ID: 54447, EffectID: 3595, Name: "Rune of Spellbreaking", IsSpellID: true, Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, ClassAllowlist: []proto.Class{proto.Class_ClassDeathknight}},
+	{ID: 54446, EffectID: 3594, Name: "Rune of Swordbreaking", IsSpellID: true, Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, ClassAllowlist: []proto.Class{proto.Class_ClassDeathknight}},
+	{ID: 53344, EffectID: 3368, Name: "Rune of the Fallen Crusader", IsSpellID: true, Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, ClassAllowlist: []proto.Class{proto.Class_ClassDeathknight}},
+	{ID: 70164, EffectID: 3883, Name: "Rune of the Nerubian Carapace", IsSpellID: true, Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, ClassAllowlist: []proto.Class{proto.Class_ClassDeathknight}},
 
 	// 2H Weapon
 	{ID: 44473, EffectID: 3247, Name: "Scourgebane", Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeTwoHand},
 	{ID: 44483, EffectID: 3827, Name: "Massacre", Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{stats.AttackPower: 110, stats.RangedAttackPower: 110}, ItemType: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeTwoHand},
 	{ID: 44630, EffectID: 3828, Name: "Greater Savagery", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{stats.AttackPower: 85, stats.RangedAttackPower: 85}, ItemType: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeTwoHand},
-	{ID: 53342, EffectID: 3367, Name: "Rune of Spellshattering", Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, ClassAllowlist: []proto.Class{proto.Class_ClassDeathKnight}},
-	{ID: 53323, EffectID: 3365, Name: "Rune of Swordshattering", Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, ClassAllowlist: []proto.Class{proto.Class_ClassDeathKnight}},
-	{ID: 62158, EffectID: 3847, Name: "Rune of the Stoneskin Gargoyle", Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, ClassAllowlist: []proto.Class{proto.Class_ClassDeathKnight}},
+	{ID: 53342, EffectID: 3367, Name: "Rune of Spellshattering", IsSpellID: true, Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, ClassAllowlist: []proto.Class{proto.Class_ClassDeathknight}},
+	{ID: 53323, EffectID: 3365, Name: "Rune of Swordshattering", IsSpellID: true, Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, ClassAllowlist: []proto.Class{proto.Class_ClassDeathknight}},
+	{ID: 62158, EffectID: 3847, Name: "Rune of the Stoneskin Gargoyle", IsSpellID: true, Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, ClassAllowlist: []proto.Class{proto.Class_ClassDeathknight}},
 
 	// Shield
 	{ID: 44489, EffectID: 1952, Name: "Defense", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{stats.Defense: 20}, ItemType: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeShield},
@@ -167,9 +168,9 @@ var Enchants = []Enchant{
 	{ID: 44936, EffectID: 3849, Name: "Titanium Plating", Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{stats.BlockValue: 81}, ItemType: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeShield},
 
 	// Ring
-	{ID: 44645, EffectID: 3839, Name: "Assault", Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{stats.AttackPower: 40, stats.RangedAttackPower: 40}, ItemType: proto.ItemType_ItemTypeFinger, RequiredProfession: proto.Profession_Enchanting},
-	{ID: 44636, EffectID: 3840, Name: "Greater Spellpower", Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{stats.SpellPower: 23, stats.HealingPower: 23}, ItemType: proto.ItemType_ItemTypeFinger, RequiredProfession: proto.Profession_Enchanting},
-	{ID: 59636, EffectID: 3791, Name: "Stamina", Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{stats.Stamina: 30}, ItemType: proto.ItemType_ItemTypeFinger, RequiredProfession: proto.Profession_Enchanting},
+	{ID: 44645, EffectID: 3839, Name: "Assault", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{stats.AttackPower: 40, stats.RangedAttackPower: 40}, ItemType: proto.ItemType_ItemTypeFinger, RequiredProfession: proto.Profession_Enchanting},
+	{ID: 44636, EffectID: 3840, Name: "Greater Spellpower", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{stats.SpellPower: 23, stats.HealingPower: 23}, ItemType: proto.ItemType_ItemTypeFinger, RequiredProfession: proto.Profession_Enchanting},
+	{ID: 59636, EffectID: 3791, Name: "Stamina", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{stats.Stamina: 30}, ItemType: proto.ItemType_ItemTypeFinger, RequiredProfession: proto.Profession_Enchanting},
 
 	// Ranged
 	{ID: 41146, EffectID: 3607, Name: "Sun Scope", Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeRanged},

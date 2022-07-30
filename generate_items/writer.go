@@ -157,6 +157,11 @@ func gemToGoString(gemDeclaration GemDeclaration, gemResponse ItemResponse) stri
 		gemStr += "Unique:true, "
 	}
 
+	prof := gemResponse.GetRequiredProfession()
+	if prof != proto.Profession_ProfessionUnknown {
+		gemStr += fmt.Sprintf("RequiredProfession:proto.Profession_%s, ", prof.String())
+	}
+
 	gemStr += "}"
 	return gemStr
 }
@@ -249,6 +254,11 @@ func itemToGoString(itemData ItemData) string {
 		itemStr += fmt.Sprintf(", SetName: \"%s\"", setName)
 	}
 
+	prof := itemData.Response.GetRequiredProfession()
+	if prof != proto.Profession_ProfessionUnknown {
+		itemStr += fmt.Sprintf(", RequiredProfession:proto.Profession_%s", prof.String())
+	}
+
 	if itemData.Response.IsHeroic() {
 		itemStr += ", Heroic: true"
 	}
@@ -302,6 +312,7 @@ var allowList = map[int]bool{
 	9449:  true, // Manual Crowd Pummeler
 	11815: true, // Hand of Justice
 	12632: true, // Storm Gauntlets
+	15808: true, // Fine Light Crossbow (for hunter testing).
 	17111: true, // Blazefury Medallion
 	17112: true, // Empyrean Demolisher
 	19808: true, // Rockhide Strongfish

@@ -27,7 +27,7 @@ func (hunter *Hunter) registerKillShotSpell() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    hunter.NewTimer(),
-				Duration: time.Second*15 - core.TernaryDuration(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfAimedShot), time.Second*6, 0),
+				Duration: time.Second*15 - core.TernaryDuration(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfKillShot), time.Second*6, 0),
 			},
 		},
 
@@ -40,7 +40,8 @@ func (hunter *Hunter) registerKillShotSpell() {
 
 			BaseDamage: hunter.talonOfAlarDamageMod(core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return 2 * ((hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.2 +
+					rap := hitEffect.RangedAttackPower(spell.Unit) + hitEffect.RangedAttackPowerOnTarget()
+					return 2 * (rap*0.4 + // 0.2 rap from normalized weapon (2.8/14) and 0.2 from bonus ratio
 						hunter.AutoAttacks.Ranged.BaseDamage(sim) +
 						hunter.AmmoDamageBonus +
 						hitEffect.BonusWeaponDamage(spell.Unit) +

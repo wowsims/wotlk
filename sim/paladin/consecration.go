@@ -10,55 +10,43 @@ import (
 
 // Maybe could switch "rank" parameter type to some proto thing. Would require updates to proto files.
 // Prot guys do whatever you want here I guess
-func (paladin *Paladin) RegisterConsecrationSpell(rank int32) {
-	var manaCost float64
-	var actionID core.ActionID
-	var baseDamage float64
+func (paladin *Paladin) registerConsecrationSpell() {
+	// TODO: Properly implement max rank consecration.
 
-	switch rank {
-	case 6:
-		manaCost = 660
-		actionID.SpellID = 27173
-		baseDamage = 64
-	case 4:
-		manaCost = 390
-		actionID.SpellID = 20923
-		baseDamage = 35
-	case 1:
-		manaCost = 120
-		actionID.SpellID = 26573
-		baseDamage = 8
-	default:
-		manaCost = 0.0
-	}
-
-	switch paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID {
-	case 27917:
-		baseDamage += (47 * 0.952) // applies 47 "spell power" to the spell
-	}
-
-	// Check for bad input
-	if manaCost == 0.0 {
-		panic("Undefined Consecration rank specified.")
-	}
+	baseCost := 0.22 * paladin.BaseMana
+	actionID := core.ActionID{SpellID: 48819}
 
 	consecrationDot := core.NewDot(core.Dot{
 		Aura: paladin.RegisterAura(core.Aura{
 			Label:    "Consecration",
 			ActionID: actionID,
 		}),
-		NumberOfTicks: 8,
+		NumberOfTicks: 8 + core.TernaryInt(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfConsecration), 2, 0),
 		TickLength:    time.Second * 1,
 		TickEffects: core.TickFuncAOESnapshot(paladin.Env, core.SpellEffect{
-			ProcMask:        core.ProcMaskEmpty,
-			BonusSpellPower: core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 27917, 47*0.8, 0),
+			ProcMask: core.ProcMaskEmpty,
 
-			DamageMultiplier: 1 *
-				core.TernaryFloat64(ItemSetLightbringerArmor.CharacterHasSetBonus(&paladin.Character, 4), 1.1, 1),
+			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(baseDamage, 0.119),
-			OutcomeApplier:   paladin.OutcomeFuncMagicHit(),
-			IsPeriodic:       true,
+			BaseDamage: core.BaseDamageConfig{
+				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+					// i = 113 + 0.04*HolP + 0.04*AP
+					scaling := hybridScaling{
+						AP: 0.04,
+						SP: 0.04,
+					}
+
+					sp := hitEffect.SpellPower(spell.Unit, spell) +
+						core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 27917, 47*0.8, 0) +
+						core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 40337, 141, 0) // Libram of Resurgence
+
+					damage := 113 + (scaling.AP * hitEffect.MeleeAttackPower(spell.Unit)) + (scaling.SP * sp)
+
+					return damage
+				},
+			},
+			OutcomeApplier: paladin.OutcomeFuncMagicHit(),
+			IsPeriodic:     true,
 		}),
 	})
 
@@ -67,16 +55,16 @@ func (paladin *Paladin) RegisterConsecrationSpell(rank int32) {
 		SpellSchool: core.SpellSchoolHoly,
 
 		ResourceType: stats.Mana,
-		BaseCost:     manaCost,
+		BaseCost:     baseCost,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: manaCost,
+				Cost: baseCost * (1 - 0.02*float64(paladin.Talents.Benediction)),
 				GCD:  core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    paladin.NewTimer(),
-				Duration: time.Second * 8,
+				Duration: (time.Second * 8) + core.TernaryDuration(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfConsecration), time.Second*2, 0),
 			},
 		},
 

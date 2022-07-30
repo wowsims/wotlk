@@ -6,7 +6,7 @@ import { TalentsConfig, newTalentsConfig } from './talents_picker.js';
 export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig([
 	{
 		name: 'Assassination',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/182.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/182.jpg',
 		talents: [
 			{
 				fieldName: 'improvedEviscerate',
@@ -18,7 +18,7 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 				maxPoints: 3,
 			},
 			{
-				//fieldName: 'remorselessAttacks',
+				fieldName: 'remorselessAttacks',
 				location: {
 					rowIdx: 0,
 					colIdx: 1,
@@ -45,12 +45,12 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 				maxPoints: 3,
 			},
 			{
-				fieldName: 'murder',
+				fieldName: 'bloodSpatter',
 				location: {
 					rowIdx: 1,
 					colIdx: 1,
 				},
-				spellIds: [14158],
+				spellIds: [51632, 51633],
 				maxPoints: 2,
 			},
 			{
@@ -63,12 +63,12 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 				maxPoints: 3,
 			},
 			{
-				fieldName: 'relentlessStrikes',
+				fieldName: 'vigor',
 				location: {
 					rowIdx: 2,
 					colIdx: 0,
 				},
-				spellIds: [14179],
+				spellIds: [14983],
 				maxPoints: 1,
 			},
 			{
@@ -99,8 +99,8 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 					rowIdx: 3,
 					colIdx: 1,
 				},
-				spellIds: [16513, 16514, 16515, 16719],
-				maxPoints: 5,
+				spellIds: [16513, 16514, 16515],
+				maxPoints: 3,
 			},
 			{
 				fieldName: 'improvedPoisons',
@@ -108,11 +108,11 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 					rowIdx: 3,
 					colIdx: 2,
 				},
-				spellIds: [14113],
+				spellIds: [14113, 14114, 14115, 14116, 14117],
 				maxPoints: 5,
 			},
 			{
-				//fieldName: 'fleetFooted',
+				fieldName: 'fleetFooted',
 				location: {
 					rowIdx: 4,
 					colIdx: 0,
@@ -130,7 +130,7 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 				maxPoints: 1,
 			},
 			{
-				//fieldName: 'improvedKidneyShot',
+				fieldName: 'improvedKidneyShot',
 				location: {
 					rowIdx: 4,
 					colIdx: 2,
@@ -161,31 +161,49 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 				maxPoints: 5,
 			},
 			{
-				fieldName: 'masterPoisoner',
+				fieldName: 'murder',
 				location: {
 					rowIdx: 5,
 					colIdx: 2,
 				},
-				spellIds: [31226],
+				spellIds: [14158, 14159],
 				maxPoints: 2,
 			},
 			{
-				fieldName: 'vigor',
+				fieldName: 'deadlyBrew',
+				location: {
+					rowIdx: 6,
+					colIdx: 0,
+				},
+				spellIds: [51625, 51626],
+				maxPoints: 2,
+			},
+			{
+				fieldName: 'overkill',
 				location: {
 					rowIdx: 6,
 					colIdx: 1,
 				},
-				spellIds: [14983],
+				spellIds: [58426],
 				maxPoints: 1,
 			},
 			{
-				//fieldName: 'deadenedNerves',
+				fieldName: 'deadenedNerves',
 				location: {
 					rowIdx: 6,
 					colIdx: 2,
 				},
-				spellIds: [31380, 31382],
-				maxPoints: 5,
+				spellIds: [31380, 31382, 31383],
+				maxPoints: 3,
+			},
+			{
+				fieldName: 'focusedAttacks',
+				location: {
+					rowIdx: 7,
+					colIdx: 0,
+				},
+				spellIds: [51634, 51635, 51636],
+				maxPoints: 3,
 			},
 			{
 				fieldName: 'findWeakness',
@@ -193,8 +211,17 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 					rowIdx: 7,
 					colIdx: 2,
 				},
-				spellIds: [31233, 31239],
-				maxPoints: 5,
+				spellIds: [31234, 31235, 31236],
+				maxPoints: 3,
+			},
+			{
+				fieldName: 'masterPoisoner',
+				location: {
+					rowIdx: 8,
+					colIdx: 0,
+				},
+				spellIds: [31226, 31227, 58410],
+				maxPoints: 3,
 			},
 			{
 				fieldName: 'mutilate',
@@ -209,14 +236,41 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 				spellIds: [1329],
 				maxPoints: 1,
 			},
+			{
+				fieldName: 'turnTheTables',
+				location: {
+					rowIdx: 8,
+					colIdx: 2,
+				},
+				spellIds: [51627, 51628, 51629],
+				maxPoints: 3,
+			},
+			{
+				fieldName: 'cutToTheChase',
+				location: {
+					rowIdx: 9,
+					colIdx: 1,
+				},
+				spellIds: [51664, 51665, 51666, 51667, 51668],
+				maxPoints: 5,
+			},
+			{
+				fieldName: 'hungerForBlood',
+				location: {
+					rowIdx: 10,
+					colIdx: 1,
+				},
+				spellIds: [51662],
+				maxPoints: 1,
+			},
 		],
 	},
 	{
 		name: 'Combat',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/181.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/181.jpg',
 		talents: [
 			{
-				//fieldName: 'improvedGouge',
+				fieldName: 'improvedGouge',
 				location: {
 					rowIdx: 0,
 					colIdx: 0,
@@ -234,12 +288,12 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 				maxPoints: 2,
 			},
 			{
-				fieldName: 'lightningReflexes',
+				fieldName: 'dualWieldSpecialization',
 				location: {
 					rowIdx: 0,
 					colIdx: 2,
 				},
-				spellIds: [13712, 13788],
+				spellIds: [13715, 13848, 13849, 13851, 13852],
 				maxPoints: 5,
 			},
 			{
@@ -248,8 +302,8 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 					rowIdx: 1,
 					colIdx: 0,
 				},
-				spellIds: [14165],
-				maxPoints: 3,
+				spellIds: [14165, 14166],
+				maxPoints: 2,
 			},
 			{
 				fieldName: 'deflection',
@@ -257,20 +311,20 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 					rowIdx: 1,
 					colIdx: 1,
 				},
-				spellIds: [13713, 13853],
-				maxPoints: 5,
+				spellIds: [13713, 13853, 13854],
+				maxPoints: 3,
 			},
 			{
 				fieldName: 'precision',
 				location: {
 					rowIdx: 1,
-					colIdx: 2,
+					colIdx: 3,
 				},
-				spellIds: [13705, 13832, 13843],
+				spellIds: [13705, 13832, 13843, 13844, 13845],
 				maxPoints: 5,
 			},
 			{
-				//fieldName: 'endurance',
+				fieldName: 'endurance',
 				location: {
 					rowIdx: 2,
 					colIdx: 0,
@@ -279,7 +333,7 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 				maxPoints: 2,
 			},
 			{
-				//fieldName: 'riposte',
+				fieldName: 'riposte',
 				location: {
 					rowIdx: 2,
 					colIdx: 1,
@@ -292,16 +346,20 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 				maxPoints: 1,
 			},
 			{
-				//fieldName: 'improvedSprint',
+				fieldName: 'closeQuartersCombat',
 				location: {
 					rowIdx: 2,
-					colIdx: 3,
+					colIdx: 2,
 				},
-				spellIds: [13743, 13875],
-				maxPoints: 2,
+				prereqLocation: {
+					rowIdx: 0,
+					colIdx: 2,
+				},
+				spellIds: [13706, 13804, 13805, 13806, 13807],
+				maxPoints: 5,
 			},
 			{
-				//fieldName: 'improvedKick',
+				fieldName: 'improvedKick',
 				location: {
 					rowIdx: 3,
 					colIdx: 0,
@@ -310,25 +368,30 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 				maxPoints: 2,
 			},
 			{
-				fieldName: 'daggerSpecialization',
+				fieldName: 'improvedSprint',
 				location: {
 					rowIdx: 3,
 					colIdx: 1,
 				},
-				spellIds: [13706, 13804],
-				maxPoints: 5,
+				spellIds: [13743, 13875],
+				maxPoints: 2,
 			},
 			{
-				fieldName: 'dualWieldSpecialization',
+				fieldName: 'lightningReflexes',
 				location: {
 					rowIdx: 3,
 					colIdx: 2,
 				},
-				prereqLocation: {
-					rowIdx: 1,
-					colIdx: 2,
+				spellIds: [13712, 13788, 13789],
+				maxPoints: 3,
+			},
+			{
+				fieldName: 'aggression',
+				location: {
+					rowIdx: 3,
+					colIdx: 3,
 				},
-				spellIds: [13715, 13848, 13849, 13851],
+				spellIds: [18427, 18428, 18429, 61330, 61331],
 				maxPoints: 5,
 			},
 			{
@@ -337,7 +400,7 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 					rowIdx: 4,
 					colIdx: 0,
 				},
-				spellIds: [13709, 13800],
+				spellIds: [13709, 13800, 13801, 13802, 13803],
 				maxPoints: 5,
 			},
 			{
@@ -350,31 +413,13 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 				maxPoints: 1,
 			},
 			{
-				fieldName: 'swordSpecialization',
+				fieldName: 'hackAndSlash',
 				location: {
 					rowIdx: 4,
 					colIdx: 2,
 				},
-				spellIds: [13960],
+				spellIds: [13960, 13961, 13962, 13963, 13964],
 				maxPoints: 5,
-			},
-			{
-				fieldName: 'fistWeaponSpecialization',
-				location: {
-					rowIdx: 4,
-					colIdx: 3,
-				},
-				spellIds: [13707, 13966],
-				maxPoints: 5,
-			},
-			{
-				//fieldName: 'bladeTwisting',
-				location: {
-					rowIdx: 5,
-					colIdx: 0,
-				},
-				spellIds: [31124, 31126],
-				maxPoints: 2,
 			},
 			{
 				fieldName: 'weaponExpertise',
@@ -390,13 +435,13 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 				maxPoints: 2,
 			},
 			{
-				fieldName: 'aggression',
+				fieldName: 'bladeTwisting',
 				location: {
 					rowIdx: 5,
 					colIdx: 2,
 				},
-				spellIds: [18427],
-				maxPoints: 3,
+				spellIds: [31124, 31126],
+				maxPoints: 2,
 			},
 			{
 				fieldName: 'vitality',
@@ -404,8 +449,8 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 					rowIdx: 6,
 					colIdx: 0,
 				},
-				spellIds: [31122],
-				maxPoints: 2,
+				spellIds: [31122, 31123, 61329],
+				maxPoints: 3,
 			},
 			{
 				fieldName: 'adrenalineRush',
@@ -417,7 +462,7 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 				maxPoints: 1,
 			},
 			{
-				//fieldName: 'nervesOfSteel',
+				fieldName: 'nervesOfSteel',
 				location: {
 					rowIdx: 6,
 					colIdx: 2,
@@ -426,13 +471,31 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 				maxPoints: 2,
 			},
 			{
+				fieldName: 'throwingSpecialization',
+				location: {
+					rowIdx: 7,
+					colIdx: 0,
+				},
+				spellIds: [5952, 51679],
+				maxPoints: 2,
+			},
+			{
 				fieldName: 'combatPotency',
 				location: {
 					rowIdx: 7,
 					colIdx: 2,
 				},
-				spellIds: [35541, 35550],
+				spellIds: [35541, 35550, 35551, 35552, 35553],
 				maxPoints: 5,
+			},
+			{
+				fieldName: 'unfairAdvantage',
+				location: {
+					rowIdx: 8,
+					colIdx: 0,
+				},
+				spellIds: [51672, 51674],
+				maxPoints: 2,
 			},
 			{
 				fieldName: 'surpriseAttacks',
@@ -447,20 +510,56 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 				spellIds: [32601],
 				maxPoints: 1,
 			},
+			{
+				fieldName: 'savageCombat',
+				location: {
+					rowIdx: 8,
+					colIdx: 2,
+				},
+				spellIds: [51682, 58413],
+				maxPoints: 2,
+			},
+			{
+				fieldName: 'preyOnTheWeak',
+				location: {
+					rowIdx: 9,
+					colIdx: 1,
+				},
+				spellIds: [51685, 51686, 51687, 51688, 51689],
+				maxPoints: 5,
+			},
+			{
+				fieldName: 'killingSpree',
+				location: {
+					rowIdx: 10,
+					colIdx: 1,
+				},
+				spellIds: [51690],
+				maxPoints: 1,
+			},
 		],
 	},
 	{
 		name: 'Subtlety',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/183.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/183.jpg',
 		talents: [
 			{
-				//fieldName: 'masterOfDeception',
+				fieldName: 'relentlessStrikes',
+				location: {
+					rowIdx: 0,
+					colIdx: 0,
+				},
+				spellIds: [14179, 58422, 58423, 58424, 58425],
+				maxPoints: 5,
+			},
+			{
+				fieldName: 'masterOfDeception',
 				location: {
 					rowIdx: 0,
 					colIdx: 1,
 				},
-				spellIds: [13958, 13970],
-				maxPoints: 5,
+				spellIds: [13958, 13970, 13971],
+				maxPoints: 3,
 			},
 			{
 				fieldName: 'opportunity',
@@ -469,7 +568,7 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 					colIdx: 2,
 				},
 				spellIds: [14057, 14072],
-				maxPoints: 5,
+				maxPoints: 2,
 			},
 			{
 				fieldName: 'sleightOfHand',
@@ -477,11 +576,11 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 					rowIdx: 1,
 					colIdx: 0,
 				},
-				spellIds: [30892],
+				spellIds: [30892, 30893],
 				maxPoints: 2,
 			},
 			{
-				//fieldName: 'dirtyTricks',
+				fieldName: 'dirtyTricks',
 				location: {
 					rowIdx: 1,
 					colIdx: 1,
@@ -490,22 +589,22 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 				maxPoints: 2,
 			},
 			{
-				//fieldName: 'camoflauge',
+				fieldName: 'camouflage',
 				location: {
 					rowIdx: 1,
 					colIdx: 2,
 				},
-				spellIds: [13975, 14062],
-				maxPoints: 5,
+				spellIds: [13975, 14062, 14603],
+				maxPoints: 3,
 			},
 			{
-				fieldName: 'initiative',
+				fieldName: 'elusiveness',
 				location: {
 					rowIdx: 2,
 					colIdx: 0,
 				},
-				spellIds: [13976, 13979],
-				maxPoints: 3,
+				spellIds: [13981, 14066],
+				maxPoints: 2,
 			},
 			{
 				fieldName: 'ghostlyStrike',
@@ -517,48 +616,48 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 				maxPoints: 1,
 			},
 			{
-				fieldName: 'improvedAmbush',
+				fieldName: 'serratedBlades',
 				location: {
 					rowIdx: 2,
 					colIdx: 2,
 				},
-				spellIds: [14079],
+				spellIds: [14171, 14172, 14173],
 				maxPoints: 3,
 			},
 			{
-				//fieldName: 'setup',
+				fieldName: 'setup',
 				location: {
 					rowIdx: 3,
 					colIdx: 0,
 				},
-				spellIds: [13983, 14070],
+				spellIds: [13983, 14070, 14071],
 				maxPoints: 3,
 			},
 			{
-				fieldName: 'elusiveness',
+				fieldName: 'initiative',
 				location: {
 					rowIdx: 3,
 					colIdx: 1,
 				},
-				spellIds: [13981, 14066],
-				maxPoints: 2,
+				spellIds: [13976, 13979, 13980],
+				maxPoints: 3,
 			},
 			{
-				fieldName: 'serratedBlades',
+				fieldName: 'improvedAmbush',
 				location: {
 					rowIdx: 3,
 					colIdx: 2,
 				},
-				spellIds: [14171],
-				maxPoints: 3,
+				spellIds: [14079, 14080],
+				maxPoints: 2,
 			},
 			{
-				//fieldName: 'heightenedSenses',
+				fieldName: 'heightenedSenses',
 				location: {
 					rowIdx: 4,
 					colIdx: 0,
 				},
-				spellIds: [30894],
+				spellIds: [30894, 30895],
 				maxPoints: 2,
 			},
 			{
@@ -576,7 +675,7 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 					rowIdx: 4,
 					colIdx: 2,
 				},
-				spellIds: [14082],
+				spellIds: [14082, 14083],
 				maxPoints: 2,
 			},
 			{
@@ -586,7 +685,7 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 					colIdx: 3,
 				},
 				prereqLocation: {
-					rowIdx: 3,
+					rowIdx: 2,
 					colIdx: 2,
 				},
 				spellIds: [16511],
@@ -598,7 +697,7 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 					rowIdx: 5,
 					colIdx: 0,
 				},
-				spellIds: [31221],
+				spellIds: [31221, 31222, 31223],
 				maxPoints: 3,
 			},
 			{
@@ -607,16 +706,16 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 					rowIdx: 5,
 					colIdx: 2,
 				},
-				spellIds: [30902],
+				spellIds: [30902, 30903, 30904, 30905, 30906],
 				maxPoints: 5,
 			},
 			{
-				//fieldName: 'envelopingShadows',
+				fieldName: 'envelopingShadows',
 				location: {
 					rowIdx: 6,
 					colIdx: 0,
 				},
-				spellIds: [31211],
+				spellIds: [31211, 31212, 31213],
 				maxPoints: 3,
 			},
 			{
@@ -633,12 +732,12 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 				maxPoints: 1,
 			},
 			{
-				//fieldName: 'cheatDeath',
+				fieldName: 'cheatDeath',
 				location: {
 					rowIdx: 6,
 					colIdx: 2,
 				},
-				spellIds: [31228],
+				spellIds: [31228, 31229, 31230],
 				maxPoints: 3,
 			},
 			{
@@ -651,8 +750,26 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 					rowIdx: 6,
 					colIdx: 1,
 				},
-				spellIds: [31216],
+				spellIds: [31216, 31217, 31218, 31219, 31220],
 				maxPoints: 5,
+			},
+			{
+				fieldName: 'waylay',
+				location: {
+					rowIdx: 7,
+					colIdx: 2,
+				},
+				spellIds: [51692, 51696],
+				maxPoints: 2,
+			},
+			{
+				fieldName: 'honorAmongThieves',
+				location: {
+					rowIdx: 8,
+					colIdx: 0,
+				},
+				spellIds: [51698, 51670, 51671],
+				maxPoints: 3,
 			},
 			{
 				fieldName: 'shadowstep',
@@ -661,6 +778,33 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 					colIdx: 1,
 				},
 				spellIds: [36554],
+				maxPoints: 1,
+			},
+			{
+				fieldName: 'filthyTricks',
+				location: {
+					rowIdx: 8,
+					colIdx: 2,
+				},
+				spellIds: [36554],
+				maxPoints: 2,
+			},
+			{
+				fieldName: 'slaughterFromTheShadows',
+				location: {
+					rowIdx: 9,
+					colIdx: 1,
+				},
+				spellIds: [51708, 51709, 51710, 51711, 51712],
+				maxPoints: 5,
+			},
+			{
+				fieldName: 'shadowDance',
+				location: {
+					rowIdx: 10,
+					colIdx: 1,
+				},
+				spellIds: [51713],
 				maxPoints: 1,
 			},
 		],

@@ -12,7 +12,7 @@ const ShoutExpirationThreshold = time.Second * 3
 
 func (warrior *Warrior) makeShoutSpellHelper(actionID core.ActionID) *core.Spell {
 	cost := 10.0
-	if ItemSetBoldArmor.CharacterHasSetBonus(&warrior.Character, 2) {
+	if warrior.HasSetBonus(ItemSetBoldArmor, 2) {
 		cost -= 2
 	}
 

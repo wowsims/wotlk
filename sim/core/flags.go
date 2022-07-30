@@ -1,7 +1,9 @@
 package core
 
-import "github.com/wowsims/wotlk/sim/core/proto"
-import "github.com/wowsims/wotlk/sim/core/stats"
+import (
+	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
+)
 
 type ProcMask uint32
 
@@ -74,6 +76,8 @@ const (
 	ProcMaskDirect = ProcMaskMelee | ProcMaskRanged | ProcMaskSpellDamage
 
 	ProcMaskTwoRoll = ProcMaskRanged | ProcMaskMeleeSpecial
+
+	ProcMaskSpecial = ProcMaskMeleeOrRangedSpecial | ProcMaskSpellDamage
 )
 
 func GetMeleeProcMaskForHands(mh bool, oh bool) ProcMask {
@@ -172,6 +176,7 @@ const (
 	SpellFlagCannotBeDodged                         // Ignores dodge in physical hit rolls
 	SpellFlagBinary                                 // Does not do partial resists and could need a different hit roll.
 	SpellFlagChanneled                              // Spell is channeled
+	SpellFlagDisease                                // Spell is categorized as disease
 	SpellFlagIgnoreModifiers                        // Only used by Ignite
 	SpellFlagMeleeMetrics                           // Marks a spell as a melee ability for metrics.
 	SpellFlagNoOnCastComplete                       // Disables OnCastComplete callbacks.

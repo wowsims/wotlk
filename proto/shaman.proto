@@ -187,6 +187,13 @@ enum ShamanShield {
 	LightningShield = 2;
 }
 
+enum ShamanImbue {
+    NoImbue = 0;
+    WindfuryWeapon = 1;
+    FlametongueWeapon = 2;
+    FrostbrandWeapon = 3;
+}
+
 message ElementalShaman {
 	message Rotation {
 		ShamanTotems totems = 3;
@@ -196,6 +203,7 @@ message ElementalShaman {
 			Adaptive = 1;
 		}
 		RotationType type = 1;
+		bool in_thunderstorm_range = 2;
 	}
 
 	message Options {
@@ -212,18 +220,15 @@ message ElementalShaman {
 message EnhancementShaman {
 	message Rotation {
 		ShamanTotems totems = 1;
-		enum PrimaryShock {
-				None = 0;
-				Earth = 1;
-				Frost = 2;
-		}
-		PrimaryShock primary_shock = 2;
-	}
+	    // TODO: lightning/possibly lavaburst weaving
+    }
 
   message Options {
 	ShamanShield shield = 1;
 	bool bloodlust = 2;
-	bool delay_offhand_swings = 3; // TODO: does enh need this in wotlk?
+	bool delay_offhand_swings = 3;
+    ShamanImbue imbueMH = 4;
+    ShamanImbue imbueOH = 5;
   }
 
   Rotation rotation = 1;

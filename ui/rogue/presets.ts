@@ -5,10 +5,12 @@ import { Consumes } from '/wotlk/core/proto/common.js';
 import { EquipmentSpec } from '/wotlk/core/proto/common.js';
 import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
+import { Glyphs } from '/wotlk/core/proto/common.js';
 import { ItemSpec } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
 import { Faction } from '/wotlk/core/proto/common.js';
+import { SavedTalents } from '/wotlk/core/proto/ui.js';
 import { Player } from '/wotlk/core/player.js';
 
 import {
@@ -30,24 +32,14 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 export const CombatTalents = {
 	name: 'Combat',
-	data: '0053201252-023305102005015002321051',
-};
-export const CombatMaceTalents = {
-	name: 'Combat Maces',
-	data: '005320123-023305002005515002321051',
-};
-export const MutilateTalents = {
-	name: 'Mutilate',
-	data: '005323125500102501051-005305200005',
-};
-export const HemoTalents = {
-	name: 'Hemo',
-	data: '-02330520100501500232105-500252100230001',
+	data: SavedTalents.create({
+		talentsString: '00532000532-0252051000035015223100501251',
+	}),
 };
 
 export const DefaultRotation = RogueRotation.create({
 	builder: Builder.Auto,
-	maintainExposeArmor: true,
+	maintainExposeArmor: false,
 	useRupture: true,
 	useShiv: true,
 	minComboPointsForDamageFinisher: 3,
@@ -57,506 +49,98 @@ export const DefaultOptions = RogueOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	defaultPotion: Potions.HastePotion,
+	defaultPotion: Potions.PotionOfSpeed,
 	defaultConjured: Conjured.ConjuredRogueThistleTea,
-	battleElixir: BattleElixir.ElixirOfMajorAgility,
-	food: Food.FoodSpicyHotTalbuk,
-	mainHandImbue: WeaponImbue.WeaponImbueAdamantiteSharpeningStone,
+	battleElixir: BattleElixir.ElixirOfDeadlyStrikes,
+	food: Food.FoodFishFeast,
+	mainHandImbue: WeaponImbue.WeaponImbueRogueInstantPoison,
 	offHandImbue: WeaponImbue.WeaponImbueRogueDeadlyPoison,
-	scrollOfAgility: 5,
-	scrollOfStrength: 5,
 });
 
 export const P1_PRESET = {
 	name: 'P1 Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 29044,
-			"enchant": 29192,
-			"gems": [
-				32409,
-				24061
-			]
-		},
-		{
-			"id": 29381
-		},
-		{
-			"id": 27797,
-			"enchant": 28888,
-			"gems": [
-				24061,
-				24055
-			]
-		},
-		{
-			"id": 28672,
-			"enchant": 34004
-		},
-		{
-			"id": 29045,
-			"enchant": 24003,
-			"gems": [
-				24061,
-				24051,
-				24055
-			]
-		},
-		{
-			"id": 29246,
-			"enchant": 34002
-		},
-		{
-			"id": 27531,
-			"enchant": 19445,
-			"gems": [
-				24061,
-				24061
-			]
-		},
-		{
-			"id": 29247
-		},
-		{
-			"id": 28741,
-			"enchant": 29535,
-			"gems": [
-				24051,
-				24051,
-				24051
-			]
-		},
-		{
-			"id": 28545,
-			"enchant": 28279,
-			"gems": [
-				24061,
-				24051
-			]
-		},
-		{
-			"id": 28757
-		},
-		{
-			"id": 28649
-		},
-		{
-			"id": 29383
-		},
-		{
-			"id": 28830
-		},
-		{
-			"id": 28729,
-			"enchant": 22559
-		},
-		{
-			"id": 28189,
-			"enchant": 22559
-		},
-		{
-			"id": 28772
-		}
-	]}`),
-};
-
-export const P2_PRESET = {
-	name: 'P2 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 30146,
-			"enchant": 29192,
-			"gems": [
-				32409,
-				24061
-			]
-		},
-		{
-			"id": 29381
-		},
-		{
-			"id": 30149,
-			"enchant": 28888,
-			"gems": [
-				24061,
-				24055
-			]
-		},
-		{
-			"id": 28672,
-			"enchant": 34004
-		},
-		{
-			"id": 30101,
-			"enchant": 24003,
-			"gems": [
-				24051,
-				24051,
-				24055
-			]
-		},
-		{
-			"id": 29966,
-			"enchant": 34002,
-			"gems": [
-				24051
-			]
-		},
-		{
-			"id": 30145,
-			"enchant": 19445
-		},
-		{
-			"id": 30106,
-			"gems": [
-				24051,
-				24051
-			]
-		},
-		{
-			"id": 30148,
-			"enchant": 29535,
-			"gems": [
-				24051
-			]
-		},
-		{
-			"id": 28545,
-			"enchant": 28279,
-			"gems": [
-				24061,
-				24051
-			]
-		},
-		{
-			"id": 29997
-		},
-		{
-			"id": 30052
-		},
-		{
-			"id": 28830
-		},
-		{
-			"id": 30450
-		},
-		{
-			"id": 30082,
-			"enchant": 22559
-		},
-		{
-			"id": 28189,
-			"enchant": 22559
-		},
-		{
-			"id": 29949,
-			"enchant": 23766
-		}
-	]}`),
-};
-
-export const P3_PRESET = {
-	name: 'P3 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 32235,
-			"enchant": 29192,
-			"gems": [
-				32409,
-				32220
-			]
-		},
-		{
-			"id": 32260
-		},
-		{
-			"id": 31030,
-			"enchant": 28888,
-			"gems": [
-				32220,
-				32220
-			]
-		},
-		{
-			"id": 32323,
-			"enchant": 34004
-		},
-		{
-			"id": 31028,
-			"enchant": 24003,
-			"gems": [
-				32206,
-				32206,
-				32212
-			]
-		},
-		{
-			"id": 32324,
-			"enchant": 34002,
-			"gems": [
-				32220
-			]
-		},
-		{
-			"id": 31026,
-			"enchant": 19445,
-			"gems": [
-				32220
-			]
-		},
-		{
-			"id": 30106,
-			"gems": [
-				32220,
-				32212
-			]
-		},
-		{
-			"id": 31029,
-			"enchant": 29535,
-			"gems": [
-				32220
-			]
-		},
-		{
-			"id": 32366,
-			"enchant": 28279,
-			"gems": [
-				32220,
-				32206
-			]
-		},
-		{
-			"id": 32497
-		},
-		{
-			"id": 29301
-		},
-		{
-			"id": 30450
-		},
-		{
-			"id": 28830
-		},
-		{
-			"id": 30082,
-			"enchant": 22559
-		},
-		{
-			"id": 32369,
-			"enchant": 22559
-		},
-		{
-			"id": 29949,
-			"enchant": 23766
-		}
-	]}`),
-};
-
-export const P4_PRESET = {
-	name: 'P4 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 32235,
-			"enchant": 29192,
-			"gems": [
-				32409,
-				32220
-			]
-		},
-		{
-			"id": 32260
-		},
-		{
-			"id": 31030,
-			"enchant": 28888,
-			"gems": [
-				32206,
-				32206
-			]
-		},
-		{
-			"id": 33590,
-			"enchant": 34004
-		},
-		{
-			"id": 31028,
-			"enchant": 24003,
-			"gems": [
-				32206,
-				32206,
-				32212
-			]
-		},
-		{
-			"id": 32324,
-			"enchant": 34002,
-			"gems": [
-				32206
-			]
-		},
-		{
-			"id": 31026,
-			"enchant": 19445,
-			"gems": [
-				32220
-			]
-		},
-		{
-			"id": 30106,
-			"gems": [
-				32220,
-				32212
-			]
-		},
-		{
-			"id": 31029,
-			"enchant": 29535,
-			"gems": [
-				32220
-			]
-		},
-		{
-			"id": 32366,
-			"enchant": 28279,
-			"gems": [
-				32220,
-				32206
-			]
-		},
-		{
-			"id": 33496
-		},
-		{
-			"id": 32497
-		},
-		{
-			"id": 30450
-		},
-		{
-			"id": 28830
-		},
-		{
-			"id": 30082,
-			"enchant": 22559
-		},
-		{
-			"id": 32369,
-			"enchant": 22559
-		},
-		{
-			"id": 29949,
-			"enchant": 23766
-		}
-	]}`),
-};
-
-export const P5_PRESET = {
-	name: 'P5 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 34244,
-			"enchant": 29192,
-			"gems": [
-				32409,
-				32220
-			]
-		},
-		{
-			"id": 34177
-		},
-		{
-			"id": 31030,
-			"enchant": 28888,
-			"gems": [
-				32220,
-				32212
-			]
-		},
-		{
-			"id": 34241,
-			"enchant": 34004,
-			"gems": [
-				32206
-			]
-		},
-		{
-			"id": 34397,
-			"enchant": 24003,
-			"gems": [
-				32212,
-				32220,
-				32220
-			]
-		},
-		{
-			"id": 34448,
-			"enchant": 34002,
-			"gems": [
-				32220
-			]
-		},
-		{
-			"id": 34370,
-			"enchant": 19445,
-			"gems": [
-				32220,
-				32220
-			]
-		},
-		{
-			"id": 34558,
-			"gems": [
-				32220
-			]
-		},
-		{
-			"id": 34188,
-			"enchant": 29535,
-			"gems": [
-				32220,
-				32220,
-				32220
-			]
-		},
-		{
-			"id": 34575,
-			"enchant": 28279,
-			"gems": [
-				32220
-			]
-		},
-		{
-			"id": 32497
-		},
-		{
-			"id": 34189
-		},
-		{
-			"id": 34427
-		},
-		{
-			"id": 28830
-		},
-		{
-			"id": 34331,
-			"enchant": 22559,
-			"gems": [
-				32206,
-				32206
-			]
-		},
-		{
-			"id": 32369,
-			"enchant": 22559
-		},
-		{
-			"id": 34196
-		}
-	]}`),
+        {
+          "id": 37293,
+          "enchant": 44879,
+          "gems": [
+            41398,
+            40088
+          ]
+        },
+        {
+          "id": 37861
+        },
+        {
+          "id": 37139,
+          "enchant": 44871,
+          "gems": [
+            24061
+          ]
+        },
+        {
+          "id": 36947,
+          "enchant": 55002
+        },
+        {
+          "id": 44303,
+          "enchant": 44623
+        },
+        {
+          "id": 44203,
+          "enchant": 60616,
+          "gems": [
+            0
+          ]
+        },
+        {
+          "id": 37409,
+          "enchant": 60668,
+          "gems": [
+            0
+          ]
+        },
+        {
+          "id": 37194,
+          "gems": [
+            40014,
+            0
+          ]
+        },
+        {
+          "id": 37644,
+          "enchant": 38374
+        },
+        {
+          "id": 44297,
+          "enchant": 28279
+        },
+        {
+          "id": 43251,
+          "gems": [
+            0
+          ]
+        },
+        {
+          "id": 37642
+        },
+        {
+          "id": 37390
+        },
+        {
+          "id": 37166
+        },
+        {
+          "id": 37693,
+          "enchant": 22559
+        },
+        {
+          "id": 37856,
+          "enchant": 22559
+        },
+        {
+          "id": 37191
+        }
+      ]}`),
 };

@@ -1,0 +1,20 @@
+.multi-icon-picker-dropdown-root {
+  border: 2px solid dimgray;
+  transition: $sim-transitions;
+	margin: 2px;
+}
+
+.multi-icon-picker-dropdown-root.active {
+  border-color: lawngreen;
+}
+.multi-icon-picker-dropdown-root.disabled {
+  border-color: dimgray;
+}
+
+.multi-icon-picker-button {
+  background-size: cover;
+}
+
+.multi-icon-picker-option {
+  background-size: cover;
+}

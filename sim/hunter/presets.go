@@ -7,50 +7,123 @@ import (
 
 var BMTalents = &proto.HunterTalents{
 	ImprovedAspectOfTheHawk: 5,
+	EnduranceTraining:       1,
 	FocusedFire:             2,
+	ImprovedRevivePet:       2,
+	AspectMastery:           true,
 	UnleashedFury:           5,
 	Ferocity:                5,
+	SpiritBond:              1,
+	Intimidation:            true,
 	BestialDiscipline:       2,
-	AnimalHandler:           1,
-	Frenzy:                  5,
+	AnimalHandler:           2,
+	Frenzy:                  4,
 	FerociousInspiration:    3,
 	BestialWrath:            true,
+	CatlikeReflexes:         2,
 	SerpentsSwiftness:       5,
+	Longevity:               3,
 	TheBeastWithin:          true,
+	CobraStrikes:            2,
+	KindredSpirits:          5,
+	BeastMastery:            true,
 
 	LethalShots:    5,
-	Efficiency:     5,
+	CarefulAim:     3,
+	MortalShots:    5,
 	GoForTheThroat: 2,
 	AimedShot:      true,
-	RapidKilling:   2,
-	MortalShots:    5,
+
+	ImprovedTracking: 1,
 }
 
-var SVTalents = &proto.HunterTalents{
+var MMTalents = &proto.HunterTalents{
 	ImprovedAspectOfTheHawk: 5,
 	FocusedFire:             2,
 
-	LethalShots:         5,
-	ImprovedHuntersMark: 5,
-	GoForTheThroat:      2,
-	RapidKilling:        1,
+	FocusedAim:                 3,
+	LethalShots:                5,
+	CarefulAim:                 3,
+	MortalShots:                5,
+	GoForTheThroat:             1,
+	AimedShot:                  true,
+	RapidKilling:               2,
+	ImprovedStings:             3,
+	Readiness:                  true,
+	Barrage:                    3,
+	CombatExperience:           2,
+	RangedWeaponSpecialization: 3,
+	PiercingShots:              3,
+	TrueshotAura:               true,
+	ImprovedBarrage:            3,
+	MasterMarksman:             5,
+	WildQuiver:                 3,
+	SilencingShot:              true,
+	ImprovedSteadyShot:         3,
+	MarkedForDeath:             5,
+	ChimeraShot:                true,
 
-	//MonsterSlaying:    3,
-	//HumanoidSlaying:   3,
-	SavageStrikes: 2,
-	//CleverTraps:       2,
-	Survivalist:       2,
-	Surefooted:        3,
+	ImprovedTracking:  5,
 	SurvivalInstincts: 2,
-	KillerInstinct:    3,
-	LightningReflexes: 5,
-	ThrillOfTheHunt:   2,
-	ExposeWeakness:    3,
-	MasterTactician:   5,
-	Readiness:         true,
 }
 
-var PlayerOptionsBasic = &proto.Player_Hunter{
+var SVTalents = &proto.HunterTalents{
+	FocusedAim:     2,
+	LethalShots:    5,
+	CarefulAim:     3,
+	MortalShots:    5,
+	GoForTheThroat: 1,
+	AimedShot:      true,
+
+	ImprovedTracking:  5,
+	TrapMastery:       3,
+	SurvivalInstincts: 2,
+	Survivalist:       5,
+	TNT:               3,
+	LockAndLoad:       3,
+	HunterVsWild:      3,
+	KillerInstinct:    3,
+	LightningReflexes: 5,
+	Resourcefulness:   2,
+	ExposeWeakness:    2,
+	WyvernSting:       true,
+	ThrillOfTheHunt:   3,
+	MasterTactician:   5,
+	NoxiousStings:     3,
+	BlackArrow:        true,
+	SniperTraining:    3,
+	HuntingParty:      1,
+	ExplosiveShot:     true,
+}
+
+var FerocityTalents = &proto.HunterPetTalents{
+	CobraReflexes:  2,
+	Dive:           true,
+	SpikedCollar:   3,
+	BoarsSpeed:     true,
+	CullingTheHerd: 3,
+	SpidersBite:    3,
+	Rabid:          true,
+	CallOfTheWild:  true,
+	WildHunt:       1,
+}
+
+var DefaultGlyphs = &proto.Glyphs{
+	Major1: int32(proto.HunterMajorGlyph_GlyphOfSteadyShot),
+	Major2: int32(proto.HunterMajorGlyph_GlyphOfSerpentSting),
+	Major3: int32(proto.HunterMajorGlyph_GlyphOfKillShot),
+	// No interesting minor glyphs.
+}
+
+var PlayerOptionsMM = &proto.Player_Hunter{
+	Hunter: &proto.Hunter{
+		Talents:  MMTalents,
+		Options:  basicOptions,
+		Rotation: basicRotation,
+	},
+}
+
+var PlayerOptionsBM = &proto.Player_Hunter{
 	Hunter: &proto.Hunter{
 		Talents:  BMTalents,
 		Options:  basicOptions,
@@ -58,71 +131,29 @@ var PlayerOptionsBasic = &proto.Player_Hunter{
 	},
 }
 
-var PlayerOptionsFrench = &proto.Player_Hunter{
-	Hunter: &proto.Hunter{
-		Talents:  BMTalents,
-		Options:  windSerpentOptions,
-		Rotation: frenchRotation,
-	},
-}
-
-var PlayerOptionsMeleeWeave = &proto.Player_Hunter{
-	Hunter: &proto.Hunter{
-		Talents:  BMTalents,
-		Options:  windSerpentOptions,
-		Rotation: meleeWeaveRotation,
-	},
-}
-
 var PlayerOptionsSV = &proto.Player_Hunter{
 	Hunter: &proto.Hunter{
 		Talents:  SVTalents,
-		Options:  windSerpentOptions,
-		Rotation: meleeWeaveRotation,
+		Options:  basicOptions,
+		Rotation: basicRotation,
 	},
 }
 
 var basicRotation = &proto.Hunter_Rotation{
-	UseMultiShot:  true,
-	UseArcaneShot: false,
-	Sting:         proto.Hunter_Rotation_SerpentSting,
-	LazyRotation:  true,
+	Sting: proto.Hunter_Rotation_SerpentSting,
 
 	ViperStartManaPercent: 0.2,
 	ViperStopManaPercent:  0.3,
 }
-var frenchRotation = &proto.Hunter_Rotation{
-	UseMultiShot:  true,
-	UseArcaneShot: true,
-	Sting:         proto.Hunter_Rotation_SerpentSting,
-
-	ViperStartManaPercent: 0.3,
-	ViperStopManaPercent:  0.5,
-}
-var meleeWeaveRotation = &proto.Hunter_Rotation{
-	UseMultiShot:  true,
-	UseArcaneShot: true,
-	Weave:         proto.Hunter_Rotation_WeaveFull,
-	TimeToWeaveMs: 500,
-	PercentWeaved: 0.8,
-
-	ViperStartManaPercent: 0.3,
-	ViperStopManaPercent:  0.5,
-}
 
 var basicOptions = &proto.Hunter_Options{
-	Ammo:      proto.Hunter_Options_AdamantiteStinger,
-	PetType:   proto.Hunter_Options_Ravager,
-	PetUptime: 0.9,
-	LatencyMs: 15,
-}
+	Ammo:       proto.Hunter_Options_SaroniteRazorheads,
+	PetType:    proto.Hunter_Options_Wolf,
+	PetTalents: FerocityTalents,
+	PetUptime:  0.9,
+	LatencyMs:  15,
 
-var windSerpentOptions = &proto.Hunter_Options{
-	Ammo:             proto.Hunter_Options_AdamantiteStinger,
-	PetType:          proto.Hunter_Options_WindSerpent,
-	PetUptime:        0.9,
-	PetSingleAbility: true,
-	LatencyMs:        15,
+	SniperTrainingUptime: 0.8,
 }
 
 var FullRaidBuffs = &proto.RaidBuffs{
@@ -158,94 +189,89 @@ var FullDebuffs = &proto.Debuffs{
 
 var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	{
-		"id": 28275,
-		"enchant": 29192,
+		"id": 40505,
+		"enchant": 44879,
 		"gems": [
-			24028,
-			32409
+			41398,
+			40023
 		]
 	},
 	{
-		"id": 29381
-	},
-	{
-		"id": 27801,
-		"enchant": 28888,
+		"id": 44664,
 		"gems": [
-			31868,
-			24028
+			40023
 		]
 	},
 	{
-		"id": 24259,
-		"enchant": 34004,
+		"id": 40507,
+		"enchant": 44871,
 		"gems": [
-			24028
+			39997
 		]
 	},
 	{
-		"id": 28228,
-		"enchant": 24003,
+		"id": 40403,
+		"enchant": 55002
+	},
+	{
+		"id": 43998,
+		"enchant": 44623,
 		"gems": [
-			24028,
-			24028,
-			24055
+			39997,
+			40023
 		]
 	},
 	{
-		"id": 29246,
-		"enchant": 34002
-	},
-	{
-		"id": 27474,
-		"enchant": 33152,
+		"id": 40282,
+		"enchant": 60616,
 		"gems": [
-			24028,
-			24028
+			40086,
+			0
 		]
 	},
 	{
-		"id": 28828,
+		"id": 40541,
+		"enchant": 54999,
 		"gems": [
-			24055,
-			31868
+			0
 		]
 	},
 	{
-		"id": 30739,
-		"enchant": 29535,
+		"id": 39762,
 		"gems": [
-			24028,
-			24028,
-			24028
+			39997
 		]
 	},
 	{
-		"id": 28545,
-		"enchant": 28279,
+		"id": 40331,
+		"enchant": 38374,
 		"gems": [
-			24028,
-			24061
+			39997,
+			40023
 		]
 	},
 	{
-		"id": 28757
+		"id": 40549,
+		"enchant": 55016
 	},
 	{
-		"id": 28791
+		"id": 40074
 	},
 	{
-		"id": 28830
+		"id": 40474
 	},
 	{
-		"id": 29383
+		"id": 40431
 	},
 	{
-		"id": 28435,
-		"enchant": 22556
+		"id": 44253
 	},
 	{
-		"id": 28772,
-		"enchant": 23766
+		"id": 40388,
+		"enchant": 44630
+	},
+	{
+		"id": 40385,
+		"enchant": 41167
 	}
 ]}`)

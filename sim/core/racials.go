@@ -39,23 +39,9 @@ func applyRaceEffects(agent Agent) {
 		// TODO: Stoneform
 	case proto.Race_RaceGnome:
 		character.PseudoStats.ReducedArcaneHitTakenChance += 0.02
-
-		character.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Intellect,
-			ModifiedStat: stats.Intellect,
-			Modifier: func(intellect float64, _ float64) float64 {
-				return intellect * 1.05
-			},
-		})
+		character.AddStatDependency(stats.Intellect, stats.Intellect, 1.0+0.05)
 	case proto.Race_RaceHuman:
-		character.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Spirit,
-			ModifiedStat: stats.Spirit,
-			Modifier: func(spirit float64, _ float64) float64 {
-				return spirit * 1.03
-			},
-		})
-
+		character.AddStatDependency(stats.Spirit, stats.Spirit, 1.0+0.03)
 		applyWeaponSpecialization(
 			character,
 			3*ExpertisePerQuarterPercentReduction,
@@ -102,7 +88,7 @@ func applyRaceEffects(agent Agent) {
 		applyWeaponSpecialization(
 			character,
 			5*ExpertisePerQuarterPercentReduction,
-			[]proto.WeaponType{proto.WeaponType_WeaponTypeAxe})
+			[]proto.WeaponType{proto.WeaponType_WeaponTypeAxe, proto.WeaponType_WeaponTypeFist})
 	case proto.Race_RaceTauren:
 		character.PseudoStats.ReducedNatureHitTakenChance += 0.02
 		character.AddStat(stats.Health, character.GetBaseStats()[stats.Health]*0.05)
@@ -175,7 +161,7 @@ func applyWeaponSpecialization(character *Character, expertiseBonus float64, wea
 		isDW = true
 		for _, wt := range weaponTypes {
 			if weapon.WeaponType == wt {
-				mh = true
+				oh = true
 			}
 		}
 	}

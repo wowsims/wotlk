@@ -9,6 +9,7 @@ import (
 )
 
 func init() {
+	core.AddEffectsToTest = false
 	//// Battlemasters trinkets
 	//sharedBattlemasterCooldownID := core.NewCooldownID()
 	//addBattlemasterEffect := func(itemID int32) {
@@ -158,7 +159,7 @@ func init() {
 					return
 				}
 
-				if !ppmm.ProcWithWeaponSpecials(sim, spellEffect.ProcMask, "Badge of the Swarmguard") {
+				if !ppmm.Proc(sim, spellEffect.ProcMask, "Badge of the Swarmguard") {
 					return
 				}
 
@@ -261,7 +262,7 @@ func init() {
 				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 					return
 				}
-				if !ppmm.ProcWithWeaponSpecials(sim, spellEffect.ProcMask, "RomulosPoisonVial") {
+				if !ppmm.Proc(sim, spellEffect.ProcMask, "RomulosPoisonVial") {
 					return
 				}
 
@@ -294,7 +295,7 @@ func init() {
 				if !icd.IsReady(sim) {
 					return
 				}
-				if !ppmm.ProcWithWeaponSpecials(sim, spellEffect.ProcMask, "dragonspine") {
+				if !ppmm.Proc(sim, spellEffect.ProcMask, "dragonspine") {
 					return
 				}
 				icd.Use(sim)
@@ -448,7 +449,7 @@ func init() {
 				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 					return
 				}
-				if !ppmm.ProcWithWeaponSpecials(sim, spellEffect.ProcMask, "Madness of the Betrayer") {
+				if !ppmm.Proc(sim, spellEffect.ProcMask, "Madness of the Betrayer") {
 					return
 				}
 
@@ -467,7 +468,7 @@ func init() {
 			Duration:  time.Second * 20,
 			MaxStacks: 10,
 			OnInit: func(aura *core.Aura, sim *core.Simulation) {
-				bonusPerStack = character.ApplyStatDependencies(stats.Stats{stats.AttackPower: 44, stats.RangedAttackPower: 44})
+				bonusPerStack = stats.Stats{stats.AttackPower: 44, stats.RangedAttackPower: 44}
 			},
 			OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
 				character.AddStatsDynamic(sim, bonusPerStack.Multiply(float64(newStacks-oldStacks)))
@@ -543,4 +544,5 @@ func init() {
 		})
 	})
 
+	core.AddEffectsToTest = true
 }

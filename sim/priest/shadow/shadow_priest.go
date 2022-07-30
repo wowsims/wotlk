@@ -28,6 +28,7 @@ func NewShadowPriest(character core.Character, options proto.Player) *ShadowPrie
 
 	selfBuffs := priest.SelfBuffs{
 		UseShadowfiend: shadowOptions.Options.UseShadowfiend,
+		UseInnerFire:   shadowOptions.Options.Armor == proto.ShadowPriest_Options_InnerFire,
 	}
 
 	basePriest := priest.New(character, selfBuffs, *shadowOptions.Talents)
@@ -45,8 +46,15 @@ func NewShadowPriest(character core.Character, options proto.Player) *ShadowPrie
 }
 
 type ShadowPriest struct {
-	*priest.Priest
+	DPstatH  float64
+	DPstatpH float64
+	DPstatSp float64
 
+	VTstatH  float64
+	VTstatpH float64
+	VTstatSp float64
+
+	*priest.Priest
 	rotation proto.ShadowPriest_Rotation
 }
 

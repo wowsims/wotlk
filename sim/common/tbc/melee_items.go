@@ -9,6 +9,7 @@ import (
 )
 
 func init() {
+	core.AddEffectsToTest = false
 	core.NewSimpleStatItemEffect(28484, stats.Stats{stats.Health: 1500, stats.Strength: 150}, time.Second*15, time.Minute*30) // Bulwark of Kings
 	core.NewSimpleStatItemEffect(28485, stats.Stats{stats.Health: 1500, stats.Strength: 150}, time.Second*15, time.Minute*30) // Bulwark of Ancient Kings
 
@@ -556,7 +557,7 @@ func init() {
 				if !icd.IsReady(sim) {
 					return
 				}
-				if !ppmm.ProcWithWeaponSpecials(sim, spellEffect.ProcMask, "Band of the Eternal Champion") {
+				if !ppmm.Proc(sim, spellEffect.ProcMask, "Band of the Eternal Champion") {
 					return
 				}
 
@@ -1082,4 +1083,5 @@ func init() {
 		})
 	})
 
+	core.AddEffectsToTest = true
 }

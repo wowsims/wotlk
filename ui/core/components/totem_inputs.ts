@@ -33,7 +33,7 @@ export function TotemsSection(simUI: IndividualSimUI<DpsShaman>, parentElem: HTM
 		numColumns: 1,
 		values: [
 			{ color: '#ffdfba', value: EarthTotem.NoEarthTotem },
-			{ actionId: ActionId.fromSpellId(25528), value: EarthTotem.StrengthOfEarthTotem },
+			{ actionId: ActionId.fromSpellId(58643), value: EarthTotem.StrengthOfEarthTotem },
 			{ actionId: ActionId.fromSpellId(8143), value: EarthTotem.TremorTotem },
 		],
 		equals: (a: EarthTotem, b: EarthTotem) => a == b,
@@ -56,8 +56,7 @@ export function TotemsSection(simUI: IndividualSimUI<DpsShaman>, parentElem: HTM
 		numColumns: 1,
 		values: [
 			{ color: '#baffc9', value: AirTotem.NoAirTotem },
-			{ actionId: ActionId.fromSpellId(25908), value: AirTotem.TranquilAirTotem },
-			{ actionId: ActionId.fromSpellId(25587), value: AirTotem.WindfuryTotem },
+			{ actionId: ActionId.fromSpellId(8512), value: AirTotem.WindfuryTotem },
 			{ actionId: ActionId.fromSpellId(3738), value: AirTotem.WrathOfAirTotem },
 		],
 		equals: (a: AirTotem, b: AirTotem) => a == b,
@@ -80,9 +79,9 @@ export function TotemsSection(simUI: IndividualSimUI<DpsShaman>, parentElem: HTM
 		numColumns: 1,
 		values: [
 			{ color: '#ffb3ba', value: FireTotem.NoFireTotem },
-			{ actionId: ActionId.fromSpellId(25552), value: FireTotem.MagmaTotem },
-			{ actionId: ActionId.fromSpellId(25533), value: FireTotem.SearingTotem },
-			{ actionId: ActionId.fromSpellId(30706), value: FireTotem.TotemOfWrath },
+			{ actionId: ActionId.fromSpellId(58734), value: FireTotem.MagmaTotem },
+			{ actionId: ActionId.fromSpellId(58704), value: FireTotem.SearingTotem },
+			{ actionId: ActionId.fromSpellId(57722), value: FireTotem.TotemOfWrath },
 		],
 		equals: (a: FireTotem, b: FireTotem) => a == b,
 		zeroValue: FireTotem.NoFireTotem,
@@ -104,7 +103,7 @@ export function TotemsSection(simUI: IndividualSimUI<DpsShaman>, parentElem: HTM
 		numColumns: 1,
 		values: [
 			{ color: '#bae1ff', value: WaterTotem.NoWaterTotem },
-			{ actionId: ActionId.fromSpellId(25570), value: WaterTotem.ManaSpringTotem },
+			{ actionId: ActionId.fromSpellId(58774), value: WaterTotem.ManaSpringTotem },
 		],
 		equals: (a: WaterTotem, b: WaterTotem) => a == b,
 		zeroValue: WaterTotem.NoWaterTotem,

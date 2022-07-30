@@ -9,68 +9,44 @@ import (
 )
 
 func (rogue *Rogue) ApplyTalents() {
-	// TODO: Last few talents in the sub tree.
 
 	rogue.applyMurder()
 	rogue.applySealFate()
 	rogue.applyWeaponSpecializations()
 	rogue.applyCombatPotency()
 
-	rogue.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*1*float64(rogue.Talents.LightningReflexes))
-	rogue.AddStat(stats.Parry, core.ParryRatingPerParryChance*1*float64(rogue.Talents.Deflection))
+	rogue.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*2*float64(rogue.Talents.LightningReflexes))
+	rogue.AddStat(stats.MeleeHaste, core.HasteRatingPerHastePercent*[]float64{0, 3, 6, 10}[rogue.Talents.LightningReflexes])
+	rogue.AddStat(stats.Parry, core.ParryRatingPerParryChance*2*float64(rogue.Talents.Deflection))
 	rogue.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*1*float64(rogue.Talents.Malice))
 	rogue.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*1*float64(rogue.Talents.Precision))
 	rogue.AddStat(stats.Expertise, core.ExpertisePerQuarterPercentReduction*5*float64(rogue.Talents.WeaponExpertise))
-	rogue.AddStat(stats.ArmorPenetration, 186*float64(rogue.Talents.SerratedBlades))
+	rogue.AddStat(stats.ArmorPenetration, core.ArmorPenPerPercentArmor*3*float64(rogue.Talents.SerratedBlades))
 
 	if rogue.Talents.DualWieldSpecialization > 0 {
 		rogue.AutoAttacks.OHEffect.BaseDamage.Calculator = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, 1+0.1*float64(rogue.Talents.DualWieldSpecialization), true)
 	}
 
-	if rogue.Talents.Vitality > 0 {
-		agiBonus := 1 + 0.01*float64(rogue.Talents.Vitality)
-		rogue.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Agility,
-			ModifiedStat: stats.Agility,
-			Modifier: func(agility float64, _ float64) float64 {
-				return agility * agiBonus
-			},
-		})
-		stamBonus := 1 + 0.02*float64(rogue.Talents.Vitality)
-		rogue.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Stamina,
-			ModifiedStat: stats.Stamina,
-			Modifier: func(stamina float64, _ float64) float64 {
-				return stamina * stamBonus
-			},
-		})
-	}
+	rogue.EnergyTickMultiplier *= (1 + []float64{0, 0.08, 0.16, 0.25}[rogue.Talents.Vitality])
 
 	if rogue.Talents.Deadliness > 0 {
-		apBonus := 1 + 0.02*float64(rogue.Talents.Deadliness)
-		rogue.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.AttackPower,
-			ModifiedStat: stats.AttackPower,
-			Modifier: func(ap float64, _ float64) float64 {
-				return ap * apBonus
-			},
-		})
+		rogue.AddStatDependency(stats.AttackPower, stats.AttackPower, 1.0+0.02*float64(rogue.Talents.Deadliness))
+	}
+
+	if rogue.Talents.SavageCombat > 0 {
+		rogue.AddStatDependency(stats.AttackPower, stats.AttackPower, 1.0+0.02*float64(rogue.Talents.SavageCombat))
 	}
 
 	if rogue.Talents.SinisterCalling > 0 {
-		agiBonus := 1 + 0.03*float64(rogue.Talents.SinisterCalling)
-		rogue.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Agility,
-			ModifiedStat: stats.Agility,
-			Modifier: func(agi float64, _ float64) float64 {
-				return agi * agiBonus
-			},
-		})
+		rogue.AddStatDependency(stats.Agility, stats.Agility, 1.0+0.03*float64(rogue.Talents.SinisterCalling))
 	}
+
+	rogue.PseudoStats.AgentReserved1DamageDealtMultiplier *= (1 + float64(rogue.Talents.FindWeakness)*0.02)
 
 	rogue.registerColdBloodCD()
 	rogue.registerBladeFlurryCD()
 	rogue.registerAdrenalineRushCD()
+	rogue.registerKillingSpreeCD()
 }
 
 func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, numPoints int32) {
@@ -96,7 +72,7 @@ func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, 
 		})
 	}
 
-	netherblade4pc := ItemSetNetherblade.CharacterHasSetBonus(&rogue.Character, 4)
+	netherblade4pc := rogue.HasSetBonus(ItemSetNetherblade, 4)
 	netherblade4pcMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 37168})
 
 	return func(sim *core.Simulation, numPoints int32) {
@@ -106,7 +82,7 @@ func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, 
 		if netherblade4pc && sim.RandomFloat("Netherblade 4pc") < 0.15 {
 			rogue.AddComboPoints(sim, 1, netherblade4pcMetrics)
 		}
-		if relentlessStrikes {
+		if relentlessStrikes > 0 {
 			if numPoints == 5 || sim.RandomFloat("RelentlessStrikes") < 0.2*float64(numPoints) {
 				rogue.AddEnergy(sim, 25, relentlessStrikesMetrics)
 			}
@@ -204,74 +180,32 @@ func (rogue *Rogue) applySealFate() {
 }
 
 func (rogue *Rogue) applyWeaponSpecializations() {
-	if weapon := rogue.Equip[proto.ItemSlot_ItemSlotMainHand]; weapon.ID != 0 {
-		if weapon.WeaponType == proto.WeaponType_WeaponTypeFist {
-			rogue.PseudoStats.BonusMHCritRating += 1 * core.CritRatingPerCritChance * float64(rogue.Talents.FistWeaponSpecialization)
-		} else if weapon.WeaponType == proto.WeaponType_WeaponTypeDagger {
-			rogue.PseudoStats.BonusMHCritRating += 1 * core.CritRatingPerCritChance * float64(rogue.Talents.DaggerSpecialization)
-		}
-	}
-	if weapon := rogue.Equip[proto.ItemSlot_ItemSlotOffHand]; weapon.ID != 0 {
-		if weapon.WeaponType == proto.WeaponType_WeaponTypeFist {
-			rogue.PseudoStats.BonusOHCritRating += 1 * core.CritRatingPerCritChance * float64(rogue.Talents.FistWeaponSpecialization)
-		} else if weapon.WeaponType == proto.WeaponType_WeaponTypeDagger {
-			rogue.PseudoStats.BonusOHCritRating += 1 * core.CritRatingPerCritChance * float64(rogue.Talents.DaggerSpecialization)
-		}
-	}
-
+	mhWeapon := rogue.GetMHWeapon()
+	ohWeapon := rogue.GetOHWeapon()
 	// https://wotlk.wowhead.com/spell=13964/sword-specialization, proc mask = 20.
-	swordSpecMask := core.ProcMaskUnknown
-	if rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeSword {
-		swordSpecMask |= core.ProcMaskMeleeMH
-	}
-	if rogue.Equip[proto.ItemSlot_ItemSlotOffHand].WeaponType == proto.WeaponType_WeaponTypeSword {
-		swordSpecMask |= core.ProcMaskMeleeOH
-	}
-	if rogue.Talents.SwordSpecialization > 0 && swordSpecMask != core.ProcMaskUnknown {
-		var swordSpecializationSpell *core.Spell
-		icd := core.Cooldown{
-			Timer:    rogue.NewTimer(),
-			Duration: time.Millisecond * 500,
+	hackAndSlashMask := core.ProcMaskUnknown
+	if mhWeapon != nil && mhWeapon.ID != 0 {
+		switch mhWeapon.WeaponType {
+		case proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeAxe:
+			hackAndSlashMask |= core.ProcMaskMeleeMH
+		case proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeFist:
+			rogue.PseudoStats.BonusMHCritRating += 1 * core.CritRatingPerCritChance * float64(rogue.Talents.CloseQuartersCombat)
+		case proto.WeaponType_WeaponTypeMace:
+			rogue.PseudoStats.BonusMHArmorPenRating += 3 * core.ArmorPenPerPercentArmor * float64(rogue.Talents.MaceSpecialization)
 		}
-		procChance := 0.01 * float64(rogue.Talents.SwordSpecialization)
-
-		rogue.RegisterAura(core.Aura{
-			Label:    "Sword Specialization",
-			Duration: core.NeverExpires,
-			OnInit: func(aura *core.Aura, sim *core.Simulation) {
-				swordSpecializationSpell = rogue.GetOrRegisterSpell(core.SpellConfig{
-					ActionID:    core.ActionID{SpellID: 13964},
-					SpellSchool: core.SpellSchoolPhysical,
-					Flags:       core.SpellFlagMeleeMetrics,
-
-					ApplyEffects: core.ApplyEffectFuncDirectDamage(rogue.AutoAttacks.MHEffect),
-				})
-			},
-			OnReset: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Activate(sim)
-			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() {
-					return
-				}
-
-				if !spellEffect.ProcMask.Matches(swordSpecMask) {
-					return
-				}
-
-				if !icd.IsReady(sim) {
-					return
-				}
-
-				if sim.RandomFloat("Sword Specialization") > procChance {
-					return
-				}
-				icd.Use(sim)
-
-				swordSpecializationSpell.Cast(sim, spellEffect.Target)
-			},
-		})
 	}
+	if ohWeapon != nil && ohWeapon.ID != 0 {
+		switch ohWeapon.WeaponType {
+		case proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeAxe:
+			hackAndSlashMask |= core.ProcMaskMeleeOH
+		case proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeFist:
+			rogue.PseudoStats.BonusOHCritRating += 1 * core.CritRatingPerCritChance * float64(rogue.Talents.CloseQuartersCombat)
+		case proto.WeaponType_WeaponTypeMace:
+			rogue.PseudoStats.BonusOHArmorPenRating += 3 * core.ArmorPenPerPercentArmor * float64(rogue.Talents.MaceSpecialization)
+		}
+	}
+
+	rogue.registerHackAndSlash(hackAndSlashMask)
 }
 
 func (rogue *Rogue) applyCombatPotency() {
@@ -475,4 +409,11 @@ func (rogue *Rogue) registerAdrenalineRushCD() {
 			return true
 		},
 	})
+}
+
+func (rogue *Rogue) registerKillingSpreeCD() {
+	if !rogue.Talents.KillingSpree {
+		return
+	}
+	rogue.registerKillingSpreeSpell()
 }

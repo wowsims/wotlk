@@ -10,44 +10,36 @@ import (
 
 const baseMana = 4396.0
 
-// Start looking to refresh 2 minute totems at 1:55.
-const TotemRefreshTime2M = time.Second * 115
+// Start looking to refresh 5 minute totems at 4:55.
+const TotemRefreshTime5M = time.Second * 295
 
 const (
 	SpellFlagShock    = core.SpellFlagAgentReserved1
 	SpellFlagElectric = core.SpellFlagAgentReserved2
 	SpellFlagTotem    = core.SpellFlagAgentReserved3
+	SpellFlagFireNova = core.SpellFlagAgentReserved4
 )
 
-func NewShaman(character core.Character, talents proto.ShamanTalents, totems proto.ShamanTotems, selfBuffs SelfBuffs) *Shaman {
+func NewShaman(character core.Character, talents proto.ShamanTalents, totems proto.ShamanTotems, selfBuffs SelfBuffs, thunderstormRange bool) *Shaman {
 	if totems.Fire == proto.FireTotem_TotemOfWrath && !talents.TotemOfWrath {
 		totems.Fire = proto.FireTotem_NoFireTotem
 	}
 
 	shaman := &Shaman{
-		Character: character,
-		Talents:   talents,
-		Totems:    totems,
-		SelfBuffs: selfBuffs,
+		Character:           character,
+		Talents:             talents,
+		Totems:              totems,
+		SelfBuffs:           selfBuffs,
+		thunderstormInRange: thunderstormRange,
 	}
 	shaman.EnableManaBar()
 
 	// Add Shaman stat dependencies
-	shaman.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Strength,
-		ModifiedStat: stats.AttackPower,
-		Modifier: func(strength float64, attackPower float64) float64 {
-			return attackPower + strength*2
-		},
-	})
-
-	shaman.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Agility,
-		ModifiedStat: stats.MeleeCrit,
-		Modifier: func(agility float64, meleeCrit float64) float64 {
-			return meleeCrit + (agility/83.3)*core.CritRatingPerCritChance
-		},
-	})
+	shaman.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+1)
+	shaman.AddStatDependency(stats.Agility, stats.AttackPower, 1.0+1)
+	shaman.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+core.CritRatingPerCritChance/83.3)
+	// Set proper Melee Haste scaling
+	shaman.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
 
 	if selfBuffs.Shield == proto.ShamanShield_WaterShield {
 		shaman.AddStat(stats.MP5, 100)
@@ -60,6 +52,8 @@ func NewShaman(character core.Character, talents proto.ShamanTalents, totems pro
 type SelfBuffs struct {
 	Bloodlust bool
 	Shield    proto.ShamanShield
+	ImbueMH   proto.ShamanImbue
+	ImbueOH   proto.ShamanImbue
 }
 
 // Indexes into NextTotemDrops for self buffs
@@ -73,6 +67,8 @@ const (
 // Shaman represents a shaman character.
 type Shaman struct {
 	core.Character
+
+	thunderstormInRange bool // flag if thunderstorm will be in range.
 
 	Talents   proto.ShamanTalents
 	SelfBuffs SelfBuffs
@@ -95,13 +91,18 @@ type Shaman struct {
 	LavaLash    *core.Spell
 	Stormstrike *core.Spell
 
+	LightningShield     *core.Spell
+	LightningShieldAura *core.Aura
+
 	Thunderstorm *core.Spell
 
 	EarthShock *core.Spell
 	FlameShock *core.Spell
 	FrostShock *core.Spell
 
-	FireNovaTotem        *core.Spell
+	FeralSpirit  *core.Spell
+	SpiritWolves *SpiritWolves
+
 	GraceOfAirTotem      *core.Spell
 	MagmaTotem           *core.Spell
 	ManaSpringTotem      *core.Spell
@@ -178,6 +179,7 @@ func (shaman *Shaman) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 
 	if shaman.Talents.UnleashedRage > 0 {
 		raidBuffs.UnleashedRage = true
+		shaman.AddStat(stats.Expertise, 3*core.ExpertisePerQuarterPercentReduction*float64(shaman.Talents.UnleashedRage))
 	}
 
 	if shaman.Talents.ElementalOath > 0 {
@@ -196,7 +198,8 @@ func (shaman *Shaman) Initialize() {
 	shaman.LightningBolt = shaman.newLightningBoltSpell(false)
 	shaman.LightningBoltLO = shaman.newLightningBoltSpell(true)
 	shaman.LavaBurst = shaman.newLavaBurstSpell()
-	// shaman.FireNova = shaman.newFireNovaSpell()
+	shaman.FireNova = shaman.newFireNovaSpell()
+	shaman.registerLightningShieldSpell()
 
 	shaman.ChainLightning = shaman.newChainLightningSpell(false)
 	numHits := core.MinInt32(3, shaman.Env.GetNumTargets())
@@ -206,8 +209,15 @@ func (shaman *Shaman) Initialize() {
 	}
 
 	if shaman.Talents.Thunderstorm {
-		shaman.Thunderstorm = shaman.newThunderstormSpell()
+		shaman.Thunderstorm = shaman.newThunderstormSpell(shaman.thunderstormInRange)
 	}
+
+	if shaman.Talents.LavaLash {
+		shaman.LavaLash = shaman.newLavaLashSpell()
+	}
+
+	shaman.registerFeralSpirit()
+
 	shaman.registerShocks()
 	shaman.registerGraceOfAirTotemSpell()
 	shaman.registerMagmaTotemSpell()
@@ -230,25 +240,27 @@ func (shaman *Shaman) Reset(sim *core.Simulation) {
 		switch i {
 		case AirTotem:
 			if shaman.Totems.Air != proto.AirTotem_NoAirTotem {
-				shaman.NextTotemDrops[i] = TotemRefreshTime2M
+				shaman.NextTotemDrops[i] = TotemRefreshTime5M
 				shaman.NextTotemDropType[i] = int32(shaman.Totems.Air)
 			}
 		case EarthTotem:
 			if shaman.Totems.Earth != proto.EarthTotem_NoEarthTotem {
-				shaman.NextTotemDrops[i] = TotemRefreshTime2M
+				shaman.NextTotemDrops[i] = TotemRefreshTime5M
 				shaman.NextTotemDropType[i] = int32(shaman.Totems.Earth)
 			}
 		case FireTotem:
-			shaman.NextTotemDropType[i] = int32(shaman.Totems.Fire)
-			if shaman.NextTotemDropType[i] != int32(proto.FireTotem_NoFireTotem) {
-				shaman.NextTotemDrops[i] = TotemRefreshTime2M
-				if shaman.NextTotemDropType[i] != int32(proto.FireTotem_TotemOfWrath) {
-					shaman.NextTotemDrops[i] = 0 // attack totems we drop immediately
+			shaman.NextTotemDropType[FireTotem] = int32(shaman.Totems.Fire)
+			if shaman.NextTotemDropType[FireTotem] != int32(proto.FireTotem_NoFireTotem) {
+				shaman.NextTotemDrops[FireTotem] = TotemRefreshTime5M
+				if shaman.NextTotemDropType[FireTotem] != int32(proto.FireTotem_TotemOfWrath) {
+					shaman.NextTotemDrops[FireTotem] = 0 // attack totems we drop immediately
+				} else if shaman.NextTotemDropType[FireTotem] == int32(proto.FireTotem_TotemOfWrath) {
+					shaman.applyToWDebuff(sim)
 				}
 			}
 		case WaterTotem:
 			if shaman.Totems.Water == proto.WaterTotem_ManaSpringTotem {
-				shaman.NextTotemDrops[i] = TotemRefreshTime2M
+				shaman.NextTotemDrops[i] = TotemRefreshTime5M
 			}
 		}
 	}

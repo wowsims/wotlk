@@ -44,7 +44,7 @@ func (shaman *Shaman) registerShamanisticRageCD() {
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    shaman.NewTimer(),
-				Duration: time.Minute * 2,
+				Duration: time.Minute * 1,
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
@@ -56,7 +56,7 @@ func (shaman *Shaman) registerShamanisticRageCD() {
 		Spell: spell,
 		Type:  core.CooldownTypeMana,
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-			const manaReserve = 1000 // If mana goes under 1000 we will need more soon. Pop shamanistic rage.
+			const manaReserve = 2500 // If mana goes under 2500 we will need more soon. Pop shamanistic rage.
 			if character.CurrentMana() > manaReserve {
 				return false
 			}

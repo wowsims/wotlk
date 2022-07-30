@@ -26,23 +26,11 @@ func (mage *Mage) ApplyTalents() {
 	}
 
 	if mage.Talents.ArcaneMind > 0 {
-		mage.Character.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Intellect,
-			ModifiedStat: stats.Intellect,
-			Modifier: func(intellect float64, _ float64) float64 {
-				return intellect * (1.0 + 0.03*float64(mage.Talents.ArcaneMind))
-			},
-		})
+		mage.Character.AddStatDependency(stats.Intellect, stats.Intellect, 1.0+(0.03*float64(mage.Talents.ArcaneMind)))
 	}
 
 	if mage.Talents.MindMastery > 0 {
-		mage.Character.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Intellect,
-			ModifiedStat: stats.SpellPower,
-			Modifier: func(intellect float64, spellPower float64) float64 {
-				return spellPower + intellect*0.05*float64(mage.Talents.MindMastery)
-			},
-		})
+		mage.Character.AddStatDependency(stats.Intellect, stats.SpellPower, 1.0+(0.05*float64(mage.Talents.MindMastery)))
 	}
 
 	if mage.Talents.ArcaneInstability > 0 {
@@ -147,7 +135,7 @@ func (mage *Mage) registerPresenceOfMindCD() {
 	}
 
 	cooldown := time.Minute * 3
-	if ItemSetAldorRegalia.CharacterHasSetBonus(&mage.Character, 4) {
+	if mage.HasSetBonus(ItemSetAldorRegalia, 4) {
 		cooldown -= time.Second * 24
 	}
 
@@ -465,8 +453,10 @@ func (mage *Mage) applyMoltenFury() {
 	multiplier := 1.0 + 0.1*float64(mage.Talents.MoltenFury)
 
 	mage.RegisterResetEffect(func(sim *core.Simulation) {
-		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation) {
-			mage.PseudoStats.DamageDealtMultiplier *= multiplier
+		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int) {
+			if isExecute == 20 {
+				mage.PseudoStats.DamageDealtMultiplier *= multiplier
+			}
 		})
 	})
 }

@@ -47,6 +47,7 @@ message SavedSettings {
 
 message SavedTalents {
 	string talents_string = 1;
+	Glyphs glyphs = 2;
 }
 
 // A buff bot placed in a raid.
@@ -61,6 +62,8 @@ message BuffBot {
 
 	// The assigned player to PI. Only used for disc priest buffbots.
 	RaidTarget power_infusion_assignment = 4;
+
+	RaidTarget tricks_of_the_trade_assignment = 5;
 }
 
 message BlessingsAssignment {

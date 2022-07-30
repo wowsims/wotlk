@@ -5,147 +5,89 @@ option go_package = "./proto";
 
 message PaladinTalents {
 	// Holy
-	int32 divine_strength = 1;
-	int32 divine_intellect = 2;
-	int32 improved_seal_of_righteousness = 3;
-	int32 illumination = 34;
-	int32 improved_blessing_of_wisdom = 4;
-	bool divine_favor = 5;
-	int32 purifying_power = 6;
-	int32 holy_power = 7;
-	bool holy_shock = 8;
-	int32 blessed_life = 51;
-	int32 holy_guidance = 9;
-	bool divine_illumination = 10;
+	int32 spiritual_focus = 1;
+	int32 seals_of_the_pure = 2;
+	int32 healing_light = 3;
+	int32 divine_intellect = 4;
+	int32 unyielding_faith = 5;
+	bool aura_mastery = 6;
+	int32 illumination = 7;
+	int32 improved_lay_on_hands = 8;
+	int32 improved_concentration_aura = 9;
+	int32 improved_blessing_of_wisdom = 10;
+	int32 blessed_hands = 11;
+	int32 pure_of_heart = 12;
+	bool divine_favor = 13;
+	int32 sanctified_light = 14;
+	int32 purifying_power = 15;
+	int32 holy_power = 16;
+	int32 lights_grace = 17;
+	bool holy_shock = 18;
+	int32 blessed_life = 19;
+	int32 sacred_cleansing = 20;
+	int32 holy_guidance = 21;
+	bool divine_illumination = 22;
+	int32 judgements_of_the_pure = 23;
+	int32 infusion_of_light = 24;
+	int32 enlightened_judgements = 25;
+	bool beacon_of_light = 26;
 
 	// Protection
-	int32 improved_devotion_aura = 35;
-	int32 redoubt = 36;
-	int32 precision = 11;
-	int32 toughness = 37;
-	bool blessing_of_kings = 12;
-	int32 improved_righteous_fury = 38;
-	int32 shield_specialization = 39;
-	int32 anticipation = 40;
-	int32 spell_warding = 41;
-	bool blessing_of_sanctuary = 42;
-	int32 reckoning = 13;
-	int32 sacred_duty = 14;
-	int32 one_handed_weapon_specialization = 15;
-	int32 improved_holy_shield = 43;
-	bool holy_shield = 44;
-	int32 ardent_defender = 45;
-	int32 combat_expertise = 16;
-	bool avengers_shield = 17;
+	int32 divinity = 27;
+	int32 divine_strength = 28;
+	int32 stoicism = 29;
+	int32 guardians_favor = 30;
+	int32 anticipation = 31;
+	bool divine_sacrifice = 32;
+	int32 improved_righteous_fury = 33;
+	int32 toughness = 34;
+	int32 divine_guardian = 35;
+	int32 improved_hammer_of_justice = 36;
+	int32 improved_devotion_aura = 37;
+	bool blessing_of_sanctuary = 38;
+	int32 reckoning = 39;
+	int32 sacred_duty = 40;
+	int32 one_handed_weapon_specialization = 41;
+	int32 spiritual_attunement = 42;
+	bool holy_shield = 43;
+	int32 ardent_defender = 44;
+	int32 redoubt = 45;
+	int32 combat_expertise = 46;
+	int32 touched_by_the_light = 47;
+	bool avengers_shield = 48;
+	int32 guarded_by_the_light = 49;
+	int32 shield_of_the_templar = 50;
+	int32 judgements_of_the_just = 51;
+	bool hammer_of_the_righteous = 52;
 
 	// Retribution
-	int32 improved_blessing_of_might = 18;
-	int32 benediction = 19;
-	int32 improved_judgement = 20;
-	int32 improved_seal_of_the_crusader = 21;
-	int32 deflection = 46;
-	int32 vindication = 22;
-	int32 conviction = 23;
-	bool seal_of_command = 24;
-	int32 pursuit_of_justice = 47;
-	int32 eye_for_an_eye = 48;
-	int32 improved_retribution_aura = 49;
-	int32 crusade = 25;
-	int32 two_handed_weapon_specialization = 26;
-	bool sanctity_aura = 27;
-	int32 improved_sanctity_aura = 28;
-	int32 vengeance = 29;
-	int32 sanctified_judgement = 30;
-	int32 sanctified_seals = 31;
-	int32 divine_purpose = 50;
-	int32 fanaticism = 32;
-	bool crusader_strike = 33;
+	int32 deflection = 53;
+	int32 benediction = 54;
+	int32 improved_judgements = 55;
+	int32 heart_of_the_crusader = 56;
+	int32 improved_blessing_of_might = 57;
+	int32 vindication = 58;
+	int32 conviction = 59;
+	bool seal_of_command = 60;
+	int32 pursuit_of_justice = 61;
+	int32 eye_for_an_eye = 62;
+	int32 sanctity_of_battle = 63;
+	int32 crusade = 64;
+	int32 two_handed_weapon_specialization = 65;
+	bool sanctified_retribution = 66;
+	int32 vengeance = 67;
+	int32 divine_purpose = 68;
+	int32 the_art_of_war = 69;
+	bool repentance = 70;
+	int32 judgements_of_the_wise = 71;
+	int32 fanaticism = 72;
+	int32 sanctified_wrath = 73;
+	int32 swift_retribution = 74;
+	bool crusader_strike = 75;
+	int32 sheath_of_light = 76;
+	int32 righteous_vengeance = 77;
+	bool divine_storm = 78;
 }
-//message PaladinTalents {
-//	// Holy
-//	int32 spiritual_focus = 1;
-//	int32 seals_of_the_pure = 2;
-//	int32 healing_light = 3;
-//	int32 divine_intellect = 4;
-//	int32 unyielding_faith = 5;
-//	bool aura_mastery = 6;
-//	int32 illumination = 7;
-//	int32 improved_lay_on_hands = 8;
-//	int32 improved_concentration_aura = 9;
-//	int32 improved_blessing_of_wisdom = 10;
-//	int32 blessed_hands = 11;
-//	int32 pure_of_heart = 12;
-//	bool divine_favor = 13;
-//	int32 sanctified_light = 14;
-//	int32 purifying_power = 15;
-//	int32 holy_power = 16;
-//	int32 lights_grace = 17;
-//	bool holy_shock = 18;
-//	int32 blessed_life = 19;
-//	int32 sacred_cleansing = 20;
-//	int32 holy_guidance = 21;
-//	bool divine_illumination = 22;
-//	int32 judgements_of_the_pure = 23;
-//	int32 infusion_of_light = 24;
-//	int32 enlightened_judgements = 25;
-//	bool beacon_of_light = 26;
-//
-//	// Protection
-//	int32 divinity = 27;
-//	int32 divine_strength = 28;
-//	int32 stoicism = 29;
-//	int32 guardians_favor = 30;
-//	int32 anticipation = 31;
-//	bool divine_sacrifice = 32;
-//	int32 improved_righteous_fury = 33;
-//	int32 toughness = 34;
-//	int32 divine_guardian = 35;
-//	int32 improved_hammer_of_justice = 36;
-//	int32 improved_devotion_aura = 37;
-//	bool blessing_of_sanctuary = 38;
-//	int32 reckoning = 39;
-//	int32 sacred_duty = 40;
-//	int32 one_handed_weapon_specialization = 41;
-//	int32 spiritual_attunement = 42;
-//	bool holy_shield = 43;
-//	int32 ardent_defender = 44;
-//	int32 redoubt = 45;
-//	int32 combat_expertise = 46;
-//	int32 touched_by_the_light = 47;
-//	bool avengers_shield = 48;
-//	int32 guarded_by_the_light = 49;
-//	int32 shield_of_the_templar = 50;
-//	int32 judgements_of_the_just = 51;
-//	bool hammer_of_the_righteous = 52;
-//
-//	// Retribution
-//	int32 deflection = 53;
-//	int32 benediction = 54;
-//	int32 improved_judgements = 55;
-//	int32 heart_of_the_crusader = 56;
-//	int32 improved_blessing_of_might = 57;
-//	int32 vindication = 58;
-//	int32 conviction = 59;
-//	bool seal_of_command = 60;
-//	int32 pursuit_of_justice = 61;
-//	int32 eye_for_an_eye = 62;
-//	int32 sanctity_of_battle = 63;
-//	int32 crusade = 64;
-//	int32 two_handed_weapon_specialization = 65;
-//	bool sanctified_retribution = 66;
-//	int32 vengeance = 67;
-//	int32 divine_purpose = 68;
-//	int32 the_art_of_war = 69;
-//	bool repentance = 70;
-//	int32 judgements_of_the_wise = 71;
-//	int32 fanaticism = 72;
-//	int32 sanctified_wrath = 73;
-//	int32 swift_retribution = 74;
-//	bool crusader_strike = 75;
-//	int32 sheath_of_light = 76;
-//	int32 righteous_vengeance = 77;
-//	bool divine_storm = 78;
-//}
 
 enum PaladinMajorGlyph {
 	PaladinMajorGlyphNone = 0;
@@ -200,49 +142,43 @@ enum Blessings {
 
 enum PaladinAura {
 	NoPaladinAura = 0;
-	SanctityAura = 1;
 	DevotionAura = 2;
 	RetributionAura = 3;
 }
 
+enum PaladinSeal {
+	Vengeance = 0;
+	Command = 1;
+	Righteousness = 2;
+}
+
 enum PaladinJudgement {
-	NoPaladinJudgement = 0;
-	JudgementOfWisdom = 1;
-	JudgementOfLight = 2;
-	JudgementOfCrusader = 3;
-	JudgementOfVengeance = 4;
-	JudgementOfRighteousness = 5;
+	JudgementOfWisdom = 0;
+	JudgementOfLight = 1;
 }
 
 message RetributionPaladin {
 	message Rotation {
-		enum ConsecrationRank {
-			None = 0;
-			Rank1 = 1;
-			Rank4 = 2;
-			Rank6 = 3;
-		}
-		ConsecrationRank consecration_rank = 1;
-
-		bool use_exorcism = 2;
+		int32 exo_slack = 1;
+		int32 cons_slack = 2;
+		double divine_plea_percentage = 3;
 	}
 	Rotation rotation = 1;
 
 	PaladinTalents talents = 2;
 	
 	message Options {
-		enum Judgement {
-			None = 0;
-			Wisdom = 1;
-			Crusader = 2;
-		}
-		Judgement judgement = 1;
+		PaladinJudgement judgement = 1;
+		
+		PaladinSeal seal = 2;
 
-		PaladinAura aura = 5;
+		PaladinAura aura = 3;
 
-		int32 crusader_strike_delay_ms = 2;
-		int32 haste_leeway_ms = 3;
 		double damage_taken_per_second = 4;
+
+		bool use_avenging_wrath = 5;
+
+		bool use_divine_plea = 6;
 	}
 	Options options = 3;
 }
@@ -250,17 +186,22 @@ message RetributionPaladin {
 message ProtectionPaladin {
 	message Rotation {
 		bool prioritize_holy_shield = 1;
-		int32 consecration_rank = 2;
-		bool use_exorcism = 3;
-		PaladinJudgement maintain_judgement = 4;
+
 	}
 	Rotation rotation = 1;
 
 	PaladinTalents talents = 2;
 
 	message Options {
-		PaladinAura aura = 1;
-		bool use_avenging_wrath = 2;
+		PaladinJudgement judgement = 1;
+
+		PaladinSeal seal = 2;
+
+		PaladinAura aura = 3;
+
+		double damage_taken_per_second = 4;
+
+		bool use_avenging_wrath = 5;
 	}
 	Options options = 3;
 }

@@ -37,13 +37,14 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 	private currentValue: number;
 
 	constructor(parent: HTMLElement, modObj: ModObject, config: IconPickerConfig<ModObject, ValueType>) {
-		config.rootElem = document.createElement('a');
-		super(parent, 'icon-input', modObj, config);
+		super(parent, 'icon-input-root', modObj, config);
 		this.config = config;
 		this.currentValue = 0;
 
-		this.rootAnchor = this.rootElem as HTMLAnchorElement;
+		this.rootAnchor = document.createElement('a');
+		this.rootAnchor.classList.add('icon-input');
 		this.rootAnchor.target = '_blank';
+		this.rootElem.appendChild(this.rootAnchor);
 
 		const useImprovedIcons = Boolean(this.config.improvedId);
 		if (useImprovedIcons) {
@@ -56,12 +57,13 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 			this.rootAnchor.classList.add('use-counter');
 		}
 
-		this.rootAnchor.innerHTML = `
-    <div class="icon-input-level-container">
+		const levelContainer = document.createElement('div');
+		levelContainer.classList.add('icon-input-level-container');
+		this.rootAnchor.appendChild(levelContainer);
+		levelContainer.innerHTML = `
       <a class="icon-input-improved icon-input-improved1"></a>
       <a class="icon-input-improved icon-input-improved2"></a>
       <span class="icon-input-counter"></span>
-    </div>
     `;
 
 		this.improvedAnchor = this.rootAnchor.getElementsByClassName('icon-input-improved1')[0] as HTMLAnchorElement;
@@ -125,6 +127,25 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 			return Boolean(this.currentValue) as unknown as ValueType;
 		} else {
 			return this.currentValue as unknown as ValueType;
+		}
+	}
+
+	// Returns the ActionId of the currently selected value, or null if none selected.
+	getActionId(): ActionId | null {
+		
+		// Go directly to source because during event propogation 
+		//  the internal `this.currentValue` may not yet have been updated.
+		const v = Number(this.config.getValue(this.modObject));
+		if (v == 0) {
+			return null;
+		} else if (v == 1) {
+			return this.config.id;
+		} else if (v == 2 && this.config.improvedId) {
+			return this.config.improvedId;
+		} else if (v == 3 && this.config.improvedId2) {
+			return this.config.improvedId2;
+		} else {
+			return this.config.id;
 		}
 	}
 

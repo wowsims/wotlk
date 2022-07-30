@@ -3,7 +3,7 @@
 	--theme-color-primary: #10abb5;
 	--theme-color-background: #101a20;
 	--theme-color-background-raw: 16, 26, 32;
-	--theme-background-image: url('/wotlk/assets/mage_background.jpg');
+	--theme-background-image: url('/wotlk/assets/img/mage_background.jpg');
 	--theme-background-opacity: 0.95;
 	--main-text-color: White;
 }
@@ -11,10 +11,4 @@
 // Set grid width for icon sections based on how many buffs we configured.
 .mage-sim-ui .self-buffs-section {
   grid-template-columns: repeat(2, 1fr);
-}
-.mage-sim-ui .buffs-section {
-  grid-template-columns: repeat(6, 1fr);
-}
-.mage-sim-ui .debuffs-section {
-  grid-template-columns: repeat(3, 1fr);
 }

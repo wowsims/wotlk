@@ -1,477 +1,183 @@
-import { Consumes } from '/wotlk/core/proto/common.js';
-import { Flask } from '/wotlk/core/proto/common.js';
-import { Food } from '/wotlk/core/proto/common.js';
-import { EquipmentSpec } from '/wotlk/core/proto/common.js';
-import { ItemSpec } from '/wotlk/core/proto/common.js';
-import { Potions } from '/wotlk/core/proto/common.js';
-import { WeaponImbue } from '/wotlk/core/proto/common.js';
-import { Faction } from '/wotlk/core/proto/common.js';
+import { Consumes,
+	Flask,
+	Food,
+	Glyphs,
+	EquipmentSpec,
+	ItemSpec,
+	Potions,
+	Faction,
+	RaidBuffs,
+	PartyBuffs,
+	IndividualBuffs,
+	Debuffs,
+	Spec,
+	Stat,
+	TristateEffect,
+	Race,
+} from '/wotlk/core/proto/common.js';
+import { SavedTalents } from '/wotlk/core/proto/ui.js';
 import { Player } from '/wotlk/core/player.js';
 
-import { Warlock, Warlock_Rotation as WarlockRotation, WarlockTalents as WarlockTalents, Warlock_Options as WarlockOptions, Warlock_Rotation_PrimarySpell, Warlock_Rotation_Curse, Warlock_Options_Armor as Armor, Warlock_Options_Summon as Summon } from '/wotlk/core/proto/warlock.js';
+import {
+	Warlock,
+	Warlock_Rotation as WarlockRotation,
+	WarlockTalents as WarlockTalents,
+	Warlock_Options as WarlockOptions,
+	Warlock_Rotation_PrimarySpell as PrimarySpell,
+	Warlock_Rotation_SecondaryDot as SecondaryDot,
+	Warlock_Rotation_SpecSpell as SpecSpell,
+	Warlock_Rotation_Curse as Curse,
+	Warlock_Options_WeaponImbue as WeaponImbue,
+	Warlock_Options_Armor as Armor,
+	Warlock_Options_Summon as Summon,
+	WarlockMajorGlyph as MajorGlyph,
+	WarlockMinorGlyph as MinorGlyph,
+} from '/wotlk/core/proto/warlock.js';
 
 import * as Enchants from '/wotlk/core/constants/enchants.js';
 import * as Gems from '/wotlk/core/proto_utils/gems.js';
 import * as Tooltips from '/wotlk/core/constants/tooltips.js';
-import { FelArmor } from './inputs';
-
-// Preset options for this spec.
-// Eventually we will import these values for the raid sim too, so its good to
-// keep them in a separate file.
+import * as WarlockTooltips from './tooltips.js';
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 
-/*export const DestructionTalents = {
-	name: 'Destruction',
-	data: '-20501301332001-50500051220051053105',
-};
-
-export const T6DestroTalents = {
-	name: 'Catabolt',
-	data: '-20501301332001-55500051221001303025',
-};
-*/
 export const AfflictionTalents = {
 	name: 'Affliction',
-	data: '2350002030023510253510331151--55000005',
+  tooltip: WarlockTooltips.AFF_TALENTS_TOOLTIP,
+	data: SavedTalents.create({
+		talentsString: '2350002030023510253510331151--55000005',
+		glyphs: Glyphs.create({
+			major1: MajorGlyph.GlyphOfQuickDecay,
+			major2: MajorGlyph.GlyphOfLifeTap,
+			major3: MajorGlyph.GlyphOfHaunt,
+			minor1: MinorGlyph.GlyphOfSouls,
+			minor2: MinorGlyph.GlyphOfDrainSoul,
+			minor3: MinorGlyph.GlyphOfEnslaveDemon,
+		}),
+	}),
 };
 
-/*export const DemonologistTalents = {
-	name: 'Demonologist',
-	data: '01-2050030133250101501351-5050005112',
+export const DemonologyTalents = {
+	name: 'Demonology',
+  tooltip: WarlockTooltips.DEMO_TALENTS_TOOLTIP,
+	data: SavedTalents.create({
+		talentsString: '-203203301035012530135201351-550000052',
+		glyphs: Glyphs.create({
+			major1: MajorGlyph.GlyphOfLifeTap,
+			major2: MajorGlyph.GlyphOfQuickDecay,
+			major3: MajorGlyph.GlyphOfMetamorphosis,
+			minor1: MinorGlyph.GlyphOfSouls,
+			minor2: MinorGlyph.GlyphOfDrainSoul,
+			minor3: MinorGlyph.GlyphOfEnslaveDemon,
+		}),
+	}),
 };
-*/
 
-export const DefaultRotation = WarlockRotation.create({
-	primarySpell: Warlock_Rotation_PrimarySpell.Shadowbolt,
-	immolate: true,
-	curse: Warlock_Rotation_Curse.Doom,
-	detonateSeed: true,
-});
+export const DestructionTalents = {
+	name: 'Destruction',
+  tooltip: WarlockTooltips.DESTRO_TALENTS_TOOLTIP,
+	data: SavedTalents.create({
+		talentsString: '030-03310030003-05203205220331051035031351',
+		glyphs: Glyphs.create({
+			major1: MajorGlyph.GlyphOfConflagrate,
+			major2: MajorGlyph.GlyphOfImp,
+			major3: MajorGlyph.GlyphOfIncinerate,
+			minor1: MinorGlyph.GlyphOfSouls,
+			minor2: MinorGlyph.GlyphOfDrainSoul,
+			minor3: MinorGlyph.GlyphOfEnslaveDemon,
+		}),
+	}),
+};
 
 export const AfflictionRotation = WarlockRotation.create({
-	primarySpell: Warlock_Rotation_PrimarySpell.Shadowbolt,
-	immolate: true,
-	corruption: true,
-	haunt: true,
-	curse: Warlock_Rotation_Curse.Elements,
-	detonateSeed: true,
+		primarySpell: PrimarySpell.ShadowBolt,
+		secondaryDot: SecondaryDot.UnstableAffliction,
+		specSpell: SpecSpell.Haunt,
+		curse: Curse.Agony,
+		corruption: true,
+		detonateSeed: true,
 });
 
 export const DemonologyRotation = WarlockRotation.create({
-	primarySpell: Warlock_Rotation_PrimarySpell.Shadowbolt,
-	immolate: true,
+	primarySpell: PrimarySpell.ShadowBolt,
+	secondaryDot: SecondaryDot.Immolate,
+	specSpell: SpecSpell.NoSpecSpell,
+	curse: Curse.Doom,
 	corruption: true,
-	curse: Warlock_Rotation_Curse.Elements,
 	detonateSeed: true,
 });
 
-export const DefaultOptions = WarlockOptions.create({
-	armor: Armor.FelArmor,
-	summon: Summon.Succubus,
+export const DestructionRotation = WarlockRotation.create({
+	primarySpell: PrimarySpell.Incinerate,
+	secondaryDot: SecondaryDot.Immolate,
+	specSpell: SpecSpell.ChaosBolt,
+	curse: Curse.Doom,
+	corruption: true,
+	detonateSeed: true,
 });
 
 export const AfflictionOptions = WarlockOptions.create({
 	armor: Armor.FelArmor,
-	summon: Summon.Imp,
+	summon: Summon.Felhunter,
+	weaponImbue: WeaponImbue.GrandSpellstone,
 });
 
 export const DemonologyOptions = WarlockOptions.create({
 	armor: Armor.FelArmor,
-	summon: Summon.Felgaurd,
+	summon: Summon.Felguard,
+	weaponImbue: WeaponImbue.GrandSpellstone,
+});
+
+export const DestructionOptions = WarlockOptions.create({
+	armor: Armor.FelArmor,
+	summon: Summon.Imp,
+	weaponImbue: WeaponImbue.GrandFirestone,
 });
 
 export const DefaultConsumes = Consumes.create({
-	flask: Flask.FlaskOfPureDeath,
-	food: Food.FoodBlackenedBasilisk,
-	mainHandImbue: WeaponImbue.WeaponImbueBrilliantWizardOil,
-	defaultPotion: Potions.DestructionPotion,
+	flask: Flask.FlaskOfTheFrostWyrm,
+	food: Food.FoodFishFeast,
+	defaultPotion: Potions.PotionOfWildMagic,
+	prepopPotion:  Potions.PotionOfWildMagic,
 });
 
-export const P1_DESTRO = {
-	name: 'P1 Destro',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-	{
-	  "id": 28963,
-	  "enchant": 29191,
-	  "gems": [
-		34220,
-		31867
-	  ]
-	},
-	{
-	  "id": 28762
-	},
-	{
-	  "id": 28967,
-	  "enchant": 28886,
-	  "gems": [
-		24056,
-		31861
-	]
-	},
-	{
-	  "id": 28766,
-	  "enchant": 33150
-	},
-	{
-	  "id": 28964,
-	  "enchant": 24003,
-	  "gems": [
-		31861,
-		24059,
-		24030
-	  ]
-	},
-	{
-	  "id": 24250,
-	  "enchant": 22534,
-	  "gems": [
-		31867
-	  ]
-	},
-	{
-	  "id": 28968,
-	  "enchant": 28272
-	},
-	{
-	  "id": 24256,
-	  "gems": [
-		31867,
-		31867
-	  ]
-	},
-	{
-	  "id": 24262,
-	  "enchant": 24274,
-	  "gems": [
-		31867,
-		31867,
-		31867
-	  ]
-	},
-	{
-	  "id": 21870,
-	  "enchant": 35297,
-	  "gems": [
-		31861,
-		24057
-	  ]
-	},
-	{
-	  "id": 28753
-	},
-	{
-	  "id": 28793
-	},
-	{
-	  "id": 27683
-	},
-	{
-	  "id": 29370
-	},
-	{
-	  "id": 28802,
-	  "enchant": 22561
-	},
-	{
-	  "id": 29273
-	},
-	{
-	  "id": 28783
-	}
-  ]}`),
-};
+export const DefaultRaidBuffs = RaidBuffs.create({
+	giftOfTheWild: TristateEffect.TristateEffectImproved,
+	powerWordFortitude: TristateEffect.TristateEffectImproved,
+	strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
+	arcaneBrilliance: true,
+	divineSpirit: true,
+	trueshotAura: true,
+	leaderOfThePack: TristateEffect.TristateEffectImproved,
+	icyTalons: true,
+	totemOfWrath: true,
+	moonkinAura: TristateEffect.TristateEffectImproved,
+	wrathOfAirTotem: true,
+	sanctifiedRetribution: true,
+	bloodlust: true,
+});
 
-export const P2_DESTRO = {
-	name: 'P2 Destro',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-	{
-	  "id": 30212,
-	  "enchant": 29191,
-	  "gems": [
-		34220,
-		30606
-	  ]
-	},
-	{
-	  "id": 30015
-	},
-	{
-	  "id": 28967,
-	  "enchant": 28886,
-	  "gems": [
-		30600,
-		30564
-	  ]
-	},
-	{
-	  "id": 29992,
-	  "enchant": 33150
-	},
-	{
-	  "id": 30107,
-	  "enchant": 24003,
-	  "gems": [
-		31867,
-		31867,
-		30605
-	  ]
-	},
-	{
-	  "id": 29918,
-	  "enchant": 22534
-	},
-	{
-	  "id": 28968,
-	  "enchant": 28272
-	},
-	{
-	  "id": 30038,
-	  "gems": [
-		24030,
-		24030
-	  ]
-	},
-	{
-	  "id": 24262,
-	  "enchant": 24274,
-	  "gems": [
-		31867,
-		31867,
-		31867
-	  ]
-	},
-	{
-	  "id": 30037,
-	  "enchant": 35297
-	},
-	{
-	  "id": 30109
-	},
-	{
-	  "id": 29302
-	},
-	{
-	  "id": 27683
-	},
-	{
-	  "id": 29370
-	},
-	{
-	  "id": 30095,
-	  "enchant": 22561
-	},
-	{
-	  "id": 30049
-	},
-	{
-	  "id": 29982
-	}
-  ]}`),
-};
+export const DefaultIndividualBuffs = IndividualBuffs.create({
+	blessingOfKings: true,
+	blessingOfWisdom: TristateEffect.TristateEffectImproved,
+	blessingOfMight: TristateEffect.TristateEffectImproved,
+	vampiricTouch: true,
+});
 
-export const P3_DESTRO = {
-	name: 'P3 Destro',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-        {
-          "id": 31051,
-          "enchant": 29191,
-          "gems": [
-            34220,
-            32218
-          ]
-        },
-        {
-          "id": 30015
-        },
-        {
-          "id": 31054,
-          "enchant": 28886,
-          "gems": [
-            32215,
-            32218
-          ]
-        },
-        {
-          "id": 32331,
-          "enchant": 33150
-        },
-        {
-          "id": 31052,
-          "enchant": 24003,
-          "gems": [
-            32196,
-            32196,
-            32196
-          ]
-        },
-        {
-          "id": 32586,
-          "enchant": 22534
-        },
-        {
-          "id": 31050,
-          "enchant": 28272,
-          "gems": [
-            32196
-          ]
-        },
-        {
-          "id": 30038,
-          "gems": [
-            32215,
-            32218
-          ]
-        },
-        {
-          "id": 30916,
-          "enchant": 24274,
-          "gems": [
-            32196,
-            32196,
-            32196
-          ]
-        },
-        {
-          "id": 32239,
-          "enchant": 35297,
-          "gems": [
-            32218,
-            32215
-          ]
-        },
-        {
-          "id": 32527,
-          "enchant": 22536
-        },
-        {
-          "id": 29305,
-          "enchant": 22536
-        },
-        {
-          "id": 32483
-        },
-        {
-          "id": 29370
-        },
-        {
-          "id": 32374,
-          "enchant": 22561
-        },
-        {},
-        {
-          "id": 29982
-        }
-	]}`),
-};
+export const DefaultDebuffs = Debuffs.create({
+	sunderArmor: true,
+	faerieFire: TristateEffect.TristateEffectImproved,
+	bloodFrenzy: true,
+	ebonPlaguebringer: true,
+	heartOfTheCrusader: true,
+	judgementOfWisdom: true,
+});
 
-export const P4_DESTRO = {
-	name: 'P4 Destro',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-		  "id": 31051,
-		  "enchant": 29191,
-		  "gems": [
-			34220,
-			32218
-		  ]
-		},
-		{
-		  "id": 33281
-		},
-		{
-		  "id": 31054,
-		  "enchant": 28886,
-		  "gems": [
-			32215,
-			32218
-		  ]
-		},
-		{
-		  "id": 32524,
-		  "enchant": 33150
-		},
-		{
-		  "id": 30107,
-		  "enchant": 24003,
-		  "gems": [
-			32196,
-			32196,
-			32196
-		  ]
-		},
-		{
-		  "id": 32586,
-		  "enchant": 22534
-		},
-		{
-		  "id": 31050,
-		  "enchant": 28272,
-		  "gems": [
-			32196
-		  ]
-		},
-		{
-		  "id": 30888,
-		  "gems": [
-			32196,
-			32196
-		  ]
-		},
-		{
-		  "id": 31053,
-		  "enchant": 24274,
-		  "gems": [
-			32196
-		  ]
-		},
-		{
-		  "id": 32239,
-		  "enchant": 35297,
-		  "gems": [
-			32218,
-			32215
-		  ]
-		},
-		{
-		  "id": 32527,
-		  "enchant": 22536
-		},
-		{
-		  "id": 33497,
-		  "enchant": 22536
-		},
-		{
-		  "id": 32483
-		},
-		{
-		  "id": 33829
-		},
-		{
-		  "id": 32374,
-		  "enchant": 22561
-		},
-		{},
-		{
-		  "id": 33192,
-		  "gems": [
-			32215
-		  ]
-		}
-	]}`),
-};
-
-
-export const P5_DESTRO = {
-	name: 'P5 Destro',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
+export const SWP_BIS = {
+	name: 'Straight Outa SWP',
+	gear: EquipmentSpec.fromJsonString(`
+{"items": [
         {
           "id": 34340,
           "enchant": 29191,
@@ -499,19 +205,20 @@ export const P5_DESTRO = {
           ]
         },
         {
-          "id": 34232,
+          "id": 34364,
           "enchant": 24003,
           "gems": [
             32196,
-            35760,
-            35760
+            35488,
+            32196
           ]
         },
         {
           "id": 34436,
           "enchant": 22534,
           "gems": [
-            35760
+            35760,
+            0
           ]
         },
         {
@@ -519,13 +226,15 @@ export const P5_DESTRO = {
           "enchant": 28272,
           "gems": [
             35760,
-            32196
+            32196,
+            0
           ]
         },
         {
           "id": 34541,
           "gems": [
-            35760
+            35760,
+            0
           ]
         },
         {
@@ -571,5 +280,241 @@ export const P5_DESTRO = {
             35760
           ]
         }
-      ]}`),
+      ]}
+    `),
 };
+export const P1_PreBiS = {
+	name: 'Pre-Raid BiS',
+	tooltip: WarlockTooltips.BIS_TOOLTIP,
+	gear: EquipmentSpec.fromJsonString(`
+    {"items":
+      [
+        {
+          "id": 44910,
+          "enchant": 44877,
+          "gems": [
+            41285,
+            40113
+          ]
+        },
+        {
+          "id": 42647,
+          "gems": [
+            40113
+          ]
+        },
+        {
+          "id": 34210,
+          "enchant": 44874,
+          "gems": [
+            40113,
+            40155
+          ]
+        },
+        {
+          "id": 41610,
+          "enchant": 55642
+        },
+        {
+          "id": 39497,
+          "enchant": 44623,
+          "gems": [
+            40113,
+            40155
+          ]
+        },
+        {
+          "id": 37361,
+          "enchant": 44498,
+          "gems": [
+            0
+          ]
+        },
+        {
+          "id": 42113,
+          "enchant": 54999,
+          "gems": [
+            0
+          ]
+        },
+        {
+          "id": 40696,
+          "gems": [
+            40155,
+            40113
+          ]
+        },
+        {
+          "id": 34181,
+          "enchant": 41602,
+          "gems": [
+            40113,
+            40113,
+            40155
+          ]
+        },
+        {
+          "id": 44202,
+          "enchant": 55016,
+          "gems": [
+            40133
+          ]
+        },
+        {
+          "id": 43253,
+          "gems": [
+            40133
+          ]
+        },
+        {
+          "id": 37694
+        },
+        {
+          "id": 40682
+        },
+        {
+          "id": 37873
+        },
+        {
+          "id": 45085,
+          "enchant": 44487
+        },
+        {
+          "id": 40698
+        },
+        {
+          "id": 34348,
+          "gems": [
+            40113
+          ]
+        }
+      ]
+    }
+  `),
+}
+
+export const P1_BiS = {
+	name: 'P1 BiS',
+	tooltip: WarlockTooltips.BIS_TOOLTIP,
+	gear: EquipmentSpec.fromJsonString(`
+    {"items":
+      [
+        {
+          "id": 40421,
+          "enchant": 44877,
+          "gems": [
+            41285,
+            40155
+          ]
+        },
+        {
+          "id": 44661,
+          "gems": [
+            40133
+          ]
+        },
+        {
+          "id": 40424,
+          "enchant": 44874,
+          "gems": [
+            40113
+          ]
+        },
+        {
+          "id": 44005,
+          "enchant": 55642,
+          "gems": [
+            40133
+          ]
+        },
+        {
+          "id": 40423,
+          "enchant": 44623,
+          "gems": [
+            40113,
+            40155
+          ]
+        },
+        {
+          "id": 44008,
+          "enchant": 44498,
+          "gems": [
+            40113,
+            0
+          ]
+        },
+        {
+          "id": 40420,
+          "enchant": 54999,
+          "gems": [
+            40113,
+            0
+          ]
+        },
+        {
+          "id": 40561,
+          "gems": [
+            40113
+          ]
+        },
+        {
+          "id": 40560,
+          "enchant": 41602
+        },
+        {
+          "id": 40558,
+          "enchant": 55016
+        },
+        {
+          "id": 40399
+        },
+        {
+          "id": 40719
+        },
+        {
+          "id": 40432
+        },
+        {
+          "id": 40255
+        },
+        {
+          "id": 40396,
+          "enchant": 44487
+        },
+        {
+          "id": 39766
+        },
+        {
+          "id": 39712
+        }
+      ]
+    }
+  `),
+}
+
+export const Naked = {
+  name: 'The Naked Bolt',
+  gear: EquipmentSpec.fromJsonString(`
+    {"items":
+      [
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {}
+      ]
+    }
+  `),
+}

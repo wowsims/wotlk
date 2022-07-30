@@ -4,17 +4,24 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (shaman *Shaman) ApplyTalents() {
+
+	// We are going to treat this like a snapshot if you have the glyph.
+	if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfTotemOfWrath) {
+		shaman.AddStat(stats.SpellPower, 280*0.3)
+	}
+
 	if shaman.Talents.ThunderingStrikes > 0 {
 		shaman.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*1*float64(shaman.Talents.ThunderingStrikes))
 		shaman.AddStat(stats.SpellCrit, core.CritRatingPerCritChance*1*float64(shaman.Talents.ThunderingStrikes))
 	}
 
 	shaman.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*1*float64(shaman.Talents.Anticipation))
-	shaman.PseudoStats.PhysicalDamageDealtMultiplier *= []float64{0, 1.04, 1.07, 1.1}[shaman.Talents.WeaponMastery]
+	shaman.PseudoStats.PhysicalDamageDealtMultiplier *= []float64{1, 1.04, 1.07, 1.1}[shaman.Talents.WeaponMastery]
 
 	if shaman.Talents.DualWieldSpecialization > 0 && shaman.HasOHWeapon() {
 		shaman.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*2*float64(shaman.Talents.DualWieldSpecialization))
@@ -25,69 +32,27 @@ func (shaman *Shaman) ApplyTalents() {
 	}
 
 	if shaman.Talents.Toughness > 0 {
-		coeff := 1 + 0.02*float64(shaman.Talents.Toughness)
-		shaman.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Stamina,
-			ModifiedStat: stats.Stamina,
-			Modifier: func(stm float64, _ float64) float64 {
-				return stm * coeff
-			},
-		})
+		shaman.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+0.02*float64(shaman.Talents.Toughness))
 	}
 
 	if shaman.Talents.UnrelentingStorm > 0 {
-		coeff := 0.04 * float64(shaman.Talents.UnrelentingStorm)
-		shaman.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Intellect,
-			ModifiedStat: stats.MP5,
-			Modifier: func(intellect float64, mp5 float64) float64 {
-				return mp5 + intellect*coeff
-			},
-		})
+		shaman.AddStatDependency(stats.Intellect, stats.MP5, 1.0+0.04*float64(shaman.Talents.UnrelentingStorm))
 	}
 
 	if shaman.Talents.AncestralKnowledge > 0 {
-		coeff := 0.02 * float64(shaman.Talents.AncestralKnowledge)
-		shaman.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Intellect,
-			ModifiedStat: stats.Intellect,
-			Modifier: func(mana float64, _ float64) float64 {
-				return mana + mana*coeff
-			},
-		})
+		shaman.AddStatDependency(stats.Intellect, stats.Intellect, 1.0+0.02*float64(shaman.Talents.AncestralKnowledge))
 	}
 
 	if shaman.Talents.MentalQuickness > 0 {
-		coeff := 0.1 * float64(shaman.Talents.MentalQuickness)
-		shaman.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.AttackPower,
-			ModifiedStat: stats.SpellPower,
-			Modifier: func(attackPower float64, spellPower float64) float64 {
-				return spellPower + attackPower*coeff
-			},
-		})
+		shaman.AddStatDependency(stats.AttackPower, stats.SpellPower, 1.0+0.1*float64(shaman.Talents.MentalQuickness))
 	}
 
 	if shaman.Talents.MentalDexterity > 0 {
-		coeff := 0.3333 * float64(shaman.Talents.MentalDexterity)
-		shaman.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Intellect,
-			ModifiedStat: stats.AttackPower,
-			Modifier: func(intellect float64, attackPower float64) float64 {
-				return attackPower + intellect*coeff
-			},
-		})
+		shaman.AddStatDependency(stats.Intellect, stats.AttackPower, 1.0+0.3333*float64(shaman.Talents.MentalDexterity))
 	}
 
 	if shaman.Talents.NaturesBlessing > 0 {
-		coeff := 0.1 * float64(shaman.Talents.NaturesBlessing)
-		shaman.AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Intellect,
-			ModifiedStat: stats.SpellPower,
-			Modifier: func(intellect float64, spellPower float64) float64 {
-				return spellPower + intellect*coeff
-			},
-		})
+		shaman.AddStatDependency(stats.Intellect, stats.SpellPower, 1.0+0.1*float64(shaman.Talents.NaturesBlessing))
 	}
 
 	if shaman.Talents.SpiritWeapons {
@@ -118,7 +83,7 @@ func (shaman *Shaman) applyElementalFocus() {
 		Duration:  time.Second * 15,
 		MaxStacks: 2,
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if !spell.Flags.Matches(SpellFlagShock | SpellFlagElectric) {
+			if !spell.Flags.Matches(SpellFlagShock | SpellFlagElectric | SpellFlagFireNova) {
 				return
 			}
 			if spell.ActionID.Tag != 0 { // Filter LO casts
@@ -187,19 +152,25 @@ func (shaman *Shaman) applyElementalDevastation() {
 	})
 }
 
+var eleMasterActionID = core.ActionID{SpellID: 16166}
+
 func (shaman *Shaman) registerElementalMasteryCD() {
 	if !shaman.Talents.ElementalMastery {
 		return
 	}
-	actionID := core.ActionID{SpellID: 16166}
+
 	cdTimer := shaman.NewTimer()
 	cd := time.Minute * 3
+
+	if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfElementalMastery) {
+		cd -= time.Second * 30
+	}
 
 	// TODO: Share CD with Natures Swiftness
 
 	shaman.ElementalMasteryBuffAura = shaman.RegisterAura(core.Aura{
-		Label:    "Elemental Mastery Proc",
-		ActionID: actionID,
+		Label:    "Elemental Mastery Haste",
+		ActionID: core.ActionID{SpellID: 64701},
 		Duration: time.Second * 15,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			shaman.AddStatDynamic(sim, stats.SpellHaste, 15*core.HasteRatingPerHastePercent)
@@ -211,7 +182,7 @@ func (shaman *Shaman) registerElementalMasteryCD() {
 
 	shaman.ElementalMasteryAura = shaman.RegisterAura(core.Aura{
 		Label:    "Elemental Mastery",
-		ActionID: actionID,
+		ActionID: eleMasterActionID,
 		Duration: core.NeverExpires,
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if !spell.Flags.Matches(SpellFlagElectric) {
@@ -228,7 +199,7 @@ func (shaman *Shaman) registerElementalMasteryCD() {
 	})
 
 	spell := shaman.RegisterSpell(core.SpellConfig{
-		ActionID: actionID,
+		ActionID: eleMasterActionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
@@ -272,7 +243,7 @@ func (shaman *Shaman) registerNaturesSwiftnessCD() {
 		},
 	})
 
-	spell := shaman.RegisterSpell(core.SpellConfig{
+	eleMastSpell := shaman.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 		Cast: core.CastConfig{
@@ -287,7 +258,7 @@ func (shaman *Shaman) registerNaturesSwiftnessCD() {
 	})
 
 	shaman.AddMajorCooldown(core.MajorCooldown{
-		Spell: spell,
+		Spell: eleMastSpell,
 		Type:  core.CooldownTypeDPS,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
 			// Don't use NS unless we're casting a full-length lightning bolt, which is
@@ -295,6 +266,22 @@ func (shaman *Shaman) registerNaturesSwiftnessCD() {
 			return !character.HasTemporarySpellCastSpeedIncrease()
 		},
 	})
+
+	if shaman.HasSetBonus(ItemSetFrostWitchRegalia, 2) {
+		shaman.RegisterAura(core.Aura{
+			Label:    "Shaman T10 Elemental 2P Bonus",
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if (spell == shaman.LightningBolt || spell == shaman.ChainLightning) && !eleMastSpell.CD.IsReady(sim) {
+					*eleMastSpell.CD.Timer = core.Timer(time.Duration(*eleMastSpell.CD.Timer) - time.Second)
+					shaman.UpdateMajorCooldowns() // this could get expensive because it will be called all the time.
+				}
+			},
+		})
+	}
 }
 
 func (shaman *Shaman) applyFlurry() {
@@ -304,11 +291,9 @@ func (shaman *Shaman) applyFlurry() {
 
 	bonus := 1.0 + 0.06*float64(shaman.Talents.Flurry)
 
-	// I believe there is a set in wotlk that improves flurry.
-
-	// if ItemSetCataclysmHarness.CharacterHasSetBonus(&shaman.Character, 4) {
-	// 	bonus += 0.05
-	// }
+	if shaman.HasSetBonus(ItemSetEarthshatterBattlegear, 4) {
+		bonus += 0.05
+	}
 
 	inverseBonus := 1 / bonus
 
@@ -381,6 +366,7 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 	})
 	shaman.MaelstromWeaponAura = procAura
 
+	ppmm := shaman.AutoAttacks.NewPPMManager(2.0*float64(shaman.Talents.MaelstromWeapon), core.ProcMaskMelee)
 	// This aura is hidden, just applies stacks of the proc aura.
 	shaman.RegisterAura(core.Aura{
 		Label:    "MaelstromWeapon",
@@ -389,7 +375,10 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+			if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.Landed() {
+				return
+			}
+			if !ppmm.Proc(sim, spellEffect.ProcMask, "Maelstrom Weapon") {
 				return
 			}
 			if !procAura.IsActive() {

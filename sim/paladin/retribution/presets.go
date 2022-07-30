@@ -6,35 +6,46 @@ import (
 )
 
 var defaultRetTalents = &proto.PaladinTalents{
+	SealsOfThePure:                5,
+	DivineIntellect:               5,
+	AuraMastery:                   true,
+	DivineStrength:                5,
 	Benediction:                   5,
-	ImprovedSealOfTheCrusader:     3,
-	ImprovedJudgement:             2,
+	ImprovedJudgements:            2,
+	HeartOfTheCrusader:            3,
+	ImprovedBlessingOfMight:       2,
 	Conviction:                    5,
 	SealOfCommand:                 true,
+	PursuitOfJustice:              2,
+	SanctityOfBattle:              3,
 	Crusade:                       3,
-	SanctityAura:                  true,
 	TwoHandedWeaponSpecialization: 3,
-	ImprovedSanctityAura:          2,
-	Vengeance:                     5,
-	SanctifiedJudgement:           2,
-	SanctifiedSeals:               3,
-	Fanaticism:                    5,
+	SanctifiedRetribution:         true,
+	Vengeance:                     3,
+	TheArtOfWar:                   2,
+	Repentance:                    true,
+	JudgementsOfTheWise:           3,
+	Fanaticism:                    3,
+	SanctifiedWrath:               2,
+	SwiftRetribution:              3,
 	CrusaderStrike:                true,
-	Precision:                     3,
-	DivineStrength:                5,
+	SanctifiedLight:               3,
+	RighteousVengeance:            3,
+	DivineStorm:                   true,
 }
 
 var defaultRetRotation = &proto.RetributionPaladin_Rotation{
-	ConsecrationRank: proto.RetributionPaladin_Rotation_None,
-	UseExorcism:      false,
+	ConsSlack:            500,
+	ExoSlack:             500,
+	DivinePleaPercentage: 0.75,
 }
 
 var defaultRetOptions = &proto.RetributionPaladin_Options{
-	Judgement:             proto.RetributionPaladin_Options_Crusader,
-	Aura:                  proto.PaladinAura_SanctityAura,
-	CrusaderStrikeDelayMs: 1700,
-	HasteLeewayMs:         100,
-	DamageTakenPerSecond:  0,
+	Judgement:            proto.PaladinJudgement_JudgementOfWisdom,
+	Seal:                 proto.PaladinSeal_Vengeance,
+	Aura:                 proto.PaladinAura_RetributionAura,
+	UseDivinePlea:        true,
+	DamageTakenPerSecond: 0,
 }
 
 var DefaultOptions = &proto.Player_RetributionPaladin{
@@ -71,7 +82,7 @@ var FullConsumes = &proto.Consumes{
 	DefaultPotion:   proto.Potions_HastePotion,
 	DefaultConjured: proto.Conjured_ConjuredDarkRune,
 	Food:            proto.Food_FoodRoastedClefthoof,
-	SuperSapper:     true,
+	ThermalSapper:   true,
 }
 
 var FullDebuffs = &proto.Debuffs{
@@ -79,10 +90,9 @@ var FullDebuffs = &proto.Debuffs{
 	Misery:            true,
 	CurseOfElements:   true,
 	BloodFrenzy:       true,
-	ExposeArmor:       proto.TristateEffect_TristateEffectImproved,
+	SunderArmor:       true,
 	FaerieFire:        proto.TristateEffect_TristateEffectImproved,
 	CurseOfWeakness:   proto.TristateEffect_TristateEffectImproved,
-	HuntersMark:       proto.TristateEffect_TristateEffectImproved,
 }
 
 var Phase4Gear = items.EquipmentSpecFromJsonString(`{"items": [

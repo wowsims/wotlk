@@ -11,8 +11,9 @@ import (
 func (paladin *Paladin) registerHolyShieldSpell() {
 	actionID := core.ActionID{SpellID: 27179}
 
-	numCharges := 4 + 2*paladin.Talents.ImprovedHolyShield
-	damage := 155 + core.TernaryFloat64(ItemSetJusticarArmor.CharacterHasSetBonus(&paladin.Character, 4), 15, 0)
+	// numCharges := 4 + 2*paladin.Talents.ImprovedHolyShield
+	numCharges := int32(5) // TODO: fix
+	damage := 155.0
 
 	procSpell := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID.WithTag(1),
@@ -20,8 +21,9 @@ func (paladin *Paladin) registerHolyShieldSpell() {
 		Flags:       core.SpellFlagBinary,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskEmpty,
-			DamageMultiplier: 1 + 0.1*float64(paladin.Talents.ImprovedHolyShield),
+			ProcMask: core.ProcMaskEmpty,
+			// DamageMultiplier: 1 + 0.1*float64(paladin.Talents.ImprovedHolyShield),
+			DamageMultiplier: 1,
 			ThreatMultiplier: 1.35,
 
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(damage, 0.05),

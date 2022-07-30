@@ -110,11 +110,12 @@ func (combos *SettingsCombos) GetTest(testIdx int) (string, *proto.ComputeStatsR
 	rsr := &proto.RaidSimRequest{
 		Raid: SinglePlayerRaidProto(
 			WithSpec(&proto.Player{
-				Race:      race,
-				Class:     combos.Class,
-				Equipment: gearSetCombo.GearSet,
-				Consumes:  buffsCombo.Consumes,
-				Buffs:     buffsCombo.Player,
+				Race:        race,
+				Class:       combos.Class,
+				Equipment:   gearSetCombo.GearSet,
+				Consumes:    buffsCombo.Consumes,
+				Buffs:       buffsCombo.Player,
+				Profession1: proto.Profession_Engineering,
 				// TODO: Allow cooldowns in tests
 				//Cooldowns: &proto.Cooldowns{
 				//	Cooldowns: []*proto.Cooldown{
@@ -223,7 +224,7 @@ func (filter *ItemFilter) Matches(item items.Item, equipChecksOnly bool) bool {
 	}
 
 	if !equipChecksOnly {
-		if !HasItemEffect(item.ID) {
+		if !HasItemEffectForTest(item.ID) {
 			return false
 		}
 
@@ -412,6 +413,7 @@ type CharacterSuiteConfig struct {
 	Race        proto.Race
 	GearSet     GearSetCombo
 	SpecOptions SpecOptionsCombo
+	Glyphs      *proto.Glyphs
 
 	RaidBuffs   *proto.RaidBuffs
 	PartyBuffs  *proto.PartyBuffs
@@ -439,11 +441,13 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 
 	defaultPlayer := WithSpec(
 		&proto.Player{
-			Class:     config.Class,
-			Race:      config.Race,
-			Equipment: config.GearSet.GearSet,
-			Consumes:  config.Consumes,
-			Buffs:     config.PlayerBuffs,
+			Class:       config.Class,
+			Race:        config.Race,
+			Equipment:   config.GearSet.GearSet,
+			Consumes:    config.Consumes,
+			Buffs:       config.PlayerBuffs,
+			Glyphs:      config.Glyphs,
+			Profession1: proto.Profession_Engineering,
 
 			InFrontOfTarget: config.InFrontOfTarget,
 		},

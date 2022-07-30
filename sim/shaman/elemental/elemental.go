@@ -44,15 +44,16 @@ func NewElementalShaman(character core.Character, options proto.Player) *Element
 	}
 
 	ele := &ElementalShaman{
-		Shaman:   shaman.NewShaman(character, *eleShamOptions.Talents, totems, selfBuffs),
+		Shaman:   shaman.NewShaman(character, *eleShamOptions.Talents, totems, selfBuffs, eleShamOptions.Rotation.InThunderstormRange),
 		rotation: rotation,
-		has4pT6:  shaman.ItemSetSkyshatterRegalia.CharacterHasSetBonus(&character, 4),
+		has4pT6:  character.HasSetBonus(shaman.ItemSetSkyshatterRegalia, 4),
 	}
 	ele.EnableResumeAfterManaWait(ele.tryUseGCD)
 
-	ele.ApplyFlametongueImbue(
-		ele.Consumes.MainHandImbue == proto.WeaponImbue_WeaponImbueShamanFlametongue,
-		ele.Consumes.OffHandImbue == proto.WeaponImbue_WeaponImbueShamanFlametongue)
+	hasOffhandWeapon := ele.Equip[proto.ItemSlot_ItemSlotOffHand].WeaponType != proto.WeaponType_WeaponTypeUnknown &&
+		ele.Equip[proto.ItemSlot_ItemSlotOffHand].WeaponType != proto.WeaponType_WeaponTypeShield &&
+		ele.Equip[proto.ItemSlot_ItemSlotOffHand].WeaponType != proto.WeaponType_WeaponTypeOffHand
+	ele.ApplyFlametongueImbue(true, hasOffhandWeapon)
 
 	return ele
 }

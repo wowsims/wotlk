@@ -435,26 +435,6 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 		})
 	}
 
-	switch consumes.Alchohol {
-	case proto.Alchohol_AlchoholKreegsStoutBeatdown:
-		character.AddStats(stats.Stats{
-			stats.Intellect: -5,
-			stats.Spirit:    25,
-		})
-	}
-
-	// Scrolls
-	character.AddStat(stats.Agility, []float64{0, 5, 9, 13, 17, 20}[consumes.ScrollOfAgility])
-	character.AddStat(stats.Strength, []float64{0, 5, 9, 13, 17, 20}[consumes.ScrollOfStrength])
-	if !character.HasRingEquipped(29297) {
-		// Proc from Band of Eternal Defender removes scroll.
-		character.AddStat(stats.Armor, []float64{0, 60, 120, 180, 240, 300}[consumes.ScrollOfProtection])
-	}
-	if raidBuffs.DivineSpirit {
-		// Doesn't stack with DS
-		character.AddStat(stats.Spirit, []float64{0, 3, 7, 11, 15, 30, 40, 64}[consumes.ScrollOfSpirit])
-	}
-
 	// Weapon Imbues
 	allowMHImbue := character.HasMHWeapon() && character.HasMHWeaponImbue
 	if allowMHImbue {
@@ -471,6 +451,11 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 
 func ApplyPetConsumeEffects(pet *Character, ownerConsumes proto.Consumes) {
 	switch ownerConsumes.PetFood {
+	case proto.PetFood_PetFoodSpicedMammothTreats:
+		pet.AddStats(stats.Stats{
+			stats.Strength: 30,
+			stats.Spirit:   30,
+		})
 	case proto.PetFood_PetFoodKiblersBits:
 		pet.AddStats(stats.Stats{
 			stats.Strength: 20,
@@ -1071,7 +1056,7 @@ func registerConjuredCD(agent Agent, consumes proto.Consumes) {
 			ActivationFactory: func(sim *Simulation) CooldownActivation {
 				expectedManaPerUsage := float64((900 + 600) / 2)
 
-				remainingUsages := int(1 + (MaxDuration(0, sim.Duration))/(time.Minute*2))
+				remainingUsages := int(1 + (MaxDuration(0, sim.Duration))/(darkRuneCD))
 
 				if consumes.DefaultConjured == proto.Conjured_ConjuredDarkRune {
 					character.ExpectedBonusMana += expectedManaPerUsage * float64(remainingUsages)
@@ -1082,7 +1067,7 @@ func registerConjuredCD(agent Agent, consumes proto.Consumes) {
 
 					if consumes.DefaultConjured == proto.Conjured_ConjuredDarkRune {
 						// Update expected bonus mana
-						newRemainingUsages := int(sim.GetRemainingDuration() / (time.Minute * 2))
+						newRemainingUsages := int(sim.GetRemainingDuration() / (darkRuneCD))
 						character.ExpectedBonusMana -= expectedManaPerUsage * float64(remainingUsages-newRemainingUsages)
 						remainingUsages = newRemainingUsages
 					}
@@ -1092,11 +1077,13 @@ func registerConjuredCD(agent Agent, consumes proto.Consumes) {
 	}
 }
 
+const darkRuneCD = time.Minute * 15
+
 func makeConjuredActivation(conjuredType proto.Conjured, character *Character) (MajorCooldown, *Spell) {
 	if conjuredType == proto.Conjured_ConjuredDarkRune {
 		actionID := ActionID{ItemID: 20520}
 		manaMetrics := character.NewManaMetrics(actionID)
-		damageTakenManaMetrics := character.NewManaMetrics(ActionID{SpellID: 33776})
+		// damageTakenManaMetrics := character.NewManaMetrics(ActionID{SpellID: 33776})
 		return MajorCooldown{
 				Type: CooldownTypeMana,
 				CanActivate: func(sim *Simulation, character *Character) bool {
@@ -1117,7 +1104,7 @@ func makeConjuredActivation(conjuredType proto.Conjured, character *Character) (
 				Cast: CastConfig{
 					CD: Cooldown{
 						Timer:    character.GetConjuredCD(),
-						Duration: time.Minute * 2,
+						Duration: darkRuneCD,
 					},
 				},
 				ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
@@ -1125,13 +1112,13 @@ func makeConjuredActivation(conjuredType proto.Conjured, character *Character) (
 					manaGain := 900 + (sim.RandomFloat("dark rune") * 600)
 					character.AddMana(sim, manaGain, manaMetrics, true)
 
-					if character.Class == proto.Class_ClassPaladin {
-						// Paladins gain extra mana from self-inflicted damage
-						// TO-DO: It is possible for damage to be resisted or to crit
-						// This would affect mana returns for Paladins
-						manaFromDamage := manaGain * 2.0 / 3.0 * 0.1
-						character.AddMana(sim, manaFromDamage, damageTakenManaMetrics, false)
-					}
+					// if character.Class == proto.Class_ClassPaladin {
+					// 	// Paladins gain extra mana from self-inflicted damage
+					// 	// TO-DO: It is possible for damage to be resisted or to crit
+					// 	// This would affect mana returns for Paladins
+					// 	manaFromDamage := manaGain * 2.0 / 3.0 * 0.1
+					// 	character.AddMana(sim, manaFromDamage, damageTakenManaMetrics, false)
+					// }
 				},
 			})
 	} else if conjuredType == proto.Conjured_ConjuredFlameCap {
@@ -1215,56 +1202,40 @@ func makeConjuredActivation(conjuredType proto.Conjured, character *Character) (
 	}
 }
 
-var SuperSapperActionID = ActionID{ItemID: 23827}
-var GoblinSapperActionID = ActionID{ItemID: 10646}
-var FelIronBombActionID = ActionID{ItemID: 23736}
-var AdamantiteGrenadeActionID = ActionID{ItemID: 23737}
-var HolyWaterActionID = ActionID{ItemID: 13180}
+var ThermalSapperActionID = ActionID{ItemID: 42641}
+var ExplosiveDecoyActionID = ActionID{ItemID: 40536}
+var SaroniteBombActionID = ActionID{ItemID: 41119}
+var CobaltFragBombActionID = ActionID{ItemID: 40771}
 
 func registerExplosivesCD(agent Agent, consumes proto.Consumes) {
-	if !consumes.SuperSapper && !consumes.GoblinSapper && consumes.FillerExplosive == proto.Explosive_ExplosiveUnknown {
+	character := agent.GetCharacter()
+	if !character.HasProfession(proto.Profession_Engineering) {
 		return
 	}
-	character := agent.GetCharacter()
+	if !consumes.ThermalSapper && !consumes.ExplosiveDecoy && consumes.FillerExplosive == proto.Explosive_ExplosiveUnknown {
+		return
+	}
 	explosivesTimer := character.NewTimer()
+	sharedTimer := character.NewTimer()
 
-	var superSapper *Spell
-	if consumes.SuperSapper {
-		superSapper = character.newSuperSapperSpell()
+	var explosives []*Spell
+
+	if consumes.ThermalSapper {
+		explosives = append(explosives, character.newThermalSapperSpell(sharedTimer))
 	}
-	var goblinSapper *Spell
-	if consumes.GoblinSapper {
-		goblinSapper = character.newGoblinSapperSpell()
+	if consumes.ExplosiveDecoy {
+		explosives = append(explosives, character.newExplosiveDecoySpell(sharedTimer))
 	}
 
-	var fillerExplosive *Spell
 	switch consumes.FillerExplosive {
-	case proto.Explosive_ExplosiveFelIronBomb:
-		fillerExplosive = character.newFelIronBombSpell()
-	case proto.Explosive_ExplosiveAdamantiteGrenade:
-		fillerExplosive = character.newAdamantiteGrenadeSpell()
-	case proto.Explosive_ExplosiveGnomishFlameTurret:
-		fillerExplosive = character.newGnomishFlameTurretSpell()
-	case proto.Explosive_ExplosiveHolyWater:
-		fillerExplosive = character.newHolyWaterSpell()
-	}
-
-	cdAfterGoblinSapper := time.Minute
-	if fillerExplosive == nil {
-		if consumes.SuperSapper {
-			cdAfterGoblinSapper = time.Minute * 4
-		} else {
-			cdAfterGoblinSapper = time.Minute * 5
-		}
-	}
-
-	cdAfterSuperSapper := time.Minute
-	if fillerExplosive == nil && !consumes.GoblinSapper {
-		cdAfterSuperSapper = time.Minute * 5
+	case proto.Explosive_ExplosiveSaroniteBomb:
+		explosives = append(explosives, character.newSaroniteBombSpell(sharedTimer))
+	case proto.Explosive_ExplosiveCobaltFragBomb:
+		explosives = append(explosives, character.newCobaltFragBombSpell(sharedTimer))
 	}
 
 	spell := character.RegisterSpell(SpellConfig{
-		ActionID: SuperSapperActionID,
+		ActionID: ThermalSapperActionID,
 		Flags:    SpellFlagNoOnCastComplete | SpellFlagNoMetrics | SpellFlagNoLogs,
 
 		Cast: CastConfig{
@@ -1275,16 +1246,18 @@ func registerExplosivesCD(agent Agent, consumes proto.Consumes) {
 		},
 
 		ApplyEffects: func(sim *Simulation, target *Unit, _ *Spell) {
-			if superSapper != nil && superSapper.IsReady(sim) {
-				superSapper.Cast(sim, target)
-				explosivesTimer.Set(sim.CurrentTime + cdAfterSuperSapper)
-			} else if goblinSapper != nil && goblinSapper.IsReady(sim) {
-				goblinSapper.Cast(sim, target)
-				explosivesTimer.Set(sim.CurrentTime + cdAfterGoblinSapper)
-			} else {
-				fillerExplosive.Cast(sim, target)
-				explosivesTimer.Set(sim.CurrentTime + time.Minute)
+			for _, explosive := range explosives {
+				if explosive.IsReady(sim) {
+					explosive.Cast(sim, target)
+					break
+				}
 			}
+
+			nextExplosiveAt := sim.CurrentTime + time.Minute*5
+			for _, explosive := range explosives {
+				nextExplosiveAt = MinDuration(explosive.ReadyAt(), nextExplosiveAt)
+			}
+			explosivesTimer.Set(nextExplosiveAt)
 		},
 	})
 
@@ -1295,23 +1268,17 @@ func registerExplosivesCD(agent Agent, consumes proto.Consumes) {
 }
 
 // Creates a spell object for the common explosive case.
-func (character *Character) newBasicExplosiveSpellConfig(actionID ActionID, minDamage float64, maxDamage float64, cooldown Cooldown, isHolyWater bool, minSelfDamage float64, maxSelfDamage float64) SpellConfig {
-	school := SpellSchoolFire
-	damageMultiplier := 1.0
-	if isHolyWater {
-		school = SpellSchoolHoly
-		if character.CurrentTarget.MobType != proto.MobType_MobTypeUndead {
-			damageMultiplier = 0
-		}
-	}
-
-	damageTakenManaMetrics := character.NewManaMetrics(ActionID{SpellID: 33776})
+func (character *Character) newBasicExplosiveSpellConfig(sharedTimer *Timer, actionID ActionID, school SpellSchool, minDamage float64, maxDamage float64, cooldown Cooldown, minSelfDamage float64, maxSelfDamage float64) SpellConfig {
 	return SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: school,
 
 		Cast: CastConfig{
 			CD: cooldown,
+			SharedCD: Cooldown{
+				Timer:    sharedTimer,
+				Duration: time.Minute,
+			},
 		},
 
 		ApplyEffects: ApplyEffectFuncAOEDamage(character.Env, SpellEffect{
@@ -1319,35 +1286,26 @@ func (character *Character) newBasicExplosiveSpellConfig(actionID ActionID, minD
 			// Explosives always have 1% resist chance, so just give them hit cap.
 			BonusSpellHitRating: 100 * SpellHitRatingPerHitChance,
 
-			DamageMultiplier: damageMultiplier,
+			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 
 			BaseDamage:     BaseDamageConfigRoll(minDamage, maxDamage),
 			OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(2),
-			OnSpellHitDealt: func(sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
-				// Paladins gain extra mana from self-inflicted damage
-				// TO-DO: Check if self-inflicted damage can be resisted or crit
-				// This affects mana returns for Paladins
-				if character.Class == proto.Class_ClassPaladin && maxSelfDamage > 0 {
-					manaGain := (minSelfDamage + (sim.RandomFloat("sapper paladin") * (maxSelfDamage - minSelfDamage))) * 0.1
-					character.AddMana(sim, manaGain, damageTakenManaMetrics, false)
-				}
-			},
+			// TODO: Deal self-damage
+			//OnSpellHitDealt: func(sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
+			//},
 		}),
 	}
 }
-func (character *Character) newSuperSapperSpell() *Spell {
-	return character.GetOrRegisterSpell(character.newBasicExplosiveSpellConfig(SuperSapperActionID, 900, 1500, Cooldown{Timer: character.NewTimer(), Duration: time.Minute * 5}, false, 675, 1125))
+func (character *Character) newThermalSapperSpell(sharedTimer *Timer) *Spell {
+	return character.GetOrRegisterSpell(character.newBasicExplosiveSpellConfig(sharedTimer, ThermalSapperActionID, SpellSchoolFire, 2188, 2812, Cooldown{Timer: character.NewTimer(), Duration: time.Minute * 5}, 2188, 2812))
 }
-func (character *Character) newGoblinSapperSpell() *Spell {
-	return character.GetOrRegisterSpell(character.newBasicExplosiveSpellConfig(GoblinSapperActionID, 450, 750, Cooldown{Timer: character.NewTimer(), Duration: time.Minute * 5}, false, 375, 625))
+func (character *Character) newExplosiveDecoySpell(sharedTimer *Timer) *Spell {
+	return character.GetOrRegisterSpell(character.newBasicExplosiveSpellConfig(sharedTimer, ExplosiveDecoyActionID, SpellSchoolPhysical, 1440, 2160, Cooldown{Timer: character.NewTimer(), Duration: time.Minute * 2}, 0, 0))
 }
-func (character *Character) newFelIronBombSpell() *Spell {
-	return character.GetOrRegisterSpell(character.newBasicExplosiveSpellConfig(FelIronBombActionID, 330, 770, Cooldown{}, false, 0, 0))
+func (character *Character) newSaroniteBombSpell(sharedTimer *Timer) *Spell {
+	return character.GetOrRegisterSpell(character.newBasicExplosiveSpellConfig(sharedTimer, SaroniteBombActionID, SpellSchoolFire, 1150, 1500, Cooldown{}, 0, 0))
 }
-func (character *Character) newAdamantiteGrenadeSpell() *Spell {
-	return character.GetOrRegisterSpell(character.newBasicExplosiveSpellConfig(AdamantiteGrenadeActionID, 450, 750, Cooldown{}, false, 0, 0))
-}
-func (character *Character) newHolyWaterSpell() *Spell {
-	return character.GetOrRegisterSpell(character.newBasicExplosiveSpellConfig(HolyWaterActionID, 438, 562, Cooldown{}, true, 0, 0))
+func (character *Character) newCobaltFragBombSpell(sharedTimer *Timer) *Spell {
+	return character.GetOrRegisterSpell(character.newBasicExplosiveSpellConfig(sharedTimer, CobaltFragBombActionID, SpellSchoolFire, 750, 1000, Cooldown{}, 0, 0))
 }

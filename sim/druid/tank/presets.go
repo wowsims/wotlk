@@ -62,24 +62,20 @@ var FullIndividualBuffs = &proto.IndividualBuffs{
 }
 
 var FullConsumes = &proto.Consumes{
-	BattleElixir:     proto.BattleElixir_ElixirOfMajorAgility,
-	Food:             proto.Food_FoodGrilledMudfish,
-	DefaultPotion:    proto.Potions_HastePotion,
-	MainHandImbue:    proto.WeaponImbue_WeaponImbueAdamantiteWeightstone,
-	DefaultConjured:  proto.Conjured_ConjuredDarkRune,
-	ScrollOfStrength: 5,
-	ScrollOfAgility:  5,
+	BattleElixir:    proto.BattleElixir_ElixirOfMajorAgility,
+	Food:            proto.Food_FoodGrilledMudfish,
+	DefaultPotion:   proto.Potions_HastePotion,
+	MainHandImbue:   proto.WeaponImbue_WeaponImbueAdamantiteWeightstone,
+	DefaultConjured: proto.Conjured_ConjuredDarkRune,
 }
 
 var FullDebuffs = &proto.Debuffs{
 	JudgementOfWisdom: true,
 	BloodFrenzy:       true,
 	GiftOfArthas:      true,
-	ExposeArmor:       proto.TristateEffect_TristateEffectImproved,
 	FaerieFire:        proto.TristateEffect_TristateEffectImproved,
 	SunderArmor:       true,
 	CurseOfWeakness:   proto.TristateEffect_TristateEffectImproved,
-	HuntersMark:       proto.TristateEffect_TristateEffectImproved,
 }
 
 var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [

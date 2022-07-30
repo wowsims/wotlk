@@ -18,12 +18,12 @@
 
 @font-face {
 	font-family: SimDefaultFont;
-	src: url(/wotlk/assets/PlusJakartaSans-Regular.woff2);
+	src: url(/wotlk/assets/fonts/PlusJakartaSans-Regular.woff2);
 }
 
 @font-face {
 	font-family: SimDefaultFont;
-	src: url(/wotlk/assets/PlusJakartaSans-Bold.woff2);
+	src: url(/wotlk/assets/fonts/PlusJakartaSans-Bold.woff2);
 	font-weight: bold;
 }
 
@@ -159,8 +159,23 @@ $sim-transitions: .2s ease-in;
 .dropdown-panel {
 	display: none;
 	position: absolute;
-	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 	z-index: 1;
+	box-shadow: 2px 4px 20px 5px #000;
+}
+.multi-icon-picker-dropdown {
+	margin-left: 25px;
+	margin-top: -25px;
+	background-color: #000 !important;
+	border: 1px gray solid;
+	padding: 1px;
+}
+.multi-icon-dropdown-container {
+	margin: 2px;
+}
+.icon-enum-picker-dropdown {
+	background-color: #000;
+	border: 1px gray solid;
+	padding: 1px;
 }
 
 .dropdown-panel-column {
@@ -217,4 +232,29 @@ $sim-transitions: .2s ease-in;
 	border: none;
 	padding: 5px;
 	font-weight: bold;
+}
+
+.labeled-icon-section {
+}
+.labeled-icon-section>fieldset>.multi-icon-picker-root, .labeled-icon-section>fieldset>.icon-input-root {
+	display: flex !important;
+	align-items: center;
+	justify-content: end;
+	font-size: 10px;
+	margin: 2px;
+}
+.labeled-icon-section>fieldset>.multi-icon-picker-root>*, .labeled-icon-section>fieldset>.icon-input-root>* {
+	margin: 0 4px 0 0;
+}
+
+.labeled-icon-section .multi-icon-picker-button {
+	height: 45px;
+	width: 45px;
+	display: block;
+}
+.labeled-icon-section .icon-input {
+	// Needs border*2 extra size because <a> is weird
+	height: 49px;
+	width: 49px;
+	display: block;
 }

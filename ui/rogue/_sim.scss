@@ -5,19 +5,13 @@
 	--theme-color-primary: #a7ba27;
 	--theme-color-background: #19190c;
 	--theme-color-background-raw: 25, 25, 12;
-	--theme-background-image: url('/wotlk/assets/rogue_background.jpg');
+	--theme-background-image: url('/wotlk/assets/img/rogue_background.jpg');
 	--theme-background-opacity: 0.95;
 	--main-text-color: White;
 }
 
 // Set grid width for icon sections based on how many buffs we configured.
 .rogue-sim-ui .self-buffs-section {
-  grid-template-columns: repeat(4, 1fr);
-}
-.rogue-sim-ui .buffs-section {
-  grid-template-columns: repeat(6, 1fr);
-}
-.rogue-sim-ui .debuffs-section {
   grid-template-columns: repeat(4, 1fr);
 }
 

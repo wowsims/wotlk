@@ -3,7 +3,7 @@
 	--theme-color-primary: #e0a335;
 	--theme-color-background: #1d1510;
 	--theme-color-background-raw: 29, 21, 16;
-	--theme-background-image: url('/wotlk/assets/feral_druid_tank_background.jpg');
+	--theme-background-image: url('/wotlk/assets/img/feral_druid_tank_background.jpg');
 	--main-text-color: White;
 }
 
@@ -12,12 +12,6 @@
   grid-template-columns: repeat(1, 1fr);
 }
 .feral-tank-druid-sim-ui .consumes-section {
-  grid-template-columns: repeat(5, 1fr);
-}
-.feral-tank-druid-sim-ui .buffs-section {
-  grid-template-columns: repeat(5, 1fr);
-}
-.feral-tank-druid-sim-ui .debuffs-section {
   grid-template-columns: repeat(5, 1fr);
 }
 

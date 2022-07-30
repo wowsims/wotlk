@@ -269,8 +269,7 @@ func (stats Stats) FlatString() string {
 		if name == "none" || statValue == 0 {
 			continue
 		}
-
-		fmt.Fprintf(&sb, "%s: %0.3f,", name, statValue)
+		fmt.Fprintf(&sb, "\"%s\": %0.3f,", name, statValue)
 	}
 
 	sb.WriteString("}")
@@ -283,130 +282,6 @@ func (stats Stats) ToFloatArray() []float64 {
 		arr[i] = v
 	}
 	return arr
-}
-
-// Given the current values for source and mod stats, should return the new
-// value for the mod stat.
-type StatModifier func(sourceValue float64, modValue float64) float64
-
-// Represents a dependency between two stats, whereby the value of one stat
-// modifies the value of the other.
-//
-// For example, many casters have a talent to increase their spell power by
-// a percentage of their intellect.
-type StatDependency struct {
-	// The stat which will be used to control the amount of increase.
-	SourceStat Stat
-
-	// The stat which will be modified, depending on the value of SourceStat.
-	ModifiedStat Stat
-
-	// Applies the stat modification.
-	Modifier StatModifier
-}
-
-type StatDependencyManager struct {
-	// Stat dependencies for each stat.
-	// First dimension is the modified stat. For each modified stat, stores a list of
-	// dependencies for that stat.
-	deps [Len][]StatDependency
-
-	// Whether Finalize() has been called.
-	finalized bool
-
-	// Dependencies being managed, sorted so that their modifiers can be applied
-	// in-order without any issues.
-	sortedDeps []StatDependency
-}
-
-func (sdm *StatDependencyManager) AddStatDependency(dep StatDependency) {
-	if sdm.finalized {
-		panic("Stat dependencies may not be added once finalized!")
-	}
-
-	sdm.deps[dep.ModifiedStat] = append(sdm.deps[dep.ModifiedStat], dep)
-}
-
-// Populates sortedDeps. Panics if there are any dependency cycles.
-// TODO: Figure out if we need to separate additive / multiplicative dependencies.
-func (sdm *StatDependencyManager) Sort() {
-	sdm.sortedDeps = []StatDependency{}
-
-	// Set of stats we're done processing.
-	processedStats := map[Stat]struct{}{}
-
-	for len(processedStats) < int(Len) {
-		numNewlyProcessed := 0
-		for i := 0; i < int(Len); i++ {
-			stat := Stat(i)
-
-			if _, alreadyProcessed := processedStats[stat]; alreadyProcessed {
-				continue
-			}
-
-			// If all deps for this stat have been processed or are the same stat, we can process it.
-			allDepsProcessed := true
-			for _, dep := range sdm.deps[stat] {
-				_, depAlreadyProcessed := processedStats[dep.SourceStat]
-
-				if !depAlreadyProcessed && dep.SourceStat != stat {
-					allDepsProcessed = false
-				}
-			}
-			if !allDepsProcessed {
-				continue
-			}
-
-			// Process this stat by adding its deps to sortedDeps.
-
-			// Add deps from other stats first.
-			for _, dep := range sdm.deps[stat] {
-				if dep.SourceStat != stat {
-					sdm.sortedDeps = append(sdm.sortedDeps, dep)
-				}
-			}
-
-			// Now add deps from the same stat.
-			for _, dep := range sdm.deps[stat] {
-				if dep.SourceStat == stat {
-					sdm.sortedDeps = append(sdm.sortedDeps, dep)
-				}
-			}
-
-			// Mark this stat as processed.
-			processedStats[stat] = struct{}{}
-			numNewlyProcessed++
-		}
-
-		// If we couldn't process any new stats but there are still stats left,
-		// there must be a circular dependency.
-		if numNewlyProcessed == 0 {
-			panic("Circular stat dependency detected")
-		}
-	}
-}
-
-func (sdm *StatDependencyManager) Finalize() {
-	if sdm.finalized {
-		return
-	}
-	sdm.finalized = true
-
-	sdm.Sort()
-}
-
-// Applies all stat dependencies and returns the new Stats.
-func (sdm *StatDependencyManager) ApplyStatDependencies(stats Stats) Stats {
-	newStats := stats
-	for _, dep := range sdm.sortedDeps {
-		newStats[dep.ModifiedStat] = dep.Modifier(newStats[dep.SourceStat], newStats[dep.ModifiedStat])
-	}
-
-	return newStats
-}
-func (sdm *StatDependencyManager) SortAndApplyStatDependencies(stats Stats) Stats {
-	sdm.Sort()
-	return sdm.ApplyStatDependencies(stats)
 }
 
 type PseudoStats struct {
@@ -439,9 +314,13 @@ type PseudoStats struct {
 	BonusRangedHitRating  float64 // Hit rating for ranged only.
 	BonusMeleeCritRating  float64 // Crit rating for melee only (not ranged).
 	BonusRangedCritRating float64 // Crit rating for ranged only.
-	BonusFireCritRating   float64 // Crit rating for fire spells only (Combustion).
+	BonusFireCritRating   float64 // Crit rating for fire spells only.
+	BonusShadowCritRating float64 // Crit rating for shadow spells only. Warlock stuff. You wouldn't understand.
 	BonusMHCritRating     float64 // Talents, e.g. Rogue Dagger specialization
 	BonusOHCritRating     float64 // Talents, e.g. Rogue Dagger specialization
+	BonusMHArmorPenRating float64 // Talents, e.g. Rogue Mace specialization
+	BonusOHArmorPenRating float64 // Talents, e.g. Rogue Mace specialization
+	BonusSpellCritRating  float64 // Crit rating bonus to spells
 
 	DisableDWMissPenalty bool    // Used by Heroic Strike and Cleave
 	IncreasedMissChance  float64 // Insect Swarm and Scorpid Sting
@@ -467,12 +346,16 @@ type PseudoStats struct {
 	HolyDamageDealtMultiplier     float64
 	NatureDamageDealtMultiplier   float64
 	ShadowDamageDealtMultiplier   float64
+	DiseaseDamageDealtMultiplier  float64
 
 	PeriodicShadowDamageDealtMultiplier float64
 
 	// Modifiers for spells with the SpellFlagAgentReserved1 flag set.
 	BonusCritRatingAgentReserved1       float64
 	AgentReserved1DamageDealtMultiplier float64
+
+	// Treat melee haste as a pseudostat so that shamans, death knights, paladins, and druids can get the correct scaling
+	MeleeHasteRatingPerHastePercent float64
 
 	///////////////////////////////////////////////////
 	// Effects that apply when this unit is the target.
@@ -485,13 +368,12 @@ type PseudoStats struct {
 
 	ReducedCritTakenChance float64 // Reduces chance to be crit.
 
-	BonusMeleeAttackPower  float64 // Imp Hunters mark, EW
-	BonusRangedAttackPower float64 // Hunters mark, EW
-	BonusSpellCritRating   float64 // Imp Shadow Bolt debuff
-	BonusCritRating        float64 // Imp Judgement of the Crusader
-	BonusFrostCritRating   float64 // Winter's Chill
-	BonusMeleeHitRating    float64 //
-	BonusSpellHitRating    float64 // Imp FF
+	BonusMeleeAttackPowerTaken  float64 // Imp Hunters mark, EW
+	BonusRangedAttackPowerTaken float64 // Hunters mark, EW
+	BonusSpellCritRatingTaken   float64 // Imp Shadow Bolt / Imp Scorch / Winter's Chill debuff
+	BonusCritRatingTaken        float64 // Totem of Wrath / Master Poisoner / Heart of the Crusader
+	BonusMeleeHitRatingTaken    float64 //
+	BonusSpellHitRatingTaken    float64 // Imp FF
 
 	BonusDamageTaken         float64 // Blessing of Sanctuary
 	BonusPhysicalDamageTaken float64 // Hemo, Gift of Arthas, etc
@@ -508,6 +390,7 @@ type PseudoStats struct {
 	HolyDamageTakenMultiplier     float64
 	NatureDamageTakenMultiplier   float64
 	ShadowDamageTakenMultiplier   float64
+	DiseaseDamageTakenMultiplier  float64
 
 	ReducedPhysicalHitTakenChance float64
 	ReducedArcaneHitTakenChance   float64
@@ -543,8 +426,11 @@ func NewPseudoStats() PseudoStats {
 		HolyDamageDealtMultiplier:           1,
 		NatureDamageDealtMultiplier:         1,
 		ShadowDamageDealtMultiplier:         1,
+		DiseaseDamageDealtMultiplier:        1,
 		PeriodicShadowDamageDealtMultiplier: 1,
 		AgentReserved1DamageDealtMultiplier: 1,
+
+		MeleeHasteRatingPerHastePercent: 32.79,
 
 		// Target effects.
 		DamageTakenMultiplier: 1,
@@ -558,6 +444,7 @@ func NewPseudoStats() PseudoStats {
 		HolyDamageTakenMultiplier:     1,
 		NatureDamageTakenMultiplier:   1,
 		ShadowDamageTakenMultiplier:   1,
+		DiseaseDamageTakenMultiplier:  1,
 
 		PeriodicPhysicalDamageTakenMultiplier: 1,
 

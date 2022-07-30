@@ -81,7 +81,7 @@ func (spell *Spell) ApplyCostModifiers(cost float64) float64 {
 	} else {
 		cost -= spell.BaseCost * (1 - spell.Unit.PseudoStats.CostMultiplier)
 		cost -= spell.Unit.PseudoStats.CostReduction
-		return MaxFloat(0, cost)
+		return MaxFloat(0, cost*spell.CostMultiplier)
 	}
 }
 
@@ -166,46 +166,6 @@ func (spell *Spell) wrapCastFuncResources(config CastConfig, onCastComplete Cast
 			onCastComplete(sim, target)
 			return true
 		}
-		// case stats.BloodRune:
-		// 	return func(sim *Simulation, target *Unit) bool {
-		// 		spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
-		// 		if spell.Unit.CurrentBloodRunes() < spell.CurCast.Cost {
-		// 			return false
-		// 		}
-		// 		spell.Unit.SpendBloodRune(sim, spell.ResourceMetrics)
-		// 		onCastComplete(sim, target)
-		// 		return true
-		// 	}
-		// case stats.FrostRune:
-		// 	return func(sim *Simulation, target *Unit) bool {
-		// 		spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
-		// 		if spell.Unit.CurrentFrostRunes() < spell.CurCast.Cost {
-		// 			return false
-		// 		}
-		// 		spell.Unit.SpendRune(sim, spell.ResourceMetrics)
-		// 		onCastComplete(sim, target)
-		// 		return true
-		// 	}
-		// case stats.UnholyRune:
-		// 	return func(sim *Simulation, target *Unit) bool {
-		// 		spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
-		// 		if spell.Unit.CurrentUnholyRunes() < spell.CurCast.Cost {
-		// 			return false
-		// 		}
-		// 		spell.Unit.SpendRune(sim, spell.ResourceMetrics)
-		// 		onCastComplete(sim, target)
-		// 		return true
-		// 	}
-		// case stats.DeathRune:
-		// 	return func(sim *Simulation, target *Unit) bool {
-		// 		spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
-		// 		if spell.Unit.CurrentDeathRunes() < spell.CurCast.Cost {
-		// 			return false
-		// 		}
-		// 		spell.Unit.SpendRune(sim, spell.ResourceMetrics)
-		// 		onCastComplete(sim, target)
-		// 		return true
-		// 	}
 	}
 
 	panic("Invalid resource type")

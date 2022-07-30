@@ -3,10 +3,12 @@ import { Consumes } from '/wotlk/core/proto/common.js';
 import { EquipmentSpec } from '/wotlk/core/proto/common.js';
 import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
+import { Glyphs } from '/wotlk/core/proto/common.js';
 import { ItemSpec } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
 import { Faction } from '/wotlk/core/proto/common.js';
+import { SavedTalents } from '/wotlk/core/proto/ui.js';
 import { Player } from '/wotlk/core/player.js';
 
 import { EnhancementShaman, EnhancementShaman_Rotation as EnhancementShamanRotation, EnhancementShaman_Options as EnhancementShamanOptions, ShamanShield } from '/wotlk/core/proto/shaman.js';
@@ -15,7 +17,6 @@ import {
 	EarthTotem,
 	FireTotem,
 	WaterTotem,
-	EnhancementShaman_Rotation_PrimaryShock as PrimaryShock,
 	ShamanTotems,
 } from '/wotlk/core/proto/shaman.js';
 
@@ -30,13 +31,10 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 export const StandardTalents = {
-	name: 'Ele Sub',
-	data: '250030502-502500210501133531151',
-};
-
-export const RestoSubspecTalents = {
-	name: 'Resto Sub',
-	data: '02-502500210502133531151-05005301',
+	name: 'Standard',
+	data: SavedTalents.create({
+		talentsString: '053030152-30205023105021333031131031051',
+	}),
 };
 
 export const DefaultRotation = EnhancementShamanRotation.create({
@@ -46,7 +44,6 @@ export const DefaultRotation = EnhancementShamanRotation.create({
 		fire: FireTotem.SearingTotem,
 		water: WaterTotem.ManaSpringTotem,
 	}),
-	primaryShock: PrimaryShock.Frost,
 });
 
 export const DefaultOptions = EnhancementShamanOptions.create({
@@ -60,9 +57,7 @@ export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfRelentlessAssault,
 	food: Food.FoodRoastedClefthoof,
 	mainHandImbue: WeaponImbue.WeaponImbueShamanWindfury,
-	offHandImbue: WeaponImbue.WeaponImbueShamanWindfury,
-	scrollOfAgility: 5,
-	scrollOfStrength: 5,
+	offHandImbue: WeaponImbue.WeaponImbueShamanFlametongue,
 });
 
 export const P1_PRESET = {

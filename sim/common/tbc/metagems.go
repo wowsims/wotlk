@@ -8,6 +8,7 @@ import (
 )
 
 func init() {
+	core.AddEffectsToTest = false
 	// Keep these in order by item ID.
 
 	core.NewItemEffect(25893, func(agent core.Agent) {
@@ -97,26 +98,16 @@ func init() {
 	})
 
 	core.NewItemEffect(35501, func(agent core.Agent) {
-		agent.GetCharacter().AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.BlockValue,
-			ModifiedStat: stats.BlockValue,
-			Modifier: func(bv float64, _ float64) float64 {
-				return bv * 1.1
-			},
-		})
+		agent.GetCharacter().AddStatDependency(stats.BlockValue, stats.BlockValue, 1.0+0.1)
 	})
 
 	core.NewItemEffect(35503, func(agent core.Agent) {
-		agent.GetCharacter().AddStatDependency(stats.StatDependency{
-			SourceStat:   stats.Intellect,
-			ModifiedStat: stats.Intellect,
-			Modifier: func(intellect float64, _ float64) float64 {
-				return intellect * 1.02
-			},
-		})
+		agent.GetCharacter().AddStatDependency(stats.Intellect, stats.Intellect, 1.0+0.02)
 	})
 
 	// These are handled in character.go, but create empty effects so they are included in tests.
 	core.NewItemEffect(34220, func(_ core.Agent) {}) // Chaotic Skyfire Diamond
 	core.NewItemEffect(32409, func(_ core.Agent) {}) // Relentless Earthstorm Diamond
+
+	core.AddEffectsToTest = true
 }

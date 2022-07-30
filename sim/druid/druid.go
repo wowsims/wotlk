@@ -156,29 +156,12 @@ func New(char core.Character, form DruidForm, selfBuffs SelfBuffs, talents proto
 	}
 	druid.EnableManaBar()
 
-	druid.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Strength,
-		ModifiedStat: stats.AttackPower,
-		Modifier: func(strength float64, attackPower float64) float64 {
-			return attackPower + strength*2
-		},
-	})
+	druid.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
+	druid.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/25))
+	druid.AddStatDependency(stats.Agility, stats.Dodge, 1.0+(core.DodgeRatingPerDodgeChance/14.7059))
 
-	druid.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Agility,
-		ModifiedStat: stats.MeleeCrit,
-		Modifier: func(agility float64, meleeCrit float64) float64 {
-			return meleeCrit + (agility/25)*core.CritRatingPerCritChance
-		},
-	})
-
-	druid.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Agility,
-		ModifiedStat: stats.Dodge,
-		Modifier: func(agility float64, dodge float64) float64 {
-			return dodge + (agility/14.7059)*core.DodgeRatingPerDodgeChance
-		},
-	})
+	// Druids get extra melee haste
+	druid.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
 
 	return druid
 }

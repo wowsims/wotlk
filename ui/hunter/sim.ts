@@ -1,9 +1,9 @@
 import { RaidBuffs } from '/wotlk/core/proto/common.js';
 import { PartyBuffs } from '/wotlk/core/proto/common.js';
 import { IndividualBuffs } from '/wotlk/core/proto/common.js';
+import { Debuffs } from '/wotlk/core/proto/common.js';
 import { Class } from '/wotlk/core/proto/common.js';
 import { Consumes } from '/wotlk/core/proto/common.js';
-import { Debuffs } from '/wotlk/core/proto/common.js';
 import { Encounter } from '/wotlk/core/proto/common.js';
 import { ItemSlot } from '/wotlk/core/proto/common.js';
 import { MobType } from '/wotlk/core/proto/common.js';
@@ -16,21 +16,16 @@ import { Sim } from '/wotlk/core/sim.js';
 import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
 import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
 
-import { Alchohol } from '/wotlk/core/proto/common.js';
-import { BattleElixir } from '/wotlk/core/proto/common.js';
-import { Flask } from '/wotlk/core/proto/common.js';
-import { Food } from '/wotlk/core/proto/common.js';
-import { GuardianElixir } from '/wotlk/core/proto/common.js';
-import { Conjured } from '/wotlk/core/proto/common.js';
-
-import { PetFood } from '/wotlk/core/proto/common.js';
-import { Potions } from '/wotlk/core/proto/common.js';
-import { WeaponImbue } from '/wotlk/core/proto/common.js';
-
-import { Hunter, Hunter_Rotation as HunterRotation, Hunter_Options as HunterOptions } from '/wotlk/core/proto/hunter.js';
+import {
+	Hunter,
+	Hunter_Rotation as HunterRotation,
+	Hunter_Options as HunterOptions,
+	Hunter_Options_PetType as PetType,
+} from '/wotlk/core/proto/hunter.js';
 
 import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
 import * as OtherInputs from '/wotlk/core/components/other_inputs.js';
+import * as Mechanics from '/wotlk/core/constants/mechanics.js';
 import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 
 import * as HunterInputs from './inputs.js';
@@ -42,6 +37,34 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 			cssClass: 'hunter-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
+				'Sim uses a simple priority-based rotation.',
+				'Melee weaving and trap weaving are not included in the rotation.',
+			],
+			warnings: [
+				// Warning when using exotic pet without BM talented.
+				(simUI: IndividualSimUI<Spec.SpecHunter>) => {
+					return {
+						updateOn: TypedEvent.onAny([simUI.player.talentsChangeEmitter, simUI.player.specOptionsChangeEmitter]),
+						getContent: () => {
+							const petIsExotic = [
+								PetType.Chimaera,
+								PetType.CoreHound,
+								PetType.Devilsaur,
+								PetType.Silithid,
+								PetType.SpiritBeast,
+								PetType.Worm,
+							].includes(simUI.player.getSpecOptions().petType);
+
+							const isBM = simUI.player.getTalents().beastMastery;
+
+							if (petIsExotic && !isBM) {
+								return 'Cannot use exotic pets without the Beast Mastery talent.';
+							} else {
+								return '';
+							}
+						},
+					};
+				},
 			],
 
 			// All stats for which EP should be calculated.
@@ -55,6 +78,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				Stat.StatMeleeCrit,
 				Stat.StatMeleeHaste,
 				Stat.StatArmorPenetration,
+				Stat.StatMP5,
 			],
 			// Reference stat against which to calculate EP.
 			epReferenceStat: Stat.StatRangedAttackPower,
@@ -71,21 +95,30 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				Stat.StatMeleeCrit,
 				Stat.StatMeleeHaste,
 				Stat.StatArmorPenetration,
+				Stat.StatMP5,
 			],
+			modifyDisplayStats: (player: Player<Spec.SpecHunter>) => {
+				let stats = new Stats();
+				stats = stats.addStat(Stat.StatMeleeCrit, player.getTalents().lethalShots * 1 * Mechanics.MELEE_CRIT_RATING_PER_CRIT_CHANCE);
+
+				return {
+					talents: stats,
+				};
+			},
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P1_PRESET.gear,
+				gear: Presets.PRERAID_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatIntellect]: 0.01,
-					[Stat.StatAgility]: 2.5,
-					[Stat.StatStrength]: 0.15,
-					[Stat.StatAttackPower]: 0.15,
+					[Stat.StatIntellect]: 0.7,
+					[Stat.StatAgility]: 3.2,
+					[Stat.StatStrength]: 0.05,
+					[Stat.StatAttackPower]: 0.05,
 					[Stat.StatRangedAttackPower]: 1.0,
-					[Stat.StatMeleeHit]: 0.3,
-					[Stat.StatMeleeCrit]: 2.3,
-					[Stat.StatMeleeHaste]: 1.97,
+					[Stat.StatMeleeHit]: 3,
+					[Stat.StatMeleeCrit]: 1.2,
+					[Stat.StatMeleeHaste]: 2.4,
 					[Stat.StatArmorPenetration]: 0.4,
 				}),
 				// Default consumes settings.
@@ -93,7 +126,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				// Default rotation settings.
 				rotation: Presets.DefaultRotation,
 				// Default talents.
-				talents: Presets.BeastMasteryTalents.data,
+				talents: Presets.SurvivalTalents.data,
 				// Default spec-specific settings.
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
@@ -105,6 +138,9 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 					windfuryTotem: TristateEffect.TristateEffectImproved,
 					battleShout: TristateEffect.TristateEffectImproved,
 					leaderOfThePack: TristateEffect.TristateEffectImproved,
+					sanctifiedRetribution: true,
+					unleashedRage: true,
+					moonkinAura: TristateEffect.TristateEffectImproved,
 				}),
 				partyBuffs: PartyBuffs.create({
 				}),
@@ -115,126 +151,46 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				}),
 				debuffs: Debuffs.create({
 					sunderArmor: true,
-					curseOfWeakness: TristateEffect.TristateEffectRegular,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					judgementOfWisdom: true,
 					curseOfElements: true,
+					heartOfTheCrusader: true,
+					savageCombat: true,
 				}),
 			},
 
-			// IconInputs to include in the 'Self Buffs' section on the settings tab.
-			selfBuffInputs: [
+			// IconInputs to include in the 'Player' section on the settings tab.
+			playerIconInputs: [
+				HunterInputs.PetTypeInput,
 				HunterInputs.WeaponAmmo,
 			],
-			// IconInputs to include in the 'Other Buffs' section on the settings tab.
-			raidBuffInputs: [
-				IconInputs.ArcaneBrilliance,
-				IconInputs.DivineSpirit,
-				IconInputs.GiftOfTheWild,
-				IconInputs.Bloodlust,
-				IconInputs.WindfuryTotem,
-				IconInputs.StrengthOfEarthTotem,
-				IconInputs.ManaSpringTotem,
-				IconInputs.BattleShout,
-				IconInputs.LeaderOfThePack,
-				IconInputs.TrueshotAura,
-				IconInputs.UnleashedRage,
-			],
-			partyBuffInputs: [
-				IconInputs.HeroicPresence,
-				IconInputs.BraidedEterniumChain,
-			],
-			playerBuffInputs: [
-				IconInputs.BlessingOfKings,
-				IconInputs.BlessingOfWisdom,
-				IconInputs.BlessingOfMight,
-			],
-			// IconInputs to include in the 'Debuffs' section on the settings tab.
-			debuffInputs: [
-				IconInputs.BloodFrenzy,
-				IconInputs.JudgementOfWisdom,
-				IconInputs.HuntersMark,
-				IconInputs.FaerieFire,
-				IconInputs.SunderArmor,
-				IconInputs.ExposeArmor,
-				IconInputs.CurseOfWeakness,
-				IconInputs.CurseOfElements,
-				IconInputs.Misery,
-				IconInputs.GiftOfArthas,
-			],
-			// Which options are selectable in the 'Consumes' section.
-			consumeOptions: {
-				potions: [
-					Potions.HastePotion,
-					Potions.SuperManaPotion,
-					Potions.FelManaPotion,
-				],
-				conjured: [
-					Conjured.ConjuredDarkRune,
-					Conjured.ConjuredFlameCap,
-				],
-				flasks: [
-					Flask.FlaskOfRelentlessAssault,
-				],
-				battleElixirs: [
-					BattleElixir.ElixirOfDemonslaying,
-					BattleElixir.ElixirOfMajorAgility,
-					BattleElixir.ElixirOfTheMongoose,
-				],
-				guardianElixirs: [
-					GuardianElixir.ElixirOfDraenicWisdom,
-					GuardianElixir.ElixirOfMajorMageblood,
-				],
-				food: [
-					Food.FoodGrilledMudfish,
-					Food.FoodRavagerDog,
-					Food.FoodSpicyHotTalbuk,
-					Food.FoodRoastedClefthoof,
-				],
-				alcohol: [
-				],
-				weaponImbues: [
-					WeaponImbue.WeaponImbueAdamantiteSharpeningStone,
-					WeaponImbue.WeaponImbueAdamantiteWeightstone,
-					WeaponImbue.WeaponImbueRighteousWeaponCoating,
-				],
-				pet: [
-					IconInputs.KiblersBits,
-					IconInputs.PetScrollOfAgilityV,
-					IconInputs.PetScrollOfStrengthV,
-				],
-				other: [
-					IconInputs.ScrollOfAgilityV,
-					IconInputs.ScrollOfStrengthV,
-				],
-			},
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: HunterInputs.HunterRotationConfig,
+			petConsumeInputs: [
+				IconInputs.SpicedMammothTreats,
+			],
+			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
+			includeBuffDebuffInputs: [
+				IconInputs.SpellDamageDebuff,
+			],
+			excludeBuffDebuffInputs: [
+			],
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
-					HunterInputs.PetTypeInput,
 					HunterInputs.PetUptime,
-					HunterInputs.PetSingleAbility,
+					//HunterInputs.PetSingleAbility,
 					HunterInputs.SniperTrainingUptime,
-					HunterInputs.LatencyMs,
+					//HunterInputs.LatencyMs,
 					OtherInputs.PrepopPotion,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],
 			},
 			encounterPicker: {
-				// Target stats to show for 'Simple' encounters.
-				simpleTargetStats: [
-					Stat.StatArmor,
-				],
 				// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
 				showExecuteProportion: false,
 			},
-
-			// If true, the talents on the talents tab will not be individually modifiable by the user.
-			// Note that the use can still pick between preset talents, if there is more than 1.
-			freezeTalents: false,
 
 			presets: {
 				// Preset talents that the user can quickly select.
@@ -245,6 +201,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
+					Presets.PRERAID_PRESET,
 					Presets.P1_PRESET,
 				],
 			},

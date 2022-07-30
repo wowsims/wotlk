@@ -1,5 +1,5 @@
 import { Component } from '/wotlk/core/components/component.js';
-import { launchedSpecs, raidSimLaunched } from '/wotlk/core/launched_sims.js';
+import { getLaunchedSims, raidSimLaunched } from '/wotlk/core/launched_sims.js';
 import { Spec } from '/wotlk/core/proto/common.js';
 import {
 	classColors,
@@ -42,7 +42,7 @@ export class Title extends Component {
 		});
 
 		const orderedLaunchedSpecs: Array<Spec | null> = (naturalSpecOrder
-			.filter(spec => launchedSpecs.includes(spec)) as Array<Spec | null>)
+			.filter(spec => getLaunchedSims().includes(spec)) as Array<Spec | null>)
 			.concat(raidSimLaunched ? [null] : []); // Null represents the raid sim.
 
 		dropdownPanel.style.gridTemplateRows = `repeat(${Math.ceil(orderedLaunchedSpecs.length / 2)}, 1fr)`;
@@ -111,7 +111,7 @@ export class Title extends Component {
 
 		if (!data.color) { // Hacky check for 'isButton'
 			const simLabel = document.createElement('span');
-			simLabel.textContent = 'TBC SIMULATOR';
+			simLabel.textContent = 'WotLK Simulator';
 			simLabel.classList.add('sim-title-sim-label', 'sim-title-label');
 			labelDiv.appendChild(simLabel);
 		}

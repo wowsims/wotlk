@@ -3,19 +3,13 @@
 	--theme-color-primary: #908986;
 	--theme-color-background: #1d1726;
 	--theme-color-background-raw: 29, 23, 38;
-	--theme-background-image: url('/wotlk/assets/smite_priest_background.jpg');
+	--theme-background-image: url('/wotlk/assets/img/smite_priest_background.jpg');
 	--theme-background-opacity: 0.95;
 	--main-text-color: White;
 }
 
 // Set grid width for icon sections based on how many buffs we configured.
 .smite-priest-sim-ui .self-buffs-section {
-  grid-template-columns: repeat(3, 1fr);
-}
-.smite-priest-sim-ui .buffs-section {
-  grid-template-columns: repeat(6, 1fr);
-}
-.smite-priest-sim-ui .debuffs-section {
   grid-template-columns: repeat(3, 1fr);
 }
 

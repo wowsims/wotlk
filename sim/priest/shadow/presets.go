@@ -10,7 +10,7 @@ var StandardTalents = &proto.PriestTalents{
 	Meditation:             3,
 	ShadowAffinity:         3,
 	ImprovedShadowWordPain: 2,
-	ShadowFocus:            5,
+	ShadowFocus:            3,
 	ImprovedMindBlast:      5,
 	MindFlay:               true,
 	ShadowWeaving:          5,
@@ -26,7 +26,7 @@ var StandardTalents = &proto.PriestTalents{
 var FullRaidBuffs = &proto.RaidBuffs{
 	ArcaneBrilliance: true,
 	GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
-	MoonkinAura:      proto.TristateEffect_TristateEffectRegular,
+	MoonkinAura:      proto.TristateEffect_TristateEffectImproved,
 	TotemOfWrath:     true,
 	WrathOfAirTotem:  true,
 	ManaSpringTotem:  proto.TristateEffect_TristateEffectRegular,
@@ -35,6 +35,13 @@ var FullPartyBuffs = &proto.PartyBuffs{}
 var FullIndividualBuffs = &proto.IndividualBuffs{
 	BlessingOfKings:  true,
 	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
+}
+
+var DefaultGlyphs = &proto.Glyphs{
+	Major1: int32(proto.PriestMajorGlyph_GlyphOfShadow),
+	Major2: int32(proto.PriestMajorGlyph_GlyphOfMindFlay),
+	Major3: int32(proto.PriestMajorGlyph_GlyphOfDispersion),
+	// No dps increasing minor glyphs.
 }
 
 var FullConsumes = &proto.Consumes{
@@ -54,6 +61,7 @@ var PlayerOptionsBasic = &proto.Player_ShadowPriest{
 	ShadowPriest: &proto.ShadowPriest{
 		Talents: StandardTalents,
 		Options: &proto.ShadowPriest_Options{
+			Armor:          proto.ShadowPriest_Options_InnerFire,
 			UseShadowfiend: true,
 		},
 		Rotation: &proto.ShadowPriest_Rotation{
@@ -66,6 +74,7 @@ var PlayerOptionsClipping = &proto.Player_ShadowPriest{
 	ShadowPriest: &proto.ShadowPriest{
 		Talents: StandardTalents,
 		Options: &proto.ShadowPriest_Options{
+			Armor:          proto.ShadowPriest_Options_InnerFire,
 			UseShadowfiend: true,
 		},
 		Rotation: &proto.ShadowPriest_Rotation{
@@ -79,6 +88,7 @@ var PlayerOptionsIdeal = &proto.Player_ShadowPriest{
 	ShadowPriest: &proto.ShadowPriest{
 		Talents: StandardTalents,
 		Options: &proto.ShadowPriest_Options{
+			Armor:          proto.ShadowPriest_Options_InnerFire,
 			UseShadowfiend: true,
 		},
 		Rotation: &proto.ShadowPriest_Rotation{

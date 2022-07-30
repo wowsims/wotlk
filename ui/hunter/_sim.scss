@@ -5,7 +5,7 @@
 	--theme-color-primary: #2ead50;
 	--theme-color-background: #0c190f;
 	--theme-color-background-raw: 12, 25, 15;
-	--theme-background-image: url('/wotlk/assets/hunter_background.jpg');
+	--theme-background-image: url('/wotlk/assets/img/hunter_background.jpg');
 	--theme-background-opacity: 0.9;
 	--main-text-color: White;
 }
@@ -13,12 +13,6 @@
 // Set grid width for icon sections based on how many buffs we configured.
 .hunter-sim-ui .self-buffs-section {
   grid-template-columns: repeat(2, 1fr);
-}
-.hunter-sim-ui .buffs-section {
-  grid-template-columns: repeat(7, 1fr);
-}
-.hunter-sim-ui .debuffs-section {
-  grid-template-columns: repeat(4, 1fr);
 }
 .hunter-sim-ui .PetBuffs-section {
   grid-template-columns: repeat(3, 1fr);

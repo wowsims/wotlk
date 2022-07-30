@@ -92,6 +92,22 @@ export class ActionId {
 				baseName = 'Incoming HPS';
 				iconUrl = 'https://wow.zamimg.com/images/wow/icons/large/spell_holy_renew.jpg';
 				break;
+			case OtherAction.OtherActionBloodRuneGain:
+				baseName = 'Blood Rune Gain';
+				iconUrl = 'https://wow.zamimg.com/images/wow/icons/medium/spell_deathknight_deathstrike.jpg';
+				break;
+			case OtherAction.OtherActionFrostRuneGain:
+				baseName = 'Frost Rune Gain';
+				iconUrl = 'https://wow.zamimg.com/images/wow/icons/medium/spell_deathknight_deathstrike2.jpg';
+				break;
+			case OtherAction.OtherActionUnholyRuneGain:
+				baseName = 'Unholy Rune Gain';
+				iconUrl = 'https://wow.zamimg.com/images/wow/icons/medium/spell_deathknight_empowerruneblade.jpg';
+				break;
+			case OtherAction.OtherActionDeathRuneGain:
+				baseName = 'Death Rune Gain';
+				iconUrl = 'https://wow.zamimg.com/images/wow/icons/medium/spell_deathknight_empowerruneblade.jpg';
+				break;
 		}
 		this.baseName = baseName;
 		this.name = name || baseName;
@@ -208,6 +224,13 @@ export class ActionId {
 			case 'Lightning Bolt':
 				if (this.tag) name += ' (LO)';
 				break;
+			case 'Holy Vengeance':
+				if (this.tag == 1) {
+					name += ' (Swing Roll)'
+				} else if (this.tag == 2) {
+					name += ' (DoT)'
+				}
+				break;
 			case 'Holy Shield':
 				if (this.tag == 1) {
 					name += ' (Proc)';
@@ -234,6 +257,18 @@ export class ActionId {
 					name += ' (Spell)';
 				}
 				break;
+			case 'Scourge Strike':
+				if (this.tag == 1) {
+					name += ' (Physical)';
+				} else if (this.tag == 2) {
+					name += ' (Shadow)';
+				}
+				break;
+			case 'Frost Strike':
+			case 'Plague Strike':
+			case 'Blood Strike':
+			case 'Obliterate':
+			case 'Blood-Caked Strike':
 			case 'Lightning Speed':
 			case 'Windfury Weapon':
 				if (this.tag == 1) {
@@ -502,36 +537,52 @@ export const defaultTargetIcon = 'https://wow.zamimg.com/images/wow/icons/large/
 const petNameToActionId: Record<string, ActionId> = {
 	'Gnomish Flame Turret': ActionId.fromItemId(23841),
 	'Water Elemental': ActionId.fromSpellId(31687),
+	'Spirit Wolf 1': ActionId.fromSpellId(51533),
+	'Spirit Wolf 2': ActionId.fromSpellId(51533)
 };
 
 // https://wowhead.com/wotlk/hunter-pets
 const petNameToIcon: Record<string, string> = {
 	'Bat': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_bat.jpg',
 	'Bear': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_bear.jpg',
+	'Bird of Prey': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_owl.jpg',
 	'Boar': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_boar.jpg',
-	'Carrion Bird': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_carrionbird.jpg',
+	'Carrion Bird': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_vulture.jpg',
 	'Cat': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_cat.jpg',
+	'Chimaera': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_chimera.jpg',
+	'Core Hound': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_corehound.jpg',
 	'Crab': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_crab.jpg',
 	'Crocolisk': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_crocolisk.jpg',
+	'Devilsaur': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_devilsaur.jpg',
 	'Dragonhawk': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_dragonhawk.jpg',
+	'Felguard': 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_summonfelguard.jpg',
+	'Felhunter': 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_summonfelhunter.jpg',
+	'Gargoyle': 'https://wow.zamimg.com/images/wow/icons/large/ability_hunter_pet_bat.jpg',
+	'Ghoul': 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_raisedead.jpg',
+	'Army of the Dead': 'https://wow.zamimg.com/images/wow/icons/large/spell_deathknight_armyofthedead.jpg',
 	'Gorilla': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_gorilla.jpg',
 	'Hyena': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_hyena.jpg',
+	'Imp': 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_summonimp.jpg',
+	'Moth': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_moth.jpg',
 	'Nether Ray': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_netherray.jpg',
 	'Owl': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_owl.jpg',
 	'Raptor': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_raptor.jpg',
 	'Ravager': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_ravager.jpg',
+	'Rhino': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_rhino.jpg',
 	'Scorpid': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_scorpid.jpg',
-	'Serpent': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_serpent.jpg',
+	'Serpent': 'https://wow.zamimg.com/images/wow/icons/medium/spell_nature_guardianward.jpg',
+	'Silithid': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_silithid.jpg',
 	'Spider': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_spider.jpg',
-	'Sporebat': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_sporebat.jpg',
+	'Spirit Beast': 'https://wow.zamimg.com/images/wow/icons/medium/ability_druid_primalprecision.jpg',
+	'Spore Bat': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_sporebat.jpg',
+	'Succubus': 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_summonsuccubus.jpg',
 	'Tallstrider': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_tallstrider.jpg',
 	'Turtle': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_turtle.jpg',
 	'Warp Stalker': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_warpstalker.jpg',
+	'Wasp': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_wasp.jpg',
 	'Wind Serpent': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_windserpent.jpg',
 	'Wolf': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_wolf.jpg',
-	'Succubus': 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_summonsuccubus.jpg',
-	'Felguard': 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_summonfelguard.jpg',
-	'Imp': 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_summonimp.jpg',
+	'Worm': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_worm.jpg',
 };
 
 export const resourceTypeToIcon: Record<ResourceType, string> = {
@@ -543,8 +594,8 @@ export const resourceTypeToIcon: Record<ResourceType, string> = {
 	[ResourceType.ResourceTypeComboPoints]: 'https://wow.zamimg.com/images/wow/icons/medium/inv_mace_2h_pvp410_c_01.jpg',
 	[ResourceType.ResourceTypeFocus]: 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_focusfire.jpg',
 	[ResourceType.ResourceTypeRunicPower]: 'https://wow.zamimg.com/images/wow/icons/medium/inv_sword_62.jpg',
-	[ResourceType.ResourceTypeBloodRune]: 'https://wow.zamimg.com/images/wow/icons/medium/spell_deathknight_deathstrike.jpg',
-	[ResourceType.ResourceTypeFrostRune]: 'https://wow.zamimg.com/images/wow/icons/medium/spell_deathknight_empowerruneblade2.jpg',
-	[ResourceType.ResourceTypeUnholyRune]: 'https://wow.zamimg.com/images/wow/icons/medium/spell_deathknight_empowerruneblade.jpg',
-	[ResourceType.ResourceTypeDeathRune]: 'https://wow.zamimg.com/images/wow/icons/medium/spell_deathknight_scourgestrike.jpg',
+	[ResourceType.ResourceTypeBloodRune]: '/wotlk/assets/img/blood_rune.png',
+	[ResourceType.ResourceTypeFrostRune]: '/wotlk/assets/img/frost_rune.png',
+	[ResourceType.ResourceTypeUnholyRune]: '/wotlk/assets/img/unholy_rune.png',
+	[ResourceType.ResourceTypeDeathRune]: '/wotlk/assets/img/death_rune.png',
 };

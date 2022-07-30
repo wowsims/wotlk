@@ -326,21 +326,21 @@ func init() {
 		character := agent.GetCharacter()
 		actionID := core.ActionID{SpellID: 54758}
 
-		procAura := character.NewTemporaryStatsAura("Hyperspeed Acceleration", actionID, stats.Stats{stats.MeleeHaste: 340, stats.SpellHaste: 340}, time.Second*10)
+		procAura := character.NewTemporaryStatsAura("Hyperspeed Acceleration", actionID, stats.Stats{stats.MeleeHaste: 340, stats.SpellHaste: 340}, time.Second*12)
 
 		spell := character.GetOrRegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
-			SpellSchool: core.SpellSchoolPhysical,
+			SpellSchool: core.SpellSchoolPhysical | core.SpellSchoolMagic,
 			Flags:       core.SpellFlagNoOnCastComplete,
 
 			Cast: core.CastConfig{
 				CD: core.Cooldown{
 					Timer:    character.NewTimer(),
-					Duration: time.Minute * 60,
+					Duration: time.Second * 60,
 				},
 				SharedCD: core.Cooldown{
 					Timer:    character.GetOffensiveTrinketCD(),
-					Duration: time.Second * 10,
+					Duration: time.Second * 12,
 				},
 			},
 
@@ -353,6 +353,160 @@ func init() {
 			Spell:    spell,
 			Priority: core.CooldownPriorityLow, // Use low prio so other actives get used first.
 			Type:     core.CooldownTypeDPS,
+		})
+	})
+
+	newRazoriceHitSpell := func(character *core.Character, isMH bool) *core.Spell {
+		baseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 0, 1.0, true)
+		if !isMH {
+			baseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, 1.0, true)
+		}
+
+		return character.RegisterSpell(core.SpellConfig{
+			ActionID:    core.ActionID{SpellID: 53343},
+			SpellSchool: core.SpellSchoolFrost,
+
+			ApplyEffects: core.ApplyEffectFuncDirectDamageTargetModifiersOnly(core.SpellEffect{
+				ProcMask: core.ProcMaskEmpty,
+
+				DamageMultiplier: 1,
+				ThreatMultiplier: 1,
+
+				BaseDamage: core.BaseDamageConfig{
+					Calculator: func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
+						return baseDamage(sim, spellEffect, spell) * 0.02
+					},
+				},
+				OutcomeApplier: character.OutcomeFuncAlwaysHit(),
+			}),
+		})
+	}
+
+	core.NewItemEffect(53343, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.ID == 53343
+		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.ID == 53343
+		if !mh && !oh {
+			return
+		}
+
+		actionID := core.ActionID{SpellID: 53343}
+		if spell := character.GetSpell(actionID); spell != nil {
+			// This function gets called twice when dual wielding this enchant, but we
+			// handle both in one call.
+			return
+		}
+
+		target := character.CurrentTarget
+
+		vulnAura := core.RuneOfRazoriceVulnerabilityAura(target)
+		mhRazoriceSpell := newRazoriceHitSpell(character, true)
+		ohRazoriceSpell := newRazoriceHitSpell(character, false)
+		character.GetOrRegisterAura(core.Aura{
+			Label:    "Rune of Razorice",
+			ActionID: core.ActionID{SpellID: 53343},
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if !spellEffect.Landed() {
+					return
+				}
+
+				if mh && !oh {
+					if !(spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHAuto) || spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHSpecial)) {
+						return
+					}
+				} else if oh && !mh {
+					if !(spellEffect.ProcMask.Matches(core.ProcMaskMeleeOHAuto) || spellEffect.ProcMask.Matches(core.ProcMaskMeleeOHSpecial)) {
+						return
+					}
+				} else if mh && oh {
+					if !(spellEffect.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeSpecial)) {
+						return
+					}
+				}
+
+				vulnAura.Activate(sim)
+				isMH := spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHAuto) || spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHSpecial)
+				if isMH {
+					mhRazoriceSpell.Cast(sim, target)
+					vulnAura.AddStack(sim)
+				}
+
+				isOH := spellEffect.ProcMask.Matches(core.ProcMaskMeleeOHAuto) || spellEffect.ProcMask.Matches(core.ProcMaskMeleeOHSpecial)
+				if isOH {
+					ohRazoriceSpell.Cast(sim, target)
+					vulnAura.AddStack(sim)
+				}
+			},
+		})
+	})
+
+	// TODO: Verify all of this
+	newRuneOfTheFallenCrusaderAura := func(character *core.Character, auraLabel string, actionID core.ActionID) *core.Aura {
+		return character.NewTemporaryStatsAuraWrapped(auraLabel, actionID, stats.Stats{}, time.Second*15, func(aura *core.Aura) {
+			oldOnGain := aura.OnGain
+			oldOnExpire := aura.OnExpire
+
+			aura.OnGain = func(aura *core.Aura, sim *core.Simulation) {
+				oldOnGain(aura, sim)
+				aura.Unit.AddStatDependencyDynamic(sim, stats.Strength, stats.Strength, 1.15)
+			}
+
+			aura.OnExpire = func(aura *core.Aura, sim *core.Simulation) {
+				oldOnExpire(aura, sim)
+				aura.Unit.AddStatDependencyDynamic(sim, stats.Strength, stats.Strength, 1.0/1.15)
+			}
+		})
+	}
+
+	// ApplyRuneOfTheFallenCrusader will be applied twice if there is two weapons with this enchant.
+	//   However it will automatically overwrite one of them so it should be ok.
+	//   A single application of the aura will handle both mh and oh procs.
+	core.NewItemEffect(53344, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.ID == 53344
+		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.ID == 53344
+		if !mh && !oh {
+			return
+		}
+
+		procMask := core.GetMeleeProcMaskForHands(mh, oh)
+		ppmm := character.AutoAttacks.NewPPMManager(2.0, procMask)
+
+		rfcAura := newRuneOfTheFallenCrusaderAura(character, "Rune Of The Fallen Crusader Proc", core.ActionID{SpellID: 53344})
+
+		character.GetOrRegisterAura(core.Aura{
+			Label:    "Rune Of The Fallen Crusader",
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if !spellEffect.Landed() {
+					return
+				}
+
+				if mh && !oh {
+					if !(spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHAuto) || spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHSpecial)) {
+						return
+					}
+				} else if oh && !mh {
+					if !(spellEffect.ProcMask.Matches(core.ProcMaskMeleeOHAuto) || spellEffect.ProcMask.Matches(core.ProcMaskMeleeOHSpecial)) {
+						return
+					}
+				} else if mh && oh {
+					if !(spellEffect.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeSpecial)) {
+						return
+					}
+				}
+
+				if ppmm.Proc(sim, spellEffect.ProcMask, "rune of the fallen crusader") {
+					rfcAura.Activate(sim)
+				}
+			},
 		})
 	})
 

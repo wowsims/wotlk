@@ -48,6 +48,8 @@ type Hunter struct {
 	manaSpentPerSecondAtFirstAspectSwap float64
 	permaHawk                           bool
 
+	serpentStingDamageMultiplier float64
+
 	AspectOfTheDragonhawk *core.Spell
 	AspectOfTheViper      *core.Spell
 
@@ -63,6 +65,7 @@ type Hunter struct {
 	RaptorStrike  *core.Spell
 	ScorpidSting  *core.Spell
 	SerpentSting  *core.Spell
+	SilencingShot *core.Spell
 	SteadyShot    *core.Spell
 
 	BlackArrowDot    *core.Dot
@@ -124,6 +127,7 @@ func (hunter *Hunter) Initialize() {
 	hunter.registerRaptorStrikeSpell()
 	hunter.registerScorpidStingSpell()
 	hunter.registerSerpentStingSpell()
+	hunter.registerSilencingShotSpell()
 	hunter.registerSteadyShotSpell()
 
 	hunter.registerKillCommandCD()
@@ -151,18 +155,18 @@ func NewHunter(character core.Character, options proto.Player) *Hunter {
 
 		latency: time.Millisecond * time.Duration(hunterOptions.Options.LatencyMs),
 
-		hasGronnstalker2Pc: ItemSetGronnstalker.CharacterHasSetBonus(&character, 2),
+		hasGronnstalker2Pc: character.HasSetBonus(ItemSetGronnstalker, 2),
 	}
 	hunter.EnableManaBar()
 
-	if hunter.Rotation.PercentWeaved <= 0 {
-		hunter.Rotation.Weave = proto.Hunter_Rotation_WeaveNone
-	}
-	if hunter.Rotation.Weave == proto.Hunter_Rotation_WeaveNone {
-		// Forces override of WF. When not weaving we'll be standing far back so weapon
-		// stone can be used.
-		hunter.HasMHWeaponImbue = true
-	}
+	//if hunter.Rotation.PercentWeaved <= 0 {
+	//	hunter.Rotation.Weave = proto.Hunter_Rotation_WeaveNone
+	//}
+	//if hunter.Rotation.Weave == proto.Hunter_Rotation_WeaveNone {
+	//	// Forces override of WF. When not weaving we'll be standing far back so weapon
+	//	// stone can be used.
+	//	hunter.HasMHWeaponImbue = true
+	//}
 
 	hunter.PseudoStats.CanParry = true
 
@@ -216,29 +220,10 @@ func NewHunter(character core.Character, options proto.Player) *Hunter {
 
 	hunter.pet = hunter.NewHunterPet()
 
-	hunter.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Strength,
-		ModifiedStat: stats.AttackPower,
-		Modifier: func(strength float64, attackPower float64) float64 {
-			return attackPower + strength*1
-		},
-	})
-
-	hunter.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Agility,
-		ModifiedStat: stats.RangedAttackPower,
-		Modifier: func(agility float64, rap float64) float64 {
-			return rap + agility*1
-		},
-	})
-
-	hunter.AddStatDependency(stats.StatDependency{
-		SourceStat:   stats.Agility,
-		ModifiedStat: stats.MeleeCrit,
-		Modifier: func(agility float64, meleeCrit float64) float64 {
-			return meleeCrit + (agility/40)*core.CritRatingPerCritChance
-		},
-	})
+	hunter.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+1)
+	hunter.AddStatDependency(stats.Agility, stats.AttackPower, 1.0+1)
+	hunter.AddStatDependency(stats.Agility, stats.RangedAttackPower, 1.0+1)
+	hunter.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/83.33))
 
 	return hunter
 }
@@ -253,8 +238,8 @@ func init() {
 		stats.Spirit:    96,
 		stats.Mana:      5046,
 
-		stats.AttackPower:       120,
-		stats.RangedAttackPower: 130,
+		stats.AttackPower:       140,
+		stats.RangedAttackPower: 150,
 		stats.MeleeCrit:         -1.53 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassHunter}] = stats.Stats{
@@ -266,8 +251,8 @@ func init() {
 		stats.Spirit:    99,
 		stats.Mana:      5046,
 
-		stats.AttackPower:       120,
-		stats.RangedAttackPower: 130,
+		stats.AttackPower:       140,
+		stats.RangedAttackPower: 150,
 		stats.MeleeCrit:         -1.53 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDwarf, Class: proto.Class_ClassHunter}] = stats.Stats{
@@ -279,8 +264,8 @@ func init() {
 		stats.Spirit:    96,
 		stats.Mana:      5046,
 
-		stats.AttackPower:       120,
-		stats.RangedAttackPower: 130,
+		stats.AttackPower:       140,
+		stats.RangedAttackPower: 150,
 		stats.MeleeCrit:         -1.53 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassHunter}] = stats.Stats{
@@ -292,8 +277,8 @@ func init() {
 		stats.Spirit:    97,
 		stats.Mana:      5046,
 
-		stats.AttackPower:       120,
-		stats.RangedAttackPower: 130,
+		stats.AttackPower:       140,
+		stats.RangedAttackPower: 150,
 		stats.MeleeCrit:         -1.53 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceOrc, Class: proto.Class_ClassHunter}] = stats.Stats{
@@ -305,8 +290,8 @@ func init() {
 		stats.Spirit:    100,
 		stats.Mana:      5046,
 
-		stats.AttackPower:       120,
-		stats.RangedAttackPower: 130,
+		stats.AttackPower:       140,
+		stats.RangedAttackPower: 150,
 		stats.MeleeCrit:         -1.53 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTauren, Class: proto.Class_ClassHunter}] = stats.Stats{
@@ -318,8 +303,8 @@ func init() {
 		stats.Spirit:    99,
 		stats.Mana:      5046,
 
-		stats.AttackPower:       120,
-		stats.RangedAttackPower: 130,
+		stats.AttackPower:       140,
+		stats.RangedAttackPower: 150,
 		stats.MeleeCrit:         -1.53 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassHunter}] = stats.Stats{
@@ -331,8 +316,8 @@ func init() {
 		stats.Spirit:    98,
 		stats.Mana:      5046,
 
-		stats.AttackPower:       120,
-		stats.RangedAttackPower: 130,
+		stats.AttackPower:       140,
+		stats.RangedAttackPower: 150,
 		stats.MeleeCrit:         -1.53 * core.CritRatingPerCritChance,
 	}
 }

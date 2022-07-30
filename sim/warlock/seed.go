@@ -22,46 +22,41 @@ func (warlock *Warlock) registerSeedSpell() {
 }
 
 func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
+	actionID := core.ActionID{SpellID: 47836}
+	spellSchool := core.SpellSchoolShadow
+	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
+	baseAdditiveMultiplierDot := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true)
+
 	baseCost := 0.34 * warlock.BaseMana
 
 	flatBonus := 0.0
-	if ItemSetOblivionRaiment.CharacterHasSetBonus(&warlock.Character, 4) {
+	if warlock.HasSetBonus(ItemSetOblivionRaiment, 4) {
 		flatBonus += 180
 	}
 
 	baseSeedExplosionEffect := core.SpellEffect{
-		ProcMask:         	  core.ProcMaskSpellDamage,
-		DamageMultiplier: 	  1 + 0.01*float64(warlock.Talents.Contagion),
-		ThreatMultiplier:	  1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-		BaseDamage:      	  core.BaseDamageConfigMagic(1633+flatBonus, 1897+flatBonus, 0.2129),
-		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(1.5),
+		ProcMask:             core.ProcMaskSpellDamage,
+		DamageMultiplier:     baseAdditiveMultiplier,
+		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+		BaseDamage:           core.BaseDamageConfigMagic(1633+flatBonus, 1897+flatBonus, 0.2129),
+		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.DefaultSpellCritMultiplier()),
 		BonusSpellCritRating: float64(warlock.Talents.ImprovedCorruption) * core.CritRatingPerCritChance,
 	}
 
 	// Use a custom aoe effect list that does not include the seeded target.
-	baseEffects := make([]core.SpellEffect, warlock.Env.GetNumTargets()-1)
-	skipped := false
+	baseEffects := make([]core.SpellEffect, warlock.Env.GetNumTargets())
 	for i := range baseEffects {
 		baseEffects[i] = baseSeedExplosionEffect
-		expTarget := i
-		if i == targetIdx {
-			skipped = true
-		}
-		if skipped {
-			expTarget++
-		}
-		baseEffects[i].Target = warlock.Env.GetTargetUnit(int32(expTarget))
+		baseEffects[i].Target = warlock.Env.GetTargetUnit(int32(i))
 	}
-	seedActionID := core.ActionID{SpellID: 47836}
 
-	explosionId := seedActionID
-	explosionId.Tag = 1
+	actionID.Tag = 1
 
 	seedExplosion := warlock.RegisterSpell(core.SpellConfig{
-		ActionID:     explosionId,
-		SpellSchool:  core.SpellSchoolShadow,
+		ActionID:     actionID,
+		SpellSchool:  spellSchool,
 		Cast:         core.CastConfig{},
-		ApplyEffects: core.ApplyEffectFuncMultipleDamageCappedWotLK(baseEffects, numTargets),
+		ApplyEffects: core.ApplyEffectFuncMultipleDamageCappedWotLK(baseEffects),
 	})
 
 	effect := core.SpellEffect{
@@ -77,8 +72,8 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 	}
 
 	warlock.Seeds[targetIdx] = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:     seedActionID,
-		SpellSchool:  core.SpellSchoolShadow,
+		ActionID:     actionID,
+		SpellSchool:  spellSchool,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 		Cast: core.CastConfig{
@@ -106,12 +101,12 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 		Spell: warlock.Seeds[targetIdx],
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "Seed-" + strconv.Itoa(int(warlock.Index)),
-			ActionID: seedActionID,
+			ActionID: actionID,
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if !spellEffect.Landed() {
 					return
 				}
-				if spell.ActionID.SpellID == seedActionID.SpellID {
+				if spell.ActionID.SpellID == actionID.SpellID {
 					return // Seed can't pop seed.
 				}
 				trySeedPop(sim, spellEffect.Damage)
@@ -131,7 +126,7 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * (1 + 0.01*float64(warlock.Talents.Contagion)) * (1 + 0.05*core.TernaryFloat64(warlock.Talents.SiphonLife, 0, 1)),
+			DamageMultiplier: baseAdditiveMultiplierDot,
 			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(1518/6, 0.25),
 			OutcomeApplier:   warlock.OutcomeFuncTick(),

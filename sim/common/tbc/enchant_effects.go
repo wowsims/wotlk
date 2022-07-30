@@ -9,6 +9,7 @@ import (
 )
 
 func init() {
+	core.AddEffectsToTest = false
 	// Keep these in order by item ID.
 
 	// TODO: Crusader, Mongoose, and Executioner could also be modelled as AddWeaponEffect instead
@@ -243,7 +244,7 @@ func init() {
 		for _, target := range character.Env.Encounter.Targets {
 			debuffs = append(debuffs, target.GetOrRegisterAura(core.Aura{
 				Label:    "Deathfrost",
-				Tag:      core.ThunderClapAuraTag,
+				Tag:      core.AtkSpeedReductionAuraTag,
 				ActionID: actionID,
 				Duration: time.Second * 8,
 				Priority: 1 / slowMultiplier,
@@ -283,4 +284,5 @@ func init() {
 		}
 	})
 
+	core.AddEffectsToTest = true
 }

@@ -9,7 +9,7 @@ var CombatTalents = &proto.RogueTalents{
 	Malice:              5,
 	Ruthlessness:        3,
 	Murder:              2,
-	RelentlessStrikes:   true,
+	RelentlessStrikes:   5,
 	ImprovedExposeArmor: 2,
 	Lethality:           5,
 	VilePoisons:         2,
@@ -19,7 +19,7 @@ var CombatTalents = &proto.RogueTalents{
 	Precision:               5,
 	DualWieldSpecialization: 5,
 	BladeFlurry:             true,
-	SwordSpecialization:     5,
+	HackAndSlash:            5,
 	WeaponExpertise:         2,
 	Aggression:              3,
 	Vitality:                2,
@@ -33,7 +33,7 @@ var MutilateTalents = &proto.RogueTalents{
 	Ruthlessness:        3,
 	Murder:              2,
 	PuncturingWounds:    3,
-	RelentlessStrikes:   true,
+	RelentlessStrikes:   5,
 	ImprovedExposeArmor: 2,
 	Lethality:           5,
 	ImprovedPoisons:     5,
@@ -56,7 +56,7 @@ var HemoTalents = &proto.RogueTalents{
 	Precision:               5,
 	DualWieldSpecialization: 5,
 	BladeFlurry:             true,
-	SwordSpecialization:     5,
+	HackAndSlash:            5,
 	WeaponExpertise:         2,
 	Aggression:              3,
 	Vitality:                2,
@@ -121,8 +121,8 @@ var FullConsumes = &proto.Consumes{
 	Flask:           proto.Flask_FlaskOfRelentlessAssault,
 	DefaultPotion:   proto.Potions_HastePotion,
 	DefaultConjured: proto.Conjured_ConjuredRogueThistleTea,
-	SuperSapper:     true,
-	FillerExplosive: proto.Explosive_ExplosiveGnomishFlameTurret,
+	ThermalSapper:   true,
+	FillerExplosive: proto.Explosive_ExplosiveSaroniteBomb,
 }
 
 var FullDebuffs = &proto.Debuffs{
@@ -172,7 +172,6 @@ var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	},
 	{
 		"id": 27531,
-		"enchant": 19445,
 		"gems": [
 			24061,
 			24061
@@ -261,7 +260,6 @@ var MutilateP1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	},
 	{
 		"id": 27531,
-		"enchant": 19445,
 		"gems": [
 			24061,
 			24061

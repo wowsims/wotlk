@@ -2,19 +2,22 @@ import { Conjured, Consumes } from '/wotlk/core/proto/common.js';
 import { EquipmentSpec } from '/wotlk/core/proto/common.js';
 import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
+import { Glyphs } from '/wotlk/core/proto/common.js';
 import { ItemSpec } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
 import { Spec } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
 import { Faction } from '/wotlk/core/proto/common.js';
+import { SavedTalents } from '/wotlk/core/proto/ui.js';
 import { Player } from '/wotlk/core/player.js';
 
 import {
 	PaladinAura as PaladinAura,
+	PaladinJudgement as PaladinJudgement,
 	RetributionPaladin_Rotation as RetributionPaladinRotation,
 	RetributionPaladin_Options as RetributionPaladinOptions,
-	RetributionPaladin_Rotation_ConsecrationRank as ConsecrationRank,
-	RetributionPaladin_Options_Judgement as Judgement,
+	PaladinMajorGlyph,
+	PaladinMinorGlyph,
 } from '/wotlk/core/proto/paladin.js';
 
 import * as Enchants from '/wotlk/core/constants/enchants.js';
@@ -27,27 +30,47 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
-export const RetKingsPaladinTalents = {
-	name: 'Ret w/ Kings',
-	data: '5-503201-0523005130033125231051',
+export const AuraMasteryTalents = {
+	name: 'Basic w/Aura Mastery+LoH buff',
+	data: SavedTalents.create({
+		talentsString: '050501-05-05232051203331302133231331',
+		glyphs: Glyphs.create({
+			major1: PaladinMajorGlyph.GlyphOfSealOfVengeance,
+			major2: PaladinMajorGlyph.GlyphOfJudgement,
+			major3: PaladinMajorGlyph.GlyphOfConsecration,
+			minor1: PaladinMinorGlyph.GlyphOfSenseUndead,
+			minor2: PaladinMinorGlyph.GlyphOfLayOnHands,
+			minor3: PaladinMinorGlyph.GlyphOfBlessingOfKings
+		})
+	}),
 };
 
 
-export const RetNoKingsPaladinTalents = {
-	name: 'Ret w/out Kings',
-	data: '52-503-0523005130033125331051',
+export const DivineSacTalents = {
+	name: 'Basic w/Dsac',
+	data: SavedTalents.create({
+		talentsString: '03-453201002-05222051203331302133201331',
+		glyphs: Glyphs.create({
+			major1: PaladinMajorGlyph.GlyphOfSealOfVengeance,
+			major2: PaladinMajorGlyph.GlyphOfJudgement,
+			major3: PaladinMajorGlyph.GlyphOfConsecration,
+			minor1: PaladinMinorGlyph.GlyphOfSenseUndead,
+			minor2: PaladinMinorGlyph.GlyphOfLayOnHands,
+			minor3: PaladinMinorGlyph.GlyphOfBlessingOfKings
+		})
+	}),
 };
 
 export const DefaultRotation = RetributionPaladinRotation.create({
-	consecrationRank: ConsecrationRank.None,
-	useExorcism: false,
+	exoSlack: 500,
+	consSlack: 500,
+	divinePleaPercentage: 0.75,
 });
 
 export const DefaultOptions = RetributionPaladinOptions.create({
-	aura: PaladinAura.SanctityAura,
-	judgement: Judgement.Crusader,
-	crusaderStrikeDelayMs: 1700,
-	hasteLeewayMs: 0,
+	aura: PaladinAura.RetributionAura,
+	judgement: PaladinJudgement.JudgementOfWisdom,
+	useDivinePlea: true,
 	damageTakenPerSecond: 0,
 });
 
@@ -424,90 +447,122 @@ export const P4_PRESET = {
 	name: 'P4 Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecRetributionPaladin>) => true,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 32235,
-			"enchant": 29192,
-			"gems": [
-				32409,
-				32193
-			]
-		},
-		{
-			"id": 30022
-		},
-		{
-			"id": 30055,
-			"enchant": 28888,
-			"gems": [
-				32193
-			]
-		},
-		{
-			"id": 33590,
-			"enchant": 34004
-		},
-		{
-			"id": 30905,
-			"enchant": 24003,
-			"gems": [
-				32211,
-				32193,
-				32217
-			]
-		},
-		{
-			"id": 32574,
-			"enchant": 27899
-		},
-		{
-			"id": 29947,
-			"enchant": 33995
-		},
-		{
-			"id": 30106,
-			"gems": [
-				32193,
-				32211
-			]
-		},
-		{
-			"id": 30900,
-			"enchant": 29535,
-			"gems": [
-				32193,
-				32193,
-				32193
-			]
-		},
-		{
-			"id": 32366,
-			"enchant": 22544,
-			"gems": [
-				32193,
-				32217
-			]
-		},
-		{
-			"id": 32526
-		},
-		{
-			"id": 30834
-		},
-		{
-			"id": 33831
-		},
-		{
-			"id": 28830
-		},
-		{
-			"id": 32332,
-			"enchant": 22559
-		},
-		{
-			"id": 27484
-		}
-	]}`),
+	gear: EquipmentSpec.fromJsonString(`
+	{
+		"items": [
+			{
+				"enchant": 44149,
+				"gems": [
+					41398,
+					40111
+				],
+				"id": 50326
+			},
+			{
+				"gems": [
+					40142
+				],
+				"id": 54581
+			},
+			{
+				"enchant": 44133,
+				"gems": [
+					40111
+				],
+				"id": 51160
+			},
+			{
+				"enchant": 55777,
+				"gems": [
+					40111
+				],
+				"id": 50653
+			},
+			{
+				"gems": [
+					40111,
+					40111,
+					40118
+				],
+				"id": 45473
+			},
+			{
+				"id": 52019
+			},
+			{
+				"id": 23709
+			},
+			{
+				"enchant": 44815,
+				"gems": [
+					40111
+				],
+				"id": 54580
+			},
+			{
+				"enchant": 54999,
+				"gems": [
+					40111,
+					40111
+				],
+				"id": 50188
+			},
+			{
+				"gems": [
+					40162,
+					40143,
+					40111
+				],
+				"id": 50762
+			},
+			{
+				"enchant": 38374,
+				"gems": [
+					40162,
+					49110
+				],
+				"id": 51161
+			},
+			{
+				"enchant": 41118,
+				"gems": [
+					40111,
+					40111
+				],
+				"id": 54578
+			},
+			{
+				"gems": [
+					40111
+				],
+				"id": 54576
+			},
+			{
+				"gems": [
+					40142
+				],
+				"id": 52572
+			},
+			{
+				"id": 47131
+			},
+			{
+				"id": 50343
+			},
+			{
+				"enchant": 44493,
+				"gems": [
+					40111,
+					40111,
+					40111
+				],
+				"id": 49623
+			},
+			{
+				"id": 47661
+			}
+		]
+	}`),
 };
 
 export const P5_PRESET = {

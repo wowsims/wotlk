@@ -2,11 +2,13 @@ import { Consumes } from '/wotlk/core/proto/common.js';
 import { EquipmentSpec } from '/wotlk/core/proto/common.js';
 import { Flask } from '/wotlk/core/proto/common.js';
 import { Food } from '/wotlk/core/proto/common.js';
+import { Glyphs } from '/wotlk/core/proto/common.js';
 import { ItemSpec } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
 import { Spec } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
 import { Faction } from '/wotlk/core/proto/common.js';
+import { SavedTalents } from '/wotlk/core/proto/ui.js';
 import { Player } from '/wotlk/core/player.js';
 
 import {
@@ -31,15 +33,21 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 export const StandardTalents = {
 	name: 'Standard',
-	data: '350003011-05-0055511033010103501351',
+	data: SavedTalents.create({
+		talentsString: '350003011-05-0055511033010103501351',
+	}),
 };
 export const ImpDemoTalents = {
 	name: 'Imp Demo',
-	data: '340003-055-0055511033010101501351',
+	data: SavedTalents.create({
+		talentsString: '340003-055-0055511033010101501351',
+	}),
 };
 export const ImpaleProtTalents = {
 	name: 'Impale Prot',
-	data: '35000301302-03-0055511033010101501351',
+	data: SavedTalents.create({
+		talentsString: '35000301302-03-0055511033010101501351',
+	}),
 };
 
 export const DefaultRotation = ProtectionWarriorRotation.create({
@@ -63,9 +71,6 @@ export const DefaultConsumes = Consumes.create({
 	defaultPotion: Potions.IronshieldPotion,
 	mainHandImbue: WeaponImbue.WeaponImbueAdamantiteSharpeningStone,
 	offHandImbue: WeaponImbue.WeaponImbueAdamantiteSharpeningStone,
-	scrollOfAgility: 5,
-	scrollOfStrength: 5,
-	scrollOfProtection: 5,
 });
 
 export const P1_BALANCED_PRESET = {

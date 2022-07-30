@@ -248,7 +248,6 @@ func BenchmarkSimulate(b *testing.B) {
 											Fire:  proto.FireTotem_TotemOfWrath,
 											Water: proto.WaterTotem_ManaSpringTotem,
 										},
-										PrimaryShock: proto.EnhancementShaman_Rotation_Frost,
 									},
 									Options: &proto.EnhancementShaman_Options{
 										Shield:             proto.ShamanShield_LightningShield,
@@ -279,8 +278,8 @@ func BenchmarkSimulate(b *testing.B) {
 			},
 		},
 		Encounter: &proto.Encounter{
-			Duration:          180,
-			ExecuteProportion: 0.1,
+			Duration:             180,
+			ExecuteProportion_20: 0.1,
 			Targets: []*proto.Target{
 				{
 					Stats:   stats.Stats{stats.Armor: 7684}.ToFloatArray(),

@@ -4,11 +4,12 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (priest *Priest) registerMindBlastSpell() {
-	baseCost := priest.BaseMana * 0.17
+	baseCost := priest.BaseMana*0.17 - core.TernaryFloat64(priest.HasSetBonus(ItemSetValorous, 2), (priest.BaseMana*0.17)*0.1, 0)
 
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
@@ -17,17 +18,27 @@ func (priest *Priest) registerMindBlastSpell() {
 		DamageMultiplier:     1,
 		ThreatMultiplier:     1 - 0.08*float64(priest.Talents.ShadowAffinity),
 		OutcomeApplier:       priest.OutcomeFuncMagicHitAndCrit(priest.SpellCritMultiplier(1, float64(priest.Talents.ShadowPower)/5)),
-		OnSpellHitDealt:      priest.OnSpellHitAddShadowWeaving(),
+		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spellEffect.Landed() {
+				priest.AddShadowWeavingStack(sim)
+			}
+			if spellEffect.DidCrit() && priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow)) {
+				priest.ShadowyInsightAura.Activate(sim)
+			}
+			if spellEffect.DidCrit() && priest.ImprovedSpiritTap != nil {
+				priest.ImprovedSpiritTap.Activate(sim)
+			}
+		},
 	}
 
 	normalCalc := core.BaseDamageFuncMagic(997, 1053, 0.429)
 	miseryCalc := core.BaseDamageFuncMagic(997, 1053, (1+float64(priest.Talents.Misery)*0.05)*0.429)
 
 	normMod := (1 + float64(priest.Talents.Darkness)*0.02) * // initialize modifier
-		core.TernaryFloat64(ItemSetAbsolution.CharacterHasSetBonus(&priest.Character, 4), 1.1, 1)
+		core.TernaryFloat64(priest.HasSetBonus(ItemSetAbsolution, 4), 1.1, 1)
 
-	swpMod := (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwistedFaith)*0.02) * // update modifier if SWP active
-		core.TernaryFloat64(ItemSetAbsolution.CharacterHasSetBonus(&priest.Character, 4), 1.1, 1)
+	swpMod := (1 + float64(priest.Talents.Darkness)*0.02) * (1 + float64(priest.Talents.TwistedFaith)*0.02) *
+		core.TernaryFloat64(priest.HasSetBonus(ItemSetAbsolution, 4), 1.1, 1)
 
 	effect.BaseDamage = core.BaseDamageConfig{
 		Calculator: func(sim *core.Simulation, effect *core.SpellEffect, spell *core.Spell) float64 {

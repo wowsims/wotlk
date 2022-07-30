@@ -1,9 +1,9 @@
 import { RaidBuffs } from '/wotlk/core/proto/common.js';
 import { PartyBuffs } from '/wotlk/core/proto/common.js';
 import { IndividualBuffs } from '/wotlk/core/proto/common.js';
+import { Debuffs } from '/wotlk/core/proto/common.js';
 import { Class } from '/wotlk/core/proto/common.js';
 import { Consumes } from '/wotlk/core/proto/common.js';
-import { Debuffs } from '/wotlk/core/proto/common.js';
 import { Encounter } from '/wotlk/core/proto/common.js';
 import { ItemSlot } from '/wotlk/core/proto/common.js';
 import { MobType } from '/wotlk/core/proto/common.js';
@@ -15,16 +15,6 @@ import { Stats } from '/wotlk/core/proto_utils/stats.js';
 import { Sim } from '/wotlk/core/sim.js';
 import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
 import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
-
-import { Alchohol } from '/wotlk/core/proto/common.js';
-import { BattleElixir } from '/wotlk/core/proto/common.js';
-import { Flask } from '/wotlk/core/proto/common.js';
-import { Food } from '/wotlk/core/proto/common.js';
-import { GuardianElixir } from '/wotlk/core/proto/common.js';
-import { Conjured } from '/wotlk/core/proto/common.js';
-
-import { PetFood } from '/wotlk/core/proto/common.js';
-import { Potions } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
 
 import { Rogue, Rogue_Rotation as RogueRotation, Rogue_Options as RogueOptions } from '/wotlk/core/proto/rogue.js';
@@ -114,10 +104,9 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
 					bloodlust: true,
 					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
-					windfuryTotem: TristateEffect.TristateEffectImproved,
+					icyTalons: true,
 					battleShout: TristateEffect.TristateEffectImproved,
 					leaderOfThePack: TristateEffect.TristateEffectImproved,
-					unleashedRage: true,
 				}),
 				partyBuffs: PartyBuffs.create({
 				}),
@@ -126,92 +115,29 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					blessingOfMight: TristateEffect.TristateEffectImproved,
 				}),
 				debuffs: Debuffs.create({
-					bloodFrenzy: true,
 					mangle: true,
 					sunderArmor: true,
-					curseOfWeakness: TristateEffect.TristateEffectRegular,
+					curseOfWeakness: TristateEffect.TristateEffectMissing,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					misery: true,
-					huntersMark: TristateEffect.TristateEffectImproved,
+					savageCombat: false,
 				}),
 			},
 
-			// IconInputs to include in the 'Self Buffs' section on the settings tab.
-			selfBuffInputs: [
+			// IconInputs to include in the 'Player' section on the settings tab.
+			playerIconInputs: [
 			],
-			// IconInputs to include in the 'Other Buffs' section on the settings tab.
-			raidBuffInputs: [
-				IconInputs.GiftOfTheWild,
-				IconInputs.Bloodlust,
-				IconInputs.StrengthOfEarthTotem,
-				IconInputs.WindfuryTotem,
-				IconInputs.BattleShout,
-				IconInputs.LeaderOfThePack,
-				IconInputs.TrueshotAura,
-				IconInputs.UnleashedRage,
-			],
-			partyBuffInputs: [
-				IconInputs.HeroicPresence,
-				IconInputs.BraidedEterniumChain,
-			],
-			playerBuffInputs: [
-				IconInputs.BlessingOfKings,
-				IconInputs.BlessingOfMight,
-			],
-			// IconInputs to include in the 'Debuffs' section on the settings tab.
-			debuffInputs: [
-				IconInputs.BloodFrenzy,
-				IconInputs.Mangle,
-
-				IconInputs.HuntersMark,
-				IconInputs.FaerieFire,
-				IconInputs.SunderArmor,
-				IconInputs.ExposeArmor,
-				IconInputs.CurseOfWeakness,
-				IconInputs.Misery,
-				IconInputs.GiftOfArthas,
-			],
-			// Which options are selectable in the 'Consumes' section.
-			consumeOptions: {
-				potions: [
-					Potions.HastePotion,
-				],
-				conjured: [
-					Conjured.ConjuredRogueThistleTea,
-					Conjured.ConjuredFlameCap,
-				],
-				flasks: [
-					Flask.FlaskOfRelentlessAssault,
-				],
-				battleElixirs: [
-					BattleElixir.ElixirOfDemonslaying,
-					BattleElixir.ElixirOfMajorAgility,
-					BattleElixir.ElixirOfTheMongoose,
-				],
-				guardianElixirs: [
-				],
-				food: [
-					Food.FoodGrilledMudfish,
-					Food.FoodSpicyHotTalbuk,
-					Food.FoodRavagerDog,
-					Food.FoodRoastedClefthoof,
-				],
-				alcohol: [
-				],
-				weaponImbues: [
-					WeaponImbue.WeaponImbueRogueDeadlyPoison,
-					WeaponImbue.WeaponImbueRogueInstantPoison,
-					WeaponImbue.WeaponImbueAdamantiteSharpeningStone,
-					WeaponImbue.WeaponImbueAdamantiteWeightstone,
-					WeaponImbue.WeaponImbueRighteousWeaponCoating,
-				],
-				other: [
-					IconInputs.ScrollOfAgilityV,
-					IconInputs.ScrollOfStrengthV,
-				],
-			},
+			//	weaponImbues: [
+			//		WeaponImbue.WeaponImbueRogueDeadlyPoison,
+			//		WeaponImbue.WeaponImbueRogueInstantPoison,
+			//	],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: RogueInputs.RogueRotationConfig,
+			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
+			includeBuffDebuffInputs: [
+			],
+			excludeBuffDebuffInputs: [
+			],
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
@@ -224,33 +150,18 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 			additionalIconSections: {
 			},
 			encounterPicker: {
-				// Target stats to show for 'Simple' encounters.
-				simpleTargetStats: [
-					Stat.StatArmor,
-				],
 				// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
 				showExecuteProportion: false,
 			},
-
-			// If true, the talents on the talents tab will not be individually modifiable by the user.
-			// Note that the use can still pick between preset talents, if there is more than 1.
-			freezeTalents: false,
 
 			presets: {
 				// Preset talents that the user can quickly select.
 				talents: [
 					Presets.CombatTalents,
-					Presets.CombatMaceTalents,
-					Presets.MutilateTalents,
-					Presets.HemoTalents,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
 					Presets.P1_PRESET,
-					Presets.P2_PRESET,
-					Presets.P3_PRESET,
-					Presets.P4_PRESET,
-					Presets.P5_PRESET,
 				],
 			},
 		});

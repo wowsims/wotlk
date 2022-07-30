@@ -265,6 +265,10 @@ func init() {
 		shaman := agent.(ShamanAgent).GetShaman()
 		procAura := shaman.NewTemporaryStatsAura("Skycall Totem Proc", core.ActionID{ItemID: 33506}, stats.Stats{stats.SpellHaste: 101}, time.Second*10)
 
+		icd := core.Cooldown{
+			Timer:    shaman.NewTimer(),
+			Duration: time.Second * 30,
+		}
 		shaman.RegisterAura(core.Aura{
 			Label:    "Skycall Totem",
 			Duration: core.NeverExpires,
@@ -272,8 +276,12 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+				if !icd.IsReady(sim) {
+					return
+				}
 				if (spell == shaman.LightningBolt || spell == shaman.LightningBoltLO) && sim.RandomFloat("Skycall Totem") < 0.15 {
 					procAura.Activate(sim)
+					icd.Use(sim)
 				}
 			},
 		})

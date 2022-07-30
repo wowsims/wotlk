@@ -30,11 +30,6 @@ func (hunter *Hunter) registerAimedShotSpell() {
 				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
-			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
-				if hunter.ImprovedSteadyShotAura.IsActive() {
-					cast.Cost *= 0.8
-				}
-			},
 			CD: core.Cooldown{
 				Timer:    hunter.NewTimer(),
 				Duration: time.Second*10 - core.TernaryDuration(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfAimedShot), time.Second*2, 0),
@@ -47,23 +42,16 @@ func (hunter *Hunter) registerAimedShotSpell() {
 				core.TernaryFloat64(hunter.Talents.TrueshotAura && hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfTrueshotAura), 10*core.CritRatingPerCritChance, 0),
 			DamageMultiplier: 1 *
 				(1 + 0.04*float64(hunter.Talents.Barrage)) *
-				(1 + 0.01*float64(hunter.Talents.MarkedForDeath)) *
-				hunter.sniperTrainingMultiplier(),
+				(1 + 0.01*float64(hunter.Talents.MarkedForDeath)),
 			ThreatMultiplier: 1,
 
 			BaseDamage: hunter.talonOfAlarDamageMod(core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					damage := (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.2 +
+					return (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.2 +
 						hunter.AutoAttacks.Ranged.BaseDamage(sim) +
 						hunter.AmmoDamageBonus +
 						hitEffect.BonusWeaponDamage(spell.Unit) +
 						408
-
-					if hunter.ImprovedSteadyShotAura.IsActive() {
-						damage *= 1.15
-						hunter.ImprovedSteadyShotAura.Deactivate(sim)
-					}
-					return damage
 				},
 				TargetSpellCoefficient: 1,
 			}),
