@@ -63,5 +63,5 @@ func (druid *Druid) registerMoonfireSpell() {
 }
 
 func (druid *Druid) ShouldCastMoonfire(sim *core.Simulation, target *core.Unit, rotation proto.BalanceDruid_Rotation) bool {
-	return rotation.Moonfire && !druid.MoonfireDot.IsActive()
+	return !druid.MoonfireDot.IsActive()
 }

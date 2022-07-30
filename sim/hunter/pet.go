@@ -196,10 +196,9 @@ func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
 		hitRatingFromOwner := math.Floor(ownerHitChance) * core.MeleeHitRatingPerHitChance
 
 		return stats.Stats{
-			stats.Stamina:     ownerStats[stats.Stamina] * (0.3 + 0.2*float64(wildHunt)),
+			stats.Stamina:     ownerStats[stats.Stamina] * 0.3 * (1 + 0.2*float64(wildHunt)),
 			stats.Armor:       ownerStats[stats.Armor] * 0.35,
-			stats.AttackPower: ownerStats[stats.RangedAttackPower]*(0.22+0.15*float64(wildHunt)) + ownerStats[stats.Stamina]*0.1*float64(hvw),
-			stats.SpellPower:  ownerStats[stats.RangedAttackPower] * (0.128 + 0.15*float64(wildHunt)),
+			stats.AttackPower: ownerStats[stats.RangedAttackPower]*0.22*(1+0.15*float64(wildHunt)) + ownerStats[stats.Stamina]*0.1*float64(hvw),
 
 			stats.MeleeHit:  hitRatingFromOwner,
 			stats.SpellHit:  hitRatingFromOwner * 2,

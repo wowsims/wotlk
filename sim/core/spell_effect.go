@@ -291,7 +291,7 @@ func (spellEffect *SpellEffect) applyAttackerModifiers(sim *Simulation, spell *S
 func (spellEffect *SpellEffect) snapshotAttackModifiers(spell *Spell) float64 {
 	attacker := spell.Unit
 
-	multiplier := 1.0
+	multiplier := attacker.PseudoStats.DamageDealtMultiplier
 
 	if spellEffect.ProcMask.Matches(ProcMaskRanged) {
 		multiplier *= attacker.PseudoStats.RangedDamageDealtMultiplier
@@ -303,7 +303,6 @@ func (spellEffect *SpellEffect) snapshotAttackModifiers(spell *Spell) float64 {
 		multiplier *= attacker.PseudoStats.DiseaseDamageDealtMultiplier
 	}
 
-	multiplier *= attacker.PseudoStats.DamageDealtMultiplier
 	if spell.SpellSchool.Matches(SpellSchoolPhysical) {
 		multiplier *= attacker.PseudoStats.PhysicalDamageDealtMultiplier
 	} else if spell.SpellSchool.Matches(SpellSchoolArcane) {

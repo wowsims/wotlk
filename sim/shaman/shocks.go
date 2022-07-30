@@ -6,6 +6,7 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/items"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -60,7 +61,7 @@ func (shaman *Shaman) registerEarthShockSpell(shockTimer *core.Timer) {
 	config.Flags |= core.SpellFlagBinary
 
 	effect.BaseDamage = core.BaseDamageConfigMagic(854, 900, 0.386)
-	effect.OutcomeApplier = shaman.OutcomeFuncMagicHitAndCritBinary(shaman.ElementalCritMultiplier())
+	effect.OutcomeApplier = shaman.OutcomeFuncMagicHitAndCritBinary(shaman.ElementalCritMultiplier(0))
 	config.ApplyEffects = core.ApplyEffectFuncDirectDamage(effect)
 
 	shaman.EarthShock = shaman.RegisterSpell(config)
@@ -75,8 +76,13 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 	effect.DamageMultiplier *= 1 + 0.1*float64(shaman.Talents.BoomingEchoes)
 
 	effect.BaseDamage = core.BaseDamageConfigMagic(500, 500, 0.214)
-	critMult := shaman.ElementalCritMultiplier()
-	effect.OutcomeApplier = shaman.OutcomeFuncMagicHitAndCrit(critMult)
+
+	critBonus := 0.0
+	if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfFlameShock) {
+		critBonus += 0.6
+	}
+	critMultiplier := shaman.ElementalCritMultiplier(critBonus)
+	effect.OutcomeApplier = shaman.OutcomeFuncMagicHitAndCrit(critMultiplier)
 	if effect.OnSpellHitDealt == nil {
 		effect.OnSpellHitDealt = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Landed() {
@@ -119,7 +125,7 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 			DamageMultiplier: dmgMult,
 			ThreatMultiplier: 1,
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(834/6, 0.1),
-			OutcomeApplier:   shaman.OutcomeFuncMagicCrit(critMult),
+			OutcomeApplier:   shaman.OutcomeFuncMagicCrit(critMultiplier),
 			IsPeriodic:       true,
 			ProcMask:         core.ProcMaskPeriodicDamage,
 		}),
@@ -135,7 +141,7 @@ func (shaman *Shaman) registerFrostShockSpell(shockTimer *core.Timer) {
 
 	effect.ThreatMultiplier *= 2
 	effect.BaseDamage = core.BaseDamageConfigMagic(812, 858, 0.386)
-	effect.OutcomeApplier = shaman.OutcomeFuncMagicHitAndCritBinary(shaman.ElementalCritMultiplier())
+	effect.OutcomeApplier = shaman.OutcomeFuncMagicHitAndCritBinary(shaman.ElementalCritMultiplier(0))
 	config.ApplyEffects = core.ApplyEffectFuncDirectDamage(effect)
 
 	shaman.FrostShock = shaman.RegisterSpell(config)

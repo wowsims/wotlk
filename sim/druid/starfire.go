@@ -11,19 +11,12 @@ import (
 // Idol IDs
 const IvoryMoongoddess int32 = 27518
 
-func (druid *Druid) newStarfireSpell(rank int) *core.Spell {
+func (druid *Druid) newStarfireSpell() *core.Spell {
 	actionID := core.ActionID{SpellID: 26986}
 	baseCost := 370.0
 	minBaseDamage := 550.0
 	maxBaseDamage := 647.0
 	spellCoefficient := 1.0
-	if rank == 6 {
-		actionID = core.ActionID{SpellID: 9876}
-		baseCost = 315
-		minBaseDamage = 463
-		maxBaseDamage = 543
-		spellCoefficient = 0.99
-	}
 
 	// This seems to be unaffected by wrath of cenarius so it needs to come first.
 	bonusFlatDamage := core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == IvoryMoongoddess, 55*spellCoefficient, 0)
@@ -31,7 +24,7 @@ func (druid *Druid) newStarfireSpell(rank int) *core.Spell {
 
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
-		BonusSpellCritRating: (float64(druid.Talents.FocusedStarlight) * 2 * core.CritRatingPerCritChance) + core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartRegalia, 4), 5*core.CritRatingPerCritChance, 0),
+		BonusSpellCritRating: core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartRegalia, 4), 5*core.CritRatingPerCritChance, 0),
 		DamageMultiplier:     1 + 0.02*float64(druid.Talents.Moonfury),
 		ThreatMultiplier:     1,
 		BaseDamage:           core.BaseDamageConfigMagic(minBaseDamage+bonusFlatDamage, maxBaseDamage+bonusFlatDamage, spellCoefficient),
@@ -69,7 +62,6 @@ func (druid *Druid) newStarfireSpell(rank int) *core.Spell {
 			},
 
 			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
-				druid.applyNaturesGrace(cast)
 				druid.applyNaturesSwiftness(cast)
 			},
 		},

@@ -64,7 +64,11 @@ for tree in trees:
 	arrows = tree.find_elements(By.CLASS_NAME, "ctc-tree-talent-arrow")
 	for arrow in arrows:
 		prereq_row, prereq_col = int(arrow.get_attribute("data-row")), int(arrow.get_attribute("data-col"))
-		length = int(arrow.get_attribute("data-size"))
+		length = 0
+		dsstr = arrow.get_attribute("data-size")
+		if dsstr:
+			length = int(dsstr)
+
 		direction = arrow.get_attribute("class").split()[-1].split("-")[-1]
 		offset_row, offset_col = {"left": (0, -1), "right": (0, 1), "down": (1, 0)}[direction]
 
