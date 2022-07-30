@@ -400,6 +400,7 @@ type PseudoStats struct {
 	ReducedShadowHitTakenChance   float64
 
 	PeriodicPhysicalDamageTakenMultiplier float64
+	PeriodicShadowDamageTakenMultiplier   float64
 
 	HealingTakenMultiplier float64
 }
@@ -447,6 +448,7 @@ func NewPseudoStats() PseudoStats {
 		DiseaseDamageTakenMultiplier:  1,
 
 		PeriodicPhysicalDamageTakenMultiplier: 1,
+		PeriodicShadowDamageTakenMultiplier:   1,
 
 		HealingTakenMultiplier: 1,
 	}

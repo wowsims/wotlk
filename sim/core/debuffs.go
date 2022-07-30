@@ -1010,3 +1010,19 @@ func minorCritDebuffAura(target *Unit, label string, actionID ActionID, points f
 		},
 	})
 }
+
+func ShadowEmbraceAura(target *Unit, points int32, warlockIndex int) *Aura {
+	shadowEmbraceBonus := 0.01 * float64(points)
+
+	return target.GetOrRegisterAura(Aura{
+		Label:     "Shadow Embrace" + strconv.Itoa(warlockIndex),
+		ActionID:  ActionID{SpellID: 32391},
+		Duration:  time.Second * 12,
+		MaxStacks: 3,
+		OnStacksChange: func(aura *Aura, sim *Simulation, oldStacks int32, newStacks int32) {
+			aura.Unit.PseudoStats.PeriodicShadowDamageTakenMultiplier /= 1.0 + shadowEmbraceBonus*float64(oldStacks)
+			aura.Unit.PseudoStats.PeriodicShadowDamageTakenMultiplier *= 1.0 + shadowEmbraceBonus*float64(newStacks)
+			// TODO: Healing over time reduction part
+		},
+	})
+}
