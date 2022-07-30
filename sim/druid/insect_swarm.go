@@ -64,5 +64,5 @@ func (druid *Druid) registerInsectSwarmSpell() {
 }
 
 func (druid *Druid) ShouldCastInsectSwarm(sim *core.Simulation, target *core.Unit, rotation proto.BalanceDruid_Rotation) bool {
-	return rotation.InsectSwarm && !druid.InsectSwarmDot.IsActive()
+	return !druid.InsectSwarmDot.IsActive()
 }

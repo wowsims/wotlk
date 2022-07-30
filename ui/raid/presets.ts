@@ -124,17 +124,9 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: BalanceDruidPresets.P1_ALLIANCE_PRESET.gear,
-				2: BalanceDruidPresets.P2_ALLIANCE_PRESET.gear,
-				3: BalanceDruidPresets.P3_PRESET.gear,
-				4: BalanceDruidPresets.P4_PRESET.gear,
 				5: BalanceDruidPresets.P5_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				1: BalanceDruidPresets.P1_HORDE_PRESET.gear,
-				2: BalanceDruidPresets.P2_HORDE_PRESET.gear,
-				3: BalanceDruidPresets.P3_PRESET.gear,
-				4: BalanceDruidPresets.P4_PRESET.gear,
 				5: BalanceDruidPresets.P5_PRESET.gear,
 			},
 		},
