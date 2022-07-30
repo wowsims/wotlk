@@ -21,8 +21,7 @@ func (mage *Mage) registerFrostboltSpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost *
-					(1 - 0.05*float64(mage.Talents.FrostChanneling)) *
-					(1 - 0.01*float64(mage.Talents.ElementalPrecision)),
+					(1 - 0.05*float64(mage.Talents.FrostChanneling)),
 
 				GCD:      core.GCDDefault,
 				CastTime: time.Second*3 - time.Millisecond*100*time.Duration(mage.Talents.ImprovedFrostbolt),
@@ -32,7 +31,7 @@ func (mage *Mage) registerFrostboltSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskSpellDamage,
 			// Frostbolt get 2x bonus from Elemental Precision because it's a binary spell.
-			BonusSpellHitRating:  float64(mage.Talents.ElementalPrecision) * 2 * core.SpellHitRatingPerHitChance,
+			BonusSpellHitRating:  0,
 			BonusSpellCritRating: float64(mage.Talents.EmpoweredFrostbolt) * 1 * core.CritRatingPerCritChance,
 
 			DamageMultiplier: mage.spellDamageMultiplier *

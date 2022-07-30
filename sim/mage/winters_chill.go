@@ -8,7 +8,7 @@ import (
 func (mage *Mage) registerWintersChillSpell() {
 	effect := core.SpellEffect{
 		ProcMask:            core.ProcMaskEmpty,
-		BonusSpellHitRating: float64(mage.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
+		BonusSpellHitRating: 0,
 		ThreatMultiplier:    1,
 		OutcomeApplier:      mage.OutcomeFuncMagicHit(),
 	}
