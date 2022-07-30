@@ -268,12 +268,9 @@ func (shaman *Shaman) Reset(sim *core.Simulation) {
 	shaman.FlameShock.CD.Reset()
 }
 
-func (shaman *Shaman) ElementalCritMultiplier() float64 {
-	critMultiplier := shaman.DefaultSpellCritMultiplier()
-	if shaman.Talents.ElementalFury > 0 {
-		critMultiplier = shaman.SpellCritMultiplier(1, 0.2*float64(shaman.Talents.ElementalFury))
-	}
-	return critMultiplier
+func (shaman *Shaman) ElementalCritMultiplier(secondary float64) float64 {
+	critBonus := (0.2 * float64(shaman.Talents.ElementalFury)) + secondary
+	return shaman.SpellCritMultiplier(1, critBonus)
 }
 
 func init() {

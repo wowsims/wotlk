@@ -43,12 +43,13 @@ func (shaman *Shaman) newLavaBurstSpell() *core.Spell {
 		}
 	}
 
-	lavaflowBonus := []float64{1.0, 1.06, 1.12, 1.24}
+	lavaflowBonus := []float64{0, 0.06, 0.12, 0.24}
 	// TODO: does lava flows multiply or add with elemental fury? Only matters if you had <5pts which probably won't happen.
-	critMultiplier := shaman.SpellCritMultiplier(1, (0.2*float64(shaman.Talents.ElementalFury))*(lavaflowBonus[shaman.Talents.LavaFlows]))
+	critBonus := lavaflowBonus[shaman.Talents.LavaFlows]
 	if shaman.HasSetBonus(ItemSetEarthShatterGarb, 4) {
-		critMultiplier *= 1.1
+		critBonus += 0.1
 	}
+	critMultiplier := shaman.ElementalCritMultiplier(critBonus)
 
 	bonusBase := core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == VentureCoLightningRod, 121, 0) +
 		core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == ThunderfallTotem, 215, 0)

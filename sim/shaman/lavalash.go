@@ -38,7 +38,7 @@ func (shaman *Shaman) newLavaLashSpell() *core.Spell {
 			ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
 
 			BaseDamage:     shaman.AutoAttacks.OHEffect.BaseDamage,
-			OutcomeApplier: shaman.OutcomeFuncMeleeSpecialHitAndCrit(shaman.ElementalCritMultiplier()),
+			OutcomeApplier: shaman.OutcomeFuncMeleeSpecialHitAndCrit(shaman.ElementalCritMultiplier(0)),
 		}),
 	})
 }
