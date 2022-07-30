@@ -13,7 +13,9 @@ func (warlock *Warlock) ApplyTalents() {
 	// warlock.PseudoStats.BonusSpellCritRating = 100 * core.CritRatingPerCritChance
 
 	// Demonic Embrace
-	warlock.AddStatDependency(stats.Stamina, stats.Stamina, 1.01+(float64(warlock.Talents.DemonicEmbrace)*0.03))
+	if warlock.Talents.DemonicEmbrace > 0 {
+		warlock.AddStatDependency(stats.Stamina, stats.Stamina, 1.01+(float64(warlock.Talents.DemonicEmbrace)*0.03))
+	}
 
 	// Molten Skin
 	warlock.PseudoStats.DamageTakenMultiplier *= 1. - 0.02*float64(warlock.Talents.MoltenSkin)
