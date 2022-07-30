@@ -416,7 +416,14 @@ class SelectorModal extends Popup {
 			// Trinket EP is weird so just sort by ilvl instead.
 			itemData.sort((dataA, dataB) => (dataB.item as unknown as Item).ilvl - (dataA.item as unknown as Item).ilvl);
 		} else {
-			itemData.sort((dataA, dataB) => computeEP(dataB.item) - computeEP(dataA.item));
+			itemData.sort((dataA, dataB) => {
+				const diff = computeEP(dataB.item) - computeEP(dataA.item);
+				 // if EP is same, sort by ilvl
+				if (Math.abs(diff) < 0.01) {
+					return (dataB.item as unknown as Item).ilvl - (dataA.item as unknown as Item).ilvl;
+				}
+				return diff;
+			});
 		}
 
 		const tabElem = document.createElement('li');

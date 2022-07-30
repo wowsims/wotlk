@@ -61,49 +61,9 @@ func (druid *Druid) ApplyTalents() {
 		druid.AddStatDependency(stats.Spirit, stats.Spirit, 1.0+bonus)
 	}
 
-	druid.setupNaturesGrace()
 	druid.registerNaturesSwiftnessCD()
 	druid.applyPrimalFury()
 	druid.applyOmenOfClarity()
-}
-
-func (druid *Druid) setupNaturesGrace() {
-	if !druid.Talents.NaturesGrace {
-		return
-	}
-
-	druid.NaturesGraceProcAura = druid.RegisterAura(core.Aura{
-		Label:    "Natures Grace Proc",
-		ActionID: core.ActionID{SpellID: 16886},
-		Duration: core.NeverExpires,
-		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if spell != druid.Wrath && spell != druid.Starfire8 && spell != druid.Starfire6 {
-				return
-			}
-
-			aura.Deactivate(sim)
-		},
-	})
-
-	druid.RegisterAura(core.Aura{
-		Label: "Natures Grace",
-		//ActionID: core.ActionID{SpellID: 16880},
-		Duration: core.NeverExpires,
-		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Activate(sim)
-		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
-				druid.NaturesGraceProcAura.Activate(sim)
-			}
-		},
-	})
-}
-
-func (druid *Druid) applyNaturesGrace(cast *core.Cast) {
-	if druid.NaturesGraceProcAura.IsActive() {
-		cast.CastTime -= time.Millisecond * 500
-	}
 }
 
 func (druid *Druid) registerNaturesSwiftnessCD() {
@@ -131,7 +91,7 @@ func (druid *Druid) registerNaturesSwiftnessCD() {
 		ActionID: actionID,
 		Duration: core.NeverExpires,
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if spell != druid.Wrath && spell != druid.Starfire8 && spell != druid.Starfire6 {
+			if spell != druid.Wrath && spell != druid.Starfire {
 				return
 			}
 
