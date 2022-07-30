@@ -22,30 +22,40 @@ func (enh *EnhancementShaman) tryUseGCD(sim *core.Simulation) {
 	enh.rotation.DoAction(enh, sim)
 }
 
+type AgentAction interface {
+	GetActionID() core.ActionID
+
+	GetManaCost() float64
+
+	Cast(sim *core.Simulation) bool
+}
+
 type Rotation interface {
 	DoAction(*EnhancementShaman, *core.Simulation)
 	Reset(*EnhancementShaman, *core.Simulation)
 }
 
-//adaptive rotation, shamelessly stolen from elemental shaman - reworked to basic
-type BasicRotation struct {
+///////////////////
+// Base Rotation //
+///////////////////
+type BaseRotation struct {
 }
 
-func (rotation *BasicRotation) shouldCastStormstrikeNoDebuff(enh *EnhancementShaman, sim *core.Simulation, target *core.Unit) bool {
+func (rotation *BaseRotation) shouldCastStormstrikeNoDebuff(enh *EnhancementShaman, sim *core.Simulation, target *core.Unit) bool {
 	if enh.Talents.Stormstrike {
 		return (!enh.StormstrikeDebuffAura(target).IsActive() && enh.Stormstrike.IsReady(sim))
 	}
 	return false
 }
 
-func (rotation *BasicRotation) shouldCastStormstrike(enh *EnhancementShaman, sim *core.Simulation, target *core.Unit) bool {
+func (rotation *BaseRotation) shouldCastStormstrike(enh *EnhancementShaman, sim *core.Simulation, target *core.Unit) bool {
 	if enh.Talents.Stormstrike {
 		return (enh.Stormstrike.IsReady(sim))
 	}
 	return false
 }
 
-func (rotation *BasicRotation) shouldCastLightningBoltInstant(enh *EnhancementShaman, sim *core.Simulation, target *core.Unit) bool {
+func (rotation *BaseRotation) shouldCastLightningBoltInstant(enh *EnhancementShaman, sim *core.Simulation, target *core.Unit) bool {
 	if enh.Talents.MaelstromWeapon > 0 {
 		if enh.MaelstromWeaponAura.GetStacks() == 5 {
 			return true
@@ -54,7 +64,7 @@ func (rotation *BasicRotation) shouldCastLightningBoltInstant(enh *EnhancementSh
 	return false
 }
 
-func (rotation *BasicRotation) shouldCastLightningBoltWeave(enh *EnhancementShaman, sim *core.Simulation, target *core.Unit) bool {
+func (rotation *BaseRotation) shouldCastLightningBoltWeave(enh *EnhancementShaman, sim *core.Simulation, target *core.Unit) bool {
 	if enh.Talents.MaelstromWeapon > 0 && enh.MaelstromWeaponAura.GetStacks() >= 3 {
 		lbCastTime := enh.LightningBolt.CurCast.CastTime
 		timeUntilSwing := enh.AutoAttacks.NextAttackAt() - sim.CurrentTime
@@ -68,19 +78,19 @@ func (rotation *BasicRotation) shouldCastLightningBoltWeave(enh *EnhancementSham
 	return false
 }
 
-func (rotation *BasicRotation) shouldCastFlameShock(enh *EnhancementShaman, sim *core.Simulation, target *core.Unit) bool {
+func (rotation *BaseRotation) shouldCastFlameShock(enh *EnhancementShaman, sim *core.Simulation, target *core.Unit) bool {
 	return (!enh.FlameShockDot.IsActive() && enh.FlameShock.IsReady(sim))
 }
 
-func (rotation *BasicRotation) shouldCastEarthShock(enh *EnhancementShaman, sim *core.Simulation, target *core.Unit) bool {
+func (rotation *BaseRotation) shouldCastEarthShock(enh *EnhancementShaman, sim *core.Simulation, target *core.Unit) bool {
 	return (enh.EarthShock.IsReady(sim))
 }
 
-func (rotation *BasicRotation) shouldCastLightningShield(enh *EnhancementShaman, sim *core.Simulation, target *core.Unit) bool {
+func (rotation *BaseRotation) shouldCastLightningShield(enh *EnhancementShaman, sim *core.Simulation, target *core.Unit) bool {
 	return (!enh.LightningShieldAura.IsActive())
 }
 
-func (rotation *BasicRotation) shouldCastFireNova(enh *EnhancementShaman, sim *core.Simulation, target *core.Unit) bool {
+func (rotation *BaseRotation) shouldCastFireNova(enh *EnhancementShaman, sim *core.Simulation, target *core.Unit) bool {
 	if enh.Totems.Fire != proto.FireTotem_NoFireTotem {
 		if enh.FireNova.IsReady(sim) && enh.CurrentMana() > 4000 {
 			return true
@@ -89,7 +99,7 @@ func (rotation *BasicRotation) shouldCastFireNova(enh *EnhancementShaman, sim *c
 	return false
 }
 
-func (rotation *BasicRotation) shouldCastLavaLash(enh *EnhancementShaman, sim *core.Simulation, target *core.Unit) bool {
+func (rotation *BaseRotation) shouldCastLavaLash(enh *EnhancementShaman, sim *core.Simulation, target *core.Unit) bool {
 	if enh.Talents.LavaLash {
 		if enh.LavaLash.IsReady(sim) {
 			return true
@@ -98,7 +108,7 @@ func (rotation *BasicRotation) shouldCastLavaLash(enh *EnhancementShaman, sim *c
 	return false
 }
 
-func (rotation *BasicRotation) DoAction(enh *EnhancementShaman, sim *core.Simulation) {
+func (rotation *BaseRotation) DoAction(enh *EnhancementShaman, sim *core.Simulation) {
 	target := sim.GetTargetUnit(0)
 
 	if rotation.shouldCastStormstrikeNoDebuff(enh, sim, target) {
@@ -166,18 +176,25 @@ func (rotation *BasicRotation) DoAction(enh *EnhancementShaman, sim *core.Simula
 	return
 }
 
-func (rotation *BasicRotation) Reset(enh *EnhancementShaman, sim *core.Simulation) {
+func (rotation *BaseRotation) Reset(enh *EnhancementShaman, sim *core.Simulation) {
 
 }
 
-func NewBasicRotation(talents *proto.ShamanTalents) *BasicRotation {
-	return &BasicRotation{}
+func NewBaseRotation(talents *proto.ShamanTalents) *BaseRotation {
+	return &BaseRotation{}
 }
 
-type AgentAction interface {
-	GetActionID() core.ActionID
+//////////////////////////////////////
+// Priority Rotation - Configurable //
+//////////////////////////////////////
+type PriorityRotation struct {
+	BaseRotation
+}
 
-	GetManaCost() float64
+// func (rotation *PriorityRotation) DoAction(enh *EnhancementShaman, sim *core.Simulation) {
 
-	Cast(sim *core.Simulation) bool
+// }
+
+func NewPriorityRotation(talents *proto.ShamanTalents) *PriorityRotation {
+	return &PriorityRotation{}
 }

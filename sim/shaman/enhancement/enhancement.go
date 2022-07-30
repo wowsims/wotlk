@@ -40,7 +40,7 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 	}
 
 	var rotation Rotation
-	rotation = NewBasicRotation(enhOptions.Talents)
+	rotation = NewPriorityRotation(enhOptions.Talents)
 
 	enh := &EnhancementShaman{
 		Shaman:   shaman.NewShaman(character, *enhOptions.Talents, totems, selfBuffs, true),
