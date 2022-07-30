@@ -89,6 +89,30 @@ func (rp *runicPowerBar) CancelRuneRegenPA(sim *Simulation, r *Rune) {
 	r.pas[0] = nil
 }
 
+func (rp *runicPowerBar) CancelBloodTap(sim *Simulation) {
+	runes := &rp.bloodRunes
+
+	if runes[0].pas[1] != nil {
+		runes[0].pas[1].Cancel(sim)
+		runes[0].pas[1] = nil
+
+		if runes[0].state == RuneState_Death {
+			rp.SetRuneToState(&runes[0], RuneState_Normal, RuneKind_Blood)
+		} else {
+			rp.SetRuneToState(&runes[0], RuneState_Spent, RuneKind_Blood)
+		}
+	} else if runes[1].pas[1] != nil {
+		runes[1].pas[1].Cancel(sim)
+		runes[1].pas[1] = nil
+
+		if runes[1].state == RuneState_Death {
+			rp.SetRuneToState(&runes[1], RuneState_Normal, RuneKind_Blood)
+		} else {
+			rp.SetRuneToState(&runes[1], RuneState_Spent, RuneKind_Blood)
+		}
+	}
+}
+
 func (rp *runicPowerBar) CorrectBloodTapConversion(sim *Simulation, bloodGainMetrics *ResourceMetrics, deathGainMetrics *ResourceMetrics, spell *Spell) {
 	runes := &rp.bloodRunes
 

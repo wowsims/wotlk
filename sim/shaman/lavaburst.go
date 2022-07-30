@@ -62,7 +62,7 @@ func (shaman *Shaman) newLavaBurstSpell() *core.Spell {
 		BonusSpellHitRating:  float64(shaman.Talents.ElementalPrecision) * 2 * core.SpellHitRatingPerHitChance,
 		BonusSpellCritRating: 0,
 		BonusSpellPower:      0,
-		DamageMultiplier:     1 * (1 + 0.01*float64(shaman.Talents.Concussion)),
+		DamageMultiplier:     1 * (1 + 0.01*float64(shaman.Talents.Concussion)) * (1.0 + 0.02*float64(shaman.Talents.CallOfFlame)),
 		ThreatMultiplier:     1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
 		BaseDamage:           core.BaseDamageConfigMagic(1192+bonusBase, 1518+bonusBase, 0.5714+(0.05*float64(shaman.Talents.Shamanism)+bonusCoeff)),
 		OutcomeApplier: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
@@ -82,7 +82,6 @@ func (shaman *Shaman) newLavaBurstSpell() *core.Spell {
 			}
 		},
 	}
-	effect.DamageMultiplier *= 1.0 + .02*float64(shaman.Talents.CallOfFlame)
 
 	if shaman.HasSetBonus(ItemSetThrallsRegalia, 4) || shaman.HasSetBonus(ItemSetNobundosRegalia, 4) {
 		lvbdotDmg := 0.0 // dynamically changing dmg

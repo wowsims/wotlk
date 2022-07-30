@@ -154,7 +154,13 @@ message ShadowPriest {
 	PriestTalents talents = 2;
 	
 	message Options {
+		enum Armor {
+			NoArmor = 0;
+			InnerFire = 1;
+		}
+
 		bool use_shadowfiend = 1;
+		Armor armor = 2;
 	}
 	Options options = 3;
 }

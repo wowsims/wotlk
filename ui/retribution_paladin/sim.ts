@@ -32,28 +32,23 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 			epStats: [
 				Stat.StatStrength,
 				Stat.StatAgility,
-				Stat.StatIntellect,
 				Stat.StatAttackPower,
 				Stat.StatMeleeHit,
 				Stat.StatMeleeCrit,
-				Stat.StatExpertise,
 				Stat.StatMeleeHaste,
+				Stat.StatExpertise,
 				Stat.StatArmorPenetration,
 				Stat.StatSpellPower,
 				Stat.StatSpellCrit,
 				Stat.StatSpellHit,
+				Stat.StatSpellHaste,
 			],
 			// Reference stat against which to calculate EP. I think all classes use either spell power or attack power.
 			epReferenceStat: Stat.StatAttackPower,
 			// Which stats to display in the Character Stats section, at the bottom of the left-hand sidebar.
 			displayStats: [
-				Stat.StatHealth,
-				Stat.StatMana,
-				Stat.StatStamina,
 				Stat.StatStrength,
 				Stat.StatAgility,
-				Stat.StatIntellect,
-				Stat.StatMP5,
 				Stat.StatAttackPower,
 				Stat.StatMeleeHit,
 				Stat.StatMeleeCrit,
@@ -61,10 +56,10 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 				Stat.StatExpertise,
 				Stat.StatArmorPenetration,
 				Stat.StatSpellPower,
-				Stat.StatHolySpellPower,
-				Stat.StatSpellHit,
 				Stat.StatSpellCrit,
-				Stat.StatSpellHaste,
+				Stat.StatSpellHit,
+				Stat.StatMana,
+				Stat.StatHealth,
 			],
 			modifyDisplayStats: (player: Player<Spec.SpecRetributionPaladin>) => {
 				let stats = new Stats();
@@ -139,7 +134,13 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 			playerIconInputs: [
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
-			rotationInputs: RetributionPaladinInputs.RetributionPaladinRotationConfig,
+			rotationInputs: {
+				inputs: [
+					RetributionPaladinInputs.RetributionPaladinRotationDivinePleaPercentageConfig,
+					RetributionPaladinInputs.RetributionPaladinRotationConsSlackConfig,
+					RetributionPaladinInputs.RetributionPaladinRotationExoSlackConfig
+				]
+			},
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
 			],

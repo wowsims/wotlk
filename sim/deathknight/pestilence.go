@@ -44,10 +44,10 @@ func (dk *Deathknight) registerPestilenceSpell() {
 							// Update expire instead of Apply to keep old snapshotted value
 							if dk.FrostFeverDisease[unitHit.Index].IsActive() {
 								dk.FrostFeverDisease[unitHit.Index].Rollover(sim)
-								dk.FrostFeverDebuffAura[unitHit.Index].Activate(sim)
-								if dk.IcyTalonsAura != nil {
+								if dk.Talents.IcyTalons > 0 {
 									dk.IcyTalonsAura.Activate(sim)
 								}
+								dk.FrostFeverDebuffAura[unitHit.Index].Activate(sim)
 							}
 
 							if dk.BloodPlagueDisease[unitHit.Index].IsActive() {
@@ -62,14 +62,14 @@ func (dk *Deathknight) registerPestilenceSpell() {
 							}
 						}
 
-						amountOfRunicPower := 10.0 + 2.5*float64(dk.Talents.ChillOfTheGrave)
+						amountOfRunicPower := 10.0
 						dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 					} else {
 						// Apply diseases on every other target
-						if dk.TargetHasDisease(FrostFeverAuraLabel, dk.CurrentTarget) {
+						if dk.FrostFeverDisease[dk.CurrentTarget.Index].IsActive() {
 							dk.FrostFeverDisease[unitHit.Index].Apply(sim)
 						}
-						if dk.TargetHasDisease(FrostFeverAuraLabel, dk.CurrentTarget) {
+						if dk.BloodPlagueDisease[dk.CurrentTarget.Index].IsActive() {
 							dk.BloodPlagueDisease[unitHit.Index].Apply(sim)
 						}
 					}
