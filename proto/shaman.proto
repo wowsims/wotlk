@@ -194,11 +194,24 @@ enum ShamanImbue {
     FrostbrandWeapon = 3;
 }
 
+enum ConfigurableRotationType {
+	Basic = 0;
+	Adaptive = 1;
+	Priority = 2;
+	CurrentHighestDPS = 3;
+	Random = 4;
+}
+
+message RotationConfiguration {
+	ConfigurableRotationType type = 1;
+	repeated uint32 order = 2;
+}
+
 message ElementalShaman {
 	message Rotation {
 		ShamanTotems totems = 3;
 
-		enum RotationType {
+		enum RotationType { // todo use common same as enha
 			Unknown = 0;
 			Adaptive = 1;
 		}
@@ -216,11 +229,11 @@ message ElementalShaman {
 	Options options = 3;
 }
 
-
 message EnhancementShaman {
 	message Rotation {
 		ShamanTotems totems = 1;
 	    // TODO: lightning/possibly lavaburst weaving
+		RotationConfiguration configuration = 2;
     }
 
   message Options {

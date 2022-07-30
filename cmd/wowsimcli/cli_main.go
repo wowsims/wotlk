@@ -19,6 +19,7 @@ func init() {
 func main() {
 	infile := flag.String("input", "input.json", "location of input file")
 	outfile := flag.String("output", "output.json", "location of output file")
+	flag.Parse()
 
 	data, err := os.ReadFile(*infile)
 	if err != nil {
