@@ -204,7 +204,7 @@ enum ConfigurableRotationType {
 
 message RotationConfiguration {
 	ConfigurableRotationType type = 1;
-	repeated uint32 order = 2;
+	repeated int32 order = 2;
 }
 
 message ElementalShaman {

@@ -109,68 +109,68 @@ func (rotation *BaseRotation) shouldCastLavaLash(enh *EnhancementShaman, sim *co
 }
 
 func (rotation *BaseRotation) DoAction(enh *EnhancementShaman, sim *core.Simulation) {
-	target := sim.GetTargetUnit(0)
+	// target := sim.GetTargetUnit(0)
 
-	if rotation.shouldCastStormstrikeNoDebuff(enh, sim, target) {
-		if !enh.Stormstrike.Cast(sim, target) {
-			enh.WaitForMana(sim, enh.Stormstrike.CurCast.Cost)
-		}
-		return
-	}
+	// if rotation.shouldCastStormstrikeNoDebuff(enh, sim, target) {
+	// 	if !enh.Stormstrike.Cast(sim, target) {
+	// 		enh.WaitForMana(sim, enh.Stormstrike.CurCast.Cost)
+	// 	}
+	// 	return
+	// }
 
-	if rotation.shouldCastLightningBoltInstant(enh, sim, target) {
-		if !enh.LightningBolt.Cast(sim, target) {
-			enh.WaitForMana(sim, enh.LightningBolt.CurCast.Cost)
-		}
-		return
-	}
+	// if rotation.shouldCastLightningBoltInstant(enh, sim, target) {
+	// 	if !enh.LightningBolt.Cast(sim, target) {
+	// 		enh.WaitForMana(sim, enh.LightningBolt.CurCast.Cost)
+	// 	}
+	// 	return
+	// }
 
-	if rotation.shouldCastStormstrike(enh, sim, target) {
-		if !enh.Stormstrike.Cast(sim, target) {
-			enh.WaitForMana(sim, enh.Stormstrike.CurCast.Cost)
-		}
-		return
-	}
+	// if rotation.shouldCastStormstrike(enh, sim, target) {
+	// 	if !enh.Stormstrike.Cast(sim, target) {
+	// 		enh.WaitForMana(sim, enh.Stormstrike.CurCast.Cost)
+	// 	}
+	// 	return
+	// }
 
-	if rotation.shouldCastFlameShock(enh, sim, target) {
-		if !enh.FlameShock.Cast(sim, target) {
-			enh.WaitForMana(sim, enh.FlameShock.CurCast.Cost)
-		}
-		return
-	}
+	// if rotation.shouldCastFlameShock(enh, sim, target) {
+	// 	if !enh.FlameShock.Cast(sim, target) {
+	// 		enh.WaitForMana(sim, enh.FlameShock.CurCast.Cost)
+	// 	}
+	// 	return
+	// }
 
-	if rotation.shouldCastLightningBoltWeave(enh, sim, target) {
-		if !enh.LightningBolt.Cast(sim, target) {
-			enh.WaitForMana(sim, enh.LightningBolt.CurCast.Cost)
-		}
-		return
-	}
+	// if rotation.shouldCastLightningBoltWeave(enh, sim, target) {
+	// 	if !enh.LightningBolt.Cast(sim, target) {
+	// 		enh.WaitForMana(sim, enh.LightningBolt.CurCast.Cost)
+	// 	}
+	// 	return
+	// }
 
-	if rotation.shouldCastEarthShock(enh, sim, target) {
-		if !enh.EarthShock.Cast(sim, target) {
-			enh.WaitForMana(sim, enh.EarthShock.CurCast.Cost)
-		}
-		return
-	}
+	// if rotation.shouldCastEarthShock(enh, sim, target) {
+	// 	if !enh.EarthShock.Cast(sim, target) {
+	// 		enh.WaitForMana(sim, enh.EarthShock.CurCast.Cost)
+	// 	}
+	// 	return
+	// }
 
-	if rotation.shouldCastLightningShield(enh, sim, target) {
-		enh.LightningShield.Cast(sim, nil)
-		return
-	}
+	// if rotation.shouldCastLightningShield(enh, sim, target) {
+	// 	enh.LightningShield.Cast(sim, nil)
+	// 	return
+	// }
 
-	if rotation.shouldCastFireNova(enh, sim, target) {
-		if !enh.FireNova.Cast(sim, target) {
-			enh.WaitForMana(sim, enh.FireNova.CurCast.Cost)
-		}
-		return
-	}
+	// if rotation.shouldCastFireNova(enh, sim, target) {
+	// 	if !enh.FireNova.Cast(sim, target) {
+	// 		enh.WaitForMana(sim, enh.FireNova.CurCast.Cost)
+	// 	}
+	// 	return
+	// }
 
-	if rotation.shouldCastLavaLash(enh, sim, target) {
-		if !enh.LavaLash.Cast(sim, target) {
-			enh.WaitForMana(sim, enh.LavaLash.CurCast.Cost)
-		}
-		return
-	}
+	// if rotation.shouldCastLavaLash(enh, sim, target) {
+	// 	if !enh.LavaLash.Cast(sim, target) {
+	// 		enh.WaitForMana(sim, enh.LavaLash.CurCast.Cost)
+	// 	}
+	// 	return
+	// }
 
 	enh.DoNothing()
 	return
@@ -182,19 +182,4 @@ func (rotation *BaseRotation) Reset(enh *EnhancementShaman, sim *core.Simulation
 
 func NewBaseRotation(talents *proto.ShamanTalents) *BaseRotation {
 	return &BaseRotation{}
-}
-
-//////////////////////////////////////
-// Priority Rotation - Configurable //
-//////////////////////////////////////
-type PriorityRotation struct {
-	BaseRotation
-}
-
-// func (rotation *PriorityRotation) DoAction(enh *EnhancementShaman, sim *core.Simulation) {
-
-// }
-
-func NewPriorityRotation(talents *proto.ShamanTalents) *PriorityRotation {
-	return &PriorityRotation{}
 }
