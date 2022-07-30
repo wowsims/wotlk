@@ -128,7 +128,7 @@ export const ReplenishmentBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanIndividualBuffInput(ActionId.fromSpellId(53292), 'huntingParty'),
 	makeBooleanIndividualBuffInput(ActionId.fromSpellId(54118), 'improvedSoulLeech'),
 	makeBooleanIndividualBuffInput(ActionId.fromSpellId(44561), 'enduringWinter'),
-], 'Repl');
+], 'Repl', 2);
 
 export const SpellCritBuff = InputHelpers.makeMultiIconInput([
 	makeTristateRaidBuffInput(ActionId.fromSpellId(24907), ActionId.fromSpellId(48396), 'moonkinAura'),
