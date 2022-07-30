@@ -1,8 +1,8 @@
 package warlock
 
 import (
-	"time"
 	"math"
+	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -58,10 +58,10 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 	wp.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
 	wp.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+core.CritRatingPerCritChance*0.04)
 	wp.AddStats(stats.Stats{
-		stats.MeleeCrit: float64(warlock.Talents.DemonicTactics)*2*core.CritRatingPerCritChance,
-		stats.SpellCrit: float64(warlock.Talents.DemonicTactics)*2*core.CritRatingPerCritChance,
-		stats.MeleeHit: -float64(warlock.Talents.Suppression)*core.MeleeHitRatingPerHitChance, //Remove warlock's Suppression hit bonus from pet which he gets through stat inheritance
-		stats.SpellHit: -float64(warlock.Talents.Suppression)*core.SpellHitRatingPerHitChance, //Remove warlock's Suppression hit bonus from pet which he gets through stat inheritance
+		stats.MeleeCrit: float64(warlock.Talents.DemonicTactics) * 2 * core.CritRatingPerCritChance,
+		stats.SpellCrit: float64(warlock.Talents.DemonicTactics) * 2 * core.CritRatingPerCritChance,
+		stats.MeleeHit:  -float64(warlock.Talents.Suppression) * core.MeleeHitRatingPerHitChance, //Remove warlock's Suppression hit bonus from pet which he gets through stat inheritance
+		stats.SpellHit:  -float64(warlock.Talents.Suppression) * core.SpellHitRatingPerHitChance, //Remove warlock's Suppression hit bonus from pet which he gets through stat inheritance
 	})
 
 	wp.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.04*float64(warlock.Talents.UnholyPower)
@@ -180,7 +180,7 @@ func (wp *WarlockPet) OnGCDReady(sim *core.Simulation) {
 }
 
 func (warlock *Warlock) makeStatInheritance() core.PetStatInheritance {
-	improvedDemonicTactics:=float64(warlock.Talents.ImprovedDemonicTactics)
+	improvedDemonicTactics := float64(warlock.Talents.ImprovedDemonicTactics)
 
 	return func(ownerStats stats.Stats) stats.Stats {
 		ownerHitChance := math.Floor(ownerStats[stats.SpellHit] / core.SpellHitRatingPerHitChance)
@@ -191,15 +191,14 @@ func (warlock *Warlock) makeStatInheritance() core.PetStatInheritance {
 			stats.AttackPower:      (ownerStats[stats.SpellPower] + ownerStats[stats.ShadowSpellPower]) * 0.57,
 			stats.SpellPower:       (ownerStats[stats.SpellPower] + ownerStats[stats.ShadowSpellPower]) * 0.15,
 			stats.SpellPenetration: ownerStats[stats.SpellPenetration],
-			stats.SpellCrit: 		improvedDemonicTactics*0.3*ownerStats[stats.SpellCrit],
-			stats.MeleeCrit: 		improvedDemonicTactics*0.3*ownerStats[stats.SpellCrit],
-			stats.MeleeHit:  		ownerHitChance * core.MeleeHitRatingPerHitChance,
-			stats.SpellHit:  		ownerHitChance * core.SpellHitRatingPerHitChance,
+			stats.SpellCrit:        improvedDemonicTactics * 0.3 * ownerStats[stats.SpellCrit],
+			stats.MeleeCrit:        improvedDemonicTactics * 0.3 * ownerStats[stats.SpellCrit],
+			stats.MeleeHit:         ownerHitChance * core.MeleeHitRatingPerHitChance,
+			stats.SpellHit:         ownerHitChance * core.SpellHitRatingPerHitChance,
 			// Resists, 40%
 		}
 	}
 }
-
 
 type PetConfig struct {
 	Name string

@@ -173,7 +173,7 @@ export const SWP_PRESET = {
         "id": 34179
       },
       {
-        "id": 33506
+        "id": 32330
       }
     ]
   }`),
@@ -373,7 +373,7 @@ export const P1_PRESET = {
         "enchant": 60653
       },
       {
-        "id": 40708
+        "id": 40267
       }
     ]
   }`),
