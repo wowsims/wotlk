@@ -31,7 +31,7 @@ export const FrostTalents = {
 			major2: DeathknightMajorGlyph.GlyphOfFrostStrike,
 			major3: DeathknightMajorGlyph.GlyphOfDisease,
 			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
-			minor2: DeathknightMinorGlyph.GlyphOfBloodTap,
+			minor2: DeathknightMinorGlyph.GlyphOfPestilence,
 			minor3: DeathknightMinorGlyph.GlyphOfRaiseDead,
 		}),
 	}),

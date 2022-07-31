@@ -7,11 +7,19 @@ import (
 )
 
 type FrostRotation struct {
+	lastSpell *core.Spell
 	nextSpell *core.Spell
 }
 
 func (fr *FrostRotation) Reset(sim *core.Simulation) {
 	fr.nextSpell = nil
+	fr.lastSpell = nil
+}
+
+func (fr *FrostRotation) SetLastSpell(condition bool, spell *core.Spell) {
+	if condition {
+		fr.lastSpell = spell
+	}
 }
 
 func (dk *DpsDeathknight) FrostDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *core.Spell, costRunes bool, casts int) bool {
@@ -51,6 +59,8 @@ func (dk *DpsDeathknight) FrostDiseaseCheck(sim *core.Simulation, target *core.U
 		if dk.frCheckForDiseaseRecast(bpExpiresAt, afterCastTime, spellCost.Blood, currentBloodRunes, nextBloodRuneAt) {
 			return false
 		}
+	} else {
+		return false
 	}
 
 	return true

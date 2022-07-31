@@ -272,6 +272,10 @@ func (rp *runicPowerBar) CurrentRuneGrace(sim *Simulation, runes *[2]Rune) time.
 	return 0
 }
 
+func (rp *runicPowerBar) IsLeftBloodRuneNormal() bool {
+	return (rp.bloodRunes[0].state == RuneState_Normal)
+}
+
 func (rp *runicPowerBar) CurrentBloodRuneGrace(sim *Simulation) time.Duration {
 	return rp.CurrentRuneGrace(sim, &rp.bloodRunes)
 }
@@ -317,7 +321,7 @@ func (rp *runicPowerBar) NormalSpentRuneReadyAt(sim *Simulation, runes *[2]Rune)
 			// code can figure out what to do with it since it wont be able to cast if a spend went through
 			readyAt = runes[0].pas[1].NextActionAt
 		} else { // Means its a death rune coming from BoTN / Reaping / DRM
-			readyAt = runes[0].lastSpendTime + 20*time.Second
+			readyAt = runes[0].lastSpendTime + 30*time.Second
 		}
 	} else {
 		if runes[0].pas[0] != nil {
@@ -331,7 +335,7 @@ func (rp *runicPowerBar) NormalSpentRuneReadyAt(sim *Simulation, runes *[2]Rune)
 		if runes[1].pas[1] != nil {
 			readyAt = runes[1].pas[1].NextActionAt
 		} else {
-			readyAt = runes[1].lastSpendTime + 20*time.Second
+			readyAt = runes[1].lastSpendTime + 30*time.Second
 		}
 	} else {
 		if runes[1].pas[0] != nil {
