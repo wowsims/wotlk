@@ -26,6 +26,7 @@ type Warlock struct {
 	CorruptionDot        *core.Dot
 	Haunt                *core.Spell
 	LifeTap              *core.Spell
+	DarkPact             *core.Spell
 	ChaosBolt            *core.Spell
 	SoulFire             *core.Spell
 	Conflagrate          *core.Spell
@@ -102,6 +103,9 @@ func (warlock *Warlock) Initialize() {
 	}
 	if warlock.Talents.Metamorphosis {
 		warlock.registerMetamorphosisSpell()
+	}
+	if warlock.Talents.DarkPact {
+		warlock.registerDarkPactSpell()
 	}
 }
 
