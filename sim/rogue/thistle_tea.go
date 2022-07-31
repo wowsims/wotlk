@@ -15,7 +15,7 @@ func (rogue *Rogue) registerThistleTeaCD() {
 	actionID := core.ActionID{ItemID: 7676}
 	energyMetrics := rogue.NewEnergyMetrics(actionID)
 
-	const energyRegen = 40.0
+	const energyRegen = 20.0
 
 	thistleTeaSpell := rogue.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
@@ -41,7 +41,7 @@ func (rogue *Rogue) registerThistleTeaCD() {
 		Type:  core.CooldownTypeDPS,
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
 			// Make sure we have plenty of room so we dont energy cap right after using.
-			return rogue.CurrentEnergy() <= 40
+			return rogue.CurrentEnergy() <= 60
 		},
 	})
 }
