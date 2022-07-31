@@ -21,6 +21,30 @@ export const ArmorInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecSha
 	],
 });
 
+export const MindBlastInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecShadowPriest, boolean>({
+	fieldName: 'useMindBlast',
+	values: [
+		{ color: 'grey', value: false },
+		{ actionId: ActionId.fromSpellId(48127), value: true },
+	],
+});
+
+export const ShadowWordDeathInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecShadowPriest, boolean>({
+	fieldName: 'useShadowWordDeath',
+	values: [
+		{ color: 'grey', value: false },
+		{ actionId: ActionId.fromSpellId(48158), value: true },
+	],
+});
+
+export const ShadowfiendInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecShadowPriest, boolean>({
+	fieldName: 'useShadowfiend',
+	values: [
+		{ color: 'grey', value: false },
+		{ actionId: ActionId.fromSpellId(34433), value: true },
+	],
+});
+
 export const ShadowPriestRotationConfig = {
 	inputs: [
 		InputHelpers.makeRotationEnumInput<Spec.SpecShadowPriest, RotationType>({
@@ -32,11 +56,6 @@ export const ShadowPriestRotationConfig = {
 				{ name: 'Clipping', value: RotationType.Clipping },
 				{ name: 'Ideal', value: RotationType.Ideal },
 			],
-		}),
-		InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecShadowPriest>({
-			fieldName: 'useShadowfiend',
-			label: 'Use Shadowfiend',
-			labelTooltip: 'Use Shadowfiend when low mana and off CD.',
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecShadowPriest>({
 			fieldName: 'precastVt',
