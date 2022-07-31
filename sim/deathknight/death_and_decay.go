@@ -52,9 +52,7 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 						dk.dndApSnapshot = 62.0 + dk.getImpurityBonus(hitEffect, spell.Unit)*0.0475
 						doSnapshot = false
 					}
-					return dk.dndApSnapshot *
-						dk.rageOfRivendareBonus(hitEffect.Target) *
-						dk.tundraStalkerBonus(hitEffect.Target)
+					return dk.dndApSnapshot * dk.RoRTSBonus(hitEffect.Target)
 				},
 				TargetSpellCoefficient: 1,
 			},

@@ -25,8 +25,7 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool) *core.Spell {
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				return weaponBaseDamage(sim, hitEffect, spell) *
 					dk.glacielRotBonus(hitEffect.Target) *
-					dk.rageOfRivendareBonus(hitEffect.Target) *
-					dk.tundraStalkerBonus(hitEffect.Target) *
+					dk.RoRTSBonus(hitEffect.Target) *
 					dk.mercilessCombatBonus(sim)
 			},
 			TargetSpellCoefficient: 1,
