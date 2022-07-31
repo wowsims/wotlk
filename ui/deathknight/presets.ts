@@ -31,7 +31,7 @@ export const FrostTalents = {
 			major2: DeathknightMajorGlyph.GlyphOfFrostStrike,
 			major3: DeathknightMajorGlyph.GlyphOfDisease,
 			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
-			minor2: DeathknightMinorGlyph.GlyphOfBloodTap,
+			minor2: DeathknightMinorGlyph.GlyphOfPestilence,
 			minor3: DeathknightMinorGlyph.GlyphOfRaiseDead,
 		}),
 	}),
@@ -288,7 +288,10 @@ export const P1_FROST_BIS_PRESET = {
       ]
     },
     {
-      "id": 40065
+      "id": 44664,
+      "gems": [
+        39996
+      ]
     },
     {
       "id": 40557,
@@ -344,7 +347,7 @@ export const P1_FROST_BIS_PRESET = {
       "enchant": 55016
     },
     {
-      "id": 40474
+      "id": 39401
     },
     {
       "id": 40075

@@ -133,7 +133,7 @@ func (dk *Deathknight) rimeCritBonus() float64 {
 }
 
 func (dk *Deathknight) rimeHbChanceProc() float64 {
-	return 5.0 * float64(dk.Talents.Rime)
+	return 0.05 * float64(dk.Talents.Rime)
 }
 
 func (dk *Deathknight) annihilationCritBonus() float64 {
