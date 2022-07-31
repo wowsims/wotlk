@@ -288,7 +288,10 @@ export const P1_FROST_BIS_PRESET = {
       ]
     },
     {
-      "id": 40065
+      "id": 44664,
+      "gems": [
+        39996
+      ]
     },
     {
       "id": 40557,
@@ -344,7 +347,7 @@ export const P1_FROST_BIS_PRESET = {
       "enchant": 55016
     },
     {
-      "id": 40474
+      "id": 39401
     },
     {
       "id": 40075
