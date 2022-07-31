@@ -118,6 +118,11 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 			playerIconInputs: [
 				ShadowPriestInputs.ArmorInput,
 			],
+			rotationIconInputs: [
+				ShadowPriestInputs.MindBlastInput,
+				ShadowPriestInputs.ShadowWordDeathInput,
+				ShadowPriestInputs.ShadowfiendInput,
+			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: ShadowPriestInputs.ShadowPriestRotationConfig,
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
