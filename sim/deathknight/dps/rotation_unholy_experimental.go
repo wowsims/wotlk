@@ -8,10 +8,19 @@ import (
 )
 
 func (dk *DpsDeathknight) dndStartSequence() {
-	dk.Main.Clear().NewAction(dk.getFirstDiseaseAction()).
+	dk.Main.Clear().
+		NewAction(dk.RotationAction_FF_ClipCheck).
+		NewAction(dk.getFirstDiseaseAction()).
+		NewAction(dk.RotationAction_BP_ClipCheck).
 		NewAction(dk.getSecondDiseaseAction()).
+		NewAction(dk.RotationAction_DC_Custom).
+		NewAction(dk.RotationAction_DC_Custom).
 		NewAction(dk.getBloodRuneAction(true)).
+		NewAction(dk.RotationAction_DC_Custom).
+		NewAction(dk.RotationAction_DC_Custom).
 		NewAction(dk.RotationAction_Dnd_Custom).
+		NewAction(dk.RotationAction_DC_Custom).
+		NewAction(dk.RotationAction_DC_Custom).
 		NewAction(dk.RotationAction_UnholyDndRotationGhoulFrenzyCheck)
 }
 
@@ -29,6 +38,15 @@ func (dk *DpsDeathknight) RotationAction_Dnd_Custom(sim *core.Simulation, target
 	return casted
 }
 
+func (dk *DpsDeathknight) RotationAction_DC_Custom(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
+	casted := dk.CastDeathCoil(sim, target)
+	if !casted {
+		dk.WaitUntil(sim, sim.CurrentTime)
+	}
+	s.Advance()
+	return true
+}
+
 func (dk *DpsDeathknight) RotationAction_UnholyDndRotationGhoulFrenzyCheck(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
 	dk.Main.Clear()
 
@@ -44,7 +62,10 @@ func (dk *DpsDeathknight) RotationAction_UnholyDndRotationGhoulFrenzyCheck(sim *
 		if dk.Talents.ScourgeStrike {
 			dk.Main.NewAction(dk.RotationActionCallback_SS)
 		} else {
-			dk.Main.NewAction(dk.getFirstDiseaseAction()).
+			dk.Main.
+				NewAction(dk.RotationAction_FF_ClipCheck).
+				NewAction(dk.getFirstDiseaseAction()).
+				NewAction(dk.RotationAction_BP_ClipCheck).
 				NewAction(dk.getSecondDiseaseAction())
 		}
 	}
@@ -54,7 +75,10 @@ func (dk *DpsDeathknight) RotationAction_UnholyDndRotationGhoulFrenzyCheck(sim *
 	} else {
 		dk.Main.NewAction(dk.RotationActionCallback_BB)
 	}
-	dk.Main.NewAction(dk.RotationAction_UnholyDndRotationEnd)
+	dk.Main.
+		NewAction(dk.RotationAction_DC_Custom).
+		NewAction(dk.RotationAction_DC_Custom).
+		NewAction(dk.RotationAction_UnholyDndRotationEnd)
 
 	if dk.uhGargoyleCanCast(sim) {
 		if !dk.PresenceMatches(deathknight.UnholyPresence) {

@@ -68,17 +68,21 @@ func (dk *DpsDeathknight) setupUnholySsArmyOpener() {
 }
 
 func (dk *DpsDeathknight) setupUnholyDndOpener() {
-	dk.Opener.
-		NewAction(dk.getFirstDiseaseAction()).
-		NewAction(dk.getSecondDiseaseAction()).
-		NewAction(dk.getBloodRuneAction(true)).
-		NewAction(dk.RotationActionCallback_DND)
-
 	if dk.Rotation.DeathAndDecayPrio == proto.Deathknight_Rotation_MaxRuneDowntime {
+		dk.Opener.
+			NewAction(dk.getFirstDiseaseAction()).
+			NewAction(dk.getSecondDiseaseAction()).
+			NewAction(dk.getBloodRuneAction(true)).
+			NewAction(dk.RotationActionCallback_DND)
+
 		dk.Main.Clear().NewAction(dk.RotationActionCallback_UnholyDndRotation)
 	} else {
 		// Static opener with no Proc checks for gargoyle
 		dk.Opener.
+			NewAction(dk.getFirstDiseaseAction()).
+			NewAction(dk.getSecondDiseaseAction()).
+			NewAction(dk.getBloodRuneAction(true)).
+			NewAction(dk.RotationActionCallback_DND).
 			NewAction(dk.RotationActionCallback_BT).
 			NewAction(dk.RotationActionCallback_UP).
 			NewAction(dk.RotationActionCallback_Garg).
