@@ -79,7 +79,9 @@ func (dk *Deathknight) ApplyFrostTalents() {
 
 	// Tundra Stalker
 	dk.AddStat(stats.Expertise, 1.0*float64(dk.Talents.TundraStalker)*core.ExpertisePerQuarterPercentReduction)
-	dk.applyTundaStalker()
+	if dk.Talents.TundraStalker > 0 {
+		dk.applyTundaStalker()
+	}
 }
 
 func (dk *Deathknight) nervesOfColdSteelBonus() float64 {
@@ -243,8 +245,7 @@ func (dk *Deathknight) applyThreatOfThassarian() {
 }
 
 func (dk *Deathknight) threatOfThassarianWillProc(sim *core.Simulation) bool {
-	ohWillCast := sim.RandomFloat("Threat of Thassarian") <= dk.bonusCoeffs.threatOfThassarianChance
-	return ohWillCast
+	return sim.RandomFloat("Threat of Thassarian") <= dk.bonusCoeffs.threatOfThassarianChance
 }
 
 func (dk *Deathknight) threatOfThassarianAdjustMetrics(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, mhOutcome core.HitOutcome) {

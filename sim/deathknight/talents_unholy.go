@@ -48,8 +48,10 @@ func (dk *Deathknight) ApplyUnholyTalents() {
 	dk.applyEbonPlaguebringer()
 
 	// Rage of Rivendare
-	dk.applyRageOfRivendare()
 	dk.AddStat(stats.Expertise, float64(dk.Talents.RageOfRivendare)*core.ExpertisePerQuarterPercentReduction)
+	if dk.Talents.RageOfRivendare > 0 {
+		dk.applyRageOfRivendare()
+	}
 }
 
 func (dk *Deathknight) viciousStrikesCritDamageBonus() float64 {
