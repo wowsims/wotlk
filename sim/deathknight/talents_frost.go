@@ -79,7 +79,9 @@ func (dk *Deathknight) ApplyFrostTalents() {
 
 	// Tundra Stalker
 	dk.AddStat(stats.Expertise, 1.0*float64(dk.Talents.TundraStalker)*core.ExpertisePerQuarterPercentReduction)
-	dk.applyTundaStalker()
+	if dk.Talents.TundraStalker > 0 {
+		dk.applyTundaStalker()
+	}
 }
 
 func (dk *Deathknight) nervesOfColdSteelBonus() float64 {
@@ -103,11 +105,10 @@ func (dk *Deathknight) mercilessCombatBonus(sim *core.Simulation) float64 {
 }
 
 func (dk *Deathknight) applyTundaStalker() {
-	dk.bonusCoeffs.tundraStalkerBonusCoeff = 1.0 + 0.03*float64(dk.Talents.TundraStalker)
-}
-
-func (dk *Deathknight) tundraStalkerBonus(target *core.Unit) float64 {
-	return core.TernaryFloat64(dk.FrostFeverDisease[target.Index].IsActive(), dk.bonusCoeffs.tundraStalkerBonusCoeff, 1.0)
+	bonus := 1.0 + 0.03*float64(dk.Talents.TundraStalker)
+	dk.RoRTSBonus = func(target *core.Unit) float64 {
+		return core.TernaryFloat64(dk.FrostFeverDisease[target.Index].IsActive(), bonus, 1.0)
+	}
 }
 
 func (dk *Deathknight) applyRime() {
@@ -132,7 +133,7 @@ func (dk *Deathknight) rimeCritBonus() float64 {
 }
 
 func (dk *Deathknight) rimeHbChanceProc() float64 {
-	return 5.0 * float64(dk.Talents.Rime)
+	return 0.05 * float64(dk.Talents.Rime)
 }
 
 func (dk *Deathknight) annihilationCritBonus() float64 {
@@ -244,8 +245,7 @@ func (dk *Deathknight) applyThreatOfThassarian() {
 }
 
 func (dk *Deathknight) threatOfThassarianWillProc(sim *core.Simulation) bool {
-	ohWillCast := sim.RandomFloat("Threat of Thassarian") <= dk.bonusCoeffs.threatOfThassarianChance
-	return ohWillCast
+	return sim.RandomFloat("Threat of Thassarian") <= dk.bonusCoeffs.threatOfThassarianChance
 }
 
 func (dk *Deathknight) threatOfThassarianAdjustMetrics(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, mhOutcome core.HitOutcome) {

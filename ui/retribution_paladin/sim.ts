@@ -143,6 +143,7 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 			},
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
+				IconInputs.ReplenishmentBuff,
 			],
 			excludeBuffDebuffInputs: [
 			],

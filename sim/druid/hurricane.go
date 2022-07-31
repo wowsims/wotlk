@@ -56,5 +56,5 @@ func (druid *Druid) registerHurricaneSpell() {
 }
 
 func (druid *Druid) ShouldCastHurricane(sim *core.Simulation, rotation proto.BalanceDruid_Rotation) bool {
-	return rotation.Hurricane && druid.Hurricane.IsReady(sim)
+	return len(druid.Env.Encounter.Targets) > 1 && druid.Hurricane.IsReady(sim)
 }

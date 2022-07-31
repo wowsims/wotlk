@@ -61,9 +61,7 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return weaponBaseDamage(sim, hitEffect, spell) *
-						dk.rageOfRivendareBonus(hitEffect.Target) *
-						dk.tundraStalkerBonus(hitEffect.Target)
+					return weaponBaseDamage(sim, hitEffect, spell) * dk.RoRTSBonus(hitEffect.Target)
 				},
 				TargetSpellCoefficient: 1,
 			},
@@ -76,8 +74,6 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 					if dk.DiseasesAreActive(spellEffect.Target) {
 						dk.LastScourgeStrikeDamage = spellEffect.Damage
 						shadowDamageSpell.Cast(sim, spellEffect.Target)
-						shadowDamageSpell.SpellMetrics[spellEffect.Target.Index].Casts--
-						shadowDamageSpell.SpellMetrics[spellEffect.Target.Index].Hits--
 					}
 
 					dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_FU)

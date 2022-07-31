@@ -22,9 +22,7 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *core.Spell {
 
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				return weaponBaseDamage(sim, hitEffect, spell) *
-					dk.tundraStalkerBonus(hitEffect.Target) *
-					dk.rageOfRivendareBonus(hitEffect.Target)
+				return weaponBaseDamage(sim, hitEffect, spell) * dk.RoRTSBonus(hitEffect.Target)
 			},
 			TargetSpellCoefficient: 1,
 		},

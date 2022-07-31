@@ -273,21 +273,23 @@ func (warlock *Warlock) setupEradication() {
 	})
 }
 
-func (warlock *Warlock) setupShadowEmbrace() {
+func (warlock *Warlock) ShadowEmbraceDebuffAura(target *core.Unit) *core.Aura {
 	shadowEmbraceBonus := 0.01 * float64(warlock.Talents.ShadowEmbrace)
 
-	warlock.ShadowEmbraceAura = warlock.RegisterAura(core.Aura{
-		Label:     "Shadow Embrace",
+	return target.GetOrRegisterAura(core.Aura{
+		Label:     "Shadow Embrace-" + warlock.Label,
 		ActionID:  core.ActionID{SpellID: 32391},
 		Duration:  time.Second * 12,
 		MaxStacks: 3,
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
-			aura.Unit.PseudoStats.PeriodicShadowDamageDealtMultiplier /= 1.0 + shadowEmbraceBonus*float64(oldStacks)
-			aura.Unit.PseudoStats.PeriodicShadowDamageDealtMultiplier *= 1.0 + shadowEmbraceBonus*float64(newStacks)
-			// TODO: make it a debuff
-			// Healing over time reduction part
+			warlock.AttackTables[aura.Unit.TableIndex].PeriodicShadowDamageDealtMultiplier /= 1.0 + shadowEmbraceBonus*float64(oldStacks)
+			warlock.AttackTables[aura.Unit.TableIndex].PeriodicShadowDamageDealtMultiplier *= 1.0 + shadowEmbraceBonus*float64(newStacks)
 		},
 	})
+}
+
+func (warlock *Warlock) setupShadowEmbrace() {
+	ShadowEmbraceAura := warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget)
 
 	warlock.RegisterAura(core.Aura{
 		Label:    "Shadow Embrace Talent Hidden Aura",
@@ -297,11 +299,12 @@ func (warlock *Warlock) setupShadowEmbrace() {
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spell == warlock.ShadowBolt || spell == warlock.Haunt {
-				if !warlock.ShadowEmbraceAura.IsActive() {
-					warlock.ShadowEmbraceAura.Activate(sim)
+				if !ShadowEmbraceAura.IsActive() {
+					ShadowEmbraceAura.Activate(sim)
+				} else {
+					ShadowEmbraceAura.Refresh(sim)
 				}
-				warlock.ShadowEmbraceAura.AddStack(sim)
-				warlock.ShadowEmbraceAura.Refresh(sim)
+				ShadowEmbraceAura.AddStack(sim)
 			}
 		},
 	})

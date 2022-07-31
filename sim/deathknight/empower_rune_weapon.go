@@ -37,7 +37,7 @@ func (dk *Deathknight) registerEmpowerRuneWeaponSpell() {
 			Priority: core.CooldownPriorityDefault,
 			Type:     core.CooldownTypeDPS,
 			CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-				if dk.Opener.IsOngoing() {
+				if dk.Opener.IsOngoing() || dk.CanSummonGargoyle(sim) {
 					return false
 				}
 				if dk.CurrentBloodRunes() > 0 {
