@@ -36,10 +36,6 @@ func (shaman *Shaman) newLavaBurstSpell() *core.Spell {
 	}
 
 	spellConfig.Cast.ModifyCast = func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-		if true {
-			spell.BonusCritRating += 3 * core.CritRatingPerCritChance
-			spell.DamageMultiplier += 1.03
-		}
 		if shaman.ElementalMasteryAura.IsActive() {
 			cast.CastTime = 0
 		} else if shaman.NaturesSwiftnessAura.IsActive() {
