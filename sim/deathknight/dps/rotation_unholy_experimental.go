@@ -7,6 +7,31 @@ import (
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
+func (dk *DpsDeathknight) dndStartOpener() {
+	// Static opener with no Proc checks for gargoyle
+	dk.Opener.
+		NewAction(dk.getFirstDiseaseAction()).
+		NewAction(dk.getSecondDiseaseAction()).
+		NewAction(dk.getBloodRuneAction(true)).
+		NewAction(dk.RotationActionCallback_DND).
+		NewAction(dk.RotationActionCallback_BT).
+		NewAction(dk.RotationActionCallback_UP).
+		NewAction(dk.RotationActionCallback_Garg).
+		NewAction(dk.RotationAction_CancelBT).
+		NewAction(dk.RotationActionCallback_ERW).
+		NewAction(dk.RotationActionCallback_BP).
+		NewAction(dk.RotationActionCallback_IT).
+		NewAction(dk.RotationActionCallback_PS).
+		NewAction(dk.RotationActionCallback_BS).
+		NewAction(dk.RotationActionCallback_IT).
+		NewAction(dk.RotationActionCallback_GF).
+		NewAction(dk.RotationAction_DC_Custom).
+		NewAction(dk.RotationAction_DC_Custom)
+
+	// Experimental rotation with sequences
+	dk.dndStartSequence()
+}
+
 func (dk *DpsDeathknight) dndStartSequence() {
 	dk.Main.Clear().
 		NewAction(dk.RotationAction_FF_ClipCheck).
@@ -16,8 +41,6 @@ func (dk *DpsDeathknight) dndStartSequence() {
 		NewAction(dk.RotationAction_DC_Custom).
 		NewAction(dk.RotationAction_DC_Custom).
 		NewAction(dk.getBloodRuneAction(true)).
-		NewAction(dk.RotationAction_DC_Custom).
-		NewAction(dk.RotationAction_DC_Custom).
 		NewAction(dk.RotationAction_Dnd_Custom).
 		NewAction(dk.RotationAction_DC_Custom).
 		NewAction(dk.RotationAction_DC_Custom).

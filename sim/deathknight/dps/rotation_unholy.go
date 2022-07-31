@@ -77,21 +77,7 @@ func (dk *DpsDeathknight) setupUnholyDndOpener() {
 
 		dk.Main.Clear().NewAction(dk.RotationActionCallback_UnholyDndRotation)
 	} else {
-		// Static opener with no Proc checks for gargoyle
-		dk.Opener.
-			NewAction(dk.getFirstDiseaseAction()).
-			NewAction(dk.getSecondDiseaseAction()).
-			NewAction(dk.getBloodRuneAction(true)).
-			NewAction(dk.RotationActionCallback_DND).
-			NewAction(dk.RotationActionCallback_BT).
-			NewAction(dk.RotationActionCallback_UP).
-			NewAction(dk.RotationActionCallback_Garg).
-			NewAction(dk.RotationAction_CancelBT).
-			NewAction(dk.RotationActionCallback_ERW).
-			NewAction(dk.RotationActionCallback_BP)
-
-		// Experimental rotation with sequences
-		dk.dndStartSequence()
+		dk.dndStartOpener()
 	}
 }
 
@@ -122,7 +108,12 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 		if !casted {
 			if dk.uhDiseaseCheck(sim, target, dk.ScourgeStrike, true, 1) {
 				if !dk.uhShouldWaitForDnD(sim, false, true, true) {
-					casted = dk.CastScourgeStrike(sim, target)
+					if dk.Talents.ScourgeStrike {
+						casted = dk.CastScourgeStrike(sim, target)
+					} else if dk.CanIcyTouch(sim) && dk.CanPlagueStrike(sim) {
+						dk.recastDiseasesSequence(sim)
+						return true
+					}
 				}
 			} else {
 				dk.recastDiseasesSequence(sim)
