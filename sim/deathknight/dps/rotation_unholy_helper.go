@@ -28,6 +28,10 @@ func (ur *UnholyRotation) Reset(sim *core.Simulation) {
 	ur.recastedBP = false
 }
 
+func (dk *DpsDeathknight) desolationAuraCheck(sim *core.Simulation) bool {
+	return !dk.DesolationAura.IsActive() || dk.DesolationAura.RemainingDuration(sim) < 10*time.Second || dk.Env.GetNumTargets() == 1
+}
+
 func (dk *DpsDeathknight) uhDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *core.Spell, costRunes bool, casts int) bool {
 	ffRemaining := dk.FrostFeverDisease[target.Index].RemainingDuration(sim)
 	bpRemaining := dk.BloodPlagueDisease[target.Index].RemainingDuration(sim)
@@ -107,4 +111,80 @@ func (dk *DpsDeathknight) uhSpreadDiseases(sim *core.Simulation, target *core.Un
 
 func (dk *DpsDeathknight) uhShouldWaitForDnD(sim *core.Simulation, blood bool, frost bool, unholy bool) bool {
 	return !(!(dk.DeathAndDecay.CD.IsReady(sim) || dk.DeathAndDecay.CD.TimeToReady(sim) <= 4*time.Second) || ((!blood || dk.CurrentBloodRunes() > 1) && (!frost || dk.CurrentFrostRunes() > 1) && (!unholy || dk.CurrentUnholyRunes() > 1)))
+}
+
+func (dk *DpsDeathknight) uhGhoulFrenzyCheck(sim *core.Simulation, target *core.Unit) bool {
+	// If no Ghoul Frenzy Aura or duration less then 10 seconds we try recasting
+	if !dk.GhoulFrenzyAura.IsActive() || dk.GhoulFrenzyAura.RemainingDuration(sim) < 10*time.Second {
+		if dk.CanBloodTap(sim) && dk.GhoulFrenzy.IsReady(sim) && dk.AllBloodRunesSpent() && dk.AllUnholySpent() && dk.SummonGargoyle.CD.TimeToReady(sim) > time.Second*60 {
+			// Use Ghoul Frenzy with a Blood Tap and Blood rune if all blood runes are on CD and Garg wont come off cd in less then a minute.
+			// The gargoyle check is there because you should BT -> UP -> Garg (Not in the sim yet)
+			if dk.uhDiseaseCheck(sim, target, dk.GhoulFrenzy, true, 1) {
+				dk.ghoulFrenzySequence(sim, true)
+				return true
+			} else {
+				dk.recastDiseasesSequence(sim)
+				return true
+			}
+		} else if !dk.Rotation.BtGhoulFrenzy && dk.CanGhoulFrenzy(sim) && dk.CanIcyTouch(sim) {
+			// Use Ghoul Frenzy with an Unholy Rune and sync the frost rune with Icy Touch
+			if dk.uhDiseaseCheck(sim, target, dk.GhoulFrenzy, true, 5) && dk.uhDiseaseCheck(sim, target, dk.IcyTouch, true, 5) {
+				dk.ghoulFrenzySequence(sim, false)
+				return true
+			} else {
+				dk.recastDiseasesSequence(sim)
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func (dk *DpsDeathknight) uhGargoyleCheck(sim *core.Simulation, target *core.Unit) bool {
+	if dk.uhGargoyleCanCast(sim) {
+		if !dk.PresenceMatches(deathknight.UnholyPresence) {
+			dk.CastBloodTap(sim, dk.CurrentTarget)
+			dk.CastUnholyPresence(sim, dk.CurrentTarget)
+		}
+
+		if dk.CastSummonGargoyle(sim, target) {
+			return true
+		}
+	}
+
+	// Go back to Blood Presence after gargoyle cast
+	if dk.PresenceMatches(deathknight.UnholyPresence) && !dk.CanSummonGargoyle(sim) {
+		if dk.BloodTapAura.IsActive() {
+			dk.BloodTapAura.Deactivate(sim)
+		}
+		if dk.CastBloodPresence(sim, target) {
+			dk.WaitUntil(sim, sim.CurrentTime)
+			return true
+		}
+	}
+	return false
+}
+
+func (dk *DpsDeathknight) GargoyleProcCheck(sim *core.Simulation) bool {
+	return false
+}
+
+func (dk *DpsDeathknight) uhGargoyleCanCast(sim *core.Simulation) bool {
+	if dk.Opener.IsOngoing() {
+		return false
+	}
+	if !dk.SummonGargoyle.IsReady(sim) {
+		return false
+	}
+	if dk.CurrentRunicPower() < dk.SummonGargoyle.DefaultCast.Cost {
+		return false
+	}
+	if !dk.PresenceMatches(deathknight.UnholyPresence) && !dk.CanBloodTap(sim) {
+		return false
+	}
+	if dk.GargoyleProcCheck(sim) {
+		return false
+	}
+
+	return true
 }
