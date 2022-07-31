@@ -7,7 +7,6 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
-	"github.com/wowsims/wotlk/sim/priest"
 )
 
 // TODO: probably do something different instead of making it global?
@@ -73,7 +72,7 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 	vtCastTime := spriest.ApplyCastSpeed(time.Millisecond * 1500)
 	gcd := spriest.SpellGCD()
 	var mfReducTime time.Duration
-	if spriest.HasSetBonus(priest.ItemSetCrimsonAcolyte, 4) {
+	if spriest.T10FourSetBonus {
 		mfReducTime = time.Millisecond * 170
 	}
 	tickLength := spriest.ApplyCastSpeed(time.Second - mfReducTime)
@@ -161,18 +160,18 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		//mb_dmg = 0
 		// DP dmg
 		dpInit := ((172 + spriest.GetStat(stats.SpellPower)*0.1849) * 8.0 * float64(spriest.Talents.ImprovedDevouringPlague) * 0.1 * (1.0 + (float64(spriest.Talents.Darkness)*0.02 +
-			float64(spriest.Talents.TwinDisciplines)*0.01 + float64(spriest.Talents.ImprovedDevouringPlague)*0.05)) * core.TernaryFloat64(spriest.HasSetBonus(priest.ItemSetConquerorSanct, 2), 1.15, 1) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1 + 0.5*(critChance+core.TernaryFloat64(spriest.HasSetBonus(priest.ItemSetCrimsonAcolyte, 4), 0.05, 0))))
+			float64(spriest.Talents.TwinDisciplines)*0.01 + float64(spriest.Talents.ImprovedDevouringPlague)*0.05)) * core.TernaryFloat64(spriest.T8TwoSetBonus, 1.15, 1) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1 + 0.5*(critChance+core.TernaryFloat64(spriest.T10TwoSetBonus, 0.05, 0))))
 		dpDot := ((172 + spriest.GetStat(stats.SpellPower)*0.1849) * num_DP_ticks *
-			(1.0 + (float64(spriest.Talents.Darkness)*0.02 + float64(spriest.Talents.TwinDisciplines)*0.01 + float64(spriest.Talents.ImprovedDevouringPlague)*0.05 + core.TernaryFloat64(spriest.HasSetBonus(priest.ItemSetConquerorSanct, 2), 0.15, 0))) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) *
-			(1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03) + core.TernaryFloat64(spriest.HasSetBonus(priest.ItemSetCrimsonAcolyte, 4), 0.05, 0)))
+			(1.0 + (float64(spriest.Talents.Darkness)*0.02 + float64(spriest.Talents.TwinDisciplines)*0.01 + float64(spriest.Talents.ImprovedDevouringPlague)*0.05 + core.TernaryFloat64(spriest.T8TwoSetBonus, 0.15, 0))) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) *
+			(1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03) + core.TernaryFloat64(spriest.T10TwoSetBonus, 0.05, 0)))
 		dpDamage = dpInit + dpDot
 
 		// VT dmg
 		vtDamage = (170 + spriest.GetStat(stats.SpellPower)*0.4) * num_VT_ticks *
-			(1.0 + float64(spriest.Talents.Darkness)*0.02) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03+core.TernaryFloat64(spriest.HasSetBonus(priest.ItemSetCrimsonAcolyte, 4), 0.05, 0)))
+			(1.0 + float64(spriest.Talents.Darkness)*0.02) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03+core.TernaryFloat64(spriest.T10TwoSetBonus, 0.05, 0)))
 
 		// SWD dmg
-		swdDamage = (618 + spriest.GetStat(stats.SpellPower)*0.429) * (1 + 0.5*(critChance+float64(spriest.Talents.MindMelt)*0.02+core.TernaryFloat64(spriest.HasSetBonus(priest.ItemSetValorous, 4), 0.1, 0))*float64(spriest.Talents.ShadowPower)*0.2) *
+		swdDamage = (618 + spriest.GetStat(stats.SpellPower)*0.429) * (1 + 0.5*(critChance+float64(spriest.Talents.MindMelt)*0.02+core.TernaryFloat64(spriest.T7FourSetBonus, 0.1, 0))*float64(spriest.Talents.ShadowPower)*0.2) *
 			(1.0 + (float64(spriest.Talents.Darkness)*0.02 + float64(spriest.Talents.TwinDisciplines)*0.01)) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * swdmfglyphMod
 		if !spriest.options.UseShadowWordDeath {
 			swdDamage = 0
@@ -222,13 +221,13 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 			//potmfdps := math.Floor(nextTick * currDotTickSpeed / float64(tickLength.Seconds()))
 
 			dpInitCurr := ((172 + spriest.DPstatSp*0.1849) * 8.0 * float64(spriest.Talents.ImprovedDevouringPlague) * 0.1 * (1.0 + (float64(spriest.Talents.Darkness)*0.02 +
-				float64(spriest.Talents.TwinDisciplines)*0.01 + float64(spriest.Talents.ImprovedDevouringPlague)*0.05)) * core.TernaryFloat64(spriest.HasSetBonus(priest.ItemSetConquerorSanct, 2), 1.15, 1) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1 + 0.5*(critChance+core.TernaryFloat64(spriest.HasSetBonus(priest.ItemSetCrimsonAcolyte, 4), 0.05, 0))))
+				float64(spriest.Talents.TwinDisciplines)*0.01 + float64(spriest.Talents.ImprovedDevouringPlague)*0.05)) * core.TernaryFloat64(spriest.T8TwoSetBonus, 1.15, 1) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1 + 0.5*(critChance+core.TernaryFloat64(spriest.T10TwoSetBonus, 0.05, 0))))
 			dpDotCurr := ((172 + spriest.DPstatSp*0.1849) *
-				(1.0 + (float64(spriest.Talents.Darkness)*0.02 + float64(spriest.Talents.TwinDisciplines)*0.01 + float64(spriest.Talents.ImprovedDevouringPlague)*0.05 + core.TernaryFloat64(spriest.HasSetBonus(priest.ItemSetConquerorSanct, 2), 0.15, 0))) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) *
-				(1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03) + core.TernaryFloat64(spriest.HasSetBonus(priest.ItemSetCrimsonAcolyte, 4), 0.05, 0)))
+				(1.0 + (float64(spriest.Talents.Darkness)*0.02 + float64(spriest.Talents.TwinDisciplines)*0.01 + float64(spriest.Talents.ImprovedDevouringPlague)*0.05 + core.TernaryFloat64(spriest.T8TwoSetBonus, 0.15, 0))) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) *
+				(1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03) + core.TernaryFloat64(spriest.T10TwoSetBonus, 0.05, 0)))
 
 			cdDamage := mbDamage
-			if spriest.HasSetBonus(priest.ItemSetCrimsonAcolyte, 4) {
+			if spriest.T10FourSetBonus {
 				cdDamage = mfDamage / 3 * 2
 			}
 
@@ -249,14 +248,14 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 			//nextTickWait2 = time.Duration(nextTick * currDotTickSpeed * 1e9)
 
 			dpInitCurr := ((172 + spriest.DPstatSp*0.1849) * 8.0 * float64(spriest.Talents.ImprovedDevouringPlague) * 0.1 * (1.0 + (float64(spriest.Talents.Darkness)*0.02 +
-				float64(spriest.Talents.TwinDisciplines)*0.01 + float64(spriest.Talents.ImprovedDevouringPlague)*0.05)) * core.TernaryFloat64(spriest.HasSetBonus(priest.ItemSetConquerorSanct, 2), 1.15, 1) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1 + 0.5*(critChance+core.TernaryFloat64(spriest.HasSetBonus(priest.ItemSetCrimsonAcolyte, 4), 0.05, 0))))
+				float64(spriest.Talents.TwinDisciplines)*0.01 + float64(spriest.Talents.ImprovedDevouringPlague)*0.05)) * core.TernaryFloat64(spriest.T8TwoSetBonus, 1.15, 1) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1 + 0.5*(critChance+core.TernaryFloat64(spriest.T10TwoSetBonus, 0.05, 0))))
 			dpDotNext := ((172 + spriest.DPstatSp*0.1849) *
-				(1.0 + (float64(spriest.Talents.Darkness)*0.02 + float64(spriest.Talents.TwinDisciplines)*0.01 + float64(spriest.Talents.ImprovedDevouringPlague)*0.05 + core.TernaryFloat64(spriest.HasSetBonus(priest.ItemSetConquerorSanct, 2), 0.15, 0))) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) *
-				(1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03) + core.TernaryFloat64(spriest.HasSetBonus(priest.ItemSetCrimsonAcolyte, 4), 0.05, 0)))
+				(1.0 + (float64(spriest.Talents.Darkness)*0.02 + float64(spriest.Talents.TwinDisciplines)*0.01 + float64(spriest.Talents.ImprovedDevouringPlague)*0.05 + core.TernaryFloat64(spriest.T8TwoSetBonus, 0.15, 0))) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) *
+				(1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03) + core.TernaryFloat64(spriest.T10TwoSetBonus, 0.05, 0)))
 
 			overwriteDPS2 = dpInitCurr + dpRemainTicks*(dpDotNext-dpDotNext/(newPsuedoHaste*(1+newHasteRating/32.79/100)))
 			cdDamage := mbDamage
-			if spriest.HasSetBonus(priest.ItemSetCrimsonAcolyte, 4) {
+			if spriest.T10FourSetBonus {
 				cdDamage = mfDamage / 3 * 2
 			}
 			currDPS2 = cdDamage
