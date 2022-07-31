@@ -6,29 +6,12 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-type FrostRotationAction uint8
-
-const (
-	FrostRotationAction_Obli FrostRotationAction = iota
-	FrostRotationAction_BS
-	FrostRotationAction_Pesti
-)
-
 type FrostRotation struct {
-	idx        int
-	numActions int
-	actions    []FrostRotationAction
+	nextSpell *core.Spell
 }
 
 func (fr *FrostRotation) Reset(sim *core.Simulation) {
-	fr.idx = 0
-	fr.actions = []FrostRotationAction{
-		FrostRotationAction_Obli,
-		FrostRotationAction_Obli,
-		FrostRotationAction_BS,
-		FrostRotationAction_Pesti,
-	}
-	fr.numActions = len(fr.actions)
+	fr.nextSpell = nil
 }
 
 func (dk *DpsDeathknight) FrostDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *core.Spell, costRunes bool, casts int) bool {
@@ -57,7 +40,7 @@ func (dk *DpsDeathknight) FrostDiseaseCheck(sim *core.Simulation, target *core.U
 
 		afterCastTime := sim.CurrentTime + castGcd
 		currentBloodRunes := crpb.CurrentBloodRunes()
-		nextBloodRuneAt := crpb.BloodRuneReadyAt(sim)
+		nextBloodRuneAt := crpb.NormalBloodRuneReadyAt(sim)
 
 		// Check FF
 		if dk.frCheckForDiseaseRecast(ffExpiresAt, afterCastTime, spellCost.Blood, currentBloodRunes, nextBloodRuneAt) {
