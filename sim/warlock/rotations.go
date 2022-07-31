@@ -178,7 +178,8 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			// ------------------------------------------
 			if !warlock.CorruptionDot.IsActive() {
 				spell = warlock.Corruption
-			} else if !warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime {
+			} else if (!warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime) && 
+				sim.GetRemainingDuration() > warlock.ImmolateDot.Duration/2. {
 				spell = warlock.Immolate
 			} else if warlock.DecimationAura.IsActive() {
 				spell = warlock.SoulFire
@@ -194,9 +195,8 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			// ------------------------------------------
 			if warlock.CanConflagrate(sim) && (warlock.ImmolateDot.TickCount > warlock.ImmolateDot.NumberOfTicks-2 || warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfConflagrate)) {
 				spell = warlock.Conflagrate
-			} else if !warlock.CorruptionDot.IsActive() {
-				spell = warlock.Corruption
-			} else if !warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime {
+			} else if (!warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime) && 
+				sim.GetRemainingDuration() > warlock.ImmolateDot.Duration/2. {
 				spell = warlock.Immolate
 			} else if warlock.Talents.ChaosBolt && warlock.ChaosBolt.CD.IsReady(sim) {
 				spell = warlock.ChaosBolt
@@ -217,31 +217,39 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// Main spells
 	// ------------------------------------------
 	if preset == proto.Warlock_Rotation_Manual {
-		if warlock.Rotation.Corruption && (!warlock.CorruptionDot.IsActive() && core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() ||
+		if warlock.Rotation.Corruption &&
+			(!warlock.CorruptionDot.IsActive() && (core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() || warlock.Talents.ImprovedShadowBolt == 0) ||
 			sim.IsExecutePhase35() && time.Duration(warlock.CorruptionDot.TickCount)*warlock.CorruptionDot.TickLength > sim.CurrentTime) {
-			// Cast Corruption as soon as the 5% crit debuff is up
+			// Cast Corruption as soon as the 5% crit debuff is up if you have the talent
 			// Cast Corruption again when you get the execute buff (Death's Embrace)
 			spell = warlock.Corruption
 		} else if warlock.CanConflagrate(sim) && (warlock.ImmolateDot.TickCount > warlock.ImmolateDot.NumberOfTicks-2 || warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfConflagrate)) {
+			// Cast Conflagrate at last Immo tick or on CD if you have the glyph
 			spell = warlock.Conflagrate
-		} else if secondaryDot == proto.Warlock_Rotation_Immolate && (!warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime) {
+		} else if secondaryDot == proto.Warlock_Rotation_Immolate && (!warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime) &&
+			sim.GetRemainingDuration() > warlock.ImmolateDot.Duration/2. {
+			// Refresh Immolate when it is gonna fade but not if the fight is ending
 			spell = warlock.Immolate
 		} else if warlock.Talents.UnstableAffliction && secondaryDot == proto.Warlock_Rotation_UnstableAffliction &&
 			(!warlock.UnstableAffDot.IsActive() || warlock.UnstableAffDot.RemainingDuration(sim) < warlock.UnstableAff.CurCast.CastTime) &&
 			sim.GetRemainingDuration() > warlock.UnstableAffDot.Duration {
+			// Refresh Unstable when it is gonna fade but not if the fight is ending
 			spell = warlock.UnstableAff
-		} else if warlock.Talents.Decimation > 0 && warlock.DecimationAura.IsActive() {
+		} else if warlock.DecimationAura.IsActive() {
+			// Spam Soulfire if you have the Decimation buff (Demonology execute phase)
 			spell = warlock.SoulFire
-		} else if warlock.Talents.MoltenCore > 0 && warlock.MoltenCoreAura.IsActive() {
+		} else if warlock.MoltenCoreAura.IsActive() {
+			// Spam Incinerate if you have the Molten Core buff (procs off Corruption ticks)
 			spell = warlock.Incinerate
 		} else if warlock.Talents.ChaosBolt && specSpell == proto.Warlock_Rotation_ChaosBolt && warlock.ChaosBolt.CD.IsReady(sim) {
 			spell = warlock.ChaosBolt
 		} else if warlock.Talents.Haunt && specSpell == proto.Warlock_Rotation_Haunt && warlock.Haunt.CD.IsReady(sim) && !warlock.HauntDebuffAura(warlock.CurrentTarget).IsActive() {
 			spell = warlock.Haunt
-		} else if sim.IsExecutePhase20() {
-			// Drain Soul execute phase
+		} else if sim.IsExecutePhase25() && warlock.Talents.SoulSiphon > 0 {
+			// Drain Soul execute phase for Affliction
 			spell = warlock.channelCheck(sim, warlock.DrainSoulDot, 5)
 		} else {
+			// Filler
 			switch mainSpell {
 			case proto.Warlock_Rotation_ShadowBolt:
 				spell = warlock.ShadowBolt

@@ -88,6 +88,12 @@ export const SecondaryDotInput = InputHelpers.makeRotationEnumIconInput<Spec.Spe
 		},
 	],
 	changeEmitter: (player: Player<Spec.SpecWarlock>) => player.changeEmitter,
+	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: number) => {
+		const newRotation = player.getRotation();
+		newRotation.secondaryDot = newValue;
+		newRotation.preset = RotationPreset.Manual;
+		player.setRotation(eventID, newRotation);
+	},
 });
 
 export const SpecSpellInput = InputHelpers.makeRotationEnumIconInput<Spec.SpecWarlock, SpecSpell>({
@@ -104,6 +110,12 @@ export const SpecSpellInput = InputHelpers.makeRotationEnumIconInput<Spec.SpecWa
 		},
 	],
 	changeEmitter: (player: Player<Spec.SpecWarlock>) => player.changeEmitter,
+	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: number) => {
+		const newRotation = player.getRotation();
+		newRotation.specSpell = newValue;
+		newRotation.preset = RotationPreset.Manual;
+		player.setRotation(eventID, newRotation);
+	},
 });
 
 
@@ -122,6 +134,7 @@ export const CorruptionSpell = {
 			newRotation.primarySpell = PrimarySpell.ShadowBolt
 		}
 		newRotation.corruption = newValue;
+		newRotation.preset = RotationPreset.Manual;
 		player.setRotation(eventID, newRotation);
 	},
 };
@@ -200,9 +213,9 @@ export const WarlockRotationConfig = {
 							newRotation = Presets.DestructionRotation
 							newOptions = Presets.DestructionOptions
 						}
-						newRotation.preset = newValue;
-						player.setRotation(eventID, newRotation);
 					}
+					newRotation.preset = newValue;
+					player.setRotation(eventID, newRotation);
 				});
 			},
 		},
@@ -223,6 +236,7 @@ export const WarlockRotationConfig = {
 			setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: number) => {
 				const newRotation = player.getRotation();
 				newRotation.curse = newValue;
+				newRotation.preset = RotationPreset.Manual;
 				player.setRotation(eventID, newRotation);
 			},
 		},

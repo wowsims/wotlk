@@ -113,7 +113,7 @@ export const DestructionRotation = WarlockRotation.create({
 	secondaryDot: SecondaryDot.Immolate,
 	specSpell: SpecSpell.ChaosBolt,
 	curse: Curse.Doom,
-	corruption: true,
+	corruption: false,
 	detonateSeed: true,
 });
 
