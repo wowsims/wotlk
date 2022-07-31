@@ -161,9 +161,12 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 				sim.GetRemainingDuration() > warlock.UnstableAffDot.Duration {
 				// Keep UA up
 				spell = warlock.UnstableAff
-			} else if warlock.Talents.Haunt && warlock.Haunt.CD.IsReady(sim) && 2*sim.GetRemainingDuration() > warlock.HauntDebuffAura(warlock.CurrentTarget).Duration && warlock.CorruptionDot.IsActive() {
+			} else if warlock.Talents.Haunt && warlock.Haunt.CD.IsReady(sim) && sim.GetRemainingDuration() > warlock.HauntDebuffAura(warlock.CurrentTarget).Duration/2. && warlock.CorruptionDot.IsActive() {
 				// Keep Haunt up
 				spell = warlock.Haunt
+			} else if warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ShadowBolt.CurCast.CastTime + core.GCDDefault {
+				// Shadow Embrace & Shadow Mastery refresh (Shadow Mastery lasts longer so no need to check)
+				spell = warlock.ShadowBolt
 			} else if sim.IsExecutePhase25() {
 				// Drain Soul execute phase
 				spell = warlock.channelCheck(sim, warlock.DrainSoulDot, 5)
@@ -235,6 +238,12 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			sim.GetRemainingDuration() > warlock.UnstableAffDot.Duration {
 			// Refresh Unstable when it is gonna fade but not if the fight is ending
 			spell = warlock.UnstableAff
+		} else if warlock.Talents.Haunt && specSpell == proto.Warlock_Rotation_Haunt && warlock.Haunt.CD.IsReady(sim) && !warlock.HauntDebuffAura(warlock.CurrentTarget).IsActive() {
+			// Refresh Haunt Debuff
+			spell = warlock.Haunt
+		} else if warlock.Talents.ShadowEmbrace > 0 && warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ShadowBolt.CurCast.CastTime + core.GCDDefault {
+			// Shadow Embrace & Shadow Mastery refresh (Shadow Mastery lasts longer so no need to check)
+			spell = warlock.ShadowBolt
 		} else if warlock.DecimationAura.IsActive() {
 			// Spam Soulfire if you have the Decimation buff (Demonology execute phase)
 			spell = warlock.SoulFire
@@ -243,8 +252,6 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			spell = warlock.Incinerate
 		} else if warlock.Talents.ChaosBolt && specSpell == proto.Warlock_Rotation_ChaosBolt && warlock.ChaosBolt.CD.IsReady(sim) {
 			spell = warlock.ChaosBolt
-		} else if warlock.Talents.Haunt && specSpell == proto.Warlock_Rotation_Haunt && warlock.Haunt.CD.IsReady(sim) && !warlock.HauntDebuffAura(warlock.CurrentTarget).IsActive() {
-			spell = warlock.Haunt
 		} else if sim.IsExecutePhase25() && warlock.Talents.SoulSiphon > 0 {
 			// Drain Soul execute phase for Affliction
 			spell = warlock.channelCheck(sim, warlock.DrainSoulDot, 5)
