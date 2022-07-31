@@ -171,7 +171,7 @@ func (wp *WarlockPet) OnGCDReady(sim *core.Simulation) {
 	if !wp.TryCast(sim, target, wp.primaryAbility) {
 		if wp.secondaryAbility != nil {
 			wp.TryCast(sim, target, wp.secondaryAbility)
-		} else if wp.primaryAbility.CD.Timer != nil {
+		} else if !wp.primaryAbility.IsReady(sim) {
 			wp.WaitUntil(sim, wp.primaryAbility.CD.ReadyAt())
 		} else {
 			wp.WaitForMana(sim, wp.primaryAbility.CurCast.Cost)
