@@ -139,7 +139,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 					}
 				}
 				if !casted {
-					if !(dk.SummonGargoyle.IsReady(sim) || dk.SummonGargoyle.CD.TimeToReady(sim) < 5*time.Second) || dk.CurrentRunicPower() >= 100 {
+					if dk.uhDeathCoilCheck(sim) {
 						casted = dk.CastDeathCoil(sim, target)
 					}
 					if !casted {
@@ -162,24 +162,8 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
 	casted := false
 
-	if dk.uhGargoyleCanCast(sim) {
-		dk.CastBloodTap(sim, dk.CurrentTarget)
-		dk.CastUnholyPresence(sim, dk.CurrentTarget)
-		casted = dk.CastSummonGargoyle(sim, target)
-		if casted {
-			return true
-		}
-	}
-
-	// Go back to Blood Presence after gargoyle cast
-	if dk.PresenceMatches(deathknight.UnholyPresence) && !dk.CanSummonGargoyle(sim) {
-		if dk.BloodTapAura.IsActive() {
-			dk.BloodTapAura.Deactivate(sim)
-		}
-		if dk.CastBloodPresence(sim, target) {
-			dk.WaitUntil(sim, sim.CurrentTime)
-			return true
-		}
+	if dk.uhGargoyleCheck(sim, target) {
+		return true
 	}
 
 	if dk.Talents.GhoulFrenzy {
@@ -215,7 +199,9 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 				}
 			}
 			if !casted {
-				casted = dk.CastDeathCoil(sim, target)
+				if dk.uhDeathCoilCheck(sim) {
+					casted = dk.CastDeathCoil(sim, target)
+				}
 				if !casted {
 					casted = dk.CastHornOfWinter(sim, target)
 				}

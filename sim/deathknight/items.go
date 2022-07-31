@@ -278,6 +278,14 @@ func (dk *Deathknight) sigilOfArthriticBindingBonus() float64 {
 	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 40875, 91, 0)
 }
 
+func (dk *Deathknight) sigilOfTheVengefulHeartDeathCoil() float64 {
+	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 45254, 380, 0)
+}
+
+func (dk *Deathknight) sigilOfTheVengefulHeartFrostStrike() float64 {
+	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 45254, 113, 0)
+}
+
 func init() {
 	core.NewItemEffect(40715, func(agent core.Agent) {
 		dk := agent.(DeathKnightAgent).GetDeathKnight()
