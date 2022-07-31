@@ -48,6 +48,24 @@ type Priest struct {
 	MindFlayDot        []*core.Dot
 	StarshardsDot      *core.Dot
 	VampiricTouchDot   *core.Dot
+
+	// set bonus cache
+	// The mana cost of your Mind Blast is reduced by 10%.
+	T7TwoSetBonus bool
+	// Your Shadow Word: Death has an additional 10% chance to critically strike.
+	T7FourSetBonus bool
+	// Increases the damage done by your Devouring Plague by 15%.
+	T8TwoSetBonus bool
+	// Your Mind Blast also grants you 240 haste for 4 sec.
+	T8FourSetBonus bool
+	// Increases the duration of your Vampiric Touch spell by 6 sec.
+	T9TwoSetBonus bool
+	// Increases the critical strike chance of your Mind Flay spell by 5%.
+	T9FourSetBonus bool
+	// The critical strike chance of your Shadow Word: Pain, Devouring Plague, and Vampiric Touch spells is increased by 5%
+	T10TwoSetBonus bool
+	// Reduces the channel duration by 0.51 sec and period by 0.17 sec on your Mind Flay spell
+	T10FourSetBonus bool
 }
 
 type SelfBuffs struct {
@@ -118,6 +136,7 @@ func (priest *Priest) Initialize() {
 		time.Second*10,
 	)
 
+	priest.registerSetBonuses()
 	priest.registerDevouringPlagueSpell()
 	priest.registerHolyFireSpell()
 	priest.registerShadowWordPainSpell()
