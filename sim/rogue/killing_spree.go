@@ -40,10 +40,14 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 		Duration: time.Second * 2,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.PseudoStats.DamageDealtMultiplier *= 1.2
+			// This first attack could/should? be implemented as an immediate tick
+			// but there is currently an issue causing the periodic action
+			// to only fire once when this flag is set
+			attackSpell.Cast(sim, rogue.CurrentTarget)
 			core.StartPeriodicAction(sim, core.PeriodicActionOptions{
 				Period:          time.Millisecond * 500,
 				NumTicks:        4,
-				TickImmediately: true,
+				TickImmediately: false,
 				OnAction: func(s *core.Simulation) {
 					attackSpell.Cast(sim, rogue.CurrentTarget)
 				},
