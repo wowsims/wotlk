@@ -563,8 +563,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-Zabra'sRegalia"
  value: {
-  dps: 2077.215622162025
-  tps: 1543.7340006055033
+  dps: 2071.151011319445
+  tps: 1539.5951428421008
  }
 }
 dps_results: {
