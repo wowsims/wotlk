@@ -64,14 +64,14 @@ func (shaman *Shaman) registerLightningShieldSpell() *core.Spell {
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			shaman.activateLightningSheildAura(sim)
+			shaman.activateLightningShieldAura(sim)
 		},
 	})
 
 	return (shaman.LightningShield)
 }
 
-func (shaman *Shaman) activateLightningSheildAura(sim *core.Simulation) {
+func (shaman *Shaman) activateLightningShieldAura(sim *core.Simulation) {
 	shaman.LightningShieldAura.Activate(sim)
 	shaman.LightningShieldAura.SetStacks(sim, defaultLightningSheildStacks+(staticShockStackMultiplier*shaman.Talents.StaticShock))
 }
