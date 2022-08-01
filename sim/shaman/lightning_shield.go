@@ -8,6 +8,9 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
+const defaultLightningSheildStacks = 3
+const staticShockStackMultiplier = 2
+
 func (shaman *Shaman) registerLightningShieldSpell() *core.Spell {
 	actionID := core.ActionID{SpellID: 49281}
 	var proc = 0.02 * float64(shaman.Talents.StaticShock)
@@ -61,10 +64,14 @@ func (shaman *Shaman) registerLightningShieldSpell() *core.Spell {
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			shaman.LightningShieldAura.Activate(sim)
-			shaman.LightningShieldAura.SetStacks(sim, 3+(2*shaman.Talents.StaticShock))
+			shaman.activateLightningSheildAura(sim)
 		},
 	})
 
 	return (shaman.LightningShield)
+}
+
+func (shaman *Shaman) activateLightningSheildAura(sim *core.Simulation) {
+	shaman.LightningShieldAura.Activate(sim)
+	shaman.LightningShieldAura.SetStacks(sim, defaultLightningSheildStacks+(staticShockStackMultiplier*shaman.Talents.StaticShock))
 }

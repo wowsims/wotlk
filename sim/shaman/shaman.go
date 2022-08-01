@@ -265,6 +265,10 @@ func (shaman *Shaman) Reset(sim *core.Simulation) {
 		}
 	}
 
+	if shaman.SelfBuffs.Shield == proto.ShamanShield_LightningShield {
+		shaman.activateLightningSheildAura(sim)
+	}
+
 	shaman.FlameShock.CD.Reset()
 }
 
