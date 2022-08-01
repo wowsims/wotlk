@@ -13,7 +13,9 @@ func (warlock *Warlock) ApplyTalents() {
 	// warlock.PseudoStats.BonusSpellCritRating = 100 * core.CritRatingPerCritChance
 
 	// Demonic Embrace
-	warlock.AddStatDependency(stats.Stamina, stats.Stamina, 1.01+(float64(warlock.Talents.DemonicEmbrace)*0.03))
+	if warlock.Talents.DemonicEmbrace > 0 {
+		warlock.AddStatDependency(stats.Stamina, stats.Stamina, 1.01+(float64(warlock.Talents.DemonicEmbrace)*0.03))
+	}
 
 	// Molten Skin
 	warlock.PseudoStats.DamageTakenMultiplier *= 1. - 0.02*float64(warlock.Talents.MoltenSkin)
@@ -38,9 +40,9 @@ func (warlock *Warlock) ApplyTalents() {
 
 	// Fel Vitality
 	if warlock.Talents.FelVitality > 0 {
-		bonus := 0.01 * float64(warlock.Talents.FelVitality)
-		// Adding a second 3% bonus int->mana dependency
-		warlock.AddStatDependency(stats.Intellect, stats.Mana, 1.0+15*bonus)
+		bonus := 1.0 + 0.01*float64(warlock.Talents.FelVitality)
+		warlock.AddStatDependency(stats.Mana, stats.Mana, bonus)
+		warlock.AddStatDependency(stats.Health, stats.Health, bonus)
 	}
 
 	if warlock.Options.Summon != proto.Warlock_Options_NoSummon {
@@ -141,10 +143,21 @@ func (warlock *Warlock) registerGlyphOfLifeTapAura() {
 		ActionID: core.ActionID{SpellID: 63321},
 		Duration: time.Second * 40,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			warlock.AddStatDependencyDynamic(sim, stats.Spirit, stats.Spirit, 1.2)
+			// This is a very ugly hack; since AddStatDependencyDynamic multipliers stack multiplicatively,
+			// normally we'd get 1.3*1.2=1.56 with fel armor, which is wrong, the correct result would be
+			// 1.5 and thus we need to correct for that
+			if warlock.Options.Armor == proto.Warlock_Options_FelArmor {
+				warlock.AddStatDependencyDynamic(sim, stats.Spirit, stats.SpellPower, 1.5/1.3)
+			} else {
+				warlock.AddStatDependencyDynamic(sim, stats.Spirit, stats.SpellPower, 1.2)
+			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			warlock.AddStatDependencyDynamic(sim, stats.Spirit, stats.Spirit, 1/1.2)
+			if warlock.Options.Armor == proto.Warlock_Options_FelArmor {
+				warlock.AddStatDependencyDynamic(sim, stats.Spirit, stats.SpellPower, 1/(1.5/1.3))
+			} else {
+				warlock.AddStatDependencyDynamic(sim, stats.Spirit, stats.SpellPower, 1/1.2)
+			}
 		},
 	})
 }
