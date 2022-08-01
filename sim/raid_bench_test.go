@@ -248,9 +248,9 @@ func BenchmarkSimulate(b *testing.B) {
 										},
 									},
 									Options: &proto.EnhancementShaman_Options{
-										Shield:             proto.ShamanShield_LightningShield,
-										Bloodlust:          true,
-										DelayOffhandSwings: true,
+										Shield:    proto.ShamanShield_LightningShield,
+										Bloodlust: true,
+										SyncType:  proto.ShamanSyncType_SyncMainhandOffhandSwings,
 									},
 								},
 							},

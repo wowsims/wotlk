@@ -66,9 +66,12 @@ func (shaman *Shaman) ApplyWindfuryImbue(mh bool, oh bool) {
 		return
 	}
 
-	var proc = 0.2 // TODO: update this for wrath, likely still 36% with wf/wf but unconfirmed, as well as glyph effect
+	var proc = 0.2
 	if mh && oh {
 		proc = 0.36
+	}
+	if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfWindfuryWeapon) {
+		proc += 0.02 //TODO: confirm how this actually works
 	}
 
 	mhSpell := shaman.newWindfuryImbueSpell(true)

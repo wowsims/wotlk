@@ -258,6 +258,7 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 			rogue.doRotation(sim)
 		}
 	})
+	rogue.EnergyTickMultiplier *= (1 + []float64{0, 0.08, 0.16, 0.25}[rogue.Talents.Vitality])
 
 	rogue.EnableAutoAttacks(rogue, core.AutoAttackOptions{
 		MainHand:       rogue.WeaponFromMainHand(0), // Set crit multiplier later when we have targets.

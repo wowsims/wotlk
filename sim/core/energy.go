@@ -35,12 +35,12 @@ type energyBar struct {
 
 func (unit *Unit) EnableEnergyBar(maxEnergy float64, onEnergyGain OnEnergyGain) {
 	unit.energyBar = energyBar{
-		unit:         unit,
-		maxEnergy:    MaxFloat(100, maxEnergy),
-		onEnergyGain: onEnergyGain,
-
-		regenMetrics:        unit.NewEnergyMetrics(ActionID{OtherID: proto.OtherAction_OtherActionEnergyRegen}),
-		EnergyRefundMetrics: unit.NewEnergyMetrics(ActionID{OtherID: proto.OtherAction_OtherActionRefund}),
+		unit:                 unit,
+		maxEnergy:            MaxFloat(100, maxEnergy),
+		onEnergyGain:         onEnergyGain,
+		EnergyTickMultiplier: 1,
+		regenMetrics:         unit.NewEnergyMetrics(ActionID{OtherID: proto.OtherAction_OtherActionEnergyRegen}),
+		EnergyRefundMetrics:  unit.NewEnergyMetrics(ActionID{OtherID: proto.OtherAction_OtherActionRefund}),
 	}
 }
 
@@ -156,6 +156,5 @@ func (eb *energyBar) reset(sim *Simulation) {
 
 	eb.currentEnergy = eb.maxEnergy
 	eb.comboPoints = 0
-	eb.EnergyTickMultiplier = 1
 	eb.newTickAction(sim, true)
 }

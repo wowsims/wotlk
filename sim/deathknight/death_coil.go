@@ -7,7 +7,7 @@ import (
 )
 
 func (dk *Deathknight) registerDeathCoilSpell() {
-	baseDamage := 443.0 + dk.sigilOfTheWildBuckBonus()
+	baseDamage := 443.0 + dk.sigilOfTheWildBuckBonus() + dk.sigilOfTheVengefulHeartDeathCoil()
 
 	dk.DeathCoil = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 49895},
