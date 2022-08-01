@@ -42,8 +42,8 @@ func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
 
 	ghoulPet.EnableAutoAttacks(ghoulPet, core.AutoAttackOptions{
 		MainHand: core.Weapon{
-			BaseDamageMin:  33,
-			BaseDamageMax:  75,
+			BaseDamageMin:  120,
+			BaseDamageMax:  160,
 			SwingSpeed:     2,
 			SwingDuration:  time.Second * 2,
 			CritMultiplier: 2,
@@ -51,7 +51,7 @@ func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
 		AutoSwingMelee: true,
 	})
 
-	ghoulPet.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+0.01)
+	ghoulPet.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+1)
 	ghoulPet.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/83.3))
 
 	return ghoulPet
@@ -77,8 +77,8 @@ func (dk *Deathknight) NewGhoulPet(permanent bool) *GhoulPet {
 
 	ghoulPet.EnableAutoAttacks(ghoulPet, core.AutoAttackOptions{
 		MainHand: core.Weapon{
-			BaseDamageMin:  33,
-			BaseDamageMax:  75,
+			BaseDamageMin:  50,
+			BaseDamageMax:  90,
 			SwingSpeed:     2,
 			SwingDuration:  time.Second * 2,
 			CritMultiplier: 2,
@@ -206,8 +206,8 @@ func (dk *Deathknight) ghoulStatInheritance() core.PetStatInheritance {
 
 var armyGhoulPetBaseStats = stats.Stats{
 	stats.Agility:     856,
-	stats.Strength:    331,
-	stats.AttackPower: 836,
+	stats.Strength:    0,
+	stats.AttackPower: 0,
 
 	stats.MeleeCrit: 3.2 * core.CritRatingPerCritChance,
 }
