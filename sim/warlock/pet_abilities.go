@@ -144,10 +144,23 @@ func (wp *WarlockPet) newLashOfPain() *core.Spell {
 }
 
 func (wp *WarlockPet) newShadowBite() *core.Spell {
-	baseCost := wp.BaseMana * 0.03
+	actionID := core.ActionID{SpellID: 54053}
+	baseCost := 131.0 // TODO: should be 3% of BaseMana, but it's unclear what that actually refers to with pets
+	critMultiplier := 1.5 + 0.1*float64(wp.owner.Talents.Ruin)
+
+	var onSpellHitDealt func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)
+	if wp.owner.Talents.ImprovedFelhunter > 0 {
+		petManaMetrics := wp.NewManaMetrics(actionID)
+		maxManaMult := 0.04 * float64(wp.owner.Talents.ImprovedFelhunter)
+		onSpellHitDealt = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spellEffect.Landed() {
+				wp.AddMana(sim, wp.MaxMana()*maxManaMult, petManaMetrics, true)
+			}
+		}
+	}
 
 	return wp.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 54053},
+		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 
 		ResourceType: stats.Mana,
@@ -172,7 +185,8 @@ func (wp *WarlockPet) newShadowBite() *core.Spell {
 				core.TernaryFloat64(wp.owner.UnstableAffDot.IsActive(), 1, 0)+core.TernaryFloat64(wp.owner.ImmolateDot.IsActive(), 1, 0))),
 			ThreatMultiplier: 1,
 			BaseDamage:       core.BaseDamageConfigMagic(98, 138, 0.429), //TODO : change spellpower coefficient
-			OutcomeApplier:   wp.OutcomeFuncMagicHitAndCrit(2),
+			OutcomeApplier:   wp.OutcomeFuncMagicHitAndCritBinary(critMultiplier),
+			OnSpellHitDealt:  onSpellHitDealt,
 		}),
 	})
 }
