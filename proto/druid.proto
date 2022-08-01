@@ -8,145 +8,95 @@ import "common.proto";
 message DruidTalents {
 	// Balance
 	int32 starlight_wrath = 1;
-	int32 focused_starlight = 2;
-	int32 improved_moonfire = 3;
-	int32 brambles = 4;
-	bool insect_swarm = 5;
-	int32 vengeance = 6;
-	int32 lunar_guidance = 7;
-	bool natures_grace = 8;
-	int32 moonglow = 9;
-	int32 moonfury = 10;
-	int32 balance_of_power = 11;
-	int32 dreamstate = 12;
-	bool moonkin_form = 13;
-	int32 improved_faerie_fire = 14;
-	int32 wrath_of_cenarius = 15;
-	bool force_of_nature = 16;
+	int32 genesis = 2;
+	int32 moonglow = 3;
+	int32 natures_majesty = 4;
+	int32 improved_moonfire = 5;
+	int32 brambles = 6;
+	int32 natures_grace = 7;
+	bool natures_splendor = 8;
+	int32 natures_reach = 9;
+	int32 vengeance = 10;
+	int32 celestial_focus = 11;
+	int32 lunar_guidance = 12;
+	bool insect_swarm = 13;
+	int32 improved_insect_swarm = 14;
+	int32 dreamstate = 15;
+	int32 moonfury = 16;
+	int32 balance_of_power = 17;
+	bool moonkin_form = 18;
+	int32 improved_moonkin_form = 19;
+	int32 improved_faerie_fire = 20;
+	int32 owlkin_frenzy = 21;
+	int32 wrath_of_cenarius = 22;
+	int32 eclipse = 23;
+	bool typhoon = 24;
+	bool force_of_nature = 25;
+	int32 gale_winds = 26;
+	int32 earth_and_moon = 27;
+	bool starfall = 28;
 
 	// Feral Combat
-	int32 ferocity = 17;
-	int32 feral_aggression = 18;
-	int32 feral_instinct = 41;
-	int32 thick_hide = 42;
-	int32 feral_swiftness = 43;
-	int32 sharpened_claws = 19;
-	int32 shredding_attacks = 20;
-	int32 predatory_strikes = 21;
-	int32 primal_fury = 22;
-	int32 savage_fury = 23;
-	bool faerie_fire = 24;
-	int32 heart_of_the_wild = 25;
-	int32 survival_of_the_fittest = 26;
-	bool leader_of_the_pack = 27;
-	int32 improved_leader_of_the_pack = 28;
-	int32 predatory_instincts = 29;
-	bool mangle = 30;
+	int32 ferocity = 29;
+	int32 feral_aggression = 30;
+	int32 feral_instinct = 31;
+	int32 savage_fury = 32;
+	int32 thick_hide = 33;
+	int32 feral_swiftness = 34;
+	bool survival_instincts = 35;
+	int32 sharpened_claws = 36;
+	int32 shredding_attacks = 37;
+	int32 predatory_strikes = 38;
+	int32 primal_fury = 39;
+	int32 primal_precision = 40;
+	int32 brutal_impact = 41;
+	bool feral_charge = 42;
+	int32 nurturing_instinct = 43;
+	int32 natural_reaction = 44;
+	int32 heart_of_the_wild = 45;
+	int32 survival_of_the_fittest = 46;
+	bool leader_of_the_pack = 47;
+	int32 improved_leader_of_the_pack = 48;
+	int32 primal_tenacity = 49;
+	int32 protector_of_the_pack = 50;
+	int32 predatory_instincts = 51;
+	int32 infected_wounds = 52;
+	int32 king_of_the_jungle = 53;
+	bool mangle = 54;
+	int32 improved_mangle = 55;
+	int32 rend_and_tear = 56;
+	bool primal_gore = 57;
+	bool berserk = 58;
 
 	// Restoration
-	int32 improved_mark_of_the_wild = 31;
-	int32 furor = 32;
-	int32 naturalist = 33;
-	int32 natural_shapeshifter = 34;
-	int32 intensity = 35;
-	int32 subtlety = 40;
-	bool omen_of_clarity = 36;
-	bool natures_swiftness = 37;
-	int32 living_spirit = 38;
-	int32 natural_perfection = 39;
+	int32 improved_mark_of_the_wild = 59;
+	int32 natures_focus = 60;
+	int32 furor = 61;
+	int32 naturalist = 62;
+	int32 subtlety = 63;
+	int32 natural_shapeshifter = 64;
+	int32 intensity = 65;
+	bool omen_of_clarity = 66;
+	int32 master_shapeshifter = 67;
+	int32 tranquil_spirit = 68;
+	int32 improved_rejuvenation = 69;
+	bool natures_swiftness = 70;
+	int32 gift_of_nature = 71;
+	int32 improved_tranquility = 72;
+	int32 empowered_touch = 73;
+	int32 natures_bounty = 74;
+	int32 living_spirit = 75;
+	bool swiftmend = 76;
+	int32 natural_perfection = 77;
+	int32 empowered_rejuvenation = 78;
+	int32 living_seed = 79;
+	int32 revitalize = 80;
+	bool tree_of_life = 81;
+	int32 improved_tree_of_life = 82;
+	int32 improved_barkskin = 83;
+	int32 gift_of_the_earthmother = 84;
+	bool wild_growth = 85;
 }
-//message DruidTalents {
-//	// Balance
-//	int32 starlight_wrath = 1;
-//	int32 genesis = 2;
-//	int32 moonglow = 3;
-//	int32 natures_majesty = 4;
-//	int32 improved_moonfire = 5;
-//	int32 brambles = 6;
-//	int32 natures_grace = 7;
-//	bool natures_splendor = 8;
-//	int32 natures_reach = 9;
-//	int32 vengeance = 10;
-//	int32 celestial_focus = 11;
-//	int32 lunar_guidance = 12;
-//	bool insect_swarm = 13;
-//	int32 improved_insect_swarm = 14;
-//	int32 dreamstate = 15;
-//	int32 moonfury = 16;
-//	int32 balance_of_power = 17;
-//	bool moonkin_form = 18;
-//	int32 improved_moonkin_form = 19;
-//	int32 improved_faerie_fire = 20;
-//	int32 owlkin_frenzy = 21;
-//	int32 wrath_of_cenarius = 22;
-//	int32 eclipse = 23;
-//	bool typhoon = 24;
-//	bool force_of_nature = 25;
-//	int32 gale_winds = 26;
-//	int32 earth_and_moon = 27;
-//	bool starfall = 28;
-//
-//	// Feral Combat
-//	int32 ferocity = 29;
-//	int32 feral_aggression = 30;
-//	int32 feral_instinct = 31;
-//	int32 savage_fury = 32;
-//	int32 thick_hide = 33;
-//	int32 feral_swiftness = 34;
-//	bool survival_instincts = 35;
-//	int32 sharpened_claws = 36;
-//	int32 shredding_attacks = 37;
-//	int32 predatory_strikes = 38;
-//	int32 primal_fury = 39;
-//	int32 primal_precision = 40;
-//	int32 brutal_impact = 41;
-//	bool feral_charge = 42;
-//	int32 nurturing_instinct = 43;
-//	int32 natural_reaction = 44;
-//	int32 heart_of_the_wild = 45;
-//	int32 survival_of_the_fittest = 46;
-//	bool leader_of_the_pack = 47;
-//	int32 improved_leader_of_the_pack = 48;
-//	int32 primal_tenacity = 49;
-//	int32 protector_of_the_pack = 50;
-//	int32 predatory_instincts = 51;
-//	int32 infected_wounds = 52;
-//	int32 king_of_the_jungle = 53;
-//	bool mangle = 54;
-//	int32 improved_mangle = 55;
-//	int32 rend_and_tear = 56;
-//	bool primal_gore = 57;
-//	bool berserk = 58;
-//
-//	// Restoration
-//	int32 improved_mark_of_the_wild = 59;
-//	int32 natures_focus = 60;
-//	int32 furor = 61;
-//	int32 naturalist = 62;
-//	int32 subtlety = 63;
-//	int32 natural_shapeshifter = 64;
-//	int32 intensity = 65;
-//	bool omen_of_clarity = 66;
-//	int32 master_shapeshifter = 67;
-//	int32 tranquil_spirit = 68;
-//	int32 improved_rejuvenation = 69;
-//	bool natures_swiftness = 70;
-//	int32 gift_of_nature = 71;
-//	int32 improved_tranquility = 72;
-//	int32 empowered_touch = 73;
-//	int32 natures_bounty = 74;
-//	int32 living_spirit = 75;
-//	bool swiftmend = 76;
-//	int32 natural_perfection = 77;
-//	int32 empowered_rejuvenation = 78;
-//	int32 living_seed = 79;
-//	int32 revitalize = 80;
-//	bool tree_of_life = 81;
-//	int32 improved_tree_of_life = 82;
-//	int32 improved_barkskin = 83;
-//	int32 gift_of_the_earthmother = 84;
-//	bool wild_growth = 85;
-//}
 
 enum DruidMajorGlyph {
 	DruidMajorGlyphNone = 0;
@@ -195,19 +145,11 @@ enum DruidMinorGlyph {
 
 message BalanceDruid {
   message Rotation {
-    enum PrimarySpell {
-        Unknown = 0;
-        Starfire = 1;
-        Starfire6 = 2;
-        Wrath = 3;
-        Adaptive = 4;
-    }
-
-    PrimarySpell primary_spell = 1;
-    bool faerie_fire = 2;
-    bool insect_swarm = 3;
-    bool moonfire = 4;
-		bool hurricane = 5;
+	enum RotationType {
+		Unknown = 0;
+		Adaptive = 1;
+	}
+	RotationType type = 1;
   }
   Rotation rotation = 1;
 
@@ -235,8 +177,7 @@ message FeralDruid {
     int32 rip_min_combo_points = 5;
     int32 bite_min_combo_points = 6;
     bool rake_trick = 7;
-
-		bool maintain_faerie_fire = 9;
+	bool maintain_faerie_fire = 9;
   }
   Rotation rotation = 1;
 
@@ -271,8 +212,7 @@ message FeralTankDruid {
 
   message Options {
     RaidTarget innervate_target = 1;
-
-		double starting_rage = 2;
+	double starting_rage = 2;
   }
   Options options = 3;
 }

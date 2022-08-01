@@ -16,9 +16,6 @@ func (druid *Druid) registerFaerieFireSpell() {
 	cd := core.Cooldown{}
 
 	if druid.InForm(Cat | Bear) {
-		if !druid.Talents.FaerieFire {
-			return
-		}
 		actionID = core.ActionID{SpellID: 16857}
 		resourceType = 0
 		baseCost = 0

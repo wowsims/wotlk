@@ -73,6 +73,7 @@ export const PrimarySpellInput = InputHelpers.makeRotationEnumIconInput<Spec.Spe
 			newRotation.corruption = false
 		}
 		newRotation.primarySpell = newValue
+		newRotation.preset = RotationPreset.Manual;
 		player.setRotation(eventID, newRotation);
 	},
 });
@@ -88,6 +89,12 @@ export const SecondaryDotInput = InputHelpers.makeRotationEnumIconInput<Spec.Spe
 		},
 	],
 	changeEmitter: (player: Player<Spec.SpecWarlock>) => player.changeEmitter,
+	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: number) => {
+		const newRotation = player.getRotation();
+		newRotation.secondaryDot = newValue;
+		newRotation.preset = RotationPreset.Manual;
+		player.setRotation(eventID, newRotation);
+	},
 });
 
 export const SpecSpellInput = InputHelpers.makeRotationEnumIconInput<Spec.SpecWarlock, SpecSpell>({
@@ -104,6 +111,12 @@ export const SpecSpellInput = InputHelpers.makeRotationEnumIconInput<Spec.SpecWa
 		},
 	],
 	changeEmitter: (player: Player<Spec.SpecWarlock>) => player.changeEmitter,
+	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: number) => {
+		const newRotation = player.getRotation();
+		newRotation.specSpell = newValue;
+		newRotation.preset = RotationPreset.Manual;
+		player.setRotation(eventID, newRotation);
+	},
 });
 
 
@@ -122,6 +135,7 @@ export const CorruptionSpell = {
 			newRotation.primarySpell = PrimarySpell.ShadowBolt
 		}
 		newRotation.corruption = newValue;
+		newRotation.preset = RotationPreset.Manual;
 		player.setRotation(eventID, newRotation);
 	},
 };
@@ -143,28 +157,32 @@ export const WarlockRotationConfig = {
 			getValue: (player: Player<Spec.SpecWarlock>) => player.getRotation().type,
 			setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: number) => {
 				var newRotation = player.getRotation();
-				var newOptions = player.getSpecOptions();
+				var newOptions: WarlockOptions;
+				var newGlyphs: Glyphs;
+				var newTalents: string;
+				if (newValue == RotationType.Affliction) {
+					newTalents = Presets.AfflictionTalents.data.talentsString
+					newGlyphs = Presets.AfflictionTalents.data.glyphs || Glyphs.create();
+					newRotation = Presets.AfflictionRotation
+					newOptions = Presets.AfflictionOptions
+				} else if (newValue == RotationType.Demonology) {
+					newTalents = Presets.DemonologyTalents.data.talentsString
+					newGlyphs = Presets.DemonologyTalents.data.glyphs || Glyphs.create();
+					newRotation = Presets.DemonologyRotation
+					newOptions = Presets.DemonologyOptions
+				} else if (newValue == RotationType.Destruction) {
+					newTalents = Presets.DestructionTalents.data.talentsString
+					newGlyphs = Presets.DestructionTalents.data.glyphs || Glyphs.create();
+					newRotation = Presets.DestructionRotation
+					newOptions = Presets.DestructionOptions
+				}
+				newRotation.type = newValue;
+				newRotation.preset = RotationPreset.Automatic;
 				TypedEvent.freezeAllAndDo(() => {
-					if (newValue == RotationType.Affliction) {
-						player.setTalentsString(eventID, Presets.AfflictionTalents.data.talentsString);
-						player.setGlyphs(eventID, Presets.AfflictionTalents.data.glyphs || Glyphs.create());
-						newRotation = Presets.AfflictionRotation
-						newOptions = Presets.AfflictionOptions
-					} else if (newValue == RotationType.Demonology) {
-						player.setTalentsString(eventID, Presets.DemonologyTalents.data.talentsString);
-						player.setGlyphs(eventID, Presets.DemonologyTalents.data.glyphs || Glyphs.create());
-						newRotation = Presets.DemonologyRotation
-						newOptions = Presets.DemonologyOptions
-					} else {
-						player.setTalentsString(eventID, Presets.DestructionTalents.data.talentsString);
-						player.setGlyphs(eventID, Presets.DestructionTalents.data.glyphs || Glyphs.create());
-						newRotation = Presets.DestructionRotation
-						newOptions = Presets.DestructionOptions
-					}
-					newRotation.type = newValue;
-					newRotation.preset = RotationPreset.Automatic;
-					player.setRotation(eventID, newRotation);
+					player.setTalentsString(eventID, newTalents);
 					player.setSpecOptions(eventID, newOptions);
+					player.setGlyphs(eventID, newGlyphs);
+					player.setRotation(eventID, newRotation);
 				});
 			},
 		},
@@ -181,28 +199,35 @@ export const WarlockRotationConfig = {
 			getValue: (player: Player<Spec.SpecWarlock>) => player.getRotation().preset,
 			setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: number) => {
 				var newRotation = player.getRotation();
-				var newOptions = player.getSpecOptions();
-				TypedEvent.freezeAllAndDo(() => {
 					if (newValue == RotationPreset.Automatic) {
+					var newOptions: WarlockOptions;
+					var newGlyphs: Glyphs;
+					var newTalents: string;
 						if (newRotation.type == RotationType.Affliction) {
-							player.setTalentsString(eventID, Presets.AfflictionTalents.data.talentsString);
-							player.setGlyphs(eventID, Presets.AfflictionTalents.data.glyphs || Glyphs.create());
+							newTalents = Presets.AfflictionTalents.data.talentsString
+							newGlyphs = Presets.AfflictionTalents.data.glyphs || Glyphs.create();
 							newRotation = Presets.AfflictionRotation
 							newOptions = Presets.AfflictionOptions
 						} else if (newRotation.type == RotationType.Demonology) {
-							player.setTalentsString(eventID, Presets.DemonologyTalents.data.talentsString);
-							player.setGlyphs(eventID, Presets.DemonologyTalents.data.glyphs || Glyphs.create());
+							newTalents = Presets.DemonologyTalents.data.talentsString
+							newGlyphs = Presets.DemonologyTalents.data.glyphs || Glyphs.create();
 							newRotation = Presets.DemonologyRotation
 							newOptions = Presets.DemonologyOptions
 						} else if (newRotation.type == RotationType.Destruction) {
-							player.setTalentsString(eventID, Presets.DestructionTalents.data.talentsString);
-							player.setGlyphs(eventID, Presets.DestructionTalents.data.glyphs || Glyphs.create());
+							newTalents = Presets.DestructionTalents.data.talentsString
+							newGlyphs = Presets.DestructionTalents.data.glyphs || Glyphs.create();
 							newRotation = Presets.DestructionRotation
 							newOptions = Presets.DestructionOptions
 						}
-						newRotation.preset = newValue;
-						player.setRotation(eventID, newRotation);
 					}
+					newRotation.preset = newValue;
+				TypedEvent.freezeAllAndDo(() => {
+					if (newValue == RotationPreset.Automatic) {
+						player.setTalentsString(eventID, newTalents);
+						player.setSpecOptions(eventID, newOptions);
+						player.setGlyphs(eventID, newGlyphs);
+					}
+					player.setRotation(eventID, newRotation);
 				});
 			},
 		},
@@ -223,6 +248,7 @@ export const WarlockRotationConfig = {
 			setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: number) => {
 				const newRotation = player.getRotation();
 				newRotation.curse = newValue;
+				newRotation.preset = RotationPreset.Manual;
 				player.setRotation(eventID, newRotation);
 			},
 		},

@@ -12,7 +12,7 @@ func (mage *Mage) registerScorchSpell() {
 
 	effect := core.SpellEffect{
 		ProcMask:            core.ProcMaskSpellDamage,
-		BonusSpellHitRating: float64(mage.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
+		BonusSpellHitRating: 0,
 
 		BonusSpellCritRating: 0 +
 			float64(mage.Talents.Incineration)*2*core.CritRatingPerCritChance +
@@ -56,10 +56,7 @@ func (mage *Mage) registerScorchSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost *
-					(1 - 0.01*float64(mage.Talents.Pyromaniac)) *
-					(1 - 0.01*float64(mage.Talents.ElementalPrecision)),
-
+				Cost:     baseCost * (1 - 0.01*float64(mage.Talents.Pyromaniac)),
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond * 1500,
 			},

@@ -27,8 +27,6 @@ func (rogue *Rogue) ApplyTalents() {
 		rogue.AutoAttacks.OHEffect.BaseDamage.Calculator = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, 1+0.1*float64(rogue.Talents.DualWieldSpecialization), true)
 	}
 
-	rogue.EnergyTickMultiplier *= (1 + []float64{0, 0.08, 0.16, 0.25}[rogue.Talents.Vitality])
-
 	if rogue.Talents.Deadliness > 0 {
 		rogue.AddStatDependency(stats.AttackPower, stats.AttackPower, 1.0+0.02*float64(rogue.Talents.Deadliness))
 	}
@@ -366,11 +364,11 @@ func (rogue *Rogue) registerAdrenalineRushCD() {
 		Duration: time.Second * 15,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.ResetEnergyTick(sim)
-			rogue.EnergyTickMultiplier = 2
+			rogue.EnergyTickMultiplier *= 2.0
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.ResetEnergyTick(sim)
-			rogue.EnergyTickMultiplier = 1
+			rogue.EnergyTickMultiplier *= 1 / 2.0
 		},
 	})
 

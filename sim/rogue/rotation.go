@@ -23,6 +23,10 @@ func (rogue *Rogue) OnGCDReady(sim *core.Simulation) {
 }
 
 func (rogue *Rogue) doRotation(sim *core.Simulation) {
+	if rogue.KillingSpreeAura.IsActive() {
+		rogue.DoNothing()
+		return
+	}
 	switch rogue.plan {
 	case PlanNone:
 		rogue.doPlanNone(sim)

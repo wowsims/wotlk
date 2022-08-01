@@ -26,7 +26,8 @@ func RegisterDpsDeathknight() {
 type DpsDeathknight struct {
 	*deathknight.Deathknight
 
-	UnholyRotation
+	fr FrostRotation
+	ur UnholyRotation
 
 	Rotation proto.Deathknight_Rotation
 }
@@ -47,12 +48,13 @@ func NewDpsDeathknight(character core.Character, player proto.Player) *DpsDeathk
 		}),
 		Rotation: *dk.Rotation,
 	}
+	dpsDk.ur.dk = dpsDk
 
 	return dpsDk
 }
 
 func (dk *DpsDeathknight) SetupRotations() {
-	dk.ffFirst = dk.Inputs.FirstDisease == proto.Deathknight_Rotation_FrostFever
+	dk.ur.ffFirst = dk.Inputs.FirstDisease == proto.Deathknight_Rotation_FrostFever
 
 	dk.Opener.Clear()
 	dk.Main.Clear()
@@ -90,5 +92,6 @@ func (dk *DpsDeathknight) Initialize() {
 func (dk *DpsDeathknight) Reset(sim *core.Simulation) {
 	dk.Deathknight.Reset(sim)
 	dk.SetupRotations()
-	dk.ResetUnholyRotation(sim)
+	dk.fr.Reset(sim)
+	dk.ur.Reset(sim)
 }

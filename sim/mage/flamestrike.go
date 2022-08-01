@@ -13,13 +13,11 @@ func (mage *Mage) registerFlamestrikeSpell() {
 
 	applyAOEDamage := core.ApplyEffectFuncAOEDamageCapped(mage.Env, 7830, core.SpellEffect{
 		ProcMask:            core.ProcMaskSpellDamage,
-		BonusSpellHitRating: float64(mage.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
+		BonusSpellHitRating: 0,
 
 		BonusSpellCritRating: 0 +
 			float64(mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
-			float64(mage.Talents.Pyromaniac)*1*core.CritRatingPerCritChance +
-			float64(mage.Talents.ImprovedFlamestrike)*5*core.CritRatingPerCritChance,
-
+			float64(mage.Talents.Pyromaniac)*1*core.CritRatingPerCritChance,
 		DamageMultiplier: mage.spellDamageMultiplier * (1 + 0.02*float64(mage.Talents.FirePower)),
 		ThreatMultiplier: 1 - 0.05*float64(mage.Talents.BurningSoul),
 
@@ -38,8 +36,7 @@ func (mage *Mage) registerFlamestrikeSpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost *
-					(1 - 0.01*float64(mage.Talents.Pyromaniac)) *
-					(1 - 0.01*float64(mage.Talents.ElementalPrecision)),
+					(1 - 0.01*float64(mage.Talents.Pyromaniac)),
 
 				GCD:      core.GCDDefault,
 				CastTime: time.Second * 3,

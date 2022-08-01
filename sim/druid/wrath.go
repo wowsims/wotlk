@@ -31,14 +31,13 @@ func (druid *Druid) registerWrathSpell() {
 			},
 
 			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
-				druid.applyNaturesGrace(cast)
 				druid.applyNaturesSwiftness(cast)
 			},
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:             core.ProcMaskSpellDamage,
-			BonusSpellCritRating: float64(druid.Talents.FocusedStarlight) * 2 * core.CritRatingPerCritChance, // 2% crit per point
+			BonusSpellCritRating: 0,
 			DamageMultiplier:     1 + 0.02*float64(druid.Talents.Moonfury),
 			ThreatMultiplier:     1,
 
