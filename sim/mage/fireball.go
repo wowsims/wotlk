@@ -15,7 +15,7 @@ func (mage *Mage) registerFireballSpell() {
 	mage.Fireball = mage.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolFire,
-		Flags:       SpellFlagMage,
+		Flags:       SpellFlagMage | BarrageSpells,
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -24,7 +24,7 @@ func (mage *Mage) registerFireballSpell() {
 			DefaultCast: core.Cast{
 				Cost: baseCost *
 					(1 - 0.01*float64(mage.Talents.Pyromaniac)) *
-					(1 - 0.01*float64(mage.Talents.ElementalPrecision)),
+					(1 - 0.01*float64(mage.Talents.Precision)),
 
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond*3500 - time.Millisecond*100*time.Duration(mage.Talents.ImprovedFireball),
@@ -33,7 +33,7 @@ func (mage *Mage) registerFireballSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:            core.ProcMaskSpellDamage,
-			BonusSpellHitRating: float64(mage.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
+			BonusSpellHitRating: float64(mage.Talents.Precision) * 1 * core.SpellHitRatingPerHitChance,
 
 			BonusSpellCritRating: 0 +
 				float64(mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
@@ -45,7 +45,7 @@ func (mage *Mage) registerFireballSpell() {
 
 			ThreatMultiplier: 1 - 0.05*float64(mage.Talents.BurningSoul),
 
-			BaseDamage:     core.BaseDamageConfigMagic(649, 821, 1.0+0.03*float64(mage.Talents.EmpoweredFireball)),
+			BaseDamage:     core.BaseDamageConfigMagic(649, 821, 1.0+0.03*float64(mage.Talents.EmpoweredFire)),
 			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, 0.25*float64(mage.Talents.SpellPower))),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

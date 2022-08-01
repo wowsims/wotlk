@@ -45,7 +45,7 @@ func (mage *Mage) registerBlizzardSpell() {
 			DefaultCast: core.Cast{
 				Cost: baseCost *
 					(1 - 0.05*float64(mage.Talents.FrostChanneling)) *
-					(1 - 0.01*float64(mage.Talents.ElementalPrecision)),
+					(1 - 0.01*float64(mage.Talents.Precision)),
 
 				GCD:         core.GCDDefault,
 				ChannelTime: time.Second * 8,

@@ -8,35 +8,35 @@ import (
 var FireTalents = &proto.MageTalents{
 	ArcaneSubtlety: 2,
 
-	ImprovedFireball:  5,
-	Ignite:            5,
-	Incineration:      2,
-	Pyroblast:         true,
-	ImprovedScorch:    3,
-	MasterOfElements:  3,
-	PlayingWithFire:   3,
-	CriticalMass:      3,
-	BlastWave:         true,
-	FirePower:         5,
-	Pyromaniac:        3,
-	Combustion:        true,
-	MoltenFury:        2,
-	EmpoweredFireball: 5,
+	ImprovedFireball: 5,
+	Ignite:           5,
+	Incineration:     2,
+	Pyroblast:        true,
+	ImprovedScorch:   3,
+	MasterOfElements: 3,
+	PlayingWithFire:  3,
+	CriticalMass:     3,
+	BlastWave:        true,
+	FirePower:        5,
+	Pyromaniac:       3,
+	Combustion:       true,
+	MoltenFury:       2,
+	EmpoweredFire:    5,
 
-	ImprovedFrostbolt:  4,
-	ElementalPrecision: 3,
-	IceShards:          5,
-	IcyVeins:           true,
+	ImprovedFrostbolt: 4,
+	Precision:         3,
+	IceShards:         5,
+	IcyVeins:          true,
 }
 
 var FrostTalents = &proto.MageTalents{
 	ArcaneFocus:         5,
 	ArcaneConcentration: 5,
-	ArcaneImpact:        3,
+	SpellImpact:         3,
 	ArcaneMeditation:    3,
 
 	ImprovedFrostbolt:    5,
-	ElementalPrecision:   3,
+	Precision:            3,
 	IceShards:            5,
 	IcyVeins:             true,
 	PiercingIce:          5,
@@ -53,7 +53,7 @@ var FrostTalents = &proto.MageTalents{
 var ArcaneTalents = &proto.MageTalents{
 	ArcaneFocus:         5,
 	ArcaneConcentration: 5,
-	ArcaneImpact:        3,
+	SpellImpact:         3,
 	ArcaneMeditation:    3,
 	PresenceOfMind:      true,
 	ArcaneMind:          5,
@@ -63,13 +63,13 @@ var ArcaneTalents = &proto.MageTalents{
 	SpellPower:          2,
 	MindMastery:         5,
 
-	ImprovedFrostbolt:  5,
-	ElementalPrecision: 3,
-	IceShards:          5,
-	IcyVeins:           true,
-	PiercingIce:        5,
-	FrostChanneling:    3,
-	ColdSnap:           true,
+	ImprovedFrostbolt: 5,
+	Precision:         3,
+	IceShards:         5,
+	IcyVeins:          true,
+	PiercingIce:       5,
+	FrostChanneling:   3,
+	ColdSnap:          true,
 }
 
 var fireMageOptions = &proto.Mage_Options{
@@ -138,10 +138,7 @@ var PlayerOptionsArcane = &proto.Player_Mage{
 		Rotation: &proto.Mage_Rotation{
 			Type: proto.Mage_Rotation_Arcane,
 			Arcane: &proto.Mage_Rotation_ArcaneRotation{
-				Filler:                     proto.Mage_Rotation_ArcaneRotation_ArcaneMissilesFrostbolt,
-				ArcaneBlastsBetweenFillers: 3,
-				StartRegenRotationPercent:  0.2,
-				StopRegenRotationPercent:   0.3,
+				MinBlastBeforeMissiles: 4,
 			},
 		},
 	},
@@ -194,7 +191,7 @@ var FullFrostConsumes = &proto.Consumes{
 	Flask:           proto.Flask_FlaskOfPureDeath,
 	Food:            proto.Food_FoodBlackenedBasilisk,
 	DefaultPotion:   proto.Potions_SuperManaPotion,
-	DefaultConjured: proto.Conjured_ConjuredMageManaEmerald,
+	DefaultConjured: proto.Conjured_ConjuredMageManaSapphire,
 	MainHandImbue:   proto.WeaponImbue_WeaponImbueBrilliantWizardOil,
 }
 
@@ -202,7 +199,7 @@ var FullArcaneConsumes = &proto.Consumes{
 	Flask:           proto.Flask_FlaskOfBlindingLight,
 	Food:            proto.Food_FoodBlackenedBasilisk,
 	DefaultPotion:   proto.Potions_SuperManaPotion,
-	DefaultConjured: proto.Conjured_ConjuredMageManaEmerald,
+	DefaultConjured: proto.Conjured_ConjuredMageManaSapphire,
 	MainHandImbue:   proto.WeaponImbue_WeaponImbueBrilliantWizardOil,
 }
 

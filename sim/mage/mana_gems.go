@@ -5,40 +5,26 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (mage *Mage) registerManaGemsCD() {
-	if mage.Consumes.DefaultConjured != proto.Conjured_ConjuredMageManaEmerald {
+	if mage.Consumes.DefaultConjured != proto.Conjured_ConjuredMageManaSapphire {
 		return
 	}
 
-	actionID := core.ActionID{ItemID: 22044}
+	actionID := core.ActionID{ItemID: 33312}
 	manaMetrics := mage.NewManaMetrics(actionID)
 
-	var serpentCoilAura *core.Aura
-	if mage.HasTrinketEquipped(SerpentCoilBraidID) {
-		serpentCoilAura = mage.NewTemporaryStatsAura("Serpent Coil Braid", core.ActionID{ItemID: SerpentCoilBraidID}, stats.Stats{stats.SpellPower: 225}, time.Second*15)
-	}
-
-	manaMultiplier := 1.0
 	minManaEmeraldGain := 2340.0
 	maxManaEmeraldGain := 2460.0
-	minManaRubyGain := 1073.0
-	maxManaRubyGain := 1127.0
-	if serpentCoilAura != nil {
-		manaMultiplier = 1.25
-		minManaEmeraldGain *= manaMultiplier
-		maxManaEmeraldGain *= manaMultiplier
-		minManaRubyGain *= manaMultiplier
-		maxManaRubyGain *= manaMultiplier
-	}
+	minManaSapphireGain := 3330.0
+	maxManaSapphireGain := 3500.0
 	manaEmeraldGainRange := maxManaEmeraldGain - minManaEmeraldGain
-	manaRubyGainRange := maxManaRubyGain - minManaRubyGain
+	manaSapphireGainRange := maxManaSapphireGain - minManaSapphireGain
 
 	var remainingManaGems int
 	mage.RegisterResetEffect(func(sim *core.Simulation) {
-		remainingManaGems = 4
+		remainingManaGems = 6
 	})
 
 	spell := mage.RegisterSpell(core.SpellConfig{
@@ -53,18 +39,14 @@ func (mage *Mage) registerManaGemsCD() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			if remainingManaGems == 1 {
-				// Mana Ruby: Restores 1073 to 1127 mana. (2 Min Cooldown)
-				manaGain := minManaRubyGain + (sim.RandomFloat("Mana Gem") * manaRubyGainRange)
-				mage.AddMana(sim, manaGain, manaMetrics, true)
-			} else {
+			if remainingManaGems <= 3 {
 				// Mana Emerald: Restores 2340 to 2460 mana. (2 Min Cooldown)
 				manaGain := minManaEmeraldGain + (sim.RandomFloat("Mana Gem") * manaEmeraldGainRange)
 				mage.AddMana(sim, manaGain, manaMetrics, true)
-			}
-
-			if serpentCoilAura != nil {
-				serpentCoilAura.Activate(sim)
+			} else {
+				// Mana Sapphire: Restores 3330 to 3500 mana. (2 Min Cooldown)
+				manaGain := minManaSapphireGain + (sim.RandomFloat("Mana Gem") * manaSapphireGainRange)
+				mage.AddMana(sim, manaGain, manaMetrics, true)
 			}
 
 			remainingManaGems--
@@ -86,8 +68,8 @@ func (mage *Mage) registerManaGemsCD() {
 			// Only pop if we have less than the max mana provided by the gem minus 1mp5 tick.
 			totalRegen := character.ManaRegenPerSecondWhileCasting() * 5
 			maxManaGain := maxManaEmeraldGain
-			if remainingManaGems == 1 {
-				maxManaGain = maxManaRubyGain
+			if remainingManaGems <= 3 {
+				maxManaGain = maxManaEmeraldGain
 			}
 			if character.MaxMana()-(character.CurrentMana()+totalRegen) < maxManaGain {
 				return false

@@ -9,6 +9,7 @@ import (
 
 const (
 	SpellFlagMage = core.SpellFlagAgentReserved1
+	BarrageSpells = core.SpellFlagAgentReserved2
 )
 
 func RegisterMage() {
@@ -28,6 +29,17 @@ func RegisterMage() {
 	)
 }
 
+type MageTierSets struct {
+	t7_2  bool
+	t7_4  bool
+	t8_2  bool
+	t8_4  bool
+	t9_2  bool
+	t9_4  bool
+	t10_2 bool
+	t10_4 bool
+}
+
 type Mage struct {
 	core.Character
 	Talents proto.MageTalents
@@ -40,15 +52,11 @@ type Mage struct {
 	AoeRotation    proto.Mage_Rotation_AoeRotation
 	UseAoeRotation bool
 
-	isDoingRegenRotation bool
-	tryingToDropStacks   bool
-	numCastsDone         int32
-	isBlastSpamming      bool
-	disabledMCDs         []*core.MajorCooldown
+	isMissilesBarrage bool
+	numCastsDone      int32
+	disabledMCDs      []*core.MajorCooldown
 
 	waterElemental *WaterElemental
-
-	hasTristfal bool
 
 	// Cached values for a few mechanics.
 	spellDamageMultiplier float64
@@ -56,7 +64,7 @@ type Mage struct {
 	// Current bonus crit from AM+CC interaction.
 	bonusAMCCCrit float64
 
-	ArcaneBlast     []*core.Spell
+	ArcaneBlast     *core.Spell
 	ArcaneExplosion *core.Spell
 	ArcaneMissiles  *core.Spell
 	Blizzard        *core.Spell
@@ -78,11 +86,14 @@ type Mage struct {
 	FlamestrikeDot    *core.Dot
 	PyroblastDot      *core.Dot
 
-	ArcaneBlastAura  *core.Aura
-	ClearcastingAura *core.Aura
-	ScorchAura       *core.Aura
+	ArcaneBlastAura    *core.Aura
+	MissileBarrageAura *core.Aura
+	ClearcastingAura   *core.Aura
+	ScorchAura         *core.Aura
 
 	IgniteTickDamage []float64
+
+	mageTier MageTierSets
 
 	manaTracker common.ManaSpendingRateTracker
 }
@@ -106,12 +117,7 @@ func (mage *Mage) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
 
 func (mage *Mage) Initialize() {
-	mage.ArcaneBlast = []*core.Spell{
-		mage.newArcaneBlastSpell(0),
-		mage.newArcaneBlastSpell(1),
-		mage.newArcaneBlastSpell(2),
-		mage.newArcaneBlastSpell(3),
-	}
+	mage.registerArcaneBlastSpell()
 	mage.registerArcaneExplosionSpell()
 	mage.registerArcaneMissilesSpell()
 	mage.registerBlizzardSpell()
@@ -138,10 +144,7 @@ func (mage *Mage) Initialize() {
 }
 
 func (mage *Mage) Reset(_ *core.Simulation) {
-	mage.isDoingRegenRotation = false
-	mage.tryingToDropStacks = false
 	mage.numCastsDone = 0
-	mage.isBlastSpamming = false
 	mage.manaTracker.Reset()
 	mage.disabledMCDs = nil
 	mage.bonusAMCCCrit = 0
@@ -178,16 +181,23 @@ func NewMage(character core.Character, options proto.Player) *Mage {
 	mage.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
 
 	if mage.Options.Armor == proto.Mage_Options_MageArmor {
-		mage.PseudoStats.SpiritRegenRateCasting += 0.3
+		mage.PseudoStats.SpiritRegenRateCasting += 0.5
 	} else if mage.Options.Armor == proto.Mage_Options_MoltenArmor {
-		mage.AddStat(stats.SpellCrit, 3*core.CritRatingPerCritChance)
+		//Need to switch to spirit crit calc
+		multi := 0.35
+		if mage.HasGlyph(int32(proto.MageMajorGlyph_GlyphOfMoltenArmor.Number())) {
+			multi += .2
+		}
+		if mage.mageTier.t9_2 {
+			multi += .15
+		}
+		mage.AddStat(stats.SpellCrit, (mage.GetStat(stats.Spirit)*multi)/core.CritRatingPerCritChance)
 	}
 
 	if mage.Talents.SummonWaterElemental {
 		mage.waterElemental = mage.NewWaterElemental(mage.FrostRotation.WaterElementalDisobeyChance)
 	}
 
-	mage.hasTristfal = mage.HasSetBonus(ItemSetTirisfalRegalia, 2)
 	return mage
 }
 
@@ -197,9 +207,9 @@ func init() {
 		stats.Strength:  30,
 		stats.Agility:   41,
 		stats.Stamina:   50,
-		stats.Intellect: 155,
-		stats.Spirit:    144,
-		stats.Mana:      2241,
+		stats.Intellect: 185,
+		stats.Spirit:    173,
+		stats.Mana:      3268,
 		stats.SpellCrit: core.CritRatingPerCritChance * 0.926,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassMage}] = stats.Stats{
@@ -207,9 +217,9 @@ func init() {
 		stats.Strength:  34,
 		stats.Agility:   36,
 		stats.Stamina:   50,
-		stats.Intellect: 152,
-		stats.Spirit:    147,
-		stats.Mana:      2241,
+		stats.Intellect: 182,
+		stats.Spirit:    176,
+		stats.Mana:      3268,
 		stats.SpellCrit: core.CritRatingPerCritChance * 0.933,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceGnome, Class: proto.Class_ClassMage}] = stats.Stats{
@@ -217,8 +227,8 @@ func init() {
 		stats.Strength:  28,
 		stats.Agility:   42,
 		stats.Stamina:   50,
-		stats.Intellect: 154.3, // Gnomes start with 162 int, we assume this include racial so / 1.05
-		stats.Spirit:    145,
+		stats.Intellect: 193, // Gnomes start with 162 int, we assume this include racial so / 1.05
+		stats.Spirit:    174,
 		stats.Mana:      2241,
 		stats.SpellCrit: core.CritRatingPerCritChance * 0.93,
 	}
@@ -227,8 +237,8 @@ func init() {
 		stats.Strength:  33,
 		stats.Agility:   39,
 		stats.Stamina:   51,
-		stats.Intellect: 151,
-		stats.Spirit:    159,
+		stats.Intellect: 181,
+		stats.Spirit:    179,
 		stats.Mana:      2241,
 		stats.SpellCrit: core.CritRatingPerCritChance * 0.926,
 	}
@@ -237,9 +247,9 @@ func init() {
 		stats.Strength:  34,
 		stats.Agility:   41,
 		stats.Stamina:   52,
-		stats.Intellect: 147,
-		stats.Spirit:    146,
-		stats.Mana:      2241,
+		stats.Intellect: 177,
+		stats.Spirit:    175,
+		stats.Mana:      3268,
 		stats.SpellCrit: core.CritRatingPerCritChance * 0.935,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceUndead, Class: proto.Class_ClassMage}] = stats.Stats{
@@ -247,9 +257,9 @@ func init() {
 		stats.Strength:  32,
 		stats.Agility:   37,
 		stats.Stamina:   52,
-		stats.Intellect: 149,
-		stats.Spirit:    150,
-		stats.Mana:      2241,
+		stats.Intellect: 179,
+		stats.Spirit:    179,
+		stats.Mana:      3268,
 		stats.SpellCrit: core.CritRatingPerCritChance * 0.930,
 	}
 }

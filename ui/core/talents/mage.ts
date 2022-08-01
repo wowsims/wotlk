@@ -36,12 +36,12 @@ export const mageTalentsConfig: TalentsConfig<MageTalents> = newTalentsConfig([
 				maxPoints: 5,
 			},
 			{
-				fieldName: 'wandSpecialization',
+				fieldName: 'arcaneStability',
 				location: {
 					rowIdx: 1,
 					colIdx: 0,
 				},
-				spellIds: [6057, 6085],
+				spellIds: [6057, 6085], //update this
 				maxPoints: 2,
 			},
 			{
@@ -63,7 +63,7 @@ export const mageTalentsConfig: TalentsConfig<MageTalents> = newTalentsConfig([
 				maxPoints: 5,
 			},
 			{
-				//fieldName: 'magicAttunement',
+				fieldName: 'magicAttunement',
 				location: {
 					rowIdx: 2,
 					colIdx: 0,
@@ -72,12 +72,12 @@ export const mageTalentsConfig: TalentsConfig<MageTalents> = newTalentsConfig([
 				maxPoints: 2,
 			},
 			{
-				fieldName: 'arcaneImpact',
+				fieldName: 'spellImpact',
 				location: {
 					rowIdx: 2,
 					colIdx: 1,
 				},
-				spellIds: [11242, 12467, 12469],
+				spellIds: [11242, 12467, 12469], //update ids
 				maxPoints: 3,
 			},
 			{
@@ -179,12 +179,12 @@ export const mageTalentsConfig: TalentsConfig<MageTalents> = newTalentsConfig([
 				maxPoints: 3,
 			},
 			{
-				fieldName: 'empoweredArcaneMissiles',
+				fieldName: 'arcaneEmpowerment',
 				location: {
 					rowIdx: 6,
 					colIdx: 0,
 				},
-				spellIds: [31579, 31582],
+				spellIds: [31579, 31582],//update ids
 				maxPoints: 3,
 			},
 			{
@@ -288,7 +288,7 @@ export const mageTalentsConfig: TalentsConfig<MageTalents> = newTalentsConfig([
 				maxPoints: 2,
 			},
 			{
-				fieldName: 'improvedFlamestrike',
+				fieldName: 'worldInFlames',
 				location: {
 					rowIdx: 2,
 					colIdx: 1,
@@ -422,7 +422,7 @@ export const mageTalentsConfig: TalentsConfig<MageTalents> = newTalentsConfig([
 				maxPoints: 2,
 			},
 			{
-				fieldName: 'empoweredFireball',
+				fieldName: 'empoweredFire',
 				location: {
 					rowIdx: 7,
 					colIdx: 2,
@@ -468,7 +468,7 @@ export const mageTalentsConfig: TalentsConfig<MageTalents> = newTalentsConfig([
 				maxPoints: 5,
 			},
 			{
-				fieldName: 'elementalPrecision',
+				fieldName: 'precision',
 				location: {
 					rowIdx: 0,
 					colIdx: 2,

@@ -24,7 +24,7 @@ func (mage *Mage) registerPyroblastSpell() {
 			DefaultCast: core.Cast{
 				Cost: baseCost *
 					(1 - 0.01*float64(mage.Talents.Pyromaniac)) *
-					(1 - 0.01*float64(mage.Talents.ElementalPrecision)),
+					(1 - 0.01*float64(mage.Talents.Precision)),
 
 				GCD:      core.GCDDefault,
 				CastTime: time.Second * 6,
@@ -33,7 +33,7 @@ func (mage *Mage) registerPyroblastSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:            core.ProcMaskSpellDamage,
-			BonusSpellHitRating: float64(mage.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
+			BonusSpellHitRating: float64(mage.Talents.Precision) * 1 * core.SpellHitRatingPerHitChance,
 
 			BonusSpellCritRating: 0 +
 				float64(mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +

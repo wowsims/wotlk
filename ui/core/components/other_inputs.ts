@@ -104,7 +104,7 @@ export const StartingConjured = {
 		{ name: 'None', value: Conjured.ConjuredUnknown },
 		{ name: 'Dark Rune', value: Conjured.ConjuredDarkRune },
 		{ name: 'Flame Cap', value: Conjured.ConjuredFlameCap },
-		{ name: 'Mana Gem', value: Conjured.ConjuredMageManaEmerald },
+		{ name: 'Mana Gem', value: Conjured.ConjuredMageManaSapphire },
 		{ name: 'Thistle Tea', value: Conjured.ConjuredRogueThistleTea },
 	],
 	changedEvent: (player: Player<any>) => player.consumesChangeEmitter,

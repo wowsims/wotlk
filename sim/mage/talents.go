@@ -14,6 +14,7 @@ func (mage *Mage) ApplyTalents() {
 	mage.applyMasterOfElements()
 	mage.applyWintersChill()
 	mage.applyMoltenFury()
+	mage.applyMissileBarrage()
 	mage.registerArcanePowerCD()
 	mage.registerPresenceOfMindCD()
 	mage.registerCombustionCD()
@@ -129,6 +130,43 @@ func (mage *Mage) applyArcaneConcentration() {
 	})
 }
 
+func (mage *Mage) applyMissileBarrage() {
+	if mage.Talents.MissileBarrage == 0 {
+		return
+	}
+
+	procChance := float64(mage.Talents.MissileBarrage) * .04
+	mage.MissileBarrageAura = mage.RegisterAura(core.Aura{
+		Label:    "Missile Barrage Proc",
+		ActionID: core.ActionID{SpellID: 44401},
+		Duration: time.Second * 15,
+	})
+
+	mage.RegisterAura(core.Aura{
+		Label:    "Missile Barrage",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if !spell.Flags.Matches(BarrageSpells) {
+				return
+			}
+
+			roll := sim.RandomFloat("Missile Barrage")
+
+			if spell.ActionID == mage.ArcaneBlast.ActionID && roll > 2*procChance {
+				return
+			} else if roll > procChance {
+				return
+			}
+
+			mage.MissileBarrageAura.Activate(sim)
+			mage.MissileBarrageAura.Prioritize()
+		},
+	})
+}
+
 func (mage *Mage) registerPresenceOfMindCD() {
 	if !mage.Talents.PresenceOfMind {
 		return
@@ -159,8 +197,7 @@ func (mage *Mage) registerPresenceOfMindCD() {
 			} else if mage.RotationType == proto.Mage_Rotation_Frost {
 				spell = mage.Frostbolt
 			} else {
-				numStacks := mage.ArcaneBlastAura.GetStacks()
-				spell = mage.ArcaneBlast[numStacks]
+				spell = mage.ArcaneBlast
 			}
 
 			normalCastTime := spell.DefaultCast.CastTime
@@ -182,8 +219,7 @@ func (mage *Mage) registerPresenceOfMindCD() {
 			} else if mage.RotationType == proto.Mage_Rotation_Frost {
 				manaCost = mage.Frostbolt.DefaultCast.Cost
 			} else {
-				numStacks := mage.ArcaneBlastAura.GetStacks()
-				manaCost = mage.ArcaneBlast[numStacks].DefaultCast.Cost
+				manaCost = mage.ArcaneBlast.DefaultCast.Cost * float64(mage.ArcaneBlastAura.GetStacks()) * 1.75
 			}
 			manaCost *= character.PseudoStats.CostMultiplier
 
