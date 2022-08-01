@@ -46,7 +46,7 @@ export const AfflictionTalents = {
 	name: 'Affliction',
   tooltip: WarlockTooltips.AFF_TALENTS_TOOLTIP,
 	data: SavedTalents.create({
-		talentsString: '2350002030023510253510331151--55000005',
+		talentsString: '2350002030023510253500331151--550000051',
 		glyphs: Glyphs.create({
 			major1: MajorGlyph.GlyphOfQuickDecay,
 			major2: MajorGlyph.GlyphOfLifeTap,

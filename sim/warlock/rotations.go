@@ -77,10 +77,8 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// ------------------------------------------
 	// If big CD coming up and we don't have enough mana for it, lifetap
 	// Also, never do a big regen in the last few seconds of the fight.
-	if !warlock.DoingRegen && nextBigCD-sim.CurrentTime < time.Second*5 && sim.GetRemainingDuration() > time.Second*30 {
-		if warlock.GetStat(stats.SpellPower) > warlock.GetInitialStat(stats.SpellPower) || warlock.HasTemporarySpellCastSpeedIncrease() {
-			// never start regen if you have boosted sp or boosted cast speed
-		} else if warlock.CurrentManaPercent() < 0.2 {
+	if !warlock.DoingRegen && nextBigCD-sim.CurrentTime < time.Second*6 && sim.GetRemainingDuration() > time.Second*30 {
+		if warlock.CurrentManaPercent() < 0.6 {
 			warlock.DoingRegen = true
 		}
 	}
@@ -108,9 +106,15 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// ------------------------------------------
 	// Keep Glyph of Life Tap buff up
 	// ------------------------------------------
-	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap) && !warlock.GlyphOfLifeTapAura.IsActive() {
-		warlock.LifeTapOrDarkPact(sim)
-		return
+	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap) &&
+		(!warlock.GlyphOfLifeTapAura.IsActive() || warlock.GlyphOfLifeTapAura.RemainingDuration(sim) < time.Second * 2) {
+		if sim.CurrentTime < time.Second {
+			// Pre-pull Life Tap
+			warlock.GlyphOfLifeTapAura.Activate(sim)
+		} else {
+			warlock.LifeTapOrDarkPact(sim)
+			return
+		}
 	}
 
 	// ------------------------------------------
@@ -172,12 +176,17 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			} else if warlock.Talents.Haunt && warlock.Haunt.CD.IsReady(sim) && sim.GetRemainingDuration() > warlock.HauntDebuffAura(warlock.CurrentTarget).Duration/2. && warlock.CorruptionDot.IsActive() {
 				// Keep Haunt up
 				spell = warlock.Haunt
-			} else if warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ShadowBolt.CurCast.CastTime+core.GCDDefault {
-				// Shadow Embrace & Shadow Mastery refresh (Shadow Mastery lasts longer so no need to check)
+			} else if warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ShadowBolt.CurCast.CastTime+core.GCDDefault ||
+				core.ShadowMasteryAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ShadowBolt.CurCast.CastTime {
+				// Shadow Embrace & Shadow Mastery refresh
 				spell = warlock.ShadowBolt
 			} else if sim.IsExecutePhase25() {
 				// Drain Soul execute phase
 				spell = warlock.channelCheck(sim, warlock.DrainSoulDot, 5)
+			} else if warlock.CurrentManaPercent() < 0.25 {
+				// If you were gonna cast a filler but are low mana, get mana instead in order not to be OOM when an important spell is coming up
+				warlock.LifeTapOrDarkPact(sim)
+				return
 			} else {
 				// Filler
 				spell = warlock.ShadowBolt
@@ -187,15 +196,23 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			// ------------------------------------------
 			// Demonology Rotation
 			// ------------------------------------------
-			if !warlock.CorruptionDot.IsActive() {
+			if (!warlock.CorruptionDot.IsActive() || warlock.CorruptionDot.RemainingDuration(sim) < warlock.Corruption.CurCast.CastTime) &&
+				sim.GetRemainingDuration() > warlock.CorruptionDot.Duration {
 				spell = warlock.Corruption
 			} else if (!warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime) &&
 				sim.GetRemainingDuration() > warlock.ImmolateDot.Duration/2. {
 				spell = warlock.Immolate
+			} else if core.ShadowMasteryAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ShadowBolt.CurCast.CastTime {
+				// Shadow Mastery refresh
+				spell = warlock.ShadowBolt
 			} else if warlock.DecimationAura.IsActive() {
 				spell = warlock.SoulFire
 			} else if warlock.MoltenCoreAura.IsActive() {
 				spell = warlock.Incinerate
+			} else if warlock.CurrentManaPercent() < 0.25 {
+				// If you were gonna cast a filler but are low mana, get mana instead in order not to be OOM when an important spell is coming up
+				warlock.LifeTapOrDarkPact(sim)
+				return
 			} else {
 				spell = warlock.ShadowBolt
 			}
@@ -249,8 +266,9 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		} else if warlock.Talents.Haunt && specSpell == proto.Warlock_Rotation_Haunt && warlock.Haunt.CD.IsReady(sim) && !warlock.HauntDebuffAura(warlock.CurrentTarget).IsActive() {
 			// Refresh Haunt Debuff
 			spell = warlock.Haunt
-		} else if warlock.Talents.ShadowEmbrace > 0 && warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ShadowBolt.CurCast.CastTime+core.GCDDefault {
-			// Shadow Embrace & Shadow Mastery refresh (Shadow Mastery lasts longer so no need to check)
+		} else if warlock.Talents.ShadowEmbrace > 0 && warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ShadowBolt.CurCast.CastTime+core.GCDDefault ||
+			warlock.Talents.ImprovedShadowBolt > 0 && core.ShadowMasteryAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ShadowBolt.CurCast.CastTime {
+			// Shadow Embrace & Shadow Mastery refresh
 			spell = warlock.ShadowBolt
 		} else if warlock.DecimationAura.IsActive() {
 			// Spam Soulfire if you have the Decimation buff (Demonology execute phase)
