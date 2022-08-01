@@ -76,7 +76,7 @@ func (character *Character) WeaponFromOffHand(critMultiplier float64) Weapon {
 	}
 }
 
-// Returns weapon stats using the off hand equipped weapon.
+// Returns weapon stats using the ranged equipped weapon.
 func (character *Character) WeaponFromRanged(critMultiplier float64) Weapon {
 	if weapon := character.GetRangedWeapon(); weapon != nil {
 		return newWeaponFromItem(*weapon, critMultiplier)
@@ -153,10 +153,10 @@ type AutoAttacks struct {
 	// use this.
 	AutoSwingRanged bool
 
-	// Set this to true to use the OH delay macro, mostly used by enhance shamans.
-	// This will intentionally delay OH swings to that they always fall within the
+	// Set this to 1 to sync your auto attacks together, or 2 to use the OH delay macro, mostly used by enhance shamans.
+	// This will intentionally perfectly sync or delay OH swings to that they always fall within the
 	// 0.5s window following a MH swing.
-	DelayOHSwings bool
+	SyncType int32
 
 	MainhandSwingAt time.Duration
 	OffhandSwingAt  time.Duration
@@ -189,7 +189,7 @@ type AutoAttackOptions struct {
 	Ranged          Weapon
 	AutoSwingMelee  bool // If true, core engine will handle calling SwingMelee() for you.
 	AutoSwingRanged bool // If true, core engine will handle calling SwingMelee() for you.
-	DelayOHSwings   bool
+	SyncType        int32
 	ReplaceMHSwing  ReplaceMHSwing
 }
 
@@ -202,7 +202,7 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 		Ranged:          options.Ranged,
 		AutoSwingMelee:  options.AutoSwingMelee,
 		AutoSwingRanged: options.AutoSwingRanged,
-		DelayOHSwings:   options.DelayOHSwings,
+		SyncType:        options.SyncType,
 		ReplaceMHSwing:  options.ReplaceMHSwing,
 		IsDualWielding:  options.MainHand.SwingSpeed != 0 && options.OffHand.SwingSpeed != 0,
 	}
@@ -484,7 +484,14 @@ func (aa *AutoAttacks) TrySwingOH(sim *Simulation, target *Unit) {
 		return
 	}
 
-	if aa.DelayOHSwings && (sim.CurrentTime-aa.previousMHSwingAt) > time.Millisecond*500 {
+	if (aa.SyncType == 1) && (sim.CurrentTime-aa.previousMHSwingAt) > time.Millisecond*500 {
+		// Perfectly Sync MH and OH attacks
+		aa.OffhandSwingAt = aa.MainhandSwingAt
+		if sim.Log != nil {
+			aa.unit.Log(sim, "Resyncing Weapons")
+		}
+		return
+	} else if (aa.SyncType == 2) && (sim.CurrentTime-aa.previousMHSwingAt) > time.Millisecond*500 {
 		// Delay the OH swing for later, so it follows the MH swing.
 		aa.OffhandSwingAt = aa.MainhandSwingAt + time.Millisecond*100
 		if sim.Log != nil {

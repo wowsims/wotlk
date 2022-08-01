@@ -15,9 +15,9 @@ func (warlock *Warlock) HauntDebuffAura(target *core.Unit) *core.Aura {
 	}
 
 	return target.GetOrRegisterAura(core.Aura{
-		Label:     "Haunt-" + warlock.Label,
-		ActionID:  core.ActionID{SpellID: 59164},
-		Duration:  time.Second * 12,
+		Label:    "Haunt-" + warlock.Label,
+		ActionID: core.ActionID{SpellID: 59164},
+		Duration: time.Second * 12,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			warlock.AttackTables[aura.Unit.TableIndex].PeriodicShadowDamageDealtMultiplier *= shadowDotMultiplier
 		},
@@ -32,7 +32,7 @@ func (warlock *Warlock) registerHauntSpell() {
 	spellSchool := core.SpellSchoolShadow
 	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
 	HauntDebuffAura := warlock.HauntDebuffAura(warlock.CurrentTarget)
-	
+
 	effect := core.SpellEffect{
 		ProcMask:         core.ProcMaskSpellDamage,
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),

@@ -11,7 +11,8 @@ import {
 	EnhancementShaman_Options as ShamanOptions,
 	ShamanTotems,
 	ShamanShield,
-    ShamanImbue
+    ShamanImbue,
+    ShamanSyncType
 } from '/wotlk/core/proto/shaman.js';
 import { Spec } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
@@ -60,10 +61,15 @@ export const ShamanImbueOH = InputHelpers.makeSpecOptionsEnumIconInput<Spec.Spec
     ],
 });
 
-export const DelayOffhandSwings = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecEnhancementShaman>({
-	fieldName: 'delayOffhandSwings',
-	label: 'Delay Offhand Swings',
-	labelTooltip: 'Uses the startattack macro to delay OH swings, so they always follow within 0.5s of a MH swing.',
+export const SyncTypeInput = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecEnhancementShaman, ShamanSyncType>({
+	fieldName: 'syncType',
+	label: 'Sync/Stagger Setting',
+	labelTooltip: 'Choose your sync or stagger option, Perfect Sync makes your weapons always attack at the same time, which is ideal for mixed imbues. Delayed Offhand is similar but additionally adds a slight delay to the offhand attacks while staying within the 0.5s flurry ICD window, ideal for matched imbues.',
+    values: [
+        { name: 'None', value: ShamanSyncType.NoSync },
+        { name: 'Perfect Sync', value: ShamanSyncType.SyncMainhandOffhandSwings },
+        { name: 'Delayed Offhand', value: ShamanSyncType.DelayOffhandSwings },
+    ],
 });
 
 export const EnhancementShamanRotationConfig = {

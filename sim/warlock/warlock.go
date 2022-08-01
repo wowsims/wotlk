@@ -60,7 +60,7 @@ type Warlock struct {
 	BackdraftAura          *core.Aura
 	EmpoweredImpAura       *core.Aura
 
-	GlyphOfLifeTapAura 	   *core.Aura
+	GlyphOfLifeTapAura *core.Aura
 }
 
 func (warlock *Warlock) GetCharacter() *core.Character {

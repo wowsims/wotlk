@@ -194,6 +194,12 @@ enum ShamanImbue {
     FrostbrandWeapon = 3;
 }
 
+enum ShamanSyncType {
+    NoSync = 0;
+    SyncMainhandOffhandSwings = 1;
+    DelayOffhandSwings = 2;
+}
+
 message ElementalShaman {
 	message Rotation {
 		ShamanTotems totems = 3;
@@ -216,7 +222,6 @@ message ElementalShaman {
 	Options options = 3;
 }
 
-
 message EnhancementShaman {
 	message Rotation {
 		ShamanTotems totems = 1;
@@ -226,7 +231,7 @@ message EnhancementShaman {
   message Options {
 	ShamanShield shield = 1;
 	bool bloodlust = 2;
-	bool delay_offhand_swings = 3;
+    ShamanSyncType syncType = 3;
     ShamanImbue imbueMH = 4;
     ShamanImbue imbueOH = 5;
   }

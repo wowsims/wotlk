@@ -355,8 +355,8 @@ func (spellEffect *SpellEffect) applyTargetModifiers(sim *Simulation, spell *Spe
 		spellEffect.Damage *= attackTable.NatureDamageDealtMultiplier
 	} else if spell.SpellSchool.Matches(SpellSchoolShadow) {
 		spellEffect.Damage *= target.PseudoStats.ShadowDamageTakenMultiplier
-			if spellEffect.IsPeriodic {
-				spellEffect.Damage *= attackTable.PeriodicShadowDamageDealtMultiplier
-			}
+		if spellEffect.IsPeriodic {
+			spellEffect.Damage *= attackTable.PeriodicShadowDamageDealtMultiplier
+		}
 	}
 }

@@ -18,6 +18,8 @@ import {
 	FireTotem,
 	WaterTotem,
 	ShamanTotems,
+    ShamanImbue,
+    ShamanSyncType
 } from '/wotlk/core/proto/shaman.js';
 
 import * as Enchants from '/wotlk/core/constants/enchants.js';
@@ -49,15 +51,15 @@ export const DefaultRotation = EnhancementShamanRotation.create({
 export const DefaultOptions = EnhancementShamanOptions.create({
 	shield: ShamanShield.LightningShield,
 	bloodlust: true,
-	delayOffhandSwings: true,
+	imbueMH: ShamanImbue.WindfuryWeapon,
+	imbueOH: ShamanImbue.FlametongueWeapon,
+	syncType: ShamanSyncType.SyncMainhandOffhandSwings,
 });
 
 export const DefaultConsumes = Consumes.create({
 	defaultPotion: Potions.HastePotion,
 	flask: Flask.FlaskOfRelentlessAssault,
 	food: Food.FoodRoastedClefthoof,
-	mainHandImbue: WeaponImbue.WeaponImbueShamanWindfury,
-	offHandImbue: WeaponImbue.WeaponImbueShamanFlametongue,
 });
 
 export const P1_PRESET = {
