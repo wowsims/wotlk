@@ -42,8 +42,8 @@ func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
 
 	ghoulPet.EnableAutoAttacks(ghoulPet, core.AutoAttackOptions{
 		MainHand: core.Weapon{
-			BaseDamageMin:  120,
-			BaseDamageMax:  130,
+			BaseDamageMin:  33,
+			BaseDamageMax:  75,
 			SwingSpeed:     2,
 			SwingDuration:  time.Second * 2,
 			CritMultiplier: 2,
@@ -77,8 +77,8 @@ func (dk *Deathknight) NewGhoulPet(permanent bool) *GhoulPet {
 
 	ghoulPet.EnableAutoAttacks(ghoulPet, core.AutoAttackOptions{
 		MainHand: core.Weapon{
-			BaseDamageMin:  42,
-			BaseDamageMax:  68,
+			BaseDamageMin:  33,
+			BaseDamageMax:  75,
 			SwingSpeed:     2,
 			SwingDuration:  time.Second * 2,
 			CritMultiplier: 2,
@@ -173,8 +173,7 @@ var ghoulPetBaseStats = stats.Stats{
 	stats.Strength:    331,
 	stats.AttackPower: 836,
 
-	// Add 1.8% because pets aren't affected by that component of crit suppression.
-	stats.MeleeCrit: (3.2 + 1.8) * core.CritRatingPerCritChance,
+	stats.MeleeCrit: 3.2 * core.CritRatingPerCritChance,
 }
 
 const PetExpertiseScale = 3.25
@@ -192,11 +191,13 @@ func (dk *Deathknight) ghoulStatInheritance() core.PetStatInheritance {
 
 		return stats.Stats{
 			stats.Stamina:  ownerStats[stats.Stamina] * (glyphBonus + 0.7*ravenousDead),
-			stats.Strength: ownerStats[stats.Strength] * (glyphBonus + 0.7*ravenousDead),
+			stats.Strength: ownerStats[stats.Strength]*(glyphBonus+0.7*ravenousDead) - 20,
 
-			stats.MeleeHit:   hitRatingFromOwner,
-			stats.SpellHit:   hitRatingFromOwner,
-			stats.Expertise:  math.Floor((math.Floor(ownerHitChance) * PetExpertiseScale)) * core.ExpertisePerQuarterPercentReduction,
+			stats.MeleeHit: hitRatingFromOwner,
+			stats.SpellHit: hitRatingFromOwner,
+
+			stats.Expertise: math.Floor((math.Floor(ownerHitChance) * PetExpertiseScale)) * core.ExpertisePerQuarterPercentReduction,
+
 			stats.MeleeHaste: ownerStats[stats.MeleeHaste],
 			stats.SpellHaste: ownerStats[stats.MeleeHaste],
 		}
@@ -208,8 +209,7 @@ var armyGhoulPetBaseStats = stats.Stats{
 	stats.Strength:    331,
 	stats.AttackPower: 836,
 
-	// Add 1.8% because pets aren't affected by that component of crit suppression.
-	stats.MeleeCrit: (3.2 + 1.8) * core.CritRatingPerCritChance,
+	stats.MeleeCrit: 3.2 * core.CritRatingPerCritChance,
 }
 
 func (dk *Deathknight) armyGhoulStatInheritance() core.PetStatInheritance {
@@ -225,11 +225,13 @@ func (dk *Deathknight) armyGhoulStatInheritance() core.PetStatInheritance {
 
 		return stats.Stats{
 			stats.Stamina:  ownerStats[stats.Stamina] * (glyphBonus + 0.7*ravenousDead),
-			stats.Strength: ownerStats[stats.Strength] * (glyphBonus + 0.7*ravenousDead),
+			stats.Strength: ownerStats[stats.Strength]*(glyphBonus+0.7*ravenousDead)*0.1 - 20,
 
-			stats.MeleeHit:   hitRatingFromOwner,
-			stats.SpellHit:   hitRatingFromOwner,
-			stats.Expertise:  math.Floor((math.Floor(ownerHitChance) * PetExpertiseScale)) * core.ExpertisePerQuarterPercentReduction,
+			stats.MeleeHit: hitRatingFromOwner,
+			stats.SpellHit: hitRatingFromOwner,
+
+			stats.Expertise: math.Floor((math.Floor(ownerHitChance) * PetExpertiseScale)) * core.ExpertisePerQuarterPercentReduction,
+
 			stats.MeleeHaste: ownerStats[stats.MeleeHaste],
 			stats.SpellHaste: ownerStats[stats.MeleeHaste],
 		}

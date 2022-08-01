@@ -88,7 +88,7 @@ func (ur *UnholyRotation) Reset(sim *core.Simulation) {
 }
 
 func (dk *DpsDeathknight) HasWeaponEnchant(enchantId int32) bool {
-	return dk.GetMHWeapon().Enchant.ID == 53344 || (dk.HasOHWeapon() && dk.GetOHWeapon().Enchant.ID == 53344)
+	return (dk.HasMHWeapon() && dk.GetMHWeapon().Enchant.ID == 53344) || (dk.HasOHWeapon() && dk.GetOHWeapon().Enchant.ID == 53344)
 }
 
 func (dk *DpsDeathknight) desolationAuraCheck(sim *core.Simulation) bool {
@@ -128,12 +128,12 @@ func (dk *DpsDeathknight) uhDiseaseCheck(sim *core.Simulation, target *core.Unit
 		nextUnholyRuneAt := crpb.UnholyRuneReadyAt(sim)
 
 		// If FF is gonna drop while our runes are on CD
-		if dk.uhDiseaseWillDrop(ffExpiresAt-dk.ur.syncTimeFF, afterCastTime, spellCost.Frost, currentFrostRunes, nextFrostRuneAt) {
+		if dk.uhRecastAvailableCheck(ffExpiresAt-dk.ur.syncTimeFF, afterCastTime, spellCost.Frost, currentFrostRunes, nextFrostRuneAt) {
 			return false
 		}
 
 		// If BP is gonna drop while our runes are on CD
-		if dk.uhDiseaseWillDrop(bpExpiresAt, afterCastTime, spellCost.Unholy, currentUnholyRunes, nextUnholyRuneAt) {
+		if dk.uhRecastAvailableCheck(bpExpiresAt, afterCastTime, spellCost.Unholy, currentUnholyRunes, nextUnholyRuneAt) {
 			return false
 		}
 	}
@@ -141,7 +141,7 @@ func (dk *DpsDeathknight) uhDiseaseCheck(sim *core.Simulation, target *core.Unit
 	return true
 }
 
-func (dk *DpsDeathknight) uhDiseaseWillDrop(expiresAt time.Duration, afterCastTime time.Duration,
+func (dk *DpsDeathknight) uhRecastAvailableCheck(expiresAt time.Duration, afterCastTime time.Duration,
 	spellCost int, currentRunes int32, nextRuneAt time.Duration) bool {
 	if spellCost > 0 && currentRunes == 0 {
 		if expiresAt < nextRuneAt {
@@ -172,7 +172,7 @@ func (dk *DpsDeathknight) uhSpreadDiseases(sim *core.Simulation, target *core.Un
 	}
 }
 
-// Temp - should be reworked to properly calculate rune cost, rune cd and dnd cooldown and filter casts
+// Simpler but somehow more effective for overall dps dnd check
 func (dk *DpsDeathknight) uhShouldWaitForDnD(sim *core.Simulation, blood bool, frost bool, unholy bool) bool {
 	return !(!(dk.DeathAndDecay.CD.IsReady(sim) || dk.DeathAndDecay.CD.TimeToReady(sim) <= 4*time.Second) || ((!blood || dk.CurrentBloodRunes() > 1) && (!frost || dk.CurrentFrostRunes() > 1) && (!unholy || dk.CurrentUnholyRunes() > 1)))
 }
