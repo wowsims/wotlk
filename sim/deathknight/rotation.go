@@ -202,16 +202,10 @@ func (dk *Deathknight) Wait(sim *core.Simulation) {
 	if dk.AutoAttacks.OffhandSwingAt > sim.CurrentTime {
 		waitUntil = core.MinDuration(waitUntil, dk.AutoAttacks.OffhandSwingAt)
 	}
-	waitUntil = core.MinDuration(waitUntil, dk.AnyRuneReadyAt(sim))
-	dk.WaitUntil(sim, waitUntil)
-}
-
-func (dk *Deathknight) WaitForResources(sim *core.Simulation) {
-	waitUntil := dk.AutoAttacks.MainhandSwingAt
-	if dk.AutoAttacks.OffhandSwingAt > sim.CurrentTime {
-		waitUntil = core.MinDuration(waitUntil, dk.AutoAttacks.OffhandSwingAt)
+	waitUntil = core.MinDuration(waitUntil, dk.AnySpentRuneReadyAt(sim))
+	if dk.ButcheryPA != nil {
+		waitUntil = core.MinDuration(dk.ButcheryPA.NextActionAt, waitUntil)
 	}
-	waitUntil = core.MinDuration(dk.ButcheryPA.NextActionAt, core.MinDuration(waitUntil, dk.AnySpentRuneReadyAt(sim)))
 	dk.WaitUntil(sim, waitUntil)
 }
 
@@ -220,19 +214,15 @@ func (dk *Deathknight) DoRotation(sim *core.Simulation) {
 
 	if dk.Opener.IsOngoing() {
 		if !dk.Opener.DoAction(sim, target, dk) {
-			dk.WaitForResources(sim)
+			dk.Wait(sim)
 		}
 	} else {
 		if dk.Main.IsOngoing() {
 			if !dk.Main.DoAction(sim, target, dk) {
-				dk.WaitForResources(sim)
+				dk.Wait(sim)
 			}
 		} else {
-			if dk.GCD.IsReady(sim) && !dk.IsWaiting() {
-				dk.WaitForResources(sim)
-			} else { // No resources
-				dk.WaitForResources(sim)
-			}
+			dk.Wait(sim)
 		}
 	}
 }
