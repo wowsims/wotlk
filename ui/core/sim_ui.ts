@@ -14,6 +14,7 @@ import { EventID, TypedEvent } from './typed_event.js';
 declare var tippy: any;
 declare var pako: any;
 
+const URLMAXLEN = 2048;
 const noticeText = '';
 //const noticeText = 'We are looking for help migrating our sims to Wrath of the Lich King. If you\'d like to participate in a fun side project working with an open-source community please <a href="https://discord.gg/jJMPr9JWwx" target="_blank">join our discord!</a>';
 
@@ -318,10 +319,14 @@ export abstract class SimUI extends Component {
 					if (issues.total_count > 0) {
 						window.open(issues.items[0].html_url, '_blank');
 					} else {
-						window.open(
-							'https://github.com/wowsims/wotlk/issues/new?assignees=&labels=&title=Crash%20Report%20' + hash +
-								'&body=' + encodeURIComponent(errorStr + '\n\nLink:\n' + link + '\n\nRNG Seed: ' + rngSeed + '\n'),
-							'_blank');
+                        const base_url = 'https://github.com/wowsims/wotlk/issues/new?assignees=&labels=&title=Crash%20Report%20'
+                        const base = `${base_url}${hash}&body=`;
+                        const maxBodyLength = URLMAXLEN - base.length;
+                        let issueBody = encodeURIComponent(errorStr + '\n\nLink:\n' + link + '\n\nRNG Seed: ' + rngSeed + '\n')
+                        if (issueBody.length > maxBodyLength) {
+                            issueBody = issueBody.substring(0, maxBodyLength - 3) + "..."
+                        }
+                        window.open(base + issueBody, '_blank');
 					}
 				});
 			}).catch(fetchErr => {
