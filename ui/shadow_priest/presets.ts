@@ -7,6 +7,10 @@ import { ItemSpec } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
 import { Faction } from '/wotlk/core/proto/common.js';
+import { RaidBuffs } from '/wotlk/core/proto/common.js';
+import { IndividualBuffs } from '/wotlk/core/proto/common.js';
+import { Debuffs } from '/wotlk/core/proto/common.js';
+import { TristateEffect } from '/wotlk/core/proto/common.js';
 import { SavedTalents } from '/wotlk/core/proto/ui.js';
 import { Player } from '/wotlk/core/player.js';
 
@@ -58,7 +62,40 @@ export const DefaultOptions = Options.create({
 export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfTheFrostWyrm,
 	food: Food.FoodFishFeast,
-	defaultPotion: Potions.PotionOfSpeed,
+	defaultPotion: Potions.PotionOfWildMagic,
+	prepopPotion:  Potions.PotionOfWildMagic,
+});
+
+export const DefaultRaidBuffs = RaidBuffs.create({
+	giftOfTheWild: TristateEffect.TristateEffectImproved,
+	powerWordFortitude: TristateEffect.TristateEffectImproved,
+	strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
+	arcaneBrilliance: true,
+	divineSpirit: true,
+	trueshotAura: true,
+	leaderOfThePack: TristateEffect.TristateEffectImproved,
+	icyTalons: true,
+	totemOfWrath: true,
+	moonkinAura: TristateEffect.TristateEffectImproved,
+	wrathOfAirTotem: true,
+	sanctifiedRetribution: true,
+	bloodlust: true,
+});
+
+export const DefaultIndividualBuffs = IndividualBuffs.create({
+	blessingOfKings: true,
+	blessingOfWisdom: TristateEffect.TristateEffectImproved,
+	blessingOfMight: TristateEffect.TristateEffectImproved,
+	vampiricTouch: true,
+});
+
+export const DefaultDebuffs = Debuffs.create({
+	sunderArmor: true,
+	faerieFire: TristateEffect.TristateEffectImproved,
+	bloodFrenzy: true,
+	ebonPlaguebringer: true,
+	heartOfTheCrusader: true,
+	judgementOfWisdom: true,
 });
 
 export const P1_PRESET = {
