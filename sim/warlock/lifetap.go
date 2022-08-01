@@ -45,6 +45,13 @@ func (warlock *Warlock) registerLifeTapSpell() {
 				if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap) {
 					warlock.GlyphOfLifeTapAura.Activate(sim)
 				}
+				// if warlock.HasSetBonus(ItemSetPlagueheartGarb, 4){
+				// 	if SpiritsoftheDamnedAura.IsActive() {
+				// 		SpiritsoftheDamnedAura.Refresh(sim)
+				// 	} else {
+				// 		SpiritsoftheDamnedAura.Activate(sim)
+				// 	}
+				// }
 			},
 		}),
 	})
