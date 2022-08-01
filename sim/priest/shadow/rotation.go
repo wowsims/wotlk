@@ -141,6 +141,9 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		num_VT_ticks = math.Floor(remain_fight / dotTickSpeed)
 		if num_VT_ticks > 5 {
 			num_VT_ticks = 5
+			if spriest.T9TwoSetBonus {
+				num_VT_ticks = 7
+			}
 		}
 
 		var duration time.Duration
@@ -180,7 +183,7 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		//swd_dmg = 0
 		// MF dmg 3 ticks
 		mfDamage = (588 + spriest.GetStat(stats.SpellPower)*(0.2570*3*(1+float64(spriest.Talents.Misery)*0.05))) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1.0 + (float64(spriest.Talents.Darkness)*0.02 +
-			float64(spriest.Talents.TwinDisciplines)*0.01)) * (1 + TFmod + mfglyphMod) * (1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.02))
+			float64(spriest.Talents.TwinDisciplines)*0.01)) * (1 + TFmod + mfglyphMod) * (1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.02+core.TernaryFloat64(spriest.T9FourSetBonus, 0.05, 0)))
 
 		// SWP is seperate because it doesnt follow the same logic for casting as the other spells
 		swpTickDamage := ((230 + spriest.GetStat(stats.SpellPower)*0.1829) *
@@ -227,7 +230,7 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 				(1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03) + core.TernaryFloat64(spriest.T10TwoSetBonus, 0.05, 0)))
 
 			cdDamage := mbDamage
-			if spriest.T10FourSetBonus {
+			if spriest.T10FourSetBonus || cdDamage == 0 {
 				cdDamage = mfDamage / 3 * 2
 			}
 
@@ -255,7 +258,7 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 
 			overwriteDPS2 = dpInitCurr + dpRemainTicks*(dpDotNext-dpDotNext/(newPsuedoHaste*(1+newHasteRating/32.79/100)))
 			cdDamage := mbDamage
-			if spriest.T10FourSetBonus {
+			if spriest.T10FourSetBonus || cdDamage == 0 {
 				cdDamage = mfDamage / 3 * 2
 			}
 			currDPS2 = cdDamage
