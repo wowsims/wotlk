@@ -17,6 +17,8 @@ const (
 	PetUnit
 )
 
+type OnAttackSpeedChanged func(sim *Simulation)
+
 // Unit is an abstraction of a Character/Boss/Pet/etc, containing functionality
 // shared by all of them.
 type Unit struct {
@@ -113,6 +115,8 @@ type Unit struct {
 	CastSpeed float64
 
 	CurrentTarget *Unit
+
+	OnAttackSpeedChanged OnAttackSpeedChanged
 }
 
 // DoNothing will explicitly declare that the character is intentionally doing nothing.
@@ -444,6 +448,10 @@ func (unit *Unit) AddMeleeHaste(sim *Simulation, amount float64) {
 func (unit *Unit) MultiplyMeleeSpeed(sim *Simulation, amount float64) {
 	unit.PseudoStats.MeleeSpeedMultiplier *= amount
 	unit.AutoAttacks.ModifySwingTime(sim, amount)
+
+	if unit.OnAttackSpeedChanged != nil {
+		unit.OnAttackSpeedChanged(sim)
+	}
 }
 
 func (unit *Unit) MultiplyRangedSpeed(sim *Simulation, amount float64) {
@@ -455,6 +463,10 @@ func (unit *Unit) MultiplyAttackSpeed(sim *Simulation, amount float64) {
 	unit.PseudoStats.MeleeSpeedMultiplier *= amount
 	unit.PseudoStats.RangedSpeedMultiplier *= amount
 	unit.AutoAttacks.ModifySwingTime(sim, amount)
+
+	if unit.OnAttackSpeedChanged != nil {
+		unit.OnAttackSpeedChanged(sim)
+	}
 }
 
 func (unit *Unit) finalize() {

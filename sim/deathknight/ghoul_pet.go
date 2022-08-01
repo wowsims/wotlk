@@ -20,7 +20,8 @@ type GhoulPet struct {
 
 	ClawAbility PetAbility
 
-	uptimePercent float64
+	uptimePercent        float64
+	ownerMeleeMultiplier float64
 }
 
 func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
@@ -70,6 +71,12 @@ func (dk *Deathknight) NewGhoulPet(permanent bool) *GhoulPet {
 		dkOwner: dk,
 	}
 
+	if permanent {
+		// Melee Speed listener
+		ghoulPet.ownerMeleeMultiplier = 1.0
+		dk.Unit.OnAttackSpeedChanged = ghoulPet.ownerAttackSpeedChanged
+	}
+
 	// NightOfTheDead
 	ghoulPet.PseudoStats.DamageTakenMultiplier *= (1.0 - float64(dk.Talents.NightOfTheDead)*0.45)
 
@@ -107,6 +114,21 @@ func (dk *Deathknight) SetupGhoul(ghoulPet *GhoulPet) {
 	dk.AddPet(ghoulPet)
 }
 
+func (ghoulPet *GhoulPet) ownerAttackSpeedChanged(sim *core.Simulation) {
+	if sim.Log != nil {
+		sim.Log("Removing " + strconv.FormatFloat(ghoulPet.ownerMeleeMultiplier, 'f', 3, 64))
+	}
+	ghoulPet.MultiplyMeleeSpeed(sim, 1/ghoulPet.ownerMeleeMultiplier)
+	ghoulPet.ownerMeleeMultiplier = ghoulPet.dkOwner.PseudoStats.MeleeSpeedMultiplier
+	ghoulPet.MultiplyMeleeSpeed(sim, ghoulPet.ownerMeleeMultiplier)
+	if sim.Log != nil {
+		sim.Log("Adding " + strconv.FormatFloat(ghoulPet.ownerMeleeMultiplier, 'f', 3, 64))
+	}
+	if sim.Log != nil {
+		sim.Log("Ghoul scaling to " + strconv.FormatFloat(ghoulPet.PseudoStats.MeleeSpeedMultiplier, 'f', 3, 64))
+	}
+}
+
 func (ghoulPet *GhoulPet) IsPetGhoul() bool {
 	return ghoulPet.dkOwner.Talents.MasterOfGhouls && ghoulPet == ghoulPet.dkOwner.Ghoul
 }
@@ -124,6 +146,12 @@ func (ghoulPet *GhoulPet) Reset(sim *core.Simulation) {
 		ghoulPet.uptimePercent = core.MinFloat(1, core.MaxFloat(0, ghoulPet.dkOwner.Inputs.PetUptime))
 	} else {
 		ghoulPet.uptimePercent = 1.0
+	}
+
+	if ghoulPet.IsPetGhoul() {
+		// Reset dk inherited melee multiplier and reapply current
+		ghoulPet.ownerMeleeMultiplier = 1
+		ghoulPet.dkOwner.Unit.OnAttackSpeedChanged(sim)
 	}
 }
 
@@ -151,10 +179,6 @@ func (ghoulPet *GhoulPet) enable(sim *core.Simulation) {
 	if ghoulPet.IsGuardian() {
 		ghoulPet.PseudoStats.MeleeSpeedMultiplier = 1
 		ghoulPet.Character.MultiplyMeleeSpeed(sim, ghoulPet.dkOwner.PseudoStats.MeleeSpeedMultiplier)
-
-		if sim.Log != nil {
-			ghoulPet.Log(sim, "Setting attack speed multiplier to "+strconv.FormatFloat(ghoulPet.PseudoStats.MeleeSpeedMultiplier, 'f', 3, 64))
-		}
 	}
 }
 
