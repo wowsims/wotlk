@@ -10,10 +10,6 @@ func RunesAtleastOneOfState(sim *Simulation, runes *[2]Rune, runeState RuneState
 	return runes[0].state == runeState || runes[1].state == runeState
 }
 
-func (rp *runicPowerBar) SetAsGeneratedByReapingOrBoTN(slot int32) {
-	rp.bloodRunes[slot].generatedByReapingOrBoTN = true
-}
-
 // TODO: Simplify this, its definitely possible
 func (rp *runicPowerBar) LaunchBloodTapRegenPA(sim *Simulation, slot int32, spell *Spell) {
 	r := &rp.bloodRunes[slot]

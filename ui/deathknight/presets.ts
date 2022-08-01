@@ -72,6 +72,7 @@ export const DefaultRotation = DeathKnightRotation.create({
   diseaseRefreshDuration: 6,
   useDeathAndDecay: false,
 	refreshHornOfWinter: false,
+  useEmpowerRuneWeapon: true,
 });
 
 export const DefaultOptions = DeathKnightOptions.create({

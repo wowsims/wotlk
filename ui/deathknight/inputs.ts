@@ -75,6 +75,14 @@ export const SetDeathAndDecayPrio = InputHelpers.makeRotationEnumInput<Spec.Spec
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => player.changeEmitter,
 })
 
+export const UseEmpowerRuneWeapon = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
+	fieldName: 'useEmpowerRuneWeapon',
+	label: 'Empower Rune Weapon',
+	labelTooltip: 'Use Empower Rune Weapon in rotation.',
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => player.talentsChangeEmitter, 
+	// TODO find out why changeEmitter breaks web with: TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter])
+});
+
 export const BloodTapGhoulFrenzy = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
 	fieldName: 'btGhoulFrenzy',
 	label: 'BT Ghoul Frenzy',
@@ -112,6 +120,7 @@ export const DeathKnightRotationConfig = {
 		SetFirstDisease,
 		UseArmyOfTheDead,
 		UseDeathAndDecay,
+		UseEmpowerRuneWeapon,
 		SetDeathAndDecayPrio,
 		BloodTapGhoulFrenzy,
 	],

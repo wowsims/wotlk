@@ -345,7 +345,6 @@ func (dk *Deathknight) reapingProc(sim *core.Simulation, spell *core.Spell, rune
 			if dk.reapingWillProc(sim) {
 				slot := dk.SpendBloodRune(sim, spell.BloodRuneMetrics())
 				dk.SetRuneAtIdxSlotToState(0, slot, core.RuneState_DeathSpent, core.RuneKind_Death)
-				dk.SetAsGeneratedByReapingOrBoTN(slot)
 				return true
 			}
 		}
