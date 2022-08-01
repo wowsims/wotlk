@@ -427,7 +427,8 @@ func (paladin *Paladin) applyJudgmentsOfTheWise() {
 func (paladin *Paladin) makeRighteousVengeanceDot(target *core.Unit) *core.Dot {
 	var applier core.OutcomeApplier
 
-	if paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 2) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 2) {
+	if paladin.HasTuralyonsOrLiadrinsBattlegear2Pc {
+		// Crits using melee crit.
 		applier = paladin.OutcomeFuncMeleeSpecialCritOnly(paladin.MeleeCritMultiplier())
 	} else {
 		applier = paladin.OutcomeFuncAlwaysHit()
@@ -471,7 +472,7 @@ func (paladin *Paladin) registerRighteousVengeanceSpell() {
 
 	paladin.RighteousVengeanceSpell = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    dotActionID,
-		SpellSchool: core.SpellSchoolPhysical,
+		SpellSchool: core.SpellSchoolHoly,
 		Flags:       core.SpellFlagMeleeMetrics,
 	})
 }

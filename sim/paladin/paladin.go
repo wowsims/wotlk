@@ -89,6 +89,8 @@ type Paladin struct {
 	ArtOfWarInstantCast *core.Aura
 
 	SpiritualAttunementMetrics *core.ResourceMetrics
+
+	HasTuralyonsOrLiadrinsBattlegear2Pc bool
 }
 
 // Implemented by each Paladin spec.
@@ -189,6 +191,8 @@ func NewPaladin(character core.Character, talents proto.PaladinTalents) *Paladin
 		Character: character,
 		Talents:   talents,
 	}
+
+	paladin.HasTuralyonsOrLiadrinsBattlegear2Pc = paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 2) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 2)
 
 	paladin.PseudoStats.CanParry = true
 
