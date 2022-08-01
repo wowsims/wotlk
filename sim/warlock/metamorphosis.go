@@ -38,6 +38,9 @@ func (warlock *Warlock) registerMetamorphosisSpell() {
 		Spell: warlock.Metamorphosis,
 		Type:  core.CooldownTypeDPS,
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
+			if warlock.DoingRegen {
+				return false
+			}
 			MetamorphosisNumber := (float64(sim.Duration) + float64(warlock.MetamorphosisAura.Duration)) / float64(warlock.Metamorphosis.CD.Duration)
 			if MetamorphosisNumber < 1 {
 				if character.HasActiveAuraWithTag(core.BloodlustAuraTag) || sim.IsExecutePhase35() {
