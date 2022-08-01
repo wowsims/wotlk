@@ -58,9 +58,9 @@ var enhShamRotation = &proto.EnhancementShaman_Rotation{
 }
 
 var enhShamOptions = &proto.EnhancementShaman_Options{
-	Shield:             proto.ShamanShield_LightningShield,
-	Bloodlust:          true,
-	DelayOffhandSwings: true, //might not be default anymore, depending on what imbues we run. still useful regardless
+	Shield:    proto.ShamanShield_LightningShield,
+	Bloodlust: true,
+	SyncType:  proto.ShamanSyncType_SyncMainhandOffhandSwings,
 }
 
 var FullRaidBuffs = &proto.RaidBuffs{

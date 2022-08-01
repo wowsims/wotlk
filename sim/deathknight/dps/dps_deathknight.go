@@ -48,6 +48,7 @@ func NewDpsDeathknight(character core.Character, player proto.Player) *DpsDeathk
 		}),
 		Rotation: *dk.Rotation,
 	}
+	dpsDk.ur.dk = dpsDk
 
 	return dpsDk
 }

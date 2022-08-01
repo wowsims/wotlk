@@ -302,7 +302,7 @@ func (unit *Unit) AddStatDependencyDynamic(sim *Simulation, source, modified sta
 	}
 
 	stat := unit.stats[source]
-	bonus := ((stat * unit.statBonuses[source].Deps[modified] / oldMultiplier) - stat) / unit.statBonuses[source].Deps[modified]
+	bonus := stat * (unit.statBonuses[source].Deps[modified] - oldMultiplier)
 	// Now apply the newly gained stats
 	unit.AddStatDynamic(sim, modified, bonus)
 }

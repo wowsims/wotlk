@@ -72,6 +72,28 @@ func TestStatDependencies(t *testing.T) {
 		t.Fatalf("Updated stats do not match:\nActual: %s\nExpected: %s", unit.stats, result4)
 	}
 
+	unit.AddStatDependencyDynamic(nil, stats.Agility, stats.Spirit, 1.75)
+	result5 := stats.Stats{
+		stats.Stamina:   10,
+		stats.Intellect: 22,
+		stats.Agility:   4,
+		stats.Spirit:    4,
+	}
+	if !unit.stats.Equals(result5) {
+		t.Fatalf("Updated stats do not match:\nActual: %s\nExpected: %s", unit.stats, result5)
+	}
+
+	unit.AddStatDependencyDynamic(nil, stats.Agility, stats.Spirit, 1/1.75)
+	result6 := stats.Stats{
+		stats.Stamina:   10,
+		stats.Intellect: 22,
+		stats.Agility:   4,
+		stats.Spirit:    1,
+	}
+	if !unit.stats.Equals(result6) {
+		t.Fatalf("Updated stats do not match:\nActual: %s\nExpected: %s", unit.stats, result6)
+	}
+
 }
 
 func TestCircularStatDependencies(t *testing.T) {

@@ -36,8 +36,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			cssClass: 'warlock-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"Some snapshotting mechanics needs to be fixed (mainly implementing rollover mechanic).",
-				"Some secondary spells need to be implemented.",
+				"Several secondary spells need to be implemented.",
 				"Rotations will be optimized.",
 			],
 
@@ -90,7 +89,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				// Default talents.
 				talents: Presets.AfflictionTalents.data,
 				// Default spec-specific settings.
-				specOptions: Presets.DestructionOptions,
+				specOptions: Presets.AfflictionOptions,
 
 				// Default buffs and debuffs settings.
 				raidBuffs: Presets.DefaultRaidBuffs,
@@ -156,7 +155,9 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 					// Presets.Naked,
 					Presets.SWP_BIS,
 					Presets.P1_PreBiS,
+					Presets.P1_PreBiS_14,
 					Presets.P1_BiS,
+					Presets.P1_BiS_14,
 				],
 			},
 		});

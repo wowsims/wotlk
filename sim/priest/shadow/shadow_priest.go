@@ -36,6 +36,7 @@ func NewShadowPriest(character core.Character, options proto.Player) *ShadowPrie
 	spriest := &ShadowPriest{
 		Priest:   basePriest,
 		rotation: *shadowOptions.Rotation,
+		options:  *shadowOptions.Options,
 	}
 
 	spriest.ApplyShadowOnHitEffects()
@@ -56,6 +57,7 @@ type ShadowPriest struct {
 
 	*priest.Priest
 	rotation proto.ShadowPriest_Rotation
+	options  proto.ShadowPriest_Options
 }
 
 func (spriest *ShadowPriest) GetPriest() *priest.Priest {

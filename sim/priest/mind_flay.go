@@ -125,9 +125,9 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 		TargetSpellCoefficient: 0.0,
 	}
 
-	var mf_reduc_time time.Duration
+	var mfReducTime time.Duration
 	if priest.HasSetBonus(ItemSetCrimsonAcolyte, 4) {
-		mf_reduc_time = time.Millisecond * 170
+		mfReducTime = time.Millisecond * 170
 	}
 
 	return core.NewDot(core.Dot{
@@ -138,15 +138,9 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 		}),
 
 		NumberOfTicks:       numTicks,
-		TickLength:          time.Second - mf_reduc_time,
+		TickLength:          time.Second - mfReducTime,
 		AffectedByCastSpeed: true,
 
 		TickEffects: core.TickFuncSnapshot(target, effect),
 	})
-}
-
-func (priest *Priest) applySWforMF(sim *core.Simulation, damage float64) {
-	if damage >= 0 {
-		priest.AddShadowWeavingStack(sim)
-	}
 }

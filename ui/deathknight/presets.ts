@@ -55,11 +55,11 @@ export const FrostUnholyTalents = {
 export const UnholyDualWieldTalents = {
 	name: 'Unholy Dual Wield',
 	data: SavedTalents.create({
-		talentsString: '-320023500002-2300303350032052000150003133151',
+		talentsString: '-320033500002-2300303050032152000150013133151',
 		glyphs: Glyphs.create({
 			major1: DeathknightMajorGlyph.GlyphOfTheGhoul,
 			major2: DeathknightMajorGlyph.GlyphOfDarkDeath,
-			major3: DeathknightMajorGlyph.GlyphOfIcyTouch,
+			major3: DeathknightMajorGlyph.GlyphOfDeathAndDecay,
 			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
 			minor2: DeathknightMinorGlyph.GlyphOfPestilence,
 			minor3: DeathknightMinorGlyph.GlyphOfRaiseDead,
@@ -69,8 +69,8 @@ export const UnholyDualWieldTalents = {
 
 
 export const DefaultRotation = DeathKnightRotation.create({
-  diseaseRefreshDuration: 6,
-  useDeathAndDecay: false,
+  useDeathAndDecay: true,
+  btGhoulFrenzy: true,
 	refreshHornOfWinter: false,
   useEmpowerRuneWeapon: true,
 });
@@ -133,7 +133,7 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
       ]
     },
     {
-      "id": 40347,
+      "id": 40552,
       "enchant": 54999,
       "gems": [
         39996,
@@ -148,8 +148,12 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
       ]
     },
     {
-      "id": 40294,
-      "enchant": 38374
+      "id": 40556,
+      "enchant": 38374,
+      "gems": [
+        39996,
+        39996
+      ]
     },
     {
       "id": 40591,
@@ -162,7 +166,7 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
       "id": 40075
     },
     {
-      "id": 40431
+      "id": 40684
     },
     {
       "id": 42987
@@ -176,7 +180,7 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
       "enchant": 44495
     },
     {
-      "id": 40207
+      "id": 40867
     }
 	]}`),
 };

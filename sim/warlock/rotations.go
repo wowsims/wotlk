@@ -9,6 +9,14 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+func (warlock *Warlock) LifeTapOrDarkPact(sim *core.Simulation) {
+	if warlock.Talents.DarkPact && warlock.Pet.CurrentMana() > warlock.GetStat(stats.SpellPower)+1200+131 {
+		warlock.DarkPact.Cast(sim, warlock.CurrentTarget)
+	} else {
+		warlock.LifeTap.Cast(sim, warlock.CurrentTarget)
+	}
+}
+
 func (warlock *Warlock) OnGCDReady(sim *core.Simulation) {
 	warlock.tryUseGCD(sim)
 }
@@ -29,7 +37,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	if mainSpell == proto.Warlock_Rotation_Seed {
 		if warlock.Rotation.DetonateSeed {
 			if success := warlock.Seeds[0].Cast(sim, target); !success {
-				warlock.LifeTap.Cast(sim, target)
+				warlock.LifeTapOrDarkPact(sim)
 			}
 			return
 		}
@@ -39,7 +47,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			if success := warlock.Seeds[0].Cast(sim, target); success {
 				return
 			} else {
-				warlock.LifeTap.Cast(sim, target)
+				warlock.LifeTapOrDarkPact(sim)
 				return
 			}
 		}
@@ -69,10 +77,8 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// ------------------------------------------
 	// If big CD coming up and we don't have enough mana for it, lifetap
 	// Also, never do a big regen in the last few seconds of the fight.
-	if !warlock.DoingRegen && nextBigCD-sim.CurrentTime < time.Second*5 && sim.GetRemainingDuration() > time.Second*30 {
-		if warlock.GetStat(stats.SpellPower) > warlock.GetInitialStat(stats.SpellPower) || warlock.HasTemporarySpellCastSpeedIncrease() {
-			// never start regen if you have boosted sp or boosted cast speed
-		} else if warlock.CurrentManaPercent() < 0.2 {
+	if !warlock.DoingRegen && nextBigCD-sim.CurrentTime < time.Second*6 && sim.GetRemainingDuration() > time.Second*30 {
+		if warlock.CurrentManaPercent() < 0.6 {
 			warlock.DoingRegen = true
 		}
 	}
@@ -82,7 +88,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			// stop regen, start blasting
 			warlock.DoingRegen = false
 		} else {
-			warlock.LifeTap.Cast(sim, target)
+			warlock.LifeTapOrDarkPact(sim)
 			if warlock.CurrentManaPercent() > 0.6 {
 				warlock.DoingRegen = false
 			}
@@ -100,9 +106,15 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// ------------------------------------------
 	// Keep Glyph of Life Tap buff up
 	// ------------------------------------------
-	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap) && !warlock.GlyphOfLifeTapAura.IsActive() {
-		warlock.LifeTap.Cast(sim, target)
-		return
+	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap) &&
+		(!warlock.GlyphOfLifeTapAura.IsActive() || warlock.GlyphOfLifeTapAura.RemainingDuration(sim) < time.Second*2) {
+		if sim.CurrentTime < time.Second {
+			// Pre-pull Life Tap
+			warlock.GlyphOfLifeTapAura.Activate(sim)
+		} else {
+			warlock.LifeTapOrDarkPact(sim)
+			return
+		}
 	}
 
 	// ------------------------------------------
@@ -137,7 +149,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	}
 	if spell != nil {
 		if !spell.Cast(sim, target) {
-			warlock.LifeTap.Cast(sim, target)
+			warlock.LifeTapOrDarkPact(sim)
 		}
 		return
 	}
@@ -161,12 +173,20 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 				sim.GetRemainingDuration() > warlock.UnstableAffDot.Duration {
 				// Keep UA up
 				spell = warlock.UnstableAff
-			} else if warlock.Talents.Haunt && warlock.Haunt.CD.IsReady(sim) && 2*sim.GetRemainingDuration() > warlock.HauntDebuffAura(warlock.CurrentTarget).Duration && warlock.CorruptionDot.IsActive() {
+			} else if warlock.Talents.Haunt && warlock.Haunt.CD.IsReady(sim) && sim.GetRemainingDuration() > warlock.HauntDebuffAura(warlock.CurrentTarget).Duration/2. && warlock.CorruptionDot.IsActive() {
 				// Keep Haunt up
 				spell = warlock.Haunt
+			} else if warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ShadowBolt.CurCast.CastTime+core.GCDDefault ||
+				core.ShadowMasteryAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ShadowBolt.CurCast.CastTime {
+				// Shadow Embrace & Shadow Mastery refresh
+				spell = warlock.ShadowBolt
 			} else if sim.IsExecutePhase25() {
 				// Drain Soul execute phase
 				spell = warlock.channelCheck(sim, warlock.DrainSoulDot, 5)
+			} else if warlock.CurrentManaPercent() < 0.25 {
+				// If you were gonna cast a filler but are low mana, get mana instead in order not to be OOM when an important spell is coming up
+				warlock.LifeTapOrDarkPact(sim)
+				return
 			} else {
 				// Filler
 				spell = warlock.ShadowBolt
@@ -176,14 +196,23 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			// ------------------------------------------
 			// Demonology Rotation
 			// ------------------------------------------
-			if !warlock.CorruptionDot.IsActive() {
+			if (!warlock.CorruptionDot.IsActive() || warlock.CorruptionDot.RemainingDuration(sim) < warlock.Corruption.CurCast.CastTime) &&
+				sim.GetRemainingDuration() > warlock.CorruptionDot.Duration {
 				spell = warlock.Corruption
-			} else if !warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime {
+			} else if (!warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime) &&
+				sim.GetRemainingDuration() > warlock.ImmolateDot.Duration/2. {
 				spell = warlock.Immolate
+			} else if core.ShadowMasteryAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ShadowBolt.CurCast.CastTime {
+				// Shadow Mastery refresh
+				spell = warlock.ShadowBolt
 			} else if warlock.DecimationAura.IsActive() {
 				spell = warlock.SoulFire
 			} else if warlock.MoltenCoreAura.IsActive() {
 				spell = warlock.Incinerate
+			} else if warlock.CurrentManaPercent() < 0.25 {
+				// If you were gonna cast a filler but are low mana, get mana instead in order not to be OOM when an important spell is coming up
+				warlock.LifeTapOrDarkPact(sim)
+				return
 			} else {
 				spell = warlock.ShadowBolt
 			}
@@ -194,9 +223,8 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			// ------------------------------------------
 			if warlock.CanConflagrate(sim) && (warlock.ImmolateDot.TickCount > warlock.ImmolateDot.NumberOfTicks-2 || warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfConflagrate)) {
 				spell = warlock.Conflagrate
-			} else if !warlock.CorruptionDot.IsActive() {
-				spell = warlock.Corruption
-			} else if !warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime {
+			} else if (!warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime) &&
+				sim.GetRemainingDuration() > warlock.ImmolateDot.Duration/2. {
 				spell = warlock.Immolate
 			} else if warlock.Talents.ChaosBolt && warlock.ChaosBolt.CD.IsReady(sim) {
 				spell = warlock.ChaosBolt
@@ -217,31 +245,44 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// Main spells
 	// ------------------------------------------
 	if preset == proto.Warlock_Rotation_Manual {
-		if warlock.Rotation.Corruption && (!warlock.CorruptionDot.IsActive() && core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() ||
-			sim.IsExecutePhase35() && time.Duration(warlock.CorruptionDot.TickCount)*warlock.CorruptionDot.TickLength > sim.CurrentTime) {
-			// Cast Corruption as soon as the 5% crit debuff is up
+		if warlock.Rotation.Corruption &&
+			(!warlock.CorruptionDot.IsActive() && (core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() || warlock.Talents.ImprovedShadowBolt == 0) ||
+				sim.IsExecutePhase35() && time.Duration(warlock.CorruptionDot.TickCount)*warlock.CorruptionDot.TickLength > sim.CurrentTime) {
+			// Cast Corruption as soon as the 5% crit debuff is up if you have the talent
 			// Cast Corruption again when you get the execute buff (Death's Embrace)
 			spell = warlock.Corruption
 		} else if warlock.CanConflagrate(sim) && (warlock.ImmolateDot.TickCount > warlock.ImmolateDot.NumberOfTicks-2 || warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfConflagrate)) {
+			// Cast Conflagrate at last Immo tick or on CD if you have the glyph
 			spell = warlock.Conflagrate
-		} else if secondaryDot == proto.Warlock_Rotation_Immolate && (!warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime) {
+		} else if secondaryDot == proto.Warlock_Rotation_Immolate && (!warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime) &&
+			sim.GetRemainingDuration() > warlock.ImmolateDot.Duration/2. {
+			// Refresh Immolate when it is gonna fade but not if the fight is ending
 			spell = warlock.Immolate
 		} else if warlock.Talents.UnstableAffliction && secondaryDot == proto.Warlock_Rotation_UnstableAffliction &&
 			(!warlock.UnstableAffDot.IsActive() || warlock.UnstableAffDot.RemainingDuration(sim) < warlock.UnstableAff.CurCast.CastTime) &&
 			sim.GetRemainingDuration() > warlock.UnstableAffDot.Duration {
+			// Refresh Unstable when it is gonna fade but not if the fight is ending
 			spell = warlock.UnstableAff
-		} else if warlock.Talents.Decimation > 0 && warlock.DecimationAura.IsActive() {
+		} else if warlock.Talents.Haunt && specSpell == proto.Warlock_Rotation_Haunt && warlock.Haunt.CD.IsReady(sim) && !warlock.HauntDebuffAura(warlock.CurrentTarget).IsActive() {
+			// Refresh Haunt Debuff
+			spell = warlock.Haunt
+		} else if warlock.Talents.ShadowEmbrace > 0 && warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ShadowBolt.CurCast.CastTime+core.GCDDefault ||
+			warlock.Talents.ImprovedShadowBolt > 0 && core.ShadowMasteryAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ShadowBolt.CurCast.CastTime {
+			// Shadow Embrace & Shadow Mastery refresh
+			spell = warlock.ShadowBolt
+		} else if warlock.DecimationAura.IsActive() {
+			// Spam Soulfire if you have the Decimation buff (Demonology execute phase)
 			spell = warlock.SoulFire
-		} else if warlock.Talents.MoltenCore > 0 && warlock.MoltenCoreAura.IsActive() {
+		} else if warlock.MoltenCoreAura.IsActive() {
+			// Spam Incinerate if you have the Molten Core buff (procs off Corruption ticks)
 			spell = warlock.Incinerate
 		} else if warlock.Talents.ChaosBolt && specSpell == proto.Warlock_Rotation_ChaosBolt && warlock.ChaosBolt.CD.IsReady(sim) {
 			spell = warlock.ChaosBolt
-		} else if warlock.Talents.Haunt && specSpell == proto.Warlock_Rotation_Haunt && warlock.Haunt.CD.IsReady(sim) && !warlock.HauntDebuffAura(warlock.CurrentTarget).IsActive() {
-			spell = warlock.Haunt
-		} else if sim.IsExecutePhase20() {
-			// Drain Soul execute phase
+		} else if sim.IsExecutePhase25() && warlock.Talents.SoulSiphon > 0 {
+			// Drain Soul execute phase for Affliction
 			spell = warlock.channelCheck(sim, warlock.DrainSoulDot, 5)
 		} else {
+			// Filler
 			switch mainSpell {
 			case proto.Warlock_Rotation_ShadowBolt:
 				spell = warlock.ShadowBolt
@@ -263,7 +304,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 
 	// Lifetap if nothing else
 	if warlock.CurrentManaPercent() < 0.8 {
-		warlock.LifeTap.Cast(sim, target)
+		warlock.LifeTapOrDarkPact(sim)
 		return
 	}
 

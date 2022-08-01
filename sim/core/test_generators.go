@@ -270,7 +270,12 @@ func (filter *ItemFilter) FindAllMetaGems() []items.Gem {
 
 	for _, gem := range items.GemsByID {
 		if gem.Color == proto.GemColor_GemColorMeta {
-			filteredGems = append(filteredGems, gem)
+			if !strings.Contains(gem.Name, "Skyfire") &&
+				!strings.Contains(gem.Name, "Earthstorm") &&
+				!strings.Contains(gem.Name, "Starfire") &&
+				!strings.Contains(gem.Name, "Unstable") {
+				filteredGems = append(filteredGems, gem)
+			}
 		}
 	}
 

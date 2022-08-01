@@ -11,9 +11,10 @@ var FrostStrikeMHOutcome = core.OutcomeMiss
 var FrostStrikeOHOutcome = core.OutcomeMiss
 
 func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool) *core.Spell {
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 250.0, 0.55, true)
+	baseDamage := 250.0 + dk.sigilOfTheVengefulHeartFrostStrike()
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, baseDamage, 0.55, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 250.0, 0.55*dk.nervesOfColdSteelBonus(), true)
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, baseDamage, 0.55*dk.nervesOfColdSteelBonus(), true)
 	}
 
 	effect := core.SpellEffect{
