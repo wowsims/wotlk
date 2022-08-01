@@ -9,7 +9,7 @@ import {
 	Deathknight_Options as DeathKnightOptions,
 } from '../core/proto/deathknight.js';
 
-import * as InputHelpers from '/wotlk/core/components/input_helpers.js';
+import * as InputHelpers from '../core/components/input_helpers.js';
 import { Player } from '../core/player';
 import { TypedEvent } from '../core/typed_event';
 

@@ -4,8 +4,6 @@ import { Flask } from '../core/proto/common.js';
 import { Food } from '../core/proto/common.js';
 import { Glyphs } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
-import { WeaponImbue } from '../core/proto/common.js';
-import { Player } from '../core/player.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import { ferocityDefault } from '../core/talents/hunter_pet.js';
 

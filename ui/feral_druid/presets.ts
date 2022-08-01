@@ -1,21 +1,15 @@
 import { Consumes } from '../core/proto/common.js';
 import { BattleElixir } from '../core/proto/common.js';
 import { Food } from '../core/proto/common.js';
-import { Glyphs } from '../core/proto/common.js';
 import { EquipmentSpec } from '../core/proto/common.js';
-import { ItemSpec } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
 import { Conjured } from '../core/proto/common.js';
 import { WeaponImbue } from '../core/proto/common.js';
-import { Faction } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
-import { Player } from '../core/player.js';
 
-import { FeralDruid, FeralDruid_Rotation as FeralDruidRotation, DruidTalents as DruidTalents, FeralDruid_Options as FeralDruidOptions } from '../core/proto/druid.js';
+import { FeralDruid_Rotation as FeralDruidRotation, FeralDruid_Options as FeralDruidOptions } from '../core/proto/druid.js';
 import { FeralDruid_Rotation_FinishingMove as FinishingMove } from '../core/proto/druid.js';
 
-import * as Enchants from '../core/constants/enchants.js';
-import * as Gems from '../core/proto_utils/gems.js';
 import * as Tooltips from '../core/constants/tooltips.js';
 
 // Preset options for this spec.

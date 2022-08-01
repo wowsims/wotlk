@@ -3,15 +3,10 @@ import { Consumes } from '../core/proto/common.js';
 import { EquipmentSpec } from '../core/proto/common.js';
 import { Flask } from '../core/proto/common.js';
 import { Food } from '../core/proto/common.js';
-import { Glyphs } from '../core/proto/common.js';
-import { ItemSpec } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
-import { WeaponImbue } from '../core/proto/common.js';
-import { Faction } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
-import { Player } from '../core/player.js';
 
-import { EnhancementShaman, EnhancementShaman_Rotation as EnhancementShamanRotation, EnhancementShaman_Options as EnhancementShamanOptions, ShamanShield } from '../core/proto/shaman.js';
+import { EnhancementShaman_Rotation as EnhancementShamanRotation, EnhancementShaman_Options as EnhancementShamanOptions, ShamanShield } from '../core/proto/shaman.js';
 import {
 	AirTotem,
 	EarthTotem,
@@ -20,10 +15,8 @@ import {
 	ShamanTotems,
     ShamanImbue,
     ShamanSyncType
-} from '/wotlk/core/proto/shaman.js';
+} from '../core/proto/shaman.js';
 
-import * as Enchants from '../core/constants/enchants.js';
-import * as Gems from '../core/proto_utils/gems.js';
 import * as Tooltips from '../core/constants/tooltips.js';
 
 // Preset options for this spec.

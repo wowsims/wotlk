@@ -13,15 +13,15 @@ import {
 	ShamanShield,
     ShamanImbue,
     ShamanSyncType
-} from '/wotlk/core/proto/shaman.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { WeaponImbue } from '/wotlk/core/proto/common.js';
-import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
-import { Player } from '/wotlk/core/player.js';
-import { Sim } from '/wotlk/core/sim.js';
-import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
-import { Target } from '/wotlk/core/target.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
+} from '../core/proto/shaman.js';
+import { Spec } from '../core/proto/common.js';
+import { WeaponImbue } from '../core/proto/common.js';
+import { ActionId } from '../core/proto_utils/action_id.js';
+import { Player } from '../core/player.js';
+import { Sim } from '../core/sim.js';
+import { IndividualSimUI } from '../core/individual_sim_ui.js';
+import { Target } from '../core/target.js';
+import { EventID, TypedEvent } from '../core/typed_event.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';
 

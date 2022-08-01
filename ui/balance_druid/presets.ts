@@ -1,19 +1,12 @@
 import { Consumes } from '../core/proto/common.js';
 import { Flask } from '../core/proto/common.js';
 import { Food } from '../core/proto/common.js';
-import { Glyphs } from '../core/proto/common.js';
 import { EquipmentSpec } from '../core/proto/common.js';
-import { ItemSpec } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
-import { WeaponImbue } from '../core/proto/common.js';
-import { Faction } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
-import { Player } from '../core/player.js';
 
-import { BalanceDruid, BalanceDruid_Rotation as BalanceDruidRotation, DruidTalents as DruidTalents, BalanceDruid_Options as BalanceDruidOptions, BalanceDruid_Rotation_RotationType as RotationType } from '/wotlk/core/proto/druid.js';
+import { BalanceDruid_Rotation as BalanceDruidRotation, BalanceDruid_Options as BalanceDruidOptions, BalanceDruid_Rotation_RotationType as RotationType } from '../core/proto/druid.js';
 
-import * as Enchants from '../core/constants/enchants.js';
-import * as Gems from '../core/proto_utils/gems.js';
 import * as Tooltips from '../core/constants/tooltips.js';
 
 // Preset options for this spec.

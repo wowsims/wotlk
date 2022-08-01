@@ -4,15 +4,12 @@ import { EquipmentSpec } from '../core/proto/common.js';
 import { Flask } from '../core/proto/common.js';
 import { Food } from '../core/proto/common.js';
 import { Glyphs } from '../core/proto/common.js';
-import { ItemSpec } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
-import { Faction } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import { WeaponImbue } from '../core/proto/common.js';
-import { Player } from '../core/player.js';
 
-import { ElementalShaman, ElementalShaman_Rotation as ElementalShamanRotation, ElementalShaman_Options as ElementalShamanOptions, ShamanShield, ShamanMajorGlyph, ShamanMinorGlyph } from '/wotlk/core/proto/shaman.js';
-import { ElementalShaman_Rotation_RotationType as RotationType } from '/wotlk/core/proto/shaman.js';
+import { ElementalShaman_Rotation as ElementalShamanRotation, ElementalShaman_Options as ElementalShamanOptions, ShamanShield, ShamanMajorGlyph, ShamanMinorGlyph } from '../core/proto/shaman.js';
+import { ElementalShaman_Rotation_RotationType as RotationType } from '../core/proto/shaman.js';
 
 import {
 	AirTotem,
@@ -23,8 +20,6 @@ import {
 } from '../core/proto/shaman.js';
 
 
-import * as Enchants from '../core/constants/enchants.js';
-import * as Gems from '../core/proto_utils/gems.js';
 import * as Tooltips from '../core/constants/tooltips.js';
 
 // Preset options for this spec.
@@ -37,7 +32,7 @@ export const StandardTalents = {
 	name: 'Standard',
 	data: SavedTalents.create({
 		talentsString: '0532001523212351322301351-005052031',
-    glyphs: Glyphs.create({
+		glyphs: Glyphs.create({
 			major1: ShamanMajorGlyph.GlyphOfLava,
 			major2: ShamanMajorGlyph.GlyphOfTotemOfWrath,
 			major3: ShamanMajorGlyph.GlyphOfLightningBolt,

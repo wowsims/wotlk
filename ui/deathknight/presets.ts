@@ -7,7 +7,6 @@ import { Potions } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
 import {
-	DeathknightTalents,
 	Deathknight_Rotation as DeathKnightRotation,
 	Deathknight_Options as DeathKnightOptions,
 	DeathknightMajorGlyph,
