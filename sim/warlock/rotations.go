@@ -9,6 +9,14 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+func (warlock *Warlock) LifeTapOrDarkPact(sim *core.Simulation) {
+	if warlock.Talents.DarkPact && warlock.Pet.CurrentMana() > warlock.GetStat(stats.SpellPower)+1200+131 {
+		warlock.DarkPact.Cast(sim, warlock.CurrentTarget)
+	} else {
+		warlock.LifeTap.Cast(sim, warlock.CurrentTarget)
+	}
+}
+
 func (warlock *Warlock) OnGCDReady(sim *core.Simulation) {
 	warlock.tryUseGCD(sim)
 }
@@ -29,7 +37,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	if mainSpell == proto.Warlock_Rotation_Seed {
 		if warlock.Rotation.DetonateSeed {
 			if success := warlock.Seeds[0].Cast(sim, target); !success {
-				warlock.LifeTap.Cast(sim, target)
+				warlock.LifeTapOrDarkPact(sim)
 			}
 			return
 		}
@@ -39,7 +47,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			if success := warlock.Seeds[0].Cast(sim, target); success {
 				return
 			} else {
-				warlock.LifeTap.Cast(sim, target)
+				warlock.LifeTapOrDarkPact(sim)
 				return
 			}
 		}
@@ -82,7 +90,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			// stop regen, start blasting
 			warlock.DoingRegen = false
 		} else {
-			warlock.LifeTap.Cast(sim, target)
+			warlock.LifeTapOrDarkPact(sim)
 			if warlock.CurrentManaPercent() > 0.6 {
 				warlock.DoingRegen = false
 			}
@@ -101,7 +109,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// Keep Glyph of Life Tap buff up
 	// ------------------------------------------
 	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap) && !warlock.GlyphOfLifeTapAura.IsActive() {
-		warlock.LifeTap.Cast(sim, target)
+		warlock.LifeTapOrDarkPact(sim)
 		return
 	}
 
@@ -137,7 +145,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	}
 	if spell != nil {
 		if !spell.Cast(sim, target) {
-			warlock.LifeTap.Cast(sim, target)
+			warlock.LifeTapOrDarkPact(sim)
 		}
 		return
 	}
@@ -278,7 +286,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 
 	// Lifetap if nothing else
 	if warlock.CurrentManaPercent() < 0.8 {
-		warlock.LifeTap.Cast(sim, target)
+		warlock.LifeTapOrDarkPact(sim)
 		return
 	}
 
