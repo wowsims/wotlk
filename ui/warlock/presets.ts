@@ -66,7 +66,7 @@ export const DemonologyTalents = {
 		glyphs: Glyphs.create({
 			major1: MajorGlyph.GlyphOfLifeTap,
 			major2: MajorGlyph.GlyphOfQuickDecay,
-			major3: MajorGlyph.GlyphOfMetamorphosis,
+			major3: MajorGlyph.GlyphOfFelguard,
 			minor1: MinorGlyph.GlyphOfSouls,
 			minor2: MinorGlyph.GlyphOfDrainSoul,
 			minor3: MinorGlyph.GlyphOfEnslaveDemon,

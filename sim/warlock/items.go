@@ -138,12 +138,17 @@ var ItemSetPlagueheartGarb = core.NewItemSet(core.ItemSet{
 		4: func(agent core.Agent) {
 			warlock := agent.(WarlockAgent).GetWarlock()
 
-			SpiritsoftheDamnedAura := warlock.NewTemporaryStatsAura(
-				"Spirits of the Damned",
-				core.ActionID{SpellID: 61082},
-				stats.Stats{stats.Spirit: 300},
-				time.Second*10,
-			)
+			SpiritsoftheDamnedAura := warlock.RegisterAura(core.Aura{
+				Label:    "Spirits of the Damned",
+				ActionID: core.ActionID{SpellID: 61082},
+				Duration: time.Second * 10,
+				OnGain: func(aura *core.Aura, sim *core.Simulation) {
+					aura.Unit.AddStatDynamic(sim, stats.Spirit, 300.)
+				},
+				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+					aura.Unit.AddStatDynamic(sim, stats.Spirit, -300.)
+				},
+			})
 
 			warlock.RegisterAura(core.Aura{
 				Label:    "4pT7 Hidden Aura",
@@ -151,10 +156,13 @@ var ItemSetPlagueheartGarb = core.NewItemSet(core.ItemSet{
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
-				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 					if spell == warlock.LifeTap {
-						SpiritsoftheDamnedAura.Activate(sim)
-						SpiritsoftheDamnedAura.Refresh(sim)
+						if SpiritsoftheDamnedAura.IsActive() {
+							SpiritsoftheDamnedAura.Refresh(sim)
+						} else {
+							SpiritsoftheDamnedAura.Activate(sim)
+						}
 					}
 				},
 			})
