@@ -136,6 +136,7 @@ type Deathknight struct {
 	NecrosisAura        *core.Aura
 	BloodCakedBladeAura *core.Aura
 	ButcheryAura        *core.Aura
+	ButcheryPA          *core.PendingAction
 	RimeAura            *core.Aura
 	BladeBarrierAura    *core.Aura
 

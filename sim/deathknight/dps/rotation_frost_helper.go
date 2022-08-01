@@ -9,17 +9,24 @@ import (
 type FrostRotation struct {
 	lastSpell *core.Spell
 	nextSpell *core.Spell
+
+	firstBloodStrike bool
 }
 
 func (fr *FrostRotation) Reset(sim *core.Simulation) {
 	fr.nextSpell = nil
 	fr.lastSpell = nil
+	fr.firstBloodStrike = true
 }
 
-func (fr *FrostRotation) SetLastSpell(condition bool, spell *core.Spell) {
-	if condition {
+func (dk *DpsDeathknight) FrostRotationCast(sim *core.Simulation, target *core.Unit, spell *core.Spell) bool {
+	fr := &dk.fr
+	canCast := dk.CanCast(sim, spell)
+	if canCast {
+		spell.Cast(sim, target)
 		fr.lastSpell = spell
 	}
+	return canCast
 }
 
 func (dk *DpsDeathknight) FrostDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *core.Spell, costRunes bool, casts int) bool {
@@ -48,7 +55,7 @@ func (dk *DpsDeathknight) FrostDiseaseCheck(sim *core.Simulation, target *core.U
 
 		afterCastTime := sim.CurrentTime + castGcd
 		currentBloodRunes := crpb.CurrentBloodRunes()
-		nextBloodRuneAt := crpb.NormalBloodRuneReadyAt(sim)
+		nextBloodRuneAt := crpb.BloodRuneReadyAt(sim)
 
 		// Check FF
 		if dk.frCheckForDiseaseRecast(ffExpiresAt, afterCastTime, spellCost.Blood, currentBloodRunes, nextBloodRuneAt) {

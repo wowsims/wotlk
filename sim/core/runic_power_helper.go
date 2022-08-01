@@ -51,9 +51,9 @@ func (rp *runicPowerBar) LaunchBloodTapRegenPA(sim *Simulation, slot int32, spel
 	}
 
 	r.pas[1] = pa
-	if !rp.isACopy {
-		sim.AddPendingAction(pa)
-	}
+	//if !rp.isACopy {
+	//sim.AddPendingAction(pa)
+	//}
 }
 
 func (rp *runicPowerBar) GainDeathRuneMetrics(sim *Simulation, spell *Spell, currRunes int32, newRunes int32) {
