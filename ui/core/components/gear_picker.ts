@@ -78,7 +78,7 @@ class ItemPicker extends Component {
 	private readonly player: Player<any>;
 	private readonly iconElem: HTMLAnchorElement;
 	private readonly nameElem: HTMLAnchorElement;
-	private readonly enchantElem: HTMLElement;
+	private readonly enchantElem: HTMLAnchorElement;
 	private readonly socketsContainerElem: HTMLElement;
 
 	// All items and enchants that are eligible for this slot
@@ -99,14 +99,14 @@ class ItemPicker extends Component {
         </div>
       </a>
       <div class="item-picker-labels-container">
-        <a class="item-picker-name"></a>
-        <span class="item-picker-enchant"></span>
+        <a class="item-picker-name"></a><br>
+        <a class="item-picker-enchant"></a>
       </div>
     `;
 
 		this.iconElem = this.rootElem.getElementsByClassName('item-picker-icon')[0] as HTMLAnchorElement;
 		this.nameElem = this.rootElem.getElementsByClassName('item-picker-name')[0] as HTMLAnchorElement;
-		this.enchantElem = this.rootElem.getElementsByClassName('item-picker-enchant')[0] as HTMLElement;
+		this.enchantElem = this.rootElem.getElementsByClassName('item-picker-enchant')[0] as HTMLAnchorElement;
 		this.socketsContainerElem = this.rootElem.getElementsByClassName('item-picker-sockets-container')[0] as HTMLElement;
 
 		this.item = player.getEquippedItem(slot);
@@ -127,6 +127,19 @@ class ItemPicker extends Component {
 			this.nameElem.addEventListener('click', onClickStart);
 			this.nameElem.addEventListener('touchstart', onClickStart);
 			this.nameElem.addEventListener('touchend', onClickEnd);
+			
+			// Make enchant name open enchant tab.
+			this.enchantElem.addEventListener('click', (ev: Event) => { 
+				ev.preventDefault();
+				const selectorModal = new SelectorModal(this.rootElem.closest('.individual-sim-ui')!, this.player, this.slot, this._equippedItem, this._items, this._enchants);
+				selectorModal.openTab(1);
+			});
+			this.enchantElem.addEventListener('touchstart', (ev: Event) => { 
+				ev.preventDefault();
+				const selectorModal = new SelectorModal(this.rootElem.closest('.individual-sim-ui')!, this.player, this.slot, this._equippedItem, this._items, this._enchants);
+				selectorModal.openTab(1);
+			});
+			this.enchantElem.addEventListener('touchend', onClickEnd);
 		});
 		player.gearChangeEmitter.on(() => {
 			this.item = player.getEquippedItem(slot);
@@ -145,15 +158,24 @@ class ItemPicker extends Component {
 		this.iconElem.style.backgroundImage = `url('${getEmptySlotIconUrl(this.slot)}')`;
 		this.iconElem.removeAttribute('data-wowhead');
 		this.iconElem.removeAttribute('href');
+		this.enchantElem.removeAttribute('data-wowhead');
 
 		this.nameElem.textContent = slotNames[this.slot];
 		setItemQualityCssClass(this.nameElem, null);
 
-		this.enchantElem.textContent = '';
+		this.enchantElem.innerHTML = '';
 		this.socketsContainerElem.innerHTML = '';
 
 		if (newItem != null) {
 			this.nameElem.textContent = newItem.item.name;
+			if (newItem.item.heroic) {
+				var heroic_span = document.createElement('span');
+				heroic_span.style.color = "green";
+				heroic_span.style.marginLeft = "3px";
+				heroic_span.innerText = "[H]";
+				this.nameElem.appendChild(heroic_span);
+			}
+			
 			setItemQualityCssClass(this.nameElem, newItem.item.quality);
 
 			this.player.setWowheadData(newItem, this.iconElem);
@@ -165,6 +187,13 @@ class ItemPicker extends Component {
 
 			if (newItem.enchant) {
 				this.enchantElem.textContent = enchantDescriptions.get(newItem.enchant.id) || newItem.enchant.name;
+				newItem.enchant
+				// Make enchant text hover have a tooltip.
+				if (newItem.enchant.isSpellId) {
+					this.enchantElem.setAttribute('data-wowhead', `spell=${newItem.enchant.id}`);
+				} else {
+					this.enchantElem.setAttribute('data-wowhead', `item=${newItem.enchant.id}`);
+				}
 			}
 
 			newItem.allSocketColors().forEach((socketColor, gemIdx) => {
@@ -221,6 +250,11 @@ class SelectorModal extends Popup {
 		this.setData(slot, equippedItem, eligibleItems, eligibleEnchants);
 	}
 
+	openTab(idx: number) {
+		const elems = this.tabsElem.getElementsByClassName("selector-modal-item-tab");
+		(elems[idx] as HTMLElement).click();
+	}
+
 	setData(slot: ItemSlot, equippedItem: EquippedItem | null, eligibleItems: Array<Item>, eligibleEnchants: Array<Enchant>) {
 		this.tabsElem.innerHTML = '';
 		this.contentElem.innerHTML = '';
@@ -236,6 +270,7 @@ class SelectorModal extends Popup {
 					actionId: ActionId.fromItem(item),
 					name: item.name,
 					quality: item.quality,
+					heroic: item.heroic,
 					phase: item.phase,
 					baseEP: this.player.computeItemEP(item),
 					ignoreEPFilter: false,
@@ -270,6 +305,7 @@ class SelectorModal extends Popup {
 					phase: enchant.phase || 1,
 					baseEP: this.player.computeStatsEP(new Stats(enchant.stats)),
 					ignoreEPFilter: true,
+					heroic: false,
 					onEquip: (eventID, enchant: Enchant) => {
 						const equippedItem = this.player.getEquippedItem(slot);
 						if (equippedItem)
@@ -308,6 +344,7 @@ class SelectorModal extends Popup {
 						name: gem.name,
 						quality: gem.quality,
 						phase: gem.phase,
+						heroic: false,
 						baseEP: this.player.computeStatsEP(new Stats(gem.stats)),
 						ignoreEPFilter: true,
 						onEquip: (eventID, gem: Gem) => {
@@ -379,7 +416,14 @@ class SelectorModal extends Popup {
 			// Trinket EP is weird so just sort by ilvl instead.
 			itemData.sort((dataA, dataB) => (dataB.item as unknown as Item).ilvl - (dataA.item as unknown as Item).ilvl);
 		} else {
-			itemData.sort((dataA, dataB) => computeEP(dataB.item) - computeEP(dataA.item));
+			itemData.sort((dataA, dataB) => {
+				const diff = computeEP(dataB.item) - computeEP(dataA.item);
+				 // if EP is same, sort by ilvl
+				if (Math.abs(diff) < 0.01) {
+					return (dataB.item as unknown as Item).ilvl - (dataA.item as unknown as Item).ilvl;
+				}
+				return diff;
+			});
 		}
 
 		const tabElem = document.createElement('li');
@@ -445,7 +489,7 @@ class SelectorModal extends Popup {
 
 			listItemElem.innerHTML = `
         <a class="selector-modal-list-item-icon"></a>
-        <a class="selector-modal-list-item-name">${itemData.name}</a>
+        <a class="selector-modal-list-item-name">${itemData.heroic ? itemData.name + "<span style=\"color:green\">[H]</span>" : itemData.name}</a>
         <div class="selector-modal-list-item-padding"></div>
         <div class="selector-modal-list-item-ep">
 					<span class="selector-modal-list-item-ep-value">${itemEP < 9.95 ? itemEP.toFixed(1) : Math.round(itemEP)}</span>
@@ -638,6 +682,7 @@ interface ItemData<T> {
 	phase: number,
 	baseEP: number,
 	ignoreEPFilter: boolean,
+	heroic: boolean,
 	onEquip: (eventID: EventID, item: T) => void,
 }
 

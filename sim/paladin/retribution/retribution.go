@@ -28,11 +28,16 @@ func NewRetributionPaladin(character core.Character, options proto.Player) *Retr
 	retOptions := options.GetRetributionPaladin()
 
 	ret := &RetributionPaladin{
-		Paladin:       paladin.NewPaladin(character, *retOptions.Talents),
-		Rotation:      *retOptions.Rotation,
-		Judgement:     retOptions.Options.Judgement,
-		Seal:          retOptions.Options.Seal,
-		UseDivinePlea: retOptions.Options.UseDivinePlea,
+		Paladin:              paladin.NewPaladin(character, *retOptions.Talents),
+		Rotation:             *retOptions.Rotation,
+		Judgement:            retOptions.Options.Judgement,
+		Seal:                 retOptions.Options.Seal,
+		UseDivinePlea:        retOptions.Options.UseDivinePlea,
+		DivinePleaPercentage: retOptions.Rotation.DivinePleaPercentage,
+		ExoSlack:             retOptions.Rotation.ExoSlack,
+		ConsSlack:            retOptions.Rotation.ConsSlack,
+
+		HasLightswornBattlegear2Pc: character.HasSetBonus(paladin.ItemSetLightswornBattlegear, 2),
 	}
 	ret.PaladinAura = retOptions.Options.Aura
 
@@ -53,11 +58,17 @@ func NewRetributionPaladin(character core.Character, options proto.Player) *Retr
 type RetributionPaladin struct {
 	*paladin.Paladin
 
-	Judgement     proto.PaladinJudgement
-	Seal          proto.PaladinSeal
-	UseDivinePlea bool
+	Judgement            proto.PaladinJudgement
+	Seal                 proto.PaladinSeal
+	UseDivinePlea        bool
+	DivinePleaPercentage float64
+	ExoSlack             int32
+	ConsSlack            int32
 
-	SealInitComplete bool
+	SealInitComplete       bool
+	DivinePleaInitComplete bool
+
+	HasLightswornBattlegear2Pc bool
 
 	Rotation proto.RetributionPaladin_Rotation
 }
@@ -77,4 +88,5 @@ func (ret *RetributionPaladin) Reset(sim *core.Simulation) {
 	ret.Paladin.Reset(sim)
 	ret.AutoAttacks.CancelAutoSwing(sim)
 	ret.SealInitComplete = false
+	ret.DivinePleaInitComplete = false
 }

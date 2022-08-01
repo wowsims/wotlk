@@ -31,7 +31,7 @@ export const FrostTalents = {
 			major2: DeathknightMajorGlyph.GlyphOfFrostStrike,
 			major3: DeathknightMajorGlyph.GlyphOfDisease,
 			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
-			minor2: DeathknightMinorGlyph.GlyphOfBloodTap,
+			minor2: DeathknightMinorGlyph.GlyphOfPestilence,
 			minor3: DeathknightMinorGlyph.GlyphOfRaiseDead,
 		}),
 	}),
@@ -55,11 +55,11 @@ export const FrostUnholyTalents = {
 export const UnholyDualWieldTalents = {
 	name: 'Unholy Dual Wield',
 	data: SavedTalents.create({
-		talentsString: '-320023500002-2300303350032052000150003133151',
+		talentsString: '-320033500002-2300303050032152000150013133151',
 		glyphs: Glyphs.create({
 			major1: DeathknightMajorGlyph.GlyphOfTheGhoul,
 			major2: DeathknightMajorGlyph.GlyphOfDarkDeath,
-			major3: DeathknightMajorGlyph.GlyphOfIcyTouch,
+			major3: DeathknightMajorGlyph.GlyphOfDeathAndDecay,
 			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
 			minor2: DeathknightMinorGlyph.GlyphOfPestilence,
 			minor3: DeathknightMinorGlyph.GlyphOfRaiseDead,
@@ -69,9 +69,8 @@ export const UnholyDualWieldTalents = {
 
 
 export const DefaultRotation = DeathKnightRotation.create({
-  diseaseRefreshDuration: 6,
-  unholyPresenceOpener: false,
-  useDeathAndDecay: false,
+  useDeathAndDecay: true,
+  btGhoulFrenzy: true,
 	refreshHornOfWinter: false,
 });
 
@@ -103,10 +102,7 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
       ]
     },
     {
-      "id": 44664,
-      "gems": [
-        39996
-      ]
+      "id": 39421
     },
     {
       "id": 40557,
@@ -124,19 +120,19 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
       "enchant": 44623,
       "gems": [
         42142,
-        40058
+        39996
       ]
     },
     {
       "id": 40330,
       "enchant": 60616,
       "gems": [
-        40058,
+        39996,
         0
       ]
     },
     {
-      "id": 40347,
+      "id": 40552,
       "enchant": 54999,
       "gems": [
         39996,
@@ -151,8 +147,12 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
       ]
     },
     {
-      "id": 40294,
-      "enchant": 38374
+      "id": 40556,
+      "enchant": 38374,
+      "gems": [
+        39996,
+        39996
+      ]
     },
     {
       "id": 40591,
@@ -165,7 +165,7 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
       "id": 40075
     },
     {
-      "id": 40431
+      "id": 40684
     },
     {
       "id": 42987
@@ -179,7 +179,7 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
       "enchant": 44495
     },
     {
-      "id": 40207
+      "id": 40867
     }
 	]}`),
 };
@@ -292,7 +292,10 @@ export const P1_FROST_BIS_PRESET = {
       ]
     },
     {
-      "id": 40065
+      "id": 44664,
+      "gems": [
+        39996
+      ]
     },
     {
       "id": 40557,
@@ -348,7 +351,7 @@ export const P1_FROST_BIS_PRESET = {
       "enchant": 55016
     },
     {
-      "id": 40474
+      "id": 39401
     },
     {
       "id": 40075
@@ -372,3 +375,104 @@ export const P1_FROST_BIS_PRESET = {
     }
   ]}`),
 };
+
+
+export const P1_FROST_HITCAP_PRESET = {
+  name: 'P1 Frost Hitcap',
+  tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+  gear: EquipmentSpec.fromJsonString(`{"items": [
+    {
+      "id": 44006,
+      "enchant": 44879,
+      "gems": [
+        41398,
+        34143
+      ]
+    },
+    {
+      "id": 44664,
+      "gems": [
+        39996
+      ]
+    },
+    {
+      "id": 40557,
+      "enchant": 44871,
+      "gems": [
+        39996
+      ]
+    },
+    {
+      "id": 40403,
+      "enchant": 44472
+    },
+    {
+      "id": 40550,
+      "enchant": 44623,
+      "gems": [
+        42142,
+        39996
+      ]
+    },
+    {
+      "id": 40330,
+      "enchant": 60616,
+      "gems": [
+        39996,
+        0
+      ]
+    },
+    {
+      "id": 40552,
+      "gems": [
+        39996,
+        0
+      ]
+    },
+    {
+      "id": 40278,
+      "gems": [
+        39996,
+        42142
+      ]
+    },
+    {
+      "id": 43994,
+      "enchant": 38374,
+      "gems": [
+        42142,
+        39996
+      ]
+    },
+    {
+      "id": 40591,
+      "enchant": 55016
+    },
+    {
+      "id": 43993,
+      "gems": [
+        39996
+      ]
+    },
+    {
+      "id": 40075
+    },
+    {
+      "id": 40256
+    },
+    {
+      "id": 42987
+    },
+    {
+      "id": 40189,
+      "enchant": 53343
+    },
+    {
+      "id": 40189,
+      "enchant": 53344
+    },
+    {
+      "id": 40207
+    }
+  ]}`),
+}

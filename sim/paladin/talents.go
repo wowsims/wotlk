@@ -65,6 +65,7 @@ func (paladin *Paladin) ApplyTalents() {
 	paladin.applyArtOfWar()
 	paladin.applyJudgmentsOfTheWise()
 	paladin.applyRighteousVengeance()
+	paladin.applyMinorGlyphOfSenseUndead()
 }
 
 func (paladin *Paladin) getTalentSealsOfThePureBonus() float64 {
@@ -93,6 +94,28 @@ func (paladin *Paladin) getMajorGlyphOfExorcismBonus() float64 {
 
 func (paladin *Paladin) getMajorGlyphOfJudgementBonus() float64 {
 	return core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfJudgement), 0.10, 0)
+}
+
+func (paladin *Paladin) applyMinorGlyphOfSenseUndead() {
+	if !paladin.HasMinorGlyph(proto.PaladinMinorGlyph_GlyphOfSenseUndead) {
+		return
+	}
+
+	var applied bool
+
+	paladin.RegisterResetEffect(
+		func(s *core.Simulation) {
+			if !applied {
+				for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
+					unit := paladin.Env.GetTargetUnit(i)
+					if unit.MobType == proto.MobType_MobTypeUndead {
+						paladin.AttackTables[unit.TableIndex].DamageDealtMultiplier *= 1.01
+					}
+				}
+				applied = true
+			}
+		},
+	)
 }
 
 func (paladin *Paladin) applyRedoubt() {
@@ -219,21 +242,28 @@ func (paladin *Paladin) applyArdentDefender() {
 	})
 }
 
+// Because Crusade modifies unit specific attack tables, it must be applied at start of sim.
 func (paladin *Paladin) applyCrusade() {
-	// TODO: This doesn't account for multiple targets
-	paladin.PseudoStats.DamageDealtMultiplier *= paladin.crusadeMultiplier()
-}
+	if paladin.Talents.Crusade == 0 {
+		return
+	}
 
-func (paladin *Paladin) crusadeMultiplier() float64 {
-	if paladin.CurrentTarget == nil {
-		return 1
-	}
-	switch paladin.CurrentTarget.MobType {
-	case proto.MobType_MobTypeHumanoid, proto.MobType_MobTypeDemon, proto.MobType_MobTypeUndead, proto.MobType_MobTypeElemental:
-		return 1 + (0.01 * float64(paladin.Talents.Crusade))
-	default:
-		return 1
-	}
+	var applied bool
+
+	paladin.RegisterResetEffect(
+		func(s *core.Simulation) {
+			if !applied {
+				for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
+					unit := paladin.Env.GetTargetUnit(i)
+					switch unit.MobType {
+					case proto.MobType_MobTypeHumanoid, proto.MobType_MobTypeDemon, proto.MobType_MobTypeUndead, proto.MobType_MobTypeElemental:
+						paladin.AttackTables[unit.TableIndex].DamageDealtMultiplier *= 1 + (0.01 * float64(paladin.Talents.Crusade))
+					}
+				}
+				applied = true
+			}
+		},
+	)
 }
 
 // Prior to WOTLK, behavior was to double dip.
@@ -279,8 +309,11 @@ func (paladin *Paladin) applyVengeance() {
 		Duration:  time.Second * 30,
 		MaxStacks: 3,
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
-			aura.Unit.PseudoStats.DamageDealtMultiplier /= 1 + (bonusPerStack * float64(oldStacks))
-			aura.Unit.PseudoStats.DamageDealtMultiplier *= 1 + (bonusPerStack * float64(newStacks))
+			aura.Unit.PseudoStats.HolyDamageDealtMultiplier /= 1 + (bonusPerStack * float64(oldStacks))
+			aura.Unit.PseudoStats.PhysicalDamageDealtMultiplier /= 1 + (bonusPerStack * float64(oldStacks))
+
+			aura.Unit.PseudoStats.HolyDamageDealtMultiplier *= 1 + (bonusPerStack * float64(newStacks))
+			aura.Unit.PseudoStats.PhysicalDamageDealtMultiplier *= 1 + (bonusPerStack * float64(newStacks))
 		},
 	})
 
@@ -391,15 +424,7 @@ func (paladin *Paladin) applyJudgmentsOfTheWise() {
 	})
 }
 
-func (paladin *Paladin) applyRighteousVengeance() {
-	// Righteous Vengeance is a MAGIC debuff that pools 10/20/30% crit damage from Crusader Strike, Divine Storm, and Judgements.
-	// It drains the pool every 2 seconds at a rate of 1/4 of the pool size.
-	// And then deals that 1/4 as PHYSICAL damage.
-	// TODO: Can crit with certain set bonuses.
-	if paladin.Talents.RighteousVengeance == 0 {
-		return
-	}
-
+func (paladin *Paladin) makeRighteousVengeanceDot(target *core.Unit) *core.Dot {
 	var applier core.OutcomeApplier
 
 	if paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 2) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 2) {
@@ -408,66 +433,56 @@ func (paladin *Paladin) applyRighteousVengeance() {
 		applier = paladin.OutcomeFuncAlwaysHit()
 	}
 
-	targets := paladin.Env.GetNumTargets()
-
-	dots := make([]*core.Dot, 0, targets)
-	effects := make([]func(*core.SpellEffect) core.TickEffects, 0, targets)
-
-	for i := 0; i < int(targets); i++ {
-		target := paladin.Env.GetTargetUnit(int32(i))
-
-		var pool float64
-
-		dotActionID := core.ActionID{SpellID: 61840} // Righteous Vengeance
-
-		effects = append(effects, func(spellEffect *core.SpellEffect) core.TickEffects {
-			return func(sim *core.Simulation, spell *core.Spell) func() {
-				return func() {
-					core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-						IsPeriodic:       true,
-						ProcMask:         core.ProcMaskPeriodicDamage,
-						DamageMultiplier: 1,
-						OutcomeApplier:   applier,
-						BaseDamage: core.BaseDamageConfig{
-							Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
-								pool += spellEffect.Damage * (0.10 * float64(paladin.Talents.RighteousVengeance))
-								damage := pool / 4
-								pool -= damage
-								return damage
-							},
-							TargetSpellCoefficient: 1,
-						},
-					})(sim, target, spell)
-				}
-			}
-		})
-
-		dots = append(dots, core.NewDot(core.Dot{
-			Spell: paladin.RegisterSpell(core.SpellConfig{
-				ActionID:    dotActionID,
-				SpellSchool: core.SpellSchoolPhysical,
-				Flags:       core.SpellFlagMeleeMetrics,
-			}),
-			Aura: target.RegisterAura(core.Aura{
-				Label:    "Righteous Vengeance (DoT) - " + strconv.Itoa(int(paladin.Index)) + " - " + strconv.Itoa(i),
-				ActionID: dotActionID,
-				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-					pool = 0
-				},
-			}),
-			TickEffects: func(sim *core.Simulation, spell *core.Spell) func() {
-				return func() {
-					core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-						IsPeriodic:       true,
-						ProcMask:         core.ProcMaskPeriodicDamage,
-						DamageMultiplier: 1,
-						OutcomeApplier:   applier,
-					})(sim, target, spell)
-				}
+	return core.NewDot(core.Dot{
+		Spell: paladin.RighteousVengeanceSpell,
+		Aura: target.RegisterAura(core.Aura{
+			Label:    "Righteous Vengeance (DoT) - " + strconv.Itoa(int(paladin.Index)) + " - " + strconv.Itoa(int(target.Index)),
+			ActionID: paladin.RighteousVengeanceSpell.ActionID,
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				paladin.RighteousVengeanceDamage[target.Index] = 0.0
+				paladin.RighteousVengeancePools[target.Index] = 0.0
 			},
-			NumberOfTicks: 4,
-			TickLength:    time.Second * 2,
-		}))
+		}),
+		NumberOfTicks: 4,
+		TickLength:    time.Second * 2,
+		TickEffects: func(sim *core.Simulation, dot *core.Dot) func() {
+			return func() {
+				core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+					IsPeriodic:       true,
+					ProcMask:         core.ProcMaskPeriodicDamage,
+					DamageMultiplier: 1,
+					OutcomeApplier:   applier,
+					BaseDamage: core.BaseDamageConfig{
+						Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
+							tick := paladin.RighteousVengeanceDamage[target.Index]
+							paladin.RighteousVengeancePools[target.Index] -= tick
+							return tick
+						},
+						TargetSpellCoefficient: 1,
+					},
+				})(sim, target, dot.Spell)
+			}
+		},
+	})
+}
+
+func (paladin *Paladin) registerRighteousVengeanceSpell() {
+	dotActionID := core.ActionID{SpellID: 61840} // Righteous Vengeance
+
+	paladin.RighteousVengeanceSpell = paladin.RegisterSpell(core.SpellConfig{
+		ActionID:    dotActionID,
+		SpellSchool: core.SpellSchoolPhysical,
+		Flags:       core.SpellFlagMeleeMetrics,
+	})
+}
+
+func (paladin *Paladin) applyRighteousVengeance() {
+	// Righteous Vengeance is a MAGIC debuff that pools 10/20/30% crit damage from Crusader Strike, Divine Storm, and Judgements.
+	// It drains the pool every 2 seconds at a rate of 1/4 of the pool size.
+	// And then deals that 1/4 as PHYSICAL damage.
+	// TODO: Can crit with certain set bonuses.
+	if paladin.Talents.RighteousVengeance == 0 {
+		return
 	}
 
 	paladin.RegisterAura(core.Aura{
@@ -482,13 +497,14 @@ func (paladin *Paladin) applyRighteousVengeance() {
 			}
 
 			if spell.SpellID == paladin.CrusaderStrike.SpellID || spell.SpellID == paladin.DivineStorm.SpellID || spell.Flags.Matches(SpellFlagSecondaryJudgement) {
-				dots[spellEffect.Target.Index].TickEffects = effects[spellEffect.Target.Index](spellEffect)
+				paladin.RighteousVengeancePools[spellEffect.Target.Index] += spellEffect.Damage * (0.10 * float64(paladin.Talents.RighteousVengeance))
+				paladin.RighteousVengeanceDamage[spellEffect.Target.Index] = paladin.RighteousVengeancePools[spellEffect.Target.Index] / 4
 
-				if !dots[spellEffect.Target.Index].IsActive() {
-					dots[spellEffect.Target.Index].Apply(sim)
+				if !paladin.RighteousVengeanceDots[spellEffect.Target.Index].IsActive() {
+					paladin.RighteousVengeanceDots[spellEffect.Target.Index].Apply(sim)
 				}
 
-				dots[spellEffect.Target.Index].Refresh(sim)
+				paladin.RighteousVengeanceDots[spellEffect.Target.Index].Refresh(sim)
 			}
 		},
 	})

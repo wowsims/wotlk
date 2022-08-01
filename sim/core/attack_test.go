@@ -102,42 +102,39 @@ import (
 //	}
 //}
 
-// The Character controlled by this Agent.
 func (fa *FakeAgent) GetCharacter() *Character {
-	panic("not implemented") // TODO: Implement
+	return &fa.Character
 }
-
-// Updates the input Buffs to include raid-wide buffs provided by this Agent.
+func (fa *FakeAgent) Initialize() {
+	if fa.Init != nil {
+		fa.Init()
+	}
+}
 func (fa *FakeAgent) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
-	panic("not implemented") // TODO: Implement
-}
 
-// Updates the input Buffs to include party-wide buffs provided by this Agent.
+}
 func (fa *FakeAgent) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
-	panic("not implemented") // TODO: Implement
-}
 
+}
+func (fa *FakeAgent) ApplyGearBonuses() {
+
+}
 func (fa *FakeAgent) ApplyTalents() {
-	panic("not implemented") // TODO: Implement
-}
 
-// Called once before the first iteration, after all Agents and Targets are finalized.
-// Use this to do any precomputations that require access to Sim or Target fields.
-func (fa *FakeAgent) Init(sim *Simulation) {
-	panic("not implemented") // TODO: Implement
 }
-
-// Returns this Agent to its initial state. Called before each Sim iteration
-// and once after the final iteration.
 func (fa *FakeAgent) Reset(sim *Simulation) {
-	panic("not implemented") // TODO: Implement
-}
 
-// Called whenever the GCD becomes ready for this Agent.
+}
 func (fa *FakeAgent) OnGCDReady(sim *Simulation) {
-	panic("not implemented") // TODO: Implement
+
+}
+func (fa *FakeAgent) OnAutoAttack(sim *Simulation, spell *Spell) {
+
 }
 
 type FakeAgent struct {
+	Spell *Spell
+	Dot   *Dot
 	Character
+	Init func()
 }

@@ -4,11 +4,14 @@ import {
 	DeathknightTalents as DeathKnightTalents,
 	Deathknight_Rotation_ArmyOfTheDead as ArmyOfTheDead,
 	Deathknight_Rotation_FirstDisease as FirstDisease,
+	Deathknight_Rotation_DeathAndDecayPrio as DeathAndDecayPrio,
 	Deathknight_Rotation as DeathKnightRotation,
 	Deathknight_Options as DeathKnightOptions,
 } from '../core/proto/deathknight.js';
 
-import * as InputHelpers from '../core/components/input_helpers.js';
+import * as InputHelpers from '/wotlk/core/components/input_helpers.js';
+import { Player } from '../core/player';
+import { TypedEvent } from '../core/typed_event';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
@@ -54,6 +57,31 @@ export const UseDeathAndDecay = InputHelpers.makeRotationBooleanInput<Spec.SpecD
 	fieldName: 'useDeathAndDecay',
 	label: 'Death and Decay',
 	labelTooltip: 'Use Death and Decay based rotation.',
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => player.talentsChangeEmitter,
+});
+
+export const SetDeathAndDecayPrio = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, DeathAndDecayPrio>({
+	fieldName: 'deathAndDecayPrio',
+	label: 'Death and Decay Prio',
+	labelTooltip: '<p>Chose how to prioritize death and decay usage:</p>\
+		<p><b>Max Rune Downtime</b>: Prioritizes spending runes over holding them for death and decay</p>\
+		<p><b>Max Dnd Uptime</b>: Prioritizes dnd uptime and can hold runes for longer then rune grace</p>',
+	values: [
+		{ name: 'Max Rune Downtime', value: DeathAndDecayPrio.MaxRuneDowntime },
+		{ name: 'Max Dnd Uptime', value: DeathAndDecayPrio.MaxDndUptime },
+	],
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && player.getRotation().useDeathAndDecay,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => player.changeEmitter,
+})
+
+export const BloodTapGhoulFrenzy = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
+	fieldName: 'btGhoulFrenzy',
+	label: 'BT Ghoul Frenzy',
+	labelTooltip: 'Use Ghoul Frenzy only with Blood Tap.',
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().ghoulFrenzy,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => player.talentsChangeEmitter, 
+	// TODO find out why changeEmitter breaks web with: TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter])
 });
 
 export const SetFirstDisease = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, FirstDisease>({
@@ -64,6 +92,8 @@ export const SetFirstDisease = InputHelpers.makeRotationEnumInput<Spec.SpecDeath
 		{ name: 'Frost Fever', value: FirstDisease.FrostFever },
 		{ name: 'Blood Plague', value: FirstDisease.BloodPlague },
 	],
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => player.talentsChangeEmitter,
 })
 
 export const UseArmyOfTheDead = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, ArmyOfTheDead>({
@@ -77,19 +107,12 @@ export const UseArmyOfTheDead = InputHelpers.makeRotationEnumInput<Spec.SpecDeat
 	],
 });
 
-export const UnholyPresenceOpener = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
-	fieldName: 'unholyPresenceOpener',
-	label: 'Unholy Presence Opener',
-	labelTooltip: 'Start fight in unholy presence and change to blood after gargoyle.',
-});
-
 export const DeathKnightRotationConfig = {
 	inputs: [
 		SetFirstDisease,
 		UseArmyOfTheDead,
 		UseDeathAndDecay,
-		UnholyPresenceOpener,
-		RefreshHornOfWinter,
-		DiseaseRefreshDuration,
+		SetDeathAndDecayPrio,
+		BloodTapGhoulFrenzy,
 	],
 };

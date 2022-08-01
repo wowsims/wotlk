@@ -27,17 +27,17 @@ func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 		ThreatMultiplier:    1 - 0.08*float64(priest.Talents.ShadowAffinity),
 		OutcomeApplier:      priest.OutcomeFuncMagicHitBinary(),
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Landed() {
-
-				if priest.ShadowWordPainDot.IsActive() {
-					if priest.Talents.PainAndSuffering == 3 {
-						priest.ShadowWordPainDot.Refresh(sim)
-					} else if sim.RandomFloat("Pain and Suffering") < (float64(priest.Talents.PainAndSuffering) * 0.33) {
-						priest.ShadowWordPainDot.Refresh(sim)
-					}
-				}
-				priest.MindFlayDot[numTicks].Apply(sim)
+			if !spellEffect.Landed() {
+				return
 			}
+			if priest.ShadowWordPainDot.IsActive() {
+				if priest.Talents.PainAndSuffering == 3 {
+					priest.ShadowWordPainDot.Rollover(sim)
+				} else if sim.RandomFloat("Pain and Suffering") < (float64(priest.Talents.PainAndSuffering) * 0.33) {
+					priest.ShadowWordPainDot.Rollover(sim)
+				}
+			}
+			priest.MindFlayDot[numTicks].Apply(sim)
 		},
 	}
 
@@ -88,6 +88,9 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 			if spellEffect.DidCrit() && priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow)) {
 				priest.ShadowyInsightAura.Activate(sim)
 			}
+			if spellEffect.DidCrit() && priest.ImprovedSpiritTap != nil && sim.RandomFloat("Improved Spirit Tap") > 0.5 {
+				priest.ImprovedSpiritTap.Activate(sim)
+			}
 		},
 	}
 
@@ -122,9 +125,9 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 		TargetSpellCoefficient: 0.0,
 	}
 
-	var mf_reduc_time time.Duration
+	var mfReducTime time.Duration
 	if priest.HasSetBonus(ItemSetCrimsonAcolyte, 4) {
-		mf_reduc_time = time.Millisecond * 170
+		mfReducTime = time.Millisecond * 170
 	}
 
 	return core.NewDot(core.Dot{
@@ -135,15 +138,9 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 		}),
 
 		NumberOfTicks:       numTicks,
-		TickLength:          time.Second - mf_reduc_time,
+		TickLength:          time.Second - mfReducTime,
 		AffectedByCastSpeed: true,
 
 		TickEffects: core.TickFuncSnapshot(target, effect),
 	})
-}
-
-func (priest *Priest) applySWforMF(sim *core.Simulation, damage float64) {
-	if damage >= 0 {
-		priest.AddShadowWeavingStack(sim)
-	}
 }

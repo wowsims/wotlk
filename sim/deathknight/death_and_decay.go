@@ -7,9 +7,31 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
+func (dk *Deathknight) OutcomeDeathAndDecaySpecial() core.OutcomeApplier {
+	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
+		if spellEffect.MagicHitCheck(sim, spell, attackTable) {
+			if sim.RandomFloat("Fixed Crit Roll") < dk.dndCritSnapshot {
+				spellEffect.Outcome = core.OutcomeCrit
+				spell.SpellMetrics[spellEffect.Target.TableIndex].Crits++
+				spellEffect.Damage *= dk.spellCritMultiplier()
+			} else {
+				spellEffect.Outcome = core.OutcomeHit
+				spell.SpellMetrics[spellEffect.Target.TableIndex].Hits++
+			}
+		} else {
+			spellEffect.Outcome = core.OutcomeMiss
+			spell.SpellMetrics[spellEffect.Target.TableIndex].Misses++
+			spellEffect.Damage = 0
+		}
+	}
+}
+
 func (dk *Deathknight) registerDeathAndDecaySpell() {
 
-	var actionID = core.ActionID{SpellID: 49938}
+	actionID := core.ActionID{SpellID: 49938}
+	glyphBonus := core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDeathAndDecay), 1.2, 1.0)
+
+	doSnapshot := false
 	dk.DeathAndDecayDot = core.NewDot(core.Dot{
 		Aura: dk.RegisterAura(core.Aura{
 			Label:    "Death and Decay",
@@ -17,23 +39,26 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 		}),
 		NumberOfTicks: 10,
 		TickLength:    time.Second * 1,
-		TickEffects: core.TickFuncAOESnapshot(dk.Env, core.SpellEffect{
-			ProcMask:        core.ProcMaskEmpty,
+		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncAOEDamage(dk.Env, core.SpellEffect{
+			ProcMask:        core.ProcMaskPeriodicDamage,
 			BonusSpellPower: 0.0,
 
-			DamageMultiplier: core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDeathAndDecay), 1.2, 1.0),
+			DamageMultiplier: glyphBonus * dk.scourgelordsPlateDamageBonus(),
 			ThreatMultiplier: 1,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return (62.0 + dk.applyImpurity(hitEffect, spell.Unit)*0.0475) *
-						dk.rageOfRivendareBonus(hitEffect.Target) *
-						dk.tundraStalkerBonus(hitEffect.Target)
+					if doSnapshot {
+						dk.dndCritSnapshot = hitEffect.SpellCritChance(spell.Unit, spell)
+						dk.dndApSnapshot = 62.0 + dk.getImpurityBonus(hitEffect, spell.Unit)*0.0475
+						doSnapshot = false
+					}
+					return dk.dndApSnapshot * dk.RoRTSBonus(hitEffect.Target)
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: dk.OutcomeFuncMagicHitAndCrit(dk.spellCritMultiplier()),
+			OutcomeApplier: dk.OutcomeDeathAndDecaySpecial(),
 			IsPeriodic:     false,
-		}),
+		})),
 	})
 
 	dk.DeathAndDecay = dk.RegisterSpell(core.SpellConfig{
@@ -54,6 +79,10 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
+			doSnapshot = true
+			dk.dndApSnapshot = 0.0
+			dk.dndCritSnapshot = 0.0
+
 			dk.DeathAndDecayDot.Apply(sim)
 			dk.DeathAndDecayDot.TickOnce()
 

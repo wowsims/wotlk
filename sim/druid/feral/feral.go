@@ -1,6 +1,7 @@
 package feral
 
 import (
+	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -72,14 +73,11 @@ func NewFeralDruid(character core.Character, options proto.Player) *FeralDruid {
 	cat.AddStat(stats.AttackPower, 140)
 	cat.AddStatDependency(stats.Agility, stats.AttackPower, 1.0+1)
 
-	// TODO: Make AP depend on weapon DPS instead of FAP
-	// cat.AddStatDependency(stats.StatDependency{
-	// 	SourceStat:   stats.FeralAttackPower,
-	// 	ModifiedStat: stats.AttackPower,
-	// 	Modifier: func(feralAttackPower float64, attackPower float64) float64 {
-	// 		return attackPower + feralAttackPower*1
-	// 	},
-	// })
+	dps := (((cat.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponDamageMax - cat.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponDamageMin) / 2.0) + cat.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponDamageMin) / cat.Equip[proto.ItemSlot_ItemSlotMainHand].SwingSpeed
+	fap := math.Floor((dps - 54.8) * 14)
+	if fap > 0 {
+		cat.AddStat(stats.AttackPower, fap)
+	}
 
 	return cat
 }

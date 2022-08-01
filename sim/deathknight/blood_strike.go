@@ -5,44 +5,47 @@ import (
 )
 
 var BloodStrikeActionID = core.ActionID{SpellID: 49930}
-var BloodStrikeMHOutcome = core.OutcomeHit
-var BloodStrikeOHOutcome = core.OutcomeHit
 
-func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *core.Spell {
+func (dk *Deathknight) newBloodStrikeSpell(isMH bool, onhit func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)) *core.Spell {
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 764.0, 0.4, true)
 	if !isMH {
 		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 764.0, 0.4*dk.nervesOfColdSteelBonus(), true)
 	}
 
+	diseaseMulti := dk.diseaseMultiplier(0.125)
+
 	effect := core.SpellEffect{
 		BonusCritRating:  (dk.subversionCritBonus() + dk.annihilationCritBonus()) * core.CritRatingPerCritChance,
-		DamageMultiplier: dk.bloodOfTheNorthCoeff(),
+		DamageMultiplier: dk.bloodOfTheNorthCoeff() * dk.thassariansPlateDamageBonus(),
 		ThreatMultiplier: 1,
 
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				return weaponBaseDamage(sim, hitEffect, spell) *
-					dk.diseaseMultiplierBonus(hitEffect.Target, 0.125) *
-					dk.rageOfRivendareBonus(hitEffect.Target) *
-					dk.tundraStalkerBonus(hitEffect.Target)
+					(1.0 + dk.countActiveDiseases(hitEffect.Target)*diseaseMulti) * dk.RoRTSBonus(hitEffect.Target)
 			},
 			TargetSpellCoefficient: 1,
 		},
-
-		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if isMH {
-				BloodStrikeMHOutcome = spellEffect.Outcome
-			} else {
-				BloodStrikeOHOutcome = spellEffect.Outcome
-			}
-		},
+		OnSpellHitDealt: onhit,
 	}
 
 	dk.threatOfThassarianProcMasks(isMH, &effect, true, true, func(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
 		return outcomeApplier
 	})
+	var cconf core.CastConfig
+	if isMH { // offhand doesnt need GCD
+		cconf = core.CastConfig{
+			DefaultCast: core.Cast{
+				GCD: core.GCDDefault,
+			},
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				cast.GCD = dk.getModifiedGCD()
+			},
+		}
+	}
 
 	return dk.RegisterSpell(core.SpellConfig{
+		Cast:         cconf,
 		ActionID:     BloodStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool:  core.SpellSchoolPhysical,
 		Flags:        core.SpellFlagMeleeMetrics,
@@ -51,53 +54,30 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *core.Spell {
 }
 
 func (dk *Deathknight) registerBloodStrikeSpell() {
-	dk.BloodStrikeMhHit = dk.newBloodStrikeSpell(true)
-	dk.BloodStrikeOhHit = dk.newBloodStrikeSpell(false)
+	dk.BloodStrikeMhHit = dk.newBloodStrikeSpell(true, func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		if dk.Talents.ThreatOfThassarian > 0 && dk.threatOfThassarianWillProc(sim) {
+			dk.BloodStrikeOhHit.Cast(sim, spellEffect.Target)
+		}
+		dk.LastCastOutcome = spellEffect.Outcome
 
-	dk.BloodStrike = dk.RegisterSpell(core.SpellConfig{
-		ActionID:    BloodStrikeActionID.WithTag(3),
-		Flags:       core.SpellFlagNoMetrics | core.SpellFlagNoLogs,
-		SpellSchool: core.SpellSchoolPhysical,
-
-		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				GCD: core.GCDDefault,
-			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.getModifiedGCD()
-			},
-		},
-
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskEmpty,
-			ThreatMultiplier: 1,
-
-			OutcomeApplier: dk.OutcomeFuncAlwaysHit(),
-
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				dk.threatOfThassarianProc(sim, spellEffect, dk.BloodStrikeMhHit, dk.BloodStrikeOhHit)
-
-				dk.LastCastOutcome = BloodStrikeMHOutcome
-
-				if dk.outcomeEitherWeaponHitOrCrit(BloodStrikeMHOutcome, BloodStrikeOHOutcome) {
-					dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_B)
-					if !dk.bloodOfTheNorthProc(sim, spell, dkSpellCost) {
-						if !dk.reapingProc(sim, spell, dkSpellCost) {
-							dk.Spend(sim, spell, dkSpellCost)
-						}
-					}
-
-					if dk.DesolationAura != nil {
-						dk.DesolationAura.Activate(sim)
-					}
-
-					// Gain at the end, to take into account previous effects for callback
-					amountOfRunicPower := 10.0
-					dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
+		if spellEffect.Outcome.Matches(core.OutcomeLanded) {
+			dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_B)
+			if !dk.bloodOfTheNorthProc(sim, spell, dkSpellCost) {
+				if !dk.reapingProc(sim, spell, dkSpellCost) {
+					dk.Spend(sim, spell, dkSpellCost)
 				}
-			},
-		}),
+			}
+
+			if dk.DesolationAura != nil {
+				dk.DesolationAura.Activate(sim)
+			}
+
+			// Gain at the end, to take into account previous effects for callback
+			dk.AddRunicPower(sim, 10.0, spell.RunicPowerMetrics())
+		}
 	})
+	dk.BloodStrikeOhHit = dk.newBloodStrikeSpell(false, nil)
+	dk.BloodStrike = dk.BloodStrikeMhHit
 }
 
 func (dk *Deathknight) CanBloodStrike(sim *core.Simulation) bool {

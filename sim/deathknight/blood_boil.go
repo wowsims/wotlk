@@ -27,11 +27,8 @@ func (dk *Deathknight) registerBloodBoilSpell() {
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					roll := (220.0-180.0)*sim.RandomFloat("Blood Boil") + 180.0
-					return (roll + dk.applyImpurity(hitEffect, spell.Unit)*0.06) *
-						dk.rageOfRivendareBonus(hitEffect.Target) *
-						dk.tundraStalkerBonus(hitEffect.Target)
+					return (roll + dk.getImpurityBonus(hitEffect, spell.Unit)*0.06) * dk.RoRTSBonus(hitEffect.Target)
 				},
-				TargetSpellCoefficient: 1,
 			},
 			OutcomeApplier: dk.OutcomeFuncMagicHitAndCrit(dk.spellCritMultiplierGoGandMoM()),
 
@@ -43,7 +40,7 @@ func (dk *Deathknight) registerBloodBoilSpell() {
 					dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_B)
 					dk.Spend(sim, spell, dkSpellCost)
 
-					amountOfRunicPower := 10.0 + 2.5*float64(dk.Talents.ChillOfTheGrave)
+					amountOfRunicPower := 10.0
 					dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 				}
 			},

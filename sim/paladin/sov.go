@@ -119,14 +119,8 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 			ProcMask:         core.ProcMaskEmpty,
 			DamageMultiplier: baseMultiplier,
 			ThreatMultiplier: 1,
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					adjustedWeaponDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 0, damagePerStack, false)
-					damage := adjustedWeaponDamage(sim, hitEffect, spell) * float64(dot.GetStacks())
-					return damage
-				},
-			},
-			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialCritOnly(paladin.MeleeCritMultiplier()), // can't miss if melee swing landed, but can crit
+			BaseDamage:       core.MultiplyByStacks(core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 0, damagePerStack, false), dot.Aura),
+			OutcomeApplier:   paladin.OutcomeFuncMeleeSpecialCritOnly(paladin.MeleeCritMultiplier()), // can't miss if melee swing landed, but can crit
 		}),
 	})
 
@@ -175,7 +169,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 		},
 	})
 
-	aura := paladin.SealOfRighteousnessAura
+	aura := paladin.SealOfVengeanceAura
 	baseCost := paladin.BaseMana * 0.14
 	paladin.SealOfVengeance = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    auraActionID, // Seal of Vengeance self buff.

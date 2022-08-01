@@ -52,7 +52,7 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 		MainHand:       enh.WeaponFromMainHand(enh.DefaultMeleeCritMultiplier()),
 		OffHand:        enh.WeaponFromOffHand(enh.DefaultMeleeCritMultiplier()),
 		AutoSwingMelee: true,
-		DelayOHSwings:  enhOptions.Options.DelayOffhandSwings,
+		SyncType:       int32(enhOptions.Options.SyncType),
 	})
 
 	if !enh.HasMHWeapon() {
@@ -75,6 +75,11 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FlametongueWeapon ||
 		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FrostbrandWeapon {
 		enh.HasMHWeaponImbue = true
+	}
+
+	enh.SpiritWolves = &shaman.SpiritWolves{
+		SpiritWolf1: enh.NewSpiritWolf(1),
+		SpiritWolf2: enh.NewSpiritWolf(2),
 	}
 
 	return enh

@@ -91,13 +91,17 @@ type Shaman struct {
 	LavaLash    *core.Spell
 	Stormstrike *core.Spell
 
-	LightningShield *core.Spell
+	LightningShield     *core.Spell
+	LightningShieldAura *core.Aura
 
 	Thunderstorm *core.Spell
 
 	EarthShock *core.Spell
 	FlameShock *core.Spell
 	FrostShock *core.Spell
+
+	FeralSpirit  *core.Spell
+	SpiritWolves *SpiritWolves
 
 	GraceOfAirTotem      *core.Spell
 	MagmaTotem           *core.Spell
@@ -143,9 +147,6 @@ func (shaman *Shaman) HasMinorGlyph(glyph proto.ShamanMinorGlyph) bool {
 func (shaman *Shaman) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	if shaman.Totems.Fire == proto.FireTotem_TotemOfWrath {
 		raidBuffs.TotemOfWrath = true
-		if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfTotemOfWrath) {
-			shaman.AddStat(stats.SpellPower, 280*0.3)
-		}
 	}
 
 	switch shaman.Totems.Water {
@@ -178,7 +179,7 @@ func (shaman *Shaman) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 
 	if shaman.Talents.UnleashedRage > 0 {
 		raidBuffs.UnleashedRage = true
-		shaman.AddStat(stats.Expertise, 3*float64(shaman.Talents.UnleashedRage))
+		shaman.AddStat(stats.Expertise, 3*core.ExpertisePerQuarterPercentReduction*float64(shaman.Talents.UnleashedRage))
 	}
 
 	if shaman.Talents.ElementalOath > 0 {
@@ -214,6 +215,8 @@ func (shaman *Shaman) Initialize() {
 	if shaman.Talents.LavaLash {
 		shaman.LavaLash = shaman.newLavaLashSpell()
 	}
+
+	shaman.registerFeralSpirit()
 
 	shaman.registerShocks()
 	shaman.registerGraceOfAirTotemSpell()
@@ -265,12 +268,9 @@ func (shaman *Shaman) Reset(sim *core.Simulation) {
 	shaman.FlameShock.CD.Reset()
 }
 
-func (shaman *Shaman) ElementalCritMultiplier() float64 {
-	critMultiplier := shaman.DefaultSpellCritMultiplier()
-	if shaman.Talents.ElementalFury > 0 {
-		critMultiplier = shaman.SpellCritMultiplier(1, 0.2*float64(shaman.Talents.ElementalFury))
-	}
-	return critMultiplier
+func (shaman *Shaman) ElementalCritMultiplier(secondary float64) float64 {
+	critBonus := (0.2 * float64(shaman.Talents.ElementalFury)) + secondary
+	return shaman.SpellCritMultiplier(1, critBonus)
 }
 
 func init() {

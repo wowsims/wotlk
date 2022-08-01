@@ -25,8 +25,7 @@ var castersWithElemental = &proto.Party{
 				BalanceDruid: &proto.BalanceDruid{
 					Talents: balance.StandardTalents,
 					Rotation: &proto.BalanceDruid_Rotation{
-						PrimarySpell: proto.BalanceDruid_Rotation_Adaptive,
-						FaerieFire:   true,
+						Type: proto.BalanceDruid_Rotation_Adaptive,
 					},
 					Options: &proto.BalanceDruid_Options{
 						InnervateTarget: &proto.RaidTarget{
@@ -146,8 +145,7 @@ var castersWithResto = &proto.Party{
 				BalanceDruid: &proto.BalanceDruid{
 					Talents: balance.StandardTalents,
 					Rotation: &proto.BalanceDruid_Rotation{
-						PrimarySpell: proto.BalanceDruid_Rotation_Adaptive,
-						FaerieFire:   true,
+						Type: proto.BalanceDruid_Rotation_Adaptive,
 					},
 					Options: &proto.BalanceDruid_Options{
 						InnervateTarget: &proto.RaidTarget{
@@ -250,9 +248,9 @@ func BenchmarkSimulate(b *testing.B) {
 										},
 									},
 									Options: &proto.EnhancementShaman_Options{
-										Shield:             proto.ShamanShield_LightningShield,
-										Bloodlust:          true,
-										DelayOffhandSwings: true,
+										Shield:    proto.ShamanShield_LightningShield,
+										Bloodlust: true,
+										SyncType:  proto.ShamanSyncType_SyncMainhandOffhandSwings,
 									},
 								},
 							},

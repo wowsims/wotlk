@@ -452,7 +452,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 							</div>
 						</div>
 						<div class="consumes-row">
-							<span>Trade</span>
+							<span>Eng</span>
 							<div class="consumes-row-inputs consumes-trade">
 							</div>
 						</div>
@@ -521,59 +521,60 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
             this.individualConfig.playerIconInputs.map(iconInput => makeIconInput(playerIconsSection, iconInput)),
             '', true);
 
-        const buffOptions = this.splitRelevantOptions([
-            { item: IconInputs.AllStatsBuff, stats: [] },
-            { item: IconInputs.AllStatsPercentBuff, stats: [] },
-            { item: IconInputs.HealthBuff, stats: [Stat.StatHealth] },
-            { item: IconInputs.ArmorBuff, stats: [Stat.StatArmor] },
-            { item: IconInputs.StaminaBuff, stats: [Stat.StatStamina] },
-            { item: IconInputs.StrengthAndAgilityBuff, stats: [Stat.StatStrength, Stat.StatAgility] },
-            { item: IconInputs.IntellectBuff, stats: [Stat.StatIntellect] },
-            { item: IconInputs.SpiritBuff, stats: [Stat.StatSpirit] },
-            { item: IconInputs.AttackPowerBuff, stats: [Stat.StatAttackPower] },
-            { item: IconInputs.AttackPowerPercentBuff, stats: [Stat.StatAttackPower] },
-            { item: IconInputs.MeleeCritBuff, stats: [Stat.StatMeleeCrit] },
-            { item: IconInputs.MeleeHasteBuff, stats: [Stat.StatMeleeHaste] },
-            { item: IconInputs.SpellPowerBuff, stats: [Stat.StatSpellPower] },
-            { item: IconInputs.SpellCritBuff, stats: [Stat.StatSpellCrit] },
-            { item: IconInputs.SpellHasteBuff, stats: [Stat.StatSpellHaste] },
-            { item: IconInputs.HastePercentBuff, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
-            { item: IconInputs.DamagePercentBuff, stats: [Stat.StatAttackPower, Stat.StatSpellPower] },
-            { item: IconInputs.DamageReductionPercentBuff, stats: [Stat.StatArmor] },
-            { item: IconInputs.MP5Buff, stats: [Stat.StatMP5] },
-            { item: IconInputs.ReplenishmentBuff, stats: [Stat.StatMP5] },
-        ]);
-        const buffsSection = this.rootElem.getElementsByClassName('buffs-section')[0] as HTMLElement;
-        configureIconSection(
-            buffsSection,
-            buffOptions.map(multiIconInput => new MultiIconPicker(buffsSection, this.player, multiIconInput, this)),
-            Tooltips.OTHER_BUFFS_SECTION);
+		const buffOptions = this.splitRelevantOptions([
+			{ item: IconInputs.AllStatsBuff, stats: [] },
+			{ item: IconInputs.AllStatsPercentBuff, stats: [] },
+			{ item: IconInputs.HealthBuff, stats: [Stat.StatHealth] },
+			{ item: IconInputs.ArmorBuff, stats: [Stat.StatArmor] },
+			{ item: IconInputs.StaminaBuff, stats: [Stat.StatStamina] },
+			{ item: IconInputs.StrengthAndAgilityBuff, stats: [Stat.StatStrength, Stat.StatAgility] },
+			{ item: IconInputs.IntellectBuff, stats: [Stat.StatIntellect] },
+			{ item: IconInputs.SpiritBuff, stats: [Stat.StatSpirit] },
+			{ item: IconInputs.AttackPowerBuff, stats: [Stat.StatAttackPower] },
+			{ item: IconInputs.AttackPowerPercentBuff, stats: [Stat.StatAttackPower] },
+			{ item: IconInputs.MeleeCritBuff, stats: [Stat.StatMeleeCrit] },
+			{ item: IconInputs.MeleeHasteBuff, stats: [Stat.StatMeleeHaste] },
+			{ item: IconInputs.SpellPowerBuff, stats: [Stat.StatSpellPower] },
+			{ item: IconInputs.SpellCritBuff, stats: [Stat.StatSpellCrit] },
+			{ item: IconInputs.HastePercentBuff, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
+			{ item: IconInputs.DamagePercentBuff, stats: [Stat.StatAttackPower, Stat.StatSpellPower] },
+			{ item: IconInputs.DamageReductionPercentBuff, stats: [Stat.StatArmor] },
+			{ item: IconInputs.MP5Buff, stats: [Stat.StatMP5] },
+			{ item: IconInputs.ReplenishmentBuff, stats: [Stat.StatMP5] },
+		]);
+		const buffsSection = this.rootElem.getElementsByClassName('buffs-section')[0] as HTMLElement;
+		configureIconSection(
+			buffsSection,
+			buffOptions.map(multiIconInput => new MultiIconPicker(buffsSection, this.player, multiIconInput, this)),
+			Tooltips.OTHER_BUFFS_SECTION);
 
-        const otherBuffOptions = this.splitRelevantOptions([
-            { item: IconInputs.Bloodlust, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
-        ] as Array<StatOption<IconInputConfig<Player<any>, any>>>);
-        otherBuffOptions.forEach(iconInput => makeIconInput(buffsSection, iconInput));
+		const otherBuffOptions = this.splitRelevantOptions([
+			{ item: IconInputs.Bloodlust, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
+			{ item: IconInputs.SpellHasteBuff, stats: [Stat.StatSpellHaste] },
+		] as Array<StatOption<IconInputConfig<Player<any>, any>>>);
+		otherBuffOptions.forEach(iconInput => makeIconInput(buffsSection, iconInput));
 
-        const miscBuffOptions = this.splitRelevantOptions([
-            { item: IconInputs.HeroicPresence, stats: [Stat.StatMeleeHit, Stat.StatSpellHit] },
-            { item: IconInputs.BraidedEterniumChain, stats: [Stat.StatMeleeCrit] },
-            { item: IconInputs.ChainOfTheTwilightOwl, stats: [Stat.StatSpellCrit] },
-            { item: IconInputs.EyeOfTheNight, stats: [Stat.StatSpellPower] },
-            { item: IconInputs.Thorns, stats: [Stat.StatArmor] },
-            { item: IconInputs.RetributionAura, stats: [Stat.StatArmor] },
-            { item: IconInputs.ShadowProtection, stats: [Stat.StatStamina] },
-            { item: IconInputs.ManaTideTotem, stats: [Stat.StatMP5] },
-            { item: IconInputs.Innervate, stats: [Stat.StatMP5] },
-            { item: IconInputs.PowerInfusion, stats: [Stat.StatMP5, Stat.StatSpellPower] },
-        ] as Array<StatOption<IconPickerConfig<Player<any>, any>>>);
-        if (miscBuffOptions.length > 0) {
-            new MultiIconPicker(buffsSection, this.player, {
-                inputs: miscBuffOptions,
-                numColumns: 3,
-                emptyColor: 'grey',
-                label: 'Misc',
-            }, this);
-        }
+		const miscBuffOptions = this.splitRelevantOptions([
+			{ item: IconInputs.HeroicPresence, stats: [Stat.StatMeleeHit, Stat.StatSpellHit] },
+			{ item: IconInputs.BraidedEterniumChain, stats: [Stat.StatMeleeCrit] },
+			{ item: IconInputs.ChainOfTheTwilightOwl, stats: [Stat.StatSpellCrit] },
+			{ item: IconInputs.EyeOfTheNight, stats: [Stat.StatSpellPower] },
+			{ item: IconInputs.Thorns, stats: [Stat.StatArmor] },
+			{ item: IconInputs.RetributionAura, stats: [Stat.StatArmor] },
+			{ item: IconInputs.ShadowProtection, stats: [Stat.StatStamina] },
+			{ item: IconInputs.ManaTideTotem, stats: [Stat.StatMP5] },
+			{ item: IconInputs.Innervate, stats: [Stat.StatMP5] },
+			{ item: IconInputs.PowerInfusion, stats: [Stat.StatMP5, Stat.StatSpellPower] },
+			{ item: IconInputs.TricksOfTheTrade, stats: [Stat.StatAttackPower, Stat.StatSpellPower] },
+		] as Array<StatOption<IconPickerConfig<Player<any>, any>>>);
+		if (miscBuffOptions.length > 0) {
+			new MultiIconPicker(buffsSection, this.player, {
+				inputs: miscBuffOptions,
+				numColumns: 3,
+				emptyColor: 'grey',
+				label: 'Misc',
+			}, this);
+		}
 
         const debuffOptions = this.splitRelevantOptions([
             { item: IconInputs.MajorArmorDebuff, stats: [Stat.StatArmorPenetration] },
@@ -679,44 +680,37 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
             new IconEnumPicker(elem, this.player, IconInputs.makeGuardianElixirsInput(guardianElixirOptions));
         }
 
-        const foodOptions = this.splitRelevantOptions([
-            { item: Food.FoodFishFeast, stats: [Stat.StatStamina, Stat.StatAttackPower, Stat.StatSpellPower] },
-            { item: Food.FoodGreatFeast, stats: [Stat.StatStamina, Stat.StatAttackPower, Stat.StatSpellPower] },
-            { item: Food.FoodBlackenedDragonfin, stats: [Stat.StatAgility] },
-            { item: Food.FoodDragonfinFilet, stats: [Stat.StatStrength] },
-            { item: Food.FoodCuttlesteak, stats: [Stat.StatSpirit] },
-            { item: Food.FoodMegaMammothMeal, stats: [Stat.StatAttackPower] },
-            { item: Food.FoodHeartyRhino, stats: [Stat.StatArmorPenetration] },
-            { item: Food.FoodRhinoliciousWormsteak, stats: [Stat.StatExpertise] },
-            { item: Food.FoodFirecrackerSalmon, stats: [Stat.StatSpellPower] },
-            { item: Food.FoodSnapperExtreme, stats: [Stat.StatMeleeHit, Stat.StatSpellHit] },
-            { item: Food.FoodSpicedWormBurger, stats: [Stat.StatMeleeCrit, Stat.StatSpellCrit] },
-            { item: Food.FoodImperialMantaSteak, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
-            { item: Food.FoodMightyRhinoDogs, stats: [Stat.StatMP5] },
-        ]);
-        if (foodOptions.length) {
-            const elem = this.rootElem.getElementsByClassName('consumes-food')[0] as HTMLElement;
-            new IconEnumPicker(elem, this.player, IconInputs.makeFoodInput(foodOptions));
-        }
+		const tradeConsumesElem = this.rootElem.getElementsByClassName('consumes-trade')[0] as HTMLElement;
+		//tradeConsumesElem.parentElement!.style.display = 'none';
+		makeIconInput(tradeConsumesElem, IconInputs.ThermalSapper);
+		makeIconInput(tradeConsumesElem, IconInputs.ExplosiveDecoy);
+		makeIconInput(tradeConsumesElem, IconInputs.FillerExplosiveInput);
 
-        const tradeConsumesElem = this.rootElem.getElementsByClassName('consumes-trade')[0] as HTMLElement;
-        //tradeConsumesElem.parentElement!.style.display = 'none';
-        makeIconInput(tradeConsumesElem, IconInputs.SuperSapper);
-        makeIconInput(tradeConsumesElem, IconInputs.GoblinSapper);
-        makeIconInput(tradeConsumesElem, IconInputs.FillerExplosiveInput);
+		const updateProfession = () => {
+			if (this.player.hasProfession(Profession.Engineering)) {
+				tradeConsumesElem.parentElement!.style.removeProperty('display');
+			} else {
+				tradeConsumesElem.parentElement!.style.display = 'none';
+			}
+		};
+		this.player.professionChangeEmitter.on(updateProfession);
+		updateProfession();
 
-        if (this.individualConfig.petConsumeInputs?.length) {
-            const petConsumesElem = this.rootElem.getElementsByClassName('consumes-pet')[0] as HTMLElement;
-            this.individualConfig.petConsumeInputs.map(iconInput => makeIconInput(petConsumesElem, iconInput));
-        } else {
-            const petRowElem = this.rootElem.getElementsByClassName('consumes-row-pet')[0] as HTMLElement;
-            petRowElem.style.display = 'none';
-        }
+		if (this.individualConfig.petConsumeInputs?.length) {
+			const petConsumesElem = this.rootElem.getElementsByClassName('consumes-pet')[0] as HTMLElement;
+			this.individualConfig.petConsumeInputs.map(iconInput => makeIconInput(petConsumesElem, iconInput));
+		} else {
+			const petRowElem = this.rootElem.getElementsByClassName('consumes-row-pet')[0] as HTMLElement;
+			petRowElem.style.display = 'none';
+		}
 
-        //if (this.individualConfig.consumeOptions?.other?.length) {
-        //	const containerElem = this.rootElem.getElementsByClassName('consumes-other')[0] as HTMLElement;
-        //	this.individualConfig.consumeOptions.other.map(iconInput => makeIconInput(containerElem, iconInput));
-        //}
+		const configureInputSection = (sectionElem: HTMLElement, sectionConfig: InputSection) => {
+			if (sectionConfig.tooltip) {
+				tippy(sectionElem, {
+					'content': sectionConfig.tooltip,
+					'allowHTML': true,
+				});
+			}
 
         const configureInputSection = (sectionElem: HTMLElement, sectionConfig: InputSection) => {
             if (sectionConfig.tooltip) {
@@ -939,6 +933,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 					<div class="talents-picker">
 					</div>
 					<div class="glyphs-picker">
+					<span>Glyphs</span>
 					</div>
 				</div>
 				<div class="saved-talents-manager">

@@ -19,16 +19,8 @@ func TestBalance(t *testing.T) {
 		Race: proto.Race_RaceTauren,
 
 		GearSet: core.GearSetCombo{Label: "P1", GearSet: P1Gear},
-		OtherGearSets: []core.GearSetCombo{
-			core.GearSetCombo{Label: "P2", GearSet: P2Gear},
-		},
 
-		SpecOptions: core.SpecOptionsCombo{Label: "Starfire", SpecOptions: PlayerOptionsStarfire},
-		OtherSpecOptions: []core.SpecOptionsCombo{
-			core.SpecOptionsCombo{Label: "Wrath", SpecOptions: PlayerOptionsWrath},
-			core.SpecOptionsCombo{Label: "Adaptive", SpecOptions: PlayerOptionsAdaptive},
-			core.SpecOptionsCombo{Label: "AOE", SpecOptions: PlayerOptionsAOE},
-		},
+		SpecOptions: core.SpecOptionsCombo{Label: "Starfire", SpecOptions: PlayerOptionsAdaptive},
 
 		RaidBuffs:   FullRaidBuffs,
 		PartyBuffs:  FullPartyBuffs,

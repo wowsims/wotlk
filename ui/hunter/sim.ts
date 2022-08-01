@@ -78,6 +78,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				Stat.StatMeleeCrit,
 				Stat.StatMeleeHaste,
 				Stat.StatArmorPenetration,
+				Stat.StatMP5,
 			],
 			// Reference stat against which to calculate EP.
 			epReferenceStat: Stat.StatRangedAttackPower,
@@ -94,6 +95,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				Stat.StatMeleeCrit,
 				Stat.StatMeleeHaste,
 				Stat.StatArmorPenetration,
+				Stat.StatMP5,
 			],
 			modifyDisplayStats: (player: Player<Spec.SpecHunter>) => {
 				let stats = new Stats();
@@ -130,6 +132,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					arcaneBrilliance: true,
+					powerWordFortitude: TristateEffect.TristateEffectImproved,
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
 					bloodlust: true,
 					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
@@ -146,6 +149,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 					blessingOfKings: true,
 					blessingOfWisdom: 2,
 					blessingOfMight: 2,
+					vampiricTouch: true,
 				}),
 				debuffs: Debuffs.create({
 					sunderArmor: true,
@@ -169,6 +173,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 			],
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
+				IconInputs.StaminaBuff,
 				IconInputs.SpellDamageDebuff,
 			],
 			excludeBuffDebuffInputs: [

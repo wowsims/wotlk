@@ -78,21 +78,22 @@ export function makePhaseSelector(parent: HTMLElement, sim: Sim): EnumPicker<Sim
 }
 
 export const PrepopPotion = {
-    type: 'enum' as const,
-    label: 'Prepop Potion',
-    labelTooltip: 'If set, this potion will be used 1s before combat starts.',
-    values: [
-        { name: 'None', value: Potions.UnknownPotion },
-        { name: 'Speed', value: Potions.PotionOfSpeed },
-        { name: 'Wild Magic', value: Potions.PotionOfWildMagic },
-    ],
-    changedEvent: (player: Player<any>) => player.consumesChangeEmitter,
-    getValue: (player: Player<any>) => player.getConsumes().prepopPotion,
-    setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
-        const newConsumes = player.getConsumes();
-        newConsumes.prepopPotion = newValue;
-        player.setConsumes(eventID, newConsumes);
-    },
+	type: 'enum' as const,
+	label: 'Prepop Potion',
+	labelTooltip: 'If set, this potion will be used 1s before combat starts.',
+	values: [
+		{ name: 'None', value: Potions.UnknownPotion },
+		{ name: 'Speed', value: Potions.PotionOfSpeed },
+		{ name: 'Wild Magic', value: Potions.PotionOfWildMagic },
+		{ name: 'Indestructible Potion', value: Potions.IndestructiblePotion },
+	],
+	changedEvent: (player: Player<any>) => player.consumesChangeEmitter,
+	getValue: (player: Player<any>) => player.getConsumes().prepopPotion,
+	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
+		const newConsumes = player.getConsumes();
+		newConsumes.prepopPotion = newValue;
+		player.setConsumes(eventID, newConsumes);
+	},
 };
 
 export const StartingConjured = {

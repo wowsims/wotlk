@@ -71,6 +71,7 @@ type Paladin struct {
 
 	HolyShieldAura *core.Aura
 	// RighteousFuryAura       *core.Aura
+	DivinePleaAura          *core.Aura
 	JudgementOfWisdomAura   *core.Aura
 	JudgementOfLightAura    *core.Aura
 	SealOfVengeanceAura     *core.Aura
@@ -79,6 +80,11 @@ type Paladin struct {
 
 	// SealOfWisdomAura        *core.Aura
 	// SealOfLightAura         *core.Aura
+
+	RighteousVengeanceSpell  *core.Spell
+	RighteousVengeanceDots   []*core.Dot
+	RighteousVengeancePools  []float64
+	RighteousVengeanceDamage []float64
 
 	ArtOfWarInstantCast *core.Aura
 
@@ -150,6 +156,23 @@ func (paladin *Paladin) Initialize() {
 
 	paladin.registerSpiritualAttunement()
 	paladin.registerDivinePleaSpell()
+	paladin.registerRighteousVengeanceSpell()
+
+	if paladin.Talents.RighteousVengeance > 0 {
+		targets := paladin.Env.GetNumTargets()
+		paladin.RighteousVengeanceDots = []*core.Dot{}
+		for i := int32(0); i < targets; i++ {
+			paladin.RighteousVengeanceDots = append(paladin.RighteousVengeanceDots, paladin.makeRighteousVengeanceDot(paladin.Env.GetTargetUnit(i)))
+		}
+		paladin.RighteousVengeancePools = []float64{}
+		for i := int32(0); i < targets; i++ {
+			paladin.RighteousVengeancePools = append(paladin.RighteousVengeancePools, 0.0)
+		}
+		paladin.RighteousVengeanceDamage = []float64{}
+		for i := int32(0); i < targets; i++ {
+			paladin.RighteousVengeanceDamage = append(paladin.RighteousVengeanceDamage, 0.0)
+		}
+	}
 }
 
 func (paladin *Paladin) Reset(sim *core.Simulation) {
@@ -171,65 +194,74 @@ func NewPaladin(character core.Character, talents proto.PaladinTalents) *Paladin
 
 	paladin.EnableManaBar()
 
-	// Add paladin stat dependencies
-	paladin.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
-	paladin.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/25))
-	paladin.AddStatDependency(stats.Agility, stats.Dodge, 1.0+(core.DodgeRatingPerDodgeChance/25))
+	// Paladins get 3 times their level in base AP
+	// then 2 AP per STR, then lose the first 20 AP
+	paladin.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2.0)
+	paladin.AddStat(stats.AttackPower, -20)
+
+	// Paladins get 1% crit per 52.08 agil
+	paladin.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+((1.0/52.08)*core.CritRatingPerCritChance))
+
+	// Paladins get 1% dodge per 52.08 agil
+	paladin.AddStatDependency(stats.Agility, stats.Dodge, 1.0+((1.0/52.08)*core.DodgeRatingPerDodgeChance))
+
+	// Paladins get more melee haste from haste than other classes, 25.22/1%
+	paladin.PseudoStats.MeleeHasteRatingPerHastePercent = 25.22
 
 	return paladin
 }
 
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassPaladin}] = stats.Stats{
-		stats.Health:      8164,
+		stats.Health:      6754,
 		stats.Stamina:     141,
 		stats.Intellect:   102,
-		stats.Mana:        5644,
+		stats.Mana:        4394,
 		stats.Spirit:      104,
 		stats.Strength:    148,
-		stats.AttackPower: 516,
+		stats.AttackPower: 240,
 		stats.Agility:     92,
-		stats.MeleeCrit:   5.03 * core.CritRatingPerCritChance,
-		stats.SpellCrit:   3.95 * core.CritRatingPerCritChance,
-		stats.Dodge:       5.03 * core.DodgeRatingPerDodgeChance,
+		stats.MeleeCrit:   3.27 * core.CritRatingPerCritChance,
+		stats.SpellCrit:   3.27 * core.CritRatingPerCritChance,
+		stats.Dodge:       3.27 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassPaladin}] = stats.Stats{
-		stats.Health:      8174,
+		stats.Health:      6754,
 		stats.Stamina:     142,
 		stats.Intellect:   113,
-		stats.Mana:        5809,
+		stats.Mana:        4394,
 		stats.Spirit:      107,
 		stats.Strength:    152,
-		stats.AttackPower: 524,
+		stats.AttackPower: 240,
 		stats.Agility:     87,
-		stats.MeleeCrit:   4.92 * core.CritRatingPerCritChance,
-		stats.SpellCrit:   4.01 * core.CritRatingPerCritChance,
-		stats.Dodge:       4.95 * core.DodgeRatingPerDodgeChance,
+		stats.MeleeCrit:   3.27 * core.CritRatingPerCritChance,
+		stats.SpellCrit:   3.27 * core.CritRatingPerCritChance,
+		stats.Dodge:       3.27 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceHuman, Class: proto.Class_ClassPaladin}] = stats.Stats{
-		stats.Health:      8354,
+		stats.Health:      6754,
 		stats.Stamina:     160,
 		stats.Intellect:   98,
-		stats.Mana:        5584,
+		stats.Mana:        4394,
 		stats.Spirit:      113,
 		stats.Strength:    173,
-		stats.AttackPower: 566,
+		stats.AttackPower: 240,
 		stats.Agility:     90,
-		stats.MeleeCrit:   5 * core.CritRatingPerCritChance,
-		stats.SpellCrit:   3.92 * core.CritRatingPerCritChance,
-		stats.Dodge:       5 * core.DodgeRatingPerDodgeChance,
+		stats.MeleeCrit:   3.27 * core.CritRatingPerCritChance,
+		stats.SpellCrit:   3.27 * core.CritRatingPerCritChance,
+		stats.Dodge:       3.27 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDwarf, Class: proto.Class_ClassPaladin}] = stats.Stats{
-		stats.Health:      8214,
+		stats.Health:      6754,
 		stats.Stamina:     146,
 		stats.Intellect:   97,
-		stats.Mana:        5569,
+		stats.Mana:        4394,
 		stats.Spirit:      104,
 		stats.Strength:    175,
-		stats.AttackPower: 570,
+		stats.AttackPower: 240,
 		stats.Agility:     86,
-		stats.MeleeCrit:   4.92 * core.CritRatingPerCritChance,
-		stats.SpellCrit:   3.92 * core.CritRatingPerCritChance,
-		stats.Dodge:       4.93 * core.DodgeRatingPerDodgeChance,
+		stats.MeleeCrit:   3.27 * core.CritRatingPerCritChance,
+		stats.SpellCrit:   3.27 * core.CritRatingPerCritChance,
+		stats.Dodge:       3.27 * core.DodgeRatingPerDodgeChance,
 	}
 }

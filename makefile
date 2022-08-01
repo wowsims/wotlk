@@ -127,6 +127,11 @@ binary_dist: $(OUT_DIR)
 	cp -r $(OUT_DIR) binary_dist/
 	rm binary_dist/wotlk/lib.wasm
 	rm -rf binary_dist/wotlk/assets/item_data
+	mkdir -p binary_dist/wotlk/assets/item_data
+	cp $(OUT_DIR)/assets/item_data/all_items_db.json ./binary_dist/wotlk/assets/item_data/all_items_db.json
+	rm -rf binary_dist/wotlk/assets/spell_data
+	mkdir -p binary_dist/wotlk/assets/spell_data
+	cp $(OUT_DIR)/assets/spell_data/all_spells_db.json ./binary_dist/wotlk/assets/spell_data/all_spells_db.json
 
 # Builds the web server with the compiled client.
 .PHONY: wowsimwotlk

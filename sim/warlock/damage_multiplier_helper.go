@@ -7,26 +7,26 @@ import (
 
 func (warlock *Warlock) staticAdditiveDamageMultiplier(actionID core.ActionID, spellSchool core.SpellSchool, IsPeriodic bool) float64 {
 	// actionID spellbook
-	actionID_Incinerate := core.ActionID{SpellID: 47838}
 	actionID_ShadowBolt := core.ActionID{SpellID: 47809}
+	actionID_Corruption := core.ActionID{SpellID: 47813}
+	actionID_Seed := core.ActionID{SpellID: 47836}
 	actionID_UnstableAffliction := core.ActionID{SpellID: 47843}
+	actionID_Incinerate := core.ActionID{SpellID: 47838}
 	actionID_Immolate := core.ActionID{SpellID: 47811}
 	actionID_Conflagrate := core.ActionID{SpellID: 17962}
 	actionID_CurseOfAgony := core.ActionID{SpellID: 47864}
-	actionID_Corruption := core.ActionID{SpellID: 47813}
-	actionID_Seed := core.ActionID{SpellID: 47836}
+	actionID_CurseOfDoom := core.ActionID{SpellID: 47867}
 	// actionID_SoulFire := core.ActionID{SpellID: 47825}
 	// actionID_ChaosBolt := core.ActionID{SpellID: 59172}
-	// actionID_CurseOfDoom := core.ActionID{SpellID: 47867}
 	// actionID_Haunt := core.ActionID{SpellID: 59164}
 	// actionID_DrainSoul := core.ActionID{SpellID: 47855}
 
 	// Aura bonuses are treated separately as they function like normal multipliers
-	additiveDamageMultiplier:= 1.0
+	additiveDamageMultiplier := 1.
 
 	// Additive Multipliers
 	// Weapon Imbues
-	if (IsPeriodic && warlock.Options.WeaponImbue == proto.Warlock_Options_GrandSpellstone) ||
+	if (IsPeriodic && warlock.Options.WeaponImbue == proto.Warlock_Options_GrandSpellstone && !(actionID == actionID_CurseOfAgony) && !(actionID == actionID_CurseOfDoom)) ||
 		(!IsPeriodic && warlock.Options.WeaponImbue == proto.Warlock_Options_GrandFirestone) {
 		additiveDamageMultiplier += 0.01
 	}
@@ -35,11 +35,11 @@ func (warlock *Warlock) staticAdditiveDamageMultiplier(actionID core.ActionID, s
 	if spellSchool == core.SpellSchoolShadow {
 		additiveDamageMultiplier += 0.03 * float64(warlock.Talents.ShadowMastery)
 	} else if spellSchool == core.SpellSchoolFire {
-		additiveDamageMultiplier += 0.03*float64(warlock.Talents.Emberstorm)
+		additiveDamageMultiplier += 0.03 * float64(warlock.Talents.Emberstorm)
 	}
 
 	if actionID == actionID_CurseOfAgony || actionID == actionID_Corruption || actionID == actionID_Seed {
-		additiveDamageMultiplier += 0.01*float64(warlock.Talents.Contagion)
+		additiveDamageMultiplier += 0.01 * float64(warlock.Talents.Contagion)
 	}
 
 	if warlock.Talents.SiphonLife && (actionID == actionID_UnstableAffliction || actionID == actionID_Corruption || (actionID == actionID_Seed && IsPeriodic)) {
@@ -47,7 +47,7 @@ func (warlock *Warlock) staticAdditiveDamageMultiplier(actionID core.ActionID, s
 	}
 
 	if actionID == actionID_ShadowBolt {
-		additiveDamageMultiplier += 0.02*float64(warlock.Talents.ImprovedShadowBolt)
+		additiveDamageMultiplier += 0.02 * float64(warlock.Talents.ImprovedShadowBolt)
 	}
 
 	if actionID == actionID_Incinerate && warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfIncinerate) {
@@ -55,11 +55,11 @@ func (warlock *Warlock) staticAdditiveDamageMultiplier(actionID core.ActionID, s
 	}
 
 	if actionID == actionID_CurseOfAgony {
-		additiveDamageMultiplier += 0.05*float64(warlock.Talents.ImprovedCurseOfAgony)
+		additiveDamageMultiplier += 0.05 * float64(warlock.Talents.ImprovedCurseOfAgony)
 	}
 
 	if actionID == actionID_Corruption {
-		additiveDamageMultiplier += 0.02*float64(warlock.Talents.ImprovedCorruption)
+		additiveDamageMultiplier += 0.02 * float64(warlock.Talents.ImprovedCorruption)
 	}
 
 	if actionID == actionID_Immolate || actionID == actionID_Conflagrate {
@@ -67,7 +67,7 @@ func (warlock *Warlock) staticAdditiveDamageMultiplier(actionID core.ActionID, s
 	}
 
 	if (actionID == actionID_Immolate && IsPeriodic) || actionID == actionID_Conflagrate {
-		additiveDamageMultiplier += 0.03*float64(warlock.Talents.Aftermath)
+		additiveDamageMultiplier += 0.03 * float64(warlock.Talents.Aftermath)
 		if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfImmolate) {
 			additiveDamageMultiplier += 0.1
 		}
@@ -97,4 +97,3 @@ func (warlock *Warlock) staticAdditiveDamageMultiplier(actionID core.ActionID, s
 
 	return additiveDamageMultiplier
 }
-

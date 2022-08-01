@@ -194,12 +194,12 @@ func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier *= threatMultSubversion
-			aura.Unit.PseudoStats.MeleeSpeedMultiplier *= 1.15
+			aura.Unit.MultiplyMeleeSpeed(sim, 1.15)
 			aura.Unit.AddStatDependencyDynamic(sim, stats.Stamina, stats.Stamina, staminaMult)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier /= threatMultSubversion
-			aura.Unit.PseudoStats.MeleeSpeedMultiplier /= 1.15
+			aura.Unit.MultiplyMeleeSpeed(sim, 1/1.15)
 			aura.Unit.AddStatDependencyDynamic(sim, stats.Stamina, stats.Stamina, 1.0/staminaMult)
 		},
 	})

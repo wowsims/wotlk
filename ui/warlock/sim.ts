@@ -36,8 +36,8 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			cssClass: 'warlock-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"Some snapshotting mechanics needs to be fixed (mainly implementing rollover mechanic).",
-				"Some secondary spells need to be implemented.",
+				"Several secondary spells need to be implemented.",
+				"Rotations will be optimized.",
 			],
 
 			// All stats for which EP should be calculated.
@@ -74,14 +74,13 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatIntellect]: 0.2,
-					[Stat.StatSpirit]: 0.4,
+					[Stat.StatSpirit]: 0.42,
 					[Stat.StatSpellPower]: 1,
 					[Stat.StatShadowSpellPower]: 1,
 					[Stat.StatFireSpellPower]: 0,
-					[Stat.StatSpellHit]: 0.75,
-					[Stat.StatSpellCrit]: 0.4,
-					[Stat.StatSpellHaste]: 0.8,
-					[Stat.StatMP5]: 0.00,
+					[Stat.StatSpellHit]: 0.93,
+					[Stat.StatSpellCrit]: 0.52,
+					[Stat.StatSpellHaste]: 0.77,
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,
@@ -119,19 +118,17 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
+				IconInputs.ReplenishmentBuff,
+				IconInputs.MajorArmorDebuff,
+				IconInputs.MinorArmorDebuff,
+				IconInputs.PhysicalDamageDebuff,
+				IconInputs.MeleeHasteBuff,
+				IconInputs.MeleeCritBuff,
+				IconInputs.MP5Buff,
+				IconInputs.AttackPowerPercentBuff,
+				IconInputs.AttackPowerBuff,
+				IconInputs.StaminaBuff,
 			],
-			//buffStats: [
-			//	// For buffs in UI only
-			//	Stat.StatMP5,
-			//	Stat.StatStamina,
-			//	Stat.StatStrength,
-			//	Stat.StatAttackPower,
-			//	Stat.StatAgility,
-			//	Stat.StatMeleeHit,
-			//	Stat.StatMeleeCrit,
-			//	Stat.StatMeleeHaste,
-			//	Stat.StatArmorPenetration,
-			//],
 			excludeBuffDebuffInputs: [
 			],
 			// Inputs to include in the 'Other' section on the settings tab.
@@ -158,7 +155,9 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 					// Presets.Naked,
 					Presets.SWP_BIS,
 					Presets.P1_PreBiS,
+					Presets.P1_PreBiS_14,
 					Presets.P1_BiS,
+					Presets.P1_BiS_14,
 				],
 			},
 		});

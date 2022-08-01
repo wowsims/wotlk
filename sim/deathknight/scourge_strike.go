@@ -7,6 +7,8 @@ import (
 var ScourgeStrikeActionID = core.ActionID{SpellID: 55271}
 
 func (dk *Deathknight) registerScourgeStrikeShadowDamageSpell() *core.Spell {
+	diseaseMulti := dk.diseaseMultiplier(0.12)
+
 	return dk.RegisterSpell(core.SpellConfig{
 		ActionID:    ScourgeStrikeActionID.WithTag(2),
 		SpellSchool: core.SpellSchoolShadow,
@@ -22,7 +24,7 @@ func (dk *Deathknight) registerScourgeStrikeShadowDamageSpell() *core.Spell {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return dk.LastScourgeStrikeDamage * (dk.diseaseMultiplierBonus(hitEffect.Target, 0.12) - 1.0)
+					return dk.LastScourgeStrikeDamage * (diseaseMulti * dk.countActiveDiseases(hitEffect.Target))
 				},
 			},
 		}),
@@ -30,19 +32,12 @@ func (dk *Deathknight) registerScourgeStrikeShadowDamageSpell() *core.Spell {
 }
 
 func (dk *Deathknight) registerScourgeStrikeSpell() {
-	outbreakBonus := 1.0
-	if dk.Talents.Outbreak == 1 {
-		outbreakBonus = 1.07
-	} else if dk.Talents.Outbreak == 2 {
-		outbreakBonus = 1.13
-	} else if dk.Talents.Outbreak == 3 {
-		outbreakBonus = 1.20
-	}
 
 	shadowDamageSpell := dk.registerScourgeStrikeShadowDamageSpell()
-	bonusBaseDamage := dk.sigilOfAwarenessBonus(dk.ScourgeStrike)
-	bonusBaseDamage += dk.sigilOfArthriticBindingBonus()
+	bonusBaseDamage := dk.sigilOfAwarenessBonus(dk.ScourgeStrike) + dk.sigilOfArthriticBindingBonus()
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 800.0+bonusBaseDamage, 0.7, true)
+	outbreakBonus := []float64{1.0, 1.07, 1.13, 1.2}[dk.Talents.Outbreak]
+	rpGain := 15.0 + 2.5*float64(dk.Talents.Dirge) + dk.scourgeborneBattlegearRunicPowerBonus()
 
 	dk.ScourgeStrike = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    ScourgeStrikeActionID.WithTag(1),
@@ -61,14 +56,12 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeMHSpecial,
 			BonusCritRating:  (dk.subversionCritBonus() + dk.viciousStrikesCritChanceBonus() + dk.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,
-			DamageMultiplier: outbreakBonus,
+			DamageMultiplier: outbreakBonus * dk.scourgelordsBattlegearDamageBonus(dk.ScourgeStrike),
 			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return weaponBaseDamage(sim, hitEffect, spell) *
-						dk.rageOfRivendareBonus(hitEffect.Target) *
-						dk.tundraStalkerBonus(hitEffect.Target)
+					return weaponBaseDamage(sim, hitEffect, spell) * dk.RoRTSBonus(hitEffect.Target)
 				},
 				TargetSpellCoefficient: 1,
 			},
@@ -86,8 +79,7 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 					dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_FU)
 					dk.Spend(sim, spell, dkSpellCost)
 
-					amountOfRunicPower := 15.0 + 2.5*float64(dk.Talents.Dirge) + dk.scourgeborneBattlegearRunicPowerBonus()
-					dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
+					dk.AddRunicPower(sim, rpGain, spell.RunicPowerMetrics())
 				}
 			},
 		}),

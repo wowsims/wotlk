@@ -12,7 +12,7 @@ func (warlock *Warlock) registerMetamorphosisSpell() {
 	warlock.MetamorphosisAura = warlock.RegisterAura(core.Aura{
 		Label:    "Metamorphosis Aura",
 		ActionID: core.ActionID{SpellID: 47241},
-		Duration: time.Second * (30 + 6 * core.TernaryDuration(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfMetamorphosis), 1, 0)),
+		Duration: time.Second * (30 + 6*core.TernaryDuration(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfMetamorphosis), 1, 0)),
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.DamageDealtMultiplier *= 1.2
 		},
@@ -26,7 +26,7 @@ func (warlock *Warlock) registerMetamorphosisSpell() {
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    warlock.NewTimer(),
-				Duration: 3 * time.Second * (60.0 - 6.0*time.Duration(warlock.Talents.Nemesis)),
+				Duration: time.Second * time.Duration(3*60.*(1.-0.1*float64(warlock.Talents.Nemesis))),
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {

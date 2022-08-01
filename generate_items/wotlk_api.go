@@ -77,6 +77,7 @@ var wotlkdbHasteRegex = regexp.MustCompile("Increases your haste rating by <!--r
 var wotlkdbSpellPenetrationRegex = regexp.MustCompile("Increases your spell penetration by ([0-9]+)")
 var wotlkdbMp5Regex = regexp.MustCompile("Restores ([0-9]+) mana per 5 sec")
 var wotlkdbAttackPowerRegex = regexp.MustCompile(`Increases attack power by ([0-9]+)\.`)
+var wotlkdbAttackPowerRegex2 = regexp.MustCompile(`Increases attack power by <!--rtg38-->([0-9]+)\.`)
 var wotlkdbRangedAttackPowerRegex = regexp.MustCompile("Increases ranged attack power by ([0-9]+)")
 var wotlkdbArmorPenetrationRegex = regexp.MustCompile("Increases armor penetration rating by <!--rtg44-->([0-9]+)")
 var wotlkdbExpertiseRegex = regexp.MustCompile("Increases expertise rating by <!--rtg37-->([0-9]+)")
@@ -123,7 +124,7 @@ func (item WotlkItemResponse) GetStats() Stats {
 		proto.Stat_StatMeleeHaste:        float64(item.GetIntValue(wotlkdbHasteRegex)),
 		proto.Stat_StatSpellPenetration:  float64(item.GetIntValue(wotlkdbSpellPenetrationRegex)),
 		proto.Stat_StatMP5:               float64(item.GetIntValue(wotlkdbMp5Regex)),
-		proto.Stat_StatAttackPower:       float64(item.GetIntValue(wotlkdbAttackPowerRegex)),
+		proto.Stat_StatAttackPower:       float64(item.GetIntValue(wotlkdbAttackPowerRegex) + item.GetIntValue(wotlkdbAttackPowerRegex2)),
 		proto.Stat_StatRangedAttackPower: float64(item.GetIntValue(wotlkdbAttackPowerRegex) + item.GetIntValue(wotlkdbRangedAttackPowerRegex)),
 		proto.Stat_StatArmorPenetration:  float64(item.GetIntValue(wotlkdbArmorPenetrationRegex)),
 		proto.Stat_StatExpertise:         float64(item.GetIntValue(wotlkdbExpertiseRegex)),

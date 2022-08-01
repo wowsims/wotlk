@@ -1,14 +1,13 @@
-import { BalanceDruid_Rotation_PrimarySpell as PrimarySpell } from '../core/proto/druid.js';
-import { BalanceDruid_Options as DruidOptions } from '../core/proto/druid.js';
-import { RaidTarget } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { NO_TARGET } from '../core/proto_utils/utils.js';
-import { ActionId } from '../core/proto_utils/action_id.js';
-import { Player } from '../core/player.js';
-import { Sim } from '../core/sim.js';
-import { EventID, TypedEvent } from '../core/typed_event.js';
-import { IndividualSimUI } from '../core/individual_sim_ui.js';
-import { Target } from '../core/target.js';
+import { BalanceDruid_Options as DruidOptions, BalanceDruid_Rotation_RotationType as RotationType } from '/wotlk/core/proto/druid.js';
+import { RaidTarget } from '/wotlk/core/proto/common.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { NO_TARGET } from '/wotlk/core/proto_utils/utils.js';
+import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
+import { Player } from '/wotlk/core/player.js';
+import { Sim } from '/wotlk/core/sim.js';
+import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
+import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
+import { Target } from '/wotlk/core/target.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';
 
@@ -32,44 +31,19 @@ export const SelfInnervate = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.S
 });
 
 export const BalanceDruidRotationConfig = {
-    inputs: [
-        InputHelpers.makeRotationEnumInput<Spec.SpecBalanceDruid, PrimarySpell>({
-            fieldName: 'primarySpell',
-            label: 'Primary Spell',
-            labelTooltip: 'If set to \'Adaptive\', will dynamically adjust rotation based on available mana.',
-            values: [
-                { name: 'Adaptive', value: PrimarySpell.Adaptive },
-                { name: 'Starfire', value: PrimarySpell.Starfire },
-                { name: 'Starfire R6', value: PrimarySpell.Starfire6 },
-                { name: 'Wrath', value: PrimarySpell.Wrath },
-            ],
-        }),
-        InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
-            fieldName: 'moonfire',
-            label: 'Use Moonfire',
-            labelTooltip: 'Use Moonfire as the next cast after the dot expires.',
-            enableWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().primarySpell != PrimarySpell.Adaptive,
-        }),
-        InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
-            fieldName: 'faerieFire',
-            label: 'Use Faerie Fire',
-            labelTooltip: 'Keep Faerie Fire active on the primary target.',
-        }),
-        InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
-            fieldName: 'insectSwarm',
-            label: 'Use Insect Swarm',
-            labelTooltip: 'Keep Insect Swarm active on the primary target.',
-            enableWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getTalents().insectSwarm,
-        }),
-        InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
-            fieldName: 'hurricane',
-            label: 'Use Hurricane',
-            labelTooltip: 'Casts Hurricane on cooldown.',
-        }),
-        InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecBalanceDruid>({
-            fieldName: 'battleRes',
-            label: 'Use Battle Res',
-            labelTooltip: 'Cast Battle Res on an ally sometime during the encounter.',
-        }),
-    ],
+	inputs: [
+		InputHelpers.makeRotationEnumInput<Spec.SpecBalanceDruid, RotationType>({
+			fieldName: 'type',
+			label: 'Type',
+			labelTooltip: 'If set to \'Adaptive\', will dynamically adjust rotation.',
+			values: [
+				{ name: 'Adaptive', value: RotationType.Adaptive },
+			],
+		}),
+		InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecBalanceDruid>({
+			fieldName: 'battleRes',
+			label: 'Use Battle Res',
+			labelTooltip: 'Cast Battle Res on an ally sometime during the encounter.',
+		}),
+	],
 };

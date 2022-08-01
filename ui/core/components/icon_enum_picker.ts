@@ -4,6 +4,8 @@ import { EventID, TypedEvent } from '../typed_event.js';
 import { Component } from './component.js';
 import { Input, InputConfig } from './input.js';
 
+declare var tippy: any;
+
 export interface IconEnumValueConfig<ModObject, T> {
 	// One of these should be set. If actionId is set, shows the icon for that id. If
 	// color is set, shows that color.
@@ -11,6 +13,9 @@ export interface IconEnumValueConfig<ModObject, T> {
 	color?: string,
 
 	value: T,
+
+	// Hover tooltip.
+	tooltip?: string,
 
 	showWhen?: (obj: ModObject) => boolean,
 }
@@ -78,6 +83,13 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 			option.classList.add('dropdown-option', 'icon-enum-picker-option');
 			optionContainer.appendChild(option);
 			this.setImage(option, valueConfig);
+
+			if (valueConfig.tooltip) {
+				tippy(option, {
+					'content': valueConfig.tooltip,
+					'allowHTML': true,
+				});
+			}
 
 			if (valueConfig.showWhen) {
 				config.changedEvent(this.modObject).on(eventID => {

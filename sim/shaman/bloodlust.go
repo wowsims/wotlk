@@ -23,7 +23,7 @@ func (shaman *Shaman) registerBloodlustCD() {
 		blAuras = append(blAuras, core.BloodlustAura(partyMember.GetCharacter(), actionID.Tag))
 	}
 
-	baseCost := 750.0
+	baseCost := shaman.BaseMana * 0.26
 	bloodlustSpell := shaman.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 

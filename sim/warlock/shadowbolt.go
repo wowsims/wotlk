@@ -9,36 +9,10 @@ import (
 )
 
 func (warlock *Warlock) registerShadowBoltSpell() {
-	ISBProcChance := 0.2*float64(warlock.Talents.ImprovedShadowBolt)
-	actionID:= core.ActionID{SpellID: 47809}
+	ISBProcChance := 0.2 * float64(warlock.Talents.ImprovedShadowBolt)
+	actionID := core.ActionID{SpellID: 47809}
 	spellSchool := core.SpellSchoolShadow
-	baseAdditiveMultiplier:= warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
-
-	effect := core.SpellEffect{
-		ProcMask:             core.ProcMaskSpellDamage,
-		BonusSpellCritRating: core.CritRatingPerCritChance * 5 * (core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) +
-			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDeathbringerGarb, 4), 1, 0) + core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 1, 0)),
-		DamageMultiplier:     baseAdditiveMultiplier,
-		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.DestructiveReach),
-		BaseDamage:           core.BaseDamageConfigMagic(694.0, 775.0, 0.857*(1+0.04*float64(warlock.Talents.ShadowAndFlame))),
-		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
-		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() {
-				return
-			}
-			// ISB debuff
-			if warlock.Talents.ImprovedShadowBolt > 0 {
-				if sim.RandomFloat("ISB") < ISBProcChance {
-					if !core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() {
-						core.ShadowMasteryAura(warlock.CurrentTarget).Activate(sim)
-					} else {
-						core.ShadowMasteryAura(warlock.CurrentTarget).Refresh(sim)
-					}
-				}
-			}
-		},
-	}
-
+	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
 	baseCost := 0.17 * warlock.BaseMana
 	costReductionFactor := 1.0
 	if float64(warlock.Talents.Cataclysm) > 0 {
@@ -46,6 +20,30 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 	}
 	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfShadowBolt) {
 		costReductionFactor -= 0.1
+	}
+
+	effect := core.SpellEffect{
+		ProcMask: core.ProcMaskSpellDamage,
+		BonusSpellCritRating: core.CritRatingPerCritChance * 5 * (core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) +
+			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDeathbringerGarb, 4), 1, 0) + core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 1, 0)),
+		DamageMultiplier: baseAdditiveMultiplier,
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
+		BaseDamage:       core.BaseDamageConfigMagic(694.0, 775.0, 0.857*(1+0.04*float64(warlock.Talents.ShadowAndFlame))),
+		OutcomeApplier:   warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
+		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.Landed() {
+				return
+			}
+			// ISB debuff
+			if warlock.Talents.ImprovedShadowBolt > 0 {
+				if warlock.Talents.ImprovedShadowBolt < 5 { // This will return early if we 'miss' the refresh, 5 pts can't 'miss'.
+					if sim.RandomFloat("ISB") > ISBProcChance {
+						return
+					}
+				}
+				core.ShadowMasteryAura(warlock.CurrentTarget).Activate(sim) // calls refresh if already active.
+			}
+		},
 	}
 
 	warlock.ShadowBolt = warlock.RegisterSpell(core.SpellConfig{

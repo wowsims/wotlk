@@ -11,16 +11,17 @@ import {
 	EnhancementShaman_Options as ShamanOptions,
 	ShamanTotems,
 	ShamanShield,
-    ShamanImbue
-} from '../core/proto/shaman.js';
-import { Spec } from '../core/proto/common.js';
-import { WeaponImbue } from '../core/proto/common.js';
-import { ActionId } from '../core/proto_utils/action_id.js';
-import { Player } from '../core/player.js';
-import { Sim } from '../core/sim.js';
-import { IndividualSimUI } from '../core/individual_sim_ui.js';
-import { Target } from '../core/target.js';
-import { EventID, TypedEvent } from '../core/typed_event.js';
+    ShamanImbue,
+    ShamanSyncType
+} from '/wotlk/core/proto/shaman.js';
+import { Spec } from '/wotlk/core/proto/common.js';
+import { WeaponImbue } from '/wotlk/core/proto/common.js';
+import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
+import { Player } from '/wotlk/core/player.js';
+import { Sim } from '/wotlk/core/sim.js';
+import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
+import { Target } from '/wotlk/core/target.js';
+import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';
 
@@ -60,10 +61,15 @@ export const ShamanImbueOH = InputHelpers.makeSpecOptionsEnumIconInput<Spec.Spec
     ],
 });
 
-export const DelayOffhandSwings = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecEnhancementShaman>({
-	fieldName: 'delayOffhandSwings',
-	label: 'Delay Offhand Swings',
-	labelTooltip: 'Uses the startattack macro to delay OH swings, so they always follow within 0.5s of a MH swing.',
+export const SyncTypeInput = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecEnhancementShaman, ShamanSyncType>({
+	fieldName: 'syncType',
+	label: 'Sync/Stagger Setting',
+	labelTooltip: 'Choose your sync or stagger option, Perfect Sync makes your weapons always attack at the same time, which is ideal for mixed imbues. Delayed Offhand is similar but additionally adds a slight delay to the offhand attacks while staying within the 0.5s flurry ICD window, ideal for matched imbues.',
+    values: [
+        { name: 'None', value: ShamanSyncType.NoSync },
+        { name: 'Perfect Sync', value: ShamanSyncType.SyncMainhandOffhandSwings },
+        { name: 'Delayed Offhand', value: ShamanSyncType.DelayOffhandSwings },
+    ],
 });
 
 export const EnhancementShamanRotationConfig = {

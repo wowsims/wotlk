@@ -27,6 +27,7 @@ func (paladin *Paladin) registerHammerOfWrathSpell() {
 	paladin.HammerOfWrath = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48806},
 		SpellSchool: core.SpellSchoolHoly,
+		Flags:       core.SpellFlagMeleeMetrics,
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,

@@ -16,7 +16,7 @@ func (priest *Priest) ApplyTalents() {
 	}
 
 	if priest.Talents.Meditation > 0 {
-		priest.PseudoStats.SpiritRegenRateCasting = float64(priest.Talents.Meditation) * 0.1
+		priest.PseudoStats.SpiritRegenRateCasting = []float64{0.0, 0.17, 0.33, 0.5}[priest.Talents.Meditation]
 	}
 
 	if priest.Talents.SpiritualGuidance > 0 {
@@ -50,6 +50,10 @@ func (priest *Priest) ApplyTalents() {
 
 	if priest.Talents.SpiritOfRedemption {
 		priest.AddStatDependency(stats.Spirit, stats.Spirit, 1.0+0.05)
+	}
+
+	if priest.Talents.TwistedFaith > 0 {
+		priest.AddStatDependency(stats.Spirit, stats.SpellPower, 1.0+0.04*float64(priest.Talents.TwistedFaith))
 	}
 }
 

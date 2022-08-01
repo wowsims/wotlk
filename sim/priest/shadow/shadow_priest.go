@@ -28,6 +28,7 @@ func NewShadowPriest(character core.Character, options proto.Player) *ShadowPrie
 
 	selfBuffs := priest.SelfBuffs{
 		UseShadowfiend: shadowOptions.Options.UseShadowfiend,
+		UseInnerFire:   shadowOptions.Options.Armor == proto.ShadowPriest_Options_InnerFire,
 	}
 
 	basePriest := priest.New(character, selfBuffs, *shadowOptions.Talents)
@@ -35,6 +36,7 @@ func NewShadowPriest(character core.Character, options proto.Player) *ShadowPrie
 	spriest := &ShadowPriest{
 		Priest:   basePriest,
 		rotation: *shadowOptions.Rotation,
+		options:  *shadowOptions.Options,
 	}
 
 	spriest.ApplyShadowOnHitEffects()
@@ -55,6 +57,7 @@ type ShadowPriest struct {
 
 	*priest.Priest
 	rotation proto.ShadowPriest_Rotation
+	options  proto.ShadowPriest_Options
 }
 
 func (spriest *ShadowPriest) GetPriest() *priest.Priest {

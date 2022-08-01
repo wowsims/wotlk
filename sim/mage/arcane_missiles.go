@@ -27,8 +27,7 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 + float64(mage.Talents.EmpoweredArcaneMissiles)*0.02),
-
+				Cost:        baseCost,
 				GCD:         core.GCDDefault,
 				ChannelTime: time.Second * 5,
 			},
@@ -76,7 +75,7 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 			DamageMultiplier: mage.spellDamageMultiplier * core.TernaryFloat64(mage.HasSetBonus(ItemSetTempestRegalia, 4), 1.05, 1),
 			ThreatMultiplier: 1 - 0.2*float64(mage.Talents.ArcaneSubtlety),
 
-			BaseDamage:     core.BaseDamageConfigMagicNoRoll(265, 1/3.5+0.03*float64(mage.Talents.EmpoweredArcaneMissiles)),
+			BaseDamage:     core.BaseDamageConfigMagicNoRoll(265, 1/3.5),
 			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, 0.25*float64(mage.Talents.SpellPower))),
 		})),
 	})

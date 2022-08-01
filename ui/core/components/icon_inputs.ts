@@ -45,6 +45,7 @@ export const AllStatsPercentBuff = InputHelpers.makeMultiIconInput([
 
 export const ArmorBuff = InputHelpers.makeMultiIconInput([
 	makeTristateRaidBuffInput(ActionId.fromSpellId(48942), ActionId.fromSpellId(20140), 'devotionAura'),
+	makeTristateRaidBuffInput(ActionId.fromSpellId(58753), ActionId.fromSpellId(16293), 'stoneskinTotem'),
 	makeBooleanRaidBuffInput(ActionId.fromItemId(43468), 'scrollOfProtection'),
 	// stoneskin?
 ], 'Armor');
@@ -127,22 +128,19 @@ export const ReplenishmentBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanIndividualBuffInput(ActionId.fromSpellId(53292), 'huntingParty'),
 	makeBooleanIndividualBuffInput(ActionId.fromSpellId(54118), 'improvedSoulLeech'),
 	makeBooleanIndividualBuffInput(ActionId.fromSpellId(44561), 'enduringWinter'),
-], 'Repl');
+], 'Repl', 2);
 
 export const SpellCritBuff = InputHelpers.makeMultiIconInput([
 	makeTristateRaidBuffInput(ActionId.fromSpellId(24907), ActionId.fromSpellId(48396), 'moonkinAura'),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(51470), 'elementalOath'),
 ], 'Spell Crit');
 
-export const SpellHasteBuff = InputHelpers.makeMultiIconInput([
-	makeBooleanRaidBuffInput(ActionId.fromSpellId(3738), 'wrathOfAirTotem'),
-], 'Spell Haste');
+export const SpellHasteBuff = withLabel(makeBooleanRaidBuffInput(ActionId.fromSpellId(3738), 'wrathOfAirTotem'), 'Spell Haste');
 
 export const SpellPowerBuff = InputHelpers.makeMultiIconInput([
+	makeMultistateRaidBuffInput(ActionId.fromSpellId(47240), 5000, 'demonicPact', 500),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(57722), 'totemOfWrath'),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(58656), 'flametongueTotem'),
-	// Not a boolean
-	//makeBooleanRaidBuffInput(ActionId.fromSpellId(47240), 'demonicPact'),
 ], 'SP');
 
 export const Bloodlust = withLabel(makeBooleanRaidBuffInput(ActionId.fromSpellId(2825), 'bloodlust'), 'Lust');
@@ -158,6 +156,7 @@ export const Thorns = makeTristateRaidBuffInput(ActionId.fromSpellId(53307), Act
 export const ManaTideTotem = makeMultistatePartyBuffInput(ActionId.fromSpellId(16190), 5, 'manaTideTotems');
 export const Innervate = makeMultistateIndividualBuffInput(ActionId.fromSpellId(29166), 11, 'innervates');
 export const PowerInfusion = makeMultistateIndividualBuffInput(ActionId.fromSpellId(10060), 11, 'powerInfusions');
+export const TricksOfTheTrade = makeMultistateIndividualBuffInput(ActionId.fromSpellId(57933), 20, 'tricksOfTheTrades');
 
 // Debuffs
 
@@ -199,7 +198,7 @@ export const MeleeAttackSpeedDebuff = InputHelpers.makeMultiIconInput([
 ], 'Atk Spd');
 
 export const MeleeHitDebuff = InputHelpers.makeMultiIconInput([
-	makeBooleanDebuffInput(ActionId.fromSpellId(48460), 'insectSwarm'),
+	makeBooleanDebuffInput(ActionId.fromSpellId(65855), 'insectSwarm'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(3043), 'scorpidSting'),
 ], 'Miss');
 
@@ -231,8 +230,8 @@ export const JudgementOfLight = makeBooleanDebuffInput(ActionId.fromSpellId(2027
 export const GiftOfArthas = makeBooleanDebuffInput(ActionId.fromSpellId(11374), 'giftOfArthas');
 
 // Consumes
-export const SuperSapper = makeBooleanConsumeInput(ActionId.fromItemId(23827), 'superSapper');
-export const GoblinSapper = makeBooleanConsumeInput(ActionId.fromItemId(10646), 'goblinSapper');
+export const ThermalSapper = makeBooleanConsumeInput(ActionId.fromItemId(42641), 'thermalSapper');
+export const ExplosiveDecoy = makeBooleanConsumeInput(ActionId.fromItemId(40536), 'explosiveDecoy');
 
 export const SpicedMammothTreats = makeBooleanConsumeInput(ActionId.fromItemId(43005), 'petFood', PetFood.PetFoodSpicedMammothTreats);
 export const PetScrollOfAgilityV = makeBooleanConsumeInput(ActionId.fromItemId(27498), 'petScrollOfAgility', 5);
@@ -315,6 +314,14 @@ function makeQuadstateDebuffInput(id: ActionId, impId: ActionId, impId2: ActionI
 		setValue: (eventID: EventID, raid: Raid, newVal: Debuffs) => raid.setDebuffs(eventID, newVal),
 		changeEmitter: (raid: Raid) => raid.debuffsChangeEmitter,
 	}, id, impId, impId2, fieldName);
+}
+function makeMultistateRaidBuffInput(id: ActionId, numStates: number, fieldName: keyof RaidBuffs, multiplier?: number): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
+	return InputHelpers.makeMultistateIconInput<any, RaidBuffs, Raid>({
+		getModObject: (player: Player<any>) => player.getRaid()!,
+		getValue: (raid: Raid) => raid.getBuffs(),
+		setValue: (eventID: EventID, raid: Raid, newVal: RaidBuffs) => raid.setBuffs(eventID, newVal),
+		changeEmitter: (raid: Raid) => raid.buffsChangeEmitter,
+	}, id, numStates, fieldName, multiplier);
 }
 function makeMultistatePartyBuffInput(id: ActionId, numStates: number, fieldName: keyof PartyBuffs): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
 	return InputHelpers.makeMultistateIconInput<any, PartyBuffs, Party>({
@@ -461,19 +468,10 @@ export const makeFoodInput = makeConsumeInputFactory('food', [
 	{ actionId: ActionId.fromItemId(33052), value: Food.FoodFishermansFeast },
 ] as Array<IconEnumValueConfig<Player<any>, Food>>);
 
-function onSetExplosives(eventID: EventID, player: Player<any>, newValue: Explosive | boolean) {
-	if (newValue) {
-		const playerConsumes = player.getConsumes();
-		player.setConsumes(eventID, playerConsumes);
-	}
-};
-
 export const FillerExplosiveInput = makeConsumeInput('fillerExplosive', [
-	{ actionId: ActionId.fromItemId(23736), value: Explosive.ExplosiveFelIronBomb },
-	{ actionId: ActionId.fromItemId(23737), value: Explosive.ExplosiveAdamantiteGrenade },
-	{ actionId: ActionId.fromItemId(23841), value: Explosive.ExplosiveGnomishFlameTurret },
-	{ actionId: ActionId.fromItemId(13180), value: Explosive.ExplosiveHolyWater },
-] as Array<IconEnumValueConfig<Player<any>, Explosive>>, onSetExplosives);
+	{ actionId: ActionId.fromItemId(41119), value: Explosive.ExplosiveSaroniteBomb },
+	{ actionId: ActionId.fromItemId(40771), value: Explosive.ExplosiveCobaltFragBomb },
+] as Array<IconEnumValueConfig<Player<any>, Explosive>>);
 
 export function makeWeaponImbueInput(isMainHand: boolean, options: Array<WeaponImbue>): InputHelpers.TypedIconEnumPickerConfig<Player<any>, WeaponImbue> {
 	const allOptions = [

@@ -49,6 +49,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 				// TODO: Remove these when debuff categories support us
 				Stat.StatSpellPower,
 				Stat.StatSpellHit,
+				Stat.StatSpellCrit,
 			],
 			// Reference stat against which to calculate EP. I think all classes use either spell power or attack power.
 			epReferenceStat: Stat.StatAttackPower,
@@ -58,12 +59,14 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 				Stat.StatArmor,
 				Stat.StatStrength,
 				Stat.StatAgility,
+				Stat.StatSpellHit,
+				Stat.StatSpellCrit,
 				Stat.StatAttackPower,
-				Stat.StatExpertise,
 				Stat.StatMeleeHit,
 				Stat.StatMeleeCrit,
 				Stat.StatMeleeHaste,
 				Stat.StatArmorPenetration,
+				Stat.StatExpertise,
 			],
 			defaults: {
 				// Default equipped gear.
@@ -99,9 +102,11 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 					sanctifiedRetribution: true,
 					bloodlust: true,
 					devotionAura: TristateEffect.TristateEffectImproved,
+					stoneskinTotem: TristateEffect.TristateEffectImproved,
+					moonkinAura: TristateEffect.TristateEffectRegular,
 				}),
 				partyBuffs: PartyBuffs.create({
-					heroicPresence: true,
+					heroicPresence: false,
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
@@ -109,12 +114,12 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 				}),
 				debuffs: Debuffs.create({
 					bloodFrenzy: true,
-					faerieFire: TristateEffect.TristateEffectRegular,
+					faerieFire: TristateEffect.TristateEffectImproved,
 					sunderArmor: true,
-					misery: true,
 					ebonPlaguebringer: true,
 					mangle: true,
 					heartOfTheCrusader: true,
+					shadowMastery: true,
 				}),
 			},
 
@@ -159,6 +164,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 				gear: [
 					Presets.P1_FROST_PRE_BIS_PRESET,
 					Presets.P1_FROST_BIS_PRESET,
+					Presets.P1_FROST_HITCAP_PRESET,
 					Presets.P1_UNHOLY_DW_BIS_PRESET,
 				],
 			},

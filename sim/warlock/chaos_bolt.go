@@ -4,17 +4,18 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warlock *Warlock) registerChaosBoltSpell() {
-	fireAndBrimstoneBonus:= 0.02*float64(warlock.Talents.FireAndBrimstone)
-	actionID:= core.ActionID{SpellID: 59172}
+	actionID := core.ActionID{SpellID: 59172}
 	spellSchool := core.SpellSchoolFire
-	baseAdditiveMultiplier:= warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
-	spellCoefficient:= 0.7142*(1+0.04*float64(warlock.Talents.ShadowAndFlame))
-	
+	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
+	fireAndBrimstoneBonus := 0.02 * float64(warlock.Talents.FireAndBrimstone)
+	normalMultiplier := baseAdditiveMultiplier + fireAndBrimstoneBonus
+	spellCoefficient := 0.7142 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
+
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
 		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) * 5 * core.CritRatingPerCritChance,
@@ -24,7 +25,9 @@ func (warlock *Warlock) registerChaosBoltSpell() {
 		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
 		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if warlock.ImmolateDot.IsActive() {
-				spellEffect.DamageMultiplier = baseAdditiveMultiplier + fireAndBrimstoneBonus
+				spellEffect.DamageMultiplier = normalMultiplier
+			} else {
+				spellEffect.DamageMultiplier = normalMultiplier - fireAndBrimstoneBonus
 			}
 		},
 	}
@@ -54,7 +57,7 @@ func (warlock *Warlock) registerChaosBoltSpell() {
 			},
 			CD: core.Cooldown{
 				Timer:    warlock.NewTimer(),
-				Duration: time.Second * (12 - 2 * core.TernaryDuration(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfChaosBolt), 1, 0)),
+				Duration: time.Second * (12 - 2*core.TernaryDuration(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfChaosBolt), 1, 0)),
 			},
 		},
 

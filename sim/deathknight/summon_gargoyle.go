@@ -62,24 +62,6 @@ func (dk *Deathknight) registerSummonGargoyleCD() {
 			sim.AddPendingAction(&pa)
 		},
 	})
-
-	dk.AddMajorCooldown(core.MajorCooldown{
-		Spell:    dk.SummonGargoyle,
-		Priority: core.CooldownPriorityDrums - 1, // Always prefer to cast after drums or lust so the gargoyle gets their benefits.
-		Type:     core.CooldownTypeDPS,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			if dk.opener.IsOngoing() {
-				return false
-			}
-			if dk.Gargoyle.IsEnabled() {
-				return false
-			}
-			if character.CurrentRunicPower() < dk.SummonGargoyle.DefaultCast.Cost {
-				return false
-			}
-			return true
-		},
-	})
 }
 
 func (dk *Deathknight) CanSummonGargoyle(sim *core.Simulation) bool {
@@ -111,6 +93,7 @@ func (dk *Deathknight) NewGargoyle() *GargoylePet {
 			gargoyleBaseStats,
 			gargoyleStatInheritance,
 			false,
+			true,
 		),
 		dkOwner: dk,
 	}

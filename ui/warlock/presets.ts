@@ -34,15 +34,17 @@ import {
 	WarlockMinorGlyph as MinorGlyph,
 } from '../core/proto/warlock.js';
 
-import * as Enchants from '../core/constants/enchants.js';
-import * as Gems from '../core/proto_utils/gems.js';
-import * as Tooltips from '../core/constants/tooltips.js';
+import * as Enchants from '/wotlk/core/constants/enchants.js';
+import * as Gems from '/wotlk/core/proto_utils/gems.js';
+import * as Tooltips from '/wotlk/core/constants/tooltips.js';
+import * as WarlockTooltips from './tooltips.js';
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 
 export const AfflictionTalents = {
 	name: 'Affliction',
+  tooltip: WarlockTooltips.AFF_TALENTS_TOOLTIP,
 	data: SavedTalents.create({
 		talentsString: '2350002030023510253510331151--55000005',
 		glyphs: Glyphs.create({
@@ -58,6 +60,7 @@ export const AfflictionTalents = {
 
 export const DemonologyTalents = {
 	name: 'Demonology',
+  tooltip: WarlockTooltips.DEMO_TALENTS_TOOLTIP,
 	data: SavedTalents.create({
 		talentsString: '-203203301035012530135201351-550000052',
 		glyphs: Glyphs.create({
@@ -73,8 +76,9 @@ export const DemonologyTalents = {
 
 export const DestructionTalents = {
 	name: 'Destruction',
+  tooltip: WarlockTooltips.DESTRO_TALENTS_TOOLTIP,
 	data: SavedTalents.create({
-		talentsString: '030-03310030003-05203205220331051035031351',
+		talentsString: '-03310030003-05203205210331051335230351',
 		glyphs: Glyphs.create({
 			major1: MajorGlyph.GlyphOfConflagrate,
 			major2: MajorGlyph.GlyphOfImp,
@@ -109,7 +113,7 @@ export const DestructionRotation = WarlockRotation.create({
 	secondaryDot: SecondaryDot.Immolate,
 	specSpell: SpecSpell.ChaosBolt,
 	curse: Curse.Doom,
-	corruption: true,
+	corruption: false,
 	detonateSeed: true,
 });
 
@@ -171,8 +175,7 @@ export const DefaultDebuffs = Debuffs.create({
 });
 
 export const SWP_BIS = {
-	name: 'Outa SWP',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	name: 'Straight Outa SWP',
 	gear: EquipmentSpec.fromJsonString(`
 {"items": [
         {
@@ -281,8 +284,8 @@ export const SWP_BIS = {
     `),
 };
 export const P1_PreBiS = {
-	name: 'Pre-Raid BiS',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	name: 'Pre-BiS',
+	tooltip: WarlockTooltips.BIS_TOOLTIP,
 	gear: EquipmentSpec.fromJsonString(`
     {"items":
       [
@@ -291,21 +294,21 @@ export const P1_PreBiS = {
           "enchant": 44877,
           "gems": [
             41285,
-            40113
+            39998
           ]
         },
         {
           "id": 42647,
           "gems": [
-            40113
+            39998
           ]
         },
         {
           "id": 34210,
           "enchant": 44874,
           "gems": [
-            40113,
-            40155
+            39998,
+            40051
           ]
         },
         {
@@ -316,8 +319,8 @@ export const P1_PreBiS = {
           "id": 39497,
           "enchant": 44623,
           "gems": [
-            40113,
-            40155
+            39998,
+            40051
           ]
         },
         {
@@ -337,30 +340,30 @@ export const P1_PreBiS = {
         {
           "id": 40696,
           "gems": [
-            40155,
-            0
+            40051,
+            39998
           ]
         },
         {
           "id": 34181,
           "enchant": 41602,
           "gems": [
-            40113,
-            40113,
-            40155
+            39998,
+            39998,
+            40051
           ]
         },
         {
           "id": 44202,
           "enchant": 55016,
           "gems": [
-            40133
+            40026
           ]
         },
         {
           "id": 43253,
           "gems": [
-            40133
+            40026
           ]
         },
         {
@@ -382,18 +385,17 @@ export const P1_PreBiS = {
         {
           "id": 34348,
           "gems": [
-            40113
+            39998
           ]
         }
       ]
     }
   `),
 }
-
-export const P1_BiS = {
-	name: 'P1 BiS',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`
+export const P1_BiS_14 = {
+  name: 'P1 BiS +3%',
+  tooltip: WarlockTooltips.BIS_TOOLTIP,
+  gear: EquipmentSpec.fromJsonString(`
     {"items":
       [
         {
@@ -401,42 +403,42 @@ export const P1_BiS = {
           "enchant": 44877,
           "gems": [
             41285,
-            40155
+            40014
           ]
         },
         {
           "id": 44661,
           "gems": [
-            40133
+            40099
           ]
         },
         {
           "id": 40424,
           "enchant": 44874,
           "gems": [
-            40113
+            40049
           ]
         },
         {
           "id": 44005,
           "enchant": 55642,
           "gems": [
-            40133
+            40099
           ]
         },
         {
           "id": 40423,
           "enchant": 44623,
           "gems": [
-            40113,
-            40155
+            40049,
+            40014
           ]
         },
         {
           "id": 44008,
           "enchant": 44498,
           "gems": [
-            40113,
+            39998,
             0
           ]
         },
@@ -444,14 +446,14 @@ export const P1_BiS = {
           "id": 40420,
           "enchant": 54999,
           "gems": [
-            40113,
+            39998,
             0
           ]
         },
         {
           "id": 40561,
           "gems": [
-            0
+            40014
           ]
         },
         {
@@ -489,6 +491,214 @@ export const P1_BiS = {
   `),
 }
 
+export const P1_BiS = {
+	name: 'P1 BiS',
+	tooltip: WarlockTooltips.BIS_TOOLTIP,
+	gear: EquipmentSpec.fromJsonString(`
+    {"items":
+      [
+        {
+          "id": 40421,
+          "enchant": 44877,
+          "gems": [
+            41285,
+            40051
+          ]
+        },
+        {
+          "id": 44661,
+          "gems": [
+            40026
+          ]
+        },
+        {
+          "id": 40424,
+          "enchant": 44874,
+          "gems": [
+            39998
+          ]
+        },
+        {
+          "id": 44005,
+          "enchant": 55642,
+          "gems": [
+            40026
+          ]
+        },
+        {
+          "id": 40423,
+          "enchant": 44623,
+          "gems": [
+            39998,
+            40051
+          ]
+        },
+        {
+          "id": 44008,
+          "enchant": 44498,
+          "gems": [
+            39998,
+            0
+          ]
+        },
+        {
+          "id": 40420,
+          "enchant": 54999,
+          "gems": [
+            39998,
+            0
+          ]
+        },
+        {
+          "id": 40561,
+          "gems": [
+            39998
+          ]
+        },
+        {
+          "id": 40560,
+          "enchant": 41602
+        },
+        {
+          "id": 40558,
+          "enchant": 55016
+        },
+        {
+          "id": 40399
+        },
+        {
+          "id": 40719
+        },
+        {
+          "id": 40432
+        },
+        {
+          "id": 40255
+        },
+        {
+          "id": 40396,
+          "enchant": 44487
+        },
+        {
+          "id": 39766
+        },
+        {
+          "id": 39712
+        }
+      ]
+    }
+  `),
+}
+export const P1_PreBiS_14 = {
+  name: 'Pre-BiS +3%',
+  tooltip: WarlockTooltips.BIS_TOOLTIP,
+  gear: EquipmentSpec.fromJsonString(`
+    {"items":
+      [
+        {
+          "id": 44910,
+          "enchant": 44877,
+          "gems": [
+            41285,
+            39998
+          ]
+        },
+        {
+          "id": 42647,
+          "gems": [
+            40049
+          ]
+        },
+        {
+          "id": 34210,
+          "enchant": 44874,
+          "gems": [
+            39998,
+            40014
+          ]
+        },
+        {
+          "id": 41610,
+          "enchant": 55642
+        },
+        {
+          "id": 39497,
+          "enchant": 44623,
+          "gems": [
+            39998,
+            40014
+          ]
+        },
+        {
+          "id": 37361,
+          "enchant": 44498,
+          "gems": [
+            0
+          ]
+        },
+        {
+          "id": 42113,
+          "enchant": 54999,
+          "gems": [
+            0
+          ]
+        },
+        {
+          "id": 40696,
+          "gems": [
+            40014,
+            39998
+          ]
+        },
+        {
+          "id": 34181,
+          "enchant": 41602,
+          "gems": [
+            39998,
+            39998,
+            40014
+          ]
+        },
+        {
+          "id": 44202,
+          "enchant": 55016,
+          "gems": [
+            40026
+          ]
+        },
+        {
+          "id": 43253,
+          "gems": [
+            40026
+          ]
+        },
+        {
+          "id": 37694
+        },
+        {
+          "id": 40682
+        },
+        {
+          "id": 37873
+        },
+        {
+          "id": 45085,
+          "enchant": 44487
+        },
+        {
+          "id": 40698
+        },
+        {
+          "id": 34348,
+          "gems": [
+            39998
+          ]
+        }
+      ]
+    }
+  `),
+}
+
 export const Naked = {
   name: 'The Naked Bolt',
   gear: EquipmentSpec.fromJsonString(`
@@ -515,3 +725,4 @@ export const Naked = {
     }
   `),
 }
+  

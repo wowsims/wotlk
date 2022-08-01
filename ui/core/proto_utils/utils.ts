@@ -954,14 +954,13 @@ const paladinRaces = [
     Race.RaceHuman,
 ];
 const priestRaces = [
-    Race.RaceBloodElf,
-    Race.RaceDraenei,
-    Race.RaceDwarf,
-    Race.RaceHuman,
-    Race.RaceNightElf,
-    Race.RaceOrc,
-    Race.RaceTroll,
-    Race.RaceUndead,
+	Race.RaceBloodElf,
+	Race.RaceDraenei,
+	Race.RaceDwarf,
+	Race.RaceHuman,
+	Race.RaceNightElf,
+	Race.RaceTroll,
+	Race.RaceUndead,
 ];
 const rogueRaces = [
     Race.RaceBloodElf,
@@ -1438,8 +1437,19 @@ const metaGemEffectEPs: Partial<Record<Spec, (gem: Gem, playerStats: Stats) => n
             return (((playerStats.getStat(Stat.StatSpellPower) * 0.795) + 603) * 2 * (playerStats.getStat(Stat.StatSpellCrit) / 2208) * 0.045) / 0.795;
         }
 
-        return 0;
-    },
+		return 0;
+	},
+	[Spec.SpecWarlock]: (gem, playerStats) => {
+		// TODO: make it gear dependant
+		if (gem.id == Gems.CHAOTIC_SKYFLARE_DIAMOND.id) {
+			return 84;
+		}
+		if (gem.id == Gems.CHAOTIC_SKYFIRE_DIAMOND.id) {
+			return 80;
+		}
+
+		return 0;
+	},
 };
 
 export function getMetaGemEffectEP(spec: Spec, gem: Gem, playerStats: Stats) {

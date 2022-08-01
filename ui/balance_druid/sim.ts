@@ -16,8 +16,7 @@ import { Player } from '../core/player.js';
 import { Sim } from '../core/sim.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
 
-import { BalanceDruid, BalanceDruid_Rotation as BalanceDruidRotation, DruidTalents as DruidTalents, BalanceDruid_Options as BalanceDruidOptions } from '../core/proto/druid.js';
-import { BalanceDruid_Rotation_PrimarySpell as PrimarySpell } from '../core/proto/druid.js';
+import { BalanceDruid, BalanceDruid_Rotation as BalanceDruidRotation, DruidTalents as DruidTalents, BalanceDruid_Options as BalanceDruidOptions } from '/wotlk/core/proto/druid.js';
 
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
@@ -63,53 +62,53 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
                 Stat.StatMP5,
             ],
 
-            defaults: {
-                // Default equipped gear.
-                gear: Presets.P1_ALLIANCE_PRESET.gear,
-                // Default EP weights for sorting gear in the gear picker.
-                epWeights: Stats.fromMap({
-                    [Stat.StatIntellect]: 0.54,
-                    [Stat.StatSpirit]: 0.1,
-                    [Stat.StatSpellPower]: 1,
-                    [Stat.StatArcaneSpellPower]: 1,
-                    [Stat.StatNatureSpellPower]: 0,
-                    [Stat.StatSpellCrit]: 0.84,
-                    [Stat.StatSpellHaste]: 1.29,
-                    [Stat.StatMP5]: 0.00,
-                }),
-                // Default consumes settings.
-                consumes: Presets.DefaultConsumes,
-                // Default rotation settings.
-                rotation: Presets.DefaultRotation,
-                // Default talents.
-                talents: Presets.StandardTalents.data,
-                // Default spec-specific settings.
-                specOptions: BalanceDruidOptions.create({
-                    innervateTarget: RaidTarget.create({
-                        targetIndex: 0, // In an individual sim the 0-indexed player is ourself.
-                    }),
-                }),
-                // Default raid/party buffs settings.
-                raidBuffs: RaidBuffs.create({
-                    arcaneBrilliance: true,
-                    divineSpirit: true,
-                    bloodlust: true,
-                    manaSpringTotem: TristateEffect.TristateEffectRegular,
-                    totemOfWrath: true,
-                    wrathOfAirTotem: true,
-                }),
-                partyBuffs: PartyBuffs.create({
-                }),
-                individualBuffs: IndividualBuffs.create({
-                    blessingOfKings: true,
-                    blessingOfWisdom: TristateEffect.TristateEffectImproved,
-                }),
-                debuffs: Debuffs.create({
-                    judgementOfWisdom: true,
-                    misery: true,
-                    curseOfElements: true,
-                }),
-            },
+			defaults: {
+				// Default equipped gear.
+				gear: Presets.P5_PRESET.gear,
+				// Default EP weights for sorting gear in the gear picker.
+				epWeights: Stats.fromMap({
+					[Stat.StatIntellect]: 0.54,
+					[Stat.StatSpirit]: 0.1,
+					[Stat.StatSpellPower]: 1,
+					[Stat.StatArcaneSpellPower]: 1,
+					[Stat.StatNatureSpellPower]: 0,
+					[Stat.StatSpellCrit]: 0.84,
+					[Stat.StatSpellHaste]: 1.29,
+					[Stat.StatMP5]: 0.00,
+				}),
+				// Default consumes settings.
+				consumes: Presets.DefaultConsumes,
+				// Default rotation settings.
+				rotation: Presets.DefaultRotation,
+				// Default talents.
+				talents: Presets.StandardTalents.data,
+				// Default spec-specific settings.
+				specOptions: BalanceDruidOptions.create({
+					innervateTarget: RaidTarget.create({
+						targetIndex: 0, // In an individual sim the 0-indexed player is ourself.
+					}),
+				}),
+				// Default raid/party buffs settings.
+				raidBuffs: RaidBuffs.create({
+					arcaneBrilliance: true,
+					divineSpirit: true,
+					bloodlust: true,
+					manaSpringTotem: TristateEffect.TristateEffectRegular,
+					totemOfWrath: true,
+					wrathOfAirTotem: true,
+				}),
+				partyBuffs: PartyBuffs.create({
+				}),
+				individualBuffs: IndividualBuffs.create({
+					blessingOfKings: true,
+					blessingOfWisdom: TristateEffect.TristateEffectImproved,
+				}),
+				debuffs: Debuffs.create({
+					judgementOfWisdom: true,
+					misery: true,
+					curseOfElements: true,
+				}),
+			},
 
             // IconInputs to include in the 'Player' section on the settings tab.
             playerIconInputs: [
@@ -135,22 +134,16 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
                 showExecuteProportion: false,
             },
 
-            presets: {
-                // Preset talents that the user can quickly select.
-                talents: [
-                    Presets.StandardTalents,
-                ],
-                // Preset gear configurations that the user can quickly select.
-                gear: [
-                    Presets.P1_ALLIANCE_PRESET,
-                    Presets.P2_ALLIANCE_PRESET,
-                    Presets.P1_HORDE_PRESET,
-                    Presets.P2_HORDE_PRESET,
-                    Presets.P3_PRESET,
-                    Presets.P4_PRESET,
-                    Presets.P5_PRESET,
-                ],
-            },
-        });
-    }
+			presets: {
+				// Preset talents that the user can quickly select.
+				talents: [
+					Presets.StandardTalents,
+				],
+				// Preset gear configurations that the user can quickly select.
+				gear: [
+					Presets.P5_PRESET,
+				],
+			},
+		});
+	}
 }

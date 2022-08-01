@@ -13,12 +13,15 @@ var ByID = map[int32]Item{}
 var GemsByName = map[string]Gem{}
 var GemsByID = map[int32]Gem{}
 var EnchantsByName = map[string]Enchant{}
-var EnchantsByID = map[int32]Enchant{}
+var EnchantsByItemByID = map[proto.ItemType]map[int32]Enchant{}
 
 func init() {
 	for _, v := range Enchants {
 		EnchantsByName[v.Name] = v
-		EnchantsByID[v.ID] = v
+		if EnchantsByItemByID[v.ItemType] == nil {
+			EnchantsByItemByID[v.ItemType] = map[int32]Enchant{}
+		}
+		EnchantsByItemByID[v.ItemType][v.ID] = v
 	}
 	for _, v := range Gems {
 		GemsByName[v.Name] = v
@@ -28,28 +31,8 @@ func init() {
 	// Add hard-coded items. Wowhead doesn't seem to have tooltips for random enchant items.
 	// Use negative IDs to avoid collisions with real item IDs.
 	Items = append(Items, []Item{
-		{Name: "Glider's Boots of Nature's Wrath", WowheadID: 30681, ID: -1, Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypeLeather, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Stats: stats.Stats{stats.Armor: 250, stats.NatureSpellPower: 78}},
-		{Name: "Glider's Foot-Wraps of Arcane Wrath", WowheadID: 30680, ID: -2, Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypeCloth, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Stats: stats.Stats{stats.Armor: 134, stats.ArcaneSpellPower: 78}},
-		{Name: "Glider's Foot-Wraps of Fiery Wrath", WowheadID: 30680, ID: -3, Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypeCloth, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Stats: stats.Stats{stats.Armor: 134, stats.FireSpellPower: 78}},
-		{Name: "Glider's Foot-Wraps of Frozen Wrath", WowheadID: 30680, ID: -4, Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypeCloth, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Stats: stats.Stats{stats.Armor: 134, stats.FrostSpellPower: 78}},
-		{Name: "Glider's Foot-Wraps of Shadow Wrath", WowheadID: 30680, ID: -5, Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypeCloth, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Stats: stats.Stats{stats.Armor: 134, stats.ShadowSpellPower: 78}},
-		{Name: "Lurker's Cord of Arcane Wrath", WowheadID: 30675, ID: -6, Type: proto.ItemType_ItemTypeWaist, ArmorType: proto.ArmorType_ArmorTypeCloth, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Stats: stats.Stats{stats.Armor: 109, stats.ArcaneSpellPower: 78}},
-		{Name: "Lurker's Cord of Fiery Wrath", WowheadID: 30675, ID: -7, Type: proto.ItemType_ItemTypeWaist, ArmorType: proto.ArmorType_ArmorTypeCloth, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Stats: stats.Stats{stats.Armor: 109, stats.FireSpellPower: 78}},
-		{Name: "Lurker's Cord of Frozen Wrath", WowheadID: 30675, ID: -8, Type: proto.ItemType_ItemTypeWaist, ArmorType: proto.ArmorType_ArmorTypeCloth, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Stats: stats.Stats{stats.Armor: 109, stats.FrostSpellPower: 78}},
-		{Name: "Lurker's Cord of Shadow Wrath", WowheadID: 30675, ID: -9, Type: proto.ItemType_ItemTypeWaist, ArmorType: proto.ArmorType_ArmorTypeCloth, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Stats: stats.Stats{stats.Armor: 109, stats.ShadowSpellPower: 78}},
-		{Name: "Lurker's Grasp of Nature's Wrath", WowheadID: 30676, ID: -10, Type: proto.ItemType_ItemTypeWaist, ArmorType: proto.ArmorType_ArmorTypeLeather, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Stats: stats.Stats{stats.Armor: 205, stats.NatureSpellPower: 78}},
-		{Name: "Ravager's Cuffs of Arcane Wrath", WowheadID: 30684, ID: -11, Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeCloth, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Stats: stats.Stats{stats.Armor: 85, stats.ArcaneSpellPower: 58}},
-		{Name: "Ravager's Cuffs of Fiery Wrath", WowheadID: 30684, ID: -12, Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeCloth, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Stats: stats.Stats{stats.Armor: 85, stats.FireSpellPower: 58}},
-		{Name: "Ravager's Cuffs of Frozen Wrath", WowheadID: 30684, ID: -13, Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeCloth, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Stats: stats.Stats{stats.Armor: 85, stats.FrostSpellPower: 58}},
-		{Name: "Ravager's Cuffs of Shadow Wrath", WowheadID: 30684, ID: -14, Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeCloth, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Stats: stats.Stats{stats.Armor: 85, stats.ShadowSpellPower: 58}},
-		{Name: "Ravager's Wrist-Wraps of Nature's Wrath", WowheadID: 30685, ID: -15, Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeLeather, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Stats: stats.Stats{stats.Armor: 159, stats.NatureSpellPower: 58}},
-		{Name: "Flawless Wand of Shadow Wrath", WowheadID: 25295, ID: -16, Type: proto.ItemType_ItemTypeRanged, RangedWeaponType: proto.RangedWeaponType_RangedWeaponTypeWand, Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Stats: stats.Stats{stats.ShadowSpellPower: 25}},
-		{Name: "Amber Cape of Shadow Wrath", WowheadID: 25043, ID: -17, Type: proto.ItemType_ItemTypeBack, Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Stats: stats.Stats{stats.ShadowSpellPower: 45}},
-		{Name: "Illidari Cape of Shadow Wrath", WowheadID: 31201, ID: -18, Type: proto.ItemType_ItemTypeBack, Phase: 1, Quality: proto.ItemQuality_ItemQualityRare, Stats: stats.Stats{stats.ShadowSpellPower: 47}},
-		{Name: "Elementalist Bracelets of Shadow Wrath", WowheadID: 24692, ID: -19, Type: proto.ItemType_ItemTypeWrist, Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Stats: stats.Stats{stats.ShadowSpellPower: 45}},
-		{Name: "Amber Cape of Shadow Wrath", WowheadID: 25043, ID: -20, Type: proto.ItemType_ItemTypeBack, Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Stats: stats.Stats{stats.ShadowSpellPower: 45}},
-		{Name: "Elementalist Gloves of Shadow Wrath", WowheadID: 24688, ID: -21, Type: proto.ItemType_ItemTypeHands, Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Stats: stats.Stats{stats.ShadowSpellPower: 60}},
-		{Name: "Nethersteel-Lined Handwraps of Shadow Wrath", WowheadID: 31166, ID: -22, Type: proto.ItemType_ItemTypeHands, Phase: 1, Quality: proto.ItemQuality_ItemQualityRare, Stats: stats.Stats{stats.ShadowSpellPower: 62}},
+		// Example hard-coded item using a negative ID.
+		// {Name: "Glider's Boots of Nature's Wrath", WowheadID: 30681, ID: -1, Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypeLeather, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Stats: stats.Stats{stats.Armor: 250, stats.NatureSpellPower: 78}},
 	}...)
 
 	for _, v := range Items {
@@ -106,27 +89,27 @@ type Item struct {
 
 func (item Item) ToProto() *proto.Item {
 	return &proto.Item{
-		Id:               item.ID,
-		WowheadId:        item.WowheadID,
-		Name:             item.Name,
-		ClassAllowlist:   item.ClassAllowlist[:],
-		Type:             proto.ItemType(item.Type),
-		ArmorType:        proto.ArmorType(item.ArmorType),
-		WeaponType:       proto.WeaponType(item.WeaponType),
-		HandType:         proto.HandType(item.HandType),
-		RangedWeaponType: proto.RangedWeaponType(item.RangedWeaponType),
-		WeaponDamageMin:  item.WeaponDamageMin,
-		WeaponDamageMax:  item.WeaponDamageMax,
-		WeaponSpeed:      item.SwingSpeed,
-		Stats:            item.Stats[:],
-		Phase:            int32(item.Phase),
-		Quality:          item.Quality,
-		Unique:           item.Unique,
-		Ilvl:             item.Ilvl,
-		GemSockets:       item.GemSockets,
-		SocketBonus:      item.SocketBonus[:],
-
+		Id:                 item.ID,
+		WowheadId:          item.WowheadID,
+		Name:               item.Name,
+		ClassAllowlist:     item.ClassAllowlist[:],
+		Type:               proto.ItemType(item.Type),
+		ArmorType:          proto.ArmorType(item.ArmorType),
+		WeaponType:         proto.WeaponType(item.WeaponType),
+		HandType:           proto.HandType(item.HandType),
+		RangedWeaponType:   proto.RangedWeaponType(item.RangedWeaponType),
+		WeaponDamageMin:    item.WeaponDamageMin,
+		WeaponDamageMax:    item.WeaponDamageMax,
+		WeaponSpeed:        item.SwingSpeed,
+		Stats:              item.Stats[:],
+		Phase:              int32(item.Phase),
+		Quality:            item.Quality,
+		Unique:             item.Unique,
+		Ilvl:               item.Ilvl,
+		GemSockets:         item.GemSockets,
+		SocketBonus:        item.SocketBonus[:],
 		RequiredProfession: item.RequiredProfession,
+		Heroic:             item.Heroic,
 	}
 }
 
@@ -285,7 +268,7 @@ func NewItem(itemSpec ItemSpec) Item {
 	}
 
 	if itemSpec.Enchant != 0 {
-		if enchant, ok := EnchantsByID[itemSpec.Enchant]; ok {
+		if enchant, ok := EnchantsByItemByID[item.Type][itemSpec.Enchant]; ok {
 			item.Enchant = enchant
 		} else {
 			panic(fmt.Sprintf("No enchant with id: %d", itemSpec.Enchant))

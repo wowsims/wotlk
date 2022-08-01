@@ -13,7 +13,7 @@ const RuptureEnergyCost = 25.0
 
 func (rogue *Rogue) makeRupture(comboPoints int32) *core.Spell {
 	refundAmount := 0.4 * float64(rogue.Talents.QuickRecovery)
-	numTicks := int(comboPoints) + 3 + core.TernaryInt(rogue.HasGlyph(int32(proto.RogueMajorGlyph_GlyphOfRupture)), 2, 0)
+	numTicks := int(comboPoints) + 3 + core.TernaryInt(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfRupture), 2, 0)
 	baseCost := RuptureEnergyCost
 
 	return rogue.RegisterSpell(core.SpellConfig{
@@ -58,7 +58,7 @@ func (rogue *Rogue) makeRupture(comboPoints int32) *core.Spell {
 func (rogue *Rogue) RuptureDuration(comboPoints int32) time.Duration {
 	return time.Second*6 +
 		time.Second*2*time.Duration(comboPoints) +
-		core.TernaryDuration(rogue.HasGlyph(int32(proto.RogueMajorGlyph_GlyphOfRupture)), time.Second*4, 0)
+		core.TernaryDuration(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfRupture), time.Second*4, 0)
 }
 
 func (rogue *Rogue) registerRupture() {
@@ -93,7 +93,7 @@ func (rogue *Rogue) registerRupture() {
 
 				return 127 + float64(comboPoints)*18 + attackPower*[]float64{0.015, 0.024, 0.03, 0.034286, 0.0375}[comboPoints-1]
 			}, 0),
-			OutcomeApplier: rogue.OutcomeFuncTick(),
+			OutcomeApplier: rogue.OutcomeFuncTickHitAndCrit(rogue.MeleeCritMultiplier(true, false)),
 		}),
 	})
 }

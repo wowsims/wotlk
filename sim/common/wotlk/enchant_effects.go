@@ -336,7 +336,7 @@ func init() {
 			Cast: core.CastConfig{
 				CD: core.Cooldown{
 					Timer:    character.NewTimer(),
-					Duration: time.Minute,
+					Duration: time.Second * 60,
 				},
 				SharedCD: core.Cooldown{
 					Timer:    character.GetOffensiveTrinketCD(),
@@ -366,7 +366,7 @@ func init() {
 			ActionID:    core.ActionID{SpellID: 53343},
 			SpellSchool: core.SpellSchoolFrost,
 
-			ApplyEffects: core.ApplyEffectFuncDirectDamageTargetModifiersOnly(core.SpellEffect{
+			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				ProcMask: core.ProcMaskEmpty,
 
 				DamageMultiplier: 1,
@@ -377,7 +377,7 @@ func init() {
 						return baseDamage(sim, spellEffect, spell) * 0.02
 					},
 				},
-				OutcomeApplier: character.OutcomeFuncMeleeWeaponSpecialNoHitNoCrit(),
+				OutcomeApplier: character.OutcomeFuncAlwaysHit(),
 			}),
 		})
 	}
@@ -415,27 +415,27 @@ func init() {
 				}
 
 				if mh && !oh {
-					if !(spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHAuto) || spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHSpecial)) {
+					if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeMH) {
 						return
 					}
 				} else if oh && !mh {
-					if !(spellEffect.ProcMask.Matches(core.ProcMaskMeleeOHAuto) || spellEffect.ProcMask.Matches(core.ProcMaskMeleeOHSpecial)) {
+					if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeOH) {
 						return
 					}
 				} else if mh && oh {
-					if !(spellEffect.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeSpecial)) {
+					if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
 						return
 					}
 				}
 
 				vulnAura.Activate(sim)
-				isMH := spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHAuto) || spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHSpecial)
+				isMH := spellEffect.ProcMask.Matches(core.ProcMaskMeleeMH)
 				if isMH {
 					mhRazoriceSpell.Cast(sim, target)
 					vulnAura.AddStack(sim)
 				}
 
-				isOH := spellEffect.ProcMask.Matches(core.ProcMaskMeleeOHAuto) || spellEffect.ProcMask.Matches(core.ProcMaskMeleeOHSpecial)
+				isOH := spellEffect.ProcMask.Matches(core.ProcMaskMeleeOH)
 				if isOH {
 					ohRazoriceSpell.Cast(sim, target)
 					vulnAura.AddStack(sim)
@@ -490,15 +490,15 @@ func init() {
 				}
 
 				if mh && !oh {
-					if !(spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHAuto) || spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHSpecial)) {
+					if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeMH) {
 						return
 					}
 				} else if oh && !mh {
-					if !(spellEffect.ProcMask.Matches(core.ProcMaskMeleeOHAuto) || spellEffect.ProcMask.Matches(core.ProcMaskMeleeOHSpecial)) {
+					if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeOH) {
 						return
 					}
 				} else if mh && oh {
-					if !(spellEffect.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeSpecial)) {
+					if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
 						return
 					}
 				}

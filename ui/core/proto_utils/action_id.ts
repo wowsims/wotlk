@@ -535,8 +535,10 @@ idOverrides[ActionId.fromSpellId(37443).toProtoString()] = ActionId.fromItemId(3
 export const defaultTargetIcon = 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_metamorphosis.jpg';
 
 const petNameToActionId: Record<string, ActionId> = {
-    'Gnomish Flame Turret': ActionId.fromItemId(23841),
-    'Water Elemental': ActionId.fromSpellId(31687),
+	'Gnomish Flame Turret': ActionId.fromItemId(23841),
+	'Water Elemental': ActionId.fromSpellId(31687),
+	'Spirit Wolf 1': ActionId.fromSpellId(51533),
+	'Spirit Wolf 2': ActionId.fromSpellId(51533)
 };
 
 // https://wowhead.com/wotlk/hunter-pets
