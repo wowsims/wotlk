@@ -44,9 +44,9 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 	nextSwingAt := ret.AutoAttacks.NextAttackAt()
 	isExecutePhase := sim.IsExecutePhase20()
 
-	nextUsefulAbility := core.MinDuration(ret.CrusaderStrike.CD.ReadyAt(), ret.DivineStorm.CD.ReadyAt())
-	nextUsefulAbility = core.MinDuration(nextUsefulAbility, ret.JudgementOfWisdom.CD.ReadyAt())
-	nextUsefulDelta := nextUsefulAbility - sim.CurrentTime
+	nextPrimaryAbility := core.MinDuration(ret.CrusaderStrike.CD.ReadyAt(), ret.DivineStorm.CD.ReadyAt())
+	nextPrimaryAbility = core.MinDuration(nextPrimaryAbility, ret.JudgementOfWisdom.CD.ReadyAt())
+	nextPrimaryAbilityDelta := nextPrimaryAbility - sim.CurrentTime
 
 	if ret.GCD.IsReady(sim) {
 		switch {
@@ -65,11 +65,11 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 		case ret.DivineStorm.IsReady(sim):
 			ret.DivineStorm.Cast(sim, target)
 		case (target.MobType == proto.MobType_MobTypeDemon || target.MobType == proto.MobType_MobTypeUndead) &&
-			nextUsefulDelta.Milliseconds() > int64(ret.ExoSlack) && ret.Exorcism.IsReady(sim) && ret.ArtOfWarInstantCast.IsActive():
+			nextPrimaryAbilityDelta.Milliseconds() > int64(ret.ExoSlack) && ret.Exorcism.IsReady(sim) && ret.ArtOfWarInstantCast.IsActive():
 			ret.Exorcism.Cast(sim, target)
-		case nextUsefulDelta.Milliseconds() > int64(ret.ConsSlack) && ret.Consecration.IsReady(sim):
+		case nextPrimaryAbilityDelta.Milliseconds() > int64(ret.ConsSlack) && ret.Consecration.IsReady(sim):
 			ret.Consecration.Cast(sim, target)
-		case nextUsefulDelta.Milliseconds() > int64(ret.ExoSlack) && ret.Exorcism.IsReady(sim) && ret.ArtOfWarInstantCast.IsActive():
+		case nextPrimaryAbilityDelta.Milliseconds() > int64(ret.ExoSlack) && ret.Exorcism.IsReady(sim) && ret.ArtOfWarInstantCast.IsActive():
 			ret.Exorcism.Cast(sim, target)
 		}
 	}
@@ -78,10 +78,7 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 	events := []time.Duration{
 		nextSwingAt,
 		ret.GCD.ReadyAt(),
-		nextUsefulAbility,
-		// ret.JudgementOfWisdom.CD.ReadyAt(),
-		// ret.CrusaderStrike.CD.ReadyAt(),
-		// ret.DivineStorm.CD.ReadyAt(),
+		nextPrimaryAbility,
 		ret.Consecration.CD.ReadyAt(),
 		ret.Exorcism.CD.ReadyAt(),
 	}
