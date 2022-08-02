@@ -14,6 +14,7 @@ import { EventID, TypedEvent } from './typed_event.js';
 declare var tippy: any;
 declare var pako: any;
 
+const URLMAXLEN = 2048;
 const noticeText = '';
 //const noticeText = 'We are looking for help migrating our sims to Wrath of the Lich King. If you\'d like to participate in a fun side project working with an open-source community please <a href="https://discord.gg/jJMPr9JWwx" target="_blank">join our discord!</a>';
 
@@ -303,33 +304,33 @@ export abstract class SimUI extends Component {
             return;
         }
 
-        const errorStr = (error as SimError).errorStr;
-        if (window.confirm('Simulation Failure:\n' + errorStr + '\nPress Ok to file crash report')) {
-            // Splice out just the line numbers
-            let filteredError = errorStr.substring(0, errorStr.indexOf('Stack Trace:'));
-            const rExp: RegExp = /(.*\.go:\d+)/g;
-            filteredError += errorStr.match(rExp)?.join(' ');
-
-            const hash = this.hashCode(errorStr);
-            const link = this.toLink();
-            const rngSeed = this.sim.getLastUsedRngSeed();
-            fetch('https://api.github.com/search/issues?q=is:issue+is:open+repo:wowsims/wotlk+' + hash).then(resp => {
-                resp.json().then((issues) => {
-                    if (issues.total_count > 0) {
-                        window.open(issues.items[0].html_url, '_blank');
+		const errorStr = (error as SimError).errorStr;
+		if (window.confirm('Simulation Failure:\n' + errorStr + '\nPress Ok to file crash report')) {
+			// Splice out just the line numbers
+			const hash = this.hashCode(errorStr);
+			const link = this.toLink();
+			const rngSeed = this.sim.getLastUsedRngSeed();
+			fetch('https://api.github.com/search/issues?q=is:issue+is:open+repo:wowsims/wotlk+' + hash).then(resp => {
+				resp.json().then((issues) => {
+					if (issues.total_count > 0) {
+						window.open(issues.items[0].html_url, '_blank');
                     } else {
-                        window.open(
-                            'https://github.com/wowsims/wotlk/issues/new?assignees=&labels=&title=Crash%20Report%20' + hash +
-                            '&body=' + encodeURIComponent(errorStr + '\n\nLink:\n' + link + '\n\nRNG Seed: ' + rngSeed + '\n'),
-                            '_blank');
-                    }
-                });
-            }).catch(fetchErr => {
-                alert('Failed to file report... try again another time:' + fetchErr);
-            });
-        }
-        return;
-    }
+                        const base_url = 'https://github.com/wowsims/wotlk/issues/new?assignees=&labels=&title=Crash%20Report%20'
+                        const base = `${base_url}${hash}&body=`;
+                        const maxBodyLength = URLMAXLEN - base.length;
+                        let issueBody = encodeURIComponent(`Link:\n${link}\n\nRNG Seed: ${rngSeed}\n\n${errorStr}`)
+                        while (issueBody.length > maxBodyLength) {
+                            issueBody = issueBody.slice(0, issueBody.lastIndexOf('%')) // Avoid truncating in the middle of a URLencoded segment
+                        }
+                        window.open(base + issueBody, '_blank');
+					}
+				});
+			}).catch(fetchErr => {
+				alert('Failed to file report... try again another time:' + fetchErr);
+			});
+		}
+		return;
+	}
 
     hashCode(str: string): number {
         let hash = 0;
