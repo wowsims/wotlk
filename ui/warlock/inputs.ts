@@ -11,7 +11,7 @@ import {
 	Warlock_Options_Summon as Summon,
 } from '/wotlk/core/proto/warlock.js';
 
-import { RaidTarget, Spec, Glyphs, Debuffs, IndividualBuffs } from '/wotlk/core/proto/common.js';
+import { RaidTarget, Spec, Glyphs, Debuffs, IndividualBuffs, RaidBuffs } from '/wotlk/core/proto/common.js';
 import { NO_TARGET } from '/wotlk/core/proto_utils/utils.js';
 import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
 import { Player } from '/wotlk/core/player.js';
@@ -148,8 +148,8 @@ export const WarlockRotationConfig = {
 		{
 			type: 'enum' as const,
 
-			label: 'Spec',
-			labelTooltip: 'Switches between spec rotation settings. Will also update talents to defaults for the selected spec.',
+			label: 'SIM PRESETS',
+			labelTooltip: 'Quick switch between sim spec presets. Will UPDATE TALENTS and SPELLS to defaults.',
 			values: [
 				{ name: 'Affliction', value: RotationType.Affliction },
 				{ name: 'Demonology', value: RotationType.Demonology },
@@ -162,51 +162,60 @@ export const WarlockRotationConfig = {
 				var newOptions: WarlockOptions;
 				var newGlyphs: Glyphs;
 				var newTalents: string;
-				var newIndividualBuffs: IndividualBuffs;
-				var newDebuffs: Debuffs;
+				// var newIndividualBuffs = player.getBuffs();
+				// const raid = player.getRaid();
+				// var newDebuffs = raid?.getDebuffs();
+				// var newRaidBuffs = raid?.getBuffs();
 				if (newValue == RotationType.Affliction) {
 					newTalents = Presets.AfflictionTalents.data.talentsString
 					newGlyphs = Presets.AfflictionTalents.data.glyphs || Glyphs.create();
 					newRotation = Presets.AfflictionRotation
 					newOptions = Presets.AfflictionOptions
-					newIndividualBuffs = Presets.DefaultIndividualBuffs || IndividualBuffs.create()
-					newDebuffs = Presets.DefaultDebuffs || Debuffs.create()
+					// if (newDebuffs != undefined) {
+					// 	newDebuffs.shadowMastery = false
+					// }
 				} else if (newValue == RotationType.Demonology) {
 					newTalents = Presets.DemonologyTalents.data.talentsString
 					newGlyphs = Presets.DemonologyTalents.data.glyphs || Glyphs.create();
 					newRotation = Presets.DemonologyRotation
 					newOptions = Presets.DemonologyOptions
-					newIndividualBuffs = Presets.DefaultIndividualBuffs || IndividualBuffs.create()
-					newDebuffs = Presets.DefaultDebuffs || Debuffs.create()
+					// if (newDebuffs != undefined) {
+					// 	newDebuffs.shadowMastery = false
+					// }
+					// if (newRaidBuffs != undefined) {
+					// 	newRaidBuffs.demonicPact = 0
+					// }
 				} else if (newValue == RotationType.Destruction) {
 					newTalents = Presets.DestructionTalents.data.talentsString
 					newGlyphs = Presets.DestructionTalents.data.glyphs || Glyphs.create();
 					newRotation = Presets.DestructionRotation
 					newOptions = Presets.DestructionOptions
-					newIndividualBuffs = Presets.DestroIndividualBuffs || IndividualBuffs.create()
-					newDebuffs = Presets.DestroDebuffs || Debuffs.create()
+					// newIndividualBuffs.improvedSoulLeech = false
+					// if (newDebuffs != undefined) {
+					// 	newDebuffs.shadowMastery = true
+					// }
 				}
 				newRotation.type = newValue;
 				newRotation.preset = RotationPreset.Automatic;
-				const raid = player.getRaid();
 				TypedEvent.freezeAllAndDo(() => {
 					player.setTalentsString(eventID, newTalents);
 					player.setSpecOptions(eventID, newOptions);
 					player.setGlyphs(eventID, newGlyphs);
 					player.setRotation(eventID, newRotation);
-					player.setBuffs(eventID, newIndividualBuffs);
-					raid?.setDebuffs(eventID, newDebuffs);
+					// player.setBuffs(eventID, newIndividualBuffs);
+					// raid?.setDebuffs(eventID, newDebuffs || Debuffs.create());
+					// raid?.setBuffs(eventID, newRaidBuffs || RaidBuffs.create());
 				});
 			},
 		},
 
 		{
 			type: 'enum' as const,
-			label: 'Rotation Preset',
-			labelTooltip: 'Automatic will select the spells for you if you have the last talent in a one of the trees. Otherwise you will have to manually select the spells you want to cast.',
+			label: 'Manual Mode',
+			labelTooltip: 'Putting it on Preset will UPDATE TALENTS and SPELLS to defaults.',
 			values: [
-				{name: "Manual", value: RotationPreset.Manual},
-				{name: "Automatic", value: RotationPreset.Automatic},
+				{name: "Expert", value: RotationPreset.Manual},
+				{name: "Preset", value: RotationPreset.Automatic},
 			],
 			changedEvent: (player: Player<Spec.SpecWarlock>) => player.rotationChangeEmitter,
 			getValue: (player: Player<Spec.SpecWarlock>) => player.getRotation().preset,
@@ -216,29 +225,34 @@ export const WarlockRotationConfig = {
 					var newOptions: WarlockOptions;
 					var newGlyphs: Glyphs;
 					var newTalents: string;
-					var newIndividualBuffs: IndividualBuffs;
-					var newDebuffs: Debuffs;
+					// var newIndividualBuffs = player.getBuffs();
+					// const raid = player.getRaid();
+					// var newDebuffs = raid?.getDebuffs();
 					if (newRotation.type == RotationType.Affliction) {
 						newTalents = Presets.AfflictionTalents.data.talentsString
 						newGlyphs = Presets.AfflictionTalents.data.glyphs || Glyphs.create()
 						newRotation = Presets.AfflictionRotation
 						newOptions = Presets.AfflictionOptions
-						newIndividualBuffs = Presets.DefaultIndividualBuffs || IndividualBuffs.create()
-						newDebuffs = Presets.DefaultDebuffs || Debuffs.create()
+						// if (newDebuffs != undefined) {
+						// 	newDebuffs.shadowMastery = false
+						// }
 					} else if (newRotation.type == RotationType.Demonology) {
 						newTalents = Presets.DemonologyTalents.data.talentsString
 						newGlyphs = Presets.DemonologyTalents.data.glyphs || Glyphs.create()
 						newRotation = Presets.DemonologyRotation
 						newOptions = Presets.DemonologyOptions
-						newIndividualBuffs = Presets.DefaultIndividualBuffs || IndividualBuffs.create()
-						newDebuffs = Presets.DefaultDebuffs || Debuffs.create()
+						// if (newDebuffs != undefined) {
+						// 	newDebuffs.shadowMastery = false
+						// }
 					} else if (newRotation.type == RotationType.Destruction) {
 						newTalents = Presets.DestructionTalents.data.talentsString
 						newGlyphs = Presets.DestructionTalents.data.glyphs || Glyphs.create()
 						newRotation = Presets.DestructionRotation
 						newOptions = Presets.DestructionOptions
-						newIndividualBuffs = Presets.DestroIndividualBuffs || IndividualBuffs.create()
-						newDebuffs = Presets.DestroDebuffs || Debuffs.create()
+						// newIndividualBuffs.improvedSoulLeech = false
+						// if (newDebuffs != undefined) {
+						// 	newDebuffs.shadowMastery = true
+						// }
 					}
 				}
 				newRotation.preset = newValue;
@@ -248,8 +262,8 @@ export const WarlockRotationConfig = {
 						player.setTalentsString(eventID, newTalents);
 						player.setSpecOptions(eventID, newOptions);
 						player.setGlyphs(eventID, newGlyphs);
-						player.setBuffs(eventID, newIndividualBuffs);
-						raid?.setDebuffs(eventID, newDebuffs);
+						// player.setBuffs(eventID, newIndividualBuffs);
+						// raid?.setDebuffs(eventID, newDebuffs || Debuffs.create());
 					}
 					player.setRotation(eventID, newRotation);
 				});
