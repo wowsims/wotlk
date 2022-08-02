@@ -177,7 +177,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 				// Keep Haunt up
 				spell = warlock.Haunt
 			} else if warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ShadowBolt.CurCast.CastTime+core.GCDDefault ||
-				core.ShadowMasteryAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ShadowBolt.CurCast.CastTime {
+				core.ShadowMasteryAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ShadowBolt.CurCast.CastTime && sim.GetRemainingDuration() > core.ShadowMasteryAura(warlock.CurrentTarget).Duration/2. {
 				// Shadow Embrace & Shadow Mastery refresh
 				spell = warlock.ShadowBolt
 			} else if sim.IsExecutePhase25() {
@@ -202,7 +202,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			} else if (!warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime) &&
 				sim.GetRemainingDuration() > warlock.ImmolateDot.Duration/2. {
 				spell = warlock.Immolate
-			} else if core.ShadowMasteryAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ShadowBolt.CurCast.CastTime {
+			} else if core.ShadowMasteryAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ShadowBolt.CurCast.CastTime && sim.GetRemainingDuration() > core.ShadowMasteryAura(warlock.CurrentTarget).Duration/2. {
 				// Shadow Mastery refresh
 				spell = warlock.ShadowBolt
 			} else if warlock.DecimationAura.IsActive() {

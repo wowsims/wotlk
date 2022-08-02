@@ -14,7 +14,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 0
   final_stats: 0
-  final_stats: 317.68000000000023
+  final_stats: 109
   final_stats: 368.696
   final_stats: 865.9778544968706
   final_stats: 714
@@ -437,43 +437,43 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Destro Warlock-FullBuffs-LongMultiTarget"
  value: {
-  dps: 4951.822881857885
-  tps: 5721.176534279097
+  dps: 5493.205810867549
+  tps: 5628.387662059913
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Destro Warlock-FullBuffs-LongSingleTarget"
  value: {
-  dps: 4951.822881857885
-  tps: 3771.95377261244
+  dps: 5493.205810867549
+  tps: 3932.2297637266006
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Destro Warlock-FullBuffs-ShortSingleTarget"
  value: {
   dps: 6149.838410636074
-  tps: 4370.504841929129
+  tps: 4413.805941929127
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Destro Warlock-NoBuffs-LongMultiTarget"
  value: {
-  dps: 2694.338491542364
-  tps: 4482.596475650848
+  dps: 2775.3900706222894
+  tps: 4353.488486346185
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Destro Warlock-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2694.338491542364
-  tps: 2224.0233298175144
+  dps: 2775.3900706222894
+  tps: 2268.0789021795235
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Destro Warlock-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 3086.6962899727287
-  tps: 2235.9879655584937
+  dps: 3260.813629154059
+  tps: 2346.6852298210383
  }
 }
 dps_results: {
