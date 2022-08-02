@@ -217,6 +217,16 @@ func (character *Character) MultiplyMeleeSpeed(sim *Simulation, amount float64) 
 	}
 }
 
+func (character *Character) MultiplyRangedSpeed(sim *Simulation, amount float64) {
+	character.Unit.MultiplyRangedSpeed(sim, amount)
+
+	if len(character.Pets) > 0 {
+		for _, petAgent := range character.Pets {
+			petAgent.OwnerAttackSpeedChanged(sim)
+		}
+	}
+}
+
 func (character *Character) MultiplyAttackSpeed(sim *Simulation, amount float64) {
 	character.Unit.MultiplyAttackSpeed(sim, amount)
 
