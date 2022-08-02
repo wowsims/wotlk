@@ -319,8 +319,8 @@ export abstract class SimUI extends Component {
                         const base = `${base_url}${hash}&body=`;
                         const maxBodyLength = URLMAXLEN - base.length;
                         let issueBody = encodeURIComponent(`Link:\n${link}\n\nRNG Seed: ${rngSeed}\n\n${errorStr}`)
-                        if (issueBody.length > maxBodyLength) {
-                            issueBody = issueBody.substring(0, maxBodyLength - 3) + "..."
+                        while (issueBody.length > maxBodyLength) {
+                            issueBody = issueBody.slice(0, issueBody.lastIndexOf('%')) // Avoid truncating in the middle of a URLencoded segment
                         }
                         window.open(base + issueBody, '_blank');
 					}
