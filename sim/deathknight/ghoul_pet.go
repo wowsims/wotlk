@@ -74,7 +74,6 @@ func (dk *Deathknight) NewGhoulPet(permanent bool) *GhoulPet {
 	if permanent {
 		// Melee Speed listener
 		ghoulPet.ownerMeleeMultiplier = 1.0
-		dk.Unit.OnAttackSpeedChanged = ghoulPet.ownerAttackSpeedChanged
 	}
 
 	// NightOfTheDead
@@ -114,7 +113,19 @@ func (dk *Deathknight) SetupGhoul(ghoulPet *GhoulPet) {
 	dk.AddPet(ghoulPet)
 }
 
-func (ghoulPet *GhoulPet) ownerAttackSpeedChanged(sim *core.Simulation) {
+func (ghoulPet *GhoulPet) IsPetGhoul() bool {
+	return ghoulPet.dkOwner.Talents.MasterOfGhouls && ghoulPet == ghoulPet.dkOwner.Ghoul
+}
+
+func (ghoul *GhoulPet) GetPet() *core.Pet {
+	return &ghoul.Pet
+}
+
+func (ghoulPet *GhoulPet) OwnerAttackSpeedChanged(sim *core.Simulation) {
+	if !ghoulPet.IsPetGhoul() {
+		return
+	}
+
 	if sim.Log != nil {
 		sim.Log("Removing " + strconv.FormatFloat(ghoulPet.ownerMeleeMultiplier, 'f', 3, 64))
 	}
@@ -127,14 +138,6 @@ func (ghoulPet *GhoulPet) ownerAttackSpeedChanged(sim *core.Simulation) {
 	if sim.Log != nil {
 		sim.Log("Ghoul scaling to " + strconv.FormatFloat(ghoulPet.PseudoStats.MeleeSpeedMultiplier, 'f', 3, 64))
 	}
-}
-
-func (ghoulPet *GhoulPet) IsPetGhoul() bool {
-	return ghoulPet.dkOwner.Talents.MasterOfGhouls && ghoulPet == ghoulPet.dkOwner.Ghoul
-}
-
-func (ghoul *GhoulPet) GetPet() *core.Pet {
-	return &ghoul.Pet
 }
 
 func (ghoulPet *GhoulPet) Initialize() {
@@ -151,7 +154,7 @@ func (ghoulPet *GhoulPet) Reset(sim *core.Simulation) {
 	if ghoulPet.IsPetGhoul() {
 		// Reset dk inherited melee multiplier and reapply current
 		ghoulPet.ownerMeleeMultiplier = 1
-		ghoulPet.dkOwner.Unit.OnAttackSpeedChanged(sim)
+		ghoulPet.OwnerAttackSpeedChanged(sim)
 	}
 }
 
@@ -178,7 +181,7 @@ func (ghoulPet *GhoulPet) enable(sim *core.Simulation) {
 	// Snapshot extra % speed modifiers from dk owner
 	if ghoulPet.IsGuardian() {
 		ghoulPet.PseudoStats.MeleeSpeedMultiplier = 1
-		ghoulPet.Character.MultiplyMeleeSpeed(sim, ghoulPet.dkOwner.PseudoStats.MeleeSpeedMultiplier)
+		ghoulPet.MultiplyMeleeSpeed(sim, ghoulPet.dkOwner.PseudoStats.MeleeSpeedMultiplier)
 	}
 }
 
@@ -188,7 +191,7 @@ func (ghoulPet *GhoulPet) disable(sim *core.Simulation) {
 	// Clear snapshot speed
 	if ghoulPet.IsGuardian() {
 		ghoulPet.PseudoStats.MeleeSpeedMultiplier = 1
-		ghoulPet.Character.MultiplyMeleeSpeed(sim, 1)
+		ghoulPet.MultiplyMeleeSpeed(sim, 1)
 	}
 }
 

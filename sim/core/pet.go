@@ -14,6 +14,7 @@ type PetAgent interface {
 
 	// The Pet controlled by this PetAgent.
 	GetPet() *Pet
+	OwnerAttackSpeedChanged(sim *Simulation)
 }
 
 type OnPetEnable func(sim *Simulation)

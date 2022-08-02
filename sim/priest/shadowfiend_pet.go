@@ -137,3 +137,5 @@ func (shadowfiend *Shadowfiend) Reset(sim *core.Simulation) {
 func (shadowfiend *Shadowfiend) GetPet() *core.Pet {
 	return &shadowfiend.Pet
 }
+
+func (shadowfiend *Shadowfiend) OwnerAttackSpeedChanged(sim *core.Simulation) {}
