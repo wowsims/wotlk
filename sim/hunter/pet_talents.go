@@ -20,11 +20,11 @@ func (hp *HunterPet) ApplyTalents() {
 	hp.PseudoStats.DamageDealtMultiplier *= 1 + 0.03*float64(talents.SharkAttack)
 	hp.AutoAttacks.MHEffect.DamageMultiplier *= 1 - 0.075*float64(talents.CobraReflexes)
 
-	hp.PseudoStats.ArcaneDamageTakenMultiplier *= 1 + 0.05*float64(talents.GreatResistance)
-	hp.PseudoStats.FireDamageTakenMultiplier *= 1 + 0.05*float64(talents.GreatResistance)
-	hp.PseudoStats.FrostDamageTakenMultiplier *= 1 + 0.05*float64(talents.GreatResistance)
-	hp.PseudoStats.NatureDamageTakenMultiplier *= 1 + 0.05*float64(talents.GreatResistance)
-	hp.PseudoStats.ShadowDamageTakenMultiplier *= 1 + 0.05*float64(talents.GreatResistance)
+	hp.PseudoStats.ArcaneDamageTakenMultiplier *= 1 - 0.05*float64(talents.GreatResistance)
+	hp.PseudoStats.FireDamageTakenMultiplier *= 1 - 0.05*float64(talents.GreatResistance)
+	hp.PseudoStats.FrostDamageTakenMultiplier *= 1 - 0.05*float64(talents.GreatResistance)
+	hp.PseudoStats.NatureDamageTakenMultiplier *= 1 - 0.05*float64(talents.GreatResistance)
+	hp.PseudoStats.ShadowDamageTakenMultiplier *= 1 - 0.05*float64(talents.GreatResistance)
 
 	if talents.GreatStamina != 0 {
 		hp.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+0.04*float64(talents.GreatStamina))
@@ -194,15 +194,15 @@ func (hp *HunterPet) registerRabidCD() {
 	actionID := core.ActionID{SpellID: 53401}
 	procChance := 0.2
 
-	var curBonusPerStack float64
-
 	procAura := hp.RegisterAura(core.Aura{
 		Label:     "Rabid Power",
 		ActionID:  core.ActionID{SpellID: 53403},
 		Duration:  core.NeverExpires,
 		MaxStacks: 5,
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
-			aura.Unit.AddStatDynamic(sim, stats.AttackPower, curBonusPerStack*float64(newStacks-oldStacks))
+			oldMultiplier := 1.0 + 0.05*float64(oldStacks)
+			newMultiplier := 1.0 + 0.05*float64(newStacks)
+			aura.Unit.AddStatDynamic(sim, stats.AttackPower, newMultiplier/oldMultiplier)
 		},
 	})
 
@@ -210,9 +210,6 @@ func (hp *HunterPet) registerRabidCD() {
 		Label:    "Rabid",
 		ActionID: actionID,
 		Duration: time.Second * 20,
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			curBonusPerStack = aura.Unit.GetStat(stats.AttackPower) * 0.5
-		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			procAura.Deactivate(sim)
 		},

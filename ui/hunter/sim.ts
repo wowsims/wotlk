@@ -12,15 +12,19 @@ import { Stat } from '/wotlk/core/proto/common.js';
 import { TristateEffect } from '/wotlk/core/proto/common.js'
 import { Player } from '/wotlk/core/player.js';
 import { Stats } from '/wotlk/core/proto_utils/stats.js';
+import { getTalentPoints } from '/wotlk/core/proto_utils/utils.js';
 import { Sim } from '/wotlk/core/sim.js';
 import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
 import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
+import { getPetTalentsConfig } from '/wotlk/core/talents/hunter_pet.js';
+import { protoToTalentString } from '/wotlk/core/talents/factory.js';
 
 import {
 	Hunter,
 	Hunter_Rotation as HunterRotation,
 	Hunter_Options as HunterOptions,
 	Hunter_Options_PetType as PetType,
+	HunterPetTalents,
 } from '/wotlk/core/proto/hunter.js';
 
 import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
@@ -59,6 +63,32 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 
 							if (petIsExotic && !isBM) {
 								return 'Cannot use exotic pets without the Beast Mastery talent.';
+							} else {
+								return '';
+							}
+						},
+					};
+				},
+				// Warning when too many Pet talent points are used without BM talented.
+				(simUI: IndividualSimUI<Spec.SpecHunter>) => {
+					return {
+						updateOn: TypedEvent.onAny([simUI.player.talentsChangeEmitter, simUI.player.specOptionsChangeEmitter]),
+						getContent: () => {
+							const specOptions = simUI.player.getSpecOptions();
+							const petTalents = specOptions.petTalents || HunterPetTalents.create();
+							const petTalentString = protoToTalentString(petTalents, getPetTalentsConfig(specOptions.petType));
+							const talentPoints = getTalentPoints(petTalentString);
+
+							const isBM = simUI.player.getTalents().beastMastery;
+							const maxPoints = isBM ? 20 : 16;
+
+							if (talentPoints == 0) {
+								// Just return here, so we don't show a warning during page load.
+								return '';
+							} else if (talentPoints < maxPoints) {
+								return 'Unspent pet talent points.';
+							} else if (talentPoints > maxPoints) {
+								return 'More than 16 points spent in pet talents, but Beast Mastery is not talented.';
 							} else {
 								return '';
 							}
