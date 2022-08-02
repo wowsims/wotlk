@@ -54,36 +54,40 @@ func (ur *UnholyRotation) Reset(sim *core.Simulation) {
 	ur.recastedFF = false
 	ur.recastedBP = false
 
-	ur.procTrackers = make([]*ProcTracker, 0)
+	ur.resetProcTrackers()
+}
+
+func (dk *DpsDeathknight) initProcTrackers() {
+	dk.ur.procTrackers = make([]*ProcTracker, 0)
 
 	// Meteorite Whetstone
-	if ur.dk.HasTrinketEquipped(37390) {
-		ur.addProc(37390, "Meteorite Whetstone Proc")
+	if dk.HasTrinketEquipped(37390) {
+		dk.ur.addProc(37390, "Meteorite Whetstone Proc")
 	}
 
 	// Mirror of Truth
-	if ur.dk.HasTrinketEquipped(40684) {
-		ur.addProc(40684, "Mirror of Truth Proc")
+	if dk.HasTrinketEquipped(40684) {
+		dk.ur.addProc(40684, "Mirror of Truth Proc")
 	}
 
 	// Thundering Skyflare Diamond
-	if ur.dk.HasMetaGemEquipped(41400) {
-		ur.addProc(55379, "Thundering Skyflare Diamond Proc")
+	if dk.HasMetaGemEquipped(41400) {
+		dk.ur.addProc(55379, "Thundering Skyflare Diamond Proc")
 	}
 
 	// Fallen Crusader
-	if ur.dk.HasWeaponEnchant(53344) {
-		ur.addProc(53344, "Rune Of The Fallen Crusader Proc")
+	if dk.HasWeaponEnchant(53344) {
+		dk.ur.addProc(53344, "Rune Of The Fallen Crusader Proc")
 	}
 
 	// Black Magic
-	if ur.dk.HasWeaponEnchant(44495) {
-		ur.addProc(59626, "Black Magic Proc")
+	if dk.HasWeaponEnchant(44495) {
+		dk.ur.addProc(59626, "Black Magic Proc")
 	}
 
 	// Hyperspeed Acceleration
-	if ur.dk.Equip[proto.ItemSlot_ItemSlotHands].Enchant.ID == 54758 {
-		ur.addProc(54758, "Hyperspeed Acceleration Proc")
+	if dk.Equip[proto.ItemSlot_ItemSlotHands].Enchant.ID == 54758 {
+		dk.ur.addProc(54758, "Hyperspeed Acceleration Proc")
 	}
 }
 
@@ -180,7 +184,7 @@ func (dk *DpsDeathknight) uhShouldWaitForDnD(sim *core.Simulation, blood bool, f
 func (dk *DpsDeathknight) uhGhoulFrenzyCheck(sim *core.Simulation, target *core.Unit) bool {
 	// If no Ghoul Frenzy Aura or duration less then 10 seconds we try recasting
 	if !dk.GhoulFrenzyAura.IsActive() || dk.GhoulFrenzyAura.RemainingDuration(sim) < 10*time.Second {
-		if dk.CanBloodTap(sim) && dk.GhoulFrenzy.IsReady(sim) && dk.AllBloodRunesSpent() && dk.AllUnholySpent() && dk.SummonGargoyle.CD.TimeToReady(sim) > time.Second*60 {
+		if dk.CanBloodTap(sim) && dk.GhoulFrenzy.IsReady(sim) && dk.AllBloodRunesSpent() && dk.AllUnholySpent() && dk.SummonGargoyle.CD.TimeToReady(sim) > time.Second*55 {
 			// Use Ghoul Frenzy with a Blood Tap and Blood rune if all blood runes are on CD and Garg wont come off cd in less then a minute.
 			// The gargoyle check is there because you should BT -> UP -> Garg (Not in the sim yet)
 			if dk.uhDiseaseCheck(sim, target, dk.GhoulFrenzy, true, 1) {
