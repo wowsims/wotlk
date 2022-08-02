@@ -48,6 +48,7 @@ func NewDpsDeathknight(character core.Character, player proto.Player) *DpsDeathk
 		}),
 		Rotation: *dk.Rotation,
 	}
+
 	dpsDk.ur.dk = dpsDk
 
 	return dpsDk
@@ -99,6 +100,7 @@ func (dk *DpsDeathknight) GetDeathknight() *deathknight.Deathknight {
 
 func (dk *DpsDeathknight) Initialize() {
 	dk.Deathknight.Initialize()
+	dk.initProcTrackers()
 }
 
 func (dk *DpsDeathknight) Reset(sim *core.Simulation) {
