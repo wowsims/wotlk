@@ -82,8 +82,8 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 		// ret.JudgementOfWisdom.CD.ReadyAt(),
 		// ret.CrusaderStrike.CD.ReadyAt(),
 		// ret.DivineStorm.CD.ReadyAt(),
-		// ret.Consecration.CD.ReadyAt(),
-		// ret.Exorcism.CD.ReadyAt(),
+		ret.Consecration.CD.ReadyAt(),
+		ret.Exorcism.CD.ReadyAt(),
 	}
 
 	ret.waitUntilNextEvent(sim, events)
