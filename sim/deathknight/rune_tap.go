@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (dk *Deathknight) registerRuneTapSpell() {
@@ -24,12 +25,17 @@ func (dk *Deathknight) registerRuneTapSpell() {
 	} else if dk.Talents.ImprovedRuneTap == 3 {
 		healthGainMult = 1.0
 	}
-
-	dk.RuneTap = dk.RegisterSpell(core.SpellConfig{
-		ActionID: actionID,
-		Flags:    core.SpellFlagNoOnCastComplete,
-
+	baseCost := float64(core.NewRuneCost(0, 1, 0, 0, 0))
+	dk.RuneTap = dk.RegisterSpell(nil, core.SpellConfig{
+		ActionID:     actionID,
+		Flags:        core.SpellFlagNoOnCastComplete,
+		ResourceType: stats.RunicPower,
+		BaseCost:     baseCost,
 		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				Cost: baseCost,
+				// TODO: Does not invoke GCD?
+			},
 			CD: core.Cooldown{
 				Timer:    cdTimer,
 				Duration: cd,
@@ -39,9 +45,6 @@ func (dk *Deathknight) registerRuneTapSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			maxHealth := dk.MaxHealth()
 			dk.GainHealth(sim, (1.0+healthGainMult)*(maxHealth*0.1), healthMetrics)
-
-			dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_B)
-			dk.Spend(sim, spell, dkSpellCost)
 		},
 	})
 }
@@ -52,8 +55,7 @@ func (dk *Deathknight) CanRuneTap(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastRuneTap(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanRuneTap(sim) {
-		dk.RuneTap.Cast(sim, target)
-		return true
+		return dk.RuneTap.Cast(sim, target)
 	}
 	return false
 }

@@ -127,6 +127,14 @@ func hash(s string) uint32 {
 	return h.Sum32()
 }
 
+func Ternary[T any](condition bool, val1 T, val2 T) T {
+	if condition {
+		return val1
+	} else {
+		return val2
+	}
+}
+
 func TernaryInt(condition bool, val1 int, val2 int) int {
 	if condition {
 		return val1

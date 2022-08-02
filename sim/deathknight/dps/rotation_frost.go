@@ -191,7 +191,7 @@ func (dk *DpsDeathknight) setupFrostSubUnholyOpener() {
 		NewAction(dk.RotationActionCallback_FrostPrioRotation)
 }
 
-func (dk *DpsDeathknight) FrostDiseaseCheckWrapper(sim *core.Simulation, target *core.Unit, spell *core.Spell) bool {
+func (dk *DpsDeathknight) FrostDiseaseCheckWrapper(sim *core.Simulation, target *core.Unit, spell *deathknight.RuneSpell) bool {
 	fr := &dk.fr
 
 	gcd := dk.SpellGCD()
@@ -225,13 +225,12 @@ func (dk *DpsDeathknight) FrostDiseaseCheckWrapper(sim *core.Simulation, target 
 			}
 
 			crpb := dk.CopyRunicPowerBar()
-			runeCostForSpell := dk.RuneAmountForSpell(spell)
-			spellCost := crpb.DetermineOptimalCost(sim, runeCostForSpell.Blood, runeCostForSpell.Frost, runeCostForSpell.Unholy)
+			spellCost := crpb.OptimalRuneCost(core.RuneCost(spell.DefaultCast.Cost))
 
 			// Add whichever non-frost specific checks you want here, I guess you'll need them.
 
 			if !(dk.RimeAura.IsActive() && spell == dk.HowlingBlast) {
-				crpb.Spend(sim, spell, spellCost)
+				crpb.SpendRuneCost(sim, spell.Spell, spellCost)
 			}
 
 			if crpb.CurrentBloodRunes() == 0 {

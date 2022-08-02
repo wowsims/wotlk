@@ -4,11 +4,12 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
 type FrostRotation struct {
-	lastSpell *core.Spell
-	nextSpell *core.Spell
+	lastSpell *deathknight.RuneSpell
+	nextSpell *deathknight.RuneSpell
 }
 
 func (fr *FrostRotation) Reset(sim *core.Simulation) {
@@ -16,13 +17,13 @@ func (fr *FrostRotation) Reset(sim *core.Simulation) {
 	fr.lastSpell = nil
 }
 
-func (fr *FrostRotation) SetLastSpell(condition bool, spell *core.Spell) {
+func (fr *FrostRotation) SetLastSpell(condition bool, spell *deathknight.RuneSpell) {
 	if condition {
 		fr.lastSpell = spell
 	}
 }
 
-func (dk *DpsDeathknight) FrostDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *core.Spell, costRunes bool, casts int) bool {
+func (dk *DpsDeathknight) FrostDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *deathknight.RuneSpell, costRunes bool, casts int) bool {
 	ffRemaining := dk.FrostFeverDisease[target.Index].RemainingDuration(sim)
 	bpRemaining := dk.BloodPlagueDisease[target.Index].RemainingDuration(sim)
 	castGcd := dk.SpellGCD() * time.Duration(casts)
@@ -41,22 +42,21 @@ func (dk *DpsDeathknight) FrostDiseaseCheck(sim *core.Simulation, target *core.U
 		bpExpiresAt := bpRemaining + sim.CurrentTime
 
 		crpb := dk.CopyRunicPowerBar()
-		runeCostForSpell := dk.RuneAmountForSpell(spell)
-		spellCost := crpb.DetermineOptimalCost(sim, runeCostForSpell.Blood, runeCostForSpell.Frost, runeCostForSpell.Unholy)
+		spellCost := crpb.OptimalRuneCost(core.RuneCost(spell.DefaultCast.Cost))
 
-		crpb.Spend(sim, spell, spellCost)
+		crpb.SpendRuneCost(sim, spell.Spell, spellCost)
 
 		afterCastTime := sim.CurrentTime + castGcd
 		currentBloodRunes := crpb.CurrentBloodRunes()
 		nextBloodRuneAt := crpb.NormalBloodRuneReadyAt(sim)
 
 		// Check FF
-		if dk.frCheckForDiseaseRecast(ffExpiresAt, afterCastTime, spellCost.Blood, currentBloodRunes, nextBloodRuneAt) {
+		if dk.frCheckForDiseaseRecast(ffExpiresAt, afterCastTime, int(spellCost.Blood()), currentBloodRunes, nextBloodRuneAt) {
 			return false
 		}
 
 		// Check BP
-		if dk.frCheckForDiseaseRecast(bpExpiresAt, afterCastTime, spellCost.Blood, currentBloodRunes, nextBloodRuneAt) {
+		if dk.frCheckForDiseaseRecast(bpExpiresAt, afterCastTime, int(spellCost.Blood()), currentBloodRunes, nextBloodRuneAt) {
 			return false
 		}
 	} else {
