@@ -38,7 +38,7 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 		// invisible wrapper
-		Flags: core.SpellFlagNoLogs | core.SpellFlagNoMetrics | core.SpellFlagNoOnCastComplete,
+		Flags: core.SpellFlagNoOnCastComplete,
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			doSnapshot = true
 			dk.dndApSnapshot = 0.0
