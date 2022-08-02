@@ -121,13 +121,20 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		})
 	}
 
-	if individualBuffs.VampiricTouch ||
-		individualBuffs.HuntingParty ||
-		individualBuffs.JudgementsOfTheWise ||
-		individualBuffs.ImprovedSoulLeech ||
-		individualBuffs.EnduringWinter {
-			actionID := ActionID{SpellID: 48160} // Vampiric Touch
-			MakePermanent(ReplenishmentAura(character, actionID))
+	var replenishmentActionID ActionID
+	if (individualBuffs.VampiricTouch) {
+		replenishmentActionID.SpellID = 48160
+	} else if (individualBuffs.HuntingParty) {
+		replenishmentActionID.SpellID = 53292
+	} else if (individualBuffs.JudgementsOfTheWise) {
+		replenishmentActionID.SpellID = 31878
+	} else if (individualBuffs.ImprovedSoulLeech) {
+		replenishmentActionID.SpellID = 54118
+	} else if (individualBuffs.EnduringWinter) {
+		replenishmentActionID.SpellID = 44561
+	}
+	if !(replenishmentActionID.IsEmptyAction()) {
+		MakePermanent(ReplenishmentAura(character, replenishmentActionID))
 	}
 
 	kingsAgiIntSpiAmount := 1.0
