@@ -102,6 +102,10 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	if warlock.Talents.DemonicEmpowerment && warlock.DemonicEmpowerment.CD.IsReady(sim) {
 		warlock.DemonicEmpowerment.Cast(sim, target)
 	}
+	if warlock.Talents.Metamorphosis && warlock.MetamorphosisAura.IsActive() &&
+		warlock.ImmolationAura.CD.IsReady(sim) {
+		warlock.ImmolationAura.Cast(sim, target)
+	}
 
 	// ------------------------------------------
 	// Keep Glyph of Life Tap buff up
