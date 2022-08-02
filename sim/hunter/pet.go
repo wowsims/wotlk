@@ -80,8 +80,6 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 	return hp
 }
 
-func (hp *HunterPet) OwnerAttackSpeedChanged(sim *core.Simulation) {}
-
 func (hp *HunterPet) GetPet() *core.Pet {
 	return &hp.Pet
 }

@@ -119,8 +119,6 @@ func (garg *GargoylePet) GetPet() *core.Pet {
 	return &garg.Pet
 }
 
-func (garg *GargoylePet) OwnerAttackSpeedChanged(sim *core.Simulation) {}
-
 func (garg *GargoylePet) Initialize() {
 	garg.registerGargoyleStrikeSpell()
 }

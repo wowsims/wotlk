@@ -147,8 +147,6 @@ func (wp *WarlockPet) GetPet() *core.Pet {
 	return &wp.Pet
 }
 
-func (wp *WarlockPet) OwnerAttackSpeedChanged(sim *core.Simulation) {}
-
 func (wp *WarlockPet) Initialize() {
 	wp.primaryAbility = wp.NewPetAbility(wp.config.PrimaryAbility, true)
 	wp.secondaryAbility = wp.NewPetAbility(wp.config.SecondaryAbility, false)

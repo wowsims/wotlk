@@ -118,5 +118,3 @@ func (spiritWolf *SpiritWolf) Reset(sim *core.Simulation) {
 func (spiritWolf *SpiritWolf) GetPet() *core.Pet {
 	return &spiritWolf.Pet
 }
-
-func (spiritWolf *SpiritWolf) OwnerAttackSpeedChanged(sim *core.Simulation) {}

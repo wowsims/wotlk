@@ -82,8 +82,6 @@ func (mage *Mage) NewWaterElemental(disobeyChance float64) *WaterElemental {
 	return waterElemental
 }
 
-func (we *WaterElemental) OwnerAttackSpeedChanged(sim *core.Simulation) {}
-
 func (we *WaterElemental) GetPet() *core.Pet {
 	return &we.Pet
 }

@@ -35,8 +35,6 @@ type GnomishFlameTurret struct {
 	FlameCannon *Spell
 }
 
-func (pet *GnomishFlameTurret) OwnerAttackSpeedChanged(sim *Simulation) {}
-
 func (character *Character) NewGnomishFlameTurret() *GnomishFlameTurret {
 	gft := &GnomishFlameTurret{
 		Pet: NewPet(
