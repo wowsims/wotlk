@@ -106,8 +106,9 @@ func (shaman *Shaman) newLavaBurstSpell() *core.Spell {
 						return lvbdotDmg / 3 //spread dot over 3 ticks
 					},
 				},
-				IsPeriodic: true,
-				ProcMask:   core.ProcMaskEmpty,
+				IsPeriodic:     true,
+				ProcMask:       core.ProcMaskEmpty,
+				OutcomeApplier: shaman.OutcomeFuncTick(),
 			}),
 		})
 
