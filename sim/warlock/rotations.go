@@ -106,12 +106,12 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// ------------------------------------------
 	// Keep Glyph of Life Tap buff up
 	// ------------------------------------------
-	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap) &&
-		(!warlock.GlyphOfLifeTapAura.IsActive() || warlock.GlyphOfLifeTapAura.RemainingDuration(sim) < time.Second * 2) {
+	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap) {
 		if sim.CurrentTime < time.Second {
 			// Pre-pull Life Tap
 			warlock.GlyphOfLifeTapAura.Activate(sim)
-		} else {
+		} else if sim.GetRemainingDuration() > time.Second * 30 &&
+		(!warlock.GlyphOfLifeTapAura.IsActive() || warlock.GlyphOfLifeTapAura.RemainingDuration(sim) < time.Second * 2) {
 			warlock.LifeTapOrDarkPact(sim)
 			return
 		}
@@ -162,7 +162,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		// Affliction Rotation
 		// ------------------------------------------
 		if rotationType == proto.Warlock_Rotation_Affliction {
-			if !warlock.CorruptionDot.IsActive() && (core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() || warlock.Talents.ImprovedShadowBolt == 0) {
+			if !warlock.CorruptionDot.IsActive() && core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() {
 				// Cast Corruption as soon as the 5% crit debuff is up
 				// Cast Corruption again when you get the execute buff (Death's Embrace)
 				spell = warlock.Corruption
@@ -183,20 +183,13 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			} else if sim.IsExecutePhase25() {
 				// Drain Soul execute phase
 				spell = warlock.channelCheck(sim, warlock.DrainSoulDot, 5)
-			} else if warlock.CurrentManaPercent() < 0.25 {
-				// If you were gonna cast a filler but are low mana, get mana instead in order not to be OOM when an important spell is coming up
-				warlock.LifeTapOrDarkPact(sim)
-				return
-			} else {
-				// Filler
-				spell = warlock.ShadowBolt
-			}
+			} 
 		} else if rotationType == proto.Warlock_Rotation_Demonology {
 
 			// ------------------------------------------
 			// Demonology Rotation
 			// ------------------------------------------
-			if (!warlock.CorruptionDot.IsActive() || warlock.CorruptionDot.RemainingDuration(sim) < warlock.Corruption.CurCast.CastTime) &&
+			if !warlock.CorruptionDot.IsActive() && core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() &&
 				sim.GetRemainingDuration() > warlock.CorruptionDot.Duration {
 				spell = warlock.Corruption
 			} else if (!warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime) &&
@@ -206,15 +199,11 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 				// Shadow Mastery refresh
 				spell = warlock.ShadowBolt
 			} else if warlock.DecimationAura.IsActive() {
+				// Demonology execute phase
 				spell = warlock.SoulFire
 			} else if warlock.MoltenCoreAura.IsActive() {
+				// Corruption proc
 				spell = warlock.Incinerate
-			} else if warlock.CurrentManaPercent() < 0.25 {
-				// If you were gonna cast a filler but are low mana, get mana instead in order not to be OOM when an important spell is coming up
-				warlock.LifeTapOrDarkPact(sim)
-				return
-			} else {
-				spell = warlock.ShadowBolt
 			}
 		} else if rotationType == proto.Warlock_Rotation_Destruction {
 
@@ -228,13 +217,8 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 				spell = warlock.Immolate
 			} else if warlock.Talents.ChaosBolt && warlock.ChaosBolt.CD.IsReady(sim) {
 				spell = warlock.ChaosBolt
-			} else {
-				spell = warlock.Incinerate
 			}
 		}
-	} else {
-		preset = proto.Warlock_Rotation_Manual
-		warlock.Rotation.Preset = proto.Warlock_Rotation_Manual
 	}
 
 	// ------------------------------------------
@@ -244,6 +228,9 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// ------------------------------------------
 	// Main spells
 	// ------------------------------------------
+
+	// We're kind of trying to fit all different spec rotations in one big priority based rotation in order to let people experiment
+
 	if preset == proto.Warlock_Rotation_Manual {
 		if warlock.Rotation.Corruption &&
 			(!warlock.CorruptionDot.IsActive() && (core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() || warlock.Talents.ImprovedShadowBolt == 0) ||
@@ -281,6 +268,17 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		} else if sim.IsExecutePhase25() && warlock.Talents.SoulSiphon > 0 {
 			// Drain Soul execute phase for Affliction
 			spell = warlock.channelCheck(sim, warlock.DrainSoulDot, 5)
+		}
+	}
+
+	// ------------------------------------------
+	// Filler spell
+	// ------------------------------------------
+	if spell == nil {
+		if warlock.CurrentManaPercent() < 0.25 && sim.GetRemainingDuration() > time.Second * 30 {
+			// If you were gonna cast a filler but are low mana, get mana instead in order not to be OOM when an important spell is coming up
+			warlock.LifeTapOrDarkPact(sim)
+			return
 		} else {
 			// Filler
 			switch mainSpell {

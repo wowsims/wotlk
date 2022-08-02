@@ -275,7 +275,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		character.AddStats(stats.Stats{stats.SpellPower: 34})
 	}
 	if partyBuffs.ChainOfTheTwilightOwl {
-		character.AddStats(stats.Stats{stats.SpellCrit: 2 * CritRatingPerCritChance})
+		character.AddStats(stats.Stats{stats.SpellCrit: 45})
 	}
 }
 
