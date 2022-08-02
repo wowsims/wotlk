@@ -34,7 +34,7 @@ export const AfflictionTalents = {
 	name: 'Affliction',
   tooltip: WarlockTooltips.AFF_TALENTS_TOOLTIP,
 	data: SavedTalents.create({
-		talentsString: '2350002030023510253510331151--55000005',
+		talentsString: '2350002030023510253500331151--550000051',
 		glyphs: Glyphs.create({
 			major1: MajorGlyph.GlyphOfQuickDecay,
 			major2: MajorGlyph.GlyphOfLifeTap,
@@ -54,7 +54,7 @@ export const DemonologyTalents = {
 		glyphs: Glyphs.create({
 			major1: MajorGlyph.GlyphOfLifeTap,
 			major2: MajorGlyph.GlyphOfQuickDecay,
-			major3: MajorGlyph.GlyphOfMetamorphosis,
+			major3: MajorGlyph.GlyphOfFelguard,
 			minor1: MinorGlyph.GlyphOfSouls,
 			minor2: MinorGlyph.GlyphOfDrainSoul,
 			minor3: MinorGlyph.GlyphOfEnslaveDemon,
@@ -147,10 +147,16 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
-	blessingOfKings: true,
-	blessingOfWisdom: TristateEffect.TristateEffectImproved,
-	blessingOfMight: TristateEffect.TristateEffectImproved,
-	vampiricTouch: true,
+  blessingOfKings: true,
+  blessingOfWisdom: TristateEffect.TristateEffectImproved,
+  blessingOfMight: TristateEffect.TristateEffectImproved,
+  vampiricTouch: true,
+});
+
+export const DestroIndividualBuffs = IndividualBuffs.create({
+  blessingOfKings: true,
+  blessingOfWisdom: TristateEffect.TristateEffectImproved,
+  blessingOfMight: TristateEffect.TristateEffectImproved,
 });
 
 export const DefaultDebuffs = Debuffs.create({
@@ -160,6 +166,16 @@ export const DefaultDebuffs = Debuffs.create({
 	ebonPlaguebringer: true,
 	heartOfTheCrusader: true,
 	judgementOfWisdom: true,
+});
+
+export const DestroDebuffs = Debuffs.create({
+  sunderArmor: true,
+  faerieFire: TristateEffect.TristateEffectImproved,
+  bloodFrenzy: true,
+  ebonPlaguebringer: true,
+  heartOfTheCrusader: true,
+  judgementOfWisdom: true,
+  shadowMastery: true,
 });
 
 export const SWP_BIS = {

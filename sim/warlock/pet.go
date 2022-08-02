@@ -52,7 +52,10 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		owner:  warlock,
 	}
 
+	// TODO: EnableManaBar should really be refactored to not assume 1 int = 15 mana
 	wp.EnableManaBar()
+	// the ratio multiplier affects the first 20 points as well
+	wp.AddStat(stats.Mana, (15*20-20)+(20-15*20)*petConfig.ManaIntRatio/15)
 	wp.AddStatDependency(stats.Intellect, stats.Mana, 1/(1+15))
 	wp.AddStatDependency(stats.Intellect, stats.Mana, 1.0+petConfig.ManaIntRatio)
 	wp.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
@@ -171,7 +174,7 @@ func (wp *WarlockPet) OnGCDReady(sim *core.Simulation) {
 	if !wp.TryCast(sim, target, wp.primaryAbility) {
 		if wp.secondaryAbility != nil {
 			wp.TryCast(sim, target, wp.secondaryAbility)
-		} else if wp.primaryAbility.CD.Timer != nil {
+		} else if !wp.primaryAbility.IsReady(sim) {
 			wp.WaitUntil(sim, wp.primaryAbility.CD.ReadyAt())
 		} else {
 			wp.WaitForMana(sim, wp.primaryAbility.CurCast.Cost)
@@ -263,16 +266,16 @@ var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
 	},
 	proto.Warlock_Options_Felhunter: {
 		Name:           "Felhunter",
-		ManaIntRatio:   11.5,
+		ManaIntRatio:   15 * 0.77, // GetUnitPowerModifier("pet")
 		Melee:          true,
 		PrimaryAbility: ShadowBite,
 		Stats: stats.Stats{
-			stats.Stamina:   328,
 			stats.Strength:  314,
 			stats.Agility:   90,
+			stats.Stamina:   328,
 			stats.Intellect: 150,
-			stats.Mana:      1109,
 			stats.Spirit:    209,
+			stats.Mana:      1559,
 			stats.MP5:       11,
 			stats.SpellCrit: 0.01,
 			stats.MeleeCrit: 0.03,

@@ -89,7 +89,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				// Default talents.
 				talents: Presets.AfflictionTalents.data,
 				// Default spec-specific settings.
-				specOptions: Presets.DestructionOptions,
+				specOptions: Presets.AfflictionOptions,
 
 				// Default buffs and debuffs settings.
 				raidBuffs: Presets.DefaultRaidBuffs,

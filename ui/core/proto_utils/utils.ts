@@ -222,11 +222,19 @@ export const titleIcons: Record<Spec, string> = {
 
 export const raidSimIcon: string = '/wotlk/assets/img/raid_icon.png';
 
+export function getTalentTreePoints(talentsString: string): Array<number> {
+	const trees = talentsString.split('-');
+	return trees.map(tree => sum([...tree].map(char => parseInt(char))));
+}
+
+export function getTalentPoints(talentsString: string): number {
+	return sum(getTalentTreePoints(talentsString));
+}
+
 // Returns the index of the talent tree (0, 1, or 2) that has the most points.
 export function getTalentTree(talentsString: string): number {
-    const trees = talentsString.split('-');
-    const points = trees.map(tree => sum([...tree].map(char => parseInt(char))));
-    return maxIndex(points) || 0;
+	const points = getTalentTreePoints(talentsString);
+	return maxIndex(points) || 0;
 }
 
 // Returns the index of the talent tree (0, 1, or 2) that has the most points.

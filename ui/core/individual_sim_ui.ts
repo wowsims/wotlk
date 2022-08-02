@@ -63,29 +63,31 @@ import { StatWeightsRequest, StatWeightsResult } from './proto/api.js';
 import { Stats } from './proto_utils/stats.js';
 import { shattFactionNames } from './proto_utils/names.js';
 import { Target } from './target.js';
-import { Target as TargetProto } from './proto/common.js';
-import { WeaponImbue } from './proto/common.js';
-import { addRaidSimAction, RaidSimResultsManager } from './components/raid_sim_action.js';
-import { addStatWeightsAction } from './components/stat_weights_action.js';
-import { equalsOrBothNull, getEnumValues } from './utils.js';
-import { getMetaGemConditionDescription } from './proto_utils/gems.js';
-import { isDualWieldSpec } from './proto_utils/utils.js';
-import { simLaunchStatuses } from './launched_sims.js';
-import { makePetTypeInputConfig } from './talents/hunter_pet.js';
-import { newIndividualExporters } from './components/exporters.js';
-import { newIndividualImporters } from './components/importers.js';
-import { newGlyphsPicker } from './talents/factory.js';
-import { newTalentsPicker } from './talents/factory.js';
-import { professionNames, raceNames } from './proto_utils/names.js';
-import { isTankSpec } from './proto_utils/utils.js';
-import { specNames } from './proto_utils/utils.js';
-import { specToEligibleRaces } from './proto_utils/utils.js';
-import { specToLocalStorageKey } from './proto_utils/utils.js';
+import { Target as TargetProto } from '/wotlk/core/proto/common.js';
+import { WeaponImbue } from '/wotlk/core/proto/common.js';
+import { addRaidSimAction, RaidSimResultsManager } from '/wotlk/core/components/raid_sim_action.js';
+import { addStatWeightsAction } from '/wotlk/core/components/stat_weights_action.js';
+import { equalsOrBothNull, getEnumValues } from '/wotlk/core/utils.js';
+import { getMetaGemConditionDescription } from '/wotlk/core/proto_utils/gems.js';
+import { getTalentPoints } from '/wotlk/core/proto_utils/utils.js';
+import { isDualWieldSpec } from '/wotlk/core/proto_utils/utils.js';
+import { simLaunchStatuses } from '/wotlk/core/launched_sims.js';
+import { makePetTypeInputConfig } from '/wotlk/core/talents/hunter_pet.js';
+import { newIndividualExporters } from '/wotlk/core/components/exporters.js';
+import { newIndividualImporters } from '/wotlk/core/components/importers.js';
+import { newGlyphsPicker } from '/wotlk/core/talents/factory.js';
+import { newTalentsPicker } from '/wotlk/core/talents/factory.js';
+import { professionNames, raceNames } from '/wotlk/core/proto_utils/names.js';
+import { isTankSpec } from '/wotlk/core/proto_utils/utils.js';
+import { specNames } from '/wotlk/core/proto_utils/utils.js';
+import { specToEligibleRaces } from '/wotlk/core/proto_utils/utils.js';
+import { specToLocalStorageKey } from '/wotlk/core/proto_utils/utils.js';
 
-import * as IconInputs from './components/icon_inputs.js';
-import * as InputHelpers from './components/input_helpers.js';
-import * as OtherConstants from './constants/other.js';
-import * as Tooltips from './constants/tooltips.js';
+import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
+import * as InputHelpers from '/wotlk/core/components/input_helpers.js';
+import * as Mechanics from '/wotlk/core/constants/mechanics.js';
+import * as OtherConstants from '/wotlk/core/constants/other.js';
+import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 
 declare var Muuri: any;
 declare var tippy: any;
@@ -240,6 +242,23 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				}
 
 				return `Only 3 Jewelcrafting Gems are allowed, but ${jcGems.length} are equipped.`;
+			},
+		});
+		this.addWarning({
+			updateOn: this.player.talentsChangeEmitter,
+			getContent: () => {
+				const talentPoints = getTalentPoints(this.player.getTalentsString());
+
+				if (talentPoints == 0) {
+					// Just return here, so we don't show a warning during page load.
+					return '';
+				} else if (talentPoints < Mechanics.MAX_TALENT_POINTS) {
+					return 'Unspent talent points.';
+				} else if (talentPoints > Mechanics.MAX_TALENT_POINTS) {
+					return 'More than maximum talent points spent.';
+				} else {
+					return '';
+				}
 			},
 		});
 		(config.warnings || []).forEach(warning => this.addWarning(warning(this)));

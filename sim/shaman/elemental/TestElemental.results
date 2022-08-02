@@ -461,7 +461,7 @@ dps_results: {
  key: "TestElemental-AllItems-Nobundo'sRegalia"
  value: {
   dps: 2681.7477236817804
-  tps: 2049.8089375836767
+  tps: 2097.186514302557
  }
 }
 dps_results: {
@@ -664,7 +664,7 @@ dps_results: {
  key: "TestElemental-AllItems-Thrall'sRegalia"
  value: {
   dps: 2681.7477236817804
-  tps: 2049.8089375836767
+  tps: 2097.186514302557
  }
 }
 dps_results: {
@@ -755,7 +755,7 @@ dps_results: {
  key: "TestElemental-AllItems-WorldbreakerGarb"
  value: {
   dps: 2838.235961766876
-  tps: 2189.7946347421016
+  tps: 2231.309700244776
  }
 }
 dps_results: {

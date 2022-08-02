@@ -246,6 +246,10 @@ func (sim *Simulation) run() *proto.RaidSimResult {
 			runtime.Gosched() // ensure that reporting threads are given time to report, mostly only important in wasm (only 1 thread)
 			st = time.Now()
 		}
+
+		// Before each iteration, reset state to seed+iterations
+		sim.rand.Seed(sim.Options.RandomSeed + int64(i))
+
 		sim.runOnce()
 		totalDuration += sim.CurrentTime
 	}
@@ -304,10 +308,10 @@ func (sim *Simulation) runOnce() {
 	sim.Encounter.doneIteration(sim)
 
 	for _, unit := range sim.Raid.AllUnits {
-		unit.Metrics.doneIteration(sim.CurrentTime.Seconds())
+		unit.Metrics.doneIteration(sim.rand.GetSeed(), sim.CurrentTime.Seconds())
 	}
 	for _, target := range sim.Encounter.Targets {
-		target.Metrics.doneIteration(sim.CurrentTime.Seconds())
+		target.Metrics.doneIteration(sim.rand.GetSeed(), sim.CurrentTime.Seconds())
 	}
 }
 

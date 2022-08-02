@@ -29,7 +29,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 0
   final_stats: 6826.6
-  final_stats: 1662.1000000000001
+  final_stats: 2009.7000000000003
   final_stats: 0
   final_stats: 0
   final_stats: 0
@@ -711,7 +711,7 @@ dps_results: {
  key: "TestEnhancement-AllItems-WorldbreakerGarb"
  value: {
   dps: 2502.477202622223
-  tps: 1767.190140398731
+  tps: 1777.692501470865
  }
 }
 dps_results: {
