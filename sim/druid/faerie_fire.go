@@ -10,7 +10,7 @@ import (
 func (druid *Druid) registerFaerieFireSpell() {
 	actionID := core.ActionID{SpellID: 770}
 	resourceType := stats.Mana
-	baseCost := 145.0
+	baseCost := 0.08 * druid.BaseMana
 	gcd := core.GCDDefault
 	ignoreHaste := false
 	cd := core.Cooldown{}

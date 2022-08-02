@@ -13,9 +13,9 @@ const IvoryMoongoddess int32 = 27518
 
 func (druid *Druid) newStarfireSpell() *core.Spell {
 	actionID := core.ActionID{SpellID: 26986}
-	baseCost := 370.0
-	minBaseDamage := 550.0
-	maxBaseDamage := 647.0
+	baseCost := 0.16 * druid.BaseMana
+	minBaseDamage := 1038.0
+	maxBaseDamage := 1222.0
 	spellCoefficient := 1.0
 
 	// This seems to be unaffected by wrath of cenarius so it needs to come first.
@@ -46,6 +46,10 @@ func (druid *Druid) newStarfireSpell() *core.Spell {
 			}
 		})
 	}
+	// If improved insect swarm and MF active, +3% crit chance
+	if druid.MoonfireDot.IsActive() && druid.Talents.ImprovedInsectSwarm > 0 {
+		effect.BonusSpellCritRating += 0.01 * float64(druid.Talents.ImprovedInsectSwarm)
+	}
 
 	return druid.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -63,6 +67,7 @@ func (druid *Druid) newStarfireSpell() *core.Spell {
 
 			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
 				druid.applyNaturesSwiftness(cast)
+				druid.applyNaturesGrace(cast)
 			},
 		},
 

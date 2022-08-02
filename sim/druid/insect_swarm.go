@@ -11,7 +11,7 @@ import (
 
 func (druid *Druid) registerInsectSwarmSpell() {
 	actionID := core.ActionID{SpellID: 27013}
-	baseCost := 175.0
+	baseCost := 0.08 * druid.BaseMana
 
 	target := druid.CurrentTarget
 	missAura := core.InsectSwarmAura(target)

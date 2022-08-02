@@ -47,6 +47,7 @@ type Druid struct {
 	FaerieFireAura       *core.Aura
 	MangleAura           *core.Aura
 	MaulQueueAura        *core.Aura
+	NaturesGraceProcAura *core.Aura
 	NaturesSwiftnessAura *core.Aura
 	CatFormAura          *core.Aura
 	BearFormAura         *core.Aura
