@@ -2,7 +2,6 @@ package deathknight
 
 import (
 	"math"
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -126,18 +125,9 @@ func (ghoulPet *GhoulPet) OwnerAttackSpeedChanged(sim *core.Simulation) {
 		return
 	}
 
-	if sim.Log != nil {
-		sim.Log("Removing " + strconv.FormatFloat(ghoulPet.ownerMeleeMultiplier, 'f', 3, 64))
-	}
 	ghoulPet.MultiplyMeleeSpeed(sim, 1/ghoulPet.ownerMeleeMultiplier)
 	ghoulPet.ownerMeleeMultiplier = ghoulPet.dkOwner.PseudoStats.MeleeSpeedMultiplier
 	ghoulPet.MultiplyMeleeSpeed(sim, ghoulPet.ownerMeleeMultiplier)
-	if sim.Log != nil {
-		sim.Log("Adding " + strconv.FormatFloat(ghoulPet.ownerMeleeMultiplier, 'f', 3, 64))
-	}
-	if sim.Log != nil {
-		sim.Log("Ghoul scaling to " + strconv.FormatFloat(ghoulPet.PseudoStats.MeleeSpeedMultiplier, 'f', 3, 64))
-	}
 }
 
 func (ghoulPet *GhoulPet) Initialize() {
