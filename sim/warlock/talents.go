@@ -487,7 +487,7 @@ func (warlock *Warlock) setupImprovedSoulLeech() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spell == warlock.Conflagrate  || spell == warlock.ShadowBolt || spell == warlock.ChaosBolt || spell == warlock.SoulFire || spell == warlock.Incinerate {
+			if spell == warlock.Conflagrate || spell == warlock.ShadowBolt || spell == warlock.ChaosBolt || spell == warlock.SoulFire || spell == warlock.Incinerate {
 				if sim.RandomFloat("SoulLeech") < soulLeechProcChance {
 					warlock.AddMana(sim, warlock.MaxMana()*float64(warlock.Talents.ImprovedSoulLeech)/100, improvedSoulLeechManaMetric, true)
 					warlock.Pets[0].GetCharacter().AddMana(sim, warlock.Pets[0].GetCharacter().MaxMana()*float64(warlock.Talents.ImprovedSoulLeech)/100, improvedSoulLeechPetManaMetric, true)

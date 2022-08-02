@@ -65,25 +65,25 @@ var DefaultAfflictionWarlock = &proto.Player_Warlock{
 
 var defaultAfflictionTalents = &proto.WarlockTalents{
 	// Affliction
-	ImprovedCurseOfAgony: 2,
-	Suppression: 3,
-	ImprovedCorruption: 5,
-	SoulSiphon: 2,
-	FelConcentration: 3,
-	Nightfall: 2,
-	EmpoweredCorruption: 3,
-	ShadowEmbrace: 5,
-	SiphonLife: true,
-	ImprovedFelhunter: 2,
-	ShadowMastery: 5,
-	Eradication: 3,
-	Contagion: 5,
-	DarkPact: true,
-	DeathsEmbrace: 3,
-	UnstableAffliction: true,
-	Pandemic: true,
+	ImprovedCurseOfAgony:  2,
+	Suppression:           3,
+	ImprovedCorruption:    5,
+	SoulSiphon:            2,
+	FelConcentration:      3,
+	Nightfall:             2,
+	EmpoweredCorruption:   3,
+	ShadowEmbrace:         5,
+	SiphonLife:            true,
+	ImprovedFelhunter:     2,
+	ShadowMastery:         5,
+	Eradication:           3,
+	Contagion:             5,
+	DarkPact:              true,
+	DeathsEmbrace:         3,
+	UnstableAffliction:    true,
+	Pandemic:              true,
 	EverlastingAffliction: 5,
-	Haunt: true,
+	Haunt:                 true,
 	// Destro
 	ImprovedShadowBolt: 5,
 	Bane:               5,
@@ -99,9 +99,9 @@ var defaultAfflictionOptions = &proto.Warlock_Options{
 var defaultAfflictionRotation = &proto.Warlock_Rotation{
 	PrimarySpell: proto.Warlock_Rotation_ShadowBolt,
 	SecondaryDot: proto.Warlock_Rotation_UnstableAffliction,
-	SpecSpell: proto.Warlock_Rotation_Haunt,
-	Curse: proto.Warlock_Rotation_Agony,
-	Corruption: true,
+	SpecSpell:    proto.Warlock_Rotation_Haunt,
+	Curse:        proto.Warlock_Rotation_Agony,
+	Corruption:   true,
 	DetonateSeed: true,
 }
 
@@ -123,30 +123,30 @@ var DefaultDemonologyWarlock = &proto.Player_Warlock{
 var defaultDemonologyTalents = &proto.WarlockTalents{
 	// Demonology
 	ImprovedHealthstone: 2,
-	DemonicEmbrace: 3,
-	FelSynergy: 2,
-	DemonicBrutality: 3,
-	FelVitality: 3,
-	SoulLink: true,
-	DemonicAegis: 3,
-	UnholyPower: 5,
-	ManaFeed: true,
-	MasterConjuror: 2,
-	MasterDemonologist: 5,
-	MoltenCore: 3,
-	DemonicEmpowerment: true,
-	DemonicKnowledge: 3,
-	DemonicTactics: 5,
-	Decimation: 2,
-	SummonFelguard: true,
-	Nemesis: 3,
-	DemonicPact: 5,
-	Metamorphosis: true,
+	DemonicEmbrace:      3,
+	FelSynergy:          2,
+	DemonicBrutality:    3,
+	FelVitality:         3,
+	SoulLink:            true,
+	DemonicAegis:        3,
+	UnholyPower:         5,
+	ManaFeed:            true,
+	MasterConjuror:      2,
+	MasterDemonologist:  5,
+	MoltenCore:          3,
+	DemonicEmpowerment:  true,
+	DemonicKnowledge:    3,
+	DemonicTactics:      5,
+	Decimation:          2,
+	SummonFelguard:      true,
+	Nemesis:             3,
+	DemonicPact:         5,
+	Metamorphosis:       true,
 	// Destro
 	ImprovedShadowBolt: 5,
 	Bane:               5,
 	Ruin:               5,
-	Intensity: 2,
+	Intensity:          2,
 }
 
 var defaultDemonologyOptions = &proto.Warlock_Options{
@@ -158,35 +158,36 @@ var defaultDemonologyOptions = &proto.Warlock_Options{
 var defaultDemonologyRotation = &proto.Warlock_Rotation{
 	PrimarySpell: proto.Warlock_Rotation_ShadowBolt,
 	SecondaryDot: proto.Warlock_Rotation_Immolate,
-	Curse: proto.Warlock_Rotation_Doom,
-	Corruption: true,
+	Curse:        proto.Warlock_Rotation_Doom,
+	Corruption:   true,
 	DetonateSeed: true,
 }
+
 // ---------------------------------------------------------
 
 var FullRaidBuffs = &proto.RaidBuffs{
-	GiftOfTheWild: 2,
-	PowerWordFortitude: 2,
-	StrengthOfEarthTotem: 2,
-	ArcaneBrilliance: true,
-	DivineSpirit: true,
-	TrueshotAura: true,
-	LeaderOfThePack: 2,
-	IcyTalons: true,
-	TotemOfWrath: true,
-	MoonkinAura: 2,
-	WrathOfAirTotem: true,
+	GiftOfTheWild:         2,
+	PowerWordFortitude:    2,
+	StrengthOfEarthTotem:  2,
+	ArcaneBrilliance:      true,
+	DivineSpirit:          true,
+	TrueshotAura:          true,
+	LeaderOfThePack:       2,
+	IcyTalons:             true,
+	TotemOfWrath:          true,
+	MoonkinAura:           2,
+	WrathOfAirTotem:       true,
 	SanctifiedRetribution: true,
-	Bloodlust: true,
+	Bloodlust:             true,
 }
 
 var FullPartyBuffs = &proto.PartyBuffs{}
 
 var FullIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings: true,
+	BlessingOfKings:  true,
 	BlessingOfWisdom: 2,
-	BlessingOfMight: 2,
-	VampiricTouch: true,
+	BlessingOfMight:  2,
+	VampiricTouch:    true,
 }
 
 var FullConsumes = &proto.Consumes{
@@ -197,12 +198,12 @@ var FullConsumes = &proto.Consumes{
 }
 
 var FullDebuffs = &proto.Debuffs{
-	SunderArmor: true,
-	FaerieFire: 2,
-	BloodFrenzy: true,
-	EbonPlaguebringer: true,
+	SunderArmor:        true,
+	FaerieFire:         2,
+	BloodFrenzy:        true,
+	EbonPlaguebringer:  true,
 	HeartOfTheCrusader: true,
-	JudgementOfWisdom: true,
+	JudgementOfWisdom:  true,
 }
 
 var P1Gear = items.EquipmentSpecFromJsonString(`
