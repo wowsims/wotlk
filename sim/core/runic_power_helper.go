@@ -114,10 +114,6 @@ func RunesAtleastOneOfState(sim *Simulation, runes *[2]Rune, runeState RuneState
 	return runes[0].state == runeState || runes[1].state == runeState
 }
 
-func (rp *runicPowerBar) SetAsGeneratedByReapingOrBoTN(slot int32) {
-	rp.bloodRunes[slot].generatedByReapingOrBoTN = true
-}
-
 // TODO: Simplify this, its definitely possible
 func (rp *runicPowerBar) LaunchBloodTapRegenPA(sim *Simulation, slot int32, spell *Spell) {
 	r := &rp.bloodRunes[slot]
@@ -155,9 +151,9 @@ func (rp *runicPowerBar) LaunchBloodTapRegenPA(sim *Simulation, slot int32, spel
 	}
 
 	r.pas[1] = pa
-	if !rp.isACopy {
-		sim.AddPendingAction(pa)
-	}
+	//if !rp.isACopy {
+	//sim.AddPendingAction(pa)
+	//}
 }
 
 func (rp *runicPowerBar) GainDeathRuneMetrics(sim *Simulation, spell *Spell, currRunes int32, newRunes int32) {
