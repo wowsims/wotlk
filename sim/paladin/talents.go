@@ -455,16 +455,9 @@ func (paladin *Paladin) makeRighteousVengeanceDot(target *core.Unit) *core.Dot {
 					OutcomeApplier:   applier,
 					BaseDamage: core.BaseDamageConfig{
 						Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
-							multiplierRemover := 1 *
-								(1 / paladin.PseudoStats.HolyDamageDealtMultiplier) *
-								(1 / target.PseudoStats.HolyDamageTakenMultiplier) *
-								(1 / paladin.PseudoStats.DamageDealtMultiplier) *
-								(1 / target.PseudoStats.DamageTakenMultiplier) *
-								(1 / paladin.AttackTables[target.TableIndex].DamageDealtMultiplier)
-
 							tick := paladin.RighteousVengeanceDamage[target.Index]
 							paladin.RighteousVengeancePools[target.Index] -= tick
-							return tick * multiplierRemover
+							return tick
 						},
 						TargetSpellCoefficient: 1,
 					},
@@ -480,7 +473,7 @@ func (paladin *Paladin) registerRighteousVengeanceSpell() {
 	paladin.RighteousVengeanceSpell = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    dotActionID,
 		SpellSchool: core.SpellSchoolHoly,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreTargetModifiers | core.SpellFlagIgnoreAttackerModifiers,
 	})
 }
 
