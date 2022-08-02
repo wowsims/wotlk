@@ -371,8 +371,7 @@ func (paladin *Paladin) applyArtOfWar() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			// TODO: Check if only procs on white hits.
-			if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+			if !spellEffect.IsMelee() || spell.Flags.Matches(SpellFlagSecondaryJudgement) {
 				return
 			}
 
