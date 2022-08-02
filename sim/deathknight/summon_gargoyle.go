@@ -168,7 +168,7 @@ func (garg *GargoylePet) registerGargoyleStrikeSpell() {
 			ThreatMultiplier: 1,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return 120 + hitEffect.MeleeAttackPower(spell.Unit)*attackPowerModifier
+					return 130 + hitEffect.MeleeAttackPower(spell.Unit)*attackPowerModifier
 				},
 				TargetSpellCoefficient: 1,
 			},
