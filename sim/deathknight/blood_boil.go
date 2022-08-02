@@ -4,9 +4,11 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
+var BloodBoilActionID = core.ActionID{SpellID: 49941}
+
 func (dk *Deathknight) registerBloodBoilSpell() {
 	dk.BloodBoil = dk.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 49941},
+		ActionID:    BloodBoilActionID,
 		SpellSchool: core.SpellSchoolShadow,
 
 		Cast: core.CastConfig{

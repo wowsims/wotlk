@@ -6,6 +6,8 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
+var HowlingBlastActionID = core.ActionID{SpellID: 51411}
+
 func (dk *Deathknight) registerHowlingBlastSpell() {
 	if !dk.Talents.HowlingBlast {
 		return
@@ -14,7 +16,7 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 	rpBonus := 2.5 * float64(dk.Talents.ChillOfTheGrave)
 
 	dk.HowlingBlast = dk.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 51411},
+		ActionID:    HowlingBlastActionID,
 		SpellSchool: core.SpellSchoolFrost,
 
 		Cast: core.CastConfig{
