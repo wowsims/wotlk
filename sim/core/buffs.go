@@ -122,15 +122,15 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 	}
 
 	var replenishmentActionID ActionID
-	if (individualBuffs.VampiricTouch) {
+	if individualBuffs.VampiricTouch {
 		replenishmentActionID.SpellID = 48160
-	} else if (individualBuffs.HuntingParty) {
+	} else if individualBuffs.HuntingParty {
 		replenishmentActionID.SpellID = 53292
-	} else if (individualBuffs.JudgementsOfTheWise) {
+	} else if individualBuffs.JudgementsOfTheWise {
 		replenishmentActionID.SpellID = 31878
-	} else if (individualBuffs.ImprovedSoulLeech) {
+	} else if individualBuffs.ImprovedSoulLeech {
 		replenishmentActionID.SpellID = 54118
-	} else if (individualBuffs.EnduringWinter) {
+	} else if individualBuffs.EnduringWinter {
 		replenishmentActionID.SpellID = 44561
 	}
 	if !(replenishmentActionID.IsEmptyAction()) {
@@ -293,6 +293,11 @@ func applyPetBuffEffects(petAgent PetAgent, raidBuffs proto.RaidBuffs, partyBuff
 	individualBuffs.Innervates = 0
 	individualBuffs.PowerInfusions = 0
 	individualBuffs.TricksOfTheTrades = 0
+
+	if !petAgent.GetPet().enabledOnStart {
+		raidBuffs.ArcaneBrilliance = false
+		raidBuffs.GiftOfTheWild = 0
+	}
 
 	// For some reason pets don't benefit from buffs that are ratings, e.g. crit rating or haste rating.
 	partyBuffs.BraidedEterniumChain = false
@@ -847,6 +852,7 @@ func ManaTideTotemAura(character *Character, actionTag int32) *Aura {
 }
 
 var ReplenishmentAuraTag = "Replenishment"
+
 const ReplenishmentAuraDuration = time.Second * 15
 
 func ReplenishmentAura(character *Character, actionID ActionID) *Aura {
