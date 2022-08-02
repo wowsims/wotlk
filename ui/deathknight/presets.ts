@@ -94,7 +94,7 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
 	name: 'P1 Unholy DW BiS',
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
+    {
       "id": 44006,
       "enchant": 44879,
       "gems": [
@@ -118,7 +118,7 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
     },
     {
       "id": 40550,
-      "enchant": 44623,
+      "enchant": 44489,
       "gems": [
         42142,
         39996
@@ -126,7 +126,7 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
     },
     {
       "id": 40330,
-      "enchant": 60616,
+      "enchant": 44484,
       "gems": [
         39996,
         0
@@ -182,19 +182,19 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
     {
       "id": 40867
     }
-	]}`),
+  ]}`),
 };
 
 export const P1_FROST_PRE_BIS_PRESET = {
 	name: 'P1 Frost Pre-Raid',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{ "items": [
+	gear: EquipmentSpec.fromJsonString(`{  "items": [
     {
       "id": 41386,
       "enchant": 44879,
       "gems": [
         41398,
-        34143
+        49110
       ]
     },
     {
@@ -210,7 +210,7 @@ export const P1_FROST_PRE_BIS_PRESET = {
     },
     {
       "id": 39617,
-      "enchant": 44623,
+      "enchant": 44489,
       "gems": [
         42142,
         39996
@@ -218,7 +218,7 @@ export const P1_FROST_PRE_BIS_PRESET = {
     },
     {
       "id": 41355,
-      "enchant": 60616,
+      "enchant": 44484,
       "gems": [
         0
       ]
@@ -289,7 +289,7 @@ export const P1_FROST_BIS_PRESET = {
       "enchant": 44879,
       "gems": [
         41398,
-        34143
+        49110
       ]
     },
     {
@@ -311,7 +311,7 @@ export const P1_FROST_BIS_PRESET = {
     },
     {
       "id": 40550,
-      "enchant": 44623,
+      "enchant": 44489,
       "gems": [
         42142,
         39996
@@ -319,7 +319,7 @@ export const P1_FROST_BIS_PRESET = {
     },
     {
       "id": 40330,
-      "enchant": 60616,
+      "enchant": 44484,
       "gems": [
         39996,
         0
@@ -376,104 +376,3 @@ export const P1_FROST_BIS_PRESET = {
     }
   ]}`),
 };
-
-
-export const P1_FROST_HITCAP_PRESET = {
-  name: 'P1 Frost Hitcap',
-  tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-  gear: EquipmentSpec.fromJsonString(`{"items": [
-    {
-      "id": 44006,
-      "enchant": 44879,
-      "gems": [
-        41398,
-        34143
-      ]
-    },
-    {
-      "id": 44664,
-      "gems": [
-        39996
-      ]
-    },
-    {
-      "id": 40557,
-      "enchant": 44871,
-      "gems": [
-        39996
-      ]
-    },
-    {
-      "id": 40403,
-      "enchant": 44472
-    },
-    {
-      "id": 40550,
-      "enchant": 44623,
-      "gems": [
-        42142,
-        39996
-      ]
-    },
-    {
-      "id": 40330,
-      "enchant": 60616,
-      "gems": [
-        39996,
-        0
-      ]
-    },
-    {
-      "id": 40552,
-      "gems": [
-        39996,
-        0
-      ]
-    },
-    {
-      "id": 40278,
-      "gems": [
-        39996,
-        42142
-      ]
-    },
-    {
-      "id": 43994,
-      "enchant": 38374,
-      "gems": [
-        42142,
-        39996
-      ]
-    },
-    {
-      "id": 40591,
-      "enchant": 55016
-    },
-    {
-      "id": 43993,
-      "gems": [
-        39996
-      ]
-    },
-    {
-      "id": 40075
-    },
-    {
-      "id": 40256
-    },
-    {
-      "id": 42987
-    },
-    {
-      "id": 40189,
-      "enchant": 53343
-    },
-    {
-      "id": 40189,
-      "enchant": 53344
-    },
-    {
-      "id": 40207
-    }
-  ]}`),
-}

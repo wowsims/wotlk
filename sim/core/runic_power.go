@@ -171,6 +171,14 @@ func (rp *runicPowerBar) CurrentRunicPower() float64 {
 	return rp.currentRunicPower
 }
 
+func (rp *runicPowerBar) MaxRunicPower() float64 {
+	return rp.maxRunicPower
+}
+
+func (rp *runicPowerBar) PercentRunicPower() float64 {
+	return rp.currentRunicPower / rp.maxRunicPower
+}
+
 func (rp *runicPowerBar) addRunicPowerInterval(sim *Simulation, amount float64, metrics *ResourceMetrics) {
 	if amount < 0 {
 		panic("Trying to add negative runic power!")
