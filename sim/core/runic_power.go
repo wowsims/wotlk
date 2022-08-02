@@ -521,24 +521,26 @@ func (rp *runicPowerBar) SetRuneToState(r *Rune, runeState RuneState, runeKind R
 }
 
 // LastSpentRune gives the slot of the last rune of given type to have been spent.
-func (rp *runicPowerBar) LastSpentRuneofType(runeBarIdx int32, kind RuneKind, state RuneState) int32 {
+func (rp *runicPowerBar) LastSpentRuneofType(kind RuneKind) int32 {
 	rb := &rp.bloodRunes
-	if runeBarIdx == 1 {
+	if kind == RuneKind_Frost {
 		rb = &rp.frostRunes
-	} else if runeBarIdx == 2 {
+	} else if kind == RuneKind_Unholy {
 		rb = &rp.unholyRunes
+	} else if kind == RuneKind_Death {
+		panic("havent implemented finding last spent death rune.")
 	}
 
 	// if rune 1 was most recently spent And its the right kind
 	//  or if its the only correct kind
 	if rb[0].lastSpendTime < rb[1].lastSpendTime || rb[0].kind != kind {
-		if rb[1].kind == kind && rb[1].state == state {
+		if rb[1].kind == kind && rb[1].state == RuneState_Spent {
 			return 1
 		}
 	}
 
 	// In this case if rune 0 was the right kind, its the only option left.
-	if rb[0].kind == kind && rb[0].state == state {
+	if rb[0].kind == kind && rb[0].state == RuneState_Spent {
 		return 0
 	}
 
