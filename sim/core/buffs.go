@@ -121,13 +121,13 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		})
 	}
 
-	// TODO: convert this to a real mana replenishment aura we can use in raid sim.
 	if individualBuffs.VampiricTouch ||
 		individualBuffs.HuntingParty ||
 		individualBuffs.JudgementsOfTheWise ||
 		individualBuffs.ImprovedSoulLeech ||
 		individualBuffs.EnduringWinter {
-		character.AddStatDependency(stats.Mana, stats.MP5, 1.0+0.01)
+			actionID := ActionID{SpellID: 48160} // Vampiric Touch
+			MakePermanent(ReplenishmentAura(character, actionID))
 	}
 
 	kingsAgiIntSpiAmount := 1.0
@@ -835,6 +835,29 @@ func ManaTideTotemAura(character *Character, actionTag int32) *Aura {
 					},
 				})
 			}
+		},
+	})
+}
+
+var ReplenishmentAuraTag = "Replenishment"
+const ReplenishmentAuraDuration = time.Second * 15
+
+func ReplenishmentAura(character *Character, actionID ActionID) *Aura {
+
+	if !(actionID.SpellID == 54118 || actionID.SpellID == 48160 || actionID.SpellID == 31878 || actionID.SpellID == 53292 || actionID.SpellID == 44561) {
+		panic("Wrong Replenishment Action ID")
+	}
+
+	return character.GetOrRegisterAura(Aura{
+		Label:    "Replenishment-" + actionID.String(),
+		Tag:      ReplenishmentAuraTag,
+		ActionID: actionID,
+		Duration: ReplenishmentAuraDuration,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			character.AddStatDependencyDynamic(sim, stats.Mana, stats.MP5, 1.0+0.01)
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			character.AddStatDependencyDynamic(sim, stats.Mana, stats.MP5, 1/(1.0+0.01))
 		},
 	})
 }

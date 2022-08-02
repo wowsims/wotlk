@@ -10,7 +10,8 @@ import {
 	Warlock_Options_Armor as Armor,
 	Warlock_Options_Summon as Summon,
 } from '/wotlk/core/proto/warlock.js';
-import { RaidTarget, Spec, Glyphs } from '/wotlk/core/proto/common.js';
+
+import { RaidTarget, Spec, Glyphs, Debuffs, IndividualBuffs } from '/wotlk/core/proto/common.js';
 import { NO_TARGET } from '/wotlk/core/proto_utils/utils.js';
 import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
 import { Player } from '/wotlk/core/player.js';
@@ -18,6 +19,7 @@ import { Sim } from '/wotlk/core/sim.js';
 import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
 import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
 import { Target } from '/wotlk/core/target.js';
+import { SimUI, SimWarning } from '/wotlk/core/sim_ui.js';
 
 import { IconPickerConfig } from '/wotlk/core/components/icon_picker.js';
 import { IconEnumPicker, IconEnumPickerConfig, IconEnumValueConfig } from '/wotlk/core/components/icon_enum_picker.js';
@@ -160,29 +162,40 @@ export const WarlockRotationConfig = {
 				var newOptions: WarlockOptions;
 				var newGlyphs: Glyphs;
 				var newTalents: string;
+				var newIndividualBuffs: IndividualBuffs;
+				var newDebuffs: Debuffs;
 				if (newValue == RotationType.Affliction) {
 					newTalents = Presets.AfflictionTalents.data.talentsString
 					newGlyphs = Presets.AfflictionTalents.data.glyphs || Glyphs.create();
 					newRotation = Presets.AfflictionRotation
 					newOptions = Presets.AfflictionOptions
+					newIndividualBuffs = Presets.DefaultIndividualBuffs || IndividualBuffs.create()
+					newDebuffs = Presets.DefaultDebuffs || Debuffs.create()
 				} else if (newValue == RotationType.Demonology) {
 					newTalents = Presets.DemonologyTalents.data.talentsString
 					newGlyphs = Presets.DemonologyTalents.data.glyphs || Glyphs.create();
 					newRotation = Presets.DemonologyRotation
 					newOptions = Presets.DemonologyOptions
+					newIndividualBuffs = Presets.DefaultIndividualBuffs || IndividualBuffs.create()
+					newDebuffs = Presets.DefaultDebuffs || Debuffs.create()
 				} else if (newValue == RotationType.Destruction) {
 					newTalents = Presets.DestructionTalents.data.talentsString
 					newGlyphs = Presets.DestructionTalents.data.glyphs || Glyphs.create();
 					newRotation = Presets.DestructionRotation
 					newOptions = Presets.DestructionOptions
+					newIndividualBuffs = Presets.DestroIndividualBuffs || IndividualBuffs.create()
+					newDebuffs = Presets.DestroDebuffs || Debuffs.create()
 				}
 				newRotation.type = newValue;
 				newRotation.preset = RotationPreset.Automatic;
+				const raid = player.getRaid();
 				TypedEvent.freezeAllAndDo(() => {
 					player.setTalentsString(eventID, newTalents);
 					player.setSpecOptions(eventID, newOptions);
 					player.setGlyphs(eventID, newGlyphs);
 					player.setRotation(eventID, newRotation);
+					player.setBuffs(eventID, newIndividualBuffs);
+					raid?.setDebuffs(eventID, newDebuffs);
 				});
 			},
 		},
@@ -199,33 +212,44 @@ export const WarlockRotationConfig = {
 			getValue: (player: Player<Spec.SpecWarlock>) => player.getRotation().preset,
 			setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: number) => {
 				var newRotation = player.getRotation();
-					if (newValue == RotationPreset.Automatic) {
+				if (newValue == RotationPreset.Automatic) {
 					var newOptions: WarlockOptions;
 					var newGlyphs: Glyphs;
 					var newTalents: string;
-						if (newRotation.type == RotationType.Affliction) {
-							newTalents = Presets.AfflictionTalents.data.talentsString
-							newGlyphs = Presets.AfflictionTalents.data.glyphs || Glyphs.create();
-							newRotation = Presets.AfflictionRotation
-							newOptions = Presets.AfflictionOptions
-						} else if (newRotation.type == RotationType.Demonology) {
-							newTalents = Presets.DemonologyTalents.data.talentsString
-							newGlyphs = Presets.DemonologyTalents.data.glyphs || Glyphs.create();
-							newRotation = Presets.DemonologyRotation
-							newOptions = Presets.DemonologyOptions
-						} else if (newRotation.type == RotationType.Destruction) {
-							newTalents = Presets.DestructionTalents.data.talentsString
-							newGlyphs = Presets.DestructionTalents.data.glyphs || Glyphs.create();
-							newRotation = Presets.DestructionRotation
-							newOptions = Presets.DestructionOptions
-						}
+					var newIndividualBuffs: IndividualBuffs;
+					var newDebuffs: Debuffs;
+					if (newRotation.type == RotationType.Affliction) {
+						newTalents = Presets.AfflictionTalents.data.talentsString
+						newGlyphs = Presets.AfflictionTalents.data.glyphs || Glyphs.create()
+						newRotation = Presets.AfflictionRotation
+						newOptions = Presets.AfflictionOptions
+						newIndividualBuffs = Presets.DefaultIndividualBuffs || IndividualBuffs.create()
+						newDebuffs = Presets.DefaultDebuffs || Debuffs.create()
+					} else if (newRotation.type == RotationType.Demonology) {
+						newTalents = Presets.DemonologyTalents.data.talentsString
+						newGlyphs = Presets.DemonologyTalents.data.glyphs || Glyphs.create()
+						newRotation = Presets.DemonologyRotation
+						newOptions = Presets.DemonologyOptions
+						newIndividualBuffs = Presets.DefaultIndividualBuffs || IndividualBuffs.create()
+						newDebuffs = Presets.DefaultDebuffs || Debuffs.create()
+					} else if (newRotation.type == RotationType.Destruction) {
+						newTalents = Presets.DestructionTalents.data.talentsString
+						newGlyphs = Presets.DestructionTalents.data.glyphs || Glyphs.create()
+						newRotation = Presets.DestructionRotation
+						newOptions = Presets.DestructionOptions
+						newIndividualBuffs = Presets.DestroIndividualBuffs || IndividualBuffs.create()
+						newDebuffs = Presets.DestroDebuffs || Debuffs.create()
 					}
-					newRotation.preset = newValue;
+				}
+				newRotation.preset = newValue;
+				const raid = player.getRaid();
 				TypedEvent.freezeAllAndDo(() => {
 					if (newValue == RotationPreset.Automatic) {
 						player.setTalentsString(eventID, newTalents);
 						player.setSpecOptions(eventID, newOptions);
 						player.setGlyphs(eventID, newGlyphs);
+						player.setBuffs(eventID, newIndividualBuffs);
+						raid?.setDebuffs(eventID, newDebuffs);
 					}
 					player.setRotation(eventID, newRotation);
 				});

@@ -159,10 +159,16 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
-	blessingOfKings: true,
-	blessingOfWisdom: TristateEffect.TristateEffectImproved,
-	blessingOfMight: TristateEffect.TristateEffectImproved,
-	vampiricTouch: true,
+  blessingOfKings: true,
+  blessingOfWisdom: TristateEffect.TristateEffectImproved,
+  blessingOfMight: TristateEffect.TristateEffectImproved,
+  vampiricTouch: true,
+});
+
+export const DestroIndividualBuffs = IndividualBuffs.create({
+  blessingOfKings: true,
+  blessingOfWisdom: TristateEffect.TristateEffectImproved,
+  blessingOfMight: TristateEffect.TristateEffectImproved,
 });
 
 export const DefaultDebuffs = Debuffs.create({
@@ -172,6 +178,16 @@ export const DefaultDebuffs = Debuffs.create({
 	ebonPlaguebringer: true,
 	heartOfTheCrusader: true,
 	judgementOfWisdom: true,
+});
+
+export const DestroDebuffs = Debuffs.create({
+  sunderArmor: true,
+  faerieFire: TristateEffect.TristateEffectImproved,
+  bloodFrenzy: true,
+  ebonPlaguebringer: true,
+  heartOfTheCrusader: true,
+  judgementOfWisdom: true,
+  shadowMastery: true,
 });
 
 export const SWP_BIS = {
