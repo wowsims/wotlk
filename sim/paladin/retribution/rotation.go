@@ -6,7 +6,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/paladin"
 )
 
 func (ret *RetributionPaladin) OnGCDReady(sim *core.Simulation) {
@@ -53,7 +52,7 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 		switch {
 		case ret.JudgementOfWisdom.IsReady(sim):
 			ret.JudgementOfWisdom.Cast(sim, target)
-		case ret.HasSetBonus(paladin.ItemSetLightswornBattlegear, 2) && ret.DivineStorm.IsReady(sim):
+		case ret.HasLightswornBattlegear2Pc && ret.DivineStorm.IsReady(sim):
 			ret.DivineStorm.Cast(sim, target)
 		case ret.Env.GetNumTargets() == 1 && isExecutePhase && ret.HammerOfWrath.IsReady(sim):
 			ret.HammerOfWrath.Cast(sim, target)

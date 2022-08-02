@@ -106,20 +106,16 @@ var ItemSetConquerorSanct = core.NewItemSet(core.ItemSet{
 		},
 		4: func(agent core.Agent) {
 			priest := agent.(PriestAgent).GetPriest()
-			const procrate = 0
-			procAura := priest.NewTemporaryStatsAura("Devious Mind Proc", core.ActionID{ItemID: 64907}, stats.Stats{stats.SpellPower: 240}, time.Second*4)
+			procAura := priest.NewTemporaryStatsAura("Devious Mind", core.ActionID{ItemID: 64907}, stats.Stats{stats.SpellHaste: 240}, time.Second*4)
 
 			priest.RegisterAura(core.Aura{
-				Label:    "Devious Mind",
+				Label:    "Devious Mind Proc",
 				Duration: core.NeverExpires,
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
 				OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 					if spell != priest.MindBlast {
-						return
-					}
-					if sim.RandomFloat("Devious Mind") > procrate {
 						return
 					}
 					procAura.Activate(sim)

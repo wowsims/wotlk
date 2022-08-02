@@ -36,6 +36,8 @@ func NewRetributionPaladin(character core.Character, options proto.Player) *Retr
 		DivinePleaPercentage: retOptions.Rotation.DivinePleaPercentage,
 		ExoSlack:             retOptions.Rotation.ExoSlack,
 		ConsSlack:            retOptions.Rotation.ConsSlack,
+
+		HasLightswornBattlegear2Pc: character.HasSetBonus(paladin.ItemSetLightswornBattlegear, 2),
 	}
 	ret.PaladinAura = retOptions.Options.Aura
 
@@ -65,6 +67,8 @@ type RetributionPaladin struct {
 
 	SealInitComplete       bool
 	DivinePleaInitComplete bool
+
+	HasLightswornBattlegear2Pc bool
 
 	Rotation proto.RetributionPaladin_Rotation
 }

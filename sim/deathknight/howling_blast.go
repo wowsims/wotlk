@@ -41,8 +41,7 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 					roll := (562.0-518.0)*sim.RandomFloat("Howling Blast") + 518.0
 					return (roll + dk.getImpurityBonus(hitEffect, spell.Unit)*0.1) *
 						dk.glacielRotBonus(hitEffect.Target) *
-						dk.rageOfRivendareBonus(hitEffect.Target) *
-						dk.tundraStalkerBonus(hitEffect.Target) *
+						dk.RoRTSBonus(hitEffect.Target) *
 						dk.mercilessCombatBonus(sim)
 				},
 				TargetSpellCoefficient: 1,

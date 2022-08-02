@@ -79,7 +79,7 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 				if mage.isMissilesBarrage {
-					mage.MultiplyCastSpeed(1 / 2)
+					mage.MultiplyCastSpeed(.5)
 					mage.isMissilesBarrage = false
 					mage.MissileBarrageAura.Deactivate(sim)
 				}

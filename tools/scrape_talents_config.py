@@ -37,6 +37,9 @@ def get_other_spell_ranks(spell_id: int) -> List[int]:
 	return [_get_spell_id_from_link(row.find_element(By.CLASS_NAME, "listview-cleartext").get_attribute("href"))
 		for row in rows]
 
+def rowcol(v):
+	return v["location"]["rowIdx"] + v["location"]["colIdx"]/10
+
 
 to_export = []
 
@@ -46,6 +49,7 @@ for tree in trees:
 	_working_talents = {}
 
 	talents = tree.find_elements(By.CLASS_NAME, "ctc-tree-talent")
+	print("found %d talents\n".format(len(talents)))
 	for talent in talents:
 		row, col = int(talent.get_attribute("data-row")), int(talent.get_attribute("data-col"))
 		max_points = int(talent.get_attribute("data-max-points"))
@@ -64,7 +68,11 @@ for tree in trees:
 	arrows = tree.find_elements(By.CLASS_NAME, "ctc-tree-talent-arrow")
 	for arrow in arrows:
 		prereq_row, prereq_col = int(arrow.get_attribute("data-row")), int(arrow.get_attribute("data-col"))
-		length = int(arrow.get_attribute("data-size"))
+		length = 0
+		dsstr = arrow.get_attribute("data-size")
+		if dsstr:
+			length = int(dsstr)
+
 		direction = arrow.get_attribute("class").split()[-1].split("-")[-1]
 		offset_row, offset_col = {"left": (0, -1), "right": (0, 1), "down": (1, 0)}[direction]
 
@@ -77,13 +85,14 @@ for tree in trees:
 		}
 
 	title = tree.find_element(By.XPATH, "./div/b").text
-	background = tree.find_element(By.CLASS_NAME, "ctc-tree-talents").get_attribute("style")
+	background = tree.find_element(By.CLASS_NAME, "ctc-tree-talents-background").get_attribute("style")
+	values = list(_working_talents.values())
+	values.sort(key=rowcol)
 	to_export.append({
 		"name": title,
 		"backgroundUrl": _between(background, '"', '"'),
-		"talents": list(_working_talents.values())
+		"talents": values,
 	})
-
 
 for subtree in to_export:
 	for talent in subtree["talents"]:

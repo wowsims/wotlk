@@ -24,8 +24,6 @@ type DeathknightInputs struct {
 type DeathknightCoeffs struct {
 	glacierRotBonusCoeff      float64
 	mercilessCombatBonusCoeff float64
-	tundraStalkerBonusCoeff   float64
-	rageOfRivendareBonusCoeff float64
 	impurityBonusCoeff        float64
 
 	bloodOfTheNorthChance    float64
@@ -95,6 +93,8 @@ type Deathknight struct {
 
 	DeathAndDecay    *core.Spell
 	DeathAndDecayDot *core.Dot
+	dndCritSnapshot  float64
+	dndApSnapshot    float64
 
 	HowlingBlast *core.Spell
 
@@ -155,6 +155,8 @@ type Deathknight struct {
 	FrostFeverDebuffAura []*core.Aura
 	CryptFeverAura       []*core.Aura
 	EbonPlagueAura       []*core.Aura
+
+	RoRTSBonus func(*core.Unit) float64 // is either RoR or TS bonus function based on talents
 }
 
 func (dk *Deathknight) ModifyAdditiveDamageModifier(sim *core.Simulation, value float64) {
@@ -229,9 +231,7 @@ func (dk *Deathknight) ResetBonusCoeffs() {
 	dk.bonusCoeffs = DeathknightCoeffs{
 		glacierRotBonusCoeff:      1.0,
 		mercilessCombatBonusCoeff: 1.0,
-		tundraStalkerBonusCoeff:   1.0,
 		impurityBonusCoeff:        1.0,
-		rageOfRivendareBonusCoeff: 1.0,
 
 		bloodOfTheNorthChance:    0.0,
 		threatOfThassarianChance: 0.0,
@@ -242,15 +242,12 @@ func (dk *Deathknight) ResetBonusCoeffs() {
 }
 
 func (dk *Deathknight) Reset(sim *core.Simulation) {
-	dk.ResetRotation(sim)
-
 	dk.Presence = UnsetPresence
 	dk.ChangePresence(sim, BloodPresence)
 
 	if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_PreCast {
 		dk.PrecastArmyOfTheDead(sim)
 	}
-
 }
 
 func (dk *Deathknight) IsFuStrike(spell *core.Spell) bool {
@@ -268,10 +265,10 @@ func NewDeathknight(character core.Character, options proto.Player, inputs Death
 	deathKnightOptions := options.GetDeathknight()
 
 	dk := &Deathknight{
-		Character: character,
-		Talents:   *deathKnightOptions.Talents,
-
-		Inputs: inputs,
+		Character:  character,
+		Talents:    *deathKnightOptions.Talents,
+		Inputs:     inputs,
+		RoRTSBonus: func(u *core.Unit) float64 { return 1.0 }, // default to no bonus for RoR/TS
 	}
 
 	dk.bonusCoeffs.additiveDamageModifier = 1
@@ -295,39 +292,39 @@ func NewDeathknight(character core.Character, options proto.Player, inputs Death
 			// you do not want these to trigger a tryUseGCD, so after the opener
 			// its fine since you're running off a prio system, and rune generation
 			// can change your logic which we want.
-			if !dk.Opener.IsOngoing() {
-				if dk.GCD.IsReady(sim) {
-					//dk.tryUseGCD(sim)
-				}
-			}
+			//if !dk.Opener.IsOngoing() {
+			//	if dk.GCD.IsReady(sim) {
+			//		dk.tryUseGCD(sim)
+			//	}
+			//}
 		},
 		func(sim *core.Simulation) {
-			if !dk.Opener.IsOngoing() {
-				if dk.GCD.IsReady(sim) {
-					//dk.tryUseGCD(sim)
-				}
-			}
+			//if !dk.Opener.IsOngoing() {
+			//			if dk.GCD.IsReady(sim) {
+			//				dk.tryUseGCD(sim)
+			//			}
+			//	}
 		},
 		func(sim *core.Simulation) {
-			if !dk.Opener.IsOngoing() {
-				if dk.GCD.IsReady(sim) {
-					//dk.tryUseGCD(sim)
-				}
-			}
+			//if !dk.Opener.IsOngoing() {
+			//				if dk.GCD.IsReady(sim) {
+			//					dk.tryUseGCD(sim)
+			//				}
+			//		}
 		},
 		func(sim *core.Simulation) {
-			if !dk.Opener.IsOngoing() {
-				if dk.GCD.IsReady(sim) {
-					//dk.tryUseGCD(sim)
-				}
-			}
+			//if !dk.Opener.IsOngoing() {
+			//	if dk.GCD.IsReady(sim) {
+			//		dk.tryUseGCD(sim)
+			//	}
+			//}
 		},
 		func(sim *core.Simulation) {
-			if !dk.Opener.IsOngoing() {
-				if dk.GCD.IsReady(sim) {
-					//dk.tryUseGCD(sim)
-				}
-			}
+			//if !dk.Opener.IsOngoing() {
+			//	if dk.GCD.IsReady(sim) {
+			//		dk.tryUseGCD(sim)
+			//	}
+			//}
 		},
 	)
 

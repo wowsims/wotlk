@@ -52,7 +52,7 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 		MainHand:       enh.WeaponFromMainHand(enh.DefaultMeleeCritMultiplier()),
 		OffHand:        enh.WeaponFromOffHand(enh.DefaultMeleeCritMultiplier()),
 		AutoSwingMelee: true,
-		DelayOHSwings:  enhOptions.Options.DelayOffhandSwings,
+		SyncType:       int32(enhOptions.Options.SyncType),
 	})
 
 	if !enh.HasMHWeapon() {

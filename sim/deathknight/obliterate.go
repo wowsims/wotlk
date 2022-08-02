@@ -36,8 +36,7 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool) *core.Spell {
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				return weaponBaseDamage(sim, hitEffect, spell) *
 					(1.0 + dk.countActiveDiseases(hitEffect.Target)*diseaseMulti) *
-					dk.rageOfRivendareBonus(hitEffect.Target) *
-					dk.tundraStalkerBonus(hitEffect.Target) *
+					dk.RoRTSBonus(hitEffect.Target) *
 					dk.mercilessCombatBonus(sim)
 			},
 			TargetSpellCoefficient: 1,

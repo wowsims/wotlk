@@ -28,9 +28,9 @@ func (warlock *Warlock) dynamicDrainSoulMultiplier() float64 {
 	// Soul Siphon Multiplier
 	soulSiphonMultiplier := 1.
 	if warlock.Talents.SoulSiphon > 0 {
-		afflictionSpellNumber := 1.  // Counts Drain Soul/Drain Life itself
+		afflictionSpellNumber := 1. // Counts Drain Soul/Drain Life itself
 		if warlock.CurseOfDoomDot.IsActive() || warlock.CurseOfAgonyDot.IsActive() {
-			afflictionSpellNumber += 1. 
+			afflictionSpellNumber += 1.
 		}
 		if warlock.CorruptionDot.IsActive() {
 			afflictionSpellNumber += 1.
@@ -38,11 +38,11 @@ func (warlock *Warlock) dynamicDrainSoulMultiplier() float64 {
 		if warlock.Talents.UnstableAffliction && warlock.UnstableAffDot.IsActive() {
 			afflictionSpellNumber += 1.
 		}
-		if warlock.Talents.Haunt && warlock.HauntAura.IsActive() {
+		if warlock.Talents.Haunt && warlock.HauntDebuffAura(warlock.CurrentTarget).IsActive() {
 			afflictionSpellNumber += 1.
 		}
 		if afflictionSpellNumber < 3 {
-			soulSiphonMultiplier = (1 + 0.03*float64(warlock.Talents.SoulSiphon)*afflictionSpellNumber)/(1 + 0.03*float64(warlock.Talents.SoulSiphon)*3.)
+			soulSiphonMultiplier = (1 + 0.03*float64(warlock.Talents.SoulSiphon)*afflictionSpellNumber) / (1 + 0.03*float64(warlock.Talents.SoulSiphon)*3.)
 		}
 	}
 
@@ -54,7 +54,7 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 	spellSchool := core.SpellSchoolShadow
 	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true)
 	// For performance optimization, the execute modifier is basekit since we never use it before execute
-	executeMultiplier :=  (4.0 + 0.04*float64(warlock.Talents.DeathsEmbrace)) / (1 + 0.04*float64(warlock.Talents.DeathsEmbrace))
+	executeMultiplier := (4.0 + 0.04*float64(warlock.Talents.DeathsEmbrace)) / (1 + 0.04*float64(warlock.Talents.DeathsEmbrace))
 	maxDynamicMultiplier := 1 + 0.03*float64(warlock.Talents.SoulSiphon)*3.
 	drainSoulDamageMultiplier := baseAdditiveMultiplier * executeMultiplier * maxDynamicMultiplier
 	baseCost := warlock.BaseMana * 0.14

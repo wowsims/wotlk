@@ -11,19 +11,15 @@ func (mage *Mage) registerFireBlastSpell() {
 	baseCost := 465.0
 
 	mage.FireBlast = mage.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 27079},
-		SpellSchool: core.SpellSchoolFire,
-		Flags:       SpellFlagMage,
-
+		ActionID:     core.ActionID{SpellID: 27079},
+		SpellSchool:  core.SpellSchoolFire,
+		Flags:        SpellFlagMage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
-
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost *
-					(1 - 0.01*float64(mage.Talents.Pyromaniac)) *
-					(1 - 0.01*float64(mage.Talents.Precision)),
-
+					(1 - 0.01*float64(mage.Talents.Pyromaniac)),
 				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{

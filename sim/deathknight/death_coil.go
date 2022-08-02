@@ -7,7 +7,7 @@ import (
 )
 
 func (dk *Deathknight) registerDeathCoilSpell() {
-	baseDamage := 443.0 + dk.sigilOfTheWildBuckBonus()
+	baseDamage := 443.0 + dk.sigilOfTheWildBuckBonus() + dk.sigilOfTheVengefulHeartDeathCoil()
 
 	dk.DeathCoil = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 49895},
@@ -35,9 +35,7 @@ func (dk *Deathknight) registerDeathCoilSpell() {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return (baseDamage + dk.getImpurityBonus(hitEffect, spell.Unit)*0.15) *
-						dk.rageOfRivendareBonus(hitEffect.Target) *
-						dk.tundraStalkerBonus(hitEffect.Target)
+					return (baseDamage + dk.getImpurityBonus(hitEffect, spell.Unit)*0.15) * dk.RoRTSBonus(hitEffect.Target)
 				},
 				TargetSpellCoefficient: 1,
 			},

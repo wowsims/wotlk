@@ -101,8 +101,7 @@ func (dk *Deathknight) registerFrostFever() {
 						firstTsApply := !flagTs[hitEffect.Target.Index]
 						flagTs[hitEffect.Target.Index] = true
 						return ((127.0 + 80.0*0.32) + dk.getImpurityBonus(hitEffect, spell.Unit)*0.055) *
-							core.TernaryFloat64(firstTsApply, 1.0, dk.rageOfRivendareBonus(hitEffect.Target)*
-								dk.tundraStalkerBonus(hitEffect.Target))
+							core.TernaryFloat64(firstTsApply, 1.0, dk.RoRTSBonus(hitEffect.Target))
 					},
 					TargetSpellCoefficient: 1,
 				},
@@ -172,8 +171,7 @@ func (dk *Deathknight) registerBloodPlague() {
 						firstRorApply := !flagRor[hitEffect.Target.Index]
 						flagRor[hitEffect.Target.Index] = true
 						return ((127.0 + 80.0*0.32) + dk.getImpurityBonus(hitEffect, spell.Unit)*0.055) *
-							core.TernaryFloat64(firstRorApply, 1.0, dk.rageOfRivendareBonus(hitEffect.Target)*
-								dk.tundraStalkerBonus(hitEffect.Target))
+							core.TernaryFloat64(firstRorApply, 1.0, dk.RoRTSBonus(hitEffect.Target))
 					},
 					TargetSpellCoefficient: 1,
 				},

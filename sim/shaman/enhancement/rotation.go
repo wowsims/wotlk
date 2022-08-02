@@ -1,6 +1,8 @@
 package enhancement
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
@@ -68,8 +70,9 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 		return
 	}
 
-	if enh.Talents.MaelstromWeapon > 0 && enh.MaelstromWeaponAura.GetStacks() >= 3 {
-		lbCastTime := enh.LightningBolt.CurCast.CastTime
+	if enh.Talents.MaelstromWeapon > 0 && enh.MaelstromWeaponAura.GetStacks() >= 1 {
+		lbCastTime := enh.LightningBolt.DefaultCast.CastTime - (time.Millisecond * time.Duration(500*enh.MaelstromWeaponAura.GetStacks()))
+		lbCastTime = enh.ApplyCastSpeed(lbCastTime)
 		timeUntilSwing := enh.AutoAttacks.NextAttackAt() - sim.CurrentTime
 		if sim.CurrentTime > enh.AutoAttacks.NextAttackAt() {
 			timeUntilSwing = enh.AutoAttacks.MH.SwingDuration

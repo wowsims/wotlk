@@ -1,5 +1,4 @@
-import { BalanceDruid_Rotation_PrimarySpell as PrimarySpell } from '/wotlk/core/proto/druid.js';
-import { BalanceDruid_Options as DruidOptions } from '/wotlk/core/proto/druid.js';
+import { BalanceDruid_Options as DruidOptions, BalanceDruid_Rotation_RotationType as RotationType } from '/wotlk/core/proto/druid.js';
 import { RaidTarget } from '/wotlk/core/proto/common.js';
 import { Spec } from '/wotlk/core/proto/common.js';
 import { NO_TARGET } from '/wotlk/core/proto_utils/utils.js';
@@ -33,38 +32,13 @@ export const SelfInnervate = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.S
 
 export const BalanceDruidRotationConfig = {
 	inputs: [
-		InputHelpers.makeRotationEnumInput<Spec.SpecBalanceDruid, PrimarySpell>({
-			fieldName: 'primarySpell',
-			label: 'Primary Spell',
-			labelTooltip: 'If set to \'Adaptive\', will dynamically adjust rotation based on available mana.',
+		InputHelpers.makeRotationEnumInput<Spec.SpecBalanceDruid, RotationType>({
+			fieldName: 'type',
+			label: 'Type',
+			labelTooltip: 'If set to \'Adaptive\', will dynamically adjust rotation.',
 			values: [
-				{ name: 'Adaptive', value: PrimarySpell.Adaptive },
-				{ name: 'Starfire', value: PrimarySpell.Starfire },
-				{ name: 'Starfire R6', value: PrimarySpell.Starfire6 },
-				{ name: 'Wrath', value: PrimarySpell.Wrath },
+				{ name: 'Adaptive', value: RotationType.Adaptive },
 			],
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
-			fieldName: 'moonfire',
-			label: 'Use Moonfire',
-			labelTooltip: 'Use Moonfire as the next cast after the dot expires.',
-			enableWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().primarySpell != PrimarySpell.Adaptive,
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
-			fieldName: 'faerieFire',
-			label: 'Use Faerie Fire',
-			labelTooltip: 'Keep Faerie Fire active on the primary target.',
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
-			fieldName: 'insectSwarm',
-			label: 'Use Insect Swarm',
-			labelTooltip: 'Keep Insect Swarm active on the primary target.',
-			enableWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getTalents().insectSwarm,
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
-			fieldName: 'hurricane',
-			label: 'Use Hurricane',
-			labelTooltip: 'Casts Hurricane on cooldown.',
 		}),
 		InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecBalanceDruid>({
 			fieldName: 'battleRes',
