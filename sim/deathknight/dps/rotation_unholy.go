@@ -108,8 +108,8 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 		if !casted {
 			if dk.uhDiseaseCheck(sim, target, dk.ScourgeStrike, true, 1) {
 				if !dk.uhShouldWaitForDnD(sim, false, true, true) {
-					if dk.Talents.ScourgeStrike {
-						casted = dk.CastScourgeStrike(sim, target)
+					if dk.Talents.ScourgeStrike && dk.ScourgeStrike.IsReady(sim) {
+						casted = dk.ScourgeStrike.Cast(sim, target)
 					} else if dk.CanIcyTouch(sim) && dk.CanPlagueStrike(sim) {
 						dk.recastDiseasesSequence(sim)
 						return true
@@ -173,7 +173,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 	// Scourge Strike -> Blood Strike (or Pesti/BB on Aoe) -> Death Coil -> Horn of Winter
 	if !casted {
 		if dk.uhDiseaseCheck(sim, target, dk.ScourgeStrike, true, 1) {
-			casted = dk.CastScourgeStrike(sim, target)
+			casted = dk.ScourgeStrike.Cast(sim, target)
 		} else {
 			dk.recastDiseasesSequence(sim)
 			return true

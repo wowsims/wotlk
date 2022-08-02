@@ -69,9 +69,6 @@ func (dk *Deathknight) ApplyFrostTalents() {
 	// Merciless Combat
 	dk.applyMercilessCombat()
 
-	// Blood of the North
-	dk.applyBloodOfTheNorth()
-
 	dk.applyThreatOfThassarian()
 
 	// Rime
@@ -209,35 +206,28 @@ func (dk *Deathknight) applyIcyTalons() {
 	})
 }
 
-func (dk *Deathknight) outcomeEitherWeaponLanded(mhOutcome core.HitOutcome, ohOutcome core.HitOutcome) bool {
-	return mhOutcome.Matches(core.OutcomeLanded) // || ohOutcome.Matches(core.OutcomeLanded) TODO: Confirm that this should be gone
-}
-
 func (dk *Deathknight) bloodOfTheNorthCoeff() float64 {
 	return []float64{1.0, 1.03, 1.06, 1.10}[dk.Talents.BloodOfTheNorth]
 }
 
-func (dk *Deathknight) applyBloodOfTheNorth() {
-	dk.bonusCoeffs.bloodOfTheNorthChance = []float64{0.0, 0.3, 0.6, 1.0}[dk.Talents.BloodOfTheNorth]
-}
-
-func (dk *Deathknight) bloodOfTheNorthWillProc(sim *core.Simulation) bool {
-	ohWillCast := sim.RandomFloat("Blood of The North") <= dk.bonusCoeffs.bloodOfTheNorthChance
-	return ohWillCast
-}
-
-func (dk *Deathknight) bloodOfTheNorthProc(sim *core.Simulation, spell *core.Spell, runeCost core.RuneAmount) bool {
-	if dk.Talents.BloodOfTheNorth > 0 {
-		if runeCost.Blood > 0 {
-			if dk.bloodOfTheNorthWillProc(sim) {
-				slot := dk.SpendBloodRune(sim, spell.BloodRuneMetrics())
-				dk.SetRuneAtIdxSlotToState(0, slot, core.RuneState_DeathSpent, core.RuneKind_Death)
-				dk.SetAsGeneratedByReapingOrBoTN(slot)
-				return true
-			}
+func (dk *Deathknight) botnAndReaping(sim *core.Simulation, spell *core.Spell) {
+	if dk.Talents.BloodOfTheNorth == 0 && dk.Talents.Reaping == 0 {
+		return
+	}
+	if core.RuneCost(spell.CurCast.Cost).Blood() == 0 {
+		return // cant get death rune if we didnt spend blood
+	}
+	tp := dk.Talents.BloodOfTheNorth + dk.Talents.Reaping
+	if tp < 3 {
+		if sim.RandomFloat("Blood of The North / Reaping") > float64(tp)*0.33 {
+			return
 		}
 	}
-	return false
+
+	// if slot == -1 that means we spent a death rune to trigger this.
+	if slot := dk.LastSpentRuneofType(core.RuneKind_Blood); slot >= 0 {
+		dk.SetRuneAtIdxSlotToState(0, slot, core.RuneState_DeathSpent, core.RuneKind_Death)
+	}
 }
 
 func (dk *Deathknight) applyThreatOfThassarian() {
@@ -274,7 +264,7 @@ func (dk *Deathknight) threatOfThassarianProcMasks(isMH bool, effect *core.Spell
 	}
 }
 
-func (dk *Deathknight) threatOfThassarianProc(sim *core.Simulation, spellEffect *core.SpellEffect, mhSpell *core.Spell, ohSpell *core.Spell) {
+func (dk *Deathknight) threatOfThassarianProc(sim *core.Simulation, spellEffect *core.SpellEffect, mhSpell *RuneSpell, ohSpell *RuneSpell) {
 	mhSpell.Cast(sim, spellEffect.Target)
 	if dk.Talents.ThreatOfThassarian > 0 && dk.threatOfThassarianWillProc(sim) {
 		ohSpell.Cast(sim, spellEffect.Target)

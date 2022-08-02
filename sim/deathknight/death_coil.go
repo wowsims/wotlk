@@ -10,18 +10,18 @@ var DeathCoilActionID = core.ActionID{SpellID: 49895}
 
 func (dk *Deathknight) registerDeathCoilSpell() {
 	baseDamage := 443.0 + dk.sigilOfTheWildBuckBonus() + dk.sigilOfTheVengefulHeartDeathCoil()
-
-	dk.DeathCoil = dk.RegisterSpell(core.SpellConfig{
+	baseCost := float64(core.NewRuneCost(40, 0, 0, 0, 0))
+	dk.DeathCoil = dk.RegisterSpell(nil, core.SpellConfig{
 		ActionID:    DeathCoilActionID,
 		SpellSchool: core.SpellSchoolShadow,
 
 		ResourceType: stats.RunicPower,
-		BaseCost:     40.0,
+		BaseCost:     baseCost,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:  core.GCDDefault,
-				Cost: 40,
+				Cost: baseCost,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				cast.GCD = dk.getModifiedGCD()
@@ -59,8 +59,7 @@ func (dk *Deathknight) CanDeathCoil(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastDeathCoil(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanDeathCoil(sim) {
-		dk.DeathCoil.Cast(sim, target)
-		return true
+		return dk.DeathCoil.Cast(sim, target)
 	}
 	return false
 }

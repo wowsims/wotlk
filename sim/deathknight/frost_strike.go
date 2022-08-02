@@ -10,7 +10,7 @@ var FrostStrikeActionID = core.ActionID{SpellID: 55268}
 var FrostStrikeMHOutcome = core.OutcomeMiss
 var FrostStrikeOHOutcome = core.OutcomeMiss
 
-func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool) *core.Spell {
+func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool) *RuneSpell {
 	baseDamage := 250.0 + dk.sigilOfTheVengefulHeartFrostStrike()
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, baseDamage, 0.55, true)
 	if !isMH {
@@ -43,7 +43,7 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool) *core.Spell {
 
 	dk.threatOfThassarianProcMasks(isMH, &effect, true, false, dk.killingMachineOutcomeMod)
 
-	return dk.RegisterSpell(core.SpellConfig{
+	return dk.RegisterSpell(nil, core.SpellConfig{
 		ActionID:     FrostStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool:  core.SpellSchoolFrost,
 		Flags:        core.SpellFlagMeleeMetrics,
@@ -52,15 +52,14 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool) *core.Spell {
 }
 
 func (dk *Deathknight) registerFrostStrikeSpell() {
-	baseCost := 40.0
-	if dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfFrostStrike) {
-		baseCost -= 8.0
-	}
+	baseCost := float64(core.NewRuneCost(
+		core.Ternary(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfFrostStrike), uint8(32), 40), 0, 0, 0, 0,
+	))
 
 	dk.FrostStrikeMhHit = dk.newFrostStrikeHitSpell(true)
 	dk.FrostStrikeOhHit = dk.newFrostStrikeHitSpell(false)
 
-	dk.FrostStrike = dk.RegisterSpell(core.SpellConfig{
+	dk.FrostStrike = dk.RegisterSpell(nil, core.SpellConfig{
 		ActionID:    FrostStrikeActionID.WithTag(3),
 		SpellSchool: core.SpellSchoolFrost,
 		Flags:       core.SpellFlagNoMetrics | core.SpellFlagNoLogs,
@@ -105,9 +104,8 @@ func (dk *Deathknight) CanFrostStrike(sim *core.Simulation) bool {
 }
 
 func (dk *Deathknight) CastFrostStrike(sim *core.Simulation, target *core.Unit) bool {
-	if dk.CanFrostStrike(sim) {
-		dk.FrostStrike.Cast(sim, target)
-		return true
+	if dk.FrostStrike.IsReady(sim) {
+		return dk.FrostStrike.Cast(sim, target)
 	}
 	return false
 }
