@@ -33,12 +33,25 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 	glyphBonus := core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDeathAndDecay), 1.2, 1.0)
 
 	doSnapshot := false
-	// This spell doesnt need to be a runespell, its just a wrapper to help with rune spending.
-	dndDotSpell := dk.Unit.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolShadow,
-		// invisible wrapper
-		Flags: core.SpellFlagNoOnCastComplete,
+	baseCost := float64(core.NewRuneCost(15, 1, 1, 1, 0))
+	dk.DeathAndDecay = dk.RegisterSpell(nil, core.SpellConfig{
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolShadow,
+		ResourceType: stats.RunicPower,
+		BaseCost:     baseCost,
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				GCD:  core.GCDDefault,
+				Cost: baseCost,
+			},
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				cast.GCD = dk.getModifiedGCD()
+			},
+			CD: core.Cooldown{
+				Timer:    dk.NewTimer(),
+				Duration: time.Second*30 - time.Second*5*time.Duration(dk.Talents.Morbidity),
+			},
+		},
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			doSnapshot = true
 			dk.dndApSnapshot = 0.0
@@ -47,6 +60,7 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 			dk.DeathAndDecayDot.TickOnce()
 		},
 	})
+
 	dk.DeathAndDecayDot = core.NewDot(core.Dot{
 		Aura: dk.RegisterAura(core.Aura{
 			Label:    "Death and Decay",
@@ -74,31 +88,7 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 			IsPeriodic:     false,
 		})),
 	})
-	dk.DeathAndDecayDot.Spell = dndDotSpell
-
-	baseCost := float64(core.NewRuneCost(15, 1, 1, 1, 0))
-	dk.DeathAndDecay = dk.RegisterSpell(nil, core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolShadow,
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
-		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				GCD:  core.GCDDefault,
-				Cost: baseCost,
-			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.getModifiedGCD()
-			},
-			CD: core.Cooldown{
-				Timer:    dk.NewTimer(),
-				Duration: time.Second*30 - time.Second*5*time.Duration(dk.Talents.Morbidity),
-			},
-		},
-		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
-			dndDotSpell.Cast(sim, unit)
-		},
-	})
+	dk.DeathAndDecayDot.Spell = dk.DeathAndDecay.Spell
 }
 
 func (dk *Deathknight) CanDeathAndDecay(sim *core.Simulation) bool {
