@@ -500,8 +500,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-Scourgelord'sBattlegear"
  value: {
-  dps: 7948.313399259035
-  tps: 5877.165673397226
+  dps: 7931.001265289116
+  tps: 5862.622084028498
  }
 }
 dps_results: {
@@ -703,15 +703,15 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Average-Default"
  value: {
-  dps: 7958.620695966458
-  tps: 5812.053469523469
+  dps: 7963.473001553858
+  tps: 5814.927074565679
  }
 }
 dps_results: {
  key: "TestUnholy-Settings-Human-Unholy P1 -Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 92621.47554649464
-  tps: 74018.48924597522
+  dps: 35852.3903078405
+  tps: 28358.717672554623
  }
 }
 dps_results: {
@@ -731,8 +731,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Settings-Human-Unholy P1 -Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 52903.505778917446
-  tps: 42621.285037052396
+  dps: 22034.75900946107
+  tps: 17810.007235487483
  }
 }
 dps_results: {
@@ -752,8 +752,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Settings-Orc-Unholy P1 -Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 92969.15954564574
-  tps: 74147.53286747108
+  dps: 36045.68540517513
+  tps: 28422.406437931924
  }
 }
 dps_results: {
@@ -773,8 +773,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Settings-Orc-Unholy P1 -Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 53098.25978899324
-  tps: 42806.415298233085
+  dps: 22323.287417586023
+  tps: 18060.23393951542
  }
 }
 dps_results: {
