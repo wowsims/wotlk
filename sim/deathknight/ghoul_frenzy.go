@@ -48,6 +48,9 @@ func (dk *Deathknight) registerGhoulFrenzySpell() {
 			if dk.Inputs.PrecastGhoulFrenzy {
 				dk.GhoulFrenzyAura.Activate(sim)
 				dk.GhoulFrenzyAura.UpdateExpires(sim.CurrentTime + time.Second*20)
+
+				dk.GhoulFrenzy.CD.Use(sim)
+				dk.GhoulFrenzy.CD.Set(sim.CurrentTime + time.Second*20)
 			}
 		},
 	})
@@ -63,10 +66,10 @@ func (dk *Deathknight) registerGhoulFrenzySpell() {
 			}
 		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.MultiplyMeleeSpeed(sim, 1.25)
+			dk.Ghoul.MultiplyMeleeSpeed(sim, 1.25)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.MultiplyMeleeSpeed(sim, 1/1.25)
+			dk.Ghoul.MultiplyMeleeSpeed(sim, 1/1.25)
 		},
 	})
 }
