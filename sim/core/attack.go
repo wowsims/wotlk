@@ -282,12 +282,12 @@ func (aa *AutoAttacks) reset(sim *Simulation) {
 			Flags:       SpellFlagMeleeMetrics,
 
 			Cast: CastConfig{
-				DefaultCast: Cast{
-					CastTime: 1, // Dummy non-zero value so the optimization doesnt remove the cast time.
-				},
-				ModifyCast: func(_ *Simulation, _ *Spell, cast *Cast) {
-					cast.CastTime = aa.RangedSwingWindup()
-				},
+				//DefaultCast: Cast{
+				//	CastTime: 1, // Dummy non-zero value so the optimization doesnt remove the cast time.
+				//},
+				//ModifyCast: func(_ *Simulation, _ *Spell, cast *Cast) {
+				//	cast.CastTime = aa.RangedSwingWindup()
+				//},
 				IgnoreHaste: true,
 				AfterCast: func(sim *Simulation, spell *Spell) {
 					aa.RangedSwingInProgress = false

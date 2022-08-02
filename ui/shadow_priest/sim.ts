@@ -112,9 +112,6 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
 				IconInputs.ReplenishmentBuff,
-				IconInputs.MajorArmorDebuff,
-				IconInputs.MinorArmorDebuff,
-				IconInputs.PhysicalDamageDebuff,
 				IconInputs.MeleeHasteBuff,
 				IconInputs.MeleeCritBuff,
 				IconInputs.MP5Buff,

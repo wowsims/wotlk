@@ -221,6 +221,12 @@ export class HunterPetTalentsPicker extends Component {
 	}
 }
 
+export function getPetTalentsConfig(petType: PetType): TalentsConfig<HunterPetTalents> {
+	const petCategory = petCategories[petType];
+	const categoryIdx = categoryOrder.indexOf(petCategory);
+	return petTalentsConfig[categoryIdx];
+}
+
 export const cunningDefault: HunterPetTalents = HunterPetTalents.create({
 	cobraReflexes: 2,
 	dive: true,

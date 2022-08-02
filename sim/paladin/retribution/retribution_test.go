@@ -22,6 +22,7 @@ func TestRetribution(t *testing.T) {
 		GearSet: core.GearSetCombo{Label: "P4", GearSet: Phase4Gear},
 
 		SpecOptions: core.SpecOptionsCombo{Label: "Retribution Paladin", SpecOptions: DefaultOptions},
+		Glyphs:      defaultRetGlyphs,
 
 		RaidBuffs:   FullRaidBuffs,
 		PartyBuffs:  FullPartyBuffs,
@@ -50,6 +51,7 @@ func BenchmarkSimulate(b *testing.B) {
 			&proto.Player{
 				Race:      proto.Race_RaceBloodElf,
 				Class:     proto.Class_ClassPaladin,
+				Glyphs:    defaultRetGlyphs,
 				Equipment: Phase4Gear,
 				Consumes:  FullConsumes,
 				Spec:      DefaultOptions,
