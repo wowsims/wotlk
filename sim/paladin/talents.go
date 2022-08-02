@@ -473,7 +473,7 @@ func (paladin *Paladin) registerRighteousVengeanceSpell() {
 	paladin.RighteousVengeanceSpell = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    dotActionID,
 		SpellSchool: core.SpellSchoolHoly,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreTargetModifiers | core.SpellFlagIgnoreAttackerModifiers,
 	})
 }
 
