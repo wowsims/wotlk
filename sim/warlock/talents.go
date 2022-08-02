@@ -478,6 +478,8 @@ func (warlock *Warlock) setupImprovedSoulLeech() {
 	soulLeechProcChance := 0.1 * float64(warlock.Talents.SoulLeech)
 	improvedSoulLeechProcChance := float64(warlock.Talents.ImprovedSoulLeech) / 2.
 	actionID := core.ActionID{SpellID: 54118}
+	improvedSoulLeechManaMetric := warlock.NewManaMetrics(actionID)
+	improvedSoulLeechPetManaMetric := warlock.Pets[0].GetCharacter().NewManaMetrics(actionID)
 	warlock.RegisterAura(core.Aura{
 		Label:    "Improved Soul Leech Hidden Aura",
 		Duration: core.NeverExpires,
@@ -487,6 +489,8 @@ func (warlock *Warlock) setupImprovedSoulLeech() {
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spell == warlock.Conflagrate  || spell == warlock.ShadowBolt || spell == warlock.ChaosBolt || spell == warlock.SoulFire || spell == warlock.Incinerate {
 				if sim.RandomFloat("SoulLeech") < soulLeechProcChance {
+					warlock.AddMana(sim, warlock.MaxMana()*float64(warlock.Talents.ImprovedSoulLeech)/100, improvedSoulLeechManaMetric, true)
+					warlock.Pets[0].GetCharacter().AddMana(sim, warlock.Pets[0].GetCharacter().MaxMana()*float64(warlock.Talents.ImprovedSoulLeech)/100, improvedSoulLeechPetManaMetric, true)
 					if sim.RandomFloat("ImprovedSoulLeech") < improvedSoulLeechProcChance {
 						core.ReplenishmentAura(warlock.GetCharacter(), actionID).Activate(sim)
 					}
