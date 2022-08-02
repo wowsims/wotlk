@@ -208,9 +208,7 @@ func (spellEffect *SpellEffect) calcDamageSingle(sim *Simulation, spell *Spell, 
 		spellEffect.applyTargetModifiers(sim, spell, attackTable)
 		afterTargetMods := spellEffect.Damage
 		spellEffect.PreoutcomeDamage = spellEffect.Damage
-		if spellEffect.OutcomeApplier != nil {
-			spellEffect.OutcomeApplier(sim, spell, spellEffect, attackTable)
-		}
+		spellEffect.OutcomeApplier(sim, spell, spellEffect, attackTable)
 		afterOutcome := spellEffect.Damage
 		spell.Unit.Log(
 			sim,
@@ -223,9 +221,7 @@ func (spellEffect *SpellEffect) calcDamageSingle(sim *Simulation, spell *Spell, 
 		spellEffect.applyResistances(sim, spell, attackTable)
 		spellEffect.applyTargetModifiers(sim, spell, attackTable)
 		spellEffect.PreoutcomeDamage = spellEffect.Damage
-		if spellEffect.OutcomeApplier != nil {
-			spellEffect.OutcomeApplier(sim, spell, spellEffect, attackTable)
-		}
+		spellEffect.OutcomeApplier(sim, spell, spellEffect, attackTable)
 	}
 }
 func (spellEffect *SpellEffect) calcDamageTargetOnly(sim *Simulation, spell *Spell, attackTable *AttackTable) {
