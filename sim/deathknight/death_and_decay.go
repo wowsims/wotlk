@@ -5,6 +5,7 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (dk *Deathknight) OutcomeDeathAndDecaySpecial() core.OutcomeApplier {
@@ -32,6 +33,20 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 	glyphBonus := core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDeathAndDecay), 1.2, 1.0)
 
 	doSnapshot := false
+	// This spell doesnt need to be a runespell, its just a wrapper to help with rune spending.
+	dndDotSpell := dk.Unit.RegisterSpell(core.SpellConfig{
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolShadow,
+		// invisible wrapper
+		Flags: core.SpellFlagNoLogs | core.SpellFlagNoMetrics | core.SpellFlagNoOnCastComplete,
+		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
+			doSnapshot = true
+			dk.dndApSnapshot = 0.0
+			dk.dndCritSnapshot = 0.0
+			dk.DeathAndDecayDot.Apply(sim)
+			dk.DeathAndDecayDot.TickOnce()
+		},
+	})
 	dk.DeathAndDecayDot = core.NewDot(core.Dot{
 		Aura: dk.RegisterAura(core.Aura{
 			Label:    "Death and Decay",
@@ -40,9 +55,8 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 		NumberOfTicks: 10,
 		TickLength:    time.Second * 1,
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncAOEDamage(dk.Env, core.SpellEffect{
-			ProcMask:        core.ProcMaskPeriodicDamage,
-			BonusSpellPower: 0.0,
-
+			ProcMask:         core.ProcMaskPeriodicDamage,
+			BonusSpellPower:  0.0,
 			DamageMultiplier: glyphBonus * dk.scourgelordsPlateDamageBonus(),
 			ThreatMultiplier: 1,
 			BaseDamage: core.BaseDamageConfig{
@@ -60,14 +74,18 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 			IsPeriodic:     false,
 		})),
 	})
+	dk.DeathAndDecayDot.Spell = dndDotSpell
 
-	dk.DeathAndDecay = dk.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolShadow,
-
+	baseCost := float64(core.NewRuneCost(15, 1, 1, 1, 0))
+	dk.DeathAndDecay = dk.RegisterSpell(nil, core.SpellConfig{
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolShadow,
+		ResourceType: stats.RunicPower,
+		BaseCost:     baseCost,
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD: core.GCDDefault,
+				GCD:  core.GCDDefault,
+				Cost: baseCost,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				cast.GCD = dk.getModifiedGCD()
@@ -77,24 +95,10 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 				Duration: time.Second*30 - time.Second*5*time.Duration(dk.Talents.Morbidity),
 			},
 		},
-
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
-			doSnapshot = true
-			dk.dndApSnapshot = 0.0
-			dk.dndCritSnapshot = 0.0
-
-			dk.DeathAndDecayDot.Apply(sim)
-			dk.DeathAndDecayDot.TickOnce()
-
-			dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_BFU)
-			dk.Spend(sim, spell, dkSpellCost)
-
-			amountOfRunicPower := 15.0
-			dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
+			dndDotSpell.Cast(sim, unit)
 		},
 	})
-
-	dk.DeathAndDecayDot.Spell = dk.DeathAndDecay
 }
 
 func (dk *Deathknight) CanDeathAndDecay(sim *core.Simulation) bool {
@@ -103,8 +107,7 @@ func (dk *Deathknight) CanDeathAndDecay(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastDeathAndDecay(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanDeathAndDecay(sim) {
-		dk.DeathAndDecay.Cast(sim, target)
-		return true
+		return dk.DeathAndDecay.Cast(sim, target)
 	}
 	return false
 }

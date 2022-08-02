@@ -99,7 +99,7 @@ func (dk *DpsDeathknight) desolationAuraCheck(sim *core.Simulation) bool {
 	return !dk.DesolationAura.IsActive() || dk.DesolationAura.RemainingDuration(sim) < 10*time.Second || dk.Env.GetNumTargets() == 1
 }
 
-func (dk *DpsDeathknight) uhDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *core.Spell, costRunes bool, casts int) bool {
+func (dk *DpsDeathknight) uhDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *deathknight.RuneSpell, costRunes bool, casts int) bool {
 	ffRemaining := dk.FrostFeverDisease[target.Index].RemainingDuration(sim)
 	bpRemaining := dk.BloodPlagueDisease[target.Index].RemainingDuration(sim)
 	castGcd := dk.SpellGCD() * time.Duration(casts)
@@ -120,10 +120,9 @@ func (dk *DpsDeathknight) uhDiseaseCheck(sim *core.Simulation, target *core.Unit
 		bpExpiresAt := bpRemaining + sim.CurrentTime
 
 		crpb := dk.CopyRunicPowerBar()
-		runeCostForSpell := dk.RuneAmountForSpell(spell)
-		spellCost := crpb.DetermineOptimalCost(sim, runeCostForSpell.Blood, runeCostForSpell.Frost, runeCostForSpell.Unholy)
+		spellCost := crpb.OptimalRuneCost(core.RuneCost(spell.DefaultCast.Cost))
 
-		crpb.Spend(sim, spell, spellCost)
+		crpb.SpendRuneCost(sim, spell.Spell, spellCost)
 
 		afterCastTime := sim.CurrentTime + castGcd
 		currentFrostRunes := crpb.CurrentFrostRunes()
@@ -132,12 +131,12 @@ func (dk *DpsDeathknight) uhDiseaseCheck(sim *core.Simulation, target *core.Unit
 		nextUnholyRuneAt := crpb.UnholyRuneReadyAt(sim)
 
 		// If FF is gonna drop while our runes are on CD
-		if dk.uhRecastAvailableCheck(ffExpiresAt-dk.ur.syncTimeFF, afterCastTime, spellCost.Frost, currentFrostRunes, nextFrostRuneAt) {
+		if dk.uhRecastAvailableCheck(ffExpiresAt-dk.ur.syncTimeFF, afterCastTime, int(spellCost.Frost()), currentFrostRunes, nextFrostRuneAt) {
 			return false
 		}
 
 		// If BP is gonna drop while our runes are on CD
-		if dk.uhRecastAvailableCheck(bpExpiresAt, afterCastTime, spellCost.Unholy, currentUnholyRunes, nextUnholyRuneAt) {
+		if dk.uhRecastAvailableCheck(bpExpiresAt, afterCastTime, int(spellCost.Unholy()), currentUnholyRunes, nextUnholyRuneAt) {
 			return false
 		}
 	}
@@ -247,7 +246,7 @@ func (dk *DpsDeathknight) uhGargoyleCanCast(sim *core.Simulation) bool {
 	if !dk.SummonGargoyle.IsReady(sim) {
 		return false
 	}
-	if dk.CurrentRunicPower() < dk.SummonGargoyle.DefaultCast.Cost {
+	if dk.CurrentRunicPower() < float64(core.RuneCost(dk.SummonGargoyle.DefaultCast.Cost).RunicPower()) {
 		return false
 	}
 	if !dk.PresenceMatches(deathknight.UnholyPresence) && !dk.CanBloodTap(sim) {

@@ -25,10 +25,7 @@ type DeathknightCoeffs struct {
 	glacierRotBonusCoeff      float64
 	mercilessCombatBonusCoeff float64
 	impurityBonusCoeff        float64
-
-	bloodOfTheNorthChance    float64
-	threatOfThassarianChance float64
-	reapingChance            float64
+	threatOfThassarianChance  float64
 
 	additiveDamageModifier float64
 }
@@ -48,80 +45,80 @@ type Deathknight struct {
 	RotationHelper
 
 	Ghoul     *GhoulPet
-	RaiseDead *core.Spell
+	RaiseDead *RuneSpell
 
 	Gargoyle       *GargoylePet
-	SummonGargoyle *core.Spell
+	SummonGargoyle *RuneSpell
 
-	ArmyOfTheDead *core.Spell
+	ArmyOfTheDead *RuneSpell
 	ArmyGhoul     []*GhoulPet
 
 	Presence Presence
 
-	IcyTouch   *core.Spell
-	BloodBoil  *core.Spell
-	Pestilence *core.Spell
+	IcyTouch   *RuneSpell
+	BloodBoil  *RuneSpell
+	Pestilence *RuneSpell
 
-	PlagueStrike      *core.Spell
-	PlagueStrikeMhHit *core.Spell
-	PlagueStrikeOhHit *core.Spell
+	PlagueStrike      *RuneSpell
+	PlagueStrikeMhHit *RuneSpell
+	PlagueStrikeOhHit *RuneSpell
 
-	DeathStrike      *core.Spell
-	DeathStrikeMhHit *core.Spell
-	DeathStrikeOhHit *core.Spell
+	DeathStrike      *RuneSpell
+	DeathStrikeMhHit *RuneSpell
+	DeathStrikeOhHit *RuneSpell
 
-	Obliterate      *core.Spell
-	ObliterateMhHit *core.Spell
-	ObliterateOhHit *core.Spell
+	Obliterate      *RuneSpell
+	ObliterateMhHit *RuneSpell
+	ObliterateOhHit *RuneSpell
 
-	BloodStrike      *core.Spell
-	BloodStrikeMhHit *core.Spell
-	BloodStrikeOhHit *core.Spell
+	BloodStrike      *RuneSpell
+	BloodStrikeMhHit *RuneSpell
+	BloodStrikeOhHit *RuneSpell
 
-	FrostStrike      *core.Spell
-	FrostStrikeMhHit *core.Spell
-	FrostStrikeOhHit *core.Spell
+	FrostStrike      *RuneSpell
+	FrostStrikeMhHit *RuneSpell
+	FrostStrikeOhHit *RuneSpell
 
-	GhoulFrenzy *core.Spell
+	GhoulFrenzy *RuneSpell
 	// Dummy aura for timeline metrics
 	GhoulFrenzyAura *core.Aura
 
 	LastScourgeStrikeDamage float64
-	ScourgeStrike           *core.Spell
+	ScourgeStrike           *RuneSpell
 
-	DeathCoil *core.Spell
+	DeathCoil *RuneSpell
 
-	DeathAndDecay    *core.Spell
+	DeathAndDecay    *RuneSpell
 	DeathAndDecayDot *core.Dot
 	dndCritSnapshot  float64
 	dndApSnapshot    float64
 
-	HowlingBlast *core.Spell
+	HowlingBlast *RuneSpell
 
 	OtherRelevantStrAgiActive bool
-	HornOfWinter              *core.Spell
+	HornOfWinter              *RuneSpell
 	HornOfWinterAura          *core.Aura
 
 	// "CDs"
-	RuneTap *core.Spell
+	RuneTap *RuneSpell
 
-	BloodTap     *core.Spell
+	BloodTap     *RuneSpell
 	BloodTapAura *core.Aura
 
-	EmpowerRuneWeapon *core.Spell
+	EmpowerRuneWeapon *RuneSpell
 
-	UnbreakableArmor     *core.Spell
+	UnbreakableArmor     *RuneSpell
 	UnbreakableArmorAura *core.Aura
 
-	BoneShield     *core.Spell
+	BoneShield     *RuneSpell
 	BoneShieldAura *core.Aura
 
-	IceboundFortitude     *core.Spell
+	IceboundFortitude     *RuneSpell
 	IceboundFortitudeAura *core.Aura
 
 	// Diseases
-	FrostFeverSpell    *core.Spell
-	BloodPlagueSpell   *core.Spell
+	FrostFeverSpell    *RuneSpell
+	BloodPlagueSpell   *RuneSpell
 	FrostFeverDisease  []*core.Dot
 	BloodPlagueDisease []*core.Dot
 
@@ -145,11 +142,11 @@ type Deathknight struct {
 	WanderingPlague   *core.Spell
 
 	// Presences
-	BloodPresence      *core.Spell
+	BloodPresence      *RuneSpell
 	BloodPresenceAura  *core.Aura
-	FrostPresence      *core.Spell
+	FrostPresence      *RuneSpell
 	FrostPresenceAura  *core.Aura
-	UnholyPresence     *core.Spell
+	UnholyPresence     *RuneSpell
 	UnholyPresenceAura *core.Aura
 
 	// Debuffs
@@ -158,6 +155,7 @@ type Deathknight struct {
 	EbonPlagueAura       []*core.Aura
 
 	RoRTSBonus func(*core.Unit) float64 // is either RoR or TS bonus function based on talents
+	curCast    *core.Cast
 }
 
 func (dk *Deathknight) ModifyAdditiveDamageModifier(sim *core.Simulation, value float64) {
@@ -233,10 +231,7 @@ func (dk *Deathknight) ResetBonusCoeffs() {
 		glacierRotBonusCoeff:      1.0,
 		mercilessCombatBonusCoeff: 1.0,
 		impurityBonusCoeff:        1.0,
-
-		bloodOfTheNorthChance:    0.0,
-		threatOfThassarianChance: 0.0,
-		reapingChance:            0.0,
+		threatOfThassarianChance:  0.0,
 
 		additiveDamageModifier: dk.bonusCoeffs.additiveDamageModifier,
 	}
@@ -252,7 +247,7 @@ func (dk *Deathknight) Reset(sim *core.Simulation) {
 }
 
 func (dk *Deathknight) IsFuStrike(spell *core.Spell) bool {
-	return spell == dk.Obliterate || spell == dk.ScourgeStrike // || spell == dk.DeathStrike
+	return spell == dk.Obliterate.Spell || spell == dk.ScourgeStrike.Spell // || spell == dk.DeathStrike
 }
 
 func (dk *Deathknight) HasMajorGlyph(glyph proto.DeathknightMajorGlyph) bool {
@@ -397,11 +392,14 @@ func (dk *Deathknight) critMultiplierGoGandMoM() float64 {
 	return dk.MeleeCritMultiplier(1.0, dk.secondaryCritModifier(applyGuile, applyMightOfMograine))
 }
 
-func (dk *Deathknight) RuneAmountForSpell(spell *core.Spell) core.RuneAmount {
-	blood := 0
-	frost := 0
-	unholy := 0
+func (dk *Deathknight) RuneAmountForSpell(spell *RuneSpell) core.RuneCost {
+	var blood uint8
+	var frost uint8
+	var unholy uint8
 	switch spell {
+	case dk.DeathStrike:
+		frost = 1
+		unholy = 1
 	case dk.DeathAndDecay:
 		blood = 1
 		frost = 1
@@ -437,10 +435,10 @@ func (dk *Deathknight) RuneAmountForSpell(spell *core.Spell) core.RuneAmount {
 		unholy = 1
 	}
 
-	return core.RuneAmount{blood, frost, unholy, 0}
+	return core.NewRuneCost(0, blood, frost, unholy, 0)
 }
 
-func (dk *Deathknight) CanCast(sim *core.Simulation, spell *core.Spell) bool {
+func (dk *Deathknight) CanCast(sim *core.Simulation, spell *RuneSpell) bool {
 	switch spell {
 	case dk.DeathAndDecay:
 		return dk.CanDeathAndDecay(sim)
@@ -451,7 +449,7 @@ func (dk *Deathknight) CanCast(sim *core.Simulation, spell *core.Spell) bool {
 	case dk.BloodStrike:
 		return dk.CanBloodStrike(sim)
 	case dk.BloodBoil:
-		return dk.CanBloodBoil(sim)
+		return dk.BloodBoil.IsReady(sim)
 	case dk.UnbreakableArmor:
 		return dk.CanUnbreakableArmor(sim)
 	case dk.IcyTouch:

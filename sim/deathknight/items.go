@@ -113,7 +113,7 @@ func (dk *Deathknight) registerThassariansBattlegearProc() {
 	core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
 		Label: "Unholy Might",
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if !icd.IsReady(sim) || (spell != dk.BloodStrike /* && spell != dk.HeartStrike*/) {
+			if !icd.IsReady(sim) || (spell != dk.BloodStrike.Spell /* && spell != dk.HeartStrike*/) {
 				return
 			}
 
@@ -143,7 +143,7 @@ func (dk *Deathknight) thassariansPlateDamageBonus() float64 {
 	return core.TernaryFloat64(dk.HasSetBonus(ItemSetThassariansPlate, 2), 1.05, 1.0)
 }
 
-func (dk *Deathknight) thassariansPlateCooldownReduction(spell *core.Spell) time.Duration {
+func (dk *Deathknight) thassariansPlateCooldownReduction(spell *RuneSpell) time.Duration {
 	if !dk.HasSetBonus(ItemSetThassariansPlate, 4) {
 		return 0
 	}
@@ -172,7 +172,7 @@ var ItemSetScourgelordsBattlegear = core.NewItemSet(core.ItemSet{
 	},
 })
 
-func (dk *Deathknight) scourgelordsBattlegearDamageBonus(spell *core.Spell) float64 {
+func (dk *Deathknight) scourgelordsBattlegearDamageBonus(spell *RuneSpell) float64 {
 	if !dk.HasSetBonus(ItemSetScourgelordsBattlegear, 2) {
 		return 1.0
 	}
@@ -244,14 +244,14 @@ func (dk *Deathknight) registerScourgelordsPlateProc() {
 	core.MakePermanent(dk.RegisterAura(core.Aura{
 		Label: "Blood Armor Proc",
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if spell == dk.BloodTap {
+			if spell == dk.BloodTap.Spell {
 				bonusAura.Activate(sim)
 			}
 		},
 	}))
 }
 
-func (dk *Deathknight) sigilOfAwarenessBonus(spell *core.Spell) float64 {
+func (dk *Deathknight) sigilOfAwarenessBonus(spell *RuneSpell) float64 {
 	if dk.Equip[proto.ItemSlot_ItemSlotRanged].ID != 40207 {
 		return 0
 	}
@@ -299,7 +299,7 @@ func init() {
 		core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
 			Label: "Sigil of Haunted Dreams",
 			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-				if !icd.IsReady(sim) || spell != dk.BloodStrike {
+				if !icd.IsReady(sim) || spell != dk.BloodStrike.Spell {
 					return
 				}
 
@@ -377,7 +377,7 @@ func CreateGladiatorsSigil(id int32, name string, ap float64, seconds time.Durat
 		core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
 			Label: name + " Gladiator's Sigil of Strife",
 			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-				if spell != dk.PlagueStrike {
+				if spell != dk.PlagueStrike.Spell {
 					return
 				}
 

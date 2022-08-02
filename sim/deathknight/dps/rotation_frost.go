@@ -150,9 +150,9 @@ func (dk *DpsDeathknight) RotationActionCallback_Obli_SubUnholy(sim *core.Simula
 	casted := false
 
 	if dk.CanObliterate(sim) {
-		runeCost := dk.DetermineOptimalCost(sim, 0, 1, 1)
+		runeCost := dk.OptimalRuneCost(core.RuneCost(dk.Obliterate.DefaultCast.Cost))
 
-		if runeCost.Death == 0 {
+		if runeCost.Death() == 0 {
 			casted = dk.CastObliterate(sim, target)
 			s.ConditionalAdvance(casted)
 		} else {
