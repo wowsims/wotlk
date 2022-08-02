@@ -9,17 +9,17 @@ import {
 	Warlock_Options_WeaponImbue as WeaponImbue,
 	Warlock_Options_Armor as Armor,
 	Warlock_Options_Summon as Summon,
-} from '/wotlk/core/proto/warlock.js';
+} from '../core/proto/warlock.js';
 
-import { RaidTarget, Spec, Glyphs, Debuffs, IndividualBuffs, RaidBuffs } from '/wotlk/core/proto/common.js';
-import { NO_TARGET } from '/wotlk/core/proto_utils/utils.js';
-import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
-import { Player } from '/wotlk/core/player.js';
-import { Sim } from '/wotlk/core/sim.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
-import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
-import { Target } from '/wotlk/core/target.js';
-import { SimUI, SimWarning } from '/wotlk/core/sim_ui.js';
+import { RaidTarget, Spec, Glyphs, Debuffs, IndividualBuffs, RaidBuffs } from '../core/proto/common.js';
+import { NO_TARGET } from '../core/proto_utils/utils.js';
+import { ActionId } from '../core/proto_utils/action_id.js';
+import { Player } from '../core/player.js';
+import { Sim } from '../core/sim.js';
+import { EventID, TypedEvent } from '../core/typed_event.js';
+import { IndividualSimUI } from '../core/individual_sim_ui.js';
+import { Target } from '../core/target.js';
+import { SimUI, SimWarning } from '../core/sim_ui.js';
 
 import { IconPickerConfig } from '../core/components/icon_picker.js';
 import { IconEnumPicker, IconEnumPickerConfig, IconEnumValueConfig } from '../core/components/icon_enum_picker.js';
