@@ -91,12 +91,12 @@ func (dk *Deathknight) applyWanderingPlague() {
 		ApplyEffects: core.ApplyEffectFuncAOEDamage(dk.Env, core.SpellEffect{
 			ProcMask: core.ProcMaskSpellDamage,
 
-			DamageMultiplier: 1,
+			DamageMultiplier: wanderingPlagueMultiplier,
 			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
-					return dk.LastDiseaseDamage * wanderingPlagueMultiplier
+					return dk.LastDiseaseDamage
 				},
 			},
 			OutcomeApplier: dk.OutcomeFuncAlwaysHit(),
@@ -119,12 +119,12 @@ func (dk *Deathknight) applyNecrosis() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskSpellDamage,
 
-			DamageMultiplier: 1,
+			DamageMultiplier: necrosisCoeff,
 			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
-					return curDmg * necrosisCoeff
+					return curDmg
 				},
 			},
 			OutcomeApplier: dk.OutcomeFuncAlwaysHit(),
