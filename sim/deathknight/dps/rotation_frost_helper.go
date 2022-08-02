@@ -21,8 +21,8 @@ func (dk *DpsDeathknight) FrostRotationCast(sim *core.Simulation, target *core.U
 	fr := &dk.fr
 	canCast := dk.CanCast(sim, spell)
 	if canCast {
-		spell.Cast(sim, target)
 		fr.lastSpell = spell
+		return spell.Cast(sim, target)
 	}
-	return canCast
+	return false
 }

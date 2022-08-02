@@ -131,7 +131,14 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBloodPrioRotation(sim *
 							if dk.KillingMachineAura.IsActive() {
 								casted = dk.RotationActionCallback_FS_HB(sim, target, s)
 							} else {
-								casted = dk.FrostRotationCast(sim, target, dk.BloodStrike)
+								if dk.CanUnbreakableArmor(sim) {
+									casted = dk.FrostRotationCast(sim, target, dk.UnbreakableArmor)
+									if casted {
+										casted = dk.RotationActionCallback_FS_HB(sim, target, s)
+									}
+								} else {
+									casted = dk.FrostRotationCast(sim, target, dk.BloodStrike)
+								}
 								fr.nextSpell = dk.Pestilence
 							}
 						} else if sim.CurrentTime+gcd < dk.SpentFrostRuneReadyAt(sim) && sim.CurrentTime+gcd < dk.SpentUnholyRuneReadyAt(sim) {
@@ -139,15 +146,37 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBloodPrioRotation(sim *
 						}
 					}
 				} else if currGCDCastsTillExpire > 1 {
-					casted = dk.FrostRotationCast(sim, target, dk.BloodStrike)
+					if dk.CanUnbreakableArmor(sim) {
+						casted = dk.FrostRotationCast(sim, target, dk.UnbreakableArmor)
+						if casted {
+							casted = dk.RotationActionCallback_FS_HB(sim, target, s)
+						} else {
+							fr.nextSpell = dk.Pestilence
+						}
+					} else {
+						casted = dk.FrostRotationCast(sim, target, dk.BloodStrike)
+					}
+
+					if !casted {
+						casted = dk.RotationActionCallback_FS_HB(sim, target, s)
+					}
 				} else {
 					casted = dk.FrostRotationCast(sim, target, dk.Pestilence)
+					if !casted {
+						casted = dk.RotationActionCallback_FS_HB(sim, target, s)
+					}
 				}
 			} else {
 				casted = dk.FrostRotationCast(sim, target, dk.PlagueStrike)
+				if !casted {
+					casted = dk.RotationActionCallback_FS_HB(sim, target, s)
+				}
 			}
 		} else {
 			casted = dk.FrostRotationCast(sim, target, dk.IcyTouch)
+			if !casted {
+				casted = dk.RotationActionCallback_FS_HB(sim, target, s)
+			}
 		}
 	}
 	return casted

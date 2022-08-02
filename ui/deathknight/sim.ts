@@ -29,8 +29,8 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 			cssClass: 'deathknight-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"<p>Rotation logic is just hit things on CGD. It is not good don't take it as actual data.</p>\
-				<p>Damage multipliers are also likely to not be properly stacking until further beta testing.</p>\
+				"<p>Rotation logic is not fully tuned yet.</p>\
+				<p>There's currently a rotation bug in the non ERW frost rotation.</p>\
 				<p>Pet scaling is likely to not be properly working until further beta testing.</p>"
 			],
 
