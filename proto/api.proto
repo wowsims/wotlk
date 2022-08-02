@@ -181,9 +181,12 @@ message ResourceMetrics {
 }
 
 message DistributionMetrics {
-	double avg   = 1;
-	double stdev = 2;
-	double max   = 3;
+	double avg     = 1;
+	double stdev   = 2;
+	double max     = 3;
+	int64 maxSeed = 5;
+	double min     = 6;
+	int64 minSeed = 7;
 	map<int32, int32> hist = 4;
 }
 

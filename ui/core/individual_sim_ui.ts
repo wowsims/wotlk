@@ -69,6 +69,7 @@ import { addRaidSimAction, RaidSimResultsManager } from '/wotlk/core/components/
 import { addStatWeightsAction } from '/wotlk/core/components/stat_weights_action.js';
 import { equalsOrBothNull, getEnumValues } from '/wotlk/core/utils.js';
 import { getMetaGemConditionDescription } from '/wotlk/core/proto_utils/gems.js';
+import { getTalentPoints } from '/wotlk/core/proto_utils/utils.js';
 import { isDualWieldSpec } from '/wotlk/core/proto_utils/utils.js';
 import { simLaunchStatuses } from '/wotlk/core/launched_sims.js';
 import { makePetTypeInputConfig } from '/wotlk/core/talents/hunter_pet.js';
@@ -84,6 +85,7 @@ import { specToLocalStorageKey } from '/wotlk/core/proto_utils/utils.js';
 
 import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
 import * as InputHelpers from '/wotlk/core/components/input_helpers.js';
+import * as Mechanics from '/wotlk/core/constants/mechanics.js';
 import * as OtherConstants from '/wotlk/core/constants/other.js';
 import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 
@@ -240,6 +242,23 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				}
 
 				return `Only 3 Jewelcrafting Gems are allowed, but ${jcGems.length} are equipped.`;
+			},
+		});
+		this.addWarning({
+			updateOn: this.player.talentsChangeEmitter,
+			getContent: () => {
+				const talentPoints = getTalentPoints(this.player.getTalentsString());
+
+				if (talentPoints == 0) {
+					// Just return here, so we don't show a warning during page load.
+					return '';
+				} else if (talentPoints < Mechanics.MAX_TALENT_POINTS) {
+					return 'Unspent talent points.';
+				} else if (talentPoints > Mechanics.MAX_TALENT_POINTS) {
+					return 'More than maximum talent points spent.';
+				} else {
+					return '';
+				}
 			},
 		});
 		(config.warnings || []).forEach(warning => this.addWarning(warning(this)));

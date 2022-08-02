@@ -84,24 +84,6 @@ func (dk *Deathknight) registerArmyOfTheDeadCD() {
 	})
 
 	aotdDot.Spell = dk.ArmyOfTheDead
-
-	dk.AddMajorCooldown(core.MajorCooldown{
-		Spell:    dk.ArmyOfTheDead,
-		Priority: core.CooldownPriorityDefault,
-		Type:     core.CooldownTypeDPS,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			if dk.Opener.IsOngoing() {
-				return false
-			}
-			if dk.Gargoyle != nil && !dk.Gargoyle.IsEnabled() {
-				return false
-			}
-			if !dk.CanArmyOfTheDead(sim) {
-				return false
-			}
-			return true
-		},
-	})
 }
 
 func (dk *Deathknight) CanArmyOfTheDead(sim *core.Simulation) bool {

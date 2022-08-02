@@ -43,7 +43,11 @@ func (warlock *Warlock) registerLifeTapSpell() {
 					}
 				}
 				if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap) {
-					warlock.GlyphOfLifeTapAura.Activate(sim)
+					if warlock.GlyphOfLifeTapAura.IsActive() {
+						warlock.GlyphOfLifeTapAura.Refresh(sim)
+					} else {
+						warlock.GlyphOfLifeTapAura.Activate(sim)
+					}
 				}
 			},
 		}),

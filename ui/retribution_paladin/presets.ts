@@ -85,7 +85,7 @@ export const DefaultConsumes = Consumes.create({
 const RET_BIS_DISCLAIMER = "<p>Please reference <a target=\"_blank\" href=\"https://docs.google.com/spreadsheets/d/1SxO6abYm4k7XRaP1MsxhaqYoukgyZ-cbWDE3ujadjx4/\">Baranor's TBC BiS Lists</a> for more detailed gearing options and information.</p>"
 
 export const PRE_RAID_PRESET = {
-	name: 'Pre-Patch Preset',
+	name: 'Pre-Raid Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecRetributionPaladin>) => true,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
