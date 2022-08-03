@@ -86,19 +86,26 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
-					bloodlust: true,
+					swiftRetribution: true,
 					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
-					windfuryTotem: TristateEffect.TristateEffectImproved,
-					leaderOfThePack: TristateEffect.TristateEffectImproved,
-					unleashedRage: true,
+					icyTalons: true,
+					abominationsMight: true,
+					leaderOfThePack: TristateEffect.TristateEffectRegular,
+					sanctifiedRetribution: true,
+					bloodlust: true,
+					devotionAura: TristateEffect.TristateEffectImproved,
+					stoneskinTotem: TristateEffect.TristateEffectImproved,
 				}),
 				partyBuffs: PartyBuffs.create({
+					heroicPresence: false,
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
 					blessingOfMight: TristateEffect.TristateEffectImproved,
 				}),
 				debuffs: Debuffs.create({
+					bloodFrenzy: true,
+					heartOfTheCrusader: true,
 					mangle: true,
 					sunderArmor: true,
 					curseOfWeakness: TristateEffect.TristateEffectRegular,
@@ -140,15 +147,9 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 				// Preset gear configurations that the user can quickly select.
 				gear: [
 					Presets.P1_FURY_PRESET,
-					Presets.P2_FURY_PRESET,
-					Presets.P3_FURY_PRESET,
-					Presets.P4_FURY_PRESET,
-					Presets.P5_FURY_PRESET,
+					Presets.P1_PRERAID_FURY_PRESET,
 					Presets.P1_ARMS_PRESET,
-					Presets.P2_ARMS_PRESET,
-					Presets.P3_ARMS_PRESET,
-					Presets.P4_ARMS_PRESET,
-					Presets.P5_ARMS_PRESET,
+					Presets.P1_PRERAID_ARMS_PRESET,
 				],
 			},
 		});
