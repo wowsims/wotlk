@@ -34,7 +34,9 @@ func (shaman *Shaman) newLavaLashSpell() *core.Spell {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeOHSpecial,
 
-			DamageMultiplier: 1 + core.TernaryFloat64(shaman.SelfBuffs.ImbueOH == proto.ShamanImbue_FlametongueWeapon, core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfLavaLash), 0.35, 0.25), 0),
+			DamageMultiplier: 1 + core.TernaryFloat64(shaman.SelfBuffs.ImbueOH == proto.ShamanImbue_FlametongueWeapon,
+				core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfLavaLash), 0.35, 0.25), 0)*
+				core.TernaryFloat64(shaman.HasSetBonus(ItemSetWorldbreakerBattlegear, 2), 1.2, 1),
 			ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
 
 			BaseDamage:     shaman.AutoAttacks.OHEffect.BaseDamage,
