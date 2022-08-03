@@ -122,8 +122,6 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 			otherInputs: {
 				inputs: [
 					WarriorInputs.StartingRage,
-					WarriorInputs.PrecastShout,
-
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],
@@ -136,8 +134,7 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 			presets: {
 				// Preset talents that the user can quickly select.
 				talents: [
-					Presets.ArmsSlamTalents,
-					Presets.ArmsDWTalents,
+					Presets.ArmsTalents,
 					Presets.FuryTalents,
 				],
 				// Preset gear configurations that the user can quickly select.

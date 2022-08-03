@@ -20,6 +20,9 @@ type DistributionMetrics struct {
 	sum        float64
 	sumSquared float64
 	max        float64
+	min        float64
+	maxSeed    int64
+	minSeed    int64
 	hist       map[int32]int32 // rounded DPS to count
 }
 
@@ -28,12 +31,19 @@ func (distMetrics *DistributionMetrics) reset() {
 }
 
 // This should be called when a Sim iteration is complete.
-func (distMetrics *DistributionMetrics) doneIteration(encounterDurationSeconds float64) {
+func (distMetrics *DistributionMetrics) doneIteration(seed int64, encounterDurationSeconds float64) {
 	dps := distMetrics.Total / encounterDurationSeconds
 
 	distMetrics.sum += dps
 	distMetrics.sumSquared += dps * dps
-	distMetrics.max = MaxFloat(distMetrics.max, dps)
+	if dps > distMetrics.max {
+		distMetrics.max = dps
+		distMetrics.maxSeed = seed
+	}
+	if dps <= distMetrics.min || distMetrics.min < 0 {
+		distMetrics.min = dps
+		distMetrics.minSeed = seed
+	}
 
 	dpsRounded := int32(math.Round(dps/10) * 10)
 	distMetrics.hist[dpsRounded]++
@@ -43,16 +53,20 @@ func (distMetrics *DistributionMetrics) ToProto(numIterations int32) *proto.Dist
 	dpsAvg := distMetrics.sum / float64(numIterations)
 
 	return &proto.DistributionMetrics{
-		Avg:   dpsAvg,
-		Stdev: math.Sqrt((distMetrics.sumSquared / float64(numIterations)) - (dpsAvg * dpsAvg)),
-		Max:   distMetrics.max,
-		Hist:  distMetrics.hist,
+		Avg:     dpsAvg,
+		Stdev:   math.Sqrt((distMetrics.sumSquared / float64(numIterations)) - (dpsAvg * dpsAvg)),
+		Max:     distMetrics.max,
+		Min:     distMetrics.min,
+		MaxSeed: distMetrics.maxSeed,
+		MinSeed: distMetrics.minSeed,
+		Hist:    distMetrics.hist,
 	}
 }
 
 func NewDistributionMetrics() DistributionMetrics {
 	return DistributionMetrics{
 		hist: make(map[int32]int32),
+		min:  -1,
 	}
 }
 
@@ -290,10 +304,10 @@ func (unitMetrics *UnitMetrics) reset() {
 }
 
 // This should be called when a Sim iteration is complete.
-func (unitMetrics *UnitMetrics) doneIteration(encounterDurationSeconds float64) {
-	unitMetrics.dps.doneIteration(encounterDurationSeconds)
-	unitMetrics.threat.doneIteration(encounterDurationSeconds)
-	unitMetrics.dtps.doneIteration(encounterDurationSeconds)
+func (unitMetrics *UnitMetrics) doneIteration(seed int64, encounterDurationSeconds float64) {
+	unitMetrics.dps.doneIteration(seed, encounterDurationSeconds)
+	unitMetrics.threat.doneIteration(seed, encounterDurationSeconds)
+	unitMetrics.dtps.doneIteration(seed, encounterDurationSeconds)
 	unitMetrics.oomTimeSum += float64(unitMetrics.OOMTime.Seconds())
 	if unitMetrics.Died {
 		unitMetrics.numItersDead++

@@ -24,7 +24,7 @@ func (dk *Deathknight) registerRaiseDeadCD() {
 		},
 	})
 
-	dk.RaiseDead = dk.RegisterSpell(core.SpellConfig{
+	dk.RaiseDead = dk.RegisterSpell(nil, core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 46584},
 
 		Cast: core.CastConfig{
@@ -52,8 +52,7 @@ func (dk *Deathknight) CanRaiseDead(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastRaiseDead(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanRaiseDead(sim) {
-		dk.RaiseDead.Cast(sim, target)
-		return true
+		return dk.RaiseDead.Cast(sim, target)
 	}
 	return false
 }

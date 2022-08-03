@@ -8,14 +8,14 @@ import (
 )
 
 func (warrior *Warrior) registerBloodthirstSpell(cdTimer *core.Timer) {
-	cost := 30.0
+	cost := 20.0
 	if warrior.HasSetBonus(ItemSetDestroyerBattlegear, 4) {
 		cost -= 5
 	}
 	refundAmount := cost * 0.8
 
 	warrior.Bloodthirst = warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 30335},
+		ActionID:    core.ActionID{SpellID: 23881},
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 
@@ -30,19 +30,19 @@ func (warrior *Warrior) registerBloodthirstSpell(cdTimer *core.Timer) {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    cdTimer,
-				Duration: time.Second * 6,
+				Duration: time.Second * 4,
 			},
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeMHSpecial,
 
-			DamageMultiplier: 1 * core.TernaryFloat64(warrior.HasSetBonus(ItemSetOnslaughtBattlegear, 4), 1.05, 1),
+			DamageMultiplier: 1 * core.TernaryFloat64(warrior.HasSetBonus(ItemSetOnslaughtBattlegear, 4), 1.05, 1) * (1 + 0.02*float64(warrior.Talents.UnendingFury)),
 			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return hitEffect.MeleeAttackPower(spell.Unit) * 0.45
+					return hitEffect.MeleeAttackPower(spell.Unit) * 0.5
 				},
 				TargetSpellCoefficient: 1,
 			},

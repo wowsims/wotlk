@@ -40,9 +40,9 @@ func (warrior *Warrior) makeShoutSpellHelper(actionID core.ActionID) *core.Spell
 
 func (warrior *Warrior) makeShoutSpell() *core.Spell {
 	if warrior.ShoutType == proto.WarriorShout_WarriorShoutBattle {
-		return warrior.makeShoutSpellHelper(core.ActionID{SpellID: 2048})
+		return warrior.makeShoutSpellHelper(core.ActionID{SpellID: 47436})
 	} else if warrior.ShoutType == proto.WarriorShout_WarriorShoutCommanding {
-		return warrior.makeShoutSpellHelper(core.ActionID{SpellID: 469})
+		return warrior.makeShoutSpellHelper(core.ActionID{SpellID: 47440})
 	} else {
 		return nil
 	}

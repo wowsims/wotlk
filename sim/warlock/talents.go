@@ -488,7 +488,7 @@ func (warlock *Warlock) setupImprovedSoulLeech() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spell == warlock.Conflagrate  || spell == warlock.ShadowBolt || spell == warlock.ChaosBolt || spell == warlock.SoulFire || spell == warlock.Incinerate {
+			if spell == warlock.Conflagrate || spell == warlock.ShadowBolt || spell == warlock.ChaosBolt || spell == warlock.SoulFire || spell == warlock.Incinerate {
 				if sim.RandomFloat("SoulLeech") < soulLeechProcChance {
 					warlock.AddMana(sim, warlock.MaxMana()*float64(warlock.Talents.ImprovedSoulLeech)/100, improvedSoulLeechManaMetric, true)
 					warlock.Pets[0].GetCharacter().AddMana(sim, warlock.Pets[0].GetCharacter().MaxMana()*float64(warlock.Talents.ImprovedSoulLeech)/100, improvedSoulLeechPetManaMetric, true)
@@ -505,31 +505,31 @@ func (warlock *Warlock) setupDemonicPact() {
 	demonicPactMultiplier := 0.02 * float64(warlock.Talents.DemonicPact)
 	warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1. + demonicPactMultiplier
 	warlock.PseudoStats.FireDamageDealtMultiplier *= 1. + demonicPactMultiplier
-	icd := core.Cooldown{
-		Timer:    warlock.NewTimer(),
-		Duration: time.Second * 5,
-	}
 
-	warlock.Pets[0].GetCharacter().RegisterAura(core.Aura{
-		Label:    "Demonic Pact Hidden Aura",
-		Duration: core.NeverExpires,
-		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Activate(sim)
-		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Outcome.Matches(core.OutcomeCrit) && icd.IsReady(sim) {
-				icd.Use(sim)
-				currentDemonicPactAura := warlock.GetAura("Demonic Pact")
-				newSPBonus := warlock.GetStat(stats.SpellPower) * demonicPactMultiplier
-				if currentDemonicPactAura != nil {
-					if currentDemonicPactAura.Priority < newSPBonus || currentDemonicPactAura.RemainingDuration(sim) < time.Second * 10 {
-						currentDemonicPactAura.Deactivate(sim)
-						core.DemonicPactAura(warlock.GetCharacter(), newSPBonus).Activate(sim)
-					}
-				} else {
-					core.DemonicPactAura(warlock.GetCharacter(), newSPBonus).Activate(sim)
-				}
-			}
-		},
-	})
+	// icd := core.Cooldown{
+	// 	Timer:    warlock.NewTimer(),
+	// 	Duration: time.Second * 5,
+	// }
+	// warlock.Pets[0].GetCharacter().RegisterAura(core.Aura{
+	// 	Label:    "Demonic Pact Hidden Aura",
+	// 	Duration: core.NeverExpires,
+	// 	OnReset: func(aura *core.Aura, sim *core.Simulation) {
+	// 		aura.Activate(sim)
+	// 	},
+	// 	OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+	// 		if spellEffect.Outcome.Matches(core.OutcomeCrit) && icd.IsReady(sim) {
+	// 			icd.Use(sim)
+	// 			currentDemonicPactAura := warlock.GetAura("Demonic Pact")
+	// 			newSPBonus := warlock.GetStat(stats.SpellPower) * demonicPactMultiplier
+	// 			if currentDemonicPactAura != nil {
+	// 				if currentDemonicPactAura.Priority < newSPBonus || currentDemonicPactAura.RemainingDuration(sim) < time.Second * 10 {
+	// 					currentDemonicPactAura.Deactivate(sim)
+	// 					core.DemonicPactAura(warlock.GetCharacter(), newSPBonus).Activate(sim)
+	// 				}
+	// 			} else {
+	// 				core.DemonicPactAura(warlock.GetCharacter(), newSPBonus).Activate(sim)
+	// 			}
+	// 		}
+	// 	},
+	// })
 }

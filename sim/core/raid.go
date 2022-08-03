@@ -82,7 +82,7 @@ func (party *Party) doneIteration(sim *Simulation) {
 		party.dpsMetrics.Total += agent.GetCharacter().Metrics.dps.Total
 	}
 
-	party.dpsMetrics.doneIteration(sim.CurrentTime.Seconds())
+	party.dpsMetrics.doneIteration(sim.rand.GetSeed(), sim.CurrentTime.Seconds())
 }
 
 func (party *Party) GetMetrics(numIterations int32) *proto.PartyMetrics {
@@ -290,7 +290,7 @@ func (raid *Raid) doneIteration(sim *Simulation) {
 		raid.dpsMetrics.Total += party.dpsMetrics.Total
 	}
 
-	raid.dpsMetrics.doneIteration(sim.CurrentTime.Seconds())
+	raid.dpsMetrics.doneIteration(sim.rand.GetSeed(), sim.CurrentTime.Seconds())
 }
 
 func (raid *Raid) GetMetrics(numIterations int32) *proto.RaidMetrics {
