@@ -222,10 +222,18 @@ export const titleIcons: Record<Spec, string> = {
 
 export const raidSimIcon: string = '/wotlk/assets/img/raid_icon.png';
 
+export function getTalentTreePoints(talentsString: string): Array<number> {
+	const trees = talentsString.split('-');
+	return trees.map(tree => sum([...tree].map(char => parseInt(char))));
+}
+
+export function getTalentPoints(talentsString: string): number {
+	return sum(getTalentTreePoints(talentsString));
+}
+
 // Returns the index of the talent tree (0, 1, or 2) that has the most points.
 export function getTalentTree(talentsString: string): number {
-	const trees = talentsString.split('-');
-	const points = trees.map(tree => sum([...tree].map(char => parseInt(char))));
+	const points = getTalentTreePoints(talentsString);
 	return maxIndex(points) || 0;
 }
 
@@ -959,7 +967,6 @@ const priestRaces = [
 	Race.RaceDwarf,
 	Race.RaceHuman,
 	Race.RaceNightElf,
-	Race.RaceOrc,
 	Race.RaceTroll,
 	Race.RaceUndead,
 ];
@@ -1436,6 +1443,17 @@ const metaGemEffectEPs: Partial<Record<Spec, (gem: Gem, playerStats: Stats) => n
 	[Spec.SpecElementalShaman]: (gem, playerStats) => {
 		if (gem.id == Gems.CHAOTIC_SKYFIRE_DIAMOND.id) {
 			return (((playerStats.getStat(Stat.StatSpellPower) * 0.795) + 603) * 2 * (playerStats.getStat(Stat.StatSpellCrit) / 2208) * 0.045) / 0.795;
+		}
+
+		return 0;
+	},
+	[Spec.SpecWarlock]: (gem, playerStats) => {
+		// TODO: make it gear dependant
+		if (gem.id == Gems.CHAOTIC_SKYFLARE_DIAMOND.id) {
+			return 84;
+		}
+		if (gem.id == Gems.CHAOTIC_SKYFIRE_DIAMOND.id) {
+			return 80;
 		}
 
 		return 0;

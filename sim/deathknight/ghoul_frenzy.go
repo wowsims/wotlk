@@ -4,20 +4,23 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (dk *Deathknight) registerGhoulFrenzySpell() {
 	if !dk.Talents.GhoulFrenzy {
 		return
 	}
-
-	dk.GhoulFrenzy = dk.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 63560},
-		SpellSchool: core.SpellSchoolShadow,
-
+	baseCost := float64(core.NewRuneCost(10, 0, 0, 1, 0))
+	dk.GhoulFrenzy = dk.RegisterSpell(nil, core.SpellConfig{
+		ActionID:     core.ActionID{SpellID: 63560},
+		SpellSchool:  core.SpellSchoolShadow,
+		ResourceType: stats.RunicPower,
+		BaseCost:     baseCost,
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD: core.GCDDefault,
+				GCD:  core.GCDDefault,
+				Cost: baseCost,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				cast.GCD = dk.getModifiedGCD()
@@ -31,12 +34,6 @@ func (dk *Deathknight) registerGhoulFrenzySpell() {
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			dk.GhoulFrenzyAura.Activate(sim)
 			dk.Ghoul.GhoulFrenzyAura.Activate(sim)
-
-			dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_U)
-			dk.Spend(sim, spell, dkSpellCost)
-
-			amountOfRunicPower := 10.0
-			dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 		},
 	})
 
@@ -63,10 +60,10 @@ func (dk *Deathknight) registerGhoulFrenzySpell() {
 			}
 		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.MeleeSpeedMultiplier *= 1.25
+			dk.Ghoul.MultiplyMeleeSpeed(sim, 1.25)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.MeleeSpeedMultiplier /= 1.25
+			dk.Ghoul.MultiplyMeleeSpeed(sim, 1/1.25)
 		},
 	})
 }
@@ -77,8 +74,7 @@ func (dk *Deathknight) CanGhoulFrenzy(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastGhoulFrenzy(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanGhoulFrenzy(sim) {
-		dk.GhoulFrenzy.Cast(sim, target)
-		return true
+		return dk.GhoulFrenzy.Cast(sim, target)
 	}
 	return false
 }

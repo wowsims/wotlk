@@ -121,8 +121,8 @@ var FullConsumes = &proto.Consumes{
 	Flask:           proto.Flask_FlaskOfRelentlessAssault,
 	DefaultPotion:   proto.Potions_HastePotion,
 	DefaultConjured: proto.Conjured_ConjuredRogueThistleTea,
-	SuperSapper:     true,
-	FillerExplosive: proto.Explosive_ExplosiveGnomishFlameTurret,
+	ThermalSapper:   true,
+	FillerExplosive: proto.Explosive_ExplosiveSaroniteBomb,
 }
 
 var FullDebuffs = &proto.Debuffs{
@@ -172,7 +172,6 @@ var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	},
 	{
 		"id": 27531,
-		"enchant": 19445,
 		"gems": [
 			24061,
 			24061
@@ -261,7 +260,6 @@ var MutilateP1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	},
 	{
 		"id": 27531,
-		"enchant": 19445,
 		"gems": [
 			24061,
 			24061

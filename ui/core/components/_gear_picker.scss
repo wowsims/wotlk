@@ -4,13 +4,13 @@
 .gear-picker-root {
   display: flex;
   flex-wrap: wrap;
-  min-width: 250px;
+  min-width: 275px;
 }
 
 .gear-picker-left, .gear-picker-right {
   width: 50%;
   flex: 1;
-  min-width: 250px;
+  min-width: 275px;
 }
 
 .item-picker-root {
@@ -25,7 +25,7 @@
   flex-direction: row-reverse;
   text-align: right;
 }
-@media only screen and (max-width: calc(750px + 1vw)) {
+@media only screen and (max-width: calc(800px + 1vw)) {
   .gear-picker-right .item-picker-root {
     text-align: left;
     flex-direction: row;
@@ -59,7 +59,6 @@
 }
 
 .item-picker-name {
-  display: block;
   font-size: clamp(16px, 17px, 18px);
 	letter-spacing: normal;
 	color: white;
@@ -70,10 +69,14 @@
 }
 
 .item-picker-enchant {
-  display: block;
   font-size: clamp(12px, 13px, 14px);;
   color: lawngreen;
 	letter-spacing: normal;
+}
+.item-picker-enchant:hover {
+  color: lawngreen;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .selector-modal {

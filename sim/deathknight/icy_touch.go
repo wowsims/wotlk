@@ -4,7 +4,10 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
+
+var IcyTouchActionID = core.ActionID{SpellID: 59131}
 
 func (dk *Deathknight) registerIcyTouchSpell() {
 	dk.FrostFeverDebuffAura = make([]*core.Aura, dk.Env.GetNumTargets())
@@ -16,22 +19,27 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 	}
 
 	impIcyTouchCoeff := 1.0 + 0.05*float64(dk.Talents.ImprovedIcyTouch)
-	sigilBonus := +dk.sigilOfTheFrozenConscienceBonus()
+	sigilBonus := dk.sigilOfTheFrozenConscienceBonus()
+	amountOfRunicPower := 10.0 + 2.5*float64(dk.Talents.ChillOfTheGrave)
+	baseCost := float64(core.NewRuneCost(uint8(amountOfRunicPower), 0, 1, 0, 0))
 
-	dk.IcyTouch = dk.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 59131},
-		SpellSchool: core.SpellSchoolFrost,
-
+	rs := &RuneSpell{}
+	dk.IcyTouch = dk.RegisterSpell(rs, core.SpellConfig{
+		ActionID:     IcyTouchActionID,
+		SpellSchool:  core.SpellSchoolFrost,
+		ResourceType: stats.RunicPower,
+		BaseCost:     baseCost,
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD: core.GCDDefault,
+				Cost: baseCost,
+				GCD:  core.GCDDefault,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				cast.GCD = dk.getModifiedGCD()
 			},
 		},
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+		ApplyEffects: dk.withRuneRefund(rs, core.SpellEffect{
 			ProcMask:             core.ProcMaskSpellDamage,
 			BonusSpellCritRating: dk.rimeCritBonus() * core.CritRatingPerCritChance,
 			DamageMultiplier:     impIcyTouchCoeff,
@@ -40,10 +48,9 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					roll := (245.0-227.0)*sim.RandomFloat("Icy Touch") + 227.0 + sigilBonus
-					return (roll + dk.applyImpurity(hitEffect, spell.Unit)*0.1) *
+					return (roll + dk.getImpurityBonus(hitEffect, spell.Unit)*0.1) *
 						dk.glacielRotBonus(hitEffect.Target) *
-						dk.rageOfRivendareBonus(hitEffect.Target) *
-						dk.tundraStalkerBonus(hitEffect.Target) *
+						dk.RoRTSBonus(hitEffect.Target) *
 						dk.mercilessCombatBonus(sim)
 				},
 				TargetSpellCoefficient: 1,
@@ -64,15 +71,9 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 					if dk.Talents.EbonPlaguebringer > 0 {
 						dk.EbonPlagueAura[spellEffect.Target.Index].Activate(sim)
 					}
-
-					dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_F)
-					dk.Spend(sim, spell, dkSpellCost)
-
-					amountOfRunicPower := 10.0 + 2.5*float64(dk.Talents.ChillOfTheGrave)
-					dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
 				}
 			},
-		}),
+		}, false),
 	})
 }
 
@@ -81,9 +82,8 @@ func (dk *Deathknight) CanIcyTouch(sim *core.Simulation) bool {
 }
 
 func (dk *Deathknight) CastIcyTouch(sim *core.Simulation, target *core.Unit) bool {
-	if dk.CanIcyTouch(sim) {
-		dk.IcyTouch.Cast(sim, target)
-		return true
+	if dk.IcyTouch.IsReady(sim) {
+		return dk.IcyTouch.Cast(sim, target)
 	}
 	return false
 }

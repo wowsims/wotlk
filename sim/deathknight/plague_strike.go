@@ -2,13 +2,12 @@ package deathknight
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 var PlagueStrikeActionID = core.ActionID{SpellID: 49921}
-var PlagueStrikeMHOutcome = core.OutcomeHit
-var PlagueStrikeOHOutcome = core.OutcomeHit
 
-func (dk *Deathknight) newPlagueStrikeSpell(isMH bool) *core.Spell {
+func (dk *Deathknight) newPlagueStrikeSpell(isMH bool, onhit func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)) *RuneSpell {
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 378.0, 0.5, true)
 	if !isMH {
 		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 378.0, 0.5*dk.nervesOfColdSteelBonus(), true)
@@ -23,80 +22,62 @@ func (dk *Deathknight) newPlagueStrikeSpell(isMH bool) *core.Spell {
 
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				return weaponBaseDamage(sim, hitEffect, spell) *
-					dk.rageOfRivendareBonus(hitEffect.Target) *
-					dk.tundraStalkerBonus(hitEffect.Target)
+				return weaponBaseDamage(sim, hitEffect, spell) * dk.RoRTSBonus(hitEffect.Target)
 			},
 			TargetSpellCoefficient: 1,
 		},
 
-		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if isMH {
-				PlagueStrikeMHOutcome = spellEffect.Outcome
-			} else {
-				PlagueStrikeOHOutcome = spellEffect.Outcome
-			}
-		},
+		OnSpellHitDealt: onhit,
 	}
 
 	dk.threatOfThassarianProcMasks(isMH, &effect, false, false, func(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
 		return outcomeApplier
 	})
 
-	return dk.RegisterSpell(core.SpellConfig{
+	conf := core.SpellConfig{
 		ActionID:     PlagueStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool:  core.SpellSchoolPhysical,
 		Flags:        core.SpellFlagMeleeMetrics,
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
-	})
-}
-
-func (dk *Deathknight) registerPlagueStrikeSpell() {
-	dk.PlagueStrikeMhHit = dk.newPlagueStrikeSpell(true)
-	dk.PlagueStrikeOhHit = dk.newPlagueStrikeSpell(false)
-
-	dk.PlagueStrike = dk.RegisterSpell(core.SpellConfig{
-		ActionID:    PlagueStrikeActionID.WithTag(3),
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagNoMetrics | core.SpellFlagNoLogs,
-
-		Cast: core.CastConfig{
+	}
+	rs := &RuneSpell{}
+	if isMH { // only MH has cost & gcd
+		rpGen := 10.0 + 2.5*float64(dk.Talents.Dirge)
+		conf.ResourceType = stats.RunicPower
+		conf.BaseCost = float64(core.NewRuneCost(uint8(rpGen), 0, 0, 1, 0))
+		conf.Cast = core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD: core.GCDDefault,
+				Cost: conf.BaseCost,
+				GCD:  core.GCDDefault,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				cast.GCD = dk.getModifiedGCD()
 			},
-		},
+		}
+		conf.ApplyEffects = dk.withRuneRefund(rs, effect, false)
+	}
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskEmpty,
-			ThreatMultiplier: 1,
+	return dk.RegisterSpell(rs, conf)
+}
 
-			OutcomeApplier: dk.OutcomeFuncAlwaysHit(),
-
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				dk.threatOfThassarianProc(sim, spellEffect, dk.PlagueStrikeMhHit, dk.PlagueStrikeOhHit)
-
-				dk.LastCastOutcome = PlagueStrikeMHOutcome
-				if dk.outcomeEitherWeaponHitOrCrit(PlagueStrikeMHOutcome, PlagueStrikeOHOutcome) {
-					dk.BloodPlagueSpell.Cast(sim, spellEffect.Target)
-					if dk.Talents.CryptFever > 0 {
-						dk.CryptFeverAura[spellEffect.Target.Index].Activate(sim)
-					}
-					if dk.Talents.EbonPlaguebringer > 0 {
-						dk.EbonPlagueAura[spellEffect.Target.Index].Activate(sim)
-					}
-
-					dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_U)
-					dk.Spend(sim, spell, dkSpellCost)
-
-					amountOfRunicPower := 10.0 + 2.5*float64(dk.Talents.Dirge)
-					dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
-				}
-			},
-		}),
+func (dk *Deathknight) registerPlagueStrikeSpell() {
+	dk.PlagueStrikeMhHit = dk.newPlagueStrikeSpell(true, func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		if dk.Talents.ThreatOfThassarian > 0 && dk.threatOfThassarianWillProc(sim) {
+			dk.PlagueStrikeOhHit.Cast(sim, spellEffect.Target)
+		}
+		dk.LastCastOutcome = spellEffect.Outcome
+		if spellEffect.Outcome.Matches(core.OutcomeLanded) {
+			dk.BloodPlagueSpell.Cast(sim, spellEffect.Target)
+			if dk.Talents.CryptFever > 0 {
+				dk.CryptFeverAura[spellEffect.Target.Index].Activate(sim)
+			}
+			if dk.Talents.EbonPlaguebringer > 0 {
+				dk.EbonPlagueAura[spellEffect.Target.Index].Activate(sim)
+			}
+		}
 	})
+	dk.PlagueStrikeOhHit = dk.newPlagueStrikeSpell(false, nil)
+	dk.PlagueStrike = dk.PlagueStrikeMhHit
 }
 
 func (dk *Deathknight) CanPlagueStrike(sim *core.Simulation) bool {
@@ -104,9 +85,8 @@ func (dk *Deathknight) CanPlagueStrike(sim *core.Simulation) bool {
 }
 
 func (dk *Deathknight) CastPlagueStrike(sim *core.Simulation, target *core.Unit) bool {
-	if dk.CanPlagueStrike(sim) {
-		dk.PlagueStrike.Cast(sim, target)
-		return true
+	if dk.PlagueStrike.IsReady(sim) {
+		return dk.PlagueStrike.Cast(sim, target)
 	}
 	return false
 }

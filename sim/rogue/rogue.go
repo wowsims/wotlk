@@ -109,6 +109,14 @@ func (rogue *Rogue) ApplyFinisher(sim *core.Simulation, spell *core.Spell) {
 	rogue.finishingMoveEffectApplier(sim, numPoints)
 }
 
+func (rogue *Rogue) HasMajorGlyph(glyph proto.RogueMajorGlyph) bool {
+	return rogue.HasGlyph(int32(glyph))
+}
+
+func (rogue *Rogue) HasMinorGlyph(glyph proto.RogueMinorGlyph) bool {
+	return rogue.HasGlyph(int32(glyph))
+}
+
 func (rogue *Rogue) Initialize() {
 	// Update auto crit multipliers now that we have the targets.
 	rogue.AutoAttacks.MHEffect.OutcomeApplier = rogue.OutcomeFuncMeleeWhite(rogue.MeleeCritMultiplier(true, false))
@@ -177,11 +185,19 @@ func (rogue *Rogue) MeleeCritMultiplier(isMH bool, applyLethality bool) float64 
 		secondaryModifier += 0.06 * float64(rogue.Talents.Lethality)
 	}
 
-	if rogue.CurrentTarget != nil && rogue.CurrentTarget.HasHealthBar() && rogue.CurrentTarget.CurrentHealthPercent() < rogue.CurrentHealthPercent() {
-		secondaryModifier += 0.04 * float64(rogue.Talents.PreyOnTheWeak)
+	// TODO: Use the following predicate if/when health values are modeled
+	//if rogue.CurrentTarget != nil && rogue.CurrentTarget.HasHealthBar() && rogue.CurrentTarget.CurrentHealthPercent() < rogue.CurrentHealthPercent() {
+	if rogue.Talents.PreyOnTheWeak > 0 {
+		secondaryModifier *= (1 + 0.04*float64(rogue.Talents.PreyOnTheWeak))
+		primaryModifier *= (1 + 0.04*float64(rogue.Talents.PreyOnTheWeak))
 	}
-
-	return rogue.Character.MeleeCritMultiplier(primaryModifier, secondaryModifier)
+	if rogue.Character.HasMetaGemEquipped(34220) ||
+		rogue.Character.HasMetaGemEquipped(32409) ||
+		rogue.Character.HasMetaGemEquipped(41285) ||
+		rogue.Character.HasMetaGemEquipped(41398) {
+		primaryModifier *= 1.03
+	}
+	return (2.0 + secondaryModifier) * primaryModifier
 }
 func (rogue *Rogue) SpellCritMultiplier() float64 {
 	return rogue.Character.SpellCritMultiplier(rogue.murderMultiplier(), 0)
@@ -242,6 +258,7 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 			rogue.doRotation(sim)
 		}
 	})
+	rogue.EnergyTickMultiplier *= (1 + []float64{0, 0.08, 0.16, 0.25}[rogue.Talents.Vitality])
 
 	rogue.EnableAutoAttacks(rogue, core.AutoAttackOptions{
 		MainHand:       rogue.WeaponFromMainHand(0), // Set crit multiplier later when we have targets.
@@ -251,7 +268,7 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 
 	rogue.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+1)
 	rogue.AddStatDependency(stats.Agility, stats.AttackPower, 1.0+1)
-	rogue.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/40))
+	rogue.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/83.15))
 
 	return rogue
 }
@@ -259,91 +276,99 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassRogue}] = stats.Stats{
 		stats.Health:    3524,
-		stats.Strength:  92,
-		stats.Agility:   160,
+		stats.Strength:  112,
+		stats.Agility:   206,
 		stats.Stamina:   88,
 		stats.Intellect: 43,
 		stats.Spirit:    57,
 
-		stats.AttackPower: 120,
+		stats.AttackPower: 140,
 		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
+		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDwarf, Class: proto.Class_ClassRogue}] = stats.Stats{
 		stats.Health:    3524,
-		stats.Strength:  97,
-		stats.Agility:   154,
+		stats.Strength:  120,
+		stats.Agility:   200,
 		stats.Stamina:   92,
 		stats.Intellect: 38,
 		stats.Spirit:    57,
 
-		stats.AttackPower: 120,
+		stats.AttackPower: 140,
 		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
+		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceGnome, Class: proto.Class_ClassRogue}] = stats.Stats{
 		stats.Health:    3524,
-		stats.Strength:  90,
-		stats.Agility:   161,
+		stats.Strength:  110,
+		stats.Agility:   206,
 		stats.Stamina:   88,
 		stats.Intellect: 45,
 		stats.Spirit:    58,
 
-		stats.AttackPower: 120,
+		stats.AttackPower: 140,
 		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
+		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceHuman, Class: proto.Class_ClassRogue}] = stats.Stats{
 		stats.Health:    3524,
-		stats.Strength:  95,
-		stats.Agility:   158,
+		stats.Strength:  115,
+		stats.Agility:   204,
 		stats.Stamina:   89,
 		stats.Intellect: 39,
 		stats.Spirit:    58,
 
-		stats.AttackPower: 120,
+		stats.AttackPower: 140,
 		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
+		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassRogue}] = stats.Stats{
 		stats.Health:    3524,
-		stats.Strength:  92,
-		stats.Agility:   163,
+		stats.Strength:  111,
+		stats.Agility:   208,
 		stats.Stamina:   88,
 		stats.Intellect: 39,
 		stats.Spirit:    58,
 
-		stats.AttackPower: 120,
+		stats.AttackPower: 140,
 		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
+		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceOrc, Class: proto.Class_ClassRogue}] = stats.Stats{
 		stats.Health:    3524,
-		stats.Strength:  98,
-		stats.Agility:   155,
+		stats.Strength:  118,
+		stats.Agility:   201,
 		stats.Stamina:   91,
 		stats.Intellect: 36,
 		stats.Spirit:    61,
 
-		stats.AttackPower: 120,
+		stats.AttackPower: 140,
 		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
+		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassRogue}] = stats.Stats{
 		stats.Health:    3524,
-		stats.Strength:  96,
-		stats.Agility:   160,
+		stats.Strength:  116,
+		stats.Agility:   206,
 		stats.Stamina:   90,
 		stats.Intellect: 35,
 		stats.Spirit:    59,
 
-		stats.AttackPower: 120,
+		stats.AttackPower: 140,
 		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
+		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceUndead, Class: proto.Class_ClassRogue}] = stats.Stats{
 		stats.Health:    3524,
-		stats.Strength:  94,
-		stats.Agility:   156,
+		stats.Strength:  114,
+		stats.Agility:   202,
 		stats.Stamina:   90,
 		stats.Intellect: 37,
 		stats.Spirit:    63,
 
-		stats.AttackPower: 120,
+		stats.AttackPower: 140,
 		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
+		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
 	}
 }
 

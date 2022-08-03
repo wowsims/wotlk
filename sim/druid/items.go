@@ -186,7 +186,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spell == druid.Starfire8 || spell == druid.Starfire6 {
+				if spell == druid.Starfire {
 					if sim.RandomFloat("Ashtongue Talisman") < 0.25 {
 						procAura.Activate(sim)
 					}

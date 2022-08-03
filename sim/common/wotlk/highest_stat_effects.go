@@ -10,6 +10,7 @@ import (
 type HighestStatAura struct {
 	statOptions []stats.Stat
 	auras       []*core.Aura
+	factory     func(stat stats.Stat) *core.Aura
 }
 
 func (hsa HighestStatAura) Get(character *core.Character) *core.Aura {
@@ -24,18 +25,19 @@ func (hsa HighestStatAura) Get(character *core.Character) *core.Aura {
 		}
 	}
 
-	return hsa.auras[bestIdx]
+	a := hsa.auras[bestIdx]
+	if a == nil {
+		a = hsa.factory(hsa.statOptions[bestIdx])
+		hsa.auras[bestIdx] = a
+	}
+	return a
 }
 
 func NewHighestStatAura(statOptions []stats.Stat, auraFactory func(stat stats.Stat) *core.Aura) HighestStatAura {
-	var auras []*core.Aura
-	for _, stat := range statOptions {
-		auras = append(auras, auraFactory(stat))
-	}
-
 	return HighestStatAura{
 		statOptions: statOptions,
-		auras:       auras,
+		factory:     auraFactory,
+		auras:       make([]*core.Aura, len(statOptions)),
 	}
 }
 

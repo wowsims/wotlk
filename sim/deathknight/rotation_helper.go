@@ -4,55 +4,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-type RotationAction uint8
-
-// Add your UH rotation Actions here and then on the DoNext function
-const (
-	RotationAction_Skip RotationAction = iota
-	RotationAction_IT
-	RotationAction_PS
-	RotationAction_Obli
-	RotationAction_BS
-	RotationAction_BT
-	RotationAction_UA
-	RotationAction_RD
-	RotationAction_Pesti
-	RotationAction_FS
-	RotationAction_HW
-	RotationAction_ERW
-	RotationAction_HB_Ghoul_RimeCheck
-	RotationAction_PrioMode
-	RotationAction_SS
-	RotationAction_DND
-	RotationAction_GF
-	RotationAction_DC
-	RotationAction_Garg
-	RotationAction_AOTD
-	RotationAction_BP
-	RotationAction_FP
-	RotationAction_UP
-)
-
-type Sequence struct {
-	idx        int
-	numActions int
-	actions    []RotationAction
-}
-
-type DoRotationEvent func(sim *core.Simulation, target *core.Unit)
-
-type RotationHelper struct {
-	opener *Sequence
-	//openers  []Sequence
-	onOpener bool
-
-	sequence *Sequence
-
-	CastSuccessful     bool
-	justCastPestilence bool
-
-	DoRotationEvent DoRotationEvent
-}
+type RotationAction func(sim *core.Simulation, target *core.Unit, s *Sequence) bool
 
 func TernaryRotationAction(condition bool, t RotationAction, f RotationAction) RotationAction {
 	if condition {
@@ -62,19 +14,54 @@ func TernaryRotationAction(condition bool, t RotationAction, f RotationAction) R
 	}
 }
 
-func (r *RotationHelper) DefineOpener(actions []RotationAction) {
-	r.opener = &Sequence{
-		idx:        0,
-		numActions: len(actions),
-		actions:    actions,
+// Add your UH rotation Actions here and then on the DoNext function
+
+type Sequence struct {
+	idx        int
+	numActions int
+	actions    []RotationAction
+}
+
+func (o *Sequence) IsOngoing() bool {
+	return o.idx < o.numActions
+}
+
+func (o *Sequence) Reset() {
+	o.idx = 0
+}
+
+func (o *Sequence) Advance() {
+	o.idx += 1
+}
+
+func (o *Sequence) ConditionalAdvance(condition bool) {
+	if condition {
+		o.idx += 1
 	}
 }
 
-func (r *RotationHelper) PushSequence(actions []RotationAction) {
-	seq := &Sequence{
-		idx:        0,
-		numActions: len(actions),
-		actions:    actions,
+func (o *Sequence) GetNextAction() RotationAction {
+	if o.idx+1 < o.numActions {
+		return o.actions[o.idx+1]
+	} else {
+		return nil
 	}
-	r.sequence = seq
+}
+
+func (s *Sequence) NewAction(action RotationAction) *Sequence {
+	s.actions = append(s.actions, action)
+	s.numActions += 1
+	return s
+}
+
+func (s *Sequence) Clear() *Sequence {
+	s.actions = make([]RotationAction, 0)
+	s.numActions = 0
+	s.idx = 0
+	return s
+}
+
+type RotationHelper struct {
+	Opener *Sequence
+	Main   *Sequence
 }

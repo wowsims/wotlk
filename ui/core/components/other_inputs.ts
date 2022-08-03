@@ -85,6 +85,7 @@ export const PrepopPotion = {
 		{ name: 'None', value: Potions.UnknownPotion },
 		{ name: 'Speed', value: Potions.PotionOfSpeed },
 		{ name: 'Wild Magic', value: Potions.PotionOfWildMagic },
+		{ name: 'Indestructible Potion', value: Potions.IndestructiblePotion },
 	],
 	changedEvent: (player: Player<any>) => player.consumesChangeEmitter,
 	getValue: (player: Player<any>) => player.getConsumes().prepopPotion,

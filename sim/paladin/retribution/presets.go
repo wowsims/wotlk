@@ -34,7 +34,20 @@ var defaultRetTalents = &proto.PaladinTalents{
 	DivineStorm:                   true,
 }
 
-var defaultRetRotation = &proto.RetributionPaladin_Rotation{}
+var defaultRetGlyphs = &proto.Glyphs{
+	Major1: int32(proto.PaladinMajorGlyph_GlyphOfSealOfVengeance),
+	Major2: int32(proto.PaladinMajorGlyph_GlyphOfJudgement),
+	Major3: int32(proto.PaladinMajorGlyph_GlyphOfConsecration),
+	Minor1: int32(proto.PaladinMinorGlyph_GlyphOfSenseUndead),
+	Minor2: int32(proto.PaladinMinorGlyph_GlyphOfLayOnHands),
+	Minor3: int32(proto.PaladinMinorGlyph_GlyphOfBlessingOfKings),
+}
+
+var defaultRetRotation = &proto.RetributionPaladin_Rotation{
+	ConsSlack:            500,
+	ExoSlack:             500,
+	DivinePleaPercentage: 0.75,
+}
 
 var defaultRetOptions = &proto.RetributionPaladin_Options{
 	Judgement:            proto.PaladinJudgement_JudgementOfWisdom,
@@ -78,7 +91,7 @@ var FullConsumes = &proto.Consumes{
 	DefaultPotion:   proto.Potions_HastePotion,
 	DefaultConjured: proto.Conjured_ConjuredDarkRune,
 	Food:            proto.Food_FoodRoastedClefthoof,
-	SuperSapper:     true,
+	ThermalSapper:   true,
 }
 
 var FullDebuffs = &proto.Debuffs{

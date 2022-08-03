@@ -241,10 +241,8 @@ enum TristateEffect {
 
 enum Explosive {
 	ExplosiveUnknown = 0;
-	ExplosiveFelIronBomb = 1;
-	ExplosiveAdamantiteGrenade = 2;
-	ExplosiveGnomishFlameTurret = 3;
-	ExplosiveHolyWater = 4;
+	ExplosiveSaroniteBomb = 1;
+	ExplosiveCobaltFragBomb = 2;
 }
 
 enum Potions {
@@ -506,6 +504,7 @@ message IndividualBuffs {
 	int32 power_infusions = 11;
 	int32 unholy_frenzy = 12;
 	int32 revitalize = 13;
+	int32 tricks_of_the_trades = 19;
 
 	bool vampiric_touch = 14;
 	bool hunting_party = 15;
@@ -535,8 +534,8 @@ message Consumes {
 	Conjured starting_conjured = 13;
 	int32 num_starting_conjured = 14;
 
-	bool super_sapper = 15;
-	bool goblin_sapper = 16;
+	bool thermal_sapper = 15;
+	bool explosive_decoy = 16;
 	Explosive filler_explosive = 17;
 }
 
@@ -643,6 +642,9 @@ message Encounter {
 	// Fury, etc.
 	double execute_proportion_20 = 3;
 
+	// Key for Affliction warlock Drain Soul
+	double execute_proportion_25 = 7;
+
 	// Same as execute_proportion but for 35%.
 	double execute_proportion_35 = 4;
 
@@ -695,6 +697,7 @@ message Item {
 	bool unique = 13;
 	int32 ilvl = 20;
 	Profession required_profession = 21;
+	bool heroic = 22;
 }
 
 // Extra enum for describing which items are eligible for an enchant, when

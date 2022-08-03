@@ -81,7 +81,7 @@ export class Sim {
 
 	// Database
 	private items: Record<number, Item> = {};
-	private enchants: Record<number, Enchant> = {};
+	private enchants: Enchant[] = [];
 	private gems: Record<number, Gem> = {};
 	private presetEncounters: Record<string, PresetEncounter> = {};
 	private presetTargets: Record<string, PresetTarget> = {};
@@ -118,7 +118,8 @@ export class Sim {
 
 		this._initPromise = this.workerPool.getGearList(GearListRequest.create()).then(result => {
 			result.items.forEach(item => this.items[item.id] = item);
-			result.enchants.forEach(enchant => this.enchants[enchant.id] = enchant);
+			// result.enchants.forEach(enchant => this.enchants[enchant.id] = enchant);
+			this.enchants = result.enchants;
 			result.gems.forEach(gem => this.gems[gem.id] = gem);
 			result.encounters.forEach(encounter => this.presetEncounters[encounter.path] = encounter);
 			result.encounters.map(e => e.targets).flat().forEach(target => this.presetTargets[target.path] = target);
@@ -470,8 +471,8 @@ export class Sim {
 		const item = this.items[itemSpec.id];
 		if (!item)
 			return null;
-
-		const enchant = this.enchants[itemSpec.enchant] || null;
+		
+		const enchant = itemSpec.enchant > 0 ? this.enchants.find(e => (e.id == itemSpec.enchant && e.type == item.type)) : null;
 		const gems = itemSpec.gems.map(gemId => this.gems[gemId] || null);
 
 		return new EquippedItem(item, enchant, gems);

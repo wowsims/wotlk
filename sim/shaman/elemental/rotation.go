@@ -39,22 +39,33 @@ type AdaptiveRotation struct {
 }
 
 func (rotation *AdaptiveRotation) DoAction(eleShaman *ElementalShaman, sim *core.Simulation) {
-	target := sim.GetTargetUnit(0)
+	target := eleShaman.CurrentTarget
 
 	if eleShaman.CurrentManaPercent() < 0.9 && eleShaman.Thunderstorm.IsReady(sim) {
 		eleShaman.Thunderstorm.Cast(sim, target)
 		return
 	}
 
-	// TODO: add rotation option to override FS if it won't be up when LvB is finished casting.
-	fsUp := eleShaman.FlameShockDot.IsActive()
-	if !fsUp && eleShaman.FlameShock.IsReady(sim) {
+	fsRemain := eleShaman.FlameShockDot.RemainingDuration(sim)
+	lvbTime := eleShaman.ApplyCastSpeed(eleShaman.LavaBurst.DefaultCast.CastTime)
+
+	needFS := false
+	if fsRemain < lvbTime {
+		needFS = true
+	}
+
+	if needFS && eleShaman.FlameShock.IsReady(sim) {
 		if !eleShaman.FlameShock.Cast(sim, target) {
 			eleShaman.WaitForMana(sim, eleShaman.FlameShock.CurCast.Cost)
 		}
 		return
-	} else if fsUp && eleShaman.LavaBurst.IsReady(sim) {
+	} else if !needFS && eleShaman.LavaBurst.IsReady(sim) {
 		if !eleShaman.LavaBurst.Cast(sim, target) {
+			eleShaman.WaitForMana(sim, eleShaman.LavaBurst.CurCast.Cost)
+		}
+		return
+	} else if len(eleShaman.Env.Encounter.Targets) > 1 && eleShaman.ChainLightning.IsReady(sim) {
+		if !eleShaman.ChainLightning.Cast(sim, target) {
 			eleShaman.WaitForMana(sim, eleShaman.LavaBurst.CurCast.Cost)
 		}
 		return

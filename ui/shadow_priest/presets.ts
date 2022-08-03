@@ -7,6 +7,10 @@ import { ItemSpec } from '/wotlk/core/proto/common.js';
 import { Potions } from '/wotlk/core/proto/common.js';
 import { WeaponImbue } from '/wotlk/core/proto/common.js';
 import { Faction } from '/wotlk/core/proto/common.js';
+import { RaidBuffs } from '/wotlk/core/proto/common.js';
+import { IndividualBuffs } from '/wotlk/core/proto/common.js';
+import { Debuffs } from '/wotlk/core/proto/common.js';
+import { TristateEffect } from '/wotlk/core/proto/common.js';
 import { SavedTalents } from '/wotlk/core/proto/ui.js';
 import { Player } from '/wotlk/core/player.js';
 
@@ -51,12 +55,47 @@ export const DefaultRotation = Rotation.create({
 
 export const DefaultOptions = Options.create({
 	useShadowfiend: true,
+  useMindBlast: true,
+  useShadowWordDeath: true,
 });
 
 export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfTheFrostWyrm,
 	food: Food.FoodFishFeast,
-	defaultPotion: Potions.PotionOfSpeed,
+	defaultPotion: Potions.PotionOfWildMagic,
+	prepopPotion:  Potions.PotionOfWildMagic,
+});
+
+export const DefaultRaidBuffs = RaidBuffs.create({
+	giftOfTheWild: TristateEffect.TristateEffectImproved,
+	powerWordFortitude: TristateEffect.TristateEffectImproved,
+	strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
+	arcaneBrilliance: true,
+	divineSpirit: true,
+	trueshotAura: true,
+	leaderOfThePack: TristateEffect.TristateEffectImproved,
+	icyTalons: true,
+	totemOfWrath: true,
+	moonkinAura: TristateEffect.TristateEffectImproved,
+	wrathOfAirTotem: true,
+	sanctifiedRetribution: true,
+	bloodlust: true,
+});
+
+export const DefaultIndividualBuffs = IndividualBuffs.create({
+	blessingOfKings: true,
+	blessingOfWisdom: TristateEffect.TristateEffectImproved,
+	blessingOfMight: TristateEffect.TristateEffectImproved,
+	vampiricTouch: true,
+});
+
+export const DefaultDebuffs = Debuffs.create({
+	sunderArmor: true,
+	faerieFire: TristateEffect.TristateEffectImproved,
+	bloodFrenzy: true,
+	ebonPlaguebringer: true,
+	heartOfTheCrusader: true,
+	judgementOfWisdom: true,
 });
 
 export const P1_PRESET = {
@@ -68,21 +107,15 @@ export const P1_PRESET = {
           "enchant": 44877,
           "gems": [
             41285,
-            39998
-          ]
-        },
-        {
-          "id": 44661,
-          "gems": [
             40026
           ]
         },
         {
-          "id": 40459,
-          "enchant": 44874,
-          "gems": [
-            39998
-          ]
+          "id": 40374
+        },
+        {
+          "id": 40286,
+          "enchant": 44874
         },
         {
           "id": 44005,
@@ -92,11 +125,11 @@ export const P1_PRESET = {
           ]
         },
         {
-          "id": 44002,
+          "id": 40234,
           "enchant": 33990,
           "gems": [
-            39998,
-            39998
+            40026,
+            40051
           ]
         },
         {
@@ -111,7 +144,7 @@ export const P1_PRESET = {
           "id": 40454,
           "enchant": 54999,
           "gems": [
-            40049,
+            39998,
             0
           ]
         },

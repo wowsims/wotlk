@@ -732,6 +732,50 @@ func (character *Character) NewTemporaryStatsAuraWrapped(auraLabel string, actio
 	var buffs stats.Stats
 	var unbuffs stats.Stats
 
+	// Try to use 'AddStatDynamic' if possible... requires less iterating.
+	var found bool
+	var statFound stats.Stat
+	var statAmount float64
+	for k, v := range tempStats {
+		if v > 0 {
+			if found {
+				found = false
+				break
+			}
+			statFound = stats.Stat(k)
+			statAmount = v
+			found = true
+		}
+	}
+	var gain func(aura *Aura, sim *Simulation)
+	var expire func(aura *Aura, sim *Simulation)
+	if found {
+		expire = func(aura *Aura, sim *Simulation) {
+			if sim.Log != nil {
+				character.Log(sim, "Lost {\"%s\":%0.1f} from fading %s.", statFound.StatName(), statAmount, actionID)
+			}
+			character.AddStatDynamic(sim, statFound, -statAmount)
+		}
+		gain = func(aura *Aura, sim *Simulation) {
+			if sim.Log != nil {
+				character.Log(sim, "Gained {\"%s\":%0.1f} from %s.", statFound.StatName(), statAmount, actionID)
+			}
+			character.AddStatDynamic(sim, statFound, statAmount)
+		}
+	} else {
+		expire = func(aura *Aura, sim *Simulation) {
+			if sim.Log != nil {
+				character.Log(sim, "Lost %s from fading %s.", buffs.FlatString(), actionID)
+			}
+			character.AddStatsDynamic(sim, unbuffs)
+		}
+		gain = func(aura *Aura, sim *Simulation) {
+			if sim.Log != nil {
+				character.Log(sim, "Gained %s from %s.", buffs.FlatString(), actionID)
+			}
+			character.AddStatsDynamic(sim, buffs)
+		}
+	}
 	config := Aura{
 		Label:    auraLabel,
 		ActionID: actionID,
@@ -740,18 +784,8 @@ func (character *Character) NewTemporaryStatsAuraWrapped(auraLabel string, actio
 			buffs = tempStats
 			unbuffs = buffs.Multiply(-1)
 		},
-		OnGain: func(aura *Aura, sim *Simulation) {
-			character.AddStatsDynamic(sim, buffs)
-			if sim.Log != nil {
-				character.Log(sim, "Gained %s from %s.", buffs.FlatString(), actionID)
-			}
-		},
-		OnExpire: func(aura *Aura, sim *Simulation) {
-			if sim.Log != nil {
-				character.Log(sim, "Lost %s from fading %s.", buffs.FlatString(), actionID)
-			}
-			character.AddStatsDynamic(sim, unbuffs)
-		},
+		OnGain:   gain,
+		OnExpire: expire,
 	}
 
 	if modConfig != nil {
@@ -759,4 +793,36 @@ func (character *Character) NewTemporaryStatsAuraWrapped(auraLabel string, actio
 	}
 
 	return character.GetOrRegisterAura(config)
+}
+
+func ApplyFixedUptimeAura(aura *Aura, uptime float64, tickLength time.Duration) {
+	auraDuration := aura.Duration
+	ticksPerAura := float64(auraDuration) / float64(tickLength)
+	chancePerTick := TernaryFloat64(uptime == 1, 1, 1.0-math.Pow(1-uptime, 1/ticksPerAura))
+
+	aura.Unit.RegisterResetEffect(func(sim *Simulation) {
+		StartPeriodicAction(sim, PeriodicActionOptions{
+			Period: tickLength,
+			OnAction: func(sim *Simulation) {
+				if sim.RandomFloat("FixedAura") < chancePerTick {
+					aura.Activate(sim)
+				}
+			},
+		})
+
+		// Also try once at the start.
+		StartPeriodicAction(sim, PeriodicActionOptions{
+			Period:   1,
+			NumTicks: 1,
+			OnAction: func(sim *Simulation) {
+				if sim.RandomFloat("FixedAura") < uptime {
+					// Use random duration to compensate for increased chance collapsed into single tick.
+					randomDur := tickLength + time.Duration(float64(auraDuration-tickLength)*sim.RandomFloat("FixedAuraDur"))
+					aura.Duration = randomDur
+					aura.Activate(sim)
+					aura.Duration = time.Second * 15
+				}
+			},
+		})
+	})
 }

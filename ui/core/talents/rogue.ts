@@ -6,7 +6,7 @@ import { TalentsConfig, newTalentsConfig } from './talents_picker.js';
 export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig([
 	{
 		name: 'Assassination',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/182.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/182.jpg',
 		talents: [
 			{
 				fieldName: 'improvedEviscerate',
@@ -267,7 +267,7 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 	},
 	{
 		name: 'Combat',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/181.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/181.jpg',
 		talents: [
 			{
 				fieldName: 'improvedGouge',
@@ -541,7 +541,7 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 	},
 	{
 		name: 'Subtlety',
-		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wotlk/183.jpg',
+		backgroundUrl: 'https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/183.jpg',
 		talents: [
 			{
 				fieldName: 'relentlessStrikes',

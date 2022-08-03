@@ -3,13 +3,15 @@ package deathknight
 import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+// TODO: Cleanup obliterate the same way we did for plague strike
 var ObliterateActionID = core.ActionID{SpellID: 51425}
-var ObliterateMHOutcome = core.OutcomeHit
-var ObliterateOHOutcome = core.OutcomeHit
+var ObliterateMHOutcome = core.OutcomeMiss
+var ObliterateOHOutcome = core.OutcomeMiss
 
-func (dk *Deathknight) newObliterateHitSpell(isMH bool) *core.Spell {
+func (dk *Deathknight) newObliterateHitSpell(isMH bool) *RuneSpell {
 	diseaseConsumptionChance := 1.0
 	if dk.Talents.Annihilation == 1 {
 		diseaseConsumptionChance = 0.67
@@ -25,6 +27,8 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool) *core.Spell {
 		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 584.0+bonusBaseDamage, 0.8*dk.nervesOfColdSteelBonus(), true)
 	}
 
+	diseaseMulti := dk.diseaseMultiplier(0.125)
+
 	effect := core.SpellEffect{
 		BonusCritRating:  (dk.rimeCritBonus() + dk.subversionCritBonus() + dk.annihilationCritBonus() + dk.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfObliterate), 1.25, 1.0) * dk.scourgelordsBattlegearDamageBonus(dk.Obliterate),
@@ -33,9 +37,8 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool) *core.Spell {
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				return weaponBaseDamage(sim, hitEffect, spell) *
-					dk.diseaseMultiplierBonus(hitEffect.Target, 0.125) *
-					dk.rageOfRivendareBonus(hitEffect.Target) *
-					dk.tundraStalkerBonus(hitEffect.Target) *
+					(1.0 + dk.countActiveDiseases(hitEffect.Target)*diseaseMulti) *
+					dk.RoRTSBonus(hitEffect.Target) *
 					dk.mercilessCombatBonus(sim)
 			},
 			TargetSpellCoefficient: 1,
@@ -63,7 +66,7 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool) *core.Spell {
 		return outcomeApplier
 	})
 
-	return dk.RegisterSpell(core.SpellConfig{
+	return dk.RegisterSpell(nil, core.SpellConfig{
 		ActionID:     ObliterateActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool:  core.SpellSchoolPhysical,
 		Flags:        core.SpellFlagMeleeMetrics,
@@ -75,21 +78,25 @@ func (dk *Deathknight) registerObliterateSpell() {
 	dk.ObliterateMhHit = dk.newObliterateHitSpell(true)
 	dk.ObliterateOhHit = dk.newObliterateHitSpell(false)
 
-	dk.Obliterate = dk.RegisterSpell(core.SpellConfig{
-		ActionID:    ObliterateActionID.WithTag(3),
-		Flags:       core.SpellFlagNoMetrics | core.SpellFlagNoLogs,
-		SpellSchool: core.SpellSchoolPhysical,
-
+	amountOfRunicPower := 15.0 + 2.5*float64(dk.Talents.ChillOfTheGrave) + dk.scourgeborneBattlegearRunicPowerBonus()
+	baseCost := float64(core.NewRuneCost(uint8(amountOfRunicPower), 0, 1, 1, 0))
+	rs := &RuneSpell{}
+	dk.Obliterate = dk.RegisterSpell(rs, core.SpellConfig{
+		ActionID:     ObliterateActionID.WithTag(3),
+		Flags:        core.SpellFlagNoMetrics | core.SpellFlagNoLogs,
+		SpellSchool:  core.SpellSchoolPhysical,
+		ResourceType: stats.RunicPower,
+		BaseCost:     baseCost,
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD: core.GCDDefault,
+				Cost: baseCost,
+				GCD:  core.GCDDefault,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				cast.GCD = dk.getModifiedGCD()
 			},
 		},
-
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+		ApplyEffects: dk.withRuneRefund(rs, core.SpellEffect{
 			ProcMask:         core.ProcMaskEmpty,
 			ThreatMultiplier: 1,
 
@@ -97,17 +104,9 @@ func (dk *Deathknight) registerObliterateSpell() {
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				dk.threatOfThassarianProc(sim, spellEffect, dk.ObliterateMhHit, dk.ObliterateOhHit)
-
 				dk.LastCastOutcome = ObliterateMHOutcome
-				if dk.outcomeEitherWeaponHitOrCrit(ObliterateMHOutcome, ObliterateOHOutcome) {
-					dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_FU)
-					dk.Spend(sim, spell, dkSpellCost)
-
-					amountOfRunicPower := 15.0 + 2.5*float64(dk.Talents.ChillOfTheGrave) + dk.scourgeborneBattlegearRunicPowerBonus()
-					dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
-				}
 			},
-		}),
+		}, true),
 	})
 }
 
@@ -116,9 +115,8 @@ func (dk *Deathknight) CanObliterate(sim *core.Simulation) bool {
 }
 
 func (dk *Deathknight) CastObliterate(sim *core.Simulation, target *core.Unit) bool {
-	if dk.CanObliterate(sim) {
-		dk.Obliterate.Cast(sim, target)
-		return true
+	if dk.Obliterate.IsReady(sim) {
+		return dk.Obliterate.Cast(sim, target)
 	}
 	return false
 }

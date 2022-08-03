@@ -20,9 +20,14 @@ type Dot struct {
 	// If true, tick length will be shortened based on casting speed.
 	AffectedByCastSpeed bool
 
-	TickEffects        TickEffects
-	snapshotEffect     *SpellEffect
+	TickEffects    TickEffects
+	snapshotEffect *SpellEffect
+
+	// snapshotted values that will be kept on rollover
+	useSnapshot        bool
 	snapshotMultiplier float64
+	snapshotCrit       float64
+	snapshotSpellCrit  float64
 
 	tickFn     func()
 	tickAction *PendingAction
@@ -50,17 +55,20 @@ type Dot struct {
 // This keeps the snapshotted crit and %dmg modifiers.
 // However sp and haste are recalculated.
 func (dot *Dot) Rollover(sim *Simulation) {
-	oldSpellCrit := dot.snapshotEffect.BonusSpellCritRating
-	oldCrit := dot.snapshotEffect.BonusCritRating
+	dot.TakeSnapshot(sim, true)
 
-	// by not calling 'dot.TakeSnapshot' we dont recalculate dmg multiplier
-	dot.tickFn = dot.TickEffects(sim, dot)
+	dot.RecomputeAuraDuration() // recalculate haste
+	dot.Aura.Refresh(sim)       // update aura's duration
 
-	dot.snapshotEffect.BonusSpellCritRating = oldSpellCrit
-	dot.snapshotEffect.BonusCritRating = oldCrit
+	oldNextTick := dot.tickAction.NextActionAt
+	dot.tickAction.Cancel(sim) // remove old PA ticker
 
-	dot.RecomputeAuraDuration()
-	dot.Aura.Refresh(sim)
+	// recreate with new period, resetting the next tick.
+	periodicOptions := dot.basePeriodicOptions()
+	periodicOptions.Period = dot.tickPeriod
+	dot.tickAction = NewPeriodicAction(sim, periodicOptions)
+	dot.tickAction.NextActionAt = oldNextTick
+	sim.AddPendingAction(dot.tickAction)
 }
 
 func (dot *Dot) Apply(sim *Simulation) {
@@ -91,9 +99,18 @@ func (dot *Dot) RecomputeAuraDuration() {
 //
 // In most cases this will be called automatically, and should only be called
 // to force a new snapshot to be taken.
-func (dot *Dot) TakeSnapshot(sim *Simulation) {
-	dot.snapshotMultiplier = dot.snapshotEffect.snapshotAttackModifiers(dot.Spell) * dot.Spell.DamageMultiplier
+//  doRollover will apply previously snapshotted crit/%dmg instead of recalculating.
+func (dot *Dot) TakeSnapshot(sim *Simulation, doRollover bool) {
+	dot.useSnapshot = doRollover
 	dot.tickFn = dot.TickEffects(sim, dot)
+	dot.useSnapshot = false
+
+	if !doRollover {
+		// if not rolling over, keep a snapshot of the effects.
+		dot.snapshotMultiplier = dot.snapshotEffect.DamageMultiplier
+		dot.snapshotCrit = dot.snapshotEffect.BonusCritRating
+		dot.snapshotSpellCrit = dot.snapshotEffect.BonusSpellCritRating
+	}
 }
 
 // Forces an instant tick. Does not reset the tick timer or aura duration,
@@ -136,7 +153,7 @@ func NewDot(config Dot) *Dot {
 	oldOnGain := dot.Aura.OnGain
 	oldOnExpire := dot.Aura.OnExpire
 	dot.Aura.OnGain = func(aura *Aura, sim *Simulation) {
-		dot.TakeSnapshot(sim)
+		dot.TakeSnapshot(sim, false)
 
 		periodicOptions := dot.basePeriodicOptions()
 		periodicOptions.Period = dot.tickPeriod
@@ -165,15 +182,21 @@ func NewDot(config Dot) *Dot {
 func TickFuncSnapshot(target *Unit, baseEffect SpellEffect) TickEffects {
 	return func(sim *Simulation, dot *Dot) func() {
 		*dot.snapshotEffect = baseEffect
-		dot.snapshotEffect.DamageMultiplier *= dot.snapshotMultiplier
+		if dot.useSnapshot {
+			dot.snapshotEffect.DamageMultiplier = dot.snapshotMultiplier
+			dot.snapshotEffect.BonusSpellCritRating = dot.snapshotSpellCrit
+			dot.snapshotEffect.BonusCritRating = dot.snapshotCrit
+		} else {
+			dot.snapshotEffect.DamageMultiplier *= dot.snapshotEffect.snapshotAttackModifiers(dot.Spell) * dot.Spell.DamageMultiplier
+			dot.snapshotEffect.BonusSpellCritRating += dot.Spell.Unit.GetStat(stats.SpellCrit) + dot.Spell.Unit.PseudoStats.BonusSpellCritRating +
+				target.PseudoStats.BonusSpellCritRatingTaken //TODO : Add spell school specific crit bonus
+			dot.snapshotEffect.BonusCritRating += target.PseudoStats.BonusCritRatingTaken + dot.Spell.BonusCritRating // no personal crit rating?
+		}
 		dot.snapshotEffect.Target = target
 
-		// Divide by dot.Spell.DamageMultiplier because its snapshotted in the dot.snapshotMultiplier and should not be double applied.
-		baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell) / dot.Spell.DamageMultiplier
-		dot.snapshotEffect.BonusSpellCritRating = dot.snapshotEffect.BonusSpellCritRating +
-			dot.Spell.Unit.GetStat(stats.SpellCrit) + dot.Spell.Unit.PseudoStats.BonusSpellCritRating + target.PseudoStats.BonusSpellCritRatingTaken
-		dot.snapshotEffect.BonusCritRating = dot.snapshotEffect.BonusCritRating + target.PseudoStats.BonusCritRatingTaken + dot.Spell.BonusCritRating
-		dot.snapshotEffect.DamageMultiplier = 1
+		baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell) / (dot.Spell.DamageMultiplier * dot.snapshotEffect.DamageMultiplier)
+		// because calculateBaseDamage(sim, dot.Spell) := spellEffect.BaseDamage.Calculator(sim, spellEffect, spell) * spellEffect.DamageMultiplier * spell.DamageMultiplier
+		// and also spellEffect.DamageMultiplier will be applied in ApplyEffectFuncDirectDamage
 		dot.snapshotEffect.BaseDamage = BaseDamageConfigFlat(baseDamage)
 
 		effectsFunc := ApplyEffectFuncDirectDamage(*dot.snapshotEffect)
@@ -187,9 +210,21 @@ func TickFuncAOESnapshot(env *Environment, baseEffect SpellEffect) TickEffects {
 	return func(sim *Simulation, dot *Dot) func() {
 		target := dot.Spell.Unit.CurrentTarget
 		*dot.snapshotEffect = baseEffect
+		if dot.useSnapshot {
+			dot.snapshotEffect.DamageMultiplier = dot.snapshotMultiplier
+			dot.snapshotEffect.BonusSpellCritRating = dot.snapshotSpellCrit
+			dot.snapshotEffect.BonusCritRating = dot.snapshotCrit
+		} else {
+			dot.snapshotEffect.DamageMultiplier *= dot.snapshotEffect.snapshotAttackModifiers(dot.Spell) * dot.Spell.DamageMultiplier
+			dot.snapshotEffect.BonusSpellCritRating += dot.Spell.Unit.GetStat(stats.SpellCrit) + dot.Spell.Unit.PseudoStats.BonusSpellCritRating +
+				target.PseudoStats.BonusSpellCritRatingTaken //TODO : Add spell school specific crit bonus
+			dot.snapshotEffect.BonusCritRating += target.PseudoStats.BonusCritRatingTaken + dot.Spell.BonusCritRating // no personal crit rating?
+		}
 		dot.snapshotEffect.Target = target
-		baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell)
-		dot.snapshotEffect.DamageMultiplier = 1
+
+		baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell) / (dot.Spell.DamageMultiplier * dot.snapshotEffect.DamageMultiplier)
+		// because calculateBaseDamage(sim, dot.Spell) := spellEffect.BaseDamage.Calculator(sim, spellEffect, spell) * spellEffect.DamageMultiplier * spell.DamageMultiplier
+		// and also spellEffect.DamageMultiplier will be applied in ApplyEffectFuncDirectDamage
 		dot.snapshotEffect.BaseDamage = BaseDamageConfigFlat(baseDamage)
 
 		effectsFunc := ApplyEffectFuncAOEDamage(env, *dot.snapshotEffect)
@@ -202,9 +237,21 @@ func TickFuncAOESnapshotCapped(env *Environment, aoeCap float64, baseEffect Spel
 	return func(sim *Simulation, dot *Dot) func() {
 		target := dot.Spell.Unit.CurrentTarget
 		*dot.snapshotEffect = baseEffect
+		if dot.useSnapshot {
+			dot.snapshotEffect.DamageMultiplier = dot.snapshotMultiplier
+			dot.snapshotEffect.BonusSpellCritRating = dot.snapshotSpellCrit
+			dot.snapshotEffect.BonusCritRating = dot.snapshotCrit
+		} else {
+			dot.snapshotEffect.DamageMultiplier *= dot.snapshotEffect.snapshotAttackModifiers(dot.Spell) * dot.Spell.DamageMultiplier
+			dot.snapshotEffect.BonusSpellCritRating += dot.Spell.Unit.GetStat(stats.SpellCrit) + dot.Spell.Unit.PseudoStats.BonusSpellCritRating +
+				target.PseudoStats.BonusSpellCritRatingTaken //TODO : Add spell school specific crit bonus
+			dot.snapshotEffect.BonusCritRating += target.PseudoStats.BonusCritRatingTaken + dot.Spell.BonusCritRating // no personal crit rating?
+		}
 		dot.snapshotEffect.Target = target
-		baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell)
-		dot.snapshotEffect.DamageMultiplier = 1
+
+		baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell) / (dot.Spell.DamageMultiplier * dot.snapshotEffect.DamageMultiplier)
+		// because calculateBaseDamage(sim, dot.Spell) := spellEffect.BaseDamage.Calculator(sim, spellEffect, spell) * spellEffect.DamageMultiplier * spell.DamageMultiplier
+		// and also spellEffect.DamageMultiplier will be applied in ApplyEffectFuncDirectDamage
 		dot.snapshotEffect.BaseDamage = BaseDamageConfigFlat(baseDamage)
 
 		effectsFunc := ApplyEffectFuncAOEDamageCapped(env, aoeCap, *dot.snapshotEffect)

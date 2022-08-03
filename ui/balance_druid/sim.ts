@@ -17,7 +17,6 @@ import { Sim } from '/wotlk/core/sim.js';
 import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
 
 import { BalanceDruid, BalanceDruid_Rotation as BalanceDruidRotation, DruidTalents as DruidTalents, BalanceDruid_Options as BalanceDruidOptions } from '/wotlk/core/proto/druid.js';
-import { BalanceDruid_Rotation_PrimarySpell as PrimarySpell } from '/wotlk/core/proto/druid.js';
 
 import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
 import * as OtherInputs from '/wotlk/core/components/other_inputs.js';
@@ -65,7 +64,7 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P1_ALLIANCE_PRESET.gear,
+				gear: Presets.P5_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatIntellect]: 0.54,
@@ -142,12 +141,6 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.P1_ALLIANCE_PRESET,
-					Presets.P2_ALLIANCE_PRESET,
-					Presets.P1_HORDE_PRESET,
-					Presets.P2_HORDE_PRESET,
-					Presets.P3_PRESET,
-					Presets.P4_PRESET,
 					Presets.P5_PRESET,
 				],
 			},

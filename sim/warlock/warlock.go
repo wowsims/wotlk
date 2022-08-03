@@ -25,8 +25,8 @@ type Warlock struct {
 	Corruption           *core.Spell
 	CorruptionDot        *core.Dot
 	Haunt                *core.Spell
-	HauntAura            *core.Aura
 	LifeTap              *core.Spell
+	DarkPact             *core.Spell
 	ChaosBolt            *core.Spell
 	SoulFire             *core.Spell
 	Conflagrate          *core.Spell
@@ -50,7 +50,6 @@ type Warlock struct {
 	SeedDots []*core.Dot
 
 	NightfallProcAura      *core.Aura
-	ShadowEmbraceAura      *core.Aura
 	EradicationAura        *core.Aura
 	DemonicEmpowerment     *core.Spell
 	DemonicEmpowermentAura *core.Aura
@@ -86,8 +85,8 @@ func (warlock *Warlock) Initialize() {
 	warlock.registerLifeTapSpell()
 	warlock.registerSeedSpell()
 	warlock.registerSoulFireSpell()
-	warlock.registerDrainSoulSpell()
 	warlock.registerUnstableAffSpell()
+	warlock.registerDrainSoulSpell()
 
 	if warlock.Talents.Conflagrate {
 		warlock.registerConflagrateSpell()
@@ -105,6 +104,9 @@ func (warlock *Warlock) Initialize() {
 	if warlock.Talents.Metamorphosis {
 		warlock.registerMetamorphosisSpell()
 	}
+	if warlock.Talents.DarkPact {
+		warlock.registerDarkPactSpell()
+	}
 }
 
 func (warlock *Warlock) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
@@ -114,7 +116,8 @@ func (warlock *Warlock) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	))
 
 	if warlock.Talents.DemonicPact > 0 {
-		raidBuffs.DemonicPact = int32(float64(stats.SpellPower) * 0.02 * float64(warlock.Talents.DemonicPact))
+		raidBuffs.DemonicPact = int32(float64(stats.SpellPower) * 0.02 * float64(warlock.Talents.DemonicPact) * 1.111)
+		// * 1.1 because the buff gets 10% better after the first refresh and so on every 20s
 	}
 }
 
@@ -174,67 +177,62 @@ func RegisterWarlock() {
 
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassWarlock}] = stats.Stats{
-		stats.Health:      7906,
-		stats.Strength:    56,
-		stats.Agility:     69,
-		stats.Stamina:     95,
-		stats.Intellect:   163,
-		stats.Spirit:      165,
-		stats.Mana:        6021,
-		stats.SpellCrit:   1.697 * core.CritRatingPerCritChance,
-		stats.AttackPower: 102,
+		stats.Health:    7164,
+		stats.Strength:  56,
+		stats.Agility:   69,
+		stats.Stamina:   89,
+		stats.Intellect: 162,
+		stats.Spirit:    164,
+		stats.Mana:      3856,
+		stats.SpellCrit: 1.697 * core.CritRatingPerCritChance,
 		// Not sure how stats modify the crit chance.
 		// stats.MeleeCrit:   4.43 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceOrc, Class: proto.Class_ClassWarlock}] = stats.Stats{
-		stats.Health:      7946,
-		stats.Strength:    62,
-		stats.Agility:     64,
-		stats.Stamina:     99,
-		stats.Intellect:   156,
-		stats.Spirit:      169,
-		stats.Mana:        5916,
-		stats.SpellCrit:   1.697 * core.CritRatingPerCritChance,
-		stats.AttackPower: 114,
+		stats.Health:    7164,
+		stats.Strength:  62,
+		stats.Agility:   64,
+		stats.Stamina:   90,
+		stats.Intellect: 156,
+		stats.Spirit:    168,
+		stats.Mana:      3856,
+		stats.SpellCrit: 1.697 * core.CritRatingPerCritChance,
 		// Not sure how stats modify the crit chance.
 		// stats.MeleeCrit:   4.43 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceUndead, Class: proto.Class_ClassWarlock}] = stats.Stats{
-		stats.Health:      7946,
-		stats.Strength:    58,
-		stats.Agility:     65,
-		stats.Stamina:     99,
-		stats.Intellect:   157,
-		stats.Spirit:      171,
-		stats.Mana:        5931,
-		stats.SpellCrit:   1.697 * core.CritRatingPerCritChance,
-		stats.AttackPower: 106,
+		stats.Health:    7164,
+		stats.Strength:  58,
+		stats.Agility:   65,
+		stats.Stamina:   89,
+		stats.Intellect: 157,
+		stats.Spirit:    171,
+		stats.Mana:      3856,
+		stats.SpellCrit: 1.697 * core.CritRatingPerCritChance,
 		// Not sure how stats modify the crit chance.
 		// stats.MeleeCrit:   4.43 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceHuman, Class: proto.Class_ClassWarlock}] = stats.Stats{
-		stats.Health:      7926,
-		stats.Strength:    59,
-		stats.Agility:     67,
-		stats.Stamina:     97,
-		stats.Intellect:   159,
-		stats.Spirit:      178,
-		stats.Mana:        5961,
-		stats.SpellCrit:   1.697 * core.CritRatingPerCritChance,
-		stats.AttackPower: 108,
+		stats.Health:    7164,
+		stats.Strength:  59,
+		stats.Agility:   67,
+		stats.Stamina:   89,
+		stats.Intellect: 159,
+		stats.Spirit:    166, // racial makes this 170
+		stats.Mana:      3856,
+		stats.SpellCrit: 1.697 * core.CritRatingPerCritChance,
 		// Not sure how stats modify the crit chance.
 		// stats.MeleeCrit:   4.43 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceGnome, Class: proto.Class_ClassWarlock}] = stats.Stats{
-		stats.Health:      7916,
-		stats.Strength:    54,
-		stats.Agility:     70,
-		stats.Stamina:     96,
-		stats.Intellect:   178,
-		stats.Spirit:      166,
-		stats.Mana:        6246,
-		stats.SpellCrit:   1.697 * core.CritRatingPerCritChance,
-		stats.AttackPower: 98,
+		stats.Health:    7164,
+		stats.Strength:  54,
+		stats.Agility:   69,
+		stats.Stamina:   89,
+		stats.Intellect: 162, // racial makes this 170
+		stats.Spirit:    166,
+		stats.Mana:      3856,
+		stats.SpellCrit: 1.697 * core.CritRatingPerCritChance,
 		// Not sure how stats modify the crit chance.
 		// stats.MeleeCrit:   4.43 * core.CritRatingPerCritChance,
 	}

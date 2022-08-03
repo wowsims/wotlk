@@ -1,6 +1,110 @@
 package core
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
+
+type RuneCost uint16
+
+func NewRuneCost(rp, blood, frost, unholy, death uint8) RuneCost {
+	value := int16(0)
+	if blood == 1 {
+		value = 1
+	} else if blood == 2 {
+		value = 3
+	}
+
+	if frost == 1 {
+		value += 1 << 2
+	} else if frost == 2 {
+		value += 3 << 2
+	}
+
+	if unholy == 1 {
+		value += 1 << 4
+	} else if unholy == 2 {
+		value += 3 << 4
+	}
+
+	if death == 1 {
+		value += 1 << 6
+	} else if death == 2 {
+		value += 3 << 6
+	}
+
+	value += int16(rp) << 8
+
+	return RuneCost(value)
+}
+
+func (rc RuneCost) String() string {
+	return fmt.Sprintf("RP: %d, Blood: %d, Frost: %d, Unholy: %d, Death: %d", rc.RunicPower(), rc.Blood(), rc.Frost(), rc.Unholy(), rc.Death())
+}
+
+// HasRune returns if this cost includes a rune portion.
+//  If any bit is set in the rune bits it means that there is a rune cost.
+func (rc RuneCost) HasRune() bool {
+	const runebits = int16(0b11111111)
+	return runebits&int16(rc) > 0
+}
+
+func (rc RuneCost) RunicPower() uint8 {
+	const rpbits = uint16(0b1111111100000000)
+	return uint8((uint16(rc) & rpbits) >> 8)
+}
+
+func (rc RuneCost) Blood() uint8 {
+	runes := uint16(rc) & 0b11
+	switch runes {
+	case 0b00:
+		return 0
+	case 0b01:
+		return 1
+	case 0b11:
+		return 2
+	}
+	return 0
+}
+
+func (rc RuneCost) Frost() uint8 {
+	runes := uint16(rc) & 0b1100
+	switch runes {
+	case 0:
+		return 0
+	case 0b0100:
+		return 1
+	case 0b1100:
+		return 2
+	}
+	return 0
+}
+
+func (rc RuneCost) Unholy() uint8 {
+	runes := uint16(rc) & 0b110000
+	switch runes {
+	case 0:
+		return 0
+	case 0b010000:
+		return 1
+	case 0b110000:
+		return 2
+	}
+	return 0
+}
+
+func (rc RuneCost) Death() uint8 {
+	runes := uint16(rc) & 0b11000000
+	switch runes {
+	case 0:
+		return 0
+	case 0b01000000:
+		return 1
+	case 0b11000000:
+		return 2
+	}
+	return 0
+}
 
 func RunesBothOfState(sim *Simulation, runes *[2]Rune, runeState RuneState) bool {
 	return runes[0].state == runeState && runes[1].state == runeState
@@ -8,10 +112,6 @@ func RunesBothOfState(sim *Simulation, runes *[2]Rune, runeState RuneState) bool
 
 func RunesAtleastOneOfState(sim *Simulation, runes *[2]Rune, runeState RuneState) bool {
 	return runes[0].state == runeState || runes[1].state == runeState
-}
-
-func (rp *runicPowerBar) SetAsGeneratedByReapingOrBoTN(slot int32) {
-	rp.bloodRunes[slot].generatedByReapingOrBoTN = true
 }
 
 // TODO: Simplify this, its definitely possible
@@ -25,6 +125,7 @@ func (rp *runicPowerBar) LaunchBloodTapRegenPA(sim *Simulation, slot int32, spel
 
 	pa.OnAction = func(sim *Simulation) {
 		if !pa.cancelled {
+			r.pas[1].Cancel(sim)
 			r.pas[1] = nil
 			if r.state == RuneState_Death {
 				currRunes := rp.CurrentBloodRunes()
@@ -50,9 +151,9 @@ func (rp *runicPowerBar) LaunchBloodTapRegenPA(sim *Simulation, slot int32, spel
 	}
 
 	r.pas[1] = pa
-	if !rp.isACopy {
-		sim.AddPendingAction(pa)
-	}
+	//if !rp.isACopy {
+	//sim.AddPendingAction(pa)
+	//}
 }
 
 func (rp *runicPowerBar) GainDeathRuneMetrics(sim *Simulation, spell *Spell, currRunes int32, newRunes int32) {
@@ -87,6 +188,16 @@ func (rp *runicPowerBar) CancelRuneRegenPA(sim *Simulation, r *Rune) {
 		r.pas[0].Cancel(sim)
 	}
 	r.pas[0] = nil
+}
+
+func (rp *runicPowerBar) CancelBloodTap(sim *Simulation) {
+	runes := &rp.bloodRunes
+
+	if runes[0].pas[1] != nil {
+		runes[0].pas[1].OnAction(sim)
+	} else if runes[1].pas[1] != nil {
+		runes[1].pas[1].OnAction(sim)
+	}
 }
 
 func (rp *runicPowerBar) CorrectBloodTapConversion(sim *Simulation, bloodGainMetrics *ResourceMetrics, deathGainMetrics *ResourceMetrics, spell *Spell) {
@@ -148,7 +259,6 @@ func (rp *runicPowerBar) CorrectBloodTapConversion(sim *Simulation, bloodGainMet
 		rp.SetRuneAtSlotToState(runes, slot, RuneState_Death, RuneKind_Death)
 		rp.GainDeathRuneMetrics(sim, spell, currDeathRunes, currDeathRunes+2)
 		rp.CancelRuneRegenPA(sim, &runes[slot])
-		rp.LaunchBloodTapRegenPA(sim, slot, spell)
 	} else if RunesAtleastOneOfState(sim, runes, RuneState_Normal) && RunesAtleastOneOfState(sim, runes, RuneState_Death) { // Point 4
 		// One active blood rune && one active death rune, we convert the blood rune into a death rune
 		slot = TernaryInt32(runes[0].state == RuneState_Normal, 0, 1)
@@ -163,12 +273,12 @@ func (rp *runicPowerBar) CorrectBloodTapConversion(sim *Simulation, bloodGainMet
 			slot = TernaryInt32(runes[0].state == RuneState_Normal, 0, 1)
 			rp.SetRuneAtSlotToState(runes, slot, RuneState_Death, RuneKind_Death)
 			rp.SpendBloodRuneMetrics(sim, spell, currBloodRunes, currBloodRunes-1)
-			rp.GainDeathRuneMetrics(sim, spell, currDeathRunes, currDeathRunes+2)
+			rp.LaunchBloodTapRegenPA(sim, slot, spell)
 
 			slot = TernaryInt32(runes[0].state == RuneState_DeathSpent, 0, 1)
 			rp.SetRuneAtSlotToState(runes, slot, RuneState_Death, RuneKind_Death)
 			rp.CancelRuneRegenPA(sim, &runes[slot])
-			rp.LaunchBloodTapRegenPA(sim, slot, spell)
+			rp.GainDeathRuneMetrics(sim, spell, currDeathRunes, currDeathRunes+2)
 		} else {
 			// We have an active death rune and a spent blood rune, we convert the blood rune into a death rune
 			slot = TernaryInt32(runes[0].state == RuneState_Spent, 0, 1)
@@ -183,3 +293,22 @@ func (rp *runicPowerBar) CorrectBloodTapConversion(sim *Simulation, bloodGainMet
 		rp.onDeathRuneGain(sim)
 	}
 }
+
+// so in english
+// 1. try to convert active blood rune -> death rune
+// 2. if no active blood, convert inactive blood rune -> death rune, and then convert one inactive death rune -> active
+
+// psuedocode
+// rune = findFirstActiveBlood()
+// if !rune {
+//   rune = findFirstInactiveBlood()
+// }
+// // possible we already have 2 death runes
+// if rune {
+//   rune.death = true
+// }
+
+// deathrune = findFirstInactiveDeath()
+// if deathrune {
+//   deathrune.active = true
+// }

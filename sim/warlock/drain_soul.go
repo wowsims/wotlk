@@ -13,32 +13,50 @@ func (warlock *Warlock) channelCheck(sim *core.Simulation, dot *core.Dot, maxTic
 	if dot.IsActive() && dot.TickCount+1 < maxTicks {
 		return warlock.DrainSoulChannelling
 	} else {
-		return dot.Spell
+		return warlock.DrainSoul
 	}
 }
 
-func (warlock *Warlock) dynamicDrainSoulMultiplier(sim *core.Simulation) float64 {
-	dynamicMultiplier := 1.0
+func (warlock *Warlock) dynamicDrainSoulMultiplier() float64 {
 
-	// Execute Multiplier - Additive with Death's Embrace so we need to remove its effect to add it again with the spell's own execution multiplier.
-	if sim.IsExecutePhase20() {
-		dynamicMultiplier *= (4.0 + 0.04*float64(warlock.Talents.DeathsEmbrace)) / (1 + 0.04*float64(warlock.Talents.DeathsEmbrace))
+	// Execute Multiplier - is now basekit for performance optimization
+	// Additive with Death's Embrace so we need to remove its effect to add it again with the spell's own execution multiplier.
+	// if sim.IsExecutePhase25() {
+	// 	dynamicMultiplier *= (4.0 + 0.04*float64(warlock.Talents.DeathsEmbrace))/(1 + 0.04*float64(warlock.Talents.DeathsEmbrace))
+	// }
+
+	// Soul Siphon Multiplier
+	soulSiphonMultiplier := 1.
+	if warlock.Talents.SoulSiphon > 0 {
+		afflictionSpellNumber := 1. // Counts Drain Soul/Drain Life itself
+		if warlock.CurseOfDoomDot.IsActive() || warlock.CurseOfAgonyDot.IsActive() {
+			afflictionSpellNumber += 1.
+		}
+		if warlock.CorruptionDot.IsActive() {
+			afflictionSpellNumber += 1.
+		}
+		if warlock.Talents.UnstableAffliction && warlock.UnstableAffDot.IsActive() {
+			afflictionSpellNumber += 1.
+		}
+		if warlock.Talents.Haunt && warlock.HauntDebuffAura(warlock.CurrentTarget).IsActive() {
+			afflictionSpellNumber += 1.
+		}
+		if afflictionSpellNumber < 3 {
+			soulSiphonMultiplier = (1 + 0.03*float64(warlock.Talents.SoulSiphon)*afflictionSpellNumber) / (1 + 0.03*float64(warlock.Talents.SoulSiphon)*3.)
+		}
 	}
 
-	// Normal Multipliers
-	afflictionSpellNumber := core.TernaryFloat64(warlock.DrainSoulDot.IsActive(), 1, 0) + //core.TernaryFloat64(warlock.ConflagrateDot.IsActive(), 1, 0) +
-		core.TernaryFloat64(warlock.CorruptionDot.IsActive(), 1, 0) + //core.TernaryFloat64(warlock.SeedDots.IsActive(), 1, 0) +
-		core.TernaryFloat64(warlock.CurseOfDoomDot.IsActive(), 1, 0) + core.TernaryFloat64(warlock.CurseOfAgonyDot.IsActive(), 1, 0) +
-		core.TernaryFloat64(warlock.UnstableAffDot.IsActive(), 1, 0) + core.TernaryFloat64(warlock.ImmolateDot.IsActive(), 1, 0)
-	dynamicMultiplier *= 1 + 0.03*float64(warlock.Talents.SoulSiphon)*core.MinFloat(3, afflictionSpellNumber)
-
-	return dynamicMultiplier
+	return soulSiphonMultiplier
 }
 
 func (warlock *Warlock) registerDrainSoulSpell() {
 	actionID := core.ActionID{SpellID: 47855}
 	spellSchool := core.SpellSchoolShadow
 	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true)
+	// For performance optimization, the execute modifier is basekit since we never use it before execute
+	executeMultiplier := (4.0 + 0.04*float64(warlock.Talents.DeathsEmbrace)) / (1 + 0.04*float64(warlock.Talents.DeathsEmbrace))
+	maxDynamicMultiplier := 1 + 0.03*float64(warlock.Talents.SoulSiphon)*3.
+	drainSoulDamageMultiplier := baseAdditiveMultiplier * executeMultiplier * maxDynamicMultiplier
 	baseCost := warlock.BaseMana * 0.14
 	channelTime := 3 * time.Second
 	epsilon := 1 * time.Millisecond
@@ -75,15 +93,12 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 	target := warlock.CurrentTarget
 
 	effect := core.SpellEffect{
-		DamageMultiplier: 1,
+		DamageMultiplier: drainSoulDamageMultiplier * warlock.dynamicDrainSoulMultiplier(),
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 		IsPeriodic:       true,
 		OutcomeApplier:   warlock.OutcomeFuncTick(),
 		ProcMask:         core.ProcMaskPeriodicDamage,
 		BaseDamage:       core.BaseDamageConfigMagicNoRoll(710/5, 3./7.),
-		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			spellEffect.DamageMultiplier = baseAdditiveMultiplier * warlock.dynamicDrainSoulMultiplier(sim)
-		},
 	}
 
 	warlock.DrainSoulDot = core.NewDot(core.Dot{

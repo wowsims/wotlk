@@ -7,26 +7,26 @@ import (
 
 func (warlock *Warlock) staticAdditiveDamageMultiplier(actionID core.ActionID, spellSchool core.SpellSchool, IsPeriodic bool) float64 {
 	// actionID spellbook
-	actionID_Incinerate := core.ActionID{SpellID: 47838}
 	actionID_ShadowBolt := core.ActionID{SpellID: 47809}
+	actionID_Corruption := core.ActionID{SpellID: 47813}
+	actionID_Seed := core.ActionID{SpellID: 47836}
 	actionID_UnstableAffliction := core.ActionID{SpellID: 47843}
+	actionID_Incinerate := core.ActionID{SpellID: 47838}
 	actionID_Immolate := core.ActionID{SpellID: 47811}
 	actionID_Conflagrate := core.ActionID{SpellID: 17962}
 	actionID_CurseOfAgony := core.ActionID{SpellID: 47864}
-	actionID_Corruption := core.ActionID{SpellID: 47813}
-	actionID_Seed := core.ActionID{SpellID: 47836}
+	actionID_CurseOfDoom := core.ActionID{SpellID: 47867}
 	// actionID_SoulFire := core.ActionID{SpellID: 47825}
 	// actionID_ChaosBolt := core.ActionID{SpellID: 59172}
-	// actionID_CurseOfDoom := core.ActionID{SpellID: 47867}
 	// actionID_Haunt := core.ActionID{SpellID: 59164}
 	// actionID_DrainSoul := core.ActionID{SpellID: 47855}
 
 	// Aura bonuses are treated separately as they function like normal multipliers
-	additiveDamageMultiplier := 1.0
+	additiveDamageMultiplier := 1.
 
 	// Additive Multipliers
 	// Weapon Imbues
-	if (IsPeriodic && warlock.Options.WeaponImbue == proto.Warlock_Options_GrandSpellstone) ||
+	if (IsPeriodic && warlock.Options.WeaponImbue == proto.Warlock_Options_GrandSpellstone && !(actionID == actionID_CurseOfAgony) && !(actionID == actionID_CurseOfDoom)) ||
 		(!IsPeriodic && warlock.Options.WeaponImbue == proto.Warlock_Options_GrandFirestone) {
 		additiveDamageMultiplier += 0.01
 	}

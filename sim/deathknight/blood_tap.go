@@ -19,15 +19,18 @@ func (dk *Deathknight) registerBloodTapSpell() {
 			dk.CorrectBloodTapConversion(sim,
 				dk.BloodRuneGainMetrics(),
 				dk.DeathRuneGainMetrics(),
-				dk.BloodTap)
+				dk.BloodTap.Spell)
 
 			// Gain at the end, to take into account previous effects for callback
 			amountOfRunicPower := 10.0
 			dk.AddRunicPower(sim, amountOfRunicPower, dk.BloodTap.RunicPowerMetrics())
 		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			dk.CancelBloodTap(sim)
+		},
 	})
 
-	dk.BloodTap = dk.RegisterSpell(core.SpellConfig{
+	dk.BloodTap = dk.RegisterSpell(nil, core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 
@@ -40,19 +43,17 @@ func (dk *Deathknight) registerBloodTapSpell() {
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			dk.BloodTapAura.Activate(sim)
-			dk.BloodTapAura.Prioritize()
 		},
 	})
 }
 
 func (dk *Deathknight) CanBloodTap(sim *core.Simulation) bool {
-	return dk.BloodTap.IsReady(sim) && dk.BloodTap.CD.IsReady(sim)
+	return dk.BloodTap.IsReady(sim)
 }
 
 func (dk *Deathknight) CastBloodTap(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanBloodTap(sim) {
-		dk.BloodTap.Cast(sim, target)
-		return true
+		return dk.BloodTap.Cast(sim, target)
 	}
 	return false
 }

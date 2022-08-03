@@ -46,7 +46,7 @@ func (rogue *Rogue) registerSinisterStrikeSpell() {
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					points := 1
-					if rogue.HasGlyph(int32(proto.RogueMajorGlyph_GlyphOfSinisterStrike)) {
+					if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfSinisterStrike) {
 						if sim.RandomFloat("Glyph of Sinister Strike") < 0.5 {
 							points += 1
 						}

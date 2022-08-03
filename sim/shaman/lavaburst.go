@@ -43,12 +43,13 @@ func (shaman *Shaman) newLavaBurstSpell() *core.Spell {
 		}
 	}
 
-	lavaflowBonus := []float64{1.0, 1.06, 1.12, 1.24}
+	lavaflowBonus := []float64{0, 0.06, 0.12, 0.24}
 	// TODO: does lava flows multiply or add with elemental fury? Only matters if you had <5pts which probably won't happen.
-	critMultiplier := shaman.SpellCritMultiplier(1, (0.2*float64(shaman.Talents.ElementalFury))*(lavaflowBonus[shaman.Talents.LavaFlows]))
+	critBonus := lavaflowBonus[shaman.Talents.LavaFlows]
 	if shaman.HasSetBonus(ItemSetEarthShatterGarb, 4) {
-		critMultiplier *= 1.1
+		critBonus += 0.1
 	}
+	critMultiplier := shaman.ElementalCritMultiplier(critBonus)
 
 	bonusBase := core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == VentureCoLightningRod, 121, 0) +
 		core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == ThunderfallTotem, 215, 0)
@@ -62,7 +63,7 @@ func (shaman *Shaman) newLavaBurstSpell() *core.Spell {
 		BonusSpellHitRating:  float64(shaman.Talents.ElementalPrecision) * 2 * core.SpellHitRatingPerHitChance,
 		BonusSpellCritRating: 0,
 		BonusSpellPower:      0,
-		DamageMultiplier:     1 * (1 + 0.01*float64(shaman.Talents.Concussion)),
+		DamageMultiplier:     1 * (1 + 0.01*float64(shaman.Talents.Concussion)) * (1.0 + 0.02*float64(shaman.Talents.CallOfFlame)),
 		ThreatMultiplier:     1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
 		BaseDamage:           core.BaseDamageConfigMagic(1192+bonusBase, 1518+bonusBase, 0.5714+(0.05*float64(shaman.Talents.Shamanism)+bonusCoeff)),
 		OutcomeApplier: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
@@ -82,7 +83,6 @@ func (shaman *Shaman) newLavaBurstSpell() *core.Spell {
 			}
 		},
 	}
-	effect.DamageMultiplier *= 1.0 + .02*float64(shaman.Talents.CallOfFlame)
 
 	if shaman.HasSetBonus(ItemSetThrallsRegalia, 4) || shaman.HasSetBonus(ItemSetNobundosRegalia, 4) {
 		lvbdotDmg := 0.0 // dynamically changing dmg
@@ -106,8 +106,9 @@ func (shaman *Shaman) newLavaBurstSpell() *core.Spell {
 						return lvbdotDmg / 3 //spread dot over 3 ticks
 					},
 				},
-				IsPeriodic: true,
-				ProcMask:   core.ProcMaskEmpty,
+				IsPeriodic:     true,
+				ProcMask:       core.ProcMaskEmpty,
+				OutcomeApplier: shaman.OutcomeFuncTick(),
 			}),
 		})
 
@@ -116,8 +117,7 @@ func (shaman *Shaman) newLavaBurstSpell() *core.Spell {
 				return
 			}
 			lvbdotDmg = spellEffect.Damage * 0.1 // TODO: does this dot pool with the previous dot?
-			lvbdot.TakeSnapshot(sim)             // reset dmg snapshot
-			lvbdot.Apply(sim)
+			lvbdot.Apply(sim)                    // will resnapshot dmg
 		}
 	}
 

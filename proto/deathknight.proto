@@ -147,17 +147,29 @@ message Deathknight {
 			AsMajorCd = 2;
 		}
 
+		enum DeathAndDecayPrio {
+			MaxRuneDowntime = 0;
+			MaxDndUptime = 1;
+		}
+
 		enum FirstDisease {
 			FrostFever = 0;
 			BloodPlague = 1;
 		}
 
-		FirstDisease first_disease = 6;
 		ArmyOfTheDead army_of_the_dead = 1;
 		bool use_death_and_decay = 2;
-		bool unholy_presence_opener = 3;
+		
+		bool bt_ghoul_frenzy = 3;
+		
 		double disease_refresh_duration = 4;
 		bool refresh_horn_of_winter = 5;
+		
+		FirstDisease first_disease = 6;
+		
+		DeathAndDecayPrio death_and_decay_prio = 7;
+
+		bool use_empower_rune_weapon = 8;
 	}
 	Rotation rotation = 1;
 

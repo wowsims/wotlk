@@ -10,19 +10,19 @@ import (
 )
 
 var DefaultSimTestOptions = &proto.SimOptions{
-	Iterations: 50,
+	Iterations: 20,
 	IsTest:     true,
 	Debug:      false,
 	RandomSeed: 101,
 }
 var StatWeightsDefaultSimTestOptions = &proto.SimOptions{
-	Iterations: 1000,
+	Iterations: 300,
 	IsTest:     true,
 	Debug:      false,
 	RandomSeed: 101,
 }
 var AverageDefaultSimTestOptions = &proto.SimOptions{
-	Iterations: 5000,
+	Iterations: 2000,
 	IsTest:     true,
 	Debug:      false,
 	RandomSeed: 101,
@@ -65,6 +65,7 @@ func MakeDefaultEncounterCombos(debuffs *proto.Debuffs) []EncounterCombo {
 			Encounter: &proto.Encounter{
 				Duration:             ShortDuration,
 				ExecuteProportion_20: 0.2,
+				ExecuteProportion_25: 0.25,
 				ExecuteProportion_35: 0.35,
 				Targets: []*proto.Target{
 					DefaultTarget,
@@ -76,6 +77,7 @@ func MakeDefaultEncounterCombos(debuffs *proto.Debuffs) []EncounterCombo {
 			Encounter: &proto.Encounter{
 				Duration:             LongDuration,
 				ExecuteProportion_20: 0.2,
+				ExecuteProportion_25: 0.25,
 				ExecuteProportion_35: 0.35,
 				Targets: []*proto.Target{
 					DefaultTarget,
@@ -87,6 +89,7 @@ func MakeDefaultEncounterCombos(debuffs *proto.Debuffs) []EncounterCombo {
 			Encounter: &proto.Encounter{
 				Duration:             LongDuration,
 				ExecuteProportion_20: 0.2,
+				ExecuteProportion_25: 0.25,
 				ExecuteProportion_35: 0.35,
 				Targets:              multipleTargets,
 			},
@@ -99,6 +102,7 @@ func MakeSingleTargetEncounter(variation float64) *proto.Encounter {
 		Duration:             LongDuration,
 		DurationVariation:    variation,
 		ExecuteProportion_20: 0.2,
+		ExecuteProportion_25: 0.25,
 		ExecuteProportion_35: 0.35,
 		Targets: []*proto.Target{
 			NewDefaultTarget(),

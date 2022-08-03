@@ -1,6 +1,7 @@
 package warlock
 
 import (
+	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -43,23 +44,27 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 			petConfig.Name,
 			&warlock.Character,
 			petConfig.Stats,
-			petStatInheritance,
+			warlock.makeStatInheritance(),
 			true,
+			false,
 		),
 		config: petConfig,
 		owner:  warlock,
 	}
 
+	// TODO: EnableManaBar should really be refactored to not assume 1 int = 15 mana
 	wp.EnableManaBar()
+	// the ratio multiplier affects the first 20 points as well
+	wp.AddStat(stats.Mana, (15*20-20)+(20-15*20)*petConfig.ManaIntRatio/15)
 	wp.AddStatDependency(stats.Intellect, stats.Mana, 1/(1+15))
 	wp.AddStatDependency(stats.Intellect, stats.Mana, 1.0+petConfig.ManaIntRatio)
 	wp.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
 	wp.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+core.CritRatingPerCritChance*0.04)
 	wp.AddStats(stats.Stats{
-		stats.MeleeCrit: float64(warlock.Talents.DemonicTactics)*2*core.CritRatingPerCritChance +
-			float64(wp.owner.Talents.ImprovedDemonicTactics)*0.3*wp.owner.GetStats()[stats.SpellCrit],
-		stats.SpellCrit: float64(warlock.Talents.DemonicTactics)*2*core.CritRatingPerCritChance +
-			float64(wp.owner.Talents.ImprovedDemonicTactics)*0.3*wp.owner.GetStats()[stats.SpellCrit],
+		stats.MeleeCrit: float64(warlock.Talents.DemonicTactics) * 2 * core.CritRatingPerCritChance,
+		stats.SpellCrit: float64(warlock.Talents.DemonicTactics) * 2 * core.CritRatingPerCritChance,
+		stats.MeleeHit:  -float64(warlock.Talents.Suppression) * core.MeleeHitRatingPerHitChance, //Remove warlock's Suppression hit bonus from pet which he gets through stat inheritance
+		stats.SpellHit:  -float64(warlock.Talents.Suppression) * core.SpellHitRatingPerHitChance, //Remove warlock's Suppression hit bonus from pet which he gets through stat inheritance
 	})
 
 	wp.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.04*float64(warlock.Talents.UnholyPower)
@@ -169,7 +174,7 @@ func (wp *WarlockPet) OnGCDReady(sim *core.Simulation) {
 	if !wp.TryCast(sim, target, wp.primaryAbility) {
 		if wp.secondaryAbility != nil {
 			wp.TryCast(sim, target, wp.secondaryAbility)
-		} else if wp.primaryAbility.CD.Timer != nil {
+		} else if !wp.primaryAbility.IsReady(sim) {
 			wp.WaitUntil(sim, wp.primaryAbility.CD.ReadyAt())
 		} else {
 			wp.WaitForMana(sim, wp.primaryAbility.CurCast.Cost)
@@ -177,15 +182,24 @@ func (wp *WarlockPet) OnGCDReady(sim *core.Simulation) {
 	}
 }
 
-var petStatInheritance = func(ownerStats stats.Stats) stats.Stats {
-	return stats.Stats{
-		stats.Stamina:          ownerStats[stats.Stamina] * 0.3,
-		stats.Intellect:        ownerStats[stats.Intellect] * 0.3,
-		stats.Armor:            ownerStats[stats.Armor] * 0.35,
-		stats.AttackPower:      (ownerStats[stats.SpellPower] + ownerStats[stats.ShadowSpellPower]) * 0.57,
-		stats.SpellPower:       (ownerStats[stats.SpellPower] + ownerStats[stats.ShadowSpellPower]) * 0.15,
-		stats.SpellPenetration: ownerStats[stats.SpellPenetration],
-		// Resists, 40%
+func (warlock *Warlock) makeStatInheritance() core.PetStatInheritance {
+	improvedDemonicTactics := float64(warlock.Talents.ImprovedDemonicTactics)
+
+	return func(ownerStats stats.Stats) stats.Stats {
+		ownerHitChance := math.Floor(ownerStats[stats.SpellHit] / core.SpellHitRatingPerHitChance)
+		return stats.Stats{
+			stats.Stamina:          ownerStats[stats.Stamina] * 0.75,
+			stats.Intellect:        ownerStats[stats.Intellect] * 0.3,
+			stats.Armor:            ownerStats[stats.Armor] * 0.35,
+			stats.AttackPower:      (ownerStats[stats.SpellPower] + ownerStats[stats.ShadowSpellPower]) * 0.57,
+			stats.SpellPower:       (ownerStats[stats.SpellPower] + ownerStats[stats.ShadowSpellPower]) * 0.15,
+			stats.SpellPenetration: ownerStats[stats.SpellPenetration],
+			stats.SpellCrit:        improvedDemonicTactics * 0.3 * ownerStats[stats.SpellCrit],
+			stats.MeleeCrit:        improvedDemonicTactics * 0.3 * ownerStats[stats.SpellCrit],
+			stats.MeleeHit:         ownerHitChance * core.MeleeHitRatingPerHitChance,
+			stats.SpellHit:         ownerHitChance * core.SpellHitRatingPerHitChance,
+			// Resists, 40%
+		}
 	}
 }
 
@@ -252,16 +266,16 @@ var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
 	},
 	proto.Warlock_Options_Felhunter: {
 		Name:           "Felhunter",
-		ManaIntRatio:   11.5,
+		ManaIntRatio:   15 * 0.77, // GetUnitPowerModifier("pet")
 		Melee:          true,
 		PrimaryAbility: ShadowBite,
 		Stats: stats.Stats{
-			stats.Stamina:   328,
 			stats.Strength:  314,
 			stats.Agility:   90,
+			stats.Stamina:   328,
 			stats.Intellect: 150,
-			stats.Mana:      1109,
 			stats.Spirit:    209,
+			stats.Mana:      1559,
 			stats.MP5:       11,
 			stats.SpellCrit: 0.01,
 			stats.MeleeCrit: 0.03,

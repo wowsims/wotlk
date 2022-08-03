@@ -31,7 +31,7 @@ export const FrostTalents = {
 			major2: DeathknightMajorGlyph.GlyphOfFrostStrike,
 			major3: DeathknightMajorGlyph.GlyphOfDisease,
 			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
-			minor2: DeathknightMinorGlyph.GlyphOfBloodTap,
+			minor2: DeathknightMinorGlyph.GlyphOfPestilence,
 			minor3: DeathknightMinorGlyph.GlyphOfRaiseDead,
 		}),
 	}),
@@ -55,11 +55,11 @@ export const FrostUnholyTalents = {
 export const UnholyDualWieldTalents = {
 	name: 'Unholy Dual Wield',
 	data: SavedTalents.create({
-		talentsString: '-320023500002-2300303350032052000150003133151',
+		talentsString: '-320033500002-2300303050032152000150013133151',
 		glyphs: Glyphs.create({
 			major1: DeathknightMajorGlyph.GlyphOfTheGhoul,
 			major2: DeathknightMajorGlyph.GlyphOfDarkDeath,
-			major3: DeathknightMajorGlyph.GlyphOfIcyTouch,
+			major3: DeathknightMajorGlyph.GlyphOfDeathAndDecay,
 			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
 			minor2: DeathknightMinorGlyph.GlyphOfPestilence,
 			minor3: DeathknightMinorGlyph.GlyphOfRaiseDead,
@@ -69,10 +69,10 @@ export const UnholyDualWieldTalents = {
 
 
 export const DefaultRotation = DeathKnightRotation.create({
-  diseaseRefreshDuration: 6,
-  unholyPresenceOpener: false,
-  useDeathAndDecay: false,
+  useDeathAndDecay: true,
+  btGhoulFrenzy: true,
 	refreshHornOfWinter: false,
+  useEmpowerRuneWeapon: true,
 });
 
 export const DefaultOptions = DeathKnightOptions.create({
@@ -94,7 +94,7 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
 	name: 'P1 Unholy DW BiS',
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
+    {
       "id": 44006,
       "enchant": 44879,
       "gems": [
@@ -118,7 +118,7 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
     },
     {
       "id": 40550,
-      "enchant": 44623,
+      "enchant": 44489,
       "gems": [
         42142,
         39996
@@ -126,14 +126,14 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
     },
     {
       "id": 40330,
-      "enchant": 60616,
+      "enchant": 44484,
       "gems": [
         39996,
         0
       ]
     },
     {
-      "id": 40347,
+      "id": 40552,
       "enchant": 54999,
       "gems": [
         39996,
@@ -148,8 +148,12 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
       ]
     },
     {
-      "id": 40294,
-      "enchant": 38374
+      "id": 40556,
+      "enchant": 38374,
+      "gems": [
+        39996,
+        39996
+      ]
     },
     {
       "id": 40591,
@@ -162,7 +166,7 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
       "id": 40075
     },
     {
-      "id": 40431
+      "id": 40684
     },
     {
       "id": 42987
@@ -176,21 +180,21 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
       "enchant": 44495
     },
     {
-      "id": 40207
+      "id": 40867
     }
-	]}`),
+  ]}`),
 };
 
 export const P1_FROST_PRE_BIS_PRESET = {
 	name: 'P1 Frost Pre-Raid',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{ "items": [
+	gear: EquipmentSpec.fromJsonString(`{  "items": [
     {
       "id": 41386,
       "enchant": 44879,
       "gems": [
         41398,
-        34143
+        49110
       ]
     },
     {
@@ -206,7 +210,7 @@ export const P1_FROST_PRE_BIS_PRESET = {
     },
     {
       "id": 39617,
-      "enchant": 44623,
+      "enchant": 44489,
       "gems": [
         42142,
         39996
@@ -214,7 +218,7 @@ export const P1_FROST_PRE_BIS_PRESET = {
     },
     {
       "id": 41355,
-      "enchant": 60616,
+      "enchant": 44484,
       "gems": [
         0
       ]
@@ -285,11 +289,14 @@ export const P1_FROST_BIS_PRESET = {
       "enchant": 44879,
       "gems": [
         41398,
-        34143
+        49110
       ]
     },
     {
-      "id": 40065
+      "id": 44664,
+      "gems": [
+        39996
+      ]
     },
     {
       "id": 40557,
@@ -304,7 +311,7 @@ export const P1_FROST_BIS_PRESET = {
     },
     {
       "id": 40550,
-      "enchant": 44623,
+      "enchant": 44489,
       "gems": [
         42142,
         39996
@@ -312,7 +319,7 @@ export const P1_FROST_BIS_PRESET = {
     },
     {
       "id": 40330,
-      "enchant": 60616,
+      "enchant": 44484,
       "gems": [
         39996,
         0
@@ -345,7 +352,7 @@ export const P1_FROST_BIS_PRESET = {
       "enchant": 55016
     },
     {
-      "id": 40474
+      "id": 39401
     },
     {
       "id": 40075

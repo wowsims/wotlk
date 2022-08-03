@@ -12,6 +12,7 @@ type Encounter struct {
 	Duration             time.Duration
 	DurationVariation    time.Duration
 	executePhase20Begins time.Duration
+	executePhase25Begins time.Duration
 	executePhase35Begins time.Duration
 	Targets              []*Target
 
@@ -24,10 +25,23 @@ type Encounter struct {
 }
 
 func NewEncounter(options proto.Encounter) Encounter {
+	if options.ExecuteProportion_20 == 0 {
+		options.ExecuteProportion_20 = 0.2
+	}
+	if options.ExecuteProportion_25 == 0 {
+		options.ExecuteProportion_25 = 0.25
+	}
+	options.ExecuteProportion_25 = MaxFloat(options.ExecuteProportion_25, options.ExecuteProportion_20)
+	if options.ExecuteProportion_35 == 0 {
+		options.ExecuteProportion_35 = 0.35
+	}
+	options.ExecuteProportion_35 = MaxFloat(options.ExecuteProportion_35, options.ExecuteProportion_25)
+
 	encounter := Encounter{
 		Duration:             DurationFromSeconds(options.Duration),
 		DurationVariation:    DurationFromSeconds(options.DurationVariation),
 		executePhase20Begins: DurationFromSeconds(options.Duration * (1 - options.ExecuteProportion_20)),
+		executePhase25Begins: DurationFromSeconds(options.Duration * (1 - options.ExecuteProportion_25)),
 		executePhase35Begins: DurationFromSeconds(options.Duration * (1 - options.ExecuteProportion_35)),
 		Targets:              []*Target{},
 	}
@@ -216,8 +230,9 @@ type AttackTable struct {
 
 	ArmorDamageModifier float64
 
-	DamageDealtMultiplier       float64
-	NatureDamageDealtMultiplier float64
+	DamageDealtMultiplier               float64
+	NatureDamageDealtMultiplier         float64
+	PeriodicShadowDamageDealtMultiplier float64
 }
 
 func NewAttackTable(attacker *Unit, defender *Unit) *AttackTable {
@@ -225,8 +240,9 @@ func NewAttackTable(attacker *Unit, defender *Unit) *AttackTable {
 		Attacker: attacker,
 		Defender: defender,
 
-		DamageDealtMultiplier:       1,
-		NatureDamageDealtMultiplier: 1,
+		DamageDealtMultiplier:               1,
+		NatureDamageDealtMultiplier:         1,
+		PeriodicShadowDamageDealtMultiplier: 1,
 	}
 
 	if defender.Type == EnemyUnit {

@@ -332,7 +332,7 @@ func (hp *HunterPet) newFroststormBreath() PetAbility {
 	return hp.newSpecialAbility(PetSpecialAbilityConfig{
 		Type:    FroststormBreath,
 		Cost:    20,
-		GCD:     core.GCDDefault,
+		GCD:     0,
 		CD:      time.Second * 10,
 		SpellID: 55492,
 		School:  core.SpellSchoolFrost,
@@ -773,7 +773,7 @@ func (hp *HunterPet) newSpiritStrike() PetAbility {
 	pa := hp.newSpecialAbility(PetSpecialAbilityConfig{
 		Type:    SpiritStrike,
 		Cost:    20,
-		GCD:     core.GCDDefault,
+		GCD:     0,
 		CD:      time.Second * 10,
 		SpellID: 61198,
 		School:  core.SpellSchoolArcane,

@@ -3,6 +3,8 @@ package proto;
 
 option go_package = "./proto";
 
+import "common.proto";
+
 message RogueTalents {
 	// Assassination
 	int32 improved_eviscerate = 1;
@@ -163,6 +165,7 @@ message Rogue {
 	RogueTalents talents = 2;
 	
 	message Options {
+		RaidTarget tricks_of_the_trade_target = 1;
 	}
 	Options options = 3;
 }

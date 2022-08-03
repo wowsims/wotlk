@@ -71,14 +71,14 @@ func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spel
 						return lbdotDmg / 2 //spread dot over 2 ticks
 					},
 				},
-				IsPeriodic: true,
-				ProcMask:   core.ProcMaskEmpty,
+				IsPeriodic:     true,
+				ProcMask:       core.ProcMaskEmpty,
+				OutcomeApplier: shaman.OutcomeFuncTick(),
 			}),
 		})
 		applyDot = func(sim *core.Simulation, dmg float64) {
-			lbdotDmg = dmg * 0.08   // TODO: does this pool with a currently ticking dot?
-			lbdot.TakeSnapshot(sim) // reset dmg snapshot
-			lbdot.Apply(sim)
+			lbdotDmg = dmg * 0.08 // TODO: does this pool with a currently ticking dot?
+			lbdot.Apply(sim)      // will resnapshot
 		}
 		effect.OnSpellHitDealt = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if !spellEffect.DidCrit() {

@@ -5,6 +5,7 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (dk *Deathknight) registerBoneShieldSpell() {
@@ -23,8 +24,8 @@ func (dk *Deathknight) registerBoneShieldSpell() {
 		MaxStacks: 3 + core.TernaryInt32(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfBoneShield), 1, 0),
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			dk.BoneShieldAura.Activate(sim)
-			dk.BoneShieldAura.UpdateExpires(sim.CurrentTime + time.Minute*4)
-			dk.BoneShieldAura.SetStacks(sim, 3)
+			dk.BoneShieldAura.UpdateExpires(sim.CurrentTime + time.Minute*5)
+			dk.BoneShieldAura.SetStacks(sim, dk.BoneShieldAura.MaxStacks)
 		},
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			aura.RemoveStack(sim)
@@ -44,13 +45,16 @@ func (dk *Deathknight) registerBoneShieldSpell() {
 		},
 	})
 
-	dk.BoneShield = dk.RegisterSpell(core.SpellConfig{
-		ActionID: actionID,
-		Flags:    core.SpellFlagNoOnCastComplete,
-
+	baseCost := float64(core.NewRuneCost(10, 0, 0, 1, 0))
+	dk.BoneShield = dk.RegisterSpell(nil, core.SpellConfig{
+		ActionID:     actionID,
+		Flags:        core.SpellFlagNoOnCastComplete,
+		ResourceType: stats.RunicPower,
+		BaseCost:     baseCost,
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD: core.GCDDefault,
+				GCD:  core.GCDDefault,
+				Cost: baseCost,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				cast.GCD = dk.getModifiedGCD()
@@ -62,13 +66,6 @@ func (dk *Deathknight) registerBoneShieldSpell() {
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			dk.BoneShieldAura.Activate(sim)
-			dk.BoneShieldAura.Prioritize()
-
-			dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_U)
-			dk.Spend(sim, spell, dkSpellCost)
-
-			amountOfRunicPower := 10.0
-			dk.AddRunicPower(sim, amountOfRunicPower, dk.BoneShield.RunicPowerMetrics())
 		},
 	})
 }
@@ -79,8 +76,7 @@ func (dk *Deathknight) CanBoneShield(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastBoneShield(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanBoneShield(sim) {
-		dk.BoneShield.Cast(sim, target)
-		return true
+		return dk.BoneShield.Cast(sim, target)
 	}
 	return false
 }

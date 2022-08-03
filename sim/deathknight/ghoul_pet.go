@@ -2,7 +2,6 @@ package deathknight
 
 import (
 	"math"
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -20,7 +19,8 @@ type GhoulPet struct {
 
 	ClawAbility PetAbility
 
-	uptimePercent float64
+	uptimePercent        float64
+	ownerMeleeMultiplier float64
 }
 
 func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
@@ -31,6 +31,7 @@ func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
 			armyGhoulPetBaseStats,
 			dk.armyGhoulStatInheritance(),
 			false,
+			true,
 		),
 		dkOwner: dk,
 	}
@@ -42,7 +43,7 @@ func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
 	ghoulPet.EnableAutoAttacks(ghoulPet, core.AutoAttackOptions{
 		MainHand: core.Weapon{
 			BaseDamageMin:  120,
-			BaseDamageMax:  130,
+			BaseDamageMax:  160,
 			SwingSpeed:     2,
 			SwingDuration:  time.Second * 2,
 			CritMultiplier: 2,
@@ -50,7 +51,7 @@ func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
 		AutoSwingMelee: true,
 	})
 
-	ghoulPet.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+0.01)
+	ghoulPet.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+1)
 	ghoulPet.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/83.3))
 
 	return ghoulPet
@@ -64,8 +65,14 @@ func (dk *Deathknight) NewGhoulPet(permanent bool) *GhoulPet {
 			ghoulPetBaseStats,
 			dk.ghoulStatInheritance(),
 			permanent,
+			!permanent,
 		),
 		dkOwner: dk,
+	}
+
+	if permanent {
+		// Melee Speed listener
+		ghoulPet.ownerMeleeMultiplier = 1.0
 	}
 
 	// NightOfTheDead
@@ -75,8 +82,8 @@ func (dk *Deathknight) NewGhoulPet(permanent bool) *GhoulPet {
 
 	ghoulPet.EnableAutoAttacks(ghoulPet, core.AutoAttackOptions{
 		MainHand: core.Weapon{
-			BaseDamageMin:  42,
-			BaseDamageMax:  68,
+			BaseDamageMin:  50,
+			BaseDamageMax:  90,
 			SwingSpeed:     2,
 			SwingDuration:  time.Second * 2,
 			CritMultiplier: 2,
@@ -113,6 +120,16 @@ func (ghoul *GhoulPet) GetPet() *core.Pet {
 	return &ghoul.Pet
 }
 
+func (ghoulPet *GhoulPet) OwnerAttackSpeedChanged(sim *core.Simulation) {
+	if !ghoulPet.IsPetGhoul() {
+		return
+	}
+
+	ghoulPet.MultiplyMeleeSpeed(sim, 1/ghoulPet.ownerMeleeMultiplier)
+	ghoulPet.ownerMeleeMultiplier = ghoulPet.dkOwner.PseudoStats.MeleeSpeedMultiplier
+	ghoulPet.MultiplyMeleeSpeed(sim, ghoulPet.ownerMeleeMultiplier)
+}
+
 func (ghoulPet *GhoulPet) Initialize() {
 	ghoulPet.ClawAbility = ghoulPet.NewPetAbility(Claw)
 }
@@ -124,7 +141,11 @@ func (ghoulPet *GhoulPet) Reset(sim *core.Simulation) {
 		ghoulPet.uptimePercent = 1.0
 	}
 
-	ghoulPet.AutoAttacks.CancelAutoSwing(sim)
+	if ghoulPet.IsPetGhoul() {
+		// Reset dk inherited melee multiplier and reapply current
+		ghoulPet.ownerMeleeMultiplier = 1
+		ghoulPet.OwnerAttackSpeedChanged(sim)
+	}
 }
 
 func (ghoulPet *GhoulPet) OnGCDReady(sim *core.Simulation) {
@@ -148,11 +169,9 @@ func (ghoulPet *GhoulPet) enable(sim *core.Simulation) {
 	ghoulPet.focusBar.Enable(sim)
 
 	// Snapshot extra % speed modifiers from dk owner
-	if !ghoulPet.PermanentPet {
-		ghoulPet.PseudoStats.MeleeSpeedMultiplier = ghoulPet.dkOwner.PseudoStats.MeleeSpeedMultiplier
-		if sim.Log != nil {
-			ghoulPet.Log(sim, "Setting attack speed multiplier to "+strconv.FormatFloat(ghoulPet.PseudoStats.MeleeSpeedMultiplier, 'f', 3, 64))
-		}
+	if ghoulPet.IsGuardian() {
+		ghoulPet.PseudoStats.MeleeSpeedMultiplier = 1
+		ghoulPet.MultiplyMeleeSpeed(sim, ghoulPet.dkOwner.PseudoStats.MeleeSpeedMultiplier)
 	}
 }
 
@@ -160,8 +179,9 @@ func (ghoulPet *GhoulPet) disable(sim *core.Simulation) {
 	ghoulPet.focusBar.Disable(sim)
 
 	// Clear snapshot speed
-	if !ghoulPet.PermanentPet {
+	if ghoulPet.IsGuardian() {
 		ghoulPet.PseudoStats.MeleeSpeedMultiplier = 1
+		ghoulPet.MultiplyMeleeSpeed(sim, 1)
 	}
 }
 
@@ -170,8 +190,7 @@ var ghoulPetBaseStats = stats.Stats{
 	stats.Strength:    331,
 	stats.AttackPower: 836,
 
-	// Add 1.8% because pets aren't affected by that component of crit suppression.
-	stats.MeleeCrit: (3.2 + 1.8) * core.CritRatingPerCritChance,
+	stats.MeleeCrit: 3.2 * core.CritRatingPerCritChance,
 }
 
 const PetExpertiseScale = 3.25
@@ -189,11 +208,13 @@ func (dk *Deathknight) ghoulStatInheritance() core.PetStatInheritance {
 
 		return stats.Stats{
 			stats.Stamina:  ownerStats[stats.Stamina] * (glyphBonus + 0.7*ravenousDead),
-			stats.Strength: ownerStats[stats.Strength] * (glyphBonus + 0.7*ravenousDead),
+			stats.Strength: ownerStats[stats.Strength]*(glyphBonus+0.7*ravenousDead) - 20,
 
-			stats.MeleeHit:   hitRatingFromOwner,
-			stats.SpellHit:   hitRatingFromOwner,
-			stats.Expertise:  math.Floor((math.Floor(ownerHitChance) * PetExpertiseScale)) * core.ExpertisePerQuarterPercentReduction,
+			stats.MeleeHit: hitRatingFromOwner,
+			stats.SpellHit: hitRatingFromOwner,
+
+			stats.Expertise: math.Floor((math.Floor(ownerHitChance) * PetExpertiseScale)) * core.ExpertisePerQuarterPercentReduction,
+
 			stats.MeleeHaste: ownerStats[stats.MeleeHaste],
 			stats.SpellHaste: ownerStats[stats.MeleeHaste],
 		}
@@ -202,11 +223,10 @@ func (dk *Deathknight) ghoulStatInheritance() core.PetStatInheritance {
 
 var armyGhoulPetBaseStats = stats.Stats{
 	stats.Agility:     856,
-	stats.Strength:    331,
-	stats.AttackPower: 836,
+	stats.Strength:    0,
+	stats.AttackPower: 0,
 
-	// Add 1.8% because pets aren't affected by that component of crit suppression.
-	stats.MeleeCrit: (3.2 + 1.8) * core.CritRatingPerCritChance,
+	stats.MeleeCrit: 3.2 * core.CritRatingPerCritChance,
 }
 
 func (dk *Deathknight) armyGhoulStatInheritance() core.PetStatInheritance {
@@ -222,11 +242,13 @@ func (dk *Deathknight) armyGhoulStatInheritance() core.PetStatInheritance {
 
 		return stats.Stats{
 			stats.Stamina:  ownerStats[stats.Stamina] * (glyphBonus + 0.7*ravenousDead),
-			stats.Strength: ownerStats[stats.Strength] * (glyphBonus + 0.7*ravenousDead),
+			stats.Strength: ownerStats[stats.Strength]*(glyphBonus+0.7*ravenousDead)*0.1 - 20,
 
-			stats.MeleeHit:   hitRatingFromOwner,
-			stats.SpellHit:   hitRatingFromOwner,
-			stats.Expertise:  math.Floor((math.Floor(ownerHitChance) * PetExpertiseScale)) * core.ExpertisePerQuarterPercentReduction,
+			stats.MeleeHit: hitRatingFromOwner,
+			stats.SpellHit: hitRatingFromOwner,
+
+			stats.Expertise: math.Floor((math.Floor(ownerHitChance) * PetExpertiseScale)) * core.ExpertisePerQuarterPercentReduction,
+
 			stats.MeleeHaste: ownerStats[stats.MeleeHaste],
 			stats.SpellHaste: ownerStats[stats.MeleeHaste],
 		}

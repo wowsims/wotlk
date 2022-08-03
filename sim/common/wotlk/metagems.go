@@ -48,13 +48,12 @@ func init() {
 
 	core.NewItemEffect(41400, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		procAura := character.NewTemporaryStatsAura("Thundering Skyflare Diamond Proc", core.ActionID{SpellID: 55379}, stats.Stats{stats.MeleeHaste: 480, stats.SpellHaste: 480}, time.Second*6)
+		procAura := character.NewTemporaryStatsAura("Thundering Skyflare Diamond Proc", core.ActionID{SpellID: 55379}, stats.Stats{stats.MeleeHaste: 480}, time.Second*6)
 
 		icd := core.Cooldown{
 			Timer:    character.NewTimer(),
 			Duration: time.Second * 40,
 		}
-		ppmm := character.AutoAttacks.NewPPMManager(1.5, core.ProcMaskMeleeOrRanged)
 
 		character.RegisterAura(core.Aura{
 			Label:    "Thundering Skyflare Diamond",
@@ -68,9 +67,6 @@ func init() {
 					return
 				}
 				if !icd.IsReady(sim) {
-					return
-				}
-				if !ppmm.Proc(sim, spellEffect.ProcMask, "Thundering Skyflare Diamond") {
 					return
 				}
 				icd.Use(sim)

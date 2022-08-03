@@ -26,6 +26,9 @@ func RegisterDpsDeathknight() {
 type DpsDeathknight struct {
 	*deathknight.Deathknight
 
+	fr FrostRotation
+	ur UnholyRotation
+
 	Rotation proto.Deathknight_Rotation
 }
 
@@ -39,57 +42,55 @@ func NewDpsDeathknight(character core.Character, player proto.Player) *DpsDeathk
 			PrecastHornOfWinter: dk.Options.PrecastHornOfWinter,
 			PetUptime:           dk.Options.PetUptime,
 
-			RefreshHornOfWinter:  dk.Rotation.RefreshHornOfWinter,
-			UnholyPresenceOpener: dk.Rotation.UnholyPresenceOpener,
-			ArmyOfTheDeadType:    dk.Rotation.ArmyOfTheDead,
-			FirstDisease:         dk.Rotation.FirstDisease,
+			RefreshHornOfWinter: dk.Rotation.RefreshHornOfWinter,
+			ArmyOfTheDeadType:   dk.Rotation.ArmyOfTheDead,
+			FirstDisease:        dk.Rotation.FirstDisease,
 		}),
 		Rotation: *dk.Rotation,
 	}
 
-	dpsDk.SetupRotations()
+	dpsDk.ur.dk = dpsDk
 
 	return dpsDk
 }
 
 func (dk *DpsDeathknight) SetupRotations() {
+	dk.ur.ffFirst = dk.Inputs.FirstDisease == proto.Deathknight_Rotation_FrostFever
+
+	dk.Opener.Clear()
+	dk.Main.Clear()
+
 	if dk.Talents.DarkConviction > 0 && dk.Talents.HowlingBlast {
-		dk.setupFrostSubBloodOpener()
-		dk.DoRotationEvent = dk.doFrostRotation
+		if dk.Rotation.UseEmpowerRuneWeapon {
+			dk.setupFrostSubBloodERWOpener()
+		} else {
+			dk.setupFrostSubBloodNoERWOpener()
+		}
 	} else if dk.Talents.BloodCakedBlade > 0 && dk.Talents.HowlingBlast {
 		dk.setupFrostSubUnholyOpener()
-		dk.DoRotationEvent = dk.doFrostRotation
 	} else if dk.Talents.HowlingBlast {
-		dk.setupFrostSubBloodOpener()
-		dk.DoRotationEvent = dk.doFrostRotation
+		if dk.Rotation.UseEmpowerRuneWeapon {
+			dk.setupFrostSubBloodERWOpener()
+		} else {
+			dk.setupFrostSubBloodNoERWOpener()
+		}
 	} else if dk.Talents.SummonGargoyle {
 		if dk.Rotation.UseDeathAndDecay {
-			dk.DoRotationEvent = dk.doUnholyRotation
-			if dk.Rotation.UnholyPresenceOpener {
-				dk.setupUnholyDndUnholyPresenceOpener()
-			} else {
-				dk.setupUnholyDndBloodPresenceOpener()
-			}
+			dk.setupUnholyDndOpener()
 		} else {
-			dk.DoRotationEvent = dk.doUnholySsRotation
-
 			if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd {
-				if dk.Rotation.UnholyPresenceOpener {
-					dk.setupUnholySsArmyUnholyPresenceOpener()
-				} else {
-					dk.setupUnholySsArmyBloodPresenceOpener()
-				}
+				dk.setupUnholySsArmyOpener()
 			} else {
-				if dk.Rotation.UnholyPresenceOpener {
-					dk.setupUnholySsUnholyPresenceOpener()
-				} else {
-					dk.setupUnholySsBloodPresenceOpener()
-				}
+				dk.setupUnholySsOpener()
 			}
 		}
 	} else {
 		// TODO: Add some default rotation that works without special talents
-		dk.setupFrostSubBloodOpener()
+		if dk.Rotation.UseEmpowerRuneWeapon {
+			dk.setupFrostSubBloodERWOpener()
+		} else {
+			dk.setupFrostSubBloodNoERWOpener()
+		}
 	}
 }
 
@@ -99,8 +100,12 @@ func (dk *DpsDeathknight) GetDeathknight() *deathknight.Deathknight {
 
 func (dk *DpsDeathknight) Initialize() {
 	dk.Deathknight.Initialize()
+	dk.initProcTrackers()
 }
 
 func (dk *DpsDeathknight) Reset(sim *core.Simulation) {
 	dk.Deathknight.Reset(sim)
+	dk.SetupRotations()
+	dk.fr.Reset(sim)
+	dk.ur.Reset(sim)
 }

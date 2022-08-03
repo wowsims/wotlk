@@ -3,26 +3,30 @@ package deathknight
 import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (dk *Deathknight) registerPestilenceSpell() {
 
 	hasGlyphOfDisease := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease)
-
-	dk.Pestilence = dk.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 50842},
-		SpellSchool: core.SpellSchoolShadow,
-
+	baseCost := float64(core.NewRuneCost(10, 1, 0, 0, 0))
+	rs := &RuneSpell{}
+	dk.Pestilence = dk.RegisterSpell(rs, core.SpellConfig{
+		ActionID:     core.ActionID{SpellID: 50842},
+		SpellSchool:  core.SpellSchoolShadow,
+		ResourceType: stats.RunicPower,
+		BaseCost:     baseCost,
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD: core.GCDDefault,
+				Cost: baseCost,
+				GCD:  core.GCDDefault,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				cast.GCD = dk.getModifiedGCD()
 			},
 		},
 
-		ApplyEffects: core.ApplyEffectFuncAOEDamage(dk.Env, core.SpellEffect{
+		ApplyEffects: dk.withRuneRefund(rs, core.SpellEffect{
 			ProcMask:             core.ProcMaskSpellDamage,
 			BonusSpellCritRating: 0.0,
 			DamageMultiplier:     0.0,
@@ -44,38 +48,29 @@ func (dk *Deathknight) registerPestilenceSpell() {
 							// Update expire instead of Apply to keep old snapshotted value
 							if dk.FrostFeverDisease[unitHit.Index].IsActive() {
 								dk.FrostFeverDisease[unitHit.Index].Rollover(sim)
-								dk.FrostFeverDebuffAura[unitHit.Index].Activate(sim)
-								if dk.IcyTalonsAura != nil {
+								if dk.Talents.IcyTalons > 0 {
 									dk.IcyTalonsAura.Activate(sim)
 								}
+								dk.FrostFeverDebuffAura[unitHit.Index].Activate(sim)
 							}
 
 							if dk.BloodPlagueDisease[unitHit.Index].IsActive() {
 								dk.BloodPlagueDisease[unitHit.Index].Rollover(sim)
 							}
 						}
-
-						dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_B)
-						if !dk.bloodOfTheNorthProc(sim, spell, dkSpellCost) {
-							if !dk.reapingProc(sim, spell, dkSpellCost) {
-								dk.Spend(sim, spell, dkSpellCost)
-							}
-						}
-
-						amountOfRunicPower := 10.0 + 2.5*float64(dk.Talents.ChillOfTheGrave)
-						dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
+						dk.botnAndReaping(sim, spell)
 					} else {
 						// Apply diseases on every other target
-						if dk.TargetHasDisease(FrostFeverAuraLabel, dk.CurrentTarget) {
+						if dk.FrostFeverDisease[dk.CurrentTarget.Index].IsActive() {
 							dk.FrostFeverDisease[unitHit.Index].Apply(sim)
 						}
-						if dk.TargetHasDisease(FrostFeverAuraLabel, dk.CurrentTarget) {
+						if dk.BloodPlagueDisease[dk.CurrentTarget.Index].IsActive() {
 							dk.BloodPlagueDisease[unitHit.Index].Apply(sim)
 						}
 					}
 				}
 			},
-		}),
+		}, true),
 	})
 }
 
@@ -84,9 +79,8 @@ func (dk *Deathknight) CanPestilence(sim *core.Simulation) bool {
 }
 
 func (dk *Deathknight) CastPestilence(sim *core.Simulation, target *core.Unit) bool {
-	if dk.CanPestilence(sim) {
-		dk.Pestilence.Cast(sim, target)
-		return true
+	if dk.Pestilence.IsReady(sim) {
+		return dk.Pestilence.Cast(sim, target)
 	}
 	return false
 }

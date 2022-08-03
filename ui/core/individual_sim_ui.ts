@@ -69,6 +69,7 @@ import { addRaidSimAction, RaidSimResultsManager } from '/wotlk/core/components/
 import { addStatWeightsAction } from '/wotlk/core/components/stat_weights_action.js';
 import { equalsOrBothNull, getEnumValues } from '/wotlk/core/utils.js';
 import { getMetaGemConditionDescription } from '/wotlk/core/proto_utils/gems.js';
+import { getTalentPoints } from '/wotlk/core/proto_utils/utils.js';
 import { isDualWieldSpec } from '/wotlk/core/proto_utils/utils.js';
 import { simLaunchStatuses } from '/wotlk/core/launched_sims.js';
 import { makePetTypeInputConfig } from '/wotlk/core/talents/hunter_pet.js';
@@ -84,6 +85,7 @@ import { specToLocalStorageKey } from '/wotlk/core/proto_utils/utils.js';
 
 import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
 import * as InputHelpers from '/wotlk/core/components/input_helpers.js';
+import * as Mechanics from '/wotlk/core/constants/mechanics.js';
 import * as OtherConstants from '/wotlk/core/constants/other.js';
 import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 
@@ -240,6 +242,23 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				}
 
 				return `Only 3 Jewelcrafting Gems are allowed, but ${jcGems.length} are equipped.`;
+			},
+		});
+		this.addWarning({
+			updateOn: this.player.talentsChangeEmitter,
+			getContent: () => {
+				const talentPoints = getTalentPoints(this.player.getTalentsString());
+
+				if (talentPoints == 0) {
+					// Just return here, so we don't show a warning during page load.
+					return '';
+				} else if (talentPoints < Mechanics.MAX_TALENT_POINTS) {
+					return 'Unspent talent points.';
+				} else if (talentPoints > Mechanics.MAX_TALENT_POINTS) {
+					return 'More than maximum talent points spent.';
+				} else {
+					return '';
+				}
 			},
 		});
 		(config.warnings || []).forEach(warning => this.addWarning(warning(this)));
@@ -452,7 +471,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 							</div>
 						</div>
 						<div class="consumes-row">
-							<span>Trade</span>
+							<span>Eng</span>
 							<div class="consumes-row-inputs consumes-trade">
 							</div>
 						</div>
@@ -536,7 +555,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			{ item: IconInputs.MeleeHasteBuff, stats: [Stat.StatMeleeHaste] },
 			{ item: IconInputs.SpellPowerBuff, stats: [Stat.StatSpellPower] },
 			{ item: IconInputs.SpellCritBuff, stats: [Stat.StatSpellCrit] },
-			{ item: IconInputs.SpellHasteBuff, stats: [Stat.StatSpellHaste] },
 			{ item: IconInputs.HastePercentBuff, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
 			{ item: IconInputs.DamagePercentBuff, stats: [Stat.StatAttackPower, Stat.StatSpellPower] },
 			{ item: IconInputs.DamageReductionPercentBuff, stats: [Stat.StatArmor] },
@@ -551,6 +569,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 		const otherBuffOptions = this.splitRelevantOptions([
 			{ item: IconInputs.Bloodlust, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
+			{ item: IconInputs.SpellHasteBuff, stats: [Stat.StatSpellHaste] },
 		] as Array<StatOption<IconInputConfig<Player<any>, any>>>);
 		otherBuffOptions.forEach(iconInput => makeIconInput(buffsSection, iconInput));
 
@@ -565,6 +584,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			{ item: IconInputs.ManaTideTotem, stats: [Stat.StatMP5] },
 			{ item: IconInputs.Innervate, stats: [Stat.StatMP5] },
 			{ item: IconInputs.PowerInfusion, stats: [Stat.StatMP5, Stat.StatSpellPower] },
+			{ item: IconInputs.TricksOfTheTrade, stats: [Stat.StatAttackPower, Stat.StatSpellPower] },
 		] as Array<StatOption<IconPickerConfig<Player<any>, any>>>);
 		if (miscBuffOptions.length > 0) {
 			new MultiIconPicker(buffsSection, this.player, {
@@ -701,9 +721,19 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 		const tradeConsumesElem = this.rootElem.getElementsByClassName('consumes-trade')[0] as HTMLElement;
 		//tradeConsumesElem.parentElement!.style.display = 'none';
-		makeIconInput(tradeConsumesElem, IconInputs.SuperSapper);
-		makeIconInput(tradeConsumesElem, IconInputs.GoblinSapper);
+		makeIconInput(tradeConsumesElem, IconInputs.ThermalSapper);
+		makeIconInput(tradeConsumesElem, IconInputs.ExplosiveDecoy);
 		makeIconInput(tradeConsumesElem, IconInputs.FillerExplosiveInput);
+
+		const updateProfession = () => {
+			if (this.player.hasProfession(Profession.Engineering)) {
+				tradeConsumesElem.parentElement!.style.removeProperty('display');
+			} else {
+				tradeConsumesElem.parentElement!.style.display = 'none';
+			}
+		};
+		this.player.professionChangeEmitter.on(updateProfession);
+		updateProfession();
 
 		if (this.individualConfig.petConsumeInputs?.length) {
 			const petConsumesElem = this.rootElem.getElementsByClassName('consumes-pet')[0] as HTMLElement;
@@ -712,11 +742,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			const petRowElem = this.rootElem.getElementsByClassName('consumes-row-pet')[0] as HTMLElement;
 			petRowElem.style.display = 'none';
 		}
-
-		//if (this.individualConfig.consumeOptions?.other?.length) {
-		//	const containerElem = this.rootElem.getElementsByClassName('consumes-other')[0] as HTMLElement;
-		//	this.individualConfig.consumeOptions.other.map(iconInput => makeIconInput(containerElem, iconInput));
-		//}
 
 		const configureInputSection = (sectionElem: HTMLElement, sectionConfig: InputSection) => {
 			if (sectionConfig.tooltip) {
@@ -939,6 +964,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 					<div class="talents-picker">
 					</div>
 					<div class="glyphs-picker">
+					<span>Glyphs</span>
 					</div>
 				</div>
 				<div class="saved-talents-manager">

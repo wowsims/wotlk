@@ -2,13 +2,15 @@ package deathknight
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+// TODO: Cleanup death strike the same way we did for plague strike
 var DeathStrikeActionID = core.ActionID{SpellID: 49924}
-var DeathStrikeMHOutcome = core.OutcomeHit
-var DeathStrikeOHOutcome = core.OutcomeHit
+var DeathStrikeMHOutcome = core.OutcomeMiss
+var DeathStrikeOHOutcome = core.OutcomeMiss
 
-func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *core.Spell {
+func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *RuneSpell {
 	bonusBaseDamage := dk.sigilOfAwarenessBonus(dk.DeathStrike)
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 297.0+bonusBaseDamage, 0.75, true)
 	if !isMH {
@@ -22,9 +24,7 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *core.Spell {
 
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				return weaponBaseDamage(sim, hitEffect, spell) *
-					dk.tundraStalkerBonus(hitEffect.Target) *
-					dk.rageOfRivendareBonus(hitEffect.Target)
+				return weaponBaseDamage(sim, hitEffect, spell) * dk.RoRTSBonus(hitEffect.Target)
 			},
 			TargetSpellCoefficient: 1,
 		},
@@ -43,7 +43,7 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *core.Spell {
 		return outcomeApplier
 	})
 
-	return dk.RegisterSpell(core.SpellConfig{
+	return dk.RegisterSpell(nil, core.SpellConfig{
 		ActionID:     DeathStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool:  core.SpellSchoolPhysical,
 		Flags:        core.SpellFlagMeleeMetrics,
@@ -54,21 +54,26 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *core.Spell {
 func (dk *Deathknight) registerDeathStrikeSpell() {
 	dk.DeathStrikeMhHit = dk.newDeathStrikeSpell(true)
 	dk.DeathStrikeOhHit = dk.newDeathStrikeSpell(false)
-	dk.DeathStrike = dk.RegisterSpell(core.SpellConfig{
-		ActionID:    DeathStrikeActionID.WithTag(3),
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagNoMetrics | core.SpellFlagNoLogs,
 
+	baseCost := float64(core.NewRuneCost(uint8(15.0+2.5*float64(dk.Talents.Dirge)), 0, 1, 1, 0))
+	rs := &RuneSpell{}
+	dk.DeathStrike = dk.RegisterSpell(rs, core.SpellConfig{
+		ActionID:     DeathStrikeActionID.WithTag(3),
+		SpellSchool:  core.SpellSchoolPhysical,
+		Flags:        core.SpellFlagNoMetrics | core.SpellFlagNoLogs,
+		ResourceType: stats.RunicPower,
+		BaseCost:     baseCost,
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD: core.GCDDefault,
+				GCD:  core.GCDDefault,
+				Cost: baseCost,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				cast.GCD = dk.getModifiedGCD()
 			},
 		},
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+		ApplyEffects: dk.withRuneRefund(rs, core.SpellEffect{
 			ProcMask:         core.ProcMaskEmpty,
 			ThreatMultiplier: 1,
 
@@ -76,17 +81,9 @@ func (dk *Deathknight) registerDeathStrikeSpell() {
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				dk.threatOfThassarianProc(sim, spellEffect, dk.DeathStrikeMhHit, dk.DeathStrikeOhHit)
-
 				dk.LastCastOutcome = DeathStrikeMHOutcome
-				if dk.outcomeEitherWeaponHitOrCrit(DeathStrikeMHOutcome, DeathStrikeOHOutcome) {
-					dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_FU)
-					dk.Spend(sim, spell, dkSpellCost)
-
-					amountOfRunicPower := 15.0 + 2.5*float64(dk.Talents.Dirge)
-					dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
-				}
 			},
-		}),
+		}, false),
 	})
 }
 
@@ -95,9 +92,8 @@ func (dk *Deathknight) CanDeathStrike(sim *core.Simulation) bool {
 }
 
 func (dk *Deathknight) CastDeathStrike(sim *core.Simulation, target *core.Unit) bool {
-	if dk.CanDeathStrike(sim) {
-		dk.DeathStrike.Cast(sim, target)
-		return true
+	if !dk.DeathStrike.IsReady(sim) {
+		return false
 	}
-	return false
+	return dk.DeathStrike.Cast(sim, target)
 }

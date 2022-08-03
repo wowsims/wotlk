@@ -8,7 +8,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-var thunderstormActionID = core.ActionID{SpellID: 51490}
+var thunderstormActionID = core.ActionID{SpellID: 59159}
 
 // newThunderstormSpell returns a precomputed instance of lightning bolt to use for casting.
 func (shaman *Shaman) newThunderstormSpell(doDamage bool) *core.Spell {
@@ -42,8 +42,8 @@ func (shaman *Shaman) newThunderstormSpell(doDamage bool) *core.Spell {
 			BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * 2 * core.SpellHitRatingPerHitChance,
 			DamageMultiplier:    1 * (1 + 0.01*float64(shaman.Talents.Concussion)),
 			ThreatMultiplier:    1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
-			BaseDamage:          core.BaseDamageConfigMagic(566, 644, 0.172),
-			OutcomeApplier:      shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier()),
+			BaseDamage:          core.BaseDamageConfigMagic(1450, 1656, 0.172),
+			OutcomeApplier:      shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
 		}
 		aoeApply := core.ApplyEffectFuncAOEDamageCapped(shaman.Env, (605+0.172*shaman.GetStat(stats.NatureSpellPower))*10, effect)
 		spellConfig.ApplyEffects = func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {

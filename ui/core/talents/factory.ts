@@ -32,7 +32,7 @@ export function newTalentsPicker(parent: HTMLElement, player: Player<any>): Tale
 			player.setTalentsString(eventID, newValue);
 		},
 		pointsPerRow: 5,
-		maxPoints: Mechanics.CHARACTER_LEVEL - 9,
+		maxPoints: Mechanics.MAX_TALENT_POINTS,
 	});
 }
 

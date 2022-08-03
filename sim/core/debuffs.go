@@ -279,6 +279,7 @@ func CurseOfElementsAura(target *Unit) *Aura {
 				aura.Unit.PseudoStats.FrostDamageTakenMultiplier *= multiplier
 				aura.Unit.PseudoStats.ShadowDamageTakenMultiplier *= multiplier
 				aura.Unit.PseudoStats.NatureDamageTakenMultiplier *= multiplier
+				aura.Unit.PseudoStats.HolyDamageTakenMultiplier *= multiplier
 			}
 			aura.Unit.AddStatsDynamic(sim, stats.Stats{stats.ArcaneResistance: -165, stats.FireResistance: -165, stats.FrostResistance: -165, stats.ShadowResistance: -165, stats.NatureResistance: -165})
 		},
@@ -289,6 +290,7 @@ func CurseOfElementsAura(target *Unit) *Aura {
 				aura.Unit.PseudoStats.FrostDamageTakenMultiplier /= multiplier
 				aura.Unit.PseudoStats.ShadowDamageTakenMultiplier /= multiplier
 				aura.Unit.PseudoStats.NatureDamageTakenMultiplier /= multiplier
+				aura.Unit.PseudoStats.HolyDamageTakenMultiplier /= multiplier
 			}
 			aura.Unit.AddStatsDynamic(sim, stats.Stats{stats.ArcaneResistance: 165, stats.FireResistance: 165, stats.FrostResistance: 165, stats.ShadowResistance: 165, stats.NatureResistance: 165})
 		},
@@ -309,6 +311,7 @@ func EarthAndMoonAura(target *Unit) *Aura {
 				aura.Unit.PseudoStats.FrostDamageTakenMultiplier *= multiplier
 				aura.Unit.PseudoStats.ShadowDamageTakenMultiplier *= multiplier
 				aura.Unit.PseudoStats.NatureDamageTakenMultiplier *= multiplier
+				aura.Unit.PseudoStats.HolyDamageTakenMultiplier *= multiplier
 			}
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
@@ -318,6 +321,7 @@ func EarthAndMoonAura(target *Unit) *Aura {
 				aura.Unit.PseudoStats.FrostDamageTakenMultiplier /= multiplier
 				aura.Unit.PseudoStats.ShadowDamageTakenMultiplier /= multiplier
 				aura.Unit.PseudoStats.NatureDamageTakenMultiplier /= multiplier
+				aura.Unit.PseudoStats.HolyDamageTakenMultiplier /= multiplier
 			}
 		},
 	})
@@ -362,6 +366,7 @@ func EbonPlaguebringerAura(target *Unit, dkIndex int) *Aura {
 				aura.Unit.PseudoStats.FrostDamageTakenMultiplier *= magicMultiplier
 				aura.Unit.PseudoStats.ShadowDamageTakenMultiplier *= magicMultiplier
 				aura.Unit.PseudoStats.NatureDamageTakenMultiplier *= magicMultiplier
+				aura.Unit.PseudoStats.HolyDamageTakenMultiplier *= magicMultiplier
 			}
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
@@ -371,6 +376,7 @@ func EbonPlaguebringerAura(target *Unit, dkIndex int) *Aura {
 				aura.Unit.PseudoStats.FrostDamageTakenMultiplier /= magicMultiplier
 				aura.Unit.PseudoStats.ShadowDamageTakenMultiplier /= magicMultiplier
 				aura.Unit.PseudoStats.NatureDamageTakenMultiplier /= magicMultiplier
+				aura.Unit.PseudoStats.HolyDamageTakenMultiplier /= magicMultiplier
 			}
 		},
 	})
@@ -394,6 +400,7 @@ func bloodFrenzySavageCombatAura(target *Unit, label string, id ActionID, points
 		ActionID: id,
 		Priority: multiplier,
 		// No fixed duration, lasts as long as the bleed that activates it.
+		Duration: NeverExpires,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.PhysicalDamageTakenMultiplier *= multiplier
 		},

@@ -24,7 +24,7 @@ var PlayerOptionsFrost = &proto.Player_Deathknight{
 var UnholyTalents = &proto.DeathknightTalents{
 	ImprovedIcyTouch:  3,
 	RunicPowerMastery: 2,
-	BlackIce:          2,
+	BlackIce:          3,
 	NervesOfColdSteel: 3,
 	IcyTalons:         5,
 	EndlessWinter:     2,
@@ -33,7 +33,7 @@ var UnholyTalents = &proto.DeathknightTalents{
 	Virulence:         3,
 	Morbidity:         3,
 	RavenousDead:      3,
-	Outbreak:          3,
+	Outbreak:          0,
 	Necrosis:          5,
 	BloodCakedBlade:   3,
 	NightOfTheDead:    2,
@@ -41,6 +41,7 @@ var UnholyTalents = &proto.DeathknightTalents{
 	Dirge:             2,
 	MasterOfGhouls:    true,
 	Desolation:        5,
+	GhoulFrenzy:       true,
 	CryptFever:        3,
 	BoneShield:        true,
 	WanderingPlague:   3,
@@ -79,12 +80,11 @@ var FrostTalents = &proto.DeathknightTalents{
 }
 
 var unholyRotation = &proto.Deathknight_Rotation{
-	UnholyPresenceOpener: true,
+	UseDeathAndDecay: true,
+	BtGhoulFrenzy:    true,
 }
 
-var frostRotation = &proto.Deathknight_Rotation{
-	UnholyPresenceOpener: false,
-}
+var frostRotation = &proto.Deathknight_Rotation{}
 
 var deathKnightOptions = &proto.Deathknight_Options{
 	StartingRunicPower:  0,
@@ -139,10 +139,7 @@ var UnholyDwP1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	]
 	},
 	{
-	"id": 44664,
-	"gems": [
-		39996
-	]
+	"id": 39421
 	},
 	{
 	"id": 40557,
@@ -160,19 +157,19 @@ var UnholyDwP1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	"enchant": 44623,
 	"gems": [
 		42142,
-		40058
+		39996
 	]
 	},
 	{
 	"id": 40330,
 	"enchant": 60616,
 	"gems": [
-		40058,
+		39996,
 		0
 	]
 	},
 	{
-	"id": 40347,
+	"id": 40552,
 	"enchant": 54999,
 	"gems": [
 		39996,
@@ -187,8 +184,12 @@ var UnholyDwP1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	]
 	},
 	{
-	"id": 40294,
-	"enchant": 38374
+	"id": 40556,
+	"enchant": 38374,
+	"gems": [
+		39996,
+		39996
+	]
 	},
 	{
 	"id": 40591,
@@ -201,7 +202,7 @@ var UnholyDwP1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	"id": 40075
 	},
 	{
-	"id": 40431
+	"id": 40684
 	},
 	{
 	"id": 42987
@@ -215,7 +216,7 @@ var UnholyDwP1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	"enchant": 44495
 	},
 	{
-	"id": 40207
+	"id": 40867
 	}
 ]}`)
 

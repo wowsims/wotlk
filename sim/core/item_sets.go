@@ -77,6 +77,10 @@ func NewItemSet(setStruct ItemSet) *ItemSet {
 }
 
 func (character *Character) HasSetBonus(itemSet *ItemSet, numItems int32) bool {
+	if character.Env != nil && character.Env.IsFinalized() {
+		panic("HasSetBonus is very slow and should never be called after finalization. Try caching the value during construction instead!")
+	}
+
 	if _, ok := itemSet.Bonuses[numItems]; !ok {
 		panic(fmt.Sprintf("Item set %s does not have a bonus with %d pieces.", itemSet.Name, numItems))
 	}
