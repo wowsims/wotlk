@@ -130,10 +130,68 @@ var ItemSetEarthshatterBattlegear = core.NewItemSet(core.ItemSet{
 	Name: "Earthshatter Battlegear",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
-			// 10% damage to lightning shield, handle in wherever its stored
+			// 10% damage to lightning shield. implemented in lightning_shield.go
 		},
 		4: func(agent core.Agent) {
-			// +5% to flurry, handle in talents.go
+			// +5% to flurry. implemented in talents.go
+		},
+	},
+})
+
+var ItemSetWorldbreakerBattlegear = core.NewItemSet(core.ItemSet{
+	Name: "Worldbreaker Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			//20% damage to stormstrike and lava lash
+		},
+		4: func(agent core.Agent) {
+			//20% increase to maelstrom proc rate
+		},
+	},
+})
+
+var itemSetEnhanceT9Bonuses = map[int32]core.ApplyEffect{
+	2: func(agent core.Agent) {
+		// +3% increase to static shock proc rate
+	},
+	4: func(agent core.Agent) {
+		// +25% shock damage
+	},
+}
+
+var ItemSetThrallsBattlegear = core.NewItemSet(core.ItemSet{
+	Name:    "Thrall's Battlegear",
+	Bonuses: itemSetEnhanceT9Bonuses,
+})
+var ItemSetNobundosBattlegear = core.NewItemSet(core.ItemSet{
+	Name:    "Nobundo's Battlegear",
+	Bonuses: itemSetEnhanceT9Bonuses,
+})
+
+var ItemSetFrostWitchBattlegear = core.NewItemSet(core.ItemSet{
+	Name: "Frost Witch's Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// TODO: add 12% damage buff to shamanistic rage
+		},
+		4: func(agent core.Agent) {
+			// TODO: at 5 maelstrom stacks, 15% chance to gain +20% attack power for 10s
+		},
+	},
+})
+
+var ItemSetGladiatorsEarthshaker = core.NewItemSet(core.ItemSet{
+	Name: "Gladiator's Earthshaker",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			shaman := agent.(ShamanAgent).GetShaman()
+			shaman.AddStat(stats.AttackPower, 50)
+			shaman.AddStat(stats.Resilience, 100)
+		},
+		4: func(agent core.Agent) {
+			shaman := agent.(ShamanAgent).GetShaman()
+			shaman.AddStat(stats.AttackPower, 150)
+			// also -2s on stormstrike CD
 		},
 	},
 })

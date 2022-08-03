@@ -288,6 +288,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-FrostWitch'sBattlegear"
+ value: {
+  dps: 2790.3720446676152
+  tps: 1984.9496705028243
+ }
+}
+dps_results: {
  key: "TestEnhancement-AllItems-FrostWitch'sRegalia"
  value: {
   dps: 2532.158652716927
@@ -306,6 +313,13 @@ dps_results: {
  value: {
   dps: 2186.154516164289
   tps: 1523.9814018332277
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-Gladiator'sEarthshaker"
+ value: {
+  dps: 3078.2394682318877
+  tps: 2201.30193769046
  }
 }
 dps_results: {
@@ -404,6 +418,13 @@ dps_results: {
  value: {
   dps: 2114.8753932489053
   tps: 1464.8871677571701
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-Nobundo'sBattlegear"
+ value: {
+  dps: 2488.078308164151
+  tps: 1771.385141858981
  }
 }
 dps_results: {
@@ -610,6 +631,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-Thrall'sBattlegear"
+ value: {
+  dps: 2483.919584616139
+  tps: 1764.7009376513374
+ }
+}
+dps_results: {
  key: "TestEnhancement-AllItems-Thrall'sRegalia"
  value: {
   dps: 2425.480579933987
@@ -705,6 +733,13 @@ dps_results: {
  value: {
   dps: 2124.6347572242867
   tps: 1472.96141536865
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-WorldbreakerBattlegear"
+ value: {
+  dps: 2873.8934812771195
+  tps: 2074.2100537490373
  }
 }
 dps_results: {
