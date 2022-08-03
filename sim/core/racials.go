@@ -109,7 +109,7 @@ func applyRaceEffects(agent Agent) {
 		actionID := ActionID{SpellID: 26297}
 
 		berserkingAura := character.RegisterAura(Aura{
-			Label:    "Berserking",
+			Label:    "Berserking (Troll)",
 			ActionID: actionID,
 			Duration: time.Second * 10,
 			OnGain: func(aura *Aura, sim *Simulation) {
