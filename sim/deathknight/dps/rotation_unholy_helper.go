@@ -98,6 +98,10 @@ func (dk *DpsDeathknight) initProcTrackers() {
 	if dk.Equip[proto.ItemSlot_ItemSlotHands].Enchant.ID == 54999 {
 		dk.ur.addProc(54999, "Hyperspeed Acceleration")
 	}
+
+	if dk.Race == proto.Race_RaceTroll {
+		dk.ur.addProc(26297, "Berserking (Troll)")
+	}
 }
 
 func (dk *DpsDeathknight) HasWeaponEnchant(enchantId int32) bool {

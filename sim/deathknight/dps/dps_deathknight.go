@@ -75,14 +75,10 @@ func (dk *DpsDeathknight) SetupRotations() {
 			dk.setupFrostSubBloodNoERWOpener()
 		}
 	} else if dk.Talents.SummonGargoyle {
-		if dk.Rotation.UseDeathAndDecay {
+		if dk.Rotation.UseDeathAndDecay || !dk.Talents.ScourgeStrike {
 			dk.setupUnholyDndOpener()
 		} else {
-			if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd {
-				dk.setupUnholySsArmyOpener()
-			} else {
-				dk.setupUnholySsOpener()
-			}
+			dk.setupUnholySsOpener()
 		}
 	} else {
 		// TODO: Add some default rotation that works without special talents
