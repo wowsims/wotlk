@@ -1,8 +1,8 @@
-import { Spec } from '/wotlk/core/proto/common.js';
-import { Player } from '/wotlk/core/player.js';
-import { EventID } from '/wotlk/core/typed_event.js';
-import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
-import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
+import { Spec } from '../core/proto/common.js';
+import { Player } from '../core/player.js';
+import { EventID } from '../core/typed_event.js';
+import { IndividualSimUI } from '../core/individual_sim_ui.js';
+import { ActionId } from '../core/proto_utils/action_id.js';
 
 import {
 	PaladinAura as PaladinAura,
@@ -10,9 +10,9 @@ import {
 	PaladinJudgement as PaladinJudgement,
 	ProtectionPaladin_Rotation as ProtectionPaladinRotation,
 	ProtectionPaladin_Options as ProtectionPaladinOptions,
-} from '/wotlk/core/proto/paladin.js';
+} from '../core/proto/paladin.js';
 
-import * as InputHelpers from '/wotlk/core/components/input_helpers.js';
+import * as InputHelpers from '../core/components/input_helpers.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.

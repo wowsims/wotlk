@@ -3,25 +3,16 @@ import { Consumes,
 	Food,
 	Glyphs,
 	EquipmentSpec,
-	ItemSpec,
 	Potions,
-	Faction,
 	RaidBuffs,
-	PartyBuffs,
 	IndividualBuffs,
 	Debuffs,
-	Spec,
-	Stat,
 	TristateEffect,
-	Race,
-} from '/wotlk/core/proto/common.js';
-import { SavedTalents } from '/wotlk/core/proto/ui.js';
-import { Player } from '/wotlk/core/player.js';
+} from '../core/proto/common.js';
+import { SavedTalents } from '../core/proto/ui.js';
 
 import {
-	Warlock,
 	Warlock_Rotation as WarlockRotation,
-	WarlockTalents as WarlockTalents,
 	Warlock_Options as WarlockOptions,
 	Warlock_Rotation_PrimarySpell as PrimarySpell,
 	Warlock_Rotation_SecondaryDot as SecondaryDot,
@@ -32,11 +23,8 @@ import {
 	Warlock_Options_Summon as Summon,
 	WarlockMajorGlyph as MajorGlyph,
 	WarlockMinorGlyph as MinorGlyph,
-} from '/wotlk/core/proto/warlock.js';
+} from '../core/proto/warlock.js';
 
-import * as Enchants from '/wotlk/core/constants/enchants.js';
-import * as Gems from '/wotlk/core/proto_utils/gems.js';
-import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 import * as WarlockTooltips from './tooltips.js';
 
 // Default talents. Uses the wowhead calculator format, make the talents on

@@ -1,27 +1,27 @@
-import { RaidBuffs } from '/wotlk/core/proto/common.js';
-import { PartyBuffs } from '/wotlk/core/proto/common.js';
-import { IndividualBuffs } from '/wotlk/core/proto/common.js';
-import { Debuffs } from '/wotlk/core/proto/common.js';
-import { Class } from '/wotlk/core/proto/common.js';
-import { Consumes } from '/wotlk/core/proto/common.js';
-import { Encounter } from '/wotlk/core/proto/common.js';
-import { ItemSlot } from '/wotlk/core/proto/common.js';
-import { MobType } from '/wotlk/core/proto/common.js';
-import { RaidTarget } from '/wotlk/core/proto/common.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { Stat } from '/wotlk/core/proto/common.js';
-import { TristateEffect } from '/wotlk/core/proto/common.js'
-import { Stats } from '/wotlk/core/proto_utils/stats.js';
-import { Player } from '/wotlk/core/player.js';
-import { Sim } from '/wotlk/core/sim.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
-import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
+import { RaidBuffs } from '../core/proto/common.js';
+import { PartyBuffs } from '../core/proto/common.js';
+import { IndividualBuffs } from '../core/proto/common.js';
+import { Debuffs } from '../core/proto/common.js';
+import { Class } from '../core/proto/common.js';
+import { Consumes } from '../core/proto/common.js';
+import { Encounter } from '../core/proto/common.js';
+import { ItemSlot } from '../core/proto/common.js';
+import { MobType } from '../core/proto/common.js';
+import { RaidTarget } from '../core/proto/common.js';
+import { Spec } from '../core/proto/common.js';
+import { Stat } from '../core/proto/common.js';
+import { TristateEffect } from '../core/proto/common.js'
+import { Stats } from '../core/proto_utils/stats.js';
+import { Player } from '../core/player.js';
+import { Sim } from '../core/sim.js';
+import { EventID, TypedEvent } from '../core/typed_event.js';
+import { IndividualSimUI } from '../core/individual_sim_ui.js';
 
-import { Warrior, Warrior_Rotation as WarriorRotation, WarriorTalents as WarriorTalents, Warrior_Options as WarriorOptions } from '/wotlk/core/proto/warrior.js';
+import { Warrior, Warrior_Rotation as WarriorRotation, WarriorTalents as WarriorTalents, Warrior_Options as WarriorOptions } from '../core/proto/warrior.js';
 
-import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
-import * as OtherInputs from '/wotlk/core/components/other_inputs.js';
-import * as Tooltips from '/wotlk/core/constants/tooltips.js';
+import * as IconInputs from '../core/components/icon_inputs.js';
+import * as OtherInputs from '../core/components/other_inputs.js';
+import * as Tooltips from '../core/constants/tooltips.js';
 
 import * as WarriorInputs from './inputs.js';
 import * as Presets from './presets.js';
@@ -86,19 +86,26 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
-					bloodlust: true,
+					swiftRetribution: true,
 					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
-					windfuryTotem: TristateEffect.TristateEffectImproved,
-					leaderOfThePack: TristateEffect.TristateEffectImproved,
-					unleashedRage: true,
+					icyTalons: true,
+					abominationsMight: true,
+					leaderOfThePack: TristateEffect.TristateEffectRegular,
+					sanctifiedRetribution: true,
+					bloodlust: true,
+					devotionAura: TristateEffect.TristateEffectImproved,
+					stoneskinTotem: TristateEffect.TristateEffectImproved,
 				}),
 				partyBuffs: PartyBuffs.create({
+					heroicPresence: false,
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
 					blessingOfMight: TristateEffect.TristateEffectImproved,
 				}),
 				debuffs: Debuffs.create({
+					bloodFrenzy: true,
+					heartOfTheCrusader: true,
 					mangle: true,
 					sunderArmor: true,
 					curseOfWeakness: TristateEffect.TristateEffectRegular,
@@ -140,15 +147,9 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 				// Preset gear configurations that the user can quickly select.
 				gear: [
 					Presets.P1_FURY_PRESET,
-					Presets.P2_FURY_PRESET,
-					Presets.P3_FURY_PRESET,
-					Presets.P4_FURY_PRESET,
-					Presets.P5_FURY_PRESET,
+					Presets.P1_PRERAID_FURY_PRESET,
 					Presets.P1_ARMS_PRESET,
-					Presets.P2_ARMS_PRESET,
-					Presets.P3_ARMS_PRESET,
-					Presets.P4_ARMS_PRESET,
-					Presets.P5_ARMS_PRESET,
+					Presets.P1_PRERAID_ARMS_PRESET,
 				],
 			},
 		});

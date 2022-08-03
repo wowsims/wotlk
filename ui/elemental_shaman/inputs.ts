@@ -1,15 +1,15 @@
-import { IconPickerConfig } from '/wotlk/core/components/icon_picker.js';
-import { ElementalShaman_Rotation_RotationType as RotationType, ShamanShield } from '/wotlk/core/proto/shaman.js';
-import { ElementalShaman_Options as ShamanOptions } from '/wotlk/core/proto/shaman.js';
-import { AirTotem } from '/wotlk/core/proto/shaman.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
-import { Player } from '/wotlk/core/player.js';
-import { Sim } from '/wotlk/core/sim.js';
-import { Target } from '/wotlk/core/target.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
+import { IconPickerConfig } from '../core/components/icon_picker.js';
+import { ElementalShaman_Rotation_RotationType as RotationType, ShamanShield } from '../core/proto/shaman.js';
+import { ElementalShaman_Options as ShamanOptions } from '../core/proto/shaman.js';
+import { AirTotem } from '../core/proto/shaman.js';
+import { Spec } from '../core/proto/common.js';
+import { ActionId } from '../core/proto_utils/action_id.js';
+import { Player } from '../core/player.js';
+import { Sim } from '../core/sim.js';
+import { Target } from '../core/target.js';
+import { EventID, TypedEvent } from '../core/typed_event.js';
 
-import * as InputHelpers from '/wotlk/core/components/input_helpers.js';
+import * as InputHelpers from '../core/components/input_helpers.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
