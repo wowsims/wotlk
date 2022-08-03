@@ -16,7 +16,7 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 	baseEffectMH := core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeMHSpecial,
 
-		DamageMultiplier: 1,
+		DamageMultiplier: 1 + 0.02*float64(warrior.Talents.UnendingFury),
 		ThreatMultiplier: 1.25,
 
 		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 0, 1, true),
@@ -25,7 +25,7 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 	baseEffectOH := core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeOHSpecial,
 
-		DamageMultiplier: 1,
+		DamageMultiplier: 1 + 0.02*float64(warrior.Talents.UnendingFury)*0.01*float64(warrior.Talents.ImprovedWhirlwind),
 		ThreatMultiplier: 1.25,
 
 		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 0, 1+0.05*float64(warrior.Talents.DualWieldSpecialization), true),
@@ -67,7 +67,7 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    warrior.NewTimer(),
-				Duration: time.Second*10 - time.Second*time.Duration(warrior.Talents.ImprovedWhirlwind),
+				Duration: time.Second * 10,
 			},
 		},
 

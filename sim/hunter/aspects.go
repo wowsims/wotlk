@@ -79,10 +79,13 @@ func (hunter *Hunter) registerAspectOfTheViperSpell() {
 
 	damagePenalty := core.TernaryFloat64(hunter.Talents.AspectMastery, 0.6, 0.5)
 
-	baseManaRegen := 0.02 * hunter.BaseMana * core.TernaryFloat64(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfAspectOfTheViper), 1.1, 1)
-	manaPerRangedHit := baseManaRegen * hunter.AutoAttacks.Ranged.SwingSpeed
-	manaPerMHHit := baseManaRegen * hunter.AutoAttacks.MH.SwingSpeed
-	manaPerOHHit := baseManaRegen * hunter.AutoAttacks.OH.SwingSpeed
+	gronnstalkerMultiplier := core.TernaryFloat64(hunter.HasSetBonus(ItemSetGronnstalker, 2), 1.25, 1)
+	baseManaRegen := 0.02 * hunter.BaseMana *
+		core.TernaryFloat64(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfAspectOfTheViper), 1.1, 1) *
+		gronnstalkerMultiplier
+	manaPerRangedHit := baseManaRegen * hunter.AutoAttacks.Ranged.SwingSpeed * gronnstalkerMultiplier
+	manaPerMHHit := baseManaRegen * hunter.AutoAttacks.MH.SwingSpeed * gronnstalkerMultiplier
+	manaPerOHHit := baseManaRegen * hunter.AutoAttacks.OH.SwingSpeed * gronnstalkerMultiplier
 	var tickPA *core.PendingAction
 
 	hasCryptstalker4pc := hunter.HasSetBonus(ItemSetCryptstalkerBattlegear, 4)

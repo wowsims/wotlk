@@ -107,7 +107,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// Keep Glyph of Life Tap buff up
 	// ------------------------------------------
 	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap) &&
-		(!warlock.GlyphOfLifeTapAura.IsActive() || warlock.GlyphOfLifeTapAura.RemainingDuration(sim) < time.Second * 2) {
+		(!warlock.GlyphOfLifeTapAura.IsActive() || warlock.GlyphOfLifeTapAura.RemainingDuration(sim) < time.Second*2) {
 		if sim.CurrentTime < time.Second {
 			// Pre-pull Life Tap
 			warlock.GlyphOfLifeTapAura.Activate(sim)

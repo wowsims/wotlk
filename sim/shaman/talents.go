@@ -347,6 +347,22 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 		return
 	}
 
+	enhT10Bonus := false
+	if shaman.HasSetBonus(ItemSetFrostWitchBattlegear, 4) {
+		enhT10Bonus = true
+	}
+	t10BonusAura := shaman.RegisterAura(core.Aura{
+		Label:    "Maelstrom Power",
+		ActionID: core.ActionID{SpellID: 70831},
+		Duration: time.Second * 10,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			shaman.AddStatDependencyDynamic(sim, stats.AttackPower, stats.AttackPower, 1.2)
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			shaman.AddStatDependencyDynamic(sim, stats.AttackPower, stats.AttackPower, 1/1.2)
+		},
+	})
+
 	// TODO: Don't forget to make it so that AA don't reset when casting when MW is active
 	// for LB / CL / LvB
 	// They can't actually hit while casting, but the AA timer doesnt reset if you cast during the AA timer.
@@ -357,6 +373,11 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 		ActionID:  core.ActionID{SpellID: 53817},
 		Duration:  time.Second * 30,
 		MaxStacks: 5,
+		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
+			if enhT10Bonus && shaman.MaelstromWeaponAura.GetStacks() == 5 {
+				t10BonusAura.Activate(sim)
+			}
+		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if !spell.Flags.Matches(SpellFlagElectric) {
 				return
@@ -366,7 +387,8 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 	})
 	shaman.MaelstromWeaponAura = procAura
 
-	ppmm := shaman.AutoAttacks.NewPPMManager(2.0*float64(shaman.Talents.MaelstromWeapon), core.ProcMaskMelee)
+	ppmm := shaman.AutoAttacks.NewPPMManager(core.TernaryFloat64(shaman.HasSetBonus(ItemSetWorldbreakerBattlegear, 4), 2.4, 2.0)*
+		float64(shaman.Talents.MaelstromWeapon), core.ProcMaskMelee)
 	// This aura is hidden, just applies stacks of the proc aura.
 	shaman.RegisterAura(core.Aura{
 		Label:    "MaelstromWeapon",

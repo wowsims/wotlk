@@ -27,7 +27,7 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 	damageEffect := core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeMHSpecial,
 
-		DamageMultiplier: 1,
+		DamageMultiplier: 1 + float64(warrior.Talents.UnrelentingAssault)*0.01,
 		ThreatMultiplier: 0.75,
 		BonusCritRating:  25 * core.CritRatingPerCritChance * float64(warrior.Talents.ImprovedOverpower),
 
@@ -40,7 +40,12 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 			}
 		},
 	})
-
+	cooldownDur := time.Second * 5
+	if warrior.Talents.UnrelentingAssault == 1 {
+		cooldownDur -= time.Second * 2
+	} else if warrior.Talents.UnrelentingAssault == 2 {
+		cooldownDur -= time.Second * 4
+	}
 	warrior.Overpower = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 11585},
 		SpellSchool: core.SpellSchoolPhysical,
@@ -57,7 +62,7 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    cdTimer,
-				Duration: time.Second * 5,
+				Duration: cooldownDur,
 			},
 		},
 
@@ -71,5 +76,5 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 func (warrior *Warrior) ShouldOverpower(sim *core.Simulation) bool {
 	return sim.CurrentTime < warrior.overpowerValidUntil &&
 		warrior.Overpower.IsReady(sim) &&
-		warrior.CurrentRage() >= warrior.Overpower.DefaultCast.Cost
+		warrior.CurrentRage() >= warrior.Overpower.DefaultCast.Cost && warrior.Talents.MortalStrike
 }
