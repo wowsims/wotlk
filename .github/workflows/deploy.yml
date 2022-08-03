@@ -31,13 +31,11 @@ jobs:
 
       - name: Build 🔧
         run: |
-          npm install
-          make
+          make dist/wotlk/.dirstamp
 
       - name: Test
         run: |
           make test
-          make dist
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.5
