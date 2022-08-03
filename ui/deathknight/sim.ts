@@ -159,12 +159,16 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 					Presets.FrostTalents,
 					Presets.FrostUnholyTalents,
 					Presets.UnholyDualWieldTalents,
+					Presets.Unholy2HTalents,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
 					Presets.P1_FROST_PRE_BIS_PRESET,
 					Presets.P1_FROST_BIS_PRESET,
+					Presets.P1_UNHOLY_DW_PRERAID_PRESET,
 					Presets.P1_UNHOLY_DW_BIS_PRESET,
+					Presets.P1_UNHOLY_2H_PRERAID_PRESET,
+					Presets.P1_UNHOLY_2H_BIS_PRESET,
 				],
 			},
 		});
