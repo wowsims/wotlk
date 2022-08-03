@@ -448,7 +448,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	{
 		spec: Spec.SpecWarrior,
 		rotation: WarriorPresets.ArmsRotation,
-		talents: WarriorPresets.ArmsSlamTalents.data,
+		talents: WarriorPresets.ArmsTalents.data,
 		specOptions: WarriorPresets.DefaultOptions,
 		consumes: WarriorPresets.DefaultConsumes,
 		defaultName: 'Arms Warrior',

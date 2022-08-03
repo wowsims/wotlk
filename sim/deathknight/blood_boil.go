@@ -5,6 +5,8 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+var BloodBoilActionID = core.ActionID{SpellID: 49941}
+
 func (dk *Deathknight) registerBloodBoilSpell() {
 
 	// TODO: Handle blood boil correctly -
@@ -12,7 +14,7 @@ func (dk *Deathknight) registerBloodBoilSpell() {
 	rs := &RuneSpell{}
 	baseCost := core.NewRuneCost(10, 1, 0, 0, 0)
 	dk.BloodBoil = dk.RegisterSpell(rs, core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 49941},
+		ActionID:     BloodBoilActionID,
 		SpellSchool:  core.SpellSchoolShadow,
 		ResourceType: stats.RunicPower,
 		BaseCost:     float64(baseCost),

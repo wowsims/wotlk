@@ -173,7 +173,7 @@ func init() {
 		procAuraOH := character.NewTemporaryStatsAura("Berserking OH Proc", core.ActionID{SpellID: 59620, Tag: 2}, stats.Stats{stats.AttackPower: 400, stats.RangedAttackPower: 400}, time.Second*15)
 
 		character.GetOrRegisterAura(core.Aura{
-			Label:    "Berserking",
+			Label:    "Berserking (Enchant)",
 			Duration: core.NeverExpires,
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)

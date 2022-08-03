@@ -6,11 +6,13 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+var DeathCoilActionID = core.ActionID{SpellID: 49895}
+
 func (dk *Deathknight) registerDeathCoilSpell() {
 	baseDamage := 443.0 + dk.sigilOfTheWildBuckBonus() + dk.sigilOfTheVengefulHeartDeathCoil()
 	baseCost := float64(core.NewRuneCost(40, 0, 0, 0, 0))
 	dk.DeathCoil = dk.RegisterSpell(nil, core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 49895},
+		ActionID:    DeathCoilActionID,
 		SpellSchool: core.SpellSchoolShadow,
 
 		ResourceType: stats.RunicPower,

@@ -4,7 +4,7 @@ import { getEmptyGemSocketIconUrl, gemMatchesSocket } from '/wotlk/core/proto_ut
 import { setGemSocketCssClass } from '/wotlk/core/proto_utils/gems.js';
 import { Stats } from '/wotlk/core/proto_utils/stats.js';
 import { enchantAppliesToItem } from '/wotlk/core/proto_utils/utils.js';
-import { Enchant, Gem, GemColor } from '/wotlk/core/proto/common.js';
+import { Class, Enchant, Gem, GemColor } from '/wotlk/core/proto/common.js';
 import { HandType } from '/wotlk/core/proto/common.js';
 import { WeaponType } from '/wotlk/core/proto/common.js';
 import { Item } from '/wotlk/core/proto/common.js';
@@ -458,7 +458,7 @@ class SelectorModal extends Popup {
 
 		const show1hWeaponsSelector = makeShow1hWeaponsSelector(tabContent.getElementsByClassName('selector-modal-show-1h-weapons')[0] as HTMLElement, this.player.sim);
 		const show2hWeaponsSelector = makeShow2hWeaponsSelector(tabContent.getElementsByClassName('selector-modal-show-2h-weapons')[0] as HTMLElement, this.player.sim);
-		if (label != 'Items' || slot != ItemSlot.ItemSlotMainHand) {
+		if (label != 'Items' || slot != ItemSlot.ItemSlotMainHand && this.player.getClass() != Class.ClassWarrior) {
 			(tabContent.getElementsByClassName('selector-modal-show-1h-weapons')[0] as HTMLElement).style.display = 'none';
 			(tabContent.getElementsByClassName('selector-modal-show-2h-weapons')[0] as HTMLElement).style.display = 'none';
 		}

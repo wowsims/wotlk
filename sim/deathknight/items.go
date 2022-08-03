@@ -287,6 +287,91 @@ func (dk *Deathknight) sigilOfTheVengefulHeartFrostStrike() float64 {
 }
 
 func init() {
+	// Rune of Cinderglacier
+	core.NewItemEffect(53341, func(agent core.Agent) {
+		character := agent.GetCharacter()
+
+		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.ID == 53341
+		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.ID == 53341
+		if !mh && !oh {
+			return
+		}
+
+		procMask := core.GetMeleeProcMaskForHands(mh, oh)
+		ppmm := character.AutoAttacks.NewPPMManager(1.0, procMask)
+
+		cinderBonusCoeff := 1.2
+
+		consumeSpells := [4]core.ActionID{
+			BloodBoilActionID,
+			DeathCoilActionID,
+			FrostStrikeActionID,
+			HowlingBlastActionID,
+		}
+
+		cinderProcAura := character.GetOrRegisterAura(core.Aura{
+			ActionID:  core.ActionID{SpellID: 53386},
+			Label:     "Cinderglacier",
+			Duration:  time.Second * 30,
+			MaxStacks: 2,
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				aura.SetStacks(sim, aura.MaxStacks)
+				aura.Unit.PseudoStats.ShadowDamageDealtMultiplier *= cinderBonusCoeff
+				aura.Unit.PseudoStats.FrostDamageDealtMultiplier *= cinderBonusCoeff
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Unit.PseudoStats.ShadowDamageDealtMultiplier /= cinderBonusCoeff
+				aura.Unit.PseudoStats.FrostDamageDealtMultiplier /= cinderBonusCoeff
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if !spellEffect.Outcome.Matches(core.OutcomeLanded) {
+					return
+				}
+
+				shouldConsume := false
+				for _, consumeSpell := range consumeSpells {
+					if spell.ActionID.SameAction(consumeSpell) {
+						shouldConsume = true
+						break
+					}
+				}
+
+				if shouldConsume {
+					aura.RemoveStack(sim)
+				}
+			},
+		})
+
+		core.MakePermanent(character.GetOrRegisterAura(core.Aura{
+			Label: "Rune of Cinderglacier",
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if !spellEffect.Landed() {
+					return
+				}
+
+				if mh && !oh {
+					if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeMH) {
+						return
+					}
+				} else if oh && !mh {
+					if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeOH) {
+						return
+					}
+				} else if mh && oh {
+					if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+						return
+					}
+				}
+
+				if ppmm.Proc(sim, spellEffect.ProcMask, "rune of cinderglacier") {
+					cinderProcAura.Activate(sim)
+				}
+			},
+		}))
+	})
+
+	// Sigils
+
 	core.NewItemEffect(40715, func(agent core.Agent) {
 		dk := agent.(DeathKnightAgent).GetDeathKnight()
 		procAura := dk.NewTemporaryStatsAura("Sigil of Haunted Dreams Proc", core.ActionID{ItemID: 40715}, stats.Stats{stats.MeleeCrit: 173.0, stats.SpellCrit: 173.0}, time.Second*10)

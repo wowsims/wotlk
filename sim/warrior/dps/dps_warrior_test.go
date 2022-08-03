@@ -52,7 +52,7 @@ func TestArms(t *testing.T) {
 
 		GearSet: core.GearSetCombo{Label: "Arms P1", GearSet: FuryP1Gear},
 
-		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsArmsSlam},
+		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsArms},
 
 		RaidBuffs:   FullRaidBuffs,
 		PartyBuffs:  FullPartyBuffs,
