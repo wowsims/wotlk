@@ -100,7 +100,8 @@ func (dk *Deathknight) registerFrostStrikeSpell() {
 }
 
 func (dk *Deathknight) CanFrostStrike(sim *core.Simulation) bool {
-	return dk.CastCostPossible(sim, 40.0, 0, 0, 0) && dk.FrostStrike.IsReady(sim)
+	runeCost := core.RuneCost(dk.FrostStrike.BaseCost)
+	return dk.CastCostPossible(sim, float64(runeCost.RunicPower()), 0, 0, 0) && dk.FrostStrike.IsReady(sim)
 }
 
 func (dk *Deathknight) CastFrostStrike(sim *core.Simulation, target *core.Unit) bool {

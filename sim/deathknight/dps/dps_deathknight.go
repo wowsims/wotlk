@@ -67,7 +67,11 @@ func (dk *DpsDeathknight) SetupRotations() {
 			dk.setupFrostSubBloodNoERWOpener()
 		}
 	} else if dk.Talents.BloodCakedBlade > 0 && dk.Talents.HowlingBlast {
-		dk.setupFrostSubUnholyOpener()
+		if dk.Rotation.UseEmpowerRuneWeapon {
+			dk.setupFrostSubUnholyERWOpener()
+		} else {
+			dk.setupFrostSubUnholyNoERWOpener()
+		}
 	} else if dk.Talents.HowlingBlast {
 		if dk.Rotation.UseEmpowerRuneWeapon {
 			dk.setupFrostSubBloodERWOpener()
