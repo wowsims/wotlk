@@ -193,7 +193,7 @@ setup:
 
 # Host a local server, for dev testing
 .PHONY: host
-host: $(OUT_DIR) node_modules
+host: $(OUT_DIR)/.dirstamp node_modules
 	# Intentionally serve one level up, so the local site has 'wotlk' as the first
 	# directory just like github pages.
 	npx http-server $(OUT_DIR)/..
