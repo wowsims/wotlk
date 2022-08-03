@@ -215,8 +215,10 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBloodPrioRotation(sim *
 	frostGracePeriod := dk.CurrentFrostRuneGrace(sim)
 	unholyGracePeriod := dk.CurrentUnholyRuneGrace(sim)
 	currGCDCastsTillExpire := math.Floor(float64(core.MinDuration(ffExpiresAt, bpExpiresAt)-sim.CurrentTime) / float64(gcd))
+	//currBloodRunes := dk.CurrentBloodRunes()
 	currFrostRunes := dk.CurrentFrostRunes()
 	currUnholyRunes := dk.CurrentUnholyRunes()
+	//currDeathRunes := dk.CurrentDeathRunes()
 	spentFrostRuneAt := dk.SpentFrostRuneReadyAt(sim)
 	spentUnholyRuneAt := dk.SpentUnholyRuneReadyAt(sim)
 
@@ -224,7 +226,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBloodPrioRotation(sim *
 		casted = dk.CastHornOfWinter(sim, target)
 	} else if fr.nextSpell == dk.Pestilence {
 		casted = dk.FrostRotationCast(sim, target, dk.Pestilence)
-		if dk.LastCastOutcome.Matches(core.OutcomeLanded) {
+		if casted && dk.LastCastOutcome.Matches(core.OutcomeLanded) {
 			fr.nextSpell = nil
 		}
 	} else {
