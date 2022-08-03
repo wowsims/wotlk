@@ -19,6 +19,7 @@ import {
 
 import { actionColors } from './color_settings.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
+import { ResourceMerger } from '../core/resources/merger';
 
 declare var $: any;
 declare var tippy: any;
@@ -204,7 +205,7 @@ export class Timeline extends ResultComponent {
 			} catch (e) {
 				console.log("Failed to update rotation chart: ", e);
 			}
-			
+
 
 			const dpsData = this.addDpsSeries(player, options, '');
 			this.addDpsYAxis(dpsData.maxDps, options);
@@ -469,14 +470,24 @@ export class Timeline extends ResultComponent {
 		const target = targets[0];
 
 		this.clearRotationChart();
-		
+
 		try {
 			this.drawRotationTimeRuler(this.rotationTimeline.getElementsByClassName('rotation-timeline-canvas')[0] as HTMLCanvasElement, duration);
-		} catch (e){
+		} catch (e) {
 			console.log("Failed to draw rotation: ", e);
 		}
 
-		orderedResourceTypes.forEach(resourceType => this.addResourceRow(resourceType, player.groupedResourceLogs[resourceType], duration));
+		const runeTypes = [
+			ResourceType.ResourceTypeBloodRune,
+			ResourceType.ResourceTypeFrostRune,
+			ResourceType.ResourceTypeUnholyRune,
+			ResourceType.ResourceTypeDeathRune
+		];
+		const resourceMerger = new ResourceMerger(runeTypes, ResourceType.ResourceTypeBloodRune);
+		const runeMergedResources = resourceMerger.mergeResources(player.groupedResourceLogs);
+		for (const resourceType of orderedResourceTypes) {
+			this.addResourceRow(resourceType, runeMergedResources[resourceType], duration);
+		}
 
 		const buffsById = Object.values(bucket(player.auraUptimeLogs, log => log.actionId!.toString()));
 		buffsById.sort((a, b) => stringComparator(a[0].actionId!.name, b[0].actionId!.name));
