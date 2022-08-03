@@ -13,7 +13,7 @@ type WarriorInputs struct {
 	PrecastShout         bool
 	PrecastShoutSapphire bool
 	PrecastShoutT2       bool
-	RampageCDThreshold   time.Duration
+	RendCdThreshold      time.Duration
 }
 
 type Warrior struct {
@@ -26,7 +26,7 @@ type Warrior struct {
 	// Current state
 	Stance              Stance
 	overpowerValidUntil time.Duration
-	rampageValidUntil   time.Duration
+	rendValidUntil      time.Duration
 	RevengeValidUntil   time.Duration
 	shoutExpiresAt      time.Duration
 
@@ -44,10 +44,10 @@ type Warrior struct {
 	DemoralizingShout    *core.Spell
 	Devastate            *core.Spell
 	Execute              *core.Spell
-	Hamstring            *core.Spell
 	MortalStrike         *core.Spell
 	Overpower            *core.Spell
 	Rampage              *core.Spell
+	Rend                 *core.Spell
 	Revenge              *core.Spell
 	ShieldBlock          *core.Spell
 	ShieldSlam           *core.Spell
@@ -56,17 +56,28 @@ type Warrior struct {
 	SunderArmorDevastate *core.Spell
 	ThunderClap          *core.Spell
 	Whirlwind            *core.Spell
+	DeepWounds           *core.Spell
+
+	RendDots             *core.Dot
+	DeepWoundsDots       []*core.Dot
+	DeepWoundsTickDamage []float64
 
 	HeroicStrikeOrCleave *core.Spell
 	HSOrCleaveQueueAura  *core.Aura
 	HSRageThreshold      float64
+	RendRageThreshold    float64
+	MsRageThreshold      float64
 
 	BattleStanceAura    *core.Aura
 	DefensiveStanceAura *core.Aura
 	BerserkerStanceAura *core.Aura
 
+	BloodsurgeAura  *core.Aura
+	SuddenDeathAura *core.Aura
+
 	DemoralizingShoutAura *core.Aura
 	BloodFrenzyAuras      []*core.Aura
+	TraumaAuras           []*core.Aura
 	ExposeArmorAura       *core.Aura // Warriors don't cast this but they need to check it.
 	AcidSpitAura          *core.Aura // Warriors don't cast this but they need to check it.
 	RampageAura           *core.Aura
@@ -107,16 +118,15 @@ func (warrior *Warrior) Initialize() {
 	warrior.registerDemoralizingShoutSpell()
 	warrior.registerDevastateSpell()
 	warrior.registerExecuteSpell()
-	warrior.registerHamstringSpell()
-	warrior.registerMortalStrikeSpell(primaryTimer)
+	warrior.registerMortalStrikeSpell(primaryTimer, warrior.MsRageThreshold)
 	warrior.registerOverpowerSpell(overpowerRevengeTimer)
-	warrior.registerRampageSpell()
 	warrior.registerRevengeSpell(overpowerRevengeTimer)
 	warrior.registerShieldBlockSpell()
 	warrior.registerShieldSlamSpell(primaryTimer)
 	warrior.registerSlamSpell()
 	warrior.registerThunderClapSpell()
 	warrior.registerWhirlwindSpell()
+	warrior.RegisterRendSpell(warrior.RendRageThreshold)
 
 	warrior.SunderArmor = warrior.newSunderArmorSpell(false)
 	warrior.SunderArmorDevastate = warrior.newSunderArmorSpell(true)
@@ -124,11 +134,20 @@ func (warrior *Warrior) Initialize() {
 	warrior.shoutDuration = time.Duration(float64(time.Minute*2) * (1 + 0.1*float64(warrior.Talents.BoomingVoice)))
 
 	warrior.registerBloodrageCD()
+
+	warrior.DeepWoundsTickDamage = []float64{}
+	for i := int32(0); i < warrior.Env.GetNumTargets(); i++ {
+		warrior.DeepWoundsTickDamage = append(warrior.DeepWoundsTickDamage, 0)
+	}
+	warrior.DeepWoundsDots = []*core.Dot{}
+	for i := int32(0); i < warrior.Env.GetNumTargets(); i++ {
+		warrior.DeepWoundsDots = append(warrior.DeepWoundsDots, warrior.newDeepWoundsDot(warrior.Env.GetTargetUnit(i)))
+	}
 }
 
 func (warrior *Warrior) Reset(sim *core.Simulation) {
 	warrior.overpowerValidUntil = 0
-	warrior.rampageValidUntil = 0
+	warrior.rendValidUntil = 0
 	warrior.RevengeValidUntil = 0
 
 	warrior.shoutExpiresAt = 0

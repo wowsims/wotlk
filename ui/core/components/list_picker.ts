@@ -1,5 +1,5 @@
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
-import { arrayEquals, swap } from '/wotlk/core/utils.js';
+import { EventID, TypedEvent } from '../typed_event.js';
+import { arrayEquals, swap } from '../utils.js';
 
 import { Input, InputConfig } from './input.js';
 

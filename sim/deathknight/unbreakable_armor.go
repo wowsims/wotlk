@@ -31,11 +31,17 @@ func (dk *Deathknight) registerUnbreakableArmorSpell() {
 		},
 	})
 
-	dk.UnbreakableArmor = dk.RegisterSpell(core.SpellConfig{
-		ActionID: actionID,
-		Flags:    core.SpellFlagNoOnCastComplete,
-
+	baseCost := float64(core.NewRuneCost(10, 0, 1, 0, 0))
+	dk.UnbreakableArmor = dk.RegisterSpell(nil, core.SpellConfig{
+		ActionID:     actionID,
+		Flags:        core.SpellFlagNoOnCastComplete,
+		ResourceType: stats.RunicPower,
+		BaseCost:     baseCost,
 		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				Cost: baseCost,
+				// TODO: does not invoke the GCD?
+			},
 			CD: core.Cooldown{
 				Timer:    cdTimer,
 				Duration: cd,
@@ -44,12 +50,6 @@ func (dk *Deathknight) registerUnbreakableArmorSpell() {
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			dk.UnbreakableArmorAura.Activate(sim)
-			dk.UnbreakableArmorAura.Prioritize()
-
-			dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_F)
-			dk.Spend(sim, spell, dkSpellCost)
-			amountOfRunicPower := 10.0
-			dk.AddRunicPower(sim, amountOfRunicPower, dk.UnbreakableArmor.RunicPowerMetrics())
 		},
 	})
 }
@@ -60,8 +60,7 @@ func (dk *Deathknight) CanUnbreakableArmor(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastUnbreakableArmor(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanUnbreakableArmor(sim) {
-		dk.UnbreakableArmor.Cast(sim, target)
-		return true
+		return dk.UnbreakableArmor.Cast(sim, target)
 	}
 	return false
 }

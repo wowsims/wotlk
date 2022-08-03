@@ -1,45 +1,45 @@
-import { Class, Faction } from '/wotlk/core/proto/common.js';
-import { Consumes } from '/wotlk/core/proto/common.js';
-import { Enchant } from '/wotlk/core/proto/common.js';
-import { Encounter as EncounterProto } from '/wotlk/core/proto/common.js';
-import { EquipmentSpec } from '/wotlk/core/proto/common.js';
-import { Gem } from '/wotlk/core/proto/common.js';
-import { GemColor } from '/wotlk/core/proto/common.js';
-import { ItemQuality } from '/wotlk/core/proto/common.js';
-import { ItemSlot } from '/wotlk/core/proto/common.js';
-import { ItemSpec } from '/wotlk/core/proto/common.js';
-import { ItemType } from '/wotlk/core/proto/common.js';
-import { Item } from '/wotlk/core/proto/common.js';
-import { Profession } from '/wotlk/core/proto/common.js';
-import { Race } from '/wotlk/core/proto/common.js';
-import { RaidTarget } from '/wotlk/core/proto/common.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { Stat } from '/wotlk/core/proto/common.js';
-import { Raid as RaidProto } from '/wotlk/core/proto/api.js';
-import { PresetEncounter, PresetTarget } from '/wotlk/core/proto/api.js';
-import { ComputeStatsRequest, ComputeStatsResult } from '/wotlk/core/proto/api.js';
-import { GearListRequest, GearListResult } from '/wotlk/core/proto/api.js';
-import { RaidSimRequest, RaidSimResult } from '/wotlk/core/proto/api.js';
-import { SimOptions } from '/wotlk/core/proto/api.js';
-import { StatWeightsRequest, StatWeightsResult } from '/wotlk/core/proto/api.js';
-import { SimSettings as SimSettingsProto } from '/wotlk/core/proto/ui.js';
+import { Class, Faction } from './proto/common.js';
+import { Consumes } from './proto/common.js';
+import { Enchant } from './proto/common.js';
+import { Encounter as EncounterProto } from './proto/common.js';
+import { EquipmentSpec } from './proto/common.js';
+import { Gem } from './proto/common.js';
+import { GemColor } from './proto/common.js';
+import { ItemQuality } from './proto/common.js';
+import { ItemSlot } from './proto/common.js';
+import { ItemSpec } from './proto/common.js';
+import { ItemType } from './proto/common.js';
+import { Item } from './proto/common.js';
+import { Profession } from './proto/common.js';
+import { Race } from './proto/common.js';
+import { RaidTarget } from './proto/common.js';
+import { Spec } from './proto/common.js';
+import { Stat } from './proto/common.js';
+import { Raid as RaidProto } from './proto/api.js';
+import { PresetEncounter, PresetTarget } from './proto/api.js';
+import { ComputeStatsRequest, ComputeStatsResult } from './proto/api.js';
+import { GearListRequest, GearListResult } from './proto/api.js';
+import { RaidSimRequest, RaidSimResult } from './proto/api.js';
+import { SimOptions } from './proto/api.js';
+import { StatWeightsRequest, StatWeightsResult } from './proto/api.js';
+import { SimSettings as SimSettingsProto } from './proto/ui.js';
 
-import { EquippedItem } from '/wotlk/core/proto_utils/equipped_item.js';
-import { Gear } from '/wotlk/core/proto_utils/gear.js';
-import { SimResult } from '/wotlk/core/proto_utils/sim_result.js';
-import { Stats } from '/wotlk/core/proto_utils/stats.js';
-import { gemEligibleForSocket } from '/wotlk/core/proto_utils/gems.js';
-import { gemMatchesSocket } from '/wotlk/core/proto_utils/gems.js';
-import { SpecRotation } from '/wotlk/core/proto_utils/utils.js';
-import { SpecTalents } from '/wotlk/core/proto_utils/utils.js';
-import { SpecTypeFunctions } from '/wotlk/core/proto_utils/utils.js';
-import { specTypeFunctions } from '/wotlk/core/proto_utils/utils.js';
-import { SpecOptions } from '/wotlk/core/proto_utils/utils.js';
-import { specToClass } from '/wotlk/core/proto_utils/utils.js';
-import { specToEligibleRaces } from '/wotlk/core/proto_utils/utils.js';
-import { getEligibleItemSlots } from '/wotlk/core/proto_utils/utils.js';
-import { getEligibleEnchantSlots } from '/wotlk/core/proto_utils/utils.js';
-import { playerToSpec } from '/wotlk/core/proto_utils/utils.js';
+import { EquippedItem } from './proto_utils/equipped_item.js';
+import { Gear } from './proto_utils/gear.js';
+import { SimResult } from './proto_utils/sim_result.js';
+import { Stats } from './proto_utils/stats.js';
+import { gemEligibleForSocket } from './proto_utils/gems.js';
+import { gemMatchesSocket } from './proto_utils/gems.js';
+import { SpecRotation } from './proto_utils/utils.js';
+import { SpecTalents } from './proto_utils/utils.js';
+import { SpecTypeFunctions } from './proto_utils/utils.js';
+import { specTypeFunctions } from './proto_utils/utils.js';
+import { SpecOptions } from './proto_utils/utils.js';
+import { specToClass } from './proto_utils/utils.js';
+import { specToEligibleRaces } from './proto_utils/utils.js';
+import { getEligibleItemSlots } from './proto_utils/utils.js';
+import { getEligibleEnchantSlots } from './proto_utils/utils.js';
+import { playerToSpec } from './proto_utils/utils.js';
 
 import { Encounter } from './encounter.js';
 import { Player } from './player.js';
@@ -50,16 +50,16 @@ import { sum } from './utils.js';
 import { wait } from './utils.js';
 import { WorkerPool } from './worker_pool.js';
 
-import * as OtherConstants from '/wotlk/core/constants/other.js';
+import * as OtherConstants from './constants/other.js';
 
 export type RaidSimData = {
-	request: RaidSimRequest,
-	result: RaidSimResult,
+    request: RaidSimRequest,
+    result: RaidSimResult,
 };
 
 export type StatWeightsData = {
-	request: StatWeightsRequest,
-	result: StatWeightsResult,
+    request: StatWeightsRequest,
+    result: StatWeightsResult,
 };
 
 // Core Sim module which deals only with api types, no UI-related stuff.
@@ -533,10 +533,10 @@ export class Sim {
 }
 
 export class SimError extends Error {
-	readonly errorStr: string;
+    readonly errorStr: string;
 
-	constructor(errorStr: string) {
-		super(errorStr);
-		this.errorStr = errorStr;
-	}
+    constructor(errorStr: string) {
+        super(errorStr);
+        this.errorStr = errorStr;
+    }
 }

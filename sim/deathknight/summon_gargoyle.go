@@ -19,8 +19,8 @@ func (dk *Deathknight) registerSummonGargoyleCD() {
 		Duration: time.Second * 30,
 	})
 
-	baseCost := 60.0
-	dk.SummonGargoyle = dk.RegisterSpell(core.SpellConfig{
+	baseCost := float64(core.NewRuneCost(60.0, 0, 0, 0, 0))
+	dk.SummonGargoyle = dk.RegisterSpell(nil, core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 49206},
 
 		ResourceType: stats.RunicPower,
@@ -79,9 +79,11 @@ func (dk *Deathknight) CanSummonGargoyle(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastSummonGargoyle(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanSummonGargoyle(sim) {
-		dk.SummonGargoyle.Cast(sim, target)
-		dk.UpdateMajorCooldowns()
-		return true
+		res := dk.SummonGargoyle.Cast(sim, target)
+		if res {
+			dk.UpdateMajorCooldowns()
+		}
+		return res
 	}
 	return false
 }

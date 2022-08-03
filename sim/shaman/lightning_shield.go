@@ -13,7 +13,12 @@ const staticShockStackMultiplier = 2
 
 func (shaman *Shaman) registerLightningShieldSpell() *core.Spell {
 	actionID := core.ActionID{SpellID: 49281}
-	var proc = 0.02 * float64(shaman.Talents.StaticShock)
+
+	t9Bonus := false
+	if shaman.HasSetBonus(ItemSetThrallsBattlegear, 2) || shaman.HasSetBonus(ItemSetNobundosBattlegear, 2) {
+		t9Bonus = true
+	}
+	var proc = 0.02*float64(shaman.Talents.StaticShock) + core.TernaryFloat64(t9Bonus, 0.03, 0)
 
 	dmgMultBonus := 1.0
 

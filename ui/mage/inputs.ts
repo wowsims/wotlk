@@ -1,22 +1,22 @@
-import { IconPickerConfig } from '/wotlk/core/components/icon_picker.js';
-import { RaidTarget } from '/wotlk/core/proto/common.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { NO_TARGET } from '/wotlk/core/proto_utils/utils.js';
-import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
-import { Player } from '/wotlk/core/player.js';
-import { Sim } from '/wotlk/core/sim.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
-import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
-import { Target } from '/wotlk/core/target.js';
+import { IconPickerConfig } from '../core/components/icon_picker.js';
+import { RaidTarget } from '../core/proto/common.js';
+import { Spec } from '../core/proto/common.js';
+import { NO_TARGET } from '../core/proto_utils/utils.js';
+import { ActionId } from '../core/proto_utils/action_id.js';
+import { Player } from '../core/player.js';
+import { Sim } from '../core/sim.js';
+import { EventID, TypedEvent } from '../core/typed_event.js';
+import { IndividualSimUI } from '../core/individual_sim_ui.js';
+import { Target } from '../core/target.js';
 
-import { Mage, Mage_Rotation as MageRotation, MageTalents as MageTalents, Mage_Options as MageOptions } from '/wotlk/core/proto/mage.js';
-import { Mage_Rotation_Type as RotationType, Mage_Rotation_ArcaneRotation as ArcaneRotation, Mage_Rotation_FireRotation as FireRotation, Mage_Rotation_FrostRotation as FrostRotation, Mage_Rotation_AoeRotation as AoeRotation } from '/wotlk/core/proto/mage.js';
-import { Mage_Rotation_FireRotation_PrimarySpell as PrimaryFireSpell } from '/wotlk/core/proto/mage.js';
-import { Mage_Rotation_AoeRotation_Rotation as AoeRotationSpells } from '/wotlk/core/proto/mage.js';
-import { Mage_Rotation_ArcaneRotation_Filler as ArcaneFiller } from '/wotlk/core/proto/mage.js';
-import { Mage_Options_ArmorType as ArmorType } from '/wotlk/core/proto/mage.js';
+import { Mage, Mage_Rotation as MageRotation, MageTalents as MageTalents, Mage_Options as MageOptions } from '../core/proto/mage.js';
+import { Mage_Rotation_Type as RotationType, Mage_Rotation_ArcaneRotation as ArcaneRotation, Mage_Rotation_FireRotation as FireRotation, Mage_Rotation_FrostRotation as FrostRotation, Mage_Rotation_AoeRotation as AoeRotation } from '../core/proto/mage.js';
+import { Mage_Rotation_FireRotation_PrimarySpell as PrimaryFireSpell } from '../core/proto/mage.js';
+import { Mage_Rotation_AoeRotation_Rotation as AoeRotationSpells } from '../core/proto/mage.js';
+import { Mage_Rotation_ArcaneRotation_Filler as ArcaneFiller } from '../core/proto/mage.js';
+import { Mage_Options_ArmorType as ArmorType } from '../core/proto/mage.js';
 
-import * as InputHelpers from '/wotlk/core/components/input_helpers.js';
+import * as InputHelpers from '../core/components/input_helpers.js';
 import * as Presets from './presets.js';
 
 // Configuration for spec-specific UI elements on the settings tab.

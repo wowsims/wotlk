@@ -1,4 +1,4 @@
-import { Spec } from '/wotlk/core/proto/common.js';
+import { Spec } from '../core/proto/common.js';
 
 import {
 	DeathknightTalents as DeathKnightTalents,
@@ -7,9 +7,9 @@ import {
 	Deathknight_Rotation_DeathAndDecayPrio as DeathAndDecayPrio,
 	Deathknight_Rotation as DeathKnightRotation,
 	Deathknight_Options as DeathKnightOptions,
-} from '/wotlk/core/proto/deathknight.js';
+} from '../core/proto/deathknight.js';
 
-import * as InputHelpers from '/wotlk/core/components/input_helpers.js';
+import * as InputHelpers from '../core/components/input_helpers.js';
 import { Player } from '../core/player';
 import { TypedEvent } from '../core/typed_event';
 
@@ -75,6 +75,12 @@ export const SetDeathAndDecayPrio = InputHelpers.makeRotationEnumInput<Spec.Spec
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => player.changeEmitter,
 })
 
+export const UseEmpowerRuneWeapon = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
+	fieldName: 'useEmpowerRuneWeapon',
+	label: 'Empower Rune Weapon',
+	labelTooltip: 'Use Empower Rune Weapon in rotation.',
+});
+
 export const BloodTapGhoulFrenzy = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
 	fieldName: 'btGhoulFrenzy',
 	label: 'BT Ghoul Frenzy',
@@ -112,6 +118,7 @@ export const DeathKnightRotationConfig = {
 		SetFirstDisease,
 		UseArmyOfTheDead,
 		UseDeathAndDecay,
+		UseEmpowerRuneWeapon,
 		SetDeathAndDecayPrio,
 		BloodTapGhoulFrenzy,
 	],

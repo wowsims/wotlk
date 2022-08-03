@@ -1,7 +1,7 @@
-import { RaidSimRequest, RaidSimResult } from '/wotlk/core/proto/api.js';
-import { SimResult, SimResultFilter } from '/wotlk/core/proto_utils/sim_result.js';
-import { Component } from '/wotlk/core/components/component.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
+import { RaidSimRequest, RaidSimResult } from '../core/proto/api.js';
+import { SimResult, SimResultFilter } from '../core/proto_utils/sim_result.js';
+import { Component } from '../core/components/component.js';
+import { EventID, TypedEvent } from '../core/typed_event.js';
 
 import { ColorSettings } from './color_settings.js';
 

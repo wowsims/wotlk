@@ -41,7 +41,7 @@ func (shaman *Shaman) StormstrikeDebuffAura(target *core.Unit) *core.Aura {
 
 func (shaman *Shaman) newStormstrikeHitSpell(isMH bool) *core.Spell {
 	effect := core.SpellEffect{
-		DamageMultiplier: 1,
+		DamageMultiplier: core.TernaryFloat64(shaman.HasSetBonus(ItemSetWorldbreakerBattlegear, 2), 1.2, 1),
 		ThreatMultiplier: core.TernaryFloat64(shaman.Talents.SpiritWeapons, 0.7, 1),
 		OutcomeApplier:   shaman.OutcomeFuncMeleeSpecialCritOnly(shaman.DefaultMeleeCritMultiplier()),
 	}
@@ -82,6 +82,8 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 
 	manaMetrics := shaman.NewManaMetrics(core.ActionID{SpellID: 51522})
 
+	cooldownTime := time.Duration(core.TernaryFloat64(shaman.HasSetBonus(ItemSetGladiatorsEarthshaker, 4), 6, 8))
+
 	shaman.Stormstrike = shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    StormstrikeActionID,
 		SpellSchool: core.SpellSchoolPhysical,
@@ -98,7 +100,7 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    shaman.NewTimer(),
-				Duration: time.Second * 8,
+				Duration: time.Second * cooldownTime,
 			},
 		},
 

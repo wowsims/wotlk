@@ -505,3 +505,54 @@ func ApplyEffectFuncMultipleDamageCappedWotLK(baseEffects []SpellEffect) ApplySp
 		}
 	}
 }
+
+func ApplyEffectFuncWithOutcome(baseEffects []SpellEffect, onOutcome func(*Simulation, HitOutcome)) ApplySpellEffects {
+	if len(baseEffects) == 1 {
+		baseEffects[0].Validate()
+		if baseEffects[0].BaseDamage.Calculator == nil {
+			// Just a hit check.
+			return func(sim *Simulation, target *Unit, spell *Spell) {
+				effect := &baseEffects[0]
+				effect.Target = target
+				attackTable := spell.Unit.AttackTables[target.TableIndex]
+				effect.init(sim, spell)
+				effect.OutcomeApplier(sim, spell, effect, attackTable)
+				onOutcome(sim, effect.Outcome)
+				effect.finalize(sim, spell)
+			}
+		} else {
+			return func(sim *Simulation, target *Unit, spell *Spell) {
+				effect := &baseEffects[0]
+				effect.Target = target
+				attackTable := spell.Unit.AttackTables[target.TableIndex]
+				effect.init(sim, spell)
+				effect.Damage = effect.calculateBaseDamage(sim, spell)
+				effect.calcDamageSingle(sim, spell, attackTable)
+				onOutcome(sim, effect.Outcome)
+				effect.finalize(sim, spell)
+			}
+		}
+	} else {
+		for _, effect := range baseEffects {
+			effect.Validate()
+		}
+		return func(sim *Simulation, _ *Unit, spell *Spell) {
+			capMultiplier := math.Min(10.0/float64(len(baseEffects)), 1.0)
+			for i := range baseEffects {
+				effect := &baseEffects[i]
+				effect.init(sim, spell)
+				attackTable := spell.Unit.AttackTables[effect.Target.TableIndex]
+				effect.Damage = effect.calculateBaseDamage(sim, spell)
+				effect.Damage *= capMultiplier
+				effect.applyAttackerModifiers(sim, spell)
+				effect.applyResistances(sim, spell, attackTable)
+				effect.OutcomeApplier(sim, spell, effect, attackTable)
+				if i == 0 {
+					onOutcome(sim, effect.Outcome)
+				}
+				effect.applyTargetModifiers(sim, spell, attackTable)
+				effect.finalize(sim, spell)
+			}
+		}
+	}
+}

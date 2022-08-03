@@ -1,24 +1,24 @@
-import { RaidBuffs } from '/wotlk/core/proto/common.js';
-import { PartyBuffs } from '/wotlk/core/proto/common.js';
-import { IndividualBuffs } from '/wotlk/core/proto/common.js';
-import { Debuffs } from '/wotlk/core/proto/common.js';
-import { Class } from '/wotlk/core/proto/common.js';
-import { Consumes } from '/wotlk/core/proto/common.js';
-import { Encounter } from '/wotlk/core/proto/common.js';
-import { ItemSlot } from '/wotlk/core/proto/common.js';
-import { MobType } from '/wotlk/core/proto/common.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { Stat } from '/wotlk/core/proto/common.js';
-import { TristateEffect } from '/wotlk/core/proto/common.js'
-import { Player } from '/wotlk/core/player.js';
-import { Stats } from '/wotlk/core/proto_utils/stats.js';
-import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
+import { RaidBuffs } from '../core/proto/common.js';
+import { PartyBuffs } from '../core/proto/common.js';
+import { IndividualBuffs } from '../core/proto/common.js';
+import { Debuffs } from '../core/proto/common.js';
+import { Class } from '../core/proto/common.js';
+import { Consumes } from '../core/proto/common.js';
+import { Encounter } from '../core/proto/common.js';
+import { ItemSlot } from '../core/proto/common.js';
+import { MobType } from '../core/proto/common.js';
+import { Spec } from '../core/proto/common.js';
+import { Stat } from '../core/proto/common.js';
+import { TristateEffect } from '../core/proto/common.js'
+import { Player } from '../core/player.js';
+import { Stats } from '../core/proto_utils/stats.js';
+import { IndividualSimUI } from '../core/individual_sim_ui.js';
 
-import { Deathknight, Deathknight_Rotation as DeathKnightRotation, DeathknightTalents as DeathKnightTalents, Deathknight_Options as DeathKnightOptions } from '/wotlk/core/proto/deathknight.js';
+import { Deathknight, Deathknight_Rotation as DeathKnightRotation, DeathknightTalents as DeathKnightTalents, Deathknight_Options as DeathKnightOptions } from '../core/proto/deathknight.js';
 
-import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
-import * as OtherInputs from '/wotlk/core/components/other_inputs.js';
-import * as Tooltips from '/wotlk/core/constants/tooltips.js';
+import * as IconInputs from '../core/components/icon_inputs.js';
+import * as OtherInputs from '../core/components/other_inputs.js';
+import * as Tooltips from '../core/constants/tooltips.js';
 
 import * as DeathKnightInputs from './inputs.js';
 import * as Presets from './presets.js';
@@ -29,8 +29,8 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 			cssClass: 'deathknight-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"<p>Rotation logic is just hit things on CGD. It is not good don't take it as actual data.</p>\
-				<p>Damage multipliers are also likely to not be properly stacking until further beta testing.</p>\
+				"<p>Rotation logic is not fully tuned yet.</p>\
+				<p>There's currently a rotation bug in the non ERW frost rotation.</p>\
 				<p>Pet scaling is likely to not be properly working until further beta testing.</p>"
 			],
 
@@ -164,7 +164,6 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 				gear: [
 					Presets.P1_FROST_PRE_BIS_PRESET,
 					Presets.P1_FROST_BIS_PRESET,
-					Presets.P1_FROST_HITCAP_PRESET,
 					Presets.P1_UNHOLY_DW_BIS_PRESET,
 				],
 			},

@@ -1,8 +1,8 @@
-import { REPO_NAME } from '/wotlk/core/constants/other.js'
-import { RaidSimRequest, RaidSimResult } from '/wotlk/core/proto/api.js';
-import { DetailedResultsUpdate, SimRun, SimRunData } from '/wotlk/core/proto/ui.js';
-import { SimResult } from '/wotlk/core/proto_utils/sim_result.js';
-import { SimUI } from '/wotlk/core/sim_ui.js';
+import { REPO_NAME } from '../constants/other.js'
+import { RaidSimRequest, RaidSimResult } from '../proto/api.js';
+import { DetailedResultsUpdate, SimRun, SimRunData } from '../proto/ui.js';
+import { SimResult } from '../proto_utils/sim_result.js';
+import { SimUI } from '../sim_ui.js';
 
 import { Component } from './component.js';
 import { RaidSimResultsManager } from './raid_sim_action.js';

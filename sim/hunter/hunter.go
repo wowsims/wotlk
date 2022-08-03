@@ -39,8 +39,7 @@ type Hunter struct {
 	AmmoDPS         float64
 	AmmoDamageBonus float64
 
-	hasGronnstalker2Pc bool
-	currentAspect      *core.Aura
+	currentAspect *core.Aura
 
 	latency time.Duration
 
@@ -154,8 +153,6 @@ func NewHunter(character core.Character, options proto.Player) *Hunter {
 		Rotation:  *hunterOptions.Rotation,
 
 		latency: time.Millisecond * time.Duration(hunterOptions.Options.LatencyMs),
-
-		hasGronnstalker2Pc: character.HasSetBonus(ItemSetGronnstalker, 2),
 	}
 	hunter.EnableManaBar()
 

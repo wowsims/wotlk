@@ -1,15 +1,15 @@
-import { Consumes } from '/wotlk/core/proto/common.js';
-import { EquipmentSpec } from '/wotlk/core/proto/common.js';
-import { Flask } from '/wotlk/core/proto/common.js';
-import { Food } from '/wotlk/core/proto/common.js';
-import { Glyphs } from '/wotlk/core/proto/common.js';
-import { ItemSpec } from '/wotlk/core/proto/common.js';
-import { Potions } from '/wotlk/core/proto/common.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { WeaponImbue } from '/wotlk/core/proto/common.js';
-import { Faction } from '/wotlk/core/proto/common.js';
-import { SavedTalents } from '/wotlk/core/proto/ui.js';
-import { Player } from '/wotlk/core/player.js';
+import { Consumes } from '../core/proto/common.js';
+import { EquipmentSpec } from '../core/proto/common.js';
+import { Flask } from '../core/proto/common.js';
+import { Food } from '../core/proto/common.js';
+import { Glyphs } from '../core/proto/common.js';
+import { ItemSpec } from '../core/proto/common.js';
+import { Potions } from '../core/proto/common.js';
+import { Spec } from '../core/proto/common.js';
+import { WeaponImbue } from '../core/proto/common.js';
+import { Faction } from '../core/proto/common.js';
+import { SavedTalents } from '../core/proto/ui.js';
+import { Player } from '../core/player.js';
 
 import {
 	WarriorShout,
@@ -18,11 +18,11 @@ import {
 	Warrior_Rotation as WarriorRotation,
 	Warrior_Rotation_SunderArmor as SunderArmor,
 	Warrior_Options as WarriorOptions,
-} from '/wotlk/core/proto/warrior.js';
+} from '../core/proto/warrior.js';
 
-import * as Enchants from '/wotlk/core/constants/enchants.js';
-import * as Gems from '/wotlk/core/proto_utils/gems.js';
-import * as Tooltips from '/wotlk/core/constants/tooltips.js';
+import * as Enchants from '../core/constants/enchants.js';
+import * as Gems from '../core/proto_utils/gems.js';
+import * as Tooltips from '../core/constants/tooltips.js';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -30,79 +30,56 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
-export const ArmsSlamTalents = {
-	name: 'Arms Slam',
+export const ArmsTalents = {
+	name: 'Arms',
 	data: SavedTalents.create({
-		talentsString: '32003301352010500221-0550000500521203',
+		talentsString: '3022032023335100102012213231251-305-2033',
 	}),
 };
-export const ArmsDWTalents = {
-	name: 'Arms DW',
-	data: SavedTalents.create({
-		talentsString: '33005301302010510321-0550000520501203',
-	}),
-};
+
 export const FuryTalents = {
 	name: 'Fury',
 	data: SavedTalents.create({
-		talentsString: '3500501130201-05050005505012050115',
+		talentsString: '30202300233-325003101504310053120500351',
 	}),
 };
 
 export const DefaultRotation = WarriorRotation.create({
-	useOverpower: false,
-	useHamstring: true,
-	prioritizeWw: false,
+	useRend: true,
+	prioritizeWw: true,
 	sunderArmor: SunderArmor.SunderArmorMaintain,
-	hsRageThreshold: 60,
-	overpowerRageThreshold: 10,
-	hamstringRageThreshold: 75,
-	rampageCdThreshold: 5,
-	slamLatency: 150,
-	slamGcdDelay: 400,
-	slamMsWwDelay: 2000,
+	hsRageThreshold: 40,
+	rendRageThreshold: 75,
+	msRageThreshold: 60,
+	rendCdThreshold: 3,
 	useHsDuringExecute: true,
-	useMsDuringExecute: true,
 	useBtDuringExecute: true,
 	useWwDuringExecute: true,
-	useSlamDuringExecute: true,
+	useSlamOverExecute: true,
 });
 
 export const ArmsRotation = WarriorRotation.create({
-	useOverpower: false,
-	useHamstring: true,
-	useSlam: true,
-	prioritizeWw: false,
+	useRend: true,
+	useMs: true,
 	sunderArmor: SunderArmor.SunderArmorMaintain,
+	msRageThreshold: 60,
 	hsRageThreshold: 60,
-	overpowerRageThreshold: 10,
-	hamstringRageThreshold: 75,
-	rampageCdThreshold: 5,
-	slamLatency: 150,
-	slamGcdDelay: 400,
-	slamMsWwDelay: 2000,
+	rendCdThreshold: 3,
 	useHsDuringExecute: true,
-	useMsDuringExecute: true,
-	useBtDuringExecute: true,
-	useWwDuringExecute: true,
-	useSlamDuringExecute: true,
+	spamExecute: false,
+	maintainDemoShout: true,
 });
 
 export const DefaultOptions = WarriorOptions.create({
 	startingRage: 0,
 	useRecklessness: true,
 	shout: WarriorShout.WarriorShoutBattle,
-	precastShout: true,
-	precastShoutSapphire: false,
-	precastShoutT2: false,
 });
 
 export const DefaultConsumes = Consumes.create({
-	flask: Flask.FlaskOfRelentlessAssault,
-	food: Food.FoodRoastedClefthoof,
-	defaultPotion: Potions.HastePotion,
-	mainHandImbue: WeaponImbue.WeaponImbueAdamantiteSharpeningStone,
-	offHandImbue: WeaponImbue.WeaponImbueAdamantiteSharpeningStone,
+	flask: Flask.FlaskOfEndlessRage,
+	food: Food.FoodHeartyRhino,
+	defaultPotion: Potions.IndestructiblePotion,
 });
 
 export const P1_FURY_PRESET = {

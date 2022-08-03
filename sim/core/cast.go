@@ -158,11 +158,24 @@ func (spell *Spell) wrapCastFuncResources(config CastConfig, onCastComplete Cast
 		}
 	case stats.RunicPower:
 		return func(sim *Simulation, target *Unit) bool {
-			spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
-			if spell.Unit.runicPowerBar.CurrentRunicPower() < spell.CurCast.Cost {
-				return false
+			// Rune spending is currently handled in DK codebase.
+			// This verifies that the user has the resources but does not spend.
+			if spell.CurCast.Cost != 0 {
+				cost := RuneCost(spell.CurCast.Cost)
+				if !cost.HasRune() {
+					if float64(cost.RunicPower()) > spell.Unit.CurrentRunicPower() {
+						return false
+					}
+				} else {
+					// Given cost might not be what is actually paid.
+					//  Calculate what combination of runes can actually pay for this spell.
+					optCost := spell.Unit.OptimalRuneCost(cost)
+					if optCost == 0 { // no combo of runes to fulfill cost
+						return false
+					}
+					spell.CurCast.Cost = float64(optCost) // assign chosen runes to the cost
+				}
 			}
-			spell.Unit.runicPowerBar.SpendRunicPower(sim, spell.CurCast.Cost, spell.ResourceMetrics)
 			onCastComplete(sim, target)
 			return true
 		}
