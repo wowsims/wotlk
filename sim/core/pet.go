@@ -14,6 +14,7 @@ type PetAgent interface {
 
 	// The Pet controlled by this PetAgent.
 	GetPet() *Pet
+	OwnerAttackSpeedChanged(sim *Simulation)
 }
 
 type OnPetEnable func(sim *Simulation)
@@ -84,6 +85,9 @@ func NewPet(name string, owner *Character, baseStats stats.Stats, statInheritanc
 
 	return pet
 }
+
+// Add a default base if pets dont need this
+func (pet *Pet) OwnerAttackSpeedChanged(sim *Simulation) {}
 
 // Updates the stats for this pet in response to a stat change on the owner.
 // addedStats is the amount of stats added to the owner (will be negative if the

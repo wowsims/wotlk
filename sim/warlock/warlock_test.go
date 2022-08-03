@@ -11,16 +11,21 @@ func init() {
 	RegisterWarlock()
 }
 
-func TestDestruction(t *testing.T) {
+func TestWarlock(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
 		Class: proto.Class_ClassWarlock,
 
-		Race:       proto.Race_RaceBloodElf,
-		OtherRaces: []proto.Race{proto.Race_RaceHuman, proto.Race_RaceGnome, proto.Race_RaceOrc, proto.Race_RaceUndead},
+		Race: proto.Race_RaceOrc,
 
-		GearSet: core.GearSetCombo{Label: "P4", GearSet: Phase4Gear},
+		GearSet: core.GearSetCombo{Label: "P1", GearSet: P1Gear},
 
-		SpecOptions: core.SpecOptionsCombo{Label: "Destro Warlock", SpecOptions: DefaultDestroWarlock},
+		SpecOptions: core.SpecOptionsCombo{Label: "Affliction Warlock", SpecOptions: DefaultAfflictionWarlock},
+		OtherSpecOptions: []core.SpecOptionsCombo{
+			core.SpecOptionsCombo{Label: "Demonology Warlock", SpecOptions: DefaultDemonologyWarlock},
+			core.SpecOptionsCombo{Label: "Destro Warlock", SpecOptions: DefaultDestroWarlock},
+		},
+
+		Glyphs: defaultAfflictionGlyphs,
 
 		RaidBuffs:   FullRaidBuffs,
 		PartyBuffs:  FullPartyBuffs,

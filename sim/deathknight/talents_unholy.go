@@ -30,9 +30,6 @@ func (dk *Deathknight) ApplyUnholyTalents() {
 	// Unholy Blight
 	dk.applyUnholyBlight()
 
-	// Reaping
-	dk.applyReaping()
-
 	// Impurity
 	dk.applyImpurity()
 
@@ -86,7 +83,7 @@ func (dk *Deathknight) applyWanderingPlague() {
 
 	wanderingPlagueMultiplier := []float64{0.0, 0.33, 0.66, 1.0}[dk.Talents.WanderingPlague]
 
-	dk.WanderingPlague = dk.RegisterSpell(core.SpellConfig{
+	dk.WanderingPlague = dk.Unit.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 		Flags:       core.SpellFlagNone,
@@ -94,12 +91,12 @@ func (dk *Deathknight) applyWanderingPlague() {
 		ApplyEffects: core.ApplyEffectFuncAOEDamage(dk.Env, core.SpellEffect{
 			ProcMask: core.ProcMaskSpellDamage,
 
-			DamageMultiplier: 1,
+			DamageMultiplier: wanderingPlagueMultiplier,
 			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
-					return dk.LastDiseaseDamage * wanderingPlagueMultiplier
+					return dk.LastDiseaseDamage
 				},
 			},
 			OutcomeApplier: dk.OutcomeFuncAlwaysHit(),
@@ -114,7 +111,7 @@ func (dk *Deathknight) applyNecrosis() {
 
 	var curDmg float64
 	necrosisCoeff := 0.04 * float64(dk.Talents.Necrosis)
-	necrosisHit := dk.RegisterSpell(core.SpellConfig{
+	necrosisHit := dk.Unit.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 51460},
 		SpellSchool: core.SpellSchoolShadow,
 		Flags:       core.SpellFlagNone,
@@ -122,12 +119,12 @@ func (dk *Deathknight) applyNecrosis() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskSpellDamage,
 
-			DamageMultiplier: 1,
+			DamageMultiplier: necrosisCoeff,
 			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
-					return curDmg * necrosisCoeff
+					return curDmg
 				},
 			},
 			OutcomeApplier: dk.OutcomeFuncAlwaysHit(),
@@ -186,7 +183,7 @@ func (dk *Deathknight) bloodCakedBladeHit(isMh bool) *core.Spell {
 		procMask = core.ProcMaskMeleeMHSpecial
 	}
 
-	return dk.RegisterSpell(core.SpellConfig{
+	return dk.Unit.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 50463}.WithTag(core.TernaryInt32(isMh, 1, 2)),
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
@@ -304,7 +301,7 @@ func (dk *Deathknight) applyUnholyBlight() {
 
 	actionID := core.ActionID{SpellID: 50536}
 
-	dk.UnholyBlightSpell = dk.RegisterSpell(core.SpellConfig{
+	dk.UnholyBlightSpell = dk.Unit.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
@@ -328,27 +325,4 @@ func (dk *Deathknight) applyUnholyBlight() {
 			TickLength:    time.Second * 1,
 		})
 	}
-}
-
-func (dk *Deathknight) applyReaping() {
-	dk.bonusCoeffs.reapingChance = []float64{0.0, 0.33, 0.66, 1.0}[dk.Talents.Reaping]
-}
-
-func (dk *Deathknight) reapingWillProc(sim *core.Simulation) bool {
-	ohWillCast := sim.RandomFloat("Reaping") <= dk.bonusCoeffs.reapingChance
-	return ohWillCast
-}
-
-func (dk *Deathknight) reapingProc(sim *core.Simulation, spell *core.Spell, runeCost core.RuneAmount) bool {
-	if dk.Talents.Reaping > 0 {
-		if runeCost.Blood > 0 {
-			if dk.reapingWillProc(sim) {
-				slot := dk.SpendBloodRune(sim, spell.BloodRuneMetrics())
-				dk.SetRuneAtIdxSlotToState(0, slot, core.RuneState_DeathSpent, core.RuneKind_Death)
-				dk.SetAsGeneratedByReapingOrBoTN(slot)
-				return true
-			}
-		}
-	}
-	return false
 }

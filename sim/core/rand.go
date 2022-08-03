@@ -8,6 +8,8 @@ import (
 type Rand interface {
 	Next() uint64
 	NextFloat64() float64
+	Seed(int64)
+	GetSeed() int64
 }
 
 // wraps go's default source; will panic if it's not a Source64
@@ -28,12 +30,13 @@ func (g GoRand) NextFloat64() float64 {
 }
 
 func NewSplitMix(seed uint64) *SplitMix64 {
-	return &SplitMix64{state: seed}
+	return &SplitMix64{state: seed, start: seed}
 }
 
 // adapted from https://prng.di.unimi.it/splitmix64.c
 type SplitMix64 struct {
 	state uint64
+	start uint64 // track starting seed
 }
 
 func (sm *SplitMix64) Next() uint64 {
@@ -46,4 +49,13 @@ func (sm *SplitMix64) Next() uint64 {
 
 func (sm *SplitMix64) NextFloat64() float64 {
 	return float64(sm.Next()>>11) * 0x1p-53
+}
+
+func (sm *SplitMix64) Seed(s int64) {
+	sm.start = uint64(s)
+	sm.state = uint64(s)
+}
+
+func (sm *SplitMix64) GetSeed() int64 {
+	return int64(sm.start)
 }

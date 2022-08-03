@@ -50,7 +50,7 @@ func (dk *Deathknight) registerFrostFever() {
 	flagTs := make([]bool, dk.Env.GetNumTargets())
 	isRefreshing := make([]bool, dk.Env.GetNumTargets())
 
-	dk.FrostFeverSpell = dk.RegisterSpell(core.SpellConfig{
+	dk.FrostFeverSpell = dk.RegisterSpell(nil, core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolFrost,
 		Flags:       core.SpellFlagDisease,
@@ -109,7 +109,7 @@ func (dk *Deathknight) registerFrostFever() {
 			}),
 		})
 
-		dk.FrostFeverDisease[target.Index].Spell = dk.FrostFeverSpell
+		dk.FrostFeverDisease[target.Index].Spell = dk.FrostFeverSpell.Spell
 	}
 }
 
@@ -119,7 +119,7 @@ func (dk *Deathknight) registerBloodPlague() {
 	flagRor := make([]bool, dk.Env.GetNumTargets())
 	isRefreshing := make([]bool, dk.Env.GetNumTargets())
 
-	dk.BloodPlagueSpell = dk.RegisterSpell(core.SpellConfig{
+	dk.BloodPlagueSpell = dk.RegisterSpell(nil, core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 		Flags:       core.SpellFlagDisease,
@@ -179,7 +179,7 @@ func (dk *Deathknight) registerBloodPlague() {
 			}),
 		})
 
-		dk.BloodPlagueDisease[target.Index].Spell = dk.BloodPlagueSpell
+		dk.BloodPlagueDisease[target.Index].Spell = dk.BloodPlagueSpell.Spell
 	}
 }
 
@@ -192,8 +192,13 @@ func (dk *Deathknight) doWanderingPlague(sim *core.Simulation, spell *core.Spell
 		return
 	}
 
+	if dk.LastTickTime == sim.CurrentTime {
+		return
+	}
+
 	physCritChance := spellEffect.PhysicalCritChance(spell.Unit, spell, dk.AttackTables[spellEffect.Target.TableIndex])
 	if sim.RandomFloat("Wandering Plague Roll") < physCritChance {
+		dk.LastTickTime = sim.CurrentTime
 		dk.LastDiseaseDamage = spellEffect.Damage
 		dk.WanderingPlague.Cast(sim, spellEffect.Target)
 	}
