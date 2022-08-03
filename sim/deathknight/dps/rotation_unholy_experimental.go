@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
@@ -18,11 +19,21 @@ func (dk *DpsDeathknight) dndStartOpener() {
 		NewAction(dk.RotationActionCallback_UP).
 		NewAction(dk.RotationActionCallback_Garg).
 		NewAction(dk.RotationAction_CancelBT).
-		NewAction(dk.RotationActionCallback_ERW).
-		NewAction(dk.RotationActionCallback_BP).
-		NewAction(dk.RotationActionCallback_IT).
-		NewAction(dk.RotationActionCallback_PS).
-		NewAction(dk.RotationActionCallback_BS).
+		NewAction(dk.RotationActionCallback_ERW)
+
+	if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd {
+		dk.Opener.
+			NewAction(dk.RotationActionCallback_AOTD).
+			NewAction(dk.RotationActionCallback_BP)
+	} else {
+		dk.Opener.
+			NewAction(dk.RotationActionCallback_BP).
+			NewAction(dk.RotationActionCallback_IT).
+			NewAction(dk.RotationActionCallback_PS).
+			NewAction(dk.RotationActionCallback_BS)
+	}
+
+	dk.Opener.
 		NewAction(dk.RotationActionCallback_IT).
 		NewAction(dk.RotationActionCallback_GF).
 		NewAction(dk.RotationAction_DC_Custom).

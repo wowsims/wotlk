@@ -81,10 +81,30 @@ func (dk *DpsDeathknight) setupUnholyDndOpener() {
 	}
 }
 
+func (dk *DpsDeathknight) afterGargoyleOpener(sim *core.Simulation) {
+	if dk.EmpowerRuneWeapon.IsReady(sim) {
+		if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd {
+			dk.Main.Clear().
+				NewAction(dk.RotationAction_CancelBT).
+				NewAction(dk.RotationActionCallback_ERW).
+				NewAction(dk.RotationActionCallback_AOTD).
+				NewAction(dk.RotationActionCallback_BP).
+				NewAction(dk.RotationAction_ResetToDndMain)
+		} else {
+			dk.Main.Clear().NewAction(dk.RotationActionCallback_UnholyDndRotation)
+		}
+	}
+}
+
 func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
+	if !dk.GCD.IsReady(sim) {
+		dk.WaitUntil(sim, dk.GCD.ReadyAt())
+		return true
+	}
 	casted := false
 
 	if dk.uhGargoyleCheck(sim, target) {
+		dk.afterGargoyleOpener(sim)
 		return true
 	}
 
