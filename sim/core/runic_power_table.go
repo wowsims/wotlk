@@ -4109,11 +4109,11 @@ var OptCostCache = [][]uint8{
 	{64, 64, 64, 128, 192},
 }
 
-func (rp *runicPowerBar) getOptCostConfIdx() int {
+func (rp *RunicPowerBar) getOptCostConfIdx() int {
 	return int(rp.bloodRunes[0].state) + int(rp.bloodRunes[1].state)*4 + int(rp.frostRunes[0].state)*16 + int(rp.frostRunes[1].state)*64 + int(rp.unholyRunes[0].state)*256 + int(rp.unholyRunes[1].state)*1024
 }
 
-func (rp *runicPowerBar) DetermineCost(sim *Simulation, costEnum DKCastEnum) RuneAmount {
+func (rp *RunicPowerBar) DetermineCost(sim *Simulation, costEnum DKCastEnum) RuneAmount {
 	confIdx := rp.getOptCostConfIdx()
 	costUint8 := OptCostCache[confIdx][costEnum]
 	blood := int(costUint8 & 3)
