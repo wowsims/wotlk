@@ -212,17 +212,14 @@ func (dk *Deathknight) Wait(sim *core.Simulation) {
 func (dk *Deathknight) DoRotation(sim *core.Simulation) {
 	target := dk.CurrentTarget
 
+	casted := false
 	if dk.Opener.IsOngoing() {
-		if !dk.Opener.DoAction(sim, target, dk) {
-			dk.Wait(sim)
-		}
-	} else {
-		if dk.Main.IsOngoing() {
-			if !dk.Main.DoAction(sim, target, dk) {
-				dk.Wait(sim)
-			}
-		} else {
-			dk.Wait(sim)
-		}
+		casted = dk.Opener.DoAction(sim, target, dk)
+	} else if dk.Main.IsOngoing() {
+		casted = dk.Main.DoAction(sim, target, dk)
+	}
+
+	if !casted || (dk.GCD.IsReady(sim) && !dk.IsWaiting()) {
+		dk.Wait(sim)
 	}
 }
