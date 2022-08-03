@@ -1,7 +1,7 @@
-import { Race } from '/wotlk/core/proto/common.js';
-import { specToEligibleRaces } from '/wotlk/core/proto_utils/utils.js';
-import { raceNames } from '/wotlk/core/proto_utils/names.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
+import { Race } from '../proto/common.js';
+import { specToEligibleRaces } from '../proto_utils/utils.js';
+import { raceNames } from '../proto_utils/names.js';
+import { EventID, TypedEvent } from '../typed_event.js';
 
 import { Input, InputConfig } from './input.js';
 

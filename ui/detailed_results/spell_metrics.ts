@@ -1,6 +1,6 @@
-import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
-import { ActionMetrics, SimResult, SimResultFilter } from '/wotlk/core/proto_utils/sim_result.js';
-import { bucket } from '/wotlk/core/utils.js';
+import { ActionId } from '../core/proto_utils/action_id.js';
+import { ActionMetrics, SimResult, SimResultFilter } from '../core/proto_utils/sim_result.js';
+import { bucket } from '../core/utils.js';
 
 import { ColumnSortType, MetricsTable } from './metrics_table.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';

@@ -1,20 +1,20 @@
-import { StatWeightsRequest, StatWeightsResult, StatWeightValues, ProgressMetrics } from '/wotlk/core/proto/api.js';
-import { ItemSlot } from '/wotlk/core/proto/common.js';
-import { Gem } from '/wotlk/core/proto/common.js';
-import { GemColor } from '/wotlk/core/proto/common.js';
-import { Stat } from '/wotlk/core/proto/common.js';
-import { Stats } from '/wotlk/core/proto_utils/stats.js';
-import { Gear } from '/wotlk/core/proto_utils/gear.js';
-import { gemMatchesSocket, getMetaGemCondition } from '/wotlk/core/proto_utils/gems.js';
-import { statNames, statOrder } from '/wotlk/core/proto_utils/names.js';
-import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
-import { Player } from '/wotlk/core/player.js';
-import { stDevToConf90 } from '/wotlk/core/utils.js';
-import { BooleanPicker } from '/wotlk/core/components/boolean_picker.js';
-import { NumberPicker } from '/wotlk/core/components/number_picker.js';
-import { ResultsViewer } from '/wotlk/core/components/results_viewer.js';
-import { getEnumValues, maxIndex, sum } from '/wotlk/core/utils.js';
+import { StatWeightsRequest, StatWeightsResult, StatWeightValues, ProgressMetrics } from '../proto/api.js';
+import { ItemSlot } from '../proto/common.js';
+import { Gem } from '../proto/common.js';
+import { GemColor } from '../proto/common.js';
+import { Stat } from '../proto/common.js';
+import { Stats } from '../proto_utils/stats.js';
+import { Gear } from '../proto_utils/gear.js';
+import { gemMatchesSocket, getMetaGemCondition } from '../proto_utils/gems.js';
+import { statNames, statOrder } from '../proto_utils/names.js';
+import { IndividualSimUI } from '../individual_sim_ui.js';
+import { EventID, TypedEvent } from '../typed_event.js';
+import { Player } from '../player.js';
+import { stDevToConf90 } from '../utils.js';
+import { BooleanPicker } from '../components/boolean_picker.js';
+import { NumberPicker } from '../components/number_picker.js';
+import { ResultsViewer } from '../components/results_viewer.js';
+import { getEnumValues, maxIndex, sum } from '../utils.js';
 
 import { Popup } from './popup.js';
 
