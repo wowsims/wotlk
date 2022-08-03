@@ -7,6 +7,8 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+var IcyTouchActionID = core.ActionID{SpellID: 59131}
+
 func (dk *Deathknight) registerIcyTouchSpell() {
 	dk.FrostFeverDebuffAura = make([]*core.Aura, dk.Env.GetNumTargets())
 	for _, encounterTarget := range dk.Env.Encounter.Targets {
@@ -23,7 +25,7 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 
 	rs := &RuneSpell{}
 	dk.IcyTouch = dk.RegisterSpell(rs, core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 59131},
+		ActionID:     IcyTouchActionID,
 		SpellSchool:  core.SpellSchoolFrost,
 		ResourceType: stats.RunicPower,
 		BaseCost:     baseCost,
