@@ -30,13 +30,17 @@ type UnholyRotation struct {
 	procTrackers []*ProcTracker
 }
 
-func (ur *UnholyRotation) addProc(id int32, label string) {
+func (ur *UnholyRotation) addProc(id int32, label string) bool {
+	if !ur.dk.HasAura(label) {
+		return false
+	}
 	ur.procTrackers = append(ur.procTrackers, &ProcTracker{
 		id:          id,
 		didActivate: false,
 		expiresAt:   -1,
 		aura:        ur.dk.GetAura(label),
 	})
+	return true
 }
 
 func (ur *UnholyRotation) resetProcTrackers() {
@@ -70,6 +74,11 @@ func (dk *DpsDeathknight) initProcTrackers() {
 		dk.ur.addProc(40684, "Mirror of Truth Proc")
 	}
 
+	// DMC: Greatness
+	if dk.HasTrinketEquipped(42987) {
+		dk.ur.addProc(42987, "DMC Greatness Strength Proc")
+	}
+
 	// Thundering Skyflare Diamond
 	if dk.HasMetaGemEquipped(41400) {
 		dk.ur.addProc(55379, "Thundering Skyflare Diamond Proc")
@@ -86,8 +95,12 @@ func (dk *DpsDeathknight) initProcTrackers() {
 	}
 
 	// Hyperspeed Acceleration
-	if dk.Equip[proto.ItemSlot_ItemSlotHands].Enchant.ID == 54758 {
-		dk.ur.addProc(54758, "Hyperspeed Acceleration Proc")
+	if dk.Equip[proto.ItemSlot_ItemSlotHands].Enchant.ID == 54999 {
+		dk.ur.addProc(54999, "Hyperspeed Acceleration")
+	}
+
+	if dk.Race == proto.Race_RaceTroll {
+		dk.ur.addProc(26297, "Berserking (Troll)")
 	}
 }
 
@@ -246,7 +259,7 @@ func (dk *DpsDeathknight) uhGargoyleCanCast(sim *core.Simulation) bool {
 	if !dk.SummonGargoyle.IsReady(sim) {
 		return false
 	}
-	if dk.CurrentRunicPower() < float64(core.RuneCost(dk.SummonGargoyle.DefaultCast.Cost).RunicPower()) {
+	if !dk.CastCostPossible(sim, 60.0, 0, 0, 0) {
 		return false
 	}
 	if !dk.PresenceMatches(deathknight.UnholyPresence) && !dk.CanBloodTap(sim) {
@@ -259,7 +272,12 @@ func (dk *DpsDeathknight) uhGargoyleCanCast(sim *core.Simulation) bool {
 	return true
 }
 
-// Oh boi...
+func logMessage(sim *core.Simulation, message string) {
+	if sim.Log != nil {
+		sim.Log(message)
+	}
+}
+
 func (dk *DpsDeathknight) GargoyleProcCheck(sim *core.Simulation) bool {
 	for _, procTracker := range dk.ur.procTrackers {
 		if !procTracker.didActivate && procTracker.aura.IsActive() {
@@ -269,6 +287,7 @@ func (dk *DpsDeathknight) GargoyleProcCheck(sim *core.Simulation) bool {
 
 		// A proc is about to drop
 		if procTracker.didActivate && procTracker.expiresAt < sim.CurrentTime+dk.SpellGCD() {
+			logMessage(sim, "Proc dropping "+procTracker.aura.Label)
 			return false
 		}
 	}

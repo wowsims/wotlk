@@ -44,25 +44,12 @@ func (dk *DpsDeathknight) setupUnholySsOpener() {
 		NewAction(dk.RotationActionCallback_UP).
 		NewAction(dk.RotationActionCallback_Garg).
 		NewAction(dk.RotationAction_CancelBT).
-		NewAction(dk.RotationActionCallback_ERW).
-		NewAction(dk.RotationActionCallback_BP)
+		NewAction(dk.RotationActionCallback_ERW)
 
-	dk.Main.NewAction(dk.RotationActionCallback_UnholySsRotation)
-}
-
-func (dk *DpsDeathknight) setupUnholySsArmyOpener() {
-	dk.Opener.
-		NewAction(dk.getFirstDiseaseAction()).
-		NewAction(dk.getSecondDiseaseAction()).
-		NewAction(dk.getBloodRuneAction(true)).
-		NewAction(dk.RotationActionCallback_SS).
-		NewAction(dk.RotationActionCallback_BT).
-		NewAction(dk.RotationActionCallback_UP).
-		NewAction(dk.RotationActionCallback_Garg).
-		NewAction(dk.RotationAction_CancelBT).
-		NewAction(dk.RotationActionCallback_ERW).
-		NewAction(dk.RotationActionCallback_AOTD).
-		NewAction(dk.RotationActionCallback_BP)
+	if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd {
+		dk.Opener.NewAction(dk.RotationActionCallback_AOTD)
+	}
+	dk.Opener.NewAction(dk.RotationActionCallback_BP)
 
 	dk.Main.NewAction(dk.RotationActionCallback_UnholySsRotation)
 }
@@ -81,10 +68,22 @@ func (dk *DpsDeathknight) setupUnholyDndOpener() {
 	}
 }
 
+func (dk *DpsDeathknight) afterGargoyleOpener(sim *core.Simulation) {
+	if dk.EmpowerRuneWeapon.IsReady(sim) && dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd {
+		dk.Main.Clear().
+			NewAction(dk.RotationAction_CancelBT).
+			NewAction(dk.RotationActionCallback_ERW).
+			NewAction(dk.RotationActionCallback_AOTD).
+			NewAction(dk.RotationActionCallback_BP).
+			NewAction(dk.RotationAction_ResetToDndMain)
+	}
+}
+
 func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
 	casted := false
 
 	if dk.uhGargoyleCheck(sim, target) {
+		dk.afterGargoyleOpener(sim)
 		return true
 	}
 
@@ -146,7 +145,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 	}
 
 	// Gargoyle cast needs to be checked more often then default rotation on gcd/resource gain checks
-	if dk.SummonGargoyle.IsReady(sim) {
+	if dk.SummonGargoyle.IsReady(sim) && dk.GCD.IsReady(sim) {
 		dk.WaitUntil(sim, sim.CurrentTime+100*time.Millisecond)
 		return true
 	}
