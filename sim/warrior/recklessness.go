@@ -4,32 +4,38 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warrior *Warrior) RegisterRecklessnessCD() {
 	actionID := core.ActionID{SpellID: 1719}
 	reckAura := warrior.RegisterAura(core.Aura{
-		Label:    "Recklessness",
-		ActionID: actionID,
-		Duration: time.Second*15 + time.Second*2*time.Duration(warrior.Talents.ImprovedDisciplines),
+		Label:     "Recklessness",
+		ActionID:  actionID,
+		Duration:  time.Second * 12,
+		MaxStacks: 3,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			warrior.AddStatDynamic(sim, stats.MeleeCrit, 100*core.CritRatingPerCritChance)
+			warrior.PseudoStats.BonusMeleeSpellCritRating += 100 * core.CritRatingPerCritChance
 			warrior.PseudoStats.DamageTakenMultiplier *= 1.2
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			warrior.AddStatDynamic(sim, stats.MeleeCrit, -100*core.CritRatingPerCritChance)
+			warrior.PseudoStats.BonusMeleeSpellCritRating -= 100 * core.CritRatingPerCritChance
 			warrior.PseudoStats.DamageTakenMultiplier /= 1.2
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeSpecial) {
+				return
+			}
+			aura.RemoveStack(sim)
 		},
 	})
 
 	cooldownDur := time.Minute * 30
-	if warrior.Talents.ImprovedDisciplines == 1 {
-		cooldownDur -= time.Minute * 4
-	} else if warrior.Talents.ImprovedDisciplines == 2 {
-		cooldownDur -= time.Minute * 7
-	} else if warrior.Talents.ImprovedDisciplines == 3 {
-		cooldownDur -= time.Minute * 10
+	if warrior.Talents.IntensifyRage == 1 {
+		cooldownDur = time.Duration(float64(cooldownDur) * 0.89)
+	} else if warrior.Talents.IntensifyRage == 2 {
+		cooldownDur = time.Duration(float64(cooldownDur) * 0.78)
+	} else if warrior.Talents.IntensifyRage == 3 {
+		cooldownDur = time.Duration(float64(cooldownDur) * 0.67)
 	}
 	reckSpell := warrior.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
@@ -47,6 +53,7 @@ func (warrior *Warrior) RegisterRecklessnessCD() {
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
 			reckAura.Activate(sim)
+			reckAura.SetStacks(sim, 3)
 		},
 	})
 
