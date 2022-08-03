@@ -79,7 +79,8 @@ ui/core/proto/api.ts: proto/*.proto node_modules
 	npx protoc --ts_out ui/core/proto --proto_path proto proto/ui.proto
 
 ui/%/index.html: ui/index_template.html
-	cat ui/index_template.html | sed 's/@@TITLE@@/WOTLK $* Simulator/g' > $@
+	$(eval title := $(shell echo $(shell basename $(@D)) | sed -r 's/(^|_)([a-z])/\U \2/g' | cut -c 2-))
+	cat ui/index_template.html | sed 's/@@TITLE@@/WOTLK $(title) Simulator/g' > $@
 
 package-lock.json:
 	npm install
