@@ -1,93 +1,93 @@
-import { BattleElixir } from '/wotlk/core/proto/common.js';
-import { BonusStatsPicker } from '/wotlk/core/components/bonus_stats_picker.js';
-import { BooleanPicker, BooleanPickerConfig } from '/wotlk/core/components/boolean_picker.js';
-import { CharacterStats, StatMods } from '/wotlk/core/components/character_stats.js';
-import { Class } from '/wotlk/core/proto/common.js';
-import { Conjured } from '/wotlk/core/proto/common.js';
-import { Consumes } from '/wotlk/core/proto/common.js';
-import { Cooldowns } from '/wotlk/core/proto/common.js';
-import { CooldownsPicker } from '/wotlk/core/components/cooldowns_picker.js';
-import { Debuffs } from '/wotlk/core/proto/common.js';
-import { DetailedResults } from '/wotlk/core/components/detailed_results.js';
+import { BattleElixir } from './proto/common.js';
+import { BonusStatsPicker } from './components/bonus_stats_picker.js';
+import { BooleanPicker, BooleanPickerConfig } from './components/boolean_picker.js';
+import { CharacterStats, StatMods } from './components/character_stats.js';
+import { Class } from './proto/common.js';
+import { Conjured } from './proto/common.js';
+import { Consumes } from './proto/common.js';
+import { Cooldowns } from './proto/common.js';
+import { CooldownsPicker } from './components/cooldowns_picker.js';
+import { Debuffs } from './proto/common.js';
+import { DetailedResults } from './components/detailed_results.js';
 
-import { Encounter as EncounterProto } from '/wotlk/core/proto/common.js';
+import { Encounter as EncounterProto } from './proto/common.js';
 import { Encounter } from './encounter.js';
-import { EncounterPicker, EncounterPickerConfig } from '/wotlk/core/components/encounter_picker.js';
-import { EnumPicker, EnumPickerConfig } from '/wotlk/core/components/enum_picker.js';
-import { EquipmentSpec } from '/wotlk/core/proto/common.js';
+import { EncounterPicker, EncounterPickerConfig } from './components/encounter_picker.js';
+import { EnumPicker, EnumPickerConfig } from './components/enum_picker.js';
+import { EquipmentSpec } from './proto/common.js';
 import { EventID, TypedEvent } from './typed_event.js';
-import { Flask } from '/wotlk/core/proto/common.js';
-import { Food } from '/wotlk/core/proto/common.js';
-import { Gear } from '/wotlk/core/proto_utils/gear.js';
-import { GearPicker } from '/wotlk/core/components/gear_picker.js';
-import { Glyphs } from '/wotlk/core/proto/common.js';
-import { GuardianElixir } from '/wotlk/core/proto/common.js';
-import { HealingModel } from '/wotlk/core/proto/common.js';
-import { HunterPetTalentsPicker } from '/wotlk/core/talents/hunter_pet.js';
-import { IconEnumPicker, IconEnumPickerConfig } from '/wotlk/core/components/icon_enum_picker.js';
-import { IconPicker, IconPickerConfig } from '/wotlk/core/components/icon_picker.js';
-import { ItemSlot } from '/wotlk/core/proto/common.js';
-import { IndividualBuffs } from '/wotlk/core/proto/common.js';
-import { IndividualSimSettings } from '/wotlk/core/proto/ui.js';
-import { Input } from '/wotlk/core/components/input.js';
-import { LogRunner } from '/wotlk/core/components/log_runner.js';
-import { MobType } from '/wotlk/core/proto/common.js';
-import { MultiIconPicker } from '/wotlk/core/components/multi_icon_picker.js';
-import { NumberPicker, NumberPickerConfig } from '/wotlk/core/components/number_picker.js';
+import { Flask } from './proto/common.js';
+import { Food } from './proto/common.js';
+import { Gear } from './proto_utils/gear.js';
+import { GearPicker } from './components/gear_picker.js';
+import { Glyphs } from './proto/common.js';
+import { GuardianElixir } from './proto/common.js';
+import { HealingModel } from './proto/common.js';
+import { HunterPetTalentsPicker } from './talents/hunter_pet.js';
+import { IconEnumPicker, IconEnumPickerConfig } from './components/icon_enum_picker.js';
+import { IconPicker, IconPickerConfig } from './components/icon_picker.js';
+import { ItemSlot } from './proto/common.js';
+import { IndividualBuffs } from './proto/common.js';
+import { IndividualSimSettings } from './proto/ui.js';
+import { Input } from './components/input.js';
+import { LogRunner } from './components/log_runner.js';
+import { MobType } from './proto/common.js';
+import { MultiIconPicker } from './components/multi_icon_picker.js';
+import { NumberPicker, NumberPickerConfig } from './components/number_picker.js';
 import { Party } from './party.js';
-import { PartyBuffs } from '/wotlk/core/proto/common.js';
-import { PetFood } from '/wotlk/core/proto/common.js';
-import { Player as PlayerProto } from '/wotlk/core/proto/api.js';
+import { PartyBuffs } from './proto/common.js';
+import { PetFood } from './proto/common.js';
+import { Player as PlayerProto } from './proto/api.js';
 import { Player } from './player.js';
-import { Potions } from '/wotlk/core/proto/common.js';
-import { Profession } from '/wotlk/core/proto/common.js';
-import { Race } from '/wotlk/core/proto/common.js';
+import { Potions } from './proto/common.js';
+import { Profession } from './proto/common.js';
+import { Race } from './proto/common.js';
 import { Raid } from './raid.js';
-import { RaidBuffs } from '/wotlk/core/proto/common.js';
-import { SavedDataConfig, SavedDataManager } from '/wotlk/core/components/saved_data_manager.js';
-import { SavedEncounter } from '/wotlk/core/proto/ui.js';
-import { SavedGearSet } from '/wotlk/core/proto/ui.js';
-import { SavedSettings } from '/wotlk/core/proto/ui.js';
-import { SavedTalents } from '/wotlk/core/proto/ui.js';
-import { SettingsMenu } from '/wotlk/core/components/settings_menu.js';
-import { ShattrathFaction } from '/wotlk/core/proto/common.js';
+import { RaidBuffs } from './proto/common.js';
+import { SavedDataConfig, SavedDataManager } from './components/saved_data_manager.js';
+import { SavedEncounter } from './proto/ui.js';
+import { SavedGearSet } from './proto/ui.js';
+import { SavedSettings } from './proto/ui.js';
+import { SavedTalents } from './proto/ui.js';
+import { SettingsMenu } from './components/settings_menu.js';
+import { ShattrathFaction } from './proto/common.js';
 import { Sim } from './sim.js';
-import { SimOptions } from '/wotlk/core/proto/api.js';
-import { SimSettings as SimSettingsProto } from '/wotlk/core/proto/ui.js';
+import { SimOptions } from './proto/api.js';
+import { SimSettings as SimSettingsProto } from './proto/ui.js';
 import { SimUI, SimWarning } from './sim_ui.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { SpecOptions } from '/wotlk/core/proto_utils/utils.js';
-import { SpecRotation } from '/wotlk/core/proto_utils/utils.js';
-import { Stat } from '/wotlk/core/proto/common.js';
-import { StatWeightsRequest, StatWeightsResult } from '/wotlk/core/proto/api.js';
-import { Stats } from '/wotlk/core/proto_utils/stats.js';
-import { shattFactionNames } from '/wotlk/core/proto_utils/names.js';
+import { Spec } from './proto/common.js';
+import { SpecOptions } from './proto_utils/utils.js';
+import { SpecRotation } from './proto_utils/utils.js';
+import { Stat } from './proto/common.js';
+import { StatWeightsRequest, StatWeightsResult } from './proto/api.js';
+import { Stats } from './proto_utils/stats.js';
+import { shattFactionNames } from './proto_utils/names.js';
 import { Target } from './target.js';
-import { Target as TargetProto } from '/wotlk/core/proto/common.js';
-import { WeaponImbue } from '/wotlk/core/proto/common.js';
-import { addRaidSimAction, RaidSimResultsManager } from '/wotlk/core/components/raid_sim_action.js';
-import { addStatWeightsAction } from '/wotlk/core/components/stat_weights_action.js';
-import { equalsOrBothNull, getEnumValues } from '/wotlk/core/utils.js';
-import { getMetaGemConditionDescription } from '/wotlk/core/proto_utils/gems.js';
-import { getTalentPoints } from '/wotlk/core/proto_utils/utils.js';
-import { isDualWieldSpec } from '/wotlk/core/proto_utils/utils.js';
-import { simLaunchStatuses } from '/wotlk/core/launched_sims.js';
-import { makePetTypeInputConfig } from '/wotlk/core/talents/hunter_pet.js';
-import { newIndividualExporters } from '/wotlk/core/components/exporters.js';
-import { newIndividualImporters } from '/wotlk/core/components/importers.js';
-import { newGlyphsPicker } from '/wotlk/core/talents/factory.js';
-import { newTalentsPicker } from '/wotlk/core/talents/factory.js';
-import { professionNames, raceNames } from '/wotlk/core/proto_utils/names.js';
-import { isTankSpec } from '/wotlk/core/proto_utils/utils.js';
-import { specNames } from '/wotlk/core/proto_utils/utils.js';
-import { specToEligibleRaces } from '/wotlk/core/proto_utils/utils.js';
-import { specToLocalStorageKey } from '/wotlk/core/proto_utils/utils.js';
+import { Target as TargetProto } from './proto/common.js';
+import { WeaponImbue } from './proto/common.js';
+import { addRaidSimAction, RaidSimResultsManager } from './components/raid_sim_action.js';
+import { addStatWeightsAction } from './components/stat_weights_action.js';
+import { equalsOrBothNull, getEnumValues } from './utils.js';
+import { getMetaGemConditionDescription } from './proto_utils/gems.js';
+import { getTalentPoints } from './proto_utils/utils.js';
+import { isDualWieldSpec } from './proto_utils/utils.js';
+import { simLaunchStatuses } from './launched_sims.js';
+import { makePetTypeInputConfig } from './talents/hunter_pet.js';
+import { newIndividualExporters } from './components/exporters.js';
+import { newIndividualImporters } from './components/importers.js';
+import { newGlyphsPicker } from './talents/factory.js';
+import { newTalentsPicker } from './talents/factory.js';
+import { professionNames, raceNames } from './proto_utils/names.js';
+import { isTankSpec } from './proto_utils/utils.js';
+import { specNames } from './proto_utils/utils.js';
+import { specToEligibleRaces } from './proto_utils/utils.js';
+import { specToLocalStorageKey } from './proto_utils/utils.js';
 
-import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
-import * as InputHelpers from '/wotlk/core/components/input_helpers.js';
-import * as Mechanics from '/wotlk/core/constants/mechanics.js';
-import * as OtherConstants from '/wotlk/core/constants/other.js';
-import * as Tooltips from '/wotlk/core/constants/tooltips.js';
+import * as IconInputs from './components/icon_inputs.js';
+import * as InputHelpers from './components/input_helpers.js';
+import * as Mechanics from './constants/mechanics.js';
+import * as OtherConstants from './constants/other.js';
+import * as Tooltips from './constants/tooltips.js';
 
 declare var Muuri: any;
 declare var tippy: any;
@@ -521,7 +521,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				if (iconPickers.length < 4) {
 					sectionElem.style.gridTemplateColumns = `repeat(${iconPickers.length}, 1fr)`;
 				} else if (iconPickers.length > 4 && iconPickers.length < 8) {
-					sectionElem.style.gridTemplateColumns = `repeat(${Math.ceil(iconPickers.length/2)}, 1fr)`;
+					sectionElem.style.gridTemplateColumns = `repeat(${Math.ceil(iconPickers.length / 2)}, 1fr)`;
 				}
 			}
 		};
@@ -619,7 +619,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			{ item: IconInputs.HuntersMark, stats: [Stat.StatRangedAttackPower] },
 		] as Array<StatOption<InputHelpers.TypedIconPickerConfig<Player<any>, any>>>);
 		otherDebuffOptions.forEach(iconInput => makeIconInput(debuffsSection, iconInput));
-		
+
 		const miscDebuffOptions = this.splitRelevantOptions([
 			{ item: IconInputs.JudgementOfLight, stats: [Stat.StatStamina] },
 			{ item: IconInputs.GiftOfArthas, stats: [Stat.StatAttackPower] },
@@ -697,26 +697,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		if (guardianElixirOptions.length) {
 			const elem = this.rootElem.getElementsByClassName('consumes-guardian-elixirs')[0] as HTMLElement;
 			new IconEnumPicker(elem, this.player, IconInputs.makeGuardianElixirsInput(guardianElixirOptions));
-		}
-
-		const foodOptions = this.splitRelevantOptions([
-			{ item: Food.FoodFishFeast, stats: [Stat.StatStamina, Stat.StatAttackPower, Stat.StatSpellPower] },
-			{ item: Food.FoodGreatFeast, stats: [Stat.StatStamina, Stat.StatAttackPower, Stat.StatSpellPower] },
-			{ item: Food.FoodBlackenedDragonfin, stats: [Stat.StatAgility] },
-			{ item: Food.FoodDragonfinFilet, stats: [Stat.StatStrength] },
-			{ item: Food.FoodCuttlesteak, stats: [Stat.StatSpirit] },
-			{ item: Food.FoodMegaMammothMeal, stats: [Stat.StatAttackPower] },
-			{ item: Food.FoodHeartyRhino, stats: [Stat.StatArmorPenetration] },
-			{ item: Food.FoodRhinoliciousWormsteak, stats: [Stat.StatExpertise] },
-			{ item: Food.FoodFirecrackerSalmon, stats: [Stat.StatSpellPower] },
-			{ item: Food.FoodSnapperExtreme, stats: [Stat.StatMeleeHit, Stat.StatSpellHit] },
-			{ item: Food.FoodSpicedWormBurger, stats: [Stat.StatMeleeCrit, Stat.StatSpellCrit] },
-			{ item: Food.FoodImperialMantaSteak, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
-			{ item: Food.FoodMightyRhinoDogs, stats: [Stat.StatMP5] },
-		]);
-		if (foodOptions.length) {
-			const elem = this.rootElem.getElementsByClassName('consumes-food')[0] as HTMLElement;
-			new IconEnumPicker(elem, this.player, IconInputs.makeFoodInput(foodOptions));
 		}
 
 		const tradeConsumesElem = this.rootElem.getElementsByClassName('consumes-trade')[0] as HTMLElement;
@@ -1181,13 +1161,13 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 	splitRelevantOptions<T>(options: Array<StatOption<T>>): Array<T> {
 		return options
-				.filter(option =>
-						this.individualConfig.includeBuffDebuffInputs.includes(option.item) ||
-						option.stats.length == 0 ||
-						option.stats.some(stat => this.individualConfig.epStats.includes(stat)))
-				.filter(option =>
-						!this.individualConfig.excludeBuffDebuffInputs.includes(option.item))
-				.map(option => option.item);
+			.filter(option =>
+				this.individualConfig.includeBuffDebuffInputs.includes(option.item) ||
+				option.stats.length == 0 ||
+				option.stats.some(stat => this.individualConfig.epStats.includes(stat)))
+			.filter(option =>
+				!this.individualConfig.excludeBuffDebuffInputs.includes(option.item))
+			.map(option => option.item);
 	}
 }
 

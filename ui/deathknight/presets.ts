@@ -1,20 +1,19 @@
-import { Consumes, PetFood } from '/wotlk/core/proto/common.js';
-import { EquipmentSpec } from '/wotlk/core/proto/common.js';
-import { Flask } from '/wotlk/core/proto/common.js';
-import { Food } from '/wotlk/core/proto/common.js';
-import { Glyphs } from '/wotlk/core/proto/common.js';
-import { Potions } from '/wotlk/core/proto/common.js';
-import { SavedTalents } from '/wotlk/core/proto/ui.js';
+import { Consumes, PetFood } from '../core/proto/common.js';
+import { EquipmentSpec } from '../core/proto/common.js';
+import { Flask } from '../core/proto/common.js';
+import { Food } from '../core/proto/common.js';
+import { Glyphs } from '../core/proto/common.js';
+import { Potions } from '../core/proto/common.js';
+import { SavedTalents } from '../core/proto/ui.js';
 
 import {
-	DeathknightTalents,
 	Deathknight_Rotation as DeathKnightRotation,
 	Deathknight_Options as DeathKnightOptions,
 	DeathknightMajorGlyph,
 	DeathknightMinorGlyph,
-} from '/wotlk/core/proto/deathknight.js';
+} from '../core/proto/deathknight.js';
 
-import * as Tooltips from '/wotlk/core/constants/tooltips.js';
+import * as Tooltips from '../core/constants/tooltips.js';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
