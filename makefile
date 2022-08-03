@@ -70,7 +70,8 @@ clean:
 	  binary_dist \
 	  ui/core/index.ts \
 	  ui/core/proto/*.ts \
-	  node_modules 
+	  node_modules \
+	  $(HTML_INDECIES)
 	find . -name "*.results.tmp" -type f -delete
 
 
