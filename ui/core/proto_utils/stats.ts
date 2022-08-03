@@ -1,5 +1,5 @@
-import { Stat } from '../proto/common.js';
-import { getEnumValues } from '../utils.js';
+import { Stat } from '../proto/common';
+import { getEnumValues } from '../utils';
 
 const STATS_LEN = getEnumValues(Stat).length;
 

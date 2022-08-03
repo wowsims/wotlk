@@ -1,20 +1,20 @@
-import { Enchant } from '../proto/common.js';
-import { EquipmentSpec } from '../proto/common.js';
-import { Gem } from '../proto/common.js';
-import { GemColor } from '../proto/common.js';
-import { Item } from '../proto/common.js';
-import { ItemSlot } from '../proto/common.js';
-import { ItemSpec } from '../proto/common.js';
-import { Profession } from '../proto/common.js';
-import { WeaponType } from '../proto/common.js';
-import { equalsOrBothNull } from '../utils.js';
-import { getEnumValues } from '../utils.js';
-import { isBluntWeaponType, isSharpWeaponType } from '../proto_utils/utils.js';
+import { Enchant } from '../proto/common';
+import { EquipmentSpec } from '../proto/common';
+import { Gem } from '../proto/common';
+import { GemColor } from '../proto/common';
+import { Item } from '../proto/common';
+import { ItemSlot } from '../proto/common';
+import { ItemSpec } from '../proto/common';
+import { Profession } from '../proto/common';
+import { WeaponType } from '../proto/common';
+import { equalsOrBothNull } from '../utils';
+import { getEnumValues } from '../utils';
+import { isBluntWeaponType, isSharpWeaponType } from '../proto_utils/utils';
 
-import { isMetaGemActive } from './gems.js';
-import { gemMatchesSocket } from './gems.js';
-import { EquippedItem } from './equipped_item.js';
-import { validWeaponCombo } from './utils.js';
+import { isMetaGemActive } from './gems';
+import { gemMatchesSocket } from './gems';
+import { EquippedItem } from './equipped_item';
+import { validWeaponCombo } from './utils';
 
 type InternalGear = Record<ItemSlot, EquippedItem | null>;
 

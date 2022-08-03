@@ -1,28 +1,28 @@
-import { ActionMetrics as ActionMetricsProto } from '../proto/api.js';
-import { AuraMetrics as AuraMetricsProto } from '../proto/api.js';
-import { DistributionMetrics as DistributionMetricsProto } from '../proto/api.js';
-import { Encounter as EncounterProto } from '../proto/common.js';
-import { EncounterMetrics as EncounterMetricsProto } from '../proto/api.js';
-import { Party as PartyProto } from '../proto/api.js';
-import { PartyMetrics as PartyMetricsProto } from '../proto/api.js';
-import { Player as PlayerProto } from '../proto/api.js';
-import { UnitMetrics as UnitMetricsProto } from '../proto/api.js';
-import { Raid as RaidProto } from '../proto/api.js';
-import { RaidMetrics as RaidMetricsProto } from '../proto/api.js';
-import { ResourceMetrics as ResourceMetricsProto, ResourceType } from '../proto/api.js';
-import { Target as TargetProto } from '../proto/common.js';
-import { TargetedActionMetrics as TargetedActionMetricsProto } from '../proto/api.js';
-import { RaidSimRequest, RaidSimResult } from '../proto/api.js';
-import { Class } from '../proto/common.js';
-import { Spec } from '../proto/common.js';
-import { SimRun } from '../proto/ui.js';
-import { ActionId, defaultTargetIcon } from '../proto_utils/action_id.js';
-import { classColors } from '../proto_utils/utils.js';
-import { getTalentTreeIcon } from '../proto_utils/utils.js';
-import { playerToSpec } from '../proto_utils/utils.js';
-import { specToClass } from '../proto_utils/utils.js';
-import { bucket } from '../utils.js';
-import { sum } from '../utils.js';
+import { ActionMetrics as ActionMetricsProto } from '../proto/api';
+import { AuraMetrics as AuraMetricsProto } from '../proto/api';
+import { DistributionMetrics as DistributionMetricsProto } from '../proto/api';
+import { Encounter as EncounterProto } from '../proto/common';
+import { EncounterMetrics as EncounterMetricsProto } from '../proto/api';
+import { Party as PartyProto } from '../proto/api';
+import { PartyMetrics as PartyMetricsProto } from '../proto/api';
+import { Player as PlayerProto } from '../proto/api';
+import { UnitMetrics as UnitMetricsProto } from '../proto/api';
+import { Raid as RaidProto } from '../proto/api';
+import { RaidMetrics as RaidMetricsProto } from '../proto/api';
+import { ResourceMetrics as ResourceMetricsProto, ResourceType } from '../proto/api';
+import { Target as TargetProto } from '../proto/common';
+import { TargetedActionMetrics as TargetedActionMetricsProto } from '../proto/api';
+import { RaidSimRequest, RaidSimResult } from '../proto/api';
+import { Class } from '../proto/common';
+import { Spec } from '../proto/common';
+import { SimRun } from '../proto/ui';
+import { ActionId, defaultTargetIcon } from '../proto_utils/action_id';
+import { classColors } from '../proto_utils/utils';
+import { getTalentTreeIcon } from '../proto_utils/utils';
+import { playerToSpec } from '../proto_utils/utils';
+import { specToClass } from '../proto_utils/utils';
+import { bucket } from '../utils';
+import { sum } from '../utils';
 
 import {
     AuraUptimeLog,
@@ -34,7 +34,7 @@ import {
     ResourceChangedLogGroup,
     SimLog,
     ThreatLogGroup,
-} from './logs_parser.js';
+} from './logs_parser';
 
 export interface SimResultFilter {
     // Raid index of the player to display, or null for all players.

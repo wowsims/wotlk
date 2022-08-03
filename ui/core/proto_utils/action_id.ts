@@ -1,9 +1,9 @@
-import { ActionID as ActionIdProto } from '../proto/common.js';
-import { ResourceType } from '../proto/api.js';
-import { Item } from '../proto/common.js';
-import { OtherAction } from '../proto/common.js';
-import { getWowheadItemId } from '../proto_utils/equipped_item.js';
-import { NO_TARGET } from '../proto_utils/utils.js';
+import { ActionID as ActionIdProto } from '../proto/common';
+import { ResourceType } from '../proto/api';
+import { Item } from '../proto/common';
+import { OtherAction } from '../proto/common';
+import { getWowheadItemId } from '../proto_utils/equipped_item';
+import { NO_TARGET } from '../proto_utils/utils';
 
 // If true uses wotlkdb.com, else uses wowhead.com.
 export const USE_WOTLK_DB = false;

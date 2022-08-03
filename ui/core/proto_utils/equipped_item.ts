@@ -1,18 +1,18 @@
-import { Enchant } from '../proto/common.js';
-import { Gem } from '../proto/common.js';
-import { GemColor } from '../proto/common.js';
-import { Item } from '../proto/common.js';
-import { ItemSlot } from '../proto/common.js';
-import { ItemSpec } from '../proto/common.js';
-import { ItemType } from '../proto/common.js';
-import { Profession } from '../proto/common.js';
-import { Stat } from '../proto/common.js';
+import { Enchant } from '../proto/common';
+import { Gem } from '../proto/common';
+import { GemColor } from '../proto/common';
+import { Item } from '../proto/common';
+import { ItemSlot } from '../proto/common';
+import { ItemSpec } from '../proto/common';
+import { ItemType } from '../proto/common';
+import { Profession } from '../proto/common';
+import { Stat } from '../proto/common';
 
-import { ActionId } from './action_id.js';
-import { enchantAppliesToItem } from './utils.js';
-import { gemEligibleForSocket } from './gems.js';
-import { gemMatchesSocket } from './gems.js';
-import { Stats } from './stats.js';
+import { ActionId } from './action_id';
+import { enchantAppliesToItem } from './utils';
+import { gemEligibleForSocket } from './gems';
+import { gemMatchesSocket } from './gems';
+import { Stats } from './stats';
 
 export function getWowheadItemId(item: Item): number {
     return item.wowheadId || item.id;

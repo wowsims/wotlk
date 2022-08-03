@@ -1,10 +1,10 @@
-import { Class } from '../proto/common.js';
-import { ItemSlot } from '../proto/common.js';
-import { Profession } from '../proto/common.js';
-import { Race } from '../proto/common.js';
-import { ShattrathFaction } from '../proto/common.js';
-import { Stat } from '../proto/common.js';
-import { ResourceType } from '../proto/api.js';
+import { Class } from '../proto/common';
+import { ItemSlot } from '../proto/common';
+import { Profession } from '../proto/common';
+import { Race } from '../proto/common';
+import { ShattrathFaction } from '../proto/common';
+import { Stat } from '../proto/common';
+import { ResourceType } from '../proto/api';
 
 export const raceNames: Record<Race, string> = {
     [Race.RaceUnknown]: 'None',

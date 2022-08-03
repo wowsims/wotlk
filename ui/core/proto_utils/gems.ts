@@ -1,5 +1,5 @@
-import { Gem } from '../proto/common.js';
-import { GemColor } from '../proto/common.js';
+import { Gem } from '../proto/common';
+import { GemColor } from '../proto/common';
 
 const socketToMatchingColors = new Map<GemColor, Array<GemColor>>();
 socketToMatchingColors.set(GemColor.GemColorMeta, [GemColor.GemColorMeta]);

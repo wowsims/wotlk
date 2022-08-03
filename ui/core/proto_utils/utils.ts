@@ -1,36 +1,36 @@
-import { REPO_NAME } from '../constants/other.js'
-import { camelToSnakeCase } from '../utils.js';
-import { getEnumValues } from '../utils.js';
-import { intersection } from '../utils.js';
-import { maxIndex } from '../utils.js';
-import { sum } from '../utils.js';
+import { REPO_NAME } from '../constants/other';
+import { camelToSnakeCase } from '../utils';
+import { getEnumValues } from '../utils';
+import { intersection } from '../utils';
+import { maxIndex } from '../utils';
+import { sum } from '../utils';
 
-import { Player } from '../proto/api.js';
-import { ResourceType } from '../proto/api.js';
-import { ArmorType } from '../proto/common.js';
-import { Class } from '../proto/common.js';
-import { Enchant } from '../proto/common.js';
-import { EnchantType } from '../proto/common.js';
-import { Gem } from '../proto/common.js';
-import { GemColor } from '../proto/common.js';
-import { HandType } from '../proto/common.js';
-import { ItemSlot } from '../proto/common.js';
-import { ItemType } from '../proto/common.js';
-import { Item } from '../proto/common.js';
-import { Race } from '../proto/common.js';
-import { Faction } from '../proto/common.js';
-import { RaidTarget } from '../proto/common.js';
-import { RangedWeaponType } from '../proto/common.js';
-import { Spec } from '../proto/common.js';
-import { Stat } from '../proto/common.js';
-import { WeaponType } from '../proto/common.js';
-import { Blessings } from '../proto/paladin.js';
-import { BlessingsAssignment } from '../proto/ui.js';
-import { BlessingsAssignments } from '../proto/ui.js';
+import { Player } from '../proto/api';
+import { ResourceType } from '../proto/api';
+import { ArmorType } from '../proto/common';
+import { Class } from '../proto/common';
+import { Enchant } from '../proto/common';
+import { EnchantType } from '../proto/common';
+import { Gem } from '../proto/common';
+import { GemColor } from '../proto/common';
+import { HandType } from '../proto/common';
+import { ItemSlot } from '../proto/common';
+import { ItemType } from '../proto/common';
+import { Item } from '../proto/common';
+import { Race } from '../proto/common';
+import { Faction } from '../proto/common';
+import { RaidTarget } from '../proto/common';
+import { RangedWeaponType } from '../proto/common';
+import { Spec } from '../proto/common';
+import { Stat } from '../proto/common';
+import { WeaponType } from '../proto/common';
+import { Blessings } from '../proto/paladin';
+import { BlessingsAssignment } from '../proto/ui';
+import { BlessingsAssignments } from '../proto/ui';
 
-import { Stats } from './stats.js';
+import { Stats } from './stats';
 
-import * as Gems from '../proto_utils/gems.js';
+import * as Gems from '../proto_utils/gems';
 
 import {
     BalanceDruid,
@@ -43,19 +43,19 @@ import {
     BalanceDruid_Options as BalanceDruidOptions,
     FeralDruid_Options as FeralDruidOptions,
     FeralTankDruid_Options as FeralTankDruidOptions
-} from '../proto/druid.js';
-import { ElementalShaman, EnhancementShaman_Rotation as EnhancementShamanRotation, ElementalShaman_Rotation as ElementalShamanRotation, ShamanTalents, ElementalShaman_Options as ElementalShamanOptions, EnhancementShaman_Options as EnhancementShamanOptions, EnhancementShaman } from '../proto/shaman.js';
-import { Hunter, Hunter_Rotation as HunterRotation, HunterTalents, Hunter_Options as HunterOptions } from '../proto/hunter.js';
-import { Mage, Mage_Rotation as MageRotation, MageTalents, Mage_Options as MageOptions } from '../proto/mage.js';
-import { Rogue, Rogue_Rotation as RogueRotation, RogueTalents, Rogue_Options as RogueOptions } from '../proto/rogue.js';
-import { RetributionPaladin, RetributionPaladin_Rotation as RetributionPaladinRotation, PaladinTalents, RetributionPaladin_Options as RetributionPaladinOptions } from '../proto/paladin.js';
-import { ProtectionPaladin, ProtectionPaladin_Rotation as ProtectionPaladinRotation, ProtectionPaladin_Options as ProtectionPaladinOptions } from '../proto/paladin.js';
-import { ShadowPriest, SmitePriest_Rotation as SmitePriestRotation, ShadowPriest_Rotation as ShadowPriestRotation, PriestTalents, ShadowPriest_Options as ShadowPriestOptions, SmitePriest_Options as SmitePriestOptions, SmitePriest } from '../proto/priest.js';
-import { Warlock, Warlock_Rotation as WarlockRotation, WarlockTalents, Warlock_Options as WarlockOptions } from '../proto/warlock.js';
-import { Warrior, Warrior_Rotation as WarriorRotation, WarriorTalents, Warrior_Options as WarriorOptions } from '../proto/warrior.js';
-import { Deathknight, Deathknight_Rotation as DeathknightRotation, DeathknightTalents, Deathknight_Options as DeathknightOptions } from '../proto/deathknight.js';
-import { TankDeathknight, TankDeathknight_Rotation as TankDeathknightRotation, TankDeathknight_Options as TankDeathknightOptions } from '../proto/deathknight.js';
-import { ProtectionWarrior, ProtectionWarrior_Rotation as ProtectionWarriorRotation, ProtectionWarrior_Options as ProtectionWarriorOptions } from '../proto/warrior.js';
+} from '../proto/druid';
+import { ElementalShaman, EnhancementShaman_Rotation as EnhancementShamanRotation, ElementalShaman_Rotation as ElementalShamanRotation, ShamanTalents, ElementalShaman_Options as ElementalShamanOptions, EnhancementShaman_Options as EnhancementShamanOptions, EnhancementShaman } from '../proto/shaman';
+import { Hunter, Hunter_Rotation as HunterRotation, HunterTalents, Hunter_Options as HunterOptions } from '../proto/hunter';
+import { Mage, Mage_Rotation as MageRotation, MageTalents, Mage_Options as MageOptions } from '../proto/mage';
+import { Rogue, Rogue_Rotation as RogueRotation, RogueTalents, Rogue_Options as RogueOptions } from '../proto/rogue';
+import { RetributionPaladin, RetributionPaladin_Rotation as RetributionPaladinRotation, PaladinTalents, RetributionPaladin_Options as RetributionPaladinOptions } from '../proto/paladin';
+import { ProtectionPaladin, ProtectionPaladin_Rotation as ProtectionPaladinRotation, ProtectionPaladin_Options as ProtectionPaladinOptions } from '../proto/paladin';
+import { ShadowPriest, SmitePriest_Rotation as SmitePriestRotation, ShadowPriest_Rotation as ShadowPriestRotation, PriestTalents, ShadowPriest_Options as ShadowPriestOptions, SmitePriest_Options as SmitePriestOptions, SmitePriest } from '../proto/priest';
+import { Warlock, Warlock_Rotation as WarlockRotation, WarlockTalents, Warlock_Options as WarlockOptions } from '../proto/warlock';
+import { Warrior, Warrior_Rotation as WarriorRotation, WarriorTalents, Warrior_Options as WarriorOptions } from '../proto/warrior';
+import { Deathknight, Deathknight_Rotation as DeathknightRotation, DeathknightTalents, Deathknight_Options as DeathknightOptions } from '../proto/deathknight';
+import { TankDeathknight, TankDeathknight_Rotation as TankDeathknightRotation, TankDeathknight_Options as TankDeathknightOptions } from '../proto/deathknight';
+import { ProtectionWarrior, ProtectionWarrior_Rotation as ProtectionWarriorRotation, ProtectionWarrior_Options as ProtectionWarriorOptions } from '../proto/warrior';
 
 export type DeathknightSpecs = [Spec.SpecDeathknight, Spec.SpecTankDeathknight];
 export type DruidSpecs = [Spec.SpecBalanceDruid, Spec.SpecFeralDruid, Spec.SpecFeralTankDruid];
