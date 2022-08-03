@@ -225,7 +225,10 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			// ------------------------------------------
 			// Destruction Rotation
 			// ------------------------------------------
-			if warlock.CanConflagrate(sim) && (warlock.ImmolateDot.TickCount > warlock.ImmolateDot.NumberOfTicks-2 || warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfConflagrate)) {
+			if warlock.Talents.Shadowburn && sim.GetRemainingDuration() < 1*time.Second && warlock.Shadowburn.CD.IsReady(sim) {
+				// TODO: ^ maybe use a better heuristic then a static 1s for using our finishers
+				spell = warlock.Shadowburn
+			} else if warlock.CanConflagrate(sim) && (warlock.ImmolateDot.TickCount > warlock.ImmolateDot.NumberOfTicks-2 || warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfConflagrate)) {
 				spell = warlock.Conflagrate
 			} else if (!warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime) &&
 				sim.GetRemainingDuration() > warlock.ImmolateDot.Duration/2. {
