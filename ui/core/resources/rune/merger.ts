@@ -1,5 +1,5 @@
-import { ResourceType } from "../../proto/api";
-import { ResourceChangedLogGroup } from "../../proto_utils/logs_parser";
+import { ResourceType } from '../../proto/api';
+import { ResourceChangedLogGroup } from '../../proto_utils/logs_parser';
 
 const RUNE_TYPES = [
 	ResourceType.ResourceTypeBloodRune,
