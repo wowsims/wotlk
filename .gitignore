@@ -1,3 +1,6 @@
+# test artifacts
+coverage
+
 # nodejs modules
 node_modules
 ui/core/index.ts
