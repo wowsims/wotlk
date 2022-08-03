@@ -167,8 +167,15 @@ sim/core/items/all_items.go: generate_items/*.go $(call rwildcard,sim/core/proto
 	gofmt -w ./sim/core/items
 
 .PHONY: test
-test: $(OUT_DIR)/lib.wasm binary_dist/dist.go
+test: gotest tstest
+
+.PHONY: gotest
+gotest: $(OUT_DIR)/lib.wasm binary_dist/dist.go
 	go test ./...
+
+.PHONY: tstest
+tstest: $(UI_SRC) node_modules
+	./node_modules/.bin/jest -c jest.config.js
 
 .PHONY: update-tests
 update-tests:

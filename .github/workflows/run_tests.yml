@@ -4,7 +4,7 @@ on:
     branches:
       - master
 jobs:
-  build-and-test:
+  go-build-and-test:
     runs-on: ubuntu-latest
     steps:
       - name: Install Go
@@ -31,10 +31,8 @@ jobs:
 
       - name: Build 🔧
         run: |
-          npm install
           make
 
       - name: Test
         run: |
           make test
-          make dist
