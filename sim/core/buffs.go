@@ -204,18 +204,16 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		stats.Health: GetTristateValueFloat(raidBuffs.CommandingShout, 1080, 1080*1.25),
 	})
 
-	spBonus := float64(raidBuffs.DemonicPact) / 10.
-	if raidBuffs.TotemOfWrath {
-		spBonus = MaxFloat(spBonus, 280)
-	} else if raidBuffs.FlametongueTotem {
-		spBonus = MaxFloat(spBonus, 144)
+	if  float64(raidBuffs.DemonicPact) / 10. > 280 {
+		MakePermanent(DemonicPactAura(character, float64(raidBuffs.DemonicPact) / 10.))
+	} else if raidBuffs.TotemOfWrath {
+		MakePermanent(TotemOfWrathAura(character))
+	} else if raidBuffs.FlametongueTotem && float64(raidBuffs.DemonicPact) / 10. < 144 {
+		MakePermanent(FlametongueTotemAura(character))
+	} else if float64(raidBuffs.DemonicPact) > 0 {
+		MakePermanent(DemonicPactAura(character, float64(raidBuffs.DemonicPact) / 10.))
 	}
-	if spBonus > 0 {
-		character.AddStats(stats.Stats{
-			stats.SpellPower:   spBonus,
-			stats.HealingPower: spBonus,
-		})
-	}
+
 	if raidBuffs.WrathOfAirTotem {
 		character.PseudoStats.CastSpeedMultiplier *= 1.05
 	}
@@ -865,6 +863,75 @@ func ReplenishmentAura(character *Character, actionID ActionID) *Aura {
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			character.AddStatDependencyDynamic(sim, stats.Mana, stats.MP5, 1/(1.0+0.01))
+		},
+	})
+}
+
+func DemonicPactAura(character *Character, spellPowerBonus float64) *Aura {
+
+	return character.GetOrRegisterAura(Aura{
+		Label:    "Demonic Pact",
+		Tag:      "SpellPowerBuff",
+		ActionID: ActionID{SpellID: 47240},
+		Priority: spellPowerBonus,
+		Duration: time.Second * 45,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			character.AddStatsDynamic(sim, stats.Stats{
+				stats.SpellPower:   spellPowerBonus,
+				stats.HealingPower: spellPowerBonus,
+			})
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			character.AddStatsDynamic(sim, stats.Stats{
+				stats.SpellPower:   -spellPowerBonus,
+				stats.HealingPower: -spellPowerBonus,
+			})
+		},
+	})
+}
+
+func TotemOfWrathAura(character *Character) *Aura {
+	spellPowerBonus := 280.
+	return character.GetOrRegisterAura(Aura{
+		Label:    "Totem of Wrath",
+		Tag:      "SpellPowerBuff",
+		ActionID: ActionID{SpellID: 57722},
+		Priority: spellPowerBonus,
+		Duration: NeverExpires,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			character.AddStatsDynamic(sim, stats.Stats{
+				stats.SpellPower:   spellPowerBonus,
+				stats.HealingPower: spellPowerBonus,
+			})
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			character.AddStatsDynamic(sim, stats.Stats{
+				stats.SpellPower:   -spellPowerBonus,
+				stats.HealingPower: -spellPowerBonus,
+			})
+		},
+	})
+}
+
+func FlametongueTotemAura(character *Character) *Aura {
+	spellPowerBonus := 144.
+	return character.GetOrRegisterAura(Aura{
+		Label:    "Flame tongueTotem",
+		Tag:      "SpellPowerBuff",
+		ActionID: ActionID{SpellID: 58656},
+		Priority: spellPowerBonus,
+		Duration: NeverExpires,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			character.AddStatsDynamic(sim, stats.Stats{
+				stats.SpellPower:   spellPowerBonus,
+				stats.HealingPower: spellPowerBonus,
+			})
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			character.AddStatsDynamic(sim, stats.Stats{
+				stats.SpellPower:   -spellPowerBonus,
+				stats.HealingPower: -spellPowerBonus,
+			})
 		},
 	})
 }

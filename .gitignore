@@ -15,3 +15,6 @@ sim/web/__debug_bin
 .dockerignore
 *.code-workspace
 wowsimwotlk
+
+# old result file
+TestDestruction.results

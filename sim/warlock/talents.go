@@ -25,8 +25,9 @@ func (warlock *Warlock) ApplyTalents() {
 	warlock.PseudoStats.FireDamageDealtMultiplier *= 1. + 0.01*float64(warlock.Talents.Malediction)
 
 	// Demonic Pact
-	warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1. + 0.02*float64(warlock.Talents.DemonicPact)
-	warlock.PseudoStats.FireDamageDealtMultiplier *= 1. + 0.02*float64(warlock.Talents.DemonicPact)
+	if warlock.Talents.DemonicPact > 0 {
+		warlock.setupDemonicPact()
+	}
 
 	// Suppression (Add 1% hit per point)
 	warlock.AddStat(stats.SpellHit, float64(warlock.Talents.Suppression)*core.SpellHitRatingPerHitChance)
@@ -494,6 +495,39 @@ func (warlock *Warlock) setupImprovedSoulLeech() {
 					if sim.RandomFloat("ImprovedSoulLeech") < improvedSoulLeechProcChance {
 						core.ReplenishmentAura(warlock.GetCharacter(), actionID).Activate(sim)
 					}
+				}
+			}
+		},
+	})
+}
+
+func (warlock *Warlock) setupDemonicPact() {
+	demonicPactMultiplier := 0.02 * float64(warlock.Talents.DemonicPact)
+	warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1. + demonicPactMultiplier
+	warlock.PseudoStats.FireDamageDealtMultiplier *= 1. + demonicPactMultiplier
+	icd := core.Cooldown{
+		Timer:    warlock.NewTimer(),
+		Duration: time.Second * 5,
+	}
+
+	warlock.Pets[0].GetCharacter().RegisterAura(core.Aura{
+		Label:    "Demonic Pact Hidden Aura",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spellEffect.Outcome.Matches(core.OutcomeCrit) && icd.IsReady(sim) {
+				icd.Use(sim)
+				currentDemonicPactAura := warlock.GetAura("Demonic Pact")
+				newSPBonus := warlock.GetStat(stats.SpellPower) * demonicPactMultiplier
+				if currentDemonicPactAura != nil {
+					if currentDemonicPactAura.Priority < newSPBonus || currentDemonicPactAura.RemainingDuration(sim) < time.Second * 10 {
+						currentDemonicPactAura.Deactivate(sim)
+						core.DemonicPactAura(warlock.GetCharacter(), newSPBonus).Activate(sim)
+					}
+				} else {
+					core.DemonicPactAura(warlock.GetCharacter(), newSPBonus).Activate(sim)
 				}
 			}
 		},
