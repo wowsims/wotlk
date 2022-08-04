@@ -74,6 +74,7 @@ func (dk *Deathknight) ShouldHornOfWinter(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastHornOfWinter(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanHornOfWinter(sim) {
+		dk.LastCast = dk.HornOfWinter
 		return dk.HornOfWinter.Cast(sim, target)
 	}
 	return false

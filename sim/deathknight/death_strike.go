@@ -81,7 +81,7 @@ func (dk *Deathknight) registerDeathStrikeSpell() {
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				dk.threatOfThassarianProc(sim, spellEffect, dk.DeathStrikeMhHit, dk.DeathStrikeOhHit)
-				dk.LastCastOutcome = DeathStrikeMHOutcome
+				dk.LastOutcome = spellEffect.Outcome
 			},
 		}, false),
 	})
@@ -92,8 +92,9 @@ func (dk *Deathknight) CanDeathStrike(sim *core.Simulation) bool {
 }
 
 func (dk *Deathknight) CastDeathStrike(sim *core.Simulation, target *core.Unit) bool {
-	if !dk.DeathStrike.IsReady(sim) {
-		return false
+	if dk.CanDeathStrike(sim) {
+		dk.LastCast = dk.DeathStrike
+		return dk.DeathStrike.Cast(sim, target)
 	}
-	return dk.DeathStrike.Cast(sim, target)
+	return false
 }

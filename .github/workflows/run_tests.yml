@@ -31,10 +31,8 @@ jobs:
 
       - name: Build 🔧
         run: |
-          npm install
-          make
+          make dist/wotlk/.dirstamp
 
       - name: Test
         run: |
           make test
-          make dist

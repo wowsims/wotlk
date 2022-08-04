@@ -38,7 +38,7 @@ func (dk *Deathknight) registerPestilenceSpell() {
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Target == dk.CurrentTarget {
-					dk.LastCastOutcome = spellEffect.Outcome
+					dk.LastOutcome = spellEffect.Outcome
 				}
 				if spellEffect.Landed() {
 					unitHit := spellEffect.Target
@@ -79,7 +79,8 @@ func (dk *Deathknight) CanPestilence(sim *core.Simulation) bool {
 }
 
 func (dk *Deathknight) CastPestilence(sim *core.Simulation, target *core.Unit) bool {
-	if dk.Pestilence.IsReady(sim) {
+	if dk.CanPestilence(sim) {
+		dk.LastCast = dk.Pestilence
 		return dk.Pestilence.Cast(sim, target)
 	}
 	return false

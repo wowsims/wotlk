@@ -162,6 +162,7 @@ message RetributionPaladin {
 		int32 exo_slack = 1;
 		int32 cons_slack = 2;
 		double divine_plea_percentage = 3;
+		int32 holy_wrath_threshold = 4;
 	}
 	Rotation rotation = 1;
 

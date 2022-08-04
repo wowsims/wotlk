@@ -27,30 +27,6 @@ func (dk *Deathknight) registerEmpowerRuneWeaponSpell() {
 			dk.AddRunicPower(sim, amountOfRunicPower, dk.EmpowerRuneWeapon.RunicPowerMetrics())
 		},
 	})
-
-	// Temp stuff for testing
-	if dk.Talents.SummonGargoyle {
-		dk.AddMajorCooldown(core.MajorCooldown{
-			Spell:    dk.EmpowerRuneWeapon.Spell,
-			Priority: core.CooldownPriorityDefault,
-			Type:     core.CooldownTypeDPS,
-			CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-				if dk.Opener.IsOngoing() || dk.CanSummonGargoyle(sim) {
-					return false
-				}
-				if dk.CurrentBloodRunes() > 0 {
-					return false
-				}
-				if dk.CurrentFrostRunes() > 0 {
-					return false
-				}
-				if dk.CurrentUnholyRunes() > 0 {
-					return false
-				}
-				return dk.CanEmpowerRuneWeapon(sim)
-			},
-		})
-	}
 }
 
 func (dk *Deathknight) CanEmpowerRuneWeapon(sim *core.Simulation) bool {
@@ -59,6 +35,7 @@ func (dk *Deathknight) CanEmpowerRuneWeapon(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastEmpowerRuneWeapon(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanEmpowerRuneWeapon(sim) && dk.EmpowerRuneWeapon.Cast(sim, target) {
+		dk.LastCast = dk.EmpowerRuneWeapon
 		dk.UpdateMajorCooldowns()
 		return true
 	}

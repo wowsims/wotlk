@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -63,14 +62,6 @@ func (dk *Deathknight) registerSummonGargoyleCD() {
 			sim.AddPendingAction(&pa)
 		},
 	})
-
-	// Extra checks for hyperspeed accelerators and gargoyle snapshot
-	// TODO: Check if we want to have the same for other OnUse trinkets
-	if dk.Equip[proto.ItemSlot_ItemSlotHands].Enchant.ID == 54758 {
-		dk.Character.GetMajorCooldown(core.ActionID{SpellID: 54758}).CanActivate = func(sim *core.Simulation, character *core.Character) bool {
-			return dk.SummonGargoyle.CD.IsReady(sim) || dk.SummonGargoyle.CD.TimeToReady(sim) > 60*time.Second
-		}
-	}
 }
 
 func (dk *Deathknight) CanSummonGargoyle(sim *core.Simulation) bool {
@@ -79,6 +70,7 @@ func (dk *Deathknight) CanSummonGargoyle(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastSummonGargoyle(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanSummonGargoyle(sim) {
+		dk.LastCast = dk.SummonGargoyle
 		res := dk.SummonGargoyle.Cast(sim, target)
 		if res {
 			dk.UpdateMajorCooldowns()

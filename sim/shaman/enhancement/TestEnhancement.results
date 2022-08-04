@@ -248,8 +248,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 2284.6849298208886
-  tps: 1609.958756138872
+  dps: 2223.79507281949
+  tps: 1549.2269524856274
  }
 }
 dps_results: {
@@ -647,8 +647,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 2240.923361621752
-  tps: 1579.1876939619483
+  dps: 2203.2010099158965
+  tps: 1537.5679561085842
  }
 }
 dps_results: {
