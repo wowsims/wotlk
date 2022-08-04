@@ -12,7 +12,7 @@ import { ItemQuality } from '../proto/common.js';
 import { ItemSlot } from '../proto/common.js';
 import { ItemType } from '../proto/common.js';
 import { Profession } from '../proto/common.js';
-import { enchantDescriptions } from '../constants/enchants.js';
+import { getEnchantDescription } from '../proto_utils/enchants.js';
 import { ActionId } from '../proto_utils/action_id.js';
 import { slotNames } from '../proto_utils/names.js';
 import { setItemQualityCssClass } from '../css_utils.js';
@@ -186,8 +186,9 @@ class ItemPicker extends Component {
 			});
 
 			if (newItem.enchant) {
-				this.enchantElem.textContent = enchantDescriptions.get(newItem.enchant.id) || newItem.enchant.name;
-				newItem.enchant
+				getEnchantDescription(newItem.enchant).then(description => {
+					this.enchantElem.textContent = description;
+				});
 				// Make enchant text hover have a tooltip.
 				if (newItem.enchant.isSpellId) {
 					this.enchantElem.setAttribute('data-wowhead', `spell=${newItem.enchant.id}`);
