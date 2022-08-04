@@ -98,7 +98,7 @@ export const DefaultDebuffs = Debuffs.create({
 export const P1_PRESET = {
 	name: 'P1 Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{
+	gear: EquipmentSpec.fromJsonString(` {
     "items": [
       {
         "id": 40562,
@@ -115,8 +115,11 @@ export const P1_PRESET = {
         ]
       },
       {
-        "id": 40555,
-        "enchant": 44874
+        "id": 40459,
+        "enchant": 44874,
+        "gems": [
+          39998
+        ]
       },
       {
         "id": 44005,
@@ -145,7 +148,7 @@ export const P1_PRESET = {
         "id": 40454,
         "enchant": 54999,
         "gems": [
-          40014,
+          40049,
           0
         ]
       },
@@ -160,7 +163,7 @@ export const P1_PRESET = {
         "enchant": 41602
       },
       {
-        "id": 40246,
+        "id": 40558,
         "enchant": 55016
       },
       {
