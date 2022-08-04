@@ -241,6 +241,26 @@ func (dk *DpsDeathknight) uhGargoyleCanCast(sim *core.Simulation) bool {
 	return true
 }
 
+func (dk *DpsDeathknight) setupGargoyleCooldowns() {
+	// hyperspeed accelerators
+	dk.gargoyleCooldownSync(core.ActionID{SpellID: 54758}, false)
+
+	// berserking (troll)
+	dk.gargoyleCooldownSync(core.ActionID{SpellID: 26297}, false)
+
+	// potion of speed
+	dk.gargoyleCooldownSync(core.ActionID{ItemID: 40211}, true)
+}
+
+func (dk *DpsDeathknight) gargoyleCooldownSync(actionID core.ActionID, isPotion bool) {
+	if dk.Character.HasMajorCooldown(actionID) {
+		majorCd := dk.Character.GetMajorCooldown(actionID)
+		majorCd.ShouldActivate = func(sim *core.Simulation, character *core.Character) bool {
+			return dk.SummonGargoyle.CD.IsReady(sim) || (dk.SummonGargoyle.CD.TimeToReady(sim) > majorCd.Spell.CD.Duration && !isPotion) || dk.SummonGargoyle.CD.ReadyAt() > dk.Env.Encounter.Duration
+		}
+	}
+}
+
 func logMessage(sim *core.Simulation, message string) {
 	if sim.Log != nil {
 		sim.Log(message)

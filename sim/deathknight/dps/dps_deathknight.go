@@ -79,6 +79,8 @@ func (dk *DpsDeathknight) SetupRotations() {
 			dk.setupFrostSubBloodNoERWOpener()
 		}
 	} else if dk.Talents.SummonGargoyle {
+		dk.setupGargoyleCooldowns()
+
 		if dk.Rotation.UseDeathAndDecay || !dk.Talents.ScourgeStrike {
 			dk.setupUnholyDndOpener()
 		} else {
