@@ -74,7 +74,7 @@ var Enchants = []Enchant{
 	{ID: 47766, EffectID: 1953, Name: "Greater Defense", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{stats.Defense: 22}, ItemType: proto.ItemType_ItemTypeChest},
 
 	// Wrist
-	{ID: 44484, EffectID: 3845, Name: "Major Assult", Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{stats.AttackPower: 50, stats.RangedAttackPower: 50}, ItemType: proto.ItemType_ItemTypeWrist},
+	{ID: 44484, EffectID: 3845, Name: "Greater Assault", Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{stats.AttackPower: 50, stats.RangedAttackPower: 50}, ItemType: proto.ItemType_ItemTypeWrist},
 	{ID: 44498, EffectID: 2332, Name: "Superior Spellpower", Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{stats.SpellPower: 30, stats.HealingPower: 30}, ItemType: proto.ItemType_ItemTypeWrist},
 	{ID: 44944, EffectID: 3850, Name: "Major Stamina", Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{stats.Stamina: 40}, ItemType: proto.ItemType_ItemTypeWrist},
 	{ID: 44555, EffectID: 1119, Name: "Exceptional Intellect", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{stats.Intellect: 16}, ItemType: proto.ItemType_ItemTypeWrist},
