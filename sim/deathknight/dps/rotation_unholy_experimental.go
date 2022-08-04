@@ -9,8 +9,7 @@ import (
 )
 
 func (dk *DpsDeathknight) dndStartOpener() {
-	// Static opener with no Proc checks for gargoyle
-	dk.Opener.
+	dk.Opener.Clear().
 		NewAction(dk.getFirstDiseaseAction()).
 		NewAction(dk.getSecondDiseaseAction()).
 		NewAction(dk.getBloodRuneAction(true)).
@@ -48,7 +47,6 @@ func (dk *DpsDeathknight) dndStartOpener() {
 			NewAction(dk.RotationActionCallback_BP)
 	}
 
-	// Experimental rotation with sequences
 	dk.dndStartSequence()
 }
 
@@ -75,7 +73,6 @@ func (dk *DpsDeathknight) dndStartSequence() {
 		NewAction(dk.RotationAction_Gargoyle_Custom)
 }
 
-// Custom Dnd callback with delay
 func (dk *DpsDeathknight) RotationAction_Gargoyle_Custom(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
 	if dk.uhGargoyleCanCast(sim) {
 		if !dk.PresenceMatches(deathknight.UnholyPresence) {
@@ -103,13 +100,28 @@ func (dk *DpsDeathknight) RotationAction_Gargoyle_Custom(sim *core.Simulation, t
 	return true
 }
 
-// Custom Dnd callback with delay
 func (dk *DpsDeathknight) RotationAction_Dnd_Custom(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
 	casted := dk.CastDeathAndDecay(sim, target)
 	if !casted {
 		if !dk.DeathAndDecay.CD.IsReady(sim) {
-			dk.WaitUntil(sim, dk.DeathAndDecay.ReadyAt())
-			return true
+			if dk.SummonGargoyle.IsReady(sim) {
+				if dk.uhGargoyleCanCast(sim) {
+					if !dk.PresenceMatches(deathknight.UnholyPresence) {
+						dk.CastBloodTap(sim, dk.CurrentTarget)
+						dk.CastUnholyPresence(sim, dk.CurrentTarget)
+					}
+					if dk.CastSummonGargoyle(sim, target) {
+						return true
+					}
+				} else {
+					waitUntil := core.MinDuration(dk.DeathAndDecay.ReadyAt(), sim.CurrentTime+100*time.Millisecond)
+					dk.WaitUntil(sim, waitUntil)
+					return true
+				}
+			} else {
+				dk.WaitUntil(sim, dk.DeathAndDecay.ReadyAt())
+				return true
+			}
 		}
 	} else {
 		s.Advance()
