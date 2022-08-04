@@ -18,5 +18,5 @@ function fetchEnchantDescriptions(): Promise<Record<number, string>> {
 
 export async function getEnchantDescription(enchant: Enchant): Promise<string> {
 	const descriptionsMap = await fetchEnchantDescriptions();
-	return descriptionsMap[enchant.id] || enchant.name;
+	return descriptionsMap[enchant.effectId] || enchant.name;
 }
