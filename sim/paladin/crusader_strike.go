@@ -12,7 +12,7 @@ func (paladin *Paladin) registerCrusaderStrikeSpell() {
 	baseCost := paladin.BaseMana * 0.05
 
 	baseModifiers := Multiplicative{
-		Additive{paladin.getTalentSanctityOfBattleBonus(), paladin.getTalentTheArtOfWarBonus()},
+		Additive{paladin.getTalentSanctityOfBattleBonus(), paladin.getTalentTheArtOfWarBonus(), paladin.getItemSetGladiatorsVindicationBonusGloves()},
 	}
 	baseMultiplier := baseModifiers.Get()
 
