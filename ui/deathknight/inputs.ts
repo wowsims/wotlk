@@ -57,8 +57,8 @@ export const UseDeathAndDecay = InputHelpers.makeRotationBooleanInput<Spec.SpecD
 	fieldName: 'useDeathAndDecay',
 	label: 'Death and Decay',
 	labelTooltip: 'Use Death and Decay based rotation.',
-	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle,
-	changeEmitter: (player: Player<Spec.SpecDeathknight>) => player.talentsChangeEmitter,
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && player.getTalents().scourgeStrike,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 });
 
 export const SetDeathAndDecayPrio = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, DeathAndDecayPrio>({
@@ -71,8 +71,8 @@ export const SetDeathAndDecayPrio = InputHelpers.makeRotationEnumInput<Spec.Spec
 		{ name: 'Max Rune Downtime', value: DeathAndDecayPrio.MaxRuneDowntime },
 		{ name: 'Max Dnd Uptime', value: DeathAndDecayPrio.MaxDndUptime },
 	],
-	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && player.getRotation().useDeathAndDecay,
-	changeEmitter: (player: Player<Spec.SpecDeathknight>) => player.changeEmitter,
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && (player.getRotation().useDeathAndDecay || !player.getTalents().scourgeStrike),
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 })
 
 export const UseEmpowerRuneWeapon = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
@@ -86,8 +86,7 @@ export const BloodTapGhoulFrenzy = InputHelpers.makeRotationBooleanInput<Spec.Sp
 	label: 'BT Ghoul Frenzy',
 	labelTooltip: 'Use Ghoul Frenzy only with Blood Tap.',
 	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().ghoulFrenzy,
-	changeEmitter: (player: Player<Spec.SpecDeathknight>) => player.talentsChangeEmitter, 
-	// TODO find out why changeEmitter breaks web with: TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter])
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 });
 
 export const SetFirstDisease = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, FirstDisease>({
@@ -99,7 +98,7 @@ export const SetFirstDisease = InputHelpers.makeRotationEnumInput<Spec.SpecDeath
 		{ name: 'Blood Plague', value: FirstDisease.BloodPlague },
 	],
 	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle,
-	changeEmitter: (player: Player<Spec.SpecDeathknight>) => player.talentsChangeEmitter,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 })
 
 export const UseArmyOfTheDead = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, ArmyOfTheDead>({

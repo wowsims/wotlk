@@ -8,36 +8,10 @@ import (
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
-func (dk *DpsDeathknight) getFirstDiseaseAction() deathknight.RotationAction {
-	if dk.ur.ffFirst {
-		return dk.RotationActionCallback_IT
-	}
-	return dk.RotationActionCallback_PS
-}
-
-func (dk *DpsDeathknight) getSecondDiseaseAction() deathknight.RotationAction {
-	if dk.ur.ffFirst {
-		return dk.RotationActionCallback_PS
-	}
-	return dk.RotationActionCallback_IT
-}
-
-func (dk *DpsDeathknight) getBloodRuneAction(isFirst bool) deathknight.RotationAction {
-	if isFirst {
-		if dk.Env.GetNumTargets() > 1 {
-			return dk.RotationActionCallback_Pesti
-		} else {
-			return dk.RotationActionCallback_BS
-		}
-	} else {
-		return dk.RotationActionCallback_BS
-	}
-}
-
 func (dk *DpsDeathknight) setupUnholyOpener() {
 	dk.setupGargoyleCooldowns()
 
-	dk.Opener.
+	dk.Opener.Clear().
 		NewAction(dk.getFirstDiseaseAction()).
 		NewAction(dk.getSecondDiseaseAction()).
 		NewAction(dk.getBloodRuneAction(true))
@@ -53,42 +27,11 @@ func (dk *DpsDeathknight) setupUnholyOpener() {
 	}
 }
 
-func (dk *DpsDeathknight) afterGargoyleOpener(sim *core.Simulation) {
-	if dk.Rotation.UseEmpowerRuneWeapon && dk.EmpowerRuneWeapon.IsReady(sim) {
-		dk.Main.Clear()
-
-		if dk.BloodTapAura.IsActive() {
-			dk.Main.NewAction(dk.RotationAction_CancelBT)
-		}
-
-		if dk.Rotation.ArmyOfTheDead != proto.Deathknight_Rotation_DoNotUse && dk.ArmyOfTheDead.IsReady(sim) {
-			// If not enough runes for aotd cast ERW
-			if dk.CurrentBloodRunes() < 1 || dk.CurrentFrostRunes() < 1 || dk.CurrentUnholyRunes() < 1 {
-				dk.Main.NewAction(dk.RotationActionCallback_ERW)
-			}
-			dk.Main.NewAction(dk.RotationActionCallback_AOTD)
-		} else {
-			// If no runes cast ERW TODO: Figure out when to do it after
-			if dk.CurrentBloodRunes() < 1 && dk.CurrentFrostRunes() < 1 && dk.CurrentUnholyRunes() < 1 {
-				dk.Main.NewAction(dk.RotationActionCallback_ERW)
-			}
-		}
-
-		dk.Main.NewAction(dk.RotationActionCallback_BP)
-
-		if dk.Rotation.UseDeathAndDecay || !dk.Talents.ScourgeStrike {
-			dk.Main.NewAction(dk.RotationAction_ResetToDndMain)
-		} else {
-			dk.Main.NewAction(dk.RotationAction_ResetToSsMain)
-		}
-	}
-}
-
 func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
 	casted := false
 
 	if dk.uhGargoyleCheck(sim, target) {
-		dk.afterGargoyleOpener(sim)
+		dk.afterGargoyleSequence(sim)
 		return true
 	}
 
@@ -162,7 +105,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 	casted := false
 
 	if dk.uhGargoyleCheck(sim, target) {
-		dk.afterGargoyleOpener(sim)
+		dk.afterGargoyleSequence(sim)
 		return true
 	}
 
@@ -216,6 +159,37 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 	}
 
 	return casted
+}
+
+func (dk *DpsDeathknight) afterGargoyleSequence(sim *core.Simulation) {
+	if dk.Rotation.UseEmpowerRuneWeapon && dk.EmpowerRuneWeapon.IsReady(sim) {
+		dk.Main.Clear()
+
+		if dk.BloodTapAura.IsActive() {
+			dk.Main.NewAction(dk.RotationAction_CancelBT)
+		}
+
+		if dk.Rotation.ArmyOfTheDead != proto.Deathknight_Rotation_DoNotUse && dk.ArmyOfTheDead.IsReady(sim) {
+			// If not enough runes for aotd cast ERW
+			if dk.CurrentBloodRunes() < 1 || dk.CurrentFrostRunes() < 1 || dk.CurrentUnholyRunes() < 1 {
+				dk.Main.NewAction(dk.RotationActionCallback_ERW)
+			}
+			dk.Main.NewAction(dk.RotationActionCallback_AOTD)
+		} else {
+			// If no runes cast ERW TODO: Figure out when to do it after
+			if dk.CurrentBloodRunes() < 1 && dk.CurrentFrostRunes() < 1 && dk.CurrentUnholyRunes() < 1 {
+				dk.Main.NewAction(dk.RotationActionCallback_ERW)
+			}
+		}
+
+		dk.Main.NewAction(dk.RotationActionCallback_BP)
+
+		if dk.Rotation.UseDeathAndDecay || !dk.Talents.ScourgeStrike {
+			dk.Main.NewAction(dk.RotationAction_ResetToDndMain)
+		} else {
+			dk.Main.NewAction(dk.RotationAction_ResetToSsMain)
+		}
+	}
 }
 
 func (dk *DpsDeathknight) ghoulFrenzySequence(sim *core.Simulation, bloodTap bool) {

@@ -130,6 +130,9 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: DeathKnightInputs.DeathKnightRotationConfig,
+			petConsumeInputs: [
+				IconInputs.SpicedMammothTreats,
+			],
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
 			],

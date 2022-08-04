@@ -73,8 +73,30 @@ func (dk *DpsDeathknight) initProcTrackers() {
 	dk.ur.addProc(26297, "Berserking (Troll)")
 }
 
-func (dk *DpsDeathknight) HasWeaponEnchant(enchantId int32) bool {
-	return (dk.HasMHWeapon() && dk.GetMHWeapon().Enchant.ID == 53344) || (dk.HasOHWeapon() && dk.GetOHWeapon().Enchant.ID == 53344)
+func (dk *DpsDeathknight) getFirstDiseaseAction() deathknight.RotationAction {
+	if dk.ur.ffFirst {
+		return dk.RotationActionCallback_IT
+	}
+	return dk.RotationActionCallback_PS
+}
+
+func (dk *DpsDeathknight) getSecondDiseaseAction() deathknight.RotationAction {
+	if dk.ur.ffFirst {
+		return dk.RotationActionCallback_PS
+	}
+	return dk.RotationActionCallback_IT
+}
+
+func (dk *DpsDeathknight) getBloodRuneAction(isFirst bool) deathknight.RotationAction {
+	if isFirst {
+		if dk.Env.GetNumTargets() > 1 {
+			return dk.RotationActionCallback_Pesti
+		} else {
+			return dk.RotationActionCallback_BS
+		}
+	} else {
+		return dk.RotationActionCallback_BS
+	}
 }
 
 func (dk *DpsDeathknight) desolationAuraCheck(sim *core.Simulation) bool {

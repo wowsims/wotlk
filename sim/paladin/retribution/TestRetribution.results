@@ -234,8 +234,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 3003.7896866663386
-  tps: 2744.2289215487567
+  dps: 2978.4701852815183
+  tps: 2724.729208897103
  }
 }
 dps_results: {
@@ -640,8 +640,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 2958.6850958671225
-  tps: 2723.4072190780057
+  dps: 2957.196654889816
+  tps: 2714.3278361158277
  }
 }
 dps_results: {
