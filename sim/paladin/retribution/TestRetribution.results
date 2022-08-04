@@ -752,8 +752,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P4-Retribution Paladin-FullBuffs-LongMultiTarget"
  value: {
-  dps: 8088.890926080096
-  tps: 9639.234270897654
+  dps: 8872.963784963316
+  tps: 10436.65832586989
  }
 }
 dps_results: {
@@ -773,8 +773,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P4-Retribution Paladin-NoBuffs-LongMultiTarget"
  value: {
-  dps: 3504.682210151716
-  tps: 4531.581931782957
+  dps: 4043.9038400821933
+  tps: 5076.871653196915
  }
 }
 dps_results: {
@@ -794,8 +794,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-Settings-Draenei-P4-Retribution Paladin-FullBuffs-LongMultiTarget"
  value: {
-  dps: 8199.954609026954
-  tps: 9754.838931079108
+  dps: 8965.926278910416
+  tps: 10507.563263848828
  }
 }
 dps_results: {
@@ -815,8 +815,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-Settings-Draenei-P4-Retribution Paladin-NoBuffs-LongMultiTarget"
  value: {
-  dps: 3643.8918021095465
-  tps: 4704.9702437264905
+  dps: 4145.15186880154
+  tps: 5190.797509621132
  }
 }
 dps_results: {
@@ -836,8 +836,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-Settings-Dwarf-P4-Retribution Paladin-FullBuffs-LongMultiTarget"
  value: {
-  dps: 8231.014896244718
-  tps: 9771.698194741799
+  dps: 8962.08670261523
+  tps: 10502.058393727737
  }
 }
 dps_results: {
@@ -857,8 +857,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-Settings-Dwarf-P4-Retribution Paladin-NoBuffs-LongMultiTarget"
  value: {
-  dps: 3503.0714276204258
-  tps: 4502.993707578273
+  dps: 4149.47233031175
+  tps: 5193.481976802621
  }
 }
 dps_results: {
@@ -878,8 +878,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-Settings-Human-P4-Retribution Paladin-FullBuffs-LongMultiTarget"
  value: {
-  dps: 8185.810804258447
-  tps: 9722.207408089003
+  dps: 8978.882809183306
+  tps: 10531.627697559405
  }
 }
 dps_results: {
@@ -899,8 +899,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-Settings-Human-P4-Retribution Paladin-NoBuffs-LongMultiTarget"
  value: {
-  dps: 3541.0218979107667
-  tps: 4558.528150305669
+  dps: 4140.9713188743035
+  tps: 5191.192728141939
  }
 }
 dps_results: {
