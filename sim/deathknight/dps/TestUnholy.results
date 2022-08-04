@@ -227,7 +227,7 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 7412.070712416887
+  dps: 7436.470749745042
   tps: 5379.228543925257
  }
 }
