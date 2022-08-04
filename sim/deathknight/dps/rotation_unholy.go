@@ -43,13 +43,15 @@ func (dk *DpsDeathknight) setupUnholySsOpener() {
 		NewAction(dk.RotationActionCallback_BT).
 		NewAction(dk.RotationActionCallback_UP).
 		NewAction(dk.RotationActionCallback_Garg).
-		NewAction(dk.RotationAction_CancelBT).
-		NewAction(dk.RotationActionCallback_ERW)
+		NewAction(dk.RotationAction_CancelBT)
 
-	if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd {
-		dk.Opener.NewAction(dk.RotationActionCallback_AOTD)
+	if dk.Rotation.UseEmpowerRuneWeapon {
+		dk.Opener.NewAction(dk.RotationActionCallback_ERW)
+		if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd {
+			dk.Opener.NewAction(dk.RotationActionCallback_AOTD)
+		}
+		dk.Opener.NewAction(dk.RotationActionCallback_BP)
 	}
-	dk.Opener.NewAction(dk.RotationActionCallback_BP)
 
 	dk.Main.NewAction(dk.RotationActionCallback_UnholySsRotation)
 }
@@ -69,11 +71,17 @@ func (dk *DpsDeathknight) setupUnholyDndOpener() {
 }
 
 func (dk *DpsDeathknight) afterGargoyleOpener(sim *core.Simulation) {
-	if dk.EmpowerRuneWeapon.IsReady(sim) && dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd {
+	if dk.Rotation.UseEmpowerRuneWeapon && dk.EmpowerRuneWeapon.IsReady(sim) {
 		dk.Main.Clear().
 			NewAction(dk.RotationAction_CancelBT).
-			NewAction(dk.RotationActionCallback_ERW).
-			NewAction(dk.RotationActionCallback_AOTD).
+			NewAction(dk.RotationActionCallback_ERW)
+
+		if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd {
+			dk.Main.
+				NewAction(dk.RotationActionCallback_AOTD)
+		}
+
+		dk.Main.
 			NewAction(dk.RotationActionCallback_BP).
 			NewAction(dk.RotationAction_ResetToDndMain)
 	}
