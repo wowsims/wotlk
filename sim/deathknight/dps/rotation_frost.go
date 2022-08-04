@@ -22,7 +22,7 @@ func (dk *DpsDeathknight) setupFrostSubBloodERWOpener() {
 		NewAction(dk.RotationActionCallback_Obli).
 		NewAction(dk.RotationActionCallback_Obli).
 		NewAction(dk.RotationActionCallback_FS).
-		NewAction(dk.RotationActionCallback_HB_Ghoul_RimeCheck).
+		NewAction(dk.RotationActionCallback_RD).
 		NewAction(dk.RotationActionCallback_FS).
 		NewAction(dk.RotationActionCallback_Obli).
 		NewAction(dk.RotationActionCallback_Obli).
