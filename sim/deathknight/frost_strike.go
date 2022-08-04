@@ -86,10 +86,10 @@ func (dk *Deathknight) registerFrostStrikeSpell() {
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				dk.threatOfThassarianProc(sim, spellEffect, dk.FrostStrikeMhHit, dk.FrostStrikeOhHit)
 				dk.threatOfThassarianAdjustMetrics(sim, spell, spellEffect, FrostStrikeMHOutcome)
-				dk.LastCastOutcome = FrostStrikeMHOutcome
+				dk.LastOutcome = spellEffect.Outcome
 
 				// Check for KM after both hits have passed
-				if dk.LastCastOutcome.Matches(core.OutcomeLanded) {
+				if dk.LastOutcome.Matches(core.OutcomeLanded) {
 					if dk.KillingMachineAura.IsActive() {
 						dk.KillingMachineAura.Deactivate(sim)
 					}
@@ -105,7 +105,8 @@ func (dk *Deathknight) CanFrostStrike(sim *core.Simulation) bool {
 }
 
 func (dk *Deathknight) CastFrostStrike(sim *core.Simulation, target *core.Unit) bool {
-	if dk.FrostStrike.IsReady(sim) {
+	if dk.CanFrostStrike(sim) {
+		dk.LastCast = dk.FrostStrike
 		return dk.FrostStrike.Cast(sim, target)
 	}
 	return false

@@ -44,7 +44,7 @@ func (dk *Deathknight) registerDeathCoilSpell() {
 			OutcomeApplier: dk.OutcomeFuncMagicHitAndCrit(dk.spellCritMultiplier()),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				dk.LastCastOutcome = spellEffect.Outcome
+				dk.LastOutcome = spellEffect.Outcome
 				if spellEffect.Landed() && dk.Talents.UnholyBlight {
 					dk.procUnholyBlight(sim, spellEffect.Target, spellEffect.Damage)
 				}
@@ -59,6 +59,7 @@ func (dk *Deathknight) CanDeathCoil(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastDeathCoil(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanDeathCoil(sim) {
+		dk.LastCast = dk.DeathCoil
 		return dk.DeathCoil.Cast(sim, target)
 	}
 	return false

@@ -75,7 +75,7 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 			OutcomeApplier: dk.OutcomeFuncMeleeSpecialHitAndCrit(dk.MeleeCritMultiplier(1.0, dk.viciousStrikesCritDamageBonus())),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				dk.LastCastOutcome = spellEffect.Outcome
+				dk.LastOutcome = spellEffect.Outcome
 				if spellEffect.Landed() && dk.DiseasesAreActive(spellEffect.Target) {
 					dk.LastScourgeStrikeDamage = spellEffect.Damage
 					shadowDamageSpell.Cast(sim, spellEffect.Target)
@@ -87,4 +87,12 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 
 func (dk *Deathknight) CanScourgeStrike(sim *core.Simulation) bool {
 	return dk.Talents.ScourgeStrike && dk.CastCostPossible(sim, 0.0, 0, 1, 1) && dk.ScourgeStrike.IsReady(sim)
+}
+
+func (dk *Deathknight) CastScourgeStrike(sim *core.Simulation, target *core.Unit) bool {
+	if dk.CanScourgeStrike(sim) {
+		dk.LastCast = dk.ScourgeStrike
+		return dk.ScourgeStrike.Cast(sim, target)
+	}
+	return false
 }

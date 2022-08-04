@@ -53,6 +53,7 @@ func (dk *Deathknight) CanBloodTap(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastBloodTap(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanBloodTap(sim) {
+		dk.LastCast = dk.BloodTap
 		return dk.BloodTap.Cast(sim, target)
 	}
 	return false
