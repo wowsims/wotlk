@@ -828,10 +828,10 @@ func (rp *RunicPowerBar) SpendDeathRune(sim *Simulation, metrics *ResourceMetric
 	runeTypeIdx := 0
 	spendSlot := rp.SpendRuneFromType(sim, &rp.bloodRunes, RuneState_Death)
 	if spendSlot < 0 {
-		runeTypeIdx += 1
+		runeTypeIdx = 1
 		spendSlot = rp.SpendRuneFromType(sim, &rp.frostRunes, RuneState_Death)
 		if spendSlot < 0 {
-			runeTypeIdx += 1
+			runeTypeIdx = 2
 			spendSlot = rp.SpendRuneFromType(sim, &rp.unholyRunes, RuneState_Death)
 		}
 	}
