@@ -106,7 +106,6 @@ func (dk *Deathknight) CanFrostStrike(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastFrostStrike(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanFrostStrike(sim) {
-		dk.LastCast = dk.FrostStrike
 		return dk.FrostStrike.Cast(sim, target)
 	}
 	return false

@@ -116,7 +116,6 @@ func (dk *Deathknight) CanObliterate(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastObliterate(sim *core.Simulation, target *core.Unit) bool {
 	if dk.Obliterate.IsReady(sim) {
-		dk.LastCast = dk.Obliterate
 		return dk.Obliterate.Cast(sim, target)
 	}
 	return false

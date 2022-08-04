@@ -8,6 +8,7 @@ type RuneSpell struct {
 	*core.Spell
 	Refundable      bool
 	curSpellOutcome core.HitOutcome
+	dk              *Deathknight
 }
 
 func (rs *RuneSpell) OnOutcome(sim *core.Simulation, outcome core.HitOutcome) {
@@ -29,6 +30,7 @@ func (rs *RuneSpell) Cast(sim *core.Simulation, target *core.Unit) bool {
 		return result
 	}
 
+	rs.dk.LastCast = rs
 	cost := core.RuneCost(rs.Spell.CurCast.Cost)
 	// Spend now if there is no way to refund the spell
 	if !cost.HasRune() || !rs.Refundable {
@@ -44,6 +46,7 @@ func (dk *Deathknight) RegisterSpell(rs *RuneSpell, spellConfig core.SpellConfig
 	if rs == nil {
 		rs = &RuneSpell{}
 	}
+	rs.dk = dk
 	rs.Spell = dk.Character.RegisterSpell(spellConfig)
 	return rs
 }

@@ -76,7 +76,6 @@ func (dk *Deathknight) CanBoneShield(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastBoneShield(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanBoneShield(sim) {
-		dk.LastCast = dk.BoneShield
 		return dk.BoneShield.Cast(sim, target)
 	}
 	return false
