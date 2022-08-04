@@ -167,7 +167,7 @@ func (dk *DpsDeathknight) uhShouldSpreadDisease(sim *core.Simulation) bool {
 func (dk *DpsDeathknight) uhSpreadDiseases(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
 	if dk.uhDiseaseCheck(sim, target, dk.Pestilence, true, 1) {
 		casted := dk.CastPestilence(sim, target)
-		landed := dk.LastCastOutcome.Matches(core.OutcomeLanded)
+		landed := dk.LastOutcome.Matches(core.OutcomeLanded)
 
 		// Reset flags on succesfull cast
 		dk.ur.recastedFF = !(casted && landed)

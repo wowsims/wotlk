@@ -58,7 +58,7 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 			OutcomeApplier: dk.killingMachineOutcomeMod(dk.OutcomeFuncMagicHitAndCrit(dk.spellCritMultiplier())),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				dk.LastCastOutcome = spellEffect.Outcome
+				dk.LastOutcome = spellEffect.Outcome
 				if spellEffect.Landed() {
 					if dk.KillingMachineAura.IsActive() {
 						dk.KillingMachineAura.Deactivate(sim)
@@ -83,6 +83,7 @@ func (dk *Deathknight) CanIcyTouch(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastIcyTouch(sim *core.Simulation, target *core.Unit) bool {
 	if dk.IcyTouch.IsReady(sim) {
+		dk.LastCast = dk.IcyTouch
 		return dk.IcyTouch.Cast(sim, target)
 	}
 	return false

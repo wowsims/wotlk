@@ -42,15 +42,21 @@ func (dk *Deathknight) registerBloodBoilSpell() {
 			OutcomeApplier: dk.OutcomeFuncMagicHitAndCrit(dk.spellCritMultiplierGoGandMoM()),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Target == dk.CurrentTarget {
-					dk.LastCastOutcome = spellEffect.Outcome
+					dk.LastOutcome = spellEffect.Outcome
 				}
 			},
 		}, true),
 	})
 }
 
+// TODO: REDO THIS SO WE DONT USE CanSpell
+func (dk *Deathknight) CanBloodBoil(sim *core.Simulation) bool {
+	return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.BloodStrike.IsReady(sim)
+}
+
 func (dk *Deathknight) CastBloodBoil(sim *core.Simulation, target *core.Unit) bool {
-	if dk.BloodBoil.IsReady(sim) {
+	if dk.CanBloodBoil(sim) {
+		dk.LastCast = dk.BloodBoil
 		return dk.BloodBoil.Cast(sim, target)
 	}
 	return false

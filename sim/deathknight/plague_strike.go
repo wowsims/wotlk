@@ -65,7 +65,7 @@ func (dk *Deathknight) registerPlagueStrikeSpell() {
 		if dk.Talents.ThreatOfThassarian > 0 && dk.threatOfThassarianWillProc(sim) {
 			dk.PlagueStrikeOhHit.Cast(sim, spellEffect.Target)
 		}
-		dk.LastCastOutcome = spellEffect.Outcome
+		dk.LastOutcome = spellEffect.Outcome
 		if spellEffect.Outcome.Matches(core.OutcomeLanded) {
 			dk.BloodPlagueSpell.Cast(sim, spellEffect.Target)
 			if dk.Talents.CryptFever > 0 {
@@ -86,6 +86,7 @@ func (dk *Deathknight) CanPlagueStrike(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastPlagueStrike(sim *core.Simulation, target *core.Unit) bool {
 	if dk.PlagueStrike.IsReady(sim) {
+		dk.LastCast = dk.PlagueStrike
 		return dk.PlagueStrike.Cast(sim, target)
 	}
 	return false

@@ -269,7 +269,7 @@ func (dk *DpsDeathknight) RotationAction_ResetToDndMain(sim *core.Simulation, ta
 // Custom PS callback for tracking recasts for pestilence disease sync
 func (dk *DpsDeathknight) RotationAction_PS_Custom(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
 	casted := dk.RotationActionCallback_PS(sim, target, s)
-	advance := dk.LastCastOutcome.Matches(core.OutcomeLanded)
+	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
 	dk.ur.recastedBP = casted && advance
 	return casted
 }
@@ -277,7 +277,7 @@ func (dk *DpsDeathknight) RotationAction_PS_Custom(sim *core.Simulation, target 
 // Custom IT callback for tracking recasts for pestilence disease sync
 func (dk *DpsDeathknight) RotationAction_IT_Custom(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
 	casted := dk.RotationActionCallback_IT(sim, target, s)
-	advance := dk.LastCastOutcome.Matches(core.OutcomeLanded)
+	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
 	if casted && advance {
 		dk.ur.recastedFF = true
 		dk.ur.syncTimeFF = 0
@@ -289,7 +289,7 @@ func (dk *DpsDeathknight) RotationAction_IT_Custom(sim *core.Simulation, target 
 func (dk *DpsDeathknight) RotationAction_IT_SetSync(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
 	ffRemaining := dk.FrostFeverDisease[target.Index].RemainingDuration(sim)
 	casted := dk.RotationActionCallback_IT(sim, target, s)
-	advance := dk.LastCastOutcome.Matches(core.OutcomeLanded)
+	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
 	if casted && advance {
 		dk.ur.syncTimeFF = dk.FrostFeverDisease[target.Index].Duration - ffRemaining
 	}
@@ -319,7 +319,7 @@ func (dk *DpsDeathknight) RotationAction_DiseaseClipCheck(dot *core.Dot, gracePe
 		nextTickAt := dot.ExpiresAt() - dot.TickLength*time.Duration((dot.NumberOfTicks-1)-dot.TickCount)
 		if nextTickAt > sim.CurrentTime && (nextTickAt < sim.CurrentTime+gracePeriod || nextTickAt < sim.CurrentTime+400*time.Millisecond) {
 			// Delay disease for next tick
-			dk.LastCastOutcome = core.OutcomeMiss
+			dk.LastOutcome = core.OutcomeMiss
 			dk.WaitUntil(sim, nextTickAt+50*time.Millisecond)
 		} else {
 			dk.WaitUntil(sim, sim.CurrentTime)

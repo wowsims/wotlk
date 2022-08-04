@@ -89,6 +89,7 @@ func (dk *Deathknight) CanArmyOfTheDead(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastArmyOfTheDead(sim *core.Simulation, target *core.Unit) bool {
 	if dk.ArmyOfTheDead.IsReady(sim) && dk.ArmyOfTheDead.Cast(sim, target) {
+		dk.LastCast = dk.ArmyOfTheDead
 		dk.UpdateMajorCooldowns()
 		return true
 	}
