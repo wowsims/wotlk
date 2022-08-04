@@ -37,7 +37,7 @@ func (dk *DpsDeathknight) getBloodRuneAction(isFirst bool) deathknight.RotationA
 func (dk *DpsDeathknight) setupUnholyOpener() {
 	dk.setupGargoyleCooldowns()
 
-	dk.Opener.
+	dk.Opener.Clear().
 		NewAction(dk.getFirstDiseaseAction()).
 		NewAction(dk.getSecondDiseaseAction()).
 		NewAction(dk.getBloodRuneAction(true))
