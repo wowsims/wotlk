@@ -55,7 +55,6 @@ func (dk *Deathknight) CanRuneTap(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastRuneTap(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanRuneTap(sim) {
-		dk.LastCast = dk.RuneTap
 		return dk.RuneTap.Cast(sim, target)
 	}
 	return false

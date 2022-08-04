@@ -71,7 +71,6 @@ func (dk *Deathknight) CanIceboundFortitude(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastIceboundFortitude(sim *core.Simulation, target *core.Unit) bool {
 	if dk.IceboundFortitude.IsReady(sim) {
-		dk.LastCast = dk.IceboundFortitude
 		return dk.IceboundFortitude.Cast(sim, target)
 	}
 	return false

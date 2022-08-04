@@ -91,7 +91,6 @@ func (dk *Deathknight) CanScourgeStrike(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastScourgeStrike(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanScourgeStrike(sim) {
-		dk.LastCast = dk.ScourgeStrike
 		return dk.ScourgeStrike.Cast(sim, target)
 	}
 	return false

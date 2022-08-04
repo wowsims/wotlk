@@ -83,7 +83,6 @@ func (dk *Deathknight) CanIcyTouch(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastIcyTouch(sim *core.Simulation, target *core.Unit) bool {
 	if dk.IcyTouch.IsReady(sim) {
-		dk.LastCast = dk.IcyTouch
 		return dk.IcyTouch.Cast(sim, target)
 	}
 	return false

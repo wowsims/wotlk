@@ -86,7 +86,6 @@ func (dk *Deathknight) CanPlagueStrike(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastPlagueStrike(sim *core.Simulation, target *core.Unit) bool {
 	if dk.PlagueStrike.IsReady(sim) {
-		dk.LastCast = dk.PlagueStrike
 		return dk.PlagueStrike.Cast(sim, target)
 	}
 	return false

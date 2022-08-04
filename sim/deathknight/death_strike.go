@@ -93,7 +93,6 @@ func (dk *Deathknight) CanDeathStrike(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastDeathStrike(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanDeathStrike(sim) {
-		dk.LastCast = dk.DeathStrike
 		return dk.DeathStrike.Cast(sim, target)
 	}
 	return false

@@ -80,7 +80,6 @@ func (dk *Deathknight) CanPestilence(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastPestilence(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanPestilence(sim) {
-		dk.LastCast = dk.Pestilence
 		return dk.Pestilence.Cast(sim, target)
 	}
 	return false

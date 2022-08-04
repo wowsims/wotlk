@@ -47,7 +47,6 @@ func (dk *Deathknight) CanBloodPresence(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastBloodPresence(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanBloodPresence(sim) {
-		dk.LastCast = dk.BloodPresence
 		return dk.BloodPresence.Cast(sim, target)
 	}
 	return false
@@ -59,7 +58,6 @@ func (dk *Deathknight) CanFrostPresence(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastFrostPresence(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanFrostPresence(sim) {
-		dk.LastCast = dk.FrostPresence
 		return dk.FrostPresence.Cast(sim, target)
 	}
 	return false
@@ -71,7 +69,6 @@ func (dk *Deathknight) CanUnholyPresence(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastUnholyPresence(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanUnholyPresence(sim) {
-		dk.LastCast = dk.UnholyPresence
 		return dk.UnholyPresence.Cast(sim, target)
 	}
 	return false

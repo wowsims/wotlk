@@ -97,7 +97,6 @@ func (dk *Deathknight) CanDeathAndDecay(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastDeathAndDecay(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanDeathAndDecay(sim) {
-		dk.LastCast = dk.DeathAndDecay
 		return dk.DeathAndDecay.Cast(sim, target)
 	}
 	return false
