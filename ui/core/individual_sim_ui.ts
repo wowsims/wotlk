@@ -699,6 +699,26 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			new IconEnumPicker(elem, this.player, IconInputs.makeGuardianElixirsInput(guardianElixirOptions));
 		}
 
+		const foodOptions = this.splitRelevantOptions([
+			{ item: Food.FoodFishFeast, stats: [Stat.StatStamina, Stat.StatAttackPower, Stat.StatSpellPower] },
+			{ item: Food.FoodGreatFeast, stats: [Stat.StatStamina, Stat.StatAttackPower, Stat.StatSpellPower] },
+			{ item: Food.FoodBlackenedDragonfin, stats: [Stat.StatAgility] },
+			{ item: Food.FoodDragonfinFilet, stats: [Stat.StatStrength] },
+			{ item: Food.FoodCuttlesteak, stats: [Stat.StatSpirit] },
+			{ item: Food.FoodMegaMammothMeal, stats: [Stat.StatAttackPower] },
+			{ item: Food.FoodHeartyRhino, stats: [Stat.StatArmorPenetration] },
+			{ item: Food.FoodRhinoliciousWormsteak, stats: [Stat.StatExpertise] },
+			{ item: Food.FoodFirecrackerSalmon, stats: [Stat.StatSpellPower] },
+			{ item: Food.FoodSnapperExtreme, stats: [Stat.StatMeleeHit, Stat.StatSpellHit] },
+			{ item: Food.FoodSpicedWormBurger, stats: [Stat.StatMeleeCrit, Stat.StatSpellCrit] },
+			{ item: Food.FoodImperialMantaSteak, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
+			{ item: Food.FoodMightyRhinoDogs, stats: [Stat.StatMP5] },
+		]);
+		if (foodOptions.length) {
+			const elem = this.rootElem.getElementsByClassName('consumes-food')[0] as HTMLElement;
+			new IconEnumPicker(elem, this.player, IconInputs.makeFoodInput(foodOptions));
+		}
+
 		const tradeConsumesElem = this.rootElem.getElementsByClassName('consumes-trade')[0] as HTMLElement;
 		//tradeConsumesElem.parentElement!.style.display = 'none';
 		makeIconInput(tradeConsumesElem, IconInputs.ThermalSapper);
