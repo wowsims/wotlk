@@ -234,8 +234,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 2978.4701852815183
-  tps: 2724.729208897103
+  dps: 2968.1972789397287
+  tps: 2708.2220248715957
  }
 }
 dps_results: {
