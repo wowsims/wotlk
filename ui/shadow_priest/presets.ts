@@ -194,7 +194,7 @@ export const PreBis_PRESET = {
         "enchant": 44877,
         "gems": [
           41285,
-          40026
+          40049
         ]
       },
       {
@@ -205,7 +205,7 @@ export const PreBis_PRESET = {
         "enchant": 44874,
         "gems": [
           39998,
-          40049
+          40026
         ]
       },
       {
