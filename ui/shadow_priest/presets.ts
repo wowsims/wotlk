@@ -101,91 +101,95 @@ export const DefaultDebuffs = Debuffs.create({
 export const P1_PRESET = {
 	name: 'P1 Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{ "items": [
-        {
-          "id": 40562,
-          "enchant": 44877,
-          "gems": [
-            41285,
-            40026
-          ]
-        },
-        {
-          "id": 40374
-        },
-        {
-          "id": 40286,
-          "enchant": 44874
-        },
-        {
-          "id": 44005,
-          "enchant": 55642,
-          "gems": [
-            40026
-          ]
-        },
-        {
-          "id": 40234,
-          "enchant": 33990,
-          "gems": [
-            40026,
-            40051
-          ]
-        },
-        {
-          "id": 44008,
-          "enchant": 44498,
-          "gems": [
-            39998,
-            0
-          ]
-        },
-        {
-          "id": 40454,
-          "enchant": 54999,
-          "gems": [
-            39998,
-            0
-          ]
-        },
-        {
-          "id": 40561,
-          "gems": [
-            39998
-          ]
-        },
-        {
-          "id": 40560,
-          "enchant": 41602
-        },
-        {
-          "id": 40558,
-          "enchant": 55016
-        },
-        {
-          "id": 40719
-        },
-        {
-          "id": 40399
-        },
-        {
-          "id": 40255
-        },
-        {
-          "id": 40432
-        },
-        {
-          "id": 40395,
-          "enchant": 44487
-        },
-        {
-          "id": 40273
-        },
-        {
-          "id": 39712
-        }
-      ]
-    }`),
+	gear: EquipmentSpec.fromJsonString(`{
+    "items": [
+      {
+        "id": 40562,
+        "enchant": 44877,
+        "gems": [
+          41285,
+          39998
+        ]
+      },
+      {
+        "id": 44661,
+        "gems": [
+          40026
+        ]
+      },
+      {
+        "id": 40555,
+        "enchant": 44874
+      },
+      {
+        "id": 44005,
+        "enchant": 55642,
+        "gems": [
+          40026
+        ]
+      },
+      {
+        "id": 44002,
+        "enchant": 33990,
+        "gems": [
+          39998,
+          39998
+        ]
+      },
+      {
+        "id": 44008,
+        "enchant": 44498,
+        "gems": [
+          39998,
+          0
+        ]
+      },
+      {
+        "id": 40454,
+        "enchant": 54999,
+        "gems": [
+          40014,
+          0
+        ]
+      },
+      {
+        "id": 40561,
+        "gems": [
+          39998
+        ]
+      },
+      {
+        "id": 40560,
+        "enchant": 41602
+      },
+      {
+        "id": 40246,
+        "enchant": 55016
+      },
+      {
+        "id": 40719
+      },
+      {
+        "id": 40399
+      },
+      {
+        "id": 40255
+      },
+      {
+        "id": 40432
+      },
+      {
+        "id": 40395,
+        "enchant": 44487
+      },
+      {
+        "id": 40273
+      },
+      {
+        "id": 39712
+      }
+    ]
+  }`),
 };
 export const PreBis_PRESET = {
 	name: 'PreBis Preset',
