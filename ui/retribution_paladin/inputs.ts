@@ -34,6 +34,11 @@ export const RetributionPaladinRotationDivinePleaPercentageConfig = InputHelpers
 	percent: true
 })
 
+export const RetributionPaladinRotationHolyWrathConfig = InputHelpers.makeRotationNumberInput<Spec.SpecRetributionPaladin>({
+	fieldName: "holyWrathThreshold",
+	label: "Holy Wrath Threshold",
+	labelTooltip: "Number of Demon and Undead units before Holy Wrath is considered usable.",
+})
 
 export const AuraSelection = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecRetributionPaladin, PaladinAura>({
 	fieldName: 'aura',

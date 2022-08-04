@@ -65,6 +65,7 @@ export const DefaultRotation = RetributionPaladinRotation.create({
 	exoSlack: 500,
 	consSlack: 500,
 	divinePleaPercentage: 0.75,
+	holyWrathThreshold: 4
 });
 
 export const DefaultOptions = RetributionPaladinOptions.create({

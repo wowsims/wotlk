@@ -92,6 +92,8 @@ type Paladin struct {
 	SpiritualAttunementMetrics *core.ResourceMetrics
 
 	HasTuralyonsOrLiadrinsBattlegear2Pc bool
+
+	DemonAndUndeadTargetCount int32
 }
 
 // Implemented by each Paladin spec.
@@ -175,6 +177,13 @@ func (paladin *Paladin) Initialize() {
 		paladin.RighteousVengeanceDamage = []float64{}
 		for i := int32(0); i < targets; i++ {
 			paladin.RighteousVengeanceDamage = append(paladin.RighteousVengeanceDamage, 0.0)
+		}
+	}
+
+	for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
+		unit := paladin.Env.GetTargetUnit(i)
+		if unit.MobType == proto.MobType_MobTypeDemon || unit.MobType == proto.MobType_MobTypeUndead {
+			paladin.DemonAndUndeadTargetCount += 1
 		}
 	}
 }
