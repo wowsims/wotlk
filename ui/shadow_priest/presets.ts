@@ -190,7 +190,7 @@ export const P1_PRESET = {
 export const PreBis_PRESET = {
 	name: 'PreBis Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`  {
+	gear: EquipmentSpec.fromJsonString(`   {
     "items": [
       {
         "id": 42553,
@@ -241,8 +241,8 @@ export const PreBis_PRESET = {
       {
         "id": 40696,
         "gems": [
-          39998,
-          40026
+          40049,
+          39998
         ]
       },
       {
@@ -253,11 +253,11 @@ export const PreBis_PRESET = {
         "id": 44202,
         "enchant": 60623,
         "gems": [
-          39998
+          40026
         ]
       },
       {
-        "id": 48957
+        "id": 40585
       },
       {
         "id": 37694
