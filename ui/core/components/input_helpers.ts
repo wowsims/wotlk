@@ -116,6 +116,7 @@ function makeWrappedNumberInput<SpecType extends Spec, ModObject>(config: Wrappe
 		label: config.label,
 		labelTooltip: config.labelTooltip,
 		float: config.float,
+		positive: config.positive,
 		changedEvent: (player: Player<SpecType>) => config.changedEvent(getModObject(player)),
 		getValue: (player: Player<SpecType>) => config.getValue(getModObject(player)),
 		setValue: (eventID: EventID, player: Player<SpecType>, newValue: number) => config.setValue(eventID, getModObject(player), newValue),
@@ -129,6 +130,7 @@ export interface PlayerNumberInputConfig<SpecType extends Spec, Message> extends
 	labelTooltip?: string,
 	percent?: boolean,
 	float?: boolean,
+	positive?: boolean,
 	enableWhen?: (player: Player<SpecType>) => boolean,
 	showWhen?: (player: Player<SpecType>) => boolean,
 }
@@ -137,6 +139,7 @@ export function makeSpecOptionsNumberInput<SpecType extends Spec>(config: Player
 		label: config.label,
 		labelTooltip: config.labelTooltip,
 		float: config.float,
+		positive: config.positive,
 		getModObject: (player: Player<SpecType>) => player,
 		getValue: config.getValue || ((player: Player<SpecType>) => player.getSpecOptions()[config.fieldName] as unknown as number),
 		setValue: config.setValue || ((eventID: EventID, player: Player<SpecType>, newVal: number) => {
@@ -162,6 +165,7 @@ export function makeRotationNumberInput<SpecType extends Spec>(config: PlayerNum
 		label: config.label,
 		labelTooltip: config.labelTooltip,
 		float: config.float,
+		positive: config.positive,
 		getModObject: (player: Player<SpecType>) => player,
 		getValue: config.getValue || ((player: Player<SpecType>) => player.getRotation()[config.fieldName] as unknown as number),
 		setValue: config.setValue || ((eventID: EventID, player: Player<SpecType>, newVal: number) => {
