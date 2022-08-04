@@ -79,13 +79,7 @@ func (dk *DpsDeathknight) SetupRotations() {
 			dk.setupFrostSubBloodNoERWOpener()
 		}
 	} else if dk.Talents.SummonGargoyle {
-		dk.setupGargoyleCooldowns()
-
-		if dk.Rotation.UseDeathAndDecay || !dk.Talents.ScourgeStrike {
-			dk.setupUnholyDndOpener()
-		} else {
-			dk.setupUnholySsOpener()
-		}
+		dk.setupUnholyOpener()
 	} else {
 		// TODO: Add some default rotation that works without special talents
 		if dk.Rotation.UseEmpowerRuneWeapon {

@@ -34,39 +34,22 @@ func (dk *DpsDeathknight) getBloodRuneAction(isFirst bool) deathknight.RotationA
 	}
 }
 
-func (dk *DpsDeathknight) setupUnholySsOpener() {
+func (dk *DpsDeathknight) setupUnholyOpener() {
+	dk.setupGargoyleCooldowns()
+
 	dk.Opener.
 		NewAction(dk.getFirstDiseaseAction()).
 		NewAction(dk.getSecondDiseaseAction()).
-		NewAction(dk.getBloodRuneAction(true)).
-		NewAction(dk.RotationActionCallback_SS).
-		NewAction(dk.RotationActionCallback_BT).
-		NewAction(dk.RotationActionCallback_UP).
-		NewAction(dk.RotationActionCallback_Garg).
-		NewAction(dk.RotationAction_CancelBT)
+		NewAction(dk.getBloodRuneAction(true))
 
-	if dk.Rotation.UseEmpowerRuneWeapon {
-		dk.Opener.NewAction(dk.RotationActionCallback_ERW)
-		if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd {
-			dk.Opener.NewAction(dk.RotationActionCallback_AOTD)
+	if dk.Rotation.UseDeathAndDecay || !dk.Talents.ScourgeStrike {
+		if dk.Rotation.DeathAndDecayPrio == proto.Deathknight_Rotation_MaxRuneDowntime {
+			dk.Main.Clear().NewAction(dk.RotationActionCallback_UnholyDndRotation)
+		} else {
+			dk.dndStartOpener()
 		}
-		dk.Opener.NewAction(dk.RotationActionCallback_BP)
-	}
-
-	dk.Main.NewAction(dk.RotationActionCallback_UnholySsRotation)
-}
-
-func (dk *DpsDeathknight) setupUnholyDndOpener() {
-	if dk.Rotation.DeathAndDecayPrio == proto.Deathknight_Rotation_MaxRuneDowntime {
-		dk.Opener.
-			NewAction(dk.getFirstDiseaseAction()).
-			NewAction(dk.getSecondDiseaseAction()).
-			NewAction(dk.getBloodRuneAction(true)).
-			NewAction(dk.RotationActionCallback_DND)
-
-		dk.Main.Clear().NewAction(dk.RotationActionCallback_UnholyDndRotation)
 	} else {
-		dk.dndStartOpener()
+		dk.Main.NewAction(dk.RotationActionCallback_UnholySsRotation)
 	}
 }
 
@@ -91,9 +74,13 @@ func (dk *DpsDeathknight) afterGargoyleOpener(sim *core.Simulation) {
 			}
 		}
 
-		dk.Main.
-			NewAction(dk.RotationActionCallback_BP).
-			NewAction(dk.RotationAction_ResetToDndMain)
+		dk.Main.NewAction(dk.RotationActionCallback_BP)
+
+		if dk.Rotation.UseDeathAndDecay || !dk.Talents.ScourgeStrike {
+			dk.Main.NewAction(dk.RotationAction_ResetToDndMain)
+		} else {
+			dk.Main.NewAction(dk.RotationAction_ResetToSsMain)
+		}
 	}
 }
 
@@ -175,6 +162,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 	casted := false
 
 	if dk.uhGargoyleCheck(sim, target) {
+		dk.afterGargoyleOpener(sim)
 		return true
 	}
 
@@ -222,7 +210,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 	}
 
 	// Gargoyle cast needs to be checked more often then default rotation on gcd/resource gain checks
-	if dk.SummonGargoyle.IsReady(sim) {
+	if dk.SummonGargoyle.IsReady(sim) && dk.GCD.IsReady(sim) {
 		dk.WaitUntil(sim, sim.CurrentTime+100*time.Millisecond)
 		return true
 	}
@@ -248,7 +236,7 @@ func (dk *DpsDeathknight) ghoulFrenzySequence(sim *core.Simulation, bloodTap boo
 		}
 	}
 
-	if dk.Rotation.UseDeathAndDecay {
+	if dk.Rotation.UseDeathAndDecay || !dk.Talents.ScourgeStrike {
 		dk.Main.NewAction(dk.RotationAction_ResetToDndMain)
 	} else {
 		dk.Main.NewAction(dk.RotationAction_ResetToSsMain)
@@ -273,7 +261,7 @@ func (dk *DpsDeathknight) recastDiseasesSequence(sim *core.Simulation) {
 			NewAction(dk.RotationAction_IT_Custom)
 	}
 
-	if dk.Rotation.UseDeathAndDecay {
+	if dk.Rotation.UseDeathAndDecay || !dk.Talents.ScourgeStrike {
 		dk.Main.NewAction(dk.RotationAction_ResetToDndMain)
 	} else {
 		dk.Main.NewAction(dk.RotationAction_ResetToSsMain)
