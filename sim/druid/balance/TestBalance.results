@@ -199,8 +199,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 1125.0336542855862
-  tps: 1115.1312816184561
+  dps: 1065.5493683379295
+  tps: 1056.8366813897528
  }
 }
 dps_results: {
