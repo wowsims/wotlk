@@ -18,26 +18,35 @@ func (dk *DpsDeathknight) dndStartOpener() {
 		NewAction(dk.RotationActionCallback_BT).
 		NewAction(dk.RotationActionCallback_UP).
 		NewAction(dk.RotationActionCallback_Garg).
-		NewAction(dk.RotationAction_CancelBT).
-		NewAction(dk.RotationActionCallback_ERW)
+		NewAction(dk.RotationAction_CancelBT)
 
-	if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd {
+	if dk.Rotation.UseEmpowerRuneWeapon {
 		dk.Opener.
-			NewAction(dk.RotationActionCallback_AOTD).
-			NewAction(dk.RotationActionCallback_BP)
+			NewAction(dk.RotationActionCallback_ERW)
+
+		if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd {
+			dk.Opener.
+				NewAction(dk.RotationActionCallback_AOTD).
+				NewAction(dk.RotationActionCallback_BP)
+		} else {
+			dk.Opener.
+				NewAction(dk.RotationActionCallback_BP).
+				NewAction(dk.getFirstDiseaseAction()).
+				NewAction(dk.getSecondDiseaseAction()).
+				NewAction(dk.RotationActionCallback_BS)
+		}
+
+		dk.Opener.
+			NewAction(dk.RotationActionCallback_IT).
+			NewAction(dk.RotationActionCallback_GF).
+			NewAction(dk.RotationAction_DC_Custom).
+			NewAction(dk.RotationAction_DC_Custom)
 	} else {
 		dk.Opener.
-			NewAction(dk.RotationActionCallback_BP).
-			NewAction(dk.RotationActionCallback_IT).
-			NewAction(dk.RotationActionCallback_PS).
-			NewAction(dk.RotationActionCallback_BS)
+			NewAction(dk.getFirstDiseaseAction()).
+			NewAction(dk.getSecondDiseaseAction()).
+			NewAction(dk.RotationActionCallback_BP)
 	}
-
-	dk.Opener.
-		NewAction(dk.RotationActionCallback_IT).
-		NewAction(dk.RotationActionCallback_GF).
-		NewAction(dk.RotationAction_DC_Custom).
-		NewAction(dk.RotationAction_DC_Custom)
 
 	// Experimental rotation with sequences
 	dk.dndStartSequence()
@@ -49,13 +58,49 @@ func (dk *DpsDeathknight) dndStartSequence() {
 		NewAction(dk.getFirstDiseaseAction()).
 		NewAction(dk.RotationAction_BP_ClipCheck).
 		NewAction(dk.getSecondDiseaseAction()).
+		NewAction(dk.RotationAction_Gargoyle_Custom).
 		NewAction(dk.RotationAction_DC_Custom).
+		NewAction(dk.RotationAction_Gargoyle_Custom).
 		NewAction(dk.RotationAction_DC_Custom).
-		NewAction(dk.getBloodRuneAction(true)).
+		NewAction(dk.RotationAction_Gargoyle_Custom).
+		NewAction(dk.RotationAction_BloodRune_Custom).
+		NewAction(dk.RotationAction_Gargoyle_Custom).
 		NewAction(dk.RotationAction_Dnd_Custom).
+		NewAction(dk.RotationAction_Gargoyle_Custom).
 		NewAction(dk.RotationAction_DC_Custom).
+		NewAction(dk.RotationAction_Gargoyle_Custom).
 		NewAction(dk.RotationAction_DC_Custom).
-		NewAction(dk.RotationAction_UnholyDndRotationGhoulFrenzyCheck)
+		NewAction(dk.RotationAction_Gargoyle_Custom).
+		NewAction(dk.RotationAction_UnholyDndRotationGhoulFrenzyCheck).
+		NewAction(dk.RotationAction_Gargoyle_Custom)
+}
+
+// Custom Dnd callback with delay
+func (dk *DpsDeathknight) RotationAction_Gargoyle_Custom(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
+	if dk.uhGargoyleCanCast(sim) {
+		if !dk.PresenceMatches(deathknight.UnholyPresence) {
+			dk.CastBloodTap(sim, dk.CurrentTarget)
+			dk.CastUnholyPresence(sim, dk.CurrentTarget)
+		}
+		if dk.CastSummonGargoyle(sim, target) {
+			return true
+		}
+	}
+
+	// Go back to Blood Presence after gargoyle cast
+	if dk.PresenceMatches(deathknight.UnholyPresence) && !dk.CanSummonGargoyle(sim) {
+		if dk.BloodTapAura.IsActive() {
+			dk.BloodTapAura.Deactivate(sim)
+		}
+		if dk.CastBloodPresence(sim, target) {
+			dk.WaitUntil(sim, sim.CurrentTime)
+			return true
+		}
+	}
+
+	s.Advance()
+	dk.WaitUntil(sim, sim.CurrentTime)
+	return true
 }
 
 // Custom Dnd callback with delay
@@ -73,12 +118,26 @@ func (dk *DpsDeathknight) RotationAction_Dnd_Custom(sim *core.Simulation, target
 }
 
 func (dk *DpsDeathknight) RotationAction_DC_Custom(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
-	casted := dk.CastDeathCoil(sim, target)
-	if !casted {
+	if !dk.uhDeathCoilCheck(sim) {
 		dk.WaitUntil(sim, sim.CurrentTime)
+	} else {
+		casted := dk.CastDeathCoil(sim, target)
+		if !casted {
+			dk.WaitUntil(sim, sim.CurrentTime)
+		}
 	}
 	s.Advance()
 	return true
+}
+
+func (dk *DpsDeathknight) RotationAction_BloodRune_Custom(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
+	if dk.PresenceMatches(deathknight.UnholyPresence) {
+		return dk.RotationActionCallback_BP(sim, target, s)
+	} else if dk.desolationAuraCheck(sim) {
+		return dk.RotationActionCallback_BS(sim, target, s)
+	} else {
+		return dk.RotationActionCallback_BB(sim, target, s)
+	}
 }
 
 func (dk *DpsDeathknight) RotationAction_UnholyDndRotationGhoulFrenzyCheck(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
@@ -104,36 +163,17 @@ func (dk *DpsDeathknight) RotationAction_UnholyDndRotationGhoulFrenzyCheck(sim *
 		}
 	}
 
-	if dk.desolationAuraCheck(sim) {
-		dk.Main.NewAction(dk.RotationActionCallback_BS)
-	} else {
-		dk.Main.NewAction(dk.RotationActionCallback_BB)
-	}
 	dk.Main.
+		NewAction(dk.RotationAction_Gargoyle_Custom).
+		NewAction(dk.RotationAction_BloodRune_Custom)
+
+	dk.Main.
+		NewAction(dk.RotationAction_Gargoyle_Custom).
 		NewAction(dk.RotationAction_DC_Custom).
+		NewAction(dk.RotationAction_Gargoyle_Custom).
 		NewAction(dk.RotationAction_DC_Custom).
+		NewAction(dk.RotationAction_Gargoyle_Custom).
 		NewAction(dk.RotationAction_UnholyDndRotationEnd)
-
-	if dk.uhGargoyleCanCast(sim) {
-		if !dk.PresenceMatches(deathknight.UnholyPresence) {
-			dk.CastBloodTap(sim, dk.CurrentTarget)
-			dk.CastUnholyPresence(sim, dk.CurrentTarget)
-		}
-		if dk.CastSummonGargoyle(sim, target) {
-			return true
-		}
-	}
-
-	// Go back to Blood Presence after gargoyle cast
-	if dk.PresenceMatches(deathknight.UnholyPresence) && !dk.CanSummonGargoyle(sim) {
-		if dk.BloodTapAura.IsActive() {
-			dk.BloodTapAura.Deactivate(sim)
-		}
-		if dk.CastBloodPresence(sim, target) {
-			dk.WaitUntil(sim, sim.CurrentTime)
-			return true
-		}
-	}
 
 	dk.WaitUntil(sim, sim.CurrentTime)
 	return true

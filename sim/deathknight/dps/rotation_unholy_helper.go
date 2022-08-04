@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
@@ -64,44 +63,14 @@ func (ur *UnholyRotation) Reset(sim *core.Simulation) {
 func (dk *DpsDeathknight) initProcTrackers() {
 	dk.ur.procTrackers = make([]*ProcTracker, 0)
 
-	// Meteorite Whetstone
-	if dk.HasTrinketEquipped(37390) {
-		dk.ur.addProc(37390, "Meteorite Whetstone Proc")
-	}
-
-	// Mirror of Truth
-	if dk.HasTrinketEquipped(40684) {
-		dk.ur.addProc(40684, "Mirror of Truth Proc")
-	}
-
-	// DMC: Greatness
-	if dk.HasTrinketEquipped(42987) {
-		dk.ur.addProc(42987, "DMC Greatness Strength Proc")
-	}
-
-	// Thundering Skyflare Diamond
-	if dk.HasMetaGemEquipped(41400) {
-		dk.ur.addProc(55379, "Thundering Skyflare Diamond Proc")
-	}
-
-	// Fallen Crusader
-	if dk.HasWeaponEnchant(53344) {
-		dk.ur.addProc(53344, "Rune Of The Fallen Crusader Proc")
-	}
-
-	// Black Magic
-	if dk.HasWeaponEnchant(44495) {
-		dk.ur.addProc(59626, "Black Magic Proc")
-	}
-
-	// Hyperspeed Acceleration
-	if dk.Equip[proto.ItemSlot_ItemSlotHands].Enchant.ID == 54999 {
-		dk.ur.addProc(54999, "Hyperspeed Acceleration")
-	}
-
-	if dk.Race == proto.Race_RaceTroll {
-		dk.ur.addProc(26297, "Berserking (Troll)")
-	}
+	dk.ur.addProc(37390, "Meteorite Whetstone Proc")
+	dk.ur.addProc(40684, "Mirror of Truth Proc")
+	dk.ur.addProc(42987, "DMC Greatness Strength Proc")
+	dk.ur.addProc(55379, "Thundering Skyflare Diamond Proc")
+	dk.ur.addProc(53344, "Rune Of The Fallen Crusader Proc")
+	dk.ur.addProc(59626, "Black Magic Proc")
+	dk.ur.addProc(54999, "Hyperspeed Acceleration")
+	dk.ur.addProc(26297, "Berserking (Troll)")
 }
 
 func (dk *DpsDeathknight) HasWeaponEnchant(enchantId int32) bool {
@@ -272,6 +241,26 @@ func (dk *DpsDeathknight) uhGargoyleCanCast(sim *core.Simulation) bool {
 	return true
 }
 
+func (dk *DpsDeathknight) setupGargoyleCooldowns() {
+	// hyperspeed accelerators
+	dk.gargoyleCooldownSync(core.ActionID{SpellID: 54758}, false)
+
+	// berserking (troll)
+	dk.gargoyleCooldownSync(core.ActionID{SpellID: 26297}, false)
+
+	// potion of speed
+	dk.gargoyleCooldownSync(core.ActionID{ItemID: 40211}, true)
+}
+
+func (dk *DpsDeathknight) gargoyleCooldownSync(actionID core.ActionID, isPotion bool) {
+	if dk.Character.HasMajorCooldown(actionID) {
+		majorCd := dk.Character.GetMajorCooldown(actionID)
+		majorCd.ShouldActivate = func(sim *core.Simulation, character *core.Character) bool {
+			return dk.SummonGargoyle.CD.IsReady(sim) || (dk.SummonGargoyle.CD.TimeToReady(sim) > majorCd.Spell.CD.Duration && !isPotion) || dk.SummonGargoyle.CD.ReadyAt() > dk.Env.Encounter.Duration
+		}
+	}
+}
+
 func logMessage(sim *core.Simulation, message string) {
 	if sim.Log != nil {
 		sim.Log(message)
@@ -286,7 +275,7 @@ func (dk *DpsDeathknight) GargoyleProcCheck(sim *core.Simulation) bool {
 		}
 
 		// A proc is about to drop
-		if procTracker.didActivate && procTracker.expiresAt < sim.CurrentTime+dk.SpellGCD() {
+		if procTracker.didActivate && procTracker.expiresAt <= sim.CurrentTime+dk.SpellGCD()+50*time.Millisecond {
 			logMessage(sim, "Proc dropping "+procTracker.aura.Label)
 			return false
 		}

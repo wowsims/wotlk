@@ -115,11 +115,11 @@ export const UseArmyOfTheDead = InputHelpers.makeRotationEnumInput<Spec.SpecDeat
 
 export const DeathKnightRotationConfig = {
 	inputs: [
-		SetFirstDisease,
-		UseArmyOfTheDead,
-		UseDeathAndDecay,
-		UseEmpowerRuneWeapon,
-		SetDeathAndDecayPrio,
 		BloodTapGhoulFrenzy,
+		UseEmpowerRuneWeapon,
+		UseArmyOfTheDead,
+		SetFirstDisease,
+		UseDeathAndDecay,
+		SetDeathAndDecayPrio,
 	],
 };

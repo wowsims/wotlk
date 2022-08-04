@@ -24,7 +24,7 @@ import * as Tooltips from '../core/constants/tooltips.js';
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wotlk.wowhead.com/talent-calc and copy the numbers in the url.
 export const FrostTalents = {
-	name: 'Frost Sub Blood',
+	name: 'Frost BL',
 	data: SavedTalents.create({
 		talentsString: '23050005-32005350352203012300033101351',
 		glyphs: Glyphs.create({
@@ -39,7 +39,7 @@ export const FrostTalents = {
 };
 
 export const FrostUnholyTalents = {
-	name: 'Frost Sub Unholy',
+	name: 'Frost UH',
 	data: SavedTalents.create({
 		talentsString: '01-32002350351203012300033101351-230200305003',
 		glyphs: Glyphs.create({

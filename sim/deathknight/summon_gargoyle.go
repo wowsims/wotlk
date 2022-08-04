@@ -62,23 +62,6 @@ func (dk *Deathknight) registerSummonGargoyleCD() {
 			sim.AddPendingAction(&pa)
 		},
 	})
-
-	// Cooldown management for gargoyle
-	// hyperspeedAccelerators
-	dk.gargoyleCooldownSync(54758)
-
-	// berserking
-	dk.gargoyleCooldownSync(26297)
-}
-
-func (dk *Deathknight) gargoyleCooldownSync(spellId int32) {
-	actionID := core.ActionID{SpellID: spellId}
-	if dk.Character.HasMajorCooldown(actionID) {
-		majorCd := dk.Character.GetMajorCooldown(actionID)
-		majorCd.CanActivate = func(sim *core.Simulation, character *core.Character) bool {
-			return dk.SummonGargoyle.CD.IsReady(sim) || dk.SummonGargoyle.CD.TimeToReady(sim) > majorCd.Spell.CD.Duration
-		}
-	}
 }
 
 func (dk *Deathknight) CanSummonGargoyle(sim *core.Simulation) bool {

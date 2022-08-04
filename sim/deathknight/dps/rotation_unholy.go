@@ -72,13 +72,23 @@ func (dk *DpsDeathknight) setupUnholyDndOpener() {
 
 func (dk *DpsDeathknight) afterGargoyleOpener(sim *core.Simulation) {
 	if dk.Rotation.UseEmpowerRuneWeapon && dk.EmpowerRuneWeapon.IsReady(sim) {
-		dk.Main.Clear().
-			NewAction(dk.RotationAction_CancelBT).
-			NewAction(dk.RotationActionCallback_ERW)
+		dk.Main.Clear()
 
-		if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd {
-			dk.Main.
-				NewAction(dk.RotationActionCallback_AOTD)
+		if dk.BloodTapAura.IsActive() {
+			dk.Main.NewAction(dk.RotationAction_CancelBT)
+		}
+
+		if dk.Rotation.ArmyOfTheDead != proto.Deathknight_Rotation_DoNotUse && dk.ArmyOfTheDead.IsReady(sim) {
+			// If not enough runes for aotd cast ERW
+			if dk.CurrentBloodRunes() < 1 || dk.CurrentFrostRunes() < 1 || dk.CurrentUnholyRunes() < 1 {
+				dk.Main.NewAction(dk.RotationActionCallback_ERW)
+			}
+			dk.Main.NewAction(dk.RotationActionCallback_AOTD)
+		} else {
+			// If no runes cast ERW TODO: Figure out when to do it after
+			if dk.CurrentBloodRunes() < 1 && dk.CurrentFrostRunes() < 1 && dk.CurrentUnholyRunes() < 1 {
+				dk.Main.NewAction(dk.RotationActionCallback_ERW)
+			}
 		}
 
 		dk.Main.
