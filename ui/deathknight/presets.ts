@@ -56,7 +56,7 @@ export const FrostUnholyTalents = {
 export const UnholyDualWieldTalents = {
 	name: 'Unholy DW',
 	data: SavedTalents.create({
-		talentsString: '-320033500002-2300303050032152000150013133151',
+		talentsString: '-320043500002-2300303050032152000150013133051',
 		glyphs: Glyphs.create({
 			major1: DeathknightMajorGlyph.GlyphOfTheGhoul,
 			major2: DeathknightMajorGlyph.GlyphOfDarkDeath,
@@ -71,11 +71,11 @@ export const UnholyDualWieldTalents = {
 export const Unholy2HTalents = {
 	name: 'Unholy 2H',
 	data: SavedTalents.create({
-		talentsString: '-320033500002-2300303350032150000150013133051',
+		talentsString: '-320050500002-2300303150032152000150013133151',
 		glyphs: Glyphs.create({
 			major1: DeathknightMajorGlyph.GlyphOfTheGhoul,
 			major2: DeathknightMajorGlyph.GlyphOfDarkDeath,
-			major3: DeathknightMajorGlyph.GlyphOfDeathAndDecay,
+			major3: DeathknightMajorGlyph.GlyphOfIcyTouch,
 			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
 			minor2: DeathknightMinorGlyph.GlyphOfPestilence,
 			minor3: DeathknightMinorGlyph.GlyphOfRaiseDead,
@@ -102,7 +102,7 @@ export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfEndlessRage,
 	food: Food.FoodDragonfinFilet,
 	defaultPotion: Potions.PotionOfSpeed,
-	petFood: PetFood.PetFoodKiblersBits,
+	petFood: PetFood.PetFoodSpicedMammothTreats,
 	prepopPotion:  Potions.PotionOfSpeed,
 });
 
@@ -115,7 +115,7 @@ export const P1_UNHOLY_2H_PRERAID_PRESET = {
       "id": 41386,
       "enchant": 44879,
       "gems": [
-        41398,
+        41400,
         49110
       ]
     },
@@ -123,10 +123,9 @@ export const P1_UNHOLY_2H_PRERAID_PRESET = {
       "id": 37397
     },
     {
-      "id": 34388,
+      "id": 37627,
       "enchant": 44871,
       "gems": [
-        39996,
         39996
       ]
     },
@@ -194,7 +193,7 @@ export const P1_UNHOLY_2H_PRERAID_PRESET = {
     },
     {
       "id": 41257,
-      "enchant": 53343
+      "enchant": 53344
     },
     {},
     {
@@ -253,7 +252,7 @@ export const P1_UNHOLY_2H_BIS_PRESET = {
       "id": 40552,
       "enchant": 54999,
       "gems": [
-        39996,
+        40038,
         0
       ]
     },
@@ -308,7 +307,7 @@ export const P1_UNHOLY_DW_PRERAID_PRESET = {
       "id": 41386,
       "enchant": 44879,
       "gems": [
-        41398,
+        41400,
         49110
       ]
     },
@@ -316,10 +315,9 @@ export const P1_UNHOLY_DW_PRERAID_PRESET = {
       "id": 37397
     },
     {
-      "id": 34388,
+      "id": 37627,
       "enchant": 44871,
       "gems": [
-        39996,
         39996
       ]
     },
@@ -443,7 +441,7 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
       ]
     },
     {
-      "id": 40552,
+      "id": 40347,
       "enchant": 54999,
       "gems": [
         39996,
@@ -458,12 +456,8 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
       ]
     },
     {
-      "id": 40556,
-      "enchant": 38374,
-      "gems": [
-        39996,
-        39996
-      ]
+      "id": 40294,
+      "enchant": 38374
     },
     {
       "id": 40591,
@@ -487,7 +481,7 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
     },
     {
       "id": 40491,
-      "enchant": 44495
+      "enchant": 53341
     },
     {
       "id": 40867
