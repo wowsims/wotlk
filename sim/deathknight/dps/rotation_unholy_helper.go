@@ -235,7 +235,6 @@ func (dk *DpsDeathknight) uhGargoyleCanCast(sim *core.Simulation) bool {
 		return false
 	}
 	if dk.GargoyleProcCheck(sim) {
-		logMessage(sim, "Proc return")
 		return false
 	}
 
