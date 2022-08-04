@@ -375,6 +375,8 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBloodPrioRotation(sim *
 											} else {
 												fr.nextSpell = dk.Pestilence
 											}
+										} else {
+											casted = dk.RotationActionCallback_FS_Star_SubBlood(sim, target, s)
 										}
 									}
 								}
