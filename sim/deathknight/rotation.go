@@ -149,7 +149,7 @@ func (dk *Deathknight) RotationActionCallback_Garg(sim *core.Simulation, target 
 
 func (dk *Deathknight) RotationActionCallback_BP(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
 	casted := dk.CastBloodPresence(sim, target)
-	if !casted {
+	if !casted && !dk.BloodPresence.IsReady(sim) {
 		dk.WaitUntil(sim, dk.BloodPresence.CD.ReadyAt())
 	} else {
 		dk.WaitUntil(sim, sim.CurrentTime)
@@ -160,7 +160,7 @@ func (dk *Deathknight) RotationActionCallback_BP(sim *core.Simulation, target *c
 
 func (dk *Deathknight) RotationActionCallback_FP(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
 	casted := dk.CastFrostPresence(sim, target)
-	if !casted {
+	if !casted && !dk.FrostPresence.IsReady(sim) {
 		dk.WaitUntil(sim, dk.FrostPresence.CD.ReadyAt())
 	} else {
 		dk.WaitUntil(sim, sim.CurrentTime)
@@ -171,7 +171,7 @@ func (dk *Deathknight) RotationActionCallback_FP(sim *core.Simulation, target *c
 
 func (dk *Deathknight) RotationActionCallback_UP(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
 	casted := dk.CastUnholyPresence(sim, target)
-	if !casted {
+	if !casted && !dk.UnholyPresence.IsReady(sim) {
 		dk.WaitUntil(sim, dk.UnholyPresence.CD.ReadyAt())
 	} else {
 		dk.WaitUntil(sim, sim.CurrentTime)
