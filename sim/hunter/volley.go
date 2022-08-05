@@ -20,7 +20,7 @@ func (hunter *Hunter) registerVolleySpell() {
 		NumberOfTicks: 6,
 		TickLength:    time.Second * 1,
 		// TODO: Whats the actual AOE cap?
-		TickEffects: core.TickFuncAOESnapshotCapped(hunter.Env, 50000, core.SpellEffect{
+		TickEffects: core.TickFuncAOESnapshotCapped(hunter.Env, core.SpellEffect{
 			ProcMask: core.ProcMaskPeriodicDamage,
 			DamageMultiplier: 1 *
 				(1 + 0.04*float64(hunter.Talents.Barrage)),

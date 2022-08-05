@@ -113,9 +113,7 @@ var castersWithElemental = &proto.Party{
 					},
 					Rotation: &proto.Mage_Rotation{
 						Arcane: &proto.Mage_Rotation_ArcaneRotation{
-							ArcaneBlastsBetweenFillers: 3,
-							StartRegenRotationPercent:  0.2,
-							StopRegenRotationPercent:   0.5,
+							MinBlastBeforeMissiles: 4,
 						},
 					},
 				},
@@ -201,9 +199,7 @@ var castersWithResto = &proto.Party{
 					},
 					Rotation: &proto.Mage_Rotation{
 						Arcane: &proto.Mage_Rotation_ArcaneRotation{
-							ArcaneBlastsBetweenFillers: 3,
-							StartRegenRotationPercent:  0.2,
-							StopRegenRotationPercent:   0.5,
+							MinBlastBeforeMissiles: 4,
 						},
 					},
 				},

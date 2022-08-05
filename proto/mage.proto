@@ -3,7 +3,6 @@ package proto;
 
 option go_package = "./proto";
 
-
 message MageTalents {
 	// Arcane
 	int32 arcane_subtlety = 1;
@@ -153,42 +152,20 @@ message Mage {
 		Type type = 1;
 
 		message ArcaneRotation {
-			enum Filler {
-				Frostbolt = 0;
-				ArcaneMissiles = 1;
-				Scorch = 2;
-				Fireball = 3;
-				ArcaneMissilesFrostbolt = 4;
-				ArcaneMissilesScorch = 5;
-				ScorchTwoFireball = 6;
-			}
-			// The spells to use to fill time while waiting for arcane blast stacks to drop.
-			Filler filler = 1;
-
-			// Number of arcane blasts to cast before switching to filler.
-			int32 arcane_blasts_between_fillers = 2;
-
-			// Percentage of mana (0-1) below which to switch to regen rotation.
-			double start_regen_rotation_percent = 3;
-
-			// Percentage of mana (0-1) above which to switch to regular rotation.
-			double stop_regen_rotation_percent = 4;
-
-			// Prevents DPS cooldowns from being using during regen rotation.
-			bool disable_dps_cooldowns_during_regen = 5;
+			int32 min_blast_before_missiles = 1;
 		}
 		ArcaneRotation arcane = 2;
 
 		message FireRotation {
 			enum PrimarySpell {
 				Fireball = 0;
-				Scorch = 1;
+				FrostfireBolt = 1;
 			}
 			PrimarySpell primary_spell = 1;
 
 			bool maintain_improved_scorch = 2;
 
-			bool weave_fire_blast = 3;
+			int32 num_extra_targets = 4;
 		}
 		FireRotation fire = 3;
 
@@ -224,6 +201,7 @@ message Mage {
 
 		// Number of Evocation ticks to use. If 0, use all of them.
 		int32 evocation_ticks = 2;
+		int32 focus_magic_percent_uptime = 3;
 	}
 	Options options = 3;
 }

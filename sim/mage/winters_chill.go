@@ -22,7 +22,6 @@ func (mage *Mage) registerWintersChillSpell() {
 		effect.OnSpellHitDealt = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Landed() {
 				wcAura.Activate(sim)
-				wcAura.AddStack(sim)
 			}
 		}
 	}
