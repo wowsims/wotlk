@@ -129,8 +129,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-DarkrunedBattlegear"
  value: {
-  dps: 7300.955661243357
-  tps: 5215.420829528522
+  dps: 7337.189335438745
+  tps: 5244.656578192165
  }
 }
 dps_results: {
@@ -325,8 +325,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-IncisorFragment-37723"
  value: {
-  dps: 7462.715054986521
-  tps: 5411.654314737944
+  dps: 7710.228929119394
+  tps: 5611.548839559294
  }
 }
 dps_results: {

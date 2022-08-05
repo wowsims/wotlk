@@ -376,8 +376,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-IncisorFragment-37723"
  value: {
-  dps: 391.64219756983204
-  tps: 660.0955922625842
+  dps: 427.24820501754647
+  tps: 718.2370572815331
  }
 }
 dps_results: {
