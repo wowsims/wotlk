@@ -60,7 +60,7 @@ dps_results: {
  key: "TestMutilate-AllItems-AssassinationArmor"
  value: {
   dps: 1488.6855753349093
-  tps: 1056.9667584877852
+  tps: 1056.966758487785
  }
 }
 dps_results: {
@@ -101,7 +101,7 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-ChaoticSkyflareDiamond"
  value: {
-  dps: 1651.9130909275573
+  dps: 1651.9130909275577
   tps: 1172.8582945585663
  }
 }
@@ -137,7 +137,7 @@ dps_results: {
  key: "TestMutilate-AllItems-DarkmoonCard:Greatness-44254"
  value: {
   dps: 1666.258837695223
-  tps: 1183.0437747636076
+  tps: 1183.0437747636079
  }
 }
 dps_results: {
@@ -452,7 +452,7 @@ dps_results: {
  key: "TestMutilate-AllItems-Slayer'sArmor"
  value: {
   dps: 1719.9168704230422
-  tps: 1221.14097800036
+  tps: 1221.1409780003598
  }
 }
 dps_results: {
@@ -507,14 +507,14 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 1662.2457445398654
+  dps: 1662.245744539865
   tps: 1180.1944786233048
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-TinyAbominationinaJar-50351"
  value: {
-  dps: 1710.7962139315728
+  dps: 1710.7962139315725
   tps: 1214.6653118914153
  }
 }

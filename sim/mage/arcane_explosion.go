@@ -23,10 +23,10 @@ func (mage *Mage) registerArcaneExplosionSpell() {
 			},
 		},
 
-		ApplyEffects: core.ApplyEffectFuncAOEDamageCapped(mage.Env, 10180, core.SpellEffect{
+		ApplyEffects: core.ApplyEffectFuncAOEDamageCapped(mage.Env, core.SpellEffect{
 			ProcMask:             core.ProcMaskSpellDamage,
 			BonusSpellHitRating:  float64(mage.Talents.ArcaneFocus) * 2 * core.SpellHitRatingPerHitChance,
-			BonusSpellCritRating: 0,
+			BonusSpellCritRating: float64(mage.Talents.SpellImpact) * 2 * core.CritRatingPerCritChance,
 
 			DamageMultiplier: mage.spellDamageMultiplier,
 			ThreatMultiplier: 1 - 0.2*float64(mage.Talents.ArcaneSubtlety),

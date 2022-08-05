@@ -8,7 +8,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (hunter *Hunter) registerBlackArrowSpell() {
+func (hunter *Hunter) registerBlackArrowSpell(timer *core.Timer) {
 	if !hunter.Talents.BlackArrow {
 		return
 	}
@@ -33,7 +33,7 @@ func (hunter *Hunter) registerBlackArrowSpell() {
 			},
 			IgnoreHaste: true, // Hunter GCD is locked at 1.5s
 			CD: core.Cooldown{
-				Timer:    hunter.NewTimer(),
+				Timer:    timer,
 				Duration: time.Second*30 - time.Second*2*time.Duration(hunter.Talents.Resourcefulness),
 			},
 		},

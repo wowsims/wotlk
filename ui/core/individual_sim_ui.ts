@@ -10,6 +10,7 @@ import { CooldownsPicker } from './components/cooldowns_picker.js';
 import { Debuffs } from './proto/common.js';
 import { DetailedResults } from './components/detailed_results.js';
 
+import { CustomRotationPicker } from './components/custom_rotation_picker.js';
 import { Encounter as EncounterProto } from './proto/common.js';
 import { Encounter } from './encounter.js';
 import { EncounterPicker, EncounterPickerConfig } from './components/encounter_picker.js';
@@ -101,7 +102,8 @@ const SAVED_TALENTS_STORAGE_KEY = '__savedTalents__';
 export type InputConfig<ModObject> = (
 	InputHelpers.TypedBooleanPickerConfig<ModObject> |
 	InputHelpers.TypedNumberPickerConfig<ModObject> |
-	InputHelpers.TypedEnumPickerConfig<ModObject>);
+	InputHelpers.TypedEnumPickerConfig<ModObject> |
+	InputHelpers.TypedCustomRotationPickerConfig<any, any>);
 
 export type IconInputConfig<ModObject, T> = (
 	InputHelpers.TypedIconPickerConfig<ModObject, T> |
@@ -758,6 +760,8 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 					new BooleanPicker(sectionElem, this.player, inputConfig);
 				} else if (inputConfig.type == 'enum') {
 					new EnumPicker(sectionElem, this.player, inputConfig);
+				} else if (inputConfig.type == 'customRotation') {
+					new CustomRotationPicker(sectionElem, this.player, inputConfig);
 				}
 			});
 		};

@@ -8,39 +8,37 @@ import (
 )
 
 func (mage *Mage) registerFireBlastSpell() {
-	baseCost := 465.0
+	baseCost := 0.21 * mage.BaseMana
 
 	mage.FireBlast = mage.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 27079},
+		ActionID:     core.ActionID{SpellID: 42873},
 		SpellSchool:  core.SpellSchoolFire,
-		Flags:        SpellFlagMage,
+		Flags:        SpellFlagMage | HotStreakSpells,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost *
-					(1 - 0.01*float64(mage.Talents.Pyromaniac)),
-				GCD: core.GCDDefault,
+				Cost: baseCost,
+				GCD:  core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    mage.NewTimer(),
-				Duration: time.Second*8 - time.Millisecond*500*time.Duration(mage.Talents.ImprovedFireBlast),
+				Duration: time.Second*8 - time.Second*time.Duration(mage.Talents.ImprovedFireBlast),
 			},
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:            core.ProcMaskSpellDamage,
-			BonusSpellHitRating: 0,
+			ProcMask: core.ProcMaskSpellDamage,
+
 			BonusSpellCritRating: 0 +
-				float64(mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
-				float64(mage.Talents.Pyromaniac)*1*core.CritRatingPerCritChance,
+				float64(mage.Talents.CriticalMass+mage.Talents.Incineration)*2*core.CritRatingPerCritChance,
 
 			DamageMultiplier: mage.spellDamageMultiplier * (1 + 0.02*float64(mage.Talents.FirePower)),
 
-			ThreatMultiplier: 1 - 0.05*float64(mage.Talents.BurningSoul),
+			ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
-			BaseDamage:     core.BaseDamageConfigMagic(664, 786, 1.5/3.5),
-			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, 0.25*float64(mage.Talents.SpellPower))),
+			BaseDamage:     core.BaseDamageConfigMagic(925, 1095, 1.5/3.5),
+			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, mage.bonusCritDamage)),
 		}),
 	})
 }

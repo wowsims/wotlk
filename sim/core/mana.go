@@ -148,7 +148,7 @@ func (unit *Unit) MP5ManaRegenPerSecond() float64 {
 
 // Returns the rate of mana regen per second from spirit.
 func (unit *Unit) SpiritManaRegenPerSecond() float64 {
-	return 0.001 + unit.stats[stats.Spirit]*math.Sqrt(unit.stats[stats.Intellect])*0.009327
+	return 0.001 + unit.stats[stats.Spirit]*math.Sqrt(unit.stats[stats.Intellect])*0.003345
 }
 
 // Returns the rate of mana regen per second, assuming this unit is

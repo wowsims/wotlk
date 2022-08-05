@@ -127,23 +127,25 @@ func (rp *RunicPowerBar) LaunchBloodTapRegenPA(sim *Simulation, slot int32, spel
 		if !pa.cancelled {
 			r.pas[1].Cancel(sim)
 			r.pas[1] = nil
-			if r.state == RuneState_Death {
-				currRunes := rp.CurrentBloodRunes()
-				rp.GainRuneMetrics(sim, rp.bloodRuneGainMetrics, "blood", currRunes, currRunes+1)
-				rp.SetRuneToState(r, RuneState_Normal, RuneKind_Blood)
+			if !r.BotnOrReaping {
+				if r.state == RuneState_Death {
+					currRunes := rp.CurrentBloodRunes()
+					rp.GainRuneMetrics(sim, rp.bloodRuneGainMetrics, "blood", currRunes, currRunes+1)
+					rp.SetRuneToState(r, RuneState_Normal, RuneKind_Blood)
 
-				currRunes = rp.CurrentDeathRunes()
-				rp.SpendRuneMetrics(sim, spell.DeathRuneMetrics(), "death", currRunes, currRunes-1)
-				if !rp.isACopy {
-					rp.onBloodRuneGain(sim)
+					currRunes = rp.CurrentDeathRunes()
+					rp.SpendRuneMetrics(sim, spell.DeathRuneMetrics(), "death", currRunes, currRunes-1)
+					if !rp.isACopy {
+						rp.onBloodRuneGain(sim)
+					}
+				} else if r.state == RuneState_DeathSpent {
+
+					if r.pas[0] == nil {
+						panic("This should have a regen PA!")
+					}
+
+					rp.SetRuneToState(r, RuneState_Spent, RuneKind_Blood)
 				}
-			} else if r.state == RuneState_DeathSpent {
-
-				if r.pas[0] == nil {
-					panic("This should have a regen PA!")
-				}
-
-				rp.SetRuneToState(r, RuneState_Spent, RuneKind_Blood)
 			}
 		} else {
 			r.pas[1] = nil

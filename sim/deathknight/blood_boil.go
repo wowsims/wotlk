@@ -56,7 +56,6 @@ func (dk *Deathknight) CanBloodBoil(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastBloodBoil(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanBloodBoil(sim) {
-		dk.LastCast = dk.BloodBoil
 		return dk.BloodBoil.Cast(sim, target)
 	}
 	return false

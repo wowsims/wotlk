@@ -3,6 +3,7 @@ package hunter
 import (
 	"time"
 
+	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -57,6 +58,7 @@ type Hunter struct {
 	BlackArrow    *core.Spell
 	ChimeraShot   *core.Spell
 	ExplosiveShot *core.Spell
+	ExplosiveTrap *core.Spell
 	KillCommand   *core.Spell
 	KillShot      *core.Spell
 	MultiShot     *core.Spell
@@ -66,8 +68,10 @@ type Hunter struct {
 	SerpentSting  *core.Spell
 	SilencingShot *core.Spell
 	SteadyShot    *core.Spell
+	Volley        *core.Spell
 
 	BlackArrowDot    *core.Dot
+	ExplosiveTrapDot *core.Dot
 	ExplosiveShotDot *core.Dot
 	SerpentStingDot  *core.Dot
 
@@ -77,6 +81,8 @@ type Hunter struct {
 	LockAndLoadAura           *core.Aura
 	ScorpidStingAura          *core.Aura
 	TalonOfAlarAura           *core.Aura
+
+	CustomRotation *common.CustomRotation
 }
 
 func (hunter *Hunter) GetCharacter() *core.Character {
@@ -115,12 +121,14 @@ func (hunter *Hunter) Initialize() {
 	hunter.registerAspectOfTheViperSpell()
 
 	arcaneShotTimer := hunter.NewTimer()
+	fireTrapTimer := hunter.NewTimer()
 
 	hunter.registerAimedShotSpell()
 	hunter.registerArcaneShotSpell(arcaneShotTimer)
-	hunter.registerBlackArrowSpell()
+	hunter.registerBlackArrowSpell(fireTrapTimer)
 	hunter.registerChimeraShotSpell()
 	hunter.registerExplosiveShotSpell(arcaneShotTimer)
+	hunter.registerExplosiveTrapSpell(fireTrapTimer)
 	hunter.registerKillShotSpell()
 	hunter.registerMultiShotSpell()
 	hunter.registerRaptorStrikeSpell()
@@ -128,11 +136,17 @@ func (hunter *Hunter) Initialize() {
 	hunter.registerSerpentStingSpell()
 	hunter.registerSilencingShotSpell()
 	hunter.registerSteadyShotSpell()
+	hunter.registerVolleySpell()
 
 	hunter.registerKillCommandCD()
 	hunter.registerRapidFireCD()
 
 	hunter.DelayDPSCooldownsForArmorDebuffs()
+
+	hunter.CustomRotation = hunter.makeCustomRotation()
+	if hunter.CustomRotation == nil {
+		hunter.Rotation.Type = proto.Hunter_Rotation_SingleTarget
+	}
 }
 
 func (hunter *Hunter) Reset(sim *core.Simulation) {

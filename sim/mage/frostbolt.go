@@ -10,10 +10,15 @@ import (
 func (mage *Mage) registerFrostboltSpell() {
 	baseCost := 330.0
 
+	bonusCrit := 0.0
+	if mage.MageTier.t9_4 {
+		bonusCrit += 5 * core.CritRatingPerCritChance
+	}
+
 	mage.Frostbolt = mage.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 27072},
 		SpellSchool: core.SpellSchoolFrost,
-		Flags:       SpellFlagMage | core.SpellFlagBinary,
+		Flags:       SpellFlagMage | core.SpellFlagBinary | BarrageSpells,
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -36,8 +41,7 @@ func (mage *Mage) registerFrostboltSpell() {
 
 			DamageMultiplier: mage.spellDamageMultiplier *
 				(1 + 0.02*float64(mage.Talents.PiercingIce)) *
-				(1 + 0.01*float64(mage.Talents.ArcticWinds)) *
-				core.TernaryFloat64(mage.HasSetBonus(ItemSetTempestRegalia, 4), 1.05, 1),
+				(1 + 0.01*float64(mage.Talents.ArcticWinds)),
 
 			ThreatMultiplier: 1 - (0.1/3)*float64(mage.Talents.FrostChanneling),
 

@@ -44,6 +44,7 @@ type Rune struct {
 	pas           [2]*PendingAction
 	lastRegenTime time.Duration
 	lastSpendTime time.Duration
+	BotnOrReaping bool
 }
 
 type RunicPowerBar struct {
@@ -84,9 +85,13 @@ func ResetRunes(sim *Simulation, runes *[2]Rune, runeKind RuneKind) {
 	runes[0].state = RuneState_Normal
 	runes[0].kind = runeKind
 	runes[0].lastRegenTime = -1
+	runes[0].lastSpendTime = -1
+	runes[0].BotnOrReaping = false
 	runes[1].state = RuneState_Normal
 	runes[1].kind = runeKind
 	runes[1].lastRegenTime = -1
+	runes[1].lastSpendTime = -1
+	runes[1].BotnOrReaping = false
 
 	if runes[0].pas[0] != nil {
 		runes[0].pas[0].Cancel(sim)
@@ -543,13 +548,24 @@ func (rp *RunicPowerBar) SpendRuneMetrics(sim *Simulation, metrics *ResourceMetr
 	}
 }
 
-func (rp *RunicPowerBar) SetRuneToState(r *Rune, runeState RuneState, runeKind RuneKind) {
-	if (r.state == RuneState_Spent || r.state == RuneState_Normal) && (runeState == RuneState_Death || runeState == RuneState_DeathSpent) {
-		r.kind = RuneKind_Death
-	} else if (r.state == RuneState_DeathSpent || r.state == RuneState_Death) && (runeState != RuneState_Death && runeState != RuneState_DeathSpent) {
-		r.kind = runeKind
+func (rp *RunicPowerBar) LastSpentRune(rb *[2]Rune) *Rune {
+	if rb[0].lastSpendTime < rb[1].lastSpendTime {
+		return &rb[1]
+	} else {
+		return &rb[0]
 	}
-	r.state = runeState
+}
+
+func (rp *RunicPowerBar) LastSpentBloodRune() *Rune {
+	return rp.LastSpentRune(&rp.bloodRunes)
+}
+
+func (rp *RunicPowerBar) LastSpentFrostRune() *Rune {
+	return rp.LastSpentRune(&rp.frostRunes)
+}
+
+func (rp *RunicPowerBar) LastSpentUnholyRune() *Rune {
+	return rp.LastSpentRune(&rp.unholyRunes)
 }
 
 // LastSpentRune gives the slot of the last rune of given type to have been spent.
@@ -606,6 +622,18 @@ func (rp *RunicPowerBar) SetRuneAtSlotToState(rb *[2]Rune, slot int32, runeState
 		rb[slot].kind = runeKind
 	}
 	rb[slot].state = runeState
+}
+
+func (rp *RunicPowerBar) SetRuneToState(r *Rune, runeState RuneState, runeKind RuneKind) {
+	if (r.state == RuneState_Spent || r.state == RuneState_Normal) && (runeState == RuneState_Death || runeState == RuneState_DeathSpent) {
+		r.kind = RuneKind_Death
+	} else if (r.state == RuneState_DeathSpent || r.state == RuneState_Death) && (runeState != RuneState_Death && runeState != RuneState_DeathSpent) {
+		if runeKind == RuneKind_Undef {
+			panic("You have to set a rune kind here!")
+		}
+		r.kind = runeKind
+	}
+	r.state = runeState
 }
 
 func (rp *RunicPowerBar) RegenRuneAndCancelPAs(sim *Simulation, r *Rune) {

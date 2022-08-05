@@ -81,7 +81,6 @@ func (dk *Deathknight) CanBloodStrike(sim *core.Simulation) bool {
 }
 
 func (dk *Deathknight) CastBloodStrike(sim *core.Simulation, target *core.Unit) bool {
-	dk.LastCast = dk.BloodStrike
 	if dk.CanBloodStrike(sim) {
 		return dk.BloodStrike.Cast(sim, target)
 	}

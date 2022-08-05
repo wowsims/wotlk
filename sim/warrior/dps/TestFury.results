@@ -95,7 +95,7 @@ dps_results: {
  key: "TestFury-AllItems-Braxley'sBackyardMoonshine-35937"
  value: {
   dps: 592.8009641218976
-  tps: 650.5607974552307
+  tps: 650.5607974552306
  }
 }
 dps_results: {
@@ -116,13 +116,13 @@ dps_results: {
  key: "TestFury-AllItems-DarkmoonCard:Berserker!-42989"
  value: {
   dps: 600.3803541468993
-  tps: 658.1670208135662
+  tps: 658.167020813566
  }
 }
 dps_results: {
  key: "TestFury-AllItems-DarkmoonCard:Death-42990"
  value: {
-  dps: 637.1455426016778
+  dps: 637.1455426016776
   tps: 695.121042601678
  }
 }
@@ -235,7 +235,7 @@ dps_results: {
  key: "TestFury-AllItems-ExtractofNecromanticPower-40373"
  value: {
   dps: 627.7459277740459
-  tps: 685.4924277740461
+  tps: 685.492427774046
  }
 }
 dps_results: {
@@ -255,7 +255,7 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-FelstalkerArmor"
  value: {
-  dps: 568.2993531752267
+  dps: 568.2993531752265
   tps: 626.0303531752264
  }
 }
@@ -326,7 +326,7 @@ dps_results: {
  key: "TestFury-AllItems-IncisorFragment-37723"
  value: {
   dps: 608.8186130596248
-  tps: 666.8324463929581
+  tps: 666.8324463929579
  }
 }
 dps_results: {
@@ -375,21 +375,21 @@ dps_results: {
  key: "TestFury-AllItems-MeteoriteWhetstone-37390"
  value: {
   dps: 611.3199423412218
-  tps: 670.5656090078884
+  tps: 670.5656090078883
  }
 }
 dps_results: {
  key: "TestFury-AllItems-NetherscaleArmor"
  value: {
-  dps: 562.2275813440052
-  tps: 619.4380813440052
+  dps: 562.2275813440053
+  tps: 619.4380813440051
  }
 }
 dps_results: {
  key: "TestFury-AllItems-NetherstrikeArmor"
  value: {
   dps: 536.9321905710096
-  tps: 593.2476905710096
+  tps: 593.2476905710095
  }
 }
 dps_results: {
@@ -473,7 +473,7 @@ dps_results: {
  key: "TestFury-AllItems-RelentlessEarthsiegeDiamond"
  value: {
   dps: 603.5578020150303
-  tps: 662.3886353483639
+  tps: 662.3886353483638
  }
 }
 dps_results: {
@@ -563,14 +563,14 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-TheFistsofFury"
  value: {
-  dps: 639.3276727817776
-  tps: 701.0885061151109
+  dps: 639.3276727817774
+  tps: 701.0885061151108
  }
 }
 dps_results: {
  key: "TestFury-AllItems-TheTwinBladesofAzzinoth"
  value: {
-  dps: 690.3034041643816
+  dps: 690.3034041643814
   tps: 753.5402374977148
  }
 }
@@ -592,14 +592,14 @@ dps_results: {
  key: "TestFury-AllItems-TinyAbominationinaJar-50351"
  value: {
   dps: 616.8097589653944
-  tps: 677.1434256320613
+  tps: 677.1434256320612
  }
 }
 dps_results: {
  key: "TestFury-AllItems-TinyAbominationinaJar-50706"
  value: {
   dps: 610.5930370137376
-  tps: 670.733370347071
+  tps: 670.7333703470708
  }
 }
 dps_results: {
@@ -654,14 +654,14 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-WindhawkArmor"
  value: {
-  dps: 530.1267840129134
+  dps: 530.1267840129133
   tps: 586.1419506795801
  }
 }
 dps_results: {
  key: "TestFury-AllItems-WrathofSpellfire"
  value: {
-  dps: 524.0982678104274
+  dps: 524.0982678104273
   tps: 579.6852678104275
  }
 }
@@ -717,21 +717,21 @@ dps_results: {
 dps_results: {
  key: "TestFury-Settings-Orc-Fury P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 594.4120325066559
-  tps: 778.9440325066562
+  dps: 594.4120325066558
+  tps: 778.944032506656
  }
 }
 dps_results: {
  key: "TestFury-Settings-Orc-Fury P1-Basic-FullBuffs-LongSingleTarget"
  value: {
-  dps: 594.4120325066559
+  dps: 594.4120325066558
   tps: 652.4990325066558
  }
 }
 dps_results: {
  key: "TestFury-Settings-Orc-Fury P1-Basic-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 649.1542689612011
+  dps: 649.154268961201
   tps: 714.8351022945344
  }
 }
@@ -753,7 +753,7 @@ dps_results: {
  key: "TestFury-Settings-Orc-Fury P1-Basic-NoBuffs-ShortSingleTarget"
  value: {
   dps: 418.63014656286396
-  tps: 476.4459798961972
+  tps: 476.44597989619706
  }
 }
 dps_results: {

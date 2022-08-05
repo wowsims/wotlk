@@ -97,23 +97,22 @@ export const PrepopPotion = {
 };
 
 export const StartingConjured = {
-    type: 'enum' as const,
-    label: 'Starting Conjured',
-    labelTooltip: 'If set, this conjured will be used instead of the default conjured for the first few uses.',
-    values: [
-        { name: 'None', value: Conjured.ConjuredUnknown },
-        { name: 'Dark Rune', value: Conjured.ConjuredDarkRune },
-        { name: 'Flame Cap', value: Conjured.ConjuredFlameCap },
-        { name: 'Mana Gem', value: Conjured.ConjuredMageManaEmerald },
-        { name: 'Thistle Tea', value: Conjured.ConjuredRogueThistleTea },
-    ],
-    changedEvent: (player: Player<any>) => player.consumesChangeEmitter,
-    getValue: (player: Player<any>) => player.getConsumes().startingConjured,
-    setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
-        const newConsumes = player.getConsumes();
-        newConsumes.startingConjured = newValue;
-        player.setConsumes(eventID, newConsumes);
-    },
+	type: 'enum' as const,
+	label: 'Starting Conjured',
+	labelTooltip: 'If set, this conjured will be used instead of the default conjured for the first few uses.',
+	values: [
+		{ name: 'None', value: Conjured.ConjuredUnknown },
+		{ name: 'Dark Rune', value: Conjured.ConjuredDarkRune },
+		{ name: 'Flame Cap', value: Conjured.ConjuredFlameCap },
+		{ name: 'Thistle Tea', value: Conjured.ConjuredRogueThistleTea },
+	],
+	changedEvent: (player: Player<any>) => player.consumesChangeEmitter,
+	getValue: (player: Player<any>) => player.getConsumes().startingConjured,
+	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
+		const newConsumes = player.getConsumes();
+		newConsumes.startingConjured = newValue;
+		player.setConsumes(eventID, newConsumes);
+	},
 };
 
 export const NumStartingConjured = {

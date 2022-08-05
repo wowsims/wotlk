@@ -70,7 +70,6 @@ func (dk *Deathknight) CanSummonGargoyle(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastSummonGargoyle(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanSummonGargoyle(sim) {
-		dk.LastCast = dk.SummonGargoyle
 		res := dk.SummonGargoyle.Cast(sim, target)
 		if res {
 			dk.UpdateMajorCooldowns()

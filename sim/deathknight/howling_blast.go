@@ -79,7 +79,6 @@ func (dk *Deathknight) CanHowlingBlast(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastHowlingBlast(sim *core.Simulation, target *core.Unit) bool {
 	if dk.HowlingBlast.IsReady(sim) {
-		dk.LastCast = dk.HowlingBlast
 		return dk.HowlingBlast.Cast(sim, target)
 	}
 	return false
