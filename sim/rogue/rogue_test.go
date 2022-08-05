@@ -114,7 +114,7 @@ func GenerateCriticalDamageMultiplierTestCase(
 		actualMultiplier = rog.MeleeCritMultiplier(true, false)
 	}
 	t.Run(testName, func(t *testing.T) {
-		if expectedMultiplier != actualMultiplier {
+		if !core.WithinToleranceFloat64(expectedMultiplier, actualMultiplier, 0.0001) {
 			t.Logf("Crit damage multiplier for %s expected %f but was %f", testName, expectedMultiplier, actualMultiplier)
 			t.Fail()
 		}

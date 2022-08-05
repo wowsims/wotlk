@@ -67,7 +67,7 @@ dps_results: {
  key: "TestBalance-AllItems-Bandit'sInsignia-40371"
  value: {
   dps: 789.73733557163
-  tps: 785.5341492787787
+  tps: 785.5341492787788
  }
 }
 dps_results: {
@@ -87,7 +87,7 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-Braxley'sBackyardMoonshine-35937"
  value: {
-  dps: 790.0394811819181
+  dps: 790.0394811819182
   tps: 785.8321186435279
  }
 }
@@ -144,7 +144,7 @@ dps_results: {
  key: "TestBalance-AllItems-Defender'sCode-40257"
  value: {
   dps: 789.73733557163
-  tps: 785.5341492787787
+  tps: 785.5341492787788
  }
 }
 dps_results: {
@@ -192,7 +192,7 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-ExtractofNecromanticPower-40373"
  value: {
-  dps: 837.7560022220556
+  dps: 837.7560022220557
   tps: 832.5941192628625
  }
 }
@@ -228,13 +228,13 @@ dps_results: {
  key: "TestBalance-AllItems-FuryoftheFiveFlights-40431"
  value: {
   dps: 789.73733557163
-  tps: 785.5341492787787
+  tps: 785.5341492787788
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-FuturesightRune-38763"
  value: {
-  dps: 817.2892983570878
+  dps: 817.2892983570877
   tps: 812.5742994751945
  }
 }
@@ -262,8 +262,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
-  dps: 861.4587894217129
-  tps: 855.8211740518603
+  dps: 861.4587894217127
+  tps: 855.8211740518606
  }
 }
 dps_results: {
@@ -284,7 +284,7 @@ dps_results: {
  key: "TestBalance-AllItems-IncisorFragment-37723"
  value: {
   dps: 789.73733557163
-  tps: 785.5341492787787
+  tps: 785.5341492787788
  }
 }
 dps_results: {
@@ -298,7 +298,7 @@ dps_results: {
  key: "TestBalance-AllItems-InsightfulEarthsiegeDiamond"
  value: {
   dps: 879.4973910940975
-  tps: 878.1787836907973
+  tps: 878.1787836907972
  }
 }
 dps_results: {
@@ -312,7 +312,7 @@ dps_results: {
  key: "TestBalance-AllItems-Lavanthor'sTalisman-37872"
  value: {
   dps: 789.73733557163
-  tps: 785.5341492787787
+  tps: 785.5341492787788
  }
 }
 dps_results: {
@@ -326,7 +326,7 @@ dps_results: {
  key: "TestBalance-AllItems-MajesticDragonFigurine-40430"
  value: {
   dps: 866.3971888920347
-  tps: 861.1056855327754
+  tps: 861.1056855327755
  }
 }
 dps_results: {
@@ -375,7 +375,7 @@ dps_results: {
  key: "TestBalance-AllItems-OfferingofSacrifice-37638"
  value: {
   dps: 789.73733557163
-  tps: 785.5341492787787
+  tps: 785.5341492787788
  }
 }
 dps_results: {
@@ -409,7 +409,7 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-PrimalIntent"
  value: {
-  dps: 673.0975417467082
+  dps: 673.0975417467081
   tps: 670.9586146636886
  }
 }
@@ -417,13 +417,13 @@ dps_results: {
  key: "TestBalance-AllItems-PurifiedShardoftheGods"
  value: {
   dps: 789.73733557163
-  tps: 785.5341492787787
+  tps: 785.5341492787788
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 873.8562231855442
+  dps: 873.8562231855443
   tps: 867.8968258070815
  }
 }
@@ -431,7 +431,7 @@ dps_results: {
  key: "TestBalance-AllItems-ReignoftheDead-47477"
  value: {
   dps: 884.04733883803
-  tps: 877.8841191465175
+  tps: 877.8841191465174
  }
 }
 dps_results: {
@@ -452,14 +452,14 @@ dps_results: {
  key: "TestBalance-AllItems-RuneofRepulsion-40372"
  value: {
   dps: 789.73733557163
-  tps: 785.5341492787787
+  tps: 785.5341492787788
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-SealofthePantheon-36993"
  value: {
   dps: 789.73733557163
-  tps: 785.5341492787787
+  tps: 785.5341492787788
  }
 }
 dps_results: {
@@ -473,20 +473,20 @@ dps_results: {
  key: "TestBalance-AllItems-ShinyShardoftheGods"
  value: {
   dps: 789.73733557163
-  tps: 785.5341492787787
+  tps: 785.5341492787788
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-Sindragosa'sFlawlessFang-50361"
  value: {
   dps: 789.73733557163
-  tps: 785.5341492787787
+  tps: 785.5341492787788
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-SparkofLife-37657"
  value: {
-  dps: 847.641984397768
+  dps: 847.6419843977683
   tps: 842.5248184617274
  }
 }
@@ -500,7 +500,7 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-StrengthoftheClefthoof"
  value: {
-  dps: 646.8492086485306
+  dps: 646.8492086485307
   tps: 645.1654748941419
  }
 }
@@ -528,7 +528,7 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-TheTwinStars"
  value: {
-  dps: 808.4152583538465
+  dps: 808.4152583538468
   tps: 803.7052036053512
  }
 }
@@ -536,7 +536,7 @@ dps_results: {
  key: "TestBalance-AllItems-ThunderheartHarness"
  value: {
   dps: 521.1151212538555
-  tps: 520.9903459140266
+  tps: 520.9903459140268
  }
 }
 dps_results: {
@@ -620,7 +620,7 @@ dps_results: {
  key: "TestBalance-Average-Default"
  value: {
   dps: 796.1994695726255
-  tps: 791.5230203862071
+  tps: 791.523020386207
  }
 }
 dps_results: {

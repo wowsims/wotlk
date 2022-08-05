@@ -88,7 +88,7 @@ dps_results: {
  key: "TestEnhancement-AllItems-Braxley'sBackyardMoonshine-35937"
  value: {
   dps: 5501.999546097223
-  tps: 4182.179266846324
+  tps: 4182.179266846325
  }
 }
 dps_results: {
@@ -101,7 +101,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-CataclysmRegalia"
  value: {
-  dps: 4071.341862975318
+  dps: 4071.3418629753187
   tps: 3080.599536873654
  }
 }
@@ -143,28 +143,28 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-DarkmoonCard:Greatness-42987"
  value: {
-  dps: 5606.1871338675855
-  tps: 4256.68032266832
+  dps: 5606.187133867586
+  tps: 4256.680322668321
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-DarkmoonCard:Greatness-44253"
  value: {
-  dps: 5637.505550513135
+  dps: 5637.505550513136
   tps: 4279.47383715688
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-DarkmoonCard:Greatness-44254"
  value: {
-  dps: 5530.802319565726
+  dps: 5530.802319565725
   tps: 4197.361137188475
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-DeathKnight'sAnguish-38212"
  value: {
-  dps: 5510.536808199895
+  dps: 5510.536808199894
   tps: 4181.597482398585
  }
 }
@@ -200,7 +200,7 @@ dps_results: {
  key: "TestEnhancement-AllItems-EarthshatterGarb"
  value: {
   dps: 4479.148684298044
-  tps: 3410.4305907761745
+  tps: 3410.4305907761736
  }
 }
 dps_results: {
@@ -213,7 +213,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-EmberSkyflareDiamond"
  value: {
-  dps: 5529.175648643035
+  dps: 5529.175648643036
   tps: 4206.611661403285
  }
 }
@@ -241,7 +241,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-ExtractofNecromanticPower-40373"
  value: {
-  dps: 5580.870646745833
+  dps: 5580.870646745832
   tps: 4247.2458803710715
  }
 }
@@ -262,7 +262,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-FelstalkerArmor"
  value: {
-  dps: 4791.165225007501
+  dps: 4791.165225007502
   tps: 3621.964107551449
  }
 }
@@ -270,7 +270,7 @@ dps_results: {
  key: "TestEnhancement-AllItems-ForgeEmber-37660"
  value: {
   dps: 5549.633191498228
-  tps: 4216.965497542519
+  tps: 4216.96549754252
  }
 }
 dps_results: {
@@ -325,7 +325,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
-  dps: 5524.4841435164435
+  dps: 5524.484143516444
   tps: 4207.226649422244
  }
 }
@@ -346,14 +346,14 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-IncisorFragment-37723"
  value: {
-  dps: 5760.906012541735
+  dps: 5760.9060125417345
   tps: 4363.559329049061
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-InfusedColdstoneRune-35935"
  value: {
-  dps: 5504.515755942516
+  dps: 5504.515755942517
   tps: 4184.580857876983
  }
 }
@@ -410,7 +410,7 @@ dps_results: {
  key: "TestEnhancement-AllItems-NetherstrikeArmor"
  value: {
   dps: 4783.5733908215625
-  tps: 3618.4444511989727
+  tps: 3618.4444511989736
  }
 }
 dps_results: {
@@ -423,7 +423,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-Nobundo'sRegalia"
  value: {
-  dps: 4652.803064533295
+  dps: 4652.803064533296
   tps: 3532.8067710477508
  }
 }
@@ -465,7 +465,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-PrimalIntent"
  value: {
-  dps: 4862.8821733163995
+  dps: 4862.882173316401
   tps: 3674.7648635268147
  }
 }
@@ -479,7 +479,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 5763.227331652478
+  dps: 5763.227331652476
   tps: 4434.955451998995
  }
 }
@@ -556,15 +556,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-SkyshatterRegalia"
  value: {
-  dps: 3775.946984892834
-  tps: 2863.4318995625085
+  dps: 3775.9469848928347
+  tps: 2863.4318995625094
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-SparkofLife-37657"
  value: {
   dps: 5534.325256178775
-  tps: 4195.884869746174
+  tps: 4195.884869746175
  }
 }
 dps_results: {
@@ -627,13 +627,13 @@ dps_results: {
  key: "TestEnhancement-AllItems-Thrall'sBattlegear"
  value: {
   dps: 4835.728181649833
-  tps: 3704.0530923357
+  tps: 3704.053092335701
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Thrall'sRegalia"
  value: {
-  dps: 4652.803064533295
+  dps: 4652.803064533296
   tps: 3532.8067710477508
  }
 }
@@ -732,7 +732,7 @@ dps_results: {
  key: "TestEnhancement-AllItems-WindhawkArmor"
  value: {
   dps: 4750.017943803542
-  tps: 3599.9717005300818
+  tps: 3599.971700530081
  }
 }
 dps_results: {
@@ -774,7 +774,7 @@ dps_results: {
  key: "TestEnhancement-Settings-Orc-P1-Basic-FullBuffs-LongSingleTarget"
  value: {
   dps: 5576.454842428504
-  tps: 4227.252023370978
+  tps: 4227.252023370977
  }
 }
 dps_results: {
