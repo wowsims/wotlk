@@ -46,13 +46,8 @@ type Mage struct {
 	core.Character
 	Talents proto.MageTalents
 
-	Options        proto.Mage_Options
-	RotationType   proto.Mage_Rotation_Type
-	ArcaneRotation proto.Mage_Rotation_ArcaneRotation
-	FireRotation   proto.Mage_Rotation_FireRotation
-	FrostRotation  proto.Mage_Rotation_FrostRotation
-	AoeRotation    proto.Mage_Rotation_AoeRotation
-	UseAoeRotation bool
+	Options  proto.Mage_Options
+	Rotation proto.Mage_Rotation
 
 	isMissilesBarrage bool
 	numCastsDone      int32
@@ -183,29 +178,16 @@ func NewMage(character core.Character, options proto.Player) *Mage {
 	mageOptions := options.GetMage()
 
 	mage := &Mage{
-		Character:    character,
-		Talents:      *mageOptions.Talents,
-		Options:      *mageOptions.Options,
-		RotationType: mageOptions.Rotation.Type,
-
-		UseAoeRotation: mageOptions.Rotation.MultiTargetRotation,
+		Character: character,
+		Talents:   *mageOptions.Talents,
+		Options:   *mageOptions.Options,
+		Rotation:  *mageOptions.Rotation,
 
 		spellDamageMultiplier: 1.0,
 		manaTracker:           common.NewManaSpendingRateTracker(),
 	}
 	mage.EnableManaBar()
 	mage.EnableResumeAfterManaWait(mage.tryUseGCD)
-
-	if mage.RotationType == proto.Mage_Rotation_Arcane && mageOptions.Rotation.Arcane != nil {
-		mage.ArcaneRotation = *mageOptions.Rotation.Arcane
-	} else if mage.RotationType == proto.Mage_Rotation_Fire && mageOptions.Rotation.Fire != nil {
-		mage.FireRotation = *mageOptions.Rotation.Fire
-	} else if mage.RotationType == proto.Mage_Rotation_Frost && mageOptions.Rotation.Frost != nil {
-		mage.FrostRotation = *mageOptions.Rotation.Frost
-	}
-	if mageOptions.Rotation.Aoe != nil {
-		mage.AoeRotation = *mageOptions.Rotation.Aoe
-	}
 
 	if mage.Options.Armor == proto.Mage_Options_MageArmor {
 		mage.PseudoStats.SpiritRegenRateCasting += 0.5
@@ -225,7 +207,7 @@ func NewMage(character core.Character, options proto.Player) *Mage {
 	}
 
 	if mage.Talents.SummonWaterElemental {
-		mage.waterElemental = mage.NewWaterElemental(mage.FrostRotation.WaterElementalDisobeyChance)
+		mage.waterElemental = mage.NewWaterElemental(mage.Rotation.WaterElementalDisobeyChance)
 	}
 
 	return mage

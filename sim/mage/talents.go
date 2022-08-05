@@ -286,9 +286,9 @@ func (mage *Mage) registerPresenceOfMindCD() {
 			var spell *core.Spell
 			if mage.Talents.Pyroblast {
 				spell = mage.Pyroblast
-			} else if mage.RotationType == proto.Mage_Rotation_Fire {
+			} else if mage.Rotation.Type == proto.Mage_Rotation_Fire {
 				spell = mage.Fireball
-			} else if mage.RotationType == proto.Mage_Rotation_Frost {
+			} else if mage.Rotation.Type == proto.Mage_Rotation_Frost {
 				spell = mage.Frostbolt
 			} else {
 				spell = mage.ArcaneBlast
@@ -308,9 +308,9 @@ func (mage *Mage) registerPresenceOfMindCD() {
 			var manaCost float64
 			if mage.Talents.Pyroblast {
 				manaCost = mage.Pyroblast.DefaultCast.Cost
-			} else if mage.RotationType == proto.Mage_Rotation_Fire {
+			} else if mage.Rotation.Type == proto.Mage_Rotation_Fire {
 				manaCost = mage.Fireball.DefaultCast.Cost
-			} else if mage.RotationType == proto.Mage_Rotation_Frost {
+			} else if mage.Rotation.Type == proto.Mage_Rotation_Frost {
 				manaCost = mage.Frostbolt.DefaultCast.Cost
 			} else {
 				manaCost = mage.ArcaneBlast.DefaultCast.Cost * float64(mage.ArcaneBlastAura.GetStacks()) * 1.75
