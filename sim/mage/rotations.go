@@ -17,12 +17,14 @@ func (mage *Mage) OnGCDReady(sim *core.Simulation) {
 
 func (mage *Mage) tryUseGCD(sim *core.Simulation) {
 	var spell *core.Spell
-	if mage.RotationType == proto.Mage_Rotation_Arcane {
+	if mage.Rotation.Type == proto.Mage_Rotation_Arcane {
 		spell = mage.doArcaneRotation(sim)
-	} else if mage.RotationType == proto.Mage_Rotation_Fire {
+	} else if mage.Rotation.Type == proto.Mage_Rotation_Fire {
 		spell = mage.doFireRotation(sim)
-	} else {
+	} else if mage.Rotation.Type == proto.Mage_Rotation_Frost {
 		spell = mage.doFrostRotation(sim)
+	} else {
+		spell = mage.doAoeRotation(sim)
 	}
 
 	if success := spell.Cast(sim, mage.CurrentTarget); success {
@@ -34,13 +36,9 @@ func (mage *Mage) tryUseGCD(sim *core.Simulation) {
 }
 
 func (mage *Mage) doArcaneRotation(sim *core.Simulation) *core.Spell {
-	if mage.UseAoeRotation {
-		return mage.doAoeRotation(sim)
-	}
-
 	//Going oom should be visible to person simming, but standard rotation should not oom with reasonable evocate/gem usage
 	numStacks := mage.ArcaneBlastAura.GetStacks()
-	if mage.ArcaneRotation.MinBlastBeforeMissiles > numStacks || !mage.MissileBarrageAura.IsActive() {
+	if mage.Rotation.MinBlastBeforeMissiles > numStacks || !mage.MissileBarrageAura.IsActive() {
 		return mage.ArcaneBlast
 	} else {
 		return mage.ArcaneMissiles
@@ -48,12 +46,8 @@ func (mage *Mage) doArcaneRotation(sim *core.Simulation) *core.Spell {
 }
 
 func (mage *Mage) doFireRotation(sim *core.Simulation) *core.Spell {
-	if mage.FireRotation.MaintainImprovedScorch && mage.ScorchAura != nil && (!mage.ScorchAura.IsActive() || mage.ScorchAura.RemainingDuration(sim) < time.Millisecond*4000) {
+	if mage.Rotation.MaintainImprovedScorch && mage.ScorchAura != nil && (!mage.ScorchAura.IsActive() || mage.ScorchAura.RemainingDuration(sim) < time.Millisecond*4000) {
 		return mage.Scorch
-	}
-
-	if mage.UseAoeRotation {
-		return mage.doAoeRotation(sim)
 	}
 
 	if mage.HotStreakAura.IsActive() {
@@ -64,7 +58,7 @@ func (mage *Mage) doFireRotation(sim *core.Simulation) *core.Spell {
 		return mage.LivingBomb
 	}
 
-	if mage.FireRotation.PrimarySpell == proto.Mage_Rotation_FireRotation_Fireball {
+	if mage.Rotation.PrimaryFireSpell == proto.Mage_Rotation_Fireball {
 		return mage.Fireball
 	} else {
 		return mage.FrostfireBolt
@@ -72,17 +66,13 @@ func (mage *Mage) doFireRotation(sim *core.Simulation) *core.Spell {
 }
 
 func (mage *Mage) doFrostRotation(sim *core.Simulation) *core.Spell {
-	if mage.UseAoeRotation {
-		return mage.doAoeRotation(sim)
-	}
-
 	return mage.Frostbolt
 }
 
 func (mage *Mage) doAoeRotation(sim *core.Simulation) *core.Spell {
-	if mage.AoeRotation.Rotation == proto.Mage_Rotation_AoeRotation_ArcaneExplosion {
+	if mage.Rotation.Aoe == proto.Mage_Rotation_ArcaneExplosion {
 		return mage.ArcaneExplosion
-	} else if mage.AoeRotation.Rotation == proto.Mage_Rotation_AoeRotation_Flamestrike {
+	} else if mage.Rotation.Aoe == proto.Mage_Rotation_Flamestrike {
 		return mage.Flamestrike
 	} else {
 		return mage.Blizzard

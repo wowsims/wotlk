@@ -99,11 +99,9 @@ var PlayerOptionsFire = &proto.Player_Mage{
 		Talents: FireTalents,
 		Options: fireMageOptions,
 		Rotation: &proto.Mage_Rotation{
-			Type: proto.Mage_Rotation_Fire,
-			Fire: &proto.Mage_Rotation_FireRotation{
-				PrimarySpell:           proto.Mage_Rotation_FireRotation_Fireball,
-				MaintainImprovedScorch: false,
-			},
+			Type:                   proto.Mage_Rotation_Fire,
+			PrimaryFireSpell:       proto.Mage_Rotation_Fireball,
+			MaintainImprovedScorch: false,
 		},
 	},
 }
@@ -112,10 +110,8 @@ var PlayerOptionsFireAOE = &proto.Player_Mage{
 		Talents: FireTalents,
 		Options: fireMageOptions,
 		Rotation: &proto.Mage_Rotation{
-			MultiTargetRotation: true,
-			Aoe: &proto.Mage_Rotation_AoeRotation{
-				Rotation: proto.Mage_Rotation_AoeRotation_Flamestrike,
-			},
+			Type: proto.Mage_Rotation_Aoe,
+			Aoe:  proto.Mage_Rotation_Flamestrike,
 		},
 	},
 }
@@ -128,8 +124,7 @@ var PlayerOptionsFrost = &proto.Player_Mage{
 		Talents: FrostTalents,
 		Options: frostMageOptions,
 		Rotation: &proto.Mage_Rotation{
-			Type:  proto.Mage_Rotation_Frost,
-			Frost: &proto.Mage_Rotation_FrostRotation{},
+			Type: proto.Mage_Rotation_Frost,
 		},
 	},
 }
@@ -138,10 +133,8 @@ var PlayerOptionsFrostAOE = &proto.Player_Mage{
 		Talents: FrostTalents,
 		Options: frostMageOptions,
 		Rotation: &proto.Mage_Rotation{
-			MultiTargetRotation: true,
-			Aoe: &proto.Mage_Rotation_AoeRotation{
-				Rotation: proto.Mage_Rotation_AoeRotation_Blizzard,
-			},
+			Type: proto.Mage_Rotation_Aoe,
+			Aoe:  proto.Mage_Rotation_Blizzard,
 		},
 	},
 }
@@ -154,10 +147,8 @@ var PlayerOptionsArcane = &proto.Player_Mage{
 		Talents: ArcaneTalents,
 		Options: arcaneMageOptions,
 		Rotation: &proto.Mage_Rotation{
-			Type: proto.Mage_Rotation_Arcane,
-			Arcane: &proto.Mage_Rotation_ArcaneRotation{
-				MinBlastBeforeMissiles: 4,
-			},
+			Type:                   proto.Mage_Rotation_Arcane,
+			MinBlastBeforeMissiles: 4,
 		},
 	},
 }
@@ -166,10 +157,8 @@ var PlayerOptionsArcaneAOE = &proto.Player_Mage{
 		Talents: ArcaneTalents,
 		Options: arcaneMageOptions,
 		Rotation: &proto.Mage_Rotation{
-			MultiTargetRotation: true,
-			Aoe: &proto.Mage_Rotation_AoeRotation{
-				Rotation: proto.Mage_Rotation_AoeRotation_ArcaneExplosion,
-			},
+			Type: proto.Mage_Rotation_Aoe,
+			Aoe:  proto.Mage_Rotation_ArcaneExplosion,
 		},
 	},
 }
