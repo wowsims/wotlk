@@ -1,3 +1,4 @@
+import { CustomRotation, CustomSpell } from '../core/proto/common.js';
 import { Consumes } from '../core/proto/common.js';
 import { EquipmentSpec } from '../core/proto/common.js';
 import { Flask } from '../core/proto/common.js';
@@ -10,7 +11,9 @@ import { ferocityDefault } from '../core/talents/hunter_pet.js';
 import {
 	Hunter_Rotation as HunterRotation,
 	//Hunter_Rotation_WeaveType as WeaveType,
+	Hunter_Rotation_RotationType as RotationType,
 	Hunter_Rotation_StingType as StingType,
+	Hunter_Rotation_SpellOption as SpellOption,
 	Hunter_Options as HunterOptions,
 	Hunter_Options_Ammo as Ammo,
 	Hunter_Options_PetType as PetType,
@@ -72,9 +75,22 @@ export const SurvivalTalents = {
 };
 
 export const DefaultRotation = HunterRotation.create({
+	type: RotationType.SingleTarget,
 	sting: StingType.SerpentSting,
 	viperStartManaPercent: 0.1,
 	viperStopManaPercent: 0.3,
+	customRotation: CustomRotation.create({
+		spells: [
+			CustomSpell.create({ spell: SpellOption.SerpentStingSpell }),
+			CustomSpell.create({ spell: SpellOption.KillShot }),
+			CustomSpell.create({ spell: SpellOption.ChimeraShot }),
+			CustomSpell.create({ spell: SpellOption.BlackArrow }),
+			CustomSpell.create({ spell: SpellOption.ExplosiveShot }),
+			CustomSpell.create({ spell: SpellOption.AimedShot }),
+			CustomSpell.create({ spell: SpellOption.ArcaneShot }),
+			CustomSpell.create({ spell: SpellOption.SteadyShot }),
+		],
+	}),
 });
 
 export const DefaultOptions = HunterOptions.create({

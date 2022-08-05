@@ -1,4 +1,5 @@
 import { ActionId } from '../proto_utils/action_id.js';
+import { CustomRotation } from '../proto/common.js';
 import { Spec } from '../proto/common.js';
 import { TristateEffect } from '../proto/common.js';
 import { Party } from '../party.js';
@@ -438,4 +439,33 @@ export function makeRotationEnumIconInput<SpecType extends Spec, T>(config: Play
 		changedEvent: config.changeEmitter || ((player: Player<SpecType>) => player.rotationChangeEmitter),
 		extraCssClasses: config.extraCssClasses,
 	});
+}
+
+export interface TypedCustomRotationPickerConfig<SpecType extends Spec, T> extends CustomRotationPickerConfig<SpecType, T> {
+	type: 'customRotation',
+}
+
+interface WrappedCustomRotationInputConfig<SpecType extends Spec, T> {
+	fieldName: keyof SpecRotation<SpecType>,
+	getValue?: (player: Player<SpecType>) => CustomRotation,
+	setValue?: (eventID: EventID, player: Player<SpecType>, newValue: CustomRotation) => void,
+
+	numColumns: number,
+	values: Array<IconEnumValueConfig<Player<SpecType>, T>>;
+
+	showWhen?: (player: Player<SpecType>) => boolean,
+}
+export function makeCustomRotationInput<SpecType extends Spec, T>(config: WrappedCustomRotationInputConfig<SpecType, T>): TypedCustomRotationPickerConfig<SpecType, T> {
+	return {
+		type: 'customRotation',
+		getValue: config.getValue || ((player: Player<Spec.SpecHunter>) => (player.getRotation()[config.fieldName] as unknown as CustomRotation) || CustomRotation.create()),
+		setValue: config.setValue || ((eventID: EventID, player: Player<Spec.SpecHunter>, newValue: CustomRotation) => {
+			const rotation = player.getRotation();
+			(rotation[config.fieldName] as unknown as CustomRotation) = newValue;
+			player.setRotation(eventID, rotation);
+		}),
+		showWhen: config.showWhen,
+		numColumns: config.numColumns,
+		values: config.values,
+	}
 }

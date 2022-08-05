@@ -1,6 +1,7 @@
 package hunter
 
 import (
+	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
@@ -23,11 +24,15 @@ func (hunter *Hunter) rotation(sim *core.Simulation) {
 		hunter.SilencingShot.Cast(sim, hunter.CurrentTarget)
 	}
 
-	spell := hunter.chooseSpell(sim)
+	if hunter.Rotation.Type == proto.Hunter_Rotation_Custom {
+		hunter.CustomRotation.Cast(sim)
+	} else {
+		spell := hunter.chooseSpell(sim)
 
-	success := spell.Cast(sim, hunter.CurrentTarget)
-	if !success {
-		hunter.WaitForMana(sim, spell.CurCast.Cost)
+		success := spell.Cast(sim, hunter.CurrentTarget)
+		if !success {
+			hunter.WaitForMana(sim, spell.CurCast.Cost)
+		}
 	}
 }
 
@@ -78,4 +83,81 @@ func (hunter *Hunter) trySwapAspect(sim *core.Simulation) bool {
 		}
 	}
 	return false
+}
+
+func (hunter *Hunter) makeCustomRotation() *common.CustomRotation {
+	return common.NewCustomRotation(hunter.Rotation.CustomRotation, hunter.GetCharacter(), map[int32]common.CustomSpell{
+		int32(proto.Hunter_Rotation_ArcaneShot): common.CustomSpell{
+			Spell: hunter.ArcaneShot,
+			Condition: func(sim *core.Simulation) bool {
+				return hunter.ArcaneShot.IsReady(sim) && (hunter.ExplosiveShotDot == nil || !hunter.ExplosiveShotDot.IsActive())
+			},
+		},
+		int32(proto.Hunter_Rotation_AimedShot): common.CustomSpell{
+			Spell: hunter.AimedShot,
+			Condition: func(sim *core.Simulation) bool {
+				return hunter.AimedShot.IsReady(sim)
+			},
+		},
+		int32(proto.Hunter_Rotation_BlackArrow): common.CustomSpell{
+			Spell: hunter.BlackArrow,
+			Condition: func(sim *core.Simulation) bool {
+				return hunter.BlackArrow.IsReady(sim)
+			},
+		},
+		int32(proto.Hunter_Rotation_ChimeraShot): common.CustomSpell{
+			Spell: hunter.ChimeraShot,
+			Condition: func(sim *core.Simulation) bool {
+				return hunter.ChimeraShot.IsReady(sim)
+			},
+		},
+		int32(proto.Hunter_Rotation_ExplosiveShot): common.CustomSpell{
+			Spell: hunter.ExplosiveShot,
+			Condition: func(sim *core.Simulation) bool {
+				return hunter.ExplosiveShot.IsReady(sim) && !hunter.ExplosiveShotDot.IsActive()
+			},
+		},
+		int32(proto.Hunter_Rotation_ExplosiveTrap): common.CustomSpell{
+			Spell: hunter.ExplosiveTrap,
+			Condition: func(sim *core.Simulation) bool {
+				return hunter.ExplosiveTrap.IsReady(sim)
+			},
+		},
+		int32(proto.Hunter_Rotation_KillShot): common.CustomSpell{
+			Spell: hunter.KillShot,
+			Condition: func(sim *core.Simulation) bool {
+				return sim.IsExecutePhase20() && hunter.KillShot.IsReady(sim)
+			},
+		},
+		int32(proto.Hunter_Rotation_MultiShot): common.CustomSpell{
+			Spell: hunter.MultiShot,
+			Condition: func(sim *core.Simulation) bool {
+				return hunter.MultiShot.IsReady(sim)
+			},
+		},
+		int32(proto.Hunter_Rotation_ScorpidStingSpell): common.CustomSpell{
+			Spell: hunter.ScorpidSting,
+			Condition: func(sim *core.Simulation) bool {
+				return hunter.Rotation.Sting == proto.Hunter_Rotation_ScorpidSting && !hunter.ScorpidStingAura.IsActive()
+			},
+		},
+		int32(proto.Hunter_Rotation_SerpentStingSpell): common.CustomSpell{
+			Spell: hunter.SerpentSting,
+			Condition: func(sim *core.Simulation) bool {
+				return hunter.Rotation.Sting == proto.Hunter_Rotation_SerpentSting && !hunter.SerpentStingDot.IsActive()
+			},
+		},
+		int32(proto.Hunter_Rotation_SteadyShot): common.CustomSpell{
+			Spell: hunter.SteadyShot,
+			Condition: func(sim *core.Simulation) bool {
+				return true
+			},
+		},
+		int32(proto.Hunter_Rotation_Volley): common.CustomSpell{
+			Spell: hunter.Volley,
+			Condition: func(sim *core.Simulation) bool {
+				return true
+			},
+		},
+	})
 }
