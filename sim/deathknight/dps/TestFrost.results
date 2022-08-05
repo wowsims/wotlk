@@ -129,8 +129,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-DarkrunedBattlegear"
  value: {
-  dps: 5384.302670097704
-  tps: 3814.7259377683163
+  dps: 5421.607980483864
+  tps: 3837.109124000012
  }
 }
 dps_results: {
@@ -325,8 +325,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-IncisorFragment-37723"
  value: {
-  dps: 5577.32773028494
-  tps: 3967.12893023972
+  dps: 5830.328557958192
+  tps: 4118.929426843672
  }
 }
 dps_results: {
