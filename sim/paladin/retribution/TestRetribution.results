@@ -185,7 +185,7 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-DoomplateBattlegear"
  value: {
-  dps: 2551.939186187054
+  dps: 2551.9391861870545
   tps: 2357.56779468572
  }
 }
@@ -347,7 +347,7 @@ dps_results: {
  key: "TestRetribution-AllItems-InfusedColdstoneRune-35935"
  value: {
   dps: 2903.634759865558
-  tps: 2655.4687147167597
+  tps: 2655.468714716759
  }
 }
 dps_results: {
@@ -360,7 +360,7 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-InvigoratingEarthsiegeDiamond"
  value: {
-  dps: 2926.3725544526287
+  dps: 2926.3725544526283
   tps: 2675.6502282504357
  }
 }
@@ -409,7 +409,7 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-LibramofValiance-47661"
  value: {
-  dps: 3182.4893126138127
+  dps: 3182.489312613813
   tps: 2896.3589512397834
  }
 }
@@ -437,7 +437,7 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-Mana-EtchedRegalia"
  value: {
-  dps: 2323.250579188935
+  dps: 2323.2505791889344
   tps: 2156.7183799685076
  }
 }
@@ -479,7 +479,7 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-PersistentEarthsiegeDiamond"
  value: {
-  dps: 2926.3725544526287
+  dps: 2926.3725544526283
   tps: 2675.6502282504357
  }
 }
@@ -501,7 +501,7 @@ dps_results: {
  key: "TestRetribution-AllItems-PrimalIntent"
  value: {
   dps: 2826.4067622984417
-  tps: 2592.9882079235585
+  tps: 2592.988207923558
  }
 }
 dps_results: {
@@ -605,7 +605,7 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-SpellstrikeInfusion"
  value: {
-  dps: 2674.577135566058
+  dps: 2674.5771355660577
   tps: 2460.3894841801866
  }
 }
@@ -619,7 +619,7 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-SwiftSkyflareDiamond"
  value: {
-  dps: 2926.3725544526287
+  dps: 2926.3725544526283
   tps: 2675.6502282504357
  }
 }
@@ -640,7 +640,7 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-TheTwinStars"
  value: {
-  dps: 2873.781152717727
+  dps: 2873.7811527177273
   tps: 2636.048481421195
  }
 }
@@ -851,7 +851,7 @@ dps_results: {
  key: "TestRetribution-Settings-Dwarf-P4-Retribution Paladin-FullBuffs-ShortSingleTarget"
  value: {
   dps: 3274.012905709812
-  tps: 3039.321257648627
+  tps: 3039.3212576486267
  }
 }
 dps_results: {

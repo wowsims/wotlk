@@ -19,7 +19,7 @@ character_stats_results: {
   final_stats: 136.07698329321138
   final_stats: 0
   final_stats: 0
-  final_stats: 5223.3812400000015
+  final_stats: 5223.381240000001
   final_stats: 135
   final_stats: 2426.5963143999998
   final_stats: 0
@@ -73,7 +73,7 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-DarkmoonCard:Berserker!-42989"
  value: {
-  dps: 1902.1008203407582
+  dps: 1902.1008203407587
   tps: 1374.0796358029781
  }
 }
@@ -81,7 +81,7 @@ dps_results: {
  key: "TestFeral-AllItems-DarkmoonCard:Death-42990"
  value: {
   dps: 1940.0446600079474
-  tps: 1401.0316119666825
+  tps: 1401.0316119666827
  }
 }
 dps_results: {
@@ -95,7 +95,7 @@ dps_results: {
  key: "TestFeral-AllItems-DarkmoonCard:Greatness-44253"
  value: {
   dps: 2053.3873884801733
-  tps: 1481.4772991819634
+  tps: 1481.4772991819639
  }
 }
 dps_results: {
@@ -122,22 +122,22 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-ExtractofNecromanticPower-40373"
  value: {
-  dps: 1931.1254395430726
+  dps: 1931.1254395430728
   tps: 1394.6950154366218
  }
 }
 dps_results: {
  key: "TestFeral-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 1900.637406664127
+  dps: 1900.6374066641274
   tps: 1373.0524620925703
  }
 }
 dps_results: {
  key: "TestFeral-AllItems-ForgeEmber-37660"
  value: {
-  dps: 1887.925179178553
-  tps: 1363.9645480092718
+  dps: 1887.9251791785532
+  tps: 1363.964548009272
  }
 }
 dps_results: {
@@ -150,14 +150,14 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-FuturesightRune-38763"
  value: {
-  dps: 1877.7107805143983
+  dps: 1877.7107805143987
   tps: 1356.904907526263
  }
 }
 dps_results: {
  key: "TestFeral-AllItems-IdolofTerror-33509"
  value: {
-  dps: 1866.0771483157082
+  dps: 1866.0771483157077
   tps: 1348.4633286651929
  }
 }
@@ -192,7 +192,7 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-InfusedColdstoneRune-35935"
  value: {
-  dps: 1881.3052441914824
+  dps: 1881.3052441914829
   tps: 1359.3503267369929
  }
 }
@@ -206,14 +206,14 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-LivingRootoftheWildheart-30664"
  value: {
-  dps: 1892.317267532487
+  dps: 1892.3172675324872
   tps: 1367.1214633091063
  }
 }
 dps_results: {
  key: "TestFeral-AllItems-MajesticDragonFigurine-40430"
  value: {
-  dps: 1886.4691243734985
+  dps: 1886.469124373499
   tps: 1363.0048316662242
  }
 }
@@ -242,7 +242,7 @@ dps_results: {
  key: "TestFeral-AllItems-MeteoriteWhetstone-37390"
  value: {
   dps: 1917.969012124441
-  tps: 1385.946598484323
+  tps: 1385.9465984843232
  }
 }
 dps_results: {
@@ -283,8 +283,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 2048.3189072830105
-  tps: 1477.8826275319775
+  dps: 2048.318907283011
+  tps: 1477.8826275319777
  }
 }
 dps_results: {
@@ -312,7 +312,7 @@ dps_results: {
  key: "TestFeral-AllItems-Serrah'sStar-37559"
  value: {
   dps: 1881.9868919983448
-  tps: 1359.8105966798646
+  tps: 1359.810596679865
  }
 }
 dps_results: {
@@ -332,7 +332,7 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-SparkofLife-37657"
  value: {
-  dps: 1944.363467370948
+  dps: 1944.3634673709487
   tps: 1404.7543667239977
  }
 }
@@ -374,14 +374,14 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-TinyAbominationinaJar-50351"
  value: {
-  dps: 1940.3767037652065
-  tps: 1402.4670450540905
+  dps: 1940.3767037652074
+  tps: 1402.467045054091
  }
 }
 dps_results: {
  key: "TestFeral-AllItems-TinyAbominationinaJar-50706"
  value: {
-  dps: 1951.6652161224579
+  dps: 1951.665216122458
   tps: 1410.6908655237153
  }
 }
@@ -416,22 +416,22 @@ dps_results: {
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-Default-FullBuffs-LongMultiTarget"
  value: {
-  dps: 1907.8776844629192
+  dps: 1907.8776844629188
   tps: 1826.1172231894739
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-Default-FullBuffs-LongSingleTarget"
  value: {
-  dps: 1907.8776844629192
-  tps: 1378.1693593297127
+  dps: 1907.8776844629188
+  tps: 1378.1693593297125
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-Default-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 2150.8115798988247
-  tps: 1559.9795119648247
+  dps: 2150.811579898824
+  tps: 1559.9795119648243
  }
 }
 dps_results: {
@@ -458,7 +458,7 @@ dps_results: {
 dps_results: {
  key: "TestFeral-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 1742.6059625862486
+  dps: 1742.6059625862483
   tps: 1261.3443103073823
  }
 }
