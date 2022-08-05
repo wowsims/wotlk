@@ -54,29 +54,31 @@ func NewDpsDeathknight(character core.Character, player proto.Player) *DpsDeathk
 	return dpsDk
 }
 
+func (dk *DpsDeathknight) FrostPointsInBlood() int32 {
+	return dk.Talents.Butchery + dk.Talents.Subversion + dk.Talents.BladeBarrier + dk.Talents.DarkConviction
+}
+
+func (dk *DpsDeathknight) FrostPointsInUnholy() int32 {
+	return dk.Talents.ViciousStrikes + dk.Talents.Virulence + dk.Talents.Epidemic + dk.Talents.RavenousDead + dk.Talents.Necrosis + dk.Talents.BloodCakedBlade
+}
+
 func (dk *DpsDeathknight) SetupRotations() {
 	dk.ur.ffFirst = dk.Inputs.FirstDisease == proto.Deathknight_Rotation_FrostFever
 
 	dk.Opener.Clear()
 	dk.Main.Clear()
 
-	if dk.Talents.DarkConviction > 0 && dk.Talents.HowlingBlast {
+	if dk.Talents.HowlingBlast && (dk.FrostPointsInBlood() > dk.FrostPointsInUnholy()) {
 		if dk.Rotation.UseEmpowerRuneWeapon {
 			dk.setupFrostSubBloodERWOpener()
 		} else {
 			dk.setupFrostSubBloodNoERWOpener()
 		}
-	} else if dk.Talents.BloodCakedBlade > 0 && dk.Talents.HowlingBlast {
+	} else if dk.Talents.HowlingBlast && (dk.FrostPointsInBlood() > dk.FrostPointsInUnholy()) {
 		if dk.Rotation.UseEmpowerRuneWeapon {
 			dk.setupFrostSubUnholyERWOpener()
 		} else {
 			dk.setupFrostSubUnholyNoERWOpener()
-		}
-	} else if dk.Talents.HowlingBlast {
-		if dk.Rotation.UseEmpowerRuneWeapon {
-			dk.setupFrostSubBloodERWOpener()
-		} else {
-			dk.setupFrostSubBloodNoERWOpener()
 		}
 	} else if dk.Talents.SummonGargoyle {
 		dk.setupUnholyOpener()
@@ -101,7 +103,7 @@ func (dk *DpsDeathknight) Initialize() {
 
 func (dk *DpsDeathknight) Reset(sim *core.Simulation) {
 	dk.Deathknight.Reset(sim)
-	dk.SetupRotations()
 	dk.fr.Reset(sim)
 	dk.ur.Reset(sim)
+	dk.SetupRotations()
 }

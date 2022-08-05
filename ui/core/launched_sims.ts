@@ -29,7 +29,7 @@ export const simLaunchStatuses: Record<Spec, LaunchStatus> = {
 	[Spec.SpecWarrior]: LaunchStatus.Unlaunched,
 	[Spec.SpecProtectionWarrior]: LaunchStatus.Unlaunched,
 	[Spec.SpecSmitePriest]: LaunchStatus.Unlaunched,
-	[Spec.SpecDeathknight]: LaunchStatus.Unlaunched,
+	[Spec.SpecDeathknight]: LaunchStatus.Alpha,
 	[Spec.SpecTankDeathknight]: LaunchStatus.Unlaunched,
 };
 

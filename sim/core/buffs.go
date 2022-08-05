@@ -255,6 +255,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		registerBloodlustCD(agent)
 	}
 
+	registerUnholyFrenzyCD(agent, individualBuffs.UnholyFrenzy)
 	registerTricksOfTheTradeCD(agent, individualBuffs.TricksOfTheTrades)
 	registerPowerInfusionCD(agent, individualBuffs.PowerInfusions)
 	registerManaTideTotemCD(agent, partyBuffs.ManaTideTotems)
@@ -665,6 +666,53 @@ func TricksOfTheTradeAura(character *Character, actionTag int32) *Aura {
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			character.PseudoStats.DamageDealtMultiplier /= 1.15
+		},
+	})
+}
+
+var UnholyFrenzyAuraTag = "UnholyFrenzy"
+
+const UnholyFrenzyDuration = time.Second * 30
+const UnholyFrenzyCD = time.Minute * 3
+
+func registerUnholyFrenzyCD(agent Agent, numUnholyFrenzy int32) {
+	if numUnholyFrenzy == 0 {
+		return
+	}
+
+	ufAura := UnholyFrenzyAura(agent.GetCharacter(), -1)
+
+	registerExternalConsecutiveCDApproximation(
+		agent,
+		externalConsecutiveCDApproximation{
+			ActionID:         ActionID{SpellID: 49016, Tag: -1},
+			AuraTag:          UnholyFrenzyAuraTag,
+			CooldownPriority: CooldownPriorityDefault,
+			AuraDuration:     UnholyFrenzyDuration,
+			AuraCD:           UnholyFrenzyCD,
+			Type:             CooldownTypeDPS | CooldownTypeUsableShapeShifted,
+
+			ShouldActivate: func(sim *Simulation, character *Character) bool {
+				return true
+			},
+			AddAura: func(sim *Simulation, character *Character) { ufAura.Activate(sim) },
+		},
+		numUnholyFrenzy)
+}
+
+func UnholyFrenzyAura(character *Character, actionTag int32) *Aura {
+	actionID := ActionID{SpellID: 49016, Tag: actionTag}
+
+	return character.GetOrRegisterAura(Aura{
+		Label:    "UnholyFrenzy-" + actionID.String(),
+		Tag:      UnholyFrenzyAuraTag,
+		ActionID: actionID,
+		Duration: UnholyFrenzyDuration,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			character.PseudoStats.PhysicalDamageDealtMultiplier *= 1.2
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			character.PseudoStats.PhysicalDamageDealtMultiplier /= 1.2
 		},
 	})
 }

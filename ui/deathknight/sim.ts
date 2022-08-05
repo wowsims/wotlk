@@ -29,8 +29,8 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 			cssClass: 'deathknight-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"<p>Rotation logic is not fully tuned yet.</p>\
-				<p>There's currently a rotation bug in the non ERW frost rotation.</p>\
+				"<p>Blood dps is not implemented.</p>\
+				<p>Rotation logic is not fully tuned yet.</p>\
 				<p>Pet scaling is likely to not be properly working until further beta testing.</p>"
 			],
 
@@ -170,6 +170,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 				gear: [
 					Presets.P1_FROST_PRE_BIS_PRESET,
 					Presets.P1_FROST_BIS_PRESET,
+					Presets.P1_FROST_GAME_BIS_PRESET,
 					Presets.P1_UNHOLY_DW_PRERAID_PRESET,
 					Presets.P1_UNHOLY_DW_BIS_PRESET,
 					Presets.P1_UNHOLY_2H_PRERAID_PRESET,
