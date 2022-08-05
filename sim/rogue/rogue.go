@@ -26,9 +26,9 @@ func RegisterRogue() {
 }
 
 const (
-	SpellFlagBuilder      = core.SpellFlagAgentReserved1
-	SpellFlagFinisher     = core.SpellFlagAgentReserved2
-	SpellFlagRogueAbility = SpellFlagBuilder | SpellFlagFinisher
+	SpellFlagBuilder      = core.SpellFlagAgentReserved2
+	SpellFlagFinisher     = core.SpellFlagAgentReserved3
+	SpellFlagRogueAbility = SpellFlagBuilder | SpellFlagFinisher | core.SpellFlagAgentReserved1
 )
 
 type Rogue struct {
@@ -57,6 +57,7 @@ type Rogue struct {
 	Backstab       *core.Spell
 	DeadlyPoison   *core.Spell
 	Hemorrhage     *core.Spell
+	HungerForBlood *core.Spell
 	InstantPoison  [3]*core.Spell
 	Mutilate       *core.Spell
 	Shiv           *core.Spell
@@ -78,6 +79,7 @@ type Rogue struct {
 	BladeFlurryAura     *core.Aura
 	DeathmantleProcAura *core.Aura
 	ExposeArmorAura     *core.Aura
+	HungerForBloodAura  *core.Aura
 	KillingSpreeAura    *core.Aura
 	OverkillAura        *core.Aura
 	SliceAndDiceAura    *core.Aura
