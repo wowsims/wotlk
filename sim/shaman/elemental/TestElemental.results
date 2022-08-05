@@ -745,6 +745,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestElemental-AllItems-TotemoftheAvalanche-50463"
+ value: {
+  dps: 2902.297553317147
+  tps: 2261.794485575902
+ }
+}
+dps_results: {
  key: "TestElemental-AllItems-TotemofthePulsingEarth-29389"
  value: {
   dps: 2902.297553317147

@@ -10,6 +10,8 @@ import (
 )
 
 var StormstrikeActionID = core.ActionID{SpellID: 17364}
+var TotemOfTheDancingFlame int32 = 45169
+var TotemOfDueling int32 = 40322
 
 func (shaman *Shaman) StormstrikeDebuffAura(target *core.Unit) *core.Aura {
 	return target.GetOrRegisterAura(core.Aura{
@@ -46,7 +48,14 @@ func (shaman *Shaman) newStormstrikeHitSpell(isMH bool) *core.Spell {
 		OutcomeApplier:   shaman.OutcomeFuncMeleeSpecialCritOnly(shaman.DefaultMeleeCritMultiplier()),
 	}
 
-	flatDamageBonus := core.TernaryFloat64(shaman.HasSetBonus(ItemSetCycloneHarness, 4), 30, 0)
+	var flatDamageBonus float64 = 0
+	if shaman.HasSetBonus(ItemSetCycloneHarness, 4) {
+		flatDamageBonus += 30
+	}
+	if shaman.Equip[items.ItemSlotRanged].ID == TotemOfTheDancingFlame {
+		flatDamageBonus += 155
+	}
+
 	if isMH {
 		effect.ProcMask = core.ProcMaskMeleeMHSpecial
 		effect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.MainHand, false, flatDamageBonus, 1, true)
@@ -78,6 +87,11 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 	var skyshatterAura *core.Aura
 	if shaman.HasSetBonus(ItemSetSkyshatterHarness, 4) {
 		skyshatterAura = shaman.NewTemporaryStatsAura("Skyshatter 4pc AP Bonus", core.ActionID{SpellID: 38432}, stats.Stats{stats.AttackPower: 70}, time.Second*12)
+	}
+	var totemOfDuelingAura *core.Aura
+	if shaman.Equip[items.ItemSlotRanged].ID == TotemOfDueling {
+		totemOfDuelingAura = shaman.NewTemporaryStatsAura("Essense of the Storm", core.ActionID{SpellID: 60766},
+			stats.Stats{stats.MeleeHaste: 60, stats.SpellHaste: 60}, time.Second*6)
 	}
 
 	manaMetrics := shaman.NewManaMetrics(core.ActionID{SpellID: 51522})
@@ -125,6 +139,9 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 
 				if skyshatterAura != nil {
 					skyshatterAura.Activate(sim)
+				}
+				if totemOfDuelingAura != nil {
+					totemOfDuelingAura.Activate(sim)
 				}
 
 				mhHit.Cast(sim, spellEffect.Target)

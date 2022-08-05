@@ -694,6 +694,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-TotemoftheAvalanche-50463"
+ value: {
+  dps: 2350.7335408121294
+  tps: 1656.6372382143668
+ }
+}
+dps_results: {
  key: "TestEnhancement-AllItems-TotemoftheElementalPlane-40708"
  value: {
   dps: 2208.0443908280263
