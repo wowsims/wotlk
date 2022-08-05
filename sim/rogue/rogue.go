@@ -159,7 +159,7 @@ func (rogue *Rogue) Initialize() {
 
 	rogue.finishingMoveEffectApplier = rogue.makeFinishingMoveEffectApplier()
 
-	rogue.energyPerSecondAvg = core.EnergyPerTick / core.EnergyTickDuration.Seconds()
+	rogue.energyPerSecondAvg = (core.EnergyPerTick*rogue.EnergyTickMultiplier)/core.EnergyTickDuration.Seconds() + 5.0
 
 	// TODO: Currently assumes default combat spec.
 	expectedComboPointsAfterFinisher := 0

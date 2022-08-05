@@ -327,7 +327,7 @@ func (rogue *Rogue) doPlanNone(sim *core.Simulation) {
 }
 
 func (rogue *Rogue) canPoolEnergy(sim *core.Simulation, energy float64) bool {
-	return sim.GetRemainingDuration() >= time.Second*6 && energy <= 50 && ((rogue.AdrenalineRushAura == nil || !rogue.AdrenalineRushAura.IsActive()) || energy <= 30)
+	return sim.GetRemainingDuration() >= time.Second*6 && energy <= 85 && ((rogue.AdrenalineRushAura == nil || !rogue.AdrenalineRushAura.IsActive()) || energy <= 70)
 }
 
 func (rogue *Rogue) castBuilder(sim *core.Simulation, target *core.Unit) {
@@ -339,9 +339,12 @@ func (rogue *Rogue) castBuilder(sim *core.Simulation, target *core.Unit) {
 }
 
 func (rogue *Rogue) tryUseDamageFinisher(sim *core.Simulation, energy float64, comboPoints int32) bool {
+	newRuptureDuration := core.MinDuration(rogue.RuptureDuration(comboPoints), sim.GetRemainingDuration())
+	if rogue.RuptureDot.IsActive() {
+		newRuptureDuration -= core.MinDuration(rogue.RuptureDot.RemainingDuration(sim), sim.GetRemainingDuration())
+	}
 	if rogue.Rotation.UseRupture &&
-		!rogue.RuptureDot.IsActive() &&
-		sim.GetRemainingDuration() >= rogue.RuptureDuration(comboPoints) &&
+		newRuptureDuration >= time.Second*10 &&
 		(sim.GetNumTargets() == 1 || (rogue.BladeFlurryAura == nil || !rogue.BladeFlurryAura.IsActive())) {
 		if energy >= RuptureEnergyCost || rogue.DeathmantleProcAura.IsActive() {
 			rogue.Rupture[comboPoints].Cast(sim, rogue.CurrentTarget)
