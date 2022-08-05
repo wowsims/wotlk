@@ -75,8 +75,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Step2(sim *core.
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
 		NewAction(dk.RotationActionCallback_FS).
-		NewAction(dk.RotationActionCallback_UA).
-		NewAction(dk.RotationActionCallback_BT).
+		NewAction(dk.RotationActionCallback_FrostSubUnholy_UA_BT).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_Star).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_Star).
@@ -192,4 +191,25 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_FS_Star(sim *cor
 
 	s.Advance()
 	return casted
+}
+
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_UA_BT(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
+	if dk.CanUnbreakableArmor(sim) && dk.CanBloodTap(sim) {
+		casted := dk.UnbreakableArmor.Cast(sim, target)
+		casted = casted && dk.BloodTap.Cast(sim, target)
+		dk.WaitUntil(sim, sim.CurrentTime)
+		s.ConditionalAdvance(casted)
+		return casted
+	}
+
+	s.Advance()
+	dk.WaitUntil(sim, sim.CurrentTime)
+	return true
+}
+
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_CancelBT(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
+	dk.BloodTapAura.Deactivate(sim)
+	dk.WaitUntil(sim, sim.CurrentTime)
+	s.Advance()
+	return true
 }
