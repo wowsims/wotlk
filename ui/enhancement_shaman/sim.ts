@@ -32,6 +32,10 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 			cssClass: 'enhancement-shaman-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
+                "Bloodlust does not currently properly apply Sated, and having it selected in the 'raid buffs' category as well as 'player' will cast them back to back",
+                "Gear presets are not currently working, as well as phases being innaccurate and items may be missing",
+                "Not all item effects are currently implemented, specifically totem relics",
+                "Talent presets do not currently have glyphs",
 			],
 
 			// All stats for which EP should be calculated.
@@ -76,17 +80,18 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				gear: Presets.P1_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatIntellect]: 1.378,
-					[Stat.StatAgility]: 1.517,
+					[Stat.StatIntellect]: 1.517,
+					[Stat.StatAgility]: 1.561,
 					[Stat.StatStrength]: 1.1,
-					[Stat.StatSpellPower]: 0.433,
-					[Stat.StatNatureSpellPower]: 0.216,
+					[Stat.StatSpellPower]: 1.117,
+                    [Stat.StatSpellHit]: 0, //default EP assumes cap
+                    [Stat.StatSpellCrit]: 0.897,
 					[Stat.StatAttackPower]: 1.0,
-					[Stat.StatMeleeHit]: 1.665,
-					[Stat.StatMeleeCrit]: 1.357,
-					[Stat.StatMeleeHaste]: 1.944,
-					[Stat.StatArmorPenetration]: 0.283,
-					[Stat.StatExpertise]: 2.871,
+					[Stat.StatMeleeHit]: 1.42,
+					[Stat.StatMeleeCrit]: 0.805, //double check how this works with spell crit
+					[Stat.StatMeleeHaste]: 1.37, //haste is complicated
+					[Stat.StatArmorPenetration]: 0.471,
+					[Stat.StatExpertise]: 0, //default EP assumes cap
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,
@@ -161,10 +166,6 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				// Preset gear configurations that the user can quickly select.
 				gear: [
 					Presets.P1_PRESET,
-					Presets.P2_PRESET,
-					Presets.P3_PRESET,
-					Presets.P4_PRESET,
-					Presets.P5_PRESET,
 				],
 			},
 		});
