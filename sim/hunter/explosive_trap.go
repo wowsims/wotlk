@@ -26,7 +26,7 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 				return core.DamageRoll(sim, 523, 671) + rap*0.1
 			},
 		},
-		OutcomeApplier: hunter.OutcomeFuncMeleeSpecialHitAndCrit(hunter.critMultiplier(false, false, hunter.CurrentTarget)),
+		OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(false, false, hunter.CurrentTarget)),
 	})
 
 	hunter.ExplosiveTrap = hunter.RegisterSpell(core.SpellConfig{
@@ -56,9 +56,9 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 		},
 	})
 
-	periodicOutcomeFunc := hunter.OutcomeFuncTick()
+	periodicOutcomeFunc := hunter.OutcomeFuncRangedHit()
 	if hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfExplosiveTrap) {
-		periodicOutcomeFunc = hunter.OutcomeFuncMeleeSpecialCritOnly(hunter.critMultiplier(false, false, hunter.CurrentTarget))
+		periodicOutcomeFunc = hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(false, false, hunter.CurrentTarget))
 	}
 
 	hunter.ExplosiveTrapDot = core.NewDot(core.Dot{

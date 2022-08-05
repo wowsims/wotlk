@@ -3,6 +3,7 @@ package hunter
 import (
 	"time"
 
+	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -80,6 +81,8 @@ type Hunter struct {
 	LockAndLoadAura           *core.Aura
 	ScorpidStingAura          *core.Aura
 	TalonOfAlarAura           *core.Aura
+
+	CustomRotation *common.CustomRotation
 }
 
 func (hunter *Hunter) GetCharacter() *core.Character {
@@ -139,6 +142,11 @@ func (hunter *Hunter) Initialize() {
 	hunter.registerRapidFireCD()
 
 	hunter.DelayDPSCooldownsForArmorDebuffs()
+
+	hunter.CustomRotation = hunter.makeCustomRotation()
+	if hunter.CustomRotation == nil {
+		hunter.Rotation.Type = proto.Hunter_Rotation_SingleTarget
+	}
 }
 
 func (hunter *Hunter) Reset(sim *core.Simulation) {

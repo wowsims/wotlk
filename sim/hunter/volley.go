@@ -33,7 +33,7 @@ func (hunter *Hunter) registerVolleySpell() {
 					return 353 + rap*0.0837
 				},
 			},
-			OutcomeApplier: hunter.OutcomeFuncTick(),
+			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, false, hunter.CurrentTarget)),
 			IsPeriodic:     true,
 		}),
 	})

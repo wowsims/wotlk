@@ -5,33 +5,46 @@ import { Input, InputConfig } from './input.js';
 
 declare var tippy: any;
 
-export interface ListPickerConfig<ModObject, ItemType> extends InputConfig<ModObject, Array<ItemType>> {
+export interface ListPickerConfig<ModObject, ItemType, ItemPicker> extends InputConfig<ModObject, Array<ItemType>> {
+	title?: string,
+	titleTooltip?: string,
 	itemLabel: string,
 	newItem: () => ItemType,
 	copyItem: (oldItem: ItemType) => ItemType,
-	newItemPicker: (parent: HTMLElement, item: ItemType) => void,
+	newItemPicker: (parent: HTMLElement, item: ItemType, listPicker: LickPicker<ModObject, ItemType>) => ItemPicker,
+	inlineMenuBar?: boolean,
 }
 
-interface ItemPickerPair<ItemType> {
+interface ItemPickerPair<ItemType, ItemPicker> {
 	item: ItemType,
-	picker: HTMLElement,
+	elem: HTMLElement,
+	picker: ItemPicker,
 }
 
-export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<ItemType>> {
-	private readonly config: ListPickerConfig<ModObject, ItemType>;
+export class ListPicker<ModObject, ItemType, ItemPicker> extends Input<ModObject, Array<ItemType>> {
+	private readonly config: ListPickerConfig<ModObject, ItemType, ItemPicker>;
 	private readonly itemsDiv: HTMLElement;
 
 	private itemPickerPairs: Array<ItemPickerPair<ItemType>>;
 
-	constructor(parent: HTMLElement, modObject: ModObject, config: ListPickerConfig<ModObject, ItemType>) {
+	constructor(parent: HTMLElement, modObject: ModObject, config: ListPickerConfig<ModObject, ItemType, ItemPicker>) {
 		super(parent, 'list-picker-root', modObject, config);
 		this.config = config;
 		this.itemPickerPairs = [];
 
 		this.rootElem.innerHTML = `
+			${this.config.title ? `<span class="list-picker-title">${this.config.title}</span>` : ''}
 			<div class="list-picker-items"></div>
 			<button class="list-picker-new-button sim-button">NEW ${config.itemLabel.toUpperCase()}</button>
 		`;
+
+		if (this.config.title && this.config.titleTooltip) {
+			const title = this.rootElem.getElementsByClassName('list-picker-title')[0] as HTMLElement;
+			tippy(title, {
+				'content': this.config.titleTooltip,
+				'allowHTML': true,
+			});
+		}
 
 		this.itemsDiv = this.rootElem.getElementsByClassName('list-picker-items')[0] as HTMLElement;
 
@@ -56,7 +69,7 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 	setInputValue(newValue: Array<ItemType>): void {
 		// Remove items that are no longer in the list.
 		const removePairs = this.itemPickerPairs.filter(ipp => !newValue.includes(ipp.item));
-		removePairs.forEach(ipp => ipp.picker.remove());
+		removePairs.forEach(ipp => ipp.elem.remove());
 		this.itemPickerPairs = this.itemPickerPairs.filter(ipp => !removePairs.includes(ipp));
 
 		// Add items that were missing.
@@ -69,25 +82,34 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 		this.itemPickerPairs = newValue.map(item => this.itemPickerPairs.find(ipp => ipp.item == item)!);
 
 		// Reorder item picker elements in the DOM if necessary.
-		const curPickers = Array.from(this.itemsDiv.children);
-		if (!curPickers.every((picker, i) => picker == this.itemPickerPairs[i].picker)) {
-			this.itemPickerPairs.forEach(ipp => ipp.picker.remove());
-			this.itemPickerPairs.forEach(ipp => this.itemsDiv.appendChild(ipp.picker));
+		const curPickerElems = Array.from(this.itemsDiv.children);
+		if (!curPickerElems.every((elem, i) => elem == this.itemPickerPairs[i].elem)) {
+			this.itemPickerPairs.forEach(ipp => ipp.elem.remove());
+			this.itemPickerPairs.forEach(ipp => this.itemsDiv.appendChild(ipp.elem));
 		}
+	}
+
+	getPickerIndex(picker: ItemPicker): number {
+		return this.itemPickerPairs.findIndex(ipp => ipp.picker == picker);
 	}
 
 	private addNewPicker(item: ItemType) {
 		const itemContainer = document.createElement('div');
 		itemContainer.classList.add('list-picker-item-container');
+		if (this.config.inlineMenuBar) {
+			itemContainer.classList.add('inline');
+		}
+
+		const itemHTML = '<div class="list-picker-item"></div>';
 		itemContainer.innerHTML = `
+			${this.config.inlineMenuBar ? itemHTML : ''}
 			<div class="list-picker-item-header">
 				<span class="list-picker-item-up fa fa-angle-up"></span>
 				<span class="list-picker-item-down fa fa-angle-down"></span>
 				<span class="list-picker-item-copy fa fa-copy"></span>
 				<span class="list-picker-item-delete fa fa-times"></span>
 			</div>
-			<div class="list-picker-item">
-			</div>
+			${!this.config.inlineMenuBar ? itemHTML : ''}
 		`;
 
 		const upButton = itemContainer.getElementsByClassName('list-picker-item-up')[0] as HTMLElement;
@@ -165,9 +187,9 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 		});
 
 		const itemElem = itemContainer.getElementsByClassName('list-picker-item')[0] as HTMLElement;
-		const itemPicker = this.config.newItemPicker(itemElem, item);
+		const itemPicker = this.config.newItemPicker(itemElem, item, this);
 		this.itemsDiv.appendChild(itemContainer);
 
-		this.itemPickerPairs.push({ item: item, picker: itemContainer });
+		this.itemPickerPairs.push({ item: item, elem: itemContainer, picker: itemPicker });
 	}
 }
