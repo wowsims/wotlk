@@ -92,7 +92,7 @@ var FullDebuffs = &proto.Debuffs{
 	Misery:            true,
 }
 
-var Phase2Gear = items.EquipmentSpecFromJsonString(`{"items": [
+var Phase1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	{
 		"id": 30190,
 		"enchant": 29192,
