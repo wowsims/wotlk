@@ -33,7 +33,7 @@ func (mage *Mage) registerFireBlastSpell() {
 			BonusSpellCritRating: 0 +
 				float64(mage.Talents.CriticalMass+mage.Talents.Incineration)*2*core.CritRatingPerCritChance,
 
-			DamageMultiplier: mage.spellDamageMultiplier * (1 + 0.02*float64(mage.Talents.FirePower)),
+			DamageMultiplier: mage.spellDamageMultiplier * (1 + 0.02*float64(mage.Talents.FirePower+mage.Talents.SpellImpact)),
 
 			ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
