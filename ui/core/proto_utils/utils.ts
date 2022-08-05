@@ -216,8 +216,8 @@ export const titleIcons: Record<Spec, string> = {
     [Spec.SpecWarrior]: '/wotlk/assets/img/warrior_icon.png',
     [Spec.SpecProtectionWarrior]: '/wotlk/assets/img/protection_warrior_icon.png',
     [Spec.SpecSmitePriest]: '/wotlk/assets/img/smite_priest_icon.png',
-    [Spec.SpecDeathknight]: 'https://wow.zamimg.com/images/wow/icons/medium/class_deathknight.jpg',
-    [Spec.SpecTankDeathknight]: 'https://wow.zamimg.com/images/wow/icons/medium/class_deathknight.jpg',
+    [Spec.SpecDeathknight]: '/wotlk/assets/img/death_knight_icon.png',
+    [Spec.SpecTankDeathknight]: '/wotlk/assets/img/death_knight_icon.png',
 };
 
 export const raidSimIcon: string = '/wotlk/assets/img/raid_icon.png';
