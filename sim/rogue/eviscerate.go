@@ -54,6 +54,7 @@ func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					rogue.ApplyFinisher(sim, spell)
+					rogue.ApplyCutToTheChase(sim)
 				} else {
 					if refundAmount > 0 {
 						rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.QuickRecoveryMetrics)

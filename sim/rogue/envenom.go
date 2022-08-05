@@ -50,6 +50,7 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					rogue.ApplyFinisher(sim, spell)
+					rogue.ApplyCutToTheChase(sim)
 					deadlyPoisonStacks := rogue.DeadlyPoisonDot.GetStacks()
 					doses := core.MinInt32(deadlyPoisonStacks, comboPoints)
 					chanceToRetainStacks := rogue.Talents.MasterPoisoner / 3.0

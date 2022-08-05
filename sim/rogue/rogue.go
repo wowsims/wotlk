@@ -266,6 +266,16 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 	return rogue
 }
 
+func (rogue *Rogue) ApplyCutToTheChase(sim *core.Simulation) {
+	if rogue.Talents.CutToTheChase > 0 && rogue.SliceAndDiceAura.IsActive() {
+		chanceToRefresh := float64(rogue.Talents.CutToTheChase) * 0.2
+		if chanceToRefresh == 1 || sim.RandomFloat("Cut to the Chase") < chanceToRefresh {
+			rogue.SliceAndDiceAura.Duration = rogue.sliceAndDiceDurations[5]
+			rogue.SliceAndDiceAura.Activate(sim)
+		}
+	}
+}
+
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassRogue}] = stats.Stats{
 		stats.Health:    3524,
