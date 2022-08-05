@@ -157,6 +157,7 @@ export const ManaTideTotem = makeMultistatePartyBuffInput(ActionId.fromSpellId(1
 export const Innervate = makeMultistateIndividualBuffInput(ActionId.fromSpellId(29166), 11, 'innervates');
 export const PowerInfusion = makeMultistateIndividualBuffInput(ActionId.fromSpellId(10060), 11, 'powerInfusions');
 export const TricksOfTheTrade = makeMultistateIndividualBuffInput(ActionId.fromSpellId(57933), 20, 'tricksOfTheTrades');
+export const UnholyFrenzy = makeMultistateIndividualBuffInput(ActionId.fromSpellId(49016), 11, 'unholyFrenzy');
 
 // Debuffs
 

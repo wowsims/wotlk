@@ -589,7 +589,7 @@ export const P1_FROST_BIS_PRESET = {
 	name: 'P1 BiS Frost',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().howlingBlast,
-	gear: EquipmentSpec.fromJsonString(`{ "items": [
+	gear: EquipmentSpec.fromJsonString(`{  "items": [
     {
       "id": 44006,
       "enchant": 44879,
@@ -624,10 +624,9 @@ export const P1_FROST_BIS_PRESET = {
       ]
     },
     {
-      "id": 40330,
+      "id": 40733,
       "enchant": 44484,
       "gems": [
-        39996,
         0
       ]
     },
@@ -640,8 +639,9 @@ export const P1_FROST_BIS_PRESET = {
       ]
     },
     {
-      "id": 40317,
+      "id": 40278,
       "gems": [
+        39996,
         42142
       ]
     },
@@ -664,7 +664,7 @@ export const P1_FROST_BIS_PRESET = {
       "id": 40075
     },
     {
-      "id": 40684
+      "id": 40256
     },
     {
       "id": 42987
@@ -681,4 +681,124 @@ export const P1_FROST_BIS_PRESET = {
       "id": 40207
     }
   ]}`),
+};
+
+export const P1_FROST_GAME_BIS_PRESET = {
+	name: 'P1 Game BiS Frost',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().howlingBlast,
+	gear: EquipmentSpec.fromJsonString(`{ "items": [
+  {
+    "id": 51312,
+    "enchant": 44879,
+    "gems": [
+      41398,
+      49110
+    ]
+  },
+  {
+    "id": 54581,
+    "gems": [
+      40111
+    ]
+  },
+  {
+    "id": 51314,
+    "enchant": 44871,
+    "gems": [
+      42142
+    ]
+  },
+  {
+    "id": 47548,
+    "enchant": 44472,
+    "gems": [
+      42142
+    ]
+  },
+  {
+    "id": 51310,
+    "enchant": 44489,
+    "gems": [
+      42142,
+      40111
+    ]
+  },
+  {
+    "id": 50670,
+    "enchant": 44484,
+    "gems": [
+      40111,
+      0
+    ]
+  },
+  {
+    "id": 50675,
+    "enchant": 54999,
+    "gems": [
+      40111,
+      40111,
+      0
+    ]
+  },
+  {
+    "id": 50620,
+    "gems": [
+      40111,
+      40111,
+      40111
+    ]
+  },
+  {
+    "id": 51313,
+    "enchant": 38374,
+    "gems": [
+      40111,
+      40111
+    ]
+  },
+  {
+    "id": 54578,
+    "enchant": 55016,
+    "gems": [
+      40111,
+      40111
+    ]
+  },
+  {
+    "id": 50693,
+    "gems": [
+      40111
+    ]
+  },
+  {
+    "id": 52572,
+    "gems": [
+      40111
+    ]
+  },
+  {
+    "id": 50363
+  },
+  {
+    "id": 54590
+  },
+  {
+    "id": 50737,
+    "enchant": 53343,
+    "gems": [
+      40111
+    ]
+  },
+  {
+    "id": 50737,
+    "enchant": 53344,
+    "gems": [
+      40111
+    ]
+  },
+  {
+    "id": 50459
+  }
+]}`),
 };
