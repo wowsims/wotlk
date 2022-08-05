@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -16,6 +17,11 @@ import (
 func (mage *Mage) registerArcaneMissilesSpell() {
 	actionID := core.ActionID{SpellID: 42846}
 	baseCost := .31 * mage.BaseMana
+
+	bonusCrit := 0.0
+	if mage.MageTier.t9_4 {
+		bonusCrit += 5 * core.CritRatingPerCritChance
+	}
 
 	// bonusCrit := float64(mage.Talents.ArcanePotency) * 10 * core.CritRatingPerCritChance
 
@@ -36,8 +42,9 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				if mage.MissileBarrageAura.IsActive() {
+					// sim.Log("Is this working correctly? ")
+					mage.PseudoStats.NoCost = true
 					cast.ChannelTime = cast.ChannelTime / 2
-					cast.Cost = 0
 				}
 			},
 		},
@@ -52,12 +59,11 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
-					// CC has a special interaction with AM, gets the benefit of CC crit bonus from
-					// the previous cast along with its own.
-					// if mage.ClearcastingAura.IsActive() && mage.bonusAMCCCrit == 0 {
-					// 	mage.AddStatDynamic(sim, stats.SpellCrit, bonusCrit)
-					// 	mage.bonusAMCCCrit = bonusCrit
-					// }
+					mage.PseudoStats.NoCost = false
+					if mage.MissileBarrageAura.IsActive() {
+						mage.isMissilesBarrage = true
+						mage.MultiplyCastSpeed(2)
+					}
 
 					mage.ArcaneMissilesDot.Apply(sim)
 				}
@@ -65,24 +71,25 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 		}),
 	})
 
+	bonusCritDamage := mage.bonusCritDamage
+	if mage.HasGlyph(int32(proto.MageMajorGlyph_GlyphOfArcaneMissiles)) {
+		bonusCritDamage += .25
+	}
 	target := mage.CurrentTarget
 	mage.ArcaneMissilesDot = core.NewDot(core.Dot{
 		Spell: mage.ArcaneMissiles,
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "ArcaneMissiles-" + strconv.Itoa(int(mage.Index)),
 			ActionID: actionID,
-			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				if mage.MissileBarrageAura.IsActive() {
-					mage.isMissilesBarrage = true
-					mage.MultiplyCastSpeed(2)
-				}
-			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 				if mage.isMissilesBarrage {
 					mage.MultiplyCastSpeed(.5)
 					mage.isMissilesBarrage = false
-					mage.MissileBarrageAura.Deactivate(sim)
+					if !mage.MageTier.t8_4 || sim.RandomFloat("MageT84PC") > .1 {
+						mage.MissileBarrageAura.Deactivate(sim)
+					}
 				}
+				mage.ArcaneBlastAura.Deactivate(sim)
 			},
 		}),
 
@@ -91,14 +98,15 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 		AffectedByCastSpeed: true,
 
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:            core.ProcMaskSpellDamage,
-			BonusSpellHitRating: float64(mage.Talents.ArcaneFocus+mage.Talents.Precision) * core.SpellHitRatingPerHitChance,
+			ProcMask:             core.ProcMaskSpellDamage,
+			BonusSpellHitRating:  float64(mage.Talents.ArcaneFocus) * core.SpellHitRatingPerHitChance,
+			BonusSpellCritRating: bonusCrit,
 
-			DamageMultiplier: mage.spellDamageMultiplier,
+			DamageMultiplier: mage.spellDamageMultiplier * (1 + .04*float64(mage.Talents.TormentTheWeak)),
 			ThreatMultiplier: 1 - 0.2*float64(mage.Talents.ArcaneSubtlety),
 
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(362, 1/3.5+0.03*float64(mage.Talents.ArcaneEmpowerment)),
-			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, 0.25*float64(mage.Talents.SpellPower))),
+			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, bonusCritDamage)),
 		})),
 	})
 }

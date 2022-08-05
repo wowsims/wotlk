@@ -4,13 +4,10 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (mage *Mage) registerManaGemsCD() {
-	if mage.Consumes.DefaultConjured != proto.Conjured_ConjuredMageManaSapphire {
-		return
-	}
 
 	actionID := core.ActionID{ItemID: 33312}
 	manaMetrics := mage.NewManaMetrics(actionID)
@@ -39,15 +36,20 @@ func (mage *Mage) registerManaGemsCD() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+			// Mana Sapphire: Restores 3330 to 3500 mana. (2 Min Cooldown)
+			manaGain := minManaSapphireGain + (sim.RandomFloat("Mana Gem") * manaSapphireGainRange)
 			if remainingManaGems <= 3 {
 				// Mana Emerald: Restores 2340 to 2460 mana. (2 Min Cooldown)
-				manaGain := minManaEmeraldGain + (sim.RandomFloat("Mana Gem") * manaEmeraldGainRange)
-				mage.AddMana(sim, manaGain, manaMetrics, true)
-			} else {
-				// Mana Sapphire: Restores 3330 to 3500 mana. (2 Min Cooldown)
-				manaGain := minManaSapphireGain + (sim.RandomFloat("Mana Gem") * manaSapphireGainRange)
-				mage.AddMana(sim, manaGain, manaMetrics, true)
+				manaGain = minManaEmeraldGain + (sim.RandomFloat("Mana Gem") * manaEmeraldGainRange)
+
 			}
+
+			if mage.MageTier.t7_2 {
+				manaGain *= 1.25
+				mage.NewTemporaryStatsAura("Improved Mana Gems T7", core.ActionID{SpellID: 61062}, stats.Stats{stats.SpellPower: 225}, 15*time.Second)
+			}
+
+			mage.AddMana(sim, manaGain, manaMetrics, true)
 
 			remainingManaGems--
 			if remainingManaGems == 0 {
@@ -67,7 +69,7 @@ func (mage *Mage) registerManaGemsCD() {
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
 			// Only pop if we have less than the max mana provided by the gem minus 1mp5 tick.
 			totalRegen := character.ManaRegenPerSecondWhileCasting() * 5
-			maxManaGain := maxManaEmeraldGain
+			maxManaGain := maxManaSapphireGain
 			if remainingManaGems <= 3 {
 				maxManaGain = maxManaEmeraldGain
 			}

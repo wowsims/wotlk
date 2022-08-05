@@ -12,7 +12,7 @@ import { Faction } from '/wotlk/core/proto/common.js';
 import { SavedTalents } from '/wotlk/core/proto/ui.js';
 import { Player } from '/wotlk/core/player.js';
 
-import { Mage, Mage_Rotation as MageRotation, MageTalents as MageTalents, Mage_Options as MageOptions } from '/wotlk/core/proto/mage.js';
+import { Mage, Mage_Rotation as MageRotation, MageTalents as MageTalents, Mage_Options as MageOptions, MageMajorGlyph, MageMinorGlyph } from '/wotlk/core/proto/mage.js';
 import { Mage_Rotation_Type as RotationType, Mage_Rotation_ArcaneRotation as ArcaneRotation, Mage_Rotation_FireRotation as FireRotation, Mage_Rotation_FrostRotation as FrostRotation } from '/wotlk/core/proto/mage.js';
 import { Mage_Rotation_FireRotation_PrimarySpell as PrimaryFireSpell } from '/wotlk/core/proto/mage.js';
 import { Mage_Options_ArmorType as ArmorType } from '/wotlk/core/proto/mage.js';
@@ -30,25 +30,43 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 export const ArcaneTalents = {
 	name: 'Arcane',
 	data: SavedTalents.create({
-		talentsString: '2500250300030150330125--053500031003001',
+		talentsString: '23000513310033015032310250532-03-023303001',
+		glyphs: Glyphs.create({
+			major1: MageMajorGlyph.GlyphOfArcaneBlast,
+			major2: MageMajorGlyph.GlyphOfArcaneMissiles,
+			major3: MageMajorGlyph.GlyphOfMoltenArmor,
+			minor1: MageMinorGlyph.GlyphOfSlowFall,
+			minor2: MageMinorGlyph.GlyphOfFrostWard,
+			minor3: MageMinorGlyph.GlyphOfBlastWave,
+		}),
 	}),
 };
 export const FireTalents = {
 	name: 'Fire',
 	data: SavedTalents.create({
-		talentsString: '2-505202012303331053125-043500001',
+		talentsString: '23000503110003-0055030011302331053120321351',
+		glyphs: Glyphs.create({
+			major1: MageMajorGlyph.GlyphOfFireball,
+			major2: MageMajorGlyph.GlyphOfMoltenArmor,
+			major3: MageMajorGlyph.GlyphOfLivingBomb,
+			minor1: MageMinorGlyph.GlyphOfSlowFall,
+			minor2: MageMinorGlyph.GlyphOfFrostWard,
+			minor3: MageMinorGlyph.GlyphOfBlastWave,
+		}),
 	}),
 };
 export const FrostTalents = {
 	name: 'Frost',
 	data: SavedTalents.create({
-		talentsString: '2500250300030150330125--053500031003001',
-	}),
-};
-export const DeepFrostTalents = {
-	name: 'Deep Frost',
-	data: SavedTalents.create({
-		talentsString: '230015031003--0535000310230012241551',
+		talentsString: '23000503110003--0533030310233100030152231351',
+		glyphs: Glyphs.create({
+			major1: MageMajorGlyph.GlyphOfArcaneBlast,
+			major2: MageMajorGlyph.GlyphOfArcaneMissiles,
+			major3: MageMajorGlyph.GlyphOfMoltenArmor,
+			minor1: MageMinorGlyph.GlyphOfSlowFall,
+			minor2: MageMinorGlyph.GlyphOfFrostWard,
+			minor3: MageMinorGlyph.GlyphOfBlastWave,
+		}),
 	}),
 };
 
@@ -56,19 +74,19 @@ export const DefaultFireRotation = MageRotation.create({
 	type: RotationType.Fire,
 	fire: FireRotation.create({
 		primarySpell: PrimaryFireSpell.Fireball,
-		maintainImprovedScorch: true,
+		maintainImprovedScorch: false,
 	}),
 });
 
 export const DefaultFireOptions = MageOptions.create({
-	armor: ArmorType.MageArmor,
+	armor: ArmorType.MoltenArmor,
 });
 
 export const DefaultFireConsumes = Consumes.create({
 	flask: Flask.FlaskOfTheFrostWyrm,
-	food: Food.FoodFishFeast,
-	defaultPotion: Potions.RunicManaPotion,
-	defaultConjured: Conjured.ConjuredMageManaSapphire,
+	food: Food.FoodFirecrackerSalmon,
+	defaultPotion: Potions.PotionOfSpeed,
+	defaultConjured: Conjured.ConjuredFlameCap,
 });
 
 export const DefaultFrostRotation = MageRotation.create({
@@ -79,12 +97,12 @@ export const DefaultFrostRotation = MageRotation.create({
 });
 
 export const DefaultFrostOptions = MageOptions.create({
-	armor: ArmorType.MageArmor,
+	armor: ArmorType.MoltenArmor,
 });
 
 export const DefaultFrostConsumes = Consumes.create({
-	defaultPotion: Potions.RunicManaPotion,
-	defaultConjured: Conjured.ConjuredMageManaSapphire,
+	defaultPotion: Potions.PotionOfSpeed,
+	defaultConjured: Conjured.ConjuredFlameCap,
 	flask: Flask.FlaskOfTheFrostWyrm,
 	food: Food.FoodFishFeast,
 });
@@ -97,329 +115,312 @@ export const DefaultArcaneRotation = MageRotation.create({
 });
 
 export const DefaultArcaneOptions = MageOptions.create({
-	armor: ArmorType.MageArmor,
+	armor: ArmorType.MoltenArmor,
 });
 
 export const DefaultArcaneConsumes = Consumes.create({
-	defaultPotion: Potions.RunicManaPotion,
-	defaultConjured: Conjured.ConjuredMageManaSapphire,
+	defaultPotion: Potions.PotionOfSpeed,
+	defaultConjured: Conjured.ConjuredFlameCap,
 	flask: Flask.FlaskOfTheFrostWyrm,
-	food: Food.FoodFishFeast,
+	food: Food.FoodFirecrackerSalmon,
 });
 
-export const P5_ARCANE_PRESET = {
-	name: 'TBC P5 Arcane Preset',
+export const P1_ARCANE_PRESET = {
+	name: 'Wotlk P1 Arcane Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
-			"id": 34405,
-			"enchant": 29191,
-			"gems": [
-				34220,
-				32196
-			]
+		  "id": 40416,
+		  "enchant": 44877,
+		  "gems": [
+			41285,
+			39998
+		  ]
 		},
 		{
-			"id": 33281
+		  "id": 44661,
+		  "gems": [
+			40026
+		  ]
 		},
 		{
-			"id": 30210,
-			"enchant": 28886,
-			"gems": [
-				32204,
-				32215
-			]
+		  "id": 40419,
+		  "enchant": 61120,
+		  "gems": [
+			40049
+		  ]
 		},
 		{
-			"id": 34242,
-			"enchant": 33150,
-			"gems": [
-				32204
-			]
+		  "id": 44005,
+		  "enchant": 63765,
+		  "gems": [
+			40026
+		  ]
 		},
 		{
-			"id": 34399,
-			"enchant": 24003,
-			"gems": [
-				32204,
-				32215,
-				32204
-			]
+		  "id": 40418,
+		  "enchant": 33990,
+		  "gems": [
+			39998,
+			40049
+		  ]
 		},
 		{
-			"id": 34447,
-			"enchant": 22534,
-			"gems": [
-				32204
-			]
+		  "id": 44008,
+		  "enchant": 44498,
+		  "gems": [
+			39998,
+			39998
+		  ]
 		},
 		{
-			"id": 30205,
-			"enchant": 28272
+		  "id": 40415,
+		  "enchant": 44592,
+		  "gems": [
+			39998,
+			0
+		  ]
 		},
 		{
-			"id": 34557,
-			"gems": [
-				32204
-			]
+		  "id": 40561,
+		  "gems": [
+			39998
+		  ]
 		},
 		{
-			"id": 34386,
-			"enchant": 24274,
-			"gems": [
-				32196,
-				32204,
-				32204
-			]
+		  "id": 40398,
+		  "enchant": 41602,
+		  "gems": [
+			39998,
+			39998
+		  ]
 		},
 		{
-			"id": 34574,
-			"enchant": 35297,
-			"gems": [
-				32204
-			]
+		  "id": 40246,
+		  "enchant": 55016
 		},
 		{
-			"id": 34230,
-			"enchant": 22536
+		  "id": 40399
 		},
 		{
-			"id": 34362,
-			"enchant": 22536
+		  "id": 40719
 		},
 		{
-			"id": 32483
+		  "id": 39229
 		},
 		{
-			"id": 30720
+		  "id": 40432
 		},
 		{
-			"id": 34336,
-			"enchant": 22560
+		  "id": 40396,
+		  "enchant": 44495
 		},
 		{
-			"id": 34179
+		  "id": 39766
 		},
 		{
-			"id": 34347,
-			"gems": [
-				32204
-			]
+		  "id": 39426
 		}
-	]}`),
+	  ]}`),
 };
 
-export const P5_FIRE_PRESET = {
-	name: 'TBC P5 Fire Preset',
+export const P1_FIRE_PRESET = {
+	name: 'Wotlk P1 Fire Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
-			"id": 34340,
-			"enchant": 29191,
-			"gems": [
-				34220,
-				32215
-			]
+		  "id": 40416,
+		  "enchant": 44877,
+		  "gems": [
+			41285,
+			39998
+		  ]
 		},
 		{
-			"id": 34204
+		  "id": 44661,
+		  "gems": [
+			40026
+		  ]
 		},
 		{
-			"id": 31059,
-			"enchant": 28886,
-			"gems": [
-				32196,
-				35760
-			]
+		  "id": 40419,
+		  "enchant": 61120,
+		  "gems": [
+			40049
+		  ]
 		},
 		{
-			"id": 34242,
-			"enchant": 33150,
-			"gems": [
-				32196
-			]
+		  "id": 44005,
+		  "enchant": 63765,
+		  "gems": [
+			40026
+		  ]
 		},
 		{
-			"id": 34232,
-			"enchant": 24003,
-			"gems": [
-				32196,
-				35760,
-				35760
-			]
+		  "id": 40418,
+		  "enchant": 33990,
+		  "gems": [
+			39998,
+			40049
+		  ]
 		},
 		{
-			"id": 34447,
-			"enchant": 22534,
-			"gems": [
-				32215
-			]
+		  "id": 44008,
+		  "enchant": 44498,
+		  "gems": [
+			39998,
+			39998
+		  ]
 		},
 		{
-			"id": 34344,
-			"enchant": 28272,
-			"gems": [
-				35760,
-				32196
-			]
+		  "id": 40415,
+		  "enchant": 44592,
+		  "gems": [
+			39998,
+			0
+		  ]
 		},
 		{
-			"id": 34557,
-			"gems": [
-				32221
-			]
+		  "id": 40561,
+		  "gems": [
+			39998
+		  ]
 		},
 		{
-			"id": 34181,
-			"enchant": 24274,
-			"gems": [
-				32196,
-				32196,
-				32221
-			]
+		  "id": 40398,
+		  "enchant": 41602,
+		  "gems": [
+			39998,
+			39998
+		  ]
 		},
 		{
-			"id": 34574,
-			"enchant": 35297,
-			"gems": [
-				32221
-			]
+		  "id": 40246,
+		  "enchant": 55016
 		},
 		{
-			"id": 34230,
-			"enchant": 22536
+		  "id": 40399
 		},
 		{
-			"id": 32527,
-			"enchant": 22536
+		  "id": 40719
 		},
 		{
-			"id": 34429
+		  "id": 39229
 		},
 		{
-			"id": 32483
+		  "id": 40432
 		},
 		{
-			"id": 34336,
-			"enchant": 22560
+		  "id": 40396,
+		  "enchant": 44495
 		},
 		{
-			"id": 34179
+		  "id": 39766
 		},
 		{
-			"id": 34347,
-			"gems": [
-				35760
-			]
+		  "id": 39426
 		}
-	]}`),
+	  ]}`),
 };
 
-export const P5_FROST_PRESET = {
-	name: 'TBC P5 Frost Preset',
+export const P1_FROST_PRESET = {
+	name: 'Wotlk P1 Frost Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Frost,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
-			"id": 34340,
-			"enchant": 29191,
-			"gems": [
-				34220,
-				32215
-			]
+		  "id": 40416,
+		  "enchant": 44877,
+		  "gems": [
+			41285,
+			39998
+		  ]
 		},
 		{
-			"id": 34204
+		  "id": 44661,
+		  "gems": [
+			40026
+		  ]
 		},
 		{
-			"id": 31059,
-			"enchant": 28886,
-			"gems": [
-				32196,
-				35760
-			]
+		  "id": 40419,
+		  "enchant": 61120,
+		  "gems": [
+			40049
+		  ]
 		},
 		{
-			"id": 34242,
-			"enchant": 33150,
-			"gems": [
-				32196
-			]
+		  "id": 44005,
+		  "enchant": 63765,
+		  "gems": [
+			40026
+		  ]
 		},
 		{
-			"id": 34232,
-			"enchant": 24003,
-			"gems": [
-				32196,
-				35760,
-				35760
-			]
+		  "id": 40418,
+		  "enchant": 33990,
+		  "gems": [
+			39998,
+			40049
+		  ]
 		},
 		{
-			"id": 34447,
-			"enchant": 22534,
-			"gems": [
-				32215
-			]
+		  "id": 44008,
+		  "enchant": 44498,
+		  "gems": [
+			39998,
+			39998
+		  ]
 		},
 		{
-			"id": 34344,
-			"enchant": 28272,
-			"gems": [
-				35760,
-				32196
-			]
+		  "id": 40415,
+		  "enchant": 44592,
+		  "gems": [
+			39998,
+			0
+		  ]
 		},
 		{
-			"id": 34557,
-			"gems": [
-				32221
-			]
+		  "id": 40561,
+		  "gems": [
+			39998
+		  ]
 		},
 		{
-			"id": 34181,
-			"enchant": 24274,
-			"gems": [
-				32196,
-				32196,
-				32221
-			]
+		  "id": 40398,
+		  "enchant": 41602,
+		  "gems": [
+			39998,
+			39998
+		  ]
 		},
 		{
-			"id": 34574,
-			"enchant": 35297,
-			"gems": [
-				32221
-			]
+		  "id": 40246,
+		  "enchant": 55016
 		},
 		{
-			"id": 34230,
-			"enchant": 22536
+		  "id": 40399
 		},
 		{
-			"id": 32527,
-			"enchant": 22536
+		  "id": 40719
 		},
 		{
-			"id": 34429
+		  "id": 39229
 		},
 		{
-			"id": 32483
+		  "id": 40432
 		},
 		{
-			"id": 34336,
-			"enchant": 22560
+		  "id": 40396,
+		  "enchant": 44495
 		},
 		{
-			"id": 34179
+		  "id": 39766
 		},
 		{
-			"id": 34347,
-			"gems": [
-				35760
-			]
+		  "id": 39426
 		}
-	]}`),
+	  ]}`),
 };

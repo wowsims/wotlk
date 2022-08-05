@@ -722,6 +722,36 @@ func MakePermanent(aura *Aura) *Aura {
 	return aura
 }
 
+func (character *Character) StatProcWithICD(auraLabel string, actionID ActionID,
+	tempStats stats.Stats, duration time.Duration, cooldown time.Duration,
+	applyProcAura func(sim *Simulation, spell *Spell, spellEffect *SpellEffect) bool) {
+
+	icd := Cooldown{
+		Timer:    character.NewTimer(),
+		Duration: time.Second * cooldown,
+	}
+
+	procAura := character.NewTemporaryStatsAura(auraLabel, actionID, tempStats, duration)
+
+	character.RegisterAura(Aura{
+		Label: auraLabel + "Permanent",
+		OnReset: func(aura *Aura, sim *Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
+			if !icd.IsReady(sim) {
+				return
+			}
+
+			if applyProcAura(sim, spell, spellEffect) {
+				icd.Use(sim)
+				procAura.Activate(sim)
+			}
+		},
+	})
+
+}
+
 // Helper for the common case of making an aura that adds stats.
 func (character *Character) NewTemporaryStatsAura(auraLabel string, actionID ActionID, tempStats stats.Stats, duration time.Duration) *Aura {
 	return character.NewTemporaryStatsAuraWrapped(auraLabel, actionID, tempStats, duration, nil)

@@ -1,15 +1,54 @@
 package mage
 
 import (
+	"image/color"
+	"log"
 	"testing"
+	"time"
 
 	_ "github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
+
+	"gonum.org/v1/plot"
+	"gonum.org/v1/plot/plotter"
 )
 
 func init() {
 	RegisterMage()
+}
+
+func TestRand(t *testing.T) {
+	mix := core.NewSplitMix(uint64(time.Now().UnixNano()))
+
+	var dist []float64
+	for i := 0; i < 100000; i++ {
+		dist = append(dist, mix.NextFloat64())
+	}
+	hist(dist, "uniform", "Uniform Distribution")
+
+}
+
+func hist(dist []float64, name, title string) {
+	n := len(dist)
+	vals := make(plotter.Values, n)
+	for i := 0; i < n; i++ {
+		vals[i] = dist[i]
+	}
+
+	plt := plot.New()
+	plt.Title.Text = title
+	hist, err := plotter.NewHist(vals, 25) // 25 bins
+	if err != nil {
+		log.Println("Cannot plot:", err)
+	}
+	hist.FillColor = color.RGBA{R: 255, G: 127, B: 80, A: 255} // coral color
+	plt.Add(hist)
+
+	err = plt.Save(400, 200, name+".png")
+	if err != nil {
+		log.Panic(err)
+	}
 }
 
 func TestArcane(t *testing.T) {

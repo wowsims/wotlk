@@ -48,7 +48,7 @@ func (mage *Mage) doArcaneRotation(sim *core.Simulation) *core.Spell {
 }
 
 func (mage *Mage) doFireRotation(sim *core.Simulation) *core.Spell {
-	if mage.FireRotation.MaintainImprovedScorch && mage.ScorchAura != nil && (mage.ScorchAura.GetStacks() < 5 || mage.ScorchAura.RemainingDuration(sim) < time.Millisecond*5500) {
+	if mage.FireRotation.MaintainImprovedScorch && mage.ScorchAura != nil && (!mage.ScorchAura.IsActive() || mage.ScorchAura.RemainingDuration(sim) < time.Millisecond*4000) {
 		return mage.Scorch
 	}
 
@@ -56,14 +56,18 @@ func (mage *Mage) doFireRotation(sim *core.Simulation) *core.Spell {
 		return mage.doAoeRotation(sim)
 	}
 
-	if mage.FireRotation.WeaveFireBlast && mage.FireBlast.IsReady(sim) {
-		return mage.FireBlast
+	if mage.HotStreakAura.IsActive() {
+		return mage.Pyroblast
+	}
+
+	if !mage.LivingBombNotActive.Empty() {
+		return mage.LivingBomb
 	}
 
 	if mage.FireRotation.PrimarySpell == proto.Mage_Rotation_FireRotation_Fireball {
 		return mage.Fireball
 	} else {
-		return mage.Scorch
+		return mage.FrostfireBolt
 	}
 }
 

@@ -165,8 +165,6 @@ message Mage {
 
 			bool maintain_improved_scorch = 2;
 
-			bool weave_fire_blast = 3;
-
 			int32 num_extra_targets = 4;
 		}
 		FireRotation fire = 3;
@@ -203,6 +201,7 @@ message Mage {
 
 		// Number of Evocation ticks to use. If 0, use all of them.
 		int32 evocation_ticks = 2;
+		int32 focus_magic_percent_uptime = 3;
 	}
 	Options options = 3;
 }

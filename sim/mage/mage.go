@@ -1,6 +1,7 @@
 package mage
 
 import (
+	llq "github.com/emirpasic/gods/queues/linkedlistqueue"
 	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -8,8 +9,9 @@ import (
 )
 
 const (
-	SpellFlagMage = core.SpellFlagAgentReserved1
-	BarrageSpells = core.SpellFlagAgentReserved2
+	SpellFlagMage   = core.SpellFlagAgentReserved1
+	BarrageSpells   = core.SpellFlagAgentReserved2
+	HotStreakSpells = core.SpellFlagAgentReserved3
 )
 
 func RegisterMage() {
@@ -62,17 +64,20 @@ type Mage struct {
 	spellDamageMultiplier float64
 
 	// Current bonus crit from AM+CC interaction.
-	bonusAMCCCrit float64
+	bonusAMCCCrit   float64
+	bonusCritDamage float64
 
 	ArcaneBlast     *core.Spell
 	ArcaneExplosion *core.Spell
 	ArcaneMissiles  *core.Spell
 	Blizzard        *core.Spell
 	Ignite          *core.Spell
+	LivingBomb      *core.Spell
 	Fireball        *core.Spell
 	FireBlast       *core.Spell
 	Flamestrike     *core.Spell
 	Frostbolt       *core.Spell
+	FrostfireBolt   *core.Spell
 	Pyroblast       *core.Spell
 	Scorch          *core.Spell
 	WintersChill    *core.Spell
@@ -80,20 +85,24 @@ type Mage struct {
 	IcyVeins             *core.Spell
 	SummonWaterElemental *core.Spell
 
-	ArcaneMissilesDot *core.Dot
-	IgniteDots        []*core.Dot
-	FireballDot       *core.Dot
-	FlamestrikeDot    *core.Dot
-	PyroblastDot      *core.Dot
+	ArcaneMissilesDot   *core.Dot
+	IgniteDots          []*core.Dot
+	LivingBombDots      []*core.Dot
+	LivingBombNotActive *llq.Queue
+	FireballDot         *core.Dot
+	FlamestrikeDot      *core.Dot
+	FrostfireDot        *core.Dot
+	PyroblastDot        *core.Dot
 
 	ArcaneBlastAura    *core.Aura
 	MissileBarrageAura *core.Aura
 	ClearcastingAura   *core.Aura
 	ScorchAura         *core.Aura
+	HotStreakAura      *core.Aura
 
 	IgniteTickDamage []float64
 
-	mageTier MageTierSets
+	MageTier MageTierSets
 
 	manaTracker common.ManaSpendingRateTracker
 }
@@ -117,6 +126,21 @@ func (mage *Mage) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
 
 func (mage *Mage) Initialize() {
+
+	mage.LivingBombDots = make([]*core.Dot, mage.Env.GetNumTargets())
+	mage.LivingBombNotActive = llq.New()
+
+	mage.MageTier = MageTierSets{
+		mage.HasSetBonus(ItemSetFrostfireGarb, 2),
+		mage.HasSetBonus(ItemSetFrostfireGarb, 4),
+		mage.HasSetBonus(ItemSetKirinTorGarb, 2),
+		mage.HasSetBonus(ItemSetKirinTorGarb, 4),
+		mage.HasSetBonus(ItemSetKhadgarsRegalia, 2) || mage.HasSetBonus(ItemSetSunstridersRegalia, 2),
+		mage.HasSetBonus(ItemSetKhadgarsRegalia, 4) || mage.HasSetBonus(ItemSetSunstridersRegalia, 4),
+		false,
+		false,
+	}
+
 	mage.registerArcaneBlastSpell()
 	mage.registerArcaneExplosionSpell()
 	mage.registerArcaneMissilesSpell()
@@ -129,6 +153,8 @@ func (mage *Mage) Initialize() {
 	mage.registerPyroblastSpell()
 	mage.registerScorchSpell()
 	mage.registerWintersChillSpell()
+	mage.registerLivingBombSpell()
+	mage.registerFrostfireBoltSpell()
 
 	mage.registerEvocationCD()
 	mage.registerManaGemsCD()
@@ -137,9 +163,8 @@ func (mage *Mage) Initialize() {
 	mage.IgniteTickDamage = []float64{}
 	for i := int32(0); i < mage.Env.GetNumTargets(); i++ {
 		mage.IgniteTickDamage = append(mage.IgniteTickDamage, 0)
-	}
-	for i := int32(0); i < mage.Env.GetNumTargets(); i++ {
 		mage.IgniteDots = append(mage.IgniteDots, mage.newIgniteDot(mage.Env.GetTargetUnit(i)))
+		mage.LivingBombNotActive.Enqueue(mage.Env.GetTargetUnit(i))
 	}
 }
 
@@ -148,6 +173,10 @@ func (mage *Mage) Reset(_ *core.Simulation) {
 	mage.manaTracker.Reset()
 	mage.disabledMCDs = nil
 	mage.bonusAMCCCrit = 0
+	for i := int32(0); i < mage.Env.GetNumTargets(); i++ {
+		mage.LivingBombNotActive.Clear()
+		mage.LivingBombNotActive.Enqueue(mage.Env.GetTargetUnit(i))
+	}
 }
 
 func NewMage(character core.Character, options proto.Player) *Mage {
@@ -178,17 +207,18 @@ func NewMage(character core.Character, options proto.Player) *Mage {
 		mage.AoeRotation = *mageOptions.Rotation.Aoe
 	}
 
-	mage.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
-
 	if mage.Options.Armor == proto.Mage_Options_MageArmor {
 		mage.PseudoStats.SpiritRegenRateCasting += 0.5
+		if mage.HasSetBonus(ItemSetKhadgarsRegalia, 2) {
+			mage.PseudoStats.SpiritRegenRateCasting += .1
+		}
 	} else if mage.Options.Armor == proto.Mage_Options_MoltenArmor {
 		//Need to switch to spirit crit calc
 		multi := 0.35
 		if mage.HasGlyph(int32(proto.MageMajorGlyph_GlyphOfMoltenArmor.Number())) {
 			multi += .2
 		}
-		if mage.mageTier.t9_2 {
+		if mage.HasSetBonus(ItemSetKhadgarsRegalia, 2) {
 			multi += .15
 		}
 		mage.AddStat(stats.SpellCrit, (mage.GetStat(stats.Spirit)*multi)/core.CritRatingPerCritChance)

@@ -36,6 +36,12 @@ export const EvocationTicks = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecM
 	labelTooltip: 'The number of ticks of Evocation to use, or 0 to use the full duration.',
 });
 
+export const FocusMagicUptime = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecMage>({
+	fieldName: 'focusMagicPercentUptime',
+	label: 'Focus Magic Percent Uptime',
+	labelTooltip: 'Percent of uptime for Focus Magic Buddy',
+});
+
 export const MageRotationConfig = {
 	inputs: [
 		{
@@ -65,7 +71,7 @@ export const MageRotationConfig = {
 							newRotation.fire = FireRotation.clone(Presets.DefaultFireRotation.fire!);
 						}
 					} else {
-						player.setTalentsString(eventID, Presets.DeepFrostTalents.data.talentsString);
+						player.setTalentsString(eventID, Presets.FrostTalents.data.talentsString);
 						if (!newRotation.frost) {
 							newRotation.frost = FrostRotation.clone(Presets.DefaultFrostRotation.frost!);
 						}
@@ -140,22 +146,6 @@ export const MageRotationConfig = {
 				player.setRotation(eventID, newRotation);
 			},
 			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
-		},
-		{
-			type: 'boolean' as const,
-			label: 'Weave Fire Blast',
-			labelTooltip: 'Use Fire Blast whenever its off CD.',
-			changedEvent: (player: Player<Spec.SpecMage>) => player.rotationChangeEmitter,
-			getValue: (player: Player<Spec.SpecMage>) => player.getRotation().fire?.weaveFireBlast || false,
-			setValue: (eventID: EventID, player: Player<Spec.SpecMage>, newValue: boolean) => {
-				const newRotation = player.getRotation();
-				if (!newRotation.fire) {
-					newRotation.fire = FireRotation.clone(Presets.DefaultFireRotation.fire!);
-				}
-				newRotation.fire.weaveFireBlast = newValue;
-				player.setRotation(eventID, newRotation);
-			},
-			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire && !player.getRotation().multiTargetRotation,
 		},
 		// ********************************************************
 		//                       FROST INPUTS

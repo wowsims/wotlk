@@ -9,41 +9,47 @@ import (
 )
 
 func (mage *Mage) registerPyroblastSpell() {
-	actionID := core.ActionID{SpellID: 33938}
-	baseCost := 500.0
+	actionID := core.ActionID{SpellID: 42891}
+	baseCost := .22 * mage.BaseMana
 
 	mage.Pyroblast = mage.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolFire,
-		Flags:       SpellFlagMage,
+		Flags:       SpellFlagMage | HotStreakSpells,
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost *
-					(1 - 0.01*float64(mage.Talents.Pyromaniac)),
+				Cost: baseCost,
 
 				GCD:      core.GCDDefault,
 				CastTime: time.Second * 6,
 			},
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				if mage.HotStreakAura.IsActive() {
+					cast.CastTime = 0
+					if !mage.MageTier.t8_4 || sim.RandomFloat("MageT84PC") > .1 {
+						mage.HotStreakAura.Deactivate(sim)
+					}
+				}
+			},
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:            core.ProcMaskSpellDamage,
-			BonusSpellHitRating: 0,
+			ProcMask: core.ProcMaskSpellDamage,
 
 			BonusSpellCritRating: 0 +
-				float64(mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
-				float64(mage.Talents.Pyromaniac)*1*core.CritRatingPerCritChance,
+				float64(mage.Talents.CriticalMass+mage.Talents.WorldInFlames)*2*core.CritRatingPerCritChance,
 
-			DamageMultiplier: mage.spellDamageMultiplier * (1 + 0.02*float64(mage.Talents.FirePower)),
+			DamageMultiplier: mage.spellDamageMultiplier * (1 + 0.02*float64(mage.Talents.FirePower)) *
+				(1 + .04*float64(mage.Talents.TormentTheWeak)),
 
-			ThreatMultiplier: 1 - 0.05*float64(mage.Talents.BurningSoul),
+			ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
-			BaseDamage:     core.BaseDamageConfigMagic(939, 1191, 1.15),
-			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, 0.25*float64(mage.Talents.SpellPower))),
+			BaseDamage:     core.BaseDamageConfigMagic(1210, 1531, 1.15),
+			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, mage.bonusCritDamage)),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
@@ -63,12 +69,13 @@ func (mage *Mage) registerPyroblastSpell() {
 		NumberOfTicks: 4,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: mage.spellDamageMultiplier * (1 + 0.02*float64(mage.Talents.FirePower)),
+			ProcMask: core.ProcMaskPeriodicDamage,
+			DamageMultiplier: mage.spellDamageMultiplier * (1 + 0.02*float64(mage.Talents.FirePower)) *
+				(1 + .04*float64(mage.Talents.TormentTheWeak)),
 
-			ThreatMultiplier: 1 - 0.05*float64(mage.Talents.BurningSoul),
+			ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
-			BaseDamage:     core.BaseDamageConfigFlat(356 / 4),
+			BaseDamage:     core.BaseDamageConfigMagicNoRoll(113, .02),
 			OutcomeApplier: mage.OutcomeFuncTick(),
 			IsPeriodic:     true,
 		}),

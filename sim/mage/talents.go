@@ -1,6 +1,7 @@
 package mage
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -15,6 +16,7 @@ func (mage *Mage) ApplyTalents() {
 	mage.applyWintersChill()
 	mage.applyMoltenFury()
 	mage.applyMissileBarrage()
+	mage.applyHotStreak()
 	mage.registerArcanePowerCD()
 	mage.registerPresenceOfMindCD()
 	mage.registerCombustionCD()
@@ -23,7 +25,16 @@ func (mage *Mage) ApplyTalents() {
 	mage.registerSummonWaterElementalCD()
 
 	if mage.Talents.ArcaneMeditation > 0 {
-		mage.PseudoStats.SpiritRegenRateCasting += float64(mage.Talents.ArcaneMeditation) * 0.1
+		mage.PseudoStats.SpiritRegenRateCasting += float64(mage.Talents.ArcaneMeditation) / 6
+	}
+
+	if mage.Talents.StudentOfTheMind > 0 {
+		mage.Character.AddStatDependency(stats.Spirit, stats.Spirit, 1.04+(.03*float64(mage.Talents.StudentOfTheMind-1)))
+	}
+
+	if mage.Talents.FocusMagic {
+		totalCritPercent := 3 + float64(mage.Options.FocusMagicPercentUptime*3)/100.0
+		mage.AddStat(stats.SpellCrit, totalCritPercent*core.CritRatingPerCritChance)
 	}
 
 	if mage.Talents.ArcaneMind > 0 {
@@ -39,8 +50,45 @@ func (mage *Mage) ApplyTalents() {
 		mage.spellDamageMultiplier += float64(mage.Talents.ArcaneInstability) * 0.01
 	}
 
+	if mage.Talents.NetherwindPresence > 0 {
+		mage.MultiplyCastSpeed(1 + 0.02*float64(mage.Talents.NetherwindPresence))
+	}
+
+	if mage.Talents.SpellPower > 0 {
+		mage.bonusCritDamage = .25 * float64(mage.Talents.SpellPower)
+	}
+
 	if mage.Talents.PlayingWithFire > 0 {
 		mage.spellDamageMultiplier += float64(mage.Talents.PlayingWithFire) * 0.01
+	}
+
+	if mage.Talents.FirePower > 0 {
+		mage.PseudoStats.FireDamageDealtMultiplier += float64(mage.Talents.FirePower) * 0.02
+	}
+
+	if mage.Talents.Pyromaniac > 0 {
+		mage.AddStat(stats.SpellCrit, float64(mage.Talents.Pyromaniac)*core.CritRatingPerCritChance)
+		mage.PseudoStats.SpiritRegenRateCasting += float64(mage.Talents.ArcaneMeditation) / 6
+	}
+
+	if mage.Talents.Burnout > 0 {
+		mage.bonusCritDamage = .1 * float64(mage.Talents.Burnout)
+	}
+
+	if mage.Talents.Precision > 0 {
+		mage.AddStat(stats.SpellHit, float64(mage.Talents.Precision)*core.SpellHitRatingPerHitChance)
+	}
+
+	if mage.Talents.PiercingIce > 0 {
+		mage.PseudoStats.FrostDamageDealtMultiplier *= 1 + float64(mage.Talents.PiercingIce)*.02
+	}
+
+	if mage.Talents.ArcticWinds > 0 {
+		mage.PseudoStats.FrostDamageDealtMultiplier *= 1 + float64(mage.Talents.ArcticWinds)*.01
+	}
+
+	if mage.Talents.FrostChanneling > 0 {
+		mage.PseudoStats.CostMultiplier = mage.PseudoStats.CostMultiplier * (1 - .04*float64(mage.Talents.FrostChanneling))
 	}
 
 	magicAbsorptionBonus := 2 * float64(mage.Talents.MagicAbsorption)
@@ -49,6 +97,59 @@ func (mage *Mage) ApplyTalents() {
 	mage.AddStat(stats.FrostResistance, magicAbsorptionBonus)
 	mage.AddStat(stats.NatureResistance, magicAbsorptionBonus)
 	mage.AddStat(stats.ShadowResistance, magicAbsorptionBonus)
+}
+
+func (mage *Mage) applyHotStreak() {
+	if mage.Talents.HotStreak == 0 {
+		return
+	}
+
+	procChance := float64(mage.Talents.HotStreak) / 3
+
+	mage.HotStreakAura = mage.RegisterAura(core.Aura{
+		Label:    "HotStreak",
+		ActionID: core.ActionID{SpellID: 44448},
+		Duration: time.Second * 10,
+	})
+
+	heatingUp := false
+	mage.RegisterAura(core.Aura{
+		Label:    "HeatingUp",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			//WHAT THE FUCK
+
+			fmt.Printf("WHAT THE FUCK")
+
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spell.Flags.Matches(HotStreakSpells) {
+				return
+			}
+
+			if mage.HotStreakAura.IsActive() {
+				return
+			}
+
+			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+				heatingUp = false
+				return
+			} else {
+				if heatingUp {
+					if procChance == 1 || sim.RandomFloat("Hot Streak") < procChance {
+						mage.HotStreakAura.Activate(sim)
+						heatingUp = false
+					}
+				} else {
+					heatingUp = true
+				}
+			}
+		},
+	})
+
 }
 
 func (mage *Mage) applyArcaneConcentration() {
@@ -143,7 +244,7 @@ func (mage *Mage) applyMissileBarrage() {
 	})
 
 	mage.RegisterAura(core.Aura{
-		Label:    "Missile Barrage",
+		Label:    "Missile Barrage Talent",
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
@@ -172,9 +273,9 @@ func (mage *Mage) registerPresenceOfMindCD() {
 		return
 	}
 
-	cooldown := time.Minute * 3
-	if mage.HasSetBonus(ItemSetAldorRegalia, 4) {
-		cooldown -= time.Second * 24
+	cooldown := 120.0
+	if mage.Talents.ArcaneFlows > 0 {
+		cooldown *= 1 - (.15 * float64(mage.Talents.ArcaneFlows))
 	}
 
 	actionID := core.ActionID{SpellID: 12043}
@@ -185,7 +286,7 @@ func (mage *Mage) registerPresenceOfMindCD() {
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    mage.NewTimer(),
-				Duration: cooldown,
+				Duration: time.Duration(cooldown) * time.Second,
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
@@ -238,17 +339,27 @@ func (mage *Mage) registerArcanePowerCD() {
 	}
 	actionID := core.ActionID{SpellID: 12042}
 
+	duration := 15
+	if mage.HasGlyph(int32(proto.MageMajorGlyph_GlyphOfArcanePower)) {
+		duration += 3
+	}
+
+	cooldown := 120.0
+	if mage.Talents.ArcaneFlows > 0 {
+		cooldown *= 1 - (.15 * float64(mage.Talents.ArcaneFlows))
+	}
+
 	apAura := mage.RegisterAura(core.Aura{
 		Label:    "Arcane Power",
 		ActionID: actionID,
-		Duration: time.Second * 15,
+		Duration: time.Second * time.Duration(duration),
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			mage.PseudoStats.DamageDealtMultiplier *= 1.3
-			mage.PseudoStats.CostMultiplier *= 1.3
+			mage.PseudoStats.DamageDealtMultiplier *= 1.2
+			mage.PseudoStats.CostMultiplier *= 1.2
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			mage.PseudoStats.DamageDealtMultiplier /= 1.3
-			mage.PseudoStats.CostMultiplier /= 1.3
+			mage.PseudoStats.DamageDealtMultiplier /= 1.2
+			mage.PseudoStats.CostMultiplier /= 1.2
 		},
 	})
 
@@ -258,7 +369,7 @@ func (mage *Mage) registerArcanePowerCD() {
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    mage.NewTimer(),
-				Duration: time.Minute * 3,
+				Duration: time.Duration(cooldown) * time.Second,
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
@@ -320,7 +431,7 @@ func (mage *Mage) registerCombustionCD() {
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			cd.Use(sim)
-			mage.UpdateMajorCooldowns()
+			// mage.UpdateMajorCooldowns()
 		},
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
 			aura.Unit.PseudoStats.BonusFireCritRating += critPerStack * float64(newStacks-oldStacks)
@@ -380,6 +491,11 @@ func (mage *Mage) registerIcyVeinsCD() {
 	actionID := core.ActionID{SpellID: 12472}
 	manaCost := mage.BaseMana * 0.03
 
+	cooldown := 180.0
+	if mage.Talents.IceFloes > 0 {
+		cooldown *= 1 - (float64(mage.Talents.IceFloes) / 15)
+	}
+
 	icyVeinsAura := mage.RegisterAura(core.Aura{
 		Label:    "Icy Veins",
 		ActionID: actionID,
@@ -405,7 +521,7 @@ func (mage *Mage) registerIcyVeinsCD() {
 			},
 			CD: core.Cooldown{
 				Timer:    mage.NewTimer(),
-				Duration: time.Minute * 3,
+				Duration: time.Duration(cooldown) * time.Second,
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
@@ -486,7 +602,7 @@ func (mage *Mage) applyMoltenFury() {
 		return
 	}
 
-	multiplier := 1.0 + 0.1*float64(mage.Talents.MoltenFury)
+	multiplier := 1.0 + 0.06*float64(mage.Talents.MoltenFury)
 
 	mage.RegisterResetEffect(func(sim *core.Simulation) {
 		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int) {

@@ -11,7 +11,7 @@ func (mage *Mage) registerFlamestrikeSpell() {
 	actionID := core.ActionID{SpellID: 27086}
 	baseCost := 1175.0
 
-	applyAOEDamage := core.ApplyEffectFuncAOEDamageCapped(mage.Env, 7830, core.SpellEffect{
+	applyAOEDamage := core.ApplyEffectFuncAOEDamageCapped(mage.Env, core.SpellEffect{
 		ProcMask:            core.ProcMaskSpellDamage,
 		BonusSpellHitRating: 0,
 

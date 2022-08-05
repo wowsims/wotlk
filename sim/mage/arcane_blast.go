@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -12,6 +13,15 @@ const ArcaneBlastBaseCastTime = time.Millisecond * 2500
 
 func (mage *Mage) registerArcaneBlastSpell() {
 	ArcaneBlastBaseManaCost := .07 * mage.BaseMana
+	additionalDamage := .15
+	if mage.HasGlyph(int32(proto.MageMajorGlyph_GlyphOfArcaneBlast)) {
+		additionalDamage += .03
+	}
+
+	bonusCrit := 0.0
+	if mage.MageTier.t9_4 {
+		bonusCrit += 5 * core.CritRatingPerCritChance
+	}
 
 	mage.ArcaneBlastAura = mage.GetOrRegisterAura(core.Aura{
 		Label:     "Arcane Blast",
@@ -22,7 +32,7 @@ func (mage *Mage) registerArcaneBlastSpell() {
 			if !aura.IsActive() {
 				return
 			}
-			mage.PseudoStats.ArcaneDamageDealtMultiplier = 1 + float64(newStacks)*.15
+			mage.PseudoStats.ArcaneDamageDealtMultiplier = 1 + float64(newStacks)*additionalDamage
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			mage.PseudoStats.ArcaneDamageDealtMultiplier = 1
@@ -57,14 +67,14 @@ func (mage *Mage) registerArcaneBlastSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:             core.ProcMaskSpellDamage,
-			BonusSpellHitRating:  float64(mage.Talents.ArcaneFocus+mage.Talents.Precision) * core.SpellHitRatingPerHitChance, // maybe precision shouldnt be here
-			BonusSpellCritRating: float64(mage.Talents.Incineration) * 2 * core.CritRatingPerCritChance,
+			BonusSpellHitRating:  float64(mage.Talents.ArcaneFocus) * core.SpellHitRatingPerHitChance, // maybe precision shouldnt be here
+			BonusSpellCritRating: float64(mage.Talents.Incineration)*2*core.CritRatingPerCritChance + bonusCrit,
 
-			DamageMultiplier: mage.spellDamageMultiplier + float64(mage.Talents.SpellImpact)*.02,
+			DamageMultiplier: mage.spellDamageMultiplier * (1 + .04*float64(mage.Talents.TormentTheWeak)) * (1 + .02*float64(mage.Talents.SpellImpact)),
 			ThreatMultiplier: 1 - 0.2*float64(mage.Talents.ArcaneSubtlety),
 
 			BaseDamage:     core.BaseDamageConfigMagic(1185, 1377, (2.5/3.5)+.03*float64(mage.Talents.ArcaneEmpowerment)),
-			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, 0.25*float64(mage.Talents.SpellPower))),
+			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, mage.bonusCritDamage)),
 		}),
 	})
 }

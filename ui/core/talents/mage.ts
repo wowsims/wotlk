@@ -209,10 +209,6 @@ export const mageTalentsConfig: TalentsConfig<MageTalents> = newTalentsConfig([
 			12043
 		  ],
 		  "maxPoints": 1,
-		  "prereqLocation": {
-			"rowIdx": 4,
-			"colIdx": 1
-		  }
 		},
 		{
 		  "fieldName": "arcaneMind",
@@ -267,7 +263,6 @@ export const mageTalentsConfig: TalentsConfig<MageTalents> = newTalentsConfig([
 		  },
 		  "spellIds": [
 			31571,
-			24544,
 			31572
 		  ],
 		  "maxPoints": 2

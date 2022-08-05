@@ -51,7 +51,7 @@ func (mage *Mage) procIgnite(sim *core.Simulation, target *core.Unit, damageFrom
 	igniteDot.TickEffects = core.TickFuncSnapshot(target, core.SpellEffect{
 		ProcMask:         core.ProcMaskPeriodicDamage,
 		DamageMultiplier: 1,
-		ThreatMultiplier: 1 - 0.05*float64(mage.Talents.BurningSoul),
+		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 		IsPeriodic:       true,
 		BaseDamage:       core.BaseDamageConfigFlat(newTickDamage),
 		OutcomeApplier:   mage.OutcomeFuncTick(),
