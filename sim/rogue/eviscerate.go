@@ -11,7 +11,7 @@ import (
 func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
 	baseDamage := 127.0 +
 		(370+core.TernaryFloat64(rogue.HasSetBonus(ItemSetDeathmantle, 2), 40, 0))*float64(comboPoints)
-	apRatio := 0.03 * float64(comboPoints)
+	apRatio := 0.05 * float64(comboPoints)
 	cost := 35.0
 	if rogue.HasSetBonus(ItemSetAssassination, 4) {
 		cost -= 10
