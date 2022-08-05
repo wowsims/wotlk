@@ -74,6 +74,83 @@ func TestMutilate(t *testing.T) {
 	}))
 }
 
+type AttackType int
+
+const (
+	Poison AttackType = iota
+	MHAuto
+	OHAuto
+	Builder
+	Finisher
+)
+
+func GenerateCriticalDamageMultiplierTestCase(
+	t *testing.T,
+	testName string,
+	equipment *proto.EquipmentSpec,
+	spec *proto.Player_Rogue,
+	attackType AttackType,
+	expectedMultiplier float64) {
+	raid := core.SinglePlayerRaidProto(core.WithSpec(&proto.Player{
+		Class:     proto.Class_ClassRogue,
+		Race:      proto.Race_RaceOrc,
+		Equipment: equipment,
+	}, spec), nil, nil, nil)
+	encounter := core.MakeSingleTargetEncounter(0.0)
+	env, _ := core.NewEnvironment(*raid, *encounter)
+	agent := env.Raid.Parties[0].Players[0]
+	rog := agent.(RogueAgent).GetRogue()
+	actualMultiplier := 0.0
+	switch attackType {
+	case Poison:
+		actualMultiplier = rog.SpellCritMultiplier()
+	case MHAuto:
+		actualMultiplier = rog.MeleeCritMultiplier(true, false)
+	case OHAuto:
+		actualMultiplier = rog.MeleeCritMultiplier(true, false)
+	case Builder:
+		actualMultiplier = rog.MeleeCritMultiplier(true, true)
+	case Finisher:
+		actualMultiplier = rog.MeleeCritMultiplier(true, false)
+	}
+	t.Run(testName, func(t *testing.T) {
+		if expectedMultiplier != actualMultiplier {
+			t.Logf("Crit damage multiplier for %s expected %f but was %f", testName, expectedMultiplier, actualMultiplier)
+			t.Fail()
+		}
+	})
+
+}
+
+// Verifies the critical damage multipliers conform to
+// https://github.com/where-fore/rogue-wotlk/issues/31
+func TestCritDamageMultipliers(t *testing.T) {
+	// Poison, no RED
+	GenerateCriticalDamageMultiplierTestCase(t, "Poison", GearWithoutRED, PlayerOptionsNoPotW, Poison, 1.5)
+	// Poison, with RED
+	GenerateCriticalDamageMultiplierTestCase(t, "PoisonRED", GearWithRED, PlayerOptionsNoPotW, Poison, 1.545000)
+	// Poison, with RED & PotW
+	GenerateCriticalDamageMultiplierTestCase(t, "PoisonREDPotW", GearWithRED, PlayerOptionsBasic, Poison, 1.854000)
+	// Auto, no RED, no Lethality, no PotW
+	GenerateCriticalDamageMultiplierTestCase(t, "Auto", GearWithoutRED, PlayerOptionsNoLethalityNoPotW, MHAuto, 2.0)
+	// Auto, RED, no Lethality, no PotW
+	GenerateCriticalDamageMultiplierTestCase(t, "AutoRED", GearWithRED, PlayerOptionsNoLethalityNoPotW, MHAuto, 2.06)
+	// Auto, RED, no Lethality, PotW
+	GenerateCriticalDamageMultiplierTestCase(t, "AutoREDPotW", GearWithRED, PlayerOptionsNoLethality, MHAuto, 2.472)
+	// Builder, no RED, Lethality, no PotW
+	GenerateCriticalDamageMultiplierTestCase(t, "BuilderLethality", GearWithoutRED, PlayerOptionsNoPotW, Builder, 2.3)
+	// Builder, RED, Lethality, no PotW
+	GenerateCriticalDamageMultiplierTestCase(t, "BuilderREDLethality", GearWithRED, PlayerOptionsNoPotW, Builder, 2.378000)
+	// Builder, no RED, Lethality, PotW
+	GenerateCriticalDamageMultiplierTestCase(t, "BuilderLethalityPotW", GearWithoutRED, PlayerOptionsBasic, Builder, 2.820000)
+	// Builder, RED, Lethality, PotW
+	GenerateCriticalDamageMultiplierTestCase(t, "BuilderREDLethalityPotW", GearWithRED, PlayerOptionsBasic, Builder, 2.913600)
+	// Finisher, no RED, Lethality, PotW
+	GenerateCriticalDamageMultiplierTestCase(t, "FinisherLethalityPotW", GearWithoutRED, PlayerOptionsBasic, Finisher, 2.4)
+	// Finisher, no RED, Lethality, PotW
+	GenerateCriticalDamageMultiplierTestCase(t, "FinisherREDLethalityPotW", GearWithRED, PlayerOptionsBasic, Finisher, 2.472)
+}
+
 func BenchmarkSimulate(b *testing.B) {
 	rsr := &proto.RaidSimRequest{
 		Raid: core.SinglePlayerRaidProto(

@@ -180,27 +180,17 @@ func (rogue *Rogue) Reset(sim *core.Simulation) {
 func (rogue *Rogue) MeleeCritMultiplier(isMH bool, applyLethality bool) float64 {
 	primaryModifier := rogue.murderMultiplier()
 	secondaryModifier := 0.0
-
+	preyModifier := rogue.preyOnTheWeakMultiplier(rogue.CurrentTarget)
 	if applyLethality {
 		secondaryModifier += 0.06 * float64(rogue.Talents.Lethality)
 	}
-
-	// TODO: Use the following predicate if/when health values are modeled
-	//if rogue.CurrentTarget != nil && rogue.CurrentTarget.HasHealthBar() && rogue.CurrentTarget.CurrentHealthPercent() < rogue.CurrentHealthPercent() {
-	if rogue.Talents.PreyOnTheWeak > 0 {
-		secondaryModifier *= (1 + 0.04*float64(rogue.Talents.PreyOnTheWeak))
-		primaryModifier *= (1 + 0.04*float64(rogue.Talents.PreyOnTheWeak))
-	}
-	if rogue.Character.HasMetaGemEquipped(34220) ||
-		rogue.Character.HasMetaGemEquipped(32409) ||
-		rogue.Character.HasMetaGemEquipped(41285) ||
-		rogue.Character.HasMetaGemEquipped(41398) {
-		primaryModifier *= 1.03
-	}
-	return (2.0 + secondaryModifier) * primaryModifier
+	primaryModifier *= preyModifier
+	return rogue.Character.MeleeCritMultiplier(primaryModifier, secondaryModifier)
 }
 func (rogue *Rogue) SpellCritMultiplier() float64 {
-	return rogue.Character.SpellCritMultiplier(rogue.murderMultiplier(), 0)
+	primaryModifier := rogue.preyOnTheWeakMultiplier(rogue.CurrentTarget)
+	primaryModifier *= rogue.murderMultiplier()
+	return rogue.Character.SpellCritMultiplier(primaryModifier, 0)
 }
 
 func NewRogue(character core.Character, options proto.Player) *Rogue {

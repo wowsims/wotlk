@@ -104,6 +104,14 @@ func (rogue *Rogue) murderMultiplier() float64 {
 	}
 }
 
+func (rogue *Rogue) preyOnTheWeakMultiplier(target *core.Unit) float64 {
+	// TODO: Use the following predicate if/when health values are modeled
+	//if rogue.CurrentTarget != nil &&
+	//rogue.CurrentTarget.HasHealthBar() &&
+	//rogue.CurrentTarget.CurrentHealthPercent() < rogue.CurrentHealthPercent()
+	return (1 + 0.04*float64(rogue.Talents.PreyOnTheWeak))
+}
+
 func (rogue *Rogue) registerColdBloodCD() {
 	if !rogue.Talents.ColdBlood {
 		return

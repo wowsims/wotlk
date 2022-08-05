@@ -6,26 +6,111 @@ import (
 )
 
 var CombatTalents = &proto.RogueTalents{
-	Malice:              5,
-	Ruthlessness:        3,
-	Murder:              2,
-	RelentlessStrikes:   5,
-	ImprovedExposeArmor: 2,
-	Lethality:           5,
-	VilePoisons:         2,
+	Malice:          5,
+	Ruthlessness:    3,
+	BloodSpatter:    2,
+	Lethality:       5,
+	VilePoisons:     2,
+	ImprovedPoisons: 3,
 
 	ImprovedSinisterStrike:  2,
-	ImprovedSliceAndDice:    3,
-	Precision:               5,
 	DualWieldSpecialization: 5,
+	ImprovedSliceAndDice:    2,
+	Precision:               5,
+	Endurance:               1,
+	CloseQuartersCombat:     5,
+	LightningReflexes:       3,
+	Aggression:              5,
 	BladeFlurry:             true,
-	HackAndSlash:            5,
 	WeaponExpertise:         2,
-	Aggression:              3,
-	Vitality:                2,
+	BladeTwisting:           2,
+	Vitality:                3,
 	AdrenalineRush:          true,
 	CombatPotency:           5,
 	SurpriseAttacks:         true,
+	SavageCombat:            2,
+	PreyOnTheWeak:           5,
+	KillingSpree:            true,
+}
+
+var CombatNoLethalityTalents = &proto.RogueTalents{
+	Malice:          5,
+	Ruthlessness:    3,
+	BloodSpatter:    2,
+	VilePoisons:     2,
+	ImprovedPoisons: 3,
+
+	ImprovedSinisterStrike:  2,
+	DualWieldSpecialization: 5,
+	ImprovedSliceAndDice:    2,
+	Precision:               5,
+	Endurance:               1,
+	CloseQuartersCombat:     5,
+	LightningReflexes:       3,
+	Aggression:              5,
+	BladeFlurry:             true,
+	WeaponExpertise:         2,
+	BladeTwisting:           2,
+	Vitality:                3,
+	AdrenalineRush:          true,
+	CombatPotency:           5,
+	SurpriseAttacks:         true,
+	SavageCombat:            2,
+	PreyOnTheWeak:           5,
+	KillingSpree:            true,
+}
+
+var CombatNoPotWTalents = &proto.RogueTalents{
+	Malice:          5,
+	Ruthlessness:    3,
+	BloodSpatter:    2,
+	Lethality:       5,
+	VilePoisons:     2,
+	ImprovedPoisons: 3,
+
+	ImprovedSinisterStrike:  2,
+	DualWieldSpecialization: 5,
+	ImprovedSliceAndDice:    2,
+	Precision:               5,
+	Endurance:               1,
+	CloseQuartersCombat:     5,
+	LightningReflexes:       3,
+	Aggression:              5,
+	BladeFlurry:             true,
+	WeaponExpertise:         2,
+	BladeTwisting:           2,
+	Vitality:                3,
+	AdrenalineRush:          true,
+	CombatPotency:           5,
+	SurpriseAttacks:         true,
+	SavageCombat:            2,
+	KillingSpree:            true,
+}
+
+var CombatNoLethalityNoPotWTalents = &proto.RogueTalents{
+	Malice:          5,
+	Ruthlessness:    3,
+	BloodSpatter:    2,
+	VilePoisons:     2,
+	ImprovedPoisons: 3,
+
+	ImprovedSinisterStrike:  2,
+	DualWieldSpecialization: 5,
+	ImprovedSliceAndDice:    2,
+	Precision:               5,
+	Endurance:               1,
+	CloseQuartersCombat:     5,
+	LightningReflexes:       3,
+	Aggression:              5,
+	BladeFlurry:             true,
+	WeaponExpertise:         2,
+	BladeTwisting:           2,
+	Vitality:                3,
+	AdrenalineRush:          true,
+	CombatPotency:           5,
+	SurpriseAttacks:         true,
+	SavageCombat:            2,
+	KillingSpree:            true,
 }
 
 var MutilateTalents = &proto.RogueTalents{
@@ -70,6 +155,30 @@ var HemoTalents = &proto.RogueTalents{
 var PlayerOptionsBasic = &proto.Player_Rogue{
 	Rogue: &proto.Rogue{
 		Talents:  CombatTalents,
+		Options:  basicOptions,
+		Rotation: basicRotation,
+	},
+}
+
+var PlayerOptionsNoLethality = &proto.Player_Rogue{
+	Rogue: &proto.Rogue{
+		Talents:  CombatNoLethalityTalents,
+		Options:  basicOptions,
+		Rotation: basicRotation,
+	},
+}
+
+var PlayerOptionsNoPotW = &proto.Player_Rogue{
+	Rogue: &proto.Rogue{
+		Talents:  CombatNoPotWTalents,
+		Options:  basicOptions,
+		Rotation: basicRotation,
+	},
+}
+
+var PlayerOptionsNoLethalityNoPotW = &proto.Player_Rogue{
+	Rogue: &proto.Rogue{
+		Talents:  CombatNoLethalityNoPotWTalents,
 		Options:  basicOptions,
 		Rotation: basicRotation,
 	},
@@ -219,6 +328,180 @@ var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 		"id": 28772
 	}
 ]}`)
+var GearWithoutRED = items.EquipmentSpecFromJsonString(`{"items": [
+	{
+	  "id": 37293,
+	  "enchant": 44879,
+	  "gems": [
+		41339,
+		40088
+	  ]
+	},
+	{
+	  "id": 37861
+	},
+	{
+	  "id": 37139,
+	  "enchant": 44871,
+	  "gems": [
+		36766
+	  ]
+	},
+	{
+	  "id": 36947,
+	  "enchant": 55002
+	},
+	{
+	  "id": 37165,
+	  "enchant": 44489,
+	  "gems": [
+		40044,
+		36766
+	  ]
+	},
+	{
+	  "id": 44203,
+	  "enchant": 44484,
+	  "gems": [
+		0
+	  ]
+	},
+	{
+	  "id": 37409,
+	  "enchant": 54999,
+	  "gems": [
+		0
+	  ]
+	},
+	{
+	  "id": 37194,
+	  "gems": [
+		40014,
+		40157
+	  ]
+	},
+	{
+	  "id": 37644,
+	  "enchant": 38374
+	},
+	{
+	  "id": 44297,
+	  "enchant": 55016
+	},
+	{
+	  "id": 43251,
+	  "gems": [
+		40136
+	  ]
+	},
+	{
+	  "id": 37642
+	},
+	{
+	  "id": 37390
+	},
+	{
+	  "id": 37166
+	},
+	{
+	  "id": 37693,
+	  "enchant": 44492
+	},
+	{
+	  "id": 37856,
+	  "enchant": 44492
+	},
+	{
+	  "id": 37191
+	}
+  ]}`)
+var GearWithRED = items.EquipmentSpecFromJsonString(`{"items": [
+	{
+	  "id": 37293,
+	  "enchant": 44879,
+	  "gems": [
+		41398,
+		40088
+	  ]
+	},
+	{
+	  "id": 37861
+	},
+	{
+	  "id": 37139,
+	  "enchant": 44871,
+	  "gems": [
+		36766
+	  ]
+	},
+	{
+	  "id": 36947,
+	  "enchant": 55002
+	},
+	{
+	  "id": 37165,
+	  "enchant": 44489,
+	  "gems": [
+		40044,
+		36766
+	  ]
+	},
+	{
+	  "id": 44203,
+	  "enchant": 44484,
+	  "gems": [
+		0
+	  ]
+	},
+	{
+	  "id": 37409,
+	  "enchant": 54999,
+	  "gems": [
+		0
+	  ]
+	},
+	{
+	  "id": 37194,
+	  "gems": [
+		40014,
+		40157
+	  ]
+	},
+	{
+	  "id": 37644,
+	  "enchant": 38374
+	},
+	{
+	  "id": 44297,
+	  "enchant": 55016
+	},
+	{
+	  "id": 43251,
+	  "gems": [
+		40136
+	  ]
+	},
+	{
+	  "id": 37642
+	},
+	{
+	  "id": 37390
+	},
+	{
+	  "id": 37166
+	},
+	{
+	  "id": 37693,
+	  "enchant": 44492
+	},
+	{
+	  "id": 37856,
+	  "enchant": 44492
+	},
+	{
+	  "id": 37191
+	}
+  ]}`)
 var MutilateP1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	{
 		"id": 29044,
