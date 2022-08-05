@@ -377,11 +377,11 @@ func (mage *Mage) registerArcanePowerCD() {
 }
 
 func (mage *Mage) applyMasterOfElements() {
-	if mage.Talents.MasterOfElements == 0 {
+	if mage.Talents.MasterOfElements == 0 && mage.Talents.Burnout == 0 {
 		return
 	}
 
-	refundCoeff := 0.1 * float64(mage.Talents.MasterOfElements)
+	refundCoeff := 0.1*float64(mage.Talents.MasterOfElements) - .01*float64(mage.Talents.Burnout)
 	manaMetrics := mage.NewManaMetrics(core.ActionID{SpellID: 29076})
 
 	mage.RegisterAura(core.Aura{
@@ -395,7 +395,11 @@ func (mage *Mage) applyMasterOfElements() {
 				return
 			}
 			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
-				mage.AddMana(sim, spell.BaseCost*refundCoeff, manaMetrics, false)
+				if refundCoeff < 0 {
+					mage.SpendMana(sim, spell.BaseCost*refundCoeff, manaMetrics)
+				} else {
+					mage.AddMana(sim, spell.BaseCost*refundCoeff, manaMetrics, false)
+				}
 			}
 		},
 	})

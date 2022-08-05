@@ -8,8 +8,11 @@ import (
 )
 
 var IgniteActionID = core.ActionID{SpellID: 12848}
+var empoweredFireActionId = core.ActionID{SpellID: 31658}
+var manaMetrics *core.ResourceMetrics
 
 func (mage *Mage) registerIgniteSpell() {
+	manaMetrics = mage.NewManaMetrics(empoweredFireActionId)
 	mage.Ignite = mage.RegisterSpell(core.SpellConfig{
 		ActionID:    IgniteActionID,
 		SpellSchool: core.SpellSchoolFire,
@@ -30,6 +33,7 @@ func (mage *Mage) newIgniteDot(target *core.Unit) *core.Dot {
 }
 
 func (mage *Mage) procIgnite(sim *core.Simulation, target *core.Unit, damageFromProccingSpell float64) {
+
 	igniteDot := mage.IgniteDots[target.Index]
 
 	newIgniteDamage := damageFromProccingSpell * float64(mage.Talents.Ignite) * 0.08
@@ -54,7 +58,12 @@ func (mage *Mage) procIgnite(sim *core.Simulation, target *core.Unit, damageFrom
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 		IsPeriodic:       true,
 		BaseDamage:       core.BaseDamageConfigFlat(newTickDamage),
-		OutcomeApplier:   mage.OutcomeFuncTick(),
+		OutcomeApplier: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
+			if float64(mage.Talents.EmpoweredFire)/3.0 > sim.RandomFloat("EmpoweredFireIgniteMana") {
+				mage.AddMana(sim, mage.MaxMana()*.02, manaMetrics, false)
+			}
+			mage.OutcomeFuncTick()
+		},
 	})
 	igniteDot.Apply(sim)
 }
