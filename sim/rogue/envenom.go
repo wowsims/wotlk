@@ -9,8 +9,8 @@ import (
 
 func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 	refundAmount := 0.4 * float64(rogue.Talents.QuickRecovery)
-	baseDamage := 60.0 + (180+core.TernaryFloat64(rogue.HasSetBonus(ItemSetDeathmantle, 2), 40, 0))*float64(comboPoints)
-	apRatio := 0.03 * float64(comboPoints)
+	baseDamage := 215 + core.TernaryFloat64(rogue.HasSetBonus(ItemSetDeathmantle, 2), 40, 0)
+	apRatio := 0.09
 
 	cost := 35.0
 	if rogue.HasSetBonus(ItemSetAssassination, 4) {
@@ -18,7 +18,7 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 	}
 
 	return rogue.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 32684, Tag: comboPoints},
+		ActionID:    core.ActionID{SpellID: 57993, Tag: comboPoints},
 		SpellSchool: core.SpellSchoolNature,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreResists | rogue.finisherFlags(),
 
@@ -40,7 +40,9 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 			ThreatMultiplier: 1,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return baseDamage + apRatio*hitEffect.MeleeAttackPower(spell.Unit)
+					deadlyPoisonStacks := rogue.DeadlyPoisonDot.GetStacks()
+					doses := float64(core.MinInt32(deadlyPoisonStacks, comboPoints))
+					return baseDamage*doses + apRatio*doses*hitEffect.MeleeAttackPower(spell.Unit)
 				},
 				TargetSpellCoefficient: 0,
 			},
@@ -48,6 +50,26 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					rogue.ApplyFinisher(sim, spell)
+					deadlyPoisonStacks := rogue.DeadlyPoisonDot.GetStacks()
+					doses := core.MinInt32(deadlyPoisonStacks, comboPoints)
+					chanceToRetainStacks := rogue.Talents.MasterPoisoner / 3.0
+					if chanceToRetainStacks < 1 && sim.RandomFloat("Master Poisoner") > float64(chanceToRetainStacks) {
+						rogue.DeadlyPoisonDot.Cancel(sim)
+					}
+					envenomAura := rogue.GetOrRegisterAura(core.Aura{
+						Label:    "Envenom",
+						ActionID: core.ActionID{SpellID: 57993},
+						OnGain: func(aura *core.Aura, sim *core.Simulation) {
+							rogue.DeadlyPoisonProcChanceBonus += 0.15
+							rogue.InstantPoisonProcChanceBonus += 0.75
+						},
+						OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+							rogue.DeadlyPoisonProcChanceBonus -= 0.15
+							rogue.InstantPoisonProcChanceBonus -= 0.75
+						},
+					})
+					envenomAura.Duration = time.Second * time.Duration(1+doses)
+					envenomAura.Activate(sim)
 				} else {
 					if refundAmount > 0 {
 						rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.QuickRecoveryMetrics)

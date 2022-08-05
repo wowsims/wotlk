@@ -57,7 +57,7 @@ type Rogue struct {
 	Backstab       *core.Spell
 	DeadlyPoison   *core.Spell
 	Hemorrhage     *core.Spell
-	InstantPoison  *core.Spell
+	InstantPoison  [3]*core.Spell
 	Mutilate       *core.Spell
 	Shiv           *core.Spell
 	SinisterStrike *core.Spell
@@ -68,9 +68,11 @@ type Rogue struct {
 	Rupture      [6]*core.Spell
 	SliceAndDice [6]*core.Spell
 
-	LastDeadlyPoisonProcMask core.ProcMask
-	DeadlyPoisonDot          *core.Dot
-	RuptureDot               *core.Dot
+	LastDeadlyPoisonProcMask     core.ProcMask
+	DeadlyPoisonProcChanceBonus  float64
+	InstantPoisonProcChanceBonus float64
+	DeadlyPoisonDot              *core.Dot
+	RuptureDot                   *core.Dot
 
 	AdrenalineRushAura  *core.Aura
 	BladeFlurryAura     *core.Aura
@@ -141,7 +143,6 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerSliceAndDice()
 
 	rogue.registerThistleTeaCD()
-	rogue.applyPoisons()
 
 	switch rogue.Rotation.Builder {
 	case proto.Rogue_Rotation_SinisterStrike:
@@ -203,6 +204,7 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 		Options:   *rogueOptions.Options,
 		Rotation:  *rogueOptions.Rotation,
 	}
+	rogue.applyPoisons()
 
 	// Passive rogue threat reduction: https://wotlk.wowhead.com/spell=21184/rogue-passive-dnd
 	rogue.PseudoStats.ThreatMultiplier *= 0.71

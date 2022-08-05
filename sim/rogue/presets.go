@@ -209,7 +209,10 @@ var basicRotation = &proto.Rogue_Rotation{
 	MinComboPointsForDamageFinisher: 3,
 }
 
-var basicOptions = &proto.Rogue_Options{}
+var basicOptions = &proto.Rogue_Options{
+	MhImbue: proto.Rogue_Options_DeadlyPoison,
+	OhImbue: proto.Rogue_Options_InstantPoison,
+}
 
 var FullRaidBuffs = &proto.RaidBuffs{
 	GiftOfTheWild:   proto.TristateEffect_TristateEffectImproved,
