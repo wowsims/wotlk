@@ -556,8 +556,7 @@ func (hunter *Hunter) applyLockAndLoad() {
 			aura.Activate(sim)
 		},
 		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			// TODO: Explosive trap
-			if spell != hunter.BlackArrow {
+			if spell != hunter.BlackArrow && spell != hunter.ExplosiveTrap {
 				return
 			}
 
@@ -757,6 +756,7 @@ func (hunter *Hunter) registerReadinessCD() {
 			hunter.ArcaneShot.CD.Reset()
 			hunter.KillCommand.CD.Reset()
 			hunter.RaptorStrike.CD.Reset()
+			hunter.ExplosiveTrap.CD.Reset()
 			if hunter.AimedShot != nil {
 				hunter.AimedShot.CD.Reset()
 			}

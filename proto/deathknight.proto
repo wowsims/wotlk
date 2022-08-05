@@ -168,6 +168,8 @@ message Deathknight {
 		FirstDisease first_disease = 6;
 		
 		DeathAndDecayPrio death_and_decay_prio = 7;
+
+		bool use_empower_rune_weapon = 8;
 	}
 	Rotation rotation = 1;
 

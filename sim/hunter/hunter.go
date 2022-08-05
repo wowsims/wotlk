@@ -39,8 +39,7 @@ type Hunter struct {
 	AmmoDPS         float64
 	AmmoDamageBonus float64
 
-	hasGronnstalker2Pc bool
-	currentAspect      *core.Aura
+	currentAspect *core.Aura
 
 	latency time.Duration
 
@@ -58,6 +57,7 @@ type Hunter struct {
 	BlackArrow    *core.Spell
 	ChimeraShot   *core.Spell
 	ExplosiveShot *core.Spell
+	ExplosiveTrap *core.Spell
 	KillCommand   *core.Spell
 	KillShot      *core.Spell
 	MultiShot     *core.Spell
@@ -67,8 +67,10 @@ type Hunter struct {
 	SerpentSting  *core.Spell
 	SilencingShot *core.Spell
 	SteadyShot    *core.Spell
+	Volley        *core.Spell
 
 	BlackArrowDot    *core.Dot
+	ExplosiveTrapDot *core.Dot
 	ExplosiveShotDot *core.Dot
 	SerpentStingDot  *core.Dot
 
@@ -116,12 +118,14 @@ func (hunter *Hunter) Initialize() {
 	hunter.registerAspectOfTheViperSpell()
 
 	arcaneShotTimer := hunter.NewTimer()
+	fireTrapTimer := hunter.NewTimer()
 
 	hunter.registerAimedShotSpell()
 	hunter.registerArcaneShotSpell(arcaneShotTimer)
-	hunter.registerBlackArrowSpell()
+	hunter.registerBlackArrowSpell(fireTrapTimer)
 	hunter.registerChimeraShotSpell()
 	hunter.registerExplosiveShotSpell(arcaneShotTimer)
+	hunter.registerExplosiveTrapSpell(fireTrapTimer)
 	hunter.registerKillShotSpell()
 	hunter.registerMultiShotSpell()
 	hunter.registerRaptorStrikeSpell()
@@ -129,6 +133,7 @@ func (hunter *Hunter) Initialize() {
 	hunter.registerSerpentStingSpell()
 	hunter.registerSilencingShotSpell()
 	hunter.registerSteadyShotSpell()
+	hunter.registerVolleySpell()
 
 	hunter.registerKillCommandCD()
 	hunter.registerRapidFireCD()
@@ -154,8 +159,6 @@ func NewHunter(character core.Character, options proto.Player) *Hunter {
 		Rotation:  *hunterOptions.Rotation,
 
 		latency: time.Millisecond * time.Duration(hunterOptions.Options.LatencyMs),
-
-		hasGronnstalker2Pc: character.HasSetBonus(ItemSetGronnstalker, 2),
 	}
 	hunter.EnableManaBar()
 

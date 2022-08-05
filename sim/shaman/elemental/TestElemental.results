@@ -299,8 +299,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 3129.8634545796695
-  tps: 2435.5291707779024
+  dps: 3038.7446844569354
+  tps: 2366.2144592709965
  }
 }
 dps_results: {
@@ -339,6 +339,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestElemental-AllItems-FrostWitch'sBattlegear"
+ value: {
+  dps: 1954.9431561587674
+  tps: 1552.0212927510242
+ }
+}
+dps_results: {
  key: "TestElemental-AllItems-FrostWitch'sRegalia"
  value: {
   dps: 3039.844186367818
@@ -357,6 +364,13 @@ dps_results: {
  value: {
   dps: 2916.907391915677
   tps: 2276.597832048966
+ }
+}
+dps_results: {
+ key: "TestElemental-AllItems-Gladiator'sEarthshaker"
+ value: {
+  dps: 2342.884985498024
+  tps: 1841.4520040763946
  }
 }
 dps_results: {
@@ -458,10 +472,17 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestElemental-AllItems-Nobundo'sBattlegear"
+ value: {
+  dps: 1953.56568256057
+  tps: 1560.461930337919
+ }
+}
+dps_results: {
  key: "TestElemental-AllItems-Nobundo'sRegalia"
  value: {
   dps: 2681.7477236817804
-  tps: 2049.8089375836767
+  tps: 2097.186514302557
  }
 }
 dps_results: {
@@ -661,10 +682,17 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestElemental-AllItems-Thrall'sBattlegear"
+ value: {
+  dps: 1940.302962215624
+  tps: 1550.9023675728042
+ }
+}
+dps_results: {
  key: "TestElemental-AllItems-Thrall'sRegalia"
  value: {
   dps: 2681.7477236817804
-  tps: 2049.8089375836767
+  tps: 2097.186514302557
  }
 }
 dps_results: {
@@ -752,10 +780,17 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestElemental-AllItems-WorldbreakerBattlegear"
+ value: {
+  dps: 2157.548342540237
+  tps: 1702.491300693025
+ }
+}
+dps_results: {
  key: "TestElemental-AllItems-WorldbreakerGarb"
  value: {
   dps: 2838.235961766876
-  tps: 2189.7946347421016
+  tps: 2231.309700244776
  }
 }
 dps_results: {

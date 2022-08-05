@@ -6,7 +6,7 @@ import (
 )
 
 func TestSplitMix64(t *testing.T) {
-	x := SplitMix64{1234567}
+	x := SplitMix64{state: 1234567}
 	min, max := 1.0, 0.0
 	distribution := make([]int, 500)
 	n := 100_000_000

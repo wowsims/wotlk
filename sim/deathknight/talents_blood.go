@@ -133,7 +133,7 @@ func (dk *Deathknight) applyButchery() {
 		ActionID: actionID,
 		Label:    "Butchery",
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			core.StartPeriodicAction(sim, core.PeriodicActionOptions{
+			dk.ButcheryPA = core.StartPeriodicAction(sim, core.PeriodicActionOptions{
 				Period:   time.Second * 5,
 				NumTicks: 0,
 				OnAction: func(sim *core.Simulation) {

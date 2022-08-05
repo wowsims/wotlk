@@ -12,7 +12,7 @@ RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
 
-ENV NODE_VERSION=14.17.6
+ENV NODE_VERSION=14.18.3
 ENV NVM_DIR="/root/.nvm"
 RUN . "$NVM_DIR/nvm.sh" && nvm install ${NODE_VERSION}
 RUN . "$NVM_DIR/nvm.sh" && nvm use v${NODE_VERSION}

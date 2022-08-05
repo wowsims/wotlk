@@ -3,25 +3,16 @@ import { Consumes,
 	Food,
 	Glyphs,
 	EquipmentSpec,
-	ItemSpec,
 	Potions,
-	Faction,
 	RaidBuffs,
-	PartyBuffs,
 	IndividualBuffs,
 	Debuffs,
-	Spec,
-	Stat,
 	TristateEffect,
-	Race,
-} from '/wotlk/core/proto/common.js';
-import { SavedTalents } from '/wotlk/core/proto/ui.js';
-import { Player } from '/wotlk/core/player.js';
+} from '../core/proto/common.js';
+import { SavedTalents } from '../core/proto/ui.js';
 
 import {
-	Warlock,
 	Warlock_Rotation as WarlockRotation,
-	WarlockTalents as WarlockTalents,
 	Warlock_Options as WarlockOptions,
 	Warlock_Rotation_PrimarySpell as PrimarySpell,
 	Warlock_Rotation_SecondaryDot as SecondaryDot,
@@ -32,11 +23,8 @@ import {
 	Warlock_Options_Summon as Summon,
 	WarlockMajorGlyph as MajorGlyph,
 	WarlockMinorGlyph as MinorGlyph,
-} from '/wotlk/core/proto/warlock.js';
+} from '../core/proto/warlock.js';
 
-import * as Enchants from '/wotlk/core/constants/enchants.js';
-import * as Gems from '/wotlk/core/proto_utils/gems.js';
-import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 import * as WarlockTooltips from './tooltips.js';
 
 // Default talents. Uses the wowhead calculator format, make the talents on
@@ -46,7 +34,7 @@ export const AfflictionTalents = {
 	name: 'Affliction',
   tooltip: WarlockTooltips.AFF_TALENTS_TOOLTIP,
 	data: SavedTalents.create({
-		talentsString: '2350002030023510253510331151--55000005',
+		talentsString: '2350002030023510253500331151--550000051',
 		glyphs: Glyphs.create({
 			major1: MajorGlyph.GlyphOfQuickDecay,
 			major2: MajorGlyph.GlyphOfLifeTap,
@@ -66,7 +54,7 @@ export const DemonologyTalents = {
 		glyphs: Glyphs.create({
 			major1: MajorGlyph.GlyphOfLifeTap,
 			major2: MajorGlyph.GlyphOfQuickDecay,
-			major3: MajorGlyph.GlyphOfMetamorphosis,
+			major3: MajorGlyph.GlyphOfFelguard,
 			minor1: MinorGlyph.GlyphOfSouls,
 			minor2: MinorGlyph.GlyphOfDrainSoul,
 			minor3: MinorGlyph.GlyphOfEnslaveDemon,
@@ -159,10 +147,16 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
-	blessingOfKings: true,
-	blessingOfWisdom: TristateEffect.TristateEffectImproved,
-	blessingOfMight: TristateEffect.TristateEffectImproved,
-	vampiricTouch: true,
+  blessingOfKings: true,
+  blessingOfWisdom: TristateEffect.TristateEffectImproved,
+  blessingOfMight: TristateEffect.TristateEffectImproved,
+  vampiricTouch: true,
+});
+
+export const DestroIndividualBuffs = IndividualBuffs.create({
+  blessingOfKings: true,
+  blessingOfWisdom: TristateEffect.TristateEffectImproved,
+  blessingOfMight: TristateEffect.TristateEffectImproved,
 });
 
 export const DefaultDebuffs = Debuffs.create({
@@ -172,6 +166,16 @@ export const DefaultDebuffs = Debuffs.create({
 	ebonPlaguebringer: true,
 	heartOfTheCrusader: true,
 	judgementOfWisdom: true,
+});
+
+export const DestroDebuffs = Debuffs.create({
+  sunderArmor: true,
+  faerieFire: TristateEffect.TristateEffectImproved,
+  bloodFrenzy: true,
+  ebonPlaguebringer: true,
+  heartOfTheCrusader: true,
+  judgementOfWisdom: true,
+  shadowMastery: true,
 });
 
 export const SWP_BIS = {

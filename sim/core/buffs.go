@@ -121,13 +121,20 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		})
 	}
 
-	// TODO: convert this to a real mana replenishment aura we can use in raid sim.
-	if individualBuffs.VampiricTouch ||
-		individualBuffs.HuntingParty ||
-		individualBuffs.JudgementsOfTheWise ||
-		individualBuffs.ImprovedSoulLeech ||
-		individualBuffs.EnduringWinter {
-		character.AddStatDependency(stats.Mana, stats.MP5, 1.0+0.01)
+	var replenishmentActionID ActionID
+	if individualBuffs.VampiricTouch {
+		replenishmentActionID.SpellID = 48160
+	} else if individualBuffs.HuntingParty {
+		replenishmentActionID.SpellID = 53292
+	} else if individualBuffs.JudgementsOfTheWise {
+		replenishmentActionID.SpellID = 31878
+	} else if individualBuffs.ImprovedSoulLeech {
+		replenishmentActionID.SpellID = 54118
+	} else if individualBuffs.EnduringWinter {
+		replenishmentActionID.SpellID = 44561
+	}
+	if !(replenishmentActionID.IsEmptyAction()) {
+		MakePermanent(ReplenishmentAura(character, replenishmentActionID))
 	}
 
 	kingsAgiIntSpiAmount := 1.0
@@ -286,6 +293,11 @@ func applyPetBuffEffects(petAgent PetAgent, raidBuffs proto.RaidBuffs, partyBuff
 	individualBuffs.Innervates = 0
 	individualBuffs.PowerInfusions = 0
 	individualBuffs.TricksOfTheTrades = 0
+
+	if !petAgent.GetPet().enabledOnStart {
+		raidBuffs.ArcaneBrilliance = false
+		raidBuffs.GiftOfTheWild = 0
+	}
 
 	// For some reason pets don't benefit from buffs that are ratings, e.g. crit rating or haste rating.
 	partyBuffs.BraidedEterniumChain = false
@@ -835,6 +847,30 @@ func ManaTideTotemAura(character *Character, actionTag int32) *Aura {
 					},
 				})
 			}
+		},
+	})
+}
+
+var ReplenishmentAuraTag = "Replenishment"
+
+const ReplenishmentAuraDuration = time.Second * 15
+
+func ReplenishmentAura(character *Character, actionID ActionID) *Aura {
+
+	if !(actionID.SpellID == 54118 || actionID.SpellID == 48160 || actionID.SpellID == 31878 || actionID.SpellID == 53292 || actionID.SpellID == 44561) {
+		panic("Wrong Replenishment Action ID")
+	}
+
+	return character.GetOrRegisterAura(Aura{
+		Label:    "Replenishment-" + actionID.String(),
+		Tag:      ReplenishmentAuraTag,
+		ActionID: actionID,
+		Duration: ReplenishmentAuraDuration,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			character.AddStatDependencyDynamic(sim, stats.Mana, stats.MP5, 1.0+0.01)
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			character.AddStatDependencyDynamic(sim, stats.Mana, stats.MP5, 1/(1.0+0.01))
 		},
 	})
 }

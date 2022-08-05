@@ -207,6 +207,36 @@ func (character *Character) GetPet(name string) PetAgent {
 	panic(character.Name + " has no pet with name " + name)
 }
 
+func (character *Character) MultiplyMeleeSpeed(sim *Simulation, amount float64) {
+	character.Unit.MultiplyMeleeSpeed(sim, amount)
+
+	if len(character.Pets) > 0 {
+		for _, petAgent := range character.Pets {
+			petAgent.OwnerAttackSpeedChanged(sim)
+		}
+	}
+}
+
+func (character *Character) MultiplyRangedSpeed(sim *Simulation, amount float64) {
+	character.Unit.MultiplyRangedSpeed(sim, amount)
+
+	if len(character.Pets) > 0 {
+		for _, petAgent := range character.Pets {
+			petAgent.OwnerAttackSpeedChanged(sim)
+		}
+	}
+}
+
+func (character *Character) MultiplyAttackSpeed(sim *Simulation, amount float64) {
+	character.Unit.MultiplyAttackSpeed(sim, amount)
+
+	if len(character.Pets) > 0 {
+		for _, petAgent := range character.Pets {
+			petAgent.OwnerAttackSpeedChanged(sim)
+		}
+	}
+}
+
 func (character *Character) AddStatsDynamic(sim *Simulation, stat stats.Stats) {
 	character.Unit.AddStatsDynamic(sim, stat)
 

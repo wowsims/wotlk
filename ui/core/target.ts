@@ -1,11 +1,11 @@
-import { MobType } from '/wotlk/core/proto/common.js';
-import { SpellSchool } from '/wotlk/core/proto/common.js';
-import { Stat } from '/wotlk/core/proto/common.js';
-import { Target as TargetProto } from '/wotlk/core/proto/common.js';
-import { PresetTarget } from '/wotlk/core/proto/api.js';
-import { Stats } from '/wotlk/core/proto_utils/stats.js';
+import { MobType } from './proto/common.js';
+import { SpellSchool } from './proto/common.js';
+import { Stat } from './proto/common.js';
+import { Target as TargetProto } from './proto/common.js';
+import { PresetTarget } from './proto/api.js';
+import { Stats } from './proto_utils/stats.js';
 
-import * as Mechanics from '/wotlk/core/constants/mechanics.js';
+import * as Mechanics from './constants/mechanics.js';
 
 import { Listener } from './typed_event.js';
 import { Sim } from './sim.js';
@@ -15,277 +15,277 @@ import { wait } from './utils.js';
 
 // Manages all the settings for a single Target.
 export class Target {
-	readonly sim: Sim;
+    readonly sim: Sim;
 
-	private id: number = 0;
-	private name: string = '';
-	private level: number = Mechanics.BOSS_LEVEL;
-	private mobType: MobType = MobType.MobTypeDemon;
-	private tankIndex: number = 0;
-	private stats: Stats = new Stats();
+    private id: number = 0;
+    private name: string = '';
+    private level: number = Mechanics.BOSS_LEVEL;
+    private mobType: MobType = MobType.MobTypeDemon;
+    private tankIndex: number = 0;
+    private stats: Stats = new Stats();
 
-	private swingSpeed: number = 0;
-	private minBaseDamage: number = 0;
-	private dualWield: boolean = false;
-	private dualWieldPenalty: boolean = false;
-	private suppressDodge: boolean = false;
-	private parryHaste: boolean = true;
-	private spellSchool: SpellSchool = SpellSchool.SpellSchoolPhysical;
+    private swingSpeed: number = 0;
+    private minBaseDamage: number = 0;
+    private dualWield: boolean = false;
+    private dualWieldPenalty: boolean = false;
+    private suppressDodge: boolean = false;
+    private parryHaste: boolean = true;
+    private spellSchool: SpellSchool = SpellSchool.SpellSchoolPhysical;
 
-	readonly idChangeEmitter = new TypedEvent<void>();
-	readonly nameChangeEmitter = new TypedEvent<void>();
-	readonly levelChangeEmitter = new TypedEvent<void>();
-	readonly mobTypeChangeEmitter = new TypedEvent<void>();
-	readonly propChangeEmitter = new TypedEvent<void>();
-	readonly statsChangeEmitter = new TypedEvent<void>();
+    readonly idChangeEmitter = new TypedEvent<void>();
+    readonly nameChangeEmitter = new TypedEvent<void>();
+    readonly levelChangeEmitter = new TypedEvent<void>();
+    readonly mobTypeChangeEmitter = new TypedEvent<void>();
+    readonly propChangeEmitter = new TypedEvent<void>();
+    readonly statsChangeEmitter = new TypedEvent<void>();
 
-	// Emits when any of the above emitters emit.
-	readonly changeEmitter = new TypedEvent<void>();
+    // Emits when any of the above emitters emit.
+    readonly changeEmitter = new TypedEvent<void>();
 
-	constructor(sim: Sim) {
-		this.sim = sim;
+    constructor(sim: Sim) {
+        this.sim = sim;
 
-		[
-			this.idChangeEmitter,
-			this.nameChangeEmitter,
-			this.levelChangeEmitter,
-			this.mobTypeChangeEmitter,
-			this.propChangeEmitter,
-			this.statsChangeEmitter,
-		].forEach(emitter => emitter.on(eventID => this.changeEmitter.emit(eventID)));
+        [
+            this.idChangeEmitter,
+            this.nameChangeEmitter,
+            this.levelChangeEmitter,
+            this.mobTypeChangeEmitter,
+            this.propChangeEmitter,
+            this.statsChangeEmitter,
+        ].forEach(emitter => emitter.on(eventID => this.changeEmitter.emit(eventID)));
 
-		this.changeEmitter.on(eventID => this.sim.encounter?.changeEmitter.emit(eventID));
-	}
+        this.changeEmitter.on(eventID => this.sim.encounter?.changeEmitter.emit(eventID));
+    }
 
-	getId(): number {
-		return this.id;
-	}
+    getId(): number {
+        return this.id;
+    }
 
-	setId(eventID: EventID, newId: number) {
-		if (newId == this.id)
-			return;
+    setId(eventID: EventID, newId: number) {
+        if (newId == this.id)
+            return;
 
-		this.id = newId;
-		this.idChangeEmitter.emit(eventID);
-	}
+        this.id = newId;
+        this.idChangeEmitter.emit(eventID);
+    }
 
-	getName(): string {
-		return this.name;
-	}
+    getName(): string {
+        return this.name;
+    }
 
-	setName(eventID: EventID, newName: string) {
-		if (newName == this.name)
-			return;
+    setName(eventID: EventID, newName: string) {
+        if (newName == this.name)
+            return;
 
-		this.name = newName;
-		this.nameChangeEmitter.emit(eventID);
-	}
+        this.name = newName;
+        this.nameChangeEmitter.emit(eventID);
+    }
 
-	getLevel(): number {
-		return this.level;
-	}
+    getLevel(): number {
+        return this.level;
+    }
 
-	setLevel(eventID: EventID, newLevel: number) {
-		if (newLevel == this.level)
-			return;
+    setLevel(eventID: EventID, newLevel: number) {
+        if (newLevel == this.level)
+            return;
 
-		this.level = newLevel;
-		this.levelChangeEmitter.emit(eventID);
-	}
+        this.level = newLevel;
+        this.levelChangeEmitter.emit(eventID);
+    }
 
-	getMobType(): MobType {
-		return this.mobType;
-	}
+    getMobType(): MobType {
+        return this.mobType;
+    }
 
-	setMobType(eventID: EventID, newMobType: MobType) {
-		if (newMobType == this.mobType)
-			return;
+    setMobType(eventID: EventID, newMobType: MobType) {
+        if (newMobType == this.mobType)
+            return;
 
-		this.mobType = newMobType;
-		this.mobTypeChangeEmitter.emit(eventID);
-	}
+        this.mobType = newMobType;
+        this.mobTypeChangeEmitter.emit(eventID);
+    }
 
-	getTankIndex(): number {
-		return this.tankIndex;
-	}
+    getTankIndex(): number {
+        return this.tankIndex;
+    }
 
-	setTankIndex(eventID: EventID, newTankIndex: number) {
-		if (newTankIndex == this.tankIndex)
-			return;
+    setTankIndex(eventID: EventID, newTankIndex: number) {
+        if (newTankIndex == this.tankIndex)
+            return;
 
-		this.tankIndex = newTankIndex;
-		this.propChangeEmitter.emit(eventID);
-	}
+        this.tankIndex = newTankIndex;
+        this.propChangeEmitter.emit(eventID);
+    }
 
-	getSwingSpeed(): number {
-		return this.swingSpeed;
-	}
+    getSwingSpeed(): number {
+        return this.swingSpeed;
+    }
 
-	setSwingSpeed(eventID: EventID, newSwingSpeed: number) {
-		if (newSwingSpeed == this.swingSpeed)
-			return;
+    setSwingSpeed(eventID: EventID, newSwingSpeed: number) {
+        if (newSwingSpeed == this.swingSpeed)
+            return;
 
-		this.swingSpeed = newSwingSpeed;
-		this.propChangeEmitter.emit(eventID);
-	}
+        this.swingSpeed = newSwingSpeed;
+        this.propChangeEmitter.emit(eventID);
+    }
 
-	getMinBaseDamage(): number {
-		return this.minBaseDamage;
-	}
+    getMinBaseDamage(): number {
+        return this.minBaseDamage;
+    }
 
-	setMinBaseDamage(eventID: EventID, newMinBaseDamage: number) {
-		if (newMinBaseDamage == this.minBaseDamage)
-			return;
+    setMinBaseDamage(eventID: EventID, newMinBaseDamage: number) {
+        if (newMinBaseDamage == this.minBaseDamage)
+            return;
 
-		this.minBaseDamage = newMinBaseDamage;
-		this.propChangeEmitter.emit(eventID);
-	}
+        this.minBaseDamage = newMinBaseDamage;
+        this.propChangeEmitter.emit(eventID);
+    }
 
-	getDualWield(): boolean {
-		return this.dualWield;
-	}
+    getDualWield(): boolean {
+        return this.dualWield;
+    }
 
-	setDualWield(eventID: EventID, newDualWield: boolean) {
-		if (newDualWield == this.dualWield)
-			return;
+    setDualWield(eventID: EventID, newDualWield: boolean) {
+        if (newDualWield == this.dualWield)
+            return;
 
-		this.dualWield = newDualWield;
-		this.propChangeEmitter.emit(eventID);
-	}
+        this.dualWield = newDualWield;
+        this.propChangeEmitter.emit(eventID);
+    }
 
-	getDualWieldPenalty(): boolean {
-		return this.dualWieldPenalty;
-	}
+    getDualWieldPenalty(): boolean {
+        return this.dualWieldPenalty;
+    }
 
-	setDualWieldPenalty(eventID: EventID, newDualWieldPenalty: boolean) {
-		if (newDualWieldPenalty == this.dualWieldPenalty)
-			return;
+    setDualWieldPenalty(eventID: EventID, newDualWieldPenalty: boolean) {
+        if (newDualWieldPenalty == this.dualWieldPenalty)
+            return;
 
-		this.dualWieldPenalty = newDualWieldPenalty;
-		this.propChangeEmitter.emit(eventID);
-	}
+        this.dualWieldPenalty = newDualWieldPenalty;
+        this.propChangeEmitter.emit(eventID);
+    }
 
-	getSuppressDodge(): boolean {
-		return this.suppressDodge;
-	}
+    getSuppressDodge(): boolean {
+        return this.suppressDodge;
+    }
 
-	setSuppressDodge(eventID: EventID, newSuppressDodge: boolean) {
-		if (newSuppressDodge == this.suppressDodge)
-			return;
+    setSuppressDodge(eventID: EventID, newSuppressDodge: boolean) {
+        if (newSuppressDodge == this.suppressDodge)
+            return;
 
-		this.suppressDodge = newSuppressDodge;
-		this.propChangeEmitter.emit(eventID);
-	}
+        this.suppressDodge = newSuppressDodge;
+        this.propChangeEmitter.emit(eventID);
+    }
 
-	getParryHaste(): boolean {
-		return this.parryHaste;
-	}
+    getParryHaste(): boolean {
+        return this.parryHaste;
+    }
 
-	setParryHaste(eventID: EventID, newParryHaste: boolean) {
-		if (newParryHaste == this.parryHaste)
-			return;
+    setParryHaste(eventID: EventID, newParryHaste: boolean) {
+        if (newParryHaste == this.parryHaste)
+            return;
 
-		this.parryHaste = newParryHaste;
-		this.propChangeEmitter.emit(eventID);
-	}
+        this.parryHaste = newParryHaste;
+        this.propChangeEmitter.emit(eventID);
+    }
 
-	getSpellSchool(): SpellSchool {
-		return this.spellSchool;
-	}
+    getSpellSchool(): SpellSchool {
+        return this.spellSchool;
+    }
 
-	setSpellSchool(eventID: EventID, newSpellSchool: SpellSchool) {
-		if (newSpellSchool == this.spellSchool)
-			return;
+    setSpellSchool(eventID: EventID, newSpellSchool: SpellSchool) {
+        if (newSpellSchool == this.spellSchool)
+            return;
 
-		this.spellSchool = newSpellSchool;
-		this.propChangeEmitter.emit(eventID);
-	}
+        this.spellSchool = newSpellSchool;
+        this.propChangeEmitter.emit(eventID);
+    }
 
-	getStats(): Stats {
-		return this.stats;
-	}
+    getStats(): Stats {
+        return this.stats;
+    }
 
-	setStats(eventID: EventID, newStats: Stats) {
-		if (newStats.equals(this.stats))
-			return;
+    setStats(eventID: EventID, newStats: Stats) {
+        if (newStats.equals(this.stats))
+            return;
 
-		this.stats = newStats;
-		this.statsChangeEmitter.emit(eventID);
-	}
+        this.stats = newStats;
+        this.statsChangeEmitter.emit(eventID);
+    }
 
-	matchesPreset(preset: PresetTarget): boolean {
-		return TargetProto.equals(this.toProto(), preset.target);
-	}
+    matchesPreset(preset: PresetTarget): boolean {
+        return TargetProto.equals(this.toProto(), preset.target);
+    }
 
-	applyPreset(eventID: EventID, preset: PresetTarget) {
-		this.fromProto(eventID, preset.target || TargetProto.create());
-	}
+    applyPreset(eventID: EventID, preset: PresetTarget) {
+        this.fromProto(eventID, preset.target || TargetProto.create());
+    }
 
-	toProto(): TargetProto {
-		return TargetProto.create({
-			id: this.getId(),
-			name: this.getName(),
-			level: this.getLevel(),
-			mobType: this.getMobType(),
-			tankIndex: this.getTankIndex(),
-			swingSpeed: this.getSwingSpeed(),
-			minBaseDamage: this.getMinBaseDamage(),
-			dualWield: this.getDualWield(),
-			dualWieldPenalty: this.getDualWieldPenalty(),
-			suppressDodge: this.getSuppressDodge(),
-			parryHaste: this.getParryHaste(),
-			spellSchool: this.getSpellSchool(),
-			stats: this.stats.asArray(),
-		});
-	}
+    toProto(): TargetProto {
+        return TargetProto.create({
+            id: this.getId(),
+            name: this.getName(),
+            level: this.getLevel(),
+            mobType: this.getMobType(),
+            tankIndex: this.getTankIndex(),
+            swingSpeed: this.getSwingSpeed(),
+            minBaseDamage: this.getMinBaseDamage(),
+            dualWield: this.getDualWield(),
+            dualWieldPenalty: this.getDualWieldPenalty(),
+            suppressDodge: this.getSuppressDodge(),
+            parryHaste: this.getParryHaste(),
+            spellSchool: this.getSpellSchool(),
+            stats: this.stats.asArray(),
+        });
+    }
 
-	fromProto(eventID: EventID, proto: TargetProto) {
-		TypedEvent.freezeAllAndDo(() => {
-			this.setId(eventID, proto.id);
-			this.setName(eventID, proto.name);
-			this.setLevel(eventID, proto.level);
-			this.setMobType(eventID, proto.mobType);
-			this.setTankIndex(eventID, proto.tankIndex);
-			this.setSwingSpeed(eventID, proto.swingSpeed);
-			this.setMinBaseDamage(eventID, proto.minBaseDamage);
-			this.setDualWield(eventID, proto.dualWield);
-			this.setDualWieldPenalty(eventID, proto.dualWieldPenalty);
-			this.setSuppressDodge(eventID, proto.suppressDodge);
-			this.setParryHaste(eventID, proto.parryHaste);
-			this.setSpellSchool(eventID, proto.spellSchool);
-			this.setStats(eventID, new Stats(proto.stats));
-		});
-	}
+    fromProto(eventID: EventID, proto: TargetProto) {
+        TypedEvent.freezeAllAndDo(() => {
+            this.setId(eventID, proto.id);
+            this.setName(eventID, proto.name);
+            this.setLevel(eventID, proto.level);
+            this.setMobType(eventID, proto.mobType);
+            this.setTankIndex(eventID, proto.tankIndex);
+            this.setSwingSpeed(eventID, proto.swingSpeed);
+            this.setMinBaseDamage(eventID, proto.minBaseDamage);
+            this.setDualWield(eventID, proto.dualWield);
+            this.setDualWieldPenalty(eventID, proto.dualWieldPenalty);
+            this.setSuppressDodge(eventID, proto.suppressDodge);
+            this.setParryHaste(eventID, proto.parryHaste);
+            this.setSpellSchool(eventID, proto.spellSchool);
+            this.setStats(eventID, new Stats(proto.stats));
+        });
+    }
 
-	clone(eventID: EventID): Target {
-		const newTarget = new Target(this.sim);
-		newTarget.fromProto(eventID, this.toProto());
-		return newTarget;
-	}
+    clone(eventID: EventID): Target {
+        const newTarget = new Target(this.sim);
+        newTarget.fromProto(eventID, this.toProto());
+        return newTarget;
+    }
 
-	static defaultProto(): TargetProto {
-		return TargetProto.create({
-			level: Mechanics.BOSS_LEVEL,
-			mobType: MobType.MobTypeDemon,
-			tankIndex: 0,
-			swingSpeed: 2,
-			minBaseDamage: 10000,
-			dualWield: false,
-			dualWieldPenalty: false,
-			suppressDodge: false,
-			parryHaste: true,
-			spellSchool: SpellSchool.SpellSchoolPhysical,
-			stats: Stats.fromMap({
-				[Stat.StatArmor]: 10643,
-				[Stat.StatBlockValue]: 54,
-				[Stat.StatAttackPower]: 320,
-			}).asArray(),
-		});
-	}
+    static defaultProto(): TargetProto {
+        return TargetProto.create({
+            level: Mechanics.BOSS_LEVEL,
+            mobType: MobType.MobTypeDemon,
+            tankIndex: 0,
+            swingSpeed: 2,
+            minBaseDamage: 10000,
+            dualWield: false,
+            dualWieldPenalty: false,
+            suppressDodge: false,
+            parryHaste: true,
+            spellSchool: SpellSchool.SpellSchoolPhysical,
+            stats: Stats.fromMap({
+                [Stat.StatArmor]: 10643,
+                [Stat.StatBlockValue]: 54,
+                [Stat.StatAttackPower]: 320,
+            }).asArray(),
+        });
+    }
 
-	static fromDefaults(eventID: EventID, sim: Sim): Target {
-		const target = new Target(sim);
-		target.fromProto(eventID, Target.defaultProto());
-		return target;
-	}
+    static fromDefaults(eventID: EventID, sim: Sim): Target {
+        const target = new Target(sim);
+        target.fromProto(eventID, Target.defaultProto());
+        return target;
+    }
 }

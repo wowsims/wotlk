@@ -47,8 +47,7 @@ func (dk *Deathknight) CanBloodPresence(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastBloodPresence(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanBloodPresence(sim) {
-		dk.BloodPresence.Cast(sim, target)
-		return true
+		return dk.BloodPresence.Cast(sim, target)
 	}
 	return false
 }
@@ -59,8 +58,7 @@ func (dk *Deathknight) CanFrostPresence(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastFrostPresence(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanFrostPresence(sim) {
-		dk.FrostPresence.Cast(sim, target)
-		return true
+		return dk.FrostPresence.Cast(sim, target)
 	}
 	return false
 }
@@ -71,8 +69,7 @@ func (dk *Deathknight) CanUnholyPresence(sim *core.Simulation) bool {
 
 func (dk *Deathknight) CastUnholyPresence(sim *core.Simulation, target *core.Unit) bool {
 	if dk.CanUnholyPresence(sim) {
-		dk.UnholyPresence.Cast(sim, target)
-		return true
+		return dk.UnholyPresence.Cast(sim, target)
 	}
 	return false
 }
@@ -85,9 +82,15 @@ func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 	staminaMult := 1.0 + 0.04*float64(dk.Talents.ImprovedFrostPresence)
 	damageTakenMult := 1.0 - 0.01*float64(dk.Talents.ImprovedFrostPresence)
 
-	dk.BloodPresence = dk.RegisterSpell(core.SpellConfig{
-		ActionID: core.ActionID{SpellID: 50689},
+	baseCost := float64(core.NewRuneCost(0, 1, 0, 0, 0))
+	dk.BloodPresence = dk.RegisterSpell(nil, core.SpellConfig{
+		ActionID:     core.ActionID{SpellID: 50689},
+		ResourceType: stats.RunicPower,
+		BaseCost:     baseCost,
 		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				Cost: baseCost,
+			},
 			CD: core.Cooldown{
 				Timer:    timer,
 				Duration: time.Second,
@@ -95,8 +98,6 @@ func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 		},
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			dk.ChangePresence(sim, BloodPresence)
-			dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_B)
-			dk.Spend(sim, spell, dkSpellCost)
 		},
 	})
 
@@ -130,9 +131,15 @@ func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 	staminaMult := 1.08
 	armorMult := 1.6
 
-	dk.FrostPresence = dk.RegisterSpell(core.SpellConfig{
-		ActionID: core.ActionID{SpellID: 48263},
+	baseCost := float64(core.NewRuneCost(0, 0, 1, 0, 0))
+	dk.FrostPresence = dk.RegisterSpell(nil, core.SpellConfig{
+		ActionID:     core.ActionID{SpellID: 48263},
+		ResourceType: stats.RunicPower,
+		BaseCost:     baseCost,
 		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				Cost: baseCost,
+			},
 			CD: core.Cooldown{
 				Timer:    timer,
 				Duration: time.Second,
@@ -140,9 +147,6 @@ func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 		},
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			dk.ChangePresence(sim, FrostPresence)
-
-			dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_F)
-			dk.Spend(sim, spell, dkSpellCost)
 		},
 	})
 
@@ -171,9 +175,15 @@ func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 	threatMultSubversion := 1.0 - dk.subversionThreatBonus()
 	staminaMult := 1.0 + 0.04*float64(dk.Talents.ImprovedFrostPresence)
 
-	dk.UnholyPresence = dk.RegisterSpell(core.SpellConfig{
-		ActionID: core.ActionID{SpellID: 48265},
+	baseCost := float64(core.NewRuneCost(0, 0, 0, 1, 0))
+	dk.UnholyPresence = dk.RegisterSpell(nil, core.SpellConfig{
+		ActionID:     core.ActionID{SpellID: 48265},
+		ResourceType: stats.RunicPower,
+		BaseCost:     baseCost,
 		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				Cost: baseCost,
+			},
 			CD: core.Cooldown{
 				Timer:    timer,
 				Duration: time.Second,
@@ -181,8 +191,6 @@ func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 		},
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			dk.ChangePresence(sim, UnholyPresence)
-			dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_U)
-			dk.Spend(sim, spell, dkSpellCost)
 		},
 	})
 
@@ -194,13 +202,13 @@ func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier *= threatMultSubversion
-			aura.Unit.MultiplyMeleeSpeed(sim, 1.15)
 			aura.Unit.AddStatDependencyDynamic(sim, stats.Stamina, stats.Stamina, staminaMult)
+			dk.MultiplyMeleeSpeed(sim, 1.15)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier /= threatMultSubversion
-			aura.Unit.MultiplyMeleeSpeed(sim, 1/1.15)
 			aura.Unit.AddStatDependencyDynamic(sim, stats.Stamina, stats.Stamina, 1.0/staminaMult)
+			dk.MultiplyMeleeSpeed(sim, 1/1.15)
 		},
 	})
 }

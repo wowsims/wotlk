@@ -34,10 +34,20 @@ var defaultRetTalents = &proto.PaladinTalents{
 	DivineStorm:                   true,
 }
 
+var defaultRetGlyphs = &proto.Glyphs{
+	Major1: int32(proto.PaladinMajorGlyph_GlyphOfSealOfVengeance),
+	Major2: int32(proto.PaladinMajorGlyph_GlyphOfJudgement),
+	Major3: int32(proto.PaladinMajorGlyph_GlyphOfConsecration),
+	Minor1: int32(proto.PaladinMinorGlyph_GlyphOfSenseUndead),
+	Minor2: int32(proto.PaladinMinorGlyph_GlyphOfLayOnHands),
+	Minor3: int32(proto.PaladinMinorGlyph_GlyphOfBlessingOfKings),
+}
+
 var defaultRetRotation = &proto.RetributionPaladin_Rotation{
 	ConsSlack:            500,
 	ExoSlack:             500,
 	DivinePleaPercentage: 0.75,
+	HolyWrathThreshold:   4,
 }
 
 var defaultRetOptions = &proto.RetributionPaladin_Options{

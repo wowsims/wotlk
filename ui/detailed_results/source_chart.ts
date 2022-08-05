@@ -1,6 +1,6 @@
-import { Component } from '/wotlk/core/components/component.js';
-import { SimResult, SimResultFilter, ActionMetrics } from '/wotlk/core/proto_utils/sim_result.js';
-import { sum } from '/wotlk/core/utils.js';
+import { Component } from '../core/components/component.js';
+import { SimResult, SimResultFilter, ActionMetrics } from '../core/proto_utils/sim_result.js';
+import { sum } from '../core/utils.js';
 
 import { actionColors } from './color_settings.js';
 

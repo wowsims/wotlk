@@ -37,6 +37,7 @@ func (paladin *Paladin) registerHammerOfWrathSpell() {
 				Cost: baseCost * (1 - 0.02*float64(paladin.Talents.Benediction)),
 				GCD:  core.GCDDefault,
 			},
+			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    paladin.NewTimer(),
 				Duration: time.Second * 6,

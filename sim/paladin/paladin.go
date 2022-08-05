@@ -53,6 +53,7 @@ type Paladin struct {
 
 	DivinePlea          *core.Spell
 	DivineStorm         *core.Spell
+	HolyWrath           *core.Spell
 	Consecration        *core.Spell
 	CrusaderStrike      *core.Spell
 	Exorcism            *core.Spell
@@ -89,6 +90,10 @@ type Paladin struct {
 	ArtOfWarInstantCast *core.Aura
 
 	SpiritualAttunementMetrics *core.ResourceMetrics
+
+	HasTuralyonsOrLiadrinsBattlegear2Pc bool
+
+	DemonAndUndeadTargetCount int32
 }
 
 // Implemented by each Paladin spec.
@@ -149,6 +154,7 @@ func (paladin *Paladin) Initialize() {
 	paladin.registerDivineStormSpell()
 	paladin.registerConsecrationSpell()
 	paladin.registerHammerOfWrathSpell()
+	paladin.registerHolyWrathSpell()
 
 	paladin.registerExorcismSpell()
 	paladin.registerHolyShieldSpell()
@@ -173,6 +179,13 @@ func (paladin *Paladin) Initialize() {
 			paladin.RighteousVengeanceDamage = append(paladin.RighteousVengeanceDamage, 0.0)
 		}
 	}
+
+	for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
+		unit := paladin.Env.GetTargetUnit(i)
+		if unit.MobType == proto.MobType_MobTypeDemon || unit.MobType == proto.MobType_MobTypeUndead {
+			paladin.DemonAndUndeadTargetCount += 1
+		}
+	}
 }
 
 func (paladin *Paladin) Reset(sim *core.Simulation) {
@@ -189,6 +202,8 @@ func NewPaladin(character core.Character, talents proto.PaladinTalents) *Paladin
 		Character: character,
 		Talents:   talents,
 	}
+
+	paladin.HasTuralyonsOrLiadrinsBattlegear2Pc = paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 2) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 2)
 
 	paladin.PseudoStats.CanParry = true
 

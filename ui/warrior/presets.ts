@@ -1,15 +1,15 @@
-import { Consumes } from '/wotlk/core/proto/common.js';
-import { EquipmentSpec } from '/wotlk/core/proto/common.js';
-import { Flask } from '/wotlk/core/proto/common.js';
-import { Food } from '/wotlk/core/proto/common.js';
-import { Glyphs } from '/wotlk/core/proto/common.js';
-import { ItemSpec } from '/wotlk/core/proto/common.js';
-import { Potions } from '/wotlk/core/proto/common.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { WeaponImbue } from '/wotlk/core/proto/common.js';
-import { Faction } from '/wotlk/core/proto/common.js';
-import { SavedTalents } from '/wotlk/core/proto/ui.js';
-import { Player } from '/wotlk/core/player.js';
+import { Consumes } from '../core/proto/common.js';
+import { EquipmentSpec } from '../core/proto/common.js';
+import { Flask } from '../core/proto/common.js';
+import { Food } from '../core/proto/common.js';
+import { Glyphs } from '../core/proto/common.js';
+import { ItemSpec } from '../core/proto/common.js';
+import { Potions } from '../core/proto/common.js';
+import { Spec } from '../core/proto/common.js';
+import { WeaponImbue } from '../core/proto/common.js';
+import { Faction } from '../core/proto/common.js';
+import { SavedTalents } from '../core/proto/ui.js';
+import { Player } from '../core/player.js';
 
 import {
 	WarriorShout,
@@ -18,11 +18,13 @@ import {
 	Warrior_Rotation as WarriorRotation,
 	Warrior_Rotation_SunderArmor as SunderArmor,
 	Warrior_Options as WarriorOptions,
-} from '/wotlk/core/proto/warrior.js';
+	WarriorMajorGlyph,
+	WarriorMinorGlyph,
+} from '../core/proto/warrior.js';
 
-import * as Enchants from '/wotlk/core/constants/enchants.js';
-import * as Gems from '/wotlk/core/proto_utils/gems.js';
-import * as Tooltips from '/wotlk/core/constants/tooltips.js';
+import * as Enchants from '../core/constants/enchants.js';
+import * as Gems from '../core/proto_utils/gems.js';
+import * as Tooltips from '../core/constants/tooltips.js';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -30,1068 +32,472 @@ import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
-export const ArmsSlamTalents = {
-	name: 'Arms Slam',
+export const ArmsTalents = {
+	name: 'Arms',
 	data: SavedTalents.create({
-		talentsString: '32003301352010500221-0550000500521203',
+		talentsString: '3022032023335100102012213231251-305-2033',
+		glyphs: Glyphs.create({
+			major1: WarriorMajorGlyph.GlyphOfRending,
+			major2: WarriorMajorGlyph.GlyphOfHeroicStrike,
+			major3: WarriorMajorGlyph.GlyphOfExecution,
+			minor1: WarriorMinorGlyph.GlyphOfBattle,
+			minor2: WarriorMinorGlyph.GlyphOfCommand,
+			minor3: WarriorMinorGlyph.GlyphOfCharge,
+		}),
 	}),
 };
-export const ArmsDWTalents = {
-	name: 'Arms DW',
-	data: SavedTalents.create({
-		talentsString: '33005301302010510321-0550000520501203',
-	}),
-};
+
 export const FuryTalents = {
 	name: 'Fury',
 	data: SavedTalents.create({
-		talentsString: '3500501130201-05050005505012050115',
+		talentsString: '30202300233-325003101504310053120500351',
+		glyphs: Glyphs.create({
+			major1: WarriorMajorGlyph.GlyphOfWhirlwind,
+			major2: WarriorMajorGlyph.GlyphOfHeroicStrike,
+			major3: WarriorMajorGlyph.GlyphOfExecution,
+			minor1: WarriorMinorGlyph.GlyphOfBattle,
+			minor2: WarriorMinorGlyph.GlyphOfCommand,
+			minor3: WarriorMinorGlyph.GlyphOfCharge,
+		}),
 	}),
 };
 
 export const DefaultRotation = WarriorRotation.create({
-	useOverpower: false,
-	useHamstring: true,
-	prioritizeWw: false,
+	useRend: true,
+	prioritizeWw: true,
 	sunderArmor: SunderArmor.SunderArmorMaintain,
-	hsRageThreshold: 60,
-	overpowerRageThreshold: 10,
-	hamstringRageThreshold: 75,
-	rampageCdThreshold: 5,
-	slamLatency: 150,
-	slamGcdDelay: 400,
-	slamMsWwDelay: 2000,
+	hsRageThreshold: 40,
+	rendRageThreshold: 75,
+	msRageThreshold: 60,
+	rendCdThreshold: 3,
 	useHsDuringExecute: true,
-	useMsDuringExecute: true,
 	useBtDuringExecute: true,
 	useWwDuringExecute: true,
-	useSlamDuringExecute: true,
+	useSlamOverExecute: true,
 });
 
 export const ArmsRotation = WarriorRotation.create({
-	useOverpower: false,
-	useHamstring: true,
-	useSlam: true,
-	prioritizeWw: false,
+	useRend: true,
+	useMs: true,
 	sunderArmor: SunderArmor.SunderArmorMaintain,
+	msRageThreshold: 60,
 	hsRageThreshold: 60,
-	overpowerRageThreshold: 10,
-	hamstringRageThreshold: 75,
-	rampageCdThreshold: 5,
-	slamLatency: 150,
-	slamGcdDelay: 400,
-	slamMsWwDelay: 2000,
+	rendCdThreshold: 3,
 	useHsDuringExecute: true,
-	useMsDuringExecute: true,
-	useBtDuringExecute: true,
-	useWwDuringExecute: true,
-	useSlamDuringExecute: true,
+	spamExecute: false,
+	maintainDemoShout: true,
 });
 
 export const DefaultOptions = WarriorOptions.create({
 	startingRage: 0,
 	useRecklessness: true,
 	shout: WarriorShout.WarriorShoutBattle,
-	precastShout: true,
-	precastShoutSapphire: false,
-	precastShoutT2: false,
 });
 
 export const DefaultConsumes = Consumes.create({
-	flask: Flask.FlaskOfRelentlessAssault,
-	food: Food.FoodRoastedClefthoof,
-	defaultPotion: Potions.HastePotion,
-	mainHandImbue: WeaponImbue.WeaponImbueAdamantiteSharpeningStone,
-	offHandImbue: WeaponImbue.WeaponImbueAdamantiteSharpeningStone,
+	flask: Flask.FlaskOfEndlessRage,
+	food: Food.FoodHeartyRhino,
+	defaultPotion: Potions.IndestructiblePotion,
 });
 
+export const P1_PRERAID_FURY_PRESET = {
+	name: 'P1 Pre-Raid Fury',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().bloodthirst,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+        {
+          "id": 41386,
+          "enchant": 44879,
+          "gems": [
+            41398,
+            49110
+          ]
+        },
+        {
+          "id": 42645,
+          "gems": [
+            42142
+          ]
+        },
+        {
+          "id": 44195,
+          "enchant": 44871
+        },
+        {
+          "id": 37647,
+          "enchant": 55002
+        },
+        {
+          "id": 39606,
+          "enchant": 44489,
+          "gems": [
+            42142,
+            39996
+          ]
+        },
+        {
+          "id": 44203,
+          "enchant": 44484,
+          "gems": [
+            0
+          ]
+        },
+        {
+          "id": 39609,
+          "enchant": 54999,
+          "gems": [
+            40037,
+            0
+          ]
+        },
+        {
+          "id": 40694,
+          "gems": [
+            42142,
+            39996
+          ]
+        },
+        {
+          "id": 37193,
+          "enchant": 38374,
+          "gems": [
+            39996,
+            39996
+          ]
+        },
+        {
+          "id": 44306,
+          "enchant": 55016,
+          "gems": [
+            39996,
+            39996
+          ]
+        },
+        {
+          "id": 42642,
+          "gems": [
+            40037
+          ]
+        },
+        {
+          "id": 37642
+        },
+        {
+          "id": 42987
+        },
+        {
+          "id": 40684
+        },
+        {
+          "id": 37852,
+          "enchant": 44492
+        },
+        {
+          "id": 37852,
+          "enchant": 44492
+        },
+        {
+          "id": 37191,
+          "enchant": 41167
+        }
+      ]}`),
+};
+
 export const P1_FURY_PRESET = {
-	name: 'P1 Fury Preset',
+	name: 'P1 BiS Fury',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().bloodthirst,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-	  {
-			"id": 29021,
-			"enchant": 29192,
-			"gems": [
-				32409,
-				24048
-			]
-		},
-		{
-			"id": 29381
-		},
-		{
-			"id": 29023,
-			"enchant": 28888,
-			"gems": [
-				24048,
-				24067
-			]
-		},
-		{
-			"id": 24259,
-			"enchant": 34004,
-			"gems": [
-				24058
-			]
-		},
-		{
-			"id": 29019,
-			"enchant": 24003,
-			"gems": [
-				24048,
-				24048,
-				24048
-			]
-		},
-		{
-			"id": 28795,
-			"enchant": 27899,
-			"gems": [
-				24067,
-				24058
-			]
-		},
-		{
-			"id": 28824,
-			"enchant": 33995,
-			"gems": [
-				24067,
-				24048
-			]
-		},
-		{
-			"id": 28779,
-			"gems": [
-				24058,
-				24067
-			]
-		},
-		{
-			"id": 28741,
-			"enchant": 29535,
-			"gems": [
-				24048,
-				24048,
-				24048
-			]
-		},
-		{
-			"id": 28608,
-			"enchant": 28279,
-			"gems": [
-				24058,
-				24048
-			]
-		},
-		{
-			"id": 28757
-		},
-		{
-			"id": 30834
-		},
-		{
-			"id": 29383
-		},
-		{
-			"id": 28830
-		},
-		{
-			"id": 28438,
-			"enchant": 22559
-		},
-		{
-			"id": 28729,
-			"enchant": 22559
-		},
-		{
-			"id": 30279
-		}
-	]}`),
+	gear: EquipmentSpec.fromJsonString(`{ "items": [
+        {
+          "id": 40528,
+          "enchant": 44879,
+          "gems": [
+            41398,
+            39996
+          ]
+        },
+        {
+          "id": 44664,
+          "gems": [
+            39996
+          ]
+        },
+        {
+          "id": 40530,
+          "enchant": 44871,
+          "gems": [
+            40058
+          ]
+        },
+        {
+          "id": 40403,
+          "enchant": 55002
+        },
+        {
+          "id": 40525,
+          "enchant": 44489,
+          "gems": [
+            42142,
+            42142
+          ]
+        },
+        {
+          "id": 40733,
+          "enchant": 44484,
+          "gems": [
+            0
+          ]
+        },
+        {
+          "id": 40541,
+          "enchant": 54999,
+          "gems": [
+            0
+          ]
+        },
+        {
+          "id": 40317,
+          "gems": [
+            42142
+          ]
+        },
+        {
+          "id": 40529,
+          "enchant": 38374,
+          "gems": [
+            39996,
+            39996
+          ]
+        },
+        {
+          "id": 40591,
+          "enchant": 55016
+        },
+        {
+          "id": 43993,
+          "gems": [
+            39996
+          ]
+        },
+        {
+          "id": 40075
+        },
+        {
+          "id": 42987
+        },
+        {
+          "id": 40256
+        },
+        {
+          "id": 40384,
+          "enchant": 44492
+        },
+        {
+          "id": 40384,
+          "enchant": 44492
+        },
+        {
+          "id": 40385
+        }
+      ]}`),
 };
 
-export const P2_FURY_PRESET = {
-	name: 'P2 Fury Preset',
+export const P1_PRERAID_ARMS_PRESET = {
+	name: 'P1 Pre-Raid Arms',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().bloodthirst,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-	  {
-			"id": 30120,
-			"enchant": 29192,
-			"gems": [
-				32409,
-				24067
-			]
-		},
-		{
-			"id": 30022
-		},
-		{
-			"id": 30122,
-			"enchant": 28888,
-			"gems": [
-				24058,
-				24067
-			]
-		},
-		{
-			"id": 24259,
-			"enchant": 34004,
-			"gems": [
-				24058
-			]
-		},
-		{
-			"id": 30118,
-			"enchant": 24003,
-			"gems": [
-				24048,
-				24067,
-				24058
-			]
-		},
-		{
-			"id": 28795,
-			"enchant": 27899,
-			"gems": [
-				24067,
-				24058
-			]
-		},
-		{
-			"id": 30119,
-			"enchant": 33995
-		},
-		{
-			"id": 30106,
-			"gems": [
-				24048,
-				24048
-			]
-		},
-		{
-			"id": 29995,
-			"enchant": 29535
-		},
-		{
-			"id": 30081,
-			"enchant": 28279
-		},
-		{
-			"id": 29997
-		},
-		{
-			"id": 28757
-		},
-		{
-			"id": 30627
-		},
-		{
-			"id": 28830
-		},
-		{
-			"id": 28439,
-			"enchant": 22559
-		},
-		{
-			"id": 30082,
-			"enchant": 22559
-		},
-		{
-			"id": 30105
-		}
-	]}`),
-};
-
-export const P3_FURY_PRESET = {
-	name: 'P3 Fury Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().bloodthirst,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 30972,
-			"enchant": 29192,
-			"gems": [
-				32409,
-				32205
-			]
-		},
-		{
-			"id": 32260
-		},
-		{
-			"id": 30979,
-			"enchant": 28888,
-			"gems": [
-				32205,
-				32226
-			]
-		},
-		{
-			"id": 32323,
-			"enchant": 34004
-		},
-		{
-			"id": 30975,
-			"enchant": 24003,
-			"gems": [
-				32217,
-				32226,
-				32226
-			]
-		},
-		{
-			"id": 30863,
-			"enchant": 27899,
-			"gems": [
-				32205
-			]
-		},
-		{
-			"id": 30969,
-			"enchant": 33995,
-			"gems": [
-				32217
-			]
-		},
-		{
-			"id": 30106,
-			"gems": [
-				32205,
-				32205
-			]
-		},
-		{
-			"id": 32341,
-			"enchant": 29535
-		},
-		{
-			"id": 32345,
-			"enchant": 28279,
-			"gems": [
-				32205,
-				32205
-			]
-		},
-		{
-			"id": 32497
-		},
-		{
-			"id": 32335
-		},
-		{
-			"id": 32505
-		},
-		{
-			"id": 28830
-		},
-		{
-			"id": 28439,
-			"enchant": 22559
-		},
-		{
-			"id": 30881,
-			"enchant": 22559
-		},
-		{
-			"id": 30105
-		}
-	]}`),
-};
-
-export const P4_FURY_PRESET = {
-	name: 'P4 Fury Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().bloodthirst,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 30972,
-			"enchant": 29192,
-			"gems": [
-				32409,
-				32205
-			]
-		},
-		{
-			"id": 32260
-		},
-		{
-			"id": 30979,
-			"enchant": 28888,
-			"gems": [
-				32205,
-				32226
-			]
-		},
-		{
-			"id": 32323,
-			"enchant": 34004
-		},
-		{
-			"id": 30975,
-			"enchant": 24003,
-			"gems": [
-				32217,
-				32226,
-				32226
-			]
-		},
-		{
-			"id": 30863,
-			"enchant": 27899,
-			"gems": [
-				32205
-			]
-		},
-		{
-			"id": 30969,
-			"enchant": 33995,
-			"gems": [
-				32217
-			]
-		},
-		{
-			"id": 30106,
-			"gems": [
-				32205,
-				32205
-			]
-		},
-		{
-			"id": 32341,
-			"enchant": 29535
-		},
-		{
-			"id": 32345,
-			"enchant": 28279,
-			"gems": [
-				32205,
-				32205
-			]
-		},
-		{
-			"id": 32497
-		},
-		{
-			"id": 33496
-		},
-		{
-			"id": 32505
-		},
-		{
-			"id": 28830
-		},
-		{
-			"id": 28439,
-			"enchant": 22559
-		},
-		{
-			"id": 30881,
-			"enchant": 22559
-		},
-		{
-			"id": 33474
-		}
-	]}`),
-};
-
-export const P5_FURY_PRESET = {
-	name: 'P5 Fury Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().bloodthirst,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 34333,
-			"enchant": 29192,
-			"gems": [
-				32193,
-				32409
-			]
-		},
-		{
-			"id": 34358,
-			"gems": [
-				32217
-			]
-		},
-		{
-			"id": 34392,
-			"enchant": 28910,
-			"gems": [
-				32193,
-				32211
-			]
-		},
-		{
-			"id": 34241,
-			"enchant": 34004,
-			"gems": [
-				33143
-			]
-		},
-		{
-			"id": 34397,
-			"enchant": 24003,
-			"gems": [
-				32211,
-				32217,
-				32193
-			]
-		},
-		{
-			"id": 34441,
-			"enchant": 27899,
-			"gems": [
-				32193
-			]
-		},
-		{
-			"id": 34343,
-			"enchant": 33995,
-			"gems": [
-				32193,
-				32217
-			]
-		},
-		{
-			"id": 34546,
-			"gems": [
-				32217
-			]
-		},
-		{
-			"id": 34188,
-			"enchant": 29535,
-			"gems": [
-				32193,
-				32193,
-				32193
-			]
-		},
-		{
-			"id": 34569,
-			"enchant": 28279,
-			"gems": [
-				32217
-			]
-		},
-		{
-			"id": 34189
-		},
-		{
-			"id": 34361
-		},
-		{
-			"id": 28830
-		},
-		{
-			"id": 34427
-		},
-		{
-			"id": 34331,
-			"enchant": 33307,
-			"gems": [
-				32205,
-				32205
-			]
-		},
-		{
-			"id": 34203,
-			"enchant": 22559
-		},
-		{
-			"id": 34196
-		}
-	]}`),
+	enableWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().mortalStrike,
+	gear: EquipmentSpec.fromJsonString(`{ "items": [
+        {
+          "id": 41386,
+          "enchant": 44879,
+          "gems": [
+            41285,
+            49110
+          ]
+        },
+        {
+          "id": 42645,
+          "gems": [
+            42142
+          ]
+        },
+        {
+          "id": 44195,
+          "enchant": 44871
+        },
+        {
+          "id": 37647,
+          "enchant": 55002
+        },
+        {
+          "id": 39606,
+          "enchant": 44489,
+          "gems": [
+            42142,
+            39996
+          ]
+        },
+        {
+          "id": 41355,
+          "enchant": 44484,
+          "gems": [
+            0
+          ]
+        },
+        {
+          "id": 39609,
+          "enchant": 54999,
+          "gems": [
+            40037,
+            0
+          ]
+        },
+        {
+          "id": 40694,
+          "gems": [
+            42142,
+            39996
+          ]
+        },
+        {
+          "id": 37193,
+          "enchant": 38374,
+          "gems": [
+            39996,
+            39996
+          ]
+        },
+        {
+          "id": 44306,
+          "enchant": 55016,
+          "gems": [
+            0,
+            40037
+          ]
+        },
+        {
+          "id": 42642,
+          "gems": [
+            40037
+          ]
+        },
+        {
+          "id": 37642
+        },
+        {
+          "id": 42987
+        },
+        {
+          "id": 40684
+        },
+        {
+          "id": 37852,
+          "enchant": 44492
+        },
+        {},
+        {
+          "id": 44504,
+          "enchant": 41167,
+          "gems": [
+            40038
+          ]
+        }
+      ]}`),
 };
 
 export const P1_ARMS_PRESET = {
-	name: 'P1 Arms Preset',
+	name: 'P1 BiS Arms',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().mortalStrike,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 29021,
-			"enchant": 29192,
-			"gems": [
-				32409,
-				24048
-			]
-		},
-		{
-			"id": 29349
-		},
-		{
-			"id": 29023,
-			"enchant": 28888,
-			"gems": [
-				24048,
-				24067
-			]
-		},
-		{
-			"id": 24259,
-			"enchant": 34004,
-			"gems": [
-				24058
-			]
-		},
-		{
-			"id": 29019,
-			"enchant": 24003,
-			"gems": [
-				24048,
-				24048,
-				24048
-			]
-		},
-		{
-			"id": 28795,
-			"enchant": 27899,
-			"gems": [
-				24067,
-				24058
-			]
-		},
-		{
-			"id": 28824,
-			"enchant": 33995,
-			"gems": [
-				24067,
-				24048
-			]
-		},
-		{
-			"id": 28779,
-			"gems": [
-				24058,
-				24067
-			]
-		},
-		{
-			"id": 28741,
-			"enchant": 29535,
-			"gems": [
-				24048,
-				24048,
-				24048
-			]
-		},
-		{
-			"id": 28608,
-			"enchant": 28279,
-			"gems": [
-				24058,
-				24048
-			]
-		},
-		{
-			"id": 28757
-		},
-		{
-			"id": 28730
-		},
-		{
-			"id": 29383
-		},
-		{
-			"id": 28830
-		},
-		{
-			"id": 28429,
-			"enchant": 22559
-		},
-		{
-			"id": 30279
-		}
-	]}`),
-};
-
-export const P2_ARMS_PRESET = {
-	name: 'P2 Arms Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().mortalStrike,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 30120,
-			"enchant": 29192,
-			"gems": [
-				32409,
-				24067
-			]
-		},
-		{
-			"id": 30022
-		},
-		{
-			"id": 30122,
-			"enchant": 28888,
-			"gems": [
-				24058,
-				24067
-			]
-		},
-		{
-			"id": 24259,
-			"enchant": 34004,
-			"gems": [
-				24058
-			]
-		},
-		{
-			"id": 30118,
-			"enchant": 24003,
-			"gems": [
-				24048,
-				24067,
-				24058
-			]
-		},
-		{
-			"id": 28795,
-			"enchant": 27899,
-			"gems": [
-				24067,
-				24058
-			]
-		},
-		{
-			"id": 30119,
-			"enchant": 33995
-		},
-		{
-			"id": 30106,
-			"gems": [
-				24048,
-				24048
-			]
-		},
-		{
-			"id": 30121,
-			"enchant": 29535,
-			"gems": [
-				24058
-			]
-		},
-		{
-			"id": 30081,
-			"enchant": 28279
-		},
-		{
-			"id": 29997
-		},
-		{
-			"id": 28757
-		},
-		{
-			"id": 30627
-		},
-		{
-			"id": 28830
-		},
-		{
-			"id": 29993,
-			"enchant": 22559,
-			"gems": [
-				24048,
-				24048,
-				24048
-			]
-		},
-		{
-			"id": 30105
-		}
-	]}`),
-};
-
-export const P3_ARMS_PRESET = {
-	name: 'P3 Arms Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().mortalStrike,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 30972,
-			"enchant": 29192,
-			"gems": [
-				32409,
-				32205
-			]
-		},
-		{
-			"id": 32260
-		},
-		{
-			"id": 30979,
-			"enchant": 28888,
-			"gems": [
-				32205,
-				32226
-			]
-		},
-		{
-			"id": 32323,
-			"enchant": 34004
-		},
-		{
-			"id": 30975,
-			"enchant": 24003,
-			"gems": [
-				32217,
-				32226,
-				32226
-			]
-		},
-		{
-			"id": 30863,
-			"enchant": 27899,
-			"gems": [
-				32205
-			]
-		},
-		{
-			"id": 30969,
-			"enchant": 33995,
-			"gems": [
-				32217
-			]
-		},
-		{
-			"id": 30106,
-			"gems": [
-				32205,
-				32205
-			]
-		},
-		{
-			"id": 32341,
-			"enchant": 29535
-		},
-		{
-			"id": 32345,
-			"enchant": 28279,
-			"gems": [
-				32205,
-				32205
-			]
-		},
-		{
-			"id": 32497
-		},
-		{
-			"id": 32335
-		},
-		{
-			"id": 32505
-		},
-		{
-			"id": 28830
-		},
-		{
-			"id": 30902,
-			"enchant": 22559
-		},
-		{
-			"id": 30105
-		}
-	]}`),
-};
-
-export const P4_ARMS_PRESET = {
-	name: 'P4 Arms Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().mortalStrike,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-	  {
-			"id": 30972,
-			"enchant": 29192,
-			"gems": [
-				32409,
-				32205
-			]
-		},
-		{
-			"id": 32260
-		},
-		{
-			"id": 30979,
-			"enchant": 28888,
-			"gems": [
-				32205,
-				32226
-			]
-		},
-		{
-			"id": 32323,
-			"enchant": 34004
-		},
-		{
-			"id": 30975,
-			"enchant": 24003,
-			"gems": [
-				32217,
-				32226,
-				32226
-			]
-		},
-		{
-			"id": 30863,
-			"enchant": 27899,
-			"gems": [
-				32205
-			]
-		},
-		{
-			"id": 30969,
-			"enchant": 33995,
-			"gems": [
-				32217
-			]
-		},
-		{
-			"id": 30106,
-			"gems": [
-				32205,
-				32205
-			]
-		},
-		{
-			"id": 32341,
-			"enchant": 29535
-		},
-		{
-			"id": 32345,
-			"enchant": 28279,
-			"gems": [
-				32205,
-				32205
-			]
-		},
-		{
-			"id": 32497
-		},
-		{
-			"id": 33496
-		},
-		{
-			"id": 32505
-		},
-		{
-			"id": 28830
-		},
-		{
-			"id": 30902,
-			"enchant": 22559
-		},
-		{
-			"id": 33474
-		}
-	]}`),
-};
-
-export const P5_ARMS_PRESET = {
-	name: 'P5 Arms Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().mortalStrike,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 34333,
-			"enchant": 29192,
-			"gems": [
-				32193,
-				32409
-			]
-		},
-		{
-			"id": 34358,
-			"gems": [
-				32217
-			]
-		},
-		{
-			"id": 34392,
-			"enchant": 28910,
-			"gems": [
-				32193,
-				32211
-			]
-		},
-		{
-			"id": 34241,
-			"enchant": 34004,
-			"gems": [
-				33143
-			]
-		},
-		{
-			"id": 34397,
-			"enchant": 24003,
-			"gems": [
-				32211,
-				32217,
-				32193
-			]
-		},
-		{
-			"id": 34441,
-			"enchant": 27899,
-			"gems": [
-				32193
-			]
-		},
-		{
-			"id": 34343,
-			"enchant": 33995,
-			"gems": [
-				32193,
-				32217
-			]
-		},
-		{
-			"id": 34546,
-			"gems": [
-				32217
-			]
-		},
-		{
-			"id": 34188,
-			"enchant": 29535,
-			"gems": [
-				32193,
-				32193,
-				32193
-			]
-		},
-		{
-			"id": 34569,
-			"enchant": 28279,
-			"gems": [
-				32217
-			]
-		},
-		{
-			"id": 34189
-		},
-		{
-			"id": 34361
-		},
-		{
-			"id": 28830
-		},
-		{
-			"id": 34427
-		},
-		{
-			"id": 34247,
-			"enchant": 33307,
-			"gems": [
-				32205,
-				32205,
-				32205
-			]
-		},
-		{
-			"id": 34196
-		}
-	]}`),
+        {
+          "id": 40528,
+          "enchant": 44879,
+          "gems": [
+            41398,
+            39996
+          ]
+        },
+        {
+          "id": 44664,
+          "gems": [
+            39996
+          ]
+        },
+        {
+          "id": 40530,
+          "enchant": 44871,
+          "gems": [
+            40058
+          ]
+        },
+        {
+          "id": 40403,
+          "enchant": 55002
+        },
+        {
+          "id": 40525,
+          "enchant": 44489,
+          "gems": [
+            42142,
+            42142
+          ]
+        },
+        {
+          "id": 40330,
+          "enchant": 44484,
+          "gems": [
+            39996,
+            39996
+          ]
+        },
+        {
+          "id": 40541,
+          "enchant": 54999,
+          "gems": [
+            0
+          ]
+        },
+        {
+          "id": 40317,
+          "gems": [
+            42142
+          ]
+        },
+        {
+          "id": 40529,
+          "enchant": 38374,
+          "gems": [
+            39996,
+            0
+          ]
+        },
+        {
+          "id": 40591,
+          "enchant": 55016
+        },
+        {
+          "id": 43993,
+          "gems": [
+            39996
+          ]
+        },
+        {
+          "id": 40717
+        },
+        {
+          "id": 42987
+        },
+        {
+          "id": 40256
+        },
+        {
+          "id": 40384,
+          "enchant": 44492
+        },
+        {},
+        {
+          "id": 40385
+        }
+      ]}`),
 };

@@ -211,15 +211,9 @@ func (equipment *Equipment) EquipItem(item Item) {
 			equipment[ItemSlotOffHand] = item
 		} else if item.HandType == proto.HandType_HandTypeMainHand || item.HandType == proto.HandType_HandTypeUnknown {
 			equipment[ItemSlotMainHand] = item
-		} else if item.HandType == proto.HandType_HandTypeTwoHand {
-			equipment[ItemSlotMainHand] = item
-			equipment[ItemSlotOffHand] = Item{} // clear offhand
 		} else if item.HandType == proto.HandType_HandTypeOffHand {
 			equipment[ItemSlotOffHand] = item
-			if equipment[ItemSlotMainHand].HandType == proto.HandType_HandTypeTwoHand {
-				equipment[ItemSlotMainHand] = Item{} // clear main hand
-			}
-		} else if item.HandType == proto.HandType_HandTypeOneHand {
+		} else if item.HandType == proto.HandType_HandTypeOneHand || item.HandType == proto.HandType_HandTypeTwoHand {
 			if equipment[ItemSlotMainHand].ID == 0 {
 				equipment[ItemSlotMainHand] = item
 			} else if equipment[ItemSlotOffHand].ID == 0 {

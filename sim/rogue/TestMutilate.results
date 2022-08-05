@@ -507,8 +507,8 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 1664.2290408453355
-  tps: 1181.602619000188
+  dps: 1662.2457445398654
+  tps: 1180.1944786233048
  }
 }
 dps_results: {

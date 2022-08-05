@@ -24,12 +24,19 @@ var StandardTalents = &proto.PriestTalents{
 }
 
 var FullRaidBuffs = &proto.RaidBuffs{
-	ArcaneBrilliance: true,
-	GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
-	MoonkinAura:      proto.TristateEffect_TristateEffectImproved,
-	TotemOfWrath:     true,
-	WrathOfAirTotem:  true,
-	ManaSpringTotem:  proto.TristateEffect_TristateEffectRegular,
+	GiftOfTheWild:         2,
+	PowerWordFortitude:    2,
+	StrengthOfEarthTotem:  2,
+	ArcaneBrilliance:      true,
+	DivineSpirit:          true,
+	TrueshotAura:          true,
+	LeaderOfThePack:       2,
+	IcyTalons:             true,
+	TotemOfWrath:          true,
+	MoonkinAura:           2,
+	WrathOfAirTotem:       true,
+	SanctifiedRetribution: true,
+	Bloodlust:             true,
 }
 var FullPartyBuffs = &proto.PartyBuffs{}
 var FullIndividualBuffs = &proto.IndividualBuffs{
@@ -48,13 +55,18 @@ var FullConsumes = &proto.Consumes{
 	Flask:           proto.Flask_FlaskOfPureDeath,
 	Food:            proto.Food_FoodBlackenedBasilisk,
 	DefaultPotion:   proto.Potions_SuperManaPotion,
+	PrepopPotion:    proto.Potions_PotionOfWildMagic,
 	DefaultConjured: proto.Conjured_ConjuredDarkRune,
 	MainHandImbue:   proto.WeaponImbue_WeaponImbueBrilliantWizardOil,
 }
 
 var FullDebuffs = &proto.Debuffs{
-	JudgementOfWisdom: true,
-	CurseOfElements:   true,
+	SunderArmor:        true,
+	FaerieFire:         2,
+	BloodFrenzy:        true,
+	EbonPlaguebringer:  true,
+	HeartOfTheCrusader: true,
+	JudgementOfWisdom:  true,
 }
 
 var PlayerOptionsBasic = &proto.Player_ShadowPriest{

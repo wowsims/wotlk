@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -142,6 +143,33 @@ var ItemSetLightswornBattlegear = core.NewItemSet(core.ItemSet{
 
 func (paladin *Paladin) getItemSetLightswornBattlegearBonus4() float64 {
 	return core.TernaryFloat64(paladin.HasSetBonus(ItemSetLightswornBattlegear, 4), .1, 0)
+}
+
+// Tier 10 ret
+var ItemSetGladiatorsVindication = core.NewItemSet(core.ItemSet{
+	Name: "Gladiator's Vindication",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			paladin := agent.(PaladinAgent).GetPaladin()
+			paladin.AddStat(stats.AttackPower, 50)
+			paladin.AddStat(stats.Resilience, 100)
+		},
+		4: func(agent core.Agent) {
+			paladin := agent.(PaladinAgent).GetPaladin()
+			paladin.AddStat(stats.AttackPower, 150)
+			// Rest implemented in judgement.go
+		},
+	},
+})
+
+func (paladin *Paladin) getItemSetGladiatorsVindicationBonusGloves() float64 {
+	hasGloves := (paladin.Equip[proto.ItemSlot_ItemSlotHands].ID == 40798) || // S5a Hateful
+		(paladin.Equip[proto.ItemSlot_ItemSlotHands].ID == 40802) || // S5b Hateful
+		(paladin.Equip[proto.ItemSlot_ItemSlotHands].ID == 40805) || // S5c Deadly
+		(paladin.Equip[proto.ItemSlot_ItemSlotHands].ID == 40808) || // S6 Furious
+		(paladin.Equip[proto.ItemSlot_ItemSlotHands].ID == 40812) || // S7 Relentless
+		(paladin.Equip[proto.ItemSlot_ItemSlotHands].ID == 51475) // S8 Wrathful
+	return core.TernaryFloat64(hasGloves, .05, 0)
 }
 
 func init() {

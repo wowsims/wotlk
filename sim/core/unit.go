@@ -74,7 +74,7 @@ type Unit struct {
 	manaBar
 	rageBar
 	energyBar
-	runicPowerBar
+	RunicPowerBar
 
 	// All spells that can be cast by this unit.
 	Spellbook []*Spell
@@ -302,7 +302,7 @@ func (unit *Unit) AddStatDependencyDynamic(sim *Simulation, source, modified sta
 	}
 
 	stat := unit.stats[source]
-	bonus := ((stat * unit.statBonuses[source].Deps[modified] / oldMultiplier) - stat) / unit.statBonuses[source].Deps[modified]
+	bonus := stat * (unit.statBonuses[source].Deps[modified] - oldMultiplier)
 	// Now apply the newly gained stats
 	unit.AddStatDynamic(sim, modified, bonus)
 }
@@ -501,7 +501,7 @@ func (unit *Unit) reset(sim *Simulation, agent Agent) {
 
 	unit.energyBar.reset(sim)
 	unit.rageBar.reset(sim)
-	unit.runicPowerBar.reset(sim)
+	unit.RunicPowerBar.reset(sim)
 
 	unit.AutoAttacks.reset(sim)
 }
