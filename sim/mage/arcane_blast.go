@@ -13,29 +13,17 @@ const ArcaneBlastBaseCastTime = time.Millisecond * 2500
 
 func (mage *Mage) registerArcaneBlastSpell() {
 	ArcaneBlastBaseManaCost := .07 * mage.BaseMana
-	additionalDamage := .15
-	if mage.HasGlyph(int32(proto.MageMajorGlyph_GlyphOfArcaneBlast)) {
-		additionalDamage += .03
-	}
 
-	bonusCrit := 0.0
-	if mage.MageTier.t9_4 {
-		bonusCrit += 5 * core.CritRatingPerCritChance
-	}
-
+	abAuraMultiplierPerStack := core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfArcaneBlast), .18, .15)
 	mage.ArcaneBlastAura = mage.GetOrRegisterAura(core.Aura{
 		Label:     "Arcane Blast",
 		ActionID:  core.ActionID{SpellID: 36032},
 		Duration:  time.Second * 8,
 		MaxStacks: 4,
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
-			if !aura.IsActive() {
-				return
-			}
-			mage.PseudoStats.ArcaneDamageDealtMultiplier = 1 + float64(newStacks)*additionalDamage
-		},
-		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			mage.PseudoStats.ArcaneDamageDealtMultiplier = 1
+			oldMultiplier := 1 + float64(oldStacks)*abAuraMultiplierPerStack
+			newMultiplier := 1 + float64(newStacks)*abAuraMultiplierPerStack
+			mage.PseudoStats.ArcaneDamageDealtMultiplier *= newMultiplier / oldMultiplier
 		},
 	})
 
@@ -68,7 +56,9 @@ func (mage *Mage) registerArcaneBlastSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:             core.ProcMaskSpellDamage,
 			BonusSpellHitRating:  float64(mage.Talents.ArcaneFocus) * core.SpellHitRatingPerHitChance, // maybe precision shouldnt be here
-			BonusSpellCritRating: float64(mage.Talents.Incineration)*2*core.CritRatingPerCritChance + bonusCrit,
+			BonusSpellCritRating: 0 +
+				float64(mage.Talents.Incineration)*2*core.CritRatingPerCritChance +
+				core.TernaryFloat64(mage.MageTier.t9_4, 5 * core.CritRatingPerCritChance, 0),
 
 			DamageMultiplier: mage.spellDamageMultiplier * (1 + .04*float64(mage.Talents.TormentTheWeak)) * (1 + .02*float64(mage.Talents.SpellImpact)),
 			ThreatMultiplier: 1 - 0.2*float64(mage.Talents.ArcaneSubtlety),

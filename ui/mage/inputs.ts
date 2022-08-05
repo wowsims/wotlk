@@ -65,10 +65,13 @@ export const MageRotationConfig = {
 				TypedEvent.freezeAllAndDo(() => {
 					if (newRotation.type == RotationType.Arcane) {
 						player.setTalentsString(eventID, Presets.ArcaneTalents.data.talentsString);
+						player.setGlyphs(eventID, Presets.ArcaneTalents.data.glyphs);
 					} else if (newRotation.type == RotationType.Fire) {
 						player.setTalentsString(eventID, Presets.FireTalents.data.talentsString);
+						player.setGlyphs(eventID, Presets.FireTalents.data.glyphs);
 					} else if (newRotation.type == RotationType.Frost) {
 						player.setTalentsString(eventID, Presets.FrostTalents.data.talentsString);
+						player.setGlyphs(eventID, Presets.FrostTalents.data.glyphs);
 					}
 
 					player.setRotation(eventID, newRotation);

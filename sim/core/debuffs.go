@@ -493,7 +493,7 @@ func WintersChillAura(target *Unit, stacks int32) *Aura {
 	return target.GetOrRegisterAura(Aura{
 		Label:     WintersChillAuraLabel,
 		Tag:       MajorSpellCritDebuffAuraTag,
-		Priority:  0,
+		Priority:  1,
 		ActionID:  ActionID{SpellID: 28595},
 		Duration:  time.Second * 30,
 		MaxStacks: 5,

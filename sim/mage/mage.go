@@ -110,6 +110,13 @@ func (mage *Mage) GetMage() *Mage {
 	return mage
 }
 
+func (mage *Mage) HasMajorGlyph(glyph proto.MageMajorGlyph) bool {
+	return mage.HasGlyph(int32(glyph))
+}
+func (mage *Mage) HasMinorGlyph(glyph proto.MageMinorGlyph) bool {
+	return mage.HasGlyph(int32(glyph))
+}
+
 func (mage *Mage) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	raidBuffs.ArcaneBrilliance = true
 
@@ -197,7 +204,7 @@ func NewMage(character core.Character, options proto.Player) *Mage {
 	} else if mage.Options.Armor == proto.Mage_Options_MoltenArmor {
 		//Need to switch to spirit crit calc
 		multi := 0.35
-		if mage.HasGlyph(int32(proto.MageMajorGlyph_GlyphOfMoltenArmor.Number())) {
+		if mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfMoltenArmor) {
 			multi += .2
 		}
 		if mage.HasSetBonus(ItemSetKhadgarsRegalia, 2) {

@@ -13,16 +13,6 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 	actionID := core.ActionID{SpellID: 47610}
 	baseCost := .14 * mage.BaseMana
 
-	frostfireGlyphBonus := int32(0)
-	if mage.HasGlyph(int32(proto.MageMajorGlyph_GlyphOfFrostfire)) {
-		frostfireGlyphBonus = 1
-	}
-
-	bonusCrit := 0.0
-	if mage.MageTier.t9_4 {
-		bonusCrit += 5 * core.CritRatingPerCritChance
-	}
-
 	mage.FrostfireBolt = mage.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolFire | core.SpellSchoolFrost,
@@ -43,13 +33,19 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 			ProcMask:            core.ProcMaskSpellDamage,
 			BonusSpellHitRating: 0,
 
-			BonusSpellCritRating: bonusCrit +
-				float64(mage.Talents.CriticalMass+frostfireGlyphBonus)*2*core.CritRatingPerCritChance +
-				float64(mage.Talents.ImprovedScorch)*core.CritRatingPerCritChance,
+			BonusSpellCritRating: 0 +
+				core.TernaryFloat64(mage.MageTier.t9_4, 5 * core.CritRatingPerCritChance, 0) +
+				core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostfire), 2 * core.CritRatingPerCritChance, 0) +
+				float64(mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
+				float64(mage.Talents.ImprovedScorch)*1*core.CritRatingPerCritChance,
 
 			DamageMultiplier: mage.spellDamageMultiplier *
-				(1 + 0.02*float64(mage.Talents.FirePower+frostfireGlyphBonus+mage.Talents.PiercingIce)) *
-				(1 + .04*float64(mage.Talents.TormentTheWeak)),
+				(1 + .02*float64(
+					mage.Talents.FirePower +
+					mage.Talents.PiercingIce +
+					core.TernaryInt32(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostfire), 1, 0))) *
+				(1 + .04*float64(mage.Talents.TormentTheWeak)) *
+				(1 + .01*float64(mage.Talents.ChilledToTheBone)),
 
 			ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul) - .04*float64(mage.Talents.FrostChanneling),
 
@@ -77,7 +73,10 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 			ProcMask: core.ProcMaskPeriodicDamage,
 
 			DamageMultiplier: mage.spellDamageMultiplier *
-				(1 + 0.02*float64(mage.Talents.FirePower+frostfireGlyphBonus+mage.Talents.PiercingIce)) *
+				(1 + 0.02*float64(
+					mage.Talents.FirePower +
+					mage.Talents.PiercingIce +
+					core.TernaryInt32(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostfire), 1, 0))) *
 				(1 + .04*float64(mage.Talents.TormentTheWeak)),
 
 			ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul) - .04*float64(mage.Talents.FrostChanneling),

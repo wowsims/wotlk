@@ -18,10 +18,12 @@ func (mage *Mage) registerWintersChillSpell() {
 		if wcAura == nil {
 			wcAura = core.WintersChillAura(mage.CurrentTarget, 0)
 		}
+		procChance := float64(mage.Talents.WintersChill)/3
 
 		effect.OnSpellHitDealt = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Landed() {
+			if spellEffect.Landed() && (procChance == 1 || sim.RandomFloat("Winters Chill") < procChance) {
 				wcAura.Activate(sim)
+				wcAura.AddStack(sim)
 			}
 		}
 	}

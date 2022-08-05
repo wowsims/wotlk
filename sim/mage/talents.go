@@ -22,16 +22,16 @@ func (mage *Mage) ApplyTalents() {
 	mage.registerIcyVeinsCD()
 	mage.registerColdSnapCD()
 	mage.registerSummonWaterElementalCD()
+	// TODO: Enduring Winter
 
-	if mage.Talents.ArcaneMeditation > 0 {
-		mage.PseudoStats.SpiritRegenRateCasting += float64(mage.Talents.ArcaneMeditation) / 6
-	}
+	mage.PseudoStats.SpiritRegenRateCasting += float64(mage.Talents.ArcaneMeditation) / 6
 
 	if mage.Talents.StudentOfTheMind > 0 {
-		mage.Character.AddStatDependency(stats.Spirit, stats.Spirit, 1.04+(.03*float64(mage.Talents.StudentOfTheMind-1)))
+		mage.Character.AddStatDependency(stats.Spirit, stats.Spirit, 1.0 + []float64{0,.04,.07,.10}[mage.Talents.StudentOfTheMind])
 	}
 
 	if mage.Talents.FocusMagic {
+		// TODO: Pretty sure this should be 2 separate effects? One from talent, another from generic raid buff from another mage.
 		totalCritPercent := 3 + float64(mage.Options.FocusMagicPercentUptime*3)/100.0
 		mage.AddStat(stats.SpellCrit, totalCritPercent*core.CritRatingPerCritChance)
 	}
@@ -44,51 +44,30 @@ func (mage *Mage) ApplyTalents() {
 		mage.Character.AddStatDependency(stats.Intellect, stats.SpellPower, 1+0.03*float64(mage.Talents.MindMastery))
 	}
 
-	if mage.Talents.ArcaneInstability > 0 {
-		mage.AddStat(stats.SpellCrit, float64(mage.Talents.ArcaneInstability)*1*core.CritRatingPerCritChance)
-		mage.spellDamageMultiplier += float64(mage.Talents.ArcaneInstability) * 0.01
-	}
+	mage.AddStat(stats.SpellCrit, float64(mage.Talents.ArcaneInstability)*1*core.CritRatingPerCritChance)
+	mage.spellDamageMultiplier += .01*float64(mage.Talents.ArcaneInstability)
 
-	if mage.Talents.NetherwindPresence > 0 {
-		mage.MultiplyCastSpeed(1 + 0.02*float64(mage.Talents.NetherwindPresence))
-	}
+	mage.PseudoStats.CastSpeedMultiplier *= 1 + .02*float64(mage.Talents.NetherwindPresence)
+
+	mage.spellDamageMultiplier += .01*float64(mage.Talents.PlayingWithFire)
+	mage.PseudoStats.FireDamageDealtMultiplier *= 1 + .02*float64(mage.Talents.FirePower)
+
+	mage.AddStat(stats.SpellCrit, float64(mage.Talents.Pyromaniac)*core.CritRatingPerCritChance)
+	mage.PseudoStats.SpiritRegenRateCasting += float64(mage.Talents.Pyromaniac) / 6
 
 	if mage.Talents.SpellPower > 0 {
 		mage.bonusCritDamage = .25 * float64(mage.Talents.SpellPower)
 	}
-
-	if mage.Talents.PlayingWithFire > 0 {
-		mage.spellDamageMultiplier += float64(mage.Talents.PlayingWithFire) * 0.01
-	}
-
-	if mage.Talents.FirePower > 0 {
-		mage.PseudoStats.FireDamageDealtMultiplier += float64(mage.Talents.FirePower) * 0.02
-	}
-
-	if mage.Talents.Pyromaniac > 0 {
-		mage.AddStat(stats.SpellCrit, float64(mage.Talents.Pyromaniac)*core.CritRatingPerCritChance)
-		mage.PseudoStats.SpiritRegenRateCasting += float64(mage.Talents.ArcaneMeditation) / 6
-	}
-
 	if mage.Talents.Burnout > 0 {
 		mage.bonusCritDamage = .1 * float64(mage.Talents.Burnout)
 	}
 
-	if mage.Talents.Precision > 0 {
-		mage.AddStat(stats.SpellHit, float64(mage.Talents.Precision)*core.SpellHitRatingPerHitChance)
-	}
+	mage.AddStat(stats.SpellHit, float64(mage.Talents.Precision)*core.SpellHitRatingPerHitChance)
+	mage.PseudoStats.CostMultiplier *= 1 - .01*float64(mage.Talents.Precision)
 
-	if mage.Talents.PiercingIce > 0 {
-		mage.PseudoStats.FrostDamageDealtMultiplier *= 1 + float64(mage.Talents.PiercingIce)*.02
-	}
-
-	if mage.Talents.ArcticWinds > 0 {
-		mage.PseudoStats.FrostDamageDealtMultiplier *= 1 + float64(mage.Talents.ArcticWinds)*.01
-	}
-
-	if mage.Talents.FrostChanneling > 0 {
-		mage.PseudoStats.CostMultiplier = mage.PseudoStats.CostMultiplier * (1 - .04*float64(mage.Talents.FrostChanneling))
-	}
+	mage.PseudoStats.FrostDamageDealtMultiplier *= 1 + .02*float64(mage.Talents.PiercingIce)
+	mage.PseudoStats.FrostDamageDealtMultiplier *= 1 + .01*float64(mage.Talents.ArcticWinds)
+	mage.PseudoStats.CostMultiplier *= 1 - .04*float64(mage.Talents.FrostChanneling)
 
 	magicAbsorptionBonus := 2 * float64(mage.Talents.MagicAbsorption)
 	mage.AddStat(stats.ArcaneResistance, magicAbsorptionBonus)
@@ -332,20 +311,10 @@ func (mage *Mage) registerArcanePowerCD() {
 	}
 	actionID := core.ActionID{SpellID: 12042}
 
-	duration := 15
-	if mage.HasGlyph(int32(proto.MageMajorGlyph_GlyphOfArcanePower)) {
-		duration += 3
-	}
-
-	cooldown := 120.0
-	if mage.Talents.ArcaneFlows > 0 {
-		cooldown *= 1 - (.15 * float64(mage.Talents.ArcaneFlows))
-	}
-
 	apAura := mage.RegisterAura(core.Aura{
 		Label:    "Arcane Power",
 		ActionID: actionID,
-		Duration: time.Second * time.Duration(duration),
+		Duration: core.TernaryDuration(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfArcanePower), time.Second * 18, time.Second * 15),
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			mage.PseudoStats.DamageDealtMultiplier *= 1.2
 			mage.PseudoStats.CostMultiplier *= 1.2
@@ -362,7 +331,7 @@ func (mage *Mage) registerArcanePowerCD() {
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    mage.NewTimer(),
-				Duration: time.Duration(cooldown) * time.Second,
+				Duration: time.Second * time.Duration(120 * (1 - (.15 * float64(mage.Talents.ArcaneFlows)))),
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
@@ -490,7 +459,7 @@ func (mage *Mage) registerIcyVeinsCD() {
 
 	cooldown := 180.0
 	if mage.Talents.IceFloes > 0 {
-		cooldown *= 1 - (float64(mage.Talents.IceFloes) / 15)
+		cooldown *= 1 - []float64{0, .7, .14, .20}[mage.Talents.IceFloes]
 	}
 
 	icyVeinsAura := mage.RegisterAura(core.Aura{
@@ -549,7 +518,7 @@ func (mage *Mage) registerColdSnapCD() {
 		return
 	}
 
-	cooldown := time.Duration(float64(time.Minute*8) * (1.0 - float64(mage.Talents.IceFloes)*0.1))
+	cooldown := time.Duration(float64(time.Minute*8) * (1.0 - float64(mage.Talents.ColdAsIce)*0.1))
 	actionID := core.ActionID{SpellID: 11958}
 
 	spell := mage.RegisterSpell(core.SpellConfig{

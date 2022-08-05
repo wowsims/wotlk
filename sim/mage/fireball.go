@@ -14,7 +14,7 @@ func (mage *Mage) registerFireballSpell() {
 	baseCost := .19 * mage.BaseMana
 
 	castTime := time.Millisecond*3500 - time.Millisecond*100*time.Duration(mage.Talents.ImprovedFireball)
-	if mage.HasGlyph(int32(proto.MageMajorGlyph_GlyphOfFireball)) {
+	if mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFireball) {
 		castTime -= time.Millisecond * 150
 	}
 
@@ -57,7 +57,7 @@ func (mage *Mage) registerFireballSpell() {
 			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, mage.bonusCritDamage)),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() && !mage.HasGlyph(int32(proto.MageMajorGlyph_GlyphOfFireball)) {
+				if spellEffect.Landed() && !mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFireball) {
 					mage.FireballDot.Apply(sim)
 				}
 			},

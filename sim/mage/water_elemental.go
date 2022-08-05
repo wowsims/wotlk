@@ -15,6 +15,7 @@ func (mage *Mage) registerSummonWaterElementalCD() {
 	}
 
 	baseCost := mage.BaseMana * 0.16
+	summonDuration := time.Second*45 + time.Second*5*time.Duration(mage.Talents.EnduringWinter)
 	mage.SummonWaterElemental = mage.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 31687},
 
@@ -23,17 +24,17 @@ func (mage *Mage) registerSummonWaterElementalCD() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.05*float64(mage.Talents.FrostChanneling)),
+				Cost: baseCost,
 				GCD:  core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    mage.NewTimer(),
-				Duration: time.Minute * 3,
+				Duration: time.Duration(float64(time.Minute * 3) * (1 - 0.1*float64(mage.Talents.ColdAsIce))),
 			},
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			mage.waterElemental.EnableWithTimeout(sim, mage.waterElemental, time.Second*45)
+			mage.waterElemental.EnableWithTimeout(sim, mage.waterElemental, summonDuration)
 		},
 	})
 
