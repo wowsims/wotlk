@@ -1,7 +1,6 @@
 package mage
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -118,12 +117,6 @@ func (mage *Mage) applyHotStreak() {
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
-		},
-		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			//WHAT THE FUCK
-
-			fmt.Printf("WHAT THE FUCK")
-
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if !spell.Flags.Matches(HotStreakSpells) {

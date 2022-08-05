@@ -119,36 +119,36 @@ func TestFire(t *testing.T) {
 	}))
 }
 
-func TestFrost(t *testing.T) {
-	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
-		Class: proto.Class_ClassMage,
+// func TestFrost(t *testing.T) {
+// 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
+// 		Class: proto.Class_ClassMage,
 
-		Race: proto.Race_RaceTroll,
+// 		Race: proto.Race_RaceTroll,
 
-		GearSet: core.GearSetCombo{Label: "P1Frost", GearSet: P1FrostGear},
+// 		GearSet: core.GearSetCombo{Label: "P1Frost", GearSet: P1FrostGear},
 
-		SpecOptions: core.SpecOptionsCombo{Label: "FrostRotation", SpecOptions: PlayerOptionsFrost},
-		OtherSpecOptions: []core.SpecOptionsCombo{
-			core.SpecOptionsCombo{Label: "AOE", SpecOptions: PlayerOptionsFrostAOE},
-		},
+// 		SpecOptions: core.SpecOptionsCombo{Label: "FrostRotation", SpecOptions: PlayerOptionsFrost},
+// 		OtherSpecOptions: []core.SpecOptionsCombo{
+// 			core.SpecOptionsCombo{Label: "AOE", SpecOptions: PlayerOptionsFrostAOE},
+// 		},
 
-		RaidBuffs:   FullRaidBuffs,
-		PartyBuffs:  FullFrostPartyBuffs,
-		PlayerBuffs: FullIndividualBuffs,
-		Consumes:    FullFrostConsumes,
-		Debuffs:     FullDebuffs,
+// 		RaidBuffs:   FullRaidBuffs,
+// 		PartyBuffs:  FullFrostPartyBuffs,
+// 		PlayerBuffs: FullIndividualBuffs,
+// 		Consumes:    FullFrostConsumes,
+// 		Debuffs:     FullDebuffs,
 
-		ItemFilter: core.ItemFilter{
-			WeaponTypes: []proto.WeaponType{
-				proto.WeaponType_WeaponTypeDagger,
-				proto.WeaponType_WeaponTypeSword,
-				proto.WeaponType_WeaponTypeOffHand,
-				proto.WeaponType_WeaponTypeStaff,
-			},
-			ArmorType: proto.ArmorType_ArmorTypeCloth,
-			RangedWeaponTypes: []proto.RangedWeaponType{
-				proto.RangedWeaponType_RangedWeaponTypeWand,
-			},
-		},
-	}))
-}
+// 		ItemFilter: core.ItemFilter{
+// 			WeaponTypes: []proto.WeaponType{
+// 				proto.WeaponType_WeaponTypeDagger,
+// 				proto.WeaponType_WeaponTypeSword,
+// 				proto.WeaponType_WeaponTypeOffHand,
+// 				proto.WeaponType_WeaponTypeStaff,
+// 			},
+// 			ArmorType: proto.ArmorType_ArmorTypeCloth,
+// 			RangedWeaponTypes: []proto.RangedWeaponType{
+// 				proto.RangedWeaponType_RangedWeaponTypeWand,
+// 			},
+// 		},
+// 	}))
+// }

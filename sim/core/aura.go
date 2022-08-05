@@ -734,7 +734,8 @@ func (character *Character) StatProcWithICD(auraLabel string, actionID ActionID,
 	procAura := character.NewTemporaryStatsAura(auraLabel, actionID, tempStats, duration)
 
 	character.RegisterAura(Aura{
-		Label: auraLabel + "Permanent",
+		Label:    auraLabel + "Permanent",
+		Duration: NeverExpires,
 		OnReset: func(aura *Aura, sim *Simulation) {
 			aura.Activate(sim)
 		},
