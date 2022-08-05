@@ -14,6 +14,7 @@ func (rogue *Rogue) ApplyTalents() {
 	rogue.applySealFate()
 	rogue.applyWeaponSpecializations()
 	rogue.applyCombatPotency()
+	rogue.applyFocusedAttacks()
 
 	rogue.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*2*float64(rogue.Talents.LightningReflexes))
 	rogue.AddStat(stats.MeleeHaste, core.HasteRatingPerHastePercent*[]float64{0, 3, 6, 10}[rogue.Talents.LightningReflexes])
@@ -244,6 +245,31 @@ func (rogue *Rogue) applyCombatPotency() {
 			}
 
 			rogue.AddEnergy(sim, energyBonus, energyMetrics)
+		},
+	})
+}
+
+func (rogue *Rogue) applyFocusedAttacks() {
+	if rogue.Talents.FocusedAttacks == 0 {
+		return
+	}
+
+	procChance := float64(rogue.Talents.FocusedAttacks) / 3.0
+	energyMetrics := rogue.NewEnergyMetrics(core.ActionID{SpellID: 51637})
+
+	rogue.RegisterAura(core.Aura{
+		Label:    "Focused Attacks",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.DidCrit() {
+				return
+			}
+			if procChance == 1 || sim.RandomFloat("Focused Attacks") <= procChance {
+				rogue.AddEnergy(sim, 2, energyMetrics)
+			}
 		},
 	})
 }
