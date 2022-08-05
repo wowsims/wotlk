@@ -227,7 +227,7 @@ func BenchmarkSimulate(b *testing.B) {
 							Name:      "Enhancement Shaman 1",
 							Race:      proto.Race_RaceTroll,
 							Class:     proto.Class_ClassShaman,
-							Equipment: enhancement.Phase2Gear,
+							Equipment: enhancement.Phase1Gear,
 							Spec: &proto.Player_EnhancementShaman{
 								EnhancementShaman: &proto.EnhancementShaman{
 									Talents: enhancement.StandardTalents,

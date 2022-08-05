@@ -124,6 +124,36 @@ func init() {
 			},
 		})
 	})
+
+	core.NewItemEffect(50463, func(agent core.Agent) {
+		shaman := agent.(ShamanAgent).GetShaman()
+		procAura := shaman.RegisterAura(core.Aura{
+			Label:     "Enraged",
+			ActionID:  core.ActionID{SpellID: 71216},
+			Duration:  time.Second * 15,
+			MaxStacks: 3,
+			OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
+				shaman.AddStatDynamic(sim, stats.AttackPower, -146*float64(oldStacks))
+				shaman.AddStatDynamic(sim, stats.AttackPower, 146*float64(newStacks))
+			},
+		})
+		shaman.RegisterAura(core.Aura{
+			Label:    "Totem of the Avalanche",
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if !spellEffect.Landed() { //TODO: verify it needs to land
+					return
+				}
+				if spell == shaman.Stormstrike {
+					procAura.Activate(sim)
+					procAura.AddStack(sim)
+				}
+			},
+		})
+	})
 }
 
 var ItemSetEarthshatterBattlegear = core.NewItemSet(core.ItemSet{
