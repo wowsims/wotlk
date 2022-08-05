@@ -76,10 +76,10 @@ export const DefaultOptions = RetributionPaladinOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	defaultPotion: Potions.HastePotion,
+	defaultPotion: Potions.PotionOfSpeed,
 	defaultConjured: Conjured.ConjuredDarkRune,
-	flask: Flask.FlaskOfRelentlessAssault,
-	food: Food.FoodRoastedClefthoof,
+	flask: Flask.FlaskOfEndlessRage,
+	food: Food.FoodFishFeast,
 });
 
 // Maybe use this later if I can figure out the interactive tooltips from tippy
