@@ -33,9 +33,9 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
                 "Bloodlust does not currently properly apply Sated, and having it selected in the 'raid buffs' category as well as 'player' will cast them back to back",
-                "Gear presets are not currently working, as well as phases being innaccurate and items may be missing",
                 "Not all item effects are currently implemented, specifically totem relics",
-                "Talent presets do not currently have glyphs",
+                "Fire Elemental is not yet implemented",
+                "Some things regarding weapon imbues need further testing and changes",
 			],
 
 			// All stats for which EP should be calculated.
@@ -165,6 +165,7 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
+                    Presets.PreRaid_PRESET,
 					Presets.P1_PRESET,
 				],
 			},
