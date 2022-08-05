@@ -12,7 +12,7 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 	actionID := core.ActionID{SpellID: 49067}
 	baseCost := 0.19 * hunter.BaseMana
 
-	applyAOEDamage := core.ApplyEffectFuncAOEDamageCapped(hunter.Env, 50000, core.SpellEffect{
+	applyAOEDamage := core.ApplyEffectFuncAOEDamageCapped(hunter.Env, core.SpellEffect{
 		ProcMask: core.ProcMaskSpellDamage,
 
 		BonusSpellHitRating: float64(hunter.Talents.SurvivalTactics) * 2 * core.SpellHitRatingPerHitChance,
