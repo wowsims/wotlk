@@ -20,7 +20,7 @@ func (dk *DpsDeathknight) setupUnholyOpener() {
 		if dk.Rotation.DeathAndDecayPrio == proto.Deathknight_Rotation_MaxRuneDowntime {
 			dk.Main.Clear().NewAction(dk.RotationActionCallback_UnholyDndRotation)
 		} else {
-			dk.dndStartOpener()
+			dk.dndExperimentalOpener()
 		}
 	} else {
 		dk.Main.NewAction(dk.RotationActionCallback_UnholySsRotation)
@@ -30,7 +30,7 @@ func (dk *DpsDeathknight) setupUnholyOpener() {
 func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
 	casted := false
 
-	if dk.uhGargoyleCheck(sim, target) {
+	if dk.uhGargoyleCheck(sim, target, 100*time.Millisecond) {
 		dk.afterGargoyleSequence(sim)
 		return true
 	}
@@ -47,8 +47,16 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 	// Death and Decay -> Scourge Strike -> Blood Strike (or Pesti/BB on Aoe) -> Death Coil -> Horn of Winter
 	if !casted {
 		if dk.uhDiseaseCheck(sim, target, dk.DeathAndDecay, true, 1) {
+			if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
+				dk.afterGargoyleSequence(sim)
+				return true
+			}
 			casted = dk.CastDeathAndDecay(sim, target)
 		} else {
+			if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()*2+50*time.Millisecond) {
+				dk.afterGargoyleSequence(sim)
+				return true
+			}
 			dk.recastDiseasesSequence(sim)
 			return true
 		}
@@ -56,8 +64,16 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 			if dk.uhDiseaseCheck(sim, target, dk.ScourgeStrike, true, 1) {
 				if !dk.uhShouldWaitForDnD(sim, false, true, true) {
 					if dk.Talents.ScourgeStrike && dk.ScourgeStrike.IsReady(sim) {
+						if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
+							dk.afterGargoyleSequence(sim)
+							return true
+						}
 						casted = dk.ScourgeStrike.Cast(sim, target)
 					} else if dk.CanIcyTouch(sim) && dk.CanPlagueStrike(sim) {
+						if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()*2+50*time.Millisecond) {
+							dk.afterGargoyleSequence(sim)
+							return true
+						}
 						dk.recastDiseasesSequence(sim)
 						return true
 					}
@@ -69,10 +85,18 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 			if !casted {
 				if dk.uhShouldSpreadDisease(sim) {
 					if !dk.uhShouldWaitForDnD(sim, true, false, false) {
+						if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
+							dk.afterGargoyleSequence(sim)
+							return true
+						}
 						casted = dk.uhSpreadDiseases(sim, target, s)
 					}
 				} else {
 					if !dk.uhShouldWaitForDnD(sim, true, false, false) {
+						if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
+							dk.afterGargoyleSequence(sim)
+							return true
+						}
 						if dk.desolationAuraCheck(sim) {
 							casted = dk.CastBloodStrike(sim, target)
 						} else {
@@ -82,9 +106,17 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 				}
 				if !casted {
 					if dk.uhDeathCoilCheck(sim) {
+						if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
+							dk.afterGargoyleSequence(sim)
+							return true
+						}
 						casted = dk.CastDeathCoil(sim, target)
 					}
 					if !casted {
+						if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
+							dk.afterGargoyleSequence(sim)
+							return true
+						}
 						casted = dk.CastHornOfWinter(sim, target)
 					}
 				}
@@ -104,7 +136,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
 	casted := false
 
-	if dk.uhGargoyleCheck(sim, target) {
+	if dk.uhGargoyleCheck(sim, target, 100*time.Millisecond) {
 		dk.afterGargoyleSequence(sim)
 		return true
 	}
@@ -121,31 +153,59 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 	// Scourge Strike -> Blood Strike (or Pesti/BB on Aoe) -> Death Coil -> Horn of Winter
 	if !casted {
 		if dk.uhDiseaseCheck(sim, target, dk.ScourgeStrike, true, 1) {
+			if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
+				dk.afterGargoyleSequence(sim)
+				return true
+			}
 			casted = dk.ScourgeStrike.Cast(sim, target)
 		} else {
+			if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()*2+50*time.Millisecond) {
+				dk.afterGargoyleSequence(sim)
+				return true
+			}
 			dk.recastDiseasesSequence(sim)
 			return true
 		}
 		if !casted {
 			if dk.uhShouldSpreadDisease(sim) {
+				if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
+					dk.afterGargoyleSequence(sim)
+					return true
+				}
 				casted = dk.uhSpreadDiseases(sim, target, s)
 			} else {
 				if dk.uhDiseaseCheck(sim, target, dk.BloodStrike, true, 1) {
+					if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
+						dk.afterGargoyleSequence(sim)
+						return true
+					}
 					if dk.desolationAuraCheck(sim) {
 						casted = dk.CastBloodStrike(sim, target)
 					} else {
 						casted = dk.CastBloodBoil(sim, target)
 					}
 				} else {
+					if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()*2+50*time.Millisecond) {
+						dk.afterGargoyleSequence(sim)
+						return true
+					}
 					dk.recastDiseasesSequence(sim)
 					return true
 				}
 			}
 			if !casted {
 				if dk.uhDeathCoilCheck(sim) {
+					if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
+						dk.afterGargoyleSequence(sim)
+						return true
+					}
 					casted = dk.CastDeathCoil(sim, target)
 				}
 				if !casted {
+					if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
+						dk.afterGargoyleSequence(sim)
+						return true
+					}
 					casted = dk.CastHornOfWinter(sim, target)
 				}
 			}
