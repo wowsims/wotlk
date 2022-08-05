@@ -5,7 +5,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 var thunderstormActionID = core.ActionID{SpellID: 59159}
@@ -45,7 +44,7 @@ func (shaman *Shaman) newThunderstormSpell(doDamage bool) *core.Spell {
 			BaseDamage:          core.BaseDamageConfigMagic(1450, 1656, 0.172),
 			OutcomeApplier:      shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
 		}
-		aoeApply := core.ApplyEffectFuncAOEDamageCapped(shaman.Env, (605+0.172*shaman.GetStat(stats.NatureSpellPower))*10, effect)
+		aoeApply := core.ApplyEffectFuncAOEDamageCapped(shaman.Env, effect)
 		spellConfig.ApplyEffects = func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			aoeApply(sim, unit, spell)                                           // Calculates hits/crits/dmg on each target
 			shaman.AddMana(sim, shaman.MaxMana()*manaRestore, manaMetrics, true) // adds mana no matter what

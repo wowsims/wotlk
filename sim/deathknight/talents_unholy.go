@@ -86,7 +86,6 @@ func (dk *Deathknight) applyWanderingPlague() {
 	dk.WanderingPlague = dk.Unit.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
-		Flags:       core.SpellFlagNone,
 
 		ApplyEffects: core.ApplyEffectFuncAOEDamage(dk.Env, core.SpellEffect{
 			ProcMask: core.ProcMaskSpellDamage,
@@ -277,21 +276,14 @@ func (dk *Deathknight) procUnholyBlight(sim *core.Simulation, target *core.Unit,
 	if unholyBlightDot.IsActive() {
 		newUnholyBlightDamage += dk.UnholyBlightTickDamage[target.Index] * float64(10-unholyBlightDot.TickCount)
 	}
+	dk.UnholyBlightTickDamage[target.Index] = newUnholyBlightDamage / 10
 
-	newTickDamage := newUnholyBlightDamage / 10
-	dk.UnholyBlightTickDamage[target.Index] = newTickDamage
-
-	// Reassign the effect to apply the new damage value.
-	unholyBlightDot.TickEffects = core.TickFuncSnapshot(target, core.SpellEffect{
-		ProcMask:         core.ProcMaskPeriodicDamage,
-		DamageMultiplier: 1,
-		ThreatMultiplier: 1,
-		IsPeriodic:       true,
-		BaseDamage:       core.BaseDamageConfigFlat(newTickDamage),
-		OutcomeApplier:   dk.OutcomeFuncTick(),
-	})
-
-	dk.UnholyBlightSpell.Cast(sim, target)
+	// resets the length
+	if unholyBlightDot.IsActive() {
+		unholyBlightDot.Apply(sim)
+	} else {
+		dk.UnholyBlightSpell.Cast(sim, target)
+	}
 }
 
 func (dk *Deathknight) applyUnholyBlight() {
@@ -323,6 +315,18 @@ func (dk *Deathknight) applyUnholyBlight() {
 			}),
 			NumberOfTicks: 10,
 			TickLength:    time.Second * 1,
+			TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
+				ProcMask:         core.ProcMaskPeriodicDamage,
+				DamageMultiplier: 1,
+				ThreatMultiplier: 1,
+				IsPeriodic:       true,
+				BaseDamage: core.BaseDamageConfig{
+					Calculator: func(_ *core.Simulation, se *core.SpellEffect, _ *core.Spell) float64 {
+						return dk.UnholyBlightTickDamage[se.Target.Index]
+					},
+				},
+				OutcomeApplier: dk.OutcomeFuncTick(),
+			}),
 		})
 	}
 }

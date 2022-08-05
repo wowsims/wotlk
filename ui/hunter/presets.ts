@@ -1,26 +1,27 @@
-import { Consumes } from '/wotlk/core/proto/common.js';
-import { EquipmentSpec } from '/wotlk/core/proto/common.js';
-import { Flask } from '/wotlk/core/proto/common.js';
-import { Food } from '/wotlk/core/proto/common.js';
-import { Glyphs } from '/wotlk/core/proto/common.js';
-import { Potions } from '/wotlk/core/proto/common.js';
-import { WeaponImbue } from '/wotlk/core/proto/common.js';
-import { Player } from '/wotlk/core/player.js';
-import { SavedTalents } from '/wotlk/core/proto/ui.js';
-import { ferocityDefault } from '/wotlk/core/talents/hunter_pet.js';
+import { CustomRotation, CustomSpell } from '../core/proto/common.js';
+import { Consumes } from '../core/proto/common.js';
+import { EquipmentSpec } from '../core/proto/common.js';
+import { Flask } from '../core/proto/common.js';
+import { Food } from '../core/proto/common.js';
+import { Glyphs } from '../core/proto/common.js';
+import { Potions } from '../core/proto/common.js';
+import { SavedTalents } from '../core/proto/ui.js';
+import { ferocityDefault } from '../core/talents/hunter_pet.js';
 
 import {
 	Hunter_Rotation as HunterRotation,
 	//Hunter_Rotation_WeaveType as WeaveType,
+	Hunter_Rotation_RotationType as RotationType,
 	Hunter_Rotation_StingType as StingType,
+	Hunter_Rotation_SpellOption as SpellOption,
 	Hunter_Options as HunterOptions,
 	Hunter_Options_Ammo as Ammo,
 	Hunter_Options_PetType as PetType,
 	HunterMajorGlyph as MajorGlyph,
 	HunterMinorGlyph as MinorGlyph,
-} from '/wotlk/core/proto/hunter.js';
+} from '../core/proto/hunter.js';
 
-import * as Tooltips from '/wotlk/core/constants/tooltips.js';
+import * as Tooltips from '../core/constants/tooltips.js';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -74,9 +75,22 @@ export const SurvivalTalents = {
 };
 
 export const DefaultRotation = HunterRotation.create({
+	type: RotationType.SingleTarget,
 	sting: StingType.SerpentSting,
 	viperStartManaPercent: 0.1,
 	viperStopManaPercent: 0.3,
+	customRotation: CustomRotation.create({
+		spells: [
+			CustomSpell.create({ spell: SpellOption.SerpentStingSpell }),
+			CustomSpell.create({ spell: SpellOption.KillShot }),
+			CustomSpell.create({ spell: SpellOption.ChimeraShot }),
+			CustomSpell.create({ spell: SpellOption.BlackArrow }),
+			CustomSpell.create({ spell: SpellOption.ExplosiveShot }),
+			CustomSpell.create({ spell: SpellOption.AimedShot }),
+			CustomSpell.create({ spell: SpellOption.ArcaneShot }),
+			CustomSpell.create({ spell: SpellOption.SteadyShot }),
+		],
+	}),
 });
 
 export const DefaultOptions = HunterOptions.create({

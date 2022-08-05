@@ -1,25 +1,25 @@
-import { getWowheadItemId } from '/wotlk/core/proto_utils/equipped_item.js';
-import { EquippedItem } from '/wotlk/core/proto_utils/equipped_item.js';
-import { getEmptyGemSocketIconUrl, gemMatchesSocket } from '/wotlk/core/proto_utils/gems.js';
-import { setGemSocketCssClass } from '/wotlk/core/proto_utils/gems.js';
-import { Stats } from '/wotlk/core/proto_utils/stats.js';
-import { enchantAppliesToItem } from '/wotlk/core/proto_utils/utils.js';
-import { Enchant, Gem, GemColor } from '/wotlk/core/proto/common.js';
-import { HandType } from '/wotlk/core/proto/common.js';
-import { WeaponType } from '/wotlk/core/proto/common.js';
-import { Item } from '/wotlk/core/proto/common.js';
-import { ItemQuality } from '/wotlk/core/proto/common.js';
-import { ItemSlot } from '/wotlk/core/proto/common.js';
-import { ItemType } from '/wotlk/core/proto/common.js';
-import { Profession } from '/wotlk/core/proto/common.js';
-import { enchantDescriptions } from '/wotlk/core/constants/enchants.js';
-import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
-import { slotNames } from '/wotlk/core/proto_utils/names.js';
-import { setItemQualityCssClass } from '/wotlk/core/css_utils.js';
-import { Player } from '/wotlk/core/player.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
-import { formatDeltaTextElem } from '/wotlk/core/utils.js';
-import { getEnumValues } from '/wotlk/core/utils.js';
+import { getWowheadItemId } from '../proto_utils/equipped_item.js';
+import { EquippedItem } from '../proto_utils/equipped_item.js';
+import { getEmptyGemSocketIconUrl, gemMatchesSocket } from '../proto_utils/gems.js';
+import { setGemSocketCssClass } from '../proto_utils/gems.js';
+import { Stats } from '../proto_utils/stats.js';
+import { enchantAppliesToItem } from '../proto_utils/utils.js';
+import { Class, Enchant, Gem, GemColor } from '../proto/common.js';
+import { HandType } from '../proto/common.js';
+import { WeaponType } from '../proto/common.js';
+import { Item } from '../proto/common.js';
+import { ItemQuality } from '../proto/common.js';
+import { ItemSlot } from '../proto/common.js';
+import { ItemType } from '../proto/common.js';
+import { Profession } from '../proto/common.js';
+import { getEnchantDescription } from '../proto_utils/enchants.js';
+import { ActionId } from '../proto_utils/action_id.js';
+import { slotNames } from '../proto_utils/names.js';
+import { setItemQualityCssClass } from '../css_utils.js';
+import { Player } from '../player.js';
+import { EventID, TypedEvent } from '../typed_event.js';
+import { formatDeltaTextElem } from '../utils.js';
+import { getEnumValues } from '../utils.js';
 
 import { Component } from './component.js';
 import { Popup } from './popup.js';
@@ -127,14 +127,14 @@ class ItemPicker extends Component {
 			this.nameElem.addEventListener('click', onClickStart);
 			this.nameElem.addEventListener('touchstart', onClickStart);
 			this.nameElem.addEventListener('touchend', onClickEnd);
-			
+
 			// Make enchant name open enchant tab.
-			this.enchantElem.addEventListener('click', (ev: Event) => { 
+			this.enchantElem.addEventListener('click', (ev: Event) => {
 				ev.preventDefault();
 				const selectorModal = new SelectorModal(this.rootElem.closest('.individual-sim-ui')!, this.player, this.slot, this._equippedItem, this._items, this._enchants);
 				selectorModal.openTab(1);
 			});
-			this.enchantElem.addEventListener('touchstart', (ev: Event) => { 
+			this.enchantElem.addEventListener('touchstart', (ev: Event) => {
 				ev.preventDefault();
 				const selectorModal = new SelectorModal(this.rootElem.closest('.individual-sim-ui')!, this.player, this.slot, this._equippedItem, this._items, this._enchants);
 				selectorModal.openTab(1);
@@ -175,7 +175,7 @@ class ItemPicker extends Component {
 				heroic_span.innerText = "[H]";
 				this.nameElem.appendChild(heroic_span);
 			}
-			
+
 			setItemQualityCssClass(this.nameElem, newItem.item.quality);
 
 			this.player.setWowheadData(newItem, this.iconElem);
@@ -186,8 +186,9 @@ class ItemPicker extends Component {
 			});
 
 			if (newItem.enchant) {
-				this.enchantElem.textContent = enchantDescriptions.get(newItem.enchant.id) || newItem.enchant.name;
-				newItem.enchant
+				getEnchantDescription(newItem.enchant).then(description => {
+					this.enchantElem.textContent = description;
+				});
 				// Make enchant text hover have a tooltip.
 				if (newItem.enchant.isSpellId) {
 					this.enchantElem.setAttribute('data-wowhead', `spell=${newItem.enchant.id}`);
@@ -418,7 +419,7 @@ class SelectorModal extends Popup {
 		} else {
 			itemData.sort((dataA, dataB) => {
 				const diff = computeEP(dataB.item) - computeEP(dataA.item);
-				 // if EP is same, sort by ilvl
+				// if EP is same, sort by ilvl
 				if (Math.abs(diff) < 0.01) {
 					return (dataB.item as unknown as Item).ilvl - (dataA.item as unknown as Item).ilvl;
 				}
@@ -458,7 +459,7 @@ class SelectorModal extends Popup {
 
 		const show1hWeaponsSelector = makeShow1hWeaponsSelector(tabContent.getElementsByClassName('selector-modal-show-1h-weapons')[0] as HTMLElement, this.player.sim);
 		const show2hWeaponsSelector = makeShow2hWeaponsSelector(tabContent.getElementsByClassName('selector-modal-show-2h-weapons')[0] as HTMLElement, this.player.sim);
-		if (label != 'Items' || slot != ItemSlot.ItemSlotMainHand) {
+		if (label != 'Items' || slot != ItemSlot.ItemSlotMainHand && this.player.getClass() != Class.ClassWarrior) {
 			(tabContent.getElementsByClassName('selector-modal-show-1h-weapons')[0] as HTMLElement).style.display = 'none';
 			(tabContent.getElementsByClassName('selector-modal-show-2h-weapons')[0] as HTMLElement).style.display = 'none';
 		}

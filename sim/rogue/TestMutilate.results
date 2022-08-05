@@ -276,8 +276,8 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-IncisorFragment-37723"
  value: {
-  dps: 1669.5221236004024
-  tps: 1185.3607077562858
+  dps: 1736.0706989584219
+  tps: 1232.6101962604794
  }
 }
 dps_results: {
@@ -507,8 +507,8 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 1664.2290408453355
-  tps: 1181.602619000188
+  dps: 1662.2457445398654
+  tps: 1180.1944786233048
  }
 }
 dps_results: {

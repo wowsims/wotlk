@@ -47,6 +47,7 @@ var defaultRetRotation = &proto.RetributionPaladin_Rotation{
 	ConsSlack:            500,
 	ExoSlack:             500,
 	DivinePleaPercentage: 0.75,
+	HolyWrathThreshold:   4,
 }
 
 var defaultRetOptions = &proto.RetributionPaladin_Options{

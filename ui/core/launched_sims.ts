@@ -1,13 +1,13 @@
-import { Spec } from '/wotlk/core/proto/common.js';
+import { Spec } from './proto/common.js';
 
 // This file is for anything related to launching a new sim. DO NOT touch this
 // file until your sim is ready to launch!
 
 export enum LaunchStatus {
-	Unlaunched,
-	Alpha,
-	Beta,
-	Launched,
+    Unlaunched,
+    Alpha,
+    Beta,
+    Launched,
 }
 
 export const raidSimLaunched = false;
@@ -29,12 +29,12 @@ export const simLaunchStatuses: Record<Spec, LaunchStatus> = {
 	[Spec.SpecWarrior]: LaunchStatus.Unlaunched,
 	[Spec.SpecProtectionWarrior]: LaunchStatus.Unlaunched,
 	[Spec.SpecSmitePriest]: LaunchStatus.Unlaunched,
-	[Spec.SpecDeathknight]: LaunchStatus.Unlaunched,
+	[Spec.SpecDeathknight]: LaunchStatus.Alpha,
 	[Spec.SpecTankDeathknight]: LaunchStatus.Unlaunched,
 };
 
 export function getLaunchedSims(): Array<Spec> {
-	return Object.keys(simLaunchStatuses)
-		.map(specStr => parseInt(specStr) as Spec)
-		.filter(spec => simLaunchStatuses[spec] > LaunchStatus.Unlaunched);
+    return Object.keys(simLaunchStatuses)
+        .map(specStr => parseInt(specStr) as Spec)
+        .filter(spec => simLaunchStatuses[spec] > LaunchStatus.Unlaunched);
 }

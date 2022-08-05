@@ -212,7 +212,7 @@ func init() {
 		Name:      "Eye of the Broodmother",
 		ID:        45308,
 		Duration:  time.Second * 10,
-		MaxStacks: 10,
+		MaxStacks: 5,
 		Bonus:     stats.Stats{stats.SpellPower: 25, stats.HealingPower: 25},
 		Callback:  OnCastComplete,
 	})

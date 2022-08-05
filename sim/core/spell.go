@@ -431,7 +431,7 @@ func applyAOECap(effects []SpellEffect, outcomeMultipliers []float64, aoeCap flo
 		effect.Damage *= capMultiplier
 	}
 }
-func ApplyEffectFuncAOEDamageCapped(env *Environment, aoeCap float64, baseEffect SpellEffect) ApplySpellEffects {
+func ApplyEffectFuncAOEDamageCapped(env *Environment, baseEffect SpellEffect) ApplySpellEffects {
 	baseEffect.Validate()
 	numHits := env.GetNumTargets()
 	if numHits == 0 {
@@ -448,42 +448,10 @@ func ApplyEffectFuncAOEDamageCapped(env *Environment, aoeCap float64, baseEffect
 		baseEffects[i] = baseEffect
 		baseEffects[i].Target = &env.GetTarget(i).Unit
 	}
-	return ApplyEffectFuncMultipleDamageCapped(baseEffects, aoeCap)
+	return ApplyEffectFuncMultipleDamageCapped(baseEffects)
 }
 
-func ApplyEffectFuncMultipleDamageCapped(baseEffects []SpellEffect, aoeCap float64) ApplySpellEffects {
-	for _, effect := range baseEffects {
-		effect.Validate()
-	}
-
-	outcomeMultipliers := make([]float64, len(baseEffects))
-	return func(sim *Simulation, _ *Unit, spell *Spell) {
-		for i := range baseEffects {
-			effect := &baseEffects[i]
-			effect.init(sim, spell)
-			attackTable := spell.Unit.AttackTables[effect.Target.TableIndex]
-			effect.Damage = effect.calculateBaseDamage(sim, spell)
-
-			effect.applyAttackerModifiers(sim, spell)
-			effect.applyResistances(sim, spell, attackTable)
-			damageBefore := effect.Damage
-			effect.OutcomeApplier(sim, spell, effect, attackTable)
-			outcomeMultipliers[i] = effect.Damage / damageBefore
-		}
-		applyAOECap(baseEffects, outcomeMultipliers, aoeCap)
-		for i := range baseEffects {
-			effect := &baseEffects[i]
-			attackTable := spell.Unit.AttackTables[effect.Target.TableIndex]
-			effect.applyTargetModifiers(sim, spell, attackTable)
-		}
-		for i := range baseEffects {
-			effect := &baseEffects[i]
-			effect.finalize(sim, spell)
-		}
-	}
-}
-
-func ApplyEffectFuncMultipleDamageCappedWotLK(baseEffects []SpellEffect) ApplySpellEffects {
+func ApplyEffectFuncMultipleDamageCapped(baseEffects []SpellEffect) ApplySpellEffects {
 	numTargets := len(baseEffects)
 	for _, effect := range baseEffects {
 		effect.Validate()

@@ -1,28 +1,28 @@
-import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
-import { BattleElixir } from '/wotlk/core/proto/common.js';
-import { Explosive } from '/wotlk/core/proto/common.js';
-import { Flask } from '/wotlk/core/proto/common.js';
-import { Food } from '/wotlk/core/proto/common.js';
-import { GuardianElixir } from '/wotlk/core/proto/common.js';
-import { RaidBuffs } from '/wotlk/core/proto/common.js';
-import { PartyBuffs } from '/wotlk/core/proto/common.js';
-import { IndividualBuffs } from '/wotlk/core/proto/common.js';
-import { Conjured } from '/wotlk/core/proto/common.js';
-import { Consumes } from '/wotlk/core/proto/common.js';
-import { Debuffs } from '/wotlk/core/proto/common.js';
+import { ActionId } from '../proto_utils/action_id.js';
+import { BattleElixir } from '../proto/common.js';
+import { Explosive } from '../proto/common.js';
+import { Flask } from '../proto/common.js';
+import { Food } from '../proto/common.js';
+import { GuardianElixir } from '../proto/common.js';
+import { RaidBuffs } from '../proto/common.js';
+import { PartyBuffs } from '../proto/common.js';
+import { IndividualBuffs } from '../proto/common.js';
+import { Conjured } from '../proto/common.js';
+import { Consumes } from '../proto/common.js';
+import { Debuffs } from '../proto/common.js';
 
-import { PetFood } from '/wotlk/core/proto/common.js';
-import { Potions } from '/wotlk/core/proto/common.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { TristateEffect } from '/wotlk/core/proto/common.js';
-import { WeaponImbue } from '/wotlk/core/proto/common.js';
-import { Party } from '/wotlk/core/party.js';
-import { Player } from '/wotlk/core/player.js';
-import { Raid } from '/wotlk/core/raid.js';
-import { Sim } from '/wotlk/core/sim.js';
-import { Target } from '/wotlk/core/target.js';
-import { Encounter } from '/wotlk/core/encounter.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
+import { PetFood } from '../proto/common.js';
+import { Potions } from '../proto/common.js';
+import { Spec } from '../proto/common.js';
+import { TristateEffect } from '../proto/common.js';
+import { WeaponImbue } from '../proto/common.js';
+import { Party } from '../party.js';
+import { Player } from '../player.js';
+import { Raid } from '../raid.js';
+import { Sim } from '../sim.js';
+import { Target } from '../target.js';
+import { Encounter } from '../encounter.js';
+import { EventID, TypedEvent } from '../typed_event.js';
 
 import { IconPickerConfig } from './icon_picker.js';
 import { IconEnumPicker, IconEnumPickerConfig, IconEnumValueConfig } from './icon_enum_picker.js';
@@ -157,6 +157,7 @@ export const ManaTideTotem = makeMultistatePartyBuffInput(ActionId.fromSpellId(1
 export const Innervate = makeMultistateIndividualBuffInput(ActionId.fromSpellId(29166), 11, 'innervates');
 export const PowerInfusion = makeMultistateIndividualBuffInput(ActionId.fromSpellId(10060), 11, 'powerInfusions');
 export const TricksOfTheTrade = makeMultistateIndividualBuffInput(ActionId.fromSpellId(57933), 20, 'tricksOfTheTrades');
+export const UnholyFrenzy = makeMultistateIndividualBuffInput(ActionId.fromSpellId(49016), 11, 'unholyFrenzy');
 
 // Debuffs
 
@@ -366,7 +367,6 @@ export const makeConjuredInput = makeConsumeInputFactory('defaultConjured', [
 	{ actionId: ActionId.fromItemId(12662), value: Conjured.ConjuredDarkRune },
 	{ actionId: ActionId.fromItemId(22788), value: Conjured.ConjuredFlameCap },
 	{ actionId: ActionId.fromItemId(22105), value: Conjured.ConjuredHealthstone },
-	{ actionId: ActionId.fromItemId(22044), value: Conjured.ConjuredMageManaEmerald },
 	{ actionId: ActionId.fromItemId(7676), value: Conjured.ConjuredRogueThistleTea },
 ] as Array<IconEnumValueConfig<Player<any>, Conjured>>);
 

@@ -115,7 +115,7 @@ func RunesAtleastOneOfState(sim *Simulation, runes *[2]Rune, runeState RuneState
 }
 
 // TODO: Simplify this, its definitely possible
-func (rp *runicPowerBar) LaunchBloodTapRegenPA(sim *Simulation, slot int32, spell *Spell) {
+func (rp *RunicPowerBar) LaunchBloodTapRegenPA(sim *Simulation, slot int32, spell *Spell) {
 	r := &rp.bloodRunes[slot]
 
 	pa := &PendingAction{
@@ -127,23 +127,25 @@ func (rp *runicPowerBar) LaunchBloodTapRegenPA(sim *Simulation, slot int32, spel
 		if !pa.cancelled {
 			r.pas[1].Cancel(sim)
 			r.pas[1] = nil
-			if r.state == RuneState_Death {
-				currRunes := rp.CurrentBloodRunes()
-				rp.GainRuneMetrics(sim, rp.bloodRuneGainMetrics, "blood", currRunes, currRunes+1)
-				rp.SetRuneToState(r, RuneState_Normal, RuneKind_Blood)
+			if !r.BotnOrReaping {
+				if r.state == RuneState_Death {
+					currRunes := rp.CurrentBloodRunes()
+					rp.GainRuneMetrics(sim, rp.bloodRuneGainMetrics, "blood", currRunes, currRunes+1)
+					rp.SetRuneToState(r, RuneState_Normal, RuneKind_Blood)
 
-				currRunes = rp.CurrentDeathRunes()
-				rp.SpendRuneMetrics(sim, spell.DeathRuneMetrics(), "death", currRunes, currRunes-1)
-				if !rp.isACopy {
-					rp.onBloodRuneGain(sim)
+					currRunes = rp.CurrentDeathRunes()
+					rp.SpendRuneMetrics(sim, spell.DeathRuneMetrics(), "death", currRunes, currRunes-1)
+					if !rp.isACopy {
+						rp.onBloodRuneGain(sim)
+					}
+				} else if r.state == RuneState_DeathSpent {
+
+					if r.pas[0] == nil {
+						panic("This should have a regen PA!")
+					}
+
+					rp.SetRuneToState(r, RuneState_Spent, RuneKind_Blood)
 				}
-			} else if r.state == RuneState_DeathSpent {
-
-				if r.pas[0] == nil {
-					panic("This should have a regen PA!")
-				}
-
-				rp.SetRuneToState(r, RuneState_Spent, RuneKind_Blood)
 			}
 		} else {
 			r.pas[1] = nil
@@ -156,7 +158,7 @@ func (rp *runicPowerBar) LaunchBloodTapRegenPA(sim *Simulation, slot int32, spel
 	//}
 }
 
-func (rp *runicPowerBar) GainDeathRuneMetrics(sim *Simulation, spell *Spell, currRunes int32, newRunes int32) {
+func (rp *RunicPowerBar) GainDeathRuneMetrics(sim *Simulation, spell *Spell, currRunes int32, newRunes int32) {
 	if !rp.isACopy {
 		metrics := rp.deathRuneGainMetrics
 		metrics.AddEvent(1, float64(newRunes)-float64(currRunes))
@@ -167,7 +169,7 @@ func (rp *runicPowerBar) GainDeathRuneMetrics(sim *Simulation, spell *Spell, cur
 	}
 }
 
-func (rp *runicPowerBar) SpendBloodRuneMetrics(sim *Simulation, spell *Spell, currRunes int32, newRunes int32) {
+func (rp *RunicPowerBar) SpendBloodRuneMetrics(sim *Simulation, spell *Spell, currRunes int32, newRunes int32) {
 	if !rp.isACopy {
 		metrics := spell.BloodRuneMetrics()
 
@@ -179,7 +181,7 @@ func (rp *runicPowerBar) SpendBloodRuneMetrics(sim *Simulation, spell *Spell, cu
 	}
 }
 
-func (rp *runicPowerBar) CancelRuneRegenPA(sim *Simulation, r *Rune) {
+func (rp *RunicPowerBar) CancelRuneRegenPA(sim *Simulation, r *Rune) {
 	if r.pas[0] == nil {
 		panic("Trying to cancel non-existant regen PA.")
 	}
@@ -190,7 +192,7 @@ func (rp *runicPowerBar) CancelRuneRegenPA(sim *Simulation, r *Rune) {
 	r.pas[0] = nil
 }
 
-func (rp *runicPowerBar) CancelBloodTap(sim *Simulation) {
+func (rp *RunicPowerBar) CancelBloodTap(sim *Simulation) {
 	runes := &rp.bloodRunes
 
 	if runes[0].pas[1] != nil {
@@ -200,7 +202,7 @@ func (rp *runicPowerBar) CancelBloodTap(sim *Simulation) {
 	}
 }
 
-func (rp *runicPowerBar) CorrectBloodTapConversion(sim *Simulation, bloodGainMetrics *ResourceMetrics, deathGainMetrics *ResourceMetrics, spell *Spell) {
+func (rp *RunicPowerBar) CorrectBloodTapConversion(sim *Simulation, bloodGainMetrics *ResourceMetrics, deathGainMetrics *ResourceMetrics, spell *Spell) {
 	runes := &rp.bloodRunes
 
 	currBloodRunes := rp.CurrentBloodRunes()

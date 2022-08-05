@@ -371,7 +371,7 @@ func (paladin *Paladin) applyArtOfWar() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.IsMelee() || spell.Flags.Matches(SpellFlagSecondaryJudgement) {
+			if !spellEffect.IsMelee() || !spell.Flags.Matches(SpellFlagSecondaryJudgement) {
 				return
 			}
 

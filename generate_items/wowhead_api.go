@@ -138,6 +138,7 @@ var mp5Regex = regexp.MustCompile("Restores ([0-9]+) mana per 5 sec\\.")
 var attackPowerRegex = regexp.MustCompile("Increases attack power by ([0-9]+)\\.")
 var rangedAttackPowerRegex = regexp.MustCompile("Increases ranged attack power by ([0-9]+)\\.")
 var armorPenetrationRegex = regexp.MustCompile("Your attacks ignore ([0-9]+) of your opponent's armor\\.")
+var armorPenetrationRegex2 = regexp.MustCompile("Increases your armor penetration rating by <!--rtg44-->([0-9]+)")
 var expertiseRegex = regexp.MustCompile("Increases your expertise rating by <!--rtg37-->([0-9]+)\\.")
 var weaponDamageRegex = regexp.MustCompile("<!--dmg-->([0-9]+) - ([0-9]+)")
 var weaponDamageRegex2 = regexp.MustCompile("<!--dmg-->([0-9]+) Damage")
@@ -185,7 +186,7 @@ func (item WowheadItemResponse) GetStats() Stats {
 		proto.Stat_StatMP5:               float64(item.GetIntValue(mp5Regex)),
 		proto.Stat_StatAttackPower:       float64(item.GetIntValue(attackPowerRegex)),
 		proto.Stat_StatRangedAttackPower: float64(item.GetIntValue(attackPowerRegex) + item.GetIntValue(rangedAttackPowerRegex)),
-		proto.Stat_StatArmorPenetration:  float64(item.GetIntValue(armorPenetrationRegex)),
+		proto.Stat_StatArmorPenetration:  float64(item.GetIntValue(armorPenetrationRegex) + item.GetIntValue(armorPenetrationRegex2)),
 		proto.Stat_StatExpertise:         float64(item.GetIntValue(expertiseRegex)),
 		proto.Stat_StatDefense:           float64(item.GetIntValue(defenseRegex) + item.GetIntValue(defenseRegex2)),
 		proto.Stat_StatBlock:             float64(item.GetIntValue(blockRegex) + item.GetIntValue(blockRegex2)),
@@ -483,6 +484,7 @@ var mp5SocketBonusRegexes = []*regexp.Regexp{
 	regexp.MustCompile("([0-9]+) mana per 5 sec"),
 }
 var attackPowerSocketBonusRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Attack Power")}
+var armorPenSocketBonusRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Armor Penetration Rating")}
 var expertiseSocketBonusRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Expertise Rating")}
 var defenseSocketBonusRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Defense Rating")}
 var blockSocketBonusRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Block Rating")}
@@ -515,6 +517,7 @@ func (item WowheadItemResponse) GetSocketBonus() Stats {
 		proto.Stat_StatAttackPower:       float64(GetBestRegexIntValue(bonusStr, attackPowerSocketBonusRegexes, 1)),
 		proto.Stat_StatRangedAttackPower: float64(GetBestRegexIntValue(bonusStr, attackPowerSocketBonusRegexes, 1)),
 		proto.Stat_StatExpertise:         float64(GetBestRegexIntValue(bonusStr, expertiseSocketBonusRegexes, 1)),
+		proto.Stat_StatArmorPenetration:  float64(GetBestRegexIntValue(bonusStr, armorPenSocketBonusRegexes, 1)),
 		proto.Stat_StatDefense:           float64(GetBestRegexIntValue(bonusStr, defenseSocketBonusRegexes, 1)),
 		proto.Stat_StatBlock:             float64(GetBestRegexIntValue(bonusStr, blockSocketBonusRegexes, 1)),
 		proto.Stat_StatDodge:             float64(GetBestRegexIntValue(bonusStr, dodgeSocketBonusRegexes, 1)),
@@ -561,9 +564,8 @@ var critGemStatRegexes = []*regexp.Regexp{
 var hasteGemStatRegexes = []*regexp.Regexp{
 	regexp.MustCompile("\\+([0-9]+) Haste Rating"),
 }
-var spellPenetrationGemStatRegexes = []*regexp.Regexp{
-	regexp.MustCompile("\\+([0-9]+) Spell Penetration"),
-}
+var armorPenetrationGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Armor Penetration")}
+var spellPenetrationGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Spell Penetration")}
 var mp5GemStatRegexes = []*regexp.Regexp{
 	regexp.MustCompile("([0-9]+) Mana per 5 sec"),
 	regexp.MustCompile("([0-9]+) mana per 5 sec"),
@@ -596,6 +598,7 @@ func (item WowheadItemResponse) GetGemStats() Stats {
 		proto.Stat_StatHealingPower:      float64(GetBestRegexIntValue(item.Tooltip, spellPowerGemStatRegexes, 1)),
 		proto.Stat_StatAttackPower:       float64(GetBestRegexIntValue(item.Tooltip, attackPowerGemStatRegexes, 1)),
 		proto.Stat_StatRangedAttackPower: float64(GetBestRegexIntValue(item.Tooltip, attackPowerGemStatRegexes, 1)),
+		proto.Stat_StatArmorPenetration:  float64(GetBestRegexIntValue(item.Tooltip, armorPenetrationGemStatRegexes, 1)),
 		proto.Stat_StatSpellPenetration:  float64(GetBestRegexIntValue(item.Tooltip, spellPenetrationGemStatRegexes, 1)),
 		proto.Stat_StatMP5:               float64(GetBestRegexIntValue(item.Tooltip, mp5GemStatRegexes, 1)),
 		proto.Stat_StatExpertise:         float64(GetBestRegexIntValue(item.Tooltip, expertiseGemStatRegexes, 1)),

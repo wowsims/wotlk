@@ -11,9 +11,6 @@ func (mage *Mage) registerEvocationCD() {
 	manaMetrics := mage.NewManaMetrics(actionID)
 
 	maxTicks := int32(4)
-	if mage.HasSetBonus(ItemSetTempestRegalia, 2) {
-		maxTicks++
-	}
 
 	numTicks := core.MaxInt32(0, core.MinInt32(maxTicks, mage.Options.EvocationTicks))
 	if numTicks == 0 {
@@ -25,7 +22,7 @@ func (mage *Mage) registerEvocationCD() {
 	manaThreshold := 0.0
 	mage.Env.RegisterPostFinalizeEffect(func() {
 		manaPerTick = mage.MaxMana() * 0.15
-		manaThreshold = mage.MaxMana() * 0.2
+		manaThreshold = mage.MaxMana() * 0.3
 	})
 
 	evocationSpell := mage.RegisterSpell(core.SpellConfig{
@@ -38,7 +35,7 @@ func (mage *Mage) registerEvocationCD() {
 			},
 			CD: core.Cooldown{
 				Timer:    mage.NewTimer(),
-				Duration: time.Minute * 8,
+				Duration: time.Minute * time.Duration(4-mage.Talents.ArcaneFlows),
 			},
 		},
 
@@ -64,14 +61,6 @@ func (mage *Mage) registerEvocationCD() {
 
 			curMana := character.CurrentMana()
 			if curMana > manaThreshold {
-				return false
-			}
-
-			if character.HasActiveAuraWithTag(core.BloodlustAuraTag) && curMana > manaThreshold/2 {
-				return false
-			}
-
-			if mage.isBlastSpamming {
 				return false
 			}
 

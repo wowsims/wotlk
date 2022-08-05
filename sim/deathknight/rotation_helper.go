@@ -64,4 +64,8 @@ func (s *Sequence) Clear() *Sequence {
 type RotationHelper struct {
 	Opener *Sequence
 	Main   *Sequence
+
+	LastOutcome core.HitOutcome
+	LastCast    *RuneSpell
+	NextCast    *RuneSpell
 }

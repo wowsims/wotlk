@@ -302,6 +302,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestProtection-AllItems-Gladiator'sVindication"
+ value: {
+  dps: 161.7500319628544
+  tps: 161.7500319628544
+ }
+}
+dps_results: {
  key: "TestProtection-AllItems-HatefulGladiator'sLibramofFortitude-42851"
  value: {
   dps: 88.32954318973073
@@ -332,8 +339,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-IncisorFragment-37723"
  value: {
-  dps: 94.74748618141471
-  tps: 96.64243590504299
+  dps: 101.80560436920328
+  tps: 103.84171645658735
  }
 }
 dps_results: {
@@ -647,8 +654,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 91.23818306464273
-  tps: 93.06294672593559
+  dps: 89.42689216030499
+  tps: 91.2154300035111
  }
 }
 dps_results: {

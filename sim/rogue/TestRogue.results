@@ -276,8 +276,8 @@ dps_results: {
 dps_results: {
  key: "TestRogue-AllItems-IncisorFragment-37723"
  value: {
-  dps: 1875.9177464558481
-  tps: 1331.9015999836522
+  dps: 1956.6910541664959
+  tps: 1389.2506484582123
  }
 }
 dps_results: {
@@ -521,8 +521,8 @@ dps_results: {
 dps_results: {
  key: "TestRogue-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 1874.535154141789
-  tps: 1330.9199594406696
+  dps: 1878.3394920649316
+  tps: 1333.6210393661008
  }
 }
 dps_results: {

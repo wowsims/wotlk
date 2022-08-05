@@ -1,26 +1,26 @@
-import { RaidBuffs } from '/wotlk/core/proto/common.js';
-import { PartyBuffs } from '/wotlk/core/proto/common.js';
-import { IndividualBuffs } from '/wotlk/core/proto/common.js';
-import { Debuffs } from '/wotlk/core/proto/common.js';
-import { Class } from '/wotlk/core/proto/common.js';
-import { Consumes } from '/wotlk/core/proto/common.js';
-import { Encounter } from '/wotlk/core/proto/common.js';
-import { ItemSlot } from '/wotlk/core/proto/common.js';
-import { MobType } from '/wotlk/core/proto/common.js';
-import { RaidTarget } from '/wotlk/core/proto/common.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { Stat } from '/wotlk/core/proto/common.js';
-import { TristateEffect } from '/wotlk/core/proto/common.js'
-import { Stats } from '/wotlk/core/proto_utils/stats.js';
-import { Player } from '/wotlk/core/player.js';
-import { Sim } from '/wotlk/core/sim.js';
-import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
+import { RaidBuffs } from '../core/proto/common.js';
+import { PartyBuffs } from '../core/proto/common.js';
+import { IndividualBuffs } from '../core/proto/common.js';
+import { Debuffs } from '../core/proto/common.js';
+import { Class } from '../core/proto/common.js';
+import { Consumes } from '../core/proto/common.js';
+import { Encounter } from '../core/proto/common.js';
+import { ItemSlot } from '../core/proto/common.js';
+import { MobType } from '../core/proto/common.js';
+import { RaidTarget } from '../core/proto/common.js';
+import { Spec } from '../core/proto/common.js';
+import { Stat } from '../core/proto/common.js';
+import { TristateEffect } from '../core/proto/common.js'
+import { Stats } from '../core/proto_utils/stats.js';
+import { Player } from '../core/player.js';
+import { Sim } from '../core/sim.js';
+import { IndividualSimUI } from '../core/individual_sim_ui.js';
 
-import { Mage, Mage_Rotation as MageRotation, MageTalents as MageTalents, Mage_Options as MageOptions } from '/wotlk/core/proto/mage.js';
+import { Mage, Mage_Rotation as MageRotation, MageTalents as MageTalents, Mage_Options as MageOptions } from '../core/proto/mage.js';
 
-import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
-import * as OtherInputs from '/wotlk/core/components/other_inputs.js';
-import * as Tooltips from '/wotlk/core/constants/tooltips.js';
+import * as IconInputs from '../core/components/icon_inputs.js';
+import * as OtherInputs from '../core/components/other_inputs.js';
+import * as Tooltips from '../core/constants/tooltips.js';
 
 import * as MageInputs from './inputs.js';
 import * as Presets from './presets.js';
@@ -66,7 +66,7 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P5_ARCANE_PRESET.gear,
+				gear: Presets.P1_ARCANE_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatIntellect]: 1.29,
@@ -124,6 +124,7 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 			otherInputs: {
 				inputs: [
 					MageInputs.EvocationTicks,
+					MageInputs.FocusMagicUptime,
 					OtherInputs.PrepopPotion,
 					OtherInputs.StartingConjured,
 					OtherInputs.NumStartingConjured,
@@ -142,13 +143,12 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 					Presets.ArcaneTalents,
 					Presets.FireTalents,
 					Presets.FrostTalents,
-					Presets.DeepFrostTalents,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.P5_ARCANE_PRESET,
-					Presets.P5_FIRE_PRESET,
-					Presets.P5_FROST_PRESET,
+					Presets.P1_ARCANE_PRESET,
+					Presets.P1_FIRE_PRESET,
+					Presets.P1_FROST_PRESET,
 				],
 			},
 		});

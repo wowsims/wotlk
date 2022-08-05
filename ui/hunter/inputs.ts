@@ -1,26 +1,30 @@
-import { BooleanPicker } from '/wotlk/core/components/boolean_picker.js';
-import { EnumPicker } from '/wotlk/core/components/enum_picker.js';
-import { IconEnumPicker, IconEnumPickerConfig } from '/wotlk/core/components/icon_enum_picker.js';
-import { IconPickerConfig } from '/wotlk/core/components/icon_picker.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
-import { Player } from '/wotlk/core/player.js';
-import { Sim } from '/wotlk/core/sim.js';
-import { Target } from '/wotlk/core/target.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
-import { makePetTypeInputConfig } from '/wotlk/core/talents/hunter_pet.js';
+import { BooleanPicker } from '../core/components/boolean_picker.js';
+import { EnumPicker } from '../core/components/enum_picker.js';
+import { IconEnumPicker, IconEnumPickerConfig } from '../core/components/icon_enum_picker.js';
+import { CustomRotationPickerConfig } from '../core/components/custom_rotation_picker.js';
+import { IconPickerConfig } from '../core/components/icon_picker.js';
+import { CustomRotation } from '../core/proto/common.js';
+import { Spec } from '../core/proto/common.js';
+import { ActionId } from '../core/proto_utils/action_id.js';
+import { Player } from '../core/player.js';
+import { Sim } from '../core/sim.js';
+import { Target } from '../core/target.js';
+import { EventID, TypedEvent } from '../core/typed_event.js';
+import { makePetTypeInputConfig } from '../core/talents/hunter_pet.js';
 
-import * as InputHelpers from '/wotlk/core/components/input_helpers.js';
+import * as InputHelpers from '../core/components/input_helpers.js';
 
 import {
 	Hunter,
 	Hunter_Rotation as HunterRotation,
+	Hunter_Rotation_RotationType as RotationType,
 	Hunter_Rotation_StingType as StingType,
+	Hunter_Rotation_SpellOption as SpellOption,
 	//Hunter_Rotation_WeaveType as WeaveType,
 	Hunter_Options as HunterOptions,
 	Hunter_Options_Ammo as Ammo,
 	Hunter_Options_PetType as PetType,
-} from '/wotlk/core/proto/hunter.js';
+} from '../core/proto/hunter.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
@@ -84,6 +88,20 @@ export const SniperTrainingUptime = InputHelpers.makeSpecOptionsNumberInput<Spec
 
 export const HunterRotationConfig = {
 	inputs: [
+		InputHelpers.makeRotationEnumInput<Spec.SpecHunter, RotationType>({
+			fieldName: 'type',
+			label: 'Type',
+			values: [
+				{
+					name: 'Single Target', value: RotationType.SingleTarget,
+					tooltip: 'Standard Rotation. Does not yet include trap/melee weaving.',
+				},
+				{
+					name: 'Custom', value: RotationType.Custom,
+					tooltip: 'Custom priority rotation.',
+				},
+			],
+		}),
 		//{
 		//	type: 'boolean' as const, cssClass: 'use-multi-shot-picker',
 		//	getModObject: (simUI: IndividualSimUI<any>) => simUI.player,
@@ -123,6 +141,7 @@ export const HunterRotationConfig = {
 				{ name: 'Scorpid Sting', value: StingType.ScorpidSting },
 				{ name: 'Serpent Sting', value: StingType.SerpentSting },
 			],
+			showWhen: (player: Player<Spec.SpecHunter>) => player.getRotation().type == RotationType.SingleTarget,
 		}),
 		//{
 		//	type: 'boolean' as const, cssClass: 'lazy-rotation-picker',
@@ -139,6 +158,25 @@ export const HunterRotationConfig = {
 		//		},
 		//	},
 		//},
+		InputHelpers.makeCustomRotationInput<Spec.SpecHunter, SpellOption>({
+			fieldName: 'customRotation',
+			numColumns: 2,
+			values: [
+				{ actionId: ActionId.fromSpellId(49052), value: SpellOption.SteadyShot },
+				{ actionId: ActionId.fromSpellId(49045), value: SpellOption.ArcaneShot },
+				{ actionId: ActionId.fromSpellId(49050), value: SpellOption.AimedShot },
+				{ actionId: ActionId.fromSpellId(49048), value: SpellOption.MultiShot },
+				{ actionId: ActionId.fromSpellId(49001), value: SpellOption.SerpentStingSpell },
+				{ actionId: ActionId.fromSpellId(3043), value: SpellOption.ScorpidStingSpell },
+				{ actionId: ActionId.fromSpellId(61006), value: SpellOption.KillShot },
+				{ actionId: ActionId.fromSpellId(3674), value: SpellOption.BlackArrow },
+				{ actionId: ActionId.fromSpellId(53209), value: SpellOption.ChimeraShot },
+				{ actionId: ActionId.fromSpellId(60053), value: SpellOption.ExplosiveShot },
+				{ actionId: ActionId.fromSpellId(49067), value: SpellOption.ExplosiveTrap },
+				{ actionId: ActionId.fromSpellId(58434), value: SpellOption.Volley },
+			],
+			showWhen: (player: Player<Spec.SpecHunter>) => player.getRotation().type == RotationType.Custom,
+		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecHunter>({
 			fieldName: 'viperStartManaPercent',
 			label: 'Viper Start Mana %',

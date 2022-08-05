@@ -268,8 +268,6 @@ enum Conjured {
 	ConjuredDarkRune = 1;
 	ConjuredFlameCap = 2;
 	ConjuredHealthstone = 5;
-
-	ConjuredMageManaEmerald = 3;
 	ConjuredRogueThistleTea = 4;
 }
 
@@ -817,4 +815,13 @@ message HealingModel {
 
 	// How often healing is applied.
 	double cadence_seconds = 2;
+}
+
+message CustomRotation {
+	repeated CustomSpell spells = 1;
+}
+
+message CustomSpell {
+	// This should usually be a spec-specific enum value.
+	int32 spell = 1;
 }

@@ -42,7 +42,6 @@ type Deathknight struct {
 
 	Inputs DeathknightInputs
 
-	LastCastOutcome core.HitOutcome
 	RotationHelper
 
 	Ghoul     *GhoulPet
@@ -247,6 +246,9 @@ func (dk *Deathknight) Reset(sim *core.Simulation) {
 	if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_PreCast {
 		dk.PrecastArmyOfTheDead(sim)
 	}
+
+	dk.LastCast = nil
+	dk.NextCast = nil
 }
 
 func (dk *Deathknight) IsFuStrike(spell *core.Spell) bool {

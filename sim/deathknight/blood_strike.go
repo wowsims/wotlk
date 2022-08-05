@@ -63,7 +63,7 @@ func (dk *Deathknight) registerBloodStrikeSpell() {
 		if dk.Talents.ThreatOfThassarian > 0 && dk.threatOfThassarianWillProc(sim) {
 			dk.BloodStrikeOhHit.Cast(sim, spellEffect.Target)
 		}
-		dk.LastCastOutcome = spellEffect.Outcome
+		dk.LastOutcome = spellEffect.Outcome
 
 		if spellEffect.Outcome.Matches(core.OutcomeLanded) {
 			dk.botnAndReaping(sim, spell)

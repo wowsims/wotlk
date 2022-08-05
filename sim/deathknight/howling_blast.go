@@ -60,7 +60,7 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 			OutcomeApplier: dk.killingMachineOutcomeMod(dk.OutcomeFuncMagicHitAndCrit(dk.spellCritMultiplierGoGandMoM())),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Target == dk.CurrentTarget {
-					dk.LastCastOutcome = spellEffect.Outcome
+					dk.LastOutcome = spellEffect.Outcome
 				}
 				if dk.Talents.ChillOfTheGrave > 0 && spellEffect.Outcome.Matches(core.OutcomeLanded) {
 					dk.AddRunicPower(sim, rpBonus, spell.RunicPowerMetrics())
