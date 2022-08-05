@@ -198,6 +198,10 @@ func (dk *DpsDeathknight) uhGhoulFrenzyCheck(sim *core.Simulation, target *core.
 				return true
 			}
 		} else if !dk.Rotation.BtGhoulFrenzy && dk.CanGhoulFrenzy(sim) && dk.CanIcyTouch(sim) {
+			if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()*2+50*time.Millisecond) {
+				dk.afterGargoyleSequence(sim)
+				return true
+			}
 			// Use Ghoul Frenzy with an Unholy Rune and sync the frost rune with Icy Touch
 			if dk.uhDiseaseCheck(sim, target, dk.GhoulFrenzy, true, 5) && dk.uhDiseaseCheck(sim, target, dk.IcyTouch, true, 5) {
 				dk.ghoulFrenzySequence(sim, false)
@@ -217,8 +221,8 @@ func (dk *DpsDeathknight) uhDeathCoilCheck(sim *core.Simulation) bool {
 }
 
 // Combined checks for casting gargoyle sequence & going back to blood presence after
-func (dk *DpsDeathknight) uhGargoyleCheck(sim *core.Simulation, target *core.Unit) bool {
-	if dk.uhGargoyleCanCast(sim) {
+func (dk *DpsDeathknight) uhGargoyleCheck(sim *core.Simulation, target *core.Unit, castTime time.Duration) bool {
+	if dk.uhGargoyleCanCast(sim, castTime) {
 		if !dk.PresenceMatches(deathknight.UnholyPresence) {
 			dk.CastBloodTap(sim, dk.CurrentTarget)
 			dk.CastUnholyPresence(sim, dk.CurrentTarget)
@@ -243,7 +247,7 @@ func (dk *DpsDeathknight) uhGargoyleCheck(sim *core.Simulation, target *core.Uni
 	return false
 }
 
-func (dk *DpsDeathknight) uhGargoyleCanCast(sim *core.Simulation) bool {
+func (dk *DpsDeathknight) uhGargoyleCanCast(sim *core.Simulation, castTime time.Duration) bool {
 	if dk.Opener.IsOngoing() {
 		return false
 	}
@@ -256,7 +260,7 @@ func (dk *DpsDeathknight) uhGargoyleCanCast(sim *core.Simulation) bool {
 	if !dk.PresenceMatches(deathknight.UnholyPresence) && !dk.CanBloodTap(sim) {
 		return false
 	}
-	if dk.GargoyleProcCheck(sim) {
+	if dk.GargoyleProcCheck(sim, castTime) {
 		return false
 	}
 
@@ -289,7 +293,7 @@ func logMessage(sim *core.Simulation, message string) {
 	}
 }
 
-func (dk *DpsDeathknight) GargoyleProcCheck(sim *core.Simulation) bool {
+func (dk *DpsDeathknight) GargoyleProcCheck(sim *core.Simulation, castTime time.Duration) bool {
 	for _, procTracker := range dk.ur.procTrackers {
 		if !procTracker.didActivate && procTracker.aura.IsActive() {
 			procTracker.didActivate = true
@@ -297,7 +301,7 @@ func (dk *DpsDeathknight) GargoyleProcCheck(sim *core.Simulation) bool {
 		}
 
 		// A proc is about to drop
-		if procTracker.didActivate && procTracker.expiresAt <= sim.CurrentTime+dk.SpellGCD()+50*time.Millisecond {
+		if procTracker.didActivate && procTracker.expiresAt <= sim.CurrentTime+castTime {
 			logMessage(sim, "Proc dropping "+procTracker.aura.Label)
 			return false
 		}
@@ -305,6 +309,7 @@ func (dk *DpsDeathknight) GargoyleProcCheck(sim *core.Simulation) bool {
 
 	for _, procTracker := range dk.ur.procTrackers {
 		if !procTracker.didActivate {
+			logMessage(sim, "Waiting on procs..")
 			return true
 		}
 	}

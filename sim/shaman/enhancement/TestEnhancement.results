@@ -52,7 +52,7 @@ character_stats_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-AshtongueTalismanofVision-32491"
  value: {
-  dps: 2209.225680592741
+  dps: 2209.2256805927404
   tps: 1542.9722950780297
  }
 }
@@ -221,7 +221,7 @@ dps_results: {
  key: "TestEnhancement-AllItems-EnigmaticSkyflareDiamond"
  value: {
   dps: 2175.6894756725
-  tps: 1522.789099936369
+  tps: 1522.7890999363692
  }
 }
 dps_results: {
@@ -262,7 +262,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-FelstalkerArmor"
  value: {
-  dps: 2092.79188510453
+  dps: 2092.7918851045297
   tps: 1448.827769856915
  }
 }
@@ -283,7 +283,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-ForlornStarflareDiamond"
  value: {
-  dps: 2137.6047833690277
+  dps: 2137.6047833690272
   tps: 1486.4924946856147
  }
 }
@@ -319,7 +319,7 @@ dps_results: {
  key: "TestEnhancement-AllItems-Gladiator'sEarthshaker"
  value: {
   dps: 3071.029713868461
-  tps: 2201.3019376904595
+  tps: 2201.30193769046
  }
 }
 dps_results: {
@@ -333,7 +333,7 @@ dps_results: {
  key: "TestEnhancement-AllItems-ImpassiveSkyflareDiamond"
  value: {
   dps: 2175.6894756725
-  tps: 1522.789099936369
+  tps: 1522.7890999363692
  }
 }
 dps_results: {
@@ -347,7 +347,7 @@ dps_results: {
  key: "TestEnhancement-AllItems-IncisorFragment-37723"
  value: {
   dps: 2228.102188865057
-  tps: 1554.8786857306386
+  tps: 1554.8786857306375
  }
 }
 dps_results: {
@@ -444,7 +444,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-PersistentEarthshatterDiamond"
  value: {
-  dps: 2157.2812467212398
+  dps: 2157.2812467212407
   tps: 1493.86321881718
  }
 }
@@ -494,7 +494,7 @@ dps_results: {
  key: "TestEnhancement-AllItems-ReignoftheDead-47477"
  value: {
   dps: 2336.7625406075413
-  tps: 1673.9744170687463
+  tps: 1673.9744170687468
  }
 }
 dps_results: {
@@ -564,7 +564,7 @@ dps_results: {
  key: "TestEnhancement-AllItems-SkyshatterRegalia"
  value: {
   dps: 2058.903682872903
-  tps: 1430.5484908051599
+  tps: 1430.54849080516
  }
 }
 dps_results: {
@@ -577,7 +577,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-SpellstrikeInfusion"
  value: {
-  dps: 2018.3314533899763
+  dps: 2018.331453389976
   tps: 1397.001350394528
  }
 }
@@ -605,7 +605,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-SwiftStarflareDiamond"
  value: {
-  dps: 2157.2812467212398
+  dps: 2157.2812467212407
   tps: 1493.86321881718
  }
 }
@@ -647,7 +647,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 2200.7791942152426
+  dps: 2200.779194215243
   tps: 1533.8825070668188
  }
 }
@@ -682,7 +682,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-TirelessStarflareDiamond"
  value: {
-  dps: 2137.6047833690277
+  dps: 2137.6047833690272
   tps: 1486.4924946856147
  }
 }
@@ -710,7 +710,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-TrenchantEarthshatterDiamond"
  value: {
-  dps: 2137.6047833690277
+  dps: 2137.6047833690272
   tps: 1486.4924946856147
  }
 }
@@ -774,7 +774,7 @@ dps_results: {
  key: "TestEnhancement-Settings-Orc-P2-Basic-FullBuffs-LongSingleTarget"
  value: {
   dps: 2195.522014375386
-  tps: 1515.3109361903512
+  tps: 1515.3109361903514
  }
 }
 dps_results: {
