@@ -6,9 +6,8 @@ import "github.com/wowsims/wotlk/sim/core"
 // runes and runic power. Specifically this also allows for "refunding" of missed refundable spells.
 type RuneSpell struct {
 	*core.Spell
-	Refundable      bool
-	curSpellOutcome core.HitOutcome
-	dk              *Deathknight
+	Refundable bool
+	dk         *Deathknight
 }
 
 func (rs *RuneSpell) OnOutcome(sim *core.Simulation, outcome core.HitOutcome) {
@@ -23,8 +22,6 @@ func (rs *RuneSpell) OnOutcome(sim *core.Simulation, outcome core.HitOutcome) {
 }
 
 func (rs *RuneSpell) Cast(sim *core.Simulation, target *core.Unit) bool {
-	rs.curSpellOutcome = core.OutcomeEmpty
-
 	result := rs.Spell.Cast(sim, target)
 	if !result {
 		return result

@@ -225,9 +225,11 @@ func (dk *Deathknight) botnAndReaping(sim *core.Simulation, spell *core.Spell) {
 	}
 
 	// if slot == -1 that means we spent a death rune to trigger this.
-	if slot := dk.LastSpentRuneofType(core.RuneKind_Blood); slot >= 0 {
-		dk.SetRuneAtIdxSlotToState(0, slot, core.RuneState_DeathSpent, core.RuneKind_Death)
-	}
+	// Jooper: BoTN should still trigger the same effect if it spent a death rune in the a blood slot.
+	// TODO: Clean this up since its kind of core-like code. Probably with PA refactor.
+	r := dk.LastSpentBloodRune()
+	dk.SetRuneToState(r, core.RuneState_DeathSpent, core.RuneKind_Death)
+	r.BotnOrReaping = true
 }
 
 func (dk *Deathknight) applyThreatOfThassarian() {
