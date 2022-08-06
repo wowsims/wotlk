@@ -157,6 +157,16 @@ message Deathknight {
 			BloodPlague = 1;
 		}
 
+		enum BloodRuneFiller {
+			BloodStrike = 0;
+			BloodBoil = 1;
+		}
+
+		enum StartingPresence {
+			Blood = 0;
+			Unholy = 1;
+		}
+
 		ArmyOfTheDead army_of_the_dead = 1;
 		bool use_death_and_decay = 2;
 		
@@ -170,6 +180,10 @@ message Deathknight {
 		DeathAndDecayPrio death_and_decay_prio = 7;
 
 		bool use_empower_rune_weapon = 8;
+
+		BloodRuneFiller blood_rune_filler = 9;
+
+		StartingPresence starting_presence = 10;
 	}
 	Rotation rotation = 1;
 
