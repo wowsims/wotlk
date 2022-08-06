@@ -34,6 +34,11 @@ export const RogueRotationConfig = {
 			labelTooltip: 'Uses Rupture over Eviscerate when appropriate.',
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
+			fieldName: 'useEnvenom',
+			label: 'Use Envenom',
+			labelTooltip: 'Uses Envenom over Eviscerate when appropriate.',
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
 			fieldName: 'useShiv',
 			label: 'Use Shiv',
 			labelTooltip: 'Uses Shiv in place of the selected builder if Deadly Poison is about to expire. Requires Deadly Poison in the off-hand.',

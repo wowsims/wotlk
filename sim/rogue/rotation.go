@@ -22,26 +22,41 @@ func (rogue *Rogue) OnGCDReady(sim *core.Simulation) {
 	rogue.doRotation(sim)
 }
 
+func (rogue *Rogue) doAssassinationRotation(sim *core.Simulation) {
+	switch rogue.plan {
+	case PlanNone:
+		rogue.doAssassinationNone(sim)
+	case PlanSliceASAP:
+		rogue.doPlanSliceASAP(sim)
+	case PlanOpener:
+		rogue.doPlanSliceASAP(sim)
+	}
+}
+
 func (rogue *Rogue) doRotation(sim *core.Simulation) {
 	if rogue.KillingSpreeAura.IsActive() {
 		rogue.DoNothing()
 		return
 	}
-	switch rogue.plan {
-	case PlanNone:
-		rogue.doPlanNone(sim)
-	case PlanSliceASAP:
-		rogue.doPlanSliceASAP(sim)
-	case PlanMaximalSlice:
-		rogue.doPlanMaximalSlice(sim)
-	case PlanExposeArmor:
-		rogue.doPlanExposeArmor(sim)
-	case PlanFillBeforeEA:
-		rogue.doPlanFillBeforeEA(sim)
-	case PlanFillBeforeSND:
-		rogue.doPlanFillBeforeSND(sim)
-	case PlanOpener:
-		rogue.doPlanOpener(sim)
+	if rogue.Rotation.UseEnvenom {
+		rogue.doAssassinationRotation(sim)
+	} else {
+		switch rogue.plan {
+		case PlanNone:
+			rogue.doPlanNone(sim)
+		case PlanSliceASAP:
+			rogue.doPlanSliceASAP(sim)
+		case PlanMaximalSlice:
+			rogue.doPlanMaximalSlice(sim)
+		case PlanExposeArmor:
+			rogue.doPlanExposeArmor(sim)
+		case PlanFillBeforeEA:
+			rogue.doPlanFillBeforeEA(sim)
+		case PlanFillBeforeSND:
+			rogue.doPlanFillBeforeSND(sim)
+		case PlanOpener:
+			rogue.doPlanOpener(sim)
+		}
 	}
 
 	// If rogue decided to not use GCD, mark exsplicitly this is ok.
@@ -263,6 +278,39 @@ func (rogue *Rogue) doPlanFillBeforeSND(sim *core.Simulation) {
 	}
 }
 
+func (rogue *Rogue) doAssassinationNone(sim *core.Simulation) {
+	energy := rogue.CurrentEnergy()
+	if energy < 15 {
+		return
+	}
+	comboPoints := rogue.ComboPoints()
+	sndTimeRemaining := rogue.SliceAndDiceAura.RemainingDuration(sim)
+	if sndTimeRemaining <= 0 {
+		rogue.plan = PlanSliceASAP
+		return
+	}
+	hungerTimeRemaining := rogue.HungerForBloodAura.RemainingDuration(sim)
+	if hungerTimeRemaining < time.Second*2 {
+		rogue.HungerForBlood.Cast(sim, nil)
+		rogue.plan = PlanNone
+		return
+	}
+	envenomTimeRemaining := rogue.GetAura("Envenom").RemainingDuration(sim)
+	if envenomTimeRemaining <= time.Second*1 && comboPoints >= rogue.Rotation.MinComboPointsForDamageFinisher {
+		if energy >= rogue.Envenom[comboPoints].DefaultCast.Cost {
+			rogue.Envenom[comboPoints].Cast(sim, rogue.CurrentTarget)
+			rogue.plan = PlanNone
+			return
+		}
+	}
+	if comboPoints <= 3 {
+		if energy >= rogue.Builder.BaseCost {
+			rogue.Builder.Cast(sim, rogue.CurrentTarget)
+			rogue.plan = PlanNone
+		}
+	}
+}
+
 func (rogue *Rogue) doPlanNone(sim *core.Simulation) {
 	energy := rogue.CurrentEnergy()
 	if energy < 25 {
@@ -351,7 +399,11 @@ func (rogue *Rogue) tryUseDamageFinisher(sim *core.Simulation, energy float64, c
 		}
 		return true
 	}
-
+	if rogue.Rotation.UseEnvenom &&
+		energy >= rogue.Envenom[comboPoints].DefaultCast.Cost {
+		rogue.Envenom[comboPoints].Cast(sim, rogue.CurrentTarget)
+		return true
+	}
 	if energy >= rogue.Eviscerate[comboPoints].DefaultCast.Cost || rogue.DeathmantleProcAura.IsActive() {
 		rogue.Eviscerate[comboPoints].Cast(sim, rogue.CurrentTarget)
 		return true

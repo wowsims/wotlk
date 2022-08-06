@@ -155,6 +155,9 @@ message Rogue {
 		// Allows use of rupture when sensible.
 		bool use_rupture = 2;
 
+		// Allows use of envenom when sensible
+		bool use_envenom = 6;
+
 		// Shiv instead of regular builder if deadly poison is about to fall.
 		bool use_shiv = 5;
 
