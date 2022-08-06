@@ -25,7 +25,16 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 			cssClass: 'retribution-paladin-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"<p>Work in progress</p>"
+				"<h3>Some glyphs that are not notably productive DPS-wise are unimplemented</h3>",
+				"<p>Unimplemented Major Glyph: Glyph of Holy Wrath</p>",
+				"<p>Unimplemented Major Glyph: Glyph of Hammer of Wrath</p>",
+				"<p>Unimplemented Major Glyph: Glyph of Divine Storm</p>",
+				"<p>Unimplemented Major Glyph: Glyph of Divine Plea</p>",
+				"<p>Unimplemented Major Glyph: Glyph of Seal of Command</p>",
+				"<p>Unimplemented Major Glyph: Glyph of Crusader Strike</p>",
+				"<p>Unimplemented Major Glyph: Glyph of Divinity</p>",
+				"<p>Unimplemented Minor Glyph: Blessing of Kings</p>",
+				"<p>Unimplemented Minor Glyph: Blessing of Might</p>",
 			],
 
 			// All stats for which EP should be calculated.
@@ -77,7 +86,7 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P4_PRESET.gear,
+				gear: Presets.P1_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatStrength]: 2.42,
@@ -107,18 +116,27 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
 					bloodlust: true,
 					manaSpringTotem: TristateEffect.TristateEffectRegular,
-					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
-					windfuryTotem: TristateEffect.TristateEffectImproved,
+					hornOfWinter: true,
 					battleShout: TristateEffect.TristateEffectImproved,
-					unleashedRage: true,
+					sanctifiedRetribution: true,
+					swiftRetribution: true,
+					elementalOath: true,
+					rampage: true,
+					trueshotAura: true,
+					icyTalons: true,
+					totemOfWrath: true,
+					wrathOfAirTotem: true,
 				}),
 				partyBuffs: PartyBuffs.create({
 				}),
 				individualBuffs: IndividualBuffs.create({
+					judgementsOfTheWise: true,
 					blessingOfKings: true,
 					blessingOfMight: TristateEffect.TristateEffectImproved,
 				}),
 				debuffs: Debuffs.create({
+					shadowMastery: true,
+					totemOfWrath: true,
 					judgementOfWisdom: true,
 					misery: true,
 					curseOfElements: true,
