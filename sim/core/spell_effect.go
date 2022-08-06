@@ -294,6 +294,10 @@ func (spellEffect *SpellEffect) applyAttackerModifiers(sim *Simulation, spell *S
 
 // snapshotAttackModifiers will calculate the total %dmg to add from attacker bonuses.
 func (spellEffect *SpellEffect) snapshotAttackModifiers(spell *Spell) float64 {
+	if spell.Flags.Matches(SpellFlagIgnoreAttackerModifiers) {
+		return 1.0
+	}
+
 	attacker := spell.Unit
 
 	multiplier := attacker.PseudoStats.DamageDealtMultiplier

@@ -8,22 +8,21 @@ import (
 )
 
 func (mage *Mage) registerScorchSpell() {
-	baseCost := 180.0
+	baseCost := .08 * mage.BaseMana
 
 	effect := core.SpellEffect{
 		ProcMask:            core.ProcMaskSpellDamage,
 		BonusSpellHitRating: 0,
 
 		BonusSpellCritRating: 0 +
-			float64(mage.Talents.Incineration)*2*core.CritRatingPerCritChance +
-			float64(mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
-			float64(mage.Talents.Pyromaniac)*1*core.CritRatingPerCritChance,
+			float64(mage.Talents.Incineration+mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
+			float64(mage.Talents.ImprovedScorch)*1*core.CritRatingPerCritChance,
 
-		DamageMultiplier: mage.spellDamageMultiplier * (1 + 0.02*float64(mage.Talents.FirePower)),
-		ThreatMultiplier: 1 - 0.05*float64(mage.Talents.BurningSoul),
+		DamageMultiplier: mage.spellDamageMultiplier * (1 + 0.02*float64(mage.Talents.FirePower+mage.Talents.SpellImpact)),
+		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
-		BaseDamage:     core.BaseDamageConfigMagic(305, 361, 1.5/3.5),
-		OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, 0.25*float64(mage.Talents.SpellPower))),
+		BaseDamage:     core.BaseDamageConfigMagic(382, 451, 1.5/3.5),
+		OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, mage.bonusCritDamage)),
 	}
 
 	if mage.Talents.ImprovedScorch > 0 {
@@ -47,7 +46,7 @@ func (mage *Mage) registerScorchSpell() {
 	}
 
 	mage.Scorch = mage.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 27074},
+		ActionID:    core.ActionID{SpellID: 42859},
 		SpellSchool: core.SpellSchoolFire,
 		Flags:       SpellFlagMage,
 
@@ -56,7 +55,7 @@ func (mage *Mage) registerScorchSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost * (1 - 0.01*float64(mage.Talents.Pyromaniac)),
+				Cost:     baseCost,
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond * 1500,
 			},

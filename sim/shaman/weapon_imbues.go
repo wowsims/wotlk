@@ -9,10 +9,6 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-// TODO: Implement all wotlk weapon imbues
-//  Include `Elemental Weapons` talent when implementing
-//  Include t4 bonus to flametongue weapon
-
 var TotemOfTheAstralWinds int32 = 27815
 var TotemOfSplintering int32 = 40710
 
@@ -118,10 +114,10 @@ func (shaman *Shaman) ApplyWindfuryImbue(mh bool, oh bool) {
 func (shaman *Shaman) newFlametongueImbueSpell(isMH bool) *core.Spell {
 	effect := core.SpellEffect{
 		ProcMask:            core.ProcMaskEmpty,
-		BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * 2 * core.SpellHitRatingPerHitChance,
+		BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
 		DamageMultiplier:    1,
 		ThreatMultiplier:    1, // TODO: add spirit weapons modifier when that's fixed
-		OutcomeApplier:      shaman.OutcomeFuncMagicHitAndCrit(shaman.DefaultSpellCritMultiplier()),
+		OutcomeApplier:      shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
 	}
 
 	if isMH {
@@ -206,13 +202,13 @@ func (shaman *Shaman) newFrostbrandImbueSpell(isMH bool) *core.Spell {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:            core.ProcMaskEmpty,
-			BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * 2 * core.SpellHitRatingPerHitChance,
+			BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
 
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1, // TODO: come back here and set spirit weapons modifier when that bug gets fixed
 
 			BaseDamage:     core.BaseDamageConfigMagic(530, 530, 0.1),
-			OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(shaman.DefaultSpellCritMultiplier()),
+			OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
 		}),
 	})
 }

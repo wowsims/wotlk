@@ -2,6 +2,7 @@ package paladin
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -102,6 +103,12 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(baseEffect),
 	})
 
+	var glyphManaMetrics *core.ResourceMetrics
+	glyphManaGain := .08 * paladin.BaseMana
+	if paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfSealOfCommand) {
+		glyphManaMetrics = paladin.NewManaMetrics(core.ActionID{ItemID: 41094})
+	}
+
 	// Seal of Command aura.
 	auraActionID := core.ActionID{SpellID: 20375}
 	paladin.SealOfCommandAura = paladin.RegisterAura(core.Aura{
@@ -111,6 +118,10 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 		Duration: SealDuration,
 
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if glyphManaMetrics != nil && spell.Flags.Matches(SpellFlagPrimaryJudgement) {
+				paladin.AddMana(sim, glyphManaGain, glyphManaMetrics, false)
+			}
+
 			// Don't proc on misses or our own procs.
 			if !spellEffect.Landed() || spell.SpellID == onJudgementProc.SpellID || spell.SpellID == onSpecialOrSwingProc.SpellID {
 				return

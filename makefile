@@ -23,7 +23,8 @@ HTML_INDECIES := ui/balance_druid/index.html \
 				 ui/protection_warrior/index.html \
 				 ui/deathknight/index.html \
 				 ui/tank_deathknight/index.html \
-				 ui/raid/index.html
+				 ui/raid/index.html \
+				 ui/detailed_results/index.html
 
 $(OUT_DIR)/.dirstamp: \
   $(OUT_DIR)/lib.wasm \
@@ -39,6 +40,7 @@ $(OUT_DIR)/bundle/.dirstamp: \
   node_modules \
   tsconfig.json \
   ui/core/index.ts \
+  ui/core/proto/api.ts \
   $(OUT_DIR)/net_worker.js \
   $(OUT_DIR)/sim_worker.js
 	npx vite build
@@ -69,7 +71,8 @@ clean:
 	  binary_dist \
 	  ui/core/index.ts \
 	  ui/core/proto/*.ts \
-	  node_modules 
+	  node_modules \
+	  $(HTML_INDECIES)
 	find . -name "*.results.tmp" -type f -delete
 
 
@@ -79,7 +82,8 @@ ui/core/proto/api.ts: proto/*.proto node_modules
 	npx protoc --ts_out ui/core/proto --proto_path proto proto/ui.proto
 
 ui/%/index.html: ui/index_template.html
-	cat ui/index_template.html | sed 's/@@TITLE@@/WOTLK $* Simulator/g' > $@
+	$(eval title := $(shell echo $(shell basename $(@D)) | sed -r 's/(^|_)([a-z])/\U \2/g' | cut -c 2-))
+	cat ui/index_template.html | sed 's/@@TITLE@@/WOTLK $(title) Simulator/g' > $@
 
 package-lock.json:
 	npm install
@@ -193,7 +197,7 @@ setup:
 
 # Host a local server, for dev testing
 .PHONY: host
-host: $(OUT_DIR) node_modules
+host: $(OUT_DIR)/.dirstamp node_modules
 	# Intentionally serve one level up, so the local site has 'wotlk' as the first
 	# directory just like github pages.
 	npx http-server $(OUT_DIR)/..

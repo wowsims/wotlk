@@ -10,6 +10,7 @@ import { CooldownsPicker } from './components/cooldowns_picker.js';
 import { Debuffs } from './proto/common.js';
 import { DetailedResults } from './components/detailed_results.js';
 
+import { CustomRotationPicker } from './components/custom_rotation_picker.js';
 import { Encounter as EncounterProto } from './proto/common.js';
 import { Encounter } from './encounter.js';
 import { EncounterPicker, EncounterPickerConfig } from './components/encounter_picker.js';
@@ -101,7 +102,8 @@ const SAVED_TALENTS_STORAGE_KEY = '__savedTalents__';
 export type InputConfig<ModObject> = (
 	InputHelpers.TypedBooleanPickerConfig<ModObject> |
 	InputHelpers.TypedNumberPickerConfig<ModObject> |
-	InputHelpers.TypedEnumPickerConfig<ModObject>);
+	InputHelpers.TypedEnumPickerConfig<ModObject> |
+	InputHelpers.TypedCustomRotationPickerConfig<any, any>);
 
 export type IconInputConfig<ModObject, T> = (
 	InputHelpers.TypedIconPickerConfig<ModObject, T> |
@@ -585,6 +587,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			{ item: IconInputs.Innervate, stats: [Stat.StatMP5] },
 			{ item: IconInputs.PowerInfusion, stats: [Stat.StatMP5, Stat.StatSpellPower] },
 			{ item: IconInputs.TricksOfTheTrade, stats: [Stat.StatAttackPower, Stat.StatSpellPower] },
+			{ item: IconInputs.UnholyFrenzy, stats: [Stat.StatAttackPower] },
 		] as Array<StatOption<IconPickerConfig<Player<any>, any>>>);
 		if (miscBuffOptions.length > 0) {
 			new MultiIconPicker(buffsSection, this.player, {
@@ -622,6 +625,8 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 		const miscDebuffOptions = this.splitRelevantOptions([
 			{ item: IconInputs.JudgementOfLight, stats: [Stat.StatStamina] },
+			{ item: IconInputs.ShatteringThrow, stats: [Stat.StatArmorPenetration] },
+			{ item: IconInputs.SporeCloud, stats: [Stat.StatArmorPenetration] },
 			{ item: IconInputs.GiftOfArthas, stats: [Stat.StatAttackPower] },
 		] as Array<StatOption<IconPickerConfig<Player<any>, any>>>);
 		if (miscDebuffOptions.length > 0) {
@@ -699,6 +704,26 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			new IconEnumPicker(elem, this.player, IconInputs.makeGuardianElixirsInput(guardianElixirOptions));
 		}
 
+		const foodOptions = this.splitRelevantOptions([
+			{ item: Food.FoodFishFeast, stats: [Stat.StatStamina, Stat.StatAttackPower, Stat.StatSpellPower] },
+			{ item: Food.FoodGreatFeast, stats: [Stat.StatStamina, Stat.StatAttackPower, Stat.StatSpellPower] },
+			{ item: Food.FoodBlackenedDragonfin, stats: [Stat.StatAgility] },
+			{ item: Food.FoodDragonfinFilet, stats: [Stat.StatStrength] },
+			{ item: Food.FoodCuttlesteak, stats: [Stat.StatSpirit] },
+			{ item: Food.FoodMegaMammothMeal, stats: [Stat.StatAttackPower] },
+			{ item: Food.FoodHeartyRhino, stats: [Stat.StatArmorPenetration] },
+			{ item: Food.FoodRhinoliciousWormsteak, stats: [Stat.StatExpertise] },
+			{ item: Food.FoodFirecrackerSalmon, stats: [Stat.StatSpellPower] },
+			{ item: Food.FoodSnapperExtreme, stats: [Stat.StatMeleeHit, Stat.StatSpellHit] },
+			{ item: Food.FoodSpicedWormBurger, stats: [Stat.StatMeleeCrit, Stat.StatSpellCrit] },
+			{ item: Food.FoodImperialMantaSteak, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
+			{ item: Food.FoodMightyRhinoDogs, stats: [Stat.StatMP5] },
+		]);
+		if (foodOptions.length) {
+			const elem = this.rootElem.getElementsByClassName('consumes-food')[0] as HTMLElement;
+			new IconEnumPicker(elem, this.player, IconInputs.makeFoodInput(foodOptions));
+		}
+
 		const tradeConsumesElem = this.rootElem.getElementsByClassName('consumes-trade')[0] as HTMLElement;
 		//tradeConsumesElem.parentElement!.style.display = 'none';
 		makeIconInput(tradeConsumesElem, IconInputs.ThermalSapper);
@@ -738,6 +763,8 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 					new BooleanPicker(sectionElem, this.player, inputConfig);
 				} else if (inputConfig.type == 'enum') {
 					new EnumPicker(sectionElem, this.player, inputConfig);
+				} else if (inputConfig.type == 'customRotation') {
+					new CustomRotationPicker(sectionElem, this.player, inputConfig);
 				}
 			});
 		};

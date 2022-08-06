@@ -12,7 +12,7 @@ func (paladin *Paladin) registerCrusaderStrikeSpell() {
 	baseCost := paladin.BaseMana * 0.05
 
 	baseModifiers := Multiplicative{
-		Additive{paladin.getTalentSanctityOfBattleBonus(), paladin.getTalentTheArtOfWarBonus()},
+		Additive{paladin.getTalentSanctityOfBattleBonus(), paladin.getTalentTheArtOfWarBonus(), paladin.getItemSetGladiatorsVindicationBonusGloves()},
 	}
 	baseMultiplier := baseModifiers.Get()
 
@@ -26,7 +26,9 @@ func (paladin *Paladin) registerCrusaderStrikeSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.02*float64(paladin.Talents.Benediction)),
+				Cost: baseCost *
+					(1 - 0.02*float64(paladin.Talents.Benediction)) *
+					core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfCrusaderStrike), 0.8, 1),
 				GCD:  core.GCDDefault,
 			},
 			IgnoreHaste: true, // cs is on phys gcd, which cannot be hasted

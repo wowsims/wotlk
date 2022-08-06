@@ -8,41 +8,38 @@ import (
 )
 
 func (mage *Mage) registerFrostboltSpell() {
-	baseCost := 330.0
+	baseCost := .11 * mage.BaseMana
 
 	mage.Frostbolt = mage.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 27072},
+		ActionID:    core.ActionID{SpellID: 42842},
 		SpellSchool: core.SpellSchoolFrost,
-		Flags:       SpellFlagMage | core.SpellFlagBinary,
+		Flags:       SpellFlagMage | core.SpellFlagBinary | BarrageSpells,
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost *
-					(1 - 0.05*float64(mage.Talents.FrostChanneling)),
+				Cost: baseCost,
 
 				GCD:      core.GCDDefault,
-				CastTime: time.Second*3 - time.Millisecond*100*time.Duration(mage.Talents.ImprovedFrostbolt),
+				CastTime: time.Second*3 - time.Millisecond*100*time.Duration(mage.Talents.ImprovedFrostbolt+mage.Talents.EmpoweredFrostbolt),
 			},
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskSpellDamage,
-			// Frostbolt get 2x bonus from Elemental Precision because it's a binary spell.
 			BonusSpellHitRating:  0,
-			BonusSpellCritRating: float64(mage.Talents.EmpoweredFrostbolt) * 1 * core.CritRatingPerCritChance,
+			BonusSpellCritRating: 0 +
+				core.TernaryFloat64(mage.MageTier.t9_4, 5 * core.CritRatingPerCritChance, 0),
 
 			DamageMultiplier: mage.spellDamageMultiplier *
-				(1 + 0.02*float64(mage.Talents.PiercingIce)) *
-				(1 + 0.01*float64(mage.Talents.ArcticWinds)) *
-				core.TernaryFloat64(mage.HasSetBonus(ItemSetTempestRegalia, 4), 1.05, 1),
+				(1 + .01*float64(mage.Talents.ChilledToTheBone)),
 
 			ThreatMultiplier: 1 - (0.1/3)*float64(mage.Talents.FrostChanneling),
 
-			BaseDamage:     core.BaseDamageConfigMagic(600, 647, (3.0/3.5)*0.95+0.02*float64(mage.Talents.EmpoweredFrostbolt)),
-			OutcomeApplier: mage.OutcomeFuncMagicHitAndCritBinary(mage.SpellCritMultiplier(1, 0.25*float64(mage.Talents.SpellPower)+0.2*float64(mage.Talents.IceShards))),
+			BaseDamage:     core.BaseDamageConfigMagic(799, 861, (3.0/3.5)*0.95+0.05*float64(mage.Talents.EmpoweredFrostbolt)),
+			OutcomeApplier: mage.OutcomeFuncMagicHitAndCritBinary(mage.SpellCritMultiplier(1, 0.25*float64(mage.Talents.SpellPower)+float64(mage.Talents.IceShards)/3)),
 		}),
 	})
 }

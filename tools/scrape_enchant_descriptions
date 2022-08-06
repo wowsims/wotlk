@@ -47,7 +47,7 @@ grep '^\s*{' |
 		fi
 
 		printf '\n  "%d": "%s",' "$id" "$effect"
-		sleep 2 # Avoid potential rate-limting
+		sleep 1 # Avoid potential rate-limting
 	done |
 	sed '$s/\,//g'
 printf '\n}\n'

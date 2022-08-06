@@ -19,21 +19,30 @@ export const RetributionPaladinRotationExoSlackConfig = InputHelpers.makeRotatio
 	fieldName: "exoSlack",
 	label: "Exo Slack (MS)",
 	labelTooltip: "Amount of extra time in MS to give main abilities to come off cooldown before using Exorcism on single target",
+	positive: true,
 })
 
 export const RetributionPaladinRotationConsSlackConfig = InputHelpers.makeRotationNumberInput<Spec.SpecRetributionPaladin>({
 	fieldName: "consSlack",
 	label: "Cons Slack (MS)",
 	labelTooltip: "Amount of extra time in MS to give main abilities to come off cooldown before using Consecration on single target",
+	positive: true,
 })
 
 export const RetributionPaladinRotationDivinePleaPercentageConfig = InputHelpers.makeRotationNumberInput<Spec.SpecRetributionPaladin>({
 	fieldName: "divinePleaPercentage",
 	label: "Divine Plea Mana Threshold %",
 	labelTooltip: "% of max mana left before beginning to use Divine Plea",
-	percent: true
+	percent: true,
+	positive: true,
 })
 
+export const RetributionPaladinRotationHolyWrathConfig = InputHelpers.makeRotationNumberInput<Spec.SpecRetributionPaladin>({
+	fieldName: "holyWrathThreshold",
+	label: "Holy Wrath Threshold",
+	labelTooltip: "Minimum number of Demon and Undead units before Holy Wrath is considered viable to add to an AOE rotation.",
+	positive: true,
+})
 
 export const AuraSelection = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecRetributionPaladin, PaladinAura>({
 	fieldName: 'aura',

@@ -7,16 +7,19 @@ import { Input, InputConfig } from './input.js';
  */
 export interface NumberPickerConfig<ModObject> extends InputConfig<ModObject, number> {
 	float?: boolean,
+	positive?: boolean,
 }
 
 // UI element for picking an arbitrary number field.
 export class NumberPicker<ModObject> extends Input<ModObject, number> {
 	private readonly inputElem: HTMLInputElement;
 	private float: boolean;
+	private positive: boolean;
 
 	constructor(parent: HTMLElement, modObject: ModObject, config: NumberPickerConfig<ModObject>) {
 		super(parent, 'number-picker-root', modObject, config);
 		this.float = config.float || false;
+		this.positive = config.positive || false;
 
 		this.inputElem = document.createElement('input');
 		if (this.float) {
@@ -24,6 +27,12 @@ export class NumberPicker<ModObject> extends Input<ModObject, number> {
 			this.inputElem.inputMode = 'numeric';
 		} else {
 			this.inputElem.type = 'number';
+			if (this.positive) {
+				this.inputElem.min = "0"
+				this.inputElem.onchange = e => {
+					this.inputElem.value = Math.abs(parseInt(this.inputElem.value)).toString()
+				}
+			}
 		}
 		this.inputElem.classList.add('number-picker-input');
 		this.rootElem.appendChild(this.inputElem);

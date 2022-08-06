@@ -9,6 +9,9 @@
 	border: 1px solid var(--theme-color-primary);
 	margin: 5px;
 }
+.list-picker-item-container.inline {
+	display: flex;
+}
 
 .list-picker-item-header {
 	display: flex;

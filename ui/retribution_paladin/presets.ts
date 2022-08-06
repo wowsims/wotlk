@@ -65,6 +65,7 @@ export const DefaultRotation = RetributionPaladinRotation.create({
 	exoSlack: 500,
 	consSlack: 500,
 	divinePleaPercentage: 0.75,
+	holyWrathThreshold: 4
 });
 
 export const DefaultOptions = RetributionPaladinOptions.create({
@@ -75,10 +76,10 @@ export const DefaultOptions = RetributionPaladinOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	defaultPotion: Potions.HastePotion,
+	defaultPotion: Potions.PotionOfSpeed,
 	defaultConjured: Conjured.ConjuredDarkRune,
-	flask: Flask.FlaskOfRelentlessAssault,
-	food: Food.FoodRoastedClefthoof,
+	flask: Flask.FlaskOfEndlessRage,
+	food: Food.FoodFishFeast,
 });
 
 // Maybe use this later if I can figure out the interactive tooltips from tippy

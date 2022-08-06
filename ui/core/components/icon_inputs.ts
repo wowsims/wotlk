@@ -157,6 +157,7 @@ export const ManaTideTotem = makeMultistatePartyBuffInput(ActionId.fromSpellId(1
 export const Innervate = makeMultistateIndividualBuffInput(ActionId.fromSpellId(29166), 11, 'innervates');
 export const PowerInfusion = makeMultistateIndividualBuffInput(ActionId.fromSpellId(10060), 11, 'powerInfusions');
 export const TricksOfTheTrade = makeMultistateIndividualBuffInput(ActionId.fromSpellId(57933), 20, 'tricksOfTheTrades');
+export const UnholyFrenzy = makeMultistateIndividualBuffInput(ActionId.fromSpellId(49016), 11, 'unholyFrenzy');
 
 // Debuffs
 
@@ -173,6 +174,7 @@ export const MinorArmorDebuff = InputHelpers.makeMultiIconInput([
 ], 'Minor Ar');
 
 export const AttackPowerDebuff = InputHelpers.makeMultiIconInput([
+	makeBooleanDebuffInput(ActionId.fromSpellId(26016), 'vindication'),
 	makeTristateDebuffInput(ActionId.fromSpellId(47437), ActionId.fromSpellId(12879), 'demoralizingShout'),
 	makeTristateDebuffInput(ActionId.fromSpellId(48560), ActionId.fromSpellId(16862), 'demoralizingRoar'),
 	makeTristateDebuffInput(ActionId.fromSpellId(50511), ActionId.fromSpellId(18180), 'curseOfWeakness'),
@@ -227,6 +229,8 @@ export const SpellDamageDebuff = InputHelpers.makeMultiIconInput([
 export const HuntersMark = withLabel(makeQuadstateDebuffInput(ActionId.fromSpellId(53338), ActionId.fromSpellId(19423), ActionId.fromItemId(42907), 'huntersMark'), 'Mark');
 export const JudgementOfWisdom = withLabel(makeBooleanDebuffInput(ActionId.fromSpellId(53408), 'judgementOfWisdom'), 'JoW');
 export const JudgementOfLight = makeBooleanDebuffInput(ActionId.fromSpellId(20271), 'judgementOfLight');
+export const ShatteringThrow = makeMultistateIndividualBuffInput(ActionId.fromSpellId(64382), 20, 'shatteringThrows');
+export const SporeCloud = makeBooleanDebuffInput(ActionId.fromSpellId(53598), 'sporeCloud');
 export const GiftOfArthas = makeBooleanDebuffInput(ActionId.fromSpellId(11374), 'giftOfArthas');
 
 // Consumes
@@ -366,7 +370,6 @@ export const makeConjuredInput = makeConsumeInputFactory('defaultConjured', [
 	{ actionId: ActionId.fromItemId(12662), value: Conjured.ConjuredDarkRune },
 	{ actionId: ActionId.fromItemId(22788), value: Conjured.ConjuredFlameCap },
 	{ actionId: ActionId.fromItemId(22105), value: Conjured.ConjuredHealthstone },
-	{ actionId: ActionId.fromItemId(22044), value: Conjured.ConjuredMageManaEmerald },
 	{ actionId: ActionId.fromItemId(7676), value: Conjured.ConjuredRogueThistleTea },
 ] as Array<IconEnumValueConfig<Player<any>, Conjured>>);
 

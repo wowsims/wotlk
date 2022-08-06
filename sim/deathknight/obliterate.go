@@ -104,9 +104,9 @@ func (dk *Deathknight) registerObliterateSpell() {
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				dk.threatOfThassarianProc(sim, spellEffect, dk.ObliterateMhHit, dk.ObliterateOhHit)
-				dk.LastCastOutcome = ObliterateMHOutcome
+				dk.LastOutcome = spellEffect.Outcome
 			},
-		}, true),
+		}, false),
 	})
 }
 

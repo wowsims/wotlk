@@ -112,11 +112,7 @@ var castersWithElemental = &proto.Party{
 						Armor: proto.Mage_Options_MageArmor,
 					},
 					Rotation: &proto.Mage_Rotation{
-						Arcane: &proto.Mage_Rotation_ArcaneRotation{
-							ArcaneBlastsBetweenFillers: 3,
-							StartRegenRotationPercent:  0.2,
-							StopRegenRotationPercent:   0.5,
-						},
+						MinBlastBeforeMissiles: 4,
 					},
 				},
 			},
@@ -200,11 +196,7 @@ var castersWithResto = &proto.Party{
 						Armor: proto.Mage_Options_MageArmor,
 					},
 					Rotation: &proto.Mage_Rotation{
-						Arcane: &proto.Mage_Rotation_ArcaneRotation{
-							ArcaneBlastsBetweenFillers: 3,
-							StartRegenRotationPercent:  0.2,
-							StopRegenRotationPercent:   0.5,
-						},
+						MinBlastBeforeMissiles: 4,
 					},
 				},
 			},
@@ -235,7 +227,7 @@ func BenchmarkSimulate(b *testing.B) {
 							Name:      "Enhancement Shaman 1",
 							Race:      proto.Race_RaceTroll,
 							Class:     proto.Class_ClassShaman,
-							Equipment: enhancement.Phase2Gear,
+							Equipment: enhancement.Phase1Gear,
 							Spec: &proto.Player_EnhancementShaman{
 								EnhancementShaman: &proto.EnhancementShaman{
 									Talents: enhancement.StandardTalents,

@@ -138,6 +138,7 @@ var mp5Regex = regexp.MustCompile("Restores ([0-9]+) mana per 5 sec\\.")
 var attackPowerRegex = regexp.MustCompile("Increases attack power by ([0-9]+)\\.")
 var rangedAttackPowerRegex = regexp.MustCompile("Increases ranged attack power by ([0-9]+)\\.")
 var armorPenetrationRegex = regexp.MustCompile("Your attacks ignore ([0-9]+) of your opponent's armor\\.")
+var armorPenetrationRegex2 = regexp.MustCompile("Increases your armor penetration rating by <!--rtg44-->([0-9]+)")
 var expertiseRegex = regexp.MustCompile("Increases your expertise rating by <!--rtg37-->([0-9]+)\\.")
 var weaponDamageRegex = regexp.MustCompile("<!--dmg-->([0-9]+) - ([0-9]+)")
 var weaponDamageRegex2 = regexp.MustCompile("<!--dmg-->([0-9]+) Damage")
@@ -185,7 +186,7 @@ func (item WowheadItemResponse) GetStats() Stats {
 		proto.Stat_StatMP5:               float64(item.GetIntValue(mp5Regex)),
 		proto.Stat_StatAttackPower:       float64(item.GetIntValue(attackPowerRegex)),
 		proto.Stat_StatRangedAttackPower: float64(item.GetIntValue(attackPowerRegex) + item.GetIntValue(rangedAttackPowerRegex)),
-		proto.Stat_StatArmorPenetration:  float64(item.GetIntValue(armorPenetrationRegex)),
+		proto.Stat_StatArmorPenetration:  float64(item.GetIntValue(armorPenetrationRegex) + item.GetIntValue(armorPenetrationRegex2)),
 		proto.Stat_StatExpertise:         float64(item.GetIntValue(expertiseRegex)),
 		proto.Stat_StatDefense:           float64(item.GetIntValue(defenseRegex) + item.GetIntValue(defenseRegex2)),
 		proto.Stat_StatBlock:             float64(item.GetIntValue(blockRegex) + item.GetIntValue(blockRegex2)),
@@ -535,7 +536,7 @@ var gemSocketColorPatterns = map[proto.GemColor]*regexp.Regexp{
 	proto.GemColor_GemColorOrange:    regexp.MustCompile("Matches a ((Yellow)|(Red)) or ((Yellow)|(Red)) (S|s)ocket\\."),
 	proto.GemColor_GemColorPurple:    regexp.MustCompile("Matches a ((Blue)|(Red)) or ((Blue)|(Red)) (S|s)ocket\\."),
 	proto.GemColor_GemColorGreen:     regexp.MustCompile("Matches a ((Yellow)|(Blue)) or ((Yellow)|(Blue)) (S|s)ocket\\."),
-	proto.GemColor_GemColorPrismatic: regexp.MustCompile("(Matches any socket)|(Matches a Red, Yellow or Blue (S|s)ocket)\\."),
+	proto.GemColor_GemColorPrismatic: regexp.MustCompile("(Matches any (S|s)ocket)|(Matches a Red, Yellow or Blue (S|s)ocket)\\."),
 }
 
 func (item WowheadItemResponse) GetSocketColor() proto.GemColor {
@@ -548,11 +549,11 @@ func (item WowheadItemResponse) GetSocketColor() proto.GemColor {
 	return proto.GemColor_GemColorUnknown
 }
 
-var strengthGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Strength"), regexp.MustCompile("\\+([0-9]+) All Stats")}
-var agilityGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Agility"), regexp.MustCompile("\\+([0-9]+) All Stats")}
-var staminaGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Stamina"), regexp.MustCompile("\\+([0-9]+) All Stats")}
-var intellectGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Intellect"), regexp.MustCompile("\\+([0-9]+) All Stats")}
-var spiritGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Spirit"), regexp.MustCompile("\\+([0-9]+) All Stats")}
+var strengthGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Strength"), regexp.MustCompile("\\+([0-9]+) (to )?All Stats")}
+var agilityGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Agility"), regexp.MustCompile("\\+([0-9]+) (to )?All Stats")}
+var staminaGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Stamina"), regexp.MustCompile("\\+([0-9]+) (to )?All Stats")}
+var intellectGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Intellect"), regexp.MustCompile("\\+([0-9]+) (to )?All Stats")}
+var spiritGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Spirit"), regexp.MustCompile("\\+([0-9]+) (to )?All Stats")}
 var spellPowerGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Spell Power")}
 var hitGemStatRegexes = []*regexp.Regexp{regexp.MustCompile("\\+([0-9]+) Hit Rating")}
 var critGemStatRegexes = []*regexp.Regexp{

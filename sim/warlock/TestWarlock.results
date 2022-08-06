@@ -87,8 +87,8 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-AllItems-CorruptorRaiment"
  value: {
-  dps: 5256.157502802353
-  tps: 4667.5995623449035
+  dps: 5264.582759047351
+  tps: 4678.111318402391
  }
 }
 dps_results: {
@@ -206,15 +206,15 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-AllItems-MaleficRaiment"
  value: {
-  dps: 5012.08816783521
-  tps: 4427.950719616262
+  dps: 5010.827874675111
+  tps: 4427.859013613827
  }
 }
 dps_results: {
  key: "TestWarlock-AllItems-OblivionRaiment"
  value: {
-  dps: 5061.727500328879
-  tps: 4495.311527011686
+  dps: 5050.965739771785
+  tps: 4483.965547819341
  }
 }
 dps_results: {
@@ -339,29 +339,29 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-AllItems-VoidheartRaiment"
  value: {
-  dps: 5202.168720924402
-  tps: 4615.746644799651
+  dps: 5237.377273668148
+  tps: 4654.864069800831
  }
 }
 dps_results: {
  key: "TestWarlock-Average-Default"
  value: {
-  dps: 6617.909625268107
-  tps: 5973.670778511973
+  dps: 6618.028550000951
+  tps: 5973.935808748788
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Affliction Warlock-FullBuffs-LongMultiTarget"
  value: {
-  dps: 5846.66103003549
-  tps: 6927.5628500470175
+  dps: 5870.373141577991
+  tps: 6992.316557690798
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Affliction Warlock-FullBuffs-LongSingleTarget"
  value: {
-  dps: 5846.66103003549
-  tps: 5189.758523647011
+  dps: 5870.373141577991
+  tps: 5220.254136890791
  }
 }
 dps_results: {
@@ -374,64 +374,64 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Affliction Warlock-NoBuffs-LongMultiTarget"
  value: {
-  dps: 3436.1025465015396
-  tps: 5350.712814525101
+  dps: 3445.18530313948
+  tps: 5373.523792179353
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Affliction Warlock-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3436.1025465015396
-  tps: 3231.1408345250993
+  dps: 3445.18530313948
+  tps: 3242.2838013460187
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Affliction Warlock-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 3444.0837888232936
-  tps: 3118.5528722467466
+  dps: 3478.077710036204
+  tps: 3166.2141996619766
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-FullBuffs-LongMultiTarget"
  value: {
-  dps: 6021.697984671627
-  tps: 6989.901597371868
+  dps: 9605.482624632688
+  tps: 10765.016367089327
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-FullBuffs-LongSingleTarget"
  value: {
-  dps: 6021.697984671627
-  tps: 5007.663634538533
+  dps: 6201.007040516901
+  tps: 5196.2108846215215
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 6965.74101858638
-  tps: 5672.611603656108
+  dps: 7377.1953945042405
+  tps: 6088.968892181743
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-NoBuffs-LongMultiTarget"
  value: {
-  dps: 3393.3599231766866
-  tps: 5359.964042686041
+  dps: 6512.317836571294
+  tps: 8694.862526508388
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3393.3599231766866
-  tps: 3079.418267686036
+  dps: 3548.726172000057
+  tps: 3245.7351876295797
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 3458.473469696028
-  tps: 3021.7047038350743
+  dps: 3629.9160347077027
+  tps: 3199.896133430082
  }
 }
 dps_results: {

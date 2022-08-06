@@ -260,10 +260,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				0: MagePresets.P5_ARCANE_PRESET.gear,
+				0: MagePresets.P1_ARCANE_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				0: MagePresets.P5_ARCANE_PRESET.gear,
+				0: MagePresets.P1_ARCANE_PRESET.gear,
 			},
 		},
 		tooltip: 'Arcane Mage',
@@ -284,10 +284,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				0: MagePresets.P5_FIRE_PRESET.gear,
+				0: MagePresets.P1_FIRE_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				0: MagePresets.P5_FIRE_PRESET.gear,
+				0: MagePresets.P1_FIRE_PRESET.gear,
 			},
 		},
 		tooltip: 'Fire Mage',
@@ -296,7 +296,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	{
 		spec: Spec.SpecMage,
 		rotation: MagePresets.DefaultFrostRotation,
-		talents: MagePresets.DeepFrostTalents.data,
+		talents: MagePresets.FrostTalents.data,
 		specOptions: MagePresets.DefaultFrostOptions,
 		consumes: MagePresets.DefaultFrostConsumes,
 		defaultName: 'Frost Mage',
@@ -308,10 +308,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				0: MagePresets.P5_FROST_PRESET.gear,
+				0: MagePresets.P1_FROST_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				0: MagePresets.P5_FROST_PRESET.gear,
+				0: MagePresets.P1_FROST_PRESET.gear,
 			},
 		},
 		tooltip: 'Frost Mage',

@@ -268,8 +268,6 @@ enum Conjured {
 	ConjuredDarkRune = 1;
 	ConjuredFlameCap = 2;
 	ConjuredHealthstone = 5;
-
-	ConjuredMageManaEmerald = 3;
 	ConjuredRogueThistleTea = 4;
 }
 
@@ -506,6 +504,9 @@ message IndividualBuffs {
 	int32 revitalize = 13;
 	int32 tricks_of_the_trades = 19;
 
+	// Technically a debuff, but only used by individual sims.
+	int32 shattering_throws = 20;
+
 	bool vampiric_touch = 14;
 	bool hunting_party = 15;
 	bool judgements_of_the_wise = 16;
@@ -582,6 +583,8 @@ message Debuffs {
 
 	TristateEffect demoralizing_roar = 25;
 	TristateEffect demoralizing_shout = 26;
+	bool vindication = 36;
+
 	TristateEffect thunder_clap = 27;
 	TristateEffect frost_fever = 28;
 	bool infected_wounds = 29;
@@ -594,6 +597,8 @@ message Debuffs {
 
 	// 1 = normal, 2 = talented, 3 = talented+glyphed
 	int32 hunters_mark = 35;
+
+	bool spore_cloud = 37;
 }
 
 enum MobType {
@@ -817,4 +822,13 @@ message HealingModel {
 
 	// How often healing is applied.
 	double cadence_seconds = 2;
+}
+
+message CustomRotation {
+	repeated CustomSpell spells = 1;
+}
+
+message CustomSpell {
+	// This should usually be a spec-specific enum value.
+	int32 spell = 1;
 }

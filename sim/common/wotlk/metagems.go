@@ -54,6 +54,7 @@ func init() {
 			Timer:    character.NewTimer(),
 			Duration: time.Second * 40,
 		}
+		ppmm := character.AutoAttacks.NewPPMManager(1.5, core.ProcMaskMeleeOrRanged)
 
 		character.RegisterAura(core.Aura{
 			Label:    "Thundering Skyflare Diamond",
@@ -67,6 +68,9 @@ func init() {
 					return
 				}
 				if !icd.IsReady(sim) {
+					return
+				}
+				if !ppmm.Proc(sim, spellEffect.ProcMask, "Thundering Skyflare Diamond") {
 					return
 				}
 				icd.Use(sim)

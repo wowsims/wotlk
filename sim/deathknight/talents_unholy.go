@@ -86,6 +86,7 @@ func (dk *Deathknight) applyWanderingPlague() {
 	dk.WanderingPlague = dk.Unit.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
+		Flags:       core.SpellFlagIgnoreAttackerModifiers | core.SpellFlagIgnoreTargetModifiers,
 
 		ApplyEffects: core.ApplyEffectFuncAOEDamage(dk.Env, core.SpellEffect{
 			ProcMask: core.ProcMaskSpellDamage,
@@ -113,7 +114,7 @@ func (dk *Deathknight) applyNecrosis() {
 	necrosisHit := dk.Unit.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 51460},
 		SpellSchool: core.SpellSchoolShadow,
-		Flags:       core.SpellFlagNone,
+		Flags:       core.SpellFlagIgnoreAttackerModifiers | core.SpellFlagIgnoreTargetModifiers,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskSpellDamage,
@@ -265,14 +266,14 @@ func (dk *Deathknight) applyDesolation() {
 	})
 }
 
-func (dk *Deathknight) procUnholyBlight(sim *core.Simulation, target *core.Unit, damageFromProccingSpell float64) {
+func (dk *Deathknight) procUnholyBlight(sim *core.Simulation, target *core.Unit, deathCoilDamage float64) {
 	if !dk.Talents.UnholyBlight {
 		return
 	}
 
 	unholyBlightDot := dk.UnholyBlightDot[target.Index]
 
-	newUnholyBlightDamage := damageFromProccingSpell * 0.10
+	newUnholyBlightDamage := deathCoilDamage * 0.10
 	if unholyBlightDot.IsActive() {
 		newUnholyBlightDamage += dk.UnholyBlightTickDamage[target.Index] * float64(10-unholyBlightDot.TickCount)
 	}
@@ -296,6 +297,7 @@ func (dk *Deathknight) applyUnholyBlight() {
 	dk.UnholyBlightSpell = dk.Unit.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
+		Flags:       core.SpellFlagIgnoreAttackerModifiers | core.SpellFlagIgnoreTargetModifiers,
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			dk.UnholyBlightDot[dk.CurrentTarget.Index].Apply(sim)
 		},

@@ -325,8 +325,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-IncisorFragment-37723"
  value: {
-  dps: 706.4372372339809
-  tps: 759.8284073047623
+  dps: 767.7527470711402
+  tps: 823.7357564704458
  }
 }
 dps_results: {
@@ -584,8 +584,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 702.1283015457044
-  tps: 754.9407368734494
+  dps: 685.0382525900748
+  tps: 736.7780549603906
  }
 }
 dps_results: {

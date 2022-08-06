@@ -233,7 +233,7 @@ func TickFuncAOESnapshot(env *Environment, baseEffect SpellEffect) TickEffects {
 		}
 	}
 }
-func TickFuncAOESnapshotCapped(env *Environment, aoeCap float64, baseEffect SpellEffect) TickEffects {
+func TickFuncAOESnapshotCapped(env *Environment, baseEffect SpellEffect) TickEffects {
 	return func(sim *Simulation, dot *Dot) func() {
 		target := dot.Spell.Unit.CurrentTarget
 		*dot.snapshotEffect = baseEffect
@@ -254,7 +254,7 @@ func TickFuncAOESnapshotCapped(env *Environment, aoeCap float64, baseEffect Spel
 		// and also spellEffect.DamageMultiplier will be applied in ApplyEffectFuncDirectDamage
 		dot.snapshotEffect.BaseDamage = BaseDamageConfigFlat(baseDamage)
 
-		effectsFunc := ApplyEffectFuncAOEDamageCapped(env, aoeCap, *dot.snapshotEffect)
+		effectsFunc := ApplyEffectFuncAOEDamageCapped(env, *dot.snapshotEffect)
 		return func() {
 			effectsFunc(sim, target, dot.Spell)
 		}

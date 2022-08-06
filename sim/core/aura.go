@@ -443,6 +443,7 @@ func (at *auraTracker) doneIteration(sim *Simulation) {
 // Adds a new aura to the simulation. If an aura with the same ID already
 // exists it will be replaced with the new one.
 func (aura *Aura) Activate(sim *Simulation) {
+	aura.metrics.Procs++
 	if aura.IsActive() {
 		if sim.Log != nil && !aura.ActionID.IsEmptyAction() {
 			aura.Unit.Log(sim, "Aura refreshed: %s", aura.ActionID)
@@ -720,6 +721,37 @@ func MakePermanent(aura *Aura) *Aura {
 		}
 	}
 	return aura
+}
+
+func (character *Character) StatProcWithICD(auraLabel string, actionID ActionID,
+	tempStats stats.Stats, duration time.Duration, cooldown time.Duration,
+	applyProcAura func(sim *Simulation, spell *Spell, spellEffect *SpellEffect) bool) {
+
+	icd := Cooldown{
+		Timer:    character.NewTimer(),
+		Duration: time.Second * cooldown,
+	}
+
+	procAura := character.NewTemporaryStatsAura(auraLabel, actionID, tempStats, duration)
+
+	character.RegisterAura(Aura{
+		Label:    auraLabel + "Permanent",
+		Duration: NeverExpires,
+		OnReset: func(aura *Aura, sim *Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
+			if !icd.IsReady(sim) {
+				return
+			}
+
+			if applyProcAura(sim, spell, spellEffect) {
+				icd.Use(sim)
+				procAura.Activate(sim)
+			}
+		},
+	})
+
 }
 
 // Helper for the common case of making an aura that adds stats.
