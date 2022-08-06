@@ -20,7 +20,7 @@ func (hunter *Hunter) registerMultiShotSpell() {
 			(1 + 0.01*float64(hunter.Talents.MarkedForDeath)),
 		ThreatMultiplier: 1,
 
-		BaseDamage: hunter.talonOfAlarDamageMod(core.BaseDamageConfig{
+		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				return (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.2 +
 					hunter.AutoAttacks.Ranged.BaseDamage(sim) +
@@ -29,7 +29,7 @@ func (hunter *Hunter) registerMultiShotSpell() {
 					408
 			},
 			TargetSpellCoefficient: 1,
-		}),
+		},
 		OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, false, hunter.CurrentTarget)),
 	}
 
@@ -72,5 +72,5 @@ func (hunter *Hunter) registerMultiShotSpell() {
 }
 
 func (hunter *Hunter) MultiShotCastTime() time.Duration {
-	return time.Duration(float64(time.Millisecond*500)/hunter.RangedSwingSpeed())
+	return time.Duration(float64(time.Millisecond*500) / hunter.RangedSwingSpeed())
 }

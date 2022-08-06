@@ -292,6 +292,7 @@ func (aa *AutoAttacks) reset(sim *Simulation) {
 
 	aa.MainhandSwingAt = 0
 	aa.OffhandSwingAt = 0
+	aa.RangedSwingAt = 0
 
 	// Apply random delay of 0 - 50% swing time, to one of the weapons if dual wielding
 	if aa.IsDualWielding {
@@ -320,7 +321,6 @@ func (aa *AutoAttacks) reset(sim *Simulation) {
 	aa.autoSwingCancelled = false
 	aa.resetAutoSwing(sim)
 
-	aa.RangedSwingAt = 0
 }
 
 func (aa *AutoAttacks) resetAutoSwing(sim *Simulation) {
@@ -487,7 +487,7 @@ func (aa *AutoAttacks) TrySwingRanged(sim *Simulation, target *Unit) {
 }
 
 func (aa *AutoAttacks) ModifySwingTime(sim *Simulation, amount float64) {
-	if !aa.IsEnabled() {
+	if !aa.IsEnabled() || aa.AutoSwingRanged {
 		return
 	}
 
@@ -534,6 +534,7 @@ func (aa *AutoAttacks) DelayMeleeUntil(sim *Simulation, readyAt time.Duration) {
 func (aa *AutoAttacks) DelayRangedUntil(sim *Simulation, readyAt time.Duration) {
 	if readyAt > aa.RangedSwingAt {
 		aa.RangedSwingAt = readyAt
+		aa.resetAutoSwing(sim)
 	}
 }
 

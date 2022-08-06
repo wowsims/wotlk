@@ -38,7 +38,7 @@ func (hunter *Hunter) registerKillShotSpell() {
 				(1 + 0.01*float64(hunter.Talents.MarkedForDeath)),
 			ThreatMultiplier: 1,
 
-			BaseDamage: hunter.talonOfAlarDamageMod(core.BaseDamageConfig{
+			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					rap := hitEffect.RangedAttackPower(spell.Unit) + hitEffect.RangedAttackPowerOnTarget()
 					return 2 * (rap*0.4 + // 0.2 rap from normalized weapon (2.8/14) and 0.2 from bonus ratio
@@ -48,7 +48,7 @@ func (hunter *Hunter) registerKillShotSpell() {
 						325)
 				},
 				TargetSpellCoefficient: 1,
-			}),
+			},
 			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, true, hunter.CurrentTarget)),
 		}),
 	})

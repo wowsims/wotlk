@@ -91,18 +91,21 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 
 	halfWeaveTime := hunter.timeToTrapWeave / 2
 	hunter.TrapWeaveSpell = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID.WithTag(1),
-		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagNoMetrics | core.SpellFlagNoLogs,
+		ActionID: actionID.WithTag(1),
+		Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagNoMetrics | core.SpellFlagNoLogs,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// Assume we started running after the most recent ranged auto, so that time
 			// can be subtracted from the run in.
 			lastRangedAutoAt := hunter.AutoAttacks.RangedSwingAt - hunter.AutoAttacks.RangedSwingSpeed()
+			if sim.CurrentTime == 0 {
+				lastRangedAutoAt = 0
+			}
 			reachLocationAt := lastRangedAutoAt + halfWeaveTime
 			layTrapAt := core.MaxDuration(reachLocationAt, sim.CurrentTime)
 			doneAt := layTrapAt + halfWeaveTime
 
-			hunter.AutoAttacks.DelayRangedUntil(sim, doneAt)
+			hunter.AutoAttacks.DelayRangedUntil(sim, doneAt+time.Millisecond*500)
 
 			if layTrapAt == sim.CurrentTime {
 				hunter.ExplosiveTrap.Cast(sim, hunter.CurrentTarget)

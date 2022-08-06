@@ -17,9 +17,9 @@ func (hunter *Hunter) registerVolleySpell() {
 			Label:    "Volley",
 			ActionID: actionID,
 		}),
-		NumberOfTicks: 6,
-		TickLength:    time.Second * 1,
-		// TODO: Whats the actual AOE cap?
+		NumberOfTicks:       6,
+		TickLength:          time.Second * 1,
+		AffectedByCastSpeed: true,
 		TickEffects: core.TickFuncAOESnapshotCapped(hunter.Env, core.SpellEffect{
 			ProcMask: core.ProcMaskPeriodicDamage,
 			DamageMultiplier: 1 *
@@ -52,11 +52,10 @@ func (hunter *Hunter) registerVolleySpell() {
 				GCD:         core.GCDDefault,
 				ChannelTime: time.Second * 6,
 			},
-			IgnoreHaste: true,
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			hunter.AutoAttacks.DelayRangedUntil(sim, sim.CurrentTime + time.Second * 6)
+			hunter.AutoAttacks.DelayRangedUntil(sim, sim.CurrentTime+time.Second*6+time.Millisecond*500)
 			volleyDot.Apply(sim)
 		},
 	})
