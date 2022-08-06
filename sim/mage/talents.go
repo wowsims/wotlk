@@ -27,7 +27,7 @@ func (mage *Mage) ApplyTalents() {
 	mage.PseudoStats.SpiritRegenRateCasting += float64(mage.Talents.ArcaneMeditation) / 6
 
 	if mage.Talents.StudentOfTheMind > 0 {
-		mage.Character.AddStatDependency(stats.Spirit, stats.Spirit, 1.0 + []float64{0,.04,.07,.10}[mage.Talents.StudentOfTheMind])
+		mage.Character.AddStatDependency(stats.Spirit, stats.Spirit, 1.0+[]float64{0, .04, .07, .10}[mage.Talents.StudentOfTheMind])
 	}
 
 	if mage.Talents.FocusMagic {
@@ -45,21 +45,22 @@ func (mage *Mage) ApplyTalents() {
 	}
 
 	mage.AddStat(stats.SpellCrit, float64(mage.Talents.ArcaneInstability)*1*core.CritRatingPerCritChance)
-	mage.spellDamageMultiplier += .01*float64(mage.Talents.ArcaneInstability)
+	mage.spellDamageMultiplier += .01 * float64(mage.Talents.ArcaneInstability)
 
 	mage.PseudoStats.CastSpeedMultiplier *= 1 + .02*float64(mage.Talents.NetherwindPresence)
 
-	mage.spellDamageMultiplier += .01*float64(mage.Talents.PlayingWithFire)
+	mage.spellDamageMultiplier += .01 * float64(mage.Talents.PlayingWithFire)
 	mage.PseudoStats.FireDamageDealtMultiplier *= 1 + .02*float64(mage.Talents.FirePower)
 
 	mage.AddStat(stats.SpellCrit, float64(mage.Talents.Pyromaniac)*core.CritRatingPerCritChance)
 	mage.PseudoStats.SpiritRegenRateCasting += float64(mage.Talents.Pyromaniac) / 6
 
 	if mage.Talents.SpellPower > 0 {
-		mage.bonusCritDamage = .25 * float64(mage.Talents.SpellPower)
+		mage.bonusCritDamage += .25 * float64(mage.Talents.SpellPower)
 	}
+
 	if mage.Talents.Burnout > 0 {
-		mage.bonusCritDamage = .1 * float64(mage.Talents.Burnout)
+		mage.bonusCritDamage += .1 * float64(mage.Talents.Burnout)
 	}
 
 	mage.AddStat(stats.SpellHit, float64(mage.Talents.Precision)*core.SpellHitRatingPerHitChance)
@@ -208,10 +209,13 @@ func (mage *Mage) applyMissileBarrage() {
 		return
 	}
 
+	// countBarrageChances := 0
+	missileBarrageActionId := core.ActionID{SpellID: 44401}
+
 	procChance := float64(mage.Talents.MissileBarrage) * .04
 	mage.MissileBarrageAura = mage.RegisterAura(core.Aura{
 		Label:    "Missile Barrage Proc",
-		ActionID: core.ActionID{SpellID: 44401},
+		ActionID: missileBarrageActionId,
 		Duration: time.Second * 15,
 	})
 
@@ -226,16 +230,16 @@ func (mage *Mage) applyMissileBarrage() {
 				return
 			}
 
+			// countBarrageChances++
+			// mage.Log(sim, "Total missile barrage opportunities %d", countBarrageChances)
 			roll := sim.RandomFloat("Missile Barrage")
 
-			if spell.ActionID == mage.ArcaneBlast.ActionID && roll > 2*procChance {
-				return
-			} else if roll > procChance {
-				return
-			}
+			updChance := core.TernaryFloat64(spell.ActionID == mage.ArcaneBlast.ActionID, 2*procChance, procChance)
 
-			mage.MissileBarrageAura.Activate(sim)
-			mage.MissileBarrageAura.Prioritize()
+			if roll < updChance {
+				mage.MissileBarrageAura.Activate(sim)
+				mage.MissileBarrageAura.Prioritize()
+			}
 		},
 	})
 }
@@ -314,7 +318,7 @@ func (mage *Mage) registerArcanePowerCD() {
 	apAura := mage.RegisterAura(core.Aura{
 		Label:    "Arcane Power",
 		ActionID: actionID,
-		Duration: core.TernaryDuration(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfArcanePower), time.Second * 18, time.Second * 15),
+		Duration: core.TernaryDuration(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfArcanePower), time.Second*18, time.Second*15),
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			mage.PseudoStats.DamageDealtMultiplier *= 1.2
 			mage.PseudoStats.CostMultiplier *= 1.2
@@ -331,7 +335,7 @@ func (mage *Mage) registerArcanePowerCD() {
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    mage.NewTimer(),
-				Duration: time.Second * time.Duration(120 * (1 - (.15 * float64(mage.Talents.ArcaneFlows)))),
+				Duration: time.Second * time.Duration(120*(1-(.15*float64(mage.Talents.ArcaneFlows)))),
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {

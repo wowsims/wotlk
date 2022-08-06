@@ -1,7 +1,6 @@
 package mage
 
 import (
-	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -28,6 +27,7 @@ func (mage *Mage) registerArcaneBlastSpell() {
 	})
 
 	actionID := core.ActionID{SpellID: 42897}
+	totalDiscount := 1 - .01*float64(mage.Talents.ArcaneFocus+mage.Talents.Precision)
 
 	mage.ArcaneBlast = mage.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -39,26 +39,26 @@ func (mage *Mage) registerArcaneBlastSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: ArcaneBlastBaseManaCost,
-
+				Cost:     ArcaneBlastBaseManaCost * totalDiscount,
 				GCD:      core.GCDDefault,
 				CastTime: ArcaneBlastBaseCastTime,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.Cost = spell.BaseCost * math.Pow(1.75, float64(mage.ArcaneBlastAura.GetStacks()))
+				cast.Cost = ArcaneBlastBaseManaCost*totalDiscount*
+					(1+1.75*float64(mage.ArcaneBlastAura.GetStacks())) + .01*float64(mage.Talents.Precision)*ArcaneBlastBaseManaCost
 			},
-			OnCastComplete: func(sim *core.Simulation, _ *core.Spell) {
+			AfterCast: func(sim *core.Simulation, spell *core.Spell) {
 				mage.ArcaneBlastAura.Activate(sim)
 				mage.ArcaneBlastAura.AddStack(sim)
 			},
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:             core.ProcMaskSpellDamage,
-			BonusSpellHitRating:  float64(mage.Talents.ArcaneFocus) * core.SpellHitRatingPerHitChance, // maybe precision shouldnt be here
+			ProcMask:            core.ProcMaskSpellDamage,
+			BonusSpellHitRating: float64(mage.Talents.ArcaneFocus) * core.SpellHitRatingPerHitChance, // maybe precision shouldnt be here
 			BonusSpellCritRating: 0 +
 				float64(mage.Talents.Incineration)*2*core.CritRatingPerCritChance +
-				core.TernaryFloat64(mage.MageTier.t9_4, 5 * core.CritRatingPerCritChance, 0),
+				core.TernaryFloat64(mage.MageTier.t9_4, 5*core.CritRatingPerCritChance, 0),
 
 			DamageMultiplier: mage.spellDamageMultiplier * (1 + .04*float64(mage.Talents.TormentTheWeak)) * (1 + .02*float64(mage.Talents.SpellImpact)),
 			ThreatMultiplier: 1 - 0.2*float64(mage.Talents.ArcaneSubtlety),
