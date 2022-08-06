@@ -60,7 +60,7 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool, onhit func(sim *core.Simul
 
 func (dk *Deathknight) registerBloodStrikeSpell() {
 	dk.BloodStrikeMhHit = dk.newBloodStrikeSpell(true, func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-		if dk.Talents.ThreatOfThassarian > 0 && dk.threatOfThassarianWillProc(sim) {
+		if dk.Talents.ThreatOfThassarian > 0 && dk.GetOHWeapon() != nil && dk.threatOfThassarianWillProc(sim) {
 			dk.BloodStrikeOhHit.Cast(sim, spellEffect.Target)
 		}
 		dk.LastOutcome = spellEffect.Outcome
