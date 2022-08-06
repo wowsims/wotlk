@@ -77,6 +77,7 @@ type Rogue struct {
 	DeathmantleProcAura *core.Aura
 	ExposeArmorAura     *core.Aura
 	KillingSpreeAura    *core.Aura
+	OverkillAura        *core.Aura
 	SliceAndDiceAura    *core.Aura
 
 	QuickRecoveryMetrics *core.ResourceMetrics
