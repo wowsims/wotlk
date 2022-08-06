@@ -32,7 +32,7 @@ func (hunter *Hunter) registerArcaneShotSpell(timer *core.Timer) {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost * (1 - 0.03*float64(hunter.Talents.Efficiency)),
-				GCD:  core.GCDDefault + hunter.latency,
+				GCD:  core.GCDDefault,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
@@ -50,12 +50,12 @@ func (hunter *Hunter) registerArcaneShotSpell(timer *core.Timer) {
 				(1 + 0.01*float64(hunter.Talents.MarkedForDeath)),
 			ThreatMultiplier: 1,
 
-			BaseDamage: hunter.talonOfAlarDamageMod(core.BaseDamageConfig{
+			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.15 + 492
 				},
 				TargetSpellCoefficient: 1,
-			}),
+			},
 			OutcomeApplier:  hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, true, hunter.CurrentTarget)),
 			OnSpellHitDealt: onSpellHit,
 		}),

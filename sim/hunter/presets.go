@@ -139,8 +139,24 @@ var PlayerOptionsSV = &proto.Player_Hunter{
 	},
 }
 
+var PlayerOptionsAOE = &proto.Player_Hunter{
+	Hunter: &proto.Hunter{
+		Talents:  SVTalents,
+		Options:  basicOptions,
+		Rotation: aoeRotation,
+	},
+}
+
 var basicRotation = &proto.Hunter_Rotation{
 	Sting: proto.Hunter_Rotation_SerpentSting,
+
+	ViperStartManaPercent: 0.2,
+	ViperStopManaPercent:  0.3,
+}
+
+var aoeRotation = &proto.Hunter_Rotation{
+	TrapWeave:         true,
+	TimeToTrapWeaveMs: 2000,
 
 	ViperStartManaPercent: 0.2,
 	ViperStopManaPercent:  0.3,
@@ -151,7 +167,6 @@ var basicOptions = &proto.Hunter_Options{
 	PetType:    proto.Hunter_Options_Wolf,
 	PetTalents: FerocityTalents,
 	PetUptime:  0.9,
-	LatencyMs:  15,
 
 	SniperTrainingUptime: 0.8,
 }
