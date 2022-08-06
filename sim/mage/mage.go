@@ -248,7 +248,7 @@ func init() {
 		stats.Stamina:   50,
 		stats.Intellect: 193, // Gnomes start with 162 int, we assume this include racial so / 1.05
 		stats.Spirit:    174,
-		stats.Mana:      2241,
+		stats.Mana:      3268,
 		stats.SpellCrit: core.CritRatingPerCritChance * 0.93,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceHuman, Class: proto.Class_ClassMage}] = stats.Stats{
@@ -258,7 +258,7 @@ func init() {
 		stats.Stamina:   51,
 		stats.Intellect: 181,
 		stats.Spirit:    179,
-		stats.Mana:      2241,
+		stats.Mana:      3268,
 		stats.SpellCrit: core.CritRatingPerCritChance * 0.926,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassMage}] = stats.Stats{

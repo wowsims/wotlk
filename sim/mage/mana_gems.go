@@ -11,6 +11,10 @@ func (mage *Mage) registerManaGemsCD() {
 
 	actionID := core.ActionID{ItemID: 33312}
 	manaMetrics := mage.NewManaMetrics(actionID)
+	var gemAura *core.Aura
+	if mage.MageTier.t7_2 {
+		gemAura = mage.NewTemporaryStatsAura("Improved Mana Gems T7", core.ActionID{SpellID: 61062}, stats.Stats{stats.SpellPower: 225}, 15*time.Second)
+	}
 
 	minManaEmeraldGain := 2340.0
 	maxManaEmeraldGain := 2460.0
@@ -46,7 +50,7 @@ func (mage *Mage) registerManaGemsCD() {
 
 			if mage.MageTier.t7_2 {
 				manaGain *= 1.25
-				mage.NewTemporaryStatsAura("Improved Mana Gems T7", core.ActionID{SpellID: 61062}, stats.Stats{stats.SpellPower: 225}, 15*time.Second)
+				gemAura.Activate(sim)
 			}
 
 			mage.AddMana(sim, manaGain, manaMetrics, true)

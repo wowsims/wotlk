@@ -9,6 +9,7 @@ import (
 
 var IgniteActionID = core.ActionID{SpellID: 12848}
 var empoweredFireActionId = core.ActionID{SpellID: 31658}
+
 // TODO: Global variables very bad. This will break the raid sim, where there can be multiple mages.
 var manaMetrics *core.ResourceMetrics
 
@@ -62,7 +63,7 @@ func (mage *Mage) procIgnite(sim *core.Simulation, target *core.Unit, damageFrom
 		BaseDamage:       core.BaseDamageConfigFlat(newTickDamage),
 		OutcomeApplier: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
 			if float64(mage.Talents.EmpoweredFire)/3.0 > sim.RandomFloat("EmpoweredFireIgniteMana") {
-				mage.AddMana(sim, mage.MaxMana()*.02, manaMetrics, false)
+				mage.AddMana(sim, mage.Unit.BaseMana*.02, manaMetrics, false)
 			}
 			mage.OutcomeFuncTick()
 		},
