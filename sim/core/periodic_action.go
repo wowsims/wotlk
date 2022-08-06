@@ -4,6 +4,41 @@ import (
 	"time"
 )
 
+type DelayedActionOptions struct {
+	// When the action should be performed.
+	DoAt time.Duration
+
+	Priority ActionPriority
+
+	OnAction func(*Simulation)
+	CleanUp  func(*Simulation)
+}
+
+func NewDelayedAction(sim *Simulation, options DelayedActionOptions) *PendingAction {
+	pa := &PendingAction{
+		NextActionAt: options.DoAt,
+		Priority:     options.Priority,
+	}
+
+	pa.OnAction = func(sim *Simulation) {
+		options.OnAction(sim)
+	}
+	pa.CleanUp = func(sim *Simulation) {
+		if options.CleanUp != nil {
+			options.CleanUp(sim)
+		}
+	}
+
+	return pa
+}
+
+// Convenience for immediately creating and starting a delayed action.
+func StartDelayedAction(sim *Simulation, options DelayedActionOptions) *PendingAction {
+	pa := NewDelayedAction(sim, options)
+	sim.AddPendingAction(pa)
+	return pa
+}
+
 type PeriodicActionOptions struct {
 	// How often the action should be performed.
 	Period time.Duration

@@ -1,8 +1,6 @@
 package hunter
 
 import (
-	"time"
-
 	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -42,8 +40,6 @@ type Hunter struct {
 
 	currentAspect *core.Aura
 
-	latency time.Duration
-
 	// Used for deciding when we can use hawk for the rest of the fight.
 	manaSpentPerSecondAtFirstAspectSwap float64
 	permaHawk                           bool
@@ -69,6 +65,9 @@ type Hunter struct {
 	SilencingShot *core.Spell
 	SteadyShot    *core.Spell
 	Volley        *core.Spell
+
+	// Fake spells to encapsulate weaving logic.
+	TrapWeaveSpell *core.Spell
 
 	BlackArrowDot    *core.Dot
 	ExplosiveTrapDot *core.Dot
@@ -165,19 +164,8 @@ func NewHunter(character core.Character, options proto.Player) *Hunter {
 		Talents:   *hunterOptions.Talents,
 		Options:   *hunterOptions.Options,
 		Rotation:  *hunterOptions.Rotation,
-
-		latency: time.Millisecond * time.Duration(hunterOptions.Options.LatencyMs),
 	}
 	hunter.EnableManaBar()
-
-	//if hunter.Rotation.PercentWeaved <= 0 {
-	//	hunter.Rotation.Weave = proto.Hunter_Rotation_WeaveNone
-	//}
-	//if hunter.Rotation.Weave == proto.Hunter_Rotation_WeaveNone {
-	//	// Forces override of WF. When not weaving we'll be standing far back so weapon
-	//	// stone can be used.
-	//	hunter.HasMHWeaponImbue = true
-	//}
 
 	hunter.PseudoStats.CanParry = true
 
@@ -219,15 +207,6 @@ func NewHunter(character core.Character, options proto.Player) *Hunter {
 		AutoSwingRanged: true,
 	})
 	hunter.AutoAttacks.RangedEffect.BaseDamage.Calculator = core.BaseDamageFuncRangedWeapon(hunter.AmmoDamageBonus)
-
-	if hunter.Options.RemoveRandomness {
-		weaponAvg := (hunter.AutoAttacks.Ranged.BaseDamageMin + hunter.AutoAttacks.Ranged.BaseDamageMax) / 2
-		hunter.AutoAttacks.Ranged.BaseDamageMin = weaponAvg
-		hunter.AutoAttacks.Ranged.BaseDamageMax = weaponAvg
-
-		hunter.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*100)
-		hunter.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*-100)
-	}
 
 	hunter.pet = hunter.NewHunterPet()
 
