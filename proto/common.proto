@@ -580,6 +580,7 @@ message Debuffs {
 
 	TristateEffect curse_of_weakness = 23;
 	bool sting = 24;
+	bool spore_cloud = 37;
 
 	TristateEffect demoralizing_roar = 25;
 	TristateEffect demoralizing_shout = 26;
@@ -597,8 +598,6 @@ message Debuffs {
 
 	// 1 = normal, 2 = talented, 3 = talented+glyphed
 	int32 hunters_mark = 35;
-
-	bool spore_cloud = 37;
 }
 
 enum MobType {

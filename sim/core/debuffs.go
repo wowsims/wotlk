@@ -570,18 +570,18 @@ func FaerieFireAura(target *Unit, imp bool) *Aura {
 	mainAura = target.GetOrRegisterAura(Aura{
 		Label:    label,
 		Tag:      MinorArmorReductionAuraTag,
-		Priority: armorReduction + 1,
+		Priority: armorReduction,
 		ActionID: ActionID{SpellID: 770},
 		Duration: time.Minute * 5,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 - armorReduction)
+			aura.Unit.PseudoStats.ArmorMultiplier *= 1.0 - armorReduction
 			aura.Unit.updateArmor()
 			if imp {
 				secondaryAura.Activate(sim)
 			}
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 / (1.0 - armorReduction))
+			aura.Unit.PseudoStats.ArmorMultiplier /= 1.0 - armorReduction
 			aura.Unit.updateArmor()
 			if imp && secondaryAura.IsActive() {
 				secondaryAura.Deactivate(sim)
@@ -671,17 +671,17 @@ func CurseOfWeaknessAura(target *Unit, points int32) *Aura {
 	return target.GetOrRegisterAura(Aura{
 		Label:    "Curse of Weakness",
 		Tag:      MinorArmorReductionAuraTag,
-		Priority: armorReduction + 1,
+		Priority: armorReduction,
 		ActionID: ActionID{SpellID: 50511},
 		Duration: time.Minute * 2,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.AddStatsDynamic(sim, bonus)
-			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 - armorReduction)
+			aura.Unit.PseudoStats.ArmorMultiplier *= 1.0 - armorReduction
 			aura.Unit.updateArmor()
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.AddStatsDynamic(sim, bonus.Multiply(-1))
-			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 - armorReduction)
+			aura.Unit.PseudoStats.ArmorMultiplier /= 1.0 - armorReduction
 			aura.Unit.updateArmor()
 		},
 	})
@@ -697,11 +697,11 @@ func StingAura(target *Unit) *Aura {
 		ActionID: ActionID{SpellID: 56631},
 		Duration: time.Second * 20,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 - armorReduction)
+			aura.Unit.PseudoStats.ArmorMultiplier *= 1.0 - armorReduction
 			aura.Unit.updateArmor()
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 - armorReduction)
+			aura.Unit.PseudoStats.ArmorMultiplier /= 1.0 - armorReduction
 			aura.Unit.updateArmor()
 		},
 	})
@@ -712,14 +712,16 @@ func SporeCloudAura(target *Unit) *Aura {
 
 	return target.GetOrRegisterAura(Aura{
 		Label:    "Spore Cloud",
+		Tag:      MinorArmorReductionAuraTag,
 		ActionID: ActionID{SpellID: 53598},
+		Priority: armorReduction,
 		Duration: time.Second * 9,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 - armorReduction)
+			aura.Unit.PseudoStats.ArmorMultiplier *= 1.0 - armorReduction
 			aura.Unit.updateArmor()
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 / (1.0 - armorReduction))
+			aura.Unit.PseudoStats.ArmorMultiplier /= 1.0 - armorReduction
 			aura.Unit.updateArmor()
 		},
 	})
@@ -734,7 +736,7 @@ func ShatteringThrowAura(target *Unit) *Aura {
 
 	return target.GetOrRegisterAura(Aura{
 		Label:    "Shattering Throw",
-		Tag: ShatteringThrowAuraTag,
+		Tag:      ShatteringThrowAuraTag,
 		ActionID: ActionID{SpellID: 64382},
 		Duration: ShatteringThrowDuration,
 		OnGain: func(aura *Aura, sim *Simulation) {
