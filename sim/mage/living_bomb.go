@@ -40,8 +40,7 @@ func (mage *Mage) registerLivingBombSpell() {
 	target := mage.CurrentTarget
 
 	lbOutcomeApplier := mage.OutcomeFuncTick()
-
-	if mage.HasGlyph(int32(proto.MageMajorGlyph_GlyphOfLivingBomb)) {
+	if mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfLivingBomb) {
 		lbOutcomeApplier = mage.OutcomeFuncMagicCrit(mage.SpellCritMultiplier(1, mage.bonusCritDamage))
 	}
 

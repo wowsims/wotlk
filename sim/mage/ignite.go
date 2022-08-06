@@ -9,6 +9,7 @@ import (
 
 var IgniteActionID = core.ActionID{SpellID: 12848}
 var empoweredFireActionId = core.ActionID{SpellID: 31658}
+// TODO: Global variables very bad. This will break the raid sim, where there can be multiple mages.
 var manaMetrics *core.ResourceMetrics
 
 func (mage *Mage) registerIgniteSpell() {
@@ -33,7 +34,6 @@ func (mage *Mage) newIgniteDot(target *core.Unit) *core.Dot {
 }
 
 func (mage *Mage) procIgnite(sim *core.Simulation, target *core.Unit, damageFromProccingSpell float64) {
-
 	igniteDot := mage.IgniteDots[target.Index]
 
 	newIgniteDamage := damageFromProccingSpell * float64(mage.Talents.Ignite) * 0.08
@@ -44,6 +44,8 @@ func (mage *Mage) procIgnite(sim *core.Simulation, target *core.Unit, damageFrom
 	newTickDamage := newIgniteDamage / 2
 	mage.IgniteTickDamage[target.Index] = newTickDamage
 
+	// Hacky: mimic the logs in sim/core/cast.go, to get Ignite to show up in the timeline as a cast.
+	// TODO: Just make this a spell.
 	if sim.Log != nil {
 		mage.Log(sim, "Casting %s (Cost = %0.03f, Cast Time = %s)", IgniteActionID, 0.0, time.Duration(0))
 		mage.Log(sim, "Completed cast %s", IgniteActionID)
