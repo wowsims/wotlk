@@ -92,7 +92,7 @@ func (dk *DpsDeathknight) RotationAction_Gargoyle_Custom(castTime time.Duration,
 	}
 
 	// Go back to Blood Presence after gargoyle cast
-	if dk.PresenceMatches(deathknight.UnholyPresence) && !dk.CanSummonGargoyle(sim) {
+	if dk.PresenceMatches(deathknight.UnholyPresence) && !dk.SummonGargoyle.IsReady(sim) {
 		if dk.BloodTapAura.IsActive() {
 			dk.BloodTapAura.Deactivate(sim)
 		}

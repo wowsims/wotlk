@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
@@ -100,7 +101,8 @@ func (dk *DpsDeathknight) getBloodRuneAction(isFirst bool) deathknight.RotationA
 }
 
 func (dk *DpsDeathknight) desolationAuraCheck(sim *core.Simulation) bool {
-	return !dk.DesolationAura.IsActive() || dk.DesolationAura.RemainingDuration(sim) < 10*time.Second || dk.Env.GetNumTargets() == 1
+	return !dk.DesolationAura.IsActive() || dk.DesolationAura.RemainingDuration(sim) < 10*time.Second ||
+		dk.Rotation.BloodRuneFiller == proto.Deathknight_Rotation_BloodStrike
 }
 
 func (dk *DpsDeathknight) uhDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *deathknight.RuneSpell, costRunes bool, casts int) bool {
@@ -235,7 +237,7 @@ func (dk *DpsDeathknight) uhGargoyleCheck(sim *core.Simulation, target *core.Uni
 	}
 
 	// Go back to Blood Presence after gargoyle cast
-	if dk.PresenceMatches(deathknight.UnholyPresence) && !dk.CanSummonGargoyle(sim) {
+	if dk.PresenceMatches(deathknight.UnholyPresence) && !dk.SummonGargoyle.IsReady(sim) {
 		if dk.BloodTapAura.IsActive() {
 			dk.BloodTapAura.Deactivate(sim)
 		}
