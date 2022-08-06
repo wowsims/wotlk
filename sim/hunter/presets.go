@@ -151,7 +151,6 @@ var basicOptions = &proto.Hunter_Options{
 	PetType:    proto.Hunter_Options_Wolf,
 	PetTalents: FerocityTalents,
 	PetUptime:  0.9,
-	LatencyMs:  15,
 
 	SniperTrainingUptime: 0.8,
 }

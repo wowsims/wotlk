@@ -88,4 +88,45 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 			IsPeriodic:     true,
 		}),
 	})
+
+	timeToTrapWeave := time.Millisecond * time.Duration(hunter.Rotation.TimeToTrapWeaveMs)
+	halfWeaveTime := timeToTrapWeave / 2
+	hunter.TrapWeaveSpell = hunter.RegisterSpell(core.SpellConfig{
+		ActionID: actionID.WithTag(1),
+		Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagNoMetrics | core.SpellFlagNoLogs,
+
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			// Assume we started running after the most recent ranged auto, so that time
+			// can be subtracted from the run in.
+			lastRangedAutoAt := hunter.AutoAttacks.RangedSwingAt - hunter.AutoAttacks.RangedSwingSpeed()
+			if sim.CurrentTime == 0 {
+				lastRangedAutoAt = 0
+			}
+			reachLocationAt := lastRangedAutoAt + halfWeaveTime
+			layTrapAt := core.MaxDuration(reachLocationAt, sim.CurrentTime)
+			doneAt := layTrapAt + halfWeaveTime
+
+			hunter.AutoAttacks.DelayRangedUntil(sim, doneAt+time.Millisecond*500)
+
+			if layTrapAt == sim.CurrentTime {
+				hunter.ExplosiveTrap.Cast(sim, hunter.CurrentTarget)
+				if doneAt > hunter.GCD.ReadyAt() {
+					hunter.GCD.Set(doneAt)
+				}
+			} else {
+				// Make sure the GCD doesn't get used while we're waiting.
+				hunter.GCD.Set(doneAt)
+				core.StartDelayedAction(sim, core.DelayedActionOptions{
+					DoAt: layTrapAt,
+					OnAction: func(sim *core.Simulation) {
+						hunter.GCD.Reset()
+						hunter.ExplosiveTrap.Cast(sim, hunter.CurrentTarget)
+						if doneAt > hunter.GCD.ReadyAt() {
+							hunter.GCD.Set(doneAt)
+						}
+					},
+				})
+			}
+		},
+	})
 }
