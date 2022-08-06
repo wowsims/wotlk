@@ -209,13 +209,10 @@ func (mage *Mage) applyMissileBarrage() {
 		return
 	}
 
-	// countBarrageChances := 0
-	missileBarrageActionId := core.ActionID{SpellID: 44401}
-
 	procChance := float64(mage.Talents.MissileBarrage) * .04
 	mage.MissileBarrageAura = mage.RegisterAura(core.Aura{
 		Label:    "Missile Barrage Proc",
-		ActionID: missileBarrageActionId,
+		ActionID: core.ActionID{SpellID: 44401},
 		Duration: time.Second * 15,
 	})
 
@@ -230,8 +227,6 @@ func (mage *Mage) applyMissileBarrage() {
 				return
 			}
 
-			// countBarrageChances++
-			// mage.Log(sim, "Total missile barrage opportunities %d", countBarrageChances)
 			roll := sim.RandomFloat("Missile Barrage")
 
 			updChance := core.TernaryFloat64(spell.ActionID == mage.ArcaneBlast.ActionID, 2*procChance, procChance)
