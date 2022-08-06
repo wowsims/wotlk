@@ -88,7 +88,7 @@ func (paladin *Paladin) registerHolyWrathSpell() {
 			},
 			CD: core.Cooldown{
 				Timer:    paladin.NewTimer(),
-				Duration: time.Second * 30,
+				Duration: time.Second * 30 - core.TernaryDuration(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfHolyWrath), time.Second*15, 0),
 			},
 		},
 

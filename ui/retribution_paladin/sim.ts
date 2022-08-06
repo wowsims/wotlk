@@ -25,16 +25,6 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 			cssClass: 'retribution-paladin-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"<h3>Some glyphs that are not notably productive DPS-wise are unimplemented</h3>",
-				"<p>Unimplemented Major Glyph: Glyph of Holy Wrath</p>",
-				"<p>Unimplemented Major Glyph: Glyph of Hammer of Wrath</p>",
-				"<p>Unimplemented Major Glyph: Glyph of Divine Storm</p>",
-				"<p>Unimplemented Major Glyph: Glyph of Divine Plea</p>",
-				"<p>Unimplemented Major Glyph: Glyph of Seal of Command</p>",
-				"<p>Unimplemented Major Glyph: Glyph of Crusader Strike</p>",
-				"<p>Unimplemented Major Glyph: Glyph of Divinity</p>",
-				"<p>Unimplemented Minor Glyph: Blessing of Kings</p>",
-				"<p>Unimplemented Minor Glyph: Blessing of Might</p>",
 			],
 
 			// All stats for which EP should be calculated.
