@@ -266,14 +266,14 @@ func (dk *Deathknight) applyDesolation() {
 	})
 }
 
-func (dk *Deathknight) procUnholyBlight(sim *core.Simulation, target *core.Unit, damageFromProccingSpell float64) {
+func (dk *Deathknight) procUnholyBlight(sim *core.Simulation, target *core.Unit, deathCoilDamage float64) {
 	if !dk.Talents.UnholyBlight {
 		return
 	}
 
 	unholyBlightDot := dk.UnholyBlightDot[target.Index]
 
-	newUnholyBlightDamage := damageFromProccingSpell * 0.10
+	newUnholyBlightDamage := deathCoilDamage * 0.10
 	if unholyBlightDot.IsActive() {
 		newUnholyBlightDamage += dk.UnholyBlightTickDamage[target.Index] * float64(10-unholyBlightDot.TickCount)
 	}
