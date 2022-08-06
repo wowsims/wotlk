@@ -38,7 +38,7 @@ func (shaman *Shaman) newThunderstormSpell(doDamage bool) *core.Spell {
 	if doDamage {
 		effect := core.SpellEffect{
 			ProcMask:            core.ProcMaskSpellDamage,
-			BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * 2 * core.SpellHitRatingPerHitChance,
+			BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,
 			DamageMultiplier:    1 * (1 + 0.01*float64(shaman.Talents.Concussion)),
 			ThreatMultiplier:    1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
 			BaseDamage:          core.BaseDamageConfigMagic(1450, 1656, 0.172),

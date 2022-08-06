@@ -72,7 +72,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 			],
 			modifyDisplayStats: (player: Player<Spec.SpecElementalShaman>) => {
 				let stats = new Stats();
-				stats = stats.addStat(Stat.StatSpellHit, player.getTalents().elementalPrecision * 2 * Mechanics.SPELL_HIT_RATING_PER_HIT_CHANCE);
+				stats = stats.addStat(Stat.StatSpellHit, player.getTalents().elementalPrecision * Mechanics.SPELL_HIT_RATING_PER_HIT_CHANCE);
 				stats = stats.addStat(Stat.StatSpellCrit,
 					player.getTalents().tidalMastery * 1 * Mechanics.SPELL_CRIT_RATING_PER_CRIT_CHANCE +
 					player.getTalents().thunderingStrikes * 1 * Mechanics.SPELL_CRIT_RATING_PER_CRIT_CHANCE);
