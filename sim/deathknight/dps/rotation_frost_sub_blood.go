@@ -161,7 +161,6 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_PrioRotation(sim 
 	fbExpireAt := core.MinDuration(ffExpiresAt, bpExpiresAt)
 	frostGracePeriod := dk.CurrentFrostRuneGrace(sim)
 	unholyGracePeriod := dk.CurrentUnholyRuneGrace(sim)
-	//currGCDCastsTillExpire := math.Floor(float64(fbExpireAt-sim.CurrentTime) / float64(gcd))
 	currBloodRunes := dk.CurrentBloodRunes()
 	currFrostRunes := dk.CurrentFrostRunes()
 	currUnholyRunes := dk.CurrentUnholyRunes()
