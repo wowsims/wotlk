@@ -54,7 +54,7 @@ func (hunter *Hunter) registerMultiShotSpell() {
 					(1 - 0.03*float64(hunter.Talents.Efficiency)) *
 					core.TernaryFloat64(hunter.HasSetBonus(ItemSetDemonStalker, 4), 0.9, 1),
 
-				GCD:      core.GCDDefault + hunter.latency,
+				GCD:      core.GCDDefault,
 				CastTime: 1, // Dummy value so core doesn't optimize the cast away
 			},
 			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
@@ -72,5 +72,5 @@ func (hunter *Hunter) registerMultiShotSpell() {
 }
 
 func (hunter *Hunter) MultiShotCastTime() time.Duration {
-	return time.Duration(float64(time.Millisecond*500)/hunter.RangedSwingSpeed()) + hunter.latency
+	return time.Duration(float64(time.Millisecond*500)/hunter.RangedSwingSpeed())
 }

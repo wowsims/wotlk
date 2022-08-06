@@ -29,7 +29,7 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 				Cost: baseCost *
 					(1 - 0.03*float64(hunter.Talents.Efficiency)) *
 					(1 - 0.05*float64(hunter.Talents.MasterMarksman)),
-				GCD: core.GCDDefault + hunter.latency,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true, // Hunter GCD is locked at 1.5s
 			CD: core.Cooldown{
@@ -69,10 +69,6 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 			},
 		}),
 	})
-}
-
-func (hunter *Hunter) ChimeraShotCastTime() time.Duration {
-	return time.Duration(float64(time.Millisecond*1500)/hunter.RangedSwingSpeed()) + hunter.latency
 }
 
 func (hunter *Hunter) chimeraShotSerpentStingSpell() *core.Spell {

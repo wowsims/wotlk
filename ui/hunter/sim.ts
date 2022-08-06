@@ -41,8 +41,6 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 			cssClass: 'hunter-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				'Sim uses a simple priority-based rotation.',
-				'Melee weaving and trap weaving are not included in the rotation.',
 			],
 			warnings: [
 				// Warning when using exotic pet without BM talented.
@@ -212,9 +210,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 			otherInputs: {
 				inputs: [
 					HunterInputs.PetUptime,
-					//HunterInputs.PetSingleAbility,
 					HunterInputs.SniperTrainingUptime,
-					//HunterInputs.LatencyMs,
 					OtherInputs.PrepopPotion,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,

@@ -170,8 +170,6 @@ type AutoAttacks struct {
 	OHAuto     *Spell
 	RangedAuto *Spell
 
-	RangedSwingInProgress bool
-
 	ReplaceMHSwing ReplaceMHSwing
 
 	// The time at which the last MH swing occurred.
@@ -282,15 +280,8 @@ func (aa *AutoAttacks) reset(sim *Simulation) {
 			Flags:       SpellFlagMeleeMetrics,
 
 			Cast: CastConfig{
-				//DefaultCast: Cast{
-				//	CastTime: 1, // Dummy non-zero value so the optimization doesnt remove the cast time.
-				//},
-				//ModifyCast: func(_ *Simulation, _ *Spell, cast *Cast) {
-				//	cast.CastTime = aa.RangedSwingWindup()
-				//},
 				IgnoreHaste: true,
 				AfterCast: func(sim *Simulation, spell *Spell) {
-					aa.RangedSwingInProgress = false
 					aa.agent.OnAutoAttack(sim, aa.RangedAuto)
 				},
 			},
@@ -330,7 +321,6 @@ func (aa *AutoAttacks) reset(sim *Simulation) {
 	aa.resetAutoSwing(sim)
 
 	aa.RangedSwingAt = 0
-	aa.RangedSwingInProgress = false
 }
 
 func (aa *AutoAttacks) resetAutoSwing(sim *Simulation) {
@@ -397,9 +387,6 @@ func (aa *AutoAttacks) EnableAutoSwing(sim *Simulation) {
 		aa.OffhandSwingAt = sim.CurrentTime
 	}
 	if aa.RangedSwingAt < sim.CurrentTime {
-		if aa.RangedSwingInProgress {
-			panic("Ranged swing already in progress!")
-		}
 		aa.RangedSwingAt = sim.CurrentTime
 	}
 
@@ -420,22 +407,6 @@ func (aa *AutoAttacks) OffhandSwingSpeed() time.Duration {
 // The amount of time between two ranged swings.
 func (aa *AutoAttacks) RangedSwingSpeed() time.Duration {
 	return time.Duration(float64(aa.Ranged.SwingDuration) / aa.unit.RangedSwingSpeed())
-}
-
-// Ranged swings have a 0.5s 'windup' time before they can fire, affected by haste.
-// This function computes the amount of windup time based on the current haste.
-func (aa *AutoAttacks) RangedSwingWindup() time.Duration {
-	return time.Duration(float64(time.Millisecond*500) / aa.unit.RangedSwingSpeed())
-}
-
-// Time between a ranged auto finishes casting and the next one becomes available.
-func (aa *AutoAttacks) RangedSwingGap() time.Duration {
-	return time.Duration(float64(aa.Ranged.SwingDuration-time.Millisecond*500) / aa.unit.RangedSwingSpeed())
-}
-
-// Returns the amount of time available before ranged auto will be clipped.
-func (aa *AutoAttacks) TimeBeforeClippingRanged(sim *Simulation) time.Duration {
-	return aa.RangedSwingAt - aa.RangedSwingWindup() - sim.CurrentTime
 }
 
 // SwingMelee will check any swing timers if they are up, and if so, swing!
@@ -513,7 +484,6 @@ func (aa *AutoAttacks) TrySwingRanged(sim *Simulation, target *Unit) {
 
 	aa.RangedAuto.Cast(sim, target)
 	aa.RangedSwingAt = sim.CurrentTime + aa.RangedSwingSpeed()
-	aa.RangedSwingInProgress = true
 }
 
 func (aa *AutoAttacks) ModifySwingTime(sim *Simulation, amount float64) {
@@ -562,9 +532,6 @@ func (aa *AutoAttacks) DelayMeleeUntil(sim *Simulation, readyAt time.Duration) {
 }
 
 func (aa *AutoAttacks) DelayRangedUntil(sim *Simulation, readyAt time.Duration) {
-	if aa.RangedSwingInProgress {
-		panic("Ranged swing already in progress!")
-	}
 	if readyAt > aa.RangedSwingAt {
 		aa.RangedSwingAt = readyAt
 	}
