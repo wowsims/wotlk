@@ -169,7 +169,7 @@ export class CharacterStats extends Component {
 		let debuffStats = new Stats();
 
 		const debuffs = player.sim.raid.getDebuffs();
-		if (debuffs.faerieFire == TristateEffect.TristateEffectImproved) {
+		if (debuffs.misery || debuffs.faerieFire == TristateEffect.TristateEffectImproved) {
 			debuffStats = debuffStats.addStat(Stat.StatSpellHit, 3 * Mechanics.SPELL_HIT_RATING_PER_HIT_CHANCE);
 		}
 		if (debuffs.totemOfWrath || debuffs.heartOfTheCrusader || debuffs.masterPoisoner) {

@@ -1494,6 +1494,9 @@ export function canEquipItem(item: Item, spec: Spec, slot: ItemSlot | undefined)
         if (item.handType == HandType.HandTypeTwoHand && !eligibleWeaponType.canUseTwoHand) {
             return false;
         }
+        if (item.handType == HandType.HandTypeTwoHand && slot == ItemSlot.ItemSlotOffHand && spec != Spec.SpecWarrior) {
+            return false;
+        }
 
         return true;
     }
