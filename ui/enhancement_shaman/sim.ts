@@ -15,7 +15,6 @@ import { Stats } from '../core/proto_utils/stats.js';
 import { Sim } from '../core/sim.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
 import { TotemsSection } from '../core/components/totem_inputs.js';
-import { WeaponImbue } from '../core/proto/common.js';
 
 import { EnhancementShaman, EnhancementShaman_Rotation as EnhancementShamanRotation, EnhancementShaman_Options as EnhancementShamanOptions } from '../core/proto/shaman.js';
 

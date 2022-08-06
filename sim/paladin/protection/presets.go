@@ -64,7 +64,6 @@ var FullConsumes = &proto.Consumes{
 	Food:            proto.Food_FoodBlackenedBasilisk,
 	DefaultPotion:   proto.Potions_SuperManaPotion,
 	DefaultConjured: proto.Conjured_ConjuredDarkRune,
-	MainHandImbue:   proto.WeaponImbue_WeaponImbueSuperiorWizardOil,
 }
 
 var FullDebuffs = &proto.Debuffs{

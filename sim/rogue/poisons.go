@@ -30,18 +30,18 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 					if rogue.DeadlyPoisonDot.IsActive() {
 						if rogue.DeadlyPoisonDot.GetStacks() == 5 {
 							if rogue.LastDeadlyPoisonProcMask.Matches(core.ProcMaskMeleeMH) {
-								switch rogue.Consumes.OffHandImbue {
-								case proto.WeaponImbue_WeaponImbueRogueDeadlyPoison:
+								switch rogue.Options.OhImbue {
+								case proto.Rogue_Options_DeadlyPoison:
 									rogue.DeadlyPoisonDot.Refresh(sim)
-								case proto.WeaponImbue_WeaponImbueRogueInstantPoison:
+								case proto.Rogue_Options_InstantPoison:
 									rogue.InstantPoison.Cast(sim, spellEffect.Target)
 								}
 							}
 							if rogue.LastDeadlyPoisonProcMask.Matches(core.ProcMaskMeleeOH) {
-								switch rogue.Consumes.MainHandImbue {
-								case proto.WeaponImbue_WeaponImbueRogueDeadlyPoison:
+								switch rogue.Options.MhImbue {
+								case proto.Rogue_Options_DeadlyPoison:
 									rogue.DeadlyPoisonDot.Refresh(sim)
-								case proto.WeaponImbue_WeaponImbueRogueInstantPoison:
+								case proto.Rogue_Options_InstantPoison:
 									rogue.InstantPoison.Cast(sim, spellEffect.Target)
 								}
 							}
@@ -104,8 +104,8 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 
 func (rogue *Rogue) applyDeadlyPoison() {
 	procMask := core.GetMeleeProcMaskForHands(
-		rogue.Consumes.MainHandImbue == proto.WeaponImbue_WeaponImbueRogueDeadlyPoison,
-		rogue.Consumes.OffHandImbue == proto.WeaponImbue_WeaponImbueRogueDeadlyPoison)
+		rogue.Options.MhImbue == proto.Rogue_Options_DeadlyPoison,
+		rogue.Options.OhImbue == proto.Rogue_Options_DeadlyPoison)
 
 	if procMask == core.ProcMaskUnknown {
 		return
@@ -154,8 +154,8 @@ func (rogue *Rogue) registerInstantPoisonSpell() {
 
 func (rogue *Rogue) applyInstantPoison() {
 	procMask := core.GetMeleeProcMaskForHands(
-		rogue.Consumes.MainHandImbue == proto.WeaponImbue_WeaponImbueRogueInstantPoison,
-		rogue.Consumes.OffHandImbue == proto.WeaponImbue_WeaponImbueRogueInstantPoison)
+		rogue.Options.MhImbue == proto.Rogue_Options_InstantPoison,
+		rogue.Options.OhImbue == proto.Rogue_Options_InstantPoison)
 
 	if procMask == core.ProcMaskUnknown {
 		return
@@ -163,10 +163,10 @@ func (rogue *Rogue) applyInstantPoison() {
 
 	var mhProcChance float64
 	var ohProcChance float64
-	if rogue.Consumes.MainHandImbue == proto.WeaponImbue_WeaponImbueRogueInstantPoison {
+	if rogue.Options.MhImbue == proto.Rogue_Options_InstantPoison {
 		mhProcChance = (rogue.GetMHWeapon().SwingSpeed * 8.57 * (1 + float64(rogue.Talents.ImprovedPoisons)*0.1)) / 60
 	}
-	if rogue.Consumes.OffHandImbue == proto.WeaponImbue_WeaponImbueRogueInstantPoison {
+	if rogue.Options.OhImbue == proto.Rogue_Options_InstantPoison {
 		ohProcChance = (rogue.GetOHWeapon().SwingSpeed * 8.57 * (1 + float64(rogue.Talents.ImprovedPoisons)*0.1)) / 60
 	}
 

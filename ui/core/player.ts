@@ -17,7 +17,6 @@ import {
     Spec,
     Faction,
     Stat,
-    WeaponImbue,
     WeaponType,
 } from './proto/common.js';
 
@@ -417,28 +416,6 @@ export class Player<SpecType extends Spec> {
         //}
 
         TypedEvent.freezeAllAndDo(() => {
-            // If we swapped between sharp/blunt weapon types, then also swap between
-            // sharpening/weightstones.
-            const consumes = this.getConsumes();
-            let consumesChanged = false;
-            if (consumes.mainHandImbue == WeaponImbue.WeaponImbueAdamantiteSharpeningStone && newGear.hasBluntMHWeapon()) {
-                consumes.mainHandImbue = WeaponImbue.WeaponImbueAdamantiteWeightstone;
-                consumesChanged = true;
-            } else if (consumes.mainHandImbue == WeaponImbue.WeaponImbueAdamantiteWeightstone && newGear.hasSharpMHWeapon()) {
-                consumes.mainHandImbue = WeaponImbue.WeaponImbueAdamantiteSharpeningStone;
-                consumesChanged = true;
-            }
-            if (consumes.offHandImbue == WeaponImbue.WeaponImbueAdamantiteSharpeningStone && newGear.hasBluntOHWeapon()) {
-                consumes.offHandImbue = WeaponImbue.WeaponImbueAdamantiteWeightstone;
-                consumesChanged = true;
-            } else if (consumes.offHandImbue == WeaponImbue.WeaponImbueAdamantiteWeightstone && newGear.hasSharpOHWeapon()) {
-                consumes.offHandImbue = WeaponImbue.WeaponImbueAdamantiteSharpeningStone;
-                consumesChanged = true;
-            }
-            if (consumesChanged) {
-                this.setConsumes(eventID, consumes);
-            }
-
             this.gear = newGear;
             this.gearChangeEmitter.emit(eventID);
             //this.setCooldowns(eventID, newCooldowns);

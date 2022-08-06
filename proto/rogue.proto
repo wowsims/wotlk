@@ -137,6 +137,7 @@ enum RogueMinorGlyph {
 	GlyphOfVanish = 43380;
 }
 
+
 message Rogue {
 	message Rotation {
 		enum Builder {
@@ -166,6 +167,13 @@ message Rogue {
 	
 	message Options {
 		RaidTarget tricks_of_the_trade_target = 1;
+		enum PoisonImbue {
+			NoPoison = 0;
+			InstantPoison = 1;
+			DeadlyPoison = 2;
+		}
+		PoisonImbue mh_imbue = 2;
+		PoisonImbue oh_imbue = 3;
 	}
 	Options options = 3;
 }

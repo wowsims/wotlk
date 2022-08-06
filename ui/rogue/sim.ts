@@ -15,7 +15,6 @@ import { Stats } from '../core/proto_utils/stats.js';
 import { Sim } from '../core/sim.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
 import { EventID, TypedEvent } from '../core/typed_event.js';
-import { WeaponImbue } from '../core/proto/common.js';
 
 import { Rogue, Rogue_Rotation as RogueRotation, Rogue_Options as RogueOptions } from '../core/proto/rogue.js';
 

@@ -5,7 +5,6 @@ import { Consumes } from '../core/proto/common.js';
 import { EquipmentSpec } from '../core/proto/common.js';
 import { Food } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
-import { WeaponImbue } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
 import {
@@ -45,8 +44,6 @@ export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredRogueThistleTea,
 	battleElixir: BattleElixir.ElixirOfDeadlyStrikes,
 	food: Food.FoodFishFeast,
-	mainHandImbue: WeaponImbue.WeaponImbueRogueInstantPoison,
-	offHandImbue: WeaponImbue.WeaponImbueRogueDeadlyPoison,
 });
 
 export const P1_PRESET = {

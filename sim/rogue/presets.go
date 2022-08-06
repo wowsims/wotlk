@@ -116,8 +116,6 @@ var FullIndividualBuffs = &proto.IndividualBuffs{
 }
 
 var FullConsumes = &proto.Consumes{
-	MainHandImbue:   proto.WeaponImbue_WeaponImbueRogueInstantPoison,
-	OffHandImbue:    proto.WeaponImbue_WeaponImbueRogueDeadlyPoison,
 	Flask:           proto.Flask_FlaskOfRelentlessAssault,
 	DefaultPotion:   proto.Potions_HastePotion,
 	DefaultConjured: proto.Conjured_ConjuredRogueThistleTea,

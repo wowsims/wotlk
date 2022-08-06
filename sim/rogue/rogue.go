@@ -244,7 +244,7 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 		}
 	}
 
-	if rogue.Consumes.OffHandImbue != proto.WeaponImbue_WeaponImbueRogueDeadlyPoison {
+	if rogue.Options.OhImbue != proto.Rogue_Options_DeadlyPoison {
 		rogue.Rotation.UseShiv = false
 	}
 
