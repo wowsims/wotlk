@@ -4,6 +4,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core"
 )
 
@@ -12,6 +13,8 @@ func (paladin *Paladin) registerDivinePleaSpell() {
 	// In future maybe expose aura for buff asserting (For prot paladins.)
 
 	actionID := core.ActionID{SpellID: 54428} // Divine plea
+
+	hasGlyph := paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfDivinePlea)
 
 	plea := core.NewDot(core.Dot{
 		Spell: paladin.RegisterSpell(core.SpellConfig{
@@ -30,6 +33,16 @@ func (paladin *Paladin) registerDivinePleaSpell() {
 		Aura: paladin.RegisterAura(core.Aura{
 			Label:    "Divine Plea-" + strconv.Itoa(int(paladin.Index)),
 			ActionID: actionID,
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				if hasGlyph {
+					aura.Unit.PseudoStats.DamageTakenMultiplier *= 0.97
+				}
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				if hasGlyph {
+					aura.Unit.PseudoStats.DamageTakenMultiplier /= 0.97
+				}
+			},
 		}),
 
 		NumberOfTicks: 5,
