@@ -1,8 +1,6 @@
 package hunter
 
 import (
-	"time"
-
 	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -39,8 +37,6 @@ type Hunter struct {
 
 	AmmoDPS         float64
 	AmmoDamageBonus float64
-
-	timeToTrapWeave time.Duration
 
 	currentAspect *core.Aura
 
@@ -168,8 +164,6 @@ func NewHunter(character core.Character, options proto.Player) *Hunter {
 		Talents:   *hunterOptions.Talents,
 		Options:   *hunterOptions.Options,
 		Rotation:  *hunterOptions.Rotation,
-
-		timeToTrapWeave: time.Millisecond * time.Duration(hunterOptions.Rotation.TimeToTrapWeaveMs),
 	}
 	hunter.EnableManaBar()
 

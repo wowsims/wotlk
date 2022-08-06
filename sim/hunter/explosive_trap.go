@@ -89,7 +89,8 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 		}),
 	})
 
-	halfWeaveTime := hunter.timeToTrapWeave / 2
+	timeToTrapWeave := time.Millisecond * time.Duration(hunter.Rotation.TimeToTrapWeaveMs)
+	halfWeaveTime := timeToTrapWeave / 2
 	hunter.TrapWeaveSpell = hunter.RegisterSpell(core.SpellConfig{
 		ActionID: actionID.WithTag(1),
 		Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagNoMetrics | core.SpellFlagNoLogs,
