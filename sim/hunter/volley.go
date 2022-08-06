@@ -53,13 +53,12 @@ func (hunter *Hunter) registerVolleySpell() {
 				ChannelTime: time.Second * 6,
 			},
 			IgnoreHaste: true,
-
-			OnCastComplete: func(sim *core.Simulation, _ *core.Spell) {
-				hunter.AutoAttacks.DelayRangedUntil(sim, sim.CurrentTime + time.Second * 6)
-			},
 		},
 
-		ApplyEffects: core.ApplyEffectFuncDot(volleyDot),
+		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+			hunter.AutoAttacks.DelayRangedUntil(sim, sim.CurrentTime + time.Second * 6)
+			volleyDot.Apply(sim)
+		},
 	})
 	volleyDot.Spell = hunter.Volley
 }

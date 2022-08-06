@@ -115,6 +115,7 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 				core.StartDelayedAction(sim, core.DelayedActionOptions{
 					DoAt: layTrapAt,
 					OnAction: func(sim *core.Simulation) {
+						hunter.GCD.Reset()
 						hunter.ExplosiveTrap.Cast(sim, hunter.CurrentTarget)
 						if doneAt > hunter.GCD.ReadyAt() {
 							hunter.GCD.Set(doneAt)

@@ -187,17 +187,17 @@ message Hunter {
 			Aoe = 3;
 			Custom = 2;
 		}
-		RotationType type = 1;
+		RotationType type = 9;
 
 		enum StingType {
 			NoSting = 0;
 			ScorpidSting = 1;
 			SerpentSting = 2;
 		}
-		StingType sting = 2;
+		StingType sting = 5;
 
-		bool trap_weave = 3;
-		double time_to_trap_weave_ms = 4;
+		bool trap_weave = 1;
+		double time_to_trap_weave_ms = 2;
 
 		enum SpellOption {
 			NoSpell = 0;
@@ -214,7 +214,7 @@ message Hunter {
 			ExplosiveTrap = 11;
 			Volley = 12;
 		}
-		CustomRotation custom_rotation = 5;
+		CustomRotation custom_rotation = 8;
 
 		// Switch to Aspect of the Viper when mana goes below this percent.
 		double viper_start_mana_percent = 6;

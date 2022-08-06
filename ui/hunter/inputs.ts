@@ -68,7 +68,7 @@ export const HunterRotationConfig = {
 			label: 'Type',
 			values: [
 				{ name: 'Single Target', value: RotationType.SingleTarget },
-				{ name: 'AOE', value: RotationType.AOE },
+				{ name: 'AOE', value: RotationType.Aoe },
 				{ name: 'Custom', value: RotationType.Custom },
 			],
 		}),
