@@ -666,6 +666,48 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestHunter-Settings-Dwarf-P1-AOE-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 14689.508870707601
+  tps: 14765.511563114673
+ }
+}
+dps_results: {
+ key: "TestHunter-Settings-Dwarf-P1-AOE-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 5315.187544403494
+  tps: 4595.944316199965
+ }
+}
+dps_results: {
+ key: "TestHunter-Settings-Dwarf-P1-AOE-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 6163.398936182473
+  tps: 5319.6678520615005
+ }
+}
+dps_results: {
+ key: "TestHunter-Settings-Dwarf-P1-AOE-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 10317.374391897849
+  tps: 11036.505021438717
+ }
+}
+dps_results: {
+ key: "TestHunter-Settings-Dwarf-P1-AOE-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 3433.0509645439997
+  tps: 3119.686306943904
+ }
+}
+dps_results: {
+ key: "TestHunter-Settings-Dwarf-P1-AOE-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 4135.955006518265
+  tps: 3747.064309613009
+ }
+}
+dps_results: {
  key: "TestHunter-Settings-Dwarf-P1-BM-FullBuffs-LongMultiTarget"
  value: {
   dps: 4842.088925032243
@@ -789,6 +831,48 @@ dps_results: {
  value: {
   dps: 3908.013613948105
   tps: 3522.0228277505425
+ }
+}
+dps_results: {
+ key: "TestHunter-Settings-Orc-P1-AOE-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 14782.648013918675
+  tps: 14811.394262233318
+ }
+}
+dps_results: {
+ key: "TestHunter-Settings-Orc-P1-AOE-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 5364.548295805753
+  tps: 4608.345910500354
+ }
+}
+dps_results: {
+ key: "TestHunter-Settings-Orc-P1-AOE-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 6220.698417706049
+  tps: 5347.519204658286
+ }
+}
+dps_results: {
+ key: "TestHunter-Settings-Orc-P1-AOE-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 10355.8844434472
+  tps: 11058.223894898394
+ }
+}
+dps_results: {
+ key: "TestHunter-Settings-Orc-P1-AOE-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 3465.6519980134603
+  tps: 3133.2884171571995
+ }
+}
+dps_results: {
+ key: "TestHunter-Settings-Orc-P1-AOE-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 4174.506120284945
+  tps: 3773.8235661729645
  }
 }
 dps_results: {

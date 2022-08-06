@@ -43,7 +43,6 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 
 				GCD: core.GCDDefault,
 			},
-			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    timer,
 				Duration: time.Second*30 - time.Second*2*time.Duration(hunter.Talents.Resourcefulness),
