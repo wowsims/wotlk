@@ -81,7 +81,7 @@ var FrostTalents = &proto.DeathknightTalents{
 
 var unholyRotation = &proto.Deathknight_Rotation{
 	UseDeathAndDecay: true,
-	BtGhoulFrenzy:    true,
+	BloodTap:         proto.Deathknight_Rotation_BloodStrikeBT,
 }
 
 var frostRotation = &proto.Deathknight_Rotation{}

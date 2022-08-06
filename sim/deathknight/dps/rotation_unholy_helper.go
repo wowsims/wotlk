@@ -189,7 +189,7 @@ func (dk *DpsDeathknight) uhShouldWaitForDnD(sim *core.Simulation, blood bool, f
 func (dk *DpsDeathknight) uhGhoulFrenzyCheck(sim *core.Simulation, target *core.Unit) bool {
 	// If no Ghoul Frenzy Aura or duration less then 10 seconds we try recasting
 	if !dk.GhoulFrenzyAura.IsActive() || dk.GhoulFrenzyAura.RemainingDuration(sim) < 10*time.Second {
-		if dk.CanBloodTap(sim) && dk.GhoulFrenzy.IsReady(sim) && dk.AllBloodRunesSpent() && dk.AllUnholySpent() && dk.SummonGargoyle.CD.TimeToReady(sim) > time.Second*55 {
+		if (dk.Rotation.BloodTap == proto.Deathknight_Rotation_GhoulFrenzy || dk.Rotation.BtGhoulFrenzy) && dk.CanBloodTap(sim) && dk.GhoulFrenzy.IsReady(sim) && dk.AllBloodRunesSpent() && dk.AllUnholySpent() && dk.SummonGargoyle.CD.TimeToReady(sim) > time.Second*55 {
 			// Use Ghoul Frenzy with a Blood Tap and Blood rune if all blood runes are on CD and Garg wont come off cd in less then a minute.
 			// The gargoyle check is there because you should BT -> UP -> Garg (Not in the sim yet)
 			if dk.uhDiseaseCheck(sim, target, dk.GhoulFrenzy, true, 1) {
@@ -214,6 +214,33 @@ func (dk *DpsDeathknight) uhGhoulFrenzyCheck(sim *core.Simulation, target *core.
 			}
 		}
 	}
+	return false
+}
+
+func (dk *DpsDeathknight) uhBloodTap(sim *core.Simulation, target *core.Unit) bool {
+	if !dk.GCD.IsReady(sim) || dk.SummonGargoyle.IsReady(sim) {
+		return false
+	}
+
+	if dk.Rotation.BloodTap != proto.Deathknight_Rotation_GhoulFrenzy && dk.BloodTap.IsReady(sim) && dk.CurrentBloodRunes() == 0 {
+		switch dk.Rotation.BloodTap {
+		case proto.Deathknight_Rotation_IcyTouch:
+			if dk.CurrentFrostRunes() == 0 {
+				dk.CastBloodTap(sim, dk.CurrentTarget)
+				dk.CastIcyTouch(sim, target)
+				return true
+			}
+		case proto.Deathknight_Rotation_BloodStrikeBT:
+			dk.CastBloodTap(sim, dk.CurrentTarget)
+			dk.CastBloodStrike(sim, target)
+			return true
+		case proto.Deathknight_Rotation_BloodBoilBT:
+			dk.CastBloodTap(sim, dk.CurrentTarget)
+			dk.CastBloodBoil(sim, target)
+			return true
+		}
+	}
+
 	return false
 }
 
