@@ -57,6 +57,10 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 		MakePermanent(GiftOfArthasAura(target))
 	}
 
+	if debuffs.SporeCloud {
+		MakePermanent(SporeCloudAura(target))
+	}
+
 	if debuffs.Mangle {
 		MakePermanent(MangleAura(target))
 	} else if debuffs.Trauma {
@@ -127,6 +131,9 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 	}
 	if debuffs.DemoralizingShout != proto.TristateEffect_TristateEffectMissing {
 		MakePermanent(DemoralizingShoutAura(target, 0, GetTristateValueInt32(debuffs.DemoralizingShout, 0, 5)))
+	}
+	if debuffs.Vindication {
+		MakePermanent(VindicationAura(target))
 	}
 
 	// Atk spd reduction
@@ -718,13 +725,18 @@ func SporeCloudAura(target *Unit) *Aura {
 	})
 }
 
+var ShatteringThrowAuraTag = "ShatteringThrow"
+
+var ShatteringThrowDuration = time.Second * 10
+
 func ShatteringThrowAura(target *Unit) *Aura {
 	armorReduction := 0.2
 
 	return target.GetOrRegisterAura(Aura{
 		Label:    "Shattering Throw",
+		Tag: ShatteringThrowAuraTag,
 		ActionID: ActionID{SpellID: 64382},
-		Duration: time.Second * 10,
+		Duration: ShatteringThrowDuration,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 - armorReduction)
 			aura.Unit.updateArmor()
@@ -789,6 +801,24 @@ func DemoralizingShoutAura(target *Unit, boomingVoicePts int32, impDemoShoutPts 
 		Tag:      APReductionAuraTag,
 		ActionID: ActionID{SpellID: 25203},
 		Duration: duration,
+		Priority: apReduction,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.AddStatDynamic(sim, stats.AttackPower, -apReduction)
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.AddStatDynamic(sim, stats.AttackPower, apReduction)
+		},
+	})
+}
+
+func VindicationAura(target *Unit) *Aura {
+	apReduction := 574.0
+
+	return target.GetOrRegisterAura(Aura{
+		Label:    "Vindication",
+		Tag:      APReductionAuraTag,
+		ActionID: ActionID{SpellID: 26016},
+		Duration: time.Second * 10,
 		Priority: apReduction,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.AddStatDynamic(sim, stats.AttackPower, -apReduction)
