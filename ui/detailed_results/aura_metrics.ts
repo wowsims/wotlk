@@ -24,6 +24,18 @@ export class AuraMetricsTable extends MetricsTable<AuraMetrics> {
                 };
             }),
             {
+                name: 'Procs',
+                tooltip: 'Procs',
+                getValue: (metric: AuraMetrics) => metric.averageProcs,
+                getDisplayString: (metric: AuraMetrics) => metric.averageProcs.toFixed(2),
+            },
+            {
+                name: 'PPM',
+                tooltip: 'Procs Per Minute',
+                getValue: (metric: AuraMetrics) => metric.ppm,
+                getDisplayString: (metric: AuraMetrics) => metric.ppm.toFixed(2),
+            },
+            {
                 name: 'Uptime',
                 tooltip: 'Uptime / Encounter Duration',
                 sort: ColumnSortType.Descending,
