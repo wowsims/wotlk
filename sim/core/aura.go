@@ -443,6 +443,7 @@ func (at *auraTracker) doneIteration(sim *Simulation) {
 // Adds a new aura to the simulation. If an aura with the same ID already
 // exists it will be replaced with the new one.
 func (aura *Aura) Activate(sim *Simulation) {
+	aura.metrics.Procs++
 	if aura.IsActive() {
 		if sim.Log != nil && !aura.ActionID.IsEmptyAction() {
 			aura.Unit.Log(sim, "Aura refreshed: %s", aura.ActionID)

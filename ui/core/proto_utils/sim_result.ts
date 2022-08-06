@@ -497,6 +497,14 @@ export class AuraMetrics {
         return this.data.uptimeSecondsAvg / this.duration * 100;
     }
 
+		get averageProcs() {
+			return this.data.procsAvg
+		}
+
+		get ppm() {
+			return this.data.procsAvg / (this.duration / 60);
+		}
+
     static async makeNew(unit: UnitMetrics | null, resultData: SimResultData, auraMetrics: AuraMetricsProto, playerIndex?: number): Promise<AuraMetrics> {
         const actionId = await ActionId.fromProto(auraMetrics.id!).fill(playerIndex);
         return new AuraMetrics(unit, actionId, auraMetrics, resultData);

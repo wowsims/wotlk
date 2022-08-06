@@ -148,6 +148,8 @@ message AuraMetrics {
 
 	double uptime_seconds_avg = 2;
 	double uptime_seconds_stdev = 3;
+
+	double procs_avg = 4;
 }
 
 enum ResourceType {
