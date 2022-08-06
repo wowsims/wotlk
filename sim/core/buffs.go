@@ -257,6 +257,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 
 	registerUnholyFrenzyCD(agent, individualBuffs.UnholyFrenzy)
 	registerTricksOfTheTradeCD(agent, individualBuffs.TricksOfTheTrades)
+	registerShatteringThrowCD(agent, individualBuffs.ShatteringThrows)
 	registerPowerInfusionCD(agent, individualBuffs.PowerInfusions)
 	registerManaTideTotemCD(agent, partyBuffs.ManaTideTotems)
 	registerInnervateCD(agent, individualBuffs.Innervates)
@@ -294,6 +295,7 @@ func applyPetBuffEffects(petAgent PetAgent, raidBuffs proto.RaidBuffs, partyBuff
 	individualBuffs.Innervates = 0
 	individualBuffs.PowerInfusions = 0
 	individualBuffs.TricksOfTheTrades = 0
+	individualBuffs.ShatteringThrows = 0
 
 	if !petAgent.GetPet().enabledOnStart {
 		raidBuffs.ArcaneBrilliance = false
@@ -715,6 +717,33 @@ func UnholyFrenzyAura(character *Character, actionTag int32) *Aura {
 			character.PseudoStats.PhysicalDamageDealtMultiplier /= 1.2
 		},
 	})
+}
+
+const ShatteringThrowCD = time.Minute * 5
+
+func registerShatteringThrowCD(agent Agent, numShatteringThrows int32) {
+	if numShatteringThrows == 0 {
+		return
+	}
+
+	stAura := ShatteringThrowAura(&agent.GetCharacter().Env.Encounter.Targets[0].Unit)
+
+	registerExternalConsecutiveCDApproximation(
+		agent,
+		externalConsecutiveCDApproximation{
+			ActionID:         ActionID{SpellID: 64382, Tag: -1},
+			AuraTag:          ShatteringThrowAuraTag,
+			CooldownPriority: CooldownPriorityDefault,
+			AuraDuration:     ShatteringThrowDuration,
+			AuraCD:           ShatteringThrowCD,
+			Type:             CooldownTypeDPS,
+
+			ShouldActivate: func(sim *Simulation, character *Character) bool {
+				return true
+			},
+			AddAura: func(sim *Simulation, character *Character) { stAura.Activate(sim) },
+		},
+		numShatteringThrows)
 }
 
 var InnervateAuraTag = "Innervate"
