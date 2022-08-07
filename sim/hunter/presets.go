@@ -169,6 +169,7 @@ var basicOptions = &proto.Hunter_Options{
 	PetUptime:  0.9,
 
 	SniperTrainingUptime: 0.8,
+	UseHuntersMark:       true,
 }
 
 var FullRaidBuffs = &proto.RaidBuffs{

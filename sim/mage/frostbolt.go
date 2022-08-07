@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -28,13 +29,14 @@ func (mage *Mage) registerFrostboltSpell() {
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
-			BonusSpellHitRating:  0,
+			ProcMask:            core.ProcMaskSpellDamage,
+			BonusSpellHitRating: 0,
 			BonusSpellCritRating: 0 +
-				core.TernaryFloat64(mage.MageTier.t9_4, 5 * core.CritRatingPerCritChance, 0),
+				core.TernaryFloat64(mage.MageTier.t9_4, 5*core.CritRatingPerCritChance, 0),
 
 			DamageMultiplier: mage.spellDamageMultiplier *
-				(1 + .01*float64(mage.Talents.ChilledToTheBone)),
+				(1 + .01*float64(mage.Talents.ChilledToTheBone)) *
+				core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostbolt), 1.05, 1),
 
 			ThreatMultiplier: 1 - (0.1/3)*float64(mage.Talents.FrostChanneling),
 

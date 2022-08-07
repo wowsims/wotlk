@@ -53,6 +53,11 @@ export const PetUptime = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecHunter
 	percent: true,
 });
 
+export const UseHuntersMark = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.SpecHunter>({
+	fieldName: 'useHuntersMark',
+	id: ActionId.fromSpellId(53338),
+});
+
 export const SniperTrainingUptime = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecHunter>({
 	fieldName: 'sniperTrainingUptime',
 	label: 'ST Uptime (%)',

@@ -8,7 +8,11 @@ import (
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
-func (dk *DpsDeathknight) setupUnholyOpener() {
+func (dk *DpsDeathknight) setupUnholyRotations() {
+	if dk.Rotation.BloodTap == proto.Deathknight_Rotation_GhoulFrenzy && !dk.Talents.GhoulFrenzy {
+		dk.Rotation.BloodTap = proto.Deathknight_Rotation_IcyTouch
+	}
+
 	dk.setupGargoyleCooldowns()
 
 	dk.Opener.Clear().
@@ -39,6 +43,14 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 		if dk.uhGhoulFrenzyCheck(sim, target) {
 			return true
 		}
+	}
+
+	if dk.uhEmpoweredRuneWeapon(sim, target) {
+		return true
+	}
+
+	if dk.uhBloodTap(sim, target) {
+		return true
 	}
 
 	// What follows is a simple APL where every cast is checked against current diseses
@@ -145,6 +157,14 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 		if dk.uhGhoulFrenzyCheck(sim, target) {
 			return true
 		}
+	}
+
+	if dk.uhEmpoweredRuneWeapon(sim, target) {
+		return true
+	}
+
+	if dk.uhBloodTap(sim, target) {
+		return true
 	}
 
 	// What follows is a simple APL where every cast is checked against current diseses

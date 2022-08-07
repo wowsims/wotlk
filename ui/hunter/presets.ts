@@ -97,6 +97,7 @@ export const DefaultRotation = HunterRotation.create({
 
 export const DefaultOptions = HunterOptions.create({
 	ammo: Ammo.SaroniteRazorheads,
+	useHuntersMark: true,
 	petType: PetType.Wolf,
 	petTalents: ferocityDefault,
 	petUptime: 1,
