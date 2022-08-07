@@ -379,7 +379,7 @@ func (rogue *Rogue) canPoolEnergy(sim *core.Simulation, energy float64) bool {
 }
 
 func (rogue *Rogue) castBuilder(sim *core.Simulation, target *core.Unit) {
-	if rogue.Rotation.UseShiv && rogue.DeadlyPoisonDot.IsActive() && rogue.DeadlyPoisonDot.RemainingDuration(sim) < time.Second*2 && rogue.CurrentEnergy() >= rogue.Shiv.DefaultCast.Cost {
+	if rogue.Rotation.UseShiv && rogue.DeadlyPoisonDots[target.Index].IsActive() && rogue.DeadlyPoisonDots[target.Index].RemainingDuration(sim) < time.Second*2 && rogue.CurrentEnergy() >= rogue.Shiv.DefaultCast.Cost {
 		rogue.Shiv.Cast(sim, target)
 	} else {
 		rogue.Builder.Cast(sim, target)

@@ -41,7 +41,8 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 			ThreatMultiplier: 1,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					deadlyPoisonStacks := rogue.DeadlyPoisonDot.GetStacks()
+					target := hitEffect.Target
+					deadlyPoisonStacks := rogue.DeadlyPoisonDots[target.Index].GetStacks()
 					doses := float64(core.MinInt32(deadlyPoisonStacks, comboPoints))
 					return baseDamage*doses + apRatio*doses*hitEffect.MeleeAttackPower(spell.Unit)
 				},
@@ -49,13 +50,14 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 			},
 			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(rogue.MeleeCritMultiplier(true, false)),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				target := spellEffect.Target
 				if spellEffect.Landed() {
 					rogue.ApplyFinisher(sim, spell)
 					rogue.ApplyCutToTheChase(sim)
-					deadlyPoisonStacks := rogue.DeadlyPoisonDot.GetStacks()
+					deadlyPoisonStacks := rogue.DeadlyPoisonDots[target.Index].GetStacks()
 					doses := core.MinInt32(deadlyPoisonStacks, comboPoints)
 					if chanceToRetainStacks < 1 && sim.RandomFloat("Master Poisoner") > float64(chanceToRetainStacks) {
-						rogue.DeadlyPoisonDot.Cancel(sim)
+						rogue.DeadlyPoisonDots[target.Index].Cancel(sim)
 					}
 					rogue.EnvenomAura.Duration = time.Second * time.Duration(1+doses)
 					rogue.EnvenomAura.Activate(sim)

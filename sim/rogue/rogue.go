@@ -72,7 +72,7 @@ type Rogue struct {
 	LastDeadlyPoisonProcMask     core.ProcMask
 	DeadlyPoisonProcChanceBonus  float64
 	InstantPoisonProcChanceBonus float64
-	DeadlyPoisonDot              *core.Dot
+	DeadlyPoisonDots             []*core.Dot
 	RuptureDot                   *core.Dot
 
 	AdrenalineRushAura  *core.Aura
