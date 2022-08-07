@@ -11,7 +11,7 @@ export interface ListPickerConfig<ModObject, ItemType, ItemPicker> extends Input
 	itemLabel: string,
 	newItem: () => ItemType,
 	copyItem: (oldItem: ItemType) => ItemType,
-	newItemPicker: (parent: HTMLElement, item: ItemType, listPicker: LickPicker<ModObject, ItemType>) => ItemPicker,
+	newItemPicker: (parent: HTMLElement, item: ItemType, listPicker: ListPicker<ModObject, ItemType, ItemPicker>) => ItemPicker,
 	inlineMenuBar?: boolean,
 }
 
@@ -25,7 +25,7 @@ export class ListPicker<ModObject, ItemType, ItemPicker> extends Input<ModObject
 	private readonly config: ListPickerConfig<ModObject, ItemType, ItemPicker>;
 	private readonly itemsDiv: HTMLElement;
 
-	private itemPickerPairs: Array<ItemPickerPair<ItemType>>;
+	private itemPickerPairs: Array<ItemPickerPair<ItemType, ItemPicker>>;
 
 	constructor(parent: HTMLElement, modObject: ModObject, config: ListPickerConfig<ModObject, ItemType, ItemPicker>) {
 		super(parent, 'list-picker-root', modObject, config);

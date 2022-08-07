@@ -22,7 +22,6 @@ import {
 	WarriorMinorGlyph,
 } from '../core/proto/warrior.js';
 
-import * as Enchants from '../core/constants/enchants.js';
 import * as Gems from '../core/proto_utils/gems.js';
 import * as Tooltips from '../core/constants/tooltips.js';
 

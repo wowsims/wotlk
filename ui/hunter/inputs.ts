@@ -98,7 +98,7 @@ export const HunterRotationConfig = {
 			fieldName: 'timeToTrapWeaveMs',
 			label: 'Weave Time',
 			labelTooltip: 'Amount of time, in milliseconds, between when you start moving towards the boss and when you re-engage your ranged autos.',
-			enableWhen: (player: Player<Spec.SpecHunter>) => (player.getRotation().type != RotationType.Custom && player.getRotation().trapWeave) || (player.getRotation().type == RotationType.Custom && player.customRotation?.spells.some(spell => spell.spell == SpellOption.ExplosiveTrap)),
+			enableWhen: (player: Player<Spec.SpecHunter>) => (player.getRotation().type != RotationType.Custom && player.getRotation().trapWeave) || (player.getRotation().type == RotationType.Custom && player.getRotation().customRotation?.spells.some(spell => spell.spell == SpellOption.ExplosiveTrap) || false),
 		}),
 		InputHelpers.makeCustomRotationInput<Spec.SpecHunter, SpellOption>({
 			fieldName: 'customRotation',
