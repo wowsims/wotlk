@@ -46,13 +46,8 @@ type Mage struct {
 	core.Character
 	Talents proto.MageTalents
 
-	Options        proto.Mage_Options
-	RotationType   proto.Mage_Rotation_Type
-	ArcaneRotation proto.Mage_Rotation_ArcaneRotation
-	FireRotation   proto.Mage_Rotation_FireRotation
-	FrostRotation  proto.Mage_Rotation_FrostRotation
-	AoeRotation    proto.Mage_Rotation_AoeRotation
-	UseAoeRotation bool
+	Options  proto.Mage_Options
+	Rotation proto.Mage_Rotation
 
 	isMissilesBarrage bool
 	numCastsDone      int32
@@ -113,6 +108,13 @@ func (mage *Mage) GetCharacter() *core.Character {
 
 func (mage *Mage) GetMage() *Mage {
 	return mage
+}
+
+func (mage *Mage) HasMajorGlyph(glyph proto.MageMajorGlyph) bool {
+	return mage.HasGlyph(int32(glyph))
+}
+func (mage *Mage) HasMinorGlyph(glyph proto.MageMinorGlyph) bool {
+	return mage.HasGlyph(int32(glyph))
 }
 
 func (mage *Mage) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
@@ -183,12 +185,10 @@ func NewMage(character core.Character, options proto.Player) *Mage {
 	mageOptions := options.GetMage()
 
 	mage := &Mage{
-		Character:    character,
-		Talents:      *mageOptions.Talents,
-		Options:      *mageOptions.Options,
-		RotationType: mageOptions.Rotation.Type,
-
-		UseAoeRotation: mageOptions.Rotation.MultiTargetRotation,
+		Character: character,
+		Talents:   *mageOptions.Talents,
+		Options:   *mageOptions.Options,
+		Rotation:  *mageOptions.Rotation,
 
 		spellDamageMultiplier: 1.0,
 		manaTracker:           common.NewManaSpendingRateTracker(),
@@ -196,26 +196,18 @@ func NewMage(character core.Character, options proto.Player) *Mage {
 	mage.EnableManaBar()
 	mage.EnableResumeAfterManaWait(mage.tryUseGCD)
 
-	if mage.RotationType == proto.Mage_Rotation_Arcane && mageOptions.Rotation.Arcane != nil {
-		mage.ArcaneRotation = *mageOptions.Rotation.Arcane
-	} else if mage.RotationType == proto.Mage_Rotation_Fire && mageOptions.Rotation.Fire != nil {
-		mage.FireRotation = *mageOptions.Rotation.Fire
-	} else if mage.RotationType == proto.Mage_Rotation_Frost && mageOptions.Rotation.Frost != nil {
-		mage.FrostRotation = *mageOptions.Rotation.Frost
-	}
-	if mageOptions.Rotation.Aoe != nil {
-		mage.AoeRotation = *mageOptions.Rotation.Aoe
-	}
-
 	if mage.Options.Armor == proto.Mage_Options_MageArmor {
-		mage.PseudoStats.SpiritRegenRateCasting += 0.5
+		mage.PseudoStats.SpiritRegenRateCasting += .5
+		if mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfMageArmor) {
+			mage.PseudoStats.SpiritRegenRateCasting += .2
+		}
 		if mage.HasSetBonus(ItemSetKhadgarsRegalia, 2) {
 			mage.PseudoStats.SpiritRegenRateCasting += .1
 		}
 	} else if mage.Options.Armor == proto.Mage_Options_MoltenArmor {
 		//Need to switch to spirit crit calc
 		multi := 0.35
-		if mage.HasGlyph(int32(proto.MageMajorGlyph_GlyphOfMoltenArmor.Number())) {
+		if mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfMoltenArmor) {
 			multi += .2
 		}
 		if mage.HasSetBonus(ItemSetKhadgarsRegalia, 2) {
@@ -225,7 +217,7 @@ func NewMage(character core.Character, options proto.Player) *Mage {
 	}
 
 	if mage.Talents.SummonWaterElemental {
-		mage.waterElemental = mage.NewWaterElemental(mage.FrostRotation.WaterElementalDisobeyChance)
+		mage.waterElemental = mage.NewWaterElemental(mage.Rotation.WaterElementalDisobeyChance)
 	}
 
 	return mage
@@ -259,7 +251,7 @@ func init() {
 		stats.Stamina:   50,
 		stats.Intellect: 193, // Gnomes start with 162 int, we assume this include racial so / 1.05
 		stats.Spirit:    174,
-		stats.Mana:      2241,
+		stats.Mana:      3268,
 		stats.SpellCrit: core.CritRatingPerCritChance * 0.93,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceHuman, Class: proto.Class_ClassMage}] = stats.Stats{
@@ -269,7 +261,7 @@ func init() {
 		stats.Stamina:   51,
 		stats.Intellect: 181,
 		stats.Spirit:    179,
-		stats.Mana:      2241,
+		stats.Mana:      3268,
 		stats.SpellCrit: core.CritRatingPerCritChance * 0.926,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassMage}] = stats.Stats{

@@ -25,6 +25,7 @@ func TestHunter(t *testing.T) {
 		OtherSpecOptions: []core.SpecOptionsCombo{
 			core.SpecOptionsCombo{Label: "BM", SpecOptions: PlayerOptionsBM},
 			core.SpecOptionsCombo{Label: "SV", SpecOptions: PlayerOptionsSV},
+			core.SpecOptionsCombo{Label: "AOE", SpecOptions: PlayerOptionsAOE},
 		},
 
 		Glyphs: DefaultGlyphs,

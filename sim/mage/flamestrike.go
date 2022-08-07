@@ -8,8 +8,8 @@ import (
 )
 
 func (mage *Mage) registerFlamestrikeSpell() {
-	actionID := core.ActionID{SpellID: 27086}
-	baseCost := 1175.0
+	actionID := core.ActionID{SpellID: 42926}
+	baseCost := .30 * mage.BaseMana
 
 	applyAOEDamage := core.ApplyEffectFuncAOEDamageCapped(mage.Env, core.SpellEffect{
 		ProcMask:            core.ProcMaskSpellDamage,
@@ -21,7 +21,7 @@ func (mage *Mage) registerFlamestrikeSpell() {
 		DamageMultiplier: mage.spellDamageMultiplier * (1 + 0.02*float64(mage.Talents.FirePower)),
 		ThreatMultiplier: 1 - 0.05*float64(mage.Talents.BurningSoul),
 
-		BaseDamage:     core.BaseDamageConfigMagic(480, 585, 0.236),
+		BaseDamage:     core.BaseDamageConfigMagic(876, 1071, 0.243),
 		OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, 0.25*float64(mage.Talents.SpellPower))),
 	})
 
@@ -63,7 +63,7 @@ func (mage *Mage) registerFlamestrikeSpell() {
 
 			ThreatMultiplier: 1 - 0.05*float64(mage.Talents.BurningSoul),
 
-			BaseDamage:     core.BaseDamageConfigMagicNoRoll(106, 0.03),
+			BaseDamage:     core.BaseDamageConfigMagicNoRoll(780/4, 0.122),
 			OutcomeApplier: mage.OutcomeFuncTick(),
 			IsPeriodic:     true,
 		}),

@@ -42,3 +42,4 @@ jobs:
         with:
           branch: gh-pages
           folder: dist/wotlk
+          single-commit: true

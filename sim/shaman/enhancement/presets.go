@@ -18,9 +18,8 @@ var StandardTalents = &proto.ShamanTalents{
 	ImprovedFireNova:     2,
 
 	EnhancingTotems:         3,
-	AncestralKnowledge:      2,
+	AncestralKnowledge:      4,
 	ThunderingStrikes:       5,
-	ImprovedShields:         3,
 	ElementalWeapons:        3,
 	ShamanisticFocus:        true, //1/2 imp stormstrike might be better, yet to be determined
 	Flurry:                  5,
@@ -38,6 +37,14 @@ var StandardTalents = &proto.ShamanTalents{
 	ShamanisticRage:         true,
 	MaelstromWeapon:         5,
 	FeralSpirit:             true,
+}
+
+var DefaultGlyphs = &proto.Glyphs{
+	Major1: int32(proto.ShamanMajorGlyph_GlyphOfStormstrike),
+	Major2: int32(proto.ShamanMajorGlyph_GlyphOfFlametongueWeapon),
+	Major3: int32(proto.ShamanMajorGlyph_GlyphOfFeralSpirit),
+
+	//minor glyphs are all qol passive stuff
 }
 
 var PlayerOptionsBasic = &proto.Player_EnhancementShaman{
@@ -92,88 +99,97 @@ var FullDebuffs = &proto.Debuffs{
 	Misery:            true,
 }
 
-var Phase2Gear = items.EquipmentSpecFromJsonString(`{"items": [
-	{
-		"id": 30190,
-		"enchant": 29192,
-		"gems": [
-			32409,
-			24058
-		]
-	},
-	{
-		"id": 30017
-	},
-	{
-		"id": 30055,
-		"enchant": 28888,
-		"gems": [
-			24027
-		]
-	},
-	{
-		"id": 29994,
-		"enchant": 34004
-	},
-	{
-		"id": 30185,
-		"enchant": 24003,
-		"gems": [
-			24027,
-			24054,
-			24058
-		]
-	},
-	{
-		"id": 30091,
-		"enchant": 27899,
-		"gems": [
-			24027
-		]
-	},
-	{
-		"id": 30189,
-		"enchant": 33995
-	},
-	{
-		"id": 30106,
-		"gems": [
-			24027,
-			24054
-		]
-	},
-	{
-		"id": 30192,
-		"enchant": 29535,
-		"gems": [
-			24027
-		]
-	},
-	{
-		"id": 30039,
-		"enchant": 28279
-	},
-	{
-		"id": 29997
-	},
-	{
-		"id": 30052
-	},
-	{
-		"id": 28830
-	},
-	{
-		"id": 29383
-	},
-	{
-		"id": 32944,
-		"enchant": 22559
-	},
-	{
-		"id": 29996,
-		"enchant": 22559
-	},
-	{
-		"id": 27815
-	}
-]}`)
+var Phase1Gear = items.EquipmentSpecFromJsonString(`{"items": [
+        {
+          "id": 40543,
+          "enchant": 44879,
+          "gems": [
+            41398,
+            40014
+          ]
+        },
+        {
+          "id": 44661,
+          "gems": [
+            40014
+          ]
+        },
+        {
+          "id": 40524,
+          "enchant": 44871,
+          "gems": [
+            40088
+          ]
+        },
+        {
+          "id": 40403,
+          "enchant": 55002
+        },
+        {
+          "id": 40523,
+          "gems": [
+            40003,
+            40014
+          ]
+        },
+        {
+          "id": 40282,
+          "enchant": 60616,
+          "gems": [
+            40088,
+            0
+          ]
+        },
+        {
+          "id": 40520,
+          "enchant": 54999,
+          "gems": [
+            42154,
+            0
+          ]
+        },
+        {
+          "id": 40275,
+          "gems": [
+            42156
+          ]
+        },
+        {
+          "id": 40522,
+          "enchant": 38374,
+          "gems": [
+            39999,
+            42156
+          ]
+        },
+        {
+          "id": 40367,
+          "enchant": 55016,
+          "gems": [
+            40058
+          ]
+        },
+        {
+          "id": 40474
+        },
+        {
+          "id": 40074
+        },
+        {
+          "id": 40684
+        },
+        {
+          "id": 37390
+        },
+        {
+          "id": 39763,
+          "enchant": 44492
+        },
+        {
+          "id": 39468,
+          "enchant": 44492
+        },
+        {
+          "id": 40322
+        }
+      ]}`)

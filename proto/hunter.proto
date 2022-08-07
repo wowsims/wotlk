@@ -184,13 +184,10 @@ message Hunter {
 		enum RotationType {
 			UnknownType = 0;
 			SingleTarget = 1;
+			Aoe = 3;
 			Custom = 2;
 		}
 		RotationType type = 9;
-
-		//bool use_multi_shot = 1;
-		//bool use_arcane_shot = 2;
-		//bool lazy_rotation = 12; // Restricts to 1 action between each auto shot.
 
 		enum StingType {
 			NoSting = 0;
@@ -199,24 +196,8 @@ message Hunter {
 		}
 		StingType sting = 5;
 
-		// Switch to Aspect of the Viper when mana goes below this percent.
-		double viper_start_mana_percent = 6;
-		// Switch back to Aspect of the Hawk when mana goes above this percent.
-		double viper_stop_mana_percent = 7;
-
-		//enum WeaveType {
-		//	WeaveNone = 0;
-		//	WeaveAutosOnly = 1;
-		//	WeaveRaptorOnly = 2;
-		//	WeaveFull = 3;
-		//}
-		//WeaveType weave = 11;
-
-		//// Time in milliseconds from when the hunter starts moving to when they reengage their ranged autos.
-		//int32 time_to_weave_ms = 9;
-
-		//// Percent of fight (0-1) to use melee weaving.
-		//double percent_weaved = 10;
+		bool trap_weave = 1;
+		double time_to_trap_weave_ms = 2;
 
 		enum SpellOption {
 			NoSpell = 0;
@@ -234,6 +215,11 @@ message Hunter {
 			Volley = 12;
 		}
 		CustomRotation custom_rotation = 8;
+
+		// Switch to Aspect of the Viper when mana goes below this percent.
+		double viper_start_mana_percent = 6;
+		// Switch back to Aspect of the Hawk when mana goes above this percent.
+		double viper_stop_mana_percent = 7;
 	}
 	Rotation rotation = 1;
 
@@ -291,16 +277,10 @@ message Hunter {
 		PetType pet_type = 2;
 		HunterPetTalents pet_talents = 3;
 		double pet_uptime = 4;
-		//bool pet_single_ability = 5;
-
-		int32 latency_ms = 6;
 
 		double sniper_training_uptime = 7;
 
-		// For internal use only.
-		// Used for hunter presims to avoid artifacts caused by randomness when
-		// calculating average ability damage from a low sample size.
-		bool remove_randomness = 8;
+		bool use_hunters_mark = 5;
 	}
 	Options options = 3;
 }

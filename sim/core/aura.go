@@ -151,6 +151,9 @@ func (aura *Aura) GetStacks() int32 {
 }
 
 func (aura *Aura) SetStacks(sim *Simulation, newStacks int32) {
+	if !aura.IsActive() && newStacks != 0 {
+		panic("Trying to set non-zero stacks on inactive aura!")
+	}
 	if newStacks < 0 {
 		panic("SetStacks newStacks cannot be negative but is " + strconv.Itoa(int(newStacks)))
 	}
@@ -443,6 +446,7 @@ func (at *auraTracker) doneIteration(sim *Simulation) {
 // Adds a new aura to the simulation. If an aura with the same ID already
 // exists it will be replaced with the new one.
 func (aura *Aura) Activate(sim *Simulation) {
+	aura.metrics.Procs++
 	if aura.IsActive() {
 		if sim.Log != nil && !aura.ActionID.IsEmptyAction() {
 			aura.Unit.Log(sim, "Aura refreshed: %s", aura.ActionID)

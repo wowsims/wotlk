@@ -60,7 +60,7 @@ func (shaman *Shaman) newLavaBurstSpell() *core.Spell {
 	}
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
-		BonusSpellHitRating:  float64(shaman.Talents.ElementalPrecision) * 2 * core.SpellHitRatingPerHitChance,
+		BonusSpellHitRating:  float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,
 		BonusSpellCritRating: 0,
 		BonusSpellPower:      0,
 		DamageMultiplier:     1 * (1 + 0.01*float64(shaman.Talents.Concussion)) * (1.0 + 0.02*float64(shaman.Talents.CallOfFlame)),

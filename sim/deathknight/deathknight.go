@@ -19,7 +19,7 @@ type DeathknightInputs struct {
 	// Rotation Vars
 	RefreshHornOfWinter bool
 	ArmyOfTheDeadType   proto.Deathknight_Rotation_ArmyOfTheDead
-	FirstDisease        proto.Deathknight_Rotation_FirstDisease
+	StartingPresence    proto.Deathknight_Rotation_StartingPresence
 }
 
 type DeathknightCoeffs struct {
@@ -240,7 +240,13 @@ func (dk *Deathknight) ResetBonusCoeffs() {
 
 func (dk *Deathknight) Reset(sim *core.Simulation) {
 	dk.Presence = UnsetPresence
-	dk.ChangePresence(sim, BloodPresence)
+
+	if dk.Inputs.StartingPresence == proto.Deathknight_Rotation_Unholy && dk.Talents.SummonGargoyle {
+		dk.ChangePresence(sim, UnholyPresence)
+	} else {
+		dk.ChangePresence(sim, BloodPresence)
+	}
+
 	dk.LastTickTime = -1
 
 	if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_PreCast {

@@ -34,6 +34,7 @@ type Warlock struct {
 	DrainSoul            *core.Spell
 	DrainSoulDot         *core.Dot
 	DrainSoulChannelling *core.Spell
+	Shadowburn           *core.Spell
 
 	CurseOfElements     *core.Spell
 	CurseOfElementsAura *core.Aura
@@ -55,6 +56,8 @@ type Warlock struct {
 	DemonicEmpowermentAura *core.Aura
 	Metamorphosis          *core.Spell
 	MetamorphosisAura      *core.Aura
+	ImmolationAura         *core.Spell
+	ImmolationAuraDot      *core.Dot
 	MoltenCoreAura         *core.Aura
 	DecimationAura         *core.Aura
 	PyroclasmAura          *core.Aura
@@ -103,9 +106,13 @@ func (warlock *Warlock) Initialize() {
 	}
 	if warlock.Talents.Metamorphosis {
 		warlock.registerMetamorphosisSpell()
+		warlock.registerImmolationAuraSpell()
 	}
 	if warlock.Talents.DarkPact {
 		warlock.registerDarkPactSpell()
+	}
+	if warlock.Talents.Shadowburn {
+		warlock.registerShadowBurnSpell()
 	}
 }
 

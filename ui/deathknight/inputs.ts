@@ -5,6 +5,9 @@ import {
 	Deathknight_Rotation_ArmyOfTheDead as ArmyOfTheDead,
 	Deathknight_Rotation_FirstDisease as FirstDisease,
 	Deathknight_Rotation_DeathAndDecayPrio as DeathAndDecayPrio,
+	Deathknight_Rotation_StartingPresence as StartingPresence,
+	Deathknight_Rotation_BloodRuneFiller as BloodRuneFiller,
+	Deathknight_Rotation_BloodTap as BloodTap,
 	Deathknight_Rotation as DeathKnightRotation,
 	Deathknight_Options as DeathKnightOptions,
 } from '../core/proto/deathknight.js';
@@ -33,6 +36,8 @@ export const PrecastGhoulFrenzy = InputHelpers.makeSpecOptionsBooleanInput<Spec.
 	fieldName: 'precastGhoulFrenzy',
 	label: 'Pre-Cast Ghoul Frenzy',
 	labelTooltip: 'Cast Ghoul Frenzy 10 seconds before combat starts.',
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && player.getTalents().ghoulFrenzy,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 });
 
 export const PrecastHornOfWinter = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecDeathknight>({
@@ -89,7 +94,7 @@ export const BloodTapGhoulFrenzy = InputHelpers.makeRotationBooleanInput<Spec.Sp
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 });
 
-export const SetFirstDisease = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, FirstDisease>({
+export const FirstDiseaseInput = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, FirstDisease>({
 	fieldName: 'firstDisease',
 	label: 'First Disease',
 	labelTooltip: 'Chose which disease to apply first.',
@@ -101,7 +106,7 @@ export const SetFirstDisease = InputHelpers.makeRotationEnumInput<Spec.SpecDeath
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 })
 
-export const UseArmyOfTheDead = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, ArmyOfTheDead>({
+export const ArmyOfTheDeadInput = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, ArmyOfTheDead>({
 	fieldName: 'armyOfTheDead',
 	label: 'Army of the Dead',
 	labelTooltip: 'Chose how to use Army of the Dead.',
@@ -112,13 +117,54 @@ export const UseArmyOfTheDead = InputHelpers.makeRotationEnumInput<Spec.SpecDeat
 	],
 });
 
+export const StartingPresenceInput = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, StartingPresence>({
+	fieldName: 'startingPresence',
+	label: 'Starting Presence',
+	labelTooltip: 'Chose the presence you start combat in.',
+	values: [
+		{ name: 'Blood', value: StartingPresence.Blood },
+		{ name: 'Unholy', value: StartingPresence.Unholy },
+	],
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+})
+
+export const BloodRuneFillerInput = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, BloodRuneFiller>({
+	fieldName: 'bloodRuneFiller',
+	label: 'Blood Rune Filler',
+	labelTooltip: 'Chose what to spend your free blood runes on.',
+	values: [
+		{ name: 'Blood Strike', value: BloodRuneFiller.BloodStrike },
+		{ name: 'Blood Boil', value: BloodRuneFiller.BloodBoil },
+	],
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+})
+
+export const BloodTapInput = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, BloodTap>({
+	fieldName: 'bloodTap',
+	label: 'Blood Tap',
+	labelTooltip: 'Chose what to spend your Blood Tap on.',
+	values: [
+		{ name: 'Ghoul Frenzy', value: BloodTap.GhoulFrenzy },
+		{ name: 'Icy Touch', value: BloodTap.IcyTouch },
+		{ name: 'Blood Strike', value: BloodTap.BloodStrikeBT },
+		{ name: 'Blood Boil', value: BloodTap.BloodBoilBT },
+	],
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+})
+
 export const DeathKnightRotationConfig = {
 	inputs: [
 		BloodTapGhoulFrenzy,
 		UseEmpowerRuneWeapon,
-		UseArmyOfTheDead,
-		SetFirstDisease,
+		BloodTapInput,
+		ArmyOfTheDeadInput,
+		FirstDiseaseInput,
+		StartingPresenceInput,
+		BloodRuneFillerInput,
 		UseDeathAndDecay,
-		SetDeathAndDecayPrio,
+		//SetDeathAndDecayPrio,
 	],
 };

@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -34,7 +35,10 @@ func (paladin *Paladin) registerHammerOfWrathSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.02*float64(paladin.Talents.Benediction)),
+				Cost: baseCost *
+					(1 - 0.02*float64(paladin.Talents.Benediction)) *
+					core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfHammerOfWrath), 0, 1),
+
 				GCD:  core.GCDDefault,
 			},
 			IgnoreHaste: true,

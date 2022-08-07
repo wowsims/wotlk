@@ -25,7 +25,6 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 			cssClass: 'retribution-paladin-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"<p>Work in progress</p>"
 			],
 
 			// All stats for which EP should be calculated.
@@ -77,7 +76,7 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P4_PRESET.gear,
+				gear: Presets.P1_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatStrength]: 2.42,
@@ -107,18 +106,27 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
 					bloodlust: true,
 					manaSpringTotem: TristateEffect.TristateEffectRegular,
-					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
-					windfuryTotem: TristateEffect.TristateEffectImproved,
+					hornOfWinter: true,
 					battleShout: TristateEffect.TristateEffectImproved,
-					unleashedRage: true,
+					sanctifiedRetribution: true,
+					swiftRetribution: true,
+					elementalOath: true,
+					rampage: true,
+					trueshotAura: true,
+					icyTalons: true,
+					totemOfWrath: true,
+					wrathOfAirTotem: true,
 				}),
 				partyBuffs: PartyBuffs.create({
 				}),
 				individualBuffs: IndividualBuffs.create({
+					judgementsOfTheWise: true,
 					blessingOfKings: true,
 					blessingOfMight: TristateEffect.TristateEffectImproved,
 				}),
 				debuffs: Debuffs.create({
+					shadowMastery: true,
+					totemOfWrath: true,
 					judgementOfWisdom: true,
 					misery: true,
 					curseOfElements: true,
@@ -136,10 +144,13 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: {
 				inputs: [
+					RetributionPaladinInputs.RotationSelector,
 					RetributionPaladinInputs.RetributionPaladinRotationDivinePleaPercentageConfig,
 					RetributionPaladinInputs.RetributionPaladinRotationConsSlackConfig,
 					RetributionPaladinInputs.RetributionPaladinRotationExoSlackConfig,
-					RetributionPaladinInputs.RetributionPaladinRotationHolyWrathConfig
+					RetributionPaladinInputs.RetributionPaladinRotationHolyWrathConfig,
+					RetributionPaladinInputs.RetributionPaladinRotationPriorityConfig,
+					RetributionPaladinInputs.RetributionPaladinCastSequenceConfig
 				]
 			},
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.

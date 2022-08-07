@@ -26,8 +26,15 @@ func (hunter *Hunter) rotation(sim *core.Simulation) {
 
 	if hunter.Rotation.Type == proto.Hunter_Rotation_Custom {
 		hunter.CustomRotation.Cast(sim)
+	} else if hunter.Rotation.Type == proto.Hunter_Rotation_Aoe {
+		spell := hunter.aoeChooseSpell(sim)
+
+		success := spell.Cast(sim, hunter.CurrentTarget)
+		if !success {
+			hunter.WaitForMana(sim, spell.CurCast.Cost)
+		}
 	} else {
-		spell := hunter.chooseSpell(sim)
+		spell := hunter.singleTargetChooseSpell(sim)
 
 		success := spell.Cast(sim, hunter.CurrentTarget)
 		if !success {
@@ -36,7 +43,15 @@ func (hunter *Hunter) rotation(sim *core.Simulation) {
 	}
 }
 
-func (hunter *Hunter) chooseSpell(sim *core.Simulation) *core.Spell {
+func (hunter *Hunter) aoeChooseSpell(sim *core.Simulation) *core.Spell {
+	if hunter.Rotation.TrapWeave && hunter.ExplosiveTrap.IsReady(sim) {
+		return hunter.TrapWeaveSpell
+	} else {
+		return hunter.Volley
+	}
+}
+
+func (hunter *Hunter) singleTargetChooseSpell(sim *core.Simulation) *core.Spell {
 	if hunter.Rotation.Sting == proto.Hunter_Rotation_ScorpidSting && !hunter.ScorpidStingAura.IsActive() {
 		return hunter.ScorpidSting
 	} else if hunter.Rotation.Sting == proto.Hunter_Rotation_SerpentSting && !hunter.SerpentStingDot.IsActive() {
@@ -45,12 +60,14 @@ func (hunter *Hunter) chooseSpell(sim *core.Simulation) *core.Spell {
 		return hunter.KillShot
 	} else if hunter.ChimeraShot.IsReady(sim) {
 		return hunter.ChimeraShot
-	} else if hunter.BlackArrow.IsReady(sim) {
+	} else if !hunter.Rotation.TrapWeave && hunter.BlackArrow.IsReady(sim) {
 		return hunter.BlackArrow
 	} else if hunter.ExplosiveShot.IsReady(sim) && !hunter.ExplosiveShotDot.IsActive() {
 		return hunter.ExplosiveShot
 	} else if hunter.AimedShot.IsReady(sim) {
 		return hunter.AimedShot
+	} else if hunter.Rotation.TrapWeave && hunter.ExplosiveTrap.IsReady(sim) {
+		return hunter.TrapWeaveSpell
 	} else if hunter.ArcaneShot.IsReady(sim) && (hunter.ExplosiveShotDot == nil || !hunter.ExplosiveShotDot.IsActive()) {
 		return hunter.ArcaneShot
 	} else {
@@ -118,7 +135,7 @@ func (hunter *Hunter) makeCustomRotation() *common.CustomRotation {
 			},
 		},
 		int32(proto.Hunter_Rotation_ExplosiveTrap): common.CustomSpell{
-			Spell: hunter.ExplosiveTrap,
+			Spell: hunter.TrapWeaveSpell,
 			Condition: func(sim *core.Simulation) bool {
 				return hunter.ExplosiveTrap.IsReady(sim)
 			},

@@ -13,15 +13,7 @@ func (mage *Mage) registerFireballSpell() {
 	actionID := core.ActionID{SpellID: 42833}
 	baseCost := .19 * mage.BaseMana
 
-	castTime := time.Millisecond*3500 - time.Millisecond*100*time.Duration(mage.Talents.ImprovedFireball)
-	if mage.HasGlyph(int32(proto.MageMajorGlyph_GlyphOfFireball)) {
-		castTime -= time.Millisecond * 150
-	}
-
-	bonusCrit := 0.0
-	if mage.MageTier.t9_4 {
-		bonusCrit += 5 * core.CritRatingPerCritChance
-	}
+	hasGlyph := mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFireball)
 
 	mage.Fireball = mage.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -33,9 +25,11 @@ func (mage *Mage) registerFireballSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost,
-				GCD:      core.GCDDefault,
-				CastTime: castTime,
+				Cost: baseCost,
+				GCD:  core.GCDDefault,
+				CastTime: time.Millisecond*3500 -
+					time.Millisecond*100*time.Duration(mage.Talents.ImprovedFireball) -
+					core.TernaryDuration(hasGlyph, time.Millisecond*150, 0),
 			},
 		},
 
@@ -43,9 +37,10 @@ func (mage *Mage) registerFireballSpell() {
 			ProcMask:            core.ProcMaskSpellDamage,
 			BonusSpellHitRating: 0,
 
-			BonusSpellCritRating: bonusCrit +
+			BonusSpellCritRating: 0 +
 				float64(mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
-				float64(mage.Talents.ImprovedScorch)*core.CritRatingPerCritChance,
+				float64(mage.Talents.ImprovedScorch)*core.CritRatingPerCritChance +
+				core.TernaryFloat64(mage.MageTier.t9_4, 5*core.CritRatingPerCritChance, 0),
 
 			DamageMultiplier: mage.spellDamageMultiplier *
 				(1 + 0.02*float64(mage.Talents.FirePower+mage.Talents.SpellImpact)) *
@@ -57,7 +52,7 @@ func (mage *Mage) registerFireballSpell() {
 			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, mage.bonusCritDamage)),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() && !mage.HasGlyph(int32(proto.MageMajorGlyph_GlyphOfFireball)) {
+				if spellEffect.Landed() && !hasGlyph {
 					mage.FireballDot.Apply(sim)
 				}
 			},

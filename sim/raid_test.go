@@ -70,7 +70,7 @@ var P1EnhancementShaman = &proto.Player{
 	Name:      "P1 Enh Shaman",
 	Race:      proto.Race_RaceOrc,
 	Class:     proto.Class_ClassShaman,
-	Equipment: enhancementShaman.Phase2Gear,
+	Equipment: enhancementShaman.Phase1Gear,
 	Consumes:  enhancementShaman.FullConsumes,
 	Spec:      enhancementShaman.PlayerOptionsBasic,
 	Buffs:     enhancementShaman.FullIndividualBuffs,

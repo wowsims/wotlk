@@ -9,11 +9,16 @@ import { EventID, TypedEvent } from '../core/typed_event.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
 import { Target } from '../core/target.js';
 
-import { Mage, Mage_Rotation as MageRotation, MageTalents as MageTalents, Mage_Options as MageOptions } from '../core/proto/mage.js';
-import { Mage_Rotation_Type as RotationType, Mage_Rotation_ArcaneRotation as ArcaneRotation, Mage_Rotation_FireRotation as FireRotation, Mage_Rotation_FrostRotation as FrostRotation, Mage_Rotation_AoeRotation as AoeRotation } from '../core/proto/mage.js';
-import { Mage_Rotation_FireRotation_PrimarySpell as PrimaryFireSpell } from '../core/proto/mage.js';
-import { Mage_Rotation_AoeRotation_Rotation as AoeRotationSpells } from '../core/proto/mage.js';
-import { Mage_Options_ArmorType as ArmorType } from '../core/proto/mage.js';
+import {
+	Mage,
+	MageTalents as MageTalents,
+	Mage_Rotation as MageRotation,
+	Mage_Rotation_Type as RotationType,
+	Mage_Rotation_PrimaryFireSpell as PrimaryFireSpell,
+	Mage_Rotation_AoeRotation as AoeRotationSpells,
+	Mage_Options as MageOptions,
+	Mage_Options_ArmorType as ArmorType,
+} from '../core/proto/mage.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';
 import * as Presets from './presets.js';
@@ -44,8 +49,8 @@ export const FocusMagicUptime = InputHelpers.makeSpecOptionsNumberInput<Spec.Spe
 
 export const MageRotationConfig = {
 	inputs: [
-		{
-			type: 'enum' as const,
+		InputHelpers.makeRotationEnumInput<Spec.SpecMage, RotationType>({
+			fieldName: 'type',
 			label: 'Spec',
 			labelTooltip: 'Switches between spec rotation settings. Will also update talents to defaults for the selected spec.',
 			values: [
@@ -53,8 +58,6 @@ export const MageRotationConfig = {
 				{ name: 'Fire', value: RotationType.Fire },
 				{ name: 'Frost', value: RotationType.Frost },
 			],
-			changedEvent: (player: Player<Spec.SpecMage>) => player.rotationChangeEmitter,
-			getValue: (player: Player<Spec.SpecMage>) => player.getRotation().type,
 			setValue: (eventID: EventID, player: Player<Spec.SpecMage>, newValue: number) => {
 				const newRotation = player.getRotation();
 				newRotation.type = newValue;
@@ -62,129 +65,70 @@ export const MageRotationConfig = {
 				TypedEvent.freezeAllAndDo(() => {
 					if (newRotation.type == RotationType.Arcane) {
 						player.setTalentsString(eventID, Presets.ArcaneTalents.data.talentsString);
-						if (!newRotation.arcane) {
-							newRotation.arcane = ArcaneRotation.clone(Presets.DefaultArcaneRotation.arcane!);
-						}
+						player.setGlyphs(eventID, Presets.ArcaneTalents.data.glyphs!);
 					} else if (newRotation.type == RotationType.Fire) {
 						player.setTalentsString(eventID, Presets.FireTalents.data.talentsString);
-						if (!newRotation.fire) {
-							newRotation.fire = FireRotation.clone(Presets.DefaultFireRotation.fire!);
-						}
-					} else {
+						player.setGlyphs(eventID, Presets.FireTalents.data.glyphs!);
+					} else if (newRotation.type == RotationType.Frost) {
 						player.setTalentsString(eventID, Presets.FrostTalents.data.talentsString);
-						if (!newRotation.frost) {
-							newRotation.frost = FrostRotation.clone(Presets.DefaultFrostRotation.frost!);
-						}
+						player.setGlyphs(eventID, Presets.FrostTalents.data.glyphs!);
 					}
 
 					player.setRotation(eventID, newRotation);
 				});
 			},
-		},
+		}),
 		// ********************************************************
 		//                        AOE INPUTS
 		// ********************************************************
-		InputHelpers.makeRotationBooleanInput<Spec.SpecMage>({
-			fieldName: 'multiTargetRotation',
-			label: 'AOE Rotation',
-			labelTooltip: 'Use multi-target spells.',
-		}),
-		{
-			type: 'enum' as const,
+		InputHelpers.makeRotationEnumInput<Spec.SpecMage, AoeRotationSpells>({
+			fieldName: 'aoe',
 			label: 'Primary Spell',
 			values: [
 				{ name: 'Arcane Explosion', value: AoeRotationSpells.ArcaneExplosion },
 				{ name: 'Flamestrike', value: AoeRotationSpells.Flamestrike },
 				{ name: 'Blizzard', value: AoeRotationSpells.Blizzard },
 			],
-			changedEvent: (player: Player<Spec.SpecMage>) => player.rotationChangeEmitter,
-			getValue: (player: Player<Spec.SpecMage>) => player.getRotation().aoe?.rotation || 0,
-			setValue: (eventID: EventID, player: Player<Spec.SpecMage>, newValue: number) => {
-				const newRotation = player.getRotation();
-				if (!newRotation.aoe) {
-					newRotation.aoe = AoeRotation.create();
-				}
-				newRotation.aoe.rotation = newValue;
-				player.setRotation(eventID, newRotation);
-			},
-			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().multiTargetRotation,
-		},
+			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Aoe,
+		}),
 		// ********************************************************
 		//                       FIRE INPUTS
 		// ********************************************************
-		{
-			type: 'enum' as const,
+		InputHelpers.makeRotationEnumInput<Spec.SpecMage, PrimaryFireSpell>({
+			fieldName: 'primaryFireSpell',
 			label: 'Primary Spell',
 			values: [
 				{ name: 'Fireball', value: PrimaryFireSpell.Fireball },
 				{ name: 'FrostfireBolt', value: PrimaryFireSpell.FrostfireBolt },
 			],
-			changedEvent: (player: Player<Spec.SpecMage>) => player.rotationChangeEmitter,
-			getValue: (player: Player<Spec.SpecMage>) => player.getRotation().fire?.primarySpell || PrimaryFireSpell.Fireball,
-			setValue: (eventID: EventID, player: Player<Spec.SpecMage>, newValue: number) => {
-				const newRotation = player.getRotation();
-				if (!newRotation.fire) {
-					newRotation.fire = FireRotation.clone(Presets.DefaultFireRotation.fire!);
-				}
-				newRotation.fire.primarySpell = newValue;
-				player.setRotation(eventID, newRotation);
-			},
-			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire && !player.getRotation().multiTargetRotation,
-		},
-		{
-			type: 'boolean' as const,
+			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecMage>({
+			fieldName: 'maintainImprovedScorch',
 			label: 'Maintain Imp. Scorch',
 			labelTooltip: 'Always use Scorch when below 5 stacks, or < 5.5s remaining on debuff.',
-			changedEvent: (player: Player<Spec.SpecMage>) => player.rotationChangeEmitter,
-			getValue: (player: Player<Spec.SpecMage>) => player.getRotation().fire?.maintainImprovedScorch || false,
-			setValue: (eventID: EventID, player: Player<Spec.SpecMage>, newValue: boolean) => {
-				const newRotation = player.getRotation();
-				if (!newRotation.fire) {
-					newRotation.fire = FireRotation.clone(Presets.DefaultFireRotation.fire!);
-				}
-				newRotation.fire.maintainImprovedScorch = newValue;
-				player.setRotation(eventID, newRotation);
-			},
 			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
-		},
+		}),
 		// ********************************************************
 		//                       FROST INPUTS
 		// ********************************************************
-		{
-			type: 'number' as const,
+		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
+			fieldName: 'waterElementalDisobeyChance',
+			percent: true,
 			label: 'Water Ele Disobey %',
 			labelTooltip: 'Percent of Water Elemental actions which will fail. This represents the Water Elemental moving around or standing still instead of casting.',
-			changedEvent: (player: Player<Spec.SpecMage>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-			getValue: (player: Player<Spec.SpecMage>) => (player.getRotation().frost?.waterElementalDisobeyChance || 0) * 100,
-			setValue: (eventID: EventID, player: Player<Spec.SpecMage>, newValue: number) => {
-				const newRotation = player.getRotation();
-				if (!newRotation.frost) {
-					newRotation.frost = FrostRotation.clone(Presets.DefaultFrostRotation.frost!);
-				}
-				newRotation.frost.waterElementalDisobeyChance = newValue / 100;
-				player.setRotation(eventID, newRotation);
-			},
+			changeEmitter: (player: Player<Spec.SpecMage>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Frost,
 			enableWhen: (player: Player<Spec.SpecMage>) => player.getTalents().summonWaterElemental,
-		},
+		}),
 		// ********************************************************
 		//                      ARCANE INPUTS
 		// ********************************************************
-		{
-			type: 'number' as const,
+		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
+			fieldName: 'minBlastBeforeMissiles',
 			label: 'Min ABs before missiles',
 			labelTooltip: 'Minimum arcane blasts to cast before using a missile barrage proc',
-			changedEvent: (player: Player<Spec.SpecMage>) => player.rotationChangeEmitter,
-			getValue: (player: Player<Spec.SpecMage>) => player.getRotation().arcane?.minBlastBeforeMissiles || 0,
-			setValue: (eventID: EventID, player: Player<Spec.SpecMage>, newValue: number) => {
-				const newRotation = player.getRotation();
-				if (!newRotation.arcane) {
-					newRotation.arcane = ArcaneRotation.clone(Presets.DefaultArcaneRotation.arcane!);
-				}
-				newRotation.arcane.minBlastBeforeMissiles = newValue;
-				player.setRotation(eventID, newRotation);
-			},
-			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane && !player.getRotation().multiTargetRotation,
-		},
+			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
+		}),
 	],
 };

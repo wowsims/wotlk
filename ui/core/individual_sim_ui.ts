@@ -625,6 +625,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 		const miscDebuffOptions = this.splitRelevantOptions([
 			{ item: IconInputs.JudgementOfLight, stats: [Stat.StatStamina] },
+			{ item: IconInputs.ShatteringThrow, stats: [Stat.StatArmorPenetration] },
 			{ item: IconInputs.GiftOfArthas, stats: [Stat.StatAttackPower] },
 		] as Array<StatOption<IconPickerConfig<Player<any>, any>>>);
 		if (miscDebuffOptions.length > 0) {

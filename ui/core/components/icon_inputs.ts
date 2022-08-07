@@ -171,9 +171,11 @@ export const MinorArmorDebuff = InputHelpers.makeMultiIconInput([
 	makeTristateDebuffInput(ActionId.fromSpellId(770), ActionId.fromSpellId(33602), 'faerieFire'),
 	makeTristateDebuffInput(ActionId.fromSpellId(50511), ActionId.fromSpellId(18180), 'curseOfWeakness'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(56631), 'sting'),
+	makeBooleanDebuffInput(ActionId.fromSpellId(53598), 'sporeCloud'),
 ], 'Minor Ar');
 
 export const AttackPowerDebuff = InputHelpers.makeMultiIconInput([
+	makeBooleanDebuffInput(ActionId.fromSpellId(26016), 'vindication'),
 	makeTristateDebuffInput(ActionId.fromSpellId(47437), ActionId.fromSpellId(12879), 'demoralizingShout'),
 	makeTristateDebuffInput(ActionId.fromSpellId(48560), ActionId.fromSpellId(16862), 'demoralizingRoar'),
 	makeTristateDebuffInput(ActionId.fromSpellId(50511), ActionId.fromSpellId(18180), 'curseOfWeakness'),
@@ -228,6 +230,7 @@ export const SpellDamageDebuff = InputHelpers.makeMultiIconInput([
 export const HuntersMark = withLabel(makeQuadstateDebuffInput(ActionId.fromSpellId(53338), ActionId.fromSpellId(19423), ActionId.fromItemId(42907), 'huntersMark'), 'Mark');
 export const JudgementOfWisdom = withLabel(makeBooleanDebuffInput(ActionId.fromSpellId(53408), 'judgementOfWisdom'), 'JoW');
 export const JudgementOfLight = makeBooleanDebuffInput(ActionId.fromSpellId(20271), 'judgementOfLight');
+export const ShatteringThrow = makeMultistateIndividualBuffInput(ActionId.fromSpellId(64382), 20, 'shatteringThrows');
 export const GiftOfArthas = makeBooleanDebuffInput(ActionId.fromSpellId(11374), 'giftOfArthas');
 
 // Consumes

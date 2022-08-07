@@ -12,13 +12,19 @@ import { Faction } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import { Player } from '../core/player.js';
 
-import { Mage, Mage_Rotation as MageRotation, MageTalents as MageTalents, Mage_Options as MageOptions, MageMajorGlyph, MageMinorGlyph } from '../core/proto/mage.js';
-import { Mage_Rotation_Type as RotationType, Mage_Rotation_ArcaneRotation as ArcaneRotation, Mage_Rotation_FireRotation as FireRotation, Mage_Rotation_FrostRotation as FrostRotation } from '../core/proto/mage.js';
-import { Mage_Rotation_FireRotation_PrimarySpell as PrimaryFireSpell } from '../core/proto/mage.js';
-import { Mage_Options_ArmorType as ArmorType } from '../core/proto/mage.js';
+import {
+	Mage,
+	MageTalents as MageTalents,
+	Mage_Rotation as MageRotation,
+	Mage_Rotation_Type as RotationType,
+	Mage_Rotation_PrimaryFireSpell as PrimaryFireSpell,
+	Mage_Rotation_AoeRotation as AoeRotationSpells,
+	Mage_Options as MageOptions,
+	Mage_Options_ArmorType as ArmorType,
+	MageMajorGlyph,
+	MageMinorGlyph,
+} from '../core/proto/mage.js';
 
-import * as Enchants from '../core/constants/enchants.js';
-import * as Gems from '../core/proto_utils/gems.js';
 import * as Tooltips from '../core/constants/tooltips.js';
 
 // Preset options for this spec.
@@ -72,10 +78,8 @@ export const FrostTalents = {
 
 export const DefaultFireRotation = MageRotation.create({
 	type: RotationType.Fire,
-	fire: FireRotation.create({
-		primarySpell: PrimaryFireSpell.Fireball,
-		maintainImprovedScorch: false,
-	}),
+	primaryFireSpell: PrimaryFireSpell.Fireball,
+	maintainImprovedScorch: false,
 });
 
 export const DefaultFireOptions = MageOptions.create({
@@ -91,9 +95,7 @@ export const DefaultFireConsumes = Consumes.create({
 
 export const DefaultFrostRotation = MageRotation.create({
 	type: RotationType.Frost,
-	frost: FrostRotation.create({
-		waterElementalDisobeyChance: 0.1,
-	}),
+	waterElementalDisobeyChance: 0.1,
 });
 
 export const DefaultFrostOptions = MageOptions.create({
@@ -109,9 +111,7 @@ export const DefaultFrostConsumes = Consumes.create({
 
 export const DefaultArcaneRotation = MageRotation.create({
 	type: RotationType.Arcane,
-	arcane: ArcaneRotation.create({
-		minBlastBeforeMissiles: 4
-	}),
+	minBlastBeforeMissiles: 4
 });
 
 export const DefaultArcaneOptions = MageOptions.create({

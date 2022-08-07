@@ -44,7 +44,7 @@ func NewDpsDeathknight(character core.Character, player proto.Player) *DpsDeathk
 
 			RefreshHornOfWinter: dk.Rotation.RefreshHornOfWinter,
 			ArmyOfTheDeadType:   dk.Rotation.ArmyOfTheDead,
-			FirstDisease:        dk.Rotation.FirstDisease,
+			StartingPresence:    dk.Rotation.StartingPresence,
 		}),
 		Rotation: *dk.Rotation,
 	}
@@ -63,7 +63,7 @@ func (dk *DpsDeathknight) FrostPointsInUnholy() int32 {
 }
 
 func (dk *DpsDeathknight) SetupRotations() {
-	dk.ur.ffFirst = dk.Inputs.FirstDisease == proto.Deathknight_Rotation_FrostFever
+	dk.ur.ffFirst = dk.Rotation.FirstDisease == proto.Deathknight_Rotation_FrostFever
 
 	dk.Opener.Clear()
 	dk.Main.Clear()
@@ -81,7 +81,7 @@ func (dk *DpsDeathknight) SetupRotations() {
 			dk.setupFrostSubUnholyNoERWOpener()
 		}
 	} else if dk.Talents.SummonGargoyle {
-		dk.setupUnholyOpener()
+		dk.setupUnholyRotations()
 	} else {
 		// TODO: Add some default rotation that works without special talents
 		if dk.Rotation.UseEmpowerRuneWeapon {

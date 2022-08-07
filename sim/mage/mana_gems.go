@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -11,6 +12,10 @@ func (mage *Mage) registerManaGemsCD() {
 
 	actionID := core.ActionID{ItemID: 33312}
 	manaMetrics := mage.NewManaMetrics(actionID)
+	var gemAura *core.Aura
+	if mage.MageTier.t7_2 {
+		gemAura = mage.NewTemporaryStatsAura("Improved Mana Gems T7", core.ActionID{SpellID: 61062}, stats.Stats{stats.SpellPower: 225}, 15*time.Second)
+	}
 
 	minManaEmeraldGain := 2340.0
 	maxManaEmeraldGain := 2460.0
@@ -18,6 +23,15 @@ func (mage *Mage) registerManaGemsCD() {
 	maxManaSapphireGain := 3500.0
 	manaEmeraldGainRange := maxManaEmeraldGain - minManaEmeraldGain
 	manaSapphireGainRange := maxManaSapphireGain - minManaSapphireGain
+
+	if mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfManaGem) {
+		minManaEmeraldGain *= 1.4
+		maxManaEmeraldGain *= 1.4
+		manaEmeraldGainRange *= 1.4
+		minManaSapphireGain *= 1.4
+		maxManaSapphireGain *= 1.4
+		manaSapphireGainRange *= 1.4
+	}
 
 	var remainingManaGems int
 	mage.RegisterResetEffect(func(sim *core.Simulation) {
@@ -46,7 +60,7 @@ func (mage *Mage) registerManaGemsCD() {
 
 			if mage.MageTier.t7_2 {
 				manaGain *= 1.25
-				mage.NewTemporaryStatsAura("Improved Mana Gems T7", core.ActionID{SpellID: 61062}, stats.Stats{stats.SpellPower: 225}, 15*time.Second)
+				gemAura.Activate(sim)
 			}
 
 			mage.AddMana(sim, manaGain, manaMetrics, true)

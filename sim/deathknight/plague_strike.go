@@ -62,7 +62,7 @@ func (dk *Deathknight) newPlagueStrikeSpell(isMH bool, onhit func(sim *core.Simu
 
 func (dk *Deathknight) registerPlagueStrikeSpell() {
 	dk.PlagueStrikeMhHit = dk.newPlagueStrikeSpell(true, func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-		if dk.Talents.ThreatOfThassarian > 0 && dk.threatOfThassarianWillProc(sim) {
+		if dk.Talents.ThreatOfThassarian > 0 && dk.GetOHWeapon() != nil && dk.threatOfThassarianWillProc(sim) {
 			dk.PlagueStrikeOhHit.Cast(sim, spellEffect.Target)
 		}
 		dk.LastOutcome = spellEffect.Outcome

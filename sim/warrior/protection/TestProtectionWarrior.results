@@ -635,8 +635,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 381.9865227374043
-  tps: 645.050064465367
+  dps: 379.4993004958177
+  tps: 641.1232629227039
  }
 }
 dps_results: {

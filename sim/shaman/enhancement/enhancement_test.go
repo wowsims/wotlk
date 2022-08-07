@@ -19,7 +19,7 @@ func TestEnhancement(t *testing.T) {
 		Race:       proto.Race_RaceTroll,
 		OtherRaces: []proto.Race{proto.Race_RaceOrc},
 
-		GearSet: core.GearSetCombo{Label: "P2", GearSet: Phase2Gear},
+		GearSet: core.GearSetCombo{Label: "P1", GearSet: Phase1Gear},
 
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
 
@@ -53,7 +53,7 @@ func BenchmarkSimulate(b *testing.B) {
 			&proto.Player{
 				Race:      proto.Race_RaceOrc,
 				Class:     proto.Class_ClassShaman,
-				Equipment: Phase2Gear,
+				Equipment: Phase1Gear,
 				Consumes:  FullConsumes,
 				Spec:      PlayerOptionsBasic,
 				Buffs:     FullIndividualBuffs,

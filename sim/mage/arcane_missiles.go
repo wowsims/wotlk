@@ -35,7 +35,7 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
+				Cost: baseCost * (1 - .01*float64(mage.Talents.ArcaneFocus)),
 
 				GCD:         core.GCDDefault,
 				ChannelTime: time.Second * 5,
@@ -72,7 +72,7 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 	})
 
 	bonusCritDamage := mage.bonusCritDamage
-	if mage.HasGlyph(int32(proto.MageMajorGlyph_GlyphOfArcaneMissiles)) {
+	if mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfArcaneMissiles) {
 		bonusCritDamage += .25
 	}
 	target := mage.CurrentTarget
