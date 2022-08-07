@@ -231,7 +231,7 @@ message EnhancementShaman {
   message Options {
 	ShamanShield shield = 1;
 	bool bloodlust = 2;
-    ShamanSyncType syncType = 3;
+    ShamanSyncType sync_type = 3;
     ShamanImbue imbue_mh = 4;
     ShamanImbue imbue_oh = 5;
   }
