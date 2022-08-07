@@ -177,11 +177,13 @@ message RetributionPaladin {
 			Exorcism = 7;
 		}
 		CustomRotation custom_rotation = 8;
+		CustomRotation custom_cast_sequence = 10;
 
 		enum RotationType {
 			UnknownType = 0;
 			Standard = 1;
 			Custom = 2;
+			CastSequence = 3;
 		}
 		RotationType type = 9;
 	}

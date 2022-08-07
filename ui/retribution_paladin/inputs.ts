@@ -25,6 +25,7 @@ export const RetributionPaladinRotationExoSlackConfig = InputHelpers.makeRotatio
 	label: "Exo Slack (MS)",
 	labelTooltip: "Amount of extra time in MS to give main abilities to come off cooldown before using Exorcism on single target",
 	positive: true,
+	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.Standard || player.getRotation().type == RotationType.Custom,
 })
 
 export const RetributionPaladinRotationConsSlackConfig = InputHelpers.makeRotationNumberInput<Spec.SpecRetributionPaladin>({
@@ -32,6 +33,7 @@ export const RetributionPaladinRotationConsSlackConfig = InputHelpers.makeRotati
 	label: "Cons Slack (MS)",
 	labelTooltip: "Amount of extra time in MS to give main abilities to come off cooldown before using Consecration on single target",
 	positive: true,
+	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.Standard || player.getRotation().type == RotationType.Custom,
 })
 
 export const RetributionPaladinRotationDivinePleaPercentageConfig = InputHelpers.makeRotationNumberInput<Spec.SpecRetributionPaladin>({
@@ -108,11 +110,27 @@ export const RetributionPaladinRotationPriorityConfig = InputHelpers.makeCustomR
 	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.Custom,
 });
 
+export const RetributionPaladinCastSequenceConfig = InputHelpers.makeCustomRotationInput<Spec.SpecRetributionPaladin, SpellOption>({
+	fieldName: 'customCastSequence',
+	numColumns: 2,
+	values: [
+		{ actionId: ActionId.fromSpellId(53408), value: SpellOption.JudgementOfWisdom },
+		{ actionId: ActionId.fromSpellId(53385), value: SpellOption.DivineStorm },
+		{ actionId: ActionId.fromSpellId(48806), value: SpellOption.HammerOfWrath },
+		{ actionId: ActionId.fromSpellId(48819), value: SpellOption.Consecration },
+		{ actionId: ActionId.fromSpellId(48817), value: SpellOption.HolyWrath },
+		{ actionId: ActionId.fromSpellId(35395), value: SpellOption.CrusaderStrike },
+		{ actionId: ActionId.fromSpellId(48801), value: SpellOption.Exorcism },
+	],
+	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.CastSequence,
+});
+
 export const RotationSelector = InputHelpers.makeRotationEnumInput<Spec.SpecRetributionPaladin, RotationType>({
 	fieldName: 'type',
 	label: 'Type',
 	values: [
 		{ name: 'Standard', value: RotationType.Standard },
 		{ name: 'Custom', value: RotationType.Custom },
+		{ name: 'Cast Sequence (macro)', value: RotationType.CastSequence },
 	],
 });

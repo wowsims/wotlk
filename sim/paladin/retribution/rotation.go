@@ -49,7 +49,7 @@ func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
 
 	if ret.GCD.IsReady(sim) {
 	rotationLoop:
-		for _, spellNumber := range ret.PriorityRotation {
+		for _, spellNumber := range ret.RotationInput {
 			switch spellNumber {
 			case int32(proto.RetributionPaladin_Rotation_JudgementOfWisdom):
 				if ret.JudgementOfWisdom.IsReady(sim) {
@@ -100,6 +100,70 @@ func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
 	}
 
 	ret.waitUntilNextEvent(sim, events, ret.customRotation)
+
+}
+
+func (ret *RetributionPaladin) castSequenceRotation(sim *core.Simulation) {
+	// Setup
+	target := ret.CurrentTarget
+
+	nextSwingAt := ret.AutoAttacks.NextAttackAt()
+	isExecutePhase := sim.IsExecutePhase20()
+
+	nextPrimaryAbility := core.MinDuration(ret.CrusaderStrike.CD.ReadyAt(), ret.DivineStorm.CD.ReadyAt())
+	nextPrimaryAbility = core.MinDuration(nextPrimaryAbility, ret.JudgementOfWisdom.CD.ReadyAt())
+
+	if ret.GCD.IsReady(sim) {
+		switch ret.RotationInput[ret.CastSequenceIndex] {
+		case int32(proto.RetributionPaladin_Rotation_JudgementOfWisdom):
+			if ret.JudgementOfWisdom.IsReady(sim) {
+				ret.JudgementOfWisdom.Cast(sim, target)
+				ret.CastSequenceIndex = (ret.CastSequenceIndex + 1) % int32(len(ret.RotationInput))
+			}
+		case int32(proto.RetributionPaladin_Rotation_DivineStorm):
+			if ret.DivineStorm.IsReady(sim) {
+				ret.DivineStorm.Cast(sim, target)
+				ret.CastSequenceIndex = (ret.CastSequenceIndex + 1) % int32(len(ret.RotationInput))
+			}
+		case int32(proto.RetributionPaladin_Rotation_HammerOfWrath):
+			if isExecutePhase && ret.HammerOfWrath.IsReady(sim) {
+				ret.HammerOfWrath.Cast(sim, target)
+				ret.CastSequenceIndex = (ret.CastSequenceIndex + 1) % int32(len(ret.RotationInput))
+			}
+		case int32(proto.RetributionPaladin_Rotation_Consecration):
+			if ret.Consecration.IsReady(sim) {
+				ret.Consecration.Cast(sim, target)
+				ret.CastSequenceIndex = (ret.CastSequenceIndex + 1) % int32(len(ret.RotationInput))
+			}
+		case int32(proto.RetributionPaladin_Rotation_HolyWrath):
+			if ret.HolyWrath.IsReady(sim) {
+				ret.HolyWrath.Cast(sim, target)
+				ret.CastSequenceIndex = (ret.CastSequenceIndex + 1) % int32(len(ret.RotationInput))
+			}
+		case int32(proto.RetributionPaladin_Rotation_CrusaderStrike):
+			if ret.CrusaderStrike.IsReady(sim) {
+				ret.CrusaderStrike.Cast(sim, target)
+				ret.CastSequenceIndex = (ret.CastSequenceIndex + 1) % int32(len(ret.RotationInput))
+			}
+		case int32(proto.RetributionPaladin_Rotation_Exorcism):
+			if ret.Exorcism.IsReady(sim) {
+				ret.Exorcism.Cast(sim, target)
+				ret.CastSequenceIndex = (ret.CastSequenceIndex + 1) % int32(len(ret.RotationInput))
+			}
+		}
+	}
+
+	// All possible next events
+	events := []time.Duration{
+		nextSwingAt,
+		ret.GCD.ReadyAt(),
+		nextPrimaryAbility,
+		ret.Consecration.CD.ReadyAt(),
+		ret.Exorcism.CD.ReadyAt(),
+		sim.CurrentTime + ret.Exorcism.CurCast.CastTime,
+	}
+
+	ret.waitUntilNextEvent(sim, events, ret.castSequenceRotation)
 
 }
 
