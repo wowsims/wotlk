@@ -27,6 +27,7 @@ type Priest struct {
 	ShadowWeavingAura  *core.Aura
 	ShadowyInsightAura *core.Aura
 	ImprovedSpiritTap  *core.Aura
+	DispersionAura     *core.Aura
 
 	SurgeOfLightProcAura *core.Aura
 
@@ -41,6 +42,7 @@ type Priest struct {
 	Smite           *core.Spell
 	Starshards      *core.Spell
 	VampiricTouch   *core.Spell
+	Dispersion      *core.Spell
 
 	ShadowWordPainDot  *core.Dot
 	DevouringPlagueDot *core.Dot
@@ -146,6 +148,7 @@ func (priest *Priest) Initialize() {
 	priest.registerSmiteSpell()
 	priest.registerStarshardsSpell()
 	priest.registerVampiricTouchSpell()
+	priest.registerDispersionSpell()
 
 	priest.registerPowerInfusionCD()
 

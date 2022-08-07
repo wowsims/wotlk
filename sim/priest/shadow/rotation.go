@@ -715,9 +715,9 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 		}
 
 		if bestIdx != nextIdx && spellDamages[nextIdx] < spellDamages[bestIdx] {
-			if sim.Log != nil {
-				spriest.Log(sim, "Checking best idx %d", bestIdx)
-			}
+			// if sim.Log != nil {
+			// 	spriest.Log(sim, "Checking best idx %d", bestIdx)
+			// }
 			numTicks = int(allCDs[bestIdx] / tickLength)
 			mfTime = core.MaxDuration(gcd, time.Duration(numTicks)*tickLength)
 			if numTicks > 3 && numTicks < 5 {

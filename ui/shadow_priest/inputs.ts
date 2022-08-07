@@ -21,28 +21,19 @@ export const ArmorInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecSha
 	],
 });
 
-export const MindBlastInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecShadowPriest, boolean>({
+export const MindBlastInput = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.SpecShadowPriest>({
 	fieldName: 'useMindBlast',
-	values: [
-		{ color: 'grey', value: false },
-		{ actionId: ActionId.fromSpellId(48127), value: true },
-	],
+	id: ActionId.fromSpellId(48127),
 });
 
-export const ShadowWordDeathInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecShadowPriest, boolean>({
+export const ShadowWordDeathInput = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.SpecShadowPriest>({
 	fieldName: 'useShadowWordDeath',
-	values: [
-		{ color: 'grey', value: false },
-		{ actionId: ActionId.fromSpellId(48158), value: true },
-	],
+	id: ActionId.fromSpellId(48158),
 });
 
-export const ShadowfiendInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecShadowPriest, boolean>({
+export const ShadowfiendInput = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.SpecShadowPriest>({
 	fieldName: 'useShadowfiend',
-	values: [
-		{ color: 'grey', value: false },
-		{ actionId: ActionId.fromSpellId(34433), value: true },
-	],
+	id: ActionId.fromSpellId(34433),
 });
 
 export const ShadowPriestRotationConfig = {
