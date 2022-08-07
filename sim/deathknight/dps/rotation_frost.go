@@ -7,6 +7,7 @@ import (
 type FrostRotation struct {
 	oblitCount  int32
 	missedPesti bool
+	uaCycle     bool
 }
 
 func (fr *FrostRotation) Reset(sim *core.Simulation) {
