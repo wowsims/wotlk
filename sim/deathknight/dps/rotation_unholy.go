@@ -45,6 +45,10 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 		}
 	}
 
+	if dk.uhEmpoweredRuneWeapon(sim, target) {
+		return true
+	}
+
 	if dk.uhBloodTap(sim, target) {
 		return true
 	}
@@ -153,6 +157,10 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 		if dk.uhGhoulFrenzyCheck(sim, target) {
 			return true
 		}
+	}
+
+	if dk.uhEmpoweredRuneWeapon(sim, target) {
+		return true
 	}
 
 	if dk.uhBloodTap(sim, target) {

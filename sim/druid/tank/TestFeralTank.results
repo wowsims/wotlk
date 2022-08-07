@@ -549,8 +549,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 613.9111695102345
-  tps: 845.5693871847307
+  dps: 606.8737829709515
+  tps: 838.5588977345776
  }
 }
 dps_results: {

@@ -8,72 +8,6 @@ import (
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
-type ProcTracker struct {
-	id          int32
-	aura        *core.Aura
-	didActivate bool
-	expiresAt   time.Duration
-}
-
-type UnholyRotation struct {
-	dk            *DpsDeathknight
-	lastCastSpell *core.Spell
-
-	ffFirst bool
-	syncFF  bool
-
-	syncTimeFF time.Duration
-
-	recastedFF bool
-	recastedBP bool
-
-	procTrackers []*ProcTracker
-}
-
-func (ur *UnholyRotation) addProc(id int32, label string) bool {
-	if !ur.dk.HasAura(label) {
-		return false
-	}
-	ur.procTrackers = append(ur.procTrackers, &ProcTracker{
-		id:          id,
-		didActivate: false,
-		expiresAt:   -1,
-		aura:        ur.dk.GetAura(label),
-	})
-	return true
-}
-
-func (ur *UnholyRotation) resetProcTrackers() {
-	for _, procTracker := range ur.procTrackers {
-		procTracker.didActivate = false
-		procTracker.expiresAt = -1
-	}
-}
-
-func (ur *UnholyRotation) Reset(sim *core.Simulation) {
-	ur.syncFF = false
-
-	ur.syncTimeFF = 0
-
-	ur.recastedFF = false
-	ur.recastedBP = false
-
-	ur.resetProcTrackers()
-}
-
-func (dk *DpsDeathknight) initProcTrackers() {
-	dk.ur.procTrackers = make([]*ProcTracker, 0)
-
-	dk.ur.addProc(37390, "Meteorite Whetstone Proc")
-	dk.ur.addProc(40684, "Mirror of Truth Proc")
-	dk.ur.addProc(42987, "DMC Greatness Strength Proc")
-	dk.ur.addProc(55379, "Thundering Skyflare Diamond Proc")
-	dk.ur.addProc(53344, "Rune Of The Fallen Crusader Proc")
-	dk.ur.addProc(59626, "Black Magic Proc")
-	dk.ur.addProc(54999, "Hyperspeed Acceleration")
-	dk.ur.addProc(26297, "Berserking (Troll)")
-}
-
 func (dk *DpsDeathknight) getFirstDiseaseAction() deathknight.RotationAction {
 	if dk.ur.ffFirst {
 		return dk.RotationActionCallback_IT
@@ -241,6 +175,19 @@ func (dk *DpsDeathknight) uhBloodTap(sim *core.Simulation, target *core.Unit) bo
 		}
 	}
 
+	return false
+}
+
+func (dk *DpsDeathknight) uhEmpoweredRuneWeapon(sim *core.Simulation, target *core.Unit) bool {
+	if !dk.Rotation.UseEmpowerRuneWeapon || dk.SummonGargoyle.IsReady(sim) {
+		return false
+	}
+
+	if dk.EmpowerRuneWeapon.IsReady(sim) && dk.CurrentBloodRunes() == 0 && dk.CurrentFrostRunes() == 0 && dk.CurrentUnholyRunes() == 0 {
+		dk.CastEmpowerRuneWeapon(sim, target)
+		dk.WaitUntil(sim, sim.CurrentTime)
+		return true
+	}
 	return false
 }
 
