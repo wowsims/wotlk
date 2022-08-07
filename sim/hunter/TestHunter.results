@@ -731,22 +731,22 @@ dps_results: {
 dps_results: {
  key: "TestHunter-Settings-Dwarf-P1-BM-NoBuffs-LongMultiTarget"
  value: {
-  dps: 2905.9381319128775
-  tps: 3690.3086131604878
+  dps: 2895.0435260923687
+  tps: 3678.037463069729
  }
 }
 dps_results: {
  key: "TestHunter-Settings-Dwarf-P1-BM-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2905.9381319128775
-  tps: 2182.060904827223
+  dps: 2895.0435260923687
+  tps: 2165.1598854031313
  }
 }
 dps_results: {
  key: "TestHunter-Settings-Dwarf-P1-BM-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 3387.3497862350296
-  tps: 2525.194642871963
+  dps: 3456.0967751306066
+  tps: 2612.324833914482
  }
 }
 dps_results: {

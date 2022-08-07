@@ -72,8 +72,8 @@ func (dk *Deathknight) registerObliterateSpell() {
 
 	dk.ObliterateOhHit = dk.newObliterateHitSpell(false, nil)
 	dk.ObliterateMhHit = dk.newObliterateHitSpell(true, func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-		dk.LastOutcome = spellEffect.Outcome
 		dk.threatOfThassarianProc(sim, spellEffect, dk.ObliterateMhHit, dk.ObliterateOhHit)
+		dk.LastOutcome = spellEffect.Outcome
 
 		if sim.RandomFloat("Annihilation") < diseaseConsumptionChance {
 			dk.FrostFeverDisease[spellEffect.Target.Index].Deactivate(sim)

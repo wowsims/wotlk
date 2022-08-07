@@ -836,22 +836,22 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-Settings-Dwarf-P4-Retribution Paladin-FullBuffs-LongMultiTarget"
  value: {
-  dps: 8942.363342242033
-  tps: 10494.87314904322
+  dps: 8902.279098406389
+  tps: 10454.788905207573
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Dwarf-P4-Retribution Paladin-FullBuffs-LongSingleTarget"
  value: {
-  dps: 2855.5690212873005
-  tps: 2605.389037497253
+  dps: 2853.272808419255
+  tps: 2603.092824629208
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Dwarf-P4-Retribution Paladin-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 3224.9079907226997
-  tps: 2992.490221014678
+  dps: 3212.6768401274026
+  tps: 2980.2590704193817
  }
 }
 dps_results: {
