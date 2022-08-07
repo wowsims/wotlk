@@ -496,26 +496,19 @@ func ImprovedScorchAura(target *Unit) *Aura {
 
 var WintersChillAuraLabel = "Winter's Chill"
 
-func WintersChillAura(target *Unit, stacks int32) *Aura {
+func WintersChillAura(target *Unit, startingStacks int32) *Aura {
 	return target.GetOrRegisterAura(Aura{
 		Label:     WintersChillAuraLabel,
 		Tag:       MajorSpellCritDebuffAuraTag,
 		Priority:  1,
 		ActionID:  ActionID{SpellID: 28595},
-		Duration:  time.Second * 30,
+		Duration:  time.Second * 15,
 		MaxStacks: 5,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.SetStacks(sim, 5)
-		},
-		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.BonusSpellCritRatingTaken -= float64(aura.stacks) * CritRatingPerCritChance
+			aura.SetStacks(sim, startingStacks)
 		},
 		OnStacksChange: func(aura *Aura, sim *Simulation, oldStacks, newStacks int32) {
-			if !aura.active {
-				return
-			}
-			aura.Priority = float64(newStacks)
-			aura.Unit.PseudoStats.BonusSpellCritRatingTaken += (float64(newStacks) - float64(oldStacks)) * CritRatingPerCritChance
+			aura.Unit.PseudoStats.BonusSpellCritRatingTaken += float64(newStacks-oldStacks) * CritRatingPerCritChance
 		},
 	})
 }
@@ -632,9 +625,9 @@ func AcidSpitAura(target *Unit, startingStacks int32) *Aura {
 			aura.SetStacks(sim, startingStacks)
 		},
 		OnStacksChange: func(aura *Aura, sim *Simulation, oldStacks int32, newStacks int32) {
-			oldMultiplier := (1.0 - float64(oldStacks)*armorReductionPerStack)
-			newMultiplier := (1.0 - float64(newStacks)*armorReductionPerStack)
-			aura.Unit.PseudoStats.ArmorMultiplier *= (newMultiplier / oldMultiplier)
+			oldMultiplier := 1.0 - float64(oldStacks)*armorReductionPerStack
+			newMultiplier := 1.0 - float64(newStacks)*armorReductionPerStack
+			aura.Unit.PseudoStats.ArmorMultiplier *= newMultiplier / oldMultiplier
 			aura.Unit.updateArmor()
 		},
 	})
@@ -964,12 +957,9 @@ func RuneOfRazoriceVulnerabilityAura(target *Unit) *Aura {
 			aura.SetStacks(sim, 0)
 		},
 		OnStacksChange: func(aura *Aura, sim *Simulation, oldStacks int32, newStacks int32) {
-			if !aura.active {
-				return
-			}
 			oldMultiplier := 1.0 + float64(oldStacks)*frostVulnPerStack
 			newMultiplier := 1.0 + float64(newStacks)*frostVulnPerStack
-			aura.Unit.PseudoStats.FrostDamageTakenMultiplier *= (newMultiplier / oldMultiplier)
+			aura.Unit.PseudoStats.FrostDamageTakenMultiplier *= newMultiplier / oldMultiplier
 		},
 	})
 	return aura

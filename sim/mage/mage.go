@@ -197,7 +197,10 @@ func NewMage(character core.Character, options proto.Player) *Mage {
 	mage.EnableResumeAfterManaWait(mage.tryUseGCD)
 
 	if mage.Options.Armor == proto.Mage_Options_MageArmor {
-		mage.PseudoStats.SpiritRegenRateCasting += 0.5
+		mage.PseudoStats.SpiritRegenRateCasting += .5
+		if mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfMageArmor) {
+			mage.PseudoStats.SpiritRegenRateCasting += .2
+		}
 		if mage.HasSetBonus(ItemSetKhadgarsRegalia, 2) {
 			mage.PseudoStats.SpiritRegenRateCasting += .1
 		}
