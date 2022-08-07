@@ -128,9 +128,21 @@ export const RetributionPaladinCastSequenceConfig = InputHelpers.makeCustomRotat
 export const RotationSelector = InputHelpers.makeRotationEnumInput<Spec.SpecRetributionPaladin, RotationType>({
 	fieldName: 'type',
 	label: 'Type',
+	labelTooltip: 
+	`<ul>
+		<li>
+			<div>Standard: All-in-one rotation for single target and aoe.</div>
+		</li>
+		<li>
+			<div>Custom: Highest spell that is ready will be cast.</div>
+		</li>
+		<li>
+			<div>Cast Sequence: Spells will be cast in the order of the list. (Like 1-button-macro)</div>
+		</li>
+	</ul>`,
 	values: [
 		{ name: 'Standard', value: RotationType.Standard },
 		{ name: 'Custom', value: RotationType.Custom },
-		{ name: 'Cast Sequence (macro)', value: RotationType.CastSequence },
+		{ name: 'Cast Sequence', value: RotationType.CastSequence },
 	],
 });

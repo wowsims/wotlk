@@ -115,4 +115,5 @@ func (ret *RetributionPaladin) Reset(sim *core.Simulation) {
 	ret.AutoAttacks.CancelAutoSwing(sim)
 	ret.SealInitComplete = false
 	ret.DivinePleaInitComplete = false
+	ret.CastSequenceIndex = 0
 }
