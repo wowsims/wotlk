@@ -180,7 +180,7 @@ message RetributionPaladin {
 
 		enum RotationType {
 			UnknownType = 0;
-			Standart = 1;
+			Standard = 1;
 			Custom = 2;
 		}
 		RotationType type = 9;

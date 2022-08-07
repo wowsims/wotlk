@@ -36,7 +36,7 @@ func (ret *RetributionPaladin) OnGCDReady(sim *core.Simulation) {
 	}
 }
 
-func (ret *RetributionPaladin) costumeRotation(sim *core.Simulation) {
+func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
 	// Setup
 	target := ret.CurrentTarget
 
@@ -99,7 +99,7 @@ func (ret *RetributionPaladin) costumeRotation(sim *core.Simulation) {
 		ret.Exorcism.CD.ReadyAt(),
 	}
 
-	ret.waitUntilNextEvent(sim, events, ret.costumeRotation)
+	ret.waitUntilNextEvent(sim, events, ret.customRotation)
 
 }
 

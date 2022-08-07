@@ -65,7 +65,7 @@ export const DivineSacTalents = {
 };
 
 export const DefaultRotation = RetributionPaladinRotation.create({
-	type: RotationType.Standart,
+	type: RotationType.Standard,
 	exoSlack: 500,
 	consSlack: 500,
 	divinePleaPercentage: 0.75,

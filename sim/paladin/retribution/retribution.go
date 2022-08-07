@@ -48,10 +48,10 @@ func NewRetributionPaladin(character core.Character, options proto.Player) *Retr
 		}
 	}
 
-	if retOptions.Rotation.Type == proto.RetributionPaladin_Rotation_Standart {
+	if retOptions.Rotation.Type == proto.RetributionPaladin_Rotation_Standard {
 		ret.SelectedRotation = ret.mainRotation
 	} else if retOptions.Rotation.Type == proto.RetributionPaladin_Rotation_Custom {
-		ret.SelectedRotation = ret.costumeRotation
+		ret.SelectedRotation = ret.customRotation
 	} else {
 		ret.SelectedRotation = ret.mainRotation
 	}

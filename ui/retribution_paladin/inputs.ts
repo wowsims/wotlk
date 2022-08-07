@@ -40,7 +40,7 @@ export const RetributionPaladinRotationDivinePleaPercentageConfig = InputHelpers
 	labelTooltip: "% of max mana left before beginning to use Divine Plea",
 	percent: true,
 	positive: true,
-	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.Standart,
+	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.Standard,
 })
 
 export const RetributionPaladinRotationHolyWrathConfig = InputHelpers.makeRotationNumberInput<Spec.SpecRetributionPaladin>({
@@ -48,7 +48,7 @@ export const RetributionPaladinRotationHolyWrathConfig = InputHelpers.makeRotati
 	label: "Holy Wrath Threshold",
 	labelTooltip: "Minimum number of Demon and Undead units before Holy Wrath is considered viable to add to an AOE rotation.",
 	positive: true,
-	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.Standart,
+	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.Standard,
 })
 
 export const AuraSelection = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecRetributionPaladin, PaladinAura>({
@@ -112,7 +112,7 @@ export const RotationSelector = InputHelpers.makeRotationEnumInput<Spec.SpecRetr
 	fieldName: 'type',
 	label: 'Type',
 	values: [
-		{ name: 'Standart', value: RotationType.Standart },
+		{ name: 'Standard', value: RotationType.Standard },
 		{ name: 'Custom', value: RotationType.Custom },
 	],
 });
