@@ -19,14 +19,12 @@ func (dk *Deathknight) newPlagueStrikeSpell(isMH bool, onhit func(sim *core.Simu
 		BonusCritRating:  (dk.annihilationCritBonus() + dk.scourgebornePlateCritBonus() + dk.viciousStrikesCritChanceBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: outbreakBonus,
 		ThreatMultiplier: 1,
-
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				return weaponBaseDamage(sim, hitEffect, spell) * dk.RoRTSBonus(hitEffect.Target)
 			},
 			TargetSpellCoefficient: 1,
 		},
-
 		OnSpellHitDealt: onhit,
 	}
 
@@ -42,9 +40,8 @@ func (dk *Deathknight) newPlagueStrikeSpell(isMH bool, onhit func(sim *core.Simu
 	}
 	rs := &RuneSpell{}
 	if isMH { // only MH has cost & gcd
-		rpGen := 10.0 + 2.5*float64(dk.Talents.Dirge)
 		conf.ResourceType = stats.RunicPower
-		conf.BaseCost = float64(core.NewRuneCost(uint8(rpGen), 0, 0, 1, 0))
+		conf.BaseCost = float64(core.NewRuneCost(uint8(10.0+2.5*float64(dk.Talents.Dirge)), 0, 0, 1, 0))
 		conf.Cast = core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: conf.BaseCost,
