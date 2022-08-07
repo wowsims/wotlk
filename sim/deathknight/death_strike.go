@@ -40,7 +40,7 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool, onhit func(sim *core.Simul
 	}
 
 	rs := &RuneSpell{}
-	if isMH { // only MH has cost & gcd
+	if isMH {
 		conf.ResourceType = stats.RunicPower
 		conf.BaseCost = float64(core.NewRuneCost(uint8(15.0+2.5*float64(dk.Talents.Dirge)), 0, 1, 1, 0))
 		conf.Cast = core.CastConfig{

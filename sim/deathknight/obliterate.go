@@ -9,15 +9,6 @@ import (
 var ObliterateActionID = core.ActionID{SpellID: 51425}
 
 func (dk *Deathknight) newObliterateHitSpell(isMH bool, onhit func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)) *RuneSpell {
-	diseaseConsumptionChance := 1.0
-	if dk.Talents.Annihilation == 1 {
-		diseaseConsumptionChance = 0.67
-	} else if dk.Talents.Annihilation == 2 {
-		diseaseConsumptionChance = 0.34
-	} else if dk.Talents.Annihilation == 3 {
-		diseaseConsumptionChance = 0.0
-	}
-
 	bonusBaseDamage := dk.sigilOfAwarenessBonus(dk.Obliterate)
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 584.0+bonusBaseDamage, 0.8, true)
 	if !isMH {
@@ -39,18 +30,7 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool, onhit func(sim *core.Sim
 			},
 			TargetSpellCoefficient: 1,
 		},
-		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if onhit != nil {
-				onhit(sim, spell, spellEffect)
-			}
-			if dk.Talents.Annihilation < 3 && sim.RandomFloat("Annihilation") < diseaseConsumptionChance {
-				dk.FrostFeverDisease[spellEffect.Target.Index].Deactivate(sim)
-				dk.BloodPlagueDisease[spellEffect.Target.Index].Deactivate(sim)
-			}
-			if sim.RandomFloat("Rime") < dk.rimeHbChanceProc() {
-				dk.RimeAura.Activate(sim)
-			}
-		},
+		OnSpellHitDealt: onhit,
 	}
 
 	dk.threatOfThassarianProcMasks(isMH, &effect, true, false, func(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
@@ -64,7 +44,7 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool, onhit func(sim *core.Sim
 	}
 
 	rs := &RuneSpell{}
-	if isMH { // only MH has cost & gcd
+	if isMH {
 		amountOfRunicPower := 15.0 + 2.5*float64(dk.Talents.ChillOfTheGrave) + dk.scourgeborneBattlegearRunicPowerBonus()
 		conf.ResourceType = stats.RunicPower
 		conf.BaseCost = float64(core.NewRuneCost(uint8(amountOfRunicPower), 0, 1, 1, 0))
@@ -84,11 +64,19 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool, onhit func(sim *core.Sim
 }
 
 func (dk *Deathknight) registerObliterateSpell() {
+	diseaseConsumptionChance := []float64{1.0, 0.67, 0.34, 0.0}[dk.Talents.Annihilation]
 	dk.ObliterateMhHit = dk.newObliterateHitSpell(true, func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 		if dk.Talents.ThreatOfThassarian > 0 && dk.GetOHWeapon() != nil && dk.threatOfThassarianWillProc(sim) {
 			dk.ObliterateOhHit.Cast(sim, spellEffect.Target)
 		}
 		dk.LastOutcome = spellEffect.Outcome
+		if dk.Talents.Annihilation < 3 && sim.RandomFloat("Annihilation") < diseaseConsumptionChance {
+			dk.FrostFeverDisease[spellEffect.Target.Index].Deactivate(sim)
+			dk.BloodPlagueDisease[spellEffect.Target.Index].Deactivate(sim)
+		}
+		if sim.RandomFloat("Rime") < dk.rimeHbChanceProc() {
+			dk.RimeAura.Activate(sim)
+		}
 	})
 	dk.ObliterateOhHit = dk.newObliterateHitSpell(false, nil)
 	dk.Obliterate = dk.ObliterateMhHit
