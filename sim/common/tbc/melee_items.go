@@ -978,19 +978,6 @@ func init() {
 		})
 	})
 
-	core.NewItemEffect(33122, func(agent core.Agent) {
-		character := agent.GetCharacter()
-
-		if character.Class != proto.Class_ClassHunter {
-			// For non-hunters just give direct crit so it shows on the stats panel.
-			character.AddStats(stats.Stats{
-				stats.MeleeCrit: 24,
-			})
-		} else {
-			character.PseudoStats.BonusMeleeCritRating += 24
-		}
-	})
-
 	core.NewItemEffect(34473, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
