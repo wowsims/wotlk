@@ -403,9 +403,7 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 			if !ppmm.Proc(sim, spellEffect.ProcMask, "Maelstrom Weapon") {
 				return
 			}
-			if !procAura.IsActive() {
-				procAura.Activate(sim)
-			}
+			procAura.Activate(sim)
 			procAura.AddStack(sim)
 		},
 	})

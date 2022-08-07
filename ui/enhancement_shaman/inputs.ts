@@ -42,7 +42,7 @@ export const ShamanShieldInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.
 });
 
 export const ShamanImbueMH = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecEnhancementShaman, ShamanImbue>({
-    fieldName: 'imbueMH',
+    fieldName: 'imbueMh',
     values: [
         { color: 'grey', value: ShamanImbue.NoImbue },
         { actionId: ActionId.fromSpellId(58804), value: ShamanImbue.WindfuryWeapon },
@@ -52,7 +52,7 @@ export const ShamanImbueMH = InputHelpers.makeSpecOptionsEnumIconInput<Spec.Spec
 });
 
 export const ShamanImbueOH = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecEnhancementShaman, ShamanImbue>({
-    fieldName: 'imbueOH',
+    fieldName: 'imbueOh',
     values: [
         { color: 'grey', value: ShamanImbue.NoImbue },
         { actionId: ActionId.fromSpellId(58804), value: ShamanImbue.WindfuryWeapon },
