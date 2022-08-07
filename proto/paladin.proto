@@ -3,6 +3,8 @@ package proto;
 
 option go_package = "./proto";
 
+ import "common.proto";
+
 message PaladinTalents {
 	// Holy
 	int32 spiritual_focus = 1;
@@ -163,7 +165,27 @@ message RetributionPaladin {
 		int32 cons_slack = 2;
 		double divine_plea_percentage = 3;
 		int32 holy_wrath_threshold = 4;
+
+		enum SpellOption {
+			NoSpell = 0;
+			JudgementOfWisdom = 1;
+			DivineStorm = 2;
+			HammerOfWrath = 3;
+			Consecration = 4;
+			HolyWrath = 5;
+			CrusaderStrike = 6;
+			Exorcism = 7;
+		}
+		CustomRotation custom_rotation = 8;
+
+		enum RotationType {
+			UnknownType = 0;
+			Standard = 1;
+			Custom = 2;
+		}
+		RotationType type = 9;
 	}
+
 	Rotation rotation = 1;
 
 	PaladinTalents talents = 2;

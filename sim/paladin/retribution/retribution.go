@@ -41,6 +41,20 @@ func NewRetributionPaladin(character core.Character, options proto.Player) *Retr
 		HasLightswornBattlegear2Pc: character.HasSetBonus(paladin.ItemSetLightswornBattlegear, 2),
 	}
 	ret.PaladinAura = retOptions.Options.Aura
+	if retOptions.Rotation.CustomRotation != nil {
+		ret.PriorityRotation = make([]int32, len(retOptions.Rotation.CustomRotation.Spells))
+		for i, customSpellProto := range retOptions.Rotation.CustomRotation.Spells {
+			ret.PriorityRotation[i] = customSpellProto.Spell
+		}
+	}
+
+	if retOptions.Rotation.Type == proto.RetributionPaladin_Rotation_Standard {
+		ret.SelectedRotation = ret.mainRotation
+	} else if retOptions.Rotation.Type == proto.RetributionPaladin_Rotation_Custom {
+		ret.SelectedRotation = ret.customRotation
+	} else {
+		ret.SelectedRotation = ret.mainRotation
+	}
 
 	// Convert DTPS option to bonus MP5
 	spAtt := retOptions.Options.DamageTakenPerSecond * 5.0 / 10.0
@@ -71,6 +85,9 @@ type RetributionPaladin struct {
 	DivinePleaInitComplete bool
 
 	HasLightswornBattlegear2Pc bool
+
+	SelectedRotation func(*core.Simulation)
+	PriorityRotation []int32
 
 	Rotation proto.RetributionPaladin_Rotation
 }

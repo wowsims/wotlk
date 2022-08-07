@@ -1,4 +1,5 @@
 import { Conjured, Consumes } from '../core/proto/common.js';
+import { CustomRotation, CustomSpell } from '../core/proto/common.js';
 import { EquipmentSpec } from '../core/proto/common.js';
 import { Flask } from '../core/proto/common.js';
 import { Food } from '../core/proto/common.js';
@@ -16,6 +17,8 @@ import {
 	PaladinJudgement as PaladinJudgement,
 	RetributionPaladin_Rotation as RetributionPaladinRotation,
 	RetributionPaladin_Options as RetributionPaladinOptions,
+	RetributionPaladin_Rotation_RotationType as RotationType,
+	RetributionPaladin_Rotation_SpellOption as SpellOption,
 	PaladinMajorGlyph,
 	PaladinMinorGlyph,
 } from '../core/proto/paladin.js';
@@ -61,10 +64,21 @@ export const DivineSacTalents = {
 };
 
 export const DefaultRotation = RetributionPaladinRotation.create({
+	type: RotationType.Standard,
 	exoSlack: 500,
 	consSlack: 500,
 	divinePleaPercentage: 0.75,
-	holyWrathThreshold: 4
+	holyWrathThreshold: 4,
+	customRotation: CustomRotation.create({
+		spells: [
+			CustomSpell.create({ spell: SpellOption.JudgementOfWisdom }),
+			CustomSpell.create({ spell: SpellOption.HammerOfWrath }),
+			CustomSpell.create({ spell: SpellOption.CrusaderStrike }),
+			CustomSpell.create({ spell: SpellOption.DivineStorm }),
+			CustomSpell.create({ spell: SpellOption.Exorcism }),
+			CustomSpell.create({ spell: SpellOption.Consecration })
+		],
+	}),
 });
 
 export const DefaultOptions = RetributionPaladinOptions.create({
