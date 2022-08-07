@@ -1,5 +1,6 @@
 import { Gem } from '../proto/common.js';
 import { GemColor } from '../proto/common.js';
+import { Profession } from '../proto/common.js';
 
 const socketToMatchingColors = new Map<GemColor, Array<GemColor>>();
 socketToMatchingColors.set(GemColor.GemColorMeta, [GemColor.GemColorMeta]);
@@ -24,6 +25,12 @@ export function gemMatchesSocket(gem: Gem, socketColor: GemColor) {
 // Whether the gem is capable of slotting into a socket of the given color.
 export function gemEligibleForSocket(gem: Gem, socketColor: GemColor) {
     return (gem.color == GemColor.GemColorMeta) == (socketColor == GemColor.GemColorMeta);
+}
+
+export function isUnrestrictedGem(gem: Gem, phase?: number): boolean {
+	return !gem.unique &&
+		gem.requiredProfession == Profession.ProfessionUnknown &&
+		(phase == null || gem.phase <= phase);
 }
 
 

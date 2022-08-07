@@ -152,8 +152,10 @@ func (hunter *Hunter) Reset(sim *core.Simulation) {
 	hunter.manaSpentPerSecondAtFirstAspectSwap = 0
 	hunter.permaHawk = false
 
-	huntersMarkAura := core.HuntersMarkAura(hunter.CurrentTarget, hunter.Talents.ImprovedHuntersMark, hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfHuntersMark))
-	huntersMarkAura.Activate(sim)
+	if hunter.Options.UseHuntersMark {
+		huntersMarkAura := core.HuntersMarkAura(hunter.CurrentTarget, hunter.Talents.ImprovedHuntersMark, hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfHuntersMark))
+		huntersMarkAura.Activate(sim)
+	}
 }
 
 func NewHunter(character core.Character, options proto.Player) *Hunter {

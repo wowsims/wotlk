@@ -193,6 +193,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 			playerIconInputs: [
 				HunterInputs.PetTypeInput,
 				HunterInputs.WeaponAmmo,
+				HunterInputs.UseHuntersMark,
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: HunterInputs.HunterRotationConfig,
