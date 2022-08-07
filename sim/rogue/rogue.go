@@ -78,6 +78,7 @@ type Rogue struct {
 	AdrenalineRushAura  *core.Aura
 	BladeFlurryAura     *core.Aura
 	DeathmantleProcAura *core.Aura
+	EnvenomAura         *core.Aura
 	ExposeArmorAura     *core.Aura
 	HungerForBloodAura  *core.Aura
 	KillingSpreeAura    *core.Aura
@@ -133,7 +134,6 @@ func (rogue *Rogue) Initialize() {
 
 	rogue.registerBackstabSpell()
 	rogue.registerDeadlyPoisonSpell()
-	rogue.registerEnvenom()
 	rogue.registerEviscerate()
 	rogue.registerExposeArmorSpell()
 	rogue.registerHemorrhageSpell()
@@ -145,6 +145,10 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerSliceAndDice()
 
 	rogue.registerThistleTeaCD()
+
+	if rogue.Rotation.UseEnvenom {
+		rogue.registerEnvenom()
+	}
 
 	switch rogue.Rotation.Builder {
 	case proto.Rogue_Rotation_SinisterStrike:

@@ -11,6 +11,7 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 	refundAmount := 0.4 * float64(rogue.Talents.QuickRecovery)
 	baseDamage := 215 + core.TernaryFloat64(rogue.HasSetBonus(ItemSetDeathmantle, 2), 40, 0)
 	apRatio := 0.09
+	chanceToRetainStacks := rogue.Talents.MasterPoisoner / 3.0
 
 	cost := 35.0
 	if rogue.HasSetBonus(ItemSetAssassination, 4) {
@@ -53,24 +54,11 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 					rogue.ApplyCutToTheChase(sim)
 					deadlyPoisonStacks := rogue.DeadlyPoisonDot.GetStacks()
 					doses := core.MinInt32(deadlyPoisonStacks, comboPoints)
-					chanceToRetainStacks := rogue.Talents.MasterPoisoner / 3.0
 					if chanceToRetainStacks < 1 && sim.RandomFloat("Master Poisoner") > float64(chanceToRetainStacks) {
 						rogue.DeadlyPoisonDot.Cancel(sim)
 					}
-					envenomAura := rogue.GetOrRegisterAura(core.Aura{
-						Label:    "Envenom",
-						ActionID: core.ActionID{SpellID: 57993},
-						OnGain: func(aura *core.Aura, sim *core.Simulation) {
-							rogue.DeadlyPoisonProcChanceBonus += 0.15
-							rogue.InstantPoisonProcChanceBonus += 0.75
-						},
-						OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-							rogue.DeadlyPoisonProcChanceBonus -= 0.15
-							rogue.InstantPoisonProcChanceBonus -= 0.75
-						},
-					})
-					envenomAura.Duration = time.Second * time.Duration(1+doses)
-					envenomAura.Activate(sim)
+					rogue.EnvenomAura.Duration = time.Second * time.Duration(1+doses)
+					rogue.EnvenomAura.Activate(sim)
 				} else {
 					if refundAmount > 0 {
 						rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.QuickRecoveryMetrics)
@@ -82,6 +70,18 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 }
 
 func (rogue *Rogue) registerEnvenom() {
+	rogue.EnvenomAura = rogue.RegisterAura(core.Aura{
+		Label:    "Envenom",
+		ActionID: core.ActionID{SpellID: 57993},
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			rogue.DeadlyPoisonProcChanceBonus += 0.15
+			rogue.InstantPoisonProcChanceBonus += 0.75
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			rogue.DeadlyPoisonProcChanceBonus -= 0.15
+			rogue.InstantPoisonProcChanceBonus -= 0.75
+		},
+	})
 	rogue.Envenom = [6]*core.Spell{
 		nil,
 		rogue.makeEnvenom(1),
