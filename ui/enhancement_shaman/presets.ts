@@ -51,8 +51,8 @@ export const DefaultRotation = EnhancementShamanRotation.create({
 export const DefaultOptions = EnhancementShamanOptions.create({
 	shield: ShamanShield.LightningShield,
 	bloodlust: true,
-	imbueMH: ShamanImbue.WindfuryWeapon,
-	imbueOH: ShamanImbue.FlametongueWeapon,
+	imbueMh: ShamanImbue.WindfuryWeapon,
+	imbueOh: ShamanImbue.FlametongueWeapon,
 	syncType: ShamanSyncType.SyncMainhandOffhandSwings,
 });
 

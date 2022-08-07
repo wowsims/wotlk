@@ -35,6 +35,12 @@ func (shaman *Shaman) newLavaBurstSpell() *core.Spell {
 		},
 	}
 
+	if shaman.Talents.LightningMastery > 0 {
+		// Convection applies against the base cost of the spell.
+		spellConfig.Cast.DefaultCast.Cost -= baseCost * float64(shaman.Talents.Convection) * 0.02
+		spellConfig.Cast.DefaultCast.CastTime -= time.Millisecond * 100 * time.Duration(shaman.Talents.LightningMastery)
+	}
+
 	spellConfig.Cast.ModifyCast = func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 		if shaman.ElementalMasteryAura.IsActive() {
 			cast.CastTime = 0
