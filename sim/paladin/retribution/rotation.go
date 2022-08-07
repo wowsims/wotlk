@@ -29,11 +29,78 @@ func (ret *RetributionPaladin) OnGCDReady(sim *core.Simulation) {
 		ret.DivinePleaInitComplete = true
 	}
 
-	ret.mainRotation(sim)
+	ret.SelectedRotation(sim)
 
 	if ret.GCD.IsReady(sim) {
 		ret.DoNothing() // this means we had nothing to do and we are ok
 	}
+}
+
+func (ret *RetributionPaladin) costumeRotation(sim *core.Simulation) {
+	// Setup
+	target := ret.CurrentTarget
+
+	nextSwingAt := ret.AutoAttacks.NextAttackAt()
+	isExecutePhase := sim.IsExecutePhase20()
+
+	nextPrimaryAbility := core.MinDuration(ret.CrusaderStrike.CD.ReadyAt(), ret.DivineStorm.CD.ReadyAt())
+	nextPrimaryAbility = core.MinDuration(nextPrimaryAbility, ret.JudgementOfWisdom.CD.ReadyAt())
+	nextPrimaryAbilityDelta := nextPrimaryAbility - sim.CurrentTime
+
+	if ret.GCD.IsReady(sim) {
+	rotationLoop:
+		for _, spellNumber := range ret.PriorityRotation {
+			switch spellNumber {
+			case int32(proto.RetributionPaladin_Rotation_JudgementOfWisdom):
+				if ret.JudgementOfWisdom.IsReady(sim) {
+					ret.JudgementOfWisdom.Cast(sim, target)
+					break rotationLoop
+				}
+			case int32(proto.RetributionPaladin_Rotation_DivineStorm):
+				if ret.DivineStorm.IsReady(sim) {
+					ret.DivineStorm.Cast(sim, target)
+					break rotationLoop
+				}
+			case int32(proto.RetributionPaladin_Rotation_HammerOfWrath):
+				if isExecutePhase && ret.HammerOfWrath.IsReady(sim) {
+					ret.HammerOfWrath.Cast(sim, target)
+					break rotationLoop
+				}
+			case int32(proto.RetributionPaladin_Rotation_Consecration):
+				if nextPrimaryAbilityDelta.Milliseconds() > int64(ret.ConsSlack) && ret.Consecration.IsReady(sim) {
+					ret.Consecration.Cast(sim, target)
+					break rotationLoop
+				}
+			case int32(proto.RetributionPaladin_Rotation_HolyWrath):
+				if ret.HolyWrath.IsReady(sim) {
+					ret.HolyWrath.Cast(sim, target)
+					break rotationLoop
+				}
+			case int32(proto.RetributionPaladin_Rotation_CrusaderStrike):
+				if ret.CrusaderStrike.IsReady(sim) {
+					ret.CrusaderStrike.Cast(sim, target)
+					break rotationLoop
+				}
+			case int32(proto.RetributionPaladin_Rotation_Exorcism):
+				if nextPrimaryAbilityDelta.Milliseconds() > int64(ret.ExoSlack) && ret.Exorcism.IsReady(sim) && ret.ArtOfWarInstantCast.IsActive() {
+					ret.Exorcism.Cast(sim, target)
+					break rotationLoop
+				}
+			}
+		}
+	}
+
+	// All possible next events
+	events := []time.Duration{
+		nextSwingAt,
+		ret.GCD.ReadyAt(),
+		nextPrimaryAbility,
+		ret.Consecration.CD.ReadyAt(),
+		ret.Exorcism.CD.ReadyAt(),
+	}
+
+	ret.waitUntilNextEvent(sim, events, ret.costumeRotation)
+
 }
 
 func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
@@ -85,11 +152,11 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 		ret.Exorcism.CD.ReadyAt(),
 	}
 
-	ret.waitUntilNextEvent(sim, events)
+	ret.waitUntilNextEvent(sim, events, ret.mainRotation)
 }
 
 // Helper function for finding the next event
-func (ret *RetributionPaladin) waitUntilNextEvent(sim *core.Simulation, events []time.Duration) {
+func (ret *RetributionPaladin) waitUntilNextEvent(sim *core.Simulation, events []time.Duration, rotationCallback func(*core.Simulation)) {
 	// Find the minimum possible next event that is greater than the current time
 	nextEventAt := time.Duration(math.MaxInt64) // any event will happen before forever.
 	for _, elem := range events {
@@ -105,7 +172,7 @@ func (ret *RetributionPaladin) waitUntilNextEvent(sim *core.Simulation, events [
 	// Otherwise add a pending action for the next time
 	pa := &core.PendingAction{
 		Priority:     core.ActionPriorityLow,
-		OnAction:     ret.mainRotation,
+		OnAction:     rotationCallback,
 		NextActionAt: nextEventAt,
 	}
 
