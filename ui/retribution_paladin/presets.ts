@@ -79,6 +79,21 @@ export const DefaultRotation = RetributionPaladinRotation.create({
 			CustomSpell.create({ spell: SpellOption.Consecration })
 		],
 	}),
+	customCastSequence: CustomRotation.create({
+		spells: [
+			CustomSpell.create({ spell: SpellOption.JudgementOfWisdom }),
+			CustomSpell.create({ spell: SpellOption.CrusaderStrike }),
+			CustomSpell.create({ spell: SpellOption.DivineStorm }),
+			CustomSpell.create({ spell: SpellOption.Consecration }),
+			CustomSpell.create({ spell: SpellOption.CrusaderStrike }),
+			CustomSpell.create({ spell: SpellOption.Exorcism }),
+			CustomSpell.create({ spell: SpellOption.JudgementOfWisdom }),
+			CustomSpell.create({ spell: SpellOption.CrusaderStrike }),
+			CustomSpell.create({ spell: SpellOption.DivineStorm }),
+			CustomSpell.create({ spell: SpellOption.Consecration }),
+			CustomSpell.create({ spell: SpellOption.CrusaderStrike }),
+		],
+	}),
 });
 
 export const DefaultOptions = RetributionPaladinOptions.create({

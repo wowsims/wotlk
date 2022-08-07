@@ -149,7 +149,8 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 					RetributionPaladinInputs.RetributionPaladinRotationConsSlackConfig,
 					RetributionPaladinInputs.RetributionPaladinRotationExoSlackConfig,
 					RetributionPaladinInputs.RetributionPaladinRotationHolyWrathConfig,
-					RetributionPaladinInputs.RetributionPaladinRotationPriorityConfig
+					RetributionPaladinInputs.RetributionPaladinRotationPriorityConfig,
+					RetributionPaladinInputs.RetributionPaladinCastSequenceConfig
 				]
 			},
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
