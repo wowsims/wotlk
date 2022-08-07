@@ -118,8 +118,6 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Sequence_Pesti(si
 			return casted
 		}
 	}
-
-	return casted
 }
 
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Main_Pesti(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
@@ -207,6 +205,17 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_PrioRotation(sim 
 				dk.fr.missedPesti = true
 			}
 		}
+	} else if dk.NextCast == dk.Obliterate {
+		casted = dk.CastObliterate(sim, target)
+		if casted && dk.LastOutcome.Matches(core.OutcomeLanded) {
+			dk.NextCast = nil
+
+			if dk.fr.uaCycle {
+				dk.fr.delayUACycle = false
+				dk.fr.uaCycle = false
+				dk.NextCast = dk.BloodTap
+			}
+		}
 	} else {
 		if ffActive {
 			if bpActive {
@@ -215,24 +224,36 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_PrioRotation(sim 
 						frostGracePeriod-gcd > 0 && unholyGracePeriod-gcd > 0 {
 						casted = dk.CastFrostStrike(sim, target)
 					}
+				}
 
-					if !casted {
-						if currFrostRunes > 0 && currUnholyRunes > 0 {
-							casted = dk.CastObliterate(sim, target)
-							dk.fr.oblitCount += core.TernaryInt32(casted, 1, 0)
-						} else if currDeathRunes == 2 && dk.fr.uaCycle && dk.CanBloodTap(sim) {
-							casted = dk.CastObliterate(sim, target)
+				if !casted {
+					if currFrostRunes > 0 && currUnholyRunes > 0 {
+						casted = dk.CastObliterate(sim, target)
+						dk.fr.oblitCount += core.TernaryInt32(casted, 1, 0)
+					} else if currDeathRunes == 2 && dk.fr.uaCycle && dk.CanBloodTap(sim) {
+						casted = dk.CastObliterate(sim, target)
+						dk.fr.oblitCount += core.TernaryInt32(casted, 1, 0)
+						if casted && dk.LastOutcome.Matches(core.OutcomeLanded) {
 							dk.fr.uaCycle = false
+							dk.fr.delayUACycle = false
 							dk.NextCast = dk.BloodTap
 						}
+					} else if currDeathRunes == 2 && dk.fr.uaCycle && !dk.CanBloodTap(sim) && dk.BloodTap.CD.ReadyAt() < fbExpireAt {
+						casted = dk.CastObliterate(sim, target)
+						dk.fr.oblitCount += core.TernaryInt32(casted, 1, 0)
+						if casted && dk.LastOutcome.Matches(core.OutcomeLanded) {
+							dk.fr.uaCycle = false
+							dk.fr.delayUACycle = false
+							dk.NextCast = dk.BloodTap
+						}
+					} else if currDeathRunes == 2 && dk.fr.uaCycle && !dk.CanBloodTap(sim) && dk.BloodTap.CD.ReadyAt() >= fbExpireAt {
+						dk.fr.delayUACycle = true
 					}
-				} else if currFrostRunes > 0 && currUnholyRunes > 0 {
-					casted = dk.CastObliterate(sim, target)
-					dk.fr.oblitCount += core.TernaryInt32(casted, 1, 0)
-				} else if currDeathRunes == 2 && dk.fr.uaCycle && dk.CanBloodTap(sim) {
-					casted = dk.CastObliterate(sim, target)
-					dk.fr.uaCycle = false
-					dk.NextCast = dk.BloodTap
+				}
+
+				if casted && (dk.LastCast == dk.Obliterate) && !dk.LastOutcome.Matches(core.OutcomeLanded) {
+					dk.NextCast = dk.Obliterate
+					return casted
 				}
 
 				if !casted {
@@ -261,6 +282,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_PrioRotation(sim 
 									if dk.CanUnbreakableArmor(sim) && currFrostRunes == 0 {
 										casted = dk.CastUnbreakableArmor(sim, target)
 										if casted {
+											dk.fr.oblitCount = 0
 											dk.fr.uaCycle = true
 											dk.NextCast = dk.Pestilence
 											dk.WaitUntil(sim, sim.CurrentTime)
@@ -272,11 +294,10 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_PrioRotation(sim 
 										if casted && !dk.LastOutcome.Matches(core.OutcomeLanded) {
 											dk.NextCast = dk.BloodStrike
 										} else if casted && dk.LastOutcome.Matches(core.OutcomeLanded) {
+											dk.fr.oblitCount = 0
 											dk.NextCast = dk.Pestilence
 										}
 									}
-
-									dk.fr.oblitCount = 0
 								}
 							}
 						}
@@ -286,33 +307,33 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_PrioRotation(sim 
 				}
 
 				if !casted {
-					if (sim.CurrentTime+gcd > spentBloodRuneAt-gcd) && dk.fr.oblitCount >= 2 && dk.NextCast != dk.Pestilence && !dk.fr.uaCycle {
-						if dk.CanUnbreakableArmor(sim) && currFrostRunes == 0 {
-							casted = dk.CastUnbreakableArmor(sim, target)
-							if casted {
-								dk.fr.uaCycle = true
-								dk.NextCast = dk.Pestilence
-								dk.WaitUntil(sim, sim.CurrentTime)
+					if (dk.fr.oblitCount >= 2 && dk.NextCast != dk.Pestilence && !dk.fr.uaCycle) || dk.fr.delayUACycle {
+						if (sim.CurrentTime+gcd > spentBloodRuneAt-gcd) || (currBloodRunes+currDeathRunes >= 1) {
+							if dk.CanUnbreakableArmor(sim) && currFrostRunes == 0 {
+								casted = dk.CastUnbreakableArmor(sim, target)
+								if casted {
+									dk.fr.oblitCount = 0
+									dk.fr.uaCycle = true
+									dk.NextCast = dk.Pestilence
+									dk.WaitUntil(sim, sim.CurrentTime)
+								} else {
+									dk.NextCast = dk.UnbreakableArmor
+								}
 							} else {
-								dk.NextCast = dk.UnbreakableArmor
-							}
-						} else {
-							casted = dk.CastBloodStrike(sim, target)
-							if casted && !dk.LastOutcome.Matches(core.OutcomeLanded) {
-								dk.NextCast = dk.BloodStrike
-							} else if casted && dk.LastOutcome.Matches(core.OutcomeLanded) {
-								dk.NextCast = dk.Pestilence
+								casted = dk.CastBloodStrike(sim, target)
+								if casted && !dk.LastOutcome.Matches(core.OutcomeLanded) {
+									dk.NextCast = dk.BloodStrike
+								} else if casted && dk.LastOutcome.Matches(core.OutcomeLanded) {
+									dk.fr.oblitCount = 0
+									dk.NextCast = dk.Pestilence
+								}
 							}
 						}
-
-						//if casted && dk.LastOutcome.Matches(core.OutcomeLanded) {
-						dk.fr.oblitCount = 0
-						//}
 					}
 				}
 
 				if !casted {
-					if oblitRunesAt+200*time.Millisecond > sim.CurrentTime+gcd {
+					if oblitRunesAt+0*time.Millisecond > sim.CurrentTime+gcd {
 						casted = dk.RotationActionCallback_FrostSubBlood_Main_FS_Star(sim, target, s)
 					}
 				}
