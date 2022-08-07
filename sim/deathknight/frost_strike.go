@@ -7,10 +7,8 @@ import (
 )
 
 var FrostStrikeActionID = core.ActionID{SpellID: 55268}
-var FrostStrikeMHOutcome = core.OutcomeMiss
-var FrostStrikeOHOutcome = core.OutcomeMiss
 
-func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool) *RuneSpell {
+func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool, onhit func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)) *RuneSpell {
 	baseDamage := 250.0 + dk.sigilOfTheVengefulHeartFrostStrike()
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, baseDamage, 0.55, true)
 	if !isMH {
@@ -32,71 +30,53 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool) *RuneSpell {
 			TargetSpellCoefficient: 1,
 		},
 
-		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if isMH {
-				FrostStrikeMHOutcome = spellEffect.Outcome
-			} else {
-				FrostStrikeOHOutcome = spellEffect.Outcome
-			}
-		},
+		OnSpellHitDealt: onhit,
 	}
 
 	dk.threatOfThassarianProcMasks(isMH, &effect, true, false, dk.killingMachineOutcomeMod)
 
-	return dk.RegisterSpell(nil, core.SpellConfig{
+	conf := core.SpellConfig{
 		ActionID:     FrostStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool:  core.SpellSchoolFrost,
 		Flags:        core.SpellFlagMeleeMetrics,
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
-	})
-}
+	}
 
-func (dk *Deathknight) registerFrostStrikeSpell() {
-	baseCost := float64(core.NewRuneCost(
-		core.Ternary(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfFrostStrike), uint8(32), 40), 0, 0, 0, 0,
-	))
-
-	dk.FrostStrikeMhHit = dk.newFrostStrikeHitSpell(true)
-	dk.FrostStrikeOhHit = dk.newFrostStrikeHitSpell(false)
-
-	dk.FrostStrike = dk.RegisterSpell(nil, core.SpellConfig{
-		ActionID:    FrostStrikeActionID.WithTag(3),
-		SpellSchool: core.SpellSchoolFrost,
-		Flags:       core.SpellFlagNoMetrics | core.SpellFlagNoLogs,
-
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
-
-		Cast: core.CastConfig{
+	rs := &RuneSpell{}
+	if isMH {
+		conf.ResourceType = stats.RunicPower
+		conf.BaseCost = float64(core.NewRuneCost(
+			core.Ternary(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfFrostStrike), uint8(32), 40), 0, 0, 0, 0,
+		))
+		conf.Cast = core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:  core.GCDDefault,
-				Cost: baseCost,
+				Cost: conf.BaseCost,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				cast.GCD = dk.getModifiedGCD()
 			},
-		},
+		}
+		conf.ApplyEffects = core.ApplyEffectFuncDirectDamage(effect)
+	}
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskEmpty,
-			ThreatMultiplier: 1,
+	return dk.RegisterSpell(rs, conf)
+}
 
-			OutcomeApplier: dk.OutcomeFuncAlwaysHit(),
-
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				dk.threatOfThassarianProc(sim, spellEffect, dk.FrostStrikeMhHit, dk.FrostStrikeOhHit)
-				dk.threatOfThassarianAdjustMetrics(sim, spell, spellEffect, FrostStrikeMHOutcome)
-				dk.LastOutcome = spellEffect.Outcome
-
-				// Check for KM after both hits have passed
-				if dk.LastOutcome.Matches(core.OutcomeLanded) {
-					if dk.KillingMachineAura.IsActive() {
-						dk.KillingMachineAura.Deactivate(sim)
-					}
-				}
-			},
-		}),
+func (dk *Deathknight) registerFrostStrikeSpell() {
+	dk.FrostStrikeMhHit = dk.newFrostStrikeHitSpell(true, func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		dk.LastOutcome = spellEffect.Outcome
+		dk.threatOfThassarianProc(sim, spellEffect, dk.FrostStrikeMhHit, dk.FrostStrikeOhHit)
 	})
+	dk.FrostStrikeOhHit = dk.newFrostStrikeHitSpell(false, func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		dk.LastOutcome = spellEffect.Outcome
+		if dk.LastOutcome.Matches(core.OutcomeLanded) {
+			if dk.KillingMachineAura.IsActive() {
+				dk.KillingMachineAura.Deactivate(sim)
+			}
+		}
+	})
+	dk.FrostStrike = dk.FrostStrikeMhHit
 }
 
 func (dk *Deathknight) CanFrostStrike(sim *core.Simulation) bool {
