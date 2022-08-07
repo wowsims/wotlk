@@ -78,7 +78,7 @@ export const FrostTalents = {
 
 export const DefaultFireRotation = MageRotation.create({
 	type: RotationType.Fire,
-	primarySpell: PrimaryFireSpell.Fireball,
+	primaryFireSpell: PrimaryFireSpell.Fireball,
 	maintainImprovedScorch: false,
 });
 

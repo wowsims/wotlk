@@ -65,13 +65,13 @@ export const MageRotationConfig = {
 				TypedEvent.freezeAllAndDo(() => {
 					if (newRotation.type == RotationType.Arcane) {
 						player.setTalentsString(eventID, Presets.ArcaneTalents.data.talentsString);
-						player.setGlyphs(eventID, Presets.ArcaneTalents.data.glyphs);
+						player.setGlyphs(eventID, Presets.ArcaneTalents.data.glyphs!);
 					} else if (newRotation.type == RotationType.Fire) {
 						player.setTalentsString(eventID, Presets.FireTalents.data.talentsString);
-						player.setGlyphs(eventID, Presets.FireTalents.data.glyphs);
+						player.setGlyphs(eventID, Presets.FireTalents.data.glyphs!);
 					} else if (newRotation.type == RotationType.Frost) {
 						player.setTalentsString(eventID, Presets.FrostTalents.data.talentsString);
-						player.setGlyphs(eventID, Presets.FrostTalents.data.glyphs);
+						player.setGlyphs(eventID, Presets.FrostTalents.data.glyphs!);
 					}
 
 					player.setRotation(eventID, newRotation);
@@ -81,7 +81,7 @@ export const MageRotationConfig = {
 		// ********************************************************
 		//                        AOE INPUTS
 		// ********************************************************
-		InputHelpers.makeRotationEnumInput<Spec.SpecMage, AoeRotation>({
+		InputHelpers.makeRotationEnumInput<Spec.SpecMage, AoeRotationSpells>({
 			fieldName: 'aoe',
 			label: 'Primary Spell',
 			values: [
@@ -117,7 +117,7 @@ export const MageRotationConfig = {
 			percent: true,
 			label: 'Water Ele Disobey %',
 			labelTooltip: 'Percent of Water Elemental actions which will fail. This represents the Water Elemental moving around or standing still instead of casting.',
-			changedEvent: (player: Player<Spec.SpecMage>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+			changeEmitter: (player: Player<Spec.SpecMage>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Frost,
 			enableWhen: (player: Player<Spec.SpecMage>) => player.getTalents().summonWaterElemental,
 		}),
@@ -125,7 +125,7 @@ export const MageRotationConfig = {
 		//                      ARCANE INPUTS
 		// ********************************************************
 		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
-			fieldName: 'minBlastBeforeMissles',
+			fieldName: 'minBlastBeforeMissiles',
 			label: 'Min ABs before missiles',
 			labelTooltip: 'Minimum arcane blasts to cast before using a missile barrage proc',
 			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,

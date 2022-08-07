@@ -170,7 +170,7 @@ class AdvancedEncounterPicker extends Popup {
 				},
 			});
 		}
-		new ListPicker<Encounter, Target>(targetsElem, this.encounter, {
+		new ListPicker<Encounter, Target, TargetPicker>(targetsElem, this.encounter, {
 			extraCssClasses: [
 				'targets-picker',
 			],
