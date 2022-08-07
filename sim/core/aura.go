@@ -151,6 +151,9 @@ func (aura *Aura) GetStacks() int32 {
 }
 
 func (aura *Aura) SetStacks(sim *Simulation, newStacks int32) {
+	if !aura.IsActive() && newStacks != 0 {
+		panic("Trying to set non-zero stacks on inactive aura!")
+	}
 	if newStacks < 0 {
 		panic("SetStacks newStacks cannot be negative but is " + strconv.Itoa(int(newStacks)))
 	}

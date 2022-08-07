@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -11,6 +12,11 @@ import (
 
 func (mage *Mage) registerSummonWaterElementalCD() {
 	if !mage.Talents.SummonWaterElemental {
+		return
+	}
+
+	if mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfEternalWater) {
+		// Makes pet permanent, so doesn't use the CD.
 		return
 	}
 
@@ -28,8 +34,9 @@ func (mage *Mage) registerSummonWaterElementalCD() {
 				GCD:  core.GCDDefault,
 			},
 			CD: core.Cooldown{
-				Timer:    mage.NewTimer(),
-				Duration: time.Duration(float64(time.Minute * 3) * (1 - 0.1*float64(mage.Talents.ColdAsIce))),
+				Timer: mage.NewTimer(),
+				Duration: time.Duration(float64(time.Minute*3)*(1-0.1*float64(mage.Talents.ColdAsIce))) -
+					core.TernaryDuration(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfWaterElemental), time.Second*30, 0),
 			},
 		},
 
@@ -71,7 +78,7 @@ func (mage *Mage) NewWaterElemental(disobeyChance float64) *WaterElemental {
 			&mage.Character,
 			waterElementalBaseStats,
 			waterElementalStatInheritance,
-			false,
+			mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfEternalWater),
 			true,
 		),
 		disobeyChance: disobeyChance,

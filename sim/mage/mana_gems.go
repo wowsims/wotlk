@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -22,6 +23,15 @@ func (mage *Mage) registerManaGemsCD() {
 	maxManaSapphireGain := 3500.0
 	manaEmeraldGainRange := maxManaEmeraldGain - minManaEmeraldGain
 	manaSapphireGainRange := maxManaSapphireGain - minManaSapphireGain
+
+	if mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfManaGem) {
+		minManaEmeraldGain *= 1.4
+		maxManaEmeraldGain *= 1.4
+		manaEmeraldGainRange *= 1.4
+		minManaSapphireGain *= 1.4
+		maxManaSapphireGain *= 1.4
+		manaSapphireGainRange *= 1.4
+	}
 
 	var remainingManaGems int
 	mage.RegisterResetEffect(func(sim *core.Simulation) {
