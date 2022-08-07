@@ -1,4 +1,4 @@
-import { RaidBuffs } from '../core/proto/common.js';
+import { Race, RaidBuffs } from '../core/proto/common.js';
 import { PartyBuffs } from '../core/proto/common.js';
 import { IndividualBuffs } from '../core/proto/common.js';
 import { Debuffs } from '../core/proto/common.js';
@@ -78,7 +78,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P1_PRESET.gear,
+				gear: Presets.PRERAID_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatAgility]: 2.214,
@@ -104,8 +104,11 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					bloodlust: true,
 					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
 					icyTalons: true,
-					battleShout: TristateEffect.TristateEffectImproved,
 					leaderOfThePack: TristateEffect.TristateEffectImproved,
+					abominationsMight: true,
+					swiftRetribution: true,
+					elementalOath: true,
+					sanctifiedRetribution: true,
 				}),
 				partyBuffs: PartyBuffs.create({
 				}),
@@ -114,26 +117,29 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					blessingOfMight: TristateEffect.TristateEffectImproved,
 				}),
 				debuffs: Debuffs.create({
+					heartOfTheCrusader: true,
 					mangle: true,
 					sunderArmor: true,
-					curseOfWeakness: TristateEffect.TristateEffectMissing,
 					faerieFire: TristateEffect.TristateEffectImproved,
-					misery: true,
-					savageCombat: false,
+					shadowMastery: true,
+					earthAndMoon: true,
+					bloodFrenzy: true,
 				}),
 			},
 
 			// IconInputs to include in the 'Player' section on the settings tab.
 			playerIconInputs: [
+				RogueInputs.MainHandImbue,
+				RogueInputs.OffHandImbue,
 			],
-			//	weaponImbues: [
-			//		WeaponImbue.WeaponImbueRogueDeadlyPoison,
-			//		WeaponImbue.WeaponImbueRogueInstantPoison,
-			//	],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: RogueInputs.RogueRotationConfig,
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
+				IconInputs.SpellCritBuff,
+				IconInputs.SpellCritDebuff,
+				IconInputs.SpellHitDebuff,
+				IconInputs.SpellDamageDebuff
 			],
 			excludeBuffDebuffInputs: [
 			],
@@ -141,7 +147,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 			otherInputs: {
 				inputs: [
 					OtherInputs.StartingConjured,
-					OtherInputs.NumStartingConjured,
+					OtherInputs.PrepopPotion,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],
@@ -157,10 +163,11 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 				// Preset talents that the user can quickly select.
 				talents: [
 					Presets.CombatTalents,
+					Presets.AssassinationTalents,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.P1_PRESET,
+					Presets.PRERAID_PRESET,
 				],
 			},
 		});
