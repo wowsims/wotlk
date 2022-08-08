@@ -199,7 +199,13 @@ func (shaman *Shaman) Initialize() {
 	shaman.LightningBoltLO = shaman.newLightningBoltSpell(true)
 	shaman.LavaBurst = shaman.newLavaBurstSpell()
 	shaman.FireNova = shaman.newFireNovaSpell()
-	shaman.registerLightningShieldSpell()
+
+	if shaman.SelfBuffs.Shield == proto.ShamanShield_LightningShield {
+		shaman.registerLightningShieldSpell()
+	} else {
+		shaman.LightningShieldAura = nil
+		shaman.LightningShield = nil
+	}
 
 	shaman.ChainLightning = shaman.newChainLightningSpell(false)
 	numHits := core.MinInt32(3, shaman.Env.GetNumTargets())
@@ -263,10 +269,6 @@ func (shaman *Shaman) Reset(sim *core.Simulation) {
 				shaman.NextTotemDrops[i] = TotemRefreshTime5M
 			}
 		}
-	}
-
-	if shaman.SelfBuffs.Shield == proto.ShamanShield_LightningShield {
-		shaman.activateLightningShieldAura(sim)
 	}
 
 	shaman.FlameShock.CD.Reset()
