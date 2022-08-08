@@ -165,7 +165,7 @@ dps_results: {
  key: "TestMutilate-AllItems-DestructiveSkyflareDiamond"
  value: {
   dps: 1812.9386999986418
-  tps: 1287.186476999035
+  tps: 1287.1864769990348
  }
 }
 dps_results: {
@@ -206,7 +206,7 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-ExtractofNecromanticPower-40373"
  value: {
-  dps: 1850.4808395542573
+  dps: 1850.4808395542568
   tps: 1313.8413960835219
  }
 }
@@ -276,7 +276,7 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-IncisorFragment-37723"
  value: {
-  dps: 1900.9481796277928
+  dps: 1900.948179627793
   tps: 1349.6732075357327
  }
 }
@@ -284,7 +284,7 @@ dps_results: {
  key: "TestMutilate-AllItems-InfusedColdstoneRune-35935"
  value: {
   dps: 1796.3183496859972
-  tps: 1275.3860282770577
+  tps: 1275.3860282770574
  }
 }
 dps_results: {
@@ -325,14 +325,14 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-MeteoriteWhetstone-37390"
  value: {
-  dps: 1850.1211631218553
+  dps: 1850.1211631218557
   tps: 1313.586025816517
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-Netherblade"
  value: {
-  dps: 1726.286486925348
+  dps: 1726.2864869253485
   tps: 1225.663405716997
  }
 }
@@ -388,14 +388,14 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 1910.3999228254725
-  tps: 1356.3839452060843
+  dps: 1910.399922825472
+  tps: 1356.3839452060845
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 1927.3709109864799
+  dps: 1927.3709109864794
   tps: 1368.4333468004
  }
 }
@@ -431,7 +431,7 @@ dps_results: {
  key: "TestMutilate-AllItems-Serrah'sStar-37559"
  value: {
   dps: 1798.6294008646596
-  tps: 1277.0268746139081
+  tps: 1277.026874613908
  }
 }
 dps_results: {
@@ -472,7 +472,7 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-StrengthoftheClefthoof"
  value: {
-  dps: 1602.1380777621891
+  dps: 1602.138077762189
   tps: 1137.5180352111543
  }
 }
@@ -564,20 +564,20 @@ dps_results: {
  key: "TestMutilate-AllItems-WastewalkerArmor"
  value: {
   dps: 1652.4113357482117
-  tps: 1173.2120483812305
+  tps: 1173.2120483812303
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-WindhawkArmor"
  value: {
-  dps: 1678.9046135657547
+  dps: 1678.904613565755
   tps: 1192.0222756316869
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-WrathofSpellfire"
  value: {
-  dps: 1671.145942371762
+  dps: 1671.1459423717617
   tps: 1186.5136190839517
  }
 }
@@ -634,7 +634,7 @@ dps_results: {
  key: "TestMutilate-Settings-Human-P1 Mutilate-Mutilate-FullBuffs-LongMultiTarget"
  value: {
   dps: 7071.126566495972
-  tps: 5020.499862212125
+  tps: 5020.499862212124
  }
 }
 dps_results: {
@@ -647,7 +647,7 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-Settings-Human-P1 Mutilate-Mutilate-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 2014.6159091419704
+  dps: 2014.6159091419697
   tps: 1430.3772954907986
  }
 }
@@ -675,7 +675,7 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 1630.4841020968217
+  dps: 1630.484102096822
   tps: 1157.6437124887432
  }
 }

@@ -53,13 +53,13 @@ dps_results: {
  key: "TestRogue-AllItems-AshtongueTalismanofLethality-32492"
  value: {
   dps: 2274.067646578654
-  tps: 1614.5880290708449
+  tps: 1614.5880290708446
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-AssassinationArmor"
  value: {
-  dps: 2017.133591746393
+  dps: 2017.1335917463923
   tps: 1432.1648501399386
  }
 }
@@ -276,8 +276,8 @@ dps_results: {
 dps_results: {
  key: "TestRogue-AllItems-IncisorFragment-37723"
  value: {
-  dps: 2408.0473960072404
-  tps: 1709.713651165141
+  dps: 2408.04739600724
+  tps: 1709.7136511651406
  }
 }
 dps_results: {
@@ -326,13 +326,13 @@ dps_results: {
  key: "TestRogue-AllItems-MeteoriteWhetstone-37390"
  value: {
   dps: 2310.027102824216
-  tps: 1640.1192430051935
+  tps: 1640.1192430051938
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-Netherblade"
  value: {
-  dps: 2156.975240550001
+  dps: 2156.9752405500008
   tps: 1531.452420790501
  }
 }
@@ -374,7 +374,7 @@ dps_results: {
 dps_results: {
  key: "TestRogue-AllItems-PrimalIntent"
  value: {
-  dps: 2245.642877218496
+  dps: 2245.6428772184963
   tps: 1594.4064428251318
  }
 }
@@ -395,7 +395,7 @@ dps_results: {
 dps_results: {
  key: "TestRogue-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 2387.654573369156
+  dps: 2387.6545733691564
   tps: 1695.2347470921009
  }
 }
@@ -452,7 +452,7 @@ dps_results: {
  key: "TestRogue-AllItems-Slayer'sArmor"
  value: {
   dps: 2390.251949094885
-  tps: 1697.0788838573676
+  tps: 1697.078883857368
  }
 }
 dps_results: {
@@ -500,7 +500,7 @@ dps_results: {
 dps_results: {
  key: "TestRogue-AllItems-TheFistsofFury"
  value: {
-  dps: 2330.3267097659527
+  dps: 2330.326709765952
   tps: 1654.5319639338263
  }
 }
@@ -508,7 +508,7 @@ dps_results: {
  key: "TestRogue-AllItems-TheTwinBladesofAzzinoth"
  value: {
   dps: 2425.7332751441777
-  tps: 1722.270625352366
+  tps: 1722.2706253523654
  }
 }
 dps_results: {
@@ -591,8 +591,8 @@ dps_results: {
 dps_results: {
  key: "TestRogue-AllItems-WrathofSpellfire"
  value: {
-  dps: 2073.9193729537187
-  tps: 1472.4827547971397
+  dps: 2073.919372953719
+  tps: 1472.48275479714
  }
 }
 dps_results: {
@@ -613,7 +613,7 @@ dps_results: {
  key: "TestRogue-Settings-BloodElf-P1-Basic-FullBuffs-LongSingleTarget"
  value: {
   dps: 2267.687690970888
-  tps: 1610.0582605893308
+  tps: 1610.0582605893305
  }
 }
 dps_results: {
@@ -626,14 +626,14 @@ dps_results: {
 dps_results: {
  key: "TestRogue-Settings-BloodElf-P1-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 20171.604011881383
+  dps: 20171.60401188138
   tps: 14321.83884843563
  }
 }
 dps_results: {
  key: "TestRogue-Settings-BloodElf-P1-Basic-NoBuffs-LongSingleTarget"
  value: {
-  dps: 1413.7697992968692
+  dps: 1413.7697992968688
   tps: 1003.7765575007767
  }
 }
@@ -676,7 +676,7 @@ dps_results: {
  key: "TestRogue-Settings-BloodElf-P1-Hemo-NoBuffs-LongSingleTarget"
  value: {
   dps: 1033.5433160566151
-  tps: 733.8157544001969
+  tps: 733.815754400197
  }
 }
 dps_results: {
@@ -711,7 +711,7 @@ dps_results: {
  key: "TestRogue-Settings-Human-P1-Basic-NoBuffs-LongMultiTarget"
  value: {
   dps: 20302.346156373955
-  tps: 14414.665771025491
+  tps: 14414.66577102549
  }
 }
 dps_results: {
@@ -724,8 +724,8 @@ dps_results: {
 dps_results: {
  key: "TestRogue-Settings-Human-P1-Basic-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 1531.4119380957186
-  tps: 1087.3024760479602
+  dps: 1531.4119380957184
+  tps: 1087.30247604796
  }
 }
 dps_results: {
@@ -746,7 +746,7 @@ dps_results: {
  key: "TestRogue-Settings-Human-P1-Hemo-FullBuffs-ShortSingleTarget"
  value: {
   dps: 2062.5178983854667
-  tps: 1464.3877078536814
+  tps: 1464.3877078536811
  }
 }
 dps_results: {
