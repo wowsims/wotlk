@@ -13,21 +13,6 @@ type ProcTracker struct {
 	expiresAt   time.Duration
 }
 
-type UnholyRotation struct {
-	dk            *DpsDeathknight
-	lastCastSpell *core.Spell
-
-	ffFirst bool
-	syncFF  bool
-
-	syncTimeFF time.Duration
-
-	recastedFF bool
-	recastedBP bool
-
-	procTrackers []*ProcTracker
-}
-
 func (ur *UnholyRotation) addProc(id int32, label string) bool {
 	if !ur.dk.HasAura(label) {
 		return false
@@ -48,17 +33,6 @@ func (ur *UnholyRotation) resetProcTrackers() {
 	}
 }
 
-func (ur *UnholyRotation) Reset(sim *core.Simulation) {
-	ur.syncFF = false
-
-	ur.syncTimeFF = 0
-
-	ur.recastedFF = false
-	ur.recastedBP = false
-
-	ur.resetProcTrackers()
-}
-
 func (dk *DpsDeathknight) initProcTrackers() {
 	dk.ur.procTrackers = make([]*ProcTracker, 0)
 
@@ -72,17 +46,15 @@ func (dk *DpsDeathknight) initProcTrackers() {
 	dk.ur.addProc(55379, "Thundering Skyflare Diamond Proc")
 
 	dk.ur.addProc(42987, "DMC Greatness Strength Proc")
+
 	dk.ur.addProc(47115, "Deaths Verdict Strength Proc")
 	dk.ur.addProc(47131, "Deaths Verdict H Strength Proc")
 	dk.ur.addProc(47303, "Deaths Choice Strength Proc")
 	dk.ur.addProc(47464, "Deaths Choice H Strength Proc")
 
 	dk.ur.addProc(71484, "Deathbringer's Will Strength Proc")
-	dk.ur.addProc(71486, "Deathbringer's Will AP Proc")
 	dk.ur.addProc(71492, "Deathbringer's Will Haste Proc")
-
 	dk.ur.addProc(71561, "Deathbringer's Will H Strength Proc")
-	dk.ur.addProc(71558, "Deathbringer's Will H AP Proc")
 	dk.ur.addProc(71560, "Deathbringer's Will H Haste Proc")
 
 	dk.ur.addProc(37390, "Meteorite Whetstone Proc")

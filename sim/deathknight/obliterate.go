@@ -70,10 +70,9 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool, onhit func(sim *core.Sim
 func (dk *Deathknight) registerObliterateSpell() {
 	diseaseConsumptionChance := []float64{1.0, 0.67, 0.34, 0.0}[dk.Talents.Annihilation]
 
-	dk.ObliterateOhHit = dk.newObliterateHitSpell(false, nil)
 	dk.ObliterateMhHit = dk.newObliterateHitSpell(true, func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-		dk.threatOfThassarianProc(sim, spellEffect, dk.ObliterateMhHit, dk.ObliterateOhHit)
 		dk.LastOutcome = spellEffect.Outcome
+		dk.threatOfThassarianProc(sim, spellEffect, dk.ObliterateMhHit, dk.ObliterateOhHit)
 
 		if sim.RandomFloat("Annihilation") < diseaseConsumptionChance {
 			dk.FrostFeverDisease[spellEffect.Target.Index].Deactivate(sim)
@@ -83,7 +82,13 @@ func (dk *Deathknight) registerObliterateSpell() {
 		if sim.RandomFloat("Rime") < dk.rimeHbChanceProc() {
 			dk.RimeAura.Activate(sim)
 		}
+
+		// KM Consume after OH
+		if spellEffect.Landed() && dk.KillingMachineAura.IsActive() {
+			dk.KillingMachineAura.Deactivate(sim)
+		}
 	})
+	dk.ObliterateOhHit = dk.newObliterateHitSpell(false, nil)
 	dk.Obliterate = dk.ObliterateMhHit
 }
 

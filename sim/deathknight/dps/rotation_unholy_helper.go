@@ -8,6 +8,31 @@ import (
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
+type UnholyRotation struct {
+	dk *DpsDeathknight
+
+	ffFirst bool
+	syncFF  bool
+
+	syncTimeFF time.Duration
+
+	recastedFF bool
+	recastedBP bool
+
+	procTrackers []*ProcTracker
+}
+
+func (ur *UnholyRotation) Reset(sim *core.Simulation) {
+	ur.syncFF = false
+
+	ur.syncTimeFF = 0
+
+	ur.recastedFF = false
+	ur.recastedBP = false
+
+	ur.resetProcTrackers()
+}
+
 func (dk *DpsDeathknight) getFirstDiseaseAction() deathknight.RotationAction {
 	if dk.ur.ffFirst {
 		return dk.RotationActionCallback_IT
