@@ -255,6 +255,10 @@ func (dk *Deathknight) Reset(sim *core.Simulation) {
 
 	dk.LastCast = nil
 	dk.NextCast = nil
+
+	if dk.Inputs.PrecastHornOfWinter {
+		dk.HornOfWinter.CD.Use(sim)
+	}
 }
 
 func (dk *Deathknight) IsFuStrike(spell *core.Spell) bool {
