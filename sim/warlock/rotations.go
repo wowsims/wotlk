@@ -187,6 +187,13 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		// Affliction Rotation
 		// ------------------------------------------
 		if rotationType == proto.Warlock_Rotation_Affliction {
+
+			SBcasttime := float64(warlock.ApplyCastSpeed(time.Millisecond * 3000))
+			if float64(nextBigCD) > 0 && float64(nextBigCD) < SBcasttime/15 {
+				warlock.WaitUntil(sim, sim.CurrentTime+nextBigCD)
+				return
+			}
+
 			if !warlock.CorruptionDot.IsActive() && (core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() || warlock.Talents.ImprovedShadowBolt == 0) {
 				// Cast Corruption as soon as the 5% crit debuff is up
 				// Cast Corruption again when you get the execute buff (Death's Embrace)
