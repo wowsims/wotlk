@@ -70,11 +70,11 @@ type Rogue struct {
 	Rupture      [6]*core.Spell
 	SliceAndDice [6]*core.Spell
 
-	LastDeadlyPoisonProcMask     core.ProcMask
-	DeadlyPoisonProcChanceBonus  float64
-	InstantPoisonProcChanceBonus float64
-	DeadlyPoisonDots             []*core.Dot
-	RuptureDot                   *core.Dot
+	LastDeadlyPoisonProcMask    core.ProcMask
+	DeadlyPoisonProcChanceBonus float64
+	InstantPoisonPPMM           core.PPMManager
+	DeadlyPoisonDots            []*core.Dot
+	RuptureDot                  *core.Dot
 
 	AdrenalineRushAura  *core.Aura
 	BladeFlurryAura     *core.Aura
@@ -212,7 +212,6 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 		Options:   *rogueOptions.Options,
 		Rotation:  *rogueOptions.Rotation,
 	}
-	rogue.applyPoisons()
 
 	// Passive rogue threat reduction: https://wotlk.wowhead.com/spell=21184/rogue-passive-dnd
 	rogue.PseudoStats.ThreatMultiplier *= 0.71
@@ -266,6 +265,7 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 		OffHand:        rogue.WeaponFromOffHand(0),  // Set crit multiplier later when we have targets.
 		AutoSwingMelee: true,
 	})
+	rogue.applyPoisons()
 
 	rogue.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+1)
 	rogue.AddStatDependency(stats.Agility, stats.AttackPower, 1.0+1)
