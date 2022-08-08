@@ -50,7 +50,7 @@ export function nameToClass(name: string): Class {
     const lower = name.toLowerCase();
     for (const key in classNames) {
         const charClass = parseInt(key) as Class;
-        if (classNames[charClass].toLowerCase() == lower) {
+        if (classNames[charClass].toLowerCase().replace(/\s+/g, '') == lower) {
             return charClass;
         }
     }

@@ -7,6 +7,7 @@ import {
 	Deathknight_Rotation_DeathAndDecayPrio as DeathAndDecayPrio,
 	Deathknight_Rotation_StartingPresence as StartingPresence,
 	Deathknight_Rotation_BloodRuneFiller as BloodRuneFiller,
+	Deathknight_Rotation_BloodTap as BloodTap,
 	Deathknight_Rotation as DeathKnightRotation,
 	Deathknight_Options as DeathKnightOptions,
 } from '../core/proto/deathknight.js';
@@ -35,6 +36,8 @@ export const PrecastGhoulFrenzy = InputHelpers.makeSpecOptionsBooleanInput<Spec.
 	fieldName: 'precastGhoulFrenzy',
 	label: 'Pre-Cast Ghoul Frenzy',
 	labelTooltip: 'Cast Ghoul Frenzy 10 seconds before combat starts.',
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && player.getTalents().ghoulFrenzy,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 });
 
 export const PrecastHornOfWinter = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecDeathknight>({
@@ -138,15 +141,30 @@ export const BloodRuneFillerInput = InputHelpers.makeRotationEnumInput<Spec.Spec
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 })
 
+export const BloodTapInput = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, BloodTap>({
+	fieldName: 'bloodTap',
+	label: 'Blood Tap',
+	labelTooltip: 'Chose what to spend your Blood Tap on.',
+	values: [
+		{ name: 'Ghoul Frenzy', value: BloodTap.GhoulFrenzy },
+		{ name: 'Icy Touch', value: BloodTap.IcyTouch },
+		{ name: 'Blood Strike', value: BloodTap.BloodStrikeBT },
+		{ name: 'Blood Boil', value: BloodTap.BloodBoilBT },
+	],
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+})
+
 export const DeathKnightRotationConfig = {
 	inputs: [
 		BloodTapGhoulFrenzy,
 		UseEmpowerRuneWeapon,
+		BloodTapInput,
 		ArmyOfTheDeadInput,
 		FirstDiseaseInput,
 		StartingPresenceInput,
 		BloodRuneFillerInput,
 		UseDeathAndDecay,
-		SetDeathAndDecayPrio,
+		//SetDeathAndDecayPrio,
 	],
 };

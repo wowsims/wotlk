@@ -347,21 +347,23 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 		return
 	}
 
+	var t10BonusAura *core.Aura
 	enhT10Bonus := false
 	if shaman.HasSetBonus(ItemSetFrostWitchBattlegear, 4) {
 		enhT10Bonus = true
+
+		t10BonusAura = shaman.RegisterAura(core.Aura{
+			Label:    "Maelstrom Power",
+			ActionID: core.ActionID{SpellID: 70831},
+			Duration: time.Second * 10,
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				shaman.AddStatDependencyDynamic(sim, stats.AttackPower, stats.AttackPower, 1.2)
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				shaman.AddStatDependencyDynamic(sim, stats.AttackPower, stats.AttackPower, 1/1.2)
+			},
+		})
 	}
-	t10BonusAura := shaman.RegisterAura(core.Aura{
-		Label:    "Maelstrom Power",
-		ActionID: core.ActionID{SpellID: 70831},
-		Duration: time.Second * 10,
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			shaman.AddStatDependencyDynamic(sim, stats.AttackPower, stats.AttackPower, 1.2)
-		},
-		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			shaman.AddStatDependencyDynamic(sim, stats.AttackPower, stats.AttackPower, 1/1.2)
-		},
-	})
 
 	// TODO: Don't forget to make it so that AA don't reset when casting when MW is active
 	// for LB / CL / LvB
@@ -403,9 +405,7 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 			if !ppmm.Proc(sim, spellEffect.ProcMask, "Maelstrom Weapon") {
 				return
 			}
-			if !procAura.IsActive() {
-				procAura.Activate(sim)
-			}
+			procAura.Activate(sim)
 			procAura.AddStack(sim)
 		},
 	})

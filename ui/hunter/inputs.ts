@@ -53,6 +53,11 @@ export const PetUptime = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecHunter
 	percent: true,
 });
 
+export const UseHuntersMark = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.SpecHunter>({
+	fieldName: 'useHuntersMark',
+	id: ActionId.fromSpellId(53338),
+});
+
 export const SniperTrainingUptime = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecHunter>({
 	fieldName: 'sniperTrainingUptime',
 	label: 'ST Uptime (%)',
@@ -93,7 +98,7 @@ export const HunterRotationConfig = {
 			fieldName: 'timeToTrapWeaveMs',
 			label: 'Weave Time',
 			labelTooltip: 'Amount of time, in milliseconds, between when you start moving towards the boss and when you re-engage your ranged autos.',
-			enableWhen: (player: Player<Spec.SpecHunter>) => (player.getRotation().type != RotationType.Custom && player.getRotation().trapWeave) || (player.getRotation().type == RotationType.Custom && player.customRotation?.spells.some(spell => spell.spell == SpellOption.ExplosiveTrap)),
+			enableWhen: (player: Player<Spec.SpecHunter>) => (player.getRotation().type != RotationType.Custom && player.getRotation().trapWeave) || (player.getRotation().type == RotationType.Custom && player.getRotation().customRotation?.spells.some(spell => spell.spell == SpellOption.ExplosiveTrap) || false),
 		}),
 		InputHelpers.makeCustomRotationInput<Spec.SpecHunter, SpellOption>({
 			fieldName: 'customRotation',
@@ -106,7 +111,7 @@ export const HunterRotationConfig = {
 				{ actionId: ActionId.fromSpellId(49001), value: SpellOption.SerpentStingSpell },
 				{ actionId: ActionId.fromSpellId(3043), value: SpellOption.ScorpidStingSpell },
 				{ actionId: ActionId.fromSpellId(61006), value: SpellOption.KillShot },
-				{ actionId: ActionId.fromSpellId(3674), value: SpellOption.BlackArrow },
+				{ actionId: ActionId.fromSpellId(63672), value: SpellOption.BlackArrow },
 				{ actionId: ActionId.fromSpellId(53209), value: SpellOption.ChimeraShot },
 				{ actionId: ActionId.fromSpellId(60053), value: SpellOption.ExplosiveShot },
 				{ actionId: ActionId.fromSpellId(49067), value: SpellOption.ExplosiveTrap },

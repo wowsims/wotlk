@@ -7,7 +7,6 @@ import { Glyphs } from '../core/proto/common.js';
 import { ItemSpec } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
-import { WeaponImbue } from '../core/proto/common.js';
 import { Faction } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import { Player } from '../core/player.js';
@@ -78,7 +77,7 @@ export const FrostTalents = {
 
 export const DefaultFireRotation = MageRotation.create({
 	type: RotationType.Fire,
-	primarySpell: PrimaryFireSpell.Fireball,
+	primaryFireSpell: PrimaryFireSpell.Fireball,
 	maintainImprovedScorch: false,
 });
 

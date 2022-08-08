@@ -74,14 +74,14 @@ func (dk *DpsDeathknight) SetupRotations() {
 		} else {
 			dk.setupFrostSubBloodNoERWOpener()
 		}
-	} else if dk.Talents.HowlingBlast && (dk.FrostPointsInBlood() > dk.FrostPointsInUnholy()) {
+	} else if dk.Talents.HowlingBlast && (dk.FrostPointsInBlood() < dk.FrostPointsInUnholy()) {
 		if dk.Rotation.UseEmpowerRuneWeapon {
 			dk.setupFrostSubUnholyERWOpener()
 		} else {
 			dk.setupFrostSubUnholyNoERWOpener()
 		}
 	} else if dk.Talents.SummonGargoyle {
-		dk.setupUnholyOpener()
+		dk.setupUnholyRotations()
 	} else {
 		// TODO: Add some default rotation that works without special talents
 		if dk.Rotation.UseEmpowerRuneWeapon {

@@ -43,6 +43,7 @@ $(OUT_DIR)/bundle/.dirstamp: \
   ui/core/proto/api.ts \
   $(OUT_DIR)/net_worker.js \
   $(OUT_DIR)/sim_worker.js
+	npx tsc --noEmit
 	npx vite build
 	touch $@
 

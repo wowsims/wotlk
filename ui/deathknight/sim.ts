@@ -45,11 +45,9 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 				Stat.StatMeleeCrit,
 				Stat.StatMeleeHaste,
 				Stat.StatArmorPenetration,
-
-				// TODO: Remove these when debuff categories support us
-				Stat.StatSpellPower,
 				Stat.StatSpellHit,
 				Stat.StatSpellCrit,
+			
 			],
 			// Reference stat against which to calculate EP. I think all classes use either spell power or attack power.
 			epReferenceStat: Stat.StatAttackPower,
@@ -135,8 +133,13 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 			],
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
+				IconInputs.SpellDamageDebuff,
 			],
 			excludeBuffDebuffInputs: [
+				IconInputs.StaminaBuff,
+				IconInputs.AttackPowerDebuff,
+				IconInputs.DamageReductionPercentBuff,
+				IconInputs.MeleeAttackSpeedDebuff,
 			],
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {

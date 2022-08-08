@@ -17,7 +17,6 @@ import {
     Spec,
     Faction,
     Stat,
-    WeaponImbue,
     WeaponType,
 } from './proto/common.js';
 
@@ -29,6 +28,7 @@ import { EquippedItem, getWeaponDPS } from './proto_utils/equipped_item.js';
 import { playerTalentStringToProto } from './talents/factory.js';
 import { Gear } from './proto_utils/gear.js';
 import {
+    isUnrestrictedGem,
     gemEligibleForSocket,
     gemMatchesSocket,
 } from './proto_utils/gems.js';
@@ -416,28 +416,6 @@ export class Player<SpecType extends Spec> {
         //}
 
         TypedEvent.freezeAllAndDo(() => {
-            // If we swapped between sharp/blunt weapon types, then also swap between
-            // sharpening/weightstones.
-            const consumes = this.getConsumes();
-            let consumesChanged = false;
-            if (consumes.mainHandImbue == WeaponImbue.WeaponImbueAdamantiteSharpeningStone && newGear.hasBluntMHWeapon()) {
-                consumes.mainHandImbue = WeaponImbue.WeaponImbueAdamantiteWeightstone;
-                consumesChanged = true;
-            } else if (consumes.mainHandImbue == WeaponImbue.WeaponImbueAdamantiteWeightstone && newGear.hasSharpMHWeapon()) {
-                consumes.mainHandImbue = WeaponImbue.WeaponImbueAdamantiteSharpeningStone;
-                consumesChanged = true;
-            }
-            if (consumes.offHandImbue == WeaponImbue.WeaponImbueAdamantiteSharpeningStone && newGear.hasBluntOHWeapon()) {
-                consumes.offHandImbue = WeaponImbue.WeaponImbueAdamantiteWeightstone;
-                consumesChanged = true;
-            } else if (consumes.offHandImbue == WeaponImbue.WeaponImbueAdamantiteWeightstone && newGear.hasSharpOHWeapon()) {
-                consumes.offHandImbue = WeaponImbue.WeaponImbueAdamantiteSharpeningStone;
-                consumesChanged = true;
-            }
-            if (consumesChanged) {
-                this.setConsumes(eventID, consumes);
-            }
-
             this.gear = newGear;
             this.gearChangeEmitter.emit(eventID);
             //this.setCooldowns(eventID, newCooldowns);
@@ -615,21 +593,10 @@ export class Player<SpecType extends Spec> {
         if (item.weaponType != WeaponType.WeaponTypeUnknown) {
             // Add weapon dps as attack power, so the EP is appropriate.
             const weaponDps = getWeaponDPS(item);
-            let effectiveAttackPower = itemStats.getStat(Stat.StatAttackPower);
-            if (this.spec != Spec.SpecFeralDruid) {
-                effectiveAttackPower += weaponDps * 14;
-            }
-            itemStats = itemStats.withStat(Stat.StatAttackPower, effectiveAttackPower);
+            itemStats = itemStats.addStat(Stat.StatAttackPower, this.spec == Spec.SpecFeralDruid ? 0 : weaponDps * 14);
         } else if (![RangedWeaponType.RangedWeaponTypeUnknown, RangedWeaponType.RangedWeaponTypeThrown].includes(item.rangedWeaponType)) {
             const weaponDps = getWeaponDPS(item);
-            const effectiveAttackPower = itemStats.getStat(Stat.StatRangedAttackPower) + weaponDps * 14;
-            itemStats = itemStats.withStat(Stat.StatRangedAttackPower, effectiveAttackPower);
-        }
-        if (item.id == 33122) {
-            // Cloak of Darkness is super weird, just hardcode it.
-            if (this.spec != Spec.SpecHunter) {
-                itemStats = itemStats.withStat(Stat.StatMeleeCrit, itemStats.getStat(Stat.StatMeleeCrit) + 24);
-            }
+            itemStats = itemStats.addStat(Stat.StatRangedAttackPower, weaponDps * 14);
         }
         let ep = itemStats.computeEP(this.epWeights);
 
@@ -646,7 +613,7 @@ export class Player<SpecType extends Spec> {
 
         // Compare whether its better to match sockets + get socket bonus, or just use best gems.
         const bestGemEPNotMatchingSockets = sum(item.gemSockets.map(socketColor => {
-            const gems = this.sim.getGems(socketColor).filter(gem => !gem.unique && gem.phase <= this.sim.getPhase());
+            const gems = this.sim.getGems(socketColor).filter(gem => isUnrestrictedGem(gem, this.sim.getPhase()));
             if (gems.length > 0) {
                 return Math.max(...gems.map(gem => this.computeGemEP(gem)));
             } else {
@@ -655,7 +622,7 @@ export class Player<SpecType extends Spec> {
         }));
 
         const bestGemEPMatchingSockets = sum(item.gemSockets.map(socketColor => {
-            const gems = this.sim.getGems(socketColor).filter(gem => !gem.unique && gem.phase <= this.sim.getPhase() && gemMatchesSocket(gem, socketColor));
+            const gems = this.sim.getGems(socketColor).filter(gem => isUnrestrictedGem(gem, this.sim.getPhase()) && gemMatchesSocket(gem, socketColor));
             if (gems.length > 0) {
                 return Math.max(...gems.map(gem => this.computeGemEP(gem)));
             } else {

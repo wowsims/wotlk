@@ -58,10 +58,10 @@ func (shaman *Shaman) newStormstrikeHitSpell(isMH bool) *core.Spell {
 
 	if isMH {
 		effect.ProcMask = core.ProcMaskMeleeMHSpecial
-		effect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.MainHand, false, flatDamageBonus, 1, true)
+		effect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.MainHand, false, flatDamageBonus, 1, 1, true)
 	} else {
 		effect.ProcMask = core.ProcMaskMeleeOHSpecial
-		effect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.OffHand, false, flatDamageBonus, 1, true)
+		effect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.OffHand, false, flatDamageBonus, 1, 1, true)
 	}
 
 	return shaman.RegisterSpell(core.SpellConfig{

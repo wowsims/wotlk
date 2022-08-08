@@ -271,25 +271,6 @@ enum Conjured {
 	ConjuredRogueThistleTea = 4;
 }
 
-enum WeaponImbue {
-	WeaponImbueUnknown = 0;
-	WeaponImbueAdamantiteSharpeningStone = 1;
-	WeaponImbueAdamantiteWeightstone = 5;
-	WeaponImbueElementalSharpeningStone = 2;
-	WeaponImbueBrilliantWizardOil = 3;
-	WeaponImbueSuperiorWizardOil = 4;
-
-	WeaponImbueShamanFlametongue = 6;
-	WeaponImbueShamanFrostbrand = 7;
-	WeaponImbueShamanRockbiter = 8;
-	WeaponImbueShamanWindfury = 9;
-
-	WeaponImbueRogueDeadlyPoison = 10;
-	WeaponImbueRogueInstantPoison = 11;
-
-	WeaponImbueRighteousWeaponCoating = 12;
-}
-
 enum Flask {
 	FlaskUnknown = 0;
 	FlaskOfTheFrostWyrm = 1;
@@ -519,9 +500,6 @@ message Consumes {
 	BattleElixir battle_elixir = 2;
 	GuardianElixir guardian_elixir = 3;
 
-	WeaponImbue main_hand_imbue = 4;
-	WeaponImbue off_hand_imbue = 5;
-
 	Food food = 6;
 	PetFood pet_food = 7;
 
@@ -580,6 +558,7 @@ message Debuffs {
 
 	TristateEffect curse_of_weakness = 23;
 	bool sting = 24;
+	bool spore_cloud = 37;
 
 	TristateEffect demoralizing_roar = 25;
 	TristateEffect demoralizing_shout = 26;
@@ -597,8 +576,6 @@ message Debuffs {
 
 	// 1 = normal, 2 = talented, 3 = talented+glyphed
 	int32 hunters_mark = 35;
-
-	bool spore_cloud = 37;
 }
 
 enum MobType {

@@ -279,6 +279,8 @@ message Hunter {
 		double pet_uptime = 4;
 
 		double sniper_training_uptime = 7;
+
+		bool use_hunters_mark = 5;
 	}
 	Options options = 3;
 }

@@ -65,7 +65,6 @@ import { Stats } from './proto_utils/stats.js';
 import { shattFactionNames } from './proto_utils/names.js';
 import { Target } from './target.js';
 import { Target as TargetProto } from './proto/common.js';
-import { WeaponImbue } from './proto/common.js';
 import { addRaidSimAction, RaidSimResultsManager } from './components/raid_sim_action.js';
 import { addStatWeightsAction } from './components/stat_weights_action.js';
 import { equalsOrBothNull, getEnumValues } from './utils.js';
@@ -626,7 +625,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		const miscDebuffOptions = this.splitRelevantOptions([
 			{ item: IconInputs.JudgementOfLight, stats: [Stat.StatStamina] },
 			{ item: IconInputs.ShatteringThrow, stats: [Stat.StatArmorPenetration] },
-			{ item: IconInputs.SporeCloud, stats: [Stat.StatArmorPenetration] },
 			{ item: IconInputs.GiftOfArthas, stats: [Stat.StatAttackPower] },
 		] as Array<StatOption<IconPickerConfig<Player<any>, any>>>);
 		if (miscDebuffOptions.length > 0) {

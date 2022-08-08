@@ -1,6 +1,7 @@
 import { Spec } from '../proto/common.js';
 import { CustomRotation, CustomSpell } from '../proto/common.js';
 import { EventID, TypedEvent } from '../typed_event.js';
+import { Player } from '../player.js';
 import { BooleanPicker } from '../components/boolean_picker.js';
 import { IconEnumPicker, IconEnumPickerConfig, IconEnumValueConfig } from '../components/icon_enum_picker.js';
 import { ListPicker, ListPickerConfig } from '../components/list_picker.js';
@@ -19,11 +20,11 @@ export interface CustomRotationPickerConfig<SpecType extends Spec, T> {
 	showWhen?: (player: Player<SpecType>) => boolean,
 }
 
-export class CustomRotationPicker<SpecType extends Spec> extends Component {
-	constructor(parent: HTMLElement, modPlayer: Player<SpecType>, config: CustomRotationPickerConfig) {
+export class CustomRotationPicker<SpecType extends Spec, T> extends Component {
+	constructor(parent: HTMLElement, modPlayer: Player<SpecType>, config: CustomRotationPickerConfig<SpecType, T>) {
 		super(parent, 'custom-rotation-picker-root');
 
-		new ListPicker<Player<SpecType>, CustomSpell>(this.rootElem, modPlayer, {
+		new ListPicker<Player<SpecType>, CustomSpell, CustomSpellPicker<SpecType, T>>(this.rootElem, modPlayer, {
 			extraCssClasses: [
 				'custom-spells-picker',
 			],
@@ -39,19 +40,19 @@ export class CustomRotationPicker<SpecType extends Spec> extends Component {
 			},
 			newItem: () => CustomSpell.create(),
 			copyItem: (oldItem: CustomSpell) => CustomSpell.clone(oldItem),
-			newItemPicker: (parent: HTMLElement, newItem: CustomSpell, listPicker: ListPicker<Player<SpecType>, CustomSpell>) => new CustomSpellPicker(parent, modPlayer, newItem, config, listPicker),
+			newItemPicker: (parent: HTMLElement, newItem: CustomSpell, listPicker: ListPicker<Player<SpecType>, CustomSpell, CustomSpellPicker<SpecType, T>>) => new CustomSpellPicker(parent, modPlayer, newItem, config, listPicker),
 			inlineMenuBar: true,
 			showWhen: config.showWhen,
 		});
 	}
 }
 
-class CustomSpellPicker<SpecType extends Spec> extends Component {
+class CustomSpellPicker<SpecType extends Spec, T> extends Component {
 	private readonly player: Player<SpecType>;
-	private readonly config: CustomRotationPickerConfig;
-	private readonly listPicker: ListPicker<Player<SpecType>, CustomSpell>;
+	private readonly config: CustomRotationPickerConfig<SpecType, T>;
+	private readonly listPicker: ListPicker<Player<SpecType>, CustomSpell, CustomSpellPicker<SpecType, T>>;
 
-	constructor(parent: HTMLElement, player: Player<SpecType>, modSpell: CustomSpell, config: CustomRotationPickerConfig, listPicker: ListPicker<Player<SpecType>, CustomSpell>) {
+	constructor(parent: HTMLElement, player: Player<SpecType>, modSpell: CustomSpell, config: CustomRotationPickerConfig<SpecType, T>, listPicker: ListPicker<Player<SpecType>, CustomSpell, CustomSpellPicker<SpecType, T>>) {
 		super(parent, 'custom-spell-picker-root');
 		this.player = player;
 		this.config = config;
@@ -59,7 +60,13 @@ class CustomSpellPicker<SpecType extends Spec> extends Component {
 
 		new IconEnumPicker<CustomSpell, number>(this.rootElem, modSpell, {
 			numColumns: config.numColumns,
-			values: config.values,
+			values: config.values.map(value => {
+				if (value.showWhen) {
+					const oldShowWhen = value.showWhen;
+					value.showWhen = ((spell: CustomSpell) => oldShowWhen(player)) as unknown as ((player: Player<SpecType>) => boolean);
+				}
+				return value;
+			}) as unknown as Array<IconEnumValueConfig<CustomSpell, number>>,
 			equals: (a: number, b: number) => a == b,
 			zeroValue: 0,
 			changedEvent: (spell: CustomSpell) => player.changeEmitter,

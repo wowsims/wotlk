@@ -30,7 +30,7 @@ func (dk *Deathknight) ApplyFrostTalents() {
 	// Nerves Of Cold Steel
 	if dk.Equip[proto.ItemSlot_ItemSlotMainHand].HandType == proto.HandType_HandTypeMainHand || dk.Equip[proto.ItemSlot_ItemSlotMainHand].HandType == proto.HandType_HandTypeOneHand {
 		dk.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*float64(dk.Talents.NervesOfColdSteel))
-		dk.AutoAttacks.OHEffect.BaseDamage.Calculator = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, dk.nervesOfColdSteelBonus(), true)
+		dk.AutoAttacks.OHEffect.BaseDamage.Calculator = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, dk.nervesOfColdSteelBonus(), 1.0, true)
 	}
 
 	// Icy Talons
@@ -146,10 +146,7 @@ func (dk *Deathknight) applyKillingMachine() {
 	}
 
 	actionID := core.ActionID{SpellID: 51130}
-	//weaponMH := dk.GetMHWeapon()
-	//procChance := (weaponMH.SwingSpeed * 5.0 / 60.0) * float64(dk.Talents.KillingMachine)
-
-	ppmm := dk.AutoAttacks.NewPPMManager(float64(dk.Talents.KillingMachine), core.ProcMaskMeleeMHAuto|core.ProcMaskMeleeMHSpecial)
+	ppmm := dk.AutoAttacks.NewPPMManager(float64(dk.Talents.KillingMachine), core.ProcMaskMeleeMHAuto)
 
 	dk.KillingMachineAura = dk.RegisterAura(core.Aura{
 		Label:    "Killing Machine Proc",
@@ -170,8 +167,6 @@ func (dk *Deathknight) applyKillingMachine() {
 
 			if !dk.KillingMachineAura.IsActive() {
 				dk.KillingMachineAura.Activate(sim)
-			} else {
-				dk.KillingMachineAura.Refresh(sim)
 			}
 		},
 	}))
@@ -270,7 +265,6 @@ func (dk *Deathknight) threatOfThassarianProcMasks(isMH bool, effect *core.Spell
 }
 
 func (dk *Deathknight) threatOfThassarianProc(sim *core.Simulation, spellEffect *core.SpellEffect, mhSpell *RuneSpell, ohSpell *RuneSpell) {
-	mhSpell.Cast(sim, spellEffect.Target)
 	if dk.Talents.ThreatOfThassarian > 0 && dk.GetOHWeapon() != nil && dk.threatOfThassarianWillProc(sim) {
 		ohSpell.Cast(sim, spellEffect.Target)
 	}

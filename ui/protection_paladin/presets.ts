@@ -6,7 +6,6 @@ import { Glyphs } from '../core/proto/common.js';
 import { ItemSpec } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
-import { WeaponImbue } from '../core/proto/common.js';
 import { Faction } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import { Player } from '../core/player.js';
@@ -20,7 +19,6 @@ import {
 	ProtectionPaladin_Options as ProtectionPaladinOptions,
 } from '../core/proto/paladin.js';
 
-import * as Enchants from '../core/constants/enchants.js';
 import * as Gems from '../core/proto_utils/gems.js';
 import * as Tooltips from '../core/constants/tooltips.js';
 
@@ -60,7 +58,6 @@ export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfBlindingLight,
 	food: Food.FoodFishermansFeast,
 	defaultPotion: Potions.IronshieldPotion,
-	mainHandImbue: WeaponImbue.WeaponImbueSuperiorWizardOil,
 });
 
 export const P1_PRESET = {

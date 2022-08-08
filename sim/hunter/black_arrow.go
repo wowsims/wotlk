@@ -13,7 +13,7 @@ func (hunter *Hunter) registerBlackArrowSpell(timer *core.Timer) {
 		return
 	}
 
-	actionID := core.ActionID{SpellID: 3674}
+	actionID := core.ActionID{SpellID: 63672}
 	baseCost := 0.06 * hunter.BaseMana
 
 	hunter.BlackArrow = hunter.RegisterSpell(core.SpellConfig{
@@ -75,7 +75,7 @@ func (hunter *Hunter) registerBlackArrowSpell(timer *core.Timer) {
 
 			BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
 				attackPower := spellEffect.RangedAttackPower(spell.Unit) + spellEffect.RangedAttackPowerOnTarget()
-				return 157 + attackPower*0.02
+				return 553 + attackPower*0.02
 			}, 0),
 			OutcomeApplier: hunter.OutcomeFuncTick(),
 		}),

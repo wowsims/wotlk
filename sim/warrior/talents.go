@@ -18,7 +18,7 @@ func (warrior *Warrior) ApplyTalents() {
 	warrior.PseudoStats.DodgeReduction += 0.01 * float64(warrior.Talents.WeaponMastery)
 
 	if warrior.Talents.DualWieldSpecialization > 0 {
-		warrior.AutoAttacks.OHEffect.BaseDamage.Calculator = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, 1+0.05*float64(warrior.Talents.DualWieldSpecialization), true)
+		warrior.AutoAttacks.OHEffect.BaseDamage.Calculator = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, 1+0.05*float64(warrior.Talents.DualWieldSpecialization), 1.0, true)
 	}
 
 	if warrior.Talents.StrengthOfArms > 0 {

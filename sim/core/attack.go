@@ -225,14 +225,14 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 			ProcMask:         ProcMaskMeleeMHAuto,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-			BaseDamage:       BaseDamageConfigMeleeWeapon(MainHand, false, 0, 1, true),
+			BaseDamage:       BaseDamageConfigMeleeWeapon(MainHand, false, 0, 1, 1, true),
 			OutcomeApplier:   unit.OutcomeFuncMeleeWhite(options.MainHand.CritMultiplier),
 		}
 		unit.AutoAttacks.OHEffect = SpellEffect{
 			ProcMask:         ProcMaskMeleeOHAuto,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-			BaseDamage:       BaseDamageConfigMeleeWeapon(OffHand, false, 0, 1, true),
+			BaseDamage:       BaseDamageConfigMeleeWeapon(OffHand, false, 0, 1, 1, true),
 			OutcomeApplier:   unit.OutcomeFuncMeleeWhite(options.OffHand.CritMultiplier),
 		}
 		unit.AutoAttacks.RangedEffect = SpellEffect{
@@ -572,10 +572,17 @@ type PPMManager struct {
 	mhProcChance     float64
 	ohProcChance     float64
 	rangedProcChance float64
+	procMask         ProcMask
 }
 
 // Returns whether the effect procced.
 func (ppmm *PPMManager) Proc(sim *Simulation, procMask ProcMask, label string) bool {
+	// Without this procs that can proc only from white attacks
+	// are still procing from specials
+	if !procMask.Matches(ppmm.procMask) {
+		return false
+	}
+
 	if procMask.Matches(ProcMaskMeleeMH) {
 		return ppmm.mhProcChance > 0 && sim.RandomFloat(label) < ppmm.mhProcChance
 	} else if procMask.Matches(ProcMaskMeleeOH) {
@@ -592,6 +599,7 @@ func (aa *AutoAttacks) NewPPMManager(ppm float64, procMask ProcMask) PPMManager 
 	}
 
 	ppmm := PPMManager{}
+	ppmm.procMask = procMask
 	if procMask.Matches(ProcMaskMeleeMH) {
 		ppmm.mhProcChance = ppm * aa.MH.SwingSpeed / 60.0
 	}

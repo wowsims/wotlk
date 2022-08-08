@@ -54,7 +54,7 @@ func init() {
 			Timer:    character.NewTimer(),
 			Duration: time.Second * 40,
 		}
-		ppmm := character.AutoAttacks.NewPPMManager(1.5, core.ProcMaskMeleeOrRanged)
+		ppmm := character.AutoAttacks.NewPPMManager(1.0, core.ProcMaskMeleeOrRanged)
 
 		character.RegisterAura(core.Aura{
 			Label:    "Thundering Skyflare Diamond",

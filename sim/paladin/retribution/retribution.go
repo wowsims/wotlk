@@ -42,6 +42,26 @@ func NewRetributionPaladin(character core.Character, options proto.Player) *Retr
 	}
 	ret.PaladinAura = retOptions.Options.Aura
 
+	var rotationInput = retOptions.Rotation.CustomRotation
+	if retOptions.Rotation.Type == proto.RetributionPaladin_Rotation_Standard {
+		ret.SelectedRotation = ret.mainRotation
+	} else if retOptions.Rotation.Type == proto.RetributionPaladin_Rotation_Custom {
+		ret.SelectedRotation = ret.customRotation
+	} else if retOptions.Rotation.Type == proto.RetributionPaladin_Rotation_CastSequence {
+		ret.SelectedRotation = ret.castSequenceRotation
+		ret.CastSequenceIndex = 0
+		rotationInput = retOptions.Rotation.CustomCastSequence
+	} else {
+		ret.SelectedRotation = ret.mainRotation
+	}
+
+	if rotationInput != nil {
+		ret.RotationInput = make([]int32, len(rotationInput.Spells))
+		for i, customSpellProto := range rotationInput.Spells {
+			ret.RotationInput[i] = customSpellProto.Spell
+		}
+	}
+
 	// Convert DTPS option to bonus MP5
 	spAtt := retOptions.Options.DamageTakenPerSecond * 5.0 / 10.0
 	ret.AddStat(stats.MP5, spAtt)
@@ -72,6 +92,10 @@ type RetributionPaladin struct {
 
 	HasLightswornBattlegear2Pc bool
 
+	SelectedRotation  func(*core.Simulation)
+	RotationInput     []int32
+	CastSequenceIndex int32
+
 	Rotation proto.RetributionPaladin_Rotation
 }
 
@@ -91,4 +115,5 @@ func (ret *RetributionPaladin) Reset(sim *core.Simulation) {
 	ret.AutoAttacks.CancelAutoSwing(sim)
 	ret.SealInitComplete = false
 	ret.DivinePleaInitComplete = false
+	ret.CastSequenceIndex = 0
 }

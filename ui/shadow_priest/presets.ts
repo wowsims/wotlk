@@ -5,7 +5,6 @@ import { Food } from '../core/proto/common.js';
 import { Glyphs } from '../core/proto/common.js';
 import { ItemSpec } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
-import { WeaponImbue } from '../core/proto/common.js';
 import { Faction } from '../core/proto/common.js';
 import { RaidBuffs } from '../core/proto/common.js';
 import { IndividualBuffs } from '../core/proto/common.js';

@@ -35,7 +35,7 @@ export class AssignmentsPicker extends Component {
 
 interface AssignmentTargetPicker {
     playerOrBot: Player<any> | BuffBot,
-    targetPicker: RaidTargetPicker<Player<any> | BuffBot>,
+    targetPicker: RaidTargetPicker<Player<any>> | RaidTargetPicker<BuffBot>,
     targetPlayer: Player<any> | null;
 };
 
@@ -92,7 +92,7 @@ abstract class AssignedBuffPicker extends Component {
             arrow.classList.add('assigned-buff-arrow', 'fa', 'fa-arrow-right');
             row.appendChild(arrow);
 
-            let raidTargetPicker: RaidTargetPicker<Player<any> | BuffBot> | null = null;
+            let raidTargetPicker: RaidTargetPicker<Player<any>> | RaidTargetPicker<BuffBot> | null = null;
             if (sourcePlayer instanceof Player) {
                 raidTargetPicker = new RaidTargetPicker<Player<any>>(row, this.raidSimUI.sim.raid, sourcePlayer, {
                     extraCssClasses: [

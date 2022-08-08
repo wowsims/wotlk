@@ -51,13 +51,13 @@ export const DefaultRotation = EnhancementShamanRotation.create({
 export const DefaultOptions = EnhancementShamanOptions.create({
 	shield: ShamanShield.LightningShield,
 	bloodlust: true,
-	imbueMH: ShamanImbue.WindfuryWeapon,
-	imbueOH: ShamanImbue.FlametongueWeapon,
+	imbueMh: ShamanImbue.WindfuryWeapon,
+	imbueOh: ShamanImbue.FlametongueWeapon,
 	syncType: ShamanSyncType.SyncMainhandOffhandSwings,
 });
 
 export const DefaultConsumes = Consumes.create({
-	defaultPotion: Potions.SpeedPotion,
+	defaultPotion: Potions.PotionOfSpeed,
 	flask: Flask.FlaskOfEndlessRage,
 	food: Food.FoodFishFeast,
 });
