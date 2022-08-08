@@ -79,7 +79,9 @@ func (war *ProtectionWarrior) Initialize() {
 		war.RegisterShieldWallCD()
 	}
 
-	war.RegisterShieldBlockCD()
+	if war.Rotation.UseShieldBlock {
+		war.RegisterShieldBlockCD()
+	}
 }
 
 func (war *ProtectionWarrior) Reset(sim *core.Simulation) {
