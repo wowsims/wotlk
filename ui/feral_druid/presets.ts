@@ -4,7 +4,6 @@ import { Food } from '../core/proto/common.js';
 import { EquipmentSpec } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
 import { Conjured } from '../core/proto/common.js';
-import { WeaponImbue } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
 import { FeralDruid_Rotation as FeralDruidRotation, FeralDruid_Options as FeralDruidOptions } from '../core/proto/druid.js';
@@ -43,7 +42,6 @@ export const DefaultOptions = FeralDruidOptions.create({
 export const DefaultConsumes = Consumes.create({
 	battleElixir: BattleElixir.ElixirOfMajorAgility,
 	food: Food.FoodGrilledMudfish,
-	mainHandImbue: WeaponImbue.WeaponImbueAdamantiteWeightstone,
 	defaultPotion: Potions.HastePotion,
 	defaultConjured: Conjured.ConjuredDarkRune,
 });

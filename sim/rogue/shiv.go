@@ -40,11 +40,11 @@ func (rogue *Rogue) registerShivSpell() {
 				if spellEffect.Landed() {
 					rogue.AddComboPoints(sim, 1, spell.ComboPointMetrics())
 
-					switch rogue.Consumes.OffHandImbue {
-					case proto.WeaponImbue_WeaponImbueRogueDeadlyPoison:
+					switch rogue.Options.OhImbue {
+					case proto.Rogue_Options_DeadlyPoison:
 						rogue.DeadlyPoison.Cast(sim, spellEffect.Target)
-					case proto.WeaponImbue_WeaponImbueRogueInstantPoison:
-						rogue.procInstantPoison(sim, spellEffect)
+					case proto.Rogue_Options_InstantPoison:
+						rogue.InstantPoison[2].Cast(sim, spellEffect.Target)
 					}
 				}
 			},

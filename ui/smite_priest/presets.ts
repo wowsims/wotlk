@@ -3,7 +3,6 @@ import { EquipmentSpec } from '../core/proto/common.js';
 import { Flask } from '../core/proto/common.js';
 import { Food } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
-import { WeaponImbue } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
 import { SmitePriest_Rotation as Rotation, SmitePriest_Options as Options, SmitePriest_Rotation_RotationType } from '../core/proto/priest.js';
@@ -41,7 +40,6 @@ export const DefaultOptions = Options.create({
 export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfBlindingLight,
 	food: Food.FoodBlackenedBasilisk,
-	mainHandImbue: WeaponImbue.WeaponImbueSuperiorWizardOil,
 	defaultPotion: Potions.SuperManaPotion,
 });
 

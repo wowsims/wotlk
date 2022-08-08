@@ -14,6 +14,7 @@ func (rogue *Rogue) ApplyTalents() {
 	rogue.applySealFate()
 	rogue.applyWeaponSpecializations()
 	rogue.applyCombatPotency()
+	rogue.applyFocusedAttacks()
 
 	rogue.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*2*float64(rogue.Talents.LightningReflexes))
 	rogue.AddStat(stats.MeleeHaste, core.HasteRatingPerHastePercent*[]float64{0, 3, 6, 10}[rogue.Talents.LightningReflexes])
@@ -41,6 +42,8 @@ func (rogue *Rogue) ApplyTalents() {
 
 	rogue.PseudoStats.AgentReserved1DamageDealtMultiplier *= (1 + float64(rogue.Talents.FindWeakness)*0.02)
 
+	rogue.registerOverkillCD()
+	rogue.registerHungerForBlood()
 	rogue.registerColdBloodCD()
 	rogue.registerBladeFlurryCD()
 	rogue.registerAdrenalineRushCD()
@@ -53,23 +56,6 @@ func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, 
 
 	relentlessStrikes := rogue.Talents.RelentlessStrikes
 	relentlessStrikesMetrics := rogue.NewEnergyMetrics(core.ActionID{SpellID: 14179})
-
-	var fwAura *core.Aura
-	findWeaknessMultiplier := 1.0 + 0.02*float64(rogue.Talents.FindWeakness)
-	if findWeaknessMultiplier != 1 {
-		fwAura = rogue.GetOrRegisterAura(core.Aura{
-			Label:    "Find Weakness",
-			ActionID: core.ActionID{SpellID: 31242},
-			Duration: time.Second * 10,
-			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Unit.PseudoStats.AgentReserved1DamageDealtMultiplier *= findWeaknessMultiplier
-			},
-			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Unit.PseudoStats.AgentReserved1DamageDealtMultiplier /= findWeaknessMultiplier
-			},
-		})
-	}
-
 	netherblade4pc := rogue.HasSetBonus(ItemSetNetherblade, 4)
 	netherblade4pcMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 37168})
 
@@ -81,12 +67,9 @@ func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, 
 			rogue.AddComboPoints(sim, 1, netherblade4pcMetrics)
 		}
 		if relentlessStrikes > 0 {
-			if numPoints == 5 || sim.RandomFloat("RelentlessStrikes") < 0.2*float64(numPoints) {
+			if sim.RandomFloat("RelentlessStrikes") < 0.04*float64(numPoints) {
 				rogue.AddEnergy(sim, 25, relentlessStrikesMetrics)
 			}
-		}
-		if fwAura != nil {
-			fwAura.Activate(sim)
 		}
 	}
 }
@@ -96,12 +79,53 @@ func (rogue *Rogue) applyMurder() {
 }
 
 func (rogue *Rogue) murderMultiplier() float64 {
-	switch rogue.CurrentTarget.MobType {
-	case proto.MobType_MobTypeHumanoid, proto.MobType_MobTypeBeast, proto.MobType_MobTypeGiant, proto.MobType_MobTypeDragonkin:
-		return 1.0 + 0.01*float64(rogue.Talents.Murder)
-	default:
-		return 1
+	return 1.0 + 0.02*float64(rogue.Talents.Murder)
+}
+
+func (rogue *Rogue) registerHungerForBlood() {
+	if !rogue.Talents.HungerForBlood {
+		return
 	}
+	actionID := core.ActionID{SpellID: 51662}
+	multiplier := 1.05
+	if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfHungerForBlood) {
+		multiplier += 0.03
+	}
+	rogue.HungerForBloodAura = rogue.RegisterAura(core.Aura{
+		Label:    "Hunger for Blood",
+		ActionID: actionID,
+		Duration: time.Minute,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			rogue.PseudoStats.DamageDealtMultiplier *= multiplier
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			rogue.PseudoStats.DamageDealtMultiplier *= 1 / multiplier
+		},
+	})
+
+	rogue.HungerForBlood = rogue.RegisterSpell(core.SpellConfig{
+		ActionID:     actionID,
+		ResourceType: stats.Energy,
+		BaseCost:     15,
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				Cost: 15,
+				GCD:  time.Second,
+			},
+		},
+		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
+			rogue.HungerForBloodAura.Activate(sim)
+		},
+	})
+
+}
+
+func (rogue *Rogue) preyOnTheWeakMultiplier(target *core.Unit) float64 {
+	// TODO: Use the following predicate if/when health values are modeled
+	//if rogue.CurrentTarget != nil &&
+	//rogue.CurrentTarget.HasHealthBar() &&
+	//rogue.CurrentTarget.CurrentHealthPercent() < rogue.CurrentHealthPercent()
+	return (1 + 0.04*float64(rogue.Talents.PreyOnTheWeak))
 }
 
 func (rogue *Rogue) registerColdBloodCD() {
@@ -236,6 +260,31 @@ func (rogue *Rogue) applyCombatPotency() {
 			}
 
 			rogue.AddEnergy(sim, energyBonus, energyMetrics)
+		},
+	})
+}
+
+func (rogue *Rogue) applyFocusedAttacks() {
+	if rogue.Talents.FocusedAttacks == 0 {
+		return
+	}
+
+	procChance := float64(rogue.Talents.FocusedAttacks) / 3.0
+	energyMetrics := rogue.NewEnergyMetrics(core.ActionID{SpellID: 51637})
+
+	rogue.RegisterAura(core.Aura{
+		Label:    "Focused Attacks",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.DidCrit() {
+				return
+			}
+			if procChance == 1 || sim.RandomFloat("Focused Attacks") <= procChance {
+				rogue.AddEnergy(sim, 2, energyMetrics)
+			}
 		},
 	})
 }

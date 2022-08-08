@@ -95,13 +95,13 @@ dps_results: {
  key: "TestWarlock-AllItems-DarkCoven'sRegalia"
  value: {
   dps: 5840.608966897828
-  tps: 5220.555324060732
+  tps: 5220.555324060733
  }
 }
 dps_results: {
  key: "TestWarlock-AllItems-DeathbringerGarb"
  value: {
-  dps: 6421.0306270582505
+  dps: 6421.030627058252
   tps: 5786.639579280071
  }
 }
@@ -158,7 +158,7 @@ dps_results: {
  key: "TestWarlock-AllItems-ForlornStarflareDiamond"
  value: {
   dps: 6589.258643086365
-  tps: 5943.039389373921
+  tps: 5943.03938937392
  }
 }
 dps_results: {
@@ -206,14 +206,14 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-AllItems-MaleficRaiment"
  value: {
-  dps: 4987.345567941501
+  dps: 4987.345567941502
   tps: 4405.829570086444
  }
 }
 dps_results: {
  key: "TestWarlock-AllItems-OblivionRaiment"
  value: {
-  dps: 5034.85935915649
+  dps: 5034.8593591564895
   tps: 4470.98776859191
  }
 }
@@ -312,14 +312,14 @@ dps_results: {
  key: "TestWarlock-AllItems-TirelessStarflareDiamond"
  value: {
   dps: 6589.258643086365
-  tps: 5943.039389373921
+  tps: 5943.03938937392
  }
 }
 dps_results: {
  key: "TestWarlock-AllItems-TrenchantEarthshatterDiamond"
  value: {
   dps: 6589.258643086365
-  tps: 5943.039389373921
+  tps: 5943.03938937392
  }
 }
 dps_results: {
@@ -333,7 +333,7 @@ dps_results: {
  key: "TestWarlock-AllItems-VoidStarTalisman-30449"
  value: {
   dps: 6601.818535753667
-  tps: 5962.360553145986
+  tps: 5962.360553145987
  }
 }
 dps_results: {
@@ -361,7 +361,7 @@ dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Affliction Warlock-FullBuffs-LongSingleTarget"
  value: {
   dps: 5862.769365658436
-  tps: 5208.944264644961
+  tps: 5208.9442646449625
  }
 }
 dps_results: {
@@ -395,22 +395,22 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-FullBuffs-LongMultiTarget"
  value: {
-  dps: 9592.907252602681
-  tps: 10757.27491924601
+  dps: 9592.907252602678
+  tps: 10757.274919246009
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-FullBuffs-LongSingleTarget"
  value: {
   dps: 6194.508052358772
-  tps: 5189.2702820645445
+  tps: 5189.270282064543
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-FullBuffs-ShortSingleTarget"
  value: {
   dps: 7377.1953945042405
-  tps: 6088.968892181743
+  tps: 6088.9688921817415
  }
 }
 dps_results: {
@@ -430,7 +430,7 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 3629.9160347077027
+  dps: 3629.9160347077022
   tps: 3199.896133430082
  }
 }
