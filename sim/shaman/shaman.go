@@ -202,9 +202,6 @@ func (shaman *Shaman) Initialize() {
 
 	if shaman.SelfBuffs.Shield == proto.ShamanShield_LightningShield {
 		shaman.registerLightningShieldSpell()
-	} else {
-		shaman.LightningShieldAura = nil
-		shaman.LightningShield = nil
 	}
 
 	shaman.ChainLightning = shaman.newChainLightningSpell(false)
