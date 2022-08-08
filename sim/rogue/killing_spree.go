@@ -12,7 +12,7 @@ func (rogue *Rogue) makeKillingSpreeAttackSpell() *core.Spell {
 		ProcMask:         core.ProcMaskMeleeMHSpecial,
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
-		BaseDamage:       core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 0, 1, true),
+		BaseDamage:       core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 0, 1, 1, true),
 		OutcomeApplier:   rogue.OutcomeFuncMeleeWeaponSpecialHitAndCrit(rogue.MeleeCritMultiplier(true, true)),
 	}
 	baseEffectMH.Target = rogue.CurrentTarget
@@ -20,7 +20,7 @@ func (rogue *Rogue) makeKillingSpreeAttackSpell() *core.Spell {
 		ProcMask:         core.ProcMaskMeleeOHSpecial,
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
-		BaseDamage:       core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 0, 1+0.05*float64(rogue.Talents.DualWieldSpecialization), true),
+		BaseDamage:       core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 0, 1, 1+0.05*float64(rogue.Talents.DualWieldSpecialization), true),
 		OutcomeApplier:   rogue.OutcomeFuncMeleeWeaponSpecialHitAndCrit(rogue.MeleeCritMultiplier(true, true)),
 	}
 	baseEffectOH.Target = rogue.CurrentTarget

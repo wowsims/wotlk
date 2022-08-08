@@ -37,7 +37,7 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 			ThreatMultiplier: 1,
 			FlatThreatBonus:  344,
 
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, baseDamage, 1, true),
+			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, baseDamage, 1, 1, true),
 			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(druid.MeleeCritMultiplier()),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
