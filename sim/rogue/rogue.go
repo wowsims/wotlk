@@ -40,6 +40,7 @@ type Rogue struct {
 
 	energyPerSecondAvg    float64
 	sliceAndDiceDurations [6]time.Duration
+	exposeArmorDurations  [6]time.Duration
 	disabledMCDs          []*core.MajorCooldown
 
 	// Assigned based on rotation, can be SS, Backstab, Hemo, etc
@@ -58,7 +59,7 @@ type Rogue struct {
 
 	Envenom      [6]*core.Spell
 	Eviscerate   [6]*core.Spell
-	ExposeArmor  *core.Spell
+	ExposeArmor  [6]*core.Spell
 	Rupture      [6]*core.Spell
 	SliceAndDice [6]*core.Spell
 
