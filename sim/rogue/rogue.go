@@ -38,24 +38,17 @@ type Rogue struct {
 	Options  proto.Rogue_Options
 	Rotation proto.Rogue_Rotation
 
-	// Current rotation plan.
-	plan int
-
-	// Cached values for calculating rotation.
 	energyPerSecondAvg    float64
-	eaBuildTime           time.Duration // Time to build EA following a finisher at ~35 energy
 	sliceAndDiceDurations [6]time.Duration
-
-	doneSND bool // Current SND will last for the rest of the iteration
-	doneEA  bool // Current EA will last for the rest of the iteration, or not using EA
-
-	disabledMCDs []*core.MajorCooldown
+	disabledMCDs          []*core.MajorCooldown
 
 	// Assigned based on rotation, can be SS, Backstab, Hemo, etc
-	Builder *core.Spell
+	Builder            *core.Spell
+	BuilderComboPoints float64
 
 	Backstab       *core.Spell
 	DeadlyPoison   *core.Spell
+	FanOfKnifes    *core.Spell
 	Hemorrhage     *core.Spell
 	HungerForBlood *core.Spell
 	InstantPoison  [3]*core.Spell
@@ -69,11 +62,11 @@ type Rogue struct {
 	Rupture      [6]*core.Spell
 	SliceAndDice [6]*core.Spell
 
-	LastDeadlyPoisonProcMask     core.ProcMask
-	DeadlyPoisonProcChanceBonus  float64
-	InstantPoisonProcChanceBonus float64
-	DeadlyPoisonDots             []*core.Dot
-	RuptureDot                   *core.Dot
+	LastDeadlyPoisonProcMask    core.ProcMask
+	DeadlyPoisonProcChanceBonus float64
+	InstantPoisonPPMM           core.PPMManager
+	DeadlyPoisonDots            []*core.Dot
+	RuptureDot                  *core.Dot
 
 	AdrenalineRushAura  *core.Aura
 	BladeFlurryAura     *core.Aura
@@ -136,6 +129,7 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerDeadlyPoisonSpell()
 	rogue.registerEviscerate()
 	rogue.registerExposeArmorSpell()
+	rogue.registerFanOfKnives()
 	rogue.registerHemorrhageSpell()
 	rogue.registerInstantPoisonSpell()
 	rogue.registerMutilateSpell()
@@ -153,12 +147,16 @@ func (rogue *Rogue) Initialize() {
 	switch rogue.Rotation.Builder {
 	case proto.Rogue_Rotation_SinisterStrike:
 		rogue.Builder = rogue.SinisterStrike
+		rogue.BuilderComboPoints = 1.0
 	case proto.Rogue_Rotation_Backstab:
 		rogue.Builder = rogue.Backstab
+		rogue.BuilderComboPoints = 1.0
 	case proto.Rogue_Rotation_Hemorrhage:
 		rogue.Builder = rogue.Hemorrhage
+		rogue.BuilderComboPoints = 1.0
 	case proto.Rogue_Rotation_Mutilate:
 		rogue.Builder = rogue.Mutilate
+		rogue.BuilderComboPoints = 2.0
 	}
 
 	rogue.finishingMoveEffectApplier = rogue.makeFinishingMoveEffectApplier()
@@ -166,22 +164,11 @@ func (rogue *Rogue) Initialize() {
 	rogue.energyPerSecondAvg = (core.EnergyPerTick*rogue.EnergyTickMultiplier)/core.EnergyTickDuration.Seconds() + 5.0
 
 	// TODO: Currently assumes default combat spec.
-	expectedComboPointsAfterFinisher := 0
-	expectedEnergyAfterFinisher := 25.0
-	comboPointsNeeded := 5 - expectedComboPointsAfterFinisher
-	energyForEA := rogue.Builder.DefaultCast.Cost*float64(comboPointsNeeded) + rogue.ExposeArmor.DefaultCast.Cost
-	rogue.eaBuildTime = time.Duration(((energyForEA - expectedEnergyAfterFinisher) / rogue.energyPerSecondAvg) * float64(time.Second))
 
 	rogue.DelayDPSCooldownsForArmorDebuffs()
 }
 
 func (rogue *Rogue) Reset(sim *core.Simulation) {
-	rogue.plan = PlanOpener
-	rogue.doneSND = false
-
-	permaEA := rogue.ExposeArmorAura.Duration == core.NeverExpires
-	rogue.doneEA = !rogue.Rotation.MaintainExposeArmor || permaEA
-
 	rogue.disabledMCDs = rogue.DisableAllEnabledCooldowns(core.CooldownTypeUnknown)
 }
 
@@ -210,15 +197,12 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 		Options:   *rogueOptions.Options,
 		Rotation:  *rogueOptions.Rotation,
 	}
-	rogue.applyPoisons()
 
 	// Passive rogue threat reduction: https://wotlk.wowhead.com/spell=21184/rogue-passive-dnd
 	rogue.PseudoStats.ThreatMultiplier *= 0.71
 	rogue.PseudoStats.CanParry = true
 
 	daggerMH := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger
-	daggerOH := rogue.Equip[proto.ItemSlot_ItemSlotOffHand].WeaponType == proto.WeaponType_WeaponTypeDagger
-	dualDagger := daggerMH && daggerOH
 	if rogue.Rotation.Builder == proto.Rogue_Rotation_Unknown {
 		rogue.Rotation.Builder = proto.Rogue_Rotation_Auto
 	}
@@ -228,15 +212,13 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 		rogue.Rotation.Builder = proto.Rogue_Rotation_Auto
 	} else if rogue.Rotation.Builder == proto.Rogue_Rotation_Mutilate && !rogue.Talents.Mutilate {
 		rogue.Rotation.Builder = proto.Rogue_Rotation_Auto
-	} else if rogue.Rotation.Builder == proto.Rogue_Rotation_Mutilate && !dualDagger {
-		rogue.Rotation.Builder = proto.Rogue_Rotation_Auto
 	}
 	if rogue.Rotation.Builder == proto.Rogue_Rotation_Auto {
-		if rogue.Talents.Mutilate && dualDagger {
+		if rogue.Talents.Mutilate {
 			rogue.Rotation.Builder = proto.Rogue_Rotation_Mutilate
 		} else if rogue.Talents.Hemorrhage {
 			rogue.Rotation.Builder = proto.Rogue_Rotation_Hemorrhage
-		} else if daggerMH {
+		} else if rogue.Talents.SlaughterFromTheShadows > 0 && daggerMH {
 			rogue.Rotation.Builder = proto.Rogue_Rotation_Backstab
 		} else {
 			rogue.Rotation.Builder = proto.Rogue_Rotation_SinisterStrike
@@ -251,12 +233,7 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 	if rogue.Talents.Vigor {
 		maxEnergy = 110
 	}
-	rogue.EnableEnergyBar(maxEnergy, func(sim *core.Simulation) {
-		rogue.TryUseCooldowns(sim)
-		if rogue.GCD.IsReady(sim) {
-			rogue.doRotation(sim)
-		}
-	})
+	rogue.EnableEnergyBar(maxEnergy, rogue.OnEnergyGain)
 	rogue.EnergyTickMultiplier *= (1 + []float64{0, 0.08, 0.16, 0.25}[rogue.Talents.Vitality])
 
 	rogue.EnableAutoAttacks(rogue, core.AutoAttackOptions{
@@ -264,6 +241,7 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 		OffHand:        rogue.WeaponFromOffHand(0),  // Set crit multiplier later when we have targets.
 		AutoSwingMelee: true,
 	})
+	rogue.applyPoisons()
 
 	rogue.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+1)
 	rogue.AddStatDependency(stats.Agility, stats.AttackPower, 1.0+1)

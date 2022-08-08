@@ -39,9 +39,6 @@ func (rogue *Rogue) registerExposeArmorSpell() {
 				if spellEffect.Landed() {
 					rogue.ExposeArmorAura.Activate(sim)
 					rogue.ApplyFinisher(sim, spell)
-					if sim.GetRemainingDuration() <= time.Second*30 {
-						rogue.doneEA = true
-					}
 				} else {
 					if refundAmount > 0 {
 						rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.QuickRecoveryMetrics)
@@ -50,8 +47,4 @@ func (rogue *Rogue) registerExposeArmorSpell() {
 			},
 		}),
 	})
-}
-
-func (rogue *Rogue) MaintainingExpose(target *core.Unit) bool {
-	return !rogue.doneEA && (rogue.Talents.ImprovedExposeArmor == 2 || !target.HasActiveAura(core.SunderArmorAuraLabel))
 }
