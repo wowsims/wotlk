@@ -84,10 +84,8 @@ func (dk *Deathknight) registerObliterateSpell() {
 		}
 
 		// KM Consume after OH
-		if spellEffect.Landed() {
-			if dk.KillingMachineAura.IsActive() {
-				dk.KillingMachineAura.Deactivate(sim)
-			}
+		if spellEffect.Landed() && dk.KillingMachineAura.IsActive() {
+			dk.KillingMachineAura.Deactivate(sim)
 		}
 	})
 	dk.ObliterateOhHit = dk.newObliterateHitSpell(false, nil)
