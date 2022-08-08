@@ -17,6 +17,8 @@ func (warrior *Warrior) RegisterShieldBlockCD() {
 		Duration: time.Second * 10,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			warrior.AddStatDynamic(sim, stats.Block, 100*core.BlockRatingPerBlockChance)
+			// TODO: The innate block value from the shield item should not be multiplied
+			// as shown here https://youtu.be/LYJdkimJgn8?t=476
 			warrior.AddStatDependencyDynamic(sim, stats.BlockValue, stats.BlockValue, blockValueMult)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
