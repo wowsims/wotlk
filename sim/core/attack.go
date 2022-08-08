@@ -572,10 +572,17 @@ type PPMManager struct {
 	mhProcChance     float64
 	ohProcChance     float64
 	rangedProcChance float64
+	procMask         ProcMask
 }
 
 // Returns whether the effect procced.
 func (ppmm *PPMManager) Proc(sim *Simulation, procMask ProcMask, label string) bool {
+	// Without this procs that can proc only from white attacks
+	// are still procing from specials
+	if !procMask.Matches(ppmm.procMask) {
+		return false
+	}
+
 	if procMask.Matches(ProcMaskMeleeMH) {
 		return ppmm.mhProcChance > 0 && sim.RandomFloat(label) < ppmm.mhProcChance
 	} else if procMask.Matches(ProcMaskMeleeOH) {
@@ -592,6 +599,7 @@ func (aa *AutoAttacks) NewPPMManager(ppm float64, procMask ProcMask) PPMManager 
 	}
 
 	ppmm := PPMManager{}
+	ppmm.procMask = procMask
 	if procMask.Matches(ProcMaskMeleeMH) {
 		ppmm.mhProcChance = ppm * aa.MH.SwingSpeed / 60.0
 	}
