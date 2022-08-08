@@ -182,11 +182,11 @@ var Enchants = []Enchant{
 	/////////////////////////////
 
 	// Head
-	{ID: 29186, EffectID: 2999, Name: "Glyph of the Defender", Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{stats.Defense: 16, stats.Dodge: 17}, ItemType: proto.ItemType_ItemTypeHead},
-	{ID: 29191, EffectID: 3002, Name: "Glyph of Power", Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{stats.SpellPower: 22, stats.SpellHit: 14}, ItemType: proto.ItemType_ItemTypeHead},
-	{ID: 29192, EffectID: 3003, Name: "Glyph of Ferocity", Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{stats.AttackPower: 34, stats.RangedAttackPower: 34, stats.MeleeHit: 16, stats.SpellHit: 16}, ItemType: proto.ItemType_ItemTypeHead},
-	{ID: 30846, EffectID: 3096, Name: "Glyph of the Outcast", Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{stats.Strength: 17, stats.Intellect: 16}, ItemType: proto.ItemType_ItemTypeHead},
-	{ID: 29193, EffectID: 3004, Name: "Glyph of the Gladiator", Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{stats.Stamina: 18, stats.Resilience: 20}, ItemType: proto.ItemType_ItemTypeHead},
+	{ID: 29186, EffectID: 2999, Name: "Arcanum of the Defender", Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{stats.Defense: 16, stats.Dodge: 17}, ItemType: proto.ItemType_ItemTypeHead},
+	{ID: 29191, EffectID: 3002, Name: "Arcanum of Power", Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{stats.SpellPower: 22, stats.SpellHit: 14}, ItemType: proto.ItemType_ItemTypeHead},
+	{ID: 29192, EffectID: 3003, Name: "Arcanum of Ferocity", Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{stats.AttackPower: 34, stats.RangedAttackPower: 34, stats.MeleeHit: 16, stats.SpellHit: 16}, ItemType: proto.ItemType_ItemTypeHead},
+	{ID: 30846, EffectID: 3096, Name: "Arcanum of the Outcast", Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{stats.Strength: 17, stats.Intellect: 16}, ItemType: proto.ItemType_ItemTypeHead},
+	{ID: 29193, EffectID: 3004, Name: "Arcanum of the Gladiator", Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{stats.Stamina: 18, stats.Resilience: 20}, ItemType: proto.ItemType_ItemTypeHead},
 
 	// ZG Head Enchants
 	{ID: 19782, EffectID: 2583, Name: "Presence of Might", Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{stats.Stamina: 10, stats.Defense: 10, stats.BlockValue: 15}, ItemType: proto.ItemType_ItemTypeHead, ClassAllowlist: []proto.Class{proto.Class_ClassWarrior}},
