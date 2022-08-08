@@ -56,6 +56,7 @@ type Rogue struct {
 
 	Backstab       *core.Spell
 	DeadlyPoison   *core.Spell
+	FanOfKnifes    *core.Spell
 	Hemorrhage     *core.Spell
 	HungerForBlood *core.Spell
 	InstantPoison  [3]*core.Spell
@@ -136,6 +137,7 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerDeadlyPoisonSpell()
 	rogue.registerEviscerate()
 	rogue.registerExposeArmorSpell()
+	rogue.registerFanOfKnives()
 	rogue.registerHemorrhageSpell()
 	rogue.registerInstantPoisonSpell()
 	rogue.registerMutilateSpell()

@@ -227,6 +227,13 @@ export class ActionId {
                     name += ' (Shiv)'
                 }
                 break;
+            case 'Fan of Knives':
+                if (this.tag == 1) {
+                    name += ' (Main Hand)'
+                } else if (this.tag == 2) {
+                    name += ' (Off Hand)'
+                }
+                break;
             case 'Chain Lightning':
             case 'Lightning Bolt':
                 if (this.tag) name += ' (LO)';
