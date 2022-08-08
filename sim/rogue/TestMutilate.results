@@ -59,7 +59,7 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-AssassinationArmor"
  value: {
-  dps: 1552.798813388618
+  dps: 1552.7988133886179
   tps: 1102.4871575059187
  }
 }
@@ -74,14 +74,14 @@ dps_results: {
  key: "TestMutilate-AllItems-Bandit'sInsignia-40371"
  value: {
   dps: 1811.6301955106276
-  tps: 1286.2574388125463
+  tps: 1286.257438812546
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-BeamingEarthsiegeDiamond"
  value: {
   dps: 1738.4705464496678
-  tps: 1234.3140879792638
+  tps: 1234.3140879792634
  }
 }
 dps_results: {
@@ -95,13 +95,13 @@ dps_results: {
  key: "TestMutilate-AllItems-Braxley'sBackyardMoonshine-35937"
  value: {
   dps: 1735.235287953641
-  tps: 1232.0170544470843
+  tps: 1232.0170544470845
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-ChaoticSkyflareDiamond"
  value: {
-  dps: 1750.6675383173945
+  dps: 1750.667538317394
   tps: 1242.9739522053492
  }
 }
@@ -115,7 +115,7 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-DarkmoonCard:Death-42990"
  value: {
-  dps: 1785.581229552723
+  dps: 1785.5812295527226
   tps: 1267.7626729824326
  }
 }
@@ -129,7 +129,7 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-DarkmoonCard:Greatness-44253"
  value: {
-  dps: 1805.1589417300906
+  dps: 1805.1589417300904
   tps: 1281.662848628364
  }
 }
@@ -186,7 +186,7 @@ dps_results: {
  key: "TestMutilate-AllItems-EnigmaticSkyflareDiamond"
  value: {
   dps: 1738.4705464496678
-  tps: 1234.3140879792638
+  tps: 1234.3140879792634
  }
 }
 dps_results: {
@@ -214,7 +214,7 @@ dps_results: {
  key: "TestMutilate-AllItems-EyeoftheBroodmother-45308"
  value: {
   dps: 1738.3218531979255
-  tps: 1234.208515770527
+  tps: 1234.2085157705267
  }
 }
 dps_results: {
@@ -263,7 +263,7 @@ dps_results: {
  key: "TestMutilate-AllItems-ImpassiveSkyflareDiamond"
  value: {
   dps: 1738.4705464496678
-  tps: 1234.3140879792638
+  tps: 1234.3140879792634
  }
 }
 dps_results: {
@@ -276,7 +276,7 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-IncisorFragment-37723"
  value: {
-  dps: 1839.0531509915618
+  dps: 1839.0531509915622
   tps: 1305.7277372040087
  }
 }
@@ -389,7 +389,7 @@ dps_results: {
  key: "TestMutilate-AllItems-ReignoftheDead-47316"
  value: {
   dps: 1848.9672843435615
-  tps: 1312.766771883928
+  tps: 1312.7667718839282
  }
 }
 dps_results: {
@@ -500,7 +500,7 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-TheTwinStars"
  value: {
-  dps: 1682.108978356732
+  dps: 1682.1089783567318
   tps: 1194.2973746332796
  }
 }
@@ -606,7 +606,7 @@ dps_results: {
  key: "TestMutilate-Settings-BloodElf-P1 Mutilate-Mutilate-FullBuffs-ShortSingleTarget"
  value: {
   dps: 1962.8602321271592
-  tps: 1393.6307648102834
+  tps: 1393.6307648102832
  }
 }
 dps_results: {

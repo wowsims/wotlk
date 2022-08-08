@@ -94,7 +94,7 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-Braxley'sBackyardMoonshine-35937"
  value: {
-  dps: 2943.589194043768
+  dps: 2943.5891940437677
   tps: 2698.0744365778364
  }
 }
@@ -199,7 +199,7 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-EmberSkyflareDiamond"
  value: {
-  dps: 2905.861506160757
+  dps: 2905.8615061607575
   tps: 2663.9779545760616
  }
 }
@@ -284,7 +284,7 @@ dps_results: {
  key: "TestRetribution-AllItems-FuriousGladiator'sLibramofFortitude-42853"
  value: {
   dps: 2988.8394123719227
-  tps: 2739.6648541080904
+  tps: 2739.664854108091
  }
 }
 dps_results: {
@@ -361,7 +361,7 @@ dps_results: {
  key: "TestRetribution-AllItems-InvigoratingEarthsiegeDiamond"
  value: {
   dps: 2919.0934285018575
-  tps: 2679.801063384637
+  tps: 2679.8010633846366
  }
 }
 dps_results: {
@@ -381,7 +381,7 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-LibramofDivineJudgement-33503"
  value: {
-  dps: 2910.4575683438366
+  dps: 2910.457568343836
   tps: 2673.348203388601
  }
 }
@@ -395,7 +395,7 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-LibramofReciprocation-40706"
  value: {
-  dps: 2910.4575683438366
+  dps: 2910.457568343836
   tps: 2673.348203388601
  }
 }
@@ -480,7 +480,7 @@ dps_results: {
  key: "TestRetribution-AllItems-PersistentEarthsiegeDiamond"
  value: {
   dps: 2919.0934285018575
-  tps: 2679.801063384637
+  tps: 2679.8010633846366
  }
 }
 dps_results: {
@@ -613,14 +613,14 @@ dps_results: {
  key: "TestRetribution-AllItems-StrengthoftheClefthoof"
  value: {
   dps: 2575.2041586186187
-  tps: 2385.428541510382
+  tps: 2385.4285415103814
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-SwiftSkyflareDiamond"
  value: {
   dps: 2919.0934285018575
-  tps: 2679.801063384637
+  tps: 2679.8010633846366
  }
 }
 dps_results: {
@@ -640,7 +640,7 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-TheTwinStars"
  value: {
-  dps: 2862.591372592566
+  dps: 2862.5913725925657
   tps: 2627.0722567968887
  }
 }
@@ -689,7 +689,7 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-TomeoftheLightbringer-32368"
  value: {
-  dps: 2910.4575683438366
+  dps: 2910.457568343836
   tps: 2673.348203388601
  }
 }
@@ -766,7 +766,7 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P4-Retribution Paladin-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 3174.5298117368475
+  dps: 3174.529811736848
   tps: 2946.667090786764
  }
 }
