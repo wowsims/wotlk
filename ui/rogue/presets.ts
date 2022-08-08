@@ -45,9 +45,10 @@ export const AssassinationTalents = {
 };
 
 export const DefaultRotation = RogueRotation.create({
-	builder: Builder.SinisterStrike,
+	builder: Builder.Auto,
 	maintainExposeArmor: false,
-	useRupture: true,
+  maintainTricksOfTheTrade: true,
+	useRupture: false,
 	useShiv: false,
 	useEnvenom: false,
 	minComboPointsForDamageFinisher: 3,

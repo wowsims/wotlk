@@ -126,6 +126,8 @@ func (rogue *Rogue) Initialize() {
 		rogue.QuickRecoveryMetrics = rogue.NewEnergyMetrics(core.ActionID{SpellID: 31245})
 	}
 
+	rogue.SetupRotation()
+
 	rogue.registerBackstabSpell()
 	rogue.registerDeadlyPoisonSpell()
 	rogue.registerEviscerate()
@@ -141,10 +143,8 @@ func (rogue *Rogue) Initialize() {
 
 	rogue.registerThistleTeaCD()
 
-	if rogue.Rotation.UseEnvenom {
-		rogue.registerEnvenom()
-	}
-
+	rogue.Rotation.UseRupture = true
+	rogue.Rotation.UseEnvenom = false
 	switch rogue.Rotation.Builder {
 	case proto.Rogue_Rotation_SinisterStrike:
 		rogue.Builder = rogue.SinisterStrike
@@ -158,14 +158,17 @@ func (rogue *Rogue) Initialize() {
 	case proto.Rogue_Rotation_Mutilate:
 		rogue.Builder = rogue.Mutilate
 		rogue.BuilderComboPoints = 2.0
+		rogue.Rotation.UseRupture = false
+		rogue.Rotation.UseEnvenom = true
+	case proto.Rogue_Rotation_Auto:
+		rogue.Builder = rogue.SinisterStrike
+		rogue.BuilderComboPoints = 1.0
 	}
-
+	if rogue.Rotation.UseEnvenom {
+		rogue.registerEnvenom()
+	}
 	rogue.finishingMoveEffectApplier = rogue.makeFinishingMoveEffectApplier()
-
 	rogue.energyPerSecondAvg = (core.EnergyPerTick*rogue.EnergyTickMultiplier)/core.EnergyTickDuration.Seconds() + 5.0
-
-	// TODO: Currently assumes default combat spec.
-
 	rogue.DelayDPSCooldownsForArmorDebuffs()
 }
 
@@ -189,6 +192,36 @@ func (rogue *Rogue) SpellCritMultiplier() float64 {
 	return rogue.Character.SpellCritMultiplier(primaryModifier, 0)
 }
 
+func (rogue *Rogue) SetupRotation() {
+	daggerMH := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger
+	if rogue.Rotation.Builder == proto.Rogue_Rotation_Unknown {
+		rogue.Rotation.Builder = proto.Rogue_Rotation_Auto
+	}
+	if rogue.Rotation.Builder == proto.Rogue_Rotation_Backstab && !daggerMH {
+		rogue.Rotation.Builder = proto.Rogue_Rotation_Auto
+	}
+	if rogue.Rotation.Builder == proto.Rogue_Rotation_Hemorrhage && !rogue.Talents.Hemorrhage {
+		rogue.Rotation.Builder = proto.Rogue_Rotation_Auto
+	}
+	if rogue.Rotation.Builder == proto.Rogue_Rotation_Mutilate && !rogue.Talents.Mutilate {
+		rogue.Rotation.Builder = proto.Rogue_Rotation_Auto
+	}
+	if rogue.Rotation.Builder == proto.Rogue_Rotation_Auto {
+		if rogue.Talents.Hemorrhage {
+			rogue.Rotation.Builder = proto.Rogue_Rotation_Hemorrhage
+		}
+		if rogue.Talents.Mutilate {
+			rogue.Rotation.Builder = proto.Rogue_Rotation_Mutilate
+		}
+		if rogue.Talents.SlaughterFromTheShadows > 1 && daggerMH {
+			rogue.Rotation.Builder = proto.Rogue_Rotation_Backstab
+		}
+	}
+	if rogue.Options.OhImbue != proto.Rogue_Options_DeadlyPoison {
+		rogue.Rotation.UseShiv = false
+	}
+}
+
 func NewRogue(character core.Character, options proto.Player) *Rogue {
 	rogueOptions := options.GetRogue()
 
@@ -202,34 +235,6 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 	// Passive rogue threat reduction: https://wotlk.wowhead.com/spell=21184/rogue-passive-dnd
 	rogue.PseudoStats.ThreatMultiplier *= 0.71
 	rogue.PseudoStats.CanParry = true
-
-	daggerMH := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger
-	if rogue.Rotation.Builder == proto.Rogue_Rotation_Unknown {
-		rogue.Rotation.Builder = proto.Rogue_Rotation_Auto
-	}
-	if rogue.Rotation.Builder == proto.Rogue_Rotation_Backstab && !daggerMH {
-		rogue.Rotation.Builder = proto.Rogue_Rotation_Auto
-	} else if rogue.Rotation.Builder == proto.Rogue_Rotation_Hemorrhage && !rogue.Talents.Hemorrhage {
-		rogue.Rotation.Builder = proto.Rogue_Rotation_Auto
-	} else if rogue.Rotation.Builder == proto.Rogue_Rotation_Mutilate && !rogue.Talents.Mutilate {
-		rogue.Rotation.Builder = proto.Rogue_Rotation_Auto
-	}
-	if rogue.Rotation.Builder == proto.Rogue_Rotation_Auto {
-		if rogue.Talents.Mutilate {
-			rogue.Rotation.Builder = proto.Rogue_Rotation_Mutilate
-		} else if rogue.Talents.Hemorrhage {
-			rogue.Rotation.Builder = proto.Rogue_Rotation_Hemorrhage
-		} else if rogue.Talents.SlaughterFromTheShadows > 0 && daggerMH {
-			rogue.Rotation.Builder = proto.Rogue_Rotation_Backstab
-		} else {
-			rogue.Rotation.Builder = proto.Rogue_Rotation_SinisterStrike
-		}
-	}
-
-	if rogue.Options.OhImbue != proto.Rogue_Options_DeadlyPoison {
-		rogue.Rotation.UseShiv = false
-	}
-
 	maxEnergy := 100.0
 	if rogue.Talents.Vigor {
 		maxEnergy = 110
