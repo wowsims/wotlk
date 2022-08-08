@@ -72,13 +72,31 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		}
 	}
 
+	if rotationType == proto.Warlock_Rotation_Affliction {
+		hauntcasttime := warlock.ApplyCastSpeed(time.Millisecond * 1500)
+		allCDs := []time.Duration{
+			core.MaxDuration(0, warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim)-hauntcasttime),
+			core.MaxDuration(0, warlock.UnstableAffDot.RemainingDuration(sim)-hauntcasttime),
+			core.MaxDuration(0, warlock.CurseOfAgonyDot.RemainingDuration(sim)),
+		}
+
+		nextCD := core.NeverExpires
+		for _, v := range allCDs {
+			if v < nextCD {
+				nextCD = v
+			}
+		}
+		nextBigCD = nextCD
+	}
 	// ------------------------------------------
 	// Regen check
 	// ------------------------------------------
 	// If big CD coming up and we don't have enough mana for it, lifetap
 	// Also, never do a big regen in the last few seconds of the fight.
-	if !warlock.DoingRegen && nextBigCD-sim.CurrentTime < time.Second*6 && sim.GetRemainingDuration() > time.Second*30 {
-		if warlock.CurrentManaPercent() < 0.6 {
+	if !warlock.DoingRegen && nextBigCD > time.Second*6 && sim.GetRemainingDuration() > time.Second*30 {
+		if warlock.CurrentManaPercent() < 0.6 && !sim.IsExecutePhase25() {
+			warlock.DoingRegen = true
+		} else if warlock.CurrentManaPercent() < 0.05 {
 			warlock.DoingRegen = true
 		}
 	}
@@ -158,6 +176,9 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		return
 	}
 
+	// ------------------------------------------
+	// Preset Rotations
+	// ------------------------------------------
 	// ------------------------------------------
 	// Preset Rotations
 	// ------------------------------------------
