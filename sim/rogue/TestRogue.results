@@ -59,7 +59,7 @@ dps_results: {
 dps_results: {
  key: "TestRogue-AllItems-AssassinationArmor"
  value: {
-  dps: 2088.4687066370802
+  dps: 2088.46870663708
   tps: 1482.8127817123266
  }
 }
@@ -102,7 +102,7 @@ dps_results: {
  key: "TestRogue-AllItems-ChaoticSkyflareDiamond"
  value: {
   dps: 2327.533244345174
-  tps: 1652.5486034850733
+  tps: 1652.5486034850728
  }
 }
 dps_results: {
@@ -207,7 +207,7 @@ dps_results: {
  key: "TestRogue-AllItems-ExtractofNecromanticPower-40373"
  value: {
   dps: 2354.717835530346
-  tps: 1671.8496632265455
+  tps: 1671.8496632265458
  }
 }
 dps_results: {
@@ -241,7 +241,7 @@ dps_results: {
 dps_results: {
  key: "TestRogue-AllItems-FuryoftheFiveFlights-40431"
  value: {
-  dps: 2415.5001925070983
+  dps: 2415.5001925070974
   tps: 1715.0051366800392
  }
 }
@@ -347,7 +347,7 @@ dps_results: {
  key: "TestRogue-AllItems-PersistentEarthshatterDiamond"
  value: {
   dps: 2311.223147054573
-  tps: 1640.9684344087468
+  tps: 1640.9684344087466
  }
 }
 dps_results: {
@@ -374,8 +374,8 @@ dps_results: {
 dps_results: {
  key: "TestRogue-AllItems-PrimalIntent"
  value: {
-  dps: 2289.1879670367475
-  tps: 1625.32345659609
+  dps: 2289.187967036748
+  tps: 1625.3234565960902
  }
 }
 dps_results: {
@@ -487,7 +487,7 @@ dps_results: {
  key: "TestRogue-AllItems-SwiftStarflareDiamond"
  value: {
   dps: 2311.223147054573
-  tps: 1640.9684344087468
+  tps: 1640.9684344087466
  }
 }
 dps_results: {
@@ -508,7 +508,7 @@ dps_results: {
  key: "TestRogue-AllItems-TheTwinBladesofAzzinoth"
  value: {
   dps: 2492.958429957774
-  tps: 1770.0004852700192
+  tps: 1770.0004852700185
  }
 }
 dps_results: {
@@ -536,7 +536,7 @@ dps_results: {
  key: "TestRogue-AllItems-TinyAbominationinaJar-50706"
  value: {
   dps: 2419.2821672407194
-  tps: 1717.6903387409116
+  tps: 1717.690338740911
  }
 }
 dps_results: {
@@ -584,14 +584,14 @@ dps_results: {
 dps_results: {
  key: "TestRogue-AllItems-WindhawkArmor"
  value: {
-  dps: 2126.4766643607336
+  dps: 2126.476664360733
   tps: 1509.7984316961197
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-WrathofSpellfire"
  value: {
-  dps: 2132.1173218977356
+  dps: 2132.117321897736
   tps: 1513.803298547392
  }
 }
@@ -605,7 +605,7 @@ dps_results: {
 dps_results: {
  key: "TestRogue-Settings-BloodElf-P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 3042.123966015598
+  dps: 3042.1239660155975
   tps: 2159.908015871075
  }
 }
@@ -613,14 +613,14 @@ dps_results: {
  key: "TestRogue-Settings-BloodElf-P1-Basic-FullBuffs-LongSingleTarget"
  value: {
   dps: 2319.610050687627
-  tps: 1646.9231359882147
+  tps: 1646.9231359882142
  }
 }
 dps_results: {
  key: "TestRogue-Settings-BloodElf-P1-Basic-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 2709.4652152626954
-  tps: 1923.720302836514
+  dps: 2709.4652152626945
+  tps: 1923.7203028365134
  }
 }
 dps_results: {
@@ -634,7 +634,7 @@ dps_results: {
  key: "TestRogue-Settings-BloodElf-P1-Basic-NoBuffs-LongSingleTarget"
  value: {
   dps: 1322.4078711302277
-  tps: 938.9095885024611
+  tps: 938.9095885024614
  }
 }
 dps_results: {
@@ -662,7 +662,7 @@ dps_results: {
  key: "TestRogue-Settings-BloodElf-P1-Hemo-FullBuffs-ShortSingleTarget"
  value: {
   dps: 2132.3134013056124
-  tps: 1513.9425149269841
+  tps: 1513.9425149269846
  }
 }
 dps_results: {
@@ -676,7 +676,7 @@ dps_results: {
  key: "TestRogue-Settings-BloodElf-P1-Hemo-NoBuffs-LongSingleTarget"
  value: {
   dps: 983.2393478556178
-  tps: 698.099936977489
+  tps: 698.0999369774889
  }
 }
 dps_results: {
@@ -711,28 +711,28 @@ dps_results: {
  key: "TestRogue-Settings-Human-P1-Basic-NoBuffs-LongMultiTarget"
  value: {
   dps: 1480.072616601706
-  tps: 1050.8515577872113
+  tps: 1050.8515577872115
  }
 }
 dps_results: {
  key: "TestRogue-Settings-Human-P1-Basic-NoBuffs-LongSingleTarget"
  value: {
   dps: 1332.3426302943446
-  tps: 945.9632675089848
+  tps: 945.9632675089849
  }
 }
 dps_results: {
  key: "TestRogue-Settings-Human-P1-Basic-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 1465.6957909214966
-  tps: 1040.6440115542625
+  dps: 1465.6957909214964
+  tps: 1040.6440115542623
  }
 }
 dps_results: {
  key: "TestRogue-Settings-Human-P1-Hemo-FullBuffs-LongMultiTarget"
  value: {
   dps: 2440.0885613624005
-  tps: 1732.4628785673042
+  tps: 1732.4628785673037
  }
 }
 dps_results: {

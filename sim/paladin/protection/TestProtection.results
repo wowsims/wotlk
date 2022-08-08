@@ -430,8 +430,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-LightswornBattlegear"
  value: {
-  dps: 151.4194722773305
-  tps: 151.4194722773305
+  dps: 151.41947227733047
+  tps: 151.41947227733047
  }
 }
 dps_results: {
