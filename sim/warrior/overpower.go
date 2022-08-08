@@ -31,7 +31,7 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 		ThreatMultiplier: 0.75,
 		BonusCritRating:  25 * core.CritRatingPerCritChance * float64(warrior.Talents.ImprovedOverpower),
 
-		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 35, 1, true),
+		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 35, 1, 1, true),
 		OutcomeApplier: warrior.OutcomeFuncMeleeSpecialNoBlockDodgeParry(warrior.critMultiplier(true)),
 
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

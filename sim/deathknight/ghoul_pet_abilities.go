@@ -70,7 +70,7 @@ func (ghoulPet *GhoulPet) newClaw() PetAbility {
 				ProcMask:         core.ProcMaskMeleeMHSpecial,
 				DamageMultiplier: 1,
 				ThreatMultiplier: 1,
-				BaseDamage:       core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 0, 1.5, true),
+				BaseDamage:       core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 0, 1.0, 1.5, true),
 				OutcomeApplier:   ghoulPet.OutcomeFuncMeleeSpecialHitAndCrit(2),
 			}),
 		}),
