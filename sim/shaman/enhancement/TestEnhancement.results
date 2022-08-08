@@ -53,13 +53,13 @@ dps_results: {
  key: "TestEnhancement-AllItems-AshtongueTalismanofVision-32491"
  value: {
   dps: 5534.980402681259
-  tps: 4213.520252562443
+  tps: 4213.520252562444
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-AustereEarthsiegeDiamond"
  value: {
-  dps: 5471.957746992053
+  dps: 5471.957746992054
   tps: 4157.2344396909375
  }
 }
@@ -67,7 +67,7 @@ dps_results: {
  key: "TestEnhancement-AllItems-Bandit'sInsignia-40371"
  value: {
   dps: 5603.896080980421
-  tps: 4268.96412755457
+  tps: 4268.964127554569
  }
 }
 dps_results: {
@@ -122,7 +122,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-CycloneRegalia"
  value: {
-  dps: 4001.373470143709
+  dps: 4001.3734701437083
   tps: 3024.4878124129114
  }
 }
@@ -179,7 +179,7 @@ dps_results: {
  key: "TestEnhancement-AllItems-DesolationBattlegear"
  value: {
   dps: 4025.9643525100596
-  tps: 3039.0671044275186
+  tps: 3039.0671044275196
  }
 }
 dps_results: {
@@ -206,7 +206,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-EffulgentSkyflareDiamond"
  value: {
-  dps: 5471.957746992053
+  dps: 5471.957746992054
   tps: 4157.2344396909375
  }
 }
@@ -234,7 +234,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-EternalEarthsiegeDiamond"
  value: {
-  dps: 5471.957746992053
+  dps: 5471.957746992054
   tps: 4157.2344396909375
  }
 }
@@ -297,7 +297,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-FrostWitch'sRegalia"
  value: {
-  dps: 4892.478497691956
+  dps: 4892.478497691955
   tps: 3710.165430752864
  }
 }
@@ -360,8 +360,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-InsightfulEarthsiegeDiamond"
  value: {
-  dps: 5536.0278026799615
-  tps: 4206.884341462213
+  dps: 5536.027802679959
+  tps: 4206.884341462212
  }
 }
 dps_results: {
@@ -388,7 +388,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-Mana-EtchedRegalia"
  value: {
-  dps: 3914.094136922031
+  dps: 3914.09413692203
   tps: 2951.17509954986
  }
 }
@@ -409,8 +409,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-NetherstrikeArmor"
  value: {
-  dps: 4809.981743822617
-  tps: 3649.873156241377
+  dps: 4809.981743822616
+  tps: 3649.8731562413764
  }
 }
 dps_results: {
@@ -451,14 +451,14 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-PowerfulEarthshatterDiamond"
  value: {
-  dps: 5471.957746992053
+  dps: 5471.957746992054
   tps: 4157.2344396909375
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-PowerfulEarthsiegeDiamond"
  value: {
-  dps: 5471.957746992053
+  dps: 5471.957746992054
   tps: 4157.2344396909375
  }
 }
@@ -479,8 +479,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 5743.563974554746
-  tps: 4430.314849173476
+  dps: 5743.563974554747
+  tps: 4430.314849173475
  }
 }
 dps_results: {
@@ -613,7 +613,7 @@ dps_results: {
  key: "TestEnhancement-AllItems-TheFistsofFury"
  value: {
   dps: 4321.350753656601
-  tps: 3150.1111103583016
+  tps: 3150.111110358302
  }
 }
 dps_results: {
@@ -626,7 +626,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-Thrall'sBattlegear"
  value: {
-  dps: 4819.746371051411
+  dps: 4819.74637105141
   tps: 3686.0899382774587
  }
 }
@@ -725,7 +725,7 @@ dps_results: {
  key: "TestEnhancement-AllItems-WastewalkerArmor"
  value: {
   dps: 3992.6412973467536
-  tps: 3007.1566924612375
+  tps: 3007.156692461238
  }
 }
 dps_results: {
@@ -766,14 +766,14 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Orc-P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 14098.77444908379
+  dps: 14098.774449083789
   tps: 11455.988469512407
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Orc-P1-Basic-FullBuffs-LongSingleTarget"
  value: {
-  dps: 5570.303418678049
+  dps: 5570.303418678048
   tps: 4222.079637465782
  }
 }
@@ -808,7 +808,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Troll-P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 14126.154018482044
+  dps: 14126.154018482048
   tps: 11463.217669660913
  }
 }
