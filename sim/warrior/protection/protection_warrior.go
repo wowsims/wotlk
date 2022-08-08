@@ -44,14 +44,14 @@ func NewProtectionWarrior(character core.Character, options proto.Player) *Prote
 		Options:  *warOptions.Options,
 	}
 
+	war.PseudoStats.CanBlock = war.Equip[proto.ItemSlot_ItemSlotOffHand].WeaponType == proto.WeaponType_WeaponTypeShield
+
 	war.EnableRageBar(warOptions.Options.StartingRage, core.TernaryFloat64(war.Talents.EndlessRage, 1.25, 1), func(sim *core.Simulation) {
 		if war.GCD.IsReady(sim) {
 			war.TryUseCooldowns(sim)
 			if war.GCD.IsReady(sim) {
 				war.doRotation(sim)
 			}
-		} else {
-			war.tryShieldBlock(sim)
 		}
 	})
 	war.EnableAutoAttacks(war, core.AutoAttackOptions{
@@ -78,6 +78,8 @@ func (war *ProtectionWarrior) Initialize() {
 	if war.Options.UseShieldWall {
 		war.RegisterShieldWallCD()
 	}
+
+	war.RegisterShieldBlockCD()
 }
 
 func (war *ProtectionWarrior) Reset(sim *core.Simulation) {
