@@ -15,7 +15,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 0
   final_stats: 107
-  final_stats: 119
+  final_stats: 135
   final_stats: 136.07698329321138
   final_stats: 0
   final_stats: 0
@@ -59,8 +59,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 1902.042038366992
-  tps: 1374.130413965401
+  dps: 1902.4784867878466
+  tps: 1374.4402923442074
  }
 }
 dps_results: {
@@ -80,8 +80,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-DarkmoonCard:Death-42990"
  value: {
-  dps: 1881.4112104733172
-  tps: 1359.4645188757422
+  dps: 1881.9918643315882
+  tps: 1359.8767831151147
  }
 }
 dps_results: {
@@ -122,8 +122,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-ExtractofNecromanticPower-40373"
  value: {
-  dps: 1862.894481936135
-  tps: 1346.1532831046957
+  dps: 1863.1979238462695
+  tps: 1346.3687268608915
  }
 }
 dps_results: {
@@ -283,15 +283,15 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 1992.1867394193227
-  tps: 1438.1331517125557
+  dps: 1995.892565042997
+  tps: 1440.7642879053642
  }
 }
 dps_results: {
  key: "TestFeral-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 2014.4579245558639
-  tps: 1453.9456931594998
+  dps: 2018.6263990726989
+  tps: 1456.905310066453
  }
 }
 dps_results: {
@@ -409,8 +409,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-Average-Default"
  value: {
-  dps: 1849.244897208507
-  tps: 1336.3185024447553
+  dps: 1848.7456005643323
+  tps: 1335.9568910785813
  }
 }
 dps_results: {
@@ -438,14 +438,14 @@ dps_results: {
  key: "TestFeral-Settings-Tauren-P1-Default-NoBuffs-LongMultiTarget"
  value: {
   dps: 767.450573526539
-  tps: 545.4366072038426
+  tps: 545.4522272038428
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-Default-NoBuffs-LongSingleTarget"
  value: {
   dps: 767.450573526539
-  tps: 545.4366072038426
+  tps: 545.4522272038428
  }
 }
 dps_results: {

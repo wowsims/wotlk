@@ -15,7 +15,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 0
   final_stats: 0
-  final_stats: 256
+  final_stats: 272
   final_stats: 12.227
   final_stats: 0
   final_stats: 0
@@ -52,8 +52,8 @@ character_stats_results: {
 dps_results: {
  key: "TestMutilate-AllItems-AshtongueTalismanofLethality-32492"
  value: {
-  dps: 1743.4003842334464
-  tps: 1237.8142728057462
+  dps: 1749.3399027305118
+  tps: 1242.0313309386624
  }
 }
 dps_results: {
@@ -66,85 +66,85 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-AustereEarthsiegeDiamond"
  value: {
-  dps: 1734.9650114384774
-  tps: 1231.8251581213185
+  dps: 1738.9370970347604
+  tps: 1234.6453388946798
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 1811.6301955106276
-  tps: 1286.257438812546
+  dps: 1815.056213300392
+  tps: 1288.689911443279
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-BeamingEarthsiegeDiamond"
  value: {
-  dps: 1738.4705464496678
-  tps: 1234.3140879792634
+  dps: 1744.5923067961717
+  tps: 1238.6605378252816
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-BracingEarthsiegeDiamond"
  value: {
-  dps: 1734.9650114384774
-  tps: 1207.1886549588921
+  dps: 1738.9370970347604
+  tps: 1209.9524321167867
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-Braxley'sBackyardMoonshine-35937"
  value: {
-  dps: 1735.235287953641
-  tps: 1232.0170544470845
+  dps: 1739.5159928823334
+  tps: 1235.0563549464562
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-ChaoticSkyflareDiamond"
  value: {
-  dps: 1750.667538317394
-  tps: 1242.9739522053492
+  dps: 1756.7737038581986
+  tps: 1247.3093297393202
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-DarkmoonCard:Berserker!-42989"
  value: {
-  dps: 1743.997132617431
-  tps: 1238.237964158376
+  dps: 1749.5820924154498
+  tps: 1242.203285614969
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-DarkmoonCard:Death-42990"
  value: {
-  dps: 1785.5812295527226
-  tps: 1267.7626729824326
+  dps: 1790.1605062015828
+  tps: 1271.013959403123
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-DarkmoonCard:Greatness-42987"
  value: {
-  dps: 1793.4349877464356
-  tps: 1273.3388412999693
+  dps: 1797.8749720745259
+  tps: 1276.491230172913
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-DarkmoonCard:Greatness-44253"
  value: {
-  dps: 1805.1589417300904
-  tps: 1281.662848628364
+  dps: 1811.4077834172215
+  tps: 1286.0995262262268
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-DarkmoonCard:Greatness-44254"
  value: {
-  dps: 1760.8157743236734
-  tps: 1250.1791997698085
+  dps: 1765.1859907142637
+  tps: 1253.2820534071275
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-DeathKnight'sAnguish-38212"
  value: {
-  dps: 1736.606886781118
-  tps: 1232.9908896145932
+  dps: 1742.015279191377
+  tps: 1236.8308482258767
  }
 }
 dps_results: {
@@ -157,162 +157,162 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-Defender'sCode-40257"
  value: {
-  dps: 1707.116571844092
-  tps: 1212.052766009305
+  dps: 1712.1203325948768
+  tps: 1215.6054361423624
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-DestructiveSkyflareDiamond"
  value: {
-  dps: 1736.2406069493688
-  tps: 1232.7308309340517
+  dps: 1742.5711379750726
+  tps: 1237.2255079623008
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-EffulgentSkyflareDiamond"
  value: {
-  dps: 1734.9650114384774
-  tps: 1231.8251581213185
+  dps: 1738.9370970347604
+  tps: 1234.6453388946798
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-EmberSkyflareDiamond"
  value: {
-  dps: 1734.9650114384774
-  tps: 1231.8251581213185
+  dps: 1738.9370970347604
+  tps: 1234.6453388946798
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-EnigmaticSkyflareDiamond"
  value: {
-  dps: 1738.4705464496678
-  tps: 1234.3140879792634
+  dps: 1744.5923067961717
+  tps: 1238.6605378252816
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-EnigmaticStarflareDiamond"
  value: {
-  dps: 1733.0659151357945
-  tps: 1230.4767997464137
+  dps: 1737.509036083154
+  tps: 1233.6314156190392
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-EternalEarthsiegeDiamond"
  value: {
-  dps: 1734.9650114384774
-  tps: 1231.8251581213185
+  dps: 1738.9370970347604
+  tps: 1234.6453388946798
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-ExtractofNecromanticPower-40373"
  value: {
-  dps: 1749.5691547724632
-  tps: 1242.1940998884484
+  dps: 1753.8135396510413
+  tps: 1245.207613152239
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 1738.3218531979255
-  tps: 1234.2085157705267
+  dps: 1744.7717343468562
+  tps: 1238.787931386267
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-ForgeEmber-37660"
  value: {
-  dps: 1739.128304474778
-  tps: 1234.7810961770922
+  dps: 1745.6903213552928
+  tps: 1239.440128162257
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-ForlornSkyflareDiamond"
  value: {
-  dps: 1734.9650114384774
-  tps: 1231.8251581213185
+  dps: 1738.9370970347604
+  tps: 1234.6453388946798
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-ForlornStarflareDiamond"
  value: {
-  dps: 1734.9650114384774
-  tps: 1231.8251581213185
+  dps: 1738.9370970347604
+  tps: 1234.6453388946798
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-FuryoftheFiveFlights-40431"
  value: {
-  dps: 1810.2522980033398
-  tps: 1285.2791315823706
+  dps: 1815.5480159075646
+  tps: 1289.0390912943699
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-FuturesightRune-38763"
  value: {
-  dps: 1707.116571844092
-  tps: 1212.052766009305
+  dps: 1712.1203325948768
+  tps: 1215.6054361423624
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
-  dps: 1707.116571844092
-  tps: 1212.052766009305
+  dps: 1712.1203325948768
+  tps: 1215.6054361423624
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-ImpassiveSkyflareDiamond"
  value: {
-  dps: 1738.4705464496678
-  tps: 1234.3140879792634
+  dps: 1744.5923067961717
+  tps: 1238.6605378252816
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-ImpassiveStarflareDiamond"
  value: {
-  dps: 1733.0659151357945
-  tps: 1230.4767997464137
+  dps: 1737.509036083154
+  tps: 1233.6314156190392
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-IncisorFragment-37723"
  value: {
-  dps: 1839.0531509915622
-  tps: 1305.7277372040087
+  dps: 1844.192082950076
+  tps: 1309.3763788945537
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-InfusedColdstoneRune-35935"
  value: {
-  dps: 1717.5793984180073
-  tps: 1219.4813728767845
+  dps: 1717.6514764756976
+  tps: 1219.5325482977446
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-InsightfulEarthsiegeDiamond"
  value: {
-  dps: 1734.9650114384774
-  tps: 1231.8251581213185
+  dps: 1738.9370970347604
+  tps: 1234.6453388946798
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-InvigoratingEarthsiegeDiamond"
  value: {
-  dps: 1748.8190143546913
-  tps: 1241.661500191831
+  dps: 1752.818610741703
+  tps: 1244.5012136266091
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-Lavanthor'sTalisman-37872"
  value: {
-  dps: 1707.116571844092
-  tps: 1212.052766009305
+  dps: 1712.1203325948768
+  tps: 1215.6054361423624
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-MajesticDragonFigurine-40430"
  value: {
-  dps: 1707.116571844092
-  tps: 1212.052766009305
+  dps: 1712.1203325948768
+  tps: 1215.6054361423624
  }
 }
 dps_results: {
@@ -325,8 +325,8 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-MeteoriteWhetstone-37390"
  value: {
-  dps: 1760.1521856912218
-  tps: 1249.7080518407665
+  dps: 1768.4289686491793
+  tps: 1255.5845677409163
  }
 }
 dps_results: {
@@ -339,113 +339,113 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-OfferingofSacrifice-37638"
  value: {
-  dps: 1707.116571844092
-  tps: 1212.052766009305
+  dps: 1712.1203325948768
+  tps: 1215.6054361423624
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-PersistentEarthshatterDiamond"
  value: {
-  dps: 1746.1801566563663
-  tps: 1239.7879112260189
+  dps: 1750.174512892762
+  tps: 1242.6239041538606
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-PersistentEarthsiegeDiamond"
  value: {
-  dps: 1748.8190143546913
-  tps: 1241.661500191831
+  dps: 1752.818610741703
+  tps: 1244.5012136266091
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-PowerfulEarthshatterDiamond"
  value: {
-  dps: 1734.9650114384774
-  tps: 1231.8251581213185
+  dps: 1738.9370970347604
+  tps: 1234.6453388946798
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-PowerfulEarthsiegeDiamond"
  value: {
-  dps: 1734.9650114384774
-  tps: 1231.8251581213185
+  dps: 1738.9370970347604
+  tps: 1234.6453388946798
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-PrimalIntent"
  value: {
-  dps: 1721.0371410081539
-  tps: 1221.9363701157895
+  dps: 1724.6053554405414
+  tps: 1224.4698023627848
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-PurifiedShardoftheGods"
  value: {
-  dps: 1707.116571844092
-  tps: 1212.052766009305
+  dps: 1712.1203325948768
+  tps: 1215.6054361423624
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 1848.9672843435615
-  tps: 1312.7667718839282
+  dps: 1853.9894109275149
+  tps: 1316.3324817585353
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 1866.5765006885376
-  tps: 1325.2693154888611
+  dps: 1871.4997372420523
+  tps: 1328.7648134418564
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-RelentlessEarthsiegeDiamond"
  value: {
-  dps: 1756.7700730653075
-  tps: 1247.3067518763678
+  dps: 1760.7510598173699
+  tps: 1250.1332524703319
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-RevitalizingSkyflareDiamond"
  value: {
-  dps: 1734.9650114384774
-  tps: 1231.8251581213185
+  dps: 1738.9370970347604
+  tps: 1234.6453388946798
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-RuneofRepulsion-40372"
  value: {
-  dps: 1707.116571844092
-  tps: 1212.052766009305
+  dps: 1712.1203325948768
+  tps: 1215.6054361423624
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-SealofthePantheon-36993"
  value: {
-  dps: 1707.116571844092
-  tps: 1212.052766009305
+  dps: 1712.1203325948768
+  tps: 1215.6054361423624
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-Serrah'sStar-37559"
  value: {
-  dps: 1718.857795002455
-  tps: 1220.3890344517426
+  dps: 1720.091471248963
+  tps: 1221.2649445867635
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-ShinyShardoftheGods"
  value: {
-  dps: 1707.116571844092
-  tps: 1212.052766009305
+  dps: 1712.1203325948768
+  tps: 1215.6054361423624
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-Sindragosa'sFlawlessFang-50361"
  value: {
-  dps: 1707.116571844092
-  tps: 1212.052766009305
+  dps: 1712.1203325948768
+  tps: 1215.6054361423624
  }
 }
 dps_results: {
@@ -458,8 +458,8 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-SparkofLife-37657"
  value: {
-  dps: 1730.0482635866908
-  tps: 1228.3342671465502
+  dps: 1734.0529113826174
+  tps: 1231.177567081658
  }
 }
 dps_results: {
@@ -472,92 +472,92 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-StrengthoftheClefthoof"
  value: {
-  dps: 1520.1323041575495
-  tps: 1079.2939359518607
+  dps: 1526.4338074160416
+  tps: 1083.76800326539
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-SwiftSkyflareDiamond"
  value: {
-  dps: 1748.8190143546913
-  tps: 1241.661500191831
+  dps: 1752.818610741703
+  tps: 1244.5012136266091
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-SwiftStarflareDiamond"
  value: {
-  dps: 1746.1801566563663
-  tps: 1239.7879112260189
+  dps: 1750.174512892762
+  tps: 1242.6239041538606
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-SwiftWindfireDiamond"
  value: {
-  dps: 1741.5621556842932
-  tps: 1236.5091305358487
+  dps: 1745.5473416571137
+  tps: 1239.338612576551
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-TheTwinStars"
  value: {
-  dps: 1682.1089783567318
-  tps: 1194.2973746332796
+  dps: 1689.3166048584953
+  tps: 1199.4147894495313
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 1747.4476604341228
-  tps: 1240.6878389082271
+  dps: 1752.9941484362764
+  tps: 1244.6258453897558
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-TinyAbominationinaJar-50351"
  value: {
-  dps: 1821.1069580853218
-  tps: 1292.9859402405777
+  dps: 1826.0116081085685
+  tps: 1296.4682417570832
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-TinyAbominationinaJar-50706"
  value: {
-  dps: 1816.6393858871331
-  tps: 1289.813963979864
+  dps: 1824.30858443655
+  tps: 1295.2590949499502
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-TirelessSkyflareDiamond"
  value: {
-  dps: 1734.9650114384774
-  tps: 1231.8251581213185
+  dps: 1738.9370970347604
+  tps: 1234.6453388946798
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-TirelessStarflareDiamond"
  value: {
-  dps: 1734.9650114384774
-  tps: 1231.8251581213185
+  dps: 1738.9370970347604
+  tps: 1234.6453388946798
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-TrenchantEarthshatterDiamond"
  value: {
-  dps: 1734.9650114384774
-  tps: 1231.8251581213185
+  dps: 1738.9370970347604
+  tps: 1234.6453388946798
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-TrenchantEarthsiegeDiamond"
  value: {
-  dps: 1734.9650114384774
-  tps: 1231.8251581213185
+  dps: 1738.9370970347604
+  tps: 1234.6453388946798
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-Warp-SpringCoil-30450"
  value: {
-  dps: 1823.8142903876287
-  tps: 1294.908146175216
+  dps: 1830.7088113449656
+  tps: 1299.803256054925
  }
 }
 dps_results: {
@@ -570,112 +570,112 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-WindhawkArmor"
  value: {
-  dps: 1592.284079240473
-  tps: 1130.521696260736
+  dps: 1596.6096106910677
+  tps: 1133.5928235906588
  }
 }
 dps_results: {
  key: "TestMutilate-AllItems-WrathofSpellfire"
  value: {
-  dps: 1589.4866356273237
-  tps: 1128.5355112954
+  dps: 1594.9528948220977
+  tps: 1132.4165553236894
  }
 }
 dps_results: {
  key: "TestMutilate-Average-Default"
  value: {
-  dps: 1740.956754656216
-  tps: 1236.0792958059083
+  dps: 1746.3342571318672
+  tps: 1239.8973225636248
  }
 }
 dps_results: {
  key: "TestMutilate-Settings-BloodElf-P1 Mutilate-Mutilate-FullBuffs-LongMultiTarget"
  value: {
-  dps: 2238.9925254779246
-  tps: 1589.6846930893264
+  dps: 2243.2445383384033
+  tps: 1592.7036222202664
  }
 }
 dps_results: {
  key: "TestMutilate-Settings-BloodElf-P1 Mutilate-Mutilate-FullBuffs-LongSingleTarget"
  value: {
-  dps: 1752.241774882074
-  tps: 1244.0916601662723
+  dps: 1756.2155693267318
+  tps: 1246.9130542219793
  }
 }
 dps_results: {
  key: "TestMutilate-Settings-BloodElf-P1 Mutilate-Mutilate-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 1962.8602321271592
-  tps: 1393.6307648102832
+  dps: 1972.2944814115504
+  tps: 1400.3290818022003
  }
 }
 dps_results: {
  key: "TestMutilate-Settings-BloodElf-P1 Mutilate-Mutilate-NoBuffs-LongMultiTarget"
  value: {
-  dps: 1091.7070979422977
-  tps: 775.1120395390316
+  dps: 1095.1864817270398
+  tps: 777.5824020261989
  }
 }
 dps_results: {
  key: "TestMutilate-Settings-BloodElf-P1 Mutilate-Mutilate-NoBuffs-LongSingleTarget"
  value: {
-  dps: 1091.7070979422977
-  tps: 775.1120395390316
+  dps: 1095.1864817270398
+  tps: 777.5824020261989
  }
 }
 dps_results: {
  key: "TestMutilate-Settings-BloodElf-P1 Mutilate-Mutilate-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 1106.0792154235003
-  tps: 785.3162429506851
+  dps: 1111.1710579575524
+  tps: 788.9314511498621
  }
 }
 dps_results: {
  key: "TestMutilate-Settings-Human-P1 Mutilate-Mutilate-FullBuffs-LongMultiTarget"
  value: {
-  dps: 2239.100315350764
-  tps: 1589.7612238990425
+  dps: 2243.35317711106
+  tps: 1592.7807557488527
  }
 }
 dps_results: {
  key: "TestMutilate-Settings-Human-P1 Mutilate-Mutilate-FullBuffs-LongSingleTarget"
  value: {
-  dps: 1752.349720887683
-  tps: 1244.168301830255
+  dps: 1756.3242345630817
+  tps: 1246.9902065397876
  }
 }
 dps_results: {
  key: "TestMutilate-Settings-Human-P1 Mutilate-Mutilate-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 1962.93378679061
-  tps: 1393.6829886213327
+  dps: 1972.3696019758413
+  tps: 1400.382417402847
  }
 }
 dps_results: {
  key: "TestMutilate-Settings-Human-P1 Mutilate-Mutilate-NoBuffs-LongMultiTarget"
  value: {
-  dps: 1091.9068381444997
-  tps: 775.2538550825943
+  dps: 1095.3869220155366
+  tps: 777.7247146310303
  }
 }
 dps_results: {
  key: "TestMutilate-Settings-Human-P1 Mutilate-Mutilate-NoBuffs-LongSingleTarget"
  value: {
-  dps: 1091.9068381444997
-  tps: 775.2538550825943
+  dps: 1095.3869220155366
+  tps: 777.7247146310303
  }
 }
 dps_results: {
  key: "TestMutilate-Settings-Human-P1 Mutilate-Mutilate-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 1106.3347279214013
-  tps: 785.4976568241949
+  dps: 1111.4275652410383
+  tps: 789.1135713211372
  }
 }
 dps_results: {
  key: "TestMutilate-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 1556.890837014992
-  tps: 1105.3924942806443
+  dps: 1562.1199766070172
+  tps: 1109.105183390982
  }
 }
