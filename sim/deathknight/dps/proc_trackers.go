@@ -36,14 +36,29 @@ func (ur *UnholyRotation) resetProcTrackers() {
 func (dk *DpsDeathknight) initProcTrackers() {
 	dk.ur.procTrackers = make([]*ProcTracker, 0)
 
+	dk.ur.addProc(40211, "Potion of Speed")
 	dk.ur.addProc(54999, "Hyperspeed Acceleration")
 	dk.ur.addProc(26297, "Berserking (Troll)")
-	dk.ur.addProc(59620, "Berserking MH Proc")
-	dk.ur.addProc(59620, "Berserking OH Proc")
 
-	dk.ur.addProc(59626, "Black Magic Proc")
+	dk.ur.addProc(35937, "ItemActive-35937")
+	dk.ur.addProc(36871, "ItemActive-36871")
+	dk.ur.addProc(37166, "ItemActive-37166")
+	dk.ur.addProc(37556, "ItemActive-37556")
+	dk.ur.addProc(37557, "ItemActive-37557")
+	dk.ur.addProc(38080, "ItemActive-38080")
+	dk.ur.addProc(38081, "ItemActive-38081")
+	dk.ur.addProc(38761, "ItemActive-38761")
+	dk.ur.addProc(39257, "ItemActive-39257")
+	dk.ur.addProc(44014, "ItemActive-44014")
+	dk.ur.addProc(45263, "ItemActive-45263")
+	dk.ur.addProc(46086, "ItemActive-46086")
+	dk.ur.addProc(47734, "ItemActive-47734")
+
 	dk.ur.addProc(53344, "Rune Of The Fallen Crusader Proc")
 	dk.ur.addProc(55379, "Thundering Skyflare Diamond Proc")
+	dk.ur.addProc(59620, "Berserking MH Proc")
+	dk.ur.addProc(59620, "Berserking OH Proc")
+	dk.ur.addProc(59626, "Black Magic Proc")
 
 	dk.ur.addProc(42987, "DMC Greatness Strength Proc")
 
