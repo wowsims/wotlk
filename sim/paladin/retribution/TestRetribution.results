@@ -94,7 +94,7 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-Braxley'sBackyardMoonshine-35937"
  value: {
-  dps: 2946.2820457960606
+  dps: 2946.28204579606
   tps: 2698.744916781771
  }
 }
@@ -234,7 +234,7 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 2953.013021953478
+  dps: 2953.0130219534776
   tps: 2700.416180495447
  }
 }
@@ -276,7 +276,7 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-ForlornStarflareDiamond"
  value: {
-  dps: 2883.526440677093
+  dps: 2883.5264406770934
   tps: 2646.2440778524006
  }
 }
@@ -298,7 +298,7 @@ dps_results: {
  key: "TestRetribution-AllItems-FuturesightRune-38763"
  value: {
   dps: 2902.9108045627845
-  tps: 2661.028960509816
+  tps: 2661.0289605098155
  }
 }
 dps_results: {
@@ -360,8 +360,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-InvigoratingEarthsiegeDiamond"
  value: {
-  dps: 2902.3455175177346
-  tps: 2662.4508717956805
+  dps: 2902.345517517734
+  tps: 2662.4508717956796
  }
 }
 dps_results: {
@@ -473,14 +473,14 @@ dps_results: {
  key: "TestRetribution-AllItems-PersistentEarthshatterDiamond"
  value: {
   dps: 2897.9945465600244
-  tps: 2658.7726411424587
+  tps: 2658.772641142459
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-PersistentEarthsiegeDiamond"
  value: {
-  dps: 2902.3455175177346
-  tps: 2662.4508717956805
+  dps: 2902.345517517734
+  tps: 2662.4508717956796
  }
 }
 dps_results: {
@@ -549,7 +549,7 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-RevitalizingSkyflareDiamond"
  value: {
-  dps: 2900.7975813482394
+  dps: 2900.79758134824
   tps: 2661.2378672791447
  }
 }
@@ -619,15 +619,15 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-SwiftSkyflareDiamond"
  value: {
-  dps: 2902.3455175177346
-  tps: 2662.4508717956805
+  dps: 2902.345517517734
+  tps: 2662.4508717956796
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-SwiftStarflareDiamond"
  value: {
   dps: 2897.9945465600244
-  tps: 2658.7726411424587
+  tps: 2658.772641142459
  }
 }
 dps_results: {
@@ -675,7 +675,7 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-TirelessStarflareDiamond"
  value: {
-  dps: 2883.526440677093
+  dps: 2883.5264406770934
   tps: 2646.2440778524006
  }
 }
@@ -696,7 +696,7 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-TrenchantEarthshatterDiamond"
  value: {
-  dps: 2883.526440677093
+  dps: 2883.5264406770934
   tps: 2646.2440778524006
  }
 }
@@ -746,7 +746,7 @@ dps_results: {
  key: "TestRetribution-Average-Default"
  value: {
   dps: 2935.4453681937325
-  tps: 2693.6264164624677
+  tps: 2693.626416462468
  }
 }
 dps_results: {
