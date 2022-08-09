@@ -283,8 +283,8 @@ dps_results: {
 dps_results: {
  key: "TestRogue-AllItems-IncisorFragment-37723"
  value: {
-  dps: 2466.1431970133
-  tps: 1750.9616698795
+  dps: 2371.4931163049
+  tps: 1683.7601125765
  }
 }
 dps_results: {
