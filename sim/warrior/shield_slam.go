@@ -4,14 +4,12 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warrior *Warrior) registerShieldSlamSpell(cdTimer *core.Timer) {
 	cost := 20.0 - float64(warrior.Talents.FocusedRage)
 	refundAmount := cost * 0.8
-	warrior.canShieldSlam = warrior.Talents.ShieldSlam && warrior.Equip[proto.ItemSlot_ItemSlotOffHand].WeaponType == proto.WeaponType_WeaponTypeShield
 
 	damageRollFunc := core.DamageRollFunc(420, 440)
 
@@ -59,6 +57,10 @@ func (warrior *Warrior) registerShieldSlamSpell(cdTimer *core.Timer) {
 	})
 }
 
+func (warrior *Warrior) HasEnoughRageForShieldSlam() bool {
+	return warrior.CurrentRage() >= warrior.ShieldSlam.DefaultCast.Cost
+}
+
 func (warrior *Warrior) CanShieldSlam(sim *core.Simulation) bool {
-	return warrior.canShieldSlam && warrior.CurrentRage() >= warrior.ShieldSlam.DefaultCast.Cost && warrior.ShieldSlam.IsReady(sim)
+	return warrior.PseudoStats.CanBlock && warrior.HasEnoughRageForShieldSlam() && warrior.ShieldSlam.IsReady(sim)
 }
