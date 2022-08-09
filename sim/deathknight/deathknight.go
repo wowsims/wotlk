@@ -273,12 +273,10 @@ func (dk *Deathknight) HasMinorGlyph(glyph proto.DeathknightMinorGlyph) bool {
 	return dk.HasGlyph(int32(glyph))
 }
 
-func NewDeathknight(character core.Character, options proto.Player, inputs DeathknightInputs) *Deathknight {
-	deathKnightOptions := options.GetDeathknight()
-
+func NewDeathknight(character core.Character, talents proto.DeathknightTalents, inputs DeathknightInputs) *Deathknight {
 	dk := &Deathknight{
 		Character:  character,
-		Talents:    *deathKnightOptions.Talents,
+		Talents:    talents,
 		Inputs:     inputs,
 		RoRTSBonus: func(u *core.Unit) float64 { return 1.0 }, // default to no bonus for RoR/TS
 	}

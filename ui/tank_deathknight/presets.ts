@@ -22,13 +22,13 @@ import * as Tooltips from '../core/constants/tooltips.js';
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wotlk.wowhead.com/talent-calc and copy the numbers in the url.
 export const BloodTalents = {
-	name: 'Frost',
+	name: 'Balanced',
 	data: SavedTalents.create({
-		talentsString: '23050005-32005350352203012300033101351',
+		talentsString: '005520153330031320102013-3050035002023-005',
 		glyphs: Glyphs.create({
-			major1: DeathknightMajorGlyph.GlyphOfObliterate,
-			major2: DeathknightMajorGlyph.GlyphOfFrostStrike,
-			major3: DeathknightMajorGlyph.GlyphOfDisease,
+			major1: DeathknightMajorGlyph.GlyphOfDisease,
+			major2: DeathknightMajorGlyph.GlyphOfVampiricBlood,
+			major3: DeathknightMajorGlyph.GlyphOfDarkCommand,
 			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
 			minor2: DeathknightMinorGlyph.GlyphOfBloodTap,
 			minor3: DeathknightMinorGlyph.GlyphOfRaiseDead,
