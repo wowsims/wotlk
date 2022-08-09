@@ -311,8 +311,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-Mana-EtchedRegalia"
  value: {
-  dps: 4748.9705127417
-  tps: 2923.9943805409
+  dps: 4757.8284703344
+  tps: 2928.2111358681
  }
 }
 dps_results: {
@@ -528,15 +528,15 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-WrathofSpellfire"
  value: {
-  dps: 5738.7783507058
-  tps: 3512.0721892516
+  dps: 5724.3375803343
+  tps: 3503.2593675546
  }
 }
 dps_results: {
  key: "TestArcane-Average-Default"
  value: {
-  dps: 6390.7003058302
-  tps: 3900.7220179665
+  dps: 6389.9500876369
+  tps: 3900.247783063
  }
 }
 dps_results: {
@@ -605,15 +605,15 @@ dps_results: {
 dps_results: {
  key: "TestArcane-Settings-Troll-P1Arcane-ArcaneRotation-NoBuffs-LongMultiTarget"
  value: {
-  dps: 3597.6695182392
-  tps: 3423.821465952
+  dps: 3647.548271322
+  tps: 3453.6735165066
  }
 }
 dps_results: {
  key: "TestArcane-Settings-Troll-P1Arcane-ArcaneRotation-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3597.6695182392
-  tps: 2221.8626986939
+  dps: 3647.548271322
+  tps: 2251.7861904789
  }
 }
 dps_results: {
