@@ -73,30 +73,6 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	}
 
 	// ------------------------------------------
-	// Regen check
-	// ------------------------------------------
-	// If big CD coming up and we don't have enough mana for it, lifetap
-	// Also, never do a big regen in the last few seconds of the fight.
-	if !warlock.DoingRegen && nextBigCD-sim.CurrentTime < time.Second*6 && sim.GetRemainingDuration() > time.Second*30 {
-		if warlock.CurrentManaPercent() < 0.6 {
-			warlock.DoingRegen = true
-		}
-	}
-
-	if warlock.DoingRegen {
-		if nextBigCD-sim.CurrentTime < time.Second*2 {
-			// stop regen, start blasting
-			warlock.DoingRegen = false
-		} else {
-			warlock.LifeTapOrDarkPact(sim)
-			if warlock.CurrentManaPercent() > 0.6 {
-				warlock.DoingRegen = false
-			}
-			return
-		}
-	}
-
-	// ------------------------------------------
 	// Small CDs
 	// ------------------------------------------
 	if warlock.Talents.DemonicEmpowerment && warlock.DemonicEmpowerment.CD.IsReady(sim) {
@@ -121,42 +97,6 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		}
 	}
 
-	// ------------------------------------------
-	// Curses (priority)
-	// ------------------------------------------
-
-	castCurse := func(spellToCast *core.Spell, aura *core.Aura) bool {
-		if !aura.IsActive() {
-			spell = spellToCast
-			return true
-		}
-		return false
-	}
-
-	switch curse {
-	case proto.Warlock_Rotation_Elements:
-		castCurse(warlock.CurseOfElements, warlock.CurseOfElementsAura)
-	case proto.Warlock_Rotation_Weakness:
-		castCurse(warlock.CurseOfWeakness, warlock.CurseOfWeaknessAura)
-	case proto.Warlock_Rotation_Tongues:
-		castCurse(warlock.CurseOfTongues, warlock.CurseOfTonguesAura)
-	case proto.Warlock_Rotation_Doom:
-		if warlock.CurseOfDoom.CD.IsReady(sim) && sim.GetRemainingDuration() > time.Minute {
-			spell = warlock.CurseOfDoom
-		} else if sim.GetRemainingDuration() > time.Second*24 && !warlock.CurseOfAgonyDot.IsActive() && !warlock.CurseOfDoomDot.IsActive() {
-			spell = warlock.CurseOfAgony
-		}
-	case proto.Warlock_Rotation_Agony:
-		if sim.GetRemainingDuration() > time.Second*24 && !warlock.CurseOfAgonyDot.IsActive() {
-			spell = warlock.CurseOfAgony
-		}
-	}
-	if spell != nil {
-		if !spell.Cast(sim, target) {
-			warlock.LifeTapOrDarkPact(sim)
-		}
-		return
-	}
 
 	// ------------------------------------------
 	// Preset Rotations
@@ -275,6 +215,67 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		} else if sim.IsExecutePhase25() && warlock.Talents.SoulSiphon > 0 {
 			// Drain Soul execute phase for Affliction
 			spell = warlock.channelCheck(sim, warlock.DrainSoulDot, 5)
+		}
+	}
+
+	// ------------------------------------------
+	// Curses
+	// ------------------------------------------
+
+	castCurse := func(spellToCast *core.Spell, aura *core.Aura) bool {
+		if !aura.IsActive() {
+			spell = spellToCast
+			return true
+		}
+		return false
+	}
+
+	switch curse {
+	case proto.Warlock_Rotation_Elements:
+		castCurse(warlock.CurseOfElements, warlock.CurseOfElementsAura)
+	case proto.Warlock_Rotation_Weakness:
+		castCurse(warlock.CurseOfWeakness, warlock.CurseOfWeaknessAura)
+	case proto.Warlock_Rotation_Tongues:
+		castCurse(warlock.CurseOfTongues, warlock.CurseOfTonguesAura)
+	case proto.Warlock_Rotation_Doom:
+		if warlock.CurseOfDoom.CD.IsReady(sim) && sim.GetRemainingDuration() > time.Minute {
+			spell = warlock.CurseOfDoom
+		} else if sim.GetRemainingDuration() > time.Second*24 && !warlock.CurseOfAgonyDot.IsActive() && !warlock.CurseOfDoomDot.IsActive() {
+			spell = warlock.CurseOfAgony
+		}
+	case proto.Warlock_Rotation_Agony:
+		if sim.GetRemainingDuration() > time.Second*24 && !warlock.CurseOfAgonyDot.IsActive() {
+			spell = warlock.CurseOfAgony
+		}
+	}
+	if spell != nil {
+		if !spell.Cast(sim, target) {
+			warlock.LifeTapOrDarkPact(sim)
+		}
+		return
+	}
+
+	// ------------------------------------------
+	// Regen check
+	// ------------------------------------------
+	// If big CD coming up and we don't have enough mana for it, lifetap
+	// Also, never do a big regen in the last few seconds of the fight.
+	if !warlock.DoingRegen && nextBigCD-sim.CurrentTime < time.Second*6 && sim.GetRemainingDuration() > time.Second*30 {
+		if warlock.CurrentManaPercent() < 0.6 {
+			warlock.DoingRegen = true
+		}
+	}
+
+	if warlock.DoingRegen {
+		if nextBigCD-sim.CurrentTime < time.Second*2 {
+			// stop regen, start blasting
+			warlock.DoingRegen = false
+		} else {
+			warlock.LifeTapOrDarkPact(sim)
+			if warlock.CurrentManaPercent() > 0.6 {
+				warlock.DoingRegen = false
+			}
+			return
 		}
 	}
 
