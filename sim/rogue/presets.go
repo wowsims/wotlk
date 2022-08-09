@@ -201,12 +201,9 @@ var PlayerOptionsHemo = &proto.Player_Rogue{
 }
 
 var basicRotation = &proto.Rogue_Rotation{
-	Builder:             proto.Rogue_Rotation_Auto,
-	MaintainExposeArmor: true,
-	UseRupture:          true,
-	UseShiv:             true,
-
-	MinComboPointsForDamageFinisher: 3,
+	Builder:                  proto.Rogue_Rotation_Auto,
+	MaintainExposeArmor:      false,
+	MaintainTricksOfTheTrade: true,
 }
 
 var basicOptions = &proto.Rogue_Options{

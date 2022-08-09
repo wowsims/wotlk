@@ -51,6 +51,7 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 				GCD:  time.Second,
 			},
 			IgnoreHaste: true,
+			ModifyCast:  rogue.builderCastModifier,
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
