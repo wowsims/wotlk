@@ -152,6 +152,9 @@ message Rogue {
 
 		bool maintain_expose_armor = 1;
 
+		// Cast Tricks of the Trade when available
+		bool maintain_tricks_of_the_trade = 7;
+
 		// Allows use of rupture when sensible.
 		bool use_rupture = 2;
 

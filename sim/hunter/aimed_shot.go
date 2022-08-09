@@ -8,7 +8,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (hunter *Hunter) registerAimedShotSpell() {
+func (hunter *Hunter) registerAimedShotSpell(timer *core.Timer) {
 	if !hunter.Talents.AimedShot {
 		return
 	}
@@ -31,7 +31,7 @@ func (hunter *Hunter) registerAimedShotSpell() {
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
-				Timer:    hunter.NewTimer(),
+				Timer:    timer,
 				Duration: time.Second*10 - core.TernaryDuration(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfAimedShot), time.Second*2, 0),
 			},
 		},

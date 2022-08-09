@@ -235,6 +235,11 @@ export class ActionId {
                     name += ' (Off Hand)'
                 }
                 break;
+            case 'Tricks of the Trade':
+                if (this.tag == 1) {
+                    name += ' (Not Self)'
+                }
+                break;
             case 'Chain Lightning':
             case 'Lightning Bolt':
                 if (this.tag) name += ' (LO)';

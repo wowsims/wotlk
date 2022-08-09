@@ -68,7 +68,7 @@ var enhShamOptions = &proto.EnhancementShaman_Options{
 	Shield:    proto.ShamanShield_LightningShield,
 	Bloodlust: true,
 	SyncType:  proto.ShamanSyncType_SyncMainhandOffhandSwings,
-	ImbueMh:   proto.ShamanImbue_WindfuryWeapon,
+	ImbueMh:   proto.ShamanImbue_FlametongueWeaponDownrank, //phase 1 (wraith strike) only
 	ImbueOh:   proto.ShamanImbue_FlametongueWeapon,
 }
 
@@ -118,7 +118,7 @@ var Phase1Gear = items.EquipmentSpecFromJsonString(`{"items": [
           "id": 40524,
           "enchant": 44871,
           "gems": [
-            40088
+            40014
           ]
         },
         {
@@ -127,6 +127,7 @@ var Phase1Gear = items.EquipmentSpecFromJsonString(`{"items": [
         },
         {
           "id": 40523,
+		  "enchant": 44489,
           "gems": [
             40003,
             40014
@@ -134,9 +135,9 @@ var Phase1Gear = items.EquipmentSpecFromJsonString(`{"items": [
         },
         {
           "id": 40282,
-          "enchant": 60616,
+          "enchant": 44484,
           "gems": [
-            40088,
+            42702,
             0
           ]
         },

@@ -83,6 +83,7 @@ export const DefaultFireRotation = MageRotation.create({
 
 export const DefaultFireOptions = MageOptions.create({
 	armor: ArmorType.MoltenArmor,
+	focusMagicPercentUptime: 99,
 });
 
 export const DefaultFireConsumes = Consumes.create({
@@ -110,11 +111,15 @@ export const DefaultFrostConsumes = Consumes.create({
 
 export const DefaultArcaneRotation = MageRotation.create({
 	type: RotationType.Arcane,
-	minBlastBeforeMissiles: 4
+	minBlastBeforeMissiles: 4,
+	num4StackBlastsToMissilesGamble: 4,
+	num4StackBlastsToEarlyMissiles: 3,
+	extraBlastsDuringFirstAp: 2,
 });
 
 export const DefaultArcaneOptions = MageOptions.create({
 	armor: ArmorType.MoltenArmor,
+	focusMagicPercentUptime: 99,
 });
 
 export const DefaultArcaneConsumes = Consumes.create({
