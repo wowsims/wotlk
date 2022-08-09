@@ -512,6 +512,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestRogue-AllItems-TerrorbladeBattlegear"
+ value: {
+  dps: 2925.2291510057
+  tps: 2076.912697214
+ }
+}
+dps_results: {
  key: "TestRogue-AllItems-TheFistsofFury"
  value: {
   dps: 2380.7294108941

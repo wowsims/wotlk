@@ -528,7 +528,7 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-WrathofSpellfire"
  value: {
-  dps: 5724.3375803342
+  dps: 5724.3375803343
   tps: 3503.2593675546
  }
 }
