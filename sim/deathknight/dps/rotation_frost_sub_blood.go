@@ -5,8 +5,6 @@ import (
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
-var canBloodStrike bool
-
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_PrioRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
 	//Priority List:
 	// HoW if refreshing
@@ -97,17 +95,17 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_PrioRotation(sim 
 			}
 		}
 		return casted
-	} else if dk.CanBloodStrike(sim) && canBloodStrike && dk.fr.oblitCount >= 2 {
+	} else if dk.CanBloodStrike(sim) && dk.fr.canBloodStrike && dk.fr.oblitCount >= 2 {
 		casted := false
 		if dk.CanUnbreakableArmor(sim) {
 			casted = dk.CastUnbreakableArmor(sim, target)
 			dk.castAllMajorCooldowns(sim)
 			if casted {
-				canBloodStrike = false
+				dk.fr.canBloodStrike = false
 				casted = dk.CastPestilence(sim, target)
 				if casted && dk.LastOutcome.Matches(core.OutcomeLanded) {
 					dk.fr.oblitCount = 0
-					canBloodStrike = true
+					dk.fr.canBloodStrike = true
 				}
 			} else {
 				dk.WaitUntil(sim, sim.CurrentTime)
@@ -115,7 +113,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_PrioRotation(sim 
 		} else {
 			casted = dk.CastBloodStrike(sim, target)
 			if casted && dk.LastOutcome.Matches(core.OutcomeLanded) {
-				canBloodStrike = false
+				dk.fr.canBloodStrike = false
 			}
 		}
 		return casted
@@ -123,7 +121,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_PrioRotation(sim 
 		casted := dk.CastPestilence(sim, target)
 		if casted && dk.LastOutcome.Matches(core.OutcomeLanded) {
 			dk.fr.oblitCount = 0
-			canBloodStrike = true
+			dk.fr.canBloodStrike = true
 		}
 		return casted
 	} else if sim.CurrentTime+gcd < obAt {
@@ -147,8 +145,6 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_PrioRotation(sim 
 
 func (dk *DpsDeathknight) setupFrostSubBloodERWOpener() {
 	dk.setupUnbreakableArmorCooldowns()
-
-	canBloodStrike = true
 
 	dk.Opener.
 		NewAction(dk.RotationActionCallback_IT).
@@ -176,7 +172,7 @@ func (dk *DpsDeathknight) setupFrostSubBloodERWOpener() {
 		NewAction(dk.RotationActionCallback_FS)
 
 	dk.Main.
-		NewAction(dk.RotationActionCallback_FrostSubBlood_PrioRotation_Experimental)
+		NewAction(dk.RotationActionCallback_FrostSubBlood_PrioRotation)
 }
 
 func (dk *DpsDeathknight) setupFrostSubBloodNoERWOpener() {
