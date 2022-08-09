@@ -370,7 +370,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Main_FS_Star(sim 
 			casted = dk.CastHornOfWinter(sim, target)
 		}
 	} else {
-		casted = false
+		casted = dk.CastHornOfWinter(sim, target)
 	}
 
 	return casted
