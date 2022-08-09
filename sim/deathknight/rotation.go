@@ -206,6 +206,7 @@ func (dk *Deathknight) Wait(sim *core.Simulation) {
 	if dk.ButcheryPA != nil {
 		waitUntil = core.MinDuration(dk.ButcheryPA.NextActionAt, waitUntil)
 	}
+	waitUntil = core.MaxDuration(sim.CurrentTime, waitUntil)
 	dk.WaitUntil(sim, waitUntil)
 }
 
