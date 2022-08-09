@@ -119,7 +119,7 @@ func (dk *DpsDeathknight) castAllMajorCooldowns(sim *core.Simulation) {
 	dk.castMajorCooldown(fr.berserkingMCD, sim, target)
 }
 
-func (dk *DpsDeathknight) RotationActionCallback_UA_SubBlood(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
+func (dk *DpsDeathknight) RotationActionCallback_UA_Frost(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
 	casted := dk.CastUnbreakableArmor(sim, target)
 
 	if casted {
