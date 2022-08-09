@@ -24,7 +24,7 @@ character_stats_results: {
   final_stats: 1851.7429022809
   final_stats: 360
   final_stats: 0
-  final_stats: 287.555
+  final_stats: 213.7775
   final_stats: 16839.48
   final_stats: 0
   final_stats: 0
@@ -94,15 +94,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-CataclysmHarness"
  value: {
-  dps: 4204.028829266
-  tps: 3275.6645860028
+  dps: 4135.4876147403
+  tps: 3210.0082435264
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-CataclysmRegalia"
  value: {
-  dps: 4138.2981928495
-  tps: 3237.1517357371
+  dps: 4067.9762511382
+  tps: 3183.4405469296
  }
 }
 dps_results: {
@@ -115,15 +115,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-CycloneHarness"
  value: {
-  dps: 4045.9380661274
-  tps: 3138.6675491492
+  dps: 3980.1562119968
+  tps: 3084.7221810987
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-CycloneRegalia"
  value: {
-  dps: 4033.5051926148
-  tps: 3145.5138537491
+  dps: 3988.1115982904
+  tps: 3108.8817053336
  }
 }
 dps_results: {
@@ -178,8 +178,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-DesolationBattlegear"
  value: {
-  dps: 4034.9694731665
-  tps: 3137.0519738376
+  dps: 3955.3622785379
+  tps: 3070.1595813433
  }
 }
 dps_results: {
@@ -192,15 +192,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-EarthshatterBattlegear"
  value: {
-  dps: 4926.8316486551
-  tps: 3855.8188490892
+  dps: 4869.7203333059
+  tps: 3807.9475877832
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-EarthshatterGarb"
  value: {
-  dps: 4579.5237413779
-  tps: 3604.3955078525
+  dps: 4489.7584547234
+  tps: 3523.5800792352
  }
 }
 dps_results: {
@@ -262,8 +262,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-FelstalkerArmor"
  value: {
-  dps: 4796.7712639821
-  tps: 3754.0037495333
+  dps: 4751.6056714545
+  tps: 3705.621563828
  }
 }
 dps_results: {
@@ -290,15 +290,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-FrostWitch'sBattlegear"
  value: {
-  dps: 5383.0702029121
-  tps: 4238.3381146076
+  dps: 5266.9317102699
+  tps: 4127.1776082753
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-FrostWitch'sRegalia"
  value: {
-  dps: 4979.9118643356
-  tps: 3914.3773589567
+  dps: 4911.9260000737
+  tps: 3853.836890701
  }
 }
 dps_results: {
@@ -318,8 +318,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-Gladiator'sEarthshaker"
  value: {
-  dps: 5543.4922310219
-  tps: 4317.5339483747
+  dps: 5436.7287753905
+  tps: 4230.6526128384
  }
 }
 dps_results: {
@@ -388,8 +388,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-Mana-EtchedRegalia"
  value: {
-  dps: 3962.4890847706
-  tps: 3083.0642833992
+  dps: 3876.1159961788
+  tps: 3008.8070828229
  }
 }
 dps_results: {
@@ -402,29 +402,29 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-NetherscaleArmor"
  value: {
-  dps: 4828.3763287953
-  tps: 3775.865859634
+  dps: 4760.6183667741
+  tps: 3716.9812874842
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-NetherstrikeArmor"
  value: {
-  dps: 4801.2524831638
-  tps: 3760.1977347357
+  dps: 4737.3621003724
+  tps: 3708.8298505536
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Nobundo'sBattlegear"
  value: {
-  dps: 4895.4090046957
-  tps: 3876.7442647501
+  dps: 4843.2545823609
+  tps: 3830.3870575719
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Nobundo'sRegalia"
  value: {
-  dps: 4785.5365783551
-  tps: 3766.1784245661
+  dps: 4712.5537211312
+  tps: 3701.921809778
  }
 }
 dps_results: {
@@ -465,8 +465,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-PrimalIntent"
  value: {
-  dps: 4838.7600658262
-  tps: 3782.4983881606
+  dps: 4815.6018221654
+  tps: 3778.2433727638
  }
 }
 dps_results: {
@@ -549,15 +549,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-SkyshatterHarness"
  value: {
-  dps: 3928.2849838597
-  tps: 3050.4665845726
+  dps: 3877.9343197839
+  tps: 3008.5808984979
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-SkyshatterRegalia"
  value: {
-  dps: 3855.2760214096
-  tps: 3022.5859210724
+  dps: 3791.9955738797
+  tps: 2958.5289184636
  }
 }
 dps_results: {
@@ -584,8 +584,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-StrengthoftheClefthoof"
  value: {
-  dps: 4451.4942412359
-  tps: 3481.1178402091
+  dps: 4388.9663590016
+  tps: 3430.8809068298
  }
 }
 dps_results: {
@@ -626,15 +626,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-Thrall'sBattlegear"
  value: {
-  dps: 4868.4829549264
-  tps: 3851.7514742884
+  dps: 4782.1017392789
+  tps: 3779.4364460653
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Thrall'sRegalia"
  value: {
-  dps: 4785.5365783551
-  tps: 3766.1784245661
+  dps: 4712.5537211312
+  tps: 3701.921809778
  }
 }
 dps_results: {
@@ -647,8 +647,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-TidefuryRaiment"
  value: {
-  dps: 3883.6711885711
-  tps: 3020.0908459211
+  dps: 3819.720040148
+  tps: 2963.8089548336
  }
 }
 dps_results: {
@@ -724,36 +724,36 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-WastewalkerArmor"
  value: {
-  dps: 4014.3368022079
-  tps: 3129.9800728082
+  dps: 3950.828390095
+  tps: 3081.0150436388
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-WindhawkArmor"
  value: {
-  dps: 4766.5049983446
-  tps: 3733.1121311486
+  dps: 4716.0708299612
+  tps: 3684.595443622
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-WorldbreakerBattlegear"
  value: {
-  dps: 5354.0069989874
-  tps: 4222.0034335261
+  dps: 5260.100693119
+  tps: 4139.40794033
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-WorldbreakerGarb"
  value: {
-  dps: 5035.4282221986
-  tps: 3998.8551122376
+  dps: 4935.2293035449
+  tps: 3914.6130981999
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-WrathofSpellfire"
  value: {
-  dps: 4717.3041824925
-  tps: 3682.9432865731
+  dps: 4690.5647839516
+  tps: 3676.1010980648
  }
 }
 dps_results: {
@@ -850,7 +850,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 5365.0356978705
-  tps: 4203.8594388459
+  dps: 5278.2958960074
+  tps: 4129.9145398123
  }
 }
