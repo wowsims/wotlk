@@ -113,6 +113,12 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 				OutcomeApplier:   rogue.OutcomeFuncTickMagicHitAndCrit(rogue.SpellCritMultiplier()),
 			})),
 		})
+		if rogue.HasSetBonus(ItemSetTerrorblade, 2) {
+			metrics := rogue.NewEnergyMetrics(core.ActionID{SpellID: 64914})
+			dot.OnPeriodicDamageDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				rogue.AddEnergy(sim, 1, metrics)
+			}
+		}
 		// Would like to do this for the snapshotting but it also shots the aura
 		//dot.TickEffects = core.TickFuncSnapshot(target, deadlyPoisonTickEffect)
 		rogue.DeadlyPoisonDots = append(rogue.DeadlyPoisonDots, dot)

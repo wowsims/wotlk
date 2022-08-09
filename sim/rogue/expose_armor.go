@@ -24,7 +24,7 @@ func (rogue *Rogue) makeExposeArmor(comboPoints int32) *core.Spell {
 				Cost: baseCost,
 				GCD:  time.Second,
 			},
-			ModifyCast:  rogue.applyDeathmantle,
+			ModifyCast:  rogue.CastModifier,
 			IgnoreHaste: true,
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{

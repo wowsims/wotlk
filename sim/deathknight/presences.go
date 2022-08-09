@@ -101,11 +101,17 @@ func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 		},
 	})
 
-	dk.BloodPresenceAura = dk.GetOrRegisterAura(core.Aura{
+	// TODO: Probably improve this
+	isDps := dk.Talents.HowlingBlast || dk.Talents.SummonGargoyle
+
+	actionID := core.ActionID{SpellID: 50689}
+	healthMetrics := dk.NewHealthMetrics(actionID)
+
+	aura := core.Aura{
 		Label:    "Blood Presence",
 		Tag:      "Presence",
 		Priority: 1,
-		ActionID: core.ActionID{SpellID: 50689},
+		ActionID: actionID,
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier *= threatMult
@@ -123,7 +129,18 @@ func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 			dk.ModifyAdditiveDamageModifier(sim, -damageBonusCoeff)
 			aura.Unit.AddStatDependencyDynamic(sim, stats.Stamina, stats.Stamina, 1.0/staminaMult)
 		},
-	})
+	}
+
+	if !isDps {
+		aura.OnSpellHitDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spellEffect.Damage > 0 {
+				healthGain := 0.04 * spellEffect.Damage
+				dk.GainHealth(sim, healthGain, healthMetrics)
+			}
+		}
+	}
+
+	dk.BloodPresenceAura = dk.GetOrRegisterAura(aura)
 }
 
 func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {

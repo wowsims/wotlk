@@ -15,7 +15,6 @@ import {
 	ProtectionWarrior,
 	ProtectionWarrior_Rotation as ProtectionWarriorRotation,
 	ProtectionWarrior_Rotation_DemoShout as DemoShout,
-	ProtectionWarrior_Rotation_ShieldBlock as ShieldBlock,
 	ProtectionWarrior_Rotation_ThunderClap as ThunderClap,
 	ProtectionWarrior_Options as ProtectionWarriorOptions
 } from '../core/proto/warrior.js';
@@ -83,15 +82,9 @@ export const ProtectionWarriorRotationConfig = {
 				{ name: 'On CD', value: ThunderClap.ThunderClapOnCD },
 			],
 		}),
-		InputHelpers.makeRotationEnumInput<Spec.SpecProtectionWarrior, ShieldBlock>({
-			fieldName: 'shieldBlock',
-			label: 'Shield Block',
-			labelTooltip: 'When to use shield block.',
-			values: [
-				{ name: 'Never', value: ShieldBlock.ShieldBlockNone },
-				{ name: 'To Proc Revenge', value: ShieldBlock.ShieldBlockToProcRevenge },
-				{ name: 'On CD', value: ShieldBlock.ShieldBlockOnCD },
-			],
+		InputHelpers.makeRotationBooleanInput<Spec.SpecProtectionWarrior>({
+			fieldName: 'useShieldBlock',
+			label: 'Use Shield Block',
 		}),
 	],
 };

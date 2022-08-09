@@ -32,7 +32,6 @@ type Warrior struct {
 
 	// Cached values
 	shoutDuration time.Duration
-	canShieldSlam bool
 
 	Shout           *core.Spell
 	BattleStance    *core.Spell
@@ -121,7 +120,6 @@ func (warrior *Warrior) Initialize() {
 	warrior.registerMortalStrikeSpell(primaryTimer, warrior.MsRageThreshold)
 	warrior.registerOverpowerSpell(overpowerRevengeTimer)
 	warrior.registerRevengeSpell(overpowerRevengeTimer)
-	warrior.registerShieldBlockSpell()
 	warrior.registerShieldSlamSpell(primaryTimer)
 	warrior.registerSlamSpell()
 	warrior.registerThunderClapSpell()

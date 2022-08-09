@@ -28,7 +28,7 @@ func (rogue *Rogue) registerShivSpell() {
 				GCD:  time.Second,
 			},
 			IgnoreHaste: true,
-			ModifyCast:  rogue.builderCastModifier,
+			ModifyCast:  rogue.CastModifier,
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
