@@ -41,7 +41,7 @@ export const FrostTalents = {
 export const FrostUnholyTalents = {
 	name: 'Frost UH',
 	data: SavedTalents.create({
-		talentsString: '01-32002350351203012300033101351-230200305003',
+		talentsString: '-32002350352203012300033101351-230200305003',
 		glyphs: Glyphs.create({
 			major1: DeathknightMajorGlyph.GlyphOfObliterate,
 			major2: DeathknightMajorGlyph.GlyphOfFrostStrike,
@@ -699,36 +699,36 @@ export const P1_FROST_GAME_BIS_PRESET = {
   {
     "id": 54581,
     "gems": [
-      40111
+      40117
     ]
   },
   {
     "id": 51314,
     "enchant": 44871,
     "gems": [
-      42142
+      42153
     ]
   },
   {
     "id": 47548,
     "enchant": 44472,
     "gems": [
-      42142
+      42153
     ]
   },
   {
     "id": 51310,
     "enchant": 44489,
     "gems": [
-      42142,
-      40111
+      42153,
+      40117
     ]
   },
   {
     "id": 50670,
     "enchant": 44484,
     "gems": [
-      40111,
+      40117,
       0
     ]
   },
@@ -736,45 +736,45 @@ export const P1_FROST_GAME_BIS_PRESET = {
     "id": 50675,
     "enchant": 54999,
     "gems": [
-      40111,
-      40111,
+      40117,
+      40117,
       0
     ]
   },
   {
     "id": 50620,
     "gems": [
-      40111,
-      40111,
-      40111
+      40117,
+      40117,
+      40117
     ]
   },
   {
     "id": 51313,
     "enchant": 38374,
     "gems": [
-      40111,
-      40111
+      40117,
+      40117
     ]
   },
   {
     "id": 54578,
     "enchant": 55016,
     "gems": [
-      40111,
-      40111
+      40117,
+      40117
     ]
   },
   {
     "id": 50693,
     "gems": [
-      40111
+      40117
     ]
   },
   {
     "id": 52572,
     "gems": [
-      40111
+      40117
     ]
   },
   {
@@ -787,7 +787,7 @@ export const P1_FROST_GAME_BIS_PRESET = {
     "id": 50737,
     "enchant": 53343,
     "gems": [
-      40111
+      40117
     ]
   },
   {

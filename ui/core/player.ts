@@ -373,8 +373,12 @@ export class Player<SpecType extends Spec> {
         this.cooldownsChangeEmitter.emit(eventID);
     }
 
+		canDualWield2H(): boolean {
+			return this.getClass() == Class.ClassWarrior && (this.getTalents() as SpecTalents<Spec.SpecWarrior>).titansGrip;
+		}
+
     equipItem(eventID: EventID, slot: ItemSlot, newItem: EquippedItem | null) {
-        this.setGear(eventID, this.gear.withEquippedItem(slot, newItem));
+        this.setGear(eventID, this.gear.withEquippedItem(slot, newItem, this.canDualWield2H()));
     }
 
     getEquippedItem(slot: ItemSlot): EquippedItem | null {

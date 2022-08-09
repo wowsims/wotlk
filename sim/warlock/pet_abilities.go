@@ -107,7 +107,7 @@ func (wp *WarlockPet) newCleave() *core.Spell {
 			ProcMask:         core.ProcMaskMeleeMHSpecial,
 			DamageMultiplier: 1.0,
 			ThreatMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 78, 1.0, true),
+			BaseDamage:       core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 78, 1.0, 1.0, true),
 			OutcomeApplier:   wp.OutcomeFuncMeleeSpecialHitAndCrit(2),
 		}),
 	})

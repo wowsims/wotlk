@@ -56,6 +56,12 @@ func (cd *Cooldown) Use(sim *Simulation) {
 	*cd.Timer = Timer(sim.CurrentTime + cd.Duration)
 }
 
+func (cd *Cooldown) UsePrePull(sim *Simulation, timeBeforePull time.Duration) {
+	if cd.Duration-timeBeforePull >= 0 {
+		*cd.Timer = Timer(sim.CurrentTime - timeBeforePull + cd.Duration)
+	}
+}
+
 func BothTimersReadyAt(t1 *Timer, t2 *Timer) time.Duration {
 	readyAt := time.Duration(0)
 	if t1 != nil {

@@ -357,9 +357,9 @@ func init() {
 	})
 
 	newRazoriceHitSpell := func(character *core.Character, isMH bool) *core.Spell {
-		baseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 0, 1.0, true)
+		baseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 0, 1.0, 1.0, true)
 		if !isMH {
-			baseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, 1.0, true)
+			baseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, 1.0, 1.0, true)
 		}
 
 		return character.RegisterSpell(core.SpellConfig{

@@ -65,7 +65,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 			}
 			casted = dk.CastDeathAndDecay(sim, target)
 		} else {
-			if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()*2+50*time.Millisecond) {
+			if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()*2+250*time.Millisecond) {
 				dk.afterGargoyleSequence(sim)
 				return true
 			}
@@ -348,20 +348,31 @@ func (dk *DpsDeathknight) RotationAction_ResetToDndMain(sim *core.Simulation, ta
 
 // Custom PS callback for tracking recasts for pestilence disease sync
 func (dk *DpsDeathknight) RotationAction_PS_Custom(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
-	casted := dk.RotationActionCallback_PS(sim, target, s)
+	if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
+		dk.afterGargoyleSequence(sim)
+		return true
+	}
+	casted := dk.CastPlagueStrike(sim, target)
 	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
+
 	dk.ur.recastedBP = casted && advance
+	s.ConditionalAdvance(casted && advance)
 	return casted
 }
 
 // Custom IT callback for tracking recasts for pestilence disease sync
 func (dk *DpsDeathknight) RotationAction_IT_Custom(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
-	casted := dk.RotationActionCallback_IT(sim, target, s)
+	if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
+		dk.afterGargoyleSequence(sim)
+		return true
+	}
+	casted := dk.CastIcyTouch(sim, target)
 	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
 	if casted && advance {
 		dk.ur.recastedFF = true
 		dk.ur.syncTimeFF = 0
 	}
+	s.ConditionalAdvance(casted && advance)
 	return casted
 }
 
@@ -400,6 +411,12 @@ func (dk *DpsDeathknight) RotationAction_DiseaseClipCheck(dot *core.Dot, gracePe
 		if nextTickAt > sim.CurrentTime && (nextTickAt < sim.CurrentTime+gracePeriod || nextTickAt < sim.CurrentTime+400*time.Millisecond) {
 			// Delay disease for next tick
 			dk.LastOutcome = core.OutcomeMiss
+
+			if dk.uhGargoyleCheck(sim, target, nextTickAt-sim.CurrentTime+50*time.Millisecond) {
+				dk.afterGargoyleSequence(sim)
+				return true
+			}
+
 			dk.WaitUntil(sim, nextTickAt+50*time.Millisecond)
 		} else {
 			dk.WaitUntil(sim, sim.CurrentTime)

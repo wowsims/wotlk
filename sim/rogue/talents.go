@@ -1,6 +1,7 @@
 package rogue
 
 import (
+	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -25,7 +26,7 @@ func (rogue *Rogue) ApplyTalents() {
 	rogue.AddStat(stats.ArmorPenetration, core.ArmorPenPerPercentArmor*3*float64(rogue.Talents.SerratedBlades))
 
 	if rogue.Talents.DualWieldSpecialization > 0 {
-		rogue.AutoAttacks.OHEffect.BaseDamage.Calculator = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, 1+0.1*float64(rogue.Talents.DualWieldSpecialization), true)
+		rogue.AutoAttacks.OHEffect.BaseDamage.Calculator = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, 1+0.1*float64(rogue.Talents.DualWieldSpecialization), 1.0, true)
 	}
 
 	if rogue.Talents.Deadliness > 0 {
@@ -70,6 +71,21 @@ func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, 
 			if sim.RandomFloat("RelentlessStrikes") < 0.04*float64(numPoints) {
 				rogue.AddEnergy(sim, 25, relentlessStrikesMetrics)
 			}
+		}
+	}
+}
+
+func (rogue *Rogue) makeBuilderCastModifier() func(*core.Simulation, *core.Spell, *core.Cast) {
+	costMultiplier := 1.0
+	if rogue.HasSetBonus(ItemSetBonescythe, 4) {
+		costMultiplier -= 0.05
+	}
+	return func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+		cast.Cost *= costMultiplier
+		cast.Cost = math.Ceil(cast.Cost)
+		if rogue.DeathmantleProcAura.IsActive() {
+			cast.Cost = 0
+			rogue.DeathmantleProcAura.Deactivate(sim)
 		}
 	}
 }

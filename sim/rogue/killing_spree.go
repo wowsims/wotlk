@@ -1,39 +1,47 @@
 package rogue
 
 import (
+	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-func (rogue *Rogue) makeKillingSpreeAttackSpell() *core.Spell {
-	baseEffectMH := core.SpellEffect{
-		ProcMask:         core.ProcMaskMeleeMHSpecial,
+func (rogue *Rogue) makeKillingSpreedWeaponSwingEffect(isMh bool) core.SpellEffect {
+	var procMask core.ProcMask
+	var baseMultiplier float64
+	var hand core.Hand
+	if isMh {
+		procMask = core.ProcMaskMeleeMHSpecial
+		baseMultiplier = 1
+		hand = core.MainHand
+	} else {
+		procMask = core.ProcMaskMeleeOHSpecial
+		baseMultiplier = 1 + 0.1*float64(rogue.Talents.DualWieldSpecialization)
+		hand = core.OffHand
+	}
+	return core.SpellEffect{
+		ProcMask:         procMask,
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
-		BaseDamage:       core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 0, 1, true),
-		OutcomeApplier:   rogue.OutcomeFuncMeleeWeaponSpecialHitAndCrit(rogue.MeleeCritMultiplier(true, true)),
+		BaseDamage:       core.BaseDamageConfigMeleeWeapon(hand, true, 0, baseMultiplier, 1, true),
+		OutcomeApplier:   rogue.OutcomeFuncMeleeWeaponSpecialHitAndCrit(rogue.MeleeCritMultiplier(isMh, false)),
 	}
-	baseEffectMH.Target = rogue.CurrentTarget
-	baseEffectOH := core.SpellEffect{
-		ProcMask:         core.ProcMaskMeleeOHSpecial,
-		DamageMultiplier: 1,
-		ThreatMultiplier: 1,
-		BaseDamage:       core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 0, 1+0.05*float64(rogue.Talents.DualWieldSpecialization), true),
-		OutcomeApplier:   rogue.OutcomeFuncMeleeWeaponSpecialHitAndCrit(rogue.MeleeCritMultiplier(true, true)),
-	}
-	baseEffectOH.Target = rogue.CurrentTarget
-	killingSpreeAttackSpell := rogue.GetOrRegisterSpell(core.SpellConfig{
+}
+func (rogue *Rogue) registerKillingSpreeSpell() {
+	mhWeaponSwing := rogue.GetOrRegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 51690, Tag: 1},
 		SpellSchool:  core.SpellSchoolPhysical,
 		Flags:        core.SpellFlagMeleeMetrics,
-		ApplyEffects: core.ApplyEffectFuncDamageMultiple([]core.SpellEffect{baseEffectMH, baseEffectOH}),
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(rogue.makeKillingSpreedWeaponSwingEffect(true)),
 	})
-	return killingSpreeAttackSpell
-}
-func (rogue *Rogue) registerKillingSpreeSpell() {
-	attackSpell := rogue.makeKillingSpreeAttackSpell()
+	ohWeaponSwing := rogue.GetOrRegisterSpell(core.SpellConfig{
+		ActionID:     core.ActionID{SpellID: 51690, Tag: 2},
+		SpellSchool:  core.SpellSchoolPhysical,
+		Flags:        core.SpellFlagMeleeMetrics,
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(rogue.makeKillingSpreedWeaponSwingEffect(false)),
+	})
 	rogue.KillingSpreeAura = rogue.RegisterAura(core.Aura{
 		Label:    "Killing Spree",
 		ActionID: core.ActionID{SpellID: 51690},
@@ -43,13 +51,21 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 			// This first attack could/should? be implemented as an immediate tick
 			// but there is currently an issue causing the periodic action
 			// to only fire once when this flag is set
-			attackSpell.Cast(sim, rogue.CurrentTarget)
+			mhWeaponSwing.Cast(sim, rogue.CurrentTarget)
+			ohWeaponSwing.Cast(sim, rogue.CurrentTarget)
 			core.StartPeriodicAction(sim, core.PeriodicActionOptions{
 				Period:          time.Millisecond * 500,
 				NumTicks:        4,
 				TickImmediately: false,
 				OnAction: func(s *core.Simulation) {
-					attackSpell.Cast(sim, rogue.CurrentTarget)
+					targetCount := sim.GetNumTargets()
+					target := rogue.CurrentTarget
+					if targetCount > 1 {
+						newTargetIndex := int32(math.Ceil(float64(targetCount)*sim.RandomFloat("Killing Spree"))) - 1
+						target = sim.GetTargetUnit(newTargetIndex)
+					}
+					mhWeaponSwing.Cast(sim, target)
+					ohWeaponSwing.Cast(sim, target)
 				},
 			})
 		},

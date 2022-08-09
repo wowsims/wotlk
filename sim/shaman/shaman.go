@@ -179,7 +179,6 @@ func (shaman *Shaman) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 
 	if shaman.Talents.UnleashedRage > 0 {
 		raidBuffs.UnleashedRage = true
-		shaman.AddStat(stats.Expertise, 3*core.ExpertisePerQuarterPercentReduction*float64(shaman.Talents.UnleashedRage))
 	}
 
 	if shaman.Talents.ElementalOath > 0 {
@@ -199,7 +198,10 @@ func (shaman *Shaman) Initialize() {
 	shaman.LightningBoltLO = shaman.newLightningBoltSpell(true)
 	shaman.LavaBurst = shaman.newLavaBurstSpell()
 	shaman.FireNova = shaman.newFireNovaSpell()
-	shaman.registerLightningShieldSpell()
+
+	if shaman.SelfBuffs.Shield == proto.ShamanShield_LightningShield {
+		shaman.registerLightningShieldSpell()
+	}
 
 	shaman.ChainLightning = shaman.newChainLightningSpell(false)
 	numHits := core.MinInt32(3, shaman.Env.GetNumTargets())

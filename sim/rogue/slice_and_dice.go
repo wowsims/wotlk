@@ -37,12 +37,7 @@ func (rogue *Rogue) makeSliceAndDice(comboPoints int32) *core.Spell {
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
 			rogue.SliceAndDiceAura.Duration = duration
 			rogue.SliceAndDiceAura.Activate(sim)
-
 			rogue.ApplyFinisher(sim, spell)
-
-			if duration >= sim.GetRemainingDuration() {
-				rogue.doneSND = true
-			}
 		},
 	})
 }

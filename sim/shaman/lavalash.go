@@ -22,6 +22,10 @@ func (shaman *Shaman) newLavaLashSpell() *core.Spell {
 	manaCost := 0.04 * shaman.BaseMana
 
 	flatDamageBonus := core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == VentureCoFlameSlicer, 25, 0)
+	offhandFlametongueImbued := false
+	if shaman.SelfBuffs.ImbueOH == proto.ShamanImbue_FlametongueWeapon || shaman.SelfBuffs.ImbueOH == proto.ShamanImbue_FlametongueWeaponDownrank {
+		offhandFlametongueImbued = true
+	}
 
 	var indomitabilityAura *core.Aura
 	switch shaman.Equip[items.ItemSlotRanged].ID {
@@ -58,12 +62,12 @@ func (shaman *Shaman) newLavaLashSpell() *core.Spell {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeOHSpecial,
 
-			DamageMultiplier: 1 + core.TernaryFloat64(shaman.SelfBuffs.ImbueOH == proto.ShamanImbue_FlametongueWeapon,
+			DamageMultiplier: 1 + core.TernaryFloat64(offhandFlametongueImbued,
 				core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfLavaLash), 0.35, 0.25), 0)*
 				core.TernaryFloat64(shaman.HasSetBonus(ItemSetWorldbreakerBattlegear, 2), 1.2, 1),
 			ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
 
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.OffHand, false, flatDamageBonus, 1, true),
+			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.OffHand, false, flatDamageBonus, 1, 1, true),
 			OutcomeApplier: shaman.OutcomeFuncMeleeSpecialHitAndCrit(shaman.ElementalCritMultiplier(0)),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if !spellEffect.Landed() { //TODO: verify that it actually needs to hit

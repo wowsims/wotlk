@@ -302,11 +302,12 @@ func init() {
 
 		cinderBonusCoeff := 1.2
 
-		consumeSpells := [4]core.ActionID{
+		consumeSpells := [5]core.ActionID{
 			BloodBoilActionID,
 			DeathCoilActionID,
 			FrostStrikeActionID,
 			HowlingBlastActionID,
+			IcyTouchActionID,
 		}
 
 		cinderProcAura := character.GetOrRegisterAura(core.Aura{
