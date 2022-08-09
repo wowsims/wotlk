@@ -27,9 +27,6 @@ func (warrior *Warrior) RegisterShieldBlockCD() {
 		},
 	})
 
-	cooldownDuration := time.Second * 60
-	cooldownDuration -= time.Second * 10 * time.Duration(warrior.Talents.ShieldMastery)
-
 	warrior.ShieldBlock = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
@@ -38,7 +35,7 @@ func (warrior *Warrior) RegisterShieldBlockCD() {
 			DefaultCast: core.Cast{},
 			CD: core.Cooldown{
 				Timer:    warrior.NewTimer(),
-				Duration: cooldownDuration,
+				Duration: time.Second*60 - time.Second*10*time.Duration(warrior.Talents.ShieldMastery),
 			},
 		},
 
@@ -51,9 +48,7 @@ func (warrior *Warrior) RegisterShieldBlockCD() {
 		Spell: warrior.ShieldBlock,
 		Type:  core.CooldownTypeDPS,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return warrior.PseudoStats.CanBlock &&
-				warrior.StanceMatches(DefensiveStance) &&
-				warrior.ShieldBlock.IsReady(sim)
+			return warrior.PseudoStats.CanBlock && warrior.StanceMatches(DefensiveStance)
 		},
 	})
 }
