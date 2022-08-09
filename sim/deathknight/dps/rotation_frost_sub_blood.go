@@ -289,24 +289,6 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Main_Pesti(sim *c
 	}
 }
 
-func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Main_FS_Star(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
-	casted := false
-	if dk.PercentRunicPower() >= 0.95 || (dk.KillingMachineAura.IsActive() && dk.CurrentRunicPower() >= 32.0) {
-		casted = dk.CastFrostStrike(sim, target)
-	} else if dk.RimeAura.IsActive() {
-		casted = dk.CastHowlingBlast(sim, target)
-	} else if dk.CurrentRunicPower() >= 32.0 {
-		casted = dk.CastFrostStrike(sim, target)
-		if !casted {
-			casted = dk.CastHornOfWinter(sim, target)
-		}
-	} else {
-		casted = dk.CastHornOfWinter(sim, target)
-	}
-
-	return casted
-}
-
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Opener_FS_Star(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
 	casted := false
 	if dk.PercentRunicPower() >= 0.95 || (dk.KillingMachineAura.IsActive() && dk.CurrentRunicPower() >= 32.0) {
