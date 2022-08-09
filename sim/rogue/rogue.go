@@ -47,15 +47,16 @@ type Rogue struct {
 	Builder            *core.Spell
 	BuilderComboPoints float64
 
-	Backstab       *core.Spell
-	DeadlyPoison   *core.Spell
-	FanOfKnifes    *core.Spell
-	Hemorrhage     *core.Spell
-	HungerForBlood *core.Spell
-	InstantPoison  [3]*core.Spell
-	Mutilate       *core.Spell
-	Shiv           *core.Spell
-	SinisterStrike *core.Spell
+	Backstab         *core.Spell
+	DeadlyPoison     *core.Spell
+	FanOfKnifes      *core.Spell
+	Hemorrhage       *core.Spell
+	HungerForBlood   *core.Spell
+	InstantPoison    [3]*core.Spell
+	Mutilate         *core.Spell
+	Shiv             *core.Spell
+	SinisterStrike   *core.Spell
+	TricksOfTheTrade *core.Spell
 
 	Envenom      [6]*core.Spell
 	Eviscerate   [6]*core.Spell
@@ -69,15 +70,16 @@ type Rogue struct {
 	DeadlyPoisonDots            []*core.Dot
 	RuptureDot                  *core.Dot
 
-	AdrenalineRushAura  *core.Aura
-	BladeFlurryAura     *core.Aura
-	DeathmantleProcAura *core.Aura
-	EnvenomAura         *core.Aura
-	ExposeArmorAura     *core.Aura
-	HungerForBloodAura  *core.Aura
-	KillingSpreeAura    *core.Aura
-	OverkillAura        *core.Aura
-	SliceAndDiceAura    *core.Aura
+	AdrenalineRushAura   *core.Aura
+	BladeFlurryAura      *core.Aura
+	DeathmantleProcAura  *core.Aura
+	EnvenomAura          *core.Aura
+	ExposeArmorAura      *core.Aura
+	HungerForBloodAura   *core.Aura
+	KillingSpreeAura     *core.Aura
+	OverkillAura         *core.Aura
+	SliceAndDiceAura     *core.Aura
+	TricksOfTheTradeAura *core.Aura
 
 	QuickRecoveryMetrics *core.ResourceMetrics
 
@@ -140,8 +142,8 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerShivSpell()
 	rogue.registerSinisterStrikeSpell()
 	rogue.registerSliceAndDice()
-
 	rogue.registerThistleTeaCD()
+	rogue.registerTricksOfTheTradeSpell()
 
 	rogue.Rotation.UseRupture = true
 	rogue.Rotation.UseEnvenom = false
