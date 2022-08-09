@@ -257,12 +257,12 @@ func (dk *Deathknight) Reset(sim *core.Simulation) {
 	dk.NextCast = nil
 
 	if dk.Inputs.PrecastHornOfWinter {
-		dk.HornOfWinter.CD.Use(sim)
+		dk.HornOfWinter.CD.UsePrePull(sim, 1500*time.Millisecond)
 	}
 }
 
 func (dk *Deathknight) IsFuStrike(spell *core.Spell) bool {
-	return spell == dk.Obliterate.Spell || spell == dk.ScourgeStrike.Spell // || spell == dk.DeathStrike
+	return spell == dk.Obliterate.Spell || spell == dk.ScourgeStrike.Spell || spell == dk.DeathStrike
 }
 
 func (dk *Deathknight) HasMajorGlyph(glyph proto.DeathknightMajorGlyph) bool {
