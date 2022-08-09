@@ -8,10 +8,12 @@ import (
 )
 
 func (dk *DpsDeathknight) setupFrostSubBloodERWOpener() {
+	dk.setupUnbreakableArmorCooldowns()
+
 	dk.Opener.
 		NewAction(dk.RotationActionCallback_IT).
 		NewAction(dk.RotationActionCallback_PS).
-		NewAction(dk.RotationActionCallback_UA).
+		NewAction(dk.RotationActionCallback_UA_SubBlood).
 		NewAction(dk.RotationActionCallback_BT).
 		NewAction(dk.RotationActionCallback_Obli).
 		NewAction(dk.RotationActionCallback_FS).
@@ -38,13 +40,15 @@ func (dk *DpsDeathknight) setupFrostSubBloodERWOpener() {
 }
 
 func (dk *DpsDeathknight) setupFrostSubBloodNoERWOpener() {
+	dk.setupUnbreakableArmorCooldowns()
+
 	dk.Opener.
 		NewAction(dk.RotationActionCallback_IT).
 		NewAction(dk.RotationActionCallback_PS).
 		NewAction(dk.RotationActionCallback_Obli).
 		NewAction(dk.RotationActionCallback_BS).
 		NewAction(dk.RotationActionCallback_BT).
-		NewAction(dk.RotationActionCallback_UA).
+		NewAction(dk.RotationActionCallback_UA_SubBlood).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti).
 		NewAction(dk.RotationActionCallback_FS).
 		NewAction(dk.RotationActionCallback_RD).
@@ -287,6 +291,8 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_PrioRotation(sim 
 									if dk.CanUnbreakableArmor(sim) && currFrostRunes == 0 {
 										casted = dk.CastUnbreakableArmor(sim, target)
 										if casted {
+											dk.castAllMajorCooldowns(sim)
+
 											dk.fr.oblitCount = 0
 											dk.fr.uaCycle = true
 											dk.NextCast = dk.Pestilence
@@ -317,6 +323,8 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_PrioRotation(sim 
 							if dk.CanUnbreakableArmor(sim) && currFrostRunes == 0 {
 								casted = dk.CastUnbreakableArmor(sim, target)
 								if casted {
+									dk.castAllMajorCooldowns(sim)
+
 									dk.fr.oblitCount = 0
 									dk.fr.uaCycle = true
 									dk.NextCast = dk.Pestilence
