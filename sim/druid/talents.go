@@ -69,9 +69,11 @@ func (druid *Druid) ApplyTalents() {
 }
 
 func (druid *Druid) setupNaturesGrace() {
-	if !druid.Talents.NaturesGrace {
+	// effect is now : spell cast speed +20% for 3s
+	if druid.Talents.NaturesGrace < 1 {
 		return
 	}
+	// 1/3 de chance de proc par point de talent.
 
 	druid.NaturesGraceProcAura = druid.RegisterAura(core.Aura{
 		Label:    "Natures Grace Proc",

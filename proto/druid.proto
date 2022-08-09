@@ -13,7 +13,7 @@ message DruidTalents {
 	int32 natures_majesty = 4;
 	int32 improved_moonfire = 5;
 	int32 brambles = 6;
-	bool natures_grace = 7;
+	int32 natures_grace = 7;
 	bool natures_splendor = 8;
 	int32 natures_reach = 9;
 	int32 vengeance = 10;
