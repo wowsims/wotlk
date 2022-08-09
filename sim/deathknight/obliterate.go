@@ -82,11 +82,6 @@ func (dk *Deathknight) registerObliterateSpell() {
 		if sim.RandomFloat("Rime") < dk.rimeHbChanceProc() {
 			dk.RimeAura.Activate(sim)
 		}
-
-		// KM Consume after OH
-		if spellEffect.Landed() && dk.KillingMachineAura.IsActive() {
-			dk.KillingMachineAura.Deactivate(sim)
-		}
 	})
 	dk.ObliterateOhHit = dk.newObliterateHitSpell(false, nil)
 	dk.Obliterate = dk.ObliterateMhHit

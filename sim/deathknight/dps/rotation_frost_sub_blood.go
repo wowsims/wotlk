@@ -28,6 +28,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_PrioRotation(sim 
 	frAt := dk.NormalSpentFrostRuneReadyAt(sim)
 	uhAt := dk.NormalSpentUnholyRuneReadyAt(sim)
 	obAt := core.MaxDuration(frAt, uhAt)
+	fsCost := float64(core.RuneCost(dk.FrostStrike.CurCast.Cost).RunicPower())
 
 	if dk.NextCast == dk.Pestilence || (ff && bp && sim.CurrentTime+gcd > fbAt) {
 		casted := dk.CastPestilence(sim, target)
@@ -126,15 +127,15 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_PrioRotation(sim 
 		}
 		return casted
 	} else if sim.CurrentTime+gcd < obAt {
-		if dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
-			return dk.CastHowlingBlast(sim, target)
-		} else if dk.KillingMachineAura.IsActive() {
+		if dk.CanFrostStrike(sim) && dk.KillingMachineAura.IsActive() {
 			return dk.CastFrostStrike(sim, target)
-		} else if dk.CurrentRunicPower() > 100.0 {
-			return dk.CastFrostStrike(sim, target)
-		} else if dk.RimeAura.IsActive() {
+		} else if dk.CanHowlingBlast(sim) && dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
 			return dk.CastHowlingBlast(sim, target)
-		} else if dk.CurrentRunicPower()-float64(core.RuneCost(dk.FrostStrike.CurCast.Cost).RunicPower()) > 14.0 {
+		} else if dk.CanFrostStrike(sim) && dk.CurrentRunicPower() > 100.0 {
+			return dk.CastFrostStrike(sim, target)
+		} else if dk.CanHowlingBlast(sim) && dk.RimeAura.IsActive() {
+			return dk.CastHowlingBlast(sim, target)
+		} else if dk.CanFrostStrike(sim) && dk.CurrentRunicPower() > 2.0*(fsCost-dk.fr.oblitRPRegen) {
 			return dk.CastFrostStrike(sim, target)
 		} else {
 			return dk.CastHornOfWinter(sim, target)
@@ -153,19 +154,20 @@ func (dk *DpsDeathknight) setupFrostSubBloodERWOpener() {
 		NewAction(dk.RotationActionCallback_UA_Frost).
 		NewAction(dk.RotationActionCallback_BT).
 		NewAction(dk.RotationActionCallback_Obli).
-		NewAction(dk.RotationActionCallback_FS).
+		NewAction(dk.RotationActionCallback_FS_KM).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti).
 		NewAction(dk.RotationActionCallback_ERW).
 		NewAction(dk.RotationActionCallback_Obli).
+		NewAction(dk.RotationActionCallback_FS_KM).
 		NewAction(dk.RotationActionCallback_Obli).
+		NewAction(dk.RotationActionCallback_FS_KM).
 		NewAction(dk.RotationActionCallback_Obli).
 		NewAction(dk.RotationActionCallback_FS).
 		NewAction(dk.RotationActionCallback_RD).
 		NewAction(dk.RotationActionCallback_FS).
-		NewAction(dk.RotationActionCallback_FS).
-		NewAction(dk.RotationActionCallback_FS).
 		NewAction(dk.RotationActionCallback_HW).
 		NewAction(dk.RotationActionCallback_Obli).
+		NewAction(dk.RotationActionCallback_FS_KM).
 		NewAction(dk.RotationActionCallback_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti).
 		NewAction(dk.RotationActionCallback_FS).
@@ -289,6 +291,24 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Main_Pesti(sim *c
 	}
 }
 
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Main_FS_Star(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
+	casted := false
+	if dk.PercentRunicPower() >= 0.95 || (dk.KillingMachineAura.IsActive() && dk.CurrentRunicPower() >= 32.0) {
+		casted = dk.CastFrostStrike(sim, target)
+	} else if dk.RimeAura.IsActive() {
+		casted = dk.CastHowlingBlast(sim, target)
+	} else if dk.CurrentRunicPower() >= 32.0 {
+		casted = dk.CastFrostStrike(sim, target)
+		if !casted {
+			casted = dk.CastHornOfWinter(sim, target)
+		}
+	} else {
+		casted = dk.CastHornOfWinter(sim, target)
+	}
+
+	return casted
+}
+
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Opener_FS_Star(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
 	casted := false
 	if dk.PercentRunicPower() >= 0.95 || (dk.KillingMachineAura.IsActive() && dk.CurrentRunicPower() >= 32.0) {
@@ -308,5 +328,17 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Opener_FS_Star(si
 		s.Advance()
 	}
 
+	return casted
+}
+
+func (dk *DpsDeathknight) RotationActionCallback_FS_KM(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
+	casted := false
+	if dk.KillingMachineAura.IsActive() {
+		casted = dk.CastFrostStrike(sim, target)
+	} else {
+		casted = dk.CastHornOfWinter(sim, target)
+	}
+
+	s.Advance()
 	return casted
 }
