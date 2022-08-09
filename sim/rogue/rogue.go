@@ -83,6 +83,7 @@ type Rogue struct {
 
 	QuickRecoveryMetrics *core.ResourceMetrics
 
+	builderCastModifier        func(*core.Simulation, *core.Spell, *core.Cast)
 	finishingMoveEffectApplier func(sim *core.Simulation, numPoints int32)
 }
 
@@ -169,6 +170,7 @@ func (rogue *Rogue) Initialize() {
 	if rogue.Rotation.UseEnvenom {
 		rogue.registerEnvenom()
 	}
+	rogue.builderCastModifier = rogue.makeBuilderCastModifier()
 	rogue.finishingMoveEffectApplier = rogue.makeFinishingMoveEffectApplier()
 	rogue.energyPerSecondAvg = (core.EnergyPerTick*rogue.EnergyTickMultiplier)/core.EnergyTickDuration.Seconds() + 5.0
 	rogue.DelayDPSCooldownsForArmorDebuffs()

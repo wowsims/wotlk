@@ -42,6 +42,20 @@ var ItemSetShadowblades = core.NewItemSet(core.ItemSet{
 	},
 })
 
+var ItemSetBonescythe = core.NewItemSet(core.ItemSet{
+	Name: "Bonescythe Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Increases the damage dealt by your Rupture by 10%
+			// Handled in rupture.go
+		},
+		4: func(agent core.Agent) {
+			// Reduce the Energy cost of your Combo Moves by 5%
+			// Handled in the builder cast modifier
+		},
+	},
+})
+
 var ItemSetAssassination = core.NewItemSet(core.ItemSet{
 	Name: "Assassination Armor",
 	Bonuses: map[int32]core.ApplyEffect{
