@@ -195,6 +195,90 @@ func (shaman *Shaman) ApplyFlametongueImbue(mh bool, oh bool) {
 	})
 }
 
+func (shaman *Shaman) newFlametongueDownrankImbueSpell(isMH bool) *core.Spell {
+	effect := core.SpellEffect{
+		ProcMask:            core.ProcMaskEmpty,
+		BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
+		DamageMultiplier:    1,
+		ThreatMultiplier:    1, // TODO: add spirit weapons modifier when that's fixed
+		OutcomeApplier:      shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
+	}
+
+	if isMH {
+		if weapon := shaman.GetMHWeapon(); weapon != nil {
+			baseDamage := weapon.SwingSpeed * 64
+			effect.BaseDamage = core.BaseDamageConfigMagic(baseDamage, baseDamage, (0.1 / 2.6 * weapon.SwingSpeed))
+		}
+	} else {
+		if weapon := shaman.GetOHWeapon(); weapon != nil {
+			baseDamage := weapon.SwingSpeed * 64
+			effect.BaseDamage = core.BaseDamageConfigMagic(baseDamage, baseDamage, (0.1 / 2.6 * weapon.SwingSpeed))
+		}
+	}
+
+	return shaman.RegisterSpell(core.SpellConfig{
+		ActionID:     core.ActionID{SpellID: 58789},
+		SpellSchool:  core.SpellSchoolFire,
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
+	})
+}
+
+func (shaman *Shaman) ApplyFlametongueDownrankImbue(mh bool, oh bool) {
+	if !mh && !oh {
+		return
+	}
+
+	imbueCount := 1.0
+	spBonus := 186.0
+	spMod := 1.0 + 0.1*float64(shaman.Talents.ElementalWeapons)
+	if shaman.HasSetBonus(ItemSetCycloneRegalia, 2) {
+		spBonus += 20.0
+	}
+	if mh && oh { // grant double SP+Crit bonuses for ft/ft (possible bug, but currently working on beta, its unclear)
+		imbueCount += 1.0
+	}
+	shaman.AddStat(stats.SpellPower, spBonus*spMod*imbueCount)
+	if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfFlametongueWeapon) {
+		shaman.AddStat(stats.SpellCrit, 2*core.CritRatingPerCritChance*imbueCount)
+	}
+
+	ftDownrankIcd := core.Cooldown{
+		Timer:    shaman.NewTimer(),
+		Duration: time.Millisecond,
+	}
+
+	mhSpell := shaman.newFlametongueDownrankImbueSpell(true)
+	ohSpell := shaman.newFlametongueDownrankImbueSpell(false)
+
+	shaman.RegisterAura(core.Aura{
+		Label:    "Flametongue Imbue (downranked)",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+				return
+			}
+
+			isMHHit := spellEffect.IsMH()
+			if (isMHHit && !mh) || (!isMHHit && !oh) {
+				return // cant proc if not enchanted
+			}
+			if !ftDownrankIcd.IsReady(sim) {
+				return
+			}
+			ftDownrankIcd.Use(sim)
+
+			if isMHHit {
+				mhSpell.Cast(sim, spellEffect.Target)
+			} else {
+				ohSpell.Cast(sim, spellEffect.Target)
+			}
+		},
+	})
+}
+
 func (shaman *Shaman) newFrostbrandImbueSpell(isMH bool) *core.Spell {
 	return shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 58796},

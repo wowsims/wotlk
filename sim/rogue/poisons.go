@@ -113,6 +113,12 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 				OutcomeApplier:   rogue.OutcomeFuncTickMagicHitAndCrit(rogue.SpellCritMultiplier()),
 			})),
 		})
+		if rogue.HasSetBonus(ItemSetTerrorblade, 2) {
+			metrics := rogue.NewEnergyMetrics(core.ActionID{SpellID: 64914})
+			dot.OnPeriodicDamageDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				rogue.AddEnergy(sim, 1, metrics)
+			}
+		}
 		// Would like to do this for the snapshotting but it also shots the aura
 		//dot.TickEffects = core.TickFuncSnapshot(target, deadlyPoisonTickEffect)
 		rogue.DeadlyPoisonDots = append(rogue.DeadlyPoisonDots, dot)
@@ -197,14 +203,13 @@ func (rogue *Rogue) GetDeadlyPoisonProcChance(mask core.ProcMask) float64 {
 	return 0.3 + 0.04*float64(rogue.Talents.ImprovedPoisons) + rogue.DeadlyPoisonProcChanceBonus
 }
 
-func (rogue *Rogue) GetInstantPoisonProcChance(mask core.ProcMask) float64 {
-	if mask.Matches(core.ProcMaskMeleeMH) && rogue.Options.MhImbue == proto.Rogue_Options_InstantPoison {
-		return (rogue.GetMHWeapon().SwingSpeed * 8.57 * (1 + float64(rogue.Talents.ImprovedPoisons)*0.1 + rogue.InstantPoisonProcChanceBonus)) / 60
-	}
-	if mask.Matches(core.ProcMaskMeleeOH) && rogue.Options.OhImbue == proto.Rogue_Options_InstantPoison {
-		return (rogue.GetOHWeapon().SwingSpeed * 8.57 * (1 + float64(rogue.Talents.ImprovedPoisons)*0.1 + rogue.InstantPoisonProcChanceBonus)) / 60
-	}
-	return 0.0
+func (rogue *Rogue) UpdateInstantPoisonPPM(bonusChance float64) {
+	procMask := core.GetMeleeProcMaskForHands(
+		rogue.Options.MhImbue == proto.Rogue_Options_InstantPoison,
+		rogue.Options.OhImbue == proto.Rogue_Options_InstantPoison)
+
+	ppm := 8.57 * (1 + float64(rogue.Talents.ImprovedPoisons)*0.1 + bonusChance)
+	rogue.InstantPoisonPPMM = rogue.AutoAttacks.NewPPMManager(ppm, procMask)
 }
 
 func (rogue *Rogue) applyInstantPoison() {
@@ -215,7 +220,7 @@ func (rogue *Rogue) applyInstantPoison() {
 	if procMask == core.ProcMaskUnknown {
 		return
 	}
-
+	rogue.UpdateInstantPoisonPPM(0)
 	rogue.RegisterAura(core.Aura{
 		Label:    "Instant Poison",
 		Duration: core.NeverExpires,
@@ -226,10 +231,9 @@ func (rogue *Rogue) applyInstantPoison() {
 			if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(procMask) {
 				return
 			}
-			if sim.RandomFloat("Instant Poison") > rogue.GetInstantPoisonProcChance(procMask) {
-				return
+			if rogue.InstantPoisonPPMM.Proc(sim, spellEffect.ProcMask, "Instant Poison") {
+				rogue.InstantPoison[0].Cast(sim, spellEffect.Target)
 			}
-			rogue.InstantPoison[0].Cast(sim, spellEffect.Target)
 		},
 	})
 }

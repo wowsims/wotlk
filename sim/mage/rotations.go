@@ -35,13 +35,42 @@ func (mage *Mage) tryUseGCD(sim *core.Simulation) {
 	}
 }
 
+// 4 ABs used < x always fish for AM
+// 4 ABs used > y always cast AM as soon as barrage procs
 func (mage *Mage) doArcaneRotation(sim *core.Simulation) *core.Spell {
-	//Going oom should be visible to person simming, but standard rotation should not oom with reasonable evocate/gem usage
 	numStacks := mage.ArcaneBlastAura.GetStacks()
-	if mage.Rotation.MinBlastBeforeMissiles > numStacks || !mage.MissileBarrageAura.IsActive() {
-		return mage.ArcaneBlast
+
+	mage.manaTracker.Update(sim, &mage.Character)
+
+	if sim.GetRemainingDuration() < 10*time.Second {
+		if mage.manaTracker.ProjectedRemainingMana(sim, &mage.Character) > mage.manaTracker.ProjectedManaCost(sim, &mage.Character) {
+			if mage.Character.CurrentMana() < mage.ArcaneBlast.CurCast.Cost {
+				return mage.ArcaneMissiles
+			} else {
+				return mage.ArcaneBlast
+			}
+		} else {
+			return mage.ArcaneMissiles
+		}
+	}
+
+	if mage.Rotation.MinBlastBeforeMissiles > numStacks {
+		if mage.isMissilesBarrageVisible && mage.Rotation.Num_4StackBlastsToEarlyMissiles < mage.num4CostAB {
+			return mage.ArcaneMissiles
+		} else {
+			return mage.ArcaneBlast
+		}
 	} else {
-		return mage.ArcaneMissiles
+		if mage.extraABsAP > 0 && mage.GetAura("Arcane Power").IsActive() {
+			mage.extraABsAP--
+			return mage.ArcaneBlast
+		}
+
+		if mage.isMissilesBarrageVisible || mage.Rotation.Num_4StackBlastsToMissilesGamble < mage.num4CostAB {
+			return mage.ArcaneMissiles
+		} else {
+			return mage.ArcaneBlast
+		}
 	}
 }
 

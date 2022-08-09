@@ -8,20 +8,17 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (rogue *Rogue) registerExposeArmorSpell() {
-	baseCost := 25.0
+var ExposeArmorActionID = core.ActionID{SpellID: 8647}
+
+func (rogue *Rogue) makeExposeArmor(comboPoints int32) *core.Spell {
+	baseCost := 25.0 - float64(rogue.Talents.ImprovedExposeArmor)*5
 	refundAmount := 0.4 * float64(rogue.Talents.QuickRecovery)
-
-	rogue.ExposeArmorAura = core.ExposeArmorAura(rogue.CurrentTarget, rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfExposeArmor))
-
-	rogue.ExposeArmor = rogue.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 26866, Tag: 5},
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics | rogue.finisherFlags(),
-
+	return rogue.RegisterSpell(core.SpellConfig{
+		ActionID:     ExposeArmorActionID.WithTag(comboPoints),
+		SpellSchool:  core.SpellSchoolPhysical,
+		Flags:        core.SpellFlagMeleeMetrics | rogue.finisherFlags(),
 		ResourceType: stats.Energy,
 		BaseCost:     baseCost,
-
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost,
@@ -30,18 +27,15 @@ func (rogue *Rogue) registerExposeArmorSpell() {
 			ModifyCast:  rogue.applyDeathmantle,
 			IgnoreHaste: true,
 		},
-
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeMHSpecial,
 			ThreatMultiplier: 1,
 			OutcomeApplier:   rogue.OutcomeFuncMeleeSpecialHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
+					rogue.ExposeArmorAura.Duration = rogue.exposeArmorDurations[comboPoints]
 					rogue.ExposeArmorAura.Activate(sim)
 					rogue.ApplyFinisher(sim, spell)
-					if sim.GetRemainingDuration() <= time.Second*30 {
-						rogue.doneEA = true
-					}
 				} else {
 					if refundAmount > 0 {
 						rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.QuickRecoveryMetrics)
@@ -52,6 +46,23 @@ func (rogue *Rogue) registerExposeArmorSpell() {
 	})
 }
 
-func (rogue *Rogue) MaintainingExpose(target *core.Unit) bool {
-	return !rogue.doneEA && (rogue.Talents.ImprovedExposeArmor == 2 || !target.HasActiveAura(core.SunderArmorAuraLabel))
+func (rogue *Rogue) registerExposeArmorSpell() {
+	rogue.ExposeArmorAura = core.ExposeArmorAura(rogue.CurrentTarget, rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfExposeArmor))
+	durationBonus := core.TernaryDuration(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfExposeArmor), time.Second*12, 0)
+	rogue.exposeArmorDurations = [6]time.Duration{
+		0,
+		time.Second*6 + durationBonus,
+		time.Second*12 + durationBonus,
+		time.Second*18 + durationBonus,
+		time.Second*24 + durationBonus,
+		time.Second*30 + durationBonus,
+	}
+	rogue.ExposeArmor = [6]*core.Spell{
+		nil,
+		rogue.makeExposeArmor(1),
+		rogue.makeExposeArmor(2),
+		rogue.makeExposeArmor(3),
+		rogue.makeExposeArmor(4),
+		rogue.makeExposeArmor(5),
+	}
 }

@@ -7,6 +7,69 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+var ItemSetTerrorblade = core.NewItemSet(core.ItemSet{
+	Name: "Terrorblade Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Your Deadly Poison causes you to gain 1 energy each time it deals damage
+			// Handled in poisons.go
+		},
+		4: func(agent core.Agent) {
+			// Increases the damage done by your Rupture by 20%
+			// Handled in rupture.go
+		},
+	},
+})
+
+var ItemSetShadowblades = core.NewItemSet(core.ItemSet{
+	Name: "Shadowblade's Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Your Tricks of the Trade now grants you 15 energy instead of costing energy.
+			// Handled in tricks_of_the_trade.go.
+		},
+		4: func(agent core.Agent) {
+			// Gives your melee finishing moves a 13% chance to add 3 combo points to your target.
+			actionID := core.ActionID{SpellID: 70803}
+			rogue := agent.(RogueAgent).GetRogue()
+			metrics := rogue.NewComboPointMetrics(actionID)
+			rogue.RegisterAura(core.Aura{
+				Label:    "Shadowblade's 4pc",
+				Duration: core.NeverExpires,
+				OnReset: func(aura *core.Aura, sim *core.Simulation) {
+					aura.Activate(sim)
+				},
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+					if !spellEffect.Landed() {
+						return
+					}
+					if !spell.Flags.Matches(SpellFlagFinisher) {
+						return
+					}
+					if sim.RandomFloat("Shadowblades") > 0.13 {
+						return
+					}
+					rogue.AddComboPoints(sim, 3, metrics)
+				},
+			})
+		},
+	},
+})
+
+var ItemSetBonescythe = core.NewItemSet(core.ItemSet{
+	Name: "Bonescythe Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Increases the damage dealt by your Rupture by 10%
+			// Handled in rupture.go
+		},
+		4: func(agent core.Agent) {
+			// Reduce the Energy cost of your Combo Moves by 5%
+			// Handled in the builder cast modifier
+		},
+	},
+})
+
 var ItemSetAssassination = core.NewItemSet(core.ItemSet{
 	Name: "Assassination Armor",
 	Bonuses: map[int32]core.ApplyEffect{

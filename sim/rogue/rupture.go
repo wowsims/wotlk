@@ -17,13 +17,11 @@ func (rogue *Rogue) makeRupture(comboPoints int32) *core.Spell {
 	baseCost := RuptureEnergyCost
 
 	return rogue.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48672, Tag: comboPoints},
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreResists | rogue.finisherFlags(),
-
+		ActionID:     core.ActionID{SpellID: 48672, Tag: comboPoints},
+		SpellSchool:  core.SpellSchoolPhysical,
+		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreResists | rogue.finisherFlags(),
 		ResourceType: stats.Energy,
 		BaseCost:     baseCost,
-
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost,
@@ -32,7 +30,6 @@ func (rogue *Rogue) makeRupture(comboPoints int32) *core.Spell {
 			ModifyCast:  rogue.applyDeathmantle,
 			IgnoreHaste: true,
 		},
-
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeMHSpecial,
 			DamageMultiplier: 1,
@@ -84,6 +81,8 @@ func (rogue *Rogue) registerRupture() {
 			ProcMask: core.ProcMaskPeriodicDamage,
 			DamageMultiplier: 1 +
 				0.15*float64(rogue.Talents.BloodSpatter) +
+				core.TernaryFloat64(rogue.HasSetBonus(ItemSetBonescythe, 2), 0.1, 0) +
+				core.TernaryFloat64(rogue.HasSetBonus(ItemSetTerrorblade, 4), 0.2, 0) +
 				0.1*float64(rogue.Talents.SerratedBlades),
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,

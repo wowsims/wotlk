@@ -41,7 +41,7 @@ export const FrostTalents = {
 export const FrostUnholyTalents = {
 	name: 'Frost UH',
 	data: SavedTalents.create({
-		talentsString: '01-32002350351203012300033101351-230200305003',
+		talentsString: '-32002350352203012300033101351-230200305003',
 		glyphs: Glyphs.create({
 			major1: DeathknightMajorGlyph.GlyphOfObliterate,
 			major2: DeathknightMajorGlyph.GlyphOfFrostStrike,

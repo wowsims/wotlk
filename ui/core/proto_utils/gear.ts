@@ -43,7 +43,7 @@ export class Gear {
      *
      * Checks for validity and removes/exchanges items/gems as needed.
      */
-    withEquippedItem(newSlot: ItemSlot, newItem: EquippedItem | null): Gear {
+    withEquippedItem(newSlot: ItemSlot, newItem: EquippedItem | null, canDualWield2H: boolean): Gear {
         // Create a new identical set of gear
         const newInternalGear = this.asMap();
 
@@ -70,14 +70,14 @@ export class Gear {
         // Actually assign the new item.
         newInternalGear[newSlot] = newItem;
 
-		// Check for valid weapon combos.
-		// if (!validWeaponCombo(newInternalGear[ItemSlot.ItemSlotMainHand]?.item, newInternalGear[ItemSlot.ItemSlotOffHand]?.item)) {
-		// 	if (newSlot == ItemSlot.ItemSlotMainHand) {
-		// 		newInternalGear[ItemSlot.ItemSlotOffHand] = null;
-		// 	} else {
-		// 		newInternalGear[ItemSlot.ItemSlotMainHand] = null;
-		// 	}
-		// }
+        // Check for valid weapon combos.
+        if (!validWeaponCombo(newInternalGear[ItemSlot.ItemSlotMainHand]?.item, newInternalGear[ItemSlot.ItemSlotOffHand]?.item, canDualWield2H)) {
+          if (newSlot == ItemSlot.ItemSlotOffHand) {
+            newInternalGear[ItemSlot.ItemSlotMainHand] = null;
+          } else {
+            newInternalGear[ItemSlot.ItemSlotOffHand] = null;
+          }
+        }
 
         return new Gear(newInternalGear);
     }
@@ -156,7 +156,7 @@ export class Gear {
         const headItem = this.getEquippedItem(ItemSlot.ItemSlotHead);
         const metaGem = this.getMetaGem();
         if (headItem && metaGem) {
-            return this.withEquippedItem(ItemSlot.ItemSlotHead, headItem.removeGemsWithId(metaGem.id));
+            return this.withEquippedItem(ItemSlot.ItemSlotHead, headItem.removeGemsWithId(metaGem.id), true);
         } else {
             return this;
         }
@@ -168,12 +168,12 @@ export class Gear {
 
         const wristItem = this.getEquippedItem(ItemSlot.ItemSlotWrist);
         if (wristItem) {
-            curGear = curGear.withEquippedItem(ItemSlot.ItemSlotWrist, wristItem.withGem(null, wristItem.numPossibleSockets - 1));
+            curGear = curGear.withEquippedItem(ItemSlot.ItemSlotWrist, wristItem.withGem(null, wristItem.numPossibleSockets - 1), true);
         }
 
         const handsItem = this.getEquippedItem(ItemSlot.ItemSlotHands);
         if (handsItem) {
-            curGear = curGear.withEquippedItem(ItemSlot.ItemSlotHands, handsItem.withGem(null, handsItem.numPossibleSockets - 1));
+            curGear = curGear.withEquippedItem(ItemSlot.ItemSlotHands, handsItem.withGem(null, handsItem.numPossibleSockets - 1), true);
         }
 
         return curGear;

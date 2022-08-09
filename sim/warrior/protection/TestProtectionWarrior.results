@@ -1,11 +1,11 @@
 character_stats_results: {
  key: "TestProtectionWarrior-CharacterStats-Default"
  value: {
-  final_stats: 710.2700000000001
+  final_stats: 710.27
   final_stats: 513.7
-  final_stats: 1107.6450000000002
-  final_stats: 178.20000000000002
-  final_stats: 138.60000000000002
+  final_stats: 1107.645
+  final_stats: 178.2
+  final_stats: 138.6
   final_stats: 0
   final_stats: 0
   final_stats: 0
@@ -19,9 +19,9 @@ character_stats_results: {
   final_stats: 51
   final_stats: 0
   final_stats: 0
-  final_stats: 2753.8940000000002
+  final_stats: 2753.894
   final_stats: 107
-  final_stats: 1185.2830666666666
+  final_stats: 1185.2830666667
   final_stats: 0
   final_stats: 0
   final_stats: 35
@@ -29,14 +29,14 @@ character_stats_results: {
   final_stats: 0
   final_stats: 0
   final_stats: 16835
-  final_stats: 982.3000000000001
+  final_stats: 982.3
   final_stats: 254.4
   final_stats: 123.95
-  final_stats: 503.2648500000001
-  final_stats: 847.7683333333334
+  final_stats: 503.26485
+  final_stats: 847.7683333333
   final_stats: 244.25
   final_stats: 68
-  final_stats: 18675.450000000004
+  final_stats: 18675.45
   final_stats: 75
   final_stats: 75
   final_stats: 75

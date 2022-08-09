@@ -8,7 +8,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (hunter *Hunter) registerMultiShotSpell() {
+func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
 	baseCost := 0.09 * hunter.BaseMana
 
 	baseEffect := core.SpellEffect{
@@ -62,7 +62,7 @@ func (hunter *Hunter) registerMultiShotSpell() {
 			},
 			IgnoreHaste: true, // Hunter GCD is locked at 1.5s
 			CD: core.Cooldown{
-				Timer:    hunter.NewTimer(),
+				Timer:    timer,
 				Duration: time.Second*10 - core.TernaryDuration(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfMultiShot), time.Second*1, 0),
 			},
 		},

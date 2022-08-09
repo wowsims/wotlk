@@ -154,6 +154,9 @@ message Mage {
 
 		// Arcane Options.
 		int32 min_blast_before_missiles = 2;
+		int32 num_4_stack_blasts_to_missiles_gamble = 8;
+		int32 num_4_stack_blasts_to_early_missiles = 9;
+		int32 extra_blasts_during_first_ap = 10;
 
 		// Fire Options.
 		enum PrimaryFireSpell {
