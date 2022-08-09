@@ -65,6 +65,11 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 				if dk.Talents.ChillOfTheGrave > 0 && spellEffect.Outcome.Matches(core.OutcomeLanded) {
 					dk.AddRunicPower(sim, rpBonus, spell.RunicPowerMetrics())
 				}
+
+				// KM Consume after OH
+				if spellEffect.Landed() && dk.KillingMachineAura.IsActive() {
+					dk.KillingMachineAura.Deactivate(sim)
+				}
 			},
 		}, true),
 	})
