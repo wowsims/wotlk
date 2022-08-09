@@ -7,6 +7,20 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+var ItemSetTerrorblade = core.NewItemSet(core.ItemSet{
+	Name: "Terrorblade Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Your Deadly Poison causes you to gain 1 energy each time it deals damage
+			// Handled in poisons.go
+		},
+		4: func(agent core.Agent) {
+			// Increases the damage done by your Rupture by 20%
+			// Handled in rupture.go
+		},
+	},
+})
+
 var ItemSetShadowblades = core.NewItemSet(core.ItemSet{
 	Name: "Shadowblade's Battlegear",
 	Bonuses: map[int32]core.ApplyEffect{

@@ -82,6 +82,7 @@ func (rogue *Rogue) registerRupture() {
 			DamageMultiplier: 1 +
 				0.15*float64(rogue.Talents.BloodSpatter) +
 				core.TernaryFloat64(rogue.HasSetBonus(ItemSetBonescythe, 2), 0.1, 0) +
+				core.TernaryFloat64(rogue.HasSetBonus(ItemSetTerrorblade, 4), 0.2, 0) +
 				0.1*float64(rogue.Talents.SerratedBlades),
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
