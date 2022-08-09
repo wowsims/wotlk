@@ -1547,12 +1547,12 @@ export function getEligibleItemSlots(item: Item): Array<ItemSlot> {
 
 // Returns whether the given main-hand and off-hand items can be worn at the
 // same time.
-export function validWeaponCombo(mainHand: Item | null | undefined, offHand: Item | null | undefined): boolean {
+export function validWeaponCombo(mainHand: Item | null | undefined, offHand: Item | null | undefined, canDW2h: boolean): boolean {
     if (mainHand == null || offHand == null) {
         return true;
     }
 
-    if (mainHand.handType == HandType.HandTypeTwoHand) {
+    if (mainHand.handType == HandType.HandTypeTwoHand && !canDW2h) {
         return false;
     }
 

@@ -135,7 +135,7 @@ func (hp *HunterPet) applyFeedingFrenzy() {
 		return
 	}
 
-	multiplier := 1.0 + 0.8*float64(hp.Talents().FeedingFrenzy)
+	multiplier := 1.0 + 0.08*float64(hp.Talents().FeedingFrenzy)
 
 	hp.RegisterResetEffect(func(sim *core.Simulation) {
 		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int) {
