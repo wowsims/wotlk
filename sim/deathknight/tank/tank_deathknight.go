@@ -26,6 +26,8 @@ func RegisterTankDeathknight() {
 type TankDeathknight struct {
 	*deathknight.Deathknight
 
+	btr BloodTankRotation
+
 	Options  proto.TankDeathknight_Options
 	Rotation proto.TankDeathknight_Rotation
 }
@@ -52,6 +54,19 @@ func (dk *TankDeathknight) Initialize() {
 	dk.Deathknight.Initialize()
 }
 
+func (dk *TankDeathknight) SetupRotations() {
+	dk.Opener.Clear()
+	dk.Main.Clear()
+
+	dk.setupBloodTankERWOpener()
+}
+
 func (dk *TankDeathknight) Reset(sim *core.Simulation) {
 	dk.Deathknight.Reset(sim)
+
+	dk.Presence = deathknight.UnsetPresence
+	dk.ChangePresence(sim, deathknight.FrostPresence)
+
+	dk.btr.Reset(sim)
+	dk.SetupRotations()
 }

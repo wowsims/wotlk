@@ -103,7 +103,17 @@ func (dk *DpsDeathknight) Initialize() {
 
 func (dk *DpsDeathknight) Reset(sim *core.Simulation) {
 	dk.Deathknight.Reset(sim)
+
+	dk.Presence = deathknight.UnsetPresence
+
+	if dk.Inputs.StartingPresence == proto.Deathknight_Rotation_Unholy && dk.Talents.SummonGargoyle {
+		dk.ChangePresence(sim, deathknight.UnholyPresence)
+	} else {
+		dk.ChangePresence(sim, deathknight.BloodPresence)
+	}
+
 	dk.fr.Reset(sim)
 	dk.ur.Reset(sim)
+
 	dk.SetupRotations()
 }
