@@ -7,6 +7,41 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+var ItemSetShadowblades = core.NewItemSet(core.ItemSet{
+	Name: "Shadowblade's Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Your Tricks of the Trade now grants you 15 energy instead of costing energy.
+			// Handled in tricks_of_the_trade.go.
+		},
+		4: func(agent core.Agent) {
+			// Gives your melee finishing moves a 13% chance to add 3 combo points to your target.
+			actionID := core.ActionID{SpellID: 70803}
+			rogue := agent.(RogueAgent).GetRogue()
+			metrics := rogue.NewComboPointMetrics(actionID)
+			rogue.RegisterAura(core.Aura{
+				Label:    "Shadowblade's 4pc",
+				Duration: core.NeverExpires,
+				OnReset: func(aura *core.Aura, sim *core.Simulation) {
+					aura.Activate(sim)
+				},
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+					if !spellEffect.Landed() {
+						return
+					}
+					if !spell.Flags.Matches(SpellFlagFinisher) {
+						return
+					}
+					if sim.RandomFloat("Shadowblades") > 0.13 {
+						return
+					}
+					rogue.AddComboPoints(sim, 3, metrics)
+				},
+			})
+		},
+	},
+})
+
 var ItemSetAssassination = core.NewItemSet(core.ItemSet{
 	Name: "Assassination Armor",
 	Bonuses: map[int32]core.ApplyEffect{
