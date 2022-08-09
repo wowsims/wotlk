@@ -8,10 +8,11 @@ import (
 )
 
 type FrostRotation struct {
-	oblitCount   int32
-	missedPesti  bool
-	uaCycle      bool
-	delayUACycle bool
+	oblitCount     int32
+	canBloodStrike bool
+	missedPesti    bool
+	uaCycle        bool
+	delayUACycle   bool
 
 	// CDS
 	hyperSpeedMCD           *core.MajorCooldown
@@ -25,6 +26,7 @@ type FrostRotation struct {
 
 func (fr *FrostRotation) Reset(sim *core.Simulation) {
 	fr.oblitCount = 0
+	fr.canBloodStrike = true
 	fr.missedPesti = false
 	fr.uaCycle = false
 	fr.delayUACycle = false

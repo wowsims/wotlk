@@ -68,8 +68,9 @@ func (dk *Deathknight) RotationActionCallback_ERW(sim *core.Simulation, target *
 
 func (dk *Deathknight) RotationActionCallback_Obli(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
 	casted := dk.CastObliterate(sim, target)
+	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
 
-	s.ConditionalAdvance(casted)
+	s.ConditionalAdvance(casted && advance)
 	return casted
 }
 
