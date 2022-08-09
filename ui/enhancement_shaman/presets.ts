@@ -174,7 +174,7 @@ export const P1_PRESET = {
           "id": 40524,
           "enchant": 44871,
           "gems": [
-            40088
+            40014
           ]
         },
         {
@@ -183,6 +183,7 @@ export const P1_PRESET = {
         },
         {
           "id": 40523,
+          "enchant": 44489,
           "gems": [
             40003,
             40014
@@ -190,9 +191,9 @@ export const P1_PRESET = {
         },
         {
           "id": 40282,
-          "enchant": 60616,
+          "enchant": 44484,
           "gems": [
-            40088,
+            42702,
             0
           ]
         },
