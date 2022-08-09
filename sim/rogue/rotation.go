@@ -68,7 +68,7 @@ func (rogue *Rogue) singleTargetChooseSpell(sim *core.Simulation) *core.Spell {
 	}
 	if rogue.Rotation.MaintainExposeArmor && rogue.ExposeArmorAura.RemainingDuration(sim) <= refreshThreshold {
 		if cp > 0 {
-			return rogue.ExposeArmor
+			return rogue.ExposeArmor[cp]
 		} else {
 			return rogue.Builder
 		}
