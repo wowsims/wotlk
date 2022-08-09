@@ -52,7 +52,7 @@ character_stats_results: {
 dps_results: {
  key: "TestUnholy-AllItems-AustereEarthsiegeDiamond"
  value: {
-  dps: 7712.4744060308
+  dps: 7712.4744060309
   tps: 5451.6115495351
  }
 }
@@ -73,7 +73,7 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-BracingEarthsiegeDiamond"
  value: {
-  dps: 7712.4744060308
+  dps: 7712.4744060309
   tps: 5342.5793185444
  }
 }
@@ -185,14 +185,14 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-EffulgentSkyflareDiamond"
  value: {
-  dps: 7712.4744060308
+  dps: 7712.4744060309
   tps: 5451.6115495351
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-EmberSkyflareDiamond"
  value: {
-  dps: 7712.4744060308
+  dps: 7712.4744060309
   tps: 5451.6115495351
  }
 }
@@ -213,7 +213,7 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-EternalEarthsiegeDiamond"
  value: {
-  dps: 7712.4744060308
+  dps: 7712.4744060309
   tps: 5451.6115495351
  }
 }
@@ -262,14 +262,14 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-ForlornSkyflareDiamond"
  value: {
-  dps: 7712.4744060308
+  dps: 7712.4744060309
   tps: 5451.6115495351
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-ForlornStarflareDiamond"
  value: {
-  dps: 7712.4744060308
+  dps: 7712.4744060309
   tps: 5451.6115495351
  }
 }
@@ -339,7 +339,7 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-InsightfulEarthsiegeDiamond"
  value: {
-  dps: 7712.4744060308
+  dps: 7712.4744060309
   tps: 5451.6115495351
  }
 }
@@ -416,14 +416,14 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-PowerfulEarthshatterDiamond"
  value: {
-  dps: 7712.4744060308
+  dps: 7712.4744060309
   tps: 5451.6115495351
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-PowerfulEarthsiegeDiamond"
  value: {
-  dps: 7712.4744060308
+  dps: 7712.4744060309
   tps: 5451.6115495351
  }
 }
@@ -472,7 +472,7 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-RevitalizingSkyflareDiamond"
  value: {
-  dps: 7712.4744060308
+  dps: 7712.4744060309
   tps: 5451.6115495351
  }
 }
@@ -647,28 +647,28 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-TirelessSkyflareDiamond"
  value: {
-  dps: 7712.4744060308
+  dps: 7712.4744060309
   tps: 5451.6115495351
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-TirelessStarflareDiamond"
  value: {
-  dps: 7712.4744060308
+  dps: 7712.4744060309
   tps: 5451.6115495351
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-TrenchantEarthshatterDiamond"
  value: {
-  dps: 7712.4744060308
+  dps: 7712.4744060309
   tps: 5451.6115495351
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-TrenchantEarthsiegeDiamond"
  value: {
-  dps: 7712.4744060308
+  dps: 7712.4744060309
   tps: 5451.6115495351
  }
 }
