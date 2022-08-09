@@ -25,8 +25,10 @@ func (rogue *Rogue) makeFanOfKnivesWeaponHitEffect(isMH bool) core.SpellEffect {
 		baseDamageConfig = core.BaseDamageConfigMeleeWeapon(core.OffHand, false, 0, 1, weaponMultiplier, false)
 	}
 	return core.SpellEffect{
-		ProcMask:         procMask,
-		DamageMultiplier: 1 + core.TernaryFloat64(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfFanOfKnives), 0.2, 0.0),
+		ProcMask: procMask,
+		DamageMultiplier: 1 +
+			0.02*float64(rogue.Talents.FindWeakness) +
+			core.TernaryFloat64(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfFanOfKnives), 0.2, 0.0),
 		ThreatMultiplier: 1,
 		BaseDamage:       baseDamageConfig,
 		OutcomeApplier:   rogue.OutcomeFuncMeleeSpecialHitAndCrit(rogue.MeleeCritMultiplier(isMH, false)),
@@ -38,13 +40,13 @@ func (rogue *Rogue) registerFanOfKnives() {
 	mhWeaponHitSpell := rogue.RegisterSpell(core.SpellConfig{
 		ActionID:     FanOfKnivesActionID.WithTag(1),
 		SpellSchool:  core.SpellSchoolPhysical,
-		Flags:        core.SpellFlagMeleeMetrics | SpellFlagRogueAbility,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(rogue.makeFanOfKnivesWeaponHitEffect(true)),
 	})
 	ohWeaponHitSpell := rogue.RegisterSpell(core.SpellConfig{
 		ActionID:     FanOfKnivesActionID.WithTag(2),
 		SpellSchool:  core.SpellSchoolPhysical,
-		Flags:        core.SpellFlagMeleeMetrics | SpellFlagRogueAbility,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(rogue.makeFanOfKnivesWeaponHitEffect(false)),
 	})
 	energyCost := 50.0

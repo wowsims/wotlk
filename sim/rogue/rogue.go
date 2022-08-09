@@ -26,10 +26,11 @@ func RegisterRogue() {
 }
 
 const (
-	SpellFlagBuilder      = core.SpellFlagAgentReserved2
-	SpellFlagFinisher     = core.SpellFlagAgentReserved3
-	SpellFlagRogueAbility = SpellFlagBuilder | SpellFlagFinisher | core.SpellFlagAgentReserved1
+	SpellFlagBuilder  = core.SpellFlagAgentReserved2
+	SpellFlagFinisher = core.SpellFlagAgentReserved3
 )
+
+type Plan int
 
 type Rogue struct {
 	core.Character
@@ -38,14 +39,15 @@ type Rogue struct {
 	Options  proto.Rogue_Options
 	Rotation proto.Rogue_Rotation
 
-	energyPerSecondAvg    float64
 	sliceAndDiceDurations [6]time.Duration
 	exposeArmorDurations  [6]time.Duration
 	disabledMCDs          []*core.MajorCooldown
 
-	// Assigned based on rotation, can be SS, Backstab, Hemo, etc
-	Builder            *core.Spell
-	BuilderComboPoints float64
+	// Assigned based on spec and rotation options
+	plan                     Plan
+	Builder                  *core.Spell
+	BuilderComboPoints       float64
+	PredictedEnergyPerSecond float64
 
 	Backstab         *core.Spell
 	DeadlyPoison     *core.Spell
@@ -86,7 +88,6 @@ type Rogue struct {
 
 	CastModifier               func(*core.Simulation, *core.Spell, *core.Cast)
 	finishingMoveEffectApplier func(sim *core.Simulation, numPoints int32)
-	energyPerSecondCalculator  func() float64
 }
 
 func (rogue *Rogue) GetCharacter() *core.Character {
@@ -174,24 +175,24 @@ func (rogue *Rogue) Initialize() {
 	if rogue.Rotation.UseEnvenom {
 		rogue.registerEnvenom()
 	}
+
 	rogue.finishingMoveEffectApplier = rogue.makeFinishingMoveEffectApplier()
-	rogue.energyPerSecondAvg = (core.EnergyPerTick * rogue.EnergyTickMultiplier) / core.EnergyTickDuration.Seconds()
-	rogue.energyPerSecondCalculator = rogue.makeExpectedEnergyPerSecond()
+	rogue.PredictedEnergyPerSecond = (core.EnergyPerTick * rogue.EnergyTickMultiplier) / core.EnergyTickDuration.Seconds()
 	rogue.DelayDPSCooldownsForArmorDebuffs()
 }
 
-func (rogue *Rogue) makeExpectedEnergyPerSecond() func() float64 {
-	// combat potency 20% offhand 15 energy
-	// focused attacks crits restore energy ~2.8/s
-	// relentless strikes 20% finishers restore 25% energy
-	// some set bonuses
-	bonusEnergyPerSecond := float64(rogue.Talents.CombatPotency) * 3 * 0.2 * 1.0 / rogue.AutoAttacks.OH.SwingSpeed
-	bonusEnergyPerSecond += float64(rogue.Talents.FocusedAttacks) / 3.0 * rogue.GetStat(stats.MeleeCrit) * 2.0
-	bonusEnergyPerSecond += float64(rogue.Talents.RelentlessStrikes) / 5.0 * 0.75
-	return func() float64 {
-		return (core.EnergyPerTick*rogue.EnergyTickMultiplier)/core.EnergyTickDuration.Seconds() + bonusEnergyPerSecond
-	}
+func (rogue *Rogue) GetExpectedEnergyPerSecond() float64 {
+	const finishersPerSecond = 1.0 / 6
+	const averageComboPointsSpendOnFinisher = 4.0
+	bonusEnergyPerSecond := float64(rogue.Talents.CombatPotency) * 3 * 0.2 * 1.0 / (rogue.AutoAttacks.OH.SwingSpeed / 1.4)
+	bonusEnergyPerSecond += float64(rogue.Talents.FocusedAttacks)
+	bonusEnergyPerSecond += float64(rogue.Talents.RelentlessStrikes) * 0.04 * 25 * finishersPerSecond * averageComboPointsSpendOnFinisher
+	return (core.EnergyPerTick*rogue.EnergyTickMultiplier)/core.EnergyTickDuration.Seconds() + bonusEnergyPerSecond
+}
 
+func (rogue *Rogue) ApplyEnergyTickMultiplier(multiplier float64) {
+	rogue.EnergyTickMultiplier *= multiplier
+	rogue.PredictedEnergyPerSecond = rogue.GetExpectedEnergyPerSecond()
 }
 
 func (rogue *Rogue) Reset(sim *core.Simulation) {
@@ -199,7 +200,7 @@ func (rogue *Rogue) Reset(sim *core.Simulation) {
 }
 
 func (rogue *Rogue) MeleeCritMultiplier(isMH bool, applyLethality bool) float64 {
-	primaryModifier := rogue.murderMultiplier()
+	primaryModifier := 1.0
 	secondaryModifier := 0.0
 	preyModifier := rogue.preyOnTheWeakMultiplier(rogue.CurrentTarget)
 	if applyLethality {
@@ -210,7 +211,6 @@ func (rogue *Rogue) MeleeCritMultiplier(isMH bool, applyLethality bool) float64 
 }
 func (rogue *Rogue) SpellCritMultiplier() float64 {
 	primaryModifier := rogue.preyOnTheWeakMultiplier(rogue.CurrentTarget)
-	primaryModifier *= rogue.murderMultiplier()
 	return rogue.Character.SpellCritMultiplier(primaryModifier, 0)
 }
 
