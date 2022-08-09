@@ -48,7 +48,7 @@ func (dk *Deathknight) ApplyBloodTalents() {
 	// TODO: Implement
 
 	// Spell Deflection
-	// TODO: Implement
+	//dk.applySpellDeflection()
 
 	// Vendetta
 	// TODO: Implement
@@ -119,6 +119,30 @@ func (dk *Deathknight) applyBladeBarrier() {
 		}
 	}
 }
+
+/*
+func (dk *Deathknight) applySpellDeflection() {
+	if dk.Talents.SpellDeflection == 0 {
+		return
+	}
+
+	damageTakenMult := 0.15 * float64(dk.Talents.SpellDeflection)
+
+	actionID := core.ActionID{SpellID: 55226}
+
+	dk.BladeBarrierAura = dk.RegisterAura(core.Aura{
+		Label:    "Spell Deflection",
+		ActionID: actionID,
+		Duration: core.NeverExpires,
+	})
+
+	dk.onRuneSpendBladeBarrier = func(sim *core.Simulation) {
+		if dk.AllBloodRunesSpent() {
+			dk.BladeBarrierAura.Activate(sim)
+		}
+	}
+}
+*/
 
 func (dk *Deathknight) applyButchery() {
 	if dk.Talents.Butchery == 0 {
