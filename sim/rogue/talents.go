@@ -75,17 +75,30 @@ func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, 
 	}
 }
 
-func (rogue *Rogue) makeBuilderCastModifier() func(*core.Simulation, *core.Spell, *core.Cast) {
+func (rogue *Rogue) makeCastModifier() func(*core.Simulation, *core.Spell, *core.Cast) {
+	builderCostMultiplier := 1.0
 	costMultiplier := 1.0
+	costReduction := 40.0
+	hasDeathmantle := rogue.HasSetBonus(ItemSetDeathmantle, 4)
 	if rogue.HasSetBonus(ItemSetBonescythe, 4) {
-		costMultiplier -= 0.05
+		builderCostMultiplier -= 0.05
 	}
 	return func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+		if spell.Flags.Matches(SpellFlagBuilder) {
+			costMultiplier *= builderCostMultiplier
+		}
+		if spell.Flags.Matches(SpellFlagFinisher) {
+			if hasDeathmantle && rogue.DeathmantleProcAura.IsActive() {
+				cast.Cost = 0
+				rogue.DeathmantleProcAura.Deactivate(sim)
+				return
+			}
+		}
 		cast.Cost *= costMultiplier
 		cast.Cost = math.Ceil(cast.Cost)
-		if rogue.DeathmantleProcAura.IsActive() {
-			cast.Cost = 0
-			rogue.DeathmantleProcAura.Deactivate(sim)
+		if rogue.VanCleefsProcAura.IsActive() {
+			cast.Cost = core.MaxFloat(0, cast.Cost-costReduction)
+			rogue.VanCleefsProcAura.Deactivate(sim)
 		}
 	}
 }

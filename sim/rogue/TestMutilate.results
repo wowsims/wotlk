@@ -87,8 +87,8 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-BonescytheBattlegear"
  value: {
-  dps: 1816.7769441044
-  tps: 1289.9116303141
+  dps: 3996.8507929719
+  tps: 2837.76406301
  }
 }
 dps_results: {
@@ -572,6 +572,13 @@ dps_results: {
  value: {
   dps: 1562.9305057174
   tps: 1109.6806590594
+ }
+}
+dps_results: {
+ key: "TestMutilate-AllItems-VanCleef'sBattlegear"
+ value: {
+  dps: 1768.074675624
+  tps: 1255.333019693
  }
 }
 dps_results: {

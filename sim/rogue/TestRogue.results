@@ -87,8 +87,8 @@ dps_results: {
 dps_results: {
  key: "TestRogue-AllItems-BonescytheBattlegear"
  value: {
-  dps: 2709.6756434302
-  tps: 1923.8697068354
+  dps: 3611.2550418866
+  tps: 2563.9910797395
  }
 }
 dps_results: {
@@ -586,6 +586,13 @@ dps_results: {
  value: {
   dps: 2308.4162849561
   tps: 1638.9755623188
+ }
+}
+dps_results: {
+ key: "TestRogue-AllItems-VanCleef'sBattlegear"
+ value: {
+  dps: 2643.5121939928
+  tps: 1876.8936577349
  }
 }
 dps_results: {

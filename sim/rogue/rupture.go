@@ -10,6 +10,7 @@ import (
 )
 
 const RuptureEnergyCost = 25.0
+const RuptureSpellID = 48672
 
 func (rogue *Rogue) makeRupture(comboPoints int32) *core.Spell {
 	refundAmount := 0.4 * float64(rogue.Talents.QuickRecovery)
@@ -17,7 +18,7 @@ func (rogue *Rogue) makeRupture(comboPoints int32) *core.Spell {
 	baseCost := RuptureEnergyCost
 
 	return rogue.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 48672, Tag: comboPoints},
+		ActionID:     core.ActionID{SpellID: RuptureSpellID, Tag: comboPoints},
 		SpellSchool:  core.SpellSchoolPhysical,
 		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreResists | rogue.finisherFlags(),
 		ResourceType: stats.Energy,
@@ -27,7 +28,7 @@ func (rogue *Rogue) makeRupture(comboPoints int32) *core.Spell {
 				Cost: baseCost,
 				GCD:  time.Second,
 			},
-			ModifyCast:  rogue.applyDeathmantle,
+			ModifyCast:  rogue.CastModifier,
 			IgnoreHaste: true,
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
