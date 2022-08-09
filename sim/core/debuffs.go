@@ -843,14 +843,7 @@ func ScreechAura(target *Unit) *Aura {
 const AtkSpeedReductionAuraTag = "AtkSpdReduction"
 
 func ThunderClapAura(target *Unit, points int32) *Aura {
-	speedMultiplier := 0.9
-	if points == 1 {
-		speedMultiplier = 0.86
-	} else if points == 2 {
-		speedMultiplier = 0.83
-	} else if points == 3 {
-		speedMultiplier = 0.8
-	}
+	speedMultiplier := []float64{0.9, 0.86, 0.83, 0.80}[points]
 	inverseMult := 1 / speedMultiplier
 
 	return target.GetOrRegisterAura(Aura{
@@ -869,14 +862,7 @@ func ThunderClapAura(target *Unit, points int32) *Aura {
 }
 
 func InfectedWoundsAura(target *Unit, points int32) *Aura {
-	speedMultiplier := 1.0
-	if points == 1 {
-		speedMultiplier = 0.94
-	} else if points == 2 {
-		speedMultiplier = 0.86
-	} else if points == 3 {
-		speedMultiplier = 0.8
-	}
+	speedMultiplier := []float64{1.0, 0.94, 0.86, 0.80}[points]
 	inverseMult := 1 / speedMultiplier
 
 	return target.GetOrRegisterAura(Aura{
@@ -897,12 +883,7 @@ func InfectedWoundsAura(target *Unit, points int32) *Aura {
 // Note: Paladin code might apply this as part of their judgement auras instead
 // of using another separate aura.
 func JudgementsOfTheJustAura(target *Unit, points int32) *Aura {
-	speedMultiplier := 1.0
-	if points == 1 {
-		speedMultiplier = 0.9
-	} else if points == 2 {
-		speedMultiplier = 0.8
-	}
+	speedMultiplier := 1.0 - 0.1*float64(points)
 	inverseMult := 1 / speedMultiplier
 
 	return target.GetOrRegisterAura(Aura{
@@ -921,10 +902,7 @@ func JudgementsOfTheJustAura(target *Unit, points int32) *Aura {
 }
 
 func FrostFeverAura(target *Unit, impIcyTouch int32) *Aura {
-	speedMultiplier := 0.86
-	if impIcyTouch > 0 {
-		speedMultiplier -= 0.02 * float64(impIcyTouch)
-	}
+	speedMultiplier := 0.86 - 0.02*float64(impIcyTouch)
 
 	inverseMult := 1 / speedMultiplier
 	return target.GetOrRegisterAura(Aura{

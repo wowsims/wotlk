@@ -49,9 +49,12 @@ type Mage struct {
 	Options  proto.Mage_Options
 	Rotation proto.Mage_Rotation
 
-	isMissilesBarrage bool
-	numCastsDone      int32
-	disabledMCDs      []*core.MajorCooldown
+	isMissilesBarrage        bool
+	isMissilesBarrageVisible bool
+	numCastsDone             int32
+	num4CostAB               int32
+	extraABsAP               int32
+	disabledMCDs             []*core.MajorCooldown
 
 	waterElemental *WaterElemental
 
@@ -168,10 +171,15 @@ func (mage *Mage) Initialize() {
 		mage.IgniteDots = append(mage.IgniteDots, mage.newIgniteDot(mage.Env.GetTargetUnit(i)))
 		mage.LivingBombNotActive.Enqueue(mage.Env.GetTargetUnit(i))
 	}
+
+	mage.num4CostAB = 0
+	mage.extraABsAP = mage.Rotation.ExtraBlastsDuringFirstAp
 }
 
 func (mage *Mage) Reset(_ *core.Simulation) {
 	mage.numCastsDone = 0
+	mage.num4CostAB = 0
+	mage.extraABsAP = mage.Rotation.ExtraBlastsDuringFirstAp
 	mage.manaTracker.Reset()
 	mage.disabledMCDs = nil
 	mage.bonusAMCCCrit = 0

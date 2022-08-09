@@ -31,7 +31,7 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 				Cost: cost,
 				GCD:  time.Second,
 			},
-			ModifyCast:  rogue.applyDeathmantle,
+			ModifyCast:  rogue.CastModifier,
 			IgnoreHaste: true,
 		},
 
@@ -77,11 +77,11 @@ func (rogue *Rogue) registerEnvenom() {
 		ActionID: core.ActionID{SpellID: 57993},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.DeadlyPoisonProcChanceBonus += 0.15
-			rogue.InstantPoisonProcChanceBonus += 0.75
+			rogue.UpdateInstantPoisonPPM(0.75)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.DeadlyPoisonProcChanceBonus -= 0.15
-			rogue.InstantPoisonProcChanceBonus -= 0.75
+			rogue.UpdateInstantPoisonPPM(0.0)
 		},
 	})
 	rogue.Envenom = [6]*core.Spell{

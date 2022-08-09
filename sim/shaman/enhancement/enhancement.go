@@ -67,6 +67,9 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 	enh.ApplyFlametongueImbue(
 		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FlametongueWeapon,
 		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_FlametongueWeapon)
+	enh.ApplyFlametongueDownrankImbue(
+		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FlametongueWeaponDownrank,
+		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_FlametongueWeaponDownrank)
 	enh.ApplyFrostbrandImbue(
 		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FrostbrandWeapon,
 		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_FrostbrandWeapon)

@@ -130,5 +130,23 @@ export const MageRotationConfig = {
 			labelTooltip: 'Minimum arcane blasts to cast before using a missile barrage proc',
 			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
 		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
+			fieldName: 'num4StackBlastsToMissilesGamble',
+			label: 'Switch to AM Gamble At',
+			labelTooltip: 'Number of times mage has cast a 4 stacked arcane blast over the whole fight before gambling on AM when you dont have missile barrage',
+			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
+			fieldName: 'num4StackBlastsToEarlyMissiles',
+			label: 'Switch to ASAP missiles barrage At',
+			labelTooltip: 'Switch to using missiles barrage ASAP after this many 4 cost ABs',
+			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
+			fieldName: 'extraBlastsDuringFirstAp',
+			label: 'Extra blasts during first AP',
+			labelTooltip: 'Number of extra arcane blasts to use during your first cooldown phase with AP',
+			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
+		}),
 	],
 };

@@ -21,10 +21,7 @@ func (dk *Deathknight) registerHornOfWinterSpell() {
 		Duration: duration,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			if dk.Inputs.PrecastHornOfWinter && dk.Inputs.RefreshHornOfWinter {
-				if aura.IsActive() {
-					aura.Deactivate(sim)
-					aura.Activate(sim)
-				}
+				aura.Activate(sim)
 			}
 		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {

@@ -221,6 +221,7 @@ func (dk *Deathknight) Initialize() {
 	dk.registerEmpowerRuneWeaponSpell()
 	dk.registerRuneTapSpell()
 	dk.registerIceboundFortitudeSpell()
+	dk.registerDeathStrikeSpell()
 
 	dk.registerRaiseDeadCD()
 	dk.registerSummonGargoyleCD()
@@ -239,14 +240,6 @@ func (dk *Deathknight) ResetBonusCoeffs() {
 }
 
 func (dk *Deathknight) Reset(sim *core.Simulation) {
-	dk.Presence = UnsetPresence
-
-	if dk.Inputs.StartingPresence == proto.Deathknight_Rotation_Unholy && dk.Talents.SummonGargoyle {
-		dk.ChangePresence(sim, UnholyPresence)
-	} else {
-		dk.ChangePresence(sim, BloodPresence)
-	}
-
 	dk.LastTickTime = -1
 
 	if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_PreCast {
@@ -255,10 +248,14 @@ func (dk *Deathknight) Reset(sim *core.Simulation) {
 
 	dk.LastCast = nil
 	dk.NextCast = nil
+
+	if dk.Inputs.PrecastHornOfWinter {
+		dk.HornOfWinter.CD.UsePrePull(sim, 1500*time.Millisecond)
+	}
 }
 
 func (dk *Deathknight) IsFuStrike(spell *core.Spell) bool {
-	return spell == dk.Obliterate.Spell || spell == dk.ScourgeStrike.Spell // || spell == dk.DeathStrike
+	return spell == dk.Obliterate.Spell || spell == dk.ScourgeStrike.Spell || spell == dk.DeathStrike.Spell
 }
 
 func (dk *Deathknight) HasMajorGlyph(glyph proto.DeathknightMajorGlyph) bool {
@@ -268,12 +265,10 @@ func (dk *Deathknight) HasMinorGlyph(glyph proto.DeathknightMinorGlyph) bool {
 	return dk.HasGlyph(int32(glyph))
 }
 
-func NewDeathknight(character core.Character, options proto.Player, inputs DeathknightInputs) *Deathknight {
-	deathKnightOptions := options.GetDeathknight()
-
+func NewDeathknight(character core.Character, talents proto.DeathknightTalents, inputs DeathknightInputs) *Deathknight {
 	dk := &Deathknight{
 		Character:  character,
-		Talents:    *deathKnightOptions.Talents,
+		Talents:    talents,
 		Inputs:     inputs,
 		RoRTSBonus: func(u *core.Unit) float64 { return 1.0 }, // default to no bonus for RoR/TS
 	}

@@ -22,13 +22,13 @@ import * as Tooltips from '../core/constants/tooltips.js';
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wotlk.wowhead.com/talent-calc and copy the numbers in the url.
 export const BloodTalents = {
-	name: 'Frost',
+	name: 'Balanced',
 	data: SavedTalents.create({
-		talentsString: '23050005-32005350352203012300033101351',
+		talentsString: '005510153330330220102013-3050505100023101-002',
 		glyphs: Glyphs.create({
-			major1: DeathknightMajorGlyph.GlyphOfObliterate,
-			major2: DeathknightMajorGlyph.GlyphOfFrostStrike,
-			major3: DeathknightMajorGlyph.GlyphOfDisease,
+			major1: DeathknightMajorGlyph.GlyphOfDisease,
+			major2: DeathknightMajorGlyph.GlyphOfVampiricBlood,
+			major3: DeathknightMajorGlyph.GlyphOfDarkCommand,
 			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
 			minor2: DeathknightMinorGlyph.GlyphOfBloodTap,
 			minor3: DeathknightMinorGlyph.GlyphOfRaiseDead,
@@ -52,96 +52,98 @@ export const DefaultConsumes = Consumes.create({
 });
 
 export const P1_BLOOD_BIS_PRESET = {
-	name: 'P1 Blood BiS Preset',
+	name: 'P1 BiS Blood',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{ "items": [
+	gear: EquipmentSpec.fromJsonString(`{"items": [
     {
-      "id": 44006,
-      "enchant": 44879,
+      "id": 40565,
+      "enchant": 67839,
       "gems": [
-        41398,
-        34143
+        41380,
+        36767
       ]
     },
     {
-      "id": 44664,
+      "id": 40387
+    },
+    {
+      "id": 39704,
+      "enchant": 44957,
       "gems": [
-        39996
+        40008
       ]
     },
     {
-      "id": 40557,
-      "enchant": 44871,
+      "id": 40252,
+      "enchant": 55002
+    },
+    {
+      "id": 40559,
       "gems": [
-        39996
+        40008,
+        40022
       ]
     },
     {
-      "id": 40403,
-      "enchant": 44472
-    },
-    {
-      "id": 40550,
-      "enchant": 44623,
+      "id": 40306,
+      "enchant": 44944,
       "gems": [
-        42142,
-        39996
-      ]
-    },
-    {
-      "id": 40330,
-      "enchant": 60616,
-      "gems": [
-        39996,
+        40008,
         0
       ]
     },
     {
-      "id": 40552,
-      "enchant": 54999,
+      "id": 40563,
+      "enchant": 63770,
       "gems": [
-        39996,
+        40008,
         0
       ]
     },
     {
-      "id": 40317,
+      "id": 39759,
       "gems": [
-        42142
+        40008,
+        0
       ]
     },
     {
-      "id": 40556,
-      "enchant": 38374,
+      "id": 40567,
+      "enchant": 38373,
       "gems": [
-        42142,
-        39996
+        40008,
+        40008
       ]
     },
     {
-      "id": 40591,
-      "enchant": 55016
+      "id": 40297,
+      "enchant": 44491
     },
     {
-      "id": 39401
+      "id": 40718
     },
     {
-      "id": 40075
+      "id": 40107
     },
     {
-      "id": 40684
+      "id": 44063,
+      "gems": [
+        40008,
+        40008
+      ]
     },
     {
-      "id": 42987
+      "id": 42341,
+      "gems": [
+        40008,
+        40008
+      ]
     },
     {
-      "id": 40189,
-      "enchant": 53343
+      "id": 40406,
+      "enchant": 62158
     },
-    {
-      "id": 40189,
-      "enchant": 53344
-    },
+    {},
     {
       "id": 40207
     }

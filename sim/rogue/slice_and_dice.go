@@ -30,19 +30,14 @@ func (rogue *Rogue) makeSliceAndDice(comboPoints int32) *core.Spell {
 				Cost: baseCost,
 				GCD:  time.Second,
 			},
-			ModifyCast:  rogue.applyDeathmantle,
+			ModifyCast:  rogue.CastModifier,
 			IgnoreHaste: true,
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
 			rogue.SliceAndDiceAura.Duration = duration
 			rogue.SliceAndDiceAura.Activate(sim)
-
 			rogue.ApplyFinisher(sim, spell)
-
-			if duration >= sim.GetRemainingDuration() {
-				rogue.doneSND = true
-			}
 		},
 	})
 }
