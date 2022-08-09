@@ -21,6 +21,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_PrioRotation(sim 
 	gcd := dk.SpellGCD()
 	ff := dk.FrostFeverDisease[target.Index].IsActive()
 	bp := dk.BloodPlagueDisease[target.Index].IsActive()
+	fbAt := core.MinDuration(dk.FrostFeverDisease[target.Index].ExpiresAt(), dk.BloodPlagueDisease[target.Index].ExpiresAt())
 	fr := dk.CurrentFrostRunes()
 	ur := dk.CurrentUnholyRunes()
 	dr := dk.CurrentDeathRunes()
@@ -28,7 +29,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_PrioRotation(sim 
 	uhAt := dk.NormalSpentUnholyRuneReadyAt(sim)
 	obAt := core.MaxDuration(frAt, uhAt)
 
-	if dk.NextCast == dk.Pestilence {
+	if dk.NextCast == dk.Pestilence || (ff && bp && sim.CurrentTime+gcd > fbAt) {
 		casted := dk.CastPestilence(sim, target)
 		if casted && dk.LastOutcome.Matches(core.OutcomeLanded) {
 			dk.NextCast = nil
@@ -38,11 +39,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_PrioRotation(sim 
 	}
 
 	if dk.LastCast == dk.Obliterate {
-		if dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
-			if dk.CanHowlingBlast(sim) && dk.LastOutcome.Matches(core.OutcomeLanded) {
-				return dk.CastHowlingBlast(sim, target)
-			}
-		} else if dk.KillingMachineAura.IsActive() {
+		if dk.KillingMachineAura.IsActive() {
 			if dk.CanFrostStrike(sim) && dk.LastOutcome.Matches(core.OutcomeLanded) {
 				return dk.CastFrostStrike(sim, target)
 			}
@@ -64,9 +61,13 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_PrioRotation(sim 
 	if dk.ShouldHornOfWinter(sim) {
 		return dk.CastHornOfWinter(sim, target)
 	} else if !ff {
-		return dk.CastIcyTouch(sim, target)
+		dk.fr.oblitCount = 0
+		dk.RotationActionCallback_FrostSubBlood_RecoverFromPestiMiss(sim, target, s)
+		return false
 	} else if !bp {
-		return dk.CastPlagueStrike(sim, target)
+		dk.fr.oblitCount = 0
+		dk.RotationActionCallback_FrostSubBlood_RecoverFromPestiMiss(sim, target, s)
+		return false
 	} else if dk.CanObliterate(sim) && fr > 0 && ur > 0 {
 		casted := false
 		if dk.fr.oblitCount < 2 {
