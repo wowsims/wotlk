@@ -60,6 +60,7 @@ func (rogue *Rogue) registerFanOfKnives() {
 				Cost: energyCost,
 				GCD:  time.Second,
 			},
+			ModifyCast:  rogue.CastModifier,
 			IgnoreHaste: true,
 		},
 		ApplyEffects: core.ApplyEffectFuncAOEDamage(rogue.Env, core.SpellEffect{

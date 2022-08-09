@@ -7,6 +7,53 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+var ItemSetVanCleefs = core.NewItemSet(core.ItemSet{
+	Name: "VanCleef's Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Your Rupture ability has a chance each time it deals damage to reduce the cost of your next ability by 40 energy.
+			rogue := agent.(RogueAgent).GetRogue()
+			rogue.VanCleefsProcAura = rogue.RegisterAura(core.Aura{
+				Label:    "VanCleef's 2pc Proc",
+				ActionID: core.ActionID{SpellID: 67209},
+				Duration: core.NeverExpires,
+			})
+			icd := core.Cooldown{
+				Timer:    rogue.NewTimer(),
+				Duration: time.Second * 15,
+			}
+			procChance := 0.02
+			rogue.RegisterAura(core.Aura{
+				Label:    "VanCleef's 2pc",
+				Duration: core.NeverExpires,
+				OnReset: func(aura *core.Aura, sim *core.Simulation) {
+					aura.Activate(sim)
+				},
+				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+					if !spellEffect.Landed() {
+						return
+					}
+					if !spell.ActionID.IsSpellAction(RuptureSpellID) {
+						return
+					}
+					if !icd.IsReady(sim) {
+						return
+					}
+					if sim.RandomFloat("VanCleef's 2pc") > procChance {
+						return
+					}
+					icd.Use(sim)
+					rogue.VanCleefsProcAura.Activate(sim)
+				},
+			})
+		},
+		4: func(agent core.Agent) {
+			// Increases the critical strike chance of your Hemorrhage, Sinister Strike, Backstab, and Mutilate abilities by 5%.
+			// Handled in ability sources
+		},
+	},
+})
+
 var ItemSetTerrorblade = core.NewItemSet(core.ItemSet{
 	Name: "Terrorblade Battlegear",
 	Bonuses: map[int32]core.ApplyEffect{
@@ -141,13 +188,6 @@ var ItemSetDeathmantle = core.NewItemSet(core.ItemSet{
 		},
 	},
 })
-
-func (rogue *Rogue) applyDeathmantle(sim *core.Simulation, _ *core.Spell, cast *core.Cast) {
-	if rogue.DeathmantleProcAura.IsActive() {
-		cast.Cost = 0
-		rogue.DeathmantleProcAura.Deactivate(sim)
-	}
-}
 
 var ItemSetSlayers = core.NewItemSet(core.ItemSet{
 	Name: "Slayer's Armor",

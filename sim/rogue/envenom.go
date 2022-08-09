@@ -31,7 +31,7 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 				Cost: cost,
 				GCD:  time.Second,
 			},
-			ModifyCast:  rogue.applyDeathmantle,
+			ModifyCast:  rogue.CastModifier,
 			IgnoreHaste: true,
 		},
 
