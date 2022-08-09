@@ -26,9 +26,9 @@ func RegisterRogue() {
 }
 
 const (
-	SpellFlagBuilder      = core.SpellFlagAgentReserved1
-	SpellFlagFinisher     = core.SpellFlagAgentReserved2
-	SpellFlagRogueAbility = SpellFlagBuilder | SpellFlagFinisher
+	SpellFlagBuilder      = core.SpellFlagAgentReserved2
+	SpellFlagFinisher     = core.SpellFlagAgentReserved3
+	SpellFlagRogueAbility = SpellFlagBuilder | SpellFlagFinisher | core.SpellFlagAgentReserved1
 )
 
 type Rogue struct {
@@ -57,7 +57,8 @@ type Rogue struct {
 	Backstab       *core.Spell
 	DeadlyPoison   *core.Spell
 	Hemorrhage     *core.Spell
-	InstantPoison  *core.Spell
+	HungerForBlood *core.Spell
+	InstantPoison  [3]*core.Spell
 	Mutilate       *core.Spell
 	Shiv           *core.Spell
 	SinisterStrike *core.Spell
@@ -68,15 +69,20 @@ type Rogue struct {
 	Rupture      [6]*core.Spell
 	SliceAndDice [6]*core.Spell
 
-	LastDeadlyPoisonProcMask core.ProcMask
-	DeadlyPoisonDot          *core.Dot
-	RuptureDot               *core.Dot
+	LastDeadlyPoisonProcMask     core.ProcMask
+	DeadlyPoisonProcChanceBonus  float64
+	InstantPoisonProcChanceBonus float64
+	DeadlyPoisonDots             []*core.Dot
+	RuptureDot                   *core.Dot
 
 	AdrenalineRushAura  *core.Aura
 	BladeFlurryAura     *core.Aura
 	DeathmantleProcAura *core.Aura
+	EnvenomAura         *core.Aura
 	ExposeArmorAura     *core.Aura
+	HungerForBloodAura  *core.Aura
 	KillingSpreeAura    *core.Aura
+	OverkillAura        *core.Aura
 	SliceAndDiceAura    *core.Aura
 
 	QuickRecoveryMetrics *core.ResourceMetrics
@@ -128,7 +134,6 @@ func (rogue *Rogue) Initialize() {
 
 	rogue.registerBackstabSpell()
 	rogue.registerDeadlyPoisonSpell()
-	rogue.registerEnvenom()
 	rogue.registerEviscerate()
 	rogue.registerExposeArmorSpell()
 	rogue.registerHemorrhageSpell()
@@ -140,7 +145,10 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerSliceAndDice()
 
 	rogue.registerThistleTeaCD()
-	rogue.applyPoisons()
+
+	if rogue.Rotation.UseEnvenom {
+		rogue.registerEnvenom()
+	}
 
 	switch rogue.Rotation.Builder {
 	case proto.Rogue_Rotation_SinisterStrike:
@@ -155,7 +163,7 @@ func (rogue *Rogue) Initialize() {
 
 	rogue.finishingMoveEffectApplier = rogue.makeFinishingMoveEffectApplier()
 
-	rogue.energyPerSecondAvg = core.EnergyPerTick / core.EnergyTickDuration.Seconds()
+	rogue.energyPerSecondAvg = (core.EnergyPerTick*rogue.EnergyTickMultiplier)/core.EnergyTickDuration.Seconds() + 5.0
 
 	// TODO: Currently assumes default combat spec.
 	expectedComboPointsAfterFinisher := 0
@@ -180,27 +188,17 @@ func (rogue *Rogue) Reset(sim *core.Simulation) {
 func (rogue *Rogue) MeleeCritMultiplier(isMH bool, applyLethality bool) float64 {
 	primaryModifier := rogue.murderMultiplier()
 	secondaryModifier := 0.0
-
+	preyModifier := rogue.preyOnTheWeakMultiplier(rogue.CurrentTarget)
 	if applyLethality {
 		secondaryModifier += 0.06 * float64(rogue.Talents.Lethality)
 	}
-
-	// TODO: Use the following predicate if/when health values are modeled
-	//if rogue.CurrentTarget != nil && rogue.CurrentTarget.HasHealthBar() && rogue.CurrentTarget.CurrentHealthPercent() < rogue.CurrentHealthPercent() {
-	if rogue.Talents.PreyOnTheWeak > 0 {
-		secondaryModifier *= (1 + 0.04*float64(rogue.Talents.PreyOnTheWeak))
-		primaryModifier *= (1 + 0.04*float64(rogue.Talents.PreyOnTheWeak))
-	}
-	if rogue.Character.HasMetaGemEquipped(34220) ||
-		rogue.Character.HasMetaGemEquipped(32409) ||
-		rogue.Character.HasMetaGemEquipped(41285) ||
-		rogue.Character.HasMetaGemEquipped(41398) {
-		primaryModifier *= 1.03
-	}
-	return (2.0 + secondaryModifier) * primaryModifier
+	primaryModifier *= preyModifier
+	return rogue.Character.MeleeCritMultiplier(primaryModifier, secondaryModifier)
 }
 func (rogue *Rogue) SpellCritMultiplier() float64 {
-	return rogue.Character.SpellCritMultiplier(rogue.murderMultiplier(), 0)
+	primaryModifier := rogue.preyOnTheWeakMultiplier(rogue.CurrentTarget)
+	primaryModifier *= rogue.murderMultiplier()
+	return rogue.Character.SpellCritMultiplier(primaryModifier, 0)
 }
 
 func NewRogue(character core.Character, options proto.Player) *Rogue {
@@ -212,6 +210,7 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 		Options:   *rogueOptions.Options,
 		Rotation:  *rogueOptions.Rotation,
 	}
+	rogue.applyPoisons()
 
 	// Passive rogue threat reduction: https://wotlk.wowhead.com/spell=21184/rogue-passive-dnd
 	rogue.PseudoStats.ThreatMultiplier *= 0.71
@@ -244,7 +243,7 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 		}
 	}
 
-	if rogue.Consumes.OffHandImbue != proto.WeaponImbue_WeaponImbueRogueDeadlyPoison {
+	if rogue.Options.OhImbue != proto.Rogue_Options_DeadlyPoison {
 		rogue.Rotation.UseShiv = false
 	}
 
@@ -271,6 +270,16 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 	rogue.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/83.15))
 
 	return rogue
+}
+
+func (rogue *Rogue) ApplyCutToTheChase(sim *core.Simulation) {
+	if rogue.Talents.CutToTheChase > 0 && rogue.SliceAndDiceAura.IsActive() {
+		chanceToRefresh := float64(rogue.Talents.CutToTheChase) * 0.2
+		if chanceToRefresh == 1 || sim.RandomFloat("Cut to the Chase") < chanceToRefresh {
+			rogue.SliceAndDiceAura.Duration = rogue.sliceAndDiceDurations[5]
+			rogue.SliceAndDiceAura.Activate(sim)
+		}
+	}
 }
 
 func init() {

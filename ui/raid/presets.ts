@@ -332,10 +332,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: RoguePresets.P1_PRESET.gear,
+				1: RoguePresets.PRERAID_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				1: RoguePresets.P1_PRESET.gear,
+				1: RoguePresets.PRERAID_PRESET.gear,
 			},
 		},
 		tooltip: 'Combat Rogue',

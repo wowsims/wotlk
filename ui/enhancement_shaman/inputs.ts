@@ -2,7 +2,6 @@ import { BooleanPicker } from '../core/components/boolean_picker.js';
 import { EnumPicker } from '../core/components/enum_picker.js';
 import { IconEnumPicker, IconEnumPickerConfig } from '../core/components/icon_enum_picker.js';
 import { IconPickerConfig } from '../core/components/icon_picker.js';
-import { makeWeaponImbueInput } from '../core/components/icon_inputs.js';
 import {
 	AirTotem,
 	EarthTotem,
@@ -15,7 +14,6 @@ import {
     ShamanSyncType
 } from '../core/proto/shaman.js';
 import { Spec } from '../core/proto/common.js';
-import { WeaponImbue } from '../core/proto/common.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { Player } from '../core/player.js';
 import { Sim } from '../core/sim.js';
@@ -42,7 +40,7 @@ export const ShamanShieldInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.
 });
 
 export const ShamanImbueMH = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecEnhancementShaman, ShamanImbue>({
-    fieldName: 'imbueMH',
+    fieldName: 'imbueMh',
     values: [
         { color: 'grey', value: ShamanImbue.NoImbue },
         { actionId: ActionId.fromSpellId(58804), value: ShamanImbue.WindfuryWeapon },
@@ -52,7 +50,7 @@ export const ShamanImbueMH = InputHelpers.makeSpecOptionsEnumIconInput<Spec.Spec
 });
 
 export const ShamanImbueOH = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecEnhancementShaman, ShamanImbue>({
-    fieldName: 'imbueOH',
+    fieldName: 'imbueOh',
     values: [
         { color: 'grey', value: ShamanImbue.NoImbue },
         { actionId: ActionId.fromSpellId(58804), value: ShamanImbue.WindfuryWeapon },

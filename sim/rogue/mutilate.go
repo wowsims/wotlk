@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -11,9 +12,9 @@ var MHOutcome = core.OutcomeHit
 var OHOutcome = core.OutcomeHit
 
 func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
-	actionID := core.ActionID{SpellID: 34419}
+	actionID := core.ActionID{SpellID: 48665}
 	if !isMH {
-		actionID = core.ActionID{SpellID: 34418}
+		actionID = core.ActionID{SpellID: 48664}
 	}
 
 	effect := core.SpellEffect{
@@ -21,11 +22,11 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 
 		BonusCritRating: 5 * core.CritRatingPerCritChance * float64(rogue.Talents.PuncturingWounds),
 		DamageMultiplier: 1 +
-			0.04*float64(rogue.Talents.Opportunity) +
+			0.1*float64(rogue.Talents.Opportunity) +
 			core.TernaryFloat64(rogue.HasSetBonus(ItemSetSlayers, 4), 0.06, 0),
 		ThreatMultiplier: 1,
 
-		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 101, 1, false),
+		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 181, 1, 1, false),
 		OutcomeApplier: rogue.OutcomeFuncMeleeSpecialCritOnly(rogue.MeleeCritMultiplier(isMH, true)),
 
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
@@ -34,20 +35,19 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 			} else {
 				OHOutcome = spellEffect.Outcome
 			}
-			return
 		},
 	}
 	if !isMH {
 		effect.ProcMask = core.ProcMaskMeleeOHSpecial
-		effect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 101, 1+0.1*float64(rogue.Talents.DualWieldSpecialization), false)
+		effect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 181, 1+0.1*float64(rogue.Talents.DualWieldSpecialization), 1, false)
 	}
 
 	effect.BaseDamage = core.WrapBaseDamageConfig(effect.BaseDamage, func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
 		return func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
 			normalDamage := oldCalculator(sim, spellEffect, spell)
 			// TODO: Add support for all poison effects
-			if rogue.DeadlyPoisonDot.IsActive() {
-				return normalDamage * 1.5
+			if rogue.DeadlyPoisonDots[spellEffect.Target.Index].IsActive() {
+				return normalDamage * 1.2
 			} else {
 				return normalDamage
 			}
@@ -57,7 +57,7 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 	return rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | SpellFlagRogueAbility,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})
@@ -68,10 +68,13 @@ func (rogue *Rogue) registerMutilateSpell() {
 	ohHitSpell := rogue.newMutilateHitSpell(false)
 
 	baseCost := 60.0
+	if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfMutilate) {
+		baseCost -= 5
+	}
 	refundAmount := baseCost * 0.8
 
 	rogue.Mutilate = rogue.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 34413},
+		ActionID:    core.ActionID{SpellID: 48666},
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics | SpellFlagBuilder,
 

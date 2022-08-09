@@ -35,7 +35,6 @@ var castersWithElemental = &proto.Party{
 				},
 			},
 			Consumes: &proto.Consumes{
-				MainHandImbue: proto.WeaponImbue_WeaponImbueBrilliantWizardOil,
 				DefaultPotion: proto.Potions_SuperManaPotion,
 			},
 			Buffs: &proto.IndividualBuffs{
@@ -60,7 +59,6 @@ var castersWithElemental = &proto.Party{
 				},
 			},
 			Consumes: &proto.Consumes{
-				MainHandImbue: proto.WeaponImbue_WeaponImbueSuperiorWizardOil,
 				DefaultPotion: proto.Potions_SuperManaPotion,
 			},
 			Buffs: &proto.IndividualBuffs{
@@ -92,7 +90,6 @@ var castersWithElemental = &proto.Party{
 				},
 			},
 			Consumes: &proto.Consumes{
-				MainHandImbue: proto.WeaponImbue_WeaponImbueBrilliantWizardOil,
 				DefaultPotion: proto.Potions_SuperManaPotion,
 			},
 			Buffs: &proto.IndividualBuffs{
@@ -117,7 +114,6 @@ var castersWithElemental = &proto.Party{
 				},
 			},
 			Consumes: &proto.Consumes{
-				MainHandImbue: proto.WeaponImbue_WeaponImbueBrilliantWizardOil,
 				DefaultPotion: proto.Potions_SuperManaPotion,
 			},
 			Buffs: &proto.IndividualBuffs{
@@ -151,7 +147,6 @@ var castersWithResto = &proto.Party{
 				},
 			},
 			Consumes: &proto.Consumes{
-				MainHandImbue: proto.WeaponImbue_WeaponImbueBrilliantWizardOil,
 				DefaultPotion: proto.Potions_SuperManaPotion,
 			},
 			Buffs: &proto.IndividualBuffs{
@@ -176,7 +171,6 @@ var castersWithResto = &proto.Party{
 				},
 			},
 			Consumes: &proto.Consumes{
-				MainHandImbue: proto.WeaponImbue_WeaponImbueSuperiorWizardOil,
 				DefaultPotion: proto.Potions_SuperManaPotion,
 			},
 			Buffs: &proto.IndividualBuffs{
@@ -201,7 +195,6 @@ var castersWithResto = &proto.Party{
 				},
 			},
 			Consumes: &proto.Consumes{
-				MainHandImbue: proto.WeaponImbue_WeaponImbueBrilliantWizardOil,
 				DefaultPotion: proto.Potions_SuperManaPotion,
 			},
 			Buffs: &proto.IndividualBuffs{

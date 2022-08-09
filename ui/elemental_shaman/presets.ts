@@ -6,7 +6,6 @@ import { Food } from '../core/proto/common.js';
 import { Glyphs } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
-import { WeaponImbue } from '../core/proto/common.js';
 
 import { ElementalShaman_Rotation as ElementalShamanRotation, ElementalShaman_Options as ElementalShamanOptions, ShamanShield, ShamanMajorGlyph, ShamanMinorGlyph } from '../core/proto/shaman.js';
 import { ElementalShaman_Rotation_RotationType as RotationType } from '../core/proto/shaman.js';
@@ -62,7 +61,6 @@ export const DefaultConsumes = Consumes.create({
 	defaultPotion: Potions.RunicManaPotion,
 	flask: Flask.FlaskOfTheFrostWyrm,
 	food: Food.FoodFishFeast,
-	mainHandImbue: WeaponImbue.WeaponImbueShamanFlametongue,
 });
 
 

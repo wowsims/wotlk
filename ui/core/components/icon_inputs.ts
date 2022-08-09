@@ -15,7 +15,6 @@ import { PetFood } from '../proto/common.js';
 import { Potions } from '../proto/common.js';
 import { Spec } from '../proto/common.js';
 import { TristateEffect } from '../proto/common.js';
-import { WeaponImbue } from '../proto/common.js';
 import { Party } from '../party.js';
 import { Player } from '../player.js';
 import { Raid } from '../raid.js';
@@ -475,35 +474,6 @@ export const FillerExplosiveInput = makeConsumeInput('fillerExplosive', [
 	{ actionId: ActionId.fromItemId(41119), value: Explosive.ExplosiveSaroniteBomb },
 	{ actionId: ActionId.fromItemId(40771), value: Explosive.ExplosiveCobaltFragBomb },
 ] as Array<IconEnumValueConfig<Player<any>, Explosive>>);
-
-export function makeWeaponImbueInput(isMainHand: boolean, options: Array<WeaponImbue>): InputHelpers.TypedIconEnumPickerConfig<Player<any>, WeaponImbue> {
-	const allOptions = [
-		{ actionId: ActionId.fromItemId(18262), value: WeaponImbue.WeaponImbueElementalSharpeningStone },
-		{ actionId: ActionId.fromItemId(20749), value: WeaponImbue.WeaponImbueBrilliantWizardOil },
-		{ actionId: ActionId.fromItemId(22522), value: WeaponImbue.WeaponImbueSuperiorWizardOil },
-		{ actionId: ActionId.fromItemId(34539), value: WeaponImbue.WeaponImbueRighteousWeaponCoating },
-		{
-			actionId: ActionId.fromItemId(23529), value: WeaponImbue.WeaponImbueAdamantiteSharpeningStone,
-			showWhen: (player: Player<any>) => !(isMainHand ? player.getGear().hasBluntMHWeapon() : player.getGear().hasBluntOHWeapon()),
-		},
-		{
-			actionId: ActionId.fromItemId(28421), value: WeaponImbue.WeaponImbueAdamantiteWeightstone,
-			showWhen: (player: Player<any>) => (isMainHand ? player.getGear().hasBluntMHWeapon() : player.getGear().hasBluntOHWeapon()),
-		},
-		{ actionId: ActionId.fromSpellId(27186), value: WeaponImbue.WeaponImbueRogueDeadlyPoison },
-		{ actionId: ActionId.fromSpellId(26891), value: WeaponImbue.WeaponImbueRogueInstantPoison },
-		{ actionId: ActionId.fromSpellId(25505), value: WeaponImbue.WeaponImbueShamanWindfury },
-		{ actionId: ActionId.fromSpellId(58790), value: WeaponImbue.WeaponImbueShamanFlametongue },
-		{ actionId: ActionId.fromSpellId(25500), value: WeaponImbue.WeaponImbueShamanFrostbrand },
-	];
-	if (isMainHand) {
-		const config = makeConsumeInputFactory('mainHandImbue', allOptions)(options);
-		config.changedEvent = (player: Player<any>) => TypedEvent.onAny([player.getRaid()?.changeEmitter || player.consumesChangeEmitter]);
-		return config;
-	} else {
-		return makeConsumeInputFactory('offHandImbue', allOptions)(options);
-	}
-}
 
 function makeConsumeInputFactory<T extends number>(consumesFieldName: keyof Consumes, allOptions: Array<IconEnumValueConfig<Player<any>, T>>, onSet?: (eventID: EventID, player: Player<any>, newValue: T) => void): (options: Array<T>) => InputHelpers.TypedIconEnumPickerConfig<Player<any>, T> {
 	return (options: Array<T>) => {

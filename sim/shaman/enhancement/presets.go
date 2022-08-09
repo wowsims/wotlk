@@ -68,6 +68,8 @@ var enhShamOptions = &proto.EnhancementShaman_Options{
 	Shield:    proto.ShamanShield_LightningShield,
 	Bloodlust: true,
 	SyncType:  proto.ShamanSyncType_SyncMainhandOffhandSwings,
+	ImbueMh:   proto.ShamanImbue_WindfuryWeapon,
+	ImbueOh:   proto.ShamanImbue_FlametongueWeapon,
 }
 
 var FullRaidBuffs = &proto.RaidBuffs{
@@ -86,8 +88,6 @@ var FullIndividualBuffs = &proto.IndividualBuffs{
 }
 
 var FullConsumes = &proto.Consumes{
-	MainHandImbue:   proto.WeaponImbue_WeaponImbueShamanWindfury,
-	OffHandImbue:    proto.WeaponImbue_WeaponImbueShamanFlametongue,
 	DefaultConjured: proto.Conjured_ConjuredFlameCap,
 }
 

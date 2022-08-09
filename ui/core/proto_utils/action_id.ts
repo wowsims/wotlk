@@ -220,6 +220,13 @@ export class ActionId {
             case 'Slice and Dice':
                 if (this.tag) name += ` (${this.tag} CP)`;
                 break;
+            case 'Instant Poison IX':
+                if (this.tag == 1) {
+                    name += ' (Deadly)'
+                } else if (this.tag == 2) {
+                    name += ' (Shiv)'
+                }
+                break;
             case 'Chain Lightning':
             case 'Lightning Bolt':
                 if (this.tag) name += ' (LO)';

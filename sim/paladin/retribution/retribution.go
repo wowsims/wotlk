@@ -41,19 +41,25 @@ func NewRetributionPaladin(character core.Character, options proto.Player) *Retr
 		HasLightswornBattlegear2Pc: character.HasSetBonus(paladin.ItemSetLightswornBattlegear, 2),
 	}
 	ret.PaladinAura = retOptions.Options.Aura
-	if retOptions.Rotation.CustomRotation != nil {
-		ret.PriorityRotation = make([]int32, len(retOptions.Rotation.CustomRotation.Spells))
-		for i, customSpellProto := range retOptions.Rotation.CustomRotation.Spells {
-			ret.PriorityRotation[i] = customSpellProto.Spell
-		}
-	}
 
+	var rotationInput = retOptions.Rotation.CustomRotation
 	if retOptions.Rotation.Type == proto.RetributionPaladin_Rotation_Standard {
 		ret.SelectedRotation = ret.mainRotation
 	} else if retOptions.Rotation.Type == proto.RetributionPaladin_Rotation_Custom {
 		ret.SelectedRotation = ret.customRotation
+	} else if retOptions.Rotation.Type == proto.RetributionPaladin_Rotation_CastSequence {
+		ret.SelectedRotation = ret.castSequenceRotation
+		ret.CastSequenceIndex = 0
+		rotationInput = retOptions.Rotation.CustomCastSequence
 	} else {
 		ret.SelectedRotation = ret.mainRotation
+	}
+
+	if rotationInput != nil {
+		ret.RotationInput = make([]int32, len(rotationInput.Spells))
+		for i, customSpellProto := range rotationInput.Spells {
+			ret.RotationInput[i] = customSpellProto.Spell
+		}
 	}
 
 	// Convert DTPS option to bonus MP5
@@ -86,8 +92,9 @@ type RetributionPaladin struct {
 
 	HasLightswornBattlegear2Pc bool
 
-	SelectedRotation func(*core.Simulation)
-	PriorityRotation []int32
+	SelectedRotation  func(*core.Simulation)
+	RotationInput     []int32
+	CastSequenceIndex int32
 
 	Rotation proto.RetributionPaladin_Rotation
 }
@@ -108,4 +115,5 @@ func (ret *RetributionPaladin) Reset(sim *core.Simulation) {
 	ret.AutoAttacks.CancelAutoSwing(sim)
 	ret.SealInitComplete = false
 	ret.DivinePleaInitComplete = false
+	ret.CastSequenceIndex = 0
 }

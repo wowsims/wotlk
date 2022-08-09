@@ -30,8 +30,8 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 	selfBuffs := shaman.SelfBuffs{
 		Bloodlust: enhOptions.Options.Bloodlust,
 		Shield:    enhOptions.Options.Shield,
-		ImbueMH:   enhOptions.Options.ImbueMH,
-		ImbueOH:   enhOptions.Options.ImbueOH,
+		ImbueMH:   enhOptions.Options.ImbueMh,
+		ImbueOH:   enhOptions.Options.ImbueOh,
 	}
 
 	totems := proto.ShamanTotems{}
@@ -56,10 +56,10 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 	})
 
 	if !enh.HasMHWeapon() {
-		enh.Consumes.MainHandImbue = proto.WeaponImbue_WeaponImbueUnknown
+		enh.SelfBuffs.ImbueMH = proto.ShamanImbue_NoImbue
 	}
 	if !enh.HasOHWeapon() {
-		enh.Consumes.OffHandImbue = proto.WeaponImbue_WeaponImbueUnknown
+		enh.SelfBuffs.ImbueOH = proto.ShamanImbue_NoImbue
 	}
 	enh.ApplyWindfuryImbue(
 		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_WindfuryWeapon,

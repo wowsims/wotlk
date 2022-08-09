@@ -15,7 +15,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 0
   final_stats: 109
-  final_stats: 98
+  final_stats: 114
   final_stats: 292
   final_stats: 0
   final_stats: 0
@@ -66,8 +66,8 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 635.3154417276984
-  tps: 693.3232750610316
+  dps: 635.6379123466256
+  tps: 693.6457456799587
  }
 }
 dps_results: {
@@ -122,8 +122,8 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-DarkmoonCard:Death-42990"
  value: {
-  dps: 637.1455426016778
-  tps: 695.121042601678
+  dps: 637.4735067506132
+  tps: 695.4490067506133
  }
 }
 dps_results: {
@@ -234,8 +234,8 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-ExtractofNecromanticPower-40373"
  value: {
-  dps: 627.7459277740459
-  tps: 685.4924277740461
+  dps: 627.9448282026596
+  tps: 685.6913282026596
  }
 }
 dps_results: {
@@ -458,15 +458,15 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 659.2992500745661
-  tps: 716.0609167412329
+  dps: 660.5793639131905
+  tps: 717.3410305798571
  }
 }
 dps_results: {
  key: "TestFury-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 670.4180850252212
-  tps: 727.179751691888
+  dps: 671.8580566981121
+  tps: 728.6197233647789
  }
 }
 dps_results: {
@@ -563,8 +563,8 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-TheFistsofFury"
  value: {
-  dps: 639.3276727817776
-  tps: 701.0885061151109
+  dps: 639.435372402742
+  tps: 701.1962057360753
  }
 }
 dps_results: {

@@ -64,7 +64,6 @@ var FullConsumes = &proto.Consumes{
 	BattleElixir:    proto.BattleElixir_ElixirOfMajorAgility,
 	Food:            proto.Food_FoodGrilledMudfish,
 	DefaultPotion:   proto.Potions_HastePotion,
-	MainHandImbue:   proto.WeaponImbue_WeaponImbueAdamantiteWeightstone,
 	DefaultConjured: proto.Conjured_ConjuredDarkRune,
 }
 

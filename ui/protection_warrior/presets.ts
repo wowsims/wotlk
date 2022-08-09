@@ -3,7 +3,6 @@ import { EquipmentSpec } from '../core/proto/common.js';
 import { Flask } from '../core/proto/common.js';
 import { Food } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
-import { WeaponImbue } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
 import {
@@ -61,8 +60,6 @@ export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfFortification,
 	food: Food.FoodFishermansFeast,
 	defaultPotion: Potions.IronshieldPotion,
-	mainHandImbue: WeaponImbue.WeaponImbueAdamantiteSharpeningStone,
-	offHandImbue: WeaponImbue.WeaponImbueAdamantiteSharpeningStone,
 });
 
 export const P1_BALANCED_PRESET = {

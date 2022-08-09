@@ -271,25 +271,6 @@ enum Conjured {
 	ConjuredRogueThistleTea = 4;
 }
 
-enum WeaponImbue {
-	WeaponImbueUnknown = 0;
-	WeaponImbueAdamantiteSharpeningStone = 1;
-	WeaponImbueAdamantiteWeightstone = 5;
-	WeaponImbueElementalSharpeningStone = 2;
-	WeaponImbueBrilliantWizardOil = 3;
-	WeaponImbueSuperiorWizardOil = 4;
-
-	WeaponImbueShamanFlametongue = 6;
-	WeaponImbueShamanFrostbrand = 7;
-	WeaponImbueShamanRockbiter = 8;
-	WeaponImbueShamanWindfury = 9;
-
-	WeaponImbueRogueDeadlyPoison = 10;
-	WeaponImbueRogueInstantPoison = 11;
-
-	WeaponImbueRighteousWeaponCoating = 12;
-}
-
 enum Flask {
 	FlaskUnknown = 0;
 	FlaskOfTheFrostWyrm = 1;
@@ -518,9 +499,6 @@ message Consumes {
 	Flask flask = 1;
 	BattleElixir battle_elixir = 2;
 	GuardianElixir guardian_elixir = 3;
-
-	WeaponImbue main_hand_imbue = 4;
-	WeaponImbue off_hand_imbue = 5;
 
 	Food food = 6;
 	PetFood pet_food = 7;

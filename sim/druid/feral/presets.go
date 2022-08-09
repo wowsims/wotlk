@@ -69,7 +69,6 @@ var FullConsumes = &proto.Consumes{
 	GuardianElixir:  proto.GuardianElixir_ElixirOfMajorMageblood,
 	Food:            proto.Food_FoodGrilledMudfish,
 	DefaultPotion:   proto.Potions_HastePotion,
-	MainHandImbue:   proto.WeaponImbue_WeaponImbueAdamantiteWeightstone,
 	DefaultConjured: proto.Conjured_ConjuredDarkRune,
 }
 

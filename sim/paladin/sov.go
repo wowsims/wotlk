@@ -119,7 +119,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 			ProcMask:         core.ProcMaskEmpty,
 			DamageMultiplier: baseMultiplier,
 			ThreatMultiplier: 1,
-			BaseDamage:       core.MultiplyByStacks(core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 0, damagePerStack, false), dot.Aura),
+			BaseDamage:       core.MultiplyByStacks(core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 0, 1, damagePerStack, false), dot.Aura),
 			OutcomeApplier:   paladin.OutcomeFuncMeleeSpecialCritOnly(paladin.MeleeCritMultiplier()), // can't miss if melee swing landed, but can crit
 		}),
 	})

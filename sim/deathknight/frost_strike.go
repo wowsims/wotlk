@@ -10,9 +10,9 @@ var FrostStrikeActionID = core.ActionID{SpellID: 55268}
 
 func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool, onhit func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)) *RuneSpell {
 	baseDamage := 250.0 + dk.sigilOfTheVengefulHeartFrostStrike()
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, baseDamage, 0.55, true)
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, baseDamage, 1.0, 0.55, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, baseDamage, 0.55*dk.nervesOfColdSteelBonus(), true)
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, baseDamage, dk.nervesOfColdSteelBonus(), 0.55, true)
 	}
 
 	effect := core.SpellEffect{
@@ -67,15 +67,13 @@ func (dk *Deathknight) registerFrostStrikeSpell() {
 	dk.FrostStrikeMhHit = dk.newFrostStrikeHitSpell(true, func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 		dk.LastOutcome = spellEffect.Outcome
 		dk.threatOfThassarianProc(sim, spellEffect, dk.FrostStrikeMhHit, dk.FrostStrikeOhHit)
-	})
-	dk.FrostStrikeOhHit = dk.newFrostStrikeHitSpell(false, func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-		dk.LastOutcome = spellEffect.Outcome
-		if dk.LastOutcome.Matches(core.OutcomeLanded) {
-			if dk.KillingMachineAura.IsActive() {
-				dk.KillingMachineAura.Deactivate(sim)
-			}
+
+		// KM Consume after OH
+		if spellEffect.Landed() && dk.KillingMachineAura.IsActive() {
+			dk.KillingMachineAura.Deactivate(sim)
 		}
 	})
+	dk.FrostStrikeOhHit = dk.newFrostStrikeHitSpell(false, nil)
 	dk.FrostStrike = dk.FrostStrikeMhHit
 }
 

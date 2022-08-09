@@ -36,6 +36,8 @@ export const PrecastGhoulFrenzy = InputHelpers.makeSpecOptionsBooleanInput<Spec.
 	fieldName: 'precastGhoulFrenzy',
 	label: 'Pre-Cast Ghoul Frenzy',
 	labelTooltip: 'Cast Ghoul Frenzy 10 seconds before combat starts.',
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && player.getTalents().ghoulFrenzy,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 });
 
 export const PrecastHornOfWinter = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecDeathknight>({

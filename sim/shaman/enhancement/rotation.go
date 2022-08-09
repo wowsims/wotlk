@@ -92,7 +92,7 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 		return
 	}
 
-	if !enh.LightningShieldAura.IsActive() {
+	if !enh.LightningShieldAura.IsActive() && enh.LightningShieldAura != nil {
 		enh.LightningShield.Cast(sim, nil)
 		return
 	}
