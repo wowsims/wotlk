@@ -47,7 +47,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 				Stat.StatArmorPenetration,
 				Stat.StatSpellHit,
 				Stat.StatSpellCrit,
-			
+				Stat.StatSpellHaste,
 			],
 			// Reference stat against which to calculate EP. I think all classes use either spell power or attack power.
 			epReferenceStat: Stat.StatAttackPower,

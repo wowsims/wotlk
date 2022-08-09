@@ -10,10 +10,7 @@ import (
 )
 
 func (dk *Deathknight) PrecastArmyOfTheDead(sim *core.Simulation) {
-	// Mark the CD as used already
-	dk.ArmyOfTheDead.CD.Use(sim)
-	dk.ArmyOfTheDead.CD.Set(sim.CurrentTime + dk.ArmyOfTheDead.CD.Duration - time.Second*10)
-
+	dk.ArmyOfTheDead.CD.UsePrePull(sim, time.Second*10)
 	dk.UpdateMajorCooldowns()
 
 	for i := 0; i < 8; i++ {
@@ -36,9 +33,11 @@ func (dk *Deathknight) registerArmyOfTheDeadCD() {
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			dk.AutoAttacks.CancelAutoSwing(sim)
+			dk.CancelGCDTimer(sim)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			dk.AutoAttacks.EnableAutoSwing(sim)
+			dk.SetGCDTimer(sim, sim.CurrentTime)
 		},
 	})
 
@@ -47,7 +46,7 @@ func (dk *Deathknight) registerArmyOfTheDeadCD() {
 		Aura:                aotdAura,
 		NumberOfTicks:       8,
 		TickLength:          time.Millisecond * 500,
-		AffectedByCastSpeed: true,
+		AffectedByCastSpeed: false,
 		TickEffects: core.TickFuncApplyEffects(func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			dk.ArmyGhoul[ghoulIndex].EnableWithTimeout(sim, dk.ArmyGhoul[ghoulIndex], time.Second*40)
 			ghoulIndex++
