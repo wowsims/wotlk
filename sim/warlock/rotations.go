@@ -134,8 +134,10 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			// Pre-pull Life Tap
 			warlock.GlyphOfLifeTapAura.Activate(sim)
 		} else {
-			warlock.LifeTapOrDarkPact(sim)
-			return
+			if !sim.IsExecutePhase25() { // more dps to not waste gcd on life tap for buff during execute
+				warlock.LifeTapOrDarkPact(sim)
+				return
+			}
 		}
 	}
 
@@ -215,7 +217,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			} else if sim.IsExecutePhase25() {
 				// Drain Soul execute phase
 				spell = warlock.channelCheck(sim, warlock.DrainSoulDot, 5)
-			} else if warlock.CurrentManaPercent() < 0.25 {
+			} else if warlock.CurrentManaPercent() < 0.1 {
 				// If you were gonna cast a filler but are low mana, get mana instead in order not to be OOM when an important spell is coming up
 				warlock.LifeTapOrDarkPact(sim)
 				return
