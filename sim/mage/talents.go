@@ -103,10 +103,6 @@ func (mage *Mage) applyHotStreak() {
 				return
 			}
 
-			if mage.HotStreakAura.IsActive() {
-				return
-			}
-
 			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
 				heatingUp = false
 				return
@@ -214,6 +210,14 @@ func (mage *Mage) applyMissileBarrage() {
 		Label:    "Missile Barrage Proc",
 		ActionID: core.ActionID{SpellID: 44401},
 		Duration: time.Second * 15,
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if spell.ActionID != mage.ArcaneMissiles.ActionID {
+				mage.isMissilesBarrageVisible = true
+			}
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			mage.isMissilesBarrageVisible = false
+		},
 	})
 
 	mage.RegisterAura(core.Aura{

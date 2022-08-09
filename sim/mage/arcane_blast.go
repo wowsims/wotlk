@@ -52,6 +52,9 @@ func (mage *Mage) registerArcaneBlastSpell() {
 				//to the mana saved from having precision as a cost multiplier.
 			},
 			AfterCast: func(sim *core.Simulation, spell *core.Spell) {
+				if mage.ArcaneBlastAura.GetStacks() >= 4 {
+					mage.num4CostAB++
+				}
 				mage.ArcaneBlastAura.Activate(sim)
 				mage.ArcaneBlastAura.AddStack(sim)
 			},
