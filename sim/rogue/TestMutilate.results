@@ -283,8 +283,8 @@ dps_results: {
 dps_results: {
  key: "TestMutilate-AllItems-IncisorFragment-37723"
  value: {
-  dps: 1643.8311833902
-  tps: 1167.120140207
+  dps: 1580.786578127
+  tps: 1122.3584704702
  }
 }
 dps_results: {
