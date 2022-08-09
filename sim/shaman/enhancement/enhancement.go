@@ -45,6 +45,7 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 	enh := &EnhancementShaman{
 		Shaman:   shaman.NewShaman(character, *enhOptions.Talents, totems, selfBuffs, true),
 		rotation: rotation,
+		weaving:  false,
 	}
 
 	// Enable Auto Attacks for this spec
@@ -91,6 +92,8 @@ type EnhancementShaman struct {
 	rotation Rotation
 
 	scheduler common.GCDScheduler
+
+	weaving bool
 }
 
 func (enh *EnhancementShaman) GetShaman() *shaman.Shaman {
