@@ -10,7 +10,7 @@ import (
 
 var FanOfKnivesActionID = core.ActionID{SpellID: 51723}
 
-func (rogue *Rogue) makeFanOfKnifesWeaponHitEffect(isMH bool) core.SpellEffect {
+func (rogue *Rogue) makeFanOfKnivesWeaponHitEffect(isMH bool) core.SpellEffect {
 	var procMask core.ProcMask
 	var baseDamageConfig core.BaseDamageConfig
 	if isMH {
@@ -39,17 +39,17 @@ func (rogue *Rogue) registerFanOfKnives() {
 		ActionID:     FanOfKnivesActionID.WithTag(1),
 		SpellSchool:  core.SpellSchoolPhysical,
 		Flags:        core.SpellFlagMeleeMetrics | SpellFlagRogueAbility,
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(rogue.makeFanOfKnifesWeaponHitEffect(true)),
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(rogue.makeFanOfKnivesWeaponHitEffect(true)),
 	})
 	ohWeaponHitSpell := rogue.RegisterSpell(core.SpellConfig{
 		ActionID:     FanOfKnivesActionID.WithTag(2),
 		SpellSchool:  core.SpellSchoolPhysical,
 		Flags:        core.SpellFlagMeleeMetrics | SpellFlagRogueAbility,
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(rogue.makeFanOfKnifesWeaponHitEffect(false)),
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(rogue.makeFanOfKnivesWeaponHitEffect(false)),
 	})
 	energyCost := 50.0
 
-	rogue.FanOfKnifes = rogue.RegisterSpell(core.SpellConfig{
+	rogue.FanOfKnives = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:     FanOfKnivesActionID,
 		SpellSchool:  core.SpellSchoolPhysical,
 		Flags:        core.SpellFlagNoMetrics | SpellFlagBuilder,

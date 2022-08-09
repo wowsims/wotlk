@@ -5,22 +5,16 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-)
-
-const buildTimeBuffer = time.Second * 0
-
-const (
-	PlanNone = iota
-	PlanOpener
-	PlanExposeArmor
-	PlanSliceASAP
-	PlanFillBeforeEA
-	PlanFillBeforeSND
-	PlanMaximalSlice
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (rogue *Rogue) OnEnergyGain(sim *core.Simulation) {
+	if rogue.KillingSpreeAura.IsActive() {
+		rogue.DoNothing()
+		return
+	}
 	rogue.TryUseCooldowns(sim)
+	rogue.energyPerSecondAvg = rogue.energyPerSecondCalculator()
 	if rogue.GCD.IsReady(sim) {
 		rogue.rotation(sim)
 	}
@@ -31,32 +25,30 @@ func (rogue *Rogue) OnGCDReady(sim *core.Simulation) {
 }
 
 func (rogue *Rogue) rotation(sim *core.Simulation) {
-	if rogue.KillingSpreeAura.IsActive() {
-		rogue.DoNothing()
-		return
-	}
 	var spell *core.Spell
 	if sim.GetNumTargets() > 1 {
 		spell = rogue.multiTargetChooseSpell(sim)
 	} else {
 		spell = rogue.singleTargetChooseSpell(sim)
 	}
-	spell.Cast(sim, rogue.CurrentTarget)
+	if spell != nil {
+		spell.Cast(sim, rogue.CurrentTarget)
+	}
 	if rogue.GCD.IsReady(sim) {
 		rogue.DoNothing()
 	}
 }
 
-func (rogue *Rogue) multiTargetChooseSpell(sim *core.Simulation) *core.Spell {
-	return rogue.FanOfKnifes
-}
-
-func (rogue *Rogue) singleTargetChooseSpell(sim *core.Simulation) *core.Spell {
+func (rogue *Rogue) chooseSpell(sim *core.Simulation, refreshThreshold time.Duration, filler proto.Rogue_Rotation_Filler) *core.Spell {
 	sliceRemaining := rogue.SliceAndDiceAura.RemainingDuration(sim)
-	eaRemaining := time.Second * math.MaxInt32
-	refreshThreshold := time.Second * 0
+	exposeRemaining := time.Second * math.MaxInt32
+	envenomRemaining := time.Second * math.MaxInt32
+	ruptureRemaining := rogue.RuptureDot.RemainingDuration(sim)
 	if rogue.Rotation.MaintainExposeArmor {
-		eaRemaining = rogue.ExposeArmorAura.RemainingDuration(sim)
+		exposeRemaining = rogue.ExposeArmorAura.RemainingDuration(sim)
+	}
+	if rogue.Rotation.UseEnvenom {
+		envenomRemaining = rogue.EnvenomAura.RemainingDuration(sim)
 	}
 	cp := rogue.ComboPoints()
 	if sliceRemaining <= refreshThreshold {
@@ -66,7 +58,7 @@ func (rogue *Rogue) singleTargetChooseSpell(sim *core.Simulation) *core.Spell {
 			return rogue.Builder
 		}
 	}
-	if rogue.Rotation.MaintainExposeArmor && rogue.ExposeArmorAura.RemainingDuration(sim) <= refreshThreshold {
+	if exposeRemaining <= refreshThreshold {
 		if cp > 0 {
 			return rogue.ExposeArmor[cp]
 		} else {
@@ -77,7 +69,8 @@ func (rogue *Rogue) singleTargetChooseSpell(sim *core.Simulation) *core.Spell {
 		rogue.EnableAllCooldowns(rogue.disabledMCDs)
 		rogue.disabledMCDs = nil
 	}
-	cpGained := rogue.expectedComboPoints(core.MinDuration(sliceRemaining, eaRemaining))
+	timeUntilMaintenance := core.MinDuration(sliceRemaining, exposeRemaining)
+	cpGained := rogue.expectedComboPoints(timeUntilMaintenance)
 	if (cp+cpGained) < 5 && rogue.Talents.CutToTheChase < 1 {
 		return rogue.Builder
 	}
@@ -85,21 +78,49 @@ func (rogue *Rogue) singleTargetChooseSpell(sim *core.Simulation) *core.Spell {
 		// TODO : needs to have a bleed
 		return rogue.HungerForBlood
 	}
-	if rogue.Rotation.UseEnvenom && rogue.EnvenomAura.RemainingDuration(sim) <= refreshThreshold {
+	if envenomRemaining <= refreshThreshold {
 		if cp > 2 {
 			return rogue.Envenom[cp]
 		}
 	}
-	if rogue.Rotation.UseRupture && rogue.RuptureDot.RemainingDuration(sim) <= refreshThreshold {
-		if cp > 0 {
+	if rogue.Rotation.UseRupture && ruptureRemaining <= refreshThreshold {
+		if cp > 2 {
 			return rogue.Rupture[cp]
 		}
 	}
-	return rogue.Builder
+	timeUntilMaintenance = core.MinDuration(timeUntilMaintenance, core.MinDuration(envenomRemaining, ruptureRemaining))
+	extraEnergy := rogue.CurrentEnergy() + rogue.expectedEnergyGain(timeUntilMaintenance) - rogue.Builder.DefaultCast.Cost
+	switch filler {
+	case proto.Rogue_Rotation_FanOfKnives:
+		// Will we run out of energy
+		if extraEnergy >= rogue.FanOfKnives.DefaultCast.Cost {
+			return rogue.FanOfKnives
+		}
+	case proto.Rogue_Rotation_Eviscerate:
+		// Will we run out of energy or combo points
+		if cp > 0 && extraEnergy >= rogue.Eviscerate[cp].DefaultCast.Cost {
+			return rogue.Eviscerate[cp]
+		}
+	}
+	if cp <= int32(5-rogue.BuilderComboPoints) {
+		return rogue.Builder
+	}
+	return nil
+}
+
+func (rogue *Rogue) multiTargetChooseSpell(sim *core.Simulation) *core.Spell {
+	return rogue.chooseSpell(sim, time.Second*2, proto.Rogue_Rotation_FanOfKnives)
+}
+
+func (rogue *Rogue) singleTargetChooseSpell(sim *core.Simulation) *core.Spell {
+	return rogue.chooseSpell(sim, 0, rogue.Rotation.Filler)
+}
+
+func (rogue *Rogue) expectedEnergyGain(duration time.Duration) float64 {
+	return rogue.energyPerSecondAvg * duration.Seconds()
 }
 
 func (rogue *Rogue) expectedComboPoints(duration time.Duration) int32 {
-	expectedEnergyGain := rogue.energyPerSecondAvg * duration.Seconds()
-	builderCasts := core.MinFloat((rogue.CurrentEnergy()+expectedEnergyGain)/rogue.Builder.DefaultCast.Cost, duration.Seconds())
+	builderCasts := core.MinFloat((rogue.CurrentEnergy()+rogue.expectedEnergyGain(duration))/rogue.Builder.DefaultCast.Cost, duration.Seconds())
 	return int32(math.Floor(builderCasts) * rogue.BuilderComboPoints)
 }

@@ -5,6 +5,7 @@ import * as InputHelpers from '../core/components/input_helpers.js';
 
 import {
 	Rogue_Rotation_Builder as Builder,
+	Rogue_Rotation_Filler as Filler,
 	Rogue_Options_PoisonImbue as Poison,
 } from '../core/proto/rogue.js';
 
@@ -33,6 +34,16 @@ export const OffHandImbue = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecR
 
 export const RogueRotationConfig = {
 	inputs: [
+		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, Filler>({
+			fieldName: 'filler',
+			label: 'Filler',
+			labelTooltip: 'Ability to use when extra resources are available',
+			values:[
+				{ name: 'None', value: Filler.NoFiller },
+				{ name: 'Eviscerate', value: Filler.Eviscerate },
+				{ name: 'Fan of Knives', value: Filler.FanOfKnives },
+			],
+		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
 			fieldName: 'maintainExposeArmor',
 			label: 'Maintain EA',

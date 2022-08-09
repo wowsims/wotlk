@@ -49,7 +49,7 @@ type Rogue struct {
 
 	Backstab         *core.Spell
 	DeadlyPoison     *core.Spell
-	FanOfKnifes      *core.Spell
+	FanOfKnives      *core.Spell
 	Hemorrhage       *core.Spell
 	HungerForBlood   *core.Spell
 	InstantPoison    [3]*core.Spell
@@ -86,6 +86,7 @@ type Rogue struct {
 
 	CastModifier               func(*core.Simulation, *core.Spell, *core.Cast)
 	finishingMoveEffectApplier func(sim *core.Simulation, numPoints int32)
+	energyPerSecondCalculator  func() float64
 }
 
 func (rogue *Rogue) GetCharacter() *core.Character {
@@ -174,8 +175,23 @@ func (rogue *Rogue) Initialize() {
 		rogue.registerEnvenom()
 	}
 	rogue.finishingMoveEffectApplier = rogue.makeFinishingMoveEffectApplier()
-	rogue.energyPerSecondAvg = (core.EnergyPerTick*rogue.EnergyTickMultiplier)/core.EnergyTickDuration.Seconds() + 5.0
+	rogue.energyPerSecondAvg = (core.EnergyPerTick * rogue.EnergyTickMultiplier) / core.EnergyTickDuration.Seconds()
+	rogue.energyPerSecondCalculator = rogue.makeExpectedEnergyPerSecond()
 	rogue.DelayDPSCooldownsForArmorDebuffs()
+}
+
+func (rogue *Rogue) makeExpectedEnergyPerSecond() func() float64 {
+	// combat potency 20% offhand 15 energy
+	// focused attacks crits restore energy ~2.8/s
+	// relentless strikes 20% finishers restore 25% energy
+	// some set bonuses
+	bonusEnergyPerSecond := float64(rogue.Talents.CombatPotency) * 3 * 0.2 * 1.0 / rogue.AutoAttacks.OH.SwingSpeed
+	bonusEnergyPerSecond += float64(rogue.Talents.FocusedAttacks) / 3.0 * rogue.GetStat(stats.MeleeCrit) * 2.0
+	bonusEnergyPerSecond += float64(rogue.Talents.RelentlessStrikes) / 5.0 * 0.75
+	return func() float64 {
+		return (core.EnergyPerTick*rogue.EnergyTickMultiplier)/core.EnergyTickDuration.Seconds() + bonusEnergyPerSecond
+	}
+
 }
 
 func (rogue *Rogue) Reset(sim *core.Simulation) {
@@ -200,7 +216,7 @@ func (rogue *Rogue) SpellCritMultiplier() float64 {
 
 func (rogue *Rogue) SetupRotation() {
 	daggerMH := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger
-	if rogue.Rotation.Builder == proto.Rogue_Rotation_Unknown {
+	if rogue.Rotation.Builder == proto.Rogue_Rotation_UnknownBuilder {
 		rogue.Rotation.Builder = proto.Rogue_Rotation_Auto
 	}
 	if rogue.Rotation.Builder == proto.Rogue_Rotation_Backstab && !daggerMH {
@@ -222,6 +238,9 @@ func (rogue *Rogue) SetupRotation() {
 		if rogue.Talents.SlaughterFromTheShadows > 1 && daggerMH {
 			rogue.Rotation.Builder = proto.Rogue_Rotation_Backstab
 		}
+	}
+	if rogue.Rotation.Filler == proto.Rogue_Rotation_UnknownFiller {
+		rogue.Rotation.Filler = proto.Rogue_Rotation_NoFiller
 	}
 	if rogue.Options.OhImbue != proto.Rogue_Options_DeadlyPoison {
 		rogue.Rotation.UseShiv = false
