@@ -82,6 +82,7 @@ func (rogue *Rogue) registerRupture() {
 			ProcMask: core.ProcMaskPeriodicDamage,
 			DamageMultiplier: 1 +
 				0.15*float64(rogue.Talents.BloodSpatter) +
+				0.02*float64(rogue.Talents.FindWeakness) +
 				core.TernaryFloat64(rogue.HasSetBonus(ItemSetBonescythe, 2), 0.1, 0) +
 				core.TernaryFloat64(rogue.HasSetBonus(ItemSetTerrorblade, 4), 0.2, 0) +
 				0.1*float64(rogue.Talents.SerratedBlades),
@@ -90,7 +91,6 @@ func (rogue *Rogue) registerRupture() {
 			BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				comboPoints := rogue.ComboPoints()
 				attackPower := hitEffect.MeleeAttackPower(spell.Unit) + hitEffect.MeleeAttackPowerOnTarget()
-
 				return 127 + float64(comboPoints)*18 + attackPower*[]float64{0.015, 0.024, 0.03, 0.034286, 0.0375}[comboPoints-1]
 			}, 0),
 			OutcomeApplier: rogue.OutcomeFuncTickHitAndCrit(rogue.MeleeCritMultiplier(true, false)),
