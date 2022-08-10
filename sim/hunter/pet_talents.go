@@ -202,7 +202,7 @@ func (hp *HunterPet) registerRabidCD() {
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
 			oldMultiplier := 1.0 + 0.05*float64(oldStacks)
 			newMultiplier := 1.0 + 0.05*float64(newStacks)
-			aura.Unit.AddStatDynamic(sim, stats.AttackPower, newMultiplier/oldMultiplier)
+			aura.Unit.AddStatDependencyDynamic(sim, stats.AttackPower, stats.AttackPower, newMultiplier/oldMultiplier)
 		},
 	})
 

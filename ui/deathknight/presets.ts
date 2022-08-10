@@ -589,13 +589,13 @@ export const P1_FROST_BIS_PRESET = {
 	name: 'P1 BiS Frost',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().howlingBlast,
-	gear: EquipmentSpec.fromJsonString(`{  "items": [
+	gear: EquipmentSpec.fromJsonString(`{   "items": [
     {
       "id": 44006,
       "enchant": 44879,
       "gems": [
         41398,
-        49110
+        42702
       ]
     },
     {
@@ -624,9 +624,10 @@ export const P1_FROST_BIS_PRESET = {
       ]
     },
     {
-      "id": 40733,
+      "id": 40330,
       "enchant": 44484,
       "gems": [
+        39996,
         0
       ]
     },

@@ -123,6 +123,30 @@ func NewRaid(raidConfig proto.Raid) *Raid {
 		nextPetIndex: 25,
 	}
 
+	// If there is at least 1 Shaman in the raid, disable Bloodlust on all other
+	// Shaman and on the RaidBuffs.
+	allShaman := RaidPlayersWithClass(raidConfig, proto.Class_ClassShaman)
+	if len(allShaman) > 0 {
+		lustingShaman := allShaman[0]
+		if raidConfig.Buffs != nil {
+			raidConfig.Buffs.Bloodlust = false
+		}
+
+		eles := RaidPlayersWithSpec(raidConfig, proto.Spec_SpecElementalShaman)
+		for _, ele := range eles {
+			if ele != lustingShaman {
+				ele.Spec.(*proto.Player_ElementalShaman).ElementalShaman.Options.Bloodlust = false
+			}
+		}
+
+		enhances := RaidPlayersWithSpec(raidConfig, proto.Spec_SpecEnhancementShaman)
+		for _, enh := range enhances {
+			if enh != lustingShaman {
+				enh.Spec.(*proto.Player_EnhancementShaman).EnhancementShaman.Options.Bloodlust = false
+			}
+		}
+	}
+
 	for partyIndex, partyConfig := range raidConfig.Parties {
 		if partyConfig != nil {
 			raid.Parties = append(raid.Parties, NewParty(raid, partyIndex, *partyConfig))
@@ -328,4 +352,16 @@ func RaidPlayersWithSpec(raid proto.Raid, spec proto.Spec) []*proto.Player {
 		}
 	}
 	return specPlayers
+}
+
+func RaidPlayersWithClass(raid proto.Raid, class proto.Class) []*proto.Player {
+	var players []*proto.Player
+	for _, party := range raid.Parties {
+		for _, player := range party.Players {
+			if player != nil && player.Class == class {
+				players = append(players, player)
+			}
+		}
+	}
+	return players
 }

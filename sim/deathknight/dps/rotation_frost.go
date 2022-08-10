@@ -8,12 +8,16 @@ import (
 )
 
 type FrostRotation struct {
+	dk *DpsDeathknight
+
 	oblitCount   int32
+	shouldPesti  bool
 	missedPesti  bool
 	uaCycle      bool
 	delayUACycle bool
 
 	// CDS
+	amsMCD                  *core.MajorCooldown
 	hyperSpeedMCD           *core.MajorCooldown
 	stoneformMCD            *core.MajorCooldown
 	bloodfuryMCD            *core.MajorCooldown
@@ -21,10 +25,17 @@ type FrostRotation struct {
 	potionOfSpeedMCD        *core.MajorCooldown
 	indestructiblePotionMCD *core.MajorCooldown
 	potionUsed              bool
+
+	oblitRPRegen float64
+}
+
+func (fr *FrostRotation) Initialize(dk *DpsDeathknight) {
+	fr.oblitRPRegen = core.TernaryFloat64(dk.HasSetBonus(deathknight.ItemSetScourgeborneBattlegear, 4), 25.0, 20.0)
 }
 
 func (fr *FrostRotation) Reset(sim *core.Simulation) {
 	fr.oblitCount = 0
+	fr.shouldPesti = true
 	fr.missedPesti = false
 	fr.uaCycle = false
 	fr.delayUACycle = false
@@ -51,6 +62,9 @@ func (dk *DpsDeathknight) getFrostMajorCooldown(actionID core.ActionID) *core.Ma
 
 func (dk *DpsDeathknight) setupUnbreakableArmorCooldowns() {
 	fr := &dk.fr
+
+	// AMS
+	fr.amsMCD = dk.getFrostMajorCooldown(core.ActionID{SpellID: 48707})
 
 	// hyperspeed accelerators
 	fr.hyperSpeedMCD = dk.getFrostMajorCooldown(core.ActionID{SpellID: 54758})
@@ -117,6 +131,7 @@ func (dk *DpsDeathknight) castAllMajorCooldowns(sim *core.Simulation) {
 	dk.castMajorCooldown(fr.stoneformMCD, sim, target)
 	dk.castMajorCooldown(fr.bloodfuryMCD, sim, target)
 	dk.castMajorCooldown(fr.berserkingMCD, sim, target)
+	dk.castMajorCooldown(fr.amsMCD, sim, target)
 }
 
 func (dk *DpsDeathknight) RotationActionCallback_UA_Frost(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {

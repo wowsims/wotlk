@@ -104,6 +104,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 					devotionAura: TristateEffect.TristateEffectImproved,
 					stoneskinTotem: TristateEffect.TristateEffectImproved,
 					moonkinAura: TristateEffect.TristateEffectRegular,
+					wrathOfAirTotem: true,
 				}),
 				partyBuffs: PartyBuffs.create({
 					heroicPresence: false,

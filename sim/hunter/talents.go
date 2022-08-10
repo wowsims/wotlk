@@ -632,7 +632,7 @@ func (hunter *Hunter) applyExposeWeakness() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.ProcMask.Matches(core.ProcMaskRanged) {
+			if !spellEffect.ProcMask.Matches(core.ProcMaskRanged) && spell != hunter.ExplosiveTrap {
 				return
 			}
 
@@ -742,8 +742,10 @@ func (hunter *Hunter) registerReadinessCD() {
 		ActionID: actionID,
 
 		Cast: core.CastConfig{
-			//GCD:         time.Second * 1, TODO: GCD causes panic
-			//IgnoreHaste: true, // Hunter GCD is locked
+			DefaultCast: core.Cast{
+				GCD: time.Second * 1,
+			},
+			IgnoreHaste: true, // Hunter GCD is locked
 			CD: core.Cooldown{
 				Timer:    hunter.NewTimer(),
 				Duration: time.Minute * 3,
