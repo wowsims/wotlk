@@ -50,10 +50,10 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 		},
 	})
 
-	dk.AddMajorCooldown(core.MajorCooldown{
-		Spell: dk.AntiMagicShell.Spell,
-		Type:  core.CooldownTypeDPS,
-	})
+	//dk.AddMajorCooldown(core.MajorCooldown{
+	//	Spell: dk.AntiMagicShell.Spell,
+	//	Type:  core.CooldownTypeDPS,
+	//})
 }
 
 func (dk *Deathknight) CanAntiMagicShell(sim *core.Simulation) bool {

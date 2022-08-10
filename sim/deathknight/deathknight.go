@@ -225,6 +225,7 @@ func (dk *Deathknight) Initialize() {
 	dk.registerRuneTapSpell()
 	dk.registerIceboundFortitudeSpell()
 	dk.registerDeathStrikeSpell()
+
 	dk.registerAntiMagicShellSpell()
 
 	dk.registerRaiseDeadCD()
