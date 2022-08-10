@@ -739,7 +739,7 @@ dps_results: {
  key: "TestRogue-Settings-Human-P1-Basic-NoBuffs-LongMultiTarget"
  value: {
   dps: 19644.5365685328
-  tps: 13947.6209636583
+  tps: 13947.6209636582
  }
 }
 dps_results: {

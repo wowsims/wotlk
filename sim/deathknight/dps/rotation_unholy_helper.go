@@ -310,7 +310,7 @@ func (dk *DpsDeathknight) GargoyleProcCheck(sim *core.Simulation, castTime time.
 
 	for _, procTracker := range dk.ur.procTrackers {
 		if !procTracker.didActivate {
-			logMessage(sim, "Waiting on procs..")
+			// logMessage(sim, "Waiting on procs..")
 			return true
 		}
 	}

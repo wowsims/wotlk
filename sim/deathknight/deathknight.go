@@ -37,8 +37,8 @@ type Deathknight struct {
 
 	bonusCoeffs DeathknightCoeffs
 
-	onRuneSpendT10          core.OnRuneSpend
-	onRuneSpendBladeBarrier core.OnRuneSpend
+	onRuneSpendT10          core.OnRune
+	onRuneSpendBladeBarrier core.OnRune
 
 	Inputs DeathknightInputs
 

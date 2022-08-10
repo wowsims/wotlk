@@ -203,7 +203,7 @@ func (dk *Deathknight) Wait(sim *core.Simulation) {
 	if dk.AutoAttacks.OffhandSwingAt > sim.CurrentTime {
 		waitUntil = core.MinDuration(waitUntil, dk.AutoAttacks.OffhandSwingAt)
 	}
-	waitUntil = core.MinDuration(waitUntil, dk.AnySpentRuneReadyAt(sim))
+	waitUntil = core.MinDuration(waitUntil, dk.AnySpentRuneReadyAt())
 	if dk.ButcheryPA != nil {
 		waitUntil = core.MinDuration(dk.ButcheryPA.NextActionAt, waitUntil)
 	}
