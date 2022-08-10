@@ -70,6 +70,19 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 		return
 	}
 
+	if enh.LavaburstWeave {
+		if enh.Talents.MaelstromWeapon > 0 && enh.MaelstromWeaponAura.GetStacks() >= 1 && enh.LavaBurst.IsReady(sim) {
+			lvbCastTime := enh.ApplyCastSpeed(enh.LavaBurst.DefaultCast.CastTime)
+			timeUntilSwing := enh.AutoAttacks.NextAttackAt() - sim.CurrentTime
+			if lvbCastTime < timeUntilSwing {
+				if !enh.LavaBurst.Cast(sim, target) {
+					enh.DoNothing()
+				}
+				return
+			}
+		}
+	}
+
 	if enh.Talents.MaelstromWeapon > 0 && enh.MaelstromWeaponAura.GetStacks() >= 1 {
 		lbCastTime := enh.LightningBolt.DefaultCast.CastTime - (time.Millisecond * time.Duration(500*enh.MaelstromWeaponAura.GetStacks()))
 		lbCastTime = enh.ApplyCastSpeed(lbCastTime)
