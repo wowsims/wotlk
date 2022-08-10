@@ -22,7 +22,7 @@ func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
 
 	nextSwingAt := ret.AutoAttacks.NextAttackAt()
 	isExecutePhase := sim.IsExecutePhase20()
-	
+
 	if ret.GCD.IsReady(sim) {
 	rotationLoop:
 		for _, spellNumber := range ret.RotationInput {
@@ -84,7 +84,7 @@ func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
 }
 
 func (ret *RetributionPaladin) castSequenceRotation(sim *core.Simulation) {
-	if(len(ret.RotationInput) == 0){
+	if len(ret.RotationInput) == 0 {
 		return
 	}
 

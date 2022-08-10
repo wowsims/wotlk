@@ -111,9 +111,9 @@ func (ret *RetributionPaladin) Reset(sim *core.Simulation) {
 	ret.Paladin.Reset(sim)
 
 	sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int) {
-			if isExecute == 20 {
-				ret.OnGCDReady(sim)
-			}
+		if isExecute == 20 {
+			ret.OnGCDReady(sim)
+		}
 	})
 
 	ret.CastSequenceIndex = 0
@@ -129,5 +129,5 @@ func (ret *RetributionPaladin) Reset(sim *core.Simulation) {
 
 	ret.DivinePleaAura.Activate(sim)
 	ret.DivinePlea.CD.Use(sim)
-	
+
 }
