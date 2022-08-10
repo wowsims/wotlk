@@ -287,6 +287,7 @@ export class ActionId {
             case 'Frost Strike':
             case 'Plague Strike':
             case 'Blood Strike':
+            case 'Death Strike':
             case 'Obliterate':
             case 'Blood-Caked Strike':
             case 'Lightning Speed':
