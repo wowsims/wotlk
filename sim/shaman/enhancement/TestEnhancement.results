@@ -766,7 +766,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Orc-P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 14571.5272474173
+  dps: 14571.5272474174
   tps: 11858.896503307
  }
 }

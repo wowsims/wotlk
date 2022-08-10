@@ -403,7 +403,7 @@ dps_results: {
  key: "TestUnholy-AllItems-PersistentEarthshatterDiamond"
  value: {
   dps: 7684.6300344995
-  tps: 5402.8064167654
+  tps: 5402.8064167655
  }
 }
 dps_results: {
@@ -458,7 +458,7 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-RelentlessEarthsiegeDiamond"
  value: {
-  dps: 7750.8599200624
+  dps: 7750.8599200623
   tps: 5453.0006160201
  }
 }
@@ -592,7 +592,7 @@ dps_results: {
  key: "TestUnholy-AllItems-SwiftStarflareDiamond"
  value: {
   dps: 7684.6300344995
-  tps: 5402.8064167654
+  tps: 5402.8064167655
  }
 }
 dps_results: {

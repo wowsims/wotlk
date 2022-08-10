@@ -60,7 +60,7 @@ func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 	if rogue.Rotation.MaintainTricksOfTheTrade {
 		rogue.AddMajorCooldown(core.MajorCooldown{
 			Spell:    rogue.TricksOfTheTrade,
-			Priority: core.CooldownPriorityDefault,
+			Priority: core.CooldownPriorityDrums,
 			Type:     core.CooldownTypeDPS,
 		})
 	}
