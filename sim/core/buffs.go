@@ -292,14 +292,34 @@ func applyPetBuffEffects(petAgent PetAgent, raidBuffs proto.RaidBuffs, partyBuff
 	// the owner during combat (Bloodlust) or don't make sense for a pet.
 	raidBuffs.Bloodlust = false
 	raidBuffs.WrathOfAirTotem = false
+	individualBuffs.HymnOfHope = 0
+	individualBuffs.HandOfSalvation = 0
 	individualBuffs.Innervates = 0
 	individualBuffs.PowerInfusions = 0
+	individualBuffs.UnholyFrenzy = 0
+	individualBuffs.Revitalize = 0
 	individualBuffs.TricksOfTheTrades = 0
 	individualBuffs.ShatteringThrows = 0
 
 	if !petAgent.GetPet().enabledOnStart {
 		raidBuffs.ArcaneBrilliance = false
+		raidBuffs.DivineSpirit = false
 		raidBuffs.GiftOfTheWild = 0
+		raidBuffs.PowerWordFortitude = 0
+		raidBuffs.Thorns = 0
+		raidBuffs.ShadowProtection = false
+		raidBuffs.DrumsOfForgottenKings = false
+		raidBuffs.DrumsOfTheWild = false
+		raidBuffs.ScrollOfProtection = false
+		raidBuffs.ScrollOfStamina = false
+		raidBuffs.ScrollOfStrength = false
+		raidBuffs.ScrollOfAgility = false
+		raidBuffs.ScrollOfIntellect = false
+		raidBuffs.ScrollOfSpirit = false
+		individualBuffs.BlessingOfKings = false
+		individualBuffs.BlessingOfSanctuary = false
+		individualBuffs.BlessingOfMight = 0
+		individualBuffs.BlessingOfWisdom = 0
 	}
 
 	// For some reason pets don't benefit from buffs that are ratings, e.g. crit rating or haste rating.
@@ -509,25 +529,34 @@ const BloodlustDuration = time.Second * 40
 const BloodlustCD = time.Minute * 10
 
 func registerBloodlustCD(agent Agent) {
-	bloodlustAura := BloodlustAura(agent.GetCharacter(), -1)
+	character := agent.GetCharacter()
+	bloodlustAura := BloodlustAura(character, -1)
 
-	// TODO: do we need consecutive CDs
-	registerExternalConsecutiveCDApproximation(
-		agent,
-		externalConsecutiveCDApproximation{
-			ActionID:         ActionID{SpellID: 2825, Tag: -1},
-			AuraTag:          BloodlustAuraTag,
-			CooldownPriority: CooldownPriorityBloodlust,
-			AuraDuration:     BloodlustDuration,
-			AuraCD:           BloodlustCD,
-			Type:             CooldownTypeDPS | CooldownTypeUsableShapeShifted,
+	spell := character.RegisterSpell(SpellConfig{
+		ActionID: bloodlustAura.ActionID,
+		Flags:    SpellFlagNoOnCastComplete | SpellFlagNoMetrics | SpellFlagNoLogs,
 
-			ShouldActivate: func(sim *Simulation, character *Character) bool {
-				// Haste portion doesn't stack with Power Infusion, so prefer to wait.
-				return !character.HasActiveAuraWithTag(PowerInfusionAuraTag)
+		Cast: CastConfig{
+			CD: Cooldown{
+				Timer:    character.NewTimer(),
+				Duration: BloodlustCD,
 			},
-			AddAura: func(sim *Simulation, character *Character) { bloodlustAura.Activate(sim) },
-		}, 1)
+		},
+
+		ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
+			bloodlustAura.Activate(sim)
+		},
+	})
+
+	character.AddMajorCooldown(MajorCooldown{
+		Spell:    spell,
+		Priority: CooldownPriorityBloodlust,
+		Type:     CooldownTypeDPS | CooldownTypeUsableShapeShifted,
+		ShouldActivate: func(sim *Simulation, character *Character) bool {
+			// Haste portion doesn't stack with Power Infusion, so prefer to wait.
+			return !character.HasActiveAuraWithTag(PowerInfusionAuraTag)
+		},
+	})
 }
 
 func BloodlustAura(character *Character, actionTag int32) *Aura {
