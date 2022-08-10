@@ -1,19 +1,15 @@
 package core
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-type OnRuneSpend func(sim *Simulation)
-type OnBloodRuneGain func(sim *Simulation)
-type OnFrostRuneGain func(sim *Simulation)
-type OnUnholyRuneGain func(sim *Simulation)
-type OnDeathRuneGain func(sim *Simulation)
+type OnRune func(sim *Simulation)
 type OnRunicPowerGain func(sim *Simulation)
 
-type RuneState uint8
 type RuneKind uint8
 
 const (
@@ -24,27 +20,12 @@ const (
 	RuneKind_Death
 )
 
-const (
-	RuneState_Normal RuneState = iota
-	RuneState_Spent
-	RuneState_Death
-	RuneState_DeathSpent
-)
-
-type RuneAmount struct {
-	Blood  int
-	Frost  int
-	Unholy int
-	Death  int
-}
-
-type Rune struct {
-	state         RuneState
-	kind          RuneKind
-	pas           [2]*PendingAction
-	lastRegenTime time.Duration
-	lastSpendTime time.Duration
-	BotnOrReaping bool
+type RuneMeta struct {
+	lastRegenTime time.Duration // last time the rune regenerated.
+	lastSpendTime time.Duration // last time the rune was spent.
+	regenAt       time.Duration // time at which the rune will no longer be spent.
+	revertAt      time.Duration // time at which rune will no longer be kind death.
+	revertOnSpend bool
 }
 
 type RunicPowerBar struct {
@@ -53,80 +34,86 @@ type RunicPowerBar struct {
 	maxRunicPower     float64
 	currentRunicPower float64
 
-	bloodRunes  [2]Rune
-	frostRunes  [2]Rune
-	unholyRunes [2]Rune
+	// These flags are used to simplify pending action checks
+	// |BFUDS| |BFUDS| |BFUDS| |BFUDS| |BFUDS| |BFUDS|
+	runeStates int32
+	runeMeta   [6]RuneMeta
+	btslot     int32
 
 	bloodRuneGainMetrics  *ResourceMetrics
 	frostRuneGainMetrics  *ResourceMetrics
 	unholyRuneGainMetrics *ResourceMetrics
 	deathRuneGainMetrics  *ResourceMetrics
 
-	onRuneSpend      OnRuneSpend
-	onBloodRuneGain  OnBloodRuneGain
-	onFrostRuneGain  OnFrostRuneGain
-	onUnholyRuneGain OnUnholyRuneGain
-	onDeathRuneGain  OnDeathRuneGain
+	onRuneSpend      OnRune
+	onBloodRuneGain  OnRune
+	onFrostRuneGain  OnRune
+	onUnholyRuneGain OnRune
+	onDeathRuneGain  OnRune
 	onRunicPowerGain OnRunicPowerGain
-	isACopy          bool
 
-	clone *RunicPowerBar
+	pa *PendingAction
+
+	isACopy bool
+	clone   *RunicPowerBar
 }
 
+func (rp *RunicPowerBar) DebugString() string {
+	data := ""
+	for i := int32(0); i < 6; i++ {
+		data += fmt.Sprintf("Rune %d - D: %v S: %v\n\tRegenAt: %0.1f, RevertAt: %0.1f\n", i, rp.runeStates&isDeaths[i] != 0, rp.runeStates&isSpents[i] != 0, rp.runeMeta[i].regenAt.Seconds(), rp.runeMeta[i].revertAt.Seconds())
+	}
+
+	return data
+}
+
+// CopyRunicPowerBar will create a clone of the bar with the same
 func (rp *RunicPowerBar) CopyRunicPowerBar() *RunicPowerBar {
 	if rp.clone == nil {
-		rp.clone = &RunicPowerBar{}
+		rp.clone = &RunicPowerBar{isACopy: true}
 	}
-	*rp.clone = *rp
+
+	rp.clone.maxRunicPower = rp.maxRunicPower
+	rp.clone.currentRunicPower = rp.currentRunicPower
+	rp.clone.runeStates = rp.runeStates
+	rp.clone.runeMeta = rp.runeMeta
+
 	return rp.clone
 }
 
-func ResetRunes(sim *Simulation, runes *[2]Rune, runeKind RuneKind) {
-	runes[0].state = RuneState_Normal
-	runes[0].kind = runeKind
-	runes[0].lastRegenTime = -1
-	runes[0].lastSpendTime = -1
-	runes[0].BotnOrReaping = false
-	runes[1].state = RuneState_Normal
-	runes[1].kind = runeKind
-	runes[1].lastRegenTime = -1
-	runes[1].lastSpendTime = -1
-	runes[1].BotnOrReaping = false
-
-	if runes[0].pas[0] != nil {
-		runes[0].pas[0].Cancel(sim)
-		runes[0].pas[0] = nil
-	}
-	if runes[0].pas[1] != nil {
-		runes[0].pas[1].Cancel(sim)
-		runes[0].pas[1] = nil
-	}
-	if runes[1].pas[0] != nil {
-		runes[1].pas[0].Cancel(sim)
-		runes[1].pas[0] = nil
-	}
-	if runes[1].pas[1] != nil {
-		runes[1].pas[1].Cancel(sim)
-		runes[1].pas[1] = nil
-	}
+func ResetRunes(runeMeta *RuneMeta) {
+	runeMeta.regenAt = NeverExpires
+	runeMeta.revertAt = NeverExpires
+	runeMeta.lastRegenTime = -1
+	runeMeta.lastSpendTime = -1
+	runeMeta.revertOnSpend = false
 }
 
 func (rp *RunicPowerBar) reset(sim *Simulation) {
 	if rp.unit == nil {
 		return
 	}
+	if rp.pa != nil {
+		rp.pa.Cancel(sim)
+	}
 
-	ResetRunes(sim, &rp.bloodRunes, RuneKind_Blood)
-	ResetRunes(sim, &rp.frostRunes, RuneKind_Frost)
-	ResetRunes(sim, &rp.unholyRunes, RuneKind_Unholy)
+	ResetRunes(&rp.runeMeta[0])
+	ResetRunes(&rp.runeMeta[1])
+	ResetRunes(&rp.runeMeta[2])
+	ResetRunes(&rp.runeMeta[3])
+	ResetRunes(&rp.runeMeta[4])
+	ResetRunes(&rp.runeMeta[5])
+	rp.runeStates = baseRuneState // unspent, no death
 }
 
+const baseRuneState = 0b100001000001000010000010000100
+
 func (unit *Unit) EnableRunicPowerBar(currentRunicPower float64, maxRunicPower float64,
-	onRuneSpend OnRuneSpend,
-	onBloodRuneGain OnBloodRuneGain,
-	onFrostRuneGain OnFrostRuneGain,
-	onUnholyRuneGain OnUnholyRuneGain,
-	onDeathRuneGain OnDeathRuneGain,
+	onRuneSpend OnRune,
+	onBloodRuneGain OnRune,
+	onFrostRuneGain OnRune,
+	onUnholyRuneGain OnRune,
+	onDeathRuneGain OnRune,
 	onRunicPowerGain OnRunicPowerGain) {
 	unit.RunicPowerBar = RunicPowerBar{
 		unit: unit,
@@ -134,9 +121,7 @@ func (unit *Unit) EnableRunicPowerBar(currentRunicPower float64, maxRunicPower f
 		maxRunicPower:     maxRunicPower,
 		currentRunicPower: currentRunicPower,
 
-		bloodRunes:  [2]Rune{Rune{state: RuneState_Normal, kind: RuneKind_Blood, pas: [2]*PendingAction{nil, nil}, lastRegenTime: -1}, Rune{state: RuneState_Normal, kind: RuneKind_Blood, pas: [2]*PendingAction{nil, nil}, lastRegenTime: -1}},
-		frostRunes:  [2]Rune{Rune{state: RuneState_Normal, kind: RuneKind_Frost, pas: [2]*PendingAction{nil, nil}, lastRegenTime: -1}, Rune{state: RuneState_Normal, kind: RuneKind_Frost, pas: [2]*PendingAction{nil, nil}, lastRegenTime: -1}},
-		unholyRunes: [2]Rune{Rune{state: RuneState_Normal, kind: RuneKind_Unholy, pas: [2]*PendingAction{nil, nil}, lastRegenTime: -1}, Rune{state: RuneState_Normal, kind: RuneKind_Unholy, pas: [2]*PendingAction{nil, nil}, lastRegenTime: -1}},
+		runeStates: baseRuneState,
 
 		onRuneSpend:      onRuneSpend,
 		onBloodRuneGain:  onBloodRuneGain,
@@ -144,8 +129,7 @@ func (unit *Unit) EnableRunicPowerBar(currentRunicPower float64, maxRunicPower f
 		onUnholyRuneGain: onUnholyRuneGain,
 		onDeathRuneGain:  onDeathRuneGain,
 		onRunicPowerGain: onRunicPowerGain,
-
-		isACopy: false,
+		isACopy:          false,
 	}
 
 	unit.bloodRuneGainMetrics = unit.NewBloodRuneMetrics(ActionID{OtherID: proto.OtherAction_OtherActionBloodRuneGain, Tag: 1})
@@ -233,187 +217,261 @@ func (rp *RunicPowerBar) spendRunicPower(sim *Simulation, amount float64, metric
 
 }
 
-func (rp *RunicPowerBar) CurrentRunesOfType(rb *[2]Rune, runeState RuneState) int32 {
-	return TernaryInt32(rb[0].state == runeState, 1, 0) + TernaryInt32(rb[1].state == runeState, 1, 0)
+// DeathRuneRegenAt returns the time the given death rune will regen at.
+//  If the rune is not death or not spent it returns NeverExpires
+func (rp *RunicPowerBar) DeathRuneRegenAt(slot int32) time.Duration {
+	// If not death or not spent, no regen time
+	if isSpentDeath[slot]&rp.runeStates != isSpentDeath[slot] {
+		return NeverExpires
+	}
+	return rp.runeMeta[slot].regenAt
 }
 
-func (rp *RunicPowerBar) DeathRuneRegenAt(r *Rune) time.Duration {
-	readyAt := time.Duration(NeverExpires)
-
-	if r.state == RuneState_DeathSpent {
-		if r.pas[1] != nil {
-			readyAt = time.Duration(TernaryDuration(r.pas[0].NextActionAt < r.pas[1].NextActionAt, r.pas[0].NextActionAt, readyAt))
-		} else {
-			readyAt = r.pas[0].NextActionAt
+// DeathRuneRevertAt returns the next time that a death rune will revert.
+//  If there is no deathrune that needs to revert it returns `NeverExpires`.
+func (rp *RunicPowerBar) DeathRuneRevertAt() time.Duration {
+	readyAt := NeverExpires
+	for i := int32(0); i < 6; i++ {
+		if rp.runeStates&isDeaths[i] == isDeaths[i] {
+			readyAt = MinDuration(readyAt, rp.runeMeta[i].revertAt)
 		}
 	}
-
 	return readyAt
 }
 
-func (rp *RunicPowerBar) SpentDeathRuneReadyAt(sim *Simulation) time.Duration {
-	readyAt := time.Duration(NeverExpires)
-
-	readyAt = MinDuration(readyAt, rp.DeathRuneRegenAt(&rp.bloodRunes[0]))
-	readyAt = MinDuration(readyAt, rp.DeathRuneRegenAt(&rp.bloodRunes[1]))
-	readyAt = MinDuration(readyAt, rp.DeathRuneRegenAt(&rp.frostRunes[0]))
-	readyAt = MinDuration(readyAt, rp.DeathRuneRegenAt(&rp.frostRunes[1]))
-	readyAt = MinDuration(readyAt, rp.DeathRuneRegenAt(&rp.unholyRunes[0]))
-	readyAt = MinDuration(readyAt, rp.DeathRuneRegenAt(&rp.unholyRunes[1]))
-
-	return readyAt
-}
-
-func (rp *RunicPowerBar) DeathRuneReadyAt(sim *Simulation) time.Duration {
-	readyAt := time.Duration(NeverExpires)
-
-	if rp.bloodRunes[0].state == RuneState_Death || rp.bloodRunes[1].state == RuneState_Death ||
-		rp.frostRunes[0].state == RuneState_Death || rp.frostRunes[1].state == RuneState_Death ||
-		rp.unholyRunes[0].state == RuneState_Death || rp.unholyRunes[1].state == RuneState_Death {
-		readyAt = sim.CurrentTime
-		return readyAt
+func (rp *RunicPowerBar) SpentDeathRuneReadyAt() time.Duration {
+	readyAt := NeverExpires
+	for i := int32(0); i < 6; i++ {
+		readyAt = MinDuration(readyAt, rp.DeathRuneRegenAt(i))
 	}
-
-	return rp.SpentDeathRuneReadyAt(sim)
+	return readyAt
 }
 
-func (rp *RunicPowerBar) CurrentRuneGrace(sim *Simulation, runes *[2]Rune) time.Duration {
-	if runes[0].pas[0] == nil {
-		return time.Millisecond*2500 - MinDuration(2500*time.Millisecond, sim.CurrentTime-runes[0].lastRegenTime)
-	} else if runes[1].pas[0] == nil {
-		return time.Millisecond*2500 - MinDuration(2500*time.Millisecond, sim.CurrentTime-runes[1].lastRegenTime)
+func (rp *RunicPowerBar) CurrentRuneGrace(sim *Simulation, slot int32) time.Duration {
+	if rp.runeMeta[slot].regenAt > sim.CurrentTime {
+		return time.Millisecond*2500 - MinDuration(2500*time.Millisecond, sim.CurrentTime-rp.runeMeta[slot].lastRegenTime)
 	}
 	return 0
 }
 
-func (rp *RunicPowerBar) IsLeftBloodRuneNormal() bool {
-	return (rp.bloodRunes[0].state == RuneState_Normal)
-}
+const anyBloodSpent = 0b0000100001
+const anyFrostSpent = 0b0000100001 << 10
+const anyUnholySpent = 0b0000100001 << 20
 
 func (rp *RunicPowerBar) CurrentBloodRuneGrace(sim *Simulation) time.Duration {
-	return rp.CurrentRuneGrace(sim, &rp.bloodRunes)
+	if rp.runeStates&anyBloodSpent == 0 {
+		return 0
+	}
+	return MaxDuration(rp.CurrentRuneGrace(sim, 0), rp.CurrentRuneGrace(sim, 1))
 }
 
 func (rp *RunicPowerBar) CurrentFrostRuneGrace(sim *Simulation) time.Duration {
-	return rp.CurrentRuneGrace(sim, &rp.frostRunes)
+	if rp.runeStates&anyFrostSpent == 0 {
+		return 0
+	}
+	return MaxDuration(rp.CurrentRuneGrace(sim, 2), rp.CurrentRuneGrace(sim, 3))
 }
 
 func (rp *RunicPowerBar) CurrentUnholyRuneGrace(sim *Simulation) time.Duration {
-	return rp.CurrentRuneGrace(sim, &rp.unholyRunes)
-}
-
-func (rp *RunicPowerBar) NormalSpentRuneReadyAt(sim *Simulation, runes *[2]Rune) time.Duration {
-	readyAt := NeverExpires
-
-	if runes[0].kind != RuneKind_Death && runes[0].pas[0] != nil {
-		readyAt = MinDuration(readyAt, runes[0].pas[0].NextActionAt)
+	if rp.runeStates&anyUnholySpent == 0 {
+		return 0
 	}
-
-	if runes[1].kind != RuneKind_Death && runes[1].pas[0] != nil {
-		readyAt = MinDuration(readyAt, runes[1].pas[0].NextActionAt)
-	}
-
-	return readyAt
-}
-
-func (rp *RunicPowerBar) SpentRuneReadyAt(sim *Simulation, runes *[2]Rune) time.Duration {
-	readyAt := rp.SpentDeathRuneReadyAt(sim)
-
-	if runes[0].pas[0] != nil {
-		readyAt = MinDuration(readyAt, runes[0].pas[0].NextActionAt)
-	}
-
-	if runes[1].pas[0] != nil {
-		readyAt = MinDuration(readyAt, runes[1].pas[0].NextActionAt)
-	}
-
-	return readyAt
-}
-
-func (rp *RunicPowerBar) RuneReadyAt(sim *Simulation, runes *[2]Rune) time.Duration {
-	if runes[0].state == RuneState_Normal || runes[0].state == RuneState_Death ||
-		runes[1].state == RuneState_Normal || runes[1].state == RuneState_Death {
-		return sim.CurrentTime
-	}
-
-	return rp.SpentRuneReadyAt(sim, runes)
-}
-
-func (rp *RunicPowerBar) SpentBloodRuneReadyAt(sim *Simulation) time.Duration {
-	return rp.SpentRuneReadyAt(sim, &rp.bloodRunes)
-}
-
-func (rp *RunicPowerBar) SpentFrostRuneReadyAt(sim *Simulation) time.Duration {
-	return rp.SpentRuneReadyAt(sim, &rp.frostRunes)
-}
-
-func (rp *RunicPowerBar) SpentUnholyRuneReadyAt(sim *Simulation) time.Duration {
-	return rp.NormalSpentRuneReadyAt(sim, &rp.unholyRunes)
+	return MaxDuration(rp.CurrentRuneGrace(sim, 2), rp.CurrentRuneGrace(sim, 3))
 }
 
 func (rp *RunicPowerBar) NormalSpentBloodRuneReadyAt(sim *Simulation) time.Duration {
-	return rp.NormalSpentRuneReadyAt(sim, &rp.bloodRunes)
+	readyAt := NeverExpires
+	if rp.runeStates&isDeaths[0] == 0 && rp.runeStates&isSpents[0] != 0 {
+		readyAt = rp.runeMeta[0].regenAt
+	}
+	if rp.runeStates&isDeaths[1] == 0 && rp.runeStates&isSpents[1] != 0 {
+		readyAt = MinDuration(readyAt, rp.runeMeta[1].regenAt)
+	}
+	return readyAt
 }
 
 func (rp *RunicPowerBar) NormalSpentFrostRuneReadyAt(sim *Simulation) time.Duration {
-	return rp.NormalSpentRuneReadyAt(sim, &rp.frostRunes)
+	readyAt := NeverExpires
+	if rp.runeStates&isDeaths[2] == 0 && rp.runeStates&isSpents[2] != 0 {
+		readyAt = rp.runeMeta[2].regenAt
+	}
+	if rp.runeStates&isDeaths[3] == 0 && rp.runeStates&isSpents[3] != 0 {
+		readyAt = MinDuration(readyAt, rp.runeMeta[3].regenAt)
+	}
+	return readyAt
 }
 
 func (rp *RunicPowerBar) NormalSpentUnholyRuneReadyAt(sim *Simulation) time.Duration {
-	return rp.NormalSpentRuneReadyAt(sim, &rp.unholyRunes)
+	readyAt := NeverExpires
+	if rp.runeStates&isDeaths[4] == 0 && rp.runeStates&isSpents[4] != 0 {
+		readyAt = rp.runeMeta[4].regenAt
+	}
+	if rp.runeStates&isDeaths[5] == 0 && rp.runeStates&isSpents[5] != 0 {
+		readyAt = MinDuration(readyAt, rp.runeMeta[5].regenAt)
+	}
+	return readyAt
+}
+
+func (rp *RunicPowerBar) SpentBloodRuneReadyAt() time.Duration {
+	return MinDuration(rp.runeMeta[0].regenAt, rp.runeMeta[1].regenAt)
+}
+
+func (rp *RunicPowerBar) SpentFrostRuneReadyAt() time.Duration {
+	return MinDuration(rp.runeMeta[2].regenAt, rp.runeMeta[3].regenAt)
+}
+
+func (rp *RunicPowerBar) SpentUnholyRuneReadyAt() time.Duration {
+	return MinDuration(rp.runeMeta[4].regenAt, rp.runeMeta[5].regenAt)
 }
 
 func (rp *RunicPowerBar) BloodRuneReadyAt(sim *Simulation) time.Duration {
-	return rp.RuneReadyAt(sim, &rp.bloodRunes)
+	if rp.runeStates&anyBloodSpent != anyBloodSpent { // if any are not spent
+		return sim.CurrentTime
+	}
+	return MinDuration(rp.runeMeta[0].regenAt, rp.runeMeta[1].regenAt)
 }
 
 func (rp *RunicPowerBar) FrostRuneReadyAt(sim *Simulation) time.Duration {
-	return rp.RuneReadyAt(sim, &rp.frostRunes)
+	if rp.runeStates&anyFrostSpent != anyFrostSpent { // if any are not spent
+		return sim.CurrentTime
+	}
+	return MinDuration(rp.runeMeta[2].regenAt, rp.runeMeta[3].regenAt)
 }
 
 func (rp *RunicPowerBar) UnholyRuneReadyAt(sim *Simulation) time.Duration {
-	return rp.RuneReadyAt(sim, &rp.unholyRunes)
+	if rp.runeStates&anyUnholySpent != anyUnholySpent { // if any are not spent
+		return sim.CurrentTime
+	}
+	return MinDuration(rp.runeMeta[4].regenAt, rp.runeMeta[5].regenAt)
 }
 
-func (rp *RunicPowerBar) AnySpentRuneReadyAt(sim *Simulation) time.Duration {
-	return MinDuration(MinDuration(rp.SpentRuneReadyAt(sim, &rp.bloodRunes), rp.SpentRuneReadyAt(sim, &rp.frostRunes)), rp.SpentRuneReadyAt(sim, &rp.unholyRunes))
+// AnySpentRuneReadyAt returns the next time that a rune will regenerate.
+//  It will be NeverExpires if there is no rune pending regeneration.
+func (rp *RunicPowerBar) AnySpentRuneReadyAt() time.Duration {
+	return MinDuration(MinDuration(rp.SpentBloodRuneReadyAt(), rp.SpentFrostRuneReadyAt()), rp.SpentUnholyRuneReadyAt())
 }
 
 func (rp *RunicPowerBar) AnyRuneReadyAt(sim *Simulation) time.Duration {
-	return MinDuration(MinDuration(rp.RuneReadyAt(sim, &rp.bloodRunes), rp.RuneReadyAt(sim, &rp.frostRunes)), rp.RuneReadyAt(sim, &rp.unholyRunes))
+	return MinDuration(MinDuration(rp.BloodRuneReadyAt(sim), rp.FrostRuneReadyAt(sim)), rp.UnholyRuneReadyAt(sim))
+}
+
+// ConvertFromDeath reverts the rune to its original type.
+func (rp *RunicPowerBar) ConvertFromDeath(sim *Simulation, slot int32) {
+	rp.runeStates = ^isDeaths[slot] & rp.runeStates
+	rp.runeMeta[slot].revertAt = NeverExpires
+	rp.runeMeta[slot].revertOnSpend = false
+
+	if !rp.isACopy {
+		metrics := rp.bloodRuneGainMetrics
+		onGain := rp.onBloodRuneGain
+		if slot == 2 || slot == 3 {
+			metrics = rp.frostRuneGainMetrics
+			onGain = rp.onFrostRuneGain
+		} else if slot == 4 || slot == 5 {
+			metrics = rp.unholyRuneGainMetrics
+			onGain = rp.onUnholyRuneGain
+		}
+		rp.SpendRuneMetrics(sim, rp.deathRuneGainMetrics, 1)
+		rp.GainRuneMetrics(sim, metrics, 1)
+		onGain(sim)
+	}
+}
+
+// ConvertToDeath converts the given slot to death and sets up the revertion conditions
+func (rp *RunicPowerBar) ConvertToDeath(sim *Simulation, slot int32, revertOnSpend bool, revertAt time.Duration) {
+	rp.runeStates = rp.runeStates | isDeaths[slot]
+	if rp.runeMeta[slot].revertAt != NeverExpires {
+		rp.runeMeta[slot].revertAt = MaxDuration(rp.runeMeta[slot].revertAt, revertAt)
+	} else {
+		rp.runeMeta[slot].revertAt = revertAt
+	}
+	rp.runeMeta[slot].revertOnSpend = revertOnSpend
+
+	// Note we gained
+	if !rp.isACopy {
+		metrics := rp.bloodRuneGainMetrics
+		if slot == 2 || slot == 3 {
+			metrics = rp.frostRuneGainMetrics
+		} else if slot == 4 || slot == 5 {
+			metrics = rp.unholyRuneGainMetrics
+		}
+		if rp.runeStates&isSpents[slot] == 0 {
+			// Only lose/gain if it wasn't spent (which it should be at this point)
+			rp.SpendRuneMetrics(sim, metrics, 1)
+			rp.GainRuneMetrics(sim, rp.deathRuneGainMetrics, 1)
+			rp.onDeathRuneGain(sim)
+		}
+	}
 }
 
 func (rp *RunicPowerBar) CurrentBloodRunes() int32 {
-	return rp.CurrentRunesOfType(&rp.bloodRunes, RuneState_Normal)
+	const unspentBlood1 = isDeath | isSpent
+	const unspentBlood2 = unspentBlood1 << 5
+
+	var count int32
+	if rp.runeStates&unspentBlood1 == 0 {
+		count++
+	}
+	if rp.runeStates&unspentBlood2 == 0 {
+		count++
+	}
+
+	return count
 }
 
 func (rp *RunicPowerBar) CurrentFrostRunes() int32 {
-	return rp.CurrentRunesOfType(&rp.frostRunes, RuneState_Normal)
+	const unspentFrost1 = (isDeath | isSpent) << 10
+	const unspentFrost2 = unspentFrost1 << 5
+
+	var count int32
+	if rp.runeStates&unspentFrost1 == 0 {
+		count++
+	}
+	if rp.runeStates&unspentFrost2 == 0 {
+		count++
+	}
+
+	return count
 }
 
 func (rp *RunicPowerBar) CurrentUnholyRunes() int32 {
-	return rp.CurrentRunesOfType(&rp.unholyRunes, RuneState_Normal)
+	const unspentUnholy1 = (isDeath | isSpent) << 20
+	const unspentUnholy2 = unspentUnholy1 << 5
+
+	var count int32
+	if rp.runeStates&unspentUnholy1 == 0 {
+		count++
+	}
+	if rp.runeStates&unspentUnholy2 == 0 {
+		count++
+	}
+
+	return count
 }
 
 func (rp *RunicPowerBar) CurrentDeathRunes() int32 {
-	return rp.CurrentRunesOfType(&rp.bloodRunes, RuneState_Death) + rp.CurrentRunesOfType(&rp.frostRunes, RuneState_Death) + rp.CurrentRunesOfType(&rp.unholyRunes, RuneState_Death)
-}
-
-func (rp *RunicPowerBar) AllRunesOfTypeSpent(runes *[2]Rune) bool {
-	return (runes[0].state == RuneState_Spent || runes[0].state == RuneState_DeathSpent) &&
-		(runes[1].state == RuneState_Spent || runes[1].state == RuneState_DeathSpent)
+	var count int32
+	for i := range rp.runeMeta {
+		if rp.runeStates&isDeaths[i] != 0 && rp.runeStates&isSpents[i] == 0 {
+			count++
+		}
+	}
+	return count
 }
 
 func (rp *RunicPowerBar) AllBloodRunesSpent() bool {
-	return rp.AllRunesOfTypeSpent(&rp.bloodRunes)
+	const checkBloodSpent = isSpent & (isSpent << 5)
+	return rp.runeStates&checkBloodSpent == checkBloodSpent
 }
 
 func (rp *RunicPowerBar) AllFrostSpent() bool {
-	return rp.AllRunesOfTypeSpent(&rp.frostRunes)
+	const checkFrostSpent = (isSpent << 10) & (isSpent << 15)
+	return rp.runeStates&checkFrostSpent == checkFrostSpent
 }
 
 func (rp *RunicPowerBar) AllUnholySpent() bool {
-	return rp.AllRunesOfTypeSpent(&rp.unholyRunes)
+	const checkUnholySpent = (isSpent << 20) & (isSpent << 25)
+	return rp.runeStates&checkUnholySpent == checkUnholySpent
 }
 
 func (rp *RunicPowerBar) CastCostPossible(sim *Simulation, runicPowerAmount float64, bloodAmount int32, frostAmount int32, unholyAmount int32) bool {
@@ -499,10 +557,6 @@ func (rp *RunicPowerBar) OptimalRuneCost(cost RuneCost) RuneCost {
 	return newCost
 }
 
-func (rc *RuneAmount) IsValid() bool {
-	return rc.Blood >= 0 && rc.Frost >= 0 && rc.Unholy >= 0 && rc.Death >= 0
-}
-
 func (rp *RunicPowerBar) SpendRuneCost(sim *Simulation, spell *Spell, cost RuneCost) {
 	for i := uint8(0); i < cost.Blood(); i++ {
 		rp.SpendBloodRune(sim, spell.BloodRuneMetrics())
@@ -528,131 +582,105 @@ func (rp *RunicPowerBar) SpendRuneCost(sim *Simulation, spell *Spell, cost RuneC
 	}
 }
 
-func (rp *RunicPowerBar) GainRuneMetrics(sim *Simulation, metrics *ResourceMetrics, name string, currRunes int32, newRunes int32) {
+// GainRuneMetrics should be called after gaining the rune
+func (rp *RunicPowerBar) GainRuneMetrics(sim *Simulation, metrics *ResourceMetrics, gainAmount int32) {
 	if !rp.isACopy {
-		metrics.AddEvent(1, float64(newRunes)-float64(currRunes))
+		metrics.AddEvent(float64(gainAmount), float64(gainAmount))
 
 		if sim.Log != nil {
-			rp.unit.Log(sim, "Gained 1.000 %s rune from %s (%d --> %d).", name, metrics.ActionID, currRunes, newRunes)
+
+			var name string
+			var currRunes int32
+
+			switch metrics.Type {
+			case proto.ResourceType_ResourceTypeDeathRune:
+				name = "death"
+				currRunes = rp.CurrentDeathRunes()
+			case proto.ResourceType_ResourceTypeBloodRune:
+				name = "blood"
+				currRunes = rp.CurrentBloodRunes()
+			case proto.ResourceType_ResourceTypeFrostRune:
+				name = "frost"
+				currRunes = rp.CurrentFrostRunes()
+			case proto.ResourceType_ResourceTypeUnholyRune:
+				name = "unholy"
+				currRunes = rp.CurrentUnholyRunes()
+			default:
+				panic("invalid metrics for rune gaining")
+			}
+
+			rp.unit.Log(sim, "Gained %0.3f %s rune from %s (%d --> %d).", float64(gainAmount), name, metrics.ActionID, currRunes-gainAmount, currRunes)
 		}
 	}
 }
 
-func (rp *RunicPowerBar) SpendRuneMetrics(sim *Simulation, metrics *ResourceMetrics, name string, currRunes int32, newRunes int32) {
+// SpendRuneMetrics should be called after spending the rune
+func (rp *RunicPowerBar) SpendRuneMetrics(sim *Simulation, metrics *ResourceMetrics, spendAmount int32) {
 	if !rp.isACopy {
-		metrics.AddEvent(-1, -1)
+		metrics.AddEvent(-float64(spendAmount), -float64(spendAmount))
 
 		if sim.Log != nil {
-			rp.unit.Log(sim, "Spent 1.000 %s rune from %s (%d --> %d).", name, metrics.ActionID, currRunes, newRunes)
+			var name string
+			var currRunes int32
+
+			switch metrics.Type {
+			case proto.ResourceType_ResourceTypeDeathRune:
+				name = "death"
+				currRunes = rp.CurrentDeathRunes()
+			case proto.ResourceType_ResourceTypeBloodRune:
+				name = "blood"
+				currRunes = rp.CurrentBloodRunes()
+			case proto.ResourceType_ResourceTypeFrostRune:
+				name = "frost"
+				currRunes = rp.CurrentFrostRunes()
+			case proto.ResourceType_ResourceTypeUnholyRune:
+				name = "unholy"
+				currRunes = rp.CurrentUnholyRunes()
+			default:
+				panic("invalid metrics for rune spending")
+			}
+
+			rp.unit.Log(sim, "Spent 1.000 %s rune from %s (%d --> %d).", name, metrics.ActionID, currRunes+spendAmount, currRunes)
 		}
 	}
 }
 
-func (rp *RunicPowerBar) LastSpentRune(rb *[2]Rune) *Rune {
-	if rb[0].lastSpendTime < rb[1].lastSpendTime {
-		return &rb[1]
-	} else {
-		return &rb[0]
-	}
-}
-
-func (rp *RunicPowerBar) LastSpentBloodRune() *Rune {
-	return rp.LastSpentRune(&rp.bloodRunes)
-}
-
-func (rp *RunicPowerBar) LastSpentFrostRune() *Rune {
-	return rp.LastSpentRune(&rp.frostRunes)
-}
-
-func (rp *RunicPowerBar) LastSpentUnholyRune() *Rune {
-	return rp.LastSpentRune(&rp.unholyRunes)
-}
-
-// LastSpentRune gives the slot of the last rune of given type to have been spent.
-func (rp *RunicPowerBar) LastSpentRuneofType(kind RuneKind) int32 {
-	rb := &rp.bloodRunes
-	if kind == RuneKind_Frost {
-		rb = &rp.frostRunes
-	} else if kind == RuneKind_Unholy {
-		rb = &rp.unholyRunes
-	} else if kind == RuneKind_Death {
-		panic("havent implemented finding last spent death rune.")
-	}
-
-	// if rune 1 was most recently spent And its the right kind
-	//  or if its the only correct kind
-	if rb[0].lastSpendTime < rb[1].lastSpendTime || rb[0].kind != kind {
-		if rb[1].kind == kind && rb[1].state == RuneState_Spent {
-			return 1
-		}
-	}
-
-	// In this case if rune 0 was the right kind, its the only option left.
-	if rb[0].kind == kind && rb[0].state == RuneState_Spent {
+func (rp *RunicPowerBar) BloodRuneSpentAt(dur time.Duration) int32 {
+	if rp.runeMeta[0].lastSpendTime == dur {
 		return 0
 	}
-
-	// This means no runes of the given kind can be found... what do?
+	if rp.runeMeta[1].lastSpendTime == dur {
+		return 1
+	}
 	return -1
 }
 
-func (rp *RunicPowerBar) SetRuneAtIdxSlotToState(runeBarIdx int32, slot int32, runeState RuneState, runeKind RuneKind) {
-	rb := &rp.bloodRunes
-	if runeBarIdx == 1 {
-		rb = &rp.frostRunes
-	} else if runeBarIdx == 2 {
-		rb = &rp.unholyRunes
+func (rp *RunicPowerBar) FrostRuneSpentAt(dur time.Duration) int32 {
+	if rp.runeMeta[2].lastSpendTime == dur {
+		return 2
 	}
-
-	if (rb[slot].state == RuneState_Spent || rb[slot].state == RuneState_Normal) && (runeState == RuneState_Death || runeState == RuneState_DeathSpent) {
-		rb[slot].kind = RuneKind_Death
-	} else if (rb[slot].state == RuneState_DeathSpent || rb[slot].state == RuneState_Death) && (runeState != RuneState_Death && runeState != RuneState_DeathSpent) {
-		rb[slot].kind = runeKind
+	if rp.runeMeta[3].lastSpendTime == dur {
+		return 3
 	}
-	rb[slot].state = runeState
+	return -1
 }
 
-func (rp *RunicPowerBar) SetRuneAtSlotToState(rb *[2]Rune, slot int32, runeState RuneState, runeKind RuneKind) {
-	if (rb[slot].state == RuneState_Spent || rb[slot].state == RuneState_Normal) && (runeState == RuneState_Death || runeState == RuneState_DeathSpent) {
-		rb[slot].kind = RuneKind_Death
-	} else if (rb[slot].state == RuneState_DeathSpent || rb[slot].state == RuneState_Death) && (runeState != RuneState_Death && runeState != RuneState_DeathSpent) {
-		if runeKind == RuneKind_Undef {
-			panic("You have to set a rune kind here!")
-		}
-		rb[slot].kind = runeKind
+func (rp *RunicPowerBar) UnholyRuneSpentAt(dur time.Duration) int32 {
+	if rp.runeMeta[4].lastSpendTime == dur {
+		return 4
 	}
-	rb[slot].state = runeState
+	if rp.runeMeta[5].lastSpendTime == dur {
+		return 5
+	}
+	return -1
 }
 
-func (rp *RunicPowerBar) SetRuneToState(r *Rune, runeState RuneState, runeKind RuneKind) {
-	if (r.state == RuneState_Spent || r.state == RuneState_Normal) && (runeState == RuneState_Death || runeState == RuneState_DeathSpent) {
-		r.kind = RuneKind_Death
-	} else if (r.state == RuneState_DeathSpent || r.state == RuneState_Death) && (runeState != RuneState_Death && runeState != RuneState_DeathSpent) {
-		if runeKind == RuneKind_Undef {
-			panic("You have to set a rune kind here!")
-		}
-		r.kind = runeKind
-	}
-	r.state = runeState
-}
-
-func (rp *RunicPowerBar) RegenRuneAndCancelPAs(sim *Simulation, r *Rune) {
-	if r.state == RuneState_Spent {
-		r.state = RuneState_Normal
-
-		if r.pas[0] != nil {
-			r.lastRegenTime = sim.CurrentTime
-			r.pas[0].Cancel(sim)
-			r.pas[0] = nil
-		}
-	} else if r.state == RuneState_DeathSpent {
-		r.state = RuneState_Death
-
-		if r.pas[0] != nil {
-			r.lastRegenTime = sim.CurrentTime
-			r.pas[0].Cancel(sim)
-			r.pas[0] = nil
-		}
+func (rp *RunicPowerBar) RegenRune(regenAt time.Duration, slot int32) {
+	checkSpent := isSpents[slot]
+	if checkSpent&rp.runeStates > 0 {
+		rp.runeStates = ^checkSpent & rp.runeStates // unset spent flag for this rune.
+		rp.runeMeta[slot].lastRegenTime = regenAt
+		rp.runeMeta[slot].regenAt = NeverExpires
 	}
 }
 
@@ -662,70 +690,65 @@ func (rp *RunicPowerBar) RegenAllRunes(sim *Simulation) {
 	startUnholy := rp.CurrentUnholyRunes()
 	startDeath := rp.CurrentDeathRunes()
 
-	rp.RegenRuneAndCancelPAs(sim, &rp.bloodRunes[0])
-	rp.RegenRuneAndCancelPAs(sim, &rp.bloodRunes[1])
-	rp.RegenRuneAndCancelPAs(sim, &rp.frostRunes[0])
-	rp.RegenRuneAndCancelPAs(sim, &rp.frostRunes[1])
-	rp.RegenRuneAndCancelPAs(sim, &rp.unholyRunes[0])
-	rp.RegenRuneAndCancelPAs(sim, &rp.unholyRunes[1])
+	rp.RegenRune(sim.CurrentTime, 0)
+	rp.RegenRune(sim.CurrentTime, 1)
+	rp.RegenRune(sim.CurrentTime, 2)
+	rp.RegenRune(sim.CurrentTime, 3)
+	rp.RegenRune(sim.CurrentTime, 4)
+	rp.RegenRune(sim.CurrentTime, 5)
 
 	if !rp.isACopy {
 		if rp.CurrentBloodRunes()-startBlood > 0 {
-			rp.GainRuneMetrics(sim, rp.bloodRuneGainMetrics, "blood", startBlood, rp.CurrentBloodRunes())
+			rp.GainRuneMetrics(sim, rp.bloodRuneGainMetrics, rp.CurrentBloodRunes()-startBlood)
 			rp.onBloodRuneGain(sim)
 		}
 
 		if rp.CurrentFrostRunes()-startFrost > 0 {
-			rp.GainRuneMetrics(sim, rp.frostRuneGainMetrics, "frost", startFrost, rp.CurrentFrostRunes())
+			rp.GainRuneMetrics(sim, rp.frostRuneGainMetrics, rp.CurrentFrostRunes()-startFrost)
 			rp.onFrostRuneGain(sim)
 		}
 
 		if rp.CurrentUnholyRunes()-startUnholy > 0 {
-			rp.GainRuneMetrics(sim, rp.unholyRuneGainMetrics, "unholy", startUnholy, rp.CurrentUnholyRunes())
+			rp.GainRuneMetrics(sim, rp.unholyRuneGainMetrics, rp.CurrentUnholyRunes()-startUnholy)
 			rp.onUnholyRuneGain(sim)
 		}
 
 		if rp.CurrentDeathRunes()-startDeath > 0 {
-			rp.GainRuneMetrics(sim, rp.deathRuneGainMetrics, "death", startDeath, rp.CurrentDeathRunes())
+			rp.GainRuneMetrics(sim, rp.deathRuneGainMetrics, rp.CurrentDeathRunes()-startDeath)
 			rp.onDeathRuneGain(sim)
 		}
 	}
 }
 
-func (rp *RunicPowerBar) GenerateRune(sim *Simulation, r *Rune) {
-	if r.state == RuneState_Spent {
-		if r.kind == RuneKind_Death {
-			panic("Rune has wrong type for state.")
-		}
-		r.state = RuneState_Normal
-		r.lastRegenTime = sim.CurrentTime
-	} else if r.state == RuneState_DeathSpent {
-		if r.kind != RuneKind_Death {
-			panic("Rune has wrong type for state.")
-		}
-		r.state = RuneState_Death
-		r.lastRegenTime = sim.CurrentTime
+func (rp *RunicPowerBar) SpendRuneFromKind(sim *Simulation, rkind RuneKind) int32 {
+	var rb int32
+	if rkind == RuneKind_Frost {
+		rb = 2
+	} else if rkind == RuneKind_Unholy {
+		rb = 4
+	} else if rkind == RuneKind_Death {
+		panic("use 'ReadyRuneByKind' to find death rune")
 	}
-}
+	spent1 := isSpents[rb]
+	spent2 := isSpents[rb+1]
 
-func (rp *RunicPowerBar) SpendRuneFromType(sim *Simulation, rb *[2]Rune, runeState RuneState) int32 {
-	spendState := RuneState_Spent
-	if runeState == RuneState_Death {
-		spendState = RuneState_DeathSpent
-	}
+	spendable1 := spent1 | isDeaths[rb] // verify rune is not spent and not death
+	spendable2 := spent2 | isDeaths[rb+1]
 
 	slot := int32(-1)
-	if rb[0].state == runeState {
-		rb[0].state = spendState
-		slot = 0
-	} else if rb[1].state == runeState {
-		rb[1].state = spendState
-		slot = 1
+	// Figure out which rune is spendable (not death and not spent)
+	// Then mark the spend bit for that rune.
+	if rp.runeStates&spendable1 == 0 {
+		rp.runeStates = rp.runeStates | spent1
+		slot = rb
+	} else if rp.runeStates&spendable2 == 0 {
+		rp.runeStates = rp.runeStates | spent2
+		slot = rb + 1
 	} else {
 		panic("Trying to spend rune that does not exist!")
 	}
 
-	rb[slot].lastSpendTime = sim.CurrentTime
+	rp.runeMeta[slot].lastSpendTime = sim.CurrentTime
 
 	if rp.onRuneSpend != nil {
 		rp.onRuneSpend(sim)
@@ -734,64 +757,137 @@ func (rp *RunicPowerBar) SpendRuneFromType(sim *Simulation, rb *[2]Rune, runeSta
 	return slot
 }
 
-func (rp *RunicPowerBar) LaunchRuneRegenPA(sim *Simulation, r *Rune) {
-	runeGracePeriod := 0.0
-	if r.lastRegenTime != -1 {
-		runeGracePeriod = MinFloat(2.5, float64(sim.CurrentTime-r.lastRegenTime)/float64(1*time.Second))
+func (rp *RunicPowerBar) LaunchRuneRegen(sim *Simulation, slot int32) {
+	var runeGracePeriod time.Duration
+	if rp.runeMeta[slot].lastRegenTime != -1 {
+		runeGracePeriod = MinDuration(time.Millisecond*2500, sim.CurrentTime-rp.runeMeta[slot].lastRegenTime)
+	}
+	rp.runeMeta[slot].regenAt = sim.CurrentTime + (time.Second*10 - runeGracePeriod)
+
+	rp.launchPA(sim, rp.runeMeta[slot].regenAt)
+}
+
+func (rp *RunicPowerBar) launchPA(sim *Simulation, at time.Duration) {
+	if rp.isACopy {
+		return
+	}
+	if rp.pa != nil {
+		// If this new regen is before currently scheduled one, we must cancel old regen and start a new one.
+		if rp.pa.NextActionAt > at {
+			rp.pa.Cancel(sim)
+			rp.pa = nil
+		} else {
+			return
+		}
 	}
 	pa := &PendingAction{
-		NextActionAt: sim.CurrentTime + time.Second*time.Duration(10.0-runeGracePeriod),
+		NextActionAt: at,
 		Priority:     ActionPriorityRegen,
 	}
 	pa.OnAction = func(sim *Simulation) {
 		if !pa.cancelled {
-			r.pas[0] = nil
+			// regenerate and revert
+			rp.Advance(sim, sim.CurrentTime)
 
-			currRunes := int32(-1)
-			switch r.kind {
-			case RuneKind_Blood:
-				currRunes = rp.CurrentBloodRunes()
-			case RuneKind_Frost:
-				currRunes = rp.CurrentFrostRunes()
-			case RuneKind_Unholy:
-				currRunes = rp.CurrentUnholyRunes()
-			case RuneKind_Death:
-				currRunes = rp.CurrentDeathRunes()
+			// Check when we need next check
+			pa.NextActionAt = MinDuration(rp.AnySpentRuneReadyAt(), rp.DeathRuneRevertAt())
+			if pa.NextActionAt < NeverExpires {
+				sim.AddPendingAction(pa)
 			}
+		}
+	}
+	rp.pa = pa
+	sim.AddPendingAction(pa)
 
-			rp.GenerateRune(sim, r)
+}
 
-			switch r.kind {
-			case RuneKind_Blood:
-				rp.GainRuneMetrics(sim, rp.bloodRuneGainMetrics, "blood", currRunes, currRunes+1)
-				if !rp.isACopy {
-					rp.onBloodRuneGain(sim)
+// Constants for finding runes
+
+//                |BFUDSBFUDSBFUDSBFUDSBFUDSBFUDS|
+const checkDeath = 0b000100001000010000100001000010
+const checkSpent = 0b000010000100001000010000100001
+
+const isDeath = int32(0b00010)
+const isSpent = int32(0b00001)
+
+var isDeaths = [6]int32{
+	isDeath,
+	isDeath << 5,
+	isDeath << 10,
+	isDeath << 15,
+	isDeath << 20,
+	isDeath << 25,
+}
+
+var isSpents = [6]int32{
+	isSpent,
+	isSpent << 5,
+	isSpent << 10,
+	isSpent << 15,
+	isSpent << 20,
+	isSpent << 25,
+}
+
+var isSpentDeath = [6]int32{
+	(isDeath | isSpent),
+	(isDeath | isSpent) << 5,
+	(isDeath | isSpent) << 10,
+	(isDeath | isSpent) << 15,
+	(isDeath | isSpent) << 20,
+	(isDeath | isSpent) << 25,
+}
+
+func (rp *RunicPowerBar) Advance(sim *Simulation, newTime time.Duration) {
+	if rp.runeStates&checkDeath > 0 {
+		for i := int32(0); i < 6; i++ {
+			if rp.runeMeta[i].revertAt <= newTime {
+				if rp.btslot == i {
+					rp.btslot = -1 // this was the BT slot.
 				}
-			case RuneKind_Frost:
-				rp.GainRuneMetrics(sim, rp.frostRuneGainMetrics, "frost", currRunes, currRunes+1)
-				if !rp.isACopy {
-					rp.onFrostRuneGain(sim)
-				}
-			case RuneKind_Unholy:
-				rp.GainRuneMetrics(sim, rp.unholyRuneGainMetrics, "unholy", currRunes, currRunes+1)
-				if !rp.isACopy {
-					rp.onUnholyRuneGain(sim)
-				}
-			case RuneKind_Death:
-				rp.GainRuneMetrics(sim, rp.deathRuneGainMetrics, "death", currRunes, currRunes+1)
-				if !rp.isACopy {
-					rp.onDeathRuneGain(sim)
-				}
+				rp.ConvertFromDeath(sim, i)
 			}
-		} else {
-			r.pas[0] = nil
 		}
 	}
 
-	r.pas[0] = pa
-	if !rp.isACopy {
-		sim.AddPendingAction(pa)
+	if rp.runeStates&checkSpent > 0 {
+		rp.findAndRegen(sim, newTime)
 	}
+}
+
+func (rp *RunicPowerBar) TryRegenRune(sim *Simulation, newTime time.Duration, slot int32) {
+	if rp.runeMeta[slot].regenAt > newTime {
+		return
+	}
+	if rp.runeStates&isSpents[slot] == 0 {
+		return
+	}
+
+	metrics := rp.bloodRuneGainMetrics
+	onGain := rp.onBloodRuneGain
+	if rp.runeStates&(isDeaths[slot]) > 0 {
+		metrics = rp.deathRuneGainMetrics
+		onGain = rp.onDeathRuneGain
+	} else if slot == 2 || slot == 3 {
+		metrics = rp.frostRuneGainMetrics
+		onGain = rp.onFrostRuneGain
+	} else if slot == 4 || slot == 5 {
+		metrics = rp.unholyRuneGainMetrics
+		onGain = rp.onUnholyRuneGain
+	}
+	rp.RegenRune(newTime, slot)
+	if !rp.isACopy {
+		rp.GainRuneMetrics(sim, metrics, 1)
+		onGain(sim)
+	}
+}
+
+func (rp *RunicPowerBar) findAndRegen(sim *Simulation, newTime time.Duration) {
+	rp.TryRegenRune(sim, newTime, 0)
+	rp.TryRegenRune(sim, newTime, 1)
+	rp.TryRegenRune(sim, newTime, 2)
+	rp.TryRegenRune(sim, newTime, 3)
+	rp.TryRegenRune(sim, newTime, 4)
+	rp.TryRegenRune(sim, newTime, 5)
 }
 
 func (rp *RunicPowerBar) SpendBloodRune(sim *Simulation, metrics *ResourceMetrics) int32 {
@@ -800,14 +896,9 @@ func (rp *RunicPowerBar) SpendBloodRune(sim *Simulation, metrics *ResourceMetric
 		panic("Trying to spend blood runes that don't exist!")
 	}
 
-	rp.SpendRuneMetrics(sim, metrics, "blood", currRunes, currRunes-1)
-	spendSlot := rp.SpendRuneFromType(sim, &rp.bloodRunes, RuneState_Normal)
-
-	r := &rp.bloodRunes[spendSlot]
-	if !rp.isACopy {
-		rp.LaunchRuneRegenPA(sim, r)
-	}
-
+	spendSlot := rp.SpendRuneFromKind(sim, RuneKind_Blood)
+	rp.SpendRuneMetrics(sim, metrics, 1)
+	rp.LaunchRuneRegen(sim, spendSlot)
 	return spendSlot
 }
 
@@ -817,14 +908,9 @@ func (rp *RunicPowerBar) SpendFrostRune(sim *Simulation, metrics *ResourceMetric
 		panic("Trying to spend frost runes that don't exist!")
 	}
 
-	rp.SpendRuneMetrics(sim, metrics, "frost", currRunes, currRunes-1)
-	spendSlot := rp.SpendRuneFromType(sim, &rp.frostRunes, RuneState_Normal)
-
-	r := &rp.frostRunes[spendSlot]
-	if !rp.isACopy {
-		rp.LaunchRuneRegenPA(sim, r)
-	}
-
+	spendSlot := rp.SpendRuneFromKind(sim, RuneKind_Frost)
+	rp.SpendRuneMetrics(sim, metrics, 1)
+	rp.LaunchRuneRegen(sim, spendSlot)
 	return spendSlot
 }
 
@@ -834,45 +920,41 @@ func (rp *RunicPowerBar) SpendUnholyRune(sim *Simulation, metrics *ResourceMetri
 		panic("Trying to spend unholy runes that don't exist!")
 	}
 
-	rp.SpendRuneMetrics(sim, metrics, "unholy", currRunes, currRunes-1)
-	spendSlot := rp.SpendRuneFromType(sim, &rp.unholyRunes, RuneState_Normal)
-
-	r := &rp.unholyRunes[spendSlot]
-	if !rp.isACopy {
-		rp.LaunchRuneRegenPA(sim, r)
-	}
-
+	spendSlot := rp.SpendRuneFromKind(sim, RuneKind_Unholy)
+	rp.SpendRuneMetrics(sim, metrics, 1)
+	rp.LaunchRuneRegen(sim, spendSlot)
 	return spendSlot
 }
 
+// ReadyDeathRune returns the slot of first available death rune.
+//  Returns -1 if there are no ready death runes
+func (rp *RunicPowerBar) ReadyDeathRune() int32 {
+	for i := int32(0); i < 6; i++ {
+		if rp.runeStates&isDeaths[i] != 0 && rp.runeStates&isSpents[i] == 0 {
+			return i
+		}
+	}
+	return -1
+}
+
 func (rp *RunicPowerBar) SpendDeathRune(sim *Simulation, metrics *ResourceMetrics) {
-	currRunes := rp.CurrentDeathRunes()
-	if currRunes <= 0 {
+	if rp.runeStates&checkDeath == 0 {
 		panic("Trying to spend death runes that don't exist!")
 	}
 
-	rp.SpendRuneMetrics(sim, metrics, "death", currRunes, currRunes-1)
-
-	runeTypeIdx := 0
-	spendSlot := rp.SpendRuneFromType(sim, &rp.bloodRunes, RuneState_Death)
-	if spendSlot < 0 {
-		runeTypeIdx = 1
-		spendSlot = rp.SpendRuneFromType(sim, &rp.frostRunes, RuneState_Death)
-		if spendSlot < 0 {
-			runeTypeIdx = 2
-			spendSlot = rp.SpendRuneFromType(sim, &rp.unholyRunes, RuneState_Death)
-		}
+	slot := rp.ReadyDeathRune()
+	if rp.runeMeta[slot].revertOnSpend {
+		// disable revert at
+		rp.runeMeta[slot].revertOnSpend = false
+		rp.runeMeta[slot].revertAt = NeverExpires
+		// clear death bit to revert.
+		rp.runeStates = ^isDeaths[slot] & rp.runeStates
 	}
 
-	r := &rp.bloodRunes[spendSlot]
-	if runeTypeIdx == 1 {
-		r = &rp.frostRunes[spendSlot]
-	} else if runeTypeIdx == 2 {
-		r = &rp.unholyRunes[spendSlot]
-	}
+	// mark spent bit to spend
+	rp.runeStates = rp.runeStates | isSpents[slot]
+	rp.runeMeta[slot].lastSpendTime = sim.CurrentTime
 
-	if !rp.isACopy {
-		rp.LaunchRuneRegenPA(sim, r)
-	}
-
+	rp.SpendRuneMetrics(sim, metrics, 1)
+	rp.LaunchRuneRegen(sim, slot)
 }
