@@ -88,8 +88,8 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		}
 		nextBigCD = nextCD
 	}
-	// ------------------------------------------
 
+	// ------------------------------------------
 	// Small CDs
 	// ------------------------------------------
 	if warlock.Talents.DemonicEmpowerment && warlock.DemonicEmpowerment.CD.IsReady(sim) {
