@@ -519,15 +519,15 @@ func (warlock *Warlock) setupDemonicPact() {
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Outcome.Matches(core.OutcomeCrit) && icd.IsReady(sim) {
 				icd.Use(sim)
-				currentDemonicPactAura := warlock.GetAura("Demonic Pact")
-				newSPBonus := warlock.GetStat(stats.SpellPower) * demonicPactMultiplier
+				currentDemonicPactAura := core.DemonicPactAura(warlock.GetCharacter(), 0)
+				newSPBonus := int32(warlock.GetStat(stats.SpellPower) * demonicPactMultiplier)
 				if currentDemonicPactAura.IsActive() {
-					if currentDemonicPactAura.Priority < newSPBonus || currentDemonicPactAura.RemainingDuration(sim) < time.Second * 10 {
-						currentDemonicPactAura.Deactivate(sim)
-						core.DemonicPactAura(warlock.GetCharacter(), newSPBonus).Activate(sim)
+					if currentDemonicPactAura.GetStacks() < newSPBonus || currentDemonicPactAura.RemainingDuration(sim) < time.Second * 10 {
+						currentDemonicPactAura.SetStacks(sim, newSPBonus)
 					}
 				} else {
-					core.DemonicPactAura(warlock.GetCharacter(), newSPBonus).Activate(sim)
+					currentDemonicPactAura.Activate(sim)
+					currentDemonicPactAura.SetStacks(sim, newSPBonus)
 				}
 			}
 		},
