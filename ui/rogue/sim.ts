@@ -168,6 +168,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 				// Preset gear configurations that the user can quickly select.
 				gear: [
 					Presets.PRERAID_PRESET,
+					Presets.P1_PRESET,
 				],
 			},
 		});
