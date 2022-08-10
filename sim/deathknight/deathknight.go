@@ -105,6 +105,9 @@ type Deathknight struct {
 	BloodTap     *RuneSpell
 	BloodTapAura *core.Aura
 
+	AntiMagicShell     *RuneSpell
+	AntiMagicShellAura *core.Aura
+
 	EmpowerRuneWeapon *RuneSpell
 
 	UnbreakableArmor     *RuneSpell
@@ -222,6 +225,8 @@ func (dk *Deathknight) Initialize() {
 	dk.registerRuneTapSpell()
 	dk.registerIceboundFortitudeSpell()
 	dk.registerDeathStrikeSpell()
+
+	dk.registerAntiMagicShellSpell()
 
 	dk.registerRaiseDeadCD()
 	dk.registerSummonGargoyleCD()
