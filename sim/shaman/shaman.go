@@ -72,6 +72,9 @@ type Shaman struct {
 
 	LavaburstWeave bool // flag to enable lava burst weaving for enh
 
+	MaelstromWeaveThreshold int32
+	FireNovaManaThreshold   float64
+
 	Talents   proto.ShamanTalents
 	SelfBuffs SelfBuffs
 

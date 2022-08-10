@@ -88,6 +88,9 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 
 	enh.LavaburstWeave = enhOptions.Rotation.LavaburstWeave
 
+	enh.MaelstromWeaveThreshold = enhOptions.Rotation.MaelstromWeaveThreshold
+	enh.FireNovaManaThreshold = float64(enhOptions.Rotation.MaelstromWeaveThreshold)
+
 	return enh
 }
 
@@ -101,6 +104,13 @@ type EnhancementShaman struct {
 
 func (enh *EnhancementShaman) GetShaman() *shaman.Shaman {
 	return enh.Shaman
+}
+
+func (enh *EnhancementShaman) IsAffectedByMaelstromStacks(spell *core.Spell) bool {
+	if spell == enh.ChainLightning || spell == enh.LightningBolt {
+		return true
+	}
+	return false
 }
 
 func (enh *EnhancementShaman) Initialize() {

@@ -46,6 +46,9 @@ export const DefaultRotation = EnhancementShamanRotation.create({
 		fire: FireTotem.MagmaTotem,
 		water: WaterTotem.ManaSpringTotem,
 	}),
+  firenovaManaThreshold: 4000,
+  maelstromWeaveThreshold: 1,
+  lavaburstWeave: false
 });
 
 export const DefaultOptions = EnhancementShamanOptions.create({

@@ -62,6 +62,9 @@ var enhShamRotation = &proto.EnhancementShaman_Rotation{
 		Water: proto.WaterTotem_ManaSpringTotem,
 		Fire:  proto.FireTotem_MagmaTotem,
 	},
+	LavaburstWeave:          false,
+	FirenovaManaThreshold:   4000,
+	MaelstromWeaveThreshold: 1,
 }
 
 var enhShamOptions = &proto.EnhancementShaman_Options{

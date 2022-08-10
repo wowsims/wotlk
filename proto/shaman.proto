@@ -227,6 +227,9 @@ message EnhancementShaman {
 	message Rotation {
 		ShamanTotems totems = 1;
         bool lavaburst_weave = 2;
+		int32 firenova_mana_threshold = 3;
+		int32 maelstrom_weave_threshold = 4;
+
 	    // TODO: lightning/possibly lavaburst weaving
     }
 

@@ -33,102 +33,116 @@ type Rotation interface {
 type AdaptiveRotation struct {
 }
 
-func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Simulation) {
-	target := sim.GetTargetUnit(0)
+type CastType int32
 
-	if enh.Talents.Stormstrike {
-		if !enh.StormstrikeDebuffAura(target).IsActive() && enh.Stormstrike.IsReady(sim) {
-			if !enh.Stormstrike.Cast(sim, target) {
-				enh.WaitForMana(sim, enh.Stormstrike.CurCast.Cost)
-			}
-			return
-		}
+const (
+	SpellCast CastType = iota
+	SpellWeave
+)
+
+func (rotation *AdaptiveRotation) chooseSpell(enh *EnhancementShaman, sim *core.Simulation, target *core.Unit) (*core.Spell, CastType) {
+	if enh.Talents.Stormstrike && enh.Stormstrike.IsReady(sim) && !enh.StormstrikeDebuffAura(target).IsActive() {
+		return enh.Stormstrike, SpellCast
 	}
 
-	if enh.Talents.MaelstromWeapon > 0 {
-		if enh.MaelstromWeaponAura.GetStacks() == 5 {
-			if !enh.LightningBolt.Cast(sim, target) {
-				enh.WaitForMana(sim, enh.LightningBolt.CurCast.Cost)
-			}
-			return
-		}
+	if enh.Talents.MaelstromWeapon > 0 && enh.MaelstromWeaponAura.GetStacks() == 5 {
+		return enh.LightningBolt, SpellCast
 	}
 
-	if enh.Talents.Stormstrike {
-		if enh.Stormstrike.IsReady(sim) {
-			if !enh.Stormstrike.Cast(sim, target) {
-				enh.WaitForMana(sim, enh.Stormstrike.CurCast.Cost)
-			}
-			return
-		}
+	if enh.Talents.Stormstrike && enh.Stormstrike.IsReady(sim) {
+		return enh.Stormstrike, SpellCast
 	}
 
 	if !enh.FlameShockDot.IsActive() && enh.FlameShock.IsReady(sim) {
-		if !enh.FlameShock.Cast(sim, target) {
-			enh.WaitForMana(sim, enh.FlameShock.CurCast.Cost)
-		}
+		return enh.FlameShock, SpellCast
+	}
+
+	if enh.LavaburstWeave && enh.Talents.MaelstromWeapon > 0 && enh.MaelstromWeaponAura.GetStacks() >= enh.MaelstromWeaveThreshold && enh.LavaBurst.IsReady(sim) {
+		return enh.LavaBurst, SpellWeave
+	}
+
+	if enh.Talents.MaelstromWeapon > 0 && enh.MaelstromWeaponAura.GetStacks() >= enh.MaelstromWeaveThreshold {
+		return enh.LightningBolt, SpellWeave
+	}
+
+	if enh.EarthShock.IsReady(sim) {
+		return enh.EarthShock, SpellCast
+	}
+
+	if !enh.LightningShieldAura.IsActive() && enh.LightningShield.IsReady(sim) {
+		return enh.LightningShield, SpellCast
+	}
+
+	if enh.Totems.Fire != proto.FireTotem_NoFireTotem && enh.FireNova.IsReady(sim) && enh.CurrentMana() > enh.FireNovaManaThreshold {
+		return enh.FireNova, SpellCast
+	}
+
+	if enh.Talents.LavaLash && enh.LavaLash.IsReady(sim) {
+		return enh.LavaLash, SpellCast
+	}
+
+	// if enh.LavaburstWeave {
+	// 	if enh.Talents.MaelstromWeapon > 0 && enh.MaelstromWeaponAura.GetStacks() >= 1 && enh.LavaBurst.IsReady(sim) {
+	// 		lvbCastTime := enh.ApplyCastSpeed(enh.LavaBurst.DefaultCast.CastTime)
+	// 		timeUntilSwing := enh.AutoAttacks.NextAttackAt() - sim.CurrentTime
+	// 		if lvbCastTime < timeUntilSwing {
+	// 			if !enh.LavaBurst.Cast(sim, target) {
+	// 				enh.DoNothing()
+	// 			}
+	// 			return
+	// 		}
+	// 	}
+	// }
+
+	// if enh.Talents.MaelstromWeapon > 0 && enh.MaelstromWeaponAura.GetStacks() >= 1 {
+	// 	lbCastTime := enh.LightningBolt.DefaultCast.CastTime - (time.Millisecond * time.Duration(500*enh.MaelstromWeaponAura.GetStacks()))
+	// 	lbCastTime = enh.ApplyCastSpeed(lbCastTime)
+	// 	timeUntilSwing := enh.AutoAttacks.NextAttackAt() - sim.CurrentTime
+	// 	if sim.CurrentTime > enh.AutoAttacks.NextAttackAt() {
+	// 		timeUntilSwing = enh.AutoAttacks.MH.SwingDuration
+	// 	}
+	// 	if lbCastTime < timeUntilSwing {
+	// 		if !enh.LightningBolt.Cast(sim, target) {
+	// 			enh.WaitForMana(sim, enh.LightningBolt.CurCast.Cost)
+	// 		}
+	// 		return
+	// 	}
+	// }
+
+	//enh.LightningShield.Cast(sim, nil) // if nothing else, refresh lightning shield
+	return nil, SpellCast
+}
+
+func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Simulation) {
+	target := sim.GetTargetUnit(0)
+
+	spell, castType := rotation.chooseSpell(enh, sim, target)
+
+	if spell == nil {
+		enh.DoNothing()
 		return
 	}
 
-	if enh.LavaburstWeave {
-		if enh.Talents.MaelstromWeapon > 0 && enh.MaelstromWeaponAura.GetStacks() >= 1 && enh.LavaBurst.IsReady(sim) {
-			lvbCastTime := enh.ApplyCastSpeed(enh.LavaBurst.DefaultCast.CastTime)
-			timeUntilSwing := enh.AutoAttacks.NextAttackAt() - sim.CurrentTime
-			if lvbCastTime < timeUntilSwing {
-				if !enh.LavaBurst.Cast(sim, target) {
-					enh.DoNothing()
-				}
-				return
-			}
+	switch castType {
+	case SpellCast:
+		if !spell.Cast(sim, target) {
+			enh.WaitForMana(sim, spell.CurCast.Cost)
 		}
-	}
-
-	if enh.Talents.MaelstromWeapon > 0 && enh.MaelstromWeaponAura.GetStacks() >= 1 {
-		lbCastTime := enh.LightningBolt.DefaultCast.CastTime - (time.Millisecond * time.Duration(500*enh.MaelstromWeaponAura.GetStacks()))
-		lbCastTime = enh.ApplyCastSpeed(lbCastTime)
+		return
+	case SpellWeave:
+		spellCastTime := enh.ApplyCastSpeed(spell.DefaultCast.CastTime - core.TernaryDuration(enh.IsAffectedByMaelstromStacks(spell), time.Microsecond*time.Duration(500*enh.MaelstromWeaponAura.GetStacks()), 0))
 		timeUntilSwing := enh.AutoAttacks.NextAttackAt() - sim.CurrentTime
 		if sim.CurrentTime > enh.AutoAttacks.NextAttackAt() {
 			timeUntilSwing = enh.AutoAttacks.MH.SwingDuration
 		}
-		if lbCastTime < timeUntilSwing {
-			if !enh.LightningBolt.Cast(sim, target) {
-				enh.WaitForMana(sim, enh.LightningBolt.CurCast.Cost)
+		if spellCastTime < timeUntilSwing {
+			if !spell.Cast(sim, target) {
+				enh.WaitForMana(sim, spell.CurCast.Cost)
 			}
-			return
-		}
-	}
-
-	if enh.EarthShock.IsReady(sim) {
-		if !enh.EarthShock.Cast(sim, target) {
-			enh.WaitForMana(sim, enh.EarthShock.CurCast.Cost)
 		}
 		return
 	}
 
-	if !enh.LightningShieldAura.IsActive() && enh.LightningShieldAura != nil {
-		enh.LightningShield.Cast(sim, nil)
-		return
-	}
-
-	if enh.Totems.Fire != proto.FireTotem_NoFireTotem {
-		if enh.FireNova.IsReady(sim) && enh.CurrentMana() > 4000 {
-			if !enh.FireNova.Cast(sim, target) {
-				enh.WaitForMana(sim, enh.FireNova.CurCast.Cost)
-			}
-			return
-		}
-	}
-
-	if enh.Talents.LavaLash {
-		if enh.LavaLash.IsReady(sim) {
-			if !enh.LavaLash.Cast(sim, target) {
-				enh.WaitForMana(sim, enh.LavaLash.CurCast.Cost)
-			}
-			return
-		}
-	}
-
-	//enh.LightningShield.Cast(sim, nil) // if nothing else, refresh lightning shield
 	enh.DoNothing()
 	return
 }
