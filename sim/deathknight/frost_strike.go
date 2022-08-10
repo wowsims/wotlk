@@ -56,6 +56,7 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool, onhit func(sim *core.Si
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				cast.GCD = dk.getModifiedGCD()
 			},
+			IgnoreHaste: true,
 		}
 		conf.ApplyEffects = core.ApplyEffectFuncDirectDamage(effect)
 	}

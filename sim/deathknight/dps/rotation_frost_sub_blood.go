@@ -123,20 +123,22 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_PrioRotation(sim 
 			dk.fr.shouldPesti = true
 			dk.fr.oblitCount = 0
 		} else {
-			//if dk.KillingMachineAura.IsActive() && dk.CurrentRunicPower() > dk.MaxRunicPower()-fsCost {
-			//	casted = dk.CastFrostStrike(sim, target)
-			//	if casted {
-			//		dk.fr.shouldPesti = true
-			//		dk.fr.oblitCount = 0
-			//	}
-			//} else {
-			casted = dk.CastBloodStrike(sim, target)
-			if casted && dk.LastOutcome.Matches(core.OutcomeLanded) {
-				dk.fr.shouldPesti = true
-				dk.fr.oblitCount = 0
+			if dk.KillingMachineAura.IsActive() && dk.CurrentRunicPower() > dk.MaxRunicPower()-fsCost {
+				casted = dk.CastFrostStrike(sim, target)
+				if casted {
+					dk.fr.shouldPesti = true
+					dk.fr.oblitCount = 0
+				}
+			} else {
+				casted = dk.CastBloodStrike(sim, target)
+				if casted && dk.LastOutcome.Matches(core.OutcomeLanded) {
+					dk.fr.shouldPesti = true
+					dk.fr.oblitCount = 0
+				} else {
+					dk.fr.shouldPesti = true
+					dk.fr.oblitCount = 0
+				}
 			}
-			//}
-			return casted
 		}
 		return casted
 	} else if sim.CurrentTime+gcd < obAt {
@@ -167,20 +169,16 @@ func (dk *DpsDeathknight) setupFrostSubBloodERWOpener() {
 		NewAction(dk.RotationActionCallback_UA_Frost).
 		NewAction(dk.RotationActionCallback_BT).
 		NewAction(dk.RotationActionCallback_Obli).
-		NewAction(dk.RotationActionCallback_FS_KM).
+		NewAction(dk.RotationActionCallback_FS).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti).
 		NewAction(dk.RotationActionCallback_ERW).
 		NewAction(dk.RotationActionCallback_Obli).
-		NewAction(dk.RotationActionCallback_FS_KM).
 		NewAction(dk.RotationActionCallback_Obli).
-		NewAction(dk.RotationActionCallback_FS_KM).
 		NewAction(dk.RotationActionCallback_Obli).
 		NewAction(dk.RotationActionCallback_FS).
 		NewAction(dk.RotationActionCallback_RD).
 		NewAction(dk.RotationActionCallback_FS).
-		NewAction(dk.RotationActionCallback_HW).
 		NewAction(dk.RotationActionCallback_Obli).
-		NewAction(dk.RotationActionCallback_FS_KM).
 		NewAction(dk.RotationActionCallback_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti).
 		NewAction(dk.RotationActionCallback_FS).
@@ -228,7 +226,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_RecoverFromPestiM
 			NewAction(dk.RotationActionCallback_PS).
 			NewAction(dk.RotationActionCallback_Obli).
 			NewAction(dk.RotationActionCallback_BS).
-			//NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti).
+			NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti).
 			NewAction(dk.RotationActionCallback_FrostSubBlood_PrioRotation)
 	} else {
 		s.Clear().
@@ -239,7 +237,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_RecoverFromPestiM
 			NewAction(dk.RotationActionCallback_PS).
 			NewAction(dk.RotationActionCallback_Obli).
 			NewAction(dk.RotationActionCallback_BS).
-			//NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti).
+			NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti).
 			NewAction(dk.RotationActionCallback_FrostSubBlood_PrioRotation)
 	}
 
