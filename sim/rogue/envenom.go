@@ -21,7 +21,7 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 	return rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 57993, Tag: comboPoints},
 		SpellSchool: core.SpellSchoolNature,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreResists | rogue.finisherFlags(),
+		Flags:       core.SpellFlagMeleeMetrics | rogue.finisherFlags(),
 
 		ResourceType: stats.Energy,
 		BaseCost:     cost,
@@ -36,8 +36,10 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			DamageMultiplier: 1 + []float64{0.0, 0.07, 0.14, 0.2}[rogue.Talents.VilePoisons],
+			ProcMask: core.ProcMaskMeleeMHSpecial,
+			DamageMultiplier: 1 +
+				0.02*float64(rogue.Talents.FindWeakness) +
+				[]float64{0.0, 0.07, 0.14, 0.2}[rogue.Talents.VilePoisons],
 			ThreatMultiplier: 1,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {

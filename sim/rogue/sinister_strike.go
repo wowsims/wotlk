@@ -36,6 +36,7 @@ func (rogue *Rogue) registerSinisterStrikeSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeMHSpecial,
 			DamageMultiplier: 1 +
+				0.02*float64(rogue.Talents.FindWeakness) +
 				0.03*float64(rogue.Talents.Aggression) +
 				0.05*float64(rogue.Talents.BladeTwisting) +
 				core.TernaryFloat64(rogue.Talents.SurpriseAttacks, 0.1, 0) +
