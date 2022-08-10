@@ -64,7 +64,7 @@ func (dk *DpsDeathknight) setupUnbreakableArmorCooldowns() {
 	fr := &dk.fr
 
 	// AMS
-	//fr.amsMCD = dk.getFrostMajorCooldown(core.ActionID{SpellID: 48707})
+	fr.amsMCD = dk.getFrostMajorCooldown(core.ActionID{SpellID: 48707})
 
 	// hyperspeed accelerators
 	fr.hyperSpeedMCD = dk.getFrostMajorCooldown(core.ActionID{SpellID: 54758})
