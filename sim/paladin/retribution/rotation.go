@@ -9,26 +9,6 @@ import (
 )
 
 func (ret *RetributionPaladin) OnGCDReady(sim *core.Simulation) {
-	ret.AutoAttacks.EnableAutoSwing(sim)
-
-	if !ret.SealInitComplete {
-		switch ret.Seal {
-		case proto.PaladinSeal_Vengeance:
-			ret.SealOfVengeanceAura.Activate(sim)
-		case proto.PaladinSeal_Command:
-			ret.SealOfCommandAura.Activate(sim)
-		case proto.PaladinSeal_Righteousness:
-			ret.SealOfRighteousnessAura.Activate(sim)
-		}
-		ret.SealInitComplete = true
-	}
-
-	if !ret.DivinePleaInitComplete {
-		ret.DivinePleaAura.Activate(sim)
-		ret.DivinePlea.CD.Use(sim)
-		ret.DivinePleaInitComplete = true
-	}
-
 	ret.SelectedRotation(sim)
 
 	if ret.GCD.IsReady(sim) {
@@ -42,10 +22,6 @@ func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
 
 	nextSwingAt := ret.AutoAttacks.NextAttackAt()
 	isExecutePhase := sim.IsExecutePhase20()
-
-	nextPrimaryAbility := core.MinDuration(ret.CrusaderStrike.CD.ReadyAt(), ret.DivineStorm.CD.ReadyAt())
-	nextPrimaryAbility = core.MinDuration(nextPrimaryAbility, ret.JudgementOfWisdom.CD.ReadyAt())
-	nextPrimaryAbilityDelta := nextPrimaryAbility - sim.CurrentTime
 
 	if ret.GCD.IsReady(sim) {
 	rotationLoop:
@@ -67,7 +43,7 @@ func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
 					break rotationLoop
 				}
 			case int32(proto.RetributionPaladin_Rotation_Consecration):
-				if nextPrimaryAbilityDelta.Milliseconds() > int64(ret.ConsSlack) && ret.Consecration.IsReady(sim) {
+				if ret.Consecration.IsReady(sim) {
 					ret.Consecration.Cast(sim, target)
 					break rotationLoop
 				}
@@ -82,7 +58,7 @@ func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
 					break rotationLoop
 				}
 			case int32(proto.RetributionPaladin_Rotation_Exorcism):
-				if nextPrimaryAbilityDelta.Milliseconds() > int64(ret.ExoSlack) && ret.Exorcism.IsReady(sim) && ret.ArtOfWarInstantCast.IsActive() {
+				if ret.Exorcism.IsReady(sim) && ret.ArtOfWarInstantCast.IsActive() {
 					ret.Exorcism.Cast(sim, target)
 					break rotationLoop
 				}
@@ -94,7 +70,11 @@ func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
 	events := []time.Duration{
 		nextSwingAt,
 		ret.GCD.ReadyAt(),
-		nextPrimaryAbility,
+		ret.JudgementOfWisdom.CD.ReadyAt(),
+		ret.DivineStorm.CD.ReadyAt(),
+		ret.HammerOfWrath.CD.ReadyAt(),
+		ret.HolyWrath.CD.ReadyAt(),
+		ret.CrusaderStrike.CD.ReadyAt(),
 		ret.Consecration.CD.ReadyAt(),
 		ret.Exorcism.CD.ReadyAt(),
 	}
@@ -104,67 +84,75 @@ func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
 }
 
 func (ret *RetributionPaladin) castSequenceRotation(sim *core.Simulation) {
+	if len(ret.RotationInput) == 0 {
+		return
+	}
+
 	// Setup
 	target := ret.CurrentTarget
-
-	nextSwingAt := ret.AutoAttacks.NextAttackAt()
 	isExecutePhase := sim.IsExecutePhase20()
 
-	nextPrimaryAbility := core.MinDuration(ret.CrusaderStrike.CD.ReadyAt(), ret.DivineStorm.CD.ReadyAt())
-	nextPrimaryAbility = core.MinDuration(nextPrimaryAbility, ret.JudgementOfWisdom.CD.ReadyAt())
-
+	nextReadyAt := sim.CurrentTime
 	if ret.GCD.IsReady(sim) {
 		switch ret.RotationInput[ret.CastSequenceIndex] {
 		case int32(proto.RetributionPaladin_Rotation_JudgementOfWisdom):
 			if ret.JudgementOfWisdom.IsReady(sim) {
 				ret.JudgementOfWisdom.Cast(sim, target)
 				ret.CastSequenceIndex = (ret.CastSequenceIndex + 1) % int32(len(ret.RotationInput))
+			} else {
+				nextReadyAt = ret.JudgementOfWisdom.ReadyAt()
 			}
 		case int32(proto.RetributionPaladin_Rotation_DivineStorm):
 			if ret.DivineStorm.IsReady(sim) {
 				ret.DivineStorm.Cast(sim, target)
 				ret.CastSequenceIndex = (ret.CastSequenceIndex + 1) % int32(len(ret.RotationInput))
+			} else {
+				nextReadyAt = ret.DivineStorm.ReadyAt()
 			}
 		case int32(proto.RetributionPaladin_Rotation_HammerOfWrath):
 			if isExecutePhase && ret.HammerOfWrath.IsReady(sim) {
 				ret.HammerOfWrath.Cast(sim, target)
 				ret.CastSequenceIndex = (ret.CastSequenceIndex + 1) % int32(len(ret.RotationInput))
+			} else {
+				nextReadyAt = ret.HammerOfWrath.ReadyAt()
 			}
 		case int32(proto.RetributionPaladin_Rotation_Consecration):
 			if ret.Consecration.IsReady(sim) {
 				ret.Consecration.Cast(sim, target)
 				ret.CastSequenceIndex = (ret.CastSequenceIndex + 1) % int32(len(ret.RotationInput))
+			} else {
+				nextReadyAt = ret.Consecration.ReadyAt()
 			}
 		case int32(proto.RetributionPaladin_Rotation_HolyWrath):
 			if ret.HolyWrath.IsReady(sim) {
 				ret.HolyWrath.Cast(sim, target)
 				ret.CastSequenceIndex = (ret.CastSequenceIndex + 1) % int32(len(ret.RotationInput))
+			} else {
+				nextReadyAt = ret.HolyWrath.ReadyAt()
 			}
 		case int32(proto.RetributionPaladin_Rotation_CrusaderStrike):
 			if ret.CrusaderStrike.IsReady(sim) {
 				ret.CrusaderStrike.Cast(sim, target)
 				ret.CastSequenceIndex = (ret.CastSequenceIndex + 1) % int32(len(ret.RotationInput))
+			} else {
+				nextReadyAt = ret.CrusaderStrike.ReadyAt()
 			}
 		case int32(proto.RetributionPaladin_Rotation_Exorcism):
 			if ret.Exorcism.IsReady(sim) {
 				ret.Exorcism.Cast(sim, target)
 				ret.CastSequenceIndex = (ret.CastSequenceIndex + 1) % int32(len(ret.RotationInput))
+			} else {
+				nextReadyAt = ret.Exorcism.ReadyAt()
 			}
 		}
 	}
 
-	// All possible next events
 	events := []time.Duration{
-		nextSwingAt,
 		ret.GCD.ReadyAt(),
-		nextPrimaryAbility,
-		ret.Consecration.CD.ReadyAt(),
-		ret.Exorcism.CD.ReadyAt(),
-		sim.CurrentTime + ret.Exorcism.CurCast.CastTime,
+		nextReadyAt,
 	}
 
 	ret.waitUntilNextEvent(sim, events, ret.castSequenceRotation)
-
 }
 
 func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
@@ -211,9 +199,14 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 	events := []time.Duration{
 		nextSwingAt,
 		ret.GCD.ReadyAt(),
-		nextPrimaryAbility,
+		ret.JudgementOfWisdom.CD.ReadyAt(),
+		ret.DivineStorm.CD.ReadyAt(),
+		ret.HammerOfWrath.CD.ReadyAt(),
+		ret.HolyWrath.CD.ReadyAt(),
+		ret.CrusaderStrike.CD.ReadyAt(),
 		ret.Consecration.CD.ReadyAt(),
 		ret.Exorcism.CD.ReadyAt(),
+		ret.DivinePlea.CD.ReadyAt(),
 	}
 
 	ret.waitUntilNextEvent(sim, events, ret.mainRotation)
