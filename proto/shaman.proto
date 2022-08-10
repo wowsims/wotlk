@@ -226,6 +226,7 @@ message ElementalShaman {
 message EnhancementShaman {
 	message Rotation {
 		ShamanTotems totems = 1;
+        bool lavaburst_weave = 2;
 	    // TODO: lightning/possibly lavaburst weaving
     }
 

@@ -8,8 +8,6 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-const defaultLightningShieldStacks = 3
-
 func (shaman *Shaman) registerLightningShieldSpell() *core.Spell {
 	actionID := core.ActionID{SpellID: 49281}
 
@@ -19,13 +17,13 @@ func (shaman *Shaman) registerLightningShieldSpell() *core.Spell {
 	}
 	var proc = 0.02*float64(shaman.Talents.StaticShock) + core.TernaryFloat64(t9Bonus, 0.03, 0)
 
-	dmgMultBonus := 1.0
+	dmgMultBonus := 0.0
 
 	switch shaman.Equip[items.ItemSlotHands].ID { //s1 and s2 enh pvp gloves, probably unnessecary but its fun
 	case 26000:
 		fallthrough
 	case 32005:
-		dmgMultBonus = 1.08
+		dmgMultBonus = 0.08
 	}
 
 	procSpell := shaman.RegisterSpell(core.SpellConfig{
@@ -33,9 +31,9 @@ func (shaman *Shaman) registerLightningShieldSpell() *core.Spell {
 		SpellSchool: core.SpellSchoolNature,
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskEmpty,
-			DamageMultiplier: 1 * (1 + 0.05*float64(shaman.Talents.ImprovedShields) +
-				core.TernaryFloat64(shaman.HasSetBonus(ItemSetEarthshatterBattlegear, 2), 0.1, 0)) *
-				core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfLightningShield), 1.2, 1) * dmgMultBonus, //possibly additive?
+			DamageMultiplier: 1*(1+0.05*float64(shaman.Talents.ImprovedShields)+
+				core.TernaryFloat64(shaman.HasSetBonus(ItemSetEarthshatterBattlegear, 2), 0.1, 0)) +
+				core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfLightningShield), 0.2, 0) + dmgMultBonus,
 
 			ThreatMultiplier: 1, //fix when spirit weapons is fixed
 			BaseDamage:       core.BaseDamageConfigMagic(380, 380, 0.267),
@@ -52,7 +50,7 @@ func (shaman *Shaman) registerLightningShieldSpell() *core.Spell {
 			aura.Activate(sim)
 		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.SetStacks(sim, defaultLightningShieldStacks+(2*shaman.Talents.StaticShock))
+			aura.SetStacks(sim, 3+(2*shaman.Talents.StaticShock))
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.Landed() {

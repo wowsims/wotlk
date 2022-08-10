@@ -20,7 +20,8 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 	effect := core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeMHSpecial,
 
-		BonusCritRating: 5 * core.CritRatingPerCritChance * float64(rogue.Talents.PuncturingWounds),
+		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0) +
+			5*core.CritRatingPerCritChance*float64(rogue.Talents.PuncturingWounds),
 		DamageMultiplier: 1 +
 			0.1*float64(rogue.Talents.Opportunity) +
 			core.TernaryFloat64(rogue.HasSetBonus(ItemSetSlayers, 4), 0.06, 0),
@@ -87,7 +88,7 @@ func (rogue *Rogue) registerMutilateSpell() {
 				GCD:  time.Second,
 			},
 			IgnoreHaste: true,
-			ModifyCast:  rogue.builderCastModifier,
+			ModifyCast:  rogue.CastModifier,
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{

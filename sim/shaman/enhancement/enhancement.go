@@ -77,6 +77,7 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 
 	if enh.SelfBuffs.ImbueMH == proto.ShamanImbue_WindfuryWeapon ||
 		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FlametongueWeapon ||
+		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FlametongueWeaponDownrank ||
 		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FrostbrandWeapon {
 		enh.HasMHWeaponImbue = true
 	}
@@ -85,6 +86,8 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 		SpiritWolf1: enh.NewSpiritWolf(1),
 		SpiritWolf2: enh.NewSpiritWolf(2),
 	}
+
+	enh.LavaburstWeave = enhOptions.Rotation.LavaburstWeave
 
 	return enh
 }

@@ -325,8 +325,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-IncisorFragment-37723"
  value: {
-  dps: 7537.6318830405
-  tps: 5372.5680520206
+  dps: 7313.4683887523
+  tps: 5190.1581887156
  }
 }
 dps_results: {
