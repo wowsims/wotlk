@@ -30,13 +30,17 @@ func (unit *Unit) NextGCDAt() time.Duration {
 func (unit *Unit) SetGCDTimer(sim *Simulation, gcdReadyAt time.Duration) {
 	unit.GCD.Set(gcdReadyAt)
 
-	unit.gcdAction.Cancel(sim)
-	oldAction := unit.gcdAction.OnAction
-
-	unit.gcdAction = &PendingAction{
-		NextActionAt: gcdReadyAt,
-		Priority:     ActionPriorityGCD,
-		OnAction:     oldAction,
+	if unit.gcdAction.consumed {
+		unit.gcdAction.cancelled = false
+		unit.gcdAction.NextActionAt = gcdReadyAt
+	} else {
+		unit.gcdAction.Cancel(sim)
+		oldAction := unit.gcdAction.OnAction
+		unit.gcdAction = &PendingAction{
+			NextActionAt: gcdReadyAt,
+			Priority:     ActionPriorityGCD,
+			OnAction:     oldAction,
+		}
 	}
 	sim.AddPendingAction(unit.gcdAction)
 }
