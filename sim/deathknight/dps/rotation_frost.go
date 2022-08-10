@@ -8,6 +8,8 @@ import (
 )
 
 type FrostRotation struct {
+	dk *DpsDeathknight
+
 	oblitCount     int32
 	canBloodStrike bool
 	missedPesti    bool
@@ -22,6 +24,12 @@ type FrostRotation struct {
 	potionOfSpeedMCD        *core.MajorCooldown
 	indestructiblePotionMCD *core.MajorCooldown
 	potionUsed              bool
+
+	oblitRPRegen float64
+}
+
+func (fr *FrostRotation) Initialize(dk *DpsDeathknight) {
+	fr.oblitRPRegen = core.TernaryFloat64(dk.HasSetBonus(deathknight.ItemSetScourgeborneBattlegear, 4), 25.0, 20.0)
 }
 
 func (fr *FrostRotation) Reset(sim *core.Simulation) {

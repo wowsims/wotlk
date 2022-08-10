@@ -75,6 +75,11 @@ export const SyncTypeInput = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecEnha
 export const EnhancementShamanRotationConfig = {
     inputs: 
         [
-
+        InputHelpers.makeRotationBooleanInput<Spec.SpecEnhancementShaman>({
+            fieldName: 'lavaburstWeave',
+            label: 'Enable Weaving Lava Burst',
+            labelTooltip: 'Not particularily useful for dual wield, mostly a 2h option',
+            //enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getTalents().maelstromWeapon,
+        }),
     ],
 };

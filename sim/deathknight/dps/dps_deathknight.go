@@ -99,6 +99,7 @@ func (dk *DpsDeathknight) GetDeathknight() *deathknight.Deathknight {
 func (dk *DpsDeathknight) Initialize() {
 	dk.Deathknight.Initialize()
 	dk.initProcTrackers()
+	dk.fr.Initialize(dk)
 }
 
 func (dk *DpsDeathknight) Reset(sim *core.Simulation) {

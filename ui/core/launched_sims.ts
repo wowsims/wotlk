@@ -16,7 +16,7 @@ export const raidSimLaunched = false;
 export const simLaunchStatuses: Record<Spec, LaunchStatus> = {
 	[Spec.SpecBalanceDruid]: LaunchStatus.Unlaunched,
 	[Spec.SpecElementalShaman]: LaunchStatus.Unlaunched,
-	[Spec.SpecEnhancementShaman]: LaunchStatus.Unlaunched,
+	[Spec.SpecEnhancementShaman]: LaunchStatus.Alpha,
 	[Spec.SpecFeralDruid]: LaunchStatus.Unlaunched,
 	[Spec.SpecFeralTankDruid]: LaunchStatus.Unlaunched,
 	[Spec.SpecHunter]: LaunchStatus.Alpha,

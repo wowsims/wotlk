@@ -31,8 +31,6 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 			cssClass: 'enhancement-shaman-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-                "Bloodlust does not currently properly apply Sated, and having it selected in the 'raid buffs' category as well as 'player' will cast them back to back",
-                "Not all item effects are currently implemented, specifically totem relics",
                 "Fire Elemental is not yet implemented",
                 "Some things regarding weapon imbues need further testing and changes",
 			],
