@@ -146,7 +146,7 @@ func (dk *Deathknight) applyKillingMachine() {
 	}
 
 	actionID := core.ActionID{SpellID: 51130}
-	ppmm := dk.AutoAttacks.NewPPMManager(float64(dk.Talents.KillingMachine), core.ProcMaskMeleeMHAuto)
+	procChance := dk.GetMHWeapon().SwingSpeed * float64(dk.Talents.KillingMachine) / 60.0
 
 	dk.KillingMachineAura = dk.RegisterAura(core.Aura{
 		Label:    "Killing Machine Proc",
@@ -161,11 +161,11 @@ func (dk *Deathknight) applyKillingMachine() {
 				return
 			}
 
-			if !ppmm.Proc(sim, spellEffect.ProcMask, "killing machine") {
+			if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHAuto) {
 				return
 			}
 
-			if !dk.KillingMachineAura.IsActive() {
+			if sim.RandomFloat("Killing Machine Proc Chance") <= procChance {
 				dk.KillingMachineAura.Activate(sim)
 			}
 		},
