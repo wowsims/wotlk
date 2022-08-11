@@ -130,7 +130,6 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		}
 	}
 
-<<<<<<< HEAD
 	// ------------------------------------------
 	// Curses
 	// ------------------------------------------
