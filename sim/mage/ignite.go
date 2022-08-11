@@ -86,7 +86,7 @@ func (mage *Mage) applyIgnite() {
 			if spellEffect.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 				return
 			}
-			if spell.SpellSchool == core.SpellSchoolFire && spellEffect.Outcome.Matches(core.OutcomeCrit) {
+			if spell.SpellSchool.Matches(core.SpellSchoolFire) && spellEffect.Outcome.Matches(core.OutcomeCrit) {
 				mage.procIgnite(sim, spellEffect.Target, spellEffect.Damage)
 			}
 		},
