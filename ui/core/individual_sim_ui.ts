@@ -138,6 +138,10 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 		individualBuffs: IndividualBuffs,
 
 		debuffs: Debuffs,
+
+		profession1?: Profession,
+		profession2?: Profession,
+		distanceFromTarget?: number,
 	},
 
 	playerIconInputs: Array<IconInputConfig<Player<SpecType>, any>>,
@@ -1073,6 +1077,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		TypedEvent.freezeAllAndDo(() => {
 			const tankSpec = isTankSpec(this.player.spec);
 
+			this.player.applySharedDefaults(eventID);
 			this.player.setRace(eventID, specToEligibleRaces[this.player.spec][0]);
 			this.player.setGear(eventID, this.sim.lookupEquipmentSpec(this.individualConfig.defaults.gear));
 			this.player.setConsumes(eventID, this.individualConfig.defaults.consumes);
@@ -1084,7 +1089,9 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.player.getParty()!.setBuffs(eventID, this.individualConfig.defaults.partyBuffs);
 			this.player.getRaid()!.setBuffs(eventID, this.individualConfig.defaults.raidBuffs);
 			this.player.setEpWeights(eventID, this.individualConfig.defaults.epWeights);
-			this.player.applySharedDefaults(eventID);
+			this.player.setProfession1(eventID, this.individualConfig.defaults.profession1 || Profession.Engineering);
+			this.player.setProfession2(eventID, this.individualConfig.defaults.profession2 || Profession.Jewelcrafting);
+			this.player.setDistanceFromTarget(eventID, this.individualConfig.defaults.distanceFromTarget || 0);
 
 			if (!this.isWithinRaidSim) {
 				this.sim.encounter.applyDefaults(eventID);

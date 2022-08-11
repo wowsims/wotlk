@@ -11,6 +11,7 @@ import { SavedTalents } from '../core/proto/ui.js';
 import {
 	Rogue_Rotation as RogueRotation,
 	Rogue_Rotation_Builder as Builder,
+	Rogue_Rotation_Filler as Filler,
 	Rogue_Options as RogueOptions,
   Rogue_Options_PoisonImbue as Poison,
   RogueMajorGlyph,
@@ -46,12 +47,12 @@ export const AssassinationTalents = {
 
 export const DefaultRotation = RogueRotation.create({
 	builder: Builder.Auto,
+  filler: Filler.NoFiller,
 	maintainExposeArmor: false,
   maintainTricksOfTheTrade: true,
 	useRupture: false,
 	useShiv: false,
 	useEnvenom: false,
-	minComboPointsForDamageFinisher: 3,
 });
 
 export const DefaultOptions = RogueOptions.create({
@@ -67,7 +68,7 @@ export const DefaultConsumes = Consumes.create({
 });
 
 export const PRERAID_PRESET = {
-	name: 'Pre-Raid Combat',
+	name: 'Pre-Raid',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
     {
@@ -156,3 +157,99 @@ export const PRERAID_PRESET = {
     }
   ]}`),
 };
+
+export const P1_PRESET = {
+	name: 'P1',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+    {
+      "id": 40499,
+      "enchant": 44879,
+      "gems": [
+        41398,
+        42702
+      ]
+    },
+    {
+      "id": 44664,
+      "gems": [
+        42154
+      ]
+    },
+    {
+      "id": 40502,
+      "enchant": 44871,
+      "gems": [
+        36766
+      ]
+    },
+    {
+      "id": 40403,
+      "enchant": 55002
+    },
+    {
+      "id": 40539,
+      "enchant": 44489,
+      "gems": [
+        36766
+      ]
+    },
+    {
+      "id": 39765,
+      "enchant": 44484,
+      "gems": [
+        40003,
+        0
+      ]
+    },
+    {
+      "id": 40496,
+      "enchant": 54999,
+      "gems": [
+        40058,
+        0
+      ]
+    },
+    {
+      "id": 40260,
+      "gems": [
+        39999
+      ]
+    },
+    {
+      "id": 40500,
+      "enchant": 38374,
+      "gems": [
+        40003,
+        40003
+      ]
+    },
+    {
+      "id": 39701,
+      "enchant": 55016
+    },
+    {
+      "id": 40074
+    },
+    {
+      "id": 40474
+    },
+    {
+        "id": 40684
+    },
+    {
+      "id": 44253
+    },
+    {
+      "id": 39714,
+      "enchant": 44492
+    },
+    {
+      "id": 40386,
+      "enchant": 44492
+    },
+    {
+      "id": 40385
+    }
+  ]}`),
+}

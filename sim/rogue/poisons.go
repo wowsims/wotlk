@@ -105,8 +105,9 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 			NumberOfTicks: 4,
 			TickLength:    time.Second * 3,
 			TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskPeriodicDamage,
-				DamageMultiplier: 1 + []float64{0.0, 0.07, 0.14, 0.20}[rogue.Talents.VilePoisons],
+				ProcMask: core.ProcMaskPeriodicDamage,
+				DamageMultiplier: 1 +
+					[]float64{0.0, 0.07, 0.14, 0.20}[rogue.Talents.VilePoisons],
 				ThreatMultiplier: 1,
 				IsPeriodic:       false, // hack to get attacker modifiers applied
 				BaseDamage:       core.MultiplyByStacks(deadlyPoisonTickBaseDamage, dotAura),
@@ -170,8 +171,9 @@ func (rogue *Rogue) makeInstantPoison(procSource InstantPoisonProcSource) *core.
 		SpellSchool: core.SpellSchoolNature,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskEmpty,
-			DamageMultiplier: 1 + []float64{0.0, 0.07, 0.14, 0.20}[rogue.Talents.VilePoisons],
+			ProcMask: core.ProcMaskEmpty,
+			DamageMultiplier: 1 +
+				[]float64{0.0, 0.07, 0.14, 0.20}[rogue.Talents.VilePoisons],
 			ThreatMultiplier: 1,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {

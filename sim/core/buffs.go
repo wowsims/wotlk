@@ -204,11 +204,15 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		stats.Health: GetTristateValueFloat(raidBuffs.CommandingShout, 1080, 1080*1.25),
 	})
 
-	spBonus := float64(raidBuffs.DemonicPact) / 10.
+	spBonus := 0.
+
+	if raidBuffs.FlametongueTotem {
+		spBonus = 144.
+		MakePermanent(FlametongueTotemAura(character))
+	}
 	if raidBuffs.TotemOfWrath {
-		spBonus = MaxFloat(spBonus, 280)
-	} else if raidBuffs.FlametongueTotem {
-		spBonus = MaxFloat(spBonus, 144)
+		spBonus = 280.
+		MakePermanent(TotemOfWrathAura(character))
 	}
 	if spBonus > 0 {
 		character.AddStats(stats.Stats{
@@ -216,6 +220,11 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 			stats.HealingPower: spBonus,
 		})
 	}
+	DPSPBonus := float64(raidBuffs.DemonicPact) / 10.
+	if DPSPBonus > 0 {
+		MakePermanent(DemonicPactAura(character, DPSPBonus))
+	}
+
 	if raidBuffs.WrathOfAirTotem {
 		character.PseudoStats.CastSpeedMultiplier *= 1.05
 	}
@@ -277,7 +286,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		character.AddStats(stats.Stats{stats.SpellPower: 34})
 	}
 	if partyBuffs.ChainOfTheTwilightOwl {
-		character.AddStats(stats.Stats{stats.SpellCrit: 2 * CritRatingPerCritChance})
+		character.AddStats(stats.Stats{stats.SpellCrit: 45})
 	}
 }
 
@@ -292,14 +301,34 @@ func applyPetBuffEffects(petAgent PetAgent, raidBuffs proto.RaidBuffs, partyBuff
 	// the owner during combat (Bloodlust) or don't make sense for a pet.
 	raidBuffs.Bloodlust = false
 	raidBuffs.WrathOfAirTotem = false
+	individualBuffs.HymnOfHope = 0
+	individualBuffs.HandOfSalvation = 0
 	individualBuffs.Innervates = 0
 	individualBuffs.PowerInfusions = 0
+	individualBuffs.UnholyFrenzy = 0
+	individualBuffs.Revitalize = 0
 	individualBuffs.TricksOfTheTrades = 0
 	individualBuffs.ShatteringThrows = 0
 
 	if !petAgent.GetPet().enabledOnStart {
 		raidBuffs.ArcaneBrilliance = false
+		raidBuffs.DivineSpirit = false
 		raidBuffs.GiftOfTheWild = 0
+		raidBuffs.PowerWordFortitude = 0
+		raidBuffs.Thorns = 0
+		raidBuffs.ShadowProtection = false
+		raidBuffs.DrumsOfForgottenKings = false
+		raidBuffs.DrumsOfTheWild = false
+		raidBuffs.ScrollOfProtection = false
+		raidBuffs.ScrollOfStamina = false
+		raidBuffs.ScrollOfStrength = false
+		raidBuffs.ScrollOfAgility = false
+		raidBuffs.ScrollOfIntellect = false
+		raidBuffs.ScrollOfSpirit = false
+		individualBuffs.BlessingOfKings = false
+		individualBuffs.BlessingOfSanctuary = false
+		individualBuffs.BlessingOfMight = 0
+		individualBuffs.BlessingOfWisdom = 0
 	}
 
 	// For some reason pets don't benefit from buffs that are ratings, e.g. crit rating or haste rating.
@@ -509,25 +538,34 @@ const BloodlustDuration = time.Second * 40
 const BloodlustCD = time.Minute * 10
 
 func registerBloodlustCD(agent Agent) {
-	bloodlustAura := BloodlustAura(agent.GetCharacter(), -1)
+	character := agent.GetCharacter()
+	bloodlustAura := BloodlustAura(character, -1)
 
-	// TODO: do we need consecutive CDs
-	registerExternalConsecutiveCDApproximation(
-		agent,
-		externalConsecutiveCDApproximation{
-			ActionID:         ActionID{SpellID: 2825, Tag: -1},
-			AuraTag:          BloodlustAuraTag,
-			CooldownPriority: CooldownPriorityBloodlust,
-			AuraDuration:     BloodlustDuration,
-			AuraCD:           BloodlustCD,
-			Type:             CooldownTypeDPS | CooldownTypeUsableShapeShifted,
+	spell := character.RegisterSpell(SpellConfig{
+		ActionID: bloodlustAura.ActionID,
+		Flags:    SpellFlagNoOnCastComplete | SpellFlagNoMetrics | SpellFlagNoLogs,
 
-			ShouldActivate: func(sim *Simulation, character *Character) bool {
-				// Haste portion doesn't stack with Power Infusion, so prefer to wait.
-				return !character.HasActiveAuraWithTag(PowerInfusionAuraTag)
+		Cast: CastConfig{
+			CD: Cooldown{
+				Timer:    character.NewTimer(),
+				Duration: BloodlustCD,
 			},
-			AddAura: func(sim *Simulation, character *Character) { bloodlustAura.Activate(sim) },
-		}, 1)
+		},
+
+		ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
+			bloodlustAura.Activate(sim)
+		},
+	})
+
+	character.AddMajorCooldown(MajorCooldown{
+		Spell:    spell,
+		Priority: CooldownPriorityBloodlust,
+		Type:     CooldownTypeDPS | CooldownTypeUsableShapeShifted,
+		ShouldActivate: func(sim *Simulation, character *Character) bool {
+			// Haste portion doesn't stack with Power Infusion, so prefer to wait.
+			return !character.HasActiveAuraWithTag(PowerInfusionAuraTag)
+		},
+	})
 }
 
 func BloodlustAura(character *Character, actionTag int32) *Aura {
@@ -950,4 +988,86 @@ func ReplenishmentAura(character *Character, actionID ActionID) *Aura {
 			character.AddStatDependencyDynamic(sim, stats.Mana, stats.MP5, 1/(1.0+0.01))
 		},
 	})
+}
+
+var spellPowerBuffTag = "SpellPowerBuff"
+
+func TotemOfWrathAura(character *Character) *Aura {
+	spellPowerBonus := 280.
+	return character.GetOrRegisterAura(Aura{
+		Label:    "Totem of Wrath",
+		Tag:      spellPowerBuffTag,
+		ActionID: ActionID{SpellID: 57722},
+		Priority: spellPowerBonus,
+		Duration: NeverExpires,
+		OnReset: func(aura *Aura, sim *Simulation) {
+			aura.Activate(sim)
+		},
+	})
+}
+
+func FlametongueTotemAura(character *Character) *Aura {
+	spellPowerBonus := 144.
+	return character.GetOrRegisterAura(Aura{
+		Label:    "Flame tongueTotem",
+		Tag:      spellPowerBuffTag,
+		ActionID: ActionID{SpellID: 58656},
+		Priority: spellPowerBonus,
+		Duration: NeverExpires,
+		OnReset: func(aura *Aura, sim *Simulation) {
+			aura.Activate(sim)
+		},
+	})
+}
+
+func DemonicPactAura(character *Character, spellPowerBonus float64) *Aura {
+
+	return character.GetOrRegisterAura(Aura{
+		Label:     "Demonic Pact",
+		Tag:       "Demonic Pact",
+		ActionID:  ActionID{SpellID: 47240},
+		Duration:  time.Second * 45,
+		Priority:  spellPowerBonus,
+		MaxStacks: math.MaxInt32,
+		OnReset: func(aura *Aura, sim *Simulation) {
+			aura.Activate(sim)
+		},
+		OnGain: func(aura *Aura, sim *Simulation) {
+			minimumSPBonus := 0.
+			if TotemOfWrathAura(character).IsActive() {
+				minimumSPBonus = 280
+			} else if FlametongueTotemAura(character).IsActive() {
+				minimumSPBonus = 144
+			}
+			newSPbonus := aura.Priority - minimumSPBonus
+			if newSPbonus < 0 {
+				newSPbonus = 0
+			}
+
+			character.AddStatsDynamic(sim, stats.Stats{
+				stats.SpellPower:   newSPbonus,
+				stats.HealingPower: newSPbonus,
+			})
+
+			aura.SetStacks(sim, int32(aura.Priority))
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			minimumSPBonus := 0.
+			if TotemOfWrathAura(character).IsActive() {
+				minimumSPBonus = 280
+			} else if FlametongueTotemAura(character).IsActive() {
+				minimumSPBonus = 144
+			}
+			newSPbonus := aura.Priority - minimumSPBonus
+			if newSPbonus < 0 {
+				newSPbonus = 0
+			}
+
+			character.AddStatsDynamic(sim, stats.Stats{
+				stats.SpellPower:   -newSPbonus,
+				stats.HealingPower: -newSPbonus,
+			})
+		},
+	})
+
 }

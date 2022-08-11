@@ -4,9 +4,9 @@ character_stats_results: {
   final_stats: 402.6
   final_stats: 1087.9
   final_stats: 1120.9
-  final_stats: 848.232
+  final_stats: 831.6
   final_stats: 232.1
-  final_stats: 2658.643568344
+  final_stats: 2653.1555572
   final_stats: 525
   final_stats: 0
   final_stats: 0
@@ -16,16 +16,16 @@ character_stats_results: {
   final_stats: 0
   final_stats: 109
   final_stats: 374
-  final_stats: 1223.9184607607
+  final_stats: 1219.3230399615
   final_stats: 360
   final_stats: 0
-  final_stats: 5391.81189448
+  final_stats: 5373.518524
   final_stats: 570.74
   final_stats: 1851.7429022809
   final_stats: 360
   final_stats: 0
   final_stats: 213.7775
-  final_stats: 16839.48
+  final_stats: 16590
   final_stats: 0
   final_stats: 0
   final_stats: 10798.8
@@ -36,7 +36,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 0
   final_stats: 0
-  final_stats: 14188
+  final_stats: 17968
   final_stats: 75
   final_stats: 75
   final_stats: 75
@@ -52,805 +52,1725 @@ character_stats_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-AshtongueTalismanofVision-32491"
  value: {
+<<<<<<< HEAD
   dps: 5454.1925245963
   tps: 4276.2024024549
+||||||| f07e2434
+  dps: 5494.9107036983
+  tps: 4319.1261916408
+=======
+  dps: 5432.8255439306
+  tps: 4290.6922638497
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-AustereEarthsiegeDiamond"
  value: {
+<<<<<<< HEAD
   dps: 5419.3922762714
   tps: 4253.0064632547
+||||||| f07e2434
+  dps: 5441.2504939119
+  tps: 4274.9701037854
+=======
+  dps: 5392.3095060296
+  tps: 4263.0212780626
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Bandit'sInsignia-40371"
  value: {
+<<<<<<< HEAD
   dps: 5518.7795470046
   tps: 4335.2553623287
+||||||| f07e2434
+  dps: 5545.6996393899
+  tps: 4359.7284022212
+=======
+  dps: 5518.8054515884
+  tps: 4371.3533852585
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-BeamingEarthsiegeDiamond"
  value: {
+<<<<<<< HEAD
   dps: 5480.9532055209
   tps: 4311.2265945925
+||||||| f07e2434
+  dps: 5476.0878170224
+  tps: 4303.467353925
+=======
+  dps: 5432.9571340619
+  tps: 4301.3883208777
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-BracingEarthsiegeDiamond"
  value: {
+<<<<<<< HEAD
   dps: 5435.8274612182
   tps: 4184.970015314
+||||||| f07e2434
+  dps: 5457.7744632375
+  tps: 4206.6368346979
+=======
+  dps: 5408.8402962662
+  tps: 4194.8383516295
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Braxley'sBackyardMoonshine-35937"
  value: {
+<<<<<<< HEAD
   dps: 5443.3194806282
   tps: 4275.7104805288
+||||||| f07e2434
+  dps: 5495.4138259308
+  tps: 4318.9541156608
+=======
+  dps: 5428.7769533529
+  tps: 4296.3659734894
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-CataclysmHarness"
  value: {
+<<<<<<< HEAD
   dps: 4114.8440669053
   tps: 3197.8587872153
+||||||| f07e2434
+  dps: 4135.4876147403
+  tps: 3210.0082435264
+=======
+  dps: 4099.6850910576
+  tps: 3219.6554893197
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-CataclysmRegalia"
  value: {
+<<<<<<< HEAD
   dps: 4035.5201353879
   tps: 3146.7004218658
+||||||| f07e2434
+  dps: 4067.9762511382
+  tps: 3183.4405469296
+=======
+  dps: 4006.6723804235
+  tps: 3155.0891853335
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ChaoticSkyflareDiamond"
  value: {
+<<<<<<< HEAD
   dps: 5557.2038446001
   tps: 4363.8797957681
+||||||| f07e2434
+  dps: 5569.6631971129
+  tps: 4386.2332563787
+=======
+  dps: 5501.7262028004
+  tps: 4351.2845248274
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-CycloneHarness"
  value: {
+<<<<<<< HEAD
   dps: 3977.0781367774
   tps: 3084.2828280902
+||||||| f07e2434
+  dps: 3980.1562119968
+  tps: 3084.7221810987
+=======
+  dps: 3954.73700994
+  tps: 3098.1435010558
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-CycloneRegalia"
  value: {
+<<<<<<< HEAD
   dps: 3979.9659498435
   tps: 3091.7647964997
+||||||| f07e2434
+  dps: 3988.1115982904
+  tps: 3108.8817053336
+=======
+  dps: 3946.9563604687
+  tps: 3104.5963492602
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-DarkmoonCard:Berserker!-42989"
  value: {
+<<<<<<< HEAD
   dps: 5508.3445099957
   tps: 4322.3389458638
+||||||| f07e2434
+  dps: 5506.2136546018
+  tps: 4334.4245842159
+=======
+  dps: 5463.1574951349
+  tps: 4317.4853729247
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-DarkmoonCard:Death-42990"
  value: {
+<<<<<<< HEAD
   dps: 5533.5294413795
   tps: 4358.5269361704
+||||||| f07e2434
+  dps: 5554.3452219081
+  tps: 4369.9806982349
+=======
+  dps: 5462.0878724934
+  tps: 4323.6300004738
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-DarkmoonCard:Greatness-42987"
  value: {
+<<<<<<< HEAD
   dps: 5530.7485182927
   tps: 4338.3505777172
+||||||| f07e2434
+  dps: 5520.2390760182
+  tps: 4337.1962706321
+=======
+  dps: 5494.5560047494
+  tps: 4344.0607141602
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-DarkmoonCard:Greatness-44253"
  value: {
+<<<<<<< HEAD
   dps: 5557.9983629118
   tps: 4352.7414718708
+||||||| f07e2434
+  dps: 5567.6362655399
+  tps: 4366.8647894485
+=======
+  dps: 5564.4139072665
+  tps: 4404.7609162521
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-DarkmoonCard:Greatness-44254"
  value: {
+<<<<<<< HEAD
   dps: 5455.0288223694
   tps: 4275.8170664727
+||||||| f07e2434
+  dps: 5487.0795606787
+  tps: 4300.8411312137
+=======
+  dps: 5442.7253511691
+  tps: 4304.8410525883
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-DeathKnight'sAnguish-38212"
  value: {
+<<<<<<< HEAD
   dps: 5482.4994790964
   tps: 4302.2970563624
+||||||| f07e2434
+  dps: 5497.0908100732
+  tps: 4323.4849038483
+=======
+  dps: 5449.5477155404
+  tps: 4309.2490691893
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Defender'sCode-40257"
  value: {
+<<<<<<< HEAD
   dps: 5387.1323005016
   tps: 4231.7832983195
+||||||| f07e2434
+  dps: 5413.1855733287
+  tps: 4249.6542968544
+=======
+  dps: 5372.1433238453
+  tps: 4252.5114591262
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-DesolationBattlegear"
  value: {
+<<<<<<< HEAD
   dps: 3956.2758601145
   tps: 3071.6551593814
+||||||| f07e2434
+  dps: 3955.3622785379
+  tps: 3070.1595813433
+=======
+  dps: 3884.6070006817
+  tps: 3037.2943245251
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-DestructiveSkyflareDiamond"
  value: {
+<<<<<<< HEAD
   dps: 5456.8522361082
   tps: 4284.0332219713
+||||||| f07e2434
+  dps: 5481.6951396697
+  tps: 4317.3219181852
+=======
+  dps: 5407.5072168539
+  tps: 4275.2650706129
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-EarthshatterBattlegear"
  value: {
+<<<<<<< HEAD
   dps: 4872.5791097658
   tps: 3807.6390286905
+||||||| f07e2434
+  dps: 4869.7203333059
+  tps: 3807.9475877832
+=======
+  dps: 4830.213022734
+  tps: 3804.3460397077
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-EarthshatterGarb"
  value: {
+<<<<<<< HEAD
   dps: 4505.14137015
   tps: 3547.7594359013
+||||||| f07e2434
+  dps: 4489.7584547234
+  tps: 3523.5800792352
+=======
+  dps: 4479.3337118481
+  tps: 3550.8042706524
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-EffulgentSkyflareDiamond"
  value: {
+<<<<<<< HEAD
   dps: 5419.3922762714
   tps: 4253.0064632547
+||||||| f07e2434
+  dps: 5441.2504939119
+  tps: 4274.9701037854
+=======
+  dps: 5392.3095060296
+  tps: 4263.0212780626
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-EmberSkyflareDiamond"
  value: {
+<<<<<<< HEAD
   dps: 5491.7573836715
   tps: 4326.5200944674
+||||||| f07e2434
+  dps: 5473.978637695
+  tps: 4307.7133171017
+=======
+  dps: 5420.5634496744
+  tps: 4289.7772884235
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-EnigmaticSkyflareDiamond"
  value: {
+<<<<<<< HEAD
   dps: 5458.3271231069
   tps: 4284.979279541
+||||||| f07e2434
+  dps: 5470.1837642284
+  tps: 4305.975374891
+=======
+  dps: 5403.5401873294
+  tps: 4272.8581849045
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-EnigmaticStarflareDiamond"
  value: {
+<<<<<<< HEAD
   dps: 5454.0399856951
   tps: 4282.082347945
+||||||| f07e2434
+  dps: 5474.2599930877
+  tps: 4302.0338699794
+=======
+  dps: 5429.3440707544
+  tps: 4292.3121744093
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-EternalEarthsiegeDiamond"
  value: {
+<<<<<<< HEAD
   dps: 5419.3922762714
   tps: 4253.0064632547
+||||||| f07e2434
+  dps: 5441.2504939119
+  tps: 4274.9701037854
+=======
+  dps: 5392.3095060296
+  tps: 4263.0212780626
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ExtractofNecromanticPower-40373"
  value: {
+<<<<<<< HEAD
   dps: 5495.9090754634
   tps: 4313.1790959726
+||||||| f07e2434
+  dps: 5525.6115422358
+  tps: 4347.875451309
+=======
+  dps: 5493.8578855097
+  tps: 4349.3711735814
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-EyeoftheBroodmother-45308"
  value: {
+<<<<<<< HEAD
   dps: 5604.7086896644
   tps: 4408.7639379337
+||||||| f07e2434
+  dps: 5568.0456967544
+  tps: 4381.2159597313
+=======
+  dps: 5549.1020724816
+  tps: 4392.2846276122
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Fathom-BroochoftheTidewalker-30663"
  value: {
+<<<<<<< HEAD
   dps: 5346.1241029247
   tps: 4187.5310980021
+||||||| f07e2434
+  dps: 5399.0780457204
+  tps: 4236.5586406888
+=======
+  dps: 5355.7669618102
+  tps: 4235.3647027584
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-FelstalkerArmor"
  value: {
+<<<<<<< HEAD
   dps: 4701.0384589526
   tps: 3667.7001226787
+||||||| f07e2434
+  dps: 4751.6056714545
+  tps: 3705.621563828
+=======
+  dps: 4696.6916521515
+  tps: 3691.4544506414
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ForgeEmber-37660"
  value: {
+<<<<<<< HEAD
   dps: 5510.0732154762
   tps: 4332.2608117348
+||||||| f07e2434
+  dps: 5537.3165071979
+  tps: 4348.9909474559
+=======
+  dps: 5455.8156180784
+  tps: 4315.0695072641
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ForlornSkyflareDiamond"
  value: {
+<<<<<<< HEAD
   dps: 5435.8274612182
   tps: 4267.7275779931
+||||||| f07e2434
+  dps: 5457.7744632375
+  tps: 4289.7772884235
+=======
+  dps: 5408.8402962662
+  tps: 4277.8428101222
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ForlornStarflareDiamond"
  value: {
+<<<<<<< HEAD
   dps: 5432.5404242288
   tps: 4264.7833550455
+||||||| f07e2434
+  dps: 5454.4696693723
+  tps: 4286.8158514958
+=======
+  dps: 5405.5341382189
+  tps: 4274.8785037102
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-FrostWitch'sBattlegear"
  value: {
+<<<<<<< HEAD
   dps: 5270.2242332328
   tps: 4132.5264008039
+||||||| f07e2434
+  dps: 5266.9317102699
+  tps: 4127.1776082753
+=======
+  dps: 5222.8511402849
+  tps: 4121.2118747083
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-FrostWitch'sRegalia"
  value: {
+<<<<<<< HEAD
   dps: 4878.5299180154
   tps: 3819.8247080175
+||||||| f07e2434
+  dps: 4911.9260000737
+  tps: 3853.836890701
+=======
+  dps: 4875.9038077376
+  tps: 3854.2356784753
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-FuryoftheFiveFlights-40431"
  value: {
+<<<<<<< HEAD
   dps: 5523.6415432791
   tps: 4334.0444396028
+||||||| f07e2434
+  dps: 5590.4752574776
+  tps: 4395.8827059136
+=======
+  dps: 5532.3924464593
+  tps: 4371.9798398671
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-FuturesightRune-38763"
  value: {
+<<<<<<< HEAD
   dps: 5427.9006114402
   tps: 4268.3452589548
+||||||| f07e2434
+  dps: 5454.0146998174
+  tps: 4286.2263389308
+=======
+  dps: 5413.1735409575
+  tps: 4289.3080188671
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Gladiator'sEarthshaker"
  value: {
+<<<<<<< HEAD
   dps: 5431.0443142815
   tps: 4221.0048559755
+||||||| f07e2434
+  dps: 5436.7287753905
+  tps: 4230.6526128384
+=======
+  dps: 5413.2256227105
+  tps: 4244.7641559839
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
+<<<<<<< HEAD
   dps: 5518.5182001565
   tps: 4349.6007208618
+||||||| f07e2434
+  dps: 5544.7705202134
+  tps: 4367.5075030433
+=======
+  dps: 5504.3783509943
+  tps: 4371.0902179711
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ImpassiveSkyflareDiamond"
  value: {
+<<<<<<< HEAD
   dps: 5458.3271231069
   tps: 4284.979279541
+||||||| f07e2434
+  dps: 5470.1837642284
+  tps: 4305.975374891
+=======
+  dps: 5403.5401873294
+  tps: 4272.8581849045
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ImpassiveStarflareDiamond"
  value: {
+<<<<<<< HEAD
   dps: 5454.0399856951
   tps: 4282.082347945
+||||||| f07e2434
+  dps: 5474.2599930877
+  tps: 4302.0338699794
+=======
+  dps: 5429.3440707544
+  tps: 4292.3121744093
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-IncisorFragment-37723"
  value: {
+<<<<<<< HEAD
   dps: 5459.7170828505
   tps: 4277.9784737341
+||||||| f07e2434
+  dps: 5494.1621502872
+  tps: 4311.1228737981
+=======
+  dps: 5428.3285690092
+  tps: 4288.8102167558
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-InfusedColdstoneRune-35935"
  value: {
+<<<<<<< HEAD
   dps: 5409.9073246621
   tps: 4245.6828575873
+||||||| f07e2434
+  dps: 5433.0541834923
+  tps: 4263.4450457068
+=======
+  dps: 5396.1488418559
+  tps: 4265.854418829
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-InsightfulEarthsiegeDiamond"
  value: {
+<<<<<<< HEAD
   dps: 5435.4343530824
   tps: 4263.0202619297
+||||||| f07e2434
+  dps: 5478.6561969141
+  tps: 4303.8540506419
+=======
+  dps: 5419.2749049912
+  tps: 4281.1558134325
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-InvigoratingEarthsiegeDiamond"
  value: {
+<<<<<<< HEAD
   dps: 5451.5171687403
   tps: 4277.7800453934
+||||||| f07e2434
+  dps: 5503.2671409876
+  tps: 4328.3667959554
+=======
+  dps: 5415.708981981
+  tps: 4283.2356101405
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Lavanthor'sTalisman-37872"
  value: {
+<<<<<<< HEAD
   dps: 5387.1323005016
   tps: 4231.7832983195
+||||||| f07e2434
+  dps: 5413.1855733287
+  tps: 4249.6542968544
+=======
+  dps: 5372.1433238453
+  tps: 4252.5114591262
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-MajesticDragonFigurine-40430"
  value: {
+<<<<<<< HEAD
   dps: 5387.1323005016
   tps: 4231.7832983195
+||||||| f07e2434
+  dps: 5413.1855733287
+  tps: 4249.6542968544
+=======
+  dps: 5372.1433238453
+  tps: 4252.5114591262
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Mana-EtchedRegalia"
  value: {
+<<<<<<< HEAD
   dps: 3899.0268002414
   tps: 3026.0232273817
+||||||| f07e2434
+  dps: 3876.1159961788
+  tps: 3008.8070828229
+=======
+  dps: 3826.7622335739
+  tps: 3006.0683179392
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-NaturalAlignmentCrystal-19344"
  value: {
+<<<<<<< HEAD
   dps: 5369.3270265722
   tps: 4214.3585457874
+||||||| f07e2434
+  dps: 5436.9252154533
+  tps: 4284.6468684228
+=======
+  dps: 5351.672602026
+  tps: 4232.1629129846
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-NetherscaleArmor"
  value: {
+<<<<<<< HEAD
   dps: 4759.4064860149
   tps: 3717.1758222227
+||||||| f07e2434
+  dps: 4760.6183667741
+  tps: 3716.9812874842
+=======
+  dps: 4739.3555725024
+  tps: 3736.9445541439
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-NetherstrikeArmor"
  value: {
+<<<<<<< HEAD
   dps: 4761.1096829117
   tps: 3728.5560987945
+||||||| f07e2434
+  dps: 4737.3621003724
+  tps: 3708.8298505536
+=======
+  dps: 4702.9673913658
+  tps: 3720.3962431002
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Nobundo'sBattlegear"
  value: {
+<<<<<<< HEAD
   dps: 4819.6611949675
   tps: 3809.6253364293
+||||||| f07e2434
+  dps: 4843.2545823609
+  tps: 3830.3870575719
+=======
+  dps: 4778.7305559183
+  tps: 3806.3002459713
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Nobundo'sRegalia"
  value: {
+<<<<<<< HEAD
   dps: 4675.5574035081
   tps: 3667.2332270749
+||||||| f07e2434
+  dps: 4712.5537211312
+  tps: 3701.921809778
+=======
+  dps: 4655.2539995475
+  tps: 3686.0094820662
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-OfferingofSacrifice-37638"
  value: {
+<<<<<<< HEAD
   dps: 5387.1323005016
   tps: 4231.7832983195
+||||||| f07e2434
+  dps: 5413.1855733287
+  tps: 4249.6542968544
+=======
+  dps: 5372.1433238453
+  tps: 4252.5114591262
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-PersistentEarthshatterDiamond"
  value: {
+<<<<<<< HEAD
   dps: 5455.4774376145
   tps: 4281.54864795
+||||||| f07e2434
+  dps: 5474.7988834034
+  tps: 4309.052717149
+=======
+  dps: 5386.0950889183
+  tps: 4262.1129395193
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-PersistentEarthsiegeDiamond"
  value: {
+<<<<<<< HEAD
   dps: 5451.5171687403
   tps: 4277.7800453934
+||||||| f07e2434
+  dps: 5503.2671409876
+  tps: 4328.3667959554
+=======
+  dps: 5415.708981981
+  tps: 4283.2356101405
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-PowerfulEarthshatterDiamond"
  value: {
+<<<<<<< HEAD
   dps: 5419.3922762714
   tps: 4253.0064632547
+||||||| f07e2434
+  dps: 5441.2504939119
+  tps: 4274.9701037854
+=======
+  dps: 5392.3095060296
+  tps: 4263.0212780626
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-PowerfulEarthsiegeDiamond"
  value: {
+<<<<<<< HEAD
   dps: 5419.3922762714
   tps: 4253.0064632547
+||||||| f07e2434
+  dps: 5441.2504939119
+  tps: 4274.9701037854
+=======
+  dps: 5392.3095060296
+  tps: 4263.0212780626
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-PrimalIntent"
  value: {
+<<<<<<< HEAD
   dps: 4781.4918103853
   tps: 3739.7447290034
+||||||| f07e2434
+  dps: 4815.6018221654
+  tps: 3778.2433727638
+=======
+  dps: 4743.9778881946
+  tps: 3740.4291261129
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-PurifiedShardoftheGods"
  value: {
+<<<<<<< HEAD
   dps: 5387.1323005016
   tps: 4231.7832983195
+||||||| f07e2434
+  dps: 5413.1855733287
+  tps: 4249.6542968544
+=======
+  dps: 5372.1433238453
+  tps: 4252.5114591262
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ReignoftheDead-47316"
  value: {
+<<<<<<< HEAD
   dps: 5713.8853230545
   tps: 4541.7300353846
+||||||| f07e2434
+  dps: 5747.8106931246
+  tps: 4586.9207475149
+=======
+  dps: 5707.9950067121
+  tps: 4572.9268300881
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ReignoftheDead-47477"
  value: {
+<<<<<<< HEAD
   dps: 5753.312203868
   tps: 4579.9261348218
+||||||| f07e2434
+  dps: 5787.9883648567
+  tps: 4625.8890254988
+=======
+  dps: 5748.5097475112
+  tps: 4612.2107006734
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-RelentlessEarthsiegeDiamond"
  value: {
+<<<<<<< HEAD
   dps: 5552.6683568812
   tps: 4366.5744981678
+||||||| f07e2434
+  dps: 5554.2712721527
+  tps: 4366.374726829
+=======
+  dps: 5563.9516337827
+  tps: 4411.3131304918
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-RevitalizingSkyflareDiamond"
  value: {
+<<<<<<< HEAD
   dps: 5419.5007752762
   tps: 4255.7946304132
+||||||| f07e2434
+  dps: 5456.4239812311
+  tps: 4292.284945156
+=======
+  dps: 5399.7960150291
+  tps: 4274.0591151282
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-RuneofRepulsion-40372"
  value: {
+<<<<<<< HEAD
   dps: 5387.1323005016
   tps: 4231.7832983195
+||||||| f07e2434
+  dps: 5413.1855733287
+  tps: 4249.6542968544
+=======
+  dps: 5372.1433238453
+  tps: 4252.5114591262
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-SealofthePantheon-36993"
  value: {
+<<<<<<< HEAD
   dps: 5387.1323005016
   tps: 4231.7832983195
+||||||| f07e2434
+  dps: 5413.1855733287
+  tps: 4249.6542968544
+=======
+  dps: 5372.1433238453
+  tps: 4252.5114591262
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Serrah'sStar-37559"
  value: {
+<<<<<<< HEAD
   dps: 5423.5214684673
   tps: 4255.5089349561
+||||||| f07e2434
+  dps: 5496.2176596271
+  tps: 4314.2548790332
+=======
+  dps: 5432.5698568523
+  tps: 4293.521172417
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ShinyShardoftheGods"
  value: {
+<<<<<<< HEAD
   dps: 5387.1323005016
   tps: 4231.7832983195
+||||||| f07e2434
+  dps: 5413.1855733287
+  tps: 4249.6542968544
+=======
+  dps: 5372.1433238453
+  tps: 4252.5114591262
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Sindragosa'sFlawlessFang-50361"
  value: {
+<<<<<<< HEAD
   dps: 5387.1323005016
   tps: 4231.7832983195
+||||||| f07e2434
+  dps: 5413.1855733287
+  tps: 4249.6542968544
+=======
+  dps: 5372.1433238453
+  tps: 4252.5114591262
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-SkycallTotem-33506"
  value: {
+<<<<<<< HEAD
   dps: 5479.8953299463
   tps: 4302.4342003328
+||||||| f07e2434
+  dps: 5549.3807222682
+  tps: 4363.0956497284
+=======
+  dps: 5468.1825054478
+  tps: 4326.2219832511
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-SkyshatterHarness"
  value: {
+<<<<<<< HEAD
   dps: 3874.4481187246
   tps: 3002.300950331
+||||||| f07e2434
+  dps: 3877.9343197839
+  tps: 3008.5808984979
+=======
+  dps: 3825.9228970792
+  tps: 2993.3417939789
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-SkyshatterRegalia"
  value: {
+<<<<<<< HEAD
   dps: 3768.7210113865
   tps: 2934.1811016287
+||||||| f07e2434
+  dps: 3791.9955738797
+  tps: 2958.5289184636
+=======
+  dps: 3787.4516615545
+  tps: 2999.8059714873
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-SparkofLife-37657"
  value: {
+<<<<<<< HEAD
   dps: 5452.9432383781
   tps: 4285.7477111884
+||||||| f07e2434
+  dps: 5532.9412788046
+  tps: 4344.1610885402
+=======
+  dps: 5498.9413328047
+  tps: 4351.8146970813
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-SpellstrikeInfusion"
  value: {
+<<<<<<< HEAD
   dps: 4768.0850582615
   tps: 3746.3642192838
+||||||| f07e2434
+  dps: 4775.6034128495
+  tps: 3748.7733672515
+=======
+  dps: 4750.807488943
+  tps: 3775.1312733882
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Stonebreaker'sTotem-33507"
  value: {
+<<<<<<< HEAD
   dps: 5525.4098631387
   tps: 4340.12916404
+||||||| f07e2434
+  dps: 5581.0106019142
+  tps: 4386.5170470378
+=======
+  dps: 5481.8611337048
+  tps: 4331.1766202409
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-StrengthoftheClefthoof"
  value: {
+<<<<<<< HEAD
   dps: 4380.8060397683
   tps: 3425.8691297291
+||||||| f07e2434
+  dps: 4388.9663590016
+  tps: 3430.8809068298
+=======
+  dps: 4343.9992299347
+  tps: 3429.0038914006
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-SwiftSkyflareDiamond"
  value: {
+<<<<<<< HEAD
   dps: 5451.5171687403
   tps: 4277.7800453934
+||||||| f07e2434
+  dps: 5503.2671409876
+  tps: 4328.3667959554
+=======
+  dps: 5415.708981981
+  tps: 4283.2356101405
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-SwiftStarflareDiamond"
  value: {
+<<<<<<< HEAD
   dps: 5455.4774376145
   tps: 4281.54864795
+||||||| f07e2434
+  dps: 5474.7988834034
+  tps: 4309.052717149
+=======
+  dps: 5386.0950889183
+  tps: 4262.1129395193
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-SwiftWindfireDiamond"
  value: {
+<<<<<<< HEAD
   dps: 5436.9041141291
   tps: 4266.7671591273
+||||||| f07e2434
+  dps: 5461.5822421794
+  tps: 4297.6103455426
+=======
+  dps: 5405.3390661376
+  tps: 4278.974022675
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TheFistsofFury"
  value: {
+<<<<<<< HEAD
   dps: 4162.3393321666
   tps: 3134.5175310675
+||||||| f07e2434
+  dps: 4175.9615757173
+  tps: 3156.3613783606
+=======
+  dps: 4113.1371256483
+  tps: 3131.9105437975
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TheTwinStars"
  value: {
+<<<<<<< HEAD
   dps: 5202.4414668371
   tps: 4068.8247893088
+||||||| f07e2434
+  dps: 5218.0998346707
+  tps: 4085.6266161314
+=======
+  dps: 5145.3673232596
+  tps: 4052.649402414
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Thrall'sBattlegear"
  value: {
+<<<<<<< HEAD
   dps: 4749.9689391013
   tps: 3746.8622984302
+||||||| f07e2434
+  dps: 4782.1017392789
+  tps: 3779.4364460653
+=======
+  dps: 4743.8508952657
+  tps: 3778.3020395503
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Thrall'sRegalia"
  value: {
+<<<<<<< HEAD
   dps: 4675.5574035081
   tps: 3667.2332270749
+||||||| f07e2434
+  dps: 4712.5537211312
+  tps: 3701.921809778
+=======
+  dps: 4655.2539995475
+  tps: 3686.0094820662
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ThunderingSkyflareDiamond"
  value: {
+<<<<<<< HEAD
   dps: 5475.3921002712
   tps: 4303.520538317
+||||||| f07e2434
+  dps: 5502.6674049757
+  tps: 4326.3392010217
+=======
+  dps: 5427.2957697604
+  tps: 4293.5936470972
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TidefuryRaiment"
  value: {
+<<<<<<< HEAD
   dps: 3783.6145704171
   tps: 2927.3506268372
+||||||| f07e2434
+  dps: 3819.720040148
+  tps: 2963.8089548336
+=======
+  dps: 3765.7137369559
+  tps: 2954.9272990588
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TinyAbominationinaJar-50351"
  value: {
+<<<<<<< HEAD
   dps: 5583.0014132826
   tps: 4393.6543253905
+||||||| f07e2434
+  dps: 5574.5190874182
+  tps: 4386.2957095199
+=======
+  dps: 5516.0857282899
+  tps: 4370.5197476936
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TinyAbominationinaJar-50706"
  value: {
+<<<<<<< HEAD
   dps: 5588.2319859629
   tps: 4398.4492131121
+||||||| f07e2434
+  dps: 5588.5178069518
+  tps: 4402.6451274392
+=======
+  dps: 5561.2367686576
+  tps: 4413.5262994116
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TirelessSkyflareDiamond"
  value: {
+<<<<<<< HEAD
   dps: 5435.8274612182
   tps: 4267.7275779931
+||||||| f07e2434
+  dps: 5457.7744632375
+  tps: 4289.7772884235
+=======
+  dps: 5408.8402962662
+  tps: 4277.8428101222
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TirelessStarflareDiamond"
  value: {
+<<<<<<< HEAD
   dps: 5432.5404242288
   tps: 4264.7833550455
+||||||| f07e2434
+  dps: 5454.4696693723
+  tps: 4286.8158514958
+=======
+  dps: 5405.5341382189
+  tps: 4274.8785037102
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TotemofElectrifyingWind-47666"
  value: {
+<<<<<<< HEAD
   dps: 5708.4872256694
   tps: 4496.1375926976
+||||||| f07e2434
+  dps: 5745.7371650346
+  tps: 4533.1508551444
+=======
+  dps: 5707.079051013
+  tps: 4536.5529072025
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TotemoftheAvalanche-50463"
  value: {
+<<<<<<< HEAD
   dps: 5737.2126643712
   tps: 4506.7137573022
+||||||| f07e2434
+  dps: 5756.3558621359
+  tps: 4523.6337961038
+=======
+  dps: 5710.2825169055
+  tps: 4513.9333507399
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TotemoftheElementalPlane-40708"
  value: {
+<<<<<<< HEAD
   dps: 5513.5584484961
   tps: 4324.324171541
+||||||| f07e2434
+  dps: 5535.7856069352
+  tps: 4350.0097962529
+=======
+  dps: 5514.5905119036
+  tps: 4372.0421369208
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TotemofthePulsingEarth-29389"
  value: {
+<<<<<<< HEAD
   dps: 5514.1609563603
   tps: 4331.4233482151
+||||||| f07e2434
+  dps: 5551.0557143396
+  tps: 4366.1649781191
+=======
+  dps: 5487.6980676274
+  tps: 4338.3623391717
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TrenchantEarthshatterDiamond"
  value: {
+<<<<<<< HEAD
   dps: 5432.5404242288
   tps: 4264.7833550455
+||||||| f07e2434
+  dps: 5454.4696693723
+  tps: 4286.8158514958
+=======
+  dps: 5405.5341382189
+  tps: 4274.8785037102
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TrenchantEarthsiegeDiamond"
  value: {
+<<<<<<< HEAD
   dps: 5435.8274612182
   tps: 4267.7275779931
+||||||| f07e2434
+  dps: 5457.7744632375
+  tps: 4289.7772884235
+=======
+  dps: 5408.8402962662
+  tps: 4277.8428101222
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-WastewalkerArmor"
  value: {
+<<<<<<< HEAD
   dps: 3925.0579274124
   tps: 3049.3470313329
+||||||| f07e2434
+  dps: 3950.828390095
+  tps: 3081.0150436388
+=======
+  dps: 3885.5786486032
+  tps: 3051.5327514841
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-WindhawkArmor"
  value: {
+<<<<<<< HEAD
   dps: 4725.4587092853
   tps: 3688.797031013
+||||||| f07e2434
+  dps: 4716.0708299612
+  tps: 3684.595443622
+=======
+  dps: 4682.3062448595
+  tps: 3689.1978189702
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-WorldbreakerBattlegear"
  value: {
+<<<<<<< HEAD
   dps: 5269.1535675982
   tps: 4135.9184766962
+||||||| f07e2434
+  dps: 5260.100693119
+  tps: 4139.40794033
+=======
+  dps: 5205.7248096508
+  tps: 4123.9467160581
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-WorldbreakerGarb"
  value: {
+<<<<<<< HEAD
   dps: 4951.2690344149
   tps: 3918.4993510723
+||||||| f07e2434
+  dps: 4935.2293035449
+  tps: 3914.6130981999
+=======
+  dps: 4886.1636131134
+  tps: 3903.6295215377
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-WrathofSpellfire"
  value: {
+<<<<<<< HEAD
   dps: 4677.522503391
   tps: 3654.8976392575
+||||||| f07e2434
+  dps: 4690.5647839516
+  tps: 3676.1010980648
+=======
+  dps: 4627.0980564428
+  tps: 3648.3536308757
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-Average-Default"
  value: {
+<<<<<<< HEAD
   dps: 5573.5427825977
   tps: 4380.8783029078
+||||||| f07e2434
+  dps: 5594.890274838
+  tps: 4403.5635236922
+=======
+  dps: 5542.178806471
+  tps: 4390.3255911307
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Orc-P1-Basic-FullBuffs-LongMultiTarget"
  value: {
+<<<<<<< HEAD
   dps: 14527.6343798227
   tps: 11828.612405811
+||||||| f07e2434
+  dps: 14610.5541533683
+  tps: 11858.896503307
+=======
+  dps: 14602.2174917964
+  tps: 11898.8558158577
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Orc-P1-Basic-FullBuffs-LongSingleTarget"
  value: {
+<<<<<<< HEAD
   dps: 5517.7739453673
   tps: 4320.8370821149
+||||||| f07e2434
+  dps: 5530.4640184293
+  tps: 4332.4616272652
+=======
+  dps: 5542.1912596711
+  tps: 4383.6144093156
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Orc-P1-Basic-FullBuffs-ShortSingleTarget"
  value: {
+<<<<<<< HEAD
   dps: 6554.5899806903
   tps: 4697.6155755234
+||||||| f07e2434
+  dps: 6535.4365485653
+  tps: 4657.4130105822
+=======
+  dps: 6459.1026440767
+  tps: 4691.8484704803
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Orc-P1-Basic-NoBuffs-LongMultiTarget"
  value: {
+<<<<<<< HEAD
   dps: 8831.7915803288
   tps: 6643.1522391507
+||||||| f07e2434
+  dps: 8988.353955031
+  tps: 6899.2958552414
+=======
+  dps: 8962.5381807765
+  tps: 6877.7023802351
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Orc-P1-Basic-NoBuffs-LongSingleTarget"
  value: {
+<<<<<<< HEAD
   dps: 3524.1121430244
   tps: 2765.0089607075
+||||||| f07e2434
+  dps: 3614.1851223261
+  tps: 2834.4875423113
+=======
+  dps: 3750.919331425
+  tps: 2944.5229525149
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Orc-P1-Basic-NoBuffs-ShortSingleTarget"
  value: {
+<<<<<<< HEAD
   dps: 5006.7763351527
   tps: 3774.8460742534
+||||||| f07e2434
+  dps: 4993.7284815316
+  tps: 3749.6829996216
+=======
+  dps: 4951.8408282326
+  tps: 3691.8199843729
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Troll-P1-Basic-FullBuffs-LongMultiTarget"
  value: {
+<<<<<<< HEAD
   dps: 14379.0489422351
   tps: 11613.2735724216
+||||||| f07e2434
+  dps: 14534.1401629734
+  tps: 11834.9927537573
+=======
+  dps: 14510.918713843
+  tps: 11844.7469129201
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Troll-P1-Basic-FullBuffs-LongSingleTarget"
  value: {
+<<<<<<< HEAD
   dps: 5552.6683568812
   tps: 4366.5744981678
+||||||| f07e2434
+  dps: 5554.2712721527
+  tps: 4366.374726829
+=======
+  dps: 5563.9516337827
+  tps: 4411.3131304918
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Troll-P1-Basic-FullBuffs-ShortSingleTarget"
  value: {
+<<<<<<< HEAD
   dps: 6679.6850405557
   tps: 4810.5141697694
+||||||| f07e2434
+  dps: 6652.8702309135
+  tps: 4813.2870653549
+=======
+  dps: 6512.1519347726
+  tps: 4775.7784143317
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Troll-P1-Basic-NoBuffs-LongMultiTarget"
  value: {
+<<<<<<< HEAD
   dps: 9386.0431214965
   tps: 7171.2921439074
+||||||| f07e2434
+  dps: 9413.4568970717
+  tps: 7258.9774939088
+=======
+  dps: 9111.5420292636
+  tps: 6911.478375128
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Troll-P1-Basic-NoBuffs-LongSingleTarget"
  value: {
+<<<<<<< HEAD
   dps: 3701.2250047356
   tps: 2913.8848021973
+||||||| f07e2434
+  dps: 3633.5798365394
+  tps: 2859.3869059859
+=======
+  dps: 3689.8143776652
+  tps: 2904.1646927298
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Troll-P1-Basic-NoBuffs-ShortSingleTarget"
  value: {
+<<<<<<< HEAD
   dps: 5022.6707459988
   tps: 3781.1750753473
+||||||| f07e2434
+  dps: 5020.2934119767
+  tps: 3797.6138741147
+=======
+  dps: 5105.2847823259
+  tps: 3868.931062988
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }
 dps_results: {
  key: "TestEnhancement-SwitchInFrontOfTarget-Default"
  value: {
+<<<<<<< HEAD
   dps: 5284.8228546324
   tps: 4131.3807777834
+||||||| f07e2434
+  dps: 5278.2958960074
+  tps: 4129.9145398123
+=======
+  dps: 5245.2247717466
+  tps: 4131.4816625865
+>>>>>>> 200d4ed287107db0ddd86635f92ef9cbcc2a8e38
  }
 }

@@ -40,17 +40,17 @@ func (mage *Mage) tryUseGCD(sim *core.Simulation) {
 func (mage *Mage) doArcaneRotation(sim *core.Simulation) *core.Spell {
 	numStacks := mage.ArcaneBlastAura.GetStacks()
 
-	mage.manaTracker.Update(sim, &mage.Character)
+	if sim.GetRemainingDuration() < 12*time.Second {
+		mage.DisableMajorCooldown(core.ActionID{SpellID: EvocationId})
+	}
 
-	if sim.GetRemainingDuration() < 10*time.Second {
-		if mage.manaTracker.ProjectedRemainingMana(sim, &mage.Character) > mage.manaTracker.ProjectedManaCost(sim, &mage.Character) {
-			if mage.Character.CurrentMana() < mage.ArcaneBlast.CurCast.Cost {
-				return mage.ArcaneMissiles
-			} else {
-				return mage.ArcaneBlast
-			}
-		} else {
+	burstDuration := time.Duration(mage.Character.CurrentManaPercent()*40) * time.Second
+	if sim.GetRemainingDuration() < burstDuration {
+		mage.DisableMajorCooldown(core.ActionID{SpellID: EvocationId})
+		if mage.Character.CurrentMana() < mage.ArcaneBlast.CurCast.Cost {
 			return mage.ArcaneMissiles
+		} else {
+			return mage.ArcaneBlast
 		}
 	}
 

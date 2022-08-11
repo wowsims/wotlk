@@ -19,3 +19,6 @@ sim/web/__debug_bin
 wotlk/
 *.code-workspace
 wowsimwotlk
+
+# old result file
+TestDestruction.results

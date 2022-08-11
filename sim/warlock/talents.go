@@ -21,12 +21,17 @@ func (warlock *Warlock) ApplyTalents() {
 	warlock.PseudoStats.DamageTakenMultiplier *= 1. - 0.02*float64(warlock.Talents.MoltenSkin)
 
 	// Malediction
-	warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1. + 0.01*float64(warlock.Talents.Malediction)
-	warlock.PseudoStats.FireDamageDealtMultiplier *= 1. + 0.01*float64(warlock.Talents.Malediction)
+	maledictionMultiplier := 1. + 0.01*float64(warlock.Talents.Malediction)
+	warlock.PseudoStats.ShadowDamageDealtMultiplier *= maledictionMultiplier
+	warlock.PseudoStats.FireDamageDealtMultiplier *= maledictionMultiplier
+	warlock.PseudoStats.ArcaneDamageDealtMultiplier *= maledictionMultiplier
+	warlock.PseudoStats.NatureDamageDealtMultiplier *= maledictionMultiplier
+	warlock.PseudoStats.HolyDamageDealtMultiplier *= maledictionMultiplier
 
 	// Demonic Pact
-	warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1. + 0.02*float64(warlock.Talents.DemonicPact)
-	warlock.PseudoStats.FireDamageDealtMultiplier *= 1. + 0.02*float64(warlock.Talents.DemonicPact)
+	if warlock.Talents.DemonicPact > 0 {
+		warlock.setupDemonicPact()
+	}
 
 	// Suppression (Add 1% hit per point)
 	warlock.AddStat(stats.SpellHit, float64(warlock.Talents.Suppression)*core.SpellHitRatingPerHitChance)
@@ -494,6 +499,52 @@ func (warlock *Warlock) setupImprovedSoulLeech() {
 					if sim.RandomFloat("ImprovedSoulLeech") < improvedSoulLeechProcChance {
 						core.ReplenishmentAura(warlock.GetCharacter(), actionID).Activate(sim)
 					}
+				}
+			}
+		},
+	})
+}
+
+func (warlock *Warlock) setupDemonicPact() {
+	demonicPactMultiplier := 0.02 * float64(warlock.Talents.DemonicPact)
+	warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1. + demonicPactMultiplier
+	warlock.PseudoStats.FireDamageDealtMultiplier *= 1. + demonicPactMultiplier
+	warlock.PseudoStats.ArcaneDamageDealtMultiplier *= 1. + demonicPactMultiplier
+	warlock.PseudoStats.NatureDamageDealtMultiplier *= 1. + demonicPactMultiplier
+	warlock.PseudoStats.HolyDamageDealtMultiplier *= 1. + demonicPactMultiplier
+
+	if warlock.Options.Summon == proto.Warlock_Options_NoSummon {
+		return
+	}
+
+	var demonicPactAura *core.Aura
+	icd := core.Cooldown{
+		Timer:    warlock.NewTimer(),
+		Duration: time.Second * 5,
+	}
+
+	warlock.Pets[0].GetCharacter().RegisterAura(core.Aura{
+		Label:    "Demonic Pact Hidden Aura",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnInit: func(aura *core.Aura, sim *core.Simulation) {
+			demonicPactAura = core.DemonicPactAura(warlock.GetCharacter(), 0)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spellEffect.Outcome.Matches(core.OutcomeCrit) && icd.IsReady(sim) {
+				icd.Use(sim)
+				newSPBonus := warlock.GetStat(stats.SpellPower) * demonicPactMultiplier
+				if demonicPactAura.IsActive() {
+					if demonicPactAura.Priority < newSPBonus || demonicPactAura.RemainingDuration(sim) < time.Second*10 {
+						demonicPactAura.Deactivate(sim)
+						demonicPactAura.Priority = newSPBonus
+						demonicPactAura.Activate(sim)
+					}
+				} else {
+					demonicPactAura.Activate(sim)
+					demonicPactAura.Priority = newSPBonus
 				}
 			}
 		},

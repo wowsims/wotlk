@@ -88,34 +88,11 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		}
 		nextBigCD = nextCD
 	}
-	// ------------------------------------------
-	// Regen check
-	// ------------------------------------------
-	// If big CD coming up and we don't have enough mana for it, lifetap
-	// Also, never do a big regen in the last few seconds of the fight.
-	if !warlock.DoingRegen && nextBigCD > time.Second*6 && sim.GetRemainingDuration() > time.Second*30 {
-		if warlock.CurrentManaPercent() < 0.1 && !sim.IsExecutePhase25() {
-			warlock.DoingRegen = true
-		}
-	}
-
-	if warlock.DoingRegen {
-		if nextBigCD-sim.CurrentTime < time.Second*2 {
-			// stop regen, start blasting
-			warlock.DoingRegen = false
-		} else {
-			warlock.LifeTapOrDarkPact(sim)
-			if warlock.CurrentManaPercent() > 0.6 {
-				warlock.DoingRegen = false
-			}
-			return
-		}
-	}
 
 	// ------------------------------------------
 	// Small CDs
 	// ------------------------------------------
-	if warlock.Talents.DemonicEmpowerment && warlock.DemonicEmpowerment.CD.IsReady(sim) {
+	if warlock.Talents.DemonicEmpowerment && warlock.DemonicEmpowerment.CD.IsReady(sim) && warlock.Options.Summon != proto.Warlock_Options_NoSummon {
 		warlock.DemonicEmpowerment.Cast(sim, target)
 	}
 	if warlock.Talents.Metamorphosis && warlock.MetamorphosisAura.IsActive() &&
@@ -139,46 +116,6 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		}
 	}
 
-	// ------------------------------------------
-	// Curses (priority)
-	// ------------------------------------------
-
-	castCurse := func(spellToCast *core.Spell, aura *core.Aura) bool {
-		if !aura.IsActive() {
-			spell = spellToCast
-			return true
-		}
-		return false
-	}
-
-	switch curse {
-	case proto.Warlock_Rotation_Elements:
-		castCurse(warlock.CurseOfElements, warlock.CurseOfElementsAura)
-	case proto.Warlock_Rotation_Weakness:
-		castCurse(warlock.CurseOfWeakness, warlock.CurseOfWeaknessAura)
-	case proto.Warlock_Rotation_Tongues:
-		castCurse(warlock.CurseOfTongues, warlock.CurseOfTonguesAura)
-	case proto.Warlock_Rotation_Doom:
-		if warlock.CurseOfDoom.CD.IsReady(sim) && sim.GetRemainingDuration() > time.Minute {
-			spell = warlock.CurseOfDoom
-		} else if sim.GetRemainingDuration() > time.Second*24 && !warlock.CurseOfAgonyDot.IsActive() && !warlock.CurseOfDoomDot.IsActive() {
-			spell = warlock.CurseOfAgony
-		}
-	case proto.Warlock_Rotation_Agony:
-		if sim.GetRemainingDuration() > time.Second*24 && !warlock.CurseOfAgonyDot.IsActive() {
-			spell = warlock.CurseOfAgony
-		}
-	}
-	if spell != nil {
-		if !spell.Cast(sim, target) {
-			warlock.LifeTapOrDarkPact(sim)
-		}
-		return
-	}
-
-	// ------------------------------------------
-	// Preset Rotations
-	// ------------------------------------------
 	// ------------------------------------------
 	// Preset Rotations
 	// ------------------------------------------
@@ -233,7 +170,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			// ------------------------------------------
 			// Demonology Rotation
 			// ------------------------------------------
-			if (!warlock.CorruptionDot.IsActive() || warlock.CorruptionDot.RemainingDuration(sim) < warlock.Corruption.CurCast.CastTime) &&
+			if !warlock.CorruptionDot.IsActive() && core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() &&
 				sim.GetRemainingDuration() > warlock.CorruptionDot.Duration {
 				spell = warlock.Corruption
 			} else if (!warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime) &&
@@ -243,15 +180,11 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 				// Shadow Mastery refresh
 				spell = warlock.ShadowBolt
 			} else if warlock.DecimationAura.IsActive() {
+				// Demonology execute phase
 				spell = warlock.SoulFire
 			} else if warlock.MoltenCoreAura.IsActive() {
+				// Corruption proc
 				spell = warlock.Incinerate
-			} else if warlock.CurrentManaPercent() < 0.25 {
-				// If you were gonna cast a filler but are low mana, get mana instead in order not to be OOM when an important spell is coming up
-				warlock.LifeTapOrDarkPact(sim)
-				return
-			} else {
-				spell = warlock.ShadowBolt
 			}
 		} else if rotationType == proto.Warlock_Rotation_Destruction {
 
@@ -268,13 +201,8 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 				spell = warlock.Immolate
 			} else if warlock.Talents.ChaosBolt && warlock.ChaosBolt.CD.IsReady(sim) {
 				spell = warlock.ChaosBolt
-			} else {
-				spell = warlock.Incinerate
 			}
 		}
-	} else {
-		preset = proto.Warlock_Rotation_Manual
-		warlock.Rotation.Preset = proto.Warlock_Rotation_Manual
 	}
 
 	// ------------------------------------------
@@ -284,6 +212,9 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// ------------------------------------------
 	// Main spells
 	// ------------------------------------------
+
+	// We're kind of trying to fit all different spec rotations in one big priority based rotation in order to let people experiment
+
 	if preset == proto.Warlock_Rotation_Manual {
 		if warlock.Rotation.Corruption &&
 			(!warlock.CorruptionDot.IsActive() && (core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() || warlock.Talents.ImprovedShadowBolt == 0) ||
@@ -321,6 +252,78 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		} else if sim.IsExecutePhase25() && warlock.Talents.SoulSiphon > 0 {
 			// Drain Soul execute phase for Affliction
 			spell = warlock.channelCheck(sim, warlock.DrainSoulDot, 5)
+		}
+	}
+
+	// ------------------------------------------
+	// Curses
+	// ------------------------------------------
+
+	castCurse := func(spellToCast *core.Spell, aura *core.Aura) bool {
+		if !aura.IsActive() {
+			spell = spellToCast
+			return true
+		}
+		return false
+	}
+
+	switch curse {
+	case proto.Warlock_Rotation_Elements:
+		castCurse(warlock.CurseOfElements, warlock.CurseOfElementsAura)
+	case proto.Warlock_Rotation_Weakness:
+		castCurse(warlock.CurseOfWeakness, warlock.CurseOfWeaknessAura)
+	case proto.Warlock_Rotation_Tongues:
+		castCurse(warlock.CurseOfTongues, warlock.CurseOfTonguesAura)
+	case proto.Warlock_Rotation_Doom:
+		if warlock.CurseOfDoom.CD.IsReady(sim) && sim.GetRemainingDuration() > time.Minute {
+			spell = warlock.CurseOfDoom
+		} else if sim.GetRemainingDuration() > time.Second*24 && !warlock.CurseOfAgonyDot.IsActive() && !warlock.CurseOfDoomDot.IsActive() {
+			spell = warlock.CurseOfAgony
+		}
+	case proto.Warlock_Rotation_Agony:
+		if sim.GetRemainingDuration() > time.Second*24 && !warlock.CurseOfAgonyDot.IsActive() {
+			spell = warlock.CurseOfAgony
+		}
+	}
+	if spell != nil {
+		if !spell.Cast(sim, target) {
+			warlock.LifeTapOrDarkPact(sim)
+		}
+		return
+	}
+
+	// ------------------------------------------
+	// Regen check
+	// ------------------------------------------
+	// If big CD coming up and we don't have enough mana for it, lifetap
+	// Also, never do a big regen in the last few seconds of the fight.
+	if !warlock.DoingRegen && nextBigCD-sim.CurrentTime < time.Second*6 && sim.GetRemainingDuration() > time.Second*30 {
+		if warlock.CurrentManaPercent() < 0.6 {
+			warlock.DoingRegen = true
+		}
+	}
+
+	if warlock.DoingRegen {
+		if nextBigCD-sim.CurrentTime < time.Second*2 {
+			// stop regen, start blasting
+			warlock.DoingRegen = false
+		} else {
+			warlock.LifeTapOrDarkPact(sim)
+			if warlock.CurrentManaPercent() > 0.6 {
+				warlock.DoingRegen = false
+			}
+			return
+		}
+	}
+
+	// ------------------------------------------
+	// Filler spell
+	// ------------------------------------------
+	if spell == nil {
+		if warlock.CurrentManaPercent() < 0.25 && sim.GetRemainingDuration() > time.Second*30 {
+			// If you were gonna cast a filler but are low mana, get mana instead in order not to be OOM when an important spell is coming up
+			warlock.LifeTapOrDarkPact(sim)
+			return
 		} else {
 			// Filler
 			switch mainSpell {

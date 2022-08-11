@@ -21,7 +21,7 @@ var ItemSetSkyshatterRegalia = core.NewItemSet(core.ItemSet{
 				return
 			}
 
-			shaman.AddStat(stats.MP5, 15)
+			shaman.AddStat(stats.MP5, 19)
 			shaman.AddStat(stats.SpellCrit, 35)
 			shaman.AddStat(stats.SpellPower, 45)
 		},
