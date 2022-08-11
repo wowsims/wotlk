@@ -71,15 +71,23 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			nextBigCD = cdReadyAt
 		}
 	}
-
+	allCDs := []time.Duration{
+		0,
+		0,
+		0,
+	}
 	if rotationType == proto.Warlock_Rotation_Affliction {
 		hauntcasttime := warlock.ApplyCastSpeed(time.Millisecond * 1500)
-		allCDs := []time.Duration{
-			core.MaxDuration(0, warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim)-hauntcasttime),
+		allCDs = []time.Duration{
+			core.MaxDuration(0, time.Duration(float64(warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim)-hauntcasttime)-float64(warlock.DistanceFromTarget)/20*1000)),
 			core.MaxDuration(0, warlock.UnstableAffDot.RemainingDuration(sim)-hauntcasttime),
 			core.MaxDuration(0, warlock.CurseOfAgonyDot.RemainingDuration(sim)),
 		}
-
+		if sim.Log != nil {
+			warlock.Log(sim, "Haunt[%d]", allCDs[0].Seconds())
+			warlock.Log(sim, "UA[%d]", allCDs[1].Seconds())
+			warlock.Log(sim, "Haunt[%d]", time.Duration(float64(warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim).Seconds()-hauntcasttime.Seconds())-float64(warlock.DistanceFromTarget)/20))
+		}
 		nextCD := core.NeverExpires
 		for _, v := range allCDs {
 			if v < nextCD {
@@ -92,7 +100,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// ------------------------------------------
 	// Small CDs
 	// ------------------------------------------
-	if warlock.Talents.DemonicEmpowerment && warlock.DemonicEmpowerment.CD.IsReady(sim) && warlock.Options.Summon != proto.Warlock_Options_NoSummon{
+	if warlock.Talents.DemonicEmpowerment && warlock.DemonicEmpowerment.CD.IsReady(sim) && warlock.Options.Summon != proto.Warlock_Options_NoSummon {
 		warlock.DemonicEmpowerment.Cast(sim, target)
 	}
 	if warlock.Talents.Metamorphosis && warlock.MetamorphosisAura.IsActive() &&
@@ -106,8 +114,14 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap) &&
 		(!warlock.GlyphOfLifeTapAura.IsActive() || warlock.GlyphOfLifeTapAura.RemainingDuration(sim) < time.Second*1) {
 		if sim.CurrentTime < time.Second {
+
+			// Pre-Pull Cast Shadow Bolt
+			warlock.SpendMana(sim, warlock.ShadowBolt.DefaultCast.Cost, warlock.ShadowBolt.ResourceMetrics)
+			warlock.ShadowBolt.SkipCastAndApplyEffects(sim, warlock.CurrentTarget)
+
 			// Pre-pull Life Tap
 			warlock.GlyphOfLifeTapAura.Activate(sim)
+
 		} else {
 			if !sim.IsExecutePhase25() && rotationType == proto.Warlock_Rotation_Affliction { // more dps to not waste gcd on life tap for buff during execute
 				warlock.LifeTapOrDarkPact(sim)
@@ -116,6 +130,50 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		}
 	}
 
+	// ------------------------------------------
+	// Curses
+	// ------------------------------------------
+
+	castCurse := func(spellToCast *core.Spell, aura *core.Aura) bool {
+		if !aura.IsActive() {
+			spell = spellToCast
+			return true
+		}
+		return false
+	}
+
+	switch curse {
+	case proto.Warlock_Rotation_Elements:
+		castCurse(warlock.CurseOfElements, warlock.CurseOfElementsAura)
+	case proto.Warlock_Rotation_Weakness:
+		castCurse(warlock.CurseOfWeakness, warlock.CurseOfWeaknessAura)
+	case proto.Warlock_Rotation_Tongues:
+		castCurse(warlock.CurseOfTongues, warlock.CurseOfTonguesAura)
+	case proto.Warlock_Rotation_Doom:
+		if warlock.CurseOfDoom.CD.IsReady(sim) && sim.GetRemainingDuration() > time.Minute {
+			spell = warlock.CurseOfDoom
+		} else if sim.GetRemainingDuration() > time.Second*24 && !warlock.CurseOfAgonyDot.IsActive() && !warlock.CurseOfDoomDot.IsActive() {
+			spell = warlock.CurseOfAgony
+		}
+	case proto.Warlock_Rotation_Agony:
+		if rotationType == proto.Warlock_Rotation_Affliction {
+			if sim.GetRemainingDuration() > time.Second*24 && allCDs[2] == 0 && allCDs[0] > 0 && allCDs[1] > 0 && warlock.CorruptionDot.IsActive() {
+				spell = warlock.CurseOfAgony
+			}
+		} else {
+			if sim.GetRemainingDuration() > time.Second*24 && !warlock.CurseOfAgonyDot.IsActive() {
+				spell = warlock.CurseOfAgony
+			}
+		}
+
+	}
+
+	if spell != nil {
+		if !spell.Cast(sim, target) {
+			warlock.LifeTapOrDarkPact(sim)
+		}
+		return
+	}
 
 	// ------------------------------------------
 	// Preset Rotations
@@ -135,22 +193,24 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			DesiredManaAtExecute := float64(0.01)                                                                         //estimate for desired mana needed to do affliction execute
 			TotalManaAtExecute := warlock.MaxMana() * DesiredManaAtExecute
 			timeUntilOom := float64(warlock.CurrentMana()-TotalManaAtExecute) / float64(ManaSpendRate)
-			timeUntilExecute := (sim.GetRemainingDurationPercent()*float64(sim.GetRemainingDuration().Seconds()) - 0.25/sim.GetRemainingDurationPercent()*(sim.GetRemainingDurationPercent()*float64(sim.GetRemainingDuration().Seconds()))) * ManaSpendRate
+			timeUntilExecute := (sim.GetRemainingDurationPercent()*float64(sim.GetRemainingDuration().Seconds()) - 0.25/sim.GetRemainingDurationPercent()*(sim.GetRemainingDurationPercent()*float64(sim.GetRemainingDuration().Seconds())))
 
-			if !warlock.CorruptionDot.IsActive() && (core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() || warlock.Talents.ImprovedShadowBolt == 0) {
+			if !warlock.CorruptionDot.IsActive() && (core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() || warlock.Talents.ImprovedShadowBolt == 0) && (!warlock.Haunt.CD.IsReady(sim) || allCDs[0] > 0) && allCDs[1] > 0 {
 				// Cast Corruption as soon as the 5% crit debuff is up
 				// Cast Corruption again when you get the execute buff (Death's Embrace)
 				spell = warlock.Corruption
 			} else if warlock.CorruptionDot.IsActive() && warlock.CorruptionDot.RemainingDuration(sim) < core.GCDDefault {
 				// Emergency Corruption refresh just in case
 				spell = warlock.DrainSoul
-			} else if warlock.Talents.UnstableAffliction && (!warlock.UnstableAffDot.IsActive() || warlock.UnstableAffDot.RemainingDuration(sim) < warlock.UnstableAff.CurCast.CastTime) &&
-				sim.GetRemainingDuration() > warlock.UnstableAffDot.Duration {
-				// Keep UA up
-				spell = warlock.UnstableAff
-			} else if warlock.Talents.Haunt && warlock.Haunt.CD.IsReady(sim) && sim.GetRemainingDuration() > warlock.HauntDebuffAura(warlock.CurrentTarget).Duration/2. && warlock.CorruptionDot.IsActive() {
+			} else if warlock.Talents.Haunt && warlock.Haunt.CD.IsReady(sim) && allCDs[0] == 0 && sim.GetRemainingDuration() > warlock.HauntDebuffAura(warlock.CurrentTarget).Duration/2. {
 				// Keep Haunt up
 				spell = warlock.Haunt
+			} else if warlock.Talents.UnstableAffliction && (!warlock.Haunt.CD.IsReady(sim) || allCDs[0] > 0) && allCDs[1] == 0 && sim.GetRemainingDuration() > warlock.UnstableAffDot.Duration {
+				// Keep UA up
+				spell = warlock.UnstableAff
+			} else if sim.GetRemainingDuration() > time.Second*24 && allCDs[2] == 0 && (!warlock.Haunt.CD.IsReady(sim) || allCDs[0] > 0) && allCDs[1] > 0 && warlock.CorruptionDot.IsActive() {
+				// Keep UA up
+				spell = warlock.CurseOfAgony
 			} else if warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ShadowBolt.CurCast.CastTime+core.GCDDefault ||
 				core.ShadowMasteryAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ShadowBolt.CurCast.CastTime && sim.GetRemainingDuration() > core.ShadowMasteryAura(warlock.CurrentTarget).Duration/2. {
 				// Shadow Embrace & Shadow Mastery refresh
@@ -175,7 +235,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 				sim.GetRemainingDuration() > warlock.CorruptionDot.Duration {
 				spell = warlock.Corruption
 			} else if (!warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime) &&
-				sim.GetRemainingDuration() > warlock.ImmolateDot.Duration / 2. {
+				sim.GetRemainingDuration() > warlock.ImmolateDot.Duration/2. {
 				spell = warlock.Immolate
 			} else if core.ShadowMasteryAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ShadowBolt.CurCast.CastTime && sim.GetRemainingDuration() > core.ShadowMasteryAura(warlock.CurrentTarget).Duration/2. {
 				// Shadow Mastery refresh
@@ -255,44 +315,6 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			spell = warlock.channelCheck(sim, warlock.DrainSoulDot, 5)
 		}
 	}
-
-	// ------------------------------------------
-	// Curses
-	// ------------------------------------------
-
-	castCurse := func(spellToCast *core.Spell, aura *core.Aura) bool {
-		if !aura.IsActive() {
-			spell = spellToCast
-			return true
-		}
-		return false
-	}
-
-	switch curse {
-	case proto.Warlock_Rotation_Elements:
-		castCurse(warlock.CurseOfElements, warlock.CurseOfElementsAura)
-	case proto.Warlock_Rotation_Weakness:
-		castCurse(warlock.CurseOfWeakness, warlock.CurseOfWeaknessAura)
-	case proto.Warlock_Rotation_Tongues:
-		castCurse(warlock.CurseOfTongues, warlock.CurseOfTonguesAura)
-	case proto.Warlock_Rotation_Doom:
-		if warlock.CurseOfDoom.CD.IsReady(sim) && sim.GetRemainingDuration() > time.Minute {
-			spell = warlock.CurseOfDoom
-		} else if sim.GetRemainingDuration() > time.Second*24 && !warlock.CurseOfAgonyDot.IsActive() && !warlock.CurseOfDoomDot.IsActive() {
-			spell = warlock.CurseOfAgony
-		}
-	case proto.Warlock_Rotation_Agony:
-		if sim.GetRemainingDuration() > time.Second*24 && !warlock.CurseOfAgonyDot.IsActive() {
-			spell = warlock.CurseOfAgony
-		}
-	}
-	if spell != nil {
-		if !spell.Cast(sim, target) {
-			warlock.LifeTapOrDarkPact(sim)
-		}
-		return
-	}
-
 	// ------------------------------------------
 	// Regen check
 	// ------------------------------------------
@@ -321,7 +343,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// Filler spell
 	// ------------------------------------------
 	if spell == nil {
-		if warlock.CurrentManaPercent() < 0.25 && sim.GetRemainingDuration() > time.Second * 30 {
+		if warlock.CurrentManaPercent() < 0.25 && sim.GetRemainingDuration() > time.Second*30 {
 			// If you were gonna cast a filler but are low mana, get mana instead in order not to be OOM when an important spell is coming up
 			warlock.LifeTapOrDarkPact(sim)
 			return
