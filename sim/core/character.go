@@ -69,6 +69,8 @@ func NewCharacter(party *Party, partyIndex int, player proto.Player) Character {
 			auraTracker: newAuraTracker(),
 			PseudoStats: stats.NewPseudoStats(),
 			Metrics:     NewUnitMetrics(),
+
+			DistanceFromTarget: player.DistanceFromTarget,
 		},
 
 		Name:         player.Name,

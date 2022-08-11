@@ -5,12 +5,12 @@ import (
 )
 
 func (dk *Deathknight) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
-	//if !dk.Opener.IsOngoing() {
-	//	if dk.GCD.IsReady(sim) {
-	//		dk.tryUseGCD(sim)
-	//	}
-	//}
-} //
+	if !dk.Opener.IsOngoing() && !dk.Inputs.IsDps {
+		if dk.GCD.IsReady(sim) {
+			dk.tryUseGCD(sim)
+		}
+	}
+}
 
 func (dk *Deathknight) OnGCDReady(sim *core.Simulation) {
 	dk.tryUseGCD(sim)
@@ -68,8 +68,9 @@ func (dk *Deathknight) RotationActionCallback_ERW(sim *core.Simulation, target *
 
 func (dk *Deathknight) RotationActionCallback_Obli(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
 	casted := dk.CastObliterate(sim, target)
+	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
 
-	s.ConditionalAdvance(casted)
+	s.ConditionalAdvance(casted && advance)
 	return casted
 }
 
@@ -202,10 +203,11 @@ func (dk *Deathknight) Wait(sim *core.Simulation) {
 	if dk.AutoAttacks.OffhandSwingAt > sim.CurrentTime {
 		waitUntil = core.MinDuration(waitUntil, dk.AutoAttacks.OffhandSwingAt)
 	}
-	waitUntil = core.MinDuration(waitUntil, dk.AnySpentRuneReadyAt(sim))
+	waitUntil = core.MinDuration(waitUntil, dk.AnySpentRuneReadyAt())
 	if dk.ButcheryPA != nil {
 		waitUntil = core.MinDuration(dk.ButcheryPA.NextActionAt, waitUntil)
 	}
+	waitUntil = core.MaxDuration(sim.CurrentTime, waitUntil)
 	dk.WaitUntil(sim, waitUntil)
 }
 

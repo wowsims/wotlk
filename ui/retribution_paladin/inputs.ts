@@ -25,7 +25,7 @@ export const RetributionPaladinRotationExoSlackConfig = InputHelpers.makeRotatio
 	label: "Exo Slack (MS)",
 	labelTooltip: "Amount of extra time in MS to give main abilities to come off cooldown before using Exorcism on single target",
 	positive: true,
-	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.Standard || player.getRotation().type == RotationType.Custom,
+	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.Standard,
 })
 
 export const RetributionPaladinRotationConsSlackConfig = InputHelpers.makeRotationNumberInput<Spec.SpecRetributionPaladin>({
@@ -33,7 +33,7 @@ export const RetributionPaladinRotationConsSlackConfig = InputHelpers.makeRotati
 	label: "Cons Slack (MS)",
 	labelTooltip: "Amount of extra time in MS to give main abilities to come off cooldown before using Consecration on single target",
 	positive: true,
-	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.Standard || player.getRotation().type == RotationType.Custom,
+	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.Standard,
 })
 
 export const RetributionPaladinRotationDivinePleaPercentageConfig = InputHelpers.makeRotationNumberInput<Spec.SpecRetributionPaladin>({

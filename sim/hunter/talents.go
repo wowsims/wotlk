@@ -517,7 +517,7 @@ func (hunter *Hunter) applyLockAndLoad() {
 	}
 
 	actionID := core.ActionID{SpellID: 56344}
-	procChance := 0.02 * float64(hunter.Talents.LockAndLoad)
+	procChance := []float64{0, 0.02, 0.04, 0.20}[hunter.Talents.LockAndLoad]
 
 	icd := core.Cooldown{
 		Timer:    hunter.NewTimer(),
@@ -632,7 +632,7 @@ func (hunter *Hunter) applyExposeWeakness() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.ProcMask.Matches(core.ProcMaskRanged) {
+			if !spellEffect.ProcMask.Matches(core.ProcMaskRanged) && spell != hunter.ExplosiveTrap {
 				return
 			}
 
@@ -742,8 +742,10 @@ func (hunter *Hunter) registerReadinessCD() {
 		ActionID: actionID,
 
 		Cast: core.CastConfig{
-			//GCD:         time.Second * 1, TODO: GCD causes panic
-			//IgnoreHaste: true, // Hunter GCD is locked
+			DefaultCast: core.Cast{
+				GCD: time.Second * 1,
+			},
+			IgnoreHaste: true, // Hunter GCD is locked
 			CD: core.Cooldown{
 				Timer:    hunter.NewTimer(),
 				Duration: time.Minute * 3,

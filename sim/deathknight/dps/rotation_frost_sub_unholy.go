@@ -8,12 +8,14 @@ import (
 )
 
 func (dk *DpsDeathknight) setupFrostSubUnholyERWOpener() {
+	dk.setupUnbreakableArmorCooldowns()
+
 	dk.Opener.
 		NewAction(dk.RotationActionCallback_IT).
 		NewAction(dk.RotationActionCallback_PS).
 		NewAction(dk.RotationActionCallback_BT).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Pesti).
-		NewAction(dk.RotationActionCallback_UA).
+		NewAction(dk.RotationActionCallback_UA_Frost).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_Star).
 		NewAction(dk.RotationActionCallback_ERW).
@@ -23,6 +25,7 @@ func (dk *DpsDeathknight) setupFrostSubUnholyERWOpener() {
 		NewAction(dk.RotationActionCallback_FS).
 		NewAction(dk.RotationActionCallback_FS).
 		NewAction(dk.RotationActionCallback_FS).
+		NewAction(dk.RotationActionCallback_RD).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
 		NewAction(dk.RotationActionCallback_BS).
@@ -34,13 +37,15 @@ func (dk *DpsDeathknight) setupFrostSubUnholyERWOpener() {
 }
 
 func (dk *DpsDeathknight) setupFrostSubUnholyNoERWOpener() {
+	dk.setupUnbreakableArmorCooldowns()
+
 	dk.Opener.
 		NewAction(dk.RotationActionCallback_IT).
 		NewAction(dk.RotationActionCallback_PS).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
 		NewAction(dk.RotationActionCallback_BS).
 		NewAction(dk.RotationActionCallback_BT).
-		NewAction(dk.RotationActionCallback_UA).
+		NewAction(dk.RotationActionCallback_UA_Frost).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Pesti).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_Star).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
@@ -245,6 +250,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Step2(sim *core.
 		casted = dk.CastBloodTap(sim, target)
 		if casted {
 			casted = dk.CastUnbreakableArmor(sim, target)
+			dk.castAllMajorCooldowns(sim)
 			dk.WaitUntil(sim, sim.CurrentTime)
 		}
 

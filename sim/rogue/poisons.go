@@ -105,14 +105,21 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 			NumberOfTicks: 4,
 			TickLength:    time.Second * 3,
 			TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskPeriodicDamage,
-				DamageMultiplier: 1 + []float64{0.0, 0.07, 0.14, 0.20}[rogue.Talents.VilePoisons],
+				ProcMask: core.ProcMaskPeriodicDamage,
+				DamageMultiplier: 1 +
+					[]float64{0.0, 0.07, 0.14, 0.20}[rogue.Talents.VilePoisons],
 				ThreatMultiplier: 1,
 				IsPeriodic:       false, // hack to get attacker modifiers applied
 				BaseDamage:       core.MultiplyByStacks(deadlyPoisonTickBaseDamage, dotAura),
 				OutcomeApplier:   rogue.OutcomeFuncTickMagicHitAndCrit(rogue.SpellCritMultiplier()),
 			})),
 		})
+		if rogue.HasSetBonus(ItemSetTerrorblade, 2) {
+			metrics := rogue.NewEnergyMetrics(core.ActionID{SpellID: 64914})
+			dot.OnPeriodicDamageDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				rogue.AddEnergy(sim, 1, metrics)
+			}
+		}
 		// Would like to do this for the snapshotting but it also shots the aura
 		//dot.TickEffects = core.TickFuncSnapshot(target, deadlyPoisonTickEffect)
 		rogue.DeadlyPoisonDots = append(rogue.DeadlyPoisonDots, dot)
@@ -164,8 +171,9 @@ func (rogue *Rogue) makeInstantPoison(procSource InstantPoisonProcSource) *core.
 		SpellSchool: core.SpellSchoolNature,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskEmpty,
-			DamageMultiplier: 1 + []float64{0.0, 0.07, 0.14, 0.20}[rogue.Talents.VilePoisons],
+			ProcMask: core.ProcMaskEmpty,
+			DamageMultiplier: 1 +
+				[]float64{0.0, 0.07, 0.14, 0.20}[rogue.Talents.VilePoisons],
 			ThreatMultiplier: 1,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {

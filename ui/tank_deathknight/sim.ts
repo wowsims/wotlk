@@ -31,25 +31,27 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 			cssClass: 'tank-deathknight-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"<p>Rotation logic is just hit things on CGD. It is not good don't take it as actual data.</p>\
-				<p>Dynamic % multipliers to stat buffs snapshot at aura gain and don't dynamically update for now.</p>\
-				<p>Damage multipliers are also likely to not be properly stacking until further beta testing.</p>"
+				"<p>Completely unfinished.</p>"
 			],
 
 			// All stats for which EP should be calculated.
 			epStats: [
+				Stat.StatStamina,
 				Stat.StatStrength,
-				Stat.StatArmor,
 				Stat.StatAgility,
 				Stat.StatAttackPower,
 				Stat.StatExpertise,
 				Stat.StatMeleeHit,
 				Stat.StatMeleeCrit,
 				Stat.StatMeleeHaste,
+				Stat.StatArmor,
 				Stat.StatArmorPenetration,
-
-				// TODO: Remove these when debuff categories support us
-				Stat.StatSpellPower,
+				Stat.StatDefense,
+				Stat.StatBlock,
+				Stat.StatBlockValue,
+				Stat.StatDodge,
+				Stat.StatParry,
+				Stat.StatResilience,
 				Stat.StatSpellHit,
 			],
 			// Reference stat against which to calculate EP. I think all classes use either spell power or attack power.
@@ -58,29 +60,43 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 			displayStats: [
 				Stat.StatHealth,
 				Stat.StatArmor,
+				Stat.StatStamina,
 				Stat.StatStrength,
 				Stat.StatAgility,
 				Stat.StatAttackPower,
 				Stat.StatExpertise,
 				Stat.StatMeleeHit,
+				Stat.StatSpellHit,
 				Stat.StatMeleeCrit,
 				Stat.StatMeleeHaste,
 				Stat.StatArmorPenetration,
+				Stat.StatDefense,
+				Stat.StatBlock,
+				Stat.StatBlockValue,
+				Stat.StatDodge,
+				Stat.StatParry,
+				Stat.StatResilience,
 			],
 			defaults: {
 				// Default equipped gear.
 				gear: Presets.P1_BLOOD_BIS_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatStrength]: 2.61,
-					[Stat.StatAgility]: 1.14,
-					[Stat.StatArmor]: 0.027,
-					[Stat.StatAttackPower]: 1,
-					[Stat.StatExpertise]: 1.73,
-					[Stat.StatMeleeHaste]: 1.26,
-					[Stat.StatMeleeHit]: 1.71,
-					[Stat.StatMeleeCrit]: 1.83,
-					[Stat.StatArmorPenetration]: 1.425,
+					[Stat.StatArmor]: 0.05,
+					[Stat.StatStamina]: 1,
+					[Stat.StatStrength]: 0.33,
+					[Stat.StatAgility]: 0.6,
+					[Stat.StatAttackPower]: 0.06,
+					[Stat.StatExpertise]: 0.67,
+					[Stat.StatMeleeHit]: 0.67,
+					[Stat.StatMeleeCrit]: 0.28,
+					[Stat.StatMeleeHaste]: 0.21,
+					[Stat.StatArmorPenetration]: 0.19,
+					[Stat.StatBlock]: 0.35,
+					[Stat.StatBlockValue]: 0.59,
+					[Stat.StatDodge]: 0.7,
+					[Stat.StatParry]: 0.58,
+					[Stat.StatDefense]: 0.8,
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,
@@ -104,11 +120,11 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 					stoneskinTotem: TristateEffect.TristateEffectImproved,
 				}),
 				partyBuffs: PartyBuffs.create({
-					heroicPresence: true,
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
 					blessingOfMight: TristateEffect.TristateEffectImproved,
+					blessingOfSanctuary: true,
 				}),
 				debuffs: Debuffs.create({
 					bloodFrenzy: true,
@@ -134,7 +150,6 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
-					
 					OtherInputs.PrepopPotion,
 
 					OtherInputs.TankAssignment,

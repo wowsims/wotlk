@@ -30,7 +30,7 @@ func (rogue *Rogue) makeSliceAndDice(comboPoints int32) *core.Spell {
 				Cost: baseCost,
 				GCD:  time.Second,
 			},
-			ModifyCast:  rogue.applyDeathmantle,
+			ModifyCast:  rogue.CastModifier,
 			IgnoreHaste: true,
 		},
 

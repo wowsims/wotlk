@@ -11,6 +11,8 @@ import (
 
 type DeathknightInputs struct {
 	// Option Vars
+	IsDps bool
+
 	StartingRunicPower  float64
 	PrecastGhoulFrenzy  bool
 	PrecastHornOfWinter bool
@@ -37,8 +39,8 @@ type Deathknight struct {
 
 	bonusCoeffs DeathknightCoeffs
 
-	onRuneSpendT10          core.OnRuneSpend
-	onRuneSpendBladeBarrier core.OnRuneSpend
+	onRuneSpendT10          core.OnRune
+	onRuneSpendBladeBarrier core.OnRune
 
 	Inputs DeathknightInputs
 
@@ -105,6 +107,9 @@ type Deathknight struct {
 	BloodTap     *RuneSpell
 	BloodTapAura *core.Aura
 
+	AntiMagicShell     *RuneSpell
+	AntiMagicShellAura *core.Aura
+
 	EmpowerRuneWeapon *RuneSpell
 
 	UnbreakableArmor     *RuneSpell
@@ -156,7 +161,6 @@ type Deathknight struct {
 	EbonPlagueAura       []*core.Aura
 
 	RoRTSBonus func(*core.Unit) float64 // is either RoR or TS bonus function based on talents
-	curCast    *core.Cast
 }
 
 func (dk *Deathknight) ModifyAdditiveDamageModifier(sim *core.Simulation, value float64) {
@@ -221,6 +225,9 @@ func (dk *Deathknight) Initialize() {
 	dk.registerEmpowerRuneWeaponSpell()
 	dk.registerRuneTapSpell()
 	dk.registerIceboundFortitudeSpell()
+	dk.registerDeathStrikeSpell()
+
+	dk.registerAntiMagicShellSpell()
 
 	dk.registerRaiseDeadCD()
 	dk.registerSummonGargoyleCD()
@@ -239,14 +246,6 @@ func (dk *Deathknight) ResetBonusCoeffs() {
 }
 
 func (dk *Deathknight) Reset(sim *core.Simulation) {
-	dk.Presence = UnsetPresence
-
-	if dk.Inputs.StartingPresence == proto.Deathknight_Rotation_Unholy && dk.Talents.SummonGargoyle {
-		dk.ChangePresence(sim, UnholyPresence)
-	} else {
-		dk.ChangePresence(sim, BloodPresence)
-	}
-
 	dk.LastTickTime = -1
 
 	if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_PreCast {
@@ -255,10 +254,14 @@ func (dk *Deathknight) Reset(sim *core.Simulation) {
 
 	dk.LastCast = nil
 	dk.NextCast = nil
+
+	if dk.Inputs.PrecastHornOfWinter {
+		dk.HornOfWinter.CD.UsePrePull(sim, 1500*time.Millisecond)
+	}
 }
 
 func (dk *Deathknight) IsFuStrike(spell *core.Spell) bool {
-	return spell == dk.Obliterate.Spell || spell == dk.ScourgeStrike.Spell // || spell == dk.DeathStrike
+	return spell == dk.Obliterate.Spell || spell == dk.ScourgeStrike.Spell || spell == dk.DeathStrike.Spell
 }
 
 func (dk *Deathknight) HasMajorGlyph(glyph proto.DeathknightMajorGlyph) bool {
@@ -268,12 +271,10 @@ func (dk *Deathknight) HasMinorGlyph(glyph proto.DeathknightMinorGlyph) bool {
 	return dk.HasGlyph(int32(glyph))
 }
 
-func NewDeathknight(character core.Character, options proto.Player, inputs DeathknightInputs) *Deathknight {
-	deathKnightOptions := options.GetDeathknight()
-
+func NewDeathknight(character core.Character, talents proto.DeathknightTalents, inputs DeathknightInputs) *Deathknight {
 	dk := &Deathknight{
 		Character:  character,
-		Talents:    *deathKnightOptions.Talents,
+		Talents:    talents,
 		Inputs:     inputs,
 		RoRTSBonus: func(u *core.Unit) float64 { return 1.0 }, // default to no bonus for RoR/TS
 	}
@@ -299,39 +300,39 @@ func NewDeathknight(character core.Character, options proto.Player, inputs Death
 			// you do not want these to trigger a tryUseGCD, so after the opener
 			// its fine since you're running off a prio system, and rune generation
 			// can change your logic which we want.
-			//if !dk.Opener.IsOngoing() {
-			//	if dk.GCD.IsReady(sim) {
-			//		dk.tryUseGCD(sim)
-			//	}
-			//}
+			if !dk.Opener.IsOngoing() && !dk.Inputs.IsDps {
+				if dk.GCD.IsReady(sim) {
+					dk.tryUseGCD(sim)
+				}
+			}
 		},
 		func(sim *core.Simulation) {
-			//if !dk.Opener.IsOngoing() {
-			//			if dk.GCD.IsReady(sim) {
-			//				dk.tryUseGCD(sim)
-			//			}
-			//	}
+			if !dk.Opener.IsOngoing() && !dk.Inputs.IsDps {
+				if dk.GCD.IsReady(sim) {
+					dk.tryUseGCD(sim)
+				}
+			}
 		},
 		func(sim *core.Simulation) {
-			//if !dk.Opener.IsOngoing() {
-			//				if dk.GCD.IsReady(sim) {
-			//					dk.tryUseGCD(sim)
-			//				}
-			//		}
+			if !dk.Opener.IsOngoing() && !dk.Inputs.IsDps {
+				if dk.GCD.IsReady(sim) {
+					dk.tryUseGCD(sim)
+				}
+			}
 		},
 		func(sim *core.Simulation) {
-			//if !dk.Opener.IsOngoing() {
-			//	if dk.GCD.IsReady(sim) {
-			//		dk.tryUseGCD(sim)
-			//	}
-			//}
+			if !dk.Opener.IsOngoing() && !dk.Inputs.IsDps {
+				if dk.GCD.IsReady(sim) {
+					dk.tryUseGCD(sim)
+				}
+			}
 		},
 		func(sim *core.Simulation) {
-			//if !dk.Opener.IsOngoing() {
-			//	if dk.GCD.IsReady(sim) {
-			//		dk.tryUseGCD(sim)
-			//	}
-			//}
+			if !dk.Opener.IsOngoing() && !dk.Inputs.IsDps {
+				if dk.GCD.IsReady(sim) {
+					dk.tryUseGCD(sim)
+				}
+			}
 		},
 	)
 

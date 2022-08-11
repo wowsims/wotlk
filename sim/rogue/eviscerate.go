@@ -31,7 +31,7 @@ func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
 				Cost: cost,
 				GCD:  time.Second,
 			},
-			ModifyCast:  rogue.applyDeathmantle,
+			ModifyCast:  rogue.CastModifier,
 			IgnoreHaste: true,
 		},
 
@@ -39,6 +39,7 @@ func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
 			ProcMask: core.ProcMaskMeleeMHSpecial,
 			DamageMultiplier: 1 +
 				[]float64{0.0, 0.07, 0.14, 0.2}[rogue.Talents.ImprovedEviscerate] +
+				0.02*float64(rogue.Talents.FindWeakness) +
 				0.03*float64(rogue.Talents.Aggression),
 			ThreatMultiplier: 1,
 			BonusCritRating: core.TernaryFloat64(

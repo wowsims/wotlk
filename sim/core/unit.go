@@ -39,6 +39,10 @@ type Unit struct {
 
 	MobType proto.MobType
 
+	// How far this unit is from its target(s). Measured in yards, this is used
+	// for calculating spell travel time for certain spells.
+	DistanceFromTarget float64
+
 	// Environment in which this Unit exists. This will be nil until after the
 	// construction phase.
 	Env *Environment

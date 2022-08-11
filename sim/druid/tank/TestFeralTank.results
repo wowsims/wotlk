@@ -283,8 +283,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-IncisorFragment-37723"
  value: {
-  dps: 697.9856524406
-  tps: 958.0381185268
+  dps: 665.2293852717
+  tps: 915.9763494595
  }
 }
 dps_results: {

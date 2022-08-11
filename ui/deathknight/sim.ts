@@ -47,7 +47,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 				Stat.StatArmorPenetration,
 				Stat.StatSpellHit,
 				Stat.StatSpellCrit,
-			
+				Stat.StatSpellHaste,
 			],
 			// Reference stat against which to calculate EP. I think all classes use either spell power or attack power.
 			epReferenceStat: Stat.StatAttackPower,
@@ -104,6 +104,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 					devotionAura: TristateEffect.TristateEffectImproved,
 					stoneskinTotem: TristateEffect.TristateEffectImproved,
 					moonkinAura: TristateEffect.TristateEffectRegular,
+					wrathOfAirTotem: true,
 				}),
 				partyBuffs: PartyBuffs.create({
 					heroicPresence: false,

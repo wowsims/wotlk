@@ -81,14 +81,14 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 				gear: Presets.PRERAID_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatAgility]: 2.214,
-					[Stat.StatStrength]: 1.1,
+					[Stat.StatAgility]: 1.89,
+					[Stat.StatStrength]: 1.17,
 					[Stat.StatAttackPower]: 1,
-					[Stat.StatMeleeHit]: 2.852,
-					[Stat.StatMeleeCrit]: 1.763,
-					[Stat.StatMeleeHaste]: 2.311,
-					[Stat.StatArmorPenetration]: 0.44,
-					[Stat.StatExpertise]: 3.107,
+					[Stat.StatMeleeHit]: 1.65,
+					[Stat.StatMeleeCrit]: 1.11,
+					[Stat.StatMeleeHaste]: 1.27,
+					[Stat.StatArmorPenetration]: 0.3,
+					[Stat.StatExpertise]: 1.69,
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,
@@ -168,6 +168,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 				// Preset gear configurations that the user can quickly select.
 				gear: [
 					Presets.PRERAID_PRESET,
+					Presets.P1_PRESET,
 				],
 			},
 		});

@@ -26,19 +26,22 @@ func RegisterTankDeathknight() {
 type TankDeathknight struct {
 	*deathknight.Deathknight
 
+	btr BloodTankRotation
+
 	Options  proto.TankDeathknight_Options
 	Rotation proto.TankDeathknight_Rotation
 }
 
 func NewTankDeathknight(character core.Character, options proto.Player) *TankDeathknight {
-	dk := options.GetTankDeathknight()
+	dkOptions := options.GetTankDeathknight()
 
 	tankDk := &TankDeathknight{
-		Deathknight: deathknight.NewDeathknight(character, options, deathknight.DeathknightInputs{
-			StartingRunicPower: dk.Options.StartingRunicPower,
+		Deathknight: deathknight.NewDeathknight(character, *dkOptions.Talents, deathknight.DeathknightInputs{
+			IsDps:              false,
+			StartingRunicPower: dkOptions.Options.StartingRunicPower,
 		}),
-		Rotation: *dk.Rotation,
-		Options:  *dk.Options,
+		Rotation: *dkOptions.Rotation,
+		Options:  *dkOptions.Options,
 	}
 
 	return tankDk
@@ -52,6 +55,19 @@ func (dk *TankDeathknight) Initialize() {
 	dk.Deathknight.Initialize()
 }
 
+func (dk *TankDeathknight) SetupRotations() {
+	dk.Opener.Clear()
+	dk.Main.Clear()
+
+	dk.setupBloodTankERWOpener()
+}
+
 func (dk *TankDeathknight) Reset(sim *core.Simulation) {
 	dk.Deathknight.Reset(sim)
+
+	dk.Presence = deathknight.UnsetPresence
+	dk.ChangePresence(sim, deathknight.FrostPresence)
+
+	dk.btr.Reset(sim)
+	dk.SetupRotations()
 }

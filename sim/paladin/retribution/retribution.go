@@ -87,9 +87,6 @@ type RetributionPaladin struct {
 	ConsSlack            int32
 	HolyWrathThreshold   int32
 
-	SealInitComplete       bool
-	DivinePleaInitComplete bool
-
 	HasLightswornBattlegear2Pc bool
 
 	SelectedRotation  func(*core.Simulation)
@@ -112,8 +109,25 @@ func (ret *RetributionPaladin) Initialize() {
 
 func (ret *RetributionPaladin) Reset(sim *core.Simulation) {
 	ret.Paladin.Reset(sim)
-	ret.AutoAttacks.CancelAutoSwing(sim)
-	ret.SealInitComplete = false
-	ret.DivinePleaInitComplete = false
+
+	sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int) {
+		if isExecute == 20 {
+			ret.OnGCDReady(sim)
+		}
+	})
+
 	ret.CastSequenceIndex = 0
+
+	switch ret.Seal {
+	case proto.PaladinSeal_Vengeance:
+		ret.SealOfVengeanceAura.Activate(sim)
+	case proto.PaladinSeal_Command:
+		ret.SealOfCommandAura.Activate(sim)
+	case proto.PaladinSeal_Righteousness:
+		ret.SealOfRighteousnessAura.Activate(sim)
+	}
+
+	ret.DivinePleaAura.Activate(sim)
+	ret.DivinePlea.CD.Use(sim)
+
 }

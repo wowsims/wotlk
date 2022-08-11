@@ -191,7 +191,8 @@ enum ShamanImbue {
     NoImbue = 0;
     WindfuryWeapon = 1;
     FlametongueWeapon = 2;
-    FrostbrandWeapon = 3;
+    FlametongueWeaponDownrank = 3;
+    FrostbrandWeapon = 4;
 }
 
 enum ShamanSyncType {
@@ -225,6 +226,7 @@ message ElementalShaman {
 message EnhancementShaman {
 	message Rotation {
 		ShamanTotems totems = 1;
+        bool lavaburst_weave = 2;
 	    // TODO: lightning/possibly lavaburst weaving
     }
 

@@ -1,6 +1,7 @@
 package rogue
 
 import (
+	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -40,8 +41,6 @@ func (rogue *Rogue) ApplyTalents() {
 		rogue.AddStatDependency(stats.Agility, stats.Agility, 1.0+0.03*float64(rogue.Talents.SinisterCalling))
 	}
 
-	rogue.PseudoStats.AgentReserved1DamageDealtMultiplier *= (1 + float64(rogue.Talents.FindWeakness)*0.02)
-
 	rogue.registerOverkillCD()
 	rogue.registerHungerForBlood()
 	rogue.registerColdBloodCD()
@@ -50,12 +49,20 @@ func (rogue *Rogue) ApplyTalents() {
 	rogue.registerKillingSpreeCD()
 }
 
+func getRelentlessStrikesSpellID(talentPoints int32) int32 {
+	if talentPoints == 1 {
+		return 14179
+	}
+	return 58420 + talentPoints
+}
+
 func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, numPoints int32) {
 	ruthlessnessChance := 0.2 * float64(rogue.Talents.Ruthlessness)
 	ruthlessnessMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 14161})
 
 	relentlessStrikes := rogue.Talents.RelentlessStrikes
-	relentlessStrikesMetrics := rogue.NewEnergyMetrics(core.ActionID{SpellID: 14179})
+	relentlessStrikesMetrics := rogue.NewEnergyMetrics(core.ActionID{SpellID: getRelentlessStrikesSpellID(rogue.Talents.RelentlessStrikes)})
+
 	netherblade4pc := rogue.HasSetBonus(ItemSetNetherblade, 4)
 	netherblade4pcMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 37168})
 
@@ -67,9 +74,37 @@ func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, 
 			rogue.AddComboPoints(sim, 1, netherblade4pcMetrics)
 		}
 		if relentlessStrikes > 0 {
-			if sim.RandomFloat("RelentlessStrikes") < 0.04*float64(numPoints) {
+			if sim.RandomFloat("RelentlessStrikes") < 0.04*float64(relentlessStrikes)*float64(numPoints) {
 				rogue.AddEnergy(sim, 25, relentlessStrikesMetrics)
 			}
+		}
+	}
+}
+
+func (rogue *Rogue) makeCastModifier() func(*core.Simulation, *core.Spell, *core.Cast) {
+	builderCostMultiplier := 1.0
+	costReduction := 40.0
+	hasDeathmantle := rogue.HasSetBonus(ItemSetDeathmantle, 4)
+	if rogue.HasSetBonus(ItemSetBonescythe, 4) {
+		builderCostMultiplier -= 0.05
+	}
+	return func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+		costMultiplier := 1.0
+		if spell.Flags.Matches(SpellFlagBuilder) {
+			costMultiplier *= builderCostMultiplier
+		}
+		if spell.Flags.Matches(SpellFlagFinisher) {
+			if hasDeathmantle && rogue.DeathmantleProcAura.IsActive() {
+				cast.Cost = 0
+				rogue.DeathmantleProcAura.Deactivate(sim)
+				return
+			}
+		}
+		cast.Cost *= costMultiplier
+		cast.Cost = math.Ceil(cast.Cost)
+		if rogue.VanCleefsProcAura.IsActive() {
+			cast.Cost = core.MaxFloat(0, cast.Cost-costReduction)
+			rogue.VanCleefsProcAura.Deactivate(sim)
 		}
 	}
 }
@@ -115,6 +150,17 @@ func (rogue *Rogue) registerHungerForBlood() {
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
 			rogue.HungerForBloodAura.Activate(sim)
+		},
+	})
+
+	rogue.AddMajorCooldown(core.MajorCooldown{
+		Spell: rogue.HungerForBlood,
+		Type:  core.CooldownTypeDPS,
+		CanActivate: func(s *core.Simulation, c *core.Character) bool {
+			return rogue.CurrentEnergy() >= 15
+		},
+		ShouldActivate: func(s *core.Simulation, c *core.Character) bool {
+			return !rogue.HungerForBloodAura.IsActive()
 		},
 	})
 
@@ -289,16 +335,16 @@ func (rogue *Rogue) applyFocusedAttacks() {
 	})
 }
 
+var BladeFlurryActionID = core.ActionID{SpellID: 13877}
+
 func (rogue *Rogue) registerBladeFlurryCD() {
 	if !rogue.Talents.BladeFlurry {
 		return
 	}
 
-	actionID := core.ActionID{SpellID: 13877}
-
 	var curDmg float64
 	bfHit := rogue.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
+		ActionID:    BladeFlurryActionID,
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 
@@ -326,7 +372,7 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 
 	rogue.BladeFlurryAura = rogue.RegisterAura(core.Aura{
 		Label:    "Blade Flurry",
-		ActionID: actionID,
+		ActionID: BladeFlurryActionID,
 		Duration: dur,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.MultiplyMeleeSpeed(sim, hasteBonus)
@@ -352,7 +398,7 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 
 	cooldownDur := time.Minute * 2
 	bladeFlurrySpell := rogue.RegisterSpell(core.SpellConfig{
-		ActionID: actionID,
+		ActionID: BladeFlurryActionID,
 
 		ResourceType: stats.Energy,
 		BaseCost:     energyCost,
@@ -377,7 +423,7 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 	rogue.AddMajorCooldown(core.MajorCooldown{
 		Spell:    bladeFlurrySpell,
 		Type:     core.CooldownTypeDPS,
-		Priority: core.CooldownPriorityLow,
+		Priority: core.CooldownPriorityDefault,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
 			return rogue.CurrentEnergy() >= energyCost
 		},
@@ -400,29 +446,29 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 	})
 }
 
+var AdrenalineRushActionID = core.ActionID{SpellID: 13750}
+
 func (rogue *Rogue) registerAdrenalineRushCD() {
 	if !rogue.Talents.AdrenalineRush {
 		return
 	}
 
-	actionID := core.ActionID{SpellID: 13750}
-
 	rogue.AdrenalineRushAura = rogue.RegisterAura(core.Aura{
 		Label:    "Adrenaline Rush",
-		ActionID: actionID,
+		ActionID: AdrenalineRushActionID,
 		Duration: time.Second * 15,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.ResetEnergyTick(sim)
-			rogue.EnergyTickMultiplier *= 2.0
+			rogue.ApplyEnergyTickMultiplier(2.0)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.ResetEnergyTick(sim)
-			rogue.EnergyTickMultiplier *= 1 / 2.0
+			rogue.ApplyEnergyTickMultiplier(1 / 2.0)
 		},
 	})
 
 	adrenalineRushSpell := rogue.RegisterSpell(core.SpellConfig{
-		ActionID: actionID,
+		ActionID: AdrenalineRushActionID,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -445,15 +491,8 @@ func (rogue *Rogue) registerAdrenalineRushCD() {
 		Type:     core.CooldownTypeDPS,
 		Priority: core.CooldownPriorityBloodlust,
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-			// Make sure we have plenty of room so the big ticks dont get wasted.
-			thresh := 85.0
-			if rogue.NextEnergyTickAt() < sim.CurrentTime+time.Second*1 {
-				thresh = 60.0
-			}
-			if rogue.CurrentEnergy() > thresh {
-				return false
-			}
-			return true
+			thresh := 45.0
+			return rogue.CurrentEnergy() <= thresh
 		},
 	})
 }

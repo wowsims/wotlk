@@ -11,6 +11,8 @@ import (
 var MHOutcome = core.OutcomeHit
 var OHOutcome = core.OutcomeHit
 
+var MutilateSpellID int32 = 48666
+
 func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 	actionID := core.ActionID{SpellID: 48665}
 	if !isMH {
@@ -20,14 +22,16 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 	effect := core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeMHSpecial,
 
-		BonusCritRating: 5 * core.CritRatingPerCritChance * float64(rogue.Talents.PuncturingWounds),
+		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0) +
+			5*core.CritRatingPerCritChance*float64(rogue.Talents.PuncturingWounds),
 		DamageMultiplier: 1 +
 			0.1*float64(rogue.Talents.Opportunity) +
+			0.02*float64(rogue.Talents.FindWeakness) +
 			core.TernaryFloat64(rogue.HasSetBonus(ItemSetSlayers, 4), 0.06, 0),
 		ThreatMultiplier: 1,
 
 		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 181, 1, 1, false),
-		OutcomeApplier: rogue.OutcomeFuncMeleeSpecialCritOnly(rogue.MeleeCritMultiplier(isMH, true)),
+		OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(rogue.MeleeCritMultiplier(isMH, true)),
 
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if isMH {
@@ -57,7 +61,7 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 	return rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics | SpellFlagRogueAbility,
+		Flags:       core.SpellFlagMeleeMetrics,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})
@@ -74,7 +78,7 @@ func (rogue *Rogue) registerMutilateSpell() {
 	refundAmount := baseCost * 0.8
 
 	rogue.Mutilate = rogue.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48666},
+		ActionID:    core.ActionID{SpellID: MutilateSpellID},
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics | SpellFlagBuilder,
 
@@ -87,6 +91,7 @@ func (rogue *Rogue) registerMutilateSpell() {
 				GCD:  time.Second,
 			},
 			IgnoreHaste: true,
+			ModifyCast:  rogue.CastModifier,
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -100,14 +105,9 @@ func (rogue *Rogue) registerMutilateSpell() {
 				}
 
 				rogue.AddComboPoints(sim, 2, spell.ComboPointMetrics())
-
-				// TODO: while this is the most natural handling, the oh attack might have effects
-				//  from the mh attack applied
 				mhHitSpell.Cast(sim, spellEffect.Target)
 				ohHitSpell.Cast(sim, spellEffect.Target)
-
 				if MHOutcome == core.OutcomeCrit || OHOutcome == core.OutcomeCrit {
-					//rogue.Mutilate.ApplyEffects.Outcome = core.OutcomeCrit
 					spellEffect.Outcome = core.OutcomeCrit
 				}
 			},

@@ -89,6 +89,7 @@ export class Player<SpecType extends Spec> {
     private specOptions: SpecOptions<SpecType>;
     private cooldowns: Cooldowns = Cooldowns.create();
     private inFrontOfTarget: boolean = false;
+    private distanceFromTarget: number = 0;
     private healingModel: HealingModel = HealingModel.create();
 
     private itemEPCache: Map<number, number> = new Map<number, number>();
@@ -114,6 +115,7 @@ export class Player<SpecType extends Spec> {
     readonly specOptionsChangeEmitter = new TypedEvent<void>('PlayerSpecOptions');
     readonly cooldownsChangeEmitter = new TypedEvent<void>('PlayerCooldowns');
     readonly inFrontOfTargetChangeEmitter = new TypedEvent<void>('PlayerInFrontOfTarget');
+    readonly distanceFromTargetChangeEmitter = new TypedEvent<void>('PlayerDistanceFromTarget');
     readonly healingModelChangeEmitter = new TypedEvent<void>('PlayerHealingModel');
     readonly epWeightsChangeEmitter = new TypedEvent<void>('PlayerEpWeights');
 
@@ -147,6 +149,7 @@ export class Player<SpecType extends Spec> {
             this.specOptionsChangeEmitter,
             this.cooldownsChangeEmitter,
             this.inFrontOfTargetChangeEmitter,
+            this.distanceFromTargetChangeEmitter,
             this.healingModelChangeEmitter,
             this.epWeightsChangeEmitter,
         ], 'PlayerChange');
@@ -536,6 +539,18 @@ export class Player<SpecType extends Spec> {
         this.inFrontOfTargetChangeEmitter.emit(eventID);
     }
 
+    getDistanceFromTarget(): number {
+        return this.distanceFromTarget;
+    }
+
+    setDistanceFromTarget(eventID: EventID, newDistanceFromTarget: number) {
+        if (newDistanceFromTarget == this.distanceFromTarget)
+            return;
+
+        this.distanceFromTarget = newDistanceFromTarget;
+        this.distanceFromTargetChangeEmitter.emit(eventID);
+    }
+
     getHealingModel(): HealingModel {
         // Make a defensive copy
         return HealingModel.clone(this.healingModel);
@@ -683,6 +698,7 @@ export class Player<SpecType extends Spec> {
                 profession1: this.getProfession1(),
                 profession2: this.getProfession2(),
                 inFrontOfTarget: this.getInFrontOfTarget(),
+                distanceFromTarget: this.getDistanceFromTarget(),
                 healingModel: this.getHealingModel(),
             }),
             this.getRotation(),
@@ -705,6 +721,7 @@ export class Player<SpecType extends Spec> {
             this.setProfession1(eventID, proto.profession1);
             this.setProfession2(eventID, proto.profession2);
             this.setInFrontOfTarget(eventID, proto.inFrontOfTarget);
+            this.setDistanceFromTarget(eventID, proto.distanceFromTarget);
             this.setHealingModel(eventID, proto.healingModel || HealingModel.create());
             this.setRotation(eventID, this.specTypeFunctions.rotationFromPlayer(proto));
             this.setSpecOptions(eventID, this.specTypeFunctions.optionsFromPlayer(proto));
@@ -719,8 +736,6 @@ export class Player<SpecType extends Spec> {
 
     applySharedDefaults(eventID: EventID) {
         TypedEvent.freezeAllAndDo(() => {
-            this.setProfession1(eventID, Profession.Engineering);
-            this.setProfession2(eventID, Profession.Jewelcrafting);
             this.setShattFaction(eventID, ShattrathFaction.ShattrathFactionAldor);
             this.setInFrontOfTarget(eventID, isTankSpec(this.spec));
             this.setHealingModel(eventID, HealingModel.create());
@@ -733,8 +748,6 @@ export class Player<SpecType extends Spec> {
 
     static applySharedDefaultsToProto(proto: PlayerProto) {
         const spec = playerToSpec(proto);
-        proto.profession1 = Profession.Engineering;
-        proto.profession2 = Profession.Jewelcrafting;
         proto.shattFaction = ShattrathFaction.ShattrathFactionAldor;
         proto.inFrontOfTarget = isTankSpec(spec);
         proto.healingModel = HealingModel.create();

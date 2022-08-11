@@ -51,11 +51,14 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 				GCD:  time.Second,
 			},
 			IgnoreHaste: true,
+			ModifyCast:  rogue.CastModifier,
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHSpecial,
+			ProcMask:        core.ProcMaskMeleeMHSpecial,
+			BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0),
 			DamageMultiplier: 1 +
+				0.02*float64(rogue.Talents.FindWeakness) +
 				core.TernaryFloat64(rogue.HasSetBonus(ItemSetSlayers, 4), 0.06, 0),
 			ThreatMultiplier: 1,
 			BaseDamage:       core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 0, 1.0, 1.1+0.01*float64(rogue.Talents.SinisterCalling), true),

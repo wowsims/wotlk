@@ -235,6 +235,11 @@ export class ActionId {
                     name += ' (Off Hand)'
                 }
                 break;
+            case 'Tricks of the Trade':
+                if (this.tag == 1) {
+                    name += ' (Not Self)'
+                }
+                break;
             case 'Chain Lightning':
             case 'Lightning Bolt':
                 if (this.tag) name += ' (LO)';
@@ -282,6 +287,7 @@ export class ActionId {
             case 'Frost Strike':
             case 'Plague Strike':
             case 'Blood Strike':
+            case 'Death Strike':
             case 'Obliterate':
             case 'Blood-Caked Strike':
             case 'Lightning Speed':
