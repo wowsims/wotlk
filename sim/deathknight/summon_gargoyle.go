@@ -142,12 +142,12 @@ func (garg *GargoylePet) registerGargoyleStrikeSpell() {
 	attackPowerModifier := 0.3333333333333333 * (1.0 + 0.04*float64(garg.dkOwner.Talents.Impurity))
 
 	garg.GargoyleStrike = garg.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 69520},
+		ActionID:    core.ActionID{SpellID: 51963},
 		SpellSchool: core.SpellSchoolNature,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				CastTime: time.Millisecond * 1500,
+				CastTime: time.Millisecond * 2000,
 			},
 			OnCastComplete: func(sim *core.Simulation, spell *core.Spell) {
 				// Gargoyle doesnt use GCD so we recast the spell over and over
