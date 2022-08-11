@@ -80,7 +80,7 @@ func (dk *DpsDeathknight) uhDiseaseCheck(sim *core.Simulation, target *core.Unit
 
 	// If the ability we want to cast spends runes we check for possible disease drops
 	// in the time we won't have runes to recast the disease
-	if dk.CanCast(sim, spell) && costRunes {
+	if spell.CanCast(sim) && costRunes {
 		ffExpiresAt := ffRemaining + sim.CurrentTime
 		bpExpiresAt := bpRemaining + sim.CurrentTime
 
@@ -127,7 +127,7 @@ func (dk *DpsDeathknight) uhShouldSpreadDisease(sim *core.Simulation) bool {
 
 func (dk *DpsDeathknight) uhSpreadDiseases(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
 	if dk.uhDiseaseCheck(sim, target, dk.Pestilence, true, 1) {
-		casted := dk.CastPestilence(sim, target)
+		casted := dk.Pestilence.Cast(sim, target)
 		landed := dk.LastOutcome.Matches(core.OutcomeLanded)
 
 		// Reset flags on succesfull cast
@@ -148,7 +148,7 @@ func (dk *DpsDeathknight) uhShouldWaitForDnD(sim *core.Simulation, blood bool, f
 func (dk *DpsDeathknight) uhGhoulFrenzyCheck(sim *core.Simulation, target *core.Unit) bool {
 	// If no Ghoul Frenzy Aura or duration less then 10 seconds we try recasting
 	if !dk.GhoulFrenzyAura.IsActive() || dk.GhoulFrenzyAura.RemainingDuration(sim) < 10*time.Second {
-		if (dk.Rotation.BloodTap == proto.Deathknight_Rotation_GhoulFrenzy || dk.Rotation.BtGhoulFrenzy) && dk.CanBloodTap(sim) && dk.GhoulFrenzy.IsReady(sim) && dk.AllBloodRunesSpent() && dk.AllUnholySpent() && dk.SummonGargoyle.CD.TimeToReady(sim) > time.Second*55 {
+		if (dk.Rotation.BloodTap == proto.Deathknight_Rotation_GhoulFrenzy || dk.Rotation.BtGhoulFrenzy) && dk.BloodTap.CanCast(sim) && dk.GhoulFrenzy.IsReady(sim) && dk.AllBloodRunesSpent() && dk.AllUnholySpent() && dk.SummonGargoyle.CD.TimeToReady(sim) > time.Second*55 {
 			// Use Ghoul Frenzy with a Blood Tap and Blood rune if all blood runes are on CD and Garg wont come off cd in less then a minute.
 			// The gargoyle check is there because you should BT -> UP -> Garg (Not in the sim yet)
 			if dk.uhDiseaseCheck(sim, target, dk.GhoulFrenzy, true, 1) {
@@ -158,7 +158,7 @@ func (dk *DpsDeathknight) uhGhoulFrenzyCheck(sim *core.Simulation, target *core.
 				dk.recastDiseasesSequence(sim)
 				return true
 			}
-		} else if !dk.Rotation.BtGhoulFrenzy && dk.CanGhoulFrenzy(sim) && dk.CanIcyTouch(sim) {
+		} else if !dk.Rotation.BtGhoulFrenzy && dk.GhoulFrenzy.CanCast(sim) && dk.IcyTouch.CanCast(sim) {
 			if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()*2+50*time.Millisecond) {
 				dk.afterGargoyleSequence(sim)
 				return true
@@ -185,17 +185,17 @@ func (dk *DpsDeathknight) uhBloodTap(sim *core.Simulation, target *core.Unit) bo
 		switch dk.Rotation.BloodTap {
 		case proto.Deathknight_Rotation_IcyTouch:
 			if dk.CurrentFrostRunes() == 0 {
-				dk.CastBloodTap(sim, dk.CurrentTarget)
-				dk.CastIcyTouch(sim, target)
+				dk.BloodTap.Cast(sim, dk.CurrentTarget)
+				dk.IcyTouch.Cast(sim, target)
 				return true
 			}
 		case proto.Deathknight_Rotation_BloodStrikeBT:
-			dk.CastBloodTap(sim, dk.CurrentTarget)
-			dk.CastBloodStrike(sim, target)
+			dk.BloodTap.Cast(sim, dk.CurrentTarget)
+			dk.BloodStrike.Cast(sim, target)
 			return true
 		case proto.Deathknight_Rotation_BloodBoilBT:
-			dk.CastBloodTap(sim, dk.CurrentTarget)
-			dk.CastBloodBoil(sim, target)
+			dk.BloodTap.Cast(sim, dk.CurrentTarget)
+			dk.BloodBoil.Cast(sim, target)
 			return true
 		}
 	}
@@ -209,7 +209,7 @@ func (dk *DpsDeathknight) uhEmpoweredRuneWeapon(sim *core.Simulation, target *co
 	}
 
 	if dk.EmpowerRuneWeapon.IsReady(sim) && dk.CurrentBloodRunes() == 0 && dk.CurrentFrostRunes() == 0 && dk.CurrentUnholyRunes() == 0 {
-		dk.CastEmpowerRuneWeapon(sim, target)
+		dk.EmpowerRuneWeapon.Cast(sim, target)
 		dk.WaitUntil(sim, sim.CurrentTime)
 		return true
 	}
@@ -225,11 +225,11 @@ func (dk *DpsDeathknight) uhDeathCoilCheck(sim *core.Simulation) bool {
 func (dk *DpsDeathknight) uhGargoyleCheck(sim *core.Simulation, target *core.Unit, castTime time.Duration) bool {
 	if dk.uhGargoyleCanCast(sim, castTime) {
 		if !dk.PresenceMatches(deathknight.UnholyPresence) {
-			dk.CastBloodTap(sim, dk.CurrentTarget)
-			dk.CastUnholyPresence(sim, dk.CurrentTarget)
+			dk.BloodTap.Cast(sim, dk.CurrentTarget)
+			dk.UnholyPresence.Cast(sim, dk.CurrentTarget)
 		}
 
-		if dk.CastSummonGargoyle(sim, target) {
+		if dk.SummonGargoyle.Cast(sim, target) {
 			dk.ur.resetProcTrackers()
 			return true
 		}
@@ -240,7 +240,7 @@ func (dk *DpsDeathknight) uhGargoyleCheck(sim *core.Simulation, target *core.Uni
 		if dk.BloodTapAura.IsActive() {
 			dk.BloodTapAura.Deactivate(sim)
 		}
-		if dk.CastBloodPresence(sim, target) {
+		if dk.BloodPresence.Cast(sim, target) {
 			dk.WaitUntil(sim, sim.CurrentTime)
 			return true
 		}
@@ -258,7 +258,7 @@ func (dk *DpsDeathknight) uhGargoyleCanCast(sim *core.Simulation, castTime time.
 	if !dk.CastCostPossible(sim, 60.0, 0, 0, 0) {
 		return false
 	}
-	if !dk.PresenceMatches(deathknight.UnholyPresence) && !dk.CanBloodTap(sim) {
+	if !dk.PresenceMatches(deathknight.UnholyPresence) && !dk.BloodTap.CanCast(sim) {
 		return false
 	}
 	if dk.GargoyleProcCheck(sim, castTime) {

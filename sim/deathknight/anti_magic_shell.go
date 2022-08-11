@@ -32,7 +32,9 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			dk.AntiMagicShellAura.Activate(sim)
 		},
-	})
+	}, func(sim *core.Simulation) bool {
+		return dk.CastCostPossible(sim, 20.0, 0, 0, 0) && dk.AntiMagicShell.IsReady(sim)
+	}, nil)
 
 	rpMetrics := dk.AntiMagicShell.RunicPowerMetrics()
 
@@ -54,15 +56,4 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 	//	Spell: dk.AntiMagicShell.Spell,
 	//	Type:  core.CooldownTypeDPS,
 	//})
-}
-
-func (dk *Deathknight) CanAntiMagicShell(sim *core.Simulation) bool {
-	return dk.CastCostPossible(sim, 20.0, 0, 0, 0) && dk.AntiMagicShell.IsReady(sim)
-}
-
-func (dk *Deathknight) CastAntiMagicShell(sim *core.Simulation, target *core.Unit) bool {
-	if dk.CanAntiMagicShell(sim) {
-		return dk.AntiMagicShell.Cast(sim, target)
-	}
-	return false
 }

@@ -135,7 +135,7 @@ func (dk *DpsDeathknight) castAllMajorCooldowns(sim *core.Simulation) {
 }
 
 func (dk *DpsDeathknight) RotationActionCallback_UA_Frost(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
-	casted := dk.CastUnbreakableArmor(sim, target)
+	casted := dk.UnbreakableArmor.Cast(sim, target)
 
 	if casted {
 		dk.castAllMajorCooldowns(sim)

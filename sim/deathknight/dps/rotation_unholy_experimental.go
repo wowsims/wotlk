@@ -83,10 +83,10 @@ func (dk *DpsDeathknight) RotationAction_Gargoyle_Custom2(sim *core.Simulation, 
 func (dk *DpsDeathknight) RotationAction_Gargoyle_Custom(castTime time.Duration, sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
 	if dk.uhGargoyleCanCast(sim, castTime) {
 		if !dk.PresenceMatches(deathknight.UnholyPresence) {
-			dk.CastBloodTap(sim, dk.CurrentTarget)
-			dk.CastUnholyPresence(sim, dk.CurrentTarget)
+			dk.BloodTap.Cast(sim, dk.CurrentTarget)
+			dk.UnholyPresence.Cast(sim, dk.CurrentTarget)
 		}
-		if dk.CastSummonGargoyle(sim, target) {
+		if dk.SummonGargoyle.Cast(sim, target) {
 			return true
 		}
 	}
@@ -96,7 +96,7 @@ func (dk *DpsDeathknight) RotationAction_Gargoyle_Custom(castTime time.Duration,
 		if dk.BloodTapAura.IsActive() {
 			dk.BloodTapAura.Deactivate(sim)
 		}
-		if dk.CastBloodPresence(sim, target) {
+		if dk.BloodPresence.Cast(sim, target) {
 			dk.WaitUntil(sim, sim.CurrentTime)
 			return true
 		}
@@ -108,16 +108,16 @@ func (dk *DpsDeathknight) RotationAction_Gargoyle_Custom(castTime time.Duration,
 }
 
 func (dk *DpsDeathknight) RotationAction_Dnd_Custom(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
-	casted := dk.CastDeathAndDecay(sim, target)
+	casted := dk.DeathAndDecay.Cast(sim, target)
 	if !casted {
 		if !dk.DeathAndDecay.CD.IsReady(sim) {
 			if dk.SummonGargoyle.IsReady(sim) {
 				if dk.uhGargoyleCanCast(sim, dk.SpellGCD()+50*time.Millisecond) {
 					if !dk.PresenceMatches(deathknight.UnholyPresence) {
-						dk.CastBloodTap(sim, dk.CurrentTarget)
-						dk.CastUnholyPresence(sim, dk.CurrentTarget)
+						dk.BloodTap.Cast(sim, dk.CurrentTarget)
+						dk.UnholyPresence.Cast(sim, dk.CurrentTarget)
 					}
-					if dk.CastSummonGargoyle(sim, target) {
+					if dk.SummonGargoyle.Cast(sim, target) {
 						return true
 					}
 				} else {
@@ -140,7 +140,7 @@ func (dk *DpsDeathknight) RotationAction_DC_Custom(sim *core.Simulation, target 
 	if !dk.uhDeathCoilCheck(sim) {
 		dk.WaitUntil(sim, sim.CurrentTime)
 	} else {
-		casted := dk.CastDeathCoil(sim, target)
+		casted := dk.DeathCoil.Cast(sim, target)
 		if !casted {
 			dk.WaitUntil(sim, sim.CurrentTime)
 		}

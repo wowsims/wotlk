@@ -21,7 +21,7 @@ func (dk *Deathknight) tryUseGCD(sim *core.Simulation) {
 }
 
 func (dk *Deathknight) RotationActionCallback_IT(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
-	casted := dk.CastIcyTouch(sim, target)
+	casted := dk.IcyTouch.Cast(sim, target)
 	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
 
 	s.ConditionalAdvance(casted && advance)
@@ -29,7 +29,7 @@ func (dk *Deathknight) RotationActionCallback_IT(sim *core.Simulation, target *c
 }
 
 func (dk *Deathknight) RotationActionCallback_PS(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
-	casted := dk.CastPlagueStrike(sim, target)
+	casted := dk.PlagueStrike.Cast(sim, target)
 	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
 
 	s.ConditionalAdvance(casted && advance)
@@ -37,21 +37,21 @@ func (dk *Deathknight) RotationActionCallback_PS(sim *core.Simulation, target *c
 }
 
 func (dk *Deathknight) RotationActionCallback_HW(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
-	casted := dk.CastHornOfWinter(sim, target)
+	casted := dk.HornOfWinter.Cast(sim, target)
 
 	s.ConditionalAdvance(true)
 	return casted
 }
 
 func (dk *Deathknight) RotationActionCallback_UA(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
-	casted := dk.CastUnbreakableArmor(sim, target)
+	casted := dk.UnbreakableArmor.Cast(sim, target)
 	dk.WaitUntil(sim, sim.CurrentTime)
 	s.ConditionalAdvance(casted)
 	return casted
 }
 
 func (dk *Deathknight) RotationActionCallback_BT(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
-	casted := dk.CastBloodTap(sim, target)
+	casted := dk.BloodTap.Cast(sim, target)
 	dk.WaitUntil(sim, sim.CurrentTime)
 
 	s.ConditionalAdvance(casted)
@@ -59,7 +59,7 @@ func (dk *Deathknight) RotationActionCallback_BT(sim *core.Simulation, target *c
 }
 
 func (dk *Deathknight) RotationActionCallback_ERW(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
-	casted := dk.CastEmpowerRuneWeapon(sim, target)
+	casted := dk.EmpowerRuneWeapon.Cast(sim, target)
 	dk.WaitUntil(sim, sim.CurrentTime)
 
 	s.ConditionalAdvance(casted)
@@ -67,7 +67,7 @@ func (dk *Deathknight) RotationActionCallback_ERW(sim *core.Simulation, target *
 }
 
 func (dk *Deathknight) RotationActionCallback_Obli(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
-	casted := dk.CastObliterate(sim, target)
+	casted := dk.Obliterate.Cast(sim, target)
 	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
 
 	s.ConditionalAdvance(casted && advance)
@@ -75,14 +75,14 @@ func (dk *Deathknight) RotationActionCallback_Obli(sim *core.Simulation, target 
 }
 
 func (dk *Deathknight) RotationActionCallback_FS(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
-	casted := dk.CastFrostStrike(sim, target)
+	casted := dk.FrostStrike.Cast(sim, target)
 
 	s.Advance()
 	return casted
 }
 
 func (dk *Deathknight) RotationActionCallback_Pesti(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
-	casted := dk.CastPestilence(sim, target)
+	casted := dk.Pestilence.Cast(sim, target)
 	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
 
 	s.ConditionalAdvance(casted && advance)
@@ -90,7 +90,7 @@ func (dk *Deathknight) RotationActionCallback_Pesti(sim *core.Simulation, target
 }
 
 func (dk *Deathknight) RotationActionCallback_BS(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
-	casted := dk.CastBloodStrike(sim, target)
+	casted := dk.BloodStrike.Cast(sim, target)
 	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
 
 	s.ConditionalAdvance(casted && advance)
@@ -114,42 +114,42 @@ func (dk *Deathknight) RotationActionCallback_SS(sim *core.Simulation, target *c
 }
 
 func (dk *Deathknight) RotationActionCallback_DND(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
-	casted := dk.CastDeathAndDecay(sim, target)
+	casted := dk.DeathAndDecay.Cast(sim, target)
 
 	s.ConditionalAdvance(casted)
 	return casted
 }
 
 func (dk *Deathknight) RotationActionCallback_GF(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
-	casted := dk.CastGhoulFrenzy(sim, target)
+	casted := dk.GhoulFrenzy.Cast(sim, target)
 
 	s.ConditionalAdvance(casted)
 	return casted
 }
 
 func (dk *Deathknight) RotationActionCallback_DC(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
-	casted := dk.CastDeathCoil(sim, target)
+	casted := dk.DeathCoil.Cast(sim, target)
 
 	s.Advance()
 	return casted
 }
 
 func (dk *Deathknight) RotationActionCallback_AOTD(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
-	casted := dk.CastArmyOfTheDead(sim, target)
+	casted := dk.ArmyOfTheDead.Cast(sim, target)
 
 	s.ConditionalAdvance(casted)
 	return casted
 }
 
 func (dk *Deathknight) RotationActionCallback_Garg(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
-	casted := dk.CastSummonGargoyle(sim, target)
+	casted := dk.SummonGargoyle.Cast(sim, target)
 
 	s.ConditionalAdvance(casted)
 	return casted
 }
 
 func (dk *Deathknight) RotationActionCallback_BP(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
-	casted := dk.CastBloodPresence(sim, target)
+	casted := dk.BloodPresence.Cast(sim, target)
 	if !casted && !dk.BloodPresence.IsReady(sim) {
 		dk.WaitUntil(sim, dk.BloodPresence.CD.ReadyAt())
 	} else {
@@ -160,7 +160,7 @@ func (dk *Deathknight) RotationActionCallback_BP(sim *core.Simulation, target *c
 }
 
 func (dk *Deathknight) RotationActionCallback_FP(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
-	casted := dk.CastFrostPresence(sim, target)
+	casted := dk.FrostPresence.Cast(sim, target)
 	if !casted && !dk.FrostPresence.IsReady(sim) {
 		dk.WaitUntil(sim, dk.FrostPresence.CD.ReadyAt())
 	} else {
@@ -171,7 +171,7 @@ func (dk *Deathknight) RotationActionCallback_FP(sim *core.Simulation, target *c
 }
 
 func (dk *Deathknight) RotationActionCallback_UP(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
-	casted := dk.CastUnholyPresence(sim, target)
+	casted := dk.UnholyPresence.Cast(sim, target)
 	if !casted && !dk.UnholyPresence.IsReady(sim) {
 		dk.WaitUntil(sim, dk.UnholyPresence.CD.ReadyAt())
 	} else {
@@ -182,7 +182,7 @@ func (dk *Deathknight) RotationActionCallback_UP(sim *core.Simulation, target *c
 }
 
 func (dk *Deathknight) RotationActionCallback_RD(sim *core.Simulation, target *core.Unit, s *Sequence) bool {
-	casted := dk.CastRaiseDead(sim, target)
+	casted := dk.RaiseDead.Cast(sim, target)
 
 	s.ConditionalAdvance(true)
 	return casted

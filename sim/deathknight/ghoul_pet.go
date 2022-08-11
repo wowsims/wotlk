@@ -213,7 +213,7 @@ func (dk *Deathknight) ghoulStatInheritance() core.PetStatInheritance {
 			stats.MeleeHit: hitRatingFromOwner,
 			stats.SpellHit: hitRatingFromOwner,
 
-			stats.Expertise: math.Floor((math.Floor(ownerHitChance) * PetExpertiseScale)) * core.ExpertisePerQuarterPercentReduction,
+			stats.Expertise: (math.Floor(ownerHitChance) * PetExpertiseScale) * core.ExpertisePerQuarterPercentReduction,
 
 			stats.MeleeHaste: ownerStats[stats.MeleeHaste],
 			stats.SpellHaste: ownerStats[stats.MeleeHaste],

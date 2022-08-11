@@ -202,7 +202,7 @@ func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
 
 			stats.MeleeHit:  hitRatingFromOwner,
 			stats.SpellHit:  hitRatingFromOwner * 2,
-			stats.Expertise: math.Floor((math.Floor(ownerHitChance) * PetExpertiseScale)) * core.ExpertisePerQuarterPercentReduction,
+			stats.Expertise: (math.Floor(ownerHitChance) * PetExpertiseScale) * core.ExpertisePerQuarterPercentReduction,
 		}
 	}
 }

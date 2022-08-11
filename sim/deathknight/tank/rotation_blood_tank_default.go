@@ -33,17 +33,17 @@ func (dk *TankDeathknight) RotationActionCallback_TankBlood_PrioRotation(sim *co
 	fbAt := core.MinDuration(dk.FrostFeverDisease[target.Index].ExpiresAt(), dk.BloodPlagueDisease[target.Index].ExpiresAt())
 
 	if !ff {
-		return dk.CastIcyTouch(sim, target)
+		return dk.IcyTouch.Cast(sim, target)
 	} else if !bp {
-		return dk.CastPlagueStrike(sim, target)
-	} else if dk.CanDeathStrike(sim) && sim.CurrentTime+attackGcd < fbAt {
-		return dk.CastDeathStrike(sim, target)
+		return dk.PlagueStrike.Cast(sim, target)
+	} else if dk.DeathStrike.CanCast(sim) && sim.CurrentTime+attackGcd < fbAt {
+		return dk.DeathStrike.Cast(sim, target)
 	} else {
 		if sim.CurrentTime < fbAt-2*spellGcd {
 			dk.WaitUntil(sim, fbAt-2*spellGcd)
 			return false
 		} else {
-			return dk.CastPestilence(sim, target)
+			return dk.Pestilence.Cast(sim, target)
 		}
 	}
 }

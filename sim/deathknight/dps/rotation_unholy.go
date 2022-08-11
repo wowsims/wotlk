@@ -63,7 +63,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 				dk.afterGargoyleSequence(sim)
 				return true
 			}
-			casted = dk.CastDeathAndDecay(sim, target)
+			casted = dk.DeathAndDecay.Cast(sim, target)
 		} else {
 			if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()*2+250*time.Millisecond) {
 				dk.afterGargoyleSequence(sim)
@@ -81,7 +81,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 							return true
 						}
 						casted = dk.ScourgeStrike.Cast(sim, target)
-					} else if dk.CanIcyTouch(sim) && dk.CanPlagueStrike(sim) {
+					} else if dk.IcyTouch.CanCast(sim) && dk.PlagueStrike.CanCast(sim) {
 						if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()*2+50*time.Millisecond) {
 							dk.afterGargoyleSequence(sim)
 							return true
@@ -110,9 +110,9 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 							return true
 						}
 						if dk.desolationAuraCheck(sim) {
-							casted = dk.CastBloodStrike(sim, target)
+							casted = dk.BloodStrike.Cast(sim, target)
 						} else {
-							casted = dk.CastBloodBoil(sim, target)
+							casted = dk.BloodBoil.Cast(sim, target)
 						}
 					}
 				}
@@ -122,14 +122,14 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 							dk.afterGargoyleSequence(sim)
 							return true
 						}
-						casted = dk.CastDeathCoil(sim, target)
+						casted = dk.DeathCoil.Cast(sim, target)
 					}
 					if !casted {
 						if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
 							dk.afterGargoyleSequence(sim)
 							return true
 						}
-						casted = dk.CastHornOfWinter(sim, target)
+						casted = dk.HornOfWinter.Cast(sim, target)
 					}
 				}
 			}
@@ -200,9 +200,9 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 						return true
 					}
 					if dk.desolationAuraCheck(sim) {
-						casted = dk.CastBloodStrike(sim, target)
+						casted = dk.BloodStrike.Cast(sim, target)
 					} else {
-						casted = dk.CastBloodBoil(sim, target)
+						casted = dk.BloodBoil.Cast(sim, target)
 					}
 				} else {
 					if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()*2+50*time.Millisecond) {
@@ -219,14 +219,14 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 						dk.afterGargoyleSequence(sim)
 						return true
 					}
-					casted = dk.CastDeathCoil(sim, target)
+					casted = dk.DeathCoil.Cast(sim, target)
 				}
 				if !casted {
 					if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
 						dk.afterGargoyleSequence(sim)
 						return true
 					}
-					casted = dk.CastHornOfWinter(sim, target)
+					casted = dk.HornOfWinter.Cast(sim, target)
 				}
 			}
 		}
@@ -352,7 +352,7 @@ func (dk *DpsDeathknight) RotationAction_PS_Custom(sim *core.Simulation, target 
 		dk.afterGargoyleSequence(sim)
 		return true
 	}
-	casted := dk.CastPlagueStrike(sim, target)
+	casted := dk.PlagueStrike.Cast(sim, target)
 	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
 
 	dk.ur.recastedBP = casted && advance
@@ -366,7 +366,7 @@ func (dk *DpsDeathknight) RotationAction_IT_Custom(sim *core.Simulation, target 
 		dk.afterGargoyleSequence(sim)
 		return true
 	}
-	casted := dk.CastIcyTouch(sim, target)
+	casted := dk.IcyTouch.Cast(sim, target)
 	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
 	if casted && advance {
 		dk.ur.recastedFF = true
