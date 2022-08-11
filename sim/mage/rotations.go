@@ -41,12 +41,12 @@ func (mage *Mage) doArcaneRotation(sim *core.Simulation) *core.Spell {
 	numStacks := mage.ArcaneBlastAura.GetStacks()
 
 	if sim.GetRemainingDuration() < 12*time.Second {
-		mage.DisableMajorCooldown(core.ActionID{SpellID: 12051})
+		mage.DisableMajorCooldown(core.ActionID{SpellID: EvocationId})
 	}
 
 	burstDuration := time.Duration(mage.Character.CurrentManaPercent()*40) * time.Second
 	if sim.GetRemainingDuration() < burstDuration {
-		mage.DisableMajorCooldown(core.ActionID{SpellID: 12051})
+		mage.DisableMajorCooldown(core.ActionID{SpellID: EvocationId})
 		if mage.Character.CurrentMana() < mage.ArcaneBlast.CurCast.Cost {
 			return mage.ArcaneMissiles
 		} else {
