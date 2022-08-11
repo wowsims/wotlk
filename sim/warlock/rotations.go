@@ -120,9 +120,6 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// ------------------------------------------
 	// Preset Rotations
 	// ------------------------------------------
-	// ------------------------------------------
-	// Preset Rotations
-	// ------------------------------------------
 	if preset == proto.Warlock_Rotation_Automatic {
 		// ------------------------------------------
 		// Affliction Rotation
