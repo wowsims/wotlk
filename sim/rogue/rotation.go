@@ -74,13 +74,17 @@ func (rogue *Rogue) updatePlan(sim *core.Simulation, refreshThreshold time.Durat
 		rogue.EnableAllCooldowns(rogue.disabledMCDs)
 		rogue.disabledMCDs = nil
 	}
-	freeDuration := core.MinDuration(sliceRemaining, exposeRemaining)
+	timeUntilRefresh := core.MinDuration(sliceRemaining, exposeRemaining)
 	cp := float64(rogue.ComboPoints())
-	expectedCP := cp + rogue.expectedComboPoints(freeDuration, 0)
-	desiredCP := 5.0 // TODO reduce based on aura durations and sim.GetRemainingDuration()
+	expectedCP := cp + rogue.expectedComboPoints(timeUntilRefresh, 0)
+	desiredCP := rogue.desiredComboPointsForSlice(sim)
+	desiredEnergy := rogue.SliceAndDice[1].DefaultCast.Cost
+	if exposeRemaining < sliceRemaining {
+		desiredCP = rogue.desiredComboPointsForExpose(sim)
+		desiredEnergy = rogue.ExposeArmor[1].DefaultCast.Cost
+	}
 	energy := rogue.CurrentEnergy()
-	expectedEnergy := energy + rogue.expectedEnergyGain(freeDuration)
-	desiredEnergy := 25.0 // TODO use actual cost of the aura to refresh
+	expectedEnergy := energy + rogue.expectedEnergyGain(timeUntilRefresh)
 	if expectedCP <= desiredCP {
 		// We can spend energy but not CP unless it is on refreshing the expiring aura
 		if (cp+rogue.BuilderComboPoints) <= desiredCP && (expectedEnergy-desiredEnergy) >= rogue.Builder.DefaultCast.Cost {
@@ -99,37 +103,46 @@ func (rogue *Rogue) updatePlan(sim *core.Simulation, refreshThreshold time.Durat
 		var remainingFinisherDuration time.Duration
 		if rogue.Rotation.UseEnvenom {
 			remainingFinisherDuration = RemainingAuraDuration(sim, rogue.EnvenomAura)
+			desiredEnergy = rogue.Envenom[1].DefaultCast.Cost
 		} else {
 			remainingFinisherDuration = RemainingAuraDuration(sim, rogue.RuptureDot.Aura)
+			desiredEnergy = rogue.Rupture[1].DefaultCast.Cost
 		}
-		if remainingFinisherDuration <= freeDuration {
-			// Recompute expected cp and energy gains using finisher aura duration
-			freeDuration = core.MaxDuration(remainingFinisherDuration, 0)
-			expectedCP := cp + rogue.expectedComboPoints(freeDuration, 0)
-			expectedEnergy := energy + rogue.expectedEnergyGain(freeDuration)
-			freeEnergy := expectedEnergy - desiredEnergy
-			freeCP := expectedCP - desiredCP
-			fillerCost := rogue.Builder.DefaultCast.Cost
-			fillerCP := 0.0
-			if rogue.Rotation.Filler == proto.Rogue_Rotation_Eviscerate {
-				fillerCost = rogue.Eviscerate[1].DefaultCast.Cost
-				fillerCP = core.MinFloat(1, cp)
+		durationToConsider := timeUntilRefresh
+		if remainingFinisherDuration <= timeUntilRefresh {
+			durationToConsider = remainingFinisherDuration
+		}
+		// Recompute expected cp and energy gains using finisher aura duration
+		// How long can we delay the finisher (by filling or building cp)
+
+		timeUntilCapCP := rogue.expectedTimeToComboPoints(5)
+		timeUntilCapEnergy := rogue.expectedTimeToEnergy(100)
+
+		// Cases where we needed to do something before the finisher aura
+		if timeUntilCapCP < durationToConsider || timeUntilCapEnergy < durationToConsider {
+			if cp < 5 {
+				rogue.plan = Build
+				return
 			}
-			if rogue.Rotation.Filler == proto.Rogue_Rotation_FanOfKnives {
-				fillerCost = rogue.FanOfKnives.DefaultCast.Cost
-				fillerCP = 0
-			}
-			if freeEnergy >= fillerCost && freeCP > fillerCP {
+			// TODO: if there is enough energy to fill, cast the finisher, and refresh the slice/expose
+			if energy >= 100 {
 				rogue.plan = Fill
 				return
-			} else {
-				rogue.plan = Finish
+			}
+			rogue.plan = Finish
+			return
+			// Cases where we will cast the finisher before capping either
+		} else {
+			// Do we have time to cast another builder?
+			// Can we cast another builder and still have the energy for our finisher
+			if (energy + rogue.expectedEnergyGain(durationToConsider)) >= (rogue.Builder.DefaultCast.Cost + desiredEnergy) {
+				rogue.plan = Build
 				return
 			}
-
+			rogue.plan = Finish
+			return
 		}
 	}
-	rogue.plan = None
 }
 
 func (rogue *Rogue) chooseSpell(sim *core.Simulation, refreshThreshold time.Duration, filler proto.Rogue_Rotation_Filler) *core.Spell {
@@ -203,12 +216,44 @@ func (rogue *Rogue) aoeChooseSpell(sim *core.Simulation) *core.Spell {
 	return rogue.FanOfKnives
 }
 
+func (rogue *Rogue) desiredComboPointsForSlice(sim *core.Simulation) float64 {
+	timeRemaining := sim.GetRemainingDuration()
+	for i := range rogue.sliceAndDiceDurations {
+		if rogue.sliceAndDiceDurations[i] > timeRemaining {
+			return float64(i)
+		}
+	}
+	return 5.0
+}
+
+func (rogue *Rogue) desiredComboPointsForExpose(sim *core.Simulation) float64 {
+	timeRemaining := sim.GetRemainingDuration()
+	for i := range rogue.exposeArmorDurations {
+		if rogue.exposeArmorDurations[i] > timeRemaining {
+			return float64(i)
+		}
+	}
+	return 5.0
+}
+
 func (rogue *Rogue) multiTargetChooseSpell(sim *core.Simulation) *core.Spell {
 	return rogue.chooseSpell(sim, time.Second*2, proto.Rogue_Rotation_FanOfKnives)
 }
 
 func (rogue *Rogue) singleTargetChooseSpell(sim *core.Simulation) *core.Spell {
 	return rogue.chooseSpell(sim, 0, rogue.Rotation.Filler)
+}
+
+func (rogue *Rogue) expectedTimeToEnergy(energy float64) time.Duration {
+	energyNeeded := core.MaxFloat(energy-rogue.CurrentEnergy(), 0)
+	return time.Duration(energyNeeded/rogue.PredictedEnergyPerSecond) * time.Second
+}
+
+func (rogue *Rogue) expectedTimeToComboPoints(points float64) time.Duration {
+	pointsNeeded := core.MaxFloat(0, points-float64(rogue.ComboPoints()))
+	castsNeeded := pointsNeeded / rogue.BuilderComboPoints
+	energyNeeded := castsNeeded * rogue.Builder.DefaultCast.Cost
+	return rogue.expectedTimeToEnergy(energyNeeded)
 }
 
 func (rogue *Rogue) expectedEnergyGain(duration time.Duration) float64 {

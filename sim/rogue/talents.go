@@ -83,13 +83,13 @@ func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, 
 
 func (rogue *Rogue) makeCastModifier() func(*core.Simulation, *core.Spell, *core.Cast) {
 	builderCostMultiplier := 1.0
-	costMultiplier := 1.0
 	costReduction := 40.0
 	hasDeathmantle := rogue.HasSetBonus(ItemSetDeathmantle, 4)
 	if rogue.HasSetBonus(ItemSetBonescythe, 4) {
 		builderCostMultiplier -= 0.05
 	}
 	return func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+		costMultiplier := 1.0
 		if spell.Flags.Matches(SpellFlagBuilder) {
 			costMultiplier *= builderCostMultiplier
 		}
