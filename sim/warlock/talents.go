@@ -21,8 +21,12 @@ func (warlock *Warlock) ApplyTalents() {
 	warlock.PseudoStats.DamageTakenMultiplier *= 1. - 0.02*float64(warlock.Talents.MoltenSkin)
 
 	// Malediction
-	warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1. + 0.01*float64(warlock.Talents.Malediction)
-	warlock.PseudoStats.FireDamageDealtMultiplier *= 1. + 0.01*float64(warlock.Talents.Malediction)
+	maledictionMultiplier := 1. + 0.01*float64(warlock.Talents.Malediction)
+	warlock.PseudoStats.ShadowDamageDealtMultiplier *= maledictionMultiplier
+	warlock.PseudoStats.FireDamageDealtMultiplier *= maledictionMultiplier
+	warlock.PseudoStats.ArcaneDamageDealtMultiplier *= maledictionMultiplier
+	warlock.PseudoStats.NatureDamageDealtMultiplier *= maledictionMultiplier
+	warlock.PseudoStats.HolyDamageDealtMultiplier *= maledictionMultiplier
 
 	// Demonic Pact
 	if warlock.Talents.DemonicPact > 0 {
@@ -505,7 +509,11 @@ func (warlock *Warlock) setupDemonicPact() {
 	demonicPactMultiplier := 0.02 * float64(warlock.Talents.DemonicPact)
 	warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1. + demonicPactMultiplier
 	warlock.PseudoStats.FireDamageDealtMultiplier *= 1. + demonicPactMultiplier
+	warlock.PseudoStats.ArcaneDamageDealtMultiplier *= 1. + demonicPactMultiplier
+	warlock.PseudoStats.NatureDamageDealtMultiplier *= 1. + demonicPactMultiplier
+	warlock.PseudoStats.HolyDamageDealtMultiplier *= 1. + demonicPactMultiplier
 
+	var demonicPactAura *core.Aura
 	icd := core.Cooldown{
 		Timer:    warlock.NewTimer(),
 		Duration: time.Second * 5,
@@ -516,18 +524,22 @@ func (warlock *Warlock) setupDemonicPact() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
+		OnInit: func(aura *core.Aura, sim *core.Simulation) {
+			demonicPactAura = core.DemonicPactAura(warlock.GetCharacter(), 0)
+		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Outcome.Matches(core.OutcomeCrit) && icd.IsReady(sim) {
 				icd.Use(sim)
-				currentDemonicPactAura := core.DemonicPactAura(warlock.GetCharacter(), 0)
-				newSPBonus := int32(warlock.GetStat(stats.SpellPower) * demonicPactMultiplier)
-				if currentDemonicPactAura.IsActive() {
-					if currentDemonicPactAura.GetStacks() < newSPBonus || currentDemonicPactAura.RemainingDuration(sim) < time.Second * 10 {
-						currentDemonicPactAura.SetStacks(sim, newSPBonus)
+				newSPBonus := warlock.GetStat(stats.SpellPower) * demonicPactMultiplier
+				if demonicPactAura.IsActive() {
+					if demonicPactAura.Priority < newSPBonus || demonicPactAura.RemainingDuration(sim) < time.Second * 10 {
+						demonicPactAura.Deactivate(sim)
+						demonicPactAura.Priority = newSPBonus
+						demonicPactAura.Activate(sim)
 					}
 				} else {
-					currentDemonicPactAura.Activate(sim)
-					currentDemonicPactAura.SetStacks(sim, newSPBonus)
+					demonicPactAura.Activate(sim)
+					demonicPactAura.Priority = newSPBonus
 				}
 			}
 		},

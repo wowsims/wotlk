@@ -220,7 +220,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 			stats.HealingPower: spBonus,
 		})
 	}
-	DPSPBonus := int32(float64(raidBuffs.DemonicPact) / 10.)
+	DPSPBonus := float64(raidBuffs.DemonicPact) / 10.
 	if  DPSPBonus > 0 {
 		MakePermanent(DemonicPactAura(character, DPSPBonus))
 	}
@@ -1021,35 +1021,49 @@ func FlametongueTotemAura(character *Character) *Aura {
 	})
 }
 
-func DemonicPactAura(character *Character, startingStacks int32) *Aura {
+func DemonicPactAura(character *Character, spellPowerBonus float64) *Aura {
 
 	return character.GetOrRegisterAura(Aura{
 		Label:     "Demonic Pact",
+		Tag:       "Demonic Pact",
 		ActionID:  ActionID{SpellID: 47240},
 		Duration:  time.Second * 45,
-		MaxStacks: math.MaxInt32,
-		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.SetStacks(sim, startingStacks)
+		Priority: spellPowerBonus,
+		OnReset: func(aura *Aura, sim *Simulation) {
+			aura.Activate(sim)
 		},
-		OnStacksChange: func(aura *Aura, sim *Simulation, oldStacks, newStacks int32) {
-			minimumSPBonus := int32(0)
+		OnGain: func(aura *Aura, sim *Simulation) {
+			minimumSPBonus := 0.
 			if TotemOfWrathAura(character).IsActive() {
 				minimumSPBonus = 280
 			} else if FlametongueTotemAura(character).IsActive() {
 				minimumSPBonus = 144
 			}
-			newSPbonus := newStacks - minimumSPBonus
+			newSPbonus := aura.Priority - minimumSPBonus
 			if newSPbonus < 0 {
 				newSPbonus = 0
 			}
-			oldSPbonus := oldStacks - minimumSPBonus
-			if oldSPbonus < 0 {
-				oldSPbonus = 0
+
+			character.AddStatsDynamic(sim, stats.Stats{
+				stats.SpellPower:   newSPbonus,
+				stats.HealingPower: newSPbonus,
+			})
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			minimumSPBonus := 0.
+			if TotemOfWrathAura(character).IsActive() {
+				minimumSPBonus = 280
+			} else if FlametongueTotemAura(character).IsActive() {
+				minimumSPBonus = 144
+			}
+			newSPbonus := aura.Priority - minimumSPBonus
+			if newSPbonus < 0 {
+				newSPbonus = 0
 			}
 
 			character.AddStatsDynamic(sim, stats.Stats{
-				stats.SpellPower:   float64(newSPbonus-oldSPbonus),
-				stats.HealingPower: float64(newSPbonus-oldSPbonus),
+				stats.SpellPower:   -newSPbonus,
+				stats.HealingPower: -newSPbonus,
 			})
 		},
 	})
