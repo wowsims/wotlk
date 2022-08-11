@@ -395,43 +395,43 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-FullBuffs-LongMultiTarget"
  value: {
-  dps: 9719.5793279768
-  tps: 10899.5721716089
+  dps: 9630.0837639524
+  tps: 10854.3005753071
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-FullBuffs-LongSingleTarget"
  value: {
-  dps: 6262.2642859871
-  tps: 5257.5617055374
+  dps: 6222.9097363062
+  tps: 5219.7534751137
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 7455.2071047076
-  tps: 6163.279067798
+  dps: 7535.8713859739
+  tps: 6245.9099323264
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6910.3372526227
-  tps: 9105.3132011981
+  dps: 6884.3423142564
+  tps: 9155.9954539994
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3816.8214058447
-  tps: 3512.8166564798
+  dps: 3730.5035228198
+  tps: 3430.6920023678
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 3857.6624752231
-  tps: 3423.3626991727
+  dps: 3910.3206320723
+  tps: 3485.8682199585
  }
 }
 dps_results: {
