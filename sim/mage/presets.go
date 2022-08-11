@@ -222,24 +222,24 @@ var P1ArcaneGear = items.EquipmentSpecFromJsonString(`{"items": [
 	},
 	{
 	  "id": 40419,
-	  "enchant": 61120,
+	  "enchant": 44874,
 	  "gems": [
-		40049
+		40051
 	  ]
 	},
 	{
 	  "id": 44005,
-	  "enchant": 63765,
+	  "enchant": 55642,
 	  "gems": [
 		40026
 	  ]
 	},
 	{
-	  "id": 40418,
-	  "enchant": 33990,
+	  "id": 44002,
+	  "enchant": 44489,
 	  "gems": [
 		39998,
-		40049
+		39998
 	  ]
 	},
 	{
@@ -247,12 +247,12 @@ var P1ArcaneGear = items.EquipmentSpecFromJsonString(`{"items": [
 	  "enchant": 44498,
 	  "gems": [
 		39998,
-		39998
+		0
 	  ]
 	},
 	{
 	  "id": 40415,
-	  "enchant": 44592,
+	  "enchant": 54999,
 	  "gems": [
 		39998,
 		0
@@ -265,39 +265,40 @@ var P1ArcaneGear = items.EquipmentSpecFromJsonString(`{"items": [
 	  ]
 	},
 	{
-	  "id": 40398,
+	  "id": 40417,
 	  "enchant": 41602,
 	  "gems": [
 		39998,
-		39998
+		40051
 	  ]
 	},
 	{
-	  "id": 40246,
+	  "id": 40558,
 	  "enchant": 55016
-	},
-	{
-	  "id": 40399
 	},
 	{
 	  "id": 40719
 	},
 	{
+	  "id": 40399
+	},
+	{
 	  "id": 39229
 	},
 	{
-	  "id": 40432
+	  "id": 40255
 	},
 	{
 	  "id": 40396,
-	  "enchant": 44495
+	  "enchant": 44487
 	},
 	{
-	  "id": 39766
+	  "id": 40273
 	},
 	{
 	  "id": 39426
 	}
-  ]}`)
+  ]
+}`)
 var P1FrostGear = P1ArcaneGear
 var P1FireGear = P1ArcaneGear
