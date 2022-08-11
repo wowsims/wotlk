@@ -92,7 +92,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// ------------------------------------------
 	// Small CDs
 	// ------------------------------------------
-	if warlock.Talents.DemonicEmpowerment && warlock.DemonicEmpowerment.CD.IsReady(sim) {
+	if warlock.Talents.DemonicEmpowerment && warlock.DemonicEmpowerment.CD.IsReady(sim) && warlock.Options.Summon != proto.Warlock_Options_NoSummon{
 		warlock.DemonicEmpowerment.Cast(sim, target)
 	}
 	if warlock.Talents.Metamorphosis && warlock.MetamorphosisAura.IsActive() &&
@@ -117,9 +117,6 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	}
 
 
-	// ------------------------------------------
-	// Preset Rotations
-	// ------------------------------------------
 	// ------------------------------------------
 	// Preset Rotations
 	// ------------------------------------------

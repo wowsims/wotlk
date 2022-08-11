@@ -155,8 +155,9 @@ var Enchants = []Enchant{
 
 	// 2H Weapon
 	{ID: 44473, EffectID: 3247, Name: "Scourgebane", Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeTwoHand},
-	{ID: 44483, EffectID: 3827, Name: "Massacre", Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{stats.AttackPower: 110, stats.RangedAttackPower: 110}, ItemType: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeTwoHand},
+	{ID: 44483, EffectID: 3827, Name: "Massacre", Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{stats.AttackPower: 110, stats.RangedAttackPower: 110}, ItemType: proto.ItemType_ItemTypeWeapon},
 	{ID: 44630, EffectID: 3828, Name: "Greater Savagery", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{stats.AttackPower: 85, stats.RangedAttackPower: 85}, ItemType: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeTwoHand},
+	{ID: 45059, EffectID: 8181, Name: "Greater Spellpower", Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{stats.SpellPower: 81, stats.HealingPower: 81}, ItemType: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeTwoHand},
 	{ID: 53342, EffectID: 3367, Name: "Rune of Spellshattering", IsSpellID: true, Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, ClassAllowlist: []proto.Class{proto.Class_ClassDeathknight}},
 	{ID: 53323, EffectID: 3365, Name: "Rune of Swordshattering", IsSpellID: true, Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, ClassAllowlist: []proto.Class{proto.Class_ClassDeathknight}},
 	{ID: 62158, EffectID: 3847, Name: "Rune of the Stoneskin Gargoyle", IsSpellID: true, Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, ClassAllowlist: []proto.Class{proto.Class_ClassDeathknight}},

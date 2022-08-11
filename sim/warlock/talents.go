@@ -513,11 +513,16 @@ func (warlock *Warlock) setupDemonicPact() {
 	warlock.PseudoStats.NatureDamageDealtMultiplier *= 1. + demonicPactMultiplier
 	warlock.PseudoStats.HolyDamageDealtMultiplier *= 1. + demonicPactMultiplier
 
+	if warlock.Options.Summon == proto.Warlock_Options_NoSummon {
+		return
+	}
+	
 	var demonicPactAura *core.Aura
 	icd := core.Cooldown{
 		Timer:    warlock.NewTimer(),
 		Duration: time.Second * 5,
 	}
+
 	warlock.Pets[0].GetCharacter().RegisterAura(core.Aura{
 		Label:    "Demonic Pact Hidden Aura",
 		Duration: core.NeverExpires,
