@@ -60,6 +60,7 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool, onhit func(sim *core.Sim
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				cast.GCD = dk.getModifiedGCD()
 			},
+			IgnoreHaste: true,
 		}
 		conf.ApplyEffects = dk.withRuneRefund(rs, effect, false)
 	}

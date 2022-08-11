@@ -6,8 +6,10 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
+const EvocationId = 12051
+
 func (mage *Mage) registerEvocationCD() {
-	actionID := core.ActionID{SpellID: 12051}
+	actionID := core.ActionID{SpellID: EvocationId}
 	manaMetrics := mage.NewManaMetrics(actionID)
 
 	maxTicks := int32(4)

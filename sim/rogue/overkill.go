@@ -17,10 +17,10 @@ func (rogue *Rogue) registerOverkillCD() {
 		ActionID: OverkillActionID,
 		Duration: time.Second * 20,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			rogue.EnergyTickMultiplier *= 1.3
+			rogue.ApplyEnergyTickMultiplier(1.3)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			rogue.EnergyTickMultiplier *= 1 / 1.3
+			rogue.ApplyEnergyTickMultiplier(1 / 1.3)
 		},
 	})
 	overkillSpell := rogue.RegisterSpell(core.SpellConfig{

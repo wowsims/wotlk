@@ -666,8 +666,16 @@ export class Timeline extends ResultComponent {
 			const castElem = document.createElement('div');
 			castElem.classList.add('rotation-timeline-cast');
 			castElem.style.left = this.timeToPx(castLog.timestamp);
-			castElem.style.minWidth = this.timeToPx(castLog.castTime);
+			castElem.style.minWidth = this.timeToPx(castLog.castTime + castLog.travelTime);
 			rowElem.appendChild(castElem);
+
+			if (castLog.travelTime != 0) {
+				const travelTimeElem = document.createElement('div');
+				travelTimeElem.classList.add('rotation-timeline-travel-time');
+				travelTimeElem.style.left = this.timeToPx(castLog.castTime);
+				travelTimeElem.style.minWidth = this.timeToPx(castLog.travelTime);
+				castElem.appendChild(travelTimeElem);
+			}
 
 			if (castLog.damageDealtLogs.length > 0) {
 				const ddl = castLog.damageDealtLogs[0];
@@ -686,9 +694,10 @@ export class Timeline extends ResultComponent {
 			iconElem.classList.add('rotation-timeline-cast-icon');
 			actionId.setBackground(iconElem);
 			castElem.appendChild(iconElem);
+			const travelTimeStr = castLog.travelTime == 0 ? '' : ` + ${castLog.travelTime.toFixed(2)}s travel time`;
 			tippy(castElem, {
 				content: `
-					<span>${castLog.actionId!.name} from ${castLog.timestamp.toFixed(2)}s to ${(castLog.timestamp + castLog.castTime).toFixed(2)}s (${castLog.castTime.toFixed(2)}s)</span>
+					<span>${castLog.actionId!.name} from ${castLog.timestamp.toFixed(2)}s to ${(castLog.timestamp + castLog.castTime).toFixed(2)}s (${castLog.castTime.toFixed(2)}s)${travelTimeStr}</span>
 					<ul class="rotation-timeline-cast-damage-list">
 						${castLog.damageDealtLogs.map(ddl => `
 								<li>
@@ -751,6 +760,19 @@ export class Timeline extends ResultComponent {
 					<span>${aul.actionId!.name}: ${aul.gainedAt.toFixed(2)}s - ${(aul.fadedAt || duration).toFixed(2)}s</span>
 				`,
 				allowHTML: true,
+			});
+
+			aul.stacksChange.forEach((scl, i) => {
+				if (scl.timestamp == aul.fadedAt) {
+					return;
+				}
+
+				const stacksChangeElem = document.createElement('div');
+				stacksChangeElem.classList.add('rotation-timeline-stacks-change');
+				stacksChangeElem.style.left = this.timeToPx(scl.timestamp - aul.timestamp);
+				stacksChangeElem.style.width = this.timeToPx(aul.stacksChange[i+1] ? aul.stacksChange[i+1].timestamp-scl.timestamp : aul.fadedAt - scl.timestamp);
+				stacksChangeElem.textContent = String(scl.newStacks);
+				auraElem.appendChild(stacksChangeElem);
 			});
 		});
 	}

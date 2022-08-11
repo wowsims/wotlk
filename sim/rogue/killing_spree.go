@@ -22,8 +22,9 @@ func (rogue *Rogue) makeKillingSpreedWeaponSwingEffect(isMh bool) core.SpellEffe
 		hand = core.OffHand
 	}
 	return core.SpellEffect{
-		ProcMask:         procMask,
-		DamageMultiplier: 1,
+		ProcMask: procMask,
+		DamageMultiplier: 1 +
+			0.02*float64(rogue.Talents.FindWeakness),
 		ThreatMultiplier: 1,
 		BaseDamage:       core.BaseDamageConfigMeleeWeapon(hand, true, 0, baseMultiplier, 1, true),
 		OutcomeApplier:   rogue.OutcomeFuncMeleeWeaponSpecialHitAndCrit(rogue.MeleeCritMultiplier(isMh, false)),
@@ -47,6 +48,7 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 		ActionID: core.ActionID{SpellID: 51690},
 		Duration: time.Second * 2,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			rogue.plan = None
 			rogue.PseudoStats.DamageDealtMultiplier *= 1.2
 			// This first attack could/should? be implemented as an immediate tick
 			// but there is currently an issue causing the periodic action
@@ -94,5 +96,15 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 		Spell:    killingSpreeSpell,
 		Type:     core.CooldownTypeDPS,
 		Priority: core.CooldownPriorityLow,
+		ShouldActivate: func(sim *core.Simulation, c *core.Character) bool {
+			bladeFlurry := rogue.GetMajorCooldown(BladeFlurryActionID)
+			if bladeFlurry != nil && bladeFlurry.IsReady(sim) {
+				return false
+			}
+			if rogue.CurrentEnergy() > 60 || (rogue.CurrentEnergy() > 30 && rogue.AdrenalineRushAura.IsActive()) {
+				return false
+			}
+			return true
+		},
 	})
 }

@@ -294,7 +294,7 @@ func (sim *Simulation) runOnce() {
 		if pa.NextActionAt > sim.CurrentTime {
 			sim.advance(pa.NextActionAt - sim.CurrentTime)
 		}
-
+		pa.consumed = true
 		pa.OnAction(sim)
 	}
 
@@ -316,6 +316,7 @@ func (sim *Simulation) runOnce() {
 }
 
 func (sim *Simulation) AddPendingAction(pa *PendingAction) {
+	pa.consumed = false
 	for index, v := range sim.pendingActions {
 		if v.NextActionAt < pa.NextActionAt || (v.NextActionAt == pa.NextActionAt && v.Priority >= pa.Priority) {
 			sim.pendingActions = append(sim.pendingActions, pa)

@@ -146,7 +146,7 @@ func (dk *Deathknight) applyKillingMachine() {
 	}
 
 	actionID := core.ActionID{SpellID: 51130}
-	ppmm := dk.AutoAttacks.NewPPMManager(float64(dk.Talents.KillingMachine), core.ProcMaskMeleeMHAuto)
+	procChance := dk.GetMHWeapon().SwingSpeed * float64(dk.Talents.KillingMachine) / 60.0
 
 	dk.KillingMachineAura = dk.RegisterAura(core.Aura{
 		Label:    "Killing Machine Proc",
@@ -161,11 +161,11 @@ func (dk *Deathknight) applyKillingMachine() {
 				return
 			}
 
-			if !ppmm.Proc(sim, spellEffect.ProcMask, "killing machine") {
+			if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHAuto) {
 				return
 			}
 
-			if !dk.KillingMachineAura.IsActive() {
+			if sim.RandomFloat("Killing Machine Proc Chance") <= procChance {
 				dk.KillingMachineAura.Activate(sim)
 			}
 		},
@@ -212,9 +212,6 @@ func (dk *Deathknight) botnAndReaping(sim *core.Simulation, spell *core.Spell) {
 	if dk.Talents.BloodOfTheNorth == 0 && dk.Talents.Reaping == 0 {
 		return
 	}
-	if core.RuneCost(spell.CurCast.Cost).Blood() == 0 {
-		return // cant get death rune if we didnt spend blood
-	}
 	tp := dk.Talents.BloodOfTheNorth + dk.Talents.Reaping
 	if tp < 3 {
 		if sim.RandomFloat("Blood of The North / Reaping") > float64(tp)*0.33 {
@@ -225,9 +222,9 @@ func (dk *Deathknight) botnAndReaping(sim *core.Simulation, spell *core.Spell) {
 	// if slot == -1 that means we spent a death rune to trigger this.
 	// Jooper: BoTN should still trigger the same effect if it spent a death rune in the a blood slot.
 	// TODO: Clean this up since its kind of core-like code. Probably with PA refactor.
-	r := dk.LastSpentBloodRune()
-	dk.SetRuneToState(r, core.RuneState_DeathSpent, core.RuneKind_Death)
-	r.BotnOrReaping = true
+	rt := sim.RandomFloat("death convert") * 20 * float64(time.Second)
+	revertAt := sim.CurrentTime + time.Duration(float64(time.Second)*10+rt)
+	dk.ConvertToDeath(sim, dk.BloodRuneSpentAt(sim.CurrentTime), true, revertAt)
 }
 
 func (dk *Deathknight) applyThreatOfThassarian() {
