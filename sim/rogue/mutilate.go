@@ -11,6 +11,8 @@ import (
 var MHOutcome = core.OutcomeHit
 var OHOutcome = core.OutcomeHit
 
+var MutilateSpellID int32 = 48666
+
 func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 	actionID := core.ActionID{SpellID: 48665}
 	if !isMH {
@@ -76,7 +78,7 @@ func (rogue *Rogue) registerMutilateSpell() {
 	refundAmount := baseCost * 0.8
 
 	rogue.Mutilate = rogue.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48666},
+		ActionID:    core.ActionID{SpellID: MutilateSpellID},
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics | SpellFlagBuilder,
 
