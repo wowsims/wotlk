@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -125,7 +126,7 @@ func (spellEffect *SpellEffect) ExpertisePercentage(unit *Unit) float64 {
 	} else if spellEffect.ProcMask.Matches(ProcMaskMeleeOH) {
 		expertiseRating += unit.PseudoStats.BonusOHExpertiseRating
 	}
-	return expertiseRating / ExpertisePerQuarterPercentReduction / 400
+	return math.Floor(expertiseRating/ExpertisePerQuarterPercentReduction) / 400
 }
 
 func (spellEffect *SpellEffect) PhysicalHitChance(unit *Unit, attackTable *AttackTable) float64 {
