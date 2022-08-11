@@ -37,7 +37,7 @@ func (shaman *Shaman) registerLightningShieldSpell() *core.Spell {
 
 			ThreatMultiplier: 1, //fix when spirit weapons is fixed
 			BaseDamage:       core.BaseDamageConfigMagic(380, 380, 0.267),
-			OutcomeApplier:   shaman.OutcomeFuncMagicHitAndCrit(shaman.DefaultSpellCritMultiplier()),
+			OutcomeApplier:   shaman.OutcomeFuncMagicHit(),
 		}),
 	})
 

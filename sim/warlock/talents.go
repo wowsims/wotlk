@@ -537,7 +537,7 @@ func (warlock *Warlock) setupDemonicPact() {
 				icd.Use(sim)
 				newSPBonus := warlock.GetStat(stats.SpellPower) * demonicPactMultiplier
 				if demonicPactAura.IsActive() {
-					if demonicPactAura.Priority < newSPBonus || demonicPactAura.RemainingDuration(sim) < time.Second * 10 {
+					if demonicPactAura.Priority < newSPBonus || demonicPactAura.RemainingDuration(sim) < time.Second*10 {
 						demonicPactAura.Deactivate(sim)
 						demonicPactAura.Priority = newSPBonus
 						demonicPactAura.Activate(sim)

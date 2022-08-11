@@ -221,10 +221,9 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		})
 	}
 	DPSPBonus := float64(raidBuffs.DemonicPact) / 10.
-	if  DPSPBonus > 0 {
+	if DPSPBonus > 0 {
 		MakePermanent(DemonicPactAura(character, DPSPBonus))
 	}
-
 
 	if raidBuffs.WrathOfAirTotem {
 		character.PseudoStats.CastSpeedMultiplier *= 1.05
