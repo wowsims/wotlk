@@ -1028,7 +1028,8 @@ func DemonicPactAura(character *Character, spellPowerBonus float64) *Aura {
 		Tag:       "Demonic Pact",
 		ActionID:  ActionID{SpellID: 47240},
 		Duration:  time.Second * 45,
-		Priority: spellPowerBonus,
+		Priority:  spellPowerBonus,
+		MaxStacks: math.MaxInt32,
 		OnReset: func(aura *Aura, sim *Simulation) {
 			aura.Activate(sim)
 		},
@@ -1048,6 +1049,8 @@ func DemonicPactAura(character *Character, spellPowerBonus float64) *Aura {
 				stats.SpellPower:   newSPbonus,
 				stats.HealingPower: newSPbonus,
 			})
+
+			aura.SetStacks(sim, int32(aura.Priority))
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			minimumSPBonus := 0.
