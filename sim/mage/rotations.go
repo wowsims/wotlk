@@ -40,12 +40,11 @@ func (mage *Mage) tryUseGCD(sim *core.Simulation) {
 func (mage *Mage) doArcaneRotation(sim *core.Simulation) *core.Spell {
 	numStacks := mage.ArcaneBlastAura.GetStacks()
 
-	burstDuration := time.Duration(mage.Character.CurrentManaPercent()*40) * time.Second
-
 	if sim.GetRemainingDuration() < 12*time.Second {
 		mage.DisableMajorCooldown(core.ActionID{SpellID: 12051})
 	}
 
+	burstDuration := time.Duration(mage.Character.CurrentManaPercent()*40) * time.Second
 	if sim.GetRemainingDuration() < burstDuration {
 		mage.DisableMajorCooldown(core.ActionID{SpellID: 12051})
 		if mage.Character.CurrentMana() < mage.ArcaneBlast.CurCast.Cost {
