@@ -163,34 +163,39 @@ export const P1_PRESET = {
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
     {
-      "id": 42550,
+      "id": 40499,
       "enchant": 44879,
       "gems": [
         41398,
-        40058
-      ]
-    },
-    {
-      "id": 40678
-    },
-    {
-      "id": 43481,
-      "enchant": 44871
-    },
-    {
-      "id": 38614,
-      "enchant": 55002
-    },
-    {
-      "id": 39558,
-      "enchant": 44489,
-      "gems": [
-        40003,
         42702
       ]
     },
     {
-      "id": 34448,
+      "id": 44664,
+      "gems": [
+        42154
+      ]
+    },
+    {
+      "id": 40502,
+      "enchant": 44871,
+      "gems": [
+        36766
+      ]
+    },
+    {
+      "id": 40403,
+      "enchant": 55002
+    },
+    {
+      "id": 40539,
+      "enchant": 44489,
+      "gems": [
+        36766
+      ]
+    },
+    {
+      "id": 39765,
       "enchant": 44484,
       "gems": [
         40003,
@@ -198,7 +203,7 @@ export const P1_PRESET = {
       ]
     },
     {
-      "id": 39560,
+      "id": 40496,
       "enchant": 54999,
       "gems": [
         40058,
@@ -206,45 +211,45 @@ export const P1_PRESET = {
       ]
     },
     {
-      "id": 40694,
+      "id": 40260,
+      "gems": [
+        39999
+      ]
+    },
+    {
+      "id": 40500,
+      "enchant": 38374,
       "gems": [
         40003,
         40003
       ]
     },
     {
-      "id": 37644,
-      "enchant": 38374
+      "id": 39701,
+      "enchant": 55016
     },
     {
-      "id": 34575,
-      "enchant": 55016,
-      "gems": [
-        40003
-      ]
+      "id": 40074
     },
     {
-      "id": 40586
+      "id": 40474
     },
     {
-      "id": 37642
-    },
-    {
-      "id": 40684
+        "id": 40684
     },
     {
       "id": 44253
     },
     {
-      "id": 37856,
+      "id": 39714,
       "enchant": 44492
     },
     {
-      "id": 37667,
+      "id": 40386,
       "enchant": 44492
     },
     {
-      "id": 43612
+      "id": 40385
     }
   ]}`),
-};
+}
