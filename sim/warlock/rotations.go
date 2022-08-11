@@ -92,7 +92,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// ------------------------------------------
 	// Small CDs
 	// ------------------------------------------
-	if warlock.Talents.DemonicEmpowerment && warlock.DemonicEmpowerment.CD.IsReady(sim) && warlock.Options.Summon != proto.Warlock_Options_NoSummon{
+	if warlock.Talents.DemonicEmpowerment && warlock.DemonicEmpowerment.CD.IsReady(sim) && warlock.Options.Summon != proto.Warlock_Options_NoSummon {
 		warlock.DemonicEmpowerment.Cast(sim, target)
 	}
 	if warlock.Talents.Metamorphosis && warlock.MetamorphosisAura.IsActive() &&
@@ -115,7 +115,6 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			}
 		}
 	}
-
 
 	// ------------------------------------------
 	// Preset Rotations
@@ -175,7 +174,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 				sim.GetRemainingDuration() > warlock.CorruptionDot.Duration {
 				spell = warlock.Corruption
 			} else if (!warlock.ImmolateDot.IsActive() || warlock.ImmolateDot.RemainingDuration(sim) < warlock.Immolate.CurCast.CastTime) &&
-				sim.GetRemainingDuration() > warlock.ImmolateDot.Duration / 2. {
+				sim.GetRemainingDuration() > warlock.ImmolateDot.Duration/2. {
 				spell = warlock.Immolate
 			} else if core.ShadowMasteryAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ShadowBolt.CurCast.CastTime && sim.GetRemainingDuration() > core.ShadowMasteryAura(warlock.CurrentTarget).Duration/2. {
 				// Shadow Mastery refresh
@@ -321,7 +320,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// Filler spell
 	// ------------------------------------------
 	if spell == nil {
-		if warlock.CurrentManaPercent() < 0.25 && sim.GetRemainingDuration() > time.Second * 30 {
+		if warlock.CurrentManaPercent() < 0.25 && sim.GetRemainingDuration() > time.Second*30 {
 			// If you were gonna cast a filler but are low mana, get mana instead in order not to be OOM when an important spell is coming up
 			warlock.LifeTapOrDarkPact(sim)
 			return
