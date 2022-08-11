@@ -58,7 +58,7 @@ func (warlock *Warlock) registerImmolateSpell() {
 			Label:    "immolate-" + strconv.Itoa(int(warlock.Index)),
 			ActionID: actionID,
 		}),
-		NumberOfTicks: 5 + int(warlock.Talents.MoltenCore)*3 +
+		NumberOfTicks: 5 + int(warlock.Talents.MoltenCore) +
 			core.TernaryInt(warlock.HasSetBonus(ItemSetVoidheartRaiment, 4), 1, 0), // voidheart 4p gives 1 extra tick
 		TickLength: time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{

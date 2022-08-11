@@ -516,7 +516,7 @@ func (warlock *Warlock) setupDemonicPact() {
 	if warlock.Options.Summon == proto.Warlock_Options_NoSummon {
 		return
 	}
-	
+
 	var demonicPactAura *core.Aura
 	icd := core.Cooldown{
 		Timer:    warlock.NewTimer(),
