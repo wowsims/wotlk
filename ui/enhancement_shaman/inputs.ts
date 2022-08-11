@@ -34,7 +34,7 @@ export const ShamanShieldInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.
 	fieldName: 'shield',
 	values: [
 		{ color: 'grey', value: ShamanShield.NoShield },
-		{ actionId: ActionId.fromSpellId(33736), value: ShamanShield.WaterShield },
+		{ actionId: ActionId.fromSpellId(57960), value: ShamanShield.WaterShield },
 		{ actionId: ActionId.fromSpellId(49281), value: ShamanShield.LightningShield },
 	],
 });
