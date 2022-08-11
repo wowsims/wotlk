@@ -1,9 +1,68 @@
 package dps
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
+
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_KM(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
+	casted := false
+	if dk.KillingMachineAura.IsActive() {
+		if dk.FrostStrike.CanCast(sim) {
+			casted = dk.FrostStrike.Cast(sim, target)
+		}
+	}
+
+	s.Advance()
+	return casted
+}
+
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	waitUntil := time.Duration(-1)
+
+	abGcd := 1500 * time.Millisecond
+	spGcd := dk.SpellGCD()
+	frAt := dk.FrostRuneReadyAt(sim)
+	uhAt := dk.UnholyRuneReadyAt(sim)
+	obAt := core.MaxDuration(frAt, uhAt)
+	fsCost := float64(core.RuneCost(dk.FrostStrike.CurCast.Cost).RunicPower())
+
+	if sim.CurrentTime+abGcd < obAt && dk.FrostStrike.CanCast(sim) && dk.KillingMachineAura.IsActive() {
+		dk.FrostStrike.Cast(sim, target)
+	} else if sim.CurrentTime+spGcd < obAt && dk.HowlingBlast.CanCast(sim) && dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
+		dk.HowlingBlast.Cast(sim, target)
+	} else if sim.CurrentTime+abGcd < obAt && dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() > 100.0 {
+		dk.FrostStrike.Cast(sim, target)
+	} else if sim.CurrentTime+spGcd < obAt && dk.HowlingBlast.CanCast(sim) && dk.RimeAura.IsActive() {
+		dk.HowlingBlast.Cast(sim, target)
+	} else if sim.CurrentTime+abGcd < obAt && dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() > 2.0*(fsCost-dk.fr.oblitRPRegen) {
+		dk.FrostStrike.Cast(sim, target)
+	} else if sim.CurrentTime+spGcd < obAt && dk.HornOfWinter.CanCast(sim) {
+		dk.HornOfWinter.Cast(sim, target)
+	} else {
+		waitUntil = obAt
+		s.Advance()
+	}
+
+	return waitUntil
+}
+
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_SequenceRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
+	dk.Main.Clear().
+		NewAction(dk.RotationActionCallback_Obli).
+		NewAction(dk.RotationActionCallback_FrostSubBlood_FS_KM).
+		NewAction(dk.RotationActionCallback_Obli).
+		NewAction(dk.RotationActionCallback_FrostSubBlood_FS_KM).
+		NewAction(dk.RotationActionCallback_Pesti).
+		NewAction(dk.RotationActionCallback_FrostSubBlood_FS_KM).
+		NewAction(dk.RotationActionCallback_BS).
+		NewAction(dk.RotationActionCallback_FrostSubBlood_FS_Dump).
+		NewAction(dk.RotationActionCallback_FrostSubBlood_SequenceRotation)
+	dk.WaitUntil(sim, sim.CurrentTime)
+	return sim.CurrentTime
+}
 
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_PrioRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
 	//Priority List:
@@ -186,7 +245,7 @@ func (dk *DpsDeathknight) setupFrostSubBloodERWOpener() {
 		NewAction(dk.RotationActionCallback_FS)
 
 	dk.Main.
-		NewAction(dk.RotationActionCallback_FrostSubBlood_PrioRotation)
+		NewAction(dk.RotationActionCallback_FrostSubBlood_SequenceRotation)
 }
 
 func (dk *DpsDeathknight) setupFrostSubBloodNoERWOpener() {

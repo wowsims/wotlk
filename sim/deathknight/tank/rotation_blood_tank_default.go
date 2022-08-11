@@ -25,25 +25,28 @@ func (dk *TankDeathknight) setupBloodTankERWOpener() {
 		NewAction(dk.RotationActionCallback_TankBlood_PrioRotation)
 }
 
-func (dk *TankDeathknight) RotationActionCallback_TankBlood_PrioRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
+func (dk *TankDeathknight) RotationActionCallback_TankBlood_PrioRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	waitUntil := time.Duration(-1)
+
 	attackGcd := 1500 * time.Millisecond
 	spellGcd := dk.SpellGCD()
 	ff := dk.FrostFeverDisease[target.Index].IsActive()
 	bp := dk.BloodPlagueDisease[target.Index].IsActive()
 	fbAt := core.MinDuration(dk.FrostFeverDisease[target.Index].ExpiresAt(), dk.BloodPlagueDisease[target.Index].ExpiresAt())
 
-	if !ff {
-		return dk.IcyTouch.Cast(sim, target)
-	} else if !bp {
-		return dk.PlagueStrike.Cast(sim, target)
+	if !ff && dk.IcyTouch.CanCast(sim) {
+		dk.IcyTouch.Cast(sim, target)
+	} else if !bp && dk.PlagueStrike.CanCast(sim) {
+		dk.PlagueStrike.Cast(sim, target)
 	} else if dk.DeathStrike.CanCast(sim) && sim.CurrentTime+attackGcd < fbAt {
-		return dk.DeathStrike.Cast(sim, target)
+		dk.DeathStrike.Cast(sim, target)
 	} else {
 		if sim.CurrentTime < fbAt-2*spellGcd {
-			dk.WaitUntil(sim, fbAt-2*spellGcd)
-			return false
+			waitUntil = fbAt - 2*spellGcd
 		} else {
-			return dk.Pestilence.Cast(sim, target)
+			dk.Pestilence.Cast(sim, target)
 		}
 	}
+
+	return waitUntil
 }
