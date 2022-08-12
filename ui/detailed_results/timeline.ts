@@ -1036,6 +1036,25 @@ const idToCategoryMap: Record<number, number> = {
 	[25587]: SPELL_ACTION_CATEGORY + 0.3, // Windfury Totem r5
 	[2825]: DEFAULT_ACTION_CATEGORY + 0.1, // Bloodlust
 
+	// Warlock
+	[47867]: SPELL_ACTION_CATEGORY + 0.01, // Curse of Doom
+	[47864]: SPELL_ACTION_CATEGORY + 0.02, // Curse of Agony
+	[47813]: SPELL_ACTION_CATEGORY + 0.1, // Corruption
+	[59164]: SPELL_ACTION_CATEGORY + 0.2, // Haunt
+	[47843]: SPELL_ACTION_CATEGORY + 0.3, // Unstable Affliction
+	[47811]: SPELL_ACTION_CATEGORY + 0.31, // Immolate
+	[17962]: SPELL_ACTION_CATEGORY + 0.32, // Conflagrate
+	[59172]: SPELL_ACTION_CATEGORY + 0.49, // Chaos Bolt
+	[47809]: SPELL_ACTION_CATEGORY + 0.5, // Shadow Bolt
+	[47838]: SPELL_ACTION_CATEGORY + 0.51, // Incinerate
+	[47825]: SPELL_ACTION_CATEGORY + 0.52, // Soul Fire
+	[47855]: SPELL_ACTION_CATEGORY + 0.6, // Drain Soul
+	[57946]: SPELL_ACTION_CATEGORY + 0.7, // Life Tap
+	[47241]: SPELL_ACTION_CATEGORY + 0.8, // Metamorphosis
+	[50589]: SPELL_ACTION_CATEGORY + 0.81, // Immolation Aura
+	[47193]: SPELL_ACTION_CATEGORY + 0.82, // Demonic Empowerment
+
+
 	// Warrior
 	[25231]: 0.1, // Cleave
 	[29707]: 0.1, // Heroic Strike
@@ -1055,6 +1074,7 @@ const idToCategoryMap: Record<number, number> = {
 	[26992]: SPELL_ACTION_CATEGORY + 0.91, // Thorns
 	[27150]: SPELL_ACTION_CATEGORY + 0.92, // Retribution Aura
 	[27169]: SPELL_ACTION_CATEGORY + 0.93, // Blessing of Sanctuary
+	// [54758]: DEFAULT_ACTION_CATEGORY + 0.000001, // Hyperspeed Acceleration
 };
 
 const idsToGroupForRotation: Array<number> = [

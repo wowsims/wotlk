@@ -169,7 +169,6 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 				spell = warlock.CurseOfAgony
 			}
 		}
-
 	}
 
 	if spell != nil {
@@ -229,7 +228,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 				core.ShadowMasteryAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ShadowBolt.CurCast.CastTime && sim.GetRemainingDuration() > core.ShadowMasteryAura(warlock.CurrentTarget).Duration/2. {
 				// Shadow Embrace & Shadow Mastery refresh
 				spell = warlock.ShadowBolt
-			} else if sim.IsExecutePhase25() || timeUntilExecute < fillerCastTime {
+			} else if sim.IsExecutePhase25() {
 				// Drain Soul execute phase
 				spell = warlock.channelCheck(sim, warlock.DrainSoulDot, 5)
 			}
@@ -351,7 +350,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// Filler spell
 	// ------------------------------------------
 	if spell == nil {
-		if timeUntilOom < time.Second && timeUntilExecute > time.Second {
+		if timeUntilOom < 5*time.Second && timeUntilExecute > time.Second {
 			// If you were gonna cast a filler but are low mana, get mana instead in order not to be OOM when an important spell is coming up
 			warlock.LifeTapOrDarkPact(sim)
 			return
