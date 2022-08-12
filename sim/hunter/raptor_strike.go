@@ -9,10 +9,10 @@ import (
 )
 
 func (hunter *Hunter) registerRaptorStrikeSpell() {
-	baseCost := 120.0
+	baseCost := 0.04 * hunter.BaseMana
 
 	hunter.RaptorStrike = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 27014},
+		ActionID:    core.ActionID{SpellID: 48996},
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 
@@ -36,7 +36,7 @@ func (hunter *Hunter) registerRaptorStrikeSpell() {
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 170, 1, 1, true),
+			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 335, 1, 1, true),
 			OutcomeApplier: hunter.OutcomeFuncMeleeSpecialHitAndCrit(hunter.critMultiplier(false, false, hunter.CurrentTarget)),
 		}),
 	})

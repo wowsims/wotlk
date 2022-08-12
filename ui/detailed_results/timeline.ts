@@ -983,7 +983,23 @@ const idToCategoryMap: Record<number, number> = {
 	[24248]: MELEE_ACTION_CATEGORY + 0.4, // Ferocious Bite
 
 	// Hunter
-	[27014]: 0.1, // Raptor Strike
+	[48996]: 0.1, // Raptor Strike
+	[53217]: 0.6, // Wild Quiver
+	[53209]: MELEE_ACTION_CATEGORY + 0.10, // Chimera Shot
+	[53353]: MELEE_ACTION_CATEGORY + 0.11, // Chimera Shot Serpent
+	[60053]: MELEE_ACTION_CATEGORY + 0.10, // Explosive Shot
+	[49050]: MELEE_ACTION_CATEGORY + 0.20, // Aimed Shot
+	[49048]: MELEE_ACTION_CATEGORY + 0.21, // Multi Shot
+	[49045]: MELEE_ACTION_CATEGORY + 0.22, // Arcane Shot
+	[49052]: MELEE_ACTION_CATEGORY + 0.27, // Steady Shot
+	[61006]: MELEE_ACTION_CATEGORY + 0.28, // Kill Shot
+	[34490]: MELEE_ACTION_CATEGORY + 0.29, // Silencing Shot
+	[49001]: MELEE_ACTION_CATEGORY + 0.30, // Serpent Sting
+	[3043]:  MELEE_ACTION_CATEGORY + 0.30, // Scorpid Sting
+	[53238]: MELEE_ACTION_CATEGORY + 0.31, // Piercing Shots
+	[63672]: MELEE_ACTION_CATEGORY + 0.32, // Black Arrow
+	[49067]: MELEE_ACTION_CATEGORY + 0.33, // Explosive Trap
+	[58434]: MELEE_ACTION_CATEGORY + 0.34, // Volley
 
 	// Paladin
 	[27156]: 0.1, // Seal of Righteousness Proc

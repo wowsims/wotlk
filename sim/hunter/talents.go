@@ -237,23 +237,26 @@ func (hunter *Hunter) applyPiercingShots() {
 
 	actionID := core.ActionID{SpellID: 53238}
 	dmgMultiplier := 0.1 * float64(hunter.Talents.PiercingShots)
+	var psDot *core.Dot
 
 	psSpell := hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagNoOnCastComplete,
+
+		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+			psDot.Apply(sim)
+		},
 	})
 
 	target := hunter.CurrentTarget
-	dotAura := target.GetOrRegisterAura(core.Aura{
-		Label:    "PiercingShots-" + strconv.Itoa(int(hunter.Index)),
-		ActionID: actionID,
-		Duration: time.Second * 8,
-	})
-
-	psDot := core.NewDot(core.Dot{
-		Spell:         psSpell,
-		Aura:          dotAura,
+	psDot = core.NewDot(core.Dot{
+		Spell: psSpell,
+		Aura: target.GetOrRegisterAura(core.Aura{
+			Label:    "PiercingShots-" + strconv.Itoa(int(hunter.Index)),
+			ActionID: actionID,
+			Duration: time.Second * 8,
+		}),
 		NumberOfTicks: 8,
 		TickLength:    time.Second * 1,
 	})
@@ -290,8 +293,8 @@ func (hunter *Hunter) applyPiercingShots() {
 				BaseDamage:       core.BaseDamageConfigFlat(currentTickDmg),
 				OutcomeApplier:   hunter.OutcomeFuncTick(),
 			})
-			psDot.Apply(sim)
-			psSpell.SpellMetrics[spellEffect.Target.TableIndex].Casts++
+
+			psSpell.Cast(sim, spellEffect.Target)
 		},
 	})
 }
