@@ -1009,8 +1009,16 @@ const idToCategoryMap: Record<number, number> = {
 	// Rogue
 	[6774]: MELEE_ACTION_CATEGORY + 0.1, // Slice and Dice
 	[26866]: MELEE_ACTION_CATEGORY + 0.2, // Expose Armor
-	[26865]: MELEE_ACTION_CATEGORY + 0.3, // Eviscerate
-	[26867]: MELEE_ACTION_CATEGORY + 0.3, // Rupture
+	[48672]: MELEE_ACTION_CATEGORY + 0.3, // Rupture
+	[57993]: MELEE_ACTION_CATEGORY + 0.3, // Envenom
+	[48668]: MELEE_ACTION_CATEGORY + 0.4, // Eviscerate
+	[48666]: MELEE_ACTION_CATEGORY + 0.5, // Mutilate
+	[48665]: MELEE_ACTION_CATEGORY + 0.6, // Mutilate (MH)
+	[48664]: MELEE_ACTION_CATEGORY + 0.7, // Mutilate (OH)
+	[48638]: MELEE_ACTION_CATEGORY + 0.5, // Sinister Strike
+	[51723]: MELEE_ACTION_CATEGORY + 0.8, // Fan of Knives
+	[57973]: SPELL_ACTION_CATEGORY + 0.1, // Deadly Poison
+	[57968]: SPELL_ACTION_CATEGORY + 0.2, // Instant Poison
 
 	// Shaman
 	[17364]: MELEE_ACTION_CATEGORY + 0.1, // Stormstrike
