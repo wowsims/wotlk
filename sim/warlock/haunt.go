@@ -56,7 +56,7 @@ func (warlock *Warlock) registerHauntSpell() {
 			ProcMask:         core.ProcMaskSpellDamage,
 			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 			DamageMultiplier: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false),
-			//MissileSpeed:     20,
+			MissileSpeed:     20,
 
 			BaseDamage:     core.BaseDamageConfigMagic(645.0, 753.0, 0.4286),
 			OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, core.TernaryFloat64(warlock.Talents.Pandemic, 1, 0))),

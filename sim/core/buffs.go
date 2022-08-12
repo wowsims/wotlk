@@ -221,10 +221,9 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		})
 	}
 	DPSPBonus := float64(raidBuffs.DemonicPact) / 10.
-	if  DPSPBonus > 0 {
+	if DPSPBonus > 0 {
 		MakePermanent(DemonicPactAura(character, DPSPBonus))
 	}
-
 
 	if raidBuffs.WrathOfAirTotem {
 		character.PseudoStats.CastSpeedMultiplier *= 1.05
@@ -1030,9 +1029,6 @@ func DemonicPactAura(character *Character, spellPowerBonus float64) *Aura {
 		Duration:  time.Second * 45,
 		Priority:  spellPowerBonus,
 		MaxStacks: math.MaxInt32,
-		OnReset: func(aura *Aura, sim *Simulation) {
-			aura.Activate(sim)
-		},
 		OnGain: func(aura *Aura, sim *Simulation) {
 			minimumSPBonus := 0.
 			if TotemOfWrathAura(character).IsActive() {
