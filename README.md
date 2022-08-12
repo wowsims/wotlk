@@ -64,6 +64,14 @@ $WOTLK_CMD make host
 ## Windows
 If you want to develop on Windows, we recommend setting up a Ubuntu virtual machine (VM) or running Docker using [this guide](https://docs.docker.com/desktop/windows/wsl/ "https://docs.docker.com/desktop/windows/wsl/") and then following the Ubuntu or Docker instructions, respectively.
 
+## Mac OS
+* You can use the general (non-Docker) setup instructions as above, with a few variations
+* OS X uses Homebrew instead of apt, so in order to install protobuf-compiler you’ll instead need to run `brew install protobuf-c` (note the package name is also a little different than in apt). You might need to first update or upgrade brew.
+* OS X Go setup is a little pickier about module install sequence; you'll have to run from specific locations:
+    * Run `go get -u -v google.golang.org/protobuf` in the /wotlk directory
+    * Run `go install google.golang.org/protobuf/cmd/protoc-gen-go@latest` in the Go directory
+* The provided install script for Node will not included a precompiled binary for OS X, but it’s smart enough to compile one. Be ready for your CPU to melt on running `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash`.
+
 # Commands
 We use a makefile for our build system. These commands will usually be all you need while developing for this project:
 ```sh
