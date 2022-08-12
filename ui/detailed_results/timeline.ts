@@ -1069,6 +1069,34 @@ const idToCategoryMap: Record<number, number> = {
 	[71]: DEFAULT_ACTION_CATEGORY + 0.1, // Defensive Stance
 	[2457]: DEFAULT_ACTION_CATEGORY + 0.1, // Battle Stance
 	[2458]: DEFAULT_ACTION_CATEGORY + 0.1, // Berserker Stance
+	
+	// Deathknight
+	[51425]: MELEE_ACTION_CATEGORY + 0.05, // Obliterate
+	[55268]: MELEE_ACTION_CATEGORY + 0.1, // Frost strike
+	[49930]: MELEE_ACTION_CATEGORY + 0.15, // Blood strike
+	[50842]: MELEE_ACTION_CATEGORY + 0.2, // Pestilence
+	[51411]: MELEE_ACTION_CATEGORY + 0.25, // Howling Blast
+	[49895]: MELEE_ACTION_CATEGORY + 0.25, // Death Coil
+	[49938]: MELEE_ACTION_CATEGORY + 0.25, // Death and Decay
+	[63560]: MELEE_ACTION_CATEGORY + 0.25, // Ghoul Frenzy
+	[50536]: MELEE_ACTION_CATEGORY + 0.25, // Unholy Blight
+	[57623]: MELEE_ACTION_CATEGORY + 0.25, // HoW
+	[59131]: MELEE_ACTION_CATEGORY + 0.3, // Icy touch
+	[49921]: MELEE_ACTION_CATEGORY + 0.3, // Plague strike
+	[51271]: MELEE_ACTION_CATEGORY + 0.35, // UA
+	[45529]: MELEE_ACTION_CATEGORY + 0.35, // BT
+	[47568]: MELEE_ACTION_CATEGORY + 0.35, // ERW
+	[49206]: MELEE_ACTION_CATEGORY + 0.35, // Summon Gargoyle
+	[46584]: MELEE_ACTION_CATEGORY + 0.35, // Raise Dead
+	[55095]: MELEE_ACTION_CATEGORY + 0.4, // Frost Fever
+	[55078]: MELEE_ACTION_CATEGORY + 0.4, // Blood Plague
+	[49655]: MELEE_ACTION_CATEGORY + 0.4, // Wandering Plague
+	[50401]: MELEE_ACTION_CATEGORY + 0.5, // Razor Frost
+	[51460]: MELEE_ACTION_CATEGORY + 0.5, // Necrosis
+	[50463]: MELEE_ACTION_CATEGORY + 0.5, // BCB
+	[50689]: DEFAULT_ACTION_CATEGORY + 0.1, // Blood Presence
+	[48263]: DEFAULT_ACTION_CATEGORY + 0.1, // Frost Presence
+	[48265]: DEFAULT_ACTION_CATEGORY + 0.1, // Unholy Presence
 
 	// Generic
 	[26992]: SPELL_ACTION_CATEGORY + 0.91, // Thorns
