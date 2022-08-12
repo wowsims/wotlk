@@ -149,7 +149,11 @@ func (rogue *Rogue) Initialize() {
 	}
 
 	rogue.finishingMoveEffectApplier = rogue.makeFinishingMoveEffectApplier()
-	rogue.SetPriorityList()
+	if rogue.Env.GetNumTargets() > 3 {
+		rogue.SetMultiTargetPriorityList()
+	} else {
+		rogue.SetPriorityList()
+	}
 	rogue.DelayDPSCooldownsForArmorDebuffs()
 }
 

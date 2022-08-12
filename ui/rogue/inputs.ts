@@ -82,5 +82,21 @@ export const RogueRotationConfig = {
 			label: 'Minimum CP (Finisher)',
 			labelTooltip: 'Primary finisher will not be cast with less than this many combo points',
 		}),
+		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, Frequency>({
+			fieldName: 'multiTargetSliceFrequency',
+			label: 'Multi-Target S&D',
+			labelTooltip: 'Frequency of Slice and Dice cast in multi-target scnearios.',
+			values:[
+				{ name: 'Never', value: Frequency.Never },
+				{ name: 'Maintain', value: Frequency.Maintain },
+			],
+		}),
+		/**
+		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
+			fieldName: 'minimumComboPointsMultiTargetSlice',
+			label: 'Minimum CP (Slice)',
+			labelTooltip: 'Minimum number of combo points spent if Slice and Dice has frequency: Once',
+		}),
+		*/
 	],
 };

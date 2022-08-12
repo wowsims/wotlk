@@ -42,6 +42,77 @@ func (rogue *Rogue) rotation(sim *core.Simulation) {
 		rogue.DoNothing()
 	}
 }
+func (rogue *Rogue) SetMultiTargetPriorityList() {
+	rogue.PriorityList = make([]RoguePriority, 0)
+	if rogue.Rotation.MultiTargetSliceFrequency != proto.Rogue_Rotation_Never {
+		sliceCP := int32(1)
+		if rogue.Rotation.MultiTargetSliceFrequency == proto.Rogue_Rotation_Once {
+			sliceCP = rogue.Rotation.MinimumComboPointsMultiTargetSlice
+		}
+		rogue.PriorityList = append(rogue.PriorityList, RoguePriority{
+			Aura:                 rogue.SliceAndDiceAura,
+			CastCount:            0,
+			Frequency:            rogue.Rotation.MultiTargetSliceFrequency,
+			GeneratedComboPoints: 0,
+			MinComboPoints:       sliceCP,
+			Spell: func(rogue *Rogue) *core.Spell {
+				return rogue.SliceAndDice[rogue.ComboPoints()]
+			},
+		})
+	}
+	mutilatePrio := RoguePriority{
+		Aura:                 nil,
+		CastCount:            0,
+		Frequency:            proto.Rogue_Rotation_Build,
+		GeneratedComboPoints: 2,
+		MinComboPoints:       0,
+		Spell: func(rogue *Rogue) *core.Spell {
+			return rogue.Mutilate
+		},
+	}
+	sinisterStrikePrio := RoguePriority{
+		Aura:                 nil,
+		CastCount:            0,
+		Frequency:            proto.Rogue_Rotation_Build,
+		GeneratedComboPoints: 1,
+		MinComboPoints:       0,
+		Spell: func(rogue *Rogue) *core.Spell {
+			return rogue.SinisterStrike
+		},
+	}
+	if rogue.Rotation.MultiTargetSliceFrequency != proto.Rogue_Rotation_Never {
+		// TODO : Figure out how to disable these in the 'Once' scenario
+		if rogue.Talents.Mutilate {
+			rogue.PriorityList = append(rogue.PriorityList, mutilatePrio)
+		} else {
+			rogue.PriorityList = append(rogue.PriorityList, sinisterStrikePrio)
+		}
+	}
+	rogue.PriorityList = append(rogue.PriorityList, RoguePriority{
+		Aura:                 nil,
+		CastCount:            0,
+		Frequency:            proto.Rogue_Rotation_Build,
+		GeneratedComboPoints: 0,
+		MinComboPoints:       0,
+		Spell: func(rogue *Rogue) *core.Spell {
+			return rogue.FanOfKnives
+		},
+	})
+	rogue.PriorityList = append(rogue.PriorityList, RoguePriority{
+		Aura:                 nil,
+		CastCount:            0,
+		Frequency:            proto.Rogue_Rotation_Build,
+		GeneratedComboPoints: 0,
+		MinComboPoints:       0,
+		Spell: func(rogue *Rogue) *core.Spell {
+			if rogue.disabledMCDs != nil {
+				rogue.EnableAllCooldowns(rogue.disabledMCDs)
+				rogue.disabledMCDs = nil
+			}
+			return nil
+		},
+	})
+}
 
 func (rogue *Rogue) SetPriorityList() {
 	rogue.PriorityList = make([]RoguePriority, 0)
