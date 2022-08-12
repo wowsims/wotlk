@@ -45,7 +45,6 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 	enh := &EnhancementShaman{
 		Shaman:       shaman.NewShaman(character, *enhOptions.Talents, totems, selfBuffs, true),
 		rotation:     rotation,
-		isWeaving:    false,
 		WeaveLatency: enhOptions.Rotation.WeaveLatency,
 	}
 
