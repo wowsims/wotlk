@@ -40,7 +40,6 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 				float64(mage.Talents.ImprovedScorch)*1*core.CritRatingPerCritChance,
 
 			DamageMultiplier: mage.spellDamageMultiplier *
-				(1 + .02*float64(mage.Talents.FirePower)) *
 				(1 + .02*float64(mage.Talents.PiercingIce)) *
 				(1 + core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostfire), .02, 0)) *
 				(1 + .04*float64(mage.Talents.TormentTheWeak)) *

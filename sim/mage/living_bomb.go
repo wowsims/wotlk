@@ -20,7 +20,7 @@ func (mage *Mage) registerLivingBombSpell() {
 		ProcMask:             core.ProcMaskSpellDamage,
 		BonusSpellCritRating: bonusCrit,
 
-		DamageMultiplier: mage.spellDamageMultiplier * (1 + 0.02*float64(mage.Talents.FirePower)),
+		DamageMultiplier: mage.spellDamageMultiplier,
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
 		BaseDamage: core.BaseDamageConfigMagicNoRoll(690, 1.5/3.5),

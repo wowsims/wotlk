@@ -43,7 +43,7 @@ func (mage *Mage) registerFireballSpell() {
 				core.TernaryFloat64(mage.MageTier.t9_4, 5*core.CritRatingPerCritChance, 0),
 
 			DamageMultiplier: mage.spellDamageMultiplier *
-				(1 + 0.02*float64(mage.Talents.FirePower+mage.Talents.SpellImpact)) *
+				(1 + 0.02*float64(mage.Talents.SpellImpact)) *
 				(1 + .04*float64(mage.Talents.TormentTheWeak)),
 
 			ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
