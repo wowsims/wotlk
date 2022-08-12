@@ -1029,9 +1029,6 @@ func DemonicPactAura(character *Character, spellPowerBonus float64) *Aura {
 		Duration:  time.Second * 45,
 		Priority:  spellPowerBonus,
 		MaxStacks: math.MaxInt32,
-		OnReset: func(aura *Aura, sim *Simulation) {
-			aura.Activate(sim)
-		},
 		OnGain: func(aura *Aura, sim *Simulation) {
 			minimumSPBonus := 0.
 			if TotemOfWrathAura(character).IsActive() {
