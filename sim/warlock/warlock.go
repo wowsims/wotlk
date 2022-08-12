@@ -65,6 +65,9 @@ type Warlock struct {
 	EmpoweredImpAura       *core.Aura
 
 	GlyphOfLifeTapAura *core.Aura
+
+	CorrShadowMult float64
+	CorrDmgMult    float64
 }
 
 func (warlock *Warlock) GetCharacter() *core.Character {

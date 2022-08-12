@@ -83,11 +83,11 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			core.MaxDuration(0, warlock.UnstableAffDot.RemainingDuration(sim)-hauntcasttime),
 			core.MaxDuration(0, warlock.CurseOfAgonyDot.RemainingDuration(sim)),
 		}
-		if sim.Log != nil {
-			warlock.Log(sim, "Haunt[%d]", allCDs[0].Seconds())
-			warlock.Log(sim, "UA[%d]", allCDs[1].Seconds())
-			warlock.Log(sim, "Haunt[%d]", time.Duration(float64(warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim).Seconds()-hauntcasttime.Seconds())-float64(warlock.DistanceFromTarget)/20))
-		}
+		//if sim.Log != nil {
+		//warlock.Log(sim, "Haunt[%d]", allCDs[0].Seconds())
+		//warlock.Log(sim, "UA[%d]", allCDs[1].Seconds())
+		//warlock.Log(sim, "Haunt[%d]", time.Duration(float64(warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim).Seconds()-hauntcasttime.Seconds())-float64(warlock.DistanceFromTarget)/20))
+		//}
 		nextCD := core.NeverExpires
 		for _, v := range allCDs {
 			if v < nextCD {
@@ -190,12 +190,16 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 				return
 			}
 			ManaSpendRate := warlock.ShadowBolt.BaseCost / float64(warlock.ApplyCastSpeed(time.Second*3).Seconds()) * 0.9 //this is just an estimated mana spent per second
-			DesiredManaAtExecute := float64(0.01)                                                                         //estimate for desired mana needed to do affliction execute
+			DesiredManaAtExecute := float64(0.015)                                                                        //estimate for desired mana needed to do affliction execute
 			TotalManaAtExecute := warlock.MaxMana() * DesiredManaAtExecute
 			timeUntilOom := float64(warlock.CurrentMana()-TotalManaAtExecute) / float64(ManaSpendRate)
-			timeUntilExecute := (sim.GetRemainingDurationPercent()*float64(sim.GetRemainingDuration().Seconds()) - 0.25/sim.GetRemainingDurationPercent()*(sim.GetRemainingDurationPercent()*float64(sim.GetRemainingDuration().Seconds())))
+			timeUntilExecute25 := (sim.GetRemainingDurationPercent()*float64(sim.GetRemainingDuration().Seconds()) - 0.25/sim.GetRemainingDurationPercent()*(sim.GetRemainingDurationPercent()*float64(sim.GetRemainingDuration().Seconds())))
 
-			if !warlock.CorruptionDot.IsActive() && (core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() || warlock.Talents.ImprovedShadowBolt == 0) && (!warlock.Haunt.CD.IsReady(sim) || allCDs[0] > 0) && allCDs[1] > 0 {
+			CurrShadowMult := warlock.PseudoStats.ShadowDamageDealtMultiplier // Track the current shadow damage multipler (essentially looking for DE)
+			CurrDmgMult := warlock.PseudoStats.DamageDealtMultiplier          // Track the current damage multipler (essentially looking for TotT)
+
+			if (sim.GetRemainingDurationPercent() < 0.85 && ((CurrShadowMult+CurrDmgMult)-(warlock.CorrDmgMult+warlock.CorrShadowMult)) > 0.1) || // If the original corruption multipliers are 10% less than this current time, then reapply corruption (also need to make sure this is some % into the fight)
+				(!warlock.CorruptionDot.IsActive() && (core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() || warlock.Talents.ImprovedShadowBolt == 0) && (!warlock.Haunt.CD.IsReady(sim) || allCDs[0] > 0) && allCDs[1] > 0) {
 				// Cast Corruption as soon as the 5% crit debuff is up
 				// Cast Corruption again when you get the execute buff (Death's Embrace)
 				spell = warlock.Corruption
@@ -205,20 +209,20 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			} else if warlock.Talents.Haunt && warlock.Haunt.CD.IsReady(sim) && allCDs[0] == 0 && sim.GetRemainingDuration() > warlock.HauntDebuffAura(warlock.CurrentTarget).Duration/2. {
 				// Keep Haunt up
 				spell = warlock.Haunt
-			} else if warlock.Talents.UnstableAffliction && (!warlock.Haunt.CD.IsReady(sim) || allCDs[0] > 0) && allCDs[1] == 0 && sim.GetRemainingDuration() > warlock.UnstableAffDot.Duration {
+			} else if warlock.Talents.UnstableAffliction && (!warlock.Haunt.CD.IsReady(sim) || allCDs[0] > 0) && allCDs[1] == 0 && sim.GetRemainingDuration() > warlock.UnstableAffDot.Duration/2. {
 				// Keep UA up
 				spell = warlock.UnstableAff
-			} else if sim.GetRemainingDuration() > time.Second*24 && allCDs[2] == 0 && (!warlock.Haunt.CD.IsReady(sim) || allCDs[0] > 0) && allCDs[1] > 0 && warlock.CorruptionDot.IsActive() {
+			} else if sim.GetRemainingDuration() > time.Second*12 && allCDs[2] == 0 && (!warlock.Haunt.CD.IsReady(sim) || allCDs[0] > 0) && allCDs[1] > 0 && warlock.CorruptionDot.IsActive() {
 				// Keep UA up
 				spell = warlock.CurseOfAgony
 			} else if warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ShadowBolt.CurCast.CastTime+core.GCDDefault ||
 				core.ShadowMasteryAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ShadowBolt.CurCast.CastTime && sim.GetRemainingDuration() > core.ShadowMasteryAura(warlock.CurrentTarget).Duration/2. {
 				// Shadow Embrace & Shadow Mastery refresh
 				spell = warlock.ShadowBolt
-			} else if sim.IsExecutePhase25() || timeUntilExecute < float64(warlock.ApplyCastSpeed(time.Second*3).Seconds()) {
+			} else if sim.IsExecutePhase25() || timeUntilExecute25 < float64(warlock.ApplyCastSpeed(time.Second*3).Seconds()) {
 				// Drain Soul execute phase
 				spell = warlock.channelCheck(sim, warlock.DrainSoulDot, 5)
-			} else if timeUntilOom < 0.5 && timeUntilExecute > 0.5 {
+			} else if timeUntilOom < 0.5 && timeUntilExecute25 > 0.5 {
 				// If you were gonna cast a filler but are low mana, get mana instead in order not to be OOM when an important spell is coming up
 				warlock.LifeTapOrDarkPact(sim)
 				return
@@ -365,6 +369,10 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// ------------------------------------------
 
 	if success := spell.Cast(sim, target); success {
+		if spell == warlock.Corruption {
+			warlock.CorrShadowMult = warlock.PseudoStats.ShadowDamageDealtMultiplier
+			warlock.CorrDmgMult = warlock.PseudoStats.DamageDealtMultiplier
+		}
 		return
 	}
 
