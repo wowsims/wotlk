@@ -35,14 +35,17 @@ type AdaptiveRotation struct {
 
 func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Simulation) {
 	target := sim.GetTargetUnit(0)
+	timeUntilSwing := enh.AutoAttacks.NextAttackAt() - sim.CurrentTime
 
-	if enh.isWeaving {
-		enh.isWeaving = false
-		if !enh.LightningBolt.Cast(sim, target) {
-			enh.DoNothing()
-		}
-		return
+	if sim.CurrentTime > enh.AutoAttacks.NextAttackAt() {
+		timeUntilSwing = enh.AutoAttacks.MH.SwingDuration
 	}
+
+	swingSpeed := core.MinDuration(enh.AutoAttacks.MainhandSwingSpeed(), enh.AutoAttacks.OffhandSwingSpeed())
+	swingSpeed = core.MaxDuration(swingSpeed, timeUntilSwing)
+	latency := time.Duration(enh.WeaveLatency) * time.Millisecond
+	swingSpeed -= latency
+	latency = core.MaxDuration(0, timeUntilSwing-swingSpeed)
 
 	if enh.Talents.Stormstrike {
 		if !enh.StormstrikeDebuffAura(target).IsActive() && enh.Stormstrike.IsReady(sim) {
@@ -79,41 +82,28 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 	}
 
 	if enh.MaelstromWeaponAura.GetStacks() >= 1 {
+		var spellToCast *core.Spell
+		castTime := time.Duration(0)
 
 		if enh.LavaburstWeave && enh.LavaBurst.IsReady(sim) {
-			lvbCastTime := enh.ApplyCastSpeed(enh.LavaBurst.DefaultCast.CastTime)
-			timeUntilSwing := enh.AutoAttacks.NextAttackAt() - sim.CurrentTime
-			if lvbCastTime < timeUntilSwing {
-				if !enh.LavaBurst.Cast(sim, target) {
-					enh.DoNothing()
-				}
-				return
-			}
+			castTime = enh.ApplyCastSpeed(enh.LavaBurst.DefaultCast.CastTime) + latency
+			spellToCast = enh.LavaBurst
 		}
 
-		lbCastTime := enh.LightningBolt.DefaultCast.CastTime - (time.Millisecond * time.Duration(500*enh.MaelstromWeaponAura.GetStacks()))
-		lbCastTime = enh.ApplyCastSpeed(lbCastTime)
-
-		timeUntilSwing := enh.AutoAttacks.NextAttackAt() - sim.CurrentTime
-		if sim.CurrentTime > enh.AutoAttacks.NextAttackAt() {
-			timeUntilSwing = enh.AutoAttacks.MH.SwingDuration
+		// If we can't fit a lava burst in try a LightningBolt
+		if castTime >= timeUntilSwing || spellToCast == nil {
+			castTime = enh.LightningBolt.DefaultCast.CastTime - (time.Millisecond * time.Duration(500*enh.MaelstromWeaponAura.GetStacks()))
+			castTime = enh.ApplyCastSpeed(castTime) + latency
+			spellToCast = enh.LightningBolt
 		}
 
-		swingSpeed := core.MinDuration(enh.AutoAttacks.MainhandSwingSpeed(), enh.AutoAttacks.OffhandSwingSpeed())
-		swingSpeed = core.MaxDuration(swingSpeed, timeUntilSwing)
-		latency := time.Duration(enh.WeaveLatency) * time.Millisecond
-		swingSpeed -= latency
-
-		if swingSpeed < timeUntilSwing {
-			latency = timeUntilSwing - swingSpeed
-			timeUntilSwing -= latency
-		}
-
-		if lbCastTime < timeUntilSwing {
+		if castTime < timeUntilSwing {
 			if latency > 0 {
-				enh.isWeaving = true
-				enh.WaitUntil(sim, sim.CurrentTime+latency)
-			} else if !enh.LightningBolt.Cast(sim, target) {
+				enh.HardcastWaitUntil(sim, sim.CurrentTime+latency, func(sim *core.Simulation, _ *core.Unit) {
+					spellToCast.Cast(sim, target)
+				})
+				enh.DoNothing()
+			} else if !spellToCast.Cast(sim, target) {
 				enh.WaitForMana(sim, enh.LightningBolt.CurCast.Cost)
 			}
 			return

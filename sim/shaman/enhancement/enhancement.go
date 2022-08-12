@@ -46,7 +46,7 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 		Shaman:       shaman.NewShaman(character, *enhOptions.Talents, totems, selfBuffs, true),
 		rotation:     rotation,
 		isWeaving:    false,
-		WeaveLatency: enhOptions.Options.WeaveLatency,
+		WeaveLatency: enhOptions.Rotation.WeaveLatency,
 	}
 
 	// Enable Auto Attacks for this spec

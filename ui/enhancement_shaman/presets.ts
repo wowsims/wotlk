@@ -54,7 +54,6 @@ export const DefaultOptions = EnhancementShamanOptions.create({
 	imbueMh: ShamanImbue.WindfuryWeapon,
 	imbueOh: ShamanImbue.FlametongueWeapon,
 	syncType: ShamanSyncType.SyncMainhandOffhandSwings,
-  weaveLatency: 0,
 });
 
 export const DefaultConsumes = Consumes.create({

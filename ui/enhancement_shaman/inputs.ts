@@ -81,10 +81,10 @@ export const EnhancementShamanRotationConfig = {
             labelTooltip: 'Not particularily useful for dual wield, mostly a 2h option',
             //enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getTalents().maelstromWeapon,
         }),
-        InputHelpers.makeSpecOptionsNumberInput<Spec.SpecEnhancementShaman>({
+        InputHelpers.makeRotationNumberInput<Spec.SpecEnhancementShaman>({
             fieldName: "weaveLatency",
             label: "Weaving Latency",
-            labelTooltip: "The amount of time to wait in miliseconds after an auto attack to begin casting a spell, only applies when Maelstrom Weapon has at least 1 stack."
+            labelTooltip: "The amount of time to wait in milliseconds after an auto attack to begin casting a spell, only applies when Maelstrom Weapon has at least 1 stack."
         }),
     ],
 };
