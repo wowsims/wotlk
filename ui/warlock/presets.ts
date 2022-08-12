@@ -178,6 +178,10 @@ export const DestroDebuffs = Debuffs.create({
   shadowMastery: true,
 });
 
+export const OtherDefaults = {
+	distanceFromTarget: 25,
+};
+
 export const SWP_BIS = {
 	name: 'Straight Outa SWP',
 	gear: EquipmentSpec.fromJsonString(`
