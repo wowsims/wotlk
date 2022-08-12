@@ -83,7 +83,7 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 		}
 	}
 
-	if enh.Talents.MaelstromWeapon > 0 && enh.MaelstromWeaponAura.GetStacks() >= 1 {
+	if enh.LightningboltWeave && enh.Talents.MaelstromWeapon > 0 && enh.MaelstromWeaponAura.GetStacks() >= enh.MaelstromweaponMinStack {
 		lbCastTime := enh.LightningBolt.DefaultCast.CastTime - (time.Millisecond * time.Duration(500*enh.MaelstromWeaponAura.GetStacks()))
 		lbCastTime = enh.ApplyCastSpeed(lbCastTime)
 		timeUntilSwing := enh.AutoAttacks.NextAttackAt() - sim.CurrentTime

@@ -73,13 +73,32 @@ export const SyncTypeInput = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecEnha
 });
 
 export const EnhancementShamanRotationConfig = {
-    inputs: 
+    inputs:
         [
         InputHelpers.makeRotationBooleanInput<Spec.SpecEnhancementShaman>({
             fieldName: 'lavaburstWeave',
             label: 'Enable Weaving Lava Burst',
             labelTooltip: 'Not particularily useful for dual wield, mostly a 2h option',
-            //enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getTalents().maelstromWeapon,
+            enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getTalents().maelstromWeapon > 0,
         }),
+        InputHelpers.makeRotationBooleanInput<Spec.SpecEnhancementShaman>({
+            fieldName: 'lightningboltWeave',
+            label: 'Enable Weaving Lightning Bolt',
+            labelTooltip: 'Will provide a DPS increase, but is harder to execute',
+            enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getTalents().maelstromWeapon > 0,
+        }),
+        InputHelpers.makeRotationEnumInput<Spec.SpecEnhancementShaman, number>({
+            fieldName: 'maelstromweaponMinStack',
+            label: 'Min number of MW for weaving',
+            labelTooltip: 'Minimum number of Maelstrom Weapon stacks to consider weaving',
+            values: [
+                { name: '1', value: 1 },
+                { name: '2', value: 2 },
+                { name: '3', value: 3 },
+                { name: '4', value: 4 },
+                { name: '5', value: 5 },
+            ],
+            enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getTalents().maelstromWeapon > 0,
+         }),
     ],
 };
