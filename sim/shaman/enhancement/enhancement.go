@@ -43,9 +43,12 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 	rotation = NewAdaptiveRotation(enhOptions.Talents)
 
 	enh := &EnhancementShaman{
-		Shaman:       shaman.NewShaman(character, *enhOptions.Talents, totems, selfBuffs, true),
-		rotation:     rotation,
-		WeaveLatency: enhOptions.Rotation.WeaveLatency,
+		Shaman:         shaman.NewShaman(character, *enhOptions.Talents, totems, selfBuffs, true),
+		rotation:       rotation,
+		WeaveLatency:   enhOptions.Rotation.WeaveLatency,
+		WeavingEnabled: enhOptions.Rotation.WeavingEnabled,
+		WeaveMinStacks: enhOptions.Rotation.WeaveMinStacks,
+		LavaburstWeave: enhOptions.Rotation.LavaburstWeave,
 	}
 
 	// Enable Auto Attacks for this spec
@@ -87,8 +90,6 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 		SpiritWolf2: enh.NewSpiritWolf(2),
 	}
 
-	enh.LavaburstWeave = enhOptions.Rotation.LavaburstWeave
-
 	return enh
 }
 
@@ -99,7 +100,10 @@ type EnhancementShaman struct {
 
 	scheduler common.GCDScheduler
 
-	WeaveLatency int32
+	LavaburstWeave bool // flag to enable lava burst weaving for enh
+	WeavingEnabled bool
+	WeaveLatency   int32
+	WeaveMinStacks int32
 }
 
 func (enh *EnhancementShaman) GetShaman() *shaman.Shaman {

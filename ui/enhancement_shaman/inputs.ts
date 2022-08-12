@@ -76,15 +76,33 @@ export const EnhancementShamanRotationConfig = {
     inputs: 
         [
         InputHelpers.makeRotationBooleanInput<Spec.SpecEnhancementShaman>({
-            fieldName: 'lavaburstWeave',
-            label: 'Enable Weaving Lava Burst',
-            labelTooltip: 'Not particularily useful for dual wield, mostly a 2h option',
-            //enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getTalents().maelstromWeapon,
+            fieldName: 'weavingEnabled',
+            label: 'Weaving',
+            labelTooltip: 'Allows casting Lightning Bolts inbetween auto attacks while having Maelstrom Weapon stacks',
         }),
         InputHelpers.makeRotationNumberInput<Spec.SpecEnhancementShaman>({
             fieldName: "weaveLatency",
             label: "Weaving Latency",
-            labelTooltip: "The amount of time to wait in milliseconds after an auto attack to begin casting a spell, only applies when Maelstrom Weapon has at least 1 stack."
+            labelTooltip: "The amount of time to wait in milliseconds after an auto attack to begin casting a spell, only applies when Maelstrom Weapon has at least 1 stack.",
+            showWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().weavingEnabled,
+        }),
+        InputHelpers.makeRotationEnumInput<Spec.SpecEnhancementShaman, number>({
+            fieldName: "weaveMinStacks",
+            label: "Minimum MW Stacks",
+            labelTooltip: "The minimum Maelstrom Weapon stacks required for weaving",
+            values: [
+                { name: '1', value: 1 },
+                { name: '2', value: 2 },
+                { name: '3', value: 3 },
+                { name: '4', value: 4 },
+            ],
+            showWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().weavingEnabled,
+        }),
+        InputHelpers.makeRotationBooleanInput<Spec.SpecEnhancementShaman>({
+            fieldName: 'lavaburstWeave',
+            label: 'Enable Weaving Lava Burst',
+            labelTooltip: 'Not particularily useful for dual wield, mostly a 2h option',
+            showWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().weavingEnabled,
         }),
     ],
 };

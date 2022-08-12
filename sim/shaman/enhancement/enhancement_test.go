@@ -22,6 +22,10 @@ func TestEnhancement(t *testing.T) {
 		GearSet: core.GearSetCombo{Label: "P1", GearSet: Phase1Gear},
 
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
+		OtherSpecOptions: []core.SpecOptionsCombo{
+			core.SpecOptionsCombo{Label: "NoWeaving", SpecOptions: PlayerOptionsNoWeaving},
+			core.SpecOptionsCombo{Label: "Latency200", SpecOptions: PlayerOptionsLatnecyWeaving},
+		},
 
 		RaidBuffs:   FullRaidBuffs,
 		PartyBuffs:  FullPartyBuffs,

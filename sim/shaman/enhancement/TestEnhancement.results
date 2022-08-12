@@ -806,6 +806,90 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-Settings-Orc-P1-Latency200-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 14355.4613902884
+  tps: 11549.3924703667
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Orc-P1-Latency200-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 5291.9115653448
+  tps: 4138.3132779471
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Orc-P1-Latency200-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 6350.7620089947
+  tps: 4572.5011449705
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Orc-P1-Latency200-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 9433.0128344338
+  tps: 7139.8751042247
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Orc-P1-Latency200-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 3582.279736499
+  tps: 2788.9541237346
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Orc-P1-Latency200-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 4772.9196486325
+  tps: 3516.8968803718
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Orc-P1-NoWeaving-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 14355.4613902884
+  tps: 11549.3924703667
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Orc-P1-NoWeaving-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 5291.9115653448
+  tps: 4138.3132779471
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Orc-P1-NoWeaving-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 6350.7620089947
+  tps: 4572.5011449705
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Orc-P1-NoWeaving-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 9433.0128344338
+  tps: 7139.8751042247
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Orc-P1-NoWeaving-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 3582.279736499
+  tps: 2788.9541237346
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Orc-P1-NoWeaving-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 4772.9196486325
+  tps: 3516.8968803718
+ }
+}
+dps_results: {
  key: "TestEnhancement-Settings-Troll-P1-Basic-FullBuffs-LongMultiTarget"
  value: {
   dps: 14497.2122426919
@@ -845,6 +929,90 @@ dps_results: {
  value: {
   dps: 5020.2934119767
   tps: 3797.6138741147
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Troll-P1-Latency200-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 14386.781300221
+  tps: 11498.4206048858
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Troll-P1-Latency200-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 5326.648828549
+  tps: 4171.2641702405
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Troll-P1-Latency200-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 6383.8089770017
+  tps: 4630.7587979449
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Troll-P1-Latency200-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 9455.4791483031
+  tps: 7190.127102622
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Troll-P1-Latency200-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 3639.1505999689
+  tps: 2833.3725550806
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Troll-P1-Latency200-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 4809.784892284
+  tps: 3578.6310761627
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Troll-P1-NoWeaving-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 14386.781300221
+  tps: 11498.4206048858
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Troll-P1-NoWeaving-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 5326.648828549
+  tps: 4171.2641702405
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Troll-P1-NoWeaving-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 6383.8089770017
+  tps: 4630.7587979449
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Troll-P1-NoWeaving-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 9455.4791483031
+  tps: 7190.127102622
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Troll-P1-NoWeaving-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 3639.1505999689
+  tps: 2833.3725550806
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Troll-P1-NoWeaving-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 4809.784892284
+  tps: 3578.6310761627
  }
 }
 dps_results: {

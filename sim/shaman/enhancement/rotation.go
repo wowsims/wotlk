@@ -56,13 +56,11 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 		}
 	}
 
-	if enh.Talents.MaelstromWeapon > 0 {
-		if enh.MaelstromWeaponAura.GetStacks() == 5 {
-			if !enh.LightningBolt.Cast(sim, target) {
-				enh.WaitForMana(sim, enh.LightningBolt.CurCast.Cost)
-			}
-			return
+	if enh.MaelstromWeaponAura.GetStacks() == 5 {
+		if !enh.LightningBolt.Cast(sim, target) {
+			enh.WaitForMana(sim, enh.LightningBolt.CurCast.Cost)
 		}
+		return
 	}
 
 	if enh.Talents.Stormstrike {
@@ -81,7 +79,7 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 		return
 	}
 
-	if enh.MaelstromWeaponAura.GetStacks() >= 1 {
+	if enh.MaelstromWeaponAura.GetStacks() >= enh.WeaveMinStacks && enh.WeavingEnabled {
 		var spellToCast *core.Spell
 		castTime := time.Duration(0)
 
@@ -90,7 +88,7 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 			spellToCast = enh.LavaBurst
 		}
 
-		// If we can't fit a lava burst in try a LightningBolt
+		// If we can't fit a Lava Burst in try a Lightning Bolt
 		if castTime >= timeUntilSwing || spellToCast == nil {
 			castTime = enh.LightningBolt.DefaultCast.CastTime - (time.Millisecond * time.Duration(500*enh.MaelstromWeaponAura.GetStacks()))
 			castTime = enh.ApplyCastSpeed(castTime) + latency
