@@ -153,18 +153,6 @@ func (rogue *Rogue) registerHungerForBlood() {
 			rogue.HungerForBloodAura.Activate(sim)
 		},
 	})
-
-	rogue.AddMajorCooldown(core.MajorCooldown{
-		Spell: rogue.HungerForBlood,
-		Type:  core.CooldownTypeDPS,
-		CanActivate: func(s *core.Simulation, c *core.Character) bool {
-			return rogue.CurrentEnergy() >= 15
-		},
-		ShouldActivate: func(s *core.Simulation, c *core.Character) bool {
-			return !rogue.HungerForBloodAura.IsActive()
-		},
-	})
-
 }
 
 func (rogue *Rogue) preyOnTheWeakMultiplier(target *core.Unit) float64 {

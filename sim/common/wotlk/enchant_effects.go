@@ -259,32 +259,6 @@ func init() {
 		w.BaseDamageMax += 15
 	})
 
-	//core.NewItemEffect(53343, func(agent core.Agent) {
-	//	character := agent.GetCharacter()
-	//	actionID := core.ActionID{SpellID: 6603}
-
-	//	spell := character.GetOrRegisterSpell(core.SpellConfig{
-	//		ActionID:    actionID,
-	//		SpellSchool: core.SpellSchoolPhysical,
-	//		Flags:       core.SpellFlagMeleeMetrics,
-
-	//		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-	//			ProcMask:         core.ProcMaskEmpty,
-	//			DamageMultiplier: 1,
-	//			ThreatMultiplier: 1,
-
-	//			BaseDamage:     core.BaseDamageConfigRoll(1654, 2020),
-	//			OutcomeApplier: character.OutcomeFuncMagicCrit(character.DefaultSpellCritMultiplier()),
-	//		}),
-	//	})
-	//
-	//	character.AddMajorCooldown(core.MajorCooldown{
-	//		Spell:    spell,
-	//		Priority: core.CooldownPriorityLow, // Use low prio so other actives get used first.
-	//		Type:     core.CooldownTypeDPS,
-	//	})
-	//})
-
 	core.NewItemEffect(54998, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		actionID := core.ActionID{SpellID: 54757}
@@ -363,7 +337,7 @@ func init() {
 		}
 
 		return character.RegisterSpell(core.SpellConfig{
-			ActionID:    core.ActionID{SpellID: 53343},
+			ActionID:    core.ActionID{SpellID: 50401},
 			SpellSchool: core.SpellSchoolFrost,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -390,7 +364,7 @@ func init() {
 			return
 		}
 
-		actionID := core.ActionID{SpellID: 53343}
+		actionID := core.ActionID{SpellID: 50401}
 		if spell := character.GetSpell(actionID); spell != nil {
 			// This function gets called twice when dual wielding this enchant, but we
 			// handle both in one call.
@@ -403,8 +377,8 @@ func init() {
 		mhRazoriceSpell := newRazoriceHitSpell(character, true)
 		ohRazoriceSpell := newRazoriceHitSpell(character, false)
 		character.GetOrRegisterAura(core.Aura{
-			Label:    "Rune of Razorice",
-			ActionID: core.ActionID{SpellID: 53343},
+			Label:    "Razor Frost",
+			ActionID: core.ActionID{SpellID: 50401},
 			Duration: core.NeverExpires,
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)

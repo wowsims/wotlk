@@ -88,6 +88,18 @@ func (rogue *Rogue) SetMultiTargetPriorityList() {
 			rogue.PriorityList = append(rogue.PriorityList, sinisterStrikePrio)
 		}
 	}
+	if rogue.Talents.HungerForBlood {
+		rogue.PriorityList = append(rogue.PriorityList, RoguePriority{
+			Aura:                 rogue.HungerForBloodAura,
+			CastCount:            0,
+			Frequency:            proto.Rogue_Rotation_Maintain,
+			GeneratedComboPoints: 0,
+			MinComboPoints:       0,
+			Spell: func(rogue *Rogue) *core.Spell {
+				return rogue.HungerForBlood
+			},
+		})
+	}
 	rogue.PriorityList = append(rogue.PriorityList, RoguePriority{
 		Aura:                 nil,
 		CastCount:            0,
@@ -139,6 +151,18 @@ func (rogue *Rogue) SetPriorityList() {
 			MinComboPoints:       exposeCP,
 			Spell: func(rogue *Rogue) *core.Spell {
 				return rogue.ExposeArmor[rogue.ComboPoints()]
+			},
+		})
+	}
+	if rogue.Talents.HungerForBlood {
+		rogue.PriorityList = append(rogue.PriorityList, RoguePriority{
+			Aura:                 rogue.HungerForBloodAura,
+			CastCount:            0,
+			Frequency:            proto.Rogue_Rotation_Maintain,
+			GeneratedComboPoints: 0,
+			MinComboPoints:       0,
+			Spell: func(rogue *Rogue) *core.Spell {
+				return rogue.HungerForBlood
 			},
 		})
 	}

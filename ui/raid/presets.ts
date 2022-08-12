@@ -1,4 +1,4 @@
-import { IndividualSimUI } from '../core/individual_sim_ui.js';
+import { IndividualSimUI, OtherDefaults } from '../core/individual_sim_ui.js';
 import { Raid as RaidProto } from '../core/proto/api.js';
 import { Party as PartyProto } from '../core/proto/api.js';
 import { Class } from '../core/proto/common.js';
@@ -84,6 +84,7 @@ export interface PresetSpecSettings<SpecType extends Spec> {
     defaultName: string,
     defaultFactionRaces: Record<Faction, Race>,
     defaultGear: Record<Faction, Record<number, EquipmentSpec>>,
+		otherDefaults?: OtherDefaults,
 
     tooltip: string,
     iconUrl: string,
@@ -149,17 +150,9 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: FeralDruidPresets.P1_PRESET.gear,
-				2: FeralDruidPresets.P2_PRESET.gear,
-				3: FeralDruidPresets.P3_PRESET.gear,
-				4: FeralDruidPresets.P4_PRESET.gear,
-				5: FeralDruidPresets.P5_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: FeralDruidPresets.P1_PRESET.gear,
-				2: FeralDruidPresets.P2_PRESET.gear,
-				3: FeralDruidPresets.P3_PRESET.gear,
-				4: FeralDruidPresets.P4_PRESET.gear,
-				5: FeralDruidPresets.P5_PRESET.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecFeralDruid],
@@ -181,17 +174,9 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: FeralTankDruidPresets.P1_PRESET.gear,
-				2: FeralTankDruidPresets.P2_PRESET.gear,
-				3: FeralTankDruidPresets.P3_PRESET.gear,
-				4: FeralTankDruidPresets.P4_PRESET.gear,
-				5: FeralTankDruidPresets.P5_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: FeralTankDruidPresets.P1_PRESET.gear,
-				2: FeralTankDruidPresets.P2_PRESET.gear,
-				3: FeralTankDruidPresets.P3_PRESET.gear,
-				4: FeralTankDruidPresets.P4_PRESET.gear,
-				5: FeralTankDruidPresets.P5_PRESET.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecFeralTankDruid],
@@ -201,7 +186,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		spec: Spec.SpecHunter,
 		rotation: HunterPresets.DefaultRotation,
 		talents: HunterPresets.BeastMasteryTalents.data,
-		specOptions: HunterPresets.DefaultOptions,
+		specOptions: HunterPresets.BMDefaultOptions,
 		consumes: HunterPresets.DefaultConsumes,
 		defaultName: 'BM Hunter',
 		defaultFactionRaces: {
@@ -220,6 +205,30 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		},
 		tooltip: 'BM Hunter',
 		iconUrl: talentTreeIcons[Class.ClassHunter][0],
+	},
+	{
+		spec: Spec.SpecHunter,
+		rotation: HunterPresets.DefaultRotation,
+		talents: HunterPresets.MarksmanTalents.data,
+		specOptions: HunterPresets.DefaultOptions,
+		consumes: HunterPresets.DefaultConsumes,
+		defaultName: 'BM Hunter',
+		defaultFactionRaces: {
+			[Faction.Unknown]: Race.RaceUnknown,
+			[Faction.Alliance]: Race.RaceNightElf,
+			[Faction.Horde]: Race.RaceOrc,
+		},
+		defaultGear: {
+			[Faction.Unknown]: {},
+			[Faction.Alliance]: {
+				1: HunterPresets.P1_PRESET.gear,
+			},
+			[Faction.Horde]: {
+				1: HunterPresets.P1_PRESET.gear,
+			},
+		},
+		tooltip: 'MM Hunter',
+		iconUrl: talentTreeIcons[Class.ClassHunter][1],
 	},
 	{
 		spec: Spec.SpecHunter,
@@ -332,10 +341,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: RoguePresets.PRERAID_PRESET.gear,
+				1: RoguePresets.P1_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				1: RoguePresets.PRERAID_PRESET.gear,
+				1: RoguePresets.P1_PRESET.gear,
 			},
 		},
 		tooltip: 'Combat Rogue',
@@ -452,12 +461,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: WarriorPresets.P1_PRERAID_ARMS_PRESET.gear,
-				2: WarriorPresets.P1_ARMS_PRESET.gear,
+				1: WarriorPresets.P1_ARMS_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				1: WarriorPresets.P1_PRERAID_ARMS_PRESET.gear,
-				2: WarriorPresets.P1_ARMS_PRESET.gear,
+				1: WarriorPresets.P1_ARMS_PRESET.gear,
 			},
 		},
 		tooltip: 'Arms Warrior',
@@ -478,12 +485,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: WarriorPresets.P1_PRERAID_FURY_PRESET.gear,
-				2: WarriorPresets.P1_FURY_PRESET.gear,
+				1: WarriorPresets.P1_FURY_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				1: WarriorPresets.P1_PRERAID_FURY_PRESET.gear,
-				2: WarriorPresets.P1_FURY_PRESET.gear,
+				1: WarriorPresets.P1_FURY_PRESET.gear,
 			},
 		},
 		tooltip: 'Fury Warrior',
@@ -505,17 +510,9 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: ProtectionWarriorPresets.P1_BALANCED_PRESET.gear,
-				2: ProtectionWarriorPresets.P2_BALANCED_PRESET.gear,
-				3: ProtectionWarriorPresets.P3_BALANCED_PRESET.gear,
-				4: ProtectionWarriorPresets.P4_BALANCED_PRESET.gear,
-				5: ProtectionWarriorPresets.P5_BALANCED_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: ProtectionWarriorPresets.P1_BALANCED_PRESET.gear,
-				2: ProtectionWarriorPresets.P2_BALANCED_PRESET.gear,
-				3: ProtectionWarriorPresets.P3_BALANCED_PRESET.gear,
-				4: ProtectionWarriorPresets.P4_BALANCED_PRESET.gear,
-				5: ProtectionWarriorPresets.P5_BALANCED_PRESET.gear,
 			},
 		},
 		tooltip: 'Protection Warrior',
@@ -569,17 +566,9 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: ProtectionPaladinPresets.P1_PRESET.gear,
-				2: ProtectionPaladinPresets.P2_PRESET.gear,
-				3: ProtectionPaladinPresets.P3_PRESET.gear,
-				4: ProtectionPaladinPresets.P4_PRESET.gear,
-				5: ProtectionPaladinPresets.P5_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: ProtectionPaladinPresets.P1_PRESET.gear,
-				2: ProtectionPaladinPresets.P2_PRESET.gear,
-				3: ProtectionPaladinPresets.P3_PRESET.gear,
-				4: ProtectionPaladinPresets.P4_PRESET.gear,
-				5: ProtectionPaladinPresets.P5_PRESET.gear,
 			},
 		},
 		tooltip: 'Protection Paladin',
@@ -614,6 +603,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 					5: WarlockPresets.P5_DESTRO.gear,
 				},
 			},
+			otherDefaults: WarlockPresets.OtherDefaults,
 			tooltip: 'Destruction Warlock: defaults to casting Curse of Doom.',
 			iconUrl: talentTreeIcons[Class.ClassWarlock][2],
 		},*/
@@ -646,6 +636,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 // 				5: WarlockPresets.P5_DESTRO.gear,
 			},
 		},
+		otherDefaults: WarlockPresets.OtherDefaults,
 		tooltip: 'Affliction Warlock: by default casts CoE with Malediction',
 		iconUrl: talentTreeIcons[Class.ClassWarlock][0],
 	},
@@ -678,6 +669,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 					5: WarlockPresets.P5_DESTRO.gear,
 				},
 			},
+			otherDefaults: WarlockPresets.OtherDefaults,
 			tooltip: 'Demonology Warlock',
 			iconUrl: talentTreeIcons[Class.ClassWarlock][1],
 		},*/

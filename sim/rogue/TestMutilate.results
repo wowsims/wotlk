@@ -260,6 +260,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestMutilate-AllItems-Gladiator'sVestments"
+ value: {
+  dps: 2130.2301232905
+  tps: 1512.4633875362
+ }
+}
+dps_results: {
  key: "TestMutilate-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
   dps: 1554.6531433065

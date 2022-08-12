@@ -531,6 +531,9 @@ func (warlock *Warlock) setupDemonicPact() {
 		},
 		OnInit: func(aura *core.Aura, sim *core.Simulation) {
 			demonicPactAura = core.DemonicPactAura(warlock.GetCharacter(), 0)
+			demonicPactAura.OnReset = func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Outcome.Matches(core.OutcomeCrit) && icd.IsReady(sim) {
@@ -543,8 +546,8 @@ func (warlock *Warlock) setupDemonicPact() {
 						demonicPactAura.Activate(sim)
 					}
 				} else {
-					demonicPactAura.Activate(sim)
 					demonicPactAura.Priority = newSPBonus
+					demonicPactAura.Activate(sim)
 				}
 			}
 		},
