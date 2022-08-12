@@ -63,7 +63,7 @@ var PlayerOptionsNoWeaving = &proto.Player_EnhancementShaman{
 	},
 }
 
-var PlayerOptionsLatnecyWeaving = &proto.Player_EnhancementShaman{
+var PlayerOptionsLatencyWeaving = &proto.Player_EnhancementShaman{
 	EnhancementShaman: &proto.EnhancementShaman{
 		Talents:  StandardTalents,
 		Options:  enhShamOptions,
