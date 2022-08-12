@@ -7,6 +7,20 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+var ItemSetGladiatorsVestments = core.NewItemSet(core.ItemSet{
+	Name: "Gladiator's Vestments",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.Resilience, 100)
+			agent.GetCharacter().AddStat(stats.AttackPower, 50)
+		},
+		4: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.AttackPower, 150)
+			// 10 maximum energy added in rogue.go
+		},
+	},
+})
+
 var ItemSetVanCleefs = core.NewItemSet(core.ItemSet{
 	Name: "VanCleef's Battlegear",
 	Bonuses: map[int32]core.ApplyEffect{

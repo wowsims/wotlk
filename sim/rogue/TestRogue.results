@@ -260,6 +260,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestRogue-AllItems-Gladiator'sVestments"
+ value: {
+  dps: 3294.0615079899
+  tps: 2338.7836706728
+ }
+}
+dps_results: {
  key: "TestRogue-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
   dps: 2329.8062961371
