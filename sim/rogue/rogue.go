@@ -30,8 +30,6 @@ const (
 	SpellFlagFinisher = core.SpellFlagAgentReserved3
 )
 
-type Plan int
-
 type Rogue struct {
 	core.Character
 
@@ -39,15 +37,12 @@ type Rogue struct {
 	Options  proto.Rogue_Options
 	Rotation proto.Rogue_Rotation
 
+	PriorityList    []RoguePriority
+	CurrentPriority *RoguePriority
+
 	sliceAndDiceDurations [6]time.Duration
 	exposeArmorDurations  [6]time.Duration
 	disabledMCDs          []*core.MajorCooldown
-
-	// Assigned based on spec and rotation options
-	plan                     Plan
-	Builder                  *core.Spell
-	BuilderComboPoints       float64
-	PredictedEnergyPerSecond float64
 
 	Backstab         *core.Spell
 	DeadlyPoison     *core.Spell
@@ -134,8 +129,6 @@ func (rogue *Rogue) Initialize() {
 
 	rogue.CastModifier = rogue.makeCastModifier()
 
-	rogue.SetupRotation()
-
 	rogue.registerBackstabSpell()
 	rogue.registerDeadlyPoisonSpell()
 	rogue.registerEviscerate()
@@ -151,33 +144,12 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerThistleTeaCD()
 	rogue.registerTricksOfTheTradeSpell()
 
-	rogue.Rotation.UseRupture = true
-	rogue.Rotation.UseEnvenom = false
-	switch rogue.Rotation.Builder {
-	case proto.Rogue_Rotation_SinisterStrike:
-		rogue.Builder = rogue.SinisterStrike
-		rogue.BuilderComboPoints = 1.0
-	case proto.Rogue_Rotation_Backstab:
-		rogue.Builder = rogue.Backstab
-		rogue.BuilderComboPoints = 1.0
-	case proto.Rogue_Rotation_Hemorrhage:
-		rogue.Builder = rogue.Hemorrhage
-		rogue.BuilderComboPoints = 1.0
-	case proto.Rogue_Rotation_Mutilate:
-		rogue.Builder = rogue.Mutilate
-		rogue.BuilderComboPoints = 2.0
-		rogue.Rotation.UseRupture = false
-		rogue.Rotation.UseEnvenom = true
-	case proto.Rogue_Rotation_Auto:
-		rogue.Builder = rogue.SinisterStrike
-		rogue.BuilderComboPoints = 1.0
-	}
-	if rogue.Rotation.UseEnvenom {
+	if rogue.Talents.Mutilate {
 		rogue.registerEnvenom()
 	}
 
 	rogue.finishingMoveEffectApplier = rogue.makeFinishingMoveEffectApplier()
-	rogue.PredictedEnergyPerSecond = (core.EnergyPerTick * rogue.EnergyTickMultiplier) / core.EnergyTickDuration.Seconds()
+	rogue.SetPriorityList()
 	rogue.DelayDPSCooldownsForArmorDebuffs()
 }
 
@@ -192,7 +164,6 @@ func (rogue *Rogue) GetExpectedEnergyPerSecond() float64 {
 
 func (rogue *Rogue) ApplyEnergyTickMultiplier(multiplier float64) {
 	rogue.EnergyTickMultiplier *= multiplier
-	rogue.PredictedEnergyPerSecond = rogue.GetExpectedEnergyPerSecond()
 }
 
 func (rogue *Rogue) Reset(sim *core.Simulation) {
@@ -212,39 +183,6 @@ func (rogue *Rogue) MeleeCritMultiplier(isMH bool, applyLethality bool) float64 
 func (rogue *Rogue) SpellCritMultiplier() float64 {
 	primaryModifier := rogue.preyOnTheWeakMultiplier(rogue.CurrentTarget)
 	return rogue.Character.SpellCritMultiplier(primaryModifier, 0)
-}
-
-func (rogue *Rogue) SetupRotation() {
-	daggerMH := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger
-	if rogue.Rotation.Builder == proto.Rogue_Rotation_UnknownBuilder {
-		rogue.Rotation.Builder = proto.Rogue_Rotation_Auto
-	}
-	if rogue.Rotation.Builder == proto.Rogue_Rotation_Backstab && !daggerMH {
-		rogue.Rotation.Builder = proto.Rogue_Rotation_Auto
-	}
-	if rogue.Rotation.Builder == proto.Rogue_Rotation_Hemorrhage && !rogue.Talents.Hemorrhage {
-		rogue.Rotation.Builder = proto.Rogue_Rotation_Auto
-	}
-	if rogue.Rotation.Builder == proto.Rogue_Rotation_Mutilate && !rogue.Talents.Mutilate {
-		rogue.Rotation.Builder = proto.Rogue_Rotation_Auto
-	}
-	if rogue.Rotation.Builder == proto.Rogue_Rotation_Auto {
-		if rogue.Talents.Hemorrhage {
-			rogue.Rotation.Builder = proto.Rogue_Rotation_Hemorrhage
-		}
-		if rogue.Talents.Mutilate {
-			rogue.Rotation.Builder = proto.Rogue_Rotation_Mutilate
-		}
-		if rogue.Talents.SlaughterFromTheShadows > 1 && daggerMH {
-			rogue.Rotation.Builder = proto.Rogue_Rotation_Backstab
-		}
-	}
-	if rogue.Rotation.Filler == proto.Rogue_Rotation_UnknownFiller {
-		rogue.Rotation.Filler = proto.Rogue_Rotation_NoFiller
-	}
-	if rogue.Options.OhImbue != proto.Rogue_Options_DeadlyPoison {
-		rogue.Rotation.UseShiv = false
-	}
 }
 
 func NewRogue(character core.Character, options proto.Player) *Rogue {
