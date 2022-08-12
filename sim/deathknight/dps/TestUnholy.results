@@ -234,7 +234,7 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-FaithinFelsteel"
  value: {
-  dps: 5952.8055990359
+  dps: 5952.8055990358
   tps: 4302.4135750197
  }
 }

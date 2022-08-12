@@ -642,7 +642,7 @@ dps_results: {
  key: "TestFeralTank-Settings-Tauren-P1-Default-FullBuffs-ShortSingleTarget"
  value: {
   dps: 808.9168249393
-  tps: 1129.6569591294
+  tps: 1129.6569591295
  }
 }
 dps_results: {
