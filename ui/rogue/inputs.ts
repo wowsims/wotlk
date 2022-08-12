@@ -62,7 +62,7 @@ export const RogueRotationConfig = {
 		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, AssassinationPriority>({
 			fieldName: 'assassinationFinisherPriority',
 			label: 'Finisher Priority (Assassination)',
-			labelTooltip: 'Priority of Assassination finisher usage',
+			labelTooltip: 'Priority of Assassination finisher usage.',
 			values:[
 				{ name: 'Envenom > Rupture', value: AssassinationPriority.EnvenomRupture },
 				{ name: 'Rupture > Envenom', value: AssassinationPriority.RuptureEnvenom },
@@ -71,7 +71,7 @@ export const RogueRotationConfig = {
 		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, AssassinationPriority>({
 			fieldName: 'combatFinisherPriority',
 			label: 'Finisher Priority (Combat)',
-			labelTooltip: 'Priority of Combat finisher usage',
+			labelTooltip: 'Priority of Combat finisher usage.',
 			values:[
 				{ name: 'Rupture > Eviscerate', value: CombatPriority.RuptureEviscerate },
 				{ name: 'Eviscerate > Rupture', value: CombatPriority.EviscerateRupture },
@@ -80,7 +80,12 @@ export const RogueRotationConfig = {
 		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
 			fieldName: 'minimumComboPointsPrimaryFinisher',
 			label: 'Minimum CP (Finisher)',
-			labelTooltip: 'Primary finisher will not be cast with less than this many combo points',
+			labelTooltip: 'Primary finisher will not be cast with less than this many combo points.',
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
+			fieldName: 'minimumComboPointsSecondaryFinisher',
+			label: 'Minimum CP (Filler)',
+			labelTooltip: 'Secondary finisher/filler will not be cast with less than this many combo points.\nSet the value to > 5 to prevent fillers.',
 		}),
 		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, Frequency>({
 			fieldName: 'multiTargetSliceFrequency',
