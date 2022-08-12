@@ -201,9 +201,13 @@ var PlayerOptionsHemo = &proto.Player_Rogue{
 }
 
 var basicRotation = &proto.Rogue_Rotation{
-	Builder:                  proto.Rogue_Rotation_Auto,
-	MaintainExposeArmor:      false,
-	MaintainTricksOfTheTrade: true,
+	ExposeArmorFrequency:                proto.Rogue_Rotation_Never,
+	TricksOfTheTradeFrequency:           proto.Rogue_Rotation_Maintain,
+	AssassinationFinisherPriority:       proto.Rogue_Rotation_EnvenomRupture,
+	CombatFinisherPriority:              proto.Rogue_Rotation_RuptureEviscerate,
+	MinimumComboPointsExposeArmor:       4,
+	MinimumComboPointsPrimaryFinisher:   3,
+	MinimumComboPointsSecondaryFinisher: 2,
 }
 
 var basicOptions = &proto.Rogue_Options{

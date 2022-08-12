@@ -4,13 +4,13 @@ import { EquipmentSpec } from '../core/proto/common.js';
 import { Flask } from '../core/proto/common.js';
 import { Food } from '../core/proto/common.js';
 import { Glyphs } from '../core/proto/common.js';
+import { PetFood } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
-import { ferocityDefault } from '../core/talents/hunter_pet.js';
+import { ferocityDefault, ferocityBMDefault } from '../core/talents/hunter_pet.js';
 
 import {
 	Hunter_Rotation as HunterRotation,
-	//Hunter_Rotation_WeaveType as WeaveType,
 	Hunter_Rotation_RotationType as RotationType,
 	Hunter_Rotation_StingType as StingType,
 	Hunter_Rotation_SpellOption as SpellOption,
@@ -104,10 +104,20 @@ export const DefaultOptions = HunterOptions.create({
 	sniperTrainingUptime: 0.8,
 });
 
+export const BMDefaultOptions = HunterOptions.create({
+	ammo: Ammo.SaroniteRazorheads,
+	useHuntersMark: true,
+	petType: PetType.Wolf,
+	petTalents: ferocityBMDefault,
+	petUptime: 1,
+	sniperTrainingUptime: 0.8,
+});
+
 export const DefaultConsumes = Consumes.create({
 	defaultPotion: Potions.PotionOfSpeed,
 	flask: Flask.FlaskOfEndlessRage,
 	food: Food.FoodFishFeast,
+	petFood: PetFood.PetFoodSpicedMammothTreats,
 });
 
 export const PRERAID_PRESET = {

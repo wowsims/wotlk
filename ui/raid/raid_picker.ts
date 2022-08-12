@@ -11,6 +11,7 @@ import { Encounter as EncounterProto } from '../core/proto/common.js';
 import { Raid as RaidProto } from '../core/proto/api.js';
 import { Party as PartyProto } from '../core/proto/api.js';
 import { Class } from '../core/proto/common.js';
+import { Profession } from '../core/proto/common.js';
 import { Race } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { Faction } from '../core/proto/common.js';
@@ -623,10 +624,11 @@ class NewPlayerPicker extends Component {
 			labelTooltip: 'Newly-created players will start with approximate BIS gear from this phase.',
 			values: [
 				{ name: '1', value: 1 },
-				{ name: '2', value: 2 },
-				{ name: '3', value: 3 },
-				{ name: '4', value: 4 },
-				{ name: '5', value: 5 },
+				// Presets aren't filled for most roles so disable these options for now.
+				//{ name: '2', value: 2 },
+				//{ name: '3', value: 3 },
+				//{ name: '4', value: 4 },
+				//{ name: '5', value: 5 },
 			],
 			changedEvent: (picker: NewPlayerPicker) => this.raidPicker.raid.sim.phaseChangeEmitter,
 			getValue: (picker: NewPlayerPicker) => this.raidPicker.raid.sim.getPhase(),
@@ -677,6 +679,7 @@ class NewPlayerPicker extends Component {
 
 
 						const newPlayer = new Player(matchingPreset.spec, this.raidPicker.raid.sim);
+						newPlayer.applySharedDefaults(eventID);
 						newPlayer.setRace(eventID, matchingPreset.defaultFactionRaces[this.raidPicker.getCurrentFaction()]);
 						newPlayer.setRotation(eventID, matchingPreset.rotation);
 						newPlayer.setTalentsString(eventID, matchingPreset.talents.talentsString);
@@ -684,7 +687,9 @@ class NewPlayerPicker extends Component {
 						newPlayer.setSpecOptions(eventID, matchingPreset.specOptions);
 						newPlayer.setConsumes(eventID, matchingPreset.consumes);
 						newPlayer.setName(eventID, matchingPreset.defaultName);
-						newPlayer.applySharedDefaults(eventID);
+						newPlayer.setProfession1(eventID, matchingPreset.otherDefaults?.profession1 || Profession.Engineering);
+						newPlayer.setProfession2(eventID, matchingPreset.otherDefaults?.profession2 || Profession.Jewelcrafting);
+						newPlayer.setDistanceFromTarget(eventID, matchingPreset.otherDefaults?.distanceFromTarget || 0);
 
 						// Need to wait because the gear might not be loaded yet.
 						this.raidPicker.raid.sim.waitForInit().then(() => {
