@@ -78,7 +78,7 @@ export const EnhancementShamanRotationConfig = {
         InputHelpers.makeRotationBooleanInput<Spec.SpecEnhancementShaman>({
             fieldName: 'weavingEnabled',
             label: 'Weaving',
-            labelTooltip: 'Allows casting Lightning Bolts inbetween auto attacks while having Maelstrom Weapon stacks',
+            labelTooltip: 'Allows casting in between auto attacks while having Maelstrom Weapon stacks',
         }),
         InputHelpers.makeRotationNumberInput<Spec.SpecEnhancementShaman>({
             fieldName: "weaveLatency",
