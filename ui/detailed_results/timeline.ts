@@ -983,7 +983,23 @@ const idToCategoryMap: Record<number, number> = {
 	[24248]: MELEE_ACTION_CATEGORY + 0.4, // Ferocious Bite
 
 	// Hunter
-	[27014]: 0.1, // Raptor Strike
+	[48996]: 0.1, // Raptor Strike
+	[53217]: 0.6, // Wild Quiver
+	[53209]: MELEE_ACTION_CATEGORY + 0.10, // Chimera Shot
+	[53353]: MELEE_ACTION_CATEGORY + 0.11, // Chimera Shot Serpent
+	[60053]: MELEE_ACTION_CATEGORY + 0.10, // Explosive Shot
+	[49050]: MELEE_ACTION_CATEGORY + 0.20, // Aimed Shot
+	[49048]: MELEE_ACTION_CATEGORY + 0.21, // Multi Shot
+	[49045]: MELEE_ACTION_CATEGORY + 0.22, // Arcane Shot
+	[49052]: MELEE_ACTION_CATEGORY + 0.27, // Steady Shot
+	[61006]: MELEE_ACTION_CATEGORY + 0.28, // Kill Shot
+	[34490]: MELEE_ACTION_CATEGORY + 0.29, // Silencing Shot
+	[49001]: MELEE_ACTION_CATEGORY + 0.30, // Serpent Sting
+	[3043]:  MELEE_ACTION_CATEGORY + 0.30, // Scorpid Sting
+	[53238]: MELEE_ACTION_CATEGORY + 0.31, // Piercing Shots
+	[63672]: MELEE_ACTION_CATEGORY + 0.32, // Black Arrow
+	[49067]: MELEE_ACTION_CATEGORY + 0.33, // Explosive Trap
+	[58434]: MELEE_ACTION_CATEGORY + 0.34, // Volley
 
 	// Paladin
 	[27156]: 0.1, // Seal of Righteousness Proc
@@ -993,8 +1009,16 @@ const idToCategoryMap: Record<number, number> = {
 	// Rogue
 	[6774]: MELEE_ACTION_CATEGORY + 0.1, // Slice and Dice
 	[26866]: MELEE_ACTION_CATEGORY + 0.2, // Expose Armor
-	[26865]: MELEE_ACTION_CATEGORY + 0.3, // Eviscerate
-	[26867]: MELEE_ACTION_CATEGORY + 0.3, // Rupture
+	[48672]: MELEE_ACTION_CATEGORY + 0.3, // Rupture
+	[57993]: MELEE_ACTION_CATEGORY + 0.3, // Envenom
+	[48668]: MELEE_ACTION_CATEGORY + 0.4, // Eviscerate
+	[48666]: MELEE_ACTION_CATEGORY + 0.5, // Mutilate
+	[48665]: MELEE_ACTION_CATEGORY + 0.6, // Mutilate (MH)
+	[48664]: MELEE_ACTION_CATEGORY + 0.7, // Mutilate (OH)
+	[48638]: MELEE_ACTION_CATEGORY + 0.5, // Sinister Strike
+	[51723]: MELEE_ACTION_CATEGORY + 0.8, // Fan of Knives
+	[57973]: SPELL_ACTION_CATEGORY + 0.1, // Deadly Poison
+	[57968]: SPELL_ACTION_CATEGORY + 0.2, // Instant Poison
 
 	// Shaman
 	[17364]: MELEE_ACTION_CATEGORY + 0.1, // Stormstrike

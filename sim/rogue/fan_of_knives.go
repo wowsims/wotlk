@@ -37,24 +37,17 @@ func (rogue *Rogue) makeFanOfKnivesWeaponHitEffect(isMH bool) core.SpellEffect {
 }
 
 func (rogue *Rogue) registerFanOfKnives() {
-	mhWeaponHitSpell := rogue.RegisterSpell(core.SpellConfig{
-		ActionID:     FanOfKnivesActionID.WithTag(1),
-		SpellSchool:  core.SpellSchoolPhysical,
-		Flags:        core.SpellFlagMeleeMetrics,
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(rogue.makeFanOfKnivesWeaponHitEffect(true)),
-	})
-	ohWeaponHitSpell := rogue.RegisterSpell(core.SpellConfig{
-		ActionID:     FanOfKnivesActionID.WithTag(2),
-		SpellSchool:  core.SpellSchoolPhysical,
-		Flags:        core.SpellFlagMeleeMetrics,
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(rogue.makeFanOfKnivesWeaponHitEffect(false)),
-	})
 	energyCost := 50.0
-
+	mhHit := rogue.makeFanOfKnivesWeaponHitEffect(true)
+	ohHit := rogue.makeFanOfKnivesWeaponHitEffect(false)
+	applyEffects := func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
+		core.ApplyEffectFuncAOEDamageCapped(rogue.Env, mhHit)(sim, unit, spell)
+		core.ApplyEffectFuncAOEDamageCapped(rogue.Env, ohHit)(sim, unit, spell)
+	}
 	rogue.FanOfKnives = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:     FanOfKnivesActionID,
 		SpellSchool:  core.SpellSchoolPhysical,
-		Flags:        core.SpellFlagNoMetrics | SpellFlagBuilder,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.Energy,
 		BaseCost:     energyCost,
 		Cast: core.CastConfig{
@@ -65,14 +58,6 @@ func (rogue *Rogue) registerFanOfKnives() {
 			ModifyCast:  rogue.CastModifier,
 			IgnoreHaste: true,
 		},
-		ApplyEffects: core.ApplyEffectFuncAOEDamage(rogue.Env, core.SpellEffect{
-			ProcMask:         core.ProcMaskEmpty,
-			ThreatMultiplier: 1,
-			OutcomeApplier:   rogue.OutcomeFuncAlwaysHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				mhWeaponHitSpell.Cast(sim, spellEffect.Target)
-				ohWeaponHitSpell.Cast(sim, spellEffect.Target)
-			},
-		}),
+		ApplyEffects: applyEffects,
 	})
 }

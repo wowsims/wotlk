@@ -22,6 +22,7 @@ func (rogue *Rogue) ApplyTalents() {
 	rogue.AddStat(stats.Parry, core.ParryRatingPerParryChance*2*float64(rogue.Talents.Deflection))
 	rogue.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*1*float64(rogue.Talents.Malice))
 	rogue.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*1*float64(rogue.Talents.Precision))
+	rogue.AddStat(stats.SpellHit, core.SpellHitRatingPerHitChance*1*float64(rogue.Talents.Precision))
 	rogue.AddStat(stats.Expertise, core.ExpertisePerQuarterPercentReduction*5*float64(rogue.Talents.WeaponExpertise))
 	rogue.AddStat(stats.ArmorPenetration, core.ArmorPenPerPercentArmor*3*float64(rogue.Talents.SerratedBlades))
 
@@ -152,18 +153,6 @@ func (rogue *Rogue) registerHungerForBlood() {
 			rogue.HungerForBloodAura.Activate(sim)
 		},
 	})
-
-	rogue.AddMajorCooldown(core.MajorCooldown{
-		Spell: rogue.HungerForBlood,
-		Type:  core.CooldownTypeDPS,
-		CanActivate: func(s *core.Simulation, c *core.Character) bool {
-			return rogue.CurrentEnergy() >= 15
-		},
-		ShouldActivate: func(s *core.Simulation, c *core.Character) bool {
-			return !rogue.HungerForBloodAura.IsActive()
-		},
-	})
-
 }
 
 func (rogue *Rogue) preyOnTheWeakMultiplier(target *core.Unit) float64 {

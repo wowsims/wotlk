@@ -10,11 +10,12 @@ import { SavedTalents } from '../core/proto/ui.js';
 
 import {
 	Rogue_Rotation as RogueRotation,
-	Rogue_Rotation_Builder as Builder,
-	Rogue_Rotation_Filler as Filler,
 	Rogue_Options as RogueOptions,
   Rogue_Options_PoisonImbue as Poison,
   RogueMajorGlyph,
+  Rogue_Rotation_Frequency,
+  Rogue_Rotation_AssassinationPriority,
+  Rogue_Rotation_CombatPriority,
 } from '../core/proto/rogue.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
@@ -46,13 +47,13 @@ export const AssassinationTalents = {
 };
 
 export const DefaultRotation = RogueRotation.create({
-	builder: Builder.Auto,
-  filler: Filler.NoFiller,
-	maintainExposeArmor: false,
-  maintainTricksOfTheTrade: true,
-	useRupture: false,
-	useShiv: false,
-	useEnvenom: false,
+  exposeArmorFrequency: Rogue_Rotation_Frequency.Never,
+  minimumComboPointsExposeArmor: 4,
+  tricksOfTheTradeFrequency: Rogue_Rotation_Frequency.Maintain,
+  assassinationFinisherPriority: Rogue_Rotation_AssassinationPriority.EnvenomRupture,
+  combatFinisherPriority: Rogue_Rotation_CombatPriority.RuptureEviscerate,
+  minimumComboPointsPrimaryFinisher: 3,
+  minimumComboPointsSecondaryFinisher: 2,
 });
 
 export const DefaultOptions = RogueOptions.create({
