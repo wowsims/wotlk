@@ -459,33 +459,49 @@ export class AuraStacksChangeLog extends SimLog {
 export class AuraUptimeLog extends SimLog {
     readonly gainedAt: number;
     readonly fadedAt: number;
+		readonly stacksChange: Array<AuraStacksChangeLog>;
 
-    constructor(params: SimLogParams, fadedAt: number) {
+    constructor(params: SimLogParams, fadedAt: number, stacksChange: Array<AuraStacksChangeLog>) {
         super(params);
         this.gainedAt = params.timestamp;
         this.fadedAt = fadedAt;
+				this.stacksChange = stacksChange;
     }
 
     static fromLogs(logs: Array<SimLog>, entity: Entity, encounterDuration: number): Array<AuraUptimeLog> {
-        let unmatchedGainedLogs: Array<AuraEventLog> = [];
+        let unmatchedGainedLogs: Array<{gained: AuraEventLog, stacks: Array<AuraStacksChangeLog>}> = [];
         const uptimeLogs: Array<AuraUptimeLog> = [];
 
         logs.forEach((log: SimLog) => {
-            if (!log.source || !log.source.equals(entity) || !log.isAuraEvent()) {
+            if (!log.source || !log.source.equals(entity)) {
                 return;
             }
+
+						if (log.isAuraStacksChange()) {
+							const matchingGainedIdx = unmatchedGainedLogs.findIndex(gainedLog => gainedLog.gained.actionId!.equals(log.actionId!));
+							if (matchingGainedIdx == -1) {
+									console.warn('Unmatched aura stacks change log: ' + log.actionId!.name);
+									return;
+							}
+							unmatchedGainedLogs[matchingGainedIdx].stacks.push(log);
+							return;
+						}
+
+						if (!log.isAuraEvent()) {
+							return;
+						}
 
             if (log.isGained) {
-                unmatchedGainedLogs.push(log);
+                unmatchedGainedLogs.push({gained: log, stacks: []});
                 return;
             }
 
-            const matchingGainedIdx = unmatchedGainedLogs.findIndex(gainedLog => gainedLog.actionId!.equals(log.actionId!));
+            const matchingGainedIdx = unmatchedGainedLogs.findIndex(gainedLog => gainedLog.gained.actionId!.equals(log.actionId!));
             if (matchingGainedIdx == -1) {
                 console.warn('Unmatched aura faded log: ' + log.actionId!.name);
                 return;
             }
-            const gainedLog = unmatchedGainedLogs.splice(matchingGainedIdx, 1)[0];
+            const { gained: gainedLog, stacks: stacksChangeLogs } = unmatchedGainedLogs.splice(matchingGainedIdx, 1)[0];
 
             uptimeLogs.push(new AuraUptimeLog({
                 raw: log.raw,
@@ -495,15 +511,16 @@ export class AuraUptimeLog extends SimLog {
                 target: log.target,
                 actionId: gainedLog.actionId,
                 threat: gainedLog.threat,
-            }, log.timestamp));
+            }, log.timestamp, stacksChangeLogs));
 
             if (log.isRefreshed) {
-                unmatchedGainedLogs.push(log);
+                unmatchedGainedLogs.push({gained: log, stacks: []});
             }
         });
 
         // Auras active at the end won't have a faded log, so need to add them separately.
-        unmatchedGainedLogs.forEach(gainedLog => {
+        unmatchedGainedLogs.forEach(unmatchedLog => {
+            const { gained: gainedLog, stacks: stacksChangeLogs } = unmatchedLog;
             uptimeLogs.push(new AuraUptimeLog({
                 raw: gainedLog.raw,
                 logIndex: gainedLog.logIndex,
@@ -512,7 +529,7 @@ export class AuraUptimeLog extends SimLog {
                 target: gainedLog.target,
                 actionId: gainedLog.actionId,
                 threat: gainedLog.threat,
-            }, encounterDuration));
+            }, encounterDuration, stacksChangeLogs));
         });
 
         uptimeLogs.sort((a, b) => a.gainedAt - b.gainedAt);
@@ -708,6 +725,7 @@ export class CastCompletedLog extends SimLog {
 
 export class CastLog extends SimLog {
     readonly castTime: number;
+		readonly travelTime: number;
 
     readonly castBeganLog: CastBeganLog;
     readonly castCompletedLog: CastCompletedLog | null;
@@ -729,6 +747,14 @@ export class CastLog extends SimLog {
         this.castBeganLog = castBeganLog;
         this.castCompletedLog = castCompletedLog;
         this.damageDealtLogs = damageDealtLogs;
+
+				if (this.castCompletedLog && this.damageDealtLogs.length == 1 &&
+						this.castCompletedLog.timestamp < this.damageDealtLogs[0].timestamp &&
+						!this.damageDealtLogs[0].tick) {
+					this.travelTime = this.damageDealtLogs[0].timestamp - this.castCompletedLog.timestamp;
+				} else {
+					this.travelTime = 0;
+				}
     }
 
     toString(): string {

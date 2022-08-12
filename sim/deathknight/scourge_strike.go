@@ -57,6 +57,7 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				cast.GCD = dk.getModifiedGCD()
 			},
+			IgnoreHaste: true,
 		},
 
 		ApplyEffects: dk.withRuneRefund(rs, core.SpellEffect{

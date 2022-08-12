@@ -213,6 +213,11 @@ $combo-points-color: #ffa07a;
 	background-color: #e5cc80;
 	z-index: 1;
 }
+.rotation-timeline-travel-time {
+	position: absolute;
+	height: 24px;
+	background-color: #f9c0ff;
+}
 .rotation-timeline-tick {
 	position: absolute;
 	width: 5px;
@@ -227,6 +232,18 @@ $combo-points-color: #ffa07a;
 	opacity: 0.5;
 	height: 20px;
 	top: 2px;
+}
+.rotation-timeline-stacks-change {
+	position: absolute;
+	height: 20px;
+	background-color: transparent;
+
+	border-left: 1px solid grey;
+	border-right: 1px solid grey;
+	display: flex;
+	align-items: center;
+	font-weight: bold;
+	overflow-x: hidden;
 }
 .rotation-timeline-separator {
 	width: 100%;

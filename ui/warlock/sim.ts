@@ -99,6 +99,8 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				individualBuffs: Presets.DefaultIndividualBuffs,
 
 				debuffs: Presets.DefaultDebuffs,
+
+				distanceFromTarget: 25,
 			},
 
 			// IconInputs to include in the 'Player' section on the settings tab.
@@ -135,6 +137,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			otherInputs: {
 				inputs: [
 					OtherInputs.PrepopPotion,
+					OtherInputs.DistanceFromTarget,
 					OtherInputs.TankAssignment,
 				],
 			},

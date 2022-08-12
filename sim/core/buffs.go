@@ -204,11 +204,15 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		stats.Health: GetTristateValueFloat(raidBuffs.CommandingShout, 1080, 1080*1.25),
 	})
 
-	spBonus := float64(raidBuffs.DemonicPact) / 10.
+	spBonus := 0.
+
+	if raidBuffs.FlametongueTotem {
+		spBonus = 144.
+		MakePermanent(FlametongueTotemAura(character))
+	}
 	if raidBuffs.TotemOfWrath {
-		spBonus = MaxFloat(spBonus, 280)
-	} else if raidBuffs.FlametongueTotem {
-		spBonus = MaxFloat(spBonus, 144)
+		spBonus = 280.
+		MakePermanent(TotemOfWrathAura(character))
 	}
 	if spBonus > 0 {
 		character.AddStats(stats.Stats{
@@ -216,6 +220,11 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 			stats.HealingPower: spBonus,
 		})
 	}
+	DPSPBonus := float64(raidBuffs.DemonicPact) / 10.
+	if DPSPBonus > 0 {
+		MakePermanent(DemonicPactAura(character, DPSPBonus))
+	}
+
 	if raidBuffs.WrathOfAirTotem {
 		character.PseudoStats.CastSpeedMultiplier *= 1.05
 	}
@@ -277,7 +286,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		character.AddStats(stats.Stats{stats.SpellPower: 34})
 	}
 	if partyBuffs.ChainOfTheTwilightOwl {
-		character.AddStats(stats.Stats{stats.SpellCrit: 2 * CritRatingPerCritChance})
+		character.AddStats(stats.Stats{stats.SpellCrit: 45})
 	}
 }
 
@@ -979,4 +988,86 @@ func ReplenishmentAura(character *Character, actionID ActionID) *Aura {
 			character.AddStatDependencyDynamic(sim, stats.Mana, stats.MP5, 1/(1.0+0.01))
 		},
 	})
+}
+
+var spellPowerBuffTag = "SpellPowerBuff"
+
+func TotemOfWrathAura(character *Character) *Aura {
+	spellPowerBonus := 280.
+	return character.GetOrRegisterAura(Aura{
+		Label:    "Totem of Wrath",
+		Tag:      spellPowerBuffTag,
+		ActionID: ActionID{SpellID: 57722},
+		Priority: spellPowerBonus,
+		Duration: NeverExpires,
+		OnReset: func(aura *Aura, sim *Simulation) {
+			aura.Activate(sim)
+		},
+	})
+}
+
+func FlametongueTotemAura(character *Character) *Aura {
+	spellPowerBonus := 144.
+	return character.GetOrRegisterAura(Aura{
+		Label:    "Flame tongueTotem",
+		Tag:      spellPowerBuffTag,
+		ActionID: ActionID{SpellID: 58656},
+		Priority: spellPowerBonus,
+		Duration: NeverExpires,
+		OnReset: func(aura *Aura, sim *Simulation) {
+			aura.Activate(sim)
+		},
+	})
+}
+
+func DemonicPactAura(character *Character, spellPowerBonus float64) *Aura {
+
+	return character.GetOrRegisterAura(Aura{
+		Label:     "Demonic Pact",
+		Tag:       "Demonic Pact",
+		ActionID:  ActionID{SpellID: 47240},
+		Duration:  time.Second * 45,
+		Priority:  spellPowerBonus,
+		MaxStacks: math.MaxInt32,
+		OnReset: func(aura *Aura, sim *Simulation) {
+			aura.Activate(sim)
+		},
+		OnGain: func(aura *Aura, sim *Simulation) {
+			minimumSPBonus := 0.
+			if TotemOfWrathAura(character).IsActive() {
+				minimumSPBonus = 280
+			} else if FlametongueTotemAura(character).IsActive() {
+				minimumSPBonus = 144
+			}
+			newSPbonus := aura.Priority - minimumSPBonus
+			if newSPbonus < 0 {
+				newSPbonus = 0
+			}
+
+			character.AddStatsDynamic(sim, stats.Stats{
+				stats.SpellPower:   newSPbonus,
+				stats.HealingPower: newSPbonus,
+			})
+
+			aura.SetStacks(sim, int32(aura.Priority))
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			minimumSPBonus := 0.
+			if TotemOfWrathAura(character).IsActive() {
+				minimumSPBonus = 280
+			} else if FlametongueTotemAura(character).IsActive() {
+				minimumSPBonus = 144
+			}
+			newSPbonus := aura.Priority - minimumSPBonus
+			if newSPbonus < 0 {
+				newSPbonus = 0
+			}
+
+			character.AddStatsDynamic(sim, stats.Stats{
+				stats.SpellPower:   -newSPbonus,
+				stats.HealingPower: -newSPbonus,
+			})
+		},
+	})
+
 }

@@ -140,6 +140,17 @@ export const InFrontOfTarget = {
     },
 };
 
+export const DistanceFromTarget = {
+    type: 'number' as const,
+    label: 'Distance From Target',
+    labelTooltip: 'Distance from targets, in yards. Used to calculate travel time for certain spells.',
+    changedEvent: (player: Player<any>) => player.distanceFromTargetChangeEmitter,
+    getValue: (player: Player<any>) => player.getDistanceFromTarget(),
+    setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
+        player.setDistanceFromTarget(eventID, newValue);
+    },
+};
+
 export const TankAssignment = {
     type: 'enum' as const,
     extraCssClasses: [

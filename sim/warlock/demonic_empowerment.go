@@ -45,10 +45,19 @@ func (warlock *Warlock) registerDemonicEmpowermentSpell() {
 				warlock.Pet.MultiplyAttackSpeed(sim, 1/1.2)
 			},
 		}
+	default:
+		petAura = core.Aura{
+			Label:    "Demonic Empowerment Aura",
+			ActionID: core.ActionID{SpellID: 47193},
+			Duration: time.Second * 15,
+		}
 	}
-	warlock.Pet.DemonicEmpowermentAura = warlock.Pet.RegisterAura(
-		petAura,
-	)
+	if warlock.Options.Summon != proto.Warlock_Options_NoSummon {
+		warlock.Pet.DemonicEmpowermentAura = warlock.Pet.RegisterAura(
+			petAura,
+		)
+	}
+
 	warlock.DemonicEmpowerment = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 47193},
 		ResourceType: stats.Mana,

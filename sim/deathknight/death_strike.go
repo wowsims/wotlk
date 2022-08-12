@@ -17,7 +17,7 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool, onhit func(sim *core.Simul
 
 	effect := core.SpellEffect{
 		BonusCritRating:  (dk.annihilationCritBonus() + dk.improvedDeathStrikeCritBonus()) * core.CritRatingPerCritChance,
-		DamageMultiplier: 1,
+		DamageMultiplier: 1.0 + 0.15*float64(dk.Talents.ImprovedDeathStrike),
 		ThreatMultiplier: 1,
 
 		BaseDamage: core.BaseDamageConfig{
@@ -54,6 +54,7 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool, onhit func(sim *core.Simul
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				cast.GCD = dk.getModifiedGCD()
 			},
+			IgnoreHaste: true,
 		}
 		conf.ApplyEffects = dk.withRuneRefund(rs, effect, false)
 	}
@@ -62,9 +63,15 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool, onhit func(sim *core.Simul
 }
 
 func (dk *Deathknight) registerDeathStrikeSpell() {
+	healthMetrics := dk.NewHealthMetrics(DeathStrikeActionID)
+
 	dk.DeathStrikeOhHit = dk.newDeathStrikeSpell(false, nil)
 	dk.DeathStrikeMhHit = dk.newDeathStrikeSpell(true, func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 		dk.LastOutcome = spellEffect.Outcome
+
+		healingAmount := 0.05 * dk.countActiveDiseases(dk.CurrentTarget) * dk.MaxHealth() * (1.0 + 0.5*float64(dk.Talents.ImprovedDeathStrike))
+		dk.GainHealth(sim, healingAmount, healthMetrics)
+
 		dk.threatOfThassarianProc(sim, spellEffect, dk.DeathStrikeMhHit, dk.DeathStrikeOhHit)
 	})
 	dk.DeathStrike = dk.DeathStrikeMhHit

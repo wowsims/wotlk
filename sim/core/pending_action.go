@@ -30,6 +30,7 @@ type PendingAction struct {
 	CleanUp  func(*Simulation)
 
 	cancelled bool
+	consumed  bool
 }
 
 func (pa *PendingAction) Cancel(sim *Simulation) {

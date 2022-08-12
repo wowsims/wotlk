@@ -57,10 +57,11 @@ func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 			}
 		},
 	})
-	if rogue.Rotation.MaintainTricksOfTheTrade {
+	if rogue.Rotation.TricksOfTheTradeFrequency != proto.Rogue_Rotation_Never {
+		// TODO: Support Rogue_Rotation_Once
 		rogue.AddMajorCooldown(core.MajorCooldown{
 			Spell:    rogue.TricksOfTheTrade,
-			Priority: core.CooldownPriorityDefault,
+			Priority: core.CooldownPriorityDrums,
 			Type:     core.CooldownTypeDPS,
 		})
 	}

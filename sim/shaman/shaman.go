@@ -277,47 +277,47 @@ func (shaman *Shaman) ElementalCritMultiplier(secondary float64) float64 {
 
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassShaman}] = stats.Stats{
-		stats.Health:      2979,
-		stats.Strength:    103,
-		stats.Agility:     61,
-		stats.Stamina:     113,
-		stats.Intellect:   109,
-		stats.Spirit:      122,
+		stats.Health:      6759,
+		stats.Strength:    121,
+		stats.Agility:     71,
+		stats.Stamina:     135,
+		stats.Intellect:   126,
+		stats.Spirit:      145,
 		stats.Mana:        baseMana,
 		stats.SpellCrit:   2.2 * core.CritRatingPerCritChance,
 		stats.AttackPower: 95, // TODO: confirm this.
 		stats.MeleeCrit:   2.92 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceOrc, Class: proto.Class_ClassShaman}] = stats.Stats{
-		stats.Health:      2979,
-		stats.Strength:    105,
-		stats.Agility:     61,
-		stats.Stamina:     116,
-		stats.Intellect:   105,
-		stats.Spirit:      123,
+		stats.Health:      6759,
+		stats.Strength:    123,
+		stats.Agility:     71,
+		stats.Stamina:     138,
+		stats.Intellect:   122,
+		stats.Spirit:      146,
 		stats.Mana:        baseMana,
 		stats.SpellCrit:   2.2 * core.CritRatingPerCritChance,
 		stats.AttackPower: 95, // TODO: confirm this.
 		stats.MeleeCrit:   2.92 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTauren, Class: proto.Class_ClassShaman}] = stats.Stats{
-		stats.Health:      2979,
-		stats.Strength:    107,
-		stats.Agility:     59,
-		stats.Stamina:     116,
-		stats.Intellect:   103,
-		stats.Spirit:      122,
+		stats.Health:      6759,
+		stats.Strength:    125,
+		stats.Agility:     69,
+		stats.Stamina:     138,
+		stats.Intellect:   120,
+		stats.Spirit:      145,
 		stats.Mana:        baseMana,
 		stats.SpellCrit:   2.2 * core.CritRatingPerCritChance,
 		stats.AttackPower: 95, // TODO: confirm this.
 		stats.MeleeCrit:   2.92 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassShaman}] = stats.Stats{
-		stats.Health:      2979,
+		stats.Health:      6759,
 		stats.Strength:    121,
 		stats.Agility:     76,
 		stats.Stamina:     137,
-		stats.Intellect:   136,
+		stats.Intellect:   122,
 		stats.Spirit:      144,
 		stats.Mana:        baseMana,
 		stats.SpellCrit:   2.2 * core.CritRatingPerCritChance,

@@ -11,6 +11,8 @@ import (
 
 type DeathknightInputs struct {
 	// Option Vars
+	IsDps bool
+
 	StartingRunicPower  float64
 	PrecastGhoulFrenzy  bool
 	PrecastHornOfWinter bool
@@ -37,8 +39,8 @@ type Deathknight struct {
 
 	bonusCoeffs DeathknightCoeffs
 
-	onRuneSpendT10          core.OnRuneSpend
-	onRuneSpendBladeBarrier core.OnRuneSpend
+	onRuneSpendT10          core.OnRune
+	onRuneSpendBladeBarrier core.OnRune
 
 	Inputs DeathknightInputs
 
@@ -159,7 +161,6 @@ type Deathknight struct {
 	EbonPlagueAura       []*core.Aura
 
 	RoRTSBonus func(*core.Unit) float64 // is either RoR or TS bonus function based on talents
-	curCast    *core.Cast
 }
 
 func (dk *Deathknight) ModifyAdditiveDamageModifier(sim *core.Simulation, value float64) {
@@ -299,39 +300,39 @@ func NewDeathknight(character core.Character, talents proto.DeathknightTalents, 
 			// you do not want these to trigger a tryUseGCD, so after the opener
 			// its fine since you're running off a prio system, and rune generation
 			// can change your logic which we want.
-			//if !dk.Opener.IsOngoing() {
-			//	if dk.GCD.IsReady(sim) {
-			//		dk.tryUseGCD(sim)
-			//	}
-			//}
+			if !dk.Opener.IsOngoing() && !dk.Inputs.IsDps {
+				if dk.GCD.IsReady(sim) {
+					dk.tryUseGCD(sim)
+				}
+			}
 		},
 		func(sim *core.Simulation) {
-			//if !dk.Opener.IsOngoing() {
-			//			if dk.GCD.IsReady(sim) {
-			//				dk.tryUseGCD(sim)
-			//			}
-			//	}
+			if !dk.Opener.IsOngoing() && !dk.Inputs.IsDps {
+				if dk.GCD.IsReady(sim) {
+					dk.tryUseGCD(sim)
+				}
+			}
 		},
 		func(sim *core.Simulation) {
-			//if !dk.Opener.IsOngoing() {
-			//				if dk.GCD.IsReady(sim) {
-			//					dk.tryUseGCD(sim)
-			//				}
-			//		}
+			if !dk.Opener.IsOngoing() && !dk.Inputs.IsDps {
+				if dk.GCD.IsReady(sim) {
+					dk.tryUseGCD(sim)
+				}
+			}
 		},
 		func(sim *core.Simulation) {
-			//if !dk.Opener.IsOngoing() {
-			//	if dk.GCD.IsReady(sim) {
-			//		dk.tryUseGCD(sim)
-			//	}
-			//}
+			if !dk.Opener.IsOngoing() && !dk.Inputs.IsDps {
+				if dk.GCD.IsReady(sim) {
+					dk.tryUseGCD(sim)
+				}
+			}
 		},
 		func(sim *core.Simulation) {
-			//if !dk.Opener.IsOngoing() {
-			//	if dk.GCD.IsReady(sim) {
-			//		dk.tryUseGCD(sim)
-			//	}
-			//}
+			if !dk.Opener.IsOngoing() && !dk.Inputs.IsDps {
+				if dk.GCD.IsReady(sim) {
+					dk.tryUseGCD(sim)
+				}
+			}
 		},
 	)
 

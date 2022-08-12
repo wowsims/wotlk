@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"math"
+	"time"
 
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
@@ -44,6 +45,10 @@ type SpellEffect struct {
 
 	// Used in determining snapshot based damage from effect details (e.g. snapshot crit and % damage modifiers)
 	IsPeriodic bool
+
+	// Speed in yards/second. Spell missile speeds can be found in the game data.
+	// Example: https://wow.tools/dbc/?dbc=spellmisc&build=3.4.0.44996
+	MissileSpeed float64
 
 	// Controls which effects can proc from this effect.
 	ProcMask ProcMask
@@ -236,6 +241,25 @@ func (spellEffect *SpellEffect) calcDamageTargetOnly(sim *Simulation, spell *Spe
 }
 
 func (spellEffect *SpellEffect) finalize(sim *Simulation, spell *Spell) {
+	if spellEffect.MissileSpeed == 0 {
+		spellEffect.finalizeInternal(sim, spell)
+	} else {
+		travelTime := time.Duration(float64(time.Second) * spell.Unit.DistanceFromTarget / spellEffect.MissileSpeed)
+
+		// We need to make a copy of this SpellEffect because some spells re-use the effect objects.
+		effectCopy := *spellEffect
+
+		StartDelayedAction(sim, DelayedActionOptions{
+			DoAt: sim.CurrentTime + travelTime,
+			OnAction: func(sim *Simulation) {
+				effectCopy.finalizeInternal(sim, spell)
+			},
+		})
+	}
+}
+
+// Applies the fully computed results from this SpellEffect to the sim.
+func (spellEffect *SpellEffect) finalizeInternal(sim *Simulation, spell *Spell) {
 	spell.SpellMetrics[spellEffect.Target.TableIndex].TotalDamage += spellEffect.Damage
 	spell.SpellMetrics[spellEffect.Target.TableIndex].TotalThreat += spellEffect.calcThreat(spell)
 

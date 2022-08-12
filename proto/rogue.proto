@@ -140,32 +140,38 @@ enum RogueMinorGlyph {
 
 message Rogue {
 	message Rotation {
-		enum Builder {
-			Unknown = 0;
-			Auto = 1;
-			SinisterStrike = 2;
-			Backstab = 3;
-			Hemorrhage = 4;
-			Mutilate = 5;
+		enum Frequency {
+			Never = 0;
+			Once = 1;
+			Maintain = 2;
+			Build = 3;
+			Fill = 4;
 		}
-		Builder builder = 3;
+		Frequency expose_armor_frequency = 1;
 
-		bool maintain_expose_armor = 1;
+		int32 minimum_combo_points_expose_armor = 2;
 
-		// Cast Tricks of the Trade when available
-		bool maintain_tricks_of_the_trade = 7;
+		Frequency tricks_of_the_trade_frequency = 3;
 
-		// Allows use of rupture when sensible.
-		bool use_rupture = 2;
+		enum CombatPriority {
+			RuptureEviscerate = 0;
+			EviscerateRupture = 1;
+		}
+		CombatPriority combat_finisher_priority = 4;
 
-		// Allows use of envenom when sensible
-		bool use_envenom = 6;
+		enum AssassinationPriority {
+			EnvenomRupture = 0;
+			RuptureEnvenom = 1;
+		}
+		AssassinationPriority assassination_finisher_priority = 5;
 
-		// Shiv instead of regular builder if deadly poison is about to fall.
-		bool use_shiv = 5;
+		int32 minimum_combo_points_primary_finisher = 6;
 
-		// Don't use damage finishers (eviscerate, rupture) unless >= this many CPs.
-		int32 min_combo_points_for_damage_finisher = 4;
+		int32 minimum_combo_points_secondary_finisher = 7;
+
+		Frequency MultiTargetSliceFrequency = 8;
+
+		int32 minimum_combo_points_multi_target_slice = 9;
 	}
 	Rotation rotation = 1;
 
