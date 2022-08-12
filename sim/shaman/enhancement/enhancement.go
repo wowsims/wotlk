@@ -100,8 +100,6 @@ type EnhancementShaman struct {
 
 	scheduler common.GCDScheduler
 
-	isWeaving bool
-
 	WeaveLatency int32
 }
 

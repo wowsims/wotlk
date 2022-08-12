@@ -62,7 +62,7 @@ var enhShamRotation = &proto.EnhancementShaman_Rotation{
 		Water: proto.WaterTotem_ManaSpringTotem,
 		Fire:  proto.FireTotem_MagmaTotem,
 	},
-	WeaveLatency: 200,
+	WeaveLatency: 0,
 }
 
 var enhShamOptions = &proto.EnhancementShaman_Options{
