@@ -87,6 +87,8 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 	}
 
 	enh.LavaburstWeave = enhOptions.Rotation.LavaburstWeave
+	enh.MaelstromWeaveThreshold = enhOptions.Rotation.MaelstromWeaveThreshold
+	enh.FireNovaManaThreshold = float64(enhOptions.Rotation.FireNovaManaThreshold)
 
 	return enh
 }
@@ -97,6 +99,10 @@ type EnhancementShaman struct {
 	rotation Rotation
 
 	scheduler common.GCDScheduler
+
+	LavaburstWeave          bool    // flag to enable lava burst weaving for enh
+	MaelstromWeaveThreshold int32   // threshold before attempting to weave spells between autos
+	FireNovaManaThreshold   float64 // threshold before willing to use fire nova
 }
 
 func (enh *EnhancementShaman) GetShaman() *shaman.Shaman {

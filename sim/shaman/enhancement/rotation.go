@@ -83,7 +83,7 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 		}
 	}
 
-	if enh.Talents.MaelstromWeapon > 0 && enh.MaelstromWeaponAura.GetStacks() >= 1 {
+	if enh.Talents.MaelstromWeapon > 0 && enh.MaelstromWeaponAura.GetStacks() >= enh.MaelstromWeaveThreshold {
 		lbCastTime := enh.LightningBolt.DefaultCast.CastTime - (time.Millisecond * time.Duration(500*enh.MaelstromWeaponAura.GetStacks()))
 		lbCastTime = enh.ApplyCastSpeed(lbCastTime)
 		timeUntilSwing := enh.AutoAttacks.NextAttackAt() - sim.CurrentTime
@@ -111,7 +111,7 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 	}
 
 	if enh.Totems.Fire != proto.FireTotem_NoFireTotem {
-		if enh.FireNova.IsReady(sim) && enh.CurrentMana() > 4000 {
+		if enh.FireNova.IsReady(sim) && enh.CurrentMana() > enh.FireNovaManaThreshold {
 			if !enh.FireNova.Cast(sim, target) {
 				enh.WaitForMana(sim, enh.FireNova.CurCast.Cost)
 			}

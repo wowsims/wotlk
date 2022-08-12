@@ -81,5 +81,17 @@ export const EnhancementShamanRotationConfig = {
             labelTooltip: 'Not particularily useful for dual wield, mostly a 2h option',
             //enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getTalents().maelstromWeapon,
         }),
+        InputHelpers.makeRotationNumberInput<Spec.SpecEnhancementShaman>({
+            fieldName: 'maelstromWeaveThreshold',
+            label: 'Maelstrom weaving stacks',
+            labelTooltip: 'Set number of maelstrom stacks required before weaving spells between autos. Default: 1',
+            //enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getTalents().maelstromWeapon,
+        }),
+        InputHelpers.makeRotationNumberInput<Spec.SpecEnhancementShaman>({
+            fieldName: 'fireNovaManaThreshold',
+            label: 'Fira Nova mana Threshold',
+            labelTooltip: 'Set mana threshold before using fire nova. Option to help avoid going OOM. Default: 4000',
+            //enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getTalents().maelstromWeapon,
+        }),
     ],
 };
