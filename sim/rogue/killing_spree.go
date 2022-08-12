@@ -48,7 +48,6 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 		ActionID: core.ActionID{SpellID: 51690},
 		Duration: time.Second * 2,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			rogue.plan = None
 			rogue.PseudoStats.DamageDealtMultiplier *= 1.2
 			// This first attack could/should? be implemented as an immediate tick
 			// but there is currently an issue causing the periodic action

@@ -4,8 +4,9 @@ import { ActionId } from '../core/proto_utils/action_id.js';
 import * as InputHelpers from '../core/components/input_helpers.js';
 
 import {
-	Rogue_Rotation_Builder as Builder,
-	Rogue_Rotation_Filler as Filler,
+	Rogue_Rotation_AssassinationPriority as AssassinationPriority,
+	Rogue_Rotation_CombatPriority as CombatPriority,
+	Rogue_Rotation_Frequency as Frequency,
 	Rogue_Options_PoisonImbue as Poison,
 } from '../core/proto/rogue.js';
 
@@ -34,25 +35,68 @@ export const OffHandImbue = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecR
 
 export const RogueRotationConfig = {
 	inputs: [
-		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, Filler>({
-			fieldName: 'filler',
-			label: 'Filler',
-			labelTooltip: 'Ability to use when extra resources are available',
+		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, Frequency>({
+			fieldName: 'exposeArmorFrequency',
+			label: 'Expose Armor',
+			labelTooltip: 'Frequency of Expose Armor casts.',
 			values:[
-				{ name: 'None', value: Filler.NoFiller },
-				{ name: 'Eviscerate', value: Filler.Eviscerate },
-				{ name: 'Fan of Knives', value: Filler.FanOfKnives },
+				{ name: 'Never', value: Frequency.Never },
+				{ name: 'Cast Once', value: Frequency.Once },
+				{ name: 'Maintain', value: Frequency.Maintain },
 			],
 		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
-			fieldName: 'maintainExposeArmor',
-			label: 'Maintain EA',
-			labelTooltip: 'Keeps Expose Armor active on the primary target.',
+		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
+			fieldName: 'minimumComboPointsExposeArmor',
+			label: 'Minimum CP (Expose Armor)',
+			labelTooltip: 'Minimum number of combo points for Expose Armor when only cast once.',
 		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
-			fieldName: 'maintainTricksOfTheTrade',
-			label: 'Maintain Tricks',
-			labelTooltip: 'Keeps Tricks of the Trade active.',
+		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, Frequency>({
+			fieldName: 'tricksOfTheTradeFrequency',
+			label: 'Tricks of the Trade',
+			labelTooltip: 'Frequency of Tricks of the Trade usage.',
+			values:[
+				{ name: 'Never', value: Frequency.Never },
+				{ name: 'Maintain', value: Frequency.Maintain },
+			],
 		}),
+		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, AssassinationPriority>({
+			fieldName: 'assassinationFinisherPriority',
+			label: 'Finisher Priority (Assassination)',
+			labelTooltip: 'Priority of Assassination finisher usage',
+			values:[
+				{ name: 'Envenom > Rupture', value: AssassinationPriority.EnvenomRupture },
+				{ name: 'Rupture > Envenom', value: AssassinationPriority.RuptureEnvenom },
+			],
+		}),
+		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, AssassinationPriority>({
+			fieldName: 'combatFinisherPriority',
+			label: 'Finisher Priority (Combat)',
+			labelTooltip: 'Priority of Combat finisher usage',
+			values:[
+				{ name: 'Rupture > Eviscerate', value: CombatPriority.RuptureEviscerate },
+				{ name: 'Eviscerate > Rupture', value: CombatPriority.EviscerateRupture },
+			],
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
+			fieldName: 'minimumComboPointsPrimaryFinisher',
+			label: 'Minimum CP (Finisher)',
+			labelTooltip: 'Primary finisher will not be cast with less than this many combo points',
+		}),
+		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, Frequency>({
+			fieldName: 'multiTargetSliceFrequency',
+			label: 'Multi-Target S&D',
+			labelTooltip: 'Frequency of Slice and Dice cast in multi-target scnearios.',
+			values:[
+				{ name: 'Never', value: Frequency.Never },
+				{ name: 'Maintain', value: Frequency.Maintain },
+			],
+		}),
+		/**
+		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
+			fieldName: 'minimumComboPointsMultiTargetSlice',
+			label: 'Minimum CP (Slice)',
+			labelTooltip: 'Minimum number of combo points spent if Slice and Dice has frequency: Once',
+		}),
+		*/
 	],
 };
