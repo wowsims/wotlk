@@ -69,8 +69,6 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 	}
 
 	if enh.MaelstromWeaponAura.GetStacks() >= 1 {
-		var spellToCast *core.Spell
-		castTime := time.Duration(0)
 		timeUntilSwing := enh.AutoAttacks.NextAttackAt() - sim.CurrentTime
 
 		if sim.CurrentTime > enh.AutoAttacks.NextAttackAt() {
@@ -82,6 +80,9 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 		latency := time.Duration(enh.WeaveLatency) * time.Millisecond
 		swingSpeed -= latency
 		latency = core.MaxDuration(0, timeUntilSwing-swingSpeed)
+
+		var spellToCast *core.Spell
+		castTime := time.Duration(0)
 
 		if enh.LavaburstWeave && enh.LavaBurst.IsReady(sim) {
 			castTime = enh.ApplyCastSpeed(enh.LavaBurst.DefaultCast.CastTime) + latency
