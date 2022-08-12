@@ -46,8 +46,6 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 		Shaman:         shaman.NewShaman(character, *enhOptions.Talents, totems, selfBuffs, true),
 		rotation:       rotation,
 		WeaveLatency:   enhOptions.Rotation.WeaveLatency,
-		WeavingEnabled: enhOptions.Rotation.WeavingEnabled,
-		WeaveMinStacks: enhOptions.Rotation.WeaveMinStacks,
 		LavaburstWeave: enhOptions.Rotation.LavaburstWeave,
 	}
 
@@ -101,9 +99,7 @@ type EnhancementShaman struct {
 	scheduler common.GCDScheduler
 
 	LavaburstWeave bool // flag to enable lava burst weaving for enh
-	WeavingEnabled bool
 	WeaveLatency   int32
-	WeaveMinStacks int32
 }
 
 func (enh *EnhancementShaman) GetShaman() *shaman.Shaman {

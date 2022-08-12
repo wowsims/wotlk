@@ -35,17 +35,6 @@ type AdaptiveRotation struct {
 
 func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Simulation) {
 	target := sim.GetTargetUnit(0)
-	timeUntilSwing := enh.AutoAttacks.NextAttackAt() - sim.CurrentTime
-
-	if sim.CurrentTime > enh.AutoAttacks.NextAttackAt() {
-		timeUntilSwing = enh.AutoAttacks.MH.SwingDuration
-	}
-
-	swingSpeed := core.MinDuration(enh.AutoAttacks.MainhandSwingSpeed(), enh.AutoAttacks.OffhandSwingSpeed())
-	swingSpeed = core.MaxDuration(swingSpeed, timeUntilSwing)
-	latency := time.Duration(enh.WeaveLatency) * time.Millisecond
-	swingSpeed -= latency
-	latency = core.MaxDuration(0, timeUntilSwing-swingSpeed)
 
 	if enh.Talents.Stormstrike {
 		if !enh.StormstrikeDebuffAura(target).IsActive() && enh.Stormstrike.IsReady(sim) {
@@ -79,9 +68,20 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 		return
 	}
 
-	if enh.MaelstromWeaponAura.GetStacks() >= enh.WeaveMinStacks && enh.WeavingEnabled {
+	if enh.MaelstromWeaponAura.GetStacks() >= 1 {
 		var spellToCast *core.Spell
 		castTime := time.Duration(0)
+		timeUntilSwing := enh.AutoAttacks.NextAttackAt() - sim.CurrentTime
+
+		if sim.CurrentTime > enh.AutoAttacks.NextAttackAt() {
+			timeUntilSwing = enh.AutoAttacks.MH.SwingDuration
+		}
+
+		swingSpeed := core.MinDuration(enh.AutoAttacks.MainhandSwingSpeed(), enh.AutoAttacks.OffhandSwingSpeed())
+		swingSpeed = core.MaxDuration(swingSpeed, timeUntilSwing)
+		latency := time.Duration(enh.WeaveLatency) * time.Millisecond
+		swingSpeed -= latency
+		latency = core.MaxDuration(0, timeUntilSwing-swingSpeed)
 
 		if enh.LavaburstWeave && enh.LavaBurst.IsReady(sim) {
 			castTime = enh.ApplyCastSpeed(enh.LavaBurst.DefaultCast.CastTime) + latency

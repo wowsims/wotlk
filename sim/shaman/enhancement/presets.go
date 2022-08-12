@@ -55,19 +55,11 @@ var PlayerOptionsBasic = &proto.Player_EnhancementShaman{
 	},
 }
 
-var PlayerOptionsNoWeaving = &proto.Player_EnhancementShaman{
-	EnhancementShaman: &proto.EnhancementShaman{
-		Talents:  StandardTalents,
-		Options:  enhShamOptions,
-		Rotation: noWeavingRotation,
-	},
-}
-
 var PlayerOptionsLatencyWeaving = &proto.Player_EnhancementShaman{
 	EnhancementShaman: &proto.EnhancementShaman{
 		Talents:  StandardTalents,
 		Options:  enhShamOptions,
-		Rotation: noWeavingRotation,
+		Rotation: LatencyRotation,
 	},
 }
 
@@ -78,9 +70,7 @@ var enhShamRotation = &proto.EnhancementShaman_Rotation{
 		Water: proto.WaterTotem_ManaSpringTotem,
 		Fire:  proto.FireTotem_MagmaTotem,
 	},
-	WeaveLatency:   0,
-	WeavingEnabled: true,
-	WeaveMinStacks: 1,
+	WeaveLatency: 0,
 }
 
 var LatencyRotation = &proto.EnhancementShaman_Rotation{
@@ -90,20 +80,7 @@ var LatencyRotation = &proto.EnhancementShaman_Rotation{
 		Water: proto.WaterTotem_ManaSpringTotem,
 		Fire:  proto.FireTotem_MagmaTotem,
 	},
-	WeaveLatency:   200,
-	WeavingEnabled: true,
-	WeaveMinStacks: 1,
-}
-
-var noWeavingRotation = &proto.EnhancementShaman_Rotation{
-	Totems: &proto.ShamanTotems{
-		Earth: proto.EarthTotem_StrengthOfEarthTotem,
-		Air:   proto.AirTotem_WindfuryTotem,
-		Water: proto.WaterTotem_ManaSpringTotem,
-		Fire:  proto.FireTotem_MagmaTotem,
-	},
-	WeaveLatency:   0,
-	WeavingEnabled: false,
+	WeaveLatency: 200,
 }
 
 var enhShamOptions = &proto.EnhancementShaman_Options{

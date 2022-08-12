@@ -228,8 +228,6 @@ message EnhancementShaman {
 		ShamanTotems totems = 1;
         bool lavaburst_weave = 2;
 		int32 weave_latency = 3;
-		bool weaving_enabled = 4;
-		int32 weave_min_stacks = 5;
 	    // TODO: lightning/possibly lavaburst weaving
     }
 

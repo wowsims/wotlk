@@ -23,7 +23,6 @@ func TestEnhancement(t *testing.T) {
 
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
 		OtherSpecOptions: []core.SpecOptionsCombo{
-			core.SpecOptionsCombo{Label: "NoWeaving", SpecOptions: PlayerOptionsNoWeaving},
 			core.SpecOptionsCombo{Label: "Latency200", SpecOptions: PlayerOptionsLatencyWeaving},
 		},
 
