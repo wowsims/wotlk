@@ -395,8 +395,7 @@ func (paladin *Paladin) applyJudgmentsOfTheWise() {
 			if paladin.JowiseManaMetrics == nil {
 				paladin.JowiseManaMetrics = paladin.NewManaMetrics(core.ActionID{SpellID: 31878})
 			}
-			// TODO: actually restore intended mana
-			unit.AddMana(sim, unit.BaseMana*0.25, paladin.JowiseManaMetrics, false)
+			paladin.AddMana(sim, paladin.BaseMana*0.25, paladin.JowiseManaMetrics, false)
 		},
 	})
 
@@ -412,12 +411,12 @@ func (paladin *Paladin) applyJudgmentsOfTheWise() {
 			}
 
 			if paladin.Talents.JudgementsOfTheWise == 3 {
-				procSpell.Cast(sim, &paladin.Unit)
+				procSpell.Cast(sim, nil)
 			} else {
 				if sim.RandomFloat("judgements of the wise") > (0.33)*float64(paladin.Talents.JudgementsOfTheWise) {
 					return
 				}
-				procSpell.Cast(sim, &paladin.Unit)
+				procSpell.Cast(sim, nil)
 			}
 		},
 	})
