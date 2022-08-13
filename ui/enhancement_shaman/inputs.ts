@@ -76,12 +76,6 @@ export const EnhancementShamanRotationConfig = {
     inputs:
         [
         InputHelpers.makeRotationBooleanInput<Spec.SpecEnhancementShaman>({
-            fieldName: 'lavaburstWeave',
-            label: 'Enable Weaving Lava Burst',
-            labelTooltip: 'Not particularily useful for dual wield, mostly a 2h option',
-            enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getTalents().maelstromWeapon > 0,
-        }),
-        InputHelpers.makeRotationBooleanInput<Spec.SpecEnhancementShaman>({
             fieldName: 'lightningboltWeave',
             label: 'Enable Weaving Lightning Bolt',
             labelTooltip: 'Will provide a DPS increase, but is harder to execute',
@@ -89,16 +83,22 @@ export const EnhancementShamanRotationConfig = {
         }),
         InputHelpers.makeRotationEnumInput<Spec.SpecEnhancementShaman, number>({
             fieldName: 'maelstromweaponMinStack',
-            label: 'Min number of MW for weaving',
-            labelTooltip: 'Minimum number of Maelstrom Weapon stacks to consider weaving',
+            label: 'Minimum Maelstrom Stacks to Weave',
+            labelTooltip: '3 stacks is the most realistic, however there are cases where lower might be possible, just much harder to do in practice',
             values: [
                 { name: '1', value: 1 },
                 { name: '2', value: 2 },
                 { name: '3', value: 3 },
                 { name: '4', value: 4 },
-                { name: '5', value: 5 },
+                { name: '5', value: 5 }, // 5 is effectively disabled. likely unnessecary
             ],
             enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getTalents().maelstromWeapon > 0,
-         }),
+        }),
+        InputHelpers.makeRotationBooleanInput<Spec.SpecEnhancementShaman>({
+            fieldName: 'lavaburstWeave',
+            label: 'Enable Weaving Lava Burst',
+            labelTooltip: 'Not particularily useful for dual wield, mostly a 2h option',
+            enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getTalents().maelstromWeapon > 0,
+        }),
     ],
 };
