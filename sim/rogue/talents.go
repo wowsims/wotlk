@@ -411,6 +411,11 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 				Timer:    rogue.NewTimer(),
 				Duration: cooldownDur,
 			},
+			ModifyCast: func(s1 *core.Simulation, s2 *core.Spell, c *core.Cast) {
+				if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfBladeFlurry) {
+					c.Cost = 0
+				}
+			},
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
@@ -454,7 +459,7 @@ func (rogue *Rogue) registerAdrenalineRushCD() {
 	rogue.AdrenalineRushAura = rogue.RegisterAura(core.Aura{
 		Label:    "Adrenaline Rush",
 		ActionID: AdrenalineRushActionID,
-		Duration: time.Second * 15,
+		Duration: core.TernaryDuration(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfAdrenalineRush), time.Second*20, time.Second*15),
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.ResetEnergyTick(sim)
 			rogue.ApplyEnergyTickMultiplier(2.0)
