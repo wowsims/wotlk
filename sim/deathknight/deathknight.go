@@ -296,43 +296,14 @@ func NewDeathknight(character core.Character, talents proto.DeathknightTalents, 
 			}
 		},
 		func(sim *core.Simulation) {
-			// I change this here because when using the opener sequence
-			// you do not want these to trigger a tryUseGCD, so after the opener
-			// its fine since you're running off a prio system, and rune generation
-			// can change your logic which we want.
-			if !dk.Opener.IsOngoing() && !dk.Inputs.IsDps {
-				if dk.GCD.IsReady(sim) {
-					dk.tryUseGCD(sim)
-				}
-			}
 		},
 		func(sim *core.Simulation) {
-			if !dk.Opener.IsOngoing() && !dk.Inputs.IsDps {
-				if dk.GCD.IsReady(sim) {
-					dk.tryUseGCD(sim)
-				}
-			}
 		},
 		func(sim *core.Simulation) {
-			if !dk.Opener.IsOngoing() && !dk.Inputs.IsDps {
-				if dk.GCD.IsReady(sim) {
-					dk.tryUseGCD(sim)
-				}
-			}
 		},
 		func(sim *core.Simulation) {
-			if !dk.Opener.IsOngoing() && !dk.Inputs.IsDps {
-				if dk.GCD.IsReady(sim) {
-					dk.tryUseGCD(sim)
-				}
-			}
 		},
 		func(sim *core.Simulation) {
-			if !dk.Opener.IsOngoing() && !dk.Inputs.IsDps {
-				if dk.GCD.IsReady(sim) {
-					dk.tryUseGCD(sim)
-				}
-			}
 		},
 	)
 
@@ -358,8 +329,7 @@ func NewDeathknight(character core.Character, talents proto.DeathknightTalents, 
 		dk.ArmyGhoul[i] = dk.NewArmyGhoulPet(i)
 	}
 
-	dk.Opener = &Sequence{}
-	dk.Main = &Sequence{}
+	dk.RotationSequence = &Sequence{}
 
 	return dk
 }

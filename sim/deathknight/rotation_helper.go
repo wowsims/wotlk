@@ -70,8 +70,7 @@ func (s *Sequence) Clear() *Sequence {
 }
 
 type RotationHelper struct {
-	Opener *Sequence
-	Main   *Sequence
+	RotationSequence *Sequence
 
 	LastOutcome core.HitOutcome
 	LastCast    *RuneSpell

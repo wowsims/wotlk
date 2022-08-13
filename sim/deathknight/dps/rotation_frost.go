@@ -134,14 +134,15 @@ func (dk *DpsDeathknight) castAllMajorCooldowns(sim *core.Simulation) {
 	dk.castMajorCooldown(fr.amsMCD, sim, target)
 }
 
-func (dk *DpsDeathknight) RotationActionCallback_UA_Frost(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
+func (dk *DpsDeathknight) RotationActionCallback_UA_Frost(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	casted := dk.UnbreakableArmor.Cast(sim, target)
 
 	if casted {
 		dk.castAllMajorCooldowns(sim)
-		dk.WaitUntil(sim, sim.CurrentTime)
+		s.ConditionalAdvance(casted)
+		return sim.CurrentTime
+	} else {
+		s.ConditionalAdvance(casted)
+		return -1
 	}
-
-	s.ConditionalAdvance(casted)
-	return casted
 }

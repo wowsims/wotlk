@@ -404,6 +404,40 @@ func (rp *RunicPowerBar) ConvertToDeath(sim *Simulation, slot int32, revertOnSpe
 	}
 }
 
+func (rp *RunicPowerBar) LeftBloodRuneReady() bool {
+	const unspentBlood1 = isDeath | isSpent
+	if rp.runeStates&unspentBlood1 == 0 {
+		return true
+	} else {
+		return false
+	}
+}
+
+func (rp *RunicPowerBar) RightBloodRuneReady() bool {
+	const unspentBlood1 = isDeath | isSpent
+	const unspentBlood2 = unspentBlood1 << 5
+	if rp.runeStates&unspentBlood2 == 0 {
+		return true
+	} else {
+		return false
+	}
+}
+
+func (rp *RunicPowerBar) CurrentDeathBloodRunes() int32 {
+	const unspentBlood1 = isSpent
+	const unspentBlood2 = unspentBlood1 << 5
+
+	var count int32
+	if rp.runeStates&unspentBlood1 == 0 {
+		count++
+	}
+	if rp.runeStates&unspentBlood2 == 0 {
+		count++
+	}
+
+	return count
+}
+
 func (rp *RunicPowerBar) CurrentBloodRunes() int32 {
 	const unspentBlood1 = isDeath | isSpent
 	const unspentBlood2 = unspentBlood1 << 5

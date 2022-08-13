@@ -1,12 +1,6 @@
 package dps
 
-import (
-	"time"
-
-	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/deathknight"
-)
-
+/*
 func (dk *DpsDeathknight) setupFrostSubUnholyERWOpener() {
 	dk.setupUnbreakableArmorCooldowns()
 
@@ -477,3 +471,4 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_CancelBT(sim *co
 	s.Advance()
 	return true
 }
+*/

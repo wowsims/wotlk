@@ -7,11 +7,6 @@ import (
 )
 
 func (dk *Deathknight) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
-	if !dk.Opener.IsOngoing() && !dk.Inputs.IsDps {
-		if dk.GCD.IsReady(sim) {
-			dk.tryUseGCD(sim)
-		}
-	}
 }
 
 func (dk *Deathknight) OnGCDReady(sim *core.Simulation) {
@@ -138,9 +133,11 @@ func (dk *Deathknight) RotationActionCallback_Garg(sim *core.Simulation, target 
 func (dk *Deathknight) RotationActionCallback_BP(sim *core.Simulation, target *core.Unit, s *Sequence) time.Duration {
 	casted := dk.BloodPresence.Cast(sim, target)
 
-	waitTime := sim.CurrentTime
+	waitTime := time.Duration(-1)
 	if !casted && !dk.BloodPresence.IsReady(sim) {
-		waitTime = dk.BloodPresence.CD.ReadyAt()
+		if dk.BloodPresence.CD.ReadyAt() != sim.CurrentTime {
+			waitTime = sim.CurrentTime
+		}
 	}
 
 	s.ConditionalAdvance(casted)
@@ -150,11 +147,12 @@ func (dk *Deathknight) RotationActionCallback_BP(sim *core.Simulation, target *c
 func (dk *Deathknight) RotationActionCallback_FP(sim *core.Simulation, target *core.Unit, s *Sequence) time.Duration {
 	casted := dk.FrostPresence.Cast(sim, target)
 
-	waitTime := sim.CurrentTime
+	waitTime := time.Duration(-1)
 	if !casted && !dk.FrostPresence.IsReady(sim) {
-		waitTime = dk.FrostPresence.CD.ReadyAt()
+		if dk.FrostPresence.CD.ReadyAt() != sim.CurrentTime {
+			waitTime = sim.CurrentTime
+		}
 	}
-
 	s.ConditionalAdvance(casted)
 	return waitTime
 }
@@ -162,11 +160,12 @@ func (dk *Deathknight) RotationActionCallback_FP(sim *core.Simulation, target *c
 func (dk *Deathknight) RotationActionCallback_UP(sim *core.Simulation, target *core.Unit, s *Sequence) time.Duration {
 	casted := dk.UnholyPresence.Cast(sim, target)
 
-	waitTime := sim.CurrentTime
+	waitTime := time.Duration(-1)
 	if !casted && !dk.UnholyPresence.IsReady(sim) {
-		waitTime = dk.UnholyPresence.CD.ReadyAt()
+		if dk.UnholyPresence.CD.ReadyAt() != sim.CurrentTime {
+			waitTime = sim.CurrentTime
+		}
 	}
-
 	s.ConditionalAdvance(casted)
 	return waitTime
 }
@@ -213,10 +212,8 @@ func (dk *Deathknight) DoRotation(sim *core.Simulation) {
 	target := dk.CurrentTarget
 
 	optWait := time.Duration(-1)
-	if dk.Opener.IsOngoing() {
-		optWait = dk.Opener.DoAction(sim, target, dk)
-	} else if dk.Main.IsOngoing() {
-		optWait = dk.Main.DoAction(sim, target, dk)
+	if dk.RotationSequence.IsOngoing() {
+		optWait = dk.RotationSequence.DoAction(sim, target, dk)
 	}
 
 	if dk.GCD.IsReady(sim) {

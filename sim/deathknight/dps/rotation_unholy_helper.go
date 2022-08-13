@@ -210,7 +210,6 @@ func (dk *DpsDeathknight) uhEmpoweredRuneWeapon(sim *core.Simulation, target *co
 
 	if dk.EmpowerRuneWeapon.IsReady(sim) && dk.CurrentBloodRunes() == 0 && dk.CurrentFrostRunes() == 0 && dk.CurrentUnholyRunes() == 0 {
 		dk.EmpowerRuneWeapon.Cast(sim, target)
-		dk.WaitUntil(sim, sim.CurrentTime)
 		return true
 	}
 	return false
@@ -241,7 +240,6 @@ func (dk *DpsDeathknight) uhGargoyleCheck(sim *core.Simulation, target *core.Uni
 			dk.BloodTapAura.Deactivate(sim)
 		}
 		if dk.BloodPresence.Cast(sim, target) {
-			dk.WaitUntil(sim, sim.CurrentTime)
 			return true
 		}
 	}
@@ -249,9 +247,6 @@ func (dk *DpsDeathknight) uhGargoyleCheck(sim *core.Simulation, target *core.Uni
 }
 
 func (dk *DpsDeathknight) uhGargoyleCanCast(sim *core.Simulation, castTime time.Duration) bool {
-	if dk.Opener.IsOngoing() {
-		return false
-	}
 	if !dk.SummonGargoyle.IsReady(sim) {
 		return false
 	}

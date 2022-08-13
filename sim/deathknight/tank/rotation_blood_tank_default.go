@@ -8,7 +8,7 @@ import (
 )
 
 func (dk *TankDeathknight) setupBloodTankERWOpener() {
-	dk.Opener.
+	dk.RotationSequence.
 		NewAction(dk.RotationActionCallback_IT).
 		NewAction(dk.RotationActionCallback_IT).
 		NewAction(dk.RotationActionCallback_BT).
@@ -19,9 +19,7 @@ func (dk *TankDeathknight) setupBloodTankERWOpener() {
 		NewAction(dk.RotationActionCallback_BS).
 		NewAction(dk.RotationActionCallback_IT).
 		NewAction(dk.RotationActionCallback_PS).
-		NewAction(dk.RotationActionCallback_IT)
-
-	dk.Main.
+		NewAction(dk.RotationActionCallback_IT).
 		NewAction(dk.RotationActionCallback_TankBlood_PrioRotation)
 }
 

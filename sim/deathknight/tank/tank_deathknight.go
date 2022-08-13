@@ -56,8 +56,7 @@ func (dk *TankDeathknight) Initialize() {
 }
 
 func (dk *TankDeathknight) SetupRotations() {
-	dk.Opener.Clear()
-	dk.Main.Clear()
+	dk.RotationSequence.Clear()
 
 	dk.setupBloodTankERWOpener()
 }
