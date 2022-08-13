@@ -16,7 +16,7 @@ import { Sim } from '../core/sim.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
 import { EventID, TypedEvent } from '../core/typed_event.js';
 
-import { Rogue, Rogue_Rotation as RogueRotation, Rogue_Options as RogueOptions } from '../core/proto/rogue.js';
+import { Rogue, Rogue_Rotation as RogueRotation, Rogue_Options as RogueOptions, Rogue_Rotation_Frequency } from '../core/proto/rogue.js';
 
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as Mechanics from '../core/constants/mechanics.js';
@@ -39,7 +39,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					return {
 						updateOn: simUI.player.changeEmitter,
 						getContent: () => {
-							if (simUI.player.getRotation().maintainExposeArmor && simUI.player.getTalents().improvedExposeArmor < 2) {
+							if (simUI.player.getRotation().exposeArmorFrequency != Rogue_Rotation_Frequency.Never && simUI.player.getTalents().improvedExposeArmor < 2) {
 								return '\'Maintain Expose Armor\' selected, but missing points in Improved Expose Armor!';
 							} else {
 								return '';

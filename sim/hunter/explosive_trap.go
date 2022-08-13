@@ -108,20 +108,25 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 			hunter.AutoAttacks.DelayRangedUntil(sim, doneAt+time.Millisecond*500)
 
 			if layTrapAt == sim.CurrentTime {
-				hunter.ExplosiveTrap.Cast(sim, hunter.CurrentTarget)
+				success := hunter.ExplosiveTrap.Cast(sim, hunter.CurrentTarget)
 				if doneAt > hunter.GCD.ReadyAt() {
 					hunter.GCD.Set(doneAt)
+				} else if !success {
+					hunter.WaitForMana(sim, hunter.ExplosiveTrap.CurCast.Cost)
 				}
 			} else {
 				// Make sure the GCD doesn't get used while we're waiting.
-				hunter.GCD.Set(doneAt)
+				hunter.WaitUntil(sim, doneAt)
+
 				core.StartDelayedAction(sim, core.DelayedActionOptions{
 					DoAt: layTrapAt,
 					OnAction: func(sim *core.Simulation) {
 						hunter.GCD.Reset()
-						hunter.ExplosiveTrap.Cast(sim, hunter.CurrentTarget)
+						success := hunter.ExplosiveTrap.Cast(sim, hunter.CurrentTarget)
 						if doneAt > hunter.GCD.ReadyAt() {
 							hunter.GCD.Set(doneAt)
+						} else if !success {
+							hunter.WaitForMana(sim, hunter.ExplosiveTrap.CurCast.Cost)
 						}
 					},
 				})

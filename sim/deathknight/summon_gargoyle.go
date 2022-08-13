@@ -128,15 +128,15 @@ var gargoyleStatInheritance = func(ownerStats stats.Stats) stats.Stats {
 }
 
 func (garg *GargoylePet) registerGargoyleStrikeSpell() {
-	attackPowerModifier := 0.3333333333333333 * (1.0 + 0.04*float64(garg.dkOwner.Talents.Impurity))
+	attackPowerModifier := (1.0 + 0.04*float64(garg.dkOwner.Talents.Impurity)) / 3.0
 
 	garg.GargoyleStrike = garg.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 69520},
+		ActionID:    core.ActionID{SpellID: 51963},
 		SpellSchool: core.SpellSchoolNature,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				CastTime: time.Millisecond * 1500,
+				CastTime: time.Millisecond * 2000,
 			},
 			OnCastComplete: func(sim *core.Simulation, spell *core.Spell) {
 				// Gargoyle doesnt use GCD so we recast the spell over and over
@@ -150,7 +150,8 @@ func (garg *GargoylePet) registerGargoyleStrikeSpell() {
 			ThreatMultiplier: 1,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return 130 + hitEffect.MeleeAttackPower(spell.Unit)*attackPowerModifier
+					dmgRoll := ((69.0-51.0)*sim.RandomFloat("Gargoyle Strike")+51.0)*2.05 + hitEffect.MeleeAttackPower(spell.Unit)*attackPowerModifier
+					return dmgRoll
 				},
 				TargetSpellCoefficient: 1,
 			},

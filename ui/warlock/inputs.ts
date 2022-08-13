@@ -211,11 +211,11 @@ export const WarlockRotationConfig = {
 
 		{
 			type: 'enum' as const,
-			label: 'Manual Mode',
-			labelTooltip: 'Putting it on Preset will UPDATE TALENTS and SPELLS to defaults.',
+			label: 'Rotation Mode',
+			labelTooltip: 'Putting it on Automatic will UPDATE talents and spells to defaults.',
 			values: [
-				{name: "Expert", value: RotationPreset.Manual},
-				{name: "Preset", value: RotationPreset.Automatic},
+				{name: "Manual", value: RotationPreset.Manual},
+				{name: "Automatic", value: RotationPreset.Automatic},
 			],
 			changedEvent: (player: Player<Spec.SpecWarlock>) => player.rotationChangeEmitter,
 			getValue: (player: Player<Spec.SpecWarlock>) => player.getRotation().preset,
