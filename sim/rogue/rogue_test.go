@@ -12,26 +12,23 @@ func init() {
 	RegisterRogue()
 }
 
-func TestRogue(t *testing.T) {
+func TestCombat(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
-		Class: proto.Class_ClassRogue,
-
-		Race:       proto.Race_RaceHuman,
-		OtherRaces: []proto.Race{proto.Race_RaceBloodElf},
-
-		GearSet: core.GearSetCombo{Label: "P1", GearSet: P1Gear},
-
-		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
+		Class:       proto.Class_ClassRogue,
+		Race:        proto.Race_RaceHuman,
+		OtherRaces:  []proto.Race{proto.Race_RaceOrc},
+		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		SpecOptions: core.SpecOptionsCombo{Label: "MH Deadly OH Instant", SpecOptions: PlayerOptionsCombatDI},
 		OtherSpecOptions: []core.SpecOptionsCombo{
-			core.SpecOptionsCombo{Label: "Hemo", SpecOptions: PlayerOptionsHemo},
+			{Label: "MH Instant OH Deadly", SpecOptions: PlayerOptionsCombatID},
+			{Label: "MH Instant OH Instant", SpecOptions: PlayerOptionsCombatII},
+			{Label: "MH Deadly OH Deadly", SpecOptions: PlayerOptionsCombatDD},
 		},
-
 		RaidBuffs:   FullRaidBuffs,
 		PartyBuffs:  FullPartyBuffs,
 		PlayerBuffs: FullIndividualBuffs,
 		Consumes:    FullConsumes,
 		Debuffs:     FullDebuffs,
-
 		ItemFilter: core.ItemFilter{
 			ArmorType: proto.ArmorType_ArmorTypeLeather,
 			RangedWeaponTypes: []proto.RangedWeaponType{
@@ -43,23 +40,23 @@ func TestRogue(t *testing.T) {
 	}))
 }
 
-func TestMutilate(t *testing.T) {
+func TestAssassination(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
-		Class: proto.Class_ClassRogue,
-
-		Race:       proto.Race_RaceHuman,
-		OtherRaces: []proto.Race{proto.Race_RaceBloodElf},
-
-		GearSet: core.GearSetCombo{Label: "P1 Mutilate", GearSet: MutilateP1Gear},
-
-		SpecOptions: core.SpecOptionsCombo{Label: "Mutilate", SpecOptions: PlayerOptionsMutilate},
-
+		Class:       proto.Class_ClassRogue,
+		Race:        proto.Race_RaceHuman,
+		OtherRaces:  []proto.Race{proto.Race_RaceOrc},
+		GearSet:     core.GearSetCombo{Label: "P1 Assassination", GearSet: P1Gear},
+		SpecOptions: core.SpecOptionsCombo{Label: "Assassination", SpecOptions: PlayerOptionsAssassinationDI},
+		OtherSpecOptions: []core.SpecOptionsCombo{
+			{Label: "MH Instant OH Deadly", SpecOptions: PlayerOptionsAssassinationID},
+			{Label: "MH Instant OH Instant", SpecOptions: PlayerOptionsAssassinationII},
+			{Label: "MH Deadly OH Deadly", SpecOptions: PlayerOptionsAssassinationDD},
+		},
 		RaidBuffs:   FullRaidBuffs,
 		PartyBuffs:  FullPartyBuffs,
 		PlayerBuffs: FullIndividualBuffs,
 		Consumes:    FullConsumes,
 		Debuffs:     FullDebuffs,
-
 		ItemFilter: core.ItemFilter{
 			ArmorType: proto.ArmorType_ArmorTypeLeather,
 			RangedWeaponTypes: []proto.RangedWeaponType{
@@ -69,6 +66,7 @@ func TestMutilate(t *testing.T) {
 			},
 			WeaponTypes: []proto.WeaponType{
 				proto.WeaponType_WeaponTypeDagger,
+				proto.WeaponType_WeaponTypeFist,
 			},
 		},
 	}))
@@ -130,7 +128,7 @@ func TestCritDamageMultipliers(t *testing.T) {
 	// Poison, with RED
 	GenerateCriticalDamageMultiplierTestCase(t, "PoisonRED", GearWithRED, PlayerOptionsNoPotW, Poison, 1.545000)
 	// Poison, with RED & PotW
-	GenerateCriticalDamageMultiplierTestCase(t, "PoisonREDPotW", GearWithRED, PlayerOptionsBasic, Poison, 1.854000)
+	GenerateCriticalDamageMultiplierTestCase(t, "PoisonREDPotW", GearWithRED, PlayerOptionsCombatDI, Poison, 1.854000)
 	// Auto, no RED, no Lethality, no PotW
 	GenerateCriticalDamageMultiplierTestCase(t, "Auto", GearWithoutRED, PlayerOptionsNoLethalityNoPotW, MHAuto, 2.0)
 	// Auto, RED, no Lethality, no PotW
@@ -142,13 +140,13 @@ func TestCritDamageMultipliers(t *testing.T) {
 	// Builder, RED, Lethality, no PotW
 	GenerateCriticalDamageMultiplierTestCase(t, "BuilderREDLethality", GearWithRED, PlayerOptionsNoPotW, Builder, 2.378000)
 	// Builder, no RED, Lethality, PotW
-	GenerateCriticalDamageMultiplierTestCase(t, "BuilderLethalityPotW", GearWithoutRED, PlayerOptionsBasic, Builder, 2.820000)
+	GenerateCriticalDamageMultiplierTestCase(t, "BuilderLethalityPotW", GearWithoutRED, PlayerOptionsCombatDI, Builder, 2.820000)
 	// Builder, RED, Lethality, PotW
-	GenerateCriticalDamageMultiplierTestCase(t, "BuilderREDLethalityPotW", GearWithRED, PlayerOptionsBasic, Builder, 2.913600)
+	GenerateCriticalDamageMultiplierTestCase(t, "BuilderREDLethalityPotW", GearWithRED, PlayerOptionsCombatDI, Builder, 2.913600)
 	// Finisher, no RED, Lethality, PotW
-	GenerateCriticalDamageMultiplierTestCase(t, "FinisherLethalityPotW", GearWithoutRED, PlayerOptionsBasic, Finisher, 2.4)
+	GenerateCriticalDamageMultiplierTestCase(t, "FinisherLethalityPotW", GearWithoutRED, PlayerOptionsCombatDI, Finisher, 2.4)
 	// Finisher, no RED, Lethality, PotW
-	GenerateCriticalDamageMultiplierTestCase(t, "FinisherREDLethalityPotW", GearWithRED, PlayerOptionsBasic, Finisher, 2.472)
+	GenerateCriticalDamageMultiplierTestCase(t, "FinisherREDLethalityPotW", GearWithRED, PlayerOptionsCombatDI, Finisher, 2.472)
 }
 
 func BenchmarkSimulate(b *testing.B) {
@@ -159,7 +157,7 @@ func BenchmarkSimulate(b *testing.B) {
 				Class:     proto.Class_ClassRogue,
 				Equipment: P1Gear,
 				Consumes:  FullConsumes,
-				Spec:      PlayerOptionsBasic,
+				Spec:      PlayerOptionsCombatDI,
 				Buffs:     FullIndividualBuffs,
 			},
 			FullPartyBuffs,
