@@ -319,6 +319,9 @@ export class Player<SpecType extends Spec> {
     hasProfession(prof: Profession): boolean {
         return this.getProfessions().includes(prof);
     }
+		isBlacksmithing(): boolean {
+			return this.hasProfession(Profession.Blacksmithing);
+		}
 
     getShattFaction(): ShattrathFaction {
         return this.shattFaction;

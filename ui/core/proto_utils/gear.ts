@@ -15,6 +15,7 @@ import { isMetaGemActive } from './gems.js';
 import { gemMatchesSocket } from './gems.js';
 import { EquippedItem } from './equipped_item.js';
 import { validWeaponCombo } from './utils.js';
+import { Stats } from './stats.js';
 
 type InternalGear = Record<ItemSlot, EquippedItem | null>;
 
@@ -115,41 +116,72 @@ export class Gear {
         });
     }
 
-    getAllGems(): Array<Gem> {
+    getAllGems(isBlacksmithing: boolean): Array<Gem> {
         return this.asArray()
-            .map(equippedItem => equippedItem == null ? [] : equippedItem.gems.filter(gem => gem != null) as Array<Gem>)
+            .map(ei => ei == null ? [] : ei.curGems(isBlacksmithing))
             .flat();
     }
 
-    getGemsOfColor(color: GemColor): Array<Gem> {
-        return this.getAllGems().filter(gem => gem.color == color);
+		getNonMetaGems(isBlacksmithing: boolean): Array<Gem> {
+			return this.getAllGems(isBlacksmithing).filter(gem => gem.color != GemColor.GemColorMeta);
+		}
+
+		statsFromGems(isBlacksmithing: boolean): Stats {
+			let stats = new Stats();
+
+			// Stats from just the gems.
+			const gems = this.getAllGems(isBlacksmithing);
+			for (let i = 0; i < gems.length; i++) {
+				stats = stats.add(new Stats(gems[i].stats));
+			}
+
+			// Stats from socket bonuses.
+			const items = this.asArray().filter(ei => ei != null) as Array<EquippedItem>;
+			for (let i = 0; i < items.length; i++) {
+				stats = stats.add(items[i].socketBonusStats());
+			}
+
+			return stats;
+		}
+
+    getGemsOfColor(color: GemColor, isBlacksmithing: boolean): Array<Gem> {
+        return this.getAllGems(isBlacksmithing).filter(gem => gem.color == color);
     }
 
-    getJCGems(): Array<Gem> {
-        return this.getAllGems().filter(gem => gem.requiredProfession == Profession.Jewelcrafting);
+    getJCGems(isBlacksmithing: boolean): Array<Gem> {
+        return this.getAllGems(isBlacksmithing).filter(gem => gem.requiredProfession == Profession.Jewelcrafting);
     }
 
     getMetaGem(): Gem | null {
-        return this.getGemsOfColor(GemColor.GemColorMeta)[0] || null;
+        return this.getGemsOfColor(GemColor.GemColorMeta, true)[0] || null;
     }
 
+		gemColorCounts(isBlacksmithing: boolean): ({ red: number, yellow: number, blue: number }) {
+			const gems = this.getAllGems(isBlacksmithing);
+			return {
+				red:    gems.filter(gem => gemMatchesSocket(gem, GemColor.GemColorRed)).length,
+				yellow: gems.filter(gem => gemMatchesSocket(gem, GemColor.GemColorYellow)).length,
+				blue:   gems.filter(gem => gemMatchesSocket(gem, GemColor.GemColorBlue)).length,
+			};
+		}
+
     // Returns true if this gear set has a meta gem AND the other gems meet the meta's conditions.
-    hasActiveMetaGem(): boolean {
+    hasActiveMetaGem(isBlacksmithing: boolean): boolean {
         const metaGem = this.getMetaGem();
         if (!metaGem) {
             return false;
         }
 
-        const gems = this.getAllGems();
+				const gemColorCounts = this.gemColorCounts(isBlacksmithing);
+
+        const gems = this.getAllGems(isBlacksmithing);
         return isMetaGemActive(
             metaGem,
-            gems.filter(gem => gemMatchesSocket(gem, GemColor.GemColorRed)).length,
-            gems.filter(gem => gemMatchesSocket(gem, GemColor.GemColorYellow)).length,
-            gems.filter(gem => gemMatchesSocket(gem, GemColor.GemColorBlue)).length);
+						gemColorCounts.red, gemColorCounts.yellow, gemColorCounts.blue);
     }
 
-    hasInactiveMetaGem(): boolean {
-        return this.getMetaGem() != null && !this.hasActiveMetaGem();
+    hasInactiveMetaGem(isBlacksmithing: boolean): boolean {
+        return this.getMetaGem() != null && !this.hasActiveMetaGem(isBlacksmithing);
     }
 
     withoutMetaGem(): Gear {
