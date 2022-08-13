@@ -93,15 +93,14 @@ export const RogueRotationConfig = {
 			labelTooltip: 'Frequency of Slice and Dice cast in multi-target scnearios.',
 			values:[
 				{ name: 'Never', value: Frequency.Never },
+				{ name: 'Once', value: Frequency.Once },
 				{ name: 'Maintain', value: Frequency.Maintain },
 			],
 		}),
-		/**
 		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
 			fieldName: 'minimumComboPointsMultiTargetSlice',
 			label: 'Minimum CP (Slice)',
 			labelTooltip: 'Minimum number of combo points spent if Slice and Dice has frequency: Once',
 		}),
-		*/
 	],
 };

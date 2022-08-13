@@ -8,7 +8,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-var FanOfKnivesActionID = core.ActionID{SpellID: 51723}
+const FanOfKnivesSpellID int32 = 51723
 
 func (rogue *Rogue) makeFanOfKnivesWeaponHitEffect(isMH bool) core.SpellEffect {
 	var procMask core.ProcMask
@@ -45,7 +45,7 @@ func (rogue *Rogue) registerFanOfKnives() {
 		core.ApplyEffectFuncAOEDamageCapped(rogue.Env, ohHit)(sim, unit, spell)
 	}
 	rogue.FanOfKnives = rogue.RegisterSpell(core.SpellConfig{
-		ActionID:     FanOfKnivesActionID,
+		ActionID:     core.ActionID{SpellID: FanOfKnivesSpellID},
 		SpellSchool:  core.SpellSchoolPhysical,
 		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.Energy,

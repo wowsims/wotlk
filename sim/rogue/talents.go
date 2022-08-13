@@ -290,6 +290,11 @@ func (rogue *Rogue) applyCombatPotency() {
 				return
 			}
 
+			// Fan of Knives OH hits do not proc combat potency
+			if spell.IsSpellAction(FanOfKnivesSpellID) {
+				return
+			}
+
 			if sim.RandomFloat("Combat Potency") > procChance {
 				return
 			}
@@ -315,6 +320,10 @@ func (rogue *Rogue) applyFocusedAttacks() {
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.DidCrit() {
+				return
+			}
+			// Fan of Knives OH hits do not trigger focused attacks
+			if spellEffect.ProcMask.Matches(core.ProcMaskMeleeOH) && spell.IsSpellAction(FanOfKnivesSpellID) {
 				return
 			}
 			if procChance == 1 || sim.RandomFloat("Focused Attacks") <= procChance {
