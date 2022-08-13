@@ -86,7 +86,9 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 		SpiritWolf2: enh.NewSpiritWolf(2),
 	}
 
-	enh.LavaburstWeave = enhOptions.Rotation.LavaburstWeave
+	enh.LavaburstWeave          = enhOptions.Rotation.LavaburstWeave
+    enh.LightningboltWeave      = enhOptions.Rotation.LightningboltWeave
+    enh.MaelstromweaponMinStack = enhOptions.Rotation.MaelstromweaponMinStack
 
 	return enh
 }
