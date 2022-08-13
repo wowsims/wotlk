@@ -192,6 +192,8 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 			ret.Consecration.Cast(sim, target)
 		case nextPrimaryAbilityDelta.Milliseconds() > int64(ret.ExoSlack) && ret.Exorcism.IsReady(sim) && ret.ArtOfWarInstantCast.IsActive():
 			ret.Exorcism.Cast(sim, target)
+		case ret.DemonAndUndeadTargetCount >= 1 && ret.HolyWrath.IsReady(sim):
+			ret.HolyWrath.Cast(sim, target)
 		}
 	}
 
