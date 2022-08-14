@@ -424,7 +424,7 @@ func (rp *RunicPowerBar) RightBloodRuneReady() bool {
 }
 
 func (rp *RunicPowerBar) CurrentDeathBloodRunes() int32 {
-	const unspentBlood1 = isSpent
+	const unspentBlood1 = isDeath
 	const unspentBlood2 = unspentBlood1 << 5
 
 	var count int32

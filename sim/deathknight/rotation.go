@@ -208,6 +208,9 @@ func (dk *Deathknight) Wait(sim *core.Simulation) {
 	dk.WaitUntil(sim, waitUntil)
 }
 
+var lastTimesIdx = 0
+var lastTimes [128]time.Duration
+
 func (dk *Deathknight) DoRotation(sim *core.Simulation) {
 	target := dk.CurrentTarget
 
@@ -221,6 +224,19 @@ func (dk *Deathknight) DoRotation(sim *core.Simulation) {
 			dk.WaitUntil(sim, optWait)
 		} else {
 			dk.Wait(sim)
+		}
+	}
+
+	lastTimes[lastTimesIdx] = sim.CurrentTime
+	lastTimesIdx += 1
+
+	if lastTimesIdx >= 5 {
+		if lastTimes[lastTimesIdx-1] == lastTimes[lastTimesIdx-2] && lastTimes[lastTimesIdx-1] == lastTimes[lastTimesIdx-3] && lastTimes[lastTimesIdx-1] == lastTimes[lastTimesIdx-4] && lastTimes[lastTimesIdx-1] == lastTimes[lastTimesIdx-5] {
+
+		}
+
+		if lastTimesIdx == 128 {
+			lastTimesIdx = 0
 		}
 	}
 }
