@@ -206,6 +206,9 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 	if rogue.Talents.Vigor {
 		maxEnergy += 10
 	}
+	if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfVigor) {
+		maxEnergy += 10
+	}
 	if rogue.HasSetBonus(ItemSetGladiatorsVestments, 4) {
 		maxEnergy += 10
 	}
