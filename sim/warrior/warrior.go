@@ -185,6 +185,10 @@ func (warrior *Warrior) spellCritMultiplier(applyImpale bool) float64 {
 	return warrior.SpellCritMultiplier(1.0, warrior.secondaryCritModifier(applyImpale))
 }
 
+func (warrior *Warrior) HasMajorGlyph(glyph proto.WarriorMajorGlyph) bool {
+	return warrior.HasGlyph(int32(glyph))
+}
+
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassWarrior}] = stats.Stats{
 		stats.Health:      4264,
