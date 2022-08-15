@@ -87,9 +87,10 @@ var armsRotation = &proto.Warrior_Rotation{
 	UseRend: true,
 	UseMs:   true,
 
-	HsRageThreshold: 60,
-	MsRageThreshold: 60,
-	RendCdThreshold: 3,
+	HsRageThreshold:   60,
+	MsRageThreshold:   60,
+	SlamRageThreshold: 20,
+	RendCdThreshold:   3,
 
 	SpamExecute: false,
 

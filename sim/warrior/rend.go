@@ -9,7 +9,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (warrior *Warrior) RegisterRendSpell(rageThreshold float64) {
+func (warrior *Warrior) registerRendSpell(rageThreshold float64) {
 	actionID := core.ActionID{SpellID: 47465}
 
 	cost := 10.0

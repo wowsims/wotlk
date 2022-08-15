@@ -74,6 +74,12 @@ export const WarriorRotationConfig = {
 			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().mortalStrike,
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecWarrior>({
+			fieldName: 'slamRageThreshold',
+			label: 'Slam rage threshold',
+			labelTooltip: 'Slam when rage is above:',
+			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().mortalStrike,
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecWarrior>({
 			fieldName: 'hsRageThreshold',
 			label: 'HS rage threshold',
 			labelTooltip: 'Heroic Strike when rage is above:',

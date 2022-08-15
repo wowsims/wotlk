@@ -85,14 +85,6 @@ func (war *DpsWarrior) normalRotation(sim *core.Simulation, highPrioSpellsOnly b
 			war.Bloodthirst.Cast(sim, war.CurrentTarget)
 		} else if war.Rotation.UseRend && war.ShouldRend(sim) {
 			war.Rend.Cast(sim, war.CurrentTarget)
-		} else if war.Rotation.UseMs && war.CanMortalStrike(sim) {
-			war.MortalStrike.Cast(sim, war.CurrentTarget)
-		} else if war.CanShieldSlam(sim) {
-			war.ShieldSlam.Cast(sim, war.CurrentTarget)
-		} else if !war.Rotation.PrioritizeWw && war.CanWhirlwind(sim) {
-			war.Whirlwind.Cast(sim, war.CurrentTarget)
-		} else if war.SuddenDeathAura.IsActive() && war.CanExecute() {
-			war.Execute.Cast(sim, war.CurrentTarget)
 		} else if war.ShouldOverpower(sim) {
 			if !war.StanceMatches(warrior.BattleStance) {
 				if !war.BattleStance.IsReady(sim) {
@@ -101,8 +93,16 @@ func (war *DpsWarrior) normalRotation(sim *core.Simulation, highPrioSpellsOnly b
 				war.BattleStance.Cast(sim, nil)
 			}
 			war.Overpower.Cast(sim, war.CurrentTarget)
+		} else if war.SuddenDeathAura.IsActive() && war.CanExecute() {
+			war.Execute.Cast(sim, war.CurrentTarget)
 		} else if war.CanSlam(sim) {
 			war.Slam.Cast(sim, war.CurrentTarget)
+		} else if war.Rotation.UseMs && war.CanMortalStrike(sim) {
+			war.MortalStrike.Cast(sim, war.CurrentTarget)
+		} else if war.CanShieldSlam(sim) {
+			war.ShieldSlam.Cast(sim, war.CurrentTarget)
+		} else if !war.Rotation.PrioritizeWw && war.CanWhirlwind(sim) {
+			war.Whirlwind.Cast(sim, war.CurrentTarget)
 		} else if !highPrioSpellsOnly {
 			if war.tryMaintainDebuffs(sim) {
 				war.DoNothing()
@@ -111,7 +111,6 @@ func (war *DpsWarrior) normalRotation(sim *core.Simulation, highPrioSpellsOnly b
 			}
 		}
 	}
-
 	war.tryQueueHsCleave(sim)
 }
 
@@ -123,6 +122,16 @@ func (war *DpsWarrior) executeRotation(sim *core.Simulation, highPrioSpellsOnly 
 			war.Bloodthirst.Cast(sim, war.CurrentTarget)
 		} else if war.Rotation.UseRend && war.ShouldRend(sim) {
 			war.Rend.Cast(sim, war.CurrentTarget)
+		} else if war.ShouldOverpower(sim) {
+			if !war.StanceMatches(warrior.BattleStance) {
+				if !war.BattleStance.IsReady(sim) {
+					return
+				}
+				war.BattleStance.Cast(sim, nil)
+			}
+			war.Overpower.Cast(sim, war.CurrentTarget)
+		} else if war.SuddenDeathAura.IsActive() && war.CanExecute() {
+			war.Execute.Cast(sim, war.CurrentTarget)
 		} else if war.Rotation.UseSlamOverExecute && war.CanSlam(sim) {
 			war.Slam.Cast(sim, war.CurrentTarget)
 		} else if war.Rotation.UseMs && war.CanMortalStrike(sim) {
@@ -131,7 +140,6 @@ func (war *DpsWarrior) executeRotation(sim *core.Simulation, highPrioSpellsOnly 
 			war.Whirlwind.Cast(sim, war.CurrentTarget)
 		} else if war.CanExecute() {
 			war.Execute.Cast(sim, war.CurrentTarget)
-
 		} else if !highPrioSpellsOnly {
 			if war.tryMaintainDebuffs(sim) {
 				war.DoNothing()

@@ -176,14 +176,17 @@ message Warrior {
 		// Fury only: Use Rend when over this threshold.
 		double rend_rage_threshold = 10;
 
-		// Refresh Rend when remaining duration is less than this threshold.
-		double rend_cd_threshold = 11;
+		// Arms only:  Use Slam when over this threshold.
+		double slam_rage_threshold = 11;
 
-		bool use_hs_during_execute = 12;
-		bool use_bt_during_execute = 13;
-		bool spam_execute = 14;
-		bool use_ww_during_execute = 15;
-		bool use_slam_over_execute = 16;
+		// Refresh Rend when remaining duration is less than this threshold.
+		double rend_cd_threshold = 12;
+
+		bool use_hs_during_execute = 13;
+		bool use_bt_during_execute = 14;
+		bool spam_execute = 15;
+		bool use_ww_during_execute = 16;
+		bool use_slam_over_execute = 17;
 	}
 	Rotation rotation = 1;
 
