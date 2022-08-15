@@ -397,6 +397,7 @@ func (mage *Mage) registerCombustionCD() {
 		MaxStacks: 20,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			numCrits = 0
+			// need to add 50% crit dmg to combustion here
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			cd.Use(sim)

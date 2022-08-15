@@ -42,7 +42,7 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				if mage.MissileBarrageAura.IsActive() {
-					// sim.Log("Is this working correctly? ")
+					bloodmageHasteAura.Activate(sim)
 					mage.PseudoStats.NoCost = true
 					cast.ChannelTime = cast.ChannelTime / 2
 				}

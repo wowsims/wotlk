@@ -56,6 +56,8 @@ func (mage *Mage) registerFireballSpell() {
 					mage.FireballDot.Apply(sim)
 				}
 			},
+
+			MissileSpeed: 22,
 		}),
 	})
 

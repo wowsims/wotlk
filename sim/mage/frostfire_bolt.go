@@ -55,6 +55,8 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 					mage.FrostfireDot.Apply(sim)
 				}
 			},
+
+			// MissileSpeed: 25,
 		}),
 	})
 

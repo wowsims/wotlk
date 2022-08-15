@@ -262,6 +262,8 @@ func (character *Character) GetBaseStats() stats.Stats {
 	return character.baseStats
 }
 
+// 1 + .5 * 1.09 * (1 + (crit mods))
+
 // Returns the crit multiplier for a spell.
 // https://web.archive.org/web/20081014064638/http://elitistjerks.com/f31/t12595-relentless_earthstorm_diamond_-_melee_only/p4/
 // https://github.com/TheGroxEmpire/TBC_DPS_Warrior_Sim/issues/30
