@@ -727,8 +727,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-Settings-Human-P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 500.5160210162
-  tps: 1009.0547499701
+  dps: 500.5124370162
+  tps: 1009.0492847285
  }
 }
 dps_results: {
@@ -769,8 +769,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-Settings-Orc-P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 507.9868587775
-  tps: 1020.322988779
+  dps: 507.9832747775
+  tps: 1020.3175235374
  }
 }
 dps_results: {
