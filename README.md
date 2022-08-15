@@ -2,6 +2,8 @@ Welcome to the WoW WOTLK Classic simulator! If you have questions or are thinkin
 
 The primary goal of this project is to provide a framework that makes it easy to build a DPS sim for any class/spec, with a polished UI and accurate results. Each community will have ownership / responsibility over their portion of the sim, to ensure accuracy and that their community is represented. By having all the individual sims on the same engine, we can also have a combined 'raid sim' for testing raid compositions.
 
+This project is licensed with MIT license. We request that anyone using this software in their own project to make sure there is a user visible link back to the original project.
+
 [Live sims can be found here.](https://wowsims.github.io/wotlk "https://wowsims.github.io/wotlk")
 
 # Installation
