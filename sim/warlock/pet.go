@@ -71,11 +71,12 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 
 	if petConfig.Melee {
 		switch summonChoice {
+		// TODO: revisit base damage once blizzard fixes JamminL/wotlk-classic-bugs#328
 		case proto.Warlock_Options_Felguard:
 			wp.EnableAutoAttacks(wp, core.AutoAttackOptions{
 				MainHand: core.Weapon{
-					BaseDamageMin:  412.5,
-					BaseDamageMax:  412.5,
+					BaseDamageMin:  88.8,
+					BaseDamageMax:  133.3,
 					SwingSpeed:     2,
 					SwingDuration:  time.Second * 2,
 					CritMultiplier: 2,
@@ -85,8 +86,8 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		case proto.Warlock_Options_Succubus:
 			wp.EnableAutoAttacks(wp, core.AutoAttackOptions{
 				MainHand: core.Weapon{
-					BaseDamageMin:  412.5,
-					BaseDamageMax:  412.5,
+					BaseDamageMin:  98,
+					BaseDamageMax:  147,
 					SwingSpeed:     2,
 					SwingDuration:  time.Second * 2,
 					CritMultiplier: 2,
@@ -96,8 +97,8 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		case proto.Warlock_Options_Felhunter:
 			wp.EnableAutoAttacks(wp, core.AutoAttackOptions{
 				MainHand: core.Weapon{
-					BaseDamageMin:  309.6,
-					BaseDamageMax:  309.6,
+					BaseDamageMin:  88.8,
+					BaseDamageMax:  133.3,
 					SwingSpeed:     2,
 					SwingDuration:  time.Second * 2,
 					CritMultiplier: 2,
@@ -223,45 +224,48 @@ var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
 		Melee:            true,
 		PrimaryAbility:   Cleave,
 		SecondaryAbility: Intercept,
-		ManaIntRatio:     11.5,
+		ManaIntRatio:     15 * 0.77, // GetUnitPowerModifier("pet")
 		Stats: stats.Stats{
-			stats.Stamina:   280,
-			stats.Strength:  153,
-			stats.Agility:   108,
-			stats.Intellect: 133,
-			stats.Mana:      893,
-			stats.Spirit:    122,
-			stats.MP5:       48,
+			stats.Strength:  314,
+			stats.Agility:   90,
+			stats.Stamina:   328,
+			stats.Intellect: 150,
+			stats.Spirit:    209,
+			stats.Mana:      1559,
+			stats.MeleeCrit: 3.2685 * core.CritRatingPerCritChance,
+			stats.SpellCrit: 3.3355 * core.CritRatingPerCritChance,
 		},
 	},
 	proto.Warlock_Options_Imp: {
 		Name:           "Imp",
-		ManaIntRatio:   4.9,
+		ManaIntRatio:   15 * 0.33, // GetUnitPowerModifier("pet")
 		Melee:          false,
 		PrimaryAbility: Firebolt,
 		Stats: stats.Stats{
-			stats.MP5:       123,
-			stats.Stamina:   101,
-			stats.Strength:  145,
-			stats.Agility:   38,
-			stats.Intellect: 327,
-			stats.Mana:      756,
-			stats.Spirit:    263,
+			stats.Strength:  297,
+			stats.Agility:   79,
+			stats.Stamina:   118,
+			stats.Intellect: 369,
+			stats.Spirit:    367,
+			stats.Mana:      1174,
+			stats.MeleeCrit: 3.454 * core.CritRatingPerCritChance,
+			stats.SpellCrit: 0.9075 * core.CritRatingPerCritChance,
 		},
 	},
 	proto.Warlock_Options_Succubus: {
 		Name:           "Succubus",
-		ManaIntRatio:   11.5,
+		ManaIntRatio:   15 * 0.77, // GetUnitPowerModifier("pet")
 		Melee:          true,
 		PrimaryAbility: LashOfPain,
 		Stats: stats.Stats{
-			stats.Stamina:   328,
 			stats.Strength:  314,
 			stats.Agility:   90,
+			stats.Stamina:   328,
 			stats.Intellect: 150,
-			stats.Mana:      1109,
 			stats.Spirit:    209,
-			stats.MP5:       11,
+			stats.Mana:      1559,
+			stats.MeleeCrit: 3.2685 * core.CritRatingPerCritChance,
+			stats.SpellCrit: 3.3355 * core.CritRatingPerCritChance,
 		},
 	},
 	proto.Warlock_Options_Felhunter: {
@@ -276,9 +280,8 @@ var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
 			stats.Intellect: 150,
 			stats.Spirit:    209,
 			stats.Mana:      1559,
-			stats.MP5:       11,
-			stats.SpellCrit: 0.01,
-			stats.MeleeCrit: 0.03,
+			stats.MeleeCrit: 3.2685 * core.CritRatingPerCritChance,
+			stats.SpellCrit: 3.3355 * core.CritRatingPerCritChance,
 		},
 	},
 }
