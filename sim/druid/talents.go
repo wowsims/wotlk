@@ -68,23 +68,30 @@ func (druid *Druid) ApplyTalents() {
 }
 
 func (druid *Druid) setupNaturesGrace() {
-	// effect is now : spell cast speed +20% for 3s
 	if druid.Talents.NaturesGrace < 1 {
 		return
 	}
 	// 1/3 de chance de proc par point de talent.
-
 	druid.NaturesGraceProcAura = druid.RegisterAura(core.Aura{
 		Label:    "Natures Grace Proc",
 		ActionID: core.ActionID{SpellID: 16886},
-		Duration: core.NeverExpires,
-		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if spell != druid.Wrath && spell != druid.Starfire {
-				return
-			}
-
-			aura.Deactivate(sim)
+		// Duration: core.NeverExpires,
+		Duration: time.Second * 3,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			druid.AddStatDynamic(sim, stats.SpellHaste, 655.8)
 		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			druid.AddStatDynamic(sim, stats.SpellHaste, -655.8)
+		},
+		/*
+			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+				if spell != druid.Wrath && spell != druid.Starfire {
+					return
+				}
+
+				aura.Deactivate(sim)
+			},
+		*/
 	})
 
 	druid.RegisterAura(core.Aura{
@@ -102,12 +109,14 @@ func (druid *Druid) setupNaturesGrace() {
 	})
 }
 
+/*
 func (druid *Druid) applyNaturesGrace(cast *core.Cast) {
 	if druid.NaturesGraceProcAura.IsActive() {
-		cast.CastTime -= time.Millisecond * 500
+		druid.AddStat(stats.SpellHaste, 655.8) // 20% spell haste = 20 * 32.79 at level 80
+		// cast.CastTime -= time.Millisecond * 500
 	}
 }
-
+*/
 func (druid *Druid) registerNaturesSwiftnessCD() {
 	if !druid.Talents.NaturesSwiftness {
 		return
