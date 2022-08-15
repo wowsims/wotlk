@@ -423,19 +423,8 @@ func (rp *RunicPowerBar) RightBloodRuneReady() bool {
 	}
 }
 
-func (rp *RunicPowerBar) CurrentDeathBloodRunes() int32 {
-	const unspentBlood1 = isDeath
-	const unspentBlood2 = unspentBlood1 << 5
-
-	var count int32
-	if rp.runeStates&unspentBlood1 == 0 {
-		count++
-	}
-	if rp.runeStates&unspentBlood2 == 0 {
-		count++
-	}
-
-	return count
+func (rp *RunicPowerBar) RuneIsDeath(slot int32) bool {
+	return (rp.runeStates & isDeaths[slot]) != 0
 }
 
 func (rp *RunicPowerBar) CurrentBloodRunes() int32 {

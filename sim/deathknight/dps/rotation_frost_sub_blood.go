@@ -15,7 +15,9 @@ func (dk *DpsDeathknight) RotationActionCallback_BS_Frost(sim *core.Simulation, 
 
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_KM(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	casted := false
-	if dk.KillingMachineAura.IsActive() {
+	ffExpiresAt := dk.FrostFeverDisease[target.Index].ExpiresAt()
+	bpExpiresAt := dk.BloodPlagueDisease[target.Index].ExpiresAt()
+	if dk.KillingMachineAura.IsActive() && sim.CurrentTime+1500*time.Millisecond < core.MinDuration(ffExpiresAt, bpExpiresAt) {
 		if dk.FrostStrike.CanCast(sim) {
 			casted = dk.FrostStrike.Cast(sim, target)
 		}
@@ -25,34 +27,34 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_KM(sim *core.S
 	return core.TernaryDuration(casted, -1, sim.CurrentTime)
 }
 
-func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump_UntilBloodRune(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	casted := false
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump_UntilBR(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	waitUntil := time.Duration(-1)
 
-	//abGcd := 1500 * time.Millisecond
-	//spGcd := dk.SpellGCD()
+	abGcd := 1500 * time.Millisecond
+	spGcd := dk.SpellGCD()
+	frAt := dk.BloodRuneReadyAt(sim)
 	fsCost := float64(core.RuneCost(dk.FrostStrike.CurCast.Cost).RunicPower())
 
-	if dk.CurrentBloodRunes()+dk.CurrentDeathRunes() == 0 {
-		if dk.FrostStrike.CanCast(sim) && dk.KillingMachineAura.IsActive() {
-			casted = dk.FrostStrike.Cast(sim, target)
-		} else if dk.HowlingBlast.CanCast(sim) && dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
-			casted = dk.HowlingBlast.Cast(sim, target)
-		} else if dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 100.0 {
-			casted = dk.FrostStrike.Cast(sim, target)
-		} else if dk.HowlingBlast.CanCast(sim) && dk.RimeAura.IsActive() {
-			casted = dk.HowlingBlast.Cast(sim, target)
-		} else if dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 2.0*(fsCost-dk.fr.oblitRPRegen) {
-			casted = dk.FrostStrike.Cast(sim, target)
-		} else if dk.HornOfWinter.CanCast(sim) {
-			casted = dk.HornOfWinter.Cast(sim, target)
-		}
+	tol := 000 * time.Millisecond
+	if sim.CurrentTime+abGcd <= frAt+tol && dk.FrostStrike.CanCast(sim) && dk.KillingMachineAura.IsActive() {
+		dk.FrostStrike.Cast(sim, target)
+	} else if sim.CurrentTime+spGcd <= frAt+tol && dk.HowlingBlast.CanCast(sim) && dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
+		dk.HowlingBlast.Cast(sim, target)
+	} else if sim.CurrentTime+abGcd <= frAt+tol && dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 100.0 {
+		dk.FrostStrike.Cast(sim, target)
+	} else if sim.CurrentTime+spGcd <= frAt+tol && dk.HowlingBlast.CanCast(sim) && dk.RimeAura.IsActive() {
+		dk.HowlingBlast.Cast(sim, target)
+	} else if sim.CurrentTime+abGcd <= frAt+tol && dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 2.0*(fsCost-dk.fr.oblitRPRegen) {
+		dk.FrostStrike.Cast(sim, target)
+	} else if sim.CurrentTime+spGcd <= frAt+tol && dk.HornOfWinter.CanCast(sim) {
+		dk.HornOfWinter.Cast(sim, target)
 	} else {
+		waitUntil = frAt
 		s.Advance()
 	}
 
-	return core.TernaryDuration(casted, -1, sim.CurrentTime)
+	return waitUntil
 }
-
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump_UntilUA(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	casted := false
 
@@ -157,7 +159,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_UA_Check(sim *cor
 }
 
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Obli_Check(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	if dk.BloodTap.IsReady(sim) && dk.CurrentDeathBloodRunes() == 2 {
+	if dk.BloodTap.IsReady(sim) && dk.RuneIsDeath(0) && dk.RuneIsDeath(1) {
 		s.Clear().
 			NewAction(dk.RotationActionCallback_Obli).
 			NewAction(dk.RotationActionCallback_BT).
@@ -180,7 +182,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_SequenceRotation(
 		NewAction(dk.RotationActionCallback_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_FS_KM).
 		NewAction(dk.RotationActionCallback_Obli).
-		NewAction(dk.RotationActionCallback_FrostSubBlood_FS_Dump_UntilBloodRune).
+		NewAction(dk.RotationActionCallback_FrostSubBlood_FS_Dump_UntilBR).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_UA_Check)
 	return sim.CurrentTime
 }
