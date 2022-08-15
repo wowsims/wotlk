@@ -24,7 +24,7 @@ func (druid *Druid) newStarfireSpell() *core.Spell {
 
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
-		BonusSpellCritRating: core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartRegalia, 4), 5*core.CritRatingPerCritChance, 0),
+		BonusSpellCritRating: float64(2*float64(druid.Talents.NaturesMajesty)*45.91) + core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartRegalia, 4), 5*core.CritRatingPerCritChance, 0),
 		DamageMultiplier:     1 + 0.02*float64(druid.Talents.Moonfury),
 		ThreatMultiplier:     1,
 		BaseDamage:           core.BaseDamageConfigMagic(minBaseDamage+bonusFlatDamage, maxBaseDamage+bonusFlatDamage, spellCoefficient),
@@ -67,7 +67,7 @@ func (druid *Druid) newStarfireSpell() *core.Spell {
 
 			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
 				druid.applyNaturesSwiftness(cast)
-				druid.applyNaturesGrace(cast)
+				// druid.applyNaturesGrace(cast)
 			},
 		},
 
