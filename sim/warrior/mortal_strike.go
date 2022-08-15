@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -39,6 +40,7 @@ func (warrior *Warrior) registerMortalStrikeSpell(cdTimer *core.Timer, rageThres
 
 			DamageMultiplier: 1 *
 				(1 + 0.01*float64(warrior.Talents.ImprovedMortalStrike)) *
+				core.TernaryFloat64(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfMortalStrike), 1.1, 1) *
 				core.TernaryFloat64(warrior.HasSetBonus(ItemSetOnslaughtBattlegear, 4), 1.05, 1),
 			ThreatMultiplier: 1,
 

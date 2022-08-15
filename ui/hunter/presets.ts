@@ -4,13 +4,13 @@ import { EquipmentSpec } from '../core/proto/common.js';
 import { Flask } from '../core/proto/common.js';
 import { Food } from '../core/proto/common.js';
 import { Glyphs } from '../core/proto/common.js';
+import { PetFood } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
-import { ferocityDefault } from '../core/talents/hunter_pet.js';
+import { ferocityDefault, ferocityBMDefault } from '../core/talents/hunter_pet.js';
 
 import {
 	Hunter_Rotation as HunterRotation,
-	//Hunter_Rotation_WeaveType as WeaveType,
 	Hunter_Rotation_RotationType as RotationType,
 	Hunter_Rotation_StingType as StingType,
 	Hunter_Rotation_SpellOption as SpellOption,
@@ -104,10 +104,20 @@ export const DefaultOptions = HunterOptions.create({
 	sniperTrainingUptime: 0.8,
 });
 
+export const BMDefaultOptions = HunterOptions.create({
+	ammo: Ammo.SaroniteRazorheads,
+	useHuntersMark: true,
+	petType: PetType.Wolf,
+	petTalents: ferocityBMDefault,
+	petUptime: 1,
+	sniperTrainingUptime: 0.8,
+});
+
 export const DefaultConsumes = Consumes.create({
 	defaultPotion: Potions.PotionOfSpeed,
 	flask: Flask.FlaskOfEndlessRage,
 	food: Food.FoodFishFeast,
+	petFood: PetFood.PetFoodSpicedMammothTreats,
 });
 
 export const PRERAID_PRESET = {
@@ -120,20 +130,20 @@ export const PRERAID_PRESET = {
 			"enchant": 44879,
 			"gems": [
 				41398,
-				40043
+				40148
 			]
 		},
 		{
 			"id": 42645,
 			"gems": [
-				39997
+				42143
 			]
 		},
 		{
 			"id": 37679,
 			"enchant": 44871,
 			"gems": [
-				39997
+				42143
 			]
 		},
 		{
@@ -142,9 +152,9 @@ export const PRERAID_PRESET = {
 		},
 		{
 			"id": 37144,
-			"enchant": 44623,
+			"enchant": 44489,
 			"gems": [
-				40023
+				40166
 			]
 		},
 		{
@@ -164,7 +174,7 @@ export const PRERAID_PRESET = {
 		{
 			"id": 37407,
 			"gems": [
-				39997
+				42143
 			]
 		},
 		{
@@ -175,8 +185,8 @@ export const PRERAID_PRESET = {
 			"id": 37167,
 			"enchant": 55016,
 			"gems": [
-				39997,
-				39997
+				40112,
+				40112
 			]
 		},
 		{
@@ -185,7 +195,7 @@ export const PRERAID_PRESET = {
 		{
 			"id": 42642,
 			"gems": [
-				40043
+				40112
 			]
 		},
 		{
@@ -198,6 +208,7 @@ export const PRERAID_PRESET = {
 			"id": 44249,
 			"enchant": 44630
 		},
+		{},
 		{
 			"id": 43284,
 			"enchant": 41167
@@ -215,20 +226,20 @@ export const P1_PRESET = {
 			"enchant": 44879,
 			"gems": [
 				41398,
-				40023
+				40166
 			]
 		},
 		{
 			"id": 44664,
 			"gems": [
-				40023
+				42143
 			]
 		},
 		{
 			"id": 40507,
 			"enchant": 44871,
 			"gems": [
-				39997
+				42143
 			]
 		},
 		{
@@ -237,17 +248,17 @@ export const P1_PRESET = {
 		},
 		{
 			"id": 43998,
-			"enchant": 44623,
+			"enchant": 44489,
 			"gems": [
-				39997,
-				40023
+				42143,
+				40112
 			]
 		},
 		{
 			"id": 40282,
 			"enchant": 60616,
 			"gems": [
-				40086,
+				40112,
 				0
 			]
 		},
@@ -261,15 +272,15 @@ export const P1_PRESET = {
 		{
 			"id": 39762,
 			"gems": [
-				39997
+				40112
 			]
 		},
 		{
 			"id": 40331,
 			"enchant": 38374,
 			"gems": [
-				39997,
-				40023
+				40112,
+				40112
 			]
 		},
 		{
@@ -292,6 +303,7 @@ export const P1_PRESET = {
 			"id": 40388,
 			"enchant": 44630
 		},
+		{},
 		{
 			"id": 40385,
 			"enchant": 41167

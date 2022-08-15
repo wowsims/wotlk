@@ -224,21 +224,22 @@ message ElementalShaman {
 }
 
 message EnhancementShaman {
-	message Rotation {
-		ShamanTotems totems = 1;
+    message Rotation {
+        ShamanTotems totems = 1;
         bool lavaburst_weave = 2;
-	    // TODO: lightning/possibly lavaburst weaving
+        bool lightningbolt_weave = 3;
+        int32 maelstromweapon_min_stack = 4;
     }
 
-  message Options {
-	ShamanShield shield = 1;
-	bool bloodlust = 2;
-    ShamanSyncType sync_type = 3;
-    ShamanImbue imbue_mh = 4;
-    ShamanImbue imbue_oh = 5;
-  }
+    message Options {
+        ShamanShield shield = 1;
+	    bool bloodlust = 2;
+        ShamanSyncType sync_type = 3;
+        ShamanImbue imbue_mh = 4;
+        ShamanImbue imbue_oh = 5;
+    }
 
-  Rotation rotation = 1;
-  ShamanTalents talents = 2;
-  Options options = 3;
+    Rotation rotation = 1;
+    ShamanTalents talents = 2;
+    Options options = 3;
 }

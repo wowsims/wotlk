@@ -165,7 +165,7 @@ func (warrior *Warrior) applyBloodsurge() {
 
 	warrior.BloodsurgeAura = warrior.RegisterAura(core.Aura{
 		Label:    "Bloodsurge Proc",
-		ActionID: core.ActionID{SpellID: 46915},
+		ActionID: core.ActionID{SpellID: 46916},
 		Duration: time.Second * 5,
 	})
 
@@ -186,7 +186,7 @@ func (warrior *Warrior) applyBloodsurge() {
 			}
 
 			// Using heroic strike SpellID for now as Cleave and HS is a single spell variable
-			if spell.ActionID.SpellID != 47450 || spell != warrior.Bloodthirst || spell != warrior.Whirlwind {
+			if spell.ActionID.SpellID != 47450 && spell != warrior.Bloodthirst && spell != warrior.Whirlwind {
 				return
 			}
 

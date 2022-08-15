@@ -653,7 +653,7 @@ func (hp *HunterPet) newSavageRend() PetAbility {
 	srSpell := hp.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagApplyArmorReduction,
 
 		Cast: core.CastConfig{
 			CD: core.Cooldown{

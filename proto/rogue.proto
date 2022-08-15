@@ -168,6 +168,10 @@ message Rogue {
 		int32 minimum_combo_points_primary_finisher = 6;
 
 		int32 minimum_combo_points_secondary_finisher = 7;
+
+		Frequency MultiTargetSliceFrequency = 8;
+
+		int32 minimum_combo_points_multi_target_slice = 9;
 	}
 	Rotation rotation = 1;
 

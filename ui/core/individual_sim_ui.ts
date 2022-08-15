@@ -113,6 +113,12 @@ export interface InputSection {
 	inputs: Array<InputConfig<Player<any>>>,
 }
 
+export interface OtherDefaults {
+	profession1?: Profession,
+	profession2?: Profession,
+	distanceFromTarget?: number,
+}
+
 export interface IndividualSimUIConfig<SpecType extends Spec> {
 	// Additional css class to add to the root element.
 	cssClass: string,
@@ -139,9 +145,7 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 
 		debuffs: Debuffs,
 
-		profession1?: Profession,
-		profession2?: Profession,
-		distanceFromTarget?: number,
+		other?: OtherDefaults,
 	},
 
 	playerIconInputs: Array<IconInputConfig<Player<SpecType>, any>>,
@@ -219,7 +223,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		this.addWarning({
 			updateOn: this.player.gearChangeEmitter,
 			getContent: () => {
-				if (!this.player.getGear().hasInactiveMetaGem()) {
+				if (!this.player.getGear().hasInactiveMetaGem(this.player.isBlacksmithing())) {
 					return '';
 				}
 
@@ -241,7 +245,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		this.addWarning({
 			updateOn: this.player.gearChangeEmitter,
 			getContent: () => {
-				const jcGems = this.player.getGear().getJCGems();
+				const jcGems = this.player.getGear().getJCGems(this.player.isBlacksmithing());
 				if (jcGems.length <= 3) {
 					return '';
 				}
@@ -1089,9 +1093,9 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.player.getParty()!.setBuffs(eventID, this.individualConfig.defaults.partyBuffs);
 			this.player.getRaid()!.setBuffs(eventID, this.individualConfig.defaults.raidBuffs);
 			this.player.setEpWeights(eventID, this.individualConfig.defaults.epWeights);
-			this.player.setProfession1(eventID, this.individualConfig.defaults.profession1 || Profession.Engineering);
-			this.player.setProfession2(eventID, this.individualConfig.defaults.profession2 || Profession.Jewelcrafting);
-			this.player.setDistanceFromTarget(eventID, this.individualConfig.defaults.distanceFromTarget || 0);
+			this.player.setProfession1(eventID, this.individualConfig.defaults.other?.profession1 || Profession.Engineering);
+			this.player.setProfession2(eventID, this.individualConfig.defaults.other?.profession2 || Profession.Jewelcrafting);
+			this.player.setDistanceFromTarget(eventID, this.individualConfig.defaults.other?.distanceFromTarget || 0);
 
 			if (!this.isWithinRaidSim) {
 				this.sim.encounter.applyDefaults(eventID);

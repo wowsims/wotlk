@@ -149,7 +149,11 @@ func (rogue *Rogue) Initialize() {
 	}
 
 	rogue.finishingMoveEffectApplier = rogue.makeFinishingMoveEffectApplier()
-	rogue.SetPriorityList()
+	if rogue.Env.GetNumTargets() > 3 {
+		rogue.SetMultiTargetPriorityList()
+	} else {
+		rogue.SetPriorityList()
+	}
 	rogue.DelayDPSCooldownsForArmorDebuffs()
 }
 
@@ -200,7 +204,13 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 	rogue.PseudoStats.CanParry = true
 	maxEnergy := 100.0
 	if rogue.Talents.Vigor {
-		maxEnergy = 110
+		maxEnergy += 10
+	}
+	if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfVigor) {
+		maxEnergy += 10
+	}
+	if rogue.HasSetBonus(ItemSetGladiatorsVestments, 4) {
+		maxEnergy += 10
 	}
 	rogue.EnableEnergyBar(maxEnergy, rogue.OnEnergyGain)
 	rogue.EnergyTickMultiplier *= (1 + []float64{0, 0.08, 0.16, 0.25}[rogue.Talents.Vitality])

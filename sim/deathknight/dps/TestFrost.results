@@ -249,7 +249,7 @@ dps_results: {
  key: "TestFrost-AllItems-FlameGuard"
  value: {
   dps: 3780.689196859
-  tps: 2507.9544443801
+  tps: 2507.95444438
  }
 }
 dps_results: {

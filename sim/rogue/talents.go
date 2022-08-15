@@ -153,18 +153,6 @@ func (rogue *Rogue) registerHungerForBlood() {
 			rogue.HungerForBloodAura.Activate(sim)
 		},
 	})
-
-	rogue.AddMajorCooldown(core.MajorCooldown{
-		Spell: rogue.HungerForBlood,
-		Type:  core.CooldownTypeDPS,
-		CanActivate: func(s *core.Simulation, c *core.Character) bool {
-			return rogue.CurrentEnergy() >= 15
-		},
-		ShouldActivate: func(s *core.Simulation, c *core.Character) bool {
-			return !rogue.HungerForBloodAura.IsActive()
-		},
-	})
-
 }
 
 func (rogue *Rogue) preyOnTheWeakMultiplier(target *core.Unit) float64 {
@@ -302,6 +290,11 @@ func (rogue *Rogue) applyCombatPotency() {
 				return
 			}
 
+			// Fan of Knives OH hits do not proc combat potency
+			if spell.IsSpellAction(FanOfKnivesSpellID) {
+				return
+			}
+
 			if sim.RandomFloat("Combat Potency") > procChance {
 				return
 			}
@@ -327,6 +320,10 @@ func (rogue *Rogue) applyFocusedAttacks() {
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.DidCrit() {
+				return
+			}
+			// Fan of Knives OH hits do not trigger focused attacks
+			if spellEffect.ProcMask.Matches(core.ProcMaskMeleeOH) && spell.IsSpellAction(FanOfKnivesSpellID) {
 				return
 			}
 			if procChance == 1 || sim.RandomFloat("Focused Attacks") <= procChance {
@@ -414,6 +411,11 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 				Timer:    rogue.NewTimer(),
 				Duration: cooldownDur,
 			},
+			ModifyCast: func(s1 *core.Simulation, s2 *core.Spell, c *core.Cast) {
+				if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfBladeFlurry) {
+					c.Cost = 0
+				}
+			},
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
@@ -457,7 +459,7 @@ func (rogue *Rogue) registerAdrenalineRushCD() {
 	rogue.AdrenalineRushAura = rogue.RegisterAura(core.Aura{
 		Label:    "Adrenaline Rush",
 		ActionID: AdrenalineRushActionID,
-		Duration: time.Second * 15,
+		Duration: core.TernaryDuration(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfAdrenalineRush), time.Second*20, time.Second*15),
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.ResetEnergyTick(sim)
 			rogue.ApplyEnergyTickMultiplier(2.0)

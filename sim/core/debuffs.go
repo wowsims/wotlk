@@ -927,7 +927,7 @@ func RuneOfRazoriceVulnerabilityAura(target *Unit) *Aura {
 	aura := target.GetOrRegisterAura(Aura{
 		Label:     "RuneOfRazoriceVulnerability",
 		Tag:       RuneOfRazoriceVulnerabilityTag,
-		ActionID:  ActionID{SpellID: 53343},
+		ActionID:  ActionID{SpellID: 50401},
 		Duration:  NeverExpires,
 		MaxStacks: 5,
 		Priority:  1.0 / 1.1,
