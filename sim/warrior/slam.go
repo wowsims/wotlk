@@ -48,12 +48,14 @@ func (warrior *Warrior) registerSlamSpell(rageThreshold float64) {
 	warrior.SlamRageThreshold = core.MaxFloat(warrior.Slam.DefaultCast.Cost, rageThreshold)
 }
 func (warrior *Warrior) CanSlam(sim *core.Simulation) bool {
-	normalCastTime := warrior.Slam.DefaultCast.CastTime
 	if warrior.BloodsurgeAura.IsActive() {
-		warrior.Slam.DefaultCast.CastTime = 0
+		warrior.Slam.CurCast.CastTime = 0
 		return warrior.CurrentRage() >= warrior.Slam.DefaultCast.Cost && warrior.Slam.IsReady(sim)
-	} else {
-		warrior.Slam.DefaultCast.CastTime = normalCastTime
-		return warrior.CurrentRage() >= warrior.SlamRageThreshold && warrior.Slam.IsReady(sim) && warrior.Talents.ImprovedSlam >= 1
 	}
+	return warrior.CurrentRage() >= warrior.SlamRageThreshold && warrior.Slam.IsReady(sim) && warrior.Talents.ImprovedSlam >= 1
+}
+
+func (warrior *Warrior) CastSlam(sim *core.Simulation, target *core.Unit) bool {
+	warrior.AutoAttacks.DelayMeleeUntil(sim, warrior.AutoAttacks.MainhandSwingAt+warrior.Slam.DefaultCast.CastTime)
+	return warrior.Slam.Cast(sim, target)
 }
