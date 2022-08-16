@@ -550,7 +550,8 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 				return
 			} else {
 				if rotType == proto.ShadowPriest_Rotation_Basic {
-					numTicks = spriest.BasicMindflayRotation(sim, allCDs, gcd, tickLength)
+					//numTicks = spriest.BasicMindflayRotation(sim, allCDs, gcd, tickLength)
+					numTicks = 3
 				} else if rotType == proto.ShadowPriest_Rotation_Clipping {
 					numTicks = spriest.ClippingMindflayRotation(sim, allCDs, gcd, tickLength)
 				}
@@ -999,9 +1000,10 @@ func (spriest *ShadowPriest) ClippingMindflayRotation(sim *core.Simulation, allC
 
 	// How many ticks we have time for.
 	numTicks := int((nextCD - time.Duration(spriest.rotation.Latency)) / tickLength)
-	if numTicks == 1 {
-		return 1
-	} else if numTicks == 2 || numTicks == 4 {
+	//if numTicks == 1 {
+	//	return 1
+	//} else if numTicks == 2 || numTicks == 4 {
+	if numTicks == 2 || numTicks == 4 {
 		return 2
 	} else {
 		return 3
