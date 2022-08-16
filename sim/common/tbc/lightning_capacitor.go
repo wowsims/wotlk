@@ -50,9 +50,9 @@ func init() {
 					return
 				}
 
+				icd.Use(sim)
 				charges++
 				if charges >= 3 {
-					icd.Use(sim)
 					tlcSpell.Cast(sim, spellEffect.Target)
 					charges = 0
 				}
