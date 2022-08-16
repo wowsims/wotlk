@@ -36,6 +36,8 @@ type Rotation interface {
 //                             ADAPTIVE
 // ################################################################
 type AdaptiveRotation struct {
+	fnmm float64
+	clmm float64
 }
 
 func (rotation *AdaptiveRotation) DoAction(eleShaman *ElementalShaman, sim *core.Simulation) {
@@ -65,12 +67,14 @@ func (rotation *AdaptiveRotation) DoAction(eleShaman *ElementalShaman, sim *core
 			eleShaman.WaitForMana(sim, eleShaman.LavaBurst.CurCast.Cost)
 		}
 		return
-	} else if len(eleShaman.Env.Encounter.Targets) > 1 && cmp > 0.33 && eleShaman.ChainLightning.IsReady(sim) {
+	}
+
+	if cmp > rotation.clmm && eleShaman.ChainLightning.IsReady(sim) {
 		if !eleShaman.ChainLightning.Cast(sim, target) {
 			eleShaman.WaitForMana(sim, eleShaman.ChainLightning.CurCast.Cost)
 		}
 		return
-	} else if len(eleShaman.Env.Encounter.Targets) > 3 && cmp > 0.66 && eleShaman.FireNova.IsReady(sim) {
+	} else if cmp > rotation.fnmm && eleShaman.FireNova.IsReady(sim) {
 		if !eleShaman.FireNova.Cast(sim, target) {
 			eleShaman.WaitForMana(sim, eleShaman.FireNova.CurCast.Cost)
 		}
@@ -86,6 +90,28 @@ func (rotation *AdaptiveRotation) DoAction(eleShaman *ElementalShaman, sim *core
 }
 
 func (rotation *AdaptiveRotation) Reset(eleShaman *ElementalShaman, sim *core.Simulation) {
+	rotation.fnmm = 1.0
+	rotation.clmm = 1.0
+	if len(sim.Encounter.Targets) > 4 {
+		// 5+ targets FN is better
+		rotation.fnmm = 0.33
+		// Allow CL as long as you have decent mana (leaving most mana for FN)
+		rotation.clmm = 0.5
+	} else if len(sim.Encounter.Targets) == 4 {
+		// 4 targets, enable both similar prio, prob looking at real AoE now (short fight)
+		rotation.clmm = 0.33
+		rotation.fnmm = 0.33
+	} else if len(sim.Encounter.Targets) == 3 {
+		// 3 targets, enable both, but prio CL (more efficient)
+		//  Still trying to be very mana efficient as 3 targets
+		//  is still often a "boss fight" and could be long.
+		rotation.clmm = 0.33
+		rotation.fnmm = 0.66
+	} else if len(sim.Encounter.Targets) == 2 {
+		// enable CL with 2
+		rotation.clmm = 0.33
+	}
+
 }
 
 // func (rotation *AdaptiveRotation) GetPresimOptions() *core.PresimOptions {
