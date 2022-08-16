@@ -52,756 +52,756 @@ character_stats_results: {
 dps_results: {
  key: "TestRogue-AllItems-AshtongueTalismanofLethality-32492"
  value: {
-  dps: 2330.1256903791
-  tps: 1654.3892401692
+  dps: 2049.6995025654
+  tps: 1455.2866468215
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-AssassinationArmor"
  value: {
-  dps: 2077.1078005496
-  tps: 1474.7465383902
+  dps: 1801.8127474648
+  tps: 1279.2870507
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-AustereEarthsiegeDiamond"
  value: {
-  dps: 2308.4162849561
-  tps: 1638.9755623188
+  dps: 2024.9564081468
+  tps: 1437.7190497842
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 2413.5821563527
-  tps: 1713.6433310104
+  dps: 2115.7321046877
+  tps: 1502.1697943282
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-BeamingEarthsiegeDiamond"
  value: {
-  dps: 2321.5833276107
-  tps: 1648.3241626036
+  dps: 2036.1587893505
+  tps: 1445.6727404388
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-BonescytheBattlegear"
  value: {
-  dps: 3611.2550418866
-  tps: 2563.9910797395
+  dps: 2430.1687800502
+  tps: 1725.4198338356
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-BracingEarthsiegeDiamond"
  value: {
-  dps: 2308.4162849561
-  tps: 1606.1960510725
+  dps: 2024.9564081468
+  tps: 1408.9646687885
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-Braxley'sBackyardMoonshine-35937"
  value: {
-  dps: 2320.0973252658
-  tps: 1647.2691009387
+  dps: 2036.4070718286
+  tps: 1445.8490209983
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-ChaoticSkyflareDiamond"
  value: {
-  dps: 2339.1054903278
-  tps: 1660.7648981328
+  dps: 2053.6697505987
+  tps: 1458.105522925
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-DarkmoonCard:Berserker!-42989"
  value: {
-  dps: 2351.910441915
-  tps: 1669.8564137596
+  dps: 2057.5458930018
+  tps: 1460.8575840313
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-DarkmoonCard:Death-42990"
  value: {
-  dps: 2388.68845686
-  tps: 1695.9688043706
+  dps: 2094.3926095844
+  tps: 1487.0187528049
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-DarkmoonCard:Greatness-42987"
  value: {
-  dps: 2409.6721695779
-  tps: 1710.8672404003
+  dps: 2112.0717317564
+  tps: 1499.5709295471
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-DarkmoonCard:Greatness-44253"
  value: {
-  dps: 2434.826093704
-  tps: 1728.7265265299
+  dps: 2137.249720076
+  tps: 1517.4473012539
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-DarkmoonCard:Greatness-44254"
  value: {
-  dps: 2365.2126943375
-  tps: 1679.3010129796
+  dps: 2072.7574179019
+  tps: 1471.6577667104
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-DeathKnight'sAnguish-38212"
  value: {
-  dps: 2339.8819027379
-  tps: 1661.3161509439
+  dps: 2046.528828894
+  tps: 1453.0354685147
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-Deathmantle"
  value: {
-  dps: 2269.2820633629
-  tps: 1611.1902649877
+  dps: 1984.8451713523
+  tps: 1409.2400716601
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-Defender'sCode-40257"
  value: {
-  dps: 2288.4479518422
-  tps: 1624.798045808
+  dps: 2001.9291778259
+  tps: 1421.3697162564
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-DestructiveSkyflareDiamond"
  value: {
-  dps: 2323.568345625
-  tps: 1649.7335253938
+  dps: 2037.9615796404
+  tps: 1446.9527215447
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-EffulgentSkyflareDiamond"
  value: {
-  dps: 2308.4162849561
-  tps: 1638.9755623188
+  dps: 2024.9564081468
+  tps: 1437.7190497842
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-EmberSkyflareDiamond"
  value: {
-  dps: 2308.4162849561
-  tps: 1638.9755623188
+  dps: 2024.9564081468
+  tps: 1437.7190497842
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-EnigmaticSkyflareDiamond"
  value: {
-  dps: 2321.5833276107
-  tps: 1648.3241626036
+  dps: 2036.1587893505
+  tps: 1445.6727404388
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-EnigmaticStarflareDiamond"
  value: {
-  dps: 2319.2445397323
-  tps: 1646.6636232099
+  dps: 2034.3891190084
+  tps: 1444.416274496
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-EternalEarthsiegeDiamond"
  value: {
-  dps: 2308.4162849561
-  tps: 1638.9755623188
+  dps: 2024.9564081468
+  tps: 1437.7190497842
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-ExtractofNecromanticPower-40373"
  value: {
-  dps: 2376.594383292
-  tps: 1687.3820121373
+  dps: 2080.5826865266
+  tps: 1477.2137074339
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 2343.3647961314
-  tps: 1663.7890052533
+  dps: 2049.8848204189
+  tps: 1455.4182224974
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-ForgeEmber-37660"
  value: {
-  dps: 2333.8467674643
-  tps: 1657.0312048996
+  dps: 2042.6336468497
+  tps: 1450.2698892633
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-ForlornSkyflareDiamond"
  value: {
-  dps: 2308.4162849561
-  tps: 1638.9755623188
+  dps: 2024.9564081468
+  tps: 1437.7190497842
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-ForlornStarflareDiamond"
  value: {
-  dps: 2308.4162849561
-  tps: 1638.9755623188
+  dps: 2024.9564081468
+  tps: 1437.7190497842
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-FuryoftheFiveFlights-40431"
  value: {
-  dps: 2428.5970312868
-  tps: 1724.3038922136
+  dps: 2125.4680196946
+  tps: 1509.0822939832
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-FuturesightRune-38763"
  value: {
-  dps: 2288.4479518422
-  tps: 1624.798045808
+  dps: 2001.9291778259
+  tps: 1421.3697162564
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
-  dps: 2288.4479518422
-  tps: 1624.798045808
+  dps: 2001.9291778259
+  tps: 1421.3697162564
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-ImpassiveSkyflareDiamond"
  value: {
-  dps: 2321.5833276107
-  tps: 1648.3241626036
+  dps: 2036.1587893505
+  tps: 1445.6727404388
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-ImpassiveStarflareDiamond"
  value: {
-  dps: 2319.2445397323
-  tps: 1646.6636232099
+  dps: 2034.3891190084
+  tps: 1444.416274496
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-IncisorFragment-37723"
  value: {
-  dps: 2371.4931163049
-  tps: 1683.7601125765
+  dps: 2077.1188750625
+  tps: 1474.7544012944
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-InfusedColdstoneRune-35935"
  value: {
-  dps: 2307.8086559868
-  tps: 1638.5441457506
+  dps: 2018.5098124584
+  tps: 1433.1419668455
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-InsightfulEarthsiegeDiamond"
  value: {
-  dps: 2308.4162849561
-  tps: 1638.9755623188
+  dps: 2024.9564081468
+  tps: 1437.7190497842
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-InvigoratingEarthsiegeDiamond"
  value: {
-  dps: 2327.1329570542
-  tps: 1652.2643995084
+  dps: 2041.4944518321
+  tps: 1449.4610608008
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-Lavanthor'sTalisman-37872"
  value: {
-  dps: 2288.4479518422
-  tps: 1624.798045808
+  dps: 2001.9291778259
+  tps: 1421.3697162564
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-MajesticDragonFigurine-40430"
  value: {
-  dps: 2288.4479518422
-  tps: 1624.798045808
+  dps: 2001.9291778259
+  tps: 1421.3697162564
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-Mana-EtchedRegalia"
  value: {
-  dps: 1896.851725875
-  tps: 1346.7647253713
+  dps: 1645.8889120207
+  tps: 1168.5811275347
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-MeteoriteWhetstone-37390"
  value: {
-  dps: 2374.9629419602
-  tps: 1686.2236887917
+  dps: 2072.1108931776
+  tps: 1471.1987341561
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-Netherblade"
  value: {
-  dps: 2206.1927162664
-  tps: 1566.3968285492
+  dps: 1908.6282550977
+  tps: 1355.1260611194
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-OfferingofSacrifice-37638"
  value: {
-  dps: 2288.4479518422
-  tps: 1624.798045808
+  dps: 2001.9291778259
+  tps: 1421.3697162564
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-PersistentEarthshatterDiamond"
  value: {
-  dps: 2323.5678766545
-  tps: 1649.7331924247
+  dps: 2038.344348273
+  tps: 1447.2244872738
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-PersistentEarthsiegeDiamond"
  value: {
-  dps: 2327.1329570542
-  tps: 1652.2643995084
+  dps: 2041.4944518321
+  tps: 1449.4610608008
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-PowerfulEarthshatterDiamond"
  value: {
-  dps: 2308.4162849561
-  tps: 1638.9755623188
+  dps: 2024.9564081468
+  tps: 1437.7190497842
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-PowerfulEarthsiegeDiamond"
  value: {
-  dps: 2308.4162849561
-  tps: 1638.9755623188
+  dps: 2024.9564081468
+  tps: 1437.7190497842
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-PrimalIntent"
  value: {
-  dps: 2300.598017141
-  tps: 1633.4245921701
+  dps: 2014.0042907413
+  tps: 1429.9430464263
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-PurifiedShardoftheGods"
  value: {
-  dps: 2288.4479518422
-  tps: 1624.798045808
+  dps: 2001.9291778259
+  tps: 1421.3697162564
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 2426.3161697315
-  tps: 1722.6844805093
+  dps: 2138.033031372
+  tps: 1518.0034522741
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 2443.3594436341
-  tps: 1734.7852049802
+  dps: 2154.7911978336
+  tps: 1529.9017504619
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-RelentlessEarthsiegeDiamond"
  value: {
-  dps: 2342.2475104282
-  tps: 1662.9957324041
+  dps: 2057.1270585402
+  tps: 1460.5602115635
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-RevitalizingSkyflareDiamond"
  value: {
-  dps: 2308.4162849561
-  tps: 1638.9755623188
+  dps: 2024.9564081468
+  tps: 1437.7190497842
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-RuneofRepulsion-40372"
  value: {
-  dps: 2288.4479518422
-  tps: 1624.798045808
+  dps: 2001.9291778259
+  tps: 1421.3697162564
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-SealofthePantheon-36993"
  value: {
-  dps: 2288.4479518422
-  tps: 1624.798045808
+  dps: 2001.9291778259
+  tps: 1421.3697162564
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-Serrah'sStar-37559"
  value: {
-  dps: 2312.1273819168
-  tps: 1641.6104411609
+  dps: 2023.2708980538
+  tps: 1436.5223376182
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-Shadowblade'sBattlegear"
  value: {
-  dps: 2813.7139209705
-  tps: 1997.7368838891
+  dps: 2476.9790014632
+  tps: 1758.6550910389
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-ShinyShardoftheGods"
  value: {
-  dps: 2288.4479518422
-  tps: 1624.798045808
+  dps: 2001.9291778259
+  tps: 1421.3697162564
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-Sindragosa'sFlawlessFang-50361"
  value: {
-  dps: 2288.4479518422
-  tps: 1624.798045808
+  dps: 2001.9291778259
+  tps: 1421.3697162564
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-Slayer'sArmor"
  value: {
-  dps: 2437.0148250174
-  tps: 1730.2805257623
+  dps: 2139.2912509998
+  tps: 1518.8967882098
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-SparkofLife-37657"
  value: {
-  dps: 2320.4101532884
-  tps: 1647.4912088348
+  dps: 2021.8958743028
+  tps: 1435.546070755
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-SpellstrikeInfusion"
  value: {
-  dps: 2137.7978874998
-  tps: 1517.8365001248
+  dps: 1847.9087367017
+  tps: 1312.0152030582
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-StrengthoftheClefthoof"
  value: {
-  dps: 2044.9651869287
-  tps: 1451.9252827194
+  dps: 1770.4675718378
+  tps: 1257.0319760049
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-SwiftSkyflareDiamond"
  value: {
-  dps: 2327.1329570542
-  tps: 1652.2643995084
+  dps: 2041.4944518321
+  tps: 1449.4610608008
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-SwiftStarflareDiamond"
  value: {
-  dps: 2323.5678766545
-  tps: 1649.7331924247
+  dps: 2038.344348273
+  tps: 1447.2244872738
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-SwiftWindfireDiamond"
  value: {
-  dps: 2317.3289859552
-  tps: 1645.3035800282
+  dps: 2032.8316670445
+  tps: 1443.3104836016
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-TerrorbladeBattlegear"
  value: {
-  dps: 2925.2291510057
-  tps: 2076.912697214
+  dps: 2589.8430538052
+  tps: 1838.7885682017
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-TheFistsofFury"
  value: {
-  dps: 2380.7294108941
-  tps: 1690.3178817348
+  dps: 2100.4153638384
+  tps: 1491.2949083253
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-TheTwinBladesofAzzinoth"
  value: {
-  dps: 2489.6558800547
-  tps: 1767.6556748388
+  dps: 2197.0847857387
+  tps: 1559.9301978745
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-TheTwinStars"
  value: {
-  dps: 2242.7504730376
-  tps: 1592.3528358567
+  dps: 1950.8525027073
+  tps: 1385.1052769222
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 2316.8055072434
-  tps: 1644.9319101428
+  dps: 2034.6367045196
+  tps: 1444.5920602089
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-TinyAbominationinaJar-50351"
  value: {
-  dps: 2421.392444615
-  tps: 1719.1886356766
+  dps: 2123.9140670011
+  tps: 1507.9789875708
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-TinyAbominationinaJar-50706"
  value: {
-  dps: 2429.0962188453
-  tps: 1724.6583153802
+  dps: 2130.8976597955
+  tps: 1512.9373384548
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-TirelessSkyflareDiamond"
  value: {
-  dps: 2308.4162849561
-  tps: 1638.9755623188
+  dps: 2024.9564081468
+  tps: 1437.7190497842
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-TirelessStarflareDiamond"
  value: {
-  dps: 2308.4162849561
-  tps: 1638.9755623188
+  dps: 2024.9564081468
+  tps: 1437.7190497842
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-TrenchantEarthshatterDiamond"
  value: {
-  dps: 2308.4162849561
-  tps: 1638.9755623188
+  dps: 2024.9564081468
+  tps: 1437.7190497842
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-TrenchantEarthsiegeDiamond"
  value: {
-  dps: 2308.4162849561
-  tps: 1638.9755623188
+  dps: 2024.9564081468
+  tps: 1437.7190497842
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-VanCleef'sBattlegear"
  value: {
-  dps: 2643.5121939928
-  tps: 1876.8936577349
+  dps: 2339.21883894
+  tps: 1660.8453756474
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-Warp-SpringCoil-30450"
  value: {
-  dps: 2466.1236681316
-  tps: 1750.9478043735
+  dps: 2167.8442157773
+  tps: 1539.1693932019
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-WastewalkerArmor"
  value: {
-  dps: 2115.0062991448
-  tps: 1501.6544723928
+  dps: 1830.4026910351
+  tps: 1299.5859106349
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-WindhawkArmor"
  value: {
-  dps: 2134.6908008211
-  tps: 1515.630468583
+  dps: 1865.283138155
+  tps: 1324.35102809
  }
 }
 dps_results: {
  key: "TestRogue-AllItems-WrathofSpellfire"
  value: {
-  dps: 2143.3441535061
-  tps: 1521.7743489893
+  dps: 1868.9148808781
+  tps: 1326.9295654234
  }
 }
 dps_results: {
  key: "TestRogue-Average-Default"
  value: {
-  dps: 2318.3390932616
-  tps: 1646.0207562157
+  dps: 2029.3206111941
+  tps: 1440.8176339479
  }
 }
 dps_results: {
  key: "TestRogue-Settings-BloodElf-P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 26823.053857537
-  tps: 19044.3682388512
+  dps: 21367.0594430877
+  tps: 15170.6122045923
  }
 }
 dps_results: {
  key: "TestRogue-Settings-BloodElf-P1-Basic-FullBuffs-LongSingleTarget"
  value: {
-  dps: 2330.863587533
-  tps: 1654.9131471484
+  dps: 2039.346819423
+  tps: 1447.9362417903
  }
 }
 dps_results: {
  key: "TestRogue-Settings-BloodElf-P1-Basic-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 2696.489410136
-  tps: 1914.5074811965
+  dps: 2422.4032197404
+  tps: 1719.9062860157
  }
 }
 dps_results: {
  key: "TestRogue-Settings-BloodElf-P1-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 20171.6040118814
-  tps: 14321.8388484356
+  dps: 15170.0311315225
+  tps: 10770.722103381
  }
 }
 dps_results: {
  key: "TestRogue-Settings-BloodElf-P1-Basic-NoBuffs-LongSingleTarget"
  value: {
-  dps: 1388.2127142497
-  tps: 985.6310271173
+  dps: 1162.9029268253
+  tps: 825.661078046
  }
 }
 dps_results: {
  key: "TestRogue-Settings-BloodElf-P1-Basic-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 1466.4542840803
-  tps: 1041.182541697
+  dps: 1258.5363574235
+  tps: 893.5608137707
  }
 }
 dps_results: {
  key: "TestRogue-Settings-BloodElf-P1-Hemo-FullBuffs-LongMultiTarget"
  value: {
-  dps: 21127.4134087532
-  tps: 15000.4635202149
+  dps: 17003.4458298387
+  tps: 12072.4465391854
  }
 }
 dps_results: {
  key: "TestRogue-Settings-BloodElf-P1-Hemo-FullBuffs-LongSingleTarget"
  value: {
-  dps: 1768.0318178613
-  tps: 1255.3025906815
+  dps: 1554.4176242954
+  tps: 1103.6365132498
  }
 }
 dps_results: {
  key: "TestRogue-Settings-BloodElf-P1-Hemo-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 2081.4274849734
-  tps: 1477.8135143311
+  dps: 1879.9630479721
+  tps: 1334.7737640602
  }
 }
 dps_results: {
  key: "TestRogue-Settings-BloodElf-P1-Hemo-NoBuffs-LongMultiTarget"
  value: {
-  dps: 15894.2185539064
-  tps: 11284.8951732736
+  dps: 11934.9099094312
+  tps: 8473.7860356961
  }
 }
 dps_results: {
  key: "TestRogue-Settings-BloodElf-P1-Hemo-NoBuffs-LongSingleTarget"
  value: {
-  dps: 1024.7625601249
-  tps: 727.5814176887
+  dps: 855.2817432782
+  tps: 607.2500377275
  }
 }
 dps_results: {
  key: "TestRogue-Settings-BloodElf-P1-Hemo-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 1069.7090062115
-  tps: 759.4933944102
+  dps: 919.9549538139
+  tps: 653.1680172079
  }
 }
 dps_results: {
  key: "TestRogue-Settings-Human-P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 26993.5457629675
-  tps: 19165.4174917073
+  dps: 21503.9263810641
+  tps: 15267.7877305555
  }
 }
 dps_results: {
  key: "TestRogue-Settings-Human-P1-Basic-FullBuffs-LongSingleTarget"
  value: {
-  dps: 2334.4491323681
-  tps: 1657.4588839814
+  dps: 2050.7781116062
+  tps: 1456.0524592404
  }
 }
 dps_results: {
  key: "TestRogue-Settings-Human-P1-Basic-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 2705.9264713197
-  tps: 1921.207794637
+  dps: 2456.2264092728
+  tps: 1743.9207505837
  }
 }
 dps_results: {
  key: "TestRogue-Settings-Human-P1-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 20302.346156374
-  tps: 14414.6657710255
+  dps: 15272.9962971802
+  tps: 10843.827370998
  }
 }
 dps_results: {
  key: "TestRogue-Settings-Human-P1-Basic-NoBuffs-LongSingleTarget"
  value: {
-  dps: 1397.7869878933
-  tps: 992.4287614042
+  dps: 1163.6439814453
+  tps: 826.1872268261
  }
 }
 dps_results: {
  key: "TestRogue-Settings-Human-P1-Basic-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 1471.8416468138
-  tps: 1045.0075692378
+  dps: 1254.2373461819
+  tps: 890.5085157891
  }
 }
 dps_results: {
  key: "TestRogue-Settings-Human-P1-Hemo-FullBuffs-LongMultiTarget"
  value: {
-  dps: 21319.11150967
-  tps: 15136.5691718656
+  dps: 17159.3524084045
+  tps: 12183.1402099672
  }
 }
 dps_results: {
  key: "TestRogue-Settings-Human-P1-Hemo-FullBuffs-LongSingleTarget"
  value: {
-  dps: 1793.4333860297
-  tps: 1273.3377040811
+  dps: 1570.5934321993
+  tps: 1115.1213368615
  }
 }
 dps_results: {
  key: "TestRogue-Settings-Human-P1-Hemo-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 2102.0788864334
-  tps: 1492.4760093677
+  dps: 1910.4548469239
+  tps: 1356.4229413159
  }
 }
 dps_results: {
  key: "TestRogue-Settings-Human-P1-Hemo-NoBuffs-LongMultiTarget"
  value: {
-  dps: 16017.0974131116
-  tps: 11372.1391633093
+  dps: 12052.7233670326
+  tps: 8557.4335905931
  }
 }
 dps_results: {
  key: "TestRogue-Settings-Human-P1-Hemo-NoBuffs-LongSingleTarget"
  value: {
-  dps: 1040.1338526117
-  tps: 738.4950353543
+  dps: 862.3864380084
+  tps: 612.2943709859
  }
 }
 dps_results: {
  key: "TestRogue-Settings-Human-P1-Hemo-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 1068.4886234938
-  tps: 758.6269226806
+  dps: 934.8611764945
+  tps: 663.7514353111
  }
 }
 dps_results: {
  key: "TestRogue-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 2126.0830476293
-  tps: 1509.5189638168
+  dps: 1833.2647739854
+  tps: 1301.6179895297
  }
 }

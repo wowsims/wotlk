@@ -78,6 +78,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-Bizuri'sTotemofShatteredIce-50458"
+ value: {
+  dps: 5478.3057712602
+  tps: 4302.544708818
+ }
+}
+dps_results: {
  key: "TestEnhancement-AllItems-BracingEarthsiegeDiamond"
  value: {
   dps: 5200.2939541022
@@ -320,6 +327,13 @@ dps_results: {
  value: {
   dps: 5251.090670562
   tps: 4083.4183987228
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-Gladiator'sWartide"
+ value: {
+  dps: 4103.3754818787
+  tps: 3197.5508351999
  }
 }
 dps_results: {

@@ -50,6 +50,11 @@ export const DefaultRotation = ElementalShamanRotation.create({
 		water: WaterTotem.ManaSpringTotem,
 	}),
 	type: RotationType.Adaptive,
+  fnMinManaPer: 33,
+  clMinManaPer: 66,
+  useChainLightning: false,
+  useFireNova: false,
+  useThunderstorm: true,
 });
 
 export const DefaultOptions = ElementalShamanOptions.create({
