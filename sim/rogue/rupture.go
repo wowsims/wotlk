@@ -91,7 +91,7 @@ func (rogue *Rogue) registerRupture() {
 			BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				comboPoints := rogue.ComboPoints()
 				attackPower := hitEffect.MeleeAttackPower(spell.Unit) + hitEffect.MeleeAttackPowerOnTarget()
-				return 127 + float64(comboPoints)*18 + attackPower*[]float64{0.015, 0.024, 0.03, 0.034286, 0.0375}[comboPoints-1]
+				return 127 + float64(comboPoints)*18 + attackPower*[]float64{0.0, 0.015, 0.024, 0.03, 0.034286, 0.0375}[comboPoints]
 			}, 0),
 			OutcomeApplier: rogue.OutcomeFuncTickHitAndCrit(rogue.MeleeCritMultiplier(true, false)),
 		}),

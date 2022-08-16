@@ -10,8 +10,7 @@ import { Stat } from '../proto/common.js';
 
 import { ActionId } from './action_id.js';
 import { enchantAppliesToItem } from './utils.js';
-import { gemEligibleForSocket } from './gems.js';
-import { gemMatchesSocket } from './gems.js';
+import { gemEligibleForSocket, gemMatchesSocket } from './gems.js';
 import { Stats } from './stats.js';
 
 export function getWowheadItemId(item: Item): number {
@@ -173,6 +172,18 @@ export class EquippedItem {
         });
     }
 
+		meetsSocketBonus(): boolean {
+			return this._item.gemSockets.every((socketColor, i) => this._gems[i] && gemMatchesSocket(this._gems[i]!, socketColor));
+		}
+
+		socketBonusStats(): Stats {
+			if (this.meetsSocketBonus()) {
+				return new Stats(this._item.socketBonus);
+			} else {
+				return new Stats();
+			}
+		}
+
     // Whether this item could have an extra socket, assuming Blacksmithing.
     couldHaveExtraSocket(): boolean {
         return [ItemType.ItemTypeWaist, ItemType.ItemTypeWrist, ItemType.ItemTypeHands].includes(this.item.type);
@@ -197,6 +208,10 @@ export class EquippedItem {
     curSocketColors(isBlacksmithing: boolean): Array<GemColor> {
         return this.hasExtraSocket(isBlacksmithing) ? this._item.gemSockets.concat([GemColor.GemColorPrismatic]) : this._item.gemSockets;
     }
+
+		curGems(isBlacksmithing: boolean): Array<Gem> {
+			return (this._gems.filter(g => g != null) as Array<Gem>).slice(0, this.numSockets(isBlacksmithing));
+		}
 
     getFailedProfessionRequirements(professions: Array<Profession>): Array<Item | Gem | Enchant> {
         let failed: Array<Item | Gem | Enchant> = [];

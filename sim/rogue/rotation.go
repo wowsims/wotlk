@@ -31,6 +31,9 @@ func (rogue *Rogue) rotation(sim *core.Simulation) {
 	if rogue.CurrentPriority == nil {
 		rogue.CurrentPriority = rogue.getPriority(sim)
 	}
+	if rogue.CurrentPriority == nil {
+		sim.Log("Problem")
+	}
 	spell := rogue.CurrentPriority.Spell(rogue)
 	if spell == nil {
 		rogue.CurrentPriority = nil
@@ -42,195 +45,229 @@ func (rogue *Rogue) rotation(sim *core.Simulation) {
 		rogue.DoNothing()
 	}
 }
+
+func MakeConditionForFrequency(frequency proto.Rogue_Rotation_Frequency, aura *core.Aura) func(*core.Simulation, *Rogue, *RoguePriority) bool {
+	var shouldCast func(*core.Simulation, *Rogue, *RoguePriority) bool
+	switch frequency {
+	case proto.Rogue_Rotation_Never:
+		shouldCast = func(s *core.Simulation, r *Rogue, p *RoguePriority) bool { return false }
+	case proto.Rogue_Rotation_Once:
+		shouldCast = func(s *core.Simulation, r *Rogue, p *RoguePriority) bool { return p.CastCount < 1 }
+	case proto.Rogue_Rotation_Build:
+		shouldCast = func(s *core.Simulation, r *Rogue, p *RoguePriority) bool {
+			return p.GeneratedComboPoints+r.ComboPoints() <= 5
+		}
+	case proto.Rogue_Rotation_Maintain:
+		shouldCast = func(s *core.Simulation, r *Rogue, p *RoguePriority) bool {
+			if aura == nil {
+				return true
+			}
+			return RemainingAuraDuration(s, aura) <= 0
+		}
+	case proto.Rogue_Rotation_Fill:
+		shouldCast = func(s *core.Simulation, r *Rogue, p *RoguePriority) bool {
+			return true
+		}
+	}
+	return shouldCast
+}
+
 func (rogue *Rogue) SetMultiTargetPriorityList() {
 	rogue.PriorityList = make([]RoguePriority, 0)
-	if rogue.Rotation.MultiTargetSliceFrequency != proto.Rogue_Rotation_Never {
-		sliceCP := int32(1)
-		if rogue.Rotation.MultiTargetSliceFrequency == proto.Rogue_Rotation_Once {
-			sliceCP = rogue.Rotation.MinimumComboPointsMultiTargetSlice
-		}
-		rogue.PriorityList = append(rogue.PriorityList, RoguePriority{
-			Aura:                 rogue.SliceAndDiceAura,
-			CastCount:            0,
-			Frequency:            rogue.Rotation.MultiTargetSliceFrequency,
-			GeneratedComboPoints: 0,
-			MinComboPoints:       sliceCP,
-			Spell: func(rogue *Rogue) *core.Spell {
-				return rogue.SliceAndDice[rogue.ComboPoints()]
-			},
-		})
+	sliceCP := int32(1)
+	if rogue.Rotation.MultiTargetSliceFrequency == proto.Rogue_Rotation_Once {
+		sliceCP = rogue.Rotation.MinimumComboPointsMultiTargetSlice
 	}
-	mutilatePrio := RoguePriority{
-		Aura:                 nil,
-		CastCount:            0,
-		Frequency:            proto.Rogue_Rotation_Build,
+	sliceAndDice := RoguePriority{
+		MinComboPoints: sliceCP,
+		ShouldCast:     MakeConditionForFrequency(rogue.Rotation.MultiTargetSliceFrequency, rogue.SliceAndDiceAura),
+		Spell:          func(r *Rogue) *core.Spell { return r.SliceAndDice[r.ComboPoints()] },
+	}
+	rogue.PriorityList = append(rogue.PriorityList, sliceAndDice)
+	sliceAndDiceIndex := 0
+
+	builderCondition := MakeConditionForFrequency(proto.Rogue_Rotation_Build, nil)
+	if rogue.Rotation.MultiTargetSliceFrequency == proto.Rogue_Rotation_Once {
+		oldCondition := builderCondition
+		builderCondition = func(s *core.Simulation, r *Rogue, rp *RoguePriority) bool {
+			return oldCondition(s, r, rp) && r.PriorityList[sliceAndDiceIndex].CastCount < 1
+		}
+	}
+	// Mutilate
+	rogue.PriorityList = append(rogue.PriorityList, RoguePriority{
 		GeneratedComboPoints: 2,
-		MinComboPoints:       0,
+		ShouldCast: func(s *core.Simulation, r *Rogue, rp *RoguePriority) bool {
+			return r.Talents.Mutilate && builderCondition(s, r, rp)
+		},
 		Spell: func(rogue *Rogue) *core.Spell {
 			return rogue.Mutilate
 		},
-	}
-	sinisterStrikePrio := RoguePriority{
-		Aura:                 nil,
-		CastCount:            0,
-		Frequency:            proto.Rogue_Rotation_Build,
+	})
+	// Sinister Strike
+	rogue.PriorityList = append(rogue.PriorityList, RoguePriority{
 		GeneratedComboPoints: 1,
-		MinComboPoints:       0,
+		ShouldCast: func(s *core.Simulation, r *Rogue, rp *RoguePriority) bool {
+			return !r.Talents.Mutilate && builderCondition(s, r, rp)
+		},
 		Spell: func(rogue *Rogue) *core.Spell {
 			return rogue.SinisterStrike
 		},
-	}
-	if rogue.Rotation.MultiTargetSliceFrequency != proto.Rogue_Rotation_Never {
-		// TODO : Figure out how to disable these in the 'Once' scenario
-		if rogue.Talents.Mutilate {
-			rogue.PriorityList = append(rogue.PriorityList, mutilatePrio)
-		} else {
-			rogue.PriorityList = append(rogue.PriorityList, sinisterStrikePrio)
-		}
-	}
+	})
+	// Hunger for Blood
 	rogue.PriorityList = append(rogue.PriorityList, RoguePriority{
-		Aura:                 nil,
-		CastCount:            0,
-		Frequency:            proto.Rogue_Rotation_Build,
-		GeneratedComboPoints: 0,
-		MinComboPoints:       0,
+		ShouldCast: func(s *core.Simulation, r *Rogue, rp *RoguePriority) bool {
+			return r.Talents.HungerForBlood && MakeConditionForFrequency(proto.Rogue_Rotation_Maintain, rogue.HungerForBloodAura)(s, r, rp)
+		},
 		Spell: func(rogue *Rogue) *core.Spell {
-			return rogue.FanOfKnives
+			return rogue.HungerForBlood
 		},
 	})
+	// Enable CDs
 	rogue.PriorityList = append(rogue.PriorityList, RoguePriority{
-		Aura:                 nil,
-		CastCount:            0,
-		Frequency:            proto.Rogue_Rotation_Build,
-		GeneratedComboPoints: 0,
-		MinComboPoints:       0,
+		ShouldCast: func(sim *core.Simulation, rogue *Rogue, prio *RoguePriority) bool {
+			return rogue.disabledMCDs != nil
+		},
 		Spell: func(rogue *Rogue) *core.Spell {
 			if rogue.disabledMCDs != nil {
 				rogue.EnableAllCooldowns(rogue.disabledMCDs)
 				rogue.disabledMCDs = nil
 			}
 			return nil
+		},
+	})
+	// Fan of Knives
+	rogue.PriorityList = append(rogue.PriorityList, RoguePriority{
+		Spell: func(rogue *Rogue) *core.Spell {
+			return rogue.FanOfKnives
 		},
 	})
 }
 
 func (rogue *Rogue) SetPriorityList() {
 	rogue.PriorityList = make([]RoguePriority, 0)
+	// Slice and Dice
 	rogue.PriorityList = append(rogue.PriorityList, RoguePriority{
-		Aura:                 rogue.SliceAndDiceAura,
-		CastCount:            0,
-		Frequency:            proto.Rogue_Rotation_Maintain,
-		GeneratedComboPoints: 0,
-		MinComboPoints:       1,
+		MinComboPoints: 1,
+		ShouldCast:     MakeConditionForFrequency(proto.Rogue_Rotation_Maintain, rogue.SliceAndDiceAura),
 		Spell: func(rogue *Rogue) *core.Spell {
 			return rogue.SliceAndDice[rogue.ComboPoints()]
 		},
 	})
-	if rogue.Rotation.ExposeArmorFrequency != proto.Rogue_Rotation_Never {
-		exposeCP := int32(1)
-		if rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Once {
-			exposeCP = rogue.Rotation.MinimumComboPointsExposeArmor
-		}
-		rogue.PriorityList = append(rogue.PriorityList, RoguePriority{
-			Aura:                 rogue.ExposeArmorAura,
-			CastCount:            0,
-			Frequency:            rogue.Rotation.ExposeArmorFrequency,
-			GeneratedComboPoints: 0,
-			MinComboPoints:       exposeCP,
-			Spell: func(rogue *Rogue) *core.Spell {
-				return rogue.ExposeArmor[rogue.ComboPoints()]
-			},
-		})
+	// Expose armor
+	exposeCP := int32(1)
+	if rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Once {
+		exposeCP = rogue.Rotation.MinimumComboPointsExposeArmor
 	}
-	mutilatePrio := RoguePriority{
-		Aura:                 nil,
-		CastCount:            0,
-		Frequency:            proto.Rogue_Rotation_Build,
+	rogue.PriorityList = append(rogue.PriorityList, RoguePriority{
+		MinComboPoints: exposeCP,
+		ShouldCast:     MakeConditionForFrequency(rogue.Rotation.ExposeArmorFrequency, rogue.ExposeArmorAura),
+		Spell: func(rogue *Rogue) *core.Spell {
+			return rogue.ExposeArmor[rogue.ComboPoints()]
+		},
+	})
+	builderCondition := MakeConditionForFrequency(proto.Rogue_Rotation_Build, nil)
+	// Mutilate
+	rogue.PriorityList = append(rogue.PriorityList, RoguePriority{
 		GeneratedComboPoints: 2,
-		MinComboPoints:       0,
+		ShouldCast: func(s *core.Simulation, r *Rogue, rp *RoguePriority) bool {
+			return r.Talents.Mutilate && builderCondition(s, r, rp)
+		},
 		Spell: func(rogue *Rogue) *core.Spell {
 			return rogue.Mutilate
 		},
-	}
-	sinisterStrikePrio := RoguePriority{
-		Aura:                 nil,
-		CastCount:            0,
-		Frequency:            proto.Rogue_Rotation_Build,
+	})
+	// Sinister Strike
+	rogue.PriorityList = append(rogue.PriorityList, RoguePriority{
 		GeneratedComboPoints: 1,
-		MinComboPoints:       0,
+		ShouldCast: func(s *core.Simulation, r *Rogue, rp *RoguePriority) bool {
+			return !r.Talents.Mutilate && builderCondition(s, r, rp)
+		},
 		Spell: func(rogue *Rogue) *core.Spell {
 			return rogue.SinisterStrike
 		},
-	}
+	})
+
+	// Envenom
 	envenomPrio := RoguePriority{
-		Aura:                 rogue.EnvenomAura,
-		CastCount:            0,
-		Frequency:            proto.Rogue_Rotation_Maintain,
-		GeneratedComboPoints: 0,
-		MinComboPoints:       3,
+		MinComboPoints: 3,
+		ShouldCast:     MakeConditionForFrequency(proto.Rogue_Rotation_Maintain, rogue.EnvenomAura),
 		Spell: func(rogue *Rogue) *core.Spell {
 			return rogue.Envenom[rogue.ComboPoints()]
 		},
 	}
+	// Rupture
 	rupturePrio := RoguePriority{
-		Aura:                 rogue.RuptureDot.Aura,
-		CastCount:            0,
-		Frequency:            proto.Rogue_Rotation_Maintain,
-		GeneratedComboPoints: 0,
-		MinComboPoints:       3,
+		MinComboPoints: 3,
+		ShouldCast:     MakeConditionForFrequency(proto.Rogue_Rotation_Maintain, rogue.RuptureDot.Aura),
 		Spell: func(rogue *Rogue) *core.Spell {
 			return rogue.Rupture[rogue.ComboPoints()]
 		},
 	}
+	// Evis
 	evisceratePrio := RoguePriority{
-		Aura:                 nil,
-		CastCount:            0,
-		Frequency:            proto.Rogue_Rotation_Build,
-		GeneratedComboPoints: 0,
-		MinComboPoints:       3,
+		MinComboPoints: 3,
+		ShouldCast:     MakeConditionForFrequency(proto.Rogue_Rotation_Fill, nil),
 		Spell: func(rogue *Rogue) *core.Spell {
 			return rogue.Eviscerate[rogue.ComboPoints()]
 		},
 	}
 	if rogue.Talents.Mutilate {
-		rogue.PriorityList = append(rogue.PriorityList, mutilatePrio)
 		switch rogue.Rotation.AssassinationFinisherPriority {
 		case proto.Rogue_Rotation_EnvenomRupture:
 			envenomPrio.MinComboPoints = rogue.Rotation.MinimumComboPointsPrimaryFinisher
 			rupturePrio.MinComboPoints = rogue.Rotation.MinimumComboPointsSecondaryFinisher
-			rupturePrio.Frequency = proto.Rogue_Rotation_Fill
 			rogue.PriorityList = append(rogue.PriorityList, envenomPrio)
+			dependencyIdx := len(rogue.PriorityList) - 1
+			oldCondition := rupturePrio.ShouldCast
+			rupturePrio.ShouldCast = func(sim *core.Simulation, rogue *Rogue, prio *RoguePriority) bool {
+				return !rogue.PriorityList[dependencyIdx].ShouldCast(sim, rogue, prio) && oldCondition(sim, rogue, prio)
+			}
+			rupturePrio.IsFiller = true
 			rogue.PriorityList = append(rogue.PriorityList, rupturePrio)
 		case proto.Rogue_Rotation_RuptureEnvenom:
 			rupturePrio.MinComboPoints = rogue.Rotation.MinimumComboPointsPrimaryFinisher
 			envenomPrio.MinComboPoints = rogue.Rotation.MinimumComboPointsSecondaryFinisher
-			envenomPrio.Frequency = proto.Rogue_Rotation_Fill
 			rogue.PriorityList = append(rogue.PriorityList, rupturePrio)
+			dependencyIdx := len(rogue.PriorityList) - 1
+			oldCondition := envenomPrio.ShouldCast
+			envenomPrio.ShouldCast = func(sim *core.Simulation, rogue *Rogue, prio *RoguePriority) bool {
+				return !rogue.PriorityList[dependencyIdx].ShouldCast(sim, rogue, prio) && oldCondition(sim, rogue, prio)
+			}
+			envenomPrio.IsFiller = true
 			rogue.PriorityList = append(rogue.PriorityList, envenomPrio)
 		}
 	} else {
-		rogue.PriorityList = append(rogue.PriorityList, sinisterStrikePrio)
 		switch rogue.Rotation.CombatFinisherPriority {
 		case proto.Rogue_Rotation_RuptureEviscerate:
 			rupturePrio.MinComboPoints = rogue.Rotation.MinimumComboPointsPrimaryFinisher
 			evisceratePrio.MinComboPoints = rogue.Rotation.MinimumComboPointsSecondaryFinisher
-			evisceratePrio.Frequency = proto.Rogue_Rotation_Fill
 			rogue.PriorityList = append(rogue.PriorityList, rupturePrio)
+			dependencyIdx := len(rogue.PriorityList) - 1
+			oldCondition := evisceratePrio.ShouldCast
+			evisceratePrio.ShouldCast = func(sim *core.Simulation, rogue *Rogue, prio *RoguePriority) bool {
+				return !rogue.PriorityList[dependencyIdx].ShouldCast(sim, rogue, prio) && oldCondition(sim, rogue, prio)
+			}
+			evisceratePrio.IsFiller = true
 			rogue.PriorityList = append(rogue.PriorityList, evisceratePrio)
 		case proto.Rogue_Rotation_EviscerateRupture:
 			evisceratePrio.MinComboPoints = rogue.Rotation.MinimumComboPointsPrimaryFinisher
 			rupturePrio.MinComboPoints = rogue.Rotation.MinimumComboPointsSecondaryFinisher
-			rupturePrio.Frequency = proto.Rogue_Rotation_Fill
-			rogue.PriorityList = append(rogue.PriorityList, evisceratePrio)
+			rupturePrio.IsFiller = true
 			rogue.PriorityList = append(rogue.PriorityList, rupturePrio)
+			rogue.PriorityList = append(rogue.PriorityList, evisceratePrio)
 		}
 	}
+	// Hunger for Blood
 	rogue.PriorityList = append(rogue.PriorityList, RoguePriority{
-		Aura:                 nil,
-		CastCount:            0,
-		Frequency:            proto.Rogue_Rotation_Build,
-		GeneratedComboPoints: 0,
-		MinComboPoints:       0,
+		ShouldCast: func(s *core.Simulation, r *Rogue, rp *RoguePriority) bool {
+			return r.Talents.HungerForBlood && MakeConditionForFrequency(proto.Rogue_Rotation_Maintain, rogue.HungerForBloodAura)(s, r, rp)
+		},
+		Spell: func(rogue *Rogue) *core.Spell {
+			return rogue.HungerForBlood
+		},
+	})
+	// Enable CDs
+	rogue.PriorityList = append(rogue.PriorityList, RoguePriority{
 		Spell: func(rogue *Rogue) *core.Spell {
 			if rogue.disabledMCDs != nil {
 				rogue.EnableAllCooldowns(rogue.disabledMCDs)
@@ -239,7 +276,6 @@ func (rogue *Rogue) SetPriorityList() {
 			return nil
 		},
 	})
-
 }
 
 func RemainingAuraDuration(sim *core.Simulation, aura *core.Aura) time.Duration {
@@ -255,56 +291,45 @@ func RemainingAuraDuration(sim *core.Simulation, aura *core.Aura) time.Duration 
 }
 
 type RoguePriority struct {
-	Aura                 *core.Aura
 	CastCount            int32
-	Frequency            proto.Rogue_Rotation_Frequency
 	GeneratedComboPoints int32
+	IsFiller             bool
 	MinComboPoints       int32
+	ShouldCast           func(sim *core.Simulation, rogue *Rogue, prio *RoguePriority) bool
 	Spell                func(rogue *Rogue) *core.Spell
 }
 
-func (prio *RoguePriority) ShouldCast(rogue *Rogue, sim *core.Simulation) bool {
-	if prio.Frequency == proto.Rogue_Rotation_Never {
-		return false
-	}
-	if prio.Frequency == proto.Rogue_Rotation_Once && prio.CastCount >= 1 {
-		return false
-	}
-	if prio.Frequency == proto.Rogue_Rotation_Build && prio.GeneratedComboPoints+rogue.ComboPoints() > 5 {
-		return false
-	}
-	if prio.Frequency == proto.Rogue_Rotation_Maintain && RemainingAuraDuration(sim, prio.Aura) >= 0 {
-		return false
-	}
-	if prio.Frequency == proto.Rogue_Rotation_Fill && (prio.Aura != nil && RemainingAuraDuration(sim, prio.Aura) >= 0) {
-		return false
-	}
-	return true
+func (prio *RoguePriority) NeedsComboPoints(rogue *Rogue) int32 {
+	return prio.MinComboPoints - rogue.ComboPoints()
 }
 
-func (prio *RoguePriority) NeedsCombatPoints(rogue *Rogue) bool {
-	return rogue.ComboPoints() < prio.MinComboPoints
-}
-
-func (prio *RoguePriority) NeedsEnergy(rogue *Rogue) bool {
+func (prio *RoguePriority) NeedsEnergy(rogue *Rogue) float64 {
 	spell := prio.Spell(rogue)
 	if spell == nil {
-		return false
+		return 0
 	}
-	return rogue.CurrentEnergy() < spell.DefaultCast.Cost
+	return spell.DefaultCast.Cost - rogue.CurrentEnergy()
 }
 
 func (rogue *Rogue) getPriority(sim *core.Simulation) *RoguePriority {
 	var nextPrio *RoguePriority
 	for idx, prio := range rogue.PriorityList {
-		if prio.ShouldCast(rogue, sim) {
-			needsCP := prio.NeedsCombatPoints(rogue)
+		if prio.ShouldCast == nil || prio.ShouldCast(sim, rogue, &prio) {
+			needsCP := prio.NeedsComboPoints(rogue)
 			needsEnergy := prio.NeedsEnergy(rogue)
-			if !needsCP && !needsEnergy && prio.Frequency != proto.Rogue_Rotation_Fill {
-				return &rogue.PriorityList[idx]
-			}
-			if nextPrio == nil && !needsCP {
-				nextPrio = &rogue.PriorityList[idx]
+			if nextPrio == nil || !prio.IsFiller {
+				if needsCP <= 0 && needsEnergy <= 0 {
+					return &rogue.PriorityList[idx]
+				}
+				if needsCP <= 0 {
+					nextPrio = &rogue.PriorityList[idx]
+				}
+			} else {
+				if needsCP <= 0 && needsEnergy <= 0 {
+					if nextPrio.NeedsComboPoints(rogue) < 1 && prio.MinComboPoints < 1 {
+						return &rogue.PriorityList[idx]
+					}
+				}
 			}
 		}
 	}

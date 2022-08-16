@@ -163,7 +163,7 @@ func (ho HitOutcome) PartialResistString() string {
 }
 
 // Other flags
-type SpellFlag uint16
+type SpellFlag uint32
 
 // Returns whether there is any overlap between the given masks.
 func (se SpellFlag) Matches(other SpellFlag) bool {
@@ -175,6 +175,7 @@ const (
 	SpellFlagIgnoreResists           SpellFlag = 1 << iota // skip spell resist/armor
 	SpellFlagIgnoreTargetModifiers                         // skip target damage modifiers
 	SpellFlagIgnoreAttackerModifiers                       // skip attacker damage modifiers
+	SpellFlagApplyArmorReduction                           // Forces damage reduction from armor to apply, even if it otherwise wouldn't.
 	SpellFlagCannotBeDodged                                // Ignores dodge in physical hit rolls
 	SpellFlagBinary                                        // Does not do partial resists and could need a different hit roll.
 	SpellFlagChanneled                                     // Spell is channeled

@@ -169,14 +169,15 @@ export class Sim {
 				let gear = this.lookupEquipmentSpec(player.equipment);
 				let gearChanged = false;
 
+				const isBlacksmith = [player.profession1, player.profession2].includes(Profession.Blacksmithing);
+
 				// Disable meta gem if inactive.
-				if (gear.hasInactiveMetaGem()) {
+				if (gear.hasInactiveMetaGem(isBlacksmith)) {
 					gear = gear.withoutMetaGem();
 					gearChanged = true;
 				}
 
 				// Remove bonus sockets if not blacksmith.
-				const isBlacksmith = [player.profession1, player.profession2].includes(Profession.Blacksmithing);
 				if (!isBlacksmith) {
 					gear = gear.withoutBlacksmithSockets();
 					gearChanged = true;
@@ -334,7 +335,7 @@ export class Sim {
 		return Object.values(this.enchants).find(enchant => enchant.id == id || enchant.effectId == id) || null;
 	}
 
-	getGems(socketColor: GemColor | undefined): Array<Gem> {
+	getGems(socketColor?: GemColor): Array<Gem> {
 		let gems = Object.values(this.gems);
 		if (socketColor) {
 			gems = gems.filter(gem => gemEligibleForSocket(gem, socketColor));

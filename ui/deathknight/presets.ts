@@ -16,6 +16,7 @@ import {
 } from '../core/proto/deathknight.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
+import { Deathknight_Rotation_StartingPresence, Deathknight_Rotation_BloodRuneFiller } from '../core/proto/deathknight.js';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -86,9 +87,11 @@ export const Unholy2HTalents = {
 
 export const DefaultRotation = DeathKnightRotation.create({
   useDeathAndDecay: true,
-  btGhoulFrenzy: true,
+  btGhoulFrenzy: false,
 	refreshHornOfWinter: false,
   useEmpowerRuneWeapon: true,
+  startingPresence: Deathknight_Rotation_StartingPresence.Unholy,
+  bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodBoil,
 });
 
 export const DefaultOptions = DeathKnightOptions.create({

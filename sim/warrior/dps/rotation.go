@@ -123,14 +123,14 @@ func (war *DpsWarrior) executeRotation(sim *core.Simulation, highPrioSpellsOnly 
 			war.Bloodthirst.Cast(sim, war.CurrentTarget)
 		} else if war.Rotation.UseRend && war.ShouldRend(sim) {
 			war.Rend.Cast(sim, war.CurrentTarget)
-		} else if war.Rotation.UseSlamOverExecute {
+		} else if war.Rotation.UseSlamOverExecute && war.CanSlam(sim) {
 			war.Slam.Cast(sim, war.CurrentTarget)
 		} else if war.Rotation.UseMs && war.CanMortalStrike(sim) {
 			war.MortalStrike.Cast(sim, war.CurrentTarget)
 		} else if !war.Rotation.PrioritizeWw && war.Rotation.UseWwDuringExecute && war.CanWhirlwind(sim) {
 			war.Whirlwind.Cast(sim, war.CurrentTarget)
-		} else if war.CanSlam(sim) {
-			war.Slam.Cast(sim, war.CurrentTarget)
+		} else if war.CanExecute() {
+			war.Execute.Cast(sim, war.CurrentTarget)
 
 		} else if !highPrioSpellsOnly {
 			if war.tryMaintainDebuffs(sim) {

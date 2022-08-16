@@ -268,3 +268,11 @@ func TickFuncApplyEffects(effectsFunc ApplySpellEffects) TickEffects {
 		}
 	}
 }
+
+func TickFuncApplyEffectsToUnit(unit *Unit, effectsFunc ApplySpellEffects) TickEffects {
+	return func(sim *Simulation, dot *Dot) func() {
+		return func() {
+			effectsFunc(sim, unit, dot.Spell)
+		}
+	}
+}

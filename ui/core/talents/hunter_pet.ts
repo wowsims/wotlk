@@ -264,7 +264,7 @@ export const tenacityDefault: HunterPetTalents = HunterPetTalents.create({
 });
 const defaultTalents = [cunningDefault, ferocityDefault, tenacityDefault];
 
-const cunningBMDefault: HunterPetTalents = HunterPetTalents.create({
+export const cunningBMDefault: HunterPetTalents = HunterPetTalents.create({
     cobraReflexes: 2,
     dive: true,
     boarsSpeed: true,
@@ -278,7 +278,7 @@ const cunningBMDefault: HunterPetTalents = HunterPetTalents.create({
     wildHunt: 2,
     roarOfSacrifice: true,
 });
-const ferocityBMDefault: HunterPetTalents = HunterPetTalents.create({
+export const ferocityBMDefault: HunterPetTalents = HunterPetTalents.create({
     cobraReflexes: 2,
     dive: true,
     bloodthirsty: 1,
@@ -291,7 +291,7 @@ const ferocityBMDefault: HunterPetTalents = HunterPetTalents.create({
     sharkAttack: 2,
     wildHunt: 2,
 });
-const tenacityBMDefault: HunterPetTalents = HunterPetTalents.create({
+export const tenacityBMDefault: HunterPetTalents = HunterPetTalents.create({
     cobraReflexes: 2,
     charge: true,
     greatStamina: 3,
