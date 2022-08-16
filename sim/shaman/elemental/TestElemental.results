@@ -201,22 +201,22 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-DarkmoonCard:Greatness-42987"
  value: {
-  dps: 2716.8094308
-  tps: 2123.0392629338
+  dps: 2724.452495682
+  tps: 2135.5798648436
  }
 }
 dps_results: {
  key: "TestElemental-AllItems-DarkmoonCard:Greatness-44253"
  value: {
-  dps: 2716.8094308
-  tps: 2123.0392629338
+  dps: 2724.452495682
+  tps: 2135.5798648436
  }
 }
 dps_results: {
  key: "TestElemental-AllItems-DarkmoonCard:Greatness-44254"
  value: {
-  dps: 2753.593902287
-  tps: 2153.0776015939
+  dps: 2744.9982781645
+  tps: 2143.6576060706
  }
 }
 dps_results: {
@@ -831,8 +831,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Settings-Orc-P1-Adaptive-FullBuffs-LongMultiTarget"
  value: {
-  dps: 3013.3175087481
-  tps: 2813.7701143294
+  dps: 3406.1931128445
+  tps: 3200.9901762731
  }
 }
 dps_results: {
@@ -852,8 +852,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Settings-Orc-P1-Adaptive-NoBuffs-LongMultiTarget"
  value: {
-  dps: 1653.7517628174
-  tps: 1344.8417805046
+  dps: 1806.2737775761
+  tps: 1503.7827245522
  }
 }
 dps_results: {
@@ -873,8 +873,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Settings-Troll-P1-Adaptive-FullBuffs-LongMultiTarget"
  value: {
-  dps: 2940.8295305161
-  tps: 2748.8798964654
+  dps: 3386.8572102969
+  tps: 3190.4197667728
  }
 }
 dps_results: {
@@ -894,8 +894,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Settings-Troll-P1-Adaptive-NoBuffs-LongMultiTarget"
  value: {
-  dps: 1664.9027931017
-  tps: 1364.3027730398
+  dps: 1807.935415778
+  tps: 1503.9362296982
  }
 }
 dps_results: {
