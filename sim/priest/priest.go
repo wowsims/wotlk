@@ -111,17 +111,18 @@ func (priest *Priest) Initialize() {
 	}
 
 	if priest.Talents.ImprovedSpiritTap > 0 {
-		increase := (1 + float64(priest.Talents.ImprovedSpiritTap)*0.05)
+		increase := 1 + 0.05*float64(priest.Talents.ImprovedSpiritTap)
+		statDep := priest.NewDynamicMultiplyStat(stats.Spirit, increase)
 		priest.ImprovedSpiritTap = priest.GetOrRegisterAura(core.Aura{
 			Label:    "Improved Spirit Tap",
 			ActionID: core.ActionID{SpellID: 59000},
 			Duration: time.Second * 8,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				priest.AddStatDependencyDynamic(sim, stats.Spirit, stats.Spirit, increase)
+				priest.EnableDynamicStatDep(sim, statDep)
 				priest.PseudoStats.SpiritRegenRateCasting += 0.33
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				priest.AddStatDependencyDynamic(sim, stats.Spirit, stats.Spirit, 1.0/increase)
+				priest.DisableDynamicStatDep(sim, statDep)
 				priest.PseudoStats.SpiritRegenRateCasting -= 0.33
 			},
 		})

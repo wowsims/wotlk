@@ -83,6 +83,7 @@ func validateDep(src Stat, dst Stat) {
 }
 
 type StatDependency struct {
+	dynamic bool
 	enabled bool
 	src     Stat
 	dst     Stat
@@ -125,6 +126,7 @@ func (sdm *StatDependencyManager) AddStatDependency2(src Stat, dst Stat, amount 
 	}
 
 	sdm.deps = append(sdm.deps, &StatDependency{
+		dynamic: false,
 		enabled: true,
 		src:     src,
 		dst:     dst,
@@ -139,6 +141,7 @@ func (sdm *StatDependencyManager) MultiplyStat(s Stat, amount float64) {
 	}
 
 	sdm.deps = append(sdm.deps, &StatDependency{
+		dynamic: false,
 		enabled: true,
 		src:     s,
 		dst:     s,
@@ -156,6 +159,7 @@ func (sdm *StatDependencyManager) NewDynamicStatDependency(src Stat, dst Stat, a
 	}
 
 	dep := &StatDependency{
+		dynamic: true,
 		enabled: false,
 		src:     src,
 		dst:     dst,
@@ -172,6 +176,7 @@ func (sdm *StatDependencyManager) NewDynamicMultiplyStat(s Stat, amount float64)
 	}
 
 	dep := &StatDependency{
+		dynamic: true,
 		enabled: false,
 		src:     s,
 		dst:     s,
@@ -204,16 +209,16 @@ func (sdm *StatDependencyManager) sortDeps() {
 					continue
 				}
 
-				if dep.enabled {
+				if dep.dynamic {
+					// Dynamic deps (those with enabled == false) need to remain separate so
+					// they can be turned on/off.
+					deps = append(deps, dep)
+				} else {
 					if srcStat == dstStat {
 						amount *= dep.amount
 					} else {
 						amount += dep.amount
 					}
-				} else {
-					// Dynamic deps (those with enabled == false) need to remain separate so
-					// they can be turned on/off.
-					deps = append(deps, dep)
 				}
 			}
 
@@ -237,6 +242,14 @@ func (sdm *StatDependencyManager) FinalizeStatDeps() {
 	}
 	sdm.sortDeps()
 	sdm.finalized = true
+}
+
+func (sdm *StatDependencyManager) ResetStatDeps() {
+	for _, dep := range sdm.deps {
+		if dep.dynamic {
+			dep.enabled = false
+		}
+	}
 }
 
 func (sdm *StatDependencyManager) IsFinalized() bool {

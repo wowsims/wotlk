@@ -378,6 +378,7 @@ func (unit *Unit) init(sim *Simulation) {
 
 func (unit *Unit) reset(sim *Simulation, agent Agent) {
 	unit.Metrics.reset()
+	unit.ResetStatDeps()
 	unit.statsWithoutDeps = unit.initialStatsWithoutDeps
 	unit.stats = unit.initialStats
 	unit.PseudoStats = unit.initialPseudoStats

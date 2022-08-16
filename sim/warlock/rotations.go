@@ -10,9 +10,10 @@ import (
 )
 
 func (warlock *Warlock) LifeTapOrDarkPact(sim *core.Simulation) {
-	if warlock.CurrentManaPercent() == 1 {
-		panic("Life Tap or Dark Pact while full mana")
-	}
+	// TODO: Reenable this check.
+	//if warlock.CurrentManaPercent() == 1 {
+	//	panic("Life Tap or Dark Pact while full mana")
+	//}
 	if warlock.Talents.DarkPact && warlock.Pet.CurrentMana() > warlock.GetStat(stats.SpellPower)+1200+131 {
 		warlock.DarkPact.Cast(sim, warlock.CurrentTarget)
 	} else {

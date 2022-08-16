@@ -981,6 +981,7 @@ func ReplenishmentAura(character *Character, actionID ActionID) *Aura {
 		Label:    "Replenishment-" + actionID.String(),
 		Tag:      ReplenishmentAuraTag,
 		ActionID: actionID,
+		Priority: 1,
 		Duration: ReplenishmentAuraDuration,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			character.EnableDynamicStatDep(sim, statDep)

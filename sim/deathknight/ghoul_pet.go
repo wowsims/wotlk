@@ -51,8 +51,8 @@ func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
 		AutoSwingMelee: true,
 	})
 
-	ghoulPet.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+1)
-	ghoulPet.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/83.3))
+	ghoulPet.AddStatDependency2(stats.Strength, stats.AttackPower, 1)
+	ghoulPet.AddStatDependency2(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/83.3)
 
 	return ghoulPet
 }
@@ -91,8 +91,8 @@ func (dk *Deathknight) NewGhoulPet(permanent bool) *GhoulPet {
 		AutoSwingMelee: true,
 	})
 
-	ghoulPet.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+1)
-	ghoulPet.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/83.3))
+	ghoulPet.AddStatDependency2(stats.Strength, stats.AttackPower, 1)
+	ghoulPet.AddStatDependency2(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/83.3)
 
 	core.ApplyPetConsumeEffects(&ghoulPet.Character, dk.Consumes)
 

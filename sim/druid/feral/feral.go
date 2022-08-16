@@ -71,7 +71,7 @@ func NewFeralDruid(character core.Character, options proto.Player) *FeralDruid {
 
 	// Cat Form adds (2 x Level) AP + 1 AP per Agi
 	cat.AddStat(stats.AttackPower, 140)
-	cat.AddStatDependency(stats.Agility, stats.AttackPower, 1.0+1)
+	cat.AddStatDependency2(stats.Agility, stats.AttackPower, 1)
 
 	dps := (((cat.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponDamageMax - cat.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponDamageMin) / 2.0) + cat.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponDamageMin) / cat.Equip[proto.ItemSlot_ItemSlotMainHand].SwingSpeed
 	fap := math.Floor((dps - 54.8) * 14)

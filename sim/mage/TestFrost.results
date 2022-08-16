@@ -108,22 +108,22 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-DarkmoonCard:Greatness-42987"
  value: {
-  dps: 4853.7703693083
-  tps: 4214.1208770336
+  dps: 4827.5626159722
+  tps: 4187.1886367864
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-DarkmoonCard:Greatness-44253"
  value: {
-  dps: 4853.7703693083
-  tps: 4214.1208770336
+  dps: 4827.5626159722
+  tps: 4187.1886367864
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-DarkmoonCard:Greatness-44254"
  value: {
-  dps: 4853.7703693083
-  tps: 4211.1151072259
+  dps: 4817.0450530889
+  tps: 4173.016360156
  }
 }
 dps_results: {
@@ -605,7 +605,7 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Troll-P1Frost-FrostRotation-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 6378.2020965647
+  dps: 6378.2020965646
   tps: 5403.7143423936
  }
 }

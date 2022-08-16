@@ -35,27 +35,27 @@ func (shaman *Shaman) ApplyTalents() {
 	}
 
 	if shaman.Talents.Toughness > 0 {
-		shaman.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+0.02*float64(shaman.Talents.Toughness))
+		shaman.MultiplyStat(stats.Stamina, 1.0+0.02*float64(shaman.Talents.Toughness))
 	}
 
 	if shaman.Talents.UnrelentingStorm > 0 {
-		shaman.AddStatDependency(stats.Intellect, stats.MP5, 1.0+0.04*float64(shaman.Talents.UnrelentingStorm))
+		shaman.AddStatDependency2(stats.Intellect, stats.MP5, 0.04*float64(shaman.Talents.UnrelentingStorm))
 	}
 
 	if shaman.Talents.AncestralKnowledge > 0 {
-		shaman.AddStatDependency(stats.Intellect, stats.Intellect, 1.0+0.02*float64(shaman.Talents.AncestralKnowledge))
+		shaman.MultiplyStat(stats.Intellect, 1.0+0.02*float64(shaman.Talents.AncestralKnowledge))
 	}
 
 	if shaman.Talents.MentalQuickness > 0 {
-		shaman.AddStatDependency(stats.AttackPower, stats.SpellPower, 1.0+0.1*float64(shaman.Talents.MentalQuickness))
+		shaman.AddStatDependency2(stats.AttackPower, stats.SpellPower, 0.1*float64(shaman.Talents.MentalQuickness))
 	}
 
 	if shaman.Talents.MentalDexterity > 0 {
-		shaman.AddStatDependency(stats.Intellect, stats.AttackPower, 1.0+0.3333*float64(shaman.Talents.MentalDexterity))
+		shaman.AddStatDependency2(stats.Intellect, stats.AttackPower, 0.3333*float64(shaman.Talents.MentalDexterity))
 	}
 
 	if shaman.Talents.NaturesBlessing > 0 {
-		shaman.AddStatDependency(stats.Intellect, stats.SpellPower, 1.0+0.1*float64(shaman.Talents.NaturesBlessing))
+		shaman.AddStatDependency2(stats.Intellect, stats.SpellPower, 0.1*float64(shaman.Talents.NaturesBlessing))
 	}
 
 	if shaman.Talents.SpiritWeapons {
@@ -355,15 +355,16 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 	if shaman.HasSetBonus(ItemSetFrostWitchBattlegear, 4) {
 		enhT10Bonus = true
 
+		statDep := shaman.NewDynamicMultiplyStat(stats.AttackPower, 1.2)
 		t10BonusAura = shaman.RegisterAura(core.Aura{
 			Label:    "Maelstrom Power",
 			ActionID: core.ActionID{SpellID: 70831},
 			Duration: time.Second * 10,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				shaman.AddStatDependencyDynamic(sim, stats.AttackPower, stats.AttackPower, 1.2)
+				shaman.EnableDynamicStatDep(sim, statDep)
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				shaman.AddStatDependencyDynamic(sim, stats.AttackPower, stats.AttackPower, 1/1.2)
+				shaman.DisableDynamicStatDep(sim, statDep)
 			},
 		})
 	}

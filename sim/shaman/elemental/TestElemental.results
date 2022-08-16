@@ -194,29 +194,29 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-DarkmoonCard:Greatness-42987"
  value: {
-  dps: 2670.3877585436
-  tps: 2082.6945293493
+  dps: 2815.6186220153
+  tps: 2211.5132355002
  }
 }
 dps_results: {
  key: "TestElemental-AllItems-DarkmoonCard:Greatness-44253"
  value: {
-  dps: 2670.3877585436
-  tps: 2082.6945293493
+  dps: 2815.6186220153
+  tps: 2211.5132355002
  }
 }
 dps_results: {
  key: "TestElemental-AllItems-DarkmoonCard:Greatness-44254"
  value: {
-  dps: 2700.5984682992
-  tps: 2112.8851499819
+  dps: 2811.9048379324
+  tps: 2193.9193270596
  }
 }
 dps_results: {
  key: "TestElemental-AllItems-DeathKnight'sAnguish-38212"
  value: {
   dps: 2759.2239369281
-  tps: 2163.7024797004
+  tps: 2163.7024797003
  }
 }
 dps_results: {

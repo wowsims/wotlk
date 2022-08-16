@@ -27,38 +27,38 @@ func (druid *Druid) ApplyTalents() {
 
 	if druid.Talents.LunarGuidance > 0 {
 		bonus := (0.25 / 3) * float64(druid.Talents.LunarGuidance)
-		druid.AddStatDependency(stats.Intellect, stats.SpellPower, 1.0+bonus)
+		druid.AddStatDependency2(stats.Intellect, stats.SpellPower, bonus)
 	}
 
 	if druid.Talents.Dreamstate > 0 {
 		bonus := (0.1 / 3) * float64(druid.Talents.Dreamstate)
-		druid.AddStatDependency(stats.Intellect, stats.MP5, 1.0+bonus)
+		druid.AddStatDependency2(stats.Intellect, stats.MP5, bonus)
 	}
 
 	if druid.Talents.HeartOfTheWild > 0 {
 		bonus := 0.04 * float64(druid.Talents.HeartOfTheWild)
-		druid.AddStatDependency(stats.Intellect, stats.Intellect, 1.0+bonus)
+		druid.MultiplyStat(stats.Intellect, 1.0+bonus)
 
 		if druid.InForm(Cat) {
-			druid.AddStatDependency(stats.AttackPower, stats.AttackPower, 1.0+0.5*bonus)
+			druid.MultiplyStat(stats.AttackPower, 1.0+0.5*bonus)
 		} else if druid.InForm(Bear) {
-			druid.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+bonus)
+			druid.MultiplyStat(stats.Stamina, 1.0+bonus)
 		}
 	}
 
 	if druid.Talents.SurvivalOfTheFittest > 0 {
 		bonus := 0.01 * float64(druid.Talents.SurvivalOfTheFittest)
-		druid.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+bonus)
-		druid.AddStatDependency(stats.Strength, stats.Strength, 1.0+bonus)
-		druid.AddStatDependency(stats.Agility, stats.Agility, 1.0+bonus)
-		druid.AddStatDependency(stats.Intellect, stats.Intellect, 1.0+bonus)
-		druid.AddStatDependency(stats.Spirit, stats.Spirit, 1.0+bonus)
+		druid.MultiplyStat(stats.Stamina, 1.0+bonus)
+		druid.MultiplyStat(stats.Strength, 1.0+bonus)
+		druid.MultiplyStat(stats.Agility, 1.0+bonus)
+		druid.MultiplyStat(stats.Intellect, 1.0+bonus)
+		druid.MultiplyStat(stats.Spirit, 1.0+bonus)
 		druid.PseudoStats.ReducedCritTakenChance += 0.01 * float64(druid.Talents.SurvivalOfTheFittest)
 	}
 
 	if druid.Talents.LivingSpirit > 0 {
 		bonus := 0.05 * float64(druid.Talents.LivingSpirit)
-		druid.AddStatDependency(stats.Spirit, stats.Spirit, 1.0+bonus)
+		druid.MultiplyStat(stats.Spirit, 1.0+bonus)
 	}
 
 	druid.registerNaturesSwiftnessCD()
