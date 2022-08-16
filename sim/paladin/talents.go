@@ -137,6 +137,8 @@ func (paladin *Paladin) applyRedoubt() {
 
 	actionID := core.ActionID{SpellID: 20132}
 
+	paladin.AddStatDependency(stats.BlockValue, stats.BlockValue, 1.0+0.10*float64(paladin.Talents.Redoubt))
+
 	bonusBlockRating := 10 * core.BlockRatingPerBlockChance * float64(paladin.Talents.Redoubt)
 
 	procAura := paladin.RegisterAura(core.Aura{
@@ -162,12 +164,6 @@ func (paladin *Paladin) applyRedoubt() {
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
-		},
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			paladin.AddStatDynamic(sim, stats.Block, bonusBlockRating)
-		},
-		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			paladin.AddStatDynamic(sim, stats.Block, -bonusBlockRating)
 		},
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Landed() && spellEffect.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
