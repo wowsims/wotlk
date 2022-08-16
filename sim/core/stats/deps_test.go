@@ -15,9 +15,9 @@ func TestStatDependencies(t *testing.T) {
 	sdm := NewStatDependencyManager()
 
 	sdm.MultiplyStat(Intellect, 2)
-	sdm.AddStatDependency2(Stamina, Intellect, 1)
+	sdm.AddStatDependency(Stamina, Intellect, 1)
 	sdm.MultiplyStat(Stamina, 2)
-	sdm.AddStatDependency2(Agility, Stamina, 1)
+	sdm.AddStatDependency(Agility, Stamina, 1)
 
 	dep1 := sdm.NewDynamicMultiplyStat(Agility, 2)
 	dep2 := sdm.NewDynamicMultiplyStat(Spirit, 3)
@@ -93,8 +93,8 @@ func TestMultipleStatDep(t *testing.T) {
 		SpellPower: 100,
 	}
 
-	sdm.AddStatDependency2(Intellect, SpellPower, 0.2)
-	sdm.AddStatDependency2(Intellect, SpellPower, 0.2)
+	sdm.AddStatDependency(Intellect, SpellPower, 0.2)
+	sdm.AddStatDependency(Intellect, SpellPower, 0.2)
 	sdm.MultiplyStat(Intellect, 1.2)
 	sdm.FinalizeStatDeps()
 	result := sdm.ApplyStatDependencies(baseStat)

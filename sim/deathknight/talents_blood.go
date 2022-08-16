@@ -26,7 +26,7 @@ func (dk *Deathknight) ApplyBloodTalents() {
 	// Bladed Armor
 	if dk.Talents.BladedArmor > 0 {
 		coeff := float64(dk.Talents.BladedArmor)
-		dk.AddStatDependency2(stats.Armor, stats.AttackPower, coeff/180.0)
+		dk.AddStatDependency(stats.Armor, stats.AttackPower, coeff/180.0)
 	}
 
 	// Two Handed Specialization

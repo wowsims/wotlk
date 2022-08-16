@@ -74,12 +74,12 @@ func (hunter *Hunter) ApplyTalents() {
 		hunter.MultiplyStat(stats.Intellect, bonus)
 	}
 	if hunter.Talents.CarefulAim > 0 {
-		hunter.AddStatDependency2(stats.Intellect, stats.RangedAttackPower, (1.0/3.0)*float64(hunter.Talents.CarefulAim))
+		hunter.AddStatDependency(stats.Intellect, stats.RangedAttackPower, (1.0/3.0)*float64(hunter.Talents.CarefulAim))
 	}
 	if hunter.Talents.HunterVsWild > 0 {
 		bonus := 0.1 * float64(hunter.Talents.HunterVsWild)
-		hunter.AddStatDependency2(stats.Stamina, stats.AttackPower, bonus)
-		hunter.AddStatDependency2(stats.Stamina, stats.RangedAttackPower, bonus)
+		hunter.AddStatDependency(stats.Stamina, stats.AttackPower, bonus)
+		hunter.AddStatDependency(stats.Stamina, stats.RangedAttackPower, bonus)
 	}
 	if hunter.Talents.LightningReflexes > 0 {
 		agiBonus := 0.03 * float64(hunter.Talents.LightningReflexes)

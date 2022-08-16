@@ -116,7 +116,7 @@ func NewStatDependencyManager() StatDependencyManager {
 	return StatDependencyManager{}
 }
 
-func (sdm *StatDependencyManager) AddStatDependency2(src Stat, dst Stat, amount float64) {
+func (sdm *StatDependencyManager) AddStatDependency(src Stat, dst Stat, amount float64) {
 	validateDep(src, dst)
 	if sdm.IsFinalized() {
 		panic("StatDependencyManager already finalized!")

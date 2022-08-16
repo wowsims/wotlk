@@ -56,10 +56,10 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 	wp.EnableManaBar()
 	// the ratio multiplier affects the first 20 points as well
 	wp.AddStat(stats.Mana, (15*20-20)+(20-15*20)*petConfig.ManaIntRatio/15)
-	wp.AddStatDependency2(stats.Intellect, stats.Mana, 1/(1+15)) //TODO: This value is wrong now because of deps refactoring
-	wp.AddStatDependency2(stats.Intellect, stats.Mana, petConfig.ManaIntRatio)
-	wp.AddStatDependency2(stats.Strength, stats.AttackPower, 2)
-	wp.AddStatDependency2(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance*0.04)
+	wp.AddStatDependency(stats.Intellect, stats.Mana, 1/(1+15)) //TODO: This value is wrong now because of deps refactoring
+	wp.AddStatDependency(stats.Intellect, stats.Mana, petConfig.ManaIntRatio)
+	wp.AddStatDependency(stats.Strength, stats.AttackPower, 2)
+	wp.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance*0.04)
 	wp.AddStats(stats.Stats{
 		stats.MeleeCrit: float64(warlock.Talents.DemonicTactics) * 2 * core.CritRatingPerCritChance,
 		stats.SpellCrit: float64(warlock.Talents.DemonicTactics) * 2 * core.CritRatingPerCritChance,
@@ -110,7 +110,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 	switch summonChoice {
 	case proto.Warlock_Options_Imp:
 		// TODO: Does imp have different int->crit ratio than other casters? If so, we need to undo and then redo int->crit.
-		// wp.AddStatDependency2(stats.Intellect, stats.SpellCrit, 0.0125*core.CritRatingPerCritChance/100)
+		// wp.AddStatDependency(stats.Intellect, stats.SpellCrit, 0.0125*core.CritRatingPerCritChance/100)
 		wp.PseudoStats.FireDamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
 		wp.PseudoStats.BonusFireCritRating *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
 	case proto.Warlock_Options_Succubus:

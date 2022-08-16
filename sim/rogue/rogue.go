@@ -222,9 +222,9 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 	})
 	rogue.applyPoisons()
 
-	rogue.AddStatDependency2(stats.Strength, stats.AttackPower, 1)
-	rogue.AddStatDependency2(stats.Agility, stats.AttackPower, 1)
-	rogue.AddStatDependency2(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/83.15)
+	rogue.AddStatDependency(stats.Strength, stats.AttackPower, 1)
+	rogue.AddStatDependency(stats.Agility, stats.AttackPower, 1)
+	rogue.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/83.15)
 
 	return rogue
 }

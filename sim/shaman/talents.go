@@ -39,7 +39,7 @@ func (shaman *Shaman) ApplyTalents() {
 	}
 
 	if shaman.Talents.UnrelentingStorm > 0 {
-		shaman.AddStatDependency2(stats.Intellect, stats.MP5, 0.04*float64(shaman.Talents.UnrelentingStorm))
+		shaman.AddStatDependency(stats.Intellect, stats.MP5, 0.04*float64(shaman.Talents.UnrelentingStorm))
 	}
 
 	if shaman.Talents.AncestralKnowledge > 0 {
@@ -47,15 +47,15 @@ func (shaman *Shaman) ApplyTalents() {
 	}
 
 	if shaman.Talents.MentalQuickness > 0 {
-		shaman.AddStatDependency2(stats.AttackPower, stats.SpellPower, 0.1*float64(shaman.Talents.MentalQuickness))
+		shaman.AddStatDependency(stats.AttackPower, stats.SpellPower, 0.1*float64(shaman.Talents.MentalQuickness))
 	}
 
 	if shaman.Talents.MentalDexterity > 0 {
-		shaman.AddStatDependency2(stats.Intellect, stats.AttackPower, 0.3333*float64(shaman.Talents.MentalDexterity))
+		shaman.AddStatDependency(stats.Intellect, stats.AttackPower, 0.3333*float64(shaman.Talents.MentalDexterity))
 	}
 
 	if shaman.Talents.NaturesBlessing > 0 {
-		shaman.AddStatDependency2(stats.Intellect, stats.SpellPower, 0.1*float64(shaman.Talents.NaturesBlessing))
+		shaman.AddStatDependency(stats.Intellect, stats.SpellPower, 0.1*float64(shaman.Talents.NaturesBlessing))
 	}
 
 	if shaman.Talents.SpiritWeapons {

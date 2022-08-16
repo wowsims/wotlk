@@ -27,12 +27,12 @@ func (druid *Druid) ApplyTalents() {
 
 	if druid.Talents.LunarGuidance > 0 {
 		bonus := (0.25 / 3) * float64(druid.Talents.LunarGuidance)
-		druid.AddStatDependency2(stats.Intellect, stats.SpellPower, bonus)
+		druid.AddStatDependency(stats.Intellect, stats.SpellPower, bonus)
 	}
 
 	if druid.Talents.Dreamstate > 0 {
 		bonus := (0.1 / 3) * float64(druid.Talents.Dreamstate)
-		druid.AddStatDependency2(stats.Intellect, stats.MP5, bonus)
+		druid.AddStatDependency(stats.Intellect, stats.MP5, bonus)
 	}
 
 	if druid.Talents.HeartOfTheWild > 0 {

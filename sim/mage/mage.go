@@ -221,7 +221,7 @@ func NewMage(character core.Character, options proto.Player) *Mage {
 		if mage.HasSetBonus(ItemSetKhadgarsRegalia, 2) {
 			multi += .15
 		}
-		mage.Character.AddStatDependency2(stats.Spirit, stats.SpellCrit, multi)
+		mage.Character.AddStatDependency(stats.Spirit, stats.SpellCrit, multi)
 	}
 
 	if mage.Talents.SummonWaterElemental {

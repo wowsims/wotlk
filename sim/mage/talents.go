@@ -41,7 +41,7 @@ func (mage *Mage) ApplyTalents() {
 	}
 
 	if mage.Talents.MindMastery > 0 {
-		mage.AddStatDependency2(stats.Intellect, stats.SpellPower, 0.03*float64(mage.Talents.MindMastery))
+		mage.AddStatDependency(stats.Intellect, stats.SpellPower, 0.03*float64(mage.Talents.MindMastery))
 	}
 
 	mage.AddStat(stats.SpellCrit, float64(mage.Talents.ArcaneInstability)*1*core.CritRatingPerCritChance)

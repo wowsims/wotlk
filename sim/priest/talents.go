@@ -21,7 +21,7 @@ func (priest *Priest) ApplyTalents() {
 
 	if priest.Talents.SpiritualGuidance > 0 {
 		bonus := (0.25 / 5) * float64(priest.Talents.SpiritualGuidance)
-		priest.AddStatDependency2(stats.Spirit, stats.SpellPower, bonus)
+		priest.AddStatDependency(stats.Spirit, stats.SpellPower, bonus)
 	}
 
 	if priest.Talents.MentalStrength > 0 {
@@ -53,7 +53,7 @@ func (priest *Priest) ApplyTalents() {
 	}
 
 	if priest.Talents.TwistedFaith > 0 {
-		priest.AddStatDependency2(stats.Spirit, stats.SpellPower, 0.04*float64(priest.Talents.TwistedFaith))
+		priest.AddStatDependency(stats.Spirit, stats.SpellPower, 0.04*float64(priest.Talents.TwistedFaith))
 	}
 }
 

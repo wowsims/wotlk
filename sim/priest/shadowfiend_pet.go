@@ -86,7 +86,7 @@ func (priest *Priest) NewShadowfiend() *Shadowfiend {
 		AutoSwingMelee: true,
 	})
 
-	shadowfiend.AddStatDependency2(stats.Strength, stats.AttackPower, 1.0)
+	shadowfiend.AddStatDependency(stats.Strength, stats.AttackPower, 1.0)
 
 	core.ApplyPetConsumeEffects(&shadowfiend.Character, priest.Consumes)
 
