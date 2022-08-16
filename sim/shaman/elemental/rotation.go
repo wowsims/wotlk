@@ -133,7 +133,7 @@ func (rotation *ManualRotation) DoAction(eleShaman *ElementalShaman, sim *core.S
 	// Only overwrite if lvb is ready right now.
 	if !needFS && rotation.options.OverwriteFlameshock && eleShaman.LavaBurst.CD.TimeToReady(sim) <= 0 {
 		lvbTime := core.MaxDuration(eleShaman.ApplyCastSpeed(eleShaman.LavaBurst.DefaultCast.CastTime), core.GCDMin)
-		if lvbTime < fsRemain {
+		if fsRemain < lvbTime {
 			needFS = true
 		}
 	}
