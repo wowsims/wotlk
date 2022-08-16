@@ -72,7 +72,7 @@ type Unit struct {
 	stats stats.Stats
 
 	// Provides stat dependency management behavior.
-	*stats.StatDependencyManager
+	stats.StatDependencyManager
 
 	PseudoStats stats.PseudoStats
 
@@ -170,7 +170,7 @@ func (unit *Unit) AddStatsDynamic(sim *Simulation, bonus stats.Stats) {
 	bonus[stats.Mana] = 0 // TODO: Mana needs special treatment
 
 	if sim.Log != nil {
-		unit.Log(sim, "Dynamic stat change: old = %s, new = %s", unit.stats, unit.stats.Add(bonus))
+		unit.Log(sim, "Dynamic stat change: old = %s, new = %s", unit.stats.FlatString(), unit.stats.Add(bonus).FlatString())
 	}
 
 	unit.stats = unit.stats.Add(bonus)

@@ -111,8 +111,8 @@ type StatDependencyManager struct {
 	finalized bool
 }
 
-func NewStatDependencyManager() *StatDependencyManager {
-	return &StatDependencyManager{}
+func NewStatDependencyManager() StatDependencyManager {
+	return StatDependencyManager{}
 }
 
 func (sdm *StatDependencyManager) AddStatDependency2(src Stat, dst Stat, amount float64) {
