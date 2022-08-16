@@ -70,7 +70,7 @@ func (rotation *AdaptiveRotation) DoAction(eleShaman *ElementalShaman, sim *core
 			eleShaman.WaitForMana(sim, eleShaman.ChainLightning.CurCast.Cost)
 		}
 		return
-	} else if len(eleShaman.Env.Encounter.Targets) > 1 && cmp > 0.66 && eleShaman.FireNova.IsReady(sim) {
+	} else if len(eleShaman.Env.Encounter.Targets) > 3 && cmp > 0.66 && eleShaman.FireNova.IsReady(sim) {
 		if !eleShaman.FireNova.Cast(sim, target) {
 			eleShaman.WaitForMana(sim, eleShaman.FireNova.CurCast.Cost)
 		}
