@@ -72,8 +72,8 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 
 	if raidBuffs.TrueshotAura || raidBuffs.AbominationsMight || raidBuffs.UnleashedRage {
 		// Increases AP by 10%
-		character.AddStatDependency(stats.AttackPower, stats.AttackPower, 1.0+0.1)
-		character.AddStatDependency(stats.RangedAttackPower, stats.RangedAttackPower, 1.0+0.1)
+		character.MultiplyStat(stats.AttackPower, 1.1)
+		character.MultiplyStat(stats.RangedAttackPower, 1.1)
 	}
 
 	if raidBuffs.ArcaneEmpowerment || raidBuffs.FerociousInspiration || raidBuffs.SanctifiedRetribution {
@@ -150,13 +150,13 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		kingsStrStamAmount = MaxFloat(kingsStrStamAmount, 1.08)
 	}
 	if kingsStrStamAmount > 0 {
-		character.AddStatDependency(stats.Strength, stats.Strength, kingsStrStamAmount)
-		character.AddStatDependency(stats.Stamina, stats.Stamina, kingsStrStamAmount)
+		character.MultiplyStat(stats.Strength, kingsStrStamAmount)
+		character.MultiplyStat(stats.Stamina, kingsStrStamAmount)
 	}
 	if kingsAgiIntSpiAmount > 0 {
-		character.AddStatDependency(stats.Agility, stats.Agility, kingsAgiIntSpiAmount)
-		character.AddStatDependency(stats.Intellect, stats.Intellect, kingsAgiIntSpiAmount)
-		character.AddStatDependency(stats.Spirit, stats.Spirit, kingsAgiIntSpiAmount)
+		character.MultiplyStat(stats.Agility, kingsAgiIntSpiAmount)
+		character.MultiplyStat(stats.Intellect, kingsAgiIntSpiAmount)
+		character.MultiplyStat(stats.Spirit, kingsAgiIntSpiAmount)
 	}
 
 	if individualBuffs.BlessingOfSanctuary {
@@ -971,10 +971,11 @@ var ReplenishmentAuraTag = "Replenishment"
 const ReplenishmentAuraDuration = time.Second * 15
 
 func ReplenishmentAura(character *Character, actionID ActionID) *Aura {
-
 	if !(actionID.SpellID == 54118 || actionID.SpellID == 48160 || actionID.SpellID == 31878 || actionID.SpellID == 53292 || actionID.SpellID == 44561) {
 		panic("Wrong Replenishment Action ID")
 	}
+
+	statDep := character.NewDynamicStatDependency(stats.Mana, stats.MP5, 0.01)
 
 	return character.GetOrRegisterAura(Aura{
 		Label:    "Replenishment-" + actionID.String(),
@@ -982,10 +983,10 @@ func ReplenishmentAura(character *Character, actionID ActionID) *Aura {
 		ActionID: actionID,
 		Duration: ReplenishmentAuraDuration,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			character.AddStatDependencyDynamic(sim, stats.Mana, stats.MP5, 1.0+0.01)
+			character.EnableDynamicStatDep(sim, statDep)
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			character.AddStatDependencyDynamic(sim, stats.Mana, stats.MP5, 1/(1.0+0.01))
+			character.DisableDynamicStatDep(sim, statDep)
 		},
 	})
 }

@@ -71,8 +71,8 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 	// Pet family bonus is now the same for all pets.
 	hp.AutoAttacks.MHEffect.DamageMultiplier *= 1.05
 
-	hp.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
-	hp.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/62.77))
+	hp.AddStatDependency2(stats.Strength, stats.AttackPower, 2)
+	hp.AddStatDependency2(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/62.77)
 	core.ApplyPetConsumeEffects(&hp.Character, hunter.Consumes)
 
 	hunter.AddPet(hp)
