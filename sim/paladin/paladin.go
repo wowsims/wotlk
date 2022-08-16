@@ -51,19 +51,22 @@ type Paladin struct {
 	CurrentSeal      *core.Aura
 	CurrentJudgement *core.Aura
 
-	DivinePlea          *core.Spell
-	DivineStorm         *core.Spell
-	HolyWrath           *core.Spell
-	Consecration        *core.Spell
-	CrusaderStrike      *core.Spell
-	Exorcism            *core.Spell
-	HolyShield          *core.Spell
-	JudgementOfWisdom   *core.Spell
-	JudgementOfLight    *core.Spell
-	HammerOfWrath       *core.Spell
-	SealOfVengeance     *core.Spell
-	SealOfRighteousness *core.Spell
-	SealOfCommand       *core.Spell
+	DivinePlea            *core.Spell
+	DivineStorm           *core.Spell
+	HolyWrath             *core.Spell
+	Consecration          *core.Spell
+	CrusaderStrike        *core.Spell
+	Exorcism              *core.Spell
+	HolyShield            *core.Spell
+	HammerOfTheRighteous  *core.Spell
+	ShieldOfRighteousness *core.Spell
+	AvengersShield        *core.Spell
+	JudgementOfWisdom     *core.Spell
+	JudgementOfLight      *core.Spell
+	HammerOfWrath         *core.Spell
+	SealOfVengeance       *core.Spell
+	SealOfRighteousness   *core.Spell
+	SealOfCommand         *core.Spell
 	// SealOfWisdom        *core.Spell
 	// SealOfLight         *core.Spell
 
@@ -158,6 +161,9 @@ func (paladin *Paladin) Initialize() {
 
 	paladin.registerExorcismSpell()
 	paladin.registerHolyShieldSpell()
+	paladin.registerHammerOfTheRighteousSpell()
+	paladin.registerShieldOfRighteousnessSpell()
+	paladin.registerAvengersShieldSpell()
 	paladin.registerJudgements()
 
 	paladin.registerSpiritualAttunement()
