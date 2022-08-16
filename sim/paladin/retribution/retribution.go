@@ -42,7 +42,7 @@ func NewRetributionPaladin(character core.Character, options proto.Player) *Retr
 	}
 	ret.PaladinAura = retOptions.Options.Aura
 
-	var rotationInput = retOptions.Rotation.CustomRotation
+	ret.RotatioOption = retOptions.Rotation.CustomRotation
 	if retOptions.Rotation.Type == proto.RetributionPaladin_Rotation_Standard {
 		ret.SelectedRotation = ret.mainRotation
 	} else if retOptions.Rotation.Type == proto.RetributionPaladin_Rotation_Custom {
@@ -50,16 +50,9 @@ func NewRetributionPaladin(character core.Character, options proto.Player) *Retr
 	} else if retOptions.Rotation.Type == proto.RetributionPaladin_Rotation_CastSequence {
 		ret.SelectedRotation = ret.castSequenceRotation
 		ret.CastSequenceIndex = 0
-		rotationInput = retOptions.Rotation.CustomCastSequence
+		ret.RotatioOption = retOptions.Rotation.CustomCastSequence
 	} else {
 		ret.SelectedRotation = ret.mainRotation
-	}
-
-	if rotationInput != nil {
-		ret.RotationInput = make([]int32, len(rotationInput.Spells))
-		for i, customSpellProto := range rotationInput.Spells {
-			ret.RotationInput[i] = customSpellProto.Spell
-		}
 	}
 
 	// Convert DTPS option to bonus MP5
@@ -90,7 +83,8 @@ type RetributionPaladin struct {
 	HasLightswornBattlegear2Pc bool
 
 	SelectedRotation  func(*core.Simulation)
-	RotationInput     []int32
+	RotatioOption     *proto.CustomRotation
+	RotationInput     []*core.Spell
 	CastSequenceIndex int32
 
 	Rotation proto.RetributionPaladin_Rotation
@@ -103,6 +97,28 @@ func (ret *RetributionPaladin) GetPaladin() *paladin.Paladin {
 func (ret *RetributionPaladin) Initialize() {
 	ret.Paladin.Initialize()
 	ret.RegisterAvengingWrathCD()
+
+	if ret.RotatioOption != nil {
+		ret.RotationInput = make([] *core.Spell, len(ret.RotatioOption.Spells))
+		for i, customSpellProto := range ret.RotatioOption.Spells {
+			switch customSpellProto.Spell {
+			case int32(proto.RetributionPaladin_Rotation_JudgementOfWisdom):
+				ret.RotationInput[i] = ret.JudgementOfWisdom
+			case int32(proto.RetributionPaladin_Rotation_DivineStorm):
+				ret.RotationInput[i] = ret.DivineStorm
+			case int32(proto.RetributionPaladin_Rotation_HammerOfWrath):
+				ret.RotationInput[i] = ret.HammerOfWrath
+			case int32(proto.RetributionPaladin_Rotation_Consecration):
+				ret.RotationInput[i] = ret.Consecration
+			case int32(proto.RetributionPaladin_Rotation_HolyWrath):
+				ret.RotationInput[i] = ret.HolyWrath
+			case int32(proto.RetributionPaladin_Rotation_CrusaderStrike):
+				ret.RotationInput[i] = ret.CrusaderStrike
+			case int32(proto.RetributionPaladin_Rotation_Exorcism):
+				ret.RotationInput[i] = ret.Exorcism
+			}
+		}
+	}
 
 	ret.DelayDPSCooldownsForArmorDebuffs()
 }
