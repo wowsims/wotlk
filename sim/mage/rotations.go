@@ -74,21 +74,13 @@ func (mage *Mage) doArcaneRotation(sim *core.Simulation) *core.Spell {
 	}
 }
 
-//Check cooldowns to see if they can be used more than once
-
-// if they can only be used once then
-// every global check cooldowns to see if they
-func (mage *Mage) removeMajorCooldownsUntilExecute() {
-
-}
-
 func (mage *Mage) doFireRotation(sim *core.Simulation) *core.Spell {
 
 	if mage.Rotation.MaintainImprovedScorch && mage.ScorchAura != nil && (!mage.ScorchAura.IsActive() || mage.ScorchAura.RemainingDuration(sim) < time.Millisecond*4000) {
 		return mage.Scorch
 	}
 
-	if !mage.LivingBombNotActive.Empty() {
+	if !mage.LivingBombNotActive.Empty() && (!mage.HotStreakAura.IsActive() || mage.Rotation.LbBeforeHotstreak) {
 		return mage.LivingBomb
 	}
 

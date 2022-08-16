@@ -62,7 +62,7 @@ func (mage *Mage) registerScorchSpell() {
 			ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
 			BaseDamage:      core.BaseDamageConfigMagic(382, 451, 1.5/3.5),
-			OutcomeApplier:  mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, mage.bonusCritDamage)),
+			OutcomeApplier:  mage.fireSpellOutcomeApplier(mage.bonusCritDamage),
 			OnSpellHitDealt: onSpellHitDealt,
 		}),
 	})

@@ -101,6 +101,7 @@ type Mage struct {
 	ClearcastingAura   *core.Aura
 	ScorchAura         *core.Aura
 	HotStreakAura      *core.Aura
+	CombustionAura     *core.Aura
 
 	IgniteTickDamage []float64
 
@@ -248,6 +249,14 @@ func (mage *Mage) Reset(sim *core.Simulation) {
 		mage.disabledMCDs = make([]*core.MajorCooldown, 0, 10)
 		mage.launchExecuteCDOptimizer(sim)
 	}
+}
+
+func (mage *Mage) fireSpellOutcomeApplier(secondaryCritMultiplier float64) core.OutcomeApplier {
+	if mage.CombustionAura.IsActive() {
+		secondaryCritMultiplier += .5
+	}
+
+	return mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, secondaryCritMultiplier))
 }
 
 func NewMage(character core.Character, options proto.Player) *Mage {

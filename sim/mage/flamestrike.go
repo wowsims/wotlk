@@ -22,7 +22,7 @@ func (mage *Mage) registerFlamestrikeSpell() {
 		ThreatMultiplier: 1 - 0.05*float64(mage.Talents.BurningSoul),
 
 		BaseDamage:     core.BaseDamageConfigMagic(876, 1071, 0.243),
-		OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, 0.25*float64(mage.Talents.SpellPower))),
+		OutcomeApplier: mage.fireSpellOutcomeApplier(mage.bonusCritDamage),
 	})
 
 	mage.Flamestrike = mage.RegisterSpell(core.SpellConfig{

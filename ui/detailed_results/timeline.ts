@@ -1069,6 +1069,9 @@ const idToCategoryMap: Record<number, number> = {
 	[71]: DEFAULT_ACTION_CATEGORY + 0.1, // Defensive Stance
 	[2457]: DEFAULT_ACTION_CATEGORY + 0.1, // Battle Stance
 	[2458]: DEFAULT_ACTION_CATEGORY + 0.1, // Berserker Stance
+
+	// Mage
+	// [],
 	
 	// Deathknight
 	[51425]: MELEE_ACTION_CATEGORY + 0.05, // Obliterate

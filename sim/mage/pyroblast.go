@@ -50,7 +50,7 @@ func (mage *Mage) registerPyroblastSpell() {
 			ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
 			BaseDamage:     core.BaseDamageConfigMagic(1210, 1531, 1.15),
-			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, mage.bonusCritDamage)),
+			OutcomeApplier: mage.fireSpellOutcomeApplier(mage.bonusCritDamage),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {

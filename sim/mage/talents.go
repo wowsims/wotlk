@@ -390,7 +390,7 @@ func (mage *Mage) registerCombustionCD() {
 	numCrits := 0
 	const critPerStack = 10 * core.CritRatingPerCritChance
 
-	aura := mage.RegisterAura(core.Aura{
+	mage.CombustionAura = mage.RegisterAura(core.Aura{
 		Label:     "Combustion",
 		ActionID:  actionID,
 		Duration:  core.NeverExpires,
@@ -410,7 +410,7 @@ func (mage *Mage) registerCombustionCD() {
 			if spell.SpellSchool != core.SpellSchoolFire {
 				return
 			}
-			if spell.SameAction(IgniteActionID) {
+			if spell.SameAction(IgniteActionID) || spell.SameAction(core.ActionID{SpellID: 55359}) { //LB dot action should be ignored
 				return
 			}
 			if !spellEffect.Landed() {
@@ -439,8 +439,8 @@ func (mage *Mage) registerCombustionCD() {
 			CD: cd,
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			aura.Activate(sim)
-			aura.Prioritize()
+			mage.CombustionAura.Activate(sim)
+			mage.CombustionAura.Prioritize()
 		},
 	})
 
@@ -448,7 +448,7 @@ func (mage *Mage) registerCombustionCD() {
 		Spell: spell,
 		Type:  core.CooldownTypeDPS,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return !aura.IsActive()
+			return !mage.CombustionAura.IsActive()
 		},
 	})
 }

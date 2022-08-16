@@ -60,6 +60,20 @@ export const FireTalents = {
 		}),
 	}),
 };
+export const FrostfireTalents = {
+	name: 'Frostfire',
+	data: SavedTalents.create({
+		talentsString: '-0055030011302331053120321351-2033030310003',
+		glyphs: Glyphs.create({
+			major1: MageMajorGlyph.GlyphOfFrostfire,
+			major2: MageMajorGlyph.GlyphOfMoltenArmor,
+			major3: MageMajorGlyph.GlyphOfLivingBomb,
+			minor1: MageMinorGlyph.GlyphOfSlowFall,
+			minor2: MageMinorGlyph.GlyphOfFrostWard,
+			minor3: MageMinorGlyph.GlyphOfBlastWave,
+		}),
+	}),
+}
 export const FrostTalents = {
 	name: 'Frost',
 	data: SavedTalents.create({
@@ -112,8 +126,8 @@ export const DefaultFrostConsumes = Consumes.create({
 export const DefaultArcaneRotation = MageRotation.create({
 	type: RotationType.Arcane,
 	minBlastBeforeMissiles: 4,
-	num4StackBlastsToMissilesGamble: 4,
-	num4StackBlastsToEarlyMissiles: 3,
+	num4StackBlastsToMissilesGamble: 12,
+	num4StackBlastsToEarlyMissiles: 6,
 	extraBlastsDuringFirstAp: 2,
 });
 
@@ -124,7 +138,7 @@ export const DefaultArcaneOptions = MageOptions.create({
 
 export const DefaultArcaneConsumes = Consumes.create({
 	defaultPotion: Potions.PotionOfSpeed,
-	defaultConjured: Conjured.ConjuredFlameCap,
+	defaultConjured: Conjured.ConjuredDarkRune,
 	flask: Flask.FlaskOfTheFrostWyrm,
 	food: Food.FoodFirecrackerSalmon,
 });

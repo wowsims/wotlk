@@ -25,7 +25,7 @@ func (mage *Mage) registerLivingBombSpell() {
 
 		BaseDamage: core.BaseDamageConfigMagicNoRoll(690, 1.5/3.5),
 
-		OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, mage.bonusCritDamage)),
+		OutcomeApplier: mage.fireSpellOutcomeApplier(mage.bonusCritDamage),
 	}
 
 	livingBombExplosionSpell := mage.RegisterSpell(core.SpellConfig{
@@ -41,7 +41,7 @@ func (mage *Mage) registerLivingBombSpell() {
 
 	lbOutcomeApplier := mage.OutcomeFuncTick()
 	if mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfLivingBomb) {
-		lbOutcomeApplier = mage.OutcomeFuncMagicCrit(mage.SpellCritMultiplier(1, mage.bonusCritDamage))
+		lbOutcomeApplier = mage.fireSpellOutcomeApplier(mage.bonusCritDamage)
 	}
 
 	mage.LivingBomb = mage.RegisterSpell(core.SpellConfig{
