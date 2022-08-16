@@ -129,6 +129,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestElemental-AllItems-Bizuri'sTotemofShatteredIce-50458"
+ value: {
+  dps: 2824.7917906171
+  tps: 2220.4056607198
+ }
+}
+dps_results: {
  key: "TestElemental-AllItems-BracingEarthsiegeDiamond"
  value: {
   dps: 2762.4742319003
@@ -216,7 +223,7 @@ dps_results: {
  key: "TestElemental-AllItems-DeathKnight'sAnguish-38212"
  value: {
   dps: 2759.2239369281
-  tps: 2163.7024797004
+  tps: 2163.7024797003
  }
 }
 dps_results: {
@@ -371,6 +378,13 @@ dps_results: {
  value: {
   dps: 2266.0006639374
   tps: 1792.1919458235
+ }
+}
+dps_results: {
+ key: "TestElemental-AllItems-Gladiator'sWartide"
+ value: {
+  dps: 2506.1416511581
+  tps: 1978.8903986768
  }
 }
 dps_results: {
