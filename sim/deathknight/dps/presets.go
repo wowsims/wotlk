@@ -84,7 +84,7 @@ var unholyRotation = &proto.Deathknight_Rotation{
 	StartingPresence:     proto.Deathknight_Rotation_Unholy,
 	UseEmpowerRuneWeapon: true,
 	BtGhoulFrenzy:        false,
-	BloodRuneFiller:      proto.Deathknight_Rotation_BloodStrike,
+	BloodRuneFiller:      proto.Deathknight_Rotation_BloodBoil,
 	ArmyOfTheDead:        proto.Deathknight_Rotation_AsMajorCd,
 	BloodTap:             proto.Deathknight_Rotation_GhoulFrenzy,
 }

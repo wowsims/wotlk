@@ -66,7 +66,7 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-AustereEarthsiegeDiamond"
  value: {
-  dps: 7218.899745623
+  dps: 7218.8997456229
   tps: 5125.4188193923
  }
 }
@@ -94,7 +94,7 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-BracingEarthsiegeDiamond"
  value: {
-  dps: 7218.899745623
+  dps: 7218.8997456229
   tps: 5022.9104430044
  }
 }
@@ -171,14 +171,14 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-EffulgentSkyflareDiamond"
  value: {
-  dps: 7218.899745623
+  dps: 7218.8997456229
   tps: 5125.4188193923
  }
 }
 dps_results: {
  key: "TestAssassination-AllItems-EmberSkyflareDiamond"
  value: {
-  dps: 7218.899745623
+  dps: 7218.8997456229
   tps: 5125.4188193923
  }
 }
@@ -199,7 +199,7 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-EternalEarthsiegeDiamond"
  value: {
-  dps: 7218.899745623
+  dps: 7218.8997456229
   tps: 5125.4188193923
  }
 }
@@ -227,14 +227,14 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-ForlornSkyflareDiamond"
  value: {
-  dps: 7218.899745623
+  dps: 7218.8997456229
   tps: 5125.4188193923
  }
 }
 dps_results: {
  key: "TestAssassination-AllItems-ForlornStarflareDiamond"
  value: {
-  dps: 7218.899745623
+  dps: 7218.8997456229
   tps: 5125.4188193923
  }
 }
@@ -297,7 +297,7 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-InsightfulEarthsiegeDiamond"
  value: {
-  dps: 7218.899745623
+  dps: 7218.8997456229
   tps: 5125.4188193923
  }
 }
@@ -367,14 +367,14 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-PowerfulEarthshatterDiamond"
  value: {
-  dps: 7218.899745623
+  dps: 7218.8997456229
   tps: 5125.4188193923
  }
 }
 dps_results: {
  key: "TestAssassination-AllItems-PowerfulEarthsiegeDiamond"
  value: {
-  dps: 7218.899745623
+  dps: 7218.8997456229
   tps: 5125.4188193923
  }
 }
@@ -416,7 +416,7 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-RevitalizingSkyflareDiamond"
  value: {
-  dps: 7218.899745623
+  dps: 7218.8997456229
   tps: 5125.4188193923
  }
 }
@@ -556,28 +556,28 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-TirelessSkyflareDiamond"
  value: {
-  dps: 7218.899745623
+  dps: 7218.8997456229
   tps: 5125.4188193923
  }
 }
 dps_results: {
  key: "TestAssassination-AllItems-TirelessStarflareDiamond"
  value: {
-  dps: 7218.899745623
+  dps: 7218.8997456229
   tps: 5125.4188193923
  }
 }
 dps_results: {
  key: "TestAssassination-AllItems-TrenchantEarthshatterDiamond"
  value: {
-  dps: 7218.899745623
+  dps: 7218.8997456229
   tps: 5125.4188193923
  }
 }
 dps_results: {
  key: "TestAssassination-AllItems-TrenchantEarthsiegeDiamond"
  value: {
-  dps: 7218.899745623
+  dps: 7218.8997456229
   tps: 5125.4188193923
  }
 }
