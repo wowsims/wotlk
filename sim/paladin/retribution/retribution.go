@@ -98,8 +98,14 @@ func (ret *RetributionPaladin) Initialize() {
 	ret.Paladin.Initialize()
 	ret.RegisterAvengingWrathCD()
 
+	ret.DelayDPSCooldownsForArmorDebuffs()
+}
+
+func (ret *RetributionPaladin) Reset(sim *core.Simulation) {
+	ret.Paladin.Reset(sim)
+
 	if ret.RotatioOption != nil {
-		ret.RotationInput = make([] *core.Spell, len(ret.RotatioOption.Spells))
+		ret.RotationInput = make([]*core.Spell, len(ret.RotatioOption.Spells))
 		for i, customSpellProto := range ret.RotatioOption.Spells {
 			switch customSpellProto.Spell {
 			case int32(proto.RetributionPaladin_Rotation_JudgementOfWisdom):
@@ -119,12 +125,6 @@ func (ret *RetributionPaladin) Initialize() {
 			}
 		}
 	}
-
-	ret.DelayDPSCooldownsForArmorDebuffs()
-}
-
-func (ret *RetributionPaladin) Reset(sim *core.Simulation) {
-	ret.Paladin.Reset(sim)
 
 	sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int) {
 		if isExecute == 20 {

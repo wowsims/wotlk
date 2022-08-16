@@ -26,18 +26,18 @@ func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
 	if ret.GCD.IsReady(sim) {
 	rotationLoop:
 		for _, spell := range ret.RotationInput {
-			if spell == ret.HammerOfWrath && !isExecutePhase{
+			if spell == ret.HammerOfWrath && !isExecutePhase {
 				continue
 			}
 
-			if spell == ret.Exorcism && !ret.ArtOfWarInstantCast.IsActive(){
+			if spell == ret.Exorcism && !ret.ArtOfWarInstantCast.IsActive() {
 				continue
 			}
 
-			if spell.IsReady(sim){
+			if spell.IsReady(sim) {
 				success := spell.Cast(sim, target)
 				if !success {
-					ret.WaitForMana(sim,  spell.CurCast.Cost)
+					ret.WaitForMana(sim, spell.CurCast.Cost)
 				}
 				break rotationLoop
 			}
@@ -74,7 +74,7 @@ func (ret *RetributionPaladin) castSequenceRotation(sim *core.Simulation) {
 	if ret.GCD.IsReady(sim) {
 		currentSpell := ret.RotationInput[ret.CastSequenceIndex]
 
-		if currentSpell == ret.HammerOfWrath && !isExecutePhase{
+		if currentSpell == ret.HammerOfWrath && !isExecutePhase {
 			return
 		}
 
@@ -83,7 +83,7 @@ func (ret *RetributionPaladin) castSequenceRotation(sim *core.Simulation) {
 			if success {
 				ret.CastSequenceIndex = (ret.CastSequenceIndex + 1) % int32(len(ret.RotationInput))
 			} else {
-				ret.WaitForMana(sim,  currentSpell.CurCast.Cost)
+				ret.WaitForMana(sim, currentSpell.CurCast.Cost)
 			}
 		} else {
 			nextReadyAt = currentSpell.ReadyAt()
@@ -115,60 +115,60 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 		case ret.JudgementOfWisdom.IsReady(sim):
 			success := ret.JudgementOfWisdom.Cast(sim, target)
 			if !success {
-				ret.WaitForMana(sim,  ret.JudgementOfWisdom.CurCast.Cost)
+				ret.WaitForMana(sim, ret.JudgementOfWisdom.CurCast.Cost)
 			}
 		case ret.HasLightswornBattlegear2Pc && ret.DivineStorm.IsReady(sim):
 			success := ret.DivineStorm.Cast(sim, target)
 			if !success {
-				ret.WaitForMana(sim,  ret.DivineStorm.CurCast.Cost)
+				ret.WaitForMana(sim, ret.DivineStorm.CurCast.Cost)
 			}
 		case ret.Env.GetNumTargets() == 1 && isExecutePhase && ret.HammerOfWrath.IsReady(sim):
 			success := ret.HammerOfWrath.Cast(sim, target)
 			if !success {
-				ret.WaitForMana(sim,  ret.HammerOfWrath.CurCast.Cost)
+				ret.WaitForMana(sim, ret.HammerOfWrath.CurCast.Cost)
 			}
 		case ret.Env.GetNumTargets() > 1 && ret.Consecration.IsReady(sim):
 			success := ret.Consecration.Cast(sim, target)
 			if !success {
-				ret.WaitForMana(sim,  ret.Consecration.CurCast.Cost)
+				ret.WaitForMana(sim, ret.Consecration.CurCast.Cost)
 			}
 		case ret.DemonAndUndeadTargetCount >= ret.HolyWrathThreshold && ret.HolyWrath.IsReady(sim):
 			success := ret.HolyWrath.Cast(sim, target)
 			if !success {
-				ret.WaitForMana(sim,  ret.HolyWrath.CurCast.Cost)
+				ret.WaitForMana(sim, ret.HolyWrath.CurCast.Cost)
 			}
 		case ret.UseDivinePlea && ret.CurrentMana() < (ret.MaxMana()*ret.DivinePleaPercentage) && ret.DivinePlea.IsReady(sim):
 			ret.DivinePlea.Cast(sim, nil)
 		case ret.CrusaderStrike.IsReady(sim):
 			success := ret.CrusaderStrike.Cast(sim, target)
 			if !success {
-				ret.WaitForMana(sim,  ret.CrusaderStrike.CurCast.Cost)
+				ret.WaitForMana(sim, ret.CrusaderStrike.CurCast.Cost)
 			}
 		case ret.DivineStorm.IsReady(sim):
 			success := ret.DivineStorm.Cast(sim, target)
 			if !success {
-				ret.WaitForMana(sim,  ret.DivineStorm.CurCast.Cost)
+				ret.WaitForMana(sim, ret.DivineStorm.CurCast.Cost)
 			}
 		case (target.MobType == proto.MobType_MobTypeDemon || target.MobType == proto.MobType_MobTypeUndead) &&
 			nextPrimaryAbilityDelta.Milliseconds() > int64(ret.ExoSlack) && ret.Exorcism.IsReady(sim) && ret.ArtOfWarInstantCast.IsActive():
 			success := ret.Exorcism.Cast(sim, target)
 			if !success {
-				ret.WaitForMana(sim,  ret.Exorcism.CurCast.Cost)
+				ret.WaitForMana(sim, ret.Exorcism.CurCast.Cost)
 			}
 		case nextPrimaryAbilityDelta.Milliseconds() > int64(ret.ConsSlack) && ret.Consecration.IsReady(sim):
 			success := ret.Consecration.Cast(sim, target)
 			if !success {
-				ret.WaitForMana(sim,  ret.Consecration.CurCast.Cost)
+				ret.WaitForMana(sim, ret.Consecration.CurCast.Cost)
 			}
 		case nextPrimaryAbilityDelta.Milliseconds() > int64(ret.ExoSlack) && ret.Exorcism.IsReady(sim) && ret.ArtOfWarInstantCast.IsActive():
 			success := ret.Exorcism.Cast(sim, target)
 			if !success {
-				ret.WaitForMana(sim,  ret.Exorcism.CurCast.Cost)
+				ret.WaitForMana(sim, ret.Exorcism.CurCast.Cost)
 			}
 		case ret.DemonAndUndeadTargetCount >= 1 && ret.HolyWrath.IsReady(sim):
 			success := ret.HolyWrath.Cast(sim, target)
 			if !success {
-				ret.WaitForMana(sim,  ret.HolyWrath.CurCast.Cost)
+				ret.WaitForMana(sim, ret.HolyWrath.CurCast.Cost)
 			}
 		}
 	}
