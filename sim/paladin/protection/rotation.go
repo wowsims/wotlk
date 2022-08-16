@@ -83,9 +83,12 @@ func (prot *ProtectionPaladin) customRotation(sim *core.Simulation) {
 		prot.GCD.ReadyAt(),
 		prot.JudgementOfWisdom.CD.ReadyAt(),
 		prot.HammerOfWrath.CD.ReadyAt(),
-		prot.HolyWrath.CD.ReadyAt(),
 		prot.Consecration.CD.ReadyAt(),
+		prot.HolyWrath.CD.ReadyAt(),
 		prot.Exorcism.CD.ReadyAt(),
+		prot.ShieldOfRighteousness.ReadyAt(),
+		prot.AvengersShield.ReadyAt(),
+		prot.HammerOfTheRighteous.ReadyAt(),
 	}
 
 	prot.waitUntilNextEvent(sim, events, prot.customRotation)
