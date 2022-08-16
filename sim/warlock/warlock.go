@@ -14,7 +14,7 @@ type Warlock struct {
 
 	Pet *WarlockPet
 
-	DoingRegen bool
+
 
 	ShadowBolt           *core.Spell
 	Incinerate           *core.Spell
@@ -66,7 +66,11 @@ type Warlock struct {
 
 	GlyphOfLifeTapAura *core.Aura
 
+
+	// Rotation related memory
+	DoingRegen 				bool
 	PrevCastSECheck *core.Spell
+	CorruptionRolloverMult  float64
 }
 
 func (warlock *Warlock) GetCharacter() *core.Character {
