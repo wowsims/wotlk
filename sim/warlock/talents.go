@@ -147,7 +147,7 @@ func (warlock *Warlock) applyWeaponImbue() {
 }
 
 func (warlock *Warlock) registerGlyphOfLifeTapAura() {
-	statDep := warlock.NewDynamicStatDependency(stats.Spirit, stats.SpellPower, 1.2)
+	statDep := warlock.NewDynamicStatDependency(stats.Spirit, stats.SpellPower, 0.2)
 	warlock.GlyphOfLifeTapAura = warlock.RegisterAura(core.Aura{
 		Label:    "Glyph Of LifeTap Aura",
 		ActionID: core.ActionID{SpellID: 63321},

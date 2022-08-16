@@ -170,7 +170,7 @@ func (unit *Unit) AddStatsDynamic(sim *Simulation, bonus stats.Stats) {
 	bonus[stats.Mana] = 0 // TODO: Mana needs special treatment
 
 	if sim.Log != nil {
-		unit.Log(sim, "Dynamic stat change: old = %s, new = %s", unit.stats.FlatString(), unit.stats.Add(bonus).FlatString())
+		unit.Log(sim, "Dynamic stat change: %s", bonus.FlatString())
 	}
 
 	unit.stats = unit.stats.Add(bonus)
@@ -224,7 +224,7 @@ func (unit *Unit) EnableDynamicStatDep(sim *Simulation, dep *stats.StatDependenc
 		unit.processDynamicBonus(sim, unit.stats.Subtract(oldStats))
 
 		if sim.Log != nil {
-			unit.Log(sim, "Dynamic dep enabled (%s): old stats = %s, new stats = %s", dep.String(), oldStats.FlatString(), unit.stats.FlatString())
+			unit.Log(sim, "Dynamic dep enabled (%s): %s", dep.String(), unit.stats.Subtract(oldStats).FlatString())
 		}
 	}
 }
@@ -235,7 +235,7 @@ func (unit *Unit) DisableDynamicStatDep(sim *Simulation, dep *stats.StatDependen
 		unit.processDynamicBonus(sim, unit.stats.Subtract(oldStats))
 
 		if sim.Log != nil {
-			unit.Log(sim, "Dynamic dep disabled (%s): old stats = %s, new stats = %s", dep.String(), oldStats.FlatString(), unit.stats.FlatString())
+			unit.Log(sim, "Dynamic dep enabled (%s): %s", dep.String(), unit.stats.Subtract(oldStats).FlatString())
 		}
 	}
 }
