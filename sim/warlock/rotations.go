@@ -214,7 +214,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// If SE remaining duration is less than a shadow bolt cast time + travel time (with a 3 second buffer to include 1 drain soul tick) and the previous cast was not haunt or SB then cast shadow bolt so SE stacks are not lost
 	KeepUpSEStacksExecute := (warlock.PrevCastSECheck != warlock.Haunt && warlock.PrevCastSECheck != warlock.ShadowBolt && warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim).Seconds() < warlock.ApplyCastSpeed(time.Duration(warlock.ShadowBolt.DefaultCast.CastTime)).Seconds()+warlock.DistanceFromTarget/20+3)
 	
-	// This part trcks all the damage multiplier that roll over with corruption
+	// This part tracks all the damage multiplier that roll over with corruption
 	CurrentShadowMult := warlock.PseudoStats.ShadowDamageDealtMultiplier // Tracks the current shadow damage multipler (essentially looking for DE)
 	CurrentDmgMult := warlock.PseudoStats.DamageDealtMultiplier          // Tracks the current damage multipler (essentially looking for TotT)
 	CurrentCritBonus := warlock.GetStat(stats.SpellCrit) + warlock.PseudoStats.BonusSpellCritRating + warlock.PseudoStats.BonusShadowCritRating + 
@@ -231,8 +231,9 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		// Affliction Rotation
 		// ------------------------------------------
 		if rotationType == proto.Warlock_Rotation_Affliction {
-			if (CurrentCorruptionRolloverMult > warlock.CorruptionRolloverMult) || // If the original corruption multipliers are lower than this current time, then reapply corruption (also need to make sure this is some % into the fight)
-				(!warlock.CorruptionDot.IsActive() && (core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() || warlock.Talents.ImprovedShadowBolt == 0) && (!warlock.Haunt.CD.IsReady(sim) || allCDs[0] > 0) && allCDs[1] > 0) {
+			if (CurrentCorruptionRolloverMult > warlock.CorruptionRolloverMult) && warlock.Talents.EverlastingAffliction > 0 ||
+			// If the original corruption multipliers are lower than this current time, then reapply corruption (also need to make sure this is some % into the fight)
+				(!warlock.CorruptionDot.IsActive() && (core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() || warlock.Talents.ImprovedShadowBolt == 0)) {
 				// Cast Corruption as soon as the 5% crit debuff is up
 				// Cast Corruption again when you get the execute buff (Death's Embrace)
 				spell = warlock.Corruption
@@ -395,7 +396,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 
 	if success := spell.Cast(sim, target); success {
 		warlock.PrevCastSECheck = spell
-		if spell == warlock.Corruption {
+		if spell == warlock.Corruption && warlock.Talents.EverlastingAffliction > 0{
 		// We are recording the current rollover power of corruption
 			warlock.CorruptionRolloverMult = CurrentCorruptionRolloverMult
 		}
