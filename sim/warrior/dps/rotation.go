@@ -79,7 +79,9 @@ func (war *DpsWarrior) doRotation(sim *core.Simulation) {
 
 func (war *DpsWarrior) normalRotation(sim *core.Simulation, highPrioSpellsOnly bool) {
 	if war.GCD.IsReady(sim) {
-		if war.Rotation.PrioritizeWw && war.CanWhirlwind(sim) {
+		if war.BloodsurgeAura.IsActive() && war.HasEnoughRageForSlam() {
+			war.CastSlam(sim, war.CurrentTarget)
+		} else if war.Rotation.PrioritizeWw && war.CanWhirlwind(sim) {
 			war.Whirlwind.Cast(sim, war.CurrentTarget)
 		} else if war.CanBloodthirst(sim) {
 			war.Bloodthirst.Cast(sim, war.CurrentTarget)
@@ -95,10 +97,10 @@ func (war *DpsWarrior) normalRotation(sim *core.Simulation, highPrioSpellsOnly b
 			war.Overpower.Cast(sim, war.CurrentTarget)
 		} else if war.SuddenDeathAura.IsActive() && war.CanExecute() {
 			war.Execute.Cast(sim, war.CurrentTarget)
-		} else if war.CanSlam(sim) {
-			war.CastSlam(sim, war.CurrentTarget)
 		} else if war.Rotation.UseMs && war.CanMortalStrike(sim) {
 			war.MortalStrike.Cast(sim, war.CurrentTarget)
+		} else if war.CanSlam(sim) {
+			war.CastSlam(sim, war.CurrentTarget)
 		} else if war.CanShieldSlam(sim) {
 			war.ShieldSlam.Cast(sim, war.CurrentTarget)
 		} else if !war.Rotation.PrioritizeWw && war.CanWhirlwind(sim) {
@@ -132,10 +134,10 @@ func (war *DpsWarrior) executeRotation(sim *core.Simulation, highPrioSpellsOnly 
 			war.Overpower.Cast(sim, war.CurrentTarget)
 		} else if war.SuddenDeathAura.IsActive() && war.CanExecute() {
 			war.Execute.Cast(sim, war.CurrentTarget)
-		} else if war.Rotation.UseSlamOverExecute && war.CanSlam(sim) {
-			war.CastSlam(sim, war.CurrentTarget)
 		} else if war.Rotation.UseMs && war.CanMortalStrike(sim) {
 			war.MortalStrike.Cast(sim, war.CurrentTarget)
+		} else if war.Rotation.UseSlamOverExecute && war.CanSlam(sim) {
+			war.CastSlam(sim, war.CurrentTarget)
 		} else if !war.Rotation.PrioritizeWw && war.Rotation.UseWwDuringExecute && war.CanWhirlwind(sim) {
 			war.Whirlwind.Cast(sim, war.CurrentTarget)
 		} else if war.CanExecute() {

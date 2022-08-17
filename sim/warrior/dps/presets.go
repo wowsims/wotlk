@@ -84,30 +84,45 @@ var FuryTalents = &proto.WarriorTalents{
 }
 
 var armsRotation = &proto.Warrior_Rotation{
-	UseRend: true,
-	UseMs:   true,
+	UseRend:   true,
+	UseMs:     true,
+	UseCleave: false,
 
-	HsRageThreshold:   60,
-	MsRageThreshold:   60,
-	SlamRageThreshold: 20,
-	RendCdThreshold:   3,
+	HsRageThreshold:   50,
+	MsRageThreshold:   30,
+	SlamRageThreshold: 15,
+	RendCdThreshold:   0,
 
 	SpamExecute: false,
+
+	UseHsDuringExecute: true,
+	UseWwDuringExecute: true,
+	UseBtDuringExecute: true,
+	UseSlamOverExecute: true,
 
 	MaintainDemoShout:   true,
 	MaintainThunderClap: false,
 }
 
 var warriorRotation = &proto.Warrior_Rotation{
-	UseRend: true,
+	UseRend:   true,
+	UseCleave: false,
+	UseMs:     true,
 
 	HsRageThreshold:   40,
 	RendRageThreshold: 75,
+	SlamRageThreshold: 15,
+	RendCdThreshold:   0,
+
+	SpamExecute: false,
 
 	UseHsDuringExecute: true,
 	UseWwDuringExecute: true,
 	UseBtDuringExecute: true,
 	UseSlamOverExecute: true,
+
+	MaintainDemoShout:   true,
+	MaintainThunderClap: false,
 }
 
 var warriorOptions = &proto.Warrior_Options{
