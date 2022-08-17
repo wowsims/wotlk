@@ -122,6 +122,17 @@ func (unit *Unit) OutcomeFuncCritFixedChance(critChance float64, critMultiplier 
 	}
 }
 
+func (unit *Unit) OutcomeFuncTickMagicHit() OutcomeApplier {
+	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
+		if spellEffect.MagicHitCheck(sim, spell, attackTable) {
+			spellEffect.Outcome = OutcomeHit
+		} else {
+			spellEffect.Outcome = OutcomeMiss
+			spellEffect.Damage = 0
+		}
+	}
+}
+
 func (unit *Unit) OutcomeFuncMagicHit() OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
 		if spellEffect.MagicHitCheck(sim, spell, attackTable) {
