@@ -70,105 +70,97 @@ export const DefaultConsumes = Consumes.create({
 
 
 export const SWP_PRESET = {
-	name: 'SWP Preset',
-	tooltip: "The P5 preset from the TBC simulator but regemmed and adjusted for new hit cap.",
+	name: 'SWP Pre-Raid Preset',
+	tooltip: "Pre-raid preset that includes some gear from SWP.",
 	gear: EquipmentSpec.fromJsonString(`{
     "items": [
       {
         "id": 34332,
-        "enchant": 29191,
+        "enchant": 44877,
         "gems": [
-          40014,
-          34220
+          40049,
+          41285
         ]
       },
       {
-        "id": 34204
+        "id": 37595
       },
       {
         "id": 31023,
-        "enchant": 23545,
+        "enchant": 44874,
         "gems": [
-          40025,
-          40014
+          42144,
+          40049
         ]
       },
       {
-        "id": 34242,
-        "enchant": 33150,
-        "gems": [
-          39998
-        ]
+        "id": 41610,
+        "enchant": 55642
       },
       {
-        "id": 34396,
-        "enchant": 24003,
+        "id": 39592,
+        "enchant": 44489,
         "gems": [
-          39998,
-          40014,
-          40014
+          42144,
+          40025
         ]
       },
       {
         "id": 34437,
-        "enchant": 22534,
+        "enchant": 44498,
         "gems": [
-          40014,
+          40049,
           0
         ]
       },
       {
-        "id": 34350,
-        "enchant": 28272,
+        "id": 34344,
+        "enchant": 44592,
         "gems": [
-          39998,
-          40025,
+          40049,
+          42144,
           0
         ]
       },
       {
         "id": 34542,
         "gems": [
-          40014,
+          40049,
           39998
         ]
       },
       {
-        "id": 34186,
-        "enchant": 24274,
-        "gems": [
-          40049,
-          39998,
-          39998
-        ]
+        "id": 37791,
+        "enchant": 41602
       },
       {
         "id": 34566,
-        "enchant": 35297,
+        "enchant": 60623,
         "gems": [
-          40051
+          40049
         ]
       },
       {
-        "id": 34230,
-        "enchant": 22536
+        "id": 43253,
+        "gems": [
+          40027
+        ]
       },
       {
-        "id": 34362,
-        "enchant": 22536
+        "id": 37694
       },
       {
-        "id": 34429
+        "id": 40682
       },
       {
-        "id": 32483
+        "id": 37873
       },
       {
-        "id": 34336,
-        "enchant": 22555
+        "id": 41384,
+        "enchant": 44487
       },
       {
-        "id": 34179
+        "id": 40698
       },
       {
         "id": 32330
@@ -183,7 +175,7 @@ export const PRE_RAID_PRESET = {
 	gear: EquipmentSpec.fromJsonString(`{
     "items": [
       {
-        "id": 37592,
+        "id": 37180,
         "enchant": 44877,
         "gems": [
           41285,
@@ -191,7 +183,7 @@ export const PRE_RAID_PRESET = {
         ]
       },
       {
-        "id": 45155
+        "id": 37595
       },
       {
         "id": 37673,
@@ -220,9 +212,10 @@ export const PRE_RAID_PRESET = {
         ]
       },
       {
-        "id": 42113,
+        "id": 39593,
         "enchant": 44592,
         "gems": [
+          40051,
           0
         ]
       },
