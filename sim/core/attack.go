@@ -174,7 +174,7 @@ type AutoAttacks struct {
 
 	// The time at which the last MH swing occurred.
 	previousMHSwingAt time.Duration
-	previousOHSwingAt time.Duration
+	PreviousAttackAt  time.Duration
 
 	// Current melee swing speed, based on haste stat and melee swing multiplier pseudostat.
 	curSwingSpeed float64
@@ -436,6 +436,7 @@ func (aa *AutoAttacks) TrySwingMH(sim *Simulation, target *Unit) {
 	attackSpell.Cast(sim, target)
 	aa.MainhandSwingAt = sim.CurrentTime + aa.MainhandSwingSpeed()
 	aa.previousMHSwingAt = sim.CurrentTime
+	aa.PreviousAttackAt = sim.CurrentTime
 	aa.agent.OnAutoAttack(sim, attackSpell)
 }
 
@@ -479,7 +480,7 @@ func (aa *AutoAttacks) TrySwingOH(sim *Simulation, target *Unit) {
 
 	aa.OHAuto.Cast(sim, target)
 	aa.OffhandSwingAt = sim.CurrentTime + aa.OffhandSwingSpeed()
-	aa.previousOHSwingAt = sim.CurrentTime
+	aa.PreviousAttackAt = sim.CurrentTime
 	aa.agent.OnAutoAttack(sim, aa.OHAuto)
 }
 
@@ -556,15 +557,6 @@ func (aa *AutoAttacks) NextAttackAt() time.Duration {
 		nextAttack = MinDuration(nextAttack, aa.OffhandSwingAt)
 	}
 	return nextAttack
-}
-
-// Returns the time at which the previous attack occured.
-func (aa *AutoAttacks) PreviousAttackAt() time.Duration {
-	previousAttack := aa.previousMHSwingAt
-	if aa.OH.SwingSpeed != 0 {
-		previousAttack = MinDuration(previousAttack, aa.previousOHSwingAt)
-	}
-	return previousAttack
 }
 
 // Returns the time at which all melee swings will be ready.

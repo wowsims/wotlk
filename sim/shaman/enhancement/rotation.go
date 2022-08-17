@@ -44,7 +44,7 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 
 	//Calculate Weaving latency
 	latency := time.Duration(enh.WeaveLatency) * time.Millisecond
-	previousAttack := sim.CurrentTime - enh.AutoAttacks.PreviousAttackAt()
+	previousAttack := sim.CurrentTime - enh.AutoAttacks.PreviousAttackAt
 	latency = core.TernaryDuration(previousAttack > latency, 0, latency-previousAttack)
 
 	//calculate cast times for weaving
