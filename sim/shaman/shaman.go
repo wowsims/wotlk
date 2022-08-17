@@ -70,9 +70,7 @@ type Shaman struct {
 
 	thunderstormInRange bool // flag if thunderstorm will be in range.
 
-	LavaburstWeave          bool // flag to enable lava burst weaving for enh
-	LightningboltWeave      bool // flag to enable lightning bolt weaving for enh
-	MaelstromweaponMinStack int32
+	ShamanisticRageManaThreshold float64 //% of mana to use sham. rage at
 
 	Talents   proto.ShamanTalents
 	SelfBuffs SelfBuffs
@@ -220,6 +218,10 @@ func (shaman *Shaman) Initialize() {
 
 	if shaman.Talents.LavaLash {
 		shaman.LavaLash = shaman.newLavaLashSpell()
+	}
+
+	if shaman.Talents.SpiritWeapons {
+		shaman.PseudoStats.ThreatMultiplier -= 0.3
 	}
 
 	shaman.registerFeralSpirit()

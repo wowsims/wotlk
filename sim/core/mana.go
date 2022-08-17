@@ -53,7 +53,8 @@ func (character *Character) EnableManaBar() {
 }
 
 // EnableResumeAfterManaWait will setup the OnManaTick callback to resume the given callback
-//  once enough mana has been gained after calling unit.WaitForMana()
+//
+//	once enough mana has been gained after calling unit.WaitForMana()
 func (character *Character) EnableResumeAfterManaWait(callback func(sim *Simulation)) {
 	if callback == nil {
 		panic("attempted to setup a mana tick callback that was nil")

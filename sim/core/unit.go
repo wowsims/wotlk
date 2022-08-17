@@ -122,8 +122,9 @@ type Unit struct {
 }
 
 // DoNothing will explicitly declare that the character is intentionally doing nothing.
-//  If the GCD is not used during OnGCDReady and this flag is set, OnGCDReady will not be called again
-//  until it is used in some other way (like from an auto attack or resource regeneration).
+//
+//	If the GCD is not used during OnGCDReady and this flag is set, OnGCDReady will not be called again
+//	until it is used in some other way (like from an auto attack or resource regeneration).
 func (char *Character) DoNothing() {
 	char.doNothing = true
 }

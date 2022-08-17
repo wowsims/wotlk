@@ -62,6 +62,8 @@ var enhShamRotation = &proto.EnhancementShaman_Rotation{
 		Water: proto.WaterTotem_ManaSpringTotem,
 		Fire:  proto.FireTotem_MagmaTotem,
 	},
+	FirenovaManaThreshold:        3000,
+	ShamanisticRageManaThreshold: 25,
 }
 
 var enhShamOptions = &proto.EnhancementShaman_Options{

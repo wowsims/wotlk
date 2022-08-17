@@ -47,6 +47,8 @@ func (shaman *Shaman) registerFeralSpirit() {
 		},
 	})
 
+	//TODO: reset swing timer on cast, unless it ends up being fixed
+
 	shaman.AddMajorCooldown(core.MajorCooldown{
 		Spell:    shaman.FeralSpirit,
 		Priority: core.CooldownPriorityDrums + 1, // Always prefer to use wolves before bloodlust/drums so wolves gain haste buff
