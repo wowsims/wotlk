@@ -86,11 +86,11 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,
 				// Default rotation settings.
-				rotation: Presets.DefaultRotation,
+				rotation: Presets.DefaultFrostRotation,
 				// Default talents.
 				talents: Presets.FrostTalents.data,
 				// Default spec-specific settings.
-				specOptions: Presets.DefaultOptions,
+				specOptions: Presets.DefaultFrostOptions,
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
