@@ -558,6 +558,7 @@ func (aa *AutoAttacks) NextAttackAt() time.Duration {
 	return nextAttack
 }
 
+// Returns the time at which the previous attack occured.
 func (aa *AutoAttacks) PreviousAttackAt() time.Duration {
 	previousAttack := aa.previousMHSwingAt
 	if aa.OH.SwingSpeed != 0 {
