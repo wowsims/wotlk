@@ -16,7 +16,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 91
   final_stats: 57
-  final_stats: 246.489455922
+  final_stats: 218.489455922
   final_stats: 0
   final_stats: 0
   final_stats: 3726.6856
@@ -66,8 +66,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 667.1383156483
-  tps: 915.4717839338
+  dps: 668.6909201968
+  tps: 918.2628073527
  }
 }
 dps_results: {
@@ -192,8 +192,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-ExtractofNecromanticPower-40373"
  value: {
-  dps: 650.1987498579
-  tps: 901.0375764993
+  dps: 649.7171052907
+  tps: 899.1320892794
  }
 }
 dps_results: {
@@ -423,15 +423,15 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 725.4563336477
-  tps: 994.1373240981
+  dps: 733.1862386785
+  tps: 1007.4293595019
  }
 }
 dps_results: {
  key: "TestFeralTank-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 739.7748123509
-  tps: 1013.1236268586
+  dps: 747.7031333936
+  tps: 1026.6787618941
  }
 }
 dps_results: {
