@@ -615,16 +615,19 @@ func (hunter *Hunter) applyExposeWeakness() {
 	actionID := core.ActionID{SpellID: 34503}
 	procChance := float64(hunter.Talents.ExposeWeakness) / 3
 
-	var curBonus stats.Stats
+	apDep := hunter.NewDynamicStatDependency(stats.Agility, stats.AttackPower, .25)
+	rapDep := hunter.NewDynamicStatDependency(stats.Agility, stats.RangedAttackPower, .25)
 	procAura := hunter.RegisterAura(core.Aura{
 		Label:    "Expose Weakness Proc",
 		ActionID: actionID,
 		Duration: time.Second * 7,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.AddStatsDynamic(sim, curBonus)
+			aura.Unit.EnableDynamicStatDep(sim, apDep)
+			aura.Unit.EnableDynamicStatDep(sim, rapDep)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.AddStatsDynamic(sim, curBonus.Multiply(-1))
+			aura.Unit.DisableDynamicStatDep(sim, apDep)
+			aura.Unit.DisableDynamicStatDep(sim, rapDep)
 		},
 	})
 
@@ -644,14 +647,6 @@ func (hunter *Hunter) applyExposeWeakness() {
 			}
 
 			if procChance == 1 || sim.RandomFloat("ExposeWeakness") < procChance {
-				procAura.Deactivate(sim)
-
-				val := hunter.GetStat(stats.Agility) * 0.25
-				curBonus = stats.Stats{
-					stats.AttackPower:       val,
-					stats.RangedAttackPower: val,
-				}
-
 				procAura.Activate(sim)
 			}
 		},

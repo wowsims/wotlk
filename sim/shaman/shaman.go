@@ -14,10 +14,10 @@ const baseMana = 4396.0
 const TotemRefreshTime5M = time.Second * 295
 
 const (
-	SpellFlagShock    = core.SpellFlagAgentReserved1
-	SpellFlagElectric = core.SpellFlagAgentReserved2
-	SpellFlagTotem    = core.SpellFlagAgentReserved3
-	SpellFlagFireNova = core.SpellFlagAgentReserved4
+	SpellFlagShock     = core.SpellFlagAgentReserved1
+	SpellFlagElectric  = core.SpellFlagAgentReserved2
+	SpellFlagTotem     = core.SpellFlagAgentReserved3
+	SpellFlagFocusable = core.SpellFlagAgentReserved4
 )
 
 func NewShaman(character core.Character, talents proto.ShamanTalents, totems proto.ShamanTotems, selfBuffs SelfBuffs, thunderstormRange bool) *Shaman {
