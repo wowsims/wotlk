@@ -35,8 +35,9 @@ type Hunter struct {
 
 	pet *HunterPet
 
-	AmmoDPS         float64
-	AmmoDamageBonus float64
+	AmmoDPS                   float64
+	AmmoDamageBonus           float64
+	NormalizedAmmoDamageBonus float64
 
 	currentAspect *core.Aura
 
@@ -196,6 +197,7 @@ func NewHunter(character core.Character, options proto.Player) *Hunter {
 			hunter.AmmoDPS = 32
 		}
 		hunter.AmmoDamageBonus = hunter.AmmoDPS * rangedWeapon.SwingSpeed
+		hunter.NormalizedAmmoDamageBonus = hunter.AmmoDPS * 2.8
 	}
 
 	hunter.EnableAutoAttacks(hunter, core.AutoAttackOptions{
