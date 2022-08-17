@@ -43,9 +43,8 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 	}
 
 	//Calculate Weaving latency
-	latency := time.Duration(enh.WeaveLatency) * time.Millisecond
 	previousAttack := sim.CurrentTime - enh.AutoAttacks.PreviousAttackAt
-	latency = core.TernaryDuration(previousAttack > latency, 0, latency-previousAttack)
+	latency := core.TernaryDuration(previousAttack < enh.WeaveLatency, enh.WeaveLatency-previousAttack, 0)
 
 	//calculate cast times for weaving
 	lbCastTime := enh.ApplyCastSpeed(enh.LightningBolt.DefaultCast.CastTime-(time.Millisecond*time.Duration(500*enh.MaelstromWeaponAura.GetStacks()))) + latency

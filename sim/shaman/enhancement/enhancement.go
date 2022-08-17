@@ -1,6 +1,8 @@
 package enhancement
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -49,7 +51,7 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 		LavaburstWeave:          enhOptions.Rotation.LavaburstWeave,
 		LightningboltWeave:      enhOptions.Rotation.LightningboltWeave,
 		MaelstromweaponMinStack: enhOptions.Rotation.MaelstromweaponMinStack,
-		WeaveLatency:            enhOptions.Rotation.WeaveLatency,
+		WeaveLatency:            time.Duration(enhOptions.Rotation.WeaveLatency) * time.Millisecond,
 	}
 
 	// Enable Auto Attacks for this spec
@@ -104,7 +106,7 @@ type EnhancementShaman struct {
 	LavaburstWeave          bool // flag to enable lava burst weaving for enh
 	LightningboltWeave      bool // flag to enable lightning bolt weaving for enh
 	MaelstromweaponMinStack int32
-	WeaveLatency            int32
+	WeaveLatency            time.Duration
 }
 
 func (enh *EnhancementShaman) GetShaman() *shaman.Shaman {
