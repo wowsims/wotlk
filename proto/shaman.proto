@@ -208,9 +208,20 @@ message ElementalShaman {
 		enum RotationType {
 			Unknown = 0;
 			Adaptive = 1;
+			Manual = 2;
 		}
 		RotationType type = 1;
 		bool in_thunderstorm_range = 2;
+
+		// These options are used for the manual rotation.
+		bool use_fire_nova = 4;
+		double fn_min_mana_per = 9;
+		bool use_chain_lightning = 5;
+		bool use_cl_only_gap = 11;
+		double cl_min_mana_per = 10;
+		bool overwrite_flameshock = 6;
+		bool always_crit_lvb = 7;
+		bool use_thunderstorm = 8;
 	}
 
 	message Options {

@@ -106,6 +106,7 @@ func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 
 	actionID := core.ActionID{SpellID: 50689}
 	healthMetrics := dk.NewHealthMetrics(actionID)
+	statDep := dk.NewDynamicMultiplyStat(stats.Stamina, staminaMult)
 
 	aura := core.Aura{
 		Label:    "Blood Presence",
@@ -119,7 +120,7 @@ func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 			aura.Unit.PseudoStats.DamageTakenMultiplier *= damageTakenMult
 
 			dk.ModifyAdditiveDamageModifier(sim, damageBonusCoeff)
-			aura.Unit.AddStatDependencyDynamic(sim, stats.Stamina, stats.Stamina, staminaMult)
+			aura.Unit.EnableDynamicStatDep(sim, statDep)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier /= threatMult
@@ -127,7 +128,7 @@ func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 			aura.Unit.PseudoStats.DamageTakenMultiplier /= damageTakenMult
 
 			dk.ModifyAdditiveDamageModifier(sim, -damageBonusCoeff)
-			aura.Unit.AddStatDependencyDynamic(sim, stats.Stamina, stats.Stamina, 1.0/staminaMult)
+			aura.Unit.DisableDynamicStatDep(sim, statDep)
 		},
 	}
 
@@ -144,9 +145,6 @@ func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 }
 
 func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
-	threatMult := 2.0735
-	staminaMult := 1.08
-	armorMult := 1.6
 
 	baseCost := float64(core.NewRuneCost(0, 0, 1, 0, 0))
 	dk.FrostPresence = dk.RegisterSpell(nil, core.SpellConfig{
@@ -167,6 +165,9 @@ func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 		},
 	})
 
+	threatMult := 2.0735
+	stamDep := dk.NewDynamicMultiplyStat(stats.Stamina, 1.08)
+	armorDep := dk.NewDynamicMultiplyStat(stats.Armor, 1.6)
 	dk.FrostPresenceAura = dk.GetOrRegisterAura(core.Aura{
 		Label:    "Frost Presence",
 		Tag:      "Presence",
@@ -176,21 +177,20 @@ func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier *= threatMult
 
-			aura.Unit.AddStatDependencyDynamic(sim, stats.Armor, stats.Armor, armorMult)
-			aura.Unit.AddStatDependencyDynamic(sim, stats.Stamina, stats.Stamina, staminaMult)
+			aura.Unit.EnableDynamicStatDep(sim, stamDep)
+			aura.Unit.EnableDynamicStatDep(sim, armorDep)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier /= threatMult
 
-			aura.Unit.AddStatDependencyDynamic(sim, stats.Armor, stats.Armor, 1.0/armorMult)
-			aura.Unit.AddStatDependencyDynamic(sim, stats.Stamina, stats.Stamina, 1.0/staminaMult)
+			aura.Unit.DisableDynamicStatDep(sim, stamDep)
+			aura.Unit.DisableDynamicStatDep(sim, armorDep)
 		},
 	})
 }
 
 func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 	threatMultSubversion := 1.0 - dk.subversionThreatBonus()
-	staminaMult := 1.0 + 0.04*float64(dk.Talents.ImprovedFrostPresence)
 
 	baseCost := float64(core.NewRuneCost(0, 0, 0, 1, 0))
 	dk.UnholyPresence = dk.RegisterSpell(nil, core.SpellConfig{
@@ -211,6 +211,7 @@ func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 		},
 	})
 
+	stamDep := dk.NewDynamicMultiplyStat(stats.Stamina, 1.0+0.04*float64(dk.Talents.ImprovedFrostPresence))
 	dk.UnholyPresenceAura = dk.GetOrRegisterAura(core.Aura{
 		Label:    "Unholy Presence",
 		Tag:      "Presence",
@@ -219,12 +220,12 @@ func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier *= threatMultSubversion
-			aura.Unit.AddStatDependencyDynamic(sim, stats.Stamina, stats.Stamina, staminaMult)
+			aura.Unit.EnableDynamicStatDep(sim, stamDep)
 			dk.MultiplyMeleeSpeed(sim, 1.15)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier /= threatMultSubversion
-			aura.Unit.AddStatDependencyDynamic(sim, stats.Stamina, stats.Stamina, 1.0/staminaMult)
+			aura.Unit.DisableDynamicStatDep(sim, stamDep)
 			dk.MultiplyMeleeSpeed(sim, 1/1.15)
 		},
 	})

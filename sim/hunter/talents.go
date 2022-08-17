@@ -23,7 +23,7 @@ func (hunter *Hunter) ApplyTalents() {
 		hunter.pet.PseudoStats.MeleeSpeedMultiplier *= 1 + 0.04*float64(hunter.Talents.SerpentsSwiftness)
 
 		if hunter.Talents.AnimalHandler != 0 {
-			hunter.pet.AddStatDependency(stats.AttackPower, stats.AttackPower, 1.0+(0.05*float64(hunter.Talents.AnimalHandler)))
+			hunter.pet.MultiplyStat(stats.AttackPower, 1+(0.05*float64(hunter.Talents.AnimalHandler)))
 		}
 		hunter.pet.ApplyTalents()
 	}
@@ -40,9 +40,9 @@ func (hunter *Hunter) ApplyTalents() {
 
 	if hunter.Talents.EnduranceTraining > 0 {
 		healthBonus := 0.01 * float64(hunter.Talents.EnduranceTraining)
-		hunter.AddStatDependency(stats.Health, stats.Health, 1.0+healthBonus)
+		hunter.MultiplyStat(stats.Health, 1.0+healthBonus)
 		if hunter.pet != nil {
-			hunter.pet.AddStatDependency(stats.Health, stats.Health, 1.0+2*healthBonus)
+			hunter.pet.MultiplyStat(stats.Health, 1.0+2*healthBonus)
 		}
 	}
 
@@ -60,35 +60,35 @@ func (hunter *Hunter) ApplyTalents() {
 		}
 		hunter.AddStat(stats.Armor, hunter.Equip.Stats()[stats.Armor]*hunterBonus)
 		if hunter.pet != nil {
-			hunter.pet.AddStatDependency(stats.Armor, stats.Armor, 1.0+petBonus)
+			hunter.pet.MultiplyStat(stats.Armor, 1.0+petBonus)
 		}
 	}
 
 	if hunter.Talents.Survivalist > 0 {
-		hunter.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+0.02*float64(hunter.Talents.Survivalist))
+		hunter.MultiplyStat(stats.Stamina, 1.0+0.02*float64(hunter.Talents.Survivalist))
 	}
 
 	if hunter.Talents.CombatExperience > 0 {
 		bonus := 1.0 + (0.02 * float64(hunter.Talents.CombatExperience))
-		hunter.AddStatDependency(stats.Agility, stats.Agility, bonus)
-		hunter.AddStatDependency(stats.Intellect, stats.Intellect, bonus)
+		hunter.MultiplyStat(stats.Agility, bonus)
+		hunter.MultiplyStat(stats.Intellect, bonus)
 	}
 	if hunter.Talents.CarefulAim > 0 {
-		hunter.AddStatDependency(stats.Intellect, stats.RangedAttackPower, 1+(1.0/3.0)*float64(hunter.Talents.CarefulAim))
+		hunter.AddStatDependency(stats.Intellect, stats.RangedAttackPower, (1.0/3.0)*float64(hunter.Talents.CarefulAim))
 	}
 	if hunter.Talents.HunterVsWild > 0 {
-		bonus := 1.0 + 0.1*float64(hunter.Talents.HunterVsWild)
+		bonus := 0.1 * float64(hunter.Talents.HunterVsWild)
 		hunter.AddStatDependency(stats.Stamina, stats.AttackPower, bonus)
 		hunter.AddStatDependency(stats.Stamina, stats.RangedAttackPower, bonus)
 	}
 	if hunter.Talents.LightningReflexes > 0 {
 		agiBonus := 0.03 * float64(hunter.Talents.LightningReflexes)
-		hunter.AddStatDependency(stats.Agility, stats.Agility, 1.0+agiBonus)
+		hunter.MultiplyStat(stats.Agility, 1.0+agiBonus)
 	}
 	if hunter.Talents.HuntingParty > 0 {
 		// TODO: Activate replenishment
 		agiBonus := 0.01 * float64(hunter.Talents.HuntingParty)
-		hunter.AddStatDependency(stats.Agility, stats.Agility, 1.0+agiBonus)
+		hunter.MultiplyStat(stats.Agility, 1.0+agiBonus)
 	}
 
 	hunter.applySpiritBond()

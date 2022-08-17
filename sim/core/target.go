@@ -119,6 +119,8 @@ func NewTarget(options proto.Target, targetIndex int32) *Target {
 			stats:       unitStats,
 			PseudoStats: stats.NewPseudoStats(),
 			Metrics:     NewUnitMetrics(),
+
+			StatDependencyManager: stats.NewStatDependencyManager(),
 		},
 	}
 	defaultRaidBossLevel := int32(CharacterLevel + 3)

@@ -2,6 +2,8 @@ Welcome to the WoW WOTLK Classic simulator! If you have questions or are thinkin
 
 The primary goal of this project is to provide a framework that makes it easy to build a DPS sim for any class/spec, with a polished UI and accurate results. Each community will have ownership / responsibility over their portion of the sim, to ensure accuracy and that their community is represented. By having all the individual sims on the same engine, we can also have a combined 'raid sim' for testing raid compositions.
 
+This project is licensed with MIT license. We request that anyone using this software in their own project to make sure there is a user visible link back to the original project.
+
 [Live sims can be found here.](https://wowsims.github.io/wotlk "https://wowsims.github.io/wotlk")
 
 # Installation
@@ -65,12 +67,11 @@ $WOTLK_CMD make host
 If you want to develop on Windows, we recommend setting up a Ubuntu virtual machine (VM) or running Docker using [this guide](https://docs.docker.com/desktop/windows/wsl/ "https://docs.docker.com/desktop/windows/wsl/") and then following the Ubuntu or Docker instructions, respectively.
 
 ## Mac OS
-* You can use the general (non-Docker) setup instructions as above, with a few variations
-* OS X uses Homebrew instead of apt, so in order to install protobuf-compiler you’ll instead need to run `brew install protobuf-c` (note the package name is also a little different than in apt). You might need to first update or upgrade brew.
-* OS X Go setup is a little pickier about module install sequence; you'll have to run from specific locations:
-    * Run `go get -u -v google.golang.org/protobuf` in the /wotlk directory
-    * Run `go install google.golang.org/protobuf/cmd/protoc-gen-go@latest` in the Go directory
-* The provided install script for Node will not included a precompiled binary for OS X, but it’s smart enough to compile one. Be ready for your CPU to melt on running `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash`.
+* Docker is available in OS X as well, so in theory similar instructions should work for the Docker method
+* You can also use the Ubuntu setup instructions as above to run natively, with a few modifications:
+  * You may need a different Go installer if `go1.18.3.linux-amd64.tar.gz` is not compatible with your system's architecture; you can do the Go install manually from `https://go.dev/doc/install`.
+  * OS X uses Homebrew instead of apt, so in order to install protobuf-compiler you’ll instead need to run `brew install protobuf-c` (note the package name is also a little different than in apt). You might need to first update or upgrade brew.
+  * The provided install script for Node will not included a precompiled binary for OS X, but it’s smart enough to compile one. Be ready for your CPU to melt on running `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash`.
 
 # Commands
 We use a makefile for our build system. These commands will usually be all you need while developing for this project:

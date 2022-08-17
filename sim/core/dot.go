@@ -99,7 +99,8 @@ func (dot *Dot) RecomputeAuraDuration() {
 //
 // In most cases this will be called automatically, and should only be called
 // to force a new snapshot to be taken.
-//  doRollover will apply previously snapshotted crit/%dmg instead of recalculating.
+//
+//	doRollover will apply previously snapshotted crit/%dmg instead of recalculating.
 func (dot *Dot) TakeSnapshot(sim *Simulation, doRollover bool) {
 	dot.useSnapshot = doRollover
 	dot.tickFn = dot.TickEffects(sim, dot)
@@ -265,6 +266,14 @@ func TickFuncApplyEffects(effectsFunc ApplySpellEffects) TickEffects {
 	return func(sim *Simulation, dot *Dot) func() {
 		return func() {
 			effectsFunc(sim, dot.Spell.Unit.CurrentTarget, dot.Spell)
+		}
+	}
+}
+
+func TickFuncApplyEffectsToUnit(unit *Unit, effectsFunc ApplySpellEffects) TickEffects {
+	return func(sim *Simulation, dot *Dot) func() {
+		return func() {
+			effectsFunc(sim, unit, dot.Spell)
 		}
 	}
 }

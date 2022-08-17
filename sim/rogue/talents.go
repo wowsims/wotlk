@@ -31,15 +31,15 @@ func (rogue *Rogue) ApplyTalents() {
 	}
 
 	if rogue.Talents.Deadliness > 0 {
-		rogue.AddStatDependency(stats.AttackPower, stats.AttackPower, 1.0+0.02*float64(rogue.Talents.Deadliness))
+		rogue.MultiplyStat(stats.AttackPower, 1.0+0.02*float64(rogue.Talents.Deadliness))
 	}
 
 	if rogue.Talents.SavageCombat > 0 {
-		rogue.AddStatDependency(stats.AttackPower, stats.AttackPower, 1.0+0.02*float64(rogue.Talents.SavageCombat))
+		rogue.MultiplyStat(stats.AttackPower, 1.0+0.02*float64(rogue.Talents.SavageCombat))
 	}
 
 	if rogue.Talents.SinisterCalling > 0 {
-		rogue.AddStatDependency(stats.Agility, stats.Agility, 1.0+0.03*float64(rogue.Talents.SinisterCalling))
+		rogue.MultiplyStat(stats.Agility, 1.0+0.03*float64(rogue.Talents.SinisterCalling))
 	}
 
 	rogue.registerOverkillCD()
@@ -411,6 +411,11 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 				Timer:    rogue.NewTimer(),
 				Duration: cooldownDur,
 			},
+			ModifyCast: func(s1 *core.Simulation, s2 *core.Spell, c *core.Cast) {
+				if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfBladeFlurry) {
+					c.Cost = 0
+				}
+			},
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
@@ -454,7 +459,7 @@ func (rogue *Rogue) registerAdrenalineRushCD() {
 	rogue.AdrenalineRushAura = rogue.RegisterAura(core.Aura{
 		Label:    "Adrenaline Rush",
 		ActionID: AdrenalineRushActionID,
-		Duration: time.Second * 15,
+		Duration: core.TernaryDuration(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfAdrenalineRush), time.Second*20, time.Second*15),
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.ResetEnergyTick(sim)
 			rogue.ApplyEnergyTickMultiplier(2.0)

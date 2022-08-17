@@ -206,6 +206,9 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 	if rogue.Talents.Vigor {
 		maxEnergy += 10
 	}
+	if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfVigor) {
+		maxEnergy += 10
+	}
 	if rogue.HasSetBonus(ItemSetGladiatorsVestments, 4) {
 		maxEnergy += 10
 	}
@@ -219,9 +222,9 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 	})
 	rogue.applyPoisons()
 
-	rogue.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+1)
-	rogue.AddStatDependency(stats.Agility, stats.AttackPower, 1.0+1)
-	rogue.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/83.15))
+	rogue.AddStatDependency(stats.Strength, stats.AttackPower, 1)
+	rogue.AddStatDependency(stats.Agility, stats.AttackPower, 1)
+	rogue.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/83.15)
 
 	return rogue
 }
