@@ -82,6 +82,7 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.1 +
 						hunter.AutoAttacks.Ranged.BaseDamage(sim)*2.8/hunter.AutoAttacks.Ranged.SwingSpeed +
+						hunter.NormalizedAmmoDamageBonus +
 						252
 				},
 				TargetSpellCoefficient: 1,
@@ -98,5 +99,5 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 }
 
 func (hunter *Hunter) SteadyShotCastTime() time.Duration {
-	return time.Duration(float64(time.Millisecond*2000)/hunter.RangedSwingSpeed())
+	return time.Duration(float64(time.Millisecond*2000) / hunter.RangedSwingSpeed())
 }
