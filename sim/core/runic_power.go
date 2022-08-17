@@ -248,7 +248,7 @@ func (rp *RunicPowerBar) SpentDeathRuneReadyAt() time.Duration {
 }
 
 func (rp *RunicPowerBar) CurrentRuneGrace(sim *Simulation, slot int32) time.Duration {
-	if rp.runeMeta[slot].regenAt > sim.CurrentTime {
+	if rp.runeMeta[slot].lastRegenTime < sim.CurrentTime {
 		return time.Millisecond*2500 - MinDuration(2500*time.Millisecond, sim.CurrentTime-rp.runeMeta[slot].lastRegenTime)
 	}
 	return 0
@@ -259,23 +259,14 @@ const anyFrostSpent = 0b0000100001 << 10
 const anyUnholySpent = 0b0000100001 << 20
 
 func (rp *RunicPowerBar) CurrentBloodRuneGrace(sim *Simulation) time.Duration {
-	if rp.runeStates&anyBloodSpent == 0 {
-		return 0
-	}
 	return MaxDuration(rp.CurrentRuneGrace(sim, 0), rp.CurrentRuneGrace(sim, 1))
 }
 
 func (rp *RunicPowerBar) CurrentFrostRuneGrace(sim *Simulation) time.Duration {
-	if rp.runeStates&anyFrostSpent == 0 {
-		return 0
-	}
 	return MaxDuration(rp.CurrentRuneGrace(sim, 2), rp.CurrentRuneGrace(sim, 3))
 }
 
 func (rp *RunicPowerBar) CurrentUnholyRuneGrace(sim *Simulation) time.Duration {
-	if rp.runeStates&anyUnholySpent == 0 {
-		return 0
-	}
 	return MaxDuration(rp.CurrentRuneGrace(sim, 2), rp.CurrentRuneGrace(sim, 3))
 }
 
@@ -301,6 +292,20 @@ func (rp *RunicPowerBar) NormalSpentFrostRuneReadyAt(sim *Simulation) time.Durat
 	return readyAt
 }
 
+func (rp *RunicPowerBar) NormalFrostRuneReadyAt(sim *Simulation) time.Duration {
+	readyAt := NeverExpires
+	if rp.runeStates&isDeaths[2] == 0 && rp.runeStates&isSpents[2] != 0 {
+		readyAt = rp.runeMeta[2].regenAt
+	}
+	if rp.runeStates&isDeaths[3] == 0 && rp.runeStates&isSpents[3] != 0 {
+		readyAt = MinDuration(readyAt, rp.runeMeta[3].regenAt)
+	}
+	if (rp.runeStates&isDeaths[2] == 0 && rp.runeStates&isSpents[2] == 0) || (rp.runeStates&isDeaths[3] == 0 && rp.runeStates&isSpents[3] == 0) {
+		readyAt = sim.CurrentTime
+	}
+	return readyAt
+}
+
 func (rp *RunicPowerBar) NormalSpentUnholyRuneReadyAt(sim *Simulation) time.Duration {
 	readyAt := NeverExpires
 	if rp.runeStates&isDeaths[4] == 0 && rp.runeStates&isSpents[4] != 0 {
@@ -308,6 +313,20 @@ func (rp *RunicPowerBar) NormalSpentUnholyRuneReadyAt(sim *Simulation) time.Dura
 	}
 	if rp.runeStates&isDeaths[5] == 0 && rp.runeStates&isSpents[5] != 0 {
 		readyAt = MinDuration(readyAt, rp.runeMeta[5].regenAt)
+	}
+	return readyAt
+}
+
+func (rp *RunicPowerBar) NormalUnholyRuneReadyAt(sim *Simulation) time.Duration {
+	readyAt := NeverExpires
+	if rp.runeStates&isDeaths[4] == 0 && rp.runeStates&isSpents[4] != 0 {
+		readyAt = rp.runeMeta[4].regenAt
+	}
+	if rp.runeStates&isDeaths[5] == 0 && rp.runeStates&isSpents[5] != 0 {
+		readyAt = MinDuration(readyAt, rp.runeMeta[5].regenAt)
+	}
+	if (rp.runeStates&isDeaths[4] == 0 && rp.runeStates&isSpents[4] == 0) || (rp.runeStates&isDeaths[5] == 0 && rp.runeStates&isSpents[5] == 0) {
+		readyAt = sim.CurrentTime
 	}
 	return readyAt
 }
@@ -479,6 +498,51 @@ func (rp *RunicPowerBar) CurrentDeathRunes() int32 {
 			count++
 		}
 	}
+	return count
+}
+
+func (rp *RunicPowerBar) NormalCurrentBloodRunes() int32 {
+	const unspentBlood1 = isSpent
+	const unspentBlood2 = unspentBlood1 << 5
+
+	var count int32
+	if rp.runeStates&unspentBlood1 == 0 {
+		count++
+	}
+	if rp.runeStates&unspentBlood2 == 0 {
+		count++
+	}
+
+	return count
+}
+
+func (rp *RunicPowerBar) NormalCurrentFrostRunes() int32 {
+	const unspentFrost1 = (isSpent) << 10
+	const unspentFrost2 = unspentFrost1 << 5
+
+	var count int32
+	if rp.runeStates&unspentFrost1 == 0 {
+		count++
+	}
+	if rp.runeStates&unspentFrost2 == 0 {
+		count++
+	}
+
+	return count
+}
+
+func (rp *RunicPowerBar) NormalCurrentUnholyRunes() int32 {
+	const unspentUnholy1 = (isSpent) << 20
+	const unspentUnholy2 = unspentUnholy1 << 5
+
+	var count int32
+	if rp.runeStates&unspentUnholy1 == 0 {
+		count++
+	}
+	if rp.runeStates&unspentUnholy2 == 0 {
+		count++
+	}
+
 	return count
 }
 
