@@ -120,6 +120,7 @@ func (rp *RunicPowerBar) CancelBloodTap(sim *Simulation) {
 	if rp.btslot == -1 {
 		return
 	}
+
 	rp.ConvertFromDeath(sim, rp.btslot)
 	rp.btslot = -1
 }

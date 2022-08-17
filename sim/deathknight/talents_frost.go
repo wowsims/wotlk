@@ -219,11 +219,8 @@ func (dk *Deathknight) botnAndReaping(sim *core.Simulation, spell *core.Spell) {
 		}
 	}
 
-	// if slot == -1 that means we spent a death rune to trigger this.
-	// Jooper: BoTN should still trigger the same effect if it spent a death rune in the a blood slot.
-	// TODO: Clean this up since its kind of core-like code. Probably with PA refactor.
-	rt := sim.RandomFloat("death convert") * 20 * float64(time.Second)
-	revertAt := sim.CurrentTime + time.Duration(float64(time.Second)*10+rt)
+	// TODO: Remove this, we're never out of combat in wowsims
+	revertAt := sim.CurrentTime + time.Second*100
 	dk.ConvertToDeath(sim, dk.BloodRuneSpentAt(sim.CurrentTime), true, revertAt)
 }
 

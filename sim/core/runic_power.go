@@ -376,6 +376,10 @@ func (rp *RunicPowerBar) AnyRuneReadyAt(sim *Simulation) time.Duration {
 
 // ConvertFromDeath reverts the rune to its original type.
 func (rp *RunicPowerBar) ConvertFromDeath(sim *Simulation, slot int32) {
+	if rp.runeMeta[slot].revertOnSpend {
+		return
+	}
+
 	rp.runeStates = ^isDeaths[slot] & rp.runeStates
 	rp.runeMeta[slot].revertAt = NeverExpires
 	rp.runeMeta[slot].revertOnSpend = false

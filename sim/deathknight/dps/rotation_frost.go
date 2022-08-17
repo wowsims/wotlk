@@ -10,11 +10,9 @@ import (
 type FrostRotation struct {
 	dk *DpsDeathknight
 
-	oblitCount   int32
-	shouldPesti  bool
-	missedPesti  bool
-	uaCycle      bool
-	delayUACycle bool
+	oblitCount int32
+	oblitDelay time.Duration
+	uaCycle    bool
 
 	// CDS
 	amsMCD                  *core.MajorCooldown
@@ -35,10 +33,8 @@ func (fr *FrostRotation) Initialize(dk *DpsDeathknight) {
 
 func (fr *FrostRotation) Reset(sim *core.Simulation) {
 	fr.oblitCount = 0
-	fr.shouldPesti = true
-	fr.missedPesti = false
+	fr.oblitDelay = 0
 	fr.uaCycle = false
-	fr.delayUACycle = false
 
 	fr.hyperSpeedMCD = nil
 	fr.stoneformMCD = nil
