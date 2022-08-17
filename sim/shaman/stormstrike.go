@@ -20,10 +20,10 @@ func (shaman *Shaman) StormstrikeDebuffAura(target *core.Unit) *core.Aura {
 		Duration:  time.Second * 12,
 		MaxStacks: 4,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			shaman.AttackTables[aura.Unit.TableIndex].NatureDamageDealtMultiplier *= core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfStormstrike), 1.28, 1.2)
+			shaman.AttackTables[aura.Unit.UnitIndex].NatureDamageDealtMultiplier *= core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfStormstrike), 1.28, 1.2)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			shaman.AttackTables[aura.Unit.TableIndex].NatureDamageDealtMultiplier /= core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfStormstrike), 1.28, 1.2)
+			shaman.AttackTables[aura.Unit.UnitIndex].NatureDamageDealtMultiplier /= core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfStormstrike), 1.28, 1.2)
 
 		},
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
@@ -146,8 +146,8 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 
 				mhHit.Cast(sim, spellEffect.Target)
 				ohHit.Cast(sim, spellEffect.Target)
-				shaman.Stormstrike.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 2
-				shaman.Stormstrike.SpellMetrics[spellEffect.Target.TableIndex].Hits--
+				shaman.Stormstrike.SpellMetrics[spellEffect.Target.UnitIndex].Casts -= 2
+				shaman.Stormstrike.SpellMetrics[spellEffect.Target.UnitIndex].Hits--
 			},
 		}),
 	})

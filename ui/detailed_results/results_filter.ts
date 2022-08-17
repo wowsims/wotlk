@@ -123,7 +123,7 @@ abstract class UnitGroupFilter extends Input<FilterData, number> {
 				iconUrl: unit.iconUrl || '',
 				text: unit.label,
 				color: unit.classColor || 'black',
-				value: unit.index,
+				value: unit.unitIndex,
 			};
 		}));
 

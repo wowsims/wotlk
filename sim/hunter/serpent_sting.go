@@ -57,7 +57,7 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 			Tag:      "SerpentSting",
 			ActionID: actionID,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				hunter.AttackTables[aura.Unit.TableIndex].DamageDealtMultiplier *= noxiousStingsMultiplier
+				hunter.AttackTables[aura.Unit.UnitIndex].DamageDealtMultiplier *= noxiousStingsMultiplier
 				// Check for 1 because this aura will always be active inside OnGain.
 				if aura.Unit.NumActiveAurasWithTag("SerpentSting") == 1 {
 					for _, otherHunter := range huntersWithGlyphOfSteadyShot {
@@ -66,7 +66,7 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 				}
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				hunter.AttackTables[aura.Unit.TableIndex].DamageDealtMultiplier /= noxiousStingsMultiplier
+				hunter.AttackTables[aura.Unit.UnitIndex].DamageDealtMultiplier /= noxiousStingsMultiplier
 				if !aura.Unit.HasActiveAuraWithTag("SerpentSting") {
 					for _, otherHunter := range huntersWithGlyphOfSteadyShot {
 						otherHunter.SteadyShot.DamageMultiplier /= 1.1

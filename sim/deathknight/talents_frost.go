@@ -236,13 +236,13 @@ func (dk *Deathknight) threatOfThassarianWillProc(sim *core.Simulation) bool {
 }
 
 func (dk *Deathknight) threatOfThassarianAdjustMetrics(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, mhOutcome core.HitOutcome) {
-	spell.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 1
+	spell.SpellMetrics[spellEffect.Target.UnitIndex].Casts -= 1
 	if mhOutcome == core.OutcomeHit {
-		spell.SpellMetrics[spellEffect.Target.TableIndex].Hits -= 1
+		spell.SpellMetrics[spellEffect.Target.UnitIndex].Hits -= 1
 	} else if mhOutcome == core.OutcomeCrit {
-		spell.SpellMetrics[spellEffect.Target.TableIndex].Hits -= 1
+		spell.SpellMetrics[spellEffect.Target.UnitIndex].Hits -= 1
 	} else {
-		spell.SpellMetrics[spellEffect.Target.TableIndex].Hits -= 2
+		spell.SpellMetrics[spellEffect.Target.UnitIndex].Hits -= 2
 	}
 }
 
