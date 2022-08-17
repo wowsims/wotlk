@@ -220,6 +220,10 @@ func (shaman *Shaman) Initialize() {
 		shaman.LavaLash = shaman.newLavaLashSpell()
 	}
 
+	if shaman.Talents.SpiritWeapons {
+		shaman.PseudoStats.ThreatMultiplier -= 0.3
+	}
+
 	shaman.registerFeralSpirit()
 
 	shaman.registerShocks()
