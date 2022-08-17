@@ -35,10 +35,10 @@ func (character *Character) EnableManaBar() {
 	// Subtract out the non-linear part of the formula separately, so that weird
 	// mana values are not included when using the stat dependency manager.
 	character.AddStat(stats.Mana, 20-15*20)
-	character.AddStatDependency(stats.Intellect, stats.Mana, 1.0+15)
+	character.AddStatDependency(stats.Intellect, stats.Mana, 15)
 
 	// This conversion is now universal for
-	character.AddStatDependency(stats.Intellect, stats.SpellCrit, 1.0+CritRatingPerCritChance/166.16)
+	character.AddStatDependency(stats.Intellect, stats.SpellCrit, CritRatingPerCritChance/166.16)
 
 	// Not a real spell, just holds metrics from mana gain threat.
 	character.RegisterSpell(SpellConfig{
