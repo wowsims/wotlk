@@ -29,12 +29,12 @@ type Rotation interface {
 	Reset(*EnhancementShaman, *core.Simulation)
 }
 
-//adaptive rotation, shamelessly stolen from elemental shaman
-type AdaptiveRotation struct {
+type PriorityRotation struct {
 }
 
-func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Simulation) {
-	target := sim.GetTargetUnit(0)
+// PRIORITY ROTATION (default)
+func (rotation *PriorityRotation) DoAction(enh *EnhancementShaman, sim *core.Simulation) {
+	target := enh.CurrentTarget
 
 	//calculate cast times for weaving
 	lbCastTime := enh.ApplyCastSpeed(enh.LightningBolt.DefaultCast.CastTime - (time.Millisecond * time.Duration(500*enh.MaelstromWeaponAura.GetStacks())))
@@ -135,13 +135,16 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 	return
 }
 
-func (rotation *AdaptiveRotation) Reset(enh *EnhancementShaman, sim *core.Simulation) {
+func (rotation *PriorityRotation) Reset(enh *EnhancementShaman, sim *core.Simulation) {
 
 }
 
-func NewAdaptiveRotation(talents *proto.ShamanTalents) *AdaptiveRotation {
-	return &AdaptiveRotation{}
+func NewPriorityRotation(talents *proto.ShamanTalents) *PriorityRotation {
+	return &PriorityRotation{}
 }
+
+//	CUSTOM ROTATION (advanced)
+//TODO: custom rotation. watch this space, i guess
 
 type AgentAction interface {
 	GetActionID() core.ActionID

@@ -237,9 +237,20 @@ message ElementalShaman {
 message EnhancementShaman {
     message Rotation {
         ShamanTotems totems = 1;
-        bool lavaburst_weave = 2;
-        bool lightningbolt_weave = 3;
-        int32 maelstromweapon_min_stack = 4;
+        
+        enum RotationType {
+            Unknown = 0;
+            Priority = 1;
+            Custom = 2;
+        }
+        RotationType rotation_type = 2;
+
+        //TODO: add spells here for custom rotation (if nessecary?)
+
+        //weaving options
+        bool lavaburst_weave = 3;
+        bool lightningbolt_weave = 4;
+        int32 maelstromweapon_min_stack = 5;
     }
 
     message Options {

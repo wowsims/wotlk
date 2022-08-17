@@ -40,7 +40,7 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 	}
 
 	var rotation Rotation
-	rotation = NewAdaptiveRotation(enhOptions.Talents)
+	rotation = NewPriorityRotation(enhOptions.Talents)
 
 	enh := &EnhancementShaman{
 		Shaman:   shaman.NewShaman(character, *enhOptions.Talents, totems, selfBuffs, true),
@@ -86,9 +86,9 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 		SpiritWolf2: enh.NewSpiritWolf(2),
 	}
 
-	enh.LavaburstWeave          = enhOptions.Rotation.LavaburstWeave
-    enh.LightningboltWeave      = enhOptions.Rotation.LightningboltWeave
-    enh.MaelstromweaponMinStack = enhOptions.Rotation.MaelstromweaponMinStack
+	enh.LavaburstWeave = enhOptions.Rotation.LavaburstWeave
+	enh.LightningboltWeave = enhOptions.Rotation.LightningboltWeave
+	enh.MaelstromweaponMinStack = enhOptions.Rotation.MaelstromweaponMinStack
 
 	return enh
 }
