@@ -9,8 +9,8 @@ import (
 
 func (warrior *Warrior) RegisterShieldBlockCD() {
 	actionID := core.ActionID{SpellID: 2565}
-	blockValueMult := 2.0
 
+	statDep := warrior.NewDynamicMultiplyStat(stats.BlockValue, 2)
 	shieldBlockAura := warrior.RegisterAura(core.Aura{
 		Label:    "Shield Block",
 		ActionID: actionID,
@@ -19,11 +19,11 @@ func (warrior *Warrior) RegisterShieldBlockCD() {
 			warrior.AddStatDynamic(sim, stats.Block, 100*core.BlockRatingPerBlockChance)
 			// TODO: The innate block value from the shield item should not be multiplied
 			// as shown here https://youtu.be/LYJdkimJgn8?t=476
-			warrior.AddStatDependencyDynamic(sim, stats.BlockValue, stats.BlockValue, blockValueMult)
+			warrior.EnableDynamicStatDep(sim, statDep)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			warrior.AddStatDynamic(sim, stats.Block, -100*core.BlockRatingPerBlockChance)
-			warrior.AddStatDependencyDynamic(sim, stats.BlockValue, stats.BlockValue, 1.0/blockValueMult)
+			warrior.DisableDynamicStatDep(sim, statDep)
 		},
 	})
 

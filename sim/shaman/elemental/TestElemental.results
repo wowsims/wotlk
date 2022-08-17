@@ -201,22 +201,22 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-DarkmoonCard:Greatness-42987"
  value: {
-  dps: 2724.452495682
-  tps: 2135.5798648436
+  dps: 2846.0688586878
+  tps: 2225.5775755014
  }
 }
 dps_results: {
  key: "TestElemental-AllItems-DarkmoonCard:Greatness-44253"
  value: {
-  dps: 2724.452495682
-  tps: 2135.5798648436
+  dps: 2846.0688586878
+  tps: 2225.5775755014
  }
 }
 dps_results: {
  key: "TestElemental-AllItems-DarkmoonCard:Greatness-44254"
  value: {
-  dps: 2744.9982781645
-  tps: 2143.6576060706
+  dps: 2900.2142509803
+  tps: 2270.8644075929
  }
 }
 dps_results: {

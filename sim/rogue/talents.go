@@ -31,15 +31,15 @@ func (rogue *Rogue) ApplyTalents() {
 	}
 
 	if rogue.Talents.Deadliness > 0 {
-		rogue.AddStatDependency(stats.AttackPower, stats.AttackPower, 1.0+0.02*float64(rogue.Talents.Deadliness))
+		rogue.MultiplyStat(stats.AttackPower, 1.0+0.02*float64(rogue.Talents.Deadliness))
 	}
 
 	if rogue.Talents.SavageCombat > 0 {
-		rogue.AddStatDependency(stats.AttackPower, stats.AttackPower, 1.0+0.02*float64(rogue.Talents.SavageCombat))
+		rogue.MultiplyStat(stats.AttackPower, 1.0+0.02*float64(rogue.Talents.SavageCombat))
 	}
 
 	if rogue.Talents.SinisterCalling > 0 {
-		rogue.AddStatDependency(stats.Agility, stats.Agility, 1.0+0.03*float64(rogue.Talents.SinisterCalling))
+		rogue.MultiplyStat(stats.Agility, 1.0+0.03*float64(rogue.Talents.SinisterCalling))
 	}
 
 	rogue.registerOverkillCD()
