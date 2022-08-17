@@ -86,7 +86,7 @@ export class SimResult {
 
     getPlayers(filter?: SimResultFilter): Array<UnitMetrics> {
         if (filter?.player || filter?.player === 0) {
-            const player = this.getPlayerWithRaidIndex(filter.player);
+            const player = this.getPlayerWithIndex(filter.player);
             return player ? [player] : [];
         } else {
             return this.raidMetrics.parties.map(party => party.players).flat();
@@ -98,8 +98,8 @@ export class SimResult {
         return this.getPlayers()[0] || null;
     }
 
-    getPlayerWithRaidIndex(raidIndex: number): UnitMetrics | null {
-        return this.getPlayers().find(player => player.index == raidIndex) || null;
+    getPlayerWithIndex(unitIndex: number): UnitMetrics | null {
+        return this.getPlayers().find(player => player.unitIndex == unitIndex) || null;
     }
 
     getTargets(filter?: SimResultFilter): Array<UnitMetrics> {
@@ -111,13 +111,16 @@ export class SimResult {
         }
     }
 
-    getTargetWithIndex(index: number): UnitMetrics | null {
-        return this.getTargets().find(target => target.index == index) || null;
+    getTargetWithIndex(unitIndex: number): UnitMetrics | null {
+        return this.getTargets().find(target => target.unitIndex == unitIndex) || null;
+    }
+    getUnitWithIndex(unitIndex: number): UnitMetrics | null {
+			return this.getPlayerWithIndex(unitIndex) || this.getTargetWithIndex(unitIndex);
     }
 
     getDamageMetrics(filter: SimResultFilter): DistributionMetricsProto {
         if (filter.player || filter.player === 0) {
-            return this.getPlayerWithRaidIndex(filter.player)?.dps || DistributionMetricsProto.create();
+            return this.getPlayerWithIndex(filter.player)?.dps || DistributionMetricsProto.create();
         }
 
         return this.raidMetrics.dps;
@@ -242,6 +245,7 @@ export class UnitMetrics {
     private readonly metrics: UnitMetricsProto;
 
     readonly index: number;
+		readonly unitIndex: number;
     readonly name: string;
     readonly spec: Spec;
     readonly petActionId: ActionId | null;
@@ -287,6 +291,7 @@ export class UnitMetrics {
         this.metrics = metrics;
 
         this.index = index;
+				this.unitIndex = metrics.unitIndex;
         this.name = metrics.name;
         this.spec = player ? playerToSpec(player) : 0;
         this.petActionId = petActionId;
@@ -339,7 +344,7 @@ export class UnitMetrics {
         return this.petActionId != null;
     }
 
-    // Returns the index of the target of this unit, as selected by the filter.
+    // Returns the unit index of the target of this unit, as selected by the filter.
     getTargetIndex(filter?: SimResultFilter): number | null {
         if (!filter) {
             return null;
@@ -745,17 +750,17 @@ export class ActionMetrics {
     }
 
     forTarget(filter?: SimResultFilter): ActionMetrics {
-        const index = this.unit!.getTargetIndex(filter);
-        if (index == null) {
+        const unitIndex = this.unit!.getTargetIndex(filter);
+        if (unitIndex == null) {
             return this;
         } else {
-            const target = this.targets.find(target => target.data.unitIndex == index);
+            const target = this.targets.find(target => target.data.unitIndex == unitIndex);
             if (target) {
                 const targetData = ActionMetricsProto.clone(this.data);
                 targetData.targets = [target.data];
                 return new ActionMetrics(this.unit, this.actionId, targetData, this.resultData);
             } else {
-                throw new Error('Could not find target with index ' + index);
+                throw new Error('Could not find target with unitIndex ' + unitIndex);
             }
         }
     }
