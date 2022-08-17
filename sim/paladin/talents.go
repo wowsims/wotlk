@@ -121,7 +121,7 @@ func (paladin *Paladin) applyMinorGlyphOfSenseUndead() {
 				for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
 					unit := paladin.Env.GetTargetUnit(i)
 					if unit.MobType == proto.MobType_MobTypeUndead {
-						paladin.AttackTables[unit.TableIndex].DamageDealtMultiplier *= 1.01
+						paladin.AttackTables[unit.UnitIndex].DamageDealtMultiplier *= 1.01
 					}
 				}
 				applied = true
@@ -271,7 +271,7 @@ func (paladin *Paladin) applyCrusade() {
 					unit := paladin.Env.GetTargetUnit(i)
 					switch unit.MobType {
 					case proto.MobType_MobTypeHumanoid, proto.MobType_MobTypeDemon, proto.MobType_MobTypeUndead, proto.MobType_MobTypeElemental:
-						paladin.AttackTables[unit.TableIndex].DamageDealtMultiplier *= 1 + (0.01 * float64(paladin.Talents.Crusade))
+						paladin.AttackTables[unit.UnitIndex].DamageDealtMultiplier *= 1 + (0.01 * float64(paladin.Talents.Crusade))
 					}
 				}
 				applied = true

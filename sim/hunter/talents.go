@@ -505,7 +505,7 @@ func (hunter *Hunter) applyImprovedTracking() {
 						proto.MobType_MobTypeGiant, proto.MobType_MobTypeHumanoid,
 						proto.MobType_MobTypeUndead:
 
-						hunter.AttackTables[target.TableIndex].DamageDealtMultiplier *= 1.0 + 0.01*float64(hunter.Talents.ImprovedTracking)
+						hunter.AttackTables[target.UnitIndex].DamageDealtMultiplier *= 1.0 + 0.01*float64(hunter.Talents.ImprovedTracking)
 					}
 				}
 				applied = true

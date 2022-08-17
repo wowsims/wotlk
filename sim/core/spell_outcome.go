@@ -13,7 +13,7 @@ type OutcomeApplier func(sim *Simulation, spell *Spell, spellEffect *SpellEffect
 func (unit *Unit) OutcomeFuncAlwaysHit() OutcomeApplier {
 	return func(_ *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
 		spellEffect.Outcome = OutcomeHit
-		spell.SpellMetrics[spellEffect.Target.TableIndex].Hits++
+		spell.SpellMetrics[spellEffect.Target.UnitIndex].Hits++
 	}
 }
 
@@ -63,15 +63,15 @@ func (unit *Unit) OutcomeFuncMagicHitAndCrit(critMultiplier float64) OutcomeAppl
 		if spellEffect.MagicHitCheck(sim, spell, attackTable) {
 			if spellEffect.MagicCritCheck(sim, spell, attackTable) {
 				spellEffect.Outcome = OutcomeCrit
-				spell.SpellMetrics[spellEffect.Target.TableIndex].Crits++
+				spell.SpellMetrics[spellEffect.Target.UnitIndex].Crits++
 				spellEffect.Damage *= critMultiplier
 			} else {
 				spellEffect.Outcome = OutcomeHit
-				spell.SpellMetrics[spellEffect.Target.TableIndex].Hits++
+				spell.SpellMetrics[spellEffect.Target.UnitIndex].Hits++
 			}
 		} else {
 			spellEffect.Outcome = OutcomeMiss
-			spell.SpellMetrics[spellEffect.Target.TableIndex].Misses++
+			spell.SpellMetrics[spellEffect.Target.UnitIndex].Misses++
 			spellEffect.Damage = 0
 		}
 	}
@@ -81,11 +81,11 @@ func (unit *Unit) OutcomeFuncMagicCrit(critMultiplier float64) OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
 		if spellEffect.MagicCritCheck(sim, spell, attackTable) {
 			spellEffect.Outcome = OutcomeCrit
-			spell.SpellMetrics[spellEffect.Target.TableIndex].Crits++
+			spell.SpellMetrics[spellEffect.Target.UnitIndex].Crits++
 			spellEffect.Damage *= critMultiplier
 		} else {
 			spellEffect.Outcome = OutcomeHit
-			spell.SpellMetrics[spellEffect.Target.TableIndex].Hits++
+			spell.SpellMetrics[spellEffect.Target.UnitIndex].Hits++
 		}
 	}
 }
@@ -95,15 +95,15 @@ func (unit *Unit) OutcomeFuncMagicHitAndCritBinary(critMultiplier float64) Outco
 		if spellEffect.MagicHitCheckBinary(sim, spell, attackTable) {
 			if spellEffect.MagicCritCheck(sim, spell, attackTable) {
 				spellEffect.Outcome = OutcomeCrit
-				spell.SpellMetrics[spellEffect.Target.TableIndex].Crits++
+				spell.SpellMetrics[spellEffect.Target.UnitIndex].Crits++
 				spellEffect.Damage *= critMultiplier
 			} else {
 				spellEffect.Outcome = OutcomeHit
-				spell.SpellMetrics[spellEffect.Target.TableIndex].Hits++
+				spell.SpellMetrics[spellEffect.Target.UnitIndex].Hits++
 			}
 		} else {
 			spellEffect.Outcome = OutcomeMiss
-			spell.SpellMetrics[spellEffect.Target.TableIndex].Misses++
+			spell.SpellMetrics[spellEffect.Target.UnitIndex].Misses++
 			spellEffect.Damage = 0
 		}
 	}
@@ -113,11 +113,11 @@ func (unit *Unit) OutcomeFuncCritFixedChance(critChance float64, critMultiplier 
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
 		if spellEffect.fixedCritCheck(sim, critChance) {
 			spellEffect.Outcome = OutcomeCrit
-			spell.SpellMetrics[spellEffect.Target.TableIndex].Crits++
+			spell.SpellMetrics[spellEffect.Target.UnitIndex].Crits++
 			spellEffect.Damage *= critMultiplier
 		} else {
 			spellEffect.Outcome = OutcomeHit
-			spell.SpellMetrics[spellEffect.Target.TableIndex].Hits++
+			spell.SpellMetrics[spellEffect.Target.UnitIndex].Hits++
 		}
 	}
 }
@@ -126,10 +126,10 @@ func (unit *Unit) OutcomeFuncMagicHit() OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
 		if spellEffect.MagicHitCheck(sim, spell, attackTable) {
 			spellEffect.Outcome = OutcomeHit
-			spell.SpellMetrics[spellEffect.Target.TableIndex].Hits++
+			spell.SpellMetrics[spellEffect.Target.UnitIndex].Hits++
 		} else {
 			spellEffect.Outcome = OutcomeMiss
-			spell.SpellMetrics[spellEffect.Target.TableIndex].Misses++
+			spell.SpellMetrics[spellEffect.Target.UnitIndex].Misses++
 			spellEffect.Damage = 0
 		}
 	}
@@ -139,10 +139,10 @@ func (unit *Unit) OutcomeFuncMagicHitBinary() OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
 		if spellEffect.MagicHitCheckBinary(sim, spell, attackTable) {
 			spellEffect.Outcome = OutcomeHit
-			spell.SpellMetrics[spellEffect.Target.TableIndex].Hits++
+			spell.SpellMetrics[spellEffect.Target.UnitIndex].Hits++
 		} else {
 			spellEffect.Outcome = OutcomeMiss
-			spell.SpellMetrics[spellEffect.Target.TableIndex].Misses++
+			spell.SpellMetrics[spellEffect.Target.UnitIndex].Misses++
 			spellEffect.Damage = 0
 		}
 	}
@@ -403,7 +403,7 @@ func (spellEffect *SpellEffect) applyAttackTableMiss(spell *Spell, unit *Unit, a
 
 	if roll < *chance {
 		spellEffect.Outcome = OutcomeMiss
-		spell.SpellMetrics[spellEffect.Target.TableIndex].Misses++
+		spell.SpellMetrics[spellEffect.Target.UnitIndex].Misses++
 		spellEffect.Damage = 0
 		return true
 	}
@@ -416,7 +416,7 @@ func (spellEffect *SpellEffect) applyAttackTableMissNoDWPenalty(spell *Spell, un
 
 	if roll < *chance {
 		spellEffect.Outcome = OutcomeMiss
-		spell.SpellMetrics[spellEffect.Target.TableIndex].Misses++
+		spell.SpellMetrics[spellEffect.Target.UnitIndex].Misses++
 		spellEffect.Damage = 0
 		return true
 	}
@@ -428,7 +428,7 @@ func (spellEffect *SpellEffect) applyAttackTableBlock(spell *Spell, unit *Unit, 
 
 	if roll < *chance {
 		spellEffect.Outcome |= OutcomeBlock
-		spell.SpellMetrics[spellEffect.Target.TableIndex].Blocks++
+		spell.SpellMetrics[spellEffect.Target.UnitIndex].Blocks++
 		spellEffect.Damage = MaxFloat(0, spellEffect.Damage-spellEffect.Target.GetStat(stats.BlockValue))
 		return true
 	}
@@ -440,7 +440,7 @@ func (spellEffect *SpellEffect) applyAttackTableDodge(spell *Spell, unit *Unit, 
 
 	if roll < *chance {
 		spellEffect.Outcome = OutcomeDodge
-		spell.SpellMetrics[spellEffect.Target.TableIndex].Dodges++
+		spell.SpellMetrics[spellEffect.Target.UnitIndex].Dodges++
 		spellEffect.Damage = 0
 		return true
 	}
@@ -452,7 +452,7 @@ func (spellEffect *SpellEffect) applyAttackTableParry(spell *Spell, unit *Unit, 
 
 	if roll < *chance {
 		spellEffect.Outcome = OutcomeParry
-		spell.SpellMetrics[spellEffect.Target.TableIndex].Parries++
+		spell.SpellMetrics[spellEffect.Target.UnitIndex].Parries++
 		spellEffect.Damage = 0
 		return true
 	}
@@ -464,7 +464,7 @@ func (spellEffect *SpellEffect) applyAttackTableGlance(spell *Spell, unit *Unit,
 
 	if roll < *chance {
 		spellEffect.Outcome = OutcomeGlance
-		spell.SpellMetrics[spellEffect.Target.TableIndex].Glances++
+		spell.SpellMetrics[spellEffect.Target.UnitIndex].Glances++
 		// TODO glancing blow damage reduction is actually a range ([65%, 85%] vs. 73)
 		spellEffect.Damage *= attackTable.GlanceMultiplier
 		return true
@@ -477,7 +477,7 @@ func (spellEffect *SpellEffect) applyAttackTableCrit(spell *Spell, unit *Unit, a
 
 	if roll < *chance {
 		spellEffect.Outcome = OutcomeCrit
-		spell.SpellMetrics[spellEffect.Target.TableIndex].Crits++
+		spell.SpellMetrics[spellEffect.Target.UnitIndex].Crits++
 		spellEffect.Damage *= critMultiplier
 		return true
 	}
@@ -487,7 +487,7 @@ func (spellEffect *SpellEffect) applyAttackTableCrit(spell *Spell, unit *Unit, a
 func (spellEffect *SpellEffect) applyAttackTableCritSeparateRoll(sim *Simulation, spell *Spell, attackTable *AttackTable, critMultiplier float64) bool {
 	if spellEffect.physicalCritRoll(sim, spell, attackTable) {
 		spellEffect.Outcome = OutcomeCrit
-		spell.SpellMetrics[spellEffect.Target.TableIndex].Crits++
+		spell.SpellMetrics[spellEffect.Target.UnitIndex].Crits++
 		spellEffect.Damage *= critMultiplier
 		return true
 	}
@@ -496,7 +496,7 @@ func (spellEffect *SpellEffect) applyAttackTableCritSeparateRoll(sim *Simulation
 
 func (spellEffect *SpellEffect) applyAttackTableHit(spell *Spell) {
 	spellEffect.Outcome = OutcomeHit
-	spell.SpellMetrics[spellEffect.Target.TableIndex].Hits++
+	spell.SpellMetrics[spellEffect.Target.UnitIndex].Hits++
 }
 
 func (spellEffect *SpellEffect) applyEnemyAttackTableMiss(spell *Spell, unit *Unit, attackTable *AttackTable, roll float64, chance *float64) bool {
@@ -508,7 +508,7 @@ func (spellEffect *SpellEffect) applyEnemyAttackTableMiss(spell *Spell, unit *Un
 
 	if roll < *chance {
 		spellEffect.Outcome = OutcomeMiss
-		spell.SpellMetrics[spellEffect.Target.TableIndex].Misses++
+		spell.SpellMetrics[spellEffect.Target.UnitIndex].Misses++
 		spellEffect.Damage = 0
 		return true
 	}
@@ -527,7 +527,7 @@ func (spellEffect *SpellEffect) applyEnemyAttackTableBlock(spell *Spell, unit *U
 
 	if roll < *chance {
 		spellEffect.Outcome |= OutcomeBlock
-		spell.SpellMetrics[spellEffect.Target.TableIndex].Blocks++
+		spell.SpellMetrics[spellEffect.Target.UnitIndex].Blocks++
 		spellEffect.Damage = MaxFloat(0, spellEffect.Damage-spellEffect.Target.GetStat(stats.BlockValue))
 		return true
 	}
@@ -543,7 +543,7 @@ func (spellEffect *SpellEffect) applyEnemyAttackTableDodge(spell *Spell, unit *U
 
 	if roll < *chance {
 		spellEffect.Outcome = OutcomeDodge
-		spell.SpellMetrics[spellEffect.Target.TableIndex].Dodges++
+		spell.SpellMetrics[spellEffect.Target.UnitIndex].Dodges++
 		spellEffect.Damage = 0
 		return true
 	}
@@ -562,7 +562,7 @@ func (spellEffect *SpellEffect) applyEnemyAttackTableParry(spell *Spell, unit *U
 
 	if roll < *chance {
 		spellEffect.Outcome = OutcomeParry
-		spell.SpellMetrics[spellEffect.Target.TableIndex].Parries++
+		spell.SpellMetrics[spellEffect.Target.UnitIndex].Parries++
 		spellEffect.Damage = 0
 		return true
 	}
@@ -579,7 +579,7 @@ func (spellEffect *SpellEffect) applyEnemyAttackTableCrit(spell *Spell, unit *Un
 
 	if roll < *chance {
 		spellEffect.Outcome = OutcomeCrit
-		spell.SpellMetrics[spellEffect.Target.TableIndex].Crits++
+		spell.SpellMetrics[spellEffect.Target.UnitIndex].Crits++
 		resilCritMultiplier := 1 - spellEffect.Target.stats[stats.Resilience]/ResilienceRatingPerCritDamageReductionPercent/100
 		spellEffect.Damage *= 2 * resilCritMultiplier
 		return true
