@@ -56,10 +56,10 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 	wp.EnableManaBar()
 	// the ratio multiplier affects the first 20 points as well
 	wp.AddStat(stats.Mana, (15*20-20)+(20-15*20)*petConfig.ManaIntRatio/15)
-	wp.AddStatDependency(stats.Intellect, stats.Mana, 1/(1+15))
-	wp.AddStatDependency(stats.Intellect, stats.Mana, 1.0+petConfig.ManaIntRatio)
-	wp.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
-	wp.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+core.CritRatingPerCritChance*0.04)
+	wp.AddStatDependency(stats.Intellect, stats.Mana, 1/(1+15)) //TODO: This value is wrong now because of deps refactoring
+	wp.AddStatDependency(stats.Intellect, stats.Mana, petConfig.ManaIntRatio)
+	wp.AddStatDependency(stats.Strength, stats.AttackPower, 2)
+	wp.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance*0.04)
 	wp.AddStats(stats.Stats{
 		stats.MeleeCrit: float64(warlock.Talents.DemonicTactics) * 2 * core.CritRatingPerCritChance,
 		stats.SpellCrit: float64(warlock.Talents.DemonicTactics) * 2 * core.CritRatingPerCritChance,
@@ -110,7 +110,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 	switch summonChoice {
 	case proto.Warlock_Options_Imp:
 		// TODO: Does imp have different int->crit ratio than other casters? If so, we need to undo and then redo int->crit.
-		// wp.AddStatDependency(stats.Intellect, stats.SpellCrit, 1.0+(0.0125*core.CritRatingPerCritChance/100))
+		// wp.AddStatDependency(stats.Intellect, stats.SpellCrit, 0.0125*core.CritRatingPerCritChance/100)
 		wp.PseudoStats.FireDamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
 		wp.PseudoStats.BonusFireCritRating *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
 	case proto.Warlock_Options_Succubus:
@@ -123,13 +123,13 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		if wp.owner.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfFelguard) {
 			multiplier *= 1.2
 		}
-		wp.AddStatDependency(stats.AttackPower, stats.AttackPower, multiplier)
+		wp.MultiplyStat(stats.AttackPower, multiplier)
 	}
 
 	if warlock.Talents.FelVitality > 0 {
 		bonus := 1.0 + 0.05*float64(warlock.Talents.FelVitality)
-		wp.AddStatDependency(stats.Intellect, stats.Intellect, bonus)
-		wp.AddStatDependency(stats.Stamina, stats.Stamina, bonus)
+		wp.MultiplyStat(stats.Intellect, bonus)
+		wp.MultiplyStat(stats.Stamina, bonus)
 	}
 
 	if warlock.HasSetBonus(ItemSetOblivionRaiment, 2) {

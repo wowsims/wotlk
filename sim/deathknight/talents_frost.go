@@ -17,7 +17,7 @@ func (dk *Deathknight) ApplyFrostTalents() {
 	// Toughness
 	if dk.Talents.Toughness > 0 {
 		armorCoeff := 0.02 * float64(dk.Talents.Toughness)
-		dk.AddStatDependency(stats.Armor, stats.Armor, 1.0+armorCoeff)
+		dk.MultiplyStat(stats.Armor, 1.0+armorCoeff)
 	}
 
 	// Icy Reach
@@ -50,7 +50,7 @@ func (dk *Deathknight) ApplyFrostTalents() {
 	// Endless Winter
 	if dk.Talents.EndlessWinter > 0 {
 		strengthCoeff := 0.02 * float64(dk.Talents.EndlessWinter)
-		dk.AddStatDependency(stats.Strength, stats.Strength, 1.0+strengthCoeff)
+		dk.MultiplyStat(stats.Strength, 1.0+strengthCoeff)
 	}
 
 	// Frigid Dreadplate

@@ -9,10 +9,10 @@ import (
 
 var itemSetT9Bonuses = map[int32]core.ApplyEffect{
 	2: func(agent core.Agent) {
-		//
+		// shocks.go
 	},
 	4: func(agent core.Agent) {
-		//
+		// lavaburst.go
 	},
 }
 
@@ -40,8 +40,10 @@ var ItemSetWorldbreakerGarb = core.NewItemSet(core.ItemSet{
 	Name: "Worldbreaker Garb",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
+			// shocks.go
 		},
 		4: func(agent core.Agent) {
+			// lightning_bolt.go
 		},
 	},
 })
@@ -50,7 +52,7 @@ var ItemSetFrostWitchRegalia = core.NewItemSet(core.ItemSet{
 	Name: "Frost Witch's Regalia",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
-			// TODO: Your Lightning Bolt and Chain Lightning spells reduce the remaining cooldown on your Elemental Mastery talent by 2 sec.
+			// This is implemented in talents.go so that the aura has easy access to the elemental mastery MCD.
 		},
 		4: func(agent core.Agent) {
 			shaman := agent.(ShamanAgent).GetShaman()
@@ -154,6 +156,37 @@ func init() {
 			},
 		})
 	})
+
+	// Bizuri's Totem of Shattered Ice
+	core.NewItemEffect(50458, func(agent core.Agent) {
+		shaman := agent.(ShamanAgent).GetShaman()
+		procAura := shaman.RegisterAura(core.Aura{
+			Label:     "Furious",
+			ActionID:  core.ActionID{SpellID: 71199},
+			Duration:  time.Second * 30,
+			MaxStacks: 5,
+			OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
+				shaman.AddStatDynamic(sim, stats.SpellHaste, -44*float64(oldStacks))
+				shaman.AddStatDynamic(sim, stats.SpellHaste, 44*float64(newStacks))
+
+				shaman.AddStatDynamic(sim, stats.MeleeHaste, -44*float64(oldStacks))
+				shaman.AddStatDynamic(sim, stats.MeleeHaste, 44*float64(newStacks))
+			},
+		})
+		shaman.RegisterAura(core.Aura{
+			Label:    "Bizuri's Totem of Shattered Ice Aura",
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			},
+			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if spell.ActionID.SpellID == FlameshockID {
+					procAura.Activate(sim)
+					procAura.AddStack(sim)
+				}
+			},
+		})
+	})
 }
 
 var ItemSetEarthshatterBattlegear = core.NewItemSet(core.ItemSet{
@@ -222,6 +255,22 @@ var ItemSetGladiatorsEarthshaker = core.NewItemSet(core.ItemSet{
 			shaman := agent.(ShamanAgent).GetShaman()
 			shaman.AddStat(stats.AttackPower, 150)
 			// also -2s on stormstrike CD
+		},
+	},
+})
+
+var ItemSetGladiatorsWartide = core.NewItemSet(core.ItemSet{
+	Name: "Gladiator's Wartide",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			shaman := agent.(ShamanAgent).GetShaman()
+			shaman.AddStat(stats.HealingPower, 29)
+			shaman.AddStat(stats.Resilience, 100)
+		},
+		4: func(agent core.Agent) {
+			shaman := agent.(ShamanAgent).GetShaman()
+			shaman.AddStat(stats.SpellPower, 88)
+			shaman.AddStat(stats.HealingPower, 88)
 		},
 	},
 })

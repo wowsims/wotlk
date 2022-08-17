@@ -36,7 +36,20 @@ func NewProtectionPaladin(character core.Character, options proto.Player) *Prote
 		Paladin:  paladin.NewPaladin(character, *protOptions.Talents),
 		Rotation: *protOptions.Rotation,
 		Options:  *protOptions.Options,
+		Seal:     protOptions.Options.Seal,
 	}
+
+	var rotationInput = protOptions.Rotation.CustomRotation
+
+	if rotationInput != nil {
+		prot.RotationInput = make([]int32, len(rotationInput.Spells))
+		for i, customSpellProto := range rotationInput.Spells {
+			prot.RotationInput[i] = customSpellProto.Spell
+		}
+	}
+
+	prot.SelectedRotation = prot.customRotation
+
 	prot.PaladinAura = protOptions.Options.Aura
 
 	prot.EnableAutoAttacks(prot, core.AutoAttackOptions{
@@ -56,6 +69,9 @@ type ProtectionPaladin struct {
 	Judgement proto.PaladinJudgement
 
 	Seal proto.PaladinSeal
+
+	SelectedRotation func(*core.Simulation)
+	RotationInput    []int32
 }
 
 func (prot *ProtectionPaladin) GetPaladin() *paladin.Paladin {
@@ -78,4 +94,22 @@ func (prot *ProtectionPaladin) Reset(sim *core.Simulation) {
 	// Assume it gets cast 3s before entering combat.
 	prot.HolyShieldAura.Activate(sim)
 	prot.HolyShield.CD.Timer.Set(time.Second * 7)
+
+	sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int) {
+		if isExecute == 20 {
+			prot.OnGCDReady(sim)
+		}
+	})
+
+	switch prot.Seal {
+	case proto.PaladinSeal_Vengeance:
+		prot.SealOfVengeanceAura.Activate(sim)
+	case proto.PaladinSeal_Command:
+		prot.SealOfCommandAura.Activate(sim)
+	case proto.PaladinSeal_Righteousness:
+		prot.SealOfRighteousnessAura.Activate(sim)
+	}
+
+	prot.DivinePleaAura.Activate(sim)
+	prot.DivinePlea.CD.Use(sim)
 }
