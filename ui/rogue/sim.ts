@@ -16,7 +16,14 @@ import { Sim } from '../core/sim.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
 import { EventID, TypedEvent } from '../core/typed_event.js';
 
-import { Rogue, Rogue_Rotation as RogueRotation, Rogue_Options as RogueOptions, Rogue_Rotation_Frequency } from '../core/proto/rogue.js';
+import { 
+	Rogue_Rotation_AssassinationPriority as AssassinationPriority,
+	Rogue_Rotation_CombatPriority as CombatPriority,
+	Rogue, 
+	Rogue_Rotation as RogueRotation, 
+	Rogue_Options as RogueOptions, 
+	Rogue_Rotation_Frequency as Frequency,
+} from '../core/proto/rogue.js';
 
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as Mechanics from '../core/constants/mechanics.js';
@@ -40,7 +47,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					return {
 						updateOn: simUI.player.changeEmitter,
 						getContent: () => {
-							if (simUI.player.getRotation().exposeArmorFrequency != Rogue_Rotation_Frequency.Never && simUI.player.getTalents().improvedExposeArmor < 2) {
+							if (simUI.player.getRotation().exposeArmorFrequency != Frequency.Never && simUI.player.getTalents().improvedExposeArmor < 2) {
 								return '\'Maintain Expose Armor\' selected, but missing points in Improved Expose Armor!';
 							} else {
 								return '';
@@ -173,6 +180,32 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					Presets.P1_PRESET,
 				],
 			},
+		})
+		this.player.changeEmitter.on((c) => {
+			const rotation = this.player.getRotation()
+			if (this.player.getTalents().mutilate) {
+				if (rotation.assassinationFinisherPriority == AssassinationPriority.AssassinationPriorityUnknown) {
+					rotation.assassinationFinisherPriority = Presets.DefaultRotation.assassinationFinisherPriority;
+				}
+				rotation.combatFinisherPriority = CombatPriority.CombatPriorityUnknown;
+			} else {
+				rotation.assassinationFinisherPriority = AssassinationPriority.AssassinationPriorityUnknown;
+				if (rotation.combatFinisherPriority == CombatPriority.CombatPriorityUnknown) {
+					rotation.combatFinisherPriority = Presets.DefaultRotation.combatFinisherPriority;
+				}
+			}
+			this.player.setRotation(c, rotation)
+		});
+		this.sim.encounter.changeEmitter.on((c) => {
+			const rotation = this.player.getRotation()
+			if (this.sim.encounter.getNumTargets() > 3) {
+				if (rotation.multiTargetSliceFrequency == Frequency.FrequencyUnknown) {
+					rotation.multiTargetSliceFrequency = Presets.DefaultRotation.multiTargetSliceFrequency;
+				}
+			} else {
+				rotation.multiTargetSliceFrequency = Frequency.FrequencyUnknown;
+			}
+			this.player.setRotation(c, rotation)
 		});
 	}
 }
