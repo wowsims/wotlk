@@ -263,9 +263,16 @@ func TickFuncAOESnapshotCapped(env *Environment, baseEffect SpellEffect) TickEff
 
 func TickFuncApplyEffects(effectsFunc ApplySpellEffects) TickEffects {
 	return func(sim *Simulation, dot *Dot) func() {
-		target := dot.Aura.Unit
 		return func() {
-			effectsFunc(sim, target, dot.Spell)
+			effectsFunc(sim, dot.Spell.Unit.CurrentTarget, dot.Spell)
+		}
+	}
+}
+
+func TickFuncApplyEffectsToUnit(unit *Unit, effectsFunc ApplySpellEffects) TickEffects {
+	return func(sim *Simulation, dot *Dot) func() {
+		return func() {
+			effectsFunc(sim, unit, dot.Spell)
 		}
 	}
 }
