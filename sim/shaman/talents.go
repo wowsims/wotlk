@@ -86,7 +86,7 @@ func (shaman *Shaman) applyElementalFocus() {
 		Duration:  time.Second * 15,
 		MaxStacks: 2,
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if !spell.Flags.Matches(SpellFlagShock | SpellFlagElectric | SpellFlagFireNova) {
+			if !spell.Flags.Matches(SpellFlagShock | SpellFlagFocusable) {
 				return
 			}
 			if spell.ActionID.Tag != 0 { // Filter LO casts
@@ -103,7 +103,7 @@ func (shaman *Shaman) applyElementalFocus() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spell.Flags.Matches(SpellFlagShock | SpellFlagElectric) {
+			if !spell.Flags.Matches(SpellFlagShock | SpellFlagFocusable) {
 				return
 			}
 			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
