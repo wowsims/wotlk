@@ -70,9 +70,7 @@ type Shaman struct {
 
 	thunderstormInRange bool // flag if thunderstorm will be in range.
 
-	LavaburstWeave          bool // flag to enable lava burst weaving for enh
-	LightningboltWeave      bool // flag to enable lightning bolt weaving for enh
-	MaelstromweaponMinStack int32
+	ShamanisticRageManaThreshold float64 //% of mana to use sham. rage at
 
 	Talents   proto.ShamanTalents
 	SelfBuffs SelfBuffs
