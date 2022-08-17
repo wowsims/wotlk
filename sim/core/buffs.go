@@ -280,13 +280,13 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 	})
 
 	if partyBuffs.BraidedEterniumChain {
-		character.AddStats(stats.Stats{stats.MeleeCrit: 28})
+		character.AddStats(stats.Stats{stats.MeleeCrit: 28, stats.SpellCrit: 28})
 	}
 	if partyBuffs.EyeOfTheNight {
 		character.AddStats(stats.Stats{stats.SpellPower: 34})
 	}
 	if partyBuffs.ChainOfTheTwilightOwl {
-		character.AddStats(stats.Stats{stats.SpellCrit: 45})
+		character.AddStats(stats.Stats{stats.MeleeCrit: 45, stats.SpellCrit: 45})
 	}
 }
 
