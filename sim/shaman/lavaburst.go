@@ -19,6 +19,7 @@ func (shaman *Shaman) newLavaBurstSpell() *core.Spell {
 	spellConfig := core.SpellConfig{
 		ActionID:     lavaBurstActionID,
 		SpellSchool:  core.SpellSchoolFire,
+		Flags:        SpellFlagFocusable,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -32,6 +33,14 @@ func (shaman *Shaman) newLavaBurstSpell() *core.Spell {
 				Timer:    shaman.NewTimer(),
 				Duration: time.Second * 8,
 			},
+			ModifyCast: func(_ *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				shaman.modifyCastClearcasting(spell, cast)
+				if shaman.ElementalMasteryAura.IsActive() {
+					cast.CastTime = 0
+				} else if shaman.NaturesSwiftnessAura.IsActive() {
+					cast.CastTime = 0
+				}
+			},
 		},
 	}
 
@@ -39,14 +48,6 @@ func (shaman *Shaman) newLavaBurstSpell() *core.Spell {
 		// Convection applies against the base cost of the spell.
 		spellConfig.Cast.DefaultCast.Cost -= baseCost * float64(shaman.Talents.Convection) * 0.02
 		spellConfig.Cast.DefaultCast.CastTime -= time.Millisecond * 100 * time.Duration(shaman.Talents.LightningMastery)
-	}
-
-	spellConfig.Cast.ModifyCast = func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-		if shaman.ElementalMasteryAura.IsActive() {
-			cast.CastTime = 0
-		} else if shaman.NaturesSwiftnessAura.IsActive() {
-			cast.CastTime = 0
-		}
 	}
 
 	lavaflowBonus := []float64{0, 0.06, 0.12, 0.24}
