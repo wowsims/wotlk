@@ -19,6 +19,8 @@ func (paladin *Paladin) ApplyTalents() {
 	paladin.AddStat(stats.SpellCrit, float64(paladin.Talents.SanctityOfBattle)*core.CritRatingPerCritChance)
 
 	paladin.AddStat(stats.Parry, core.ParryRatingPerParryChance*1*float64(paladin.Talents.Deflection))
+	paladin.AddStat(stats.Parry, core.DodgeRatingPerDodgeChance*1*float64(paladin.Talents.Anticipation))
+
 	paladin.AddStat(stats.Armor, paladin.Equip.Stats()[stats.Armor]*0.02*float64(paladin.Talents.Toughness))
 	paladin.AddStat(stats.Defense, core.DefenseRatingPerDefense*4*float64(paladin.Talents.Anticipation))
 
@@ -35,6 +37,11 @@ func (paladin *Paladin) ApplyTalents() {
 		paladin.AddStatDependency(stats.AttackPower, stats.SpellPower, percentage)
 	}
 
+	if paladin.Talents.TouchedByTheLight > 0 {
+		percentage := 0.20 * float64(paladin.Talents.TouchedByTheLight)
+		paladin.AddStatDependency(stats.Strength, stats.SpellPower, 1.0+percentage)
+	}
+
 	// if paladin.Talents.ShieldSpecialization > 0 {
 	// 	bonus := 1 + 0.1*float64(paladin.Talents.ShieldSpecialization)
 	// 	paladin.AddStatDependency(stats.StatDependency{
@@ -47,12 +54,16 @@ func (paladin *Paladin) ApplyTalents() {
 	// }
 
 	if paladin.Talents.SacredDuty > 0 {
-		paladin.MultiplyStat(stats.Stamina, 1.0+0.03*float64(paladin.Talents.SacredDuty))
+		paladin.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+0.02*float64(paladin.Talents.SacredDuty))
 	}
 
 	if paladin.Talents.CombatExpertise > 0 {
-		paladin.AddStat(stats.Expertise, core.ExpertisePerQuarterPercentReduction*1*float64(paladin.Talents.CombatExpertise))
+		paladin.AddStat(stats.Expertise, core.ExpertisePerQuarterPercentReduction*2*float64(paladin.Talents.CombatExpertise))
 		paladin.MultiplyStat(stats.Stamina, 1.0+0.02*float64(paladin.Talents.CombatExpertise))
+	}
+
+	if paladin.Talents.ShieldOfTheTemplar > 0 {
+		paladin.PseudoStats.DamageTakenMultiplier *= 1 - 0.01*float64(paladin.Talents.ShieldOfTheTemplar)
 	}
 
 	paladin.applyRedoubt()
@@ -66,6 +77,7 @@ func (paladin *Paladin) ApplyTalents() {
 	paladin.applyJudgmentsOfTheWise()
 	paladin.applyRighteousVengeance()
 	paladin.applyMinorGlyphOfSenseUndead()
+	paladin.applyGuardedByTheLight()
 }
 
 func (paladin *Paladin) getTalentSealsOfThePureBonus() float64 {
@@ -123,9 +135,11 @@ func (paladin *Paladin) applyRedoubt() {
 		return
 	}
 
-	actionID := core.ActionID{SpellID: 20137}
+	actionID := core.ActionID{SpellID: 20132}
 
-	bonusBlockRating := 6 * core.BlockRatingPerBlockChance * float64(paladin.Talents.Redoubt)
+	paladin.AddStatDependency(stats.BlockValue, stats.BlockValue, 1.0+0.10*float64(paladin.Talents.Redoubt))
+
+	bonusBlockRating := 10 * core.BlockRatingPerBlockChance * float64(paladin.Talents.Redoubt)
 
 	procAura := paladin.RegisterAura(core.Aura{
 		Label:     "Redoubt Proc",
@@ -516,4 +530,34 @@ func (paladin *Paladin) applyFanaticism() {
 	}
 
 	paladin.PseudoStats.ThreatMultiplier *= 1 - 0.10*float64(paladin.Talents.Fanaticism)
+}
+
+func (paladin *Paladin) applyGuardedByTheLight() {
+	if paladin.Talents.GuardedByTheLight == 0 {
+		return
+	}
+
+	paladin.PseudoStats.ArcaneDamageTakenMultiplier *= 1 - 0.03*float64(paladin.Talents.GuardedByTheLight)
+	paladin.PseudoStats.FireDamageTakenMultiplier *= 1 - 0.03*float64(paladin.Talents.GuardedByTheLight)
+	paladin.PseudoStats.FrostDamageTakenMultiplier *= 1 - 0.03*float64(paladin.Talents.GuardedByTheLight)
+	paladin.PseudoStats.HolyDamageTakenMultiplier *= 1 - 0.03*float64(paladin.Talents.GuardedByTheLight)
+	paladin.PseudoStats.NatureDamageTakenMultiplier *= 1 - 0.03*float64(paladin.Talents.GuardedByTheLight)
+	paladin.PseudoStats.ShadowDamageTakenMultiplier *= 1 - 0.03*float64(paladin.Talents.GuardedByTheLight)
+
+	paladin.RegisterAura(core.Aura{
+		Label:    "Touched By The Light",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.Landed() {
+				return
+			}
+
+			if paladin.DivinePleaAura.IsActive() {
+				paladin.DivinePleaAura.Refresh(sim)
+			}
+		},
+	})
 }

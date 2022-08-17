@@ -212,6 +212,18 @@ message ProtectionPaladin {
 	message Rotation {
 		bool prioritize_holy_shield = 1;
 
+		enum SpellOption {
+			NoSpell = 0;
+			JudgementOfWisdom = 1;
+			HammerOfWrath = 2;
+			Consecration = 3;
+			HolyWrath = 4;
+			Exorcism = 5;
+			ShieldOfRighteousness = 6;
+			AvengersShield = 7;
+			HammerOfTheRighteous = 8;
+		}
+		CustomRotation custom_rotation = 2;
 	}
 	Rotation rotation = 1;
 

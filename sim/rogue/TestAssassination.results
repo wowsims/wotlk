@@ -626,8 +626,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-Settings-Human-P1 Assassination-Assassination-FullBuffs-LongMultiTarget"
  value: {
-  dps: 27360.6472907441
-  tps: 19426.0595764283
+  dps: 28872.5958901508
+  tps: 20499.5430820071
  }
 }
 dps_results: {
@@ -710,8 +710,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-Settings-Human-P1 Assassination-MH Instant OH Deadly-FullBuffs-LongMultiTarget"
  value: {
-  dps: 27360.6472907441
-  tps: 19426.0595764283
+  dps: 28872.5958901508
+  tps: 20499.5430820071
  }
 }
 dps_results: {
@@ -752,8 +752,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-Settings-Human-P1 Assassination-MH Instant OH Instant-FullBuffs-LongMultiTarget"
  value: {
-  dps: 21793.9412917572
-  tps: 15473.6983171476
+  dps: 23702.3210216301
+  tps: 16828.6479253574
  }
 }
 dps_results: {
@@ -773,7 +773,7 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-Settings-Human-P1 Assassination-MH Instant OH Instant-NoBuffs-LongMultiTarget"
  value: {
-  dps: 13925.8615027601
+  dps: 13925.8615027602
   tps: 9887.3616669597
  }
 }
@@ -794,8 +794,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-Settings-Orc-P1 Assassination-Assassination-FullBuffs-LongMultiTarget"
  value: {
-  dps: 27589.8077876956
-  tps: 19588.7635292639
+  dps: 29111.1221997233
+  tps: 20668.8967618036
  }
 }
 dps_results: {
@@ -815,8 +815,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-Settings-Orc-P1 Assassination-Assassination-NoBuffs-LongMultiTarget"
  value: {
-  dps: 16081.2332714526
-  tps: 11417.6756227313
+  dps: 16081.1170074752
+  tps: 11417.5930753074
  }
 }
 dps_results: {
@@ -878,8 +878,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-Settings-Orc-P1 Assassination-MH Instant OH Deadly-FullBuffs-LongMultiTarget"
  value: {
-  dps: 27589.8077876956
-  tps: 19588.7635292639
+  dps: 29111.1221997233
+  tps: 20668.8967618036
  }
 }
 dps_results: {
@@ -899,8 +899,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-Settings-Orc-P1 Assassination-MH Instant OH Deadly-NoBuffs-LongMultiTarget"
  value: {
-  dps: 16081.2332714526
-  tps: 11417.6756227313
+  dps: 16081.1170074752
+  tps: 11417.5930753074
  }
 }
 dps_results: {
@@ -920,8 +920,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-Settings-Orc-P1 Assassination-MH Instant OH Instant-FullBuffs-LongMultiTarget"
  value: {
-  dps: 21922.1069507912
-  tps: 15564.6959350617
+  dps: 23847.2126464417
+  tps: 16931.5209789737
  }
 }
 dps_results: {

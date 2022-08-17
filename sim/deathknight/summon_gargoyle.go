@@ -93,7 +93,13 @@ func (dk *Deathknight) NewGargoyle() *GargoylePet {
 			"Gargoyle",
 			&dk.Character,
 			gargoyleBaseStats,
-			gargoyleStatInheritance,
+			func(ownerStats stats.Stats) stats.Stats {
+				return stats.Stats{
+					stats.AttackPower: ownerStats[stats.AttackPower],
+					stats.SpellHit:    ownerStats[stats.SpellHit],
+					stats.SpellHaste:  (ownerStats[stats.MeleeHaste] / dk.PseudoStats.MeleeHasteRatingPerHastePercent) * core.HasteRatingPerHastePercent,
+				}
+			},
 			false,
 			true,
 		),
@@ -128,14 +134,6 @@ func (garg *GargoylePet) OnGCDReady(sim *core.Simulation) {
 // These numbers are just rough guesses
 var gargoyleBaseStats = stats.Stats{
 	stats.Stamina: 1000,
-}
-
-var gargoyleStatInheritance = func(ownerStats stats.Stats) stats.Stats {
-	return stats.Stats{
-		stats.AttackPower: ownerStats[stats.AttackPower],
-		stats.SpellHit:    ownerStats[stats.SpellHit],
-		stats.SpellHaste:  ownerStats[stats.MeleeHaste],
-	}
 }
 
 func (garg *GargoylePet) registerGargoyleStrikeSpell() {

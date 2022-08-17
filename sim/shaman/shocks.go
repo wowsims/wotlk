@@ -72,9 +72,10 @@ func (shaman *Shaman) registerEarthShockSpell(shockTimer *core.Timer) {
 	shaman.EarthShock = shaman.RegisterSpell(config)
 }
 
+const FlameshockID = 49233
+
 func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
-	const flameshockID = 49233
-	config, effect := shaman.newShockSpellConfig(flameshockID, core.SpellSchoolFire, baseMana*0.17, shockTimer)
+	config, effect := shaman.newShockSpellConfig(FlameshockID, core.SpellSchoolFire, baseMana*0.17, shockTimer)
 
 	config.Cast.CD.Duration -= time.Duration(shaman.Talents.BoomingEchoes) * time.Second
 
@@ -128,7 +129,7 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 		Spell: shaman.FlameShock,
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "FlameShock-" + strconv.Itoa(int(shaman.Index)),
-			ActionID: core.ActionID{SpellID: flameshockID},
+			ActionID: core.ActionID{SpellID: FlameshockID},
 		}),
 		NumberOfTicks:       6 + bonusTicks,
 		TickLength:          time.Second * 3,
