@@ -73,15 +73,15 @@ func (paladin *Paladin) registerExorcismSpell() {
 				if spellEffect.MagicHitCheck(sim, spell, attackTable) {
 					if spellEffect.Target.MobType == proto.MobType_MobTypeDemon || spellEffect.Target.MobType == proto.MobType_MobTypeUndead || spellEffect.MagicCritCheck(sim, spell, attackTable) {
 						spellEffect.Outcome = core.OutcomeCrit
-						spell.SpellMetrics[spellEffect.Target.TableIndex].Crits++
+						spell.SpellMetrics[spellEffect.Target.UnitIndex].Crits++
 						spellEffect.Damage *= paladin.SpellCritMultiplier()
 					} else {
 						spellEffect.Outcome = core.OutcomeHit
-						spell.SpellMetrics[spellEffect.Target.TableIndex].Hits++
+						spell.SpellMetrics[spellEffect.Target.UnitIndex].Hits++
 					}
 				} else {
 					spellEffect.Outcome = core.OutcomeMiss
-					spell.SpellMetrics[spellEffect.Target.TableIndex].Misses++
+					spell.SpellMetrics[spellEffect.Target.UnitIndex].Misses++
 					spellEffect.Damage = 0
 				}
 			},

@@ -26,9 +26,9 @@ type Unit struct {
 	//  For Pets, this is the same as the owner's index.
 	Index int32
 
-	// Index of this unit as it appears in attack/defense tables.
-	// This is different from Index because there can be gaps in the raid.
-	TableIndex int32
+	// Unique index of this unit among all units in the environment.
+	// This is used as the index for attack tables.
+	UnitIndex int32
 
 	// Unique label for logging.
 	Label string
@@ -127,6 +127,18 @@ type Unit struct {
 //	until it is used in some other way (like from an auto attack or resource regeneration).
 func (char *Character) DoNothing() {
 	char.doNothing = true
+}
+
+func (unit *Unit) IsOpponent(other *Unit) bool {
+	return (unit.Type == EnemyUnit) != (other.Type == EnemyUnit)
+}
+
+func (unit *Unit) GetOpponents() []*Unit {
+	if unit.Type == EnemyUnit {
+		return unit.Env.Raid.AllUnits
+	} else {
+		return unit.Env.Encounter.TargetUnits
+	}
 }
 
 func (unit *Unit) LogLabel() string {

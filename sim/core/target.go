@@ -15,6 +15,7 @@ type Encounter struct {
 	executePhase25Begins time.Duration
 	executePhase35Begins time.Duration
 	Targets              []*Target
+	TargetUnits          []*Unit
 
 	EndFightAtHealth float64
 	// DamgeTaken is used to track health fights instead of duration fights.
@@ -58,11 +59,14 @@ func NewEncounter(options proto.Encounter) Encounter {
 	for targetIndex, targetOptions := range options.Targets {
 		target := NewTarget(*targetOptions, int32(targetIndex))
 		encounter.Targets = append(encounter.Targets, target)
+		encounter.TargetUnits = append(encounter.TargetUnits, &target.Unit)
 	}
 	if len(encounter.Targets) == 0 {
 		// Add a dummy target. The only case where targets aren't specified is when
 		// computing character stats, and targets won't matter there.
-		encounter.Targets = append(encounter.Targets, NewTarget(proto.Target{}, 0))
+		target := NewTarget(proto.Target{}, 0)
+		encounter.Targets = append(encounter.Targets, target)
+		encounter.TargetUnits = append(encounter.TargetUnits, &target.Unit)
 	}
 
 	if encounter.EndFightAtHealth > 0 {
@@ -183,6 +187,7 @@ func (target *Target) NextTarget() *Target {
 func (target *Target) GetMetricsProto(numIterations int32) *proto.UnitMetrics {
 	metrics := target.Metrics.ToProto(numIterations)
 	metrics.Name = target.Label
+	metrics.UnitIndex = target.UnitIndex
 	metrics.Auras = target.auraTracker.GetMetricsProto(numIterations)
 	return metrics
 }
