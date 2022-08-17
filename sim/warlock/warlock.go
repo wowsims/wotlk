@@ -65,6 +65,8 @@ type Warlock struct {
 	EmpoweredImpAura       *core.Aura
 
 	GlyphOfLifeTapAura *core.Aura
+
+	PrevCastSECheck *core.Spell
 }
 
 func (warlock *Warlock) GetCharacter() *core.Character {

@@ -172,7 +172,6 @@ func (warlock *Warlock) registerCurseOfDoomSpell() {
 		DamageMultiplier: baseAdditiveMultiplier,
 		BaseDamage:       core.BaseDamageConfigMagicNoRoll(7300, 2),
 		OutcomeApplier:   warlock.OutcomeFuncTick(),
-		IsPeriodic:       true,
 		ProcMask:         core.ProcMaskPeriodicDamage,
 	}
 

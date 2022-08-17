@@ -2,8 +2,11 @@ package warrior
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
+
+// TODO: GlyphOfSunderArmor will require refactoring this a bit
 
 var SunderArmorActionID = core.ActionID{SpellID: 47467}
 
@@ -30,6 +33,7 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 			IgnoreHaste: true,
 		},
 	}
+	extraStack := isDevastateEffect && warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfDevastate)
 	if isDevastateEffect {
 		config.ResourceType = 0
 		config.BaseCost = 0
@@ -50,6 +54,9 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 				warrior.SunderArmorAura.Activate(sim)
 				if warrior.SunderArmorAura.IsActive() {
 					warrior.SunderArmorAura.AddStack(sim)
+					if extraStack {
+						warrior.SunderArmorAura.AddStack(sim)
+					}
 				}
 			} else {
 				warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)

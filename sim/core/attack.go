@@ -174,6 +174,7 @@ type AutoAttacks struct {
 
 	// The time at which the last MH swing occurred.
 	previousMHSwingAt time.Duration
+	previousOHSwingAt time.Duration
 
 	// PendingAction which handles auto attacks.
 	autoSwingAction    *PendingAction
@@ -473,6 +474,7 @@ func (aa *AutoAttacks) TrySwingOH(sim *Simulation, target *Unit) {
 
 	aa.OHAuto.Cast(sim, target)
 	aa.OffhandSwingAt = sim.CurrentTime + aa.OffhandSwingSpeed()
+	aa.previousOHSwingAt = sim.CurrentTime
 	aa.agent.OnAutoAttack(sim, aa.OHAuto)
 }
 
@@ -545,6 +547,14 @@ func (aa *AutoAttacks) NextAttackAt() time.Duration {
 		nextAttack = MinDuration(nextAttack, aa.OffhandSwingAt)
 	}
 	return nextAttack
+}
+
+func (aa *AutoAttacks) PreviousAttackAt() time.Duration {
+	previousAttack := aa.previousMHSwingAt
+	if aa.OH.SwingSpeed != 0 {
+		previousAttack = MinDuration(previousAttack, aa.previousOHSwingAt)
+	}
+	return previousAttack
 }
 
 // Returns the time at which all melee swings will be ready.

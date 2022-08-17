@@ -73,9 +73,28 @@ export const SyncTypeInput = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecEnha
 });
 
 export const EnhancementShamanRotationConfig = {
-    inputs: 
+    inputs:
         [
-        InputHelpers.makeRotationNumberInput<Spec.SpecEnhancementShaman>({
+        InputHelpers.makeRotationBooleanInput<Spec.SpecEnhancementShaman>({
+            fieldName: 'lightningboltWeave',
+            label: 'Enable Weaving Lightning Bolt',
+            labelTooltip: 'Will provide a DPS increase, but is harder to execute',
+            enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getTalents().maelstromWeapon > 0,
+        }),
+        InputHelpers.makeRotationEnumInput<Spec.SpecEnhancementShaman, number>({
+            fieldName: 'maelstromweaponMinStack',
+            label: 'Minimum Maelstrom Stacks to Weave',
+            labelTooltip: '3 stacks is the most realistic, however there are cases where lower might be possible, just much harder to do in practice',
+            values: [
+                { name: '1', value: 1 },
+                { name: '2', value: 2 },
+                { name: '3', value: 3 },
+                { name: '4', value: 4 },
+                { name: '5', value: 5 }, // 5 is effectively disabled. likely unnessecary
+            ],
+            enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getTalents().maelstromWeapon > 0,
+        }),
+            InputHelpers.makeRotationNumberInput<Spec.SpecEnhancementShaman>({
             fieldName: "weaveLatency",
             label: "Weaving Latency",
             labelTooltip: "The amount of time to wait in milliseconds after an auto attack to begin casting a spell, only applies when Maelstrom Weapon has at least 1 stack.",
@@ -84,6 +103,7 @@ export const EnhancementShamanRotationConfig = {
             fieldName: 'lavaburstWeave',
             label: 'Enable Weaving Lava Burst',
             labelTooltip: 'Not particularily useful for dual wield, mostly a 2h option',
+            enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getTalents().maelstromWeapon > 0,
         }),
     ],
 };

@@ -33,6 +33,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
 				'Rotations are not fully optimized, especially for non-standard setups.',
+				'Subtlety specs are not currently supported.'
 			],
 			warnings: [
 				(simUI: IndividualSimUI<Spec.SpecRogue>) => {

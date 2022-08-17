@@ -180,7 +180,7 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 		case ret.DemonAndUndeadTargetCount >= ret.HolyWrathThreshold && ret.HolyWrath.IsReady(sim):
 			ret.HolyWrath.Cast(sim, target)
 		case ret.UseDivinePlea && ret.CurrentMana() < (ret.MaxMana()*ret.DivinePleaPercentage) && ret.DivinePlea.IsReady(sim):
-			ret.DivinePlea.Cast(sim, &ret.Unit)
+			ret.DivinePlea.Cast(sim, nil)
 		case ret.CrusaderStrike.IsReady(sim):
 			ret.CrusaderStrike.Cast(sim, target)
 		case ret.DivineStorm.IsReady(sim):
@@ -192,6 +192,8 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 			ret.Consecration.Cast(sim, target)
 		case nextPrimaryAbilityDelta.Milliseconds() > int64(ret.ExoSlack) && ret.Exorcism.IsReady(sim) && ret.ArtOfWarInstantCast.IsActive():
 			ret.Exorcism.Cast(sim, target)
+		case ret.DemonAndUndeadTargetCount >= 1 && ret.HolyWrath.IsReady(sim):
+			ret.HolyWrath.Cast(sim, target)
 		}
 	}
 
