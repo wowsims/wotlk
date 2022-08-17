@@ -279,7 +279,7 @@ func (shaman *Shaman) registerNaturesSwiftnessCD() {
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if (spell == shaman.LightningBolt || spell == shaman.ChainLightning) && !eleMastSpell.CD.IsReady(sim) {
-					*eleMastSpell.CD.Timer = core.Timer(time.Duration(*eleMastSpell.CD.Timer) - time.Second)
+					*eleMastSpell.CD.Timer = core.Timer(time.Duration(*eleMastSpell.CD.Timer) - time.Second*2)
 					shaman.UpdateMajorCooldowns() // this could get expensive because it will be called all the time.
 				}
 			},
