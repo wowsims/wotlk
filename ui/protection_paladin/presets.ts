@@ -1,4 +1,5 @@
 import { Conjured, Consumes } from '../core/proto/common.js';
+import { CustomRotation, CustomSpell } from '../core/proto/common.js';
 import { EquipmentSpec } from '../core/proto/common.js';
 import { Flask } from '../core/proto/common.js';
 import { Food } from '../core/proto/common.js';
@@ -15,6 +16,7 @@ import {
 	PaladinMajorGlyph,
 	PaladinMinorGlyph,
 	PaladinJudgement as PaladinJudgement,
+	ProtectionPaladin_Rotation_SpellOption as SpellOption,
 	ProtectionPaladin_Rotation as ProtectionPaladinRotation,
 	ProtectionPaladin_Options as ProtectionPaladinOptions,
 } from '../core/proto/paladin.js';
@@ -46,6 +48,17 @@ export const GenericAoeTalents = {
 
 export const DefaultRotation = ProtectionPaladinRotation.create({
 	prioritizeHolyShield: true,
+	customRotation: CustomRotation.create({
+		spells: [
+			CustomSpell.create({ spell: SpellOption.AvengersShield }),
+			CustomSpell.create({ spell: SpellOption.HammerOfTheRighteous }),
+			CustomSpell.create({ spell: SpellOption.ShieldOfRighteousness }),
+			CustomSpell.create({ spell: SpellOption.JudgementOfWisdom }),
+			CustomSpell.create({ spell: SpellOption.HammerOfWrath }),
+			CustomSpell.create({ spell: SpellOption.Consecration }),
+			CustomSpell.create({ spell: SpellOption.Exorcism })
+		],
+	}),
 });
 
 export const DefaultOptions = ProtectionPaladinOptions.create({

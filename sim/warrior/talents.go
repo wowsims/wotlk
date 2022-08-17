@@ -22,21 +22,21 @@ func (warrior *Warrior) ApplyTalents() {
 	}
 
 	if warrior.Talents.StrengthOfArms > 0 {
-		warrior.AddStatDependency(stats.Strength, stats.Strength, 1.0+0.01*float64(warrior.Talents.ImprovedBerserkerStance))
+		warrior.MultiplyStat(stats.Strength, 1.0+0.01*float64(warrior.Talents.ImprovedBerserkerStance))
 	}
 
 	// TODO: This should only be applied while berserker stance is active.
 	if warrior.Talents.ImprovedBerserkerStance > 0 {
-		warrior.AddStatDependency(stats.Strength, stats.Strength, 1.0+0.04*float64(warrior.Talents.ImprovedBerserkerStance))
+		warrior.MultiplyStat(stats.Strength, 1.0+0.04*float64(warrior.Talents.ImprovedBerserkerStance))
 	}
 
 	if warrior.Talents.ShieldMastery > 0 {
-		warrior.AddStatDependency(stats.BlockValue, stats.BlockValue, 1.0+0.1*float64(warrior.Talents.ShieldMastery))
+		warrior.MultiplyStat(stats.BlockValue, 1.0+0.1*float64(warrior.Talents.ShieldMastery))
 	}
 
 	if warrior.Talents.Vitality > 0 {
-		warrior.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+0.01*float64(warrior.Talents.Vitality))
-		warrior.AddStatDependency(stats.Strength, stats.Strength, 1.0+0.02*float64(warrior.Talents.Vitality))
+		warrior.MultiplyStat(stats.Stamina, 1.0+0.01*float64(warrior.Talents.Vitality))
+		warrior.MultiplyStat(stats.Strength, 1.0+0.02*float64(warrior.Talents.Vitality))
 	}
 
 	warrior.applyAngerManagement()
@@ -165,7 +165,7 @@ func (warrior *Warrior) applyBloodsurge() {
 
 	warrior.BloodsurgeAura = warrior.RegisterAura(core.Aura{
 		Label:    "Bloodsurge Proc",
-		ActionID: core.ActionID{SpellID: 46915},
+		ActionID: core.ActionID{SpellID: 46916},
 		Duration: time.Second * 5,
 	})
 
@@ -186,7 +186,7 @@ func (warrior *Warrior) applyBloodsurge() {
 			}
 
 			// Using heroic strike SpellID for now as Cleave and HS is a single spell variable
-			if spell.ActionID.SpellID != 47450 || spell != warrior.Bloodthirst || spell != warrior.Whirlwind {
+			if spell.ActionID.SpellID != 47450 && spell != warrior.Bloodthirst && spell != warrior.Whirlwind {
 				return
 			}
 

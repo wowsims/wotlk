@@ -20,10 +20,10 @@ func (shaman *Shaman) StormstrikeDebuffAura(target *core.Unit) *core.Aura {
 		Duration:  time.Second * 12,
 		MaxStacks: 4,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			shaman.AttackTables[aura.Unit.TableIndex].NatureDamageDealtMultiplier *= core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfStormstrike), 1.28, 1.2)
+			shaman.AttackTables[aura.Unit.UnitIndex].NatureDamageDealtMultiplier *= core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfStormstrike), 1.28, 1.2)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			shaman.AttackTables[aura.Unit.TableIndex].NatureDamageDealtMultiplier /= core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfStormstrike), 1.28, 1.2)
+			shaman.AttackTables[aura.Unit.UnitIndex].NatureDamageDealtMultiplier /= core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfStormstrike), 1.28, 1.2)
 
 		},
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
@@ -44,7 +44,7 @@ func (shaman *Shaman) StormstrikeDebuffAura(target *core.Unit) *core.Aura {
 func (shaman *Shaman) newStormstrikeHitSpell(isMH bool) *core.Spell {
 	effect := core.SpellEffect{
 		DamageMultiplier: core.TernaryFloat64(shaman.HasSetBonus(ItemSetWorldbreakerBattlegear, 2), 1.2, 1),
-		ThreatMultiplier: core.TernaryFloat64(shaman.Talents.SpiritWeapons, 0.7, 1),
+		ThreatMultiplier: 1,
 		OutcomeApplier:   shaman.OutcomeFuncMeleeSpecialCritOnly(shaman.DefaultMeleeCritMultiplier()),
 	}
 
@@ -146,8 +146,8 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 
 				mhHit.Cast(sim, spellEffect.Target)
 				ohHit.Cast(sim, spellEffect.Target)
-				shaman.Stormstrike.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 2
-				shaman.Stormstrike.SpellMetrics[spellEffect.Target.TableIndex].Hits--
+				shaman.Stormstrike.SpellMetrics[spellEffect.Target.UnitIndex].Casts -= 2
+				shaman.Stormstrike.SpellMetrics[spellEffect.Target.UnitIndex].Hits--
 			},
 		}),
 	})

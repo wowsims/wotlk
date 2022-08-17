@@ -38,7 +38,7 @@ func (hunter *Hunter) registerSilencingShotSpell() {
 				(1 + 0.01*float64(hunter.Talents.MarkedForDeath)),
 			ThreatMultiplier: 1,
 
-			BaseDamage:     core.BaseDamageConfigRangedWeapon(0),
+			BaseDamage:     core.BaseDamageConfigRangedWeapon(hunter.AmmoDamageBonus),
 			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, false, hunter.CurrentTarget)),
 		}),
 	})

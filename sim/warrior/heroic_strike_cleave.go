@@ -2,12 +2,19 @@ package warrior
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warrior *Warrior) registerHeroicStrikeSpell() {
 	cost := 15.0 - float64(warrior.Talents.ImprovedHeroicStrike) - float64(warrior.Talents.FocusedRage)
 	refundAmount := cost * 0.8
+
+	hasGlyph := warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfHeroicStrike)
+	var rageMetrics *core.ResourceMetrics
+	if hasGlyph {
+		rageMetrics = warrior.NewRageMetrics(core.ActionID{ItemID: 43418})
+	}
 
 	warrior.HeroicStrikeOrCleave = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47450},
@@ -38,6 +45,9 @@ func (warrior *Warrior) registerHeroicStrikeSpell() {
 				if !spellEffect.Landed() {
 					warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
 				}
+				if spellEffect.DidCrit() && hasGlyph {
+					warrior.AddRage(sim, 10, rageMetrics)
+				}
 			},
 		}),
 	})
@@ -59,7 +69,8 @@ func (warrior *Warrior) registerCleaveSpell() {
 		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(true)),
 	}
 
-	numHits := core.MinInt32(2, warrior.Env.GetNumTargets())
+	targets := core.TernaryInt32(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfCleaving), 3, 2)
+	numHits := core.MinInt32(targets, warrior.Env.GetNumTargets())
 	effects := make([]core.SpellEffect, 0, numHits)
 	for i := int32(0); i < numHits; i++ {
 		effects = append(effects, baseEffect)

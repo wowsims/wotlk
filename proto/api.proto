@@ -196,6 +196,7 @@ message DistributionMetrics {
 // All the results for a single Unit (player, target, or pet).
 message UnitMetrics {
 	string name = 9;
+	int32 unit_index = 13;
 
 	DistributionMetrics dps = 1;
 	DistributionMetrics threat = 8;

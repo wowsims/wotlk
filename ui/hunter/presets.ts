@@ -130,20 +130,20 @@ export const PRERAID_PRESET = {
 			"enchant": 44879,
 			"gems": [
 				41398,
-				40043
+				40044
 			]
 		},
 		{
 			"id": 42645,
 			"gems": [
-				39997
+				42143
 			]
 		},
 		{
 			"id": 37679,
 			"enchant": 44871,
 			"gems": [
-				39997
+				42143
 			]
 		},
 		{
@@ -152,9 +152,9 @@ export const PRERAID_PRESET = {
 		},
 		{
 			"id": 37144,
-			"enchant": 44623,
+			"enchant": 44489,
 			"gems": [
-				40023
+				40088
 			]
 		},
 		{
@@ -174,7 +174,7 @@ export const PRERAID_PRESET = {
 		{
 			"id": 37407,
 			"gems": [
-				39997
+				42143
 			]
 		},
 		{
@@ -195,7 +195,7 @@ export const PRERAID_PRESET = {
 		{
 			"id": 42642,
 			"gems": [
-				40043
+				39997
 			]
 		},
 		{
@@ -206,8 +206,9 @@ export const PRERAID_PRESET = {
 		},
 		{
 			"id": 44249,
-			"enchant": 44630
+			"enchant": 44483
 		},
+		{},
 		{
 			"id": 43284,
 			"enchant": 41167
@@ -225,20 +226,20 @@ export const P1_PRESET = {
 			"enchant": 44879,
 			"gems": [
 				41398,
-				40023
+				40088
 			]
 		},
 		{
 			"id": 44664,
 			"gems": [
-				40023
+				42143
 			]
 		},
 		{
 			"id": 40507,
 			"enchant": 44871,
 			"gems": [
-				39997
+				42143
 			]
 		},
 		{
@@ -247,17 +248,17 @@ export const P1_PRESET = {
 		},
 		{
 			"id": 43998,
-			"enchant": 44623,
+			"enchant": 44489,
 			"gems": [
-				39997,
-				40023
+				42143,
+				39997
 			]
 		},
 		{
 			"id": 40282,
 			"enchant": 60616,
 			"gems": [
-				40086,
+				39997,
 				0
 			]
 		},
@@ -279,7 +280,7 @@ export const P1_PRESET = {
 			"enchant": 38374,
 			"gems": [
 				39997,
-				40023
+				39997
 			]
 		},
 		{
@@ -300,8 +301,9 @@ export const P1_PRESET = {
 		},
 		{
 			"id": 40388,
-			"enchant": 44630
+			"enchant": 44483
 		},
+		{},
 		{
 			"id": 40385,
 			"enchant": 41167

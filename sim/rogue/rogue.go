@@ -44,6 +44,7 @@ type Rogue struct {
 	exposeArmorDurations  [6]time.Duration
 	disabledMCDs          []*core.MajorCooldown
 
+	Builder          *core.Spell
 	Backstab         *core.Spell
 	DeadlyPoison     *core.Spell
 	FanOfKnives      *core.Spell
@@ -149,11 +150,6 @@ func (rogue *Rogue) Initialize() {
 	}
 
 	rogue.finishingMoveEffectApplier = rogue.makeFinishingMoveEffectApplier()
-	if rogue.Env.GetNumTargets() > 3 {
-		rogue.SetMultiTargetPriorityList()
-	} else {
-		rogue.SetPriorityList()
-	}
 	rogue.DelayDPSCooldownsForArmorDebuffs()
 }
 
@@ -172,6 +168,7 @@ func (rogue *Rogue) ApplyEnergyTickMultiplier(multiplier float64) {
 
 func (rogue *Rogue) Reset(sim *core.Simulation) {
 	rogue.disabledMCDs = rogue.DisableAllEnabledCooldowns(core.CooldownTypeUnknown)
+	rogue.SetPriorityList(sim)
 }
 
 func (rogue *Rogue) MeleeCritMultiplier(isMH bool, applyLethality bool) float64 {
@@ -206,6 +203,9 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 	if rogue.Talents.Vigor {
 		maxEnergy += 10
 	}
+	if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfVigor) {
+		maxEnergy += 10
+	}
 	if rogue.HasSetBonus(ItemSetGladiatorsVestments, 4) {
 		maxEnergy += 10
 	}
@@ -219,9 +219,9 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 	})
 	rogue.applyPoisons()
 
-	rogue.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+1)
-	rogue.AddStatDependency(stats.Agility, stats.AttackPower, 1.0+1)
-	rogue.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/83.15))
+	rogue.AddStatDependency(stats.Strength, stats.AttackPower, 1)
+	rogue.AddStatDependency(stats.Agility, stats.AttackPower, 1)
+	rogue.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/83.15)
 
 	return rogue
 }

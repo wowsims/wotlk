@@ -37,6 +37,10 @@ export const ElementalShamanRotationConfig = {
 					name: 'Adaptive', value: RotationType.Adaptive,
 					tooltip: 'Dynamically adapts based on available mana to maximize CL casts without going OOM.',
 				},
+				{
+					name: 'Manual', value: RotationType.Manual,
+					tooltip: 'Allows custom selection of which spells to use and to modify cast conditions.',
+				},
 			],
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecElementalShaman>({
@@ -44,6 +48,54 @@ export const ElementalShamanRotationConfig = {
 			label: 'In Thunderstorm Range',
 			labelTooltip: 'Thunderstorm will hit all targets when cast. Ignores knockback.',
 			enableWhen: (player: Player<Spec.SpecElementalShaman>) => player.getTalents().thunderstorm,
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecElementalShaman>({
+			fieldName: 'useChainLightning',
+			label: 'Use Chain Lightning in Rotation',
+			labelTooltip: 'Use Chain Lightning in rotation',
+			enableWhen: (player: Player<Spec.SpecElementalShaman>) => player.getRotation().type == RotationType.Manual,
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecElementalShaman>({
+			fieldName: 'useClOnlyGap',
+			label: 'Use CL only as gap filler',
+			labelTooltip: 'Use CL to fill short gaps in LvB CD instead of on CD.',
+			enableWhen: (player: Player<Spec.SpecElementalShaman>) => player.getRotation().type == RotationType.Manual && player.getRotation().useChainLightning,
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecElementalShaman>({
+			fieldName: 'clMinManaPer',
+			label: 'Min mana percent to use Chain Lightning',
+			labelTooltip: 'Customize minimum mana level to cast Chain Lightning. 0 will spam until OOM.',
+			enableWhen: (player: Player<Spec.SpecElementalShaman>) => player.getRotation().type == RotationType.Manual && player.getRotation().useChainLightning,
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecElementalShaman>({
+			fieldName: 'useFireNova',
+			label: 'Use Fire Nova in Rotation',
+			labelTooltip: 'Fire Nova will hit all targets when cast.',
+			enableWhen: (player: Player<Spec.SpecElementalShaman>) => player.getRotation().type == RotationType.Manual,
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecElementalShaman>({
+			fieldName: 'fnMinManaPer',
+			label: 'Min mana percent to use FireNova',
+			labelTooltip: 'Customize minimum mana level to cast Fire Nova. 0 will spam until OOM.',
+			enableWhen: (player: Player<Spec.SpecElementalShaman>) => player.getRotation().type == RotationType.Manual && player.getRotation().useFireNova,
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecElementalShaman>({
+			fieldName: 'overwriteFlameshock',
+			label: 'Allow Flameshock to be overwritten',
+			labelTooltip: 'Will use flameshock at the end of the duration even if its still ticking if there isn\'t enough time to cast lavaburst before expiring.',
+			enableWhen: (player: Player<Spec.SpecElementalShaman>) => player.getRotation().type == RotationType.Manual,
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecElementalShaman>({
+			fieldName: 'alwaysCritLvb',
+			label: 'Only cast Lavaburst with FS',
+			labelTooltip: 'Will only cast Lavaburst if Flameshock will be active when the cast finishes.',
+			enableWhen: (player: Player<Spec.SpecElementalShaman>) => player.getRotation().type == RotationType.Manual,
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecElementalShaman>({
+			fieldName: 'useThunderstorm',
+			label: 'Allow Thunderstorm to be cast.',
+			labelTooltip: 'Disabling this will stop thunderstorm from being cast entirely.',
+			enableWhen: (player: Player<Spec.SpecElementalShaman>) => player.getRotation().type == RotationType.Manual,
 		}),
 	],
 };

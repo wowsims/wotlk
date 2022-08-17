@@ -73,13 +73,42 @@ export const SyncTypeInput = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecEnha
 });
 
 export const EnhancementShamanRotationConfig = {
-    inputs: 
+    inputs:
         [
+        InputHelpers.makeRotationBooleanInput<Spec.SpecEnhancementShaman>({
+            fieldName: 'lightningboltWeave',
+            label: 'Enable Weaving Lightning Bolt',
+            labelTooltip: 'Will provide a DPS increase, but is harder to execute',
+            enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getTalents().maelstromWeapon > 0,
+        }),
+        InputHelpers.makeRotationEnumInput<Spec.SpecEnhancementShaman, number>({
+            fieldName: 'maelstromweaponMinStack',
+            label: 'Minimum Maelstrom Stacks to Weave',
+            labelTooltip: '3 stacks is the most realistic, however there are cases where lower might be possible, just much harder to do in practice',
+            values: [
+                { name: '1', value: 1 },
+                { name: '2', value: 2 },
+                { name: '3', value: 3 },
+                { name: '4', value: 4 },
+                { name: '5', value: 5 }, // 5 is effectively disabled. likely unnessecary
+            ],
+            enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().lightningboltWeave,
+        }),
         InputHelpers.makeRotationBooleanInput<Spec.SpecEnhancementShaman>({
             fieldName: 'lavaburstWeave',
             label: 'Enable Weaving Lava Burst',
             labelTooltip: 'Not particularily useful for dual wield, mostly a 2h option',
-            //enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getTalents().maelstromWeapon,
+            enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().lightningboltWeave,
+        }),
+        InputHelpers.makeRotationNumberInput<Spec.SpecEnhancementShaman>({
+            fieldName: 'firenovaManaThreshold',
+            label: 'Minimum mana to cast Fire Nova',
+            labelTooltip: 'Fire Nova will not be cast when mana is below this value. Set this medium-low, it has a bad mana-to-damage ratio',
+        }),
+        InputHelpers.makeRotationNumberInput<Spec.SpecEnhancementShaman>({
+            fieldName: 'shamanisticRageManaThreshold',
+            label: 'Mana % to use Shamanistic Rage',
+            enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getTalents().shamanisticRage,
         }),
     ],
 };

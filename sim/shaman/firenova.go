@@ -18,6 +18,7 @@ func (shaman *Shaman) newFireNovaSpell() *core.Spell {
 	return shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 61657},
 		SpellSchool: core.SpellSchoolFire,
+		Flags:       SpellFlagFocusable,
 
 		ResourceType: stats.Mana,
 		BaseCost:     manaCost,

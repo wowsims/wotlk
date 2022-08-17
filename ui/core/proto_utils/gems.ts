@@ -1,8 +1,14 @@
 import { Gem } from '../proto/common.js';
 import { GemColor } from '../proto/common.js';
 import { Profession } from '../proto/common.js';
+import { getEnumValues } from '../utils.js';
 
-const socketToMatchingColors = new Map<GemColor, Array<GemColor>>();
+export const GEM_COLORS = (getEnumValues(GemColor) as Array<GemColor>).filter(color => color != GemColor.GemColorUnknown);
+export const PRIMARY_COLORS = [GemColor.GemColorRed, GemColor.GemColorYellow, GemColor.GemColorBlue];
+// Secondary is intentionally ordered so that it matches the inverse of PRIMARY_COLORS.
+export const SECONDARY_COLORS = [GemColor.GemColorGreen, GemColor.GemColorPurple, GemColor.GemColorOrange];
+
+export const socketToMatchingColors = new Map<GemColor, Array<GemColor>>();
 socketToMatchingColors.set(GemColor.GemColorMeta, [GemColor.GemColorMeta]);
 socketToMatchingColors.set(GemColor.GemColorBlue, [GemColor.GemColorBlue, GemColor.GemColorPurple, GemColor.GemColorGreen, GemColor.GemColorPrismatic]);
 socketToMatchingColors.set(GemColor.GemColorRed, [GemColor.GemColorRed, GemColor.GemColorPurple, GemColor.GemColorOrange, GemColor.GemColorPrismatic]);
@@ -17,9 +23,13 @@ socketToMatchingColors.set(GemColor.GemColorPrismatic, [
     GemColor.GemColorPrismatic,
 ]);
 
+export function gemColorMatchesSocket(gemColor: GemColor, socketColor: GemColor) {
+    return gemColor == socketColor || (socketToMatchingColors.has(socketColor) && socketToMatchingColors.get(socketColor)!.includes(gemColor));
+}
+
 // Whether the gem matches the given socket color, for the purposes of gaining the socket bonuses.
 export function gemMatchesSocket(gem: Gem, socketColor: GemColor) {
-    return gem.color == socketColor || (socketToMatchingColors.has(socketColor) && socketToMatchingColors.get(socketColor)!.includes(gem.color));
+	return gemColorMatchesSocket(gem.color, socketColor);
 }
 
 // Whether the gem is capable of slotting into a socket of the given color.
@@ -71,6 +81,22 @@ export class MetaGemCondition {
         const numLesser = MetaGemCondition.getNumInCategory(this.compareColorLesser, numRed, numYellow, numBlue);
         return numGreater > numLesser;
     }
+
+		isCompareColorCondition(): boolean {
+			return this.minRed == 0 && this.minYellow == 0 && this.minBlue == 0;
+		}
+
+		isOneOfEach(): boolean {
+			return this.minRed == 1 && this.minYellow == 1 && this.minBlue == 1;
+		}
+
+		isTwoAndOne(): boolean {
+			return [this.minRed, this.minYellow, this.minBlue].includes(2);
+		}
+
+		isThreeOfAColor(): boolean {
+			return this.minRed == 3 || this.minYellow == 3 || this.minBlue == 3;
+		}
 
     private static getNumInCategory(gemColor: GemColor, numRed: number, numYellow: number, numBlue: number): number {
         if (gemColor == GemColor.GemColorRed) {

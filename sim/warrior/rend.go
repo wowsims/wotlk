@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -51,7 +52,7 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64) {
 			Label:    "Rends-" + strconv.Itoa(int(warrior.Index)),
 			ActionID: actionID,
 		}),
-		NumberOfTicks: 5,
+		NumberOfTicks: core.TernaryInt(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfRending), 7, 5),
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,

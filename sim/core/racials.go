@@ -38,18 +38,20 @@ func applyRaceEffects(agent Agent) {
 
 		// TODO: Stoneform
 		actionID := ActionID{SpellID: 20594}
+
+		statDep := character.NewDynamicMultiplyStat(stats.Armor, 1.1)
 		stoneFormAura := character.NewTemporaryStatsAuraWrapped("Stoneform", actionID, stats.Stats{}, time.Second*8, func(aura *Aura) {
 			oldOnGain := aura.OnGain
 			oldOnExpire := aura.OnExpire
 
 			aura.OnGain = func(aura *Aura, sim *Simulation) {
 				oldOnGain(aura, sim)
-				aura.Unit.AddStatDependencyDynamic(sim, stats.Armor, stats.Armor, 1.1)
+				aura.Unit.EnableDynamicStatDep(sim, statDep)
 			}
 
 			aura.OnExpire = func(aura *Aura, sim *Simulation) {
 				oldOnExpire(aura, sim)
-				aura.Unit.AddStatDependencyDynamic(sim, stats.Armor, stats.Armor, 1.0/1.1)
+				aura.Unit.DisableDynamicStatDep(sim, statDep)
 			}
 		})
 
@@ -73,9 +75,9 @@ func applyRaceEffects(agent Agent) {
 		})
 	case proto.Race_RaceGnome:
 		character.PseudoStats.ReducedArcaneHitTakenChance += 0.02
-		character.AddStatDependency(stats.Intellect, stats.Intellect, 1.0+0.05)
+		character.MultiplyStat(stats.Intellect, 1.05)
 	case proto.Race_RaceHuman:
-		character.AddStatDependency(stats.Spirit, stats.Spirit, 1.0+0.03)
+		character.MultiplyStat(stats.Spirit, 1.03)
 		applyWeaponSpecialization(
 			character,
 			3*ExpertisePerQuarterPercentReduction,

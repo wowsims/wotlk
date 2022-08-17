@@ -39,7 +39,7 @@ func (shaman *Shaman) newElectricSpellConfig(actionID core.ActionID, baseCost fl
 	spell := core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolNature,
-		Flags:        SpellFlagElectric,
+		Flags:        SpellFlagElectric | SpellFlagFocusable,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

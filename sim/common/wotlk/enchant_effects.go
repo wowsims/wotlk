@@ -424,14 +424,16 @@ func init() {
 			oldOnGain := aura.OnGain
 			oldOnExpire := aura.OnExpire
 
+			statDep := character.NewDynamicMultiplyStat(stats.Strength, 1.15)
+
 			aura.OnGain = func(aura *core.Aura, sim *core.Simulation) {
 				oldOnGain(aura, sim)
-				aura.Unit.AddStatDependencyDynamic(sim, stats.Strength, stats.Strength, 1.15)
+				aura.Unit.EnableDynamicStatDep(sim, statDep)
 			}
 
 			aura.OnExpire = func(aura *core.Aura, sim *core.Simulation) {
 				oldOnExpire(aura, sim)
-				aura.Unit.AddStatDependencyDynamic(sim, stats.Strength, stats.Strength, 1.0/1.15)
+				aura.Unit.DisableDynamicStatDep(sim, statDep)
 			}
 		})
 	}

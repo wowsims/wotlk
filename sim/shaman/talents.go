@@ -35,27 +35,27 @@ func (shaman *Shaman) ApplyTalents() {
 	}
 
 	if shaman.Talents.Toughness > 0 {
-		shaman.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+0.02*float64(shaman.Talents.Toughness))
+		shaman.MultiplyStat(stats.Stamina, 1.0+0.02*float64(shaman.Talents.Toughness))
 	}
 
 	if shaman.Talents.UnrelentingStorm > 0 {
-		shaman.AddStatDependency(stats.Intellect, stats.MP5, 1.0+0.04*float64(shaman.Talents.UnrelentingStorm))
+		shaman.AddStatDependency(stats.Intellect, stats.MP5, 0.04*float64(shaman.Talents.UnrelentingStorm))
 	}
 
 	if shaman.Talents.AncestralKnowledge > 0 {
-		shaman.AddStatDependency(stats.Intellect, stats.Intellect, 1.0+0.02*float64(shaman.Talents.AncestralKnowledge))
+		shaman.MultiplyStat(stats.Intellect, 1.0+0.02*float64(shaman.Talents.AncestralKnowledge))
 	}
 
 	if shaman.Talents.MentalQuickness > 0 {
-		shaman.AddStatDependency(stats.AttackPower, stats.SpellPower, 1.0+0.1*float64(shaman.Talents.MentalQuickness))
+		shaman.AddStatDependency(stats.AttackPower, stats.SpellPower, 0.1*float64(shaman.Talents.MentalQuickness))
 	}
 
 	if shaman.Talents.MentalDexterity > 0 {
-		shaman.AddStatDependency(stats.Intellect, stats.AttackPower, 1.0+0.3333*float64(shaman.Talents.MentalDexterity))
+		shaman.AddStatDependency(stats.Intellect, stats.AttackPower, 0.3333*float64(shaman.Talents.MentalDexterity))
 	}
 
 	if shaman.Talents.NaturesBlessing > 0 {
-		shaman.AddStatDependency(stats.Intellect, stats.SpellPower, 1.0+0.1*float64(shaman.Talents.NaturesBlessing))
+		shaman.AddStatDependency(stats.Intellect, stats.SpellPower, 0.1*float64(shaman.Talents.NaturesBlessing))
 	}
 
 	if shaman.Talents.SpiritWeapons {
@@ -86,7 +86,7 @@ func (shaman *Shaman) applyElementalFocus() {
 		Duration:  time.Second * 15,
 		MaxStacks: 2,
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if !spell.Flags.Matches(SpellFlagShock | SpellFlagElectric | SpellFlagFireNova) {
+			if !spell.Flags.Matches(SpellFlagShock | SpellFlagFocusable) {
 				return
 			}
 			if spell.ActionID.Tag != 0 { // Filter LO casts
@@ -103,7 +103,7 @@ func (shaman *Shaman) applyElementalFocus() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spell.Flags.Matches(SpellFlagShock | SpellFlagElectric) {
+			if !spell.Flags.Matches(SpellFlagShock | SpellFlagFocusable) {
 				return
 			}
 			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
@@ -201,7 +201,7 @@ func (shaman *Shaman) registerElementalMasteryCD() {
 		},
 	})
 
-	spell := shaman.RegisterSpell(core.SpellConfig{
+	eleMastSpell := shaman.RegisterSpell(core.SpellConfig{
 		ActionID: eleMasterActionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 		Cast: core.CastConfig{
@@ -217,9 +217,25 @@ func (shaman *Shaman) registerElementalMasteryCD() {
 	})
 
 	shaman.AddMajorCooldown(core.MajorCooldown{
-		Spell: spell,
+		Spell: eleMastSpell,
 		Type:  core.CooldownTypeDPS,
 	})
+
+	if shaman.HasSetBonus(ItemSetFrostWitchRegalia, 2) {
+		shaman.RegisterAura(core.Aura{
+			Label:    "Shaman T10 Elemental 2P Bonus",
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if (spell == shaman.LightningBolt || spell == shaman.ChainLightning) && !eleMastSpell.CD.IsReady(sim) {
+					*eleMastSpell.CD.Timer = core.Timer(time.Duration(*eleMastSpell.CD.Timer) - time.Second*2)
+					shaman.UpdateMajorCooldowns() // this could get expensive because it will be called all the time.
+				}
+			},
+		})
+	}
 }
 
 func (shaman *Shaman) registerNaturesSwiftnessCD() {
@@ -246,7 +262,7 @@ func (shaman *Shaman) registerNaturesSwiftnessCD() {
 		},
 	})
 
-	eleMastSpell := shaman.RegisterSpell(core.SpellConfig{
+	nsSpell := shaman.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 		Cast: core.CastConfig{
@@ -261,7 +277,7 @@ func (shaman *Shaman) registerNaturesSwiftnessCD() {
 	})
 
 	shaman.AddMajorCooldown(core.MajorCooldown{
-		Spell: eleMastSpell,
+		Spell: nsSpell,
 		Type:  core.CooldownTypeDPS,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
 			// Don't use NS unless we're casting a full-length lightning bolt, which is
@@ -269,22 +285,6 @@ func (shaman *Shaman) registerNaturesSwiftnessCD() {
 			return !character.HasTemporarySpellCastSpeedIncrease()
 		},
 	})
-
-	if shaman.HasSetBonus(ItemSetFrostWitchRegalia, 2) {
-		shaman.RegisterAura(core.Aura{
-			Label:    "Shaman T10 Elemental 2P Bonus",
-			Duration: core.NeverExpires,
-			OnReset: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Activate(sim)
-			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if (spell == shaman.LightningBolt || spell == shaman.ChainLightning) && !eleMastSpell.CD.IsReady(sim) {
-					*eleMastSpell.CD.Timer = core.Timer(time.Duration(*eleMastSpell.CD.Timer) - time.Second)
-					shaman.UpdateMajorCooldowns() // this could get expensive because it will be called all the time.
-				}
-			},
-		})
-	}
 }
 
 func (shaman *Shaman) applyFlurry() {
@@ -355,15 +355,16 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 	if shaman.HasSetBonus(ItemSetFrostWitchBattlegear, 4) {
 		enhT10Bonus = true
 
+		statDep := shaman.NewDynamicMultiplyStat(stats.AttackPower, 1.2)
 		t10BonusAura = shaman.RegisterAura(core.Aura{
 			Label:    "Maelstrom Power",
 			ActionID: core.ActionID{SpellID: 70831},
 			Duration: time.Second * 10,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				shaman.AddStatDependencyDynamic(sim, stats.AttackPower, stats.AttackPower, 1.2)
+				shaman.EnableDynamicStatDep(sim, statDep)
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				shaman.AddStatDependencyDynamic(sim, stats.AttackPower, stats.AttackPower, 1/1.2)
+				shaman.DisableDynamicStatDep(sim, statDep)
 			},
 		})
 	}
@@ -380,7 +381,9 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 		MaxStacks: 5,
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
 			if enhT10Bonus && shaman.MaelstromWeaponAura.GetStacks() == 5 {
-				t10BonusAura.Activate(sim)
+				if sim.RandomFloat("Maelstrom Power") < 0.15 {
+					t10BonusAura.Activate(sim)
+				}
 			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

@@ -212,7 +212,7 @@ class ItemPicker extends Component {
 
 				if (gemIdx == newItem.numPossibleSockets - 1 && [ItemType.ItemTypeWrist, ItemType.ItemTypeHands].includes(newItem.item.type)) {
 					const updateProfession = () => {
-						if (this.player.hasProfession(Profession.Blacksmithing)) {
+						if (this.player.isBlacksmithing()) {
 							gemIconElem.style.removeProperty('display');
 						} else {
 							gemIconElem.style.display = 'none';
@@ -332,7 +332,7 @@ class SelectorModal extends Popup {
 		}
 
 		const socketBonusEP = this.player.computeStatsEP(new Stats(equippedItem.item.socketBonus)) / (equippedItem.item.gemSockets.length || 1);
-		equippedItem.curSocketColors(this.player.hasProfession(Profession.Blacksmithing)).forEach((socketColor, socketIdx) => {
+		equippedItem.curSocketColors(this.player.isBlacksmithing()).forEach((socketColor, socketIdx) => {
 			this.addTab(
 				'Gem ' + (socketIdx + 1),
 				slot,

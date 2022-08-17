@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -55,14 +56,14 @@ func (warrior *Warrior) registerSweepingStrikesCD() {
 			curDmg = spellEffect.Damage / warrior.AttackTables[spellEffect.Target.Index].ArmorDamageModifier
 
 			ssHit.Cast(sim, warrior.Env.NextTargetUnit(spellEffect.Target))
-			ssHit.SpellMetrics[spellEffect.Target.TableIndex].Casts--
+			ssHit.SpellMetrics[spellEffect.Target.UnitIndex].Casts--
 			if aura.GetStacks() > 0 {
 				aura.RemoveStack(sim)
 			}
 		},
 	})
 
-	cost := 30.0
+	cost := core.TernaryFloat64(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfSweepingStrikes), 0.0, 30.0)
 	ssCD := warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,

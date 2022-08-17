@@ -33,6 +33,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
 				'Rotations are not fully optimized, especially for non-standard setups.',
+				'Subtlety specs are not currently supported.'
 			],
 			warnings: [
 				(simUI: IndividualSimUI<Spec.SpecRogue>) => {
@@ -70,6 +71,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 				Stat.StatStrength,
 				Stat.StatAttackPower,
 				Stat.StatMeleeHit,
+				Stat.StatSpellHit,
 				Stat.StatMeleeCrit,
 				Stat.StatMeleeHaste,
 				Stat.StatArmorPenetration,
@@ -162,8 +164,8 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 			presets: {
 				// Preset talents that the user can quickly select.
 				talents: [
-					Presets.CombatTalents,
 					Presets.AssassinationTalents,
+					Presets.CombatTalents,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
