@@ -37,6 +37,17 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	curse := warlock.Rotation.Curse
 
 	// ------------------------------------------
+	// Data
+	// ------------------------------------------
+	if warlock.Talents.DemonicPact > 0 && sim.CurrentTime != 0 {
+		// We are integrating the Demonic Pact SP bonus over the course of the simulation to get the average
+		warlock.DPSPAverage *= float64(warlock.PreviousTime)
+		warlock.DPSPAverage += core.DemonicPactAura(warlock.GetCharacter(), 0).Priority * float64(sim.CurrentTime - warlock.PreviousTime)
+		warlock.DPSPAverage /= float64(sim.CurrentTime)
+		warlock.PreviousTime = sim.CurrentTime
+	}
+
+	// ------------------------------------------
 	// AoE (Seed)
 	// ------------------------------------------
 	if mainSpell == proto.Warlock_Rotation_Seed {
@@ -224,7 +235,13 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	CurrentCorruptionRolloverMult := CurrentDmgMult * CurrentShadowMult * CurrentCritMult
 
 	if sim.Log != nil {
-		warlock.Log(sim, "Current Corruption Rollover Multiplier [%d]", CurrentCorruptionRolloverMult)
+		if warlock.Talents.EverlastingAffliction > 0 {
+			warlock.Log(sim, "[Info] Initial Corruption Rollover Multiplier [%.2f]", warlock.CorruptionRolloverMult)
+			warlock.Log(sim, "[Info] Current Corruption Rollover Multiplier [%.2f]", CurrentCorruptionRolloverMult)
+		}
+		if warlock.Talents.DemonicPact > 0 {
+			warlock.Log(sim, "[Info] Demonic Pact Spell Power Average [%.0f]", warlock.DPSPAverage)
+		}
 	}
 
 	if preset == proto.Warlock_Rotation_Automatic {

@@ -1,6 +1,7 @@
 package warlock
 
 import (
+	"time"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -65,9 +66,11 @@ type Warlock struct {
 	GlyphOfLifeTapAura *core.Aura
 
 	// Rotation related memory
-	DoingRegen             bool
-	PrevCastSECheck        *core.Spell
-	CorruptionRolloverMult float64
+	DoingRegen 				bool
+	PrevCastSECheck 		*core.Spell
+	CorruptionRolloverMult  float64
+	DPSPAverage				float64
+	PreviousTime			time.Duration
 }
 
 func (warlock *Warlock) GetCharacter() *core.Character {
