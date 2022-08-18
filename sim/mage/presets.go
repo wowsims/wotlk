@@ -189,10 +189,10 @@ var FullArcanePartyBuffs = &proto.PartyBuffs{
 var FullArcaneIndividualBuffs = FullIndividualBuffs
 
 var FullFireConsumes = &proto.Consumes{
-	Flask:           proto.Flask_FlaskOfTheFrostWyrm,
-	Food:            proto.Food_FoodFirecrackerSalmon,
-	DefaultPotion:   proto.Potions_PotionOfSpeed,
-	DefaultConjured: proto.Conjured_ConjuredFlameCap,
+	Flask:         proto.Flask_FlaskOfTheFrostWyrm,
+	Food:          proto.Food_FoodFirecrackerSalmon,
+	DefaultPotion: proto.Potions_PotionOfSpeed,
+	// DefaultConjured: proto.Conjured_ConjuredFlameCap,
 }
 var FullFrostConsumes = FullFireConsumes
 

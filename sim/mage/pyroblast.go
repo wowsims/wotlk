@@ -15,7 +15,7 @@ func (mage *Mage) registerPyroblastSpell() {
 	mage.Pyroblast = mage.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolFire,
-		Flags:       SpellFlagMage | HotStreakSpells,
+		Flags:       SpellFlagMage,
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -29,7 +29,11 @@ func (mage *Mage) registerPyroblastSpell() {
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				if mage.HotStreakAura.IsActive() {
+					if mage.MageTier.t10_2 {
+						bloodmageHasteAura.Activate(sim)
+					}
 					cast.CastTime = 0
+					// cast.AfterCastDelay could be used for CQS to avoid ignite munching. Going to wait to implement for now though
 					if !mage.MageTier.t8_4 || sim.RandomFloat("MageT84PC") > .1 {
 						mage.HotStreakAura.Deactivate(sim)
 					}
@@ -43,19 +47,21 @@ func (mage *Mage) registerPyroblastSpell() {
 			BonusSpellCritRating: 0 +
 				float64(mage.Talents.CriticalMass+mage.Talents.WorldInFlames)*2*core.CritRatingPerCritChance,
 
-			DamageMultiplier: mage.spellDamageMultiplier * (1 + 0.02*float64(mage.Talents.FirePower)) *
-				(1 + .04*float64(mage.Talents.TormentTheWeak)),
+			DamageMultiplier: mage.spellDamageMultiplier * (1 + .04*float64(mage.Talents.TormentTheWeak)),
 
 			ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
-			BaseDamage:     core.BaseDamageConfigMagic(1210, 1531, 1.15),
-			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, mage.bonusCritDamage)),
+			BaseDamage: core.BaseDamageConfigMagic(1210, 1531, 1.15+0.05*float64(mage.Talents.EmpoweredFire)),
+			// BaseDamage:     core.BaseDamageConfigMagicNoRoll((1210+1531)/2, 1.15+0.05*float64(mage.Talents.EmpoweredFire)),
+			OutcomeApplier: mage.fireSpellOutcomeApplier(mage.bonusCritDamage),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					mage.PyroblastDot.Apply(sim)
 				}
 			},
+
+			MissileSpeed: 22,
 		}),
 	})
 
