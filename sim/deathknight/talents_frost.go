@@ -219,9 +219,7 @@ func (dk *Deathknight) botnAndReaping(sim *core.Simulation, spell *core.Spell) {
 		}
 	}
 
-	// TODO: Remove this, we're never out of combat in wowsims
-	revertAt := sim.CurrentTime + time.Second*100
-	dk.ConvertToDeath(sim, dk.BloodRuneSpentAt(sim.CurrentTime), true, revertAt)
+	dk.ConvertToDeath(sim, dk.BloodRuneSpentAt(sim.CurrentTime), true, core.NeverExpires)
 }
 
 func (dk *Deathknight) applyThreatOfThassarian() {
@@ -230,17 +228,6 @@ func (dk *Deathknight) applyThreatOfThassarian() {
 
 func (dk *Deathknight) threatOfThassarianWillProc(sim *core.Simulation) bool {
 	return sim.RandomFloat("Threat of Thassarian") <= dk.bonusCoeffs.threatOfThassarianChance
-}
-
-func (dk *Deathknight) threatOfThassarianAdjustMetrics(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, mhOutcome core.HitOutcome) {
-	spell.SpellMetrics[spellEffect.Target.UnitIndex].Casts -= 1
-	if mhOutcome == core.OutcomeHit {
-		spell.SpellMetrics[spellEffect.Target.UnitIndex].Hits -= 1
-	} else if mhOutcome == core.OutcomeCrit {
-		spell.SpellMetrics[spellEffect.Target.UnitIndex].Hits -= 1
-	} else {
-		spell.SpellMetrics[spellEffect.Target.UnitIndex].Hits -= 2
-	}
 }
 
 func (dk *Deathknight) threatOfThassarianProcMasks(isMH bool, effect *core.SpellEffect, isGuileOfGorefiendStrike bool, isMightOfMograineStrike bool, wrapper func(outcomeApplier core.OutcomeApplier) core.OutcomeApplier) {

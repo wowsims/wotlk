@@ -116,11 +116,11 @@ func (rp *RunicPowerBar) GainDeathRuneMetrics(sim *Simulation, spell *Spell, cur
 		}
 	}
 }
+
 func (rp *RunicPowerBar) CancelBloodTap(sim *Simulation) {
-	if rp.btslot == -1 {
+	if rp.btslot == -1 || rp.runeMeta[rp.btslot].revertOnSpend {
 		return
 	}
-
 	rp.ConvertFromDeath(sim, rp.btslot)
 	rp.btslot = -1
 }

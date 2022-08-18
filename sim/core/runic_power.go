@@ -380,7 +380,7 @@ func (rp *RunicPowerBar) ConvertFromDeath(sim *Simulation, slot int32) {
 	rp.runeMeta[slot].revertAt = NeverExpires
 	rp.runeMeta[slot].revertOnSpend = false
 
-	if !rp.isACopy {
+	if !rp.isACopy && rp.runeStates&isSpents[slot] == 0 {
 		metrics := rp.bloodRuneGainMetrics
 		onGain := rp.onBloodRuneGain
 		if slot == 2 || slot == 3 {
@@ -397,14 +397,22 @@ func (rp *RunicPowerBar) ConvertFromDeath(sim *Simulation, slot int32) {
 }
 
 // ConvertToDeath converts the given slot to death and sets up the revertion conditions
+// ConvertToDeath converts the given slot to death and sets up the revertion conditions
 func (rp *RunicPowerBar) ConvertToDeath(sim *Simulation, slot int32, revertOnSpend bool, revertAt time.Duration) {
 	rp.runeStates = rp.runeStates | isDeaths[slot]
-	if rp.runeMeta[slot].revertAt != NeverExpires {
-		rp.runeMeta[slot].revertAt = MaxDuration(rp.runeMeta[slot].revertAt, revertAt)
+
+	// revertOnSpend == true overrides anything
+	rp.runeMeta[slot].revertOnSpend = rp.runeMeta[slot].revertOnSpend || revertOnSpend
+
+	if rp.runeMeta[slot].revertOnSpend {
+		rp.runeMeta[slot].revertAt = NeverExpires
 	} else {
-		rp.runeMeta[slot].revertAt = revertAt
+		if rp.runeMeta[slot].revertAt != NeverExpires {
+			rp.runeMeta[slot].revertAt = MaxDuration(rp.runeMeta[slot].revertAt, revertAt)
+		} else {
+			rp.runeMeta[slot].revertAt = revertAt
+		}
 	}
-	rp.runeMeta[slot].revertOnSpend = revertOnSpend
 
 	// Note we gained
 	if !rp.isACopy {
