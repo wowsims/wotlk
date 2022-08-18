@@ -9,7 +9,7 @@ var ScourgeStrikeActionID = core.ActionID{SpellID: 55271}
 
 // this is just a simple spell because it has no rune costs and is really just a wrapper.
 func (dk *Deathknight) registerScourgeStrikeShadowDamageSpell() *core.Spell {
-	diseaseMulti := dk.diseaseMultiplier(0.12)
+	diseaseMulti := dk.dkDiseaseMultiplier(0.12)
 
 	return dk.Unit.RegisterSpell(core.SpellConfig{
 		ActionID:    ScourgeStrikeActionID.WithTag(2),
@@ -26,7 +26,7 @@ func (dk *Deathknight) registerScourgeStrikeShadowDamageSpell() *core.Spell {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return dk.LastScourgeStrikeDamage * (diseaseMulti * dk.countActiveDiseases(hitEffect.Target))
+					return dk.LastScourgeStrikeDamage * (diseaseMulti * dk.dkCountActiveDiseases(hitEffect.Target))
 				},
 			},
 		}),

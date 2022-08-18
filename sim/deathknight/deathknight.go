@@ -52,8 +52,13 @@ type Deathknight struct {
 	Gargoyle       *GargoylePet
 	SummonGargoyle *RuneSpell
 
+	RuneWeapon        *RuneWeaponPet
+	DancingRuneWeapon *RuneSpell
+
 	ArmyOfTheDead *RuneSpell
 	ArmyGhoul     []*GhoulPet
+
+	Bloodworm []*BloodwormPet
 
 	Presence Presence
 
@@ -80,6 +85,9 @@ type Deathknight struct {
 	FrostStrike      *RuneSpell
 	FrostStrikeMhHit *RuneSpell
 	FrostStrikeOhHit *RuneSpell
+
+	HeartStrike       *RuneSpell
+	HeartStrikeOffHit *RuneSpell
 
 	GhoulFrenzy *RuneSpell
 	// Dummy aura for timeline metrics
@@ -141,6 +149,7 @@ type Deathknight struct {
 	ButcheryPA          *core.PendingAction
 	RimeAura            *core.Aura
 	BladeBarrierAura    *core.Aura
+	SuddenDoomAura      *core.Aura
 
 	// Talent Spells
 	LastDiseaseDamage float64
@@ -226,12 +235,14 @@ func (dk *Deathknight) Initialize() {
 	dk.registerRuneTapSpell()
 	dk.registerIceboundFortitudeSpell()
 	dk.registerDeathStrikeSpell()
+	dk.registerHeartStrikeSpell()
 
 	dk.registerAntiMagicShellSpell()
 
 	dk.registerRaiseDeadCD()
 	dk.registerSummonGargoyleCD()
 	dk.registerArmyOfTheDeadCD()
+	dk.registerDancingRuneWeaponCD()
 }
 
 func (dk *Deathknight) ResetBonusCoeffs() {
@@ -328,6 +339,13 @@ func NewDeathknight(character core.Character, talents proto.DeathknightTalents, 
 	for i := 0; i < 8; i++ {
 		dk.ArmyGhoul[i] = dk.NewArmyGhoulPet(i)
 	}
+
+	dk.Bloodworm = make([]*BloodwormPet, 4)
+	for i := 0; i < 4; i++ {
+		dk.Bloodworm[i] = dk.NewBloodwormPet(i)
+	}
+
+	dk.RuneWeapon = dk.NewRuneWeapon()
 
 	dk.RotationSequence = &Sequence{}
 

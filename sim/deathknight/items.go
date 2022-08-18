@@ -113,7 +113,7 @@ func (dk *Deathknight) registerThassariansBattlegearProc() {
 	core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
 		Label: "Unholy Might",
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if !icd.IsReady(sim) || (spell != dk.BloodStrike.Spell /* && spell != dk.HeartStrike*/) {
+			if !icd.IsReady(sim) || (spell != dk.BloodStrike.Spell && spell != dk.HeartStrike.Spell) {
 				return
 			}
 
@@ -179,9 +179,9 @@ func (dk *Deathknight) scourgelordsBattlegearDamageBonus(spell *RuneSpell) float
 
 	if spell == dk.Obliterate || spell == dk.ScourgeStrike {
 		return 1.1
-	} /* else if spell == dk.HeartStrike {
+	} else if spell == dk.HeartStrike {
 		return 1.07
-	}*/
+	}
 	return 1.0
 }
 

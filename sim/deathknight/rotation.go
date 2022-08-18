@@ -40,6 +40,29 @@ func (dk *Deathknight) RotationActionCallback_HW(sim *core.Simulation, target *c
 	return -1
 }
 
+func (dk *Deathknight) RotationActionCallback_DRW(sim *core.Simulation, target *core.Unit, s *Sequence) time.Duration {
+	casted := dk.DancingRuneWeapon.Cast(sim, target)
+
+	s.ConditionalAdvance(casted)
+	return -1
+}
+
+func (dk *Deathknight) RotationActionCallback_DS(sim *core.Simulation, target *core.Unit, s *Sequence) time.Duration {
+	casted := dk.DeathStrike.Cast(sim, target)
+	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
+
+	s.ConditionalAdvance(casted && advance)
+	return -1
+}
+
+func (dk *Deathknight) RotationActionCallback_HS(sim *core.Simulation, target *core.Unit, s *Sequence) time.Duration {
+	casted := dk.HeartStrike.Cast(sim, target)
+	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
+
+	s.ConditionalAdvance(casted && advance)
+	return -1
+}
+
 func (dk *Deathknight) RotationActionCallback_UA(sim *core.Simulation, target *core.Unit, s *Sequence) time.Duration {
 	casted := dk.UnbreakableArmor.Cast(sim, target)
 	s.ConditionalAdvance(casted)

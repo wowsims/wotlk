@@ -84,6 +84,21 @@ export const Unholy2HTalents = {
 	}),
 };
 
+export const BloodTalents = {
+	name: 'Blood DPS',
+	data: SavedTalents.create({
+		talentsString: '2305020530003303231023101351--230220305003',
+		glyphs: Glyphs.create({
+			major1: DeathknightMajorGlyph.GlyphOfDancingRuneWeapon,
+			major2: DeathknightMajorGlyph.GlyphOfDeathStrike,
+			major3: DeathknightMajorGlyph.GlyphOfDisease,
+			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
+			minor2: DeathknightMinorGlyph.GlyphOfPestilence,
+			minor3: DeathknightMinorGlyph.GlyphOfRaiseDead,
+		}),
+	}),
+};
+
 export const DefaultUnholyRotation = DeathKnightRotation.create({
   useDeathAndDecay: true,
   btGhoulFrenzy: false,
@@ -822,4 +837,100 @@ export const P1_FROST_GAME_BIS_PRESET = {
     "id": 50459
   }
 ]}`),
+};
+
+export const P1_BLOOD_BIS_PRESET = {
+	name: 'P1 BiS Blood',
+	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().dancingRuneWeapon,
+	gear: EquipmentSpec.fromJsonString(`{ "items": [
+    {
+      "id": 44006,
+      "enchant": 44879,
+      "gems": [
+        41400,
+        49110
+      ]
+    },
+    {
+      "id": 44664,
+      "gems": [
+        39996
+      ]
+    },
+    {
+      "id": 40557,
+      "enchant": 44871,
+      "gems": [
+        39996
+      ]
+    },
+    {
+      "id": 40403,
+      "enchant": 44472
+    },
+    {
+      "id": 40550,
+      "enchant": 44489,
+      "gems": [
+        42142,
+        39996
+      ]
+    },
+    {
+      "id": 40330,
+      "enchant": 44484,
+      "gems": [
+        39996,
+        0
+      ]
+    },
+    {
+      "id": 40552,
+      "enchant": 54999,
+      "gems": [
+        40038,
+        0
+      ]
+    },
+    {
+      "id": 40278,
+      "gems": [
+        42142,
+        42142
+      ]
+    },
+    {
+      "id": 40556,
+      "enchant": 38374,
+      "gems": [
+        39996,
+        39996
+      ]
+    },
+    {
+      "id": 40591,
+      "enchant": 55016
+    },
+    {
+      "id": 39401
+    },
+    {
+      "id": 40075
+    },
+    {
+      "id": 40256
+    },
+    {
+      "id": 42987
+    },
+    {
+      "id": 40384,
+      "enchant": 53344
+    },
+    {},
+    {
+      "id": 40207
+    }
+  ]}`),
 };

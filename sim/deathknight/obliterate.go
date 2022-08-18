@@ -16,7 +16,7 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool, onhit func(sim *core.Sim
 		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 584.0+bonusBaseDamage, dk.nervesOfColdSteelBonus(), 0.8, true)
 	}
 
-	diseaseMulti := dk.diseaseMultiplier(0.125)
+	diseaseMulti := dk.dkDiseaseMultiplier(0.125)
 
 	effect := core.SpellEffect{
 		BonusCritRating:  (dk.rimeCritBonus() + dk.subversionCritBonus() + dk.annihilationCritBonus() + dk.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,
@@ -26,7 +26,7 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool, onhit func(sim *core.Sim
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				return weaponBaseDamage(sim, hitEffect, spell) *
-					(1.0 + dk.countActiveDiseases(hitEffect.Target)*diseaseMulti) *
+					(1.0 + dk.dkCountActiveDiseases(hitEffect.Target)*diseaseMulti) *
 					dk.RoRTSBonus(hitEffect.Target) *
 					dk.mercilessCombatBonus(sim)
 			},
