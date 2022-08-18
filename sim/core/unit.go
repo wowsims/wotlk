@@ -234,6 +234,7 @@ func (unit *Unit) EnableDynamicStatDep(sim *Simulation, dep *stats.StatDependenc
 	if unit.StatDependencyManager.EnableDynamicStatDep(dep) {
 		oldStats := unit.stats
 		unit.stats = unit.ApplyStatDependencies(unit.statsWithoutDeps)
+		unit.stats[stats.Mana] = oldStats[stats.Mana] // Need to reset mana because it's also used as current mana.
 		unit.processDynamicBonus(sim, unit.stats.Subtract(oldStats))
 
 		if sim.Log != nil {
@@ -245,6 +246,7 @@ func (unit *Unit) DisableDynamicStatDep(sim *Simulation, dep *stats.StatDependen
 	if unit.StatDependencyManager.DisableDynamicStatDep(dep) {
 		oldStats := unit.stats
 		unit.stats = unit.ApplyStatDependencies(unit.statsWithoutDeps)
+		unit.stats[stats.Mana] = oldStats[stats.Mana] // Need to reset mana because it's also used as current mana.
 		unit.processDynamicBonus(sim, unit.stats.Subtract(oldStats))
 
 		if sim.Log != nil {
