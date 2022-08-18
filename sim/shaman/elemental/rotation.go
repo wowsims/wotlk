@@ -33,7 +33,9 @@ type Rotation interface {
 }
 
 // ################################################################
-//                             ADAPTIVE
+//
+//	ADAPTIVE
+//
 // ################################################################
 type AdaptiveRotation struct {
 	fnmm float64
@@ -130,7 +132,9 @@ func NewAdaptiveRotation(talents *proto.ShamanTalents) *AdaptiveRotation {
 }
 
 // ################################################################
-//                             MANUAL
+//
+//	MANUAL
+//
 // ################################################################
 type ManualRotation struct {
 	// talents

@@ -92,7 +92,7 @@ export const EnhancementShamanRotationConfig = {
                 { name: '4', value: 4 },
                 { name: '5', value: 5 }, // 5 is effectively disabled. likely unnessecary
             ],
-            enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getTalents().maelstromWeapon > 0,
+            enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().lightningboltWeave,
         }),
             InputHelpers.makeRotationNumberInput<Spec.SpecEnhancementShaman>({
             fieldName: "weaveLatency",
@@ -103,7 +103,17 @@ export const EnhancementShamanRotationConfig = {
             fieldName: 'lavaburstWeave',
             label: 'Enable Weaving Lava Burst',
             labelTooltip: 'Not particularily useful for dual wield, mostly a 2h option',
-            enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getTalents().maelstromWeapon > 0,
+            enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().lightningboltWeave,
+        }),
+        InputHelpers.makeRotationNumberInput<Spec.SpecEnhancementShaman>({
+            fieldName: 'firenovaManaThreshold',
+            label: 'Minimum mana to cast Fire Nova',
+            labelTooltip: 'Fire Nova will not be cast when mana is below this value. Set this medium-low, it has a bad mana-to-damage ratio',
+        }),
+        InputHelpers.makeRotationNumberInput<Spec.SpecEnhancementShaman>({
+            fieldName: 'shamanisticRageManaThreshold',
+            label: 'Mana % to use Shamanistic Rage',
+            enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getTalents().shamanisticRage,
         }),
     ],
 };

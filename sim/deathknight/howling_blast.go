@@ -72,19 +72,10 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 				}
 			},
 		}, true),
-	})
-}
-
-func (dk *Deathknight) CanHowlingBlast(sim *core.Simulation) bool {
-	if dk.RimeAura.IsActive() {
-		return dk.HowlingBlast.IsReady(sim)
-	}
-	return dk.CastCostPossible(sim, 0.0, 0, 1, 1) && dk.HowlingBlast.IsReady(sim)
-}
-
-func (dk *Deathknight) CastHowlingBlast(sim *core.Simulation, target *core.Unit) bool {
-	if dk.HowlingBlast.IsReady(sim) {
-		return dk.HowlingBlast.Cast(sim, target)
-	}
-	return false
+	}, func(sim *core.Simulation) bool {
+		if dk.RimeAura.IsActive() {
+			return dk.HowlingBlast.IsReady(sim)
+		}
+		return dk.CastCostPossible(sim, 0.0, 0, 1, 1) && dk.HowlingBlast.IsReady(sim)
+	}, nil)
 }

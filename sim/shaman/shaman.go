@@ -70,6 +70,8 @@ type Shaman struct {
 
 	thunderstormInRange bool // flag if thunderstorm will be in range.
 
+	ShamanisticRageManaThreshold float64 //% of mana to use sham. rage at
+
 	Talents   proto.ShamanTalents
 	SelfBuffs SelfBuffs
 
@@ -216,6 +218,10 @@ func (shaman *Shaman) Initialize() {
 
 	if shaman.Talents.LavaLash {
 		shaman.LavaLash = shaman.newLavaLashSpell()
+	}
+
+	if shaman.Talents.SpiritWeapons {
+		shaman.PseudoStats.ThreatMultiplier -= 0.3
 	}
 
 	shaman.registerFeralSpirit()

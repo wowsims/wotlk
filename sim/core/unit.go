@@ -26,9 +26,9 @@ type Unit struct {
 	//  For Pets, this is the same as the owner's index.
 	Index int32
 
-	// Index of this unit as it appears in attack/defense tables.
-	// This is different from Index because there can be gaps in the raid.
-	TableIndex int32
+	// Unique index of this unit among all units in the environment.
+	// This is used as the index for attack tables.
+	UnitIndex int32
 
 	// Unique label for logging.
 	Label string
@@ -122,10 +122,23 @@ type Unit struct {
 }
 
 // DoNothing will explicitly declare that the character is intentionally doing nothing.
-//  If the GCD is not used during OnGCDReady and this flag is set, OnGCDReady will not be called again
-//  until it is used in some other way (like from an auto attack or resource regeneration).
+//
+//	If the GCD is not used during OnGCDReady and this flag is set, OnGCDReady will not be called again
+//	until it is used in some other way (like from an auto attack or resource regeneration).
 func (char *Character) DoNothing() {
 	char.doNothing = true
+}
+
+func (unit *Unit) IsOpponent(other *Unit) bool {
+	return (unit.Type == EnemyUnit) != (other.Type == EnemyUnit)
+}
+
+func (unit *Unit) GetOpponents() []*Unit {
+	if unit.Type == EnemyUnit {
+		return unit.Env.Raid.AllUnits
+	} else {
+		return unit.Env.Encounter.TargetUnits
+	}
 }
 
 func (unit *Unit) LogLabel() string {
@@ -221,6 +234,7 @@ func (unit *Unit) EnableDynamicStatDep(sim *Simulation, dep *stats.StatDependenc
 	if unit.StatDependencyManager.EnableDynamicStatDep(dep) {
 		oldStats := unit.stats
 		unit.stats = unit.ApplyStatDependencies(unit.statsWithoutDeps)
+		unit.stats[stats.Mana] = oldStats[stats.Mana] // Need to reset mana because it's also used as current mana.
 		unit.processDynamicBonus(sim, unit.stats.Subtract(oldStats))
 
 		if sim.Log != nil {
@@ -232,6 +246,7 @@ func (unit *Unit) DisableDynamicStatDep(sim *Simulation, dep *stats.StatDependen
 	if unit.StatDependencyManager.DisableDynamicStatDep(dep) {
 		oldStats := unit.stats
 		unit.stats = unit.ApplyStatDependencies(unit.statsWithoutDeps)
+		unit.stats[stats.Mana] = oldStats[stats.Mana] // Need to reset mana because it's also used as current mana.
 		unit.processDynamicBonus(sim, unit.stats.Subtract(oldStats))
 
 		if sim.Log != nil {

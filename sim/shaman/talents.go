@@ -381,7 +381,9 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 		MaxStacks: 5,
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
 			if enhT10Bonus && shaman.MaelstromWeaponAura.GetStacks() == 5 {
-				t10BonusAura.Activate(sim)
+				if sim.RandomFloat("Maelstrom Power") < 0.15 {
+					t10BonusAura.Activate(sim)
+				}
 			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

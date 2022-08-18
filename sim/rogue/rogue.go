@@ -44,6 +44,7 @@ type Rogue struct {
 	exposeArmorDurations  [6]time.Duration
 	disabledMCDs          []*core.MajorCooldown
 
+	Builder          *core.Spell
 	Backstab         *core.Spell
 	DeadlyPoison     *core.Spell
 	FanOfKnives      *core.Spell
@@ -149,11 +150,6 @@ func (rogue *Rogue) Initialize() {
 	}
 
 	rogue.finishingMoveEffectApplier = rogue.makeFinishingMoveEffectApplier()
-	if rogue.Env.GetNumTargets() > 3 {
-		rogue.SetMultiTargetPriorityList()
-	} else {
-		rogue.SetPriorityList()
-	}
 	rogue.DelayDPSCooldownsForArmorDebuffs()
 }
 
@@ -172,6 +168,7 @@ func (rogue *Rogue) ApplyEnergyTickMultiplier(multiplier float64) {
 
 func (rogue *Rogue) Reset(sim *core.Simulation) {
 	rogue.disabledMCDs = rogue.DisableAllEnabledCooldowns(core.CooldownTypeUnknown)
+	rogue.SetPriorityList(sim)
 }
 
 func (rogue *Rogue) MeleeCritMultiplier(isMH bool, applyLethality bool) float64 {

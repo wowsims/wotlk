@@ -57,10 +57,10 @@ func (hunter *Hunter) registerBlackArrowSpell(timer *core.Timer) {
 			Label:    "BlackArrow-" + strconv.Itoa(int(hunter.Index)),
 			ActionID: actionID,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				hunter.AttackTables[aura.Unit.TableIndex].DamageDealtMultiplier *= 1.06
+				hunter.AttackTables[aura.Unit.UnitIndex].DamageDealtMultiplier *= 1.06
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				hunter.AttackTables[aura.Unit.TableIndex].DamageDealtMultiplier /= 1.06
+				hunter.AttackTables[aura.Unit.UnitIndex].DamageDealtMultiplier /= 1.06
 			},
 		}),
 		NumberOfTicks: 5,

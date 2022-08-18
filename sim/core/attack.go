@@ -9,9 +9,10 @@ import (
 )
 
 // ReplaceMHSwing is called right before an auto attack fires
-//  If it returns nil, the attack takes place as normal. If it returns a Spell,
-//  that Spell is used in place of the attack.
-//  This allows for abilities that convert a white attack into yellow attack.
+//
+//	If it returns nil, the attack takes place as normal. If it returns a Spell,
+//	that Spell is used in place of the attack.
+//	This allows for abilities that convert a white attack into yellow attack.
 type ReplaceMHSwing func(sim *Simulation, mhSwingSpell *Spell) *Spell
 
 // Represents a generic weapon. Pets / unarmed / various other cases dont use

@@ -489,6 +489,7 @@ func (character *Character) doneIteration(sim *Simulation) {
 func (character *Character) GetMetricsProto(numIterations int32) *proto.UnitMetrics {
 	metrics := character.Metrics.ToProto(numIterations)
 	metrics.Name = character.Name
+	metrics.UnitIndex = character.UnitIndex
 	metrics.Auras = character.auraTracker.GetMetricsProto(numIterations)
 
 	metrics.Pets = []*proto.UnitMetrics{}

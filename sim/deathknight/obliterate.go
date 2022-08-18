@@ -65,7 +65,13 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool, onhit func(sim *core.Sim
 		conf.ApplyEffects = dk.withRuneRefund(rs, effect, false)
 	}
 
-	return dk.RegisterSpell(rs, conf)
+	if isMH {
+		return dk.RegisterSpell(rs, conf, func(sim *core.Simulation) bool {
+			return dk.CastCostPossible(sim, 0.0, 0, 1, 1) && dk.Obliterate.IsReady(sim)
+		}, nil)
+	} else {
+		return dk.RegisterSpell(rs, conf, nil, nil)
+	}
 }
 
 func (dk *Deathknight) registerObliterateSpell() {
@@ -86,15 +92,4 @@ func (dk *Deathknight) registerObliterateSpell() {
 	})
 	dk.ObliterateOhHit = dk.newObliterateHitSpell(false, nil)
 	dk.Obliterate = dk.ObliterateMhHit
-}
-
-func (dk *Deathknight) CanObliterate(sim *core.Simulation) bool {
-	return dk.CastCostPossible(sim, 0.0, 0, 1, 1) && dk.Obliterate.IsReady(sim)
-}
-
-func (dk *Deathknight) CastObliterate(sim *core.Simulation, target *core.Unit) bool {
-	if dk.Obliterate.IsReady(sim) {
-		return dk.Obliterate.Cast(sim, target)
-	}
-	return false
 }

@@ -163,7 +163,7 @@ func init() {
 		procMask := core.GetMeleeProcMaskForHands(mh, oh)
 		ppmm := character.AutoAttacks.NewPPMManager(1.0, procMask)
 
-		procAura := character.NewTemporaryStatsAura("Executioner Proc", core.ActionID{SpellID: 42976}, stats.Stats{stats.ArmorPenetration: 840}, time.Second*15)
+		procAura := character.NewTemporaryStatsAura("Executioner Proc", core.ActionID{SpellID: 42976}, stats.Stats{stats.ArmorPenetration: 120}, time.Second*15)
 
 		character.GetOrRegisterAura(core.Aura{
 			Label:    "Executioner",

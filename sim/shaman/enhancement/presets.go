@@ -70,9 +70,11 @@ var enhShamRotation = &proto.EnhancementShaman_Rotation{
 		Water: proto.WaterTotem_ManaSpringTotem,
 		Fire:  proto.FireTotem_MagmaTotem,
 	},
-	WeaveLatency:            0,
-	MaelstromweaponMinStack: 3,
-	LightningboltWeave:      true,
+	WeaveLatency:                 0,
+	MaelstromweaponMinStack:      3,
+	LightningboltWeave:           true,
+	FirenovaManaThreshold:        3000,
+	ShamanisticRageManaThreshold: 25,
 }
 
 var LatencyRotation = &proto.EnhancementShaman_Rotation{
@@ -82,9 +84,11 @@ var LatencyRotation = &proto.EnhancementShaman_Rotation{
 		Water: proto.WaterTotem_ManaSpringTotem,
 		Fire:  proto.FireTotem_MagmaTotem,
 	},
-	WeaveLatency:            200,
-	MaelstromweaponMinStack: 3,
-	LightningboltWeave:      true,
+	WeaveLatency:                 200,
+	MaelstromweaponMinStack:      3,
+	LightningboltWeave:           true,
+	FirenovaManaThreshold:        3000,
+	ShamanisticRageManaThreshold: 25,
 }
 
 var enhShamOptions = &proto.EnhancementShaman_Options{

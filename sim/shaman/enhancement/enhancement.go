@@ -42,7 +42,7 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 	}
 
 	var rotation Rotation
-	rotation = NewAdaptiveRotation(enhOptions.Talents)
+	rotation = NewPriorityRotation(enhOptions.Talents, enhOptions.Rotation)
 
 	enh := &EnhancementShaman{
 		Shaman:   shaman.NewShaman(character, *enhOptions.Talents, totems, selfBuffs, true),
@@ -92,6 +92,8 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 		SpiritWolf1: enh.NewSpiritWolf(1),
 		SpiritWolf2: enh.NewSpiritWolf(2),
 	}
+
+	enh.ShamanisticRageManaThreshold = enhOptions.Rotation.ShamanisticRageManaThreshold
 
 	return enh
 }

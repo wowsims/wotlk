@@ -237,10 +237,42 @@ message ElementalShaman {
 message EnhancementShaman {
     message Rotation {
         ShamanTotems totems = 1;
-        bool lavaburst_weave = 2;
-        bool lightningbolt_weave = 3;
-        int32 maelstromweapon_min_stack = 4;
-		int32 weave_latency = 5;
+        
+        enum RotationType {
+            Unknown = 0;
+            Priority = 1;
+            Custom = 2;
+        }
+        RotationType rotation_type = 2;
+
+        //TODO: add spells here for custom rotation (if nessecary?)
+        enum CustomRotationSpell {
+            NoSpell = 0;
+            Stormstrike = 1;
+            StormstrikeDebuffMissing = 2; //find a way to differentiate tooltips for this, lightning bolt weaves, and downranked flametongue
+            LightningBolt = 3;
+            LightningBoltWeave = 4;
+            FlameShock = 5;
+            EarthShock = 6;
+            LavaLash = 7;
+            LavaBurst = 8;
+            LightningShieldSpell = 9;
+            FireNova = 10;
+            ChainLightning = 11;
+            //fire totems as well maybe?
+        }
+
+        //weaving options
+        bool lavaburst_weave = 3;
+        bool lightningbolt_weave = 4;
+        int32 maelstromweapon_min_stack = 5;
+		int32 weave_latency = 6;
+
+        //other general rotation config options
+        double firenova_mana_threshold = 7;
+        double shamanistic_rage_mana_threshold = 8;
+
+        //add frost shock option back maybe?
     }
 
     message Options {

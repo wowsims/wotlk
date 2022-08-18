@@ -146,6 +146,7 @@ message Rogue {
 			Maintain = 2;
 			Build = 3;
 			Fill = 4;
+			FrequencyUnknown = 5;
 		}
 		Frequency expose_armor_frequency = 1;
 
@@ -156,12 +157,14 @@ message Rogue {
 		enum CombatPriority {
 			RuptureEviscerate = 0;
 			EviscerateRupture = 1;
+			CombatPriorityUnknown = 2;
 		}
 		CombatPriority combat_finisher_priority = 4;
 
 		enum AssassinationPriority {
 			EnvenomRupture = 0;
 			RuptureEnvenom = 1;
+			AssassinationPriorityUnknown = 2;
 		}
 		AssassinationPriority assassination_finisher_priority = 5;
 
