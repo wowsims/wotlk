@@ -234,8 +234,8 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	CurrentCorruptionRolloverMult := CurrentDmgMult * CurrentShadowMult * CurrentCritMult
 
 	if sim.Log != nil {
-		warlock.Log(sim, "Current Corruption Rollover Multiplier [%d]", CurrentCorruptionRolloverMult)
-		warlock.Log(sim, "warlock.DPSPAverage [%d]", warlock.DPSPAverage)
+		warlock.Log(sim, "Current Corruption Rollover Multiplier [%.2f]", CurrentCorruptionRolloverMult)
+		warlock.Log(sim, "warlock.DPSPAverage [%.0f]", warlock.DPSPAverage)
 	}
 
 	if preset == proto.Warlock_Rotation_Automatic {
