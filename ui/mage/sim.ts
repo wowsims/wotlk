@@ -69,15 +69,16 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 				gear: Presets.P1_ARCANE_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatIntellect]: .6,
-					[Stat.StatSpirit]: 0.5,
+					[Stat.StatIntellect]: .43,
+					[Stat.StatSpirit]: 0.39,
 					[Stat.StatSpellPower]: 1,
 					[Stat.StatArcaneSpellPower]: 1,
 					[Stat.StatFireSpellPower]: 0,
 					[Stat.StatFrostSpellPower]: 0,
-					[Stat.StatSpellCrit]: 0.7,
-					[Stat.StatSpellHaste]: 0.84,
+					[Stat.StatSpellCrit]: 0.59,
+					[Stat.StatSpellHaste]: 1.27,
 					[Stat.StatMP5]: 0.1,
+					[Stat.StatSpellHit]: .3,
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultArcaneConsumes,
@@ -159,6 +160,12 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 					Presets.P1_ARCANE_PRESET,
 					Presets.P1_FIRE_PRESET,
 					Presets.P1_FROST_PRESET,
+					Presets.P1_PRERAID_ARCANE_PRESET,
+					Presets.P1_PRERAID_FIRE_PRESET,
+					Presets.ICC_FFB_Preset,
+					Presets.ICC_Fireball_Preset,
+					Presets.P2_Arcane_Preset,
+					Presets.P2_Fire_Preset
 				],
 			},
 		});

@@ -446,9 +446,201 @@ export const P1_FROST_PRESET = {
 	  ]}`),
 };
 
+export const P1_PRERAID_ARCANE_PRESET = {
+	name: "Arcane Pre Raid Preset",
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
+	gear: EquipmentSpec.fromJsonString(`
+	{
+		"items": [
+		  {
+			"id": 42553,
+			"enchant": 44877,
+			"gems": [
+			  41285,
+			  40049
+			]
+		  },
+		  {
+			"id": 39472
+		  },
+		  {
+			"id": 37673,
+			"enchant": 44874,
+			"gems": [
+			  39998
+			]
+		  },
+		  {
+			"id": 41610,
+			"enchant": 55642
+		  },
+		  {
+			"id": 39492,
+			"enchant": 44489,
+			"gems": [
+			  39998,
+			  40049
+			]
+		  },
+		  {
+			"id": 37361,
+			"enchant": 44498,
+			"gems": [
+			  0
+			]
+		  },
+		  {
+			"id": 39495,
+			"enchant": 54999,
+			"gems": [
+			  39998,
+			  0
+			]
+		  },
+		  {
+			"id": 40696,
+			"gems": [
+			  40049,
+			  40026
+			]
+		  },
+		  {
+			"id": 37854,
+			"enchant": 41602
+		  },
+		  {
+			"id": 44202,
+			"enchant": 55016,
+			"gems": [
+			  40026
+			]
+		  },
+		  {
+			"id": 40585
+		  },
+		  {
+			"id": 37694
+		  },
+		  {
+			"id": 37873
+		  },
+		  {
+			"id": 40682
+		  },
+		  {
+			"id": 37360,
+			"enchant": 45059
+		  },
+		  {},
+		  {
+			"id": 37238
+		  }
+		]
+	  }`
+	  )
+}
 
-
-
+export const P1_PRERAID_FIRE_PRESET = {
+	name: "Fire Pre Raid Preset",
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
+	gear: EquipmentSpec.fromJsonString(`
+	{
+		"items": [
+		  {
+			"id": 42553,
+			"enchant": 44877,
+			"gems": [
+			  41285,
+			  40014
+			]
+		  },
+		  {
+			"id": 39472
+		  },
+		  {
+			"id": 34210,
+			"enchant": 44874,
+			"gems": [
+			  40049,
+			  40014
+			]
+		  },
+		  {
+			"id": 41610,
+			"enchant": 63765
+		  },
+		  {
+			"id": 39492,
+			"enchant": 44489,
+			"gems": [
+			  40049,
+			  40014
+			]
+		  },
+		  {
+			"id": 37361,
+			"enchant": 44498,
+			"gems": [
+			  0
+			]
+		  },
+		  {
+			"id": 39495,
+			"enchant": 54999,
+			"gems": [
+			  40049,
+			  0
+			]
+		  },
+		  {
+			"id": 40696,
+			"gems": [
+			  40014,
+			  40026
+			]
+		  },
+		  {
+			"id": 37854,
+			"enchant": 41602
+		  },
+		  {
+			"id": 44202,
+			"enchant": 60623,
+			"gems": [
+			  40026
+			]
+		  },
+		  {
+			"id": 40585
+		  },
+		  {
+			"id": 42644,
+			"gems": [
+			  40049
+			]
+		  },
+		  {
+			"id": 37873
+		  },
+		  {
+			"id": 40682
+		  },
+		  {
+			"id": 45085,
+			"enchant": 44487
+		  },
+		  {
+			"id": 40698
+		  },
+		  {
+			"id": 37177
+		  }
+		]
+	  }
+	`)
+}
 
 
 export const ICC_FFB_Preset = {
@@ -814,7 +1006,7 @@ export const ICC_Fireball_Preset = {
 	export const P2_Fire_Preset = {
 		name: 'Ulduar Fire rough BiS',
 		tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-		enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
+		enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
 		gear: EquipmentSpec.fromJsonString(`
 		{
 			"items": [
