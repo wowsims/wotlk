@@ -17,7 +17,7 @@ func (dk *Deathknight) ApplyFrostTalents() {
 	// Toughness
 	if dk.Talents.Toughness > 0 {
 		armorCoeff := 0.02 * float64(dk.Talents.Toughness)
-		dk.AddStatDependency(stats.Armor, stats.Armor, 1.0+armorCoeff)
+		dk.MultiplyStat(stats.Armor, 1.0+armorCoeff)
 	}
 
 	// Icy Reach
@@ -50,7 +50,7 @@ func (dk *Deathknight) ApplyFrostTalents() {
 	// Endless Winter
 	if dk.Talents.EndlessWinter > 0 {
 		strengthCoeff := 0.02 * float64(dk.Talents.EndlessWinter)
-		dk.AddStatDependency(stats.Strength, stats.Strength, 1.0+strengthCoeff)
+		dk.MultiplyStat(stats.Strength, 1.0+strengthCoeff)
 	}
 
 	// Frigid Dreadplate
@@ -219,12 +219,7 @@ func (dk *Deathknight) botnAndReaping(sim *core.Simulation, spell *core.Spell) {
 		}
 	}
 
-	// if slot == -1 that means we spent a death rune to trigger this.
-	// Jooper: BoTN should still trigger the same effect if it spent a death rune in the a blood slot.
-	// TODO: Clean this up since its kind of core-like code. Probably with PA refactor.
-	rt := sim.RandomFloat("death convert") * 20 * float64(time.Second)
-	revertAt := sim.CurrentTime + time.Duration(float64(time.Second)*10+rt)
-	dk.ConvertToDeath(sim, dk.BloodRuneSpentAt(sim.CurrentTime), true, revertAt)
+	dk.ConvertToDeath(sim, dk.BloodRuneSpentAt(sim.CurrentTime), true, core.NeverExpires)
 }
 
 func (dk *Deathknight) applyThreatOfThassarian() {
@@ -233,17 +228,6 @@ func (dk *Deathknight) applyThreatOfThassarian() {
 
 func (dk *Deathknight) threatOfThassarianWillProc(sim *core.Simulation) bool {
 	return sim.RandomFloat("Threat of Thassarian") <= dk.bonusCoeffs.threatOfThassarianChance
-}
-
-func (dk *Deathknight) threatOfThassarianAdjustMetrics(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, mhOutcome core.HitOutcome) {
-	spell.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 1
-	if mhOutcome == core.OutcomeHit {
-		spell.SpellMetrics[spellEffect.Target.TableIndex].Hits -= 1
-	} else if mhOutcome == core.OutcomeCrit {
-		spell.SpellMetrics[spellEffect.Target.TableIndex].Hits -= 1
-	} else {
-		spell.SpellMetrics[spellEffect.Target.TableIndex].Hits -= 2
-	}
 }
 
 func (dk *Deathknight) threatOfThassarianProcMasks(isMH bool, effect *core.SpellEffect, isGuileOfGorefiendStrike bool, isMightOfMograineStrike bool, wrapper func(outcomeApplier core.OutcomeApplier) core.OutcomeApplier) {

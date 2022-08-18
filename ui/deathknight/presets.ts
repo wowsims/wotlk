@@ -84,8 +84,7 @@ export const Unholy2HTalents = {
 	}),
 };
 
-
-export const DefaultRotation = DeathKnightRotation.create({
+export const DefaultUnholyRotation = DeathKnightRotation.create({
   useDeathAndDecay: true,
   btGhoulFrenzy: false,
 	refreshHornOfWinter: false,
@@ -94,12 +93,30 @@ export const DefaultRotation = DeathKnightRotation.create({
   bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodBoil,
 });
 
-export const DefaultOptions = DeathKnightOptions.create({
+export const DefaultUnholyOptions = DeathKnightOptions.create({
 	startingRunicPower: 0,
 	petUptime: 1,
 	precastGhoulFrenzy: true,
   precastHornOfWinter: true,
 });
+
+export const DefaultFrostRotation = DeathKnightRotation.create({
+  useDeathAndDecay: false,
+  btGhoulFrenzy: false,
+	refreshHornOfWinter: false,
+  useEmpowerRuneWeapon: true,
+  startingPresence: Deathknight_Rotation_StartingPresence.Unholy,
+  bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodBoil,
+});
+
+export const DefaultFrostOptions = DeathKnightOptions.create({
+	startingRunicPower: 0,
+	petUptime: 1,
+  precastHornOfWinter: true,
+});
+
+export const OtherDefaults = {
+};
 
 export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfEndlessRage,

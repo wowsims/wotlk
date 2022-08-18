@@ -27,7 +27,7 @@ func (mage *Mage) ApplyTalents() {
 	mage.PseudoStats.SpiritRegenRateCasting += float64(mage.Talents.ArcaneMeditation) / 6
 
 	if mage.Talents.StudentOfTheMind > 0 {
-		mage.Character.AddStatDependency(stats.Spirit, stats.Spirit, 1.0+[]float64{0, .04, .07, .10}[mage.Talents.StudentOfTheMind])
+		mage.MultiplyStat(stats.Spirit, 1.0+[]float64{0, .04, .07, .10}[mage.Talents.StudentOfTheMind])
 	}
 
 	if mage.Talents.FocusMagic {
@@ -37,11 +37,11 @@ func (mage *Mage) ApplyTalents() {
 	}
 
 	if mage.Talents.ArcaneMind > 0 {
-		mage.Character.AddStatDependency(stats.Intellect, stats.Intellect, 1.0+(0.03*float64(mage.Talents.ArcaneMind)))
+		mage.MultiplyStat(stats.Intellect, 1.0+0.03*float64(mage.Talents.ArcaneMind))
 	}
 
 	if mage.Talents.MindMastery > 0 {
-		mage.Character.AddStatDependency(stats.Intellect, stats.SpellPower, 1+0.03*float64(mage.Talents.MindMastery))
+		mage.AddStatDependency(stats.Intellect, stats.SpellPower, 0.03*float64(mage.Talents.MindMastery))
 	}
 
 	mage.AddStat(stats.SpellCrit, float64(mage.Talents.ArcaneInstability)*1*core.CritRatingPerCritChance)

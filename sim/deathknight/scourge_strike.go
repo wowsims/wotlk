@@ -83,16 +83,7 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 				}
 			},
 		}, false),
-	})
-}
-
-func (dk *Deathknight) CanScourgeStrike(sim *core.Simulation) bool {
-	return dk.Talents.ScourgeStrike && dk.CastCostPossible(sim, 0.0, 0, 1, 1) && dk.ScourgeStrike.IsReady(sim)
-}
-
-func (dk *Deathknight) CastScourgeStrike(sim *core.Simulation, target *core.Unit) bool {
-	if dk.CanScourgeStrike(sim) {
-		return dk.ScourgeStrike.Cast(sim, target)
-	}
-	return false
+	}, func(sim *core.Simulation) bool {
+		return dk.Talents.ScourgeStrike && dk.CastCostPossible(sim, 0.0, 0, 1, 1) && dk.ScourgeStrike.IsReady(sim)
+	}, nil)
 }

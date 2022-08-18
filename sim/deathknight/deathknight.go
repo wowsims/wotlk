@@ -296,43 +296,14 @@ func NewDeathknight(character core.Character, talents proto.DeathknightTalents, 
 			}
 		},
 		func(sim *core.Simulation) {
-			// I change this here because when using the opener sequence
-			// you do not want these to trigger a tryUseGCD, so after the opener
-			// its fine since you're running off a prio system, and rune generation
-			// can change your logic which we want.
-			if !dk.Opener.IsOngoing() && !dk.Inputs.IsDps {
-				if dk.GCD.IsReady(sim) {
-					dk.tryUseGCD(sim)
-				}
-			}
 		},
 		func(sim *core.Simulation) {
-			if !dk.Opener.IsOngoing() && !dk.Inputs.IsDps {
-				if dk.GCD.IsReady(sim) {
-					dk.tryUseGCD(sim)
-				}
-			}
 		},
 		func(sim *core.Simulation) {
-			if !dk.Opener.IsOngoing() && !dk.Inputs.IsDps {
-				if dk.GCD.IsReady(sim) {
-					dk.tryUseGCD(sim)
-				}
-			}
 		},
 		func(sim *core.Simulation) {
-			if !dk.Opener.IsOngoing() && !dk.Inputs.IsDps {
-				if dk.GCD.IsReady(sim) {
-					dk.tryUseGCD(sim)
-				}
-			}
 		},
 		func(sim *core.Simulation) {
-			if !dk.Opener.IsOngoing() && !dk.Inputs.IsDps {
-				if dk.GCD.IsReady(sim) {
-					dk.tryUseGCD(sim)
-				}
-			}
 		},
 	)
 
@@ -342,9 +313,9 @@ func NewDeathknight(character core.Character, talents proto.DeathknightTalents, 
 		AutoSwingMelee: true,
 	})
 
-	dk.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/62.5))
-	dk.AddStatDependency(stats.Agility, stats.Dodge, 1.0+(core.DodgeRatingPerDodgeChance/84.74576271))
-	dk.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
+	dk.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/62.5)
+	dk.AddStatDependency(stats.Agility, stats.Dodge, core.DodgeRatingPerDodgeChance/84.74576271)
+	dk.AddStatDependency(stats.Strength, stats.AttackPower, 2)
 
 	dk.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
 
@@ -358,8 +329,7 @@ func NewDeathknight(character core.Character, talents proto.DeathknightTalents, 
 		dk.ArmyGhoul[i] = dk.NewArmyGhoulPet(i)
 	}
 
-	dk.Opener = &Sequence{}
-	dk.Main = &Sequence{}
+	dk.RotationSequence = &Sequence{}
 
 	return dk
 }
@@ -402,99 +372,6 @@ func (dk *Deathknight) critMultiplierGoGandMoM() float64 {
 	applyGuile := dk.Talents.GuileOfGorefiend > 0
 	applyMightOfMograine := dk.Talents.MightOfMograine > 0
 	return dk.MeleeCritMultiplier(1.0, dk.secondaryCritModifier(applyGuile, applyMightOfMograine))
-}
-
-func (dk *Deathknight) RuneAmountForSpell(spell *RuneSpell) core.RuneCost {
-	var blood uint8
-	var frost uint8
-	var unholy uint8
-	switch spell {
-	case dk.DeathStrike:
-		frost = 1
-		unholy = 1
-	case dk.DeathAndDecay:
-		blood = 1
-		frost = 1
-		unholy = 1
-	case dk.ArmyOfTheDead:
-		blood = 1
-		frost = 1
-		unholy = 1
-	case dk.Pestilence:
-		blood = 1
-	case dk.BloodStrike:
-		blood = 1
-	case dk.BloodBoil:
-		blood = 1
-	case dk.UnbreakableArmor:
-		frost = 1
-	case dk.IcyTouch:
-		frost = 1
-	case dk.PlagueStrike:
-		unholy = 1
-	case dk.GhoulFrenzy:
-		unholy = 1
-	case dk.BoneShield:
-		unholy = 1
-	case dk.ScourgeStrike:
-		frost = 1
-		unholy = 1
-	case dk.Obliterate:
-		frost = 1
-		unholy = 1
-	case dk.HowlingBlast:
-		frost = 1
-		unholy = 1
-	}
-
-	return core.NewRuneCost(0, blood, frost, unholy, 0)
-}
-
-func (dk *Deathknight) CanCast(sim *core.Simulation, spell *RuneSpell) bool {
-	switch spell {
-	case dk.DeathAndDecay:
-		return dk.CanDeathAndDecay(sim)
-	case dk.ArmyOfTheDead:
-		return dk.CanArmyOfTheDead(sim)
-	case dk.Pestilence:
-		return dk.CanPestilence(sim)
-	case dk.BloodStrike:
-		return dk.CanBloodStrike(sim)
-	case dk.BloodBoil:
-		return dk.BloodBoil.IsReady(sim)
-	case dk.UnbreakableArmor:
-		return dk.CanUnbreakableArmor(sim)
-	case dk.IcyTouch:
-		return dk.CanIcyTouch(sim)
-	case dk.PlagueStrike:
-		return dk.CanPlagueStrike(sim)
-	case dk.GhoulFrenzy:
-		return dk.CanGhoulFrenzy(sim)
-	case dk.BoneShield:
-		return dk.CanBoneShield(sim)
-	case dk.ScourgeStrike:
-		return dk.CanScourgeStrike(sim)
-	case dk.Obliterate:
-		return dk.CanObliterate(sim)
-	case dk.HowlingBlast:
-		return dk.CanHowlingBlast(sim)
-	case dk.FrostStrike:
-		return dk.CanFrostStrike(sim)
-	case dk.DeathCoil:
-		return dk.CanDeathCoil(sim)
-	case dk.BloodTap:
-		return dk.CanBloodTap(sim)
-	case dk.EmpowerRuneWeapon:
-		return dk.CanEmpowerRuneWeapon(sim)
-	case dk.HornOfWinter:
-		return dk.CanHornOfWinter(sim)
-	case dk.RaiseDead:
-		return dk.CanRaiseDead(sim)
-	default:
-		panic("Not in cost list.")
-	}
-
-	return false
 }
 
 func init() {

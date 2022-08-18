@@ -43,16 +43,7 @@ func (dk *Deathknight) registerRaiseDeadCD() {
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			raiseDeadAura.Activate(sim)
 		},
-	})
-}
-
-func (dk *Deathknight) CanRaiseDead(sim *core.Simulation) bool {
-	return !dk.Talents.MasterOfGhouls && dk.RaiseDead.IsReady(sim)
-}
-
-func (dk *Deathknight) CastRaiseDead(sim *core.Simulation, target *core.Unit) bool {
-	if dk.CanRaiseDead(sim) {
-		return dk.RaiseDead.Cast(sim, target)
-	}
-	return false
+	}, func(sim *core.Simulation) bool {
+		return !dk.Talents.MasterOfGhouls && dk.RaiseDead.IsReady(sim)
+	}, nil)
 }

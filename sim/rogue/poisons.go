@@ -111,7 +111,7 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 				ThreatMultiplier: 1,
 				IsPeriodic:       false, // hack to get attacker modifiers applied
 				BaseDamage:       core.MultiplyByStacks(deadlyPoisonTickBaseDamage, dotAura),
-				OutcomeApplier:   rogue.OutcomeFuncTickMagicHitAndCrit(rogue.SpellCritMultiplier()),
+				OutcomeApplier:   rogue.OutcomeFuncTickMagicHit(),
 			})),
 		})
 		if rogue.HasSetBonus(ItemSetTerrorblade, 2) {

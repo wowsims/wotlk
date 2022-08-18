@@ -300,7 +300,7 @@ func NewMage(character core.Character, options proto.Player) *Mage {
 		if mage.HasSetBonus(ItemSetKhadgarsRegalia, 2) {
 			multi += .15
 		}
-		mage.Character.AddStatDependency(stats.Spirit, stats.SpellCrit, 1+multi)
+		mage.Character.AddStatDependency(stats.Spirit, stats.SpellCrit, multi)
 	}
 
 	mage.mirrorImage = mage.NewMirrorImage()

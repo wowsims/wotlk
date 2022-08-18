@@ -56,7 +56,7 @@ func (warrior *Warrior) registerSweepingStrikesCD() {
 			curDmg = spellEffect.Damage / warrior.AttackTables[spellEffect.Target.Index].ArmorDamageModifier
 
 			ssHit.Cast(sim, warrior.Env.NextTargetUnit(spellEffect.Target))
-			ssHit.SpellMetrics[spellEffect.Target.TableIndex].Casts--
+			ssHit.SpellMetrics[spellEffect.Target.UnitIndex].Casts--
 			if aura.GetStacks() > 0 {
 				aura.RemoveStack(sim)
 			}

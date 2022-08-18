@@ -71,16 +71,7 @@ func (dk *Deathknight) registerPestilenceSpell() {
 				}
 			},
 		}, true),
-	})
-}
-
-func (dk *Deathknight) CanPestilence(sim *core.Simulation) bool {
-	return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.Pestilence.IsReady(sim)
-}
-
-func (dk *Deathknight) CastPestilence(sim *core.Simulation, target *core.Unit) bool {
-	if dk.CanPestilence(sim) {
-		return dk.Pestilence.Cast(sim, target)
-	}
-	return false
+	}, func(sim *core.Simulation) bool {
+		return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.Pestilence.IsReady(sim)
+	}, nil)
 }

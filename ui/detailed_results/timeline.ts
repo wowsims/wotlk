@@ -1005,6 +1005,19 @@ const idToCategoryMap: Record<number, number> = {
 	[27156]: 0.1, // Seal of Righteousness Proc
 	[20182]: 0.2, // Reckoning
 	[27179]: SPELL_ACTION_CATEGORY + 0.1, // Holy Shield
+	
+	[35395]: MELEE_ACTION_CATEGORY + 0.10, // Crusader Strike
+	[53385]: MELEE_ACTION_CATEGORY + 0.20, // Divine Storm
+	[53408]: SPELL_ACTION_CATEGORY + 0.10, // Judgement of Wisdom
+	[20271]: SPELL_ACTION_CATEGORY + 0.10, // Judgement of Light
+	[31804]: SPELL_ACTION_CATEGORY + 0.20, // Judgement of Vengeance
+	[20467]: SPELL_ACTION_CATEGORY + 0.20, // Judgement of Command
+	[20187]: SPELL_ACTION_CATEGORY + 0.20, // Judgement of Righteousness
+	[48801]: SPELL_ACTION_CATEGORY + 0.30, // Exorcism
+	[48819]: SPELL_ACTION_CATEGORY + 0.40, // Consecration
+	[48817]: SPELL_ACTION_CATEGORY + 0.50, // Holy Wrath
+	[48806]: SPELL_ACTION_CATEGORY + 0.60, // Hammer of Wrath
+	[54428]: SPELL_ACTION_CATEGORY + 0.70, // Divine Plea
 
 	// Rogue
 	[6774]: MELEE_ACTION_CATEGORY + 0.1, // Slice and Dice
