@@ -67,7 +67,7 @@ func (shaman *Shaman) registerShamanisticRageCD() {
 		Spell: spell,
 		Type:  core.CooldownTypeMana,
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-			const manaReserve = 2500 // If mana goes under 2500 we will need more soon. Pop shamanistic rage. TODO: make this configurable
+			manaReserve := shaman.ShamanisticRageManaThreshold / 100 * shaman.MaxMana()
 			if character.CurrentMana() > manaReserve {
 				return false
 			}

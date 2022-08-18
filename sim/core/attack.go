@@ -9,9 +9,10 @@ import (
 )
 
 // ReplaceMHSwing is called right before an auto attack fires
-//  If it returns nil, the attack takes place as normal. If it returns a Spell,
-//  that Spell is used in place of the attack.
-//  This allows for abilities that convert a white attack into yellow attack.
+//
+//	If it returns nil, the attack takes place as normal. If it returns a Spell,
+//	that Spell is used in place of the attack.
+//	This allows for abilities that convert a white attack into yellow attack.
 type ReplaceMHSwing func(sim *Simulation, mhSwingSpell *Spell) *Spell
 
 // Represents a generic weapon. Pets / unarmed / various other cases dont use
@@ -175,6 +176,9 @@ type AutoAttacks struct {
 	// The time at which the last MH swing occurred.
 	previousMHSwingAt time.Duration
 
+	// Current melee swing speed, based on haste stat and melee swing multiplier pseudostat.
+	curSwingSpeed float64
+
 	// PendingAction which handles auto attacks.
 	autoSwingAction    *PendingAction
 	autoSwingCancelled bool
@@ -256,6 +260,8 @@ func (aa *AutoAttacks) reset(sim *Simulation) {
 	if !aa.IsEnabled() {
 		return
 	}
+
+	aa.curSwingSpeed = aa.unit.SwingSpeed()
 
 	aa.MHAuto = aa.unit.GetOrRegisterSpell(SpellConfig{
 		ActionID:    ActionID{OtherID: proto.OtherAction_OtherActionAttack, Tag: 1},
@@ -486,20 +492,24 @@ func (aa *AutoAttacks) TrySwingRanged(sim *Simulation, target *Unit) {
 	aa.RangedSwingAt = sim.CurrentTime + aa.RangedSwingSpeed()
 }
 
-func (aa *AutoAttacks) ModifySwingTime(sim *Simulation, amount float64) {
+func (aa *AutoAttacks) UpdateSwingTime(sim *Simulation) {
 	if !aa.IsEnabled() || aa.AutoSwingRanged {
 		return
 	}
 
+	oldSwingSpeed := aa.curSwingSpeed
+	aa.curSwingSpeed = aa.unit.SwingSpeed()
+	speedup := aa.curSwingSpeed / oldSwingSpeed
+
 	mhSwingTime := aa.MainhandSwingAt - sim.CurrentTime
 	if mhSwingTime > 1 { // If its 1 we end up rounding down to 0 and causing a panic.
-		aa.MainhandSwingAt = sim.CurrentTime + time.Duration(float64(mhSwingTime)/amount)
+		aa.MainhandSwingAt = sim.CurrentTime + time.Duration(float64(mhSwingTime)/speedup)
 	}
 
 	if aa.OH.SwingSpeed != 0 {
 		ohSwingTime := aa.OffhandSwingAt - sim.CurrentTime
 		if ohSwingTime > 1 {
-			newTime := time.Duration(float64(ohSwingTime) / amount)
+			newTime := time.Duration(float64(ohSwingTime) / speedup)
 			if newTime > 0 {
 				aa.OffhandSwingAt = sim.CurrentTime + newTime
 			}

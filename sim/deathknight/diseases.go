@@ -62,7 +62,7 @@ func (dk *Deathknight) registerFrostFever() {
 			isRefreshing[unit.Index] = false
 			dk.FrostFeverDebuffAura[unit.Index].Activate(sim)
 		},
-	})
+	}, nil, nil)
 
 	dk.FrostFeverDisease = make([]*core.Dot, dk.Env.GetNumTargets())
 
@@ -131,7 +131,7 @@ func (dk *Deathknight) registerBloodPlague() {
 			dk.BloodPlagueDisease[unit.Index].Apply(sim)
 			isRefreshing[unit.Index] = false
 		},
-	})
+	}, nil, nil)
 
 	dk.BloodPlagueDisease = make([]*core.Dot, dk.Env.GetNumTargets())
 
@@ -198,7 +198,7 @@ func (dk *Deathknight) doWanderingPlague(sim *core.Simulation, spell *core.Spell
 		return
 	}
 
-	physCritChance := spellEffect.PhysicalCritChance(spell.Unit, spell, dk.AttackTables[spellEffect.Target.TableIndex])
+	physCritChance := spellEffect.PhysicalCritChance(spell.Unit, spell, dk.AttackTables[spellEffect.Target.UnitIndex])
 	if sim.RandomFloat("Wandering Plague Roll") < physCritChance {
 		dk.LastTickTime = sim.CurrentTime
 		dk.LastDiseaseDamage = spellEffect.Damage

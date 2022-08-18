@@ -62,8 +62,8 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 					targetCount := sim.GetNumTargets()
 					target := rogue.CurrentTarget
 					if targetCount > 1 {
-						newTargetIndex := int32(math.Ceil(float64(targetCount)*sim.RandomFloat("Killing Spree"))) - 1
-						target = sim.GetTargetUnit(newTargetIndex)
+						newUnitIndex := int32(math.Ceil(float64(targetCount)*sim.RandomFloat("Killing Spree"))) - 1
+						target = sim.GetTargetUnit(newUnitIndex)
 					}
 					mhWeaponSwing.Cast(sim, target)
 					ohWeaponSwing.Cast(sim, target)

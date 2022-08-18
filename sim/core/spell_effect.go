@@ -260,8 +260,8 @@ func (spellEffect *SpellEffect) finalize(sim *Simulation, spell *Spell) {
 
 // Applies the fully computed results from this SpellEffect to the sim.
 func (spellEffect *SpellEffect) finalizeInternal(sim *Simulation, spell *Spell) {
-	spell.SpellMetrics[spellEffect.Target.TableIndex].TotalDamage += spellEffect.Damage
-	spell.SpellMetrics[spellEffect.Target.TableIndex].TotalThreat += spellEffect.calcThreat(spell)
+	spell.SpellMetrics[spellEffect.Target.UnitIndex].TotalDamage += spellEffect.Damage
+	spell.SpellMetrics[spellEffect.Target.UnitIndex].TotalThreat += spellEffect.calcThreat(spell)
 
 	// Mark total damage done in raid so far for health based fights.
 	// Don't include damage done by EnemyUnits to Players

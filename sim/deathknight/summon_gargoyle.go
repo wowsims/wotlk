@@ -61,22 +61,11 @@ func (dk *Deathknight) registerSummonGargoyleCD() {
 			}
 			sim.AddPendingAction(&pa)
 		},
+	}, func(sim *core.Simulation) bool {
+		return dk.CastCostPossible(sim, 60.0, 0, 0, 0) && dk.SummonGargoyle.IsReady(sim)
+	}, func(sim *core.Simulation) {
+		dk.UpdateMajorCooldowns()
 	})
-}
-
-func (dk *Deathknight) CanSummonGargoyle(sim *core.Simulation) bool {
-	return dk.CastCostPossible(sim, 60.0, 0, 0, 0) && dk.SummonGargoyle.IsReady(sim)
-}
-
-func (dk *Deathknight) CastSummonGargoyle(sim *core.Simulation, target *core.Unit) bool {
-	if dk.CanSummonGargoyle(sim) {
-		res := dk.SummonGargoyle.Cast(sim, target)
-		if res {
-			dk.UpdateMajorCooldowns()
-		}
-		return res
-	}
-	return false
 }
 
 type GargoylePet struct {

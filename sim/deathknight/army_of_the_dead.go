@@ -77,19 +77,11 @@ func (dk *Deathknight) registerArmyOfTheDeadCD() {
 			ghoulIndex = 0
 			aotdDot.Apply(sim)
 		},
+	}, func(sim *core.Simulation) bool {
+		return dk.CastCostPossible(sim, 0.0, 1, 1, 1) && dk.ArmyOfTheDead.IsReady(sim)
+	}, func(sim *core.Simulation) {
+		dk.UpdateMajorCooldowns()
 	})
 
 	aotdDot.Spell = dk.ArmyOfTheDead.Spell
-}
-
-func (dk *Deathknight) CanArmyOfTheDead(sim *core.Simulation) bool {
-	return dk.CastCostPossible(sim, 0.0, 1, 1, 1) && dk.ArmyOfTheDead.IsReady(sim)
-}
-
-func (dk *Deathknight) CastArmyOfTheDead(sim *core.Simulation, target *core.Unit) bool {
-	if dk.ArmyOfTheDead.IsReady(sim) && dk.ArmyOfTheDead.Cast(sim, target) {
-		dk.UpdateMajorCooldowns()
-		return true
-	}
-	return false
 }

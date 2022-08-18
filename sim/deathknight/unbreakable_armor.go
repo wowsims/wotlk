@@ -16,18 +16,21 @@ func (dk *Deathknight) registerUnbreakableArmorSpell() {
 	cdTimer := dk.NewTimer()
 	cd := time.Minute*1 - dk.thassariansPlateCooldownReduction(dk.UnbreakableArmor)
 
+	strDep := dk.NewDynamicMultiplyStat(stats.Strength, 1.2)
+	armorDep := dk.NewDynamicMultiplyStat(stats.Armor, 1.25)
+
 	dk.UnbreakableArmorAura = dk.RegisterAura(core.Aura{
 		Label:    "Unbreakable Armor",
 		ActionID: actionID,
 		Duration: time.Second * 20,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			dk.UnbreakableArmorAura.Unit.AddStatDependencyDynamic(sim, stats.Strength, stats.Strength, 1.2)
-			dk.UnbreakableArmorAura.Unit.AddStatDependencyDynamic(sim, stats.Armor, stats.Armor, 1.25)
+			aura.Unit.EnableDynamicStatDep(sim, strDep)
+			aura.Unit.EnableDynamicStatDep(sim, armorDep)
 		},
 
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			dk.UnbreakableArmorAura.Unit.AddStatDependencyDynamic(sim, stats.Strength, stats.Strength, 1.0/1.2)
-			dk.UnbreakableArmorAura.Unit.AddStatDependencyDynamic(sim, stats.Armor, stats.Armor, 1.0/1.25)
+			aura.Unit.DisableDynamicStatDep(sim, strDep)
+			aura.Unit.DisableDynamicStatDep(sim, armorDep)
 		},
 	})
 
@@ -51,16 +54,7 @@ func (dk *Deathknight) registerUnbreakableArmorSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			dk.UnbreakableArmorAura.Activate(sim)
 		},
-	})
-}
-
-func (dk *Deathknight) CanUnbreakableArmor(sim *core.Simulation) bool {
-	return dk.CastCostPossible(sim, 0, 0, 1, 0) && dk.UnbreakableArmor.IsReady(sim)
-}
-
-func (dk *Deathknight) CastUnbreakableArmor(sim *core.Simulation, target *core.Unit) bool {
-	if dk.CanUnbreakableArmor(sim) {
-		return dk.UnbreakableArmor.Cast(sim, target)
-	}
-	return false
+	}, func(sim *core.Simulation) bool {
+		return dk.CastCostPossible(sim, 0, 0, 1, 0) && dk.UnbreakableArmor.IsReady(sim)
+	}, nil)
 }

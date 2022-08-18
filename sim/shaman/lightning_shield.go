@@ -27,7 +27,7 @@ func (shaman *Shaman) registerLightningShieldSpell() *core.Spell {
 	}
 
 	procSpell := shaman.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
+		ActionID:    core.ActionID{SpellID: 49279},
 		SpellSchool: core.SpellSchoolNature,
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskEmpty,

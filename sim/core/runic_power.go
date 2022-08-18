@@ -248,7 +248,7 @@ func (rp *RunicPowerBar) SpentDeathRuneReadyAt() time.Duration {
 }
 
 func (rp *RunicPowerBar) CurrentRuneGrace(sim *Simulation, slot int32) time.Duration {
-	if rp.runeMeta[slot].regenAt > sim.CurrentTime {
+	if rp.runeMeta[slot].lastRegenTime < sim.CurrentTime {
 		return time.Millisecond*2500 - MinDuration(2500*time.Millisecond, sim.CurrentTime-rp.runeMeta[slot].lastRegenTime)
 	}
 	return 0
@@ -259,23 +259,14 @@ const anyFrostSpent = 0b0000100001 << 10
 const anyUnholySpent = 0b0000100001 << 20
 
 func (rp *RunicPowerBar) CurrentBloodRuneGrace(sim *Simulation) time.Duration {
-	if rp.runeStates&anyBloodSpent == 0 {
-		return 0
-	}
 	return MaxDuration(rp.CurrentRuneGrace(sim, 0), rp.CurrentRuneGrace(sim, 1))
 }
 
 func (rp *RunicPowerBar) CurrentFrostRuneGrace(sim *Simulation) time.Duration {
-	if rp.runeStates&anyFrostSpent == 0 {
-		return 0
-	}
 	return MaxDuration(rp.CurrentRuneGrace(sim, 2), rp.CurrentRuneGrace(sim, 3))
 }
 
 func (rp *RunicPowerBar) CurrentUnholyRuneGrace(sim *Simulation) time.Duration {
-	if rp.runeStates&anyUnholySpent == 0 {
-		return 0
-	}
 	return MaxDuration(rp.CurrentRuneGrace(sim, 2), rp.CurrentRuneGrace(sim, 3))
 }
 
@@ -301,6 +292,20 @@ func (rp *RunicPowerBar) NormalSpentFrostRuneReadyAt(sim *Simulation) time.Durat
 	return readyAt
 }
 
+func (rp *RunicPowerBar) NormalFrostRuneReadyAt(sim *Simulation) time.Duration {
+	readyAt := NeverExpires
+	if rp.runeStates&isDeaths[2] == 0 && rp.runeStates&isSpents[2] != 0 {
+		readyAt = rp.runeMeta[2].regenAt
+	}
+	if rp.runeStates&isDeaths[3] == 0 && rp.runeStates&isSpents[3] != 0 {
+		readyAt = MinDuration(readyAt, rp.runeMeta[3].regenAt)
+	}
+	if (rp.runeStates&isDeaths[2] == 0 && rp.runeStates&isSpents[2] == 0) || (rp.runeStates&isDeaths[3] == 0 && rp.runeStates&isSpents[3] == 0) {
+		readyAt = sim.CurrentTime
+	}
+	return readyAt
+}
+
 func (rp *RunicPowerBar) NormalSpentUnholyRuneReadyAt(sim *Simulation) time.Duration {
 	readyAt := NeverExpires
 	if rp.runeStates&isDeaths[4] == 0 && rp.runeStates&isSpents[4] != 0 {
@@ -308,6 +313,20 @@ func (rp *RunicPowerBar) NormalSpentUnholyRuneReadyAt(sim *Simulation) time.Dura
 	}
 	if rp.runeStates&isDeaths[5] == 0 && rp.runeStates&isSpents[5] != 0 {
 		readyAt = MinDuration(readyAt, rp.runeMeta[5].regenAt)
+	}
+	return readyAt
+}
+
+func (rp *RunicPowerBar) NormalUnholyRuneReadyAt(sim *Simulation) time.Duration {
+	readyAt := NeverExpires
+	if rp.runeStates&isDeaths[4] == 0 && rp.runeStates&isSpents[4] != 0 {
+		readyAt = rp.runeMeta[4].regenAt
+	}
+	if rp.runeStates&isDeaths[5] == 0 && rp.runeStates&isSpents[5] != 0 {
+		readyAt = MinDuration(readyAt, rp.runeMeta[5].regenAt)
+	}
+	if (rp.runeStates&isDeaths[4] == 0 && rp.runeStates&isSpents[4] == 0) || (rp.runeStates&isDeaths[5] == 0 && rp.runeStates&isSpents[5] == 0) {
+		readyAt = sim.CurrentTime
 	}
 	return readyAt
 }
@@ -361,7 +380,7 @@ func (rp *RunicPowerBar) ConvertFromDeath(sim *Simulation, slot int32) {
 	rp.runeMeta[slot].revertAt = NeverExpires
 	rp.runeMeta[slot].revertOnSpend = false
 
-	if !rp.isACopy {
+	if !rp.isACopy && rp.runeStates&isSpents[slot] == 0 {
 		metrics := rp.bloodRuneGainMetrics
 		onGain := rp.onBloodRuneGain
 		if slot == 2 || slot == 3 {
@@ -378,14 +397,22 @@ func (rp *RunicPowerBar) ConvertFromDeath(sim *Simulation, slot int32) {
 }
 
 // ConvertToDeath converts the given slot to death and sets up the revertion conditions
+// ConvertToDeath converts the given slot to death and sets up the revertion conditions
 func (rp *RunicPowerBar) ConvertToDeath(sim *Simulation, slot int32, revertOnSpend bool, revertAt time.Duration) {
 	rp.runeStates = rp.runeStates | isDeaths[slot]
-	if rp.runeMeta[slot].revertAt != NeverExpires {
-		rp.runeMeta[slot].revertAt = MaxDuration(rp.runeMeta[slot].revertAt, revertAt)
+
+	// revertOnSpend == true overrides anything
+	rp.runeMeta[slot].revertOnSpend = rp.runeMeta[slot].revertOnSpend || revertOnSpend
+
+	if rp.runeMeta[slot].revertOnSpend {
+		rp.runeMeta[slot].revertAt = NeverExpires
 	} else {
-		rp.runeMeta[slot].revertAt = revertAt
+		if rp.runeMeta[slot].revertAt != NeverExpires {
+			rp.runeMeta[slot].revertAt = MaxDuration(rp.runeMeta[slot].revertAt, revertAt)
+		} else {
+			rp.runeMeta[slot].revertAt = revertAt
+		}
 	}
-	rp.runeMeta[slot].revertOnSpend = revertOnSpend
 
 	// Note we gained
 	if !rp.isACopy {
@@ -402,6 +429,29 @@ func (rp *RunicPowerBar) ConvertToDeath(sim *Simulation, slot int32, revertOnSpe
 			rp.onDeathRuneGain(sim)
 		}
 	}
+}
+
+func (rp *RunicPowerBar) LeftBloodRuneReady() bool {
+	const unspentBlood1 = isDeath | isSpent
+	if rp.runeStates&unspentBlood1 == 0 {
+		return true
+	} else {
+		return false
+	}
+}
+
+func (rp *RunicPowerBar) RightBloodRuneReady() bool {
+	const unspentBlood1 = isDeath | isSpent
+	const unspentBlood2 = unspentBlood1 << 5
+	if rp.runeStates&unspentBlood2 == 0 {
+		return true
+	} else {
+		return false
+	}
+}
+
+func (rp *RunicPowerBar) RuneIsDeath(slot int32) bool {
+	return (rp.runeStates & isDeaths[slot]) != 0
 }
 
 func (rp *RunicPowerBar) CurrentBloodRunes() int32 {
@@ -456,6 +506,51 @@ func (rp *RunicPowerBar) CurrentDeathRunes() int32 {
 			count++
 		}
 	}
+	return count
+}
+
+func (rp *RunicPowerBar) NormalCurrentBloodRunes() int32 {
+	const unspentBlood1 = isSpent
+	const unspentBlood2 = unspentBlood1 << 5
+
+	var count int32
+	if rp.runeStates&unspentBlood1 == 0 {
+		count++
+	}
+	if rp.runeStates&unspentBlood2 == 0 {
+		count++
+	}
+
+	return count
+}
+
+func (rp *RunicPowerBar) NormalCurrentFrostRunes() int32 {
+	const unspentFrost1 = (isSpent) << 10
+	const unspentFrost2 = unspentFrost1 << 5
+
+	var count int32
+	if rp.runeStates&unspentFrost1 == 0 {
+		count++
+	}
+	if rp.runeStates&unspentFrost2 == 0 {
+		count++
+	}
+
+	return count
+}
+
+func (rp *RunicPowerBar) NormalCurrentUnholyRunes() int32 {
+	const unspentUnholy1 = (isSpent) << 20
+	const unspentUnholy2 = unspentUnholy1 << 5
+
+	var count int32
+	if rp.runeStates&unspentUnholy1 == 0 {
+		count++
+	}
+	if rp.runeStates&unspentUnholy2 == 0 {
+		count++
+	}
+
 	return count
 }
 

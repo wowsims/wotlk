@@ -22,6 +22,7 @@ import { Player } from '../core/player.js';
 
 import { BuffBot } from './buff_bot.js';
 
+import * as DeathknightPresets from '../deathknight/presets.js';
 import * as BalanceDruidPresets from '../balance_druid/presets.js';
 import * as FeralDruidPresets from '../feral_druid/presets.js';
 import * as FeralTankDruidPresets from '../feral_tank_druid/presets.js';
@@ -54,9 +55,11 @@ import { SmitePriestSimUI } from '../smite_priest/sim.js';
 import { WarriorSimUI } from '../warrior/sim.js';
 import { ProtectionWarriorSimUI } from '../protection_warrior/sim.js';
 import { WarlockSimUI } from '../warlock/sim.js';
+import { DeathknightSimUI } from '../deathknight/sim.js';
 
 export const specSimFactories: Partial<Record<Spec, (parentElem: HTMLElement, player: Player<any>) => IndividualSimUI<any>>> = {
-    [Spec.SpecBalanceDruid]: (parentElem: HTMLElement, player: Player<any>) => new BalanceDruidSimUI(parentElem, player),
+    [Spec.SpecDeathknight]: (parentElem: HTMLElement, player: Player<any>) => new DeathknightSimUI(parentElem, player),
+	[Spec.SpecBalanceDruid]: (parentElem: HTMLElement, player: Player<any>) => new BalanceDruidSimUI(parentElem, player),
     [Spec.SpecFeralDruid]: (parentElem: HTMLElement, player: Player<any>) => new FeralDruidSimUI(parentElem, player),
     [Spec.SpecFeralTankDruid]: (parentElem: HTMLElement, player: Player<any>) => new FeralTankDruidSimUI(parentElem, player),
     [Spec.SpecElementalShaman]: (parentElem: HTMLElement, player: Player<any>) => new ElementalShamanSimUI(parentElem, player),
@@ -110,6 +113,56 @@ export interface BuffBotSettings {
 }
 
 export const playerPresets: Array<PresetSpecSettings<any>> = [
+	{
+		spec: Spec.SpecDeathknight,
+		rotation: DeathknightPresets.DefaultFrostRotation,
+		talents: DeathknightPresets.FrostTalents.data,
+		specOptions: DeathknightPresets.DefaultFrostOptions,
+		consumes: DeathknightPresets.DefaultConsumes,
+		defaultName: 'Frost DK',
+		defaultFactionRaces: {
+			[Faction.Unknown]: Race.RaceUnknown,
+			[Faction.Alliance]: Race.RaceHuman,
+			[Faction.Horde]: Race.RaceTroll,
+		},
+		defaultGear: {
+			[Faction.Unknown]: {},
+			[Faction.Alliance]: {
+				1: DeathknightPresets.P1_FROST_BIS_PRESET.gear,
+			},
+			[Faction.Horde]: {
+				1: DeathknightPresets.P1_FROST_BIS_PRESET.gear,
+			},
+		},
+		otherDefaults: DeathknightPresets.OtherDefaults,
+		tooltip: 'Frost Death Knight',
+		iconUrl: talentTreeIcons[Class.ClassDeathknight][1],
+	},
+	{
+		spec: Spec.SpecDeathknight,
+		rotation: DeathknightPresets.DefaultUnholyRotation,
+		talents: DeathknightPresets.UnholyDualWieldTalents.data,
+		specOptions: DeathknightPresets.DefaultUnholyOptions,
+		consumes: DeathknightPresets.DefaultConsumes,
+		defaultName: 'DW Unholy DK',
+		defaultFactionRaces: {
+			[Faction.Unknown]: Race.RaceUnknown,
+			[Faction.Alliance]: Race.RaceHuman,
+			[Faction.Horde]: Race.RaceTroll,
+		},
+		defaultGear: {
+			[Faction.Unknown]: {},
+			[Faction.Alliance]: {
+				1: DeathknightPresets.P1_UNHOLY_DW_BIS_PRESET.gear,
+			},
+			[Faction.Horde]: {
+				1: DeathknightPresets.P1_UNHOLY_DW_BIS_PRESET.gear,
+			},
+		},
+		otherDefaults: DeathknightPresets.OtherDefaults,
+		tooltip: 'Dual Wield Unholy DK',
+		iconUrl: talentTreeIcons[Class.ClassDeathknight][2],
+	},
 	{
 		spec: Spec.SpecBalanceDruid,
 		rotation: BalanceDruidPresets.DefaultRotation,
@@ -269,10 +322,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				0: MagePresets.P1_ARCANE_PRESET.gear,
+				1: MagePresets.P1_ARCANE_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				0: MagePresets.P1_ARCANE_PRESET.gear,
+				1: MagePresets.P1_ARCANE_PRESET.gear,
 			},
 		},
 		tooltip: 'Arcane Mage',
@@ -293,10 +346,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				0: MagePresets.P1_FIRE_PRESET.gear,
+				1: MagePresets.P1_FIRE_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				0: MagePresets.P1_FIRE_PRESET.gear,
+				1: MagePresets.P1_FIRE_PRESET.gear,
 			},
 		},
 		tooltip: 'Fire Mage',
@@ -317,10 +370,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				0: MagePresets.P1_FROST_PRESET.gear,
+				1: MagePresets.P1_FROST_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				0: MagePresets.P1_FROST_PRESET.gear,
+				1: MagePresets.P1_FROST_PRESET.gear,
 			},
 		},
 		tooltip: 'Frost Mage',

@@ -19,8 +19,10 @@ func (shaman *Shaman) registerBloodlustCD() {
 	actionID := shaman.BloodlustActionID()
 
 	blAuras := []*core.Aura{}
-	for _, partyMember := range shaman.Party.Players {
-		blAuras = append(blAuras, core.BloodlustAura(partyMember.GetCharacter(), actionID.Tag))
+	for _, party := range shaman.Env.Raid.Parties {
+		for _, partyMember := range party.Players {
+			blAuras = append(blAuras, core.BloodlustAura(partyMember.GetCharacter(), actionID.Tag))
+		}
 	}
 
 	baseCost := shaman.BaseMana * 0.26
@@ -57,11 +59,13 @@ func (shaman *Shaman) registerBloodlustCD() {
 				return false
 			}
 
-			// Need to check if any party member has lust, not just self, because of
+			// Need to check if any raid member has lust, not just self, because of
 			// major CD ordering issues with the shared bloodlust.
-			for _, partyMember := range character.Party.Players {
-				if partyMember.GetCharacter().HasActiveAuraWithTag(core.BloodlustAuraTag) {
-					return false
+			for _, party := range character.Env.Raid.Parties {
+				for _, partyMember := range party.Players {
+					if partyMember.GetCharacter().HasActiveAuraWithTag(core.BloodlustAuraTag) {
+						return false
+					}
 				}
 			}
 			return true

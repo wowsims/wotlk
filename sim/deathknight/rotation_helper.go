@@ -1,10 +1,14 @@
 package deathknight
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-type RotationAction func(sim *core.Simulation, target *core.Unit, s *Sequence) bool
+// return bool is if its on GCD
+// return duration is an optional wait time
+type RotationAction func(sim *core.Simulation, target *core.Unit, s *Sequence) time.Duration
 
 func TernaryRotationAction(condition bool, t RotationAction, f RotationAction) RotationAction {
 	if condition {
@@ -24,6 +28,10 @@ type Sequence struct {
 
 func (o *Sequence) IsOngoing() bool {
 	return o.idx < o.numActions
+}
+
+func (o *Sequence) RemainingActions() int {
+	return (o.numActions - 1) - o.idx
 }
 
 func (o *Sequence) Reset() {
@@ -62,8 +70,7 @@ func (s *Sequence) Clear() *Sequence {
 }
 
 type RotationHelper struct {
-	Opener *Sequence
-	Main   *Sequence
+	RotationSequence *Sequence
 
 	LastOutcome core.HitOutcome
 	LastCast    *RuneSpell

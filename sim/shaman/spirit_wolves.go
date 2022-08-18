@@ -69,8 +69,8 @@ func (shaman *Shaman) NewSpiritWolf(index int) *SpiritWolf {
 		AutoSwingMelee: true,
 	})
 
-	spiritWolf.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2)
-	spiritWolf.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/83.3))
+	spiritWolf.AddStatDependency(stats.Strength, stats.AttackPower, 2)
+	spiritWolf.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/83.3)
 	core.ApplyPetConsumeEffects(&spiritWolf.Character, shaman.Consumes)
 
 	shaman.AddPet(spiritWolf)

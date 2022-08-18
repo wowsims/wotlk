@@ -77,7 +77,7 @@ func NewFeralTankDruid(character core.Character, options proto.Player) *FeralTan
 	bear.AddStat(stats.AttackPower, 3*float64(core.CharacterLevel))
 
 	// Dire Bear Form bonuses.
-	bear.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+0.25)
+	bear.MultiplyStat(stats.Stamina, 1.25)
 
 	dps := (((bear.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponDamageMax - bear.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponDamageMin) / 2.0) + bear.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponDamageMin) / bear.Equip[proto.ItemSlot_ItemSlotMainHand].SwingSpeed
 	fap := math.Floor((dps - 54.8) * 14)

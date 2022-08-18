@@ -23,6 +23,7 @@ type Environment struct {
 
 	Raid      *Raid
 	Encounter Encounter
+	AllUnits  []*Unit
 
 	BaseDuration      time.Duration // base duration
 	DurationVariation time.Duration // variation per duration
@@ -52,8 +53,14 @@ func (env *Environment) construct(raidProto proto.Raid, encounterProto proto.Enc
 
 	env.Raid.updatePlayersAndPets()
 
-	for _, unit := range env.Raid.AllUnits {
+	env.AllUnits = append(env.Encounter.TargetUnits, env.Raid.AllUnits...)
+
+	for unitIndex, unit := range env.AllUnits {
 		unit.Env = env
+		unit.UnitIndex = int32(unitIndex)
+	}
+
+	for _, unit := range env.Raid.AllUnits {
 		unit.CurrentTarget = &env.Encounter.Targets[0].Unit
 	}
 
@@ -64,7 +71,6 @@ func (env *Environment) construct(raidProto proto.Raid, encounterProto proto.Enc
 
 	// Assign target or target using Tanks field.
 	for _, target := range env.Encounter.Targets {
-		target.Env = env
 		if target.Index < int32(len(encounterProto.Targets)) {
 			targetProto := encounterProto.Targets[target.Index]
 			if targetProto.TankIndex >= 0 && targetProto.TankIndex < int32(len(raidProto.Tanks)) {
@@ -143,26 +149,18 @@ func (env *Environment) setupAttackTables() {
 		return
 	}
 
-	for targetIndex, target := range env.Encounter.Targets {
-		target.TableIndex = int32(targetIndex)
-		target.AttackTables = make([]*AttackTable, len(raidUnits))
-		target.DefenseTables = make([]*AttackTable, len(raidUnits))
+	for _, unit := range env.AllUnits {
+		unit.AttackTables = make([]*AttackTable, len(env.AllUnits))
+		unit.DefenseTables = make([]*AttackTable, len(env.AllUnits))
+	}
 
-		for attackerIndex, attacker := range raidUnits {
-			attacker.TableIndex = int32(attackerIndex)
-			if attacker.AttackTables == nil {
-				attacker.AttackTables = make([]*AttackTable, env.GetNumTargets())
-				attacker.DefenseTables = make([]*AttackTable, env.GetNumTargets())
-			}
-
-			attackTable := NewAttackTable(attacker, &target.Unit)
-			defenseTable := NewAttackTable(&target.Unit, attacker)
-
-			attacker.AttackTables[target.TableIndex] = attackTable
-			attacker.DefenseTables[target.TableIndex] = defenseTable
-
-			target.AttackTables[attacker.TableIndex] = defenseTable
-			target.DefenseTables[attacker.TableIndex] = attackTable
+	for i := 0; i < len(env.AllUnits); i++ {
+		for j := 0; j < len(env.AllUnits); j++ {
+			attacker := env.AllUnits[i]
+			defender := env.AllUnits[j]
+			attackTable := NewAttackTable(attacker, defender)
+			attacker.AttackTables[j] = attackTable
+			defender.DefenseTables[i] = attackTable
 		}
 	}
 }

@@ -16,15 +16,16 @@ var BrutallusStomp = TargetAbility{
 
 		characterTarget := target.Env.Raid.GetPlayerFromUnit(target.CurrentTarget).GetCharacter()
 
+		statDep := characterTarget.NewDynamicMultiplyStat(stats.Armor, 0.5)
 		stompDebuff := characterTarget.RegisterAura(core.Aura{
 			Label:    "Stomp",
 			ActionID: actionID,
 			Duration: time.Second * 10,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Unit.AddStatDependencyDynamic(sim, stats.Armor, stats.Armor, 0.5)
+				aura.Unit.EnableDynamicStatDep(sim, statDep)
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Unit.AddStatDependencyDynamic(sim, stats.Armor, stats.Armor, 1/0.5)
+				aura.Unit.DisableDynamicStatDep(sim, statDep)
 			},
 		})
 

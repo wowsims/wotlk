@@ -62,7 +62,7 @@ func (warrior *Warrior) procDeepWounds(sim *core.Simulation, target *core.Unit) 
 	newTickDamage := newDeepWoundsDamage / 6
 	warrior.DeepWoundsTickDamage[target.Index] = newTickDamage
 
-	warrior.DeepWounds.SpellMetrics[target.TableIndex].Hits++
+	warrior.DeepWounds.SpellMetrics[target.UnitIndex].Hits++
 
 	deepWoundsDot.TickEffects = core.TickFuncApplyEffectsToUnit(target, core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 		ProcMask:         core.ProcMaskPeriodicDamage,

@@ -67,15 +67,13 @@ func (dk *Deathknight) registerBoneShieldSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			dk.BoneShieldAura.Activate(sim)
 		},
-	})
-}
-
-func (dk *Deathknight) CanBoneShield(sim *core.Simulation) bool {
-	return dk.CastCostPossible(sim, 0.0, 0, 0, 1) && dk.BoneShield.IsReady(sim)
+	}, func(sim *core.Simulation) bool {
+		return dk.CastCostPossible(sim, 0.0, 0, 0, 1) && dk.BoneShield.IsReady(sim)
+	}, nil)
 }
 
 func (dk *Deathknight) CastBoneShield(sim *core.Simulation, target *core.Unit) bool {
-	if dk.CanBoneShield(sim) {
+	if dk.BoneShield.CanCast(sim) {
 		return dk.BoneShield.Cast(sim, target)
 	}
 	return false

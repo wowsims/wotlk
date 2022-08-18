@@ -256,7 +256,7 @@ func (unitMetrics *UnitMetrics) addSpell(spell *Spell) {
 		actionMetrics.Targets = make([]TargetedActionMetrics, len(spell.SpellMetrics))
 		for i, _ := range actionMetrics.Targets {
 			tam := &actionMetrics.Targets[i]
-			tam.UnitIndex = spell.Unit.AttackTables[i].Defender.Index
+			tam.UnitIndex = spell.Unit.AttackTables[i].Defender.UnitIndex
 		}
 	}
 
@@ -272,11 +272,14 @@ func (unitMetrics *UnitMetrics) addSpell(spell *Spell) {
 		tam.Glances += spellTargetMetrics.Glances
 		tam.Damage += spellTargetMetrics.TotalDamage
 		tam.Threat += spellTargetMetrics.TotalThreat
-		unitMetrics.dps.Total += spellTargetMetrics.TotalDamage
-		unitMetrics.threat.Total += spellTargetMetrics.TotalThreat
 
 		target := spell.Unit.AttackTables[i].Defender
 		target.Metrics.dtps.Total += spellTargetMetrics.TotalDamage
+
+		if spell.Unit.IsOpponent(target) {
+			unitMetrics.dps.Total += spellTargetMetrics.TotalDamage
+			unitMetrics.threat.Total += spellTargetMetrics.TotalThreat
+		}
 	}
 }
 

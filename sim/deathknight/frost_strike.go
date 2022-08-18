@@ -61,7 +61,14 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool, onhit func(sim *core.Si
 		conf.ApplyEffects = core.ApplyEffectFuncDirectDamage(effect)
 	}
 
-	return dk.RegisterSpell(rs, conf)
+	if isMH {
+		return dk.RegisterSpell(rs, conf, func(sim *core.Simulation) bool {
+			runeCost := core.RuneCost(dk.FrostStrike.BaseCost)
+			return dk.CastCostPossible(sim, float64(runeCost.RunicPower()), 0, 0, 0) && dk.FrostStrike.IsReady(sim)
+		}, nil)
+	} else {
+		return dk.RegisterSpell(rs, conf, nil, nil)
+	}
 }
 
 func (dk *Deathknight) registerFrostStrikeSpell() {
@@ -76,16 +83,4 @@ func (dk *Deathknight) registerFrostStrikeSpell() {
 	})
 	dk.FrostStrikeOhHit = dk.newFrostStrikeHitSpell(false, nil)
 	dk.FrostStrike = dk.FrostStrikeMhHit
-}
-
-func (dk *Deathknight) CanFrostStrike(sim *core.Simulation) bool {
-	runeCost := core.RuneCost(dk.FrostStrike.BaseCost)
-	return dk.CastCostPossible(sim, float64(runeCost.RunicPower()), 0, 0, 0) && dk.FrostStrike.IsReady(sim)
-}
-
-func (dk *Deathknight) CastFrostStrike(sim *core.Simulation, target *core.Unit) bool {
-	if dk.CanFrostStrike(sim) {
-		return dk.FrostStrike.Cast(sim, target)
-	}
-	return false
 }

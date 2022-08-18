@@ -46,16 +46,7 @@ func (dk *Deathknight) registerRuneTapSpell() {
 			maxHealth := dk.MaxHealth()
 			dk.GainHealth(sim, (1.0+healthGainMult)*(maxHealth*0.1), healthMetrics)
 		},
-	})
-}
-
-func (dk *Deathknight) CanRuneTap(sim *core.Simulation) bool {
-	return dk.CastCostPossible(sim, 0, 1, 0, 0) && dk.RuneTap.IsReady(sim)
-}
-
-func (dk *Deathknight) CastRuneTap(sim *core.Simulation, target *core.Unit) bool {
-	if dk.CanRuneTap(sim) {
-		return dk.RuneTap.Cast(sim, target)
-	}
-	return false
+	}, func(sim *core.Simulation) bool {
+		return dk.CastCostPossible(sim, 0, 1, 0, 0) && dk.RuneTap.IsReady(sim)
+	}, nil)
 }
