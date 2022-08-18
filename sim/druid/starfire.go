@@ -29,6 +29,12 @@ func (druid *Druid) newStarfireSpell() *core.Spell {
 		ThreatMultiplier:     1,
 		BaseDamage:           core.BaseDamageConfigMagic(minBaseDamage+bonusFlatDamage, maxBaseDamage+bonusFlatDamage, spellCoefficient),
 		OutcomeApplier:       druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, 0.2*float64(druid.Talents.Vengeance))),
+		/*OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spellEffect.Landed() && druid.HasGlyph(proto.DruidMajorGlyph_GlyphOfStarfire) && druid.MoonfireDot.IsActive() {
+				// Add 3seconds to Moonfire Tick up to +9s
+				druid.MoonfireDot.NumberOfTicks += 1
+			}
+		}, */
 	}
 
 	if druid.HasSetBonus(ItemSetNordrassilRegalia, 4) {
@@ -48,7 +54,7 @@ func (druid *Druid) newStarfireSpell() *core.Spell {
 	}
 	// If improved insect swarm and MF active, +3% crit chance
 	if druid.MoonfireDot.IsActive() && druid.Talents.ImprovedInsectSwarm > 0 {
-		effect.BonusSpellCritRating += 0.01 * float64(druid.Talents.ImprovedInsectSwarm)
+		effect.BonusSpellCritRating += 45.91 * float64(druid.Talents.ImprovedInsectSwarm)
 	}
 
 	return druid.RegisterSpell(core.SpellConfig{
