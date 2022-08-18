@@ -62,11 +62,8 @@ func (mage *Mage) registerEvocationCD() {
 			}
 
 			curMana := character.CurrentMana()
-			if curMana > manaThreshold {
-				return false
-			}
 
-			return true
+			return curMana < manaThreshold
 		},
 	})
 }

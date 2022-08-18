@@ -245,18 +245,26 @@ func (mage *Mage) Reset(sim *core.Simulation) {
 		mage.LivingBombNotActive.Enqueue(mage.Env.GetTargetUnit(i))
 	}
 
-	if mage.Rotation.Type == proto.Mage_Rotation_Fire { // make this an option
+	if mage.Rotation.Type == proto.Mage_Rotation_Fire && mage.Rotation.OptimizeCdsForExecute { // make this an option
 		mage.disabledMCDs = make([]*core.MajorCooldown, 0, 10)
 		mage.launchExecuteCDOptimizer(sim)
 	}
 }
 
 func (mage *Mage) fireSpellOutcomeApplier(secondaryCritMultiplier float64) core.OutcomeApplier {
-	if mage.CombustionAura.IsActive() {
-		secondaryCritMultiplier += .5
+
+	critMult := mage.SpellCritMultiplier(1, secondaryCritMultiplier)
+
+	combMult := mage.SpellCritMultiplier(1, secondaryCritMultiplier+.5)
+
+	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
+		if mage.CombustionAura.IsActive() {
+			mage.OutcomeFuncMagicHitAndCrit(combMult)(sim, spell, spellEffect, attackTable)
+		} else {
+			mage.OutcomeFuncMagicHitAndCrit(critMult)(sim, spell, spellEffect, attackTable)
+		}
 	}
 
-	return mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, secondaryCritMultiplier))
 }
 
 func NewMage(character core.Character, options proto.Player) *Mage {
@@ -271,6 +279,7 @@ func NewMage(character core.Character, options proto.Player) *Mage {
 		spellDamageMultiplier: 1.0,
 		manaTracker:           common.NewManaSpendingRateTracker(),
 	}
+	mage.DistanceFromTarget = 25
 	mage.EnableManaBar()
 	mage.EnableResumeAfterManaWait(mage.tryUseGCD)
 

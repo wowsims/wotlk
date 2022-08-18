@@ -47,7 +47,7 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 
 			ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul) - .04*float64(mage.Talents.FrostChanneling),
 
-			BaseDamage:     core.BaseDamageConfigMagic(722, 838, 3.0/3.5+float64(mage.Talents.EmpoweredFire)*.05),
+			BaseDamage:     core.BaseDamageConfigMagicNoRoll((722+838)/2, 3.0/3.5+float64(mage.Talents.EmpoweredFire)*.05),
 			OutcomeApplier: mage.fireSpellOutcomeApplier(mage.bonusCritDamage + float64(mage.Talents.IceShards)/3),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
@@ -56,7 +56,7 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 				}
 			},
 
-			// MissileSpeed: 25,
+			MissileSpeed: 25,
 		}),
 	})
 

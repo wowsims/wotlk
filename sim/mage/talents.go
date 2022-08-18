@@ -299,11 +299,7 @@ func (mage *Mage) registerPresenceOfMindCD() {
 			}
 			manaCost *= character.PseudoStats.CostMultiplier
 
-			if character.CurrentMana() < manaCost {
-				return false
-			}
-
-			return true
+			return character.CurrentMana() >= manaCost
 		},
 	})
 }
@@ -384,7 +380,7 @@ func (mage *Mage) registerCombustionCD() {
 	actionID := core.ActionID{SpellID: 11129}
 	cd := core.Cooldown{
 		Timer:    mage.NewTimer(),
-		Duration: time.Minute * 3,
+		Duration: time.Minute * 2,
 	}
 
 	numCrits := 0
@@ -397,20 +393,18 @@ func (mage *Mage) registerCombustionCD() {
 		MaxStacks: 20,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			numCrits = 0
-			// need to add 50% crit dmg to combustion here
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			cd.Use(sim)
-			// mage.UpdateMajorCooldowns()
 		},
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
 			aura.Unit.PseudoStats.BonusFireCritRating += critPerStack * float64(newStacks-oldStacks)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spell.SpellSchool != core.SpellSchoolFire {
+			if spell.SpellSchool != core.SpellSchoolFire || !spell.Flags.Matches(SpellFlagMage) {
 				return
 			}
-			if spell.SameAction(IgniteActionID) || spell.SameAction(core.ActionID{SpellID: 55359}) { //LB dot action should be ignored
+			if spell.SameAction(IgniteActionID) || spell.SameAction(core.ActionID{SpellID: 55359}) || spell.SameAction(core.ActionID{SpellID: 44457}) { //LB dot action should be ignored
 				return
 			}
 			if !spellEffect.Landed() {
@@ -576,6 +570,7 @@ func (mage *Mage) applyMoltenFury() {
 
 	mage.RegisterResetEffect(func(sim *core.Simulation) {
 		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int) {
+			mage.DisableMajorCooldown(core.ActionID{SpellID: EvocationId})
 			if isExecute == 35 {
 				mage.PseudoStats.DamageDealtMultiplier *= multiplier
 			}

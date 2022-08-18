@@ -48,7 +48,8 @@ func (mage *Mage) registerFireballSpell() {
 
 			ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
-			BaseDamage:     core.BaseDamageConfigMagic(898, 1143, 1.0+0.05*float64(mage.Talents.EmpoweredFire)),
+			BaseDamage: core.BaseDamageConfigMagic(898, 1143, 1.0+0.05*float64(mage.Talents.EmpoweredFire)),
+			// BaseDamage:     core.BaseDamageConfigMagicNoRoll((898 + 1143)/2, 1.0+0.05*float64(mage.Talents.EmpoweredFire)),
 			OutcomeApplier: mage.fireSpellOutcomeApplier(mage.bonusCritDamage),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

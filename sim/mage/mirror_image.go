@@ -22,7 +22,10 @@ func (mage *Mage) registerMirrorImageCD() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost,
-				GCD:  core.GCDDefault,
+				// GCD:  core.GCDDefault,
+			},
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				spell.DefaultCast.GCD = core.GCDDefault
 			},
 			CD: core.Cooldown{
 				Timer:    mage.NewTimer(),
@@ -67,10 +70,10 @@ func (mage *Mage) NewMirrorImage() *MirrorImage {
 			&mage.Character,
 			mirrorImageBaseStats,
 			mirrorImageInheritance,
-			false, //could be true if set to precast before first global
+			false,
 			true,
 		),
-		waitBetweenCasts: time.Second,
+		waitBetweenCasts: time.Second * 0,
 	}
 	mirrorImage.EnableManaBar()
 
@@ -98,8 +101,6 @@ func (mi *MirrorImage) OnGCDReady(sim *core.Simulation) {
 	}
 
 	if success := spell.Cast(sim, mi.CurrentTarget); !success {
-		// If water ele has gone OOM then there won't be enough time left for meaningful
-		// regen to occur before the ele expires. So just murder itself.
 		mi.Disable(sim)
 	}
 }
@@ -112,12 +113,14 @@ var mirrorImageBaseStats = stats.Stats{
 var mirrorImageInheritance = func(ownerStats stats.Stats) stats.Stats {
 	// These numbers are just rough guesses based on looking at some logs.
 	return ownerStats.DotProduct(stats.Stats{
-		// Computed based on my lvl 65 mage, need to ask someone with a 70 to check these
 		stats.Stamina:   1,
 		stats.Intellect: 1,
 		stats.Mana:      1,
 
-		stats.SpellPower: 0.1,
+		stats.SpellCrit: 1,
+		stats.SpellHit:  1,
+
+		stats.SpellPower: 0.33,
 	})
 }
 
@@ -161,9 +164,8 @@ func (mi *MirrorImage) registerFireblastSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost,
-				GCD:      core.GCDMin,
-				CastTime: time.Second * 3,
+				Cost: baseCost,
+				GCD:  core.GCDMin,
 			},
 			CD: core.Cooldown{
 				Timer:    mi.NewTimer(),

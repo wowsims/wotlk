@@ -1054,6 +1054,29 @@ const idToCategoryMap: Record<number, number> = {
 	[50589]: SPELL_ACTION_CATEGORY + 0.81, // Immolation Aura
 	[47193]: SPELL_ACTION_CATEGORY + 0.82, // Demonic Empowerment
 
+	// Mage
+	[42842]: SPELL_ACTION_CATEGORY + 0.01, // Frostbolt
+	[47610]: SPELL_ACTION_CATEGORY + 0.02, // Frostfire Bolt
+	[42897]: SPELL_ACTION_CATEGORY + 0.02, // Arcane Blast
+	[42833]: SPELL_ACTION_CATEGORY + 0.02, // Fireball
+	[42891]: SPELL_ACTION_CATEGORY + 0.1, // Pyroblast
+	[42846]: SPELL_ACTION_CATEGORY + 0.1, // Arcane Missiles
+	[55360]: SPELL_ACTION_CATEGORY + 0.2, //Living Bomb
+	[12848]: SPELL_ACTION_CATEGORY + 0.3, // Ignite
+	[12472]: SPELL_ACTION_CATEGORY + 0.4, // Icy Veins
+	[11129]: SPELL_ACTION_CATEGORY + 0.4, // Combustion
+	[12042]: SPELL_ACTION_CATEGORY + 0.4, // Arcane Power
+	[12043]: SPELL_ACTION_CATEGORY + 0.41, // Presence of Mind
+	[31687]: SPELL_ACTION_CATEGORY + 0.41, // Water Elemental
+	[55342]: SPELL_ACTION_CATEGORY + 0.5, // Mirror Image
+	[33312]: SPELL_ACTION_CATEGORY + 0.51, // Mana Gems
+	[12051]: SPELL_ACTION_CATEGORY + 0.52, // Evocate
+	[44401]: SPELL_ACTION_CATEGORY + 0.6, // Missile Barrage
+	[44448]: SPELL_ACTION_CATEGORY + 0.6, // Hot Streak
+	[12536]: SPELL_ACTION_CATEGORY + 0.61, // Clearcasting
+	// [55360]: SPELL_ACTION_CATEGORY + 0.6, // Fingers of Frost
+	// [55360]: SPELL_ACTION_CATEGORY + 0.61, // Brain Freeze
+
 
 	// Warrior
 	[25231]: 0.1, // Cleave
@@ -1069,9 +1092,6 @@ const idToCategoryMap: Record<number, number> = {
 	[71]: DEFAULT_ACTION_CATEGORY + 0.1, // Defensive Stance
 	[2457]: DEFAULT_ACTION_CATEGORY + 0.1, // Battle Stance
 	[2458]: DEFAULT_ACTION_CATEGORY + 0.1, // Berserker Stance
-
-	// Mage
-	// [],
 	
 	// Deathknight
 	[51425]: MELEE_ACTION_CATEGORY + 0.05, // Obliterate

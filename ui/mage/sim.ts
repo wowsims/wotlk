@@ -136,6 +136,7 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 					MageInputs.EvocationTicks,
 					MageInputs.FocusMagicUptime,
 					OtherInputs.PrepopPotion,
+					OtherInputs.DistanceFromTarget,
 
 					OtherInputs.TankAssignment,
 				],
