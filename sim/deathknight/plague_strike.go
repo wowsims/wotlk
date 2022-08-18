@@ -58,7 +58,13 @@ func (dk *Deathknight) newPlagueStrikeSpell(isMH bool, onhit func(sim *core.Simu
 		conf.ApplyEffects = dk.withRuneRefund(rs, effect, false)
 	}
 
-	return dk.RegisterSpell(rs, conf)
+	if isMH {
+		return dk.RegisterSpell(rs, conf, func(sim *core.Simulation) bool {
+			return dk.CastCostPossible(sim, 0.0, 0, 0, 1) && dk.PlagueStrike.IsReady(sim)
+		}, nil)
+	} else {
+		return dk.RegisterSpell(rs, conf, nil, nil)
+	}
 }
 
 func (dk *Deathknight) registerPlagueStrikeSpell() {
@@ -79,15 +85,4 @@ func (dk *Deathknight) registerPlagueStrikeSpell() {
 	})
 	dk.PlagueStrikeOhHit = dk.newPlagueStrikeSpell(false, nil)
 	dk.PlagueStrike = dk.PlagueStrikeMhHit
-}
-
-func (dk *Deathknight) CanPlagueStrike(sim *core.Simulation) bool {
-	return dk.CastCostPossible(sim, 0.0, 0, 0, 1) && dk.PlagueStrike.IsReady(sim)
-}
-
-func (dk *Deathknight) CastPlagueStrike(sim *core.Simulation, target *core.Unit) bool {
-	if dk.PlagueStrike.IsReady(sim) {
-		return dk.PlagueStrike.Cast(sim, target)
-	}
-	return false
 }

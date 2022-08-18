@@ -74,16 +74,7 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 				}
 			},
 		}, false),
-	})
-}
-
-func (dk *Deathknight) CanIcyTouch(sim *core.Simulation) bool {
-	return dk.CastCostPossible(sim, 0.0, 0, 1, 0) && dk.IcyTouch.IsReady(sim)
-}
-
-func (dk *Deathknight) CastIcyTouch(sim *core.Simulation, target *core.Unit) bool {
-	if dk.IcyTouch.IsReady(sim) {
-		return dk.IcyTouch.Cast(sim, target)
-	}
-	return false
+	}, func(sim *core.Simulation) bool {
+		return dk.CastCostPossible(sim, 0.0, 0, 1, 0) && dk.IcyTouch.IsReady(sim)
+	}, nil)
 }

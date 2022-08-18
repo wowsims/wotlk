@@ -66,8 +66,7 @@ func (dk *DpsDeathknight) FrostPointsInUnholy() int32 {
 func (dk *DpsDeathknight) SetupRotations() {
 	dk.ur.ffFirst = dk.Rotation.FirstDisease == proto.Deathknight_Rotation_FrostFever
 
-	dk.Opener.Clear()
-	dk.Main.Clear()
+	dk.RotationSequence.Clear()
 
 	if dk.Talents.HowlingBlast && (dk.FrostPointsInBlood() > dk.FrostPointsInUnholy()) {
 		if dk.Rotation.UseEmpowerRuneWeapon {
@@ -77,9 +76,11 @@ func (dk *DpsDeathknight) SetupRotations() {
 		}
 	} else if dk.Talents.HowlingBlast && (dk.FrostPointsInBlood() < dk.FrostPointsInUnholy()) {
 		if dk.Rotation.UseEmpowerRuneWeapon {
-			dk.setupFrostSubUnholyERWOpener()
+			//dk.setupFrostSubUnholyERWOpener()
+			dk.setupFrostSubBloodERWOpener()
 		} else {
-			dk.setupFrostSubUnholyNoERWOpener()
+			//dk.setupFrostSubUnholyNoERWOpener()
+			dk.setupFrostSubBloodNoERWOpener()
 		}
 	} else if dk.Talents.SummonGargoyle {
 		dk.setupUnholyRotations()
