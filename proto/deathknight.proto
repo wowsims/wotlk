@@ -192,6 +192,8 @@ message Deathknight {
 
 		StartingPresence starting_presence = 10;
 		BloodTap blood_tap = 11;
+
+		double oblit_delay_duration = 12;
 	}
 	Rotation rotation = 1;
 
