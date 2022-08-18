@@ -75,7 +75,7 @@ export class PlayerDamageMetricsTable extends MetricsTable<UnitMetrics> {
 	customizeRowElem(player: UnitMetrics, rowElem: HTMLElement) {
 		rowElem.classList.add('player-damage-row');
 		rowElem.addEventListener('click', event => {
-			this.resultsFilter.setPlayer(this.getLastSimResult().eventID, player.index);
+			this.resultsFilter.setPlayer(this.getLastSimResult().eventID, player.unitIndex);
 		});
 	}
 

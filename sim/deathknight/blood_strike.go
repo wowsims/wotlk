@@ -56,7 +56,13 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool, onhit func(sim *core.Simul
 		conf.ApplyEffects = dk.withRuneRefund(rs, effect, false)
 	}
 
-	return dk.RegisterSpell(rs, conf)
+	if isMH {
+		return dk.RegisterSpell(rs, conf, func(sim *core.Simulation) bool {
+			return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.BloodStrike.IsReady(sim)
+		}, nil)
+	} else {
+		return dk.RegisterSpell(rs, conf, nil, nil)
+	}
 }
 
 func (dk *Deathknight) registerBloodStrikeSpell() {
@@ -75,15 +81,4 @@ func (dk *Deathknight) registerBloodStrikeSpell() {
 	})
 	dk.BloodStrikeOhHit = dk.newBloodStrikeSpell(false, nil)
 	dk.BloodStrike = dk.BloodStrikeMhHit
-}
-
-func (dk *Deathknight) CanBloodStrike(sim *core.Simulation) bool {
-	return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.BloodStrike.IsReady(sim)
-}
-
-func (dk *Deathknight) CastBloodStrike(sim *core.Simulation, target *core.Unit) bool {
-	if dk.CanBloodStrike(sim) {
-		return dk.BloodStrike.Cast(sim, target)
-	}
-	return false
 }

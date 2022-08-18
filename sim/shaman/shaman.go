@@ -14,10 +14,10 @@ const baseMana = 4396.0
 const TotemRefreshTime5M = time.Second * 295
 
 const (
-	SpellFlagShock    = core.SpellFlagAgentReserved1
-	SpellFlagElectric = core.SpellFlagAgentReserved2
-	SpellFlagTotem    = core.SpellFlagAgentReserved3
-	SpellFlagFireNova = core.SpellFlagAgentReserved4
+	SpellFlagShock     = core.SpellFlagAgentReserved1
+	SpellFlagElectric  = core.SpellFlagAgentReserved2
+	SpellFlagTotem     = core.SpellFlagAgentReserved3
+	SpellFlagFocusable = core.SpellFlagAgentReserved4
 )
 
 func NewShaman(character core.Character, talents proto.ShamanTalents, totems proto.ShamanTotems, selfBuffs SelfBuffs, thunderstormRange bool) *Shaman {
@@ -35,9 +35,9 @@ func NewShaman(character core.Character, talents proto.ShamanTalents, totems pro
 	shaman.EnableManaBar()
 
 	// Add Shaman stat dependencies
-	shaman.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+1)
-	shaman.AddStatDependency(stats.Agility, stats.AttackPower, 1.0+1)
-	shaman.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+core.CritRatingPerCritChance/83.3)
+	shaman.AddStatDependency(stats.Strength, stats.AttackPower, 1)
+	shaman.AddStatDependency(stats.Agility, stats.AttackPower, 1)
+	shaman.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/83.3)
 	// Set proper Melee Haste scaling
 	shaman.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
 
@@ -70,9 +70,7 @@ type Shaman struct {
 
 	thunderstormInRange bool // flag if thunderstorm will be in range.
 
-	LavaburstWeave bool // flag to enable lava burst weaving for enh
-    LightningboltWeave bool // flag to enable lightning bolt weaving for enh
-    MaelstromweaponMinStack int32
+	ShamanisticRageManaThreshold float64 //% of mana to use sham. rage at
 
 	Talents   proto.ShamanTalents
 	SelfBuffs SelfBuffs
@@ -220,6 +218,10 @@ func (shaman *Shaman) Initialize() {
 
 	if shaman.Talents.LavaLash {
 		shaman.LavaLash = shaman.newLavaLashSpell()
+	}
+
+	if shaman.Talents.SpiritWeapons {
+		shaman.PseudoStats.ThreatMultiplier -= 0.3
 	}
 
 	shaman.registerFeralSpirit()

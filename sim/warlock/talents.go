@@ -14,7 +14,7 @@ func (warlock *Warlock) ApplyTalents() {
 
 	// Demonic Embrace
 	if warlock.Talents.DemonicEmbrace > 0 {
-		warlock.AddStatDependency(stats.Stamina, stats.Stamina, 1.01+(float64(warlock.Talents.DemonicEmbrace)*0.03))
+		warlock.MultiplyStat(stats.Stamina, 1.01+(float64(warlock.Talents.DemonicEmbrace)*0.03))
 	}
 
 	// Molten Skin
@@ -46,8 +46,8 @@ func (warlock *Warlock) ApplyTalents() {
 	// Fel Vitality
 	if warlock.Talents.FelVitality > 0 {
 		bonus := 1.0 + 0.01*float64(warlock.Talents.FelVitality)
-		warlock.AddStatDependency(stats.Mana, stats.Mana, bonus)
-		warlock.AddStatDependency(stats.Health, stats.Health, bonus)
+		warlock.MultiplyStat(stats.Mana, bonus)
+		warlock.MultiplyStat(stats.Health, bonus)
 	}
 
 	if warlock.Options.Summon != proto.Warlock_Options_NoSummon {
@@ -147,26 +147,16 @@ func (warlock *Warlock) applyWeaponImbue() {
 }
 
 func (warlock *Warlock) registerGlyphOfLifeTapAura() {
+	statDep := warlock.NewDynamicStatDependency(stats.Spirit, stats.SpellPower, 0.2)
 	warlock.GlyphOfLifeTapAura = warlock.RegisterAura(core.Aura{
 		Label:    "Glyph Of LifeTap Aura",
 		ActionID: core.ActionID{SpellID: 63321},
 		Duration: time.Second * 40,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			// This is a very ugly hack; since AddStatDependencyDynamic multipliers stack multiplicatively,
-			// normally we'd get 1.3*1.2=1.56 with fel armor, which is wrong, the correct result would be
-			// 1.5 and thus we need to correct for that
-			if warlock.Options.Armor == proto.Warlock_Options_FelArmor {
-				warlock.AddStatDependencyDynamic(sim, stats.Spirit, stats.SpellPower, 1.5/1.3)
-			} else {
-				warlock.AddStatDependencyDynamic(sim, stats.Spirit, stats.SpellPower, 1.2)
-			}
+			warlock.EnableDynamicStatDep(sim, statDep)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			if warlock.Options.Armor == proto.Warlock_Options_FelArmor {
-				warlock.AddStatDependencyDynamic(sim, stats.Spirit, stats.SpellPower, 1/(1.5/1.3))
-			} else {
-				warlock.AddStatDependencyDynamic(sim, stats.Spirit, stats.SpellPower, 1/1.2)
-			}
+			warlock.DisableDynamicStatDep(sim, statDep)
 		},
 	})
 }
@@ -304,8 +294,8 @@ func (warlock *Warlock) ShadowEmbraceDebuffAura(target *core.Unit) *core.Aura {
 		Duration:  time.Second * 12,
 		MaxStacks: 3,
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
-			warlock.AttackTables[aura.Unit.TableIndex].PeriodicShadowDamageDealtMultiplier /= 1.0 + shadowEmbraceBonus*float64(oldStacks)
-			warlock.AttackTables[aura.Unit.TableIndex].PeriodicShadowDamageDealtMultiplier *= 1.0 + shadowEmbraceBonus*float64(newStacks)
+			warlock.AttackTables[aura.Unit.UnitIndex].PeriodicShadowDamageDealtMultiplier /= 1.0 + shadowEmbraceBonus*float64(oldStacks)
+			warlock.AttackTables[aura.Unit.UnitIndex].PeriodicShadowDamageDealtMultiplier *= 1.0 + shadowEmbraceBonus*float64(newStacks)
 		},
 	})
 }
@@ -485,6 +475,8 @@ func (warlock *Warlock) setupImprovedSoulLeech() {
 	actionID := core.ActionID{SpellID: 54118}
 	improvedSoulLeechManaMetric := warlock.NewManaMetrics(actionID)
 	improvedSoulLeechPetManaMetric := warlock.Pets[0].GetCharacter().NewManaMetrics(actionID)
+	replAura := core.ReplenishmentAura(warlock.GetCharacter(), actionID)
+
 	warlock.RegisterAura(core.Aura{
 		Label:    "Improved Soul Leech Hidden Aura",
 		Duration: core.NeverExpires,
@@ -497,7 +489,7 @@ func (warlock *Warlock) setupImprovedSoulLeech() {
 					warlock.AddMana(sim, warlock.MaxMana()*float64(warlock.Talents.ImprovedSoulLeech)/100, improvedSoulLeechManaMetric, true)
 					warlock.Pets[0].GetCharacter().AddMana(sim, warlock.Pets[0].GetCharacter().MaxMana()*float64(warlock.Talents.ImprovedSoulLeech)/100, improvedSoulLeechPetManaMetric, true)
 					if sim.RandomFloat("ImprovedSoulLeech") < improvedSoulLeechProcChance {
-						core.ReplenishmentAura(warlock.GetCharacter(), actionID).Activate(sim)
+						replAura.Activate(sim)
 					}
 				}
 			}

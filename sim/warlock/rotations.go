@@ -10,9 +10,10 @@ import (
 )
 
 func (warlock *Warlock) LifeTapOrDarkPact(sim *core.Simulation) {
-	if warlock.CurrentManaPercent() == 1 {
-		panic("Life Tap or Dark Pact while full mana")
-	}
+	// TODO: Reenable this check.
+	//if warlock.CurrentManaPercent() == 1 {
+	//	panic("Life Tap or Dark Pact while full mana")
+	//}
 	if warlock.Talents.DarkPact && warlock.Pet.CurrentMana() > warlock.GetStat(stats.SpellPower)+1200+131 {
 		warlock.DarkPact.Cast(sim, warlock.CurrentTarget)
 	} else {
@@ -217,20 +218,20 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	ManaSpendRate := warlock.ShadowBolt.BaseCost / float64(fillerCastTime.Seconds()) //this is just an estimated mana spent per second
 	DesiredManaAtExecute := 0.02                                                     //estimate for desired mana needed to do affliction execute
 	TotalManaAtExecute := warlock.MaxMana() * DesiredManaAtExecute
-	timeUntilOom := time.Duration((warlock.CurrentMana()-TotalManaAtExecute) / ManaSpendRate) * time.Second
-	timeUntilExecute25 := time.Duration((sim.GetRemainingDurationPercent()- 0.25) * float64(sim.Duration))
+	timeUntilOom := time.Duration((warlock.CurrentMana()-TotalManaAtExecute)/ManaSpendRate) * time.Second
+	timeUntilExecute25 := time.Duration((sim.GetRemainingDurationPercent() - 0.25) * float64(sim.Duration))
 
 	// If SE remaining duration is less than a shadow bolt cast time + travel time (with a 1 second buffer) and the previous cast was not haunt or SB then cast shadow bolt so SE stacks are not lost
 	KeepUpSEStacks := (warlock.PrevCastSECheck != warlock.Haunt && warlock.PrevCastSECheck != warlock.ShadowBolt && warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim).Seconds() < warlock.ApplyCastSpeed(time.Duration(warlock.ShadowBolt.DefaultCast.CastTime)).Seconds()+warlock.DistanceFromTarget/20+1)
 	// If SE remaining duration is less than a shadow bolt cast time + travel time (with a 3 second buffer to include 1 drain soul tick) and the previous cast was not haunt or SB then cast shadow bolt so SE stacks are not lost
 	KeepUpSEStacksExecute := (warlock.PrevCastSECheck != warlock.Haunt && warlock.PrevCastSECheck != warlock.ShadowBolt && warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim).Seconds() < warlock.ApplyCastSpeed(time.Duration(warlock.ShadowBolt.DefaultCast.CastTime)).Seconds()+warlock.DistanceFromTarget/20+3)
-	
+
 	// This part tracks all the damage multiplier that roll over with corruption
 	CurrentShadowMult := warlock.PseudoStats.ShadowDamageDealtMultiplier // Tracks the current shadow damage multipler (essentially looking for DE)
 	CurrentDmgMult := warlock.PseudoStats.DamageDealtMultiplier          // Tracks the current damage multipler (essentially looking for TotT)
-	CurrentCritBonus := warlock.GetStat(stats.SpellCrit) + warlock.PseudoStats.BonusSpellCritRating + warlock.PseudoStats.BonusShadowCritRating + 
-		warlock.CurrentTarget.PseudoStats.BonusSpellCritRatingTaken   // Tracks the current crit rating multipler (essentially looking for Shadow Mastery (ISB))
-	CurrentCritMult := 1 + CurrentCritBonus / core.CritRatingPerCritChance / 100 * core.TernaryFloat64(warlock.Talents.Pandemic, 1, 0)
+	CurrentCritBonus := warlock.GetStat(stats.SpellCrit) + warlock.PseudoStats.BonusSpellCritRating + warlock.PseudoStats.BonusShadowCritRating +
+		warlock.CurrentTarget.PseudoStats.BonusSpellCritRatingTaken // Tracks the current crit rating multipler (essentially looking for Shadow Mastery (ISB))
+	CurrentCritMult := 1 + CurrentCritBonus/core.CritRatingPerCritChance/100*core.TernaryFloat64(warlock.Talents.Pandemic, 1, 0)
 	CurrentCorruptionRolloverMult := CurrentDmgMult * CurrentShadowMult * CurrentCritMult
 
 	if sim.Log != nil {
@@ -244,7 +245,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		// ------------------------------------------
 		if rotationType == proto.Warlock_Rotation_Affliction {
 			if (CurrentCorruptionRolloverMult > warlock.CorruptionRolloverMult) && warlock.Talents.EverlastingAffliction > 0 ||
-			// If the original corruption multipliers are lower than this current time, then reapply corruption (also need to make sure this is some % into the fight)
+				// If the original corruption multipliers are lower than this current time, then reapply corruption (also need to make sure this is some % into the fight)
 				(!warlock.CorruptionDot.IsActive() && (core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() || warlock.Talents.ImprovedShadowBolt == 0)) {
 				// Cast Corruption as soon as the 5% crit debuff is up
 				// Cast Corruption again when you get the execute buff (Death's Embrace)
@@ -408,8 +409,8 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 
 	if success := spell.Cast(sim, target); success {
 		warlock.PrevCastSECheck = spell
-		if spell == warlock.Corruption && warlock.Talents.EverlastingAffliction > 0{
-		// We are recording the current rollover power of corruption
+		if spell == warlock.Corruption && warlock.Talents.EverlastingAffliction > 0 {
+			// We are recording the current rollover power of corruption
 			warlock.CorruptionRolloverMult = CurrentCorruptionRolloverMult
 		}
 		return

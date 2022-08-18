@@ -108,22 +108,22 @@ dps_results: {
 dps_results: {
  key: "TestFire-AllItems-DarkmoonCard:Greatness-42987"
  value: {
-  dps: 5596.8243230709
-  tps: 4141.0009439259
+  dps: 5806.5302444707
+  tps: 4306.7598139155
  }
 }
 dps_results: {
  key: "TestFire-AllItems-DarkmoonCard:Greatness-44253"
  value: {
-  dps: 5596.8243230709
-  tps: 4141.0009439259
+  dps: 5806.5302444707
+  tps: 4306.7598139155
  }
 }
 dps_results: {
  key: "TestFire-AllItems-DarkmoonCard:Greatness-44254"
  value: {
-  dps: 5668.6620476017
-  tps: 4191.0543671317
+  dps: 5875.8681792913
+  tps: 4342.316008532
  }
 }
 dps_results: {
@@ -536,7 +536,7 @@ dps_results: {
  key: "TestFire-AllItems-WrathofSpellfire"
  value: {
   dps: 5212.9267295828
-  tps: 3904.4108160957
+  tps: 3904.4108160958
  }
 }
 dps_results: {

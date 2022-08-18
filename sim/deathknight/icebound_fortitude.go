@@ -62,16 +62,7 @@ func (dk *Deathknight) registerIceboundFortitudeSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			dk.IceboundFortitudeAura.Activate(sim)
 		},
-	})
-}
-
-func (dk *Deathknight) CanIceboundFortitude(sim *core.Simulation) bool {
-	return dk.CastCostPossible(sim, 20.0, 0, 0, 0) && dk.IceboundFortitude.IsReady(sim)
-}
-
-func (dk *Deathknight) CastIceboundFortitude(sim *core.Simulation, target *core.Unit) bool {
-	if dk.IceboundFortitude.IsReady(sim) {
-		return dk.IceboundFortitude.Cast(sim, target)
-	}
-	return false
+	}, func(sim *core.Simulation) bool {
+		return dk.CastCostPossible(sim, 20.0, 0, 0, 0) && dk.IceboundFortitude.IsReady(sim)
+	}, nil)
 }

@@ -35,7 +35,9 @@ func (dk *Deathknight) registerGhoulFrenzySpell() {
 			dk.GhoulFrenzyAura.Activate(sim)
 			dk.Ghoul.GhoulFrenzyAura.Activate(sim)
 		},
-	})
+	}, func(sim *core.Simulation) bool {
+		return dk.Talents.GhoulFrenzy && dk.Ghoul.IsEnabled() && dk.CastCostPossible(sim, 0.0, 0, 0, 1) && dk.GhoulFrenzy.IsReady(sim)
+	}, nil)
 
 	dk.GhoulFrenzyAura = dk.RegisterAura(core.Aura{
 		ActionID: core.ActionID{SpellID: 63560},
@@ -66,15 +68,4 @@ func (dk *Deathknight) registerGhoulFrenzySpell() {
 			dk.Ghoul.MultiplyMeleeSpeed(sim, 1/1.25)
 		},
 	})
-}
-
-func (dk *Deathknight) CanGhoulFrenzy(sim *core.Simulation) bool {
-	return dk.Talents.GhoulFrenzy && dk.Ghoul.IsEnabled() && dk.CastCostPossible(sim, 0.0, 0, 0, 1) && dk.GhoulFrenzy.IsReady(sim)
-}
-
-func (dk *Deathknight) CastGhoulFrenzy(sim *core.Simulation, target *core.Unit) bool {
-	if dk.CanGhoulFrenzy(sim) {
-		return dk.GhoulFrenzy.Cast(sim, target)
-	}
-	return false
 }

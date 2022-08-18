@@ -19,10 +19,10 @@ func (warlock *Warlock) HauntDebuffAura(target *core.Unit) *core.Aura {
 		ActionID: core.ActionID{SpellID: 59164},
 		Duration: time.Second * 12,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			warlock.AttackTables[aura.Unit.TableIndex].PeriodicShadowDamageDealtMultiplier *= shadowDotMultiplier
+			warlock.AttackTables[aura.Unit.UnitIndex].PeriodicShadowDamageDealtMultiplier *= shadowDotMultiplier
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			warlock.AttackTables[aura.Unit.TableIndex].PeriodicShadowDamageDealtMultiplier /= shadowDotMultiplier
+			warlock.AttackTables[aura.Unit.UnitIndex].PeriodicShadowDamageDealtMultiplier /= shadowDotMultiplier
 		},
 	})
 }
