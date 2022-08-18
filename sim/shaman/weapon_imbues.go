@@ -26,7 +26,7 @@ func (shaman *Shaman) newWindfuryImbueSpell(isMH bool) *core.Spell {
 		BonusAttackPower: apBonus,
 		ProcMask:         core.ProcMaskMelee,
 		DamageMultiplier: 1.0,
-		ThreatMultiplier: core.TernaryFloat64(shaman.Talents.SpiritWeapons, 0.7, 1),
+		ThreatMultiplier: 1,
 		OutcomeApplier:   shaman.OutcomeFuncMeleeSpecialHitAndCrit(shaman.DefaultMeleeCritMultiplier()),
 	}
 
@@ -116,7 +116,7 @@ func (shaman *Shaman) newFlametongueImbueSpell(isMH bool) *core.Spell {
 		ProcMask:            core.ProcMaskEmpty,
 		BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
 		DamageMultiplier:    1,
-		ThreatMultiplier:    1, // TODO: add spirit weapons modifier when that's fixed
+		ThreatMultiplier:    1,
 		OutcomeApplier:      shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
 	}
 
@@ -200,7 +200,7 @@ func (shaman *Shaman) newFlametongueDownrankImbueSpell(isMH bool) *core.Spell {
 		ProcMask:            core.ProcMaskEmpty,
 		BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
 		DamageMultiplier:    1,
-		ThreatMultiplier:    1, // TODO: add spirit weapons modifier when that's fixed
+		ThreatMultiplier:    1,
 		OutcomeApplier:      shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
 	}
 
@@ -289,7 +289,7 @@ func (shaman *Shaman) newFrostbrandImbueSpell(isMH bool) *core.Spell {
 			BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
 
 			DamageMultiplier: 1,
-			ThreatMultiplier: 1, // TODO: come back here and set spirit weapons modifier when that bug gets fixed
+			ThreatMultiplier: 1,
 
 			BaseDamage:     core.BaseDamageConfigMagic(530, 530, 0.1),
 			OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),

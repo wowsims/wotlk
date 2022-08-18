@@ -41,39 +41,6 @@ func (dk *Deathknight) ChangePresence(sim *core.Simulation, newPresence Presence
 	}
 }
 
-func (dk *Deathknight) CanBloodPresence(sim *core.Simulation) bool {
-	return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.BloodPresence.IsReady(sim)
-}
-
-func (dk *Deathknight) CastBloodPresence(sim *core.Simulation, target *core.Unit) bool {
-	if dk.CanBloodPresence(sim) {
-		return dk.BloodPresence.Cast(sim, target)
-	}
-	return false
-}
-
-func (dk *Deathknight) CanFrostPresence(sim *core.Simulation) bool {
-	return dk.CastCostPossible(sim, 0.0, 0, 1, 0) && dk.FrostPresence.IsReady(sim)
-}
-
-func (dk *Deathknight) CastFrostPresence(sim *core.Simulation, target *core.Unit) bool {
-	if dk.CanFrostPresence(sim) {
-		return dk.FrostPresence.Cast(sim, target)
-	}
-	return false
-}
-
-func (dk *Deathknight) CanUnholyPresence(sim *core.Simulation) bool {
-	return dk.CastCostPossible(sim, 0.0, 0, 0, 1) && dk.UnholyPresence.IsReady(sim)
-}
-
-func (dk *Deathknight) CastUnholyPresence(sim *core.Simulation, target *core.Unit) bool {
-	if dk.CanUnholyPresence(sim) {
-		return dk.UnholyPresence.Cast(sim, target)
-	}
-	return false
-}
-
 func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 	threatMult := 0.8
 	threatMultSubversion := 1.0 - dk.subversionThreatBonus()
@@ -99,7 +66,9 @@ func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			dk.ChangePresence(sim, BloodPresence)
 		},
-	})
+	}, func(sim *core.Simulation) bool {
+		return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.BloodPresence.IsReady(sim)
+	}, nil)
 
 	// TODO: Probably improve this
 	isDps := dk.Talents.HowlingBlast || dk.Talents.SummonGargoyle
@@ -163,7 +132,9 @@ func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			dk.ChangePresence(sim, FrostPresence)
 		},
-	})
+	}, func(sim *core.Simulation) bool {
+		return dk.CastCostPossible(sim, 0.0, 0, 1, 0) && dk.FrostPresence.IsReady(sim)
+	}, nil)
 
 	threatMult := 2.0735
 	stamDep := dk.NewDynamicMultiplyStat(stats.Stamina, 1.08)
@@ -209,7 +180,9 @@ func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			dk.ChangePresence(sim, UnholyPresence)
 		},
-	})
+	}, func(sim *core.Simulation) bool {
+		return dk.CastCostPossible(sim, 0.0, 0, 0, 1) && dk.UnholyPresence.IsReady(sim)
+	}, nil)
 
 	stamDep := dk.NewDynamicMultiplyStat(stats.Stamina, 1.0+0.04*float64(dk.Talents.ImprovedFrostPresence))
 	dk.UnholyPresenceAura = dk.GetOrRegisterAura(core.Aura{

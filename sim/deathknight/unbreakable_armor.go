@@ -54,16 +54,7 @@ func (dk *Deathknight) registerUnbreakableArmorSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			dk.UnbreakableArmorAura.Activate(sim)
 		},
-	})
-}
-
-func (dk *Deathknight) CanUnbreakableArmor(sim *core.Simulation) bool {
-	return dk.CastCostPossible(sim, 0, 0, 1, 0) && dk.UnbreakableArmor.IsReady(sim)
-}
-
-func (dk *Deathknight) CastUnbreakableArmor(sim *core.Simulation, target *core.Unit) bool {
-	if dk.CanUnbreakableArmor(sim) {
-		return dk.UnbreakableArmor.Cast(sim, target)
-	}
-	return false
+	}, func(sim *core.Simulation) bool {
+		return dk.CastCostPossible(sim, 0, 0, 1, 0) && dk.UnbreakableArmor.IsReady(sim)
+	}, nil)
 }

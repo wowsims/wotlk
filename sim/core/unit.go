@@ -122,8 +122,9 @@ type Unit struct {
 }
 
 // DoNothing will explicitly declare that the character is intentionally doing nothing.
-//  If the GCD is not used during OnGCDReady and this flag is set, OnGCDReady will not be called again
-//  until it is used in some other way (like from an auto attack or resource regeneration).
+//
+//	If the GCD is not used during OnGCDReady and this flag is set, OnGCDReady will not be called again
+//	until it is used in some other way (like from an auto attack or resource regeneration).
 func (char *Character) DoNothing() {
 	char.doNothing = true
 }
@@ -233,6 +234,7 @@ func (unit *Unit) EnableDynamicStatDep(sim *Simulation, dep *stats.StatDependenc
 	if unit.StatDependencyManager.EnableDynamicStatDep(dep) {
 		oldStats := unit.stats
 		unit.stats = unit.ApplyStatDependencies(unit.statsWithoutDeps)
+		unit.stats[stats.Mana] = oldStats[stats.Mana] // Need to reset mana because it's also used as current mana.
 		unit.processDynamicBonus(sim, unit.stats.Subtract(oldStats))
 
 		if sim.Log != nil {
@@ -244,6 +246,7 @@ func (unit *Unit) DisableDynamicStatDep(sim *Simulation, dep *stats.StatDependen
 	if unit.StatDependencyManager.DisableDynamicStatDep(dep) {
 		oldStats := unit.stats
 		unit.stats = unit.ApplyStatDependencies(unit.statsWithoutDeps)
+		unit.stats[stats.Mana] = oldStats[stats.Mana] // Need to reset mana because it's also used as current mana.
 		unit.processDynamicBonus(sim, unit.stats.Subtract(oldStats))
 
 		if sim.Log != nil {

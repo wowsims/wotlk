@@ -62,7 +62,7 @@ func (dk *Deathknight) registerFrostFever() {
 			isRefreshing[unit.Index] = false
 			dk.FrostFeverDebuffAura[unit.Index].Activate(sim)
 		},
-	})
+	}, nil, nil)
 
 	dk.FrostFeverDisease = make([]*core.Dot, dk.Env.GetNumTargets())
 
@@ -131,7 +131,7 @@ func (dk *Deathknight) registerBloodPlague() {
 			dk.BloodPlagueDisease[unit.Index].Apply(sim)
 			isRefreshing[unit.Index] = false
 		},
-	})
+	}, nil, nil)
 
 	dk.BloodPlagueDisease = make([]*core.Dot, dk.Env.GetNumTargets())
 

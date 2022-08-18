@@ -29,12 +29,13 @@ type Rotation interface {
 	Reset(*EnhancementShaman, *core.Simulation)
 }
 
-//adaptive rotation, shamelessly stolen from elemental shaman
-type AdaptiveRotation struct {
+type PriorityRotation struct {
+	options *proto.EnhancementShaman_Rotation
 }
 
-func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Simulation) {
-	target := sim.GetTargetUnit(0)
+// PRIORITY ROTATION (default)
+func (rotation *PriorityRotation) DoAction(enh *EnhancementShaman, sim *core.Simulation) {
+	target := enh.CurrentTarget
 
 	//calculate cast times for weaving
 	lbCastTime := enh.ApplyCastSpeed(enh.LightningBolt.DefaultCast.CastTime - (time.Millisecond * time.Duration(500*enh.MaelstromWeaponAura.GetStacks())))
@@ -78,7 +79,7 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 		return
 	}
 
-	if enh.LavaburstWeave {
+	if rotation.options.LavaburstWeave {
 		if enh.MaelstromWeaponAura.GetStacks() >= 1 && enh.LavaBurst.IsReady(sim) {
 			if lvbCastTime < timeUntilSwing {
 				if !enh.LavaBurst.Cast(sim, target) {
@@ -89,8 +90,8 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 		}
 	}
 
-	if enh.LightningboltWeave {
-		if enh.MaelstromWeaponAura.GetStacks() >= enh.MaelstromweaponMinStack {
+	if rotation.options.LightningboltWeave {
+		if enh.MaelstromWeaponAura.GetStacks() >= rotation.options.MaelstromweaponMinStack {
 			if lbCastTime < timeUntilSwing {
 				if !enh.LightningBolt.Cast(sim, target) {
 					enh.DoNothing()
@@ -113,7 +114,7 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 	}
 
 	if enh.Totems.Fire != proto.FireTotem_NoFireTotem {
-		if enh.FireNova.IsReady(sim) && enh.CurrentMana() > 4000 { //TODO: make this configurable
+		if enh.FireNova.IsReady(sim) && enh.CurrentMana() > rotation.options.FirenovaManaThreshold {
 			if !enh.FireNova.Cast(sim, target) {
 				enh.DoNothing()
 			}
@@ -121,7 +122,7 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 		}
 	}
 
-	if enh.Talents.LavaLash { //TODO: potentially raise the prio when certain relics are equipped. tbd if its worth it though
+	if enh.Talents.LavaLash && enh.AutoAttacks.IsDualWielding { //TODO: potentially raise the prio when certain relics are equipped. TBD
 		if enh.LavaLash.IsReady(sim) {
 			if !enh.LavaLash.Cast(sim, target) {
 				enh.WaitForMana(sim, enh.LavaLash.CurCast.Cost)
@@ -135,13 +136,18 @@ func (rotation *AdaptiveRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 	return
 }
 
-func (rotation *AdaptiveRotation) Reset(enh *EnhancementShaman, sim *core.Simulation) {
+func (rotation *PriorityRotation) Reset(enh *EnhancementShaman, sim *core.Simulation) {
 
 }
 
-func NewAdaptiveRotation(talents *proto.ShamanTalents) *AdaptiveRotation {
-	return &AdaptiveRotation{}
+func NewPriorityRotation(talents *proto.ShamanTalents, options *proto.EnhancementShaman_Rotation) *PriorityRotation {
+	return &PriorityRotation{
+		options: options,
+	}
 }
+
+//	CUSTOM ROTATION (advanced) (also WIP).
+//TODO: figure out how to do this (probably too complicated to copy hunters)
 
 type AgentAction interface {
 	GetActionID() core.ActionID
