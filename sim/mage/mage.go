@@ -178,22 +178,10 @@ func (mage *Mage) Initialize() {
 		mage.LivingBombNotActive.Enqueue(mage.Env.GetTargetUnit(i))
 	}
 
-	//check either every 35% of the fight time or 40 seconds whichever is smaller
-
-	// &core.PendingAction{
-	// 	NextActionAt: ,// recreate this action every time it loads
-	// 	Priority: core.ActionPriorityRegen,
-	// 	OnAction: func(sim *core.Simulation) {
-	// 		//loop through all cooldowns and disable ones with only one more use
-	// 	}
-
-	// }
-
 	mage.num4CostAB = 0
 	mage.extraABsAP = mage.Rotation.ExtraBlastsDuringFirstAp
 }
 
-//Ignore bloodlust. Make it an option.
 func (mage *Mage) launchExecuteCDOptimizer(sim *core.Simulation) {
 
 	pa := &core.PendingAction{
@@ -279,7 +267,6 @@ func NewMage(character core.Character, options proto.Player) *Mage {
 		spellDamageMultiplier: 1.0,
 		manaTracker:           common.NewManaSpendingRateTracker(),
 	}
-	mage.DistanceFromTarget = 25
 	mage.EnableManaBar()
 	mage.EnableResumeAfterManaWait(mage.tryUseGCD)
 
