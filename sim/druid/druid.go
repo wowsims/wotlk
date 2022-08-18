@@ -51,6 +51,9 @@ type Druid struct {
 	CatFormAura          *core.Aura
 	BearFormAura         *core.Aura
 
+	LunarICD core.Cooldown
+	SolarICD core.Cooldown
+
 	form         DruidForm
 	disabledMCDs []*core.MajorCooldown
 }
