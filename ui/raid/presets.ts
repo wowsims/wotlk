@@ -178,10 +178,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				5: BalanceDruidPresets.T7_PRESET.gear,
+				1: BalanceDruidPresets.P1_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				5: BalanceDruidPresets.T7_PRESET.gear,
+				1: BalanceDruidPresets.P1_PRESET.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecBalanceDruid],
