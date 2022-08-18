@@ -54,7 +54,7 @@ func (paladin *Paladin) ApplyTalents() {
 	// }
 
 	if paladin.Talents.SacredDuty > 0 {
-		paladin.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+0.02*float64(paladin.Talents.SacredDuty))
+		paladin.MultiplyStat(stats.Stamina, 1.0+0.02*float64(paladin.Talents.SacredDuty))
 	}
 
 	if paladin.Talents.CombatExpertise > 0 {
@@ -137,7 +137,7 @@ func (paladin *Paladin) applyRedoubt() {
 
 	actionID := core.ActionID{SpellID: 20132}
 
-	paladin.AddStatDependency(stats.BlockValue, stats.BlockValue, 1.0+0.10*float64(paladin.Talents.Redoubt))
+	paladin.MultiplyStat(stats.BlockValue, 1.0+0.10*float64(paladin.Talents.Redoubt))
 
 	bonusBlockRating := 10 * core.BlockRatingPerBlockChance * float64(paladin.Talents.Redoubt)
 
