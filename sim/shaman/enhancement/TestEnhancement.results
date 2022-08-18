@@ -297,8 +297,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-FrostWitch'sBattlegear"
  value: {
-  dps: 4775.0688242319
-  tps: 2655.332851642
+  dps: 4843.525090764
+  tps: 2728.5456929898
  }
 }
 dps_results: {
