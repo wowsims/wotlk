@@ -235,8 +235,13 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	CurrentCorruptionRolloverMult := CurrentDmgMult * CurrentShadowMult * CurrentCritMult
 
 	if sim.Log != nil {
-		warlock.Log(sim, "Current Corruption Rollover Multiplier [%.2f]", CurrentCorruptionRolloverMult)
-		warlock.Log(sim, "warlock.DPSPAverage [%.0f]", warlock.DPSPAverage)
+		if warlock.Talents.EverlastingAffliction > 0 {
+			warlock.Log(sim, "[Info] Initial Corruption Rollover Multiplier [%.2f]", warlock.CorruptionRolloverMult)
+			warlock.Log(sim, "[Info] Current Corruption Rollover Multiplier [%.2f]", CurrentCorruptionRolloverMult)
+		}
+		if warlock.Talents.DemonicPact > 0 {
+			warlock.Log(sim, "[Info] Demonic Pact Spell Power Average [%.0f]", warlock.DPSPAverage)
+		}
 	}
 
 	if preset == proto.Warlock_Rotation_Automatic {
