@@ -222,13 +222,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-DeathKnight'sAnguish-38212"
  value: {
-<<<<<<< HEAD
-  dps: 2759.2239369281
-  tps: 2163.7024797003
-=======
   dps: 3250.2155662839
   tps: 2533.3860184818
->>>>>>> 51f71125b31c4cccd50061b4e4b65d8d811dc464
  }
 }
 dps_results: {

@@ -66,13 +66,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-AustereEarthsiegeDiamond"
  value: {
-<<<<<<< HEAD
-  dps: 7218.8997456229
-  tps: 5125.4188193923
-=======
   dps: 7153.9407086988
   tps: 5079.2979031762
->>>>>>> 51f71125b31c4cccd50061b4e4b65d8d811dc464
  }
 }
 dps_results: {
@@ -99,13 +94,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-BracingEarthsiegeDiamond"
  value: {
-<<<<<<< HEAD
-  dps: 7218.8997456229
-  tps: 5022.9104430044
-=======
   dps: 7153.9407086988
   tps: 4977.7119451127
->>>>>>> 51f71125b31c4cccd50061b4e4b65d8d811dc464
  }
 }
 dps_results: {
@@ -181,25 +171,15 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-EffulgentSkyflareDiamond"
  value: {
-<<<<<<< HEAD
-  dps: 7218.8997456229
-  tps: 5125.4188193923
-=======
   dps: 7153.9407086988
   tps: 5079.2979031762
->>>>>>> 51f71125b31c4cccd50061b4e4b65d8d811dc464
  }
 }
 dps_results: {
  key: "TestAssassination-AllItems-EmberSkyflareDiamond"
  value: {
-<<<<<<< HEAD
-  dps: 7218.8997456229
-  tps: 5125.4188193923
-=======
   dps: 7153.9407086988
   tps: 5079.2979031762
->>>>>>> 51f71125b31c4cccd50061b4e4b65d8d811dc464
  }
 }
 dps_results: {
@@ -219,13 +199,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-EternalEarthsiegeDiamond"
  value: {
-<<<<<<< HEAD
-  dps: 7218.8997456229
-  tps: 5125.4188193923
-=======
   dps: 7153.9407086988
   tps: 5079.2979031762
->>>>>>> 51f71125b31c4cccd50061b4e4b65d8d811dc464
  }
 }
 dps_results: {
@@ -252,25 +227,15 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-ForlornSkyflareDiamond"
  value: {
-<<<<<<< HEAD
-  dps: 7218.8997456229
-  tps: 5125.4188193923
-=======
   dps: 7153.9407086988
   tps: 5079.2979031762
->>>>>>> 51f71125b31c4cccd50061b4e4b65d8d811dc464
  }
 }
 dps_results: {
  key: "TestAssassination-AllItems-ForlornStarflareDiamond"
  value: {
-<<<<<<< HEAD
-  dps: 7218.8997456229
-  tps: 5125.4188193923
-=======
   dps: 7153.9407086988
   tps: 5079.2979031762
->>>>>>> 51f71125b31c4cccd50061b4e4b65d8d811dc464
  }
 }
 dps_results: {
@@ -332,13 +297,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-InsightfulEarthsiegeDiamond"
  value: {
-<<<<<<< HEAD
-  dps: 7218.8997456229
-  tps: 5125.4188193923
-=======
   dps: 7153.9407086988
   tps: 5079.2979031762
->>>>>>> 51f71125b31c4cccd50061b4e4b65d8d811dc464
  }
 }
 dps_results: {
@@ -407,25 +367,15 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-PowerfulEarthshatterDiamond"
  value: {
-<<<<<<< HEAD
-  dps: 7218.8997456229
-  tps: 5125.4188193923
-=======
   dps: 7153.9407086988
   tps: 5079.2979031762
->>>>>>> 51f71125b31c4cccd50061b4e4b65d8d811dc464
  }
 }
 dps_results: {
  key: "TestAssassination-AllItems-PowerfulEarthsiegeDiamond"
  value: {
-<<<<<<< HEAD
-  dps: 7218.8997456229
-  tps: 5125.4188193923
-=======
   dps: 7153.9407086988
   tps: 5079.2979031762
->>>>>>> 51f71125b31c4cccd50061b4e4b65d8d811dc464
  }
 }
 dps_results: {
@@ -466,13 +416,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-RevitalizingSkyflareDiamond"
  value: {
-<<<<<<< HEAD
-  dps: 7218.8997456229
-  tps: 5125.4188193923
-=======
   dps: 7153.9407086988
   tps: 5079.2979031762
->>>>>>> 51f71125b31c4cccd50061b4e4b65d8d811dc464
  }
 }
 dps_results: {
@@ -611,49 +556,29 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-TirelessSkyflareDiamond"
  value: {
-<<<<<<< HEAD
-  dps: 7218.8997456229
-  tps: 5125.4188193923
-=======
   dps: 7153.9407086988
   tps: 5079.2979031762
->>>>>>> 51f71125b31c4cccd50061b4e4b65d8d811dc464
  }
 }
 dps_results: {
  key: "TestAssassination-AllItems-TirelessStarflareDiamond"
  value: {
-<<<<<<< HEAD
-  dps: 7218.8997456229
-  tps: 5125.4188193923
-=======
   dps: 7153.9407086988
   tps: 5079.2979031762
->>>>>>> 51f71125b31c4cccd50061b4e4b65d8d811dc464
  }
 }
 dps_results: {
  key: "TestAssassination-AllItems-TrenchantEarthshatterDiamond"
  value: {
-<<<<<<< HEAD
-  dps: 7218.8997456229
-  tps: 5125.4188193923
-=======
   dps: 7153.9407086988
   tps: 5079.2979031762
->>>>>>> 51f71125b31c4cccd50061b4e4b65d8d811dc464
  }
 }
 dps_results: {
  key: "TestAssassination-AllItems-TrenchantEarthsiegeDiamond"
  value: {
-<<<<<<< HEAD
-  dps: 7218.8997456229
-  tps: 5125.4188193923
-=======
   dps: 7153.9407086988
   tps: 5079.2979031762
->>>>>>> 51f71125b31c4cccd50061b4e4b65d8d811dc464
  }
 }
 dps_results: {
@@ -701,13 +626,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-Settings-Human-P1 Assassination-Assassination-FullBuffs-LongMultiTarget"
  value: {
-<<<<<<< HEAD
-  dps: 27525.3771146456
-  tps: 19543.0177513984
-=======
   dps: 26997.9048569566
   tps: 19168.5124484392
->>>>>>> 51f71125b31c4cccd50061b4e4b65d8d811dc464
  }
 }
 dps_results: {
@@ -727,13 +647,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-Settings-Human-P1 Assassination-Assassination-NoBuffs-LongMultiTarget"
  value: {
-<<<<<<< HEAD
-  dps: 16021.9984864334
-  tps: 11375.6189253677
-=======
   dps: 15135.7059547474
   tps: 10746.3512278707
->>>>>>> 51f71125b31c4cccd50061b4e4b65d8d811dc464
  }
 }
 dps_results: {
@@ -795,13 +710,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-Settings-Human-P1 Assassination-MH Instant OH Deadly-FullBuffs-LongMultiTarget"
  value: {
-<<<<<<< HEAD
-  dps: 27525.3771146456
-  tps: 19543.0177513984
-=======
   dps: 26997.9048569566
   tps: 19168.5124484392
->>>>>>> 51f71125b31c4cccd50061b4e4b65d8d811dc464
  }
 }
 dps_results: {
@@ -821,13 +731,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-Settings-Human-P1 Assassination-MH Instant OH Deadly-NoBuffs-LongMultiTarget"
  value: {
-<<<<<<< HEAD
-  dps: 16021.9984864334
-  tps: 11375.6189253677
-=======
   dps: 15135.7059547474
   tps: 10746.3512278707
->>>>>>> 51f71125b31c4cccd50061b4e4b65d8d811dc464
  }
 }
 dps_results: {
@@ -847,13 +752,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-Settings-Human-P1 Assassination-MH Instant OH Instant-FullBuffs-LongMultiTarget"
  value: {
-<<<<<<< HEAD
-  dps: 21795.1567815624
-  tps: 15474.5613149093
-=======
   dps: 21465.2966534058
   tps: 15240.3606239181
->>>>>>> 51f71125b31c4cccd50061b4e4b65d8d811dc464
  }
 }
 dps_results: {
@@ -873,13 +773,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-Settings-Human-P1 Assassination-MH Instant OH Instant-NoBuffs-LongMultiTarget"
  value: {
-<<<<<<< HEAD
-  dps: 13933.7733042314
-  tps: 9892.9790460043
-=======
   dps: 12946.4567296584
   tps: 9191.9842780575
->>>>>>> 51f71125b31c4cccd50061b4e4b65d8d811dc464
  }
 }
 dps_results: {
@@ -899,13 +794,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-Settings-Orc-P1 Assassination-Assassination-FullBuffs-LongMultiTarget"
  value: {
-<<<<<<< HEAD
-  dps: 27376.6157626683
-  tps: 19437.3971914945
-=======
   dps: 27048.4658807206
   tps: 19204.4107753117
->>>>>>> 51f71125b31c4cccd50061b4e4b65d8d811dc464
  }
 }
 dps_results: {
@@ -925,13 +815,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-Settings-Orc-P1 Assassination-Assassination-NoBuffs-LongMultiTarget"
  value: {
-<<<<<<< HEAD
-  dps: 16090.3127352903
-  tps: 11424.1220420561
-=======
   dps: 15248.4450509391
   tps: 10826.3959861668
->>>>>>> 51f71125b31c4cccd50061b4e4b65d8d811dc464
  }
 }
 dps_results: {
@@ -993,13 +878,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-Settings-Orc-P1 Assassination-MH Instant OH Deadly-FullBuffs-LongMultiTarget"
  value: {
-<<<<<<< HEAD
-  dps: 27376.6157626683
-  tps: 19437.3971914945
-=======
   dps: 27048.4658807206
   tps: 19204.4107753117
->>>>>>> 51f71125b31c4cccd50061b4e4b65d8d811dc464
  }
 }
 dps_results: {
@@ -1019,13 +899,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-Settings-Orc-P1 Assassination-MH Instant OH Deadly-NoBuffs-LongMultiTarget"
  value: {
-<<<<<<< HEAD
-  dps: 16090.3127352903
-  tps: 11424.1220420561
-=======
   dps: 15248.4450509391
   tps: 10826.3959861668
->>>>>>> 51f71125b31c4cccd50061b4e4b65d8d811dc464
  }
 }
 dps_results: {
@@ -1045,13 +920,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-Settings-Orc-P1 Assassination-MH Instant OH Instant-FullBuffs-LongMultiTarget"
  value: {
-<<<<<<< HEAD
-  dps: 21945.4251154212
-  tps: 15581.2518319491
-=======
   dps: 21569.5198153925
   tps: 15314.3590689286
->>>>>>> 51f71125b31c4cccd50061b4e4b65d8d811dc464
  }
 }
 dps_results: {
