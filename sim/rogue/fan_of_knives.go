@@ -41,8 +41,8 @@ func (rogue *Rogue) registerFanOfKnives() {
 	mhHit := rogue.makeFanOfKnivesWeaponHitEffect(true)
 	ohHit := rogue.makeFanOfKnivesWeaponHitEffect(false)
 	applyEffects := func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
-		core.ApplyEffectFuncAOEDamageCapped(rogue.Env, mhHit)(sim, unit, spell)
 		core.ApplyEffectFuncAOEDamageCapped(rogue.Env, ohHit)(sim, unit, spell)
+		core.ApplyEffectFuncAOEDamageCapped(rogue.Env, mhHit)(sim, unit, spell)
 	}
 	rogue.FanOfKnives = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: FanOfKnivesSpellID},
