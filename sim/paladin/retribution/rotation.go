@@ -9,31 +9,93 @@ import (
 )
 
 func (ret *RetributionPaladin) OnGCDReady(sim *core.Simulation) {
-	ret.AutoAttacks.EnableAutoSwing(sim)
-
-	if !ret.SealInitComplete {
-		switch ret.Seal {
-		case proto.PaladinSeal_Vengeance:
-			ret.SealOfVengeanceAura.Activate(sim)
-		case proto.PaladinSeal_Command:
-			ret.SealOfCommandAura.Activate(sim)
-		case proto.PaladinSeal_Righteousness:
-			ret.SealOfRighteousnessAura.Activate(sim)
-		}
-		ret.SealInitComplete = true
-	}
-
-	if !ret.DivinePleaInitComplete {
-		ret.DivinePleaAura.Activate(sim)
-		ret.DivinePlea.CD.Use(sim)
-		ret.DivinePleaInitComplete = true
-	}
-
-	ret.mainRotation(sim)
+	ret.SelectedRotation(sim)
 
 	if ret.GCD.IsReady(sim) {
 		ret.DoNothing() // this means we had nothing to do and we are ok
 	}
+}
+
+func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
+	// Setup
+	target := ret.CurrentTarget
+
+	nextSwingAt := ret.AutoAttacks.NextAttackAt()
+	isExecutePhase := sim.IsExecutePhase20()
+
+	if ret.GCD.IsReady(sim) {
+	rotationLoop:
+		for _, spell := range ret.RotationInput {
+			if spell == ret.HammerOfWrath && !isExecutePhase {
+				continue
+			}
+
+			if spell == ret.Exorcism && !ret.ArtOfWarInstantCast.IsActive() {
+				continue
+			}
+
+			if spell.IsReady(sim) {
+				success := spell.Cast(sim, target)
+				if !success {
+					ret.WaitForMana(sim, spell.CurCast.Cost)
+				}
+				break rotationLoop
+			}
+		}
+	}
+
+	// All possible next events
+	events := []time.Duration{
+		nextSwingAt,
+		ret.GCD.ReadyAt(),
+		ret.JudgementOfWisdom.CD.ReadyAt(),
+		ret.DivineStorm.CD.ReadyAt(),
+		ret.HammerOfWrath.CD.ReadyAt(),
+		ret.HolyWrath.CD.ReadyAt(),
+		ret.CrusaderStrike.CD.ReadyAt(),
+		ret.Consecration.CD.ReadyAt(),
+		ret.Exorcism.CD.ReadyAt(),
+	}
+
+	ret.waitUntilNextEvent(sim, events, ret.customRotation)
+
+}
+
+func (ret *RetributionPaladin) castSequenceRotation(sim *core.Simulation) {
+	if len(ret.RotationInput) == 0 {
+		return
+	}
+
+	// Setup
+	target := ret.CurrentTarget
+	isExecutePhase := sim.IsExecutePhase20()
+
+	nextReadyAt := sim.CurrentTime
+	if ret.GCD.IsReady(sim) {
+		currentSpell := ret.RotationInput[ret.CastSequenceIndex]
+
+		if currentSpell == ret.HammerOfWrath && !isExecutePhase {
+			return
+		}
+
+		if currentSpell.IsReady(sim) {
+			success := currentSpell.Cast(sim, target)
+			if success {
+				ret.CastSequenceIndex = (ret.CastSequenceIndex + 1) % int32(len(ret.RotationInput))
+			} else {
+				ret.WaitForMana(sim, currentSpell.CurCast.Cost)
+			}
+		} else {
+			nextReadyAt = currentSpell.ReadyAt()
+		}
+	}
+
+	events := []time.Duration{
+		ret.GCD.ReadyAt(),
+		nextReadyAt,
+	}
+
+	ret.waitUntilNextEvent(sim, events, ret.castSequenceRotation)
 }
 
 func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
@@ -44,33 +106,70 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 	nextSwingAt := ret.AutoAttacks.NextAttackAt()
 	isExecutePhase := sim.IsExecutePhase20()
 
-	nextUsefulAbility := core.MinDuration(ret.CrusaderStrike.CD.ReadyAt(), ret.DivineStorm.CD.ReadyAt())
-	nextUsefulAbility = core.MinDuration(nextUsefulAbility, ret.JudgementOfWisdom.CD.ReadyAt())
-	nextUsefulDelta := nextUsefulAbility - sim.CurrentTime
+	nextPrimaryAbility := core.MinDuration(ret.CrusaderStrike.CD.ReadyAt(), ret.DivineStorm.CD.ReadyAt())
+	nextPrimaryAbility = core.MinDuration(nextPrimaryAbility, ret.JudgementOfWisdom.CD.ReadyAt())
+	nextPrimaryAbilityDelta := nextPrimaryAbility - sim.CurrentTime
 
 	if ret.GCD.IsReady(sim) {
 		switch {
 		case ret.JudgementOfWisdom.IsReady(sim):
-			ret.JudgementOfWisdom.Cast(sim, target)
+			success := ret.JudgementOfWisdom.Cast(sim, target)
+			if !success {
+				ret.WaitForMana(sim, ret.JudgementOfWisdom.CurCast.Cost)
+			}
 		case ret.HasLightswornBattlegear2Pc && ret.DivineStorm.IsReady(sim):
-			ret.DivineStorm.Cast(sim, target)
+			success := ret.DivineStorm.Cast(sim, target)
+			if !success {
+				ret.WaitForMana(sim, ret.DivineStorm.CurCast.Cost)
+			}
 		case ret.Env.GetNumTargets() == 1 && isExecutePhase && ret.HammerOfWrath.IsReady(sim):
-			ret.HammerOfWrath.Cast(sim, target)
+			success := ret.HammerOfWrath.Cast(sim, target)
+			if !success {
+				ret.WaitForMana(sim, ret.HammerOfWrath.CurCast.Cost)
+			}
 		case ret.Env.GetNumTargets() > 1 && ret.Consecration.IsReady(sim):
-			ret.Consecration.Cast(sim, target)
+			success := ret.Consecration.Cast(sim, target)
+			if !success {
+				ret.WaitForMana(sim, ret.Consecration.CurCast.Cost)
+			}
+		case ret.DemonAndUndeadTargetCount >= ret.HolyWrathThreshold && ret.HolyWrath.IsReady(sim):
+			success := ret.HolyWrath.Cast(sim, target)
+			if !success {
+				ret.WaitForMana(sim, ret.HolyWrath.CurCast.Cost)
+			}
 		case ret.UseDivinePlea && ret.CurrentMana() < (ret.MaxMana()*ret.DivinePleaPercentage) && ret.DivinePlea.IsReady(sim):
-			ret.DivinePlea.Cast(sim, &ret.Unit)
+			ret.DivinePlea.Cast(sim, nil)
 		case ret.CrusaderStrike.IsReady(sim):
-			ret.CrusaderStrike.Cast(sim, target)
+			success := ret.CrusaderStrike.Cast(sim, target)
+			if !success {
+				ret.WaitForMana(sim, ret.CrusaderStrike.CurCast.Cost)
+			}
 		case ret.DivineStorm.IsReady(sim):
-			ret.DivineStorm.Cast(sim, target)
+			success := ret.DivineStorm.Cast(sim, target)
+			if !success {
+				ret.WaitForMana(sim, ret.DivineStorm.CurCast.Cost)
+			}
 		case (target.MobType == proto.MobType_MobTypeDemon || target.MobType == proto.MobType_MobTypeUndead) &&
-			nextUsefulDelta.Milliseconds() > int64(ret.ExoSlack) && ret.Exorcism.IsReady(sim) && ret.ArtOfWarInstantCast.IsActive():
-			ret.Exorcism.Cast(sim, target)
-		case nextUsefulDelta.Milliseconds() > int64(ret.ConsSlack) && ret.Consecration.IsReady(sim):
-			ret.Consecration.Cast(sim, target)
-		case nextUsefulDelta.Milliseconds() > int64(ret.ExoSlack) && ret.Exorcism.IsReady(sim) && ret.ArtOfWarInstantCast.IsActive():
-			ret.Exorcism.Cast(sim, target)
+			nextPrimaryAbilityDelta.Milliseconds() > int64(ret.ExoSlack) && ret.Exorcism.IsReady(sim) && ret.ArtOfWarInstantCast.IsActive():
+			success := ret.Exorcism.Cast(sim, target)
+			if !success {
+				ret.WaitForMana(sim, ret.Exorcism.CurCast.Cost)
+			}
+		case nextPrimaryAbilityDelta.Milliseconds() > int64(ret.ConsSlack) && ret.Consecration.IsReady(sim):
+			success := ret.Consecration.Cast(sim, target)
+			if !success {
+				ret.WaitForMana(sim, ret.Consecration.CurCast.Cost)
+			}
+		case nextPrimaryAbilityDelta.Milliseconds() > int64(ret.ExoSlack) && ret.Exorcism.IsReady(sim) && ret.ArtOfWarInstantCast.IsActive():
+			success := ret.Exorcism.Cast(sim, target)
+			if !success {
+				ret.WaitForMana(sim, ret.Exorcism.CurCast.Cost)
+			}
+		case ret.DemonAndUndeadTargetCount >= 1 && ret.HolyWrath.IsReady(sim):
+			success := ret.HolyWrath.Cast(sim, target)
+			if !success {
+				ret.WaitForMana(sim, ret.HolyWrath.CurCast.Cost)
+			}
 		}
 	}
 
@@ -78,19 +177,21 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 	events := []time.Duration{
 		nextSwingAt,
 		ret.GCD.ReadyAt(),
-		nextUsefulAbility,
-		// ret.JudgementOfWisdom.CD.ReadyAt(),
-		// ret.CrusaderStrike.CD.ReadyAt(),
-		// ret.DivineStorm.CD.ReadyAt(),
-		// ret.Consecration.CD.ReadyAt(),
-		// ret.Exorcism.CD.ReadyAt(),
+		ret.JudgementOfWisdom.CD.ReadyAt(),
+		ret.DivineStorm.CD.ReadyAt(),
+		ret.HammerOfWrath.CD.ReadyAt(),
+		ret.HolyWrath.CD.ReadyAt(),
+		ret.CrusaderStrike.CD.ReadyAt(),
+		ret.Consecration.CD.ReadyAt(),
+		ret.Exorcism.CD.ReadyAt(),
+		ret.DivinePlea.CD.ReadyAt(),
 	}
 
-	ret.waitUntilNextEvent(sim, events)
+	ret.waitUntilNextEvent(sim, events, ret.mainRotation)
 }
 
 // Helper function for finding the next event
-func (ret *RetributionPaladin) waitUntilNextEvent(sim *core.Simulation, events []time.Duration) {
+func (ret *RetributionPaladin) waitUntilNextEvent(sim *core.Simulation, events []time.Duration, rotationCallback func(*core.Simulation)) {
 	// Find the minimum possible next event that is greater than the current time
 	nextEventAt := time.Duration(math.MaxInt64) // any event will happen before forever.
 	for _, elem := range events {
@@ -106,7 +207,7 @@ func (ret *RetributionPaladin) waitUntilNextEvent(sim *core.Simulation, events [
 	// Otherwise add a pending action for the next time
 	pa := &core.PendingAction{
 		Priority:     core.ActionPriorityLow,
-		OnAction:     ret.mainRotation,
+		OnAction:     rotationCallback,
 		NextActionAt: nextEventAt,
 	}
 

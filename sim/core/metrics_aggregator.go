@@ -20,6 +20,9 @@ type DistributionMetrics struct {
 	sum        float64
 	sumSquared float64
 	max        float64
+	min        float64
+	maxSeed    int64
+	minSeed    int64
 	hist       map[int32]int32 // rounded DPS to count
 }
 
@@ -28,12 +31,19 @@ func (distMetrics *DistributionMetrics) reset() {
 }
 
 // This should be called when a Sim iteration is complete.
-func (distMetrics *DistributionMetrics) doneIteration(encounterDurationSeconds float64) {
+func (distMetrics *DistributionMetrics) doneIteration(seed int64, encounterDurationSeconds float64) {
 	dps := distMetrics.Total / encounterDurationSeconds
 
 	distMetrics.sum += dps
 	distMetrics.sumSquared += dps * dps
-	distMetrics.max = MaxFloat(distMetrics.max, dps)
+	if dps > distMetrics.max {
+		distMetrics.max = dps
+		distMetrics.maxSeed = seed
+	}
+	if dps <= distMetrics.min || distMetrics.min < 0 {
+		distMetrics.min = dps
+		distMetrics.minSeed = seed
+	}
 
 	dpsRounded := int32(math.Round(dps/10) * 10)
 	distMetrics.hist[dpsRounded]++
@@ -43,16 +53,20 @@ func (distMetrics *DistributionMetrics) ToProto(numIterations int32) *proto.Dist
 	dpsAvg := distMetrics.sum / float64(numIterations)
 
 	return &proto.DistributionMetrics{
-		Avg:   dpsAvg,
-		Stdev: math.Sqrt((distMetrics.sumSquared / float64(numIterations)) - (dpsAvg * dpsAvg)),
-		Max:   distMetrics.max,
-		Hist:  distMetrics.hist,
+		Avg:     dpsAvg,
+		Stdev:   math.Sqrt((distMetrics.sumSquared / float64(numIterations)) - (dpsAvg * dpsAvg)),
+		Max:     distMetrics.max,
+		Min:     distMetrics.min,
+		MaxSeed: distMetrics.maxSeed,
+		MinSeed: distMetrics.minSeed,
+		Hist:    distMetrics.hist,
 	}
 }
 
 func NewDistributionMetrics() DistributionMetrics {
 	return DistributionMetrics{
 		hist: make(map[int32]int32),
+		min:  -1,
 	}
 }
 
@@ -242,7 +256,7 @@ func (unitMetrics *UnitMetrics) addSpell(spell *Spell) {
 		actionMetrics.Targets = make([]TargetedActionMetrics, len(spell.SpellMetrics))
 		for i, _ := range actionMetrics.Targets {
 			tam := &actionMetrics.Targets[i]
-			tam.UnitIndex = spell.Unit.AttackTables[i].Defender.Index
+			tam.UnitIndex = spell.Unit.AttackTables[i].Defender.UnitIndex
 		}
 	}
 
@@ -258,11 +272,14 @@ func (unitMetrics *UnitMetrics) addSpell(spell *Spell) {
 		tam.Glances += spellTargetMetrics.Glances
 		tam.Damage += spellTargetMetrics.TotalDamage
 		tam.Threat += spellTargetMetrics.TotalThreat
-		unitMetrics.dps.Total += spellTargetMetrics.TotalDamage
-		unitMetrics.threat.Total += spellTargetMetrics.TotalThreat
 
 		target := spell.Unit.AttackTables[i].Defender
 		target.Metrics.dtps.Total += spellTargetMetrics.TotalDamage
+
+		if spell.Unit.IsOpponent(target) {
+			unitMetrics.dps.Total += spellTargetMetrics.TotalDamage
+			unitMetrics.threat.Total += spellTargetMetrics.TotalThreat
+		}
 	}
 }
 
@@ -290,10 +307,10 @@ func (unitMetrics *UnitMetrics) reset() {
 }
 
 // This should be called when a Sim iteration is complete.
-func (unitMetrics *UnitMetrics) doneIteration(encounterDurationSeconds float64) {
-	unitMetrics.dps.doneIteration(encounterDurationSeconds)
-	unitMetrics.threat.doneIteration(encounterDurationSeconds)
-	unitMetrics.dtps.doneIteration(encounterDurationSeconds)
+func (unitMetrics *UnitMetrics) doneIteration(seed int64, encounterDurationSeconds float64) {
+	unitMetrics.dps.doneIteration(seed, encounterDurationSeconds)
+	unitMetrics.threat.doneIteration(seed, encounterDurationSeconds)
+	unitMetrics.dtps.doneIteration(seed, encounterDurationSeconds)
 	unitMetrics.oomTimeSum += float64(unitMetrics.OOMTime.Seconds())
 	if unitMetrics.Died {
 		unitMetrics.numItersDead++
@@ -326,30 +343,37 @@ type AuraMetrics struct {
 
 	// Metrics for the current iteration.
 	Uptime time.Duration
+	Procs  int32
 
 	// Aggregate values. These are updated after each iteration.
 	uptimeSum        time.Duration
 	uptimeSumSquared time.Duration
+
+	procsSum int32
 }
 
 func (auraMetrics *AuraMetrics) reset() {
 	auraMetrics.Uptime = 0
+	auraMetrics.Procs = 0
 }
 
 // This should be called when a Sim iteration is complete.
 func (auraMetrics *AuraMetrics) doneIteration() {
 	auraMetrics.uptimeSum += auraMetrics.Uptime
 	auraMetrics.uptimeSumSquared += auraMetrics.Uptime * auraMetrics.Uptime
+	auraMetrics.procsSum += auraMetrics.Procs
 }
 
 func (auraMetrics *AuraMetrics) ToProto(numIterations int32) *proto.AuraMetrics {
 	uptimeAvg := auraMetrics.uptimeSum.Seconds() / float64(numIterations)
+	procsAvg := float64(auraMetrics.procsSum) / float64(numIterations)
 
 	return &proto.AuraMetrics{
 		Id: auraMetrics.ID.ToProto(),
 
 		UptimeSecondsAvg:   uptimeAvg,
 		UptimeSecondsStdev: math.Sqrt((auraMetrics.uptimeSumSquared.Seconds() / float64(numIterations)) - (uptimeAvg * uptimeAvg)),
+		ProcsAvg:           procsAvg,
 	}
 }
 

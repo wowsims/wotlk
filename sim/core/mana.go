@@ -35,10 +35,10 @@ func (character *Character) EnableManaBar() {
 	// Subtract out the non-linear part of the formula separately, so that weird
 	// mana values are not included when using the stat dependency manager.
 	character.AddStat(stats.Mana, 20-15*20)
-	character.AddStatDependency(stats.Intellect, stats.Mana, 1.0+15)
+	character.AddStatDependency(stats.Intellect, stats.Mana, 15)
 
 	// This conversion is now universal for
-	character.AddStatDependency(stats.Intellect, stats.SpellCrit, 1.0+CritRatingPerCritChance/166.16)
+	character.AddStatDependency(stats.Intellect, stats.SpellCrit, CritRatingPerCritChance/166.16)
 
 	// Not a real spell, just holds metrics from mana gain threat.
 	character.RegisterSpell(SpellConfig{
@@ -53,7 +53,8 @@ func (character *Character) EnableManaBar() {
 }
 
 // EnableResumeAfterManaWait will setup the OnManaTick callback to resume the given callback
-//  once enough mana has been gained after calling unit.WaitForMana()
+//
+//	once enough mana has been gained after calling unit.WaitForMana()
 func (character *Character) EnableResumeAfterManaWait(callback func(sim *Simulation)) {
 	if callback == nil {
 		panic("attempted to setup a mana tick callback that was nil")
@@ -148,7 +149,7 @@ func (unit *Unit) MP5ManaRegenPerSecond() float64 {
 
 // Returns the rate of mana regen per second from spirit.
 func (unit *Unit) SpiritManaRegenPerSecond() float64 {
-	return 0.001 + unit.stats[stats.Spirit]*math.Sqrt(unit.stats[stats.Intellect])*0.009327
+	return 0.001 + unit.stats[stats.Spirit]*math.Sqrt(unit.stats[stats.Intellect])*0.003345
 }
 
 // Returns the rate of mana regen per second, assuming this unit is

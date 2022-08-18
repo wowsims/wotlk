@@ -1,27 +1,26 @@
-import { RaidBuffs } from '/wotlk/core/proto/common.js';
-import { PartyBuffs } from '/wotlk/core/proto/common.js';
-import { IndividualBuffs } from '/wotlk/core/proto/common.js';
-import { Debuffs } from '/wotlk/core/proto/common.js';
-import { Class } from '/wotlk/core/proto/common.js';
-import { Consumes } from '/wotlk/core/proto/common.js';
-import { Encounter } from '/wotlk/core/proto/common.js';
-import { ItemSlot } from '/wotlk/core/proto/common.js';
-import { MobType } from '/wotlk/core/proto/common.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { Stat } from '/wotlk/core/proto/common.js';
-import { TristateEffect } from '/wotlk/core/proto/common.js'
-import { Player } from '/wotlk/core/player.js';
-import { Stats } from '/wotlk/core/proto_utils/stats.js';
-import { Sim } from '/wotlk/core/sim.js';
-import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
-import { TotemsSection } from '/wotlk/core/components/totem_inputs.js';
-import { WeaponImbue } from '/wotlk/core/proto/common.js';
+import { RaidBuffs } from '../core/proto/common.js';
+import { PartyBuffs } from '../core/proto/common.js';
+import { IndividualBuffs } from '../core/proto/common.js';
+import { Debuffs } from '../core/proto/common.js';
+import { Class } from '../core/proto/common.js';
+import { Consumes } from '../core/proto/common.js';
+import { Encounter } from '../core/proto/common.js';
+import { ItemSlot } from '../core/proto/common.js';
+import { MobType } from '../core/proto/common.js';
+import { Spec } from '../core/proto/common.js';
+import { Stat } from '../core/proto/common.js';
+import { TristateEffect } from '../core/proto/common.js'
+import { Player } from '../core/player.js';
+import { Stats } from '../core/proto_utils/stats.js';
+import { Sim } from '../core/sim.js';
+import { IndividualSimUI } from '../core/individual_sim_ui.js';
+import { TotemsSection } from '../core/components/totem_inputs.js';
 
-import { EnhancementShaman, EnhancementShaman_Rotation as EnhancementShamanRotation, EnhancementShaman_Options as EnhancementShamanOptions } from '/wotlk/core/proto/shaman.js';
+import { EnhancementShaman, EnhancementShaman_Rotation as EnhancementShamanRotation, EnhancementShaman_Options as EnhancementShamanOptions } from '../core/proto/shaman.js';
 
-import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
-import * as OtherInputs from '/wotlk/core/components/other_inputs.js';
-import * as Tooltips from '/wotlk/core/constants/tooltips.js';
+import * as IconInputs from '../core/components/icon_inputs.js';
+import * as OtherInputs from '../core/components/other_inputs.js';
+import * as Tooltips from '../core/constants/tooltips.js';
 
 import * as ShamanInputs from './inputs.js';
 import * as Presets from './presets.js';
@@ -32,6 +31,8 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 			cssClass: 'enhancement-shaman-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
+                "Fire Elemental is not yet implemented",
+                "Some things regarding weapon imbues need further testing and changes",
 			],
 
 			// All stats for which EP should be calculated.
@@ -76,17 +77,18 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				gear: Presets.P1_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatIntellect]: 1.378,
-					[Stat.StatAgility]: 1.517,
+					[Stat.StatIntellect]: 1.517,
+					[Stat.StatAgility]: 1.561,
 					[Stat.StatStrength]: 1.1,
-					[Stat.StatSpellPower]: 0.433,
-					[Stat.StatNatureSpellPower]: 0.216,
+					[Stat.StatSpellPower]: 1.117,
+                    [Stat.StatSpellHit]: 0, //default EP assumes cap
+                    [Stat.StatSpellCrit]: 0.897,
 					[Stat.StatAttackPower]: 1.0,
-					[Stat.StatMeleeHit]: 1.665,
-					[Stat.StatMeleeCrit]: 1.357,
-					[Stat.StatMeleeHaste]: 1.944,
-					[Stat.StatArmorPenetration]: 0.283,
-					[Stat.StatExpertise]: 2.871,
+					[Stat.StatMeleeHit]: 1.42,
+					[Stat.StatMeleeCrit]: 0.805, //double check how this works with spell crit
+					[Stat.StatMeleeHaste]: 1.37, //haste is complicated
+					[Stat.StatArmorPenetration]: 0.471,
+					[Stat.StatExpertise]: 0, //default EP assumes cap
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,
@@ -133,8 +135,13 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 			rotationInputs: ShamanInputs.EnhancementShamanRotationConfig, 
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
+				IconInputs.ReplenishmentBuff,
+				IconInputs.MP5Buff,
+				IconInputs.SpellHasteBuff,
+				IconInputs.SpiritBuff,
 			],
 			excludeBuffDebuffInputs: [
+				IconInputs.BleedDebuff,
 			],
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
@@ -160,11 +167,8 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
+                    Presets.PreRaid_PRESET,
 					Presets.P1_PRESET,
-					Presets.P2_PRESET,
-					Presets.P3_PRESET,
-					Presets.P4_PRESET,
-					Presets.P5_PRESET,
 				],
 			},
 		});

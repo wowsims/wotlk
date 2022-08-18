@@ -69,6 +69,10 @@ func NewCharacter(party *Party, partyIndex int, player proto.Player) Character {
 			auraTracker: newAuraTracker(),
 			PseudoStats: stats.NewPseudoStats(),
 			Metrics:     NewUnitMetrics(),
+
+			StatDependencyManager: stats.NewStatDependencyManager(),
+
+			DistanceFromTarget: player.DistanceFromTarget,
 		},
 
 		Name:         player.Name,
@@ -129,8 +133,8 @@ func NewCharacter(party *Party, partyIndex int, player proto.Player) Character {
 }
 
 func (character *Character) addUniversalStatDependencies() {
-	character.AddStatDependency(stats.Stamina, stats.Health, 1.0+10)
-	character.AddStatDependency(stats.Agility, stats.Armor, 1.0+2)
+	character.AddStatDependency(stats.Stamina, stats.Health, 10)
+	character.AddStatDependency(stats.Agility, stats.Armor, 2)
 }
 
 // Empty implementation so its optional for Agents.
@@ -142,22 +146,22 @@ func (character *Character) applyAllEffects(agent Agent, raidBuffs proto.RaidBuf
 
 	applyRaceEffects(agent)
 	character.applyProfessionEffects()
-	playerStats.BaseStats = character.applyStatDependencies(character.stats).ToFloatArray()
+	playerStats.BaseStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
 
 	character.AddStats(character.Equip.Stats())
 	character.applyItemEffects(agent)
 	character.applyItemSetBonusEffects(agent)
 	agent.ApplyGearBonuses()
-	playerStats.GearStats = character.applyStatDependencies(character.stats).ToFloatArray()
+	playerStats.GearStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
 
 	agent.ApplyTalents()
-	playerStats.TalentsStats = character.applyStatDependencies(character.stats).ToFloatArray()
+	playerStats.TalentsStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
 
 	applyBuffEffects(agent, raidBuffs, partyBuffs, individualBuffs)
-	playerStats.BuffsStats = character.applyStatDependencies(character.stats).ToFloatArray()
+	playerStats.BuffsStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
 
 	applyConsumeEffects(agent, raidBuffs, partyBuffs)
-	playerStats.ConsumesStats = character.applyStatDependencies(character.stats).ToFloatArray()
+	playerStats.ConsumesStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
 
 	for _, petAgent := range character.Pets {
 		applyPetBuffEffects(petAgent, raidBuffs, partyBuffs, individualBuffs)
@@ -205,6 +209,36 @@ func (character *Character) GetPet(name string) PetAgent {
 		}
 	}
 	panic(character.Name + " has no pet with name " + name)
+}
+
+func (character *Character) MultiplyMeleeSpeed(sim *Simulation, amount float64) {
+	character.Unit.MultiplyMeleeSpeed(sim, amount)
+
+	if len(character.Pets) > 0 {
+		for _, petAgent := range character.Pets {
+			petAgent.OwnerAttackSpeedChanged(sim)
+		}
+	}
+}
+
+func (character *Character) MultiplyRangedSpeed(sim *Simulation, amount float64) {
+	character.Unit.MultiplyRangedSpeed(sim, amount)
+
+	if len(character.Pets) > 0 {
+		for _, petAgent := range character.Pets {
+			petAgent.OwnerAttackSpeedChanged(sim)
+		}
+	}
+}
+
+func (character *Character) MultiplyAttackSpeed(sim *Simulation, amount float64) {
+	character.Unit.MultiplyAttackSpeed(sim, amount)
+
+	if len(character.Pets) > 0 {
+		for _, petAgent := range character.Pets {
+			petAgent.OwnerAttackSpeedChanged(sim)
+		}
+	}
 }
 
 func (character *Character) AddStatsDynamic(sim *Simulation, stat stats.Stats) {
@@ -304,9 +338,6 @@ func (character *Character) Finalize(playerStats *proto.PlayerStats) {
 	if character.Env.IsFinalized() {
 		return
 	}
-
-	character.finalizeStatDeps()
-	character.stats = character.applyStatDependencies(character.stats)
 
 	character.PseudoStats.ParryHaste = character.PseudoStats.CanParry
 
@@ -458,6 +489,7 @@ func (character *Character) doneIteration(sim *Simulation) {
 func (character *Character) GetMetricsProto(numIterations int32) *proto.UnitMetrics {
 	metrics := character.Metrics.ToProto(numIterations)
 	metrics.Name = character.Name
+	metrics.UnitIndex = character.UnitIndex
 	metrics.Auras = character.auraTracker.GetMetricsProto(numIterations)
 
 	metrics.Pets = []*proto.UnitMetrics{}

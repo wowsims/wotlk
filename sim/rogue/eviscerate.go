@@ -11,7 +11,7 @@ import (
 func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
 	baseDamage := 127.0 +
 		(370+core.TernaryFloat64(rogue.HasSetBonus(ItemSetDeathmantle, 2), 40, 0))*float64(comboPoints)
-	apRatio := 0.03 * float64(comboPoints)
+	apRatio := 0.05 * float64(comboPoints)
 	cost := 35.0
 	if rogue.HasSetBonus(ItemSetAssassination, 4) {
 		cost -= 10
@@ -31,7 +31,7 @@ func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
 				Cost: cost,
 				GCD:  time.Second,
 			},
-			ModifyCast:  rogue.applyDeathmantle,
+			ModifyCast:  rogue.CastModifier,
 			IgnoreHaste: true,
 		},
 
@@ -39,6 +39,7 @@ func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
 			ProcMask: core.ProcMaskMeleeMHSpecial,
 			DamageMultiplier: 1 +
 				[]float64{0.0, 0.07, 0.14, 0.2}[rogue.Talents.ImprovedEviscerate] +
+				0.02*float64(rogue.Talents.FindWeakness) +
 				0.03*float64(rogue.Talents.Aggression),
 			ThreatMultiplier: 1,
 			BonusCritRating: core.TernaryFloat64(
@@ -54,6 +55,7 @@ func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					rogue.ApplyFinisher(sim, spell)
+					rogue.ApplyCutToTheChase(sim)
 				} else {
 					if refundAmount > 0 {
 						rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.QuickRecoveryMetrics)

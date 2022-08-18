@@ -268,28 +268,7 @@ enum Conjured {
 	ConjuredDarkRune = 1;
 	ConjuredFlameCap = 2;
 	ConjuredHealthstone = 5;
-
-	ConjuredMageManaEmerald = 3;
 	ConjuredRogueThistleTea = 4;
-}
-
-enum WeaponImbue {
-	WeaponImbueUnknown = 0;
-	WeaponImbueAdamantiteSharpeningStone = 1;
-	WeaponImbueAdamantiteWeightstone = 5;
-	WeaponImbueElementalSharpeningStone = 2;
-	WeaponImbueBrilliantWizardOil = 3;
-	WeaponImbueSuperiorWizardOil = 4;
-
-	WeaponImbueShamanFlametongue = 6;
-	WeaponImbueShamanFrostbrand = 7;
-	WeaponImbueShamanRockbiter = 8;
-	WeaponImbueShamanWindfury = 9;
-
-	WeaponImbueRogueDeadlyPoison = 10;
-	WeaponImbueRogueInstantPoison = 11;
-
-	WeaponImbueRighteousWeaponCoating = 12;
 }
 
 enum Flask {
@@ -506,6 +485,9 @@ message IndividualBuffs {
 	int32 revitalize = 13;
 	int32 tricks_of_the_trades = 19;
 
+	// Technically a debuff, but only used by individual sims.
+	int32 shattering_throws = 20;
+
 	bool vampiric_touch = 14;
 	bool hunting_party = 15;
 	bool judgements_of_the_wise = 16;
@@ -517,9 +499,6 @@ message Consumes {
 	Flask flask = 1;
 	BattleElixir battle_elixir = 2;
 	GuardianElixir guardian_elixir = 3;
-
-	WeaponImbue main_hand_imbue = 4;
-	WeaponImbue off_hand_imbue = 5;
 
 	Food food = 6;
 	PetFood pet_food = 7;
@@ -579,9 +558,12 @@ message Debuffs {
 
 	TristateEffect curse_of_weakness = 23;
 	bool sting = 24;
+	bool spore_cloud = 37;
 
 	TristateEffect demoralizing_roar = 25;
 	TristateEffect demoralizing_shout = 26;
+	bool vindication = 36;
+
 	TristateEffect thunder_clap = 27;
 	TristateEffect frost_fever = 28;
 	bool infected_wounds = 29;
@@ -817,4 +799,13 @@ message HealingModel {
 
 	// How often healing is applied.
 	double cadence_seconds = 2;
+}
+
+message CustomRotation {
+	repeated CustomSpell spells = 1;
+}
+
+message CustomSpell {
+	// This should usually be a spec-specific enum value.
+	int32 spell = 1;
 }

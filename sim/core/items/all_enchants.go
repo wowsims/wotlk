@@ -74,7 +74,7 @@ var Enchants = []Enchant{
 	{ID: 47766, EffectID: 1953, Name: "Greater Defense", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{stats.Defense: 22}, ItemType: proto.ItemType_ItemTypeChest},
 
 	// Wrist
-	{ID: 44484, EffectID: 3845, Name: "Major Assult", Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{stats.AttackPower: 50, stats.RangedAttackPower: 50}, ItemType: proto.ItemType_ItemTypeWrist},
+	{ID: 44484, EffectID: 3845, Name: "Greater Assault", Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{stats.AttackPower: 50, stats.RangedAttackPower: 50}, ItemType: proto.ItemType_ItemTypeWrist},
 	{ID: 44498, EffectID: 2332, Name: "Superior Spellpower", Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{stats.SpellPower: 30, stats.HealingPower: 30}, ItemType: proto.ItemType_ItemTypeWrist},
 	{ID: 44944, EffectID: 3850, Name: "Major Stamina", Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{stats.Stamina: 40}, ItemType: proto.ItemType_ItemTypeWrist},
 	{ID: 44555, EffectID: 1119, Name: "Exceptional Intellect", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{stats.Intellect: 16}, ItemType: proto.ItemType_ItemTypeWrist},
@@ -157,6 +157,7 @@ var Enchants = []Enchant{
 	{ID: 44473, EffectID: 3247, Name: "Scourgebane", Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeTwoHand},
 	{ID: 44483, EffectID: 3827, Name: "Massacre", Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{stats.AttackPower: 110, stats.RangedAttackPower: 110}, ItemType: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeTwoHand},
 	{ID: 44630, EffectID: 3828, Name: "Greater Savagery", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{stats.AttackPower: 85, stats.RangedAttackPower: 85}, ItemType: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeTwoHand},
+	{ID: 45059, EffectID: 3854, Name: "Greater Spellpower", Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{stats.SpellPower: 81, stats.HealingPower: 81}, ItemType: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeTwoHand},
 	{ID: 53342, EffectID: 3367, Name: "Rune of Spellshattering", IsSpellID: true, Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, ClassAllowlist: []proto.Class{proto.Class_ClassDeathknight}},
 	{ID: 53323, EffectID: 3365, Name: "Rune of Swordshattering", IsSpellID: true, Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, ClassAllowlist: []proto.Class{proto.Class_ClassDeathknight}},
 	{ID: 62158, EffectID: 3847, Name: "Rune of the Stoneskin Gargoyle", IsSpellID: true, Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, ClassAllowlist: []proto.Class{proto.Class_ClassDeathknight}},
@@ -182,11 +183,11 @@ var Enchants = []Enchant{
 	/////////////////////////////
 
 	// Head
-	{ID: 29186, EffectID: 2999, Name: "Glyph of the Defender", Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{stats.Defense: 16, stats.Dodge: 17}, ItemType: proto.ItemType_ItemTypeHead},
-	{ID: 29191, EffectID: 3002, Name: "Glyph of Power", Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{stats.SpellPower: 22, stats.SpellHit: 14}, ItemType: proto.ItemType_ItemTypeHead},
-	{ID: 29192, EffectID: 3003, Name: "Glyph of Ferocity", Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{stats.AttackPower: 34, stats.RangedAttackPower: 34, stats.MeleeHit: 16}, ItemType: proto.ItemType_ItemTypeHead},
-	{ID: 30846, EffectID: 3096, Name: "Glyph of the Outcast", Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{stats.Strength: 17, stats.Intellect: 16}, ItemType: proto.ItemType_ItemTypeHead},
-	{ID: 29193, EffectID: 3004, Name: "Glyph of the Gladiator", Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{stats.Stamina: 18, stats.Resilience: 20}, ItemType: proto.ItemType_ItemTypeHead},
+	{ID: 29186, EffectID: 2999, Name: "Arcanum of the Defender", Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{stats.Defense: 16, stats.Dodge: 17}, ItemType: proto.ItemType_ItemTypeHead},
+	{ID: 29191, EffectID: 3002, Name: "Arcanum of Power", Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{stats.SpellPower: 22, stats.SpellHit: 14}, ItemType: proto.ItemType_ItemTypeHead},
+	{ID: 29192, EffectID: 3003, Name: "Arcanum of Ferocity", Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{stats.AttackPower: 34, stats.RangedAttackPower: 34, stats.MeleeHit: 16, stats.SpellHit: 16}, ItemType: proto.ItemType_ItemTypeHead},
+	{ID: 30846, EffectID: 3096, Name: "Arcanum of the Outcast", Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{stats.Strength: 17, stats.Intellect: 16}, ItemType: proto.ItemType_ItemTypeHead},
+	{ID: 29193, EffectID: 3004, Name: "Arcanum of the Gladiator", Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{stats.Stamina: 18, stats.Resilience: 20}, ItemType: proto.ItemType_ItemTypeHead},
 
 	// ZG Head Enchants
 	{ID: 19782, EffectID: 2583, Name: "Presence of Might", Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{stats.Stamina: 10, stats.Defense: 10, stats.BlockValue: 15}, ItemType: proto.ItemType_ItemTypeHead, ClassAllowlist: []proto.Class{proto.Class_ClassWarrior}},

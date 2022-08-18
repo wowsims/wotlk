@@ -51,18 +51,22 @@ type Paladin struct {
 	CurrentSeal      *core.Aura
 	CurrentJudgement *core.Aura
 
-	DivinePlea          *core.Spell
-	DivineStorm         *core.Spell
-	Consecration        *core.Spell
-	CrusaderStrike      *core.Spell
-	Exorcism            *core.Spell
-	HolyShield          *core.Spell
-	JudgementOfWisdom   *core.Spell
-	JudgementOfLight    *core.Spell
-	HammerOfWrath       *core.Spell
-	SealOfVengeance     *core.Spell
-	SealOfRighteousness *core.Spell
-	SealOfCommand       *core.Spell
+	DivinePlea            *core.Spell
+	DivineStorm           *core.Spell
+	HolyWrath             *core.Spell
+	Consecration          *core.Spell
+	CrusaderStrike        *core.Spell
+	Exorcism              *core.Spell
+	HolyShield            *core.Spell
+	HammerOfTheRighteous  *core.Spell
+	ShieldOfRighteousness *core.Spell
+	AvengersShield        *core.Spell
+	JudgementOfWisdom     *core.Spell
+	JudgementOfLight      *core.Spell
+	HammerOfWrath         *core.Spell
+	SealOfVengeance       *core.Spell
+	SealOfRighteousness   *core.Spell
+	SealOfCommand         *core.Spell
 	// SealOfWisdom        *core.Spell
 	// SealOfLight         *core.Spell
 
@@ -89,6 +93,10 @@ type Paladin struct {
 	ArtOfWarInstantCast *core.Aura
 
 	SpiritualAttunementMetrics *core.ResourceMetrics
+
+	HasTuralyonsOrLiadrinsBattlegear2Pc bool
+
+	DemonAndUndeadTargetCount int32
 }
 
 // Implemented by each Paladin spec.
@@ -149,9 +157,13 @@ func (paladin *Paladin) Initialize() {
 	paladin.registerDivineStormSpell()
 	paladin.registerConsecrationSpell()
 	paladin.registerHammerOfWrathSpell()
+	paladin.registerHolyWrathSpell()
 
 	paladin.registerExorcismSpell()
 	paladin.registerHolyShieldSpell()
+	paladin.registerHammerOfTheRighteousSpell()
+	paladin.registerShieldOfRighteousnessSpell()
+	paladin.registerAvengersShieldSpell()
 	paladin.registerJudgements()
 
 	paladin.registerSpiritualAttunement()
@@ -173,6 +185,13 @@ func (paladin *Paladin) Initialize() {
 			paladin.RighteousVengeanceDamage = append(paladin.RighteousVengeanceDamage, 0.0)
 		}
 	}
+
+	for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
+		unit := paladin.Env.GetTargetUnit(i)
+		if unit.MobType == proto.MobType_MobTypeDemon || unit.MobType == proto.MobType_MobTypeUndead {
+			paladin.DemonAndUndeadTargetCount += 1
+		}
+	}
 }
 
 func (paladin *Paladin) Reset(sim *core.Simulation) {
@@ -190,20 +209,22 @@ func NewPaladin(character core.Character, talents proto.PaladinTalents) *Paladin
 		Talents:   talents,
 	}
 
+	paladin.HasTuralyonsOrLiadrinsBattlegear2Pc = paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 2) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 2)
+
 	paladin.PseudoStats.CanParry = true
 
 	paladin.EnableManaBar()
 
 	// Paladins get 3 times their level in base AP
 	// then 2 AP per STR, then lose the first 20 AP
-	paladin.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+2.0)
+	paladin.AddStatDependency(stats.Strength, stats.AttackPower, 2.0)
 	paladin.AddStat(stats.AttackPower, -20)
 
 	// Paladins get 1% crit per 52.08 agil
-	paladin.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+((1.0/52.08)*core.CritRatingPerCritChance))
+	paladin.AddStatDependency(stats.Agility, stats.MeleeCrit, (1.0/52.08)*core.CritRatingPerCritChance)
 
 	// Paladins get 1% dodge per 52.08 agil
-	paladin.AddStatDependency(stats.Agility, stats.Dodge, 1.0+((1.0/52.08)*core.DodgeRatingPerDodgeChance))
+	paladin.AddStatDependency(stats.Agility, stats.Dodge, (1.0/52.08)*core.DodgeRatingPerDodgeChance)
 
 	// Paladins get more melee haste from haste than other classes, 25.22/1%
 	paladin.PseudoStats.MeleeHasteRatingPerHastePercent = 25.22

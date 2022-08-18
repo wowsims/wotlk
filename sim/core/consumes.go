@@ -435,15 +435,6 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 		})
 	}
 
-	// Weapon Imbues
-	allowMHImbue := character.HasMHWeapon() && character.HasMHWeaponImbue
-	if allowMHImbue {
-		addImbueStats(character, consumes.MainHandImbue)
-	}
-	if character.HasOHWeapon() {
-		addImbueStats(character, consumes.OffHandImbue)
-	}
-
 	registerPotionCD(agent, consumes)
 	registerConjuredCD(agent, consumes)
 	registerExplosivesCD(agent, consumes)
@@ -465,72 +456,6 @@ func ApplyPetConsumeEffects(pet *Character, ownerConsumes proto.Consumes) {
 
 	pet.AddStat(stats.Agility, []float64{0, 5, 9, 13, 17, 20}[ownerConsumes.PetScrollOfAgility])
 	pet.AddStat(stats.Strength, []float64{0, 5, 9, 13, 17, 20}[ownerConsumes.PetScrollOfStrength])
-}
-
-func addImbueStats(character *Character, imbue proto.WeaponImbue) {
-	if imbue == proto.WeaponImbue_WeaponImbueUnknown {
-		return
-	}
-
-	if imbue == proto.WeaponImbue_WeaponImbueAdamantiteSharpeningStone {
-		character.PseudoStats.BonusDamage += 12
-		// Crit rating for sharpening stone applies to melee only.
-		if character.Class != proto.Class_ClassHunter {
-			// For non-hunters just give direct crit so it shows on the stats panel.
-			character.AddStats(stats.Stats{stats.MeleeCrit: 14})
-		} else {
-			character.PseudoStats.BonusMeleeCritRating += 14
-		}
-	} else if imbue == proto.WeaponImbue_WeaponImbueAdamantiteWeightstone {
-		character.PseudoStats.BonusDamage += 12
-		character.AddStats(stats.Stats{stats.MeleeCrit: 14})
-	} else if imbue == proto.WeaponImbue_WeaponImbueElementalSharpeningStone {
-		character.AddStats(stats.Stats{
-			stats.MeleeCrit: 28,
-		})
-	} else if imbue == proto.WeaponImbue_WeaponImbueBrilliantWizardOil {
-		character.AddStats(stats.Stats{
-			stats.SpellCrit:    14,
-			stats.SpellPower:   36,
-			stats.HealingPower: 36,
-		})
-	} else if imbue == proto.WeaponImbue_WeaponImbueSuperiorWizardOil {
-		character.AddStats(stats.Stats{
-			stats.SpellPower:   42,
-			stats.HealingPower: 42,
-		})
-	} else if imbue == proto.WeaponImbue_WeaponImbueRighteousWeaponCoating {
-		procAura := character.NewTemporaryStatsAura("RighteousWeaponCoatingProc", ActionID{ItemID: 34539}, stats.Stats{stats.AttackPower: 300, stats.RangedAttackPower: 300}, time.Second*10)
-		ppmm := character.AutoAttacks.NewPPMManager(10.0, ProcMaskMeleeOrRanged)
-
-		icd := Cooldown{
-			Timer:    character.NewTimer(),
-			Duration: time.Second * 45,
-		}
-
-		character.GetOrRegisterAura(Aura{
-			Label:    "Righteous Weapon Coating",
-			Duration: NeverExpires,
-			OnReset: func(aura *Aura, sim *Simulation) {
-				aura.Activate(sim)
-			},
-			OnSpellHitDealt: func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
-				// mask 340
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(ProcMaskDirect) {
-					return
-				}
-				if !icd.IsReady(sim) {
-					return
-				}
-				if !ppmm.Proc(sim, spellEffect.ProcMask, "Righteous Weapon Coating") {
-					return
-				}
-
-				icd.Use(sim)
-				procAura.Activate(sim)
-			},
-		})
-	}
 }
 
 var PotionAuraTag = "Potion"

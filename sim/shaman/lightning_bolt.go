@@ -71,8 +71,9 @@ func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spel
 						return lbdotDmg / 2 //spread dot over 2 ticks
 					},
 				},
-				IsPeriodic: true,
-				ProcMask:   core.ProcMaskEmpty,
+				IsPeriodic:     true,
+				ProcMask:       core.ProcMaskEmpty,
+				OutcomeApplier: shaman.OutcomeFuncTick(),
 			}),
 		})
 		applyDot = func(sim *core.Simulation, dmg float64) {

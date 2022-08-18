@@ -8,7 +8,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (hunter *Hunter) registerMultiShotSpell() {
+func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
 	baseCost := 0.09 * hunter.BaseMana
 
 	baseEffect := core.SpellEffect{
@@ -20,7 +20,7 @@ func (hunter *Hunter) registerMultiShotSpell() {
 			(1 + 0.01*float64(hunter.Talents.MarkedForDeath)),
 		ThreatMultiplier: 1,
 
-		BaseDamage: hunter.talonOfAlarDamageMod(core.BaseDamageConfig{
+		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				return (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.2 +
 					hunter.AutoAttacks.Ranged.BaseDamage(sim) +
@@ -29,7 +29,7 @@ func (hunter *Hunter) registerMultiShotSpell() {
 					408
 			},
 			TargetSpellCoefficient: 1,
-		}),
+		},
 		OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, false, hunter.CurrentTarget)),
 	}
 
@@ -54,7 +54,7 @@ func (hunter *Hunter) registerMultiShotSpell() {
 					(1 - 0.03*float64(hunter.Talents.Efficiency)) *
 					core.TernaryFloat64(hunter.HasSetBonus(ItemSetDemonStalker, 4), 0.9, 1),
 
-				GCD:      core.GCDDefault + hunter.latency,
+				GCD:      core.GCDDefault,
 				CastTime: 1, // Dummy value so core doesn't optimize the cast away
 			},
 			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
@@ -62,7 +62,7 @@ func (hunter *Hunter) registerMultiShotSpell() {
 			},
 			IgnoreHaste: true, // Hunter GCD is locked at 1.5s
 			CD: core.Cooldown{
-				Timer:    hunter.NewTimer(),
+				Timer:    timer,
 				Duration: time.Second*10 - core.TernaryDuration(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfMultiShot), time.Second*1, 0),
 			},
 		},
@@ -72,5 +72,5 @@ func (hunter *Hunter) registerMultiShotSpell() {
 }
 
 func (hunter *Hunter) MultiShotCastTime() time.Duration {
-	return time.Duration(float64(time.Millisecond*500)/hunter.RangedSwingSpeed()) + hunter.latency
+	return time.Duration(float64(time.Millisecond*500) / hunter.RangedSwingSpeed())
 }

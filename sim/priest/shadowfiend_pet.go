@@ -31,7 +31,7 @@ func (priest *Priest) NewShadowfiend() *Shadowfiend {
 			baseStats,
 			priest.shadowfiendStatInheritance(),
 			false,
-			true,
+			false,
 		),
 		Priest: priest,
 	}
@@ -105,8 +105,8 @@ func (priest *Priest) shadowfiendStatInheritance() core.PetStatInheritance {
 			stats.SpellHit:    ownerStats[stats.SpellHit],
 			stats.MeleeCrit:   ownerStats[stats.SpellCrit],
 			stats.SpellCrit:   ownerStats[stats.SpellCrit],
-			stats.MeleeHaste:  ownerStats[stats.SpellHaste],
-			stats.SpellHaste:  ownerStats[stats.SpellHaste],
+			//stats.MeleeHaste:  ownerStats[stats.SpellHaste],
+			//stats.SpellHaste:  ownerStats[stats.SpellHaste],
 		}
 	}
 }

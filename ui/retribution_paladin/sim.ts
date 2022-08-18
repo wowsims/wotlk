@@ -1,20 +1,20 @@
-import { RaidBuffs } from '/wotlk/core/proto/common.js';
-import { PartyBuffs } from '/wotlk/core/proto/common.js';
-import { IndividualBuffs } from '/wotlk/core/proto/common.js';
-import { Debuffs } from '/wotlk/core/proto/common.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { Stat } from '/wotlk/core/proto/common.js';
-import { TristateEffect } from '/wotlk/core/proto/common.js'
-import { Stats } from '/wotlk/core/proto_utils/stats.js';
-import { Player } from '/wotlk/core/player.js';
-import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
+import { RaidBuffs } from '../core/proto/common.js';
+import { PartyBuffs } from '../core/proto/common.js';
+import { IndividualBuffs } from '../core/proto/common.js';
+import { Debuffs } from '../core/proto/common.js';
+import { Spec } from '../core/proto/common.js';
+import { Stat } from '../core/proto/common.js';
+import { TristateEffect } from '../core/proto/common.js'
+import { Stats } from '../core/proto_utils/stats.js';
+import { Player } from '../core/player.js';
+import { IndividualSimUI } from '../core/individual_sim_ui.js';
+import { EventID, TypedEvent } from '../core/typed_event.js';
 
-import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
-import * as OtherInputs from '/wotlk/core/components/other_inputs.js';
-import * as Mechanics from '/wotlk/core/constants/mechanics.js';
+import * as IconInputs from '../core/components/icon_inputs.js';
+import * as OtherInputs from '../core/components/other_inputs.js';
+import * as Mechanics from '../core/constants/mechanics.js';
 
-import { PaladinMajorGlyph, PaladinSeal } from '/wotlk/core/proto/paladin.js';
+import { PaladinMajorGlyph, PaladinSeal } from '../core/proto/paladin.js';
 
 import * as RetributionPaladinInputs from './inputs.js';
 import * as Presets from './presets.js';
@@ -25,7 +25,6 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 			cssClass: 'retribution-paladin-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"<p>Work in progress</p>"
 			],
 
 			// All stats for which EP should be calculated.
@@ -77,7 +76,7 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P4_PRESET.gear,
+				gear: Presets.P1_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatStrength]: 2.42,
@@ -107,18 +106,27 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
 					bloodlust: true,
 					manaSpringTotem: TristateEffect.TristateEffectRegular,
-					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
-					windfuryTotem: TristateEffect.TristateEffectImproved,
+					hornOfWinter: true,
 					battleShout: TristateEffect.TristateEffectImproved,
-					unleashedRage: true,
+					sanctifiedRetribution: true,
+					swiftRetribution: true,
+					elementalOath: true,
+					rampage: true,
+					trueshotAura: true,
+					icyTalons: true,
+					totemOfWrath: true,
+					wrathOfAirTotem: true,
 				}),
 				partyBuffs: PartyBuffs.create({
 				}),
 				individualBuffs: IndividualBuffs.create({
+					judgementsOfTheWise: true,
 					blessingOfKings: true,
 					blessingOfMight: TristateEffect.TristateEffectImproved,
 				}),
 				debuffs: Debuffs.create({
+					shadowMastery: true,
+					totemOfWrath: true,
 					judgementOfWisdom: true,
 					misery: true,
 					curseOfElements: true,
@@ -136,9 +144,13 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: {
 				inputs: [
+					RetributionPaladinInputs.RotationSelector,
 					RetributionPaladinInputs.RetributionPaladinRotationDivinePleaPercentageConfig,
 					RetributionPaladinInputs.RetributionPaladinRotationConsSlackConfig,
-					RetributionPaladinInputs.RetributionPaladinRotationExoSlackConfig
+					RetributionPaladinInputs.RetributionPaladinRotationExoSlackConfig,
+					RetributionPaladinInputs.RetributionPaladinRotationHolyWrathConfig,
+					RetributionPaladinInputs.RetributionPaladinRotationPriorityConfig,
+					RetributionPaladinInputs.RetributionPaladinCastSequenceConfig
 				]
 			},
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
@@ -155,6 +167,7 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 					RetributionPaladinInputs.DivinePleaSelection,
 					RetributionPaladinInputs.StartingSealSelection,
 					RetributionPaladinInputs.DamageTakenPerSecond,
+					OtherInputs.PrepopPotion,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],

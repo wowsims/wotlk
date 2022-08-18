@@ -1,32 +1,36 @@
-import { RaidBuffs } from '/wotlk/core/proto/common.js';
-import { PartyBuffs } from '/wotlk/core/proto/common.js';
-import { IndividualBuffs } from '/wotlk/core/proto/common.js';
-import { Debuffs } from '/wotlk/core/proto/common.js';
-import { Class } from '/wotlk/core/proto/common.js';
-import { Consumes } from '/wotlk/core/proto/common.js';
-import { Encounter } from '/wotlk/core/proto/common.js';
-import { ItemSlot } from '/wotlk/core/proto/common.js';
-import { MobType } from '/wotlk/core/proto/common.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { Stat } from '/wotlk/core/proto/common.js';
-import { TristateEffect } from '/wotlk/core/proto/common.js'
-import { Player } from '/wotlk/core/player.js';
-import { Stats } from '/wotlk/core/proto_utils/stats.js';
-import { Sim } from '/wotlk/core/sim.js';
-import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
+import { RaidBuffs } from '../core/proto/common.js';
+import { PartyBuffs } from '../core/proto/common.js';
+import { IndividualBuffs } from '../core/proto/common.js';
+import { Debuffs } from '../core/proto/common.js';
+import { Class } from '../core/proto/common.js';
+import { Consumes } from '../core/proto/common.js';
+import { Encounter } from '../core/proto/common.js';
+import { ItemSlot } from '../core/proto/common.js';
+import { MobType } from '../core/proto/common.js';
+import { Spec } from '../core/proto/common.js';
+import { Stat } from '../core/proto/common.js';
+import { TristateEffect } from '../core/proto/common.js'
+import { Player } from '../core/player.js';
+import { Stats } from '../core/proto_utils/stats.js';
+import { getTalentPoints } from '../core/proto_utils/utils.js';
+import { Sim } from '../core/sim.js';
+import { IndividualSimUI } from '../core/individual_sim_ui.js';
+import { EventID, TypedEvent } from '../core/typed_event.js';
+import { getPetTalentsConfig } from '../core/talents/hunter_pet.js';
+import { protoToTalentString } from '../core/talents/factory.js';
 
 import {
 	Hunter,
 	Hunter_Rotation as HunterRotation,
 	Hunter_Options as HunterOptions,
 	Hunter_Options_PetType as PetType,
-} from '/wotlk/core/proto/hunter.js';
+	HunterPetTalents,
+} from '../core/proto/hunter.js';
 
-import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
-import * as OtherInputs from '/wotlk/core/components/other_inputs.js';
-import * as Mechanics from '/wotlk/core/constants/mechanics.js';
-import * as Tooltips from '/wotlk/core/constants/tooltips.js';
+import * as IconInputs from '../core/components/icon_inputs.js';
+import * as OtherInputs from '../core/components/other_inputs.js';
+import * as Mechanics from '../core/constants/mechanics.js';
+import * as Tooltips from '../core/constants/tooltips.js';
 
 import * as HunterInputs from './inputs.js';
 import * as Presets from './presets.js';
@@ -37,8 +41,6 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 			cssClass: 'hunter-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				'Sim uses a simple priority-based rotation.',
-				'Melee weaving and trap weaving are not included in the rotation.',
 			],
 			warnings: [
 				// Warning when using exotic pet without BM talented.
@@ -65,10 +67,37 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 						},
 					};
 				},
+				// Warning when too many Pet talent points are used without BM talented.
+				(simUI: IndividualSimUI<Spec.SpecHunter>) => {
+					return {
+						updateOn: TypedEvent.onAny([simUI.player.talentsChangeEmitter, simUI.player.specOptionsChangeEmitter]),
+						getContent: () => {
+							const specOptions = simUI.player.getSpecOptions();
+							const petTalents = specOptions.petTalents || HunterPetTalents.create();
+							const petTalentString = protoToTalentString(petTalents, getPetTalentsConfig(specOptions.petType));
+							const talentPoints = getTalentPoints(petTalentString);
+
+							const isBM = simUI.player.getTalents().beastMastery;
+							const maxPoints = isBM ? 20 : 16;
+
+							if (talentPoints == 0) {
+								// Just return here, so we don't show a warning during page load.
+								return '';
+							} else if (talentPoints < maxPoints) {
+								return 'Unspent pet talent points.';
+							} else if (talentPoints > maxPoints) {
+								return 'More than 16 points spent in pet talents, but Beast Mastery is not talented.';
+							} else {
+								return '';
+							}
+						},
+					};
+				},
 			],
 
 			// All stats for which EP should be calculated.
 			epStats: [
+				Stat.StatStamina,
 				Stat.StatIntellect,
 				Stat.StatAgility,
 				Stat.StatStrength,
@@ -108,7 +137,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.PRERAID_PRESET.gear,
+				gear: Presets.P1_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatIntellect]: 0.7,
@@ -165,6 +194,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 			playerIconInputs: [
 				HunterInputs.PetTypeInput,
 				HunterInputs.WeaponAmmo,
+				HunterInputs.UseHuntersMark,
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: HunterInputs.HunterRotationConfig,
@@ -182,9 +212,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 			otherInputs: {
 				inputs: [
 					HunterInputs.PetUptime,
-					//HunterInputs.PetSingleAbility,
 					HunterInputs.SniperTrainingUptime,
-					//HunterInputs.LatencyMs,
 					OtherInputs.PrepopPotion,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,

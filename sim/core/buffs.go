@@ -72,8 +72,8 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 
 	if raidBuffs.TrueshotAura || raidBuffs.AbominationsMight || raidBuffs.UnleashedRage {
 		// Increases AP by 10%
-		character.AddStatDependency(stats.AttackPower, stats.AttackPower, 1.0+0.1)
-		character.AddStatDependency(stats.RangedAttackPower, stats.RangedAttackPower, 1.0+0.1)
+		character.MultiplyStat(stats.AttackPower, 1.1)
+		character.MultiplyStat(stats.RangedAttackPower, 1.1)
 	}
 
 	if raidBuffs.ArcaneEmpowerment || raidBuffs.FerociousInspiration || raidBuffs.SanctifiedRetribution {
@@ -121,13 +121,20 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		})
 	}
 
-	// TODO: convert this to a real mana replenishment aura we can use in raid sim.
-	if individualBuffs.VampiricTouch ||
-		individualBuffs.HuntingParty ||
-		individualBuffs.JudgementsOfTheWise ||
-		individualBuffs.ImprovedSoulLeech ||
-		individualBuffs.EnduringWinter {
-		character.AddStatDependency(stats.Mana, stats.MP5, 1.0+0.01)
+	var replenishmentActionID ActionID
+	if individualBuffs.VampiricTouch {
+		replenishmentActionID.SpellID = 48160
+	} else if individualBuffs.HuntingParty {
+		replenishmentActionID.SpellID = 53292
+	} else if individualBuffs.JudgementsOfTheWise {
+		replenishmentActionID.SpellID = 31878
+	} else if individualBuffs.ImprovedSoulLeech {
+		replenishmentActionID.SpellID = 54118
+	} else if individualBuffs.EnduringWinter {
+		replenishmentActionID.SpellID = 44561
+	}
+	if !(replenishmentActionID.IsEmptyAction()) {
+		MakePermanent(ReplenishmentAura(character, replenishmentActionID))
 	}
 
 	kingsAgiIntSpiAmount := 1.0
@@ -143,13 +150,13 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		kingsStrStamAmount = MaxFloat(kingsStrStamAmount, 1.08)
 	}
 	if kingsStrStamAmount > 0 {
-		character.AddStatDependency(stats.Strength, stats.Strength, kingsStrStamAmount)
-		character.AddStatDependency(stats.Stamina, stats.Stamina, kingsStrStamAmount)
+		character.MultiplyStat(stats.Strength, kingsStrStamAmount)
+		character.MultiplyStat(stats.Stamina, kingsStrStamAmount)
 	}
 	if kingsAgiIntSpiAmount > 0 {
-		character.AddStatDependency(stats.Agility, stats.Agility, kingsAgiIntSpiAmount)
-		character.AddStatDependency(stats.Intellect, stats.Intellect, kingsAgiIntSpiAmount)
-		character.AddStatDependency(stats.Spirit, stats.Spirit, kingsAgiIntSpiAmount)
+		character.MultiplyStat(stats.Agility, kingsAgiIntSpiAmount)
+		character.MultiplyStat(stats.Intellect, kingsAgiIntSpiAmount)
+		character.MultiplyStat(stats.Spirit, kingsAgiIntSpiAmount)
 	}
 
 	if individualBuffs.BlessingOfSanctuary {
@@ -197,11 +204,15 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		stats.Health: GetTristateValueFloat(raidBuffs.CommandingShout, 1080, 1080*1.25),
 	})
 
-	spBonus := float64(raidBuffs.DemonicPact) / 10.
+	spBonus := 0.
+
+	if raidBuffs.FlametongueTotem {
+		spBonus = 144.
+		MakePermanent(FlametongueTotemAura(character))
+	}
 	if raidBuffs.TotemOfWrath {
-		spBonus = MaxFloat(spBonus, 280)
-	} else if raidBuffs.FlametongueTotem {
-		spBonus = MaxFloat(spBonus, 144)
+		spBonus = 280.
+		MakePermanent(TotemOfWrathAura(character))
 	}
 	if spBonus > 0 {
 		character.AddStats(stats.Stats{
@@ -209,6 +220,11 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 			stats.HealingPower: spBonus,
 		})
 	}
+	DPSPBonus := float64(raidBuffs.DemonicPact) / 10.
+	if DPSPBonus > 0 {
+		MakePermanent(DemonicPactAura(character, DPSPBonus))
+	}
+
 	if raidBuffs.WrathOfAirTotem {
 		character.PseudoStats.CastSpeedMultiplier *= 1.05
 	}
@@ -248,7 +264,9 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		registerBloodlustCD(agent)
 	}
 
+	registerUnholyFrenzyCD(agent, individualBuffs.UnholyFrenzy)
 	registerTricksOfTheTradeCD(agent, individualBuffs.TricksOfTheTrades)
+	registerShatteringThrowCD(agent, individualBuffs.ShatteringThrows)
 	registerPowerInfusionCD(agent, individualBuffs.PowerInfusions)
 	registerManaTideTotemCD(agent, partyBuffs.ManaTideTotems)
 	registerInnervateCD(agent, individualBuffs.Innervates)
@@ -262,13 +280,13 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 	})
 
 	if partyBuffs.BraidedEterniumChain {
-		character.AddStats(stats.Stats{stats.MeleeCrit: 28})
+		character.AddStats(stats.Stats{stats.MeleeCrit: 28, stats.SpellCrit: 28})
 	}
 	if partyBuffs.EyeOfTheNight {
 		character.AddStats(stats.Stats{stats.SpellPower: 34})
 	}
 	if partyBuffs.ChainOfTheTwilightOwl {
-		character.AddStats(stats.Stats{stats.SpellCrit: 2 * CritRatingPerCritChance})
+		character.AddStats(stats.Stats{stats.MeleeCrit: 45, stats.SpellCrit: 45})
 	}
 }
 
@@ -283,9 +301,35 @@ func applyPetBuffEffects(petAgent PetAgent, raidBuffs proto.RaidBuffs, partyBuff
 	// the owner during combat (Bloodlust) or don't make sense for a pet.
 	raidBuffs.Bloodlust = false
 	raidBuffs.WrathOfAirTotem = false
+	individualBuffs.HymnOfHope = 0
+	individualBuffs.HandOfSalvation = 0
 	individualBuffs.Innervates = 0
 	individualBuffs.PowerInfusions = 0
+	individualBuffs.UnholyFrenzy = 0
+	individualBuffs.Revitalize = 0
 	individualBuffs.TricksOfTheTrades = 0
+	individualBuffs.ShatteringThrows = 0
+
+	if !petAgent.GetPet().enabledOnStart {
+		raidBuffs.ArcaneBrilliance = false
+		raidBuffs.DivineSpirit = false
+		raidBuffs.GiftOfTheWild = 0
+		raidBuffs.PowerWordFortitude = 0
+		raidBuffs.Thorns = 0
+		raidBuffs.ShadowProtection = false
+		raidBuffs.DrumsOfForgottenKings = false
+		raidBuffs.DrumsOfTheWild = false
+		raidBuffs.ScrollOfProtection = false
+		raidBuffs.ScrollOfStamina = false
+		raidBuffs.ScrollOfStrength = false
+		raidBuffs.ScrollOfAgility = false
+		raidBuffs.ScrollOfIntellect = false
+		raidBuffs.ScrollOfSpirit = false
+		individualBuffs.BlessingOfKings = false
+		individualBuffs.BlessingOfSanctuary = false
+		individualBuffs.BlessingOfMight = 0
+		individualBuffs.BlessingOfWisdom = 0
+	}
 
 	// For some reason pets don't benefit from buffs that are ratings, e.g. crit rating or haste rating.
 	partyBuffs.BraidedEterniumChain = false
@@ -494,25 +538,34 @@ const BloodlustDuration = time.Second * 40
 const BloodlustCD = time.Minute * 10
 
 func registerBloodlustCD(agent Agent) {
-	bloodlustAura := BloodlustAura(agent.GetCharacter(), -1)
+	character := agent.GetCharacter()
+	bloodlustAura := BloodlustAura(character, -1)
 
-	// TODO: do we need consecutive CDs
-	registerExternalConsecutiveCDApproximation(
-		agent,
-		externalConsecutiveCDApproximation{
-			ActionID:         ActionID{SpellID: 2825, Tag: -1},
-			AuraTag:          BloodlustAuraTag,
-			CooldownPriority: CooldownPriorityBloodlust,
-			AuraDuration:     BloodlustDuration,
-			AuraCD:           BloodlustCD,
-			Type:             CooldownTypeDPS | CooldownTypeUsableShapeShifted,
+	spell := character.RegisterSpell(SpellConfig{
+		ActionID: bloodlustAura.ActionID,
+		Flags:    SpellFlagNoOnCastComplete | SpellFlagNoMetrics | SpellFlagNoLogs,
 
-			ShouldActivate: func(sim *Simulation, character *Character) bool {
-				// Haste portion doesn't stack with Power Infusion, so prefer to wait.
-				return !character.HasActiveAuraWithTag(PowerInfusionAuraTag)
+		Cast: CastConfig{
+			CD: Cooldown{
+				Timer:    character.NewTimer(),
+				Duration: BloodlustCD,
 			},
-			AddAura: func(sim *Simulation, character *Character) { bloodlustAura.Activate(sim) },
-		}, 1)
+		},
+
+		ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
+			bloodlustAura.Activate(sim)
+		},
+	})
+
+	character.AddMajorCooldown(MajorCooldown{
+		Spell:    spell,
+		Priority: CooldownPriorityBloodlust,
+		Type:     CooldownTypeDPS | CooldownTypeUsableShapeShifted,
+		ShouldActivate: func(sim *Simulation, character *Character) bool {
+			// Haste portion doesn't stack with Power Infusion, so prefer to wait.
+			return !character.HasActiveAuraWithTag(PowerInfusionAuraTag)
+		},
+	})
 }
 
 func BloodlustAura(character *Character, actionTag int32) *Aura {
@@ -655,6 +708,80 @@ func TricksOfTheTradeAura(character *Character, actionTag int32) *Aura {
 			character.PseudoStats.DamageDealtMultiplier /= 1.15
 		},
 	})
+}
+
+var UnholyFrenzyAuraTag = "UnholyFrenzy"
+
+const UnholyFrenzyDuration = time.Second * 30
+const UnholyFrenzyCD = time.Minute * 3
+
+func registerUnholyFrenzyCD(agent Agent, numUnholyFrenzy int32) {
+	if numUnholyFrenzy == 0 {
+		return
+	}
+
+	ufAura := UnholyFrenzyAura(agent.GetCharacter(), -1)
+
+	registerExternalConsecutiveCDApproximation(
+		agent,
+		externalConsecutiveCDApproximation{
+			ActionID:         ActionID{SpellID: 49016, Tag: -1},
+			AuraTag:          UnholyFrenzyAuraTag,
+			CooldownPriority: CooldownPriorityDefault,
+			AuraDuration:     UnholyFrenzyDuration,
+			AuraCD:           UnholyFrenzyCD,
+			Type:             CooldownTypeDPS | CooldownTypeUsableShapeShifted,
+
+			ShouldActivate: func(sim *Simulation, character *Character) bool {
+				return true
+			},
+			AddAura: func(sim *Simulation, character *Character) { ufAura.Activate(sim) },
+		},
+		numUnholyFrenzy)
+}
+
+func UnholyFrenzyAura(character *Character, actionTag int32) *Aura {
+	actionID := ActionID{SpellID: 49016, Tag: actionTag}
+
+	return character.GetOrRegisterAura(Aura{
+		Label:    "UnholyFrenzy-" + actionID.String(),
+		Tag:      UnholyFrenzyAuraTag,
+		ActionID: actionID,
+		Duration: UnholyFrenzyDuration,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			character.PseudoStats.PhysicalDamageDealtMultiplier *= 1.2
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			character.PseudoStats.PhysicalDamageDealtMultiplier /= 1.2
+		},
+	})
+}
+
+const ShatteringThrowCD = time.Minute * 5
+
+func registerShatteringThrowCD(agent Agent, numShatteringThrows int32) {
+	if numShatteringThrows == 0 {
+		return
+	}
+
+	stAura := ShatteringThrowAura(&agent.GetCharacter().Env.Encounter.Targets[0].Unit)
+
+	registerExternalConsecutiveCDApproximation(
+		agent,
+		externalConsecutiveCDApproximation{
+			ActionID:         ActionID{SpellID: 64382, Tag: -1},
+			AuraTag:          ShatteringThrowAuraTag,
+			CooldownPriority: CooldownPriorityDefault,
+			AuraDuration:     ShatteringThrowDuration,
+			AuraCD:           ShatteringThrowCD,
+			Type:             CooldownTypeDPS,
+
+			ShouldActivate: func(sim *Simulation, character *Character) bool {
+				return true
+			},
+			AddAura: func(sim *Simulation, character *Character) { stAura.Activate(sim) },
+		},
+		numShatteringThrows)
 }
 
 var InnervateAuraTag = "Innervate"
@@ -837,4 +964,109 @@ func ManaTideTotemAura(character *Character, actionTag int32) *Aura {
 			}
 		},
 	})
+}
+
+var ReplenishmentAuraTag = "Replenishment"
+
+const ReplenishmentAuraDuration = time.Second * 15
+
+func ReplenishmentAura(character *Character, actionID ActionID) *Aura {
+	if !(actionID.SpellID == 54118 || actionID.SpellID == 48160 || actionID.SpellID == 31878 || actionID.SpellID == 53292 || actionID.SpellID == 44561) {
+		panic("Wrong Replenishment Action ID")
+	}
+
+	statDep := character.NewDynamicStatDependency(stats.Mana, stats.MP5, 0.01)
+
+	return character.GetOrRegisterAura(Aura{
+		Label:    "Replenishment-" + actionID.String(),
+		Tag:      ReplenishmentAuraTag,
+		ActionID: actionID,
+		Priority: 1,
+		Duration: ReplenishmentAuraDuration,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			character.EnableDynamicStatDep(sim, statDep)
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			character.DisableDynamicStatDep(sim, statDep)
+		},
+	})
+}
+
+var spellPowerBuffTag = "SpellPowerBuff"
+
+func TotemOfWrathAura(character *Character) *Aura {
+	spellPowerBonus := 280.
+	return character.GetOrRegisterAura(Aura{
+		Label:    "Totem of Wrath",
+		Tag:      spellPowerBuffTag,
+		ActionID: ActionID{SpellID: 57722},
+		Priority: spellPowerBonus,
+		Duration: NeverExpires,
+		OnReset: func(aura *Aura, sim *Simulation) {
+			aura.Activate(sim)
+		},
+	})
+}
+
+func FlametongueTotemAura(character *Character) *Aura {
+	spellPowerBonus := 144.
+	return character.GetOrRegisterAura(Aura{
+		Label:    "Flame tongueTotem",
+		Tag:      spellPowerBuffTag,
+		ActionID: ActionID{SpellID: 58656},
+		Priority: spellPowerBonus,
+		Duration: NeverExpires,
+		OnReset: func(aura *Aura, sim *Simulation) {
+			aura.Activate(sim)
+		},
+	})
+}
+
+func DemonicPactAura(character *Character, spellPowerBonus float64) *Aura {
+
+	return character.GetOrRegisterAura(Aura{
+		Label:     "Demonic Pact",
+		Tag:       "Demonic Pact",
+		ActionID:  ActionID{SpellID: 47240},
+		Duration:  time.Second * 45,
+		Priority:  spellPowerBonus,
+		MaxStacks: math.MaxInt32,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			minimumSPBonus := 0.
+			if TotemOfWrathAura(character).IsActive() {
+				minimumSPBonus = 280
+			} else if FlametongueTotemAura(character).IsActive() {
+				minimumSPBonus = 144
+			}
+			newSPbonus := aura.Priority - minimumSPBonus
+			if newSPbonus < 0 {
+				newSPbonus = 0
+			}
+
+			character.AddStatsDynamic(sim, stats.Stats{
+				stats.SpellPower:   newSPbonus,
+				stats.HealingPower: newSPbonus,
+			})
+
+			aura.SetStacks(sim, int32(aura.Priority))
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			minimumSPBonus := 0.
+			if TotemOfWrathAura(character).IsActive() {
+				minimumSPBonus = 280
+			} else if FlametongueTotemAura(character).IsActive() {
+				minimumSPBonus = 144
+			}
+			newSPbonus := aura.Priority - minimumSPBonus
+			if newSPbonus < 0 {
+				newSPbonus = 0
+			}
+
+			character.AddStatsDynamic(sim, stats.Stats{
+				stats.SpellPower:   -newSPbonus,
+				stats.HealingPower: -newSPbonus,
+			})
+		},
+	})
+
 }

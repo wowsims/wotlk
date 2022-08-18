@@ -9,28 +9,10 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-// TODO: probably do something different instead of making it global?
-const (
-	dudidx int = iota
-	mfidx
-	TFmod
-)
-
-// some global variables used througout the code
-var currentWait time.Duration
-var mbDamage float64
-var dpDamage float64
-var vtDamage float64
-var swdDamage float64
-var mfDamage float64
-var overwriteDPS float64
-var mbIdb int
-var dpIdx int
-var vtIdx int
-var swdIdx int
-var currDotTickSpeed float64
-
-//var remain_fight float64
+var mbIdb = 0
+var dpIdx = 1
+var vtIdx = 2
+var swdIdx = 3
 
 func (spriest *ShadowPriest) OnGCDReady(sim *core.Simulation) {
 	spriest.tryUseGCD(sim)
@@ -42,6 +24,25 @@ func (spriest *ShadowPriest) OnManaTick(sim *core.Simulation) {
 	}
 }
 func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
+	// TODO: probably do something different instead of making it global?
+	const (
+		dudidx int = iota
+		mfidx
+		// TFmod
+	)
+
+	// some global variables used througout the code
+	var currentWait time.Duration
+	var mbDamage float64
+	var dpDamage float64
+	var vtDamage float64
+	var swdDamage float64
+	var mfDamage float64
+	var overwriteDPS float64
+
+	var currDotTickSpeed float64
+
+	//var remain_fight float64
 
 	if sim.CurrentTime == 0 && spriest.rotation.PrecastVt {
 		spriest.SpendMana(sim, spriest.VampiricTouch.DefaultCast.Cost, spriest.VampiricTouch.ResourceMetrics)
@@ -62,11 +63,6 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 	var wait2 time.Duration
 	var wait time.Duration
 	var wait3 time.Duration
-	//initialize spell indices
-	mbIdb = 0
-	dpIdx = 1
-	vtIdx = 2
-	swdIdx = 3
 
 	// initialize helpful variables for calculations later
 	vtCastTime := spriest.ApplyCastSpeed(time.Millisecond * 1500)
@@ -565,7 +561,7 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 			} else if castMf2 == 1 {
 				numTicks = 2
 			} else {
-				numTicks = spriest.IdealMindflayRotation(sim, allCDs, gcd, tickLength) //enter the mf optimizaiton routine to optimze mf clips and for next optimal spell
+				numTicks = spriest.IdealMindflayRotation(sim, allCDs, gcd, tickLength, currentWait, mfDamage, mbDamage, dpDamage, vtDamage, swdDamage, overwriteDPS) //enter the mf optimizaiton routine to optimze mf clips and for next optimal spell
 			}
 		}
 
@@ -627,7 +623,8 @@ func (spriest *ShadowPriest) BasicMindflayRotation(sim *core.Simulation, allCDs 
 }
 
 // Returns the number of MF ticks to use, or 0 to wait for next CD.
-func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs []time.Duration, gcd time.Duration, tickLength time.Duration) int {
+func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs []time.Duration, gcd time.Duration, tickLength time.Duration,
+	currentWait time.Duration, mfDamage, mbDamage, dpDamage, vtDamage, swdDamage, overwriteDPS float64) int {
 	nextCD := core.NeverExpires
 	nextIdx := -1
 	for i, v := range allCDs {

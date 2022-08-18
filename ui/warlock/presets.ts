@@ -3,40 +3,31 @@ import { Consumes,
 	Food,
 	Glyphs,
 	EquipmentSpec,
-	ItemSpec,
 	Potions,
-	Faction,
 	RaidBuffs,
-	PartyBuffs,
 	IndividualBuffs,
 	Debuffs,
-	Spec,
-	Stat,
 	TristateEffect,
-	Race,
-} from '/wotlk/core/proto/common.js';
-import { SavedTalents } from '/wotlk/core/proto/ui.js';
-import { Player } from '/wotlk/core/player.js';
+  Spec,
+} from '../core/proto/common.js';
+import { SavedTalents } from '../core/proto/ui.js';
+import { Player } from '../core/player.js';
 
 import {
-	Warlock,
 	Warlock_Rotation as WarlockRotation,
-	WarlockTalents as WarlockTalents,
 	Warlock_Options as WarlockOptions,
 	Warlock_Rotation_PrimarySpell as PrimarySpell,
 	Warlock_Rotation_SecondaryDot as SecondaryDot,
 	Warlock_Rotation_SpecSpell as SpecSpell,
 	Warlock_Rotation_Curse as Curse,
+  Warlock_Rotation_Type as RotationType,
 	Warlock_Options_WeaponImbue as WeaponImbue,
 	Warlock_Options_Armor as Armor,
 	Warlock_Options_Summon as Summon,
 	WarlockMajorGlyph as MajorGlyph,
 	WarlockMinorGlyph as MinorGlyph,
-} from '/wotlk/core/proto/warlock.js';
+} from '../core/proto/warlock.js';
 
-import * as Enchants from '/wotlk/core/constants/enchants.js';
-import * as Gems from '/wotlk/core/proto_utils/gems.js';
-import * as Tooltips from '/wotlk/core/constants/tooltips.js';
 import * as WarlockTooltips from './tooltips.js';
 
 // Default talents. Uses the wowhead calculator format, make the talents on
@@ -44,7 +35,6 @@ import * as WarlockTooltips from './tooltips.js';
 
 export const AfflictionTalents = {
 	name: 'Affliction',
-  tooltip: WarlockTooltips.AFF_TALENTS_TOOLTIP,
 	data: SavedTalents.create({
 		talentsString: '2350002030023510253500331151--550000051',
 		glyphs: Glyphs.create({
@@ -60,7 +50,6 @@ export const AfflictionTalents = {
 
 export const DemonologyTalents = {
 	name: 'Demonology',
-  tooltip: WarlockTooltips.DEMO_TALENTS_TOOLTIP,
 	data: SavedTalents.create({
 		talentsString: '-203203301035012530135201351-550000052',
 		glyphs: Glyphs.create({
@@ -76,7 +65,6 @@ export const DemonologyTalents = {
 
 export const DestructionTalents = {
 	name: 'Destruction',
-  tooltip: WarlockTooltips.DESTRO_TALENTS_TOOLTIP,
 	data: SavedTalents.create({
 		talentsString: '-03310030003-05203205210331051335230351',
 		glyphs: Glyphs.create({
@@ -159,10 +147,16 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
-	blessingOfKings: true,
-	blessingOfWisdom: TristateEffect.TristateEffectImproved,
-	blessingOfMight: TristateEffect.TristateEffectImproved,
-	vampiricTouch: true,
+  blessingOfKings: true,
+  blessingOfWisdom: TristateEffect.TristateEffectImproved,
+  blessingOfMight: TristateEffect.TristateEffectImproved,
+  vampiricTouch: true,
+});
+
+export const DestroIndividualBuffs = IndividualBuffs.create({
+  blessingOfKings: true,
+  blessingOfWisdom: TristateEffect.TristateEffectImproved,
+  blessingOfMight: TristateEffect.TristateEffectImproved,
 });
 
 export const DefaultDebuffs = Debuffs.create({
@@ -173,6 +167,20 @@ export const DefaultDebuffs = Debuffs.create({
 	heartOfTheCrusader: true,
 	judgementOfWisdom: true,
 });
+
+export const DestroDebuffs = Debuffs.create({
+  sunderArmor: true,
+  faerieFire: TristateEffect.TristateEffectImproved,
+  bloodFrenzy: true,
+  ebonPlaguebringer: true,
+  heartOfTheCrusader: true,
+  judgementOfWisdom: true,
+  shadowMastery: true,
+});
+
+export const OtherDefaults = {
+	distanceFromTarget: 25,
+};
 
 export const SWP_BIS = {
 	name: 'Straight Outa SWP',
@@ -284,8 +292,9 @@ export const SWP_BIS = {
     `),
 };
 export const P1_PreBiS = {
-	name: 'Pre-BiS',
+	name: 'Pre-Raid Affliction',
 	tooltip: WarlockTooltips.BIS_TOOLTIP,
+  enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction,
 	gear: EquipmentSpec.fromJsonString(`
     {"items":
       [
@@ -393,8 +402,9 @@ export const P1_PreBiS = {
   `),
 }
 export const P1_BiS_14 = {
-  name: 'P1 BiS +3%',
+  name: 'P1 Preset',
   tooltip: WarlockTooltips.BIS_TOOLTIP,
+  enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology || player.getRotation().type == RotationType.Destruction,
   gear: EquipmentSpec.fromJsonString(`
     {"items":
       [
@@ -492,8 +502,9 @@ export const P1_BiS_14 = {
 }
 
 export const P1_BiS = {
-	name: 'P1 BiS',
+	name: 'P1 Affliction',
 	tooltip: WarlockTooltips.BIS_TOOLTIP,
+  enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction,
 	gear: EquipmentSpec.fromJsonString(`
     {"items":
       [
@@ -590,8 +601,9 @@ export const P1_BiS = {
   `),
 }
 export const P1_PreBiS_14 = {
-  name: 'Pre-BiS +3%',
+  name: 'Pre-Raid Preset',
   tooltip: WarlockTooltips.BIS_TOOLTIP,
+  enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology || player.getRotation().type == RotationType.Destruction,
   gear: EquipmentSpec.fromJsonString(`
     {"items":
       [

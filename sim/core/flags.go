@@ -163,7 +163,7 @@ func (ho HitOutcome) PartialResistString() string {
 }
 
 // Other flags
-type SpellFlag uint16
+type SpellFlag uint32
 
 // Returns whether there is any overlap between the given masks.
 func (se SpellFlag) Matches(other SpellFlag) bool {
@@ -171,23 +171,27 @@ func (se SpellFlag) Matches(other SpellFlag) bool {
 }
 
 const (
-	SpellFlagNone             SpellFlag = 0
-	SpellFlagIgnoreResists    SpellFlag = 1 << iota // skip spell resist/armor
-	SpellFlagCannotBeDodged                         // Ignores dodge in physical hit rolls
-	SpellFlagBinary                                 // Does not do partial resists and could need a different hit roll.
-	SpellFlagChanneled                              // Spell is channeled
-	SpellFlagDisease                                // Spell is categorized as disease
-	SpellFlagIgnoreModifiers                        // Only used by Ignite
-	SpellFlagMeleeMetrics                           // Marks a spell as a melee ability for metrics.
-	SpellFlagNoOnCastComplete                       // Disables OnCastComplete callbacks.
-	SpellFlagNoMetrics                              // Disables metrics for a spell.
-	SpellFlagNoLogs                                 // Disables logs for a spell.
+	SpellFlagNone                    SpellFlag = 0
+	SpellFlagIgnoreResists           SpellFlag = 1 << iota // skip spell resist/armor
+	SpellFlagIgnoreTargetModifiers                         // skip target damage modifiers
+	SpellFlagIgnoreAttackerModifiers                       // skip attacker damage modifiers
+	SpellFlagApplyArmorReduction                           // Forces damage reduction from armor to apply, even if it otherwise wouldn't.
+	SpellFlagCannotBeDodged                                // Ignores dodge in physical hit rolls
+	SpellFlagBinary                                        // Does not do partial resists and could need a different hit roll.
+	SpellFlagChanneled                                     // Spell is channeled
+	SpellFlagDisease                                       // Spell is categorized as disease
+	SpellFlagMeleeMetrics                                  // Marks a spell as a melee ability for metrics.
+	SpellFlagNoOnCastComplete                              // Disables OnCastComplete callbacks.
+	SpellFlagNoMetrics                                     // Disables metrics for a spell.
+	SpellFlagNoLogs                                        // Disables logs for a spell.
 
 	// Used to let agents categorize their spells.
 	SpellFlagAgentReserved1
 	SpellFlagAgentReserved2
 	SpellFlagAgentReserved3
 	SpellFlagAgentReserved4
+
+	SpellFlagIgnoreModifiers = SpellFlagIgnoreAttackerModifiers | SpellFlagIgnoreResists | SpellFlagIgnoreTargetModifiers
 )
 
 type SpellSchool byte

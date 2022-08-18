@@ -24,7 +24,7 @@ func (dk *Deathknight) registerRaiseDeadCD() {
 		},
 	})
 
-	dk.RaiseDead = dk.RegisterSpell(core.SpellConfig{
+	dk.RaiseDead = dk.RegisterSpell(nil, core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 46584},
 
 		Cast: core.CastConfig{
@@ -43,17 +43,7 @@ func (dk *Deathknight) registerRaiseDeadCD() {
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			raiseDeadAura.Activate(sim)
 		},
-	})
-}
-
-func (dk *Deathknight) CanRaiseDead(sim *core.Simulation) bool {
-	return !dk.Talents.MasterOfGhouls && dk.RaiseDead.IsReady(sim)
-}
-
-func (dk *Deathknight) CastRaiseDead(sim *core.Simulation, target *core.Unit) bool {
-	if dk.CanRaiseDead(sim) {
-		dk.RaiseDead.Cast(sim, target)
-		return true
-	}
-	return false
+	}, func(sim *core.Simulation) bool {
+		return !dk.Talents.MasterOfGhouls && dk.RaiseDead.IsReady(sim)
+	}, nil)
 }

@@ -9,9 +9,10 @@ import (
 )
 
 // ReplaceMHSwing is called right before an auto attack fires
-//  If it returns nil, the attack takes place as normal. If it returns a Spell,
-//  that Spell is used in place of the attack.
-//  This allows for abilities that convert a white attack into yellow attack.
+//
+//	If it returns nil, the attack takes place as normal. If it returns a Spell,
+//	that Spell is used in place of the attack.
+//	This allows for abilities that convert a white attack into yellow attack.
 type ReplaceMHSwing func(sim *Simulation, mhSwingSpell *Spell) *Spell
 
 // Represents a generic weapon. Pets / unarmed / various other cases dont use
@@ -170,12 +171,13 @@ type AutoAttacks struct {
 	OHAuto     *Spell
 	RangedAuto *Spell
 
-	RangedSwingInProgress bool
-
 	ReplaceMHSwing ReplaceMHSwing
 
 	// The time at which the last MH swing occurred.
 	previousMHSwingAt time.Duration
+
+	// Current melee swing speed, based on haste stat and melee swing multiplier pseudostat.
+	curSwingSpeed float64
 
 	// PendingAction which handles auto attacks.
 	autoSwingAction    *PendingAction
@@ -227,14 +229,14 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 			ProcMask:         ProcMaskMeleeMHAuto,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-			BaseDamage:       BaseDamageConfigMeleeWeapon(MainHand, false, 0, 1, true),
+			BaseDamage:       BaseDamageConfigMeleeWeapon(MainHand, false, 0, 1, 1, true),
 			OutcomeApplier:   unit.OutcomeFuncMeleeWhite(options.MainHand.CritMultiplier),
 		}
 		unit.AutoAttacks.OHEffect = SpellEffect{
 			ProcMask:         ProcMaskMeleeOHAuto,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-			BaseDamage:       BaseDamageConfigMeleeWeapon(OffHand, false, 0, 1, true),
+			BaseDamage:       BaseDamageConfigMeleeWeapon(OffHand, false, 0, 1, 1, true),
 			OutcomeApplier:   unit.OutcomeFuncMeleeWhite(options.OffHand.CritMultiplier),
 		}
 		unit.AutoAttacks.RangedEffect = SpellEffect{
@@ -259,6 +261,8 @@ func (aa *AutoAttacks) reset(sim *Simulation) {
 		return
 	}
 
+	aa.curSwingSpeed = aa.unit.SwingSpeed()
+
 	aa.MHAuto = aa.unit.GetOrRegisterSpell(SpellConfig{
 		ActionID:    ActionID{OtherID: proto.OtherAction_OtherActionAttack, Tag: 1},
 		SpellSchool: aa.MH.GetSpellSchool(),
@@ -282,15 +286,8 @@ func (aa *AutoAttacks) reset(sim *Simulation) {
 			Flags:       SpellFlagMeleeMetrics,
 
 			Cast: CastConfig{
-				DefaultCast: Cast{
-					CastTime: 1, // Dummy non-zero value so the optimization doesnt remove the cast time.
-				},
-				ModifyCast: func(_ *Simulation, _ *Spell, cast *Cast) {
-					cast.CastTime = aa.RangedSwingWindup()
-				},
 				IgnoreHaste: true,
 				AfterCast: func(sim *Simulation, spell *Spell) {
-					aa.RangedSwingInProgress = false
 					aa.agent.OnAutoAttack(sim, aa.RangedAuto)
 				},
 			},
@@ -301,6 +298,7 @@ func (aa *AutoAttacks) reset(sim *Simulation) {
 
 	aa.MainhandSwingAt = 0
 	aa.OffhandSwingAt = 0
+	aa.RangedSwingAt = 0
 
 	// Apply random delay of 0 - 50% swing time, to one of the weapons if dual wielding
 	if aa.IsDualWielding {
@@ -329,8 +327,6 @@ func (aa *AutoAttacks) reset(sim *Simulation) {
 	aa.autoSwingCancelled = false
 	aa.resetAutoSwing(sim)
 
-	aa.RangedSwingAt = 0
-	aa.RangedSwingInProgress = false
 }
 
 func (aa *AutoAttacks) resetAutoSwing(sim *Simulation) {
@@ -397,9 +393,6 @@ func (aa *AutoAttacks) EnableAutoSwing(sim *Simulation) {
 		aa.OffhandSwingAt = sim.CurrentTime
 	}
 	if aa.RangedSwingAt < sim.CurrentTime {
-		if aa.RangedSwingInProgress {
-			panic("Ranged swing already in progress!")
-		}
 		aa.RangedSwingAt = sim.CurrentTime
 	}
 
@@ -420,22 +413,6 @@ func (aa *AutoAttacks) OffhandSwingSpeed() time.Duration {
 // The amount of time between two ranged swings.
 func (aa *AutoAttacks) RangedSwingSpeed() time.Duration {
 	return time.Duration(float64(aa.Ranged.SwingDuration) / aa.unit.RangedSwingSpeed())
-}
-
-// Ranged swings have a 0.5s 'windup' time before they can fire, affected by haste.
-// This function computes the amount of windup time based on the current haste.
-func (aa *AutoAttacks) RangedSwingWindup() time.Duration {
-	return time.Duration(float64(time.Millisecond*500) / aa.unit.RangedSwingSpeed())
-}
-
-// Time between a ranged auto finishes casting and the next one becomes available.
-func (aa *AutoAttacks) RangedSwingGap() time.Duration {
-	return time.Duration(float64(aa.Ranged.SwingDuration-time.Millisecond*500) / aa.unit.RangedSwingSpeed())
-}
-
-// Returns the amount of time available before ranged auto will be clipped.
-func (aa *AutoAttacks) TimeBeforeClippingRanged(sim *Simulation) time.Duration {
-	return aa.RangedSwingAt - aa.RangedSwingWindup() - sim.CurrentTime
 }
 
 // SwingMelee will check any swing timers if they are up, and if so, swing!
@@ -513,23 +490,26 @@ func (aa *AutoAttacks) TrySwingRanged(sim *Simulation, target *Unit) {
 
 	aa.RangedAuto.Cast(sim, target)
 	aa.RangedSwingAt = sim.CurrentTime + aa.RangedSwingSpeed()
-	aa.RangedSwingInProgress = true
 }
 
-func (aa *AutoAttacks) ModifySwingTime(sim *Simulation, amount float64) {
-	if !aa.IsEnabled() {
+func (aa *AutoAttacks) UpdateSwingTime(sim *Simulation) {
+	if !aa.IsEnabled() || aa.AutoSwingRanged {
 		return
 	}
 
+	oldSwingSpeed := aa.curSwingSpeed
+	aa.curSwingSpeed = aa.unit.SwingSpeed()
+	speedup := aa.curSwingSpeed / oldSwingSpeed
+
 	mhSwingTime := aa.MainhandSwingAt - sim.CurrentTime
 	if mhSwingTime > 1 { // If its 1 we end up rounding down to 0 and causing a panic.
-		aa.MainhandSwingAt = sim.CurrentTime + time.Duration(float64(mhSwingTime)/amount)
+		aa.MainhandSwingAt = sim.CurrentTime + time.Duration(float64(mhSwingTime)/speedup)
 	}
 
 	if aa.OH.SwingSpeed != 0 {
 		ohSwingTime := aa.OffhandSwingAt - sim.CurrentTime
 		if ohSwingTime > 1 {
-			newTime := time.Duration(float64(ohSwingTime) / amount)
+			newTime := time.Duration(float64(ohSwingTime) / speedup)
 			if newTime > 0 {
 				aa.OffhandSwingAt = sim.CurrentTime + newTime
 			}
@@ -562,11 +542,9 @@ func (aa *AutoAttacks) DelayMeleeUntil(sim *Simulation, readyAt time.Duration) {
 }
 
 func (aa *AutoAttacks) DelayRangedUntil(sim *Simulation, readyAt time.Duration) {
-	if aa.RangedSwingInProgress {
-		panic("Ranged swing already in progress!")
-	}
 	if readyAt > aa.RangedSwingAt {
 		aa.RangedSwingAt = readyAt
+		aa.resetAutoSwing(sim)
 	}
 }
 
@@ -604,10 +582,17 @@ type PPMManager struct {
 	mhProcChance     float64
 	ohProcChance     float64
 	rangedProcChance float64
+	procMask         ProcMask
 }
 
 // Returns whether the effect procced.
 func (ppmm *PPMManager) Proc(sim *Simulation, procMask ProcMask, label string) bool {
+	// Without this procs that can proc only from white attacks
+	// are still procing from specials
+	if !procMask.Matches(ppmm.procMask) {
+		return false
+	}
+
 	if procMask.Matches(ProcMaskMeleeMH) {
 		return ppmm.mhProcChance > 0 && sim.RandomFloat(label) < ppmm.mhProcChance
 	} else if procMask.Matches(ProcMaskMeleeOH) {
@@ -624,6 +609,7 @@ func (aa *AutoAttacks) NewPPMManager(ppm float64, procMask ProcMask) PPMManager 
 	}
 
 	ppmm := PPMManager{}
+	ppmm.procMask = procMask
 	if procMask.Matches(ProcMaskMeleeMH) {
 		ppmm.mhProcChance = ppm * aa.MH.SwingSpeed / 60.0
 	}

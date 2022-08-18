@@ -1,4 +1,4 @@
-import { Component } from '/wotlk/core/components/component.js';
+import { Component } from '../components/component.js';
 
 export class ResultsViewer extends Component {
 	readonly pendingElem: HTMLElement;

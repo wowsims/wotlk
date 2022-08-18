@@ -2,11 +2,11 @@ character_stats_results: {
  key: "TestBalance-CharacterStats-Default"
  value: {
   final_stats: 151.8
-  final_stats: 134.20000000000002
-  final_stats: 407.00000000000006
+  final_stats: 134.2
+  final_stats: 407
   final_stats: 534.6
   final_stats: 276.1
-  final_stats: 1177.4275
+  final_stats: 1168.072
   final_stats: 863
   final_stats: 130
   final_stats: 50
@@ -14,9 +14,9 @@ character_stats_results: {
   final_stats: 80
   final_stats: 80
   final_stats: 0
-  final_stats: 168.46000000000004
+  final_stats: 168.46
   final_stats: 214.928
-  final_stats: 656.9199542609533
+  final_stats: 656.919954261
   final_stats: 0
   final_stats: 0
   final_stats: 283.6
@@ -33,10 +33,10 @@ character_stats_results: {
   final_stats: 0
   final_stats: 0
   final_stats: 0
-  final_stats: 328.3154044805147
+  final_stats: 328.3154044805
   final_stats: 0
   final_stats: 0
-  final_stats: 7675.700000000001
+  final_stats: 7675.7
   final_stats: 75
   final_stats: 75
   final_stats: 75

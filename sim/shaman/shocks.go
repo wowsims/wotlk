@@ -20,6 +20,11 @@ func (shaman *Shaman) newShockSpellConfig(spellID int32, spellSchool core.SpellS
 
 	cost := baseCost
 
+	enhT9Bonus := false
+	if shaman.HasSetBonus(ItemSetThrallsBattlegear, 4) || shaman.HasSetBonus(ItemSetNobundosBattlegear, 4) {
+		enhT9Bonus = true
+	}
+
 	return core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: spellSchool,
@@ -47,11 +52,11 @@ func (shaman *Shaman) newShockSpellConfig(spellID int32, spellSchool core.SpellS
 			},
 		}, core.SpellEffect{
 			ProcMask:            core.ProcMaskSpellDamage,
-			BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * 2 * core.SpellHitRatingPerHitChance,
+			BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,
 			BonusSpellPower: 0 +
 				core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == TotemOfRage, 30, 0) +
 				core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == TotemOfImpact, 46, 0),
-			DamageMultiplier: 1 * (1 + 0.01*float64(shaman.Talents.Concussion)),
+			DamageMultiplier: 1 * (1 + 0.01*float64(shaman.Talents.Concussion)) * core.TernaryFloat64(enhT9Bonus, 1.25, 1),
 			ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
 		}
 }
@@ -67,9 +72,10 @@ func (shaman *Shaman) registerEarthShockSpell(shockTimer *core.Timer) {
 	shaman.EarthShock = shaman.RegisterSpell(config)
 }
 
+const FlameshockID = 49233
+
 func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
-	const flameshockID = 49233
-	config, effect := shaman.newShockSpellConfig(flameshockID, core.SpellSchoolFire, baseMana*0.17, shockTimer)
+	config, effect := shaman.newShockSpellConfig(FlameshockID, core.SpellSchoolFire, baseMana*0.17, shockTimer)
 
 	config.Cast.CD.Duration -= time.Duration(shaman.Talents.BoomingEchoes) * time.Second
 
@@ -102,10 +108,17 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 	config.ApplyEffects = core.ApplyEffectFuncDirectDamage(effect)
 	shaman.FlameShock = shaman.RegisterSpell(config)
 
-	dmgMult := 1 * (1 + 0.01*float64(shaman.Talents.Concussion)) * (1.0 + float64(shaman.Talents.StormEarthAndFire)*0.2) // 20% bonus dmg per SE&F
+	enhT9Bonus := false
+	if shaman.HasSetBonus(ItemSetThrallsBattlegear, 4) || shaman.HasSetBonus(ItemSetNobundosBattlegear, 4) {
+		enhT9Bonus = true
+	}
+
+	dmgMult := 1 * (1 + 0.01*float64(shaman.Talents.Concussion)) * (1.0 + float64(shaman.Talents.StormEarthAndFire)*0.2) * // 20% bonus dmg per SE&F
+		core.TernaryFloat64(enhT9Bonus, 1.25, 1) //assuming enh t9 applies to the dot? cant really be tested yet
 	if shaman.HasSetBonus(ItemSetWorldbreakerGarb, 2) {
 		dmgMult *= 1.2
 	}
+
 	target := shaman.CurrentTarget
 	bonusTicks := 0
 	if shaman.HasSetBonus(ItemSetNobundosRegalia, 2) || shaman.HasSetBonus(ItemSetThrallsRegalia, 2) {
@@ -116,7 +129,7 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 		Spell: shaman.FlameShock,
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "FlameShock-" + strconv.Itoa(int(shaman.Index)),
-			ActionID: core.ActionID{SpellID: flameshockID},
+			ActionID: core.ActionID{SpellID: FlameshockID},
 		}),
 		NumberOfTicks:       6 + bonusTicks,
 		TickLength:          time.Second * 3,

@@ -1,8 +1,7 @@
 package hunter
 
 import (
-	"time"
-
+	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -36,13 +35,11 @@ type Hunter struct {
 
 	pet *HunterPet
 
-	AmmoDPS         float64
-	AmmoDamageBonus float64
+	AmmoDPS                   float64
+	AmmoDamageBonus           float64
+	NormalizedAmmoDamageBonus float64
 
-	hasGronnstalker2Pc bool
-	currentAspect      *core.Aura
-
-	latency time.Duration
+	currentAspect *core.Aura
 
 	// Used for deciding when we can use hawk for the rest of the fight.
 	manaSpentPerSecondAtFirstAspectSwap float64
@@ -58,6 +55,7 @@ type Hunter struct {
 	BlackArrow    *core.Spell
 	ChimeraShot   *core.Spell
 	ExplosiveShot *core.Spell
+	ExplosiveTrap *core.Spell
 	KillCommand   *core.Spell
 	KillShot      *core.Spell
 	MultiShot     *core.Spell
@@ -67,8 +65,13 @@ type Hunter struct {
 	SerpentSting  *core.Spell
 	SilencingShot *core.Spell
 	SteadyShot    *core.Spell
+	Volley        *core.Spell
+
+	// Fake spells to encapsulate weaving logic.
+	TrapWeaveSpell *core.Spell
 
 	BlackArrowDot    *core.Dot
+	ExplosiveTrapDot *core.Dot
 	ExplosiveShotDot *core.Dot
 	SerpentStingDot  *core.Dot
 
@@ -78,6 +81,8 @@ type Hunter struct {
 	LockAndLoadAura           *core.Aura
 	ScorpidStingAura          *core.Aura
 	TalonOfAlarAura           *core.Aura
+
+	CustomRotation *common.CustomRotation
 }
 
 func (hunter *Hunter) GetCharacter() *core.Character {
@@ -115,33 +120,44 @@ func (hunter *Hunter) Initialize() {
 	hunter.registerAspectOfTheDragonhawkSpell()
 	hunter.registerAspectOfTheViperSpell()
 
+	multiShotTimer := hunter.NewTimer()
 	arcaneShotTimer := hunter.NewTimer()
+	fireTrapTimer := hunter.NewTimer()
 
-	hunter.registerAimedShotSpell()
+	hunter.registerAimedShotSpell(multiShotTimer)
 	hunter.registerArcaneShotSpell(arcaneShotTimer)
-	hunter.registerBlackArrowSpell()
+	hunter.registerBlackArrowSpell(fireTrapTimer)
 	hunter.registerChimeraShotSpell()
 	hunter.registerExplosiveShotSpell(arcaneShotTimer)
+	hunter.registerExplosiveTrapSpell(fireTrapTimer)
 	hunter.registerKillShotSpell()
-	hunter.registerMultiShotSpell()
+	hunter.registerMultiShotSpell(multiShotTimer)
 	hunter.registerRaptorStrikeSpell()
 	hunter.registerScorpidStingSpell()
 	hunter.registerSerpentStingSpell()
 	hunter.registerSilencingShotSpell()
 	hunter.registerSteadyShotSpell()
+	hunter.registerVolleySpell()
 
 	hunter.registerKillCommandCD()
 	hunter.registerRapidFireCD()
 
 	hunter.DelayDPSCooldownsForArmorDebuffs()
+
+	hunter.CustomRotation = hunter.makeCustomRotation()
+	if hunter.CustomRotation == nil {
+		hunter.Rotation.Type = proto.Hunter_Rotation_SingleTarget
+	}
 }
 
 func (hunter *Hunter) Reset(sim *core.Simulation) {
 	hunter.manaSpentPerSecondAtFirstAspectSwap = 0
 	hunter.permaHawk = false
 
-	huntersMarkAura := core.HuntersMarkAura(hunter.CurrentTarget, hunter.Talents.ImprovedHuntersMark, hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfHuntersMark))
-	huntersMarkAura.Activate(sim)
+	if hunter.Options.UseHuntersMark {
+		huntersMarkAura := core.HuntersMarkAura(hunter.CurrentTarget, hunter.Talents.ImprovedHuntersMark, hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfHuntersMark))
+		huntersMarkAura.Activate(sim)
+	}
 }
 
 func NewHunter(character core.Character, options proto.Player) *Hunter {
@@ -152,21 +168,8 @@ func NewHunter(character core.Character, options proto.Player) *Hunter {
 		Talents:   *hunterOptions.Talents,
 		Options:   *hunterOptions.Options,
 		Rotation:  *hunterOptions.Rotation,
-
-		latency: time.Millisecond * time.Duration(hunterOptions.Options.LatencyMs),
-
-		hasGronnstalker2Pc: character.HasSetBonus(ItemSetGronnstalker, 2),
 	}
 	hunter.EnableManaBar()
-
-	//if hunter.Rotation.PercentWeaved <= 0 {
-	//	hunter.Rotation.Weave = proto.Hunter_Rotation_WeaveNone
-	//}
-	//if hunter.Rotation.Weave == proto.Hunter_Rotation_WeaveNone {
-	//	// Forces override of WF. When not weaving we'll be standing far back so weapon
-	//	// stone can be used.
-	//	hunter.HasMHWeaponImbue = true
-	//}
 
 	hunter.PseudoStats.CanParry = true
 
@@ -194,6 +197,7 @@ func NewHunter(character core.Character, options proto.Player) *Hunter {
 			hunter.AmmoDPS = 32
 		}
 		hunter.AmmoDamageBonus = hunter.AmmoDPS * rangedWeapon.SwingSpeed
+		hunter.NormalizedAmmoDamageBonus = hunter.AmmoDPS * 2.8
 	}
 
 	hunter.EnableAutoAttacks(hunter, core.AutoAttackOptions{
@@ -209,21 +213,12 @@ func NewHunter(character core.Character, options proto.Player) *Hunter {
 	})
 	hunter.AutoAttacks.RangedEffect.BaseDamage.Calculator = core.BaseDamageFuncRangedWeapon(hunter.AmmoDamageBonus)
 
-	if hunter.Options.RemoveRandomness {
-		weaponAvg := (hunter.AutoAttacks.Ranged.BaseDamageMin + hunter.AutoAttacks.Ranged.BaseDamageMax) / 2
-		hunter.AutoAttacks.Ranged.BaseDamageMin = weaponAvg
-		hunter.AutoAttacks.Ranged.BaseDamageMax = weaponAvg
-
-		hunter.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*100)
-		hunter.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*-100)
-	}
-
 	hunter.pet = hunter.NewHunterPet()
 
-	hunter.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+1)
-	hunter.AddStatDependency(stats.Agility, stats.AttackPower, 1.0+1)
-	hunter.AddStatDependency(stats.Agility, stats.RangedAttackPower, 1.0+1)
-	hunter.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/83.33))
+	hunter.AddStatDependency(stats.Strength, stats.AttackPower, 1)
+	hunter.AddStatDependency(stats.Agility, stats.AttackPower, 1)
+	hunter.AddStatDependency(stats.Agility, stats.RangedAttackPower, 1)
+	hunter.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/83.33)
 
 	return hunter
 }

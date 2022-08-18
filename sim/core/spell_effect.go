@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"math"
+	"time"
 
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
@@ -10,10 +11,12 @@ import (
 // Callback for after a spell hits the target and after damage is calculated. Use it for proc effects
 // or anything that comes from the final result of the spell.
 type OnSpellHit func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect)
+type EffectOnSpellHitDealt func(sim *Simulation, spell *Spell, spellEffect *SpellEffect)
 
 // OnPeriodicDamage is called when dots tick, after damage is calculated. Use it for proc effects
 // or anything that comes from the final result of a tick.
 type OnPeriodicDamage func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect)
+type EffectOnPeriodicDamageDealt func(sim *Simulation, spell *Spell, spellEffect *SpellEffect)
 
 type SpellEffect struct {
 	// Target of the spell.
@@ -43,13 +46,17 @@ type SpellEffect struct {
 	// Used in determining snapshot based damage from effect details (e.g. snapshot crit and % damage modifiers)
 	IsPeriodic bool
 
+	// Speed in yards/second. Spell missile speeds can be found in the game data.
+	// Example: https://wow.tools/dbc/?dbc=spellmisc&build=3.4.0.44996
+	MissileSpeed float64
+
 	// Controls which effects can proc from this effect.
 	ProcMask ProcMask
 
 	// Callbacks for providing additional custom behavior.
 	OnInit                func(sim *Simulation, spell *Spell, spellEffect *SpellEffect)
-	OnSpellHitDealt       func(sim *Simulation, spell *Spell, spellEffect *SpellEffect)
-	OnPeriodicDamageDealt func(sim *Simulation, spell *Spell, spellEffect *SpellEffect)
+	OnSpellHitDealt       EffectOnSpellHitDealt
+	OnPeriodicDamageDealt EffectOnPeriodicDamageDealt
 
 	// Results
 	Outcome HitOutcome
@@ -141,6 +148,9 @@ func (spellEffect *SpellEffect) PhysicalCritChance(unit *Unit, spell *Spell, att
 		critRating += unit.PseudoStats.BonusRangedCritRating
 	} else {
 		critRating += unit.PseudoStats.BonusMeleeCritRating
+		if spellEffect.ProcMask.Matches(ProcMaskMeleeSpecial) {
+			critRating += unit.PseudoStats.BonusMeleeSpellCritRating
+		}
 	}
 	if spell.Flags.Matches(SpellFlagAgentReserved1) {
 		critRating += unit.PseudoStats.BonusCritRatingAgentReserved1
@@ -197,33 +207,31 @@ func (spellEffect *SpellEffect) calculateBaseDamage(sim *Simulation, spell *Spel
 }
 
 func (spellEffect *SpellEffect) calcDamageSingle(sim *Simulation, spell *Spell, attackTable *AttackTable) {
-	if !spell.Flags.Matches(SpellFlagIgnoreModifiers) {
-		if sim.Log != nil {
-			baseDmg := spellEffect.Damage
-			if !spellEffect.IsPeriodic { // dots snapshot personal attack dmg bonuses
-				spellEffect.applyAttackerModifiers(sim, spell)
-			}
-			afterAttackMods := spellEffect.Damage
-			spellEffect.applyResistances(sim, spell, attackTable)
-			afterResistances := spellEffect.Damage
-			spellEffect.applyTargetModifiers(sim, spell, attackTable)
-			afterTargetMods := spellEffect.Damage
-			spellEffect.PreoutcomeDamage = spellEffect.Damage
-			spellEffect.OutcomeApplier(sim, spell, spellEffect, attackTable)
-			afterOutcome := spellEffect.Damage
-			spell.Unit.Log(
-				sim,
-				"%s %s [DEBUG] BaseDamage:%0.01f, AfterAttackerMods:%0.01f, AfterResistances:%0.01f, AfterTargetMods:%0.01f, AfterOutcome:%0.01f",
-				spellEffect.Target.LogLabel(), spell.ActionID, baseDmg, afterAttackMods, afterResistances, afterTargetMods, afterOutcome)
-		} else {
-			if !spellEffect.IsPeriodic { // dots snapshot personal attack dmg bonuses
-				spellEffect.applyAttackerModifiers(sim, spell)
-			}
-			spellEffect.applyResistances(sim, spell, attackTable)
-			spellEffect.applyTargetModifiers(sim, spell, attackTable)
-			spellEffect.PreoutcomeDamage = spellEffect.Damage
-			spellEffect.OutcomeApplier(sim, spell, spellEffect, attackTable)
+	if sim.Log != nil {
+		baseDmg := spellEffect.Damage
+		if !spellEffect.IsPeriodic { // dots snapshot personal attack dmg bonuses
+			spellEffect.applyAttackerModifiers(sim, spell)
 		}
+		afterAttackMods := spellEffect.Damage
+		spellEffect.applyResistances(sim, spell, attackTable)
+		afterResistances := spellEffect.Damage
+		spellEffect.applyTargetModifiers(sim, spell, attackTable)
+		afterTargetMods := spellEffect.Damage
+		spellEffect.PreoutcomeDamage = spellEffect.Damage
+		spellEffect.OutcomeApplier(sim, spell, spellEffect, attackTable)
+		afterOutcome := spellEffect.Damage
+		spell.Unit.Log(
+			sim,
+			"%s %s [DEBUG] BaseDamage:%0.01f, AfterAttackerMods:%0.01f, AfterResistances:%0.01f, AfterTargetMods:%0.01f, AfterOutcome:%0.01f",
+			spellEffect.Target.LogLabel(), spell.ActionID, baseDmg, afterAttackMods, afterResistances, afterTargetMods, afterOutcome)
+	} else {
+		if !spellEffect.IsPeriodic { // dots snapshot personal attack dmg bonuses
+			spellEffect.applyAttackerModifiers(sim, spell)
+		}
+		spellEffect.applyResistances(sim, spell, attackTable)
+		spellEffect.applyTargetModifiers(sim, spell, attackTable)
+		spellEffect.PreoutcomeDamage = spellEffect.Damage
+		spellEffect.OutcomeApplier(sim, spell, spellEffect, attackTable)
 	}
 }
 func (spellEffect *SpellEffect) calcDamageTargetOnly(sim *Simulation, spell *Spell, attackTable *AttackTable) {
@@ -233,8 +241,27 @@ func (spellEffect *SpellEffect) calcDamageTargetOnly(sim *Simulation, spell *Spe
 }
 
 func (spellEffect *SpellEffect) finalize(sim *Simulation, spell *Spell) {
-	spell.SpellMetrics[spellEffect.Target.TableIndex].TotalDamage += spellEffect.Damage
-	spell.SpellMetrics[spellEffect.Target.TableIndex].TotalThreat += spellEffect.calcThreat(spell)
+	if spellEffect.MissileSpeed == 0 {
+		spellEffect.finalizeInternal(sim, spell)
+	} else {
+		travelTime := time.Duration(float64(time.Second) * spell.Unit.DistanceFromTarget / spellEffect.MissileSpeed)
+
+		// We need to make a copy of this SpellEffect because some spells re-use the effect objects.
+		effectCopy := *spellEffect
+
+		StartDelayedAction(sim, DelayedActionOptions{
+			DoAt: sim.CurrentTime + travelTime,
+			OnAction: func(sim *Simulation) {
+				effectCopy.finalizeInternal(sim, spell)
+			},
+		})
+	}
+}
+
+// Applies the fully computed results from this SpellEffect to the sim.
+func (spellEffect *SpellEffect) finalizeInternal(sim *Simulation, spell *Spell) {
+	spell.SpellMetrics[spellEffect.Target.UnitIndex].TotalDamage += spellEffect.Damage
+	spell.SpellMetrics[spellEffect.Target.UnitIndex].TotalThreat += spellEffect.calcThreat(spell)
 
 	// Mark total damage done in raid so far for health based fights.
 	// Don't include damage done by EnemyUnits to Players
@@ -274,6 +301,10 @@ func (spellEffect *SpellEffect) String() string {
 }
 
 func (spellEffect *SpellEffect) applyAttackerModifiers(sim *Simulation, spell *Spell) {
+	if spell.Flags.Matches(SpellFlagIgnoreAttackerModifiers) {
+		return
+	}
+
 	attacker := spell.Unit
 
 	if spell.SpellSchool.Matches(SpellSchoolPhysical) {
@@ -289,6 +320,10 @@ func (spellEffect *SpellEffect) applyAttackerModifiers(sim *Simulation, spell *S
 
 // snapshotAttackModifiers will calculate the total %dmg to add from attacker bonuses.
 func (spellEffect *SpellEffect) snapshotAttackModifiers(spell *Spell) float64 {
+	if spell.Flags.Matches(SpellFlagIgnoreAttackerModifiers) {
+		return 1.0
+	}
+
 	attacker := spell.Unit
 
 	multiplier := attacker.PseudoStats.DamageDealtMultiplier
@@ -323,6 +358,10 @@ func (spellEffect *SpellEffect) snapshotAttackModifiers(spell *Spell) float64 {
 }
 
 func (spellEffect *SpellEffect) applyTargetModifiers(sim *Simulation, spell *Spell, attackTable *AttackTable) {
+	if spell.Flags.Matches(SpellFlagIgnoreTargetModifiers) {
+		return
+	}
+
 	target := spellEffect.Target
 
 	spellEffect.Damage *= attackTable.DamageDealtMultiplier

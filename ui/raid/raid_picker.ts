@@ -1,38 +1,39 @@
-import { CloseButton } from '/wotlk/core/components/close_button.js';
-import { Component } from '/wotlk/core/components/component.js';
-import { EnumPicker } from '/wotlk/core/components/enum_picker.js';
-import { makePhaseSelector } from '/wotlk/core/components/other_inputs.js';
-import { Raid } from '/wotlk/core/raid.js';
-import { MAX_PARTY_SIZE } from '/wotlk/core/party.js';
-import { Party } from '/wotlk/core/party.js';
-import { Player } from '/wotlk/core/player.js';
-import { Player as PlayerProto } from '/wotlk/core/proto/api.js';
-import { Encounter as EncounterProto } from '/wotlk/core/proto/common.js';
-import { Raid as RaidProto } from '/wotlk/core/proto/api.js';
-import { Party as PartyProto } from '/wotlk/core/proto/api.js';
-import { Class } from '/wotlk/core/proto/common.js';
-import { Race } from '/wotlk/core/proto/common.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { Faction } from '/wotlk/core/proto/common.js';
-import { Glyphs } from '/wotlk/core/proto/common.js';
-import { BuffBot as BuffBotProto } from '/wotlk/core/proto/ui.js';
-import { playerToSpec, specNames } from '/wotlk/core/proto_utils/utils.js';
-import { classColors } from '/wotlk/core/proto_utils/utils.js';
-import { isTankSpec } from '/wotlk/core/proto_utils/utils.js';
-import { specToClass } from '/wotlk/core/proto_utils/utils.js';
-import { newRaidTarget } from '/wotlk/core/proto_utils/utils.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
-import { camelToSnakeCase } from '/wotlk/core/utils.js';
-import { formatDeltaTextElem } from '/wotlk/core/utils.js';
-import { getEnumValues } from '/wotlk/core/utils.js';
-import { hexToRgba } from '/wotlk/core/utils.js';
+import { CloseButton } from '../core/components/close_button.js';
+import { Component } from '../core/components/component.js';
+import { EnumPicker } from '../core/components/enum_picker.js';
+import { makePhaseSelector } from '../core/components/other_inputs.js';
+import { Raid } from '../core/raid.js';
+import { MAX_PARTY_SIZE } from '../core/party.js';
+import { Party } from '../core/party.js';
+import { Player } from '../core/player.js';
+import { Player as PlayerProto } from '../core/proto/api.js';
+import { Encounter as EncounterProto } from '../core/proto/common.js';
+import { Raid as RaidProto } from '../core/proto/api.js';
+import { Party as PartyProto } from '../core/proto/api.js';
+import { Class } from '../core/proto/common.js';
+import { Profession } from '../core/proto/common.js';
+import { Race } from '../core/proto/common.js';
+import { Spec } from '../core/proto/common.js';
+import { Faction } from '../core/proto/common.js';
+import { Glyphs } from '../core/proto/common.js';
+import { BuffBot as BuffBotProto } from '../core/proto/ui.js';
+import { playerToSpec, specNames } from '../core/proto_utils/utils.js';
+import { classColors } from '../core/proto_utils/utils.js';
+import { isTankSpec } from '../core/proto_utils/utils.js';
+import { specToClass } from '../core/proto_utils/utils.js';
+import { newRaidTarget } from '../core/proto_utils/utils.js';
+import { EventID, TypedEvent } from '../core/typed_event.js';
+import { camelToSnakeCase } from '../core/utils.js';
+import { formatDeltaTextElem } from '../core/utils.js';
+import { getEnumValues } from '../core/utils.js';
+import { hexToRgba } from '../core/utils.js';
 
 import { BuffBot } from './buff_bot.js';
 import { RaidSimUI } from './raid_sim_ui.js';
 import { buffBotPresets, playerPresets, specSimFactories } from './presets.js';
 
-import { BalanceDruid_Options as BalanceDruidOptions } from '/wotlk/core/proto/druid.js';
-import { SmitePriest_Options as SmitePriestOptions } from '/wotlk/core/proto/priest.js';
+import { BalanceDruid_Options as BalanceDruidOptions } from '../core/proto/druid.js';
+import { SmitePriest_Options as SmitePriestOptions } from '../core/proto/priest.js';
 import { MessageType } from '@protobuf-ts/runtime';
 
 declare var tippy: any;
@@ -623,10 +624,11 @@ class NewPlayerPicker extends Component {
 			labelTooltip: 'Newly-created players will start with approximate BIS gear from this phase.',
 			values: [
 				{ name: '1', value: 1 },
-				{ name: '2', value: 2 },
-				{ name: '3', value: 3 },
-				{ name: '4', value: 4 },
-				{ name: '5', value: 5 },
+				// Presets aren't filled for most roles so disable these options for now.
+				//{ name: '2', value: 2 },
+				//{ name: '3', value: 3 },
+				//{ name: '4', value: 4 },
+				//{ name: '5', value: 5 },
 			],
 			changedEvent: (picker: NewPlayerPicker) => this.raidPicker.raid.sim.phaseChangeEmitter,
 			getValue: (picker: NewPlayerPicker) => this.raidPicker.raid.sim.getPhase(),
@@ -677,6 +679,7 @@ class NewPlayerPicker extends Component {
 
 
 						const newPlayer = new Player(matchingPreset.spec, this.raidPicker.raid.sim);
+						newPlayer.applySharedDefaults(eventID);
 						newPlayer.setRace(eventID, matchingPreset.defaultFactionRaces[this.raidPicker.getCurrentFaction()]);
 						newPlayer.setRotation(eventID, matchingPreset.rotation);
 						newPlayer.setTalentsString(eventID, matchingPreset.talents.talentsString);
@@ -684,7 +687,9 @@ class NewPlayerPicker extends Component {
 						newPlayer.setSpecOptions(eventID, matchingPreset.specOptions);
 						newPlayer.setConsumes(eventID, matchingPreset.consumes);
 						newPlayer.setName(eventID, matchingPreset.defaultName);
-						newPlayer.applySharedDefaults(eventID);
+						newPlayer.setProfession1(eventID, matchingPreset.otherDefaults?.profession1 || Profession.Engineering);
+						newPlayer.setProfession2(eventID, matchingPreset.otherDefaults?.profession2 || Profession.Jewelcrafting);
+						newPlayer.setDistanceFromTarget(eventID, matchingPreset.otherDefaults?.distanceFromTarget || 0);
 
 						// Need to wait because the gear might not be loaded yet.
 						this.raidPicker.raid.sim.waitForInit().then(() => {

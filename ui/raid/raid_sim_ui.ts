@@ -1,24 +1,24 @@
-import { BooleanPicker } from "/wotlk/core/components/boolean_picker.js";
-import { DetailedResults } from "/wotlk/core/components/detailed_results.js";
-import { EncounterPicker } from "/wotlk/core/components/encounter_picker.js";
-import { LogRunner } from "/wotlk/core/components/log_runner.js";
-import { addRaidSimAction, RaidSimResultsManager, ReferenceData } from "/wotlk/core/components/raid_sim_action.js";
-import { SavedDataManager } from "/wotlk/core/components/saved_data_manager.js";
-import { SettingsMenu } from "/wotlk/core/components/settings_menu.js";
+import { BooleanPicker } from "../core/components/boolean_picker.js";
+import { DetailedResults } from "../core/components/detailed_results.js";
+import { EncounterPicker } from "../core/components/encounter_picker.js";
+import { LogRunner } from "../core/components/log_runner.js";
+import { addRaidSimAction, RaidSimResultsManager, ReferenceData } from "../core/components/raid_sim_action.js";
+import { SavedDataManager } from "../core/components/saved_data_manager.js";
+import { SettingsMenu } from "../core/components/settings_menu.js";
 
-import * as Tooltips from "/wotlk/core/constants/tooltips.js";
-import { Encounter } from "/wotlk/core/encounter.js";
-import { Player } from "/wotlk/core/player.js";
-import { Raid as RaidProto } from "/wotlk/core/proto/api.js";
-import { Class, Encounter as EncounterProto, Faction, Stat, TristateEffect } from "/wotlk/core/proto/common.js";
-import { Blessings } from "/wotlk/core/proto/paladin.js";
-import { BlessingsAssignments, BuffBot as BuffBotProto, RaidSimSettings, SavedEncounter, SavedRaid } from "/wotlk/core/proto/ui.js";
-import { playerToSpec } from "/wotlk/core/proto_utils/utils.js";
-import { Raid } from "/wotlk/core/raid.js";
-import { Sim } from "/wotlk/core/sim.js";
-import { SimUI } from "/wotlk/core/sim_ui.js";
-import { LaunchStatus, raidSimLaunched } from '/wotlk/core/launched_sims.js';
-import { EventID, TypedEvent } from "/wotlk/core/typed_event.js";
+import * as Tooltips from "../core/constants/tooltips.js";
+import { Encounter } from "../core/encounter.js";
+import { Player } from "../core/player.js";
+import { Raid as RaidProto } from "../core/proto/api.js";
+import { Class, Encounter as EncounterProto, Faction, Stat, TristateEffect } from "../core/proto/common.js";
+import { Blessings } from "../core/proto/paladin.js";
+import { BlessingsAssignments, BuffBot as BuffBotProto, RaidSimSettings, SavedEncounter, SavedRaid } from "../core/proto/ui.js";
+import { playerToSpec } from "../core/proto_utils/utils.js";
+import { Raid } from "../core/raid.js";
+import { Sim } from "../core/sim.js";
+import { SimUI } from "../core/sim_ui.js";
+import { LaunchStatus, raidSimLaunched } from '../core/launched_sims.js';
+import { EventID, TypedEvent } from "../core/typed_event.js";
 
 import { AssignmentsPicker } from "./assignments_picker.js";
 import { BlessingsPicker } from "./blessings_picker.js";
@@ -232,6 +232,20 @@ export class RaidSimUI extends SimUI {
 			allowHTML: true,
 			placement: 'left',
 		});
+
+		const assignmentsPicker = new AssignmentsPicker(this.rootElem.getElementsByClassName('assignments-section-container')[0] as HTMLElement, this);
+		const tanksPicker = new TanksPicker(this.rootElem.getElementsByClassName('tanks-section-container')[0] as HTMLElement, this);
+
+		const otherOptionsSectionElem = this.rootElem.getElementsByClassName('other-options-section')[0] as HTMLElement;
+		//new BooleanPicker(otherOptionsSectionElem, this.sim.raid, {
+		//	label: 'Stagger Stormstrikes',
+		//	labelTooltip: 'When there are multiple Enhancement Shaman in the raid, causes them to coordinate their Stormstrike casts for optimal SS charge usage.',
+		//	changedEvent: (raid: Raid) => raid.staggerStormstrikesChangeEmitter,
+		//	getValue: (raid: Raid) => raid.getStaggerStormstrikes(),
+		//	setValue: (eventID: EventID, raid: Raid, newValue: boolean) => {
+		//		raid.setStaggerStormstrikes(eventID, newValue);
+		//	},
+		//});
 
 		// Init Muuri layout only when settings tab is clicked, because it needs the elements
 		// to be shown so it can calculate sizes.

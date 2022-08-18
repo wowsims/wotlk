@@ -1,28 +1,29 @@
-import { Conjured, Consumes } from '/wotlk/core/proto/common.js';
-import { EquipmentSpec } from '/wotlk/core/proto/common.js';
-import { Flask } from '/wotlk/core/proto/common.js';
-import { Food } from '/wotlk/core/proto/common.js';
-import { Glyphs } from '/wotlk/core/proto/common.js';
-import { ItemSpec } from '/wotlk/core/proto/common.js';
-import { Potions } from '/wotlk/core/proto/common.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { WeaponImbue } from '/wotlk/core/proto/common.js';
-import { Faction } from '/wotlk/core/proto/common.js';
-import { SavedTalents } from '/wotlk/core/proto/ui.js';
-import { Player } from '/wotlk/core/player.js';
+import { Conjured, Consumes } from '../core/proto/common.js';
+import { CustomRotation, CustomSpell } from '../core/proto/common.js';
+import { EquipmentSpec } from '../core/proto/common.js';
+import { Flask } from '../core/proto/common.js';
+import { Food } from '../core/proto/common.js';
+import { Glyphs } from '../core/proto/common.js';
+import { ItemSpec } from '../core/proto/common.js';
+import { Potions } from '../core/proto/common.js';
+import { Spec } from '../core/proto/common.js';
+import { Faction } from '../core/proto/common.js';
+import { SavedTalents } from '../core/proto/ui.js';
+import { Player } from '../core/player.js';
 
 import {
 	PaladinAura as PaladinAura,
 	PaladinJudgement as PaladinJudgement,
 	RetributionPaladin_Rotation as RetributionPaladinRotation,
 	RetributionPaladin_Options as RetributionPaladinOptions,
+	RetributionPaladin_Rotation_RotationType as RotationType,
+	RetributionPaladin_Rotation_SpellOption as SpellOption,
 	PaladinMajorGlyph,
 	PaladinMinorGlyph,
-} from '/wotlk/core/proto/paladin.js';
+} from '../core/proto/paladin.js';
 
-import * as Enchants from '/wotlk/core/constants/enchants.js';
-import * as Gems from '/wotlk/core/proto_utils/gems.js';
-import * as Tooltips from '/wotlk/core/constants/tooltips.js';
+import * as Gems from '../core/proto_utils/gems.js';
+import * as Tooltips from '../core/constants/tooltips.js';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -62,9 +63,36 @@ export const DivineSacTalents = {
 };
 
 export const DefaultRotation = RetributionPaladinRotation.create({
+	type: RotationType.Standard,
 	exoSlack: 500,
 	consSlack: 500,
 	divinePleaPercentage: 0.75,
+	holyWrathThreshold: 4,
+	customRotation: CustomRotation.create({
+		spells: [
+			CustomSpell.create({ spell: SpellOption.JudgementOfWisdom }),
+			CustomSpell.create({ spell: SpellOption.HammerOfWrath }),
+			CustomSpell.create({ spell: SpellOption.CrusaderStrike }),
+			CustomSpell.create({ spell: SpellOption.DivineStorm }),
+			CustomSpell.create({ spell: SpellOption.Exorcism }),
+			CustomSpell.create({ spell: SpellOption.Consecration })
+		],
+	}),
+	customCastSequence: CustomRotation.create({
+		spells: [
+			CustomSpell.create({ spell: SpellOption.JudgementOfWisdom }),
+			CustomSpell.create({ spell: SpellOption.CrusaderStrike }),
+			CustomSpell.create({ spell: SpellOption.DivineStorm }),
+			CustomSpell.create({ spell: SpellOption.Consecration }),
+			CustomSpell.create({ spell: SpellOption.CrusaderStrike }),
+			CustomSpell.create({ spell: SpellOption.Exorcism }),
+			CustomSpell.create({ spell: SpellOption.JudgementOfWisdom }),
+			CustomSpell.create({ spell: SpellOption.CrusaderStrike }),
+			CustomSpell.create({ spell: SpellOption.DivineStorm }),
+			CustomSpell.create({ spell: SpellOption.Consecration }),
+			CustomSpell.create({ spell: SpellOption.CrusaderStrike }),
+		],
+	}),
 });
 
 export const DefaultOptions = RetributionPaladinOptions.create({
@@ -75,17 +103,17 @@ export const DefaultOptions = RetributionPaladinOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	defaultPotion: Potions.HastePotion,
+	defaultPotion: Potions.PotionOfSpeed,
 	defaultConjured: Conjured.ConjuredDarkRune,
-	flask: Flask.FlaskOfRelentlessAssault,
-	food: Food.FoodRoastedClefthoof,
+	flask: Flask.FlaskOfEndlessRage,
+	food: Food.FoodFishFeast,
 });
 
 // Maybe use this later if I can figure out the interactive tooltips from tippy
 const RET_BIS_DISCLAIMER = "<p>Please reference <a target=\"_blank\" href=\"https://docs.google.com/spreadsheets/d/1SxO6abYm4k7XRaP1MsxhaqYoukgyZ-cbWDE3ujadjx4/\">Baranor's TBC BiS Lists</a> for more detailed gearing options and information.</p>"
 
 export const PRE_RAID_PRESET = {
-	name: 'Pre-Patch Preset',
+	name: 'Pre-Raid Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecRetributionPaladin>) => true,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
@@ -226,7 +254,7 @@ export const P1_PRESET = {
 		  },
 		  {
 			"id": 40541,
-			"enchant": 60668,
+			"enchant": 54999,
 			"gems": [
 			  0
 			]

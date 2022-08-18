@@ -30,8 +30,8 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 	selfBuffs := shaman.SelfBuffs{
 		Bloodlust: enhOptions.Options.Bloodlust,
 		Shield:    enhOptions.Options.Shield,
-		ImbueMH:   enhOptions.Options.ImbueMH,
-		ImbueOH:   enhOptions.Options.ImbueOH,
+		ImbueMH:   enhOptions.Options.ImbueMh,
+		ImbueOH:   enhOptions.Options.ImbueOh,
 	}
 
 	totems := proto.ShamanTotems{}
@@ -40,7 +40,7 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 	}
 
 	var rotation Rotation
-	rotation = NewAdaptiveRotation(enhOptions.Talents)
+	rotation = NewPriorityRotation(enhOptions.Talents, enhOptions.Rotation)
 
 	enh := &EnhancementShaman{
 		Shaman:   shaman.NewShaman(character, *enhOptions.Talents, totems, selfBuffs, true),
@@ -56,10 +56,10 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 	})
 
 	if !enh.HasMHWeapon() {
-		enh.Consumes.MainHandImbue = proto.WeaponImbue_WeaponImbueUnknown
+		enh.SelfBuffs.ImbueMH = proto.ShamanImbue_NoImbue
 	}
 	if !enh.HasOHWeapon() {
-		enh.Consumes.OffHandImbue = proto.WeaponImbue_WeaponImbueUnknown
+		enh.SelfBuffs.ImbueOH = proto.ShamanImbue_NoImbue
 	}
 	enh.ApplyWindfuryImbue(
 		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_WindfuryWeapon,
@@ -67,12 +67,16 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 	enh.ApplyFlametongueImbue(
 		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FlametongueWeapon,
 		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_FlametongueWeapon)
+	enh.ApplyFlametongueDownrankImbue(
+		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FlametongueWeaponDownrank,
+		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_FlametongueWeaponDownrank)
 	enh.ApplyFrostbrandImbue(
 		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FrostbrandWeapon,
 		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_FrostbrandWeapon)
 
 	if enh.SelfBuffs.ImbueMH == proto.ShamanImbue_WindfuryWeapon ||
 		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FlametongueWeapon ||
+		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FlametongueWeaponDownrank ||
 		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FrostbrandWeapon {
 		enh.HasMHWeaponImbue = true
 	}
@@ -81,6 +85,8 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 		SpiritWolf1: enh.NewSpiritWolf(1),
 		SpiritWolf2: enh.NewSpiritWolf(2),
 	}
+
+	enh.ShamanisticRageManaThreshold = enhOptions.Rotation.ShamanisticRageManaThreshold
 
 	return enh
 }

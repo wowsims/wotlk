@@ -1,18 +1,14 @@
-import { Consumes } from '/wotlk/core/proto/common.js';
+import { Consumes } from '../core/proto/common.js';
 
-import { EquipmentSpec } from '/wotlk/core/proto/common.js';
-import { Flask } from '/wotlk/core/proto/common.js';
-import { Food } from '/wotlk/core/proto/common.js';
-import { Glyphs } from '/wotlk/core/proto/common.js';
-import { ItemSpec } from '/wotlk/core/proto/common.js';
-import { Potions } from '/wotlk/core/proto/common.js';
-import { Faction } from '/wotlk/core/proto/common.js';
-import { SavedTalents } from '/wotlk/core/proto/ui.js';
-import { WeaponImbue } from '/wotlk/core/proto/common.js';
-import { Player } from '/wotlk/core/player.js';
+import { EquipmentSpec } from '../core/proto/common.js';
+import { Flask } from '../core/proto/common.js';
+import { Food } from '../core/proto/common.js';
+import { Glyphs } from '../core/proto/common.js';
+import { Potions } from '../core/proto/common.js';
+import { SavedTalents } from '../core/proto/ui.js';
 
-import { ElementalShaman, ElementalShaman_Rotation as ElementalShamanRotation, ElementalShaman_Options as ElementalShamanOptions, ShamanShield, ShamanMajorGlyph, ShamanMinorGlyph } from '/wotlk/core/proto/shaman.js';
-import { ElementalShaman_Rotation_RotationType as RotationType } from '/wotlk/core/proto/shaman.js';
+import { ElementalShaman_Rotation as ElementalShamanRotation, ElementalShaman_Options as ElementalShamanOptions, ShamanShield, ShamanMajorGlyph, ShamanMinorGlyph } from '../core/proto/shaman.js';
+import { ElementalShaman_Rotation_RotationType as RotationType } from '../core/proto/shaman.js';
 
 import {
 	AirTotem,
@@ -20,12 +16,10 @@ import {
 	FireTotem,
 	WaterTotem,
 	ShamanTotems,
-} from '/wotlk/core/proto/shaman.js';
+} from '../core/proto/shaman.js';
 
 
-import * as Enchants from '/wotlk/core/constants/enchants.js';
-import * as Gems from '/wotlk/core/proto_utils/gems.js';
-import * as Tooltips from '/wotlk/core/constants/tooltips.js';
+import * as Tooltips from '../core/constants/tooltips.js';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -37,7 +31,7 @@ export const StandardTalents = {
 	name: 'Standard',
 	data: SavedTalents.create({
 		talentsString: '0532001523212351322301351-005052031',
-    glyphs: Glyphs.create({
+		glyphs: Glyphs.create({
 			major1: ShamanMajorGlyph.GlyphOfLava,
 			major2: ShamanMajorGlyph.GlyphOfTotemOfWrath,
 			major3: ShamanMajorGlyph.GlyphOfLightningBolt,
@@ -56,6 +50,11 @@ export const DefaultRotation = ElementalShamanRotation.create({
 		water: WaterTotem.ManaSpringTotem,
 	}),
 	type: RotationType.Adaptive,
+  fnMinManaPer: 66,
+  clMinManaPer: 33,
+  useChainLightning: false,
+  useFireNova: false,
+  useThunderstorm: true,
 });
 
 export const DefaultOptions = ElementalShamanOptions.create({
@@ -67,110 +66,101 @@ export const DefaultConsumes = Consumes.create({
 	defaultPotion: Potions.RunicManaPotion,
 	flask: Flask.FlaskOfTheFrostWyrm,
 	food: Food.FoodFishFeast,
-	mainHandImbue: WeaponImbue.WeaponImbueShamanFlametongue,
 });
 
 
 export const SWP_PRESET = {
-	name: 'SWP Preset',
-	tooltip: "The P5 preset from the TBC simulator but regemmed and adjusted for new hit cap.",
+	name: 'SWP Pre-Raid Preset',
+	tooltip: "Pre-raid preset that includes some gear from SWP.",
 	gear: EquipmentSpec.fromJsonString(`{
     "items": [
       {
         "id": 34332,
-        "enchant": 29191,
+        "enchant": 44877,
         "gems": [
-          40014,
-          34220
+          40049,
+          41285
         ]
       },
       {
-        "id": 34204
+        "id": 37595
       },
       {
         "id": 31023,
-        "enchant": 23545,
+        "enchant": 44874,
         "gems": [
-          40025,
-          40014
+          42144,
+          40049
         ]
       },
       {
-        "id": 34242,
-        "enchant": 33150,
-        "gems": [
-          39998
-        ]
+        "id": 41610,
+        "enchant": 55642
       },
       {
-        "id": 34396,
-        "enchant": 24003,
+        "id": 39592,
+        "enchant": 44489,
         "gems": [
-          39998,
-          40014,
-          40014
+          42144,
+          40025
         ]
       },
       {
         "id": 34437,
-        "enchant": 22534,
+        "enchant": 44498,
         "gems": [
-          40014,
+          40049,
           0
         ]
       },
       {
-        "id": 34350,
-        "enchant": 28272,
+        "id": 34344,
+        "enchant": 44592,
         "gems": [
-          39998,
-          40025,
+          40049,
+          42144,
           0
         ]
       },
       {
         "id": 34542,
         "gems": [
-          40014,
+          40049,
           39998
         ]
       },
       {
-        "id": 34186,
-        "enchant": 24274,
-        "gems": [
-          40049,
-          39998,
-          39998
-        ]
+        "id": 37791,
+        "enchant": 41602
       },
       {
         "id": 34566,
-        "enchant": 35297,
+        "enchant": 60623,
         "gems": [
-          40051
+          40049
         ]
       },
       {
-        "id": 34230,
-        "enchant": 22536
+        "id": 43253,
+        "gems": [
+          40027
+        ]
       },
       {
-        "id": 34362,
-        "enchant": 22536
+        "id": 37694
       },
       {
-        "id": 34429
+        "id": 40682
       },
       {
-        "id": 32483
+        "id": 37873
       },
       {
-        "id": 34336,
-        "enchant": 22555
+        "id": 41384,
+        "enchant": 44487
       },
       {
-        "id": 34179
+        "id": 40698
       },
       {
         "id": 32330
@@ -185,33 +175,33 @@ export const PRE_RAID_PRESET = {
 	gear: EquipmentSpec.fromJsonString(`{
     "items": [
       {
-        "id": 37592,
+        "id": 37180,
         "enchant": 44877,
         "gems": [
           41285,
-          39998
+          42144
         ]
       },
       {
-        "id": 42647,
+        "id": 37595
+      },
+      {
+        "id": 37673,
+        "enchant": 44874,
         "gems": [
-          39998
+          42144
         ]
-      },
-      {
-        "id": 37398,
-        "enchant": 44874
       },
       {
         "id": 41610,
-        "enchant": 44472
+        "enchant": 55642
       },
       {
-        "id": 43410,
+        "id": 39592,
         "enchant": 44489,
         "gems": [
-          39998,
-          40014
+          42144,
+          40025
         ]
       },
       {
@@ -222,16 +212,17 @@ export const PRE_RAID_PRESET = {
         ]
       },
       {
-        "id": 42113,
-        "enchant": 54999,
+        "id": 39593,
+        "enchant": 44592,
         "gems": [
+          40051,
           0
         ]
       },
       {
         "id": 40696,
         "gems": [
-          40051,
+          40049,
           39998
         ]
       },
@@ -243,7 +234,7 @@ export const PRE_RAID_PRESET = {
         "id": 44202,
         "enchant": 60623,
         "gems": [
-          40025
+          39998
         ]
       },
       {
@@ -285,84 +276,74 @@ export const P1_PRESET = {
         "enchant": 44877,
         "gems": [
           41285,
-          40025
+          40027
         ]
       },
       {
         "id": 44661,
         "gems": [
-          40027
-        ]
-      },
-      {
-        "id": 40518,
-        "enchant": 44874,
-        "gems": [
           39998
         ]
       },
       {
+        "id": 40286,
+        "enchant": 44874
+      },
+      {
         "id": 44005,
-        "enchant": 44472,
+        "enchant": 55642,
         "gems": [
-          40025
+          40027
         ]
       },
       {
         "id": 40514,
         "enchant": 44489,
         "gems": [
-          39998,
-          40025
+          42144,
+          42144
         ]
       },
       {
         "id": 40324,
         "enchant": 44498,
         "gems": [
-          40025,
+          42144,
           0
         ]
       },
       {
         "id": 40302,
-        "enchant": 54999,
+        "enchant": 44592,
         "gems": [
           0
         ]
       },
       {
-        "id": 40327,
+        "id": 40301,
         "gems": [
-          39998
+          40014
         ]
       },
       {
-        "id": 40517,
-        "enchant": 41602,
-        "gems": [
-          40049,
-          40027
-        ]
+        "id": 40560,
+        "enchant": 41604
       },
       {
-        "id": 40237,
-        "enchant": 60623,
-        "gems": [
-          40025
-        ]
+        "id": 40519,
+        "enchant": 60623
+      },
+      {
+        "id": 37694
       },
       {
         "id": 40399
       },
       {
-        "id": 48957
+        "id": 40432
       },
       {
         "id": 40255
-      },
-      {
-        "id": 39229
       },
       {
         "id": 40395,

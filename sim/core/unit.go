@@ -1,8 +1,6 @@
 package core
 
 import (
-	"errors"
-	"fmt"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -28,9 +26,9 @@ type Unit struct {
 	//  For Pets, this is the same as the owner's index.
 	Index int32
 
-	// Index of this unit as it appears in attack/defense tables.
-	// This is different from Index because there can be gaps in the raid.
-	TableIndex int32
+	// Unique index of this unit among all units in the environment.
+	// This is used as the index for attack tables.
+	UnitIndex int32
 
 	// Unique label for logging.
 	Label string
@@ -39,6 +37,10 @@ type Unit struct {
 
 	MobType proto.MobType
 
+	// How far this unit is from its target(s). Measured in yards, this is used
+	// for calculating spell travel time for certain spells.
+	DistanceFromTarget float64
+
 	// Environment in which this Unit exists. This will be nil until after the
 	// construction phase.
 	Env *Environment
@@ -46,7 +48,8 @@ type Unit struct {
 	// Stats this Unit will have at the very start of each Sim iteration.
 	// Includes all equipment / buffs / permanent effects but not temporary
 	// effects from items / abilities.
-	initialStats stats.Stats
+	initialStats            stats.Stats
+	initialStatsWithoutDeps stats.Stats
 
 	initialPseudoStats stats.PseudoStats
 
@@ -62,11 +65,14 @@ type Unit struct {
 	// Provides aura tracking behavior.
 	auraTracker
 
-	// Current stats, including temporary effects.
+	// Current stats, including temporary effects but not dependencies.
+	statsWithoutDeps stats.Stats
+
+	// Current stats, including temporary effects and dependencies.
 	stats stats.Stats
 
 	// Provides stat dependency management behavior.
-	statBonuses [stats.Len]stats.Bonuses
+	stats.StatDependencyManager
 
 	PseudoStats stats.PseudoStats
 
@@ -74,7 +80,7 @@ type Unit struct {
 	manaBar
 	rageBar
 	energyBar
-	runicPowerBar
+	RunicPowerBar
 
 	// All spells that can be cast by this unit.
 	Spellbook []*Spell
@@ -116,10 +122,23 @@ type Unit struct {
 }
 
 // DoNothing will explicitly declare that the character is intentionally doing nothing.
-//  If the GCD is not used during OnGCDReady and this flag is set, OnGCDReady will not be called again
-//  until it is used in some other way (like from an auto attack or resource regeneration).
+//
+//	If the GCD is not used during OnGCDReady and this flag is set, OnGCDReady will not be called again
+//	until it is used in some other way (like from an auto attack or resource regeneration).
 func (char *Character) DoNothing() {
 	char.doNothing = true
+}
+
+func (unit *Unit) IsOpponent(other *Unit) bool {
+	return (unit.Type == EnemyUnit) != (other.Type == EnemyUnit)
+}
+
+func (unit *Unit) GetOpponents() []*Unit {
+	if unit.Type == EnemyUnit {
+		return unit.Env.Raid.AllUnits
+	} else {
+		return unit.Env.Encounter.TargetUnits
+	}
 }
 
 func (unit *Unit) LogLabel() string {
@@ -153,191 +172,86 @@ func (unit *Unit) AddStat(stat stats.Stat, amount float64) {
 	unit.stats[stat] += amount
 }
 
-func (unit *Unit) AddStatsDynamic(sim *Simulation, stat stats.Stats) {
+func (unit *Unit) AddStatsDynamic(sim *Simulation, bonus stats.Stats) {
 	if unit.Env == nil || !unit.Env.IsFinalized() {
 		panic("Not finalized, use AddStats instead!")
 	}
 
-	stat[stats.Mana] = 0 // TODO: Mana needs special treatment
+	unit.statsWithoutDeps = unit.statsWithoutDeps.Add(bonus)
 
-	for k, v := range stat {
-		if v == 0 {
-			continue
-		}
-		unit.AddStatDynamic(sim, stats.Stat(k), v)
+	bonus = unit.ApplyStatDependencies(bonus)
+	bonus[stats.Mana] = 0 // TODO: Mana needs special treatment
+
+	if sim.Log != nil {
+		unit.Log(sim, "Dynamic stat change: %s", bonus.FlatString())
 	}
+
+	unit.stats = unit.stats.Add(bonus)
+	unit.processDynamicBonus(sim, bonus)
 }
 func (unit *Unit) AddStatDynamic(sim *Simulation, stat stats.Stat, amount float64) {
-	if unit.Env == nil || !unit.Env.IsFinalized() {
-		panic("Not finalized, use AddStats instead!")
+	bonus := stats.Stats{}
+	bonus[stat] = amount
+	unit.AddStatsDynamic(sim, bonus)
+}
+func (unit *Unit) processDynamicBonus(sim *Simulation, bonus stats.Stats) {
+	if bonus[stats.MP5] != 0 || bonus[stats.Intellect] != 0 || bonus[stats.Spirit] != 0 {
+		unit.UpdateManaRegenRates()
 	}
-
-	added := amount * unit.statBonuses[stat].Multiplier
-
-	if added == 0 {
-		return
+	if bonus[stats.MeleeHaste] != 0 {
+		unit.AutoAttacks.UpdateSwingTime(sim)
 	}
-
-	if stat == stats.MeleeHaste {
-		unit.AddMeleeHaste(sim, added)
-	} else {
-		unit.stats[stat] += added
-
-		if stat == stats.MP5 || stat == stats.Intellect || stat == stats.Spirit {
-			unit.UpdateManaRegenRates()
-		} else if stat == stats.SpellHaste {
-			unit.updateCastSpeed()
-		} else if stat == stats.Armor {
-			unit.updateArmor()
-		} else if stat == stats.ArmorPenetration {
-			unit.updateArmorPen()
-		} else if stat == stats.SpellPenetration {
-			unit.updateSpellPen()
-		} else if stat == stats.ArcaneResistance {
-			unit.updateResistances()
-		} else if stat == stats.FireResistance {
-			unit.updateResistances()
-		} else if stat == stats.FrostResistance {
-			unit.updateResistances()
-		} else if stat == stats.NatureResistance {
-			unit.updateResistances()
-		} else if stat == stats.ShadowResistance {
-			unit.updateResistances()
-		}
+	if bonus[stats.SpellHaste] != 0 {
+		unit.updateCastSpeed()
 	}
-
-	// Now apply stat dependencies
-	for k, v := range unit.statBonuses[stat].Deps {
-		if v == 1 {
-			continue
-		}
-		unit.AddStatDynamic(sim, k, (v-1)*added) // this should handle descending
+	if bonus[stats.Armor] != 0 {
+		unit.updateArmor()
+	}
+	if bonus[stats.ArmorPenetration] != 0 {
+		unit.updateArmorPen()
+	}
+	if bonus[stats.SpellPenetration] != 0 {
+		unit.updateSpellPen()
+	}
+	if bonus[stats.ArcaneResistance] != 0 {
+		unit.updateResistances()
+	}
+	if bonus[stats.FireResistance] != 0 {
+		unit.updateResistances()
+	}
+	if bonus[stats.FrostResistance] != 0 {
+		unit.updateResistances()
+	}
+	if bonus[stats.NatureResistance] != 0 {
+		unit.updateResistances()
+	}
+	if bonus[stats.ShadowResistance] != 0 {
+		unit.updateResistances()
 	}
 }
 
-// applyStatDependencies will apply all stat dependencies.
-func (unit *Unit) applyStatDependencies(ss stats.Stats) stats.Stats {
-	news := stats.Stats{}
+func (unit *Unit) EnableDynamicStatDep(sim *Simulation, dep *stats.StatDependency) {
+	if unit.StatDependencyManager.EnableDynamicStatDep(dep) {
+		oldStats := unit.stats
+		unit.stats = unit.ApplyStatDependencies(unit.statsWithoutDeps)
+		unit.stats[stats.Mana] = oldStats[stats.Mana] // Need to reset mana because it's also used as current mana.
+		unit.processDynamicBonus(sim, unit.stats.Subtract(oldStats))
 
-	var addstat func(s stats.Stat, v float64)
-
-	addstat = func(s stats.Stat, v float64) {
-		if unit.statBonuses[s].Multiplier == 0 {
-			unit.statBonuses[s].Multiplier = 1
+		if sim.Log != nil {
+			unit.Log(sim, "Dynamic dep enabled (%s): %s", dep.String(), unit.stats.Subtract(oldStats).FlatString())
 		}
-		added := v * unit.statBonuses[s].Multiplier
-		news[s] += added
-		for k, v := range unit.statBonuses[s].Deps {
-			if v == 1 {
-				continue
-			}
-			addstat(k, (v-1)*added)
-		}
-	}
-
-	for s, v := range ss {
-		if v == 0 {
-			continue
-		}
-		addstat(stats.Stat(s), v)
-	}
-
-	return news
-}
-
-// AddStatDependency will add source stat * ratio to the modified stat.
-func (unit *Unit) AddStatDependency(source, modified stats.Stat, multiplier float64) {
-	if unit.Env != nil && unit.Env.IsFinalized() {
-		panic("Already finalized, can't add more dependencies!")
-	}
-	if source == modified {
-		if unit.statBonuses[source].Multiplier == 0 {
-			unit.statBonuses[source].Multiplier = multiplier
-		} else {
-			unit.statBonuses[source].Multiplier *= multiplier
-		}
-		return
-	}
-	if unit.statBonuses[source].Deps == nil {
-		unit.statBonuses[source].Deps = map[stats.Stat]float64{
-			modified: multiplier,
-		}
-	} else if unit.statBonuses[source].Deps[modified] == 0 {
-		unit.statBonuses[source].Deps[modified] = multiplier
-	} else {
-		unit.statBonuses[source].Deps[modified] *= multiplier
 	}
 }
+func (unit *Unit) DisableDynamicStatDep(sim *Simulation, dep *stats.StatDependency) {
+	if unit.StatDependencyManager.DisableDynamicStatDep(dep) {
+		oldStats := unit.stats
+		unit.stats = unit.ApplyStatDependencies(unit.statsWithoutDeps)
+		unit.stats[stats.Mana] = oldStats[stats.Mana] // Need to reset mana because it's also used as current mana.
+		unit.processDynamicBonus(sim, unit.stats.Subtract(oldStats))
 
-// AddStatDependencyDynamic will dynamically adjust stats based on the change to the dependency.
-func (unit *Unit) AddStatDependencyDynamic(sim *Simulation, source, modified stats.Stat, multiplier float64) {
-	if unit.Env == nil || !unit.Env.IsFinalized() {
-		panic("Not finalized, use AddStatDependency instead!")
-	}
-	if source == modified {
-		oldMultiplier := 1.0
-		if unit.statBonuses[source].Multiplier == 0 {
-			unit.statBonuses[source].Multiplier = multiplier
-		} else {
-			oldMultiplier = unit.statBonuses[source].Multiplier
-			unit.statBonuses[source].Multiplier *= multiplier
+		if sim.Log != nil {
+			unit.Log(sim, "Dynamic dep enabled (%s): %s", dep.String(), unit.stats.Subtract(oldStats).FlatString())
 		}
-		// Now modify the stat itself
-		stat := unit.stats[source]
-		bonus := ((stat * unit.statBonuses[source].Multiplier / oldMultiplier) - stat) / unit.statBonuses[source].Multiplier
-		unit.AddStatDynamic(sim, source, bonus)
-		return
-	}
-
-	oldMultiplier := 1.0
-	if unit.statBonuses[source].Deps == nil {
-		unit.statBonuses[source].Deps = map[stats.Stat]float64{
-			modified: multiplier,
-		}
-	} else if unit.statBonuses[source].Deps[modified] == 0 {
-		unit.statBonuses[source].Deps[modified] = multiplier
-	} else {
-		oldMultiplier = unit.statBonuses[source].Deps[modified]
-		unit.statBonuses[source].Deps[modified] *= multiplier
-	}
-
-	stat := unit.stats[source]
-	bonus := stat * (unit.statBonuses[source].Deps[modified] - oldMultiplier)
-	// Now apply the newly gained stats
-	unit.AddStatDynamic(sim, modified, bonus)
-}
-
-// finalizeStatDeps will descend the tree of each stat's depedencies and verify
-// there are no circular dependencies
-func (unit *Unit) finalizeStatDeps() {
-	seen := map[stats.Stat]struct{}{}
-
-	var walk func(m map[stats.Stat]float64) error
-
-	walk = func(m map[stats.Stat]float64) error {
-		for k := range m {
-			if _, ok := seen[k]; ok {
-				return errors.New("circular dependency in stats: " + k.StatName())
-			}
-			seen[k] = struct{}{}
-			err := walk(unit.statBonuses[k].Deps)
-			if err != nil {
-				return fmt.Errorf("%w from: %s", err, k.StatName())
-			}
-			delete(seen, k)
-		}
-		return nil
-	}
-
-	for s := range unit.stats {
-		if unit.statBonuses[s].Multiplier == 0 {
-			unit.statBonuses[s].Multiplier = 1
-		}
-		seen[stats.Stat(s)] = struct{}{}
-		if err := walk(unit.statBonuses[s].Deps); err != nil {
-			panic(err)
-		}
-		delete(seen, stats.Stat(s))
 	}
 }
 
@@ -426,24 +340,10 @@ func (unit *Unit) RangedSwingSpeed() float64 {
 	return unit.PseudoStats.RangedSpeedMultiplier * (1 + (unit.stats[stats.MeleeHaste] / (HasteRatingPerHastePercent * 100)))
 }
 
-func (unit *Unit) AddMeleeHaste(sim *Simulation, amount float64) {
-	if amount > 0 {
-		mod := 1 + (amount / (unit.PseudoStats.MeleeHasteRatingPerHastePercent * 100))
-		unit.AutoAttacks.ModifySwingTime(sim, mod)
-	} else {
-		mod := 1 / (1 + (-amount / (unit.PseudoStats.MeleeHasteRatingPerHastePercent * 100)))
-		unit.AutoAttacks.ModifySwingTime(sim, mod)
-	}
-	unit.stats[stats.MeleeHaste] += amount
-
-	// Could add melee haste to pets too, but not aware of any pets that scale with
-	// owner's melee haste.
-}
-
 // MultiplyMeleeSpeed will alter the attack speed multiplier and change swing speed of all autoattack swings in progress.
 func (unit *Unit) MultiplyMeleeSpeed(sim *Simulation, amount float64) {
 	unit.PseudoStats.MeleeSpeedMultiplier *= amount
-	unit.AutoAttacks.ModifySwingTime(sim, amount)
+	unit.AutoAttacks.UpdateSwingTime(sim)
 }
 
 func (unit *Unit) MultiplyRangedSpeed(sim *Simulation, amount float64) {
@@ -454,7 +354,7 @@ func (unit *Unit) MultiplyRangedSpeed(sim *Simulation, amount float64) {
 func (unit *Unit) MultiplyAttackSpeed(sim *Simulation, amount float64) {
 	unit.PseudoStats.MeleeSpeedMultiplier *= amount
 	unit.PseudoStats.RangedSpeedMultiplier *= amount
-	unit.AutoAttacks.ModifySwingTime(sim, amount)
+	unit.AutoAttacks.UpdateSwingTime(sim)
 }
 
 func (unit *Unit) finalize() {
@@ -467,16 +367,20 @@ func (unit *Unit) finalize() {
 		panic("Initial stats may not be set before finalized: " + unit.initialStats.String())
 	}
 
+	unit.applyParryHaste()
 	unit.updateCastSpeed()
 
 	// All stats added up to this point are part of the 'initial' stats.
-	unit.initialStats = unit.stats
+	unit.initialStatsWithoutDeps = unit.stats
 	unit.initialPseudoStats = unit.PseudoStats
 	unit.initialCastSpeed = unit.CastSpeed
 	unit.initialMeleeSwingSpeed = unit.SwingSpeed()
 	unit.initialRangedSwingSpeed = unit.RangedSwingSpeed()
 
-	unit.applyParryHaste()
+	unit.StatDependencyManager.FinalizeStatDeps()
+	unit.initialStats = unit.ApplyStatDependencies(unit.initialStatsWithoutDeps)
+	unit.statsWithoutDeps = unit.initialStatsWithoutDeps
+	unit.stats = unit.initialStats
 
 	for _, spell := range unit.Spellbook {
 		spell.finalize()
@@ -489,6 +393,8 @@ func (unit *Unit) init(sim *Simulation) {
 
 func (unit *Unit) reset(sim *Simulation, agent Agent) {
 	unit.Metrics.reset()
+	unit.ResetStatDeps()
+	unit.statsWithoutDeps = unit.initialStatsWithoutDeps
 	unit.stats = unit.initialStats
 	unit.PseudoStats = unit.initialPseudoStats
 	unit.auraTracker.reset(sim)
@@ -501,7 +407,7 @@ func (unit *Unit) reset(sim *Simulation, agent Agent) {
 
 	unit.energyBar.reset(sim)
 	unit.rageBar.reset(sim)
-	unit.runicPowerBar.reset(sim)
+	unit.RunicPowerBar.reset(sim)
 
 	unit.AutoAttacks.reset(sim)
 }

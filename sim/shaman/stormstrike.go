@@ -10,6 +10,8 @@ import (
 )
 
 var StormstrikeActionID = core.ActionID{SpellID: 17364}
+var TotemOfTheDancingFlame int32 = 45169
+var TotemOfDueling int32 = 40322
 
 func (shaman *Shaman) StormstrikeDebuffAura(target *core.Unit) *core.Aura {
 	return target.GetOrRegisterAura(core.Aura{
@@ -18,10 +20,10 @@ func (shaman *Shaman) StormstrikeDebuffAura(target *core.Unit) *core.Aura {
 		Duration:  time.Second * 12,
 		MaxStacks: 4,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			shaman.AttackTables[aura.Unit.TableIndex].NatureDamageDealtMultiplier *= core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfStormstrike), 1.28, 1.2)
+			shaman.AttackTables[aura.Unit.UnitIndex].NatureDamageDealtMultiplier *= core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfStormstrike), 1.28, 1.2)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			shaman.AttackTables[aura.Unit.TableIndex].NatureDamageDealtMultiplier /= core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfStormstrike), 1.28, 1.2)
+			shaman.AttackTables[aura.Unit.UnitIndex].NatureDamageDealtMultiplier /= core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfStormstrike), 1.28, 1.2)
 
 		},
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
@@ -41,18 +43,25 @@ func (shaman *Shaman) StormstrikeDebuffAura(target *core.Unit) *core.Aura {
 
 func (shaman *Shaman) newStormstrikeHitSpell(isMH bool) *core.Spell {
 	effect := core.SpellEffect{
-		DamageMultiplier: 1,
-		ThreatMultiplier: core.TernaryFloat64(shaman.Talents.SpiritWeapons, 0.7, 1),
+		DamageMultiplier: core.TernaryFloat64(shaman.HasSetBonus(ItemSetWorldbreakerBattlegear, 2), 1.2, 1),
+		ThreatMultiplier: 1,
 		OutcomeApplier:   shaman.OutcomeFuncMeleeSpecialCritOnly(shaman.DefaultMeleeCritMultiplier()),
 	}
 
-	flatDamageBonus := core.TernaryFloat64(shaman.HasSetBonus(ItemSetCycloneHarness, 4), 30, 0)
+	var flatDamageBonus float64 = 0
+	if shaman.HasSetBonus(ItemSetCycloneHarness, 4) {
+		flatDamageBonus += 30
+	}
+	if shaman.Equip[items.ItemSlotRanged].ID == TotemOfTheDancingFlame {
+		flatDamageBonus += 155
+	}
+
 	if isMH {
 		effect.ProcMask = core.ProcMaskMeleeMHSpecial
-		effect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.MainHand, false, flatDamageBonus, 1, true)
+		effect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.MainHand, false, flatDamageBonus, 1, 1, true)
 	} else {
 		effect.ProcMask = core.ProcMaskMeleeOHSpecial
-		effect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.OffHand, false, flatDamageBonus, 1, true)
+		effect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.OffHand, false, flatDamageBonus, 1, 1, true)
 	}
 
 	return shaman.RegisterSpell(core.SpellConfig{
@@ -79,8 +88,15 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 	if shaman.HasSetBonus(ItemSetSkyshatterHarness, 4) {
 		skyshatterAura = shaman.NewTemporaryStatsAura("Skyshatter 4pc AP Bonus", core.ActionID{SpellID: 38432}, stats.Stats{stats.AttackPower: 70}, time.Second*12)
 	}
+	var totemOfDuelingAura *core.Aura
+	if shaman.Equip[items.ItemSlotRanged].ID == TotemOfDueling {
+		totemOfDuelingAura = shaman.NewTemporaryStatsAura("Essense of the Storm", core.ActionID{SpellID: 60766},
+			stats.Stats{stats.MeleeHaste: 60, stats.SpellHaste: 60}, time.Second*6)
+	}
 
 	manaMetrics := shaman.NewManaMetrics(core.ActionID{SpellID: 51522})
+
+	cooldownTime := time.Duration(core.TernaryFloat64(shaman.HasSetBonus(ItemSetGladiatorsEarthshaker, 4), 6, 8))
 
 	shaman.Stormstrike = shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    StormstrikeActionID,
@@ -98,7 +114,7 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    shaman.NewTimer(),
-				Duration: time.Second * 8,
+				Duration: time.Second * cooldownTime,
 			},
 		},
 
@@ -124,11 +140,14 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 				if skyshatterAura != nil {
 					skyshatterAura.Activate(sim)
 				}
+				if totemOfDuelingAura != nil {
+					totemOfDuelingAura.Activate(sim)
+				}
 
 				mhHit.Cast(sim, spellEffect.Target)
 				ohHit.Cast(sim, spellEffect.Target)
-				shaman.Stormstrike.SpellMetrics[spellEffect.Target.TableIndex].Casts -= 2
-				shaman.Stormstrike.SpellMetrics[spellEffect.Target.TableIndex].Hits--
+				shaman.Stormstrike.SpellMetrics[spellEffect.Target.UnitIndex].Casts -= 2
+				shaman.Stormstrike.SpellMetrics[spellEffect.Target.UnitIndex].Hits--
 			},
 		}),
 	})

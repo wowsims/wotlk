@@ -15,7 +15,7 @@ func TestWarlock(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
 		Class: proto.Class_ClassWarlock,
 
-		Race:       proto.Race_RaceOrc,
+		Race: proto.Race_RaceOrc,
 
 		GearSet: core.GearSetCombo{Label: "P1", GearSet: P1Gear},
 

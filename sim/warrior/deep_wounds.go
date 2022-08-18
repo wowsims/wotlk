@@ -7,54 +7,22 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
+var DeepWoundsActionID = core.ActionID{SpellID: 12867}
+
 func (warrior *Warrior) applyDeepWounds() {
 	if warrior.Talents.DeepWounds == 0 {
 		return
 	}
 
-	actionID := core.ActionID{SpellID: 12867}
-
-	deepWoundsSpell := warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
+	warrior.DeepWounds = warrior.RegisterSpell(core.SpellConfig{
+		ActionID:    DeepWoundsActionID,
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagNoOnCastComplete,
 	})
 
-	var dwDots []*core.Dot
-
 	warrior.RegisterAura(core.Aura{
-		Label:    "Deep Wounds",
+		Label:    "Deep Wounds Talent",
 		Duration: core.NeverExpires,
-		OnInit: func(aura *core.Aura, sim *core.Simulation) {
-			if len(dwDots) > 0 {
-				return
-			}
-
-			tickDamage := warrior.AutoAttacks.MH.AverageDamage()
-			for i := int32(0); i < sim.GetNumTargets(); i++ {
-				target := sim.GetTarget(i)
-				dotAura := target.GetOrRegisterAura(core.Aura{
-					Label:    "DeepWounds-" + strconv.Itoa(int(warrior.Index)),
-					ActionID: actionID,
-					Duration: time.Second * 12,
-				})
-				dot := core.NewDot(core.Dot{
-					Spell:         deepWoundsSpell,
-					Aura:          dotAura,
-					NumberOfTicks: 4,
-					TickLength:    time.Second * 3,
-					TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-						ProcMask:         core.ProcMaskPeriodicDamage,
-						DamageMultiplier: 0.2 * float64(warrior.Talents.DeepWounds),
-						ThreatMultiplier: 1,
-						IsPeriodic:       true,
-						BaseDamage:       core.BaseDamageConfigFlat(tickDamage),
-						OutcomeApplier:   warrior.OutcomeFuncTick(),
-					})),
-				})
-				dwDots = append(dwDots, dot)
-			}
-		},
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
@@ -63,11 +31,46 @@ func (warrior *Warrior) applyDeepWounds() {
 				return
 			}
 			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
-				deepWoundsSpell.Cast(sim, nil)
-				deepWoundsSpell.SpellMetrics[spellEffect.Target.TableIndex].Hits++
-				dwDots[spellEffect.Target.Index].Apply(sim)
-				warrior.procBloodFrenzy(sim, spellEffect, time.Second*12)
+				warrior.DeepWounds.Cast(sim, nil)
+				warrior.procDeepWounds(sim, spellEffect.Target)
+				warrior.procBloodFrenzy(sim, spellEffect, time.Second*6)
 			}
 		},
 	})
+}
+
+func (warrior *Warrior) newDeepWoundsDot(target *core.Unit) *core.Dot {
+	return core.NewDot(core.Dot{
+		Spell: warrior.DeepWounds,
+		Aura: target.RegisterAura(core.Aura{
+			Label:    "DeepWounds-" + strconv.Itoa(int(warrior.Index)),
+			ActionID: DeepWoundsActionID,
+		}),
+		NumberOfTicks: 6,
+		TickLength:    time.Second * 1,
+	})
+}
+
+func (warrior *Warrior) procDeepWounds(sim *core.Simulation, target *core.Unit) {
+	deepWoundsDot := warrior.DeepWoundsDots[target.Index]
+
+	newDeepWoundsDamage := warrior.AutoAttacks.MH.AverageDamage() * 0.16 * float64(warrior.Talents.DeepWounds)
+	if deepWoundsDot.IsActive() {
+		newDeepWoundsDamage += warrior.DeepWoundsTickDamage[target.Index] * float64(6-deepWoundsDot.TickCount)
+	}
+
+	newTickDamage := newDeepWoundsDamage / 6
+	warrior.DeepWoundsTickDamage[target.Index] = newTickDamage
+
+	warrior.DeepWounds.SpellMetrics[target.UnitIndex].Hits++
+
+	deepWoundsDot.TickEffects = core.TickFuncApplyEffectsToUnit(target, core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+		ProcMask:         core.ProcMaskPeriodicDamage,
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+		IsPeriodic:       true,
+		BaseDamage:       core.BaseDamageConfigFlat(newTickDamage),
+		OutcomeApplier:   warrior.OutcomeFuncTick(),
+	}))
+	deepWoundsDot.Apply(sim)
 }

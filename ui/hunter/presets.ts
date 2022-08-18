@@ -1,26 +1,27 @@
-import { Consumes } from '/wotlk/core/proto/common.js';
-import { EquipmentSpec } from '/wotlk/core/proto/common.js';
-import { Flask } from '/wotlk/core/proto/common.js';
-import { Food } from '/wotlk/core/proto/common.js';
-import { Glyphs } from '/wotlk/core/proto/common.js';
-import { Potions } from '/wotlk/core/proto/common.js';
-import { WeaponImbue } from '/wotlk/core/proto/common.js';
-import { Player } from '/wotlk/core/player.js';
-import { SavedTalents } from '/wotlk/core/proto/ui.js';
-import { ferocityDefault } from '/wotlk/core/talents/hunter_pet.js';
+import { CustomRotation, CustomSpell } from '../core/proto/common.js';
+import { Consumes } from '../core/proto/common.js';
+import { EquipmentSpec } from '../core/proto/common.js';
+import { Flask } from '../core/proto/common.js';
+import { Food } from '../core/proto/common.js';
+import { Glyphs } from '../core/proto/common.js';
+import { PetFood } from '../core/proto/common.js';
+import { Potions } from '../core/proto/common.js';
+import { SavedTalents } from '../core/proto/ui.js';
+import { ferocityDefault, ferocityBMDefault } from '../core/talents/hunter_pet.js';
 
 import {
 	Hunter_Rotation as HunterRotation,
-	//Hunter_Rotation_WeaveType as WeaveType,
+	Hunter_Rotation_RotationType as RotationType,
 	Hunter_Rotation_StingType as StingType,
+	Hunter_Rotation_SpellOption as SpellOption,
 	Hunter_Options as HunterOptions,
 	Hunter_Options_Ammo as Ammo,
 	Hunter_Options_PetType as PetType,
 	HunterMajorGlyph as MajorGlyph,
 	HunterMinorGlyph as MinorGlyph,
-} from '/wotlk/core/proto/hunter.js';
+} from '../core/proto/hunter.js';
 
-import * as Tooltips from '/wotlk/core/constants/tooltips.js';
+import * as Tooltips from '../core/constants/tooltips.js';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -74,15 +75,40 @@ export const SurvivalTalents = {
 };
 
 export const DefaultRotation = HunterRotation.create({
+	type: RotationType.SingleTarget,
 	sting: StingType.SerpentSting,
+	trapWeave: false,
+	timeToTrapWeaveMs: 2000,
 	viperStartManaPercent: 0.1,
 	viperStopManaPercent: 0.3,
+	customRotation: CustomRotation.create({
+		spells: [
+			CustomSpell.create({ spell: SpellOption.SerpentStingSpell }),
+			CustomSpell.create({ spell: SpellOption.KillShot }),
+			CustomSpell.create({ spell: SpellOption.ChimeraShot }),
+			CustomSpell.create({ spell: SpellOption.BlackArrow }),
+			CustomSpell.create({ spell: SpellOption.ExplosiveShot }),
+			CustomSpell.create({ spell: SpellOption.AimedShot }),
+			CustomSpell.create({ spell: SpellOption.ArcaneShot }),
+			CustomSpell.create({ spell: SpellOption.SteadyShot }),
+		],
+	}),
 });
 
 export const DefaultOptions = HunterOptions.create({
 	ammo: Ammo.SaroniteRazorheads,
+	useHuntersMark: true,
 	petType: PetType.Wolf,
 	petTalents: ferocityDefault,
+	petUptime: 1,
+	sniperTrainingUptime: 0.8,
+});
+
+export const BMDefaultOptions = HunterOptions.create({
+	ammo: Ammo.SaroniteRazorheads,
+	useHuntersMark: true,
+	petType: PetType.Wolf,
+	petTalents: ferocityBMDefault,
 	petUptime: 1,
 	sniperTrainingUptime: 0.8,
 });
@@ -91,6 +117,7 @@ export const DefaultConsumes = Consumes.create({
 	defaultPotion: Potions.PotionOfSpeed,
 	flask: Flask.FlaskOfEndlessRage,
 	food: Food.FoodFishFeast,
+	petFood: PetFood.PetFoodSpicedMammothTreats,
 });
 
 export const PRERAID_PRESET = {
@@ -103,20 +130,20 @@ export const PRERAID_PRESET = {
 			"enchant": 44879,
 			"gems": [
 				41398,
-				40043
+				40044
 			]
 		},
 		{
 			"id": 42645,
 			"gems": [
-				39997
+				42143
 			]
 		},
 		{
 			"id": 37679,
 			"enchant": 44871,
 			"gems": [
-				39997
+				42143
 			]
 		},
 		{
@@ -125,9 +152,9 @@ export const PRERAID_PRESET = {
 		},
 		{
 			"id": 37144,
-			"enchant": 44623,
+			"enchant": 44489,
 			"gems": [
-				40023
+				40088
 			]
 		},
 		{
@@ -147,7 +174,7 @@ export const PRERAID_PRESET = {
 		{
 			"id": 37407,
 			"gems": [
-				39997
+				42143
 			]
 		},
 		{
@@ -168,7 +195,7 @@ export const PRERAID_PRESET = {
 		{
 			"id": 42642,
 			"gems": [
-				40043
+				39997
 			]
 		},
 		{
@@ -179,8 +206,9 @@ export const PRERAID_PRESET = {
 		},
 		{
 			"id": 44249,
-			"enchant": 44630
+			"enchant": 44483
 		},
+		{},
 		{
 			"id": 43284,
 			"enchant": 41167
@@ -198,20 +226,20 @@ export const P1_PRESET = {
 			"enchant": 44879,
 			"gems": [
 				41398,
-				40023
+				40088
 			]
 		},
 		{
 			"id": 44664,
 			"gems": [
-				40023
+				42143
 			]
 		},
 		{
 			"id": 40507,
 			"enchant": 44871,
 			"gems": [
-				39997
+				42143
 			]
 		},
 		{
@@ -220,17 +248,17 @@ export const P1_PRESET = {
 		},
 		{
 			"id": 43998,
-			"enchant": 44623,
+			"enchant": 44489,
 			"gems": [
-				39997,
-				40023
+				42143,
+				39997
 			]
 		},
 		{
 			"id": 40282,
 			"enchant": 60616,
 			"gems": [
-				40086,
+				39997,
 				0
 			]
 		},
@@ -252,7 +280,7 @@ export const P1_PRESET = {
 			"enchant": 38374,
 			"gems": [
 				39997,
-				40023
+				39997
 			]
 		},
 		{
@@ -273,8 +301,9 @@ export const P1_PRESET = {
 		},
 		{
 			"id": 40388,
-			"enchant": 44630
+			"enchant": 44483
 		},
+		{},
 		{
 			"id": 40385,
 			"enchant": 41167

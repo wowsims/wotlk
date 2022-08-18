@@ -1,22 +1,22 @@
-import { MobType } from '/wotlk/core/proto/common.js';
-import { SpellSchool } from '/wotlk/core/proto/common.js';
-import { Stat } from '/wotlk/core/proto/common.js';
-import { Encounter } from '/wotlk/core/encounter.js';
-import { Target } from '/wotlk/core/target.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
-import { BooleanPicker } from '/wotlk/core/components/boolean_picker.js';
-import { EnumPicker, EnumPickerConfig } from '/wotlk/core/components/enum_picker.js';
-import { ListPicker, ListPickerConfig } from '/wotlk/core/components/list_picker.js';
-import { NumberPicker } from '/wotlk/core/components/number_picker.js';
-import { Stats } from '/wotlk/core/proto_utils/stats.js';
-import { isTankSpec } from '/wotlk/core/proto_utils/utils.js';
-import { statNames } from '/wotlk/core/proto_utils/names.js';
-import { getEnumValues } from '/wotlk/core/utils.js';
+import { MobType } from '../proto/common.js';
+import { SpellSchool } from '../proto/common.js';
+import { Stat } from '../proto/common.js';
+import { Encounter } from '../encounter.js';
+import { Target } from '../target.js';
+import { EventID, TypedEvent } from '../typed_event.js';
+import { BooleanPicker } from '../components/boolean_picker.js';
+import { EnumPicker, EnumPickerConfig } from '../components/enum_picker.js';
+import { ListPicker, ListPickerConfig } from '../components/list_picker.js';
+import { NumberPicker } from '../components/number_picker.js';
+import { Stats } from '../proto_utils/stats.js';
+import { isTankSpec } from '../proto_utils/utils.js';
+import { statNames } from '../proto_utils/names.js';
+import { getEnumValues } from '../utils.js';
 
 import { Component } from './component.js';
 import { Popup } from './popup.js';
 
-import * as Mechanics from '/wotlk/core/constants/mechanics.js';
+import * as Mechanics from '../constants/mechanics.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
 import { SimUI } from '../sim_ui.js';
 
@@ -170,7 +170,7 @@ class AdvancedEncounterPicker extends Popup {
 				},
 			});
 		}
-		new ListPicker<Encounter, Target>(targetsElem, this.encounter, {
+		new ListPicker<Encounter, Target, TargetPicker>(targetsElem, this.encounter, {
 			extraCssClasses: [
 				'targets-picker',
 			],

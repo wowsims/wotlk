@@ -1,20 +1,20 @@
-import { Component } from '/wotlk/core/components/component.js';
-import { IconEnumPicker } from '/wotlk/core/components/icon_enum_picker.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
-import { Class } from '/wotlk/core/proto/common.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { Blessings } from '/wotlk/core/proto/paladin.js';
-import { BlessingsAssignment } from '/wotlk/core/proto/ui.js';
-import { BlessingsAssignments } from '/wotlk/core/proto/ui.js';
-import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
+import { Component } from '../core/components/component.js';
+import { IconEnumPicker } from '../core/components/icon_enum_picker.js';
+import { EventID, TypedEvent } from '../core/typed_event.js';
+import { Class } from '../core/proto/common.js';
+import { Spec } from '../core/proto/common.js';
+import { Blessings } from '../core/proto/paladin.js';
+import { BlessingsAssignment } from '../core/proto/ui.js';
+import { BlessingsAssignments } from '../core/proto/ui.js';
+import { ActionId } from '../core/proto_utils/action_id.js';
 import {
 	makeDefaultBlessings,
 	classColors,
 	naturalSpecOrder,
 	specNames,
 	titleIcons,
-} from '/wotlk/core/proto_utils/utils.js';
-import { getEnumValues } from '/wotlk/core/utils.js';
+} from '../core/proto_utils/utils.js';
+import { getEnumValues } from '../core/utils.js';
 
 import { RaidSimUI } from './raid_sim_ui.js';
 import { implementedSpecs } from './presets.js';
@@ -87,10 +87,9 @@ export class BlessingsPicker extends Component {
 					values: [
 						{ color: classColors[Class.ClassPaladin], value: Blessings.BlessingUnknown },
 						{ actionId: ActionId.fromSpellId(25898), value: Blessings.BlessingOfKings },
-						{ actionId: ActionId.fromSpellId(27141), value: Blessings.BlessingOfMight },
-						{ actionId: ActionId.fromSpellId(27143), value: Blessings.BlessingOfWisdom },
-						{ actionId: ActionId.fromSpellId(27169), value: Blessings.BlessingOfSanctuary },
-						{ actionId: ActionId.fromSpellId(27145), value: Blessings.BlessingOfLight },
+						{ actionId: ActionId.fromSpellId(48934), value: Blessings.BlessingOfMight },
+						{ actionId: ActionId.fromSpellId(48938), value: Blessings.BlessingOfWisdom },
+						{ actionId: ActionId.fromSpellId(25899), value: Blessings.BlessingOfSanctuary },
 					],
 					equals: (a: Blessings, b: Blessings) => a == b,
 					zeroValue: Blessings.BlessingUnknown,

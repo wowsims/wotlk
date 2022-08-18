@@ -26,9 +26,8 @@ func RegisterRogue() {
 }
 
 const (
-	SpellFlagBuilder      = core.SpellFlagAgentReserved1
-	SpellFlagFinisher     = core.SpellFlagAgentReserved2
-	SpellFlagRogueAbility = SpellFlagBuilder | SpellFlagFinisher
+	SpellFlagBuilder  = core.SpellFlagAgentReserved2
+	SpellFlagFinisher = core.SpellFlagAgentReserved3
 )
 
 type Rogue struct {
@@ -38,49 +37,52 @@ type Rogue struct {
 	Options  proto.Rogue_Options
 	Rotation proto.Rogue_Rotation
 
-	// Current rotation plan.
-	plan int
+	PriorityList    []RoguePriority
+	CurrentPriority *RoguePriority
 
-	// Cached values for calculating rotation.
-	energyPerSecondAvg    float64
-	eaBuildTime           time.Duration // Time to build EA following a finisher at ~35 energy
 	sliceAndDiceDurations [6]time.Duration
+	exposeArmorDurations  [6]time.Duration
+	disabledMCDs          []*core.MajorCooldown
 
-	doneSND bool // Current SND will last for the rest of the iteration
-	doneEA  bool // Current EA will last for the rest of the iteration, or not using EA
-
-	disabledMCDs []*core.MajorCooldown
-
-	// Assigned based on rotation, can be SS, Backstab, Hemo, etc
-	Builder *core.Spell
-
-	Backstab       *core.Spell
-	DeadlyPoison   *core.Spell
-	Hemorrhage     *core.Spell
-	InstantPoison  *core.Spell
-	Mutilate       *core.Spell
-	Shiv           *core.Spell
-	SinisterStrike *core.Spell
+	Builder          *core.Spell
+	Backstab         *core.Spell
+	DeadlyPoison     *core.Spell
+	FanOfKnives      *core.Spell
+	Hemorrhage       *core.Spell
+	HungerForBlood   *core.Spell
+	InstantPoison    [3]*core.Spell
+	Mutilate         *core.Spell
+	Shiv             *core.Spell
+	SinisterStrike   *core.Spell
+	TricksOfTheTrade *core.Spell
 
 	Envenom      [6]*core.Spell
 	Eviscerate   [6]*core.Spell
-	ExposeArmor  *core.Spell
+	ExposeArmor  [6]*core.Spell
 	Rupture      [6]*core.Spell
 	SliceAndDice [6]*core.Spell
 
-	LastDeadlyPoisonProcMask core.ProcMask
-	DeadlyPoisonDot          *core.Dot
-	RuptureDot               *core.Dot
+	LastDeadlyPoisonProcMask    core.ProcMask
+	DeadlyPoisonProcChanceBonus float64
+	InstantPoisonPPMM           core.PPMManager
+	DeadlyPoisonDots            []*core.Dot
+	RuptureDot                  *core.Dot
 
-	AdrenalineRushAura  *core.Aura
-	BladeFlurryAura     *core.Aura
-	DeathmantleProcAura *core.Aura
-	ExposeArmorAura     *core.Aura
-	KillingSpreeAura    *core.Aura
-	SliceAndDiceAura    *core.Aura
+	AdrenalineRushAura   *core.Aura
+	BladeFlurryAura      *core.Aura
+	DeathmantleProcAura  *core.Aura
+	VanCleefsProcAura    *core.Aura
+	EnvenomAura          *core.Aura
+	ExposeArmorAura      *core.Aura
+	HungerForBloodAura   *core.Aura
+	KillingSpreeAura     *core.Aura
+	OverkillAura         *core.Aura
+	SliceAndDiceAura     *core.Aura
+	TricksOfTheTradeAura *core.Aura
 
 	QuickRecoveryMetrics *core.ResourceMetrics
 
+	CastModifier               func(*core.Simulation, *core.Spell, *core.Cast)
 	finishingMoveEffectApplier func(sim *core.Simulation, numPoints int32)
 }
 
@@ -126,11 +128,13 @@ func (rogue *Rogue) Initialize() {
 		rogue.QuickRecoveryMetrics = rogue.NewEnergyMetrics(core.ActionID{SpellID: 31245})
 	}
 
+	rogue.CastModifier = rogue.makeCastModifier()
+
 	rogue.registerBackstabSpell()
 	rogue.registerDeadlyPoisonSpell()
-	rogue.registerEnvenom()
 	rogue.registerEviscerate()
 	rogue.registerExposeArmorSpell()
+	rogue.registerFanOfKnives()
 	rogue.registerHemorrhageSpell()
 	rogue.registerInstantPoisonSpell()
 	rogue.registerMutilateSpell()
@@ -138,69 +142,48 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerShivSpell()
 	rogue.registerSinisterStrikeSpell()
 	rogue.registerSliceAndDice()
-
 	rogue.registerThistleTeaCD()
-	rogue.applyPoisons()
+	rogue.registerTricksOfTheTradeSpell()
 
-	switch rogue.Rotation.Builder {
-	case proto.Rogue_Rotation_SinisterStrike:
-		rogue.Builder = rogue.SinisterStrike
-	case proto.Rogue_Rotation_Backstab:
-		rogue.Builder = rogue.Backstab
-	case proto.Rogue_Rotation_Hemorrhage:
-		rogue.Builder = rogue.Hemorrhage
-	case proto.Rogue_Rotation_Mutilate:
-		rogue.Builder = rogue.Mutilate
+	if rogue.Talents.Mutilate {
+		rogue.registerEnvenom()
 	}
 
 	rogue.finishingMoveEffectApplier = rogue.makeFinishingMoveEffectApplier()
-
-	rogue.energyPerSecondAvg = core.EnergyPerTick / core.EnergyTickDuration.Seconds()
-
-	// TODO: Currently assumes default combat spec.
-	expectedComboPointsAfterFinisher := 0
-	expectedEnergyAfterFinisher := 25.0
-	comboPointsNeeded := 5 - expectedComboPointsAfterFinisher
-	energyForEA := rogue.Builder.DefaultCast.Cost*float64(comboPointsNeeded) + rogue.ExposeArmor.DefaultCast.Cost
-	rogue.eaBuildTime = time.Duration(((energyForEA - expectedEnergyAfterFinisher) / rogue.energyPerSecondAvg) * float64(time.Second))
-
 	rogue.DelayDPSCooldownsForArmorDebuffs()
 }
 
+func (rogue *Rogue) GetExpectedEnergyPerSecond() float64 {
+	const finishersPerSecond = 1.0 / 6
+	const averageComboPointsSpendOnFinisher = 4.0
+	bonusEnergyPerSecond := float64(rogue.Talents.CombatPotency) * 3 * 0.2 * 1.0 / (rogue.AutoAttacks.OH.SwingSpeed / 1.4)
+	bonusEnergyPerSecond += float64(rogue.Talents.FocusedAttacks)
+	bonusEnergyPerSecond += float64(rogue.Talents.RelentlessStrikes) * 0.04 * 25 * finishersPerSecond * averageComboPointsSpendOnFinisher
+	return (core.EnergyPerTick*rogue.EnergyTickMultiplier)/core.EnergyTickDuration.Seconds() + bonusEnergyPerSecond
+}
+
+func (rogue *Rogue) ApplyEnergyTickMultiplier(multiplier float64) {
+	rogue.EnergyTickMultiplier *= multiplier
+}
+
 func (rogue *Rogue) Reset(sim *core.Simulation) {
-	rogue.plan = PlanOpener
-	rogue.doneSND = false
-
-	permaEA := rogue.ExposeArmorAura.Duration == core.NeverExpires
-	rogue.doneEA = !rogue.Rotation.MaintainExposeArmor || permaEA
-
 	rogue.disabledMCDs = rogue.DisableAllEnabledCooldowns(core.CooldownTypeUnknown)
+	rogue.SetPriorityList(sim)
 }
 
 func (rogue *Rogue) MeleeCritMultiplier(isMH bool, applyLethality bool) float64 {
-	primaryModifier := rogue.murderMultiplier()
+	primaryModifier := 1.0
 	secondaryModifier := 0.0
-
+	preyModifier := rogue.preyOnTheWeakMultiplier(rogue.CurrentTarget)
 	if applyLethality {
 		secondaryModifier += 0.06 * float64(rogue.Talents.Lethality)
 	}
-
-	// TODO: Use the following predicate if/when health values are modeled
-	//if rogue.CurrentTarget != nil && rogue.CurrentTarget.HasHealthBar() && rogue.CurrentTarget.CurrentHealthPercent() < rogue.CurrentHealthPercent() {
-	if rogue.Talents.PreyOnTheWeak > 0 {
-		secondaryModifier *= (1 + 0.04*float64(rogue.Talents.PreyOnTheWeak))
-		primaryModifier *= (1 + 0.04*float64(rogue.Talents.PreyOnTheWeak))
-	}
-	if rogue.Character.HasMetaGemEquipped(34220) ||
-		rogue.Character.HasMetaGemEquipped(32409) ||
-		rogue.Character.HasMetaGemEquipped(41285) ||
-		rogue.Character.HasMetaGemEquipped(41398) {
-		primaryModifier *= 1.03
-	}
-	return (2.0 + secondaryModifier) * primaryModifier
+	primaryModifier *= preyModifier
+	return rogue.Character.MeleeCritMultiplier(primaryModifier, secondaryModifier)
 }
 func (rogue *Rogue) SpellCritMultiplier() float64 {
-	return rogue.Character.SpellCritMultiplier(rogue.murderMultiplier(), 0)
+	primaryModifier := rogue.preyOnTheWeakMultiplier(rogue.CurrentTarget)
+	return rogue.Character.SpellCritMultiplier(primaryModifier, 0)
 }
 
 func NewRogue(character core.Character, options proto.Player) *Rogue {
@@ -216,48 +199,17 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 	// Passive rogue threat reduction: https://wotlk.wowhead.com/spell=21184/rogue-passive-dnd
 	rogue.PseudoStats.ThreatMultiplier *= 0.71
 	rogue.PseudoStats.CanParry = true
-
-	daggerMH := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger
-	daggerOH := rogue.Equip[proto.ItemSlot_ItemSlotOffHand].WeaponType == proto.WeaponType_WeaponTypeDagger
-	dualDagger := daggerMH && daggerOH
-	if rogue.Rotation.Builder == proto.Rogue_Rotation_Unknown {
-		rogue.Rotation.Builder = proto.Rogue_Rotation_Auto
-	}
-	if rogue.Rotation.Builder == proto.Rogue_Rotation_Backstab && !daggerMH {
-		rogue.Rotation.Builder = proto.Rogue_Rotation_Auto
-	} else if rogue.Rotation.Builder == proto.Rogue_Rotation_Hemorrhage && !rogue.Talents.Hemorrhage {
-		rogue.Rotation.Builder = proto.Rogue_Rotation_Auto
-	} else if rogue.Rotation.Builder == proto.Rogue_Rotation_Mutilate && !rogue.Talents.Mutilate {
-		rogue.Rotation.Builder = proto.Rogue_Rotation_Auto
-	} else if rogue.Rotation.Builder == proto.Rogue_Rotation_Mutilate && !dualDagger {
-		rogue.Rotation.Builder = proto.Rogue_Rotation_Auto
-	}
-	if rogue.Rotation.Builder == proto.Rogue_Rotation_Auto {
-		if rogue.Talents.Mutilate && dualDagger {
-			rogue.Rotation.Builder = proto.Rogue_Rotation_Mutilate
-		} else if rogue.Talents.Hemorrhage {
-			rogue.Rotation.Builder = proto.Rogue_Rotation_Hemorrhage
-		} else if daggerMH {
-			rogue.Rotation.Builder = proto.Rogue_Rotation_Backstab
-		} else {
-			rogue.Rotation.Builder = proto.Rogue_Rotation_SinisterStrike
-		}
-	}
-
-	if rogue.Consumes.OffHandImbue != proto.WeaponImbue_WeaponImbueRogueDeadlyPoison {
-		rogue.Rotation.UseShiv = false
-	}
-
 	maxEnergy := 100.0
 	if rogue.Talents.Vigor {
-		maxEnergy = 110
+		maxEnergy += 10
 	}
-	rogue.EnableEnergyBar(maxEnergy, func(sim *core.Simulation) {
-		rogue.TryUseCooldowns(sim)
-		if rogue.GCD.IsReady(sim) {
-			rogue.doRotation(sim)
-		}
-	})
+	if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfVigor) {
+		maxEnergy += 10
+	}
+	if rogue.HasSetBonus(ItemSetGladiatorsVestments, 4) {
+		maxEnergy += 10
+	}
+	rogue.EnableEnergyBar(maxEnergy, rogue.OnEnergyGain)
 	rogue.EnergyTickMultiplier *= (1 + []float64{0, 0.08, 0.16, 0.25}[rogue.Talents.Vitality])
 
 	rogue.EnableAutoAttacks(rogue, core.AutoAttackOptions{
@@ -265,12 +217,23 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 		OffHand:        rogue.WeaponFromOffHand(0),  // Set crit multiplier later when we have targets.
 		AutoSwingMelee: true,
 	})
+	rogue.applyPoisons()
 
-	rogue.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+1)
-	rogue.AddStatDependency(stats.Agility, stats.AttackPower, 1.0+1)
-	rogue.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/83.15))
+	rogue.AddStatDependency(stats.Strength, stats.AttackPower, 1)
+	rogue.AddStatDependency(stats.Agility, stats.AttackPower, 1)
+	rogue.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/83.15)
 
 	return rogue
+}
+
+func (rogue *Rogue) ApplyCutToTheChase(sim *core.Simulation) {
+	if rogue.Talents.CutToTheChase > 0 && rogue.SliceAndDiceAura.IsActive() {
+		chanceToRefresh := float64(rogue.Talents.CutToTheChase) * 0.2
+		if chanceToRefresh == 1 || sim.RandomFloat("Cut to the Chase") < chanceToRefresh {
+			rogue.SliceAndDiceAura.Duration = rogue.sliceAndDiceDurations[5]
+			rogue.SliceAndDiceAura.Activate(sim)
+		}
+	}
 }
 
 func init() {

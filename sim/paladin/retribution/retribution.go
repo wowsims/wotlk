@@ -36,10 +36,24 @@ func NewRetributionPaladin(character core.Character, options proto.Player) *Retr
 		DivinePleaPercentage: retOptions.Rotation.DivinePleaPercentage,
 		ExoSlack:             retOptions.Rotation.ExoSlack,
 		ConsSlack:            retOptions.Rotation.ConsSlack,
+		HolyWrathThreshold:   retOptions.Rotation.HolyWrathThreshold,
 
 		HasLightswornBattlegear2Pc: character.HasSetBonus(paladin.ItemSetLightswornBattlegear, 2),
 	}
 	ret.PaladinAura = retOptions.Options.Aura
+
+	ret.RotatioOption = retOptions.Rotation.CustomRotation
+	if retOptions.Rotation.Type == proto.RetributionPaladin_Rotation_Standard {
+		ret.SelectedRotation = ret.mainRotation
+	} else if retOptions.Rotation.Type == proto.RetributionPaladin_Rotation_Custom {
+		ret.SelectedRotation = ret.customRotation
+	} else if retOptions.Rotation.Type == proto.RetributionPaladin_Rotation_CastSequence {
+		ret.SelectedRotation = ret.castSequenceRotation
+		ret.CastSequenceIndex = 0
+		ret.RotatioOption = retOptions.Rotation.CustomCastSequence
+	} else {
+		ret.SelectedRotation = ret.mainRotation
+	}
 
 	// Convert DTPS option to bonus MP5
 	spAtt := retOptions.Options.DamageTakenPerSecond * 5.0 / 10.0
@@ -64,11 +78,14 @@ type RetributionPaladin struct {
 	DivinePleaPercentage float64
 	ExoSlack             int32
 	ConsSlack            int32
-
-	SealInitComplete       bool
-	DivinePleaInitComplete bool
+	HolyWrathThreshold   int32
 
 	HasLightswornBattlegear2Pc bool
+
+	SelectedRotation  func(*core.Simulation)
+	RotatioOption     *proto.CustomRotation
+	RotationInput     []*core.Spell
+	CastSequenceIndex int32
 
 	Rotation proto.RetributionPaladin_Rotation
 }
@@ -86,7 +103,47 @@ func (ret *RetributionPaladin) Initialize() {
 
 func (ret *RetributionPaladin) Reset(sim *core.Simulation) {
 	ret.Paladin.Reset(sim)
-	ret.AutoAttacks.CancelAutoSwing(sim)
-	ret.SealInitComplete = false
-	ret.DivinePleaInitComplete = false
+
+	if ret.RotatioOption != nil {
+		ret.RotationInput = make([]*core.Spell, len(ret.RotatioOption.Spells))
+		for i, customSpellProto := range ret.RotatioOption.Spells {
+			switch customSpellProto.Spell {
+			case int32(proto.RetributionPaladin_Rotation_JudgementOfWisdom):
+				ret.RotationInput[i] = ret.JudgementOfWisdom
+			case int32(proto.RetributionPaladin_Rotation_DivineStorm):
+				ret.RotationInput[i] = ret.DivineStorm
+			case int32(proto.RetributionPaladin_Rotation_HammerOfWrath):
+				ret.RotationInput[i] = ret.HammerOfWrath
+			case int32(proto.RetributionPaladin_Rotation_Consecration):
+				ret.RotationInput[i] = ret.Consecration
+			case int32(proto.RetributionPaladin_Rotation_HolyWrath):
+				ret.RotationInput[i] = ret.HolyWrath
+			case int32(proto.RetributionPaladin_Rotation_CrusaderStrike):
+				ret.RotationInput[i] = ret.CrusaderStrike
+			case int32(proto.RetributionPaladin_Rotation_Exorcism):
+				ret.RotationInput[i] = ret.Exorcism
+			}
+		}
+	}
+
+	sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int) {
+		if isExecute == 20 {
+			ret.OnGCDReady(sim)
+		}
+	})
+
+	ret.CastSequenceIndex = 0
+
+	switch ret.Seal {
+	case proto.PaladinSeal_Vengeance:
+		ret.SealOfVengeanceAura.Activate(sim)
+	case proto.PaladinSeal_Command:
+		ret.SealOfCommandAura.Activate(sim)
+	case proto.PaladinSeal_Righteousness:
+		ret.SealOfRighteousnessAura.Activate(sim)
+	}
+
+	ret.DivinePleaAura.Activate(sim)
+	ret.DivinePlea.CD.Use(sim)
+
 }

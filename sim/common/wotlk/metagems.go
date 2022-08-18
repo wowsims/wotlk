@@ -15,7 +15,7 @@ func init() {
 	// TODO: Invigorating Earthsiege (heal on crits)
 
 	core.NewItemEffect(41333, func(agent core.Agent) {
-		agent.GetCharacter().AddStatDependency(stats.Intellect, stats.Intellect, 1.0+0.02)
+		agent.GetCharacter().MultiplyStat(stats.Intellect, 1.02)
 	})
 
 	core.NewItemEffect(41377, func(agent core.Agent) {
@@ -34,7 +34,7 @@ func init() {
 	})
 
 	core.NewItemEffect(41389, func(agent core.Agent) {
-		agent.GetCharacter().AddStatDependency(stats.Mana, stats.Mana, 1.0+0.02)
+		agent.GetCharacter().MultiplyStat(stats.Mana, 1.02)
 	})
 
 	core.NewItemEffect(41395, func(agent core.Agent) {
@@ -43,7 +43,7 @@ func init() {
 	})
 
 	core.NewItemEffect(41396, func(agent core.Agent) {
-		agent.GetCharacter().AddStatDependency(stats.BlockValue, stats.BlockValue, 1.0+0.05)
+		agent.GetCharacter().MultiplyStat(stats.BlockValue, 1.05)
 	})
 
 	core.NewItemEffect(41400, func(agent core.Agent) {
@@ -54,6 +54,7 @@ func init() {
 			Timer:    character.NewTimer(),
 			Duration: time.Second * 40,
 		}
+		ppmm := character.AutoAttacks.NewPPMManager(1.0, core.ProcMaskMeleeOrRanged)
 
 		character.RegisterAura(core.Aura{
 			Label:    "Thundering Skyflare Diamond",
@@ -67,6 +68,9 @@ func init() {
 					return
 				}
 				if !icd.IsReady(sim) {
+					return
+				}
+				if !ppmm.Proc(sim, spellEffect.ProcMask, "Thundering Skyflare Diamond") {
 					return
 				}
 				icd.Use(sim)

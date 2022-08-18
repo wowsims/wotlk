@@ -6,14 +6,22 @@ import (
 )
 
 var FireTalents = &proto.MageTalents{
-	ArcaneSubtlety: 2,
+
+	ArcaneSubtlety:      2,
+	ArcaneFocus:         3,
+	ArcaneConcentration: 5,
+	SpellImpact:         3,
+	StudentOfTheMind:    1,
+	FocusMagic:          true,
+	TormentTheWeak:      3,
 
 	ImprovedFireball: 5,
 	Ignite:           5,
-	Incineration:     2,
+	WorldInFlames:    3,
 	Pyroblast:        true,
+	BurningSoul:      1,
 	ImprovedScorch:   3,
-	MasterOfElements: 3,
+	MasterOfElements: 2,
 	PlayingWithFire:  3,
 	CriticalMass:     3,
 	BlastWave:        true,
@@ -21,18 +29,22 @@ var FireTalents = &proto.MageTalents{
 	Pyromaniac:       3,
 	Combustion:       true,
 	MoltenFury:       2,
-
-	ImprovedFrostbolt: 4,
-	IceShards:         5,
-	IcyVeins:          true,
+	EmpoweredFire:    3,
+	DragonsBreath:    true,
+	Firestarter:      2,
+	HotStreak:        3,
+	Burnout:          5,
+	LivingBomb:       true,
 }
 
 var FrostTalents = &proto.MageTalents{
 	ArcaneFocus:         5,
 	ArcaneConcentration: 5,
+	SpellImpact:         3,
 	ArcaneMeditation:    3,
 
 	ImprovedFrostbolt:    5,
+	Precision:            3,
 	IceShards:            5,
 	IcyVeins:             true,
 	PiercingIce:          5,
@@ -47,39 +59,49 @@ var FrostTalents = &proto.MageTalents{
 }
 
 var ArcaneTalents = &proto.MageTalents{
-	ArcaneFocus:         5,
+
+	ArcaneFocus:         3,
+	ArcaneSubtlety:      2,
 	ArcaneConcentration: 5,
+	SpellImpact:         3,
+	FocusMagic:          true,
+	MagicAttunement:     1,
+	StudentOfTheMind:    3,
 	ArcaneMeditation:    3,
+	TormentTheWeak:      3,
 	PresenceOfMind:      true,
 	ArcaneMind:          5,
 	ArcaneInstability:   3,
-	ArcanePotency:       3,
+	ArcanePotency:       2,
+	ArcaneEmpowerment:   3,
 	ArcanePower:         true,
-	SpellPower:          2,
+	ArcaneFlows:         2,
 	MindMastery:         5,
+	MissileBarrage:      5,
+	NetherwindPresence:  3,
+	SpellPower:          2,
+	ArcaneBarrage:       true,
 
-	ImprovedFrostbolt: 5,
-	IceShards:         5,
+	Incineration: 3,
+
+	ImprovedFrostbolt: 2,
+	IceFloes:          3,
+	IceShards:         2,
+	Precision:         3,
 	IcyVeins:          true,
-	PiercingIce:       5,
-	FrostChanneling:   3,
-	ColdSnap:          true,
 }
 
 var fireMageOptions = &proto.Mage_Options{
-	Armor: proto.Mage_Options_MageArmor,
+	Armor: proto.Mage_Options_MoltenArmor,
 }
 var PlayerOptionsFire = &proto.Player_Mage{
 	Mage: &proto.Mage{
 		Talents: FireTalents,
 		Options: fireMageOptions,
 		Rotation: &proto.Mage_Rotation{
-			Type: proto.Mage_Rotation_Fire,
-			Fire: &proto.Mage_Rotation_FireRotation{
-				PrimarySpell:           proto.Mage_Rotation_FireRotation_Fireball,
-				MaintainImprovedScorch: true,
-				WeaveFireBlast:         true,
-			},
+			Type:                   proto.Mage_Rotation_Fire,
+			PrimaryFireSpell:       proto.Mage_Rotation_Fireball,
+			MaintainImprovedScorch: false,
 		},
 	},
 }
@@ -88,10 +110,8 @@ var PlayerOptionsFireAOE = &proto.Player_Mage{
 		Talents: FireTalents,
 		Options: fireMageOptions,
 		Rotation: &proto.Mage_Rotation{
-			MultiTargetRotation: true,
-			Aoe: &proto.Mage_Rotation_AoeRotation{
-				Rotation: proto.Mage_Rotation_AoeRotation_Flamestrike,
-			},
+			Type: proto.Mage_Rotation_Aoe,
+			Aoe:  proto.Mage_Rotation_Flamestrike,
 		},
 	},
 }
@@ -104,8 +124,7 @@ var PlayerOptionsFrost = &proto.Player_Mage{
 		Talents: FrostTalents,
 		Options: frostMageOptions,
 		Rotation: &proto.Mage_Rotation{
-			Type:  proto.Mage_Rotation_Frost,
-			Frost: &proto.Mage_Rotation_FrostRotation{},
+			Type: proto.Mage_Rotation_Frost,
 		},
 	},
 }
@@ -114,29 +133,22 @@ var PlayerOptionsFrostAOE = &proto.Player_Mage{
 		Talents: FrostTalents,
 		Options: frostMageOptions,
 		Rotation: &proto.Mage_Rotation{
-			MultiTargetRotation: true,
-			Aoe: &proto.Mage_Rotation_AoeRotation{
-				Rotation: proto.Mage_Rotation_AoeRotation_Blizzard,
-			},
+			Type: proto.Mage_Rotation_Aoe,
+			Aoe:  proto.Mage_Rotation_Blizzard,
 		},
 	},
 }
 
 var arcaneMageOptions = &proto.Mage_Options{
-	Armor: proto.Mage_Options_MageArmor,
+	Armor: proto.Mage_Options_MoltenArmor,
 }
 var PlayerOptionsArcane = &proto.Player_Mage{
 	Mage: &proto.Mage{
 		Talents: ArcaneTalents,
 		Options: arcaneMageOptions,
 		Rotation: &proto.Mage_Rotation{
-			Type: proto.Mage_Rotation_Arcane,
-			Arcane: &proto.Mage_Rotation_ArcaneRotation{
-				Filler:                     proto.Mage_Rotation_ArcaneRotation_ArcaneMissilesFrostbolt,
-				ArcaneBlastsBetweenFillers: 3,
-				StartRegenRotationPercent:  0.2,
-				StopRegenRotationPercent:   0.3,
-			},
+			Type:                   proto.Mage_Rotation_Arcane,
+			MinBlastBeforeMissiles: 4,
 		},
 	},
 }
@@ -145,162 +157,148 @@ var PlayerOptionsArcaneAOE = &proto.Player_Mage{
 		Talents: ArcaneTalents,
 		Options: arcaneMageOptions,
 		Rotation: &proto.Mage_Rotation{
-			MultiTargetRotation: true,
-			Aoe: &proto.Mage_Rotation_AoeRotation{
-				Rotation: proto.Mage_Rotation_AoeRotation_ArcaneExplosion,
-			},
+			Type: proto.Mage_Rotation_Aoe,
+			Aoe:  proto.Mage_Rotation_ArcaneExplosion,
 		},
 	},
 }
 
 var FullRaidBuffs = &proto.RaidBuffs{
-	GiftOfTheWild:   proto.TristateEffect_TristateEffectImproved,
-	Bloodlust:       true,
-	MoonkinAura:     proto.TristateEffect_TristateEffectRegular,
-	ManaSpringTotem: proto.TristateEffect_TristateEffectRegular,
-	TotemOfWrath:    true,
-	WrathOfAirTotem: true,
+	GiftOfTheWild:     proto.TristateEffect_TristateEffectImproved,
+	Bloodlust:         true,
+	MoonkinAura:       proto.TristateEffect_TristateEffectRegular,
+	ManaSpringTotem:   proto.TristateEffect_TristateEffectRegular,
+	TotemOfWrath:      true,
+	WrathOfAirTotem:   true,
+	ArcaneBrilliance:  true,
+	ArcaneEmpowerment: true,
+	SwiftRetribution:  true,
+	DivineSpirit:      true,
 }
 var FullFirePartyBuffs = &proto.PartyBuffs{}
 var FullFrostPartyBuffs = FullFirePartyBuffs
 var FullIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings:  true,
-	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
+	BlessingOfKings:     true,
+	BlessingOfWisdom:    proto.TristateEffect_TristateEffectImproved,
+	JudgementsOfTheWise: true,
 }
 
 var FullArcanePartyBuffs = &proto.PartyBuffs{
 	ManaTideTotems: 1,
 }
-var FullArcaneIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings:  true,
-	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
-	Innervates:       1,
-}
+var FullArcaneIndividualBuffs = FullIndividualBuffs
 
 var FullFireConsumes = &proto.Consumes{
-	Flask:           proto.Flask_FlaskOfPureDeath,
-	Food:            proto.Food_FoodBlackenedBasilisk,
-	DefaultPotion:   proto.Potions_SuperManaPotion,
-	DefaultConjured: proto.Conjured_ConjuredFlameCap,
-	MainHandImbue:   proto.WeaponImbue_WeaponImbueBrilliantWizardOil,
+	Flask:         proto.Flask_FlaskOfTheFrostWyrm,
+	Food:          proto.Food_FoodFirecrackerSalmon,
+	DefaultPotion: proto.Potions_PotionOfSpeed,
+	// DefaultConjured: proto.Conjured_ConjuredFlameCap,
 }
-var FullFrostConsumes = &proto.Consumes{
-	Flask:           proto.Flask_FlaskOfPureDeath,
-	Food:            proto.Food_FoodBlackenedBasilisk,
-	DefaultPotion:   proto.Potions_SuperManaPotion,
-	DefaultConjured: proto.Conjured_ConjuredMageManaEmerald,
-	MainHandImbue:   proto.WeaponImbue_WeaponImbueBrilliantWizardOil,
-}
+var FullFrostConsumes = FullFireConsumes
 
-var FullArcaneConsumes = &proto.Consumes{
-	Flask:           proto.Flask_FlaskOfBlindingLight,
-	Food:            proto.Food_FoodBlackenedBasilisk,
-	DefaultPotion:   proto.Potions_SuperManaPotion,
-	DefaultConjured: proto.Conjured_ConjuredMageManaEmerald,
-	MainHandImbue:   proto.WeaponImbue_WeaponImbueBrilliantWizardOil,
-}
+var FullArcaneConsumes = FullFireConsumes
 
 var FullDebuffs = &proto.Debuffs{
-	CurseOfElements:   true,
 	JudgementOfWisdom: true,
+	EarthAndMoon:      true,
 	Misery:            true,
+	ImprovedScorch:    true,
 }
 
-var P1FireGear = items.EquipmentSpecFromJsonString(`{"items": [
+var P1ArcaneGear = items.EquipmentSpecFromJsonString(`{"items": [
 	{
-		"id": 29076,
-		"enchant": 29191,
-		"gems": [
-			34220,
-			24056
-		]
+	  "id": 40416,
+	  "enchant": 44877,
+	  "gems": [
+		41285,
+		39998
+	  ]
 	},
 	{
-		"id": 28134
+	  "id": 44661,
+	  "gems": [
+		40026
+	  ]
 	},
 	{
-		"id": 29079,
-		"enchant": 28886,
-		"gems": [
-			31867,
-			24030
-		]
+	  "id": 40419,
+	  "enchant": 44874,
+	  "gems": [
+		40051
+	  ]
 	},
 	{
-		"id": 28766,
-		"enchant": 33150
+	  "id": 44005,
+	  "enchant": 55642,
+	  "gems": [
+		40026
+	  ]
 	},
 	{
-		"id": 21848,
-		"enchant": 24003,
-		"gems": [
-			31867,
-			31867
-		]
+	  "id": 44002,
+	  "enchant": 44489,
+	  "gems": [
+		39998,
+		39998
+	  ]
 	},
 	{
-		"id": 28411,
-		"enchant": 22534,
-		"gems": [
-			31867
-		]
+	  "id": 44008,
+	  "enchant": 44498,
+	  "gems": [
+		39998,
+		0
+	  ]
 	},
 	{
-		"id": 21847,
-		"enchant": 28272,
-		"gems": [
-			31867,
-			24056
-		]
+	  "id": 40415,
+	  "enchant": 54999,
+	  "gems": [
+		39998,
+		0
+	  ]
 	},
 	{
-		"id": 21846,
-		"gems": [
-			31867,
-			31867
-		]
+	  "id": 40561,
+	  "gems": [
+		39998
+	  ]
 	},
 	{
-		"id": 24262,
-		"enchant": 24274,
-		"gems": [
-			31867,
-			31867,
-			31867
-		]
+	  "id": 40417,
+	  "enchant": 41602,
+	  "gems": [
+		39998,
+		40051
+	  ]
 	},
 	{
-		"id": 28517,
-		"enchant": 35297,
-		"gems": [
-			31867,
-			31867
-		]
+	  "id": 40558,
+	  "enchant": 55016
 	},
 	{
-		"id": 28793,
-		"enchant": 22536
+	  "id": 40719
 	},
 	{
-		"id": 29172,
-		"enchant": 22536
+	  "id": 40399
 	},
 	{
-		"id": 29370
+	  "id": 39229
 	},
 	{
-		"id": 27683
+	  "id": 40255
 	},
 	{
-		"id": 28802,
-		"enchant": 22560
+	  "id": 40396,
+	  "enchant": 44487
 	},
 	{
-		"id": 29270
+	  "id": 40273
 	},
 	{
-		"id": 28673
+	  "id": 39426
 	}
-]}`)
-var P1FrostGear = P1FireGear
-var P1ArcaneGear = P1FireGear
+  ]
+}`)
+var P1FrostGear = P1ArcaneGear
+var P1FireGear = P1ArcaneGear

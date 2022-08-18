@@ -56,7 +56,7 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 		ActionID:     actionID,
 		SpellSchool:  spellSchool,
 		Cast:         core.CastConfig{},
-		ApplyEffects: core.ApplyEffectFuncMultipleDamageCappedWotLK(baseEffects),
+		ApplyEffects: core.ApplyEffectFuncMultipleDamageCapped(baseEffects),
 	})
 
 	effect := core.SpellEffect{

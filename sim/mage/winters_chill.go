@@ -6,25 +6,13 @@ import (
 
 // Winters Chill has a separate hit check from frostbolt, so it needs its own spell.
 func (mage *Mage) registerWintersChillSpell() {
-	effect := core.SpellEffect{
-		ProcMask:            core.ProcMaskEmpty,
-		BonusSpellHitRating: 0,
-		ThreatMultiplier:    1,
-		OutcomeApplier:      mage.OutcomeFuncMagicHit(),
+	if mage.Talents.WintersChill == 0 {
+		return
 	}
 
-	if mage.Talents.WintersChill > 0 {
-		wcAura := mage.CurrentTarget.GetAura(core.WintersChillAuraLabel)
-		if wcAura == nil {
-			wcAura = core.WintersChillAura(mage.CurrentTarget, 0)
-		}
-
-		effect.OnSpellHitDealt = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Landed() {
-				wcAura.Activate(sim)
-				wcAura.AddStack(sim)
-			}
-		}
+	wcAura := mage.CurrentTarget.GetAura(core.WintersChillAuraLabel)
+	if wcAura == nil {
+		wcAura = core.WintersChillAura(mage.CurrentTarget, 0)
 	}
 
 	mage.WintersChill = mage.RegisterSpell(core.SpellConfig{
@@ -32,7 +20,20 @@ func (mage *Mage) registerWintersChillSpell() {
 		SpellSchool: core.SpellSchoolFrost,
 		Flags:       SpellFlagMage,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+			ProcMask:            core.ProcMaskEmpty,
+			BonusSpellHitRating: 0,
+			ThreatMultiplier:    1,
+			OutcomeApplier:      mage.OutcomeFuncMagicHit(),
+			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if spellEffect.Landed() {
+					wcAura.Activate(sim)
+					if wcAura.IsActive() {
+						wcAura.AddStack(sim)
+					}
+				}
+			},
+		}),
 	})
 }
 
@@ -41,7 +42,7 @@ func (mage *Mage) applyWintersChill() {
 		return
 	}
 
-	procChance := float64(mage.Talents.WintersChill) / 5.0
+	procChance := float64(mage.Talents.WintersChill) / 3
 
 	mage.RegisterAura(core.Aura{
 		Label:    "Winters Chill Talent",
@@ -55,11 +56,9 @@ func (mage *Mage) applyWintersChill() {
 			}
 
 			if spell.SpellSchool == core.SpellSchoolFrost && spell != mage.WintersChill {
-				if procChance != 1.0 && sim.RandomFloat("Winters Chill") > procChance {
-					return
+				if procChance == 1.0 || sim.RandomFloat("Winters Chill") < procChance {
+					mage.WintersChill.Cast(sim, spellEffect.Target)
 				}
-
-				mage.WintersChill.Cast(sim, spellEffect.Target)
 			}
 		},
 	})

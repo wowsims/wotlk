@@ -19,20 +19,27 @@ func (paladin *Paladin) ApplyTalents() {
 	paladin.AddStat(stats.SpellCrit, float64(paladin.Talents.SanctityOfBattle)*core.CritRatingPerCritChance)
 
 	paladin.AddStat(stats.Parry, core.ParryRatingPerParryChance*1*float64(paladin.Talents.Deflection))
+	paladin.AddStat(stats.Parry, core.DodgeRatingPerDodgeChance*1*float64(paladin.Talents.Anticipation))
+
 	paladin.AddStat(stats.Armor, paladin.Equip.Stats()[stats.Armor]*0.02*float64(paladin.Talents.Toughness))
 	paladin.AddStat(stats.Defense, core.DefenseRatingPerDefense*4*float64(paladin.Talents.Anticipation))
 
 	if paladin.Talents.DivineStrength > 0 {
-		paladin.AddStatDependency(stats.Strength, stats.Strength, 1.0+0.03*float64(paladin.Talents.DivineStrength))
+		paladin.MultiplyStat(stats.Strength, 1.0+0.03*float64(paladin.Talents.DivineStrength))
 	}
 	if paladin.Talents.DivineIntellect > 0 {
-		paladin.AddStatDependency(stats.Intellect, stats.Intellect, 1.0+0.02*float64(paladin.Talents.DivineIntellect))
+		paladin.MultiplyStat(stats.Intellect, 1.0+0.02*float64(paladin.Talents.DivineIntellect))
 	}
 
 	if paladin.Talents.SheathOfLight > 0 {
 		// doesn't implement HOT
 		percentage := 0.10 * float64(paladin.Talents.SheathOfLight)
-		paladin.AddStatDependency(stats.AttackPower, stats.SpellPower, 1.0+percentage)
+		paladin.AddStatDependency(stats.AttackPower, stats.SpellPower, percentage)
+	}
+
+	if paladin.Talents.TouchedByTheLight > 0 {
+		percentage := 0.20 * float64(paladin.Talents.TouchedByTheLight)
+		paladin.AddStatDependency(stats.Strength, stats.SpellPower, 1.0+percentage)
 	}
 
 	// if paladin.Talents.ShieldSpecialization > 0 {
@@ -47,12 +54,16 @@ func (paladin *Paladin) ApplyTalents() {
 	// }
 
 	if paladin.Talents.SacredDuty > 0 {
-		paladin.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+0.03*float64(paladin.Talents.SacredDuty))
+		paladin.MultiplyStat(stats.Stamina, 1.0+0.02*float64(paladin.Talents.SacredDuty))
 	}
 
 	if paladin.Talents.CombatExpertise > 0 {
-		paladin.AddStat(stats.Expertise, core.ExpertisePerQuarterPercentReduction*1*float64(paladin.Talents.CombatExpertise))
-		paladin.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+0.02*float64(paladin.Talents.CombatExpertise))
+		paladin.AddStat(stats.Expertise, core.ExpertisePerQuarterPercentReduction*2*float64(paladin.Talents.CombatExpertise))
+		paladin.MultiplyStat(stats.Stamina, 1.0+0.02*float64(paladin.Talents.CombatExpertise))
+	}
+
+	if paladin.Talents.ShieldOfTheTemplar > 0 {
+		paladin.PseudoStats.DamageTakenMultiplier *= 1 - 0.01*float64(paladin.Talents.ShieldOfTheTemplar)
 	}
 
 	paladin.applyRedoubt()
@@ -66,6 +77,7 @@ func (paladin *Paladin) ApplyTalents() {
 	paladin.applyJudgmentsOfTheWise()
 	paladin.applyRighteousVengeance()
 	paladin.applyMinorGlyphOfSenseUndead()
+	paladin.applyGuardedByTheLight()
 }
 
 func (paladin *Paladin) getTalentSealsOfThePureBonus() float64 {
@@ -109,7 +121,7 @@ func (paladin *Paladin) applyMinorGlyphOfSenseUndead() {
 				for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
 					unit := paladin.Env.GetTargetUnit(i)
 					if unit.MobType == proto.MobType_MobTypeUndead {
-						paladin.AttackTables[unit.TableIndex].DamageDealtMultiplier *= 1.01
+						paladin.AttackTables[unit.UnitIndex].DamageDealtMultiplier *= 1.01
 					}
 				}
 				applied = true
@@ -123,9 +135,11 @@ func (paladin *Paladin) applyRedoubt() {
 		return
 	}
 
-	actionID := core.ActionID{SpellID: 20137}
+	actionID := core.ActionID{SpellID: 20132}
 
-	bonusBlockRating := 6 * core.BlockRatingPerBlockChance * float64(paladin.Talents.Redoubt)
+	paladin.MultiplyStat(stats.BlockValue, 1.0+0.10*float64(paladin.Talents.Redoubt))
+
+	bonusBlockRating := 10 * core.BlockRatingPerBlockChance * float64(paladin.Talents.Redoubt)
 
 	procAura := paladin.RegisterAura(core.Aura{
 		Label:     "Redoubt Proc",
@@ -257,7 +271,7 @@ func (paladin *Paladin) applyCrusade() {
 					unit := paladin.Env.GetTargetUnit(i)
 					switch unit.MobType {
 					case proto.MobType_MobTypeHumanoid, proto.MobType_MobTypeDemon, proto.MobType_MobTypeUndead, proto.MobType_MobTypeElemental:
-						paladin.AttackTables[unit.TableIndex].DamageDealtMultiplier *= 1 + (0.01 * float64(paladin.Talents.Crusade))
+						paladin.AttackTables[unit.UnitIndex].DamageDealtMultiplier *= 1 + (0.01 * float64(paladin.Talents.Crusade))
 					}
 				}
 				applied = true
@@ -371,8 +385,7 @@ func (paladin *Paladin) applyArtOfWar() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			// TODO: Check if only procs on white hits.
-			if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+			if !spellEffect.IsMelee() && !spell.Flags.Matches(SpellFlagSecondaryJudgement) {
 				return
 			}
 
@@ -396,8 +409,7 @@ func (paladin *Paladin) applyJudgmentsOfTheWise() {
 			if paladin.JowiseManaMetrics == nil {
 				paladin.JowiseManaMetrics = paladin.NewManaMetrics(core.ActionID{SpellID: 31878})
 			}
-			// TODO: actually restore intended mana
-			unit.AddMana(sim, unit.BaseMana*0.25, paladin.JowiseManaMetrics, false)
+			paladin.AddMana(sim, paladin.BaseMana*0.25, paladin.JowiseManaMetrics, false)
 		},
 	})
 
@@ -413,12 +425,12 @@ func (paladin *Paladin) applyJudgmentsOfTheWise() {
 			}
 
 			if paladin.Talents.JudgementsOfTheWise == 3 {
-				procSpell.Cast(sim, &paladin.Unit)
+				procSpell.Cast(sim, nil)
 			} else {
 				if sim.RandomFloat("judgements of the wise") > (0.33)*float64(paladin.Talents.JudgementsOfTheWise) {
 					return
 				}
-				procSpell.Cast(sim, &paladin.Unit)
+				procSpell.Cast(sim, nil)
 			}
 		},
 	})
@@ -427,7 +439,8 @@ func (paladin *Paladin) applyJudgmentsOfTheWise() {
 func (paladin *Paladin) makeRighteousVengeanceDot(target *core.Unit) *core.Dot {
 	var applier core.OutcomeApplier
 
-	if paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 2) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 2) {
+	if paladin.HasTuralyonsOrLiadrinsBattlegear2Pc {
+		// Crits using melee crit.
 		applier = paladin.OutcomeFuncMeleeSpecialCritOnly(paladin.MeleeCritMultiplier())
 	} else {
 		applier = paladin.OutcomeFuncAlwaysHit()
@@ -471,8 +484,8 @@ func (paladin *Paladin) registerRighteousVengeanceSpell() {
 
 	paladin.RighteousVengeanceSpell = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    dotActionID,
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics,
+		SpellSchool: core.SpellSchoolHoly,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreTargetModifiers | core.SpellFlagIgnoreAttackerModifiers,
 	})
 }
 
@@ -517,4 +530,34 @@ func (paladin *Paladin) applyFanaticism() {
 	}
 
 	paladin.PseudoStats.ThreatMultiplier *= 1 - 0.10*float64(paladin.Talents.Fanaticism)
+}
+
+func (paladin *Paladin) applyGuardedByTheLight() {
+	if paladin.Talents.GuardedByTheLight == 0 {
+		return
+	}
+
+	paladin.PseudoStats.ArcaneDamageTakenMultiplier *= 1 - 0.03*float64(paladin.Talents.GuardedByTheLight)
+	paladin.PseudoStats.FireDamageTakenMultiplier *= 1 - 0.03*float64(paladin.Talents.GuardedByTheLight)
+	paladin.PseudoStats.FrostDamageTakenMultiplier *= 1 - 0.03*float64(paladin.Talents.GuardedByTheLight)
+	paladin.PseudoStats.HolyDamageTakenMultiplier *= 1 - 0.03*float64(paladin.Talents.GuardedByTheLight)
+	paladin.PseudoStats.NatureDamageTakenMultiplier *= 1 - 0.03*float64(paladin.Talents.GuardedByTheLight)
+	paladin.PseudoStats.ShadowDamageTakenMultiplier *= 1 - 0.03*float64(paladin.Talents.GuardedByTheLight)
+
+	paladin.RegisterAura(core.Aura{
+		Label:    "Touched By The Light",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.Landed() {
+				return
+			}
+
+			if paladin.DivinePleaAura.IsActive() {
+				paladin.DivinePleaAura.Refresh(sim)
+			}
+		},
+	})
 }

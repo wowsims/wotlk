@@ -1,17 +1,22 @@
-import { Spec } from '/wotlk/core/proto/common.js';
-import { Player } from '/wotlk/core/player.js';
-import { EventID } from '/wotlk/core/typed_event.js';
-import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
+import { Spec } from '../core/proto/common.js';
+import { Player } from '../core/player.js';
+import { EventID } from '../core/typed_event.js';
+import { IndividualSimUI } from '../core/individual_sim_ui.js';
+import { ActionId } from '../core/proto_utils/action_id.js';
+import { CustomRotationPickerConfig } from '../core/components/custom_rotation_picker.js';
+import { CustomRotation } from '../core/proto/common.js';
 
 import {
 	PaladinAura as PaladinAura,
 	RetributionPaladin_Rotation as RetributionPaladinRotation,
 	RetributionPaladin_Options as RetributionPaladinOptions,
+	RetributionPaladin_Rotation_SpellOption as SpellOption,
+	RetributionPaladin_Rotation_RotationType as RotationType,
 	PaladinJudgement as PaladinJudgement,
 	PaladinSeal,
-} from '/wotlk/core/proto/paladin.js';
+} from '../core/proto/paladin.js';
 
-import * as InputHelpers from '/wotlk/core/components/input_helpers.js';
+import * as InputHelpers from '../core/components/input_helpers.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
@@ -19,21 +24,34 @@ export const RetributionPaladinRotationExoSlackConfig = InputHelpers.makeRotatio
 	fieldName: "exoSlack",
 	label: "Exo Slack (MS)",
 	labelTooltip: "Amount of extra time in MS to give main abilities to come off cooldown before using Exorcism on single target",
+	positive: true,
+	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.Standard,
 })
 
 export const RetributionPaladinRotationConsSlackConfig = InputHelpers.makeRotationNumberInput<Spec.SpecRetributionPaladin>({
 	fieldName: "consSlack",
 	label: "Cons Slack (MS)",
 	labelTooltip: "Amount of extra time in MS to give main abilities to come off cooldown before using Consecration on single target",
+	positive: true,
+	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.Standard,
 })
 
 export const RetributionPaladinRotationDivinePleaPercentageConfig = InputHelpers.makeRotationNumberInput<Spec.SpecRetributionPaladin>({
 	fieldName: "divinePleaPercentage",
 	label: "Divine Plea Mana Threshold %",
 	labelTooltip: "% of max mana left before beginning to use Divine Plea",
-	percent: true
+	percent: true,
+	positive: true,
+	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.Standard,
 })
 
+export const RetributionPaladinRotationHolyWrathConfig = InputHelpers.makeRotationNumberInput<Spec.SpecRetributionPaladin>({
+	fieldName: "holyWrathThreshold",
+	label: "Holy Wrath Threshold",
+	labelTooltip: "Minimum number of Demon and Undead units before Holy Wrath is considered viable to add to an AOE rotation.",
+	positive: true,
+	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.Standard,
+})
 
 export const AuraSelection = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecRetributionPaladin, PaladinAura>({
 	fieldName: 'aura',
@@ -75,4 +93,56 @@ export const DamageTakenPerSecond = InputHelpers.makeSpecOptionsNumberInput<Spec
 	fieldName: 'damageTakenPerSecond',
 	label: 'Damage Taken Per Second',
 	labelTooltip: "Damage taken per second across the encounter. Used to model mana regeneration from Spiritual Attunement. This value should NOT include damage taken from Seal of Blood / Judgement of Blood. Leave at 0 if you do not take damage during the encounter.",
+});
+
+export const RetributionPaladinRotationPriorityConfig = InputHelpers.makeCustomRotationInput<Spec.SpecRetributionPaladin, SpellOption>({
+	fieldName: 'customRotation',
+	numColumns: 2,
+	values: [
+		{ actionId: ActionId.fromSpellId(53408), value: SpellOption.JudgementOfWisdom },
+		{ actionId: ActionId.fromSpellId(53385), value: SpellOption.DivineStorm },
+		{ actionId: ActionId.fromSpellId(48806), value: SpellOption.HammerOfWrath },
+		{ actionId: ActionId.fromSpellId(48819), value: SpellOption.Consecration },
+		{ actionId: ActionId.fromSpellId(48817), value: SpellOption.HolyWrath },
+		{ actionId: ActionId.fromSpellId(35395), value: SpellOption.CrusaderStrike },
+		{ actionId: ActionId.fromSpellId(48801), value: SpellOption.Exorcism },
+	],
+	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.Custom,
+});
+
+export const RetributionPaladinCastSequenceConfig = InputHelpers.makeCustomRotationInput<Spec.SpecRetributionPaladin, SpellOption>({
+	fieldName: 'customCastSequence',
+	numColumns: 2,
+	values: [
+		{ actionId: ActionId.fromSpellId(53408), value: SpellOption.JudgementOfWisdom },
+		{ actionId: ActionId.fromSpellId(53385), value: SpellOption.DivineStorm },
+		{ actionId: ActionId.fromSpellId(48806), value: SpellOption.HammerOfWrath },
+		{ actionId: ActionId.fromSpellId(48819), value: SpellOption.Consecration },
+		{ actionId: ActionId.fromSpellId(48817), value: SpellOption.HolyWrath },
+		{ actionId: ActionId.fromSpellId(35395), value: SpellOption.CrusaderStrike },
+		{ actionId: ActionId.fromSpellId(48801), value: SpellOption.Exorcism },
+	],
+	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.CastSequence,
+});
+
+export const RotationSelector = InputHelpers.makeRotationEnumInput<Spec.SpecRetributionPaladin, RotationType>({
+	fieldName: 'type',
+	label: 'Type',
+	labelTooltip: 
+	`<ul>
+		<li>
+			<div>Standard: All-in-one rotation for single target and aoe.</div>
+		</li>
+		<li>
+			<div>Custom: Highest spell that is ready will be cast.</div>
+		</li>
+		<li>
+			<div>Cast Sequence: Spells will be cast in the order of the list. (Like 1-button-macro)</div>
+		</li>
+	</ul>`,
+	values: [
+		{ name: 'Standard', value: RotationType.Standard },
+		{ name: 'Custom', value: RotationType.Custom },
+		{ name: 'Cast Sequence', value: RotationType.CastSequence },
+	],
 });

@@ -7,95 +7,102 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-const SerpentCoilBraidID = 30720
-
-var ItemSetAldorRegalia = core.NewItemSet(core.ItemSet{
-	Name: "Aldor Regalia",
+//T7 Naxx
+var ItemSetFrostfireGarb = core.NewItemSet(core.ItemSet{
+	Name: "Frostfire Garb",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
-			// Interruption avoidance.
+			//Implemented in mana gems
 		},
 		4: func(agent core.Agent) {
-			// Reduces the cooldown on PoM/Blast Wave/Ice Block.
+			mage := agent.(MageAgent).GetMage()
+
+			mage.bonusCritDamage += .05
 		},
 	},
 })
 
-var ItemSetTirisfalRegalia = core.NewItemSet(core.ItemSet{
-	Name: "Tirisfal Regalia",
+//T8 Ulduar
+var ItemSetKirinTorGarb = core.NewItemSet(core.ItemSet{
+	Name: "Kirin Tor Garb",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
-			// Increases the damage and mana cost of Arcane Blast by 20%.
-			// Implemented in arcane_blast.go.
+
+			applyProcAura := func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) bool {
+				if !spell.Flags.Matches(BarrageSpells) {
+					return false
+				}
+
+				return sim.RandomFloat("Mage2pT8") < .25
+
+			}
+
+			agent.GetCharacter().StatProcWithICD("Kirin Tor 2pc", core.ActionID{SpellID: 64867}, stats.Stats{stats.SpellPower: 350}, 15*time.Second, 45*time.Second, applyProcAura)
+
 		},
 		4: func(agent core.Agent) {
-			mage := agent.(MageAgent).GetMage()
-			// Your spell critical strikes grant you up to 70 spell damage for 6 sec.
-			procAura := mage.NewTemporaryStatsAura("Tirisfal 4pc Proc", core.ActionID{SpellID: 37443}, stats.Stats{stats.SpellPower: 70}, time.Second*6)
-			mage.RegisterAura(core.Aura{
-				Label:    "Tirisfal 4pc",
-				Duration: core.NeverExpires,
-				OnReset: func(aura *core.Aura, sim *core.Simulation) {
-					aura.Activate(sim)
+			//Implemented at 10% chance needs testing
+		},
+	},
+})
+
+//T9
+var ItemSetKhadgarsRegalia = core.NewItemSet(core.ItemSet{
+	Name: "Khadgar's Regalia",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			//Implemented in initialization
+		},
+		4: func(agent core.Agent) {
+			//Implemented in each spell
+		},
+	},
+})
+
+//T9 horde
+var ItemSetSunstridersRegalia = core.NewItemSet(core.ItemSet{
+	Name: "Sunstrider's Regalia",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			//Implemented in initialization
+		},
+		4: func(agent core.Agent) {
+			//Implemented in each spell
+		},
+	},
+})
+
+var bloodmageHasteAura *core.Aura
+var bloodmageDamageAura *core.Aura
+var ItemSetBloodmagesRegalia = core.NewItemSet(core.ItemSet{
+	Name: "Bloodmage's Regalia",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			agent.GetCharacter()
+			bloodmageHasteAura = agent.GetCharacter().RegisterAura(core.Aura{
+				Label:    "Spec Based Haste T10 2PC",
+				ActionID: core.ActionID{SpellID: 70752},
+				Duration: time.Second * 5,
+				OnGain: func(aura *core.Aura, sim *core.Simulation) {
+					aura.Unit.MultiplyCastSpeed(1.12)
 				},
-				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if spellEffect.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
-						return
-					}
-					if spellEffect.Outcome.Matches(core.OutcomeCrit) {
-						procAura.Activate(sim)
-					}
+				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+					aura.Unit.MultiplyCastSpeed(1 / 1.12)
+				},
+			})
+		},
+		4: func(agent core.Agent) {
+			bloodmageDamageAura = agent.GetCharacter().RegisterAura(core.Aura{
+				Label:    "Mirror Image Bonus Damage T10 4PC",
+				ActionID: core.ActionID{SpellID: 70748},
+				Duration: time.Second * 30,
+				OnGain: func(aura *core.Aura, sim *core.Simulation) {
+					agent.GetCharacter().PseudoStats.DamageDealtMultiplier *= 1.18
+				},
+				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+					agent.GetCharacter().PseudoStats.DamageDealtMultiplier /= 1.18
 				},
 			})
 		},
 	},
 })
-
-var ItemSetTempestRegalia = core.NewItemSet(core.ItemSet{
-	Name: "Tempest Regalia",
-	Bonuses: map[int32]core.ApplyEffect{
-		2: func(agent core.Agent) {
-			// Increases the duratoin of your Evocation ability by 2 sec.
-			// Implemented in mage.go.
-		},
-		4: func(agent core.Agent) {
-			// Increases the damage of your Fireball, Frostbolt, and Arcane Missles abilities by 5%.
-			// Implemented in the files for those spells.
-		},
-	},
-})
-
-func init() {
-	core.NewSimpleStatOffensiveTrinketEffect(19339, stats.Stats{stats.SpellHaste: 330}, time.Second*20, time.Minute*5) // MQG
-
-	core.NewItemEffect(32488, func(agent core.Agent) {
-		mage := agent.(MageAgent).GetMage()
-		procAura := mage.NewTemporaryStatsAura("Asghtongue Talisman Proc", core.ActionID{SpellID: 32488}, stats.Stats{stats.SpellHaste: 150}, time.Second*5)
-
-		mage.RegisterAura(core.Aura{
-			Label:    "Ashtongue Talisman",
-			Duration: core.NeverExpires,
-			OnReset: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Activate(sim)
-			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
-					return
-				}
-				if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
-					return
-				}
-
-				if sim.RandomFloat("Ashtongue Talisman of Insight") > 0.5 {
-					return
-				}
-
-				procAura.Activate(sim)
-			},
-		})
-	})
-
-	// Even though these item effects are handled elsewhere, add them so they are
-	// detected for automatic testing.
-	core.NewItemEffect(SerpentCoilBraidID, func(core.Agent) {})
-}

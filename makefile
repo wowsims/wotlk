@@ -1,49 +1,64 @@
+OUT_DIR := dist/wotlk
+TS_CORE_SRC := $(shell find ui/core -name '*.ts' -type f)
+ASSETS_INPUT := $(shell find assets/ -type f)
+ASSETS := $(patsubst assets/%,$(OUT_DIR)/assets/%,$(ASSETS_INPUT))
 # Recursive wildcard function
-rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
-
-OUT_DIR=dist/wotlk
-#ASSETS_INPUT := $(shell find assets/ -type f)
-#ASSETS := $(patsubst assets/%,$(OUT_DIR)/assets/%,$(ASSETS_INPUT))
+rwildcard := $(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 GOROOT := $(shell go env GOROOT)
+UI_SRC := $(shell find ui -name '*.ts' -o -name '*.scss' -o -name '*.html')
+HTML_INDECIES := ui/balance_druid/index.html \
+				 ui/feral_druid/index.html \
+				 ui/feral_tank_druid/index.html \
+				 ui/elemental_shaman/index.html \
+				 ui/enhancement_shaman/index.html \
+				 ui/hunter/index.html \
+				 ui/mage/index.html \
+				 ui/rogue/index.html \
+				 ui/retribution_paladin/index.html \
+				 ui/protection_paladin/index.html \
+				 ui/shadow_priest/index.html \
+				 ui/smite_priest/index.html \
+				 ui/warlock/index.html \
+				 ui/warrior/index.html \
+				 ui/protection_warrior/index.html \
+				 ui/deathknight/index.html \
+				 ui/tank_deathknight/index.html \
+				 ui/raid/index.html \
+				 ui/detailed_results/index.html
 
-ifeq ($(shell go env GOOS),darwin)
-    SED:=sed -i "" -E -e
-else
-    SED:=sed -i -E -e
-endif
+$(OUT_DIR)/.dirstamp: \
+  $(OUT_DIR)/lib.wasm \
+  ui/core/proto/api.ts \
+  $(ASSETS) \
+  $(OUT_DIR)/bundle/.dirstamp
+	touch $@
 
-# Make everything. Keep this first so it's the default rule.
-$(OUT_DIR): ui_shared \
- $(OUT_DIR)/balance_druid/index.js $(OUT_DIR)/balance_druid/index.css $(OUT_DIR)/balance_druid/index.html \
- $(OUT_DIR)/feral_druid/index.js $(OUT_DIR)/feral_druid/index.css $(OUT_DIR)/feral_druid/index.html \
- $(OUT_DIR)/feral_tank_druid/index.js $(OUT_DIR)/feral_tank_druid/index.css $(OUT_DIR)/feral_tank_druid/index.html \
- $(OUT_DIR)/elemental_shaman/index.js $(OUT_DIR)/elemental_shaman/index.css $(OUT_DIR)/elemental_shaman/index.html \
- $(OUT_DIR)/enhancement_shaman/index.js $(OUT_DIR)/enhancement_shaman/index.css $(OUT_DIR)/enhancement_shaman/index.html \
- $(OUT_DIR)/hunter/index.js $(OUT_DIR)/hunter/index.css $(OUT_DIR)/hunter/index.html \
- $(OUT_DIR)/mage/index.js $(OUT_DIR)/mage/index.css $(OUT_DIR)/mage/index.html \
- $(OUT_DIR)/rogue/index.js $(OUT_DIR)/rogue/index.css $(OUT_DIR)/rogue/index.html \
- $(OUT_DIR)/retribution_paladin/index.js $(OUT_DIR)/retribution_paladin/index.css $(OUT_DIR)/retribution_paladin/index.html \
- $(OUT_DIR)/protection_paladin/index.js $(OUT_DIR)/protection_paladin/index.css $(OUT_DIR)/protection_paladin/index.html \
- $(OUT_DIR)/shadow_priest/index.js $(OUT_DIR)/shadow_priest/index.css $(OUT_DIR)/shadow_priest/index.html \
- $(OUT_DIR)/smite_priest/index.js $(OUT_DIR)/smite_priest/index.css $(OUT_DIR)/smite_priest/index.html \
- $(OUT_DIR)/warlock/index.js $(OUT_DIR)/warlock/index.css $(OUT_DIR)/warlock/index.html \
- $(OUT_DIR)/warrior/index.js $(OUT_DIR)/warrior/index.css $(OUT_DIR)/warrior/index.html \
- $(OUT_DIR)/protection_warrior/index.js $(OUT_DIR)/protection_warrior/index.css $(OUT_DIR)/protection_warrior/index.html \
- $(OUT_DIR)/deathknight/index.js $(OUT_DIR)/deathknight/index.css $(OUT_DIR)/deathknight/index.html \
- $(OUT_DIR)/tank_deathknight/index.js $(OUT_DIR)/tank_deathknight/index.css $(OUT_DIR)/tank_deathknight/index.html \
- $(OUT_DIR)/raid/index.js $(OUT_DIR)/raid/index.css $(OUT_DIR)/raid/index.html
+$(OUT_DIR)/bundle/.dirstamp: \
+  $(UI_SRC) \
+  $(HTML_INDECIES) \
+  vite.config.js \
+  node_modules \
+  tsconfig.json \
+  ui/core/index.ts \
+  ui/core/proto/api.ts \
+  $(OUT_DIR)/net_worker.js \
+  $(OUT_DIR)/sim_worker.js
+	npx tsc --noEmit
+	npx vite build
+	touch $@
 
-ui_shared: $(OUT_DIR)/lib.wasm \
- $(OUT_DIR)/core/tsconfig.tsbuildinfo \
- $(OUT_DIR)/index.html \
- $(OUT_DIR)/sim_worker.js \
- $(OUT_DIR)/net_worker.js \
- $(OUT_DIR)/detailed_results/index.js \
- $(OUT_DIR)/detailed_results/index.css \
- $(OUT_DIR)/detailed_results/index.html
+$(OUT_DIR)/sim_worker.js: ui/worker/sim_worker.js
+	cat $(GOROOT)/misc/wasm/wasm_exec.js > $(OUT_DIR)/sim_worker.js
+	cat ui/worker/sim_worker.js >> $(OUT_DIR)/sim_worker.js
 
-$(OUT_DIR)/index.html:
-	cp ui/index.html $(OUT_DIR)
+$(OUT_DIR)/net_worker.js: ui/worker/net_worker.js
+	cp ui/worker/net_worker.js $(OUT_DIR)
+
+ui/core/index.ts: $(TS_CORE_SRC)
+	find ui/core -name '*.ts' | \
+	  awk -F 'ui/core/' '{ print "import \x22./" $$2 "\x22;" }' | \
+	  sed 's/\.ts";$$/";/' | \
+	  grep -v 'import "./index";' > $@
 
 .PHONY: clean
 clean:
@@ -54,24 +69,22 @@ clean:
 	  wowsimwotlk-amd64-darwin \
 	  wowsimwotlk-amd64-linux \
 	  dist \
-	  binary_dist
+	  binary_dist \
+	  ui/core/index.ts \
+	  ui/core/proto/*.ts \
+	  node_modules \
+	  $(HTML_INDECIES)
 	find . -name "*.results.tmp" -type f -delete
 
-# Host a local server, for dev testing
-.PHONY: host
-host: $(OUT_DIR)
-	# Intentionally serve one level up, so the local site has 'wotlk' as the first
-	# directory just like github pages.
-	npx http-server $(OUT_DIR)/..
 
 ui/core/proto/api.ts: proto/*.proto node_modules
-	mkdir -p $(OUT_DIR)/protobuf-ts
-	cp -r node_modules/@protobuf-ts/runtime/build/es2015/* $(OUT_DIR)/protobuf-ts
-	$(SED) "s/from '(.*)';/from '\1.js';/g" $(OUT_DIR)/protobuf-ts/*.js
-	$(SED) "s/from \"(.*)\";/from '\1.js';/g" $(OUT_DIR)/protobuf-ts/*.js
 	npx protoc --ts_opt generate_dependencies --ts_out ui/core/proto --proto_path proto proto/api.proto
 	npx protoc --ts_out ui/core/proto --proto_path proto proto/test.proto
 	npx protoc --ts_out ui/core/proto --proto_path proto proto/ui.proto
+
+ui/%/index.html: ui/index_template.html
+	$(eval title := $(shell echo $(shell basename $(@D)) | sed -r 's/(^|_)([a-z])/\U \2/g' | cut -c 2-))
+	cat ui/index_template.html | sed 's/@@TITLE@@/WOTLK $(title) Simulator/g' > $@
 
 package-lock.json:
 	npm install
@@ -79,25 +92,10 @@ package-lock.json:
 node_modules: package-lock.json
 	npm ci
 
-$(OUT_DIR)/core/tsconfig.tsbuildinfo: $(call rwildcard,ui/core,*.ts) ui/core/proto/api.ts
-	npx tsc -p ui/core
-	$(SED) 's#@protobuf-ts/runtime#/wotlk/protobuf-ts/index#g' $(OUT_DIR)/core/proto/*.js
-	$(SED) "s/from \"(.*)\";/from '\1.js';/g" $(OUT_DIR)/core/proto/*.js
-
 # Generic rule for hosting any class directory
 .PHONY: host_%
-host_%: ui_shared $(OUT_DIR)/%/index.js $(OUT_DIR)/%/index.css $(OUT_DIR)/%/index.html
+host_%: $(OUT_DIR) node_modules
 	npx http-server $(OUT_DIR)/..
-
-# Generic rule for building index.js for any class directory
-$(OUT_DIR)/%/index.js: ui/%/index.ts ui/%/*.ts $(OUT_DIR)/core/tsconfig.tsbuildinfo
-	npx tsc -p $(<D) 
-	touch $@ # TSC does not guarantee a file touch.
-
-# Generic rule for building index.css for any class directory
-$(OUT_DIR)/%/index.css: ui/%/index.scss ui/%/*.scss $(call rwildcard,ui/core,*.scss)
-	mkdir -p $(@D)
-	npx sass $< $@
 
 # Generic rule for building index.html for any class directory
 $(OUT_DIR)/%/index.html: ui/index_template.html $(OUT_DIR)/assets
@@ -119,17 +117,9 @@ $(OUT_DIR)/lib.wasm: sim/wasm/* sim/core/proto/api.pb.go $(filter-out sim/core/i
 		exit 1; \
 	fi
 	
-
-# Generic sim_worker that uses the generic lib.wasm
-$(OUT_DIR)/sim_worker.js: ui/worker/sim_worker.js
-	cat $(GOROOT)/misc/wasm/wasm_exec.js > $(OUT_DIR)/sim_worker.js
-	cat ui/worker/sim_worker.js >> $(OUT_DIR)/sim_worker.js
-
-$(OUT_DIR)/net_worker.js: ui/worker/net_worker.js
-	cp ui/worker/net_worker.js $(OUT_DIR)
-
-$(OUT_DIR)/assets: assets/*
-	cp -r assets $(OUT_DIR)
+$(OUT_DIR)/assets/%: assets/%
+	mkdir -p $(@D)
+	cp $< $@
 
 binary_dist/dist.go: sim/web/dist.go.tmpl
 	mkdir -p binary_dist/wotlk
@@ -205,3 +195,10 @@ tsfmt:
 setup:
 	cp pre-commit .git/hooks
 	chmod +x .git/hooks/pre-commit
+
+# Host a local server, for dev testing
+.PHONY: host
+host: $(OUT_DIR)/.dirstamp node_modules
+	# Intentionally serve one level up, so the local site has 'wotlk' as the first
+	# directory just like github pages.
+	npx http-server $(OUT_DIR)/..

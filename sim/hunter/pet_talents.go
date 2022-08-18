@@ -20,29 +20,29 @@ func (hp *HunterPet) ApplyTalents() {
 	hp.PseudoStats.DamageDealtMultiplier *= 1 + 0.03*float64(talents.SharkAttack)
 	hp.AutoAttacks.MHEffect.DamageMultiplier *= 1 - 0.075*float64(talents.CobraReflexes)
 
-	hp.PseudoStats.ArcaneDamageTakenMultiplier *= 1 + 0.05*float64(talents.GreatResistance)
-	hp.PseudoStats.FireDamageTakenMultiplier *= 1 + 0.05*float64(talents.GreatResistance)
-	hp.PseudoStats.FrostDamageTakenMultiplier *= 1 + 0.05*float64(talents.GreatResistance)
-	hp.PseudoStats.NatureDamageTakenMultiplier *= 1 + 0.05*float64(talents.GreatResistance)
-	hp.PseudoStats.ShadowDamageTakenMultiplier *= 1 + 0.05*float64(talents.GreatResistance)
+	hp.PseudoStats.ArcaneDamageTakenMultiplier *= 1 - 0.05*float64(talents.GreatResistance)
+	hp.PseudoStats.FireDamageTakenMultiplier *= 1 - 0.05*float64(talents.GreatResistance)
+	hp.PseudoStats.FrostDamageTakenMultiplier *= 1 - 0.05*float64(talents.GreatResistance)
+	hp.PseudoStats.NatureDamageTakenMultiplier *= 1 - 0.05*float64(talents.GreatResistance)
+	hp.PseudoStats.ShadowDamageTakenMultiplier *= 1 - 0.05*float64(talents.GreatResistance)
 
 	if talents.GreatStamina != 0 {
-		hp.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+0.04*float64(talents.GreatStamina))
+		hp.MultiplyStat(stats.Stamina, 1.0+0.04*float64(talents.GreatStamina))
 	}
 
 	if talents.NaturalArmor != 0 {
-		hp.AddStatDependency(stats.Armor, stats.Armor, 1.0+0.05*float64(talents.NaturalArmor))
+		hp.MultiplyStat(stats.Armor, 1.0+0.05*float64(talents.NaturalArmor))
 	}
 
 	if talents.BloodOfTheRhino != 0 {
 		hp.PseudoStats.HealingTakenMultiplier *= 1 + 0.2*float64(talents.BloodOfTheRhino)
 
-		hp.AddStatDependency(stats.Stamina, stats.Stamina, 1.0+0.02*float64(talents.BloodOfTheRhino))
+		hp.MultiplyStat(stats.Stamina, 1.0+0.02*float64(talents.BloodOfTheRhino))
 	}
 
 	if talents.PetBarding != 0 {
 		hp.AddStat(stats.Dodge, 1*core.DodgeRatingPerDodgeChance*float64(talents.PetBarding))
-		hp.AddStatDependency(stats.Armor, stats.Armor, 1.0+0.05*float64(talents.PetBarding))
+		hp.MultiplyStat(stats.Armor, 1.0+0.05*float64(talents.PetBarding))
 	}
 
 	hp.applyOwlsFocus()
@@ -135,7 +135,7 @@ func (hp *HunterPet) applyFeedingFrenzy() {
 		return
 	}
 
-	multiplier := 1.0 + 0.8*float64(hp.Talents().FeedingFrenzy)
+	multiplier := 1.0 + 0.08*float64(hp.Talents().FeedingFrenzy)
 
 	hp.RegisterResetEffect(func(sim *core.Simulation) {
 		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int) {
@@ -194,7 +194,10 @@ func (hp *HunterPet) registerRabidCD() {
 	actionID := core.ActionID{SpellID: 53401}
 	procChance := 0.2
 
-	var curBonusPerStack float64
+	statDeps := []*stats.StatDependency{nil}
+	for i := 1; i <= 5; i++ {
+		statDeps = append(statDeps, hp.NewDynamicMultiplyStat(stats.AttackPower, 1+0.05*float64(i)))
+	}
 
 	procAura := hp.RegisterAura(core.Aura{
 		Label:     "Rabid Power",
@@ -202,7 +205,12 @@ func (hp *HunterPet) registerRabidCD() {
 		Duration:  core.NeverExpires,
 		MaxStacks: 5,
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
-			aura.Unit.AddStatDynamic(sim, stats.AttackPower, curBonusPerStack*float64(newStacks-oldStacks))
+			if oldStacks != 0 {
+				aura.Unit.DisableDynamicStatDep(sim, statDeps[oldStacks])
+			}
+			if newStacks != 0 {
+				aura.Unit.EnableDynamicStatDep(sim, statDeps[newStacks])
+			}
 		},
 	})
 
@@ -210,9 +218,6 @@ func (hp *HunterPet) registerRabidCD() {
 		Label:    "Rabid",
 		ActionID: actionID,
 		Duration: time.Second * 20,
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			curBonusPerStack = aura.Unit.GetStat(stats.AttackPower) * 0.5
-		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			procAura.Deactivate(sim)
 		},

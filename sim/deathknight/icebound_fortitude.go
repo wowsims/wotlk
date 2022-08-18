@@ -40,9 +40,9 @@ func (dk *Deathknight) registerIceboundFortitudeSpell() {
 		},
 	})
 
-	baseCost := 20.0
+	baseCost := float64(core.NewRuneCost(20.0, 0, 0, 0, 0))
 
-	dk.IceboundFortitude = dk.RegisterSpell(core.SpellConfig{
+	dk.IceboundFortitude = dk.RegisterSpell(nil, core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 
@@ -61,19 +61,8 @@ func (dk *Deathknight) registerIceboundFortitudeSpell() {
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			dk.IceboundFortitudeAura.Activate(sim)
-			dk.IceboundFortitudeAura.Prioritize()
 		},
-	})
-}
-
-func (dk *Deathknight) CanIceboundFortitude(sim *core.Simulation) bool {
-	return dk.CastCostPossible(sim, 20.0, 0, 0, 0) && dk.IceboundFortitude.IsReady(sim)
-}
-
-func (dk *Deathknight) CastIceboundFortitude(sim *core.Simulation, target *core.Unit) bool {
-	if dk.CanIceboundFortitude(sim) {
-		dk.IceboundFortitude.Cast(sim, target)
-		return true
-	}
-	return false
+	}, func(sim *core.Simulation) bool {
+		return dk.CastCostPossible(sim, 20.0, 0, 0, 0) && dk.IceboundFortitude.IsReady(sim)
+	}, nil)
 }

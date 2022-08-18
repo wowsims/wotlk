@@ -82,7 +82,7 @@ func (party *Party) doneIteration(sim *Simulation) {
 		party.dpsMetrics.Total += agent.GetCharacter().Metrics.dps.Total
 	}
 
-	party.dpsMetrics.doneIteration(sim.CurrentTime.Seconds())
+	party.dpsMetrics.doneIteration(sim.rand.GetSeed(), sim.CurrentTime.Seconds())
 }
 
 func (party *Party) GetMetrics(numIterations int32) *proto.PartyMetrics {
@@ -121,6 +121,43 @@ func NewRaid(raidConfig proto.Raid) *Raid {
 	raid := &Raid{
 		dpsMetrics:   NewDistributionMetrics(),
 		nextPetIndex: 25,
+	}
+
+	// If there is at least 1 Shaman in the raid, disable Bloodlust on all other
+	// Shaman and on the RaidBuffs.
+	allShaman := RaidPlayersWithClass(raidConfig, proto.Class_ClassShaman)
+
+	var luster *proto.Player
+	for _, sham := range allShaman {
+		if ele, ok := sham.Spec.(*proto.Player_ElementalShaman); ok {
+			if ele.ElementalShaman == nil || ele.ElementalShaman.Options == nil {
+				continue
+			}
+			if luster == nil {
+				if ele.ElementalShaman.Options.Bloodlust {
+					luster = sham
+				}
+			} else {
+				ele.ElementalShaman.Options.Bloodlust = false
+			}
+		}
+		if enh, ok := sham.Spec.(*proto.Player_EnhancementShaman); ok {
+			if enh.EnhancementShaman == nil || enh.EnhancementShaman.Options == nil {
+				continue
+			}
+			if luster == nil {
+				if enh.EnhancementShaman.Options.Bloodlust {
+					luster = sham
+				}
+			} else {
+				enh.EnhancementShaman.Options.Bloodlust = false
+			}
+		}
+	}
+	if luster != nil {
+		if raidConfig.Buffs != nil {
+			raidConfig.Buffs.Bloodlust = false
+		}
 	}
 
 	for partyIndex, partyConfig := range raidConfig.Parties {
@@ -290,7 +327,7 @@ func (raid *Raid) doneIteration(sim *Simulation) {
 		raid.dpsMetrics.Total += party.dpsMetrics.Total
 	}
 
-	raid.dpsMetrics.doneIteration(sim.CurrentTime.Seconds())
+	raid.dpsMetrics.doneIteration(sim.rand.GetSeed(), sim.CurrentTime.Seconds())
 }
 
 func (raid *Raid) GetMetrics(numIterations int32) *proto.RaidMetrics {
@@ -328,4 +365,16 @@ func RaidPlayersWithSpec(raid proto.Raid, spec proto.Spec) []*proto.Player {
 		}
 	}
 	return specPlayers
+}
+
+func RaidPlayersWithClass(raid proto.Raid, class proto.Class) []*proto.Player {
+	var players []*proto.Player
+	for _, party := range raid.Parties {
+		for _, player := range party.Players {
+			if player != nil && player.Class == class {
+				players = append(players, player)
+			}
+		}
+	}
+	return players
 }

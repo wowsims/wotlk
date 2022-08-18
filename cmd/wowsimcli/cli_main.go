@@ -19,6 +19,9 @@ func init() {
 func main() {
 	infile := flag.String("input", "input.json", "location of input file")
 	outfile := flag.String("output", "output.json", "location of output file")
+	verbose := flag.Bool("verbose", false, "print information during runtime")
+
+	flag.Parse()
 
 	data, err := os.ReadFile(*infile)
 	if err != nil {
@@ -39,10 +42,12 @@ func main() {
 			finalResult = v.FinalRaidResult
 			break
 		}
-		fmt.Printf("Sim Progress: %d / %d\n", v.CompletedIterations, v.TotalIterations)
+		if *verbose {
+			fmt.Printf("Sim Progress: %d / %d\n", v.CompletedIterations, v.TotalIterations)
+		}
 	}
 
-	output, err := protojson.Marshal(finalResult)
+	output, err := protojson.MarshalOptions{EmitUnpopulated: true}.Marshal(finalResult)
 	if err != nil {
 		log.Fatalf("faield to marshal final results: %s", err)
 	}
@@ -51,5 +56,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to write output file:: %s", err)
 	}
-	fmt.Printf("Wrote output file: `%s` successfully.\n", *outfile)
+	if *verbose {
+		fmt.Printf("Wrote output file: `%s` successfully.\n", *outfile)
+	}
 }

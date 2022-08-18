@@ -1,6 +1,7 @@
 package warlock
 
 import (
+	"time"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -13,8 +14,6 @@ type Warlock struct {
 	Rotation proto.Warlock_Rotation
 
 	Pet *WarlockPet
-
-	DoingRegen bool
 
 	ShadowBolt           *core.Spell
 	Incinerate           *core.Spell
@@ -34,6 +33,7 @@ type Warlock struct {
 	DrainSoul            *core.Spell
 	DrainSoulDot         *core.Dot
 	DrainSoulChannelling *core.Spell
+	Shadowburn           *core.Spell
 
 	CurseOfElements     *core.Spell
 	CurseOfElementsAura *core.Aura
@@ -55,6 +55,8 @@ type Warlock struct {
 	DemonicEmpowermentAura *core.Aura
 	Metamorphosis          *core.Spell
 	MetamorphosisAura      *core.Aura
+	ImmolationAura         *core.Spell
+	ImmolationAuraDot      *core.Dot
 	MoltenCoreAura         *core.Aura
 	DecimationAura         *core.Aura
 	PyroclasmAura          *core.Aura
@@ -62,6 +64,13 @@ type Warlock struct {
 	EmpoweredImpAura       *core.Aura
 
 	GlyphOfLifeTapAura *core.Aura
+
+	// Rotation related memory
+	DoingRegen 				bool
+	PrevCastSECheck 		*core.Spell
+	CorruptionRolloverMult  float64
+	DPSPAverage				float64
+	PreviousTime			time.Duration
 }
 
 func (warlock *Warlock) GetCharacter() *core.Character {
@@ -103,9 +112,13 @@ func (warlock *Warlock) Initialize() {
 	}
 	if warlock.Talents.Metamorphosis {
 		warlock.registerMetamorphosisSpell()
+		warlock.registerImmolationAuraSpell()
 	}
 	if warlock.Talents.DarkPact {
 		warlock.registerDarkPactSpell()
+	}
+	if warlock.Talents.Shadowburn {
+		warlock.registerShadowBurnSpell()
 	}
 }
 
@@ -140,13 +153,13 @@ func NewWarlock(character core.Character, options proto.Player) *Warlock {
 	}
 	warlock.EnableManaBar()
 
-	warlock.Character.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+1)
+	warlock.AddStatDependency(stats.Strength, stats.AttackPower, 1)
 
 	if warlock.Options.Armor == proto.Warlock_Options_FelArmor {
 		demonicAegisMultiplier := 1 + float64(warlock.Talents.DemonicAegis)*0.1
 		amount := 180.0 * demonicAegisMultiplier
 		warlock.AddStat(stats.SpellPower, amount)
-		warlock.AddStatDependency(stats.Spirit, stats.SpellPower, 1+0.3*demonicAegisMultiplier)
+		warlock.AddStatDependency(stats.Spirit, stats.SpellPower, 0.3*demonicAegisMultiplier)
 	}
 
 	if warlock.Options.Summon != proto.Warlock_Options_NoSummon {

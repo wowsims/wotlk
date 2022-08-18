@@ -6,12 +6,12 @@ import { RaidBuffs,
 	Stat,
 	TristateEffect,
 	Race,
-} from '/wotlk/core/proto/common.js';
+} from '../core/proto/common.js';
 
-import { Stats } from '/wotlk/core/proto_utils/stats.js';
-import { Player } from '/wotlk/core/player.js';
-import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
-import { TypedEvent } from '/wotlk/core/typed_event.js';
+import { Stats } from '../core/proto_utils/stats.js';
+import { Player } from '../core/player.js';
+import { IndividualSimUI } from '../core/individual_sim_ui.js';
+import { TypedEvent } from '../core/typed_event.js';
 
 import {
 	Warlock,
@@ -21,11 +21,11 @@ import {
 	Warlock_Options_Armor as Armor,
 	Warlock_Options_Summon as Summon,
 	Warlock_Options_WeaponImbue as WeaponImbue,
-} from '/wotlk/core/proto/warlock.js';
+} from '../core/proto/warlock.js';
 
-import * as IconInputs from '/wotlk/core/components/icon_inputs.js';
-import * as OtherInputs from '/wotlk/core/components/other_inputs.js';
-import * as Tooltips from '/wotlk/core/constants/tooltips.js';
+import * as IconInputs from '../core/components/icon_inputs.js';
+import * as OtherInputs from '../core/components/other_inputs.js';
+import * as Tooltips from '../core/constants/tooltips.js';
 
 import * as WarlockInputs from './inputs.js';
 import * as Presets from './presets.js';
@@ -99,6 +99,8 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				individualBuffs: Presets.DefaultIndividualBuffs,
 
 				debuffs: Presets.DefaultDebuffs,
+
+				other: Presets.OtherDefaults,
 			},
 
 			// IconInputs to include in the 'Player' section on the settings tab.
@@ -135,6 +137,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			otherInputs: {
 				inputs: [
 					OtherInputs.PrepopPotion,
+					OtherInputs.DistanceFromTarget,
 					OtherInputs.TankAssignment,
 				],
 			},

@@ -80,8 +80,13 @@ var FrostTalents = &proto.DeathknightTalents{
 }
 
 var unholyRotation = &proto.Deathknight_Rotation{
-	UseDeathAndDecay: true,
-	BtGhoulFrenzy:    true,
+	UseDeathAndDecay:     true,
+	StartingPresence:     proto.Deathknight_Rotation_Unholy,
+	UseEmpowerRuneWeapon: true,
+	BtGhoulFrenzy:        false,
+	BloodRuneFiller:      proto.Deathknight_Rotation_BloodBoil,
+	ArmyOfTheDead:        proto.Deathknight_Rotation_AsMajorCd,
+	BloodTap:             proto.Deathknight_Rotation_GhoulFrenzy,
 }
 
 var frostRotation = &proto.Deathknight_Rotation{}

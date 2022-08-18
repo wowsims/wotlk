@@ -884,7 +884,7 @@ func init() {
 			Duration:  time.Second * 10,
 			MaxStacks: 3,
 			OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
-				character.AddStatDynamic(sim, stats.ArmorPenetration, 435*float64(newStacks-oldStacks))
+				character.AddStatDynamic(sim, stats.ArmorPenetration, 62*float64(newStacks-oldStacks))
 			},
 		})
 
@@ -976,19 +976,6 @@ func init() {
 				}
 			},
 		})
-	})
-
-	core.NewItemEffect(33122, func(agent core.Agent) {
-		character := agent.GetCharacter()
-
-		if character.Class != proto.Class_ClassHunter {
-			// For non-hunters just give direct crit so it shows on the stats panel.
-			character.AddStats(stats.Stats{
-				stats.MeleeCrit: 24,
-			})
-		} else {
-			character.PseudoStats.BonusMeleeCritRating += 24
-		}
 	})
 
 	core.NewItemEffect(34473, func(agent core.Agent) {

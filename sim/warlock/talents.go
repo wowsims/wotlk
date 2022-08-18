@@ -14,19 +14,24 @@ func (warlock *Warlock) ApplyTalents() {
 
 	// Demonic Embrace
 	if warlock.Talents.DemonicEmbrace > 0 {
-		warlock.AddStatDependency(stats.Stamina, stats.Stamina, 1.01+(float64(warlock.Talents.DemonicEmbrace)*0.03))
+		warlock.MultiplyStat(stats.Stamina, 1.01+(float64(warlock.Talents.DemonicEmbrace)*0.03))
 	}
 
 	// Molten Skin
 	warlock.PseudoStats.DamageTakenMultiplier *= 1. - 0.02*float64(warlock.Talents.MoltenSkin)
 
 	// Malediction
-	warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1. + 0.01*float64(warlock.Talents.Malediction)
-	warlock.PseudoStats.FireDamageDealtMultiplier *= 1. + 0.01*float64(warlock.Talents.Malediction)
+	maledictionMultiplier := 1. + 0.01*float64(warlock.Talents.Malediction)
+	warlock.PseudoStats.ShadowDamageDealtMultiplier *= maledictionMultiplier
+	warlock.PseudoStats.FireDamageDealtMultiplier *= maledictionMultiplier
+	warlock.PseudoStats.ArcaneDamageDealtMultiplier *= maledictionMultiplier
+	warlock.PseudoStats.NatureDamageDealtMultiplier *= maledictionMultiplier
+	warlock.PseudoStats.HolyDamageDealtMultiplier *= maledictionMultiplier
 
 	// Demonic Pact
-	warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1. + 0.02*float64(warlock.Talents.DemonicPact)
-	warlock.PseudoStats.FireDamageDealtMultiplier *= 1. + 0.02*float64(warlock.Talents.DemonicPact)
+	if warlock.Talents.DemonicPact > 0 {
+		warlock.setupDemonicPact()
+	}
 
 	// Suppression (Add 1% hit per point)
 	warlock.AddStat(stats.SpellHit, float64(warlock.Talents.Suppression)*core.SpellHitRatingPerHitChance)
@@ -41,8 +46,8 @@ func (warlock *Warlock) ApplyTalents() {
 	// Fel Vitality
 	if warlock.Talents.FelVitality > 0 {
 		bonus := 1.0 + 0.01*float64(warlock.Talents.FelVitality)
-		warlock.AddStatDependency(stats.Mana, stats.Mana, bonus)
-		warlock.AddStatDependency(stats.Health, stats.Health, bonus)
+		warlock.MultiplyStat(stats.Mana, bonus)
+		warlock.MultiplyStat(stats.Health, bonus)
 	}
 
 	if warlock.Options.Summon != proto.Warlock_Options_NoSummon {
@@ -106,6 +111,10 @@ func (warlock *Warlock) ApplyTalents() {
 		warlock.setupBackdraft()
 	}
 
+	if warlock.Talents.ImprovedSoulLeech > 0 {
+		warlock.setupImprovedSoulLeech()
+	}
+
 	if warlock.Talents.EmpoweredImp > 0 && warlock.Options.Summon == proto.Warlock_Options_Imp {
 		warlock.Pet.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.1*float64(warlock.Talents.EmpoweredImp)
 		warlock.setupEmpoweredImp()
@@ -138,26 +147,16 @@ func (warlock *Warlock) applyWeaponImbue() {
 }
 
 func (warlock *Warlock) registerGlyphOfLifeTapAura() {
+	statDep := warlock.NewDynamicStatDependency(stats.Spirit, stats.SpellPower, 0.2)
 	warlock.GlyphOfLifeTapAura = warlock.RegisterAura(core.Aura{
 		Label:    "Glyph Of LifeTap Aura",
 		ActionID: core.ActionID{SpellID: 63321},
 		Duration: time.Second * 40,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			// This is a very ugly hack; since AddStatDependencyDynamic multipliers stack multiplicatively,
-			// normally we'd get 1.3*1.2=1.56 with fel armor, which is wrong, the correct result would be
-			// 1.5 and thus we need to correct for that
-			if warlock.Options.Armor == proto.Warlock_Options_FelArmor {
-				warlock.AddStatDependencyDynamic(sim, stats.Spirit, stats.SpellPower, 1.5/1.3)
-			} else {
-				warlock.AddStatDependencyDynamic(sim, stats.Spirit, stats.SpellPower, 1.2)
-			}
+			warlock.EnableDynamicStatDep(sim, statDep)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			if warlock.Options.Armor == proto.Warlock_Options_FelArmor {
-				warlock.AddStatDependencyDynamic(sim, stats.Spirit, stats.SpellPower, 1/(1.5/1.3))
-			} else {
-				warlock.AddStatDependencyDynamic(sim, stats.Spirit, stats.SpellPower, 1/1.2)
-			}
+			warlock.DisableDynamicStatDep(sim, statDep)
 		},
 	})
 }
@@ -295,8 +294,8 @@ func (warlock *Warlock) ShadowEmbraceDebuffAura(target *core.Unit) *core.Aura {
 		Duration:  time.Second * 12,
 		MaxStacks: 3,
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
-			warlock.AttackTables[aura.Unit.TableIndex].PeriodicShadowDamageDealtMultiplier /= 1.0 + shadowEmbraceBonus*float64(oldStacks)
-			warlock.AttackTables[aura.Unit.TableIndex].PeriodicShadowDamageDealtMultiplier *= 1.0 + shadowEmbraceBonus*float64(newStacks)
+			warlock.AttackTables[aura.Unit.UnitIndex].PeriodicShadowDamageDealtMultiplier /= 1.0 + shadowEmbraceBonus*float64(oldStacks)
+			warlock.AttackTables[aura.Unit.UnitIndex].PeriodicShadowDamageDealtMultiplier *= 1.0 + shadowEmbraceBonus*float64(newStacks)
 		},
 	})
 }
@@ -463,6 +462,84 @@ func (warlock *Warlock) setupEverlastingAffliction() {
 						}
 					}
 					warlock.CorruptionDot.Rollover(sim)
+				}
+			}
+		},
+	})
+}
+
+func (warlock *Warlock) setupImprovedSoulLeech() {
+
+	soulLeechProcChance := 0.1 * float64(warlock.Talents.SoulLeech)
+	improvedSoulLeechProcChance := float64(warlock.Talents.ImprovedSoulLeech) / 2.
+	actionID := core.ActionID{SpellID: 54118}
+	improvedSoulLeechManaMetric := warlock.NewManaMetrics(actionID)
+	improvedSoulLeechPetManaMetric := warlock.Pets[0].GetCharacter().NewManaMetrics(actionID)
+	replAura := core.ReplenishmentAura(warlock.GetCharacter(), actionID)
+
+	warlock.RegisterAura(core.Aura{
+		Label:    "Improved Soul Leech Hidden Aura",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spell == warlock.Conflagrate || spell == warlock.ShadowBolt || spell == warlock.ChaosBolt || spell == warlock.SoulFire || spell == warlock.Incinerate {
+				if sim.RandomFloat("SoulLeech") < soulLeechProcChance {
+					warlock.AddMana(sim, warlock.MaxMana()*float64(warlock.Talents.ImprovedSoulLeech)/100, improvedSoulLeechManaMetric, true)
+					warlock.Pets[0].GetCharacter().AddMana(sim, warlock.Pets[0].GetCharacter().MaxMana()*float64(warlock.Talents.ImprovedSoulLeech)/100, improvedSoulLeechPetManaMetric, true)
+					if sim.RandomFloat("ImprovedSoulLeech") < improvedSoulLeechProcChance {
+						replAura.Activate(sim)
+					}
+				}
+			}
+		},
+	})
+}
+
+func (warlock *Warlock) setupDemonicPact() {
+	demonicPactMultiplier := 0.02 * float64(warlock.Talents.DemonicPact)
+	warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1. + demonicPactMultiplier
+	warlock.PseudoStats.FireDamageDealtMultiplier *= 1. + demonicPactMultiplier
+	warlock.PseudoStats.ArcaneDamageDealtMultiplier *= 1. + demonicPactMultiplier
+	warlock.PseudoStats.NatureDamageDealtMultiplier *= 1. + demonicPactMultiplier
+	warlock.PseudoStats.HolyDamageDealtMultiplier *= 1. + demonicPactMultiplier
+
+	if warlock.Options.Summon == proto.Warlock_Options_NoSummon {
+		return
+	}
+
+	var demonicPactAura *core.Aura
+	icd := core.Cooldown{
+		Timer:    warlock.NewTimer(),
+		Duration: time.Second * 5,
+	}
+
+	warlock.Pets[0].GetCharacter().RegisterAura(core.Aura{
+		Label:    "Demonic Pact Hidden Aura",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnInit: func(aura *core.Aura, sim *core.Simulation) {
+			demonicPactAura = core.DemonicPactAura(warlock.GetCharacter(), 0)
+			demonicPactAura.OnReset = func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			}
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spellEffect.Outcome.Matches(core.OutcomeCrit) && icd.IsReady(sim) {
+				icd.Use(sim)
+				newSPBonus := warlock.GetStat(stats.SpellPower) * demonicPactMultiplier
+				if demonicPactAura.IsActive() {
+					if demonicPactAura.Priority < newSPBonus || demonicPactAura.RemainingDuration(sim) < time.Second*10 {
+						demonicPactAura.Deactivate(sim)
+						demonicPactAura.Priority = newSPBonus
+						demonicPactAura.Activate(sim)
+					}
+				} else {
+					demonicPactAura.Priority = newSPBonus
+					demonicPactAura.Activate(sim)
 				}
 			}
 		},

@@ -347,26 +347,33 @@ func (hp *HunterPet) newFuriousHowl() PetAbility {
 
 	petAura := hp.NewTemporaryStatsAura("FuriousHowl", actionID, stats.Stats{stats.AttackPower: 320, stats.RangedAttackPower: 320}, time.Second*20)
 	ownerAura := hp.hunterOwner.NewTemporaryStatsAura("FuriousHowl", actionID, stats.Stats{stats.AttackPower: 320, stats.RangedAttackPower: 320}, time.Second*20)
+	const cost = 20.0
 
-	return PetAbility{
-		Type: FuriousHowl,
-		Cost: 20,
+	howlSpell := hp.RegisterSpell(core.SpellConfig{
+		ActionID: actionID,
 
-		Spell: hp.RegisterSpell(core.SpellConfig{
-			ActionID: actionID,
-
-			Cast: core.CastConfig{
-				CD: core.Cooldown{
-					Timer:    hp.NewTimer(),
-					Duration: hp.hunterOwner.applyLongevity(time.Second * 40),
-				},
+		Cast: core.CastConfig{
+			CD: core.Cooldown{
+				Timer:    hp.NewTimer(),
+				Duration: hp.hunterOwner.applyLongevity(time.Second * 40),
 			},
-			ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-				petAura.Activate(sim)
-				ownerAura.Activate(sim)
-			},
-		}),
-	}
+		},
+		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+			hp.SpendFocus(sim, cost, actionID)
+			petAura.Activate(sim)
+			ownerAura.Activate(sim)
+		},
+	})
+
+	hp.hunterOwner.AddMajorCooldown(core.MajorCooldown{
+		Spell: howlSpell,
+		Type:  core.CooldownTypeDPS,
+		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
+			return hp.IsEnabled() && hp.CurrentFocus() >= cost
+		},
+	})
+
+	return PetAbility{}
 }
 
 func (hp *HunterPet) newGore() PetAbility {
@@ -628,6 +635,7 @@ func (hp *HunterPet) newRavage() PetAbility {
 
 func (hp *HunterPet) newSavageRend() PetAbility {
 	actionID := core.ActionID{SpellID: 53582}
+	const cost = 20.0
 	var dot *core.Dot
 
 	procAura := hp.RegisterAura(core.Aura{
@@ -642,28 +650,40 @@ func (hp *HunterPet) newSavageRend() PetAbility {
 		},
 	})
 
-	pa := hp.newSpecialAbility(PetSpecialAbilityConfig{
-		Type:    SavageRend,
-		Cost:    20,
-		CD:      time.Second * 60,
-		SpellID: 53582,
-		School:  core.SpellSchoolPhysical,
-		MinDmg:  59,
-		MaxDmg:  83,
-		APRatio: 0.07,
-		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Landed() {
-				dot.Apply(sim)
-				if spellEffect.Outcome.Matches(core.OutcomeCrit) {
-					procAura.Activate(sim)
-				}
-			}
+	srSpell := hp.RegisterSpell(core.SpellConfig{
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolPhysical,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagApplyArmorReduction,
+
+		Cast: core.CastConfig{
+			CD: core.Cooldown{
+				Timer:    hp.NewTimer(),
+				Duration: hp.hunterOwner.applyLongevity(time.Second * 60),
+			},
 		},
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+			ProcMask:         core.ProcMaskSpellDamage,
+			DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
+			ThreatMultiplier: 1,
+
+			BaseDamage:     hp.specialDamageMod(core.BaseDamageConfigMelee(59, 83, 0.07)),
+			OutcomeApplier: hp.OutcomeFuncMeleeSpecialHitAndCrit(2),
+
+			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				hp.SpendFocus(sim, cost, actionID)
+				if spellEffect.Landed() {
+					dot.Apply(sim)
+					if spellEffect.Outcome.Matches(core.OutcomeCrit) {
+						procAura.Activate(sim)
+					}
+				}
+			},
+		}),
 	})
 
 	target := hp.CurrentTarget
 	dot = core.NewDot(core.Dot{
-		Spell: pa.Spell,
+		Spell: srSpell,
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "SavageRend-" + strconv.Itoa(int(hp.hunterOwner.Index)),
 			ActionID: actionID,
@@ -680,7 +700,15 @@ func (hp *HunterPet) newSavageRend() PetAbility {
 		}),
 	})
 
-	return pa
+	hp.hunterOwner.AddMajorCooldown(core.MajorCooldown{
+		Spell: srSpell,
+		Type:  core.CooldownTypeDPS,
+		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
+			return hp.IsEnabled() && hp.CurrentFocus() >= cost
+		},
+	})
+
+	return PetAbility{}
 }
 
 func (hp *HunterPet) newScorpidPoison() PetAbility {

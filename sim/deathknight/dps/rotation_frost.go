@@ -1,265 +1,144 @@
 package dps
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
-func (dk *DpsDeathknight) RotationActionCallback_UA_Frost(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
-	casted := dk.CastUnbreakableArmor(sim, target)
-	dk.WaitUntil(sim, sim.CurrentTime)
-	return casted
+type FrostRotation struct {
+	dk *DpsDeathknight
+
+	oblitCount int32
+	oblitDelay time.Duration
+	uaCycle    bool
+
+	// CDS
+	amsMCD                  *core.MajorCooldown
+	hyperSpeedMCD           *core.MajorCooldown
+	stoneformMCD            *core.MajorCooldown
+	bloodfuryMCD            *core.MajorCooldown
+	berserkingMCD           *core.MajorCooldown
+	potionOfSpeedMCD        *core.MajorCooldown
+	indestructiblePotionMCD *core.MajorCooldown
+	potionUsed              bool
+
+	oblitRPRegen float64
 }
 
-func (dk *DpsDeathknight) RotationActionCallback_BT_Frost(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
-	casted := dk.CastBloodTap(sim, target)
-	dk.WaitUntil(sim, sim.CurrentTime)
-	return casted
+func (fr *FrostRotation) Initialize(dk *DpsDeathknight) {
+	fr.oblitRPRegen = core.TernaryFloat64(dk.HasSetBonus(deathknight.ItemSetScourgeborneBattlegear, 4), 25.0, 20.0)
 }
 
-func (dk *DpsDeathknight) RotationActionCallback_HB_Ghoul_RimeCheck(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
-	casted := false
-	if dk.RimeAura.IsActive() {
-		casted = dk.CastHowlingBlast(sim, target)
-	} else {
-		casted = dk.CastRaiseDead(sim, target)
+func (fr *FrostRotation) Reset(sim *core.Simulation) {
+	fr.oblitCount = 0
+	fr.oblitDelay = 0
+	fr.uaCycle = false
+
+	fr.hyperSpeedMCD = nil
+	fr.stoneformMCD = nil
+	fr.bloodfuryMCD = nil
+	fr.berserkingMCD = nil
+	fr.potionOfSpeedMCD = nil
+	fr.indestructiblePotionMCD = nil
+	fr.potionUsed = false
+}
+
+func (dk *DpsDeathknight) getFrostMajorCooldown(actionID core.ActionID) *core.MajorCooldown {
+	if dk.Character.HasMajorCooldown(actionID) {
+		majorCd := dk.Character.GetMajorCooldown(actionID)
+		majorCd.ShouldActivate = func(sim *core.Simulation, character *core.Character) bool {
+			return false
+		}
+		return majorCd
 	}
-
-	s.ConditionalAdvance(true)
-	return casted
+	return nil
 }
 
-func (dk *DpsDeathknight) RotationActionCallback_HB_FS(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
-	casted := false
-	if dk.KillingMachineAura.IsActive() && !dk.RimeAura.IsActive() {
-		casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
-	} else if dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
-		if dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() < 110 {
-			casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.HowlingBlast)
-		} else if dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() > 110 {
-			casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.HowlingBlast)
-		} else if !dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() > 110 {
-			casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
-		} else if !dk.CastCostPossible(sim, 0, 0, 1, 1) && dk.CurrentRunicPower() < 110 {
-			casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
-		}
-	} else if !dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
-		if dk.CurrentRunicPower() < 110 {
-			casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.HowlingBlast)
-		} else {
-			casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
-		}
-	} else {
-		casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
-		if !casted {
-			casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.HornOfWinter)
-		}
-	}
-	return casted
-}
-
-func (dk *DpsDeathknight) RotationActionCallback_FrostPrioRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
+func (dk *DpsDeathknight) setupUnbreakableArmorCooldowns() {
 	fr := &dk.fr
 
-	casted := false
+	// AMS
+	fr.amsMCD = dk.getFrostMajorCooldown(core.ActionID{SpellID: 48707})
 
-	if fr.nextSpell == dk.UnbreakableArmor {
-		casted = dk.RotationActionCallback_UA_Frost(sim, target, s)
-		if casted {
-			fr.nextSpell = dk.Pestilence
-		}
-	} else if fr.nextSpell == dk.Pestilence {
-		casted = dk.CastPestilence(sim, target)
-		if casted && dk.LastCastOutcome.Matches(core.OutcomeLanded) {
-			fr.nextSpell = nil
-		}
-	} else if dk.ShouldHornOfWinter(sim) {
-		casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.HornOfWinter)
-	} else {
-		if dk.KillingMachineAura.IsActive() && !dk.RimeAura.IsActive() && fr.lastSpell == dk.Obliterate {
-			casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.FrostStrike)
-		} else {
-			casted = dk.FrostDiseaseCheckWrapper(sim, target, dk.Obliterate)
-			if !casted {
-				casted = dk.RotationActionCallback_HB_FS(sim, target, s)
-			}
+	// hyperspeed accelerators
+	fr.hyperSpeedMCD = dk.getFrostMajorCooldown(core.ActionID{SpellID: 54758})
+
+	// stoneform (dwarf)
+	fr.stoneformMCD = dk.getFrostMajorCooldown(core.ActionID{SpellID: 20594})
+
+	// bloodfury (orc)
+	fr.bloodfuryMCD = dk.getFrostMajorCooldown(core.ActionID{SpellID: 33697})
+
+	// berserking (troll)
+	fr.berserkingMCD = dk.getFrostMajorCooldown(core.ActionID{SpellID: 26297})
+
+	// potion of speed
+	fr.potionOfSpeedMCD = dk.getFrostMajorCooldown(core.ActionID{ItemID: 40211})
+
+	// indestructible potion
+	fr.indestructiblePotionMCD = dk.getFrostMajorCooldown(core.ActionID{ItemID: 40093})
+}
+
+func (dk *DpsDeathknight) castMajorCooldown(mcd *core.MajorCooldown, sim *core.Simulation, target *core.Unit) {
+	if mcd != nil {
+		if mcd.Spell.IsReady(sim) && dk.GCD.IsReady(sim) {
+			mcd.Spell.Cast(sim, target)
 		}
 	}
-
-	if !casted && dk.IsLeftBloodRuneNormal() && dk.CanBloodTap(sim) {
-		casted = dk.RotationActionCallback_BT_Frost(sim, target, s)
-		fr.nextSpell = dk.UnbreakableArmor
-	} else if !casted && (dk.CurrentBloodRunes() > 0 || dk.CurrentDeathRunes() > 0) {
-		casted = dk.CastBloodStrike(sim, target)
-		fr.nextSpell = dk.Pestilence
-	}
-
-	return casted
 }
 
-// func (dk *DpsDeathknight) RotationActionCallback_FrostPrioRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
-// 	fr := &dk.fr
-
-// 	casted := false
-// 	numActions := fr.numActions
-// 	nextAction := fr.actions[fr.idx]
-// 	advance := true
-
-// 	switch nextAction {
-// 	case FrostRotationAction_Obli:
-// 		if dk.FrostDiseaseCheck(sim, target, dk.Obliterate, true, core.TernaryInt(fr.idx == 0, 2, 1)) {
-// 			casted = dk.CastObliterate(sim, target)
-// 		} else {
-// 			if !dk.FrostFeverDisease[target.Index].IsActive() {
-// 				casted = dk.CastIcyTouch(sim, target)
-// 			} else if !dk.BloodPlagueDisease[target.Index].IsActive() {
-// 				casted = dk.CastPlagueStrike(sim, target)
-// 			} else {
-// 				casted = dk.CastPestilence(sim, target)
-// 			}
-// 		}
-// 	case FrostRotationAction_BS:
-// 		casted = dk.CastBloodStrike(sim, target)
-// 		advance = casted && dk.LastCastOutcome.Matches(core.OutcomeLanded)
-// 	case FrostRotationAction_Pesti:
-// 		casted = dk.CastPestilence(sim, target)
-// 		advance = casted && dk.LastCastOutcome.Matches(core.OutcomeLanded)
-// 	}
-
-// 	if fr.idx+1 < numActions {
-// 		if advance {
-// 			fr.idx += 1
-// 		}
-// 	} else {
-// 		fr.Reset(sim)
-// 	}
-
-// 	return casted
-// }
-
-func (dk *DpsDeathknight) setupFrostSubBloodOpener() {
-	dk.Opener.
-		NewAction(dk.RotationActionCallback_IT).
-		NewAction(dk.RotationActionCallback_PS).
-		NewAction(dk.RotationActionCallback_UA).
-		NewAction(dk.RotationActionCallback_BT).
-		NewAction(dk.RotationActionCallback_Obli).
-		NewAction(dk.RotationActionCallback_FS).
-		NewAction(dk.RotationActionCallback_Pesti).
-		NewAction(dk.RotationActionCallback_ERW).
-		NewAction(dk.RotationActionCallback_Obli).
-		NewAction(dk.RotationActionCallback_Obli).
-		NewAction(dk.RotationActionCallback_Obli).
-		NewAction(dk.RotationActionCallback_FS).
-		NewAction(dk.RotationActionCallback_HB_Ghoul_RimeCheck).
-		NewAction(dk.RotationActionCallback_FS).
-		NewAction(dk.RotationActionCallback_FS).
-		NewAction(dk.RotationActionCallback_Obli).
-		NewAction(dk.RotationActionCallback_Obli).
-		NewAction(dk.RotationActionCallback_Pesti).
-		NewAction(dk.RotationActionCallback_FS).
-		NewAction(dk.RotationActionCallback_BS).
-		NewAction(dk.RotationActionCallback_FS)
-
-	dk.Main.
-		NewAction(dk.RotationActionCallback_FrostPrioRotation)
-}
-
-func (dk *DpsDeathknight) setupFrostSubUnholyOpener() {
-	dk.Opener.
-		NewAction(dk.RotationActionCallback_IT).
-		NewAction(dk.RotationActionCallback_PS).
-		NewAction(dk.RotationActionCallback_BT).
-		NewAction(dk.RotationActionCallback_Pesti).
-		NewAction(dk.RotationActionCallback_UA).
-		NewAction(dk.RotationActionCallback_Obli).
-		NewAction(dk.RotationActionCallback_FS).
-		NewAction(dk.RotationActionCallback_ERW).
-		NewAction(dk.RotationActionCallback_Obli).
-		NewAction(dk.RotationActionCallback_Obli).
-		NewAction(dk.RotationActionCallback_Obli).
-		NewAction(dk.RotationActionCallback_FS).
-		NewAction(dk.RotationActionCallback_FS).
-		NewAction(dk.RotationActionCallback_FS).
-		NewAction(dk.RotationActionCallback_Obli).
-		NewAction(dk.RotationActionCallback_Obli).
-		NewAction(dk.RotationActionCallback_BS).
-		NewAction(dk.RotationActionCallback_Pesti).
-		NewAction(dk.RotationActionCallback_FS)
-
-	dk.Main.
-		NewAction(dk.RotationActionCallback_FrostPrioRotation)
-}
-
-func (dk *DpsDeathknight) FrostDiseaseCheckWrapper(sim *core.Simulation, target *core.Unit, spell *core.Spell) bool {
-	fr := &dk.fr
-
-	gcd := dk.SpellGCD()
-
-	success := false
-
-	if !dk.FrostFeverDisease[target.Index].IsActive() {
-		success = dk.CastIcyTouch(sim, target)
-		fr.SetLastSpell(success, dk.IcyTouch)
-	} else if !dk.BloodPlagueDisease[target.Index].IsActive() {
-		success = dk.CastPlagueStrike(sim, target)
-		fr.SetLastSpell(success, dk.PlagueStrike)
-	} else if dk.FrostFeverDisease[target.Index].RemainingDuration(sim) < gcd ||
-		dk.BloodPlagueDisease[target.Index].RemainingDuration(sim) < gcd {
-		success = dk.CastPestilence(sim, target)
-		fr.SetLastSpell(success, dk.Pestilence)
-		if dk.LastCastOutcome == core.OutcomeMiss {
-			// Deal with pestilence miss
-			// TODO:
-
-		}
-	} else {
-		if dk.CanCast(sim, spell) {
-			ffExpiresIn := dk.FrostFeverDisease[target.Index].RemainingDuration(sim)
-			bpExpiresIn := dk.BloodPlagueDisease[target.Index].RemainingDuration(sim)
-			ffExpiresAt := ffExpiresIn + sim.CurrentTime
-			bpExpiresAt := bpExpiresIn + sim.CurrentTime
-			if gcd > ffExpiresIn || gcd > bpExpiresIn {
-				success = false
-				return success
-			}
-
-			crpb := dk.CopyRunicPowerBar()
-			runeCostForSpell := dk.RuneAmountForSpell(spell)
-			spellCost := crpb.DetermineOptimalCost(sim, runeCostForSpell.Blood, runeCostForSpell.Frost, runeCostForSpell.Unholy)
-
-			// Add whichever non-frost specific checks you want here, I guess you'll need them.
-
-			if !(dk.RimeAura.IsActive() && spell == dk.HowlingBlast) {
-				crpb.Spend(sim, spell, spellCost)
-			}
-
-			if crpb.CurrentBloodRunes() == 0 {
-				nextBloodRuneAt := float64(crpb.BloodRuneReadyAt(sim))
-
-				ff1 := float64(ffExpiresAt) > nextBloodRuneAt
-				ff2 := sim.CurrentTime+gcd < ffExpiresAt
-
-				bp1 := float64(bpExpiresAt) > nextBloodRuneAt
-				bp2 := sim.CurrentTime+gcd < bpExpiresAt
-
-				ff := ff1 && ff2
-				bp := bp1 && bp2
-
-				if ff || bp {
-					spell.Cast(sim, target)
-					success = true
-				} else {
-					return success
+func (dk *DpsDeathknight) castMajorCooldownConditional(mcd *core.MajorCooldown, conditionalMCDs []*core.MajorCooldown, sim *core.Simulation, target *core.Unit) {
+	if mcd != nil && !dk.fr.potionUsed {
+		if mcd.Spell.IsReady(sim) && dk.GCD.IsReady(sim) {
+			allReady := true
+			for i := range conditionalMCDs {
+				if conditionalMCDs[i] != nil && allReady {
+					spell := conditionalMCDs[i].Spell
+					allReady = allReady && spell.CD.IsReady(sim)
+					//// TODO: Find a way to get the racial aura durations
+					if !allReady {
+						if dk.Env.Encounter.Duration < time.Duration(float64(spell.CD.ReadyAt())*1.25) {
+							allReady = true
+						}
+					}
 				}
-			} else {
-				spell.Cast(sim, target)
-				success = true
+			}
+
+			if allReady {
+				mcd.Spell.Cast(sim, target)
+
+				dk.fr.potionUsed = true
 			}
 		}
-
-		fr.SetLastSpell(success, spell)
 	}
+}
 
-	return success
+func (dk *DpsDeathknight) castAllMajorCooldowns(sim *core.Simulation) {
+	fr := &dk.fr
+	target := dk.CurrentTarget
+
+	racialConditionals := []*core.MajorCooldown{fr.bloodfuryMCD, fr.berserkingMCD, fr.stoneformMCD}
+
+	dk.castMajorCooldownConditional(fr.potionOfSpeedMCD, racialConditionals, sim, target)
+	dk.castMajorCooldownConditional(fr.indestructiblePotionMCD, racialConditionals, sim, target)
+	dk.castMajorCooldown(fr.hyperSpeedMCD, sim, target)
+	dk.castMajorCooldown(fr.stoneformMCD, sim, target)
+	dk.castMajorCooldown(fr.bloodfuryMCD, sim, target)
+	dk.castMajorCooldown(fr.berserkingMCD, sim, target)
+	dk.castMajorCooldown(fr.amsMCD, sim, target)
+}
+
+func (dk *DpsDeathknight) RotationActionCallback_UA_Frost(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	casted := dk.UnbreakableArmor.Cast(sim, target)
+
+	if casted {
+		dk.castAllMajorCooldowns(sim)
+		s.ConditionalAdvance(casted)
+		return sim.CurrentTime
+	} else {
+		s.ConditionalAdvance(casted)
+		return -1
+	}
 }

@@ -37,10 +37,7 @@ type DpsWarrior struct {
 	maintainSunder  bool
 	thunderClapNext bool
 
-	castSlamAt    time.Duration
-	slamLatency   time.Duration
-	slamGCDDelay  time.Duration
-	slamMSWWDelay time.Duration
+	castSlamAt time.Duration
 }
 
 func NewDpsWarrior(character core.Character, options proto.Player) *DpsWarrior {
@@ -48,37 +45,20 @@ func NewDpsWarrior(character core.Character, options proto.Player) *DpsWarrior {
 
 	war := &DpsWarrior{
 		Warrior: warrior.NewWarrior(character, *warOptions.Talents, warrior.WarriorInputs{
-			ShoutType:            warOptions.Options.Shout,
-			PrecastShout:         warOptions.Options.PrecastShout,
-			PrecastShoutSapphire: warOptions.Options.PrecastShoutSapphire,
-			PrecastShoutT2:       warOptions.Options.PrecastShoutT2,
-			RampageCDThreshold:   core.DurationFromSeconds(warOptions.Rotation.RampageCdThreshold),
+			ShoutType:       warOptions.Options.Shout,
+			RendCdThreshold: core.DurationFromSeconds(warOptions.Rotation.RendCdThreshold),
 		}),
 		Rotation: *warOptions.Rotation,
 		Options:  *warOptions.Options,
-
-		slamLatency:   core.DurationFromSeconds(warOptions.Rotation.SlamLatency / 1000),
-		slamGCDDelay:  core.DurationFromSeconds(warOptions.Rotation.SlamGcdDelay / 1000),
-		slamMSWWDelay: core.DurationFromSeconds(warOptions.Rotation.SlamMsWwDelay / 1000),
-	}
-	if war.Talents.ImprovedSlam != 2 {
-		war.Rotation.UseSlam = false
-	}
-	if war.slamGCDDelay == 0 {
-		war.slamGCDDelay = time.Millisecond * 400
-	}
-	if war.slamMSWWDelay == 0 {
-		war.slamMSWWDelay = time.Millisecond * 2000
 	}
 
 	war.EnableRageBar(warOptions.Options.StartingRage, core.TernaryFloat64(war.Talents.EndlessRage, 1.25, 1), func(sim *core.Simulation) {
 		if war.GCD.IsReady(sim) {
 			war.TryUseCooldowns(sim)
 			if war.GCD.IsReady(sim) {
-				war.tryQueueSlam(sim)
 				war.doRotation(sim)
 			}
-		} else if !war.thunderClapNext {
+		} else if !war.thunderClapNext && war.Talents.Bloodthirst {
 			war.trySwapToBerserker(sim)
 		}
 	})
@@ -120,9 +100,15 @@ func (war *DpsWarrior) Initialize() {
 }
 
 func (war *DpsWarrior) Reset(sim *core.Simulation) {
-	war.Warrior.Reset(sim)
-	war.BerserkerStanceAura.Activate(sim)
-	war.Stance = warrior.BerserkerStance
+	if war.Talents.Bloodthirst {
+		war.Warrior.Reset(sim)
+		war.BerserkerStanceAura.Activate(sim)
+		war.Stance = warrior.BerserkerStance
+	} else if war.Talents.MortalStrike {
+		war.Warrior.Reset(sim)
+		war.BattleStanceAura.Activate(sim)
+		war.Stance = warrior.BattleStance
+	}
 
 	war.canSwapStanceAt = 0
 	war.maintainSunder = war.Rotation.SunderArmor != proto.Warrior_Rotation_SunderArmorNone

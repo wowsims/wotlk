@@ -1,5 +1,5 @@
-import { UnitMetrics, SimResult, SimResultFilter } from '/wotlk/core/proto_utils/sim_result.js';
-import { maxIndex } from '/wotlk/core/utils.js';
+import { UnitMetrics, SimResult, SimResultFilter } from '../core/proto_utils/sim_result.js';
+import { maxIndex } from '../core/utils.js';
 
 import { ColumnSortType, MetricsTable } from './metrics_table.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
@@ -75,7 +75,7 @@ export class PlayerDamageMetricsTable extends MetricsTable<UnitMetrics> {
 	customizeRowElem(player: UnitMetrics, rowElem: HTMLElement) {
 		rowElem.classList.add('player-damage-row');
 		rowElem.addEventListener('click', event => {
-			this.resultsFilter.setPlayer(this.getLastSimResult().eventID, player.index);
+			this.resultsFilter.setPlayer(this.getLastSimResult().eventID, player.unitIndex);
 		});
 	}
 

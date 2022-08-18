@@ -1,12 +1,12 @@
-import { PlayerStats } from '/wotlk/core/proto/api.js';
-import { Stat, 	Class } from '/wotlk/core/proto/common.js';
-import { TristateEffect } from '/wotlk/core/proto/common.js'
-import { statNames, statOrder } from '/wotlk/core/proto_utils/names.js';
-import { Stats } from '/wotlk/core/proto_utils/stats.js';
-import { Player } from '/wotlk/core/player.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
+import { PlayerStats } from '..//proto/api.js';
+import { Stat, 	Class } from '..//proto/common.js';
+import { TristateEffect } from '..//proto/common.js'
+import { statNames, statOrder } from '..//proto_utils/names.js';
+import { Stats } from '..//proto_utils/stats.js';
+import { Player } from '..//player.js';
+import { EventID, TypedEvent } from '..//typed_event.js';
 
-import * as Mechanics from '/wotlk/core/constants/mechanics.js';
+import * as Mechanics from '../constants/mechanics.js';
 
 import { Component } from './component.js';
 
@@ -169,7 +169,7 @@ export class CharacterStats extends Component {
 		let debuffStats = new Stats();
 
 		const debuffs = player.sim.raid.getDebuffs();
-		if (debuffs.faerieFire == TristateEffect.TristateEffectImproved) {
+		if (debuffs.misery || debuffs.faerieFire == TristateEffect.TristateEffectImproved) {
 			debuffStats = debuffStats.addStat(Stat.StatSpellHit, 3 * Mechanics.SPELL_HIT_RATING_PER_HIT_CHANCE);
 		}
 		if (debuffs.totemOfWrath || debuffs.heartOfTheCrusader || debuffs.masterPoisoner) {

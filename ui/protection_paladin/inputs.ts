@@ -1,18 +1,34 @@
-import { Spec } from '/wotlk/core/proto/common.js';
-import { Player } from '/wotlk/core/player.js';
-import { EventID } from '/wotlk/core/typed_event.js';
-import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
-import { ActionId } from '/wotlk/core/proto_utils/action_id.js';
+import { Spec } from '../core/proto/common.js';
+import { Player } from '../core/player.js';
+import { EventID } from '../core/typed_event.js';
+import { IndividualSimUI } from '../core/individual_sim_ui.js';
+import { ActionId } from '../core/proto_utils/action_id.js';
 
 import {
 	PaladinAura as PaladinAura,
 	PaladinSeal,
 	PaladinJudgement as PaladinJudgement,
+	ProtectionPaladin_Rotation_SpellOption as SpellOption,
 	ProtectionPaladin_Rotation as ProtectionPaladinRotation,
 	ProtectionPaladin_Options as ProtectionPaladinOptions,
-} from '/wotlk/core/proto/paladin.js';
+} from '../core/proto/paladin.js';
 
-import * as InputHelpers from '/wotlk/core/components/input_helpers.js';
+import * as InputHelpers from '../core/components/input_helpers.js';
+
+export const ProtectionPaladinRotationPriorityConfig = InputHelpers.makeCustomRotationInput<Spec.SpecProtectionPaladin, SpellOption>({
+	fieldName: 'customRotation',
+	numColumns: 2,
+	values: [
+		{ actionId: ActionId.fromSpellId(53408), value: SpellOption.JudgementOfWisdom },
+		{ actionId: ActionId.fromSpellId(48806), value: SpellOption.HammerOfWrath },
+		{ actionId: ActionId.fromSpellId(48819), value: SpellOption.Consecration },
+		{ actionId: ActionId.fromSpellId(48817), value: SpellOption.HolyWrath },
+		{ actionId: ActionId.fromSpellId(48801), value: SpellOption.Exorcism },
+		{ actionId: ActionId.fromSpellId(61411), value: SpellOption.ShieldOfRighteousness },
+		{ actionId: ActionId.fromSpellId(48827), value: SpellOption.AvengersShield },
+		{ actionId: ActionId.fromSpellId(53595), value: SpellOption.HammerOfTheRighteous },
+	],
+});
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
@@ -23,6 +39,7 @@ export const ProtectionPaladinRotationConfig = {
 			label: 'Prio Holy Shield',
 			labelTooltip: 'Uses Holy Shield as the highest priority spell. This is usually done when tanking a boss that can crush.',
 		}),
+		ProtectionPaladinRotationPriorityConfig
 	],
 }
 

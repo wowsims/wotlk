@@ -14,33 +14,61 @@ func (mage *Mage) ApplyTalents() {
 	mage.applyMasterOfElements()
 	mage.applyWintersChill()
 	mage.applyMoltenFury()
+	mage.applyMissileBarrage()
+	mage.applyHotStreak()
 	mage.registerArcanePowerCD()
 	mage.registerPresenceOfMindCD()
 	mage.registerCombustionCD()
 	mage.registerIcyVeinsCD()
 	mage.registerColdSnapCD()
 	mage.registerSummonWaterElementalCD()
+	// TODO: Enduring Winter
 
-	if mage.Talents.ArcaneMeditation > 0 {
-		mage.PseudoStats.SpiritRegenRateCasting += float64(mage.Talents.ArcaneMeditation) * 0.1
+	mage.PseudoStats.SpiritRegenRateCasting += float64(mage.Talents.ArcaneMeditation) / 6
+
+	if mage.Talents.StudentOfTheMind > 0 {
+		mage.MultiplyStat(stats.Spirit, 1.0+[]float64{0, .04, .07, .10}[mage.Talents.StudentOfTheMind])
+	}
+
+	if mage.Talents.FocusMagic {
+		// TODO: Pretty sure this should be 2 separate effects? One from talent, another from generic raid buff from another mage.
+		totalCritPercent := 3 + float64(mage.Options.FocusMagicPercentUptime*3)/100.0
+		mage.AddStat(stats.SpellCrit, totalCritPercent*core.CritRatingPerCritChance)
 	}
 
 	if mage.Talents.ArcaneMind > 0 {
-		mage.Character.AddStatDependency(stats.Intellect, stats.Intellect, 1.0+(0.03*float64(mage.Talents.ArcaneMind)))
+		mage.MultiplyStat(stats.Intellect, 1.0+0.03*float64(mage.Talents.ArcaneMind))
 	}
 
 	if mage.Talents.MindMastery > 0 {
-		mage.Character.AddStatDependency(stats.Intellect, stats.SpellPower, 1.0+(0.05*float64(mage.Talents.MindMastery)))
+		mage.AddStatDependency(stats.Intellect, stats.SpellPower, 0.03*float64(mage.Talents.MindMastery))
 	}
 
-	if mage.Talents.ArcaneInstability > 0 {
-		mage.AddStat(stats.SpellCrit, float64(mage.Talents.ArcaneInstability)*1*core.CritRatingPerCritChance)
-		mage.spellDamageMultiplier += float64(mage.Talents.ArcaneInstability) * 0.01
+	mage.AddStat(stats.SpellCrit, float64(mage.Talents.ArcaneInstability)*1*core.CritRatingPerCritChance)
+	mage.spellDamageMultiplier += .01 * float64(mage.Talents.ArcaneInstability)
+
+	mage.PseudoStats.CastSpeedMultiplier *= 1 + .02*float64(mage.Talents.NetherwindPresence)
+
+	mage.spellDamageMultiplier += .01 * float64(mage.Talents.PlayingWithFire)
+	mage.PseudoStats.FireDamageDealtMultiplier *= 1 + .02*float64(mage.Talents.FirePower)
+
+	mage.AddStat(stats.SpellCrit, float64(mage.Talents.Pyromaniac)*core.CritRatingPerCritChance)
+	mage.PseudoStats.SpiritRegenRateCasting += float64(mage.Talents.Pyromaniac) / 6
+
+	if mage.Talents.SpellPower > 0 {
+		mage.bonusCritDamage += .25 * float64(mage.Talents.SpellPower)
 	}
 
-	if mage.Talents.PlayingWithFire > 0 {
-		mage.spellDamageMultiplier += float64(mage.Talents.PlayingWithFire) * 0.01
+	if mage.Talents.Burnout > 0 {
+		mage.bonusCritDamage += .1 * float64(mage.Talents.Burnout)
 	}
+
+	mage.AddStat(stats.SpellHit, float64(mage.Talents.Precision)*core.SpellHitRatingPerHitChance)
+	mage.PseudoStats.CostMultiplier *= 1 - .01*float64(mage.Talents.Precision)
+
+	mage.PseudoStats.FrostDamageDealtMultiplier *= 1 + .02*float64(mage.Talents.PiercingIce)
+	mage.PseudoStats.FrostDamageDealtMultiplier *= 1 + .01*float64(mage.Talents.ArcticWinds)
+	mage.PseudoStats.CostMultiplier *= 1 - .04*float64(mage.Talents.FrostChanneling)
 
 	magicAbsorptionBonus := 2 * float64(mage.Talents.MagicAbsorption)
 	mage.AddStat(stats.ArcaneResistance, magicAbsorptionBonus)
@@ -48,6 +76,49 @@ func (mage *Mage) ApplyTalents() {
 	mage.AddStat(stats.FrostResistance, magicAbsorptionBonus)
 	mage.AddStat(stats.NatureResistance, magicAbsorptionBonus)
 	mage.AddStat(stats.ShadowResistance, magicAbsorptionBonus)
+}
+
+func (mage *Mage) applyHotStreak() {
+	if mage.Talents.HotStreak == 0 {
+		return
+	}
+
+	procChance := float64(mage.Talents.HotStreak) / 3
+
+	mage.HotStreakAura = mage.RegisterAura(core.Aura{
+		Label:    "HotStreak",
+		ActionID: core.ActionID{SpellID: 44448},
+		Duration: time.Second * 10,
+	})
+
+	heatingUp := false
+	mage.RegisterAura(core.Aura{
+		Label:    "HeatingUp",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spell.Flags.Matches(HotStreakSpells) {
+				return
+			}
+
+			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+				heatingUp = false
+				return
+			} else {
+				if heatingUp {
+					if procChance == 1 || sim.RandomFloat("Hot Streak") < procChance {
+						mage.HotStreakAura.Activate(sim)
+						heatingUp = false
+					}
+				} else {
+					heatingUp = true
+				}
+			}
+		},
+	})
+
 }
 
 func (mage *Mage) applyArcaneConcentration() {
@@ -129,14 +200,57 @@ func (mage *Mage) applyArcaneConcentration() {
 	})
 }
 
+func (mage *Mage) applyMissileBarrage() {
+	if mage.Talents.MissileBarrage == 0 {
+		return
+	}
+
+	procChance := float64(mage.Talents.MissileBarrage) * .04
+	mage.MissileBarrageAura = mage.RegisterAura(core.Aura{
+		Label:    "Missile Barrage Proc",
+		ActionID: core.ActionID{SpellID: 44401},
+		Duration: time.Second * 15,
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if spell.ActionID != mage.ArcaneMissiles.ActionID {
+				mage.isMissilesBarrageVisible = true
+			}
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			mage.isMissilesBarrageVisible = false
+		},
+	})
+
+	mage.RegisterAura(core.Aura{
+		Label:    "Missile Barrage Talent",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if !spell.Flags.Matches(BarrageSpells) {
+				return
+			}
+
+			roll := sim.RandomFloat("Missile Barrage")
+
+			updChance := core.TernaryFloat64(spell.ActionID == mage.ArcaneBlast.ActionID, 2*procChance, procChance)
+
+			if roll < updChance {
+				mage.MissileBarrageAura.Activate(sim)
+				mage.MissileBarrageAura.Prioritize()
+			}
+		},
+	})
+}
+
 func (mage *Mage) registerPresenceOfMindCD() {
 	if !mage.Talents.PresenceOfMind {
 		return
 	}
 
-	cooldown := time.Minute * 3
-	if mage.HasSetBonus(ItemSetAldorRegalia, 4) {
-		cooldown -= time.Second * 24
+	cooldown := 120.0
+	if mage.Talents.ArcaneFlows > 0 {
+		cooldown *= 1 - (.15 * float64(mage.Talents.ArcaneFlows))
 	}
 
 	actionID := core.ActionID{SpellID: 12043}
@@ -147,20 +261,19 @@ func (mage *Mage) registerPresenceOfMindCD() {
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    mage.NewTimer(),
-				Duration: cooldown,
+				Duration: time.Duration(cooldown) * time.Second,
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			var spell *core.Spell
 			if mage.Talents.Pyroblast {
 				spell = mage.Pyroblast
-			} else if mage.RotationType == proto.Mage_Rotation_Fire {
+			} else if mage.Rotation.Type == proto.Mage_Rotation_Fire {
 				spell = mage.Fireball
-			} else if mage.RotationType == proto.Mage_Rotation_Frost {
+			} else if mage.Rotation.Type == proto.Mage_Rotation_Frost {
 				spell = mage.Frostbolt
 			} else {
-				numStacks := mage.ArcaneBlastAura.GetStacks()
-				spell = mage.ArcaneBlast[numStacks]
+				spell = mage.ArcaneBlast
 			}
 
 			normalCastTime := spell.DefaultCast.CastTime
@@ -177,21 +290,16 @@ func (mage *Mage) registerPresenceOfMindCD() {
 			var manaCost float64
 			if mage.Talents.Pyroblast {
 				manaCost = mage.Pyroblast.DefaultCast.Cost
-			} else if mage.RotationType == proto.Mage_Rotation_Fire {
+			} else if mage.Rotation.Type == proto.Mage_Rotation_Fire {
 				manaCost = mage.Fireball.DefaultCast.Cost
-			} else if mage.RotationType == proto.Mage_Rotation_Frost {
+			} else if mage.Rotation.Type == proto.Mage_Rotation_Frost {
 				manaCost = mage.Frostbolt.DefaultCast.Cost
 			} else {
-				numStacks := mage.ArcaneBlastAura.GetStacks()
-				manaCost = mage.ArcaneBlast[numStacks].DefaultCast.Cost
+				manaCost = mage.ArcaneBlast.DefaultCast.Cost * float64(mage.ArcaneBlastAura.GetStacks()) * 1.75
 			}
 			manaCost *= character.PseudoStats.CostMultiplier
 
-			if character.CurrentMana() < manaCost {
-				return false
-			}
-
-			return true
+			return character.CurrentMana() >= manaCost
 		},
 	})
 }
@@ -205,14 +313,14 @@ func (mage *Mage) registerArcanePowerCD() {
 	apAura := mage.RegisterAura(core.Aura{
 		Label:    "Arcane Power",
 		ActionID: actionID,
-		Duration: time.Second * 15,
+		Duration: core.TernaryDuration(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfArcanePower), time.Second*18, time.Second*15),
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			mage.PseudoStats.DamageDealtMultiplier *= 1.3
-			mage.PseudoStats.CostMultiplier *= 1.3
+			mage.PseudoStats.DamageDealtMultiplier *= 1.2
+			mage.PseudoStats.CostMultiplier *= 1.2
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			mage.PseudoStats.DamageDealtMultiplier /= 1.3
-			mage.PseudoStats.CostMultiplier /= 1.3
+			mage.PseudoStats.DamageDealtMultiplier /= 1.2
+			mage.PseudoStats.CostMultiplier /= 1.2
 		},
 	})
 
@@ -222,7 +330,7 @@ func (mage *Mage) registerArcanePowerCD() {
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    mage.NewTimer(),
-				Duration: time.Minute * 3,
+				Duration: time.Second * time.Duration(120*(1-(.15*float64(mage.Talents.ArcaneFlows)))),
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
@@ -237,11 +345,11 @@ func (mage *Mage) registerArcanePowerCD() {
 }
 
 func (mage *Mage) applyMasterOfElements() {
-	if mage.Talents.MasterOfElements == 0 {
+	if mage.Talents.MasterOfElements == 0 && mage.Talents.Burnout == 0 {
 		return
 	}
 
-	refundCoeff := 0.1 * float64(mage.Talents.MasterOfElements)
+	refundCoeff := 0.1*float64(mage.Talents.MasterOfElements) - .01*float64(mage.Talents.Burnout)
 	manaMetrics := mage.NewManaMetrics(core.ActionID{SpellID: 29076})
 
 	mage.RegisterAura(core.Aura{
@@ -255,7 +363,11 @@ func (mage *Mage) applyMasterOfElements() {
 				return
 			}
 			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
-				mage.AddMana(sim, spell.BaseCost*refundCoeff, manaMetrics, false)
+				if refundCoeff < 0 {
+					mage.SpendMana(sim, spell.BaseCost*refundCoeff, manaMetrics)
+				} else {
+					mage.AddMana(sim, spell.BaseCost*refundCoeff, manaMetrics, false)
+				}
 			}
 		},
 	})
@@ -268,13 +380,13 @@ func (mage *Mage) registerCombustionCD() {
 	actionID := core.ActionID{SpellID: 11129}
 	cd := core.Cooldown{
 		Timer:    mage.NewTimer(),
-		Duration: time.Minute * 3,
+		Duration: time.Minute * 2,
 	}
 
 	numCrits := 0
 	const critPerStack = 10 * core.CritRatingPerCritChance
 
-	aura := mage.RegisterAura(core.Aura{
+	mage.CombustionAura = mage.RegisterAura(core.Aura{
 		Label:     "Combustion",
 		ActionID:  actionID,
 		Duration:  core.NeverExpires,
@@ -284,16 +396,15 @@ func (mage *Mage) registerCombustionCD() {
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			cd.Use(sim)
-			mage.UpdateMajorCooldowns()
 		},
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
 			aura.Unit.PseudoStats.BonusFireCritRating += critPerStack * float64(newStacks-oldStacks)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spell.SpellSchool != core.SpellSchoolFire {
+			if spell.SpellSchool != core.SpellSchoolFire || !spell.Flags.Matches(SpellFlagMage) {
 				return
 			}
-			if spell.SameAction(IgniteActionID) {
+			if spell.SameAction(IgniteActionID) || spell.SameAction(core.ActionID{SpellID: 55359}) || spell.SameAction(core.ActionID{SpellID: 44457}) { //LB dot action should be ignored
 				return
 			}
 			if !spellEffect.Landed() {
@@ -322,8 +433,8 @@ func (mage *Mage) registerCombustionCD() {
 			CD: cd,
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			aura.Activate(sim)
-			aura.Prioritize()
+			mage.CombustionAura.Activate(sim)
+			mage.CombustionAura.Prioritize()
 		},
 	})
 
@@ -331,7 +442,7 @@ func (mage *Mage) registerCombustionCD() {
 		Spell: spell,
 		Type:  core.CooldownTypeDPS,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return !aura.IsActive()
+			return !mage.CombustionAura.IsActive()
 		},
 	})
 }
@@ -343,6 +454,11 @@ func (mage *Mage) registerIcyVeinsCD() {
 
 	actionID := core.ActionID{SpellID: 12472}
 	manaCost := mage.BaseMana * 0.03
+
+	cooldown := 180.0
+	if mage.Talents.IceFloes > 0 {
+		cooldown *= 1 - []float64{0, .7, .14, .20}[mage.Talents.IceFloes]
+	}
 
 	icyVeinsAura := mage.RegisterAura(core.Aura{
 		Label:    "Icy Veins",
@@ -369,7 +485,7 @@ func (mage *Mage) registerIcyVeinsCD() {
 			},
 			CD: core.Cooldown{
 				Timer:    mage.NewTimer(),
-				Duration: time.Minute * 3,
+				Duration: time.Duration(cooldown) * time.Second,
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
@@ -400,7 +516,7 @@ func (mage *Mage) registerColdSnapCD() {
 		return
 	}
 
-	cooldown := time.Duration(float64(time.Minute*8) * (1.0 - float64(mage.Talents.IceFloes)*0.1))
+	cooldown := time.Duration(float64(time.Minute*8) * (1.0 - float64(mage.Talents.ColdAsIce)*0.1))
 	actionID := core.ActionID{SpellID: 11958}
 
 	spell := mage.RegisterSpell(core.SpellConfig{
@@ -450,11 +566,12 @@ func (mage *Mage) applyMoltenFury() {
 		return
 	}
 
-	multiplier := 1.0 + 0.1*float64(mage.Talents.MoltenFury)
+	multiplier := 1.0 + 0.06*float64(mage.Talents.MoltenFury)
 
 	mage.RegisterResetEffect(func(sim *core.Simulation) {
 		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int) {
-			if isExecute == 20 {
+			mage.DisableMajorCooldown(core.ActionID{SpellID: EvocationId})
+			if isExecute == 35 {
 				mage.PseudoStats.DamageDealtMultiplier *= multiplier
 			}
 		})

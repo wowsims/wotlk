@@ -39,7 +39,7 @@ func (shaman *Shaman) newElectricSpellConfig(actionID core.ActionID, baseCost fl
 	spell := core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolNature,
-		Flags:        SpellFlagElectric,
+		Flags:        SpellFlagElectric | SpellFlagFocusable,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -81,7 +81,7 @@ func (shaman *Shaman) newElectricSpellEffect(minBaseDamage float64, maxBaseDamag
 
 	effect := core.SpellEffect{
 		ProcMask:            core.ProcMaskSpellDamage,
-		BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * 2 * core.SpellHitRatingPerHitChance,
+		BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,
 		BonusSpellCritRating: 0 +
 			(float64(shaman.Talents.TidalMastery) * 1 * core.CritRatingPerCritChance),
 		BonusSpellPower:  0,

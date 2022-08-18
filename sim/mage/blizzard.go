@@ -8,8 +8,8 @@ import (
 )
 
 func (mage *Mage) registerBlizzardSpell() {
-	actionID := core.ActionID{SpellID: 27085}
-	baseCost := 1645.0
+	actionID := core.ActionID{SpellID: 42939}
+	baseCost := .74 * mage.BaseMana
 
 	blizzardDot := core.NewDot(core.Dot{
 		Aura: mage.RegisterAura(core.Aura{
@@ -19,15 +19,13 @@ func (mage *Mage) registerBlizzardSpell() {
 		NumberOfTicks:       8,
 		TickLength:          time.Second * 1,
 		AffectedByCastSpeed: true,
-		TickEffects: core.TickFuncAOESnapshotCapped(mage.Env, 3620, core.SpellEffect{
+		TickEffects: core.TickFuncAOESnapshotCapped(mage.Env, core.SpellEffect{
 			ProcMask: core.ProcMaskPeriodicDamage,
-			DamageMultiplier: mage.spellDamageMultiplier *
-				(1 + 0.02*float64(mage.Talents.PiercingIce)) *
-				(1 + 0.01*float64(mage.Talents.ArcticWinds)),
+			DamageMultiplier: mage.spellDamageMultiplier,
 
 			ThreatMultiplier: 1 - (0.1/3)*float64(mage.Talents.FrostChanneling),
 
-			BaseDamage:     core.BaseDamageConfigMagicNoRoll(184, 0.119),
+			BaseDamage:     core.BaseDamageConfigMagicNoRoll(352, 0.119),
 			OutcomeApplier: mage.OutcomeFuncTick(),
 			IsPeriodic:     true,
 		}),
@@ -43,8 +41,7 @@ func (mage *Mage) registerBlizzardSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost *
-					(1 - 0.05*float64(mage.Talents.FrostChanneling)),
+				Cost: baseCost,
 
 				GCD:         core.GCDDefault,
 				ChannelTime: time.Second * 8,

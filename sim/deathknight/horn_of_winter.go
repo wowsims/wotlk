@@ -21,10 +21,7 @@ func (dk *Deathknight) registerHornOfWinterSpell() {
 		Duration: duration,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			if dk.Inputs.PrecastHornOfWinter && dk.Inputs.RefreshHornOfWinter {
-				if aura.IsActive() {
-					aura.Deactivate(sim)
-					aura.Activate(sim)
-				}
+				aura.Activate(sim)
 			}
 		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
@@ -40,10 +37,9 @@ func (dk *Deathknight) registerHornOfWinterSpell() {
 		},
 	})
 
-	dk.HornOfWinter = dk.RegisterSpell(core.SpellConfig{
+	dk.HornOfWinter = dk.RegisterSpell(nil, core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
-
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
@@ -56,31 +52,17 @@ func (dk *Deathknight) registerHornOfWinterSpell() {
 				Duration: 20 * time.Second,
 			},
 		},
-
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			if dk.Inputs.RefreshHornOfWinter {
 				dk.HornOfWinterAura.Activate(sim)
-				// dk.HornOfWinterAura.Prioritize() // pretty sure we dont want this.
 			}
-
-			amountOfRunicPower := 10.0
-			dk.AddRunicPower(sim, amountOfRunicPower, dk.HornOfWinter.RunicPowerMetrics())
+			dk.AddRunicPower(sim, 10.0, dk.HornOfWinter.RunicPowerMetrics())
 		},
-	})
-}
-
-func (dk *Deathknight) CanHornOfWinter(sim *core.Simulation) bool {
-	return dk.HornOfWinter.IsReady(sim)
+	}, func(sim *core.Simulation) bool {
+		return dk.HornOfWinter.IsReady(sim)
+	}, nil)
 }
 
 func (dk *Deathknight) ShouldHornOfWinter(sim *core.Simulation) bool {
 	return dk.Inputs.RefreshHornOfWinter && dk.HornOfWinter.IsReady(sim) && !dk.HornOfWinterAura.IsActive()
-}
-
-func (dk *Deathknight) CastHornOfWinter(sim *core.Simulation, target *core.Unit) bool {
-	if dk.CanHornOfWinter(sim) {
-		dk.HornOfWinter.Cast(sim, target)
-		return true
-	}
-	return false
 }

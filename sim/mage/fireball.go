@@ -5,27 +5,31 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (mage *Mage) registerFireballSpell() {
-	actionID := core.ActionID{SpellID: 27070}
-	baseCost := 425.0
+	actionID := core.ActionID{SpellID: 42833}
+	baseCost := .19 * mage.BaseMana
+
+	hasGlyph := mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFireball)
 
 	mage.Fireball = mage.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolFire,
-		Flags:       SpellFlagMage,
+		Flags:       SpellFlagMage | BarrageSpells | HotStreakSpells,
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost *
-					(1 - 0.01*float64(mage.Talents.Pyromaniac)),
-				GCD:      core.GCDDefault,
-				CastTime: time.Millisecond*3500 - time.Millisecond*100*time.Duration(mage.Talents.ImprovedFireball),
+				Cost: baseCost,
+				GCD:  core.GCDDefault,
+				CastTime: time.Millisecond*3500 -
+					time.Millisecond*100*time.Duration(mage.Talents.ImprovedFireball) -
+					core.TernaryDuration(hasGlyph, time.Millisecond*150, 0),
 			},
 		},
 
@@ -35,22 +39,26 @@ func (mage *Mage) registerFireballSpell() {
 
 			BonusSpellCritRating: 0 +
 				float64(mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
-				float64(mage.Talents.Pyromaniac)*1*core.CritRatingPerCritChance,
+				float64(mage.Talents.ImprovedScorch)*core.CritRatingPerCritChance +
+				core.TernaryFloat64(mage.MageTier.t9_4, 5*core.CritRatingPerCritChance, 0),
 
 			DamageMultiplier: mage.spellDamageMultiplier *
-				(1 + 0.02*float64(mage.Talents.FirePower)) *
-				core.TernaryFloat64(mage.HasSetBonus(ItemSetTempestRegalia, 4), 1.05, 1),
+				(1 + 0.02*float64(mage.Talents.SpellImpact)) *
+				(1 + .04*float64(mage.Talents.TormentTheWeak)),
 
-			ThreatMultiplier: 1 - 0.05*float64(mage.Talents.BurningSoul),
+			ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
-			BaseDamage:     core.BaseDamageConfigMagic(649, 821, 1.0),
-			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, 0.25*float64(mage.Talents.SpellPower))),
+			BaseDamage: core.BaseDamageConfigMagic(898, 1143, 1.0+0.05*float64(mage.Talents.EmpoweredFire)),
+			// BaseDamage:     core.BaseDamageConfigMagicNoRoll((898 + 1143)/2, 1.0+0.05*float64(mage.Talents.EmpoweredFire)),
+			OutcomeApplier: mage.fireSpellOutcomeApplier(mage.bonusCritDamage),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
+				if spellEffect.Landed() && !hasGlyph {
 					mage.FireballDot.Apply(sim)
 				}
 			},
+
+			MissileSpeed: 22,
 		}),
 	})
 
@@ -67,12 +75,11 @@ func (mage *Mage) registerFireballSpell() {
 			ProcMask: core.ProcMaskPeriodicDamage,
 
 			DamageMultiplier: mage.spellDamageMultiplier *
-				(1 + 0.02*float64(mage.Talents.FirePower)) *
-				core.TernaryFloat64(mage.HasSetBonus(ItemSetTempestRegalia, 4), 1.05, 1),
+				(1 + 0.02*float64(mage.Talents.FirePower)) * (1 + .04*float64(mage.Talents.TormentTheWeak)),
 
-			ThreatMultiplier: 1 - 0.05*float64(mage.Talents.BurningSoul),
+			ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
-			BaseDamage:     core.BaseDamageConfigFlat(84 / 4),
+			BaseDamage:     core.BaseDamageConfigFlat(116 / 4),
 			OutcomeApplier: mage.OutcomeFuncTick(),
 			IsPeriodic:     true,
 		}),

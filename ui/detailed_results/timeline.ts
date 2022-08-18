@@ -1,11 +1,11 @@
-import { ResourceType } from '/wotlk/core/proto/api.js';
-import { OtherAction } from '/wotlk/core/proto/common.js';
-import { UnitMetrics, SimResult, SimResultFilter } from '/wotlk/core/proto_utils/sim_result.js';
-import { ActionId, resourceTypeToIcon } from '/wotlk/core/proto_utils/action_id.js';
-import { resourceColors, resourceNames } from '/wotlk/core/proto_utils/names.js';
-import { orderedResourceTypes } from '/wotlk/core/proto_utils/utils.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
-import { bucket, distinct, getEnumValues, maxIndex, stringComparator, sum } from '/wotlk/core/utils.js';
+import { ResourceType } from '../core/proto/api.js';
+import { OtherAction } from '../core/proto/common.js';
+import { UnitMetrics, SimResult, SimResultFilter } from '../core/proto_utils/sim_result.js';
+import { ActionId, resourceTypeToIcon } from '../core/proto_utils/action_id.js';
+import { resourceColors, resourceNames } from '../core/proto_utils/names.js';
+import { orderedResourceTypes } from '../core/proto_utils/utils.js';
+import { EventID, TypedEvent } from '../core/typed_event.js';
+import { bucket, distinct, getEnumValues, maxIndex, stringComparator, sum } from '../core/utils.js';
 
 import {
 	AuraUptimeLog,
@@ -15,7 +15,7 @@ import {
 	DpsLog,
 	SimLog,
 	ThreatLogGroup,
-} from '/wotlk/core/proto_utils/logs_parser.js';
+} from '../core/proto_utils/logs_parser.js';
 
 import { actionColors } from './color_settings.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
@@ -666,8 +666,16 @@ export class Timeline extends ResultComponent {
 			const castElem = document.createElement('div');
 			castElem.classList.add('rotation-timeline-cast');
 			castElem.style.left = this.timeToPx(castLog.timestamp);
-			castElem.style.minWidth = this.timeToPx(castLog.castTime);
+			castElem.style.minWidth = this.timeToPx(castLog.castTime + castLog.travelTime);
 			rowElem.appendChild(castElem);
+
+			if (castLog.travelTime != 0) {
+				const travelTimeElem = document.createElement('div');
+				travelTimeElem.classList.add('rotation-timeline-travel-time');
+				travelTimeElem.style.left = this.timeToPx(castLog.castTime);
+				travelTimeElem.style.minWidth = this.timeToPx(castLog.travelTime);
+				castElem.appendChild(travelTimeElem);
+			}
 
 			if (castLog.damageDealtLogs.length > 0) {
 				const ddl = castLog.damageDealtLogs[0];
@@ -686,9 +694,10 @@ export class Timeline extends ResultComponent {
 			iconElem.classList.add('rotation-timeline-cast-icon');
 			actionId.setBackground(iconElem);
 			castElem.appendChild(iconElem);
+			const travelTimeStr = castLog.travelTime == 0 ? '' : ` + ${castLog.travelTime.toFixed(2)}s travel time`;
 			tippy(castElem, {
 				content: `
-					<span>${castLog.actionId!.name} from ${castLog.timestamp.toFixed(2)}s to ${(castLog.timestamp + castLog.castTime).toFixed(2)}s (${castLog.castTime.toFixed(2)}s)</span>
+					<span>${castLog.actionId!.name} from ${castLog.timestamp.toFixed(2)}s to ${(castLog.timestamp + castLog.castTime).toFixed(2)}s (${castLog.castTime.toFixed(2)}s)${travelTimeStr}</span>
 					<ul class="rotation-timeline-cast-damage-list">
 						${castLog.damageDealtLogs.map(ddl => `
 								<li>
@@ -751,6 +760,19 @@ export class Timeline extends ResultComponent {
 					<span>${aul.actionId!.name}: ${aul.gainedAt.toFixed(2)}s - ${(aul.fadedAt || duration).toFixed(2)}s</span>
 				`,
 				allowHTML: true,
+			});
+
+			aul.stacksChange.forEach((scl, i) => {
+				if (scl.timestamp == aul.fadedAt) {
+					return;
+				}
+
+				const stacksChangeElem = document.createElement('div');
+				stacksChangeElem.classList.add('rotation-timeline-stacks-change');
+				stacksChangeElem.style.left = this.timeToPx(scl.timestamp - aul.timestamp);
+				stacksChangeElem.style.width = this.timeToPx(aul.stacksChange[i+1] ? aul.stacksChange[i+1].timestamp-scl.timestamp : aul.fadedAt - scl.timestamp);
+				stacksChangeElem.textContent = String(scl.newStacks);
+				auraElem.appendChild(stacksChangeElem);
 			});
 		});
 	}
@@ -961,18 +983,55 @@ const idToCategoryMap: Record<number, number> = {
 	[24248]: MELEE_ACTION_CATEGORY + 0.4, // Ferocious Bite
 
 	// Hunter
-	[27014]: 0.1, // Raptor Strike
+	[48996]: 0.1, // Raptor Strike
+	[53217]: 0.6, // Wild Quiver
+	[53209]: MELEE_ACTION_CATEGORY + 0.10, // Chimera Shot
+	[53353]: MELEE_ACTION_CATEGORY + 0.11, // Chimera Shot Serpent
+	[60053]: MELEE_ACTION_CATEGORY + 0.10, // Explosive Shot
+	[49050]: MELEE_ACTION_CATEGORY + 0.20, // Aimed Shot
+	[49048]: MELEE_ACTION_CATEGORY + 0.21, // Multi Shot
+	[49045]: MELEE_ACTION_CATEGORY + 0.22, // Arcane Shot
+	[49052]: MELEE_ACTION_CATEGORY + 0.27, // Steady Shot
+	[61006]: MELEE_ACTION_CATEGORY + 0.28, // Kill Shot
+	[34490]: MELEE_ACTION_CATEGORY + 0.29, // Silencing Shot
+	[49001]: MELEE_ACTION_CATEGORY + 0.30, // Serpent Sting
+	[3043]:  MELEE_ACTION_CATEGORY + 0.30, // Scorpid Sting
+	[53238]: MELEE_ACTION_CATEGORY + 0.31, // Piercing Shots
+	[63672]: MELEE_ACTION_CATEGORY + 0.32, // Black Arrow
+	[49067]: MELEE_ACTION_CATEGORY + 0.33, // Explosive Trap
+	[58434]: MELEE_ACTION_CATEGORY + 0.34, // Volley
 
 	// Paladin
 	[27156]: 0.1, // Seal of Righteousness Proc
 	[20182]: 0.2, // Reckoning
 	[27179]: SPELL_ACTION_CATEGORY + 0.1, // Holy Shield
+	
+	[35395]: MELEE_ACTION_CATEGORY + 0.10, // Crusader Strike
+	[53385]: MELEE_ACTION_CATEGORY + 0.20, // Divine Storm
+	[53408]: SPELL_ACTION_CATEGORY + 0.10, // Judgement of Wisdom
+	[20271]: SPELL_ACTION_CATEGORY + 0.10, // Judgement of Light
+	[31804]: SPELL_ACTION_CATEGORY + 0.20, // Judgement of Vengeance
+	[20467]: SPELL_ACTION_CATEGORY + 0.20, // Judgement of Command
+	[20187]: SPELL_ACTION_CATEGORY + 0.20, // Judgement of Righteousness
+	[48801]: SPELL_ACTION_CATEGORY + 0.30, // Exorcism
+	[48819]: SPELL_ACTION_CATEGORY + 0.40, // Consecration
+	[48817]: SPELL_ACTION_CATEGORY + 0.50, // Holy Wrath
+	[48806]: SPELL_ACTION_CATEGORY + 0.60, // Hammer of Wrath
+	[54428]: SPELL_ACTION_CATEGORY + 0.70, // Divine Plea
 
 	// Rogue
 	[6774]: MELEE_ACTION_CATEGORY + 0.1, // Slice and Dice
 	[26866]: MELEE_ACTION_CATEGORY + 0.2, // Expose Armor
-	[26865]: MELEE_ACTION_CATEGORY + 0.3, // Eviscerate
-	[26867]: MELEE_ACTION_CATEGORY + 0.3, // Rupture
+	[48672]: MELEE_ACTION_CATEGORY + 0.3, // Rupture
+	[57993]: MELEE_ACTION_CATEGORY + 0.3, // Envenom
+	[48668]: MELEE_ACTION_CATEGORY + 0.4, // Eviscerate
+	[48666]: MELEE_ACTION_CATEGORY + 0.5, // Mutilate
+	[48665]: MELEE_ACTION_CATEGORY + 0.6, // Mutilate (MH)
+	[48664]: MELEE_ACTION_CATEGORY + 0.7, // Mutilate (OH)
+	[48638]: MELEE_ACTION_CATEGORY + 0.5, // Sinister Strike
+	[51723]: MELEE_ACTION_CATEGORY + 0.8, // Fan of Knives
+	[57973]: SPELL_ACTION_CATEGORY + 0.1, // Deadly Poison
+	[57968]: SPELL_ACTION_CATEGORY + 0.2, // Instant Poison
 
 	// Shaman
 	[17364]: MELEE_ACTION_CATEGORY + 0.1, // Stormstrike
@@ -990,6 +1049,48 @@ const idToCategoryMap: Record<number, number> = {
 	[25587]: SPELL_ACTION_CATEGORY + 0.3, // Windfury Totem r5
 	[2825]: DEFAULT_ACTION_CATEGORY + 0.1, // Bloodlust
 
+	// Warlock
+	[47867]: SPELL_ACTION_CATEGORY + 0.01, // Curse of Doom
+	[47864]: SPELL_ACTION_CATEGORY + 0.02, // Curse of Agony
+	[47813]: SPELL_ACTION_CATEGORY + 0.1, // Corruption
+	[59164]: SPELL_ACTION_CATEGORY + 0.2, // Haunt
+	[47843]: SPELL_ACTION_CATEGORY + 0.3, // Unstable Affliction
+	[47811]: SPELL_ACTION_CATEGORY + 0.31, // Immolate
+	[17962]: SPELL_ACTION_CATEGORY + 0.32, // Conflagrate
+	[59172]: SPELL_ACTION_CATEGORY + 0.49, // Chaos Bolt
+	[47809]: SPELL_ACTION_CATEGORY + 0.5, // Shadow Bolt
+	[47838]: SPELL_ACTION_CATEGORY + 0.51, // Incinerate
+	[47825]: SPELL_ACTION_CATEGORY + 0.52, // Soul Fire
+	[47855]: SPELL_ACTION_CATEGORY + 0.6, // Drain Soul
+	[57946]: SPELL_ACTION_CATEGORY + 0.7, // Life Tap
+	[47241]: SPELL_ACTION_CATEGORY + 0.8, // Metamorphosis
+	[50589]: SPELL_ACTION_CATEGORY + 0.81, // Immolation Aura
+	[47193]: SPELL_ACTION_CATEGORY + 0.82, // Demonic Empowerment
+
+	// Mage
+	[42842]: SPELL_ACTION_CATEGORY + 0.01, // Frostbolt
+	[47610]: SPELL_ACTION_CATEGORY + 0.02, // Frostfire Bolt
+	[42897]: SPELL_ACTION_CATEGORY + 0.02, // Arcane Blast
+	[42833]: SPELL_ACTION_CATEGORY + 0.02, // Fireball
+	[42891]: SPELL_ACTION_CATEGORY + 0.1, // Pyroblast
+	[42846]: SPELL_ACTION_CATEGORY + 0.1, // Arcane Missiles
+	[55360]: SPELL_ACTION_CATEGORY + 0.2, //Living Bomb
+	[12848]: SPELL_ACTION_CATEGORY + 0.3, // Ignite
+	[12472]: SPELL_ACTION_CATEGORY + 0.4, // Icy Veins
+	[11129]: SPELL_ACTION_CATEGORY + 0.4, // Combustion
+	[12042]: SPELL_ACTION_CATEGORY + 0.4, // Arcane Power
+	[12043]: SPELL_ACTION_CATEGORY + 0.41, // Presence of Mind
+	[31687]: SPELL_ACTION_CATEGORY + 0.41, // Water Elemental
+	[55342]: SPELL_ACTION_CATEGORY + 0.5, // Mirror Image
+	[33312]: SPELL_ACTION_CATEGORY + 0.51, // Mana Gems
+	[12051]: SPELL_ACTION_CATEGORY + 0.52, // Evocate
+	[44401]: SPELL_ACTION_CATEGORY + 0.6, // Missile Barrage
+	[44448]: SPELL_ACTION_CATEGORY + 0.6, // Hot Streak
+	[12536]: SPELL_ACTION_CATEGORY + 0.61, // Clearcasting
+	// [55360]: SPELL_ACTION_CATEGORY + 0.6, // Fingers of Frost
+	// [55360]: SPELL_ACTION_CATEGORY + 0.61, // Brain Freeze
+
+
 	// Warrior
 	[25231]: 0.1, // Cleave
 	[29707]: 0.1, // Heroic Strike
@@ -1004,11 +1105,40 @@ const idToCategoryMap: Record<number, number> = {
 	[71]: DEFAULT_ACTION_CATEGORY + 0.1, // Defensive Stance
 	[2457]: DEFAULT_ACTION_CATEGORY + 0.1, // Battle Stance
 	[2458]: DEFAULT_ACTION_CATEGORY + 0.1, // Berserker Stance
+	
+	// Deathknight
+	[51425]: MELEE_ACTION_CATEGORY + 0.05, // Obliterate
+	[55268]: MELEE_ACTION_CATEGORY + 0.1, // Frost strike
+	[49930]: MELEE_ACTION_CATEGORY + 0.15, // Blood strike
+	[50842]: MELEE_ACTION_CATEGORY + 0.2, // Pestilence
+	[51411]: MELEE_ACTION_CATEGORY + 0.25, // Howling Blast
+	[49895]: MELEE_ACTION_CATEGORY + 0.25, // Death Coil
+	[49938]: MELEE_ACTION_CATEGORY + 0.25, // Death and Decay
+	[63560]: MELEE_ACTION_CATEGORY + 0.25, // Ghoul Frenzy
+	[50536]: MELEE_ACTION_CATEGORY + 0.25, // Unholy Blight
+	[57623]: MELEE_ACTION_CATEGORY + 0.25, // HoW
+	[59131]: MELEE_ACTION_CATEGORY + 0.3, // Icy touch
+	[49921]: MELEE_ACTION_CATEGORY + 0.3, // Plague strike
+	[51271]: MELEE_ACTION_CATEGORY + 0.35, // UA
+	[45529]: MELEE_ACTION_CATEGORY + 0.35, // BT
+	[47568]: MELEE_ACTION_CATEGORY + 0.35, // ERW
+	[49206]: MELEE_ACTION_CATEGORY + 0.35, // Summon Gargoyle
+	[46584]: MELEE_ACTION_CATEGORY + 0.35, // Raise Dead
+	[55095]: MELEE_ACTION_CATEGORY + 0.4, // Frost Fever
+	[55078]: MELEE_ACTION_CATEGORY + 0.4, // Blood Plague
+	[49655]: MELEE_ACTION_CATEGORY + 0.4, // Wandering Plague
+	[50401]: MELEE_ACTION_CATEGORY + 0.5, // Razor Frost
+	[51460]: MELEE_ACTION_CATEGORY + 0.5, // Necrosis
+	[50463]: MELEE_ACTION_CATEGORY + 0.5, // BCB
+	[50689]: DEFAULT_ACTION_CATEGORY + 0.1, // Blood Presence
+	[48263]: DEFAULT_ACTION_CATEGORY + 0.1, // Frost Presence
+	[48265]: DEFAULT_ACTION_CATEGORY + 0.1, // Unholy Presence
 
 	// Generic
 	[26992]: SPELL_ACTION_CATEGORY + 0.91, // Thorns
 	[27150]: SPELL_ACTION_CATEGORY + 0.92, // Retribution Aura
 	[27169]: SPELL_ACTION_CATEGORY + 0.93, // Blessing of Sanctuary
+	// [54758]: DEFAULT_ACTION_CATEGORY + 0.000001, // Hyperspeed Acceleration
 };
 
 const idsToGroupForRotation: Array<number> = [

@@ -10,6 +10,7 @@ import (
 )
 
 const RuptureEnergyCost = 25.0
+const RuptureSpellID = 48672
 
 func (rogue *Rogue) makeRupture(comboPoints int32) *core.Spell {
 	refundAmount := 0.4 * float64(rogue.Talents.QuickRecovery)
@@ -17,22 +18,19 @@ func (rogue *Rogue) makeRupture(comboPoints int32) *core.Spell {
 	baseCost := RuptureEnergyCost
 
 	return rogue.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48672, Tag: comboPoints},
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreResists | rogue.finisherFlags(),
-
+		ActionID:     core.ActionID{SpellID: RuptureSpellID, Tag: comboPoints},
+		SpellSchool:  core.SpellSchoolPhysical,
+		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreResists | rogue.finisherFlags(),
 		ResourceType: stats.Energy,
 		BaseCost:     baseCost,
-
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost,
 				GCD:  time.Second,
 			},
-			ModifyCast:  rogue.applyDeathmantle,
+			ModifyCast:  rogue.CastModifier,
 			IgnoreHaste: true,
 		},
-
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeMHSpecial,
 			DamageMultiplier: 1,
@@ -84,14 +82,16 @@ func (rogue *Rogue) registerRupture() {
 			ProcMask: core.ProcMaskPeriodicDamage,
 			DamageMultiplier: 1 +
 				0.15*float64(rogue.Talents.BloodSpatter) +
+				0.02*float64(rogue.Talents.FindWeakness) +
+				core.TernaryFloat64(rogue.HasSetBonus(ItemSetBonescythe, 2), 0.1, 0) +
+				core.TernaryFloat64(rogue.HasSetBonus(ItemSetTerrorblade, 4), 0.2, 0) +
 				0.1*float64(rogue.Talents.SerratedBlades),
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
 			BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				comboPoints := rogue.ComboPoints()
 				attackPower := hitEffect.MeleeAttackPower(spell.Unit) + hitEffect.MeleeAttackPowerOnTarget()
-
-				return 127 + float64(comboPoints)*18 + attackPower*[]float64{0.015, 0.024, 0.03, 0.034286, 0.0375}[comboPoints-1]
+				return 127 + float64(comboPoints)*18 + attackPower*[]float64{0.0, 0.015, 0.024, 0.03, 0.034286, 0.0375}[comboPoints]
 			}, 0),
 			OutcomeApplier: rogue.OutcomeFuncTickHitAndCrit(rogue.MeleeCritMultiplier(true, false)),
 		}),

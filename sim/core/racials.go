@@ -37,11 +37,47 @@ func applyRaceEffects(agent Agent) {
 			[]proto.WeaponType{proto.WeaponType_WeaponTypeMace})
 
 		// TODO: Stoneform
+		actionID := ActionID{SpellID: 20594}
+
+		statDep := character.NewDynamicMultiplyStat(stats.Armor, 1.1)
+		stoneFormAura := character.NewTemporaryStatsAuraWrapped("Stoneform", actionID, stats.Stats{}, time.Second*8, func(aura *Aura) {
+			oldOnGain := aura.OnGain
+			oldOnExpire := aura.OnExpire
+
+			aura.OnGain = func(aura *Aura, sim *Simulation) {
+				oldOnGain(aura, sim)
+				aura.Unit.EnableDynamicStatDep(sim, statDep)
+			}
+
+			aura.OnExpire = func(aura *Aura, sim *Simulation) {
+				oldOnExpire(aura, sim)
+				aura.Unit.DisableDynamicStatDep(sim, statDep)
+			}
+		})
+
+		spell := character.RegisterSpell(SpellConfig{
+			ActionID: actionID,
+			Flags:    SpellFlagNoOnCastComplete,
+			Cast: CastConfig{
+				CD: Cooldown{
+					Timer:    character.NewTimer(),
+					Duration: time.Minute * 2,
+				},
+			},
+			ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
+				stoneFormAura.Activate(sim)
+			},
+		})
+
+		character.AddMajorCooldown(MajorCooldown{
+			Spell: spell,
+			Type:  CooldownTypeDPS,
+		})
 	case proto.Race_RaceGnome:
 		character.PseudoStats.ReducedArcaneHitTakenChance += 0.02
-		character.AddStatDependency(stats.Intellect, stats.Intellect, 1.0+0.05)
+		character.MultiplyStat(stats.Intellect, 1.05)
 	case proto.Race_RaceHuman:
-		character.AddStatDependency(stats.Spirit, stats.Spirit, 1.0+0.03)
+		character.MultiplyStat(stats.Spirit, 1.03)
 		applyWeaponSpecialization(
 			character,
 			3*ExpertisePerQuarterPercentReduction,
@@ -109,7 +145,7 @@ func applyRaceEffects(agent Agent) {
 		actionID := ActionID{SpellID: 26297}
 
 		berserkingAura := character.RegisterAura(Aura{
-			Label:    "Berserking",
+			Label:    "Berserking (Troll)",
 			ActionID: actionID,
 			Duration: time.Second * 10,
 			OnGain: func(aura *Aura, sim *Simulation) {

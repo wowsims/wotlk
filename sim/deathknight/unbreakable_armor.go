@@ -16,26 +16,35 @@ func (dk *Deathknight) registerUnbreakableArmorSpell() {
 	cdTimer := dk.NewTimer()
 	cd := time.Minute*1 - dk.thassariansPlateCooldownReduction(dk.UnbreakableArmor)
 
+	strDep := dk.NewDynamicMultiplyStat(stats.Strength, 1.2)
+	armorDep := dk.NewDynamicMultiplyStat(stats.Armor, 1.25)
+
 	dk.UnbreakableArmorAura = dk.RegisterAura(core.Aura{
 		Label:    "Unbreakable Armor",
 		ActionID: actionID,
 		Duration: time.Second * 20,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			dk.UnbreakableArmorAura.Unit.AddStatDependencyDynamic(sim, stats.Strength, stats.Strength, 1.2)
-			dk.UnbreakableArmorAura.Unit.AddStatDependencyDynamic(sim, stats.Armor, stats.Armor, 1.25)
+			aura.Unit.EnableDynamicStatDep(sim, strDep)
+			aura.Unit.EnableDynamicStatDep(sim, armorDep)
 		},
 
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			dk.UnbreakableArmorAura.Unit.AddStatDependencyDynamic(sim, stats.Strength, stats.Strength, 1.0/1.2)
-			dk.UnbreakableArmorAura.Unit.AddStatDependencyDynamic(sim, stats.Armor, stats.Armor, 1.0/1.25)
+			aura.Unit.DisableDynamicStatDep(sim, strDep)
+			aura.Unit.DisableDynamicStatDep(sim, armorDep)
 		},
 	})
 
-	dk.UnbreakableArmor = dk.RegisterSpell(core.SpellConfig{
-		ActionID: actionID,
-		Flags:    core.SpellFlagNoOnCastComplete,
-
+	baseCost := float64(core.NewRuneCost(10, 0, 1, 0, 0))
+	dk.UnbreakableArmor = dk.RegisterSpell(nil, core.SpellConfig{
+		ActionID:     actionID,
+		Flags:        core.SpellFlagNoOnCastComplete,
+		ResourceType: stats.RunicPower,
+		BaseCost:     baseCost,
 		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				Cost: baseCost,
+				// TODO: does not invoke the GCD?
+			},
 			CD: core.Cooldown{
 				Timer:    cdTimer,
 				Duration: cd,
@@ -44,24 +53,8 @@ func (dk *Deathknight) registerUnbreakableArmorSpell() {
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			dk.UnbreakableArmorAura.Activate(sim)
-			dk.UnbreakableArmorAura.Prioritize()
-
-			dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_F)
-			dk.Spend(sim, spell, dkSpellCost)
-			amountOfRunicPower := 10.0
-			dk.AddRunicPower(sim, amountOfRunicPower, dk.UnbreakableArmor.RunicPowerMetrics())
 		},
-	})
-}
-
-func (dk *Deathknight) CanUnbreakableArmor(sim *core.Simulation) bool {
-	return dk.CastCostPossible(sim, 0, 0, 1, 0) && dk.UnbreakableArmor.IsReady(sim)
-}
-
-func (dk *Deathknight) CastUnbreakableArmor(sim *core.Simulation, target *core.Unit) bool {
-	if dk.CanUnbreakableArmor(sim) {
-		dk.UnbreakableArmor.Cast(sim, target)
-		return true
-	}
-	return false
+	}, func(sim *core.Simulation) bool {
+		return dk.CastCostPossible(sim, 0, 0, 1, 0) && dk.UnbreakableArmor.IsReady(sim)
+	}, nil)
 }

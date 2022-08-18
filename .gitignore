@@ -1,5 +1,8 @@
 # nodejs modules
 node_modules
+ui/core/index.ts
+ui/*/index.html
+.dirstamp
 
 # IDE folders
 .vscode
@@ -13,5 +16,9 @@ sim/web/__debug_bin
 # temporary files
 *.results.tmp
 .dockerignore
+wotlk/
 *.code-workspace
 wowsimwotlk
+
+# old result file
+TestDestruction.results

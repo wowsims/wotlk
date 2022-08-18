@@ -50,7 +50,7 @@ func (dk *Deathknight) registerFrostFever() {
 	flagTs := make([]bool, dk.Env.GetNumTargets())
 	isRefreshing := make([]bool, dk.Env.GetNumTargets())
 
-	dk.FrostFeverSpell = dk.RegisterSpell(core.SpellConfig{
+	dk.FrostFeverSpell = dk.RegisterSpell(nil, core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolFrost,
 		Flags:       core.SpellFlagDisease,
@@ -62,7 +62,7 @@ func (dk *Deathknight) registerFrostFever() {
 			isRefreshing[unit.Index] = false
 			dk.FrostFeverDebuffAura[unit.Index].Activate(sim)
 		},
-	})
+	}, nil, nil)
 
 	dk.FrostFeverDisease = make([]*core.Dot, dk.Env.GetNumTargets())
 
@@ -100,7 +100,8 @@ func (dk *Deathknight) registerFrostFever() {
 					Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 						firstTsApply := !flagTs[hitEffect.Target.Index]
 						flagTs[hitEffect.Target.Index] = true
-						return ((127.0 + 80.0*0.32) + dk.getImpurityBonus(hitEffect, spell.Unit)*0.055) *
+						// 80.0 * 0.32 * 1.15 base, 0.055 * 1.15
+						return (29.44 + dk.getImpurityBonus(hitEffect, spell.Unit)*0.06325) *
 							core.TernaryFloat64(firstTsApply, 1.0, dk.RoRTSBonus(hitEffect.Target))
 					},
 					TargetSpellCoefficient: 1,
@@ -109,7 +110,7 @@ func (dk *Deathknight) registerFrostFever() {
 			}),
 		})
 
-		dk.FrostFeverDisease[target.Index].Spell = dk.FrostFeverSpell
+		dk.FrostFeverDisease[target.Index].Spell = dk.FrostFeverSpell.Spell
 	}
 }
 
@@ -119,7 +120,7 @@ func (dk *Deathknight) registerBloodPlague() {
 	flagRor := make([]bool, dk.Env.GetNumTargets())
 	isRefreshing := make([]bool, dk.Env.GetNumTargets())
 
-	dk.BloodPlagueSpell = dk.RegisterSpell(core.SpellConfig{
+	dk.BloodPlagueSpell = dk.RegisterSpell(nil, core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 		Flags:       core.SpellFlagDisease,
@@ -130,7 +131,7 @@ func (dk *Deathknight) registerBloodPlague() {
 			dk.BloodPlagueDisease[unit.Index].Apply(sim)
 			isRefreshing[unit.Index] = false
 		},
-	})
+	}, nil, nil)
 
 	dk.BloodPlagueDisease = make([]*core.Dot, dk.Env.GetNumTargets())
 
@@ -170,7 +171,8 @@ func (dk *Deathknight) registerBloodPlague() {
 					Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 						firstRorApply := !flagRor[hitEffect.Target.Index]
 						flagRor[hitEffect.Target.Index] = true
-						return ((127.0 + 80.0*0.32) + dk.getImpurityBonus(hitEffect, spell.Unit)*0.055) *
+						// 80.0 * 0.394 * 1.15 for base, 0.055 * 1.15 for ap coeff
+						return (36.248 + dk.getImpurityBonus(hitEffect, spell.Unit)*0.06325) *
 							core.TernaryFloat64(firstRorApply, 1.0, dk.RoRTSBonus(hitEffect.Target))
 					},
 					TargetSpellCoefficient: 1,
@@ -179,7 +181,7 @@ func (dk *Deathknight) registerBloodPlague() {
 			}),
 		})
 
-		dk.BloodPlagueDisease[target.Index].Spell = dk.BloodPlagueSpell
+		dk.BloodPlagueDisease[target.Index].Spell = dk.BloodPlagueSpell.Spell
 	}
 }
 
@@ -192,8 +194,13 @@ func (dk *Deathknight) doWanderingPlague(sim *core.Simulation, spell *core.Spell
 		return
 	}
 
-	physCritChance := spellEffect.PhysicalCritChance(spell.Unit, spell, dk.AttackTables[spellEffect.Target.TableIndex])
+	if dk.LastTickTime == sim.CurrentTime {
+		return
+	}
+
+	physCritChance := spellEffect.PhysicalCritChance(spell.Unit, spell, dk.AttackTables[spellEffect.Target.UnitIndex])
 	if sim.RandomFloat("Wandering Plague Roll") < physCritChance {
+		dk.LastTickTime = sim.CurrentTime
 		dk.LastDiseaseDamage = spellEffect.Damage
 		dk.WanderingPlague.Cast(sim, spellEffect.Target)
 	}

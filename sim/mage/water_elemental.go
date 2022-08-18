@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -14,7 +15,13 @@ func (mage *Mage) registerSummonWaterElementalCD() {
 		return
 	}
 
+	if mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfEternalWater) {
+		// Makes pet permanent, so doesn't use the CD.
+		return
+	}
+
 	baseCost := mage.BaseMana * 0.16
+	summonDuration := time.Second*45 + time.Second*5*time.Duration(mage.Talents.EnduringWinter)
 	mage.SummonWaterElemental = mage.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 31687},
 
@@ -23,17 +30,18 @@ func (mage *Mage) registerSummonWaterElementalCD() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.05*float64(mage.Talents.FrostChanneling)),
+				Cost: baseCost,
 				GCD:  core.GCDDefault,
 			},
 			CD: core.Cooldown{
-				Timer:    mage.NewTimer(),
-				Duration: time.Minute * 3,
+				Timer: mage.NewTimer(),
+				Duration: time.Duration(float64(time.Minute*3)*(1-0.1*float64(mage.Talents.ColdAsIce))) -
+					core.TernaryDuration(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfWaterElemental), time.Second*30, 0),
 			},
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			mage.waterElemental.EnableWithTimeout(sim, mage.waterElemental, time.Second*45)
+			mage.waterElemental.EnableWithTimeout(sim, mage.waterElemental, summonDuration)
 		},
 	})
 
@@ -70,7 +78,7 @@ func (mage *Mage) NewWaterElemental(disobeyChance float64) *WaterElemental {
 			&mage.Character,
 			waterElementalBaseStats,
 			waterElementalStatInheritance,
-			false,
+			mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfEternalWater),
 			true,
 		),
 		disobeyChance: disobeyChance,

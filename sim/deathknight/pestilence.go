@@ -3,26 +3,30 @@ package deathknight
 import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (dk *Deathknight) registerPestilenceSpell() {
 
 	hasGlyphOfDisease := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease)
-
-	dk.Pestilence = dk.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 50842},
-		SpellSchool: core.SpellSchoolShadow,
-
+	baseCost := float64(core.NewRuneCost(10, 1, 0, 0, 0))
+	rs := &RuneSpell{}
+	dk.Pestilence = dk.RegisterSpell(rs, core.SpellConfig{
+		ActionID:     core.ActionID{SpellID: 50842},
+		SpellSchool:  core.SpellSchoolShadow,
+		ResourceType: stats.RunicPower,
+		BaseCost:     baseCost,
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD: core.GCDDefault,
+				Cost: baseCost,
+				GCD:  core.GCDDefault,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				cast.GCD = dk.getModifiedGCD()
 			},
 		},
 
-		ApplyEffects: core.ApplyEffectFuncAOEDamage(dk.Env, core.SpellEffect{
+		ApplyEffects: dk.withRuneRefund(rs, core.SpellEffect{
 			ProcMask:             core.ProcMaskSpellDamage,
 			BonusSpellCritRating: 0.0,
 			DamageMultiplier:     0.0,
@@ -34,7 +38,7 @@ func (dk *Deathknight) registerPestilenceSpell() {
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Target == dk.CurrentTarget {
-					dk.LastCastOutcome = spellEffect.Outcome
+					dk.LastOutcome = spellEffect.Outcome
 				}
 				if spellEffect.Landed() {
 					unitHit := spellEffect.Target
@@ -54,16 +58,7 @@ func (dk *Deathknight) registerPestilenceSpell() {
 								dk.BloodPlagueDisease[unitHit.Index].Rollover(sim)
 							}
 						}
-
-						dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_B)
-						if !dk.bloodOfTheNorthProc(sim, spell, dkSpellCost) {
-							if !dk.reapingProc(sim, spell, dkSpellCost) {
-								dk.Spend(sim, spell, dkSpellCost)
-							}
-						}
-
-						amountOfRunicPower := 10.0
-						dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
+						dk.botnAndReaping(sim, spell)
 					} else {
 						// Apply diseases on every other target
 						if dk.FrostFeverDisease[dk.CurrentTarget.Index].IsActive() {
@@ -75,18 +70,8 @@ func (dk *Deathknight) registerPestilenceSpell() {
 					}
 				}
 			},
-		}),
-	})
-}
-
-func (dk *Deathknight) CanPestilence(sim *core.Simulation) bool {
-	return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.Pestilence.IsReady(sim)
-}
-
-func (dk *Deathknight) CastPestilence(sim *core.Simulation, target *core.Unit) bool {
-	if dk.CanPestilence(sim) {
-		dk.Pestilence.Cast(sim, target)
-		return true
-	}
-	return false
+		}, true),
+	}, func(sim *core.Simulation) bool {
+		return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.Pestilence.IsReady(sim)
+	}, nil)
 }

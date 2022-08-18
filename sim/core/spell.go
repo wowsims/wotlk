@@ -170,9 +170,9 @@ func (spell *Spell) CurDamagePerCast() float64 {
 	} else {
 		casts := int32(0)
 		damage := 0.0
-		for _, targetMetrics := range spell.SpellMetrics {
-			casts += targetMetrics.Casts
-			damage += targetMetrics.TotalDamage
+		for _, opponent := range spell.Unit.GetOpponents() {
+			casts += spell.SpellMetrics[opponent.UnitIndex].Casts
+			damage += spell.SpellMetrics[opponent.UnitIndex].TotalDamage
 		}
 		return damage / float64(casts)
 	}
@@ -192,7 +192,7 @@ func (spell *Spell) finalize() {
 }
 
 func (spell *Spell) reset(sim *Simulation) {
-	spell.SpellMetrics = make([]SpellMetrics, len(spell.Unit.AttackTables))
+	spell.SpellMetrics = make([]SpellMetrics, len(spell.Unit.Env.AllUnits))
 
 	// Reset dynamic effects.
 	spell.CostMultiplier = 1
@@ -284,7 +284,7 @@ func (spell *Spell) applyEffects(sim *Simulation, target *Unit) {
 	if target == nil {
 		target = spell.Unit.CurrentTarget
 	}
-	spell.SpellMetrics[target.TableIndex].Casts++
+	spell.SpellMetrics[target.UnitIndex].Casts++
 	spell.ApplyEffects(sim, target, spell)
 }
 
@@ -305,7 +305,7 @@ func ApplyEffectFuncDirectDamage(baseEffect SpellEffect) ApplySpellEffects {
 		return func(sim *Simulation, target *Unit, spell *Spell) {
 			effect := &baseEffect
 			effect.Target = target
-			attackTable := spell.Unit.AttackTables[target.TableIndex]
+			attackTable := spell.Unit.AttackTables[target.UnitIndex]
 			effect.init(sim, spell)
 
 			effect.OutcomeApplier(sim, spell, effect, attackTable)
@@ -315,7 +315,7 @@ func ApplyEffectFuncDirectDamage(baseEffect SpellEffect) ApplySpellEffects {
 		return func(sim *Simulation, target *Unit, spell *Spell) {
 			effect := &baseEffect
 			effect.Target = target
-			attackTable := spell.Unit.AttackTables[target.TableIndex]
+			attackTable := spell.Unit.AttackTables[target.UnitIndex]
 			effect.init(sim, spell)
 
 			effect.Damage = effect.calculateBaseDamage(sim, spell)
@@ -330,7 +330,7 @@ func ApplyEffectFuncDirectDamageTargetModifiersOnly(baseEffect SpellEffect) Appl
 	return func(sim *Simulation, target *Unit, spell *Spell) {
 		effect := &baseEffect
 		effect.Target = target
-		attackTable := spell.Unit.AttackTables[target.TableIndex]
+		attackTable := spell.Unit.AttackTables[target.UnitIndex]
 
 		effect.Damage = effect.calculateBaseDamage(sim, spell)
 		effect.calcDamageTargetOnly(sim, spell, attackTable)
@@ -354,7 +354,7 @@ func ApplyEffectFuncDamageMultiple(baseEffects []SpellEffect) ApplySpellEffects 
 			effect := &baseEffects[i]
 			effect.init(sim, spell)
 			effect.Damage = effect.calculateBaseDamage(sim, spell)
-			attackTable := spell.Unit.AttackTables[effect.Target.TableIndex]
+			attackTable := spell.Unit.AttackTables[effect.Target.UnitIndex]
 			effect.calcDamageSingle(sim, spell, attackTable)
 		}
 		for i := range baseEffects {
@@ -378,7 +378,7 @@ func ApplyEffectFuncDamageMultipleTargeted(baseEffects []SpellEffect) ApplySpell
 		for i := range baseEffects {
 			effect := &baseEffects[i]
 			effect.Target = target
-			attackTable := spell.Unit.AttackTables[target.TableIndex]
+			attackTable := spell.Unit.AttackTables[target.UnitIndex]
 			effect.init(sim, spell)
 			effect.Damage = effect.calculateBaseDamage(sim, spell)
 			effect.calcDamageSingle(sim, spell, attackTable)
@@ -431,7 +431,7 @@ func applyAOECap(effects []SpellEffect, outcomeMultipliers []float64, aoeCap flo
 		effect.Damage *= capMultiplier
 	}
 }
-func ApplyEffectFuncAOEDamageCapped(env *Environment, aoeCap float64, baseEffect SpellEffect) ApplySpellEffects {
+func ApplyEffectFuncAOEDamageCapped(env *Environment, baseEffect SpellEffect) ApplySpellEffects {
 	baseEffect.Validate()
 	numHits := env.GetNumTargets()
 	if numHits == 0 {
@@ -448,42 +448,10 @@ func ApplyEffectFuncAOEDamageCapped(env *Environment, aoeCap float64, baseEffect
 		baseEffects[i] = baseEffect
 		baseEffects[i].Target = &env.GetTarget(i).Unit
 	}
-	return ApplyEffectFuncMultipleDamageCapped(baseEffects, aoeCap)
+	return ApplyEffectFuncMultipleDamageCapped(baseEffects)
 }
 
-func ApplyEffectFuncMultipleDamageCapped(baseEffects []SpellEffect, aoeCap float64) ApplySpellEffects {
-	for _, effect := range baseEffects {
-		effect.Validate()
-	}
-
-	outcomeMultipliers := make([]float64, len(baseEffects))
-	return func(sim *Simulation, _ *Unit, spell *Spell) {
-		for i := range baseEffects {
-			effect := &baseEffects[i]
-			effect.init(sim, spell)
-			attackTable := spell.Unit.AttackTables[effect.Target.TableIndex]
-			effect.Damage = effect.calculateBaseDamage(sim, spell)
-
-			effect.applyAttackerModifiers(sim, spell)
-			effect.applyResistances(sim, spell, attackTable)
-			damageBefore := effect.Damage
-			effect.OutcomeApplier(sim, spell, effect, attackTable)
-			outcomeMultipliers[i] = effect.Damage / damageBefore
-		}
-		applyAOECap(baseEffects, outcomeMultipliers, aoeCap)
-		for i := range baseEffects {
-			effect := &baseEffects[i]
-			attackTable := spell.Unit.AttackTables[effect.Target.TableIndex]
-			effect.applyTargetModifiers(sim, spell, attackTable)
-		}
-		for i := range baseEffects {
-			effect := &baseEffects[i]
-			effect.finalize(sim, spell)
-		}
-	}
-}
-
-func ApplyEffectFuncMultipleDamageCappedWotLK(baseEffects []SpellEffect) ApplySpellEffects {
+func ApplyEffectFuncMultipleDamageCapped(baseEffects []SpellEffect) ApplySpellEffects {
 	numTargets := len(baseEffects)
 	for _, effect := range baseEffects {
 		effect.Validate()
@@ -494,7 +462,7 @@ func ApplyEffectFuncMultipleDamageCappedWotLK(baseEffects []SpellEffect) ApplySp
 		for i := range baseEffects {
 			effect := &baseEffects[i]
 			effect.init(sim, spell)
-			attackTable := spell.Unit.AttackTables[effect.Target.TableIndex]
+			attackTable := spell.Unit.AttackTables[effect.Target.UnitIndex]
 			effect.Damage = effect.calculateBaseDamage(sim, spell)
 			effect.Damage *= capMultiplier
 			effect.applyAttackerModifiers(sim, spell)
@@ -502,6 +470,57 @@ func ApplyEffectFuncMultipleDamageCappedWotLK(baseEffects []SpellEffect) ApplySp
 			effect.OutcomeApplier(sim, spell, effect, attackTable)
 			effect.applyTargetModifiers(sim, spell, attackTable)
 			effect.finalize(sim, spell)
+		}
+	}
+}
+
+func ApplyEffectFuncWithOutcome(baseEffects []SpellEffect, onOutcome func(*Simulation, HitOutcome)) ApplySpellEffects {
+	if len(baseEffects) == 1 {
+		baseEffects[0].Validate()
+		if baseEffects[0].BaseDamage.Calculator == nil {
+			// Just a hit check.
+			return func(sim *Simulation, target *Unit, spell *Spell) {
+				effect := &baseEffects[0]
+				effect.Target = target
+				attackTable := spell.Unit.AttackTables[target.UnitIndex]
+				effect.init(sim, spell)
+				effect.OutcomeApplier(sim, spell, effect, attackTable)
+				onOutcome(sim, effect.Outcome)
+				effect.finalize(sim, spell)
+			}
+		} else {
+			return func(sim *Simulation, target *Unit, spell *Spell) {
+				effect := &baseEffects[0]
+				effect.Target = target
+				attackTable := spell.Unit.AttackTables[target.UnitIndex]
+				effect.init(sim, spell)
+				effect.Damage = effect.calculateBaseDamage(sim, spell)
+				effect.calcDamageSingle(sim, spell, attackTable)
+				onOutcome(sim, effect.Outcome)
+				effect.finalize(sim, spell)
+			}
+		}
+	} else {
+		for _, effect := range baseEffects {
+			effect.Validate()
+		}
+		return func(sim *Simulation, _ *Unit, spell *Spell) {
+			capMultiplier := math.Min(10.0/float64(len(baseEffects)), 1.0)
+			for i := range baseEffects {
+				effect := &baseEffects[i]
+				effect.init(sim, spell)
+				attackTable := spell.Unit.AttackTables[effect.Target.UnitIndex]
+				effect.Damage = effect.calculateBaseDamage(sim, spell)
+				effect.Damage *= capMultiplier
+				effect.applyAttackerModifiers(sim, spell)
+				effect.applyResistances(sim, spell, attackTable)
+				effect.OutcomeApplier(sim, spell, effect, attackTable)
+				if i == 0 {
+					onOutcome(sim, effect.Outcome)
+				}
+				effect.applyTargetModifiers(sim, spell, attackTable)
+				effect.finalize(sim, spell)
+			}
 		}
 	}
 }

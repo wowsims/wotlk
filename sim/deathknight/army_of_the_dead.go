@@ -6,13 +6,11 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (dk *Deathknight) PrecastArmyOfTheDead(sim *core.Simulation) {
-	// Mark the CD as used already
-	dk.ArmyOfTheDead.CD.Use(sim)
-	dk.ArmyOfTheDead.CD.Set(sim.CurrentTime + dk.ArmyOfTheDead.CD.Duration - time.Second*10)
-
+	dk.ArmyOfTheDead.CD.UsePrePull(sim, time.Second*10)
 	dk.UpdateMajorCooldowns()
 
 	for i := 0; i < 8; i++ {
@@ -35,9 +33,11 @@ func (dk *Deathknight) registerArmyOfTheDeadCD() {
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			dk.AutoAttacks.CancelAutoSwing(sim)
+			dk.CancelGCDTimer(sim)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			dk.AutoAttacks.EnableAutoSwing(sim)
+			dk.SetGCDTimer(sim, sim.CurrentTime)
 		},
 	})
 
@@ -46,22 +46,23 @@ func (dk *Deathknight) registerArmyOfTheDeadCD() {
 		Aura:                aotdAura,
 		NumberOfTicks:       8,
 		TickLength:          time.Millisecond * 500,
-		AffectedByCastSpeed: true,
+		AffectedByCastSpeed: false,
 		TickEffects: core.TickFuncApplyEffects(func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			dk.ArmyGhoul[ghoulIndex].EnableWithTimeout(sim, dk.ArmyGhoul[ghoulIndex], time.Second*40)
 			ghoulIndex++
 		}),
 	})
 
-	amountOfRunicPower := 15.0
-
-	dk.ArmyOfTheDead = dk.RegisterSpell(core.SpellConfig{
-		ActionID: core.ActionID{SpellID: 42650},
-
+	baseCost := float64(core.NewRuneCost(15, 1, 1, 1, 0))
+	dk.ArmyOfTheDead = dk.RegisterSpell(nil, core.SpellConfig{
+		ActionID:     core.ActionID{SpellID: 42650},
+		ResourceType: stats.RunicPower,
+		BaseCost:     baseCost,
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				ChannelTime: time.Second * 4,
 				GCD:         core.GCDDefault,
+				Cost:        baseCost,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				cast.GCD = dk.getModifiedGCD()
@@ -73,28 +74,14 @@ func (dk *Deathknight) registerArmyOfTheDeadCD() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
-			dkSpellCost := dk.DetermineCost(sim, core.DKCastEnum_BFU)
-			dk.Spend(sim, spell, dkSpellCost)
-
-			dk.AddRunicPower(sim, amountOfRunicPower, spell.RunicPowerMetrics())
-
 			ghoulIndex = 0
 			aotdDot.Apply(sim)
 		},
+	}, func(sim *core.Simulation) bool {
+		return dk.CastCostPossible(sim, 0.0, 1, 1, 1) && dk.ArmyOfTheDead.IsReady(sim)
+	}, func(sim *core.Simulation) {
+		dk.UpdateMajorCooldowns()
 	})
 
-	aotdDot.Spell = dk.ArmyOfTheDead
-}
-
-func (dk *Deathknight) CanArmyOfTheDead(sim *core.Simulation) bool {
-	return dk.CastCostPossible(sim, 0.0, 1, 1, 1) && dk.ArmyOfTheDead.IsReady(sim)
-}
-
-func (dk *Deathknight) CastArmyOfTheDead(sim *core.Simulation, target *core.Unit) bool {
-	if dk.CanArmyOfTheDead(sim) {
-		dk.ArmyOfTheDead.Cast(sim, target)
-		dk.UpdateMajorCooldowns()
-		return true
-	}
-	return false
+	aotdDot.Spell = dk.ArmyOfTheDead.Spell
 }

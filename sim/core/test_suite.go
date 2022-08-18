@@ -3,6 +3,7 @@ package core
 import (
 	"errors"
 	"fmt"
+	"math"
 	"os"
 	"strings"
 	"testing"
@@ -11,6 +12,8 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 	"google.golang.org/protobuf/encoding/prototext"
 )
+
+const storagePrecision = 10
 
 type IndividualTestSuite struct {
 	Name string
@@ -35,7 +38,7 @@ func (testSuite *IndividualTestSuite) TestCharacterStats(testName string, csr *p
 	finalStats := stats.FromFloatArray(result.RaidStats.Parties[0].Players[0].FinalStats)
 
 	testSuite.testResults.CharacterStatsResults[testName] = &proto.CharacterStatsTestResult{
-		FinalStats: finalStats[:],
+		FinalStats: toFixedStats(finalStats[:], storagePrecision),
 	}
 }
 
@@ -46,7 +49,7 @@ func (testSuite *IndividualTestSuite) TestStatWeights(testName string, swr *prot
 	weights := stats.FromFloatArray(result.Dps.Weights)
 
 	testSuite.testResults.StatWeightsResults[testName] = &proto.StatWeightsTestResult{
-		Weights: weights[:],
+		Weights: toFixedStats(weights[:], storagePrecision),
 	}
 }
 
@@ -61,9 +64,9 @@ func (testSuite *IndividualTestSuite) TestDPS(testName string, rsr *proto.RaidSi
 		panic("simulation failed to run: " + result.ErrorResult)
 	}
 	testSuite.testResults.DpsResults[testName] = &proto.DpsTestResult{
-		Dps:  result.RaidMetrics.Dps.Avg,
-		Tps:  result.RaidMetrics.Parties[0].Players[0].Threat.Avg,
-		Dtps: result.RaidMetrics.Parties[0].Players[0].Dtps.Avg,
+		Dps:  toFixed(result.RaidMetrics.Dps.Avg, storagePrecision),
+		Tps:  toFixed(result.RaidMetrics.Parties[0].Players[0].Threat.Avg, storagePrecision),
+		Dtps: toFixed(result.RaidMetrics.Parties[0].Players[0].Dtps.Avg, storagePrecision),
 	}
 }
 
@@ -215,4 +218,20 @@ func RunTestSuite(t *testing.T, suiteName string, generator TestGenerator) {
 	if t.Failed() {
 		t.Log("One or more tests failed! If the changes are intentional, update the expected results with 'make test && make update-tests'. Otherwise go fix your bugs!")
 	}
+}
+
+func round(num float64) int {
+	return int(num + math.Copysign(0.5, num))
+}
+
+func toFixed(num float64, precision int) float64 {
+	output := math.Pow(10, float64(precision))
+	return float64(round(num*output)) / output
+}
+
+func toFixedStats(s []float64, precision int) []float64 {
+	for i, val := range s {
+		s[i] = toFixed(val, precision)
+	}
+	return s
 }

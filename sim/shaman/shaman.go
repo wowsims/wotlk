@@ -14,10 +14,10 @@ const baseMana = 4396.0
 const TotemRefreshTime5M = time.Second * 295
 
 const (
-	SpellFlagShock    = core.SpellFlagAgentReserved1
-	SpellFlagElectric = core.SpellFlagAgentReserved2
-	SpellFlagTotem    = core.SpellFlagAgentReserved3
-	SpellFlagFireNova = core.SpellFlagAgentReserved4
+	SpellFlagShock     = core.SpellFlagAgentReserved1
+	SpellFlagElectric  = core.SpellFlagAgentReserved2
+	SpellFlagTotem     = core.SpellFlagAgentReserved3
+	SpellFlagFocusable = core.SpellFlagAgentReserved4
 )
 
 func NewShaman(character core.Character, talents proto.ShamanTalents, totems proto.ShamanTotems, selfBuffs SelfBuffs, thunderstormRange bool) *Shaman {
@@ -35,9 +35,9 @@ func NewShaman(character core.Character, talents proto.ShamanTalents, totems pro
 	shaman.EnableManaBar()
 
 	// Add Shaman stat dependencies
-	shaman.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+1)
-	shaman.AddStatDependency(stats.Agility, stats.AttackPower, 1.0+1)
-	shaman.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+core.CritRatingPerCritChance/83.3)
+	shaman.AddStatDependency(stats.Strength, stats.AttackPower, 1)
+	shaman.AddStatDependency(stats.Agility, stats.AttackPower, 1)
+	shaman.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/83.3)
 	// Set proper Melee Haste scaling
 	shaman.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
 
@@ -69,6 +69,8 @@ type Shaman struct {
 	core.Character
 
 	thunderstormInRange bool // flag if thunderstorm will be in range.
+
+	ShamanisticRageManaThreshold float64 //% of mana to use sham. rage at
 
 	Talents   proto.ShamanTalents
 	SelfBuffs SelfBuffs
@@ -179,7 +181,6 @@ func (shaman *Shaman) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 
 	if shaman.Talents.UnleashedRage > 0 {
 		raidBuffs.UnleashedRage = true
-		shaman.AddStat(stats.Expertise, 3*core.ExpertisePerQuarterPercentReduction*float64(shaman.Talents.UnleashedRage))
 	}
 
 	if shaman.Talents.ElementalOath > 0 {
@@ -199,7 +200,10 @@ func (shaman *Shaman) Initialize() {
 	shaman.LightningBoltLO = shaman.newLightningBoltSpell(true)
 	shaman.LavaBurst = shaman.newLavaBurstSpell()
 	shaman.FireNova = shaman.newFireNovaSpell()
-	shaman.registerLightningShieldSpell()
+
+	if shaman.SelfBuffs.Shield == proto.ShamanShield_LightningShield {
+		shaman.registerLightningShieldSpell()
+	}
 
 	shaman.ChainLightning = shaman.newChainLightningSpell(false)
 	numHits := core.MinInt32(3, shaman.Env.GetNumTargets())
@@ -214,6 +218,10 @@ func (shaman *Shaman) Initialize() {
 
 	if shaman.Talents.LavaLash {
 		shaman.LavaLash = shaman.newLavaLashSpell()
+	}
+
+	if shaman.Talents.SpiritWeapons {
+		shaman.PseudoStats.ThreatMultiplier -= 0.3
 	}
 
 	shaman.registerFeralSpirit()
@@ -275,47 +283,47 @@ func (shaman *Shaman) ElementalCritMultiplier(secondary float64) float64 {
 
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassShaman}] = stats.Stats{
-		stats.Health:      2979,
-		stats.Strength:    103,
-		stats.Agility:     61,
-		stats.Stamina:     113,
-		stats.Intellect:   109,
-		stats.Spirit:      122,
+		stats.Health:      6759,
+		stats.Strength:    121,
+		stats.Agility:     71,
+		stats.Stamina:     135,
+		stats.Intellect:   126,
+		stats.Spirit:      145,
 		stats.Mana:        baseMana,
 		stats.SpellCrit:   2.2 * core.CritRatingPerCritChance,
 		stats.AttackPower: 95, // TODO: confirm this.
 		stats.MeleeCrit:   2.92 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceOrc, Class: proto.Class_ClassShaman}] = stats.Stats{
-		stats.Health:      2979,
-		stats.Strength:    105,
-		stats.Agility:     61,
-		stats.Stamina:     116,
-		stats.Intellect:   105,
-		stats.Spirit:      123,
+		stats.Health:      6759,
+		stats.Strength:    123,
+		stats.Agility:     71,
+		stats.Stamina:     138,
+		stats.Intellect:   122,
+		stats.Spirit:      146,
 		stats.Mana:        baseMana,
 		stats.SpellCrit:   2.2 * core.CritRatingPerCritChance,
 		stats.AttackPower: 95, // TODO: confirm this.
 		stats.MeleeCrit:   2.92 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTauren, Class: proto.Class_ClassShaman}] = stats.Stats{
-		stats.Health:      2979,
-		stats.Strength:    107,
-		stats.Agility:     59,
-		stats.Stamina:     116,
-		stats.Intellect:   103,
-		stats.Spirit:      122,
+		stats.Health:      6759,
+		stats.Strength:    125,
+		stats.Agility:     69,
+		stats.Stamina:     138,
+		stats.Intellect:   120,
+		stats.Spirit:      145,
 		stats.Mana:        baseMana,
 		stats.SpellCrit:   2.2 * core.CritRatingPerCritChance,
 		stats.AttackPower: 95, // TODO: confirm this.
 		stats.MeleeCrit:   2.92 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassShaman}] = stats.Stats{
-		stats.Health:      2979,
+		stats.Health:      6759,
 		stats.Strength:    121,
 		stats.Agility:     76,
 		stats.Stamina:     137,
-		stats.Intellect:   136,
+		stats.Intellect:   122,
 		stats.Spirit:      144,
 		stats.Mana:        baseMana,
 		stats.SpellCrit:   2.2 * core.CritRatingPerCritChance,

@@ -17,170 +17,92 @@ func (mage *Mage) OnGCDReady(sim *core.Simulation) {
 
 func (mage *Mage) tryUseGCD(sim *core.Simulation) {
 	var spell *core.Spell
-	if mage.RotationType == proto.Mage_Rotation_Arcane {
+	if mage.Rotation.Type == proto.Mage_Rotation_Arcane {
 		spell = mage.doArcaneRotation(sim)
-	} else if mage.RotationType == proto.Mage_Rotation_Fire {
+	} else if mage.Rotation.Type == proto.Mage_Rotation_Fire {
 		spell = mage.doFireRotation(sim)
-	} else {
+	} else if mage.Rotation.Type == proto.Mage_Rotation_Frost {
 		spell = mage.doFrostRotation(sim)
+	} else {
+		spell = mage.doAoeRotation(sim)
 	}
 
 	if success := spell.Cast(sim, mage.CurrentTarget); success {
 		return
-	}
-
-	if mage.numCastsDone != 0 {
-		mage.tryingToDropStacks = false
-	}
-
-	numStacks := mage.ArcaneBlastAura.GetStacks()
-	if numStacks > 0 && sim.GetRemainingDuration() > time.Second*5 {
-		// Wait for AB stacks to drop.
-		waitTime := mage.ArcaneBlastAura.RemainingDuration(sim) + time.Millisecond*100
-		if sim.Log != nil {
-			mage.Log(sim, "Waiting for AB stacks to drop: %0.02f", waitTime.Seconds())
-		}
-		mage.Metrics.MarkOOM(&mage.Unit, waitTime)
-		mage.WaitUntil(sim, sim.CurrentTime+waitTime)
 	} else {
+		mage.Metrics.MarkOOM(&mage.Unit, sim.CurrentTime)
 		mage.WaitForMana(sim, spell.CurCast.Cost)
 	}
 }
 
+// 4 ABs used < x always fish for AM
+// 4 ABs used > y always cast AM as soon as barrage procs
 func (mage *Mage) doArcaneRotation(sim *core.Simulation) *core.Spell {
-	if mage.UseAoeRotation {
-		return mage.doAoeRotation(sim)
-	}
-
-	// Only arcane rotation cares about mana tracking so update it here.
-	// Don't need to update tracker because we only use certain functions.
-	//mage.manaTracker.Update(sim, mage.GetCharacter())
-
-	// Create an AB object because we use its mana cost / cast time in many of our calculations.
 	numStacks := mage.ArcaneBlastAura.GetStacks()
-	abCastTime := mage.ArcaneBlastCastTime(numStacks)
-	abManaCost := mage.ArcaneBlastManaCost(numStacks)
-	willDropStacks := mage.willDropArcaneBlastStacks(sim, abCastTime, numStacks)
 
-	mage.isBlastSpamming = mage.canBlast(sim, abManaCost, abCastTime, numStacks, willDropStacks)
-	if mage.isBlastSpamming {
-		return mage.ArcaneBlast[numStacks]
+	if sim.GetRemainingDuration() < 12*time.Second {
+		mage.DisableMajorCooldown(core.ActionID{SpellID: EvocationId})
 	}
 
-	currentManaPercent := mage.CurrentManaPercent()
-
-	if mage.isDoingRegenRotation {
-		// Check if we should stop regen rotation.
-		if currentManaPercent > mage.ArcaneRotation.StopRegenRotationPercent && willDropStacks {
-			mage.isDoingRegenRotation = false
-			if mage.disabledMCDs != nil {
-				mage.EnableAllCooldowns(mage.disabledMCDs)
-				mage.disabledMCDs = nil
-			}
-		}
-	} else {
-		// Check if we should start regen rotation.
-		startThreshold := mage.ArcaneRotation.StartRegenRotationPercent
-		if mage.HasActiveAuraWithTag(core.BloodlustAuraTag) {
-			startThreshold = core.MinFloat(0.1, startThreshold)
-		}
-
-		if currentManaPercent < startThreshold {
-			mage.isDoingRegenRotation = true
-			mage.tryingToDropStacks = true
-			mage.numCastsDone = 0
-
-			if mage.ArcaneRotation.DisableDpsCooldownsDuringRegen {
-				mage.disabledMCDs = mage.DisableAllEnabledCooldowns(core.CooldownTypeDPS)
-			}
-		}
-	}
-
-	if !mage.isDoingRegenRotation {
-		return mage.ArcaneBlast[numStacks]
-	}
-
-	if mage.tryingToDropStacks {
-		if willDropStacks {
-			mage.tryingToDropStacks = false
-			mage.numCastsDone = 1 // 1 to count the blast we're about to return
-			return mage.ArcaneBlast[numStacks]
+	burstDuration := time.Duration(mage.Character.CurrentManaPercent()*40) * time.Second
+	if sim.GetRemainingDuration() < burstDuration {
+		mage.DisableMajorCooldown(core.ActionID{SpellID: EvocationId})
+		if mage.Character.CurrentMana() < mage.ArcaneBlast.CurCast.Cost {
+			return mage.ArcaneMissiles
 		} else {
-			// Do a filler spell while waiting for stacks to drop.
-			mage.numCastsDone++
-			switch mage.ArcaneRotation.Filler {
-			case proto.Mage_Rotation_ArcaneRotation_Frostbolt:
-				return mage.Frostbolt
-			case proto.Mage_Rotation_ArcaneRotation_ArcaneMissiles:
-				return mage.ArcaneMissiles
-			case proto.Mage_Rotation_ArcaneRotation_Scorch:
-				return mage.Scorch
-			case proto.Mage_Rotation_ArcaneRotation_Fireball:
-				return mage.Fireball
-			case proto.Mage_Rotation_ArcaneRotation_ArcaneMissilesFrostbolt:
-				if mage.numCastsDone%2 == 1 {
-					return mage.ArcaneMissiles
-				} else {
-					return mage.Frostbolt
-				}
-			case proto.Mage_Rotation_ArcaneRotation_ArcaneMissilesScorch:
-				if mage.numCastsDone%2 == 1 {
-					return mage.ArcaneMissiles
-				} else {
-					return mage.Scorch
-				}
-			case proto.Mage_Rotation_ArcaneRotation_ScorchTwoFireball:
-				if mage.numCastsDone%3 == 1 {
-					return mage.Scorch
-				} else {
-					return mage.Fireball
-				}
-			default:
-				return mage.Frostbolt
-			}
+			return mage.ArcaneBlast
+		}
+	}
+
+	if mage.Rotation.MinBlastBeforeMissiles > numStacks {
+		if mage.isMissilesBarrageVisible && mage.Rotation.Num_4StackBlastsToEarlyMissiles < mage.num4CostAB {
+			return mage.ArcaneMissiles
+		} else {
+			return mage.ArcaneBlast
 		}
 	} else {
-		mage.numCastsDone++
-		if (mage.Metrics.WentOOM && currentManaPercent < 0.2 && mage.numCastsDone >= 2) || mage.numCastsDone >= mage.ArcaneRotation.ArcaneBlastsBetweenFillers {
-			mage.tryingToDropStacks = true
-			mage.numCastsDone = 0
+		if mage.extraABsAP > 0 && mage.GetAura("Arcane Power").IsActive() {
+			mage.extraABsAP--
+			return mage.ArcaneBlast
 		}
-		return mage.ArcaneBlast[numStacks]
+
+		if mage.isMissilesBarrageVisible || mage.Rotation.Num_4StackBlastsToMissilesGamble < mage.num4CostAB {
+			return mage.ArcaneMissiles
+		} else {
+			return mage.ArcaneBlast
+		}
 	}
 }
 
 func (mage *Mage) doFireRotation(sim *core.Simulation) *core.Spell {
-	if mage.FireRotation.MaintainImprovedScorch && mage.ScorchAura != nil && (mage.ScorchAura.GetStacks() < 5 || mage.ScorchAura.RemainingDuration(sim) < time.Millisecond*5500) {
+
+	if mage.Rotation.MaintainImprovedScorch && mage.ScorchAura != nil && (!mage.ScorchAura.IsActive() || mage.ScorchAura.RemainingDuration(sim) < time.Millisecond*4000) {
 		return mage.Scorch
 	}
 
-	if mage.UseAoeRotation {
-		return mage.doAoeRotation(sim)
+	if !mage.LivingBombNotActive.Empty() && (!mage.HotStreakAura.IsActive() || mage.Rotation.LbBeforeHotstreak) {
+		return mage.LivingBomb
 	}
 
-	if mage.FireRotation.WeaveFireBlast && mage.FireBlast.IsReady(sim) {
-		return mage.FireBlast
+	if mage.HotStreakAura.IsActive() {
+		return mage.Pyroblast
 	}
 
-	if mage.FireRotation.PrimarySpell == proto.Mage_Rotation_FireRotation_Fireball {
+	if mage.Rotation.PrimaryFireSpell == proto.Mage_Rotation_Fireball {
 		return mage.Fireball
 	} else {
-		return mage.Scorch
+		return mage.FrostfireBolt
 	}
 }
 
 func (mage *Mage) doFrostRotation(sim *core.Simulation) *core.Spell {
-	if mage.UseAoeRotation {
-		return mage.doAoeRotation(sim)
-	}
-
 	return mage.Frostbolt
 }
 
 func (mage *Mage) doAoeRotation(sim *core.Simulation) *core.Spell {
-	if mage.AoeRotation.Rotation == proto.Mage_Rotation_AoeRotation_ArcaneExplosion {
+	if mage.Rotation.Aoe == proto.Mage_Rotation_ArcaneExplosion {
 		return mage.ArcaneExplosion
-	} else if mage.AoeRotation.Rotation == proto.Mage_Rotation_AoeRotation_Flamestrike {
+	} else if mage.Rotation.Aoe == proto.Mage_Rotation_Flamestrike {
 		return mage.Flamestrike
 	} else {
 		return mage.Blizzard

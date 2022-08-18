@@ -57,7 +57,6 @@ var FullConsumes = &proto.Consumes{
 	DefaultPotion:   proto.Potions_SuperManaPotion,
 	PrepopPotion:    proto.Potions_PotionOfWildMagic,
 	DefaultConjured: proto.Conjured_ConjuredDarkRune,
-	MainHandImbue:   proto.WeaponImbue_WeaponImbueBrilliantWizardOil,
 }
 
 var FullDebuffs = &proto.Debuffs{

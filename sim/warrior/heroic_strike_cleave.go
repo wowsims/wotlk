@@ -2,6 +2,7 @@ package warrior
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -9,8 +10,14 @@ func (warrior *Warrior) registerHeroicStrikeSpell() {
 	cost := 15.0 - float64(warrior.Talents.ImprovedHeroicStrike) - float64(warrior.Talents.FocusedRage)
 	refundAmount := cost * 0.8
 
+	hasGlyph := warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfHeroicStrike)
+	var rageMetrics *core.ResourceMetrics
+	if hasGlyph {
+		rageMetrics = warrior.NewRageMetrics(core.ActionID{ItemID: 43418})
+	}
+
 	warrior.HeroicStrikeOrCleave = warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 29707},
+		ActionID:    core.ActionID{SpellID: 47450},
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 
@@ -29,13 +36,17 @@ func (warrior *Warrior) registerHeroicStrikeSpell() {
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 			FlatThreatBonus:  194,
+			BonusCritRating:  float64(warrior.Talents.Incite) * 5 * core.CritRatingPerCritChance,
 
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 176, 1, true),
+			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 495, 1, 1, true),
 			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(true)),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if !spellEffect.Landed() {
 					warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
+				}
+				if spellEffect.DidCrit() && hasGlyph {
+					warrior.AddRage(sim, 10, rageMetrics)
 				}
 			},
 		}),
@@ -45,19 +56,21 @@ func (warrior *Warrior) registerHeroicStrikeSpell() {
 func (warrior *Warrior) registerCleaveSpell() {
 	cost := 20.0 - float64(warrior.Talents.FocusedRage)
 
-	flatDamageBonus := 70 * (1 + 0.4*float64(warrior.Talents.ImprovedCleave))
+	flatDamageBonus := 222 * (1 + 0.4*float64(warrior.Talents.ImprovedCleave))
 	baseEffect := core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 		FlatThreatBonus:  125,
+		BonusCritRating:  float64(warrior.Talents.Incite) * 5 * core.CritRatingPerCritChance,
 
-		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, flatDamageBonus, 1, true),
+		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, flatDamageBonus, 1, 1, true),
 		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(true)),
 	}
 
-	numHits := core.MinInt32(2, warrior.Env.GetNumTargets())
+	targets := core.TernaryInt32(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfCleaving), 3, 2)
+	numHits := core.MinInt32(targets, warrior.Env.GetNumTargets())
 	effects := make([]core.SpellEffect, 0, numHits)
 	for i := int32(0); i < numHits; i++ {
 		effects = append(effects, baseEffect)
@@ -65,7 +78,7 @@ func (warrior *Warrior) registerCleaveSpell() {
 	}
 
 	warrior.HeroicStrikeOrCleave = warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 25231},
+		ActionID:    core.ActionID{SpellID: 47520},
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 

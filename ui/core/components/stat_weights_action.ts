@@ -1,20 +1,22 @@
-import { StatWeightsRequest, StatWeightsResult, StatWeightValues, ProgressMetrics } from '/wotlk/core/proto/api.js';
-import { ItemSlot } from '/wotlk/core/proto/common.js';
-import { Gem } from '/wotlk/core/proto/common.js';
-import { GemColor } from '/wotlk/core/proto/common.js';
-import { Stat } from '/wotlk/core/proto/common.js';
-import { Stats } from '/wotlk/core/proto_utils/stats.js';
-import { Gear } from '/wotlk/core/proto_utils/gear.js';
-import { gemMatchesSocket, getMetaGemCondition } from '/wotlk/core/proto_utils/gems.js';
-import { statNames, statOrder } from '/wotlk/core/proto_utils/names.js';
-import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
-import { EventID, TypedEvent } from '/wotlk/core/typed_event.js';
-import { Player } from '/wotlk/core/player.js';
-import { stDevToConf90 } from '/wotlk/core/utils.js';
-import { BooleanPicker } from '/wotlk/core/components/boolean_picker.js';
-import { NumberPicker } from '/wotlk/core/components/number_picker.js';
-import { ResultsViewer } from '/wotlk/core/components/results_viewer.js';
-import { getEnumValues, maxIndex, sum } from '/wotlk/core/utils.js';
+import { StatWeightsRequest, StatWeightsResult, StatWeightValues, ProgressMetrics } from '../proto/api.js';
+import { ItemSlot } from '../proto/common.js';
+import { Gem } from '../proto/common.js';
+import { GemColor } from '../proto/common.js';
+import { Profession } from '../proto/common.js';
+import { Stat } from '../proto/common.js';
+import { Stats } from '../proto_utils/stats.js';
+import { Gear } from '../proto_utils/gear.js';
+import { statNames, statOrder } from '../proto_utils/names.js';
+import { IndividualSimUI } from '../individual_sim_ui.js';
+import { EventID, TypedEvent } from '../typed_event.js';
+import { Player } from '../player.js';
+import { stDevToConf90 } from '../utils.js';
+import { BooleanPicker } from '../components/boolean_picker.js';
+import { NumberPicker } from '../components/number_picker.js';
+import { ResultsViewer } from '../components/results_viewer.js';
+import { combinations, combinationsWithDups, permutations, getEnumValues, maxIndex, sum } from '../utils.js';
+
+import * as Gems from '../proto_utils/gems.js';
 
 import { Popup } from './popup.js';
 
@@ -164,7 +166,7 @@ class EpWeightsMenu extends Popup {
 		tippy(optimizeGemsButton, {
 			'content': `
 				<p>Optimizes equipped gems to maximize EP, based on the values in <b>Current EP</b>.</p>
-				<p>WARNING: Ignores unique gems and does not pick the meta gem or ensure its condition is met.</p>
+				<p>Does not change the meta gem, but ensures that its condition is met. Uses JC gems if Jewelcrafting is a selected profession.</p>
 			`,
 			'allowHTML': true,
 		});
@@ -285,24 +287,228 @@ class EpWeightsMenu extends Popup {
 	}
 
 	private optimizeGems(eventID: EventID) {
-		let epWeights = this.simUI.player.getEpWeights();
-
 		// Replace 0 weights with a very tiny value, so we always prefer to take free stats even if the user gave a 0 weight.
+		let epWeights = this.simUI.player.getEpWeights();
 		epWeights = new Stats(epWeights.asArray().map(w => w == 0 ? 1e-8 : w));
 
-		const gemColors = getEnumValues(GemColor) as Array<GemColor>;
-		const allGems = this.simUI.player.getGems().filter(gem => !gem.unique && gem.phase <= this.simUI.sim.getPhase());
+		const gear = this.simUI.player.getGear();
+		const allGems = this.simUI.sim.getGems();
+		const phase = this.simUI.sim.getPhase();
+		const isBlacksmithing = this.simUI.player.isBlacksmithing();
+		const isJewelcrafting = this.simUI.player.hasProfession(Profession.Jewelcrafting);
 
+		const optimizedGear = EpWeightsMenu.optimizeGemsForWeights(epWeights, gear, allGems, phase, isBlacksmithing, isJewelcrafting);
+		this.simUI.player.setGear(eventID, optimizedGear);
+	}
+
+	private static optimizeGemsForWeights(epWeights: Stats, gear: Gear, allGems: Array<Gem>, phase: number, isBlacksmithing: boolean, isJewelcrafting: boolean): Gear {
+		const unrestrictedGems = allGems.filter(gem => Gems.isUnrestrictedGem(gem, phase));
+
+		const {
+			bestGemForColor: bestGemForColor,
+			bestGemForColorEP: bestGemForColorEP,
+			bestGemForSocket: bestGemForSocket,
+			bestGemForSocketEP: bestGemForSocketEP,
+			bestGem: bestGem,
+			bestGemEP: bestGemEP,
+		} = EpWeightsMenu.findBestGems(unrestrictedGems, epWeights);
+
+		const items = gear.asMap();
+		const socketBonusEPs = Object.values(items).map(item => item != null ? new Stats(item.item.socketBonus).computeEP(epWeights) : 0);
+
+		// Start by optimally filling all items, ignoring meta condition.
+		Object.entries(items).forEach(([itemSlot, equippedItem], i) => {
+			if (equippedItem == null) {
+				return;
+			}
+			const item = equippedItem.item;
+			const socketColors = equippedItem.curSocketColors(isBlacksmithing);
+
+			// Compare whether its better to match sockets + get socket bonus, or just use best gems.
+			const bestGemEPNotMatchingSockets = sum(socketColors.map(socketColor => socketColor == GemColor.GemColorMeta ? 0 : bestGemEP));
+			const bestGemEPMatchingSockets = socketBonusEPs[i] + sum(socketColors.map(socketColor => socketColor == GemColor.GemColorMeta ? 0 : bestGemForSocketEP[socketColor]));
+
+			if (bestGemEPNotMatchingSockets > bestGemEPMatchingSockets) {
+				socketColors.forEach((socketColor, i) => {
+					if (socketColor != GemColor.GemColorMeta) {
+						equippedItem = equippedItem!.withGem(bestGem, i);
+					}
+				});
+			} else {
+				socketColors.forEach((socketColor, i) => {
+					if (socketColor != GemColor.GemColorMeta) {
+						equippedItem = equippedItem!.withGem(bestGemForSocket[socketColor], i);
+					}
+				});
+			}
+
+			items[Number(itemSlot) as ItemSlot] = equippedItem;
+		});
+		gear = new Gear(items);
+
+		const allSockets: Array<{itemSlot: ItemSlot, socketIdx: number}> = Object.keys(items).map((itemSlotStr) => {
+			const itemSlot = parseInt(itemSlotStr) as ItemSlot;
+			const item = items[itemSlot];
+			if (!item) {
+				return [];
+			}
+
+			const numSockets = item.numSockets(isBlacksmithing);
+			return [...Array(numSockets).keys()]
+			.filter(socketIdx => item.item.gemSockets[socketIdx] != GemColor.GemColorMeta)
+			.map(socketIdx => {
+				return {
+					itemSlot: itemSlot,
+					socketIdx: socketIdx,
+				};
+			});
+		}).flat();
+		const threeSocketCombos = permutations(allSockets, 3);
+		const calculateGearGemsEP = (gear: Gear): number => gear.statsFromGems(isBlacksmithing).computeEP(epWeights);
+
+		// Now make adjustments to satisfy meta condition.
+		// Use a wrapper function so we can return for readability.
+		gear = ((gear: Gear): Gear => {
+			const metaGem = gear.getMetaGem();
+			if (!metaGem) {
+				return gear;
+			}
+
+			const condition = Gems.getMetaGemCondition(metaGem.id);
+			// Only TBC gems use compare color conditions, so just ignore them.
+			if (!condition || condition.isCompareColorCondition()) {
+				return gear;
+			}
+
+			// If there are very few non-meta gem slots, just skip because it's annoying to deal with.
+			if (gear.getAllGems(isBlacksmithing).length - 1 < 3) {
+				return gear;
+			}
+
+			// In wrath, all meta gems use min colors condition (numRed >= r && numYellow >= y && numBlue >= b)
+			// All conditions require 3 gems, e.g. 3 of a single color, 2 of one color and 1 of another, or 1 of each.
+			// So the maximum number of gems that ever need to change is 3.
+
+			const colorCombos = EpWeightsMenu.getColorCombosToSatisfyCondition(condition);
+
+			let bestGear = gear;
+			let bestGearEP = calculateGearGemsEP(gear);
+
+			// Use brute-force to try every possibility.
+			colorCombos.forEach(colorCombo => {
+				threeSocketCombos.forEach(socketCombo => {
+					const curItems = gear.asMap();
+					for (let i = 0; i < colorCombo.length; i++) {
+						const gemColor = colorCombo[i];
+						const { itemSlot, socketIdx } = socketCombo[i];
+						curItems[itemSlot] = curItems[itemSlot]!.withGem(bestGemForColor[gemColor], socketIdx);
+					}
+					const curGear = new Gear(curItems);
+					if (curGear.hasActiveMetaGem(isBlacksmithing)) {
+						const curGearEP = calculateGearGemsEP(curGear);
+						if (curGearEP > bestGearEP) {
+							bestGear = curGear;
+							bestGearEP = curGearEP;
+						}
+					}
+				});
+			});
+
+			return bestGear;
+		})(gear);
+
+		// Now insert 3 JC gems, if Jewelcrafting is selected.
+		// Use a wrapper function so we can return for readability.
+		gear = ((gear: Gear): Gear => {
+			if (!isJewelcrafting) {
+				return gear;
+			}
+
+			const jcGems = allGems.filter(gem => gem.requiredProfession == Profession.Jewelcrafting);
+
+			const {
+				bestGemForColor: bestJcGemForColor,
+				bestGemForColorEP: bestJcGemForColorEP,
+				bestGemForSocket: bestJcGemForSocket,
+				bestGemForSocketEP: bestJcGemForSocketEP,
+				bestGem: bestJcGem,
+				bestGemEP: bestJcGemEP,
+			} = EpWeightsMenu.findBestGems(jcGems, epWeights);
+
+			let bestGear = gear;
+			let bestGearEP = calculateGearGemsEP(gear);
+
+			threeSocketCombos.forEach(socketCombo => {
+				const curItems = gear.asMap();
+				for (let i = 0; i < socketCombo.length; i++) {
+					const { itemSlot, socketIdx } = socketCombo[i];
+					const ei = curItems[itemSlot]!;
+					const gemColor = ei.gems[socketIdx]!.color;
+					curItems[itemSlot] = ei.withGem(bestJcGemForColor[gemColor], socketIdx);
+				}
+
+				const curGear = new Gear(curItems);
+				if (curGear.hasActiveMetaGem(isBlacksmithing)) {
+					const curGearEP = calculateGearGemsEP(curGear);
+					if (curGearEP > bestGearEP) {
+						bestGear = curGear;
+						bestGearEP = curGearEP;
+					}
+				}
+			});
+
+			return bestGear;
+		})(gear);
+
+		return gear;
+	}
+
+	// Returns every possible way we could satisfy the gem condition.
+	private static getColorCombosToSatisfyCondition(condition: Gems.MetaGemCondition): Array<Array<GemColor>> {
+		if (condition.isOneOfEach()) {
+			return [
+				Gems.PRIMARY_COLORS,
+				[GemColor.GemColorPrismatic],
+			].concat(
+				Gems.SECONDARY_COLORS.map((secondaryColor, i) => {
+					const remainingColor = Gems.PRIMARY_COLORS[i];
+					return Gems.socketToMatchingColors.get(remainingColor)!.map(matchingColor => [matchingColor, secondaryColor]);
+				}).flat()
+			);
+		} else if (condition.isTwoAndOne()) {
+			const oneColor = Gems.PRIMARY_COLORS[[condition.minRed, condition.minYellow, condition.minBlue].indexOf(1)];
+			const twoColor = Gems.PRIMARY_COLORS[[condition.minRed, condition.minYellow, condition.minBlue].indexOf(2)];
+			const secondaryColor = Gems.SECONDARY_COLORS.find(color => Gems.gemColorMatchesSocket(color, oneColor) && Gems.gemColorMatchesSocket(color, twoColor))!;
+
+			return [
+				// All the ways to get 1 point in both colors. These are partial combos,
+				// which still need 1 more gem in the 2-color.
+				[GemColor.GemColorPrismatic],
+				[secondaryColor],
+				[oneColor, twoColor],
+			].map(partialCombo => {
+					return Gems.socketToMatchingColors.get(twoColor)!.map(matchingColor => partialCombo.concat([matchingColor]));
+			}).flat();
+		} else if (condition.isThreeOfAColor()) {
+			const threeColor = Gems.PRIMARY_COLORS[[condition.minRed, condition.minYellow, condition.minBlue].indexOf(3)];
+			const matchingColors = Gems.socketToMatchingColors.get(threeColor)!;
+			return combinationsWithDups(matchingColors, 3);
+		} else {
+			return [];
+		}
+	}
+
+	private static findBestGems(gemList: Array<Gem>, epWeights: Stats): BestGemsResult {
 		// Best gem when we need a gem of a specific color.
-		const bestGemForColor: Array<Gem> = gemColors.map(color => null as unknown as Gem);
-		const bestGemForColorEP: Array<number> = gemColors.map(color => 0);
+		const bestGemForColor: Array<Gem> = Gems.GEM_COLORS.map(color => null as unknown as Gem);
+		const bestGemForColorEP: Array<number> = Gems.GEM_COLORS.map(color => 0);
 		// Best gem when we need to match a socket to activate a bonus.
 		const bestGemForSocket: Array<Gem> = bestGemForColor.slice();
 		const bestGemForSocketEP: Array<number> = bestGemForColorEP.slice();
 		// The single best gem, when color doesn't matter.
-		let bestGem = allGems[0];
+		let bestGem = gemList[0];
 		let bestGemEP = 0;
-		allGems.forEach(gem => {
+		gemList.forEach(gem => {
 			const gemEP = new Stats(gem.stats).computeEP(epWeights);
 			if (gemEP > bestGemForColorEP[gem.color]) {
 				bestGemForColorEP[gem.color] = gemEP;
@@ -314,57 +520,30 @@ class EpWeightsMenu extends Popup {
 				}
 			}
 
-			gemColors.forEach(socketColor => {
-				if (gemMatchesSocket(gem, socketColor) && gemEP > bestGemForSocketEP[socketColor]) {
+			Gems.GEM_COLORS.forEach(socketColor => {
+				if (Gems.gemMatchesSocket(gem, socketColor) && gemEP > bestGemForSocketEP[socketColor]) {
 					bestGemForSocketEP[socketColor] = gemEP;
 					bestGemForSocket[socketColor] = gem;
 				}
 			});
 		});
 
-
-		let gear = this.simUI.player.getGear();
-		const items = gear.asMap();
-		const socketBonusEPs = Object.values(items).map(item => item != null ? new Stats(item.item.socketBonus).computeEP(epWeights) : 0);
-
-		// Start by optimally filling all items, ignoring meta condition.
-		Object.entries(items).forEach(([itemSlot, equippedItem], i) => {
-			if (equippedItem == null) {
-				return;
-			}
-			const item = equippedItem.item;
-
-			// Compare whether its better to match sockets + get socket bonus, or just use best gems.
-			const bestGemEPNotMatchingSockets = sum(item.gemSockets.map(socketColor => socketColor == GemColor.GemColorMeta ? 0 : bestGemEP));
-			const bestGemEPMatchingSockets = socketBonusEPs[i] + sum(item.gemSockets.map(socketColor => socketColor == GemColor.GemColorMeta ? 0 : bestGemForSocketEP[socketColor]));
-
-			if (bestGemEPNotMatchingSockets > bestGemEPMatchingSockets) {
-				item.gemSockets.forEach((socketColor, i) => {
-					if (socketColor != GemColor.GemColorMeta) {
-						equippedItem = equippedItem!.withGem(bestGem, i);
-					}
-				});
-			} else {
-				item.gemSockets.forEach((socketColor, i) => {
-					if (socketColor != GemColor.GemColorMeta) {
-						equippedItem = equippedItem!.withGem(bestGemForSocket[socketColor], i);
-					}
-				});
-			}
-
-			items[Number(itemSlot) as ItemSlot] = equippedItem;
-		});
-		gear = new Gear(items);
-
-		// Now make adjustments to satisfy meta condition.
-		const metaGem = gear.getMetaGem();
-		if (metaGem != null) {
-			const condition = getMetaGemCondition(metaGem.id);
-			// TODO: Satisfy condition. Not implementing this since we're about to move
-			// to wrath which doesn't have meta conditions.
-		}
-
-		// Apply the new gear.
-		this.simUI.player.setGear(eventID, gear);
+		return {
+			bestGemForColor: bestGemForColor,
+			bestGemForColorEP: bestGemForColorEP,
+			bestGemForSocket: bestGemForSocket,
+			bestGemForSocketEP: bestGemForSocketEP,
+			bestGem: bestGem,
+			bestGemEP: bestGemEP,
+		};
 	}
+}
+
+interface BestGemsResult {
+	bestGemForColor: Array<Gem>,
+	bestGemForColorEP: Array<number>,
+	bestGemForSocket: Array<Gem>,
+	bestGemForSocketEP: Array<number>,
+	bestGem: Gem,
+	bestGemEP: number,
 }

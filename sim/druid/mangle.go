@@ -45,7 +45,7 @@ func (druid *Druid) registerMangleBearSpell() {
 			ThreatMultiplier: (1.5 / 1.15) *
 				core.TernaryFloat64(druid.InForm(Bear) && druid.HasSetBonus(ItemSetThunderheartHarness, 2), 1.15, 1),
 
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 155/1.15, 1.15, true),
+			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 155/1.15, 1.0, 1.15, true),
 			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(druid.MeleeCritMultiplier()),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
@@ -92,7 +92,7 @@ func (druid *Druid) registerMangleCatSpell() {
 			DamageMultiplier: 1 + 0.1*float64(druid.Talents.SavageFury),
 			ThreatMultiplier: 1,
 
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 264/1.6, 1.6, true),
+			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 264/1.6, 1.0, 1.6, true),
 			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(druid.MeleeCritMultiplier()),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

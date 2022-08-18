@@ -60,6 +60,7 @@ message Player {
 	Cooldowns cooldowns = 19;
 
 	bool in_front_of_target = 23;
+	double distance_from_target = 33;
 
 	HealingModel healing_model = 27;
 }
@@ -148,6 +149,8 @@ message AuraMetrics {
 
 	double uptime_seconds_avg = 2;
 	double uptime_seconds_stdev = 3;
+
+	double procs_avg = 4;
 }
 
 enum ResourceType {
@@ -181,15 +184,19 @@ message ResourceMetrics {
 }
 
 message DistributionMetrics {
-	double avg   = 1;
-	double stdev = 2;
-	double max   = 3;
+	double avg     = 1;
+	double stdev   = 2;
+	double max     = 3;
+	int64 maxSeed = 5;
+	double min     = 6;
+	int64 minSeed = 7;
 	map<int32, int32> hist = 4;
 }
 
 // All the results for a single Unit (player, target, or pet).
 message UnitMetrics {
 	string name = 9;
+	int32 unit_index = 13;
 
 	DistributionMetrics dps = 1;
 	DistributionMetrics threat = 8;

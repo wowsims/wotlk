@@ -147,6 +147,13 @@ message Deathknight {
 			AsMajorCd = 2;
 		}
 
+		enum BloodTap {
+			GhoulFrenzy = 0;
+			IcyTouch = 1;
+			BloodStrikeBT = 2;
+			BloodBoilBT = 3;
+		}
+
 		enum DeathAndDecayPrio {
 			MaxRuneDowntime = 0;
 			MaxDndUptime = 1;
@@ -155,6 +162,16 @@ message Deathknight {
 		enum FirstDisease {
 			FrostFever = 0;
 			BloodPlague = 1;
+		}
+
+		enum BloodRuneFiller {
+			BloodStrike = 0;
+			BloodBoil = 1;
+		}
+
+		enum StartingPresence {
+			Blood = 0;
+			Unholy = 1;
 		}
 
 		ArmyOfTheDead army_of_the_dead = 1;
@@ -168,6 +185,13 @@ message Deathknight {
 		FirstDisease first_disease = 6;
 		
 		DeathAndDecayPrio death_and_decay_prio = 7;
+
+		bool use_empower_rune_weapon = 8;
+
+		BloodRuneFiller blood_rune_filler = 9;
+
+		StartingPresence starting_presence = 10;
+		BloodTap blood_tap = 11;
 	}
 	Rotation rotation = 1;
 

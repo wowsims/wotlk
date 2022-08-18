@@ -1,114 +1,168 @@
-import { IndividualSimUI } from '/wotlk/core/individual_sim_ui.js';
-import { Raid as RaidProto } from '/wotlk/core/proto/api.js';
-import { Party as PartyProto } from '/wotlk/core/proto/api.js';
-import { Class } from '/wotlk/core/proto/common.js';
-import { Consumes } from '/wotlk/core/proto/common.js';
+import { IndividualSimUI, OtherDefaults } from '../core/individual_sim_ui.js';
+import { Raid as RaidProto } from '../core/proto/api.js';
+import { Party as PartyProto } from '../core/proto/api.js';
+import { Class } from '../core/proto/common.js';
+import { Consumes } from '../core/proto/common.js';
 
-import { Encounter as EncounterProto } from '/wotlk/core/proto/common.js';
-import { EquipmentSpec } from '/wotlk/core/proto/common.js';
-import { Race } from '/wotlk/core/proto/common.js';
-import { Spec } from '/wotlk/core/proto/common.js';
-import { TristateEffect } from '/wotlk/core/proto/common.js';
-import { Faction } from '/wotlk/core/proto/common.js';
-import { SavedTalents } from '/wotlk/core/proto/ui.js';
-import { SpecOptions } from '/wotlk/core/proto_utils/utils.js';
-import { SpecRotation } from '/wotlk/core/proto_utils/utils.js';
-import { playerToSpec } from '/wotlk/core/proto_utils/utils.js';
-import { specIconsLarge } from '/wotlk/core/proto_utils/utils.js';
-import { specNames } from '/wotlk/core/proto_utils/utils.js';
-import { talentTreeIcons } from '/wotlk/core/proto_utils/utils.js';
-import { NO_TARGET } from '/wotlk/core/proto_utils/utils.js';
-import { Player } from '/wotlk/core/player.js';
+import { Encounter as EncounterProto } from '../core/proto/common.js';
+import { EquipmentSpec } from '../core/proto/common.js';
+import { Race } from '../core/proto/common.js';
+import { Spec } from '../core/proto/common.js';
+import { TristateEffect } from '../core/proto/common.js';
+import { Faction } from '../core/proto/common.js';
+import { SavedTalents } from '../core/proto/ui.js';
+import { SpecOptions } from '../core/proto_utils/utils.js';
+import { SpecRotation } from '../core/proto_utils/utils.js';
+import { playerToSpec } from '../core/proto_utils/utils.js';
+import { specIconsLarge } from '../core/proto_utils/utils.js';
+import { specNames } from '../core/proto_utils/utils.js';
+import { talentTreeIcons } from '../core/proto_utils/utils.js';
+import { NO_TARGET } from '../core/proto_utils/utils.js';
+import { Player } from '../core/player.js';
 
 import { BuffBot } from './buff_bot.js';
 
-import * as BalanceDruidPresets from '/wotlk/balance_druid/presets.js';
-import * as FeralDruidPresets from '/wotlk/feral_druid/presets.js';
-import * as FeralTankDruidPresets from '/wotlk/feral_tank_druid/presets.js';
-import * as ElementalShamanPresets from '/wotlk/elemental_shaman/presets.js';
-import * as EnhancementShamanPresets from '/wotlk/enhancement_shaman/presets.js';
-import * as HunterPresets from '/wotlk/hunter/presets.js';
-import * as MagePresets from '/wotlk/mage/presets.js';
-import * as RoguePresets from '/wotlk/rogue/presets.js';
-import * as RetributionPaladinPresets from '/wotlk/retribution_paladin/presets.js';
-import * as ProtectionPaladinPresets from '/wotlk/protection_paladin/presets.js';
-import * as ShadowPriestPresets from '/wotlk/shadow_priest/presets.js';
-import * as SmitePriestPresets from '/wotlk/smite_priest/presets.js';
-import * as WarriorPresets from '/wotlk/warrior/presets.js';
-import * as ProtectionWarriorPresets from '/wotlk/protection_warrior/presets.js';
-import * as WarlockPresets from '/wotlk/warlock/presets.js';
+import * as DeathknightPresets from '../deathknight/presets.js';
+import * as BalanceDruidPresets from '../balance_druid/presets.js';
+import * as FeralDruidPresets from '../feral_druid/presets.js';
+import * as FeralTankDruidPresets from '../feral_tank_druid/presets.js';
+import * as ElementalShamanPresets from '../elemental_shaman/presets.js';
+import * as EnhancementShamanPresets from '../enhancement_shaman/presets.js';
+import * as HunterPresets from '../hunter/presets.js';
+import * as MagePresets from '../mage/presets.js';
+import * as RoguePresets from '../rogue/presets.js';
+import * as RetributionPaladinPresets from '../retribution_paladin/presets.js';
+import * as ProtectionPaladinPresets from '../protection_paladin/presets.js';
+import * as ShadowPriestPresets from '../shadow_priest/presets.js';
+import * as SmitePriestPresets from '../smite_priest/presets.js';
+import * as WarriorPresets from '../warrior/presets.js';
+import * as ProtectionWarriorPresets from '../protection_warrior/presets.js';
+import * as WarlockPresets from '../warlock/presets.js';
 
 
-import { BalanceDruidSimUI } from '/wotlk/balance_druid/sim.js';
-import { FeralDruidSimUI } from '/wotlk/feral_druid/sim.js';
-import { FeralTankDruidSimUI } from '/wotlk/feral_tank_druid/sim.js';
-import { EnhancementShamanSimUI } from '/wotlk/enhancement_shaman/sim.js';
-import { ElementalShamanSimUI } from '/wotlk/elemental_shaman/sim.js';
-import { HunterSimUI } from '/wotlk/hunter/sim.js';
-import { MageSimUI } from '/wotlk/mage/sim.js';
-import { RogueSimUI } from '/wotlk/rogue/sim.js';
-import { RetributionPaladinSimUI } from '/wotlk/retribution_paladin/sim.js';
-import { ProtectionPaladinSimUI } from '/wotlk/protection_paladin/sim.js';
-import { ShadowPriestSimUI } from '/wotlk/shadow_priest/sim.js';
-import { SmitePriestSimUI } from '/wotlk/smite_priest/sim.js';
-import { WarriorSimUI } from '/wotlk/warrior/sim.js';
-import { ProtectionWarriorSimUI } from '/wotlk/protection_warrior/sim.js';
-import { WarlockSimUI } from '/wotlk/warlock/sim.js';
+import { BalanceDruidSimUI } from '../balance_druid/sim.js';
+import { FeralDruidSimUI } from '../feral_druid/sim.js';
+import { FeralTankDruidSimUI } from '../feral_tank_druid/sim.js';
+import { EnhancementShamanSimUI } from '../enhancement_shaman/sim.js';
+import { ElementalShamanSimUI } from '../elemental_shaman/sim.js';
+import { HunterSimUI } from '../hunter/sim.js';
+import { MageSimUI } from '../mage/sim.js';
+import { RogueSimUI } from '../rogue/sim.js';
+import { RetributionPaladinSimUI } from '../retribution_paladin/sim.js';
+import { ProtectionPaladinSimUI } from '../protection_paladin/sim.js';
+import { ShadowPriestSimUI } from '../shadow_priest/sim.js';
+import { SmitePriestSimUI } from '../smite_priest/sim.js';
+import { WarriorSimUI } from '../warrior/sim.js';
+import { ProtectionWarriorSimUI } from '../protection_warrior/sim.js';
+import { WarlockSimUI } from '../warlock/sim.js';
+import { DeathknightSimUI } from '../deathknight/sim.js';
 
 export const specSimFactories: Partial<Record<Spec, (parentElem: HTMLElement, player: Player<any>) => IndividualSimUI<any>>> = {
+    [Spec.SpecDeathknight]: (parentElem: HTMLElement, player: Player<any>) => new DeathknightSimUI(parentElem, player),
 	[Spec.SpecBalanceDruid]: (parentElem: HTMLElement, player: Player<any>) => new BalanceDruidSimUI(parentElem, player),
-	[Spec.SpecFeralDruid]: (parentElem: HTMLElement, player: Player<any>) => new FeralDruidSimUI(parentElem, player),
-	[Spec.SpecFeralTankDruid]: (parentElem: HTMLElement, player: Player<any>) => new FeralTankDruidSimUI(parentElem, player),
-	[Spec.SpecElementalShaman]: (parentElem: HTMLElement, player: Player<any>) => new ElementalShamanSimUI(parentElem, player),
-	[Spec.SpecEnhancementShaman]: (parentElem: HTMLElement, player: Player<any>) => new EnhancementShamanSimUI(parentElem, player),
-	[Spec.SpecHunter]: (parentElem: HTMLElement, player: Player<any>) => new HunterSimUI(parentElem, player),
-	[Spec.SpecMage]: (parentElem: HTMLElement, player: Player<any>) => new MageSimUI(parentElem, player),
-	[Spec.SpecRogue]: (parentElem: HTMLElement, player: Player<any>) => new RogueSimUI(parentElem, player),
-	[Spec.SpecRetributionPaladin]: (parentElem: HTMLElement, player: Player<any>) => new RetributionPaladinSimUI(parentElem, player),
-	[Spec.SpecProtectionPaladin]: (parentElem: HTMLElement, player: Player<any>) => new ProtectionPaladinSimUI(parentElem, player),
-	[Spec.SpecShadowPriest]: (parentElem: HTMLElement, player: Player<any>) => new ShadowPriestSimUI(parentElem, player),
-	[Spec.SpecSmitePriest]: (parentElem: HTMLElement, player: Player<any>) => new SmitePriestSimUI(parentElem, player),
-	[Spec.SpecWarrior]: (parentElem: HTMLElement, player: Player<any>) => new WarriorSimUI(parentElem, player),
-	[Spec.SpecProtectionWarrior]: (parentElem: HTMLElement, player: Player<any>) => new ProtectionWarriorSimUI(parentElem, player),
-	[Spec.SpecWarlock]: (parentElem: HTMLElement, player: Player<any>) => new WarlockSimUI(parentElem, player),
+    [Spec.SpecFeralDruid]: (parentElem: HTMLElement, player: Player<any>) => new FeralDruidSimUI(parentElem, player),
+    [Spec.SpecFeralTankDruid]: (parentElem: HTMLElement, player: Player<any>) => new FeralTankDruidSimUI(parentElem, player),
+    [Spec.SpecElementalShaman]: (parentElem: HTMLElement, player: Player<any>) => new ElementalShamanSimUI(parentElem, player),
+    [Spec.SpecEnhancementShaman]: (parentElem: HTMLElement, player: Player<any>) => new EnhancementShamanSimUI(parentElem, player),
+    [Spec.SpecHunter]: (parentElem: HTMLElement, player: Player<any>) => new HunterSimUI(parentElem, player),
+    [Spec.SpecMage]: (parentElem: HTMLElement, player: Player<any>) => new MageSimUI(parentElem, player),
+    [Spec.SpecRogue]: (parentElem: HTMLElement, player: Player<any>) => new RogueSimUI(parentElem, player),
+    [Spec.SpecRetributionPaladin]: (parentElem: HTMLElement, player: Player<any>) => new RetributionPaladinSimUI(parentElem, player),
+    [Spec.SpecProtectionPaladin]: (parentElem: HTMLElement, player: Player<any>) => new ProtectionPaladinSimUI(parentElem, player),
+    [Spec.SpecShadowPriest]: (parentElem: HTMLElement, player: Player<any>) => new ShadowPriestSimUI(parentElem, player),
+    [Spec.SpecSmitePriest]: (parentElem: HTMLElement, player: Player<any>) => new SmitePriestSimUI(parentElem, player),
+    [Spec.SpecWarrior]: (parentElem: HTMLElement, player: Player<any>) => new WarriorSimUI(parentElem, player),
+    [Spec.SpecProtectionWarrior]: (parentElem: HTMLElement, player: Player<any>) => new ProtectionWarriorSimUI(parentElem, player),
+    [Spec.SpecWarlock]: (parentElem: HTMLElement, player: Player<any>) => new WarlockSimUI(parentElem, player),
 };
 
 // Configuration necessary for creating new players.
 export interface PresetSpecSettings<SpecType extends Spec> {
-	spec: Spec,
-	rotation: SpecRotation<SpecType>,
-	talents: SavedTalents,
-	specOptions: SpecOptions<SpecType>,
-	consumes: Consumes,
+    spec: Spec,
+    rotation: SpecRotation<SpecType>,
+    talents: SavedTalents,
+    specOptions: SpecOptions<SpecType>,
+    consumes: Consumes,
 
-	defaultName: string,
-	defaultFactionRaces: Record<Faction, Race>,
-	defaultGear: Record<Faction, Record<number, EquipmentSpec>>,
+    defaultName: string,
+    defaultFactionRaces: Record<Faction, Race>,
+    defaultGear: Record<Faction, Record<number, EquipmentSpec>>,
+		otherDefaults?: OtherDefaults,
 
-	tooltip: string,
-	iconUrl: string,
+    tooltip: string,
+    iconUrl: string,
 }
 
 // Configuration necessary for creating new BuffBots.
 export interface BuffBotSettings {
-	// The value of this field must never change, to preserve local storage data.
-	buffBotId: string,
+    // The value of this field must never change, to preserve local storage data.
+    buffBotId: string,
 
-	// Set this to true to remove a buff bot option after launching a real sim.
-	// This will allow users with saved settings to properly load the buffbot but
-	// also remove the buffbot as an option from the UI.
-	deprecated?: boolean,
+    // Set this to true to remove a buff bot option after launching a real sim.
+    // This will allow users with saved settings to properly load the buffbot but
+    // also remove the buffbot as an option from the UI.
+    deprecated?: boolean,
 
-	spec: Spec,
-	name: string,
-	tooltip: string,
-	iconUrl: string,
+    spec: Spec,
+    name: string,
+    tooltip: string,
+    iconUrl: string,
 
-	// Callback to apply buffs from this buff bot.
-	modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => void,
+    // Callback to apply buffs from this buff bot.
+    modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => void,
 }
 
 export const playerPresets: Array<PresetSpecSettings<any>> = [
+	{
+		spec: Spec.SpecDeathknight,
+		rotation: DeathknightPresets.DefaultFrostRotation,
+		talents: DeathknightPresets.FrostTalents.data,
+		specOptions: DeathknightPresets.DefaultFrostOptions,
+		consumes: DeathknightPresets.DefaultConsumes,
+		defaultName: 'Frost DK',
+		defaultFactionRaces: {
+			[Faction.Unknown]: Race.RaceUnknown,
+			[Faction.Alliance]: Race.RaceHuman,
+			[Faction.Horde]: Race.RaceTroll,
+		},
+		defaultGear: {
+			[Faction.Unknown]: {},
+			[Faction.Alliance]: {
+				1: DeathknightPresets.P1_FROST_BIS_PRESET.gear,
+			},
+			[Faction.Horde]: {
+				1: DeathknightPresets.P1_FROST_BIS_PRESET.gear,
+			},
+		},
+		otherDefaults: DeathknightPresets.OtherDefaults,
+		tooltip: 'Frost Death Knight',
+		iconUrl: talentTreeIcons[Class.ClassDeathknight][1],
+	},
+	{
+		spec: Spec.SpecDeathknight,
+		rotation: DeathknightPresets.DefaultUnholyRotation,
+		talents: DeathknightPresets.UnholyDualWieldTalents.data,
+		specOptions: DeathknightPresets.DefaultUnholyOptions,
+		consumes: DeathknightPresets.DefaultConsumes,
+		defaultName: 'DW Unholy DK',
+		defaultFactionRaces: {
+			[Faction.Unknown]: Race.RaceUnknown,
+			[Faction.Alliance]: Race.RaceHuman,
+			[Faction.Horde]: Race.RaceTroll,
+		},
+		defaultGear: {
+			[Faction.Unknown]: {},
+			[Faction.Alliance]: {
+				1: DeathknightPresets.P1_UNHOLY_DW_BIS_PRESET.gear,
+			},
+			[Faction.Horde]: {
+				1: DeathknightPresets.P1_UNHOLY_DW_BIS_PRESET.gear,
+			},
+		},
+		otherDefaults: DeathknightPresets.OtherDefaults,
+		tooltip: 'Dual Wield Unholy DK',
+		iconUrl: talentTreeIcons[Class.ClassDeathknight][2],
+	},
 	{
 		spec: Spec.SpecBalanceDruid,
 		rotation: BalanceDruidPresets.DefaultRotation,
@@ -124,10 +178,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				5: BalanceDruidPresets.P5_PRESET.gear,
+				1: BalanceDruidPresets.P1_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				5: BalanceDruidPresets.P5_PRESET.gear,
+				1: BalanceDruidPresets.P1_PRESET.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecBalanceDruid],
@@ -149,17 +203,9 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: FeralDruidPresets.P1_PRESET.gear,
-				2: FeralDruidPresets.P2_PRESET.gear,
-				3: FeralDruidPresets.P3_PRESET.gear,
-				4: FeralDruidPresets.P4_PRESET.gear,
-				5: FeralDruidPresets.P5_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: FeralDruidPresets.P1_PRESET.gear,
-				2: FeralDruidPresets.P2_PRESET.gear,
-				3: FeralDruidPresets.P3_PRESET.gear,
-				4: FeralDruidPresets.P4_PRESET.gear,
-				5: FeralDruidPresets.P5_PRESET.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecFeralDruid],
@@ -181,17 +227,9 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: FeralTankDruidPresets.P1_PRESET.gear,
-				2: FeralTankDruidPresets.P2_PRESET.gear,
-				3: FeralTankDruidPresets.P3_PRESET.gear,
-				4: FeralTankDruidPresets.P4_PRESET.gear,
-				5: FeralTankDruidPresets.P5_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: FeralTankDruidPresets.P1_PRESET.gear,
-				2: FeralTankDruidPresets.P2_PRESET.gear,
-				3: FeralTankDruidPresets.P3_PRESET.gear,
-				4: FeralTankDruidPresets.P4_PRESET.gear,
-				5: FeralTankDruidPresets.P5_PRESET.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecFeralTankDruid],
@@ -201,7 +239,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		spec: Spec.SpecHunter,
 		rotation: HunterPresets.DefaultRotation,
 		talents: HunterPresets.BeastMasteryTalents.data,
-		specOptions: HunterPresets.DefaultOptions,
+		specOptions: HunterPresets.BMDefaultOptions,
 		consumes: HunterPresets.DefaultConsumes,
 		defaultName: 'BM Hunter',
 		defaultFactionRaces: {
@@ -220,6 +258,30 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		},
 		tooltip: 'BM Hunter',
 		iconUrl: talentTreeIcons[Class.ClassHunter][0],
+	},
+	{
+		spec: Spec.SpecHunter,
+		rotation: HunterPresets.DefaultRotation,
+		talents: HunterPresets.MarksmanTalents.data,
+		specOptions: HunterPresets.DefaultOptions,
+		consumes: HunterPresets.DefaultConsumes,
+		defaultName: 'BM Hunter',
+		defaultFactionRaces: {
+			[Faction.Unknown]: Race.RaceUnknown,
+			[Faction.Alliance]: Race.RaceNightElf,
+			[Faction.Horde]: Race.RaceOrc,
+		},
+		defaultGear: {
+			[Faction.Unknown]: {},
+			[Faction.Alliance]: {
+				1: HunterPresets.P1_PRESET.gear,
+			},
+			[Faction.Horde]: {
+				1: HunterPresets.P1_PRESET.gear,
+			},
+		},
+		tooltip: 'MM Hunter',
+		iconUrl: talentTreeIcons[Class.ClassHunter][1],
 	},
 	{
 		spec: Spec.SpecHunter,
@@ -260,10 +322,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				0: MagePresets.P5_ARCANE_PRESET.gear,
+				1: MagePresets.P1_ARCANE_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				0: MagePresets.P5_ARCANE_PRESET.gear,
+				1: MagePresets.P1_ARCANE_PRESET.gear,
 			},
 		},
 		tooltip: 'Arcane Mage',
@@ -284,10 +346,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				0: MagePresets.P5_FIRE_PRESET.gear,
+				1: MagePresets.P1_FIRE_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				0: MagePresets.P5_FIRE_PRESET.gear,
+				1: MagePresets.P1_FIRE_PRESET.gear,
 			},
 		},
 		tooltip: 'Fire Mage',
@@ -296,7 +358,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	{
 		spec: Spec.SpecMage,
 		rotation: MagePresets.DefaultFrostRotation,
-		talents: MagePresets.DeepFrostTalents.data,
+		talents: MagePresets.FrostTalents.data,
 		specOptions: MagePresets.DefaultFrostOptions,
 		consumes: MagePresets.DefaultFrostConsumes,
 		defaultName: 'Frost Mage',
@@ -308,10 +370,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				0: MagePresets.P5_FROST_PRESET.gear,
+				1: MagePresets.P1_FROST_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				0: MagePresets.P5_FROST_PRESET.gear,
+				1: MagePresets.P1_FROST_PRESET.gear,
 			},
 		},
 		tooltip: 'Frost Mage',
@@ -381,17 +443,9 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: EnhancementShamanPresets.P1_PRESET.gear,
-				2: EnhancementShamanPresets.P2_PRESET.gear,
-				3: EnhancementShamanPresets.P3_PRESET.gear,
-				4: EnhancementShamanPresets.P4_PRESET.gear,
-				5: EnhancementShamanPresets.P5_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: EnhancementShamanPresets.P1_PRESET.gear,
-				2: EnhancementShamanPresets.P2_PRESET.gear,
-				3: EnhancementShamanPresets.P3_PRESET.gear,
-				4: EnhancementShamanPresets.P4_PRESET.gear,
-				5: EnhancementShamanPresets.P5_PRESET.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecEnhancementShaman],
@@ -448,7 +502,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	{
 		spec: Spec.SpecWarrior,
 		rotation: WarriorPresets.ArmsRotation,
-		talents: WarriorPresets.ArmsSlamTalents.data,
+		talents: WarriorPresets.ArmsTalents.data,
 		specOptions: WarriorPresets.DefaultOptions,
 		consumes: WarriorPresets.DefaultConsumes,
 		defaultName: 'Arms Warrior',
@@ -461,17 +515,9 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: WarriorPresets.P1_ARMS_PRESET.gear,
-				2: WarriorPresets.P2_ARMS_PRESET.gear,
-				3: WarriorPresets.P3_ARMS_PRESET.gear,
-				4: WarriorPresets.P4_ARMS_PRESET.gear,
-				5: WarriorPresets.P5_ARMS_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: WarriorPresets.P1_ARMS_PRESET.gear,
-				2: WarriorPresets.P2_ARMS_PRESET.gear,
-				3: WarriorPresets.P3_ARMS_PRESET.gear,
-				4: WarriorPresets.P4_ARMS_PRESET.gear,
-				5: WarriorPresets.P5_ARMS_PRESET.gear,
 			},
 		},
 		tooltip: 'Arms Warrior',
@@ -493,17 +539,9 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: WarriorPresets.P1_FURY_PRESET.gear,
-				2: WarriorPresets.P2_FURY_PRESET.gear,
-				3: WarriorPresets.P3_FURY_PRESET.gear,
-				4: WarriorPresets.P4_FURY_PRESET.gear,
-				5: WarriorPresets.P5_FURY_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: WarriorPresets.P1_FURY_PRESET.gear,
-				2: WarriorPresets.P2_FURY_PRESET.gear,
-				3: WarriorPresets.P3_FURY_PRESET.gear,
-				4: WarriorPresets.P4_FURY_PRESET.gear,
-				5: WarriorPresets.P5_FURY_PRESET.gear,
 			},
 		},
 		tooltip: 'Fury Warrior',
@@ -525,17 +563,9 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: ProtectionWarriorPresets.P1_BALANCED_PRESET.gear,
-				2: ProtectionWarriorPresets.P2_BALANCED_PRESET.gear,
-				3: ProtectionWarriorPresets.P3_BALANCED_PRESET.gear,
-				4: ProtectionWarriorPresets.P4_BALANCED_PRESET.gear,
-				5: ProtectionWarriorPresets.P5_BALANCED_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: ProtectionWarriorPresets.P1_BALANCED_PRESET.gear,
-				2: ProtectionWarriorPresets.P2_BALANCED_PRESET.gear,
-				3: ProtectionWarriorPresets.P3_BALANCED_PRESET.gear,
-				4: ProtectionWarriorPresets.P4_BALANCED_PRESET.gear,
-				5: ProtectionWarriorPresets.P5_BALANCED_PRESET.gear,
 			},
 		},
 		tooltip: 'Protection Warrior',
@@ -589,17 +619,9 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: ProtectionPaladinPresets.P1_PRESET.gear,
-				2: ProtectionPaladinPresets.P2_PRESET.gear,
-				3: ProtectionPaladinPresets.P3_PRESET.gear,
-				4: ProtectionPaladinPresets.P4_PRESET.gear,
-				5: ProtectionPaladinPresets.P5_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: ProtectionPaladinPresets.P1_PRESET.gear,
-				2: ProtectionPaladinPresets.P2_PRESET.gear,
-				3: ProtectionPaladinPresets.P3_PRESET.gear,
-				4: ProtectionPaladinPresets.P4_PRESET.gear,
-				5: ProtectionPaladinPresets.P5_PRESET.gear,
 			},
 		},
 		tooltip: 'Protection Paladin',
@@ -634,6 +656,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 					5: WarlockPresets.P5_DESTRO.gear,
 				},
 			},
+			otherDefaults: WarlockPresets.OtherDefaults,
 			tooltip: 'Destruction Warlock: defaults to casting Curse of Doom.',
 			iconUrl: talentTreeIcons[Class.ClassWarlock][2],
 		},*/
@@ -666,6 +689,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 // 				5: WarlockPresets.P5_DESTRO.gear,
 			},
 		},
+		otherDefaults: WarlockPresets.OtherDefaults,
 		tooltip: 'Affliction Warlock: by default casts CoE with Malediction',
 		iconUrl: talentTreeIcons[Class.ClassWarlock][0],
 	},
@@ -698,6 +722,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 					5: WarlockPresets.P5_DESTRO.gear,
 				},
 			},
+			otherDefaults: WarlockPresets.OtherDefaults,
 			tooltip: 'Demonology Warlock',
 			iconUrl: talentTreeIcons[Class.ClassWarlock][1],
 		},*/
@@ -706,134 +731,134 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 export const implementedSpecs: Array<Spec> = [...new Set(playerPresets.map(preset => preset.spec))];
 
 export const buffBotPresets: Array<BuffBotSettings> = [
-	{
-		// The value of this field must never change, to preserve local storage data.
-		buffBotId: 'Bear',
-		deprecated: true,
-		spec: Spec.SpecBalanceDruid,
-		name: 'Bear',
-		tooltip: 'Bear: Adds Gift of the Wild, an Innervate, Faerie Fire, and Leader of the Pack.',
-		iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/ability_racial_bearform.jpg',
-		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
-			raidProto.buffs!.giftOfTheWild = Math.max(raidProto.buffs!.giftOfTheWild, TristateEffect.TristateEffectRegular);
-			raidProto.buffs!.thorns = Math.max(raidProto.buffs!.thorns, TristateEffect.TristateEffectRegular);
-			raidProto.debuffs!.faerieFire = Math.max(raidProto.debuffs!.faerieFire, TristateEffect.TristateEffectRegular);
-			raidProto.buffs!.leaderOfThePack = Math.max(raidProto.buffs!.leaderOfThePack, TristateEffect.TristateEffectRegular);
+    {
+        // The value of this field must never change, to preserve local storage data.
+        buffBotId: 'Bear',
+        deprecated: true,
+        spec: Spec.SpecBalanceDruid,
+        name: 'Bear',
+        tooltip: 'Bear: Adds Gift of the Wild, an Innervate, Faerie Fire, and Leader of the Pack.',
+        iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/ability_racial_bearform.jpg',
+        modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
+            raidProto.buffs!.giftOfTheWild = Math.max(raidProto.buffs!.giftOfTheWild, TristateEffect.TristateEffectRegular);
+            raidProto.buffs!.thorns = Math.max(raidProto.buffs!.thorns, TristateEffect.TristateEffectRegular);
+            raidProto.debuffs!.faerieFire = Math.max(raidProto.debuffs!.faerieFire, TristateEffect.TristateEffectRegular);
+            raidProto.buffs!.leaderOfThePack = Math.max(raidProto.buffs!.leaderOfThePack, TristateEffect.TristateEffectRegular);
 
-			const innervateIndex = buffBot.getInnervateAssignment().targetIndex;
-			if (innervateIndex != NO_TARGET) {
-				const partyIndex = Math.floor(innervateIndex / 5);
-				const playerIndex = innervateIndex % 5;
-				const playerProto = raidProto.parties[partyIndex].players[playerIndex];
-				if (playerProto.buffs) {
-					playerProto.buffs.innervates++;
-				}
-			}
-		},
-	},
-	{
-		// The value of this field must never change, to preserve local storage data.
-		buffBotId: 'Resto Druid',
-		spec: Spec.SpecBalanceDruid,
-		name: 'Resto Druid',
-		tooltip: 'Resto Druid: Adds Improved Gift of the Wild, and an Innervate.',
-		iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/spell_nature_healingtouch.jpg',
-		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
-			raidProto.buffs!.giftOfTheWild = TristateEffect.TristateEffectImproved;
-			raidProto.buffs!.thorns = Math.max(raidProto.buffs!.thorns, TristateEffect.TristateEffectRegular);
+            const innervateIndex = buffBot.getInnervateAssignment().targetIndex;
+            if (innervateIndex != NO_TARGET) {
+                const partyIndex = Math.floor(innervateIndex / 5);
+                const playerIndex = innervateIndex % 5;
+                const playerProto = raidProto.parties[partyIndex].players[playerIndex];
+                if (playerProto.buffs) {
+                    playerProto.buffs.innervates++;
+                }
+            }
+        },
+    },
+    {
+        // The value of this field must never change, to preserve local storage data.
+        buffBotId: 'Resto Druid',
+        spec: Spec.SpecBalanceDruid,
+        name: 'Resto Druid',
+        tooltip: 'Resto Druid: Adds Improved Gift of the Wild, and an Innervate.',
+        iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/spell_nature_healingtouch.jpg',
+        modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
+            raidProto.buffs!.giftOfTheWild = TristateEffect.TristateEffectImproved;
+            raidProto.buffs!.thorns = Math.max(raidProto.buffs!.thorns, TristateEffect.TristateEffectRegular);
 
-			const innervateIndex = buffBot.getInnervateAssignment().targetIndex;
-			if (innervateIndex != NO_TARGET) {
-				const partyIndex = Math.floor(innervateIndex / 5);
-				const playerIndex = innervateIndex % 5;
-				const playerProto = raidProto.parties[partyIndex].players[playerIndex];
-				if (playerProto.buffs) {
-					playerProto.buffs.innervates++;
-				}
-			}
-		},
-	},
-	{
-		// The value of this field must never change, to preserve local storage data.
-		buffBotId: 'Dreamstate',
-		spec: Spec.SpecBalanceDruid,
-		name: 'Dreamstate',
-		tooltip: 'Dreamstate: Adds Improved Gift of the Wild, an Innervate, and Improved Faerie Fire.',
-		iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/spell_nature_faeriefire.jpg',
-		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
-			raidProto.buffs!.giftOfTheWild = TristateEffect.TristateEffectImproved;
-			raidProto.buffs!.thorns = TristateEffect.TristateEffectImproved;
-			raidProto.debuffs!.faerieFire = TristateEffect.TristateEffectImproved;
+            const innervateIndex = buffBot.getInnervateAssignment().targetIndex;
+            if (innervateIndex != NO_TARGET) {
+                const partyIndex = Math.floor(innervateIndex / 5);
+                const playerIndex = innervateIndex % 5;
+                const playerProto = raidProto.parties[partyIndex].players[playerIndex];
+                if (playerProto.buffs) {
+                    playerProto.buffs.innervates++;
+                }
+            }
+        },
+    },
+    {
+        // The value of this field must never change, to preserve local storage data.
+        buffBotId: 'Dreamstate',
+        spec: Spec.SpecBalanceDruid,
+        name: 'Dreamstate',
+        tooltip: 'Dreamstate: Adds Improved Gift of the Wild, an Innervate, and Improved Faerie Fire.',
+        iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/spell_nature_faeriefire.jpg',
+        modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
+            raidProto.buffs!.giftOfTheWild = TristateEffect.TristateEffectImproved;
+            raidProto.buffs!.thorns = TristateEffect.TristateEffectImproved;
+            raidProto.debuffs!.faerieFire = TristateEffect.TristateEffectImproved;
 
-			const innervateIndex = buffBot.getInnervateAssignment().targetIndex;
-			if (innervateIndex != NO_TARGET) {
-				const partyIndex = Math.floor(innervateIndex / 5);
-				const playerIndex = innervateIndex % 5;
-				const playerProto = raidProto.parties[partyIndex].players[playerIndex];
-				if (playerProto.buffs) {
-					playerProto.buffs.innervates++;
-				}
-			}
-		},
-	},
-	{
-		// The value of this field must never change, to preserve local storage data.
-		buffBotId: 'Mage',
-		deprecated: true,
-		spec: Spec.SpecMage,
-		name: 'Mage',
-		tooltip: 'Mage: Adds Arcane Brilliance.',
-		iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/spell_holy_arcaneintellect.jpg',
-		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
-			raidProto.buffs!.arcaneBrilliance = true;
-		},
-	},
-	{
-		// The value of this field must never change, to preserve local storage data.
-		buffBotId: 'Paladin',
-		spec: Spec.SpecRetributionPaladin,
-		name: 'Holy Paladin',
-		tooltip: 'Holy Paladin: Adds a set of blessings.',
-		iconUrl: talentTreeIcons[Class.ClassPaladin][0],
-		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
-			// Do nothing, blessings are handled elswhere.
-		},
-	},
-	{
-		// The value of this field must never change, to preserve local storage data.
-		buffBotId: 'JoW Paladin',
-		spec: Spec.SpecRetributionPaladin,
-		name: 'JoW Paladin',
-		tooltip: 'JoW Paladin: Adds a set of blessings and Judgement of Wisdom.',
-		iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/spell_holy_righteousnessaura.jpg',
-		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
-			// Blessings are handled elswhere.
-			raidProto.debuffs!.judgementOfWisdom = true;
-		},
-	},
-	{
-		// The value of this field must never change, to preserve local storage data.
-		buffBotId: 'Holy Priest',
-		spec: Spec.SpecShadowPriest,
-		name: 'Holy Priest',
-		tooltip: 'Holy Priest: Adds Improved PW Fortitude and Shadow Protection.',
-		iconUrl: talentTreeIcons[Class.ClassPriest][1],
-		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
-			raidProto.buffs!.shadowProtection = true;
-			raidProto.buffs!.powerWordFortitude = TristateEffect.TristateEffectImproved;
-		},
-	},
-	{
-		// The value of this field must never change, to preserve local storage data.
-		buffBotId: 'Divine Spirit Priest',
-		spec: Spec.SpecShadowPriest,
-		name: 'Disc Priest',
-		tooltip: 'Disc Priest: Adds Improved PW Fort, Shadow Protection, Improved Divine Spirit and a Power Infusion.',
-		iconUrl: 'https://wow.zamimg.com/images/wow/icons/medium/spell_holy_powerinfusion.jpg',
-		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
-			raidProto.buffs!.shadowProtection = true;
-			raidProto.buffs!.powerWordFortitude = TristateEffect.TristateEffectImproved;
-			raidProto.buffs!.divineSpirit = true;
+            const innervateIndex = buffBot.getInnervateAssignment().targetIndex;
+            if (innervateIndex != NO_TARGET) {
+                const partyIndex = Math.floor(innervateIndex / 5);
+                const playerIndex = innervateIndex % 5;
+                const playerProto = raidProto.parties[partyIndex].players[playerIndex];
+                if (playerProto.buffs) {
+                    playerProto.buffs.innervates++;
+                }
+            }
+        },
+    },
+    {
+        // The value of this field must never change, to preserve local storage data.
+        buffBotId: 'Mage',
+        deprecated: true,
+        spec: Spec.SpecMage,
+        name: 'Mage',
+        tooltip: 'Mage: Adds Arcane Brilliance.',
+        iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/spell_holy_arcaneintellect.jpg',
+        modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
+            raidProto.buffs!.arcaneBrilliance = true;
+        },
+    },
+    {
+        // The value of this field must never change, to preserve local storage data.
+        buffBotId: 'Paladin',
+        spec: Spec.SpecRetributionPaladin,
+        name: 'Holy Paladin',
+        tooltip: 'Holy Paladin: Adds a set of blessings.',
+        iconUrl: talentTreeIcons[Class.ClassPaladin][0],
+        modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
+            // Do nothing, blessings are handled elswhere.
+        },
+    },
+    {
+        // The value of this field must never change, to preserve local storage data.
+        buffBotId: 'JoW Paladin',
+        spec: Spec.SpecRetributionPaladin,
+        name: 'JoW Paladin',
+        tooltip: 'JoW Paladin: Adds a set of blessings and Judgement of Wisdom.',
+        iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/spell_holy_righteousnessaura.jpg',
+        modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
+            // Blessings are handled elswhere.
+            raidProto.debuffs!.judgementOfWisdom = true;
+        },
+    },
+    {
+        // The value of this field must never change, to preserve local storage data.
+        buffBotId: 'Holy Priest',
+        spec: Spec.SpecShadowPriest,
+        name: 'Holy Priest',
+        tooltip: 'Holy Priest: Adds Improved PW Fortitude and Shadow Protection.',
+        iconUrl: talentTreeIcons[Class.ClassPriest][1],
+        modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
+            raidProto.buffs!.shadowProtection = true;
+            raidProto.buffs!.powerWordFortitude = TristateEffect.TristateEffectImproved;
+        },
+    },
+    {
+        // The value of this field must never change, to preserve local storage data.
+        buffBotId: 'Divine Spirit Priest',
+        spec: Spec.SpecShadowPriest,
+        name: 'Disc Priest',
+        tooltip: 'Disc Priest: Adds Improved PW Fort, Shadow Protection, Improved Divine Spirit and a Power Infusion.',
+        iconUrl: 'https://wow.zamimg.com/images/wow/icons/medium/spell_holy_powerinfusion.jpg',
+        modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
+            raidProto.buffs!.shadowProtection = true;
+            raidProto.buffs!.powerWordFortitude = TristateEffect.TristateEffectImproved;
+            raidProto.buffs!.divineSpirit = true;
 
 			const powerInfusionIndex = buffBot.getPowerInfusionAssignment().targetIndex;
 			if (powerInfusionIndex != NO_TARGET) {
@@ -877,78 +902,78 @@ export const buffBotPresets: Array<BuffBotSettings> = [
 			raidProto.buffs!.manaSpringTotem = TristateEffect.TristateEffectImproved;
 			partyProto.buffs!.manaTideTotems++;
 
-			// Choose which air totem to drop based on party composition.
-			const woaSpecs = [
-				Spec.SpecBalanceDruid,
-				Spec.SpecMage,
-				Spec.SpecShadowPriest,
-				Spec.SpecSmitePriest,
-				Spec.SpecEnhancementShaman,
-				Spec.SpecElementalShaman,
-				Spec.SpecWarlock,
-			];
-			const wfSpecs = [
-				Spec.SpecRetributionPaladin,
-				Spec.SpecRogue,
-				Spec.SpecWarrior,
-				Spec.SpecProtectionWarrior,
-				Spec.SpecFeralDruid,
-				Spec.SpecFeralTankDruid,
-			];
-			const [woaVotes, wfVotes] = [woaSpecs, wfSpecs]
-				.map(specs => partyProto.players
-					.filter(player => player.class != Class.ClassUnknown)
-					.map(player => playerToSpec(player))
-					.filter(playerSpec => specs.includes(playerSpec))
-					.length);
+            // Choose which air totem to drop based on party composition.
+            const woaSpecs = [
+                Spec.SpecBalanceDruid,
+                Spec.SpecMage,
+                Spec.SpecShadowPriest,
+                Spec.SpecSmitePriest,
+                Spec.SpecEnhancementShaman,
+                Spec.SpecElementalShaman,
+                Spec.SpecWarlock,
+            ];
+            const wfSpecs = [
+                Spec.SpecRetributionPaladin,
+                Spec.SpecRogue,
+                Spec.SpecWarrior,
+                Spec.SpecProtectionWarrior,
+                Spec.SpecFeralDruid,
+                Spec.SpecFeralTankDruid,
+            ];
+            const [woaVotes, wfVotes] = [woaSpecs, wfSpecs]
+                .map(specs => partyProto.players
+                    .filter(player => player.class != Class.ClassUnknown)
+                    .map(player => playerToSpec(player))
+                    .filter(playerSpec => specs.includes(playerSpec))
+                    .length);
 
-			if (woaVotes >= wfVotes) {
-				raidProto.buffs!.wrathOfAirTotem = true;
-			} else {
-				raidProto.buffs!.windfuryTotem = TristateEffect.TristateEffectRegular;
-			}
-		},
-	},
-	{
-		// The value of this field must never change, to preserve local storage data.
-		buffBotId: 'Arms Warrior',
-		deprecated: true,
-		spec: Spec.SpecWarrior,
-		name: 'Arms Warrior',
-		tooltip: 'Arms Warrior: Adds Sunder Armor, Blood Frenzy, and Improved Battle Shout.',
-		iconUrl: 'https://wow.zamimg.com/images/wow/icons/medium/ability_warrior_savageblow.jpg',
-		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
-			raidProto.buffs!.battleShout = TristateEffect.TristateEffectImproved;
-			const debuffs = raidProto.debuffs!;
-			debuffs.sunderArmor = true;
-			debuffs.bloodFrenzy = true;
-		},
-	},
-	{
-		// The value of this field must never change, to preserve local storage data.
-		buffBotId: 'Fury Warrior',
-		deprecated: true,
-		spec: Spec.SpecWarrior,
-		name: 'Fury Warrior',
-		tooltip: 'Fury Warrior: Adds Sunder Armor and Improved Battle Shout.',
-		iconUrl: 'https://wow.zamimg.com/images/wow/icons/medium/ability_warrior_innerrage.jpg',
-		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
-			raidProto.buffs!.battleShout = TristateEffect.TristateEffectImproved;
-			const debuffs = raidProto.debuffs!;
-			debuffs.sunderArmor = true;
-		},
-	},
-	{
-		// The value of this field must never change, to preserve local storage data.
-		buffBotId: 'Prot Warrior',
-		deprecated: true,
-		spec: Spec.SpecWarrior,
-		name: 'Prot Warrior',
-		tooltip: 'Prot Warrior: Adds Sunder Armor.',
-		iconUrl: 'https://wow.zamimg.com/images/wow/icons/medium/inv_shield_06.jpg',
-		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
-			const debuffs = raidProto.debuffs!;
-			debuffs.sunderArmor = true;
-		},
-	},
+            if (woaVotes >= wfVotes) {
+                raidProto.buffs!.wrathOfAirTotem = true;
+            } else {
+                raidProto.buffs!.windfuryTotem = TristateEffect.TristateEffectRegular;
+            }
+        },
+    },
+    {
+        // The value of this field must never change, to preserve local storage data.
+        buffBotId: 'Arms Warrior',
+        deprecated: true,
+        spec: Spec.SpecWarrior,
+        name: 'Arms Warrior',
+        tooltip: 'Arms Warrior: Adds Sunder Armor, Blood Frenzy, and Improved Battle Shout.',
+        iconUrl: 'https://wow.zamimg.com/images/wow/icons/medium/ability_warrior_savageblow.jpg',
+        modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
+            raidProto.buffs!.battleShout = TristateEffect.TristateEffectImproved;
+            const debuffs = raidProto.debuffs!;
+            debuffs.sunderArmor = true;
+            debuffs.bloodFrenzy = true;
+        },
+    },
+    {
+        // The value of this field must never change, to preserve local storage data.
+        buffBotId: 'Fury Warrior',
+        deprecated: true,
+        spec: Spec.SpecWarrior,
+        name: 'Fury Warrior',
+        tooltip: 'Fury Warrior: Adds Sunder Armor and Improved Battle Shout.',
+        iconUrl: 'https://wow.zamimg.com/images/wow/icons/medium/ability_warrior_innerrage.jpg',
+        modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
+            raidProto.buffs!.battleShout = TristateEffect.TristateEffectImproved;
+            const debuffs = raidProto.debuffs!;
+            debuffs.sunderArmor = true;
+        },
+    },
+    {
+        // The value of this field must never change, to preserve local storage data.
+        buffBotId: 'Prot Warrior',
+        deprecated: true,
+        spec: Spec.SpecWarrior,
+        name: 'Prot Warrior',
+        tooltip: 'Prot Warrior: Adds Sunder Armor.',
+        iconUrl: 'https://wow.zamimg.com/images/wow/icons/medium/inv_shield_06.jpg',
+        modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
+            const debuffs = raidProto.debuffs!;
+            debuffs.sunderArmor = true;
+        },
+    },
 ];
