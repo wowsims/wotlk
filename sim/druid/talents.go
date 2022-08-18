@@ -64,6 +64,7 @@ func (druid *Druid) ApplyTalents() {
 	druid.registerNaturesSwiftnessCD()
 	druid.applyPrimalFury()
 	druid.applyOmenOfClarity()
+	druid.applyEclipse()
 }
 
 func (druid *Druid) registerNaturesSwiftnessCD() {
@@ -198,4 +199,71 @@ func (druid *Druid) ApplyClearcasting(sim *core.Simulation, spell *core.Spell, c
 		cast.Cost = 0
 		druid.ClearcastingAura.Deactivate(sim)
 	}
+}
+
+func (druid *Druid) applyEclipse() {
+	druid.SolarICD = core.Cooldown{Timer: druid.NewTimer(), Duration: 0}
+	druid.LunarICD = core.Cooldown{Timer: druid.NewTimer(), Duration: 0}
+	if druid.Talents.Eclipse == 0 {
+		return
+	}
+	// Solar
+	solarProcChance := 0.333 * float64(druid.Talents.Eclipse)
+	solarProcAura := druid.NewTemporaryStatsAura("Solar Eclipse proc", core.ActionID{SpellID: 48517}, stats.Stats{}, time.Millisecond*15000)
+	druid.SolarICD.Duration = time.Millisecond * 30000
+	druid.RegisterAura(core.Aura{
+		Label:    "Eclipse (Solar)",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+				return
+			}
+			if spell != druid.Starfire {
+				return
+			}
+			if !druid.SolarICD.Timer.IsReady(sim) {
+				return
+			}
+			if druid.LunarICD.Timer.TimeToReady(sim) > time.Millisecond*15000 {
+				return
+			}
+			if sim.RandomFloat("Eclipse (Solar)") < solarProcChance {
+				druid.SolarICD.Use(sim)
+				solarProcAura.Activate(sim)
+			}
+		},
+	})
+
+	// Lunar
+	lunarProcChance := 0.2 * float64(druid.Talents.Eclipse)
+	lunarProcAura := druid.NewTemporaryStatsAura("Lunar Eclipse proc", core.ActionID{SpellID: 48518}, stats.Stats{}, time.Millisecond*15000)
+	druid.LunarICD.Duration = time.Millisecond * 30000
+	druid.RegisterAura(core.Aura{
+		Label:    "Eclipse (Lunar)",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+				return
+			}
+			if spell != druid.Wrath {
+				return
+			}
+			if !druid.LunarICD.Timer.IsReady(sim) {
+				return
+			}
+			if druid.SolarICD.Timer.TimeToReady(sim) > time.Millisecond*15000 {
+				return
+			}
+			if sim.RandomFloat("Eclipse (Lunar)") < lunarProcChance {
+				druid.LunarICD.Use(sim)
+				lunarProcAura.Activate(sim)
+			}
+		},
+	})
 }
