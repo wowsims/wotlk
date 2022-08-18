@@ -385,6 +385,10 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 			if spellEffect.Damage == 0 || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
 				return
 			}
+			// Fan of Knives off-hand hits are not cloned
+			if spell.IsSpellAction(FanOfKnivesSpellID) && spellEffect.ProcMask.Matches(core.ProcMaskMeleeOH) {
+				return
+			}
 
 			// Undo armor reduction to get the raw damage value.
 			curDmg = spellEffect.Damage / rogue.AttackTables[spellEffect.Target.Index].ArmorDamageModifier
