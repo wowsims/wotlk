@@ -37,8 +37,8 @@ type Rogue struct {
 	Options  proto.Rogue_Options
 	Rotation proto.Rogue_Rotation
 
-	PriorityList    []RoguePriority
-	CurrentPriority *RoguePriority
+	PriorityItems []RoguePriorityItem
+	RotationItems []RogueRotationItem
 
 	sliceAndDiceDurations [6]time.Duration
 	exposeArmorDurations  [6]time.Duration
@@ -46,8 +46,10 @@ type Rogue struct {
 
 	initialArmorDebuffAura *core.Aura
 
+	BuilderPoints    int32
 	Builder          *core.Spell
 	Backstab         *core.Spell
+	BladeFlurry      *core.Spell
 	DeadlyPoison     *core.Spell
 	FanOfKnives      *core.Spell
 	Hemorrhage       *core.Spell
@@ -179,7 +181,7 @@ func (rogue *Rogue) Reset(sim *core.Simulation) {
 	rogue.disabledMCDs = rogue.DisableAllEnabledCooldowns(core.CooldownTypeUnknown)
 	rogue.initialArmorDebuffAura = rogue.CurrentTarget.GetActiveAuraWithTag(core.MajorArmorReductionTag)
 	rogue.LastDeadlyPoisonProcMask = core.ProcMaskEmpty
-	rogue.SetPriorityList(sim)
+	rogue.SetPriorityItems(sim)
 }
 
 func (rogue *Rogue) MeleeCritMultiplier(isMH bool, applyLethality bool) float64 {
