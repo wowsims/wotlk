@@ -2,6 +2,7 @@ package core
 
 import (
 	"math"
+	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -264,6 +265,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		registerBloodlustCD(agent)
 	}
 
+	registerRevitalizeCD(agent, individualBuffs.Revitalize)
 	registerUnholyFrenzyCD(agent, individualBuffs.UnholyFrenzy)
 	registerTricksOfTheTradeCD(agent, individualBuffs.TricksOfTheTrades)
 	registerShatteringThrowCD(agent, individualBuffs.ShatteringThrows)
@@ -755,6 +757,60 @@ func UnholyFrenzyAura(character *Character, actionTag int32) *Aura {
 			character.PseudoStats.PhysicalDamageDealtMultiplier /= 1.2
 		},
 	})
+}
+
+var RevitalizeAuraTag = "Revitalize"
+
+// TODO: Add some control for uptime instead of full 100% as it unrealistic
+func registerRevitalizeCD(agent Agent, numRevitalize int32) {
+	if numRevitalize == 0 {
+		return
+	}
+
+	for i := 0; i < int(numRevitalize); i++ {
+		RevitalizeHot(agent.GetCharacter(), "Rejuvination", 3*time.Second, i)
+		RevitalizeHot(agent.GetCharacter(), "Wild Growth", time.Second, i)
+	}
+
+}
+
+func RevitalizeHot(character *Character, label string, tickPeriod time.Duration, sourceIndex int) *Aura {
+	actionID := ActionID{SpellID: 48545}
+
+	manaMetrics := character.NewManaMetrics(actionID)
+	energyMetrics := character.NewEnergyMetrics(actionID)
+	rageMetrics := character.NewRageMetrics(actionID)
+	rpMetrics := character.NewRunicPowerMetrics(actionID)
+
+	return MakePermanent(character.GetOrRegisterAura(Aura{
+		Label:    "Revitalize-" + label + "-" + strconv.Itoa(sourceIndex),
+		Tag:      RevitalizeAuraTag,
+		ActionID: actionID,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			pa := NewPeriodicAction(sim, PeriodicActionOptions{
+				Period:   tickPeriod,
+				NumTicks: 0,
+				OnAction: func(s *Simulation) {
+					if sim.RandomFloat("Revitalize Proc") < 0.15 {
+						if sim.Log != nil {
+							sim.Log("Proccing Revitalize " + strconv.Itoa(sourceIndex))
+						}
+
+						if aura.Unit.HasManaBar() {
+							aura.Unit.AddMana(sim, aura.Unit.BaseMana*0.01, manaMetrics, true)
+						} else if aura.Unit.HasEnergyBar() {
+							aura.Unit.AddEnergy(sim, 8, energyMetrics)
+						} else if aura.Unit.HasRageBar() {
+							aura.Unit.AddRage(sim, 4, rageMetrics)
+						} else if aura.Unit.HasRunicPowerBar() {
+							aura.Unit.AddRunicPower(sim, 16, rpMetrics)
+						}
+					}
+				},
+			})
+			sim.AddPendingAction(pa)
+		},
+	}))
 }
 
 const ShatteringThrowCD = time.Minute * 5
