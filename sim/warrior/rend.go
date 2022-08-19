@@ -80,9 +80,9 @@ func (warrior *Warrior) ShouldRend(sim *core.Simulation) bool {
 	}
 
 	if warrior.Talents.MortalStrike {
-		return warrior.StanceMatches(BattleStance) && sim.CurrentTime >= (warrior.rendValidUntil-warrior.RendCdThreshold) && warrior.CurrentRage() >= warrior.Rend.DefaultCast.Cost
+		return sim.CurrentTime >= (warrior.rendValidUntil-warrior.RendCdThreshold) && warrior.CurrentRage() >= warrior.Rend.DefaultCast.Cost
 	} else if warrior.Talents.Bloodthirst {
-		return warrior.StanceMatches(BattleStance) && warrior.CurrentRage() >= warrior.RendRageThreshold
+		return warrior.CurrentRage() >= warrior.RendRageThreshold
 	}
 	return false
 }

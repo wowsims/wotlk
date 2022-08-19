@@ -86,6 +86,12 @@ func (war *DpsWarrior) normalRotation(sim *core.Simulation, highPrioSpellsOnly b
 		} else if war.CanBloodthirst(sim) {
 			war.Bloodthirst.Cast(sim, war.CurrentTarget)
 		} else if war.Rotation.UseRend && war.ShouldRend(sim) {
+			if !war.StanceMatches(warrior.BattleStance) {
+				if !war.BattleStance.IsReady(sim) {
+					return
+				}
+				war.BattleStance.Cast(sim, nil)
+			}
 			war.Rend.Cast(sim, war.CurrentTarget)
 		} else if war.ShouldOverpower(sim) {
 			if !war.StanceMatches(warrior.BattleStance) {
@@ -123,6 +129,12 @@ func (war *DpsWarrior) executeRotation(sim *core.Simulation, highPrioSpellsOnly 
 		} else if war.Rotation.UseBtDuringExecute && war.CanBloodthirst(sim) {
 			war.Bloodthirst.Cast(sim, war.CurrentTarget)
 		} else if war.Rotation.UseRend && war.ShouldRend(sim) {
+			if !war.StanceMatches(warrior.BattleStance) {
+				if !war.BattleStance.IsReady(sim) {
+					return
+				}
+				war.BattleStance.Cast(sim, nil)
+			}
 			war.Rend.Cast(sim, war.CurrentTarget)
 		} else if war.ShouldOverpower(sim) {
 			if !war.StanceMatches(warrior.BattleStance) {
