@@ -155,6 +155,14 @@ export const BloodTapInput = InputHelpers.makeRotationEnumInput<Spec.SpecDeathkn
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 })
 
+export const OblitDelayDuration = InputHelpers.makeRotationNumberInput<Spec.SpecDeathknight>({
+	fieldName: 'oblitDelayDuration',
+	label: 'Oblit Delay (ms)',
+	labelTooltip: 'How long a FS/HB/HW can delay a Oblit by.',
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().howlingBlast,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+});
+
 export const DeathKnightRotationConfig = {
 	inputs: [
 		BloodTapGhoulFrenzy,
@@ -165,6 +173,7 @@ export const DeathKnightRotationConfig = {
 		StartingPresenceInput,
 		BloodRuneFillerInput,
 		UseDeathAndDecay,
+		OblitDelayDuration,
 		//SetDeathAndDecayPrio,
 	],
 };
