@@ -283,10 +283,10 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		// Find the maximum DPCT spell
 		bestDmg := 0.0
 		for i, v := range spellDPCT {
-			// if sim.Log != nil {
-			// 	spriest.Log(sim, "\tSpellDamages[%d]: %01.f", i, v)
-			// 	spriest.Log(sim, "\tcdDiffs[%d]: %0.1f", i, cdDiffs[i].Seconds())
-			// }
+			if sim.Log != nil {
+				//spriest.Log(sim, "\tspellDPCT[%d]: %01.f", i, v)
+				//spriest.Log(sim, "\tcdDiffs[%d]: %0.1f", i, cdDiffs[i].Seconds())
+			}
 			if v > bestDmg {
 				bestIdx = i
 				bestDmg = v
