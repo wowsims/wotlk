@@ -72,14 +72,10 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		mfReducTime = time.Millisecond * 170
 	}
 	tickLength := spriest.ApplyCastSpeed(time.Second - mfReducTime)
-	//if tickLength<gcd/3{
-	//	tickLength = gcd/3
-	//}
 
 	dotTickSpeed := float64(spriest.ApplyCastSpeed(time.Second * 3))
-	critChance := (spriest.GetStat(stats.SpellCrit) / (core.CritRatingPerCritChance * 100))
+	critChance := (spriest.GetStat(stats.SpellCrit) + spriest.CurrentTarget.PseudoStats.BonusCritRatingTaken + spriest.CurrentTarget.PseudoStats.BonusSpellCritRatingTaken) / (core.CritRatingPerCritChance * 100)
 	remain_fight := float64(sim.GetRemainingDuration())
-	//bosshealth := float64(sim.GetRemainingDurationPercent())
 	castMf2 := 0 // if SW stacks = 3, and we want to get SWP up at 5 stacks exactly, then we want to hard code a MF2
 	bestIdx := -1
 
@@ -156,7 +152,7 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		if !spriest.options.UseMindBlast {
 			mbDamage = 0
 		}
-		//mb_dmg = 0
+
 		// DP dmg
 		dpInit := ((172 + spriest.GetStat(stats.SpellPower)*0.1849) * 8.0 * float64(spriest.Talents.ImprovedDevouringPlague) * 0.1 * (1.0 + (float64(spriest.Talents.Darkness)*0.02 +
 			float64(spriest.Talents.TwinDisciplines)*0.01 + float64(spriest.Talents.ImprovedDevouringPlague)*0.05)) * core.TernaryFloat64(spriest.T8TwoSetBonus, 1.15, 1) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1 + 0.5*(critChance+core.TernaryFloat64(spriest.T10TwoSetBonus, 0.05, 0))))
@@ -176,7 +172,6 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 			swdDamage = 0
 		}
 
-		//swd_dmg = 0
 		// MF dmg 3 ticks
 		mfDamage = (588 + spriest.GetStat(stats.SpellPower)*(0.2570*3*(1+float64(spriest.Talents.Misery)*0.05))) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1.0 + (float64(spriest.Talents.Darkness)*0.02 +
 			float64(spriest.Talents.TwinDisciplines)*0.01)) * (1 + TFmod + mfglyphMod) * (1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.02+core.TernaryFloat64(spriest.T9FourSetBonus, 0.05, 0)))
@@ -278,6 +273,15 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 			swdDamage / float64((gcd + allCDs[swdIdx]).Seconds()),
 			// MF dps 3 ticks
 			mfDamage / float64((tickLength * 3).Seconds()),
+		}
+
+		if sim.Log != nil {
+			spriest.Log(sim, "mbDamage[%d]", mbDamage)
+			spriest.Log(sim, "mfDamage[%d]", mfDamage)
+			spriest.Log(sim, "mftime[%d]", float64((tickLength * 3).Seconds()))
+			spriest.Log(sim, "gcd[%d]", gcd.Seconds())
+			spriest.Log(sim, "CastSpeedMultiplier[%d]", spriest.PseudoStats.CastSpeedMultiplier)
+			spriest.Log(sim, "critChance[%d]", critChance)
 		}
 
 		// Find the maximum DPCT spell
