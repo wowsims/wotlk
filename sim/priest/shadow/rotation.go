@@ -288,8 +288,8 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		bestDmg := 0.0
 		for i, v := range spellDPCT {
 			if sim.Log != nil {
-				spriest.Log(sim, "\tspellDPCT[%d]: %01.f", i, v)
-				spriest.Log(sim, "\tcdDiffs[%d]: %0.1f", i, allCDs[i].Seconds())
+				//spriest.Log(sim, "\tspellDPCT[%d]: %01.f", i, v)
+				//spriest.Log(sim, "\tcdDiffs[%d]: %0.1f", i, allCDs[i].Seconds())
 			}
 			if v > bestDmg {
 				bestIdx = i
@@ -317,8 +317,8 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		}
 
 		if sim.Log != nil {
-			spriest.Log(sim, "best=next[%d]", bestIdx)
-			spriest.Log(sim, "currentWait[%d]", currentWait.Seconds())
+			//spriest.Log(sim, "best=next[%d]", bestIdx)
+			//spriest.Log(sim, "currentWait[%d]", currentWait.Seconds())
 		}
 
 		if nextIdx != 4 && bestIdx != 4 && bestIdx != 5 && currentWait > waitmin && currentWait.Seconds() < 3 { // right now 3 might not be correct number, but we can study this to optimize
@@ -662,10 +662,8 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 		// TODO: Should spriest latency be added to the second option here?
 
 		mfTime := core.MaxDuration(gcd, time.Duration(numTicks)*tickLength)
-		if numTicks == 0 && allCDs[0].Seconds() > float64(time.Duration(3*tickLength).Seconds()) {
+		if numTicks == 0 {
 			mfTime = core.MaxDuration(gcd, time.Duration(3)*tickLength)
-		} else {
-			mfTime = core.MaxDuration(gcd, time.Duration(1)*tickLength)
 		}
 
 		//if sim.Log != nil {
@@ -846,9 +844,7 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 			highestPossibleIdx := -1
 			if highestPossibleIdx == 0 {
 				for i, v := range dpsPossible0 {
-					// if sim.Log != nil {
-					// 	spriest.Log(sim, "\tdpsPossible[%d]: %01.f", i, v)
-					// }
+
 					if v >= highestPossibleDmg {
 						highestPossibleIdx = i
 						highestPossibleDmg = v
@@ -890,12 +886,6 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 				highestPossibleIdx = 1 // if the wait time is equal to an extra mf tick, and there are already 2 ticks, then just add 1
 			}
 
-			if sim.Log != nil {
-				//spriest.Log(sim, "finalMFStart %d", finalMFStart)
-				//spriest.Log(sim, "bestDmg %d", bestDmg)
-				//spriest.Log(sim, "highestPossibleIdx %d", highestPossibleIdx)
-			}
-
 			if highestPossibleIdx == 0 {
 				switch finalMFStart {
 				case 0:
@@ -903,12 +893,6 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 					dpsPossible[1] = (bestDmg*dpsDuration + mfDamage*1/3) / float64(gcd.Seconds()+gcd.Seconds())          // new damage for 1 extra tick
 					dpsPossible[2] = (bestDmg*dpsDuration + mfDamage*2/3) / float64(2*tickLength.Seconds()+gcd.Seconds()) // new damage for 2 extra tick
 					dpsPossible[3] = (bestDmg*dpsDuration + mfDamage) / float64(3*tickLength.Seconds()+gcd.Seconds())     // new damage for 3 extra tick
-
-					if sim.Log != nil {
-						//	spriest.Log(sim, "dpsPossible1 %d", dpsPossible[1])
-						//spriest.Log(sim, "dpsPossible2 %d", dpsPossible[2])
-						//spriest.Log(sim, "dpsPossible3 %d", dpsPossible[3])
-					}
 
 				case 1:
 					total_check_time := 2 * tickLength
