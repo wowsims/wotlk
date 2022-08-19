@@ -19,7 +19,7 @@ func (druid *Druid) registerMangleBearSpell() {
 	durReduction := (0.5) * float64(druid.Talents.ImprovedMangle)
 
 	druid.Mangle = druid.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 33987},
+		ActionID:    core.ActionID{SpellID: 48564},
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 
@@ -46,7 +46,7 @@ func (druid *Druid) registerMangleBearSpell() {
 			ThreatMultiplier: (1.5 / 1.15) *
 				core.TernaryFloat64(druid.InForm(Bear) && druid.HasSetBonus(ItemSetThunderheartHarness, 2), 1.15, 1),
 
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 155/1.15, 1.0, 1.15, true),
+			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 299/1.15, 1.0, 1.15, true),
 			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(druid.MeleeCritMultiplier()),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
@@ -75,7 +75,7 @@ func (druid *Druid) registerMangleCatSpell() {
 	refundAmount := cost * 0.8
 
 	druid.Mangle = druid.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 33983},
+		ActionID:    core.ActionID{SpellID: 48566},
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 
@@ -97,7 +97,7 @@ func (druid *Druid) registerMangleCatSpell() {
 			DamageMultiplier: 1 + 0.1*float64(druid.Talents.SavageFury),
 			ThreatMultiplier: 1,
 
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 264/1.6, 1.0, 1.6, true),
+			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 566/2.0, 1.0, 2.0, true),
 			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(druid.MeleeCritMultiplier()),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
@@ -118,4 +118,16 @@ func (druid *Druid) CanMangleBear(sim *core.Simulation) bool {
 
 func (druid *Druid) CanMangleCat() bool {
 	return druid.Mangle != nil && druid.CurrentEnergy() >= druid.Mangle.DefaultCast.Cost
+}
+
+func (druid *Druid) ShouldMangle(sim *core.Simulation) bool {
+	if druid.Mangle == nil {
+		return false
+	}
+
+	if !druid.Mangle.IsReady(sim) {
+		return false
+	}
+
+	return druid.CurrentTarget.ShouldRefreshAuraWithTagAtPriority(sim, core.BleedDamageAuraTag, druid.MangleAura.Priority, time.Second*3)
 }

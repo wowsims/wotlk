@@ -10,7 +10,7 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 	cost := 15.0 - float64(druid.Talents.Ferocity)
 	refundAmount := cost * 0.8
 
-	baseDamage := 176.0
+	baseDamage := 578.0
 	if druid.Equip[items.ItemSlotRanged].ID == 23198 { // Idol of Brutality
 		baseDamage += 50
 	}

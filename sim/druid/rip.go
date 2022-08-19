@@ -10,7 +10,7 @@ import (
 )
 
 func (druid *Druid) registerRipSpell() {
-	actionID := core.ActionID{SpellID: 27008}
+	actionID := core.ActionID{SpellID: 49800}
 	baseCost := 30.0
 	refundAmount := baseCost * (0.4 * float64(druid.Talents.PrimalPrecision))
 
@@ -62,7 +62,7 @@ func (druid *Druid) registerRipSpell() {
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
 			BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				comboPoints := druid.ComboPoints()
+				comboPoints := float64(druid.ComboPoints())
 				attackPower := hitEffect.MeleeAttackPower(spell.Unit)
 
 				bonusTickDamage := 0.0
@@ -70,16 +70,7 @@ func (druid *Druid) registerRipSpell() {
 					bonusTickDamage += 7 * float64(comboPoints)
 				}
 
-				if comboPoints < 3 {
-					panic("Only 3-5 CP Rips are supported at present.")
-				}
-				if comboPoints == 3 {
-					return (990+0.18*attackPower)/6 + bonusTickDamage
-				} else if comboPoints == 4 {
-					return (1272+0.24*attackPower)/6 + bonusTickDamage
-				} else { // 5
-					return (1554+0.24*attackPower)/6 + bonusTickDamage
-				}
+				return (36.0+93.0*comboPoints+0.01*comboPoints*attackPower)/6.0 + bonusTickDamage
 			}, 0),
 			OutcomeApplier: druid.PrimalGoreOutcomeFuncTick(),
 		}),

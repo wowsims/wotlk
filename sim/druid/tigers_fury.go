@@ -11,7 +11,7 @@ func (druid *Druid) registerTigersFurySpell() {
 	energyMetrics := druid.NewEnergyMetrics(actionID)
 	instantEnergy := 20.0 * float64(druid.Talents.KingOfTheJungle)
 
-	dmgBonus := 40.0
+	dmgBonus := 80.0
 
 	druid.TigersFuryAura = druid.RegisterAura(core.Aura{
 		Label:    "Tiger's Fury Aura",

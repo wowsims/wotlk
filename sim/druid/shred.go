@@ -12,12 +12,12 @@ func (druid *Druid) registerShredSpell() {
 	baseCost := 60.0 - 9*float64(druid.Talents.ShreddingAttacks)
 	refundAmount := baseCost * 0.8
 
-	flatDamageBonus := 405 +
+	flatDamageBonus := 666 +
 		core.TernaryFloat64(druid.HasSetBonus(ItemSetNordrassilHarness, 4), 75, 0) +
 		core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == 29390, 88, 0)
 
 	druid.Shred = druid.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 27002},
+		ActionID:    core.ActionID{SpellID: 48572},
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 

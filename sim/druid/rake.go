@@ -9,7 +9,7 @@ import (
 )
 
 func (druid *Druid) registerRakeSpell() {
-	actionID := core.ActionID{SpellID: 27003}
+	actionID := core.ActionID{SpellID: 48574}
 
 	cost := 40.0 - float64(druid.Talents.Ferocity)
 	refundAmount := cost * 0.8
@@ -40,7 +40,7 @@ func (druid *Druid) registerRakeSpell() {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					damage := 78 + 0.01*hitEffect.MeleeAttackPower(spell.Unit)
+					damage := 176 + 0.01*hitEffect.MeleeAttackPower(spell.Unit)
 					if mangleAura.IsActive() {
 						return damage * 1.3
 					} else {
@@ -78,7 +78,7 @@ func (druid *Druid) registerRakeSpell() {
 			IsPeriodic:       true,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return 36 + 0.02*hitEffect.MeleeAttackPower(spell.Unit)
+					return 358 + 0.06*hitEffect.MeleeAttackPower(spell.Unit)
 				},
 				TargetSpellCoefficient: 0,
 			},

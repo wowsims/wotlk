@@ -9,11 +9,11 @@ import (
 )
 
 func (druid *Druid) registerFerociousBiteSpell() {
-	actionID := core.ActionID{SpellID: 24248}
+	actionID := core.ActionID{SpellID: 48577}
 	baseCost := 35.0
 	refundAmount := baseCost * (0.4 * float64(druid.Talents.PrimalPrecision))
 
-	dmgPerComboPoint := 169.0
+	dmgPerComboPoint := 290.0
 	if druid.Equip[items.ItemSlotRanged].ID == 25667 { // Idol of the Beast
 		dmgPerComboPoint += 14
 	}
@@ -58,9 +58,10 @@ func (druid *Druid) registerFerociousBiteSpell() {
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					comboPoints := float64(druid.ComboPoints())
 
-					base := 57.0 + dmgPerComboPoint*comboPoints + 4.1*excessEnergy
-					roll := sim.RandomFloat("Ferocious Bite") * 66.0
-					return base + roll + hitEffect.MeleeAttackPower(spell.Unit)*0.05*comboPoints
+					bonusDmg := excessEnergy * (9.4 + hitEffect.MeleeAttackPower(spell.Unit)/410)
+					base := 120.0 + dmgPerComboPoint*comboPoints + bonusDmg
+					roll := sim.RandomFloat("Ferocious Bite") * 140.0
+					return base + roll + hitEffect.MeleeAttackPower(spell.Unit)*0.07*comboPoints
 				},
 				TargetSpellCoefficient: 1,
 			},
