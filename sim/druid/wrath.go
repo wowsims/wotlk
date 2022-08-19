@@ -11,6 +11,7 @@ import (
 const IdolAvenger int32 = 31025
 
 func (druid *Druid) registerWrathSpell() {
+	druid.OriginalWrathDamageMultiplier = (1 + 0.02*float64(druid.Talents.Moonfury)) * (1 + 0.01*float64(druid.Talents.ImprovedInsectSwarm))
 	baseCost := 0.11 * druid.BaseMana
 	minBaseDamage := 553.0
 	maxBaseDamage := 623.0
@@ -41,7 +42,7 @@ func (druid *Druid) registerWrathSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:             core.ProcMaskSpellDamage,
 			BonusSpellCritRating: float64(2 * float64(druid.Talents.NaturesMajesty) * 45.91),
-			DamageMultiplier:     (1 + 0.02*float64(druid.Talents.Moonfury)) * (1 + 0.01*float64(druid.Talents.ImprovedInsectSwarm)),
+			DamageMultiplier:     druid.OriginalWrathDamageMultiplier,
 			ThreatMultiplier:     1,
 
 			BaseDamage:     core.BaseDamageConfigMagic(minBaseDamage+bonusFlatDamage, maxBaseDamage+bonusFlatDamage, 0.571+0.02*float64(druid.Talents.WrathOfCenarius)),
