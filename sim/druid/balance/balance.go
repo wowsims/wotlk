@@ -26,8 +26,8 @@ func RegisterBalanceDruid() {
 
 func NewBalanceDruid(character core.Character, options proto.Player) *BalanceDruid {
 	balanceOptions := options.GetBalanceDruid()
-
 	selfBuffs := druid.SelfBuffs{}
+
 	if balanceOptions.Options.InnervateTarget != nil {
 		selfBuffs.InnervateTarget = *balanceOptions.Options.InnervateTarget
 	} else {
@@ -58,7 +58,6 @@ type BalanceDruid struct {
 	useMF              bool
 	canMfInsideEclipse bool
 	canIsInsideEclipse bool
-
 	// These are only used when primary spell is set to 'Adaptive'. When the mana
 	// tracker tells us we have extra mana to spare, use surplusRotation instead of
 	// primaryRotation.

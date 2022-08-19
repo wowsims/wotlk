@@ -12,6 +12,7 @@ import (
 const IvoryMoongoddess int32 = 27518
 
 func (druid *Druid) newStarfireSpell() *core.Spell {
+	druid.OriginalStarfireBonusCritRating = float64(2*float64(druid.Talents.NaturesMajesty)*45.91) + core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartRegalia, 4), 5*core.CritRatingPerCritChance, 0)
 	actionID := core.ActionID{SpellID: 26986}
 	baseCost := 0.16 * druid.BaseMana
 	minBaseDamage := 1038.0
@@ -24,7 +25,7 @@ func (druid *Druid) newStarfireSpell() *core.Spell {
 
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
-		BonusSpellCritRating: float64(2*float64(druid.Talents.NaturesMajesty)*45.91) + core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartRegalia, 4), 5*core.CritRatingPerCritChance, 0),
+		BonusSpellCritRating: druid.OriginalStarfireBonusCritRating,
 		DamageMultiplier:     1 + 0.02*float64(druid.Talents.Moonfury),
 		ThreatMultiplier:     1,
 		BaseDamage:           core.BaseDamageConfigMagic(minBaseDamage+bonusFlatDamage, maxBaseDamage+bonusFlatDamage, spellCoefficient),
