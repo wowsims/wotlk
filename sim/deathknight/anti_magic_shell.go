@@ -37,23 +37,39 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 	}, nil)
 
 	rpMetrics := dk.AntiMagicShell.RunicPowerMetrics()
+	healthMetrics := dk.NewHealthMetrics(actionID)
 
 	dk.AntiMagicShellAura = dk.RegisterAura(core.Aura{
 		Label:    "Anti-Magic Shell",
 		ActionID: actionID,
 		Duration: time.Millisecond * 200,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.UpdateExpires(sim.CurrentTime + time.Second*time.Duration(2.0*sim.RandomFloat("Anti Magic Shell Duration")))
+			//if dk.Inputs.IsDps {
+			// Setup a PA that deals damage to unit
+			//}
 		},
 
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			rpGain := 20.0*sim.RandomFloat("Anti Magic Shell RP") + 54.0
-			dk.AddRunicPower(sim, rpGain, rpMetrics)
+			//rpGain := 20.0*sim.RandomFloat("Anti Magic Shell RP") + 54.0
+			//dk.AddRunicPower(sim, rpG  ain, rpMetrics)
+		},
+
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spellEffect.Damage > 0 {
+				absorvedDamage := core.MinFloat(0.75*spellEffect.Damage, 0.5*dk.MaxHealth())
+				dk.GainHealth(sim, absorvedDamage, healthMetrics)
+				dk.AddRunicPower(sim, absorvedDamage/69.0, rpMetrics)
+			}
+
+			aura.Deactivate(sim)
 		},
 	})
 
-	//dk.AddMajorCooldown(core.MajorCooldown{
-	//	Spell: dk.AntiMagicShell.Spell,
-	//	Type:  core.CooldownTypeDPS,
-	//})
+	if dk.Rotation.UseAms {
+		dk.AddMajorCooldown(core.MajorCooldown{
+			Spell:    dk.AntiMagicShell.Spell,
+			Priority: core.CooldownPriorityLow, // Use low prio so other actives get used first.
+			Type:     core.CooldownTypeDPS,
+		})
+	}
 }
