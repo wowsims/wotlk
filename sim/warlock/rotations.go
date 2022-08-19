@@ -101,11 +101,15 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			core.MaxDuration(0, warlock.CurseOfAgonyDot.RemainingDuration(sim)),
 		}
 		if sim.Log != nil {
-			//warlock.Log(sim, "Haunt[%d]", allCDs[0].Seconds())
-			//warlock.Log(sim, "UA[%d]", allCDs[1].Seconds())
+			// warlock.Log(sim, "Haunt[%d]", allCDs[0].Seconds())
+			// warlock.Log(sim, "UA[%d]", allCDs[1].Seconds())
+			// warlock.Log(sim, "Agony[%d]", allCDs[2].Seconds())
+			// warlock.Log(sim, "nextBigCD1[%d]", nextBigCD.Seconds()) 
 			//warlock.Log(sim, "SE stacks[%d]", warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).GetStacks())
 			//warlock.Log(sim, "SE time[%d]", warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim).Seconds())
-			//warlock.Log(sim, "travel time[%d]", float64(warlock.DistanceFromTarget)/20)
+			// warlock.Log(sim, "Haunt RemainingDuration [%d]", warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim).Seconds())
+			// warlock.Log(sim, "cast time [%d]", hauntcasttime.Seconds())
+			// warlock.Log(sim, "travel time[%d]", float64(warlock.DistanceFromTarget)/20)
 			//warlock.Log(sim, "filler time[%d]", (warlock.ApplyCastSpeed(time.Duration(warlock.ShadowBolt.DefaultCast.CastTime)).Seconds() + warlock.DistanceFromTarget/20))
 		}
 		nextCD := core.NeverExpires
@@ -242,6 +246,9 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		if warlock.Talents.DemonicPact > 0 {
 			warlock.Log(sim, "[Info] Demonic Pact Spell Power Average [%.0f]", warlock.DPSPAverage)
 		}
+			// warlock.Log(sim, "nextBigCD2[%d]", nextBigCD.Seconds()) 
+			// warlock.Log(sim, "sim.CurrentTime[%d]", sim.CurrentTime.Seconds())
+			// warlock.Log(sim, "fillerCastTime[%d]", fillerCastTime.Seconds())
 	}
 
 	if preset == proto.Warlock_Rotation_Automatic {
@@ -399,7 +406,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			return
 		} else {
 			// Filler
-			if nextBigCD-sim.CurrentTime > 0 && (nextBigCD-sim.CurrentTime)*15 < fillerCastTime {
+			if nextBigCD-sim.CurrentTime > 0 && nextBigCD*15 < fillerCastTime {
 				warlock.WaitUntil(sim, sim.CurrentTime+nextBigCD)
 				return
 			} else {
