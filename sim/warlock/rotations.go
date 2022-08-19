@@ -93,11 +93,14 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		0,
 	}
 
+	nextCD := core.NeverExpires
 	if rotationType == proto.Warlock_Rotation_Affliction {
-		hauntcasttime := warlock.ApplyCastSpeed(time.Millisecond * 1500)
+		hauntTravelTime := time.Duration(float64(warlock.DistanceFromTarget)/20)*time.Second
+		hauntCastTime := warlock.ApplyCastSpeed(warlock.Haunt.DefaultCast.CastTime)
+		UACastTime := warlock.ApplyCastSpeed(warlock.UnstableAff.DefaultCast.CastTime)
 		allCDs = []time.Duration{
-			core.MaxDuration(0, time.Duration(float64(warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim)-hauntcasttime)-float64(warlock.DistanceFromTarget)/20*1000)),
-			core.MaxDuration(0, warlock.UnstableAffDot.RemainingDuration(sim)-hauntcasttime),
+			core.MaxDuration(0, warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim) - hauntCastTime - hauntTravelTime),
+			core.MaxDuration(0, warlock.UnstableAffDot.RemainingDuration(sim) - UACastTime),
 			core.MaxDuration(0, warlock.CurseOfAgonyDot.RemainingDuration(sim)),
 		}
 		if sim.Log != nil {
@@ -105,20 +108,20 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			// warlock.Log(sim, "UA[%d]", allCDs[1].Seconds())
 			// warlock.Log(sim, "Agony[%d]", allCDs[2].Seconds())
 			// warlock.Log(sim, "nextBigCD1[%d]", nextBigCD.Seconds()) 
-			//warlock.Log(sim, "SE stacks[%d]", warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).GetStacks())
-			//warlock.Log(sim, "SE time[%d]", warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim).Seconds())
+			// warlock.Log(sim, "SE stacks[%d]", warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).GetStacks())
+			// warlock.Log(sim, "SE time[%d]", warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim).Seconds())
 			// warlock.Log(sim, "Haunt RemainingDuration [%d]", warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim).Seconds())
 			// warlock.Log(sim, "cast time [%d]", hauntcasttime.Seconds())
+			// warlock.Log(sim, "cast time float64[%d]", float64(hauntcasttime))
 			// warlock.Log(sim, "travel time[%d]", float64(warlock.DistanceFromTarget)/20)
-			//warlock.Log(sim, "filler time[%d]", (warlock.ApplyCastSpeed(time.Duration(warlock.ShadowBolt.DefaultCast.CastTime)).Seconds() + warlock.DistanceFromTarget/20))
+			// warlock.Log(sim, "filler time[%d]", (warlock.ApplyCastSpeed(time.Duration(warlock.ShadowBolt.DefaultCast.CastTime)).Seconds() + warlock.DistanceFromTarget/20))
 		}
-		nextCD := core.NeverExpires
 		for _, v := range allCDs {
 			if v < nextCD {
 				nextCD = v
 			}
 		}
-		nextBigCD = nextCD
+		nextCD += sim.CurrentTime
 	}
 
 	// ------------------------------------------
@@ -246,9 +249,6 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		if warlock.Talents.DemonicPact > 0 {
 			warlock.Log(sim, "[Info] Demonic Pact Spell Power Average [%.0f]", warlock.DPSPAverage)
 		}
-			// warlock.Log(sim, "nextBigCD2[%d]", nextBigCD.Seconds()) 
-			// warlock.Log(sim, "sim.CurrentTime[%d]", sim.CurrentTime.Seconds())
-			// warlock.Log(sim, "fillerCastTime[%d]", fillerCastTime.Seconds())
 	}
 
 	if preset == proto.Warlock_Rotation_Automatic {
@@ -377,19 +377,20 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// ------------------------------------------
 	// If big CD coming up and we don't have enough mana for it, lifetap
 	// Also, never do a big regen in the last few seconds of the fight.
-	if !warlock.DoingRegen && nextBigCD-sim.CurrentTime < time.Second*6 && sim.GetRemainingDuration() > time.Second*30 {
-		if warlock.CurrentManaPercent() < 0.6 {
+	// TODO: Specify regen goals depending on CD
+	if !warlock.DoingRegen && nextBigCD - sim.CurrentTime < time.Second*6 && sim.GetRemainingDuration() > time.Second*30 {
+		if warlock.CurrentManaPercent() < 0.2 {
 			warlock.DoingRegen = true
 		}
 	}
 
 	if warlock.DoingRegen {
-		if nextBigCD-sim.CurrentTime < time.Second*2 {
+		if nextBigCD - sim.CurrentTime < time.Second*2 {
 			// stop regen, start blasting
 			warlock.DoingRegen = false
 		} else {
 			warlock.LifeTapOrDarkPact(sim)
-			if warlock.CurrentManaPercent() > 0.6 {
+			if warlock.CurrentManaPercent() > 0.2 {
 				warlock.DoingRegen = false
 			}
 			return
@@ -406,8 +407,11 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			return
 		} else {
 			// Filler
-			if nextBigCD-sim.CurrentTime > 0 && nextBigCD*15 < fillerCastTime {
-				warlock.WaitUntil(sim, sim.CurrentTime+nextBigCD)
+			if nextBigCD - sim.CurrentTime > 0 && nextBigCD - sim.CurrentTime < fillerCastTime/15 {
+				warlock.WaitUntil(sim, nextBigCD)
+				return
+			} else if nextCD - sim.CurrentTime > 0 && nextCD - sim.CurrentTime < fillerCastTime/15 {
+				warlock.WaitUntil(sim, nextCD)
 				return
 			} else {
 				spell = filler
