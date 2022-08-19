@@ -14,6 +14,7 @@ func (warrior *Warrior) registerRendSpell(rageThreshold float64) {
 
 	cost := 10.0
 	refundAmount := cost * 0.8
+	isAbove75 := true
 	warrior.Rend = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
@@ -35,6 +36,11 @@ func (warrior *Warrior) registerRendSpell(rageThreshold float64) {
 			OutcomeApplier:   warrior.OutcomeFuncMeleeSpecialHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
+					if sim.GetRemainingDurationPercent() <= 0.75 && isAbove75 {
+						isAbove75 = false
+						// TODO: figure out why this multiplier is applied twice when called
+						warrior.RendDots.Spell.DamageMultiplier /= 1 + 0.35/2
+					}
 					warrior.RendDots.Apply(sim)
 					warrior.procBloodFrenzy(sim, spellEffect, time.Second*15)
 					warrior.rendValidUntil = sim.CurrentTime + time.Second*15
@@ -55,8 +61,9 @@ func (warrior *Warrior) registerRendSpell(rageThreshold float64) {
 		NumberOfTicks: core.TernaryInt(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfRending), 7, 5),
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 + 0.01*float64(warrior.Talents.ImprovedRend),
+			ProcMask: core.ProcMaskPeriodicDamage,
+			// 135% damage multiplier is applied at the begining of the fight and removed when target is at 75% health
+			DamageMultiplier: (1 + 0.1*float64(warrior.Talents.ImprovedRend)) * 1.35,
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
 
@@ -73,9 +80,9 @@ func (warrior *Warrior) ShouldRend(sim *core.Simulation) bool {
 	}
 
 	if warrior.Talents.MortalStrike {
-		return sim.CurrentTime >= (warrior.rendValidUntil-warrior.RendCdThreshold) && warrior.CurrentRage() >= warrior.Rend.DefaultCast.Cost
+		return warrior.StanceMatches(BattleStance) && sim.CurrentTime >= (warrior.rendValidUntil-warrior.RendCdThreshold) && warrior.CurrentRage() >= warrior.Rend.DefaultCast.Cost
 	} else if warrior.Talents.Bloodthirst {
-		return warrior.CurrentRage() >= warrior.RendRageThreshold
+		return warrior.StanceMatches(BattleStance) && warrior.CurrentRage() >= warrior.RendRageThreshold
 	}
 	return false
 }
