@@ -268,16 +268,16 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 				// Cast Corruption as soon as the 5% crit debuff is up
 				// Cast Corruption again when you get the execute buff (Death's Embrace)
 				spell = warlock.Corruption
-			} else if warlock.CorruptionDot.IsActive() && warlock.CorruptionDot.RemainingDuration(sim) < core.GCDDefault {
+			} else if warlock.CorruptionDot.IsActive() && warlock.CorruptionDot.RemainingDuration(sim) < warlock.ApplyCastSpeed(core.GCDDefault) {
 				// Emergency Corruption refresh just in case
 				spell = warlock.DrainSoul
 			} else if warlock.Talents.Haunt && warlock.Haunt.CD.IsReady(sim) && allCDs[0] == 0 && sim.GetRemainingDuration() > warlock.HauntDebuffAura(warlock.CurrentTarget).Duration/2. {
 				// Keep Haunt up
 				spell = warlock.Haunt
-			} else if warlock.Talents.UnstableAffliction && (!warlock.Haunt.CD.IsReady(sim) || allCDs[0] > 0) && allCDs[1] == 0 && sim.GetRemainingDuration() > warlock.UnstableAffDot.Duration/2. {
+			} else if warlock.Talents.UnstableAffliction && allCDs[1] == 0 && sim.GetRemainingDuration() > warlock.UnstableAffDot.Duration/2. {
 				// Keep UA up
 				spell = warlock.UnstableAff
-			} else if sim.GetRemainingDuration() > time.Second*24 && allCDs[2] == 0 && (!warlock.Haunt.CD.IsReady(sim) || allCDs[0] > 0) && allCDs[1] > 0 && warlock.CorruptionDot.IsActive() {
+			} else if sim.GetRemainingDuration() > time.Second*24 && allCDs[2] == 0 {
 				// Keep Agony up
 				spell = warlock.CurseOfAgony
 			} else if KeepUpSEStacks && sim.GetRemainingDuration() > time.Second*10 ||
@@ -361,7 +361,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		} else if warlock.Talents.Haunt && specSpell == proto.Warlock_Rotation_Haunt && warlock.Haunt.CD.IsReady(sim) && !warlock.HauntDebuffAura(warlock.CurrentTarget).IsActive() {
 			// Refresh Haunt Debuff
 			spell = warlock.Haunt
-		} else if warlock.Talents.ShadowEmbrace > 0 && warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ShadowBolt.CurCast.CastTime+core.GCDDefault ||
+		} else if warlock.Talents.ShadowEmbrace > 0 && warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ApplyCastSpeed(warlock.ShadowBolt.DefaultCast.CastTime + core.GCDDefault) ||
 			warlock.Talents.ImprovedShadowBolt > 0 && core.ShadowMasteryAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ShadowBolt.CurCast.CastTime {
 			// Shadow Embrace & Shadow Mastery refresh
 			spell = warlock.ShadowBolt
