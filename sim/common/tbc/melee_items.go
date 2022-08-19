@@ -1072,22 +1072,15 @@ func init() {
 	core.NewItemEffect(12590, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		effectAura := character.GetOrRegisterAura(core.Aura{
-			Label:     "Felstriker Proc",
-			ActionID:  core.ActionID{SpellID: 16551},
-			Duration:  time.Second * 3,
-			MaxStacks: 3,
+			Label:    "Felstriker Proc",
+			ActionID: core.ActionID{SpellID: 16551},
+			Duration: time.Second * 3,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
 				character.PseudoStats.BonusMeleeCritRating += 100 * core.CritRatingPerCritChance
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 				character.PseudoStats.BonusMeleeCritRating -= 100 * core.CritRatingPerCritChance
 
-			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
-					return
-				}
-				aura.RemoveStack(sim)
 			},
 		})
 		ppmm := character.AutoAttacks.NewPPMManager(1.0, core.ProcMaskMelee)
@@ -1105,7 +1098,6 @@ func init() {
 					return
 				}
 				effectAura.Activate(sim)
-				effectAura.SetStacks(sim, 3)
 			},
 		})
 	})
