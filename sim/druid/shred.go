@@ -43,11 +43,15 @@ func (druid *Druid) registerShredSpell() {
 				func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
 					return func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
 						normalDamage := oldCalculator(sim, spellEffect, spell)
-						if druid.MangleAura.IsActive() {
-							return normalDamage * 1.3
-						} else {
-							return normalDamage
+						modifier := 1.0
+						if druid.CurrentTarget.HasActiveAuraWithTag(core.BleedDamageAuraTag) {
+							modifier += .3
 						}
+						if druid.RipDot.IsActive() || druid.RakeDot.IsActive() || druid.LacerateDot.IsActive() {
+							modifier += (0.04 * float64(druid.Talents.RendAndTear))
+						}
+
+						return normalDamage * modifier
 					}
 				}),
 			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(druid.MeleeCritMultiplier()),

@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/items"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -52,12 +51,7 @@ func (druid *Druid) registerCatFormSpell() {
 	actionID := core.ActionID{SpellID: 768}
 	baseCost := druid.BaseMana * 0.35
 
-	furorProcChance := 0.2 * float64(druid.Talents.Furor)
-
-	finalEnergy := 0.0
-	if druid.Equip[items.ItemSlotHead].ID == 8345 { // Wolfshead Helm
-		finalEnergy += 20.0
-	}
+	srm := druid.getSavageRoarMultiplier()
 
 	druid.CatFormAura = druid.GetOrRegisterAura(core.Aura{
 		Label:    "Cat Form",
@@ -69,6 +63,14 @@ func (druid *Druid) registerCatFormSpell() {
 			druid.manageCooldownsEnabled(sim)
 			druid.PseudoStats.SpiritRegenMultiplier *= AnimalSpiritRegenSuppression
 			druid.UpdateManaRegenRates()
+
+			// These buffs stay up, but corresponding changes don't
+			if druid.SavageRoarAura.IsActive() {
+				druid.PseudoStats.PhysicalDamageDealtMultiplier *= srm
+			}
+			if druid.BerserkAura.IsActive() {
+				druid.PseudoStats.CostMultiplier /= 2.0
+			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			druid.form = Humanoid
@@ -76,6 +78,16 @@ func (druid *Druid) registerCatFormSpell() {
 			druid.manageCooldownsEnabled(sim)
 			druid.PseudoStats.SpiritRegenMultiplier /= AnimalSpiritRegenSuppression
 			druid.UpdateManaRegenRates()
+
+			druid.TigersFuryAura.Deactivate(sim)
+
+			// These buffs stay up, but corresponding changes don't
+			if druid.SavageRoarAura.IsActive() {
+				druid.PseudoStats.PhysicalDamageDealtMultiplier /= srm
+			}
+			if druid.BerserkAura.IsActive() {
+				druid.PseudoStats.CostMultiplier *= 2.0
+			}
 		},
 	})
 
@@ -90,21 +102,18 @@ func (druid *Druid) registerCatFormSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.1*float64(druid.Talents.NaturalShapeshifter)),
+				Cost: baseCost * (1 - 0.2*float64(druid.Talents.KingOfTheJungle)) * (1 - 0.1*float64(druid.Talents.NaturalShapeshifter)),
 				GCD:  core.GCDDefault,
 			},
 			IgnoreHaste: true,
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-			energyDelta := finalEnergy - druid.CurrentEnergy()
-			if furorProcChance == 1 || (furorProcChance > 0 && sim.RandomFloat("Furor") < furorProcChance) {
-				energyDelta += 40.0
-			}
+			maxShiftEnergy := float64(20 * druid.Talents.Furor)
 
-			if energyDelta > 0 {
-				druid.AddEnergy(sim, energyDelta, energyMetrics)
-			} else if energyDelta < 0 {
+			energyDelta := maxShiftEnergy - druid.CurrentEnergy()
+
+			if energyDelta < 0 {
 				druid.SpendEnergy(sim, -energyDelta, energyMetrics)
 			}
 			druid.CatFormAura.Activate(sim)
@@ -133,9 +142,6 @@ func (druid *Druid) registerBearFormSpell() {
 
 	previousRage := 0.0
 	finalRage := 0.0
-	if druid.Equip[items.ItemSlotHead].ID == 8345 { // Wolfshead Helm
-		finalRage += 5.0
-	}
 
 	druid.BearFormAura = druid.GetOrRegisterAura(core.Aura{
 		Label:    "Bear Form",
@@ -155,6 +161,7 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.manageCooldownsEnabled(sim)
 			druid.PseudoStats.SpiritRegenMultiplier /= AnimalSpiritRegenSuppression
 			druid.UpdateManaRegenRates()
+			druid.EnrageAura.Deactivate(sim)
 		},
 	})
 
@@ -169,7 +176,7 @@ func (druid *Druid) registerBearFormSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.1*float64(druid.Talents.NaturalShapeshifter)),
+				Cost: baseCost * (1 - 0.2*float64(druid.Talents.KingOfTheJungle)) * (1 - 0.1*float64(druid.Talents.NaturalShapeshifter)),
 				GCD:  core.GCDDefault,
 			},
 			IgnoreHaste: true,

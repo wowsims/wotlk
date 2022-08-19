@@ -11,6 +11,7 @@ import (
 func (druid *Druid) registerFerociousBiteSpell() {
 	actionID := core.ActionID{SpellID: 24248}
 	baseCost := 35.0
+	refundAmount := baseCost * (0.4 * float64(druid.Talents.PrimalPrecision))
 
 	dmgPerComboPoint := 169.0
 	if druid.Equip[items.ItemSlotRanged].ID == 25667 { // Idol of the Beast
@@ -34,9 +35,15 @@ func (druid *Druid) registerFerociousBiteSpell() {
 			},
 			IgnoreHaste: true,
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				if druid.RipDot.IsActive() || druid.RakeDot.IsActive() || druid.LacerateDot.IsActive() {
+					spell.BonusCritRating = 5.0 * float64(druid.Talents.RendAndTear) * core.CritRatingPerCritChance
+				} else {
+					spell.BonusCritRating = 0
+				}
+
 				druid.ApplyClearcasting(sim, spell, cast)
-				excessEnergy = spell.Unit.CurrentEnergy() - cast.Cost
-				cast.Cost = spell.Unit.CurrentEnergy()
+				excessEnergy = core.MinFloat(spell.Unit.CurrentEnergy()-cast.Cost, 30)
+				cast.Cost = baseCost + excessEnergy
 			},
 		},
 
@@ -62,6 +69,8 @@ func (druid *Druid) registerFerociousBiteSpell() {
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					druid.SpendComboPoints(sim, spell.ComboPointMetrics())
+				} else if refundAmount > 0 {
+					druid.AddEnergy(sim, refundAmount, druid.PrimalPrecisionRecoveryMetrics)
 				}
 			},
 		}),

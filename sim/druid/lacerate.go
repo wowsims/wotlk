@@ -99,7 +99,7 @@ func (druid *Druid) registerLacerateSpell() {
 				},
 				TargetSpellCoefficient: 0,
 			}, dotAura),
-			OutcomeApplier: druid.OutcomeFuncTick(),
+			OutcomeApplier: druid.PrimalGoreOutcomeFuncTick(),
 		})),
 	})
 }

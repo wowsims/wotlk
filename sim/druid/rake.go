@@ -35,7 +35,7 @@ func (druid *Druid) registerRakeSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			DamageMultiplier: 1,
+			DamageMultiplier: 1 + 0.1*float64(druid.Talents.SavageFury),
 			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{

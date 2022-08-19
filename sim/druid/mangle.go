@@ -16,6 +16,7 @@ func (druid *Druid) registerMangleBearSpell() {
 
 	cost := 20.0 - float64(druid.Talents.Ferocity)
 	refundAmount := cost * 0.8
+	durReduction := (0.5) * float64(druid.Talents.ImprovedMangle)
 
 	druid.Mangle = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 33987},
@@ -34,14 +35,14 @@ func (druid *Druid) registerMangleBearSpell() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    druid.NewTimer(),
-				Duration: time.Second * 6,
+				Duration: time.Duration(float64(time.Second) * (6 - durReduction)),
 			},
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeMHSpecial,
 
-			DamageMultiplier: 1,
+			DamageMultiplier: 1 + 0.1*float64(druid.Talents.SavageFury),
 			ThreatMultiplier: (1.5 / 1.15) *
 				core.TernaryFloat64(druid.InForm(Bear) && druid.HasSetBonus(ItemSetThunderheartHarness, 2), 1.15, 1),
 
@@ -53,6 +54,10 @@ func (druid *Druid) registerMangleBearSpell() {
 					druid.MangleAura.Activate(sim)
 				} else {
 					druid.AddRage(sim, refundAmount, druid.RageRefundMetrics)
+				}
+
+				if druid.BerserkAura.IsActive() {
+					spell.CD.Reset()
 				}
 			},
 		}),
@@ -66,7 +71,7 @@ func (druid *Druid) registerMangleCatSpell() {
 
 	druid.MangleAura = core.MangleAura(druid.CurrentTarget)
 
-	cost := 45.0 - float64(druid.Talents.Ferocity) - core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartHarness, 2), 5.0, 0)
+	cost := 45.0 - (2.0 * float64(druid.Talents.ImprovedMangle)) - float64(druid.Talents.Ferocity) - core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartHarness, 2), 5.0, 0)
 	refundAmount := cost * 0.8
 
 	druid.Mangle = druid.RegisterSpell(core.SpellConfig{

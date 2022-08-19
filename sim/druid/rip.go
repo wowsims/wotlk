@@ -12,6 +12,7 @@ import (
 func (druid *Druid) registerRipSpell() {
 	actionID := core.ActionID{SpellID: 27008}
 	baseCost := 30.0
+	refundAmount := baseCost * (0.4 * float64(druid.Talents.PrimalPrecision))
 
 	druid.Rip = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -39,6 +40,8 @@ func (druid *Druid) registerRipSpell() {
 				if spellEffect.Landed() {
 					druid.RipDot.Apply(sim)
 					druid.SpendComboPoints(sim, spell.ComboPointMetrics())
+				} else if refundAmount > 0 {
+					druid.AddEnergy(sim, refundAmount, druid.PrimalPrecisionRecoveryMetrics)
 				}
 			},
 		}),
@@ -78,7 +81,7 @@ func (druid *Druid) registerRipSpell() {
 					return (1554+0.24*attackPower)/6 + bonusTickDamage
 				}
 			}, 0),
-			OutcomeApplier: druid.OutcomeFuncTick(),
+			OutcomeApplier: druid.PrimalGoreOutcomeFuncTick(),
 		}),
 	})
 }
