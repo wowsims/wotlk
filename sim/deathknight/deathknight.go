@@ -110,7 +110,8 @@ type Deathknight struct {
 	HornOfWinterAura          *core.Aura
 
 	// "CDs"
-	RuneTap *RuneSpell
+	RuneTap     *RuneSpell
+	MarkOfBlood *RuneSpell
 
 	BloodTap     *RuneSpell
 	BloodTapAura *core.Aura
@@ -236,6 +237,7 @@ func (dk *Deathknight) Initialize() {
 	dk.registerIceboundFortitudeSpell()
 	dk.registerDeathStrikeSpell()
 	dk.registerHeartStrikeSpell()
+	dk.registerMarkOfBloodSpell()
 
 	dk.registerAntiMagicShellSpell()
 

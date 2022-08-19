@@ -35,7 +35,7 @@ func (dk *Deathknight) ApplyBloodTalents() {
 	}
 
 	// Rune Tap
-	// TODO: Implement
+	// TODO: Implemented outside
 
 	// Dark Conviction
 	dk.PseudoStats.BonusMeleeCritRating += core.CritRatingPerCritChance * float64(dk.Talents.DarkConviction)
@@ -45,13 +45,13 @@ func (dk *Deathknight) ApplyBloodTalents() {
 	// TODO: Implement
 
 	// Improved Rune Tap
-	// TODO: Implement
+	// TODO: Implemented outside
 
 	// Spell Deflection
 	// TODO: Implement
 
 	// Vendetta
-	// TODO: Implement
+	// TODO: Pointless
 
 	// Bloody Strikes
 	// Implemented
