@@ -1,6 +1,7 @@
 package druid
 
 import (
+	"math/rand"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -25,6 +26,10 @@ func (druid *Druid) registerRebirthSpell() {
 				GCD:      core.GCDDefault,
 				CastTime: time.Second*3 + time.Millisecond*500,
 			},
+			CD: core.Cooldown{
+				Timer:    druid.NewTimer(),
+				Duration: time.Minute * 10,
+			},
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
@@ -33,13 +38,6 @@ func (druid *Druid) registerRebirthSpell() {
 	})
 }
 
-func (druid *Druid) TryRebirth(sim *core.Simulation) bool {
-	if druid.RebirthUsed {
-		return false
-	}
-
-	if success := druid.Rebirth.Cast(sim, nil); !success {
-		druid.WaitForMana(sim, druid.Rebirth.CurCast.Cost)
-	}
-	return true
+func (druid *Druid) setRebirthTiming() {
+	druid.RebirthTiming = rand.Float64() * (druid.Env.BaseDuration.Seconds())
 }
