@@ -50,12 +50,12 @@ func (dk *DpsDeathknight) shDiseaseCheck(sim *core.Simulation, target *core.Unit
 		nextUnholyRuneAt := crpb.UnholyRuneReadyAt(sim)
 
 		// If FF is gonna drop while our runes are on CD
-		if dk.shRecastAvailableCheck(ffExpiresAt-ffSyncTime, afterCastTime, int(spellCost.Frost()), currentFrostRunes, nextFrostRuneAt) {
+		if dk.shRecastAvailableCheck(ffExpiresAt-ffSyncTime, afterCastTime, int(spellCost.Frost()), int32(currentFrostRunes), nextFrostRuneAt) {
 			return false
 		}
 
 		// If BP is gonna drop while our runes are on CD
-		if dk.shRecastAvailableCheck(bpExpiresAt, afterCastTime, int(spellCost.Unholy()), currentUnholyRunes, nextUnholyRuneAt) {
+		if dk.shRecastAvailableCheck(bpExpiresAt, afterCastTime, int(spellCost.Unholy()), int32(currentUnholyRunes), nextUnholyRuneAt) {
 			return false
 		}
 	}

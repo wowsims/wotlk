@@ -127,6 +127,9 @@ type Deathknight struct {
 	UnbreakableArmor     *RuneSpell
 	UnbreakableArmorAura *core.Aura
 
+	VampiricBlood     *RuneSpell
+	VampiricBloodAura *core.Aura
+
 	BoneShield     *RuneSpell
 	BoneShieldAura *core.Aura
 
@@ -154,6 +157,7 @@ type Deathknight struct {
 	RimeAura            *core.Aura
 	BladeBarrierAura    *core.Aura
 	SuddenDoomAura      *core.Aura
+	ScentOfBloodAura    *core.Aura
 
 	// Talent Spells
 	LastDiseaseDamage float64
@@ -241,6 +245,7 @@ func (dk *Deathknight) Initialize() {
 	dk.registerDeathStrikeSpell()
 	dk.registerHeartStrikeSpell()
 	dk.registerMarkOfBloodSpell()
+	dk.registerVampiricBloodSpell()
 
 	dk.registerAntiMagicShellSpell()
 

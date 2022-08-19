@@ -29,6 +29,9 @@ func (dk *Deathknight) ApplyBloodTalents() {
 		dk.AddStatDependency(stats.Armor, stats.AttackPower, coeff/180.0)
 	}
 
+	// Scent of Blood
+	dk.applyScentOfBlood()
+
 	// Two Handed Specialization
 	if dk.Equip[proto.ItemSlot_ItemSlotMainHand].HandType == proto.HandType_HandTypeTwoHand {
 		dk.PseudoStats.PhysicalDamageDealtMultiplier *= 1 + 0.01*float64(dk.Talents.TwoHandedWeaponSpecialization)
@@ -42,7 +45,7 @@ func (dk *Deathknight) ApplyBloodTalents() {
 	dk.PseudoStats.BonusSpellCritRating += core.CritRatingPerCritChance * float64(dk.Talents.DarkConviction)
 
 	// Death Rune Mastery
-	// TODO: Implement
+	// TODO: Implemented outside
 
 	// Improved Rune Tap
 	// TODO: Implemented outside
@@ -80,6 +83,46 @@ func (dk *Deathknight) ApplyBloodTalents() {
 	}
 
 	dk.applyBloodGorged()
+}
+
+func (dk *Deathknight) applyScentOfBlood() {
+	if dk.Talents.ScentOfBlood == 0 {
+		return
+	}
+
+	actionID := core.ActionID{SpellID: 49509}
+	procChance := 0.15
+
+	rpMetrics := dk.NewRunicPowerMetrics(actionID)
+
+	dk.ScentOfBloodAura = dk.RegisterAura(core.Aura{
+		Label:     "Scent of Blood Proc",
+		ActionID:  actionID,
+		Duration:  core.NeverExpires,
+		MaxStacks: dk.Talents.ScentOfBlood,
+
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			aura.SetStacks(sim, aura.MaxStacks)
+		},
+
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+				return
+			}
+
+			dk.AddRunicPower(sim, 10.0, rpMetrics)
+			aura.RemoveStack(sim)
+		},
+	})
+
+	core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
+		Label: "Scent of Blood",
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if sim.RandomFloat("Scent Of Blood Proc Chance") <= procChance {
+				dk.ScentOfBloodAura.Activate(sim)
+			}
+		},
+	}))
 }
 
 func (dk *Deathknight) bloodyStrikesBonus(spell *RuneSpell) float64 {

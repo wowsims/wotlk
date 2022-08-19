@@ -944,6 +944,7 @@ func MarkOfBloodAura(target *Unit) *Aura {
 		OnSpellHitDealt: func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
 			target := aura.Unit.CurrentTarget
 
+			// TODO: Does vampiric blood make it so this health gain is increased?
 			if target != nil {
 				target.GainHealth(sim, target.MaxHealth()*0.04, healthMetrics)
 				aura.RemoveStack(sim)
