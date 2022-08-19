@@ -633,8 +633,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Deadly OH Deadly-FullBuffs-LongMultiTarget"
  value: {
-  dps: 14725.9895111649
-  tps: 10455.4525529271
+  dps: 14300.5826902688
+  tps: 10153.4137100908
  }
 }
 dps_results: {
@@ -654,8 +654,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Deadly OH Deadly-NoBuffs-LongMultiTarget"
  value: {
-  dps: 9002.0703771849
-  tps: 6391.4699678013
+  dps: 8735.3526504326
+  tps: 6202.1003818071
  }
 }
 dps_results: {
@@ -675,8 +675,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Deadly OH Instant-FullBuffs-LongMultiTarget"
  value: {
-  dps: 20712.8904319954
-  tps: 14706.1522067167
+  dps: 20237.9263678525
+  tps: 14368.9277211753
  }
 }
 dps_results: {
@@ -696,8 +696,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Deadly OH Instant-NoBuffs-LongMultiTarget"
  value: {
-  dps: 12594.8560877651
-  tps: 8942.3478223133
+  dps: 12304.7665200164
+  tps: 8736.3842292116
  }
 }
 dps_results: {
@@ -717,8 +717,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Instant OH Deadly-FullBuffs-LongMultiTarget"
  value: {
-  dps: 20712.8904319954
-  tps: 14706.1522067167
+  dps: 20237.9263678525
+  tps: 14368.9277211753
  }
 }
 dps_results: {
@@ -738,8 +738,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Instant OH Deadly-NoBuffs-LongMultiTarget"
  value: {
-  dps: 12594.8560877651
-  tps: 8942.3478223133
+  dps: 12304.7665200164
+  tps: 8736.3842292116
  }
 }
 dps_results: {
@@ -759,8 +759,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Instant OH Instant-FullBuffs-LongMultiTarget"
  value: {
-  dps: 19836.2792239514
-  tps: 14083.7582490054
+  dps: 19387.1994595729
+  tps: 13764.9116162967
  }
 }
 dps_results: {
@@ -780,8 +780,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Instant OH Instant-NoBuffs-LongMultiTarget"
  value: {
-  dps: 12260.5856213627
-  tps: 8705.0157911675
+  dps: 11986.0292616438
+  tps: 8510.0807757671
  }
 }
 dps_results: {
@@ -801,8 +801,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Deadly OH Deadly-FullBuffs-LongMultiTarget"
  value: {
-  dps: 14868.8967748858
-  tps: 10556.9167101689
+  dps: 14429.3156056194
+  tps: 10244.8140799898
  }
 }
 dps_results: {
@@ -822,8 +822,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Deadly OH Deadly-NoBuffs-LongMultiTarget"
  value: {
-  dps: 9101.8413636764
-  tps: 6462.3073682103
+  dps: 8824.1056094944
+  tps: 6265.114982741
  }
 }
 dps_results: {
@@ -843,8 +843,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Deadly OH Instant-FullBuffs-LongMultiTarget"
  value: {
-  dps: 20885.5364433936
-  tps: 14828.7308748095
+  dps: 20394.8628057895
+  tps: 14480.3525921106
  }
 }
 dps_results: {
@@ -864,8 +864,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Deadly OH Instant-NoBuffs-LongMultiTarget"
  value: {
-  dps: 12716.5708666318
-  tps: 9028.7653153086
+  dps: 12414.6942303591
+  tps: 8814.432903555
  }
 }
 dps_results: {
@@ -885,8 +885,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Instant OH Deadly-FullBuffs-LongMultiTarget"
  value: {
-  dps: 20885.5364433936
-  tps: 14828.7308748095
+  dps: 20394.8628057895
+  tps: 14480.3525921106
  }
 }
 dps_results: {
@@ -906,8 +906,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Instant OH Deadly-NoBuffs-LongMultiTarget"
  value: {
-  dps: 12716.5708666318
-  tps: 9028.7653153086
+  dps: 12414.6942303591
+  tps: 8814.432903555
  }
 }
 dps_results: {
@@ -927,8 +927,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Instant OH Instant-FullBuffs-LongMultiTarget"
  value: {
-  dps: 19999.912298059
-  tps: 14199.9377316218
+  dps: 19535.4864386149
+  tps: 13870.1953714165
  }
 }
 dps_results: {
@@ -948,8 +948,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Instant OH Instant-NoBuffs-LongMultiTarget"
  value: {
-  dps: 12376.996165763
-  tps: 8787.6672776917
+  dps: 12090.7569696382
+  tps: 8584.4374484431
  }
 }
 dps_results: {
