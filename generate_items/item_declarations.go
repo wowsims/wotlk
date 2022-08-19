@@ -61,6 +61,7 @@ var ItemDeclarationOverrides = []ItemDeclaration{
 	{ /** Twinblade of the Pheonix */ ID: 29993, Stats: Stats{proto.Stat_StatRangedAttackPower: 108}},
 	{ /** Pillar of Ferocity */ ID: 30883, Stats: Stats{proto.Stat_StatArmor: 550}},
 	{ /** Beast-tamer's Shoulders */ ID: 30892, ClassAllowlist: []proto.Class{proto.Class_ClassHunter}},
+	{ /** Incisor Fragment */ ID: 37723, Stats: Stats{proto.Stat_StatArmorPenetration: 0}},
 
 	{ID: 28431, HandType: proto.HandType_HandTypeOneHand},
 	{ID: 28432, HandType: proto.HandType_HandTypeOneHand},

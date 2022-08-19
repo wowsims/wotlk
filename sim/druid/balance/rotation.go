@@ -15,13 +15,6 @@ func (moonkin *BalanceDruid) tryUseGCD(sim *core.Simulation) {
 }
 
 func (moonkin *BalanceDruid) rotation(sim *core.Simulation) {
-	// Activate shared druid behaviors
-	// Use Rebirth at the beginning of the fight if flagged in rotation settings
-	// Potentially allow options for "Time of cast" in future or default cast like 1 min into fight
-	// Currently just casts at the beginning of encounter (with all CDs popped)
-	if moonkin.useBattleRes && moonkin.TryRebirth(sim) {
-		return
-	}
 
 	target := moonkin.CurrentTarget
 
@@ -41,10 +34,15 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) {
 	moonfireUptime := moonkin.MoonfireDot.RemainingDuration(sim)
 	insectSwarmUptime := moonkin.InsectSwarmDot.RemainingDuration(sim)
 
+	shouldRebirth := sim.GetRemainingDuration().Seconds() < moonkin.RebirthTiming
+
 	var spell *core.Spell
-	//TODO Treants
-	//TODO Starfall
-	if (solarIsActive && insectSwarmUptime > time.Second*3) || (solarIsActive && solarUptime < time.Second*13) || (lunarICD < 2 && moonfireUptime > 0) {
+	// TODO Treants
+	if moonkin.useBattleRes && shouldRebirth && moonkin.Rebirth.IsReady(sim) {
+		spell = moonkin.Rebirth
+	} else if moonkin.Starfall.IsReady(sim) {
+		spell = moonkin.Starfall
+	} else if (solarIsActive && insectSwarmUptime > time.Second*3) || (solarIsActive && solarUptime < time.Second*13) || (lunarICD < 2 && moonfireUptime > 0) {
 		spell = moonkin.Wrath
 	} else if (lunarIsActive && moonfireUptime > time.Second*3) || (lunarIsActive && lunarUptime < time.Second*13) || (solarICD < 2 && insectSwarmUptime > 0) {
 		spell = moonkin.Starfire
