@@ -288,8 +288,8 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		bestDmg := 0.0
 		for i, v := range spellDPCT {
 			if sim.Log != nil {
-				spriest.Log(sim, "\tspellDPCT[%d]: %01.f", i, v)
-				spriest.Log(sim, "\tcdDiffs[%d]: %0.1f", i, allCDs[i].Seconds())
+				//spriest.Log(sim, "\tspellDPCT[%d]: %01.f", i, v)
+				//spriest.Log(sim, "\tcdDiffs[%d]: %0.1f", i, allCDs[i].Seconds())
 			}
 			if v > bestDmg {
 				bestIdx = i
@@ -317,8 +317,8 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		}
 
 		if sim.Log != nil {
-			spriest.Log(sim, "best=next[%d]", bestIdx)
-			spriest.Log(sim, "currentWait[%d]", currentWait.Seconds())
+			//spriest.Log(sim, "best=next[%d]", bestIdx)
+			//spriest.Log(sim, "currentWait[%d]", currentWait.Seconds())
 		}
 
 		if nextIdx != 4 && bestIdx != 4 && bestIdx != 5 && currentWait > waitmin && currentWait.Seconds() < 3 { // right now 3 might not be correct number, but we can study this to optimize
@@ -662,10 +662,8 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 		// TODO: Should spriest latency be added to the second option here?
 
 		mfTime := core.MaxDuration(gcd, time.Duration(numTicks)*tickLength)
-		if numTicks == 0 && allCDs[0].Seconds() > float64(time.Duration(3*tickLength).Seconds()) {
+		if numTicks == 0 {
 			mfTime = core.MaxDuration(gcd, time.Duration(3)*tickLength)
-		} else {
-			mfTime = core.MaxDuration(gcd, time.Duration(1)*tickLength)
 		}
 
 		//if sim.Log != nil {
