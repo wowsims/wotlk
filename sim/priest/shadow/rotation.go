@@ -275,14 +275,14 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 			mfDamage / float64((tickLength * 3).Seconds()),
 		}
 
-		if sim.Log != nil {
-			spriest.Log(sim, "mbDamage[%d]", mbDamage)
-			spriest.Log(sim, "mfDamage[%d]", mfDamage)
-			spriest.Log(sim, "mftime[%d]", float64((tickLength * 3).Seconds()))
-			spriest.Log(sim, "gcd[%d]", gcd.Seconds())
-			spriest.Log(sim, "CastSpeedMultiplier[%d]", spriest.PseudoStats.CastSpeedMultiplier)
-			spriest.Log(sim, "critChance[%d]", critChance)
-		}
+		//if sim.Log != nil {
+		//spriest.Log(sim, "mbDamage[%d]", mbDamage)
+		//spriest.Log(sim, "mfDamage[%d]", mfDamage)
+		//spriest.Log(sim, "mftime[%d]", float64((tickLength * 3).Seconds()))
+		//spriest.Log(sim, "gcd[%d]", gcd.Seconds())
+		//spriest.Log(sim, "CastSpeedMultiplier[%d]", spriest.PseudoStats.CastSpeedMultiplier)
+		//spriest.Log(sim, "critChance[%d]", critChance)
+		//}
 
 		// Find the maximum DPCT spell
 		bestDmg := 0.0
