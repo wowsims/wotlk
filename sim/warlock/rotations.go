@@ -87,6 +87,12 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			nextBigCD = cdReadyAt
 		}
 	}
+
+	if nextBigCD - sim.CurrentTime <= 0 {
+		// stop regen, start blasting
+		warlock.DoingRegen = false
+	} 
+
 	allCDs := []time.Duration{
 		0,
 		0,
@@ -372,52 +378,44 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			spell = warlock.channelCheck(sim, warlock.DrainSoulDot, 5)
 		}
 	}
-	// ------------------------------------------
-	// Regen check
-	// ------------------------------------------
-	// If big CD coming up and we don't have enough mana for it, lifetap
-	// Also, never do a big regen in the last few seconds of the fight.
-	// TODO: Specify regen goals depending on CD
-	if !warlock.DoingRegen && nextBigCD - sim.CurrentTime < time.Second*6 && sim.GetRemainingDuration() > time.Second*30 {
-		if warlock.CurrentManaPercent() < 0.2 {
-			warlock.DoingRegen = true
-		}
-	}
 
-	if warlock.DoingRegen {
-		if nextBigCD - sim.CurrentTime < time.Second*2 {
-			// stop regen, start blasting
-			warlock.DoingRegen = false
-		} else {
+	// ------------------------------------------
+	// Filler spell && Regen check
+	// ------------------------------------------
+
+	if spell == nil {
+		// If a CD is really close to be up, wait for it.
+		if nextBigCD - sim.CurrentTime > 0 && nextBigCD - sim.CurrentTime < fillerCastTime/15 {
+			warlock.WaitUntil(sim, nextBigCD)
+			return
+		} else if nextCD - sim.CurrentTime > 0 && nextCD - sim.CurrentTime < fillerCastTime/15 {
+			warlock.WaitUntil(sim, nextCD)
+			return
+		} else if timeUntilOom < 5*time.Second && timeUntilExecute25 > time.Second {
+			// If you were gonna cast a filler but are low mana, get mana instead in order not to be OOM when an important spell is coming up.
+			warlock.LifeTapOrDarkPact(sim)
+			return
+		} else if !warlock.DoingRegen && nextBigCD - sim.CurrentTime < time.Second*6 && sim.GetRemainingDuration() > time.Second*30 {
+			// If big CD coming up and we don't have enough mana for it, lifetap
+			// Also, never do a big regen in the last few seconds of the fight.
+			// TODO: Specify regen goals depending on CD
+			if warlock.CurrentManaPercent() < 0.2 {
+				warlock.DoingRegen = true
+			}
+		}
+
+		if warlock.DoingRegen {
 			warlock.LifeTapOrDarkPact(sim)
 			if warlock.CurrentManaPercent() > 0.2 {
 				warlock.DoingRegen = false
 			}
 			return
 		}
+
+		// Filler
+		spell = filler
 	}
 
-	// ------------------------------------------
-	// Filler spell
-	// ------------------------------------------
-	if spell == nil {
-		if timeUntilOom < 5*time.Second && timeUntilExecute25 > time.Second {
-			// If you were gonna cast a filler but are low mana, get mana instead in order not to be OOM when an important spell is coming up
-			warlock.LifeTapOrDarkPact(sim)
-			return
-		} else {
-			// Filler
-			if nextBigCD - sim.CurrentTime > 0 && nextBigCD - sim.CurrentTime < fillerCastTime/15 {
-				warlock.WaitUntil(sim, nextBigCD)
-				return
-			} else if nextCD - sim.CurrentTime > 0 && nextCD - sim.CurrentTime < fillerCastTime/15 {
-				warlock.WaitUntil(sim, nextCD)
-				return
-			} else {
-				spell = filler
-			}
-		}
-	}
 
 	// ------------------------------------------
 	// Spell casting
