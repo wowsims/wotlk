@@ -36,8 +36,12 @@ var defaultDestroTalents = &proto.WarlockTalents{
 }
 
 var defaultDestroRotation = &proto.Warlock_Rotation{
+	Type:					proto.Warlock_Rotation_Destruction,
 	PrimarySpell: proto.Warlock_Rotation_Incinerate,
 	SecondaryDot: proto.Warlock_Rotation_Immolate,
+	SpecSpell:    proto.Warlock_Rotation_ChaosBolt,
+	Curse:        proto.Warlock_Rotation_Doom,
+	Corruption:   false,
 }
 
 var defaultDestroOptions = &proto.Warlock_Options{
@@ -97,6 +101,7 @@ var defaultAfflictionOptions = &proto.Warlock_Options{
 }
 
 var defaultAfflictionRotation = &proto.Warlock_Rotation{
+	Type:					proto.Warlock_Rotation_Affliction,
 	PrimarySpell: proto.Warlock_Rotation_ShadowBolt,
 	SecondaryDot: proto.Warlock_Rotation_UnstableAffliction,
 	SpecSpell:    proto.Warlock_Rotation_Haunt,
@@ -156,6 +161,7 @@ var defaultDemonologyOptions = &proto.Warlock_Options{
 }
 
 var defaultDemonologyRotation = &proto.Warlock_Rotation{
+	Type:					proto.Warlock_Rotation_Demonology,
 	PrimarySpell: proto.Warlock_Rotation_ShadowBolt,
 	SecondaryDot: proto.Warlock_Rotation_Immolate,
 	Curse:        proto.Warlock_Rotation_Doom,

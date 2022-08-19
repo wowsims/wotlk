@@ -63,6 +63,12 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool, onhit func(sim *core.Sim
 			IgnoreHaste: true,
 		}
 		conf.ApplyEffects = dk.withRuneRefund(rs, effect, false)
+		if dk.Talents.DeathRuneMastery == 3 {
+			rs.DeathConvertChance = 1.0
+		} else {
+			rs.DeathConvertChance = float64(dk.Talents.DeathRuneMastery) * 0.33
+		}
+		rs.ConvertType = RuneTypeFrost | RuneTypeUnholy
 	}
 
 	if isMH {

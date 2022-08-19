@@ -60,7 +60,7 @@ func (dk *DpsDeathknight) uhDiseaseCheck(sim *core.Simulation, target *core.Unit
 }
 
 func (dk *DpsDeathknight) uhRecastAvailableCheck(expiresAt time.Duration, afterCastTime time.Duration,
-	spellCost int, currentRunes int32, nextRuneAt time.Duration) bool {
+	spellCost int, currentRunes int8, nextRuneAt time.Duration) bool {
 	if spellCost > 0 && currentRunes == 0 {
 		if expiresAt < nextRuneAt {
 			return true

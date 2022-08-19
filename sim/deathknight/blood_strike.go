@@ -54,6 +54,12 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool, onhit func(sim *core.Simul
 			IgnoreHaste: true,
 		}
 		conf.ApplyEffects = dk.withRuneRefund(rs, effect, false)
+		if dk.Talents.BloodOfTheNorth+dk.Talents.Reaping >= 3 {
+			rs.DeathConvertChance = 1.0
+		} else {
+			rs.DeathConvertChance = float64(dk.Talents.BloodOfTheNorth+dk.Talents.Reaping) * 0.33
+		}
+		rs.ConvertType = RuneTypeBlood
 	}
 
 	if isMH {
@@ -73,7 +79,6 @@ func (dk *Deathknight) registerBloodStrikeSpell() {
 		dk.LastOutcome = spellEffect.Outcome
 
 		if spellEffect.Outcome.Matches(core.OutcomeLanded) {
-			dk.botnAndReaping(sim, spell)
 			if dk.DesolationAura != nil {
 				dk.DesolationAura.Activate(sim)
 			}

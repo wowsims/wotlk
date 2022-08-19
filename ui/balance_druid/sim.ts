@@ -83,31 +83,15 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 				// Default talents.
 				talents: Presets.StandardTalents.data,
 				// Default spec-specific settings.
-				specOptions: BalanceDruidOptions.create({
-					innervateTarget: RaidTarget.create({
-						targetIndex: 0, // In an individual sim the 0-indexed player is ourself.
-					}),
-				}),
+				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
-				raidBuffs: RaidBuffs.create({
-					arcaneBrilliance: true,
-					divineSpirit: true,
-					bloodlust: true,
-					manaSpringTotem: TristateEffect.TristateEffectRegular,
-					totemOfWrath: true,
-					wrathOfAirTotem: true,
-				}),
-				partyBuffs: PartyBuffs.create({
-				}),
-				individualBuffs: IndividualBuffs.create({
-					blessingOfKings: true,
-					blessingOfWisdom: TristateEffect.TristateEffectImproved,
-				}),
-				debuffs: Debuffs.create({
-					judgementOfWisdom: true,
-					misery: true,
-					curseOfElements: true,
-				}),
+				raidBuffs: Presets.DefaultRaidBuffs,
+
+				partyBuffs: PartyBuffs.create({}),
+
+				individualBuffs: Presets.DefaultIndividualBuffs,
+
+				debuffs: Presets.DefaultDebuffs,
 			},
 
             // IconInputs to include in the 'Player' section on the settings tab.

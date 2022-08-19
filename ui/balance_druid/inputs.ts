@@ -45,5 +45,25 @@ export const BalanceDruidRotationConfig = {
 			label: 'Use Battle Res',
 			labelTooltip: 'Cast Battle Res on an ally sometime during the encounter.',
 		}),
+		InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecBalanceDruid>({
+			fieldName: 'useIs',
+			label: 'Use Insect Swarm',
+			labelTooltip: 'Should the rotation use Insect Swarm.',
+		}),
+		InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecBalanceDruid>({
+			fieldName: 'useMf',
+			label: 'Use Moonfire',
+			labelTooltip: 'Should the rotation use Moonfire.',
+		}),
+		InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecBalanceDruid>({
+			fieldName: 'canMfInsideEclipse',
+			label: 'Refresh Moonfire inside eclipse',
+			labelTooltip: 'Should the rotation use Moonfire inside Lunar Eclipse.',
+		}),
+		InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecBalanceDruid>({
+			fieldName: 'canIsInsideEclipse',
+			label: 'Refresh Insect Swarm inside eclipse',
+			labelTooltip: 'Should the rotation use Insect Swarm inside Solar Eclipse.',
+		}),
 	],
 };
