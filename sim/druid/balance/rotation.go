@@ -43,8 +43,9 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) {
 
 	var spell *core.Spell
 	//TODO Treants
-	//TODO Starfall
-	if (solarIsActive && insectSwarmUptime > time.Second*3) || (solarIsActive && solarUptime < time.Second*13) || (lunarICD < 2 && moonfireUptime > 0) {
+	if moonkin.Starfall.IsReady(sim) {
+		spell = moonkin.Starfall
+	} else if (solarIsActive && insectSwarmUptime > time.Second*3) || (solarIsActive && solarUptime < time.Second*13) || (lunarICD < 2 && moonfireUptime > 0) {
 		spell = moonkin.Wrath
 	} else if (lunarIsActive && moonfireUptime > time.Second*3) || (lunarIsActive && lunarUptime < time.Second*13) || (solarICD < 2 && insectSwarmUptime > 0) {
 		spell = moonkin.Starfire
