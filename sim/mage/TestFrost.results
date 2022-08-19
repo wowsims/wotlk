@@ -612,13 +612,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Troll-P1Frost-FrostRotation-FullBuffs-ShortSingleTarget"
  value: {
-<<<<<<< HEAD
-  dps: 6378.2020965646
-  tps: 5403.7143423936
-=======
   dps: 6322.2419818135
   tps: 5074.975583253
->>>>>>> 000fe5e64bff5c542afbf63a87007000ad0b606b
  }
 }
 dps_results: {

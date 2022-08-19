@@ -542,13 +542,8 @@ dps_results: {
 dps_results: {
  key: "TestFire-AllItems-WrathofSpellfire"
  value: {
-<<<<<<< HEAD
-  dps: 5212.9267295828
-  tps: 3904.4108160957
-=======
   dps: 4944.904624062
   tps: 3622.1484696784
->>>>>>> 000fe5e64bff5c542afbf63a87007000ad0b606b
  }
 }
 dps_results: {
