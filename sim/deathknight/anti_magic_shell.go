@@ -82,7 +82,7 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 			if spellEffect.Damage > 0 {
 				absorvedDamage := core.MinFloat(0.75*spellEffect.Damage, 0.5*dk.MaxHealth())
 				dk.RemoveHealth(sim, spellEffect.Damage-absorvedDamage)
-				dk.AddRunicPower(sim, absorvedDamage/69.0, rpMetrics)
+				dk.AddRunicPower(sim, spellEffect.Damage/69.0, rpMetrics)
 			}
 		},
 	})
