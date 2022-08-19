@@ -1,4 +1,4 @@
-import { Consumes } from '../core/proto/common.js';
+import {Consumes, Debuffs, IndividualBuffs, RaidBuffs, TristateEffect} from '../core/proto/common.js';
 import { Flask } from '../core/proto/common.js';
 import { Food } from '../core/proto/common.js';
 import { EquipmentSpec } from '../core/proto/common.js';
@@ -27,12 +27,46 @@ export const DefaultRotation = BalanceDruidRotation.create({
 });
 
 export const DefaultOptions = BalanceDruidOptions.create({
+	useIs: true,
+	useMf: true
 });
 
 export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfTheFrostWyrm,
 	food: Food.FoodFishFeast,
 	defaultPotion: Potions.PotionOfSpeed,
+});
+
+export const DefaultRaidBuffs = RaidBuffs.create({
+	giftOfTheWild: TristateEffect.TristateEffectImproved,
+	powerWordFortitude: TristateEffect.TristateEffectImproved,
+	strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
+	arcaneBrilliance: true,
+	divineSpirit: true,
+	trueshotAura: true,
+	leaderOfThePack: TristateEffect.TristateEffectImproved,
+	icyTalons: true,
+	totemOfWrath: true,
+	moonkinAura: TristateEffect.TristateEffectImproved,
+	wrathOfAirTotem: true,
+	sanctifiedRetribution: true,
+	bloodlust: true,
+});
+
+export const DefaultIndividualBuffs = IndividualBuffs.create({
+	blessingOfKings: true,
+	blessingOfWisdom: TristateEffect.TristateEffectImproved,
+	blessingOfMight: TristateEffect.TristateEffectImproved,
+	vampiricTouch: true,
+});
+
+export const DefaultDebuffs = Debuffs.create({
+	sunderArmor: true,
+	faerieFire: TristateEffect.TristateEffectImproved,
+	bloodFrenzy: true,
+	ebonPlaguebringer: true,
+	heartOfTheCrusader: true,
+	judgementOfWisdom: true,
 });
 
 export const P1_PRESET = {
