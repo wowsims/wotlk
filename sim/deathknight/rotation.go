@@ -34,7 +34,9 @@ func (dk *Deathknight) RotationActionCallback_PS(sim *core.Simulation, target *c
 }
 
 func (dk *Deathknight) RotationActionCallback_HW(sim *core.Simulation, target *core.Unit, s *Sequence) time.Duration {
-	dk.HornOfWinter.Cast(sim, target)
+	if dk.HornOfWinter.CanCast(sim) {
+		dk.HornOfWinter.Cast(sim, target)
+	}
 
 	s.Advance()
 	return -1
@@ -206,6 +208,12 @@ func (dk *Deathknight) RotationActionCallback_Reset(sim *core.Simulation, target
 }
 
 func (o *Sequence) DoAction(sim *core.Simulation, target *core.Unit, dk *Deathknight) time.Duration {
+	if dk.Inputs.UseAMS {
+		if dk.AntiMagicShell.CanCast(sim) {
+			dk.AntiMagicShell.Cast(sim, target)
+		}
+	}
+
 	action := o.actions[o.idx]
 	return action(sim, target, o)
 }

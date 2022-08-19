@@ -106,7 +106,7 @@ export const DefaultUnholyRotation = DeathKnightRotation.create({
   useEmpowerRuneWeapon: true,
   startingPresence: Deathknight_Rotation_StartingPresence.Unholy,
   bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodBoil,
-  useAMS: false,
+  useAms: false,
 });
 
 export const DefaultUnholyOptions = DeathKnightOptions.create({
@@ -123,6 +123,10 @@ export const DefaultFrostRotation = DeathKnightRotation.create({
   useEmpowerRuneWeapon: true,
   startingPresence: Deathknight_Rotation_StartingPresence.Unholy,
   bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodBoil,
+  useAms: false,
+  avgAmsSuccessRate: 0.5,
+  avgAmsHit: 5000.0,
+  oblitDelayDuration: 0,
 });
 
 export const DefaultFrostOptions = DeathKnightOptions.create({

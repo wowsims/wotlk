@@ -54,7 +54,7 @@ func (dk *DpsDeathknight) RotationActionCallback_BloodRotation(sim *core.Simulat
 				if dk.blDeathCoilCheck(sim) {
 					casted = dk.DeathCoil.Cast(sim, target)
 				}
-				if !casted {
+				if !casted && dk.HornOfWinter.CanCast(sim) {
 					casted = dk.HornOfWinter.Cast(sim, target)
 				}
 			}

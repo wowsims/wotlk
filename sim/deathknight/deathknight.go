@@ -22,6 +22,9 @@ type DeathknightInputs struct {
 	RefreshHornOfWinter bool
 	ArmyOfTheDeadType   proto.Deathknight_Rotation_ArmyOfTheDead
 	StartingPresence    proto.Deathknight_Rotation_StartingPresence
+	UseAMS              bool
+	AvgAMSSuccessRate   float64
+	AvgAMSHit           float64
 }
 
 type DeathknightCoeffs struct {

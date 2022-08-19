@@ -129,7 +129,10 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 							dk.uhAfterGargoyleSequence(sim)
 							return sim.CurrentTime
 						}
-						casted = dk.HornOfWinter.Cast(sim, target)
+
+						if dk.HornOfWinter.CanCast(sim) {
+							casted = dk.HornOfWinter.Cast(sim, target)
+						}
 					}
 				}
 			}
@@ -225,7 +228,10 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 						dk.uhAfterGargoyleSequence(sim)
 						return sim.CurrentTime
 					}
-					casted = dk.HornOfWinter.Cast(sim, target)
+
+					if dk.HornOfWinter.CanCast(sim) {
+						casted = dk.HornOfWinter.Cast(sim, target)
+					}
 				}
 			}
 		}
