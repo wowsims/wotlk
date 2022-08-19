@@ -335,4 +335,9 @@ var allowList = map[int]bool{
 	6360:  true, // Steelscale Crushfish
 	8345:  true, // Wolfshead Helm
 	28032: true, // Delicate Green Poncho
+	12590: true, // Felstriker
+	15056: true, // Stormshroud Armor
+	15057: true, // Stormshroud Pants
+	15058: true, // Stormshroud Shoulders
+	21278: true, // Stormshroud Gloves
 }

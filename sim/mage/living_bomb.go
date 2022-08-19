@@ -13,6 +13,7 @@ func (mage *Mage) registerLivingBombSpell() {
 
 	actionID := core.ActionID{SpellID: 55360}
 	actionIDDot := core.ActionID{SpellID: 55359} // I want the dot to be separately trackable for metrics
+	actionIDSpell := core.ActionID{SpellID: 44457}
 	baseCost := .22 * mage.BaseMana
 	bonusCrit := float64(mage.Talents.WorldInFlames+mage.Talents.CriticalMass) * 2 * core.CritRatingPerCritChance
 
@@ -20,16 +21,16 @@ func (mage *Mage) registerLivingBombSpell() {
 		ProcMask:             core.ProcMaskSpellDamage,
 		BonusSpellCritRating: bonusCrit,
 
-		DamageMultiplier: mage.spellDamageMultiplier * (1 + 0.02*float64(mage.Talents.FirePower)),
+		DamageMultiplier: mage.spellDamageMultiplier,
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
 		BaseDamage: core.BaseDamageConfigMagicNoRoll(690, 1.5/3.5),
 
-		OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, mage.bonusCritDamage)),
+		OutcomeApplier: mage.fireSpellOutcomeApplier(mage.bonusCritDamage),
 	}
 
 	livingBombExplosionSpell := mage.RegisterSpell(core.SpellConfig{
-		Flags:        SpellFlagMage,
+		Flags:        SpellFlagMage | HotStreakSpells,
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolFire,
 		Cast:         core.CastConfig{},
@@ -41,13 +42,13 @@ func (mage *Mage) registerLivingBombSpell() {
 
 	lbOutcomeApplier := mage.OutcomeFuncTick()
 	if mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfLivingBomb) {
-		lbOutcomeApplier = mage.OutcomeFuncMagicCrit(mage.SpellCritMultiplier(1, mage.bonusCritDamage))
+		lbOutcomeApplier = mage.fireSpellOutcomeApplier(mage.bonusCritDamage)
 	}
 
 	mage.LivingBomb = mage.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
+		ActionID:    actionIDSpell,
 		SpellSchool: core.SpellSchoolFire,
-		Flags:       SpellFlagMage | HotStreakSpells,
+		Flags:       SpellFlagMage,
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -100,7 +101,7 @@ func (mage *Mage) registerLivingBombSpell() {
 
 			BonusSpellCritRating: bonusCrit,
 
-			DamageMultiplier: mage.spellDamageMultiplier * (1 + 0.02*float64(mage.Talents.FirePower)),
+			DamageMultiplier: mage.spellDamageMultiplier,
 			ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(345, .2),

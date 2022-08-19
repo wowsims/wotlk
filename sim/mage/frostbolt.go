@@ -14,7 +14,7 @@ func (mage *Mage) registerFrostboltSpell() {
 	mage.Frostbolt = mage.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 42842},
 		SpellSchool: core.SpellSchoolFrost,
-		Flags:       SpellFlagMage | core.SpellFlagBinary | BarrageSpells,
+		Flags:       SpellFlagMage | BarrageSpells,
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,

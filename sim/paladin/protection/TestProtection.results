@@ -617,6 +617,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestProtection-AllItems-StormshroudArmor"
+ value: {
+  dps: 211.2891076472
+  tps: 142.657755009
+ }
+}
+dps_results: {
  key: "TestProtection-AllItems-StrengthoftheClefthoof"
  value: {
   dps: 218.0952098882

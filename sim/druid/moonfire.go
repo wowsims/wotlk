@@ -11,7 +11,7 @@ import (
 
 func (druid *Druid) registerMoonfireSpell() {
 	actionID := core.ActionID{SpellID: 26988}
-	baseCost := 495.0
+	baseCost := 0.21 * druid.BaseMana
 
 	druid.Moonfire = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -49,7 +49,7 @@ func (druid *Druid) registerMoonfireSpell() {
 			Label:    "Moonfire-" + strconv.Itoa(int(druid.Index)),
 			ActionID: actionID,
 		}),
-		NumberOfTicks: 4 + core.TernaryInt(druid.HasSetBonus(ItemSetThunderheartRegalia, 2), 1, 0),
+		NumberOfTicks: 4 + core.TernaryInt(druid.HasSetBonus(ItemSetThunderheartRegalia, 2), 1, 0) + core.TernaryInt(druid.Talents.NaturesSplendor, 1, 0),
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,

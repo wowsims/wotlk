@@ -448,10 +448,24 @@ func ApplyEffectFuncAOEDamageCapped(env *Environment, baseEffect SpellEffect) Ap
 		baseEffects[i] = baseEffect
 		baseEffects[i].Target = &env.GetTarget(i).Unit
 	}
-	return ApplyEffectFuncMultipleDamageCapped(baseEffects)
+	return ApplyEffectFuncMultipleDamageCapped(baseEffects, false)
 }
 
-func ApplyEffectFuncMultipleDamageCapped(baseEffects []SpellEffect) ApplySpellEffects {
+func ApplyEffectFuncAOEDamageCappedWithDeferredEffects(env *Environment, baseEffect SpellEffect) ApplySpellEffects {
+	baseEffect.Validate()
+	numHits := env.GetNumTargets()
+	if numHits == 0 {
+		return nil
+	}
+	baseEffects := make([]SpellEffect, numHits)
+	for i := int32(0); i < numHits; i++ {
+		baseEffects[i] = baseEffect
+		baseEffects[i].Target = &env.GetTarget(i).Unit
+	}
+	return ApplyEffectFuncMultipleDamageCapped(baseEffects, true)
+}
+
+func ApplyEffectFuncMultipleDamageCapped(baseEffects []SpellEffect, deferFinalization bool) ApplySpellEffects {
 	numTargets := len(baseEffects)
 	for _, effect := range baseEffects {
 		effect.Validate()
@@ -469,7 +483,15 @@ func ApplyEffectFuncMultipleDamageCapped(baseEffects []SpellEffect) ApplySpellEf
 			effect.applyResistances(sim, spell, attackTable)
 			effect.OutcomeApplier(sim, spell, effect, attackTable)
 			effect.applyTargetModifiers(sim, spell, attackTable)
-			effect.finalize(sim, spell)
+			if !deferFinalization {
+				effect.finalize(sim, spell)
+			}
+		}
+		if deferFinalization {
+			for i := range baseEffects {
+				effect := &baseEffects[i]
+				effect.finalize(sim, spell)
+			}
 		}
 	}
 }

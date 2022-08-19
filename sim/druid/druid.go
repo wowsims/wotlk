@@ -15,6 +15,7 @@ type Druid struct {
 
 	RebirthUsed       bool
 	MaulRageThreshold float64
+	RebirthTiming     float64
 
 	DemoralizingRoar *core.Spell
 	FaerieFire       *core.Spell
@@ -30,26 +31,34 @@ type Druid struct {
 	Rip              *core.Spell
 	Shred            *core.Spell
 	Starfire         *core.Spell
+	Starfall         *core.Spell
+	StarfallSplash   *core.Spell
 	Swipe            *core.Spell
 	Wrath            *core.Spell
 
 	CatForm  *core.Spell
 	BearForm *core.Spell
 
-	InsectSwarmDot *core.Dot
-	LacerateDot    *core.Dot
-	MoonfireDot    *core.Dot
-	RakeDot        *core.Dot
-	RipDot         *core.Dot
+	InsectSwarmDot    *core.Dot
+	LacerateDot       *core.Dot
+	MoonfireDot       *core.Dot
+	RakeDot           *core.Dot
+	RipDot            *core.Dot
+	StarfallDot       *core.Dot
+	StarfallDotSplash *core.Dot
 
 	ClearcastingAura     *core.Aura
 	DemoralizingRoarAura *core.Aura
 	FaerieFireAura       *core.Aura
 	MangleAura           *core.Aura
 	MaulQueueAura        *core.Aura
+	NaturesGraceProcAura *core.Aura
 	NaturesSwiftnessAura *core.Aura
 	CatFormAura          *core.Aura
 	BearFormAura         *core.Aura
+
+	LunarICD core.Cooldown
+	SolarICD core.Cooldown
 
 	form         DruidForm
 	disabledMCDs []*core.MajorCooldown
@@ -109,6 +118,7 @@ func (druid *Druid) Initialize() {
 	druid.registerFaerieFireSpell()
 	druid.registerRebirthSpell()
 	druid.registerInnervateCD()
+	druid.setRebirthTiming()
 }
 
 func (druid *Druid) RegisterBalanceSpells() {
@@ -117,6 +127,7 @@ func (druid *Druid) RegisterBalanceSpells() {
 	druid.registerMoonfireSpell()
 	druid.Starfire = druid.newStarfireSpell()
 	druid.registerWrathSpell()
+	druid.registerStarfallSpell()
 }
 
 func (druid *Druid) RegisterBearSpells(maulRageThreshold float64) {

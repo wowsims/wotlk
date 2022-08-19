@@ -575,6 +575,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestUnholy-AllItems-StormshroudArmor"
+ value: {
+  dps: 5654.8335470012
+  tps: 4016.3648904628
+ }
+}
+dps_results: {
  key: "TestUnholy-AllItems-StrengthoftheClefthoof"
  value: {
   dps: 6064.5572139832
