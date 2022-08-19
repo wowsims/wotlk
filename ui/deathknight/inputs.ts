@@ -155,14 +155,6 @@ export const BloodTapInput = InputHelpers.makeRotationEnumInput<Spec.SpecDeathkn
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 })
 
-export const UseAMS = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
-	fieldName: 'useAMS',
-	label: 'Use AMS',
-	labelTooltip: 'Use AMS around predicted damage for a RP gain.',
-	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().howlingBlast,
-	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-});
-
 export const DeathKnightRotationConfig = {
 	inputs: [
 		BloodTapGhoulFrenzy,
@@ -173,7 +165,6 @@ export const DeathKnightRotationConfig = {
 		StartingPresenceInput,
 		BloodRuneFillerInput,
 		UseDeathAndDecay,
-		UseAMS,
 		//SetDeathAndDecayPrio,
 	],
 };

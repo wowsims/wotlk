@@ -192,8 +192,6 @@ message Deathknight {
 
 		StartingPresence starting_presence = 10;
 		BloodTap blood_tap = 11;
-
-		bool use_ams = 12;
 	}
 	Rotation rotation = 1;
 

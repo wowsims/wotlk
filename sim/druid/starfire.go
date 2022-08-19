@@ -13,9 +13,9 @@ const IvoryMoongoddess int32 = 27518
 
 func (druid *Druid) newStarfireSpell() *core.Spell {
 	actionID := core.ActionID{SpellID: 26986}
-	baseCost := 370.0
-	minBaseDamage := 550.0
-	maxBaseDamage := 647.0
+	baseCost := 0.16 * druid.BaseMana
+	minBaseDamage := 1038.0
+	maxBaseDamage := 1222.0
 	spellCoefficient := 1.0
 
 	// This seems to be unaffected by wrath of cenarius so it needs to come first.
@@ -24,11 +24,17 @@ func (druid *Druid) newStarfireSpell() *core.Spell {
 
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
-		BonusSpellCritRating: core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartRegalia, 4), 5*core.CritRatingPerCritChance, 0),
+		BonusSpellCritRating: float64(2*float64(druid.Talents.NaturesMajesty)*45.91) + core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartRegalia, 4), 5*core.CritRatingPerCritChance, 0),
 		DamageMultiplier:     1 + 0.02*float64(druid.Talents.Moonfury),
 		ThreatMultiplier:     1,
 		BaseDamage:           core.BaseDamageConfigMagic(minBaseDamage+bonusFlatDamage, maxBaseDamage+bonusFlatDamage, spellCoefficient),
 		OutcomeApplier:       druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, 0.2*float64(druid.Talents.Vengeance))),
+		/*OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spellEffect.Landed() && druid.HasGlyph(proto.DruidMajorGlyph_GlyphOfStarfire) && druid.MoonfireDot.IsActive() {
+				// Add 3seconds to Moonfire Tick up to +9s
+				druid.MoonfireDot.NumberOfTicks += 1
+			}
+		}, */
 	}
 
 	if druid.HasSetBonus(ItemSetNordrassilRegalia, 4) {
@@ -45,6 +51,10 @@ func (druid *Druid) newStarfireSpell() *core.Spell {
 				}
 			}
 		})
+	}
+	// If improved insect swarm and MF active, +3% crit chance
+	if druid.MoonfireDot.IsActive() && druid.Talents.ImprovedInsectSwarm > 0 {
+		effect.BonusSpellCritRating += 45.91 * float64(druid.Talents.ImprovedInsectSwarm)
 	}
 
 	return druid.RegisterSpell(core.SpellConfig{
@@ -63,6 +73,7 @@ func (druid *Druid) newStarfireSpell() *core.Spell {
 
 			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
 				druid.applyNaturesSwiftness(cast)
+				// druid.applyNaturesGrace(cast)
 			},
 		},
 
