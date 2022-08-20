@@ -6,6 +6,7 @@ import (
 
 // Function for calculating the base damage of a spell.
 type BaseDamageCalculator func(*Simulation, *SpellEffect, *Spell) float64
+type BaseHealingCalculator = BaseDamageCalculator
 
 type BaseDamageConfig struct {
 	// Lambda for calculating the base damage.
@@ -15,6 +16,11 @@ type BaseDamageConfig struct {
 	TargetSpellCoefficient float64
 }
 
+type BaseHealingConfig struct {
+	// Lambda for calculating the base healing or shielding amount.
+	Calculator BaseHealingCalculator
+}
+
 func BuildBaseDamageConfig(calculator BaseDamageCalculator, coeff float64) BaseDamageConfig {
 	return BaseDamageConfig{
 		Calculator:             calculator,
@@ -22,10 +28,21 @@ func BuildBaseDamageConfig(calculator BaseDamageCalculator, coeff float64) BaseD
 	}
 }
 
+func BuildBaseHealingConfig(calculator BaseHealingCalculator) BaseHealingConfig {
+	return BaseHealingConfig{
+		Calculator: calculator,
+	}
+}
+
 func WrapBaseDamageConfig(config BaseDamageConfig, wrapper func(oldCalculator BaseDamageCalculator) BaseDamageCalculator) BaseDamageConfig {
 	return BaseDamageConfig{
 		Calculator:             wrapper(config.Calculator),
 		TargetSpellCoefficient: config.TargetSpellCoefficient,
+	}
+}
+func WrapBaseHealingConfig(config BaseHealingConfig, wrapper func(oldCalculator BaseHealingCalculator) BaseHealingCalculator) BaseHealingConfig {
+	return BaseHealingConfig{
+		Calculator: wrapper(config.Calculator),
 	}
 }
 
@@ -37,6 +54,9 @@ func BaseDamageFuncFlat(damage float64) BaseDamageCalculator {
 }
 func BaseDamageConfigFlat(damage float64) BaseDamageConfig {
 	return BuildBaseDamageConfig(BaseDamageFuncFlat(damage), 0)
+}
+func BaseHealingConfigFlat(healing float64) BaseHealingConfig {
+	return BuildBaseHealingConfig(BaseDamageFuncFlat(healing))
 }
 
 // Creates a BaseDamageCalculator function with a single damage roll.
@@ -52,6 +72,9 @@ func BaseDamageFuncRoll(minFlatDamage float64, maxFlatDamage float64) BaseDamage
 }
 func BaseDamageConfigRoll(minFlatDamage float64, maxFlatDamage float64) BaseDamageConfig {
 	return BuildBaseDamageConfig(BaseDamageFuncRoll(minFlatDamage, maxFlatDamage), 0)
+}
+func BaseHealingConfigRoll(minFlatHealing float64, maxFlatHealing float64) BaseHealingConfig {
+	return BuildBaseHealingConfig(BaseDamageFuncRoll(minFlatHealing, maxFlatHealing))
 }
 
 func BaseDamageFuncMagic(minFlatDamage float64, maxFlatDamage float64, spellCoefficient float64) BaseDamageCalculator {
