@@ -86,3 +86,31 @@ func (dk *Deathknight) registerPlagueStrikeSpell() {
 	dk.PlagueStrikeOhHit = dk.newPlagueStrikeSpell(false, nil)
 	dk.PlagueStrike = dk.PlagueStrikeMhHit
 }
+func (dk *Deathknight) registerDrwPlagueStrikeSpell() {
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 378.0, 1.0, 0.5, true)
+	outbreakBonus := 1.0 + 0.1*float64(dk.Talents.Outbreak)
+
+	dk.RuneWeapon.PlagueStrike = dk.RuneWeapon.RegisterSpell(core.SpellConfig{
+		ActionID:    PlagueStrikeActionID.WithTag(1),
+		SpellSchool: core.SpellSchoolPhysical,
+		Flags:       core.SpellFlagMeleeMetrics,
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+			ProcMask:         core.ProcMaskMeleeMHSpecial,
+			BonusCritRating:  (dk.annihilationCritBonus() + dk.scourgebornePlateCritBonus() + dk.viciousStrikesCritChanceBonus()) * core.CritRatingPerCritChance,
+			DamageMultiplier: outbreakBonus,
+			ThreatMultiplier: 1,
+			OutcomeApplier:   dk.RuneWeapon.OutcomeFuncMeleeWeaponSpecialHitAndCrit(dk.RuneWeapon.MeleeCritMultiplier(1.0, 0.0)),
+			BaseDamage: core.BaseDamageConfig{
+				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+					return weaponBaseDamage(sim, hitEffect, spell)
+				},
+				TargetSpellCoefficient: 1,
+			},
+			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if spellEffect.Landed() {
+					dk.RuneWeapon.BloodPlagueSpell.Cast(sim, spellEffect.Target)
+				}
+			},
+		}),
+	})
+}

@@ -155,7 +155,31 @@ export const BloodTapInput = InputHelpers.makeRotationEnumInput<Spec.SpecDeathkn
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 })
 
-export const OblitDelayDuration = InputHelpers.makeRotationNumberInput<Spec.SpecDeathknight>({
+export const UseAMSInput = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
+	fieldName: 'useAms',
+	label: 'Use AMS',
+	labelTooltip: 'Use AMS around predicted damage for a RP gain.',
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().howlingBlast,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+});
+
+export const AvgAMSSuccessRateInput = InputHelpers.makeRotationNumberInput<Spec.SpecDeathknight>({
+	fieldName: 'avgAmsSuccessRate',
+	label: 'Avg AMS Success %',
+	labelTooltip: 'Chance for damage to be taken during the 5 second window of AMS.',
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getRotation().useAms == true,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+});
+
+export const AvgAMSHitInput = InputHelpers.makeRotationNumberInput<Spec.SpecDeathknight>({
+	fieldName: 'avgAmsHit',
+	label: 'Avg AMS Hit',
+	labelTooltip: 'How much on average (+-10%) the character is hit for when AMS is successful.',
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getRotation().useAms == true,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+});
+
+export const OblitDelayDurationInput = InputHelpers.makeRotationNumberInput<Spec.SpecDeathknight>({
 	fieldName: 'oblitDelayDuration',
 	label: 'Oblit Delay (ms)',
 	labelTooltip: 'How long a FS/HB/HW can delay a Oblit by.',
@@ -173,7 +197,10 @@ export const DeathKnightRotationConfig = {
 		StartingPresenceInput,
 		BloodRuneFillerInput,
 		UseDeathAndDecay,
-		OblitDelayDuration,
+		OblitDelayDurationInput,
+		UseAMSInput,
+		AvgAMSSuccessRateInput,
+		AvgAMSHitInput,
 		//SetDeathAndDecayPrio,
 	],
 };

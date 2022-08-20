@@ -169,6 +169,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 					Presets.FrostUnholyTalents,
 					Presets.UnholyDualWieldTalents,
 					Presets.Unholy2HTalents,
+					Presets.BloodTalents,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
@@ -179,6 +180,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 					Presets.P1_UNHOLY_DW_BIS_PRESET,
 					Presets.P1_UNHOLY_2H_PRERAID_PRESET,
 					Presets.P1_UNHOLY_2H_BIS_PRESET,
+					Presets.P1_BLOOD_BIS_PRESET,
 				],
 			},
 		});

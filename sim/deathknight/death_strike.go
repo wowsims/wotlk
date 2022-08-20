@@ -2,6 +2,7 @@ package deathknight
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -81,10 +82,37 @@ func (dk *Deathknight) registerDeathStrikeSpell() {
 	dk.DeathStrikeMhHit = dk.newDeathStrikeSpell(true, func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 		dk.LastOutcome = spellEffect.Outcome
 
-		healingAmount := 0.05 * dk.countActiveDiseases(dk.CurrentTarget) * dk.MaxHealth() * (1.0 + 0.5*float64(dk.Talents.ImprovedDeathStrike))
+		healingAmount := 0.05 * dk.dkCountActiveDiseases(dk.CurrentTarget) * dk.MaxHealth() * (1.0 + 0.5*float64(dk.Talents.ImprovedDeathStrike)) * (1.0 + core.TernaryFloat64(dk.VampiricBloodAura.IsActive(), 0.35, 0.0))
 		dk.GainHealth(sim, healingAmount, healthMetrics)
 
 		dk.threatOfThassarianProc(sim, spellEffect, dk.DeathStrikeMhHit, dk.DeathStrikeOhHit)
 	})
 	dk.DeathStrike = dk.DeathStrikeMhHit
+}
+
+func (dk *Deathknight) registerDrwDeathStrikeSpell() {
+	bonusBaseDamage := dk.sigilOfAwarenessBonus(dk.DeathStrike)
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 297.0+bonusBaseDamage, 1.0, 0.75, true)
+
+	hasGlyph := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDeathStrike)
+
+	dk.RuneWeapon.DeathStrike = dk.RuneWeapon.RegisterSpell(core.SpellConfig{
+		ActionID:    DeathStrikeActionID.WithTag(1),
+		SpellSchool: core.SpellSchoolPhysical,
+		Flags:       core.SpellFlagMeleeMetrics,
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+			ProcMask:         core.ProcMaskMeleeSpecial,
+			BonusCritRating:  (dk.annihilationCritBonus() + dk.improvedDeathStrikeCritBonus()) * core.CritRatingPerCritChance,
+			DamageMultiplier: dk.improvedDeathStrikeDamageBonus(),
+			ThreatMultiplier: 1,
+			OutcomeApplier:   dk.RuneWeapon.OutcomeFuncMeleeWeaponSpecialHitAndCrit(dk.RuneWeapon.MeleeCritMultiplier(1.0, 0.0)),
+			BaseDamage: core.BaseDamageConfig{
+				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+					bonusDamage := core.TernaryFloat64(hasGlyph, 1.0+core.MinFloat(0.25, dk.CurrentRunicPower()/100.0), 1.0)
+					return weaponBaseDamage(sim, hitEffect, spell) * bonusDamage
+				},
+				TargetSpellCoefficient: 1,
+			},
+		}),
+	})
 }

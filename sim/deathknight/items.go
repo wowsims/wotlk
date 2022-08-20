@@ -87,7 +87,8 @@ var ItemSetDarkrunedPlate = core.NewItemSet(core.ItemSet{
 })
 
 var ItemSetThassariansBattlegear = core.NewItemSet(core.ItemSet{
-	Name: "Thassarian's Battlegear",
+	Name:            "Thassarian's Battlegear",
+	AlternativeName: "Koltira's Battlegear",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
 			// Your Blood Strike and Heart Strike abilities have a
@@ -113,7 +114,7 @@ func (dk *Deathknight) registerThassariansBattlegearProc() {
 	core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
 		Label: "Unholy Might",
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if !icd.IsReady(sim) || (spell != dk.BloodStrike.Spell /* && spell != dk.HeartStrike*/) {
+			if !icd.IsReady(sim) || (spell != dk.BloodStrike.Spell && spell != dk.HeartStrike.Spell) {
 				return
 			}
 
@@ -126,7 +127,8 @@ func (dk *Deathknight) registerThassariansBattlegearProc() {
 }
 
 var ItemSetThassariansPlate = core.NewItemSet(core.ItemSet{
-	Name: "Thassarian's Plate",
+	Name:            "Thassarian's Plate",
+	AlternativeName: "Koltira's Plate",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
 			// Decreases the cooldown on your Dark Command ability by 2 sec and
@@ -179,9 +181,9 @@ func (dk *Deathknight) scourgelordsBattlegearDamageBonus(spell *RuneSpell) float
 
 	if spell == dk.Obliterate || spell == dk.ScourgeStrike {
 		return 1.1
-	} /* else if spell == dk.HeartStrike {
+	} else if spell == dk.HeartStrike {
 		return 1.07
-	}*/
+	}
 	return 1.0
 }
 
