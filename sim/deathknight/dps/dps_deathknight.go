@@ -54,6 +54,12 @@ func NewDpsDeathknight(character core.Character, player proto.Player) *DpsDeathk
 		Rotation: *dk.Rotation,
 	}
 
+	dpsDk.EnableAutoAttacks(dpsDk, core.AutoAttackOptions{
+		MainHand:       dpsDk.WeaponFromMainHand(dpsDk.DefaultMeleeCritMultiplier()),
+		OffHand:        dpsDk.WeaponFromOffHand(dpsDk.DefaultMeleeCritMultiplier()),
+		AutoSwingMelee: true,
+	})
+
 	dpsDk.sr.dk = dpsDk
 	dpsDk.ur.dk = dpsDk
 

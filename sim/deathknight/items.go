@@ -11,7 +11,7 @@ import (
 
 // TODO: T7 Tank missing Icebound Fortitude
 // TODO: T8 Dps missing Heart Strike
-// TODO: T8 Tank missing Rune Strike and AMS
+// TODO: T8 Tank missing AMS
 // TODO: T9 Dps missing Heart Strike
 // TODO: T9 Tank missing Heart Strike and Vampiric Blood and Dark Command
 // TODO: T10 Dps missing Heart Strike
@@ -85,6 +85,10 @@ var ItemSetDarkrunedPlate = core.NewItemSet(core.ItemSet{
 		},
 	},
 })
+
+func (dk *Deathknight) darkrunedPlateRuneStrikeDamageBonus() float64 {
+	return core.TernaryFloat64(dk.HasSetBonus(ItemSetDarkrunedPlate, 2), 1.1, 1.0)
+}
 
 var ItemSetThassariansBattlegear = core.NewItemSet(core.ItemSet{
 	Name:            "Thassarian's Battlegear",
