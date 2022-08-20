@@ -191,7 +191,7 @@ func (spell *Spell) wrapCastFuncHaste(config CastConfig, onCastComplete CastFunc
 
 	return func(sim *Simulation, target *Unit) {
 		spell.CurCast.GCD = spell.Unit.ApplyCastSpeed(spell.CurCast.GCD)
-		spell.CurCast.CastTime = spell.Unit.ApplyCastSpeed(spell.CurCast.CastTime)
+		spell.CurCast.CastTime = spell.Unit.ApplyCastSpeedForSpell(spell.CurCast.CastTime, spell)
 		spell.CurCast.ChannelTime = spell.Unit.ApplyCastSpeed(spell.CurCast.ChannelTime)
 
 		onCastComplete(sim, target)

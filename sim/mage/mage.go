@@ -72,6 +72,7 @@ type Mage struct {
 	ArcaneExplosion *core.Spell
 	ArcaneMissiles  *core.Spell
 	Blizzard        *core.Spell
+	DeepFreeze      *core.Spell
 	Ignite          *core.Spell
 	LivingBomb      *core.Spell
 	Fireball        *core.Spell
@@ -102,6 +103,11 @@ type Mage struct {
 	ScorchAura         *core.Aura
 	HotStreakAura      *core.Aura
 	CombustionAura     *core.Aura
+	FingersOfFrostAura *core.Aura
+	BrainFreezeAura    *core.Aura
+
+	// Used to prevent utiliizing Brain Freeze immediately after proccing it.
+	BrainFreezeActivatedAt time.Duration
 
 	IgniteTickDamage []float64
 
@@ -155,6 +161,7 @@ func (mage *Mage) Initialize() {
 	mage.registerArcaneExplosionSpell()
 	mage.registerArcaneMissilesSpell()
 	mage.registerBlizzardSpell()
+	mage.registerDeepFreezeSpell()
 	mage.registerFireballSpell()
 	mage.registerFireBlastSpell()
 	mage.registerFlamestrikeSpell()

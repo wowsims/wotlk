@@ -112,9 +112,8 @@ func (we *WaterElemental) OnGCDReady(sim *core.Simulation) {
 	}
 
 	if success := spell.Cast(sim, we.CurrentTarget); !success {
-		// If water ele has gone OOM then there won't be enough time left for meaningful
-		// regen to occur before the ele expires. So just murder itself.
-		we.Disable(sim)
+		we.Metrics.MarkOOM(&we.Unit, sim.CurrentTime)
+		we.WaitForMana(sim, spell.CurCast.Cost)
 	}
 }
 
@@ -122,7 +121,7 @@ func (we *WaterElemental) OnGCDReady(sim *core.Simulation) {
 var waterElementalBaseStats = stats.Stats{
 	stats.Intellect:  100,
 	stats.SpellPower: 300,
-	stats.Mana:       2000,
+	stats.Mana:       4000,
 	stats.SpellHit:   3 * core.SpellHitRatingPerHitChance,
 	stats.SpellCrit:  8 * core.CritRatingPerCritChance,
 }

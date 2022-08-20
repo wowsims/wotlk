@@ -38,24 +38,34 @@ var FireTalents = &proto.MageTalents{
 }
 
 var FrostTalents = &proto.MageTalents{
-	ArcaneFocus:         5,
+	ArcaneSubtlety:      2,
+	ArcaneFocus:         3,
 	ArcaneConcentration: 5,
 	SpellImpact:         3,
-	ArcaneMeditation:    3,
+	StudentOfTheMind:    1,
+	FocusMagic:          true,
+	TormentTheWeak:      3,
 
 	ImprovedFrostbolt:    5,
+	IceFloes:             3,
+	IceShards:            3,
 	Precision:            3,
-	IceShards:            5,
+	PiercingIce:          3,
 	IcyVeins:             true,
-	PiercingIce:          5,
+	ArcticReach:          2,
 	FrostChanneling:      3,
+	Shatter:              3,
 	ColdSnap:             true,
-	ImprovedConeOfCold:   2,
-	IceFloes:             2,
-	WintersChill:         4,
+	WintersChill:         3,
+	IceBarrier:           true,
 	ArcticWinds:          5,
-	EmpoweredFrostbolt:   5,
+	EmpoweredFrostbolt:   2,
+	FingersOfFrost:       2,
+	BrainFreeze:          3,
 	SummonWaterElemental: true,
+	EnduringWinter:       3,
+	ChilledToTheBone:     5,
+	DeepFreeze:           true,
 }
 
 var ArcaneTalents = &proto.MageTalents{
