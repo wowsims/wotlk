@@ -18,20 +18,13 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) {
 
 	target := moonkin.CurrentTarget
 
+	// Eclipse stuff
 	lunarICD := moonkin.LunarICD.Timer.TimeToReady(sim)
 	solarICD := moonkin.SolarICD.Timer.TimeToReady(sim)
-
 	lunarIsActive := lunarICD > time.Millisecond*15000
 	solarIsActive := solarICD > time.Millisecond*15000
-
-	//lunarUptime := core.TernaryDuration(lunarIsActive, lunarICD-time.Millisecond*15000, 0)
-	//solarUptime := core.TernaryDuration(solarIsActive, solarICD-time.Millisecond*15000, 0)
-
-	// TODO Store those original values elsewhere and use them in the spells aswell
-	originalWrathDamageMultiplier := (1 + 0.02*float64(moonkin.Talents.Moonfury)) * (1 + 0.01*float64(moonkin.Talents.ImprovedInsectSwarm))
-	originalStarfireBonusCritRating := float64(2 * float64(moonkin.Talents.NaturesMajesty) * 45.91)
-	moonkin.Wrath.DamageMultiplier = core.TernaryFloat64(solarIsActive, originalWrathDamageMultiplier+0.4, originalWrathDamageMultiplier)
-	moonkin.Starfire.BonusCritRating = core.TernaryFloat64(lunarIsActive, originalStarfireBonusCritRating+40*core.CritRatingPerCritChance, originalStarfireBonusCritRating)
+	lunarUptime := core.TernaryDuration(lunarIsActive, lunarICD-time.Millisecond*15000, 0)
+	solarUptime := core.TernaryDuration(solarIsActive, solarICD-time.Millisecond*15000, 0)
 
 	moonfireUptime := moonkin.MoonfireDot.RemainingDuration(sim)
 	insectSwarmUptime := moonkin.InsectSwarmDot.RemainingDuration(sim)
@@ -55,6 +48,12 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) {
 	} else {
 		spell = moonkin.Starfire // Always fallback to Starfire for beautiful Classic memories
 	}
+
+	// "Applying" or "Dispelling" eclipse effects before casting
+	solarShouldStayActive := float64(solarUptime-spell.DefaultCast.CastTime) > 0
+	lunarShouldStayActive := float64(lunarUptime-spell.DefaultCast.CastTime) > 0
+	moonkin.Wrath.DamageMultiplier = core.TernaryFloat64(solarShouldStayActive, moonkin.OriginalWrathDamageMultiplier+0.4, moonkin.OriginalWrathDamageMultiplier)
+	moonkin.Starfire.BonusCritRating = core.TernaryFloat64(lunarShouldStayActive, moonkin.OriginalStarfireBonusCritRating+(40*core.CritRatingPerCritChance), moonkin.OriginalStarfireBonusCritRating)
 
 	if success := spell.Cast(sim, target); !success {
 		moonkin.WaitForMana(sim, spell.CurCast.Cost)

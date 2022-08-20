@@ -13,9 +13,11 @@ type Druid struct {
 
 	StartingForm DruidForm
 
-	RebirthUsed       bool
-	MaulRageThreshold float64
-	RebirthTiming     float64
+	RebirthUsed                     bool
+	MaulRageThreshold               float64
+	RebirthTiming                   float64
+	OriginalWrathDamageMultiplier   float64
+	OriginalStarfireBonusCritRating float64
 
 	DemoralizingRoar *core.Spell
 	FaerieFire       *core.Spell
@@ -118,7 +120,6 @@ func (druid *Druid) Initialize() {
 	druid.registerFaerieFireSpell()
 	druid.registerRebirthSpell()
 	druid.registerInnervateCD()
-	druid.setRebirthTiming()
 }
 
 func (druid *Druid) RegisterBalanceSpells() {

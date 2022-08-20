@@ -1,7 +1,6 @@
 package druid
 
 import (
-	"math/rand"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -36,8 +35,4 @@ func (druid *Druid) registerRebirthSpell() {
 			druid.RebirthUsed = true
 		},
 	})
-}
-
-func (druid *Druid) setRebirthTiming() {
-	druid.RebirthTiming = rand.Float64() * (druid.Env.BaseDuration.Seconds())
 }

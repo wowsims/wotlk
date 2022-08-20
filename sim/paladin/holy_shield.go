@@ -9,11 +9,9 @@ import (
 )
 
 func (paladin *Paladin) registerHolyShieldSpell() {
-	actionID := core.ActionID{SpellID: 27179}
+	actionID := core.ActionID{SpellID: 48952}
 
-	// numCharges := 4 + 2*paladin.Talents.ImprovedHolyShield
-	numCharges := int32(5) // TODO: fix
-	damage := 155.0
+	numCharges := int32(8)
 
 	procSpell := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID.WithTag(1),
@@ -26,7 +24,19 @@ func (paladin *Paladin) registerHolyShieldSpell() {
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1.35,
 
-			BaseDamage:     core.BaseDamageConfigMagicNoRoll(damage, 0.05),
+			BaseDamage: core.BaseDamageConfig{
+				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+					// TODO: examine this
+					scaling := hybridScaling{
+						AP: 0.07,
+						SP: 0.11,
+					}
+
+					damage := 274 + (scaling.AP * hitEffect.MeleeAttackPower(spell.Unit)) + (scaling.SP * hitEffect.SpellPower(spell.Unit, spell))
+
+					return damage
+				},
+			},
 			OutcomeApplier: paladin.OutcomeFuncMagicHitBinary(),
 		}),
 	})
@@ -53,7 +63,7 @@ func (paladin *Paladin) registerHolyShieldSpell() {
 		},
 	})
 
-	baseCost := 280.0
+	baseCost := paladin.BaseMana * 0.10
 
 	paladin.HolyShield = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -69,7 +79,7 @@ func (paladin *Paladin) registerHolyShieldSpell() {
 			},
 			CD: core.Cooldown{
 				Timer:    paladin.NewTimer(),
-				Duration: time.Second * 10,
+				Duration: time.Second * 8,
 			},
 		},
 
