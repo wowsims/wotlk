@@ -159,6 +159,12 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 			// Differ between judgements and other melee abilities.
 			if spell.Flags.Matches(SpellFlagPrimaryJudgement) {
 				onJudgementProc.Cast(sim, spellEffect.Target)
+				if paladin.Talents.JudgementsOfTheJust > 0 {
+					// Special JoJ talent behavior, procs swing seal on judgements
+					if dot.GetStacks() > 0 && spellEffect.Target == paladin.CurrentTarget {
+						onSpecialOrSwingProc.Cast(sim, spellEffect.Target)
+					}
+				}
 			} else {
 				if spellEffect.IsMelee() {
 					if dot.GetStacks() > 0 && spellEffect.Target == paladin.CurrentTarget {

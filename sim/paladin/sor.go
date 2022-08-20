@@ -110,8 +110,13 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 			// Differ between judgements and other melee abilities.
 			if spell.Flags.Matches(SpellFlagPrimaryJudgement) {
 				// SoR is the only seal that can proc off its own judgement.
-				onJudgementProc.Cast(sim, spellEffect.Target)
 				onSpecialOrSwingProc.Cast(sim, spellEffect.Target)
+				onJudgementProc.Cast(sim, spellEffect.Target)
+				if paladin.Talents.JudgementsOfTheJust > 0 {
+					// Special JoJ talent behavior, procs swing seal on judgements
+					// Yes, for SoR this means it proces TWICE on one judgement.
+					onSpecialOrSwingProc.Cast(sim, spellEffect.Target)
+				}
 			} else {
 				if spellEffect.IsMelee() {
 					onSpecialOrSwingProc.Cast(sim, spellEffect.Target)
