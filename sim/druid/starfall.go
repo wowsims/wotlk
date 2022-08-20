@@ -16,9 +16,6 @@ func (druid *Druid) registerStarfallSpell() {
 	baseCost := druid.BaseMana * 0.35
 	target := druid.CurrentTarget
 
-	numberOfTicks := core.TernaryInt(druid.Env.GetNumTargets() > 1, 20, 10)
-	tickLength := core.TernaryDuration(druid.Env.GetNumTargets() > 1, time.Millisecond*500, time.Millisecond*1000)
-
 	druid.Starfall = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 53201},
 		SpellSchool: core.SpellSchoolArcane,
@@ -75,6 +72,9 @@ func (druid *Druid) registerStarfallSpell() {
 		}),
 	})
 
+	numberOfTicks := core.TernaryInt(druid.Env.GetNumTargets() > 1, 20, 10)
+	tickLength := core.TernaryDuration(druid.Env.GetNumTargets() > 1, time.Millisecond*500, time.Millisecond*1000)
+
 	druid.StarfallDot = core.NewDot(core.Dot{
 		Spell: druid.Starfall,
 		Aura: target.RegisterAura(core.Aura{
@@ -87,9 +87,9 @@ func (druid *Druid) registerStarfallSpell() {
 			ProcMask:         core.ProcMaskPeriodicDamage,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-			IsPeriodic:       true,
+			IsPeriodic:       false,
 			BaseDamage:       core.BaseDamageConfigMagic(563, 653, 0.127),
-			OutcomeApplier:   druid.OutcomeFuncTick(),
+			OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, 1)),
 		}),
 	})
 
@@ -105,9 +105,9 @@ func (druid *Druid) registerStarfallSpell() {
 			ProcMask:         core.ProcMaskPeriodicDamage,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-			IsPeriodic:       true,
+			IsPeriodic:       false,
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(101, 0.127),
-			OutcomeApplier:   druid.OutcomeFuncTick(),
+			OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, 1)),
 		})),
 	})
 }
