@@ -92,6 +92,9 @@ type Deathknight struct {
 	HeartStrike       *RuneSpell
 	HeartStrikeOffHit *RuneSpell
 
+	RuneStrike     *RuneSpell
+	RuneStrikeAura *core.Aura
+
 	GhoulFrenzy *RuneSpell
 	// Dummy aura for timeline metrics
 	GhoulFrenzyAura *core.Aura
@@ -246,8 +249,8 @@ func (dk *Deathknight) Initialize() {
 	dk.registerHeartStrikeSpell()
 	dk.registerMarkOfBloodSpell()
 	dk.registerVampiricBloodSpell()
-
 	dk.registerAntiMagicShellSpell()
+	dk.registerRuneStrikeSpell()
 
 	dk.registerRaiseDeadCD()
 	dk.registerSummonGargoyleCD()
@@ -327,12 +330,6 @@ func NewDeathknight(character core.Character, talents proto.DeathknightTalents, 
 		func(sim *core.Simulation) {
 		},
 	)
-
-	dk.EnableAutoAttacks(dk, core.AutoAttackOptions{
-		MainHand:       dk.WeaponFromMainHand(dk.DefaultMeleeCritMultiplier()),
-		OffHand:        dk.WeaponFromOffHand(dk.DefaultMeleeCritMultiplier()),
-		AutoSwingMelee: true,
-	})
 
 	dk.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/62.5)
 	dk.AddStatDependency(stats.Agility, stats.Dodge, core.DodgeRatingPerDodgeChance/84.74576271)

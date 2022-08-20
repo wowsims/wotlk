@@ -60,18 +60,23 @@ func (rs *RuneSpell) OnOutcome(sim *core.Simulation, outcome core.HitOutcome) {
 	// misses just dont get spent as a way to avoid having to cancel regeneration PAs
 }
 
-func (rs *RuneSpell) CastInternal(sim *core.Simulation, target *core.Unit) bool {
+func (rs *RuneSpell) DoCost(sim *core.Simulation) {
+	cost := core.RuneCost(rs.Spell.CurCast.Cost)
+	// Spend now if there is no way to refund the spell
+	if !cost.HasRune() || !rs.Refundable {
+		rs.Spell.Unit.SpendRuneCost(sim, rs.Spell, cost)
+	}
+}
+
+func (rs *RuneSpell) castInternal(sim *core.Simulation, target *core.Unit) bool {
 	result := rs.Spell.Cast(sim, target)
 	if !result {
 		return result
 	}
 
 	rs.dk.LastCast = rs
-	cost := core.RuneCost(rs.Spell.CurCast.Cost)
-	// Spend now if there is no way to refund the spell
-	if !cost.HasRune() || !rs.Refundable {
-		rs.Spell.Unit.SpendRuneCost(sim, rs.Spell, cost)
-	}
+
+	rs.DoCost(sim)
 
 	if rs.onCast != nil {
 		rs.onCast(sim)
@@ -82,10 +87,10 @@ func (rs *RuneSpell) CastInternal(sim *core.Simulation, target *core.Unit) bool 
 
 func (rs *RuneSpell) Cast(sim *core.Simulation, target *core.Unit) bool {
 	if rs.CanCast == nil {
-		return rs.CastInternal(sim, target)
+		return rs.castInternal(sim, target)
 	} else {
 		if rs.CanCast(sim) {
-			return rs.CastInternal(sim, target)
+			return rs.castInternal(sim, target)
 		}
 		return false
 	}
