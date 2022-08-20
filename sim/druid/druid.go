@@ -120,7 +120,6 @@ func (druid *Druid) Initialize() {
 	druid.registerFaerieFireSpell()
 	druid.registerRebirthSpell()
 	druid.registerInnervateCD()
-	druid.setRebirthTiming()
 }
 
 func (druid *Druid) RegisterBalanceSpells() {
