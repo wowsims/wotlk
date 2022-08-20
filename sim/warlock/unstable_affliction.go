@@ -47,8 +47,9 @@ func (warlock *Warlock) registerUnstableAffSpell() {
 			Label:    "unstableaff-" + strconv.Itoa(int(warlock.Index)),
 			ActionID: core.ActionID{SpellID: 47843},
 		}),
-		NumberOfTicks: 5,
-		TickLength:    time.Second * 3,
+		NumberOfTicks:       5,
+		TickLength:          time.Second * 3,
+		AffectedByCastSpeed: true,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			DamageMultiplier:     baseAdditiveMultiplier,
 			ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),

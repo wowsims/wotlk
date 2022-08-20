@@ -37,6 +37,7 @@ type Priest struct {
 	ShadowWordPain  *core.Spell
 	MindBlast       *core.Spell
 	MindFlay        []*core.Spell
+	MindSear        []*core.Spell
 	ShadowWordDeath *core.Spell
 	Shadowfiend     *core.Spell
 	Smite           *core.Spell
@@ -48,6 +49,7 @@ type Priest struct {
 	DevouringPlagueDot *core.Dot
 	HolyFireDot        *core.Dot
 	MindFlayDot        []*core.Dot
+	MindSearDot        []*core.Dot
 	StarshardsDot      *core.Dot
 	VampiricTouchDot   *core.Dot
 
@@ -165,6 +167,23 @@ func (priest *Priest) Initialize() {
 		priest.newMindFlayDot(2),
 		priest.newMindFlayDot(3),
 	}
+	priest.MindSear = []*core.Spell{
+		nil, // So we can use # of ticks as the index
+		priest.newMindSearSpell(1),
+		priest.newMindSearSpell(2),
+		priest.newMindSearSpell(3),
+		priest.newMindSearSpell(4),
+		priest.newMindSearSpell(5),
+	}
+	priest.MindSearDot = []*core.Dot{
+		nil, // So we can use # of ticks as the index
+		priest.newMindSearDot(1),
+		priest.newMindSearDot(2),
+		priest.newMindSearDot(3),
+		priest.newMindSearDot(4),
+		priest.newMindSearDot(5),
+	}
+
 }
 
 func (priest *Priest) AddShadowWeavingStack(sim *core.Simulation) {
