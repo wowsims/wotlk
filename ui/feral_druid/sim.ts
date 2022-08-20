@@ -34,7 +34,6 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 			cssClass: 'feral-druid-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"Glyphs not implemented",
 				"Most Sets / new items aren't functional",
 				"Rotations need updating",
 				"Lacerate doesn't snapshot correctly",

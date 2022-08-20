@@ -4,11 +4,13 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (druid *Druid) getSavageRoarMultiplier() float64 {
-	return 1.3
+	glyphBonus := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfSavageRoar), 0.03, 0)
+	return 1.3 + glyphBonus
 }
 
 func (druid *Druid) registerSavageRoarSpell() {

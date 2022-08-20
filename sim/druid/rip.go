@@ -6,6 +6,7 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/items"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -13,6 +14,8 @@ func (druid *Druid) registerRipSpell() {
 	actionID := core.ActionID{SpellID: 49800}
 	baseCost := 30.0
 	refundAmount := baseCost * (0.4 * float64(druid.Talents.PrimalPrecision))
+
+	glyphBonus := core.TernaryInt(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfRip), 2, 0)
 
 	druid.Rip = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -54,7 +57,7 @@ func (druid *Druid) registerRipSpell() {
 			Label:    "Rip-" + strconv.Itoa(int(druid.Index)),
 			ActionID: actionID,
 		}),
-		NumberOfTicks: 6,
+		NumberOfTicks: 6 + glyphBonus,
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
@@ -75,4 +78,12 @@ func (druid *Druid) registerRipSpell() {
 			OutcomeApplier: druid.PrimalGoreOutcomeFuncTick(),
 		}),
 	})
+}
+
+func (druid *Druid) maxRipTicks() int {
+	// TODO: This should handle sets as well
+	base := 6
+	ripGlyphBonus := core.TernaryInt(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfRip), 2, 0)
+	shredGlyphBonus := core.TernaryInt(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfShred), 3, 0)
+	return base + ripGlyphBonus + shredGlyphBonus
 }

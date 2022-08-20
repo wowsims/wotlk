@@ -5,6 +5,7 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/items"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -59,6 +60,15 @@ func (druid *Druid) registerShredSpell() {
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					druid.AddComboPoints(sim, 1, spell.ComboPointMetrics())
+
+					if druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfShred) && druid.RipDot.IsActive() {
+						maxRipTicks := druid.maxRipTicks()
+						if druid.RipDot.NumberOfTicks < maxRipTicks {
+							druid.RipDot.NumberOfTicks += 1
+							druid.RipDot.RecomputeAuraDuration()
+						}
+					}
+
 				} else {
 					druid.AddEnergy(sim, refundAmount, druid.EnergyRefundMetrics)
 				}

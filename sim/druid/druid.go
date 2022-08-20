@@ -134,6 +134,13 @@ func (druid *Druid) MeleeCritMultiplier() float64 {
 	return druid.Character.MeleeCritMultiplier(primaryModifier, 0)
 }
 
+func (druid *Druid) HasMajorGlyph(glyph proto.DruidMajorGlyph) bool {
+	return druid.HasGlyph(int32(glyph))
+}
+func (druid *Druid) HasMinorGlyph(glyph proto.DruidMinorGlyph) bool {
+	return druid.HasGlyph(int32(glyph))
+}
+
 func (druid *Druid) Initialize() {
 	if druid.Talents.PrimalPrecision > 0 {
 		druid.PrimalPrecisionRecoveryMetrics = druid.NewEnergyMetrics(core.ActionID{SpellID: 48410})

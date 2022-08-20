@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (druid *Druid) registerBerserkCD() {
@@ -13,10 +14,12 @@ func (druid *Druid) registerBerserkCD() {
 
 	actionId := core.ActionID{SpellID: 50334}
 
+	glyphBonus := core.TernaryDuration(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfBerserk), time.Second*5.0, 0.0)
+
 	druid.BerserkAura = druid.RegisterAura(core.Aura{
 		Label:    "Berserk",
 		ActionID: actionId,
-		Duration: time.Second * 15,
+		Duration: (time.Second * 15) + glyphBonus,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			if druid.InForm(Cat) {
 				druid.PseudoStats.CostMultiplier /= 2.0
