@@ -249,8 +249,6 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		if warlock.Talents.DemonicPact > 0 {
 			warlock.Log(sim, "[Info] Demonic Pact Spell Power Average [%.0f]", warlock.DPSPAverage)
 		}
-		warlock.Log(sim, "[Info] KeepUpSEStacks [%.2f]", KeepUpSEStacks)
-		warlock.Log(sim, "[Info] check2 [%.2f]", (core.ShadowMasteryAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ShadowBolt.CurCast.CastTime && sim.GetRemainingDuration() > core.ShadowMasteryAura(warlock.CurrentTarget).Duration/2.))
 	}
 
 	if preset == proto.Warlock_Rotation_Automatic {
