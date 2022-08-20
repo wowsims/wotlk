@@ -55,8 +55,6 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) {
 	moonkin.Wrath.DamageMultiplier = core.TernaryFloat64(solarShouldStayActive, moonkin.OriginalWrathDamageMultiplier+0.4, moonkin.OriginalWrathDamageMultiplier)
 	moonkin.Starfire.BonusCritRating = core.TernaryFloat64(lunarShouldStayActive, moonkin.OriginalStarfireBonusCritRating+(40*core.CritRatingPerCritChance), moonkin.OriginalStarfireBonusCritRating)
 
-	//spell.BonusCritRating += core.TernaryFloat64(target.HasActiveAura("Faerie Fire"), float64(moonkin.Talents.ImprovedFaerieFire)*1*core.CritRatingPerCritChance, 0)
-
 	if success := spell.Cast(sim, target); !success {
 		moonkin.WaitForMana(sim, spell.CurCast.Cost)
 	}

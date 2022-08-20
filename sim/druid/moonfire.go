@@ -12,6 +12,7 @@ import (
 func (druid *Druid) registerMoonfireSpell() {
 	actionID := core.ActionID{SpellID: 26988}
 	baseCost := 0.21 * druid.BaseMana
+	iffCritBonus := core.TernaryFloat64(druid.CurrentTarget.HasActiveAura("Improved Faerie Fire"), float64(druid.Talents.ImprovedFaerieFire)*1*core.CritRatingPerCritChance, 0)
 
 	druid.Moonfire = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -29,7 +30,7 @@ func (druid *Druid) registerMoonfireSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:             core.ProcMaskSpellDamage,
-			BonusSpellCritRating: float64(druid.Talents.ImprovedMoonfire) * 5 * core.CritRatingPerCritChance,
+			BonusSpellCritRating: float64(druid.Talents.ImprovedMoonfire)*5*core.CritRatingPerCritChance + iffCritBonus,
 			DamageMultiplier:     1 * (1 + 0.05*float64(druid.Talents.ImprovedMoonfire)) * (1 + 0.02*float64(druid.Talents.Moonfury)),
 			ThreatMultiplier:     1,
 			BaseDamage:           core.BaseDamageConfigMagic(305, 357, 0.15),
