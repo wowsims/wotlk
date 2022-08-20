@@ -96,7 +96,13 @@ func (mage *Mage) doFireRotation(sim *core.Simulation) *core.Spell {
 }
 
 func (mage *Mage) doFrostRotation(sim *core.Simulation) *core.Spell {
-	return mage.Frostbolt
+	if mage.FingersOfFrostAura.IsActive() && mage.DeepFreeze != nil && mage.DeepFreeze.IsReady(sim) {
+		return mage.DeepFreeze
+	} else if mage.BrainFreezeAura.IsActive() && sim.CurrentTime != mage.BrainFreezeActivatedAt {
+		return mage.FrostfireBolt
+	} else {
+		return mage.Frostbolt
+	}
 }
 
 func (mage *Mage) doAoeRotation(sim *core.Simulation) *core.Spell {

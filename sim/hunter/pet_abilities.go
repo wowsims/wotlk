@@ -317,7 +317,7 @@ func (hp *HunterPet) newFireBreath() PetAbility {
 		TickLength:    time.Second * 1,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1,
+			DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
 			ThreatMultiplier: 1,
 			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigRoll(44/2, 56/2)),
 			OutcomeApplier:   hp.OutcomeFuncTick(),
@@ -509,7 +509,7 @@ func (hp *HunterPet) newPin() PetAbility {
 		TickLength:    time.Second * 1,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1,
+			DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
 			ThreatMultiplier: 1,
 			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(112/4, 144/4, 0.07)),
 			OutcomeApplier:   hp.OutcomeFuncTick(),
@@ -566,7 +566,7 @@ func (hp *HunterPet) newPoisonSpit() PetAbility {
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1,
+			DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
 			ThreatMultiplier: 1,
 			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(104/4, 136/4, 0.049/4)),
 			OutcomeApplier:   hp.OutcomeFuncTick(),
@@ -609,7 +609,7 @@ func (hp *HunterPet) newRake() PetAbility {
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1,
+			DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
 			ThreatMultiplier: 1,
 			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(19, 25, 0.0175)),
 			OutcomeApplier:   hp.OutcomeFuncTick(),
@@ -692,7 +692,7 @@ func (hp *HunterPet) newSavageRend() PetAbility {
 		TickLength:    time.Second * 5,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1,
+			DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
 			ThreatMultiplier: 1,
 			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(21, 27, 0.07)),
 			OutcomeApplier:   hp.OutcomeFuncTick(),
@@ -757,7 +757,7 @@ func (hp *HunterPet) newScorpidPoison() PetAbility {
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1,
+			DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
 			ThreatMultiplier: 1,
 			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(100/5, 130/5, 0.07/5)),
 			OutcomeApplier:   hp.OutcomeFuncTick(),
@@ -826,7 +826,7 @@ func (hp *HunterPet) newSpiritStrike() PetAbility {
 		TickLength:    time.Second * 6,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1,
+			DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
 			ThreatMultiplier: 1,
 			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(49, 65, 0.04)),
 			OutcomeApplier:   hp.OutcomeFuncTick(),
@@ -883,7 +883,7 @@ func (hp *HunterPet) newSporeCloud() PetAbility {
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncAOESnapshot(hp.Env, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1,
+			DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
 			ThreatMultiplier: 1,
 			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(22, 28, 0.049/3)),
 			OutcomeApplier:   hp.OutcomeFuncTick(),
@@ -1004,7 +1004,7 @@ func (hp *HunterPet) newVenomWebSpray() PetAbility {
 		TickLength:    time.Second * 1,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1,
+			DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
 			ThreatMultiplier: 1,
 			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(46, 46, 0.07)),
 			OutcomeApplier:   hp.OutcomeFuncTick(),
