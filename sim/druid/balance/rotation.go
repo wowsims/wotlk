@@ -18,12 +18,11 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) {
 
 	target := moonkin.CurrentTarget
 
+	// Eclipse stuff
 	lunarICD := moonkin.LunarICD.Timer.TimeToReady(sim)
 	solarICD := moonkin.SolarICD.Timer.TimeToReady(sim)
-
 	lunarIsActive := lunarICD > time.Millisecond*15000
 	solarIsActive := solarICD > time.Millisecond*15000
-
 	lunarUptime := core.TernaryDuration(lunarIsActive, lunarICD-time.Millisecond*15000, 0)
 	solarUptime := core.TernaryDuration(solarIsActive, solarICD-time.Millisecond*15000, 0)
 
@@ -50,7 +49,7 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) {
 		spell = moonkin.Starfire // Always fallback to Starfire for beautiful Classic memories
 	}
 
-	// "Dispelling" eclipse effects before casting
+	// "Applying" or "Dispelling" eclipse effects before casting
 	solarShouldStayActive := float64(solarUptime-spell.DefaultCast.CastTime) > 0
 	lunarShouldStayActive := float64(lunarUptime-spell.DefaultCast.CastTime) > 0
 	moonkin.Wrath.DamageMultiplier = core.TernaryFloat64(solarShouldStayActive, moonkin.OriginalWrathDamageMultiplier+0.4, moonkin.OriginalWrathDamageMultiplier)

@@ -81,4 +81,5 @@ func (moonkin *BalanceDruid) Reset(sim *core.Simulation) {
 		moonkin.manaTracker.Reset()
 	}
 	moonkin.Druid.Reset(sim)
+	moonkin.RebirthTiming = moonkin.Env.BaseDuration.Seconds() * sim.RandomFloat("Rebirth Timing")
 }
