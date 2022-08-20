@@ -242,7 +242,7 @@ func (druid *Druid) applyPrimalFury() {
 					}
 				}
 			} else if druid.InForm(Cat) {
-				if spell == druid.Mangle || spell == druid.Shred || spell == druid.Rake {
+				if druid.IsMangle(spell) || spell == druid.Shred || spell == druid.Rake {
 					if spellEffect.Outcome.Matches(core.OutcomeCrit) {
 						if procChance == 1 || sim.RandomFloat("Primal Fury") < procChance {
 							druid.AddComboPoints(sim, 1, cpMetrics)

@@ -82,7 +82,11 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) bool {
 			(ripDebuff && sim.Duration-ripEnd < RipEndThresh)))
 
 	mangleNow := !ripNow && !mangleDebuff
-	mangleCost := cat.Mangle.DefaultCast.Cost
+
+	mangleCost := 45.0
+	if cat.MangleCat != nil {
+		mangleCost = cat.MangleCat.DefaultCast.Cost
+	}
 
 	biteBeforeRip := ripDebuff && rotation.UseBite &&
 		ripEnd-sim.CurrentTime >= BiteTime
@@ -121,9 +125,9 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) bool {
 		if ripNow && (energy >= 30 || omenProc) {
 			cat.Metrics.MarkOOM(&cat.Unit, time.Second)
 			return cat.Rip.Cast(sim, cat.CurrentTarget)
-		} else if mangleNow && (energy >= mangleCost || omenProc) {
+		} else if mangleNow && cat.CanMangleCat() {
 			cat.Metrics.MarkOOM(&cat.Unit, time.Second)
-			return cat.Mangle.Cast(sim, cat.CurrentTarget)
+			return cat.MangleCat.Cast(sim, cat.CurrentTarget)
 		} else if biteNow && (energy >= 35 || omenProc) {
 			cat.Metrics.MarkOOM(&cat.Unit, time.Second)
 			return cat.FerociousBite.Cast(sim, cat.CurrentTarget)
@@ -197,8 +201,8 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) bool {
 	} else if mangleNow {
 		if energy < mangleCost-20 && !ripNext {
 			cat.shift(sim)
-		} else if energy >= mangleCost || omenProc {
-			return cat.Mangle.Cast(sim, cat.CurrentTarget)
+		} else if cat.CanMangleCat() {
+			return cat.MangleCat.Cast(sim, cat.CurrentTarget)
 		} else if timeToNextTick > MaxWaitTime {
 			cat.shift(sim)
 		}
@@ -215,14 +219,15 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) bool {
 		if energy >= 2*mangleCost-20 && energy < 22+mangleCost &&
 			timeToNextTick <= 1.0*time.Second &&
 			rotation.UseMangleTrick &&
-			(!rotation.UseRakeTrick || mangleCost == 35) {
-			return cat.Mangle.Cast(sim, cat.CurrentTarget)
+			(!rotation.UseRakeTrick || mangleCost == 35) &&
+			cat.CanMangleCat() {
+			return cat.MangleCat.Cast(sim, cat.CurrentTarget)
 		}
 		if energy >= 42 {
 			return cat.Shred.Cast(sim, cat.CurrentTarget)
 		}
-		if energy >= mangleCost && timeToNextTick > time.Second+cat.latency {
-			return cat.Mangle.Cast(sim, cat.CurrentTarget)
+		if cat.CanMangleCat() && timeToNextTick > time.Second+cat.latency {
+			return cat.MangleCat.Cast(sim, cat.CurrentTarget)
 		}
 		if timeToNextTick > MaxWaitTime {
 			cat.shift(sim)

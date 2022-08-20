@@ -8,17 +8,17 @@ import (
 )
 
 func (druid *Druid) registerMangleBearSpell() {
+	druid.MangleAura = core.MangleAura(druid.CurrentTarget)
+
 	if !druid.Talents.Mangle {
 		return
 	}
-
-	druid.MangleAura = core.MangleAura(druid.CurrentTarget)
 
 	cost := 20.0 - float64(druid.Talents.Ferocity)
 	refundAmount := cost * 0.8
 	durReduction := (0.5) * float64(druid.Talents.ImprovedMangle)
 
-	druid.Mangle = druid.RegisterSpell(core.SpellConfig{
+	druid.MangleBear = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48564},
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
@@ -65,16 +65,16 @@ func (druid *Druid) registerMangleBearSpell() {
 }
 
 func (druid *Druid) registerMangleCatSpell() {
+	druid.MangleAura = core.MangleAura(druid.CurrentTarget)
+
 	if !druid.Talents.Mangle {
 		return
 	}
 
-	druid.MangleAura = core.MangleAura(druid.CurrentTarget)
-
 	cost := 45.0 - (2.0 * float64(druid.Talents.ImprovedMangle)) - float64(druid.Talents.Ferocity) - core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartHarness, 2), 5.0, 0)
 	refundAmount := cost * 0.8
 
-	druid.Mangle = druid.RegisterSpell(core.SpellConfig{
+	druid.MangleCat = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48566},
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
@@ -113,21 +113,18 @@ func (druid *Druid) registerMangleCatSpell() {
 }
 
 func (druid *Druid) CanMangleBear(sim *core.Simulation) bool {
-	return druid.Mangle != nil && druid.CurrentRage() >= druid.Mangle.DefaultCast.Cost && druid.Mangle.IsReady(sim)
+	return druid.MangleBear != nil && druid.InForm(Bear) && (druid.CurrentRage() >= druid.MangleBear.DefaultCast.Cost || druid.ClearcastingAura.IsActive()) && druid.MangleBear.IsReady(sim)
 }
 
 func (druid *Druid) CanMangleCat() bool {
-	return druid.Mangle != nil && druid.CurrentEnergy() >= druid.Mangle.DefaultCast.Cost
+	return druid.MangleCat != nil && druid.InForm(Cat) && (druid.CurrentEnergy() >= druid.MangleCat.DefaultCast.Cost || druid.ClearcastingAura.IsActive())
 }
 
-func (druid *Druid) ShouldMangle(sim *core.Simulation) bool {
-	if druid.Mangle == nil {
-		return false
+func (druid *Druid) IsMangle(spell *core.Spell) bool {
+	if druid.MangleBear != nil && druid.MangleBear == spell {
+		return true
+	} else if druid.MangleCat != nil && druid.MangleCat == spell {
+		return true
 	}
-
-	if !druid.Mangle.IsReady(sim) {
-		return false
-	}
-
-	return druid.CurrentTarget.ShouldRefreshAuraWithTagAtPriority(sim, core.BleedDamageAuraTag, druid.MangleAura.Priority, time.Second*3)
+	return false
 }

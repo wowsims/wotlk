@@ -26,7 +26,8 @@ type Druid struct {
 	Hurricane        *core.Spell
 	InsectSwarm      *core.Spell
 	Lacerate         *core.Spell
-	Mangle           *core.Spell
+	MangleBear       *core.Spell
+	MangleCat        *core.Spell
 	Maul             *core.Spell
 	Moonfire         *core.Spell
 	Rebirth          *core.Spell
@@ -152,26 +153,22 @@ func (druid *Druid) RegisterBalanceSpells() {
 	druid.registerStarfallSpell()
 }
 
-func (druid *Druid) RegisterBearSpells(maulRageThreshold float64) {
-	druid.registerBerserkCD()
-	druid.registerBearFormSpell()
-	druid.registerEnrageSpell()
-	druid.registerMangleBearSpell()
-	druid.registerMaulSpell(maulRageThreshold)
-	druid.registerLacerateSpell()
-	druid.registerSwipeSpell()
-	druid.registerDemoralizingRoarSpell()
-}
-
-func (druid *Druid) RegisterCatSpells() {
+func (druid *Druid) RegisterFeralSpells(maulRageThreshold float64) {
 	druid.registerBerserkCD()
 	druid.registerCatFormSpell()
+	druid.registerBearFormSpell()
+	druid.registerDemoralizingRoarSpell()
+	druid.registerEnrageSpell()
 	druid.registerFerociousBiteSpell()
+	druid.registerMangleBearSpell()
 	druid.registerMangleCatSpell()
+	druid.registerMaulSpell(maulRageThreshold)
+	druid.registerLacerateSpell()
 	druid.registerRakeSpell()
 	druid.registerRipSpell()
 	druid.registerSavageRoarSpell()
 	druid.registerShredSpell()
+	druid.registerSwipeSpell()
 	druid.registerTigersFurySpell()
 }
 
