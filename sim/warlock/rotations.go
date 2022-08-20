@@ -42,7 +42,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	if warlock.Talents.DemonicPact > 0 && sim.CurrentTime != 0 {
 		// We are integrating the Demonic Pact SP bonus over the course of the simulation to get the average
 		warlock.DPSPAverage *= float64(warlock.PreviousTime)
-		warlock.DPSPAverage += core.DemonicPactAura(warlock.GetCharacter(), 0).Priority * float64(sim.CurrentTime - warlock.PreviousTime)
+		warlock.DPSPAverage += core.DemonicPactAura(warlock.GetCharacter(), 0).Priority * float64(sim.CurrentTime-warlock.PreviousTime)
 		warlock.DPSPAverage /= float64(sim.CurrentTime)
 		warlock.PreviousTime = sim.CurrentTime
 	}
@@ -95,19 +95,19 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 
 	nextCD := core.NeverExpires
 	if rotationType == proto.Warlock_Rotation_Affliction {
-		hauntTravelTime := time.Duration(float64(warlock.DistanceFromTarget)/20)*time.Second
+		hauntTravelTime := time.Duration(float64(warlock.DistanceFromTarget)/20) * time.Second
 		hauntCastTime := warlock.ApplyCastSpeed(warlock.Haunt.DefaultCast.CastTime)
 		UACastTime := warlock.ApplyCastSpeed(warlock.UnstableAff.DefaultCast.CastTime)
 		allCDs = []time.Duration{
-			core.MaxDuration(0, warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim) - hauntCastTime - hauntTravelTime),
-			core.MaxDuration(0, warlock.UnstableAffDot.RemainingDuration(sim) - UACastTime),
+			core.MaxDuration(0, warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim)-hauntCastTime-hauntTravelTime),
+			core.MaxDuration(0, warlock.UnstableAffDot.RemainingDuration(sim)-UACastTime),
 			core.MaxDuration(0, warlock.CurseOfAgonyDot.RemainingDuration(sim)),
 		}
 		if sim.Log != nil {
 			// warlock.Log(sim, "Haunt[%d]", allCDs[0].Seconds())
 			// warlock.Log(sim, "UA[%d]", allCDs[1].Seconds())
 			// warlock.Log(sim, "Agony[%d]", allCDs[2].Seconds())
-			// warlock.Log(sim, "nextBigCD1[%d]", nextBigCD.Seconds()) 
+			// warlock.Log(sim, "nextBigCD1[%d]", nextBigCD.Seconds())
 			// warlock.Log(sim, "SE stacks[%d]", warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).GetStacks())
 			// warlock.Log(sim, "SE time[%d]", warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim).Seconds())
 			// warlock.Log(sim, "Haunt RemainingDuration [%d]", warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim).Seconds())
@@ -182,16 +182,16 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	case proto.Warlock_Rotation_Doom:
 		if warlock.CurseOfDoom.CD.IsReady(sim) && sim.GetRemainingDuration() > time.Minute {
 			spell = warlock.CurseOfDoom
-		} else if sim.GetRemainingDuration() > time.Second*24 && !warlock.CurseOfAgonyDot.IsActive() && !warlock.CurseOfDoomDot.IsActive() {
+		} else if sim.GetRemainingDuration() > time.Second*12 && !warlock.CurseOfAgonyDot.IsActive() && !warlock.CurseOfDoomDot.IsActive() {
 			spell = warlock.CurseOfAgony
 		}
 	case proto.Warlock_Rotation_Agony:
 		if rotationType == proto.Warlock_Rotation_Affliction {
-			if sim.GetRemainingDuration() > time.Second*24 && allCDs[2] == 0 && allCDs[0] > 0 && allCDs[1] > 0 && warlock.CorruptionDot.IsActive() {
+			if sim.GetRemainingDuration() > time.Second*12 && allCDs[2] == 0 && (!warlock.Haunt.CD.IsReady(sim) || allCDs[0] > 0) && allCDs[1] > 0 && warlock.CorruptionDot.IsActive() {
 				spell = warlock.CurseOfAgony
 			}
 		} else {
-			if sim.GetRemainingDuration() > time.Second*24 && !warlock.CurseOfAgonyDot.IsActive() {
+			if sim.GetRemainingDuration() > time.Second*12 && !warlock.CurseOfAgonyDot.IsActive() {
 				spell = warlock.CurseOfAgony
 			}
 		}
@@ -249,6 +249,8 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		if warlock.Talents.DemonicPact > 0 {
 			warlock.Log(sim, "[Info] Demonic Pact Spell Power Average [%.0f]", warlock.DPSPAverage)
 		}
+		warlock.Log(sim, "[Info] KeepUpSEStacks [%.2f]", KeepUpSEStacks)
+		warlock.Log(sim, "[Info] check2 [%.2f]", (core.ShadowMasteryAura(warlock.CurrentTarget).RemainingDuration(sim) < warlock.ShadowBolt.CurCast.CastTime && sim.GetRemainingDuration() > core.ShadowMasteryAura(warlock.CurrentTarget).Duration/2.))
 	}
 
 	if preset == proto.Warlock_Rotation_Automatic {
@@ -271,7 +273,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			} else if warlock.Talents.UnstableAffliction && (!warlock.Haunt.CD.IsReady(sim) || allCDs[0] > 0) && allCDs[1] == 0 && sim.GetRemainingDuration() > warlock.UnstableAffDot.Duration/2. {
 				// Keep UA up
 				spell = warlock.UnstableAff
-			} else if sim.GetRemainingDuration() > time.Second*24 && allCDs[2] == 0 && (!warlock.Haunt.CD.IsReady(sim) || allCDs[0] > 0) && allCDs[1] > 0 && warlock.CorruptionDot.IsActive() {
+			} else if sim.GetRemainingDuration() > time.Second*12 && allCDs[2] == 0 && (!warlock.Haunt.CD.IsReady(sim) || allCDs[0] > 0) && allCDs[1] > 0 && warlock.CorruptionDot.IsActive() {
 				// Keep Agony up
 				spell = warlock.CurseOfAgony
 			} else if KeepUpSEStacks && sim.GetRemainingDuration() > time.Second*10 ||
@@ -378,14 +380,14 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// If big CD coming up and we don't have enough mana for it, lifetap
 	// Also, never do a big regen in the last few seconds of the fight.
 	// TODO: Specify regen goals depending on CD
-	if !warlock.DoingRegen && nextBigCD - sim.CurrentTime < time.Second*6 && sim.GetRemainingDuration() > time.Second*30 {
+	if !warlock.DoingRegen && nextBigCD-sim.CurrentTime < time.Second*6 && sim.GetRemainingDuration() > time.Second*30 {
 		if warlock.CurrentManaPercent() < 0.2 {
 			warlock.DoingRegen = true
 		}
 	}
 
 	if warlock.DoingRegen {
-		if nextBigCD - sim.CurrentTime < time.Second*2 {
+		if nextBigCD-sim.CurrentTime < time.Second*2 {
 			// stop regen, start blasting
 			warlock.DoingRegen = false
 		} else {
@@ -407,10 +409,10 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			return
 		} else {
 			// Filler
-			if nextBigCD - sim.CurrentTime > 0 && nextBigCD - sim.CurrentTime < fillerCastTime/15 {
+			if nextBigCD-sim.CurrentTime > 0 && nextBigCD-sim.CurrentTime < fillerCastTime/15 {
 				warlock.WaitUntil(sim, nextBigCD)
 				return
-			} else if nextCD - sim.CurrentTime > 0 && nextCD - sim.CurrentTime < fillerCastTime/15 {
+			} else if nextCD-sim.CurrentTime > 0 && nextCD-sim.CurrentTime < fillerCastTime/15 {
 				warlock.WaitUntil(sim, nextCD)
 				return
 			} else {
