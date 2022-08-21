@@ -54,6 +54,7 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 					targetDummySpell = aura.Unit.CurrentTarget.RegisterSpell(core.SpellConfig{
 						ActionID:    core.ActionID{SpellID: 49375},
 						SpellSchool: core.SpellSchoolMagic,
+						Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagNoMetrics,
 
 						Cast: core.CastConfig{},
 
