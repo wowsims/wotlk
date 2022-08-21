@@ -86,8 +86,7 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 			dk.PseudoStats.HolyDamageTakenMultiplier *= spellDmgTakenMult
 			dk.PseudoStats.NatureDamageTakenMultiplier *= spellDmgTakenMult
 			dk.PseudoStats.ShadowDamageTakenMultiplier *= spellDmgTakenMult
-			dk.PseudoStats.DiseaseDamageTakenMultiplier *= spellDmgTakenMult
-			dk.PseudoStats.PeriodicPhysicalDamageTakenMultiplier *= spellDmgTakenMult
+			dk.PseudoStats.PeriodicPhysicalDamageTakenMultiplier *= physDmgTakenMult
 			dk.PseudoStats.PeriodicShadowDamageTakenMultiplier *= spellDmgTakenMult
 		},
 
@@ -99,8 +98,7 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 			dk.PseudoStats.HolyDamageTakenMultiplier /= spellDmgTakenMult
 			dk.PseudoStats.NatureDamageTakenMultiplier /= spellDmgTakenMult
 			dk.PseudoStats.ShadowDamageTakenMultiplier /= spellDmgTakenMult
-			dk.PseudoStats.DiseaseDamageTakenMultiplier /= spellDmgTakenMult
-			dk.PseudoStats.PeriodicPhysicalDamageTakenMultiplier /= spellDmgTakenMult
+			dk.PseudoStats.PeriodicPhysicalDamageTakenMultiplier /= physDmgTakenMult
 			dk.PseudoStats.PeriodicShadowDamageTakenMultiplier /= spellDmgTakenMult
 		},
 
