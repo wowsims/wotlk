@@ -44,13 +44,20 @@ export const RetributionPaladinRotationDivinePleaSelection = InputHelpers.makeRo
 	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.Standard,
 });
 
+// Reuse field name, but different tooltip.
+export const RetributionPaladinRotationDivinePleaSelectionAlternate = InputHelpers.makeRotationBooleanInput<Spec.SpecRetributionPaladin>({
+	fieldName: 'useDivinePlea',
+	label: 'Use Divine Plea - Out of Sequence',
+	labelTooltip: 'Whether or not to maintain Divine Plea, this happens OUTSIDE of the cast sequence',
+	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.CastSequence
+});
+
 export const RetributionPaladinRotationDivinePleaPercentageConfig = InputHelpers.makeRotationNumberInput<Spec.SpecRetributionPaladin>({
 	fieldName: "divinePleaPercentage",
 	label: "Divine Plea Mana Threshold %",
 	labelTooltip: "% of max mana left before beginning to use Divine Plea",
 	percent: true,
 	positive: true,
-	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.Standard || player.getRotation().type == RotationType.Custom,
 })
 
 export const RetributionPaladinRotationHolyWrathConfig = InputHelpers.makeRotationNumberInput<Spec.SpecRetributionPaladin>({
