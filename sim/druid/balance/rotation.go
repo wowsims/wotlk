@@ -37,16 +37,16 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) {
 		spell = moonkin.Rebirth
 	} else if moonkin.Starfall.IsReady(sim) {
 		spell = moonkin.Starfall
-	} else if (solarIsActive && (insectSwarmUptime > 0 || !moonkin.canIsInsideEclipse)) || (!lunarIsActive && moonfireUptime > 13) {
+	} else if (solarIsActive && (insectSwarmUptime > 0 || float64(moonkin.isInsideEclipseThreshold) > solarUptime.Seconds())) || (!lunarIsActive && moonfireUptime > 13) {
 		spell = moonkin.Wrath
-	} else if (lunarIsActive && (moonfireUptime > 0 || !moonkin.canMfInsideEclipse)) || (!solarIsActive && insectSwarmUptime > 13) {
+	} else if (lunarIsActive && (moonfireUptime > 0 || float64(moonkin.mfInsideEclipseThreshold) > lunarUptime.Seconds())) || (!solarIsActive && insectSwarmUptime > 13) {
 		spell = moonkin.Starfire
 	} else if (lunarIsActive || lunarICD < core.GCDDefault) && moonkin.useMF {
 		spell = moonkin.Moonfire
 	} else if moonkin.useIS {
 		spell = moonkin.InsectSwarm
 	} else {
-		spell = moonkin.Starfire // Always fallback to Starfire for beautiful Classic memories
+		spell = moonkin.Wrath // Always fallback to Wrath to trigger Lunar, because yes
 	}
 
 	// "Applying" or "Dispelling" eclipse effects before casting

@@ -55,15 +55,15 @@ export const BalanceDruidRotationConfig = {
 			label: 'Use Moonfire',
 			labelTooltip: 'Should the rotation use Moonfire.',
 		}),
-		InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecBalanceDruid>({
-			fieldName: 'canMfInsideEclipse',
-			label: 'Refresh Moonfire inside eclipse',
-			labelTooltip: 'Should the rotation use Moonfire inside Lunar Eclipse.',
+		InputHelpers.makeSpecOptionsNumberInput<Spec.SpecBalanceDruid>({
+			fieldName: 'mfInsideEclipseThreshold',
+			label: 'Moonfire inside eclipse max timing',
+			labelTooltip: 'Max eclipse uptime at which Moonfire can be applied/refreshed. 15 = never refresh,  0= always refresh.',
 		}),
-		InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecBalanceDruid>({
-			fieldName: 'canIsInsideEclipse',
-			label: 'Refresh Insect Swarm inside eclipse',
-			labelTooltip: 'Should the rotation use Insect Swarm inside Solar Eclipse.',
+		InputHelpers.makeSpecOptionsNumberInput<Spec.SpecBalanceDruid>({
+			fieldName: 'isInsideEclipseThreshold',
+			label: 'Insect Swarm inside eclipse max timing',
+			labelTooltip: 'Max eclipse uptime at which Insect Swarm can be applied/refreshed. 15 = never refresh,  0= always refresh.',
 		}),
 	],
 };

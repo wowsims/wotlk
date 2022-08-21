@@ -19,6 +19,7 @@ func (druid *Druid) newStarfireSpell() *core.Spell {
 	minBaseDamage := 1038.0
 	maxBaseDamage := 1222.0
 	spellCoefficient := 1.0
+	manaMetrics := druid.NewManaMetrics(actionID)
 
 	// This seems to be unaffected by wrath of cenarius so it needs to come first.
 	bonusFlatDamage := core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == IvoryMoongoddess, 55*spellCoefficient, 0)
@@ -37,6 +38,12 @@ func (druid *Druid) newStarfireSpell() *core.Spell {
 				druid.MoonfireDot.NumberOfTicks += 1
 			}
 		}, */
+		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
+				hasMoonkinForm := core.TernaryFloat64(druid.Talents.MoonkinForm, 1, 0)
+				druid.AddMana(sim, druid.MaxMana()*0.02*hasMoonkinForm, manaMetrics, true)
+			}
+		},
 	}
 
 	if druid.HasSetBonus(ItemSetNordrassilRegalia, 4) {
