@@ -105,6 +105,10 @@ var Enchants = []Enchant{
 	{ID: 54999, EffectID: 3604, Name: "Hyperspeed Accelerators", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeHands, RequiredProfession: proto.Profession_Engineering},
 	{ID: 63770, EffectID: 3860, Name: "Reticulated Armor Webbing", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{stats.Armor: 885}, ItemType: proto.ItemType_ItemTypeHands, RequiredProfession: proto.Profession_Engineering},
 
+	// Waist
+	{ID: 54736, EffectID: 3599, Name: "Personal Electromagnetic Pulse Generator", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWaist, RequiredProfession: proto.Profession_Engineering},
+	{ID: 54793, EffectID: 3601, Name: "Frag Belt", IsSpellID: true, Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWaist, RequiredProfession: proto.Profession_Engineering},
+
 	// Legs
 	{ID: 38371, EffectID: 3325, Name: "Jormungar Leg Armor", Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{stats.Stamina: 45, stats.Agility: 15}, ItemType: proto.ItemType_ItemTypeLegs},
 	{ID: 38372, EffectID: 3326, Name: "Nerubian Leg Armor", Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{stats.AttackPower: 55, stats.RangedAttackPower: 55, stats.MeleeCrit: 15, stats.SpellCrit: 15}, ItemType: proto.ItemType_ItemTypeLegs},
