@@ -66,6 +66,7 @@ export const DefaultRotation = RetributionPaladinRotation.create({
 	type: RotationType.Standard,
 	exoSlack: 500,
 	consSlack: 500,
+	useDivinePlea: true,
 	divinePleaPercentage: 0.75,
 	holyWrathThreshold: 4,
 	customRotation: CustomRotation.create({
@@ -98,7 +99,6 @@ export const DefaultRotation = RetributionPaladinRotation.create({
 export const DefaultOptions = RetributionPaladinOptions.create({
 	aura: PaladinAura.RetributionAura,
 	judgement: PaladinJudgement.JudgementOfWisdom,
-	useDivinePlea: true,
 	damageTakenPerSecond: 0,
 });
 
