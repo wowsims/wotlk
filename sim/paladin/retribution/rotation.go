@@ -52,7 +52,7 @@ func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
 	events := []time.Duration{
 		nextSwingAt,
 		ret.GCD.ReadyAt(),
-		ret.JudgementOfWisdom.CD.ReadyAt(),
+		ret.SelectedJudgement.CD.ReadyAt(),
 		ret.DivineStorm.CD.ReadyAt(),
 		ret.HammerOfWrath.CD.ReadyAt(),
 		ret.HolyWrath.CD.ReadyAt(),
@@ -116,15 +116,15 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 	isExecutePhase := sim.IsExecutePhase20()
 
 	nextPrimaryAbility := core.MinDuration(ret.CrusaderStrike.CD.ReadyAt(), ret.DivineStorm.CD.ReadyAt())
-	nextPrimaryAbility = core.MinDuration(nextPrimaryAbility, ret.JudgementOfWisdom.CD.ReadyAt())
+	nextPrimaryAbility = core.MinDuration(nextPrimaryAbility, ret.SelectedJudgement.CD.ReadyAt())
 	nextPrimaryAbilityDelta := nextPrimaryAbility - sim.CurrentTime
 
 	if ret.GCD.IsReady(sim) {
 		switch {
-		case ret.JudgementOfWisdom.IsReady(sim):
-			success := ret.JudgementOfWisdom.Cast(sim, target)
+		case ret.SelectedJudgement.IsReady(sim):
+			success := ret.SelectedJudgement.Cast(sim, target)
 			if !success {
-				ret.WaitForMana(sim, ret.JudgementOfWisdom.CurCast.Cost)
+				ret.WaitForMana(sim, ret.SelectedJudgement.CurCast.Cost)
 			}
 		case ret.HasLightswornBattlegear2Pc && ret.DivineStorm.IsReady(sim):
 			success := ret.DivineStorm.Cast(sim, target)
@@ -186,7 +186,7 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 	events := []time.Duration{
 		nextSwingAt,
 		ret.GCD.ReadyAt(),
-		ret.JudgementOfWisdom.CD.ReadyAt(),
+		ret.SelectedJudgement.CD.ReadyAt(),
 		ret.DivineStorm.CD.ReadyAt(),
 		ret.HammerOfWrath.CD.ReadyAt(),
 		ret.HolyWrath.CD.ReadyAt(),

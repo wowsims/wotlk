@@ -18,6 +18,35 @@ import {
 
 import * as InputHelpers from '../core/components/input_helpers.js';
 
+export const AuraSelection = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecRetributionPaladin, PaladinAura>({
+	fieldName: 'aura',
+	values: [
+		{ color: 'grey', value: PaladinAura.NoPaladinAura },
+		{ actionId: ActionId.fromSpellId(54043), value: PaladinAura.RetributionAura },
+	],
+});
+
+export const StartingSealSelection = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecRetributionPaladin, PaladinSeal>({
+	fieldName: 'seal',
+	values: [
+		{ actionId: ActionId.fromSpellId(42463), value: PaladinSeal.Vengeance },
+		{ actionId: ActionId.fromSpellId(20154), value: PaladinSeal.Righteousness },
+		{ 
+			actionId: ActionId.fromSpellId(20424), value: PaladinSeal.Command,
+			showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getTalents().sealOfCommand,
+		},
+	],
+	changeEmitter: (player: Player<Spec.SpecRetributionPaladin>) => player.changeEmitter,
+});
+
+export const JudgementSelection = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecRetributionPaladin, PaladinJudgement>({
+	fieldName: 'judgement',
+	values: [
+		{ actionId: ActionId.fromSpellId(53408), value: PaladinJudgement.JudgementOfWisdom },
+		{ actionId: ActionId.fromSpellId(20271), value: PaladinJudgement.JudgementOfLight },
+	],
+});
+
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
 export const RetributionPaladinRotationExoSlackConfig = InputHelpers.makeRotationNumberInput<Spec.SpecRetributionPaladin>({
@@ -67,36 +96,6 @@ export const RetributionPaladinRotationHolyWrathConfig = InputHelpers.makeRotati
 	positive: true,
 	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.Standard,
 })
-
-export const AuraSelection = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecRetributionPaladin, PaladinAura>({
-	fieldName: 'aura',
-	label: 'Aura',
-	values: [
-		{ name: 'None', value: PaladinAura.NoPaladinAura },
-		{ name: 'Retribution Aura', value: PaladinAura.RetributionAura },
-	],
-});
-
-export const StartingSealSelection = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecRetributionPaladin, PaladinSeal>({
-	fieldName: 'seal',
-	label: 'Seal',
-	labelTooltip: 'The seal active before encounter',
-	values: [
-		{ name: 'Vengeance', value: PaladinSeal.Vengeance },
-		{ name: 'Command', value: PaladinSeal.Command },
-		{ name: 'Righteousness', value: PaladinSeal.Righteousness },
-	],
-});
-
-export const JudgementSelection = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecRetributionPaladin, PaladinJudgement>({
-	fieldName: 'judgement',
-	label: 'Judgement',
-	labelTooltip: 'Judgement debuff you will use on the target during the encounter.',
-	values: [
-		{ name: 'Wisdom', value: PaladinJudgement.JudgementOfWisdom },
-		{ name: 'Light', value: PaladinJudgement.JudgementOfLight },
-	],
-});
 
 export const DamageTakenPerSecond = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecRetributionPaladin>({
 	fieldName: 'damageTakenPerSecond',
