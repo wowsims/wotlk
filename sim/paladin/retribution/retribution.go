@@ -32,7 +32,7 @@ func NewRetributionPaladin(character core.Character, options proto.Player) *Retr
 		Rotation:             *retOptions.Rotation,
 		Judgement:            retOptions.Options.Judgement,
 		Seal:                 retOptions.Options.Seal,
-		UseDivinePlea:        retOptions.Options.UseDivinePlea,
+		UseDivinePlea:        retOptions.Rotation.UseDivinePlea,
 		DivinePleaPercentage: retOptions.Rotation.DivinePleaPercentage,
 		ExoSlack:             retOptions.Rotation.ExoSlack,
 		ConsSlack:            retOptions.Rotation.ConsSlack,
