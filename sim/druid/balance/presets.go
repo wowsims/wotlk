@@ -39,6 +39,15 @@ var StandardTalents = &proto.DruidTalents{
 	Intensity:             3,
 }
 
+var DefaultGlyphs = &proto.Glyphs{
+	Major1: int32(proto.DruidMajorGlyph_GlyphOfStarfire),
+	Major2: int32(proto.DruidMajorGlyph_GlyphOfMoonfire),
+	Major3: int32(proto.DruidMajorGlyph_GlyphOfStarfall),
+	Minor1: int32(proto.DruidMajorGlyph_GlyphOfUnburdenedRebirth),
+	Minor2: int32(proto.DruidMajorGlyph_GlyphOfTyphoon),
+	Minor3: int32(proto.DruidMajorGlyph_GlyphOfTheWild),
+}
+
 var FullRaidBuffs = &proto.RaidBuffs{
 	ArcaneBrilliance: true,
 	GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
