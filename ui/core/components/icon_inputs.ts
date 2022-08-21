@@ -348,22 +348,26 @@ function makeMultistateIndividualBuffInput(id: ActionId, numStates: number, fiel
 // Custom buffs that don't fit into any of the helper functions above.
 //////////////////////////////////////////////////////////////////////
 
-export const makePotionsInput = makeConsumeInputFactory('defaultPotion', [
-	{ actionId: ActionId.fromItemId(33447), value: Potions.RunicHealingPotion },
-	{ actionId: ActionId.fromItemId(33448), value: Potions.RunicManaPotion },
-	{ actionId: ActionId.fromItemId(40093), value: Potions.IndestructiblePotion },
-	{ actionId: ActionId.fromItemId(40211), value: Potions.PotionOfSpeed },
-	{ actionId: ActionId.fromItemId(40212), value: Potions.PotionOfWildMagic },
+function makePotionInputFactory(consumesFieldName: keyof Consumes): (options: Array<Potions>) => InputHelpers.TypedIconEnumPickerConfig<Player<any>, Potions> {
+	return makeConsumeInputFactory(consumesFieldName, [
+		{ actionId: ActionId.fromItemId(33447), value: Potions.RunicHealingPotion },
+		{ actionId: ActionId.fromItemId(33448), value: Potions.RunicManaPotion },
+		{ actionId: ActionId.fromItemId(40093), value: Potions.IndestructiblePotion },
+		{ actionId: ActionId.fromItemId(40211), value: Potions.PotionOfSpeed },
+		{ actionId: ActionId.fromItemId(40212), value: Potions.PotionOfWildMagic },
 
-	{ actionId: ActionId.fromItemId(22839), value: Potions.DestructionPotion },
-	{ actionId: ActionId.fromItemId(22838), value: Potions.HastePotion },
-	{ actionId: ActionId.fromItemId(13442), value: Potions.MightyRagePotion },
-	{ actionId: ActionId.fromItemId(22832), value: Potions.SuperManaPotion },
-	{ actionId: ActionId.fromItemId(31677), value: Potions.FelManaPotion },
-	{ actionId: ActionId.fromItemId(22828), value: Potions.InsaneStrengthPotion },
-	{ actionId: ActionId.fromItemId(22849), value: Potions.IronshieldPotion },
-	{ actionId: ActionId.fromItemId(22837), value: Potions.HeroicPotion },
-] as Array<IconEnumValueConfig<Player<any>, Potions>>);
+		{ actionId: ActionId.fromItemId(22839), value: Potions.DestructionPotion },
+		{ actionId: ActionId.fromItemId(22838), value: Potions.HastePotion },
+		{ actionId: ActionId.fromItemId(13442), value: Potions.MightyRagePotion },
+		{ actionId: ActionId.fromItemId(22832), value: Potions.SuperManaPotion },
+		{ actionId: ActionId.fromItemId(31677), value: Potions.FelManaPotion },
+		{ actionId: ActionId.fromItemId(22828), value: Potions.InsaneStrengthPotion },
+		{ actionId: ActionId.fromItemId(22849), value: Potions.IronshieldPotion },
+		{ actionId: ActionId.fromItemId(22837), value: Potions.HeroicPotion },
+	] as Array<IconEnumValueConfig<Player<any>, Potions>>);
+}
+export const makePotionsInput = makePotionInputFactory('defaultPotion');
+export const makePrepopPotionsInput = makePotionInputFactory('prepopPotion');
 
 export const makeConjuredInput = makeConsumeInputFactory('defaultConjured', [
 	{ actionId: ActionId.fromItemId(12662), value: Conjured.ConjuredDarkRune },
