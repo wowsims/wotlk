@@ -13,6 +13,7 @@ func (druid *Druid) registerMoonfireSpell() {
 	actionID := core.ActionID{SpellID: 26988}
 	baseCost := 0.21 * druid.BaseMana
 	iffCritBonus := core.TernaryFloat64(druid.CurrentTarget.HasActiveAura("Improved Faerie Fire"), float64(druid.Talents.ImprovedFaerieFire)*1*core.CritRatingPerCritChance, 0)
+	manaMetrics := druid.NewManaMetrics(actionID)
 
 	druid.Moonfire = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -38,6 +39,10 @@ func (druid *Druid) registerMoonfireSpell() {
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					druid.MoonfireDot.Apply(sim)
+					if spellEffect.Outcome.Matches(core.OutcomeCrit) {
+						hasMoonkinForm := core.TernaryFloat64(druid.Talents.MoonkinForm, 1, 0)
+						druid.AddMana(sim, druid.MaxMana()*0.02*hasMoonkinForm, manaMetrics, true)
+					}
 				}
 			},
 		}),
