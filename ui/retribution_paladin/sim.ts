@@ -29,7 +29,6 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 
 			// All stats for which EP should be calculated.
 			epStats: [
-				Stat.StatStamina,
 				Stat.StatStrength,
 				Stat.StatAgility,
 				Stat.StatIntellect,
@@ -173,7 +172,6 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
-					RetributionPaladinInputs.DamageTakenPerSecond,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],

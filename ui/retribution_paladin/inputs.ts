@@ -97,12 +97,6 @@ export const RetributionPaladinRotationHolyWrathConfig = InputHelpers.makeRotati
 	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.Standard,
 })
 
-export const DamageTakenPerSecond = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecRetributionPaladin>({
-	fieldName: 'damageTakenPerSecond',
-	label: 'Damage Taken Per Second',
-	labelTooltip: "Damage taken per second across the encounter. Used to model mana regeneration from Spiritual Attunement. This value should NOT include damage taken from Seal of Blood / Judgement of Blood. Leave at 0 if you do not take damage during the encounter.",
-});
-
 export const RetributionPaladinRotationPriorityConfig = InputHelpers.makeCustomRotationInput<Spec.SpecRetributionPaladin, SpellOption>({
 	fieldName: 'customRotation',
 	numColumns: 2,
