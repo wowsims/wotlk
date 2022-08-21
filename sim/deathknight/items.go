@@ -9,9 +9,6 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-// TODO: T7 Tank missing Icebound Fortitude
-// TODO: T8 Dps missing Heart Strike
-// TODO: T8 Tank missing AMS
 // TODO: T9 Dps missing Heart Strike
 // TODO: T9 Tank missing Heart Strike and Vampiric Blood and Dark Command
 // TODO: T10 Dps missing Heart Strike
@@ -55,6 +52,10 @@ func (dk *Deathknight) scourgebornePlateCritBonus() float64 {
 	return core.TernaryFloat64(dk.HasSetBonus(ItemSetScourgebornePlate, 2), 10.0, 0.0)
 }
 
+func (dk *Deathknight) scourgebornePlateIFDurationBonus() time.Duration {
+	return core.TernaryDuration(dk.HasSetBonus(ItemSetScourgebornePlate, 4), 3*time.Second, 0*time.Second)
+}
+
 var ItemSetDarkrunedBattlegear = core.NewItemSet(core.ItemSet{
 	Name: "Darkruned Battlegear",
 	Bonuses: map[int32]core.ApplyEffect{
@@ -88,6 +89,10 @@ var ItemSetDarkrunedPlate = core.NewItemSet(core.ItemSet{
 
 func (dk *Deathknight) darkrunedPlateRuneStrikeDamageBonus() float64 {
 	return core.TernaryFloat64(dk.HasSetBonus(ItemSetDarkrunedPlate, 2), 1.1, 1.0)
+}
+
+func (dk *Deathknight) darkrunedPlateAMSBonus() float64 {
+	return core.TernaryFloat64(dk.HasSetBonus(ItemSetDarkrunedPlate, 4), 0.9, 1.0)
 }
 
 var ItemSetThassariansBattlegear = core.NewItemSet(core.ItemSet{

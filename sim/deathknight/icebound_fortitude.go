@@ -13,12 +13,14 @@ func (dk *Deathknight) registerIceboundFortitudeSpell() {
 	cdTimer := dk.NewTimer()
 	cd := time.Minute * 2
 
+	hasGlyph := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfIceboundFortitude)
+
 	m := (50.0 - 35.0) / (680.0 - 540.0)
 	dtMultiplier := 1.0
 	dk.IceboundFortitudeAura = dk.RegisterAura(core.Aura{
 		Label:    "Icebound Fortitude",
 		ActionID: actionID,
-		Duration: time.Second*12 + time.Second*2*time.Duration(float64(dk.Talents.GuileOfGorefiend)),
+		Duration: time.Second*12 + time.Second*2*time.Duration(float64(dk.Talents.GuileOfGorefiend)) + dk.scourgebornePlateIFDurationBonus(),
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			// TODO: Verify formula
 			defRating := dk.IceboundFortitudeAura.Unit.GetStat(stats.Defense) * core.DefenseRatingPerDefense
@@ -28,7 +30,7 @@ func (dk *Deathknight) registerIceboundFortitudeSpell() {
 				dtMultiplier = 1.0 + (m*defRating - 22.8571428556)
 			}
 
-			if dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfIceboundFortitude) {
+			if hasGlyph {
 				dtMultiplier = core.MaxFloat(dtMultiplier, 1.4)
 			}
 

@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -16,6 +17,8 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 
 	rpBonus := 2.5 * float64(dk.Talents.ChillOfTheGrave)
 	baseCost := float64(core.NewRuneCost(15, 0, 1, 1, 0))
+
+	hasGlyph := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfHowlingBlast)
 
 	howlingBlast := &RuneSpell{}
 	dk.HowlingBlast = dk.RegisterSpell(howlingBlast, core.SpellConfig{
@@ -69,6 +72,16 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 				// KM Consume after OH
 				if spellEffect.Landed() && dk.KillingMachineAura.IsActive() {
 					dk.KillingMachineAura.Deactivate(sim)
+				}
+
+				if hasGlyph {
+					dk.FrostFeverSpell.Cast(sim, spellEffect.Target)
+					if dk.Talents.CryptFever > 0 {
+						dk.CryptFeverAura[spellEffect.Target.Index].Activate(sim)
+					}
+					if dk.Talents.EbonPlaguebringer > 0 {
+						dk.EbonPlagueAura[spellEffect.Target.Index].Activate(sim)
+					}
 				}
 			},
 		}, true),

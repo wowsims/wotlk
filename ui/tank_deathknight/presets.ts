@@ -54,7 +54,7 @@ export const DefaultConsumes = Consumes.create({
 export const P1_BLOOD_BIS_PRESET = {
 	name: 'P1 BiS Blood',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
+	gear: EquipmentSpec.fromJsonString(`{ "items": [
     {
       "id": 40565,
       "enchant": 67839,
@@ -104,7 +104,7 @@ export const P1_BLOOD_BIS_PRESET = {
       "id": 39759,
       "gems": [
         40008,
-        0
+        40008
       ]
     },
     {
@@ -128,8 +128,8 @@ export const P1_BLOOD_BIS_PRESET = {
     {
       "id": 44063,
       "gems": [
-        40008,
-        40008
+        36767,
+        36767
       ]
     },
     {

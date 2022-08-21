@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -17,7 +18,7 @@ func (dk *Deathknight) registerUnbreakableArmorSpell() {
 	cd := time.Minute*1 - dk.thassariansPlateCooldownReduction(dk.UnbreakableArmor)
 
 	strDep := dk.NewDynamicMultiplyStat(stats.Strength, 1.2)
-	armorDep := dk.NewDynamicMultiplyStat(stats.Armor, 1.25)
+	armorDep := dk.NewDynamicMultiplyStat(stats.Armor, 1.25+core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfUnbreakableArmor), 0.3, 0.0))
 
 	dk.UnbreakableArmorAura = dk.RegisterAura(core.Aura{
 		Label:    "Unbreakable Armor",
