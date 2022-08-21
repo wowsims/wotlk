@@ -106,6 +106,7 @@ export const RetributionPaladinRotationPriorityConfig = InputHelpers.makeCustomR
 		{ actionId: ActionId.fromSpellId(48817), value: SpellOption.HolyWrath },
 		{ actionId: ActionId.fromSpellId(35395), value: SpellOption.CrusaderStrike },
 		{ actionId: ActionId.fromSpellId(48801), value: SpellOption.Exorcism },
+		{ actionId: ActionId.fromSpellId(54428), value: SpellOption.DivinePlea }
 	],
 	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.Custom,
 });
@@ -121,6 +122,7 @@ export const RetributionPaladinCastSequenceConfig = InputHelpers.makeCustomRotat
 		{ actionId: ActionId.fromSpellId(48817), value: SpellOption.HolyWrath },
 		{ actionId: ActionId.fromSpellId(35395), value: SpellOption.CrusaderStrike },
 		{ actionId: ActionId.fromSpellId(48801), value: SpellOption.Exorcism },
+		{ actionId: ActionId.fromSpellId(54428), value: SpellOption.DivinePlea }
 	],
 	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.CastSequence,
 });

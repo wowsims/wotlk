@@ -175,6 +175,7 @@ message RetributionPaladin {
 			HolyWrath = 5;
 			CrusaderStrike = 6;
 			Exorcism = 7;
+			DivinePlea = 8;
 		}
 		CustomRotation custom_rotation = 8;
 		CustomRotation custom_cast_sequence = 10;
