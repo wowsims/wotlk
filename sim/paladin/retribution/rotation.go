@@ -77,27 +77,25 @@ func (ret *RetributionPaladin) castSequenceRotation(sim *core.Simulation) {
 
 	nextReadyAt := sim.CurrentTime
 	if ret.GCD.IsReady(sim) {
-		currentSpell := ret.RotationInput[ret.CastSequenceIndex]
-
-		for currentSpell == nil {
-			// Skip empty spell slots.
-			ret.CastSequenceIndex = (ret.CastSequenceIndex + 1) % int32(len(ret.RotationInput))
-			currentSpell = ret.RotationInput[ret.CastSequenceIndex]
-		}
-
-		if currentSpell == ret.HammerOfWrath && !isExecutePhase {
-			return
-		}
-
-		if currentSpell.IsReady(sim) {
-			success := currentSpell.Cast(sim, target)
-			if success {
-				ret.CastSequenceIndex = (ret.CastSequenceIndex + 1) % int32(len(ret.RotationInput))
-			} else {
-				ret.WaitForMana(sim, currentSpell.CurCast.Cost)
-			}
+		if ret.UseDivinePlea && ret.DivinePlea.IsReady(sim) && ret.CurrentMana() < (ret.MaxMana()*ret.DivinePleaPercentage) {
+			ret.DivinePlea.Cast(sim, nil)
 		} else {
-			nextReadyAt = currentSpell.ReadyAt()
+			currentSpell := ret.RotationInput[ret.CastSequenceIndex]
+
+			if currentSpell == ret.HammerOfWrath && !isExecutePhase {
+				return
+			}
+
+			if currentSpell.IsReady(sim) {
+				success := currentSpell.Cast(sim, target)
+				if success {
+					ret.CastSequenceIndex = (ret.CastSequenceIndex + 1) % int32(len(ret.RotationInput))
+				} else {
+					ret.WaitForMana(sim, currentSpell.CurCast.Cost)
+				}
+			} else {
+				nextReadyAt = currentSpell.ReadyAt()
+			}
 		}
 	}
 
