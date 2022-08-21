@@ -58,6 +58,7 @@ func (priest *Priest) newMindSearDot(numTicks int) *core.Dot {
 		IsPeriodic:           true,
 		BonusSpellCritRating: float64(priest.Talents.MindMelt) * 2 * core.CritRatingPerCritChance,
 		ProcMask:             core.ProcMaskSpellDamage,
+		OutcomeApplier:       priest.OutcomeFuncMagicHitBinary(),
 		OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Landed() {
 				priest.AddShadowWeavingStack(sim)
@@ -99,7 +100,6 @@ func (priest *Priest) newMindSearDot(numTicks int) *core.Dot {
 		NumberOfTicks:       numTicks,
 		TickLength:          time.Second,
 		AffectedByCastSpeed: true,
-
-		TickEffects: core.TickFuncAOESnapshotCapped(priest.Env, effect),
+		TickEffects:         core.TickFuncAOESnapshotCapped(priest.Env, effect),
 	})
 }
