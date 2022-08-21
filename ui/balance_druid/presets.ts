@@ -19,7 +19,15 @@ export const StandardTalents = {
     name: 'Standard',
     data: SavedTalents.create({
         talentsString: '510022312503135231351--520033',
-    }),
+		glyphs: Glyphs.create({
+			major1: MajorGlyph.GlyphOfStarfire,
+			major2: MajorGlyph.GlyphOfMoonfire,
+			major3: MajorGlyph.GlyphOfStarfall,
+			minor1: MinorGlyph.GlyphOfUnburdenedRebirth,
+			minor2: MinorGlyph.GlyphOfTyphoon,
+			minor3: MinorGlyph.GlyphOfTheWild,
+		}),
+	}),
 };
 
 export const DefaultRotation = BalanceDruidRotation.create({
