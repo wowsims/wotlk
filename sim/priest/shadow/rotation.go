@@ -42,6 +42,10 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 
 	var currDotTickSpeed float64
 
+	// ------------------------------------------
+	// AoE (Mind Sear)
+	// ------------------------------------------
+
 	//var remain_fight float64
 
 	if sim.CurrentTime == 0 && spriest.rotation.PrecastVt {
@@ -94,7 +98,15 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		swStacks = float64(spriest.ShadowWeavingAura.GetStacks())
 	}
 
-	if rotType == proto.ShadowPriest_Rotation_Basic || rotType == proto.ShadowPriest_Rotation_Clipping {
+	if rotType == proto.ShadowPriest_Rotation_AoE {
+		numTicks := 5
+		spell = spriest.MindSear[numTicks]
+		if success := spell.Cast(sim, spriest.CurrentTarget); !success {
+			spriest.WaitForMana(sim, spell.CurCast.Cost)
+		}
+		return
+
+	} else if rotType == proto.ShadowPriest_Rotation_Basic || rotType == proto.ShadowPriest_Rotation_Clipping {
 
 		if spriest.DevouringPlagueDot.RemainingDuration(sim) <= 0 {
 			bestIdx = 1

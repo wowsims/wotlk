@@ -143,6 +143,7 @@ message ShadowPriest {
 			Basic = 1;
 			Clipping = 2;
 			Ideal = 3;
+			AoE = 4;
 		}
 	
 		RotationType rotation_type = 1;
