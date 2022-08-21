@@ -675,7 +675,7 @@ dps_results: {
 dps_results: {
  key: "TestFury-Average-Default"
  value: {
-  dps: 680.6077847667
+  dps: 680.6077847668
   tps: 761.4229088987
  }
 }

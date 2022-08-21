@@ -339,8 +339,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-Mana-EtchedRegalia"
  value: {
-  dps: 1237.0384581995
-  tps: 895.8726824337
+  dps: 1246.7003898516
+  tps: 902.4320808583
  }
 }
 dps_results: {
@@ -724,15 +724,15 @@ dps_results: {
 dps_results: {
  key: "TestShadow-Settings-Draenei-P3-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 475.7359932008
-  tps: 527.2910803404
+  dps: 469.7539465203
+  tps: 521.8750070673
  }
 }
 dps_results: {
  key: "TestShadow-Settings-Draenei-P3-Basic-NoBuffs-LongSingleTarget"
  value: {
-  dps: 475.7359932008
-  tps: 339.2259136738
+  dps: 469.7539465203
+  tps: 333.8098404007
  }
 }
 dps_results: {
@@ -766,15 +766,15 @@ dps_results: {
 dps_results: {
  key: "TestShadow-Settings-Draenei-P3-Clipping-NoBuffs-LongMultiTarget"
  value: {
-  dps: 489.8808377491
-  tps: 537.6396447839
+  dps: 491.1532997412
+  tps: 537.4303186555
  }
 }
 dps_results: {
  key: "TestShadow-Settings-Draenei-P3-Clipping-NoBuffs-LongSingleTarget"
  value: {
-  dps: 489.8808377491
-  tps: 349.5744781172
+  dps: 491.1532997412
+  tps: 349.3651519889
  }
 }
 dps_results: {
@@ -808,15 +808,15 @@ dps_results: {
 dps_results: {
  key: "TestShadow-Settings-Draenei-P3-Ideal-NoBuffs-LongMultiTarget"
  value: {
-  dps: 597.5998539386
-  tps: 616.2892622869
+  dps: 597.0869449132
+  tps: 615.7387471542
  }
 }
 dps_results: {
  key: "TestShadow-Settings-Draenei-P3-Ideal-NoBuffs-LongSingleTarget"
  value: {
-  dps: 597.5998539386
-  tps: 428.2240956203
+  dps: 597.0869449132
+  tps: 427.6735804875
  }
 }
 dps_results: {
@@ -976,15 +976,15 @@ dps_results: {
 dps_results: {
  key: "TestShadow-Settings-NightElf-P3-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 463.8231392488
-  tps: 518.3410876214
+  dps: 466.257387876
+  tps: 518.7218698391
  }
 }
 dps_results: {
  key: "TestShadow-Settings-NightElf-P3-Basic-NoBuffs-LongSingleTarget"
  value: {
-  dps: 463.8231392488
-  tps: 330.5371709548
+  dps: 466.257387876
+  tps: 330.9179531725
  }
 }
 dps_results: {
@@ -1018,15 +1018,15 @@ dps_results: {
 dps_results: {
  key: "TestShadow-Settings-NightElf-P3-Clipping-NoBuffs-LongMultiTarget"
  value: {
-  dps: 486.5167609222
-  tps: 534.3617471894
+  dps: 479.1074624127
+  tps: 528.8455570856
  }
 }
 dps_results: {
  key: "TestShadow-Settings-NightElf-P3-Clipping-NoBuffs-LongSingleTarget"
  value: {
-  dps: 486.5167609222
-  tps: 346.5578305227
+  dps: 479.1074624127
+  tps: 341.041640419
  }
 }
 dps_results: {
@@ -1060,15 +1060,15 @@ dps_results: {
 dps_results: {
  key: "TestShadow-Settings-NightElf-P3-Ideal-NoBuffs-LongMultiTarget"
  value: {
-  dps: 593.9834523123
-  tps: 614.6634494
+  dps: 595.1616608354
+  tps: 614.5732386915
  }
 }
 dps_results: {
  key: "TestShadow-Settings-NightElf-P3-Ideal-NoBuffs-LongSingleTarget"
  value: {
-  dps: 593.9834523123
-  tps: 426.8595327333
+  dps: 595.1616608354
+  tps: 426.7693220248
  }
 }
 dps_results: {
@@ -1228,15 +1228,15 @@ dps_results: {
 dps_results: {
  key: "TestShadow-Settings-Undead-P3-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 466.7396594065
-  tps: 519.5957199565
+  dps: 467.9236330972
+  tps: 519.7413345474
  }
 }
 dps_results: {
  key: "TestShadow-Settings-Undead-P3-Basic-NoBuffs-LongSingleTarget"
  value: {
-  dps: 466.7396594065
-  tps: 332.3143032898
+  dps: 467.9236330972
+  tps: 332.4599178807
  }
 }
 dps_results: {
@@ -1270,15 +1270,15 @@ dps_results: {
 dps_results: {
  key: "TestShadow-Settings-Undead-P3-Clipping-NoBuffs-LongMultiTarget"
  value: {
-  dps: 485.4714979293
-  tps: 533.4435176293
+  dps: 489.1648945497
+  tps: 534.9855445047
  }
 }
 dps_results: {
  key: "TestShadow-Settings-Undead-P3-Clipping-NoBuffs-LongSingleTarget"
  value: {
-  dps: 485.4714979293
-  tps: 346.1621009627
+  dps: 489.1648945497
+  tps: 347.704127838
  }
 }
 dps_results: {
@@ -1312,15 +1312,15 @@ dps_results: {
 dps_results: {
  key: "TestShadow-Settings-Undead-P3-Ideal-NoBuffs-LongMultiTarget"
  value: {
-  dps: 589.5823780552
-  tps: 610.8259166874
+  dps: 589.1083111176
+  tps: 609.7700945306
  }
 }
 dps_results: {
  key: "TestShadow-Settings-Undead-P3-Ideal-NoBuffs-LongSingleTarget"
  value: {
-  dps: 589.5823780552
-  tps: 423.5445000207
+  dps: 589.1083111176
+  tps: 422.488677864
  }
 }
 dps_results: {

@@ -400,11 +400,10 @@ func (unit *Unit) reset(sim *Simulation, agent Agent) {
 	unit.statsWithoutDeps = unit.initialStatsWithoutDeps
 	unit.stats = unit.initialStats
 	unit.PseudoStats = unit.initialPseudoStats
+	unit.auraTracker.reset(sim)
 	for _, spell := range unit.Spellbook {
 		spell.reset(sim)
 	}
-	unit.resetCDs(sim)
-	unit.auraTracker.reset(sim)
 
 	unit.healthBar.reset(sim)
 	unit.UpdateManaRegenRates()
@@ -437,4 +436,5 @@ func (unit *Unit) doneIteration(sim *Simulation) {
 	for _, spell := range unit.Spellbook {
 		spell.doneIteration()
 	}
+	unit.resetCDs(sim)
 }
