@@ -175,6 +175,7 @@ message RetributionPaladin {
 			HolyWrath = 5;
 			CrusaderStrike = 6;
 			Exorcism = 7;
+			DivinePlea = 8;
 		}
 		CustomRotation custom_rotation = 8;
 		CustomRotation custom_cast_sequence = 10;
@@ -186,6 +187,8 @@ message RetributionPaladin {
 			CastSequence = 3;
 		}
 		RotationType type = 9;
+
+		bool use_divine_plea = 11;
 	}
 
 	Rotation rotation = 1;
@@ -202,8 +205,6 @@ message RetributionPaladin {
 		double damage_taken_per_second = 4;
 
 		bool use_avenging_wrath = 5;
-
-		bool use_divine_plea = 6;
 	}
 	Options options = 3;
 }

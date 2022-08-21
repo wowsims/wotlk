@@ -36,13 +36,28 @@ export const RetributionPaladinRotationConsSlackConfig = InputHelpers.makeRotati
 	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.Standard,
 })
 
+
+export const RetributionPaladinRotationDivinePleaSelection = InputHelpers.makeRotationBooleanInput<Spec.SpecRetributionPaladin>({
+	fieldName: 'useDivinePlea',
+	label: 'Use Divine Plea',
+	labelTooltip: 'Whether or not to maintain Divine Plea',
+	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.Standard,
+});
+
+// Reuse field name, but different tooltip.
+export const RetributionPaladinRotationDivinePleaSelectionAlternate = InputHelpers.makeRotationBooleanInput<Spec.SpecRetributionPaladin>({
+	fieldName: 'useDivinePlea',
+	label: 'Use Divine Plea - Out of Sequence',
+	labelTooltip: 'Whether or not to maintain Divine Plea, this happens OUTSIDE of the cast sequence',
+	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.CastSequence
+});
+
 export const RetributionPaladinRotationDivinePleaPercentageConfig = InputHelpers.makeRotationNumberInput<Spec.SpecRetributionPaladin>({
 	fieldName: "divinePleaPercentage",
 	label: "Divine Plea Mana Threshold %",
 	labelTooltip: "% of max mana left before beginning to use Divine Plea",
 	percent: true,
 	positive: true,
-	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.Standard,
 })
 
 export const RetributionPaladinRotationHolyWrathConfig = InputHelpers.makeRotationNumberInput<Spec.SpecRetributionPaladin>({
@@ -73,12 +88,6 @@ export const StartingSealSelection = InputHelpers.makeSpecOptionsEnumInput<Spec.
 	],
 });
 
-export const DivinePleaSelection = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecRetributionPaladin>({
-	fieldName: 'useDivinePlea',
-	label: 'Divine Plea',
-	labelTooltip: 'Whether or not to maintain Divine Plea',
-});
-
 export const JudgementSelection = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecRetributionPaladin, PaladinJudgement>({
 	fieldName: 'judgement',
 	label: 'Judgement',
@@ -106,6 +115,7 @@ export const RetributionPaladinRotationPriorityConfig = InputHelpers.makeCustomR
 		{ actionId: ActionId.fromSpellId(48817), value: SpellOption.HolyWrath },
 		{ actionId: ActionId.fromSpellId(35395), value: SpellOption.CrusaderStrike },
 		{ actionId: ActionId.fromSpellId(48801), value: SpellOption.Exorcism },
+		{ actionId: ActionId.fromSpellId(54428), value: SpellOption.DivinePlea }
 	],
 	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.Custom,
 });
@@ -121,6 +131,7 @@ export const RetributionPaladinCastSequenceConfig = InputHelpers.makeCustomRotat
 		{ actionId: ActionId.fromSpellId(48817), value: SpellOption.HolyWrath },
 		{ actionId: ActionId.fromSpellId(35395), value: SpellOption.CrusaderStrike },
 		{ actionId: ActionId.fromSpellId(48801), value: SpellOption.Exorcism },
+		{ actionId: ActionId.fromSpellId(54428), value: SpellOption.DivinePlea }
 	],
 	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.CastSequence,
 });
