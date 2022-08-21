@@ -334,6 +334,7 @@ func NewDeathknight(character core.Character, talents proto.DeathknightTalents, 
 	dk.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/62.5)
 	dk.AddStatDependency(stats.Agility, stats.Dodge, core.DodgeRatingPerDodgeChance/84.74576271)
 	dk.AddStatDependency(stats.Strength, stats.AttackPower, 2)
+	dk.AddStatDependency(stats.Strength, stats.Parry, 0.25)
 
 	dk.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
 
