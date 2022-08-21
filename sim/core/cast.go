@@ -206,7 +206,7 @@ func (spell *Spell) wrapCastFuncGCD(config CastConfig, onCastComplete CastFunc) 
 	return func(sim *Simulation, target *Unit) {
 		// By panicking if spell is on CD, we force each sim to properly check for their own CDs.
 		if spell.CurCast.GCD != 0 && !spell.Unit.GCD.IsReady(sim) {
-			panic(fmt.Sprintf("Trying to cast %s but GCD on cooldown for %s", spell.ActionID, spell.Unit.GCD.TimeToReady(sim)))
+			panic(fmt.Sprintf("Trying to cast %s but GCD on cooldown for %s, curTime = %s", spell.ActionID, spell.Unit.GCD.TimeToReady(sim), sim.CurrentTime))
 		}
 
 		gcd := spell.CurCast.GCD
@@ -233,7 +233,7 @@ func (spell *Spell) wrapCastFuncCooldown(config CastConfig, onCastComplete CastF
 	return func(sim *Simulation, target *Unit) {
 		// By panicking if spell is on CD, we force each sim to properly check for their own CDs.
 		if !spell.CD.IsReady(sim) {
-			panic(fmt.Sprintf("Trying to cast %s but is still on cooldown for %s", spell.ActionID, spell.CD.TimeToReady(sim)))
+			panic(fmt.Sprintf("Trying to cast %s but is still on cooldown for %s, curTime = %s", spell.ActionID, spell.CD.TimeToReady(sim), sim.CurrentTime))
 		}
 
 		spell.CD.Set(sim.CurrentTime + spell.CurCast.CastTime + spell.CD.Duration)
@@ -254,7 +254,7 @@ func (spell *Spell) wrapCastFuncSharedCooldown(config CastConfig, onCastComplete
 	return func(sim *Simulation, target *Unit) {
 		// By panicking if spell is on CD, we force each sim to properly check for their own CDs.
 		if !spell.SharedCD.IsReady(sim) {
-			panic(fmt.Sprintf("Trying to cast %s but is still on shared cooldown for %s", spell.ActionID, spell.SharedCD.TimeToReady(sim)))
+			panic(fmt.Sprintf("Trying to cast %s but is still on shared cooldown for %s, curTime = %s", spell.ActionID, spell.SharedCD.TimeToReady(sim), sim.CurrentTime))
 		}
 
 		spell.SharedCD.Set(sim.CurrentTime + spell.CurCast.CastTime + spell.SharedCD.Duration)

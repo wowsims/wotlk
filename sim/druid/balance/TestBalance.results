@@ -234,8 +234,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-FuturesightRune-38763"
  value: {
-  dps: 1498.9238409376
-  tps: 1483.2700612041
+  dps: 1492.5840920413
+  tps: 1477.2985572857
  }
 }
 dps_results: {
