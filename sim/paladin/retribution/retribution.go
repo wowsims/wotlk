@@ -122,6 +122,8 @@ func (ret *RetributionPaladin) Reset(sim *core.Simulation) {
 				ret.RotationInput[i] = ret.CrusaderStrike
 			case int32(proto.RetributionPaladin_Rotation_Exorcism):
 				ret.RotationInput[i] = ret.Exorcism
+			case int32(proto.RetributionPaladin_Rotation_DivinePlea):
+				ret.RotationInput[i] = ret.DivinePlea
 			}
 		}
 	}
