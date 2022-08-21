@@ -252,7 +252,7 @@ func JudgementOfWisdomAura(target *Unit) *Aura {
 var JudgementOfLightAuraLabel = "Judgement of Light"
 
 func JudgementOfLightAura(target *Unit) *Aura {
-	actionID := ActionID{SpellID: 27163}
+	actionID := ActionID{SpellID: 20271}
 
 	return target.GetOrRegisterAura(Aura{
 		Label:    JudgementOfLightAuraLabel,

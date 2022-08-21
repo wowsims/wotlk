@@ -82,6 +82,8 @@ type RetributionPaladin struct {
 
 	HasLightswornBattlegear2Pc bool
 
+	SelectedJudgement *core.Spell
+
 	SelectedRotation  func(*core.Simulation)
 	RotatioOption     *proto.CustomRotation
 	RotationInput     []*core.Spell
@@ -104,12 +106,19 @@ func (ret *RetributionPaladin) Initialize() {
 func (ret *RetributionPaladin) Reset(sim *core.Simulation) {
 	ret.Paladin.Reset(sim)
 
+	switch ret.Judgement {
+	case proto.PaladinJudgement_JudgementOfWisdom:
+		ret.SelectedJudgement = ret.JudgementOfWisdom
+	case proto.PaladinJudgement_JudgementOfLight:
+		ret.SelectedJudgement = ret.JudgementOfLight
+	}
+
 	if ret.RotatioOption != nil {
 		ret.RotationInput = make([]*core.Spell, 0, len(ret.RotatioOption.Spells))
 		for _, customSpellProto := range ret.RotatioOption.Spells {
 			switch customSpellProto.Spell {
 			case int32(proto.RetributionPaladin_Rotation_JudgementOfWisdom):
-				ret.RotationInput = append(ret.RotationInput, ret.JudgementOfWisdom)
+				ret.RotationInput = append(ret.RotationInput, ret.SelectedJudgement)
 			case int32(proto.RetributionPaladin_Rotation_DivineStorm):
 				ret.RotationInput = append(ret.RotationInput, ret.DivineStorm)
 			case int32(proto.RetributionPaladin_Rotation_HammerOfWrath):
