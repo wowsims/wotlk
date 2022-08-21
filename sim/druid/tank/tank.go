@@ -101,7 +101,7 @@ func (bear *FeralTankDruid) GetDruid() *druid.Druid {
 
 func (bear *FeralTankDruid) Initialize() {
 	bear.Druid.Initialize()
-	bear.RegisterBearSpells(float64(bear.Rotation.MaulRageThreshold))
+	bear.RegisterFeralSpells(float64(bear.Rotation.MaulRageThreshold))
 }
 
 func (bear *FeralTankDruid) ApplyGearBonuses() {
