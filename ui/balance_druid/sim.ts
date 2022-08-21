@@ -108,8 +108,6 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
             // Inputs to include in the 'Other' section on the settings tab.
             otherInputs: {
                 inputs: [
-                    OtherInputs.PrepopPotion,
-
                     OtherInputs.TankAssignment,
                 ],
             },

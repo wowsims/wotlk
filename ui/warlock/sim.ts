@@ -136,7 +136,6 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
-					OtherInputs.PrepopPotion,
 					OtherInputs.DistanceFromTarget,
 					OtherInputs.TankAssignment,
 				],

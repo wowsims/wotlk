@@ -152,8 +152,6 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
-					OtherInputs.PrepopPotion,
-
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],

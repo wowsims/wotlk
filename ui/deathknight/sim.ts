@@ -151,8 +151,6 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 					DeathKnightInputs.PrecastGhoulFrenzy,
 					DeathKnightInputs.PrecastHornOfWinter,
 					
-					OtherInputs.PrepopPotion,
-
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],
