@@ -14,6 +14,7 @@ func (druid *Druid) registerFaerieFireSpell() {
 	gcd := core.GCDDefault
 	ignoreHaste := false
 	cd := core.Cooldown{}
+	baseDamage := core.BaseDamageConfigMelee(0, 0, 0)
 
 	if druid.InForm(Cat | Bear) {
 		actionID = core.ActionID{SpellID: 16857}
@@ -25,6 +26,10 @@ func (druid *Druid) registerFaerieFireSpell() {
 			Timer:    druid.NewTimer(),
 			Duration: time.Second * 6,
 		}
+	}
+
+	if druid.InForm(Bear) {
+		baseDamage = core.BaseDamageConfigMelee(1, 1, 0.15)
 	}
 
 	druid.FaerieFireAura = core.FaerieFireAura(druid.CurrentTarget, druid.Talents.ImprovedFaerieFire > 0)
@@ -47,6 +52,7 @@ func (druid *Druid) registerFaerieFireSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskSpellDamage,
+			BaseDamage:       baseDamage,
 			ThreatMultiplier: 1,
 			FlatThreatBonus:  66 * 2,
 			OutcomeApplier:   druid.OutcomeFuncMagicHit(),

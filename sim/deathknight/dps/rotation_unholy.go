@@ -22,7 +22,7 @@ func (dk *DpsDeathknight) setupUnholyRotations() {
 
 	if dk.Rotation.UseDeathAndDecay || !dk.Talents.ScourgeStrike {
 		if dk.Rotation.DeathAndDecayPrio == proto.Deathknight_Rotation_MaxRuneDowntime {
-			dk.RotationSequence.Clear().NewAction(dk.RotationActionCallback_UnholyDndRotation)
+			dk.RotationSequence.NewAction(dk.RotationActionCallback_UnholyDndRotation)
 		} else {
 			dk.dndExperimentalOpener()
 		}

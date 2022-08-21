@@ -190,7 +190,7 @@ func init() {
 					if sim.RandomFloat("Ashtongue Talisman") < 0.25 {
 						procAura.Activate(sim)
 					}
-				} else if druid.Mangle != nil && spell == druid.Mangle {
+				} else if druid.IsMangle(spell) {
 					if sim.RandomFloat("Ashtongue Talisman") < 0.4 {
 						procAura.Activate(sim)
 					}
@@ -212,7 +212,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spell == druid.Mangle && druid.Mangle != nil {
+				if druid.IsMangle(spell) {
 					procAura.Activate(sim)
 				}
 			},
@@ -238,7 +238,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spell != druid.Mangle || druid.Mangle == nil {
+				if !druid.IsMangle(spell) {
 					return
 				}
 				if !icd.IsReady(sim) {

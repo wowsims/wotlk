@@ -16,10 +16,14 @@ type UnholyRotation struct {
 	syncTimeFF time.Duration
 
 	procTrackers []*ProcTracker
+	majorCds     []*core.MajorCooldown
+
+	activatingGargoyle bool
 }
 
 func (ur *UnholyRotation) Reset(sim *core.Simulation) {
 	ur.syncTimeFF = 0
+	ur.activatingGargoyle = false
 
 	ur.resetProcTrackers()
 }
@@ -174,6 +178,14 @@ func (dk *DpsDeathknight) uhGargoyleCheck(sim *core.Simulation, target *core.Uni
 			dk.UnholyPresence.Cast(sim, dk.CurrentTarget)
 		}
 
+		dk.ur.activatingGargoyle = true
+		for _, majorCd := range dk.ur.majorCds {
+			if majorCd.IsReady(sim) {
+				majorCd.TryActivate(sim, &dk.Character)
+			}
+		}
+		dk.ur.activatingGargoyle = false
+
 		if dk.SummonGargoyle.Cast(sim, target) {
 			dk.ur.resetProcTrackers()
 			return true
@@ -210,11 +222,16 @@ func (dk *DpsDeathknight) uhGargoyleCanCast(sim *core.Simulation, castTime time.
 }
 
 func (dk *DpsDeathknight) setupGargoyleCooldowns() {
+	dk.ur.majorCds = make([]*core.MajorCooldown, 0)
+
 	// hyperspeed accelerators
 	dk.gargoyleCooldownSync(core.ActionID{SpellID: 54758}, false)
 
 	// berserking (troll)
 	dk.gargoyleCooldownSync(core.ActionID{SpellID: 26297}, false)
+
+	// blood fury (orc)
+	dk.gargoyleCooldownSync(core.ActionID{SpellID: 33697}, false)
 
 	// potion of speed
 	dk.gargoyleCooldownSync(core.ActionID{ItemID: 40211}, true)
@@ -223,8 +240,10 @@ func (dk *DpsDeathknight) setupGargoyleCooldowns() {
 func (dk *DpsDeathknight) gargoyleCooldownSync(actionID core.ActionID, isPotion bool) {
 	if dk.Character.HasMajorCooldown(actionID) {
 		majorCd := dk.Character.GetMajorCooldown(actionID)
+		dk.ur.majorCds = append(dk.ur.majorCds, majorCd)
+
 		majorCd.ShouldActivate = func(sim *core.Simulation, character *core.Character) bool {
-			return dk.SummonGargoyle.CD.IsReady(sim) || (dk.SummonGargoyle.CD.TimeToReady(sim) > majorCd.Spell.CD.Duration && !isPotion) || dk.SummonGargoyle.CD.ReadyAt() > dk.Env.Encounter.Duration
+			return dk.ur.activatingGargoyle || (dk.SummonGargoyle.CD.TimeToReady(sim) > majorCd.Spell.CD.Duration && !isPotion) || dk.SummonGargoyle.CD.ReadyAt() > dk.Env.Encounter.Duration
 		}
 	}
 }
@@ -250,7 +269,7 @@ func (dk *DpsDeathknight) GargoyleProcCheck(sim *core.Simulation, castTime time.
 	}
 
 	for _, procTracker := range dk.ur.procTrackers {
-		if !procTracker.didActivate {
+		if !procTracker.didActivate && !procTracker.isActive {
 			// logMessage(sim, "Waiting on procs..")
 			return true
 		}

@@ -34,6 +34,9 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 			cssClass: 'feral-druid-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
+				"Most Sets / new items aren't functional",
+				"Rotations need updating",
+				"Lacerate doesn't snapshot correctly",
 			],
 			warnings: [
 				// Warning that a frontal rotation is not implemented.
@@ -145,7 +148,6 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 			otherInputs: {
 				inputs: [
 					DruidInputs.LatencyMs,
-					OtherInputs.PrepopPotion,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],
