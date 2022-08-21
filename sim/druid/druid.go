@@ -270,8 +270,10 @@ func New(char core.Character, form DruidForm, selfBuffs SelfBuffs, talents proto
 	druid.EnableManaBar()
 
 	druid.AddStatDependency(stats.Strength, stats.AttackPower, 2)
-	druid.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/25)
-	druid.AddStatDependency(stats.Agility, stats.Dodge, core.DodgeRatingPerDodgeChance/14.7059)
+	// Druids get 0.012 crit per agi at level 80, roughly 1 per 83.33
+	druid.AddStatDependency(stats.Agility, stats.MeleeCrit, (1.0/83.33)*core.CritRatingPerCritChance)
+	// Druid get 0.0209 dodge per agi (before dr), roughly 1 per 47.16
+	druid.AddStatDependency(stats.Agility, stats.Dodge, (1.0/47.16)*core.DodgeRatingPerDodgeChance)
 
 	// Druids get extra melee haste
 	druid.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
@@ -287,30 +289,28 @@ func New(char core.Character, form DruidForm, selfBuffs SelfBuffs, talents proto
 
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTauren, Class: proto.Class_ClassDruid}] = stats.Stats{
-		stats.Health:      7237,
-		stats.Strength:    85,
-		stats.Agility:     86,
-		stats.Stamina:     98,
-		stats.Intellect:   143,
-		stats.Spirit:      159,
-		stats.Mana:        3496,
-		stats.SpellCrit:   1.85 * core.CritRatingPerCritChance, // Class-specific constant
-		stats.AttackPower: -20,                                 // accounts for the fact that the first 20 points in Str only provide 1 AP rather than 2
-		stats.MeleeCrit:   0.96 * core.CritRatingPerCritChance, // 3.56% chance to crit shown on naked character screen
-		stats.Dodge:       -1.87 * core.DodgeRatingPerDodgeChance,
+		stats.Health:    6892, // 8227 health shown on naked character (would include tauren bonus)
+		stats.Strength:  94,
+		stats.Agility:   78,
+		stats.Stamina:   99,
+		stats.Intellect: 139,
+		stats.Spirit:    161,
+		stats.Mana:      3496,                                // 5301 mana shown on naked character
+		stats.SpellCrit: 1.85 * core.CritRatingPerCritChance, // Class-specific constant
+		stats.MeleeCrit: 7.48 * core.CritRatingPerCritChance, // 8.41% chance to crit shown on naked character screen
+		stats.Dodge:     5.59 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassDruid}] = stats.Stats{
-		stats.Health:      7237,
-		stats.Strength:    94,
-		stats.Agility:     78,
-		stats.Stamina:     99,
-		stats.Intellect:   139,
-		stats.Spirit:      161,
-		stats.Mana:        3496,
-		stats.SpellCrit:   1.85 * core.CritRatingPerCritChance, // Class-specific constant
-		stats.AttackPower: -20,                                 // accounts for the fact that the first 20 points in Str only provide 1 AP rather than 2
-		stats.MeleeCrit:   0.96 * core.CritRatingPerCritChance, // 3.96% chance to crit shown on naked character screen
-		stats.Dodge:       -1.87 * core.DodgeRatingPerDodgeChance,
+		stats.Health:    7237, // 8217 health shown on naked character
+		stats.Strength:  85,
+		stats.Agility:   86,
+		stats.Stamina:   98,
+		stats.Intellect: 143,
+		stats.Spirit:    159,
+		stats.Mana:      3496,                                // 5361 mana shown on naked character
+		stats.SpellCrit: 1.85 * core.CritRatingPerCritChance, // Class-specific constant
+		stats.MeleeCrit: 7.48 * core.CritRatingPerCritChance, // 8.51% chance to crit shown on naked character screen
+		stats.Dodge:     5.59 * core.DodgeRatingPerDodgeChance,
 	}
 }
 
