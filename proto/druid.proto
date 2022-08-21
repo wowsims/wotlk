@@ -160,8 +160,8 @@ message BalanceDruid {
     bool battle_res = 2;
 		bool use_is = 3;
 		bool use_mf = 4;
-		bool can_mf_inside_eclipse = 5;
-		bool can_is_inside_eclipse = 6;
+		float mf_inside_eclipse_threshold = 5;
+		float is_inside_eclipse_threshold = 6;
 	}
   Options options = 3;
 }

@@ -35,13 +35,13 @@ func NewBalanceDruid(character core.Character, options proto.Player) *BalanceDru
 	}
 
 	moonkin := &BalanceDruid{
-		Druid:              druid.New(character, druid.Moonkin, selfBuffs, *balanceOptions.Talents),
-		primaryRotation:    *balanceOptions.Rotation,
-		useBattleRes:       balanceOptions.Options.BattleRes,
-		useIS:              balanceOptions.Options.UseIs,
-		useMF:              balanceOptions.Options.UseMf,
-		canMfInsideEclipse: balanceOptions.Options.CanMfInsideEclipse,
-		canIsInsideEclipse: balanceOptions.Options.CanIsInsideEclipse,
+		Druid:                    druid.New(character, druid.Moonkin, selfBuffs, *balanceOptions.Talents),
+		primaryRotation:          *balanceOptions.Rotation,
+		useBattleRes:             balanceOptions.Options.BattleRes,
+		useIS:                    balanceOptions.Options.UseIs,
+		useMF:                    balanceOptions.Options.UseMf,
+		mfInsideEclipseThreshold: balanceOptions.Options.MfInsideEclipseThreshold,
+		isInsideEclipseThreshold: balanceOptions.Options.IsInsideEclipseThreshold,
 	}
 
 	moonkin.EnableResumeAfterManaWait(moonkin.tryUseGCD)
@@ -52,12 +52,12 @@ func NewBalanceDruid(character core.Character, options proto.Player) *BalanceDru
 type BalanceDruid struct {
 	*druid.Druid
 
-	primaryRotation    proto.BalanceDruid_Rotation
-	useBattleRes       bool
-	useIS              bool
-	useMF              bool
-	canMfInsideEclipse bool
-	canIsInsideEclipse bool
+	primaryRotation          proto.BalanceDruid_Rotation
+	useBattleRes             bool
+	useIS                    bool
+	useMF                    bool
+	mfInsideEclipseThreshold float32
+	isInsideEclipseThreshold float32
 	// These are only used when primary spell is set to 'Adaptive'. When the mana
 	// tracker tells us we have extra mana to spare, use surplusRotation instead of
 	// primaryRotation.
