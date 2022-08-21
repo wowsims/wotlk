@@ -1,4 +1,4 @@
-import { Consumes, PetFood } from '../core/proto/common.js';
+import { Consumes, Explosive, PetFood } from '../core/proto/common.js';
 import { EquipmentSpec } from '../core/proto/common.js';
 import { Flask } from '../core/proto/common.js';
 import { Food } from '../core/proto/common.js';
@@ -139,11 +139,13 @@ export const OtherDefaults = {
 };
 
 export const DefaultConsumes = Consumes.create({
-	flask: Flask.FlaskOfEndlessRage,
-	food: Food.FoodDragonfinFilet,
-	defaultPotion: Potions.PotionOfSpeed,
-	petFood: PetFood.PetFoodSpicedMammothTreats,
-	prepopPotion:  Potions.PotionOfSpeed,
+  flask: Flask.FlaskOfEndlessRage,
+  food: Food.FoodDragonfinFilet,
+  defaultPotion: Potions.PotionOfSpeed,
+  petFood: PetFood.PetFoodSpicedMammothTreats,
+  prepopPotion:  Potions.PotionOfSpeed,
+  thermalSapper: true,
+  fillerExplosive: Explosive.ExplosiveSaroniteBomb,
 });
 
 export const P1_UNHOLY_2H_PRERAID_PRESET = {
@@ -500,8 +502,11 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
       "enchant": 38374
     },
     {
-      "id": 40591,
-      "enchant": 55016
+      "id": 39706,
+      "enchant": 55016,
+      "gems": [
+        39996
+      ]
     },
     {
       "id": 40717
@@ -510,7 +515,7 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
       "id": 40075
     },
     {
-      "id": 40684
+      "id": 37390
     },
     {
       "id": 42987
@@ -521,10 +526,10 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
     },
     {
       "id": 40491,
-      "enchant": 53341
+      "enchant": 44495
     },
     {
-      "id": 40867
+      "id": 42620
     }
   ]}`),
 };

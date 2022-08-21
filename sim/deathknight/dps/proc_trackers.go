@@ -41,6 +41,7 @@ func (dk *DpsDeathknight) initProcTrackers() {
 	dk.ur.addProc(40211, "Potion of Speed", true)
 	dk.ur.addProc(54999, "Hyperspeed Acceleration", true)
 	dk.ur.addProc(26297, "Berserking (Troll)", true)
+	dk.ur.addProc(33697, "Blood Fury", true)
 
 	dk.ur.addProc(35937, "ItemActive-35937", true)
 	dk.ur.addProc(36871, "ItemActive-36871", true)
