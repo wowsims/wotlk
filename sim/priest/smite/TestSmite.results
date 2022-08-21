@@ -598,15 +598,15 @@ dps_results: {
 dps_results: {
  key: "TestSmite-Settings-Undead-P3-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 333.1287258156
-  tps: 482.6384853211
+  dps: 334.2370608824
+  tps: 482.4631427445
  }
 }
 dps_results: {
  key: "TestSmite-Settings-Undead-P3-Basic-NoBuffs-LongSingleTarget"
  value: {
-  dps: 333.1287258156
-  tps: 294.4461769878
+  dps: 334.2370608824
+  tps: 294.2708344112
  }
 }
 dps_results: {
