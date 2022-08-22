@@ -21,32 +21,25 @@ func (warrior *Warrior) registerThunderClapSpell() {
 		impTCDamageMult = 1.3
 	}
 
+	warrior.ThunderClapAura = core.ThunderClapAura(warrior.CurrentTarget, warrior.Talents.ImprovedThunderClap)
+
 	baseEffect := core.SpellEffect{
 		ProcMask:         core.ProcMaskSpellDamage,
 		DamageMultiplier: impTCDamageMult,
 		ThreatMultiplier: 1.75,
 		BonusCritRating:  float64(warrior.Talents.Incite) * 5 * core.CritRatingPerCritChance,
-		// TODO: find out the AP damage coefficient
-		BaseDamage:     core.BaseDamageConfigFlat(300),
+		BaseDamage: core.BaseDamageConfig{
+			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+				return hitEffect.MeleeAttackPower(spell.Unit)*0.12 + 300
+			},
+			TargetSpellCoefficient: 1,
+		},
 		OutcomeApplier: warrior.OutcomeFuncMagicHitAndCrit(warrior.spellCritMultiplier(true)),
-	}
-
-	numHits := warrior.Env.GetNumTargets()
-	effects := make([]core.SpellEffect, 0, numHits)
-	for i := int32(0); i < numHits; i++ {
-		effects = append(effects, baseEffect)
-		effects[i].Target = warrior.Env.GetTargetUnit(i)
-
-		tcAura := core.ThunderClapAura(effects[i].Target, warrior.Talents.ImprovedThunderClap)
-		if i == 0 {
-			warrior.ThunderClapAura = tcAura
-		}
-
-		effects[i].OnSpellHitDealt = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Landed() {
-				tcAura.Activate(sim)
+				core.ThunderClapAura(spellEffect.Target, warrior.Talents.ImprovedThunderClap).Activate(sim)
 			}
-		}
+		},
 	}
 
 	warrior.ThunderClap = warrior.RegisterSpell(core.SpellConfig{
@@ -69,7 +62,7 @@ func (warrior *Warrior) registerThunderClapSpell() {
 			},
 		},
 
-		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
+		ApplyEffects: core.ApplyEffectFuncAOEDamageCapped(warrior.Env, baseEffect),
 	})
 }
 
