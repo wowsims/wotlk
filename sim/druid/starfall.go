@@ -15,9 +15,7 @@ func (druid *Druid) registerStarfallSpell() {
 	}
 	baseCost := druid.BaseMana * 0.35
 	target := druid.CurrentTarget
-
-	numberOfTicks := core.TernaryInt(druid.Env.GetNumTargets() > 1, 20, 10)
-	tickLength := core.TernaryDuration(druid.Env.GetNumTargets() > 1, time.Millisecond*500, time.Millisecond*1000)
+	iffCritBonus := core.TernaryFloat64(druid.CurrentTarget.HasAura("Improved Faerie Fire"), float64(druid.Talents.ImprovedFaerieFire)*1*core.CritRatingPerCritChance, 0)
 
 	druid.Starfall = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 53201},
@@ -75,6 +73,9 @@ func (druid *Druid) registerStarfallSpell() {
 		}),
 	})
 
+	numberOfTicks := core.TernaryInt(druid.Env.GetNumTargets() > 1, 20, 10)
+	tickLength := core.TernaryDuration(druid.Env.GetNumTargets() > 1, time.Millisecond*500, time.Millisecond*1000)
+
 	druid.StarfallDot = core.NewDot(core.Dot{
 		Spell: druid.Starfall,
 		Aura: target.RegisterAura(core.Aura{
@@ -83,14 +84,15 @@ func (druid *Druid) registerStarfallSpell() {
 		}),
 		NumberOfTicks: numberOfTicks,
 		TickLength:    tickLength,
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
+		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-			IsPeriodic:       true,
+			IsPeriodic:       false,
 			BaseDamage:       core.BaseDamageConfigMagic(563, 653, 0.127),
-			OutcomeApplier:   druid.OutcomeFuncTick(),
-		}),
+			OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(1),
+			BonusCritRating:  iffCritBonus,
+		})),
 	})
 
 	druid.StarfallDotSplash = core.NewDot(core.Dot{
@@ -101,13 +103,14 @@ func (druid *Druid) registerStarfallSpell() {
 		}),
 		NumberOfTicks: numberOfTicks,
 		TickLength:    tickLength,
-		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncAOEDamage(druid.Env, core.SpellEffect{
+		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncAOEDamageCapped(druid.Env, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-			IsPeriodic:       true,
+			IsPeriodic:       false,
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(101, 0.127),
-			OutcomeApplier:   druid.OutcomeFuncTick(),
+			OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(1),
+			BonusCritRating:  iffCritBonus,
 		})),
 	})
 }

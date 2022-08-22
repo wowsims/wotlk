@@ -10,6 +10,9 @@ import (
 func (druid *Druid) ApplyTalents() {
 	druid.AddStat(stats.SpellHit, float64(druid.Talents.BalanceOfPower)*2*core.SpellHitRatingPerHitChance)
 	druid.AddStat(stats.SpellCrit, float64(druid.Talents.NaturalPerfection)*1*core.CritRatingPerCritChance)
+	druid.AddStat(stats.SpellHaste, float64(druid.Talents.CelestialFocus)*1*core.HasteRatingPerHastePercent)
+	druid.AddStat(stats.SpellPower, (float64(druid.Talents.ImprovedMoonkinForm)*0.1)*druid.GetStat(stats.Spirit))
+	druid.PseudoStats.DamageDealtMultiplier *= 1 + (float64(druid.Talents.EarthAndMoon) * 0.02)
 	druid.PseudoStats.SpiritRegenRateCasting = float64(druid.Talents.Intensity) * 0.1
 	druid.PseudoStats.ThreatMultiplier *= 1 - 0.04*float64(druid.Talents.Subtlety)
 	druid.PseudoStats.PhysicalDamageDealtMultiplier *= 1 + 0.02*float64(druid.Talents.Naturalist)
@@ -259,7 +262,7 @@ func (druid *Druid) applyEclipse() {
 		return
 	}
 	// Solar
-	solarProcChance := 0.333 * float64(druid.Talents.Eclipse)
+	solarProcChance := (1.0 / 3.0) * float64(druid.Talents.Eclipse)
 	solarProcAura := druid.NewTemporaryStatsAura("Solar Eclipse proc", core.ActionID{SpellID: 48517}, stats.Stats{}, time.Millisecond*15000)
 	druid.SolarICD.Duration = time.Millisecond * 30000
 	druid.RegisterAura(core.Aura{
