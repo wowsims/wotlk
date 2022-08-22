@@ -1,7 +1,6 @@
 package druid
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -52,7 +51,7 @@ func (druid *Druid) registerMoonfireSpell() {
 	druid.MoonfireDot = core.NewDot(core.Dot{
 		Spell: druid.Moonfire,
 		Aura: target.RegisterAura(core.Aura{
-			Label:    "Moonfire-" + strconv.Itoa(int(druid.Index)),
+			Label:    "Moonfire",
 			ActionID: actionID,
 		}),
 		NumberOfTicks: 4 + core.TernaryInt(druid.HasSetBonus(ItemSetThunderheartRegalia, 2), 1, 0) + core.TernaryInt(druid.Talents.NaturesSplendor, 1, 0),

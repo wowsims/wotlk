@@ -11,9 +11,6 @@ import (
 const IdolAvenger int32 = 31025
 
 func (druid *Druid) registerWrathSpell() {
-	druid.OriginalWrathDamageMultiplier = (1 + 0.02*float64(druid.Talents.Moonfury)) * (1 + 0.01*float64(druid.Talents.ImprovedInsectSwarm))
-	iffCritBonus := core.TernaryFloat64(druid.CurrentTarget.HasAura("Improved Faerie Fire"), float64(druid.Talents.ImprovedFaerieFire)*1*core.CritRatingPerCritChance, 0)
-
 	baseCost := 0.11 * druid.BaseMana
 	minBaseDamage := 557.0
 	maxBaseDamage := 627.0
@@ -22,6 +19,40 @@ func (druid *Druid) registerWrathSpell() {
 
 	// This seems to be unaffected by wrath of cenarius.
 	bonusFlatDamage := core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == IdolAvenger, 25*0.571, 0)
+
+	effect := core.SpellEffect{
+		ProcMask:             core.ProcMaskSpellDamage,
+		BonusSpellCritRating: 2 * float64(druid.Talents.NaturesMajesty) * core.CritRatingPerCritChance,
+		DamageMultiplier:     1 + 0.02*float64(druid.Talents.Moonfury),
+		ThreatMultiplier:     1,
+
+		BaseDamage:     core.BaseDamageConfigMagic(minBaseDamage+bonusFlatDamage, maxBaseDamage+bonusFlatDamage, 0.571+0.02*float64(druid.Talents.WrathOfCenarius)),
+		OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, 0.2*float64(druid.Talents.Vengeance))),
+		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
+				hasMoonkinForm := core.TernaryFloat64(druid.Talents.MoonkinForm, 1, 0)
+				druid.AddMana(sim, druid.MaxMana()*0.02*hasMoonkinForm, manaMetrics, true)
+			}
+		},
+	}
+
+	// Improved Insect Swarm
+	if druid.CurrentTarget.HasAura("Insect Swarm") {
+		effect.DamageMultiplier *= 1 + 0.01*float64(druid.Talents.ImprovedInsectSwarm)
+	}
+
+	// Improved Faerie Fire
+	if druid.CurrentTarget.HasAura("Improved Faerie Fire") {
+		effect.BonusSpellCritRating += float64(druid.Talents.ImprovedFaerieFire) * 1 * core.CritRatingPerCritChance
+	}
+
+	// Solar eclipse buff
+	if druid.HasAura("Solar Eclipse proc") {
+		effect.DamageMultiplier *= 1.4
+	}
+
+	// Nature's Majesty
+	effect.BonusSpellCritRating += 2 * float64(druid.Talents.NaturesMajesty) * core.CritRatingPerCritChance
 
 	druid.Wrath = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -43,20 +74,6 @@ func (druid *Druid) registerWrathSpell() {
 			},
 		},
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:             core.ProcMaskSpellDamage,
-			BonusSpellCritRating: float64(2*float64(druid.Talents.NaturesMajesty)*core.CritRatingPerCritChance) + iffCritBonus,
-			DamageMultiplier:     druid.OriginalWrathDamageMultiplier,
-			ThreatMultiplier:     1,
-
-			BaseDamage:     core.BaseDamageConfigMagic(minBaseDamage+bonusFlatDamage, maxBaseDamage+bonusFlatDamage, 0.571+0.02*float64(druid.Talents.WrathOfCenarius)),
-			OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, 0.2*float64(druid.Talents.Vengeance))),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Outcome.Matches(core.OutcomeCrit) {
-					hasMoonkinForm := core.TernaryFloat64(druid.Talents.MoonkinForm, 1, 0)
-					druid.AddMana(sim, druid.MaxMana()*0.02*hasMoonkinForm, manaMetrics, true)
-				}
-			},
-		}),
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})
 }
