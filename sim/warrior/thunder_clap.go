@@ -12,13 +12,13 @@ func (warrior *Warrior) registerThunderClapSpell() {
 	impTCDamageMult := 1.0
 	if warrior.Talents.ImprovedThunderClap == 1 {
 		cost -= 1
-		impTCDamageMult = 1.4
+		impTCDamageMult = 1.1
 	} else if warrior.Talents.ImprovedThunderClap == 2 {
 		cost -= 2
-		impTCDamageMult = 1.7
+		impTCDamageMult = 1.2
 	} else if warrior.Talents.ImprovedThunderClap == 3 {
 		cost -= 4
-		impTCDamageMult = 2
+		impTCDamageMult = 1.3
 	}
 
 	baseEffect := core.SpellEffect{
@@ -26,11 +26,11 @@ func (warrior *Warrior) registerThunderClapSpell() {
 		DamageMultiplier: impTCDamageMult,
 		ThreatMultiplier: 1.75,
 		BonusCritRating:  float64(warrior.Talents.Incite) * 5 * core.CritRatingPerCritChance,
-		BaseDamage:       core.BaseDamageConfigFlat(123),
+		BaseDamage:       core.BaseDamageConfigFlat(300),
 		OutcomeApplier:   warrior.OutcomeFuncMagicHitAndCrit(warrior.spellCritMultiplier(true)),
 	}
 
-	numHits := core.MinInt32(4, warrior.Env.GetNumTargets())
+	numHits := warrior.Env.GetNumTargets()
 	effects := make([]core.SpellEffect, 0, numHits)
 	for i := int32(0); i < numHits; i++ {
 		effects = append(effects, baseEffect)
@@ -64,7 +64,7 @@ func (warrior *Warrior) registerThunderClapSpell() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    warrior.NewTimer(),
-				Duration: time.Second * 4,
+				Duration: time.Second * 6,
 			},
 		},
 
