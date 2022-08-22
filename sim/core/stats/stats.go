@@ -356,6 +356,8 @@ type PseudoStats struct {
 	// Treat melee haste as a pseudostat so that shamans, death knights, paladins, and druids can get the correct scaling
 	MeleeHasteRatingPerHastePercent float64
 
+	HealingDealtMultiplier float64
+
 	///////////////////////////////////////////////////
 	// Effects that apply when this unit is the target.
 	///////////////////////////////////////////////////
@@ -430,6 +432,8 @@ func NewPseudoStats() PseudoStats {
 		AgentReserved1DamageDealtMultiplier: 1,
 
 		MeleeHasteRatingPerHastePercent: 32.79,
+
+		HealingDealtMultiplier: 1,
 
 		// Target effects.
 		DamageTakenMultiplier: 1,
