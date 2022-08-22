@@ -4,18 +4,33 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/items"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (druid *Druid) ApplyTalents() {
 	druid.AddStat(stats.SpellHit, float64(druid.Talents.BalanceOfPower)*2*core.SpellHitRatingPerHitChance)
 	druid.AddStat(stats.SpellCrit, float64(druid.Talents.NaturalPerfection)*1*core.CritRatingPerCritChance)
-	druid.PseudoStats.SpiritRegenRateCasting = float64(druid.Talents.Intensity) * 0.1
+	druid.AddStat(stats.SpellHaste, float64(druid.Talents.CelestialFocus)*1*core.HasteRatingPerHastePercent)
+	druid.AddStat(stats.SpellPower, (float64(druid.Talents.ImprovedMoonkinForm)*0.1)*druid.GetStat(stats.Spirit))
+	druid.PseudoStats.DamageDealtMultiplier *= 1 + (float64(druid.Talents.EarthAndMoon) * 0.02)
+	druid.PseudoStats.SpiritRegenRateCasting = float64(druid.Talents.Intensity) * (0.5 / 3)
 	druid.PseudoStats.ThreatMultiplier *= 1 - 0.04*float64(druid.Talents.Subtlety)
 	druid.PseudoStats.PhysicalDamageDealtMultiplier *= 1 + 0.02*float64(druid.Talents.Naturalist)
 
 	if druid.InForm(Bear | Cat) {
-		druid.AddStat(stats.AttackPower, float64(druid.Talents.PredatoryStrikes)*0.5*float64(core.CharacterLevel))
+		if druid.Talents.PredatoryStrikes > 0 {
+			druid.AddStat(stats.AttackPower, float64(druid.Talents.PredatoryStrikes)*0.5*float64(core.CharacterLevel))
+
+			weap := druid.GetMHWeapon()
+			if weap != nil {
+				weap := druid.Equip[items.ItemSlotMainHand]
+				dps := (((weap.WeaponDamageMax - weap.WeaponDamageMin) / 2.0) + weap.WeaponDamageMin) / weap.SwingSpeed
+				fap := (dps - 54.8) * 14
+
+				druid.AddStat(stats.AttackPower, fap*((0.2/3)*float64(druid.Talents.PredatoryStrikes)))
+			}
+		}
 		druid.AddStat(stats.MeleeCrit, float64(druid.Talents.SharpenedClaws)*2*core.CritRatingPerCritChance)
 		druid.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*2*float64(druid.Talents.FeralSwiftness))
 	}
@@ -42,18 +57,42 @@ func (druid *Druid) ApplyTalents() {
 		if druid.InForm(Cat) {
 			druid.MultiplyStat(stats.AttackPower, 1.0+0.5*bonus)
 		} else if druid.InForm(Bear) {
-			druid.MultiplyStat(stats.Stamina, 1.0+bonus)
+			druid.MultiplyStat(stats.Stamina, 1.0+0.5*bonus)
 		}
 	}
 
 	if druid.Talents.SurvivalOfTheFittest > 0 {
-		bonus := 0.01 * float64(druid.Talents.SurvivalOfTheFittest)
+		bonus := 0.02 * float64(druid.Talents.SurvivalOfTheFittest)
 		druid.MultiplyStat(stats.Stamina, 1.0+bonus)
 		druid.MultiplyStat(stats.Strength, 1.0+bonus)
 		druid.MultiplyStat(stats.Agility, 1.0+bonus)
 		druid.MultiplyStat(stats.Intellect, 1.0+bonus)
 		druid.MultiplyStat(stats.Spirit, 1.0+bonus)
-		druid.PseudoStats.ReducedCritTakenChance += 0.01 * float64(druid.Talents.SurvivalOfTheFittest)
+		druid.PseudoStats.ReducedCritTakenChance += 0.02 * float64(druid.Talents.SurvivalOfTheFittest)
+		if druid.InForm(Bear) {
+			druid.AddStat(stats.Armor, druid.Equip.Stats()[stats.Armor]*(0.33/3)*float64(druid.Talents.ThickHide))
+		}
+	}
+
+	if druid.Talents.ImprovedMarkOfTheWild > 0 {
+		bonus := 0.01 * float64(druid.Talents.ImprovedMarkOfTheWild)
+		druid.MultiplyStat(stats.Stamina, 1.0+bonus)
+		druid.MultiplyStat(stats.Strength, 1.0+bonus)
+		druid.MultiplyStat(stats.Agility, 1.0+bonus)
+		druid.MultiplyStat(stats.Intellect, 1.0+bonus)
+		druid.MultiplyStat(stats.Spirit, 1.0+bonus)
+	}
+
+	if druid.Talents.ProtectorOfThePack > 0 {
+		bonus := 0.02 * float64(druid.Talents.ProtectorOfThePack)
+		if druid.InForm(Bear) {
+			druid.MultiplyStat(stats.AttackPower, 1.0+bonus)
+			druid.PseudoStats.DamageTakenMultiplier -= 0.04 * float64(druid.Talents.ProtectorOfThePack)
+		}
+	}
+
+	if druid.Talents.PrimalPrecision > 0 {
+		druid.AddStat(stats.Expertise, 5.0*float64(druid.Talents.PrimalPrecision))
 	}
 
 	if druid.Talents.LivingSpirit > 0 {
@@ -61,11 +100,72 @@ func (druid *Druid) ApplyTalents() {
 		druid.MultiplyStat(stats.Spirit, 1.0+bonus)
 	}
 
+	if druid.Talents.MasterShapeshifter > 0 {
+		bonus := 0.02 * float64(druid.Talents.MasterShapeshifter)
+		if druid.InForm(Bear) {
+			druid.PseudoStats.DamageDealtMultiplier += bonus
+		} else if druid.InForm(Cat) {
+			druid.AddStat(stats.MeleeCrit, 2*float64(druid.Talents.MasterShapeshifter)*core.CritRatingPerCritChance)
+		}
+	}
+
+	druid.setupNaturesGrace()
 	druid.registerNaturesSwiftnessCD()
 	druid.applyPrimalFury()
 	druid.applyOmenOfClarity()
+	druid.applyEclipse()
 }
 
+func (druid *Druid) setupNaturesGrace() {
+	if druid.Talents.NaturesGrace < 1 {
+		return
+	}
+	// 1/3 de chance de proc par point de talent.
+	druid.NaturesGraceProcAura = druid.RegisterAura(core.Aura{
+		Label:    "Natures Grace Proc",
+		ActionID: core.ActionID{SpellID: 16886},
+		// Duration: core.NeverExpires,
+		Duration: time.Second * 3,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			druid.AddStatDynamic(sim, stats.SpellHaste, 655.8)
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			druid.AddStatDynamic(sim, stats.SpellHaste, -655.8)
+		},
+		/*
+			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+				if spell != druid.Wrath && spell != druid.Starfire {
+					return
+				}
+
+				aura.Deactivate(sim)
+			},
+		*/
+	})
+
+	druid.RegisterAura(core.Aura{
+		Label: "Natures Grace",
+		//ActionID: core.ActionID{SpellID: 16880},
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
+				druid.NaturesGraceProcAura.Activate(sim)
+			}
+		},
+	})
+}
+
+/*
+func (druid *Druid) applyNaturesGrace(cast *core.Cast) {
+	if druid.NaturesGraceProcAura.IsActive() {
+		druid.AddStat(stats.SpellHaste, 655.8) // 20% spell haste = 20 * 32.79 at level 80
+		// cast.CastTime -= time.Millisecond * 500
+	}
+}
+*/
 func (druid *Druid) registerNaturesSwiftnessCD() {
 	if !druid.Talents.NaturesSwiftness {
 		return
@@ -142,7 +242,7 @@ func (druid *Druid) applyPrimalFury() {
 					}
 				}
 			} else if druid.InForm(Cat) {
-				if spell == druid.Mangle || spell == druid.Shred {
+				if druid.IsMangle(spell) || spell == druid.Shred || spell == druid.Rake {
 					if spellEffect.Outcome.Matches(core.OutcomeCrit) {
 						if procChance == 1 || sim.RandomFloat("Primal Fury") < procChance {
 							druid.AddComboPoints(sim, 1, cpMetrics)
@@ -159,11 +259,7 @@ func (druid *Druid) applyOmenOfClarity() {
 		return
 	}
 
-	ppmm := druid.AutoAttacks.NewPPMManager(2.0, core.ProcMaskMelee)
-	icd := core.Cooldown{
-		Timer:    druid.NewTimer(),
-		Duration: time.Second * 10,
-	}
+	ppmm := druid.AutoAttacks.NewPPMManager(3.5, core.ProcMaskMelee)
 
 	druid.ClearcastingAura = druid.RegisterAura(core.Aura{
 		Label:    "Clearcasting",
@@ -178,16 +274,12 @@ func (druid *Druid) applyOmenOfClarity() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
-				return
-			}
-			if !icd.IsReady(sim) {
+			if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeSpecial) {
 				return
 			}
 			if !ppmm.Proc(sim, spellEffect.ProcMask, "Omen of Clarity") {
 				return
 			}
-			icd.Use(sim)
 			druid.ClearcastingAura.Activate(sim)
 		},
 	})
@@ -198,4 +290,71 @@ func (druid *Druid) ApplyClearcasting(sim *core.Simulation, spell *core.Spell, c
 		cast.Cost = 0
 		druid.ClearcastingAura.Deactivate(sim)
 	}
+}
+
+func (druid *Druid) applyEclipse() {
+	druid.SolarICD = core.Cooldown{Timer: druid.NewTimer(), Duration: 0}
+	druid.LunarICD = core.Cooldown{Timer: druid.NewTimer(), Duration: 0}
+	if druid.Talents.Eclipse == 0 {
+		return
+	}
+	// Solar
+	solarProcChance := (1.0 / 3.0) * float64(druid.Talents.Eclipse)
+	solarProcAura := druid.NewTemporaryStatsAura("Solar Eclipse proc", core.ActionID{SpellID: 48517}, stats.Stats{}, time.Millisecond*15000)
+	druid.SolarICD.Duration = time.Millisecond * 30000
+	druid.RegisterAura(core.Aura{
+		Label:    "Eclipse (Solar)",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+				return
+			}
+			if spell != druid.Starfire {
+				return
+			}
+			if !druid.SolarICD.Timer.IsReady(sim) {
+				return
+			}
+			if druid.LunarICD.Timer.TimeToReady(sim) > time.Millisecond*15000 {
+				return
+			}
+			if sim.RandomFloat("Eclipse (Solar)") < solarProcChance {
+				druid.SolarICD.Use(sim)
+				solarProcAura.Activate(sim)
+			}
+		},
+	})
+
+	// Lunar
+	lunarProcChance := 0.2 * float64(druid.Talents.Eclipse)
+	lunarProcAura := druid.NewTemporaryStatsAura("Lunar Eclipse proc", core.ActionID{SpellID: 48518}, stats.Stats{}, time.Millisecond*15000)
+	druid.LunarICD.Duration = time.Millisecond * 30000
+	druid.RegisterAura(core.Aura{
+		Label:    "Eclipse (Lunar)",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+				return
+			}
+			if spell != druid.Wrath {
+				return
+			}
+			if !druid.LunarICD.Timer.IsReady(sim) {
+				return
+			}
+			if druid.SolarICD.Timer.TimeToReady(sim) > time.Millisecond*15000 {
+				return
+			}
+			if sim.RandomFloat("Eclipse (Lunar)") < lunarProcChance {
+				druid.LunarICD.Use(sim)
+				lunarProcAura.Activate(sim)
+			}
+		},
+	})
 }

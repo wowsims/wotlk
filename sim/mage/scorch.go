@@ -57,12 +57,12 @@ func (mage *Mage) registerScorchSpell() {
 				float64(mage.Talents.ImprovedScorch)*1*core.CritRatingPerCritChance,
 
 			DamageMultiplier: mage.spellDamageMultiplier *
-				(1 + 0.02*float64(mage.Talents.FirePower+mage.Talents.SpellImpact)) *
+				(1 + 0.02*float64(mage.Talents.SpellImpact)) *
 				core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfScorch), 1.2, 1),
 			ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
 			BaseDamage:      core.BaseDamageConfigMagic(382, 451, 1.5/3.5),
-			OutcomeApplier:  mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, mage.bonusCritDamage)),
+			OutcomeApplier:  mage.fireSpellOutcomeApplier(mage.bonusCritDamage),
 			OnSpellHitDealt: onSpellHitDealt,
 		}),
 	})

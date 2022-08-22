@@ -1,4 +1,4 @@
-import { Consumes } from '../core/proto/common.js';
+import {Consumes, Debuffs, IndividualBuffs, RaidBuffs, TristateEffect} from '../core/proto/common.js';
 import { Flask } from '../core/proto/common.js';
 import { Food } from '../core/proto/common.js';
 import { EquipmentSpec } from '../core/proto/common.js';
@@ -27,6 +27,8 @@ export const DefaultRotation = BalanceDruidRotation.create({
 });
 
 export const DefaultOptions = BalanceDruidOptions.create({
+	useIs: true,
+	useMf: true
 });
 
 export const DefaultConsumes = Consumes.create({
@@ -35,105 +37,125 @@ export const DefaultConsumes = Consumes.create({
 	defaultPotion: Potions.PotionOfSpeed,
 });
 
-export const P5_PRESET = {
-	name: 'TBC P5 Preset',
+export const DefaultRaidBuffs = RaidBuffs.create({
+	giftOfTheWild: TristateEffect.TristateEffectImproved,
+	powerWordFortitude: TristateEffect.TristateEffectImproved,
+	strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
+	arcaneBrilliance: true,
+	divineSpirit: true,
+	trueshotAura: true,
+	leaderOfThePack: TristateEffect.TristateEffectImproved,
+	icyTalons: true,
+	totemOfWrath: true,
+	moonkinAura: TristateEffect.TristateEffectImproved,
+	wrathOfAirTotem: true,
+	sanctifiedRetribution: true,
+	bloodlust: true,
+});
+
+export const DefaultIndividualBuffs = IndividualBuffs.create({
+	blessingOfKings: true,
+	blessingOfWisdom: TristateEffect.TristateEffectImproved,
+	blessingOfMight: TristateEffect.TristateEffectImproved,
+	vampiricTouch: true,
+});
+
+export const DefaultDebuffs = Debuffs.create({
+	sunderArmor: true,
+	faerieFire: TristateEffect.TristateEffectImproved,
+	bloodFrenzy: true,
+	ebonPlaguebringer: true,
+	heartOfTheCrusader: true,
+	judgementOfWisdom: true,
+});
+
+export const P1_PRESET = {
+	name: 'P1 Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 34403,
-			"enchant": 29191,
-			"gems": [
-				34220,
-				32196
+        {
+            "id": 40467,
+            "enchant": 50368,
+            "gems": [
+                    41285,
+                    39998
 			]
-		},
-		{
-			"id": 34204
-		},
-		{
-			"id": 34391,
-			"enchant": 28886,
-			"gems": [
-				32221,
-				32196
+        },
+        {
+            "id": 44661,
+            "gems": [
+            	40026
 			]
-		},
-		{
-			"id": 34242,
-			"enchant": 33150,
-			"gems": [
-				32196
-			]
-		},
-		{
-			"id": 31043,
-			"enchant": 24003,
-			"gems": [
-				32215,
-				32215,
-				32221
-			]
-		},
-		{
-			"id": 34446,
-			"enchant": 22534,
-			"gems": [
-				35760
-			]
-		},
-		{
-			"id": 34407,
-			"enchant": 28272,
-			"gems": [
-				32196,
-				35760
-			]
-		},
-		{
-			"id": 34555,
-			"gems": [
-				32196
-			]
-		},
-		{
-			"id": 34169,
-			"enchant": 24274,
-			"gems": [
-				32196,
-				32196,
-				35760
-			]
-		},
-		{
-			"id": 34572,
-			"enchant": 35297,
-			"gems": [
-				32196
-			]
-		},
-		{
-			"id": 34230,
-			"enchant": 22536
-		},
-		{
-			"id": 34362,
-			"enchant": 22536
-		},
-		{
-			"id": 32483
-		},
-		{
-			"id": 34429
-		},
-		{
-			"id": 34336,
-			"enchant": 22560
-		},
-		{
-			"id": 34179
-		},
-		{
-			"id": 32387
-		}
-	]}`),
+        },
+        {
+            "id": 40470,
+            "enchant": 50338,
+            "gems": [
+             39998
+            ]
+        },
+        {
+            "id": 40469,
+            "enchant":  60692,
+            "gems": [
+				 39998,
+				 40026
+            ]
+        },
+        {
+            "id": 40561,
+            "enchant":  54793,
+            "gems": [
+             39998
+            ]
+        },
+        {
+            "id": 40560,
+            "enchant": 41602
+        },
+        {
+            "id": 40558,
+            "enchant": 55016
+        },
+        {
+            "id": 44008,
+            "enchant":  60767,
+            "gems": [
+            	39998
+            ]
+        },
+        {
+            "id": 40466,
+            "enchant":  54999,
+            "gems": [ 
+            	39998
+            ]
+        },
+        {
+            "id": 40399
+        },
+        {
+            "id": 40080
+        },
+        {
+            "id": 40255
+        },
+        {
+            "id": 40432
+        },
+        {
+            "id": 40405,
+            "enchant": 55642
+        },
+        {
+            "id": 40395,
+            "enchant":  60714
+        },
+        {
+            "id": 40192
+        },
+        {
+            "id": 40321
+        }
+    ]}`),
 };

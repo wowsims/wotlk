@@ -16,7 +16,7 @@ sim/web/__debug_bin
 # temporary files
 *.results.tmp
 .dockerignore
-wotlk/
+/wotlk/
 *.code-workspace
 wowsimwotlk
 

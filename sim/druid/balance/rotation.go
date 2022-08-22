@@ -2,7 +2,7 @@ package balance
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
+	"time"
 )
 
 func (moonkin *BalanceDruid) OnGCDReady(sim *core.Simulation) {
@@ -10,46 +10,50 @@ func (moonkin *BalanceDruid) OnGCDReady(sim *core.Simulation) {
 }
 
 func (moonkin *BalanceDruid) tryUseGCD(sim *core.Simulation) {
-	if moonkin.useSurplusRotation {
-		moonkin.manaTracker.Update(sim, moonkin.GetCharacter())
-
-		// If we have enough mana to burn, use the surplus rotation.
-		if moonkin.manaTracker.ProjectedManaSurplus(sim, moonkin.GetCharacter()) {
-			moonkin.actRotation(sim, moonkin.surplusRotation)
-		} else {
-			moonkin.actRotation(sim, moonkin.primaryRotation)
-		}
-	} else {
-		moonkin.actRotation(sim, moonkin.primaryRotation)
-	}
+	// TODO add rotation choice here
+	moonkin.rotation(sim)
 }
 
-func (moonkin *BalanceDruid) actRotation(sim *core.Simulation, rotation proto.BalanceDruid_Rotation) {
-	// Activate shared druid behaviors
-	// Use Rebirth at the beginning of the fight if flagged in rotation settings
-	// Potentially allow options for "Time of cast" in future or default cast like 1 min into fight
-	// Currently just casts at the beginning of encounter (with all CDs popped)
-	if moonkin.useBattleRes && moonkin.TryRebirth(sim) {
-		return
-	}
+func (moonkin *BalanceDruid) rotation(sim *core.Simulation) {
 
 	target := moonkin.CurrentTarget
 
-	var spell *core.Spell
-	// TODO: add starfall always
+	// Eclipse stuff
+	lunarICD := moonkin.LunarICD.Timer.TimeToReady(sim)
+	solarICD := moonkin.SolarICD.Timer.TimeToReady(sim)
+	lunarIsActive := lunarICD > time.Millisecond*15000
+	solarIsActive := solarICD > time.Millisecond*15000
+	lunarUptime := core.TernaryDuration(lunarIsActive, lunarICD-time.Millisecond*15000, 0)
+	solarUptime := core.TernaryDuration(solarIsActive, solarICD-time.Millisecond*15000, 0)
 
-	if moonkin.ShouldFaerieFire(sim) {
-		spell = moonkin.FaerieFire
-	} else if moonkin.ShouldCastHurricane(sim, rotation) {
-		spell = moonkin.Hurricane
-	} else if moonkin.ShouldCastInsectSwarm(sim, target, rotation) {
-		spell = moonkin.InsectSwarm
-	} else if moonkin.ShouldCastMoonfire(sim, target, rotation) {
-		spell = moonkin.Moonfire
-	} else {
+	moonfireUptime := moonkin.MoonfireDot.RemainingDuration(sim)
+	insectSwarmUptime := moonkin.InsectSwarmDot.RemainingDuration(sim)
+
+	shouldRebirth := sim.GetRemainingDuration().Seconds() < moonkin.RebirthTiming
+
+	var spell *core.Spell
+	// TODO Treants
+	if moonkin.useBattleRes && shouldRebirth && moonkin.Rebirth.IsReady(sim) {
+		spell = moonkin.Rebirth
+	} else if moonkin.Starfall.IsReady(sim) {
+		spell = moonkin.Starfall
+	} else if (solarIsActive && (insectSwarmUptime > 0 || !moonkin.canIsInsideEclipse)) || (!lunarIsActive && moonfireUptime > 13) {
+		spell = moonkin.Wrath
+	} else if (lunarIsActive && (moonfireUptime > 0 || !moonkin.canMfInsideEclipse)) || (!solarIsActive && insectSwarmUptime > 13) {
 		spell = moonkin.Starfire
-		// TODO: Check for eclipse to decide if starfire or wrath
+	} else if (lunarIsActive || lunarICD < core.GCDDefault) && moonkin.useMF {
+		spell = moonkin.Moonfire
+	} else if moonkin.useIS {
+		spell = moonkin.InsectSwarm
+	} else {
+		spell = moonkin.Starfire // Always fallback to Starfire for beautiful Classic memories
 	}
+
+	// "Applying" or "Dispelling" eclipse effects before casting
+	solarShouldStayActive := float64(solarUptime-spell.DefaultCast.CastTime) > 0
+	lunarShouldStayActive := float64(lunarUptime-spell.DefaultCast.CastTime) > 0
+	moonkin.Wrath.DamageMultiplier = core.TernaryFloat64(solarShouldStayActive, moonkin.OriginalWrathDamageMultiplier+0.4, moonkin.OriginalWrathDamageMultiplier)
+	moonkin.Starfire.BonusCritRating = core.TernaryFloat64(lunarShouldStayActive, moonkin.OriginalStarfireBonusCritRating+(40*core.CritRatingPerCritChance), moonkin.OriginalStarfireBonusCritRating)
 
 	if success := spell.Cast(sim, target); !success {
 		moonkin.WaitForMana(sim, spell.CurCast.Cost)

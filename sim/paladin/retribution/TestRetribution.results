@@ -514,8 +514,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-RedemptionBattlegear"
  value: {
-  dps: 3030.6803040219
-  tps: 2792.0758292573
+  dps: 3032.5041626575
+  tps: 2793.6842874212
  }
 }
 dps_results: {
@@ -607,6 +607,13 @@ dps_results: {
  value: {
   dps: 2706.1329368894
   tps: 2502.7308836848
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-StormshroudArmor"
+ value: {
+  dps: 2536.9465966843
+  tps: 2362.1557800819
  }
 }
 dps_results: {

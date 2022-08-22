@@ -45,9 +45,9 @@ export const DefaultOptions = TankDeathKnightOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	flask: Flask.FlaskOfFortification,
+	flask: Flask.FlaskOfStoneblood,
 	food: Food.FoodDragonfinFilet,
-	defaultPotion: Potions.PotionOfSpeed,
+	defaultPotion: Potions.IndestructiblePotion,
 	prepopPotion:  Potions.IndestructiblePotion,
 });
 

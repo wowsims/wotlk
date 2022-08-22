@@ -1,6 +1,8 @@
 package mage
 
 import (
+	"time"
+
 	llq "github.com/emirpasic/gods/queues/linkedlistqueue"
 	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
@@ -57,6 +59,7 @@ type Mage struct {
 	disabledMCDs             []*core.MajorCooldown
 
 	waterElemental *WaterElemental
+	mirrorImage    *MirrorImage
 
 	// Cached values for a few mechanics.
 	spellDamageMultiplier float64
@@ -69,6 +72,7 @@ type Mage struct {
 	ArcaneExplosion *core.Spell
 	ArcaneMissiles  *core.Spell
 	Blizzard        *core.Spell
+	DeepFreeze      *core.Spell
 	Ignite          *core.Spell
 	LivingBomb      *core.Spell
 	Fireball        *core.Spell
@@ -79,6 +83,7 @@ type Mage struct {
 	Pyroblast       *core.Spell
 	Scorch          *core.Spell
 	WintersChill    *core.Spell
+	MirrorImage     *core.Spell
 
 	IcyVeins             *core.Spell
 	SummonWaterElemental *core.Spell
@@ -97,6 +102,12 @@ type Mage struct {
 	ClearcastingAura   *core.Aura
 	ScorchAura         *core.Aura
 	HotStreakAura      *core.Aura
+	CombustionAura     *core.Aura
+	FingersOfFrostAura *core.Aura
+	BrainFreezeAura    *core.Aura
+
+	// Used to prevent utiliizing Brain Freeze immediately after proccing it.
+	BrainFreezeActivatedAt time.Duration
 
 	IgniteTickDamage []float64
 
@@ -123,9 +134,9 @@ func (mage *Mage) HasMinorGlyph(glyph proto.MageMinorGlyph) bool {
 func (mage *Mage) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	raidBuffs.ArcaneBrilliance = true
 
-	//if mage.Talents.ArcaneEmpowerment == 3 {
-	//	raidBuffs.ArcaneEmpowerment = true
-	//}
+	if mage.Talents.ArcaneEmpowerment == 3 {
+		raidBuffs.ArcaneEmpowerment = true
+	}
 }
 func (mage *Mage) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
@@ -142,14 +153,15 @@ func (mage *Mage) Initialize() {
 		mage.HasSetBonus(ItemSetKirinTorGarb, 4),
 		mage.HasSetBonus(ItemSetKhadgarsRegalia, 2) || mage.HasSetBonus(ItemSetSunstridersRegalia, 2),
 		mage.HasSetBonus(ItemSetKhadgarsRegalia, 4) || mage.HasSetBonus(ItemSetSunstridersRegalia, 4),
-		false,
-		false,
+		mage.HasSetBonus(ItemSetBloodmagesRegalia, 2),
+		mage.HasSetBonus(ItemSetBloodmagesRegalia, 4),
 	}
 
 	mage.registerArcaneBlastSpell()
 	mage.registerArcaneExplosionSpell()
 	mage.registerArcaneMissilesSpell()
 	mage.registerBlizzardSpell()
+	mage.registerDeepFreezeSpell()
 	mage.registerFireballSpell()
 	mage.registerFireBlastSpell()
 	mage.registerFlamestrikeSpell()
@@ -163,6 +175,7 @@ func (mage *Mage) Initialize() {
 
 	mage.registerEvocationCD()
 	mage.registerManaGemsCD()
+	mage.registerMirrorImageCD()
 
 	mage.IgniteDots = []*core.Dot{}
 	mage.IgniteTickDamage = []float64{}
@@ -176,17 +189,77 @@ func (mage *Mage) Initialize() {
 	mage.extraABsAP = mage.Rotation.ExtraBlastsDuringFirstAp
 }
 
-func (mage *Mage) Reset(_ *core.Simulation) {
+func (mage *Mage) launchExecuteCDOptimizer(sim *core.Simulation) {
+
+	pa := &core.PendingAction{
+		Priority: core.ActionPriorityRegen,
+	}
+	pa.OnAction = func(sim *core.Simulation) {
+		if sim.IsExecutePhase35() {
+			for _, mcd := range mage.disabledMCDs {
+				mage.EnableMajorCooldown(mcd.Spell.ActionID)
+			}
+		} else {
+			for _, mcd := range mage.GetMajorCooldowns() {
+				isBloodLust := mcd.Spell.ActionID == core.ActionID{SpellID: 2825, Tag: -1} //ignore blood lust as it shouldn't be saved
+				isFlameCap := mcd.Spell.ActionID == core.ActionID{ItemID: 22788}           //ignore flame cap because it's so long
+				isPotionOfSpeed := mcd.Spell.ActionID == core.ActionID{ItemID: 40211}
+				if mcd.Spell.CD.Duration > (sim.Duration-sim.CurrentTime) && mcd.Type.Matches(core.CooldownTypeDPS) &&
+					!isBloodLust && !isFlameCap || isPotionOfSpeed {
+					mage.DisableMajorCooldown(mcd.Spell.ActionID)
+					mage.disabledMCDs = append(mage.disabledMCDs, mcd)
+				}
+			}
+
+			pa.NextActionAt = sim.CurrentTime + core.MinDuration(40*time.Second, time.Duration(.35*float64(sim.Duration)))
+
+			executeTime := time.Duration(.7 * float64(sim.Duration))
+
+			if pa.NextActionAt > executeTime {
+				pa.NextActionAt = executeTime
+			}
+			if pa.NextActionAt < sim.Duration {
+				sim.AddPendingAction(pa)
+			}
+
+		}
+
+	}
+
+	pa.OnAction(sim) // immediately activate first pending action
+}
+
+func (mage *Mage) Reset(sim *core.Simulation) {
 	mage.numCastsDone = 0
 	mage.num4CostAB = 0
 	mage.extraABsAP = mage.Rotation.ExtraBlastsDuringFirstAp
 	mage.manaTracker.Reset()
-	mage.disabledMCDs = nil
 	mage.bonusAMCCCrit = 0
 	for i := int32(0); i < mage.Env.GetNumTargets(); i++ {
 		mage.LivingBombNotActive.Clear()
 		mage.LivingBombNotActive.Enqueue(mage.Env.GetTargetUnit(i))
 	}
+
+	if mage.Rotation.Type == proto.Mage_Rotation_Fire && mage.Rotation.OptimizeCdsForExecute { // make this an option
+		mage.disabledMCDs = make([]*core.MajorCooldown, 0, 10)
+		mage.launchExecuteCDOptimizer(sim)
+	}
+}
+
+func (mage *Mage) fireSpellOutcomeApplier(secondaryCritMultiplier float64) core.OutcomeApplier {
+
+	critMult := mage.SpellCritMultiplier(1, secondaryCritMultiplier)
+
+	combMult := mage.SpellCritMultiplier(1, secondaryCritMultiplier+.5)
+
+	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
+		if mage.CombustionAura.IsActive() {
+			mage.OutcomeFuncMagicHitAndCrit(combMult)(sim, spell, spellEffect, attackTable)
+		} else {
+			mage.OutcomeFuncMagicHitAndCrit(critMult)(sim, spell, spellEffect, attackTable)
+		}
+	}
+
 }
 
 func NewMage(character core.Character, options proto.Player) *Mage {
@@ -223,6 +296,8 @@ func NewMage(character core.Character, options proto.Player) *Mage {
 		}
 		mage.Character.AddStatDependency(stats.Spirit, stats.SpellCrit, multi)
 	}
+
+	mage.mirrorImage = mage.NewMirrorImage()
 
 	if mage.Talents.SummonWaterElemental {
 		mage.waterElemental = mage.NewWaterElemental(mage.Rotation.WaterElementalDisobeyChance)

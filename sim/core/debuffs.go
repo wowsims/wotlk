@@ -438,7 +438,7 @@ func MangleAura(target *Unit) *Aura {
 		Label:    "Mangle",
 		Tag:      BleedDamageAuraTag,
 		ActionID: ActionID{SpellID: 33876},
-		Duration: time.Second * 12,
+		Duration: time.Minute,
 		Priority: 1.3,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.PeriodicPhysicalDamageTakenMultiplier *= 1.3
@@ -918,6 +918,44 @@ func FrostFeverAura(target *Unit, impIcyTouch int32) *Aura {
 			aura.Unit.MultiplyAttackSpeed(sim, inverseMult)
 		},
 	})
+}
+
+const MarkOfBloodTag = "MarkOfBlood"
+
+func MarkOfBloodAura(target *Unit) *Aura {
+	actionId := ActionID{SpellID: 49005}
+
+	var healthMetrics *ResourceMetrics
+	aura := target.GetOrRegisterAura(Aura{
+		Label:     "MarkOfBlood",
+		Tag:       MarkOfBloodTag,
+		ActionID:  actionId,
+		Duration:  20 * time.Second,
+		MaxStacks: 20,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.SetStacks(sim, aura.MaxStacks)
+
+			target := aura.Unit.CurrentTarget
+
+			if healthMetrics == nil && target != nil {
+				healthMetrics = target.NewHealthMetrics(actionId)
+			}
+		},
+		OnSpellHitDealt: func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
+			target := aura.Unit.CurrentTarget
+
+			// TODO: Does vampiric blood make it so this health gain is increased?
+			if target != nil {
+				target.GainHealth(sim, target.MaxHealth()*0.04, healthMetrics)
+				aura.RemoveStack(sim)
+
+				if aura.GetStacks() == 0 {
+					aura.Deactivate(sim)
+				}
+			}
+		},
+	})
+	return aura
 }
 
 const RuneOfRazoriceVulnerabilityTag = "RuneOfRazoriceVulnerability"

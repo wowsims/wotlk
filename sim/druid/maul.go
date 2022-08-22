@@ -3,6 +3,7 @@ package druid
 import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/items"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -10,9 +11,34 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 	cost := 15.0 - float64(druid.Talents.Ferocity)
 	refundAmount := cost * 0.8
 
-	baseDamage := 176.0
+	baseDamage := 578.0
 	if druid.Equip[items.ItemSlotRanged].ID == 23198 { // Idol of Brutality
 		baseDamage += 50
+	}
+
+	baseEffect := core.SpellEffect{
+		ProcMask: core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
+
+		DamageMultiplier: 1 + 0.1*float64(druid.Talents.SavageFury),
+		ThreatMultiplier: 1,
+		FlatThreatBonus:  344,
+
+		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, baseDamage, 1, 1, true),
+		OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(druid.MeleeCritMultiplier()),
+
+		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.Landed() {
+				druid.AddRage(sim, refundAmount, druid.RageRefundMetrics)
+			}
+		},
+	}
+
+	maxTargets := core.TernaryInt(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMaul), 2, 1)
+	numHits := core.MinInt(maxTargets, int(druid.Env.GetNumTargets()))
+	effects := make([]core.SpellEffect, 0, numHits)
+	for i := 0; i < numHits; i++ {
+		effects = append(effects, baseEffect)
+		effects[i].Target = druid.Env.GetTargetUnit(int32(i))
 	}
 
 	druid.Maul = druid.RegisterSpell(core.SpellConfig{
@@ -30,22 +56,7 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 			ModifyCast: druid.ApplyClearcasting,
 		},
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
-
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			FlatThreatBonus:  344,
-
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, baseDamage, 1, 1, true),
-			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(druid.MeleeCritMultiplier()),
-
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() {
-					druid.AddRage(sim, refundAmount, druid.RageRefundMetrics)
-				}
-			},
-		}),
+		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
 	})
 
 	druid.MaulQueueAura = druid.RegisterAura(core.Aura{

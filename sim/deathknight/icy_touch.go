@@ -78,3 +78,34 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 		return dk.CastCostPossible(sim, 0.0, 0, 1, 0) && dk.IcyTouch.IsReady(sim)
 	}, nil)
 }
+func (dk *Deathknight) registerDrwIcyTouchSpell() {
+	impIcyTouchCoeff := 1.0 + 0.05*float64(dk.Talents.ImprovedIcyTouch)
+	sigilBonus := dk.sigilOfTheFrozenConscienceBonus()
+
+	dk.RuneWeapon.IcyTouch = dk.RuneWeapon.RegisterSpell(core.SpellConfig{
+		ActionID:    IcyTouchActionID,
+		SpellSchool: core.SpellSchoolFrost,
+
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+			ProcMask:             core.ProcMaskSpellDamage,
+			BonusSpellCritRating: dk.rimeCritBonus() * core.CritRatingPerCritChance,
+			DamageMultiplier:     impIcyTouchCoeff,
+			ThreatMultiplier:     7.0,
+
+			BaseDamage: core.BaseDamageConfig{
+				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+					roll := (245.0-227.0)*sim.RandomFloat("Icy Touch") + 227.0 + sigilBonus
+					return (roll + dk.RuneWeapon.getImpurityBonus(hitEffect, spell.Unit)*0.1)
+				},
+				TargetSpellCoefficient: 1,
+			},
+			OutcomeApplier: dk.RuneWeapon.OutcomeFuncMagicHitAndCrit(dk.RuneWeapon.MeleeCritMultiplier(1.0, 0.0)),
+
+			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if spellEffect.Landed() {
+					dk.RuneWeapon.FrostFeverSpell.Cast(sim, spellEffect.Target)
+				}
+			},
+		}),
+	})
+}

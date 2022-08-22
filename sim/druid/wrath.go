@@ -11,7 +11,12 @@ import (
 const IdolAvenger int32 = 31025
 
 func (druid *Druid) registerWrathSpell() {
-	baseCost := 255.0
+	druid.OriginalWrathDamageMultiplier = (1 + 0.02*float64(druid.Talents.Moonfury)) * (1 + 0.01*float64(druid.Talents.ImprovedInsectSwarm))
+	iffCritBonus := core.TernaryFloat64(druid.CurrentTarget.HasAura("Improved Faerie Fire"), float64(druid.Talents.ImprovedFaerieFire)*1*core.CritRatingPerCritChance, 0)
+
+	baseCost := 0.11 * druid.BaseMana
+	minBaseDamage := 553.0
+	maxBaseDamage := 623.0
 
 	// This seems to be unaffected by wrath of cenarius.
 	bonusFlatDamage := core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == IdolAvenger, 25*0.571, 0)
@@ -31,17 +36,18 @@ func (druid *Druid) registerWrathSpell() {
 			},
 
 			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
+				//druid.applyNaturesGrace(cast)
 				druid.applyNaturesSwiftness(cast)
 			},
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:             core.ProcMaskSpellDamage,
-			BonusSpellCritRating: 0,
-			DamageMultiplier:     1 + 0.02*float64(druid.Talents.Moonfury),
+			BonusSpellCritRating: float64(2*float64(druid.Talents.NaturesMajesty)*45.91) + iffCritBonus,
+			DamageMultiplier:     druid.OriginalWrathDamageMultiplier,
 			ThreatMultiplier:     1,
 
-			BaseDamage:     core.BaseDamageConfigMagic(383+bonusFlatDamage, 432+bonusFlatDamage, 0.571+0.02*float64(druid.Talents.WrathOfCenarius)),
+			BaseDamage:     core.BaseDamageConfigMagic(minBaseDamage+bonusFlatDamage, maxBaseDamage+bonusFlatDamage, 0.571+0.02*float64(druid.Talents.WrathOfCenarius)),
 			OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, 0.2*float64(druid.Talents.Vengeance))),
 		}),
 	})

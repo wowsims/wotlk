@@ -15,7 +15,6 @@ type FrostRotation struct {
 	uaCycle    bool
 
 	// CDS
-	amsMCD                  *core.MajorCooldown
 	hyperSpeedMCD           *core.MajorCooldown
 	stoneformMCD            *core.MajorCooldown
 	bloodfuryMCD            *core.MajorCooldown
@@ -58,9 +57,6 @@ func (dk *DpsDeathknight) getFrostMajorCooldown(actionID core.ActionID) *core.Ma
 
 func (dk *DpsDeathknight) setupUnbreakableArmorCooldowns() {
 	fr := &dk.fr
-
-	// AMS
-	fr.amsMCD = dk.getFrostMajorCooldown(core.ActionID{SpellID: 48707})
 
 	// hyperspeed accelerators
 	fr.hyperSpeedMCD = dk.getFrostMajorCooldown(core.ActionID{SpellID: 54758})
@@ -127,7 +123,6 @@ func (dk *DpsDeathknight) castAllMajorCooldowns(sim *core.Simulation) {
 	dk.castMajorCooldown(fr.stoneformMCD, sim, target)
 	dk.castMajorCooldown(fr.bloodfuryMCD, sim, target)
 	dk.castMajorCooldown(fr.berserkingMCD, sim, target)
-	dk.castMajorCooldown(fr.amsMCD, sim, target)
 }
 
 func (dk *DpsDeathknight) RotationActionCallback_UA_Frost(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {

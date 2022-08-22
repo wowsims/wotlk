@@ -135,8 +135,13 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 			rotationInputs: ShamanInputs.EnhancementShamanRotationConfig, 
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
+				IconInputs.ReplenishmentBuff,
+				IconInputs.MP5Buff,
+				IconInputs.SpellHasteBuff,
+				IconInputs.SpiritBuff,
 			],
 			excludeBuffDebuffInputs: [
+				IconInputs.BleedDebuff,
 			],
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {

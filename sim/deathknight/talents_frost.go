@@ -208,20 +208,6 @@ func (dk *Deathknight) bloodOfTheNorthCoeff() float64 {
 	return []float64{1.0, 1.03, 1.06, 1.10}[dk.Talents.BloodOfTheNorth]
 }
 
-func (dk *Deathknight) botnAndReaping(sim *core.Simulation, spell *core.Spell) {
-	if dk.Talents.BloodOfTheNorth == 0 && dk.Talents.Reaping == 0 {
-		return
-	}
-	tp := dk.Talents.BloodOfTheNorth + dk.Talents.Reaping
-	if tp < 3 {
-		if sim.RandomFloat("Blood of The North / Reaping") > float64(tp)*0.33 {
-			return
-		}
-	}
-
-	dk.ConvertToDeath(sim, dk.BloodRuneSpentAt(sim.CurrentTime), true, core.NeverExpires)
-}
-
 func (dk *Deathknight) applyThreatOfThassarian() {
 	dk.bonusCoeffs.threatOfThassarianChance = []float64{0.0, 0.3, 0.6, 1.0}[dk.Talents.ThreatOfThassarian]
 }

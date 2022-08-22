@@ -44,6 +44,19 @@ func NewTankDeathknight(character core.Character, options proto.Player) *TankDea
 		Options:  *dkOptions.Options,
 	}
 
+	tankDk.EnableAutoAttacks(tankDk, core.AutoAttackOptions{
+		MainHand:       tankDk.WeaponFromMainHand(tankDk.DefaultMeleeCritMultiplier()),
+		OffHand:        tankDk.WeaponFromOffHand(tankDk.DefaultMeleeCritMultiplier()),
+		AutoSwingMelee: true,
+		ReplaceMHSwing: func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
+			if tankDk.RuneStrike.CanCast(sim) {
+				return tankDk.RuneStrike.Spell
+			} else {
+				return nil
+			}
+		},
+	})
+
 	return tankDk
 }
 

@@ -473,15 +473,16 @@ func registerPotionCD(agent Agent, consumes proto.Consumes) {
 
 	prepopTime := time.Second
 	startingMCD := makePotionActivation(startingPotion, character, potionCD, prepopTime)
-	if startingMCD.Spell != nil {
+	hasPrepopPotion := startingMCD.Spell != nil
+	if hasPrepopPotion {
 		startingPotionSpell := startingMCD.Spell
 		character.RegisterResetEffect(func(sim *Simulation) {
-			StartPeriodicAction(sim, PeriodicActionOptions{
-				Period:   0,
-				NumTicks: 1,
+			StartDelayedAction(sim, DelayedActionOptions{
+				DoAt: 0,
 				OnAction: func(sim *Simulation) {
 					startingPotionSpell.Cast(sim, nil)
 					potionCD.Set(time.Minute - prepopTime)
+					character.UpdateMajorCooldowns()
 				},
 			})
 		})
@@ -494,6 +495,12 @@ func registerPotionCD(agent Agent, consumes proto.Consumes) {
 		canActivate := defaultMCD.CanActivate
 		defaultMCD.CanActivate = func(sim *Simulation, character *Character) bool {
 			if usedDefaultPotion {
+				return false
+			}
+
+			if hasPrepopPotion && sim.CurrentTime < time.Second*1 {
+				// Because of prepop's StartDelayedAction call, regular potion actually gets
+				// checked first so we need to make sure it doesn't activate.
 				return false
 			}
 

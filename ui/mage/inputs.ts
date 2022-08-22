@@ -104,9 +104,21 @@ export const MageRotationConfig = {
 			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecMage>({
+			fieldName: 'optimizeCdsForExecute',
+			label: 'Optimize CDs for execute time',
+			labelTooltip: 'Automatically save cooldowns that only have 1 use remaining for execute time',
+			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecMage>({
 			fieldName: 'maintainImprovedScorch',
 			label: 'Maintain Imp. Scorch',
 			labelTooltip: 'Always use Scorch when below 5 stacks, or < 5.5s remaining on debuff.',
+			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecMage>({
+			fieldName: 'lbBeforeHotstreak',
+			label: 'Living Bomb Over Hot Streak',
+			labelTooltip: 'Choose to reapply living bomb before consuming hot streak',
 			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
 		}),
 		// ********************************************************

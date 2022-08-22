@@ -164,10 +164,12 @@ message Mage {
 			FrostfireBolt = 1;
 		}
 		PrimaryFireSpell primary_fire_spell = 3;
-
+		
 		bool maintain_improved_scorch = 4;
-
 		int32 num_extra_targets = 5;
+		bool optimize_cds_for_execute = 11;
+		int32 cqs_latency = 12;
+		bool lb_before_hotstreak = 13;
 
 		// Frost Options.
 		// Chance for water elemental to disobey, doing nothing rather than cast.
