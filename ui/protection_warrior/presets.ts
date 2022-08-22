@@ -24,19 +24,7 @@ import * as Tooltips from '../core/constants/tooltips.js';
 export const StandardTalents = {
 	name: 'Standard',
 	data: SavedTalents.create({
-		talentsString: '350003011-05-0055511033010103501351',
-	}),
-};
-export const ImpDemoTalents = {
-	name: 'Imp Demo',
-	data: SavedTalents.create({
-		talentsString: '340003-055-0055511033010101501351',
-	}),
-};
-export const ImpaleProtTalents = {
-	name: 'Impale Prot',
-	data: SavedTalents.create({
-		talentsString: '35000301302-03-0055511033010101501351',
+		talentsString: '2500030023-302-053351225000012521030113321',
 	}),
 };
 
