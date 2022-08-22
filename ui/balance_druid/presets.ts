@@ -18,7 +18,7 @@ import * as Tooltips from '../core/constants/tooltips.js';
 export const StandardTalents = {
     name: 'Standard',
     data: SavedTalents.create({
-        talentsString: '510022312503135231351--520033',
+        talentsString: '5012203125331203213305311231--205003012',
     }),
 };
 
