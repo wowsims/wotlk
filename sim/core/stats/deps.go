@@ -29,6 +29,7 @@ var safeDepsOrder []Stat = []Stat{
 	Block,
 	BlockValue,
 	Dodge,
+	Parry,
 }
 
 const invalidDep = -1

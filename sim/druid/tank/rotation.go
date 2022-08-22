@@ -29,7 +29,7 @@ func (bear *FeralTankDruid) doRotation(sim *core.Simulation) {
 				bear.Swipe.Cast(sim, bear.CurrentTarget)
 			}
 		} else if bear.CanMangleBear(sim) {
-			bear.Mangle.Cast(sim, bear.CurrentTarget)
+			bear.MangleBear.Cast(sim, bear.CurrentTarget)
 		} else if bear.shouldSwipe(sim) {
 			bear.Swipe.Cast(sim, bear.CurrentTarget)
 		} else if bear.CanLacerate(sim) {
@@ -37,8 +37,8 @@ func (bear *FeralTankDruid) doRotation(sim *core.Simulation) {
 		}
 	}
 
-	if bear.GCD.IsReady(sim) && !bear.Mangle.IsReady(sim) && bear.Rotation.Swipe != proto.FeralTankDruid_Rotation_SwipeSpam {
-		bear.WaitUntil(sim, bear.Mangle.ReadyAt())
+	if bear.GCD.IsReady(sim) && (bear.MangleBear != nil && !bear.MangleBear.IsReady(sim)) && bear.Rotation.Swipe != proto.FeralTankDruid_Rotation_SwipeSpam {
+		bear.WaitUntil(sim, bear.MangleBear.ReadyAt())
 	}
 
 	bear.tryQueueMaul(sim)

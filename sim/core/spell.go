@@ -84,9 +84,10 @@ type Spell struct {
 	// The current or most recent cast data.
 	CurCast Cast
 
-	CostMultiplier   float64 // For dynamic effects. Do not set during initialization.
-	DamageMultiplier float64 // For dynamic effects. Do not set during initialization.
-	BonusCritRating  float64 // For dynamic effects. Do not set during initialization.
+	CastTimeMultiplier float64 // For dynamic effects. Do not set during initialization.
+	CostMultiplier     float64 // For dynamic effects. Do not set during initialization.
+	DamageMultiplier   float64 // For dynamic effects. Do not set during initialization.
+	BonusCritRating    float64 // For dynamic effects. Do not set during initialization.
 }
 
 // Registers a new spell to the unit. Returns the newly created spell.
@@ -109,8 +110,9 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 
 		ApplyEffects: config.ApplyEffects,
 
-		CostMultiplier:   1,
-		DamageMultiplier: 1,
+		CastTimeMultiplier: 1,
+		CostMultiplier:     1,
+		DamageMultiplier:   1,
 	}
 
 	switch spell.ResourceType {
@@ -180,6 +182,9 @@ func (spell *Spell) CurDamagePerCast() float64 {
 
 func (spell *Spell) finalize() {
 	// Assert that user doesn't set dynamic fields during static initialization.
+	if spell.CastTimeMultiplier != 1 {
+		panic(spell.ActionID.String() + " has non-default CastTimeMultiplier during finalize!")
+	}
 	if spell.CostMultiplier != 1 {
 		panic(spell.ActionID.String() + " has non-default CostMultiplier during finalize!")
 	}
@@ -195,6 +200,7 @@ func (spell *Spell) reset(sim *Simulation) {
 	spell.SpellMetrics = make([]SpellMetrics, len(spell.Unit.Env.AllUnits))
 
 	// Reset dynamic effects.
+	spell.CastTimeMultiplier = 1
 	spell.CostMultiplier = 1
 	spell.DamageMultiplier = 1
 	spell.BonusCritRating = 0

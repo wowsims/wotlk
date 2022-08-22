@@ -460,6 +460,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 						<div class="consumes-row">
 							<span>Potions</span>
 							<div class="consumes-row-inputs">
+								<div class="consumes-prepot"></div>
 								<div class="consumes-potions"></div>
 								<div class="consumes-conjured"></div>
 							</div>
@@ -645,6 +646,22 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			}, this);
 		}
 
+		const prepopPotionOptions = this.splitRelevantOptions([
+			// This list is smaller because some potions don't make sense to use as prepot.
+			// E.g. healing/mana potions.
+			{ item: Potions.IndestructiblePotion, stats: [Stat.StatArmor] },
+			{ item: Potions.PotionOfSpeed, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
+			{ item: Potions.PotionOfWildMagic, stats: [Stat.StatMeleeCrit, Stat.StatSpellCrit, Stat.StatSpellPower] },
+		]);
+		if (prepopPotionOptions.length) {
+			const elem = this.rootElem.getElementsByClassName('consumes-prepot')[0] as HTMLElement;
+			new IconEnumPicker(elem, this.player, IconInputs.makePrepopPotionsInput(prepopPotionOptions));
+			tippy(elem, {
+				'content': 'Prepop Potion (1s before combat)',
+				'allowHTML': true,
+			});
+		}
+
 		const potionOptions = this.splitRelevantOptions([
 			{ item: Potions.RunicHealingPotion, stats: [Stat.StatStamina] },
 			{ item: Potions.RunicManaPotion, stats: [Stat.StatIntellect] },
@@ -655,9 +672,14 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		if (potionOptions.length) {
 			const elem = this.rootElem.getElementsByClassName('consumes-potions')[0] as HTMLElement;
 			new IconEnumPicker(elem, this.player, IconInputs.makePotionsInput(potionOptions));
+			tippy(elem, {
+				'content': 'Combat Potion',
+				'allowHTML': true,
+			});
 		}
 
 		const conjuredOptions = this.splitRelevantOptions([
+			this.player.getClass() == Class.ClassRogue ? { item: Conjured.ConjuredRogueThistleTea, stats: [] } : null,
 			{ item: Conjured.ConjuredHealthstone, stats: [Stat.StatStamina] },
 			{ item: Conjured.ConjuredDarkRune, stats: [Stat.StatIntellect] },
 			{ item: Conjured.ConjuredFlameCap, stats: [Stat.StatStrength, Stat.StatAgility, Stat.StatFireSpellPower] },
@@ -1196,15 +1218,16 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		});
 	}
 
-	splitRelevantOptions<T>(options: Array<StatOption<T>>): Array<T> {
+	splitRelevantOptions<T>(options: Array<StatOption<T> | null>): Array<T> {
 		return options
+			.filter(option => option != null)
 			.filter(option =>
-				this.individualConfig.includeBuffDebuffInputs.includes(option.item) ||
-				option.stats.length == 0 ||
-				option.stats.some(stat => this.individualConfig.epStats.includes(stat)))
+				this.individualConfig.includeBuffDebuffInputs.includes(option!.item) ||
+				option!.stats.length == 0 ||
+				option!.stats.some(stat => this.individualConfig.epStats.includes(stat)))
 			.filter(option =>
-				!this.individualConfig.excludeBuffDebuffInputs.includes(option.item))
-			.map(option => option.item);
+				!this.individualConfig.excludeBuffDebuffInputs.includes(option!.item))
+			.map(option => option!.item);
 	}
 }
 

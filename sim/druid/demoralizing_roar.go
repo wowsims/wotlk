@@ -36,7 +36,7 @@ func (druid *Druid) registerDemoralizingRoarSpell() {
 	}
 
 	druid.DemoralizingRoar = druid.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 26998},
+		ActionID:    core.ActionID{SpellID: 48560},
 		SpellSchool: core.SpellSchoolPhysical,
 
 		ResourceType: stats.Rage,

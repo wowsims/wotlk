@@ -8,10 +8,21 @@ import "github.com/wowsims/wotlk/sim/core"
 type RuneSpellCanCast func(sim *core.Simulation) bool
 type RuneSpellOnCast func(sim *core.Simulation)
 
+type RuneType int8
+
+const (
+	RuneTypeNone RuneType = 1 << iota
+	RuneTypeBlood
+	RuneTypeFrost
+	RuneTypeUnholy
+)
+
 type RuneSpell struct {
 	*core.Spell
-	Refundable bool
-	dk         *Deathknight
+	Refundable         bool
+	DeathConvertChance float64
+	ConvertType        RuneType
+	dk                 *Deathknight
 
 	CanCast RuneSpellCanCast
 	onCast  RuneSpellOnCast
@@ -23,23 +34,49 @@ func (rs *RuneSpell) OnOutcome(sim *core.Simulation, outcome core.HitOutcome) {
 		return // it was free this time. we dont care
 	}
 	if outcome.Matches(core.OutcomeLanded) {
-		rs.Spell.Unit.SpendRuneCost(sim, rs.Spell, cost)
+		slot1, slot2, slot3 := rs.Spell.Unit.SpendRuneCost(sim, rs.Spell, cost)
+		if rs.DeathConvertChance == 0 {
+			return
+		}
+		if rs.DeathConvertChance < 1 && sim.RandomFloat("Blood of The North / Reaping / DRM") > rs.DeathConvertChance {
+			return
+		}
+		if (rs.ConvertType&RuneTypeBlood != 0 && (slot1 == 0 || slot1 == 1)) ||
+			(rs.ConvertType&RuneTypeFrost != 0 && (slot1 == 2 || slot1 == 3)) ||
+			rs.ConvertType&RuneTypeUnholy != 0 && (slot1 == 4 || slot1 == 5) {
+			rs.dk.ConvertToDeath(sim, slot1, true, core.NeverExpires)
+		}
+		if (rs.ConvertType&RuneTypeBlood != 0 && (slot2 == 0 || slot2 == 1)) ||
+			(rs.ConvertType&RuneTypeFrost != 0 && (slot2 == 2 || slot2 == 3)) ||
+			rs.ConvertType&RuneTypeUnholy != 0 && (slot2 == 4 || slot2 == 5) {
+			rs.dk.ConvertToDeath(sim, slot2, true, core.NeverExpires)
+		}
+		if (rs.ConvertType&RuneTypeBlood != 0 && (slot3 == 0 || slot3 == 1)) ||
+			(rs.ConvertType&RuneTypeFrost != 0 && (slot3 == 2 || slot3 == 3)) ||
+			rs.ConvertType&RuneTypeUnholy != 0 && (slot3 == 4 || slot3 == 5) {
+			rs.dk.ConvertToDeath(sim, slot3, true, core.NeverExpires)
+		}
 	}
 	// misses just dont get spent as a way to avoid having to cancel regeneration PAs
 }
 
-func (rs *RuneSpell) CastInternal(sim *core.Simulation, target *core.Unit) bool {
+func (rs *RuneSpell) DoCost(sim *core.Simulation) {
+	cost := core.RuneCost(rs.Spell.CurCast.Cost)
+	// Spend now if there is no way to refund the spell
+	if !cost.HasRune() || !rs.Refundable {
+		rs.Spell.Unit.SpendRuneCost(sim, rs.Spell, cost)
+	}
+}
+
+func (rs *RuneSpell) castInternal(sim *core.Simulation, target *core.Unit) bool {
 	result := rs.Spell.Cast(sim, target)
 	if !result {
 		return result
 	}
 
 	rs.dk.LastCast = rs
-	cost := core.RuneCost(rs.Spell.CurCast.Cost)
-	// Spend now if there is no way to refund the spell
-	if !cost.HasRune() || !rs.Refundable {
-		rs.Spell.Unit.SpendRuneCost(sim, rs.Spell, cost)
-	}
+
+	rs.DoCost(sim)
 
 	if rs.onCast != nil {
 		rs.onCast(sim)
@@ -50,10 +87,10 @@ func (rs *RuneSpell) CastInternal(sim *core.Simulation, target *core.Unit) bool 
 
 func (rs *RuneSpell) Cast(sim *core.Simulation, target *core.Unit) bool {
 	if rs.CanCast == nil {
-		return rs.CastInternal(sim, target)
+		return rs.castInternal(sim, target)
 	} else {
 		if rs.CanCast(sim) {
-			return rs.CastInternal(sim, target)
+			return rs.castInternal(sim, target)
 		}
 		return false
 	}

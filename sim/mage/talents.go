@@ -16,6 +16,8 @@ func (mage *Mage) ApplyTalents() {
 	mage.applyMoltenFury()
 	mage.applyMissileBarrage()
 	mage.applyHotStreak()
+	mage.applyFingersOfFrost()
+	mage.applyBrainFreeze()
 	mage.registerArcanePowerCD()
 	mage.registerPresenceOfMindCD()
 	mage.registerCombustionCD()
@@ -575,5 +577,99 @@ func (mage *Mage) applyMoltenFury() {
 				mage.PseudoStats.DamageDealtMultiplier *= multiplier
 			}
 		})
+	})
+}
+
+func (mage *Mage) hasChillEffect(spell *core.Spell) bool {
+	return spell == mage.Frostbolt || spell == mage.FrostfireBolt || (spell == mage.Blizzard && mage.Talents.ImprovedBlizzard > 0)
+}
+
+func (mage *Mage) applyFingersOfFrost() {
+	if mage.Talents.FingersOfFrost == 0 {
+		return
+	}
+
+	bonusCrit := []float64{0, 17, 34, 50}[mage.Talents.Shatter] * core.CritRatingPerCritChance
+
+	mage.FingersOfFrostAura = mage.RegisterAura(core.Aura{
+		Label:     "Fingers of Frost Proc",
+		ActionID:  core.ActionID{SpellID: 44545},
+		Duration:  time.Second * 15,
+		MaxStacks: 2,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			mage.AddStatDynamic(sim, stats.SpellCrit, bonusCrit)
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			mage.AddStatDynamic(sim, stats.SpellCrit, -bonusCrit)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			aura.RemoveStack(sim)
+		},
+	})
+
+	procChance := []float64{0, .07, .15}[mage.Talents.FingersOfFrost]
+	mage.RegisterAura(core.Aura{
+		Label:    "Fingers of Frost Talent",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if mage.hasChillEffect(spell) && sim.RandomFloat("Fingers of Frost") < procChance {
+				mage.FingersOfFrostAura.Activate(sim)
+				mage.FingersOfFrostAura.SetStacks(sim, 2)
+
+				// Fingers of frost proc callback needs to happen before this one, or it
+				// will immediately consume a stack.
+				mage.FingersOfFrostAura.Prioritize()
+			}
+		},
+	})
+}
+
+func (mage *Mage) applyBrainFreeze() {
+	if mage.Talents.BrainFreeze == 0 {
+		return
+	}
+
+	mage.BrainFreezeAura = mage.RegisterAura(core.Aura{
+		Label:    "Brain Freeze Proc",
+		ActionID: core.ActionID{SpellID: 44549},
+		Duration: core.NeverExpires,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			mage.Fireball.CostMultiplier -= 1
+			mage.Fireball.CastTimeMultiplier -= 1
+			mage.FrostfireBolt.CostMultiplier -= 1
+			mage.FrostfireBolt.CastTimeMultiplier -= 1
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			mage.Fireball.CostMultiplier += 1
+			mage.Fireball.CastTimeMultiplier += 1
+			mage.FrostfireBolt.CostMultiplier += 1
+			mage.FrostfireBolt.CastTimeMultiplier += 1
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spell == mage.FrostfireBolt || spell == mage.Fireball {
+				aura.Deactivate(sim)
+				mage.BrainFreezeActivatedAt = 0
+			}
+		},
+	})
+
+	procChance := .05 * float64(mage.Talents.BrainFreeze)
+	mage.RegisterAura(core.Aura{
+		Label:    "Brain Freeze Talent",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if mage.hasChillEffect(spell) && sim.RandomFloat("Brain Freeze") < procChance {
+				mage.BrainFreezeAura.Activate(sim)
+				if mage.BrainFreezeActivatedAt == 0 {
+					mage.BrainFreezeActivatedAt = sim.CurrentTime
+				}
+			}
+		},
 	})
 }

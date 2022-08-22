@@ -191,14 +191,10 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 	}
 
 	if raidBuffs.BattleShout > 0 || individualBuffs.BlessingOfMight > 0 {
-		bonusAP := 550 * GetTristateValueFloat(raidBuffs.BattleShout, 1, 1.25)
-		bomAP := 550 * GetTristateValueFloat(individualBuffs.BlessingOfMight, 1, 1.25)
-		if bomAP > bonusAP {
-			bonusAP = bomAP
-		}
+		bonusAP := 550 * GetTristateValueFloat(MaxTristate(raidBuffs.BattleShout, individualBuffs.BlessingOfMight), 1, 1.25)
 		character.AddStats(stats.Stats{
-			stats.AttackPower:       math.Floor(bomAP),
-			stats.RangedAttackPower: math.Floor(bomAP),
+			stats.AttackPower:       math.Floor(bonusAP),
+			stats.RangedAttackPower: math.Floor(bonusAP),
 		})
 	}
 	character.AddStats(stats.Stats{

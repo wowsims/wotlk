@@ -1,7 +1,6 @@
 package druid
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -47,7 +46,7 @@ func (druid *Druid) registerInsectSwarmSpell() {
 	druid.InsectSwarmDot = core.NewDot(core.Dot{
 		Spell: druid.InsectSwarm,
 		Aura: target.RegisterAura(core.Aura{
-			Label:    "InsectSwarm-" + strconv.Itoa(int(druid.Index)),
+			Label:    "Insect Swarm",
 			ActionID: actionID,
 		}),
 		NumberOfTicks: 6 + core.TernaryInt(druid.Talents.NaturesSplendor, 1, 0),

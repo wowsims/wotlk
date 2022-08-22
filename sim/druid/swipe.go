@@ -9,7 +9,7 @@ import (
 func (druid *Druid) registerSwipeSpell() {
 	cost := 20.0 - float64(druid.Talents.Ferocity)
 
-	baseDamage := 84.0
+	baseDamage := 108.0
 	if druid.Equip[items.ItemSlotRanged].ID == 23198 { // Idol of Brutality
 		baseDamage += 10
 	}
@@ -38,7 +38,7 @@ func (druid *Druid) registerSwipeSpell() {
 	}
 
 	druid.Swipe = druid.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 26997},
+		ActionID:    core.ActionID{SpellID: 48562},
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 

@@ -22,6 +22,9 @@ type DeathknightInputs struct {
 	RefreshHornOfWinter bool
 	ArmyOfTheDeadType   proto.Deathknight_Rotation_ArmyOfTheDead
 	StartingPresence    proto.Deathknight_Rotation_StartingPresence
+	UseAMS              bool
+	AvgAMSSuccessRate   float64
+	AvgAMSHit           float64
 }
 
 type DeathknightCoeffs struct {
@@ -52,8 +55,13 @@ type Deathknight struct {
 	Gargoyle       *GargoylePet
 	SummonGargoyle *RuneSpell
 
+	RuneWeapon        *RuneWeaponPet
+	DancingRuneWeapon *RuneSpell
+
 	ArmyOfTheDead *RuneSpell
 	ArmyGhoul     []*GhoulPet
+
+	Bloodworm []*BloodwormPet
 
 	Presence Presence
 
@@ -81,6 +89,12 @@ type Deathknight struct {
 	FrostStrikeMhHit *RuneSpell
 	FrostStrikeOhHit *RuneSpell
 
+	HeartStrike       *RuneSpell
+	HeartStrikeOffHit *RuneSpell
+
+	RuneStrike     *RuneSpell
+	RuneStrikeAura *core.Aura
+
 	GhoulFrenzy *RuneSpell
 	// Dummy aura for timeline metrics
 	GhoulFrenzyAura *core.Aura
@@ -102,7 +116,8 @@ type Deathknight struct {
 	HornOfWinterAura          *core.Aura
 
 	// "CDs"
-	RuneTap *RuneSpell
+	RuneTap     *RuneSpell
+	MarkOfBlood *RuneSpell
 
 	BloodTap     *RuneSpell
 	BloodTapAura *core.Aura
@@ -114,6 +129,9 @@ type Deathknight struct {
 
 	UnbreakableArmor     *RuneSpell
 	UnbreakableArmorAura *core.Aura
+
+	VampiricBlood     *RuneSpell
+	VampiricBloodAura *core.Aura
 
 	BoneShield     *RuneSpell
 	BoneShieldAura *core.Aura
@@ -141,6 +159,8 @@ type Deathknight struct {
 	ButcheryPA          *core.PendingAction
 	RimeAura            *core.Aura
 	BladeBarrierAura    *core.Aura
+	SuddenDoomAura      *core.Aura
+	ScentOfBloodAura    *core.Aura
 
 	// Talent Spells
 	LastDiseaseDamage float64
@@ -226,12 +246,16 @@ func (dk *Deathknight) Initialize() {
 	dk.registerRuneTapSpell()
 	dk.registerIceboundFortitudeSpell()
 	dk.registerDeathStrikeSpell()
-
+	dk.registerHeartStrikeSpell()
+	dk.registerMarkOfBloodSpell()
+	dk.registerVampiricBloodSpell()
 	dk.registerAntiMagicShellSpell()
+	dk.registerRuneStrikeSpell()
 
 	dk.registerRaiseDeadCD()
 	dk.registerSummonGargoyleCD()
 	dk.registerArmyOfTheDeadCD()
+	dk.registerDancingRuneWeaponCD()
 }
 
 func (dk *Deathknight) ResetBonusCoeffs() {
@@ -307,15 +331,10 @@ func NewDeathknight(character core.Character, talents proto.DeathknightTalents, 
 		},
 	)
 
-	dk.EnableAutoAttacks(dk, core.AutoAttackOptions{
-		MainHand:       dk.WeaponFromMainHand(dk.DefaultMeleeCritMultiplier()),
-		OffHand:        dk.WeaponFromOffHand(dk.DefaultMeleeCritMultiplier()),
-		AutoSwingMelee: true,
-	})
-
 	dk.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/62.5)
 	dk.AddStatDependency(stats.Agility, stats.Dodge, core.DodgeRatingPerDodgeChance/84.74576271)
 	dk.AddStatDependency(stats.Strength, stats.AttackPower, 2)
+	dk.AddStatDependency(stats.Strength, stats.Parry, 0.25)
 
 	dk.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
 
@@ -328,6 +347,13 @@ func NewDeathknight(character core.Character, talents proto.DeathknightTalents, 
 	for i := 0; i < 8; i++ {
 		dk.ArmyGhoul[i] = dk.NewArmyGhoulPet(i)
 	}
+
+	dk.Bloodworm = make([]*BloodwormPet, 4)
+	for i := 0; i < 4; i++ {
+		dk.Bloodworm[i] = dk.NewBloodwormPet(i)
+	}
+
+	dk.RuneWeapon = dk.NewRuneWeapon()
 
 	dk.RotationSequence = &Sequence{}
 

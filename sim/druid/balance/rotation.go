@@ -18,23 +18,26 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) {
 
 	target := moonkin.CurrentTarget
 
+	// Eclipse stuff
 	lunarICD := moonkin.LunarICD.Timer.TimeToReady(sim)
 	solarICD := moonkin.SolarICD.Timer.TimeToReady(sim)
-
 	lunarIsActive := lunarICD > time.Millisecond*15000
 	solarIsActive := solarICD > time.Millisecond*15000
-
 	lunarUptime := core.TernaryDuration(lunarIsActive, lunarICD-time.Millisecond*15000, 0)
 	solarUptime := core.TernaryDuration(solarIsActive, solarICD-time.Millisecond*15000, 0)
-
-	//TODO These temp stats will be based on Cerdiwyn's new spell values
-	moonkin.Wrath.DamageMultiplier = core.TernaryFloat64(solarIsActive, 1+0.02*float64(moonkin.Talents.Moonfury)+0.4, 1+0.02*float64(moonkin.Talents.Moonfury))
-	moonkin.Starfire.BonusCritRating = core.TernaryFloat64(lunarIsActive, 40*core.CritRatingPerCritChance, 0)
 
 	moonfireUptime := moonkin.MoonfireDot.RemainingDuration(sim)
 	insectSwarmUptime := moonkin.InsectSwarmDot.RemainingDuration(sim)
 
 	shouldRebirth := sim.GetRemainingDuration().Seconds() < moonkin.RebirthTiming
+
+	// "Dispelling" eclipse effects before casting if needed
+	if float64(lunarUptime-moonkin.Starfire.CurCast.CastTime) <= 0 && moonkin.useIS {
+		lunarIsActive = false
+	}
+	if float64(solarUptime-moonkin.Wrath.CurCast.CastTime) <= 0 && moonkin.useMF {
+		solarIsActive = false
+	}
 
 	var spell *core.Spell
 	// TODO Treants
@@ -42,14 +45,16 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) {
 		spell = moonkin.Rebirth
 	} else if moonkin.Starfall.IsReady(sim) {
 		spell = moonkin.Starfall
-	} else if (solarIsActive && insectSwarmUptime > time.Second*3) || (solarIsActive && solarUptime < time.Second*13) || (lunarICD < 2 && moonfireUptime > 0) {
+	} else if (solarIsActive && (insectSwarmUptime > 0 || float64(moonkin.isInsideEclipseThreshold) >= solarUptime.Seconds())) || (!lunarIsActive && moonfireUptime > 13) {
 		spell = moonkin.Wrath
-	} else if (lunarIsActive && moonfireUptime > time.Second*3) || (lunarIsActive && lunarUptime < time.Second*13) || (solarICD < 2 && insectSwarmUptime > 0) {
+	} else if (lunarIsActive && (moonfireUptime > 0 || float64(moonkin.mfInsideEclipseThreshold) >= lunarUptime.Seconds())) || (!solarIsActive && insectSwarmUptime > 13) {
 		spell = moonkin.Starfire
-	} else if lunarIsActive || lunarICD < time.Second*2 {
+	} else if (lunarIsActive || lunarICD < core.GCDDefault) && moonkin.useMF {
 		spell = moonkin.Moonfire
-	} else {
+	} else if moonkin.useIS {
 		spell = moonkin.InsectSwarm
+	} else {
+		spell = moonkin.Wrath // Always fallback to Wrath to trigger Lunar, because yes
 	}
 
 	if success := spell.Cast(sim, target); !success {

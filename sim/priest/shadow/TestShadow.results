@@ -115,8 +115,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-CrimsonAcolyte'sRegalia"
  value: {
-  dps: 1935.6998607282
-  tps: 1425.1166306973
+  dps: 1947.2890738633
+  tps: 1434.2737064535
  }
 }
 dps_results: {
@@ -136,15 +136,15 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-DarkmoonCard:Greatness-42987"
  value: {
-  dps: 1710.3696994153
-  tps: 1245.2112613093
+  dps: 1719.2653948934
+  tps: 1251.4322150587
  }
 }
 dps_results: {
  key: "TestShadow-AllItems-DarkmoonCard:Greatness-44253"
  value: {
-  dps: 1710.3696994153
-  tps: 1245.2112613093
+  dps: 1719.2653948934
+  tps: 1251.4322150587
  }
 }
 dps_results: {
@@ -290,8 +290,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-IncarnateRaiment"
  value: {
-  dps: 1411.166285003
-  tps: 1026.9977229438
+  dps: 1411.1788729538
+  tps: 1027.0070984496
  }
 }
 dps_results: {
@@ -570,8 +570,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-Average-Default"
  value: {
-  dps: 1741.0778568563
-  tps: 1261.1077787672
+  dps: 1740.8550375738
+  tps: 1260.9717715987
  }
 }
 dps_results: {
@@ -696,8 +696,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-Settings-Draenei-P1-Ideal-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 1486.6429206611
-  tps: 1030.2470540642
+  dps: 1492.2123592889
+  tps: 1035.4962423122
  }
 }
 dps_results: {
@@ -801,8 +801,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-Settings-Draenei-P3-Ideal-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 3453.0056410249
-  tps: 2390.1107012235
+  dps: 3452.8171258013
+  tps: 2389.7777443028
  }
 }
 dps_results: {
@@ -927,8 +927,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-Settings-NightElf-P1-Ideal-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 3014.1661086468
-  tps: 2085.9350093525
+  dps: 3025.2614239836
+  tps: 2095.0953437285
  }
 }
 dps_results: {
@@ -948,8 +948,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-Settings-NightElf-P1-Ideal-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 1459.808454849
-  tps: 1012.3714787452
+  dps: 1457.9340062592
+  tps: 1012.5240741232
  }
 }
 dps_results: {
@@ -1053,8 +1053,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-Settings-NightElf-P3-Ideal-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 3406.2959065187
-  tps: 2353.2528720513
+  dps: 3422.1680502796
+  tps: 2365.5981716332
  }
 }
 dps_results: {
@@ -1179,8 +1179,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-Settings-Undead-P1-Ideal-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 3013.9871601809
-  tps: 2086.009580684
+  dps: 3025.72052273
+  tps: 2094.4175637119
  }
 }
 dps_results: {
@@ -1200,8 +1200,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-Settings-Undead-P1-Ideal-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 1459.808454849
-  tps: 1012.2339787452
+  dps: 1457.9340062592
+  tps: 1012.3865741232
  }
 }
 dps_results: {
@@ -1305,8 +1305,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-Settings-Undead-P3-Ideal-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 3406.2959065187
-  tps: 2353.0741220513
+  dps: 3422.1680502796
+  tps: 2365.4194216332
  }
 }
 dps_results: {

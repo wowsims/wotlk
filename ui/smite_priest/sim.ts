@@ -62,9 +62,7 @@ export class SmitePriestSimUI extends IndividualSimUI<Spec.SpecSmitePriest> {
 			],
 			modifyDisplayStats: (player: Player<Spec.SpecSmitePriest>) => {
 				let stats = new Stats();
-				stats = stats.addStat(Stat.StatSpellHit,
-					player.getTalents().shadowFocus * 2 * Mechanics.SPELL_HIT_RATING_PER_HIT_CHANCE +
-					player.getTalents().focusedPower * 2 * Mechanics.SPELL_HIT_RATING_PER_HIT_CHANCE);
+				stats = stats.addStat(Stat.StatSpellHit, player.getTalents().shadowFocus * 1 * Mechanics.SPELL_HIT_RATING_PER_HIT_CHANCE);
 
 				return {
 					talents: stats,
@@ -95,26 +93,10 @@ export class SmitePriestSimUI extends IndividualSimUI<Spec.SpecSmitePriest> {
 				// Default spec-specific settings.
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
-				raidBuffs: RaidBuffs.create({
-					arcaneBrilliance: true,
-					divineSpirit: true,
-					giftOfTheWild: TristateEffect.TristateEffectImproved,
-					bloodlust: true,
-					manaSpringTotem: TristateEffect.TristateEffectRegular,
-					wrathOfAirTotem: true,
-				}),
-				partyBuffs: PartyBuffs.create({
-				}),
-				individualBuffs: IndividualBuffs.create({
-					blessingOfKings: true,
-					blessingOfWisdom: 2,
-
-				}),
-				debuffs: Debuffs.create({
-					judgementOfWisdom: true,
-					misery: true,
-					curseOfElements: true,
-				}),
+				raidBuffs: Presets.DefaultRaidBuffs,
+				partyBuffs: PartyBuffs.create({}),
+				individualBuffs: Presets.DefaultIndividualBuffs,
+				debuffs: Presets.DefaultDebuffs,
 			},
 
 			// IconInputs to include in the 'Player' section on the settings tab.
@@ -131,7 +113,6 @@ export class SmitePriestSimUI extends IndividualSimUI<Spec.SpecSmitePriest> {
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
-					OtherInputs.PrepopPotion,
 					OtherInputs.TankAssignment,
 				],
 			},
@@ -144,10 +125,10 @@ export class SmitePriestSimUI extends IndividualSimUI<Spec.SpecSmitePriest> {
 				// Preset talents that the user can quickly select.
 				talents: [
 					Presets.StandardTalents,
-					Presets.HolyTalents,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
+					Presets.PRERAID_PRESET,
 					Presets.P1_PRESET,
 				],
 			},

@@ -7,6 +7,29 @@ import (
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
+func (dk *DpsDeathknight) RegularPrioPickSpell(sim *core.Simulation, untilTime time.Duration) *deathknight.RuneSpell {
+	fsCost := float64(core.RuneCost(dk.FrostStrike.CurCast.Cost).RunicPower())
+
+	abGcd := 1500 * time.Millisecond
+	spGcd := dk.SpellGCD()
+
+	if sim.CurrentTime+abGcd <= untilTime && dk.FrostStrike.CanCast(sim) && dk.KillingMachineAura.IsActive() {
+		return dk.FrostStrike
+	} else if sim.CurrentTime+abGcd <= untilTime && dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 100.0 {
+		return dk.FrostStrike
+	} else if sim.CurrentTime+spGcd <= untilTime && dk.HowlingBlast.CanCast(sim) && dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
+		return dk.HowlingBlast
+	} else if sim.CurrentTime+spGcd <= untilTime && dk.HowlingBlast.CanCast(sim) && dk.RimeAura.IsActive() {
+		return dk.HowlingBlast
+	} else if sim.CurrentTime+abGcd <= untilTime && dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 2.0*(fsCost-dk.fr.oblitRPRegen) {
+		return dk.FrostStrike
+	} else if sim.CurrentTime+spGcd <= untilTime && dk.HornOfWinter.CanCast(sim) {
+		return dk.HornOfWinter
+	} else {
+		return nil
+	}
+}
+
 func (dk *DpsDeathknight) RotationActionCallback_BS_Frost(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	casted := false
 
@@ -44,6 +67,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Obli(sim *core.Si
 			casted = dk.Obliterate.Cast(sim, target)
 			advance = dk.LastOutcome.Matches(core.OutcomeLanded)
 		}
+
 		s.ConditionalAdvance(casted && advance)
 	} else {
 		waitTime = sim.CurrentTime
@@ -71,6 +95,8 @@ func (dk *DpsDeathknight) RotationActionCallback_LastSecondsCast(sim *core.Simul
 		} else if dk.Obliterate.CanCast(sim) {
 			casted = dk.Obliterate.Cast(sim, target)
 		} else if dk.HowlingBlast.CanCast(sim) {
+			casted = dk.HowlingBlast.Cast(sim, target)
+		} else if dk.HornOfWinter.CanCast(sim) {
 			casted = dk.HornOfWinter.Cast(sim, target)
 		}
 	}
@@ -104,43 +130,21 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump_UntilBR(s
 
 	casted = dk.RotationActionCallback_LastSecondsCast(sim, target)
 	if !casted {
-		abGcd := 1500 * time.Millisecond
-		spGcd := dk.SpellGCD()
 		br := dk.CurrentBloodRunes() + dk.CurrentDeathRunes()
 		ddAt := dk.SpentBloodRuneReadyAt()
-		fsCost := float64(core.RuneCost(dk.FrostStrike.CurCast.Cost).RunicPower())
 
-		tol := 0 * time.Millisecond
 		if br == 0 {
-			if dk.FrostStrike.CanCast(sim) && dk.KillingMachineAura.IsActive() {
-				casted = dk.FrostStrike.Cast(sim, target)
-			} else if dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 100.0 {
-				casted = dk.FrostStrike.Cast(sim, target)
-			} else if dk.HowlingBlast.CanCast(sim) && dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
-				casted = dk.HowlingBlast.Cast(sim, target)
-			} else if dk.HowlingBlast.CanCast(sim) && dk.RimeAura.IsActive() {
-				casted = dk.HowlingBlast.Cast(sim, target)
-			} else if dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 2.0*(fsCost-dk.fr.oblitRPRegen) {
-				casted = dk.FrostStrike.Cast(sim, target)
-			} else if dk.HornOfWinter.CanCast(sim) {
-				casted = dk.HornOfWinter.Cast(sim, target)
+			spell := dk.RegularPrioPickSpell(sim, core.NeverExpires)
+			if spell != nil {
+				casted = spell.Cast(sim, target)
 			} else {
 				s.Advance()
 				waitUntil = ddAt
 			}
 		} else if br == 1 {
-			if sim.CurrentTime+abGcd <= ddAt+tol && dk.FrostStrike.CanCast(sim) && dk.KillingMachineAura.IsActive() {
-				casted = dk.FrostStrike.Cast(sim, target)
-			} else if sim.CurrentTime+abGcd <= ddAt+tol && dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 100.0 {
-				casted = dk.FrostStrike.Cast(sim, target)
-			} else if sim.CurrentTime+spGcd <= ddAt+tol && dk.HowlingBlast.CanCast(sim) && dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
-				casted = dk.HowlingBlast.Cast(sim, target)
-			} else if sim.CurrentTime+spGcd <= ddAt+tol && dk.HowlingBlast.CanCast(sim) && dk.RimeAura.IsActive() {
-				casted = dk.HowlingBlast.Cast(sim, target)
-			} else if sim.CurrentTime+abGcd <= ddAt+tol && dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 2.0*(fsCost-dk.fr.oblitRPRegen) {
-				casted = dk.FrostStrike.Cast(sim, target)
-			} else if sim.CurrentTime+spGcd <= ddAt+tol && dk.HornOfWinter.CanCast(sim) {
-				casted = dk.HornOfWinter.Cast(sim, target)
+			spell := dk.RegularPrioPickSpell(sim, ddAt+1500*time.Millisecond)
+			if spell != nil {
+				casted = spell.Cast(sim, target)
 			} else {
 				s.Advance()
 				waitUntil = sim.CurrentTime
@@ -168,21 +172,10 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump_UntilUA(s
 
 	casted = dk.RotationActionCallback_LastSecondsCast(sim, target)
 	if !casted {
-		fsCost := float64(core.RuneCost(dk.FrostStrike.CurCast.Cost).RunicPower())
-
 		if !dk.UnbreakableArmor.IsReady(sim) {
-			if dk.FrostStrike.CanCast(sim) && dk.KillingMachineAura.IsActive() {
-				casted = dk.FrostStrike.Cast(sim, target)
-			} else if dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 100.0 {
-				casted = dk.FrostStrike.Cast(sim, target)
-			} else if dk.HowlingBlast.CanCast(sim) && dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
-				casted = dk.HowlingBlast.Cast(sim, target)
-			} else if dk.HowlingBlast.CanCast(sim) && dk.RimeAura.IsActive() {
-				casted = dk.HowlingBlast.Cast(sim, target)
-			} else if dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 2.0*(fsCost-dk.fr.oblitRPRegen) {
-				casted = dk.FrostStrike.Cast(sim, target)
-			} else if dk.HornOfWinter.CanCast(sim) {
-				casted = dk.HornOfWinter.Cast(sim, target)
+			spell := dk.RegularPrioPickSpell(sim, core.NeverExpires)
+			if spell != nil {
+				casted = spell.Cast(sim, target)
 			} else {
 				s.Advance()
 				waitUntil = dk.UnbreakableArmor.ReadyAt()
@@ -202,8 +195,6 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump(sim *core
 
 	casted = dk.RotationActionCallback_LastSecondsCast(sim, target)
 	if !casted {
-		abGcd := 1500 * time.Millisecond
-		spGcd := dk.SpellGCD()
 		fr := dk.NormalCurrentFrostRunes()
 		uh := dk.NormalCurrentUnholyRunes()
 		frAt := dk.NormalFrostRuneReadyAt(sim)
@@ -211,7 +202,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump(sim *core
 		//frGp := dk.CurrentFrostRuneGrace(sim)
 		//uhGp := dk.CurrentUnholyRuneGrace(sim)
 		obAt := core.MaxDuration(frAt, uhAt)
-		fsCost := float64(core.RuneCost(dk.FrostStrike.CurCast.Cost).RunicPower())
+		//fsCost := float64(core.RuneCost(dk.FrostStrike.CurCast.Cost).RunicPower())
 
 		if fr == 2 && uh == 2 {
 			casted := false
@@ -266,58 +257,11 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump(sim *core
 			}
 
 			return core.TernaryDuration(casted, -1, sim.CurrentTime)
-			/*
-				compareToAb := (frGp-abGcd > -500*time.Millisecond) && (uhGp-abGcd > -500*time.Millisecond)
-				compareToSp := (frGp-spGcd > -500*time.Millisecond) && (uhGp-spGcd > -500*time.Millisecond)
-				if compareToAb && dk.FrostStrike.CanCast(sim) && dk.KillingMachineAura.IsActive() {
-					casted = dk.FrostStrike.Cast(sim, target)
-				} else if compareToSp && dk.HowlingBlast.CanCast(sim) && dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
-					casted = dk.HowlingBlast.Cast(sim, target)
-				} else if compareToAb && dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 100.0 {
-					casted = dk.FrostStrike.Cast(sim, target)
-				} else if compareToSp && dk.HowlingBlast.CanCast(sim) && dk.RimeAura.IsActive() {
-					casted = dk.HowlingBlast.Cast(sim, target)
-				} else if compareToAb && dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 2.0*(fsCost-dk.fr.oblitRPRegen) {
-					casted = dk.FrostStrike.Cast(sim, target)
-				} else if compareToSp && dk.HornOfWinter.CanCast(sim) {
-					casted = dk.HornOfWinter.Cast(sim, target)
-				} else {
-					if sim.CurrentTime+sim.GetRemainingDuration() < obAt {
-						casted = dk.FrostStrike.Cast(sim, target)
-					} else {
-						casted := false
-						waitTime := time.Duration(-1)
-
-						ffExpiresAt := dk.FrostFeverDisease[target.Index].ExpiresAt()
-						bpExpiresAt := dk.BloodPlagueDisease[target.Index].ExpiresAt()
-						if sim.CurrentTime+1500*time.Millisecond < core.MinDuration(ffExpiresAt, bpExpiresAt) {
-							if dk.Obliterate.CanCast(sim) {
-								casted = dk.Obliterate.Cast(sim, target)
-								advance := dk.LastOutcome.Matches(core.OutcomeLanded)
-								s.ConditionalAdvance(casted && advance)
-							}
-						} else {
-							waitTime = sim.CurrentTime
-							s.Advance()
-						}
-
-						return core.TernaryDuration(casted, -1, waitTime)
-					}
-				}
-			*/
 		} else {
-			if sim.CurrentTime+spGcd <= obAt && dk.HowlingBlast.CanCast(sim) && dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
-				casted = dk.HowlingBlast.Cast(sim, target)
-			} else if sim.CurrentTime+abGcd <= obAt && dk.FrostStrike.CanCast(sim) && dk.KillingMachineAura.IsActive() {
-				casted = dk.FrostStrike.Cast(sim, target)
-			} else if sim.CurrentTime+abGcd <= obAt && dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 100.0 {
-				casted = dk.FrostStrike.Cast(sim, target)
-			} else if sim.CurrentTime+spGcd <= obAt && dk.HowlingBlast.CanCast(sim) && dk.RimeAura.IsActive() {
-				casted = dk.HowlingBlast.Cast(sim, target)
-			} else if sim.CurrentTime+abGcd <= obAt && dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 2.0*(fsCost-dk.fr.oblitRPRegen) {
-				casted = dk.FrostStrike.Cast(sim, target)
-			} else if sim.CurrentTime+spGcd <= obAt && dk.HornOfWinter.CanCast(sim) {
-				casted = dk.HornOfWinter.Cast(sim, target)
+			delayAmount := core.MinDuration(time.Duration(dk.Rotation.OblitDelayDuration)*time.Millisecond, 2501*time.Millisecond)
+			spell := dk.RegularPrioPickSpell(sim, obAt+delayAmount)
+			if spell != nil {
+				casted = spell.Cast(sim, target)
 			} else {
 				waitUntil = obAt
 			}
@@ -415,6 +359,7 @@ func (dk *DpsDeathknight) setupFrostSubBloodERWOpener() {
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
 		NewAction(dk.RotationActionCallback_FS).
 		NewAction(dk.RotationActionCallback_RD).
+		NewAction(dk.RotationActionCallback_FS).
 		NewAction(dk.RotationActionCallback_FS).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
@@ -566,7 +511,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Main_FS_Star(sim 
 		if !casted {
 			casted = dk.HornOfWinter.Cast(sim, target)
 		}
-	} else {
+	} else if dk.HornOfWinter.CanCast(sim) {
 		casted = dk.HornOfWinter.Cast(sim, target)
 	}
 
@@ -584,7 +529,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Opener_FS_Star(si
 		s.ConditionalAdvance(casted)
 	} else if dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 2.0*(fsCost-dk.fr.oblitRPRegen) {
 		casted = dk.FrostStrike.Cast(sim, target)
-		if !casted {
+		if !casted && dk.HornOfWinter.CanCast(sim) {
 			dk.HornOfWinter.Cast(sim, target)
 		}
 		s.Advance()

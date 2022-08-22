@@ -17,7 +17,7 @@ func (dk *DpsDeathknight) dndExperimentalOpener() {
 		NewAction(dk.RotationActionCallback_BT).
 		NewAction(dk.RotationActionCallback_UP).
 		NewAction(dk.RotationActionCallback_Garg).
-		NewAction(dk.RotationAction_CancelBT)
+		NewAction(dk.RotationActionUH_CancelBT)
 
 	if dk.Rotation.UseEmpowerRuneWeapon {
 		dk.RotationSequence.
@@ -52,9 +52,9 @@ func (dk *DpsDeathknight) dndExperimentalOpener() {
 
 func (dk *DpsDeathknight) dndExperimentalStartSequence() {
 	dk.RotationSequence.Clear().
-		NewAction(dk.RotationAction_FF_ClipCheck).
+		NewAction(dk.RotationActionUH_FF_ClipCheck).
 		NewAction(dk.getFirstDiseaseAction()).
-		NewAction(dk.RotationAction_BP_ClipCheck).
+		NewAction(dk.RotationActionUH_BP_ClipCheck).
 		NewAction(dk.getSecondDiseaseAction()).
 		NewAction(dk.RotationAction_Gargoyle_Custom1).
 		NewAction(dk.RotationAction_DC_Custom).
@@ -171,9 +171,9 @@ func (dk *DpsDeathknight) RotationAction_UnholyDndRotationGhoulFrenzyCheck(sim *
 			dk.RotationSequence.NewAction(dk.RotationActionCallback_SS)
 		} else {
 			dk.RotationSequence.
-				NewAction(dk.RotationAction_FF_ClipCheck).
+				NewAction(dk.RotationActionUH_FF_ClipCheck).
 				NewAction(dk.getFirstDiseaseAction()).
-				NewAction(dk.RotationAction_BP_ClipCheck).
+				NewAction(dk.RotationActionUH_BP_ClipCheck).
 				NewAction(dk.getSecondDiseaseAction())
 		}
 	}

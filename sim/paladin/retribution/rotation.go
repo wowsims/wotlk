@@ -34,6 +34,10 @@ func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
 				continue
 			}
 
+			if spell == ret.DivinePlea && ret.CurrentMana() > (ret.MaxMana()*ret.DivinePleaPercentage) {
+				continue
+			}
+
 			if spell.IsReady(sim) {
 				success := spell.Cast(sim, target)
 				if !success {
@@ -48,13 +52,14 @@ func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
 	events := []time.Duration{
 		nextSwingAt,
 		ret.GCD.ReadyAt(),
-		ret.JudgementOfWisdom.CD.ReadyAt(),
+		ret.SelectedJudgement.CD.ReadyAt(),
 		ret.DivineStorm.CD.ReadyAt(),
 		ret.HammerOfWrath.CD.ReadyAt(),
 		ret.HolyWrath.CD.ReadyAt(),
 		ret.CrusaderStrike.CD.ReadyAt(),
 		ret.Consecration.CD.ReadyAt(),
 		ret.Exorcism.CD.ReadyAt(),
+		ret.DivinePlea.CD.ReadyAt(),
 	}
 
 	ret.waitUntilNextEvent(sim, events, ret.customRotation)
@@ -72,21 +77,25 @@ func (ret *RetributionPaladin) castSequenceRotation(sim *core.Simulation) {
 
 	nextReadyAt := sim.CurrentTime
 	if ret.GCD.IsReady(sim) {
-		currentSpell := ret.RotationInput[ret.CastSequenceIndex]
-
-		if currentSpell == ret.HammerOfWrath && !isExecutePhase {
-			return
-		}
-
-		if currentSpell.IsReady(sim) {
-			success := currentSpell.Cast(sim, target)
-			if success {
-				ret.CastSequenceIndex = (ret.CastSequenceIndex + 1) % int32(len(ret.RotationInput))
-			} else {
-				ret.WaitForMana(sim, currentSpell.CurCast.Cost)
-			}
+		if ret.UseDivinePlea && ret.DivinePlea.IsReady(sim) && ret.CurrentMana() < (ret.MaxMana()*ret.DivinePleaPercentage) {
+			ret.DivinePlea.Cast(sim, nil)
 		} else {
-			nextReadyAt = currentSpell.ReadyAt()
+			currentSpell := ret.RotationInput[ret.CastSequenceIndex]
+
+			if currentSpell == ret.HammerOfWrath && !isExecutePhase {
+				return
+			}
+
+			if currentSpell.IsReady(sim) {
+				success := currentSpell.Cast(sim, target)
+				if success {
+					ret.CastSequenceIndex = (ret.CastSequenceIndex + 1) % int32(len(ret.RotationInput))
+				} else {
+					ret.WaitForMana(sim, currentSpell.CurCast.Cost)
+				}
+			} else {
+				nextReadyAt = currentSpell.ReadyAt()
+			}
 		}
 	}
 
@@ -107,15 +116,15 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 	isExecutePhase := sim.IsExecutePhase20()
 
 	nextPrimaryAbility := core.MinDuration(ret.CrusaderStrike.CD.ReadyAt(), ret.DivineStorm.CD.ReadyAt())
-	nextPrimaryAbility = core.MinDuration(nextPrimaryAbility, ret.JudgementOfWisdom.CD.ReadyAt())
+	nextPrimaryAbility = core.MinDuration(nextPrimaryAbility, ret.SelectedJudgement.CD.ReadyAt())
 	nextPrimaryAbilityDelta := nextPrimaryAbility - sim.CurrentTime
 
 	if ret.GCD.IsReady(sim) {
 		switch {
-		case ret.JudgementOfWisdom.IsReady(sim):
-			success := ret.JudgementOfWisdom.Cast(sim, target)
+		case ret.SelectedJudgement.IsReady(sim):
+			success := ret.SelectedJudgement.Cast(sim, target)
 			if !success {
-				ret.WaitForMana(sim, ret.JudgementOfWisdom.CurCast.Cost)
+				ret.WaitForMana(sim, ret.SelectedJudgement.CurCast.Cost)
 			}
 		case ret.HasLightswornBattlegear2Pc && ret.DivineStorm.IsReady(sim):
 			success := ret.DivineStorm.Cast(sim, target)
@@ -177,7 +186,7 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 	events := []time.Duration{
 		nextSwingAt,
 		ret.GCD.ReadyAt(),
-		ret.JudgementOfWisdom.CD.ReadyAt(),
+		ret.SelectedJudgement.CD.ReadyAt(),
 		ret.DivineStorm.CD.ReadyAt(),
 		ret.HammerOfWrath.CD.ReadyAt(),
 		ret.HolyWrath.CD.ReadyAt(),
