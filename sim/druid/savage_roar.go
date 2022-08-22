@@ -46,9 +46,9 @@ func (druid *Druid) registerSavageRoarSpell() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
+			druid.SavageRoarAura.Duration = time.Duration(float64(time.Second) * (9.0 + (5.0)*float64(druid.ComboPoints())))
+			druid.SavageRoarAura.Activate(sim)
 			druid.SpendComboPoints(sim, spell.ComboPointMetrics())
-			druid.TigersFuryAura.Duration = time.Duration(float64(time.Second) * (9.0 + (5.0)*float64(druid.ComboPoints())))
-			druid.TigersFuryAura.Activate(sim)
 		},
 	})
 
