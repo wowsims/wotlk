@@ -159,7 +159,6 @@ export const UseAMSInput = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathk
 	fieldName: 'useAms',
 	label: 'Use AMS',
 	labelTooltip: 'Use AMS around predicted damage for a RP gain.',
-	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().howlingBlast,
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 });
 

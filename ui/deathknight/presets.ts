@@ -121,11 +121,11 @@ export const DefaultFrostRotation = DeathKnightRotation.create({
   btGhoulFrenzy: false,
 	refreshHornOfWinter: false,
   useEmpowerRuneWeapon: true,
-  startingPresence: Deathknight_Rotation_StartingPresence.Unholy,
+  startingPresence: Deathknight_Rotation_StartingPresence.Blood,
   bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodBoil,
   useAms: false,
-  avgAmsSuccessRate: 0.5,
-  avgAmsHit: 5000.0,
+  avgAmsSuccessRate: 1.0,
+  avgAmsHit: 10000.0,
   oblitDelayDuration: 0,
 });
 
@@ -449,7 +449,7 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
       "enchant": 44879,
       "gems": [
         41400,
-        49110
+        42702
       ]
     },
     {
@@ -855,92 +855,91 @@ export const P1_BLOOD_BIS_PRESET = {
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().dancingRuneWeapon,
 	gear: EquipmentSpec.fromJsonString(`{ "items": [
     {
-      "id": 44006,
-      "enchant": 44879,
-      "gems": [
-        41400,
-        49110
-      ]
-    },
-    {
-      "id": 44664,
-      "gems": [
-        39996
-      ]
-    },
-    {
-      "id": 40557,
-      "enchant": 44871,
-      "gems": [
-        39996
-      ]
-    },
-    {
-      "id": 40403,
-      "enchant": 44472
-    },
-    {
-      "id": 40550,
-      "enchant": 44489,
-      "gems": [
-        42142,
-        39996
-      ]
-    },
-    {
-      "id": 40330,
-      "enchant": 44484,
-      "gems": [
-        39996,
-        0
-      ]
-    },
-    {
-      "id": 40552,
-      "enchant": 54999,
-      "gems": [
-        40038,
-        0
-      ]
-    },
-    {
-      "id": 40278,
-      "gems": [
-        42142,
-        42142
-      ]
-    },
-    {
-      "id": 40556,
-      "enchant": 38374,
-      "gems": [
-        39996,
-        39996
-      ]
-    },
-    {
-      "id": 40591,
-      "enchant": 55016
-    },
-    {
-      "id": 39401
-    },
-    {
-      "id": 40075
-    },
-    {
-      "id": 40256
-    },
-    {
-      "id": 42987
-    },
-    {
-      "id": 40384,
-      "enchant": 53344
-    },
-    {},
-    {
-      "id": 40207
-    }
+          "id": 44006,
+          "enchant": 44879,
+          "gems": [
+            41400,
+            42702
+          ]
+        },
+        {
+          "id": 39421
+        },
+        {
+          "id": 40557,
+          "enchant": 44871,
+          "gems": [
+            39996
+          ]
+        },
+        {
+          "id": 40403,
+          "enchant": 44472
+        },
+        {
+          "id": 40550,
+          "enchant": 44489,
+          "gems": [
+            42142,
+            39996
+          ]
+        },
+        {
+          "id": 40330,
+          "enchant": 44484,
+          "gems": [
+            39996,
+            0
+          ]
+        },
+        {
+          "id": 40347,
+          "enchant": 54999,
+          "gems": [
+            39996,
+            0
+          ]
+        },
+        {
+          "id": 40278,
+          "gems": [
+            42142,
+            42142
+          ]
+        },
+        {
+          "id": 40294,
+          "enchant": 38374
+        },
+        {
+          "id": 39706,
+          "enchant": 55016,
+          "gems": [
+            39996
+          ]
+        },
+        {
+          "id": 40717
+        },
+        {
+          "id": 40075
+        },
+        {
+          "id": 37390
+        },
+        {
+          "id": 42987
+        },
+        {
+          "id": 40189,
+          "enchant": 53344
+        },
+        {
+          "id": 40491,
+          "enchant": 44495
+        },
+        {
+          "id": 42620
+        }
   ]}`),
 };

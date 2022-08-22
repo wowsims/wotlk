@@ -97,6 +97,7 @@ var FullConsumes = &proto.Consumes{
 
 var FullDebuffs = &proto.Debuffs{
 	JudgementOfWisdom: true,
+	JudgementOfLight:  true,
 	Misery:            true,
 	CurseOfElements:   true,
 	BloodFrenzy:       true,

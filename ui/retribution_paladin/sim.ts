@@ -31,6 +31,8 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 			epStats: [
 				Stat.StatStrength,
 				Stat.StatAgility,
+				Stat.StatIntellect,
+				Stat.StatMP5,
 				Stat.StatAttackPower,
 				Stat.StatMeleeHit,
 				Stat.StatMeleeCrit,
@@ -48,6 +50,8 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 			displayStats: [
 				Stat.StatStrength,
 				Stat.StatAgility,
+				Stat.StatIntellect,
+				Stat.StatMP5,
 				Stat.StatAttackPower,
 				Stat.StatMeleeHit,
 				Stat.StatMeleeCrit,
@@ -128,6 +132,7 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 					shadowMastery: true,
 					totemOfWrath: true,
 					judgementOfWisdom: true,
+					judgementOfLight: true,
 					misery: true,
 					curseOfElements: true,
 					bloodFrenzy: true,
@@ -140,6 +145,9 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 
 			// IconInputs to include in the 'Player' section on the settings tab.
 			playerIconInputs: [
+				RetributionPaladinInputs.AuraSelection,
+				RetributionPaladinInputs.JudgementSelection,
+				RetributionPaladinInputs.StartingSealSelection,
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: {
@@ -164,11 +172,6 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
-					RetributionPaladinInputs.AuraSelection,
-					RetributionPaladinInputs.JudgementSelection,
-					RetributionPaladinInputs.StartingSealSelection,
-					RetributionPaladinInputs.DamageTakenPerSecond,
-					OtherInputs.PrepopPotion,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],

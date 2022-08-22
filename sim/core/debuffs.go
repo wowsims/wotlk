@@ -252,7 +252,7 @@ func JudgementOfWisdomAura(target *Unit) *Aura {
 var JudgementOfLightAuraLabel = "Judgement of Light"
 
 func JudgementOfLightAura(target *Unit) *Aura {
-	actionID := ActionID{SpellID: 27163}
+	actionID := ActionID{SpellID: 20271}
 
 	return target.GetOrRegisterAura(Aura{
 		Label:    JudgementOfLightAuraLabel,
@@ -843,13 +843,20 @@ func ScreechAura(target *Unit) *Aura {
 const AtkSpeedReductionAuraTag = "AtkSpdReduction"
 
 func ThunderClapAura(target *Unit, points int32) *Aura {
-	speedMultiplier := []float64{0.9, 0.86, 0.83, 0.80}[points]
+	speedMultiplier := 0.9
+	if points == 1 {
+		speedMultiplier = 0.86
+	} else if points == 2 {
+		speedMultiplier = 0.83
+	} else if points == 3 {
+		speedMultiplier = 0.8
+	}
 	inverseMult := 1 / speedMultiplier
 
 	return target.GetOrRegisterAura(Aura{
 		Label:    "ThunderClap-" + strconv.Itoa(int(points)),
 		Tag:      AtkSpeedReductionAuraTag,
-		ActionID: ActionID{SpellID: 25264},
+		ActionID: ActionID{SpellID: 47502},
 		Duration: time.Second * 30,
 		Priority: inverseMult,
 		OnGain: func(aura *Aura, sim *Simulation) {

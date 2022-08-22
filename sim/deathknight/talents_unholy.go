@@ -8,6 +8,7 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	//"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -292,6 +293,8 @@ func (dk *Deathknight) applyUnholyBlight() {
 		return
 	}
 
+	glyphDmgBonus := core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfUnholyBlight), 1.4, 1.0)
+
 	actionID := core.ActionID{SpellID: 50536}
 
 	dk.UnholyBlightSpell = dk.Unit.RegisterSpell(core.SpellConfig{
@@ -324,7 +327,7 @@ func (dk *Deathknight) applyUnholyBlight() {
 				IsPeriodic:       true,
 				BaseDamage: core.BaseDamageConfig{
 					Calculator: func(_ *core.Simulation, se *core.SpellEffect, _ *core.Spell) float64 {
-						return dk.UnholyBlightTickDamage[se.Target.Index]
+						return dk.UnholyBlightTickDamage[se.Target.Index] * glyphDmgBonus
 					},
 				},
 				OutcomeApplier: dk.OutcomeFuncTick(),
