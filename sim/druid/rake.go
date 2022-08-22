@@ -19,7 +19,7 @@ func (druid *Druid) registerRakeSpell() {
 	druid.Rake = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreResists,
 
 		ResourceType: stats.Energy,
 		BaseCost:     cost,
