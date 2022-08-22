@@ -54,6 +54,7 @@ func (warrior *Warrior) ApplyTalents() {
 	warrior.applyTasteForBlood()
 	warrior.applyBloodsurge()
 	warrior.applySuddenDeath()
+	warrior.RegisterBladestormCD()
 }
 
 func (warrior *Warrior) applyAngerManagement() {
@@ -652,4 +653,106 @@ func (warrior *Warrior) registerLastStandCD() {
 		Spell: lastStandSpell,
 		Type:  core.CooldownTypeSurvival,
 	})
+}
+
+func (warrior *Warrior) RegisterBladestormCD() {
+	if !warrior.Talents.Bladestorm {
+		return
+	}
+
+	cost := 25.0 - float64(warrior.Talents.FocusedRage)
+	cd := core.TernaryDuration(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfBladestorm), time.Second*75, time.Second*90)
+	baseEffectMH := core.SpellEffect{
+		ProcMask: core.ProcMaskMeleeMHSpecial,
+
+		DamageMultiplier: 1 + 0.02*float64(warrior.Talents.UnendingFury),
+		ThreatMultiplier: 1.25,
+
+		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 0, 1, 1, true),
+		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(true)),
+	}
+	baseEffectOH := core.SpellEffect{
+		ProcMask: core.ProcMaskMeleeOHSpecial,
+
+		DamageMultiplier: 1 + 0.02*float64(warrior.Talents.UnendingFury)*0.1*float64(warrior.Talents.ImprovedWhirlwind),
+		ThreatMultiplier: 1.25,
+
+		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 0, 1+0.05*float64(warrior.Talents.DualWieldSpecialization), 1, true),
+		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(true)),
+	}
+
+	numHits := core.MinInt32(4, warrior.Env.GetNumTargets())
+	numTotalHits := numHits
+	if warrior.AutoAttacks.IsDualWielding {
+		numTotalHits *= 2
+	}
+
+	effects := make([]core.SpellEffect, 0, numTotalHits)
+	for i := int32(0); i < numHits; i++ {
+		for j := int32(0); j < 5; j++ {
+			mhEffect := baseEffectMH
+			mhEffect.Target = warrior.Env.GetTargetUnit(i)
+			effects = append(effects, mhEffect)
+
+			if warrior.AutoAttacks.IsDualWielding {
+				ohEffect := baseEffectOH
+				ohEffect.Target = warrior.Env.GetTargetUnit(i)
+				effects = append(effects, ohEffect)
+			}
+		}
+
+	}
+
+	bladestormWhirlwind := warrior.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 50622},
+		SpellSchool: core.SpellSchoolPhysical,
+		Flags:       core.SpellFlagMeleeMetrics,
+
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				ChannelTime: 6 * time.Second,
+			},
+			IgnoreHaste: true,
+		},
+
+		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
+	})
+
+	bladestormSpell := warrior.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 46924},
+		SpellSchool: core.SpellSchoolPhysical,
+		Flags:       core.SpellFlagChanneled,
+
+		ResourceType: stats.Rage,
+		BaseCost:     cost,
+
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				Cost:        cost,
+				GCD:         core.GCDDefault,
+				ChannelTime: time.Second * 6,
+			},
+			IgnoreHaste: true,
+			CD: core.Cooldown{
+				Timer:    warrior.NewTimer(),
+				Duration: cd,
+			},
+		},
+		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+			warrior.AutoAttacks.DelayMeleeUntil(sim, sim.CurrentTime+time.Second*6+time.Millisecond*500)
+			bladestormWhirlwind.Cast(sim, warrior.CurrentTarget)
+		},
+	})
+
+	warrior.AddMajorCooldown(core.MajorCooldown{
+		Spell: bladestormSpell,
+		Type:  core.CooldownTypeDPS,
+		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
+			return warrior.CurrentRage() >= cost
+		},
+		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
+			return true
+		},
+	})
+
 }
