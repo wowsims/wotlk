@@ -39,6 +39,10 @@ func (druid *Druid) ApplyTalents() {
 	} else {
 		druid.AddStat(stats.Armor, druid.Equip.Stats()[stats.Armor]*(0.1/3)*float64(druid.Talents.ThickHide))
 	}
+	if druid.InForm(Moonkin) && druid.Talents.MoonkinForm {
+		druid.MultiplyStat(stats.Intellect, 1+(0.02*float64(druid.Talents.Furor)))
+		druid.PseudoStats.DamageDealtMultiplier *= 1 + (float64(druid.Talents.MasterShapeshifter) * 0.02)
+	}
 
 	if druid.Talents.LunarGuidance > 0 {
 		bonus := (0.25 / 3) * float64(druid.Talents.LunarGuidance)
@@ -274,13 +278,17 @@ func (druid *Druid) applyOmenOfClarity() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeSpecial) {
+			if !spellEffect.Landed() {
 				return
 			}
-			if !ppmm.Proc(sim, spellEffect.ProcMask, "Omen of Clarity") {
-				return
+			if spellEffect.ProcMask.Matches(core.ProcMaskMeleeSpecial) && ppmm.Proc(sim, spellEffect.ProcMask, "Omen of Clarity") { // Melee Special
+				druid.ClearcastingAura.Activate(sim)
 			}
-			druid.ClearcastingAura.Activate(sim)
+			if spellEffect.ProcMask.Matches(core.ProcMaskSpellDamage) && (spell == druid.Starfire || spell == druid.Wrath) { // Spells
+				if sim.RandomFloat("Clearcasting") <= 1.75/(60/spell.CurCast.CastTime.Seconds()) {
+					druid.ClearcastingAura.Activate(sim)
+				}
+			}
 		},
 	})
 }
