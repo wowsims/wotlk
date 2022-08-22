@@ -28,5 +28,5 @@ func (dk *DpsDeathknight) blSpreadDiseases(sim *core.Simulation, target *core.Un
 
 // Save up Runic Power for DRW - Allow casts above 100 rp or garg CD > 5 sec
 func (dk *DpsDeathknight) blDeathCoilCheck(sim *core.Simulation) bool {
-	return !(dk.DancingRuneWeapon.IsReady(sim) || dk.DancingRuneWeapon.CD.TimeToReady(sim) < 5*time.Second) || dk.CurrentRunicPower() >= 100
+	return !(dk.DancingRuneWeapon.IsReady(sim) || dk.DancingRuneWeapon.CD.TimeToReady(sim) < 5*time.Second && dk.CurrentRunicPower() >= 85) || dk.CurrentRunicPower() >= 100
 }
