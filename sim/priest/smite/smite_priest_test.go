@@ -18,9 +18,10 @@ func TestSmite(t *testing.T) {
 
 		Race: proto.Race_RaceUndead,
 
-		GearSet: core.GearSetCombo{Label: "P3", GearSet: P3Gear},
+		GearSet: core.GearSetCombo{Label: "P1", GearSet: P1Gear},
 
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
+		Glyphs:      DefaultGlyphs,
 
 		RaidBuffs:   FullRaidBuffs,
 		PartyBuffs:  FullPartyBuffs,

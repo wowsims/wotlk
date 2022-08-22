@@ -83,6 +83,13 @@ func (priest *Priest) GetCharacter() *core.Character {
 	return &priest.Character
 }
 
+func (priest *Priest) HasMajorGlyph(glyph proto.PriestMajorGlyph) bool {
+	return priest.HasGlyph(int32(glyph))
+}
+func (priest *Priest) HasMinorGlyph(glyph proto.PriestMinorGlyph) bool {
+	return priest.HasGlyph(int32(glyph))
+}
+
 func (priest *Priest) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	raidBuffs.ShadowProtection = true
 

@@ -1,6 +1,8 @@
 package priest
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
@@ -32,7 +34,7 @@ func (priest *Priest) registerPowerInfusionCD() {
 			},
 			CD: core.Cooldown{
 				Timer:    priest.NewTimer(),
-				Duration: core.PowerInfusionCD,
+				Duration: time.Duration(float64(core.PowerInfusionCD) * (1 - .1*float64(priest.Talents.Aspiration))),
 			},
 		},
 
