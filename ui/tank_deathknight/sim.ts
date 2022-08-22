@@ -143,7 +143,7 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 			playerIconInputs: [
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
-			rotationInputs: DeathKnightInputs.DeathKnightRotationConfig,
+			rotationInputs: DeathKnightInputs.TankDeathKnightRotationConfig,
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
 			],
@@ -154,6 +154,7 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 				inputs: [
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
+					DeathKnightInputs.StartingRunicPower,
 				],
 			},
 			encounterPicker: {

@@ -124,8 +124,8 @@ export const DefaultFrostRotation = DeathKnightRotation.create({
   startingPresence: Deathknight_Rotation_StartingPresence.Blood,
   bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodBoil,
   useAms: false,
-  avgAmsSuccessRate: 0.5,
-  avgAmsHit: 5000.0,
+  avgAmsSuccessRate: 1.0,
+  avgAmsHit: 10000.0,
   oblitDelayDuration: 0,
 });
 
