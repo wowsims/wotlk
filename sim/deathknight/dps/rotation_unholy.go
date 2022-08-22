@@ -22,7 +22,9 @@ func (dk *DpsDeathknight) setupUnholyRotations() {
 
 	if dk.Rotation.UseDeathAndDecay || !dk.Talents.ScourgeStrike {
 		if dk.Rotation.DeathAndDecayPrio == proto.Deathknight_Rotation_MaxRuneDowntime {
-			dk.RotationSequence.NewAction(dk.RotationActionCallback_UnholyDndRotation)
+			dk.RotationSequence.
+				NewAction(dk.RotationActionCallback_DND).
+				NewAction(dk.RotationActionCallback_UnholyDndRotation)
 		} else {
 			dk.dndExperimentalOpener()
 		}
@@ -253,20 +255,32 @@ func (dk *DpsDeathknight) uhAfterGargoyleSequence(sim *core.Simulation) {
 			dk.RotationSequence.NewAction(dk.RotationActionUH_CancelBT)
 		}
 
+		didErw := false
 		if dk.Rotation.ArmyOfTheDead != proto.Deathknight_Rotation_DoNotUse && dk.ArmyOfTheDead.IsReady(sim) {
 			// If not enough runes for aotd cast ERW
 			if dk.CurrentBloodRunes() < 1 || dk.CurrentFrostRunes() < 1 || dk.CurrentUnholyRunes() < 1 {
 				dk.RotationSequence.NewAction(dk.RotationActionCallback_ERW)
+				didErw = true
 			}
 			dk.RotationSequence.NewAction(dk.RotationActionCallback_AOTD)
 		} else {
-			// If no runes cast ERW TODO: Figure out when to do it after
-			if dk.CurrentBloodRunes() < 1 && dk.CurrentFrostRunes() < 1 && dk.CurrentUnholyRunes() < 1 {
+			// If no runes soon cast ERW
+			if dk.CurrentBloodRunes() < 1 && dk.CurrentFrostRunes() < 1 && dk.CurrentUnholyRunes() < 1 && dk.AnyRuneReadyAt(sim)-sim.CurrentTime > 2*time.Second {
 				dk.RotationSequence.NewAction(dk.RotationActionCallback_ERW)
+				didErw = true
 			}
 		}
 
-		dk.RotationSequence.NewAction(dk.RotationActionCallback_BP)
+		if !dk.PresenceMatches(deathknight.BloodPresence) {
+			if didErw || dk.CurrentBloodRunes() > 0 {
+				dk.RotationSequence.NewAction(dk.RotationActionCallback_BP)
+			} else if !didErw && dk.BloodTap.IsReady(sim) {
+				dk.RotationSequence.
+					NewAction(dk.RotationActionCallback_BT).
+					NewAction(dk.RotationActionCallback_BP).
+					NewAction(dk.RotationActionUH_CancelBT)
+			}
+		}
 
 		if dk.Rotation.UseDeathAndDecay || !dk.Talents.ScourgeStrike {
 			dk.RotationSequence.NewAction(dk.RotationActionUH_ResetToDndMain)
