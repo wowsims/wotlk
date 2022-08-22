@@ -134,6 +134,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestBalance-AllItems-DeadlyGladiator'sIdolofResolve-42588"
+ value: {
+  dps: 1408.778
+  tps: 1309.38952
+ }
+}
+dps_results: {
  key: "TestBalance-AllItems-DeathKnight'sAnguish-38212"
  value: {
   dps: 1391.79764
@@ -253,7 +260,21 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestBalance-AllItems-HatefulGladiator'sIdolofResolve-42587"
+ value: {
+  dps: 1408.778
+  tps: 1309.38952
+ }
+}
+dps_results: {
  key: "TestBalance-AllItems-IdolofTerror-33509"
+ value: {
+  dps: 1408.778
+  tps: 1309.38952
+ }
+}
+dps_results: {
+ key: "TestBalance-AllItems-IdoloftheCorruptor-45509"
  value: {
   dps: 1408.778
   tps: 1309.38952
@@ -267,7 +288,28 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestBalance-AllItems-IdolofthePlainstalker-37573"
+ value: {
+  dps: 1408.778
+  tps: 1309.38952
+ }
+}
+dps_results: {
+ key: "TestBalance-AllItems-IdoloftheRavenGoddess-32387"
+ value: {
+  dps: 1401.82403
+  tps: 1302.31267
+ }
+}
+dps_results: {
  key: "TestBalance-AllItems-IdoloftheUnseenMoon-33510"
+ value: {
+  dps: 1408.778
+  tps: 1309.38952
+ }
+}
+dps_results: {
+ key: "TestBalance-AllItems-IdoloftheWastes-38295"
  value: {
   dps: 1408.778
   tps: 1309.38952
@@ -502,6 +544,13 @@ dps_results: {
  value: {
   dps: -9.223372036854777e+13
   tps: -9.223372036854777e+13
+ }
+}
+dps_results: {
+ key: "TestBalance-AllItems-SavageGladiator'sIdolofResolve-42574"
+ value: {
+  dps: 1408.778
+  tps: 1309.38952
  }
 }
 dps_results: {

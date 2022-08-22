@@ -71,6 +71,8 @@ func (druid *Druid) registerRipSpell() {
 				bonusTickDamage := 0.0
 				if druid.Equip[items.ItemSlotRanged].ID == 28372 { // Idol of Feral Shadows
 					bonusTickDamage += 7 * float64(comboPoints)
+				} else if druid.Equip[items.ItemSlotRanged].ID == 39757 { // Idol of Worship
+					bonusTickDamage += 21 * float64(comboPoints)
 				}
 
 				return (36.0+93.0*comboPoints+0.01*comboPoints*attackPower)/6.0 + bonusTickDamage

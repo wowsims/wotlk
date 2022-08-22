@@ -2,7 +2,6 @@ package druid
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/items"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 	"time"
@@ -160,10 +159,6 @@ func (druid *Druid) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 		if druid.Talents.ImprovedMoonkinForm > 0 {
 			// For now, we assume Improved Moonkin Form is maxed-out
 			raidBuffs.MoonkinAura = proto.TristateEffect_TristateEffectImproved
-		}
-		// Idol of the Raven Goddess
-		if druid.Equip[items.ItemSlotRanged].ID == 32387 {
-			druid.AddStat(stats.SpellCrit, 40)
 		}
 	}
 	if druid.InForm(Cat|Bear) && druid.Talents.LeaderOfThePack {

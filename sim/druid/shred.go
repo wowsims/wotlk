@@ -15,7 +15,8 @@ func (druid *Druid) registerShredSpell() {
 
 	flatDamageBonus := 666 +
 		core.TernaryFloat64(druid.HasSetBonus(ItemSetNordrassilHarness, 4), 75, 0) +
-		core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == 29390, 88, 0)
+		core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == 29390, 88, 0) +
+		core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == 40713, 203, 0)
 
 	druid.Shred = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48572},

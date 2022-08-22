@@ -134,6 +134,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeralTank-AllItems-DeadlyGladiator'sIdolofResolve-42588"
+ value: {
+  dps: 690.89698
+  tps: 918.08671
+ }
+}
+dps_results: {
  key: "TestFeralTank-AllItems-DeathKnight'sAnguish-38212"
  value: {
   dps: 697.49061
@@ -253,10 +260,24 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeralTank-AllItems-HatefulGladiator'sIdolofResolve-42587"
+ value: {
+  dps: 678.23366
+  tps: 889.70437
+ }
+}
+dps_results: {
  key: "TestFeralTank-AllItems-IdolofTerror-33509"
  value: {
   dps: 682.30415
   tps: 902.35641
+ }
+}
+dps_results: {
+ key: "TestFeralTank-AllItems-IdoloftheCorruptor-45509"
+ value: {
+  dps: 690.75792
+  tps: 921.61386
  }
 }
 dps_results: {
@@ -267,10 +288,31 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeralTank-AllItems-IdolofthePlainstalker-37573"
+ value: {
+  dps: 664.77116
+  tps: 880.54885
+ }
+}
+dps_results: {
+ key: "TestFeralTank-AllItems-IdoloftheRavenGoddess-32387"
+ value: {
+  dps: 684.32006
+  tps: 906.91951
+ }
+}
+dps_results: {
  key: "TestFeralTank-AllItems-IdoloftheUnseenMoon-33510"
  value: {
   dps: 672.39786
   tps: 895.29785
+ }
+}
+dps_results: {
+ key: "TestFeralTank-AllItems-IdoloftheWastes-38295"
+ value: {
+  dps: 682.85546
+  tps: 907.72643
  }
 }
 dps_results: {
@@ -502,6 +544,13 @@ dps_results: {
  value: {
   dps: 652.92607
   tps: 849.67052
+ }
+}
+dps_results: {
+ key: "TestFeralTank-AllItems-SavageGladiator'sIdolofResolve-42574"
+ value: {
+  dps: 680.97883
+  tps: 903.16756
  }
 }
 dps_results: {
