@@ -104,8 +104,9 @@ export const DefaultOptions = WarriorOptions.create({
 
 export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfEndlessRage,
-	food: Food.FoodHeartyRhino,
+	food: Food.FoodDragonfinFilet,
 	defaultPotion: Potions.IndestructiblePotion,
+  prepopPotion:  Potions.IndestructiblePotion,
 });
 
 export const P1_PRERAID_FURY_PRESET = {

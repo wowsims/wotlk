@@ -144,7 +144,12 @@ var FullIndividualBuffs = &proto.IndividualBuffs{
 	BlessingOfMight:  proto.TristateEffect_TristateEffectImproved,
 }
 
-var FullConsumes = &proto.Consumes{}
+var FullConsumes = &proto.Consumes{
+	Flask:         proto.Flask_FlaskOfEndlessRage,
+	DefaultPotion: proto.Potions_IndestructiblePotion,
+	PrepopPotion:  proto.Potions_IndestructiblePotion,
+	Food:          proto.Food_FoodDragonfinFilet,
+}
 
 var FullDebuffs = &proto.Debuffs{
 	BloodFrenzy:       true,

@@ -131,6 +131,7 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 					WarriorInputs.StartingRage,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
+					OtherInputs.PrepopPotion,
 				],
 			},
 			encounterPicker: {
