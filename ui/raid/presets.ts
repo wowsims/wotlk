@@ -550,7 +550,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	{
 		spec: Spec.SpecProtectionWarrior,
 		rotation: ProtectionWarriorPresets.DefaultRotation,
-		talents: ProtectionWarriorPresets.ImpaleProtTalents.data,
+		talents: ProtectionWarriorPresets.StandardTalents.data,
 		specOptions: ProtectionWarriorPresets.DefaultOptions,
 		consumes: ProtectionWarriorPresets.DefaultConsumes,
 		defaultName: 'Prot Warrior',

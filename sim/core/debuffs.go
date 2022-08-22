@@ -843,14 +843,7 @@ func ScreechAura(target *Unit) *Aura {
 const AtkSpeedReductionAuraTag = "AtkSpdReduction"
 
 func ThunderClapAura(target *Unit, points int32) *Aura {
-	speedMultiplier := 0.9
-	if points == 1 {
-		speedMultiplier = 0.86
-	} else if points == 2 {
-		speedMultiplier = 0.83
-	} else if points == 3 {
-		speedMultiplier = 0.8
-	}
+	speedMultiplier := []float64{0.9, 0.86, 0.83, 0.8}[points]
 	inverseMult := 1 / speedMultiplier
 
 	return target.GetOrRegisterAura(Aura{
