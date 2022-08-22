@@ -26,8 +26,9 @@ func (warrior *Warrior) registerThunderClapSpell() {
 		DamageMultiplier: impTCDamageMult,
 		ThreatMultiplier: 1.75,
 		BonusCritRating:  float64(warrior.Talents.Incite) * 5 * core.CritRatingPerCritChance,
-		BaseDamage:       core.BaseDamageConfigFlat(300),
-		OutcomeApplier:   warrior.OutcomeFuncMagicHitAndCrit(warrior.spellCritMultiplier(true)),
+		// TODO: find out the AP damage coefficient
+		BaseDamage:     core.BaseDamageConfigFlat(300),
+		OutcomeApplier: warrior.OutcomeFuncMagicHitAndCrit(warrior.spellCritMultiplier(true)),
 	}
 
 	numHits := warrior.Env.GetNumTargets()
