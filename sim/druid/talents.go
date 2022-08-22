@@ -298,6 +298,7 @@ func (druid *Druid) applyEclipse() {
 	if druid.Talents.Eclipse == 0 {
 		return
 	}
+
 	// Solar
 	solarProcChance := (1.0 / 3.0) * float64(druid.Talents.Eclipse)
 	solarProcAura := druid.NewTemporaryStatsAura("Solar Eclipse proc", core.ActionID{SpellID: 48517}, stats.Stats{}, time.Millisecond*15000)
