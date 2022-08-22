@@ -15,6 +15,8 @@ const (
 	PetUnit
 )
 
+type DynamicDamageTakenModifier func(sim *Simulation, spellEffect *SpellEffect)
+
 // Unit is an abstraction of a Character/Boss/Pet/etc, containing functionality
 // shared by all of them.
 type Unit struct {
@@ -94,8 +96,9 @@ type Unit struct {
 
 	cdTimers []*Timer
 
-	AttackTables  []*AttackTable
-	DefenseTables []*AttackTable
+	AttackTables               []*AttackTable
+	DefenseTables              []*AttackTable
+	DynamicDamageTakenModifier DynamicDamageTakenModifier
 
 	GCD       *Timer
 	doNothing bool // flags that this character chose to do nothing.

@@ -50,8 +50,27 @@ func (dk *Deathknight) ApplyBloodTalents() {
 	// Improved Rune Tap
 	// TODO: Implemented outside
 
-	// Spell Deflection
-	// TODO: Implement
+	// Spell Deflection && WoTN
+	dk.applyWillOfTheNecropolis()
+	dk.DynamicDamageTakenModifier = func(sim *core.Simulation, spellEffect *core.SpellEffect) {
+		if dk.Talents.SpellDeflection > 0 && spellEffect.ProcMask.Matches(core.ProcMaskSpellDamage) {
+			procChance := dk.GetStat(stats.Parry) / core.ParryRatingPerParryChance
+			dmgMult := 1.0 - 0.15*float64(dk.Talents.SpellDeflection)
+			if -1 < procChance {
+				spellEffect.Damage *= dmgMult
+			}
+		}
+
+		if dk.Talents.WillOfTheNecropolis > 0 {
+			if (dk.CurrentHealth()-spellEffect.Damage)/dk.MaxHealth() <= 0.35 {
+				spellEffect.Damage *= 0.85
+				if (dk.CurrentHealth()-spellEffect.Damage)/dk.MaxHealth() <= 0.35 {
+					dk.WillOfTheNecropolis.Activate(sim)
+					return
+				}
+			}
+		}
+	}
 
 	// Vendetta
 	// TODO: Pointless
@@ -83,6 +102,20 @@ func (dk *Deathknight) ApplyBloodTalents() {
 	}
 
 	dk.applyBloodGorged()
+}
+
+func (dk *Deathknight) applyWillOfTheNecropolis() {
+	if dk.Talents.WillOfTheNecropolis == 0 {
+		return
+	}
+
+	actionID := core.ActionID{SpellID: 50150}
+	dk.WillOfTheNecropolis = dk.RegisterAura(core.Aura{
+		Label:    "Will of The Necropolis",
+		ActionID: actionID,
+		Duration: core.NeverExpires,
+	})
+
 }
 
 func (dk *Deathknight) applyScentOfBlood() {

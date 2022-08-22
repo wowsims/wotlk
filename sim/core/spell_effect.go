@@ -260,6 +260,10 @@ func (spellEffect *SpellEffect) finalize(sim *Simulation, spell *Spell) {
 
 // Applies the fully computed results from this SpellEffect to the sim.
 func (spellEffect *SpellEffect) finalizeInternal(sim *Simulation, spell *Spell) {
+	if spellEffect.Target.DynamicDamageTakenModifier != nil {
+		spellEffect.Target.DynamicDamageTakenModifier(sim, spellEffect)
+	}
+
 	spell.SpellMetrics[spellEffect.Target.UnitIndex].TotalDamage += spellEffect.Damage
 	spell.SpellMetrics[spellEffect.Target.UnitIndex].TotalThreat += spellEffect.calcThreat(spell)
 

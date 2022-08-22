@@ -161,6 +161,7 @@ type Deathknight struct {
 	BladeBarrierAura    *core.Aura
 	SuddenDoomAura      *core.Aura
 	ScentOfBloodAura    *core.Aura
+	WillOfTheNecropolis *core.Aura
 
 	// Talent Spells
 	LastDiseaseDamage float64
