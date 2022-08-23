@@ -38,6 +38,7 @@ type Priest struct {
 	MindBlast       *core.Spell
 	MindFlay        []*core.Spell
 	MindSear        []*core.Spell
+	Penance         *core.Spell
 	ShadowWordDeath *core.Spell
 	Shadowfiend     *core.Spell
 	Smite           *core.Spell
@@ -116,6 +117,7 @@ func (priest *Priest) Initialize() {
 	priest.registerHolyFireSpell()
 	priest.registerShadowWordPainSpell()
 	priest.registerMindBlastSpell()
+	priest.registerPenanceSpell()
 	priest.registerShadowWordDeathSpell()
 	priest.registerShadowfiendSpell()
 	priest.registerSmiteSpell()
