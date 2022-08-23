@@ -10,6 +10,10 @@ func (spellEffect *SpellEffect) applyResistances(sim *Simulation, spell *Spell, 
 		return
 	}
 
+	if spellEffect.IsHealing {
+		return
+	}
+
 	if spell.SpellSchool.Matches(SpellSchoolPhysical) {
 		// All physical dots (Bleeds) ignore armor.
 		if spellEffect.IsPeriodic && !spell.Flags.Matches(SpellFlagApplyArmorReduction) {
