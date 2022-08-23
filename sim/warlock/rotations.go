@@ -502,7 +502,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	var DesiredManaAtExecute float64
 	if warlock.Talents.Decimation > 0 {
 		executeDuration = 0.35
-		DesiredManaAtExecute = 0.3
+		DesiredManaAtExecute = 0.3*sim.Duration.Seconds()*executeDuration/60
 	} else if warlock.Talents.SoulSiphon > 0 {
 		executeDuration = 0.25
 		DesiredManaAtExecute = 0.02
@@ -513,7 +513,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	timeUntilExecute := time.Duration((sim.GetRemainingDurationPercent() - executeDuration) * float64(sim.Duration))
 
 	if sim.Log != nil {
-		warlock.Log(sim, "TotalManaAtExecute[%d]", TotalManaAtExecute)
+		warlock.Log(sim, "DesiredManaAtExecute[%d]", DesiredManaAtExecute)
 	}
 
 	// ------------------------------------------
@@ -528,24 +528,9 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		} else if nextCD - sim.CurrentTime > 0 && nextCD - sim.CurrentTime < fillerCastTime/10 {
 			warlock.WaitUntil(sim, nextCD+dotLag)
 			return
-		} else if timeUntilOom < 5*time.Second && timeUntilExecute > time.Second {
+		} else if timeUntilOom < time.Second && timeUntilExecute > time.Second && warlock.CurrentManaPercent() < 0.8 {
 			// If you were gonna cast a filler but are low mana, get mana instead in order not to be OOM when an important spell is coming up.
 			warlock.LifeTapOrDarkPact(sim)
-			return
-		} else if !warlock.DoingRegen && nextBigCD - sim.CurrentTime < time.Second*6 && sim.GetRemainingDuration() > time.Second*30 {
-			// If big CD coming up and we don't have enough mana for it, lifetap
-			// Also, never do a big regen in the last few seconds of the fight.
-			// TODO: Specify regen goals depending on CD
-			if warlock.CurrentManaPercent() < 0.2 {
-				warlock.DoingRegen = true
-			}
-		}
-
-		if warlock.DoingRegen {
-			warlock.LifeTapOrDarkPact(sim)
-			if warlock.CurrentManaPercent() > 0.2 {
-				warlock.DoingRegen = false
-			}
 			return
 		}
 
@@ -565,13 +550,10 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			warlock.CorruptionRolloverMult = CurrentCorruptionRolloverMult
 		}
 		return
-	}
-
-	// Lifetap if nothing else
-	if warlock.CurrentManaPercent() < 0.8 {
+	} else {
+	// Lifetap if can't cast
 		warlock.LifeTapOrDarkPact(sim)
 		return
 	}
 
-	// If we get here, something's wrong
 }
