@@ -50,7 +50,18 @@ import { Mage, Mage_Rotation as MageRotation, MageTalents, Mage_Options as MageO
 import { Rogue, Rogue_Rotation as RogueRotation, RogueTalents, Rogue_Options as RogueOptions } from '../proto/rogue.js';
 import { RetributionPaladin, RetributionPaladin_Rotation as RetributionPaladinRotation, PaladinTalents, RetributionPaladin_Options as RetributionPaladinOptions } from '../proto/paladin.js';
 import { ProtectionPaladin, ProtectionPaladin_Rotation as ProtectionPaladinRotation, ProtectionPaladin_Options as ProtectionPaladinOptions } from '../proto/paladin.js';
-import { ShadowPriest, SmitePriest_Rotation as SmitePriestRotation, ShadowPriest_Rotation as ShadowPriestRotation, PriestTalents, ShadowPriest_Options as ShadowPriestOptions, SmitePriest_Options as SmitePriestOptions, SmitePriest } from '../proto/priest.js';
+import {
+	PriestTalents,
+	HealingPriest,
+	HealingPriest_Rotation as HealingPriestRotation,
+	HealingPriest_Options as HealingPriestOptions,
+	ShadowPriest,
+	ShadowPriest_Rotation as ShadowPriestRotation,
+	ShadowPriest_Options as ShadowPriestOptions,
+	SmitePriest,
+	SmitePriest_Rotation as SmitePriestRotation,
+	SmitePriest_Options as SmitePriestOptions,
+} from '../proto/priest.js';
 import { Warlock, Warlock_Rotation as WarlockRotation, WarlockTalents, Warlock_Options as WarlockOptions } from '../proto/warlock.js';
 import { Warrior, Warrior_Rotation as WarriorRotation, WarriorTalents, Warrior_Options as WarriorOptions } from '../proto/warrior.js';
 import { Deathknight, Deathknight_Rotation as DeathknightRotation, DeathknightTalents, Deathknight_Options as DeathknightOptions } from '../proto/deathknight.js';
@@ -63,7 +74,7 @@ export type HunterSpecs = Spec.SpecHunter;
 export type MageSpecs = Spec.SpecMage;
 export type RogueSpecs = Spec.SpecRogue;
 export type PaladinSpecs = [Spec.SpecRetributionPaladin, Spec.SpecProtectionPaladin];
-export type PriestSpecs = [Spec.SpecShadowPriest, Spec.SpecSmitePriest];
+export type PriestSpecs = [Spec.SpecHealingPriest, Spec.SpecShadowPriest, Spec.SpecSmitePriest];
 export type ShamanSpecs = [Spec.SpecElementalShaman, Spec.SpecEnhancementShaman];
 export type WarlockSpecs = Spec.SpecWarlock;
 export type WarriorSpecs = [Spec.SpecWarrior, Spec.SpecProtectionWarrior];
@@ -80,6 +91,7 @@ export const naturalSpecOrder: Array<Spec> = [
     Spec.SpecMage,
     Spec.SpecRetributionPaladin,
     Spec.SpecProtectionPaladin,
+    Spec.SpecHealingPriest,
     Spec.SpecShadowPriest,
     Spec.SpecSmitePriest,
     Spec.SpecRogue,
@@ -103,11 +115,12 @@ export const specNames: Record<Spec, string> = {
     [Spec.SpecRogue]: 'Rogue',
     [Spec.SpecRetributionPaladin]: 'Retribution Paladin',
     [Spec.SpecProtectionPaladin]: 'Protection Paladin',
+    [Spec.SpecHealingPriest]: 'Priest',
     [Spec.SpecShadowPriest]: 'Shadow Priest',
+    [Spec.SpecSmitePriest]: 'Smite Priest',
     [Spec.SpecWarlock]: 'Warlock',
     [Spec.SpecWarrior]: 'Warrior',
     [Spec.SpecProtectionWarrior]: 'Protection Warrior',
-    [Spec.SpecSmitePriest]: 'Smite Priest',
     [Spec.SpecDeathknight]: 'Death Knight',
     [Spec.SpecTankDeathknight]: 'Death Knight Tank',
 };
@@ -137,11 +150,12 @@ export const specIconsLarge: Record<Spec, string> = {
     [Spec.SpecRogue]: 'https://wow.zamimg.com/images/wow/icons/large/classicon_rogue.jpg',
     [Spec.SpecRetributionPaladin]: 'https://wow.zamimg.com/images/wow/icons/large/spell_holy_auraoflight.jpg',
     [Spec.SpecProtectionPaladin]: 'https://wow.zamimg.com/images/wow/icons/large/spell_holy_devotionaura.jpg',
+    [Spec.SpecHealingPriest]: 'https://wow.zamimg.com/images/wow/icons/large/spell_holy_guardianspirit.jpg',
     [Spec.SpecShadowPriest]: 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_shadowwordpain.jpg',
+    [Spec.SpecSmitePriest]: 'https://wow.zamimg.com/images/wow/icons/large/spell_holy_holysmite.jpg',
     [Spec.SpecWarlock]: 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_metamorphosis.jpg',
     [Spec.SpecWarrior]: 'https://wow.zamimg.com/images/wow/icons/large/ability_warrior_innerrage.jpg',
     [Spec.SpecProtectionWarrior]: 'https://wow.zamimg.com/images/wow/icons/large/ability_warrior_defensivestance.jpg',
-    [Spec.SpecSmitePriest]: 'https://wow.zamimg.com/images/wow/icons/large/spell_holy_holysmite.jpg',
     [Spec.SpecDeathknight]: 'https://wow.zamimg.com/images/wow/icons/medium/class_deathknight.jpg',
     [Spec.SpecTankDeathknight]: 'https://wow.zamimg.com/images/wow/icons/medium/class_deathknight.jpg',
 };
@@ -211,11 +225,12 @@ export const titleIcons: Record<Spec, string> = {
     [Spec.SpecRogue]: '/wotlk/assets/img/rogue_icon.png',
     [Spec.SpecRetributionPaladin]: '/wotlk/assets/img/retribution_icon.png',
     [Spec.SpecProtectionPaladin]: '/wotlk/assets/img/protection_paladin_icon.png',
+    [Spec.SpecHealingPriest]: '/wotlk/assets/img/shadow_priest_icon.png',
     [Spec.SpecShadowPriest]: '/wotlk/assets/img/shadow_priest_icon.png',
+    [Spec.SpecSmitePriest]: '/wotlk/assets/img/smite_priest_icon.png',
     [Spec.SpecWarlock]: '/wotlk/assets/img/warlock_icon.png',
     [Spec.SpecWarrior]: '/wotlk/assets/img/warrior_icon.png',
     [Spec.SpecProtectionWarrior]: '/wotlk/assets/img/protection_warrior_icon.png',
-    [Spec.SpecSmitePriest]: '/wotlk/assets/img/smite_priest_icon.png',
     [Spec.SpecDeathknight]: '/wotlk/assets/img/death_knight_icon.png',
     [Spec.SpecTankDeathknight]: '/wotlk/assets/img/death_knight_icon.png',
 };
@@ -264,11 +279,12 @@ export type RotationUnion =
     RogueRotation |
     RetributionPaladinRotation |
     ProtectionPaladinRotation |
+    HealingPriestRotation |
     ShadowPriestRotation |
+    SmitePriestRotation |
     WarlockRotation |
     WarriorRotation |
     ProtectionWarriorRotation |
-    SmitePriestRotation |
     DeathknightRotation |
     TankDeathknightRotation;
 export type SpecRotation<T extends Spec> =
@@ -282,11 +298,12 @@ export type SpecRotation<T extends Spec> =
     T extends Spec.SpecRogue ? RogueRotation :
     T extends Spec.SpecRetributionPaladin ? RetributionPaladinRotation :
     T extends Spec.SpecProtectionPaladin ? ProtectionPaladinRotation :
+    T extends Spec.SpecHealingPriest ? HealingPriestRotation :
     T extends Spec.SpecShadowPriest ? ShadowPriestRotation :
+    T extends Spec.SpecSmitePriest ? SmitePriestRotation :
     T extends Spec.SpecWarlock ? WarlockRotation :
     T extends Spec.SpecWarrior ? WarriorRotation :
     T extends Spec.SpecProtectionWarrior ? ProtectionWarriorRotation :
-    T extends Spec.SpecSmitePriest ? SmitePriestRotation :
     T extends Spec.SpecDeathknight ? DeathknightRotation :
     T extends Spec.SpecTankDeathknight ? TankDeathknightRotation :
     ElementalShamanRotation; // Should never reach this case
@@ -313,11 +330,12 @@ export type SpecTalents<T extends Spec> =
     T extends Spec.SpecRogue ? RogueTalents :
     T extends Spec.SpecRetributionPaladin ? PaladinTalents :
     T extends Spec.SpecProtectionPaladin ? PaladinTalents :
+    T extends Spec.SpecHealingPriest ? PriestTalents :
     T extends Spec.SpecShadowPriest ? PriestTalents :
+    T extends Spec.SpecSmitePriest ? PriestTalents :
     T extends Spec.SpecWarlock ? WarlockTalents :
     T extends Spec.SpecWarrior ? WarriorTalents :
     T extends Spec.SpecProtectionWarrior ? WarriorTalents :
-    T extends Spec.SpecSmitePriest ? PriestTalents :
     T extends Spec.SpecDeathknight ? DeathknightTalents :
     T extends Spec.SpecTankDeathknight ? DeathknightTalents :
     ShamanTalents; // Should never reach this case
@@ -333,11 +351,12 @@ export type SpecOptionsUnion =
     RogueOptions |
     RetributionPaladinOptions |
     ProtectionPaladinOptions |
+    HealingPriestOptions |
     ShadowPriestOptions |
+    SmitePriestOptions |
     WarlockOptions |
     WarriorOptions |
     ProtectionWarriorOptions |
-    SmitePriestOptions |
     DeathknightOptions |
     TankDeathknightOptions;
 export type SpecOptions<T extends Spec> =
@@ -351,11 +370,12 @@ export type SpecOptions<T extends Spec> =
     T extends Spec.SpecRogue ? RogueOptions :
     T extends Spec.SpecRetributionPaladin ? RetributionPaladinOptions :
     T extends Spec.SpecProtectionPaladin ? ProtectionPaladinOptions :
+    T extends Spec.SpecHealingPriest ? HealingPriestOptions :
     T extends Spec.SpecShadowPriest ? ShadowPriestOptions :
+    T extends Spec.SpecSmitePriest ? SmitePriestOptions :
     T extends Spec.SpecWarlock ? WarlockOptions :
     T extends Spec.SpecWarrior ? WarriorOptions :
     T extends Spec.SpecProtectionWarrior ? ProtectionWarriorOptions :
-    T extends Spec.SpecSmitePriest ? SmitePriestOptions :
     T extends Spec.SpecDeathknight ? DeathknightOptions :
     T extends Spec.SpecTankDeathknight ? TankDeathknightOptions :
     ElementalShamanOptions; // Should never reach this case
@@ -371,11 +391,12 @@ export type SpecProtoUnion =
     Rogue |
     RetributionPaladin |
     ProtectionPaladin |
+    HealingPriest |
     ShadowPriest |
+    SmitePriest |
     Warlock |
     Warrior |
     ProtectionWarrior |
-    SmitePriest |
     Deathknight |
     TankDeathknight;
 export type SpecProto<T extends Spec> =
@@ -389,11 +410,12 @@ export type SpecProto<T extends Spec> =
     T extends Spec.SpecRogue ? Rogue :
     T extends Spec.SpecRetributionPaladin ? RetributionPaladin :
     T extends Spec.SpecProtectionPaladin ? ProtectionPaladin :
+    T extends Spec.SpecHealingPriest ? HealingPriest :
     T extends Spec.SpecShadowPriest ? ShadowPriest :
+    T extends Spec.SpecSmitePriest ? SmitePriest :
     T extends Spec.SpecWarlock ? Warlock :
     T extends Spec.SpecWarrior ? Warrior :
     T extends Spec.SpecProtectionWarrior ? ProtectionWarrior :
-    T extends Spec.SpecSmitePriest ? SmitePriest :
     T extends Spec.SpecDeathknight ? Deathknight :
     T extends Spec.SpecTankDeathknight ? TankDeathknight :
     ElementalShaman; // Should never reach this case
@@ -702,6 +724,34 @@ export const specTypeFunctions: Record<Spec, SpecTypeFunctions<any>> = {
             ? player.spec.rogue.options || RogueOptions.create()
             : RogueOptions.create(),
     },
+    [Spec.SpecHealingPriest]: {
+        rotationCreate: () => HealingPriestRotation.create(),
+        rotationEquals: (a, b) => HealingPriestRotation.equals(a as HealingPriestRotation, b as HealingPriestRotation),
+        rotationCopy: (a) => HealingPriestRotation.clone(a as HealingPriestRotation),
+        rotationToJson: (a) => HealingPriestRotation.toJson(a as HealingPriestRotation),
+        rotationFromJson: (obj) => HealingPriestRotation.fromJson(obj),
+        rotationFromPlayer: (player) => player.spec.oneofKind == 'healingPriest'
+            ? player.spec.healingPriest.rotation || HealingPriestRotation.create()
+            : HealingPriestRotation.create(),
+
+        talentsCreate: () => PriestTalents.create(),
+        talentsEquals: (a, b) => PriestTalents.equals(a as PriestTalents, b as PriestTalents),
+        talentsCopy: (a) => PriestTalents.clone(a as PriestTalents),
+        talentsToJson: (a) => PriestTalents.toJson(a as PriestTalents),
+        talentsFromJson: (obj) => PriestTalents.fromJson(obj),
+        talentsFromPlayer: (player) => player.spec.oneofKind == 'healingPriest'
+            ? player.spec.healingPriest.talents || PriestTalents.create()
+            : PriestTalents.create(),
+
+        optionsCreate: () => HealingPriestOptions.create(),
+        optionsEquals: (a, b) => HealingPriestOptions.equals(a as HealingPriestOptions, b as HealingPriestOptions),
+        optionsCopy: (a) => HealingPriestOptions.clone(a as HealingPriestOptions),
+        optionsToJson: (a) => HealingPriestOptions.toJson(a as HealingPriestOptions),
+        optionsFromJson: (obj) => HealingPriestOptions.fromJson(obj),
+        optionsFromPlayer: (player) => player.spec.oneofKind == 'healingPriest'
+            ? player.spec.healingPriest.options || HealingPriestOptions.create()
+            : HealingPriestOptions.create(),
+    },
     [Spec.SpecShadowPriest]: {
         rotationCreate: () => ShadowPriestRotation.create(),
         rotationEquals: (a, b) => ShadowPriestRotation.equals(a as ShadowPriestRotation, b as ShadowPriestRotation),
@@ -729,6 +779,34 @@ export const specTypeFunctions: Record<Spec, SpecTypeFunctions<any>> = {
         optionsFromPlayer: (player) => player.spec.oneofKind == 'shadowPriest'
             ? player.spec.shadowPriest.options || ShadowPriestOptions.create()
             : ShadowPriestOptions.create(),
+    },
+    [Spec.SpecSmitePriest]: {
+        rotationCreate: () => SmitePriestRotation.create(),
+        rotationEquals: (a, b) => SmitePriestRotation.equals(a as SmitePriestRotation, b as SmitePriestRotation),
+        rotationCopy: (a) => SmitePriestRotation.clone(a as SmitePriestRotation),
+        rotationToJson: (a) => SmitePriestRotation.toJson(a as SmitePriestRotation),
+        rotationFromJson: (obj) => SmitePriestRotation.fromJson(obj),
+        rotationFromPlayer: (player) => player.spec.oneofKind == 'smitePriest'
+            ? player.spec.smitePriest.rotation || SmitePriestRotation.create()
+            : SmitePriestRotation.create(),
+
+        talentsCreate: () => PriestTalents.create(),
+        talentsEquals: (a, b) => PriestTalents.equals(a as PriestTalents, b as PriestTalents),
+        talentsCopy: (a) => PriestTalents.clone(a as PriestTalents),
+        talentsToJson: (a) => PriestTalents.toJson(a as PriestTalents),
+        talentsFromJson: (obj) => PriestTalents.fromJson(obj),
+        talentsFromPlayer: (player) => player.spec.oneofKind == 'smitePriest'
+            ? player.spec.smitePriest.talents || PriestTalents.create()
+            : PriestTalents.create(),
+
+        optionsCreate: () => SmitePriestOptions.create(),
+        optionsEquals: (a, b) => SmitePriestOptions.equals(a as SmitePriestOptions, b as SmitePriestOptions),
+        optionsCopy: (a) => SmitePriestOptions.clone(a as SmitePriestOptions),
+        optionsToJson: (a) => SmitePriestOptions.toJson(a as SmitePriestOptions),
+        optionsFromJson: (obj) => SmitePriestOptions.fromJson(obj),
+        optionsFromPlayer: (player) => player.spec.oneofKind == 'smitePriest'
+            ? player.spec.smitePriest.options || SmitePriestOptions.create()
+            : SmitePriestOptions.create(),
     },
     [Spec.SpecWarlock]: {
         rotationCreate: () => WarlockRotation.create(),
@@ -814,34 +892,6 @@ export const specTypeFunctions: Record<Spec, SpecTypeFunctions<any>> = {
             ? player.spec.protectionWarrior.options || ProtectionWarriorOptions.create()
             : ProtectionWarriorOptions.create(),
     },
-    [Spec.SpecSmitePriest]: {
-        rotationCreate: () => SmitePriestRotation.create(),
-        rotationEquals: (a, b) => SmitePriestRotation.equals(a as SmitePriestRotation, b as SmitePriestRotation),
-        rotationCopy: (a) => SmitePriestRotation.clone(a as SmitePriestRotation),
-        rotationToJson: (a) => SmitePriestRotation.toJson(a as SmitePriestRotation),
-        rotationFromJson: (obj) => SmitePriestRotation.fromJson(obj),
-        rotationFromPlayer: (player) => player.spec.oneofKind == 'smitePriest'
-            ? player.spec.smitePriest.rotation || SmitePriestRotation.create()
-            : SmitePriestRotation.create(),
-
-        talentsCreate: () => PriestTalents.create(),
-        talentsEquals: (a, b) => PriestTalents.equals(a as PriestTalents, b as PriestTalents),
-        talentsCopy: (a) => PriestTalents.clone(a as PriestTalents),
-        talentsToJson: (a) => PriestTalents.toJson(a as PriestTalents),
-        talentsFromJson: (obj) => PriestTalents.fromJson(obj),
-        talentsFromPlayer: (player) => player.spec.oneofKind == 'smitePriest'
-            ? player.spec.smitePriest.talents || PriestTalents.create()
-            : PriestTalents.create(),
-
-        optionsCreate: () => SmitePriestOptions.create(),
-        optionsEquals: (a, b) => SmitePriestOptions.equals(a as SmitePriestOptions, b as SmitePriestOptions),
-        optionsCopy: (a) => SmitePriestOptions.clone(a as SmitePriestOptions),
-        optionsToJson: (a) => SmitePriestOptions.toJson(a as SmitePriestOptions),
-        optionsFromJson: (obj) => SmitePriestOptions.fromJson(obj),
-        optionsFromPlayer: (player) => player.spec.oneofKind == 'smitePriest'
-            ? player.spec.smitePriest.options || SmitePriestOptions.create()
-            : SmitePriestOptions.create(),
-    },
     [Spec.SpecDeathknight]: {
         rotationCreate: () => DeathknightRotation.create(),
         rotationEquals: (a, b) => DeathknightRotation.equals(a as DeathknightRotation, b as DeathknightRotation),
@@ -923,6 +973,7 @@ export const specToClass: Record<Spec, Class> = {
     [Spec.SpecRogue]: Class.ClassRogue,
     [Spec.SpecRetributionPaladin]: Class.ClassPaladin,
     [Spec.SpecProtectionPaladin]: Class.ClassPaladin,
+    [Spec.SpecHealingPriest]: Class.ClassPriest,
     [Spec.SpecShadowPriest]: Class.ClassPriest,
     [Spec.SpecSmitePriest]: Class.ClassPriest,
     [Spec.SpecElementalShaman]: Class.ClassShaman,
@@ -1028,11 +1079,12 @@ export const specToEligibleRaces: Record<Spec, Array<Race>> = {
     [Spec.SpecRetributionPaladin]: paladinRaces,
     [Spec.SpecProtectionPaladin]: paladinRaces,
     [Spec.SpecRogue]: rogueRaces,
+    [Spec.SpecHealingPriest]: priestRaces,
     [Spec.SpecShadowPriest]: priestRaces,
+    [Spec.SpecSmitePriest]: priestRaces,
     [Spec.SpecWarlock]: warlockRaces,
     [Spec.SpecWarrior]: warriorRaces,
     [Spec.SpecProtectionWarrior]: warriorRaces,
-    [Spec.SpecSmitePriest]: priestRaces,
     [Spec.SpecDeathknight]: deathKnightRaces,
     [Spec.SpecTankDeathknight]: deathKnightRaces,
 };
@@ -1062,6 +1114,13 @@ export function isTankSpec(spec: Spec): boolean {
     return tankSpecs.includes(spec);
 }
 
+const healingSpecs: Array<Spec> = [
+    Spec.SpecHealingPriest,
+];
+export function isHealingSpec(spec: Spec): boolean {
+    return healingSpecs.includes(spec);
+}
+
 // Prefixes used for storing browser data for each site. Even if a Spec is
 // renamed, DO NOT change these values or people will lose their saved data.
 export const specToLocalStorageKey: Record<Spec, string> = {
@@ -1075,11 +1134,12 @@ export const specToLocalStorageKey: Record<Spec, string> = {
     [Spec.SpecRetributionPaladin]: '__wotlk_retribution_paladin',
     [Spec.SpecProtectionPaladin]: '__wotlk_protection_paladin',
     [Spec.SpecRogue]: '__wotlk_rogue',
+    [Spec.SpecHealingPriest]: '__wotlk_healing_priest',
     [Spec.SpecShadowPriest]: '__wotlk_shadow_priest',
+    [Spec.SpecSmitePriest]: '__wotlk_smite_priest',
     [Spec.SpecWarlock]: '__wotlk_warlock',
     [Spec.SpecWarrior]: '__wotlk_warrior',
     [Spec.SpecProtectionWarrior]: '__wotlk_protection_warrior',
-    [Spec.SpecSmitePriest]: '__wotlk_smite_priest',
     [Spec.SpecDeathknight]: '__wotlk_deathknight',
     [Spec.SpecTankDeathknight]: '__wotlk_tank_deathknight',
 };
@@ -1194,6 +1254,16 @@ export function withSpecProto<SpecType extends Spec>(
                 }),
             };
             return copy;
+        case Spec.SpecHealingPriest:
+            copy.spec = {
+                oneofKind: 'healingPriest',
+                healingPriest: HealingPriest.create({
+                    rotation: rotation as HealingPriestRotation,
+                    talents: talents as PriestTalents,
+                    options: specOptions as HealingPriestOptions,
+                }),
+            };
+            return copy;
         case Spec.SpecShadowPriest:
             copy.spec = {
                 oneofKind: 'shadowPriest',
@@ -1201,6 +1271,16 @@ export function withSpecProto<SpecType extends Spec>(
                     rotation: rotation as ShadowPriestRotation,
                     talents: talents as PriestTalents,
                     options: specOptions as ShadowPriestOptions,
+                }),
+            };
+            return copy;
+        case Spec.SpecSmitePriest:
+            copy.spec = {
+                oneofKind: 'smitePriest',
+                smitePriest: SmitePriest.create({
+                    rotation: rotation as SmitePriestRotation,
+                    talents: talents as PriestTalents,
+                    options: specOptions as SmitePriestOptions,
                 }),
             };
             return copy;
@@ -1231,16 +1311,6 @@ export function withSpecProto<SpecType extends Spec>(
                     rotation: rotation as ProtectionWarriorRotation,
                     talents: talents as WarriorTalents,
                     options: specOptions as ProtectionWarriorOptions,
-                }),
-            };
-            return copy;
-        case Spec.SpecSmitePriest:
-            copy.spec = {
-                oneofKind: 'smitePriest',
-                smitePriest: SmitePriest.create({
-                    rotation: rotation as SmitePriestRotation,
-                    talents: talents as PriestTalents,
-                    options: specOptions as SmitePriestOptions,
                 }),
             };
             return copy;
@@ -1662,6 +1732,7 @@ export function makeDefaultBlessings(numPaladins: number): BlessingsAssignments 
         { spec: Spec.SpecMage, blessings: [Blessings.BlessingOfKings, Blessings.BlessingOfWisdom] },
         { spec: Spec.SpecRetributionPaladin, blessings: [Blessings.BlessingOfKings, Blessings.BlessingOfMight, Blessings.BlessingOfWisdom] },
         { spec: Spec.SpecProtectionPaladin, blessings: [Blessings.BlessingOfKings, Blessings.BlessingOfSanctuary, Blessings.BlessingOfWisdom, Blessings.BlessingOfMight] },
+        { spec: Spec.SpecHealingPriest, blessings: [Blessings.BlessingOfKings, Blessings.BlessingOfWisdom] },
         { spec: Spec.SpecShadowPriest, blessings: [Blessings.BlessingOfKings, Blessings.BlessingOfWisdom] },
         { spec: Spec.SpecSmitePriest, blessings: [Blessings.BlessingOfKings, Blessings.BlessingOfWisdom] },
         { spec: Spec.SpecRogue, blessings: [Blessings.BlessingOfKings, Blessings.BlessingOfMight] },

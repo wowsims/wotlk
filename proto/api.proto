@@ -37,6 +37,7 @@ message Player {
 		Mage mage = 8;
 		RetributionPaladin retribution_paladin = 9;
 		ProtectionPaladin protection_paladin = 25;
+		HealingPriest healing_priest = 34;
 		ShadowPriest shadow_priest = 10;
 		SmitePriest smite_priest = 20;
 		Rogue rogue = 11;

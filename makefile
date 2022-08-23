@@ -16,6 +16,7 @@ HTML_INDECIES := ui/balance_druid/index.html \
 				 ui/rogue/index.html \
 				 ui/retribution_paladin/index.html \
 				 ui/protection_paladin/index.html \
+				 ui/healing_priest/index.html \
 				 ui/shadow_priest/index.html \
 				 ui/smite_priest/index.html \
 				 ui/warlock/index.html \
