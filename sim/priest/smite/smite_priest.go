@@ -27,6 +27,7 @@ func NewSmitePriest(character core.Character, options proto.Player) *SmitePriest
 	smiteOptions := options.GetSmitePriest()
 
 	selfBuffs := priest.SelfBuffs{
+		UseInnerFire:   smiteOptions.Options.UseInnerFire,
 		UseShadowfiend: smiteOptions.Options.UseShadowfiend,
 	}
 
@@ -56,6 +57,11 @@ type SmitePriest struct {
 
 func (spriest *SmitePriest) GetPriest() *priest.Priest {
 	return spriest.Priest
+}
+
+func (spriest *SmitePriest) Initialize() {
+	spriest.Priest.Initialize()
+	spriest.RegisterHymnOfHopeCD()
 }
 
 func (spriest *SmitePriest) Reset(sim *core.Simulation) {

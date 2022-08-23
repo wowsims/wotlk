@@ -16,7 +16,7 @@ import { Player } from '../core/player.js';
 import { Sim } from '../core/sim.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
 
-import { SmitePriest, SmitePriest_Rotation as Rotation, SmitePriest_Options as Options, SmitePriest_Rotation, SmitePriest_Rotation_RotationType } from '../core/proto/priest.js';
+import { SmitePriest, SmitePriest_Rotation as Rotation, SmitePriest_Options as Options, SmitePriest_Rotation } from '../core/proto/priest.js';
 
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
@@ -53,8 +53,6 @@ export class SmitePriestSimUI extends IndividualSimUI<Spec.SpecSmitePriest> {
 				Stat.StatIntellect,
 				Stat.StatSpirit,
 				Stat.StatSpellPower,
-				Stat.StatShadowSpellPower,
-				Stat.StatHolySpellPower,
 				Stat.StatSpellHit,
 				Stat.StatSpellCrit,
 				Stat.StatSpellHaste,
@@ -78,8 +76,6 @@ export class SmitePriestSimUI extends IndividualSimUI<Spec.SpecSmitePriest> {
 					[Stat.StatSpirit]: 1.18,
 					[Stat.StatSpellPower]: 1,
 					[Stat.StatSpellHit]: 2.57,
-					[Stat.StatShadowSpellPower]: 0.05,
-					[Stat.StatHolySpellPower]: 0.95,
 					[Stat.StatSpellCrit]: 0.44,
 					[Stat.StatSpellHaste]: 0.28, // tricky because SP is tricky
 					[Stat.StatMP5]: 2.05,
@@ -102,6 +98,8 @@ export class SmitePriestSimUI extends IndividualSimUI<Spec.SpecSmitePriest> {
 			// IconInputs to include in the 'Player' section on the settings tab.
 			playerIconInputs: [
 				SmitePriestInputs.SelfPowerInfusion,
+				SmitePriestInputs.InnerFire,
+				SmitePriestInputs.Shadowfiend,
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: SmitePriestInputs.SmitePriestRotationConfig,

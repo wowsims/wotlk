@@ -26,15 +26,22 @@ func (spriest *SmitePriest) tryUseGCD(sim *core.Simulation) {
 
 func (spriest *SmitePriest) chooseSpell(sim *core.Simulation) *core.Spell {
 	if spriest.holyFireDotWillBeUp(sim) {
+		if spriest.InnerFocus != nil && spriest.InnerFocus.IsReady(sim) {
+			spriest.InnerFocus.Cast(sim, nil)
+		}
+
 		// Make sure we spam smite while dot is active.
 		return spriest.Smite
 	} else if !spriest.ShadowWordPainDot.IsActive() {
 		return spriest.ShadowWordPain
-	} else if spriest.rotation.UseMindBlast && spriest.MindBlast.IsReady(sim) {
-		return spriest.MindBlast
-		// If setting enabled, cast Shadow Word: Death on cooldown
+	} else if spriest.rotation.UseDevouringPlague && !spriest.DevouringPlagueDot.IsActive() {
+		return spriest.DevouringPlague
+	} else if spriest.Penance != nil && spriest.Penance.IsReady(sim) {
+		return spriest.Penance
 	} else if spriest.rotation.UseShadowWordDeath && spriest.ShadowWordDeath.IsReady(sim) {
 		return spriest.ShadowWordDeath
+	} else if spriest.rotation.UseMindBlast && spriest.MindBlast.IsReady(sim) {
+		return spriest.MindBlast
 	} else if spriest.HolyFire.IsReady(sim) {
 		return spriest.HolyFire
 	} else {
