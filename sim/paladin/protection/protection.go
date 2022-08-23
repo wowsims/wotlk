@@ -103,10 +103,13 @@ func (prot *ProtectionPaladin) Reset(sim *core.Simulation) {
 
 	switch prot.Seal {
 	case proto.PaladinSeal_Vengeance:
+		prot.CurrentSeal = prot.SealOfVengeanceAura
 		prot.SealOfVengeanceAura.Activate(sim)
 	case proto.PaladinSeal_Command:
+		prot.CurrentSeal = prot.SealOfCommandAura
 		prot.SealOfCommandAura.Activate(sim)
 	case proto.PaladinSeal_Righteousness:
+		prot.CurrentSeal = prot.SealOfRighteousnessAura
 		prot.SealOfRighteousnessAura.Activate(sim)
 	}
 
