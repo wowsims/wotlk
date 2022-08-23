@@ -29,13 +29,18 @@ export const SelfPowerInfusion = InputHelpers.makeSpecOptionsBooleanIconInput<Sp
 	},
 });
 
+export const InnerFire = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.SpecSmitePriest>({
+	fieldName: 'useInnerFire',
+	id: ActionId.fromSpellId(48168),
+});
+
+export const Shadowfiend = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.SpecSmitePriest>({
+	fieldName: 'useShadowfiend',
+	id: ActionId.fromSpellId(34433),
+});
+
 export const SmitePriestRotationConfig = {
 	inputs: [
-		InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecSmitePriest>({
-			fieldName: 'useShadowfiend',
-			label: 'Use Shadowfiend',
-			labelTooltip: 'Use Shadowfiend when low mana and off CD.',
-		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecSmitePriest>({
 			fieldName: 'useDevouringPlague',
 			label: 'Use Devouring Plague',
