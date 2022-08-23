@@ -150,7 +150,6 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 					OtherInputs.HealingCadence,
 					OtherInputs.HpPercentForDefensives,
 					DruidInputs.StartingRage,
-					OtherInputs.PrepopPotion,
 					OtherInputs.InFrontOfTarget,
 				],
 			},

@@ -104,7 +104,7 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 			Aura:          dotAura,
 			NumberOfTicks: 4,
 			TickLength:    time.Second * 3,
-			TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+			TickEffects: core.TickFuncApplyEffectsToUnit(target, core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				ProcMask: core.ProcMaskPeriodicDamage,
 				DamageMultiplier: 1 +
 					[]float64{0.0, 0.07, 0.14, 0.20}[rogue.Talents.VilePoisons],

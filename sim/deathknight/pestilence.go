@@ -58,7 +58,6 @@ func (dk *Deathknight) registerPestilenceSpell() {
 								dk.BloodPlagueDisease[unitHit.Index].Rollover(sim)
 							}
 						}
-						dk.botnAndReaping(sim, spell)
 					} else {
 						// Apply diseases on every other target
 						if dk.FrostFeverDisease[dk.CurrentTarget.Index].IsActive() {
@@ -74,4 +73,10 @@ func (dk *Deathknight) registerPestilenceSpell() {
 	}, func(sim *core.Simulation) bool {
 		return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.Pestilence.IsReady(sim)
 	}, nil)
+	if dk.Talents.BloodOfTheNorth+dk.Talents.Reaping >= 3 {
+		rs.DeathConvertChance = 1.0
+	} else {
+		rs.DeathConvertChance = float64(dk.Talents.BloodOfTheNorth+dk.Talents.Reaping) * 0.33
+	}
+	rs.ConvertType = RuneTypeBlood
 }

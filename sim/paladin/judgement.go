@@ -49,6 +49,41 @@ func (paladin *Paladin) registerJudgementOfWisdomSpell(cdTimer *core.Timer) {
 	})
 }
 
+func (paladin *Paladin) registerJudgementOfLightSpell(cdTimer *core.Timer) {
+	// paladin.JudgementOfLightAura = core.JudgementOfLightAura(paladin.CurrentTarget)
+
+	baseCost := paladin.BaseMana * 0.05
+
+	paladin.JudgementOfLight = paladin.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 20271},
+		SpellSchool: core.SpellSchoolHoly,
+		Flags:       SpellFlagPrimaryJudgement,
+
+		ResourceType: stats.Mana,
+		BaseCost:     baseCost,
+
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				Cost: baseCost * (1 - 0.02*float64(paladin.Talents.Benediction)),
+				GCD:  core.GCDDefault,
+			},
+			IgnoreHaste: true,
+			CD: core.Cooldown{
+				Timer: cdTimer,
+				Duration: (time.Second * 10) -
+					(time.Second * time.Duration(paladin.Talents.ImprovedJudgements)) -
+					core.TernaryDuration(paladin.HasSetBonus(ItemSetRedemptionBattlegear, 4), 1*time.Second, 0) -
+					core.TernaryDuration(paladin.HasSetBonus(ItemSetGladiatorsVindication, 4), 1*time.Second, 0),
+			},
+		},
+
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+			ProcMask:       core.ProcMaskEmpty,
+			OutcomeApplier: paladin.OutcomeFuncRangedHit(), // Primary Judgements cannot crit or be dodged, parried, or blocked-- only miss. (Unless target is a hunter.)
+		}),
+	})
+}
+
 // Defines judgement refresh behavior from attacks
 // Returns extra mana if a different pally applied Judgement of Wisdom
 // func (paladin *Paladin) setupJudgementRefresh() {
@@ -83,4 +118,5 @@ func (paladin *Paladin) registerJudgements() {
 	// Shared CD for all judgements.
 	cdTimer := paladin.NewTimer()
 	paladin.registerJudgementOfWisdomSpell(cdTimer)
+	paladin.registerJudgementOfLightSpell(cdTimer)
 }

@@ -47,8 +47,6 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 				Stat.StatArmor,
 				Stat.StatArmorPenetration,
 				Stat.StatDefense,
-				Stat.StatBlock,
-				Stat.StatBlockValue,
 				Stat.StatDodge,
 				Stat.StatParry,
 				Stat.StatResilience,
@@ -71,8 +69,6 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 				Stat.StatMeleeHaste,
 				Stat.StatArmorPenetration,
 				Stat.StatDefense,
-				Stat.StatBlock,
-				Stat.StatBlockValue,
 				Stat.StatDodge,
 				Stat.StatParry,
 				Stat.StatResilience,
@@ -108,6 +104,8 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
+					retributionAura: true,
+					powerWordFortitude: TristateEffect.TristateEffectImproved, 
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
 					swiftRetribution: true,
 					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
@@ -134,6 +132,10 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 					ebonPlaguebringer: true,
 					mangle: true,
 					heartOfTheCrusader: true,
+					demoralizingShout: TristateEffect.TristateEffectImproved,
+					frostFever: TristateEffect.TristateEffectImproved,
+					insectSwarm: true,
+					judgementOfLight: true,
 				}),
 			},
 
@@ -141,19 +143,19 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 			playerIconInputs: [
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
-			rotationInputs: DeathKnightInputs.DeathKnightRotationConfig,
+			rotationInputs: DeathKnightInputs.TankDeathKnightRotationConfig,
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
+				IconInputs.SpellDamageDebuff,
 			],
 			excludeBuffDebuffInputs: [
 			],
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
-					OtherInputs.PrepopPotion,
-
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
+					DeathKnightInputs.StartingRunicPower,
 				],
 			},
 			encounterPicker: {

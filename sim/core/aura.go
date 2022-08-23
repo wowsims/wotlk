@@ -528,7 +528,7 @@ func (aura *Aura) Prioritize() {
 	if aura.onCastCompleteIndex > 0 {
 		otherAura := aura.Unit.onCastCompleteAuras[0]
 		aura.Unit.onCastCompleteAuras[0] = aura
-		aura.Unit.onCastCompleteAuras[len(aura.Unit.onCastCompleteAuras)-1] = otherAura
+		aura.Unit.onCastCompleteAuras[aura.onCastCompleteIndex] = otherAura
 		otherAura.onCastCompleteIndex = aura.onCastCompleteIndex
 		aura.onCastCompleteIndex = 0
 	}
@@ -536,7 +536,7 @@ func (aura *Aura) Prioritize() {
 	if aura.onSpellHitDealtIndex > 0 {
 		otherAura := aura.Unit.onSpellHitDealtAuras[0]
 		aura.Unit.onSpellHitDealtAuras[0] = aura
-		aura.Unit.onSpellHitDealtAuras[len(aura.Unit.onSpellHitDealtAuras)-1] = otherAura
+		aura.Unit.onSpellHitDealtAuras[aura.onSpellHitDealtIndex] = otherAura
 		otherAura.onSpellHitDealtIndex = aura.onSpellHitDealtIndex
 		aura.onSpellHitDealtIndex = 0
 	}
@@ -544,7 +544,7 @@ func (aura *Aura) Prioritize() {
 	if aura.onSpellHitTakenIndex > 0 {
 		otherAura := aura.Unit.onSpellHitTakenAuras[0]
 		aura.Unit.onSpellHitTakenAuras[0] = aura
-		aura.Unit.onSpellHitTakenAuras[len(aura.Unit.onSpellHitTakenAuras)-1] = otherAura
+		aura.Unit.onSpellHitTakenAuras[aura.onSpellHitTakenIndex] = otherAura
 		otherAura.onSpellHitTakenIndex = aura.onSpellHitTakenIndex
 		aura.onSpellHitTakenIndex = 0
 	}
@@ -552,7 +552,7 @@ func (aura *Aura) Prioritize() {
 	if aura.onPeriodicDamageDealtIndex > 0 {
 		otherAura := aura.Unit.onPeriodicDamageDealtAuras[0]
 		aura.Unit.onPeriodicDamageDealtAuras[0] = aura
-		aura.Unit.onPeriodicDamageDealtAuras[len(aura.Unit.onPeriodicDamageDealtAuras)-1] = otherAura
+		aura.Unit.onPeriodicDamageDealtAuras[aura.onPeriodicDamageDealtIndex] = otherAura
 		otherAura.onPeriodicDamageDealtIndex = aura.onPeriodicDamageDealtIndex
 		aura.onPeriodicDamageDealtIndex = 0
 	}
@@ -560,7 +560,7 @@ func (aura *Aura) Prioritize() {
 	if aura.onPeriodicDamageTakenIndex > 0 {
 		otherAura := aura.Unit.onPeriodicDamageTakenAuras[0]
 		aura.Unit.onPeriodicDamageTakenAuras[0] = aura
-		aura.Unit.onPeriodicDamageTakenAuras[len(aura.Unit.onPeriodicDamageTakenAuras)-1] = otherAura
+		aura.Unit.onPeriodicDamageTakenAuras[aura.onPeriodicDamageTakenIndex] = otherAura
 		otherAura.onPeriodicDamageTakenIndex = aura.onPeriodicDamageTakenIndex
 		aura.onPeriodicDamageTakenIndex = 0
 	}

@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -25,6 +26,9 @@ func (dk *Deathknight) registerRuneTapSpell() {
 	} else if dk.Talents.ImprovedRuneTap == 3 {
 		healthGainMult = 1.0
 	}
+
+	glyphHealBonus := core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfRuneTap), 0.01, 0.0)
+
 	baseCost := float64(core.NewRuneCost(0, 1, 0, 0, 0))
 	dk.RuneTap = dk.RegisterSpell(nil, core.SpellConfig{
 		ActionID:     actionID,
@@ -44,7 +48,7 @@ func (dk *Deathknight) registerRuneTapSpell() {
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			maxHealth := dk.MaxHealth()
-			dk.GainHealth(sim, (1.0+healthGainMult)*(maxHealth*0.1), healthMetrics)
+			dk.GainHealth(sim, (maxHealth*(0.1+glyphHealBonus))*(1.0+healthGainMult)*(1.0+core.TernaryFloat64(dk.VampiricBloodAura.IsActive(), 0.35, 0.0)), healthMetrics)
 		},
 	}, func(sim *core.Simulation) bool {
 		return dk.CastCostPossible(sim, 0, 1, 0, 0) && dk.RuneTap.IsReady(sim)

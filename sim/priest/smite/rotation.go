@@ -1,10 +1,7 @@
 package smite
 
 import (
-	"time"
-
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 // TODO: probably do something different instead of making it global?
@@ -20,36 +17,49 @@ func (spriest *SmitePriest) OnGCDReady(sim *core.Simulation) {
 }
 
 func (spriest *SmitePriest) tryUseGCD(sim *core.Simulation) {
-
-	// Calculate higher SW:P uptime if using HF
-	swpRemaining := spriest.ShadowWordPainDot.RemainingDuration(sim)
-
-	// smite cast time, talent assumed
-	smiteCastTime := spriest.ApplyCastSpeed(time.Millisecond * 2000)
-
-	// holy fire cast time
-	hfCastTime := spriest.ApplyCastSpeed(time.Millisecond * 3000)
-
-	var spell *core.Spell
-	// Always attempt to keep SW:P up if its down
-	if !spriest.ShadowWordPainDot.IsActive() {
-		spell = spriest.ShadowWordPain
-		// Favor star shards for NE if off cooldown first
-	} else if spriest.rotation.UseMindBlast && spriest.MindBlast.IsReady(sim) {
-		spell = spriest.MindBlast
-		// If setting enabled, cast Shadow Word: Death on cooldown
-	} else if spriest.rotation.UseShadowWordDeath && spriest.ShadowWordDeath.IsReady(sim) {
-		spell = spriest.ShadowWordDeath
-		// Consider HF if SWP will fall off after 1 smite but before 2 smites from now finishes
-		//	and swp falls off after hf finishes (assumption never worth clipping)
-	} else if spriest.rotation.RotationType == proto.SmitePriest_Rotation_HolyFireWeave && swpRemaining > smiteCastTime && swpRemaining < hfCastTime {
-		spell = spriest.HolyFire
-		// Base filler spell is smite
-	} else {
-		spell = spriest.Smite
-	}
+	spell := spriest.chooseSpell(sim)
 
 	if success := spell.Cast(sim, spriest.CurrentTarget); !success {
 		spriest.WaitForMana(sim, spell.CurCast.Cost)
 	}
+}
+
+func (spriest *SmitePriest) chooseSpell(sim *core.Simulation) *core.Spell {
+	if spriest.holyFireDotWillBeUp(sim) {
+		if spriest.InnerFocus != nil && spriest.InnerFocus.IsReady(sim) {
+			spriest.InnerFocus.Cast(sim, nil)
+		}
+
+		// Make sure we spam smite while dot is active.
+		return spriest.Smite
+	} else if !spriest.ShadowWordPainDot.IsActive() {
+		return spriest.ShadowWordPain
+	} else if spriest.rotation.UseDevouringPlague && !spriest.DevouringPlagueDot.IsActive() {
+		return spriest.DevouringPlague
+	} else if spriest.HolyFire.IsReady(sim) {
+		return spriest.HolyFire
+	} else if spriest.Penance != nil && spriest.Penance.IsReady(sim) {
+		return spriest.Penance
+	} else if spriest.rotation.UseShadowWordDeath && spriest.ShadowWordDeath.IsReady(sim) {
+		return spriest.ShadowWordDeath
+	} else if spriest.rotation.UseMindBlast && spriest.MindBlast.IsReady(sim) {
+		return spriest.MindBlast
+	} else if spriest.Talents.MindFlay {
+		mfTickLength := spriest.MindFlayTickDuration()
+		hfTimeToReady := spriest.HolyFire.TimeToReady(sim)
+		numTicks := core.MinInt(3, int(hfTimeToReady/mfTickLength+1))
+		return spriest.MindFlay[numTicks]
+	} else {
+		return spriest.Smite
+	}
+}
+
+// Returns whether a Smite cast starting now would complete while Holy Fire is active.
+func (spriest *SmitePriest) holyFireDotWillBeUp(sim *core.Simulation) bool {
+	if !spriest.HolyFireDot.IsActive() {
+		return false
+	}
+
+	smiteCastTime := spriest.ApplyCastSpeedForSpell(spriest.Smite.DefaultCast.CastTime, spriest.Smite)
+	return smiteCastTime <= spriest.HolyFireDot.RemainingDuration(sim)
 }

@@ -243,7 +243,7 @@ var ItemSetDarkCovensRegalia = core.NewItemSet(core.ItemSet{
 					aura.Activate(sim)
 				},
 				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if spell == warlock.UnstableAff || spell == warlock.Immolate {
+					if spell == warlock.UnstableAffliction || spell == warlock.Immolate {
 						if sim.RandomFloat("4pT10") < 0.15 {
 							DeviousMindsAura.Activate(sim)
 							DeviousMindsAura.Refresh(sim)

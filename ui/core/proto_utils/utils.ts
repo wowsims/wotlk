@@ -1056,6 +1056,7 @@ const tankSpecs: Array<Spec> = [
     Spec.SpecFeralTankDruid,
     Spec.SpecProtectionPaladin,
     Spec.SpecProtectionWarrior,
+    Spec.SpecTankDeathknight,
 ];
 export function isTankSpec(spec: Spec): boolean {
     return tankSpecs.includes(spec);

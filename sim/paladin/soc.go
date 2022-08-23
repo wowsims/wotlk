@@ -132,6 +132,11 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 			// Differ between judgements and other melee abilities.
 			if spell.Flags.Matches(SpellFlagPrimaryJudgement) {
 				onJudgementProc.Cast(sim, spellEffect.Target)
+				if paladin.Talents.JudgementsOfTheJust > 0 {
+					// Special JoJ talent behavior, procs swing seal on judgements
+					// For SoC this is a cleave.
+					onSpecialOrSwingProcCleave.Cast(sim, spellEffect.Target)
+				}
 			} else {
 				if spellEffect.IsMelee() {
 					// Temporary check to avoid AOE double procing.

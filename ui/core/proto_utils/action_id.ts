@@ -557,9 +557,13 @@ export const defaultTargetIcon = 'https://wow.zamimg.com/images/wow/icons/large/
 
 const petNameToActionId: Record<string, ActionId> = {
 	'Gnomish Flame Turret': ActionId.fromItemId(23841),
+	'Mirror Image': ActionId.fromSpellId(55342),
 	'Water Elemental': ActionId.fromSpellId(31687),
+	'Shadowfiend': ActionId.fromSpellId(34433),
 	'Spirit Wolf 1': ActionId.fromSpellId(51533),
-	'Spirit Wolf 2': ActionId.fromSpellId(51533)
+	'Spirit Wolf 2': ActionId.fromSpellId(51533),
+	'Rune Weapon': ActionId.fromSpellId(49028),
+	'Bloodworm': ActionId.fromSpellId(50452),
 };
 
 // https://wowhead.com/wotlk/hunter-pets
@@ -584,6 +588,7 @@ const petNameToIcon: Record<string, string> = {
     'Gorilla': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_gorilla.jpg',
     'Hyena': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_hyena.jpg',
     'Imp': 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_summonimp.jpg',
+    'Mirror Image': 'https://wow.zamimg.com/images/wow/icons/large/spell_magic_lesserinvisibilty.jpg',
     'Moth': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_moth.jpg',
     'Nether Ray': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_netherray.jpg',
     'Owl': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_owl.jpg',

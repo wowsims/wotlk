@@ -12,7 +12,8 @@ func (paladin *Paladin) registerDivineStormSpell() {
 	baseCost := paladin.BaseMana * 0.12
 
 	baseModifiers := Multiplicative{
-		Additive{paladin.getTalentTheArtOfWarBonus(), paladin.getItemSetRedemptionBattlegearBonus2()},
+		Additive{paladin.getTalentTheArtOfWarBonus()},
+		Additive{paladin.getItemSetRedemptionBattlegearBonus2()},
 	}
 	baseMultiplier := baseModifiers.Get()
 

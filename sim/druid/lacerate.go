@@ -10,12 +10,12 @@ import (
 )
 
 func (druid *Druid) registerLacerateSpell() {
-	actionID := core.ActionID{SpellID: 33745}
+	actionID := core.ActionID{SpellID: 48568}
 
 	cost := 15.0 - float64(druid.Talents.ShreddingAttacks)
 	refundAmount := cost * 0.8
 
-	tickDamage := 155.0 / 5
+	tickDamage := 320.0 / 5
 	if druid.HasSetBonus(ItemSetNordrassilHarness, 4) {
 		tickDamage += 15
 	}
@@ -50,7 +50,7 @@ func (druid *Druid) registerLacerateSpell() {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					damage := tickDamage + 0.01*hitEffect.MeleeAttackPower(spell.Unit)
+					damage := 88 + 0.01*hitEffect.MeleeAttackPower(spell.Unit)
 					if mangleAura.IsActive() {
 						return damage * 1.3
 					} else {
@@ -99,7 +99,7 @@ func (druid *Druid) registerLacerateSpell() {
 				},
 				TargetSpellCoefficient: 0,
 			}, dotAura),
-			OutcomeApplier: druid.OutcomeFuncTick(),
+			OutcomeApplier: druid.PrimalGoreOutcomeFuncTick(),
 		})),
 	})
 }

@@ -64,16 +64,16 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P5_PRESET.gear,
+                gear: Presets.PRE_RAID_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatIntellect]: 0.54,
-					[Stat.StatSpirit]: 0.1,
+					[Stat.StatIntellect]: 0.52,
+					[Stat.StatSpirit]: 0.3,
 					[Stat.StatSpellPower]: 1,
-					[Stat.StatArcaneSpellPower]: 1,
-					[Stat.StatNatureSpellPower]: 0,
-					[Stat.StatSpellCrit]: 0.84,
-					[Stat.StatSpellHaste]: 1.29,
+					[Stat.StatArcaneSpellPower]: 0.45,
+					[Stat.StatNatureSpellPower]: 0.50,
+					[Stat.StatSpellCrit]: 0.61,
+					[Stat.StatSpellHaste]: 0.67,
 					[Stat.StatMP5]: 0.00,
 				}),
 				// Default consumes settings.
@@ -83,31 +83,15 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 				// Default talents.
 				talents: Presets.StandardTalents.data,
 				// Default spec-specific settings.
-				specOptions: BalanceDruidOptions.create({
-					innervateTarget: RaidTarget.create({
-						targetIndex: 0, // In an individual sim the 0-indexed player is ourself.
-					}),
-				}),
+				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
-				raidBuffs: RaidBuffs.create({
-					arcaneBrilliance: true,
-					divineSpirit: true,
-					bloodlust: true,
-					manaSpringTotem: TristateEffect.TristateEffectRegular,
-					totemOfWrath: true,
-					wrathOfAirTotem: true,
-				}),
-				partyBuffs: PartyBuffs.create({
-				}),
-				individualBuffs: IndividualBuffs.create({
-					blessingOfKings: true,
-					blessingOfWisdom: TristateEffect.TristateEffectImproved,
-				}),
-				debuffs: Debuffs.create({
-					judgementOfWisdom: true,
-					misery: true,
-					curseOfElements: true,
-				}),
+				raidBuffs: Presets.DefaultRaidBuffs,
+
+				partyBuffs: Presets.DefaultPartyBuffs,
+
+				individualBuffs: Presets.DefaultIndividualBuffs,
+
+				debuffs: Presets.DefaultDebuffs,
 			},
 
             // IconInputs to include in the 'Player' section on the settings tab.
@@ -124,8 +108,6 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
             // Inputs to include in the 'Other' section on the settings tab.
             otherInputs: {
                 inputs: [
-                    OtherInputs.PrepopPotion,
-
                     OtherInputs.TankAssignment,
                 ],
             },
@@ -141,7 +123,8 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.P5_PRESET,
+					Presets.P1_PRESET,
+                    Presets.PRE_RAID_PRESET,
 				],
 			},
 		});

@@ -184,6 +184,77 @@ var ItemSetPrimalstrike = core.NewItemSet(core.ItemSet{
 	},
 })
 
+var ItemSetStormshroud = core.NewItemSet(core.ItemSet{
+	Name: "Stormshroud Armor",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(a core.Agent) {
+			proc := a.GetCharacter().RegisterSpell(core.SpellConfig{
+				ActionID:    core.ActionID{SpellID: 18980},
+				SpellSchool: core.SpellSchoolNature,
+				ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+					ProcMask:         core.ProcMaskEmpty,
+					DamageMultiplier: 1,
+					BaseDamage:       core.BaseDamageConfigRoll(15, 25),
+					OutcomeApplier:   a.GetCharacter().OutcomeFuncMagicHitAndCrit(a.GetCharacter().DefaultSpellCritMultiplier()),
+				}),
+			})
+			a.GetCharacter().RegisterAura(core.Aura{
+				Label:    "Stormshround Armor 2pc",
+				ActionID: core.ActionID{SpellID: 18979},
+				Duration: core.NeverExpires,
+				OnReset: func(aura *core.Aura, sim *core.Simulation) {
+					aura.Activate(sim)
+				},
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+					if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+						return
+					}
+					chance := 0.05
+					if sim.RandomFloat("Stormshroud Armor 2pc") > chance {
+						return
+					}
+					proc.Cast(sim, spellEffect.Target)
+				},
+			})
+		},
+		3: func(a core.Agent) {
+			if !a.GetCharacter().HasEnergyBar() {
+				return
+			}
+			metrics := a.GetCharacter().NewEnergyMetrics(core.ActionID{SpellID: 23863})
+			proc := a.GetCharacter().RegisterSpell(core.SpellConfig{
+				ActionID:    core.ActionID{SpellID: 23864},
+				SpellSchool: core.SpellSchoolNature,
+				ApplyEffects: func(sim *core.Simulation, u *core.Unit, spell *core.Spell) {
+					a.GetCharacter().AddEnergy(sim, 30, metrics)
+				},
+			})
+			a.GetCharacter().RegisterAura(core.Aura{
+				Label:    "Stormshround Armor 3pc",
+				ActionID: core.ActionID{SpellID: 18979},
+				Duration: core.NeverExpires,
+				OnReset: func(aura *core.Aura, sim *core.Simulation) {
+					aura.Activate(sim)
+				},
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+					if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+						return
+					}
+					chance := 0.02
+					if sim.RandomFloat("Stormshroud Armor 2pc") > chance {
+						return
+					}
+					proc.Cast(sim, spellEffect.Target)
+				},
+			})
+
+		},
+		4: func(a core.Agent) {
+			a.GetCharacter().AddStat(stats.AttackPower, 14)
+		},
+	},
+})
+
 var ItemSetStrengthOfTheClefthoof = core.NewItemSet(core.ItemSet{
 	Name: "Strength of the Clefthoof",
 	Bonuses: map[int32]core.ApplyEffect{

@@ -27,6 +27,7 @@ type Priest struct {
 	ShadowWeavingAura  *core.Aura
 	ShadowyInsightAura *core.Aura
 	ImprovedSpiritTap  *core.Aura
+	DispersionAura     *core.Aura
 
 	SurgeOfLightProcAura *core.Aura
 
@@ -36,16 +37,20 @@ type Priest struct {
 	ShadowWordPain  *core.Spell
 	MindBlast       *core.Spell
 	MindFlay        []*core.Spell
+	MindSear        []*core.Spell
+	Penance         *core.Spell
 	ShadowWordDeath *core.Spell
 	Shadowfiend     *core.Spell
 	Smite           *core.Spell
 	Starshards      *core.Spell
 	VampiricTouch   *core.Spell
+	Dispersion      *core.Spell
 
 	ShadowWordPainDot  *core.Dot
 	DevouringPlagueDot *core.Dot
 	HolyFireDot        *core.Dot
 	MindFlayDot        []*core.Dot
+	MindSearDot        []*core.Dot
 	StarshardsDot      *core.Dot
 	VampiricTouchDot   *core.Dot
 
@@ -79,6 +84,13 @@ func (priest *Priest) GetCharacter() *core.Character {
 	return &priest.Character
 }
 
+func (priest *Priest) HasMajorGlyph(glyph proto.PriestMajorGlyph) bool {
+	return priest.HasGlyph(int32(glyph))
+}
+func (priest *Priest) HasMinorGlyph(glyph proto.PriestMinorGlyph) bool {
+	return priest.HasGlyph(int32(glyph))
+}
+
 func (priest *Priest) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	raidBuffs.ShadowProtection = true
 
@@ -91,43 +103,6 @@ func (priest *Priest) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
 
 func (priest *Priest) Initialize() {
-
-	if priest.Talents.Misery > 0 {
-		priest.MiseryAura = core.MiseryAura(priest.CurrentTarget)
-	}
-
-	if priest.Talents.ShadowWeaving > 0 {
-		priest.ShadowWeavingAura = priest.GetOrRegisterAura(core.Aura{
-			Label:     "Shadow Weaving",
-			ActionID:  core.ActionID{SpellID: 15258},
-			Duration:  time.Second * 15,
-			MaxStacks: 5,
-			// TODO: This affects all spells not just direct damage. Dot damage should omit multipliers since it's snapshot at cast time.
-			// OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
-			// 	aura.Unit.PseudoStats.ShadowDamageDealtMultiplier /= 1.0 + 0.02*float64(oldStacks)
-			// 	aura.Unit.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + 0.02*float64(newStacks)
-			// },
-		})
-	}
-
-	if priest.Talents.ImprovedSpiritTap > 0 {
-		increase := 1 + 0.05*float64(priest.Talents.ImprovedSpiritTap)
-		statDep := priest.NewDynamicMultiplyStat(stats.Spirit, increase)
-		priest.ImprovedSpiritTap = priest.GetOrRegisterAura(core.Aura{
-			Label:    "Improved Spirit Tap",
-			ActionID: core.ActionID{SpellID: 59000},
-			Duration: time.Second * 8,
-			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				priest.EnableDynamicStatDep(sim, statDep)
-				priest.PseudoStats.SpiritRegenRateCasting += 0.33
-			},
-			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				priest.DisableDynamicStatDep(sim, statDep)
-				priest.PseudoStats.SpiritRegenRateCasting -= 0.33
-			},
-		})
-	}
-
 	// Shadow Insight gained from Glyph of Shadow
 	// Finalized spirit off gear and not dynamic spirit (e.g. Spirit Tap does not increase this)
 	priest.ShadowyInsightAura = priest.NewTemporaryStatsAura(
@@ -142,11 +117,13 @@ func (priest *Priest) Initialize() {
 	priest.registerHolyFireSpell()
 	priest.registerShadowWordPainSpell()
 	priest.registerMindBlastSpell()
+	priest.registerPenanceSpell()
 	priest.registerShadowWordDeathSpell()
 	priest.registerShadowfiendSpell()
 	priest.registerSmiteSpell()
 	priest.registerStarshardsSpell()
 	priest.registerVampiricTouchSpell()
+	priest.registerDispersionSpell()
 
 	priest.registerPowerInfusionCD()
 
@@ -162,6 +139,23 @@ func (priest *Priest) Initialize() {
 		priest.newMindFlayDot(2),
 		priest.newMindFlayDot(3),
 	}
+	priest.MindSear = []*core.Spell{
+		nil, // So we can use # of ticks as the index
+		priest.newMindSearSpell(1),
+		priest.newMindSearSpell(2),
+		priest.newMindSearSpell(3),
+		priest.newMindSearSpell(4),
+		priest.newMindSearSpell(5),
+	}
+	priest.MindSearDot = []*core.Dot{
+		nil, // So we can use # of ticks as the index
+		priest.newMindSearDot(1),
+		priest.newMindSearDot(2),
+		priest.newMindSearDot(3),
+		priest.newMindSearDot(4),
+		priest.newMindSearDot(5),
+	}
+
 }
 
 func (priest *Priest) AddShadowWeavingStack(sim *core.Simulation) {
@@ -193,7 +187,7 @@ func New(char core.Character, selfBuffs SelfBuffs, talents proto.PriestTalents) 
 	if selfBuffs.UseInnerFire {
 		multi := 1 + float64(priest.Talents.ImprovedInnerFire)*0.15
 		sp := 120.0 * multi
-		armor := 2440 * multi
+		armor := 2440 * multi * core.TernaryFloat64(priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfInnerFire), 1.5, 1)
 		priest.AddStat(stats.SpellPower, sp)
 		priest.AddStat(stats.Armor, armor)
 	}
