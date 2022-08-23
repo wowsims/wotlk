@@ -1,6 +1,7 @@
 package druid
 
 import (
+	"github.com/wowsims/wotlk/sim/common/wotlk"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -277,4 +278,32 @@ func init() {
 		})
 	})
 
+	// This Idol is badly listed on Wowhead, not accessible from UI
+	core.NewItemEffect(50457, func(agent core.Agent) {
+		druid := agent.(DruidAgent).GetDruid()
+
+		actionID := core.ActionID{ItemID: 50457}
+
+		procAura := wotlk.MakeStackingAura(agent.GetCharacter(), wotlk.StackingProcAura{
+			Aura: core.Aura{
+				Label:     "Idol of the Lunar Eclipse proc",
+				ActionID:  actionID,
+				Duration:  time.Second * 15,
+				MaxStacks: 5,
+			},
+			BonusPerStack: stats.Stats{stats.SpellCrit: 44},
+		})
+
+		core.MakePermanent(druid.GetOrRegisterAura(core.Aura{
+			Label:    "Idol of the Lunar Eclipse",
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			},
+			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				procAura.Activate(sim)
+				procAura.AddStack(sim)
+			},
+		}))
+	})
 }

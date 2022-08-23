@@ -10,6 +10,7 @@ import (
 
 // Idol IDs
 const IvoryMoongoddess int32 = 27518
+const ShootingStar int32 = 60775
 
 func (druid *Druid) newStarfireSpell() *core.Spell {
 
@@ -22,6 +23,7 @@ func (druid *Druid) newStarfireSpell() *core.Spell {
 
 	// This seems to be unaffected by wrath of cenarius so it needs to come first.
 	bonusFlatDamage := core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == IvoryMoongoddess, 55*spellCoefficient, 0)
+	bonusFlatDamage += core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == ShootingStar, 165*spellCoefficient, 0)
 	spellCoefficient += 0.04 * float64(druid.Talents.WrathOfCenarius)
 
 	effect := core.SpellEffect{
@@ -59,6 +61,7 @@ func (druid *Druid) newStarfireSpell() *core.Spell {
 			}
 		})
 	}
+
 	// Improved Insect Swarm
 	if druid.CurrentTarget.HasAura("Moonfire") {
 		effect.BonusSpellCritRating += core.CritRatingPerCritChance * float64(druid.Talents.ImprovedInsectSwarm)
@@ -99,7 +102,6 @@ func (druid *Druid) newStarfireSpell() *core.Spell {
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				druid.applyNaturesSwiftness(cast)
 				druid.ApplyClearcasting(sim, spell, cast)
-				// druid.applyNaturesGrace(cast)
 			},
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
