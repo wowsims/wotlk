@@ -79,17 +79,17 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P4_PRESET.gear,
+				gear: Presets.P1_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatStrength]: 2.266,
-					[Stat.StatAgility]: 3.5,
+					[Stat.StatStrength]: 2.379,
+					[Stat.StatAgility]: 2.15,
 					[Stat.StatAttackPower]: 1,
-					[Stat.StatMeleeHit]: 3.2,
-					[Stat.StatMeleeCrit]: 2.37,
-					[Stat.StatMeleeHaste]: 1.36,
-					[Stat.StatArmorPenetration]: 0.47,
-					[Stat.StatExpertise]: 3.2,
+					[Stat.StatMeleeHit]: 2.51,
+					[Stat.StatMeleeCrit]: 2,
+					[Stat.StatMeleeHaste]: 1.67,
+					[Stat.StatArmorPenetration]: 1.66,
+					[Stat.StatExpertise]: 2.28,
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,
@@ -163,11 +163,8 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
+					Presets.PreRaid_PRESET,
 					Presets.P1_PRESET,
-					Presets.P2_PRESET,
-					Presets.P3_PRESET,
-					Presets.P4_PRESET,
-					Presets.P5_PRESET,
 				],
 			},
 		});
