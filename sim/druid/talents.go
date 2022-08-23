@@ -124,52 +124,35 @@ func (druid *Druid) setupNaturesGrace() {
 	if druid.Talents.NaturesGrace < 1 {
 		return
 	}
-	// 1/3 de chance de proc par point de talent.
 	druid.NaturesGraceProcAura = druid.RegisterAura(core.Aura{
 		Label:    "Natures Grace Proc",
 		ActionID: core.ActionID{SpellID: 16886},
-		// Duration: core.NeverExpires,
 		Duration: time.Second * 3,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			druid.AddStatDynamic(sim, stats.SpellHaste, 655.8)
+			druid.MultiplyCastSpeed(1.2)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			druid.AddStatDynamic(sim, stats.SpellHaste, -655.8)
+			druid.MultiplyCastSpeed(1 / 1.2)
 		},
-		/*
-			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-				if spell != druid.Wrath && spell != druid.Starfire {
-					return
-				}
-
-				aura.Deactivate(sim)
-			},
-		*/
 	})
 
 	druid.RegisterAura(core.Aura{
-		Label: "Natures Grace",
-		//ActionID: core.ActionID{SpellID: 16880},
+		Label:    "Natures Grace",
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
+			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+				return
+			}
+			if (spell == druid.Starfire || spell == druid.Wrath) && float64(druid.Talents.NaturesGrace)*(1.0/3.0) >= sim.RandomFloat("Natures Grace") {
 				druid.NaturesGraceProcAura.Activate(sim)
 			}
 		},
 	})
 }
 
-/*
-func (druid *Druid) applyNaturesGrace(cast *core.Cast) {
-	if druid.NaturesGraceProcAura.IsActive() {
-		druid.AddStat(stats.SpellHaste, 655.8) // 20% spell haste = 20 * 32.79 at level 80
-		// cast.CastTime -= time.Millisecond * 500
-	}
-}
-*/
 func (druid *Druid) registerNaturesSwiftnessCD() {
 	if !druid.Talents.NaturesSwiftness {
 		return

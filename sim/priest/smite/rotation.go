@@ -36,14 +36,19 @@ func (spriest *SmitePriest) chooseSpell(sim *core.Simulation) *core.Spell {
 		return spriest.ShadowWordPain
 	} else if spriest.rotation.UseDevouringPlague && !spriest.DevouringPlagueDot.IsActive() {
 		return spriest.DevouringPlague
+	} else if spriest.HolyFire.IsReady(sim) {
+		return spriest.HolyFire
 	} else if spriest.Penance != nil && spriest.Penance.IsReady(sim) {
 		return spriest.Penance
 	} else if spriest.rotation.UseShadowWordDeath && spriest.ShadowWordDeath.IsReady(sim) {
 		return spriest.ShadowWordDeath
 	} else if spriest.rotation.UseMindBlast && spriest.MindBlast.IsReady(sim) {
 		return spriest.MindBlast
-	} else if spriest.HolyFire.IsReady(sim) {
-		return spriest.HolyFire
+	} else if spriest.Talents.MindFlay {
+		mfTickLength := spriest.MindFlayTickDuration()
+		hfTimeToReady := spriest.HolyFire.TimeToReady(sim)
+		numTicks := core.MinInt(3, int(hfTimeToReady/mfTickLength+1))
+		return spriest.MindFlay[numTicks]
 	} else {
 		return spriest.Smite
 	}

@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -60,13 +59,9 @@ func (druid *Druid) registerMoonfireSpell() {
 			ProcMask:         core.ProcMaskPeriodicDamage,
 			DamageMultiplier: 1 * (1 + 0.05*float64(druid.Talents.ImprovedMoonfire)) * (1 + 0.02*float64(druid.Talents.Moonfury)),
 			ThreatMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(600/4, 0.13),
+			BaseDamage:       core.BaseDamageConfigMagicNoRoll(200, 0.13),
 			OutcomeApplier:   druid.OutcomeFuncTick(),
 			IsPeriodic:       true,
 		}),
 	})
-}
-
-func (druid *Druid) ShouldCastMoonfire(sim *core.Simulation, target *core.Unit, rotation proto.BalanceDruid_Rotation) bool {
-	return !druid.MoonfireDot.IsActive()
 }

@@ -67,13 +67,13 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
                 gear: Presets.PRE_RAID_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatIntellect]: 0.54,
-					[Stat.StatSpirit]: 0.1,
+					[Stat.StatIntellect]: 0.52,
+					[Stat.StatSpirit]: 0.3,
 					[Stat.StatSpellPower]: 1,
-					[Stat.StatArcaneSpellPower]: 1,
-					[Stat.StatNatureSpellPower]: 0,
-					[Stat.StatSpellCrit]: 0.84,
-					[Stat.StatSpellHaste]: 1.29,
+					[Stat.StatArcaneSpellPower]: 0.45,
+					[Stat.StatNatureSpellPower]: 0.50,
+					[Stat.StatSpellCrit]: 0.61,
+					[Stat.StatSpellHaste]: 0.67,
 					[Stat.StatMP5]: 0.00,
 				}),
 				// Default consumes settings.
@@ -87,7 +87,7 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 				// Default raid/party buffs settings.
 				raidBuffs: Presets.DefaultRaidBuffs,
 
-				partyBuffs: PartyBuffs.create({}),
+				partyBuffs: Presets.DefaultPartyBuffs,
 
 				individualBuffs: Presets.DefaultIndividualBuffs,
 

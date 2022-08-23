@@ -9,16 +9,21 @@ import (
 )
 
 const IdolAvenger int32 = 31025
+const IdolSteadfastRenewal int32 = 40712
 
 func (druid *Druid) registerWrathSpell() {
 	baseCost := 0.11 * druid.BaseMana
-	minBaseDamage := 557.0
-	maxBaseDamage := 627.0
+
 	actionID := core.ActionID{SpellID: 26985}
 	manaMetrics := druid.NewManaMetrics(actionID)
+	spellmodifier := 0.571
 
 	// This seems to be unaffected by wrath of cenarius.
-	bonusFlatDamage := core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == IdolAvenger, 25*0.571, 0)
+	bonusFlatDamage := core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == IdolAvenger, 25, 0)
+	bonusFlatDamage += core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == IdolSteadfastRenewal, 70, 0)
+
+	minBaseDamage := 557.0 + bonusFlatDamage
+	maxBaseDamage := 627.0 + bonusFlatDamage
 
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
@@ -26,7 +31,7 @@ func (druid *Druid) registerWrathSpell() {
 		DamageMultiplier:     1 + 0.02*float64(druid.Talents.Moonfury),
 		ThreatMultiplier:     1,
 
-		BaseDamage:     core.BaseDamageConfigMagic(minBaseDamage+bonusFlatDamage, maxBaseDamage+bonusFlatDamage, 0.571+0.02*float64(druid.Talents.WrathOfCenarius)),
+		BaseDamage:     core.BaseDamageConfigMagic(minBaseDamage, maxBaseDamage, spellmodifier+0.02*float64(druid.Talents.WrathOfCenarius)),
 		OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, 0.2*float64(druid.Talents.Vengeance))),
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
@@ -69,7 +74,6 @@ func (druid *Druid) registerWrathSpell() {
 			},
 
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				//druid.applyNaturesGrace(cast)
 				druid.applyNaturesSwiftness(cast)
 				druid.ApplyClearcasting(sim, spell, cast)
 			},

@@ -67,7 +67,6 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) {
 
 	// Non-Eclipse
 	if spell == nil {
-		// TODO ForceOfNature
 		// We're not gonna rez someone during eclipse, are we ?
 		if moonkin.useBattleRes && shouldRebirth && moonkin.Rebirth.IsReady(sim) {
 			spell = moonkin.Rebirth

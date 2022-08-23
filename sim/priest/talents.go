@@ -69,10 +69,12 @@ func (priest *Priest) applySurgeOfLight() {
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			priest.Smite.CastTimeMultiplier -= 1
+			priest.Smite.CostMultiplier -= 1
 			priest.Smite.BonusCritRating -= 100 * core.CritRatingPerCritChance
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			priest.Smite.CastTimeMultiplier += 1
+			priest.Smite.CostMultiplier += 1
 			priest.Smite.BonusCritRating += 100 * core.CritRatingPerCritChance
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
@@ -91,11 +93,8 @@ func (priest *Priest) applySurgeOfLight() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
-				if procChance < sim.RandomFloat("SurgeOfLight") {
-					priest.SurgeOfLightProcAura.Activate(sim)
-					priest.SurgeOfLightProcAura.Prioritize()
-				}
+			if spellEffect.Outcome.Matches(core.OutcomeCrit) && sim.RandomFloat("SurgeOfLight") < procChance {
+				priest.SurgeOfLightProcAura.Activate(sim)
 			}
 		},
 	})
