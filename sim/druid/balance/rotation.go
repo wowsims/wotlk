@@ -73,6 +73,8 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) {
 			spell = moonkin.Rebirth
 		} else if moonkin.Starfall.IsReady(sim) {
 			spell = moonkin.Starfall
+		} else if moonkin.Talents.ForceOfNature && moonkin.ForceOfNature.IsReady(sim) {
+			spell = moonkin.ForceOfNature
 		} else if moonkin.useMF && moonfireUptime <= 0 && fishingForLunar {
 			spell = moonkin.Moonfire
 		} else if moonkin.useIS && insectSwarmUptime <= 0 && fishingForSolar {

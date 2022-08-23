@@ -19,8 +19,8 @@ type Warlock struct {
 	Incinerate           *core.Spell
 	Immolate             *core.Spell
 	ImmolateDot          *core.Dot
-	UnstableAff          *core.Spell
-	UnstableAffDot       *core.Dot
+	UnstableAffliction    *core.Spell
+	UnstableAfflictionDot *core.Dot
 	Corruption           *core.Spell
 	CorruptionDot        *core.Dot
 	Haunt                *core.Spell
@@ -45,9 +45,8 @@ type Warlock struct {
 	CurseOfAgonyDot     *core.Dot
 	CurseOfDoom         *core.Spell
 	CurseOfDoomDot      *core.Dot
-
-	Seeds    []*core.Spell
-	SeedDots []*core.Dot
+	Seeds    			[]*core.Spell
+	SeedDots 			[]*core.Dot
 
 	NightfallProcAura      *core.Aura
 	EradicationAura        *core.Aura
@@ -62,8 +61,7 @@ type Warlock struct {
 	PyroclasmAura          *core.Aura
 	BackdraftAura          *core.Aura
 	EmpoweredImpAura       *core.Aura
-
-	GlyphOfLifeTapAura *core.Aura
+	GlyphOfLifeTapAura     *core.Aura
 
 	// Rotation related memory
 	DoingRegen 				bool
@@ -71,7 +69,17 @@ type Warlock struct {
 	CorruptionRolloverMult  float64
 	DPSPAverage				float64
 	PreviousTime			time.Duration
+	SpellsRotation	      	[]SpellRotation
 }
+
+type SpellRotation struct {
+	Spell           *core.Spell
+	CastIn          CastReadyness
+	Priority        int
+}
+
+type CastReadyness func(*core.Simulation) time.Duration
+
 
 func (warlock *Warlock) GetCharacter() *core.Character {
 	return &warlock.Character
@@ -94,19 +102,12 @@ func (warlock *Warlock) Initialize() {
 	warlock.registerLifeTapSpell()
 	warlock.registerSeedSpell()
 	warlock.registerSoulFireSpell()
-	warlock.registerUnstableAffSpell()
+	warlock.registerUnstableAfflictionSpell()
 	warlock.registerDrainSoulSpell()
+	warlock.registerConflagrateSpell()
+	warlock.registerHauntSpell()
+	warlock.registerChaosBoltSpell()
 
-	if warlock.Talents.Conflagrate {
-		warlock.registerConflagrateSpell()
-	}
-
-	if warlock.Talents.Haunt {
-		warlock.registerHauntSpell()
-	}
-	if warlock.Talents.ChaosBolt {
-		warlock.registerChaosBoltSpell()
-	}
 	if warlock.Talents.DemonicEmpowerment {
 		warlock.registerDemonicEmpowermentSpell()
 	}
@@ -120,6 +121,8 @@ func (warlock *Warlock) Initialize() {
 	if warlock.Talents.Shadowburn {
 		warlock.registerShadowBurnSpell()
 	}
+
+	warlock.defineRotation()
 }
 
 func (warlock *Warlock) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {

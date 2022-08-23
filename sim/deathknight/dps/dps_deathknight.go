@@ -76,6 +76,7 @@ func (dk *DpsDeathknight) FrostPointsInUnholy() int32 {
 
 func (dk *DpsDeathknight) SetupRotations() {
 	dk.ur.ffFirst = dk.Rotation.FirstDisease == proto.Deathknight_Rotation_FrostFever
+	dk.ur.hasGod = dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease)
 
 	dk.RotationSequence.Clear()
 

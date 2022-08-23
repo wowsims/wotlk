@@ -21,6 +21,7 @@ type Druid struct {
 	Enrage           *core.Spell
 	FaerieFire       *core.Spell
 	FerociousBite    *core.Spell
+	ForceOfNature    *core.Spell
 	Hurricane        *core.Spell
 	InsectSwarm      *core.Spell
 	Lacerate         *core.Spell
@@ -69,6 +70,9 @@ type Druid struct {
 
 	LunarICD core.Cooldown
 	SolarICD core.Cooldown
+	Treant1  *TreantPet
+	Treant2  *TreantPet
+	Treant3  *TreantPet
 
 	form         DruidForm
 	disabledMCDs []*core.MajorCooldown
@@ -157,6 +161,7 @@ func (druid *Druid) RegisterBalanceSpells() {
 	druid.Starfire = druid.newStarfireSpell()
 	druid.registerWrathSpell()
 	druid.registerStarfallSpell()
+	druid.registerForceOfNatureCD()
 }
 
 func (druid *Druid) RegisterFeralSpells(maulRageThreshold float64) {
@@ -200,6 +205,12 @@ func New(char core.Character, form DruidForm, selfBuffs SelfBuffs, talents proto
 
 	// Druids get extra melee haste
 	druid.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
+
+	if druid.Talents.ForceOfNature {
+		druid.Treant1 = druid.NewTreant()
+		druid.Treant2 = druid.NewTreant()
+		druid.Treant3 = druid.NewTreant()
+	}
 
 	return druid
 }
