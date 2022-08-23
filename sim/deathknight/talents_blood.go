@@ -51,7 +51,7 @@ func (dk *Deathknight) ApplyBloodTalents() {
 	// TODO: Implemented outside
 
 	// Spell Deflection
-	// TODO: Implement
+	dk.applySpellDeflection()
 
 	// Vendetta
 	// TODO: Pointless
@@ -83,6 +83,48 @@ func (dk *Deathknight) ApplyBloodTalents() {
 	}
 
 	dk.applyBloodGorged()
+
+	// Will of the Necropolis
+	dk.applyWillOfTheNecropolis()
+}
+
+func (dk *Deathknight) applySpellDeflection() {
+	if dk.Talents.SpellDeflection == 0 {
+		return
+	}
+
+	dk.AddDynamicDamageTakenModifier(func(sim *core.Simulation, spellEffect *core.SpellEffect) {
+		if spellEffect.ProcMask.Matches(core.ProcMaskSpellDamage) {
+			procChance := dk.GetStat(stats.Parry) / core.ParryRatingPerParryChance
+			dmgMult := 1.0 - 0.15*float64(dk.Talents.SpellDeflection)
+			if -1 < procChance {
+				spellEffect.Damage *= dmgMult
+			}
+		}
+	})
+}
+
+func (dk *Deathknight) applyWillOfTheNecropolis() {
+	if dk.Talents.WillOfTheNecropolis == 0 {
+		return
+	}
+
+	actionID := core.ActionID{SpellID: 50150}
+	dk.WillOfTheNecropolis = dk.RegisterAura(core.Aura{
+		Label:    "Will of The Necropolis",
+		ActionID: actionID,
+		Duration: core.NeverExpires,
+	})
+
+	dk.AddDynamicDamageTakenModifier(func(sim *core.Simulation, spellEffect *core.SpellEffect) {
+		if (dk.CurrentHealth()-spellEffect.Damage)/dk.MaxHealth() <= 0.35 {
+			spellEffect.Damage *= 0.85
+			if (dk.CurrentHealth()-spellEffect.Damage)/dk.MaxHealth() <= 0.35 {
+				dk.WillOfTheNecropolis.Activate(sim)
+				return
+			}
+		}
+	})
 }
 
 func (dk *Deathknight) applyScentOfBlood() {
