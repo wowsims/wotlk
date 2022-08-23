@@ -12,6 +12,7 @@ type UnholyRotation struct {
 	dk *DpsDeathknight
 
 	ffFirst bool
+	hasGod  bool
 
 	syncTimeFF time.Duration
 
