@@ -15,6 +15,8 @@ const (
 	PetUnit
 )
 
+type DynamicDamageTakenModifier func(sim *Simulation, spellEffect *SpellEffect)
+
 // Unit is an abstraction of a Character/Boss/Pet/etc, containing functionality
 // shared by all of them.
 type Unit struct {
@@ -94,8 +96,9 @@ type Unit struct {
 
 	cdTimers []*Timer
 
-	AttackTables  []*AttackTable
-	DefenseTables []*AttackTable
+	AttackTables                []*AttackTable
+	DefenseTables               []*AttackTable
+	DynamicDamageTakenModifiers []DynamicDamageTakenModifier
 
 	GCD       *Timer
 	doNothing bool // flags that this character chose to do nothing.
@@ -170,6 +173,13 @@ func (unit *Unit) AddStat(stat stats.Stat, amount float64) {
 		panic("Already finalized, use AddStatDynamic instead!")
 	}
 	unit.stats[stat] += amount
+}
+
+func (unit *Unit) AddDynamicDamageTakenModifier(ddtm DynamicDamageTakenModifier) {
+	if unit.Env != nil && unit.Env.IsFinalized() {
+		panic("Already finalized, cannot add dynamic damage taken modifier!")
+	}
+	unit.DynamicDamageTakenModifiers = append(unit.DynamicDamageTakenModifiers, ddtm)
 }
 
 func (unit *Unit) AddStatsDynamic(sim *Simulation, bonus stats.Stats) {

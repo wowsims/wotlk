@@ -14,9 +14,9 @@ func RegisterTankDeathknight() {
 			return NewTankDeathknight(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
-			playerSpec, ok := spec.(*proto.Player_Deathknight)
+			playerSpec, ok := spec.(*proto.Player_TankDeathknight)
 			if !ok {
-				panic("Invalid spec value for Deathknight!")
+				panic("Invalid spec value for Tank Deathknight!")
 			}
 			player.Spec = playerSpec
 		},

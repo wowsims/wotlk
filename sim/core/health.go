@@ -145,6 +145,7 @@ func (character *Character) applyHealingModel(healingModel proto.HealingModel) {
 	character.RegisterResetEffect(func(sim *Simulation) {
 		// Hack since we don't have OnHealingReceived aura handlers yet.
 		ardentDefenderAura := character.GetAura("Ardent Defender")
+		willOfTheNecropolisAura := character.GetAura("Will of The Necropolis")
 
 		StartPeriodicAction(sim, PeriodicActionOptions{
 			Period: cadence,
@@ -153,6 +154,10 @@ func (character *Character) applyHealingModel(healingModel proto.HealingModel) {
 
 				if ardentDefenderAura != nil && character.CurrentHealthPercent() >= 0.35 {
 					ardentDefenderAura.Deactivate(sim)
+				}
+
+				if willOfTheNecropolisAura != nil && character.CurrentHealthPercent() > 0.35 {
+					willOfTheNecropolisAura.Deactivate(sim)
 				}
 			},
 		})
