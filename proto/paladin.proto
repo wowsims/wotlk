@@ -165,6 +165,7 @@ message RetributionPaladin {
 		int32 cons_slack = 2;
 		double divine_plea_percentage = 3;
 		int32 holy_wrath_threshold = 4;
+		int32 sov_targets = 5;
 
 		enum SpellOption {
 			NoSpell = 0;
