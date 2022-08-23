@@ -1,4 +1,3 @@
-import { SmitePriest_Rotation_RotationType as RotationType } from '../core/proto/priest.js';
 import { Race, RaidTarget } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { NO_TARGET } from '../core/proto_utils/utils.js';
@@ -30,31 +29,32 @@ export const SelfPowerInfusion = InputHelpers.makeSpecOptionsBooleanIconInput<Sp
 	},
 });
 
+export const InnerFire = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.SpecSmitePriest>({
+	fieldName: 'useInnerFire',
+	id: ActionId.fromSpellId(48168),
+});
+
+export const Shadowfiend = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.SpecSmitePriest>({
+	fieldName: 'useShadowfiend',
+	id: ActionId.fromSpellId(34433),
+});
+
 export const SmitePriestRotationConfig = {
 	inputs: [
-		InputHelpers.makeRotationEnumInput<Spec.SpecSmitePriest, RotationType>({
-			fieldName: 'rotationType',
-			label: 'Rotation Type',
-			labelTooltip: 'Choose whether to weave optionally weave holy fire for increase Shadow Word: Pain uptime',
-			values: [
-				{ name: 'Basic', value: RotationType.Basic },
-				{ name: 'HF Weave', value: RotationType.HolyFireWeave },
-			],
-		}),
-		InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecSmitePriest>({
-			fieldName: 'useShadowfiend',
-			label: 'Use Shadowfiend',
-			labelTooltip: 'Use Shadowfiend when low mana and off CD.',
-		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecSmitePriest>({
-			fieldName: 'useMindBlast',
-			label: 'Use Mind Blast',
-			labelTooltip: 'Use Mind Blast whenever off CD.',
+			fieldName: 'useDevouringPlague',
+			label: 'Use Devouring Plague',
+			labelTooltip: 'Use Devouring Plague whenever its not active.',
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecSmitePriest>({
 			fieldName: 'useShadowWordDeath',
 			label: 'Use Shadow Word: Death',
 			labelTooltip: 'Use Shadow Word: Death whenever off CD.',
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecSmitePriest>({
+			fieldName: 'useMindBlast',
+			label: 'Use Mind Blast',
+			labelTooltip: 'Use Mind Blast whenever off CD.',
 		}),
 	],
 };

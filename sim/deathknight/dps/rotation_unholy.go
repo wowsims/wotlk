@@ -318,24 +318,64 @@ func (dk *DpsDeathknight) uhGhoulFrenzySequence(sim *core.Simulation, bloodTap b
 func (dk *DpsDeathknight) uhRecastDiseasesSequence(sim *core.Simulation) {
 	dk.RotationSequence.Clear()
 
-	if dk.ur.ffFirst {
-		dk.RotationSequence.
-			NewAction(dk.RotationActionUH_FF_ClipCheck).
-			NewAction(dk.RotationActionUH_IT_Custom).
-			NewAction(dk.RotationActionUH_BP_ClipCheck).
-			NewAction(dk.RotationActionUH_PS_Custom)
-	} else {
-		dk.RotationSequence.
-			NewAction(dk.RotationActionUH_BP_ClipCheck).
-			NewAction(dk.RotationActionUH_PS_Custom).
-			NewAction(dk.RotationActionUH_FF_ClipCheck).
-			NewAction(dk.RotationActionUH_IT_Custom)
+	// If we have glyph of Disease and both dots active try to refresh with pesti
+	didPesti := false
+	if dk.ur.hasGod {
+		if dk.FrostFeverDisease[dk.CurrentTarget.Index].IsActive() && dk.BloodPlagueDisease[dk.CurrentTarget.Index].IsActive() {
+			didPesti = true
+			dk.RotationSequence.NewAction(dk.RotationActionCallback_Pesti_Custom)
+		}
+	}
+
+	// If we did not pesti queue normal dot refresh
+	if !didPesti {
+		if dk.ur.ffFirst {
+			dk.RotationSequence.
+				NewAction(dk.RotationActionUH_FF_ClipCheck).
+				NewAction(dk.RotationActionUH_IT_Custom).
+				NewAction(dk.RotationActionUH_BP_ClipCheck).
+				NewAction(dk.RotationActionUH_PS_Custom)
+		} else {
+			dk.RotationSequence.
+				NewAction(dk.RotationActionUH_BP_ClipCheck).
+				NewAction(dk.RotationActionUH_PS_Custom).
+				NewAction(dk.RotationActionUH_FF_ClipCheck).
+				NewAction(dk.RotationActionUH_IT_Custom)
+		}
 	}
 
 	if dk.Rotation.UseDeathAndDecay || !dk.Talents.ScourgeStrike {
 		dk.RotationSequence.NewAction(dk.RotationActionUH_ResetToDndMain)
 	} else {
 		dk.RotationSequence.NewAction(dk.RotationActionUH_ResetToSsMain)
+	}
+}
+
+func (dk *DpsDeathknight) RotationActionCallback_Pesti_Custom(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	// If we have both dots active try to refresh with pesti and move to normal rotation
+	if dk.FrostFeverDisease[dk.CurrentTarget.Index].IsActive() && dk.BloodPlagueDisease[dk.CurrentTarget.Index].IsActive() {
+		dk.Pestilence.Cast(sim, target)
+		s.Advance()
+
+		return -1
+	} else {
+		// If a disease has dropped do normal reapply
+		dk.RotationSequence.Clear()
+
+		if dk.ur.ffFirst {
+			dk.RotationSequence.
+				NewAction(dk.RotationActionUH_FF_ClipCheck).
+				NewAction(dk.RotationActionUH_IT_Custom).
+				NewAction(dk.RotationActionUH_BP_ClipCheck).
+				NewAction(dk.RotationActionUH_PS_Custom)
+		} else {
+			dk.RotationSequence.
+				NewAction(dk.RotationActionUH_BP_ClipCheck).
+				NewAction(dk.RotationActionUH_PS_Custom).
+				NewAction(dk.RotationActionUH_FF_ClipCheck).
+				NewAction(dk.RotationActionUH_IT_Custom)
+		}
+		return sim.CurrentTime
 	}
 }
 

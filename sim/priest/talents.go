@@ -8,7 +8,10 @@ import (
 )
 
 func (priest *Priest) ApplyTalents() {
-	priest.setupSurgeOfLight()
+	priest.applySurgeOfLight()
+	priest.applyMisery()
+	priest.applyShadowWeaving()
+	priest.applyImprovedSpiritTap()
 	priest.registerInnerFocus()
 
 	priest.AddStat(stats.SpellCrit, 1*float64(priest.Talents.FocusedWill)*core.CritRatingPerCritChance)
@@ -37,8 +40,8 @@ func (priest *Priest) ApplyTalents() {
 	}
 
 	if priest.Talents.Enlightenment > 0 {
-		priest.MultiplyStat(stats.Spirit, 1.0+.02*float64(priest.Talents.Enlightenment))
-		priest.AddStat(stats.SpellHaste, 2*float64(priest.Talents.Enlightenment)*core.HasteRatingPerHastePercent)
+		priest.MultiplyStat(stats.Spirit, 1+.02*float64(priest.Talents.Enlightenment))
+		priest.PseudoStats.CastSpeedMultiplier *= 1 + .02*float64(priest.Talents.Enlightenment)
 	}
 
 	if priest.Talents.FocusedPower > 0 {
@@ -55,7 +58,7 @@ func (priest *Priest) ApplyTalents() {
 	}
 }
 
-func (priest *Priest) setupSurgeOfLight() {
+func (priest *Priest) applySurgeOfLight() {
 	if priest.Talents.SurgeOfLight == 0 {
 		return
 	}
@@ -66,10 +69,12 @@ func (priest *Priest) setupSurgeOfLight() {
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			priest.Smite.CastTimeMultiplier -= 1
+			priest.Smite.CostMultiplier -= 1
 			priest.Smite.BonusCritRating -= 100 * core.CritRatingPerCritChance
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			priest.Smite.CastTimeMultiplier += 1
+			priest.Smite.CostMultiplier += 1
 			priest.Smite.BonusCritRating += 100 * core.CritRatingPerCritChance
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
@@ -88,12 +93,58 @@ func (priest *Priest) setupSurgeOfLight() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
-				if procChance < sim.RandomFloat("SurgeOfLight") {
-					priest.SurgeOfLightProcAura.Activate(sim)
-					priest.SurgeOfLightProcAura.Prioritize()
-				}
+			if spellEffect.Outcome.Matches(core.OutcomeCrit) && sim.RandomFloat("SurgeOfLight") < procChance {
+				priest.SurgeOfLightProcAura.Activate(sim)
 			}
+		},
+	})
+}
+
+func (priest *Priest) applyMisery() {
+	if priest.Talents.Misery == 0 {
+		return
+	}
+
+	priest.MiseryAura = core.MiseryAura(priest.CurrentTarget)
+}
+
+func (priest *Priest) applyShadowWeaving() {
+	if priest.Talents.ShadowWeaving == 0 {
+		return
+	}
+
+	priest.ShadowWeavingAura = priest.GetOrRegisterAura(core.Aura{
+		Label:     "Shadow Weaving",
+		ActionID:  core.ActionID{SpellID: 15258},
+		Duration:  time.Second * 15,
+		MaxStacks: 5,
+		// TODO: This affects all spells not just direct damage. Dot damage should omit multipliers since it's snapshot at cast time.
+		// OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
+		// 	aura.Unit.PseudoStats.ShadowDamageDealtMultiplier /= 1.0 + 0.02*float64(oldStacks)
+		// 	aura.Unit.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + 0.02*float64(newStacks)
+		// },
+	})
+}
+
+func (priest *Priest) applyImprovedSpiritTap() {
+	if priest.Talents.ImprovedSpiritTap == 0 {
+		return
+	}
+
+	increase := 1 + 0.05*float64(priest.Talents.ImprovedSpiritTap)
+	statDep := priest.NewDynamicMultiplyStat(stats.Spirit, increase)
+
+	priest.ImprovedSpiritTap = priest.GetOrRegisterAura(core.Aura{
+		Label:    "Improved Spirit Tap",
+		ActionID: core.ActionID{SpellID: 59000},
+		Duration: time.Second * 8,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			priest.EnableDynamicStatDep(sim, statDep)
+			priest.PseudoStats.SpiritRegenRateCasting += 0.33
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			priest.DisableDynamicStatDep(sim, statDep)
+			priest.PseudoStats.SpiritRegenRateCasting -= 0.33
 		},
 	})
 }
