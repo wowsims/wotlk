@@ -810,7 +810,7 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-WorldbreakerBattlegear"
  value: {
-  dps: 2528.6405413669
+  dps: 2528.640541367
   tps: 1980.0844854126
  }
 }
