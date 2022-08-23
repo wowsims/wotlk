@@ -8,6 +8,38 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
+func (ret *RetributionPaladin) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
+	if ret.SealOfVengeanceAura.IsActive() && core.MinInt32(ret.MaxSoVTargets, ret.Env.GetNumTargets()) > 1 {
+		minVengeanceDotDuration := time.Second * 15
+		minVengeanceDotDurationTargetIndex := int32(0)
+		minVengeanceDotStacks := int32(5)
+		minVengeanceDotStacksTargetIndex := int32(0)
+		for i := int32(0); i < core.MinInt32(ret.MaxSoVTargets, ret.Env.GetNumTargets()); i++ {
+			dot := ret.SealOfVengeanceDot[i]
+			remainingDuration := dot.RemainingDuration(sim)
+			stackCount := dot.GetStacks()
+
+			if remainingDuration < minVengeanceDotDuration && remainingDuration > 0 {
+				minVengeanceDotDuration = remainingDuration
+				minVengeanceDotDurationTargetIndex = i
+			}
+
+			if stackCount < minVengeanceDotStacks {
+				minVengeanceDotStacks = stackCount
+				minVengeanceDotStacksTargetIndex = i
+			}
+		}
+
+		if minVengeanceDotDuration < ret.WeaponFromMainHand(0).SwingDuration*2 {
+			ret.CurrentTarget = &ret.Env.Encounter.Targets[minVengeanceDotDurationTargetIndex].Unit
+		} else if ret.SealOfVengeanceDot[ret.CurrentTarget.Index].GetStacks() == 5 && minVengeanceDotStacks < 5 {
+			ret.CurrentTarget = &ret.Env.Encounter.Targets[minVengeanceDotStacksTargetIndex].Unit
+		} else {
+			ret.CurrentTarget = &ret.Env.Encounter.Targets[0].Unit
+		}
+	}
+}
+
 func (ret *RetributionPaladin) OnGCDReady(sim *core.Simulation) {
 	ret.SelectedRotation(sim)
 
@@ -18,7 +50,7 @@ func (ret *RetributionPaladin) OnGCDReady(sim *core.Simulation) {
 
 func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
 	// Setup
-	target := ret.CurrentTarget
+	target := &ret.Env.Encounter.Targets[0].Unit
 
 	nextSwingAt := ret.AutoAttacks.NextAttackAt()
 	isExecutePhase := sim.IsExecutePhase20()
@@ -72,7 +104,7 @@ func (ret *RetributionPaladin) castSequenceRotation(sim *core.Simulation) {
 	}
 
 	// Setup
-	target := ret.CurrentTarget
+	target := &ret.Env.Encounter.Targets[0].Unit
 	isExecutePhase := sim.IsExecutePhase20()
 
 	nextReadyAt := sim.CurrentTime
@@ -110,7 +142,7 @@ func (ret *RetributionPaladin) castSequenceRotation(sim *core.Simulation) {
 func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 
 	// Setup
-	target := ret.CurrentTarget
+	target := &ret.Env.Encounter.Targets[0].Unit
 
 	nextSwingAt := ret.AutoAttacks.NextAttackAt()
 	isExecutePhase := sim.IsExecutePhase20()

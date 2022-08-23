@@ -97,6 +97,15 @@ export const RetributionPaladinRotationHolyWrathConfig = InputHelpers.makeRotati
 	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.Standard,
 })
 
+export const RetributionPaladinSoVTargets = InputHelpers.makeRotationNumberInput<Spec.SpecRetributionPaladin>({
+	fieldName: "sovTargets",
+	label: "Max SoV Targets",
+	labelTooltip: "The maximum number of targets to keep the SoV debuff on.",
+	positive: true,
+	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getSpecOptions().seal == PaladinSeal.Vengeance,
+	changeEmitter: (player: Player<Spec.SpecRetributionPaladin>) => player.changeEmitter,
+})
+
 export const RetributionPaladinRotationPriorityConfig = InputHelpers.makeCustomRotationInput<Spec.SpecRetributionPaladin, SpellOption>({
 	fieldName: 'customRotation',
 	numColumns: 2,
