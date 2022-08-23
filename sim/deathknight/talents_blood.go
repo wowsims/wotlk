@@ -50,26 +50,17 @@ func (dk *Deathknight) ApplyBloodTalents() {
 	// Improved Rune Tap
 	// TODO: Implemented outside
 
-	// Spell Deflection && WoTN
-	dk.applyWillOfTheNecropolis()
-	dk.DynamicDamageTakenModifier = func(sim *core.Simulation, spellEffect *core.SpellEffect) {
-		if dk.Talents.SpellDeflection > 0 && spellEffect.ProcMask.Matches(core.ProcMaskSpellDamage) {
-			procChance := dk.GetStat(stats.Parry) / core.ParryRatingPerParryChance
-			dmgMult := 1.0 - 0.15*float64(dk.Talents.SpellDeflection)
-			if -1 < procChance {
-				spellEffect.Damage *= dmgMult
-			}
-		}
-
-		if dk.Talents.WillOfTheNecropolis > 0 {
-			if (dk.CurrentHealth()-spellEffect.Damage)/dk.MaxHealth() <= 0.35 {
-				spellEffect.Damage *= 0.85
-				if (dk.CurrentHealth()-spellEffect.Damage)/dk.MaxHealth() <= 0.35 {
-					dk.WillOfTheNecropolis.Activate(sim)
-					return
+	// Spell Deflection
+	if dk.Talents.SpellDeflection > 0 {
+		dk.AddDynamicDamageTakenModifier(func(sim *core.Simulation, spellEffect *core.SpellEffect) {
+			if spellEffect.ProcMask.Matches(core.ProcMaskSpellDamage) {
+				procChance := dk.GetStat(stats.Parry) / core.ParryRatingPerParryChance
+				dmgMult := 1.0 - 0.15*float64(dk.Talents.SpellDeflection)
+				if -1 < procChance {
+					spellEffect.Damage *= dmgMult
 				}
 			}
-		}
+		})
 	}
 
 	// Vendetta
@@ -102,6 +93,9 @@ func (dk *Deathknight) ApplyBloodTalents() {
 	}
 
 	dk.applyBloodGorged()
+
+	// Will of the Necropolis
+	dk.applyWillOfTheNecropolis()
 }
 
 func (dk *Deathknight) applyWillOfTheNecropolis() {
@@ -116,6 +110,15 @@ func (dk *Deathknight) applyWillOfTheNecropolis() {
 		Duration: core.NeverExpires,
 	})
 
+	dk.AddDynamicDamageTakenModifier(func(sim *core.Simulation, spellEffect *core.SpellEffect) {
+		if (dk.CurrentHealth()-spellEffect.Damage)/dk.MaxHealth() <= 0.35 {
+			spellEffect.Damage *= 0.85
+			if (dk.CurrentHealth()-spellEffect.Damage)/dk.MaxHealth() <= 0.35 {
+				dk.WillOfTheNecropolis.Activate(sim)
+				return
+			}
+		}
+	})
 }
 
 func (dk *Deathknight) applyScentOfBlood() {
