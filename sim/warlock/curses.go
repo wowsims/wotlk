@@ -142,6 +142,7 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 			OutcomeApplier:   warlock.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
+					warlock.CurseOfDoomDot.Cancel(sim)
 					warlock.CurseOfAgonyDot.Apply(sim)
 				}
 			},
@@ -196,6 +197,7 @@ func (warlock *Warlock) registerCurseOfDoomSpell() {
 			OutcomeApplier:   warlock.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
+					warlock.CurseOfAgonyDot.Cancel(sim)
 					warlock.CurseOfDoomDot.Apply(sim)
 				}
 			},

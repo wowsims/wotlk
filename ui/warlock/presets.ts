@@ -326,7 +326,7 @@ export const P1_PreBiS = {
         },
         {
           "id": 39497,
-          "enchant": 44623,
+          "enchant": 44489,
           "gems": [
             39998,
             40051
@@ -438,7 +438,7 @@ export const P1_BiS_14 = {
         },
         {
           "id": 40423,
-          "enchant": 44623,
+          "enchant": 44489,
           "gems": [
             40049,
             40014
@@ -538,7 +538,7 @@ export const P1_BiS = {
         },
         {
           "id": 40423,
-          "enchant": 44623,
+          "enchant": 44489,
           "gems": [
             39998,
             40051
@@ -635,7 +635,7 @@ export const P1_PreBiS_14 = {
         },
         {
           "id": 39497,
-          "enchant": 44623,
+          "enchant": 44489,
           "gems": [
             39998,
             40014
