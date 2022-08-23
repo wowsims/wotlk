@@ -19,7 +19,8 @@ func (dk *DpsDeathknight) setupBloodRotations() {
 		NewAction(dk.RotationActionCallback_IT).
 		NewAction(dk.RotationActionCallback_PS).
 		NewAction(dk.RotationActionCallback_HS).
-		NewAction(dk.RotationActionCallback_DS).
+		NewAction(dk.RotationActionCallback_HS).
+		NewAction(dk.RotationActionCallback_HS).
 		NewAction(dk.RotationActionCallback_HS)
 
 	dk.RotationSequence.NewAction(dk.RotationActionCallback_BloodRotation)
@@ -33,19 +34,19 @@ func (dk *DpsDeathknight) RotationActionCallback_BloodRotation(sim *core.Simulat
 	}
 
 	if !casted {
-		if dk.blDiseaseCheck(sim, target, dk.DeathStrike, true, 1) {
+		if dk.blDiseaseCheck(sim, target, dk.HeartStrike, true, 1) {
 			if dk.shShouldSpreadDisease(sim) {
 				return dk.blSpreadDiseases(sim, target, s)
 			} else {
-				casted = dk.DeathStrike.Cast(sim, target)
+				casted = dk.HeartStrike.Cast(sim, target)
 			}
 		} else {
 			dk.blRecastDiseasesSequence(sim)
 			return sim.CurrentTime
 		}
 		if !casted {
-			if dk.blDiseaseCheck(sim, target, dk.BloodStrike, true, 1) {
-				casted = dk.HeartStrike.Cast(sim, target)
+			if dk.blDiseaseCheck(sim, target, dk.DeathStrike, true, 1) {
+				casted = dk.DeathStrike.Cast(sim, target)
 			} else {
 				dk.blRecastDiseasesSequence(sim)
 				return sim.CurrentTime
