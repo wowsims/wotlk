@@ -162,6 +162,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestBalance-AllItems-DreamwalkerBattlegear"
+ value: {
+  dps: 951.72205
+  tps: 865.24031
+ }
+}
+dps_results: {
  key: "TestBalance-AllItems-DreamwalkerGarb"
  value: {
   dps: 1957.27294
@@ -250,6 +257,13 @@ dps_results: {
  value: {
   dps: 1421.49157
   tps: 1320.65337
+ }
+}
+dps_results: {
+ key: "TestBalance-AllItems-Gladiator'sSanctuary"
+ value: {
+  dps: 1034.32923
+  tps: 948.67005
  }
 }
 dps_results: {
@@ -372,6 +386,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestBalance-AllItems-LasherweaveBattlegear"
+ value: {
+  dps: 961.73134
+  tps: 875.42712
+ }
+}
+dps_results: {
  key: "TestBalance-AllItems-LasherweaveRegalia"
  value: {
   dps: 3128.2653
@@ -397,6 +418,13 @@ dps_results: {
  value: {
   dps: 1495.20147
   tps: 1396.58775
+ }
+}
+dps_results: {
+ key: "TestBalance-AllItems-Malfurion'sBattlegear"
+ value: {
+  dps: 1057.02059
+  tps: 970.6597
  }
 }
 dps_results: {
@@ -432,6 +460,13 @@ dps_results: {
  value: {
   dps: 1404.66608
   tps: 1306.14182
+ }
+}
+dps_results: {
+ key: "TestBalance-AllItems-NightsongBattlegear"
+ value: {
+  dps: 1010.72219
+  tps: 924.27689
  }
 }
 dps_results: {
@@ -537,6 +572,13 @@ dps_results: {
  value: {
   dps: 1343.38821
   tps: 1244.62486
+ }
+}
+dps_results: {
+ key: "TestBalance-AllItems-Runetotem'sBattlegear"
+ value: {
+  dps: 1057.02059
+  tps: 970.6597
  }
 }
 dps_results: {

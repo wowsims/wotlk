@@ -16,6 +16,8 @@ func (druid *Druid) registerRakeSpell() {
 
 	mangleAura := core.MangleAura(druid.CurrentTarget)
 
+	t9bonus := core.TernaryInt(druid.HasT9FeralSetBonus(2), 1, 0)
+
 	druid.Rake = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
@@ -69,7 +71,7 @@ func (druid *Druid) registerRakeSpell() {
 	druid.RakeDot = core.NewDot(core.Dot{
 		Spell:         druid.Rake,
 		Aura:          dotAura,
-		NumberOfTicks: 3,
+		NumberOfTicks: 3 + t9bonus,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
@@ -82,7 +84,7 @@ func (druid *Druid) registerRakeSpell() {
 				},
 				TargetSpellCoefficient: 0,
 			},
-			OutcomeApplier: druid.OutcomeFuncTick(),
+			OutcomeApplier: core.Ternary(druid.HasSetBonus(ItemSetLasherweaveBattlegear, 4), druid.OutcomeFuncTickHitAndCrit(druid.MeleeCritMultiplier()), druid.OutcomeFuncTick()),
 		})),
 	})
 }

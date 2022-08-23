@@ -25,6 +25,10 @@ func (druid *Druid) registerLacerateSpell() {
 		initialBonus += 8
 	}
 
+	lbdm := core.TernaryFloat64(druid.HasSetBonus(ItemSetLasherweaveBattlegear, 2), 1.2, 1.0)
+	dwdm := core.TernaryFloat64(druid.HasSetBonus(ItemSetDreamwalkerBattlegear, 2), 1.05, 1.0)
+	t9bonus := core.TernaryFloat64(druid.HasT9FeralSetBonus(2), 1.05, 1.0)
+
 	mangleAura := core.MangleAura(druid.CurrentTarget)
 
 	druid.Lacerate = druid.RegisterSpell(core.SpellConfig{
@@ -46,7 +50,7 @@ func (druid *Druid) registerLacerateSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			DamageMultiplier: 1,
+			DamageMultiplier: lbdm * dwdm,
 			ThreatMultiplier: 0.5,
 			FlatThreatBonus:  267,
 
@@ -92,7 +96,7 @@ func (druid *Druid) registerLacerateSpell() {
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1,
+			DamageMultiplier: lbdm * t9bonus,
 			ThreatMultiplier: 0.5,
 			IsPeriodic:       true,
 			BaseDamage: core.MultiplyByStacks(core.BaseDamageConfig{

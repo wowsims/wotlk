@@ -14,10 +14,13 @@ func (druid *Druid) registerSwipeSpell() {
 		baseDamage += 10
 	}
 
+	lbdm := core.TernaryFloat64(druid.HasSetBonus(ItemSetLasherweaveBattlegear, 2), 1.2, 1.0)
+	thdm := core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartHarness, 4), 1.15, 1.0)
+
 	baseEffect := core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeMHSpecial,
 
-		DamageMultiplier: 1 + core.TernaryFloat64(druid.InForm(Bear) && druid.HasSetBonus(ItemSetThunderheartHarness, 4), 0.15, 0),
+		DamageMultiplier: lbdm * thdm,
 		ThreatMultiplier: 1,
 
 		BaseDamage: core.BaseDamageConfig{
@@ -59,5 +62,5 @@ func (druid *Druid) registerSwipeSpell() {
 }
 
 func (druid *Druid) CanSwipe() bool {
-	return druid.CurrentRage() >= druid.Swipe.DefaultCast.Cost
+	return druid.InForm(Bear) && druid.CurrentRage() >= druid.Swipe.DefaultCast.Cost
 }

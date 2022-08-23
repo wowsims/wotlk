@@ -44,7 +44,9 @@ var ItemSetMalorneHarness = core.NewItemSet(core.ItemSet{
 		2: func(agent core.Agent) {
 			druid := agent.(DruidAgent).GetDruid()
 
-			procChance := 0.04
+			// Proc chance should 'scale down' with level,
+			// not sure exact formula but its 0 at 80
+			procChance := core.TernaryFloat64(druid.Level >= 80, 0.0, 0.04)
 			rageMetrics := druid.NewRageMetrics(core.ActionID{SpellID: 37306})
 			energyMetrics := druid.NewEnergyMetrics(core.ActionID{SpellID: 37311})
 
@@ -211,6 +213,119 @@ var ItemSetGladiatorsWildhide = core.NewItemSet(core.ItemSet{
 		},
 	},
 })
+
+var ItemSetGladiatorsSanctuary = core.NewItemSet(core.ItemSet{
+	Name: "Gladiator's Sanctuary",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.Resilience, 100)
+			agent.GetCharacter().AddStat(stats.AttackPower, 50)
+		},
+		4: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.AttackPower, 150)
+		},
+	},
+})
+
+var ItemSetNightsongBattlegear = core.NewItemSet(core.ItemSet{
+	Name: "Nightsong Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			druid := agent.(DruidAgent).GetDruid()
+			// The periodic damage dealt by your Rake, Rip, and Lacerate abilities
+			// has a chance to cause you to enter a Clearcasting state.
+			// (Proc chance: 2%, 15s cooldown)
+
+			procChance := 0.02
+
+			cca := druid.GetOrRegisterAura(core.Aura{
+				Label:    "Clearcasting",
+				ActionID: core.ActionID{SpellID: 16870},
+				Duration: time.Second * 15,
+			})
+
+			icd := core.Cooldown{
+				Timer:    druid.NewTimer(),
+				Duration: time.Second * 15,
+			}
+
+			druid.RegisterAura(core.Aura{
+				Label:    "Nightsong 4pc",
+				Duration: core.NeverExpires,
+				OnReset: func(aura *core.Aura, sim *core.Simulation) {
+					aura.Activate(sim)
+				},
+				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+					if spell != druid.Rake && spell != druid.Rip && spell != druid.Lacerate {
+						return
+					}
+					if !icd.IsReady(sim) {
+						return
+					}
+					if sim.RandomFloat("Nightsong 4pc") < procChance {
+						icd.Use(sim)
+						cca.Activate(sim)
+					}
+				},
+			})
+		},
+		4: func(agent core.Agent) {
+			// Implemented in savage roar
+		},
+	},
+})
+
+var ItemSetLasherweaveBattlegear = core.NewItemSet(core.ItemSet{
+	Name: "Lasherweave Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// implemented in skills
+		},
+		4: func(agent core.Agent) {
+			// implemented in skills
+		},
+	},
+})
+
+var ItemSetDreamwalkerBattlegear = core.NewItemSet(core.ItemSet{
+	Name: "Dreamwalker Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// implemented in skills
+		},
+		4: func(agent core.Agent) {
+			// implemented in skills
+		},
+	},
+})
+
+var ItemSetRunetotemsBattlegear = core.NewItemSet(core.ItemSet{
+	Name: "Runetotem's Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// implemented in skills
+		},
+		4: func(agent core.Agent) {
+			// implemented in skills
+		},
+	},
+})
+
+var ItemSetMalfurionsBattlegear = core.NewItemSet(core.ItemSet{
+	Name: "Malfurion's Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// implemented in skills
+		},
+		4: func(agent core.Agent) {
+			// implemented in skills
+		},
+	},
+})
+
+func (druid *Druid) HasT9FeralSetBonus(num int32) bool {
+	return druid.HasSetBonus(ItemSetRunetotemsBattlegear, num) || druid.HasSetBonus(ItemSetMalfurionsBattlegear, num)
+}
 
 func init() {
 
@@ -384,6 +499,7 @@ func init() {
 		// Idol of the Raven Goddess
 		// This should maybe be an Aura, but this way it changes stats on sheet
 		druid := agent.(DruidAgent).GetDruid()
+
 		if druid.InForm(Bear | Cat) {
 			druid.AddStat(stats.MeleeCrit, 40.0)
 		} else if druid.InForm(Moonkin) {

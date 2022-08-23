@@ -248,7 +248,7 @@ func (druid *Druid) applyOmenOfClarity() {
 
 	ppmm := druid.AutoAttacks.NewPPMManager(3.5, core.ProcMaskMelee)
 
-	druid.ClearcastingAura = druid.RegisterAura(core.Aura{
+	druid.ClearcastingAura = druid.GetOrRegisterAura(core.Aura{
 		Label:    "Clearcasting",
 		ActionID: core.ActionID{SpellID: 16870},
 		Duration: time.Second * 15,

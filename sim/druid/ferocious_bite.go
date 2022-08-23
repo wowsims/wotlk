@@ -18,6 +18,8 @@ func (druid *Druid) registerFerociousBiteSpell() {
 		dmgPerComboPoint += 14
 	}
 
+	t9bonus := core.TernaryFloat64(druid.HasT9FeralSetBonus(4), 5*core.CritRatingPerCritChance, 0.0)
+
 	var excessEnergy float64
 
 	druid.FerociousBite = druid.RegisterSpell(core.SpellConfig{
@@ -48,10 +50,10 @@ func (druid *Druid) registerFerociousBiteSpell() {
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHSpecial,
-			DamageMultiplier: 1 +
-				0.03*float64(druid.Talents.FeralAggression) +
-				core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartHarness, 4), 0.15, 0),
+			ProcMask:        core.ProcMaskMeleeMHSpecial,
+			BonusCritRating: t9bonus,
+			DamageMultiplier: (1 + 0.03*float64(druid.Talents.FeralAggression)) *
+				core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartHarness, 4), 1.15, 1.0),
 			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{
