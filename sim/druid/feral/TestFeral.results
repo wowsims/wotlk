@@ -241,8 +241,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-IdoloftheWastes-38295"
  value: {
-  dps: 1114.24997
-  tps: 820.60859
+  dps: 1120.21926
+  tps: 824.84678
  }
 }
 dps_results: {

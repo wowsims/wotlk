@@ -325,8 +325,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-IdoloftheWastes-38295"
  value: {
-  dps: 679.95001
-  tps: 898.52555
+  dps: 679.40557
+  tps: 895.40855
  }
 }
 dps_results: {
@@ -774,8 +774,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-Settings-Tauren-P1-Default-FullBuffs-LongMultiTarget"
  value: {
-  dps: 906.00822
-  tps: 1447.13217
+  dps: 2214.35672
+  tps: 3899.9807
  }
 }
 dps_results: {

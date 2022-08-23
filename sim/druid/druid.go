@@ -38,7 +38,8 @@ type Druid struct {
 	Starfire         *core.Spell
 	Starfall         *core.Spell
 	StarfallSplash   *core.Spell
-	Swipe            *core.Spell
+	SwipeBear        *core.Spell
+	SwipeCat         *core.Spell
 	TigersFury       *core.Spell
 	Wrath            *core.Spell
 
@@ -244,7 +245,8 @@ func (druid *Druid) RegisterFeralSpells(maulRageThreshold float64) {
 	druid.registerRipSpell()
 	druid.registerSavageRoarSpell()
 	druid.registerShredSpell()
-	druid.registerSwipeSpell()
+	druid.registerSwipeBearSpell()
+	druid.registerSwipeCatSpell()
 	druid.registerTigersFurySpell()
 }
 

@@ -570,7 +570,7 @@ func init() {
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Idol of the Wastes",
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if druid.Shred != spell && druid.Swipe != spell {
+				if druid.Shred != spell && druid.IsSwipeSpell(spell) {
 					return
 				}
 

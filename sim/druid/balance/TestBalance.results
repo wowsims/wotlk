@@ -325,8 +325,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-IdoloftheWastes-38295"
  value: {
-  dps: 1408.778
-  tps: 1309.38952
+  dps: 1409.80417
+  tps: 1310.39517
  }
 }
 dps_results: {
