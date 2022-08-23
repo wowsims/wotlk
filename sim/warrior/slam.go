@@ -7,7 +7,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (warrior *Warrior) registerSlamSpell(rageThreshold float64) {
+func (warrior *Warrior) registerSlamSpell() {
 	cost := 15.0 - float64(warrior.Talents.FocusedRage)
 	refundAmount := cost * 0.8
 
@@ -45,14 +45,10 @@ func (warrior *Warrior) registerSlamSpell(rageThreshold float64) {
 			},
 		}),
 	})
-	warrior.SlamRageThreshold = core.MaxFloat(warrior.Slam.DefaultCast.Cost, rageThreshold)
-}
-func (warrior *Warrior) HasEnoughRageForSlam() bool {
-	return warrior.CurrentRage() >= warrior.SlamRageThreshold
 }
 
 func (warrior *Warrior) CanSlam(sim *core.Simulation) bool {
-	return warrior.CurrentRage() >= warrior.SlamRageThreshold && warrior.Slam.IsReady(sim) && warrior.Talents.ImprovedSlam >= 1
+	return warrior.CurrentRage() >= warrior.Slam.DefaultCast.Cost && warrior.Slam.IsReady(sim) && warrior.Talents.ImprovedSlam >= 1
 }
 
 func (warrior *Warrior) CastSlam(sim *core.Simulation, target *core.Unit) bool {

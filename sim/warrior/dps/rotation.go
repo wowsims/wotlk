@@ -79,13 +79,13 @@ func (war *DpsWarrior) doRotation(sim *core.Simulation) {
 
 func (war *DpsWarrior) normalRotation(sim *core.Simulation, highPrioSpellsOnly bool) {
 	if war.GCD.IsReady(sim) {
-		if war.BloodsurgeAura.IsActive() && war.HasEnoughRageForSlam() {
+		if war.BloodsurgeAura.IsActive() && war.CurrentRage() >= war.Rotation.SlamRageThreshold {
 			war.CastSlam(sim, war.CurrentTarget)
 		} else if war.Rotation.PrioritizeWw && war.CanWhirlwind(sim) {
 			war.Whirlwind.Cast(sim, war.CurrentTarget)
 		} else if war.CanBloodthirst(sim) {
 			war.Bloodthirst.Cast(sim, war.CurrentTarget)
-		} else if war.Rotation.UseRend && war.ShouldRend(sim) {
+		} else if war.Rotation.UseRend && war.ShouldRend(sim) && war.CurrentRage() >= war.Rotation.RendRageThreshold {
 			if !war.StanceMatches(warrior.BattleStance) {
 				if !war.BattleStance.IsReady(sim) {
 					return
@@ -103,7 +103,7 @@ func (war *DpsWarrior) normalRotation(sim *core.Simulation, highPrioSpellsOnly b
 			war.Overpower.Cast(sim, war.CurrentTarget)
 		} else if war.SuddenDeathAura.IsActive() && war.CanExecute() {
 			war.Execute.Cast(sim, war.CurrentTarget)
-		} else if war.Rotation.UseMs && war.CanMortalStrike(sim) {
+		} else if war.Rotation.UseMs && war.CanMortalStrike(sim) && war.CurrentRage() >= war.Rotation.MsRageThreshold {
 			war.MortalStrike.Cast(sim, war.CurrentTarget)
 		} else if war.CanSlam(sim) {
 			war.CastSlam(sim, war.CurrentTarget)
@@ -128,7 +128,7 @@ func (war *DpsWarrior) executeRotation(sim *core.Simulation, highPrioSpellsOnly 
 			war.Whirlwind.Cast(sim, war.CurrentTarget)
 		} else if war.Rotation.UseBtDuringExecute && war.CanBloodthirst(sim) {
 			war.Bloodthirst.Cast(sim, war.CurrentTarget)
-		} else if war.Rotation.UseRend && war.ShouldRend(sim) {
+		} else if war.Rotation.UseRend && war.ShouldRend(sim) && war.CurrentRage() >= war.Rotation.RendRageThreshold {
 			if !war.StanceMatches(warrior.BattleStance) {
 				if !war.BattleStance.IsReady(sim) {
 					return
@@ -146,9 +146,9 @@ func (war *DpsWarrior) executeRotation(sim *core.Simulation, highPrioSpellsOnly 
 			war.Overpower.Cast(sim, war.CurrentTarget)
 		} else if war.SuddenDeathAura.IsActive() && war.CanExecute() {
 			war.Execute.Cast(sim, war.CurrentTarget)
-		} else if war.Rotation.UseMs && war.CanMortalStrike(sim) {
+		} else if war.Rotation.UseMs && war.CanMortalStrike(sim) && war.CurrentRage() >= war.Rotation.MsRageThreshold {
 			war.MortalStrike.Cast(sim, war.CurrentTarget)
-		} else if war.Rotation.UseSlamOverExecute && war.CanSlam(sim) {
+		} else if war.Rotation.UseSlamOverExecute && war.CanSlam(sim) && war.CurrentRage() >= war.Rotation.SlamRageThreshold {
 			war.CastSlam(sim, war.CurrentTarget)
 		} else if !war.Rotation.PrioritizeWw && war.Rotation.UseWwDuringExecute && war.CanWhirlwind(sim) {
 			war.Whirlwind.Cast(sim, war.CurrentTarget)

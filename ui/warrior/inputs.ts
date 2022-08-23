@@ -60,7 +60,7 @@ export const WarriorRotationConfig = {
 		InputHelpers.makeRotationBooleanInput<Spec.SpecWarrior>({
 			fieldName: 'useRend',
 			label: 'Use Rend',
-			labelTooltip: 'Use Rend on free globals.',
+			labelTooltip: 'Use Rend when rage threshold is met and the debuff duration is less than refresh time.',
 			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecWarrior>({
@@ -94,14 +94,14 @@ export const WarriorRotationConfig = {
 			label: 'Rend rage threshold',
 			labelTooltip: 'Rend will only be used when rage is larger than this value.',
 			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-			showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().useRend && player.getTalents().bloodthirst,
+			showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().useRend == true
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecWarrior>({
 			fieldName: 'rendCdThreshold',
 			label: 'Rend Refresh Time',
 			labelTooltip: 'Refresh Rend when the remaining duration is less than this amount of time (seconds).',
 			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().mortalStrike,
+			showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().useRend == true
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecWarrior>({
 			fieldName: 'useHsDuringExecute',

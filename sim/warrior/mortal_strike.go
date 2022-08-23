@@ -8,7 +8,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (warrior *Warrior) registerMortalStrikeSpell(cdTimer *core.Timer, rageThreshold float64) {
+func (warrior *Warrior) registerMortalStrikeSpell(cdTimer *core.Timer) {
 	cost := 30.0
 	if warrior.HasSetBonus(ItemSetDestroyerBattlegear, 4) {
 		cost -= 5
@@ -59,9 +59,8 @@ func (warrior *Warrior) registerMortalStrikeSpell(cdTimer *core.Timer, rageThres
 			},
 		}),
 	})
-	warrior.MsRageThreshold = core.MaxFloat(warrior.MortalStrike.DefaultCast.Cost, rageThreshold)
 }
 
 func (warrior *Warrior) CanMortalStrike(sim *core.Simulation) bool {
-	return warrior.Talents.MortalStrike && warrior.CurrentRage() >= warrior.MsRageThreshold && warrior.MortalStrike.IsReady(sim)
+	return warrior.Talents.MortalStrike && warrior.CurrentRage() >= warrior.MortalStrike.DefaultCast.Cost && warrior.MortalStrike.IsReady(sim)
 }
