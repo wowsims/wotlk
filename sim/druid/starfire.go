@@ -96,12 +96,12 @@ func (druid *Druid) newStarfireSpell() *core.Spell {
 				CastTime: time.Millisecond*3500 - (time.Millisecond * 100 * time.Duration(druid.Talents.StarlightWrath)),
 			},
 
-			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				druid.applyNaturesSwiftness(cast)
+				druid.ApplyClearcasting(sim, spell, cast)
 				// druid.applyNaturesGrace(cast)
 			},
 		},
-
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})
 }

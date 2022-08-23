@@ -18,7 +18,7 @@ func (dk *Deathknight) registerRuneStrikeSpell() {
 	dk.RuneStrike = dk.RegisterSpell(rs, core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
+		Flags:       core.SpellFlagMeleeMetrics,
 
 		ResourceType: stats.RunicPower,
 		BaseCost:     baseCost,
@@ -48,7 +48,7 @@ func (dk *Deathknight) registerRuneStrikeSpell() {
 				TargetSpellCoefficient: 1,
 			},
 
-			OutcomeApplier: dk.OutcomeFuncMeleeWeaponSpecialHitAndCrit(dk.critMultiplier()),
+			OutcomeApplier: dk.OutcomeFuncMeleeSpecialNoBlockDodgeParry(dk.critMultiplier()),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				rs.DoCost(sim)

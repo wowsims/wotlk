@@ -56,7 +56,9 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 	if raidBuffs.MoonkinAura > 0 || raidBuffs.ElementalOath {
 		character.AddStat(stats.SpellCrit, 5*CritRatingPerCritChance)
 	}
+
 	if raidBuffs.MoonkinAura == proto.TristateEffect_TristateEffectImproved || raidBuffs.SwiftRetribution {
+		// For now, we assume Improved Moonkin Form is maxed-out
 		character.PseudoStats.CastSpeedMultiplier *= 1.03
 		character.PseudoStats.MeleeSpeedMultiplier *= 1.03
 		character.PseudoStats.RangedSpeedMultiplier *= 1.03

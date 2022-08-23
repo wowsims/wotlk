@@ -146,6 +146,7 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 			rotationInputs: DeathKnightInputs.TankDeathKnightRotationConfig,
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
+				IconInputs.SpellDamageDebuff,
 			],
 			excludeBuffDebuffInputs: [
 			],

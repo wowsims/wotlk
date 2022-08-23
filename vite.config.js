@@ -11,7 +11,7 @@ export default defineConfig(({ command, mode }) => ({
 		sourcemap: command === "serve" ? "inline" : "false",
 		target: ["es2020"],
 		rollupOptions: {
-			input: glob.sync(path.resolve(__dirname, "ui", "**/index.html")),
+			input: glob.sync(path.resolve(__dirname, "ui", "**/index.html").replace(/\\/g, "/")),
 			output: {
 				assetFileNames: () => "bundle/[name]-[hash].style.css",
 				entryFileNames: () => "bundle/[name]-[hash].entry.js",

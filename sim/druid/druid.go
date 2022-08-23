@@ -97,9 +97,10 @@ func (druid *Druid) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 
 	if druid.InForm(Moonkin) && druid.Talents.MoonkinForm {
 		raidBuffs.MoonkinAura = core.MaxTristate(raidBuffs.MoonkinAura, proto.TristateEffect_TristateEffectRegular)
-		// if druid.Talents.ImprovedMoonkinForm > 0 {
-		// 	raidBuffs.LeaderOfThePack = proto.TristateEffect_TristateEffectImproved
-		// }
+		if druid.Talents.ImprovedMoonkinForm > 0 {
+			// For now, we assume Improved Moonkin Form is maxed-out
+			raidBuffs.MoonkinAura = proto.TristateEffect_TristateEffectImproved
+		}
 	}
 	if druid.InForm(Cat|Bear) && druid.Talents.LeaderOfThePack {
 		raidBuffs.LeaderOfThePack = core.MaxTristate(raidBuffs.LeaderOfThePack, proto.TristateEffect_TristateEffectRegular)
