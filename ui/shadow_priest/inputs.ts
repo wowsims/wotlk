@@ -46,6 +46,7 @@ export const ShadowPriestRotationConfig = {
 				{ name: 'Basic', value: RotationType.Basic },
 				{ name: 'Clipping', value: RotationType.Clipping },
 				{ name: 'Ideal', value: RotationType.Ideal },
+				{ name: 'AoE', value: RotationType.AoE },
 			],
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecShadowPriest>({

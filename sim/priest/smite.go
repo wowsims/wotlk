@@ -8,13 +8,10 @@ import (
 )
 
 func (priest *Priest) registerSmiteSpell() {
-	baseCost := 385.0
-
-	normalOutcome := priest.OutcomeFuncMagicHitAndCrit(priest.DefaultSpellCritMultiplier())
-	surgeOfLightOutcome := priest.OutcomeFuncMagicHit()
+	baseCost := .15 * priest.BaseMana
 
 	priest.Smite = priest.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 25364},
+		ActionID:    core.ActionID{SpellID: 48123},
 		SpellSchool: core.SpellSchoolHoly,
 
 		ResourceType: stats.Mana,
@@ -26,27 +23,17 @@ func (priest *Priest) registerSmiteSpell() {
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond*2500 - time.Millisecond*100*time.Duration(priest.Talents.DivineFury),
 			},
-			ModifyCast: priest.applySurgeOfLight,
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:            core.ProcMaskSpellDamage,
-			BonusSpellHitRating: float64(priest.Talents.FocusedPower) * 2 * core.SpellHitRatingPerHitChance,
+			ProcMask: core.ProcMaskSpellDamage,
 
 			BonusSpellCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
+			DamageMultiplier:     1 + 0.05*float64(priest.Talents.SearingLight),
+			ThreatMultiplier:     1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
-			DamageMultiplier: 1 + 0.05*float64(priest.Talents.SearingLight),
-
-			ThreatMultiplier: 1 - 0.04*float64(priest.Talents.SilentResolve),
-
-			BaseDamage: core.BaseDamageConfigMagic(549, 616, 0.7143),
-			OutcomeApplier: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
-				if priest.SurgeOfLightProcAura.IsActive() {
-					surgeOfLightOutcome(sim, spell, spellEffect, attackTable)
-				} else {
-					normalOutcome(sim, spell, spellEffect, attackTable)
-				}
-			},
+			BaseDamage:     core.BaseDamageConfigMagic(713, 799, 0.7143),
+			OutcomeApplier: priest.OutcomeFuncMagicHitAndCrit(priest.DefaultSpellCritMultiplier()),
 		}),
 	})
 }

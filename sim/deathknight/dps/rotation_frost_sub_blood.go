@@ -95,6 +95,8 @@ func (dk *DpsDeathknight) RotationActionCallback_LastSecondsCast(sim *core.Simul
 		} else if dk.Obliterate.CanCast(sim) {
 			casted = dk.Obliterate.Cast(sim, target)
 		} else if dk.HowlingBlast.CanCast(sim) {
+			casted = dk.HowlingBlast.Cast(sim, target)
+		} else if dk.HornOfWinter.CanCast(sim) {
 			casted = dk.HornOfWinter.Cast(sim, target)
 		}
 	}
@@ -358,6 +360,7 @@ func (dk *DpsDeathknight) setupFrostSubBloodERWOpener() {
 		NewAction(dk.RotationActionCallback_FS).
 		NewAction(dk.RotationActionCallback_RD).
 		NewAction(dk.RotationActionCallback_FS).
+		NewAction(dk.RotationActionCallback_FS).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti).
@@ -508,7 +511,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Main_FS_Star(sim 
 		if !casted {
 			casted = dk.HornOfWinter.Cast(sim, target)
 		}
-	} else {
+	} else if dk.HornOfWinter.CanCast(sim) {
 		casted = dk.HornOfWinter.Cast(sim, target)
 	}
 
@@ -526,7 +529,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Opener_FS_Star(si
 		s.ConditionalAdvance(casted)
 	} else if dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 2.0*(fsCost-dk.fr.oblitRPRegen) {
 		casted = dk.FrostStrike.Cast(sim, target)
-		if !casted {
+		if !casted && dk.HornOfWinter.CanCast(sim) {
 			dk.HornOfWinter.Cast(sim, target)
 		}
 		s.Advance()

@@ -98,7 +98,7 @@ func (cat *FeralDruid) GetDruid() *druid.Druid {
 
 func (cat *FeralDruid) Initialize() {
 	cat.Druid.Initialize()
-	cat.RegisterCatSpells()
+	cat.RegisterFeralSpells(15)
 	cat.DelayDPSCooldownsForArmorDebuffs()
 }
 

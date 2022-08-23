@@ -34,9 +34,34 @@ func (dk *Deathknight) RotationActionCallback_PS(sim *core.Simulation, target *c
 }
 
 func (dk *Deathknight) RotationActionCallback_HW(sim *core.Simulation, target *core.Unit, s *Sequence) time.Duration {
-	dk.HornOfWinter.Cast(sim, target)
+	if dk.HornOfWinter.CanCast(sim) {
+		dk.HornOfWinter.Cast(sim, target)
+	}
 
 	s.Advance()
+	return -1
+}
+
+func (dk *Deathknight) RotationActionCallback_DRW(sim *core.Simulation, target *core.Unit, s *Sequence) time.Duration {
+	casted := dk.DancingRuneWeapon.Cast(sim, target)
+
+	s.ConditionalAdvance(casted)
+	return -1
+}
+
+func (dk *Deathknight) RotationActionCallback_DS(sim *core.Simulation, target *core.Unit, s *Sequence) time.Duration {
+	casted := dk.DeathStrike.Cast(sim, target)
+	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
+
+	s.ConditionalAdvance(casted && advance)
+	return -1
+}
+
+func (dk *Deathknight) RotationActionCallback_HS(sim *core.Simulation, target *core.Unit, s *Sequence) time.Duration {
+	casted := dk.HeartStrike.Cast(sim, target)
+	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
+
+	s.ConditionalAdvance(casted && advance)
 	return -1
 }
 
@@ -183,6 +208,12 @@ func (dk *Deathknight) RotationActionCallback_Reset(sim *core.Simulation, target
 }
 
 func (o *Sequence) DoAction(sim *core.Simulation, target *core.Unit, dk *Deathknight) time.Duration {
+	if dk.Inputs.UseAMS || !dk.Inputs.IsDps {
+		if dk.AntiMagicShell.CanCast(sim) {
+			dk.AntiMagicShell.Cast(sim, target)
+		}
+	}
+
 	action := o.actions[o.idx]
 	return action(sim, target, o)
 }

@@ -78,41 +78,18 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 	}
 
 	if debuffs.ExposeArmor {
-		exposeArmorAura := ExposeArmorAura(target, false) // TODO: check glyph
-		ScheduledAura(exposeArmorAura, false, PeriodicActionOptions{
-			Period:   time.Second * 10,
-			NumTicks: 1,
-			OnAction: func(sim *Simulation) {
-				exposeArmorAura.Activate(sim)
-			},
-		})
+		exposeArmorAura := ExposeArmorAura(target, false)
+		ScheduledAura(exposeArmorAura, false, ExposeArmorPeriodicActonOptions(exposeArmorAura))
 	}
 
 	if debuffs.SunderArmor {
 		sunderArmorAura := SunderArmorAura(target, 1)
-		ScheduledAura(sunderArmorAura, true, PeriodicActionOptions{
-			Period:   time.Millisecond * 1500,
-			NumTicks: 4,
-			Priority: ActionPriorityDOT, // High prio so it comes before actual warrior sunders.
-			OnAction: func(sim *Simulation) {
-				if sunderArmorAura.IsActive() {
-					sunderArmorAura.AddStack(sim)
-				}
-			},
-		})
+		ScheduledAura(sunderArmorAura, true, SunderArmorPeriodicActionOptions(sunderArmorAura))
 	}
 
 	if debuffs.AcidSpit {
 		acidSpitAura := AcidSpitAura(target, 1)
-		ScheduledAura(acidSpitAura, true, PeriodicActionOptions{
-			Period:   time.Second * 10,
-			NumTicks: 1,
-			OnAction: func(sim *Simulation) {
-				if acidSpitAura.IsActive() {
-					acidSpitAura.AddStack(sim)
-				}
-			},
-		})
+		ScheduledAura(acidSpitAura, true, AcidSpitPeriodicActionOptions(acidSpitAura))
 	}
 
 	if debuffs.CurseOfWeakness != proto.TristateEffect_TristateEffectMissing {
@@ -187,6 +164,43 @@ func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
 	}
 }
 
+func AcidSpitPeriodicActionOptions(aura *Aura) PeriodicActionOptions {
+	return PeriodicActionOptions{
+		Period:   time.Second * 10,
+		NumTicks: 1,
+		OnAction: func(sim *Simulation) {
+			if aura.IsActive() {
+				aura.AddStack(sim)
+			}
+		},
+	}
+}
+
+func ExposeArmorPeriodicActonOptions(aura *Aura) PeriodicActionOptions {
+	return PeriodicActionOptions{
+		Period:   time.Second * 10,
+		NumTicks: 1,
+		OnAction: func(sim *Simulation) {
+			if aura.IsActive() {
+				aura.AddStack(sim)
+			}
+		},
+	}
+}
+
+func SunderArmorPeriodicActionOptions(aura *Aura) PeriodicActionOptions {
+	return PeriodicActionOptions{
+		Period:   time.Millisecond * 1500,
+		NumTicks: 4,
+		Priority: ActionPriorityDOT, // High prio so it comes before actual warrior sunders.
+		OnAction: func(sim *Simulation) {
+			if aura.IsActive() {
+				aura.AddStack(sim)
+			}
+		},
+	}
+}
+
 func ScheduledAura(aura *Aura, preActivate bool, options PeriodicActionOptions) *Aura {
 	aura.Duration = NeverExpires
 	aura.OnReset = func(aura *Aura, sim *Simulation) {
@@ -252,7 +266,7 @@ func JudgementOfWisdomAura(target *Unit) *Aura {
 var JudgementOfLightAuraLabel = "Judgement of Light"
 
 func JudgementOfLightAura(target *Unit) *Aura {
-	actionID := ActionID{SpellID: 27163}
+	actionID := ActionID{SpellID: 20271}
 
 	return target.GetOrRegisterAura(Aura{
 		Label:    JudgementOfLightAuraLabel,
@@ -438,7 +452,7 @@ func MangleAura(target *Unit) *Aura {
 		Label:    "Mangle",
 		Tag:      BleedDamageAuraTag,
 		ActionID: ActionID{SpellID: 33876},
-		Duration: time.Second * 12,
+		Duration: time.Minute,
 		Priority: 1.3,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.PeriodicPhysicalDamageTakenMultiplier *= 1.3
@@ -586,6 +600,7 @@ func FaerieFireAura(target *Unit, imp bool) *Aura {
 
 var SunderArmorAuraLabel = "Sunder Armor"
 var MajorArmorReductionTag = "MajorArmorReductionAura"
+var SunderArmorActionID = ActionID{SpellID: 47467}
 
 func SunderArmorAura(target *Unit, startingStacks int32) *Aura {
 	armorReductionPerStack := 0.04
@@ -593,7 +608,7 @@ func SunderArmorAura(target *Unit, startingStacks int32) *Aura {
 	return target.GetOrRegisterAura(Aura{
 		Label:     SunderArmorAuraLabel,
 		Tag:       MajorArmorReductionTag,
-		ActionID:  ActionID{SpellID: 47467},
+		ActionID:  SunderArmorActionID,
 		Duration:  time.Second * 30,
 		MaxStacks: 5,
 		Priority:  armorReductionPerStack * 5,
@@ -610,6 +625,7 @@ func SunderArmorAura(target *Unit, startingStacks int32) *Aura {
 }
 
 var AcidSpitAuraLabel = "Acid Spit"
+var AcidSpitActionID = ActionID{SpellID: 55754}
 
 func AcidSpitAura(target *Unit, startingStacks int32) *Aura {
 	armorReductionPerStack := 0.1
@@ -617,7 +633,7 @@ func AcidSpitAura(target *Unit, startingStacks int32) *Aura {
 	return target.GetOrRegisterAura(Aura{
 		Label:     AcidSpitAuraLabel,
 		Tag:       MajorArmorReductionTag,
-		ActionID:  ActionID{SpellID: 55754},
+		ActionID:  AcidSpitActionID,
 		Duration:  time.Second * 10,
 		MaxStacks: 2,
 		Priority:  armorReductionPerStack * 2,
@@ -843,13 +859,13 @@ func ScreechAura(target *Unit) *Aura {
 const AtkSpeedReductionAuraTag = "AtkSpdReduction"
 
 func ThunderClapAura(target *Unit, points int32) *Aura {
-	speedMultiplier := []float64{0.9, 0.86, 0.83, 0.80}[points]
+	speedMultiplier := []float64{0.9, 0.86, 0.83, 0.8}[points]
 	inverseMult := 1 / speedMultiplier
 
 	return target.GetOrRegisterAura(Aura{
 		Label:    "ThunderClap-" + strconv.Itoa(int(points)),
 		Tag:      AtkSpeedReductionAuraTag,
-		ActionID: ActionID{SpellID: 25264},
+		ActionID: ActionID{SpellID: 47502},
 		Duration: time.Second * 30,
 		Priority: inverseMult,
 		OnGain: func(aura *Aura, sim *Simulation) {
@@ -918,6 +934,44 @@ func FrostFeverAura(target *Unit, impIcyTouch int32) *Aura {
 			aura.Unit.MultiplyAttackSpeed(sim, inverseMult)
 		},
 	})
+}
+
+const MarkOfBloodTag = "MarkOfBlood"
+
+func MarkOfBloodAura(target *Unit) *Aura {
+	actionId := ActionID{SpellID: 49005}
+
+	var healthMetrics *ResourceMetrics
+	aura := target.GetOrRegisterAura(Aura{
+		Label:     "MarkOfBlood",
+		Tag:       MarkOfBloodTag,
+		ActionID:  actionId,
+		Duration:  20 * time.Second,
+		MaxStacks: 20,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.SetStacks(sim, aura.MaxStacks)
+
+			target := aura.Unit.CurrentTarget
+
+			if healthMetrics == nil && target != nil {
+				healthMetrics = target.NewHealthMetrics(actionId)
+			}
+		},
+		OnSpellHitDealt: func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
+			target := aura.Unit.CurrentTarget
+
+			// TODO: Does vampiric blood make it so this health gain is increased?
+			if target != nil {
+				target.GainHealth(sim, target.MaxHealth()*0.04, healthMetrics)
+				aura.RemoveStack(sim)
+
+				if aura.GetStacks() == 0 {
+					aura.Deactivate(sim)
+				}
+			}
+		},
+	})
+	return aura
 }
 
 const RuneOfRazoriceVulnerabilityTag = "RuneOfRazoriceVulnerability"

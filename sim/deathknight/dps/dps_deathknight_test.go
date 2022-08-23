@@ -48,7 +48,7 @@ func TestFrost(t *testing.T) {
 		Race:       proto.Race_RaceOrc,
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
-		GearSet: core.GearSetCombo{Label: "Frost P1", GearSet: UnholyDwP1Gear},
+		GearSet: core.GearSetCombo{Label: "Frost P1", GearSet: FrostP1Gear},
 
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsFrost},
 

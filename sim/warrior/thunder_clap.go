@@ -12,40 +12,34 @@ func (warrior *Warrior) registerThunderClapSpell() {
 	impTCDamageMult := 1.0
 	if warrior.Talents.ImprovedThunderClap == 1 {
 		cost -= 1
-		impTCDamageMult = 1.4
+		impTCDamageMult = 1.1
 	} else if warrior.Talents.ImprovedThunderClap == 2 {
 		cost -= 2
-		impTCDamageMult = 1.7
+		impTCDamageMult = 1.2
 	} else if warrior.Talents.ImprovedThunderClap == 3 {
 		cost -= 4
-		impTCDamageMult = 2
+		impTCDamageMult = 1.3
 	}
+
+	warrior.ThunderClapAura = core.ThunderClapAura(warrior.CurrentTarget, warrior.Talents.ImprovedThunderClap)
 
 	baseEffect := core.SpellEffect{
 		ProcMask:         core.ProcMaskSpellDamage,
 		DamageMultiplier: impTCDamageMult,
 		ThreatMultiplier: 1.75,
 		BonusCritRating:  float64(warrior.Talents.Incite) * 5 * core.CritRatingPerCritChance,
-		BaseDamage:       core.BaseDamageConfigFlat(123),
-		OutcomeApplier:   warrior.OutcomeFuncMagicHitAndCrit(warrior.spellCritMultiplier(true)),
-	}
-
-	numHits := core.MinInt32(4, warrior.Env.GetNumTargets())
-	effects := make([]core.SpellEffect, 0, numHits)
-	for i := int32(0); i < numHits; i++ {
-		effects = append(effects, baseEffect)
-		effects[i].Target = warrior.Env.GetTargetUnit(i)
-
-		tcAura := core.ThunderClapAura(effects[i].Target, warrior.Talents.ImprovedThunderClap)
-		if i == 0 {
-			warrior.ThunderClapAura = tcAura
-		}
-
-		effects[i].OnSpellHitDealt = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		BaseDamage: core.BaseDamageConfig{
+			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+				return hitEffect.MeleeAttackPower(spell.Unit)*0.12 + 300
+			},
+			TargetSpellCoefficient: 1,
+		},
+		OutcomeApplier: warrior.OutcomeFuncRangedHitAndCrit(warrior.critMultiplier(true)),
+		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Landed() {
-				tcAura.Activate(sim)
+				core.ThunderClapAura(spellEffect.Target, warrior.Talents.ImprovedThunderClap).Activate(sim)
 			}
-		}
+		},
 	}
 
 	warrior.ThunderClap = warrior.RegisterSpell(core.SpellConfig{
@@ -64,11 +58,11 @@ func (warrior *Warrior) registerThunderClapSpell() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    warrior.NewTimer(),
-				Duration: time.Second * 4,
+				Duration: time.Second * 6,
 			},
 		},
 
-		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
+		ApplyEffects: core.ApplyEffectFuncAOEDamageCapped(warrior.Env, baseEffect),
 	})
 }
 

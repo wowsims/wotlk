@@ -145,6 +145,7 @@ func (character *Character) applyHealingModel(healingModel proto.HealingModel) {
 	character.RegisterResetEffect(func(sim *Simulation) {
 		// Hack since we don't have OnHealingReceived aura handlers yet.
 		ardentDefenderAura := character.GetAura("Ardent Defender")
+		willOfTheNecropolisAura := character.GetAura("Will of The Necropolis")
 
 		StartPeriodicAction(sim, PeriodicActionOptions{
 			Period: cadence,
@@ -154,29 +155,31 @@ func (character *Character) applyHealingModel(healingModel proto.HealingModel) {
 				if ardentDefenderAura != nil && character.CurrentHealthPercent() >= 0.35 {
 					ardentDefenderAura.Deactivate(sim)
 				}
+
+				if willOfTheNecropolisAura != nil && character.CurrentHealthPercent() > 0.35 {
+					willOfTheNecropolisAura.Deactivate(sim)
+				}
 			},
 		})
 	})
 }
 
-// func (character *Character) GetPresimOptions(playerConfig proto.Player) *PresimOptions {
-// 	healingModel := playerConfig.HealingModel
-// 	if healingModel == nil || healingModel.Hps != 0 {
-// 		// If Hps is not 0, then we don't need to run the presim.
-// 		return nil
-// 	}
-
-// 	return &PresimOptions{
-// 		SetPresimPlayerOptions: func(player *proto.Player) {
-// 			player.HealingModel = nil
-// 		},
-
-// 		OnPresimResult: func(presimResult proto.UnitMetrics, iterations int32, duration time.Duration) bool {
-// 			character.applyHealingModel(proto.HealingModel{
-// 				Hps:            presimResult.Dtps.Avg * 1.25,
-// 				CadenceSeconds: healingModel.CadenceSeconds,
-// 			})
-// 			return true
-// 		},
-// 	}
-// }
+func (character *Character) GetPresimOptions(playerConfig proto.Player) *PresimOptions {
+	healingModel := playerConfig.HealingModel
+	if healingModel == nil || healingModel.Hps != 0 {
+		// If Hps is not 0, then we don't need to run the presim.
+		return nil
+	}
+	return &PresimOptions{
+		SetPresimPlayerOptions: func(player *proto.Player) {
+			player.HealingModel = nil
+		},
+		OnPresimResult: func(presimResult proto.UnitMetrics, iterations int32, duration time.Duration) bool {
+			character.applyHealingModel(proto.HealingModel{
+				Hps:            presimResult.Dtps.Avg * 1.25,
+				CadenceSeconds: healingModel.CadenceSeconds,
+			})
+			return true
+		},
+	}
+}

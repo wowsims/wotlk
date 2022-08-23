@@ -9,10 +9,11 @@ import (
 )
 
 func (druid *Druid) registerFerociousBiteSpell() {
-	actionID := core.ActionID{SpellID: 24248}
+	actionID := core.ActionID{SpellID: 48577}
 	baseCost := 35.0
+	refundAmount := baseCost * (0.4 * float64(druid.Talents.PrimalPrecision))
 
-	dmgPerComboPoint := 169.0
+	dmgPerComboPoint := 290.0
 	if druid.Equip[items.ItemSlotRanged].ID == 25667 { // Idol of the Beast
 		dmgPerComboPoint += 14
 	}
@@ -34,9 +35,15 @@ func (druid *Druid) registerFerociousBiteSpell() {
 			},
 			IgnoreHaste: true,
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				if druid.RipDot.IsActive() || druid.RakeDot.IsActive() || druid.LacerateDot.IsActive() {
+					spell.BonusCritRating = 5.0 * float64(druid.Talents.RendAndTear) * core.CritRatingPerCritChance
+				} else {
+					spell.BonusCritRating = 0
+				}
+
 				druid.ApplyClearcasting(sim, spell, cast)
-				excessEnergy = spell.Unit.CurrentEnergy() - cast.Cost
-				cast.Cost = spell.Unit.CurrentEnergy()
+				excessEnergy = core.MinFloat(spell.Unit.CurrentEnergy()-cast.Cost, 30)
+				cast.Cost = baseCost + excessEnergy
 			},
 		},
 
@@ -51,9 +58,10 @@ func (druid *Druid) registerFerociousBiteSpell() {
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					comboPoints := float64(druid.ComboPoints())
 
-					base := 57.0 + dmgPerComboPoint*comboPoints + 4.1*excessEnergy
-					roll := sim.RandomFloat("Ferocious Bite") * 66.0
-					return base + roll + hitEffect.MeleeAttackPower(spell.Unit)*0.05*comboPoints
+					bonusDmg := excessEnergy * (9.4 + hitEffect.MeleeAttackPower(spell.Unit)/410)
+					base := 120.0 + dmgPerComboPoint*comboPoints + bonusDmg
+					roll := sim.RandomFloat("Ferocious Bite") * 140.0
+					return base + roll + hitEffect.MeleeAttackPower(spell.Unit)*0.07*comboPoints
 				},
 				TargetSpellCoefficient: 1,
 			},
@@ -62,6 +70,8 @@ func (druid *Druid) registerFerociousBiteSpell() {
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					druid.SpendComboPoints(sim, spell.ComboPointMetrics())
+				} else if refundAmount > 0 {
+					druid.AddEnergy(sim, refundAmount, druid.PrimalPrecisionRecoveryMetrics)
 				}
 			},
 		}),

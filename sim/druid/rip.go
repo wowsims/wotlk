@@ -6,12 +6,16 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/items"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (druid *Druid) registerRipSpell() {
-	actionID := core.ActionID{SpellID: 27008}
+	actionID := core.ActionID{SpellID: 49800}
 	baseCost := 30.0
+	refundAmount := baseCost * (0.4 * float64(druid.Talents.PrimalPrecision))
+
+	glyphBonus := core.TernaryInt(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfRip), 2, 0)
 
 	druid.Rip = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -39,6 +43,8 @@ func (druid *Druid) registerRipSpell() {
 				if spellEffect.Landed() {
 					druid.RipDot.Apply(sim)
 					druid.SpendComboPoints(sim, spell.ComboPointMetrics())
+				} else if refundAmount > 0 {
+					druid.AddEnergy(sim, refundAmount, druid.PrimalPrecisionRecoveryMetrics)
 				}
 			},
 		}),
@@ -51,7 +57,7 @@ func (druid *Druid) registerRipSpell() {
 			Label:    "Rip-" + strconv.Itoa(int(druid.Index)),
 			ActionID: actionID,
 		}),
-		NumberOfTicks: 6,
+		NumberOfTicks: 6 + glyphBonus,
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
@@ -59,7 +65,7 @@ func (druid *Druid) registerRipSpell() {
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
 			BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				comboPoints := druid.ComboPoints()
+				comboPoints := float64(druid.ComboPoints())
 				attackPower := hitEffect.MeleeAttackPower(spell.Unit)
 
 				bonusTickDamage := 0.0
@@ -67,18 +73,17 @@ func (druid *Druid) registerRipSpell() {
 					bonusTickDamage += 7 * float64(comboPoints)
 				}
 
-				if comboPoints < 3 {
-					panic("Only 3-5 CP Rips are supported at present.")
-				}
-				if comboPoints == 3 {
-					return (990+0.18*attackPower)/6 + bonusTickDamage
-				} else if comboPoints == 4 {
-					return (1272+0.24*attackPower)/6 + bonusTickDamage
-				} else { // 5
-					return (1554+0.24*attackPower)/6 + bonusTickDamage
-				}
+				return (36.0+93.0*comboPoints+0.01*comboPoints*attackPower)/6.0 + bonusTickDamage
 			}, 0),
-			OutcomeApplier: druid.OutcomeFuncTick(),
+			OutcomeApplier: druid.PrimalGoreOutcomeFuncTick(),
 		}),
 	})
+}
+
+func (druid *Druid) maxRipTicks() int {
+	// TODO: This should handle sets as well
+	base := 6
+	ripGlyphBonus := core.TernaryInt(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfRip), 2, 0)
+	shredGlyphBonus := core.TernaryInt(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfShred), 3, 0)
+	return base + ripGlyphBonus + shredGlyphBonus
 }
