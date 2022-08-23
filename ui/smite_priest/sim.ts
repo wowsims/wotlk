@@ -16,7 +16,7 @@ import { Player } from '../core/player.js';
 import { Sim } from '../core/sim.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
 
-import { SmitePriest, SmitePriest_Rotation as Rotation, SmitePriest_Options as Options, SmitePriest_Rotation, SmitePriest_Rotation_RotationType } from '../core/proto/priest.js';
+import { SmitePriest, SmitePriest_Rotation as Rotation, SmitePriest_Options as Options, SmitePriest_Rotation } from '../core/proto/priest.js';
 
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
