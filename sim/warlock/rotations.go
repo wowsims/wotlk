@@ -87,36 +87,37 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			nextBigCD = cdReadyAt
 		}
 	}
-	rotationalLeeway := []time.Duration{
+	allCDs := []time.Duration{
 		0,
 		0,
 		0,
 	}
-	hauntSBTravelTime := time.Duration(float64(warlock.DistanceFromTarget)/20) * time.Second
-	hauntCastTime := warlock.ApplyCastSpeed(warlock.Haunt.DefaultCast.CastTime)
-	UACastTime := warlock.ApplyCastSpeed(warlock.UnstableAff.DefaultCast.CastTime)
+
 	//SBCastTime := warlock.ApplyCastSpeed(warlock.ShadowBolt.DefaultCast.CastTime)
 	nextCD := core.NeverExpires
 	if rotationType == proto.Warlock_Rotation_Affliction {
-		rotationalLeeway = []time.Duration{
+		hauntSBTravelTime := time.Duration(float64(warlock.DistanceFromTarget)/20) * time.Second
+		hauntCastTime := warlock.ApplyCastSpeed(warlock.Haunt.DefaultCast.CastTime)
+		UACastTime := warlock.ApplyCastSpeed(warlock.UnstableAff.DefaultCast.CastTime)
+		allCDs = []time.Duration{
 			core.MaxDuration(0, warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim)-(hauntCastTime+hauntSBTravelTime)),
 			core.MaxDuration(0, warlock.UnstableAffDot.RemainingDuration(sim)-UACastTime),
 			core.MaxDuration(0, warlock.CurseOfAgonyDot.RemainingDuration(sim)),
 		}
-		if sim.Log != nil {
-			// warlock.Log(sim, "Haunt[%d]", rotationalLeeway[0].Seconds())
-			// warlock.Log(sim, "UA[%d]", rotationalLeeway[1].Seconds())
-			// warlock.Log(sim, "Agony[%d]", rotationalLeeway[2].Seconds())
-			// warlock.Log(sim, "nextBigCD1[%d]", nextBigCD.Seconds())
-			// warlock.Log(sim, "SE stacks[%d]", warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).GetStacks())
-			// warlock.Log(sim, "SE time[%d]", warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim).Seconds())
-			// warlock.Log(sim, "Haunt RemainingDuration [%d]", warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim).Seconds())
-			// warlock.Log(sim, "cast time [%d]", hauntcasttime.Seconds())
-			// warlock.Log(sim, "cast time float64[%d]", float64(hauntcasttime))
-			// warlock.Log(sim, "travel time[%d]", float64(warlock.DistanceFromTarget)/20)
-			// warlock.Log(sim, "filler time[%d]", (warlock.ApplyCastSpeed(time.Duration(warlock.ShadowBolt.DefaultCast.CastTime)).Seconds() + warlock.DistanceFromTarget/20))
-		}
-		for _, v := range rotationalLeeway {
+		// if sim.Log != nil {
+		// warlock.Log(sim, "Haunt[%d]", allCDs[0].Seconds())
+		// warlock.Log(sim, "UA[%d]", allCDs[1].Seconds())
+		// warlock.Log(sim, "Agony[%d]", allCDs[2].Seconds())
+		// warlock.Log(sim, "nextBigCD1[%d]", nextBigCD.Seconds())
+		// warlock.Log(sim, "SE stacks[%d]", warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).GetStacks())
+		// warlock.Log(sim, "SE time[%d]", warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim).Seconds())
+		// warlock.Log(sim, "Haunt RemainingDuration [%d]", warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim).Seconds())
+		// warlock.Log(sim, "cast time [%d]", hauntcasttime.Seconds())
+		// warlock.Log(sim, "cast time float64[%d]", float64(hauntcasttime))
+		// warlock.Log(sim, "travel time[%d]", float64(warlock.DistanceFromTarget)/20)
+		// warlock.Log(sim, "filler time[%d]", (warlock.ApplyCastSpeed(time.Duration(warlock.ShadowBolt.DefaultCast.CastTime)).Seconds() + warlock.DistanceFromTarget/20))
+		//}
+		for _, v := range allCDs {
 			if v < nextCD {
 				nextCD = v
 			}
@@ -187,7 +188,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		}
 	case proto.Warlock_Rotation_Agony:
 		if rotationType == proto.Warlock_Rotation_Affliction {
-			if sim.GetRemainingDuration() > time.Second*12 && rotationalLeeway[2] == 0 && (!warlock.Haunt.CD.IsReady(sim) || rotationalLeeway[0] > 0) && rotationalLeeway[1] > 0 && warlock.CorruptionDot.IsActive() {
+			if sim.GetRemainingDuration() > time.Second*12 && allCDs[2] == 0 && (!warlock.Haunt.CD.IsReady(sim) || allCDs[0] > 0) && allCDs[1] > 0 && warlock.CorruptionDot.IsActive() {
 				spell = warlock.CurseOfAgony
 			}
 		} else {
@@ -241,6 +242,8 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	CurrentCritMult := 1 + CurrentCritBonus/core.CritRatingPerCritChance/100*core.TernaryFloat64(warlock.Talents.Pandemic, 1, 0)
 	CurrentCorruptionRolloverMult := CurrentDmgMult * CurrentShadowMult * CurrentCritMult
 
+	hauntSBTravelTime := time.Duration(float64(warlock.DistanceFromTarget)/20) * time.Second
+	UACastTime := warlock.ApplyCastSpeed(warlock.UnstableAff.DefaultCast.CastTime)
 	if sim.Log != nil {
 		if warlock.Talents.EverlastingAffliction > 0 {
 			warlock.Log(sim, "[Info] Initial Corruption Rollover Multiplier [%.2f]", warlock.CorruptionRolloverMult)
@@ -265,13 +268,13 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			} else if warlock.CorruptionDot.IsActive() && warlock.CorruptionDot.RemainingDuration(sim) < core.GCDDefault {
 				// Emergency Corruption refresh just in case
 				spell = warlock.DrainSoul
-			} else if warlock.Talents.Haunt && warlock.Haunt.CD.IsReady(sim) && rotationalLeeway[0] == 0 && sim.GetRemainingDuration() > warlock.HauntDebuffAura(warlock.CurrentTarget).Duration/2. {
+			} else if warlock.Talents.Haunt && warlock.Haunt.CD.IsReady(sim) && allCDs[0] == 0 && sim.GetRemainingDuration() > warlock.HauntDebuffAura(warlock.CurrentTarget).Duration/2. {
 				// Keep Haunt up
 				spell = warlock.Haunt
-			} else if warlock.Talents.UnstableAffliction && (!warlock.Haunt.CD.IsReady(sim) || rotationalLeeway[0]-UACastTime > 0) && rotationalLeeway[1] == 0 && sim.GetRemainingDuration() > warlock.UnstableAffDot.Duration/2. {
+			} else if warlock.Talents.UnstableAffliction && (!warlock.Haunt.CD.IsReady(sim) || allCDs[0]-UACastTime > 0) && allCDs[1] == 0 && sim.GetRemainingDuration() > warlock.UnstableAffDot.Duration/2. {
 				// Keep UA up, but not at the expense of dropping Haunt.
 				spell = warlock.UnstableAff
-			} else if sim.GetRemainingDuration() > time.Second*12 && rotationalLeeway[2] == 0 && (!warlock.Haunt.CD.IsReady(sim) || rotationalLeeway[0]-UACastTime > 0) && rotationalLeeway[1] > 0 && warlock.CorruptionDot.IsActive() {
+			} else if sim.GetRemainingDuration() > time.Second*12 && allCDs[2] == 0 && (!warlock.Haunt.CD.IsReady(sim) || allCDs[0]-UACastTime > 0) && allCDs[1] > 0 && warlock.CorruptionDot.IsActive() {
 				// Keep Agony up, but not at the expense of dropping Haunt
 				spell = warlock.CurseOfAgony
 			} else if KeepUpSEStacks && sim.GetRemainingDuration() > time.Second*10 ||
@@ -281,7 +284,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			} else if sim.IsExecutePhase25() && !KeepUpSEStacksExecute {
 				// Drain Soul execute phase
 				if warlock.Talents.Haunt && warlock.Haunt.CD.IsReady(sim) &&
-					((warlock.DrainSoulDot.IsActive() && (rotationalLeeway[0]-warlock.DrainSoulDot.TickLength) < 0) || (!warlock.DrainSoulDot.IsActive() && (rotationalLeeway[0]-warlock.DrainSoul.CurCast.ChannelTime) < 0)) {
+					((warlock.DrainSoulDot.IsActive() && (allCDs[0]-warlock.DrainSoulDot.TickLength) < 0) || (!warlock.DrainSoulDot.IsActive() && (allCDs[0]-warlock.DrainSoul.CurCast.ChannelTime) < 0)) {
 					//purpose of this part is to make sure Haunt never falls off the target once it's on.
 					//Essentially, we don't want to commit to a spell that will make Haunt fall off our target.
 					spell = warlock.Haunt
@@ -398,7 +401,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		} else {
 			if warlock.Talents.Haunt &&
 				warlock.Haunt.CD.IsReady(sim) &&
-				rotationalLeeway[0]-fillerCastTime < 0 {
+				allCDs[0]-fillerCastTime < 0 {
 				//purpose of this part is to make sure Haunt never falls off the target once it's on.
 				//Essentially, we don't want to commit to a spell that will make Haunt fall off our target.
 				spell = warlock.Haunt
@@ -430,7 +433,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			} else {
 				if warlock.Talents.Haunt &&
 					warlock.Haunt.CD.IsReady(sim) &&
-					rotationalLeeway[0]-fillerCastTime < 0 {
+					allCDs[0]-fillerCastTime < 0 {
 					//purpose of this part is to make sure Haunt never falls off the target once it's on.
 					//Essentially, we don't want to commit to a spell that will make Haunt fall off our target.
 					spell = warlock.Haunt
