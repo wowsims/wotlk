@@ -71,6 +71,7 @@ var PlayerOptionsBasic = &proto.Player_SmitePriest{
 	SmitePriest: &proto.SmitePriest{
 		Talents: StandardTalents,
 		Options: &proto.SmitePriest_Options{
+			UseInnerFire:   true,
 			UseShadowfiend: true,
 		},
 		Rotation: &proto.SmitePriest_Rotation{

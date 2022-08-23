@@ -52,6 +52,7 @@ export const DefaultRotation = Rotation.create({
 });
 
 export const DefaultOptions = Options.create({
+	useInnerFire: true,
 	useShadowfiend: true,
 
 	powerInfusionTarget: RaidTarget.create({

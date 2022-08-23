@@ -27,6 +27,7 @@ func NewSmitePriest(character core.Character, options proto.Player) *SmitePriest
 	smiteOptions := options.GetSmitePriest()
 
 	selfBuffs := priest.SelfBuffs{
+		UseInnerFire:   smiteOptions.Options.UseInnerFire,
 		UseShadowfiend: smiteOptions.Options.UseShadowfiend,
 	}
 

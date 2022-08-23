@@ -98,6 +98,8 @@ export class SmitePriestSimUI extends IndividualSimUI<Spec.SpecSmitePriest> {
 			// IconInputs to include in the 'Player' section on the settings tab.
 			playerIconInputs: [
 				SmitePriestInputs.SelfPowerInfusion,
+				SmitePriestInputs.InnerFire,
+				SmitePriestInputs.Shadowfiend,
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: SmitePriestInputs.SmitePriestRotationConfig,

@@ -185,7 +185,7 @@ func New(char core.Character, selfBuffs SelfBuffs, talents proto.PriestTalents) 
 	if selfBuffs.UseInnerFire {
 		multi := 1 + float64(priest.Talents.ImprovedInnerFire)*0.15
 		sp := 120.0 * multi
-		armor := 2440 * multi
+		armor := 2440 * multi * core.TernaryFloat64(priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfInnerFire), 1.5, 1)
 		priest.AddStat(stats.SpellPower, sp)
 		priest.AddStat(stats.Armor, armor)
 	}
