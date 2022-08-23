@@ -23,7 +23,8 @@ type HunterPet struct {
 	specialAbility PetAbility
 	focusDump      PetAbility
 
-	uptimePercent float64
+	uptimePercent    float64
+	hasOwnerCooldown bool
 }
 
 func (hunter *Hunter) NewHunterPet() *HunterPet {
@@ -46,6 +47,8 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 		),
 		config:      petConfig,
 		hunterOwner: hunter,
+
+		hasOwnerCooldown: petConfig.SpecialAbility == FuriousHowl || petConfig.SpecialAbility == SavageRend,
 	}
 
 	hp.EnableFocusBar(1.0+0.5*float64(hunter.Talents.BestialDiscipline), func(sim *core.Simulation) {
@@ -119,6 +122,13 @@ func (hp *HunterPet) OnGCDReady(sim *core.Simulation) {
 	if percentRemaining < 1.0-hp.uptimePercent { // once fight is % completed, disable pet.
 		hp.Disable(sim)
 		hp.focusBar.Cancel(sim)
+		return
+	}
+
+	if hp.hasOwnerCooldown && hp.CurrentFocus() < 50 {
+		// When a major ability (Furious Howl or Savage Rend) is ready, pool enough
+		// energy to use on-demand.
+		hp.DoNothing()
 		return
 	}
 
