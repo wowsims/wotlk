@@ -19,8 +19,8 @@ type Warlock struct {
 	Incinerate           *core.Spell
 	Immolate             *core.Spell
 	ImmolateDot          *core.Dot
-	UnstableAff          *core.Spell
-	UnstableAffDot       *core.Dot
+	UnstableAffliction    *core.Spell
+	UnstableAfflictionDot *core.Dot
 	Corruption           *core.Spell
 	CorruptionDot        *core.Dot
 	Haunt                *core.Spell
@@ -102,19 +102,12 @@ func (warlock *Warlock) Initialize() {
 	warlock.registerLifeTapSpell()
 	warlock.registerSeedSpell()
 	warlock.registerSoulFireSpell()
-	warlock.registerUnstableAffSpell()
+	warlock.registerUnstableAfflictionSpell()
 	warlock.registerDrainSoulSpell()
+	warlock.registerConflagrateSpell()
+	warlock.registerHauntSpell()
+	warlock.registerChaosBoltSpell()
 
-	if warlock.Talents.Conflagrate {
-		warlock.registerConflagrateSpell()
-	}
-
-	if warlock.Talents.Haunt {
-		warlock.registerHauntSpell()
-	}
-	if warlock.Talents.ChaosBolt {
-		warlock.registerChaosBoltSpell()
-	}
 	if warlock.Talents.DemonicEmpowerment {
 		warlock.registerDemonicEmpowermentSpell()
 	}

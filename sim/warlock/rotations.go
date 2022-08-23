@@ -12,16 +12,23 @@ import (
 func (warlock *Warlock) defineRotation() {
 	rotationType := warlock.Rotation.Type
 
-	warlock.SpellsRotation = make([]SpellRotation, 7)
+	// Spells (does not include fillers)
 
-	// Spells
-	warlock.SpellsRotation[0].Spell = warlock.Corruption
-	warlock.SpellsRotation[1].Spell = warlock.Immolate
-	warlock.SpellsRotation[2].Spell = warlock.UnstableAff
-	warlock.SpellsRotation[3].Spell = warlock.Haunt
-	warlock.SpellsRotation[4].Spell = warlock.CurseOfAgony
-	warlock.SpellsRotation[5].Spell = warlock.CurseOfDoom
-	warlock.SpellsRotation[6].Spell = warlock.Conflagrate
+ 	spellBook := [...]*core.Spell{
+ 		warlock.Corruption,
+ 		warlock.Immolate,
+ 		warlock.UnstableAffliction,
+ 		warlock.Haunt,
+ 		warlock.CurseOfAgony,
+ 		warlock.CurseOfDoom,
+ 		warlock.Conflagrate,
+ 		warlock.ChaosBolt,
+ 	}
+
+ 	warlock.SpellsRotation = make([]SpellRotation, len(spellBook))
+	for i, spell := range spellBook{
+		warlock.SpellsRotation[i].Spell = spell
+	}
 
 	// Next Cast readyness in time unit
 	warlock.SpellsRotation[0].CastIn = func(sim *core.Simulation) time.Duration {
@@ -35,6 +42,7 @@ func (warlock *Warlock) defineRotation() {
 		if warlock.Talents.EverlastingAffliction > 0 && ((CurrentCorruptionRolloverMult > warlock.CorruptionRolloverMult) ||
 			// If the original corruption multipliers are lower than this current time, then reapply corruption (also need to make sure this is some % into the fight)
 			(!warlock.CorruptionDot.IsActive() && (core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() || warlock.Talents.ImprovedShadowBolt == 0))) {
+			// Wait for SM to be applied to cast first Corruption
 			return 0
 		} else {
 			return core.MaxDuration(0,warlock.CorruptionDot.RemainingDuration(sim))
@@ -44,9 +52,15 @@ func (warlock *Warlock) defineRotation() {
 		return core.MaxDuration(0,warlock.ImmolateDot.RemainingDuration(sim)-warlock.ApplyCastSpeed(warlock.SpellsRotation[1].Spell.DefaultCast.CastTime))
 	}
 	warlock.SpellsRotation[2].CastIn = func(sim *core.Simulation) time.Duration {
-		return core.MaxDuration(0,warlock.UnstableAffDot.RemainingDuration(sim)-warlock.ApplyCastSpeed(warlock.SpellsRotation[2].Spell.DefaultCast.CastTime))
+		if !warlock.Talents.UnstableAffliction {
+			return core.NeverExpires
+		}
+		return core.MaxDuration(0,warlock.UnstableAfflictionDot.RemainingDuration(sim)-warlock.ApplyCastSpeed(warlock.SpellsRotation[2].Spell.DefaultCast.CastTime))
 	}
 	warlock.SpellsRotation[3].CastIn = func(sim *core.Simulation) time.Duration {
+		if !warlock.Talents.Haunt {
+			return core.NeverExpires
+		}
 		hauntTravelTime := time.Duration(warlock.DistanceFromTarget/20) * time.Second
 		hauntCastTime := warlock.ApplyCastSpeed(warlock.Haunt.DefaultCast.CastTime)
 		spellCastTime := warlock.ApplyCastSpeed(core.GCDDefault)
@@ -58,7 +72,7 @@ func (warlock *Warlock) defineRotation() {
 		if KeepUpSEStacks && sim.GetRemainingDuration() > time.Second*10 && warlock.SpellsRotation[3].Spell.IsReady(sim) {
 			return 0
 		} else {
-			return core.MaxDuration(0,warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim)-warlock.ApplyCastSpeed(warlock.SpellsRotation[3].Spell.DefaultCast.CastTime)-time.Duration(float64(warlock.DistanceFromTarget)/20) * time.Second)
+			return core.MaxDuration(0,warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim)-hauntCastTime-hauntTravelTime)
 		}
 	}
 	warlock.SpellsRotation[4].CastIn = func(sim *core.Simulation) time.Duration {
@@ -68,38 +82,39 @@ func (warlock *Warlock) defineRotation() {
 		return core.MaxDuration(0,warlock.CurseOfDoomDot.RemainingDuration(sim))
 	}
 	warlock.SpellsRotation[6].CastIn = func(sim *core.Simulation) time.Duration {
+		if !warlock.Talents.Conflagrate {
+			return core.NeverExpires
+		}
 		if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfConflagrate) {
-			return core.MaxDuration(0,warlock.SpellsRotation[6].Spell.CD.ReadyAt()-sim.CurrentTime)
+			return core.MaxDuration(0,warlock.SpellsRotation[6].Spell.TimeToReady(sim))
 		} else {
 			return core.MaxDuration(0,warlock.ImmolateDot.RemainingDuration(sim)-warlock.ImmolateDot.TickLength)
 		}
+	}
+	warlock.SpellsRotation[7].CastIn = func(sim *core.Simulation) time.Duration {
+		if !warlock.Talents.ChaosBolt {
+			return core.NeverExpires
+		}
+		return core.MaxDuration(0,warlock.ChaosBolt.TimeToReady(sim))
 	}
 
 	// Priority based rotations (0 means not in rotation, 1 is maximum priority)
 	if rotationType == proto.Warlock_Rotation_Affliction {
 		warlock.SpellsRotation[0].Priority = 1
-		warlock.SpellsRotation[1].Priority = 0
 		warlock.SpellsRotation[2].Priority = 2
 		warlock.SpellsRotation[3].Priority = 3
 		warlock.SpellsRotation[4].Priority = 4
-		warlock.SpellsRotation[5].Priority = 0
-		warlock.SpellsRotation[6].Priority = 0
 	} else if rotationType == proto.Warlock_Rotation_Demonology {
 		warlock.SpellsRotation[0].Priority = 2
 		warlock.SpellsRotation[1].Priority = 1
-		warlock.SpellsRotation[2].Priority = 0
-		warlock.SpellsRotation[3].Priority = 0
 		warlock.SpellsRotation[4].Priority = 4
 		warlock.SpellsRotation[5].Priority = 3
-		warlock.SpellsRotation[6].Priority = 0
 	} else if rotationType == proto.Warlock_Rotation_Destruction {
-		warlock.SpellsRotation[0].Priority = 0
 		warlock.SpellsRotation[1].Priority = 1
-		warlock.SpellsRotation[2].Priority = 0
-		warlock.SpellsRotation[3].Priority = 0
 		warlock.SpellsRotation[4].Priority = 4
 		warlock.SpellsRotation[5].Priority = 3
 		warlock.SpellsRotation[6].Priority = 2
+		warlock.SpellsRotation[7].Priority = 5
 	}
 }
 
@@ -199,10 +214,10 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	hauntTravelTime := time.Duration(float64(warlock.DistanceFromTarget)/20) * time.Second
 	if rotationType == proto.Warlock_Rotation_Affliction {
 		hauntCastTime := warlock.ApplyCastSpeed(warlock.Haunt.DefaultCast.CastTime)
-		UACastTime := warlock.ApplyCastSpeed(warlock.UnstableAff.DefaultCast.CastTime)
+		UACastTime := warlock.ApplyCastSpeed(warlock.UnstableAffliction.DefaultCast.CastTime)
 		allCDs = []time.Duration{
 			core.MaxDuration(0, warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim)-hauntCastTime-hauntTravelTime),
-			core.MaxDuration(0, warlock.UnstableAffDot.RemainingDuration(sim)-UACastTime),
+			core.MaxDuration(0, warlock.UnstableAfflictionDot.RemainingDuration(sim)-UACastTime),
 			core.MaxDuration(0, warlock.CurseOfAgonyDot.RemainingDuration(sim)),
 		}
 	} else if rotationType == proto.Warlock_Rotation_Demonology {
@@ -243,11 +258,11 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// ------------------------------------------
 	// Small CDs
 	// ------------------------------------------
-	if warlock.Talents.DemonicEmpowerment && warlock.DemonicEmpowerment.CD.IsReady(sim) && warlock.Options.Summon != proto.Warlock_Options_NoSummon {
+	if warlock.Talents.DemonicEmpowerment && warlock.DemonicEmpowerment.IsReady(sim) && warlock.Options.Summon != proto.Warlock_Options_NoSummon {
 		warlock.DemonicEmpowerment.Cast(sim, target)
 	}
 	if warlock.Talents.Metamorphosis && warlock.MetamorphosisAura.IsActive() &&
-		warlock.ImmolationAura.CD.IsReady(sim) {
+		warlock.ImmolationAura.IsReady(sim) {
 		warlock.ImmolationAura.Cast(sim, target)
 	}
 
@@ -384,9 +399,9 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			} else if warlock.Talents.Haunt && warlock.Haunt.CD.IsReady(sim) && allCDs[0] == 0 && sim.GetRemainingDuration() > warlock.HauntDebuffAura(warlock.CurrentTarget).Duration/2. {
 				// Keep Haunt up
 				spell = warlock.Haunt
-			} else if warlock.Talents.UnstableAffliction && allCDs[1] == 0 && sim.GetRemainingDuration() > warlock.UnstableAffDot.Duration/2. {
+			} else if warlock.Talents.UnstableAffliction && allCDs[1] == 0 && sim.GetRemainingDuration() > warlock.UnstableAfflictionDot.Duration/2. {
 				// Keep UA up
-				spell = warlock.UnstableAff
+				spell = warlock.UnstableAffliction
 			} else if sim.GetRemainingDuration() > warlock.CurseOfAgonyDot.Duration/2. &&
 			allCDs[2] == 0 && (!warlock.Haunt.CD.IsReady(sim) || allCDs[0] > 0) && allCDs[1] > 0 && warlock.CorruptionDot.IsActive() {
 				// Keep Agony up
@@ -488,10 +503,10 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// 		// Refresh Immolate when it is gonna fade but not if the fight is ending
 	// 		spell = warlock.Immolate
 	// 	} else if warlock.Talents.UnstableAffliction && secondaryDot == proto.Warlock_Rotation_UnstableAffliction &&
-	// 		(!warlock.UnstableAffDot.IsActive() || warlock.UnstableAffDot.RemainingDuration(sim) < warlock.UnstableAff.CurCast.CastTime) &&
-	// 		sim.GetRemainingDuration() > warlock.UnstableAffDot.Duration {
+	// 		(!warlock.UnstableAfflictionDot.IsActive() || warlock.UnstableAfflictionDot.RemainingDuration(sim) < warlock.UnstableAffliction.CurCast.CastTime) &&
+	// 		sim.GetRemainingDuration() > warlock.UnstableAfflictionDot.Duration {
 	// 		// Refresh Unstable when it is gonna fade but not if the fight is ending
-	// 		spell = warlock.UnstableAff
+	// 		spell = warlock.UnstableAffliction
 	// 	} else if warlock.Talents.Haunt && specSpell == proto.Warlock_Rotation_Haunt && warlock.Haunt.CD.IsReady(sim) && !warlock.HauntDebuffAura(warlock.CurrentTarget).IsActive() {
 	// 		// Refresh Haunt Debuff
 	// 		spell = warlock.Haunt

@@ -9,13 +9,13 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (warlock *Warlock) registerUnstableAffSpell() {
+func (warlock *Warlock) registerUnstableAfflictionSpell() {
 	baseCost := 0.15 * warlock.BaseMana
 	actionID := core.ActionID{SpellID: 47843}
 	spellSchool := core.SpellSchoolShadow
 	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true)
 
-	warlock.UnstableAff = warlock.RegisterSpell(core.SpellConfig{
+	warlock.UnstableAffliction = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  spellSchool,
 		ResourceType: stats.Mana,
@@ -30,7 +30,7 @@ func (warlock *Warlock) registerUnstableAffSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:        core.ProcMaskEmpty,
 			OutcomeApplier:  warlock.OutcomeFuncMagicHit(),
-			OnSpellHitDealt: applyDotOnLanded(&warlock.UnstableAffDot),
+			OnSpellHitDealt: applyDotOnLanded(&warlock.UnstableAfflictionDot),
 		}),
 	})
 
@@ -41,10 +41,10 @@ func (warlock *Warlock) registerUnstableAffSpell() {
 		applier = warlock.OutcomeFuncMagicCrit(warlock.SpellCritMultiplier(1, 1))
 	}
 
-	warlock.UnstableAffDot = core.NewDot(core.Dot{
-		Spell: warlock.UnstableAff,
+	warlock.UnstableAfflictionDot = core.NewDot(core.Dot{
+		Spell: warlock.UnstableAffliction,
 		Aura: target.RegisterAura(core.Aura{
-			Label:    "unstableaff-" + strconv.Itoa(int(warlock.Index)),
+			Label:    "UnstableAffliction-" + strconv.Itoa(int(warlock.Index)),
 			ActionID: core.ActionID{SpellID: 47843},
 		}),
 		NumberOfTicks: 5,
