@@ -44,13 +44,13 @@ func (spriest *SmitePriest) chooseSpell(sim *core.Simulation) *core.Spell {
 		return spriest.ShadowWordDeath
 	} else if spriest.rotation.UseMindBlast && spriest.MindBlast.IsReady(sim) {
 		return spriest.MindBlast
-	} else {
+	} else if spriest.Talents.MindFlay {
 		mfTickLength := spriest.MindFlayTickDuration()
 		hfTimeToReady := spriest.HolyFire.TimeToReady(sim)
 		numTicks := core.MinInt(3, int(hfTimeToReady/mfTickLength+1))
 		return spriest.MindFlay[numTicks]
-
-		//return spriest.Smite
+	} else {
+		return spriest.Smite
 	}
 }
 
