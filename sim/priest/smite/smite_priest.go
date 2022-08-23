@@ -59,6 +59,11 @@ func (spriest *SmitePriest) GetPriest() *priest.Priest {
 	return spriest.Priest
 }
 
+func (spriest *SmitePriest) Initialize() {
+	spriest.Priest.Initialize()
+	spriest.RegisterHymnOfHopeCD()
+}
+
 func (spriest *SmitePriest) Reset(sim *core.Simulation) {
 	spriest.Priest.Reset(sim)
 }
