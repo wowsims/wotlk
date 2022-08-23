@@ -404,14 +404,14 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 				spell = warlock.ShadowBolt
 			} else if sim.IsExecutePhase25() && !KeepUpSEStacksExecute {
 				// Drain Soul execute phase
-				if warlock.Talents.Haunt && warlock.Haunt.CD.IsReady(sim) &&
-					((warlock.DrainSoulDot.IsActive() && (allCDs[0]-warlock.DrainSoulDot.TickLength) < 0) || (!warlock.DrainSoulDot.IsActive() && (allCDs[0]-warlock.DrainSoul.CurCast.ChannelTime) < 0)) {
-					//purpose of this part is to make sure Haunt never falls off the target once it's on.
-					//Essentially, we don't want to commit to a spell that will make Haunt fall off our target.
-					spell = warlock.Haunt
-				} else {
-					spell = warlock.channelCheck(sim, warlock.DrainSoulDot, 5)
-				}
+				//				if warlock.Talents.Haunt && warlock.Haunt.CD.IsReady(sim) &&
+				//					((warlock.DrainSoulDot.IsActive() && (allCDs[0]-warlock.DrainSoulDot.TickLength) < 0) || (!warlock.DrainSoulDot.IsActive() && (allCDs[0]-warlock.DrainSoul.CurCast.ChannelTime) < 0)) {
+				//purpose of this part is to make sure Haunt never falls off the target once it's on.
+				//Essentially, we don't want to commit to a spell that will make Haunt fall off our target.
+				//					spell = warlock.Haunt
+				//				} else {
+				spell = warlock.channelCheck(sim, warlock.DrainSoulDot, 5)
+				//				}
 			}
 
 		} else if rotationType == proto.Warlock_Rotation_Demonology {
@@ -536,16 +536,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			return
 		} else if timeUntilOom < 5*time.Second && timeUntilExecute > time.Second {
 			// If you were gonna cast a filler but are low mana, get mana instead in order not to be OOM when an important spell is coming up.
-			if warlock.Talents.Haunt &&
-				warlock.Haunt.CD.IsReady(sim) &&
-				allCDs[0]-fillerCastTime < 0 {
-				//purpose of this part is to make sure Haunt never falls off the target once it's on.
-				//Essentially, we don't want to commit to a spell that will make Haunt fall off our target.
-				spell = warlock.Haunt
-			} else {
-				warlock.LifeTapOrDarkPact(sim)
-				return
-			}
+			warlock.LifeTapOrDarkPact(sim)
 			return
 		} else if !warlock.DoingRegen && nextBigCD-sim.CurrentTime < time.Second*6 && sim.GetRemainingDuration() > time.Second*30 {
 			// If big CD coming up and we don't have enough mana for it, lifetap
@@ -555,24 +546,26 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 				warlock.DoingRegen = true
 			}
 		}
-		if warlock.DoingRegen {
+
+		if warlock.DoingRegen && !(warlock.Talents.Haunt &&
+			allCDs[0]-fillerCastTime < 0 &&
+			warlock.Haunt.CD.IsReady(sim)) {
 			warlock.LifeTapOrDarkPact(sim)
 			if warlock.CurrentManaPercent() > 0.2 {
 				warlock.DoingRegen = false
 			}
 			return
+		} else {
+			spell = warlock.Haunt
 		}
 
 		// Filler
 		if warlock.Talents.Haunt &&
-			warlock.Haunt.CD.IsReady(sim) &&
-			allCDs[0]-fillerCastTime < 0 {
-			//purpose of this part is to make sure Haunt never falls off the target once it's on.
-			//Essentially, we don't want to commit to a spell that will make Haunt fall off our target.
+			allCDs[0]-fillerCastTime < 0 &&
+			warlock.Haunt.CD.IsReady(sim) {
 			spell = warlock.Haunt
 		} else {
 			spell = filler
-			return
 		}
 	}
 
@@ -590,15 +583,10 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	}
 
 	// Lifetap if nothing else
-	if warlock.CurrentManaPercent() < 0.8 &&
-		!(warlock.Talents.Haunt &&
-			warlock.Haunt.CD.IsReady(sim) &&
-			allCDs[0]-fillerCastTime < 0) {
+	if warlock.CurrentManaPercent() < 0.8 {
 		warlock.LifeTapOrDarkPact(sim)
 		return
-	} else {
-		spell = warlock.Haunt
-		return
 	}
+
 	// If we get here, something's wrong
 }
