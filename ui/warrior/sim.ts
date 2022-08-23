@@ -32,6 +32,10 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 			cssClass: 'warrior-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
+				"This sim is in EARLY ALPHA, suggestions are welcomed.",
+				"Bladestorm WWs damage are all dealt at casting time.",
+				"Sets bonus aren't implemented yet.",
+				"Indestrucible doesn't appear on UI but it is applied in default.",				
 			],
 
 			// All stats for which EP should be calculated.
@@ -131,7 +135,6 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 					WarriorInputs.StartingRage,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
-					OtherInputs.PrepopPotion,
 				],
 			},
 			encounterPicker: {
