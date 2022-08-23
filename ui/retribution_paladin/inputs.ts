@@ -102,6 +102,8 @@ export const RetributionPaladinSoVTargets = InputHelpers.makeRotationNumberInput
 	label: "Max SoV Targets",
 	labelTooltip: "The maximum number of targets to keep the SoV debuff on.",
 	positive: true,
+	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getSpecOptions().seal == PaladinSeal.Vengeance,
+	changeEmitter: (player: Player<Spec.SpecRetributionPaladin>) => player.changeEmitter,
 })
 
 export const RetributionPaladinRotationPriorityConfig = InputHelpers.makeCustomRotationInput<Spec.SpecRetributionPaladin, SpellOption>({
