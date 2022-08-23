@@ -67,7 +67,7 @@ func (priest *Priest) registerPenanceSpell() {
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskPeriodicDamage,
 
-			DamageMultiplier: 1,
+			DamageMultiplier: 1 + 0.05*float64(priest.Talents.SearingLight),
 			ThreatMultiplier: 0,
 
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(375, .4286),
