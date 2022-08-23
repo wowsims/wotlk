@@ -157,7 +157,8 @@ export const Innervate = makeMultistateIndividualBuffInput(ActionId.fromSpellId(
 export const PowerInfusion = makeMultistateIndividualBuffInput(ActionId.fromSpellId(10060), 11, 'powerInfusions');
 export const TricksOfTheTrade = makeMultistateIndividualBuffInput(ActionId.fromSpellId(57933), 20, 'tricksOfTheTrades');
 export const UnholyFrenzy = makeMultistateIndividualBuffInput(ActionId.fromSpellId(49016), 11, 'unholyFrenzy');
-export const Revitalize = makeMultistateIndividualBuffInput(ActionId.fromSpellId(48545), 11, 'revitalize');
+export const RevitalizeRejuvination = makeMultistateIndividualBuffInput(ActionId.fromSpellId(26982), 11, 'revitalizeRejuvination');
+export const RevitalizeWildGrowth = makeMultistateIndividualBuffInput(ActionId.fromSpellId(53251), 11, 'revitalizeWildGrowth');
 
 // Debuffs
 

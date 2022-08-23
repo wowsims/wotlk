@@ -262,7 +262,8 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		registerBloodlustCD(agent)
 	}
 
-	registerRevitalizeCD(agent, individualBuffs.Revitalize)
+	registerRevitalizeCD(agent, "Rejuvination", ActionID{SpellID: 26982}, 5, 3*time.Second, individualBuffs.RevitalizeRejuvination)
+	registerRevitalizeCD(agent, "Wild Growth", ActionID{SpellID: 53251}, 7, time.Second, individualBuffs.RevitalizeWildGrowth)
 	registerUnholyFrenzyCD(agent, individualBuffs.UnholyFrenzy)
 	registerTricksOfTheTradeCD(agent, individualBuffs.TricksOfTheTrades)
 	registerShatteringThrowCD(agent, individualBuffs.ShatteringThrows)
@@ -305,7 +306,8 @@ func applyPetBuffEffects(petAgent PetAgent, raidBuffs proto.RaidBuffs, partyBuff
 	individualBuffs.Innervates = 0
 	individualBuffs.PowerInfusions = 0
 	individualBuffs.UnholyFrenzy = 0
-	individualBuffs.Revitalize = 0
+	individualBuffs.RevitalizeRejuvination = 0
+	individualBuffs.RevitalizeWildGrowth = 0
 	individualBuffs.TricksOfTheTrades = 0
 	individualBuffs.ShatteringThrows = 0
 
@@ -756,13 +758,12 @@ func UnholyFrenzyAura(character *Character, actionTag int32) *Aura {
 	})
 }
 
-func registerRevitalizeCD(agent Agent, uptimeCount int32) {
+func registerRevitalizeCD(agent Agent, label string, actionID ActionID, ticks int, tickPeriod time.Duration, uptimeCount int32) {
 	if uptimeCount == 0 {
 		return
 	}
 
-	RevitalizeHot(agent.GetCharacter(), "Rejuvination", ActionID{SpellID: 26982}, 5, 3*time.Second, int(uptimeCount))
-	RevitalizeHot(agent.GetCharacter(), "Wild Growth", ActionID{SpellID: 53251}, 7, time.Second, int(uptimeCount))
+	RevitalizeHot(agent.GetCharacter(), label, actionID, ticks, tickPeriod, int(uptimeCount))
 }
 
 func RevitalizeHot(character *Character, label string, hotID ActionID, ticks int, tickPeriod time.Duration, uptimeCount int) *Aura {
@@ -776,15 +777,11 @@ func RevitalizeHot(character *Character, label string, hotID ActionID, ticks int
 	// Calculate desired downtime based on selected uptimeCount (1 count = 10% uptime, 0%-100%)
 	totalDuration := time.Duration(ticks) * tickPeriod
 	uptimePercent := float64(uptimeCount) / 10.0
-	downtimeDuration := time.Duration((1.0/uptimePercent - 1.0) * float64(totalDuration))
 
-	return character.GetOrRegisterAura(Aura{
+	aura := character.GetOrRegisterAura(Aura{
 		Label:    "Revitalize-" + label,
 		ActionID: hotID,
 		Duration: totalDuration,
-		OnReset: func(aura *Aura, sim *Simulation) {
-			aura.Activate(sim)
-		},
 		OnGain: func(aura *Aura, sim *Simulation) {
 			pa := NewPeriodicAction(sim, PeriodicActionOptions{
 				Period:   tickPeriod,
@@ -805,18 +802,11 @@ func RevitalizeHot(character *Character, label string, hotID ActionID, ticks int
 			})
 			sim.AddPendingAction(pa)
 		},
-		OnExpire: func(aura *Aura, sim *Simulation) {
-			// Activate again after downtime to match desired total uptime
-			pa := NewPeriodicAction(sim, PeriodicActionOptions{
-				Period:   downtimeDuration,
-				NumTicks: 1,
-				OnAction: func(s *Simulation) {
-					aura.Activate(s)
-				},
-			})
-			sim.AddPendingAction(pa)
-		},
 	})
+
+	ApplyFixedUptimeAura(aura, uptimePercent, totalDuration)
+
+	return aura
 }
 
 const ShatteringThrowCD = time.Minute * 5

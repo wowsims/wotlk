@@ -1,3 +1,4 @@
+import { ActionId } from './proto_utils/action_id.js';
 import { BattleElixir } from './proto/common.js';
 import { BonusStatsPicker } from './components/bonus_stats_picker.js';
 import { BooleanPicker, BooleanPickerConfig } from './components/boolean_picker.js';
@@ -583,6 +584,20 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		] as Array<StatOption<IconInputConfig<Player<any>, any>>>);
 		otherBuffOptions.forEach(iconInput => makeIconInput(buffsSection, iconInput));
 
+		const revitalizeBuffOptions = this.splitRelevantOptions([
+			{ item: IconInputs.RevitalizeRejuvination, stats: [Stat.StatAttackPower, Stat.StatSpellPower] },
+			{ item: IconInputs.RevitalizeWildGrowth, stats: [Stat.StatAttackPower, Stat.StatSpellPower] },
+		] as Array<StatOption<IconPickerConfig<Player<any>, any>>>);
+		if (revitalizeBuffOptions.length > 0) {
+			new MultiIconPicker(buffsSection, this.player, {
+				inputs: revitalizeBuffOptions,
+				numColumns: 1,
+				emptyColor: 'grey',
+				label: 'Revitalize',
+				categoryId: ActionId.fromSpellId(48545),
+			}, this);
+		}
+
 		const miscBuffOptions = this.splitRelevantOptions([
 			{ item: IconInputs.HeroicPresence, stats: [Stat.StatMeleeHit, Stat.StatSpellHit] },
 			{ item: IconInputs.BraidedEterniumChain, stats: [Stat.StatMeleeCrit] },
@@ -596,7 +611,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			{ item: IconInputs.PowerInfusion, stats: [Stat.StatMP5, Stat.StatSpellPower] },
 			{ item: IconInputs.TricksOfTheTrade, stats: [Stat.StatAttackPower, Stat.StatSpellPower] },
 			{ item: IconInputs.UnholyFrenzy, stats: [Stat.StatAttackPower] },
-			{ item: IconInputs.Revitalize, stats: [Stat.StatAttackPower, Stat.StatSpellPower] },
 		] as Array<StatOption<IconPickerConfig<Player<any>, any>>>);
 		if (miscBuffOptions.length > 0) {
 			new MultiIconPicker(buffsSection, this.player, {

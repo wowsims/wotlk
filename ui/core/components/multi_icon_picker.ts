@@ -14,6 +14,7 @@ export interface MultiIconPickerConfig<ModObject> {
 	emptyColor: string,
 	numColumns: number,
 	label?: string,
+	categoryId?: ActionId,
 }
 
 // Icon-based UI for a dropdown with multiple icon pickers.
@@ -98,6 +99,6 @@ export class MultiIconPicker<ModObject> extends Component {
 	}
 
 	private getMaxValue(): ActionId | null {
-		return this.pickers.map(picker => picker.getActionId()).filter(id => id != null)[0] || null;
+		return this.config.categoryId != null ? this.config.categoryId : this.pickers.map(picker => picker.getActionId()).filter(id => id != null)[0] || null;
 	}
 }

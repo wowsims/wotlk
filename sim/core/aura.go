@@ -853,9 +853,11 @@ func ApplyFixedUptimeAura(aura *Aura, uptime float64, tickLength time.Duration) 
 				if sim.RandomFloat("FixedAura") < uptime {
 					// Use random duration to compensate for increased chance collapsed into single tick.
 					randomDur := tickLength + time.Duration(float64(auraDuration-tickLength)*sim.RandomFloat("FixedAuraDur"))
+					oldDur := aura.Duration
+
 					aura.Duration = randomDur
 					aura.Activate(sim)
-					aura.Duration = time.Second * 15
+					aura.Duration = oldDur
 				}
 			},
 		})
