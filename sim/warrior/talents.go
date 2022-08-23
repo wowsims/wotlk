@@ -478,6 +478,7 @@ func (warrior *Warrior) applySuddenDeath() {
 
 	var rage_refund float64
 	var procChance float64
+	rageMetrics := warrior.NewRageMetrics(core.ActionID{SpellID: 29724})
 
 	if warrior.Talents.SuddenDeath == 1 {
 		rage_refund = 3.0
@@ -512,7 +513,7 @@ func (warrior *Warrior) applySuddenDeath() {
 
 			if warrior.SuddenDeathAura.IsActive() && spell == warrior.Execute {
 				warrior.SuddenDeathAura.Deactivate(sim)
-				warrior.AddRage(sim, rage_refund, warrior.RageRefundMetrics)
+				warrior.AddRage(sim, rage_refund, rageMetrics)
 			}
 		},
 	})

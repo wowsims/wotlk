@@ -7,6 +7,10 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+/////////////////////////////////////////////////////////////////
+// TBC Item set
+/////////////////////////////////////////////////////////////////
+
 var ItemSetBoldArmor = core.NewItemSet(core.ItemSet{
 	Name: "Bold Armor",
 	Bonuses: map[int32]core.ApplyEffect{
@@ -201,6 +205,86 @@ var ItemSetOnslaughtBattlegear = core.NewItemSet(core.ItemSet{
 		4: func(agent core.Agent) {
 			// Increases the damage of your Mortal Strike and Bloodthirst abilities by 5%.
 			// Handled in bloodthirst.go and mortal_strike.go.
+		},
+	},
+})
+
+/////////////////////////////////////////////////////////////////
+// Wrath Item set
+/////////////////////////////////////////////////////////////////
+
+var ItemSetDreadnaughtBattlegear = core.NewItemSet(core.ItemSet{
+	Name: "Dreadnaught Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Increases the damage of your Slam by 10%.
+		},
+		4: func(agent core.Agent) {
+			// Your Bleed periodic effects have a chance to make your next ability cost 5 less rage.
+			warrior := agent.(WarriorAgent).GetWarrior()
+			rageMetrics := warrior.NewRageMetrics(core.ActionID{SpellID: 61571})
+
+			procAura := warrior.RegisterAura(core.Aura{
+				Label:    "Dreadnaught Battlegear 2pc Proc",
+				ActionID: core.ActionID{SpellID: 61571},
+				Duration: time.Second * 30,
+				OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+					warrior.AddRage(sim, 5, rageMetrics)
+					aura.Deactivate(sim)
+				},
+			})
+
+			warrior.RegisterAura(core.Aura{
+				Label:    "Dreadnaught Battlegear 2pc",
+				Duration: core.NeverExpires,
+				ActionID: core.ActionID{SpellID: 60176},
+				OnReset: func(aura *core.Aura, sim *core.Simulation) {
+					aura.Activate(sim)
+				},
+				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+					if spellEffect.Landed() && sim.RandomFloat("Dreadnaught Battlegear 2pc") < 0.1 {
+						procAura.Activate(sim)
+					}
+				},
+			})
+		},
+	},
+})
+
+var ItemSetSiegebreakerBattlegear = core.NewItemSet(core.ItemSet{
+	Name: "Siegebreaker Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Heroic Strike and Slam critical strikes have a chance to grant you 150 haste rating for 5 sec.
+		},
+		4: func(agent core.Agent) {
+			// Increases the critical strike chance of Mortal Strike and Bloodthirst by 10%.
+		},
+	},
+})
+
+var ItemSetWrynnsBattlegear = core.NewItemSet(core.ItemSet{
+	Name:            "Wrynn's Battlegear",
+	AlternativeName: "Hellscream's Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Berserker Stance grants an additional 2% critical strike chance, and Battle Stance grants an additional 6% armor penetration.
+		},
+		4: func(agent core.Agent) {
+			// Increases the critical strike chance of your Slam and Heroic Strike abilities by 5%.
+		},
+	},
+})
+
+var ItemSetYmirjarLordsBattlegear = core.NewItemSet(core.ItemSet{
+	Name: "Ymirjar Lord's Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// When your Deep Wounds ability deals damage you have a 3% chance to gain 16% attack power for 10 sec.
+		},
+		4: func(agent core.Agent) {
+			// You have a 20% chance for your Bloodsurge and Sudden Death talents to grant 2 charges of their effect instead of 1,
+			// reduce the global cooldown on Execute or Slam by 0.5 sec, and for the duration of the effect to be increased by 100%.
 		},
 	},
 })
