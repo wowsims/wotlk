@@ -2,7 +2,6 @@ package core
 
 import (
 	"math"
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -757,58 +756,67 @@ func UnholyFrenzyAura(character *Character, actionTag int32) *Aura {
 	})
 }
 
-var RevitalizeAuraTag = "Revitalize"
-
-// TODO: Add some control for uptime instead of full 100% as it unrealistic
-func registerRevitalizeCD(agent Agent, numRevitalize int32) {
-	if numRevitalize == 0 {
+func registerRevitalizeCD(agent Agent, uptimeCount int32) {
+	if uptimeCount == 0 {
 		return
 	}
 
-	for i := 0; i < int(numRevitalize); i++ {
-		RevitalizeHot(agent.GetCharacter(), "Rejuvination", 3*time.Second, i)
-		RevitalizeHot(agent.GetCharacter(), "Wild Growth", time.Second, i)
-	}
-
+	RevitalizeHot(agent.GetCharacter(), "Rejuvination", ActionID{SpellID: 26982}, 5, 3*time.Second, int(uptimeCount))
+	RevitalizeHot(agent.GetCharacter(), "Wild Growth", ActionID{SpellID: 53251}, 7, time.Second, int(uptimeCount))
 }
 
-func RevitalizeHot(character *Character, label string, tickPeriod time.Duration, sourceIndex int) *Aura {
-	actionID := ActionID{SpellID: 48545}
+func RevitalizeHot(character *Character, label string, hotID ActionID, ticks int, tickPeriod time.Duration, uptimeCount int) *Aura {
+	revActionID := ActionID{SpellID: 48545}
 
-	manaMetrics := character.NewManaMetrics(actionID)
-	energyMetrics := character.NewEnergyMetrics(actionID)
-	rageMetrics := character.NewRageMetrics(actionID)
-	rpMetrics := character.NewRunicPowerMetrics(actionID)
+	manaMetrics := character.NewManaMetrics(revActionID)
+	energyMetrics := character.NewEnergyMetrics(revActionID)
+	rageMetrics := character.NewRageMetrics(revActionID)
+	rpMetrics := character.NewRunicPowerMetrics(revActionID)
 
-	return MakePermanent(character.GetOrRegisterAura(Aura{
-		Label:    "Revitalize-" + label + "-" + strconv.Itoa(sourceIndex),
-		Tag:      RevitalizeAuraTag,
-		ActionID: actionID,
+	// Calculate desired downtime based on selected uptimeCount (1 count = 10% uptime, 0%-100%)
+	totalDuration := time.Duration(ticks) * tickPeriod
+	uptimePercent := float64(uptimeCount) / 10.0
+	downtimeDuration := time.Duration((1.0/uptimePercent - 1.0) * float64(totalDuration))
+
+	return character.GetOrRegisterAura(Aura{
+		Label:    "Revitalize-" + label,
+		ActionID: hotID,
+		Duration: totalDuration,
+		OnReset: func(aura *Aura, sim *Simulation) {
+			aura.Activate(sim)
+		},
 		OnGain: func(aura *Aura, sim *Simulation) {
 			pa := NewPeriodicAction(sim, PeriodicActionOptions{
 				Period:   tickPeriod,
-				NumTicks: 0,
+				NumTicks: ticks,
 				OnAction: func(s *Simulation) {
-					if sim.RandomFloat("Revitalize Proc") < 0.15 {
-						if sim.Log != nil {
-							sim.Log("Proccing Revitalize " + strconv.Itoa(sourceIndex))
-						}
-
+					if s.RandomFloat("Revitalize Proc") < 0.15 {
 						if aura.Unit.HasManaBar() {
-							aura.Unit.AddMana(sim, aura.Unit.BaseMana*0.01, manaMetrics, true)
+							aura.Unit.AddMana(s, aura.Unit.BaseMana*0.01, manaMetrics, true)
 						} else if aura.Unit.HasEnergyBar() {
-							aura.Unit.AddEnergy(sim, 8, energyMetrics)
+							aura.Unit.AddEnergy(s, 8, energyMetrics)
 						} else if aura.Unit.HasRageBar() {
-							aura.Unit.AddRage(sim, 4, rageMetrics)
+							aura.Unit.AddRage(s, 4, rageMetrics)
 						} else if aura.Unit.HasRunicPowerBar() {
-							aura.Unit.AddRunicPower(sim, 16, rpMetrics)
+							aura.Unit.AddRunicPower(s, 16, rpMetrics)
 						}
 					}
 				},
 			})
 			sim.AddPendingAction(pa)
 		},
-	}))
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			// Activate again after downtime to match desired total uptime
+			pa := NewPeriodicAction(sim, PeriodicActionOptions{
+				Period:   downtimeDuration,
+				NumTicks: 1,
+				OnAction: func(s *Simulation) {
+					aura.Activate(s)
+				},
+			})
+			sim.AddPendingAction(pa)
+		},
+	})
 }
 
 const ShatteringThrowCD = time.Minute * 5
