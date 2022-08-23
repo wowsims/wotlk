@@ -328,9 +328,9 @@ func (spellEffect *SpellEffect) finalizeInternal(sim *Simulation, spell *Spell) 
 
 func (spellEffect *SpellEffect) finalizeHealingInternal(sim *Simulation, spell *Spell) {
 	spell.SpellMetrics[spellEffect.Target.UnitIndex].TotalThreat += spellEffect.calcThreat(spell)
-	spell.SpellMetrics[spellEffect.Target.UnitIndex].TotalHealing += spellEffect.Healing
+	spell.SpellMetrics[spellEffect.Target.UnitIndex].TotalHealing += spellEffect.Damage
 	if spellEffect.Target.HasHealthBar() {
-		spellEffect.Target.GainHealth(sim, spellEffect.Healing, metrics)
+		spellEffect.Target.GainHealth(sim, spellEffect.Damage, spell.HealthMetrics(spellEffect.Target))
 	}
 
 	if sim.Log != nil {
@@ -362,7 +362,7 @@ func (spellEffect *SpellEffect) String() string {
 		return outcomeStr
 	}
 	if spellEffect.IsHealing {
-		return fmt.Sprintf("%s for %0.3f healing", outcomeStr, spellEffect.Healing)
+		return fmt.Sprintf("%s for %0.3f healing", outcomeStr, spellEffect.Damage)
 	} else {
 		return fmt.Sprintf("%s for %0.3f damage", outcomeStr, spellEffect.Damage)
 	}

@@ -65,6 +65,7 @@ type Spell struct {
 	frostRuneMetrics  *ResourceMetrics
 	unholyRuneMetrics *ResourceMetrics
 	deathRuneMetrics  *ResourceMetrics
+	healthMetrics     []*ResourceMetrics
 
 	// Base cost. Many effects in the game which 'reduce mana cost by X%'
 	// are calculated using the base cost.
@@ -254,6 +255,16 @@ func (spell *Spell) DeathRuneMetrics() *ResourceMetrics {
 		spell.deathRuneMetrics = spell.Unit.NewDeathRuneMetrics(spell.ActionID)
 	}
 	return spell.deathRuneMetrics
+}
+
+func (spell *Spell) HealthMetrics(target *Unit) *ResourceMetrics {
+	if spell.healthMetrics == nil {
+		spell.healthMetrics = make([]*ResourceMetrics, len(spell.Unit.AttackTables))
+	}
+	if spell.healthMetrics[target.UnitIndex] == nil {
+		spell.healthMetrics[target.UnitIndex] = target.NewHealthMetrics(spell.ActionID)
+	}
+	return spell.healthMetrics[target.UnitIndex]
 }
 
 func (spell *Spell) ReadyAt() time.Duration {
@@ -555,16 +566,4 @@ func ApplyEffectFuncWithOutcome(baseEffects []SpellEffect, onOutcome func(*Simul
 	}
 }
 
-func ApplyEffectFuncDirectHealing(baseEffect SpellEffect) ApplySpellEffects {
-	baseEffect.Validate()
-	return func(sim *Simulation, target *Unit, spell *Spell) {
-		effect := &baseEffect
-		effect.Target = target
-		attackTable := spell.Unit.AttackTables[target.UnitIndex]
-		effect.init(sim, spell)
-
-		effect.Damage = effect.calculateBaseHealing(sim, spell)
-		effect.calcHealingSingle(sim, spell, attackTable)
-		effect.finalize(sim, spell)
-	}
-}
+var ApplyEffectFuncDirectHealing = ApplyEffectFuncDirectDamage
