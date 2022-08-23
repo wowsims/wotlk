@@ -102,43 +102,6 @@ func (priest *Priest) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
 
 func (priest *Priest) Initialize() {
-
-	if priest.Talents.Misery > 0 {
-		priest.MiseryAura = core.MiseryAura(priest.CurrentTarget)
-	}
-
-	if priest.Talents.ShadowWeaving > 0 {
-		priest.ShadowWeavingAura = priest.GetOrRegisterAura(core.Aura{
-			Label:     "Shadow Weaving",
-			ActionID:  core.ActionID{SpellID: 15258},
-			Duration:  time.Second * 15,
-			MaxStacks: 5,
-			// TODO: This affects all spells not just direct damage. Dot damage should omit multipliers since it's snapshot at cast time.
-			// OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
-			// 	aura.Unit.PseudoStats.ShadowDamageDealtMultiplier /= 1.0 + 0.02*float64(oldStacks)
-			// 	aura.Unit.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + 0.02*float64(newStacks)
-			// },
-		})
-	}
-
-	if priest.Talents.ImprovedSpiritTap > 0 {
-		increase := 1 + 0.05*float64(priest.Talents.ImprovedSpiritTap)
-		statDep := priest.NewDynamicMultiplyStat(stats.Spirit, increase)
-		priest.ImprovedSpiritTap = priest.GetOrRegisterAura(core.Aura{
-			Label:    "Improved Spirit Tap",
-			ActionID: core.ActionID{SpellID: 59000},
-			Duration: time.Second * 8,
-			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				priest.EnableDynamicStatDep(sim, statDep)
-				priest.PseudoStats.SpiritRegenRateCasting += 0.33
-			},
-			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				priest.DisableDynamicStatDep(sim, statDep)
-				priest.PseudoStats.SpiritRegenRateCasting -= 0.33
-			},
-		})
-	}
-
 	// Shadow Insight gained from Glyph of Shadow
 	// Finalized spirit off gear and not dynamic spirit (e.g. Spirit Tap does not increase this)
 	priest.ShadowyInsightAura = priest.NewTemporaryStatsAura(

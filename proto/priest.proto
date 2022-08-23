@@ -170,15 +170,9 @@ message ShadowPriest {
 
 message SmitePriest {
 	message Rotation {
-		enum RotationType {
-			Unknown = 0;
-			Basic = 1;
-			HolyFireWeave = 2;
-		}
-	
-		RotationType rotation_type = 1;
 		bool use_mind_blast = 2;
 		bool use_shadow_word_death = 3;
+		bool use_devouring_plague = 4;
 	}
 	Rotation rotation = 1;
 

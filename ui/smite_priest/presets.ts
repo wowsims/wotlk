@@ -9,9 +9,11 @@ import { Faction } from '../core/proto/common.js';
 import { RaidBuffs } from '../core/proto/common.js';
 import { IndividualBuffs } from '../core/proto/common.js';
 import { Debuffs } from '../core/proto/common.js';
+import { RaidTarget } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import { Player } from '../core/player.js';
+import { NO_TARGET } from '../core/proto_utils/utils.js';
 
 import {
 	SmitePriest_Rotation as Rotation,
@@ -50,6 +52,13 @@ export const DefaultRotation = Rotation.create({
 
 export const DefaultOptions = Options.create({
 	useShadowfiend: true,
+	useDevouringPlague: true,
+	useShadowWordDeath: true,
+	useMindBlast: true,
+
+	powerInfusionTarget: RaidTarget.create({
+		targetIndex: NO_TARGET, // In an individual sim the 0-indexed player is ourself.
+	}),
 });
 
 export const DefaultConsumes = Consumes.create({

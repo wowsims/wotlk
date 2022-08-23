@@ -53,8 +53,6 @@ export class SmitePriestSimUI extends IndividualSimUI<Spec.SpecSmitePriest> {
 				Stat.StatIntellect,
 				Stat.StatSpirit,
 				Stat.StatSpellPower,
-				Stat.StatShadowSpellPower,
-				Stat.StatHolySpellPower,
 				Stat.StatSpellHit,
 				Stat.StatSpellCrit,
 				Stat.StatSpellHaste,
@@ -78,8 +76,6 @@ export class SmitePriestSimUI extends IndividualSimUI<Spec.SpecSmitePriest> {
 					[Stat.StatSpirit]: 1.18,
 					[Stat.StatSpellPower]: 1,
 					[Stat.StatSpellHit]: 2.57,
-					[Stat.StatShadowSpellPower]: 0.05,
-					[Stat.StatHolySpellPower]: 0.95,
 					[Stat.StatSpellCrit]: 0.44,
 					[Stat.StatSpellHaste]: 0.28, // tricky because SP is tricky
 					[Stat.StatMP5]: 2.05,

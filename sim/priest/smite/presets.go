@@ -74,7 +74,9 @@ var PlayerOptionsBasic = &proto.Player_SmitePriest{
 			UseShadowfiend: true,
 		},
 		Rotation: &proto.SmitePriest_Rotation{
-			RotationType: proto.SmitePriest_Rotation_Basic,
+			UseDevouringPlague: true,
+			UseShadowWordDeath: true,
+			UseMindBlast:       true,
 		},
 	},
 }
