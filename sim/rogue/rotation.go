@@ -149,7 +149,7 @@ func (rogue *Rogue) SetMultiTargetPriorityList() {
 		rogue.PriorityList = append(rogue.PriorityList, sliceAndDice)
 		index += 1
 
-		if rogue.Talents.Mutilate {
+		if rogue.CanMutilate() {
 			mutilate := RoguePriority{
 				MinimumComboPoints:   0,
 				IsBuilder:            true,
@@ -225,7 +225,7 @@ func (rogue *Rogue) SetMultiTargetPriorityList() {
 }
 
 func (rogue *Rogue) SetPriorityList(sim *core.Simulation) {
-	if rogue.Talents.Mutilate {
+	if rogue.CanMutilate() {
 		rogue.Builder = rogue.Mutilate
 	} else {
 		rogue.Builder = rogue.SinisterStrike
@@ -352,7 +352,7 @@ func (rogue *Rogue) SetStandardPriorityList() {
 		},
 	}
 
-	if rogue.Talents.Mutilate {
+	if rogue.Talents.MasterPoisoner > 0 || rogue.Talents.CutToTheChase > 0 {
 		envenom := RoguePriority{
 			MinimumComboPoints: 3,
 			IsBuilder:          false,
@@ -411,7 +411,7 @@ func (rogue *Rogue) SetStandardPriorityList() {
 		}
 	}
 
-	if rogue.Talents.Mutilate {
+	if rogue.CanMutilate() {
 		mutilate := RoguePriority{
 			MinimumComboPoints:   0,
 			IsBuilder:            true,
@@ -531,10 +531,7 @@ func (rogue *Rogue) HasPriorityWithInactiveAura(sim *core.Simulation) bool {
 
 func (rogue *Rogue) updatePlan(sim *core.Simulation) {
 	currentIndex := 0
-	builderEnergyCost := rogue.SinisterStrike.DefaultCast.Cost
-	if rogue.Talents.Mutilate {
-		builderEnergyCost = rogue.Mutilate.DefaultCast.Cost
-	}
+	builderEnergyCost := rogue.Builder.DefaultCast.Cost
 
 	// Verify current plan
 	if rogue.CurrentPriority != nil {
