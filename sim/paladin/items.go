@@ -188,9 +188,9 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				// if spell == paladin.JudgementOfBlood || spell == paladin.JudgementOfRighteousness {
-				procAura.Activate(sim)
-				// }
+				if spell.Flags.Matches(SpellFlagSecondaryJudgement) {
+					procAura.Activate(sim)
+				}
 			},
 		})
 	})
