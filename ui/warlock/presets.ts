@@ -291,7 +291,7 @@ export const SWP_BIS = {
       ]}
     `),
 };
-export const P1_PreBiS = {
+export const P1_PreBiS_11 = {
 	name: 'Pre-Raid Affliction',
 	tooltip: WarlockTooltips.BIS_TOOLTIP,
   enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction,

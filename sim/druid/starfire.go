@@ -60,29 +60,32 @@ func (druid *Druid) newStarfireSpell() *core.Spell {
 			}
 		})
 	}
-
-	// Improved Insect Swarm
-	if druid.CurrentTarget.HasAura("Moonfire") {
-		effect.BonusSpellCritRating += core.CritRatingPerCritChance * float64(druid.Talents.ImprovedInsectSwarm)
-	}
-
-	// Lunar eclipse buff
-	if druid.HasAura("Lunar Eclipse proc") {
-		effect.BonusSpellCritRating += core.CritRatingPerCritChance * 40
-	}
-
-	// Nature's Majesty
-	effect.BonusSpellCritRating += 2 * float64(druid.Talents.NaturesMajesty) * core.CritRatingPerCritChance
-
 	// T6-4P
 	if druid.HasSetBonus(ItemSetThunderheartRegalia, 4) {
 		effect.BonusSpellCritRating += 5 * core.CritRatingPerCritChance
 	}
-
+	// T7-4P
+	if druid.DruidTier.balance_t7_4 {
+		effect.BonusSpellCritRating += 5 * core.CritRatingPerCritChance
+	}
 	// Improved Faerie Fire
 	if druid.CurrentTarget.HasAura("Improved Faerie Fire") {
 		effect.BonusSpellCritRating += float64(druid.Talents.ImprovedFaerieFire) * 1 * core.CritRatingPerCritChance
 	}
+	// Improved Insect Swarm
+	if druid.CurrentTarget.HasAura("Moonfire") {
+		effect.BonusSpellCritRating += core.CritRatingPerCritChance * float64(druid.Talents.ImprovedInsectSwarm)
+	}
+	// Lunar eclipse buff
+	if druid.HasAura("Lunar Eclipse proc") {
+		effect.BonusSpellCritRating += core.CritRatingPerCritChance * 40
+		// T8-2P
+		if druid.DruidTier.balance_t8_2 {
+			effect.BonusSpellCritRating += core.CritRatingPerCritChance * 7
+		}
+	}
+	// Nature's Majesty
+	effect.BonusSpellCritRating += 2 * float64(druid.Talents.NaturesMajesty) * core.CritRatingPerCritChance
 
 	return druid.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -101,6 +104,10 @@ func (druid *Druid) newStarfireSpell() *core.Spell {
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				druid.applyNaturesSwiftness(cast)
 				druid.ApplyClearcasting(sim, spell, cast)
+				if druid.HasActiveAura("Elune's Wrath") {
+					cast.CastTime = 0
+					druid.GetAura("Elune's Wrath").Deactivate(sim)
+				}
 			},
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),

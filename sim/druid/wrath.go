@@ -16,23 +16,14 @@ func (druid *Druid) registerWrathSpell() {
 
 	actionID := core.ActionID{SpellID: 26985}
 	manaMetrics := druid.NewManaMetrics(actionID)
-	spellmodifier := 0.571 * (1 + 0.02*float64(druid.Talents.WrathOfCenarius))
-
-	// This seems to be unaffected by wrath of cenarius.
-	bonusFlatDamage := core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == IdolAvenger, 25, 0)
-	bonusFlatDamage += core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == IdolSteadfastRenewal, 70, 0)
-
-	minBaseDamage := 557.0 + bonusFlatDamage
-	maxBaseDamage := 627.0 + bonusFlatDamage
+	spellModifier := 0.571 * (1 + 0.02*float64(druid.Talents.WrathOfCenarius))
 
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
 		BonusSpellCritRating: 2 * float64(druid.Talents.NaturesMajesty) * core.CritRatingPerCritChance,
 		DamageMultiplier:     1 + 0.02*float64(druid.Talents.Moonfury),
 		ThreatMultiplier:     1,
-
-		BaseDamage:     core.BaseDamageConfigMagic(minBaseDamage, maxBaseDamage, spellmodifier),
-		OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, 0.2*float64(druid.Talents.Vengeance))),
+		OutcomeApplier:       druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, 0.2*float64(druid.Talents.Vengeance))),
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
 				hasMoonkinForm := core.TernaryFloat64(druid.Talents.MoonkinForm, 1, 0)
@@ -40,24 +31,31 @@ func (druid *Druid) registerWrathSpell() {
 			}
 		},
 	}
-
-	// Improved Insect Swarm
-	if druid.CurrentTarget.HasAura("Insect Swarm") {
-		effect.DamageMultiplier *= 1 + 0.01*float64(druid.Talents.ImprovedInsectSwarm)
+	// T7-4P
+	if druid.DruidTier.balance_t7_4 {
+		effect.BonusSpellCritRating += 5 * core.CritRatingPerCritChance
 	}
-
 	// Improved Faerie Fire
 	if druid.CurrentTarget.HasAura("Improved Faerie Fire") {
 		effect.BonusSpellCritRating += float64(druid.Talents.ImprovedFaerieFire) * 1 * core.CritRatingPerCritChance
 	}
-
+	// Improved Insect Swarm
+	if druid.CurrentTarget.HasAura("Insect Swarm") {
+		effect.DamageMultiplier *= 1 + 0.01*float64(druid.Talents.ImprovedInsectSwarm)
+	}
 	// Solar eclipse buff
 	if druid.HasAura("Solar Eclipse proc") {
-		effect.DamageMultiplier *= 1.4
+		// T8-2P
+		tierEffect := core.TernaryFloat64(druid.HasSetBonus(ItemSetNightsongGarb, 2), 0.07, 0)
+		effect.DamageMultiplier *= 1.4 + tierEffect
 	}
-
 	// Nature's Majesty
 	effect.BonusSpellCritRating += 2 * float64(druid.Talents.NaturesMajesty) * core.CritRatingPerCritChance
+	// Idols
+	bonusFlatDamage := core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == IdolAvenger, 25, 0)
+	bonusFlatDamage += core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == IdolSteadfastRenewal, 70, 0)
+
+	effect.BaseDamage = core.BaseDamageConfigMagic(557.0+bonusFlatDamage, 627.0+bonusFlatDamage, spellModifier)
 
 	druid.Wrath = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,

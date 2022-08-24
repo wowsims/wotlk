@@ -156,7 +156,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				gear: [
 					// Presets.Naked,
 					Presets.SWP_BIS,
-					Presets.P1_PreBiS,
+					Presets.P1_PreBiS_11,
 					Presets.P1_PreBiS_14,
 					Presets.P1_Preset_Affliction,
 					Presets.P1_Preset_Demo_Destro,
