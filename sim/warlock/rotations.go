@@ -87,16 +87,7 @@ func (warlock *Warlock) defineRotation() {
 		if sim.IsExecutePhase25() {
 			spellCastTime = warlock.ApplyCastSpeed(warlock.DrainSoulDot.TickLength)
 		}
-		// If SE remaining duration is less than a Haunt cast time + travel time
-		// (+ whichever current filler cast time so that we don't start a cast that would drop haunt)
-		// and the previous cast was not Haunt or SB then cast shadow bolt so SE stacks are not lost
-		KeepUpSEStacks := (warlock.PrevCastSECheck != warlock.Haunt && warlock.PrevCastSECheck != warlock.ShadowBolt &&
-			warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim) < hauntCastTime+hauntSBTravelTime)
-		if KeepUpSEStacks && sim.GetRemainingDuration() > time.Second*10 && warlock.Haunt.IsReady(sim) {
-			return 0
-		} else {
-			return core.MaxDuration(0, warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim)-hauntCastTime-hauntSBTravelTime-spellCastTime)
-		}
+		return core.MaxDuration(0, warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim)-hauntCastTime-hauntSBTravelTime-spellCastTime)
 	}
 	warlock.SpellsRotation[4].CastIn = func(sim *core.Simulation) time.Duration {
 		if !(curse == proto.Warlock_Rotation_Doom || curse == proto.Warlock_Rotation_Agony) || warlock.CurseOfDoomDot.IsActive() || sim.GetRemainingDuration() < warlock.CurseOfAgonyDot.Duration/2 {
@@ -164,7 +155,7 @@ func (warlock *Warlock) defineRotation() {
 		warlock.SpellsRotation[6].Priority = 1
 	}
 	if curse == proto.Warlock_Rotation_Doom && warlock.SpellsRotation[5].Priority == 0 {
-		warlock.SpellsRotation[5].Priority = 10
+		warlock.SpellsRotation[5].Priority = 1
 	}
 }
 
@@ -188,7 +179,6 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	var filler *core.Spell
 	var target = warlock.CurrentTarget
 	mainSpell := warlock.Rotation.PrimarySpell
-	rotationType := warlock.Rotation.Type
 	curse := warlock.Rotation.Curse
 	dotLag := time.Duration(10 * time.Millisecond)
 
@@ -249,43 +239,6 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		warlock.DoingRegen = false
 	}
 
-	allCDs := []time.Duration{
-		0,
-		0,
-		0,
-	}
-
-	//SBCastTime := warlock.ApplyCastSpeed(warlock.ShadowBolt.DefaultCast.CastTime)
-	nextCD := core.NeverExpires
-	immolateCastTime := warlock.ApplyCastSpeed(warlock.Immolate.DefaultCast.CastTime)
-	hauntSBTravelTime := time.Duration(float64(warlock.DistanceFromTarget)/20) * time.Second
-	if rotationType == proto.Warlock_Rotation_Affliction {
-		hauntCastTime := warlock.ApplyCastSpeed(warlock.Haunt.DefaultCast.CastTime)
-		UACastTime := warlock.ApplyCastSpeed(warlock.UnstableAffliction.DefaultCast.CastTime)
-		allCDs = []time.Duration{
-			core.MaxDuration(0, warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim)-(hauntCastTime+hauntSBTravelTime)),
-			core.MaxDuration(0, warlock.UnstableAfflictionDot.RemainingDuration(sim)-UACastTime),
-			core.MaxDuration(0, warlock.CurseOfAgonyDot.RemainingDuration(sim)),
-		}
-	} else if rotationType == proto.Warlock_Rotation_Demonology {
-		allCDs = []time.Duration{
-			core.MaxDuration(0, warlock.CorruptionDot.RemainingDuration(sim)),
-			core.MaxDuration(0, warlock.ImmolateDot.RemainingDuration(sim)-immolateCastTime),
-			core.MaxDuration(0, warlock.CurseOfDoomDot.RemainingDuration(sim)),
-		}
-	} else if rotationType == proto.Warlock_Rotation_Destruction {
-		allCDs = []time.Duration{
-			core.MaxDuration(0, warlock.ImmolateDot.RemainingDuration(sim)-immolateCastTime),
-			core.MaxDuration(0, warlock.CurseOfDoomDot.RemainingDuration(sim)),
-			core.NeverExpires,
-		}
-	}
-	for _, v := range allCDs {
-		if v < nextCD {
-			nextCD = v
-		}
-	}
-	nextCD += sim.CurrentTime
 
 	// ------------------------------------------
 	// Small CDs
@@ -365,12 +318,8 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		}
 	}
 
-	// If SE remaining duration is less than a shadow bolt cast time + travel time (with a 3 second buffer to include 1 drain soul tick) and the previous cast was not haunt or SB then cast shadow bolt so SE stacks are not lost
-	KeepUpSEStacksExecute := (warlock.PrevCastSECheck != warlock.Haunt && warlock.PrevCastSECheck != warlock.ShadowBolt &&
-		warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim).Seconds() < warlock.ApplyCastSpeed(time.Duration(warlock.ShadowBolt.DefaultCast.CastTime)).Seconds()+warlock.DistanceFromTarget/20+3)
-	
 	// The default filler can change because of some execute phase or proc
-	if sim.IsExecutePhase25() && warlock.Talents.SoulSiphon > 0 && !KeepUpSEStacksExecute {
+	if sim.IsExecutePhase25() && warlock.Talents.SoulSiphon > 0 {
 		// Affliction execute phase
 		filler = warlock.channelCheck(sim, warlock.DrainSoulDot, 5)
 	} else if warlock.DecimationAura.IsActive() {
@@ -380,13 +329,20 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		// Molten Core talent corruption proc (Demonology)
 		filler = warlock.Incinerate
 	}
+	nextCD := core.NeverExpires
+	currentCD := core.NeverExpires
 	currentSpellPrio := math.MaxInt64 // Lowest priority for a filler spell
 	for _, RSI := range warlock.SpellsRotation {
-		if RSI.CastIn(sim) == 0 && (RSI.Priority < currentSpellPrio) && RSI.Spell.IsReady(sim) && RSI.Priority != 0 {
+		currentCD = RSI.CastIn(sim)
+		if currentCD < nextCD {
+			nextCD = currentCD
+		}
+		if currentCD == 0 && (RSI.Priority < currentSpellPrio) && RSI.Spell.IsReady(sim) && RSI.Priority != 0 {
 			spell = RSI.Spell
 			currentSpellPrio = RSI.Priority
 		}
 	}
+	nextCD += sim.CurrentTime
 	if sim.Log != nil {
 		// warlock.Log(sim, "warlock.SpellsRotation[%d]", warlock.SpellsRotation[4].CastIn(sim).Seconds())
 	}
