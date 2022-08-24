@@ -69,6 +69,7 @@ export const DefaultRotation = RetributionPaladinRotation.create({
 	useDivinePlea: true,
 	divinePleaPercentage: 0.75,
 	holyWrathThreshold: 4,
+	sovTargets: 1,
 	customRotation: CustomRotation.create({
 		spells: [
 			CustomSpell.create({ spell: SpellOption.JudgementOfWisdom }),

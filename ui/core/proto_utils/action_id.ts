@@ -242,7 +242,11 @@ export class ActionId {
                 break;
             case 'Chain Lightning':
             case 'Lightning Bolt':
-                if (this.tag) name += ' (LO)';
+                if (this.tag == 6) {
+                    name += ' (LO)';
+                }else if (this.tag) {
+                    name += ` (${this.tag} MW)`;
+                }
                 break;
             case 'Holy Vengeance':
                 if (this.tag == 1) {

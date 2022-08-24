@@ -239,6 +239,13 @@ func (rogue *Rogue) ApplyCutToTheChase(sim *core.Simulation) {
 	}
 }
 
+func (rogue *Rogue) CanMutilate() bool {
+	return rogue.Talents.Mutilate &&
+		rogue.HasMHWeapon() && rogue.HasOHWeapon() &&
+		rogue.GetMHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger &&
+		rogue.GetOHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger
+}
+
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassRogue}] = stats.Stats{
 		stats.Health:    3524,

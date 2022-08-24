@@ -1,10 +1,10 @@
 package warlock
 
 import (
-	"time"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
+	"time"
 )
 
 type Warlock struct {
@@ -15,25 +15,25 @@ type Warlock struct {
 
 	Pet *WarlockPet
 
-	ShadowBolt           *core.Spell
-	Incinerate           *core.Spell
-	Immolate             *core.Spell
-	ImmolateDot          *core.Dot
+	ShadowBolt            *core.Spell
+	Incinerate            *core.Spell
+	Immolate              *core.Spell
+	ImmolateDot           *core.Dot
 	UnstableAffliction    *core.Spell
 	UnstableAfflictionDot *core.Dot
-	Corruption           *core.Spell
-	CorruptionDot        *core.Dot
-	Haunt                *core.Spell
-	LifeTap              *core.Spell
-	DarkPact             *core.Spell
-	ChaosBolt            *core.Spell
-	SoulFire             *core.Spell
-	Conflagrate          *core.Spell
-	ConflagrateDot       *core.Dot
-	DrainSoul            *core.Spell
-	DrainSoulDot         *core.Dot
-	DrainSoulChannelling *core.Spell
-	Shadowburn           *core.Spell
+	Corruption            *core.Spell
+	CorruptionDot         *core.Dot
+	Haunt                 *core.Spell
+	LifeTap               *core.Spell
+	DarkPact              *core.Spell
+	ChaosBolt             *core.Spell
+	SoulFire              *core.Spell
+	Conflagrate           *core.Spell
+	ConflagrateDot        *core.Dot
+	DrainSoul             *core.Spell
+	DrainSoulDot          *core.Dot
+	DrainSoulChannelling  *core.Spell
+	Shadowburn            *core.Spell
 
 	CurseOfElements     *core.Spell
 	CurseOfElementsAura *core.Aura
@@ -45,8 +45,8 @@ type Warlock struct {
 	CurseOfAgonyDot     *core.Dot
 	CurseOfDoom         *core.Spell
 	CurseOfDoomDot      *core.Dot
-	Seeds    			[]*core.Spell
-	SeedDots 			[]*core.Dot
+	Seeds               []*core.Spell
+	SeedDots            []*core.Dot
 
 	NightfallProcAura      *core.Aura
 	EradicationAura        *core.Aura
@@ -64,22 +64,21 @@ type Warlock struct {
 	GlyphOfLifeTapAura     *core.Aura
 
 	// Rotation related memory
-	DoingRegen 				bool
-	PrevCastSECheck 		*core.Spell
-	CorruptionRolloverMult  float64
-	DPSPAverage				float64
-	PreviousTime			time.Duration
-	SpellsRotation	      	[]SpellRotation
+	DoingRegen             bool
+	PrevCastSECheck        *core.Spell
+	CorruptionRolloverMult float64
+	DPSPAverage            float64
+	PreviousTime           time.Duration
+	SpellsRotation         []SpellRotation
 }
 
 type SpellRotation struct {
-	Spell           *core.Spell
-	CastIn          CastReadyness
-	Priority        int
+	Spell    *core.Spell
+	CastIn   CastReadyness
+	Priority int
 }
 
 type CastReadyness func(*core.Simulation) time.Duration
-
 
 func (warlock *Warlock) GetCharacter() *core.Character {
 	return &warlock.Character
