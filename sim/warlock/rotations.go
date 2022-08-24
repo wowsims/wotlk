@@ -103,7 +103,7 @@ func (warlock *Warlock) defineRotation() { //quite the lengthy beast, don't you 
 		if warlock.Talents.EverlastingAffliction > 0 { // Check if EverlastingAffliction is talented, if not, rolling is not admissable and you apply manually.
 			if (!warlock.CorruptionDot.IsActive() && //Corruption is not up
 				(core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() ||
-					warlock.Talents.ImprovedShadowBolt == 0)) || // Do you need to apply SM to be applied to cast first Corruption?
+					warlock.Talents.ImprovedShadowBolt == 0)) || // Do you need to wait for SM to be applied to cast first Corruption?
 				warlock.CorruptionDot.IsActive() &&
 					(CurrentCorruptionRolloverMult > warlock.CorruptionRolloverMult) { // If you end up with a better possible corruption, reapply!
 				return 0 //Ready to cast!
@@ -130,11 +130,11 @@ func (warlock *Warlock) defineRotation() { //quite the lengthy beast, don't you 
 		}
 		return core.MaxDuration(0, warlock.UnstableAfflictionDot.RemainingDuration(sim)-warlock.ApplyCastSpeed(warlock.UnstableAffliction.DefaultCast.CastTime))
 	}
-	//Haunt
-	//Haunt is different than all your other DoT's, reason being, it dynamicly amplifies other DoT's for it's duration.
-	//Meaning, all your other dots,you let them tick to their last second and elapse, and then reapply as soon as possible.
-	//In Haunt, you want to maximize uptime and that it never falls off.
-	//It also shares debuff duration with Shadow Embrace, which stacks off to 3, and is a huge dps loss when dropped.
+	/*Haunt
+	Haunt is different than all your other DoT's, reason being, it dynamicly amplifies other DoT's for it's duration.
+	Meaning, all your other dots,you let them tick to their last second and elapse, and then reapply as soon as possible.
+	In Haunt, you want to maximize uptime and that it never falls off.
+	It also shares debuff duration with Shadow Embrace, which stacks off to 3, and is a huge dps loss when dropped. */
 	warlock.SpellsRotation[3].CastIn = func(sim *core.Simulation) time.Duration {
 		if !warlock.Talents.Haunt || !(specSpell == proto.Warlock_Rotation_Haunt) {
 			return core.NeverExpires
