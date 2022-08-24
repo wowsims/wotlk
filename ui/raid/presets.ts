@@ -654,7 +654,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			},
 		},
 		otherDefaults: WarlockPresets.OtherDefaults,
-		tooltip: 'Destruction Warlock',
+		tooltip: 'Destruction Warlock: Adds Improved Soul Leech and Blood Pact',
 		iconUrl: talentTreeIcons[Class.ClassWarlock][2],
 	},
 	{
@@ -684,7 +684,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			},
 		},
 		otherDefaults: WarlockPresets.OtherDefaults,
-		tooltip: 'Affliction Warlock',
+		tooltip: 'Affliction Warlock: Adds Improved Fel Intelligence',
 		iconUrl: talentTreeIcons[Class.ClassWarlock][0],
 	},
 	{
@@ -714,7 +714,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			},
 		},
 		otherDefaults: WarlockPresets.OtherDefaults,
-		tooltip: 'Demonology Warlock',
+		tooltip: 'Demonology Warlock: Adds Demonic Pact',
 		iconUrl: talentTreeIcons[Class.ClassWarlock][1],
 	},
 ];
