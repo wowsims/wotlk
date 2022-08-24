@@ -509,15 +509,15 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 429.5913139007
-  tps: 646.5399923231
+  dps: 359.2041524397
+  tps: 551.5349956136
  }
 }
 dps_results: {
  key: "TestProtectionWarrior-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 438.7789616181
-  tps: 658.7228131963
+  dps: 359.6439517205
+  tps: 552.1181694599
  }
 }
 dps_results: {

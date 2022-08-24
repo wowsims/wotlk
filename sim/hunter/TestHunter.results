@@ -437,15 +437,15 @@ dps_results: {
 dps_results: {
  key: "TestHunter-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 5587.0234400097
-  tps: 4804.218354339
+  dps: 5403.4703823092
+  tps: 4620.6370538216
  }
 }
 dps_results: {
  key: "TestHunter-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 5611.0129419698
-  tps: 4828.2078562992
+  dps: 5403.4703823092
+  tps: 4620.6370538216
  }
 }
 dps_results: {

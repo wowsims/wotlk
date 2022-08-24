@@ -444,15 +444,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 5822.5154747057
-  tps: 3816.7253756325
+  dps: 5539.0300806987
+  tps: 3652.5795684494
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 5859.822858231
-  tps: 3839.1098057477
+  dps: 5541.7046895859
+  tps: 3654.1843337818
  }
 }
 dps_results: {

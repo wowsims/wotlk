@@ -451,15 +451,15 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 1650.7862130009
-  tps: 5188.3620177241
+  dps: 1570.2976637725
+  tps: 5020.3411963092
  }
 }
 dps_results: {
  key: "TestBloodTank-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 1661.1599256422
-  tps: 5209.8719108858
+  dps: 1570.6204055092
+  tps: 5021.0104013003
  }
 }
 dps_results: {

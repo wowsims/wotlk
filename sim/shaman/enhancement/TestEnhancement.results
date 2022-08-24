@@ -493,15 +493,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 5495.6216589473
-  tps: 3126.1770473117
+  dps: 5313.343372307
+  tps: 2997.978048273
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 5534.9414735048
-  tps: 3152.8455188932
+  dps: 5331.1247428414
+  tps: 3009.5691830625
  }
 }
 dps_results: {

@@ -395,15 +395,15 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 7300.8176351749
-  tps: 5183.5805209742
+  dps: 6970.738444527
+  tps: 4949.2242956142
  }
 }
 dps_results: {
  key: "TestAssassination-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 7341.5133123439
-  tps: 5212.4744517642
+  dps: 6970.738444527
+  tps: 4949.2242956142
  }
 }
 dps_results: {
