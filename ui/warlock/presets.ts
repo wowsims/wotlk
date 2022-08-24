@@ -401,8 +401,8 @@ export const P1_PreBiS_11 = {
     }
   `),
 }
-export const P1_BiS_Tailor_Engineer = {
-  name: 'P1 BiS (Tailor/Engineer)',
+export const P1_BiS_14 = {
+  name: 'P1 Preset',
   tooltip: WarlockTooltips.BIS_TOOLTIP,
   enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology || player.getRotation().type == RotationType.Destruction,
   gear: EquipmentSpec.fromJsonString(`
@@ -501,109 +501,8 @@ export const P1_BiS_Tailor_Engineer = {
   `),
 }
 
-export const P1_BiS_JC_Engineer = {
-  name: 'P1 BiS (JC/Engineer)',
-  tooltip: WarlockTooltips.BIS_TOOLTIP,
-  enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology || player.getRotation().type == RotationType.Destruction,
-  gear: EquipmentSpec.fromJsonString(`
-    {"items":
-      [
-        {
-          "id": 40421,
-          "enchant": 44877,
-          "gems": [
-            41285,
-            42156
-          ]
-        },
-        {
-          "id": 44661,
-          "gems": [
-            40099
-          ]
-        },
-        {
-          "id": 40424,
-          "enchant": 44874,
-          "gems": [
-            42144
-          ]
-        },
-        {
-          "id": 44005,
-          "enchant": 63765,
-          "gems": [
-            40099
-          ]
-        },
-        {
-          "id": 40423,
-          "enchant": 44489,
-          "gems": [
-            42144,
-            40014
-          ]
-        },
-        {
-          "id": 44008,
-          "enchant": 44498,
-          "gems": [
-            39998,
-            0
-          ]
-        },
-        {
-          "id": 40420,
-          "enchant": 54999,
-          "gems": [
-            39998,
-            0
-          ]
-        },
-        {
-          "id": 40561,
-          "gems": [
-            40014
-          ]
-        },
-        {
-          "id": 40560,
-          "enchant": 41602
-        },
-        {
-          "id": 40558,
-          "enchant": 55016
-        },
-        {
-          "id": 40399
-        },
-        {
-          "id": 40719
-        },
-        {
-          "id": 40432
-        },
-        {
-          "id": 40255
-        },
-        {
-          "id": 40396,
-          "enchant": 44487
-        },
-        {
-          "id": 39766
-        },
-        {
-          "id": 39712
-        }
-      ]
-    }
-  `),
-}
-
-// will have only rare gems, but a Lightweave Embroidery on cloak.
-export const P1_BiS_Aff_Tailor_Engineer = {
-	name: 'P1 Affliction BiS (Tailor/Engineer)',
+export const P1_BiS = {
+	name: 'P1 Affliction',
 	tooltip: WarlockTooltips.BIS_TOOLTIP,
   enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction,
 	gear: EquipmentSpec.fromJsonString(`
@@ -701,109 +600,6 @@ export const P1_BiS_Aff_Tailor_Engineer = {
     }
   `),
 }
-
-//will have 3 42144, Runed Dragon's Eye JC gems and 63765 Springy Arachnoweave on cloak
-// for simplicity, the first 3 red gem slots are changed.
-export const P1_BiS_Aff_JC_Engineer = {
-	name: 'P1 Affliction BiS (JC/Engineer)',
-	tooltip: WarlockTooltips.BIS_TOOLTIP,
-  enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction,
-	gear: EquipmentSpec.fromJsonString(`
-    {"items":
-      [
-        {
-          "id": 40421,
-          "enchant": 44877,
-          "gems": [
-            41285,
-            40051
-          ]
-        },
-        {
-          "id": 44661,
-          "gems": [
-            40026
-          ]
-        },
-        {
-          "id": 40424,
-          "enchant": 44874,
-          "gems": [
-            42144
-          ]
-        },
-        {
-          "id": 44005,
-          "enchant": 63765,
-          "gems": [
-            40026
-          ]
-        },
-        {
-          "id": 40423,
-          "enchant": 44489,
-          "gems": [
-            42144,
-            40051
-          ]
-        },
-        {
-          "id": 44008,
-          "enchant": 44498,
-          "gems": [
-            42144,
-            0
-          ]
-        },
-        {
-          "id": 40420,
-          "enchant": 54999,
-          "gems": [
-            39998,
-            0
-          ]
-        },
-        {
-          "id": 40561,
-          "gems": [
-            39998
-          ]
-        },
-        {
-          "id": 40560,
-          "enchant": 41602
-        },
-        {
-          "id": 40558,
-          "enchant": 55016
-        },
-        {
-          "id": 40399
-        },
-        {
-          "id": 40719
-        },
-        {
-          "id": 40432
-        },
-        {
-          "id": 40255
-        },
-        {
-          "id": 40396,
-          "enchant": 44487
-        },
-        {
-          "id": 39766
-        },
-        {
-          "id": 39712
-        }
-      ]
-    }
-  `),
-}
-
 export const P1_PreBiS_14 = {
   name: 'Pre-Raid Preset',
   tooltip: WarlockTooltips.BIS_TOOLTIP,
