@@ -144,3 +144,7 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 		TickEffects: core.TickFuncSnapshot(target, effect),
 	})
 }
+
+func (priest *Priest) MindFlayTickDuration() time.Duration {
+	return priest.ApplyCastSpeed(time.Second - core.TernaryDuration(priest.T10FourSetBonus, time.Millisecond*170, 0))
+}
