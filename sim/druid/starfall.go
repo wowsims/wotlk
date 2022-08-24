@@ -26,7 +26,7 @@ func (druid *Druid) registerStarfallSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
+				Cost: baseCost * (1 - 0.03*float64(druid.Talents.Moonglow)),
 				GCD:  core.GCDDefault,
 			},
 			CD: core.Cooldown{
