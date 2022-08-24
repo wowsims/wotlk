@@ -117,7 +117,7 @@ func MakeProcTriggerAura(unit *core.Unit, config ProcTrigger) *core.Aura {
 
 	applyProcTriggerCallback(unit, &aura, config)
 
-	return unit.RegisterAura(aura)
+	return unit.GetOrRegisterAura(aura)
 }
 
 func NewItemEffectWithHeroic(f func(isHeroic bool)) {
