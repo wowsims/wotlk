@@ -774,7 +774,7 @@ func registerRevitalizeHotCD(agent Agent, label string, hotID ActionID, ticks in
 
 	// Calculate desired downtime based on selected uptimeCount (1 count = 10% uptime, 0%-100%)
 	totalDuration := time.Duration(ticks) * tickPeriod
-	uptimePercent := float64(uptimeCount) / 10.0
+	uptimePercent := float64(uptimeCount) / 100.0
 
 	aura := character.GetOrRegisterAura(Aura{
 		Label:    "Revitalize-" + label,
