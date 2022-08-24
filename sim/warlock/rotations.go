@@ -15,7 +15,7 @@ func (warlock *Warlock) defineRotation() {
 	secondaryDot := warlock.Rotation.SecondaryDot
 	specSpell := warlock.Rotation.SpecSpell
 
-	// Spells (does not include fillers)
+	// High priority spells (does not include fillers)
 	spellBook := [...]*core.Spell{
 		warlock.Corruption,
 		warlock.Immolate,
@@ -32,24 +32,31 @@ func (warlock *Warlock) defineRotation() {
 		warlock.SpellsRotation[i].Spell = spell
 	}
 
-	// Next Cast readyness in time unit (use same order as in spellBook)
+	// Calculation of spell readyness in time unit (use same order as in spellBook)
+	// The associated spell will not be cast before time is 0
 	// 0 : Cast ready ; core.NeverExpires : never cast
 	warlock.SpellsRotation[0].CastIn = func(sim *core.Simulation) time.Duration {
+		// Checking if it's the manual rotation
 		if !warlock.Rotation.Corruption {
 			return core.NeverExpires
 		}
 		// This part tracks all the damage multiplier that roll over with corruption
-		CurrentShadowMult := warlock.PseudoStats.ShadowDamageDealtMultiplier // Tracks the current shadow damage multipler (essentially looking for DE)
-		CurrentDmgMult := warlock.PseudoStats.DamageDealtMultiplier          // Tracks the current damage multipler (essentially looking for TotT)
+		// Shadow damage multipler (looking for DE)
+		CurrentShadowMult := warlock.PseudoStats.ShadowDamageDealtMultiplier
+		// Damage multipler (looking for TotT)
+		CurrentDmgMult := warlock.PseudoStats.DamageDealtMultiplier
+		// Crit rating multipler (looking for Shadow Mastery (ISB Talent) and Potion of Wild Magic)
 		CurrentCritBonus := warlock.GetStat(stats.SpellCrit) + warlock.PseudoStats.BonusSpellCritRating + warlock.PseudoStats.BonusShadowCritRating +
-			warlock.CurrentTarget.PseudoStats.BonusSpellCritRatingTaken // Tracks the current crit rating multipler (essentially looking for Shadow Mastery (ISB))
+			warlock.CurrentTarget.PseudoStats.BonusSpellCritRatingTaken
 		CurrentCritMult := 1 + CurrentCritBonus/core.CritRatingPerCritChance/100*core.TernaryFloat64(warlock.Talents.Pandemic, 1, 0)
+		// Combination of all multipliers
 		CurrentCorruptionRolloverMult := CurrentDmgMult * CurrentShadowMult * CurrentCritMult
+		// Affliction spec check
 		if warlock.Talents.EverlastingAffliction > 0 {
-			if warlock.CorruptionDot.IsActive() && (CurrentCorruptionRolloverMult > warlock.CorruptionRolloverMult) ||
-				// If the original corruption multipliers are lower than this current time, then reapply corruption (also need to make sure this is some % into the fight)
-				(!warlock.CorruptionDot.IsActive() && (core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() || warlock.Talents.ImprovedShadowBolt == 0)) {
+			if (!warlock.CorruptionDot.IsActive() && (core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() || warlock.Talents.ImprovedShadowBolt == 0)) ||
 				// Wait for SM to be applied to cast first Corruption
+				warlock.CorruptionDot.IsActive() && (CurrentCorruptionRolloverMult > warlock.CorruptionRolloverMult) {
+				// If the original corruption multipliers are lower than this current time, then reapply corruption
 				return 0
 			} else {
 				return core.NeverExpires
@@ -80,12 +87,15 @@ func (warlock *Warlock) defineRotation() {
 		if sim.IsExecutePhase25() {
 			spellCastTime = warlock.ApplyCastSpeed(warlock.DrainSoulDot.TickLength)
 		}
-		// If SE remaining duration is less than a shadow bolt cast time + travel time (with a 1 second buffer) and the previous cast was not haunt or SB then cast shadow bolt so SE stacks are not lost
-		KeepUpSEStacks := (warlock.PrevCastSECheck != warlock.Haunt && warlock.PrevCastSECheck != warlock.ShadowBolt && warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim) < hauntCastTime+hauntSBTravelTime+spellCastTime)
+		// If SE remaining duration is less than a Haunt cast time + travel time
+		// (+ whichever current filler cast time so that we don't start a cast that would drop haunt)
+		// and the previous cast was not Haunt or SB then cast shadow bolt so SE stacks are not lost
+		KeepUpSEStacks := (warlock.PrevCastSECheck != warlock.Haunt && warlock.PrevCastSECheck != warlock.ShadowBolt &&
+			warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim) < hauntCastTime+hauntSBTravelTime)
 		if KeepUpSEStacks && sim.GetRemainingDuration() > time.Second*10 && warlock.Haunt.IsReady(sim) {
 			return 0
 		} else {
-			return core.MaxDuration(0, warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim)-hauntCastTime-hauntSBTravelTime)
+			return core.MaxDuration(0, warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim)-hauntCastTime-hauntSBTravelTime-spellCastTime)
 		}
 	}
 	warlock.SpellsRotation[4].CastIn = func(sim *core.Simulation) time.Duration {
@@ -105,7 +115,7 @@ func (warlock *Warlock) defineRotation() {
 			return core.NeverExpires
 		}
 		if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfConflagrate) {
-			return core.MaxDuration(0, warlock.SpellsRotation[6].Spell.TimeToReady(sim))
+			return core.MaxDuration(0, warlock.Conflagrate.TimeToReady(sim))
 		} else {
 			return core.MaxDuration(0, warlock.ImmolateDot.RemainingDuration(sim)-warlock.ImmolateDot.TickLength)
 		}
@@ -117,7 +127,7 @@ func (warlock *Warlock) defineRotation() {
 		return core.MaxDuration(0, warlock.ChaosBolt.TimeToReady(sim))
 	}
 
-	// Priority based rotations (0 means not in rotation, 1 is max
+	// Priority based rotations (0 or absent means not in rotation, 1 is max)
 	if rotationType == proto.Warlock_Rotation_Affliction {
 		warlock.SpellsRotation[0].Priority = 1
 		warlock.SpellsRotation[2].Priority = 2
@@ -134,6 +144,27 @@ func (warlock *Warlock) defineRotation() {
 		warlock.SpellsRotation[5].Priority = 1
 		warlock.SpellsRotation[6].Priority = 3
 		warlock.SpellsRotation[7].Priority = 4
+	}
+
+	// For Manual rotation, give spells lowest prio if user wants to experiment
+	if warlock.Rotation.Corruption && warlock.SpellsRotation[0].Priority == 0 {
+		warlock.SpellsRotation[0].Priority = 10
+	}
+	if secondaryDot == proto.Warlock_Rotation_Immolate && warlock.SpellsRotation[1].Priority == 0 {
+		warlock.SpellsRotation[1].Priority = 10
+	} else if secondaryDot == proto.Warlock_Rotation_UnstableAffliction && warlock.SpellsRotation[2].Priority == 0 {
+		warlock.SpellsRotation[2].Priority = 10
+	}
+	if specSpell == proto.Warlock_Rotation_Haunt && warlock.SpellsRotation[3].Priority == 0 {
+		warlock.SpellsRotation[3].Priority = 10
+	} else if specSpell == proto.Warlock_Rotation_ChaosBolt && warlock.SpellsRotation[7].Priority == 0 {
+		warlock.SpellsRotation[7].Priority = 10
+	}
+	if warlock.Talents.Conflagrate && warlock.SpellsRotation[6].Priority == 0 {
+		warlock.SpellsRotation[6].Priority = 10
+	}
+	if curse == proto.Warlock_Rotation_Doom && warlock.SpellsRotation[5].Priority == 0 {
+		warlock.SpellsRotation[5].Priority = 10
 	}
 }
 
@@ -350,9 +381,11 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// ------------------------------------------
 
 	// If SE remaining duration is less than a shadow bolt cast time + travel time (with a 1 second buffer) and the previous cast was not haunt or SB then cast shadow bolt so SE stacks are not lost
-	KeepUpSEStacks := (warlock.PrevCastSECheck != warlock.Haunt && warlock.PrevCastSECheck != warlock.ShadowBolt && warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim).Seconds() < warlock.ApplyCastSpeed(time.Duration(warlock.ShadowBolt.DefaultCast.CastTime)).Seconds()+warlock.DistanceFromTarget/20+1)
+	KeepUpSEStacks := (warlock.PrevCastSECheck != warlock.Haunt && warlock.PrevCastSECheck != warlock.ShadowBolt &&
+		warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim).Seconds() < warlock.ApplyCastSpeed(time.Duration(warlock.ShadowBolt.DefaultCast.CastTime)).Seconds()+warlock.DistanceFromTarget/20+1)
 	// If SE remaining duration is less than a shadow bolt cast time + travel time (with a 3 second buffer to include 1 drain soul tick) and the previous cast was not haunt or SB then cast shadow bolt so SE stacks are not lost
-	KeepUpSEStacksExecute := (warlock.PrevCastSECheck != warlock.Haunt && warlock.PrevCastSECheck != warlock.ShadowBolt && warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim).Seconds() < warlock.ApplyCastSpeed(time.Duration(warlock.ShadowBolt.DefaultCast.CastTime)).Seconds()+warlock.DistanceFromTarget/20+3)
+	KeepUpSEStacksExecute := (warlock.PrevCastSECheck != warlock.Haunt && warlock.PrevCastSECheck != warlock.ShadowBolt &&
+		warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim).Seconds() < warlock.ApplyCastSpeed(time.Duration(warlock.ShadowBolt.DefaultCast.CastTime)).Seconds()+warlock.DistanceFromTarget/20+3)
 
 	// This part tracks all the damage multiplier that roll over with corruption
 	CurrentShadowMult := warlock.PseudoStats.ShadowDamageDealtMultiplier // Tracks the current shadow damage multipler (essentially looking for DE)
@@ -399,7 +432,8 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 				// Keep Agony up, but not at the expense of dropping Haunt
 				spell = warlock.CurseOfAgony
 			} else if KeepUpSEStacks && sim.GetRemainingDuration() > time.Second*10 ||
-				(core.ShadowMasteryAura(warlock.CurrentTarget).RemainingDuration(sim) < (warlock.ShadowBolt.CurCast.CastTime+hauntSBTravelTime) && sim.GetRemainingDuration() > core.ShadowMasteryAura(warlock.CurrentTarget).Duration/2.) {
+				(core.ShadowMasteryAura(warlock.CurrentTarget).RemainingDuration(sim) < (warlock.ShadowBolt.CurCast.CastTime+hauntSBTravelTime) &&
+				sim.GetRemainingDuration() > core.ShadowMasteryAura(warlock.CurrentTarget).Duration/2.) {
 				// Shadow Embrace & Shadow Mastery refresh
 				spell = warlock.ShadowBolt
 			} else if sim.IsExecutePhase25() && !KeepUpSEStacksExecute {
@@ -464,15 +498,17 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// ------------------------------------------
 
 	// We're kind of trying to fit all different spec rotations in one big priority based rotation in order to let people experiment
-
-	switch mainSpell {
-	case proto.Warlock_Rotation_ShadowBolt:
-		filler = warlock.ShadowBolt
-	case proto.Warlock_Rotation_Incinerate:
-		filler = warlock.Incinerate
+	if filler == nil {
+		switch mainSpell {
+		case proto.Warlock_Rotation_ShadowBolt:
+			filler = warlock.ShadowBolt
+		case proto.Warlock_Rotation_Incinerate:
+			filler = warlock.Incinerate
+		}
 	}
 
 	if preset == proto.Warlock_Rotation_Manual {
+		// The default filler can change because of some execute phase or proc
 		if sim.IsExecutePhase25() && warlock.Talents.SoulSiphon > 0 && !KeepUpSEStacksExecute {
 			// Affliction execute phase
 			filler = warlock.channelCheck(sim, warlock.DrainSoulDot, 5)
@@ -504,24 +540,6 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		fillerCastTime = warlock.ApplyCastSpeed(filler.DefaultCast.CastTime)
 		ManaSpendRate = filler.BaseCost / float64(fillerCastTime.Seconds())
 	}
-	var executeDuration float64
-	// Estimate for desired mana needed to do affliction execute
-	var DesiredManaAtExecute float64
-	if warlock.Talents.Decimation > 0 {
-		executeDuration = 0.35
-		DesiredManaAtExecute = 0.3
-	} else if warlock.Talents.SoulSiphon > 0 {
-		executeDuration = 0.25
-		DesiredManaAtExecute = 0.02
-	}
-	TotalManaAtExecute := warlock.MaxMana() * DesiredManaAtExecute
-	// TotalManaAtExecute := executeDuration*sim.Duration.Seconds()/ManaSpendRate
-	timeUntilOom := time.Duration((warlock.CurrentMana()-TotalManaAtExecute)/ManaSpendRate) * time.Second
-	timeUntilExecute := time.Duration((sim.GetRemainingDurationPercent() - executeDuration) * float64(sim.Duration))
-
-	if sim.Log != nil {
-		warlock.Log(sim, "TotalManaAtExecute[%d]", TotalManaAtExecute)
-	}
 	// ------------------------------------------
 	// Filler spell && Regen check
 	// ------------------------------------------
@@ -532,41 +550,42 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			warlock.WaitUntil(sim, nextBigCD)
 			return
 		} else if nextCD-sim.CurrentTime > 0 && nextCD-sim.CurrentTime < fillerCastTime/10 {
+			// The dot lag is currently here only for UI purposes, without which the last dot tick is shown as part of the next dot cast
 			warlock.WaitUntil(sim, nextCD+dotLag)
 			return
-		} else if timeUntilOom < 5*time.Second && timeUntilExecute > time.Second {
-			// If you were gonna cast a filler but are low mana, get mana instead in order not to be OOM when an important spell is coming up.
-			warlock.LifeTapOrDarkPact(sim)
-			return
-		} else if !warlock.DoingRegen && nextBigCD-sim.CurrentTime < time.Second*6 && sim.GetRemainingDuration() > time.Second*30 {
-			// If big CD coming up and we don't have enough mana for it, lifetap
-			// Also, never do a big regen in the last few seconds of the fight.
-			// TODO: Specify regen goals depending on CD
-			if warlock.CurrentManaPercent() < 0.2 {
-				warlock.DoingRegen = true
-			}
 		}
 
-		if warlock.DoingRegen && !(warlock.Talents.Haunt &&
-			allCDs[0]-fillerCastTime < 0 &&
-			warlock.Haunt.CD.IsReady(sim)) {
+		var executeDuration float64
+		// Estimate for desired mana needed to do affliction execute
+		var DesiredManaAtExecute float64
+		if warlock.Talents.Decimation > 0 {
+			// We suppose that if you would want to use Soul Fire as an execute filler if and only if you have the Decimation talent.
+			executeDuration = 0.35
+			DesiredManaAtExecute = 0.3*sim.Duration.Seconds()*executeDuration/60
+		} else if warlock.Talents.SoulSiphon > 0 {
+			// We suppose that if you would want to use Drain Soul as an execute filler if and only if you have the Soul Siphon talent.
+			executeDuration = 0.25
+			DesiredManaAtExecute = 0.02
+		}
+		TotalManaAtExecute := warlock.MaxMana() * DesiredManaAtExecute
+		// TotalManaAtExecute := executeDuration*sim.Duration.Seconds()/ManaSpendRate
+		timeUntilOom := time.Duration((warlock.CurrentMana()-TotalManaAtExecute)/ManaSpendRate) * time.Second
+		timeUntilExecute := time.Duration((sim.GetRemainingDurationPercent() - executeDuration) * float64(sim.Duration))
+
+		if sim.Log != nil {
+			warlock.Log(sim, "DesiredManaAtExecute[%d]", DesiredManaAtExecute)
+		}
+
+		if timeUntilOom < time.Second && timeUntilExecute > time.Second && warlock.CurrentManaPercent() < 0.8 {
+			// If you were gonna cast a filler but are low mana, get mana instead in order not to be OOM when an important spell is coming up.
+			// warlock.CurrentManaPercent() < 0.8 is here to prevent overlifetapping early in the sim since timeUntilOom could still be
+			// really low since the reference is the execute time expected mana.
 			warlock.LifeTapOrDarkPact(sim)
-			if warlock.CurrentManaPercent() > 0.2 {
-				warlock.DoingRegen = false
-			}
 			return
-		} else {
-			spell = warlock.Haunt
 		}
 
 		// Filler
-		if warlock.Talents.Haunt &&
-			allCDs[0]-fillerCastTime < 0 &&
-			warlock.Haunt.CD.IsReady(sim) {
-			spell = warlock.Haunt
-		} else {
-			spell = filler
-		}
+		spell = filler
 	}
 
 	// ------------------------------------------
@@ -580,13 +599,10 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			warlock.CorruptionRolloverMult = CurrentCorruptionRolloverMult
 		}
 		return
-	}
-
-	// Lifetap if nothing else
-	if warlock.CurrentManaPercent() < 0.8 {
+	} else {
+	// Lifetap if can't cast
 		warlock.LifeTapOrDarkPact(sim)
 		return
 	}
 
-	// If we get here, something's wrong
 }

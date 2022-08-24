@@ -96,10 +96,9 @@ func (hunter *Hunter) trySwapAspect(sim *core.Simulation) bool {
 		if !hunter.permaHawk &&
 			hunter.CurrentMana() > hunter.manaSpentPerSecondAtFirstAspectSwap*sim.GetRemainingDuration().Seconds() {
 			hunter.permaHawk = true
-		} else {
-			hunter.AspectOfTheViper.Cast(sim, nil)
-			return true
 		}
+		hunter.AspectOfTheViper.Cast(sim, nil)
+		return true
 	}
 	return false
 }
