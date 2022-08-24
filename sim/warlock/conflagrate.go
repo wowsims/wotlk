@@ -9,10 +9,6 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (warlock *Warlock) CanConflagrate(sim *core.Simulation) bool {
-	return warlock.Talents.Conflagrate && warlock.ImmolateDot.IsActive() && warlock.Conflagrate.IsReady(sim)
-}
-
 func (warlock *Warlock) registerConflagrateSpell() {
 
 	baseCost := 0.16 * warlock.BaseMana
@@ -54,6 +50,9 @@ func (warlock *Warlock) registerConflagrateSpell() {
 				Duration: time.Second * 10,
 			},
 			OnCastComplete: func(sim *core.Simulation, spell *core.Spell) {
+				if !warlock.ImmolateDot.IsActive() {
+					panic("Conflagrate spell is cast while Immolate is not active.")
+				}
 				if !warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfConflagrate) {
 					warlock.ImmolateDot.Deactivate(sim)
 					//warlock.ShadowflameDot.Deactivate(sim)

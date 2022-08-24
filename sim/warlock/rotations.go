@@ -102,13 +102,15 @@ func (warlock *Warlock) defineRotation() {
 		return core.MaxDuration(0, warlock.CurseOfDoomDot.RemainingDuration(sim))
 	}
 	warlock.SpellsRotation[6].CastIn = func(sim *core.Simulation) time.Duration {
-		if !warlock.Talents.Conflagrate {
+		if !warlock.Talents.Conflagrate || !warlock.ImmolateDot.IsActive() {
 			return core.NeverExpires
 		}
 		if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfConflagrate) {
+			// Cast on CD
 			return core.MaxDuration(0, warlock.Conflagrate.TimeToReady(sim))
 		} else {
-			return core.MaxDuration(0, warlock.ImmolateDot.RemainingDuration(sim)-warlock.ImmolateDot.TickLength)
+			// Cast at the end of an Immolate
+			return core.MaxDuration(core.MaxDuration(0, warlock.ImmolateDot.RemainingDuration(sim)-warlock.ImmolateDot.TickLength), warlock.Conflagrate.TimeToReady(sim))
 		}
 	}
 	warlock.SpellsRotation[7].CastIn = func(sim *core.Simulation) time.Duration {
@@ -249,12 +251,6 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		}
 	}
 
-	if nextBigCD-sim.CurrentTime <= 0 {
-		// stop regen, start blasting
-		warlock.DoingRegen = false
-	}
-
-
 	// ------------------------------------------
 	// Small CDs
 	// ------------------------------------------
@@ -313,7 +309,6 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	if spell != nil {
 		if curse != proto.Warlock_Rotation_Doom && curse != proto.Warlock_Rotation_Agony {
 			if success := spell.Cast(sim, target); success {
-				warlock.PrevCastSECheck = spell
 				return
 			}
 		}
@@ -444,7 +439,6 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// ------------------------------------------
 
 	if success := spell.Cast(sim, target); success {
-		warlock.PrevCastSECheck = spell
 		if spell == warlock.Corruption && warlock.Talents.EverlastingAffliction > 0 {
 			// We are recording the current rollover power of corruption
 			warlock.CorruptionRolloverMult = CurrentCorruptionRolloverMult

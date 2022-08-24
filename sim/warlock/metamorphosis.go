@@ -40,7 +40,7 @@ func (warlock *Warlock) registerMetamorphosisSpell() {
 		Spell: warlock.Metamorphosis,
 		Type:  core.CooldownTypeDPS,
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-			if warlock.DoingRegen || !warlock.GetAura("Demonic Pact").IsActive() {
+			if !warlock.GetAura("Demonic Pact").IsActive() {
 				return false
 			}
 			MetamorphosisNumber := (float64(sim.Duration) + float64(warlock.MetamorphosisAura.Duration)) / float64(warlock.Metamorphosis.CD.Duration)
