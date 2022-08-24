@@ -87,6 +87,9 @@ type Unit struct {
 	// All spells that can be cast by this unit.
 	Spellbook []*Spell
 
+	// Pets owned by this Unit.
+	Pets []PetAgent
+
 	// AutoAttacks is the manager for auto attack swings.
 	// Must be enabled to use, with "EnableAutoAttacks()".
 	AutoAttacks AutoAttacks
@@ -198,6 +201,12 @@ func (unit *Unit) AddStatsDynamic(sim *Simulation, bonus stats.Stats) {
 
 	unit.stats = unit.stats.Add(bonus)
 	unit.processDynamicBonus(sim, bonus)
+
+	if len(unit.Pets) > 0 {
+		for _, petAgent := range unit.Pets {
+			petAgent.GetPet().addOwnerStats(sim, bonus)
+		}
+	}
 }
 func (unit *Unit) AddStatDynamic(sim *Simulation, stat stats.Stat, amount float64) {
 	bonus := stats.Stats{}
