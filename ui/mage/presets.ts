@@ -350,7 +350,7 @@ export const P1_FROST_PRESET = {
 	name: 'Wotlk P1 Frost Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Frost,
-	gear: EquipmentSpec.fromJsonString(`
+	gear: EquipmentSpec.fromJsonString(`{"items": [
         {
           "id": 40416,
           "enchant": 44877,
