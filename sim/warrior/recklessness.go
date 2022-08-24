@@ -22,7 +22,7 @@ func (warrior *Warrior) RegisterRecklessnessCD() {
 			warrior.PseudoStats.DamageTakenMultiplier /= 1.2
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeSpecial) {
+			if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeSpecial) || spellEffect.Damage <= 0 {
 				return
 			}
 			aura.RemoveStack(sim)

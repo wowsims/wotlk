@@ -591,8 +591,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-TheTwinBladesofAzzinoth"
  value: {
-  dps: 986.783620324
-  tps: 1103.4899400349
+  dps: 987.6353950104
+  tps: 1104.3111636813
  }
 }
 dps_results: {
