@@ -201,12 +201,6 @@ func (unit *Unit) AddStatsDynamic(sim *Simulation, bonus stats.Stats) {
 
 	unit.stats = unit.stats.Add(bonus)
 	unit.processDynamicBonus(sim, bonus)
-
-	if len(unit.Pets) > 0 {
-		for _, petAgent := range unit.Pets {
-			petAgent.GetPet().addOwnerStats(sim, bonus)
-		}
-	}
 }
 func (unit *Unit) AddStatDynamic(sim *Simulation, stat stats.Stat, amount float64) {
 	bonus := stats.Stats{}
@@ -246,6 +240,12 @@ func (unit *Unit) processDynamicBonus(sim *Simulation, bonus stats.Stats) {
 	}
 	if bonus[stats.ShadowResistance] != 0 {
 		unit.updateResistances()
+	}
+
+	if len(unit.Pets) > 0 {
+		for _, petAgent := range unit.Pets {
+			petAgent.GetPet().addOwnerStats(sim, bonus)
+		}
 	}
 }
 
