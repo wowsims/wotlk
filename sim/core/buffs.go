@@ -605,7 +605,7 @@ func BloodlustAura(character *Character, actionTag int32) *Aura {
 var PowerInfusionAuraTag = "PowerInfusion"
 
 const PowerInfusionDuration = time.Second * 15
-const PowerInfusionCD = time.Minute * 3
+const PowerInfusionCD = time.Minute * 2
 
 func registerPowerInfusionCD(agent Agent, numPowerInfusions int32) {
 	if numPowerInfusions == 0 {

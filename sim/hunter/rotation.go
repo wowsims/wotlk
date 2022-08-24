@@ -52,22 +52,24 @@ func (hunter *Hunter) aoeChooseSpell(sim *core.Simulation) *core.Spell {
 }
 
 func (hunter *Hunter) singleTargetChooseSpell(sim *core.Simulation) *core.Spell {
-	if hunter.Rotation.Sting == proto.Hunter_Rotation_ScorpidSting && !hunter.ScorpidStingAura.IsActive() {
+	if sim.IsExecutePhase20() && hunter.KillShot.IsReady(sim) {
+		return hunter.KillShot
+	} else if hunter.ExplosiveShot.IsReady(sim) && !hunter.ExplosiveShotDot.IsActive() {
+		return hunter.ExplosiveShot
+	} else if hunter.Rotation.Sting == proto.Hunter_Rotation_ScorpidSting && !hunter.ScorpidStingAura.IsActive() {
 		return hunter.ScorpidSting
 	} else if hunter.Rotation.Sting == proto.Hunter_Rotation_SerpentSting && !hunter.SerpentStingDot.IsActive() {
 		return hunter.SerpentSting
-	} else if sim.IsExecutePhase20() && hunter.KillShot.IsReady(sim) {
-		return hunter.KillShot
 	} else if hunter.ChimeraShot.IsReady(sim) {
 		return hunter.ChimeraShot
 	} else if !hunter.Rotation.TrapWeave && hunter.BlackArrow.IsReady(sim) {
 		return hunter.BlackArrow
-	} else if hunter.ExplosiveShot.IsReady(sim) && !hunter.ExplosiveShotDot.IsActive() {
-		return hunter.ExplosiveShot
-	} else if hunter.AimedShot.IsReady(sim) {
-		return hunter.AimedShot
 	} else if hunter.Rotation.TrapWeave && hunter.ExplosiveTrap.IsReady(sim) {
 		return hunter.TrapWeaveSpell
+	} else if hunter.AimedShot.IsReady(sim) {
+		return hunter.AimedShot
+	} else if hunter.MultiShot.IsReady(sim) {
+		return hunter.MultiShot
 	} else if hunter.ArcaneShot.IsReady(sim) && (hunter.ExplosiveShotDot == nil || !hunter.ExplosiveShotDot.IsActive()) {
 		return hunter.ArcaneShot
 	} else {

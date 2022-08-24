@@ -360,6 +360,7 @@ func (character *Character) reset(sim *Simulation, agent Agent) {
 	character.ExpectedBonusMana = 0
 	character.majorCooldownManager.reset(sim)
 	character.Unit.reset(sim, agent)
+	character.Unit.CurrentTarget = &character.Env.Encounter.Targets[0].Unit
 
 	if character.Type == PlayerUnit {
 		character.SetGCDTimer(sim, 0)

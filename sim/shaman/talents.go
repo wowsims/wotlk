@@ -89,7 +89,7 @@ func (shaman *Shaman) applyElementalFocus() {
 			if !spell.Flags.Matches(SpellFlagShock | SpellFlagFocusable) {
 				return
 			}
-			if spell.ActionID.Tag != 0 { // Filter LO casts
+			if spell.ActionID.Tag == 6 { // Filter LO casts
 				return
 			}
 			aura.RemoveStack(sim)

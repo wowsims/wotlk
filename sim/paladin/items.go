@@ -188,9 +188,9 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				// if spell == paladin.JudgementOfBlood || spell == paladin.JudgementOfRighteousness {
-				procAura.Activate(sim)
-				// }
+				if spell.Flags.Matches(SpellFlagSecondaryJudgement) {
+					procAura.Activate(sim)
+				}
 			},
 		})
 	})
@@ -399,7 +399,13 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spell == paladin.SealOfVengeanceDot.Spell {
+				isVengeanceDot := false
+				for _, vengeanceDot := range paladin.SealOfVengeanceDot{
+					if spell == vengeanceDot.Spell{
+						isVengeanceDot = true
+					}
+				} 
+				if isVengeanceDot {
 					if !icd.IsReady(sim) || sim.RandomFloat("Libram of Valiance") > 0.70 {
 						return
 					}

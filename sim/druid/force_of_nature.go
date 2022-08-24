@@ -67,6 +67,7 @@ func (druid *Druid) NewTreant() *TreantPet {
 			func(ownerStats stats.Stats) stats.Stats {
 				return stats.Stats{
 					stats.AttackPower: ownerStats[stats.SpellPower] * 2,
+					stats.MeleeHaste:  ownerStats[stats.SpellHaste],
 				}
 			},
 			false,
@@ -109,4 +110,5 @@ var treantBaseStats = stats.Stats{
 	stats.Stamina:   9600,
 	stats.MeleeHit:  4 * core.MeleeHitRatingPerHitChance,
 	stats.Expertise: 14 * core.ExpertisePerQuarterPercentReduction,
+	stats.MeleeCrit: 3 * core.CritRatingPerCritChance,
 }
