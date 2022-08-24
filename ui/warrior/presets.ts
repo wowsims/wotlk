@@ -62,40 +62,48 @@ export const FuryTalents = {
 
 export const DefaultRotation = WarriorRotation.create({
 	useRend: true,
+  useMs: true,
+  useCleave: false,
+
 	prioritizeWw: true,
-	sunderArmor: SunderArmor.SunderArmorMaintain,
-	hsRageThreshold: 40,
-	rendRageThreshold: 75,
-	msRageThreshold: 60,
-	rendCdThreshold: 3,
+	sunderArmor: SunderArmor.SunderArmorHelpStack,
+
+  msRageThreshold: 50,
+	hsRageThreshold: 60,
+	rendRageThresholdBelow: 70,
+  slamRageThreshold: 15,
+	rendCdThreshold: 0,
 	useHsDuringExecute: true,
 	useBtDuringExecute: true,
 	useWwDuringExecute: true,
 	useSlamOverExecute: true,
+  spamExecute: true,
 });
 
 export const ArmsRotation = WarriorRotation.create({
 	useRend: true,
 	useMs: true,
-	sunderArmor: SunderArmor.SunderArmorMaintain,
-	msRageThreshold: 60,
+  useCleave: false,
+	sunderArmor: SunderArmor.SunderArmorHelpStack,
+	msRageThreshold: 50,
+  slamRageThreshold: 15,
 	hsRageThreshold: 60,
-	rendCdThreshold: 3,
+	rendCdThreshold: 0,
 	useHsDuringExecute: true,
-	spamExecute: false,
-	maintainDemoShout: true,
+	spamExecute: true,
 });
 
 export const DefaultOptions = WarriorOptions.create({
 	startingRage: 0,
 	useRecklessness: true,
-	shout: WarriorShout.WarriorShoutBattle,
+	shout: WarriorShout.WarriorShoutCommanding,
 });
 
 export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfEndlessRage,
-	food: Food.FoodHeartyRhino,
+	food: Food.FoodDragonfinFilet,
 	defaultPotion: Potions.IndestructiblePotion,
+  prepopPotion:  Potions.IndestructiblePotion,
 });
 
 export const P1_PRERAID_FURY_PRESET = {
