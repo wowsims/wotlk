@@ -15,7 +15,10 @@ func (druid *Druid) registerStarfallSpell() {
 	}
 	baseCost := druid.BaseMana * 0.35
 	target := druid.CurrentTarget
+
+	// Improved Faerie Fire and Nature's Majesty
 	iffCritBonus := core.TernaryFloat64(druid.CurrentTarget.HasAura("Improved Faerie Fire"), float64(druid.Talents.ImprovedFaerieFire)*1*core.CritRatingPerCritChance, 0)
+	naturesMajestyCritBonus := 2 * float64(druid.Talents.NaturesMajesty) * core.CritRatingPerCritChance
 
 	druid.Starfall = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 53201},
@@ -89,9 +92,9 @@ func (druid *Druid) registerStarfallSpell() {
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 			IsPeriodic:       false,
-			BaseDamage:       core.BaseDamageConfigMagic(563, 653, 0.127),
+			BaseDamage:       core.BaseDamageConfigMagic(563, 653, 0.3),
 			OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(1),
-			BonusCritRating:  iffCritBonus,
+			BonusCritRating:  iffCritBonus + naturesMajestyCritBonus,
 		})),
 	})
 
@@ -108,9 +111,9 @@ func (druid *Druid) registerStarfallSpell() {
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 			IsPeriodic:       false,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(101, 0.127),
+			BaseDamage:       core.BaseDamageConfigMagicNoRoll(101, 0.13),
 			OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(1),
-			BonusCritRating:  iffCritBonus,
+			BonusCritRating:  iffCritBonus + naturesMajestyCritBonus,
 		})),
 	})
 }
