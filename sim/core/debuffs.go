@@ -181,9 +181,7 @@ func ExposeArmorPeriodicActonOptions(aura *Aura) PeriodicActionOptions {
 		Period:   time.Second * 10,
 		NumTicks: 1,
 		OnAction: func(sim *Simulation) {
-			if aura.IsActive() {
-				aura.AddStack(sim)
-			}
+			aura.Activate(sim)
 		},
 	}
 }
