@@ -155,6 +155,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeralTank-AllItems-DreamwalkerGarb"
+ value: {
+  dps: 702.0337416637
+  tps: 918.414428
+ }
+}
+dps_results: {
  key: "TestFeralTank-AllItems-EffulgentSkyflareDiamond"
  value: {
   dps: 820.26602271
@@ -316,6 +323,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeralTank-AllItems-LasherweaveRegalia"
+ value: {
+  dps: 781.6130031199
+  tps: 1022.6666628615
+ }
+}
+dps_results: {
  key: "TestFeralTank-AllItems-Lavanthor'sTalisman-37872"
  value: {
   dps: 835.4808017216
@@ -334,6 +348,13 @@ dps_results: {
  value: {
   dps: 835.4808017216
   tps: 1115.2071428332
+ }
+}
+dps_results: {
+ key: "TestFeralTank-AllItems-Malfurion'sRegalia"
+ value: {
+  dps: 734.9464081233
+  tps: 963.4741577742
  }
 }
 dps_results: {
@@ -362,6 +383,13 @@ dps_results: {
  value: {
   dps: 871.8778929863
   tps: 1165.5151149222
+ }
+}
+dps_results: {
+ key: "TestFeralTank-AllItems-NightsongGarb"
+ value: {
+  dps: 699.6791736522
+  tps: 913.0964769037
  }
 }
 dps_results: {
@@ -460,6 +488,13 @@ dps_results: {
  value: {
   dps: 835.4808017216
   tps: 1115.2071428332
+ }
+}
+dps_results: {
+ key: "TestFeralTank-AllItems-Runetotem'sRegalia"
+ value: {
+  dps: 734.9464081233
+  tps: 963.4741577742
  }
 }
 dps_results: {

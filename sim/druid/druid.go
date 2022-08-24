@@ -77,6 +77,18 @@ type Druid struct {
 
 	form         DruidForm
 	disabledMCDs []*core.MajorCooldown
+	DruidTier    DruidTierSets
+}
+
+type DruidTierSets struct {
+	balance_t7_2  bool
+	balance_t7_4  bool
+	balance_t8_2  bool
+	balance_t8_4  bool
+	balance_t9_2  bool
+	balance_t9_4  bool
+	balance_t10_2 bool
+	balance_t10_4 bool
 }
 
 type SelfBuffs struct {
@@ -147,6 +159,17 @@ func (druid *Druid) HasMinorGlyph(glyph proto.DruidMinorGlyph) bool {
 func (druid *Druid) Initialize() {
 	if druid.Talents.PrimalPrecision > 0 {
 		druid.PrimalPrecisionRecoveryMetrics = druid.NewEnergyMetrics(core.ActionID{SpellID: 48410})
+	}
+
+	druid.DruidTier = DruidTierSets{
+		druid.HasSetBonus(ItemSetDreamwalkerGarb, 2),
+		druid.HasSetBonus(ItemSetDreamwalkerGarb, 4),
+		druid.HasSetBonus(ItemSetNightsongGarb, 2),
+		druid.HasSetBonus(ItemSetNightsongGarb, 4),
+		druid.HasSetBonus(ItemSetMalfurionsRegalia, 2) || druid.HasSetBonus(ItemSetRunetotemsRegalia, 2),
+		druid.HasSetBonus(ItemSetMalfurionsRegalia, 4) || druid.HasSetBonus(ItemSetRunetotemsRegalia, 4),
+		druid.HasSetBonus(ItemSetLasherweaveRegalia, 2),
+		druid.HasSetBonus(ItemSetLasherweaveRegalia, 4),
 	}
 
 	druid.registerFaerieFireSpell()
