@@ -81,6 +81,7 @@ type Druid struct {
 }
 
 type DruidTierSets struct {
+	balance_t6_2  bool
 	balance_t7_2  bool
 	balance_t7_4  bool
 	balance_t8_2  bool
@@ -162,6 +163,7 @@ func (druid *Druid) Initialize() {
 	}
 
 	druid.DruidTier = DruidTierSets{
+		druid.HasSetBonus(ItemSetThunderheartRegalia, 2),
 		druid.HasSetBonus(ItemSetDreamwalkerGarb, 2),
 		druid.HasSetBonus(ItemSetDreamwalkerGarb, 4),
 		druid.HasSetBonus(ItemSetNightsongGarb, 2),
@@ -181,7 +183,7 @@ func (druid *Druid) RegisterBalanceSpells() {
 	druid.registerHurricaneSpell()
 	druid.registerInsectSwarmSpell()
 	druid.registerMoonfireSpell()
-	druid.Starfire = druid.newStarfireSpell()
+	druid.registerStarfireSpell()
 	druid.registerWrathSpell()
 	druid.registerStarfallSpell()
 	druid.registerForceOfNatureCD()

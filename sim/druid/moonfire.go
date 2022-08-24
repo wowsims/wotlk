@@ -1,6 +1,7 @@
 package druid
 
 import (
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -53,7 +54,7 @@ func (druid *Druid) registerMoonfireSpell() {
 			Label:    "Moonfire",
 			ActionID: actionID,
 		}),
-		NumberOfTicks: 4 + core.TernaryInt(druid.HasSetBonus(ItemSetThunderheartRegalia, 2), 1, 0) + core.TernaryInt(druid.Talents.NaturesSplendor, 1, 0),
+		NumberOfTicks: 4 + core.TernaryInt(druid.DruidTier.balance_t6_2, 1, 0) + core.TernaryInt(druid.Talents.NaturesSplendor, 1, 0),
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
@@ -64,4 +65,12 @@ func (druid *Druid) registerMoonfireSpell() {
 			IsPeriodic:       true,
 		}),
 	})
+}
+
+func (druid *Druid) maxMoonfireTicks() int {
+	base := 4
+	thunderhearthRegalia := core.TernaryInt(druid.DruidTier.balance_t6_2, 1, 0)
+	natureSplendor := core.TernaryInt(druid.Talents.NaturesSplendor, 1, 0)
+	starfireGlyph := core.TernaryInt(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfStarfire), 3, 0)
+	return base + thunderhearthRegalia + natureSplendor + starfireGlyph
 }

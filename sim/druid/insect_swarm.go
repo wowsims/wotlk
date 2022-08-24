@@ -58,7 +58,7 @@ func (druid *Druid) registerInsectSwarmSpell() {
 			DamageMultiplier: 1 * (1 + 0.01*float64(druid.Talents.Genesis)) * dreamwalkerGrab,
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(124, 0.2),
+			BaseDamage:       core.BaseDamageConfigMagicNoRoll(215, 0.2),
 			OutcomeApplier:   druid.OutcomeFuncTick(),
 			OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if sim.RandomFloat("Elune's Wrath proc") > (1-0.08) && druid.DruidTier.balance_t8_4 {
