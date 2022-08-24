@@ -641,15 +641,15 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		},
 		defaultGear: {
 			[Faction.Unknown]: {
-				1: WarlockPresets.P1_BiS_Tailor_Engineer.gear,
+				1: WarlockPresets.P1_Preset_Demo_Destro.gear,
 				2: WarlockPresets.P1_PreBiS_14.gear,
 			},
 			[Faction.Alliance]: {
-				1: WarlockPresets.P1_BiS_Tailor_Engineer.gear,
+				1: WarlockPresets.P1_Preset_Demo_Destro.gear,
 				2: WarlockPresets.P1_PreBiS_14.gear,
 			},
 			[Faction.Horde]: {
-				1: WarlockPresets.P1_BiS_Tailor_Engineer.gear,
+				1: WarlockPresets.P1_Preset_Demo_Destro.gear,
 				2: WarlockPresets.P1_PreBiS_14.gear,
 			},
 		},
@@ -671,15 +671,15 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		},
 		defaultGear: {
 			[Faction.Unknown]: {
-				1: WarlockPresets.P1_BiS_Aff_Tailor_Engineer.gear,
+				1: WarlockPresets.P1_Preset_Affliction.gear,
 				2: WarlockPresets.P1_PreBiS_11.gear,
 			},
 			[Faction.Alliance]: {
-				1: WarlockPresets.P1_BiS_Aff_Tailor_Engineer.gear,
+				1: WarlockPresets.P1_Preset_Affliction.gear,
 				2: WarlockPresets.P1_PreBiS_11.gear,
 			},
 			[Faction.Horde]: {
-				1: WarlockPresets.P1_BiS_Aff_Tailor_Engineer.gear,
+				1: WarlockPresets.P1_Preset_Affliction.gear,
 				2: WarlockPresets.P1_PreBiS_11.gear,
 			},
 		},
@@ -701,15 +701,15 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		},
 		defaultGear: {
 			[Faction.Unknown]: {
-				1: WarlockPresets.P1_BiS_Tailor_Engineer.gear,
+				1: WarlockPresets.P1_Preset_Demo_Destro.gear,
 				2: WarlockPresets.P1_PreBiS_14.gear,
 			},
 			[Faction.Alliance]: {
-				1: WarlockPresets.P1_BiS_Tailor_Engineer.gear,
+				1: WarlockPresets.P1_Preset_Demo_Destro.gear,
 				2: WarlockPresets.P1_PreBiS_14.gear,
 			},
 			[Faction.Horde]: {
-				1: WarlockPresets.P1_BiS_Tailor_Engineer.gear,
+				1: WarlockPresets.P1_Preset_Demo_Destro.gear,
 				2: WarlockPresets.P1_PreBiS_14.gear,
 			},
 		},
