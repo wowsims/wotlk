@@ -262,8 +262,9 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		registerBloodlustCD(agent)
 	}
 
-	registerRevitalizeCD(agent, "Rejuvination", ActionID{SpellID: 26982}, 5, 3*time.Second, individualBuffs.RevitalizeRejuvination)
-	registerRevitalizeCD(agent, "Wild Growth", ActionID{SpellID: 53251}, 7, time.Second, individualBuffs.RevitalizeWildGrowth)
+	registerRevitalizeHotCD(agent, "Rejuvination", ActionID{SpellID: 26982}, 5, 3*time.Second, individualBuffs.RevitalizeRejuvination)
+	registerRevitalizeHotCD(agent, "Wild Growth", ActionID{SpellID: 53251}, 7, time.Second, individualBuffs.RevitalizeWildGrowth)
+
 	registerUnholyFrenzyCD(agent, individualBuffs.UnholyFrenzy)
 	registerTricksOfTheTradeCD(agent, individualBuffs.TricksOfTheTrades)
 	registerShatteringThrowCD(agent, individualBuffs.ShatteringThrows)
@@ -758,15 +759,12 @@ func UnholyFrenzyAura(character *Character, actionTag int32) *Aura {
 	})
 }
 
-func registerRevitalizeCD(agent Agent, label string, actionID ActionID, ticks int, tickPeriod time.Duration, uptimeCount int32) {
+func registerRevitalizeHotCD(agent Agent, label string, hotID ActionID, ticks int, tickPeriod time.Duration, uptimeCount int32) {
 	if uptimeCount == 0 {
 		return
 	}
 
-	RevitalizeHot(agent.GetCharacter(), label, actionID, ticks, tickPeriod, int(uptimeCount))
-}
-
-func RevitalizeHot(character *Character, label string, hotID ActionID, ticks int, tickPeriod time.Duration, uptimeCount int) *Aura {
+	character := agent.GetCharacter()
 	revActionID := ActionID{SpellID: 48545}
 
 	manaMetrics := character.NewManaMetrics(revActionID)
@@ -805,8 +803,6 @@ func RevitalizeHot(character *Character, label string, hotID ActionID, ticks int
 	})
 
 	ApplyFixedUptimeAura(aura, uptimePercent, totalDuration)
-
-	return aura
 }
 
 const ShatteringThrowCD = time.Minute * 5
