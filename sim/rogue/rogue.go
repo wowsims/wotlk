@@ -53,6 +53,7 @@ type Rogue struct {
 	Hemorrhage       *core.Spell
 	HungerForBlood   *core.Spell
 	InstantPoison    [3]*core.Spell
+	WoundPoison      [3]*core.Spell
 	Mutilate         *core.Spell
 	Shiv             *core.Spell
 	SinisterStrike   *core.Spell
@@ -81,6 +82,10 @@ type Rogue struct {
 	OverkillAura         *core.Aura
 	SliceAndDiceAura     *core.Aura
 	TricksOfTheTradeAura *core.Aura
+
+	masterPoisonerDebuffAuras []*core.Aura
+	savageCombatDebuffAuras   []*core.Aura
+	woundPoisonDebuffAuras    []*core.Aura
 
 	QuickRecoveryMetrics *core.ResourceMetrics
 
@@ -134,11 +139,13 @@ func (rogue *Rogue) Initialize() {
 
 	rogue.registerBackstabSpell()
 	rogue.registerDeadlyPoisonSpell()
+	rogue.registerPoisonAuras()
 	rogue.registerEviscerate()
 	rogue.registerExposeArmorSpell()
 	rogue.registerFanOfKnives()
 	rogue.registerHemorrhageSpell()
 	rogue.registerInstantPoisonSpell()
+	rogue.registerWoundPoisonSpell()
 	rogue.registerMutilateSpell()
 	rogue.registerRupture()
 	rogue.registerShivSpell()
@@ -171,6 +178,7 @@ func (rogue *Rogue) ApplyEnergyTickMultiplier(multiplier float64) {
 func (rogue *Rogue) Reset(sim *core.Simulation) {
 	rogue.disabledMCDs = rogue.DisableAllEnabledCooldowns(core.CooldownTypeUnknown)
 	rogue.initialArmorDebuffAura = rogue.CurrentTarget.GetActiveAuraWithTag(core.MajorArmorReductionTag)
+	rogue.LastDeadlyPoisonProcMask = core.ProcMaskEmpty
 	rogue.SetPriorityList(sim)
 }
 

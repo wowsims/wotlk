@@ -21,6 +21,7 @@ export const MainHandImbue = InputHelpers.makeSpecOptionsEnumIconInput<Spec.Spec
 		{ color: 'grey', value: Poison.NoPoison },
 		{ actionId: ActionId.fromItemId(43233), value: Poison.DeadlyPoison },
 		{ actionId: ActionId.fromItemId(43231), value: Poison.InstantPoison },
+		{ actionId: ActionId.fromItemId(43235), value: Poison.WoundPoison },
 	],
 });
 
@@ -31,6 +32,7 @@ export const OffHandImbue = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecR
 		{ color: 'grey', value: Poison.NoPoison },
 		{ actionId: ActionId.fromItemId(43233), value: Poison.DeadlyPoison },
 		{ actionId: ActionId.fromItemId(43231), value: Poison.InstantPoison },
+		{ actionId: ActionId.fromItemId(43235), value: Poison.WoundPoison },
 	],
 });
 

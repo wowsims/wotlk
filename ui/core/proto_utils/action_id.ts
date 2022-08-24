@@ -221,6 +221,7 @@ export class ActionId {
                 if (this.tag) name += ` (${this.tag} CP)`;
                 break;
             case 'Instant Poison IX':
+            case 'Wound Poison VII':
                 if (this.tag == 1) {
                     name += ' (Deadly)'
                 } else if (this.tag == 2) {
