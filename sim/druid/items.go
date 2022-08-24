@@ -148,6 +148,7 @@ var ItemSetNightsongGarb = core.NewItemSet(core.ItemSet{
 		},
 		4: func(agent core.Agent) {
 			// Each time your Insect Swarm deals damage, it has a chance to make your next Starfire cast within 10 sec instant.
+			// Implemented in spell files.
 		},
 	},
 })

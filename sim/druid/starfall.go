@@ -13,8 +13,11 @@ func (druid *Druid) registerStarfallSpell() {
 	if !druid.Talents.Starfall {
 		return
 	}
+
 	baseCost := druid.BaseMana * 0.35
 	target := druid.CurrentTarget
+	numberOfTicks := core.TernaryInt(druid.Env.GetNumTargets() > 1, 20, 10)
+	tickLength := core.TernaryDuration(druid.Env.GetNumTargets() > 1, time.Millisecond*500, time.Millisecond*1000)
 
 	// Improved Faerie Fire and Nature's Majesty
 	iffCritBonus := core.TernaryFloat64(druid.CurrentTarget.HasAura("Improved Faerie Fire"), float64(druid.Talents.ImprovedFaerieFire)*1*core.CritRatingPerCritChance, 0)
@@ -39,45 +42,20 @@ func (druid *Druid) registerStarfallSpell() {
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			OutcomeApplier:   druid.OutcomeFuncMagicHit(),
+			ProcMask:       core.ProcMaskSpellDamage,
+			OutcomeApplier: druid.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					druid.StarfallDot.Apply(sim)
-					druid.StarfallSplash.Cast(sim, target)
-				}
-			},
-		}),
-	})
-
-	druid.StarfallSplash = druid.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 53190},
-		SpellSchool: core.SpellSchoolArcane,
-
-		Cast: core.CastConfig{
-			CD: core.Cooldown{
-				Timer:    druid.NewTimer(),
-				Duration: time.Second * 90,
-			},
-		},
-
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			OutcomeApplier:   druid.OutcomeFuncMagicHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
 					druid.StarfallDotSplash.Apply(sim)
 				}
 			},
 		}),
 	})
 
-	numberOfTicks := core.TernaryInt(druid.Env.GetNumTargets() > 1, 20, 10)
-	tickLength := core.TernaryDuration(druid.Env.GetNumTargets() > 1, time.Millisecond*500, time.Millisecond*1000)
+	druid.StarfallSplash = druid.RegisterSpell(core.SpellConfig{
+		ActionID: core.ActionID{SpellID: 53190},
+	})
 
 	druid.StarfallDot = core.NewDot(core.Dot{
 		Spell: druid.Starfall,
