@@ -87,16 +87,7 @@ func (warlock *Warlock) defineRotation() {
 		if sim.IsExecutePhase25() {
 			spellCastTime = warlock.ApplyCastSpeed(warlock.DrainSoulDot.TickLength)
 		}
-		// If SE remaining duration is less than a Haunt cast time + travel time
-		// (+ whichever current filler cast time so that we don't start a cast that would drop haunt)
-		// and the previous cast was not Haunt or SB then cast shadow bolt so SE stacks are not lost
-		KeepUpSEStacks := (warlock.PrevCastSECheck != warlock.Haunt && warlock.PrevCastSECheck != warlock.ShadowBolt &&
-			warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim) < hauntCastTime+hauntSBTravelTime)
-		if KeepUpSEStacks && sim.GetRemainingDuration() > time.Second*10 && warlock.Haunt.IsReady(sim) {
-			return 0
-		} else {
-			return core.MaxDuration(0, warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim)-hauntCastTime-hauntSBTravelTime-spellCastTime)
-		}
+		return core.MaxDuration(0, warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim)-hauntCastTime-hauntSBTravelTime-spellCastTime)
 	}
 	warlock.SpellsRotation[4].CastIn = func(sim *core.Simulation) time.Duration {
 		if !(curse == proto.Warlock_Rotation_Doom || curse == proto.Warlock_Rotation_Agony) || warlock.CurseOfDoomDot.IsActive() || sim.GetRemainingDuration() < warlock.CurseOfAgonyDot.Duration/2 {
@@ -327,12 +318,8 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		}
 	}
 
-	// If SE remaining duration is less than a shadow bolt cast time + travel time (with a 3 second buffer to include 1 drain soul tick) and the previous cast was not haunt or SB then cast shadow bolt so SE stacks are not lost
-	KeepUpSEStacksExecute := (warlock.PrevCastSECheck != warlock.Haunt && warlock.PrevCastSECheck != warlock.ShadowBolt &&
-		warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget).RemainingDuration(sim).Seconds() < warlock.ApplyCastSpeed(time.Duration(warlock.ShadowBolt.DefaultCast.CastTime)).Seconds()+warlock.DistanceFromTarget/20+3)
-	
 	// The default filler can change because of some execute phase or proc
-	if sim.IsExecutePhase25() && warlock.Talents.SoulSiphon > 0 && !KeepUpSEStacksExecute {
+	if sim.IsExecutePhase25() && warlock.Talents.SoulSiphon > 0 {
 		// Affliction execute phase
 		filler = warlock.channelCheck(sim, warlock.DrainSoulDot, 5)
 	} else if warlock.DecimationAura.IsActive() {
