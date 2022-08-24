@@ -1,3 +1,16 @@
+/* README(2022-08):
+Main Author: Glandalf (Discord : Glandalf#0679)
+Co-Author's: Linelo aka "The good bad guy" (Discord: Linelo#3958) , Potikuvi(Discord: Pötiküvi#7506)
+
+This file (rotations.go) contains the logic behind how the sim chooses a spell at a given time.
+There are two rotation types, Manual & Automatic.
+	Automatic predetermines the spell priorities according to tested and theorycrafted information.
+	Manual lets users decide their spell priorities and which spells they cast, allowing for further experimentation.
+
+
+*/
+
+// importing dependencies
 package warlock
 
 import (
@@ -9,14 +22,29 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (warlock *Warlock) defineRotation() {
+/* preparation function definitions start::
+In this section of the code, we will be predefinining some intermediary functions.
+These act as a setup for the tryUseGCD() function.
+*/
+
+func (warlock *Warlock) defineRotation() { //quite the lengthy beast, don't you get intimidated! I promise I'll hold your hand every step of the way.
 	rotationType := warlock.Rotation.Type
 	curse := warlock.Rotation.Curse
 	secondaryDot := warlock.Rotation.SecondaryDot
 	specSpell := warlock.Rotation.SpecSpell
 
-	// High priority spells (does not include fillers)
-	spellBook := [...]*core.Spell{
+	/* The warlock rotaitonal spells come mostly in three shapes
+	Filler Spells: are the bottom of the spell hierarchy, you cast this whenever you don't have any other "Priorities"
+		Ex: Shadowbolt as Affliction or Demo, Incinerate as Destro are your regular fillers.
+		Ex: Soul Siphon as Affliction, Soulfire as Demo/Hybrid are your Execute fillers. (More onto this later)
+	Priority Spells: Are things you want to aggressively cast whenever the situation calls for it.
+		Ex: When Conflag comes off CD for Destro, When UA expires on the target as Affliction, Incinerate when you have MC procs as Demo.
+	Regen Spells: Are cast when the best thing to do is regen, either for when you want to prepare a big burst and top your mana reserves, or there is nothing better to cast.
+		Ex: Lifetap / DarkPact
+	Although the relationship between these are not as simple as I've put out to be, the code below is all about determining which spell is best to cast in a given moment in time,
+	*/
+
+	spellBook := [...]*core.Spell{ //These are all of your possible "Priority Spells " being stored in an array.
 		warlock.Corruption,
 		warlock.Immolate,
 		warlock.UnstableAffliction,
@@ -27,117 +55,158 @@ func (warlock *Warlock) defineRotation() {
 		warlock.ChaosBolt,
 	}
 
-	warlock.SpellsRotation = make([]SpellRotation, len(spellBook))
-	for i, spell := range spellBook {
+	warlock.SpellsRotation = make([]SpellRotation, len(spellBook)) // an array containing Spell Rotation structs
+	/*
+		type SpellRotation struct {
+		Spell    *core.Spell //The spell in question
+		CastIn   CastReadyness // If the time to cast the spell is right. This is measured in time units. If this is 0, the spell is ready to go!
+		Priority int // Priority of the spell. A metric used to compare... you guessed right, the priority of the spell. Higher is cast first.
+		}
+	*/
+
+	for i, spell := range spellBook { //Setup the spells, match them with their spellBook entries
 		warlock.SpellsRotation[i].Spell = spell
 	}
 
-	// Calculation of spell readyness in time unit (use same order as in spellBook)
-	// The associated spell will not be cast before time is 0
-	// 0 : Cast ready ; core.NeverExpires : never cast
+	/*
+		Now, each spell in the spellbook above, will be evaluated one by one, and will be given a CastIn value, that determines when each spell will be ready to cast.
+		return 0: means cast it now, it's ready!
+		return core.NeverExpires : This value is used to completely disable a spell, like when the talent for it is missing.
+		If a spell is never ready to cast, it won't ever get casted.
+	*/
+
+	//Starting off: Corruption
 	warlock.SpellsRotation[0].CastIn = func(sim *core.Simulation) time.Duration {
-		// Checking if it's the manual rotation
-		if !warlock.Rotation.Corruption {
+
+		if !warlock.Rotation.Corruption { //If corruption is not added to the rotation, it will never be cast.
 			return core.NeverExpires
 		}
-		// This part tracks all the damage multiplier that roll over with corruption
-		// Shadow damage multipler (looking for DE)
-		CurrentShadowMult := warlock.PseudoStats.ShadowDamageDealtMultiplier
-		// Damage multipler (looking for TotT)
-		CurrentDmgMult := warlock.PseudoStats.DamageDealtMultiplier
-		// Crit rating multipler (looking for Shadow Mastery (ISB Talent) and Potion of Wild Magic)
+		/*	Roll Multiplier & Evaluation
+			 This part tracks all the damage multiplier that roll over with corruption.
+			 Everlasting Affliction talent allows you to "Roll" snapshot values for DoT's, carrying their benefits beyond their buff time on you.
+				Ex: If you have a 6 seconds Tricks on you with %10 damage increase, you can have your corruption "roll" with that buff indefinately.
+
+			These variables are used to estimate how good the roll will be, and determine if refreshing the corruption again will be a DPS increase.
+		*/
+		CurrentShadowMult := warlock.PseudoStats.ShadowDamageDealtMultiplier // Shadow damage multipler (looking for DE)
+		CurrentDmgMult := warlock.PseudoStats.DamageDealtMultiplier          // Damage multipler (looking for TotT)
+
+		// Crit rating multipler calculation (looking for Shadow Mastery (ISB Talent) and Potion of Wild Magic)
 		CurrentCritBonus := warlock.GetStat(stats.SpellCrit) + warlock.PseudoStats.BonusSpellCritRating + warlock.PseudoStats.BonusShadowCritRating +
 			warlock.CurrentTarget.PseudoStats.BonusSpellCritRatingTaken
 		CurrentCritMult := 1 + CurrentCritBonus/core.CritRatingPerCritChance/100*core.TernaryFloat64(warlock.Talents.Pandemic, 1, 0)
-		// Combination of all multipliers
-		CurrentCorruptionRolloverMult := CurrentDmgMult * CurrentShadowMult * CurrentCritMult
-		// Affliction spec check
-		if warlock.Talents.EverlastingAffliction > 0 {
-			if (!warlock.CorruptionDot.IsActive() && (core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() || warlock.Talents.ImprovedShadowBolt == 0)) ||
-				// Wait for SM to be applied to cast first Corruption
-				warlock.CorruptionDot.IsActive() && (CurrentCorruptionRolloverMult > warlock.CorruptionRolloverMult) {
-				// If the original corruption multipliers are lower than this current time, then reapply corruption
-				return 0
+
+		CurrentCorruptionRolloverMult := CurrentDmgMult * CurrentShadowMult * CurrentCritMult // This combines all of the abovementioned multipliers
+
+		//I'll be explaining in detail how these boolean statements work for this example, for the rest of the document, you can follow the exact same logic here.
+
+		if warlock.Talents.EverlastingAffliction > 0 { // Check if EverlastingAffliction is talented, if not, rolling is not admissable and you apply manually.
+			if (!warlock.CorruptionDot.IsActive() && //Corruption is not up
+				(core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() ||
+					warlock.Talents.ImprovedShadowBolt == 0)) || // Do you need to apply SM to be applied to cast first Corruption?
+				warlock.CorruptionDot.IsActive() &&
+					(CurrentCorruptionRolloverMult > warlock.CorruptionRolloverMult) { // If you end up with a better possible corruption, reapply!
+				return 0 //Ready to cast!
 			} else {
-				return core.NeverExpires
+				return core.NeverExpires //Never will be cast
 			}
 		} else {
-			return core.MaxDuration(0, warlock.CorruptionDot.RemainingDuration(sim))
-		}
+			return core.MaxDuration(0, warlock.CorruptionDot.RemainingDuration(sim)) // Will be "ready to cast in this many seconds"
+		} //This is due to not having EA on, you will have to manually reapply Corr.
 	}
+	//Immolate
 	warlock.SpellsRotation[1].CastIn = func(sim *core.Simulation) time.Duration {
 		if !(secondaryDot == proto.Warlock_Rotation_Immolate) || sim.GetRemainingDuration() < warlock.ImmolateDot.Duration/2. {
 			return core.NeverExpires
 		}
 		return core.MaxDuration(0, warlock.ImmolateDot.RemainingDuration(sim)-warlock.ApplyCastSpeed(warlock.Immolate.DefaultCast.CastTime))
+		//This return is used as "the time left to refresh the spell"
+		//It's remaining duration - time it will take to reapply the spell, when it is 0, you optimally benefit from everytick, while restoring the debuff the milisecond it falls off.
 	}
+	//UA
 	warlock.SpellsRotation[2].CastIn = func(sim *core.Simulation) time.Duration {
 		if !warlock.Talents.UnstableAffliction || !(secondaryDot == proto.Warlock_Rotation_UnstableAffliction) {
 			return core.NeverExpires
 		}
 		return core.MaxDuration(0, warlock.UnstableAfflictionDot.RemainingDuration(sim)-warlock.ApplyCastSpeed(warlock.UnstableAffliction.DefaultCast.CastTime))
 	}
+	//Haunt
+	//Haunt is different than all your other DoT's, reason being, it dynamicly amplifies other DoT's for it's duration.
+	//Meaning, all your other dots,you let them tick to their last second and elapse, and then reapply as soon as possible.
+	//In Haunt, you want to maximize uptime and that it never falls off.
+	//It also shares debuff duration with Shadow Embrace, which stacks off to 3, and is a huge dps loss when dropped.
 	warlock.SpellsRotation[3].CastIn = func(sim *core.Simulation) time.Duration {
 		if !warlock.Talents.Haunt || !(specSpell == proto.Warlock_Rotation_Haunt) {
 			return core.NeverExpires
 		}
-		hauntSBTravelTime := time.Duration(warlock.DistanceFromTarget/20) * time.Second
+		hauntSBTravelTime := time.Duration(warlock.DistanceFromTarget/20) * time.Second //Haunt is a projectile, so if you are at range, you have to account distance from target
 		hauntCastTime := warlock.ApplyCastSpeed(warlock.Haunt.DefaultCast.CastTime)
 		spellCastTime := warlock.ApplyCastSpeed(core.GCDDefault)
 		if sim.IsExecutePhase25() {
 			spellCastTime = warlock.ApplyCastSpeed(warlock.DrainSoulDot.TickLength)
 		}
 		return core.MaxDuration(0, warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim)-hauntCastTime-hauntSBTravelTime-spellCastTime)
+		//Since Haunt's unique behavior, this return is the "Leeway" you have for the spell. Meaning, if this hits below 0, you are too late and haunt dropped off.
+		//On the other hand, reapplying this when not 0, but say 0.5 or 1, is not a tick loss as it is for other dots.
 	}
+	//Curse of Agony
 	warlock.SpellsRotation[4].CastIn = func(sim *core.Simulation) time.Duration {
 		if !(curse == proto.Warlock_Rotation_Doom || curse == proto.Warlock_Rotation_Agony) || warlock.CurseOfDoomDot.IsActive() || sim.GetRemainingDuration() < warlock.CurseOfAgonyDot.Duration/2 {
 			return core.NeverExpires
 		}
 		return core.MaxDuration(0, warlock.CurseOfAgonyDot.RemainingDuration(sim))
 	}
+	//Curse of Doom
 	warlock.SpellsRotation[5].CastIn = func(sim *core.Simulation) time.Duration {
 		if curse != proto.Warlock_Rotation_Doom || !warlock.CurseOfDoom.IsReady(sim) || sim.GetRemainingDuration() < time.Minute {
 			return core.NeverExpires
 		}
 		return core.MaxDuration(0, warlock.CurseOfDoomDot.RemainingDuration(sim))
 	}
+	//Conflagrate
 	warlock.SpellsRotation[6].CastIn = func(sim *core.Simulation) time.Duration {
 		if !warlock.Talents.Conflagrate {
 			return core.NeverExpires
 		}
-		if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfConflagrate) {
+		if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfConflagrate) { //This glyphs makes Conflag not consume the Immolate
 			return core.MaxDuration(0, warlock.Conflagrate.TimeToReady(sim))
 		} else {
 			return core.MaxDuration(0, warlock.ImmolateDot.RemainingDuration(sim)-warlock.ImmolateDot.TickLength)
 		}
 	}
+	//Chaos Bolt
 	warlock.SpellsRotation[7].CastIn = func(sim *core.Simulation) time.Duration {
 		if !warlock.Talents.ChaosBolt || !(specSpell == proto.Warlock_Rotation_ChaosBolt) {
 			return core.NeverExpires
 		}
 		return core.MaxDuration(0, warlock.ChaosBolt.TimeToReady(sim))
+		//for spells that have a set CD, and not a DoT, this return simply becomes the current CD on your spell.
 	}
 
-	// Priority based rotations (0 or absent means not in rotation, 1 is max)
+	// Rotation Presets: These are the presets representing theorycrafted rotation priorities.
+	// We use this variable to distinguish between two spells that are ready at the same time, highest prio is cast first.
+	// Value Legend: 0 / Absent = Not cast, 1 is highest prio, 10 is lowest prio.
 	if rotationType == proto.Warlock_Rotation_Affliction {
-		warlock.SpellsRotation[0].Priority = 1
-		warlock.SpellsRotation[2].Priority = 2
-		warlock.SpellsRotation[3].Priority = 3
-		warlock.SpellsRotation[4].Priority = 4
+		warlock.SpellsRotation[0].Priority = 1 //Corruption
+		warlock.SpellsRotation[2].Priority = 2 //UA
+		warlock.SpellsRotation[3].Priority = 3 //Haunt
+		warlock.SpellsRotation[4].Priority = 4 //Curse of Agony
 	} else if rotationType == proto.Warlock_Rotation_Demonology {
-		warlock.SpellsRotation[0].Priority = 2
-		warlock.SpellsRotation[1].Priority = 3
-		warlock.SpellsRotation[4].Priority = 4
-		warlock.SpellsRotation[5].Priority = 1
+		warlock.SpellsRotation[5].Priority = 1 // Curse of Doom
+		warlock.SpellsRotation[0].Priority = 2 // Corruption
+		warlock.SpellsRotation[1].Priority = 3 // Immolate
+		warlock.SpellsRotation[4].Priority = 4 // Curse of Agony
 	} else if rotationType == proto.Warlock_Rotation_Destruction {
-		warlock.SpellsRotation[1].Priority = 3
-		warlock.SpellsRotation[4].Priority = 5
-		warlock.SpellsRotation[5].Priority = 2
-		warlock.SpellsRotation[6].Priority = 1
-		warlock.SpellsRotation[7].Priority = 4
+		warlock.SpellsRotation[6].Priority = 1 // Conflagrate
+		warlock.SpellsRotation[5].Priority = 2 // Curse of Doom
+		warlock.SpellsRotation[1].Priority = 3 // Immolate
+		warlock.SpellsRotation[7].Priority = 4 // Chaos Bolt
+		warlock.SpellsRotation[4].Priority = 5 // Curse of Agony
 	}
 
-	// For Manual rotation, give spells lowest prio if user wants to experiment
+	//Manual Rotation Feature:
+	//This part sets every castable spells prio to the lowest value of 10, to later let the user reorder them.
+	//CAUTION:This section is not yet implemented in the UI and is WIP.
 	if warlock.Rotation.Corruption && warlock.SpellsRotation[0].Priority == 0 {
 		warlock.SpellsRotation[0].Priority = 10
 	}
@@ -159,28 +228,44 @@ func (warlock *Warlock) defineRotation() {
 	}
 }
 
+/*
+	At the end of this function, every spell in our arsenal is given;
+	 A castIn() value, that determines when the spell will be needed to/will be ready to recast again.
+	 A Priority value, that lets us order which one of the "Ready Spells(aka. castIn = 0)" we will be using.
+*/
+
+// Regen Spells: Casts the regen spell that will give you the most mana, includes a error whenever we cast pact on full mana.
 func (warlock *Warlock) LifeTapOrDarkPact(sim *core.Simulation) {
 	if warlock.CurrentManaPercent() == 1 {
 		panic("Life Tap or Dark Pact while full mana")
 	}
-	if warlock.Talents.DarkPact && warlock.Pet.CurrentMana() > warlock.GetStat(stats.SpellPower)+1200+131 {
+	if warlock.Talents.DarkPact && warlock.Pet.CurrentMana() > warlock.GetStat(stats.SpellPower)+1200+131 { //Evaluates based on your SP, if DP or LT will give you the highest mana.
 		warlock.DarkPact.Cast(sim, warlock.CurrentTarget)
 	} else {
 		warlock.LifeTap.Cast(sim, warlock.CurrentTarget)
 	}
 }
 
+// This function is an intermediary, it is used when sim has a GCD ready, not much to see here.
 func (warlock *Warlock) OnGCDReady(sim *core.Simulation) {
 	warlock.tryUseGCD(sim)
 }
 
+//preparation function definitions ends::
+
+/*
+This function is the way we execute the main functionality of this entire script.
+All of the previously implemented functions come together in this function.
+Function takes the Warlock character that's used to model the client behavior, and returns the "modified" simulation state.
+Might sound complicated, worry not, things will get better.
+*/
 func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
-	var spell *core.Spell
-	var filler *core.Spell
-	var target = warlock.CurrentTarget
-	mainSpell := warlock.Rotation.PrimarySpell
-	curse := warlock.Rotation.Curse
-	dotLag := time.Duration(10 * time.Millisecond)
+	var spell *core.Spell                          //the variable we'll be returning to the sim as our final decision
+	var filler *core.Spell                         //the filler spell we'll store, we will cast this whenever we have all our priorities in check
+	var target = warlock.CurrentTarget             //our current target
+	mainSpell := warlock.Rotation.PrimarySpell     // our primary spell
+	curse := warlock.Rotation.Curse                // our curse of choice
+	dotLag := time.Duration(10 * time.Millisecond) // the lag time for dots, a small value that allows us to gap two dots properly
 
 	// ------------------------------------------
 	// Data
@@ -196,6 +281,8 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// ------------------------------------------
 	// AoE (Seed)
 	// ------------------------------------------
+	//For aoe situations, sets your main spell as Seed.
+	//This is currently a WIP.
 	if mainSpell == proto.Warlock_Rotation_Seed {
 		if warlock.Rotation.DetonateSeed {
 			if success := warlock.Seeds[0].Cast(sim, target); !success {
@@ -222,14 +309,14 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// Big CDs
 	// ------------------------------------------
 
-	bigCDs := warlock.GetMajorCooldowns()
-	nextBigCD := core.NeverExpires
-	for _, cd := range bigCDs {
+	bigCDs := warlock.GetMajorCooldowns() // all of our major CD's, things like pots, racials, metamorphing power rangers, you name it.
+	nextBigCD := core.NeverExpires        // just setting the highest possible value for convenience in declaration
+	for _, cd := range bigCDs {           //a loop that iterates over all possible CD's, and orders them based on their time to get ready.
 		if cd == nil {
 			continue // not on cooldown right now.
 		}
-		cdReadyAt := cd.Spell.ReadyAt()
-		if cd.Type.Matches(core.CooldownTypeDPS) && cdReadyAt < nextBigCD {
+		cdReadyAt := cd.Spell.ReadyAt()                                     //Cooldown will be ready in cdReadyAt.
+		if cd.Type.Matches(core.CooldownTypeDPS) && cdReadyAt < nextBigCD { //If the cooldown is a DPS cooldown, nextBigCD will be this cd
 			nextBigCD = cdReadyAt
 		}
 	}
@@ -239,9 +326,8 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		warlock.DoingRegen = false
 	}
 
-
 	// ------------------------------------------
-	// Small CDs
+	// Small CDs (Cast on CD)
 	// ------------------------------------------
 	if warlock.Talents.DemonicEmpowerment && warlock.DemonicEmpowerment.IsReady(sim) && warlock.Options.Summon != proto.Warlock_Options_NoSummon {
 		warlock.DemonicEmpowerment.Cast(sim, target)
@@ -254,7 +340,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// ------------------------------------------
 	// Keep Glyph of Life Tap buff up
 	// ------------------------------------------
-	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap) &&
+	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap) && // This glyph gives you a buff to SP when you cast Life Tap, and we want this on at all times.
 		(!warlock.GlyphOfLifeTapAura.IsActive() || warlock.GlyphOfLifeTapAura.RemainingDuration(sim) < time.Second) {
 		if sim.CurrentTime < time.Second {
 
@@ -265,6 +351,8 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			// Pre-pull Life Tap
 			warlock.GlyphOfLifeTapAura.Activate(sim)
 
+			//These lines emulate you pre-casting a shadowbolt and having Life Tap on
+			//TODO: Illustration of Dragon Soul stacking to 10 with Life Funnel.
 		} else {
 			if sim.GetRemainingDuration() > time.Second*30 {
 				// More dps to not waste gcd on life tap for buff during execute unless execute is > 30 seconds
@@ -278,21 +366,21 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// Curses
 	// ------------------------------------------
 
-	castCurse := func(spellToCast *core.Spell, aura *core.Aura) bool {
+	castDebuffCurse := func(spellToCast *core.Spell, aura *core.Aura) bool {
 		if !aura.IsActive() {
 			spell = spellToCast
 			return true
 		}
 		return false
-	}
+	} // a simple function for our debuff curses, we want to apply them immediately as they drop, disregarding any priority as responsible debuff slaves.
 
 	switch curse {
 	case proto.Warlock_Rotation_Elements:
-		castCurse(warlock.CurseOfElements, warlock.CurseOfElementsAura)
+		castDebuffCurse(warlock.CurseOfElements, warlock.CurseOfElementsAura)
 	case proto.Warlock_Rotation_Weakness:
-		castCurse(warlock.CurseOfWeakness, warlock.CurseOfWeaknessAura)
+		castDebuffCurse(warlock.CurseOfWeakness, warlock.CurseOfWeaknessAura)
 	case proto.Warlock_Rotation_Tongues:
-		castCurse(warlock.CurseOfTongues, warlock.CurseOfTonguesAura)
+		castDebuffCurse(warlock.CurseOfTongues, warlock.CurseOfTonguesAura)
 	}
 
 	if spell != nil {
@@ -309,7 +397,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// ------------------------------------------
 
 	// We're kind of trying to fit all different spec rotations in one big priority based rotation in order to let people experiment
-	if filler == nil {
+	if filler == nil { // There are two main fillers in warlocks arsenal, SB for Affliction & Demo, Incinerate for Destro
 		switch mainSpell {
 		case proto.Warlock_Rotation_ShadowBolt:
 			filler = warlock.ShadowBolt
@@ -318,31 +406,38 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		}
 	}
 
-	// The default filler can change because of some execute phase or proc
+	/* Execute Phase: Warlock, with it's Demo/Affliction/Hybrid specs, rely on execute mechanics;
+	Affliction:
+		Death's Embrace : When the target is at or below %35 hp, all shadow damage done is %12 increased flat.
+		Drain Soul : Spell has a built in mechanic, that does 4 Times it's normal damage, if the target is at or below %25 HP.
+	Demo & Hybrid:
+		Decimation: Hitting a target at or below %35 hp, will make your Soul Fire spell %40 faster, and cost no Soul Shards
+	*/
 	if sim.IsExecutePhase25() && warlock.Talents.SoulSiphon > 0 {
-		// Affliction execute phase
-		filler = warlock.channelCheck(sim, warlock.DrainSoulDot, 5)
-	} else if warlock.DecimationAura.IsActive() {
-		// Demonology execute phase
+		// Drain Soul phase, Soul Siphon is an affliction talent, so if below %25, and you have siphon talented, sim assumes you are Affliction.
+		filler = warlock.channelCheck(sim, warlock.DrainSoulDot, 5) //This function checks if you are channeling DS or not. Returns continuing channeling or casting DS actions accordingly.
+	} else if warlock.DecimationAura.IsActive() { //Molten Core, buffs Incinerate and Soul Fire, however, since below %35 you will spam SF, you don't need to check Molten Core.
+		// Demo & Hybrid execute phase
 		filler = warlock.SoulFire
-	} else if warlock.MoltenCoreAura.IsActive() {
+	} else if warlock.MoltenCoreAura.IsActive() { //Now you have to alternate to Incinerate from Shadow Bolts, so you will check for MC's
 		// Molten Core talent corruption proc (Demonology)
 		filler = warlock.Incinerate
 	}
-	nextCD := core.NeverExpires
-	currentCD := core.NeverExpires
-	currentSpellPrio := math.MaxInt64 // Lowest priority for a filler spell
-	for _, RSI := range warlock.SpellsRotation {
-		currentCD = RSI.CastIn(sim)
-		if currentCD < nextCD {
-			nextCD = currentCD
+	//The loop that filters the currently ready Priority Spells, and decides on which to cast based on Priority.
+	nextSpell := core.NeverExpires               // declaration convention, don't worry, just breathe
+	currentSpell := core.NeverExpires            // in..... and out, breath in fully....
+	currentSpellPrio := math.MaxInt64            // Lowest priority for a filler spell, oh btw, remember to keep breathing
+	for _, RSI := range warlock.SpellsRotation { // For all the spells off cooldown (aka. castIn = 0, check the explanations in warlock.SpellsReady if this makes no sense )
+		currentSpell = RSI.CastIn(sim)
+		if currentSpell < nextSpell {
+			nextSpell = currentSpell
 		}
-		if currentCD == 0 && (RSI.Priority < currentSpellPrio) && RSI.Spell.IsReady(sim) && RSI.Priority != 0 {
+		if currentSpell == 0 && (RSI.Priority < currentSpellPrio) && RSI.Spell.IsReady(sim) && RSI.Priority != 0 {
 			spell = RSI.Spell
 			currentSpellPrio = RSI.Priority
-		}
+		} // find and cast the highest prio
 	}
-	nextCD += sim.CurrentTime
+	nextSpell += sim.CurrentTime
 	if sim.Log != nil {
 		// warlock.Log(sim, "warlock.SpellsRotation[%d]", warlock.SpellsRotation[4].CastIn(sim).Seconds())
 	}
@@ -350,10 +445,10 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// ------------------------------------------
 	// Filler spell && Regen check
 	// ------------------------------------------
-	
+	//We decide if we can cast our fillers without repercussions,
 	var ManaSpendRate float64
 	var fillerCastTime time.Duration
-	if warlock.Talents.SoulSiphon > 0 {
+	if warlock.Talents.SoulSiphon > 0 { //SoulSiphon >0 is an affliction check.
 		fillerCastTime = warlock.ApplyCastSpeed(warlock.ShadowBolt.DefaultCast.CastTime)
 		ManaSpendRate = warlock.ShadowBolt.BaseCost / float64(fillerCastTime.Seconds())
 	} else {
@@ -366,9 +461,9 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		if nextBigCD-sim.CurrentTime > 0 && nextBigCD-sim.CurrentTime < fillerCastTime/10 {
 			warlock.WaitUntil(sim, nextBigCD)
 			return
-		} else if nextCD-sim.CurrentTime > 0 && nextCD-sim.CurrentTime < fillerCastTime/10 {
+		} else if nextSpell-sim.CurrentTime > 0 && nextSpell-sim.CurrentTime < fillerCastTime/10 {
 			// The dot lag is currently here only for UI purposes, without which the last dot tick is shown as part of the next dot cast
-			warlock.WaitUntil(sim, nextCD+dotLag)
+			warlock.WaitUntil(sim, nextSpell+dotLag)
 			return
 		}
 
@@ -378,7 +473,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		if warlock.Talents.Decimation > 0 {
 			// We suppose that if you would want to use Soul Fire as an execute filler if and only if you have the Decimation talent.
 			executeDuration = 0.35
-			DesiredManaAtExecute = 0.3*sim.Duration.Seconds()*executeDuration/60
+			DesiredManaAtExecute = 0.3 * sim.Duration.Seconds() * executeDuration / 60
 		} else if warlock.Talents.SoulSiphon > 0 {
 			// We suppose that if you would want to use Drain Soul as an execute filler if and only if you have the Soul Siphon talent.
 			executeDuration = 0.25
@@ -401,10 +496,9 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			return
 		}
 
-		// Filler
+		// After all the previous checks, if everything checks out, you are free to cast filler.
 		spell = filler
 	}
-
 
 	// This part tracks all the damage multiplier that roll over with corruption
 	CurrentShadowMult := warlock.PseudoStats.ShadowDamageDealtMultiplier // Tracks the current shadow damage multipler (essentially looking for DE)
@@ -414,7 +508,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	CurrentCritMult := 1 + CurrentCritBonus/core.CritRatingPerCritChance/100*core.TernaryFloat64(warlock.Talents.Pandemic, 1, 0)
 	CurrentCorruptionRolloverMult := CurrentDmgMult * CurrentShadowMult * CurrentCritMult
 	if sim.Log != nil {
-		if warlock.Talents.EverlastingAffliction > 0 {
+		if warlock.Talents.EverlastingAffliction > 0 { //Log the corruption multiplier, or DP average, for affli and demo respectively.
 			warlock.Log(sim, "[Info] Initial Corruption Rollover Multiplier [%.2f]", warlock.CorruptionRolloverMult)
 			warlock.Log(sim, "[Info] Current Corruption Rollover Multiplier [%.2f]", CurrentCorruptionRolloverMult)
 		}
@@ -423,20 +517,18 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		}
 	}
 
-
 	// ------------------------------------------
 	// Spell casting
 	// ------------------------------------------
-
-	if success := spell.Cast(sim, target); success {
+	if success := spell.Cast(sim, target); success { //if you are succesfully committing to a spell
 		warlock.PrevCastSECheck = spell
-		if spell == warlock.Corruption && warlock.Talents.EverlastingAffliction > 0 {
-			// We are recording the current rollover power of corruption
+		if spell == warlock.Corruption && warlock.Talents.EverlastingAffliction > 0 { // Record the current rollover power of corruption
+
 			warlock.CorruptionRolloverMult = CurrentCorruptionRolloverMult
 		}
 		return
 	} else {
-	// Lifetap if can't cast
+		// Regen Cast if you can't cast anything else.
 		warlock.LifeTapOrDarkPact(sim)
 		return
 	}
