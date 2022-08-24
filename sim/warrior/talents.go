@@ -143,7 +143,7 @@ func (warrior *Warrior) applyTrauma() {
 			}
 			proc := warrior.TraumaAuras[spellEffect.Target.Index]
 			proc.Duration = time.Minute * 1
-			aura.Activate(sim)
+			proc.Activate(sim)
 		},
 	})
 }
