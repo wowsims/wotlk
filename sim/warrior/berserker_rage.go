@@ -8,7 +8,7 @@ import (
 
 func (warrior *Warrior) registerBerserkerRageSpell() {
 	actionID := core.ActionID{SpellID: 18499}
-	rageBonus := 5 * float64(warrior.Talents.ImprovedBerserkerRage)
+	rageBonus := 10 * float64(warrior.Talents.ImprovedBerserkerRage)
 	rageMetrics := warrior.NewRageMetrics(actionID)
 	cooldownDur := time.Second * 30
 	if warrior.Talents.IntensifyRage == 1 {
