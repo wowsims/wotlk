@@ -1,6 +1,7 @@
 package druid
 
 import (
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -12,7 +13,7 @@ import (
 const IvoryMoongoddess int32 = 27518
 const ShootingStar int32 = 60775
 
-func (druid *Druid) newStarfireSpell() *core.Spell {
+func (druid *Druid) registerStarfireSpell() {
 
 	actionID := core.ActionID{SpellID: 26986}
 	baseCost := 0.16 * druid.BaseMana
@@ -31,16 +32,20 @@ func (druid *Druid) newStarfireSpell() *core.Spell {
 		ThreatMultiplier: 1,
 		BaseDamage:       core.BaseDamageConfigMagic(minBaseDamage+bonusFlatDamage, maxBaseDamage+bonusFlatDamage, spellCoefficient),
 		OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, 0.2*float64(druid.Talents.Vengeance))),
-		/*OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Landed() && druid.HasGlyph(proto.DruidMajorGlyph_GlyphOfStarfire) && druid.MoonfireDot.IsActive() {
-				// Add 3seconds to Moonfire Tick up to +9s
-				druid.MoonfireDot.NumberOfTicks += 1
-			}
-		}, */
+
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
-				hasMoonkinForm := core.TernaryFloat64(druid.Talents.MoonkinForm, 1, 0)
-				druid.AddMana(sim, druid.MaxMana()*0.02*hasMoonkinForm, manaMetrics, true)
+			if spellEffect.Landed() {
+				if spellEffect.Outcome.Matches(core.OutcomeCrit) {
+					hasMoonkinForm := core.TernaryFloat64(druid.Talents.MoonkinForm, 1, 0)
+					druid.AddMana(sim, druid.MaxMana()*0.02*hasMoonkinForm, manaMetrics, true)
+				}
+				if druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfStarfire) && druid.MoonfireDot.IsActive() {
+					maxMoonfireTicks := druid.maxMoonfireTicks()
+					if druid.MoonfireDot.NumberOfTicks < maxMoonfireTicks {
+						druid.MoonfireDot.NumberOfTicks += 1
+						druid.MoonfireDot.UpdateExpires(druid.MoonfireDot.ExpiresAt() + time.Second*3)
+					}
+				}
 			}
 		},
 	}
@@ -87,7 +92,7 @@ func (druid *Druid) newStarfireSpell() *core.Spell {
 	// Nature's Majesty
 	effect.BonusSpellCritRating += 2 * float64(druid.Talents.NaturesMajesty) * core.CritRatingPerCritChance
 
-	return druid.RegisterSpell(core.SpellConfig{
+	druid.Starfire = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolArcane,
 
