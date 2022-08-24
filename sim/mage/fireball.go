@@ -43,19 +43,22 @@ func (mage *Mage) registerFireballSpell() {
 				core.TernaryFloat64(mage.MageTier.t9_4, 5*core.CritRatingPerCritChance, 0),
 
 			DamageMultiplier: mage.spellDamageMultiplier *
-				(1 + 0.02*float64(mage.Talents.FirePower+mage.Talents.SpellImpact)) *
+				(1 + 0.02*float64(mage.Talents.SpellImpact)) *
 				(1 + .04*float64(mage.Talents.TormentTheWeak)),
 
 			ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
-			BaseDamage:     core.BaseDamageConfigMagic(898, 1143, 1.0+0.05*float64(mage.Talents.EmpoweredFire)),
-			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, mage.bonusCritDamage)),
+			BaseDamage: core.BaseDamageConfigMagic(898, 1143, 1.0+0.05*float64(mage.Talents.EmpoweredFire)),
+			// BaseDamage:     core.BaseDamageConfigMagicNoRoll((898 + 1143)/2, 1.0+0.05*float64(mage.Talents.EmpoweredFire)),
+			OutcomeApplier: mage.fireSpellOutcomeApplier(mage.bonusCritDamage),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() && !hasGlyph {
 					mage.FireballDot.Apply(sim)
 				}
 			},
+
+			MissileSpeed: 22,
 		}),
 	})
 

@@ -8,10 +8,18 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-const FrostFeverAuraLabel = "FrostFever-"
-const BloodPlagueAuraLabel = "BloodPlague-"
+func (dk *Deathknight) drwCountActiveDiseases(target *core.Unit) float64 {
+	count := 0
+	if dk.RuneWeapon.FrostFeverDisease[target.Index].IsActive() {
+		count++
+	}
+	if dk.RuneWeapon.BloodPlagueDisease[target.Index].IsActive() {
+		count++
+	}
+	return float64(count)
+}
 
-func (dk *Deathknight) countActiveDiseases(target *core.Unit) float64 {
+func (dk *Deathknight) dkCountActiveDiseases(target *core.Unit) float64 {
 	count := 0
 	if dk.FrostFeverDisease[target.Index].IsActive() {
 		count++
@@ -29,7 +37,7 @@ func (dk *Deathknight) countActiveDiseases(target *core.Unit) float64 {
 
 // diseaseMultiplier calculates the bonus based on if you have DarkrunedBattlegear 4p.
 //  This function is slow so should only be used during initialization.
-func (dk *Deathknight) diseaseMultiplier(multiplier float64) float64 {
+func (dk *Deathknight) dkDiseaseMultiplier(multiplier float64) float64 {
 	if dk.Env.IsFinalized() {
 		panic("dont call dk.diseaseMultiplier function during runtime, cache result during initialization")
 	}
@@ -73,7 +81,7 @@ func (dk *Deathknight) registerFrostFever() {
 	for _, encounterTarget := range dk.Env.Encounter.Targets {
 		target := &encounterTarget.Unit
 		aura := core.Aura{
-			Label:    FrostFeverAuraLabel + strconv.Itoa(int(dk.Index)),
+			Label:    "FrostFever-" + strconv.Itoa(int(dk.Index)),
 			ActionID: actionID,
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 				if !isRefreshing[aura.Unit.Index] {
@@ -150,7 +158,7 @@ func (dk *Deathknight) registerBloodPlague() {
 
 		dk.BloodPlagueDisease[target.Index] = core.NewDot(core.Dot{
 			Aura: target.RegisterAura(core.Aura{
-				Label:    BloodPlagueAuraLabel + strconv.Itoa(int(dk.Index)),
+				Label:    "BloodPlague-" + strconv.Itoa(int(dk.Index)),
 				ActionID: actionID,
 				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 					if !isRefreshing[aura.Unit.Index] {
@@ -182,6 +190,105 @@ func (dk *Deathknight) registerBloodPlague() {
 		})
 
 		dk.BloodPlagueDisease[target.Index].Spell = dk.BloodPlagueSpell.Spell
+	}
+}
+func (dk *Deathknight) registerDrwDiseaseDots() {
+	dk.registerDrwFrostFever()
+	dk.registerDrwBloodPlague()
+}
+
+func (dk *Deathknight) registerDrwFrostFever() {
+	actionID := core.ActionID{SpellID: 55095}
+
+	dk.RuneWeapon.FrostFeverSpell = dk.RuneWeapon.RegisterSpell(core.SpellConfig{
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolFrost,
+		Flags:       core.SpellFlagDisease,
+		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
+			dk.RuneWeapon.FrostFeverDisease[unit.Index].Apply(sim)
+		},
+	})
+
+	dk.RuneWeapon.FrostFeverDisease = make([]*core.Dot, dk.Env.GetNumTargets())
+
+	for _, encounterTarget := range dk.Env.Encounter.Targets {
+		target := &encounterTarget.Unit
+
+		dk.RuneWeapon.FrostFeverDisease[target.Index] = core.NewDot(core.Dot{
+			Aura: target.RegisterAura(core.Aura{
+				Label:    "DrwFrostFever-" + strconv.Itoa(int(dk.RuneWeapon.Index)),
+				ActionID: actionID,
+			}),
+			NumberOfTicks: 5 + int(dk.Talents.Epidemic),
+			TickLength:    time.Second * 3,
+			TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
+				ProcMask:         core.ProcMaskPeriodicDamage,
+				DamageMultiplier: core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfIcyTouch), 1.2, 1.0),
+				ThreatMultiplier: 1,
+				IsPeriodic:       true,
+				BaseDamage: core.BaseDamageConfig{
+					Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+						// 80.0 * 0.32 * 1.15 base, 0.055 * 1.15
+						return (29.44 + dk.RuneWeapon.getImpurityBonus(hitEffect, spell.Unit)*0.06325)
+					},
+					TargetSpellCoefficient: 1,
+				},
+				OutcomeApplier: dk.RuneWeapon.OutcomeFuncAlwaysHit(),
+			}),
+		})
+
+		dk.RuneWeapon.FrostFeverDisease[target.Index].Spell = dk.RuneWeapon.FrostFeverSpell
+	}
+}
+
+func (dk *Deathknight) registerDrwBloodPlague() {
+	actionID := core.ActionID{SpellID: 55078}
+
+	dk.RuneWeapon.BloodPlagueSpell = dk.RuneWeapon.RegisterSpell(core.SpellConfig{
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolShadow,
+		Flags:       core.SpellFlagDisease,
+		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
+			dk.RuneWeapon.BloodPlagueDisease[unit.Index].Apply(sim)
+		},
+	})
+
+	dk.RuneWeapon.BloodPlagueDisease = make([]*core.Dot, dk.Env.GetNumTargets())
+
+	// Tier9 4Piece
+	outcomeApplier := dk.RuneWeapon.OutcomeFuncAlwaysHit()
+	if dk.HasSetBonus(ItemSetThassariansBattlegear, 4) {
+		outcomeApplier = dk.RuneWeapon.OutcomeFuncMagicCrit(dk.spellCritMultiplier())
+	}
+
+	for _, encounterTarget := range dk.Env.Encounter.Targets {
+		target := &encounterTarget.Unit
+
+		dk.RuneWeapon.BloodPlagueDisease[target.Index] = core.NewDot(core.Dot{
+			Aura: target.RegisterAura(core.Aura{
+				Label:    "DrwBloodPlague-" + strconv.Itoa(int(dk.RuneWeapon.Index)),
+				ActionID: actionID,
+			}),
+			NumberOfTicks: 5 + int(dk.Talents.Epidemic),
+			TickLength:    time.Second * 3,
+
+			TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
+				ProcMask:         core.ProcMaskPeriodicDamage,
+				DamageMultiplier: 1,
+				ThreatMultiplier: 1,
+				IsPeriodic:       true,
+				BaseDamage: core.BaseDamageConfig{
+					Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+						// 80.0 * 0.394 * 1.15 for base, 0.055 * 1.15 for ap coeff
+						return (36.248 + dk.RuneWeapon.getImpurityBonus(hitEffect, spell.Unit)*0.06325)
+					},
+					TargetSpellCoefficient: 1,
+				},
+				OutcomeApplier: outcomeApplier,
+			}),
+		})
+
+		dk.RuneWeapon.BloodPlagueDisease[target.Index].Spell = dk.RuneWeapon.BloodPlagueSpell
 	}
 }
 

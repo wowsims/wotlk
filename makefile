@@ -16,6 +16,7 @@ HTML_INDECIES := ui/balance_druid/index.html \
 				 ui/rogue/index.html \
 				 ui/retribution_paladin/index.html \
 				 ui/protection_paladin/index.html \
+				 ui/healing_priest/index.html \
 				 ui/shadow_priest/index.html \
 				 ui/smite_priest/index.html \
 				 ui/warlock/index.html \
@@ -48,7 +49,7 @@ $(OUT_DIR)/bundle/.dirstamp: \
 	touch $@
 
 $(OUT_DIR)/sim_worker.js: ui/worker/sim_worker.js
-	cat $(GOROOT)/misc/wasm/wasm_exec.js > $(OUT_DIR)/sim_worker.js
+	cat '$(GOROOT)/misc/wasm/wasm_exec.js' > $(OUT_DIR)/sim_worker.js
 	cat ui/worker/sim_worker.js >> $(OUT_DIR)/sim_worker.js
 
 $(OUT_DIR)/net_worker.js: ui/worker/net_worker.js
@@ -111,9 +112,9 @@ wasm: $(OUT_DIR)/lib.wasm
 $(OUT_DIR)/lib.wasm: sim/wasm/* sim/core/proto/api.pb.go $(filter-out sim/core/items/all_items.go, $(call rwildcard,sim,*.go))
 	@echo "Starting webassembly compile now..."
 	@if GOOS=js GOARCH=wasm go build -o ./$(OUT_DIR)/lib.wasm ./sim/wasm/; then \
-		echo "\033[1;32mWASM compile successful.\033[0m"; \
+		printf "\033[1;32mWASM compile successful.\033[0m\n"; \
 	else \
-		echo "\033[1;31mWASM COMPILE FAILED\033[0m"; \
+		printf "\033[1;31mWASM COMPILE FAILED\033[0m\n"; \
 		exit 1; \
 	fi
 	
@@ -146,9 +147,9 @@ wowsimwotlk: binary_dist devserver
 devserver: sim/core/proto/api.pb.go sim/web/main.go binary_dist/dist.go
 	@echo "Starting server compile now..."
 	@if go build -o wowsimwotlk ./sim/web/main.go; then \
-		echo "\033[1;32mBuild Completed Succeessfully\033[0m"; \
+		printf "\033[1;32mBuild Completed Succeessfully\033[0m\n"; \
 	else \
-		echo "\033[1;31mBUILD FAILED\033[0m"; \
+		printf "\033[1;31mBUILD FAILED\033[0m\n"; \
 		exit 1; \
 	fi
 

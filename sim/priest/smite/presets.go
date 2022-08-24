@@ -6,20 +6,39 @@ import (
 )
 
 var StandardTalents = &proto.PriestTalents{
-	InnerFocus:     true,
-	Meditation:     3,
-	SilentResolve:  1,
-	MentalAgility:  5,
-	MentalStrength: 5,
-	//DivineSpirit:         true,
-	//ImprovedDivineSpirit: 2,
-	//ForceOfWill:          5,
-	PowerInfusion:      true,
+	TwinDisciplines:            5,
+	SilentResolve:              3,
+	ImprovedInnerFire:          3,
+	ImprovedPowerWordFortitude: 2,
+	Meditation:                 3,
+	InnerFocus:                 true,
+	MentalAgility:              3,
+	MentalStrength:             5,
+	FocusedPower:               2,
+	Enlightenment:              3,
+	FocusedWill:                3,
+	PowerInfusion:              true,
+
 	HolySpecialization: 5,
+	SpellWarding:       5,
 	DivineFury:         5,
+	DesperatePrayer:    true,
+	HolyReach:          2,
 	SearingLight:       2,
+	SpiritOfRedemption: true,
 	SpiritualGuidance:  5,
 	SurgeOfLight:       2,
+
+	SpiritTap:         3,
+	ImprovedSpiritTap: 2,
+	Darkness:          4,
+}
+
+var DefaultGlyphs = &proto.Glyphs{
+	Major1: int32(proto.PriestMajorGlyph_GlyphOfSmite),
+	Major2: int32(proto.PriestMajorGlyph_GlyphOfHolyNova),
+	Major3: int32(proto.PriestMajorGlyph_GlyphOfShadowWordDeath),
+	// No interesting minor glyphs.
 }
 
 var FullRaidBuffs = &proto.RaidBuffs{
@@ -37,10 +56,10 @@ var FullIndividualBuffs = &proto.IndividualBuffs{
 }
 
 var FullConsumes = &proto.Consumes{
-	Flask:           proto.Flask_FlaskOfBlindingLight,
-	Food:            proto.Food_FoodBlackenedBasilisk,
-	DefaultPotion:   proto.Potions_SuperManaPotion,
-	DefaultConjured: proto.Conjured_ConjuredDarkRune,
+	Flask:         proto.Flask_FlaskOfTheFrostWyrm,
+	Food:          proto.Food_FoodFishFeast,
+	DefaultPotion: proto.Potions_RunicManaPotion,
+	PrepopPotion:  proto.Potions_PotionOfWildMagic,
 }
 
 var FullDebuffs = &proto.Debuffs{
@@ -52,204 +71,93 @@ var PlayerOptionsBasic = &proto.Player_SmitePriest{
 	SmitePriest: &proto.SmitePriest{
 		Talents: StandardTalents,
 		Options: &proto.SmitePriest_Options{
+			UseInnerFire:   true,
 			UseShadowfiend: true,
 		},
 		Rotation: &proto.SmitePriest_Rotation{
-			RotationType: proto.SmitePriest_Rotation_Basic,
+			UseDevouringPlague: true,
+			UseShadowWordDeath: true,
+			UseMindBlast:       true,
 		},
 	},
 }
 
 var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	{
-		"id": 24266,
-		"enchant": 29191,
+		"id": 40562,
+		"enchant": 44877,
 		"gems": [
-			28118,
-			24030,
-			24030
+			41307,
+			40049
 		]
 	},
 	{
-		"id": 28530
+		"id": 40374
 	},
 	{
-		"id": 29060,
-		"enchant": 28886,
-		"gems": [
-			24030,
-			24030
-		]
+		"id": 40555,
+		"enchant": 44874
 	},
 	{
-		"id": 28766,
-		"enchant": 33150
+		"id": 41610,
+		"enchant": 63765
 	},
 	{
-		"id": 29056,
-		"enchant": 24003,
-		"gems": [
-			24030,
-			24030,
-			24030
-		]
-	},
-	{
-		"id": 24250,
-		"enchant": 22534,
-		"gems": [
-			24030
-		]
-	},
-	{
-		"id": 30725,
-		"enchant": 28272,
-		"gems": [
-			24030,
-			24030
-		]
-	},
-	{
-		"id": 24256,
-		"gems": [
-			24030,
-			24030
-		]
-	},
-	{
-		"id": 30734,
-		"enchant": 24274,
-		"gems": [
-			24030,
-			24030,
-			24030
-		]
-	},
-	{
-		"id": 28517,
-		"enchant": 35297,
-		"gems": [
-			24030,
-			24030
-		]
-	},
-	{
-		"id": 28793,
-		"enchant": 22536
-	},
-	{
-		"id": 29172,
-		"enchant": 22536
-	},
-	{
-		"id": 27683
-	},
-	{
-		"id": 29370
-	},
-	{
-		"id": 30723,
-		"enchant": 22555,
-		"gems": [
-			30564,
-			31867
-		]
-	},
-	{
-		"id": 28734
-	},
-	{
-		"id": 28673
-	}
-]}`)
-var P3Gear = items.EquipmentSpecFromJsonString(`{"items": [
-	{
-		"id": 32525,
-		"enchant": 29191,
-		"gems": [
-			34220,
-			30600
-		]
-	},
-	{
-		"id": 32349
-	},
-	{
-		"id": 31070,
-		"enchant": 28886,
-		"gems": [
-			32218,
-			32215
-		]
-	},
-	{
-		"id": 32524,
-		"enchant": 33150
-	},
-	{
-		"id": 30107,
+		"id": 40526,
 		"enchant": 33990,
 		"gems": [
-			32196,
-			32196,
-			32196
+			40049
 		]
 	},
 	{
-		"id": 32586,
-		"enchant": 22534
-	},
-	{
-		"id": 31061,
-		"enchant": 28272,
+		"id": 40325,
+		"enchant": 44498,
 		"gems": [
-			32196
+			0
 		]
 	},
 	{
-		"id": 30038,
+		"id": 40454,
+		"enchant": 44592,
 		"gems": [
-			32196,
-			32196
+			40049,
+			0
 		]
 	},
 	{
-		"id": 30916,
-		"enchant": 24274,
+		"id": 40301,
 		"gems": [
-			32196,
-			32196,
-			32196
+			40049
 		]
 	},
 	{
-		"id": 32239,
-		"enchant": 35297,
-		"gems": [
-			32196,
-			32196
-		]
+		"id": 40560,
+		"enchant": 41602
 	},
 	{
-		"id": 32527,
-		"enchant": 22536
+		"id": 40246,
+		"enchant": 60623
 	},
 	{
-		"id": 32247,
-		"enchant": 22536
+		"id": 40399
 	},
 	{
-		"id": 29370
+		"id": 39389
 	},
 	{
-		"id": 32483
+		"id": 42129
 	},
 	{
-		"id": 32374,
-		"enchant": 22555
+		"id": 40382
 	},
-	{},
 	{
-		"id": 29982
+		"id": 40395,
+		"enchant": 44487
+	},
+	{
+		"id": 40273
+	},
+	{
+		"id": 39712
 	}
 ]}`)

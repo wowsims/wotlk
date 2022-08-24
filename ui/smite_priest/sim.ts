@@ -16,7 +16,7 @@ import { Player } from '../core/player.js';
 import { Sim } from '../core/sim.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
 
-import { SmitePriest, SmitePriest_Rotation as Rotation, SmitePriest_Options as Options, SmitePriest_Rotation, SmitePriest_Rotation_RotationType } from '../core/proto/priest.js';
+import { SmitePriest, SmitePriest_Rotation as Rotation, SmitePriest_Options as Options, SmitePriest_Rotation } from '../core/proto/priest.js';
 
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
@@ -53,8 +53,6 @@ export class SmitePriestSimUI extends IndividualSimUI<Spec.SpecSmitePriest> {
 				Stat.StatIntellect,
 				Stat.StatSpirit,
 				Stat.StatSpellPower,
-				Stat.StatShadowSpellPower,
-				Stat.StatHolySpellPower,
 				Stat.StatSpellHit,
 				Stat.StatSpellCrit,
 				Stat.StatSpellHaste,
@@ -62,9 +60,7 @@ export class SmitePriestSimUI extends IndividualSimUI<Spec.SpecSmitePriest> {
 			],
 			modifyDisplayStats: (player: Player<Spec.SpecSmitePriest>) => {
 				let stats = new Stats();
-				stats = stats.addStat(Stat.StatSpellHit,
-					player.getTalents().shadowFocus * 2 * Mechanics.SPELL_HIT_RATING_PER_HIT_CHANCE +
-					player.getTalents().focusedPower * 2 * Mechanics.SPELL_HIT_RATING_PER_HIT_CHANCE);
+				stats = stats.addStat(Stat.StatSpellHit, player.getTalents().shadowFocus * 1 * Mechanics.SPELL_HIT_RATING_PER_HIT_CHANCE);
 
 				return {
 					talents: stats,
@@ -80,8 +76,6 @@ export class SmitePriestSimUI extends IndividualSimUI<Spec.SpecSmitePriest> {
 					[Stat.StatSpirit]: 1.18,
 					[Stat.StatSpellPower]: 1,
 					[Stat.StatSpellHit]: 2.57,
-					[Stat.StatShadowSpellPower]: 0.05,
-					[Stat.StatHolySpellPower]: 0.95,
 					[Stat.StatSpellCrit]: 0.44,
 					[Stat.StatSpellHaste]: 0.28, // tricky because SP is tricky
 					[Stat.StatMP5]: 2.05,
@@ -95,31 +89,17 @@ export class SmitePriestSimUI extends IndividualSimUI<Spec.SpecSmitePriest> {
 				// Default spec-specific settings.
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
-				raidBuffs: RaidBuffs.create({
-					arcaneBrilliance: true,
-					divineSpirit: true,
-					giftOfTheWild: TristateEffect.TristateEffectImproved,
-					bloodlust: true,
-					manaSpringTotem: TristateEffect.TristateEffectRegular,
-					wrathOfAirTotem: true,
-				}),
-				partyBuffs: PartyBuffs.create({
-				}),
-				individualBuffs: IndividualBuffs.create({
-					blessingOfKings: true,
-					blessingOfWisdom: 2,
-
-				}),
-				debuffs: Debuffs.create({
-					judgementOfWisdom: true,
-					misery: true,
-					curseOfElements: true,
-				}),
+				raidBuffs: Presets.DefaultRaidBuffs,
+				partyBuffs: PartyBuffs.create({}),
+				individualBuffs: Presets.DefaultIndividualBuffs,
+				debuffs: Presets.DefaultDebuffs,
 			},
 
 			// IconInputs to include in the 'Player' section on the settings tab.
 			playerIconInputs: [
 				SmitePriestInputs.SelfPowerInfusion,
+				SmitePriestInputs.InnerFire,
+				SmitePriestInputs.Shadowfiend,
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: SmitePriestInputs.SmitePriestRotationConfig,
@@ -131,7 +111,6 @@ export class SmitePriestSimUI extends IndividualSimUI<Spec.SpecSmitePriest> {
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
-					OtherInputs.PrepopPotion,
 					OtherInputs.TankAssignment,
 				],
 			},
@@ -144,10 +123,10 @@ export class SmitePriestSimUI extends IndividualSimUI<Spec.SpecSmitePriest> {
 				// Preset talents that the user can quickly select.
 				talents: [
 					Presets.StandardTalents,
-					Presets.HolyTalents,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
+					Presets.PRERAID_PRESET,
 					Presets.P1_PRESET,
 				],
 			},

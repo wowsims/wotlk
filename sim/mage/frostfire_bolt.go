@@ -16,7 +16,7 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 	mage.FrostfireBolt = mage.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolFire | core.SpellSchoolFrost,
-		Flags:       SpellFlagMage | HotStreakSpells | core.SpellFlagBinary,
+		Flags:       SpellFlagMage | HotStreakSpells,
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -40,7 +40,6 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 				float64(mage.Talents.ImprovedScorch)*1*core.CritRatingPerCritChance,
 
 			DamageMultiplier: mage.spellDamageMultiplier *
-				(1 + .02*float64(mage.Talents.FirePower)) *
 				(1 + .02*float64(mage.Talents.PiercingIce)) *
 				(1 + core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostfire), .02, 0)) *
 				(1 + .04*float64(mage.Talents.TormentTheWeak)) *
@@ -48,14 +47,16 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 
 			ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul) - .04*float64(mage.Talents.FrostChanneling),
 
-			BaseDamage:     core.BaseDamageConfigMagic(722, 838, 3.0/3.5+float64(mage.Talents.EmpoweredFire)*.05),
-			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, mage.bonusCritDamage+float64(mage.Talents.IceShards)/3)),
+			BaseDamage:     core.BaseDamageConfigMagicNoRoll((722+838)/2, 3.0/3.5+float64(mage.Talents.EmpoweredFire)*.05),
+			OutcomeApplier: mage.fireSpellOutcomeApplier(mage.bonusCritDamage + float64(mage.Talents.IceShards)/3),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					mage.FrostfireDot.Apply(sim)
 				}
 			},
+
+			MissileSpeed: 25,
 		}),
 	})
 

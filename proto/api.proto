@@ -37,6 +37,7 @@ message Player {
 		Mage mage = 8;
 		RetributionPaladin retribution_paladin = 9;
 		ProtectionPaladin protection_paladin = 25;
+		HealingPriest healing_priest = 34;
 		ShadowPriest shadow_priest = 10;
 		SmitePriest smite_priest = 20;
 		Rogue rogue = 11;
@@ -137,11 +138,17 @@ message TargetedActionMetrics {
 	// # of times this action was a Glance.
 	int32 glances = 8;
 
-	// Total damage done to all targets by this action.
+	// Total damage done to this target by this action.
 	double damage = 9;
 
-	// Total threat done to all targets by this action.
+	// Total threat done to this target by this action.
 	double threat = 10;
+
+	// Total healing done to this target by this action.
+	double healing = 11;
+
+	// Total shielding done to this target by this action.
+	double shielding = 13;
 }
 
 message AuraMetrics {
@@ -201,6 +208,7 @@ message UnitMetrics {
 	DistributionMetrics dps = 1;
 	DistributionMetrics threat = 8;
 	DistributionMetrics dtps = 11;
+	DistributionMetrics hps = 14;
 
 	// average seconds spent oom per iteration
 	double seconds_oom_avg = 3; 

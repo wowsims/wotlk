@@ -5,6 +5,7 @@ import (
 )
 
 func init() {
+	registerNaxxramas10()
 	registerBlackTemple()
 	registerSunwellPlateau()
 }

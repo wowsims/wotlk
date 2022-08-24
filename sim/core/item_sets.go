@@ -8,7 +8,8 @@ import (
 )
 
 type ItemSet struct {
-	Name string
+	Name            string
+	AlternativeName string
 
 	// IDs of items that are part of this set. map[key]struct{} is roughly a set in go.
 	Items map[int32]struct{}
@@ -55,14 +56,21 @@ func NewItemSet(setStruct ItemSet) *ItemSet {
 	*set = setStruct
 
 	if len(set.Items) > 0 {
-		panic(set.Name + " supplied item IDs, set items are detected automatically!")
+		panic(set.Name + " (" + set.AlternativeName + ") supplied item IDs, set items are detected automatically!")
 	}
 
 	set.Items = make(map[int32]struct{})
 	for _, item := range items.Items {
-		if item.SetName == set.Name {
-			//fmt.Printf("Adding item %s-%d to set %s\n", item.Name, item.ID, item.SetName)
-			set.Items[item.ID] = struct{}{}
+		if len(set.AlternativeName) == 0 {
+			if item.SetName == set.Name {
+				//fmt.Printf("Adding item %s-%d to set %s\n", item.Name, item.ID, item.SetName)
+				set.Items[item.ID] = struct{}{}
+			}
+		} else {
+			if item.SetName == set.Name || item.SetName == set.AlternativeName {
+				//fmt.Printf("Adding item %s-%d to set %s\n", item.Name, item.ID, item.SetName)
+				set.Items[item.ID] = struct{}{}
+			}
 		}
 	}
 	if len(set.Items) == 0 {

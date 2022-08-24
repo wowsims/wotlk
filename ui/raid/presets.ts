@@ -178,10 +178,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				5: BalanceDruidPresets.P5_PRESET.gear,
+				1: BalanceDruidPresets.P1_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				5: BalanceDruidPresets.P5_PRESET.gear,
+				1: BalanceDruidPresets.P1_PRESET.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecBalanceDruid],
@@ -550,7 +550,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	{
 		spec: Spec.SpecProtectionWarrior,
 		rotation: ProtectionWarriorPresets.DefaultRotation,
-		talents: ProtectionWarriorPresets.ImpaleProtTalents.data,
+		talents: ProtectionWarriorPresets.StandardTalents.data,
 		specOptions: ProtectionWarriorPresets.DefaultOptions,
 		consumes: ProtectionWarriorPresets.DefaultConsumes,
 		defaultName: 'Prot Warrior',

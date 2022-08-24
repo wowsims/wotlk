@@ -45,5 +45,25 @@ export const BalanceDruidRotationConfig = {
 			label: 'Use Battle Res',
 			labelTooltip: 'Cast Battle Res on an ally sometime during the encounter.',
 		}),
+		InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecBalanceDruid>({
+			fieldName: 'useIs',
+			label: 'Use Insect Swarm',
+			labelTooltip: 'Should the rotation use Insect Swarm.',
+		}),
+		InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecBalanceDruid>({
+			fieldName: 'useMf',
+			label: 'Use Moonfire',
+			labelTooltip: 'Should the rotation use Moonfire.',
+		}),
+		InputHelpers.makeSpecOptionsNumberInput<Spec.SpecBalanceDruid>({
+			fieldName: 'mfInsideEclipseThreshold',
+			label: 'Moonfire inside eclipse max timing',
+			labelTooltip: 'Max eclipse uptime at which Moonfire can be applied/refreshed. 15 = never refresh,  0= always refresh.',
+		}),
+		InputHelpers.makeSpecOptionsNumberInput<Spec.SpecBalanceDruid>({
+			fieldName: 'isInsideEclipseThreshold',
+			label: 'Insect Swarm inside eclipse max timing',
+			labelTooltip: 'Max eclipse uptime at which Insect Swarm can be applied/refreshed. 15 = never refresh,  0= always refresh.',
+		}),
 	],
 };

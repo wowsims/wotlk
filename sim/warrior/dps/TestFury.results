@@ -533,6 +533,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFury-AllItems-StormshroudArmor"
+ value: {
+  dps: 555.8200705828
+  tps: 626.5954019992
+ }
+}
+dps_results: {
  key: "TestFury-AllItems-StrengthoftheClefthoof"
  value: {
   dps: 568.517674073
@@ -696,22 +703,22 @@ dps_results: {
 dps_results: {
  key: "TestFury-Settings-Human-Fury P1-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 431.966828939
-  tps: 620.2537049633
+  dps: 495.9879787603
+  tps: 689.0553952644
  }
 }
 dps_results: {
  key: "TestFury-Settings-Human-Fury P1-Basic-NoBuffs-LongSingleTarget"
  value: {
-  dps: 431.966828939
-  tps: 494.1095382967
+  dps: 495.9879787603
+  tps: 562.6737285977
  }
 }
 dps_results: {
  key: "TestFury-Settings-Human-Fury P1-Basic-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 485.7082509911
-  tps: 557.4131382293
+  dps: 543.8642995247
+  tps: 618.6950412268
  }
 }
 dps_results: {
@@ -738,22 +745,22 @@ dps_results: {
 dps_results: {
  key: "TestFury-Settings-Orc-Fury P1-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 430.6421942029
-  tps: 619.2905269073
+  dps: 501.379559736
+  tps: 693.8887022298
  }
 }
 dps_results: {
  key: "TestFury-Settings-Orc-Fury P1-Basic-NoBuffs-LongSingleTarget"
  value: {
-  dps: 430.6421942029
-  tps: 493.447193574
+  dps: 501.379559736
+  tps: 567.8553688965
  }
 }
 dps_results: {
  key: "TestFury-Settings-Orc-Fury P1-Basic-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 466.2127110195
-  tps: 535.7690539966
+  dps: 546.9566439237
+  tps: 621.1465642344
  }
 }
 dps_results: {

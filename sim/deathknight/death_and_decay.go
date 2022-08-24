@@ -74,7 +74,7 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 			ProcMask:         core.ProcMaskPeriodicDamage,
 			BonusSpellPower:  0.0,
 			DamageMultiplier: glyphBonus * dk.scourgelordsPlateDamageBonus(),
-			ThreatMultiplier: 1,
+			ThreatMultiplier: 1.9,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					if doSnapshot {

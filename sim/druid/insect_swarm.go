@@ -1,17 +1,15 @@
 package druid
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (druid *Druid) registerInsectSwarmSpell() {
 	actionID := core.ActionID{SpellID: 27013}
-	baseCost := 175.0
+	baseCost := 0.08 * druid.BaseMana
 
 	target := druid.CurrentTarget
 	missAura := core.InsectSwarmAura(target)
@@ -47,22 +45,18 @@ func (druid *Druid) registerInsectSwarmSpell() {
 	druid.InsectSwarmDot = core.NewDot(core.Dot{
 		Spell: druid.InsectSwarm,
 		Aura: target.RegisterAura(core.Aura{
-			Label:    "InsectSwarm-" + strconv.Itoa(int(druid.Index)),
+			Label:    "Insect Swarm",
 			ActionID: actionID,
 		}),
-		NumberOfTicks: 6,
+		NumberOfTicks: 6 + core.TernaryInt(druid.Talents.NaturesSplendor, 1, 0),
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(792/6, 0.127),
+			BaseDamage:       core.BaseDamageConfigMagicNoRoll(124, 0.2),
 			OutcomeApplier:   druid.OutcomeFuncTick(),
 		}),
 	})
-}
-
-func (druid *Druid) ShouldCastInsectSwarm(sim *core.Simulation, target *core.Unit, rotation proto.BalanceDruid_Rotation) bool {
-	return !druid.InsectSwarmDot.IsActive()
 }

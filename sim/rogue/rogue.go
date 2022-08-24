@@ -44,6 +44,8 @@ type Rogue struct {
 	exposeArmorDurations  [6]time.Duration
 	disabledMCDs          []*core.MajorCooldown
 
+	initialArmorDebuffAura *core.Aura
+
 	Builder          *core.Spell
 	Backstab         *core.Spell
 	DeadlyPoison     *core.Spell
@@ -168,6 +170,7 @@ func (rogue *Rogue) ApplyEnergyTickMultiplier(multiplier float64) {
 
 func (rogue *Rogue) Reset(sim *core.Simulation) {
 	rogue.disabledMCDs = rogue.DisableAllEnabledCooldowns(core.CooldownTypeUnknown)
+	rogue.initialArmorDebuffAura = rogue.CurrentTarget.GetActiveAuraWithTag(core.MajorArmorReductionTag)
 	rogue.SetPriorityList(sim)
 }
 
@@ -234,6 +237,13 @@ func (rogue *Rogue) ApplyCutToTheChase(sim *core.Simulation) {
 			rogue.SliceAndDiceAura.Activate(sim)
 		}
 	}
+}
+
+func (rogue *Rogue) CanMutilate() bool {
+	return rogue.Talents.Mutilate &&
+		rogue.HasMHWeapon() && rogue.HasOHWeapon() &&
+		rogue.GetMHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger &&
+		rogue.GetOHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger
 }
 
 func init() {

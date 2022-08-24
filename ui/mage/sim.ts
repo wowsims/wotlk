@@ -69,15 +69,16 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 				gear: Presets.P1_ARCANE_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatIntellect]: 1.29,
-					[Stat.StatSpirit]: 0.89,
+					[Stat.StatIntellect]: .43,
+					[Stat.StatSpirit]: 0.39,
 					[Stat.StatSpellPower]: 1,
-					[Stat.StatArcaneSpellPower]: 0.78,
+					[Stat.StatArcaneSpellPower]: 1,
 					[Stat.StatFireSpellPower]: 0,
-					[Stat.StatFrostSpellPower]: 0.21,
-					[Stat.StatSpellCrit]: 0.77,
-					[Stat.StatSpellHaste]: 0.84,
-					[Stat.StatMP5]: 0.61,
+					[Stat.StatFrostSpellPower]: 0,
+					[Stat.StatSpellCrit]: 0.59,
+					[Stat.StatSpellHaste]: 1.27,
+					[Stat.StatMP5]: 0.1,
+					[Stat.StatSpellHit]: .3,
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultArcaneConsumes,
@@ -93,6 +94,12 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 					bloodlust: true,
 					manaSpringTotem: TristateEffect.TristateEffectImproved,
 					wrathOfAirTotem: true,
+					divineSpirit: true,
+					swiftRetribution: true,
+					sanctifiedRetribution: true,
+					demonicPact: 2500,
+					moonkinAura: TristateEffect.TristateEffectImproved,
+					arcaneBrilliance: true,
 				}),
 				partyBuffs: PartyBuffs.create({
 					manaTideTotems: 1,
@@ -100,12 +107,15 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
 					blessingOfWisdom: TristateEffect.TristateEffectImproved,
-					innervates: 1,
+					innervates: 0,
+					vampiricTouch: true,
 				}),
 				debuffs: Debuffs.create({
 					judgementOfWisdom: true,
 					misery: true,
 					curseOfElements: true,
+					shadowMastery: true,
+					heartOfTheCrusader: true,
 				}),
 			},
 
@@ -117,6 +127,7 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 			rotationInputs: MageInputs.MageRotationConfig,
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
+				//Should add hymn of hope, revitalize, and 
 			],
 			excludeBuffDebuffInputs: [
 			],
@@ -125,9 +136,7 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 				inputs: [
 					MageInputs.EvocationTicks,
 					MageInputs.FocusMagicUptime,
-					OtherInputs.PrepopPotion,
-					OtherInputs.StartingConjured,
-					OtherInputs.NumStartingConjured,
+					OtherInputs.DistanceFromTarget,
 
 					OtherInputs.TankAssignment,
 				],
@@ -142,6 +151,7 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 				talents: [
 					Presets.ArcaneTalents,
 					Presets.FireTalents,
+					Presets.FrostfireTalents,
 					Presets.FrostTalents,
 				],
 				// Preset gear configurations that the user can quickly select.
@@ -149,6 +159,12 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 					Presets.P1_ARCANE_PRESET,
 					Presets.P1_FIRE_PRESET,
 					Presets.P1_FROST_PRESET,
+					Presets.P1_PRERAID_ARCANE_PRESET,
+					Presets.P1_PRERAID_FIRE_PRESET,
+					Presets.ICC_FFB_Preset,
+					Presets.ICC_Fireball_Preset,
+					Presets.P2_Arcane_Preset,
+					Presets.P2_Fire_Preset
 				],
 			},
 		});

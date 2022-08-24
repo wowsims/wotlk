@@ -213,7 +213,6 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				inputs: [
 					HunterInputs.PetUptime,
 					HunterInputs.SniperTrainingUptime,
-					OtherInputs.PrepopPotion,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],

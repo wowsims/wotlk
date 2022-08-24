@@ -71,7 +71,7 @@ type Paladin struct {
 	// SealOfLight         *core.Spell
 
 	ConsecrationDot    *core.Dot
-	SealOfVengeanceDot *core.Dot
+	SealOfVengeanceDot []*core.Dot
 
 	HolyShieldAura *core.Aura
 	// RighteousFuryAura       *core.Aura

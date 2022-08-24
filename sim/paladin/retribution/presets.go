@@ -46,6 +46,7 @@ var defaultRetGlyphs = &proto.Glyphs{
 var defaultRetRotation = &proto.RetributionPaladin_Rotation{
 	ConsSlack:            500,
 	ExoSlack:             500,
+	UseDivinePlea:        true,
 	DivinePleaPercentage: 0.75,
 	HolyWrathThreshold:   4,
 }
@@ -54,7 +55,6 @@ var defaultRetOptions = &proto.RetributionPaladin_Options{
 	Judgement:            proto.PaladinJudgement_JudgementOfWisdom,
 	Seal:                 proto.PaladinSeal_Vengeance,
 	Aura:                 proto.PaladinAura_RetributionAura,
-	UseDivinePlea:        true,
 	DamageTakenPerSecond: 0,
 }
 
@@ -97,6 +97,7 @@ var FullConsumes = &proto.Consumes{
 
 var FullDebuffs = &proto.Debuffs{
 	JudgementOfWisdom: true,
+	JudgementOfLight:  true,
 	Misery:            true,
 	CurseOfElements:   true,
 	BloodFrenzy:       true,

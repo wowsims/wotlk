@@ -28,16 +28,16 @@ func NewRetributionPaladin(character core.Character, options proto.Player) *Retr
 	retOptions := options.GetRetributionPaladin()
 
 	ret := &RetributionPaladin{
-		Paladin:              paladin.NewPaladin(character, *retOptions.Talents),
-		Rotation:             *retOptions.Rotation,
-		Judgement:            retOptions.Options.Judgement,
-		Seal:                 retOptions.Options.Seal,
-		UseDivinePlea:        retOptions.Options.UseDivinePlea,
-		DivinePleaPercentage: retOptions.Rotation.DivinePleaPercentage,
-		ExoSlack:             retOptions.Rotation.ExoSlack,
-		ConsSlack:            retOptions.Rotation.ConsSlack,
-		HolyWrathThreshold:   retOptions.Rotation.HolyWrathThreshold,
-
+		Paladin:                    paladin.NewPaladin(character, *retOptions.Talents),
+		Rotation:                   *retOptions.Rotation,
+		Judgement:                  retOptions.Options.Judgement,
+		Seal:                       retOptions.Options.Seal,
+		UseDivinePlea:              retOptions.Rotation.UseDivinePlea,
+		DivinePleaPercentage:       retOptions.Rotation.DivinePleaPercentage,
+		ExoSlack:                   retOptions.Rotation.ExoSlack,
+		ConsSlack:                  retOptions.Rotation.ConsSlack,
+		HolyWrathThreshold:         retOptions.Rotation.HolyWrathThreshold,
+		MaxSoVTargets:              retOptions.Rotation.SovTargets,
 		HasLightswornBattlegear2Pc: character.HasSetBonus(paladin.ItemSetLightswornBattlegear, 2),
 	}
 	ret.PaladinAura = retOptions.Options.Aura
@@ -79,8 +79,11 @@ type RetributionPaladin struct {
 	ExoSlack             int32
 	ConsSlack            int32
 	HolyWrathThreshold   int32
+	MaxSoVTargets        int32
 
 	HasLightswornBattlegear2Pc bool
+
+	SelectedJudgement *core.Spell
 
 	SelectedRotation  func(*core.Simulation)
 	RotatioOption     *proto.CustomRotation
@@ -104,24 +107,33 @@ func (ret *RetributionPaladin) Initialize() {
 func (ret *RetributionPaladin) Reset(sim *core.Simulation) {
 	ret.Paladin.Reset(sim)
 
+	switch ret.Judgement {
+	case proto.PaladinJudgement_JudgementOfWisdom:
+		ret.SelectedJudgement = ret.JudgementOfWisdom
+	case proto.PaladinJudgement_JudgementOfLight:
+		ret.SelectedJudgement = ret.JudgementOfLight
+	}
+
 	if ret.RotatioOption != nil {
-		ret.RotationInput = make([]*core.Spell, len(ret.RotatioOption.Spells))
-		for i, customSpellProto := range ret.RotatioOption.Spells {
+		ret.RotationInput = make([]*core.Spell, 0, len(ret.RotatioOption.Spells))
+		for _, customSpellProto := range ret.RotatioOption.Spells {
 			switch customSpellProto.Spell {
 			case int32(proto.RetributionPaladin_Rotation_JudgementOfWisdom):
-				ret.RotationInput[i] = ret.JudgementOfWisdom
+				ret.RotationInput = append(ret.RotationInput, ret.SelectedJudgement)
 			case int32(proto.RetributionPaladin_Rotation_DivineStorm):
-				ret.RotationInput[i] = ret.DivineStorm
+				ret.RotationInput = append(ret.RotationInput, ret.DivineStorm)
 			case int32(proto.RetributionPaladin_Rotation_HammerOfWrath):
-				ret.RotationInput[i] = ret.HammerOfWrath
+				ret.RotationInput = append(ret.RotationInput, ret.HammerOfWrath)
 			case int32(proto.RetributionPaladin_Rotation_Consecration):
-				ret.RotationInput[i] = ret.Consecration
+				ret.RotationInput = append(ret.RotationInput, ret.Consecration)
 			case int32(proto.RetributionPaladin_Rotation_HolyWrath):
-				ret.RotationInput[i] = ret.HolyWrath
+				ret.RotationInput = append(ret.RotationInput, ret.HolyWrath)
 			case int32(proto.RetributionPaladin_Rotation_CrusaderStrike):
-				ret.RotationInput[i] = ret.CrusaderStrike
+				ret.RotationInput = append(ret.RotationInput, ret.CrusaderStrike)
 			case int32(proto.RetributionPaladin_Rotation_Exorcism):
-				ret.RotationInput[i] = ret.Exorcism
+				ret.RotationInput = append(ret.RotationInput, ret.Exorcism)
+			case int32(proto.RetributionPaladin_Rotation_DivinePlea):
+				ret.RotationInput = append(ret.RotationInput, ret.DivinePlea)
 			}
 		}
 	}
@@ -136,14 +148,16 @@ func (ret *RetributionPaladin) Reset(sim *core.Simulation) {
 
 	switch ret.Seal {
 	case proto.PaladinSeal_Vengeance:
+		ret.CurrentSeal = ret.SealOfVengeanceAura
 		ret.SealOfVengeanceAura.Activate(sim)
 	case proto.PaladinSeal_Command:
+		ret.CurrentSeal = ret.SealOfCommandAura
 		ret.SealOfCommandAura.Activate(sim)
 	case proto.PaladinSeal_Righteousness:
+		ret.CurrentSeal = ret.SealOfRighteousnessAura
 		ret.SealOfRighteousnessAura.Activate(sim)
 	}
 
 	ret.DivinePleaAura.Activate(sim)
 	ret.DivinePlea.CD.Use(sim)
-
 }
