@@ -627,105 +627,96 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		tooltip: 'Protection Paladin',
 		iconUrl: talentTreeIcons[Class.ClassPaladin][1],
 	},
-	/*	{
-			spec: Spec.SpecWarlock,
-			rotation: WarlockPresets.DefaultRotation,
-			talents: WarlockPresets.DestructionTalents.data,
-			specOptions: WarlockPresets.DefaultOptions,
-			consumes: WarlockPresets.DefaultConsumes,
-			defaultName: 'Destro Warlock',
-			defaultFactionRaces: {
-				[Faction.Unknown]: Race.RaceUnknown,
-				[Faction.Alliance]: Race.RaceHuman,
-				[Faction.Horde]: Race.RaceBloodElf,
+	{
+		spec: Spec.SpecWarlock,
+		rotation: WarlockPresets.DestructionRotation,
+		talents: WarlockPresets.DestructionTalents.data,
+		specOptions: WarlockPresets.DestructionOptions,
+		consumes: WarlockPresets.DefaultConsumes,
+		defaultName: 'Destro Warlock',
+		defaultFactionRaces: {
+			[Faction.Unknown]: Race.RaceUnknown,
+			[Faction.Alliance]: Race.RaceHuman,
+			[Faction.Horde]: Race.RaceOrc,
+		},
+		defaultGear: {
+			[Faction.Unknown]: {
+				1: WarlockPresets.P1_BiS_Tailor_Engineer.gear,
+				2: WarlockPresets.P1_PreBiS_17.gear,
 			},
-			defaultGear: {
-				[Faction.Unknown]: {},
-				[Faction.Alliance]: {
-					1: WarlockPresets.P1_DESTRO.gear,
-					2: WarlockPresets.P2_DESTRO.gear,
-					3: WarlockPresets.P3_DESTRO.gear,
-					4: WarlockPresets.P4_DESTRO.gear,
-					5: WarlockPresets.P5_DESTRO.gear,
-				},
-				[Faction.Horde]: {
-					1: WarlockPresets.P1_DESTRO.gear,
-					2: WarlockPresets.P2_DESTRO.gear,
-					3: WarlockPresets.P3_DESTRO.gear,
-					4: WarlockPresets.P4_DESTRO.gear,
-					5: WarlockPresets.P5_DESTRO.gear,
-				},
+			[Faction.Alliance]: {
+				1: WarlockPresets.P1_BiS_Tailor_Engineer.gear,
+				2: WarlockPresets.P1_PreBiS_17.gear,
 			},
-			otherDefaults: WarlockPresets.OtherDefaults,
-			tooltip: 'Destruction Warlock: defaults to casting Curse of Doom.',
-			iconUrl: talentTreeIcons[Class.ClassWarlock][2],
-		},*/
+			[Faction.Horde]: {
+				1: WarlockPresets.P1_BiS_Tailor_Engineer.gear,
+				2: WarlockPresets.P1_PreBiS_17.gear,
+			},
+		},
+		otherDefaults: WarlockPresets.OtherDefaults,
+		tooltip: 'Destruction Warlock',
+		iconUrl: talentTreeIcons[Class.ClassWarlock][2],
+	},
 	{
 		spec: Spec.SpecWarlock,
 		rotation: WarlockPresets.AfflictionRotation,
 		talents: WarlockPresets.AfflictionTalents.data,
 		specOptions: WarlockPresets.AfflictionOptions,
 		consumes: WarlockPresets.DefaultConsumes,
-		defaultName: 'Aff Warlock',
+		defaultName: 'Affli Warlock',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceHuman,
-			[Faction.Horde]: Race.RaceBloodElf,
+			[Faction.Horde]: Race.RaceOrc,
 		},
 		defaultGear: {
-			[Faction.Unknown]: {},
+			[Faction.Unknown]: {
+				1: WarlockPresets.P1_BiS_Aff_Tailor_Engineer.gear,
+				2: WarlockPresets.P1_PreBiS_14.gear,
+			},
 			[Faction.Alliance]: {
-// 				1: WarlockPresets.P1_DESTRO.gear,
-// 				2: WarlockPresets.P2_DESTRO.gear,
-// 				3: WarlockPresets.P3_DESTRO.gear,
-// 				4: WarlockPresets.P4_DESTRO.gear,
-// 				5: WarlockPresets.P5_DESTRO.gear,
+				1: WarlockPresets.P1_BiS_Aff_Tailor_Engineer.gear,
+				2: WarlockPresets.P1_PreBiS_14.gear,
 			},
 			[Faction.Horde]: {
-// 				1: WarlockPresets.P1_DESTRO.gear,
-// 				2: WarlockPresets.P2_DESTRO.gear,
-// 				3: WarlockPresets.P3_DESTRO.gear,
-// 				4: WarlockPresets.P4_DESTRO.gear,
-// 				5: WarlockPresets.P5_DESTRO.gear,
+				1: WarlockPresets.P1_BiS_Aff_Tailor_Engineer.gear,
+				2: WarlockPresets.P1_PreBiS_14.gear,
 			},
 		},
 		otherDefaults: WarlockPresets.OtherDefaults,
-		tooltip: 'Affliction Warlock: by default casts CoE with Malediction',
+		tooltip: 'Affliction Warlock',
 		iconUrl: talentTreeIcons[Class.ClassWarlock][0],
 	},
-	/*	{
-			spec: Spec.SpecWarlock,
-			rotation: WarlockPresets.DemonologyRotation,
-			talents: WarlockPresets.DemonologistTalents.data,
-			specOptions: WarlockPresets.DemonologyOptions,
-			consumes: WarlockPresets.DefaultConsumes,
-			defaultName: 'Demo Warlock',
-			defaultFactionRaces: {
-				[Faction.Unknown]: Race.RaceUnknown,
-				[Faction.Alliance]: Race.RaceHuman,
-				[Faction.Horde]: Race.RaceBloodElf,
+	{
+		spec: Spec.SpecWarlock,
+		rotation: WarlockPresets.DemonologyRotation,
+		talents: WarlockPresets.DemonologyTalents.data,
+		specOptions: WarlockPresets.DemonologyOptions,
+		consumes: WarlockPresets.DefaultConsumes,
+		defaultName: 'Demo Warlock',
+		defaultFactionRaces: {
+			[Faction.Unknown]: Race.RaceUnknown,
+			[Faction.Alliance]: Race.RaceHuman,
+			[Faction.Horde]: Race.RaceOrc,
+		},
+		defaultGear: {
+			[Faction.Unknown]: {
+				1: WarlockPresets.P1_BiS_Tailor_Engineer.gear,
+				2: WarlockPresets.P1_PreBiS_17.gear,
 			},
-			defaultGear: {
-				[Faction.Unknown]: {},
-				[Faction.Alliance]: {
-					1: WarlockPresets.P1_DESTRO.gear,
-					2: WarlockPresets.P2_DESTRO.gear,
-					3: WarlockPresets.P3_DESTRO.gear,
-					4: WarlockPresets.P4_DESTRO.gear,
-					5: WarlockPresets.P5_DESTRO.gear,
-				},
-				[Faction.Horde]: {
-					1: WarlockPresets.P1_DESTRO.gear,
-					2: WarlockPresets.P2_DESTRO.gear,
-					3: WarlockPresets.P3_DESTRO.gear,
-					4: WarlockPresets.P4_DESTRO.gear,
-					5: WarlockPresets.P5_DESTRO.gear,
-				},
+			[Faction.Alliance]: {
+				1: WarlockPresets.P1_BiS_Tailor_Engineer.gear,
+				2: WarlockPresets.P1_PreBiS_17.gear,
 			},
-			otherDefaults: WarlockPresets.OtherDefaults,
-			tooltip: 'Demonology Warlock',
-			iconUrl: talentTreeIcons[Class.ClassWarlock][1],
-		},*/
+			[Faction.Horde]: {
+				1: WarlockPresets.P1_BiS_Tailor_Engineer.gear,
+				2: WarlockPresets.P1_PreBiS_17.gear,
+			},
+		},
+		otherDefaults: WarlockPresets.OtherDefaults,
+		tooltip: 'Demonology Warlock',
+		iconUrl: talentTreeIcons[Class.ClassWarlock][1],
+	},
 ];
 
 export const implementedSpecs: Array<Spec> = [...new Set(playerPresets.map(preset => preset.spec))];

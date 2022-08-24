@@ -291,7 +291,7 @@ export const SWP_BIS = {
       ]}
     `),
 };
-export const P1_PreBiS = {
+export const P1_PreBiS_14 = {
 	name: 'Pre-Raid Affliction',
 	tooltip: WarlockTooltips.BIS_TOOLTIP,
   enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction,
@@ -804,7 +804,7 @@ export const P1_BiS_Aff_JC_Engineer = {
   `),
 }
 
-export const P1_PreBiS_14 = {
+export const P1_PreBiS_17 = {
   name: 'Pre-Raid Preset',
   tooltip: WarlockTooltips.BIS_TOOLTIP,
   enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology || player.getRotation().type == RotationType.Destruction,
