@@ -69,7 +69,7 @@ export const DestructionTalents = {
 		talentsString: '-03310030003-05203205210331051335230351',
 		glyphs: Glyphs.create({
 			major1: MajorGlyph.GlyphOfConflagrate,
-			major2: MajorGlyph.GlyphOfImp,
+			major2: MajorGlyph.GlyphOfLifeTap,
 			major3: MajorGlyph.GlyphOfIncinerate,
 			minor1: MinorGlyph.GlyphOfSouls,
 			minor2: MinorGlyph.GlyphOfDrainSoul,

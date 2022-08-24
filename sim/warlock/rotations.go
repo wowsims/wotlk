@@ -9,6 +9,20 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+func (warlock *Warlock) corruptionTracker() float64 {
+	// This part tracks all the damage multiplier that roll over with corruption
+	// Shadow damage multipler (looking for DE)
+	CurrentShadowMult := warlock.PseudoStats.ShadowDamageDealtMultiplier
+	// Damage multipler (looking for TotT)
+	CurrentDmgMult := warlock.PseudoStats.DamageDealtMultiplier
+	// Crit rating multipler (looking for Shadow Mastery (ISB Talent) and Potion of Wild Magic)
+	CurrentCritBonus := warlock.GetStat(stats.SpellCrit) + warlock.PseudoStats.BonusSpellCritRating + warlock.PseudoStats.BonusShadowCritRating +
+		warlock.CurrentTarget.PseudoStats.BonusSpellCritRatingTaken
+	CurrentCritMult := 1 + CurrentCritBonus/core.CritRatingPerCritChance/100*core.TernaryFloat64(warlock.Talents.Pandemic, 1, 0)
+	// Combination of all multipliers
+	return CurrentDmgMult * CurrentShadowMult * CurrentCritMult
+}
+
 func (warlock *Warlock) defineRotation() {
 	rotationType := warlock.Rotation.Type
 	curse := warlock.Rotation.Curse
@@ -40,23 +54,12 @@ func (warlock *Warlock) defineRotation() {
 		if !warlock.Rotation.Corruption {
 			return core.NeverExpires
 		}
-		// This part tracks all the damage multiplier that roll over with corruption
-		// Shadow damage multipler (looking for DE)
-		CurrentShadowMult := warlock.PseudoStats.ShadowDamageDealtMultiplier
-		// Damage multipler (looking for TotT)
-		CurrentDmgMult := warlock.PseudoStats.DamageDealtMultiplier
-		// Crit rating multipler (looking for Shadow Mastery (ISB Talent) and Potion of Wild Magic)
-		CurrentCritBonus := warlock.GetStat(stats.SpellCrit) + warlock.PseudoStats.BonusSpellCritRating + warlock.PseudoStats.BonusShadowCritRating +
-			warlock.CurrentTarget.PseudoStats.BonusSpellCritRatingTaken
-		CurrentCritMult := 1 + CurrentCritBonus/core.CritRatingPerCritChance/100*core.TernaryFloat64(warlock.Talents.Pandemic, 1, 0)
-		// Combination of all multipliers
-		CurrentCorruptionRolloverMult := CurrentDmgMult * CurrentShadowMult * CurrentCritMult
 		// Affliction spec check
 		if warlock.Talents.EverlastingAffliction > 0 {
 			if (!warlock.CorruptionDot.IsActive() && (core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() || warlock.Talents.ImprovedShadowBolt == 0)) ||
 				// Wait for SM to be applied to cast first Corruption
-				warlock.CorruptionDot.IsActive() && (CurrentCorruptionRolloverMult > warlock.CorruptionRolloverMult) {
-				// If the original corruption multipliers are lower than this current time, then reapply corruption
+				warlock.CorruptionDot.IsActive() && (warlock.corruptionTracker() > warlock.CorruptionRolloverPower) {
+				// If the active corruption multipliers are lower than the ones for a potential new corruption, then reapply corruption
 				return 0
 			} else {
 				return core.NeverExpires
@@ -415,21 +418,14 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		spell = filler
 	}
 
-
-	// This part tracks all the damage multiplier that roll over with corruption
-	CurrentShadowMult := warlock.PseudoStats.ShadowDamageDealtMultiplier // Tracks the current shadow damage multipler (essentially looking for DE)
-	CurrentDmgMult := warlock.PseudoStats.DamageDealtMultiplier          // Tracks the current damage multipler (essentially looking for TotT)
-	CurrentCritBonus := warlock.GetStat(stats.SpellCrit) + warlock.PseudoStats.BonusSpellCritRating + warlock.PseudoStats.BonusShadowCritRating +
-		warlock.CurrentTarget.PseudoStats.BonusSpellCritRatingTaken // Tracks the current crit rating multipler (essentially looking for Shadow Mastery (ISB))
-	CurrentCritMult := 1 + CurrentCritBonus/core.CritRatingPerCritChance/100*core.TernaryFloat64(warlock.Talents.Pandemic, 1, 0)
-	CurrentCorruptionRolloverMult := CurrentDmgMult * CurrentShadowMult * CurrentCritMult
+	PotentialCorruptionRolloverPower := warlock.corruptionTracker()
 	if sim.Log != nil {
 		if warlock.Talents.EverlastingAffliction > 0 {
-			warlock.Log(sim, "[Info] Initial Corruption Rollover Multiplier [%.2f]", warlock.CorruptionRolloverMult)
-			warlock.Log(sim, "[Info] Current Corruption Rollover Multiplier [%.2f]", CurrentCorruptionRolloverMult)
+			warlock.Log(sim, "[Info] Active Corruption rollover power [%.2f]", warlock.CorruptionRolloverPower)
+			warlock.Log(sim, "[Info] Potential Corruption rollover power [%.2f]", PotentialCorruptionRolloverPower)
 		}
 		if warlock.Talents.DemonicPact > 0 {
-			warlock.Log(sim, "[Info] Demonic Pact Spell Power Average [%.0f]", warlock.DPSPAverage)
+			warlock.Log(sim, "[Info] Demonic Pact spell power bonus average [%.0f]", warlock.DPSPAverage)
 		}
 	}
 
@@ -441,7 +437,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	if success := spell.Cast(sim, target); success {
 		if spell == warlock.Corruption && warlock.Talents.EverlastingAffliction > 0 {
 			// We are recording the current rollover power of corruption
-			warlock.CorruptionRolloverMult = CurrentCorruptionRolloverMult
+			warlock.CorruptionRolloverPower = PotentialCorruptionRolloverPower
 		}
 		return
 	} else {
