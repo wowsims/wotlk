@@ -140,22 +140,37 @@ func (warlock *Warlock) defineRotation() {
 	// For Manual rotation, give spells lowest prio if user wants to experiment
 	if warlock.Rotation.Corruption && warlock.SpellsRotation[0].Priority == 0 {
 		warlock.SpellsRotation[0].Priority = 10
+	} else if !warlock.Rotation.Corruption && warlock.SpellsRotation[0].Priority != 0 {
+		warlock.SpellsRotation[0].Priority = 0
 	}
 	if secondaryDot == proto.Warlock_Rotation_Immolate && warlock.SpellsRotation[1].Priority == 0 {
 		warlock.SpellsRotation[1].Priority = 10
+		warlock.SpellsRotation[2].Priority = 0
 	} else if secondaryDot == proto.Warlock_Rotation_UnstableAffliction && warlock.SpellsRotation[2].Priority == 0 {
+		warlock.SpellsRotation[1].Priority = 0
 		warlock.SpellsRotation[2].Priority = 10
+	} else if secondaryDot == proto.Warlock_Rotation_NoSecondaryDot {
+		warlock.SpellsRotation[1].Priority = 0
+		warlock.SpellsRotation[2].Priority = 0
 	}
+
 	if specSpell == proto.Warlock_Rotation_Haunt && warlock.SpellsRotation[3].Priority == 0 {
 		warlock.SpellsRotation[3].Priority = 10
+		warlock.SpellsRotation[7].Priority = 0
 	} else if specSpell == proto.Warlock_Rotation_ChaosBolt && warlock.SpellsRotation[7].Priority == 0 {
+		warlock.SpellsRotation[3].Priority = 0
 		warlock.SpellsRotation[7].Priority = 10
+	} else if specSpell == proto.Warlock_Rotation_NoSpecSpell {
+		warlock.SpellsRotation[3].Priority = 0
+		warlock.SpellsRotation[7].Priority = 0
 	}
 	if warlock.Talents.Conflagrate && warlock.SpellsRotation[6].Priority == 0 {
 		warlock.SpellsRotation[6].Priority = 1
 	}
 	if curse == proto.Warlock_Rotation_Doom && warlock.SpellsRotation[5].Priority == 0 {
 		warlock.SpellsRotation[5].Priority = 1
+	} else if curse != proto.Warlock_Rotation_Doom && warlock.SpellsRotation[5].Priority != 0 {
+		warlock.SpellsRotation[5].Priority = 0
 	}
 }
 
