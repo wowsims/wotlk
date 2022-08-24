@@ -18,6 +18,11 @@ func (warrior *Warrior) ApplyTalents() {
 	warrior.PseudoStats.DodgeReduction += 0.01 * float64(warrior.Talents.WeaponMastery)
 	warrior.AutoAttacks.OHEffect.DamageMultiplier *= 1 + 0.05*float64(warrior.Talents.DualWieldSpecialization)
 
+	if warrior.Talents.ArmoredToTheTeeth > 0 {
+		coeff := float64(warrior.Talents.ArmoredToTheTeeth)
+		warrior.AddStatDependency(stats.Armor, stats.AttackPower, coeff/108.0)
+	}
+
 	if warrior.Talents.StrengthOfArms > 0 {
 		warrior.MultiplyStat(stats.Strength, 1.0+0.01*float64(warrior.Talents.ImprovedBerserkerStance))
 	}
