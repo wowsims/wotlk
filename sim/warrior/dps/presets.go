@@ -106,7 +106,7 @@ var warriorRotation = &proto.Warrior_Rotation{
 	UseCleave: false,
 
 	HsRageThreshold:        60,
-	RendRageThresholdBelow: 15,
+	RendRageThresholdBelow: 70,
 	SlamRageThreshold:      15,
 	RendCdThreshold:        0,
 
