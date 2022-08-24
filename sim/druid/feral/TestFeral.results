@@ -120,6 +120,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeral-AllItems-DreamwalkerGarb"
+ value: {
+  dps: 1193.5472793848
+  tps: 868.5813217243
+ }
+}
+dps_results: {
  key: "TestFeral-AllItems-ExtractofNecromanticPower-40373"
  value: {
   dps: 1462.9204403388
@@ -204,6 +211,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeral-AllItems-LasherweaveRegalia"
+ value: {
+  dps: 1270.2752279505
+  tps: 923.6864282734
+ }
+}
+dps_results: {
  key: "TestFeral-AllItems-Lavanthor'sTalisman-37872"
  value: {
   dps: 1409.9985949847
@@ -222,6 +236,13 @@ dps_results: {
  value: {
   dps: 1413.4978822783
   tps: 1024.4834472242
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-Malfurion'sRegalia"
+ value: {
+  dps: 1216.4921597775
+  tps: 885.0065085048
  }
 }
 dps_results: {
@@ -250,6 +271,13 @@ dps_results: {
  value: {
   dps: 1460.5796250816
   tps: 1058.3433612073
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-NightsongGarb"
+ value: {
+  dps: 1170.6376466126
+  tps: 852.0742381598
  }
 }
 dps_results: {
@@ -306,6 +334,13 @@ dps_results: {
  value: {
   dps: 1409.9985949847
   tps: 1022.0061274348
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-Runetotem'sRegalia"
+ value: {
+  dps: 1216.4921597775
+  tps: 885.0071023435
  }
 }
 dps_results: {

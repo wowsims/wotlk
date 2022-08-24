@@ -13,9 +13,15 @@ func (druid *Druid) registerStarfallSpell() {
 	if !druid.Talents.Starfall {
 		return
 	}
+
 	baseCost := druid.BaseMana * 0.35
 	target := druid.CurrentTarget
+	numberOfTicks := core.TernaryInt(druid.Env.GetNumTargets() > 1, 20, 10)
+	tickLength := core.TernaryDuration(druid.Env.GetNumTargets() > 1, time.Millisecond*500, time.Millisecond*1000)
+
+	// Improved Faerie Fire and Nature's Majesty
 	iffCritBonus := core.TernaryFloat64(druid.CurrentTarget.HasAura("Improved Faerie Fire"), float64(druid.Talents.ImprovedFaerieFire)*1*core.CritRatingPerCritChance, 0)
+	naturesMajestyCritBonus := 2 * float64(druid.Talents.NaturesMajesty) * core.CritRatingPerCritChance
 
 	druid.Starfall = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 53201},
@@ -26,7 +32,7 @@ func (druid *Druid) registerStarfallSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
+				Cost: baseCost * (1 - 0.03*float64(druid.Talents.Moonglow)),
 				GCD:  core.GCDDefault,
 			},
 			CD: core.Cooldown{
@@ -36,45 +42,20 @@ func (druid *Druid) registerStarfallSpell() {
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			OutcomeApplier:   druid.OutcomeFuncMagicHit(),
+			ProcMask:       core.ProcMaskSpellDamage,
+			OutcomeApplier: druid.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					druid.StarfallDot.Apply(sim)
-					druid.StarfallSplash.Cast(sim, target)
-				}
-			},
-		}),
-	})
-
-	druid.StarfallSplash = druid.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 53190},
-		SpellSchool: core.SpellSchoolArcane,
-
-		Cast: core.CastConfig{
-			CD: core.Cooldown{
-				Timer:    druid.NewTimer(),
-				Duration: time.Second * 90,
-			},
-		},
-
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			OutcomeApplier:   druid.OutcomeFuncMagicHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
 					druid.StarfallDotSplash.Apply(sim)
 				}
 			},
 		}),
 	})
 
-	numberOfTicks := core.TernaryInt(druid.Env.GetNumTargets() > 1, 20, 10)
-	tickLength := core.TernaryDuration(druid.Env.GetNumTargets() > 1, time.Millisecond*500, time.Millisecond*1000)
+	druid.StarfallSplash = druid.RegisterSpell(core.SpellConfig{
+		ActionID: core.ActionID{SpellID: 53190},
+	})
 
 	druid.StarfallDot = core.NewDot(core.Dot{
 		Spell: druid.Starfall,
@@ -89,9 +70,9 @@ func (druid *Druid) registerStarfallSpell() {
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 			IsPeriodic:       false,
-			BaseDamage:       core.BaseDamageConfigMagic(563, 653, 0.127),
+			BaseDamage:       core.BaseDamageConfigMagic(563, 653, 0.3),
 			OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(1),
-			BonusCritRating:  iffCritBonus,
+			BonusCritRating:  iffCritBonus + naturesMajestyCritBonus,
 		})),
 	})
 
@@ -108,9 +89,9 @@ func (druid *Druid) registerStarfallSpell() {
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 			IsPeriodic:       false,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(101, 0.127),
+			BaseDamage:       core.BaseDamageConfigMagicNoRoll(101, 0.13),
 			OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(1),
-			BonusCritRating:  iffCritBonus,
+			BonusCritRating:  iffCritBonus + naturesMajestyCritBonus,
 		})),
 	})
 }

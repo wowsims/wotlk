@@ -291,7 +291,7 @@ export const SWP_BIS = {
       ]}
     `),
 };
-export const P1_PreBiS = {
+export const P1_PreBiS_11 = {
 	name: 'Pre-Raid Affliction',
 	tooltip: WarlockTooltips.BIS_TOOLTIP,
   enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction,
@@ -401,8 +401,8 @@ export const P1_PreBiS = {
     }
   `),
 }
-export const P1_BiS_14 = {
-  name: 'P1 Preset',
+export const P1_Preset_Demo_Destro = {
+  name: 'P1 Preset Demo / Destro',
   tooltip: WarlockTooltips.BIS_TOOLTIP,
   enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology || player.getRotation().type == RotationType.Destruction,
   gear: EquipmentSpec.fromJsonString(`
@@ -501,8 +501,10 @@ export const P1_BiS_14 = {
   `),
 }
 
-export const P1_BiS = {
-	name: 'P1 Affliction',
+
+// will have only rare gems, but a Lightweave Embroidery on cloak.
+export const P1_Preset_Affliction = {
+	name: 'P1 Affliction Preset',
 	tooltip: WarlockTooltips.BIS_TOOLTIP,
   enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction,
 	gear: EquipmentSpec.fromJsonString(`
@@ -600,6 +602,8 @@ export const P1_BiS = {
     }
   `),
 }
+
+
 export const P1_PreBiS_14 = {
   name: 'Pre-Raid Preset',
   tooltip: WarlockTooltips.BIS_TOOLTIP,
