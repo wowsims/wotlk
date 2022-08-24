@@ -23,7 +23,8 @@ type HunterPet struct {
 	specialAbility PetAbility
 	focusDump      PetAbility
 
-	uptimePercent float64
+	uptimePercent    float64
+	hasOwnerCooldown bool
 }
 
 func (hunter *Hunter) NewHunterPet() *HunterPet {
@@ -46,6 +47,8 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 		),
 		config:      petConfig,
 		hunterOwner: hunter,
+
+		hasOwnerCooldown: petConfig.SpecialAbility == FuriousHowl || petConfig.SpecialAbility == SavageRend,
 	}
 
 	hp.EnableFocusBar(1.0+0.5*float64(hunter.Talents.BestialDiscipline), func(sim *core.Simulation) {
@@ -69,7 +72,7 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 	hp.PseudoStats.DamageDealtMultiplier *= 1.25
 
 	// Pet family bonus is now the same for all pets.
-	hp.AutoAttacks.MHEffect.DamageMultiplier *= 1.05
+	hp.PseudoStats.PhysicalDamageDealtMultiplier *= 1.05
 
 	hp.AddStatDependency(stats.Strength, stats.AttackPower, 2)
 	hp.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/62.77)
@@ -105,12 +108,6 @@ func (hp *HunterPet) Initialize() {
 
 func (hp *HunterPet) Reset(sim *core.Simulation) {
 	hp.focusBar.reset(sim)
-	if sim.Log != nil {
-		hp.Log(sim, "Total Pet stats: %s", hp.GetStats())
-		inheritedStats := hp.hunterOwner.makeStatInheritance()(hp.hunterOwner.GetStats())
-		hp.Log(sim, "Inherited Pet stats: %s", inheritedStats)
-	}
-
 	hp.uptimePercent = core.MinFloat(1, core.MaxFloat(0, hp.hunterOwner.Options.PetUptime))
 }
 
@@ -119,6 +116,13 @@ func (hp *HunterPet) OnGCDReady(sim *core.Simulation) {
 	if percentRemaining < 1.0-hp.uptimePercent { // once fight is % completed, disable pet.
 		hp.Disable(sim)
 		hp.focusBar.Cancel(sim)
+		return
+	}
+
+	if hp.hasOwnerCooldown && hp.CurrentFocus() < 50 {
+		// When a major ability (Furious Howl or Savage Rend) is ready, pool enough
+		// energy to use on-demand.
+		hp.DoNothing()
 		return
 	}
 

@@ -32,6 +32,7 @@ func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spel
 			if shaman.NaturesSwiftnessAura.IsActive() {
 				cast.CastTime = 0
 			} else {
+				spell.ActionID.Tag = shaman.MaelstromWeaponAura.GetStacks()
 				shaman.modifyCastMaelstrom(spell, cast)
 			}
 		}

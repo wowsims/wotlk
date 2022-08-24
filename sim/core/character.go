@@ -23,9 +23,6 @@ type Character struct {
 	// Current gear.
 	Equip items.Equipment
 
-	// Pets owned by this Character.
-	Pets []PetAgent
-
 	// Consumables this Character will be using.
 	Consumes proto.Consumes
 
@@ -241,25 +238,6 @@ func (character *Character) MultiplyAttackSpeed(sim *Simulation, amount float64)
 	}
 }
 
-func (character *Character) AddStatsDynamic(sim *Simulation, stat stats.Stats) {
-	character.Unit.AddStatsDynamic(sim, stat)
-
-	if len(character.Pets) > 0 {
-		for _, petAgent := range character.Pets {
-			petAgent.GetPet().addOwnerStats(sim, stat)
-		}
-	}
-}
-func (character *Character) AddStatDynamic(sim *Simulation, stat stats.Stat, amount float64) {
-	character.Unit.AddStatDynamic(sim, stat, amount)
-
-	if len(character.Pets) > 0 {
-		for _, petAgent := range character.Pets {
-			petAgent.GetPet().addOwnerStat(sim, stat, amount)
-		}
-	}
-}
-
 func (character *Character) GetBaseStats() stats.Stats {
 	return character.baseStats
 }
@@ -360,6 +338,7 @@ func (character *Character) reset(sim *Simulation, agent Agent) {
 	character.ExpectedBonusMana = 0
 	character.majorCooldownManager.reset(sim)
 	character.Unit.reset(sim, agent)
+	character.Unit.CurrentTarget = &character.Env.Encounter.Targets[0].Unit
 
 	if character.Type == PlayerUnit {
 		character.SetGCDTimer(sim, 0)

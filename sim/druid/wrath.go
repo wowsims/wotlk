@@ -16,7 +16,7 @@ func (druid *Druid) registerWrathSpell() {
 
 	actionID := core.ActionID{SpellID: 26985}
 	manaMetrics := druid.NewManaMetrics(actionID)
-	spellmodifier := 0.571
+	spellmodifier := 0.571 * (1 + 0.02*float64(druid.Talents.WrathOfCenarius))
 
 	// This seems to be unaffected by wrath of cenarius.
 	bonusFlatDamage := core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == IdolAvenger, 25, 0)
@@ -31,7 +31,7 @@ func (druid *Druid) registerWrathSpell() {
 		DamageMultiplier:     1 + 0.02*float64(druid.Talents.Moonfury),
 		ThreatMultiplier:     1,
 
-		BaseDamage:     core.BaseDamageConfigMagic(minBaseDamage, maxBaseDamage, spellmodifier+0.02*float64(druid.Talents.WrathOfCenarius)),
+		BaseDamage:     core.BaseDamageConfigMagic(minBaseDamage, maxBaseDamage, spellmodifier),
 		OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, 0.2*float64(druid.Talents.Vengeance))),
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Outcome.Matches(core.OutcomeCrit) {

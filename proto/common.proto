@@ -14,6 +14,7 @@ enum Spec {
 	SpecProtectionPaladin = 13;
 	SpecRetributionPaladin = 3;
 	SpecRogue = 7;
+	SpecHealingPriest = 17;
 	SpecShadowPriest = 4;
 	SpecSmitePriest = 10;
 	SpecWarlock = 5;
