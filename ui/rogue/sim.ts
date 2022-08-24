@@ -1,4 +1,4 @@
-import { Race, RaidBuffs } from '../core/proto/common.js';
+import { Item, Race, RaidBuffs, WeaponType } from '../core/proto/common.js';
 import { PartyBuffs } from '../core/proto/common.js';
 import { IndividualBuffs } from '../core/proto/common.js';
 import { Debuffs } from '../core/proto/common.js';
@@ -49,6 +49,22 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 						getContent: () => {
 							if (simUI.player.getRotation().exposeArmorFrequency != Frequency.Never && simUI.player.getTalents().improvedExposeArmor < 2) {
 								return '\'Maintain Expose Armor\' selected, but missing points in Improved Expose Armor!';
+							} else {
+								return '';
+							}
+						},
+					};
+				},
+				(simUI: IndividualSimUI<Spec.SpecRogue>) => {
+					return {
+						updateOn: simUI.player.changeEmitter,
+						getContent: () => {
+							if (
+								simUI.player.getTalents().mutilate &&
+								(simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponType != WeaponType.WeaponTypeDagger ||
+								simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponType != WeaponType.WeaponTypeDagger) 
+							){
+								return '\'Mutilate\' talent selected, but daggers not equipped in both hands!';
 							} else {
 								return '';
 							}

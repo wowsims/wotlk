@@ -381,8 +381,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-LibramofAvengement-27484"
  value: {
-  dps: 243.708205432
-  tps: 252.1037050395
+  dps: 241.7545736019
+  tps: 248.6689075129
  }
 }
 dps_results: {
