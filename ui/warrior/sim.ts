@@ -32,8 +32,8 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 			cssClass: 'warrior-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"Bladestorm WWs damage are all dealt at casting time.",
-				"Only T7 Set bonus has been implemented.",		
+				"Bladestorm WWs damage are all dealt at casting time.",	
+				"Thunder Clap is not working."
 			],
 
 			// All stats for which EP should be calculated.

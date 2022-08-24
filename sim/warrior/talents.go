@@ -158,9 +158,10 @@ func (warrior *Warrior) applyBloodsurge() {
 	}
 
 	warrior.BloodsurgeAura = warrior.RegisterAura(core.Aura{
-		Label:    "Bloodsurge Proc",
-		ActionID: core.ActionID{SpellID: 46916},
-		Duration: time.Second * 5,
+		Label:     "Bloodsurge Proc",
+		ActionID:  core.ActionID{SpellID: 46916},
+		Duration:  time.Second * time.Duration(core.TernaryFloat64(warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4), 10, 5)),
+		MaxStacks: core.TernaryInt32(warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4), 2, 1),
 	})
 
 	warrior.RegisterAura(core.Aura{
@@ -171,7 +172,7 @@ func (warrior *Warrior) applyBloodsurge() {
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spell == warrior.Slam && warrior.BloodsurgeAura.IsActive() {
-				warrior.BloodsurgeAura.Deactivate(sim)
+				warrior.BloodsurgeAura.RemoveStack(sim)
 				return
 			}
 
@@ -189,6 +190,7 @@ func (warrior *Warrior) applyBloodsurge() {
 			}
 
 			warrior.BloodsurgeAura.Activate(sim)
+			warrior.BloodsurgeAura.AddStack(sim)
 		},
 	})
 }
@@ -492,9 +494,10 @@ func (warrior *Warrior) applySuddenDeath() {
 	}
 
 	warrior.SuddenDeathAura = warrior.RegisterAura(core.Aura{
-		Label:    "Sudden Death Proc",
-		ActionID: core.ActionID{SpellID: 29724},
-		Duration: core.NeverExpires,
+		Label:     "Sudden Death Proc",
+		ActionID:  core.ActionID{SpellID: 29724},
+		Duration:  time.Second * time.Duration(core.TernaryFloat64(warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4), 20, 10)),
+		MaxStacks: core.TernaryInt32(warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4), 2, 1),
 	})
 	warrior.RegisterAura(core.Aura{
 		Label:    "Sudden Death",
@@ -509,10 +512,11 @@ func (warrior *Warrior) applySuddenDeath() {
 
 			if spellEffect.ProcMask.Matches(core.ProcMaskMelee) && sim.RandomFloat("Sudden Death") < procChance {
 				warrior.SuddenDeathAura.Activate(sim)
+				warrior.SuddenDeathAura.AddStack(sim)
 			}
 
 			if warrior.SuddenDeathAura.IsActive() && spell == warrior.Execute {
-				warrior.SuddenDeathAura.Deactivate(sim)
+				warrior.SuddenDeathAura.RemoveStack(sim)
 				warrior.AddRage(sim, rage_refund, rageMetrics)
 			}
 		},
