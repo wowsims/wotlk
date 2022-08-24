@@ -41,7 +41,7 @@ func TestWarlock(t *testing.T) {
 			HandTypes: []proto.HandType{
 				proto.HandType_HandTypeOffHand,
 			},
-			ArmorType: proto.ArmorType_ArmorTypePlate,
+			ArmorType: proto.ArmorType_ArmorTypeCloth,
 			RangedWeaponTypes: []proto.RangedWeaponType{
 				proto.RangedWeaponType_RangedWeaponTypeWand,
 			},
