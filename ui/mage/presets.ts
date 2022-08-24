@@ -79,8 +79,8 @@ export const FrostTalents = {
 	data: SavedTalents.create({
 		talentsString: '23000503110003--0533030310233100030152231351',
 		glyphs: Glyphs.create({
-			major1: MageMajorGlyph.GlyphOfArcaneBlast,
-			major2: MageMajorGlyph.GlyphOfArcaneMissiles,
+			major1: MageMajorGlyph.GlyphOfFrostbolt,
+			major2: MageMajorGlyph.GlyphOfEternalWater,
 			major3: MageMajorGlyph.GlyphOfMoltenArmor,
 			minor1: MageMinorGlyph.GlyphOfSlowFall,
 			minor2: MageMinorGlyph.GlyphOfFrostWard,
@@ -351,99 +351,96 @@ export const P1_FROST_PRESET = {
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Frost,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-		  "id": 40416,
-		  "enchant": 44877,
-		  "gems": [
-			41285,
-			39998
-		  ]
-		},
-		{
-		  "id": 44661,
-		  "gems": [
-			40026
-		  ]
-		},
-		{
-		  "id": 40419,
-		  "enchant": 61120,
-		  "gems": [
-			40049
-		  ]
-		},
-		{
-		  "id": 44005,
-		  "enchant": 63765,
-		  "gems": [
-			40026
-		  ]
-		},
-		{
-		  "id": 40418,
-		  "enchant": 33990,
-		  "gems": [
-			39998,
-			40049
-		  ]
-		},
-		{
-		  "id": 44008,
-		  "enchant": 44498,
-		  "gems": [
-			39998,
-			39998
-		  ]
-		},
-		{
-		  "id": 40415,
-		  "enchant": 44592,
-		  "gems": [
-			39998,
-			0
-		  ]
-		},
-		{
-		  "id": 40561,
-		  "gems": [
-			39998
-		  ]
-		},
-		{
-		  "id": 40398,
-		  "enchant": 41602,
-		  "gems": [
-			39998,
-			39998
-		  ]
-		},
-		{
-		  "id": 40246,
-		  "enchant": 55016
-		},
-		{
-		  "id": 40399
-		},
-		{
-		  "id": 40719
-		},
-		{
-		  "id": 39229
-		},
-		{
-		  "id": 40432
-		},
-		{
-		  "id": 40396,
-		  "enchant": 44495
-		},
-		{
-		  "id": 39766
-		},
-		{
-		  "id": 39426
-		}
-	  ]}`),
+        {
+          "id": 40416,
+          "enchant": 44877,
+          "gems": [
+            41285,
+            39998
+          ]
+        },
+        {
+          "id": 44661,
+          "gems": [
+            40026
+          ]
+        },
+        {
+          "id": 40419,
+          "enchant": 44874,
+          "gems": [
+            40051
+          ]
+        },
+        {
+          "id": 44005,
+          "enchant": 55642,
+          "gems": [
+            40026
+          ]
+        },
+        {
+          "id": 40418,
+          "enchant": 44489,
+          "gems": [
+            39998,
+            40048
+          ]
+        },
+        {
+          "id": 44008,
+          "enchant": 44498,
+          "gems": [
+            39998,
+            0
+          ]
+        },
+        {
+          "id": 40415,
+          "enchant": 54999,
+          "gems": [
+            39998,
+            0
+          ]
+        },
+        {
+          "id": 40301,
+          "gems": [
+            39998
+          ]
+        },
+        {
+          "id": 40560,
+          "enchant": 41602
+        },
+        {
+          "id": 40558,
+          "enchant": 55016
+        },
+        {
+          "id": 40399
+        },
+        {
+          "id": 40719
+        },
+        {
+          "id": 40255
+        },
+        {
+          "id": 40432
+        },
+        {
+          "id": 40396,
+          "enchant": 44487
+        },
+        {
+          "id": 39766
+        },
+        {
+          "id": 39712
+        }
+      ]
+    }`),
 };
 
 export const P1_PRERAID_ARCANE_PRESET = {

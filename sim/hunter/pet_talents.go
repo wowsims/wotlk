@@ -269,27 +269,30 @@ func (hp *HunterPet) registerCallOfTheWildCD() {
 	hunter := hp.hunterOwner
 	actionID := core.ActionID{SpellID: 53434}
 
-	makeProcAura := func(unit *core.Unit) *core.Aura {
-		var curBonus stats.Stats
+	ownerMAPDep := hunter.NewDynamicMultiplyStat(stats.AttackPower, 1.1)
+	ownerRAPDep := hunter.NewDynamicMultiplyStat(stats.RangedAttackPower, 1.1)
+	petMAPDep := hp.NewDynamicMultiplyStat(stats.AttackPower, 1.1)
+	makeProcAura := func(unit *core.Unit, mapDep *stats.StatDependency, rapDep *stats.StatDependency) *core.Aura {
 		return unit.RegisterAura(core.Aura{
 			Label:    "Call of the Wild",
 			ActionID: actionID,
 			Duration: time.Second * 20,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				curBonus = stats.Stats{
-					stats.AttackPower:       aura.Unit.GetStat(stats.AttackPower) * 0.1,
-					stats.RangedAttackPower: aura.Unit.GetStat(stats.RangedAttackPower) * 0.1,
+				unit.EnableDynamicStatDep(sim, mapDep)
+				if rapDep != nil {
+					unit.EnableDynamicStatDep(sim, rapDep)
 				}
-
-				aura.Unit.AddStatsDynamic(sim, curBonus)
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Unit.AddStatsDynamic(sim, curBonus.Multiply(-1))
+				unit.DisableDynamicStatDep(sim, mapDep)
+				if rapDep != nil {
+					unit.DisableDynamicStatDep(sim, rapDep)
+				}
 			},
 		})
 	}
-	petAura := makeProcAura(&hp.Unit)
-	ownerAura := makeProcAura(&hp.hunterOwner.Unit)
+	petAura := makeProcAura(&hp.Unit, petMAPDep, nil)
+	ownerAura := makeProcAura(&hp.hunterOwner.Unit, ownerMAPDep, ownerRAPDep)
 
 	cotwSpell := hunter.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,

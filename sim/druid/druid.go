@@ -2,6 +2,7 @@ package druid
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/items"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
@@ -21,6 +22,7 @@ type Druid struct {
 	Enrage           *core.Spell
 	FaerieFire       *core.Spell
 	FerociousBite    *core.Spell
+	ForceOfNature    *core.Spell
 	Hurricane        *core.Spell
 	InsectSwarm      *core.Spell
 	Lacerate         *core.Spell
@@ -69,6 +71,9 @@ type Druid struct {
 
 	LunarICD core.Cooldown
 	SolarICD core.Cooldown
+	Treant1  *TreantPet
+	Treant2  *TreantPet
+	Treant3  *TreantPet
 
 	form         DruidForm
 	disabledMCDs []*core.MajorCooldown
@@ -101,6 +106,10 @@ func (druid *Druid) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 			// For now, we assume Improved Moonkin Form is maxed-out
 			raidBuffs.MoonkinAura = proto.TristateEffect_TristateEffectImproved
 		}
+		// Idol of the Raven Goddess
+		if druid.Equip[items.ItemSlotRanged].ID == 32387 {
+			druid.AddStat(stats.SpellCrit, 40)
+		}
 	}
 	if druid.InForm(Cat|Bear) && druid.Talents.LeaderOfThePack {
 		raidBuffs.LeaderOfThePack = core.MaxTristate(raidBuffs.LeaderOfThePack, proto.TristateEffect_TristateEffectRegular)
@@ -109,11 +118,6 @@ func (druid *Druid) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 		}
 	}
 
-}
-
-const ravenGoddessItemID = 32387
-
-func (druid *Druid) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
 
 func (druid *Druid) PrimalGoreOutcomeFuncTick() core.OutcomeApplier {
@@ -157,6 +161,7 @@ func (druid *Druid) RegisterBalanceSpells() {
 	druid.Starfire = druid.newStarfireSpell()
 	druid.registerWrathSpell()
 	druid.registerStarfallSpell()
+	druid.registerForceOfNatureCD()
 }
 
 func (druid *Druid) RegisterFeralSpells(maulRageThreshold float64) {
@@ -200,6 +205,12 @@ func New(char core.Character, form DruidForm, selfBuffs SelfBuffs, talents proto
 
 	// Druids get extra melee haste
 	druid.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
+
+	if druid.Talents.ForceOfNature {
+		druid.Treant1 = druid.NewTreant()
+		druid.Treant2 = druid.NewTreant()
+		druid.Treant3 = druid.NewTreant()
+	}
 
 	return druid
 }

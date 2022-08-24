@@ -74,6 +74,7 @@ type UnitMetrics struct {
 	dps    DistributionMetrics
 	threat DistributionMetrics
 	dtps   DistributionMetrics
+	hps    DistributionMetrics
 
 	CharacterIterationMetrics
 
@@ -129,24 +130,28 @@ type TargetedActionMetrics struct {
 	Blocks  int32
 	Glances int32
 
-	Damage float64
-	Threat float64
+	Damage    float64
+	Threat    float64
+	Healing   float64
+	Shielding float64
 }
 
 func (tam *TargetedActionMetrics) ToProto() *proto.TargetedActionMetrics {
 	return &proto.TargetedActionMetrics{
 		UnitIndex: tam.UnitIndex,
 
-		Casts:   tam.Casts,
-		Hits:    tam.Hits,
-		Crits:   tam.Crits,
-		Misses:  tam.Misses,
-		Dodges:  tam.Dodges,
-		Parries: tam.Parries,
-		Blocks:  tam.Blocks,
-		Glances: tam.Glances,
-		Damage:  tam.Damage,
-		Threat:  tam.Threat,
+		Casts:     tam.Casts,
+		Hits:      tam.Hits,
+		Crits:     tam.Crits,
+		Misses:    tam.Misses,
+		Dodges:    tam.Dodges,
+		Parries:   tam.Parries,
+		Blocks:    tam.Blocks,
+		Glances:   tam.Glances,
+		Damage:    tam.Damage,
+		Threat:    tam.Threat,
+		Healing:   tam.Healing,
+		Shielding: tam.Shielding,
 	}
 }
 
@@ -155,6 +160,7 @@ func NewUnitMetrics() UnitMetrics {
 		dps:     NewDistributionMetrics(),
 		threat:  NewDistributionMetrics(),
 		dtps:    NewDistributionMetrics(),
+		hps:     NewDistributionMetrics(),
 		actions: make(map[ActionID]*ActionMetrics),
 	}
 }
@@ -272,6 +278,8 @@ func (unitMetrics *UnitMetrics) addSpell(spell *Spell) {
 		tam.Glances += spellTargetMetrics.Glances
 		tam.Damage += spellTargetMetrics.TotalDamage
 		tam.Threat += spellTargetMetrics.TotalThreat
+		tam.Healing += spellTargetMetrics.TotalHealing
+		tam.Shielding += spellTargetMetrics.TotalShielding
 
 		target := spell.Unit.AttackTables[i].Defender
 		target.Metrics.dtps.Total += spellTargetMetrics.TotalDamage
@@ -279,6 +287,8 @@ func (unitMetrics *UnitMetrics) addSpell(spell *Spell) {
 		if spell.Unit.IsOpponent(target) {
 			unitMetrics.dps.Total += spellTargetMetrics.TotalDamage
 			unitMetrics.threat.Total += spellTargetMetrics.TotalThreat
+		} else {
+			unitMetrics.hps.Total += spellTargetMetrics.TotalHealing + spellTargetMetrics.TotalShielding
 		}
 	}
 }
@@ -299,6 +309,7 @@ func (unitMetrics *UnitMetrics) reset() {
 	unitMetrics.dps.reset()
 	unitMetrics.threat.reset()
 	unitMetrics.dtps.reset()
+	unitMetrics.hps.reset()
 	unitMetrics.CharacterIterationMetrics = CharacterIterationMetrics{}
 
 	for _, resourceMetrics := range unitMetrics.resources {
@@ -311,6 +322,7 @@ func (unitMetrics *UnitMetrics) doneIteration(seed int64, encounterDurationSecon
 	unitMetrics.dps.doneIteration(seed, encounterDurationSeconds)
 	unitMetrics.threat.doneIteration(seed, encounterDurationSeconds)
 	unitMetrics.dtps.doneIteration(seed, encounterDurationSeconds)
+	unitMetrics.hps.doneIteration(seed, encounterDurationSeconds)
 	unitMetrics.oomTimeSum += float64(unitMetrics.OOMTime.Seconds())
 	if unitMetrics.Died {
 		unitMetrics.numItersDead++
@@ -322,6 +334,7 @@ func (unitMetrics *UnitMetrics) ToProto(numIterations int32) *proto.UnitMetrics 
 		Dps:           unitMetrics.dps.ToProto(numIterations),
 		Threat:        unitMetrics.threat.ToProto(numIterations),
 		Dtps:          unitMetrics.dtps.ToProto(numIterations),
+		Hps:           unitMetrics.hps.ToProto(numIterations),
 		SecondsOomAvg: unitMetrics.oomTimeSum / float64(numIterations),
 		ChanceOfDeath: float64(unitMetrics.numItersDead) / float64(numIterations),
 	}

@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -53,15 +52,11 @@ func (druid *Druid) registerInsectSwarmSpell() {
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1,
+			DamageMultiplier: 1 * (1 + 0.01*float64(druid.Talents.Genesis)),
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(792/6, 0.127),
+			BaseDamage:       core.BaseDamageConfigMagicNoRoll(124, 0.2),
 			OutcomeApplier:   druid.OutcomeFuncTick(),
 		}),
 	})
-}
-
-func (druid *Druid) ShouldCastInsectSwarm(sim *core.Simulation, target *core.Unit, rotation proto.BalanceDruid_Rotation) bool {
-	return !druid.InsectSwarmDot.IsActive()
 }

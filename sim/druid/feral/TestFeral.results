@@ -162,6 +162,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeral-AllItems-IdoloftheLunarEclipse-50457"
+ value: {
+  dps: 1403.808227614
+  tps: 1017.6109666015
+ }
+}
+dps_results: {
  key: "TestFeral-AllItems-IdoloftheUnseenMoon-33510"
  value: {
   dps: 1403.808227614

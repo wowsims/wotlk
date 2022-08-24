@@ -100,11 +100,10 @@ func (dk *DpsDeathknight) SetupRotations() {
 		dk.setupBloodRotations()
 	} else {
 		// TODO: Add some default rotation that works without special talents
-		if dk.Rotation.UseEmpowerRuneWeapon {
-			dk.setupFrostSubBloodERWOpener()
-		} else {
-			dk.setupFrostSubBloodNoERWOpener()
-		}
+		dk.RotationSequence.Clear().
+			NewAction(dk.RotationActionCallback_IT).
+			NewAction(dk.RotationActionCallback_PS).
+			NewAction(dk.RotationActionCallback_BS)
 	}
 }
 
