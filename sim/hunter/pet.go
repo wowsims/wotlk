@@ -108,12 +108,6 @@ func (hp *HunterPet) Initialize() {
 
 func (hp *HunterPet) Reset(sim *core.Simulation) {
 	hp.focusBar.reset(sim)
-	if sim.Log != nil {
-		hp.Log(sim, "Total Pet stats: %s", hp.GetStats())
-		inheritedStats := hp.hunterOwner.makeStatInheritance()(hp.hunterOwner.GetStats())
-		hp.Log(sim, "Inherited Pet stats: %s", inheritedStats)
-	}
-
 	hp.uptimePercent = core.MinFloat(1, core.MaxFloat(0, hp.hunterOwner.Options.PetUptime))
 }
 
