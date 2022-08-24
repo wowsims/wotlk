@@ -88,40 +88,34 @@ var armsRotation = &proto.Warrior_Rotation{
 	UseMs:     true,
 	UseCleave: false,
 
-	HsRageThreshold:   50,
-	MsRageThreshold:   30,
+	HsRageThreshold:   60,
+	MsRageThreshold:   50,
 	SlamRageThreshold: 15,
 	RendCdThreshold:   0,
 
 	SpamExecute: false,
 
 	UseHsDuringExecute: true,
-	UseWwDuringExecute: true,
-	UseBtDuringExecute: true,
-	UseSlamOverExecute: true,
 
-	MaintainDemoShout:   true,
+	MaintainDemoShout:   false,
 	MaintainThunderClap: false,
 }
 
 var warriorRotation = &proto.Warrior_Rotation{
 	UseRend:   true,
 	UseCleave: false,
-	UseMs:     true,
 
-	HsRageThreshold:   40,
-	RendRageThreshold: 75,
-	SlamRageThreshold: 15,
-	RendCdThreshold:   0,
-
-	SpamExecute: false,
+	HsRageThreshold:        60,
+	RendRageThresholdBelow: 15,
+	SlamRageThreshold:      15,
+	RendCdThreshold:        0,
 
 	UseHsDuringExecute: true,
 	UseWwDuringExecute: true,
 	UseBtDuringExecute: true,
 	UseSlamOverExecute: true,
 
-	MaintainDemoShout:   true,
+	MaintainDemoShout:   false,
 	MaintainThunderClap: false,
 }
 

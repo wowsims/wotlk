@@ -90,18 +90,18 @@ export const WarriorRotationConfig = {
 			labelTooltip: 'Heroic Strike when rage is above:',
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecWarrior>({
-			fieldName: 'rendRageThreshold',
-			label: 'Rend rage threshold',
-			labelTooltip: 'Rend will only be used when rage is larger than this value.',
+			fieldName: 'rendRageThresholdBelow',
+			label: 'Rend rage threshold below',
+			labelTooltip: 'Rend will only be used when rage is smaller than this value.',
 			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-			showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().useRend == true
+			showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().useRend == true && player.getTalents().bloodthirst,
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecWarrior>({
 			fieldName: 'rendCdThreshold',
 			label: 'Rend Refresh Time',
 			labelTooltip: 'Refresh Rend when the remaining duration is less than this amount of time (seconds).',
 			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-			showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().useRend == true
+			showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().useRend == true,
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecWarrior>({
 			fieldName: 'useHsDuringExecute',

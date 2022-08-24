@@ -54,6 +54,7 @@ func (warrior *Warrior) makeStanceSpell(stance Stance, aura *core.Aura, stanceCD
 func (warrior *Warrior) registerBattleStanceAura() {
 	actionID := core.ActionID{SpellID: 2457}
 	threatMult := 0.8
+	armorPenBonus := 10 * core.ArmorPenPerPercentArmor
 
 	warrior.BattleStanceAura = warrior.GetOrRegisterAura(core.Aura{
 		Label:    "Battle Stance",
@@ -63,9 +64,11 @@ func (warrior *Warrior) registerBattleStanceAura() {
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier *= threatMult
+			aura.Unit.AddStatDynamic(sim, stats.ArmorPenetration, armorPenBonus)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier /= threatMult
+			aura.Unit.AddStatDynamic(sim, stats.ArmorPenetration, -armorPenBonus)
 		},
 	})
 }

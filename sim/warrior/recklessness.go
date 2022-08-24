@@ -60,8 +60,19 @@ func (warrior *Warrior) RegisterRecklessnessCD() {
 	warrior.AddMajorCooldown(core.MajorCooldown{
 		Spell: reckSpell,
 		Type:  core.CooldownTypeDPS,
+		ActivationFactory: func(sim *core.Simulation) core.CooldownActivation {
+			return func(sim *core.Simulation, character *core.Character) {
+				if !warrior.StanceMatches(BerserkerStance) {
+					if !warrior.BerserkerStance.IsReady(sim) {
+						return
+					}
+					warrior.BerserkerStance.Cast(sim, nil)
+				}
+				reckSpell.Cast(sim, character.CurrentTarget)
+			}
+		},
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return warrior.StanceMatches(BerserkerStance)
+			return true
 		},
 	})
 }
