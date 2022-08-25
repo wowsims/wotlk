@@ -178,19 +178,13 @@ func (rotation *ManualRotation) DoAction(eleShaman *ElementalShaman, sim *core.S
 
 	shouldCL := rotation.options.UseChainLightning && cmp > (rotation.options.ClMinManaPer/100) && eleShaman.ChainLightning.IsReady(sim)
 	if shouldCL && rotation.options.UseClOnlyGap {
-		// If LvB CD < CL cast time, we should use CL in its place.
+		shouldCL = false
 		lvbCD := eleShaman.LavaBurst.CD.TimeToReady(sim)
 		clCast := core.MaxDuration(eleShaman.ApplyCastSpeed(eleShaman.ChainLightning.DefaultCast.CastTime), core.GCDMin)
-		if lvbCD <= clCast {
-			// need to check that FS has enough time to make casting CL worth.
-			if rotation.options.AlwaysCritLvb {
-				lvbTime := core.MaxDuration(eleShaman.ApplyCastSpeed(eleShaman.LavaBurst.DefaultCast.CastTime), core.GCDMin)
-				if fsRemain <= core.MaxDuration(clCast, lvbCD)+lvbTime {
-					shouldCL = false
-				}
-			}
-		} else {
-			shouldCL = false
+		// If LvB CD < CL cast time, we should use CL to pass the time until then.
+		// Or if FS is about to expire and we didn't cast LvB.
+		if fsRemain <= clCast || (lvbCD <= clCast) {
+			shouldCL = true
 		}
 	}
 
