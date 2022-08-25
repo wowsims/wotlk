@@ -1031,9 +1031,9 @@ func DemonicPactAura(character *Character, spellPowerBonus float64) *Aura {
 		MaxStacks: math.MaxInt32,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			minimumSPBonus := 0.
-			if TotemOfWrathAura(character).IsActive() {
+			if character.HasActiveAura("Totem of Wrath") {
 				minimumSPBonus = 280
-			} else if FlametongueTotemAura(character).IsActive() {
+			} else if character.HasActiveAura("Flame tongueTotem") {
 				minimumSPBonus = 144
 			}
 			newSPbonus := aura.Priority - minimumSPBonus
@@ -1050,9 +1050,9 @@ func DemonicPactAura(character *Character, spellPowerBonus float64) *Aura {
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			minimumSPBonus := 0.
-			if TotemOfWrathAura(character).IsActive() {
+			if character.HasActiveAura("Totem of Wrath") {
 				minimumSPBonus = 280
-			} else if FlametongueTotemAura(character).IsActive() {
+			} else if character.HasActiveAura("Flame tongueTotem") {
 				minimumSPBonus = 144
 			}
 			newSPbonus := aura.Priority - minimumSPBonus
