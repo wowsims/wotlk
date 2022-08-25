@@ -15,7 +15,7 @@ const ShootingStar int32 = 60775
 
 func (druid *Druid) registerStarfireSpell() {
 
-	actionID := core.ActionID{SpellID: 26986}
+	actionID := core.ActionID{SpellID: 48465}
 	baseCost := 0.16 * druid.BaseMana
 	minBaseDamage := 1038.0
 	maxBaseDamage := 1222.0
@@ -32,9 +32,9 @@ func (druid *Druid) registerStarfireSpell() {
 		ThreatMultiplier: 1,
 		BaseDamage:       core.BaseDamageConfigMagic(minBaseDamage+bonusFlatDamage, maxBaseDamage+bonusFlatDamage, spellCoefficient),
 		OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, 0.2*float64(druid.Talents.Vengeance))),
-		// Improved Insect Swarm
 		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			spellEffect.BonusSpellCritRating = 0
+			// Improved Insect Swarm
 			if druid.MoonfireDot.IsActive() {
 				spellEffect.BonusSpellCritRating += core.CritRatingPerCritChance * float64(druid.Talents.ImprovedInsectSwarm)
 			}

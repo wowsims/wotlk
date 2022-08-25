@@ -14,7 +14,7 @@ const IdolSteadfastRenewal int32 = 40712
 func (druid *Druid) registerWrathSpell() {
 	baseCost := 0.11 * druid.BaseMana
 
-	actionID := core.ActionID{SpellID: 26985}
+	actionID := core.ActionID{SpellID: 48461}
 	manaMetrics := druid.NewManaMetrics(actionID)
 	spellModifier := 0.571 * (1 + 0.02*float64(druid.Talents.WrathOfCenarius))
 
