@@ -14,7 +14,8 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 	cd := time.Second*45 - time.Second*time.Duration(core.TernaryInt32(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfAntiMagicShell), 2, 0))
 
 	baseCost := float64(core.NewRuneCost(20.0, 0, 0, 0, 0))
-	dk.AntiMagicShell = dk.RegisterSpell(nil, core.SpellConfig{
+	rs := &RuneSpell{}
+	dk.AntiMagicShell = dk.RegisterSpell(rs, core.SpellConfig{
 		ActionID: actionID,
 
 		ResourceType: stats.RunicPower,
@@ -89,6 +90,8 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 			dk.PseudoStats.ShadowDamageTakenMultiplier *= spellDmgTakenMult
 			dk.PseudoStats.PeriodicPhysicalDamageTakenMultiplier *= physDmgTakenMult
 			dk.PseudoStats.PeriodicShadowDamageTakenMultiplier *= spellDmgTakenMult
+
+			rs.DoCost(sim)
 		},
 
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
@@ -105,22 +108,27 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Damage > 0 && physDmgTakenMult != 1.0 {
-				absorbedDmg := (1.0 - core.TernaryFloat64(spell.SpellSchool == core.SpellSchoolPhysical, physDmgTakenMult, spellDmgTakenMult)) * spellEffect.Damage
-
-				if dk.Inputs.IsDps {
-					dk.RemoveHealth(sim, spellEffect.Damage)
-				}
-
+				coeff := core.TernaryFloat64(spell.SpellSchool == core.SpellSchoolPhysical, physDmgTakenMult, spellDmgTakenMult)
+				absorbedDmg := (1.0 - coeff) * spellEffect.Damage / coeff
 				dk.AddRunicPower(sim, absorbedDmg/69.0, rpMetrics)
 			} else if spellEffect.Damage > 0 && spell.SpellSchool != core.SpellSchoolPhysical {
-				absorbedDmg := (1.0 - spellDmgTakenMult) * spellEffect.Damage
-
-				if dk.Inputs.IsDps {
-					dk.RemoveHealth(sim, spellEffect.Damage)
-				}
-
+				absorbedDmg := (1.0 - spellDmgTakenMult) * spellEffect.Damage / spellDmgTakenMult
 				dk.AddRunicPower(sim, absorbedDmg/69.0, rpMetrics)
 			}
 		},
 	})
+
+	if !dk.Inputs.IsDps {
+		dk.AddMajorCooldown(core.MajorCooldown{
+			Spell:    dk.AntiMagicShell.Spell,
+			Type:     core.CooldownTypeSurvival,
+			Priority: core.CooldownPriorityDefault,
+		})
+	} else if dk.Inputs.UseAMS {
+		dk.AddMajorCooldown(core.MajorCooldown{
+			Spell:    dk.AntiMagicShell.Spell,
+			Type:     core.CooldownTypeDPS,
+			Priority: core.CooldownPriorityLow,
+		})
+	}
 }

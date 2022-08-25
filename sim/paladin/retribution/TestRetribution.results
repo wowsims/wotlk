@@ -94,15 +94,15 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-Braxley'sBackyardMoonshine-35937"
  value: {
-  dps: 2930.65573
-  tps: 2694.3088
+  dps: 2928.41708
+  tps: 2692.07016
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-BurningRage"
  value: {
-  dps: 2726.12241
-  tps: 2515.24901
+  dps: 2726.27331
+  tps: 2515.3999
  }
 }
 dps_results: {
@@ -122,8 +122,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-DarkmoonCard:Death-42990"
  value: {
-  dps: 2983.90538
-  tps: 2744.10504
+  dps: 2983.98964
+  tps: 2744.1893
  }
 }
 dps_results: {
@@ -164,8 +164,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-Defender'sCode-40257"
  value: {
-  dps: 2895.35282
-  tps: 2668.51345
+  dps: 2892.86703
+  tps: 2666.02766
  }
 }
 dps_results: {
@@ -185,8 +185,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-DoomplateBattlegear"
  value: {
-  dps: 2561.90227
-  tps: 2377.84793
+  dps: 2562.05825
+  tps: 2378.00392
  }
 }
 dps_results: {
@@ -255,8 +255,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-FlameGuard"
  value: {
-  dps: 2466.4995
-  tps: 2293.33157
+  dps: 2466.59786
+  tps: 2293.42993
  }
 }
 dps_results: {
@@ -297,8 +297,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-FuturesightRune-38763"
  value: {
-  dps: 2907.7918
-  tps: 2678.1473
+  dps: 2905.30601
+  tps: 2675.66151
  }
 }
 dps_results: {
@@ -339,15 +339,15 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-IncisorFragment-37723"
  value: {
-  dps: 2992.77169
-  tps: 2752.60817
+  dps: 2990.2859
+  tps: 2750.12238
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-InfusedColdstoneRune-35935"
  value: {
-  dps: 2911.26948
-  tps: 2680.23237
+  dps: 2908.70826
+  tps: 2677.67114
  }
 }
 dps_results: {
@@ -367,15 +367,15 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-Lavanthor'sTalisman-37872"
  value: {
-  dps: 2895.35282
-  tps: 2668.51345
+  dps: 2892.86703
+  tps: 2666.02766
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-Liadrin'sBattlegear"
  value: {
-  dps: 3339.83264
-  tps: 3028.16485
+  dps: 3339.98766
+  tps: 3028.31986
  }
 }
 dps_results: {
@@ -437,8 +437,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-Mana-EtchedRegalia"
  value: {
-  dps: 2387.58036
-  tps: 2231.8358
+  dps: 2387.66418
+  tps: 2231.91963
  }
 }
 dps_results: {
@@ -458,15 +458,15 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-NetherstrikeArmor"
  value: {
-  dps: 2698.5164
-  tps: 2493.80463
+  dps: 2698.62153
+  tps: 2493.90976
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-OfferingofSacrifice-37638"
  value: {
-  dps: 2895.35282
-  tps: 2668.51345
+  dps: 2892.86703
+  tps: 2666.02766
  }
 }
 dps_results: {
@@ -549,15 +549,15 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-RevitalizingSkyflareDiamond"
  value: {
-  dps: 2907.96733
-  tps: 2679.14378
+  dps: 2908.06346
+  tps: 2679.23991
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-RuneofRepulsion-40372"
  value: {
-  dps: 2895.35282
-  tps: 2668.51345
+  dps: 2892.86703
+  tps: 2666.02766
  }
 }
 dps_results: {
@@ -570,8 +570,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-SealofthePantheon-36993"
  value: {
-  dps: 2895.35282
-  tps: 2668.51345
+  dps: 2892.86703
+  tps: 2666.02766
  }
 }
 dps_results: {
@@ -591,8 +591,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-Sindragosa'sFlawlessFang-50361"
  value: {
-  dps: 2895.35282
-  tps: 2668.51345
+  dps: 2892.86703
+  tps: 2666.02766
  }
 }
 dps_results: {
@@ -619,8 +619,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-StrengthoftheClefthoof"
  value: {
-  dps: 2581.77891
-  tps: 2400.0274
+  dps: 2581.87931
+  tps: 2400.12779
  }
 }
 dps_results: {
@@ -661,8 +661,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-TinyAbominationinaJar-50351"
  value: {
-  dps: 3074.58458
-  tps: 2842.36864
+  dps: 3074.86742
+  tps: 2842.65148
  }
 }
 dps_results: {
@@ -717,15 +717,15 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-Turalyon'sBattlegear"
  value: {
-  dps: 3339.83264
-  tps: 3028.16485
+  dps: 3339.98766
+  tps: 3028.31986
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-WastewalkerArmor"
  value: {
-  dps: 2535.66374
-  tps: 2359.57407
+  dps: 2535.87535
+  tps: 2359.78569
  }
 }
 dps_results: {
@@ -752,8 +752,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-Average-Default"
  value: {
-  dps: 2949.71177
-  tps: 2716.57777
+  dps: 2949.81062
+  tps: 2716.67661
  }
 }
 dps_results: {
@@ -927,7 +927,7 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 2761.29859
-  tps: 2532.97915
+  dps: 2761.40405
+  tps: 2533.08461
  }
 }
