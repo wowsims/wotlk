@@ -32,9 +32,9 @@ func (druid *Druid) registerStarfireSpell() {
 		ThreatMultiplier: 1,
 		BaseDamage:       core.BaseDamageConfigMagic(minBaseDamage+bonusFlatDamage, maxBaseDamage+bonusFlatDamage, spellCoefficient),
 		OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, 0.2*float64(druid.Talents.Vengeance))),
-		// Improved Insect Swarm
 		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			spellEffect.BonusSpellCritRating = 0
+			// Improved Insect Swarm
 			if druid.MoonfireDot.IsActive() {
 				spellEffect.BonusSpellCritRating += core.CritRatingPerCritChance * float64(druid.Talents.ImprovedInsectSwarm)
 			}
