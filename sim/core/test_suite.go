@@ -13,7 +13,10 @@ import (
 	"google.golang.org/protobuf/encoding/prototext"
 )
 
-const storagePrecision = 10
+// Precise enough to detect very small changes to test results, but truncated
+// enough that we don't have flaky tests due to different OS/Go versions with
+// different float rounding behavior.
+const storagePrecision = 5
 
 type IndividualTestSuite struct {
 	Name string
