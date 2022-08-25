@@ -32,7 +32,35 @@ func (druid *Druid) registerStarfireSpell() {
 		ThreatMultiplier: 1,
 		BaseDamage:       core.BaseDamageConfigMagic(minBaseDamage+bonusFlatDamage, maxBaseDamage+bonusFlatDamage, spellCoefficient),
 		OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, 0.2*float64(druid.Talents.Vengeance))),
-
+		// Improved Insect Swarm
+		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			spellEffect.BonusSpellCritRating = 0
+			if druid.MoonfireDot.IsActive() {
+				spellEffect.BonusSpellCritRating += core.CritRatingPerCritChance * float64(druid.Talents.ImprovedInsectSwarm)
+			}
+			// T6-4P
+			if druid.SetBonuses.balance_t6_2 {
+				spellEffect.BonusSpellCritRating += 5 * core.CritRatingPerCritChance
+			}
+			// T7-4P
+			if druid.SetBonuses.balance_t7_4 {
+				spellEffect.BonusSpellCritRating += 5 * core.CritRatingPerCritChance
+			}
+			// Improved Faerie Fire
+			if druid.CurrentTarget.HasAura("Improved Faerie Fire") {
+				spellEffect.BonusSpellCritRating += float64(druid.Talents.ImprovedFaerieFire) * 1 * core.CritRatingPerCritChance
+			}
+			// Lunar eclipse buff
+			if druid.HasAura("Lunar Eclipse proc") {
+				spellEffect.BonusSpellCritRating += core.CritRatingPerCritChance * 40
+				// T8-2P
+				if druid.SetBonuses.balance_t8_2 {
+					spellEffect.BonusSpellCritRating += core.CritRatingPerCritChance * 7
+				}
+			}
+			// Nature's Majesty
+			spellEffect.BonusSpellCritRating += 2 * float64(druid.Talents.NaturesMajesty) * core.CritRatingPerCritChance
+		},
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Landed() {
 				if spellEffect.Outcome.Matches(core.OutcomeCrit) {
@@ -65,32 +93,6 @@ func (druid *Druid) registerStarfireSpell() {
 			}
 		})
 	}
-	// T6-4P
-	if druid.HasSetBonus(ItemSetThunderheartRegalia, 4) {
-		effect.BonusSpellCritRating += 5 * core.CritRatingPerCritChance
-	}
-	// T7-4P
-	if druid.DruidTier.balance_t7_4 {
-		effect.BonusSpellCritRating += 5 * core.CritRatingPerCritChance
-	}
-	// Improved Faerie Fire
-	if druid.CurrentTarget.HasAura("Improved Faerie Fire") {
-		effect.BonusSpellCritRating += float64(druid.Talents.ImprovedFaerieFire) * 1 * core.CritRatingPerCritChance
-	}
-	// Improved Insect Swarm
-	if druid.CurrentTarget.HasAura("Moonfire") {
-		effect.BonusSpellCritRating += core.CritRatingPerCritChance * float64(druid.Talents.ImprovedInsectSwarm)
-	}
-	// Lunar eclipse buff
-	if druid.HasAura("Lunar Eclipse proc") {
-		effect.BonusSpellCritRating += core.CritRatingPerCritChance * 40
-		// T8-2P
-		if druid.DruidTier.balance_t8_2 {
-			effect.BonusSpellCritRating += core.CritRatingPerCritChance * 7
-		}
-	}
-	// Nature's Majesty
-	effect.BonusSpellCritRating += 2 * float64(druid.Talents.NaturesMajesty) * core.CritRatingPerCritChance
 
 	druid.Starfire = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
