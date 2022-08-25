@@ -84,6 +84,7 @@ type Hunter struct {
 	AspectOfTheViperAura      *core.Aura
 	ImprovedSteadyShotAura    *core.Aura
 	LockAndLoadAura           *core.Aura
+	RapidFireAura             *core.Aura
 	ScorpidStingAura          *core.Aura
 	TalonOfAlarAura           *core.Aura
 
