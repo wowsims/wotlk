@@ -39,6 +39,14 @@ func (druid *Druid) registerBerserkCD() {
 				Timer:    druid.NewTimer(),
 				Duration: time.Second * 180.0,
 			},
+			IgnoreHaste: true,
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				if druid.InForm(Cat) {
+					cast.GCD = time.Second
+				} else {
+					cast.GCD = core.GCDDefault
+				}
+			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			druid.BerserkAura.Activate(sim)
