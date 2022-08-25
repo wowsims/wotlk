@@ -337,8 +337,14 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Obli_Check(sim *c
 
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_SequenceRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	s.Clear().
-		NewAction(dk.RotationActionCallback_FrostSubBlood_FS_Dump).
-		NewAction(dk.RotationActionCallback_FrostSubBlood_UA_Check)
+		NewAction(dk.RotationActionCallback_FrostSubBlood_FS_Dump)
+
+	if dk.UnbreakableArmor != nil {
+		s.NewAction(dk.RotationActionCallback_FrostSubBlood_UA_Check)
+	} else {
+		s.NewAction(dk.RotationActionCallback_FrostSubBlood_Obli_Check)
+	}
+
 	return sim.CurrentTime
 }
 
