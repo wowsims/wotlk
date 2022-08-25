@@ -262,6 +262,9 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		registerBloodlustCD(agent)
 	}
 
+	registerRevitalizeHotCD(agent, "Rejuvination", ActionID{SpellID: 26982}, 5, 3*time.Second, individualBuffs.RevitalizeRejuvination)
+	registerRevitalizeHotCD(agent, "Wild Growth", ActionID{SpellID: 53251}, 7, time.Second, individualBuffs.RevitalizeWildGrowth)
+
 	registerUnholyFrenzyCD(agent, individualBuffs.UnholyFrenzy)
 	registerTricksOfTheTradeCD(agent, individualBuffs.TricksOfTheTrades)
 	registerShatteringThrowCD(agent, individualBuffs.ShatteringThrows)
@@ -304,7 +307,8 @@ func applyPetBuffEffects(petAgent PetAgent, raidBuffs proto.RaidBuffs, partyBuff
 	individualBuffs.Innervates = 0
 	individualBuffs.PowerInfusions = 0
 	individualBuffs.UnholyFrenzy = 0
-	individualBuffs.Revitalize = 0
+	individualBuffs.RevitalizeRejuvination = 0
+	individualBuffs.RevitalizeWildGrowth = 0
 	individualBuffs.TricksOfTheTrades = 0
 	individualBuffs.ShatteringThrows = 0
 
@@ -753,6 +757,52 @@ func UnholyFrenzyAura(character *Character, actionTag int32) *Aura {
 			character.PseudoStats.PhysicalDamageDealtMultiplier /= 1.2
 		},
 	})
+}
+
+func registerRevitalizeHotCD(agent Agent, label string, hotID ActionID, ticks int, tickPeriod time.Duration, uptimeCount int32) {
+	if uptimeCount == 0 {
+		return
+	}
+
+	character := agent.GetCharacter()
+	revActionID := ActionID{SpellID: 48545}
+
+	manaMetrics := character.NewManaMetrics(revActionID)
+	energyMetrics := character.NewEnergyMetrics(revActionID)
+	rageMetrics := character.NewRageMetrics(revActionID)
+	rpMetrics := character.NewRunicPowerMetrics(revActionID)
+
+	// Calculate desired downtime based on selected uptimeCount (1 count = 10% uptime, 0%-100%)
+	totalDuration := time.Duration(ticks) * tickPeriod
+	uptimePercent := float64(uptimeCount) / 100.0
+
+	aura := character.GetOrRegisterAura(Aura{
+		Label:    "Revitalize-" + label,
+		ActionID: hotID,
+		Duration: totalDuration,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			pa := NewPeriodicAction(sim, PeriodicActionOptions{
+				Period:   tickPeriod,
+				NumTicks: ticks,
+				OnAction: func(s *Simulation) {
+					if s.RandomFloat("Revitalize Proc") < 0.15 {
+						if aura.Unit.HasManaBar() {
+							aura.Unit.AddMana(s, aura.Unit.MaxMana()*0.01, manaMetrics, true)
+						} else if aura.Unit.HasEnergyBar() {
+							aura.Unit.AddEnergy(s, 8, energyMetrics)
+						} else if aura.Unit.HasRageBar() {
+							aura.Unit.AddRage(s, 4, rageMetrics)
+						} else if aura.Unit.HasRunicPowerBar() {
+							aura.Unit.AddRunicPower(s, 16, rpMetrics)
+						}
+					}
+				},
+			})
+			sim.AddPendingAction(pa)
+		},
+	})
+
+	ApplyFixedUptimeAura(aura, uptimePercent, totalDuration)
 }
 
 const ShatteringThrowCD = time.Minute * 5

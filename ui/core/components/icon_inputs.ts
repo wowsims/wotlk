@@ -157,6 +157,8 @@ export const Innervate = makeMultistateIndividualBuffInput(ActionId.fromSpellId(
 export const PowerInfusion = makeMultistateIndividualBuffInput(ActionId.fromSpellId(10060), 11, 'powerInfusions');
 export const TricksOfTheTrade = makeMultistateIndividualBuffInput(ActionId.fromSpellId(57933), 20, 'tricksOfTheTrades');
 export const UnholyFrenzy = makeMultistateIndividualBuffInput(ActionId.fromSpellId(49016), 11, 'unholyFrenzy');
+export const RevitalizeRejuvination = makeMultistateMultiplierIndividualBuffInput(ActionId.fromSpellId(26982), 101, 10, 'revitalizeRejuvination');
+export const RevitalizeWildGrowth = makeMultistateMultiplierIndividualBuffInput(ActionId.fromSpellId(53251), 101, 10, 'revitalizeWildGrowth');
 
 // Debuffs
 
@@ -341,6 +343,14 @@ function makeMultistateIndividualBuffInput(id: ActionId, numStates: number, fiel
 		setValue: (eventID: EventID, player: Player<any>, newVal: IndividualBuffs) => player.setBuffs(eventID, newVal),
 		changeEmitter: (player: Player<any>) => player.buffsChangeEmitter,
 	}, id, numStates, fieldName);
+}
+function makeMultistateMultiplierIndividualBuffInput(id: ActionId, numStates: number, multiplier: number, fieldName: keyof IndividualBuffs): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
+	return InputHelpers.makeMultistateIconInput<any, IndividualBuffs, Player<any>>({
+		getModObject: (player: Player<any>) => player,
+		getValue: (player: Player<any>) => player.getBuffs(),
+		setValue: (eventID: EventID, player: Player<any>, newVal: IndividualBuffs) => player.setBuffs(eventID, newVal),
+		changeEmitter: (player: Player<any>) => player.buffsChangeEmitter,
+	}, id, numStates, fieldName, multiplier);
 }
 
 
