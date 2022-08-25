@@ -44,7 +44,7 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					target := hitEffect.Target
-					deadlyPoisonStacks := rogue.DeadlyPoisonDots[target.Index].GetStacks()
+					deadlyPoisonStacks := rogue.deadlyPoisonDots[target.Index].GetStacks()
 					doses := float64(core.MinInt32(deadlyPoisonStacks, comboPoints))
 					return baseDamage*doses + apRatio*doses*hitEffect.MeleeAttackPower(spell.Unit)
 				},
@@ -56,10 +56,10 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 				if spellEffect.Landed() {
 					rogue.ApplyFinisher(sim, spell)
 					rogue.ApplyCutToTheChase(sim)
-					deadlyPoisonStacks := rogue.DeadlyPoisonDots[target.Index].GetStacks()
+					deadlyPoisonStacks := rogue.deadlyPoisonDots[target.Index].GetStacks()
 					doses := core.MinInt32(deadlyPoisonStacks, comboPoints)
 					if chanceToRetainStacks < 1 && sim.RandomFloat("Master Poisoner") > float64(chanceToRetainStacks) {
-						rogue.DeadlyPoisonDots[target.Index].Cancel(sim)
+						rogue.deadlyPoisonDots[target.Index].Cancel(sim)
 					}
 					rogue.EnvenomAura.Duration = time.Second * time.Duration(1+doses)
 					rogue.EnvenomAura.Activate(sim)
@@ -78,11 +78,11 @@ func (rogue *Rogue) registerEnvenom() {
 		Label:    "Envenom",
 		ActionID: core.ActionID{SpellID: 57993},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			rogue.DeadlyPoisonProcChanceBonus += 0.15
+			rogue.deadlyPoisonProcChanceBonus += 0.15
 			rogue.UpdateInstantPoisonPPM(0.75)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			rogue.DeadlyPoisonProcChanceBonus -= 0.15
+			rogue.deadlyPoisonProcChanceBonus -= 0.15
 			rogue.UpdateInstantPoisonPPM(0.0)
 		},
 	})

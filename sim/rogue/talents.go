@@ -464,12 +464,12 @@ func (rogue *Rogue) registerAdrenalineRushCD() {
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.ResetEnergyTick(sim)
 			rogue.ApplyEnergyTickMultiplier(2.0)
-			rogue.RotationItems = rogue.PlanRotation(sim)
+			rogue.rotationItems = rogue.planRotation(sim)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.ResetEnergyTick(sim)
 			rogue.ApplyEnergyTickMultiplier(1 / 2.0)
-			rogue.RotationItems = rogue.PlanRotation(sim)
+			rogue.rotationItems = rogue.planRotation(sim)
 		},
 	})
 
