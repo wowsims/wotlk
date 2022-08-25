@@ -13,7 +13,7 @@ import (
 	"google.golang.org/protobuf/encoding/prototext"
 )
 
-const storagePrecision = 10
+const storagePrecision = 5
 
 type IndividualTestSuite struct {
 	Name string
