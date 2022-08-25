@@ -196,6 +196,7 @@ func (warrior *Warrior) applyBloodsurge() {
 
 			warrior.BloodsurgeAura.Activate(sim)
 			warrior.BloodsurgeAura.AddStack(sim)
+			warrior.lastBloodsurgeProc = sim.CurrentTime
 		},
 	})
 }

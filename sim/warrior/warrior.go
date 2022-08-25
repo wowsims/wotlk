@@ -30,6 +30,10 @@ type Warrior struct {
 	RevengeValidUntil   time.Duration
 	shoutExpiresAt      time.Duration
 
+	// Reaction time values
+	reactionTime       time.Duration
+	lastBloodsurgeProc time.Duration
+
 	// Cached values
 	shoutDuration time.Duration
 
@@ -108,6 +112,8 @@ func (warrior *Warrior) Initialize() {
 
 	primaryTimer := warrior.NewTimer()
 	overpowerRevengeTimer := warrior.NewTimer()
+
+	warrior.reactionTime = time.Millisecond * 500
 
 	warrior.registerStances()
 	warrior.registerBerserkerRageSpell()
