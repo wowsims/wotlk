@@ -60,10 +60,11 @@ func (druid *Druid) registerFerociousBiteSpell() {
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					comboPoints := float64(druid.ComboPoints())
 
-					bonusDmg := excessEnergy * (9.4 + hitEffect.MeleeAttackPower(spell.Unit)/410)
+					attackPower := hitEffect.MeleeAttackPower(spell.Unit) + hitEffect.MeleeAttackPowerOnTarget()
+					bonusDmg := excessEnergy * (9.4 + attackPower/410)
 					base := 120.0 + dmgPerComboPoint*comboPoints + bonusDmg
 					roll := sim.RandomFloat("Ferocious Bite") * 140.0
-					return base + roll + hitEffect.MeleeAttackPower(spell.Unit)*0.07*comboPoints
+					return base + roll + attackPower*0.07*comboPoints
 				},
 				TargetSpellCoefficient: 1,
 			},

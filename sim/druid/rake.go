@@ -42,7 +42,7 @@ func (druid *Druid) registerRakeSpell() {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					damage := 176 + 0.01*hitEffect.MeleeAttackPower(spell.Unit)
+					damage := 176 + 0.01*(hitEffect.MeleeAttackPower(spell.Unit)+hitEffect.MeleeAttackPowerOnTarget())
 					if mangleAura.IsActive() {
 						return damage * 1.3
 					} else {
@@ -79,9 +79,7 @@ func (druid *Druid) registerRakeSpell() {
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
 			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return 358 + 0.06*hitEffect.MeleeAttackPower(spell.Unit)
-				},
+				Calculator:             core.BaseDamageFuncMelee(358, 358, 0.06),
 				TargetSpellCoefficient: 0,
 			},
 			OutcomeApplier: core.Ternary(druid.HasSetBonus(ItemSetLasherweaveBattlegear, 4), druid.OutcomeFuncTickHitAndCrit(druid.MeleeCritMultiplier()), druid.OutcomeFuncTick()),
