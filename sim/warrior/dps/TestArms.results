@@ -199,8 +199,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-DreadnaughtBattlegear"
  value: {
-  dps: 928.87599
-  tps: 1038.8648
+  dps: 936.32543
+  tps: 1047.86664
  }
 }
 dps_results: {
