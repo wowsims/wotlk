@@ -24,14 +24,16 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-/* preparation function definitions start::
-
+/*
+In this section of the code, we will be predefinining some intermediary functions.
+These act as a setup for the tryUseGCD() function.
+*/
 /*	Roll Multiplier & Evaluation
-   This part tracks all the damage multiplier that roll over with corruption.
-   Everlasting Affliction talent allows you to "Roll" snapshot values for DoT's, carrying their benefits beyond their buff time on you.
-    Ex: If you have a 6 seconds Tricks on you with %10 damage increase, you can have your corruption "roll" with that buff indefinately.
+ This part tracks all the damage multiplier that roll over with corruption.
+ Everlasting Affliction talent allows you to "Roll" snapshot values for DoT's, carrying their benefits beyond their buff time on you.
+  Ex: If you have a 6 seconds Tricks on you with %10 damage increase, you can have your corruption "roll" with that buff indefinately.
 
-  These variables are used to estimate how good the roll will be, and determine if refreshing the corruption again will be a DPS increase.
+These variables are used to estimate how good the roll will be, and determine if refreshing the corruption again will be a DPS increase.
 */
 
 func (warlock *Warlock) corruptionTracker() float64 {
@@ -48,9 +50,6 @@ func (warlock *Warlock) corruptionTracker() float64 {
 	return CurrentDmgMult * CurrentShadowMult * CurrentCritMult
 }
 
-In this section of the code, we will be predefinining some intermediary functions.
-These act as a setup for the tryUseGCD() function.
-*/
 func (warlock *Warlock) defineRotation() {
 	rotationType := warlock.Rotation.Type
 	curse := warlock.Rotation.Curse
@@ -518,7 +517,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		spell = filler
 	}
 
-// This part tracks all the damage multiplier that roll over with corruption
+	// This part tracks all the damage multiplier that roll over with corruption
 	PotentialCorruptionRolloverPower := warlock.corruptionTracker()
 	if sim.Log != nil {
 		if warlock.Talents.EverlastingAffliction > 0 {
