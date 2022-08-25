@@ -77,7 +77,7 @@ type Druid struct {
 
 	form         DruidForm
 	disabledMCDs []*core.MajorCooldown
-	DruidTier    DruidTierSets
+	SetBonuses   DruidTierSets
 }
 
 type DruidTierSets struct {
@@ -162,7 +162,7 @@ func (druid *Druid) Initialize() {
 		druid.PrimalPrecisionRecoveryMetrics = druid.NewEnergyMetrics(core.ActionID{SpellID: 48410})
 	}
 
-	druid.DruidTier = DruidTierSets{
+	druid.SetBonuses = DruidTierSets{
 		druid.HasSetBonus(ItemSetThunderheartRegalia, 2),
 		druid.HasSetBonus(ItemSetDreamwalkerGarb, 2),
 		druid.HasSetBonus(ItemSetDreamwalkerGarb, 4),
