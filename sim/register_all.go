@@ -12,6 +12,7 @@ import (
 	"github.com/wowsims/wotlk/sim/mage"
 	protectionPaladin "github.com/wowsims/wotlk/sim/paladin/protection"
 	"github.com/wowsims/wotlk/sim/paladin/retribution"
+	healingPriest "github.com/wowsims/wotlk/sim/priest/healing"
 	"github.com/wowsims/wotlk/sim/priest/shadow"
 	"github.com/wowsims/wotlk/sim/priest/smite"
 	"github.com/wowsims/wotlk/sim/rogue"
@@ -37,13 +38,14 @@ func RegisterAll() {
 	enhancement.RegisterEnhancementShaman()
 	hunter.RegisterHunter()
 	mage.RegisterMage()
+	healingPriest.RegisterHealingPriest()
 	shadow.RegisterShadowPriest()
+	smite.RegisterSmitePriest()
 	rogue.RegisterRogue()
 	dpsWarrior.RegisterDpsWarrior()
 	protectionWarrior.RegisterProtectionWarrior()
 	retribution.RegisterRetributionPaladin()
 	protectionPaladin.RegisterProtectionPaladin()
-	smite.RegisterSmitePriest()
 	warlock.RegisterWarlock()
 	dpsDeathKnight.RegisterDpsDeathknight()
 	tankDeathKnight.RegisterTankDeathknight()

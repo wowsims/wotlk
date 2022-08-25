@@ -4,14 +4,6 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-// TODO: probably do something different instead of making it global?
-const (
-	mbidx int = iota
-	swdidx
-	vtidx
-	swpidx
-)
-
 func (spriest *SmitePriest) OnGCDReady(sim *core.Simulation) {
 	spriest.tryUseGCD(sim)
 }
