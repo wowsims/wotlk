@@ -20,7 +20,7 @@ func (druid *Druid) registerStarfireSpell() {
 	minBaseDamage := 1038.0
 	maxBaseDamage := 1222.0
 	spellCoefficient := 1.0 * (1 + 0.04*float64(druid.Talents.WrathOfCenarius))
-	manaMetrics := druid.NewManaMetrics(actionID)
+	manaMetrics := druid.NewManaMetrics(core.ActionID{SpellID: 24858})
 
 	// This seems to be unaffected by wrath of cenarius so it needs to come first.
 	bonusFlatDamage := core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == IvoryMoongoddess, 55*spellCoefficient, 0)

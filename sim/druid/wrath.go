@@ -15,7 +15,7 @@ func (druid *Druid) registerWrathSpell() {
 	baseCost := 0.11 * druid.BaseMana
 
 	actionID := core.ActionID{SpellID: 48461}
-	manaMetrics := druid.NewManaMetrics(actionID)
+	manaMetrics := druid.NewManaMetrics(core.ActionID{SpellID: 24858})
 	spellModifier := 0.571 * (1 + 0.02*float64(druid.Talents.WrathOfCenarius))
 
 	effect := core.SpellEffect{
