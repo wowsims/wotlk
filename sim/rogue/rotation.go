@@ -46,7 +46,9 @@ type roguePriorityItem struct {
 	Aura               *core.Aura
 	CastCount          int32
 	EnergyCost         float64
+	GetDuration        func(*Rogue, int32) time.Duration
 	GetSpell           func(*Rogue, int32) *core.Spell
+	IsFiller           bool
 	MaximumComboPoints int32
 	MaxCasts           int32
 	MinimumComboPoints int32
@@ -75,32 +77,32 @@ func (rogue *Rogue) timeToBuild(sim *core.Simulation, points int32, builderPoint
 	return core.MaxDuration(time.Second*time.Duration(secondsNeeded), time.Second*time.Duration(globalsNeeded))
 }
 
-func (rogue *Rogue) shouldCastNextPrioItem(sim *core.Simulation, eps float64) shouldCastRotationItemResult {
+func (rogue *Rogue) shouldCastNextRotationItem(sim *core.Simulation, eps float64) shouldCastRotationItemResult {
 	if len(rogue.rotationItems) < 1 {
 		panic("Empty rotation")
 	}
 	currentEnergy := rogue.CurrentEnergy()
 	comboPoints := rogue.ComboPoints()
 	currentTime := sim.CurrentTime
-
-	// Adjusting for planning variance
 	item := rogue.rotationItems[0]
 	prio := rogue.priorityItems[item.PrioIndex]
 	tte := item.ExpiresAt - currentTime
-
 	clippingThreshold := time.Second * 2
-
 	timeUntilNextGCD := rogue.GCD.TimeToReady(sim)
 
-	// A higher prio item will expire within the next GCD
+	// Check to see if a higher prio item will expire
 	if len(rogue.rotationItems) > 0 {
+		timeElapsed := time.Second * 1
 		for _, nextItem := range rogue.rotationItems[1:] {
-			if nextItem.ExpiresAt-currentTime <= time.Second*1 {
+			if nextItem.ExpiresAt-(currentTime+timeElapsed) <= 0 {
 				return ShouldNotCast
 			}
+			timeElapsed += nextItem.MinimumBuildDuration
 		}
 	}
-	if tte <= timeUntilNextGCD { // Expires before next GCD
+
+	// Expires before next GCD
+	if tte <= timeUntilNextGCD {
 		if comboPoints >= prio.MinimumComboPoints && currentEnergy >= prio.EnergyCost {
 			return ShouldCast
 		} else if comboPoints < prio.MinimumComboPoints && currentEnergy >= rogue.Builder.DefaultCast.Cost {
@@ -108,49 +110,48 @@ func (rogue *Rogue) shouldCastNextPrioItem(sim *core.Simulation, eps float64) sh
 		} else {
 			return ShouldWait
 		}
-	} else { // More than a GCD before expiration
-		if comboPoints >= prio.MaximumComboPoints { // Don't need CP
-			// Cast
-			if tte <= clippingThreshold && currentEnergy >= prio.EnergyCost {
-				return ShouldCast
-			}
-			// Pool energy
-			if tte <= clippingThreshold && currentEnergy < prio.EnergyCost {
-				return ShouldWait
-			}
-			// We have time to squeeze in another spell
-			if tte > item.MinimumBuildDuration {
-				// Find the first lower prio item that can be cast and use it
-				for lpi, lowerPrio := range rogue.priorityItems[item.PrioIndex+1:] {
-					if comboPoints > lowerPrio.MinimumComboPoints && currentEnergy > lowerPrio.EnergyCost && lowerPrio.MaxCasts == 0 {
-						rogue.rotationItems = append([]rogueRotationItem{
-							{ExpiresAt: currentTime, PrioIndex: lpi + item.PrioIndex + 1},
-						}, rogue.rotationItems...)
-						return ShouldCast
-					}
+	}
+	if comboPoints >= prio.MaximumComboPoints { // Don't need CP
+		// Cast
+		if tte <= clippingThreshold && currentEnergy >= prio.EnergyCost {
+			return ShouldCast
+		}
+		// Pool energy
+		if tte <= clippingThreshold && currentEnergy < prio.EnergyCost {
+			return ShouldWait
+		}
+		// We have time to squeeze in another spell
+		if tte > item.MinimumBuildDuration {
+			// Find the first lower prio item that can be cast and use it
+			for lpi, lowerPrio := range rogue.priorityItems[item.PrioIndex+1:] {
+				if comboPoints > lowerPrio.MinimumComboPoints && currentEnergy > lowerPrio.EnergyCost && lowerPrio.MaxCasts == 0 {
+					rogue.rotationItems = append([]rogueRotationItem{
+						{ExpiresAt: currentTime, PrioIndex: lpi + item.PrioIndex + 1},
+					}, rogue.rotationItems...)
+					return ShouldCast
 				}
 			}
-			// Overcap CP with builder
-			if rogue.timeToBuild(sim, 1, rogue.BuilderPoints, eps, 0) <= tte && currentEnergy >= rogue.Builder.DefaultCast.Cost {
-				return ShouldBuild
-			}
-		} else if comboPoints < prio.MinimumComboPoints { // Need CP
-			if currentEnergy >= rogue.Builder.DefaultCast.Cost {
-				return ShouldBuild
-			} else {
-				return ShouldWait
-			}
-		} else { // TODO: Optionally build more CP
-			if currentEnergy >= prio.EnergyCost && tte < time.Second*1 {
-				return ShouldCast
-			} else if currentEnergy >= rogue.Builder.DefaultCast.Cost {
-				return ShouldBuild
-			} else {
-				return ShouldWait
-			}
 		}
-		return ShouldWait
+		// Overcap CP with builder
+		if rogue.timeToBuild(sim, 1, rogue.BuilderPoints, eps, 0) <= tte && currentEnergy >= rogue.Builder.DefaultCast.Cost {
+			return ShouldBuild
+		}
+	} else if comboPoints < prio.MinimumComboPoints { // Need CP
+		if currentEnergy >= rogue.Builder.DefaultCast.Cost {
+			return ShouldBuild
+		} else {
+			return ShouldWait
+		}
+	} else { // TODO: Optionally build more CP
+		if currentEnergy >= prio.EnergyCost && tte < time.Second*1 {
+			return ShouldCast
+		} else if currentEnergy >= rogue.Builder.DefaultCast.Cost {
+			return ShouldBuild
+		} else {
+			return ShouldWait
+		}
 	}
+	return ShouldWait
 }
 
 func (rogue *Rogue) planRotation(sim *core.Simulation) []rogueRotationItem {
@@ -161,6 +162,10 @@ func (rogue *Rogue) planRotation(sim *core.Simulation) []rogueRotationItem {
 			continue
 		}
 		expiresAt := core.NeverExpires
+		maxCP := prio.MaximumComboPoints
+		for maxCP > 0 && prio.GetDuration(rogue, maxCP)+sim.CurrentTime > sim.Duration {
+			maxCP--
+		}
 		if prio.Aura != nil {
 			expiresAt = prio.Aura.ExpiresAt()
 		} else if prio.MaxCasts == 1 {
@@ -169,7 +174,7 @@ func (rogue *Rogue) planRotation(sim *core.Simulation) []rogueRotationItem {
 			expiresAt = sim.CurrentTime
 		}
 		minimumBuildDuration := rogue.timeToBuild(sim, prio.MinimumComboPoints, rogue.BuilderPoints, eps, prio.EnergyCost)
-		maximumBuildDuration := rogue.timeToBuild(sim, prio.MaxCasts, rogue.BuilderPoints, eps, prio.EnergyCost)
+		maximumBuildDuration := rogue.timeToBuild(sim, maxCP, rogue.BuilderPoints, eps, prio.EnergyCost)
 		rotationItems = append(rotationItems, rogueRotationItem{
 			ExpiresAt:            expiresAt,
 			MaximumBuildDuration: maximumBuildDuration,
@@ -184,6 +189,9 @@ func (rogue *Rogue) planRotation(sim *core.Simulation) []rogueRotationItem {
 
 	prioStack := make([]rogueRotationItem, 0)
 	for _, item := range rotationItems {
+		if item.ExpiresAt >= sim.Duration {
+			continue
+		}
 		prio := rogue.priorityItems[item.PrioIndex]
 		maxBuildAt := item.ExpiresAt - item.MaximumBuildDuration
 		if prio.Aura == nil {
@@ -201,14 +209,14 @@ func (rogue *Rogue) planRotation(sim *core.Simulation) []rogueRotationItem {
 			cpUsed := core.MaxInt32(0, prio.MinimumComboPoints-comboPoints)
 			energyUsed := core.MaxFloat(0, prio.EnergyCost-currentEnergy)
 			minBuildTime := rogue.timeToBuild(sim, cpUsed, rogue.BuilderPoints, eps, energyUsed)
-			if currentTime+minBuildTime <= item.ExpiresAt {
+			if currentTime+minBuildTime <= item.ExpiresAt || !prio.IsFiller {
 				prioStack = append(prioStack, item)
-				currentTime = item.ExpiresAt
+				currentTime = core.MaxDuration(item.ExpiresAt, currentTime+minBuildTime)
 				currentEnergy = 0
 				if prio.MinimumComboPoints > 0 {
 					comboPoints = 0
 				}
-			} else if len(prioStack) < 1 || (prio.Aura != nil && !prio.Aura.IsActive()) || prio.MaxCasts == 1 {
+			} else if len(prioStack) < 1 || (prio.Aura != nil && !prio.Aura.IsActive() && !prio.IsFiller) || prio.MaxCasts == 1 {
 				// Plan to cast it as soon as possible
 				prioStack = append(prioStack, item)
 				currentTime += item.MinimumBuildDuration
@@ -244,6 +252,9 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 		MaximumComboPoints: 5,
 		Aura:               rogue.SliceAndDiceAura,
 		EnergyCost:         rogue.SliceAndDice[1].DefaultCast.Cost,
+		GetDuration: func(r *Rogue, cp int32) time.Duration {
+			return rogue.sliceAndDiceDurations[cp]
+		},
 		GetSpell: func(r *Rogue, cp int32) *core.Spell {
 			return rogue.SliceAndDice[cp]
 		},
@@ -275,6 +286,9 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 			MinimumComboPoints: minPoints,
 			Aura:               rogue.ExposeArmorAura,
 			EnergyCost:         rogue.ExposeArmor[1].DefaultCast.Cost,
+			GetDuration: func(r *Rogue, cp int32) time.Duration {
+				return rogue.exposeArmorDurations[cp]
+			},
 			GetSpell: func(r *Rogue, cp int32) *core.Spell {
 				return rogue.ExposeArmor[cp]
 			},
@@ -287,6 +301,9 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 			MaximumComboPoints: 0,
 			Aura:               rogue.HungerForBloodAura,
 			EnergyCost:         rogue.HungerForBlood.DefaultCast.Cost,
+			GetDuration: func(r *Rogue, cp int32) time.Duration {
+				return rogue.HungerForBloodAura.Duration
+			},
 			GetSpell: func(r *Rogue, cp int32) *core.Spell {
 				return r.HungerForBlood
 			},
@@ -297,6 +314,9 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 	rogue.priorityItems = append(rogue.priorityItems, roguePriorityItem{
 		MaxCasts:           1,
 		MaximumComboPoints: 0,
+		GetDuration: func(r *Rogue, cp int32) time.Duration {
+			return 0
+		},
 		GetSpell: func(r *Rogue, cp int32) *core.Spell {
 			if r.disabledMCDs != nil {
 				r.EnableAllCooldowns(r.disabledMCDs)
@@ -312,6 +332,9 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 		MaximumComboPoints: 5,
 		Aura:               rogue.ruptureDot.Aura,
 		EnergyCost:         rogue.Rupture[1].DefaultCast.Cost,
+		GetDuration: func(r *Rogue, cp int32) time.Duration {
+			return r.RuptureDuration(cp)
+		},
 		GetSpell: func(r *Rogue, cp int32) *core.Spell {
 			return rogue.Rupture[cp]
 		},
@@ -322,6 +345,9 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 		MinimumComboPoints: 1,
 		MaximumComboPoints: 5,
 		EnergyCost:         rogue.Eviscerate[1].DefaultCast.Cost,
+		GetDuration: func(r *Rogue, cp int32) time.Duration {
+			return 0
+		},
 		GetSpell: func(r *Rogue, cp int32) *core.Spell {
 			return rogue.Eviscerate[cp]
 		},
@@ -343,6 +369,9 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 			MaximumComboPoints: 5,
 			Aura:               rogue.EnvenomAura,
 			EnergyCost:         rogue.Envenom[1].DefaultCast.Cost,
+			GetDuration: func(r *Rogue, cp int32) time.Duration {
+				return r.EnvenomAura.Duration
+			},
 			GetSpell: func(r *Rogue, cp int32) *core.Spell {
 				return rogue.Envenom[cp]
 			},
@@ -352,6 +381,7 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 			envenom.MinimumComboPoints = core.MaxInt32(1, rogue.Rotation.MinimumComboPointsPrimaryFinisher)
 			rogue.priorityItems = append(rogue.priorityItems, envenom)
 			rupture.MinimumComboPoints = rogue.Rotation.MinimumComboPointsSecondaryFinisher
+			rupture.IsFiller = true
 			if rupture.MinimumComboPoints > 0 && rupture.MinimumComboPoints <= 5 {
 				rogue.priorityItems = append(rogue.priorityItems, rupture)
 			}
@@ -359,23 +389,27 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 			rupture.MinimumComboPoints = core.MaxInt32(1, rogue.Rotation.MinimumComboPointsPrimaryFinisher)
 			rogue.priorityItems = append(rogue.priorityItems, rupture)
 			envenom.MinimumComboPoints = rogue.Rotation.MinimumComboPointsSecondaryFinisher
+			envenom.IsFiller = true
 			if envenom.MinimumComboPoints > 0 && envenom.MinimumComboPoints <= 5 {
 				rogue.priorityItems = append(rogue.priorityItems, envenom)
 			}
 		}
+		eviscerate.IsFiller = true
+		eviscerate.MinimumComboPoints = 1
+		rogue.priorityItems = append(rogue.priorityItems, eviscerate)
 	} else {
 		switch rogue.Rotation.CombatFinisherPriority {
 		case proto.Rogue_Rotation_RuptureEviscerate:
 			rupture.MinimumComboPoints = core.MaxInt32(1, rogue.Rotation.MinimumComboPointsPrimaryFinisher)
 			rogue.priorityItems = append(rogue.priorityItems, rupture)
-			eviscerate.MinimumComboPoints = rogue.Rotation.MinimumComboPointsSecondaryFinisher
-			if eviscerate.MinimumComboPoints > 0 && eviscerate.MinimumComboPoints <= 5 {
-				rogue.priorityItems = append(rogue.priorityItems, eviscerate)
-			}
+			eviscerate.MinimumComboPoints = core.MaxInt32(1, rogue.Rotation.MinimumComboPointsSecondaryFinisher)
+			eviscerate.IsFiller = true
+			rogue.priorityItems = append(rogue.priorityItems, eviscerate)
 		case proto.Rogue_Rotation_EviscerateRupture:
 			eviscerate.MinimumComboPoints = core.MaxInt32(1, rogue.Rotation.MinimumComboPointsPrimaryFinisher)
 			rogue.priorityItems = append(rogue.priorityItems, eviscerate)
 			rupture.MinimumComboPoints = rogue.Rotation.MinimumComboPointsSecondaryFinisher
+			rupture.IsFiller = true
 			if rupture.MinimumComboPoints > 0 && rupture.MinimumComboPoints <= 5 {
 				rogue.priorityItems = append(rogue.priorityItems, rupture)
 			}
@@ -389,7 +423,7 @@ func (rogue *Rogue) rotation(sim *core.Simulation) {
 		panic("Rotation is empty")
 	}
 	eps := rogue.getExpectedEnergyPerSecond()
-	shouldCast := rogue.shouldCastNextPrioItem(sim, eps)
+	shouldCast := rogue.shouldCastNextRotationItem(sim, eps)
 	item := rogue.rotationItems[0]
 	prio := rogue.priorityItems[item.PrioIndex]
 	switch shouldCast {
