@@ -1,3 +1,4 @@
+import { ActionId } from './proto_utils/action_id.js';
 import { BattleElixir } from './proto/common.js';
 import { BonusStatsPicker } from './components/bonus_stats_picker.js';
 import { BooleanPicker, BooleanPickerConfig } from './components/boolean_picker.js';
@@ -582,6 +583,20 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			{ item: IconInputs.SpellHasteBuff, stats: [Stat.StatSpellHaste] },
 		] as Array<StatOption<IconInputConfig<Player<any>, any>>>);
 		otherBuffOptions.forEach(iconInput => makeIconInput(buffsSection, iconInput));
+
+		const revitalizeBuffOptions = this.splitRelevantOptions([
+			{ item: IconInputs.RevitalizeRejuvination, stats: [] },
+			{ item: IconInputs.RevitalizeWildGrowth, stats: [] },
+		] as Array<StatOption<IconPickerConfig<Player<any>, any>>>);
+		if (revitalizeBuffOptions.length > 0) {
+			new MultiIconPicker(buffsSection, this.player, {
+				inputs: revitalizeBuffOptions,
+				numColumns: 1,
+				emptyColor: 'grey',
+				label: 'Revitalize',
+				categoryId: ActionId.fromSpellId(48545),
+			}, this);
+		}
 
 		const miscBuffOptions = this.splitRelevantOptions([
 			{ item: IconInputs.HeroicPresence, stats: [Stat.StatMeleeHit, Stat.StatSpellHit] },

@@ -19,7 +19,7 @@ func (druid *Druid) registerMoonfireSpell() {
 	moonfireGlyphBaseDamageMultiplier := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMoonfire), 0.9, 0)
 	moonfireGlyphDotDamageMultiplier := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMoonfire), 0.75, 0)
 
-	manaMetrics := druid.NewManaMetrics(actionID)
+	manaMetrics := druid.NewManaMetrics(core.ActionID{SpellID: 24858})
 
 	druid.Moonfire = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48463},
