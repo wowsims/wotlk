@@ -52,14 +52,17 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		owner:  warlock,
 	}
 
-	// TODO: EnableManaBar should really be refactored to not assume 1 int = 15 mana
-	wp.EnableManaBar()
-	// the ratio multiplier affects the first 20 points as well
-	wp.AddStat(stats.Mana, (15*20-20)+(20-15*20)*petConfig.ManaIntRatio/15)
-	wp.AddStatDependency(stats.Intellect, stats.Mana, 1/(1+15)) //TODO: This value is wrong now because of deps refactoring
-	wp.AddStatDependency(stats.Intellect, stats.Mana, petConfig.ManaIntRatio)
+	wp.EnableManaBarWithModifier(petConfig.PowerModifier)
 	wp.AddStatDependency(stats.Strength, stats.AttackPower, 2)
-	wp.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance*0.04)
+	wp.AddStat(stats.AttackPower, -20)
+
+	if summonChoice == proto.Warlock_Options_Imp {
+		// imp has a slightly different agi crit scaling coef for some reason
+		wp.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance*1/51.0204)
+	} else {
+		wp.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance*1/52.0833)
+	}
+
 	wp.AddStats(stats.Stats{
 		stats.MeleeCrit: float64(warlock.Talents.DemonicTactics) * 2 * core.CritRatingPerCritChance,
 		stats.SpellCrit: float64(warlock.Talents.DemonicTactics) * 2 * core.CritRatingPerCritChance,
@@ -110,8 +113,6 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 	// wp.AutoAttacks.MHEffect.DamageMultiplier *= petConfig.DamageMultiplier
 	switch summonChoice {
 	case proto.Warlock_Options_Imp:
-		// TODO: Does imp have different int->crit ratio than other casters? If so, we need to undo and then redo int->crit.
-		// wp.AddStatDependency(stats.Intellect, stats.SpellCrit, 0.0125*core.CritRatingPerCritChance/100)
 		wp.PseudoStats.FireDamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
 		wp.PseudoStats.BonusFireCritRating *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
 	case proto.Warlock_Options_Succubus:
@@ -207,9 +208,9 @@ func (warlock *Warlock) makeStatInheritance() core.PetStatInheritance {
 type PetConfig struct {
 	Name string
 	// DamageMultiplier float64
-	Melee        bool
-	Stats        stats.Stats
-	ManaIntRatio float64
+	Melee         bool
+	Stats         stats.Stats
+	PowerModifier float64
 
 	// Randomly select between abilities instead of using a prio.
 	RandomSelection bool
@@ -224,7 +225,7 @@ var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
 		Melee:            true,
 		PrimaryAbility:   Cleave,
 		SecondaryAbility: Intercept,
-		ManaIntRatio:     15 * 0.77, // GetUnitPowerModifier("pet")
+		PowerModifier:    0.77, // GetUnitPowerModifier("pet")
 		Stats: stats.Stats{
 			stats.Strength:  314,
 			stats.Agility:   90,
@@ -238,7 +239,7 @@ var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
 	},
 	proto.Warlock_Options_Imp: {
 		Name:           "Imp",
-		ManaIntRatio:   15 * 0.33, // GetUnitPowerModifier("pet")
+		PowerModifier:  0.33, // GetUnitPowerModifier("pet")
 		Melee:          false,
 		PrimaryAbility: Firebolt,
 		Stats: stats.Stats{
@@ -254,7 +255,7 @@ var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
 	},
 	proto.Warlock_Options_Succubus: {
 		Name:           "Succubus",
-		ManaIntRatio:   15 * 0.77, // GetUnitPowerModifier("pet")
+		PowerModifier:  0.77, // GetUnitPowerModifier("pet")
 		Melee:          true,
 		PrimaryAbility: LashOfPain,
 		Stats: stats.Stats{
@@ -270,7 +271,7 @@ var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
 	},
 	proto.Warlock_Options_Felhunter: {
 		Name:           "Felhunter",
-		ManaIntRatio:   15 * 0.77, // GetUnitPowerModifier("pet")
+		PowerModifier:  0.77, // GetUnitPowerModifier("pet")
 		Melee:          true,
 		PrimaryAbility: ShadowBite,
 		Stats: stats.Stats{
