@@ -20,6 +20,7 @@ func (dk *TankDeathknight) setupBloodTankERWOpener() {
 		NewAction(dk.RotationActionCallback_IT).
 		NewAction(dk.RotationActionCallback_IT).
 		NewAction(dk.RotationActionCallback_IT).
+		NewAction(dk.RotationActionCallback_RD).
 		NewAction(dk.RotationActionCallback_DS).
 		NewAction(dk.RotationActionCallback_TankBlood_PrioRotation)
 }
