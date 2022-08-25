@@ -585,8 +585,8 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		otherBuffOptions.forEach(iconInput => makeIconInput(buffsSection, iconInput));
 
 		const revitalizeBuffOptions = this.splitRelevantOptions([
-			{ item: IconInputs.RevitalizeRejuvination, stats: [Stat.StatAttackPower, Stat.StatSpellPower] },
-			{ item: IconInputs.RevitalizeWildGrowth, stats: [Stat.StatAttackPower, Stat.StatSpellPower] },
+			{ item: IconInputs.RevitalizeRejuvination, stats: [] },
+			{ item: IconInputs.RevitalizeWildGrowth, stats: [] },
 		] as Array<StatOption<IconPickerConfig<Player<any>, any>>>);
 		if (revitalizeBuffOptions.length > 0) {
 			new MultiIconPicker(buffsSection, this.player, {
