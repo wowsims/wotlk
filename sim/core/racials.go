@@ -17,7 +17,6 @@ func applyRaceEffects(agent Agent) {
 		character.PseudoStats.ReducedFrostHitTakenChance += 0.02
 		character.PseudoStats.ReducedNatureHitTakenChance += 0.02
 		character.PseudoStats.ReducedShadowHitTakenChance += 0.02
-		// TODO: Add major cooldown: arcane torrent
 
 		actionID := ActionID{SpellID: 50613}
 
@@ -75,7 +74,6 @@ func applyRaceEffects(agent Agent) {
 			5*ExpertisePerQuarterPercentReduction,
 			[]proto.WeaponType{proto.WeaponType_WeaponTypeMace})
 
-		// TODO: Stoneform
 		actionID := ActionID{SpellID: 20594}
 
 		statDep := character.NewDynamicMultiplyStat(stats.Armor, 1.1)
