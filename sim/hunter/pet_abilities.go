@@ -531,6 +531,7 @@ func (hp *HunterPet) newPoisonSpit() PetAbility {
 		Spell: hp.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolNature,
+			Flags:       core.SpellFlagIgnoreResists,
 
 			Cast: core.CastConfig{
 				DefaultCast: core.Cast{
@@ -722,6 +723,7 @@ func (hp *HunterPet) newScorpidPoison() PetAbility {
 		Spell: hp.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolNature,
+			Flags:       core.SpellFlagIgnoreResists,
 
 			Cast: core.CastConfig{
 				DefaultCast: core.Cast{
@@ -853,6 +855,7 @@ func (hp *HunterPet) newSporeCloud() PetAbility {
 		Spell: hp.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolNature,
+			Flags:       core.SpellFlagIgnoreResists,
 
 			Cast: core.CastConfig{
 				DefaultCast: core.Cast{
@@ -973,6 +976,7 @@ func (hp *HunterPet) newVenomWebSpray() PetAbility {
 		Spell: hp.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolNature,
+			Flags:       core.SpellFlagIgnoreResists,
 
 			Cast: core.CastConfig{
 				CD: core.Cooldown{

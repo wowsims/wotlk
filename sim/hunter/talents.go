@@ -540,9 +540,9 @@ func (hunter *Hunter) applyLockAndLoad() {
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			hunter.ArcaneShot.CostMultiplier -= 1
+			hunter.ArcaneShot.CostMultiplier += 1
 			if hunter.ExplosiveShot != nil {
-				hunter.ExplosiveShot.CostMultiplier -= 1
+				hunter.ExplosiveShot.CostMultiplier += 1
 			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
