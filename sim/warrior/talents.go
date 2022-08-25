@@ -699,36 +699,31 @@ func (warrior *Warrior) RegisterBladestormCD() {
 
 	effects := make([]core.SpellEffect, 0, numTotalHits)
 	for i := int32(0); i < numHits; i++ {
-		for j := int32(0); j < 5; j++ {
-			mhEffect := baseEffectMH
-			mhEffect.Target = warrior.Env.GetTargetUnit(i)
-			effects = append(effects, mhEffect)
+		mhEffect := baseEffectMH
+		mhEffect.Target = warrior.Env.GetTargetUnit(i)
+		effects = append(effects, mhEffect)
 
-			if warrior.AutoAttacks.IsDualWielding {
-				ohEffect := baseEffectOH
-				ohEffect.Target = warrior.Env.GetTargetUnit(i)
-				effects = append(effects, ohEffect)
-			}
+		if warrior.AutoAttacks.IsDualWielding {
+			ohEffect := baseEffectOH
+			ohEffect.Target = warrior.Env.GetTargetUnit(i)
+			effects = append(effects, ohEffect)
 		}
-
 	}
 
-	bladestormWhirlwind := warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 50622},
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics,
+	bladestormWhirlwind := core.NewDot(core.Dot{
+		Spell: warrior.Bladestorm,
 
-		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				ChannelTime: 6 * time.Second,
-			},
-			IgnoreHaste: true,
-		},
+		Aura: warrior.RegisterAura(core.Aura{
+			Label:    "Bladestorm Whirlwind",
+			ActionID: core.ActionID{SpellID: 50622},
+		}),
 
-		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
+		NumberOfTicks: 6,
+		TickLength:    time.Second * 1,
+		TickEffects:   core.TickFuncApplyEffects(core.ApplyEffectFuncDamageMultiple(effects)),
 	})
 
-	bladestormSpell := warrior.RegisterSpell(core.SpellConfig{
+	warrior.Bladestorm = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 46924},
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagChanneled,
@@ -750,12 +745,12 @@ func (warrior *Warrior) RegisterBladestormCD() {
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			warrior.AutoAttacks.DelayMeleeUntil(sim, sim.CurrentTime+time.Second*6+time.Millisecond*500)
-			bladestormWhirlwind.Cast(sim, warrior.CurrentTarget)
+			bladestormWhirlwind.Apply(sim)
 		},
 	})
 
 	warrior.AddMajorCooldown(core.MajorCooldown{
-		Spell: bladestormSpell,
+		Spell: warrior.Bladestorm,
 		Type:  core.CooldownTypeDPS,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
 			return warrior.CurrentRage() >= cost
@@ -764,5 +759,4 @@ func (warrior *Warrior) RegisterBladestormCD() {
 			return true
 		},
 	})
-
 }
