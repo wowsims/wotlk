@@ -1,6 +1,8 @@
 package elemental
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
@@ -47,7 +49,7 @@ func (rotation *AdaptiveRotation) DoAction(eleShaman *ElementalShaman, sim *core
 
 	shouldTS := false
 	cmp := eleShaman.CurrentManaPercent()
-	percent := 0.75
+	percent := 0.55
 	if len(eleShaman.Env.Encounter.Targets) > 1 {
 		percent = 0.9 // single target we need less mana.
 	}
@@ -72,10 +74,14 @@ func (rotation *AdaptiveRotation) DoAction(eleShaman *ElementalShaman, sim *core
 	}
 
 	if cmp > rotation.clmm && eleShaman.ChainLightning.IsReady(sim) {
-		if !eleShaman.ChainLightning.Cast(sim, target) {
-			eleShaman.WaitForMana(sim, eleShaman.ChainLightning.CurCast.Cost)
+		lbTime := eleShaman.ApplyCastSpeed(eleShaman.LightningBolt.DefaultCast.CastTime)
+		// Only CL if LB is slower than CL or there is more than 1 target.
+		if lbTime > time.Second || len(eleShaman.Env.Encounter.Targets) > 1 {
+			if !eleShaman.ChainLightning.Cast(sim, target) {
+				eleShaman.WaitForMana(sim, eleShaman.ChainLightning.CurCast.Cost)
+			}
+			return
 		}
-		return
 	} else if cmp > rotation.fnmm && eleShaman.FireNova.IsReady(sim) {
 		if !eleShaman.FireNova.Cast(sim, target) {
 			eleShaman.WaitForMana(sim, eleShaman.FireNova.CurCast.Cost)
@@ -113,7 +119,6 @@ func (rotation *AdaptiveRotation) Reset(eleShaman *ElementalShaman, sim *core.Si
 		// enable CL with 2
 		rotation.clmm = 0.33
 	}
-
 }
 
 // func (rotation *AdaptiveRotation) GetPresimOptions() *core.PresimOptions {
@@ -146,7 +151,9 @@ func (rotation *ManualRotation) DoAction(eleShaman *ElementalShaman, sim *core.S
 
 	shouldTS := false
 	cmp := eleShaman.CurrentManaPercent()
-	percent := 0.75
+
+	// TODO: expose these percents to let user tweak
+	percent := 0.55
 	if len(eleShaman.Env.Encounter.Targets) > 1 {
 		percent = 0.9
 	}
@@ -177,6 +184,12 @@ func (rotation *ManualRotation) DoAction(eleShaman *ElementalShaman, sim *core.S
 	}
 
 	shouldCL := rotation.options.UseChainLightning && cmp > (rotation.options.ClMinManaPer/100) && eleShaman.ChainLightning.IsReady(sim)
+	lbTime := eleShaman.ApplyCastSpeed(eleShaman.LightningBolt.DefaultCast.CastTime)
+
+	// Never cast CL if single target and LB cast time == CL cast time.
+	if lbTime <= time.Second && len(eleShaman.Env.Encounter.Targets) == 1 {
+		shouldCL = false // never CL if your LB is just as fast.
+	}
 	if shouldCL && rotation.options.UseClOnlyGap {
 		shouldCL = false
 		lvbCD := eleShaman.LavaBurst.CD.TimeToReady(sim)
