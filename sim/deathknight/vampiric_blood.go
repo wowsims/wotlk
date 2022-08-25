@@ -36,7 +36,8 @@ func (dk *Deathknight) registerVampiricBloodSpell() {
 	})
 
 	baseCost := float64(core.NewRuneCost(10, 1, 0, 0, 0))
-	dk.VampiricBlood = dk.RegisterSpell(nil, core.SpellConfig{
+	rs := &RuneSpell{}
+	dk.VampiricBlood = dk.RegisterSpell(rs, core.SpellConfig{
 		ActionID:     actionID,
 		Flags:        core.SpellFlagNoOnCastComplete,
 		ResourceType: stats.RunicPower,
@@ -54,8 +55,15 @@ func (dk *Deathknight) registerVampiricBloodSpell() {
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			dk.VampiricBloodAura.Activate(sim)
+			rs.DoCost(sim)
 		},
 	}, func(sim *core.Simulation) bool {
 		return dk.CastCostPossible(sim, 0, 1, 0, 0) && dk.VampiricBlood.IsReady(sim)
 	}, nil)
+
+	dk.AddMajorCooldown(core.MajorCooldown{
+		Spell:    dk.VampiricBlood.Spell,
+		Type:     core.CooldownTypeSurvival,
+		Priority: core.CooldownPriorityDefault,
+	})
 }
