@@ -58,12 +58,25 @@ func (unit *Unit) IsWaitingForMana() bool {
 	return unit.waitingForMana != 0
 }
 
+func (unit *Unit) IsWaitingForEnergy() bool {
+	return unit.waitingForEnergy != 0
+}
+
 // Assumes that IsWaitingForMana() == true
 func (unit *Unit) DoneWaitingForMana(sim *Simulation) bool {
 	if unit.CurrentMana() >= unit.waitingForMana {
 		unit.Metrics.MarkOOM(unit, sim.CurrentTime-unit.waitStartTime)
 		unit.waitStartTime = 0
 		unit.waitingForMana = 0
+		return true
+	}
+	return false
+}
+
+func (unit *Unit) DoneWaitingForEnergy(sim *Simulation) bool {
+	if unit.CurrentEnergy() >= unit.waitingForEnergy {
+		unit.waitStartTime = 0
+		unit.waitingForEnergy = 0
 		return true
 	}
 	return false
@@ -111,11 +124,24 @@ func (unit *Unit) WaitForMana(sim *Simulation, desiredMana float64) {
 	}
 }
 
+func (unit *Unit) WaitForEnergy(sim *Simulation, desiredEnergy float64) {
+	if !unit.IsWaitingForEnergy() {
+		unit.waitStartTime = sim.CurrentTime
+	}
+	unit.waitingForEnergy = desiredEnergy
+	if sim.Log != nil {
+		unit.Log(sim, "Not enough energy to cast, pausing GCD until energy >= %0.01f.", desiredEnergy)
+	}
+}
+
 func (unit *Unit) doneIterationGCD(simDuration time.Duration) {
 	if unit.IsWaitingForMana() {
 		unit.Metrics.MarkOOM(unit, simDuration-unit.waitStartTime)
 		unit.waitStartTime = 0
 		unit.waitingForMana = 0
+	} else if unit.IsWaitingForEnergy() {
+		unit.waitStartTime = 0
+		unit.waitingForEnergy = 0
 	} else if unit.IsWaiting() {
 		unit.waitStartTime = 0
 	}
