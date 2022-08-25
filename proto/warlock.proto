@@ -145,6 +145,7 @@ message Warlock {
 			Affliction = 0;
 			Demonology = 1;
 			Destruction = 2;
+			Hybrid = 3;
 		}
 		enum PrimarySpell {
 			UnknownSpell = 0;

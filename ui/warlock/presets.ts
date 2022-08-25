@@ -78,6 +78,22 @@ export const DestructionTalents = {
 	}),
 };
 
+export const HybridTalents = {
+	name: 'Destruction',
+	data: SavedTalents.create({
+		talentsString: '-0332003011352025301312-05203215200131051',
+		glyphs: Glyphs.create({
+			major1: MajorGlyph.GlyphOfConflagrate,
+			major2: MajorGlyph.GlyphOfImp,
+			major3: MajorGlyph.GlyphOfIncinerate,
+			minor1: MinorGlyph.GlyphOfSouls,
+			minor2: MinorGlyph.GlyphOfDrainSoul,
+			minor3: MinorGlyph.GlyphOfEnslaveDemon,
+		}),
+	}),
+};
+
+
 export const AfflictionRotation = WarlockRotation.create({
 		primarySpell: PrimarySpell.ShadowBolt,
 		secondaryDot: SecondaryDot.UnstableAffliction,
@@ -105,6 +121,16 @@ export const DestructionRotation = WarlockRotation.create({
 	detonateSeed: true,
 });
 
+export const HybridRotation = WarlockRotation.create({
+  primarySpell: PrimarySpell.Incinerate,
+  secondaryDot: SecondaryDot.Immolate,
+  specSpell: SpecSpell.NoSpecSpell,
+  curse: Curse.Doom,
+  corruption: true,
+  detonateSeed: true,
+});
+
+
 export const AfflictionOptions = WarlockOptions.create({
 	armor: Armor.FelArmor,
 	summon: Summon.Felhunter,
@@ -118,6 +144,12 @@ export const DemonologyOptions = WarlockOptions.create({
 });
 
 export const DestructionOptions = WarlockOptions.create({
+	armor: Armor.FelArmor,
+	summon: Summon.Imp,
+	weaponImbue: WeaponImbue.GrandFirestone,
+});
+
+export const HybridOptions = WarlockOptions.create({
 	armor: Armor.FelArmor,
 	summon: Summon.Imp,
 	weaponImbue: WeaponImbue.GrandFirestone,
@@ -169,6 +201,16 @@ export const DefaultDebuffs = Debuffs.create({
 });
 
 export const DestroDebuffs = Debuffs.create({
+  sunderArmor: true,
+  faerieFire: TristateEffect.TristateEffectImproved,
+  bloodFrenzy: true,
+  ebonPlaguebringer: true,
+  heartOfTheCrusader: true,
+  judgementOfWisdom: true,
+  shadowMastery: true,
+});
+
+export const HybridDebuffs = Debuffs.create({
   sunderArmor: true,
   faerieFire: TristateEffect.TristateEffectImproved,
   bloodFrenzy: true,
@@ -404,7 +446,7 @@ export const P1_PreBiS_11 = {
 export const P1_Preset_Demo_Destro = {
   name: 'P1 Preset Demo / Destro',
   tooltip: WarlockTooltips.BIS_TOOLTIP,
-  enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology || player.getRotation().type == RotationType.Destruction,
+  enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology || player.getRotation().type == RotationType.Destruction || player.getRotation().type == RotationType.Hybrid,
   gear: EquipmentSpec.fromJsonString(`
     {"items":
       [

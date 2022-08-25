@@ -194,7 +194,17 @@ export const WarlockRotationConfig = {
 					// if (newDebuffs != undefined) {
 					// 	newDebuffs.shadowMastery = true
 					// }
+				} else if (newValue == RotationType.Hybrid) {
+					newTalents = Presets.HybridTalents.data.talentsString
+					newGlyphs = Presets.HybridTalents.data.glyphs || Glyphs.create();
+					newRotation = Presets.HybridRotation
+					newOptions = Presets.HybridOptions
+					// newIndividualBuffs.improvedSoulLeech = false
+					// if (newDebuffs != undefined) {
+					// 	newDebuffs.shadowMastery = true
+					// }
 				}
+				
 				newRotation.type = newValue;
 				newRotation.preset = RotationPreset.Automatic;
 				TypedEvent.freezeAllAndDo(() => {
@@ -253,7 +263,16 @@ export const WarlockRotationConfig = {
 						// if (newDebuffs != undefined) {
 						// 	newDebuffs.shadowMastery = true
 						// }
-					}
+					} else if (newRotation.type == RotationType.Hybrid) {
+					newTalents = Presets.HybridTalents.data.talentsString
+					newGlyphs = Presets.HybridTalents.data.glyphs || Glyphs.create()
+					newRotation = Presets.HybridRotation
+					newOptions = Presets.HybridOptions
+					// newIndividualBuffs.improvedSoulLeech = false
+					// if (newDebuffs != undefined) {
+					// 	newDebuffs.shadowMastery = true
+					// }
+				}
 				}
 				newRotation.preset = newValue;
 				const raid = player.getRaid();

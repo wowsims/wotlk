@@ -151,6 +151,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 					Presets.AfflictionTalents,
 					Presets.DemonologyTalents,
 					Presets.DestructionTalents,
+					Presets.HybridTalents,
 				],
 				//Preset gear configurations that the user can quickly select.
 				gear: [
