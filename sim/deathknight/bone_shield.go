@@ -45,8 +45,6 @@ func (dk *Deathknight) registerBoneShieldSpell() {
 		},
 	})
 
-	core.MakePermanent(dk.BoneShieldAura)
-
 	baseCost := float64(core.NewRuneCost(10, 0, 0, 1, 0))
 	dk.BoneShield = dk.RegisterSpell(nil, core.SpellConfig{
 		ActionID:     actionID,
