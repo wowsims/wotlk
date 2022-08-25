@@ -40,6 +40,19 @@ func (hunter *Hunter) registerSilencingShotSpell() {
 
 			BaseDamage:     core.BaseDamageConfigRangedWeapon(hunter.AmmoDamageBonus),
 			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, false, hunter.CurrentTarget)),
+
+			// Add a check for later so we use ASAP when it comes off CD.
+			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				core.StartDelayedAction(sim, core.DelayedActionOptions{
+					DoAt: sim.CurrentTime + hunter.SilencingShot.CD.Duration,
+					OnAction: func(sim *core.Simulation) {
+						// Need to check in case Readiness caused a shift in timing.
+						if hunter.SilencingShot.IsReady(sim) {
+							hunter.SilencingShot.Cast(sim, hunter.CurrentTarget)
+						}
+					},
+				})
+			},
 		}),
 	})
 }
