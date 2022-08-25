@@ -9,7 +9,7 @@ import (
 )
 
 func (druid *Druid) registerHurricaneSpell() {
-	actionID := core.ActionID{SpellID: 27012}
+	actionID := core.ActionID{SpellID: 48467}
 	baseCost := 1905.0
 
 	hurricaneDot := core.NewDot(core.Dot{

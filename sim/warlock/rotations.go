@@ -25,11 +25,33 @@ import (
 )
 
 /* preparation function definitions start::
+
+/*	Roll Multiplier & Evaluation
+   This part tracks all the damage multiplier that roll over with corruption.
+   Everlasting Affliction talent allows you to "Roll" snapshot values for DoT's, carrying their benefits beyond their buff time on you.
+    Ex: If you have a 6 seconds Tricks on you with %10 damage increase, you can have your corruption "roll" with that buff indefinately.
+
+  These variables are used to estimate how good the roll will be, and determine if refreshing the corruption again will be a DPS increase.
+*/
+
+func (warlock *Warlock) corruptionTracker() float64 {
+	// This part tracks all the damage multiplier that roll over with corruption
+	// Shadow damage multipler (looking for DE)
+	CurrentShadowMult := warlock.PseudoStats.ShadowDamageDealtMultiplier
+	// Damage multipler (looking for TotT)
+	CurrentDmgMult := warlock.PseudoStats.DamageDealtMultiplier
+	// Crit rating multipler (looking for Shadow Mastery (ISB Talent) and Potion of Wild Magic)
+	CurrentCritBonus := warlock.GetStat(stats.SpellCrit) + warlock.PseudoStats.BonusSpellCritRating + warlock.PseudoStats.BonusShadowCritRating +
+		warlock.CurrentTarget.PseudoStats.BonusSpellCritRatingTaken
+	CurrentCritMult := 1 + CurrentCritBonus/core.CritRatingPerCritChance/100*core.TernaryFloat64(warlock.Talents.Pandemic, 1, 0)
+	// Combination of all multipliers
+	return CurrentDmgMult * CurrentShadowMult * CurrentCritMult
+}
+
 In this section of the code, we will be predefinining some intermediary functions.
 These act as a setup for the tryUseGCD() function.
 */
-
-func (warlock *Warlock) defineRotation() { //quite the lengthy beast, don't you get intimidated! I promise I'll hold your hand every step of the way.
+func (warlock *Warlock) defineRotation() {
 	rotationType := warlock.Rotation.Type
 	curse := warlock.Rotation.Curse
 	secondaryDot := warlock.Rotation.SecondaryDot
@@ -83,32 +105,14 @@ func (warlock *Warlock) defineRotation() { //quite the lengthy beast, don't you 
 		if !warlock.Rotation.Corruption { //If corruption is not added to the rotation, it will never be cast.
 			return core.NeverExpires
 		}
-		/*	Roll Multiplier & Evaluation
-			 This part tracks all the damage multiplier that roll over with corruption.
-			 Everlasting Affliction talent allows you to "Roll" snapshot values for DoT's, carrying their benefits beyond their buff time on you.
-				Ex: If you have a 6 seconds Tricks on you with %10 damage increase, you can have your corruption "roll" with that buff indefinately.
 
-			These variables are used to estimate how good the roll will be, and determine if refreshing the corruption again will be a DPS increase.
-		*/
-		CurrentShadowMult := warlock.PseudoStats.ShadowDamageDealtMultiplier // Shadow damage multipler (looking for DE)
-		CurrentDmgMult := warlock.PseudoStats.DamageDealtMultiplier          // Damage multipler (looking for TotT)
-
-		// Crit rating multipler calculation (looking for Shadow Mastery (ISB Talent) and Potion of Wild Magic)
-		CurrentCritBonus := warlock.GetStat(stats.SpellCrit) + warlock.PseudoStats.BonusSpellCritRating + warlock.PseudoStats.BonusShadowCritRating +
-			warlock.CurrentTarget.PseudoStats.BonusSpellCritRatingTaken
-		CurrentCritMult := 1 + CurrentCritBonus/core.CritRatingPerCritChance/100*core.TernaryFloat64(warlock.Talents.Pandemic, 1, 0)
-
-		CurrentCorruptionRolloverMult := CurrentDmgMult * CurrentShadowMult * CurrentCritMult // This combines all of the abovementioned multipliers
-
-		//I'll be explaining in detail how these boolean statements work for this example, for the rest of the document, you can follow the exact same logic here.
-
-		if warlock.Talents.EverlastingAffliction > 0 { // Check if EverlastingAffliction is talented, if not, rolling is not admissable and you apply manually.
-			if (!warlock.CorruptionDot.IsActive() && //Corruption is not up
-				(core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() ||
-					warlock.Talents.ImprovedShadowBolt == 0)) || // Do you need to wait for SM to be applied to cast first Corruption?
-				warlock.CorruptionDot.IsActive() &&
-					(CurrentCorruptionRolloverMult > warlock.CorruptionRolloverMult) { // If you end up with a better possible corruption, reapply!
-				return 0 //Ready to cast!
+		// Affliction spec check
+		if warlock.Talents.EverlastingAffliction > 0 {
+			if (!warlock.CorruptionDot.IsActive() && (core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() || warlock.Talents.ImprovedShadowBolt == 0)) ||
+				// Wait for SM to be applied to cast first Corruption
+				warlock.CorruptionDot.IsActive() && (warlock.corruptionTracker() > warlock.CorruptionRolloverPower) {
+				// If the active corruption multipliers are lower than the ones for a potential new corruption, then reapply corruption
+				return 0
 			} else {
 				return core.NeverExpires //Never will be cast
 			}
@@ -167,13 +171,16 @@ func (warlock *Warlock) defineRotation() { //quite the lengthy beast, don't you 
 	}
 	//Conflagrate
 	warlock.SpellsRotation[6].CastIn = func(sim *core.Simulation) time.Duration {
-		if !warlock.Talents.Conflagrate {
+		if !warlock.Talents.Conflagrate || !warlock.ImmolateDot.IsActive() {
 			return core.NeverExpires
 		}
-		if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfConflagrate) { //This glyphs makes Conflag not consume the Immolate
+
+		if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfConflagrate) { //This glyph makes Conflag not consume the Immolate
+			// Cast on CD
 			return core.MaxDuration(0, warlock.Conflagrate.TimeToReady(sim))
 		} else {
-			return core.MaxDuration(0, warlock.ImmolateDot.RemainingDuration(sim)-warlock.ImmolateDot.TickLength)
+			// Cast at the end of an Immolate
+			return core.MaxDuration(core.MaxDuration(0, warlock.ImmolateDot.RemainingDuration(sim)-warlock.ImmolateDot.TickLength), warlock.Conflagrate.TimeToReady(sim))
 		}
 	}
 	//Chaos Bolt
@@ -211,22 +218,37 @@ func (warlock *Warlock) defineRotation() { //quite the lengthy beast, don't you 
 	//CAUTION:This section is not yet implemented in the UI and is WIP.
 	if warlock.Rotation.Corruption && warlock.SpellsRotation[0].Priority == 0 {
 		warlock.SpellsRotation[0].Priority = 10
+	} else if !warlock.Rotation.Corruption && warlock.SpellsRotation[0].Priority != 0 {
+		warlock.SpellsRotation[0].Priority = 0
 	}
 	if secondaryDot == proto.Warlock_Rotation_Immolate && warlock.SpellsRotation[1].Priority == 0 {
 		warlock.SpellsRotation[1].Priority = 10
+		warlock.SpellsRotation[2].Priority = 0
 	} else if secondaryDot == proto.Warlock_Rotation_UnstableAffliction && warlock.SpellsRotation[2].Priority == 0 {
+		warlock.SpellsRotation[1].Priority = 0
 		warlock.SpellsRotation[2].Priority = 10
+	} else if secondaryDot == proto.Warlock_Rotation_NoSecondaryDot {
+		warlock.SpellsRotation[1].Priority = 0
+		warlock.SpellsRotation[2].Priority = 0
 	}
+
 	if specSpell == proto.Warlock_Rotation_Haunt && warlock.SpellsRotation[3].Priority == 0 {
 		warlock.SpellsRotation[3].Priority = 10
+		warlock.SpellsRotation[7].Priority = 0
 	} else if specSpell == proto.Warlock_Rotation_ChaosBolt && warlock.SpellsRotation[7].Priority == 0 {
+		warlock.SpellsRotation[3].Priority = 0
 		warlock.SpellsRotation[7].Priority = 10
+	} else if specSpell == proto.Warlock_Rotation_NoSpecSpell {
+		warlock.SpellsRotation[3].Priority = 0
+		warlock.SpellsRotation[7].Priority = 0
 	}
 	if warlock.Talents.Conflagrate && warlock.SpellsRotation[6].Priority == 0 {
 		warlock.SpellsRotation[6].Priority = 1
 	}
 	if curse == proto.Warlock_Rotation_Doom && warlock.SpellsRotation[5].Priority == 0 {
 		warlock.SpellsRotation[5].Priority = 1
+	} else if curse != proto.Warlock_Rotation_Doom && warlock.SpellsRotation[5].Priority != 0 {
+		warlock.SpellsRotation[5].Priority = 0
 	}
 }
 
@@ -323,11 +345,6 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		}
 	}
 
-	if nextBigCD-sim.CurrentTime <= 0 {
-		// stop regen, start blasting
-		warlock.DoingRegen = false
-	}
-
 	// ------------------------------------------
 	// Small CDs (Cast on CD)
 	// ------------------------------------------
@@ -388,7 +405,6 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	if spell != nil {
 		if curse != proto.Warlock_Rotation_Doom && curse != proto.Warlock_Rotation_Agony {
 			if success := spell.Cast(sim, target); success {
-				warlock.PrevCastSECheck = spell
 				return
 			}
 		}
@@ -502,31 +518,25 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		spell = filler
 	}
 
-	// This part tracks all the damage multiplier that roll over with corruption
-	CurrentShadowMult := warlock.PseudoStats.ShadowDamageDealtMultiplier // Tracks the current shadow damage multipler (essentially looking for DE)
-	CurrentDmgMult := warlock.PseudoStats.DamageDealtMultiplier          // Tracks the current damage multipler (essentially looking for TotT)
-	CurrentCritBonus := warlock.GetStat(stats.SpellCrit) + warlock.PseudoStats.BonusSpellCritRating + warlock.PseudoStats.BonusShadowCritRating +
-		warlock.CurrentTarget.PseudoStats.BonusSpellCritRatingTaken // Tracks the current crit rating multipler (essentially looking for Shadow Mastery (ISB))
-	CurrentCritMult := 1 + CurrentCritBonus/core.CritRatingPerCritChance/100*core.TernaryFloat64(warlock.Talents.Pandemic, 1, 0)
-	CurrentCorruptionRolloverMult := CurrentDmgMult * CurrentShadowMult * CurrentCritMult
+// This part tracks all the damage multiplier that roll over with corruption
+	PotentialCorruptionRolloverPower := warlock.corruptionTracker()
 	if sim.Log != nil {
-		if warlock.Talents.EverlastingAffliction > 0 { //Log the corruption multiplier, or DP average, for affli and demo respectively.
-			warlock.Log(sim, "[Info] Initial Corruption Rollover Multiplier [%.2f]", warlock.CorruptionRolloverMult)
-			warlock.Log(sim, "[Info] Current Corruption Rollover Multiplier [%.2f]", CurrentCorruptionRolloverMult)
+		if warlock.Talents.EverlastingAffliction > 0 {
+			warlock.Log(sim, "[Info] Active Corruption rollover power [%.2f]", warlock.CorruptionRolloverPower)
+			warlock.Log(sim, "[Info] Potential Corruption rollover power [%.2f]", PotentialCorruptionRolloverPower)
 		}
 		if warlock.Talents.DemonicPact > 0 {
-			warlock.Log(sim, "[Info] Demonic Pact Spell Power Average [%.0f]", warlock.DPSPAverage)
+			warlock.Log(sim, "[Info] Demonic Pact spell power bonus average [%.0f]", warlock.DPSPAverage)
 		}
 	}
 
 	// ------------------------------------------
 	// Spell casting
 	// ------------------------------------------
-	if success := spell.Cast(sim, target); success { //if you are succesfully committing to a spell
-		warlock.PrevCastSECheck = spell
-		if spell == warlock.Corruption && warlock.Talents.EverlastingAffliction > 0 { // Record the current rollover power of corruption
-
-			warlock.CorruptionRolloverMult = CurrentCorruptionRolloverMult
+	if success := spell.Cast(sim, target); success {
+		if spell == warlock.Corruption && warlock.Talents.EverlastingAffliction > 0 {
+			// We are recording the current rollover power of corruption
+			warlock.CorruptionRolloverPower = PotentialCorruptionRolloverPower
 		}
 		return
 	} else {

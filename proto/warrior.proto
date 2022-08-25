@@ -173,17 +173,20 @@ message Warrior {
 		// Use Mortal Strike when over this threshold.
 		double ms_rage_threshold = 9;
 
-		// Fury only: Use Rend when over this threshold.
-		double rend_rage_threshold = 10;
+		// Use Rend when below this threshold.
+		double rend_rage_threshold_below = 10;
+
+		// Use Slam when over this threshold.
+		double slam_rage_threshold = 11;
 
 		// Refresh Rend when remaining duration is less than this threshold.
-		double rend_cd_threshold = 11;
+		double rend_cd_threshold = 12;
 
-		bool use_hs_during_execute = 12;
-		bool use_bt_during_execute = 13;
-		bool spam_execute = 14;
-		bool use_ww_during_execute = 15;
-		bool use_slam_over_execute = 16;
+		bool use_hs_during_execute = 13;
+		bool use_bt_during_execute = 14;
+		bool spam_execute = 15;
+		bool use_ww_during_execute = 16;
+		bool use_slam_over_execute = 17;
 	}
 	Rotation rotation = 1;
 

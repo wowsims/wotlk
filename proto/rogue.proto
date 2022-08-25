@@ -186,6 +186,7 @@ message Rogue {
 			NoPoison = 0;
 			InstantPoison = 1;
 			DeadlyPoison = 2;
+			WoundPoison = 3;
 		}
 		PoisonImbue mh_imbue = 2;
 		PoisonImbue oh_imbue = 3;

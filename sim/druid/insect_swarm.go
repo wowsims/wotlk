@@ -8,11 +8,14 @@ import (
 )
 
 func (druid *Druid) registerInsectSwarmSpell() {
-	actionID := core.ActionID{SpellID: 27013}
+	actionID := core.ActionID{SpellID: 48468}
 	baseCost := 0.08 * druid.BaseMana
 
 	target := druid.CurrentTarget
 	missAura := core.InsectSwarmAura(target)
+
+	// T7-2P
+	dreamwalkerGrab := core.TernaryFloat64(druid.SetBonuses.balance_t7_2, 1.1, 1.0)
 
 	druid.InsectSwarm = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -52,11 +55,21 @@ func (druid *Druid) registerInsectSwarmSpell() {
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * (1 + 0.01*float64(druid.Talents.Genesis)),
+			DamageMultiplier: 1 * (1 + 0.01*float64(druid.Talents.Genesis)) * dreamwalkerGrab,
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(124, 0.2),
+			BaseDamage:       core.BaseDamageConfigMagicNoRoll(215, 0.2),
 			OutcomeApplier:   druid.OutcomeFuncTick(),
+			OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if sim.RandomFloat("Elune's Wrath proc") > (1-0.08) && druid.SetBonuses.balance_t8_4 {
+					tierProc := druid.GetOrRegisterAura(core.Aura{
+						Label:    "Elune's Wrath",
+						ActionID: core.ActionID{SpellID: 64823},
+						Duration: time.Second * 10,
+					})
+					tierProc.Activate(sim)
+				}
+			},
 		}),
 	})
 }

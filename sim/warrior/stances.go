@@ -54,6 +54,7 @@ func (warrior *Warrior) makeStanceSpell(stance Stance, aura *core.Aura, stanceCD
 func (warrior *Warrior) registerBattleStanceAura() {
 	actionID := core.ActionID{SpellID: 2457}
 	threatMult := 0.8
+	armorPenBonus := core.ArmorPenPerPercentArmor * (10 + core.TernaryFloat64(warrior.HasSetBonus(ItemSetWrynnsBattlegear, 2), 6, 0))
 
 	warrior.BattleStanceAura = warrior.GetOrRegisterAura(core.Aura{
 		Label:    "Battle Stance",
@@ -63,9 +64,11 @@ func (warrior *Warrior) registerBattleStanceAura() {
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier *= threatMult
+			aura.Unit.AddStatDynamic(sim, stats.ArmorPenetration, armorPenBonus)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier /= threatMult
+			aura.Unit.AddStatDynamic(sim, stats.ArmorPenetration, -armorPenBonus)
 		},
 	})
 }
@@ -106,7 +109,7 @@ func (warrior *Warrior) registerDefensiveStanceAura() {
 
 func (warrior *Warrior) registerBerserkerStanceAura() {
 	threatMult := 0.8 - 0.02*float64(warrior.Talents.ImprovedBerserkerStance)
-	critBonus := core.CritRatingPerCritChance * 3
+	critBonus := core.CritRatingPerCritChance * (3 + core.TernaryFloat64(warrior.HasSetBonus(ItemSetWrynnsBattlegear, 2), 2, 0))
 
 	warrior.BerserkerStanceAura = warrior.GetOrRegisterAura(core.Aura{
 		Label:    "Berserker Stance",

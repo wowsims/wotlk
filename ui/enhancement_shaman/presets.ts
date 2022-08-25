@@ -1,9 +1,13 @@
-import { Consumes } from '../core/proto/common.js';
-import { EquipmentSpec } from '../core/proto/common.js';
-import { Flask } from '../core/proto/common.js';
-import { Food } from '../core/proto/common.js';
-import { Glyphs } from '../core/proto/common.js'
-import { Potions } from '../core/proto/common.js';
+import { Consumes,
+	Flask,
+	Food,
+	Glyphs,
+	EquipmentSpec,
+	Potions,
+	RaidBuffs,
+	TristateEffect,
+  Debuffs,
+} from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
 import { EnhancementShaman_Rotation as EnhancementShamanRotation, EnhancementShaman_Options as EnhancementShamanOptions, ShamanShield } from '../core/proto/shaman.js';
@@ -46,6 +50,11 @@ export const DefaultRotation = EnhancementShamanRotation.create({
 		fire: FireTotem.MagmaTotem,
 		water: WaterTotem.ManaSpringTotem,
 	}),
+  maelstromweaponMinStack: 3,
+  lightningboltWeave: true,
+  lavaburstWeave: false,
+  firenovaManaThreshold: 3000,
+  shamanisticRageManaThreshold: 25,
 });
 
 export const DefaultOptions = EnhancementShamanOptions.create({
@@ -61,6 +70,31 @@ export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfEndlessRage,
 	food: Food.FoodFishFeast,
 });
+
+export const DefaultRaidBuffs = RaidBuffs.create({
+	giftOfTheWild: TristateEffect.TristateEffectImproved,
+	arcaneBrilliance: true,
+	leaderOfThePack: TristateEffect.TristateEffectImproved,
+	totemOfWrath: true,
+  wrathOfAirTotem: true,
+	moonkinAura: TristateEffect.TristateEffectImproved,
+	sanctifiedRetribution: true,
+	divineSpirit: true,
+	battleShout: TristateEffect.TristateEffectImproved,
+});
+
+export const DefaultDebuffs = Debuffs.create({
+  bloodFrenzy: true,
+  sunderArmor: true,
+  curseOfWeakness: TristateEffect.TristateEffectRegular,
+  curseOfElements: true,
+  faerieFire: TristateEffect.TristateEffectImproved,
+  judgementOfWisdom: true,
+  misery: true,
+  totemOfWrath: true,
+  shadowMastery: true,
+});
+
 
 export const PreRaid_PRESET = {
     name: 'Preraid Preset',
