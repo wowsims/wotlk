@@ -114,13 +114,10 @@ func (priest *Priest) Initialize() {
 
 	priest.registerSetBonuses()
 	priest.registerDevouringPlagueSpell()
-	priest.registerHolyFireSpell()
 	priest.registerShadowWordPainSpell()
 	priest.registerMindBlastSpell()
-	priest.registerPenanceSpell()
 	priest.registerShadowWordDeathSpell()
 	priest.registerShadowfiendSpell()
-	priest.registerSmiteSpell()
 	priest.registerStarshardsSpell()
 	priest.registerVampiricTouchSpell()
 	priest.registerDispersionSpell()

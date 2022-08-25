@@ -60,8 +60,11 @@ func (priest *Priest) registerShadowWordPainSpell() {
 		TickLength: time.Second * 3,
 
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01 + float64(priest.Talents.ImprovedShadowWordPain)*0.03),
+			ProcMask: core.ProcMaskPeriodicDamage,
+			DamageMultiplier: 1 +
+				float64(priest.Talents.Darkness)*0.02 +
+				float64(priest.Talents.TwinDisciplines)*0.01 +
+				float64(priest.Talents.ImprovedShadowWordPain)*0.03,
 
 			BonusSpellCritRating: float64(priest.Talents.MindMelt)*3*core.CritRatingPerCritChance + core.TernaryFloat64(priest.HasSetBonus(ItemSetCrimsonAcolyte, 2), 5, 0)*core.CritRatingPerCritChance,
 

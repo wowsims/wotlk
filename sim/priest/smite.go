@@ -7,7 +7,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (priest *Priest) registerSmiteSpell() {
+func (priest *Priest) RegisterSmiteSpell(memeDream bool) {
 	baseCost := .15 * priest.BaseMana
 
 	priest.Smite = priest.RegisterSpell(core.SpellConfig{
@@ -29,7 +29,7 @@ func (priest *Priest) registerSmiteSpell() {
 			ProcMask: core.ProcMaskSpellDamage,
 
 			BonusSpellCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
-			DamageMultiplier:     1 + 0.05*float64(priest.Talents.SearingLight),
+			DamageMultiplier:     (1 + 0.05*float64(priest.Talents.SearingLight)) * core.TernaryFloat64(memeDream, 1.2, 1),
 			ThreatMultiplier:     1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 			BaseDamage:     core.BaseDamageConfigMagic(713, 799, 0.7143),
