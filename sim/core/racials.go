@@ -43,7 +43,7 @@ func applyRaceEffects(agent Agent) {
 				}
 
 				if spell.Unit.HasRunicPowerBar() {
-					spell.Unit.AddRunicPower(sim, 150.0, resourceMetrics)
+					spell.Unit.AddRunicPower(sim, 15.0, resourceMetrics)
 				} else if spell.Unit.HasEnergyBar() {
 					spell.Unit.AddEnergy(sim, 15.0, resourceMetrics)
 				} else if unit.HasManaBar() {
