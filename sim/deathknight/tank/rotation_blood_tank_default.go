@@ -44,7 +44,7 @@ func (dk *TankDeathknight) RotationActionCallback_TankBlood_PrioRotation(sim *co
 		} else if !bp && dk.PlagueStrike.CanCast(sim) {
 			dk.PlagueStrike.Cast(sim, target)
 		} else if !dk.btr.itCycle && dk.DeathStrike.CanCast(sim) && sim.CurrentTime+attackGcd < fbAt {
-			casted = dk.DeathStrike.Cast(sim, target)
+			casted := dk.DeathStrike.Cast(sim, target)
 			if casted && dk.LastOutcome.Matches(core.OutcomeLanded) {
 				dk.btr.dsCount++
 			}
