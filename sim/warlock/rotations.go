@@ -1,6 +1,8 @@
 /* README(2022-08):
 Main Author: Glandalf (Discord : Glandalf#0679)
-Co-Author's: Linelo aka "The good bad guy" (Discord: Linelo#3958) , Pötiküvi(Discord: Pötiküvi#7506)
+Co-Author's: Ketesh (Ketesh#8103),
+			Linelo aka "The good bad guy" (Discord: Linelo#3958),
+			Pötiküvi(Discord: Pötiküvi#7506)
 
 This file (rotations.go) contains the logic behind how the sim chooses a spell at a given time.
 There are two rotation types, Manual & Automatic.
