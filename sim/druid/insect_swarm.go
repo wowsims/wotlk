@@ -8,7 +8,7 @@ import (
 )
 
 func (druid *Druid) registerInsectSwarmSpell() {
-	actionID := core.ActionID{SpellID: 27013}
+	actionID := core.ActionID{SpellID: 48468}
 	baseCost := 0.08 * druid.BaseMana
 
 	target := druid.CurrentTarget
