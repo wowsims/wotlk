@@ -1,6 +1,8 @@
 package hunter
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -46,6 +48,9 @@ type Hunter struct {
 	permaHawk                           bool
 
 	serpentStingDamageMultiplier float64
+
+	// The most recent time at which moving could have started, for trap weaving.
+	mayMoveAt time.Duration
 
 	AspectOfTheDragonhawk *core.Spell
 	AspectOfTheViper      *core.Spell
@@ -151,6 +156,7 @@ func (hunter *Hunter) Initialize() {
 }
 
 func (hunter *Hunter) Reset(sim *core.Simulation) {
+	hunter.mayMoveAt = 0
 	hunter.manaSpentPerSecondAtFirstAspectSwap = 0
 	hunter.permaHawk = false
 

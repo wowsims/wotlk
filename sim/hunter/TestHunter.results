@@ -675,8 +675,8 @@ dps_results: {
 dps_results: {
  key: "TestHunter-Settings-Dwarf-P1-AOE-FullBuffs-LongMultiTarget"
  value: {
-  dps: 14638.0903360587
-  tps: 15005.8824339614
+  dps: 14546.9713414023
+  tps: 14910.9515376959
  }
 }
 dps_results: {
