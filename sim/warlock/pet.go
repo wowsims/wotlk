@@ -121,7 +121,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 	case proto.Warlock_Options_Felguard:
 		wp.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
 		// Simulates a pre-stacked demonic frenzy
-		multiplier := 1.5 // demonic frenzy
+		multiplier := 1.5 + 0.1*float64(warlock.Talents.DemonicBrutality)
 		if wp.owner.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfFelguard) {
 			multiplier *= 1.2
 		}
