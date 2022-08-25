@@ -227,7 +227,10 @@ func (warrior *Warrior) applyTitansGrip() {
 	if !warrior.Talents.TitansGrip {
 		return
 	}
-	if warrior.Equip[proto.ItemSlot_ItemSlotOffHand].HandType != proto.HandType_HandTypeTwoHand {
+	if !warrior.AutoAttacks.IsDualWielding {
+		return
+	}
+	if warrior.Equip[proto.ItemSlot_ItemSlotMainHand].HandType != proto.HandType_HandTypeTwoHand && warrior.Equip[proto.ItemSlot_ItemSlotOffHand].HandType != proto.HandType_HandTypeTwoHand {
 		return
 	}
 

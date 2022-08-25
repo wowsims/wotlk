@@ -33,7 +33,8 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
 				"Bladestorm WWs damage are all dealt at casting time.",	
-				"Thunder Clap is not working."
+				"Thunder Clap is not working.",
+				"Deep Wounds are dealing less damage than expected.",
 			],
 
 			// All stats for which EP should be calculated.

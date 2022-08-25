@@ -125,7 +125,7 @@ func (war *DpsWarrior) executeRotation(sim *core.Simulation) {
 	if war.GCD.IsReady(sim) {
 		if war.ShouldInstantSlam(sim) {
 			war.CastSlam(sim, war.CurrentTarget)
-		} else if war.Rotation.SpamExecute && war.CanExecute() {
+		} else if war.SpamExecute(war.Rotation.SpamExecute) {
 			war.Execute.Cast(sim, war.CurrentTarget)
 		} else if war.Rotation.PrioritizeWw && war.Rotation.UseWwDuringExecute && war.CanWhirlwind(sim) {
 			war.Whirlwind.Cast(sim, war.CurrentTarget)
