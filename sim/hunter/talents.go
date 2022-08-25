@@ -778,8 +778,10 @@ func (hunter *Hunter) registerReadinessCD() {
 		Type:  core.CooldownTypeDPS,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
 			// Don't use if there are no cooldowns to reset.
-			return !hunter.RapidFire.IsReady(sim) &&
-				(!hunter.RapidFireAura.IsActive() || hunter.RapidFireAura.RemainingDuration(sim) < time.Second*10)
+			return !hunter.RapidFire.IsReady(sim)
+		},
+		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
+			return !hunter.RapidFireAura.IsActive() || hunter.RapidFireAura.RemainingDuration(sim) < time.Second*10
 		},
 	})
 }
