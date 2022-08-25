@@ -56,6 +56,7 @@ type Warrior struct {
 	ThunderClap          *core.Spell
 	Whirlwind            *core.Spell
 	DeepWounds           *core.Spell
+	Bladestorm           *core.Spell
 
 	RendDots             *core.Dot
 	DeepWoundsDots       []*core.Dot
