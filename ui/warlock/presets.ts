@@ -1,6 +1,7 @@
 import { Consumes,
 	Flask,
 	Food,
+  PetFood,
 	Glyphs,
 	EquipmentSpec,
 	Potions,
@@ -126,6 +127,7 @@ export const DestructionOptions = WarlockOptions.create({
 export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfTheFrostWyrm,
 	food: Food.FoodFishFeast,
+	petFood: PetFood.PetFoodSpicedMammothTreats,
 	defaultPotion: Potions.PotionOfWildMagic,
 	prepopPotion:  Potions.PotionOfWildMagic,
 });
