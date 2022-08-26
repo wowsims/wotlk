@@ -52,8 +52,8 @@ character_stats_results: {
 dps_results: {
  key: "TestSmite-AllItems-AbsolutionRegalia"
  value: {
-  dps: 1419.53354
-  tps: 1230.94028
+  dps: 1423.79332
+  tps: 1234.36467
  }
 }
 dps_results: {
@@ -150,8 +150,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-DarkmoonCard:Greatness-44254"
  value: {
-  dps: 1996.3708
-  tps: 1707.34665
+  dps: 2000.40789
+  tps: 1710.29014
  }
 }
 dps_results: {
@@ -185,8 +185,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-EmberSkyflareDiamond"
  value: {
-  dps: 2090.54137
-  tps: 1786.26536
+  dps: 2097.98993
+  tps: 1793.49858
  }
 }
 dps_results: {
@@ -430,8 +430,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-SanctificationGarb"
  value: {
-  dps: 1941.72225
-  tps: 1667.59397
+  dps: 1941.61773
+  tps: 1667.48126
  }
 }
 dps_results: {
@@ -465,8 +465,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-SparkofLife-37657"
  value: {
-  dps: 1957.64027
-  tps: 1669.92677
+  dps: 1960.17131
+  tps: 1671.40234
  }
 }
 dps_results: {
@@ -500,8 +500,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-TheTwinStars"
  value: {
-  dps: 2003.81029
-  tps: 1716.52528
+  dps: 2007.53552
+  tps: 1714.30717
  }
 }
 dps_results: {
@@ -570,8 +570,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-Average-Default"
  value: {
-  dps: 2049.68467
-  tps: 1748.94502
+  dps: 2052.1483
+  tps: 1751.04883
  }
 }
 dps_results: {
