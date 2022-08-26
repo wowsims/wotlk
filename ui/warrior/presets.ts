@@ -36,7 +36,7 @@ export const ArmsTalents = {
 		talentsString: '3022032023335100102012213231251-305-2033',
 		glyphs: Glyphs.create({
 			major1: WarriorMajorGlyph.GlyphOfRending,
-			major2: WarriorMajorGlyph.GlyphOfHeroicStrike,
+			major2: WarriorMajorGlyph.GlyphOfMortalStrike,
 			major3: WarriorMajorGlyph.GlyphOfExecution,
 			minor1: WarriorMinorGlyph.GlyphOfBattle,
 			minor2: WarriorMinorGlyph.GlyphOfCommand,
