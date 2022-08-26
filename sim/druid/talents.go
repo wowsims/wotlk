@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/items"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -18,22 +17,6 @@ func (druid *Druid) ApplyTalents() {
 	druid.PseudoStats.ThreatMultiplier *= 1 - 0.04*float64(druid.Talents.Subtlety)
 	druid.PseudoStats.PhysicalDamageDealtMultiplier *= 1 + 0.02*float64(druid.Talents.Naturalist)
 
-	if druid.InForm(Bear | Cat) {
-		if druid.Talents.PredatoryStrikes > 0 {
-			druid.AddStat(stats.AttackPower, float64(druid.Talents.PredatoryStrikes)*0.5*float64(core.CharacterLevel))
-
-			weap := druid.GetMHWeapon()
-			if weap != nil {
-				weap := druid.Equip[items.ItemSlotMainHand]
-				dps := (((weap.WeaponDamageMax - weap.WeaponDamageMin) / 2.0) + weap.WeaponDamageMin) / weap.SwingSpeed
-				fap := (dps - 54.8) * 14
-
-				druid.AddStat(stats.AttackPower, fap*((0.2/3)*float64(druid.Talents.PredatoryStrikes)))
-			}
-		}
-		druid.AddStat(stats.MeleeCrit, float64(druid.Talents.SharpenedClaws)*2*core.CritRatingPerCritChance)
-		druid.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*2*float64(druid.Talents.FeralSwiftness))
-	}
 	if druid.InForm(Bear) {
 		druid.AddStat(stats.Armor, druid.Equip.Stats()[stats.Armor]*(0.5/3)*float64(druid.Talents.ThickHide))
 	} else {

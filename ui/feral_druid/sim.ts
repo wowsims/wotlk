@@ -36,6 +36,9 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 			knownIssues: [
 				"Rotations need updating",
 				"Lacerate doesn't snapshot correctly",
+				"Form Stat changes may display/function incorrectly",
+				"Bear / cat auto attacks don't change with form",
+				"ilotp mana regen not implemented"
 			],
 			warnings: [
 				// Warning that a frontal rotation is not implemented.

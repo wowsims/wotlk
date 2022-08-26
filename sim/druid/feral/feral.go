@@ -1,12 +1,10 @@
 package feral
 
 import (
-	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 	"github.com/wowsims/wotlk/sim/druid"
 )
 
@@ -69,16 +67,6 @@ func NewFeralDruid(character core.Character, options proto.Player) *FeralDruid {
 		AutoSwingMelee: true,
 	})
 
-	// Cat Form adds (2 x Level) AP + 1 AP per Agi
-	cat.AddStat(stats.AttackPower, float64(druid.Level)*2)
-	cat.AddStatDependency(stats.Agility, stats.AttackPower, 1)
-
-	dps := (((cat.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponDamageMax - cat.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponDamageMin) / 2.0) + cat.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponDamageMin) / cat.Equip[proto.ItemSlot_ItemSlotMainHand].SwingSpeed
-	fap := math.Floor((dps - 54.8) * 14)
-	if fap > 0 {
-		cat.AddStat(stats.AttackPower, fap)
-	}
-
 	return cat
 }
 
@@ -104,6 +92,7 @@ func (cat *FeralDruid) Initialize() {
 
 func (cat *FeralDruid) Reset(sim *core.Simulation) {
 	cat.Druid.Reset(sim)
+	cat.Druid.ClearForm(sim)
 	cat.CatFormAura.Activate(sim)
 	cat.readyToShift = false
 	cat.waitingForTick = false
