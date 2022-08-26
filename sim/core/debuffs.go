@@ -178,7 +178,7 @@ func AcidSpitPeriodicActionOptions(aura *Aura) PeriodicActionOptions {
 
 func ExposeArmorPeriodicActonOptions(aura *Aura) PeriodicActionOptions {
 	return PeriodicActionOptions{
-		Period:   time.Second * 10,
+		Period:   time.Second * 3,
 		NumTicks: 1,
 		OnAction: func(sim *Simulation) {
 			aura.Activate(sim)

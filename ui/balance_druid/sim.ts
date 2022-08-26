@@ -102,6 +102,13 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
             rotationInputs: DruidInputs.BalanceDruidRotationConfig,
             // Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
             includeBuffDebuffInputs: [
+                IconInputs.MeleeHasteBuff,
+                IconInputs.MeleeCritBuff,
+                IconInputs.AttackPowerPercentBuff,
+                IconInputs.AttackPowerBuff,
+                IconInputs.MajorArmorDebuff,
+                IconInputs.MinorArmorDebuff,
+                IconInputs.PhysicalDamageDebuff,
             ],
             excludeBuffDebuffInputs: [
             ],
