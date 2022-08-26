@@ -49,7 +49,6 @@ type Warrior struct {
 	Execute              *core.Spell
 	MortalStrike         *core.Spell
 	Overpower            *core.Spell
-	Rampage              *core.Spell
 	Rend                 *core.Spell
 	Revenge              *core.Spell
 	ShieldBlock          *core.Spell
@@ -61,9 +60,10 @@ type Warrior struct {
 	Whirlwind            *core.Spell
 	DeepWounds           *core.Spell
 
-	RendDots             *core.Dot
-	DeepWoundsDots       []*core.Dot
-	DeepWoundsTickDamage []float64
+	RendDots               *core.Dot
+	DeepWoundsDots         []*core.Dot
+	DeepWoundsTickDamage   []float64
+	DeepwoundsDamageBuffer []float64
 
 	HeroicStrikeOrCleave *core.Spell
 	HSOrCleaveQueueAura  *core.Aura
@@ -81,7 +81,6 @@ type Warrior struct {
 	TraumaAuras           []*core.Aura
 	ExposeArmorAura       *core.Aura // Warriors don't cast this but they need to check it.
 	AcidSpitAura          *core.Aura // Warriors don't cast this but they need to check it.
-	RampageAura           *core.Aura
 	SunderArmorAura       *core.Aura
 	ThunderClapAura       *core.Aura
 }
@@ -101,6 +100,10 @@ func (warrior *Warrior) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 		if warrior.Talents.CommandingPresence == 5 {
 			raidBuffs.CommandingShout = proto.TristateEffect_TristateEffectImproved
 		}
+	}
+
+	if warrior.Talents.Rampage {
+		raidBuffs.Rampage = true
 	}
 }
 
@@ -137,6 +140,10 @@ func (warrior *Warrior) Initialize() {
 
 	warrior.registerBloodrageCD()
 
+	warrior.DeepwoundsDamageBuffer = []float64{}
+	for i := int32(0); i < warrior.Env.GetNumTargets(); i++ {
+		warrior.DeepwoundsDamageBuffer = append(warrior.DeepwoundsDamageBuffer, 0)
+	}
 	warrior.DeepWoundsTickDamage = []float64{}
 	for i := int32(0); i < warrior.Env.GetNumTargets(); i++ {
 		warrior.DeepWoundsTickDamage = append(warrior.DeepWoundsTickDamage, 0)

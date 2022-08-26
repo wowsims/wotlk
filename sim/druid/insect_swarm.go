@@ -51,11 +51,11 @@ func (druid *Druid) registerInsectSwarmSpell() {
 			Label:    "Insect Swarm",
 			ActionID: actionID,
 		}),
-		NumberOfTicks: 6 + core.TernaryInt(druid.Talents.NaturesSplendor, 1, 0),
+		NumberOfTicks: 6 + druid.TalentsBonuses.naturesSplendorTick,
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * (1 + 0.01*float64(druid.Talents.Genesis)) * dreamwalkerGrab,
+			DamageMultiplier: 1 * druid.TalentsBonuses.genesisMultiplier * dreamwalkerGrab,
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(215, 0.2),
