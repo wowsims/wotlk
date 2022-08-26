@@ -244,7 +244,7 @@ export const P1_FURY_PRESET = {
           "enchant": 44489,
           "gems": [
             42142,
-            42142
+            49110
           ]
         },
         {
@@ -377,7 +377,7 @@ export const P1_PRERAID_ARMS_PRESET = {
           "id": 44306,
           "enchant": 55016,
           "gems": [
-            0,
+            42702,
             40037
           ]
         },
@@ -475,7 +475,7 @@ export const P1_ARMS_PRESET = {
           "enchant": 38374,
           "gems": [
             39996,
-            0
+            49110
           ]
         },
         {
