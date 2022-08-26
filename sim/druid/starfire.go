@@ -28,7 +28,7 @@ func (druid *Druid) registerStarfireSpell() {
 
 	effect := core.SpellEffect{
 		ProcMask:         core.ProcMaskSpellDamage,
-		DamageMultiplier: 1 + 0.02*float64(druid.Talents.Moonfury),
+		DamageMultiplier: 1 + []float64{0.0, 0.03, 0.06, 0.1}[druid.Talents.Moonfury],
 		ThreatMultiplier: 1,
 		BaseDamage:       core.BaseDamageConfigMagic(minBaseDamage+bonusFlatDamage, maxBaseDamage+bonusFlatDamage, spellCoefficient),
 		OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, 0.2*float64(druid.Talents.Vengeance))),

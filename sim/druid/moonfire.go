@@ -14,7 +14,7 @@ func (druid *Druid) registerMoonfireSpell() {
 
 	iffCritBonus := core.TernaryFloat64(druid.CurrentTarget.HasActiveAura("Improved Faerie Fire"), float64(druid.Talents.ImprovedFaerieFire)*1*core.CritRatingPerCritChance, 0)
 	improvedMoonfireDamageMultiplier := 0.05 * float64(druid.Talents.ImprovedMoonfire)
-	moonfuryDamageMultiplier := 0.02 * float64(druid.Talents.Moonfury)
+	moonfuryDamageMultiplier := []float64{0.0, 0.03, 0.06, 0.1}[druid.Talents.Moonfury]
 
 	moonfireGlyphBaseDamageMultiplier := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMoonfire), 0.9, 0)
 	moonfireGlyphDotDamageMultiplier := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMoonfire), 0.75, 0)

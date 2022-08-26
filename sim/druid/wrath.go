@@ -21,7 +21,7 @@ func (druid *Druid) registerWrathSpell() {
 	effect := core.SpellEffect{
 		ProcMask:             core.ProcMaskSpellDamage,
 		BonusSpellCritRating: 2 * float64(druid.Talents.NaturesMajesty) * core.CritRatingPerCritChance,
-		DamageMultiplier:     1 + 0.02*float64(druid.Talents.Moonfury),
+		DamageMultiplier:     1 + []float64{0.0, 0.03, 0.06, 0.1}[druid.Talents.Moonfury],
 		ThreatMultiplier:     1,
 		OutcomeApplier:       druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, 0.2*float64(druid.Talents.Vengeance))),
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
@@ -32,7 +32,7 @@ func (druid *Druid) registerWrathSpell() {
 		},
 		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			spellEffect.BonusSpellCritRating = 0
-			spellEffect.DamageMultiplier = 1 + 0.02*float64(druid.Talents.Moonfury)
+			spellEffect.DamageMultiplier = 1 + []float64{0.0, 0.03, 0.06, 0.1}[druid.Talents.Moonfury]
 			// T7-4P
 			if druid.SetBonuses.balance_t7_4 {
 				spellEffect.BonusSpellCritRating += 5 * core.CritRatingPerCritChance
