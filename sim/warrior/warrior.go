@@ -187,6 +187,9 @@ func (warrior *Warrior) secondaryCritModifier(applyImpale bool) float64 {
 	if applyImpale {
 		secondaryModifier += 0.1 * float64(warrior.Talents.Impale)
 	}
+	if warrior.Talents.PoleaxeSpecialization > 0 {
+		secondaryModifier += 0.01 * float64(warrior.Talents.PoleaxeSpecialization)
+	}
 	return secondaryModifier
 }
 func (warrior *Warrior) critMultiplier(applyImpale bool) float64 {
