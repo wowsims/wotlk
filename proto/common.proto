@@ -14,6 +14,7 @@ enum Spec {
 	SpecProtectionPaladin = 13;
 	SpecRetributionPaladin = 3;
 	SpecRogue = 7;
+	SpecHealingPriest = 17;
 	SpecShadowPriest = 4;
 	SpecSmitePriest = 10;
 	SpecWarlock = 5;
@@ -482,7 +483,8 @@ message IndividualBuffs {
 	int32 innervates = 10;
 	int32 power_infusions = 11;
 	int32 unholy_frenzy = 12;
-	int32 revitalize = 13;
+	int32 revitalize_rejuvination = 13;
+	int32 revitalize_wild_growth = 21;
 	int32 tricks_of_the_trades = 19;
 
 	// Technically a debuff, but only used by individual sims.

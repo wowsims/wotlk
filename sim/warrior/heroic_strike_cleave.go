@@ -36,7 +36,7 @@ func (warrior *Warrior) registerHeroicStrikeSpell() {
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 			FlatThreatBonus:  194,
-			BonusCritRating:  float64(warrior.Talents.Incite) * 5 * core.CritRatingPerCritChance,
+			BonusCritRating:  (float64(warrior.Talents.Incite)*5 + core.TernaryFloat64(warrior.HasSetBonus(ItemSetWrynnsBattlegear, 4), 5, 0)) * core.CritRatingPerCritChance,
 
 			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 495, 1, 1, true),
 			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(true)),

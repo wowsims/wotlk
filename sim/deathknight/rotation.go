@@ -65,12 +65,6 @@ func (dk *Deathknight) RotationActionCallback_HS(sim *core.Simulation, target *c
 	return -1
 }
 
-func (dk *Deathknight) RotationActionCallback_UA(sim *core.Simulation, target *core.Unit, s *Sequence) time.Duration {
-	casted := dk.UnbreakableArmor.Cast(sim, target)
-	s.ConditionalAdvance(casted)
-	return sim.CurrentTime
-}
-
 func (dk *Deathknight) RotationActionCallback_BT(sim *core.Simulation, target *core.Unit, s *Sequence) time.Duration {
 	casted := dk.BloodTap.Cast(sim, target)
 	s.ConditionalAdvance(casted)
@@ -208,12 +202,6 @@ func (dk *Deathknight) RotationActionCallback_Reset(sim *core.Simulation, target
 }
 
 func (o *Sequence) DoAction(sim *core.Simulation, target *core.Unit, dk *Deathknight) time.Duration {
-	if dk.Inputs.UseAMS || !dk.Inputs.IsDps {
-		if dk.AntiMagicShell.CanCast(sim) {
-			dk.AntiMagicShell.Cast(sim, target)
-		}
-	}
-
 	action := o.actions[o.idx]
 	return action(sim, target, o)
 }

@@ -30,6 +30,10 @@ type Warrior struct {
 	RevengeValidUntil   time.Duration
 	shoutExpiresAt      time.Duration
 
+	// Reaction time values
+	reactionTime       time.Duration
+	lastBloodsurgeProc time.Duration
+
 	// Cached values
 	shoutDuration time.Duration
 
@@ -64,8 +68,6 @@ type Warrior struct {
 	HeroicStrikeOrCleave *core.Spell
 	HSOrCleaveQueueAura  *core.Aura
 	HSRageThreshold      float64
-	RendRageThreshold    float64
-	MsRageThreshold      float64
 
 	BattleStanceAura    *core.Aura
 	DefensiveStanceAura *core.Aura
@@ -111,20 +113,22 @@ func (warrior *Warrior) Initialize() {
 	primaryTimer := warrior.NewTimer()
 	overpowerRevengeTimer := warrior.NewTimer()
 
+	warrior.reactionTime = time.Millisecond * 500
+
 	warrior.registerStances()
 	warrior.registerBerserkerRageSpell()
 	warrior.registerBloodthirstSpell(primaryTimer)
 	warrior.registerDemoralizingShoutSpell()
 	warrior.registerDevastateSpell()
 	warrior.registerExecuteSpell()
-	warrior.registerMortalStrikeSpell(primaryTimer, warrior.MsRageThreshold)
+	warrior.registerMortalStrikeSpell(primaryTimer)
 	warrior.registerOverpowerSpell(overpowerRevengeTimer)
 	warrior.registerRevengeSpell(overpowerRevengeTimer)
 	warrior.registerShieldSlamSpell(primaryTimer)
 	warrior.registerSlamSpell()
 	warrior.registerThunderClapSpell()
 	warrior.registerWhirlwindSpell()
-	warrior.RegisterRendSpell(warrior.RendRageThreshold)
+	warrior.registerRendSpell()
 
 	warrior.SunderArmor = warrior.newSunderArmorSpell(false)
 	warrior.SunderArmorDevastate = warrior.newSunderArmorSpell(true)
@@ -163,8 +167,8 @@ func NewWarrior(character core.Character, talents proto.WarriorTalents, inputs W
 
 	warrior.PseudoStats.CanParry = true
 
-	warrior.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/33.0)
-	warrior.AddStatDependency(stats.Agility, stats.Dodge, core.DodgeRatingPerDodgeChance/30.0)
+	warrior.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/62.5)
+	warrior.AddStatDependency(stats.Agility, stats.Dodge, core.DodgeRatingPerDodgeChance/85.1)
 	warrior.AddStatDependency(stats.Strength, stats.AttackPower, 2)
 	warrior.AddStatDependency(stats.Strength, stats.BlockValue, .05) // 5% block from str
 
@@ -191,103 +195,103 @@ func (warrior *Warrior) HasMajorGlyph(glyph proto.WarriorMajorGlyph) bool {
 
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassWarrior}] = stats.Stats{
-		stats.Health:      4264,
-		stats.Strength:    146,
-		stats.Agility:     93,
-		stats.Stamina:     132,
-		stats.Intellect:   34,
-		stats.Spirit:      53,
-		stats.AttackPower: 190,
-		stats.MeleeCrit:   1.14 * core.CritRatingPerCritChance,
-		stats.Dodge:       0.75 * core.DodgeRatingPerDodgeChance,
+		stats.Health:      9611,
+		stats.Strength:    185,
+		stats.Agility:     110,
+		stats.Stamina:     167,
+		stats.Intellect:   37,
+		stats.Spirit:      61,
+		stats.AttackPower: 590,
+		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
+		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDwarf, Class: proto.Class_ClassWarrior}] = stats.Stats{
-		stats.Health:      4264,
-		stats.Strength:    147,
-		stats.Agility:     92,
-		stats.Stamina:     136,
-		stats.Intellect:   32,
-		stats.Spirit:      50,
-		stats.AttackPower: 190,
-		stats.MeleeCrit:   1.14 * core.CritRatingPerCritChance,
-		stats.Dodge:       0.75 * core.DodgeRatingPerDodgeChance,
+		stats.Health:      9651,
+		stats.Strength:    186,
+		stats.Agility:     109,
+		stats.Stamina:     171,
+		stats.Intellect:   35,
+		stats.Spirit:      58,
+		stats.AttackPower: 592,
+		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
+		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceGnome, Class: proto.Class_ClassWarrior}] = stats.Stats{
-		stats.Health:      4264,
-		stats.Strength:    140,
-		stats.Agility:     99,
-		stats.Stamina:     132,
-		stats.Intellect:   38,
-		stats.Spirit:      51,
-		stats.AttackPower: 190,
-		stats.MeleeCrit:   1.14 * core.CritRatingPerCritChance,
-		stats.Dodge:       0.75 * core.DodgeRatingPerDodgeChance,
+		stats.Health:      9581,
+		stats.Strength:    175,
+		stats.Agility:     116,
+		stats.Stamina:     164,
+		stats.Intellect:   42,
+		stats.Spirit:      59,
+		stats.AttackPower: 570,
+		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
+		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceHuman, Class: proto.Class_ClassWarrior}] = stats.Stats{
-		stats.Health:      4264,
-		stats.Strength:    145,
-		stats.Agility:     96,
-		stats.Stamina:     133,
-		stats.Intellect:   33,
-		stats.Spirit:      56,
-		stats.AttackPower: 190,
-		stats.MeleeCrit:   1.14 * core.CritRatingPerCritChance,
-		stats.Dodge:       0.75 * core.DodgeRatingPerDodgeChance,
+		stats.Health:      9621,
+		stats.Strength:    184,
+		stats.Agility:     113,
+		stats.Stamina:     168,
+		stats.Intellect:   36,
+		stats.Spirit:      63,
+		stats.AttackPower: 588,
+		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
+		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassWarrior}] = stats.Stats{
-		stats.Health:      4264,
-		stats.Strength:    142,
-		stats.Agility:     101,
-		stats.Stamina:     132,
-		stats.Intellect:   33,
-		stats.Spirit:      51,
-		stats.AttackPower: 190,
-		stats.MeleeCrit:   1.14 * core.CritRatingPerCritChance,
-		stats.Dodge:       0.75 * core.DodgeRatingPerDodgeChance,
+		stats.Health:      9611,
+		stats.Strength:    181,
+		stats.Agility:     118,
+		stats.Stamina:     167,
+		stats.Intellect:   36,
+		stats.Spirit:      59,
+		stats.AttackPower: 582,
+		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
+		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceOrc, Class: proto.Class_ClassWarrior}] = stats.Stats{
-		stats.Health:      4264,
-		stats.Strength:    148,
-		stats.Agility:     93,
-		stats.Stamina:     135,
-		stats.Intellect:   30,
-		stats.Spirit:      54,
-		stats.AttackPower: 190,
-		stats.MeleeCrit:   1.14 * core.CritRatingPerCritChance,
-		stats.Dodge:       0.75 * core.DodgeRatingPerDodgeChance,
+		stats.Health:      9641,
+		stats.Strength:    187,
+		stats.Agility:     110,
+		stats.Stamina:     170,
+		stats.Intellect:   33,
+		stats.Spirit:      62,
+		stats.AttackPower: 594,
+		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
+		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTauren, Class: proto.Class_ClassWarrior}] = stats.Stats{
-		stats.Health:      4264,
-		stats.Strength:    150,
-		stats.Agility:     91,
-		stats.Stamina:     135,
-		stats.Intellect:   28,
-		stats.Spirit:      53,
-		stats.AttackPower: 190,
-		stats.MeleeCrit:   1.14 * core.CritRatingPerCritChance,
-		stats.Dodge:       0.75 * core.DodgeRatingPerDodgeChance,
+		stats.Health:      10047,
+		stats.Strength:    179,
+		stats.Agility:     108,
+		stats.Stamina:     170,
+		stats.Intellect:   31,
+		stats.Spirit:      61,
+		stats.AttackPower: 578,
+		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
+		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassWarrior}] = stats.Stats{
-		stats.Health:      4264,
-		stats.Strength:    146,
-		stats.Agility:     98,
-		stats.Stamina:     134,
-		stats.Intellect:   29,
-		stats.Spirit:      52,
-		stats.AttackPower: 190,
-		stats.MeleeCrit:   1.14 * core.CritRatingPerCritChance,
-		stats.Dodge:       0.75 * core.DodgeRatingPerDodgeChance,
+		stats.Health:      9631,
+		stats.Strength:    185,
+		stats.Agility:     115,
+		stats.Stamina:     169,
+		stats.Intellect:   32,
+		stats.Spirit:      60,
+		stats.AttackPower: 590,
+		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
+		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceUndead, Class: proto.Class_ClassWarrior}] = stats.Stats{
-		stats.Health:      4264,
-		stats.Strength:    144,
-		stats.Agility:     94,
-		stats.Stamina:     134,
-		stats.Intellect:   31,
-		stats.Spirit:      56,
-		stats.AttackPower: 190,
-		stats.MeleeCrit:   1.14 * core.CritRatingPerCritChance,
-		stats.Dodge:       0.75 * core.DodgeRatingPerDodgeChance,
+		stats.Health:      9541,
+		stats.Strength:    173,
+		stats.Agility:     111,
+		stats.Stamina:     160,
+		stats.Intellect:   34,
+		stats.Spirit:      64,
+		stats.AttackPower: 566,
+		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
+		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
 }
 

@@ -14,6 +14,7 @@ export interface MultiIconPickerConfig<ModObject> {
 	emptyColor: string,
 	numColumns: number,
 	label?: string,
+	categoryId?: ActionId,
 }
 
 // Icon-based UI for a dropdown with multiple icon pickers.
@@ -88,10 +89,18 @@ export class MultiIconPicker<ModObject> extends Component {
 
 		if (this.currentValue) {
 			this.dropdownRootElem.classList.add('active');
-			this.currentValue.fillAndSet(this.buttonElem, false, true);
+			if (this.config.categoryId != null) {
+				this.config.categoryId.fillAndSet(this.buttonElem, false, true);
+			} else {
+				this.currentValue.fillAndSet(this.buttonElem, false, true);
+			}
 		} else {
 			this.dropdownRootElem.classList.remove('active');
-			this.buttonElem.style.backgroundImage = '';
+			if (this.config.categoryId != null) {
+				this.config.categoryId.fillAndSet(this.buttonElem, false, true);
+			} else {
+				this.buttonElem.style.backgroundImage = '';
+			}
 			this.buttonElem.style.backgroundColor = this.config.emptyColor;
 			this.buttonElem.removeAttribute("href");
 		}

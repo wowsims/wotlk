@@ -11,9 +11,25 @@ import (
 func (rogue *Rogue) applyPoisons() {
 	rogue.applyDeadlyPoison()
 	rogue.applyInstantPoison()
+	rogue.applyWoundPoison()
 }
 
 var DeadlyPoisonActionID = core.ActionID{SpellID: 57973}
+
+func (rogue *Rogue) registerPoisonAuras() {
+	numTargets := rogue.Env.GetNumTargets()
+	for i := int32(0); i < numTargets; i++ {
+		target := rogue.Env.GetTargetUnit(i)
+		if rogue.Talents.SavageCombat > 0 {
+			rogue.savageCombatDebuffAuras = append(rogue.savageCombatDebuffAuras, core.SavageCombatAura(target, rogue.Talents.SavageCombat))
+		}
+		if rogue.Talents.MasterPoisoner > 0 {
+			masterPoisonerAura := core.MasterPoisonerDebuff(target, float64(rogue.Talents.MasterPoisoner))
+			masterPoisonerAura.Duration = core.NeverExpires
+			rogue.masterPoisonerDebuffAuras = append(rogue.masterPoisonerDebuffAuras, masterPoisonerAura)
+		}
+	}
+}
 
 func (rogue *Rogue) registerDeadlyPoisonSpell() {
 	rogue.DeadlyPoison = rogue.RegisterSpell(core.SpellConfig{
@@ -26,23 +42,27 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				target := spellEffect.Target
 				if spellEffect.Landed() {
-					dot := rogue.DeadlyPoisonDots[target.Index]
+					dot := rogue.deadlyPoisonDots[target.Index]
 					if dot.IsActive() {
 						if dot.GetStacks() == 5 {
-							if rogue.LastDeadlyPoisonProcMask.Matches(core.ProcMaskMeleeMH) {
+							if rogue.lastDeadlyPoisonProcMask.Matches(core.ProcMaskMeleeMH) {
 								switch rogue.Options.OhImbue {
 								case proto.Rogue_Options_DeadlyPoison:
 									dot.Refresh(sim)
 								case proto.Rogue_Options_InstantPoison:
 									rogue.InstantPoison[1].Cast(sim, target)
+								case proto.Rogue_Options_WoundPoison:
+									rogue.WoundPoison[1].Cast(sim, target)
 								}
 							}
-							if rogue.LastDeadlyPoisonProcMask.Matches(core.ProcMaskMeleeOH) {
+							if rogue.lastDeadlyPoisonProcMask.Matches(core.ProcMaskMeleeOH) {
 								switch rogue.Options.MhImbue {
 								case proto.Rogue_Options_DeadlyPoison:
 									dot.Refresh(sim)
 								case proto.Rogue_Options_InstantPoison:
 									rogue.InstantPoison[1].Cast(sim, target)
+								case proto.Rogue_Options_WoundPoison:
+									rogue.WoundPoison[1].Cast(sim, target)
 								}
 							}
 						}
@@ -53,13 +73,10 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 						dot.SetStacks(sim, 1)
 					}
 				}
-				rogue.LastDeadlyPoisonProcMask = core.ProcMaskEmpty
+				rogue.lastDeadlyPoisonProcMask = core.ProcMaskEmpty
 			},
 		}),
 	})
-	numTargets := rogue.Env.GetNumTargets()
-	savageCombatDebuffAuras := make([]*core.Aura, 0, numTargets)
-	masterPoisonerDebuffAuras := make([]*core.Aura, 0, numTargets)
 	deadlyPoisonDebuffAura := core.Aura{
 		Label:     "DeadlyPoison-" + strconv.Itoa(int(rogue.Index)),
 		ActionID:  DeadlyPoisonActionID,
@@ -67,18 +84,18 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 		Duration:  time.Second * 12,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			if rogue.Talents.SavageCombat > 0 {
-				savageCombatDebuffAuras[aura.Unit.Index].Activate(sim)
+				rogue.savageCombatDebuffAuras[aura.Unit.Index].Activate(sim)
 			}
 			if rogue.Talents.MasterPoisoner > 0 {
-				masterPoisonerDebuffAuras[aura.Unit.Index].Activate(sim)
+				rogue.masterPoisonerDebuffAuras[aura.Unit.Index].Activate(sim)
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			if rogue.Talents.SavageCombat > 0 {
-				savageCombatDebuffAuras[aura.Unit.Index].Deactivate(sim)
+				rogue.savageCombatDebuffAuras[aura.Unit.Index].Deactivate(sim)
 			}
 			if rogue.Talents.MasterPoisoner > 0 {
-				masterPoisonerDebuffAuras[aura.Unit.Index].Deactivate(sim)
+				rogue.masterPoisonerDebuffAuras[aura.Unit.Index].Deactivate(sim)
 			}
 		},
 	}
@@ -88,23 +105,16 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 		},
 		TargetSpellCoefficient: 1,
 	}
+	numTargets := rogue.Env.GetNumTargets()
 	for i := int32(0); i < numTargets; i++ {
 		target := rogue.Env.GetTargetUnit(i)
-		if rogue.Talents.SavageCombat > 0 {
-			savageCombatDebuffAuras = append(savageCombatDebuffAuras, core.SavageCombatAura(target, rogue.Talents.SavageCombat))
-		}
-		if rogue.Talents.MasterPoisoner > 0 {
-			masterPoisonerAura := core.MasterPoisonerDebuff(target, float64(rogue.Talents.MasterPoisoner))
-			masterPoisonerAura.Duration = core.NeverExpires
-			masterPoisonerDebuffAuras = append(masterPoisonerDebuffAuras, masterPoisonerAura)
-		}
 		dotAura := target.RegisterAura(deadlyPoisonDebuffAura)
 		dot := core.NewDot(core.Dot{
 			Spell:         rogue.DeadlyPoison,
 			Aura:          dotAura,
 			NumberOfTicks: 4,
 			TickLength:    time.Second * 3,
-			TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+			TickEffects: core.TickFuncApplyEffectsToUnit(target, core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				ProcMask: core.ProcMaskPeriodicDamage,
 				DamageMultiplier: 1 +
 					[]float64{0.0, 0.07, 0.14, 0.20}[rogue.Talents.VilePoisons],
@@ -122,12 +132,12 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 		}
 		// Would like to do this for the snapshotting but it also shots the aura
 		//dot.TickEffects = core.TickFuncSnapshot(target, deadlyPoisonTickEffect)
-		rogue.DeadlyPoisonDots = append(rogue.DeadlyPoisonDots, dot)
+		rogue.deadlyPoisonDots = append(rogue.deadlyPoisonDots, dot)
 	}
 }
 
 func (rogue *Rogue) procDeadlyPoison(sim *core.Simulation, spellEffect *core.SpellEffect) {
-	rogue.LastDeadlyPoisonProcMask = spellEffect.ProcMask
+	rogue.lastDeadlyPoisonProcMask = spellEffect.ProcMask
 	rogue.DeadlyPoison.Cast(sim, spellEffect.Target)
 }
 
@@ -157,15 +167,52 @@ func (rogue *Rogue) applyDeadlyPoison() {
 	})
 }
 
-type InstantPoisonProcSource int
+func (rogue *Rogue) GetWoundPoisonProcChance(mask core.ProcMask) float64 {
+	if mask.Matches(core.ProcMaskMeleeMH) && rogue.Options.MhImbue != proto.Rogue_Options_WoundPoison {
+		return 0.0
+	}
+	if mask.Matches(core.ProcMaskMeleeOH) && rogue.Options.OhImbue != proto.Rogue_Options_WoundPoison {
+		return 0.0
+	}
+	return 0.5
+
+}
+
+func (rogue *Rogue) applyWoundPoison() {
+	procMask := core.GetMeleeProcMaskForHands(
+		rogue.Options.MhImbue == proto.Rogue_Options_WoundPoison,
+		rogue.Options.OhImbue == proto.Rogue_Options_WoundPoison,
+	)
+	if procMask == core.ProcMaskUnknown {
+		return
+	}
+	rogue.RegisterAura(core.Aura{
+		Label:    "Wound Poison",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(procMask) {
+				return
+			}
+			if sim.RandomFloat("Wound Poison") > rogue.GetWoundPoisonProcChance(procMask) {
+				return
+			}
+			rogue.WoundPoison[0].Cast(sim, spellEffect.Target)
+		},
+	})
+}
+
+type PoisonProcSource int
 
 const (
-	NormalProc InstantPoisonProcSource = iota
+	NormalProc PoisonProcSource = iota
 	DeadlyProc
 	ShivProc
 )
 
-func (rogue *Rogue) makeInstantPoison(procSource InstantPoisonProcSource) *core.Spell {
+func (rogue *Rogue) makeInstantPoison(procSource PoisonProcSource) *core.Spell {
 	return rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 57968, Tag: int32(procSource)},
 		SpellSchool: core.SpellSchoolNature,
@@ -187,6 +234,68 @@ func (rogue *Rogue) makeInstantPoison(procSource InstantPoisonProcSource) *core.
 
 }
 
+func (rogue *Rogue) makeWoundPoison(procSource PoisonProcSource) *core.Spell {
+	return rogue.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 57975, Tag: int32(procSource)},
+		SpellSchool: core.SpellSchoolNature,
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+			ProcMask: core.ProcMaskEmpty,
+			DamageMultiplier: 1 +
+				[]float64{0.0, 0.07, 0.14, 0.20}[rogue.Talents.VilePoisons],
+			ThreatMultiplier: 1,
+			BaseDamage: core.BaseDamageConfig{
+				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+					return 231 + hitEffect.MeleeAttackPower(spell.Unit)*0.04
+				},
+				TargetSpellCoefficient: 1,
+			},
+			OutcomeApplier: rogue.OutcomeFuncMagicHitAndCrit(rogue.SpellCritMultiplier()),
+			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if !spellEffect.Landed() {
+					return
+				}
+				rogue.woundPoisonDebuffAuras[spellEffect.Target.Index].Activate(sim)
+			},
+		}),
+	})
+}
+
+var WoundPoisonActionID = core.ActionID{SpellID: 57975}
+
+func (rogue *Rogue) registerWoundPoisonSpell() {
+	woundPoisonDebuffAura := core.Aura{
+		Label:    "WoundPoison-" + strconv.Itoa(int(rogue.Index)),
+		ActionID: WoundPoisonActionID,
+		Duration: time.Second * 15,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			if rogue.Talents.SavageCombat > 0 {
+				rogue.savageCombatDebuffAuras[aura.Unit.Index].Activate(sim)
+			}
+			if rogue.Talents.MasterPoisoner > 0 {
+				rogue.masterPoisonerDebuffAuras[aura.Unit.Index].Activate(sim)
+			}
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			if rogue.Talents.SavageCombat > 0 {
+				rogue.savageCombatDebuffAuras[aura.Unit.Index].Deactivate(sim)
+			}
+			if rogue.Talents.MasterPoisoner > 0 {
+				rogue.masterPoisonerDebuffAuras[aura.Unit.Index].Deactivate(sim)
+			}
+		},
+	}
+	numTargets := rogue.Env.GetNumTargets()
+	for i := int32(0); i < numTargets; i++ {
+		target := rogue.Env.GetTargetUnit(i)
+		rogue.woundPoisonDebuffAuras = append(rogue.woundPoisonDebuffAuras, target.RegisterAura(woundPoisonDebuffAura))
+	}
+	rogue.WoundPoison = [3]*core.Spell{
+		rogue.makeWoundPoison(NormalProc),
+		rogue.makeWoundPoison(DeadlyProc),
+		rogue.makeWoundPoison(ShivProc),
+	}
+}
+
 func (rogue *Rogue) registerInstantPoisonSpell() {
 	rogue.InstantPoison = [3]*core.Spell{
 		rogue.makeInstantPoison(NormalProc),
@@ -202,7 +311,7 @@ func (rogue *Rogue) GetDeadlyPoisonProcChance(mask core.ProcMask) float64 {
 	if mask.Matches(core.ProcMaskMeleeOH) && rogue.Options.OhImbue != proto.Rogue_Options_DeadlyPoison {
 		return 0.0
 	}
-	return 0.3 + 0.04*float64(rogue.Talents.ImprovedPoisons) + rogue.DeadlyPoisonProcChanceBonus
+	return 0.3 + 0.04*float64(rogue.Talents.ImprovedPoisons) + rogue.deadlyPoisonProcChanceBonus
 }
 
 func (rogue *Rogue) UpdateInstantPoisonPPM(bonusChance float64) {
@@ -211,7 +320,7 @@ func (rogue *Rogue) UpdateInstantPoisonPPM(bonusChance float64) {
 		rogue.Options.OhImbue == proto.Rogue_Options_InstantPoison)
 
 	ppm := 8.57 * (1 + float64(rogue.Talents.ImprovedPoisons)*0.1 + bonusChance)
-	rogue.InstantPoisonPPMM = rogue.AutoAttacks.NewPPMManager(ppm, procMask)
+	rogue.instantPoisonPPMM = rogue.AutoAttacks.NewPPMManager(ppm, procMask)
 }
 
 func (rogue *Rogue) applyInstantPoison() {
@@ -233,7 +342,7 @@ func (rogue *Rogue) applyInstantPoison() {
 			if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(procMask) {
 				return
 			}
-			if rogue.InstantPoisonPPMM.Proc(sim, spellEffect.ProcMask, "Instant Poison") {
+			if rogue.instantPoisonPPMM.Proc(sim, spellEffect.ProcMask, "Instant Poison") {
 				rogue.InstantPoison[0].Cast(sim, spellEffect.Target)
 			}
 		},

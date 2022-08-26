@@ -45,6 +45,34 @@ func (generator *SingleDpsTestGenerator) GetTest(testIdx int) (string, *proto.Co
 	return generator.Name, nil, nil, generator.Request
 }
 
+type RotationCastsTestGenerator struct {
+	SpecOptions []SpecOptionsCombo
+	PartyBuffs  *proto.PartyBuffs
+	RaidBuffs   *proto.RaidBuffs
+	Debuffs     *proto.Debuffs
+	Player      *proto.Player
+	Encounter   *proto.Encounter
+	SimOptions  *proto.SimOptions
+}
+
+func (generator *RotationCastsTestGenerator) NumTests() int {
+	return len(generator.SpecOptions)
+}
+
+func (generator *RotationCastsTestGenerator) GetTest(testIdx int) (string, *proto.ComputeStatsRequest, *proto.StatWeightsRequest, *proto.RaidSimRequest) {
+	rsr := &proto.RaidSimRequest{
+		Raid: SinglePlayerRaidProto(
+			WithSpec(generator.Player, generator.SpecOptions[testIdx].SpecOptions),
+			generator.PartyBuffs,
+			generator.RaidBuffs,
+			generator.Debuffs,
+		),
+		Encounter:  generator.Encounter,
+		SimOptions: generator.SimOptions,
+	}
+	return generator.SpecOptions[testIdx].Label, nil, nil, rsr
+}
+
 type GearSetCombo struct {
 	Label   string
 	GearSet *proto.EquipmentSpec
@@ -563,5 +591,53 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 		},
 	})
 
+	return generator
+}
+
+func MakeDefaultBuffCombos(config CharacterSuiteConfig) []BuffsCombo {
+	return []BuffsCombo{
+		{
+			Label: "No Buffs",
+		},
+		{
+			Label:    "Full Buffs",
+			Raid:     config.RaidBuffs,
+			Party:    config.PartyBuffs,
+			Debuffs:  config.Debuffs,
+			Player:   config.PlayerBuffs,
+			Consumes: config.Consumes,
+		},
+	}
+}
+
+func RotationTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator {
+	allSpecOptions := append(config.OtherSpecOptions, config.SpecOptions)
+
+	defaultPlayer := &proto.Player{
+		Class:           config.Class,
+		Race:            config.Race,
+		Equipment:       config.GearSet.GearSet,
+		Consumes:        config.Consumes,
+		Buffs:           config.PlayerBuffs,
+		Glyphs:          config.Glyphs,
+		Profession1:     proto.Profession_Engineering,
+		InFrontOfTarget: config.InFrontOfTarget,
+	}
+
+	generator := &CombinedTestGenerator{
+		subgenerators: []SubGenerator{},
+	}
+	generator.subgenerators = append(generator.subgenerators, SubGenerator{
+		name: "Casts",
+		generator: &RotationCastsTestGenerator{
+			Player:      defaultPlayer,
+			PartyBuffs:  config.PartyBuffs,
+			RaidBuffs:   config.RaidBuffs,
+			Debuffs:     config.Debuffs,
+			SpecOptions: allSpecOptions,
+			Encounter:   MakeSingleTargetEncounter(5),
+			SimOptions:  AverageDefaultSimTestOptions,
+		},
+	})
 	return generator
 }

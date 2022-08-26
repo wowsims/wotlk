@@ -1,6 +1,7 @@
 package druid
 
 import (
+	"github.com/wowsims/wotlk/sim/common/wotlk"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -118,6 +119,75 @@ var ItemSetThunderheartHarness = core.NewItemSet(core.ItemSet{
 		},
 		4: func(agent core.Agent) {
 			// Implemented in swipe.go.
+		},
+	},
+})
+
+// T7 Balance
+var ItemSetDreamwalkerGarb = core.NewItemSet(core.ItemSet{
+	Name: "Dreamwalker Garb",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			//Your Insect Swarm deals an additional 10% damage.
+			// Implemented in insect_swarm.go.
+		},
+		4: func(agent core.Agent) {
+			// Your Wrath and Starfire spells gain an additional 5% critical strike chance.
+			// Implemented in spell files.
+		},
+	},
+})
+
+// T8 Balance
+var ItemSetNightsongGarb = core.NewItemSet(core.ItemSet{
+	Name: "Nightsong Garb",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Increases the bonus granted by Eclipse for Starfire and Wrath by 7%.
+			// Implemented in spell files.
+		},
+		4: func(agent core.Agent) {
+			// Each time your Insect Swarm deals damage, it has a chance to make your next Starfire cast within 10 sec instant.
+			// Implemented in spell files.
+		},
+	},
+})
+
+// T9 Balance Alliance
+var ItemSetMalfurionsRegalia = core.NewItemSet(core.ItemSet{
+	Name: "Malfurion's Regalia",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Your Moonfire ability now has a chance for its periodic damage to be critical strikes.
+		},
+		4: func(agent core.Agent) {
+			// Increases the damage done by your Starfire and Wrath spells by 4%.
+		},
+	},
+})
+
+// T9 Balance Horde
+var ItemSetRunetotemsRegalia = core.NewItemSet(core.ItemSet{
+	Name: "Runetotem's Regalia",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Your Moonfire ability now has a chance for its periodic damage to be critical strikes.
+		},
+		4: func(agent core.Agent) {
+			// Increases the damage done by your Starfire and Wrath spells by 4%.
+		},
+	},
+})
+
+// T10 Balance
+var ItemSetLasherweaveRegalia = core.NewItemSet(core.ItemSet{
+	Name: "Lasherweave Regalia",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// When you gain Clearcasting from your Omen of Clarity talent, you deal 15% additional Nature and Arcane damage for 6 sec.
+		},
+		4: func(agent core.Agent) {
+			// Your critical strikes from Starfire and Wrath cause the target to languish for an additional 7% of your spell's damage over 4 sec.
 		},
 	},
 })
@@ -277,4 +347,32 @@ func init() {
 		})
 	})
 
+	// This Idol is badly listed on Wowhead, not accessible from UI
+	core.NewItemEffect(50457, func(agent core.Agent) {
+		druid := agent.(DruidAgent).GetDruid()
+
+		actionID := core.ActionID{ItemID: 50457}
+
+		procAura := wotlk.MakeStackingAura(agent.GetCharacter(), wotlk.StackingProcAura{
+			Aura: core.Aura{
+				Label:     "Idol of the Lunar Eclipse proc",
+				ActionID:  actionID,
+				Duration:  time.Second * 15,
+				MaxStacks: 5,
+			},
+			BonusPerStack: stats.Stats{stats.SpellCrit: 44},
+		})
+
+		core.MakePermanent(druid.GetOrRegisterAura(core.Aura{
+			Label:    "Idol of the Lunar Eclipse",
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			},
+			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				procAura.Activate(sim)
+				procAura.AddStack(sim)
+			},
+		}))
+	})
 }

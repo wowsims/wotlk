@@ -84,6 +84,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,
+
 				// Default rotation settings.
 				rotation: Presets.AfflictionRotation,
 				// Default talents.
@@ -133,7 +134,10 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			],
 			excludeBuffDebuffInputs: [
 			],
-			// Inputs to include in the 'Other' section on the settings tab.
+			petConsumeInputs: [
+				IconInputs.SpicedMammothTreats,
+			],
+		// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
 					OtherInputs.DistanceFromTarget,
@@ -156,10 +160,10 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				gear: [
 					// Presets.Naked,
 					Presets.SWP_BIS,
-					Presets.P1_PreBiS,
+					Presets.P1_PreBiS_11,
 					Presets.P1_PreBiS_14,
-					Presets.P1_BiS,
-					Presets.P1_BiS_14,
+					Presets.P1_Preset_Affliction,
+					Presets.P1_Preset_Demo_Destro,
 				],
 			},
 		});

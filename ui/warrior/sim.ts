@@ -32,6 +32,9 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 			cssClass: 'warrior-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
+				"Bladestorm WWs damage are all dealt at casting time.",	
+				"Thunder Clap is not working.",
+				"Deep Wounds are dealing less damage than expected.",
 			],
 
 			// All stats for which EP should be calculated.
@@ -44,6 +47,7 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 				Stat.StatMeleeCrit,
 				Stat.StatMeleeHaste,
 				Stat.StatArmorPenetration,
+				Stat.StatArmor,
 			],
 			// Reference stat against which to calculate EP. I think all classes use either spell power or attack power.
 			epReferenceStat: Stat.StatAttackPower,
@@ -59,6 +63,7 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 				Stat.StatMeleeCrit,
 				Stat.StatMeleeHaste,
 				Stat.StatArmorPenetration,
+				Stat.StatArmor,
 			],
 
 			defaults: {
@@ -74,6 +79,7 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 					[Stat.StatMeleeCrit]: 1.83,
 					[Stat.StatMeleeHaste]: 2.07,
 					[Stat.StatArmorPenetration]: 0.5,
+					[Stat.StatArmor]: 0.027,
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,

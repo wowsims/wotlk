@@ -211,7 +211,7 @@ export const WarlockRotationConfig = {
 
 		{
 			type: 'enum' as const,
-			label: 'Rotation Mode',
+			label: 'Spell & Talent',
 			labelTooltip: 'Putting it on Automatic will UPDATE talents and spells to defaults.',
 			values: [
 				{name: "Manual", value: RotationPreset.Manual},

@@ -2,6 +2,7 @@ package rogue
 
 import (
 	"math"
+	"sort"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -24,605 +25,464 @@ func (rogue *Rogue) OnGCDReady(sim *core.Simulation) {
 		rogue.DoNothing()
 		return
 	}
-	rogue.rotation(sim)
-}
-
-func RemainingAuraDuration(sim *core.Simulation, aura *core.Aura) time.Duration {
-	if aura == nil {
-		return 0
-	}
-	return core.MaxDuration(0, aura.RemainingDuration(sim))
-}
-
-func (rogue *Rogue) ExpectedEnergyGain(sim *core.Simulation, duration time.Duration) float64 {
-	adrenalineRushDuration := time.Second * 0
-	if rogue.Talents.AdrenalineRush {
-		adrenalineRushDuration = core.MinDuration(core.MaxDuration(rogue.AdrenalineRushAura.RemainingDuration(sim), 0), duration)
-	}
-	offHandWeaponSpeed := rogue.AutoAttacks.OH.SwingSpeed
-	baseEnergyDuration := duration - adrenalineRushDuration
-	adrenalineRushEnergyPerSecond := 12.5
-	baseEnergyPerSecond := 10.0
-	guaranteedEnergy := (adrenalineRushDuration.Seconds() * adrenalineRushEnergyPerSecond) + (baseEnergyDuration.Seconds() * baseEnergyPerSecond)
-	combatPotencyEnergyPerSwing := float64(rogue.Talents.CombatPotency) * 3 * 0.2
-	expectedCombatPotencyEnergy := (duration.Seconds() / offHandWeaponSpeed) * combatPotencyEnergyPerSwing
-	return guaranteedEnergy + expectedCombatPotencyEnergy
-}
-
-func (rogue *Rogue) ExpectedComboPoints(sim *core.Simulation, duration time.Duration, builderEnergyCost float64, finisherEnergyCost float64) float64 {
-	energyGained := rogue.ExpectedEnergyGain(sim, duration)
-	availableEnergy := energyGained + rogue.CurrentEnergy() - finisherEnergyCost
-	currentComboPoints := float64(rogue.ComboPoints())
-	expectedComboPoints := currentComboPoints
-	availableDuration := duration
-	for availableDuration > 0 && ((currentComboPoints >= 4.5 && availableEnergy >= finisherEnergyCost) ||
-		(currentComboPoints < 4.5 && availableEnergy >= builderEnergyCost)) {
-		if currentComboPoints >= 4.5 {
-			currentComboPoints -= 4.4
-			availableEnergy -= finisherEnergyCost
-		} else {
-			currentComboPoints += 1
-			availableEnergy -= builderEnergyCost
-			expectedComboPoints += 1
-		}
-		availableDuration -= 1.0
-	}
-	return expectedComboPoints
-}
-
-func (rogue *Rogue) rotation(sim *core.Simulation) {
-	rogue.updatePlan(sim)
-	spell := rogue.CurrentPriority.GetSpell(sim, rogue)
-	if spell == nil && (rogue.CurrentPriority.IsBuilder || rogue.CurrentPriority.IsFinisher) {
-		panic("Builders and Finishers should always have a spell")
-	} else if spell == nil {
-		if rogue.CurrentPriority.IncrementIfNil {
-			rogue.CurrentPriority.CastCount += 1
-		}
-		rogue.CurrentPriority = rogue.CurrentPriority.Prev
-	} else {
-		castSucceeded := false
-		if rogue.CurrentPriority.IsFinisher {
-			// Pool energy?
-			if rogue.CurrentEnergy() < 100 && RemainingAuraDuration(sim, rogue.CurrentPriority.Aura) > 0 {
-				castSucceeded = false
-			} else {
-				castSucceeded = spell.Cast(sim, rogue.CurrentTarget)
-			}
-		} else {
-			castSucceeded = spell.Cast(sim, rogue.CurrentTarget)
-		}
-		if castSucceeded {
-			rogue.CurrentPriority.CastCount += 1
-			rogue.CurrentPriority = rogue.CurrentPriority.Prev
-		}
+	rogue.TryUseCooldowns(sim)
+	if rogue.IsWaitingForEnergy() {
+		rogue.DoNothing()
+		return
 	}
 	if rogue.GCD.IsReady(sim) {
-		rogue.DoNothing()
+		rogue.rotation(sim)
 	}
 }
 
-type RoguePriority struct {
-	Prev                 *RoguePriority
-	CastCount            int32
-	MaxCasts             int32
-	IncrementIfNil       bool
-	ComboPointsConsumed  float64
-	Index                int
-	MinimumComboPoints   float64
-	IsBuilder            bool
-	IsFinisher           bool
-	Label                string
-	Aura                 *core.Aura
-	EnergyCost           float64
-	ComboPointsGenerated float64
-	GetSpell             func(*core.Simulation, *Rogue) *core.Spell
+type rogueRotationItem struct {
+	ExpiresAt            time.Duration
+	MinimumBuildDuration time.Duration
+	MaximumBuildDuration time.Duration
+	PrioIndex            int
 }
 
-func (rogue *Rogue) SetMultiTargetPriorityList() {
-	index := 0
-	rogue.PriorityList = make([]RoguePriority, 0)
+type roguePriorityItem struct {
+	Aura               *core.Aura
+	CastCount          int32
+	EnergyCost         float64
+	GetDuration        func(*Rogue, int32) time.Duration
+	GetSpell           func(*Rogue, int32) *core.Spell
+	IsFiller           bool
+	MaximumComboPoints int32
+	MaxCasts           int32
+	MinimumComboPoints int32
+}
 
-	if rogue.Rotation.MultiTargetSliceFrequency != proto.Rogue_Rotation_Never {
+type shouldCastRotationItemResult int32
 
-		// Slice And Dice
-		sliceAndDice := RoguePriority{
-			Index:              index,
-			MinimumComboPoints: 1,
-			IsBuilder:          false,
-			IsFinisher:         true,
-			Label:              "Slice and Dice",
-			Aura:               rogue.SliceAndDiceAura,
-			EnergyCost:         rogue.SliceAndDice[1].DefaultCast.Cost,
-			GetSpell: func(s *core.Simulation, r *Rogue) *core.Spell {
-				comboPoints := rogue.ComboPoints()
-				if comboPoints < 1 {
-					return nil
-				}
-				return rogue.SliceAndDice[comboPoints]
-			},
-		}
-		if rogue.Rotation.MultiTargetSliceFrequency == proto.Rogue_Rotation_Once {
-			sliceAndDice.MaxCasts = 1
-			sliceAndDice.MinimumComboPoints = core.MaxFloat(1.0, float64(rogue.Rotation.MinimumComboPointsMultiTargetSlice))
-		}
-		rogue.PriorityList = append(rogue.PriorityList, sliceAndDice)
-		index += 1
+const (
+	ShouldNotCast shouldCastRotationItemResult = iota
+	ShouldBuild
+	ShouldCast
+	ShouldWait
+)
 
-		if rogue.Talents.Mutilate {
-			mutilate := RoguePriority{
-				MinimumComboPoints:   0,
-				IsBuilder:            true,
-				IsFinisher:           false,
-				Label:                "Mutilate",
-				ComboPointsGenerated: 2,
-				EnergyCost:           rogue.Mutilate.DefaultCast.Cost,
-				GetSpell: func(s *core.Simulation, r *Rogue) *core.Spell {
-					return rogue.Mutilate
-				},
+func (rogue *Rogue) energyToBuild(points int32) float64 {
+	costPerBuilder := rogue.Builder.DefaultCast.Cost
+	buildersNeeded := math.Ceil(float64(points) / float64(rogue.BuilderPoints))
+	return buildersNeeded * costPerBuilder
+}
+
+func (rogue *Rogue) timeToBuild(sim *core.Simulation, points int32, builderPoints int32, eps float64, finisherCost float64) time.Duration {
+	energyNeeded := rogue.energyToBuild(points) + finisherCost
+	secondsNeeded := energyNeeded / eps
+	globalsNeeded := math.Ceil(float64(points)/float64(builderPoints)) + 1
+	// Return greater of the time it takes to use the globals and the time it takes to build the energy
+	return core.MaxDuration(time.Second*time.Duration(secondsNeeded), time.Second*time.Duration(globalsNeeded))
+}
+
+func (rogue *Rogue) shouldCastNextRotationItem(sim *core.Simulation, eps float64) shouldCastRotationItemResult {
+	if len(rogue.rotationItems) < 1 {
+		panic("Empty rotation")
+	}
+	currentEnergy := rogue.CurrentEnergy()
+	comboPoints := rogue.ComboPoints()
+	currentTime := sim.CurrentTime
+	item := rogue.rotationItems[0]
+	prio := rogue.priorityItems[item.PrioIndex]
+	tte := item.ExpiresAt - currentTime
+	clippingThreshold := time.Second * 2
+	timeUntilNextGCD := rogue.GCD.TimeToReady(sim)
+
+	// Check to see if a higher prio item will expire
+	if len(rogue.rotationItems) > 0 {
+		timeElapsed := time.Second * 1
+		for _, nextItem := range rogue.rotationItems[1:] {
+			if nextItem.ExpiresAt-(currentTime+timeElapsed) <= 0 {
+				return ShouldNotCast
 			}
-			rogue.PriorityList = append(rogue.PriorityList, mutilate)
-			index += 1
+			timeElapsed += nextItem.MinimumBuildDuration
+		}
+	}
+
+	// Expires before next GCD
+	if tte <= timeUntilNextGCD {
+		if comboPoints >= prio.MinimumComboPoints && currentEnergy >= prio.EnergyCost {
+			return ShouldCast
+		} else if comboPoints < prio.MinimumComboPoints && currentEnergy >= rogue.Builder.DefaultCast.Cost {
+			return ShouldBuild
 		} else {
-			sinisterStrike := RoguePriority{
-				MinimumComboPoints:   0,
-				IsBuilder:            true,
-				IsFinisher:           false,
-				Label:                "Sinister Strike",
-				ComboPointsGenerated: 1,
-				EnergyCost:           rogue.SinisterStrike.DefaultCast.Cost,
-				GetSpell: func(s *core.Simulation, r *Rogue) *core.Spell {
-					return rogue.SinisterStrike
-				},
-			}
-			rogue.PriorityList = append(rogue.PriorityList, sinisterStrike)
-			index += 1
+			return ShouldWait
 		}
 	}
-	if rogue.Talents.HungerForBlood {
-		hungerForBlood := RoguePriority{
-			IsBuilder:  false,
-			IsFinisher: false,
-			Label:      "Hunger for Blood",
-			EnergyCost: rogue.HungerForBlood.DefaultCast.Cost,
-			Aura:       rogue.HungerForBloodAura,
-			GetSpell: func(s *core.Simulation, r *Rogue) *core.Spell {
-				return rogue.HungerForBlood
-			},
+	if comboPoints >= prio.MaximumComboPoints { // Don't need CP
+		// Cast
+		if tte <= clippingThreshold && currentEnergy >= prio.EnergyCost {
+			return ShouldCast
 		}
-		rogue.PriorityList = append(rogue.PriorityList, hungerForBlood)
-		index += 1
-	}
-
-	// Dummy thing to enable cooldowns
-	cooldownEnabler := RoguePriority{
-		Index:          index,
-		Label:          "Enable Cooldowns",
-		MaxCasts:       1,
-		IncrementIfNil: true,
-		GetSpell: func(s *core.Simulation, r *Rogue) *core.Spell {
-			if rogue.disabledMCDs != nil {
-				rogue.EnableAllCooldowns(rogue.disabledMCDs)
-				rogue.disabledMCDs = nil
+		// Pool energy
+		if tte <= clippingThreshold && currentEnergy < prio.EnergyCost {
+			return ShouldWait
+		}
+		// We have time to squeeze in another spell
+		if tte > item.MinimumBuildDuration {
+			// Find the first lower prio item that can be cast and use it
+			for lpi, lowerPrio := range rogue.priorityItems[item.PrioIndex+1:] {
+				if comboPoints > lowerPrio.MinimumComboPoints && currentEnergy > lowerPrio.EnergyCost && lowerPrio.MaxCasts == 0 {
+					rogue.rotationItems = append([]rogueRotationItem{
+						{ExpiresAt: currentTime, PrioIndex: lpi + item.PrioIndex + 1},
+					}, rogue.rotationItems...)
+					return ShouldCast
+				}
 			}
-			return nil
-		},
+		}
+		// Overcap CP with builder
+		if rogue.timeToBuild(sim, 1, rogue.BuilderPoints, eps, 0) <= tte && currentEnergy >= rogue.Builder.DefaultCast.Cost {
+			return ShouldBuild
+		}
+	} else if comboPoints < prio.MinimumComboPoints { // Need CP
+		if currentEnergy >= rogue.Builder.DefaultCast.Cost {
+			return ShouldBuild
+		} else {
+			return ShouldWait
+		}
+	} else { // TODO: Optionally build more CP
+		if currentEnergy >= prio.EnergyCost && tte < time.Second*1 {
+			return ShouldCast
+		} else if currentEnergy >= rogue.Builder.DefaultCast.Cost {
+			return ShouldBuild
+		} else {
+			return ShouldWait
+		}
 	}
-	rogue.PriorityList = append(rogue.PriorityList, cooldownEnabler)
-	index += 1
-
-	fanOfKnives := RoguePriority{
-		Label:      "Fan of Knives",
-		IsBuilder:  false,
-		IsFinisher: false,
-		EnergyCost: rogue.FanOfKnives.DefaultCast.Cost,
-		GetSpell: func(s *core.Simulation, r *Rogue) *core.Spell {
-			return rogue.FanOfKnives
-		},
-	}
-	rogue.PriorityList = append(rogue.PriorityList, fanOfKnives)
-	index += 1
+	return ShouldWait
 }
 
-func (rogue *Rogue) SetPriorityList(sim *core.Simulation) {
+func (rogue *Rogue) planRotation(sim *core.Simulation) []rogueRotationItem {
+	rotationItems := make([]rogueRotationItem, 0)
+	eps := rogue.getExpectedEnergyPerSecond()
+	for pi, prio := range rogue.priorityItems {
+		if prio.MaxCasts > 0 && prio.CastCount >= prio.MaxCasts {
+			continue
+		}
+		expiresAt := core.NeverExpires
+		maxCP := prio.MaximumComboPoints
+		for maxCP > 0 && prio.GetDuration(rogue, maxCP)+sim.CurrentTime > sim.Duration {
+			maxCP--
+		}
+		if prio.Aura != nil {
+			expiresAt = prio.Aura.ExpiresAt()
+		} else if prio.MaxCasts == 1 {
+			expiresAt = sim.CurrentTime
+		} else {
+			expiresAt = sim.CurrentTime
+		}
+		minimumBuildDuration := rogue.timeToBuild(sim, prio.MinimumComboPoints, rogue.BuilderPoints, eps, prio.EnergyCost)
+		maximumBuildDuration := rogue.timeToBuild(sim, maxCP, rogue.BuilderPoints, eps, prio.EnergyCost)
+		rotationItems = append(rotationItems, rogueRotationItem{
+			ExpiresAt:            expiresAt,
+			MaximumBuildDuration: maximumBuildDuration,
+			MinimumBuildDuration: minimumBuildDuration,
+			PrioIndex:            pi,
+		})
+	}
+
+	currentTime := sim.CurrentTime
+	comboPoints := rogue.ComboPoints()
+	currentEnergy := rogue.CurrentEnergy()
+
+	prioStack := make([]rogueRotationItem, 0)
+	for _, item := range rotationItems {
+		if item.ExpiresAt >= sim.Duration {
+			continue
+		}
+		prio := rogue.priorityItems[item.PrioIndex]
+		maxBuildAt := item.ExpiresAt - item.MaximumBuildDuration
+		if prio.Aura == nil {
+			timeValueOfResources := time.Duration((float64(comboPoints)*rogue.Builder.DefaultCast.Cost/float64(rogue.BuilderPoints) + currentEnergy) / eps)
+			maxBuildAt = currentTime - item.MaximumBuildDuration - timeValueOfResources
+		}
+		if currentTime < maxBuildAt {
+			// Put it on the to cast stack
+			prioStack = append(prioStack, item)
+			if prio.MinimumComboPoints > 0 {
+				comboPoints = 0
+			}
+			currentTime += item.MaximumBuildDuration
+		} else {
+			cpUsed := core.MaxInt32(0, prio.MinimumComboPoints-comboPoints)
+			energyUsed := core.MaxFloat(0, prio.EnergyCost-currentEnergy)
+			minBuildTime := rogue.timeToBuild(sim, cpUsed, rogue.BuilderPoints, eps, energyUsed)
+			if currentTime+minBuildTime <= item.ExpiresAt || !prio.IsFiller {
+				prioStack = append(prioStack, item)
+				currentTime = core.MaxDuration(item.ExpiresAt, currentTime+minBuildTime)
+				currentEnergy = 0
+				if prio.MinimumComboPoints > 0 {
+					comboPoints = 0
+				}
+			} else if len(prioStack) < 1 || (prio.Aura != nil && !prio.Aura.IsActive() && !prio.IsFiller) || prio.MaxCasts == 1 {
+				// Plan to cast it as soon as possible
+				prioStack = append(prioStack, item)
+				currentTime += item.MinimumBuildDuration
+				currentEnergy = 0
+				if prio.MinimumComboPoints > 0 {
+					comboPoints = 0
+				}
+			}
+		}
+	}
+
+	// Reverse
+	sort.Slice(prioStack, func(i, j int) bool {
+		return j < i
+	})
+
+	return prioStack
+}
+
+func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
+	rogue.Builder = rogue.SinisterStrike
+	rogue.BuilderPoints = 1
 	if rogue.Talents.Mutilate {
 		rogue.Builder = rogue.Mutilate
-	} else {
-		rogue.Builder = rogue.SinisterStrike
+		rogue.BuilderPoints = 2
 	}
-	if sim.GetNumTargets() > 3 {
-		rogue.SetMultiTargetPriorityList()
-	} else {
-		rogue.SetStandardPriorityList()
-	}
-}
+	isMultiTarget := sim.GetNumTargets() > 3
+	// Slice and Dice
+	rogue.priorityItems = make([]roguePriorityItem, 0)
 
-func (rogue *Rogue) SetStandardPriorityList() {
-	index := 0
-	rogue.PriorityList = make([]RoguePriority, 0)
-
-	// Slice And Dice
-	sliceAndDice := RoguePriority{
-		Index:              index,
+	sliceAndDice := roguePriorityItem{
 		MinimumComboPoints: 1,
-		IsBuilder:          false,
-		IsFinisher:         true,
-		Label:              "Slice and Dice",
+		MaximumComboPoints: 5,
 		Aura:               rogue.SliceAndDiceAura,
 		EnergyCost:         rogue.SliceAndDice[1].DefaultCast.Cost,
-		GetSpell: func(s *core.Simulation, r *Rogue) *core.Spell {
-			comboPoints := rogue.ComboPoints()
-			if comboPoints < 1 {
-				return nil
-			}
-			return rogue.SliceAndDice[comboPoints]
+		GetDuration: func(r *Rogue, cp int32) time.Duration {
+			return rogue.sliceAndDiceDurations[cp]
+		},
+		GetSpell: func(r *Rogue, cp int32) *core.Spell {
+			return rogue.SliceAndDice[cp]
 		},
 	}
-	rogue.PriorityList = append(rogue.PriorityList, sliceAndDice)
-	index += 1
+	if isMultiTarget {
+		if rogue.Rotation.MultiTargetSliceFrequency != proto.Rogue_Rotation_Never {
+			sliceAndDice.MinimumComboPoints = rogue.Rotation.MinimumComboPointsMultiTargetSlice
+			if rogue.Rotation.MultiTargetSliceFrequency == proto.Rogue_Rotation_Once {
+				sliceAndDice.MaxCasts = 1
+			}
+			rogue.priorityItems = append(rogue.priorityItems, sliceAndDice)
+		}
+	} else {
+		rogue.priorityItems = append(rogue.priorityItems, sliceAndDice)
+	}
 
 	// Expose Armor
-	exposeArmor := RoguePriority{
-		MinimumComboPoints: 1,
-		IsBuilder:          false,
-		IsFinisher:         true,
-		Label:              "Expose Armor",
-		Aura:               rogue.ExposeArmorAura,
-		EnergyCost:         rogue.ExposeArmor[1].DefaultCast.Cost,
-		GetSpell: func(s *core.Simulation, r *Rogue) *core.Spell {
-			comboPoints := rogue.ComboPoints()
-			if comboPoints < 1 {
-				return nil
-			}
-			return rogue.ExposeArmor[comboPoints]
-		},
-	}
-	if rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Maintain {
-		exposeArmor.Index = index
-		rogue.PriorityList = append(rogue.PriorityList, exposeArmor)
-		index += 1
-	} else if rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Once {
-		exposeArmor.Index = index
-		exposeArmor.MaxCasts = 1
-		exposeArmor.MinimumComboPoints = float64(rogue.Rotation.MinimumComboPointsExposeArmor)
-		rogue.PriorityList = append(rogue.PriorityList, exposeArmor)
-		index += 1
-	}
-
-	if rogue.Talents.HungerForBlood {
-		hungerForBlood := RoguePriority{
-			IsBuilder:  false,
-			IsFinisher: false,
-			Label:      "Hunger for Blood",
-			EnergyCost: rogue.HungerForBlood.DefaultCast.Cost,
-			Aura:       rogue.HungerForBloodAura,
-			GetSpell: func(s *core.Simulation, r *Rogue) *core.Spell {
-				return rogue.HungerForBlood
-			},
+	if rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Maintain ||
+		rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Once {
+		minPoints := int32(1)
+		maxCasts := int32(0)
+		if rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Once {
+			minPoints = rogue.Rotation.MinimumComboPointsExposeArmor
+			maxCasts = 1
 		}
-		rogue.PriorityList = append(rogue.PriorityList, hungerForBlood)
-		index += 1
+		rogue.priorityItems = append(rogue.priorityItems, roguePriorityItem{
+			MaxCasts:           maxCasts,
+			MaximumComboPoints: 5,
+			MinimumComboPoints: minPoints,
+			Aura:               rogue.ExposeArmorAura,
+			EnergyCost:         rogue.ExposeArmor[1].DefaultCast.Cost,
+			GetDuration: func(r *Rogue, cp int32) time.Duration {
+				return rogue.exposeArmorDurations[cp]
+			},
+			GetSpell: func(r *Rogue, cp int32) *core.Spell {
+				return rogue.ExposeArmor[cp]
+			},
+		})
 	}
 
-	// Dummy thing to enable cooldowns
-	cooldownEnabler := RoguePriority{
-		Index:          index,
-		Label:          "Enable Cooldowns",
-		MaxCasts:       1,
-		IncrementIfNil: true,
-		GetSpell: func(s *core.Simulation, r *Rogue) *core.Spell {
-			if rogue.disabledMCDs != nil {
-				rogue.EnableAllCooldowns(rogue.disabledMCDs)
-				rogue.disabledMCDs = nil
+	// Hunger for Blood
+	if rogue.Talents.HungerForBlood {
+		rogue.priorityItems = append(rogue.priorityItems, roguePriorityItem{
+			MaximumComboPoints: 0,
+			Aura:               rogue.HungerForBloodAura,
+			EnergyCost:         rogue.HungerForBlood.DefaultCast.Cost,
+			GetDuration: func(r *Rogue, cp int32) time.Duration {
+				return rogue.HungerForBloodAura.Duration
+			},
+			GetSpell: func(r *Rogue, cp int32) *core.Spell {
+				return r.HungerForBlood
+			},
+		})
+	}
+
+	// Dummy priority to enable CDs
+	rogue.priorityItems = append(rogue.priorityItems, roguePriorityItem{
+		MaxCasts:           1,
+		MaximumComboPoints: 0,
+		GetDuration: func(r *Rogue, cp int32) time.Duration {
+			return 0
+		},
+		GetSpell: func(r *Rogue, cp int32) *core.Spell {
+			if r.disabledMCDs != nil {
+				r.EnableAllCooldowns(r.disabledMCDs)
+				r.disabledMCDs = nil
 			}
 			return nil
 		},
-	}
-	rogue.PriorityList = append(rogue.PriorityList, cooldownEnabler)
-	index += 1
+	})
 
-	rupture := RoguePriority{
+	// Rupture
+	rupture := roguePriorityItem{
 		MinimumComboPoints: 3,
-		IsBuilder:          false,
-		IsFinisher:         true,
-		Label:              "Rupture",
-		Aura:               rogue.RuptureDot.Aura,
+		MaximumComboPoints: 5,
+		Aura:               rogue.ruptureDot.Aura,
 		EnergyCost:         rogue.Rupture[1].DefaultCast.Cost,
-		GetSpell: func(s *core.Simulation, r *Rogue) *core.Spell {
-			comboPoints := rogue.ComboPoints()
-			if comboPoints < 1 {
-				return nil
-			}
-			return rogue.Rupture[comboPoints]
+		GetDuration: func(r *Rogue, cp int32) time.Duration {
+			return r.RuptureDuration(cp)
+		},
+		GetSpell: func(r *Rogue, cp int32) *core.Spell {
+			return rogue.Rupture[cp]
 		},
 	}
 
-	eviscerate := RoguePriority{
-		MinimumComboPoints: 3,
-		IsBuilder:          false,
-		IsFinisher:         true,
-		Label:              "Eviscerate",
+	// Eviscerate
+	eviscerate := roguePriorityItem{
+		MinimumComboPoints: 1,
+		MaximumComboPoints: 5,
 		EnergyCost:         rogue.Eviscerate[1].DefaultCast.Cost,
-		GetSpell: func(s *core.Simulation, r *Rogue) *core.Spell {
-			comboPoints := rogue.ComboPoints()
-			if comboPoints < 1 {
-				return nil
-			}
-			return rogue.Eviscerate[comboPoints]
+		GetDuration: func(r *Rogue, cp int32) time.Duration {
+			return 0
+		},
+		GetSpell: func(r *Rogue, cp int32) *core.Spell {
+			return rogue.Eviscerate[cp]
 		},
 	}
 
-	if rogue.Talents.Mutilate {
-		envenom := RoguePriority{
-			MinimumComboPoints: 3,
-			IsBuilder:          false,
-			IsFinisher:         true,
-			Label:              "Envenom",
+	if isMultiTarget {
+		rogue.priorityItems = append(rogue.priorityItems, roguePriorityItem{
+			MaximumComboPoints: 0,
+			EnergyCost:         rogue.FanOfKnives.DefaultCast.Cost,
+			GetSpell: func(r *Rogue, i int32) *core.Spell {
+				return r.FanOfKnives
+			},
+		})
+
+	} else if rogue.Talents.MasterPoisoner > 0 || rogue.Talents.CutToTheChase > 0 {
+		// Envenom
+		envenom := roguePriorityItem{
+			MinimumComboPoints: 1,
+			MaximumComboPoints: 5,
 			Aura:               rogue.EnvenomAura,
 			EnergyCost:         rogue.Envenom[1].DefaultCast.Cost,
-			GetSpell: func(s *core.Simulation, r *Rogue) *core.Spell {
-				comboPoints := rogue.ComboPoints()
-				if comboPoints < 1 {
-					return nil
-				}
-				return rogue.Envenom[comboPoints]
+			GetDuration: func(r *Rogue, cp int32) time.Duration {
+				return r.EnvenomAura.Duration
+			},
+			GetSpell: func(r *Rogue, cp int32) *core.Spell {
+				return rogue.Envenom[cp]
 			},
 		}
 		switch rogue.Rotation.AssassinationFinisherPriority {
 		case proto.Rogue_Rotation_EnvenomRupture:
-			envenom.Index = index
-			envenom.MinimumComboPoints = float64(rogue.Rotation.MinimumComboPointsPrimaryFinisher)
-			rogue.PriorityList = append(rogue.PriorityList, envenom)
-			index += 1
-			rupture.Index = index
-			rupture.MinimumComboPoints = float64(rogue.Rotation.MinimumComboPointsSecondaryFinisher)
-			rogue.PriorityList = append(rogue.PriorityList, rupture)
-			index += 1
+			envenom.MinimumComboPoints = core.MaxInt32(1, rogue.Rotation.MinimumComboPointsPrimaryFinisher)
+			rogue.priorityItems = append(rogue.priorityItems, envenom)
+			rupture.MinimumComboPoints = rogue.Rotation.MinimumComboPointsSecondaryFinisher
+			rupture.IsFiller = true
+			if rupture.MinimumComboPoints > 0 && rupture.MinimumComboPoints <= 5 {
+				rogue.priorityItems = append(rogue.priorityItems, rupture)
+			}
 		case proto.Rogue_Rotation_RuptureEnvenom:
-			rupture.Index = index
-			rupture.MinimumComboPoints = float64(rogue.Rotation.MinimumComboPointsPrimaryFinisher)
-			rogue.PriorityList = append(rogue.PriorityList, rupture)
-			index += 1
-			envenom.Index = index
-			envenom.MinimumComboPoints = float64(rogue.Rotation.MinimumComboPointsSecondaryFinisher)
-			rogue.PriorityList = append(rogue.PriorityList, envenom)
-			index += 1
+			rupture.MinimumComboPoints = core.MaxInt32(1, rogue.Rotation.MinimumComboPointsPrimaryFinisher)
+			rogue.priorityItems = append(rogue.priorityItems, rupture)
+			envenom.MinimumComboPoints = rogue.Rotation.MinimumComboPointsSecondaryFinisher
+			envenom.IsFiller = true
+			if envenom.MinimumComboPoints > 0 && envenom.MinimumComboPoints <= 5 {
+				rogue.priorityItems = append(rogue.priorityItems, envenom)
+			}
 		}
+		eviscerate.IsFiller = true
+		eviscerate.MinimumComboPoints = 1
+		rogue.priorityItems = append(rogue.priorityItems, eviscerate)
 	} else {
 		switch rogue.Rotation.CombatFinisherPriority {
 		case proto.Rogue_Rotation_RuptureEviscerate:
-			rupture.Index = index
-			rupture.MinimumComboPoints = float64(rogue.Rotation.MinimumComboPointsPrimaryFinisher)
-			rogue.PriorityList = append(rogue.PriorityList, rupture)
-			index += 1
-			eviscerate.Index = index
-			eviscerate.MinimumComboPoints = float64(rogue.Rotation.MinimumComboPointsSecondaryFinisher)
-			rogue.PriorityList = append(rogue.PriorityList, eviscerate)
-			index += 1
+			rupture.MinimumComboPoints = core.MaxInt32(1, rogue.Rotation.MinimumComboPointsPrimaryFinisher)
+			rogue.priorityItems = append(rogue.priorityItems, rupture)
+			eviscerate.MinimumComboPoints = core.MaxInt32(1, rogue.Rotation.MinimumComboPointsSecondaryFinisher)
+			eviscerate.IsFiller = true
+			rogue.priorityItems = append(rogue.priorityItems, eviscerate)
 		case proto.Rogue_Rotation_EviscerateRupture:
-			eviscerate.Index = index
-			eviscerate.MinimumComboPoints = float64(rogue.Rotation.MinimumComboPointsPrimaryFinisher)
-			rogue.PriorityList = append(rogue.PriorityList, eviscerate)
-			index += 1
-			rupture.Index = index
-			rupture.MinimumComboPoints = float64(rogue.Rotation.MinimumComboPointsSecondaryFinisher)
-			rogue.PriorityList = append(rogue.PriorityList, rupture)
-			index += 1
+			eviscerate.MinimumComboPoints = core.MaxInt32(1, rogue.Rotation.MinimumComboPointsPrimaryFinisher)
+			rogue.priorityItems = append(rogue.priorityItems, eviscerate)
+			rupture.MinimumComboPoints = rogue.Rotation.MinimumComboPointsSecondaryFinisher
+			rupture.IsFiller = true
+			if rupture.MinimumComboPoints > 0 && rupture.MinimumComboPoints <= 5 {
+				rogue.priorityItems = append(rogue.priorityItems, rupture)
+			}
 		}
 	}
-
-	if rogue.Talents.Mutilate {
-		mutilate := RoguePriority{
-			MinimumComboPoints:   0,
-			IsBuilder:            true,
-			IsFinisher:           false,
-			Label:                "Mutilate",
-			ComboPointsGenerated: 2,
-			EnergyCost:           rogue.Mutilate.DefaultCast.Cost,
-			GetSpell: func(s *core.Simulation, r *Rogue) *core.Spell {
-				return rogue.Mutilate
-			},
-		}
-		rogue.PriorityList = append(rogue.PriorityList, mutilate)
-		index += 1
-	} else {
-		sinisterStrike := RoguePriority{
-			MinimumComboPoints:   0,
-			IsBuilder:            true,
-			IsFinisher:           false,
-			Label:                "Sinister Strike",
-			ComboPointsGenerated: 1,
-			EnergyCost:           rogue.SinisterStrike.DefaultCast.Cost,
-			GetSpell: func(s *core.Simulation, r *Rogue) *core.Spell {
-				return rogue.SinisterStrike
-			},
-		}
-		rogue.PriorityList = append(rogue.PriorityList, sinisterStrike)
-		index += 1
-	}
+	rogue.rotationItems = rogue.planRotation(sim)
 }
 
-func (rogue *Rogue) MinimalComboPointsNeededForPlan() float64 {
-	prio := rogue.CurrentPriority
-	if prio == nil {
-		return 0
+func (rogue *Rogue) rotation(sim *core.Simulation) {
+	if len(rogue.rotationItems) < 1 {
+		panic("Rotation is empty")
 	}
-	cpNeeded := prio.MinimumComboPoints
-	for prio.Prev != nil {
-		prio = prio.Prev
-		cpNeeded += prio.MinimumComboPoints
-	}
-	return cpNeeded
-}
-
-func (rogue *Rogue) IdealComboPointsNeededForPlan() float64 {
-	prio := rogue.CurrentPriority
-	if prio == nil {
-		return 0
-	}
-	cpNeeded := prio.ComboPointsConsumed
-	for prio.Prev != nil {
-		prio = prio.Prev
-		cpNeeded += prio.ComboPointsConsumed
-	}
-	return cpNeeded
-}
-
-func (rogue *Rogue) DurationOfCurrentPlan(sim *core.Simulation) time.Duration {
-	prio := rogue.CurrentPriority
-	if prio == nil {
-		return 0
-	}
-	for prio.Prev != nil {
-		prio = prio.Prev
-	}
-	return RemainingAuraDuration(sim, prio.Aura)
-}
-
-func (rogue *Rogue) DurationUntilNextExpiration(sim *core.Simulation) (bool, time.Duration) {
-	prio := rogue.CurrentPriority
-	hasExpiration := false
-	duration := time.Second * math.MaxInt32
-	for prio != nil {
-		if prio.Aura != nil {
-			hasExpiration = true
-			duration = core.MinDuration(duration, RemainingAuraDuration(sim, prio.Aura))
-		}
-		prio = prio.Prev
-	}
-	return hasExpiration, duration
-}
-
-func (rogue *Rogue) verifyPlan(sim *core.Simulation) (bool, float64) {
-	prio := rogue.CurrentPriority
-	pointsSpent := 0.0
-	error := 0.0
-	for prio != nil {
-		if prio.Aura != nil {
-			pointsNeeded := prio.ComboPointsConsumed + pointsSpent
-			neededBy := RemainingAuraDuration(sim, prio.Aura)
-			expectedPoints := rogue.ExpectedComboPoints(sim, neededBy, rogue.Builder.DefaultCast.Cost, prio.EnergyCost)
-			if expectedPoints < pointsNeeded {
-				delta := pointsNeeded - expectedPoints
-				if delta > prio.ComboPointsConsumed-prio.MinimumComboPoints {
-					return false, error
-				}
-				// We can reduce consumed points to make up the difference
-				pointsNeeded -= delta
-				error += delta
+	eps := rogue.getExpectedEnergyPerSecond()
+	shouldCast := rogue.shouldCastNextRotationItem(sim, eps)
+	item := rogue.rotationItems[0]
+	prio := rogue.priorityItems[item.PrioIndex]
+	switch shouldCast {
+	case ShouldNotCast:
+		rogue.rotationItems = rogue.rotationItems[1:]
+		rogue.rotation(sim)
+	case ShouldBuild:
+		spell := rogue.Builder
+		if spell == nil || spell.Cast(sim, rogue.CurrentTarget) {
+			if rogue.GCD.IsReady(sim) {
+				rogue.rotation(sim)
 			}
-			pointsSpent += pointsNeeded
+		} else {
+			panic("Unexpected builder cast failure")
 		}
-		prio = prio.Prev
-	}
-	return true, error
-}
-
-func (rogue *Rogue) HasPriorityWithInactiveAura(sim *core.Simulation) bool {
-	prio := rogue.CurrentPriority
-	for prio != nil {
-		if prio.Aura != nil && !prio.Aura.IsActive() {
-			return true
+	case ShouldCast:
+		spell := prio.GetSpell(rogue, rogue.ComboPoints())
+		if spell == nil || spell.Cast(sim, rogue.CurrentTarget) {
+			rogue.priorityItems[item.PrioIndex].CastCount += 1
+			rogue.rotationItems = rogue.planRotation(sim)
+			if rogue.GCD.IsReady(sim) {
+				rogue.rotation(sim)
+			}
+		} else {
+			panic("Unexpected cast failure")
 		}
-		prio = prio.Prev
-	}
-	return false
-}
-
-func (rogue *Rogue) updatePlan(sim *core.Simulation) {
-	currentIndex := 0
-	builderEnergyCost := rogue.SinisterStrike.DefaultCast.Cost
-	if rogue.Talents.Mutilate {
-		builderEnergyCost = rogue.Mutilate.DefaultCast.Cost
-	}
-
-	// Verify current plan
-	if rogue.CurrentPriority != nil {
-		validPlan, pointDelta := rogue.verifyPlan(sim)
-		if !validPlan {
-			rogue.CurrentPriority = nil
-		} else if pointDelta > 0 {
-			if rogue.CurrentPriority.ComboPointsConsumed-pointDelta >= rogue.CurrentPriority.MinimumComboPoints {
-				rogue.CurrentPriority.ComboPointsConsumed -= pointDelta
-			} else {
-				rogue.CurrentPriority = nil
+	case ShouldWait:
+		desiredEnergy := 100.0
+		if rogue.ComboPoints() == 5 {
+			if rogue.CurrentEnergy() >= 100 {
+				panic("Rotation is capped on energy and cp")
+			}
+			desiredEnergy = prio.EnergyCost
+		} else {
+			if rogue.CurrentEnergy() < prio.EnergyCost && rogue.ComboPoints() >= prio.MinimumComboPoints {
+				desiredEnergy = prio.EnergyCost
+			} else if rogue.ComboPoints() < 5 {
+				desiredEnergy = rogue.Builder.DefaultCast.Cost
 			}
 		}
-		if rogue.CurrentPriority != nil && rogue.CurrentPriority.IsBuilder {
-			return
+		cdAvailableTime := time.Second * 10
+		if sim.CurrentTime > cdAvailableTime {
+			cdAvailableTime = core.NeverExpires
 		}
-	}
-	if rogue.CurrentPriority != nil {
-		currentIndex = rogue.CurrentPriority.Index + 1
-	}
-
-	// Add new priorities
-	freezeFinishers := false
-	for nextIndex, prio := range rogue.PriorityList[currentIndex:] {
-		prioIndex := currentIndex + nextIndex
-
-		// Filter out cast-limited priorities
-		if prio.MaxCasts > 0 && prio.CastCount >= prio.MaxCasts {
-			continue
-		}
-		if prio.IsFinisher && !freezeFinishers {
-			if rogue.HasPriorityWithInactiveAura(sim) {
-				freezeFinishers = true
-				continue
-			}
-			expectedPoints := 0.0
-			idealConsumedPoints := 0.0
-			minimalConsumedPoints := 0.0
-			energyCost := prio.EnergyCost
-			if rogue.CurrentPriority != nil {
-				minimalConsumedPoints = rogue.MinimalComboPointsNeededForPlan()
-				idealConsumedPoints = rogue.IdealComboPointsNeededForPlan()
-				expectedPoints = rogue.ExpectedComboPoints(sim, rogue.DurationOfCurrentPlan(sim), builderEnergyCost, energyCost)
-			} else {
-				expectedPoints = rogue.ExpectedComboPoints(sim, RemainingAuraDuration(sim, prio.Aura), builderEnergyCost, energyCost)
-			}
-			hasInactiveAura := prio.Aura != nil && !prio.Aura.IsActive()
-			canPrioritizeIdeal := expectedPoints >= (idealConsumedPoints+prio.MinimumComboPoints) && (prio.Aura == nil || prio.Aura.IsActive())
-			shouldPrioritize := expectedPoints >= (minimalConsumedPoints+prio.MinimumComboPoints) && hasInactiveAura
-			if rogue.CurrentPriority == nil || canPrioritizeIdeal || shouldPrioritize {
-				nextPrio := &rogue.PriorityList[prioIndex]
-				nextPrio.Prev = rogue.CurrentPriority
-				pointsToUse := 0.0
-				if canPrioritizeIdeal {
-					pointsToUse = core.MinFloat(expectedPoints-idealConsumedPoints, 5)
-				} else {
-					pointsToUse = core.MaxFloat(prio.MinimumComboPoints, float64(rogue.ComboPoints()))
-				}
-				nextPrio.ComboPointsConsumed = pointsToUse
-				if nextPrio.ComboPointsConsumed <= 0 {
-					panic("Consumed points of finishers should always be greater than 0")
-				}
-				rogue.CurrentPriority = nextPrio
-			} else {
-				freezeFinishers = true
+		nextExpiration := cdAvailableTime
+		for _, otherItem := range rogue.rotationItems {
+			if otherItem.ExpiresAt < nextExpiration {
+				nextExpiration = otherItem.ExpiresAt
 			}
 		}
-		if !prio.IsBuilder && !prio.IsFinisher && (rogue.CurrentPriority == nil || rogue.CurrentPriority.Aura.IsActive()) {
-			// Hunger for Blood
-			if prio.Aura != nil && !prio.Aura.IsActive() {
-				nextPrio := &rogue.PriorityList[prioIndex]
-				nextPrio.Prev = rogue.CurrentPriority
-				rogue.CurrentPriority = nextPrio
-			} else if prio.Aura == nil {
-				nextPrio := &rogue.PriorityList[prioIndex]
-				nextPrio.Prev = rogue.CurrentPriority
-				rogue.CurrentPriority = nextPrio
-			}
-		}
-		if prio.IsBuilder {
-			if rogue.CurrentPriority == nil || !rogue.CurrentPriority.IsFinisher {
-				continue
-			}
-			if float64(rogue.ComboPoints()) < core.MinFloat(5, rogue.CurrentPriority.ComboPointsConsumed) {
-				nextPrio := &rogue.PriorityList[prioIndex]
-				nextPrio.Prev = rogue.CurrentPriority
-				rogue.CurrentPriority = nextPrio
-			}
+		neededEnergy := desiredEnergy - rogue.CurrentEnergy()
+		energyAvailableTime := time.Second*time.Duration(neededEnergy/eps) + 1*time.Second
+		energyAt := sim.CurrentTime + energyAvailableTime
+		if energyAt < nextExpiration {
+			rogue.WaitForEnergy(sim, desiredEnergy)
+		} else if nextExpiration > sim.CurrentTime {
+			rogue.WaitUntil(sim, nextExpiration)
+		} else {
+			rogue.DoNothing()
 		}
 	}
 }

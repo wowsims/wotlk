@@ -100,27 +100,11 @@ func (pet *Pet) addOwnerStats(sim *Simulation, addedStats stats.Stats) {
 		return
 	}
 	inheritedChange := pet.currentStatInheritance(addedStats)
+	pet.inheritedStats = pet.inheritedStats.Add(inheritedChange)
 	pet.AddStatsDynamic(sim, inheritedChange)
 }
-func (pet *Pet) addOwnerStat(sim *Simulation, stat stats.Stat, addedAmount float64) {
-	// Temporary pets dont update stats after summon
-	if pet.isGuardian {
-		return
-	}
-	s := stats.Stats{}
-	s[stat] = addedAmount
-	pet.addOwnerStats(sim, s)
-}
 
-// This needs to be called after owner stats are finalized so we can inherit the
-// final values.
 func (pet *Pet) Finalize() {
-	// Temporary pets should snapshot their stats when summoned and not at start
-	if !pet.isGuardian {
-		pet.inheritedStats = pet.statInheritance(pet.Owner.GetStats())
-		pet.AddStats(pet.inheritedStats)
-		pet.currentStatInheritance = pet.statInheritance
-	}
 	pet.Character.Finalize(nil)
 }
 
@@ -170,12 +154,9 @@ func (pet *Pet) Enable(sim *Simulation, petAgent PetAgent) {
 		pet.reset(sim, petAgent)
 	}
 
-	// Inherit stats on summon for temporary pets
-	if pet.isGuardian {
-		pet.inheritedStats = pet.statInheritance(pet.Owner.GetStats())
-		pet.AddStatsDynamic(sim, pet.inheritedStats)
-		pet.currentStatInheritance = pet.statInheritance
-	}
+	pet.inheritedStats = pet.statInheritance(pet.Owner.GetStats())
+	pet.AddStatsDynamic(sim, pet.inheritedStats)
+	pet.currentStatInheritance = pet.statInheritance
 
 	pet.SetGCDTimer(sim, sim.CurrentTime)
 	pet.AutoAttacks.EnableAutoSwing(sim)
@@ -187,7 +168,8 @@ func (pet *Pet) Enable(sim *Simulation, petAgent PetAgent) {
 	}
 
 	if sim.Log != nil {
-		pet.Log(sim, pet.GetStats().String())
+		pet.Log(sim, "Pet stats: %s", pet.GetStats())
+		pet.Log(sim, "Pet inherited stats: %s", pet.ApplyStatDependencies(pet.inheritedStats))
 		pet.Log(sim, "Pet summoned")
 	}
 }

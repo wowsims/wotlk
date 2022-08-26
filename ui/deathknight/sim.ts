@@ -105,6 +105,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 					stoneskinTotem: TristateEffect.TristateEffectImproved,
 					moonkinAura: TristateEffect.TristateEffectRegular,
 					wrathOfAirTotem: true,
+					powerWordFortitude: TristateEffect.TristateEffectImproved, 
 				}),
 				partyBuffs: PartyBuffs.create({
 					heroicPresence: false,
@@ -135,9 +136,9 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
 				IconInputs.SpellDamageDebuff,
+				IconInputs.StaminaBuff,
 			],
 			excludeBuffDebuffInputs: [
-				IconInputs.StaminaBuff,
 				IconInputs.AttackPowerDebuff,
 				IconInputs.DamageReductionPercentBuff,
 				IconInputs.MeleeAttackSpeedDebuff,

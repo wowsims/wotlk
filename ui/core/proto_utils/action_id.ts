@@ -221,6 +221,7 @@ export class ActionId {
                 if (this.tag) name += ` (${this.tag} CP)`;
                 break;
             case 'Instant Poison IX':
+            case 'Wound Poison VII':
                 if (this.tag == 1) {
                     name += ' (Deadly)'
                 } else if (this.tag == 2) {
@@ -242,7 +243,11 @@ export class ActionId {
                 break;
             case 'Chain Lightning':
             case 'Lightning Bolt':
-                if (this.tag) name += ' (LO)';
+                if (this.tag == 6) {
+                    name += ' (LO)';
+                }else if (this.tag) {
+                    name += ` (${this.tag} MW)`;
+                }
                 break;
             case 'Holy Vengeance':
                 if (this.tag == 1) {

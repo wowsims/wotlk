@@ -50,7 +50,7 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 		return func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
 			normalDamage := oldCalculator(sim, spellEffect, spell)
 			// TODO: Add support for all poison effects
-			if rogue.DeadlyPoisonDots[spellEffect.Target.Index].IsActive() {
+			if rogue.deadlyPoisonDots[spellEffect.Target.Index].IsActive() || rogue.woundPoisonDebuffAuras[spellEffect.Target.Index].IsActive() {
 				return normalDamage * 1.2
 			} else {
 				return normalDamage

@@ -61,6 +61,10 @@ func (spriest *SmitePriest) GetPriest() *priest.Priest {
 
 func (spriest *SmitePriest) Initialize() {
 	spriest.Priest.Initialize()
+
+	spriest.RegisterHolyFireSpell(spriest.rotation.MemeDream)
+	spriest.RegisterSmiteSpell(spriest.rotation.MemeDream)
+	spriest.RegisterPenanceSpell()
 	spriest.RegisterHymnOfHopeCD()
 }
 

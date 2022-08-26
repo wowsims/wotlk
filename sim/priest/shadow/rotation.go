@@ -71,11 +71,7 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 	// initialize helpful variables for calculations later
 	vtCastTime := spriest.ApplyCastSpeed(time.Millisecond * 1500)
 	gcd := spriest.SpellGCD()
-	var mfReducTime time.Duration
-	if spriest.T10FourSetBonus {
-		mfReducTime = time.Millisecond * 170
-	}
-	tickLength := spriest.ApplyCastSpeed(time.Second - mfReducTime)
+	tickLength := spriest.MindFlayTickDuration()
 
 	dotTickSpeed := float64(spriest.ApplyCastSpeed(time.Second * 3))
 	critChance := (spriest.GetStat(stats.SpellCrit) + spriest.CurrentTarget.PseudoStats.BonusCritRatingTaken + spriest.CurrentTarget.PseudoStats.BonusSpellCritRatingTaken) / (core.CritRatingPerCritChance * 100)

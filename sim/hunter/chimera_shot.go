@@ -19,7 +19,7 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 	hunter.ChimeraShot = hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 53209},
 		SpellSchool: core.SpellSchoolNature,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreResists,
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -61,7 +61,7 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 				}
 
 				if hunter.SerpentStingDot.IsActive() {
-					hunter.SerpentStingDot.Apply(sim)
+					hunter.SerpentStingDot.Rollover(sim)
 					ssProcSpell.Cast(sim, spellEffect.Target)
 				} else if hunter.ScorpidStingAura.IsActive() {
 					hunter.ScorpidStingAura.Refresh(sim)
@@ -93,7 +93,7 @@ func (hunter *Hunter) chimeraShotSerpentStingSpell() *core.Spell {
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, false, hunter.CurrentTarget)),
+			OutcomeApplier: hunter.OutcomeFuncRangedCritOnly(hunter.critMultiplier(true, false, hunter.CurrentTarget)),
 		}),
 	})
 }
