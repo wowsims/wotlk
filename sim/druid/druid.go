@@ -161,7 +161,6 @@ func (druid *Druid) Initialize() {
 	if druid.Talents.PrimalPrecision > 0 {
 		druid.PrimalPrecisionRecoveryMetrics = druid.NewEnergyMetrics(core.ActionID{SpellID: 48410})
 	}
-
 	druid.SetBonuses = DruidTierSets{
 		druid.HasSetBonus(ItemSetThunderheartRegalia, 2),
 		druid.HasSetBonus(ItemSetDreamwalkerGarb, 2),
@@ -173,7 +172,6 @@ func (druid *Druid) Initialize() {
 		druid.HasSetBonus(ItemSetLasherweaveRegalia, 2),
 		druid.HasSetBonus(ItemSetLasherweaveRegalia, 4),
 	}
-
 	druid.registerFaerieFireSpell()
 	druid.registerRebirthSpell()
 	druid.registerInnervateCD()

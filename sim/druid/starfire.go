@@ -11,7 +11,7 @@ import (
 
 // Idol IDs
 const IvoryMoongoddess int32 = 27518
-const ShootingStar int32 = 60775
+const ShootingStar int32 = 40321
 
 func (druid *Druid) registerStarfireSpell() {
 
