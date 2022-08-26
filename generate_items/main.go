@@ -39,8 +39,39 @@ func main() {
 	// 	}
 	// 	// No socket color means that this isn't a gem
 	// 	if resp.GetSocketColor() == proto.GemColor_GemColorUnknown {
+	// 		itemLevel := resp.GetItemLevel()
+	// 		qual := resp.GetQuality()
+	// 		if qual < int(proto.ItemQuality_ItemQualityUncommon) {
+	// 			continue
+	// 		} else if qual > int(proto.ItemQuality_ItemQualityLegendary) {
+	// 			continue
+	// 		} else if qual < int(proto.ItemQuality_ItemQualityEpic) {
+	// 			if itemLevel < 105 {
+	// 				continue
+	// 			}
+	// 			if itemLevel < 110 && resp.GetItemSetName() == "" {
+	// 				continue
+	// 			}
+	// 		} else if qual < int(proto.ItemQuality_ItemQualityEpic) {
+	// 			if itemLevel < 110 {
+	// 				continue
+	// 			}
+	// 			if itemLevel < 140 && resp.GetItemSetName() == "" {
+	// 				continue
+	// 			}
+	// 		} else {
+	// 			// Epic and legendary items might come from classic, so use a lower ilvl threshold.
+	// 			if itemLevel < 75 {
+	// 				continue
+	// 			}
+	// 		}
+
 	// 		items.WriteString(fmt.Sprintf("%d\n", k))
 	// 	} else {
+	// 		qual := resp.GetQuality()
+	// 		if qual <= int(proto.ItemQuality_ItemQualityUncommon) && k < 30000 {
+	// 			continue
+	// 		}
 	// 		gems.WriteString(fmt.Sprintf("%d\n", k))
 	// 	}
 	// }
