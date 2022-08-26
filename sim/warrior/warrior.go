@@ -61,9 +61,10 @@ type Warrior struct {
 	Whirlwind            *core.Spell
 	DeepWounds           *core.Spell
 
-	RendDots             *core.Dot
-	DeepWoundsDots       []*core.Dot
-	DeepWoundsTickDamage []float64
+	RendDots               *core.Dot
+	DeepWoundsDots         []*core.Dot
+	DeepWoundsTickDamage   []float64
+	DeepwoundsDamageBuffer []float64
 
 	HeroicStrikeOrCleave *core.Spell
 	HSOrCleaveQueueAura  *core.Aura
@@ -137,6 +138,10 @@ func (warrior *Warrior) Initialize() {
 
 	warrior.registerBloodrageCD()
 
+	warrior.DeepwoundsDamageBuffer = []float64{}
+	for i := int32(0); i < warrior.Env.GetNumTargets(); i++ {
+		warrior.DeepwoundsDamageBuffer = append(warrior.DeepwoundsDamageBuffer, 0)
+	}
 	warrior.DeepWoundsTickDamage = []float64{}
 	for i := int32(0); i < warrior.Env.GetNumTargets(); i++ {
 		warrior.DeepWoundsTickDamage = append(warrior.DeepWoundsTickDamage, 0)
