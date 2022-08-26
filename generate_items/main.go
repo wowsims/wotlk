@@ -31,7 +31,7 @@ func main() {
 	// items := &strings.Builder{}
 	// for k := range tooltipsDB {
 	// 	resp := getWowheadItemResponse(k, tooltipsDB)
-	// 	if resp.Name == "" || strings.Contains(resp.Name, "zzOLD") {
+	// 	if resp.Name == "" || strings.Contains(resp.Name, "QA Test") || strings.Contains(resp.Name, "zzOLD") || strings.Contains(resp.Name, "Monster -") {
 	// 		continue
 	// 	}
 	// 	if resp.IsPattern() {

@@ -537,8 +537,6 @@ var Gems = []Gem{
 	{Name: "Tenuous Dreadstone", ID: 40131, Phase: 3, Quality: proto.ItemQuality_ItemQualityEpic, Color: proto.GemColor_GemColorPurple, Stats: stats.Stats{stats.Agility: 10, stats.MP5: 5}},
 	{Name: "Tenuous Shadow Crystal", ID: 39942, Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Color: proto.GemColor_GemColorPurple, Stats: stats.Stats{stats.Agility: 6, stats.MP5: 3}},
 	{Name: "Tenuous Twilight Opal", ID: 40024, Phase: 1, Quality: proto.ItemQuality_ItemQualityRare, Color: proto.GemColor_GemColorPurple, Stats: stats.Stats{stats.Agility: 8, stats.MP5: 4}},
-	{Name: "Test Dazzling Talasite", ID: 40232, Phase: 0, Quality: proto.ItemQuality_ItemQualityRare, Color: proto.GemColor_GemColorGreen, Stats: stats.Stats{stats.Intellect: 4, stats.MP5: 2}},
-	{Name: "Test Living Ruby", ID: 38292, Phase: 0, Quality: proto.ItemQuality_ItemQualityRare, Color: proto.GemColor_GemColorRed, Stats: stats.Stats{}},
 	{Name: "Thick Autumn's Glow", ID: 40015, Phase: 1, Quality: proto.ItemQuality_ItemQualityRare, Color: proto.GemColor_GemColorYellow, Stats: stats.Stats{stats.Defense: 16}},
 	{Name: "Thick Dawnstone", ID: 24052, Phase: 1, Quality: proto.ItemQuality_ItemQualityRare, Color: proto.GemColor_GemColorYellow, Stats: stats.Stats{stats.Defense: 8}},
 	{Name: "Thick Dragon's Eye", ID: 42157, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Color: proto.GemColor_GemColorYellow, Stats: stats.Stats{stats.Defense: 34}, RequiredProfession: proto.Profession_Jewelcrafting},
