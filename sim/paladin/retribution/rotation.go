@@ -15,7 +15,7 @@ func (ret *RetributionPaladin) OnAutoAttack(sim *core.Simulation, spell *core.Sp
 		minVengeanceDotStacks := int32(5)
 		minVengeanceDotStacksTargetIndex := int32(0)
 		for i := int32(0); i < core.MinInt32(ret.MaxSoVTargets, ret.Env.GetNumTargets()); i++ {
-			dot := ret.SealOfVengeanceDot[i]
+			dot := ret.SealOfVengeanceDots[i]
 			remainingDuration := dot.RemainingDuration(sim)
 			stackCount := dot.GetStacks()
 
@@ -32,7 +32,7 @@ func (ret *RetributionPaladin) OnAutoAttack(sim *core.Simulation, spell *core.Sp
 
 		if minVengeanceDotDuration < ret.WeaponFromMainHand(0).SwingDuration*2 {
 			ret.CurrentTarget = &ret.Env.Encounter.Targets[minVengeanceDotDurationTargetIndex].Unit
-		} else if ret.SealOfVengeanceDot[ret.CurrentTarget.Index].GetStacks() == 5 && minVengeanceDotStacks < 5 {
+		} else if ret.SealOfVengeanceDots[ret.CurrentTarget.Index].GetStacks() == 5 && minVengeanceDotStacks < 5 {
 			ret.CurrentTarget = &ret.Env.Encounter.Targets[minVengeanceDotStacksTargetIndex].Unit
 		} else {
 			ret.CurrentTarget = &ret.Env.Encounter.Targets[0].Unit
