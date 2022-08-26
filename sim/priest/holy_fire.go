@@ -28,7 +28,7 @@ func (priest *Priest) RegisterHolyFireSpell(memeDream bool) {
 			},
 			CD: core.Cooldown{
 				Timer:    priest.NewTimer(),
-				Duration: time.Duration(float64(time.Second*10) * (1 - .1*float64(priest.Talents.Aspiration))),
+				Duration: time.Second * 10,
 			},
 		},
 
