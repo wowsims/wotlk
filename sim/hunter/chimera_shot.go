@@ -93,7 +93,7 @@ func (hunter *Hunter) chimeraShotSerpentStingSpell() *core.Spell {
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, false, hunter.CurrentTarget)),
+			OutcomeApplier: hunter.OutcomeFuncRangedCritOnly(hunter.critMultiplier(true, false, hunter.CurrentTarget)),
 		}),
 	})
 }
