@@ -47,7 +47,7 @@ func (hunter *Hunter) registerArcaneShotSpell(timer *core.Timer) {
 			DamageMultiplier: 1 *
 				(1 + 0.05*float64(hunter.Talents.ImprovedArcaneShot)) *
 				(1 + 0.03*float64(hunter.Talents.FerociousInspiration)) *
-				(1 + 0.01*float64(hunter.Talents.MarkedForDeath)),
+				hunter.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{
