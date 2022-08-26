@@ -17,7 +17,7 @@ func (druid *Druid) registerTigersFurySpell() {
 	druid.TigersFuryAura = druid.RegisterAura(core.Aura{
 		Label:    "Tiger's Fury Aura",
 		ActionID: actionID,
-		Duration: 6,
+		Duration: 6 * time.Second,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			druid.PseudoStats.BonusDamage += dmgBonus
 		},
