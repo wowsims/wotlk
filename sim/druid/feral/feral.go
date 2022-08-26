@@ -59,8 +59,8 @@ func NewFeralDruid(character core.Character, options proto.Player) *FeralDruid {
 	cat.EnableAutoAttacks(cat, core.AutoAttackOptions{
 		// Base paw weapon.
 		MainHand: core.Weapon{
-			BaseDamageMin:        43.5,
-			BaseDamageMax:        66.5,
+			BaseDamageMin:        72,
+			BaseDamageMax:        95,
 			SwingSpeed:           1.0,
 			NormalizedSwingSpeed: 1.0,
 			SwingDuration:        time.Second,
@@ -70,7 +70,7 @@ func NewFeralDruid(character core.Character, options proto.Player) *FeralDruid {
 	})
 
 	// Cat Form adds (2 x Level) AP + 1 AP per Agi
-	cat.AddStat(stats.AttackPower, 140)
+	cat.AddStat(stats.AttackPower, float64(druid.Level)*2)
 	cat.AddStatDependency(stats.Agility, stats.AttackPower, 1)
 
 	dps := (((cat.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponDamageMax - cat.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponDamageMin) / 2.0) + cat.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponDamageMin) / cat.Equip[proto.ItemSlot_ItemSlotMainHand].SwingSpeed
