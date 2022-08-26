@@ -143,7 +143,7 @@ var rangedAttackPowerRegex = regexp.MustCompile("Increases ranged attack power b
 var rangedAttackPowerRegex2 = regexp.MustCompile("Increases ranged attack power by <!--rtg39-->([0-9]+)\\.")
 
 var armorPenetrationRegex = regexp.MustCompile("Increases armor penetration rating by ([0-9]+)")
-var armorPenetrationRegex2 = regexp.MustCompile("Increases your armor penetration by <!--rtg44-->([0-9]+)")
+var armorPenetrationRegex2 = regexp.MustCompile("Increases your armor penetration by <!--rtg44-->([0-9]+)\\.")
 
 var expertiseRegex = regexp.MustCompile("Increases your expertise rating by <!--rtg37-->([0-9]+)\\.")
 var weaponDamageRegex = regexp.MustCompile("<!--dmg-->([0-9]+) - ([0-9]+)")
