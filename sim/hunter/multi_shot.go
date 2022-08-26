@@ -17,7 +17,7 @@ func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
 		BonusCritRating: 4 * core.CritRatingPerCritChance * float64(hunter.Talents.ImprovedBarrage),
 		DamageMultiplier: 1 *
 			(1 + 0.04*float64(hunter.Talents.Barrage)) *
-			(1 + 0.01*float64(hunter.Talents.MarkedForDeath)),
+			hunter.markedForDeathMultiplier(),
 		ThreatMultiplier: 1,
 
 		BaseDamage: core.BaseDamageConfig{

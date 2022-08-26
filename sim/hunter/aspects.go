@@ -55,7 +55,7 @@ func (hunter *Hunter) registerAspectOfTheDragonhawkSpell() {
 			}
 
 			aura.OnSpellHitDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.ProcMask.Matches(core.ProcMaskRangedAuto) {
+				if spell != hunter.AutoAttacks.RangedAuto {
 					return
 				}
 
