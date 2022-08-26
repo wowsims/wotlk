@@ -72,7 +72,7 @@ export const DefaultRotation = WarriorRotation.create({
 	hsRageThreshold: 60,
 	rendRageThresholdBelow: 70,
   slamRageThreshold: 15,
-	rendCdThreshold: 0,
+	rendCdThreshold: 1,
 	useHsDuringExecute: true,
 	useBtDuringExecute: true,
 	useWwDuringExecute: true,
@@ -88,7 +88,7 @@ export const ArmsRotation = WarriorRotation.create({
 	msRageThreshold: 50,
   slamRageThreshold: 15,
 	hsRageThreshold: 60,
-	rendCdThreshold: 0,
+	rendCdThreshold: 1,
 	useHsDuringExecute: true,
 	spamExecute: true,
 });
