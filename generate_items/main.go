@@ -24,54 +24,64 @@ func main() {
 	}
 
 	tooltipsDB := getWowheadTooltipsDB()
+
+	// Generate all item/gem ids from the tooltips db
+
+	// gems := &strings.Builder{}
+	// items := &strings.Builder{}
+	// for k := range tooltipsDB {
+	// 	resp := getWowheadItemResponse(k, tooltipsDB)
+	// 	if resp.Name == "" || strings.Contains(resp.Name, "zzOLD") {
+	// 		continue
+	// 	}
+	// 	if resp.IsPattern() {
+	// 		continue
+	// 	}
+	// 	// No socket color means that this isn't a gem
+	// 	if resp.GetSocketColor() == proto.GemColor_GemColorUnknown {
+	// 		items.WriteString(fmt.Sprintf("%d\n", k))
+	// 	} else {
+	// 		gems.WriteString(fmt.Sprintf("%d\n", k))
+	// 	}
+	// }
+
+	// ioutil.WriteFile("all_item_ids", []byte(items.String()), 0666)
+	// ioutil.WriteFile("all_gem_ids", []byte(gems.String()), 0666)
+
+	// panic("done")
+
 	var gemsData []GemData
 	var itemsData []ItemData
 	if *db == "wowhead" {
-		for k := range tooltipsDB {
-			resp := getWowheadItemResponse(k, tooltipsDB)
-			if resp.Name == "" || strings.Contains(resp.Name, "zzOLD") {
+		gemDeclarations := getGemDeclarations()
+		gemsData = make([]GemData, len(gemDeclarations))
+		for idx, gemDeclaration := range gemDeclarations {
+			gemData := GemData{
+				Declaration: gemDeclaration,
+				Response:    getWowheadItemResponse(gemDeclaration.ID, tooltipsDB),
+			}
+			if gemData.Response.GetName() == "" {
 				continue
 			}
-			if resp.IsPattern() {
-				continue
-			}
-			// No socket color means that this isn't a gem
-			if resp.GetSocketColor() == proto.GemColor_GemColorUnknown {
-				itemsData = append(itemsData, ItemData{Response: resp, Declaration: ItemDeclaration{ID: k}})
-			} else {
-				gemsData = append(gemsData, GemData{Response: resp, Declaration: GemDeclaration{ID: k}})
-			}
+			//log.Printf("\n\n%+v\n", gemData.Response)
+			gemsData[idx] = gemData
 		}
 
-		// gemDeclarations := getGemDeclarations()
-		// gemsData = make([]GemData, len(gemDeclarations))
-		// for idx, gemDeclaration := range gemDeclarations {
-		// 	gemData := GemData{
-		// 		Declaration: gemDeclaration,
-		// 		Response:    getWowheadItemResponse(gemDeclaration.ID, tooltipsDB),
-		// 	}
-		// 	if gemData.Response.GetName() == "" {
-		// 		continue
-		// 	}
-		// 	//log.Printf("\n\n%+v\n", gemData.Response)
-		// 	gemsData[idx] = gemData
-		// }
-
-		// itemDeclarations := getItemDeclarations()
-		// // qualityModifiers := getItemQualityModifiers()
-		// itemsData = make([]ItemData, len(itemDeclarations))
-		// for idx, itemDeclaration := range itemDeclarations {
-		// 	itemData := ItemData{
-		// 		Declaration: itemDeclaration,
-		// 		Response:    getWowheadItemResponse(itemDeclaration.ID, tooltipsDB),
-		// 		// QualityModifier: qualityModifiers[itemDeclaration.ID],
-		// 	}
-		// 	if itemData.Response.GetName() == "" {
-		// 		continue
-		// 	}
-		// 	//fmt.Printf("\n\n%+v\n", itemData.Response)
-		// 	itemsData[idx] = itemData
-		// }
+		itemDeclarations := getItemDeclarations()
+		// qualityModifiers := getItemQualityModifiers()
+		itemsData = make([]ItemData, len(itemDeclarations))
+		for idx, itemDeclaration := range itemDeclarations {
+			itemData := ItemData{
+				Declaration: itemDeclaration,
+				Response:    getWowheadItemResponse(itemDeclaration.ID, tooltipsDB),
+				// QualityModifier: qualityModifiers[itemDeclaration.ID],
+			}
+			if itemData.Response.GetName() == "" {
+				continue
+			}
+			//fmt.Printf("\n\n%+v\n", itemData.Response)
+			itemsData[idx] = itemData
+		}
 	} else if *db == "wotlkdb" {
 		itemsData = make([]ItemData, 0, len(tooltipsDB))
 		gemsData = make([]GemData, 0, len(tooltipsDB))
