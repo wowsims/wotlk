@@ -42,7 +42,7 @@ func (spriest *SmitePriest) chooseSpell(sim *core.Simulation) *core.Spell {
 		return spriest.ShadowWordPain
 	} else if spriest.HolyFire.IsReady(sim) {
 		return spriest.HolyFire
-	} else if spriest.allowedHFDelay <= spriest.HolyFire.TimeToReady(sim) {
+	} else if spriest.HolyFire.TimeToReady(sim) <= spriest.allowedHFDelay {
 		return nil
 	} else if spriest.ImprovedSpiritTap.IsActive() {
 		return spriest.Smite
@@ -69,7 +69,7 @@ func (spriest *SmitePriest) chooseSpellMemeDream(sim *core.Simulation) *core.Spe
 		return spriest.ShadowWordPain
 	} else if spriest.HolyFire.IsReady(sim) {
 		return spriest.HolyFire
-	} else if spriest.allowedHFDelay <= spriest.HolyFire.TimeToReady(sim) {
+	} else if spriest.HolyFire.TimeToReady(sim) <= spriest.allowedHFDelay {
 		return nil
 	} else {
 		if spriest.InnerFocus != nil && spriest.InnerFocus.IsReady(sim) {

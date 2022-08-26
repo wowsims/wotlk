@@ -69,13 +69,8 @@ export const DefaultConsumes = Consumes.create({
 
 export const DefaultRaidBuffs = RaidBuffs.create({
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
-	powerWordFortitude: TristateEffect.TristateEffectImproved,
-	strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
 	arcaneBrilliance: true,
 	divineSpirit: true,
-	trueshotAura: true,
-	leaderOfThePack: TristateEffect.TristateEffectImproved,
-	icyTalons: true,
 	totemOfWrath: true,
 	moonkinAura: TristateEffect.TristateEffectImproved,
 	wrathOfAirTotem: true,
@@ -91,9 +86,7 @@ export const DefaultIndividualBuffs = IndividualBuffs.create({
 });
 
 export const DefaultDebuffs = Debuffs.create({
-	sunderArmor: true,
 	faerieFire: TristateEffect.TristateEffectImproved,
-	bloodFrenzy: true,
 	ebonPlaguebringer: true,
 	heartOfTheCrusader: true,
 	judgementOfWisdom: true,
