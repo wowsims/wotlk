@@ -652,7 +652,7 @@ func (item WowheadItemResponse) GetGemStats() Stats {
 	return stats
 }
 
-var itemSetNameRegex = regexp.MustCompile("<a href=\\\"\\/wotlk/item-set=([0-9]+)/(.*)\\\" class=\\\"q\\\">([^<]+)<")
+var itemSetNameRegex = regexp.MustCompile("<a href=\\\"\\/wotlk/item-set=-?([0-9]+)/(.*)\\\" class=\\\"q\\\">([^<]+)<")
 
 func (item WowheadItemResponse) GetItemSetName() string {
 	return item.GetTooltipRegexString(itemSetNameRegex, 3)
