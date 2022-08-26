@@ -5,6 +5,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/items"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
+	"time"
 )
 
 type Druid struct {
@@ -75,9 +76,21 @@ type Druid struct {
 	Treant2  *TreantPet
 	Treant3  *TreantPet
 
-	form         DruidForm
-	disabledMCDs []*core.MajorCooldown
-	SetBonuses   DruidTierSets
+	form           DruidForm
+	disabledMCDs   []*core.MajorCooldown
+	SetBonuses     DruidTierSets
+	TalentsBonuses TalentsBonuses
+}
+
+type TalentsBonuses struct {
+	moonfuryMultiplier      float64
+	iffBonusCrit            float64
+	vengeanceModifier       float64
+	genesisMultiplier       float64
+	moonglowMultiplier      float64
+	naturesMajestyBonusCrit float64
+	naturesSplendorTick     int
+	starlightWrathModifier  time.Duration
 }
 
 type DruidTierSets struct {
@@ -93,9 +106,34 @@ type DruidTierSets struct {
 }
 
 type SelfBuffs struct {
-	Omen bool
-
 	InnervateTarget proto.RaidTarget
+}
+
+// Registering non-unique Talent effects
+func (druid *Druid) RegisterTalentsBonuses() {
+	druid.TalentsBonuses = TalentsBonuses{
+		moonfuryMultiplier:      []float64{0.0, 0.03, 0.06, 0.1}[druid.Talents.Moonfury],
+		genesisMultiplier:       1 + 0.01*float64(druid.Talents.Genesis),
+		moonglowMultiplier:      1 - 0.03*float64(druid.Talents.Moonglow),
+		iffBonusCrit:            float64(druid.Talents.ImprovedFaerieFire) * 1 * core.CritRatingPerCritChance,
+		naturesMajestyBonusCrit: 2 * float64(druid.Talents.NaturesMajesty) * core.CritRatingPerCritChance,
+		vengeanceModifier:       0.2 * float64(druid.Talents.Vengeance),
+		naturesSplendorTick:     core.TernaryInt(druid.Talents.NaturesSplendor, 1, 0),
+		starlightWrathModifier:  time.Millisecond * 100 * time.Duration(druid.Talents.StarlightWrath),
+	}
+}
+
+func (druid *Druid) ResetTalentsBonuses() {
+	druid.TalentsBonuses = TalentsBonuses{
+		moonfuryMultiplier:      0,
+		genesisMultiplier:       0,
+		moonglowMultiplier:      0,
+		iffBonusCrit:            0,
+		naturesMajestyBonusCrit: 0,
+		vengeanceModifier:       0,
+		naturesSplendorTick:     0,
+		starlightWrathModifier:  0,
+	}
 }
 
 func (druid *Druid) GetCharacter() *core.Character {
@@ -161,7 +199,6 @@ func (druid *Druid) Initialize() {
 	if druid.Talents.PrimalPrecision > 0 {
 		druid.PrimalPrecisionRecoveryMetrics = druid.NewEnergyMetrics(core.ActionID{SpellID: 48410})
 	}
-
 	druid.SetBonuses = DruidTierSets{
 		druid.HasSetBonus(ItemSetThunderheartRegalia, 2),
 		druid.HasSetBonus(ItemSetDreamwalkerGarb, 2),
@@ -173,7 +210,6 @@ func (druid *Druid) Initialize() {
 		druid.HasSetBonus(ItemSetLasherweaveRegalia, 2),
 		druid.HasSetBonus(ItemSetLasherweaveRegalia, 4),
 	}
-
 	druid.registerFaerieFireSpell()
 	druid.registerRebirthSpell()
 	druid.registerInnervateCD()

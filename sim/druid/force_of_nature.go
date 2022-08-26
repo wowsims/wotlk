@@ -66,8 +66,7 @@ func (druid *Druid) NewTreant() *TreantPet {
 			treantBaseStats,
 			func(ownerStats stats.Stats) stats.Stats {
 				return stats.Stats{
-					stats.AttackPower: ownerStats[stats.SpellPower] * 2,
-					stats.MeleeHaste:  ownerStats[stats.SpellHaste],
+					stats.Strength: 331 + (ownerStats[stats.NatureSpellPower] * 0.35),
 				}
 			},
 			false,
@@ -75,7 +74,8 @@ func (druid *Druid) NewTreant() *TreantPet {
 		),
 		druidOwner: druid,
 	}
-
+	treant.AddStatDependency(stats.Strength, stats.AttackPower, 2)
+	treant.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/83.3)
 	treant.EnableAutoAttacks(treant, core.AutoAttackOptions{
 		MainHand: core.Weapon{
 			BaseDamageMin:  59,
@@ -105,10 +105,13 @@ func (treant *TreantPet) OnGCDReady(sim *core.Simulation) {
 	treant.DoNothing()
 }
 
-// Eyeballing those TODO: get more data
+// TODO : fix miss/dodge
 var treantBaseStats = stats.Stats{
-	stats.Stamina:   9600,
-	stats.MeleeHit:  4 * core.MeleeHitRatingPerHitChance,
-	stats.Expertise: 14 * core.ExpertisePerQuarterPercentReduction,
-	stats.MeleeCrit: 3 * core.CritRatingPerCritChance,
+	stats.Agility:   113,
+	stats.Stamina:   598,
+	stats.Intellect: 281,
+	stats.Spirit:    109,
+	stats.MeleeCrit: 5 * core.CritRatingPerCritChance,
+	stats.MeleeHit:  5 * core.MeleeHitRatingPerHitChance,
+	stats.Expertise: 120,
 }

@@ -24,7 +24,8 @@ func (warrior *Warrior) ApplyTalents() {
 	}
 
 	if warrior.Talents.StrengthOfArms > 0 {
-		warrior.MultiplyStat(stats.Strength, 1.0+0.01*float64(warrior.Talents.ImprovedBerserkerStance))
+		warrior.MultiplyStat(stats.Strength, 1.0+0.01*float64(warrior.Talents.StrengthOfArms))
+		warrior.AddStat(stats.Expertise, 2*float64(warrior.Talents.StrengthOfArms))
 	}
 
 	// TODO: This should only be applied while berserker stance is active.
@@ -674,8 +675,36 @@ func (warrior *Warrior) RegisterBladestormCD() {
 		return
 	}
 
+	var bladestormDot *core.Dot
+	actionID := core.ActionID{SpellID: 46924}
 	cost := 25.0 - float64(warrior.Talents.FocusedRage)
-	cd := core.TernaryDuration(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfBladestorm), time.Second*75, time.Second*90)
+
+	bladestormSpell := warrior.RegisterSpell(core.SpellConfig{
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolPhysical,
+		Flags:       core.SpellFlagChanneled,
+
+		ResourceType: stats.Rage,
+		BaseCost:     cost,
+
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				Cost: cost,
+			},
+			CD: core.Cooldown{
+				Timer:    warrior.NewTimer(),
+				Duration: core.TernaryDuration(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfBladestorm), time.Second*75, time.Second*90),
+			},
+		},
+		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+			bladestormDot.Apply(sim)
+			bladestormDot.TickOnce()
+
+			// Using regular cast/channel options would disable melee swings, so do it manually instead.
+			warrior.SetGCDTimer(sim, sim.CurrentTime+time.Second*6)
+		},
+	})
+
 	baseEffectMH := core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeMHSpecial,
 
@@ -688,7 +717,9 @@ func (warrior *Warrior) RegisterBladestormCD() {
 	baseEffectOH := core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeOHSpecial,
 
-		DamageMultiplier: 1 + 0.02*float64(warrior.Talents.UnendingFury)*0.1*float64(warrior.Talents.ImprovedWhirlwind),
+		DamageMultiplier: 1 *
+			(1 + 0.02*float64(warrior.Talents.UnendingFury)) *
+			(1 + 0.1*float64(warrior.Talents.ImprovedWhirlwind)),
 		ThreatMultiplier: 1.25,
 
 		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 0, 1+0.05*float64(warrior.Talents.DualWieldSpecialization), 1, true),
@@ -703,59 +734,26 @@ func (warrior *Warrior) RegisterBladestormCD() {
 
 	effects := make([]core.SpellEffect, 0, numTotalHits)
 	for i := int32(0); i < numHits; i++ {
-		for j := int32(0); j < 5; j++ {
-			mhEffect := baseEffectMH
-			mhEffect.Target = warrior.Env.GetTargetUnit(i)
-			effects = append(effects, mhEffect)
+		mhEffect := baseEffectMH
+		mhEffect.Target = warrior.Env.GetTargetUnit(i)
+		effects = append(effects, mhEffect)
 
-			if warrior.AutoAttacks.IsDualWielding {
-				ohEffect := baseEffectOH
-				ohEffect.Target = warrior.Env.GetTargetUnit(i)
-				effects = append(effects, ohEffect)
-			}
+		if warrior.AutoAttacks.IsDualWielding {
+			ohEffect := baseEffectOH
+			ohEffect.Target = warrior.Env.GetTargetUnit(i)
+			effects = append(effects, ohEffect)
 		}
-
 	}
 
-	bladestormWhirlwind := warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 50622},
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics,
-
-		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				ChannelTime: 6 * time.Second,
-			},
-			IgnoreHaste: true,
-		},
-
-		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
-	})
-
-	bladestormSpell := warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 46924},
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagChanneled,
-
-		ResourceType: stats.Rage,
-		BaseCost:     cost,
-
-		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost:        cost,
-				GCD:         core.GCDDefault,
-				ChannelTime: time.Second * 6,
-			},
-			IgnoreHaste: true,
-			CD: core.Cooldown{
-				Timer:    warrior.NewTimer(),
-				Duration: cd,
-			},
-		},
-		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			warrior.AutoAttacks.DelayMeleeUntil(sim, sim.CurrentTime+time.Second*6+time.Millisecond*500)
-			bladestormWhirlwind.Cast(sim, warrior.CurrentTarget)
-		},
+	bladestormDot = core.NewDot(core.Dot{
+		Spell: bladestormSpell,
+		Aura: warrior.RegisterAura(core.Aura{
+			Label:    "Bladestorm",
+			ActionID: actionID,
+		}),
+		NumberOfTicks: 6,
+		TickLength:    time.Second * 1,
+		TickEffects:   core.TickFuncApplyEffects(core.ApplyEffectFuncDamageMultiple(effects)),
 	})
 
 	warrior.AddMajorCooldown(core.MajorCooldown{
