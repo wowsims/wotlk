@@ -32,7 +32,8 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 			cssClass: 'warrior-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"Thunder Clap is not working.",
+				"Deep Wound is not scaling with physical damage modifiers.",
+				"2H weapon in offhand remains equipped after switching out of Titan's Grip spec."
 			],
 
 			// All stats for which EP should be calculated.
