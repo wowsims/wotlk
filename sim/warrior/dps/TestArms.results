@@ -255,8 +255,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-FaithinFelsteel"
  value: {
-  dps: 719.61736
-  tps: 798.85573
+  dps: 738.84273
+  tps: 820.45192
  }
 }
 dps_results: {
@@ -521,8 +521,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-SiegebreakerBattlegear"
  value: {
-  dps: 992.48913
-  tps: 1106.96307
+  dps: 983.96405
+  tps: 1096.9401
  }
 }
 dps_results: {
@@ -549,8 +549,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-StormshroudArmor"
  value: {
-  dps: 698.16127
-  tps: 779.8084
+  dps: 688.20765
+  tps: 769.91664
  }
 }
 dps_results: {
@@ -689,15 +689,15 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-Wrynn'sBattlegear"
  value: {
-  dps: 981.22701
-  tps: 1092.32523
+  dps: 1098.76063
+  tps: 1221.81558
  }
 }
 dps_results: {
  key: "TestArms-AllItems-YmirjarLord'sBattlegear"
  value: {
-  dps: 1074.31415
-  tps: 1198.60342
+  dps: 1216.42467
+  tps: 1356.4382
  }
 }
 dps_results: {
