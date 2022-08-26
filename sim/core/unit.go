@@ -115,8 +115,9 @@ type Unit struct {
 	hardcastAction *PendingAction
 
 	// Fields related to waiting for certain events to happen.
-	waitingForMana float64
-	waitStartTime  time.Duration
+	waitingForEnergy float64
+	waitingForMana   float64
+	waitStartTime    time.Duration
 
 	// Cached mana return values per tick.
 	manaTickWhileCasting    float64
