@@ -160,7 +160,7 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		// This is needed throughout the code to determine the optimal spell(s) to cast next
 		// MB dmg
 		mbDamage = (1025 + spriest.GetStat(stats.SpellPower)*(0.428*(1+float64(spriest.Talents.Misery)*0.05))) * (1 + float64(spriest.Talents.Darkness)*0.02) * (1 + TFmod) *
-			core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.02))
+			core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1 + 0.5*(critChance+float64(spriest.Talents.MindMelt)*0.02)*float64(spriest.Talents.ShadowPower)*0.2)
 		if !spriest.options.UseMindBlast {
 			mbDamage = 0
 		}
@@ -186,7 +186,7 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 
 		// MF dmg 3 ticks
 		mfDamage = (588 + spriest.GetStat(stats.SpellPower)*(0.2570*3*(1+float64(spriest.Talents.Misery)*0.05))) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1.0 + (float64(spriest.Talents.Darkness)*0.02 +
-			float64(spriest.Talents.TwinDisciplines)*0.01)) * (1 + TFmod + mfglyphMod) * (1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.02+core.TernaryFloat64(spriest.T9FourSetBonus, 0.05, 0)))
+			float64(spriest.Talents.TwinDisciplines)*0.01)) * (1 + TFmod + mfglyphMod) * (1 + 0.5*(critChance+float64(spriest.Talents.MindMelt)*0.02+core.TernaryFloat64(spriest.T9FourSetBonus, 0.05, 0))*float64(spriest.Talents.ShadowPower)*0.2)
 
 		// SWP is seperate because it doesnt follow the same logic for casting as the other spells
 		swpTickDamage := ((230 + spriest.GetStat(stats.SpellPower)*0.1829) *
@@ -669,17 +669,37 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 	}
 
 	var numTicks int
-	if nextCD < gcd {
+	numTicks_Base := 0.0
+	numTicks_floored := 0.0
+	if nextCD < gcd/2 {
 		numTicks = 0
 	} else {
-		numTicks = int(nextCD / tickLength)
+		numTicks_Base = float64(nextCD.Seconds()) / float64(tickLength.Seconds())
+		numTicks_floored = math.Floor(float64(nextCD.Seconds()) / float64(tickLength.Seconds()))
+		numTicks = int(numTicks_Base)
+	}
+
+	AlmostAnotherTick := numTicks_Base - numTicks_floored
+
+	if AlmostAnotherTick > 0.75 {
+		numTicks += 1
 	}
 
 	mfTickDamage := mfDamage * 0.3333
 
-	if sim.Log != nil {
-		//	spriest.Log(sim, "numTicks %d", numTicks)
+	if float64(tickLength.Seconds()) < float64(gcd.Seconds())/2.9 {
+		numTicks = 3
+		return numTicks
 	}
+
+	//if sim.Log != nil {
+	//spriest.Log(sim, "AlmostAnotherTick %d", AlmostAnotherTick)
+	//spriest.Log(sim, "numTicks %d", numTicks)
+	//spriest.Log(sim, "tickLength %d", tickLength.Seconds())
+	//spriest.Log(sim, "nextCD %d", nextCD.Seconds())
+	//spriest.Log(sim, "numTicks_Base %d", numTicks_Base)
+	//spriest.Log(sim, "numTicks_floored %d", numTicks_floored)
+	//}
 
 	if numTicks < 100 && overwriteDPS == 0 { // if the code entered this loop because mf is the higest dps spell, and the number of ticks that can fit in the remaining cd time is < 1, then just cast a mf3 as it essentially fits perfectly
 		// TODO: Should spriest latency be added to the second option here?
@@ -689,11 +709,11 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 			mfTime = core.MaxDuration(gcd, time.Duration(numTicks)*tickLength)
 		}
 
-		//if sim.Log != nil {
-		//spriest.Log(sim, "mfTime %d", mfTime.Seconds())
-		//spriest.Log(sim, "allCDs %d", allCDs[0].Seconds())
-		//spriest.Log(sim, "mf3Time %d", float64(time.Duration(3*tickLength).Seconds()))
-		//	}
+		if sim.Log != nil {
+			//spriest.Log(sim, "mfTime %d", mfTime.Seconds())
+			//spriest.Log(sim, "allCDs %d", allCDs[0].Seconds())
+			//spriest.Log(sim, "mf3Time %d", float64(time.Duration(3*tickLength).Seconds()))
+		}
 		// Amount of gap time after casting mind flay, but before each CD is available.
 
 		cdDiffs := []time.Duration{
@@ -711,7 +731,7 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 			mfspdmg = mfTickDamage * float64(3) / float64((time.Duration(3) * tickLength).Seconds())
 		}
 		if sim.Log != nil {
-			//	spriest.Log(sim, "mfspdmg %d", mfspdmg)
+			//spriest.Log(sim, "mfspdmg %d", mfspdmg)
 		}
 		spellDamages := []float64{
 			// MB dps
@@ -730,7 +750,7 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 		bestDmg := 0.0
 		for i, v := range spellDamages {
 			if sim.Log != nil {
-				//	spriest.Log(sim, "\tspellDamages[%d]: %01.f", i, v)
+				//spriest.Log(sim, "\tspellDamages[%d]: %01.f", i, v)
 			}
 			if v > bestDmg {
 				bestIdx = i
@@ -743,8 +763,24 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 		//return numTicks
 		//}
 
+		if sim.Log != nil {
+			//spriest.Log(sim, "bestIdx %d", bestIdx)
+			//spriest.Log(sim, "nextIdx %d", nextIdx)
+			//spriest.Log(sim, "spellDamages[bestIdx]  %d", spellDamages[bestIdx])
+			//spriest.Log(sim, "spellDamages[nextIdx]  %d", spellDamages[nextIdx])
+		}
+
 		if bestIdx != nextIdx && spellDamages[nextIdx] < spellDamages[bestIdx] {
-			numTicks = int(allCDs[bestIdx] / tickLength)
+			numTicks_Base = float64(allCDs[bestIdx].Seconds()) / float64(tickLength.Seconds())
+			numTicks_floored = math.Floor(float64(allCDs[bestIdx].Seconds()) / float64(tickLength.Seconds()))
+			numTicks = int(numTicks_Base)
+
+			AlmostAnotherTick := numTicks_Base - numTicks_floored
+
+			if AlmostAnotherTick > 0.75 {
+				numTicks += 1
+			}
+
 			mfTime = core.MaxDuration(gcd, time.Duration(numTicks)*tickLength)
 			if numTicks > 3 && numTicks < 5 {
 				addedgcd := core.MaxDuration(gcd, time.Duration(2)*tickLength)
@@ -759,8 +795,9 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 				0,
 			}
 			if sim.Log != nil {
-				//	spriest.Log(sim, "cdDiffs[bestIdx] %d", cdDiffs[bestIdx])
-				// spriest.Log(sim, "mid_ticks2 %d", numTicks)
+				//spriest.Log(sim, "numTicks %d", numTicks)
+				//spriest.Log(sim, "cdDiffs[bestIdx] %d", cdDiffs[bestIdx])
+				//spriest.Log(sim, "mid_ticks2 %d", numTicks)
 			}
 			if float64(cdDiffs[bestIdx]) < float64(-0.33) {
 				numTicks = numTicks - 1
