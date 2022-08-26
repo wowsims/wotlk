@@ -34,7 +34,7 @@ func (fireElemental *FireElemental) registerFireBlast() {
 			ProcMask:         core.ProcMaskSpellDamage,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMagic(0, 1070, 0.429), // TODO find out values
+			BaseDamage:       core.BaseDamageConfigMagic(323, 459, 0.429), // TODO find out values
 			OutcomeApplier:   fireElemental.OutcomeFuncMagicHitAndCrit(fireElemental.DefaultSpellCritMultiplier()),
 		}),
 	})
@@ -70,7 +70,7 @@ func (fireElemental *FireElemental) registerFireNova() {
 			ProcMask:         core.ProcMaskSpellDamage,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMagic(0, 1070, 1.07), // TODO find out values
+			BaseDamage:       core.BaseDamageConfigMagic(1, 150, 1.07), // TODO find out values
 			OutcomeApplier:   fireElemental.OutcomeFuncMagicHitAndCrit(fireElemental.DefaultSpellCritMultiplier()),
 		}),
 	})
@@ -106,7 +106,7 @@ func (fireElemental *FireElemental) registerFireShieldDot() {
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskEmpty,
 			DamageMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMagic(65, 66, 0.032), // TODO need proper values
+			BaseDamage:       core.BaseDamageConfigMagic(68, 70, 0.032), // TODO need proper values
 			OutcomeApplier:   fireElemental.OutcomeFuncMagicCrit(fireElemental.DefaultSpellCritMultiplier()),
 		})),
 	})

@@ -1,6 +1,7 @@
 package shaman
 
 import (
+	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -32,8 +33,8 @@ func (shaman *Shaman) NewFireElemental() *FireElemental {
 	fireElemental.EnableManaBar()
 	fireElemental.EnableAutoAttacks(fireElemental, core.AutoAttackOptions{
 		MainHand: core.Weapon{
-			BaseDamageMin:  11, // TODO find out values
-			BaseDamageMax:  35, // TODO find out values
+			BaseDamageMin:  1,  // TODO find out values
+			BaseDamageMax:  24, // TODO find out values
 			SwingSpeed:     2,
 			SwingDuration:  time.Second * 2,
 			CritMultiplier: 2, // Pretty sure this is right.
@@ -97,22 +98,29 @@ func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
 }
 
 var fireElementalPetBaseStats = stats.Stats{
-	//TODO These are just estimates from a excel sheet
 	stats.Mana:        1789,
 	stats.Health:      994,
 	stats.Intellect:   147,
 	stats.Stamina:     327,
-	stats.SpellPower:  1070,
-	stats.AttackPower: 1368,
+	stats.SpellPower:  995,
+	stats.AttackPower: 1369,
 }
 
 func (shaman *Shaman) fireElementalStatInheritance() core.PetStatInheritance {
 	return func(ownerStats stats.Stats) stats.Stats {
+		ownerHitChance := ownerStats[stats.MeleeHit] / core.MeleeHitRatingPerHitChance
+		hitRatingFromOwner := math.Floor(ownerHitChance) * core.MeleeHitRatingPerHitChance
+
 		return stats.Stats{
 			stats.Stamina:     ownerStats[stats.Stamina] * 0.75,
 			stats.Intellect:   ownerStats[stats.Intellect] * 0.30,
 			stats.SpellPower:  ownerStats[stats.SpellPower] * 0.5218,
 			stats.AttackPower: ownerStats[stats.SpellPower] * 4.45,
+
+			// TODO these need to be confirmed borrowed from Hunter/Warlock pets
+			stats.MeleeHit:  hitRatingFromOwner / 2,
+			stats.SpellHit:  hitRatingFromOwner,
+			stats.Expertise: math.Floor((math.Floor(ownerHitChance/2) * PetExpertiseScale)) * core.ExpertisePerQuarterPercentReduction,
 		}
 	}
 }

@@ -567,6 +567,7 @@ const petNameToActionId: Record<string, ActionId> = {
 	'Shadowfiend': ActionId.fromSpellId(34433),
 	'Spirit Wolf 1': ActionId.fromSpellId(51533),
 	'Spirit Wolf 2': ActionId.fromSpellId(51533),
+    "Greater Fire Elemental" : ActionId.fromSpellId(2894),
 	'Rune Weapon': ActionId.fromSpellId(49028),
 	'Bloodworm': ActionId.fromSpellId(50452),
 };
