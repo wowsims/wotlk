@@ -9,9 +9,9 @@ import { SavedTalents } from '../core/proto/ui.js';
 import { 
 	FeralDruid_Rotation as FeralDruidRotation,
 	FeralDruid_Options as FeralDruidOptions,
-	FeralDruid_Rotation_FinishingMove as FinishingMove,
 	DruidMajorGlyph,
 	DruidMinorGlyph,
+    FeralDruid_Rotation_BearweaveType,
  } from '../core/proto/druid.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
@@ -38,17 +38,22 @@ export const StandardTalents = {
 };
 
 export const DefaultRotation = FeralDruidRotation.create({
-	finishingMove: FinishingMove.Rip,
-	mangleTrick: true,
-	biteweave: true,
-	ripMinComboPoints: 5,
-	biteMinComboPoints: 5,
-	rakeTrick: false,
-	ripweave: false,
+	bearWeaveType: FeralDruid_Rotation_BearweaveType.None,
+  minCombosForRip: 5,
+  minCombosForBite: 5,
+
+  useRake: true,
+  useBite: false,
+  mangleSpam: false,
+  biteTime: 10.0,
+  berserkBiteThresh: 30.0,
+  powerbear: false,
+  maxRoarClip: 10.0,
 	maintainFaerieFire: true,
 });
 
 export const DefaultOptions = FeralDruidOptions.create({
+  latencyMs: 100
 });
 
 export const DefaultConsumes = Consumes.create({

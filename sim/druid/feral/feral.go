@@ -40,6 +40,7 @@ func NewFeralDruid(character core.Character, options proto.Player) *FeralDruid {
 		latency: time.Duration(feralOptions.Options.LatencyMs) * time.Millisecond,
 	}
 
+	cat.maxRipTicks = cat.MaxRipTicks()
 	cat.setupRotation(feralOptions.Rotation)
 
 	// Passive Cat Form threat reduction
@@ -49,8 +50,8 @@ func NewFeralDruid(character core.Character, options proto.Player) *FeralDruid {
 	cat.HasMHWeaponImbue = true
 
 	cat.EnableEnergyBar(100.0, func(sim *core.Simulation) {
-		if cat.GCD.IsReady(sim) {
-			cat.doRotation(sim)
+		if cat.InForm(druid.Cat) {
+			cat.doTigersFury(sim)
 		}
 	})
 
@@ -75,13 +76,26 @@ type FeralDruid struct {
 
 	Rotation FeralDruidRotation
 
+	missChance     float64
 	readyToShift   bool
 	waitingForTick bool
 	latency        time.Duration
+	maxRipTicks    int
 }
 
 func (cat *FeralDruid) GetDruid() *druid.Druid {
 	return cat.Druid
+}
+
+func (cat *FeralDruid) MissChance() float64 {
+	speffect := core.SpellEffect{
+		ProcMask:         core.ProcMaskMeleeMHSpecial,
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+		Target:           cat.CurrentTarget,
+	}
+	at := cat.AttackTables[cat.CurrentTarget.UnitIndex]
+	return at.BaseMissChance - speffect.PhysicalHitChance(&cat.Druid.Unit, at)
 }
 
 func (cat *FeralDruid) Initialize() {

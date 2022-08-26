@@ -19,7 +19,6 @@ import { IndividualSimUI } from '../core/individual_sim_ui.js';
 import { TypedEvent } from '../core/typed_event.js';
 
 import { FeralDruid, FeralDruid_Rotation as FeralDruidRotation, DruidTalents as DruidTalents, FeralDruid_Options as FeralDruidOptions } from '../core/proto/druid.js';
-import { FeralDruid_Rotation_FinishingMove as FinishingMove } from '../core/proto/druid.js';
 
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
