@@ -115,8 +115,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-CrimsonAcolyte'sRegalia"
  value: {
-  dps: 1934.99867
-  tps: 1418.00797
+  dps: 2532.65357
+  tps: 1838.33727
  }
 }
 dps_results: {
@@ -430,8 +430,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-SanctificationGarb"
  value: {
-  dps: 2019.43715
-  tps: 1464.66713
+  dps: 1960.30829
+  tps: 1421.9861
  }
 }
 dps_results: {
@@ -563,8 +563,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-Zabra'sRegalia"
  value: {
-  dps: 1980.88995
-  tps: 1453.50872
+  dps: 2575.63106
+  tps: 1878.86192
  }
 }
 dps_results: {

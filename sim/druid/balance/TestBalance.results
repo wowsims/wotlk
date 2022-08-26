@@ -157,8 +157,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-DreamwalkerGarb"
  value: {
-  dps: 2100.92799
-  tps: 1983.73538
+  dps: 1938.79876
+  tps: 1824.19095
  }
 }
 dps_results: {
@@ -325,8 +325,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-LasherweaveRegalia"
  value: {
-  dps: 2347.65165
-  tps: 2283.48949
+  dps: 3024.92251
+  tps: 2878.52264
  }
 }
 dps_results: {
@@ -353,8 +353,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-Malfurion'sRegalia"
  value: {
-  dps: 2039.57276
-  tps: 1966.11721
+  dps: 2594.68162
+  tps: 2452.31241
  }
 }
 dps_results: {
@@ -493,8 +493,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-Runetotem'sRegalia"
  value: {
-  dps: 2035.45305
-  tps: 1950.82704
+  dps: 2594.68162
+  tps: 2452.31241
  }
 }
 dps_results: {
@@ -654,8 +654,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-WindhawkArmor"
  value: {
-  dps: 1468.25118
-  tps: 1364.66048
+  dps: 1391.32989
+  tps: 1285.1118
  }
 }
 dps_results: {
