@@ -55,6 +55,7 @@ func (druid *Druid) registerRakeSpell() {
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
+					druid.AddComboPoints(sim, 1, spell.ComboPointMetrics())
 					druid.RakeDot.Apply(sim)
 				} else {
 					druid.AddEnergy(sim, refundAmount, druid.EnergyRefundMetrics)
@@ -75,7 +76,7 @@ func (druid *Druid) registerRakeSpell() {
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1,
+			DamageMultiplier: 1 + 0.1*float64(druid.Talents.SavageFury),
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
 			BaseDamage: core.BaseDamageConfig{

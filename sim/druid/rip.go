@@ -18,6 +18,7 @@ func (druid *Druid) registerRipSpell() {
 	t7bonus := core.TernaryInt(druid.HasSetBonus(ItemSetDreamwalkerBattlegear, 2), 2, 0)
 	glyphBonus := core.TernaryInt(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfRip), 2, 0)
 	t9bonus := core.TernaryFloat64(druid.HasT9FeralSetBonus(4), 5*core.CritRatingPerCritChance, 0.0)
+	ripBaseNumTicks := 6 + glyphBonus + t7bonus
 
 	druid.Rip = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -44,6 +45,7 @@ func (druid *Druid) registerRipSpell() {
 			OutcomeApplier:   druid.OutcomeFuncMeleeSpecialHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
+					druid.RipDot.NumberOfTicks = ripBaseNumTicks
 					druid.RipDot.Apply(sim)
 					druid.SpendComboPoints(sim, spell.ComboPointMetrics())
 				} else if refundAmount > 0 {
@@ -60,7 +62,7 @@ func (druid *Druid) registerRipSpell() {
 			Label:    "Rip-" + strconv.Itoa(int(druid.Index)),
 			ActionID: actionID,
 		}),
-		NumberOfTicks: 6 + glyphBonus + t7bonus,
+		NumberOfTicks: ripBaseNumTicks,
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
@@ -78,7 +80,7 @@ func (druid *Druid) registerRipSpell() {
 					bonusTickDamage += 21 * float64(comboPoints)
 				}
 
-				return (36.0+93.0*comboPoints+0.01*comboPoints*attackPower)/6.0 + bonusTickDamage
+				return (36.0 + 93.0*comboPoints + 0.01*comboPoints*attackPower) + bonusTickDamage
 			}, 0),
 			OutcomeApplier: druid.PrimalGoreOutcomeFuncTick(),
 		}),

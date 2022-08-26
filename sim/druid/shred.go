@@ -18,6 +18,9 @@ func (druid *Druid) registerShredSpell() {
 		core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == 29390, 88, 0) +
 		core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == 40713, 203, 0)
 
+	hasGlyphofShred := druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfShred)
+	maxRipTicks := druid.MaxRipTicks()
+
 	druid.Shred = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48572},
 		SpellSchool: core.SpellSchoolPhysical,
@@ -62,14 +65,13 @@ func (druid *Druid) registerShredSpell() {
 				if spellEffect.Landed() {
 					druid.AddComboPoints(sim, 1, spell.ComboPointMetrics())
 
-					if druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfShred) && druid.RipDot.IsActive() {
-						maxRipTicks := druid.MaxRipTicks()
+					if hasGlyphofShred && druid.RipDot.IsActive() {
 						if druid.RipDot.NumberOfTicks < maxRipTicks {
 							druid.RipDot.NumberOfTicks += 1
 							druid.RipDot.RecomputeAuraDuration()
+							druid.RipDot.UpdateExpires(druid.RipDot.ExpiresAt() + time.Second*2)
 						}
 					}
-
 				} else {
 					druid.AddEnergy(sim, refundAmount, druid.EnergyRefundMetrics)
 				}
