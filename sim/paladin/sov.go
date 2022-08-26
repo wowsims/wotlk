@@ -43,12 +43,9 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 			paladin.getItemSetLightswornBattlegearBonus4(),
 			paladin.getTalentSealsOfThePureBonus(),
 		},
-	}
-
-	procModifiers := append(baseModifiers.Clone(),
 		Additive{paladin.getTalentTwoHandedWeaponSpecializationBonus()},
-	)
-	procMultiplier := procModifiers.Get()
+	}
+	baseMultiplier := baseModifiers.Get()
 
 	judgementModifiers := append(baseModifiers.Clone(),
 		Additive{paladin.getMajorGlyphOfJudgementBonus(), paladin.getTalentTheArtOfWarBonus()},
@@ -119,7 +116,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 		Flags:       core.SpellFlagMeleeMetrics,
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskEmpty,
-			DamageMultiplier: procMultiplier,
+			DamageMultiplier: baseMultiplier,
 			ThreatMultiplier: 1,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
