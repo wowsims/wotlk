@@ -11,6 +11,7 @@ import (
 	"github.com/wowsims/wotlk/sim"
 	"github.com/wowsims/wotlk/sim/core"
 	proto "github.com/wowsims/wotlk/sim/core/proto"
+	prototext "google.golang.org/protobuf/encoding/prototext"
 	googleProto "google.golang.org/protobuf/proto"
 )
 
@@ -22,8 +23,11 @@ func main() {
 	c := make(chan struct{}, 0)
 
 	js.Global().Set("computeStats", js.FuncOf(computeStats))
+	js.Global().Set("computeStatsJson", js.FuncOf(computeStatsJson))
 	js.Global().Set("gearList", js.FuncOf(gearList))
+	js.Global().Set("gearListJson", js.FuncOf(gearListJson))
 	js.Global().Set("raidSim", js.FuncOf(raidSim))
+	js.Global().Set("raidSimJson", js.FuncOf(raidSimJson))
 	js.Global().Set("raidSimAsync", js.FuncOf(raidSimAsync))
 	js.Global().Set("statWeights", js.FuncOf(statWeights))
 	js.Global().Set("statWeightsAsync", js.FuncOf(statWeightsAsync))
@@ -76,6 +80,37 @@ func computeStats(this js.Value, args []js.Value) (response interface{}) {
 	return response
 }
 
+func computeStatsJson(this js.Value, args []js.Value) (response interface{}) {
+	defer func() {
+		if err := recover(); err != nil {
+			errStr := ""
+			switch errt := err.(type) {
+			case string:
+				errStr = errt
+			case error:
+				errStr = errt.Error()
+			}
+
+			errStr += "\nStack Trace:\n" + string(debug.Stack())
+			result := &proto.ComputeStatsResult{
+				ErrorResult: errStr,
+			}
+			outStr := prototext.Format(result)
+			response = js.ValueOf(outStr)
+		}
+	}()
+	csr := &proto.ComputeStatsRequest{}
+	if err := prototext.Unmarshal([]byte(args[0].String()), csr); err != nil {
+		log.Printf("Failed to parse request: %s", err)
+		return nil
+	}
+	result := core.ComputeStats(csr)
+
+	outStr := prototext.Format(result)
+	response = js.ValueOf(outStr)
+	return response
+}
+
 func gearList(this js.Value, args []js.Value) interface{} {
 	glr := &proto.GearListRequest{}
 	if err := googleProto.Unmarshal(getArgsBinary(args[0]), glr); err != nil {
@@ -96,6 +131,19 @@ func gearList(this js.Value, args []js.Value) interface{} {
 	return outArray
 }
 
+func gearListJson(this js.Value, args []js.Value) interface{} {
+	glr := &proto.GearListRequest{}
+	if err := prototext.Unmarshal([]byte(args[0].String()), glr); err != nil {
+		log.Printf("Failed to parse request: %s", err)
+		return nil
+	}
+	result := core.GetGearList(glr)
+
+	outStr := prototext.Format(result)
+	response := js.ValueOf(outStr)
+	return response
+}
+
 func raidSim(this js.Value, args []js.Value) interface{} {
 	rsr := &proto.RaidSimRequest{}
 	if err := googleProto.Unmarshal(getArgsBinary(args[0]), rsr); err != nil {
@@ -114,6 +162,19 @@ func raidSim(this js.Value, args []js.Value) interface{} {
 	js.CopyBytesToJS(outArray, outbytes)
 
 	return outArray
+}
+
+func raidSimJson(this js.Value, args []js.Value) interface{} {
+	rsr := &proto.RaidSimRequest{}
+	if err := prototext.Unmarshal([]byte(args[0].String()), rsr); err != nil {
+		log.Printf("Failed to parse request: %s", err)
+		return nil
+	}
+	result := core.RunRaidSim(rsr)
+
+	outStr := prototext.Format(result)
+	response := js.ValueOf(outStr)
+	return response
 }
 
 func raidSimAsync(this js.Value, args []js.Value) interface{} {
