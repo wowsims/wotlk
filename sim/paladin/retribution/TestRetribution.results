@@ -52,8 +52,8 @@ character_stats_results: {
 dps_results: {
  key: "TestRetribution-AllItems-AegisBattlegear"
  value: {
-  dps: 3432.82979
-  tps: 3129.61525
+  dps: 3331.44106
+  tps: 3046.834
  }
 }
 dps_results: {
@@ -304,8 +304,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-Gladiator'sVindication"
  value: {
-  dps: 3716.24926
-  tps: 3349.41125
+  dps: 2700.34381
+  tps: 2493.92405
  }
 }
 dps_results: {
@@ -374,8 +374,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-Liadrin'sBattlegear"
  value: {
-  dps: 3339.98766
-  tps: 3028.31986
+  dps: 3587.10802
+  tps: 3232.85243
  }
 }
 dps_results: {
@@ -423,8 +423,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-LightswornBattlegear"
  value: {
-  dps: 3692.46287
-  tps: 3345.12441
+  dps: 4014.78752
+  tps: 3629.33229
  }
 }
 dps_results: {
@@ -612,8 +612,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-StormshroudArmor"
  value: {
-  dps: 2529.72358
-  tps: 2357.33497
+  dps: 2500.31391
+  tps: 2332.42966
  }
 }
 dps_results: {
@@ -642,6 +642,13 @@ dps_results: {
  value: {
   dps: 2912.6094
   tps: 2679.24466
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-TheTwinBladesofAzzinoth"
+ value: {
+  dps: 2650.81038
+  tps: 2428.72917
  }
 }
 dps_results: {
@@ -717,8 +724,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-Turalyon'sBattlegear"
  value: {
-  dps: 3339.98766
-  tps: 3028.31986
+  dps: 3587.10802
+  tps: 3232.85243
  }
 }
 dps_results: {
@@ -731,8 +738,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-WindhawkArmor"
  value: {
-  dps: 2683.4948
-  tps: 2481.85336
+  dps: 2699.15935
+  tps: 2501.19875
  }
 }
 dps_results: {

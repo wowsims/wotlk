@@ -122,8 +122,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-DreamwalkerGarb"
  value: {
-  dps: 1208.06231
-  tps: 888.01263
+  dps: 1162.81577
+  tps: 855.51233
  }
 }
 dps_results: {
@@ -213,8 +213,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-LasherweaveRegalia"
  value: {
-  dps: 1283.351
-  tps: 942.31008
+  dps: 1303.40317
+  tps: 956.89654
  }
 }
 dps_results: {
@@ -241,8 +241,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-Malfurion'sRegalia"
  value: {
-  dps: 1229.73835
-  tps: 903.65078
+  dps: 1226.25868
+  tps: 901.17379
  }
 }
 dps_results: {
@@ -339,8 +339,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-Runetotem'sRegalia"
  value: {
-  dps: 1227.40015
-  tps: 902.02543
+  dps: 1226.25868
+  tps: 901.17379
  }
 }
 dps_results: {
@@ -388,8 +388,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-StormshroudArmor"
  value: {
-  dps: 1207.83121
-  tps: 886.59044
+  dps: 1197.36201
+  tps: 879.1573
  }
 }
 dps_results: {
@@ -444,8 +444,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-WindhawkArmor"
  value: {
-  dps: 1240.03353
-  tps: 909.97501
+  dps: 1242.26893
+  tps: 911.50077
  }
 }
 dps_results: {
