@@ -37,8 +37,8 @@ type Rogue struct {
 	Options  proto.Rogue_Options
 	Rotation proto.Rogue_Rotation
 
-	PriorityList    []RoguePriority
-	CurrentPriority *RoguePriority
+	priorityItems []roguePriorityItem
+	rotationItems []rogueRotationItem
 
 	sliceAndDiceDurations [6]time.Duration
 	exposeArmorDurations  [6]time.Duration
@@ -46,8 +46,10 @@ type Rogue struct {
 
 	initialArmorDebuffAura *core.Aura
 
+	BuilderPoints    int32
 	Builder          *core.Spell
 	Backstab         *core.Spell
+	BladeFlurry      *core.Spell
 	DeadlyPoison     *core.Spell
 	FanOfKnives      *core.Spell
 	Hemorrhage       *core.Spell
@@ -65,11 +67,11 @@ type Rogue struct {
 	Rupture      [6]*core.Spell
 	SliceAndDice [6]*core.Spell
 
-	LastDeadlyPoisonProcMask    core.ProcMask
-	DeadlyPoisonProcChanceBonus float64
-	InstantPoisonPPMM           core.PPMManager
-	DeadlyPoisonDots            []*core.Dot
-	RuptureDot                  *core.Dot
+	lastDeadlyPoisonProcMask    core.ProcMask
+	deadlyPoisonProcChanceBonus float64
+	instantPoisonPPMM           core.PPMManager
+	deadlyPoisonDots            []*core.Dot
+	ruptureDot                  *core.Dot
 
 	AdrenalineRushAura   *core.Aura
 	BladeFlurryAura      *core.Aura
@@ -162,7 +164,7 @@ func (rogue *Rogue) Initialize() {
 	rogue.DelayDPSCooldownsForArmorDebuffs()
 }
 
-func (rogue *Rogue) GetExpectedEnergyPerSecond() float64 {
+func (rogue *Rogue) getExpectedEnergyPerSecond() float64 {
 	const finishersPerSecond = 1.0 / 6
 	const averageComboPointsSpendOnFinisher = 4.0
 	bonusEnergyPerSecond := float64(rogue.Talents.CombatPotency) * 3 * 0.2 * 1.0 / (rogue.AutoAttacks.OH.SwingSpeed / 1.4)
@@ -178,8 +180,8 @@ func (rogue *Rogue) ApplyEnergyTickMultiplier(multiplier float64) {
 func (rogue *Rogue) Reset(sim *core.Simulation) {
 	rogue.disabledMCDs = rogue.DisableAllEnabledCooldowns(core.CooldownTypeUnknown)
 	rogue.initialArmorDebuffAura = rogue.CurrentTarget.GetActiveAuraWithTag(core.MajorArmorReductionTag)
-	rogue.LastDeadlyPoisonProcMask = core.ProcMaskEmpty
-	rogue.SetPriorityList(sim)
+	rogue.lastDeadlyPoisonProcMask = core.ProcMaskEmpty
+	rogue.setPriorityItems(sim)
 }
 
 func (rogue *Rogue) MeleeCritMultiplier(isMH bool, applyLethality bool) float64 {

@@ -365,6 +365,30 @@ func (unit *Unit) OutcomeFuncRangedHitAndCrit(critMultiplier float64) OutcomeApp
 	}
 }
 
+func (unit *Unit) OutcomeFuncRangedCritOnly(critMultiplier float64) OutcomeApplier {
+	if unit.PseudoStats.InFrontOfTarget {
+		return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
+			unit := spell.Unit
+			roll := sim.RandomFloat("White Hit Table")
+			chance := 0.0
+
+			if spellEffect.applyAttackTableCritSeparateRoll(sim, spell, attackTable, critMultiplier) {
+				spellEffect.applyAttackTableBlock(spell, unit, attackTable, roll, &chance)
+			} else {
+				if !spellEffect.applyAttackTableBlock(spell, unit, attackTable, roll, &chance) {
+					spellEffect.applyAttackTableHit(spell)
+				}
+			}
+		}
+	} else {
+		return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
+			if !spellEffect.applyAttackTableCritSeparateRoll(sim, spell, attackTable, critMultiplier) {
+				spellEffect.applyAttackTableHit(spell)
+			}
+		}
+	}
+}
+
 func (unit *Unit) OutcomeFuncEnemyMeleeWhite() OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
 		unit := spell.Unit

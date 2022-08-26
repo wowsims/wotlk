@@ -72,6 +72,24 @@ func TestAssassination(t *testing.T) {
 	}))
 }
 
+func TestRotation(t *testing.T) {
+	specOptions := RotationSpecOptions(PlayerOptionsCombatDI.Rogue.Talents, PlayerOptionsCombatDI.Rogue.Options)
+	specOptions = append(specOptions, RotationSpecOptions(PlayerOptionsAssassinationDI.Rogue.Talents, PlayerOptionsAssassinationDI.Rogue.Options)...)
+	core.RunTestSuite(t, t.Name(), core.RotationTestSuiteGenerator(core.CharacterSuiteConfig{
+		Class:            proto.Class_ClassRogue,
+		Race:             proto.Race_RaceHuman,
+		OtherRaces:       []proto.Race{proto.Race_RaceOrc},
+		GearSet:          core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		SpecOptions:      specOptions[0],
+		OtherSpecOptions: specOptions[1:],
+		RaidBuffs:        FullRaidBuffs,
+		PartyBuffs:       FullPartyBuffs,
+		PlayerBuffs:      FullIndividualBuffs,
+		Consumes:         FullConsumes,
+		Debuffs:          FullDebuffs,
+	}))
+}
+
 type AttackType int
 
 const (

@@ -89,7 +89,7 @@ func (dk *Deathknight) applyWanderingPlague() {
 		SpellSchool: core.SpellSchoolShadow,
 		Flags:       core.SpellFlagIgnoreAttackerModifiers | core.SpellFlagIgnoreTargetModifiers,
 
-		ApplyEffects: core.ApplyEffectFuncAOEDamage(dk.Env, core.SpellEffect{
+		ApplyEffects: core.ApplyEffectFuncAOEDamageCapped(dk.Env, core.SpellEffect{
 			ProcMask: core.ProcMaskSpellDamage,
 
 			DamageMultiplier: wanderingPlagueMultiplier,
