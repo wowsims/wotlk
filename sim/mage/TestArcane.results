@@ -484,13 +484,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestArcane-AllItems-TheTwinBladesofAzzinoth"
- value: {
-  dps: 5502.28285
-  tps: 3302.99319
- }
-}
-dps_results: {
  key: "TestArcane-AllItems-TheTwinStars"
  value: {
   dps: 6347.66609
