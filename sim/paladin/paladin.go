@@ -70,8 +70,8 @@ type Paladin struct {
 	// SealOfWisdom        *core.Spell
 	// SealOfLight         *core.Spell
 
-	ConsecrationDot    *core.Dot
-	SealOfVengeanceDot []*core.Dot
+	ConsecrationDot     *core.Dot
+	SealOfVengeanceDots []*core.Dot
 
 	HolyShieldAura *core.Aura
 	// RighteousFuryAura       *core.Aura
@@ -170,8 +170,9 @@ func (paladin *Paladin) Initialize() {
 	paladin.registerDivinePleaSpell()
 	paladin.registerRighteousVengeanceSpell()
 
+	targets := paladin.Env.GetNumTargets()
+
 	if paladin.Talents.RighteousVengeance > 0 {
-		targets := paladin.Env.GetNumTargets()
 		paladin.RighteousVengeanceDots = []*core.Dot{}
 		for i := int32(0); i < targets; i++ {
 			paladin.RighteousVengeanceDots = append(paladin.RighteousVengeanceDots, paladin.makeRighteousVengeanceDot(paladin.Env.GetTargetUnit(i)))
@@ -184,6 +185,11 @@ func (paladin *Paladin) Initialize() {
 		for i := int32(0); i < targets; i++ {
 			paladin.RighteousVengeanceDamage = append(paladin.RighteousVengeanceDamage, 0.0)
 		}
+	}
+
+	paladin.SealOfVengeanceDots = []*core.Dot{}
+	for i := int32(0); i < targets; i++ {
+		paladin.SealOfVengeanceDots = append(paladin.SealOfVengeanceDots, paladin.createSealOfVengeanceDot(paladin.Env.GetTargetUnit(i)))
 	}
 
 	for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {

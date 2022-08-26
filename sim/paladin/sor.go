@@ -36,7 +36,7 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 	baseMultiplier := baseModifiers.Get()
 
 	judgementModifiers := append(baseModifiers.Clone(),
-		Additive{paladin.getMajorGlyphOfJudgementBonus()},
+		Additive{paladin.getMajorGlyphOfJudgementBonus(), paladin.getTalentTheArtOfWarBonus()},
 	)
 	judgementMultiplier := judgementModifiers.Get()
 
