@@ -631,13 +631,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestBloodTank-AllItems-TheTwinBladesofAzzinoth"
- value: {
-  dps: 1511.91116
-  tps: 4918.22573
- }
-}
-dps_results: {
  key: "TestBloodTank-AllItems-TheTwinStars"
  value: {
   dps: 1501.70376
