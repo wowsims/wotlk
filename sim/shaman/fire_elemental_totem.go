@@ -11,16 +11,17 @@ const fireTotemDuration time.Duration = time.Second * 120
 
 func (shaman *Shaman) registerFireElementalTotem() {
 
+	actionID := core.ActionID{SpellID: 2894}
 	manaCost := 0.23 * shaman.BaseMana
 
 	fireElementalAura := shaman.RegisterAura(core.Aura{
 		Label:    "Fire Elemental Totem",
-		ActionID: core.ActionID{SpellID: 2894},
+		ActionID: actionID,
 		Duration: fireTotemDuration,
 	})
 
 	shaman.FireElementalTotem = shaman.RegisterSpell(core.SpellConfig{
-		ActionID: core.ActionID{SpellID: 2894},
+		ActionID: actionID,
 
 		ResourceType: stats.Mana,
 		BaseCost:     manaCost,

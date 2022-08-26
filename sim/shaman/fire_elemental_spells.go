@@ -8,9 +8,7 @@ import (
 )
 
 func (fireElemental *FireElemental) registerFireBlast() {
-
-	// TODO : needs to be figured out
-	manaCost := float64(120)
+	var manaCost float64 = 276
 
 	fireElemental.FireBlast = fireElemental.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 13339},
@@ -28,13 +26,15 @@ func (fireElemental *FireElemental) registerFireBlast() {
 				Timer:    fireElemental.NewTimer(),
 				Duration: time.Second * 4,
 			},
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				fireElemental.AutoAttacks.DelayMeleeUntil(sim, sim.CurrentTime+time.Second*2)
+			},
 		},
-
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskSpellDamage,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMagic(925, 1095, 1.5/3.5), // TODO need proper values just copied from mages fireblast
+			BaseDamage:       core.BaseDamageConfigMagic(0, 1070, 0.429), // TODO find out values
 			OutcomeApplier:   fireElemental.OutcomeFuncMagicHitAndCrit(fireElemental.DefaultSpellCritMultiplier()),
 		}),
 	})
@@ -42,9 +42,7 @@ func (fireElemental *FireElemental) registerFireBlast() {
 }
 
 func (fireElemental *FireElemental) registerFireNova() {
-
-	// TODO : needs to be figured out
-	manaCost := float64(30)
+	var manaCost float64 = 207
 
 	fireElemental.FireNova = fireElemental.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 12470},
@@ -63,25 +61,29 @@ func (fireElemental *FireElemental) registerFireNova() {
 				Timer:    fireElemental.NewTimer(),
 				Duration: time.Second * 4,
 			},
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				fireElemental.AutoAttacks.DelayMeleeUntil(sim, sim.CurrentTime+time.Second*4)
+			},
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskSpellDamage,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMagic(925, 1095, 1.5/3.5), // TODO need proper values just copied from fireblast
+			BaseDamage:       core.BaseDamageConfigMagic(0, 1070, 1.07), // TODO find out values
 			OutcomeApplier:   fireElemental.OutcomeFuncMagicHitAndCrit(fireElemental.DefaultSpellCritMultiplier()),
 		}),
 	})
 
 }
 
-func (fireElemental *FireElemental) registerFireShieldAura() {
+func (fireElemental *FireElemental) registerFireShieldDot() {
 	actionID := core.ActionID{SpellID: 11350}
 
 	//dummy spell, dots require a spell
 	fireShieldSpell := fireElemental.RegisterSpell(core.SpellConfig{
-		ActionID: actionID,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolFire,
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: 0,
@@ -101,11 +103,11 @@ func (fireElemental *FireElemental) registerFireShieldAura() {
 		}),
 		NumberOfTicks: 40,
 		TickLength:    time.Second * 3,
-		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncAOEDamageCapped(fireElemental.Env, core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
+		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+			ProcMask:         core.ProcMaskEmpty,
 			DamageMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(371, 0.1), // TODO need proper values
-			OutcomeApplier:   fireElemental.OutcomeFuncMagicHitBinary(),
+			BaseDamage:       core.BaseDamageConfigMagic(65, 66, 0.032), // TODO need proper values
+			OutcomeApplier:   fireElemental.OutcomeFuncMagicCrit(fireElemental.DefaultSpellCritMultiplier()),
 		})),
 	})
 }

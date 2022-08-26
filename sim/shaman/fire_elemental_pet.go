@@ -29,11 +29,11 @@ func (shaman *Shaman) NewFireElemental() *FireElemental {
 		),
 		shamanOwner: shaman,
 	}
-
+	fireElemental.EnableManaBar()
 	fireElemental.EnableAutoAttacks(fireElemental, core.AutoAttackOptions{
 		MainHand: core.Weapon{
-			BaseDamageMin:  25, // TODO find out values
-			BaseDamageMax:  27, // TODO find out values
+			BaseDamageMin:  11, // TODO find out values
+			BaseDamageMax:  35, // TODO find out values
 			SwingSpeed:     2,
 			SwingDuration:  time.Second * 2,
 			CritMultiplier: 2, // Pretty sure this is right.
@@ -55,55 +55,64 @@ func (fireElemental *FireElemental) GetPet() *core.Pet {
 func (fireElemental *FireElemental) Initialize() {
 	fireElemental.registerFireBlast()
 	fireElemental.registerFireNova()
-	fireElemental.registerFireShieldAura()
+	fireElemental.registerFireShieldDot()
 }
 
 func (fireElemental *FireElemental) Reset(sim *core.Simulation) {
 }
 
 func (fireElemental *FireElemental) enable(sim *core.Simulation) {
-	// TODO Snapshot stats
-
 	fireElemental.FireShieldDot.Apply(sim)
 }
 
 func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
 	target := fireElemental.CurrentTarget
 
-	waitingOnCD := core.MinDuration(fireElemental.FireBlast.TimeToReady(sim), fireElemental.FireNova.TimeToReady(sim))
-
 	/*
 		TODO Need to handle the rotation, a 50/50 split might be close enough for now, but it does not use every gcd,
 		will have to account for that.
 	*/
 
-	if fireElemental.FireBlast.IsReady(sim) {
-		if !fireElemental.FireBlast.Cast(sim, target) {
-			fireElemental.WaitForMana(sim, fireElemental.FireBlast.CurCast.Cost)
+	if fireElemental.FireNova.IsReady(sim) {
+		if fireElemental.FireNova.Cast(sim, target) {
+			return
 		}
+		fireElemental.WaitForMana(sim, fireElemental.FireNova.CurCast.Cost)
 		return
 	}
 
-	if fireElemental.FireNova.IsReady(sim) {
-		if !fireElemental.FireNova.Cast(sim, target) {
-			fireElemental.WaitForMana(sim, fireElemental.FireNova.CurCast.Cost)
+	if fireElemental.FireBlast.IsReady(sim) {
+		if fireElemental.FireBlast.Cast(sim, target) {
+			return
 		}
-		return
+	}
+
+	waitingOnCD := core.MinDuration(fireElemental.FireBlast.TimeToReady(sim), fireElemental.FireNova.TimeToReady(sim))
+
+	if waitingOnCD == 0 {
+		waitingOnCD = core.MaxDuration(fireElemental.FireBlast.TimeToReady(sim), fireElemental.FireNova.TimeToReady(sim))
 	}
 
 	fireElemental.WaitUntil(sim, sim.CurrentTime+waitingOnCD)
 }
 
 var fireElementalPetBaseStats = stats.Stats{
-	//TODO
-	stats.Mana: 3000,
+	//TODO These are just estimates from a excel sheet
+	stats.Mana:        1789,
+	stats.Health:      994,
+	stats.Intellect:   147,
+	stats.Stamina:     327,
+	stats.SpellPower:  1070,
+	stats.AttackPower: 1368,
 }
 
 func (shaman *Shaman) fireElementalStatInheritance() core.PetStatInheritance {
 	return func(ownerStats stats.Stats) stats.Stats {
 		return stats.Stats{
-			// TODO
-
+			stats.Stamina:     ownerStats[stats.Stamina] * 0.75,
+			stats.Intellect:   ownerStats[stats.Intellect] * 0.30,
+			stats.SpellPower:  ownerStats[stats.SpellPower] * 0.5218,
+			stats.AttackPower: ownerStats[stats.SpellPower] * 4.45,
 		}
 	}
 }
