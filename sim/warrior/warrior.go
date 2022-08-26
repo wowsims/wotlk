@@ -49,7 +49,6 @@ type Warrior struct {
 	Execute              *core.Spell
 	MortalStrike         *core.Spell
 	Overpower            *core.Spell
-	Rampage              *core.Spell
 	Rend                 *core.Spell
 	Revenge              *core.Spell
 	ShieldBlock          *core.Spell
@@ -82,7 +81,6 @@ type Warrior struct {
 	TraumaAuras           []*core.Aura
 	ExposeArmorAura       *core.Aura // Warriors don't cast this but they need to check it.
 	AcidSpitAura          *core.Aura // Warriors don't cast this but they need to check it.
-	RampageAura           *core.Aura
 	SunderArmorAura       *core.Aura
 	ThunderClapAura       *core.Aura
 }
@@ -102,6 +100,10 @@ func (warrior *Warrior) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 		if warrior.Talents.CommandingPresence == 5 {
 			raidBuffs.CommandingShout = proto.TristateEffect_TristateEffectImproved
 		}
+	}
+
+	if warrior.Talents.Rampage {
+		raidBuffs.Rampage = true
 	}
 }
 
