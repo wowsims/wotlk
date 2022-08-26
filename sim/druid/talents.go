@@ -278,7 +278,7 @@ func (druid *Druid) applyOmenOfClarity() {
 			if !spellEffect.Landed() {
 				return
 			}
-			if spellEffect.ProcMask.Matches(core.ProcMaskMeleeSpecial) && ppmm.Proc(sim, spellEffect.ProcMask, "Omen of Clarity") { // Melee Special
+			if spellEffect.ProcMask.Matches(core.ProcMaskMelee) && ppmm.Proc(sim, spellEffect.ProcMask, "Omen of Clarity") { // Melee
 				druid.ClearcastingAura.Activate(sim)
 			}
 			if spellEffect.ProcMask.Matches(core.ProcMaskSpellDamage) && (spell == druid.Starfire || spell == druid.Wrath) { // Spells
