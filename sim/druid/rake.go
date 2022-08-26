@@ -87,6 +87,10 @@ func (druid *Druid) registerRakeSpell() {
 	})
 }
 
-func (druid *Druid) CanRake(sim *core.Simulation) bool {
-	return druid.CurrentEnergy() >= druid.Rake.DefaultCast.Cost
+func (druid *Druid) CanRake() bool {
+	return druid.InForm(Cat) && ((druid.CurrentEnergy() >= druid.CurrentRakeCost()) || druid.ClearcastingAura.IsActive())
+}
+
+func (druid *Druid) CurrentRakeCost() float64 {
+	return druid.Rake.ApplyCostModifiers(druid.Rake.BaseCost)
 }

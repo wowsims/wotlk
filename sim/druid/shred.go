@@ -63,7 +63,7 @@ func (druid *Druid) registerShredSpell() {
 					druid.AddComboPoints(sim, 1, spell.ComboPointMetrics())
 
 					if druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfShred) && druid.RipDot.IsActive() {
-						maxRipTicks := druid.maxRipTicks()
+						maxRipTicks := druid.MaxRipTicks()
 						if druid.RipDot.NumberOfTicks < maxRipTicks {
 							druid.RipDot.NumberOfTicks += 1
 							druid.RipDot.RecomputeAuraDuration()
@@ -79,5 +79,9 @@ func (druid *Druid) registerShredSpell() {
 }
 
 func (druid *Druid) CanShred() bool {
-	return !druid.PseudoStats.InFrontOfTarget && druid.CurrentEnergy() >= druid.Shred.DefaultCast.Cost
+	return !druid.PseudoStats.InFrontOfTarget && (druid.CurrentEnergy() >= druid.CurrentShredCost() || druid.ClearcastingAura.IsActive())
+}
+
+func (druid *Druid) CurrentShredCost() float64 {
+	return druid.Shred.ApplyCostModifiers(druid.Shred.BaseCost)
 }

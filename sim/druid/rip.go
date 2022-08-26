@@ -85,10 +85,18 @@ func (druid *Druid) registerRipSpell() {
 	})
 }
 
-func (druid *Druid) maxRipTicks() int {
+func (druid *Druid) MaxRipTicks() int {
 	base := 6
 	t7bonus := core.TernaryInt(druid.HasSetBonus(ItemSetDreamwalkerBattlegear, 2), 2, 0)
 	ripGlyphBonus := core.TernaryInt(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfRip), 2, 0)
 	shredGlyphBonus := core.TernaryInt(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfShred), 3, 0)
 	return base + ripGlyphBonus + shredGlyphBonus + t7bonus
+}
+
+func (druid *Druid) CanRip() bool {
+	return druid.InForm(Cat) && druid.ComboPoints() > 0 && ((druid.CurrentEnergy() >= druid.CurrentRipCost()) || druid.ClearcastingAura.IsActive())
+}
+
+func (druid *Druid) CurrentRipCost() float64 {
+	return druid.Rip.ApplyCostModifiers(druid.Rip.BaseCost)
 }

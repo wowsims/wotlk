@@ -55,3 +55,11 @@ func (druid *Druid) registerSavageRoarSpell() {
 
 	druid.SavageRoar = srSpell
 }
+
+func (druid *Druid) CanSavageRoar() bool {
+	return druid.InForm(Cat) && druid.ComboPoints() > 0 && (druid.CurrentEnergy() >= druid.CurrentSavageRoarCost())
+}
+
+func (druid *Druid) CurrentSavageRoarCost() float64 {
+	return druid.SavageRoar.ApplyCostModifiers(druid.SavageRoar.BaseCost)
+}

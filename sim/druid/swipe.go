@@ -99,7 +99,11 @@ func (druid *Druid) registerSwipeCatSpell() {
 }
 
 func (druid *Druid) CanSwipeCat() bool {
-	return druid.InForm(Cat) && druid.CurrentEnergy() >= druid.SwipeCat.DefaultCast.Cost
+	return druid.InForm(Cat) && (druid.CurrentEnergy() >= druid.CurrentSwipeCatCost() || druid.ClearcastingAura.IsActive())
+}
+
+func (druid *Druid) CurrentSwipeCatCost() float64 {
+	return druid.SwipeCat.ApplyCostModifiers(druid.SwipeCat.BaseCost)
 }
 
 func (druid *Druid) CanSwipeBear() bool {

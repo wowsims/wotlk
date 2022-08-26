@@ -80,3 +80,11 @@ func (druid *Druid) registerFerociousBiteSpell() {
 		}),
 	})
 }
+
+func (druid *Druid) CanFerociousBite() bool {
+	return druid.InForm(Cat) && druid.ComboPoints() > 0 && ((druid.CurrentEnergy() >= druid.CurrentFerociousBiteCost()) || druid.ClearcastingAura.IsActive())
+}
+
+func (druid *Druid) CurrentFerociousBiteCost() float64 {
+	return druid.FerociousBite.ApplyCostModifiers(druid.FerociousBite.BaseCost)
+}
