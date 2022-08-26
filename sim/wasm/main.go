@@ -11,6 +11,7 @@ import (
 	"github.com/wowsims/wotlk/sim"
 	"github.com/wowsims/wotlk/sim/core"
 	proto "github.com/wowsims/wotlk/sim/core/proto"
+	protojson "google.golang.org/protobuf/encoding/protojson"
 	googleProto "google.golang.org/protobuf/proto"
 )
 
@@ -22,8 +23,11 @@ func main() {
 	c := make(chan struct{}, 0)
 
 	js.Global().Set("computeStats", js.FuncOf(computeStats))
+	js.Global().Set("computeStatsJson", js.FuncOf(computeStatsJson))
 	js.Global().Set("gearList", js.FuncOf(gearList))
+	js.Global().Set("gearListJson", js.FuncOf(gearListJson))
 	js.Global().Set("raidSim", js.FuncOf(raidSim))
+	js.Global().Set("raidSimJson", js.FuncOf(raidSimJson))
 	js.Global().Set("raidSimAsync", js.FuncOf(raidSimAsync))
 	js.Global().Set("statWeights", js.FuncOf(statWeights))
 	js.Global().Set("statWeightsAsync", js.FuncOf(statWeightsAsync))
@@ -76,6 +80,46 @@ func computeStats(this js.Value, args []js.Value) (response interface{}) {
 	return response
 }
 
+func computeStatsJson(this js.Value, args []js.Value) (response interface{}) {
+	defer func() {
+		if err := recover(); err != nil {
+			errStr := ""
+			switch errt := err.(type) {
+			case string:
+				errStr = errt
+			case error:
+				errStr = errt.Error()
+			}
+
+			errStr += "\nStack Trace:\n" + string(debug.Stack())
+			result := &proto.ComputeStatsResult{
+				ErrorResult: errStr,
+			}
+
+			output, err := protojson.MarshalOptions{EmitUnpopulated: true}.Marshal(result)
+			if err != nil {
+				log.Printf("[ERROR] Failed to marshal result: %s", err.Error())
+			}
+			response = js.ValueOf(string(output))
+		}
+	}()
+	csr := &proto.ComputeStatsRequest{}
+	log.Printf("Compute stats request: %s", getArgsJson(args[0]))
+	if err := protojson.Unmarshal(getArgsJson(args[0]), csr); err != nil {
+		log.Printf("Failed to parse request: %s", err)
+		return nil
+	}
+	result := core.ComputeStats(csr)
+
+	output, err := protojson.MarshalOptions{EmitUnpopulated: true}.Marshal(result)
+	if err != nil {
+		log.Printf("[ERROR] Failed to marshal result: %s", err.Error())
+		return nil
+	}
+	response = js.ValueOf(string(output))
+	return response
+}
+
 func gearList(this js.Value, args []js.Value) interface{} {
 	glr := &proto.GearListRequest{}
 	if err := googleProto.Unmarshal(getArgsBinary(args[0]), glr); err != nil {
@@ -96,6 +140,23 @@ func gearList(this js.Value, args []js.Value) interface{} {
 	return outArray
 }
 
+func gearListJson(this js.Value, args []js.Value) interface{} {
+	glr := &proto.GearListRequest{}
+	if err := protojson.Unmarshal(getArgsJson(args[0]), glr); err != nil {
+		log.Printf("Failed to parse request: %s", err)
+		return nil
+	}
+	result := core.GetGearList(glr)
+
+	output, err := protojson.MarshalOptions{EmitUnpopulated: true}.Marshal(result)
+	if err != nil {
+		log.Printf("[ERROR] Failed to marshal result: %s", err.Error())
+		return nil
+	}
+	response := js.ValueOf(string(output))
+	return response
+}
+
 func raidSim(this js.Value, args []js.Value) interface{} {
 	rsr := &proto.RaidSimRequest{}
 	if err := googleProto.Unmarshal(getArgsBinary(args[0]), rsr); err != nil {
@@ -114,6 +175,23 @@ func raidSim(this js.Value, args []js.Value) interface{} {
 	js.CopyBytesToJS(outArray, outbytes)
 
 	return outArray
+}
+
+func raidSimJson(this js.Value, args []js.Value) interface{} {
+	rsr := &proto.RaidSimRequest{}
+	if err := protojson.Unmarshal(getArgsJson(args[0]), rsr); err != nil {
+		log.Printf("Failed to parse request: %s", err)
+		return nil
+	}
+	result := core.RunRaidSim(rsr)
+
+	output, err := protojson.MarshalOptions{EmitUnpopulated: true}.Marshal(result)
+	if err != nil {
+		log.Printf("[ERROR] Failed to marshal result: %s", err.Error())
+		return nil
+	}
+	response := js.ValueOf(string(output))
+	return response
 }
 
 func raidSimAsync(this js.Value, args []js.Value) interface{} {
@@ -166,6 +244,11 @@ func getArgsBinary(value js.Value) []byte {
 	data := make([]byte, value.Get("length").Int())
 	js.CopyBytesToGo(data, value)
 	return data
+}
+
+func getArgsJson(value js.Value) []byte {
+	str := value.String()
+	return []byte(str)
 }
 
 func processAsyncProgress(progFunc js.Value, reporter chan *proto.ProgressMetrics) js.Value {
