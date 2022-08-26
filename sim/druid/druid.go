@@ -18,6 +18,7 @@ type Druid struct {
 	MaulRageThreshold float64
 	RebirthTiming     float64
 
+	Berserk          *core.Spell
 	DemoralizingRoar *core.Spell
 	Enrage           *core.Spell
 	FaerieFire       *core.Spell
