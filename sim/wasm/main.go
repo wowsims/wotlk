@@ -11,7 +11,7 @@ import (
 	"github.com/wowsims/wotlk/sim"
 	"github.com/wowsims/wotlk/sim/core"
 	proto "github.com/wowsims/wotlk/sim/core/proto"
-	prototext "google.golang.org/protobuf/encoding/prototext"
+	protojson "google.golang.org/protobuf/encoding/protojson"
 	googleProto "google.golang.org/protobuf/proto"
 )
 
@@ -95,19 +95,28 @@ func computeStatsJson(this js.Value, args []js.Value) (response interface{}) {
 			result := &proto.ComputeStatsResult{
 				ErrorResult: errStr,
 			}
-			outStr := prototext.Format(result)
-			response = js.ValueOf(outStr)
+
+			output, err := protojson.MarshalOptions{EmitUnpopulated: true}.Marshal(result)
+			if err != nil {
+				log.Printf("[ERROR] Failed to marshal result: %s", err.Error())
+			}
+			response = js.ValueOf(string(output))
 		}
 	}()
 	csr := &proto.ComputeStatsRequest{}
-	if err := prototext.Unmarshal([]byte(args[0].String()), csr); err != nil {
+	log.Printf("Compute stats request: %s", getArgsJson(args[0]))
+	if err := protojson.Unmarshal(getArgsJson(args[0]), csr); err != nil {
 		log.Printf("Failed to parse request: %s", err)
 		return nil
 	}
 	result := core.ComputeStats(csr)
 
-	outStr := prototext.Format(result)
-	response = js.ValueOf(outStr)
+	output, err := protojson.MarshalOptions{EmitUnpopulated: true}.Marshal(result)
+	if err != nil {
+		log.Printf("[ERROR] Failed to marshal result: %s", err.Error())
+		return nil
+	}
+	response = js.ValueOf(string(output))
 	return response
 }
 
@@ -133,14 +142,18 @@ func gearList(this js.Value, args []js.Value) interface{} {
 
 func gearListJson(this js.Value, args []js.Value) interface{} {
 	glr := &proto.GearListRequest{}
-	if err := prototext.Unmarshal([]byte(args[0].String()), glr); err != nil {
+	if err := protojson.Unmarshal(getArgsJson(args[0]), glr); err != nil {
 		log.Printf("Failed to parse request: %s", err)
 		return nil
 	}
 	result := core.GetGearList(glr)
 
-	outStr := prototext.Format(result)
-	response := js.ValueOf(outStr)
+	output, err := protojson.MarshalOptions{EmitUnpopulated: true}.Marshal(result)
+	if err != nil {
+		log.Printf("[ERROR] Failed to marshal result: %s", err.Error())
+		return nil
+	}
+	response := js.ValueOf(string(output))
 	return response
 }
 
@@ -166,14 +179,18 @@ func raidSim(this js.Value, args []js.Value) interface{} {
 
 func raidSimJson(this js.Value, args []js.Value) interface{} {
 	rsr := &proto.RaidSimRequest{}
-	if err := prototext.Unmarshal([]byte(args[0].String()), rsr); err != nil {
+	if err := protojson.Unmarshal(getArgsJson(args[0]), rsr); err != nil {
 		log.Printf("Failed to parse request: %s", err)
 		return nil
 	}
 	result := core.RunRaidSim(rsr)
 
-	outStr := prototext.Format(result)
-	response := js.ValueOf(outStr)
+	output, err := protojson.MarshalOptions{EmitUnpopulated: true}.Marshal(result)
+	if err != nil {
+		log.Printf("[ERROR] Failed to marshal result: %s", err.Error())
+		return nil
+	}
+	response := js.ValueOf(string(output))
 	return response
 }
 
@@ -227,6 +244,11 @@ func getArgsBinary(value js.Value) []byte {
 	data := make([]byte, value.Get("length").Int())
 	js.CopyBytesToGo(data, value)
 	return data
+}
+
+func getArgsJson(value js.Value) []byte {
+	str := value.String()
+	return []byte(str)
 }
 
 func processAsyncProgress(progFunc js.Value, reporter chan *proto.ProgressMetrics) js.Value {
