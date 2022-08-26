@@ -175,7 +175,6 @@ func getGemDeclarations() []GemDeclaration {
 }
 
 func getItemDeclarations() []ItemDeclaration {
-	//itemsData := readCsvFile("./assets/item_data/all_equippable_item_ids.csv")
 	itemsData := readCsvFile("./assets/item_data/all_item_ids.csv")
 
 	// Ignore first line
