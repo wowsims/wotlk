@@ -7,6 +7,7 @@ import (
 )
 
 func (hunter *Hunter) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
+	hunter.mayMoveAt = sim.CurrentTime
 	hunter.TryUseCooldowns(sim)
 	if hunter.GCD.IsReady(sim) {
 		hunter.rotation(sim)

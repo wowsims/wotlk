@@ -15,6 +15,11 @@ message DpsTestResult {
 	double dps = 1;
 	double tps = 2;
 	double dtps = 3;
+	double hps = 4;
+}
+
+message CastsTestResult {
+	map<string, double> casts = 1;
 }
 
 message TestSuiteResult {
@@ -26,4 +31,6 @@ message TestSuiteResult {
 
 	// Maps test names to their results.
 	map<string, DpsTestResult> dps_results = 1;
+
+	map<string, CastsTestResult> casts_results = 4;
 }

@@ -56,5 +56,10 @@ export const SmitePriestRotationConfig = {
 			label: 'Use Mind Blast',
 			labelTooltip: 'Use Mind Blast whenever off CD.',
 		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecSmitePriest>({
+			fieldName: 'memeDream',
+			label: 'Meme Dream',
+			labelTooltip: 'Assumes 2nd Smite Priest in raid, so just spams HF + Smite with permanent HF uptime.',
+		}),
 	],
 };

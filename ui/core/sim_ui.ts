@@ -102,9 +102,9 @@ export abstract class SimUI extends Component {
         if (config.launchStatus == LaunchStatus.Unlaunched) {
             statusStr = 'This sim is a WORK IN PROGRESS. It is not fully developed and should not be used for general purposes.';
         } else if (config.launchStatus == LaunchStatus.Alpha) {
-            statusStr = 'This sim is in ALPHA. Bugs are expected; please let us know if you find one!.';
+            statusStr = 'This sim is in ALPHA. Bugs are expected; please let us know if you find one!';
         } else if (config.launchStatus == LaunchStatus.Beta) {
-            statusStr = 'This sim is in BETA. There may still be a few bugs; please let us know if you find one!.';
+            statusStr = 'This sim is in BETA. There may still be a few bugs; please let us know if you find one!';
         }
         if (statusStr) {
             config.knownIssues = [statusStr].concat(config.knownIssues || []);

@@ -1,6 +1,7 @@
 package druid
 
 import (
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"strconv"
 	"time"
 
@@ -37,7 +38,7 @@ func (druid *Druid) registerStarfallSpell() {
 			},
 			CD: core.Cooldown{
 				Timer:    druid.NewTimer(),
-				Duration: time.Second * 90,
+				Duration: time.Second * (90 - core.TernaryDuration(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfStarfall), 30, 0)),
 			},
 		},
 
@@ -67,7 +68,7 @@ func (druid *Druid) registerStarfallSpell() {
 		TickLength:    tickLength,
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1,
+			DamageMultiplier: 1 * (1 + core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfFocus), 0.1, 0)),
 			ThreatMultiplier: 1,
 			IsPeriodic:       false,
 			BaseDamage:       core.BaseDamageConfigMagic(563, 653, 0.3),
@@ -86,7 +87,7 @@ func (druid *Druid) registerStarfallSpell() {
 		TickLength:    tickLength,
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncAOEDamageCapped(druid.Env, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1,
+			DamageMultiplier: 1 * (1 + core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfFocus), 0.1, 0)),
 			ThreatMultiplier: 1,
 			IsPeriodic:       false,
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(101, 0.13),

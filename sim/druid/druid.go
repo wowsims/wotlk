@@ -77,7 +77,7 @@ type Druid struct {
 
 	form         DruidForm
 	disabledMCDs []*core.MajorCooldown
-	DruidTier    DruidTierSets
+	SetBonuses   DruidTierSets
 }
 
 type DruidTierSets struct {
@@ -162,7 +162,7 @@ func (druid *Druid) Initialize() {
 		druid.PrimalPrecisionRecoveryMetrics = druid.NewEnergyMetrics(core.ActionID{SpellID: 48410})
 	}
 
-	druid.DruidTier = DruidTierSets{
+	druid.SetBonuses = DruidTierSets{
 		druid.HasSetBonus(ItemSetThunderheartRegalia, 2),
 		druid.HasSetBonus(ItemSetDreamwalkerGarb, 2),
 		druid.HasSetBonus(ItemSetDreamwalkerGarb, 4),
@@ -242,27 +242,27 @@ func New(char core.Character, form DruidForm, selfBuffs SelfBuffs, talents proto
 
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTauren, Class: proto.Class_ClassDruid}] = stats.Stats{
-		stats.Health:      3434, // 4498 health shown on naked character (would include tauren bonus)
-		stats.Strength:    81,
-		stats.Agility:     65,
-		stats.Stamina:     85,
-		stats.Intellect:   115,
-		stats.Spirit:      135,
-		stats.Mana:        2370,
-		stats.SpellCrit:   40.66,                               // 3.29% chance to crit shown on naked character screen
+		stats.Health:      7237,
+		stats.Strength:    85,
+		stats.Agility:     86,
+		stats.Stamina:     98,
+		stats.Intellect:   143,
+		stats.Spirit:      159,
+		stats.Mana:        3496,
+		stats.SpellCrit:   1.85 * core.CritRatingPerCritChance, // Class-specific constant
 		stats.AttackPower: -20,                                 // accounts for the fact that the first 20 points in Str only provide 1 AP rather than 2
 		stats.MeleeCrit:   0.96 * core.CritRatingPerCritChance, // 3.56% chance to crit shown on naked character screen
 		stats.Dodge:       -1.87 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassDruid}] = stats.Stats{
-		stats.Health:      3434, // 4254 health shown on naked character
-		stats.Strength:    73,
-		stats.Agility:     75,
-		stats.Stamina:     82,
-		stats.Intellect:   120,
-		stats.Spirit:      133,
-		stats.Mana:        2370,
-		stats.SpellCrit:   40.60,                               // 3.35% chance to crit shown on naked character screen
+		stats.Health:      7237,
+		stats.Strength:    94,
+		stats.Agility:     78,
+		stats.Stamina:     99,
+		stats.Intellect:   139,
+		stats.Spirit:      161,
+		stats.Mana:        3496,
+		stats.SpellCrit:   1.85 * core.CritRatingPerCritChance, // Class-specific constant
 		stats.AttackPower: -20,                                 // accounts for the fact that the first 20 points in Str only provide 1 AP rather than 2
 		stats.MeleeCrit:   0.96 * core.CritRatingPerCritChance, // 3.96% chance to crit shown on naked character screen
 		stats.Dodge:       -1.87 * core.DodgeRatingPerDodgeChance,

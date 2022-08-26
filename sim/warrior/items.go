@@ -225,7 +225,7 @@ var ItemSetDreadnaughtBattlegear = core.NewItemSet(core.ItemSet{
 			rageMetrics := warrior.NewRageMetrics(core.ActionID{SpellID: 61571})
 
 			procAura := warrior.RegisterAura(core.Aura{
-				Label:    "Dreadnaught Battlegear 2pc Proc",
+				Label:    "Dreadnaught Battlegear 4pc Proc",
 				ActionID: core.ActionID{SpellID: 61571},
 				Duration: time.Second * 30,
 				OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
@@ -235,14 +235,14 @@ var ItemSetDreadnaughtBattlegear = core.NewItemSet(core.ItemSet{
 			})
 
 			warrior.RegisterAura(core.Aura{
-				Label:    "Dreadnaught Battlegear 2pc",
+				Label:    "Dreadnaught Battlegear 4pc",
 				Duration: core.NeverExpires,
 				ActionID: core.ActionID{SpellID: 60176},
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
 				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if spellEffect.Landed() && sim.RandomFloat("Dreadnaught Battlegear 2pc") < 0.1 {
+					if spellEffect.Landed() && sim.RandomFloat("Dreadnaught Battlegear 4pc") < 0.1 {
 						procAura.Activate(sim)
 					}
 				},

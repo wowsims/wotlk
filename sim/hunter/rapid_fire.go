@@ -18,7 +18,7 @@ func (hunter *Hunter) registerRapidFireCD() {
 
 	hasteMultiplier := 1.4 + core.TernaryFloat64(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfRapidFire), 0.08, 0)
 
-	rfAura := hunter.RegisterAura(core.Aura{
+	hunter.RapidFireAura = hunter.RegisterAura(core.Aura{
 		Label:    "Rapid Fire",
 		ActionID: actionID,
 		Duration: time.Second * 15,
@@ -59,7 +59,7 @@ func (hunter *Hunter) registerRapidFireCD() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			rfAura.Activate(sim)
+			hunter.RapidFireAura.Activate(sim)
 		},
 	})
 
@@ -68,7 +68,7 @@ func (hunter *Hunter) registerRapidFireCD() {
 		Type:  core.CooldownTypeDPS,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
 			// Make sure we don't reuse after a Readiness cast.
-			return !rfAura.IsActive()
+			return !hunter.RapidFireAura.IsActive()
 		},
 	})
 }

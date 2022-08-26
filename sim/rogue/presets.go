@@ -1,6 +1,7 @@
 package rogue
 
 import (
+	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/items"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
@@ -138,6 +139,106 @@ var AssassinationTalents = &proto.RogueTalents{
 
 	RelentlessStrikes: 5,
 	Opportunity:       2,
+}
+
+var AssassinationRotationOptions = []*proto.Rogue_Rotation{
+	{
+		ExposeArmorFrequency:          proto.Rogue_Rotation_Never,
+		TricksOfTheTradeFrequency:     proto.Rogue_Rotation_Never,
+		AssassinationFinisherPriority: proto.Rogue_Rotation_EnvenomRupture,
+	},
+	{
+		ExposeArmorFrequency:          proto.Rogue_Rotation_Never,
+		TricksOfTheTradeFrequency:     proto.Rogue_Rotation_Once,
+		AssassinationFinisherPriority: proto.Rogue_Rotation_EnvenomRupture,
+	},
+	{
+		ExposeArmorFrequency:          proto.Rogue_Rotation_Once,
+		MinimumComboPointsExposeArmor: 3,
+		TricksOfTheTradeFrequency:     proto.Rogue_Rotation_Never,
+		AssassinationFinisherPriority: proto.Rogue_Rotation_EnvenomRupture,
+	},
+	{
+		ExposeArmorFrequency:          proto.Rogue_Rotation_Maintain,
+		TricksOfTheTradeFrequency:     proto.Rogue_Rotation_Never,
+		AssassinationFinisherPriority: proto.Rogue_Rotation_EnvenomRupture,
+	},
+	{
+		ExposeArmorFrequency:          proto.Rogue_Rotation_Never,
+		TricksOfTheTradeFrequency:     proto.Rogue_Rotation_Maintain,
+		AssassinationFinisherPriority: proto.Rogue_Rotation_EnvenomRupture,
+	},
+	{
+		ExposeArmorFrequency:          proto.Rogue_Rotation_Never,
+		TricksOfTheTradeFrequency:     proto.Rogue_Rotation_Maintain,
+		AssassinationFinisherPriority: proto.Rogue_Rotation_RuptureEnvenom,
+	},
+}
+
+var CombatRotationOptions = []*proto.Rogue_Rotation{
+	{
+		ExposeArmorFrequency:      proto.Rogue_Rotation_Never,
+		TricksOfTheTradeFrequency: proto.Rogue_Rotation_Never,
+		CombatFinisherPriority:    proto.Rogue_Rotation_RuptureEviscerate,
+	},
+	{
+		ExposeArmorFrequency:      proto.Rogue_Rotation_Never,
+		TricksOfTheTradeFrequency: proto.Rogue_Rotation_Once,
+		CombatFinisherPriority:    proto.Rogue_Rotation_RuptureEviscerate,
+	},
+	{
+		ExposeArmorFrequency:          proto.Rogue_Rotation_Once,
+		MinimumComboPointsExposeArmor: 3,
+		TricksOfTheTradeFrequency:     proto.Rogue_Rotation_Never,
+		CombatFinisherPriority:        proto.Rogue_Rotation_RuptureEviscerate,
+	},
+	{
+		ExposeArmorFrequency:      proto.Rogue_Rotation_Maintain,
+		TricksOfTheTradeFrequency: proto.Rogue_Rotation_Never,
+		CombatFinisherPriority:    proto.Rogue_Rotation_RuptureEviscerate,
+	},
+	{
+		ExposeArmorFrequency:      proto.Rogue_Rotation_Never,
+		TricksOfTheTradeFrequency: proto.Rogue_Rotation_Maintain,
+		CombatFinisherPriority:    proto.Rogue_Rotation_RuptureEviscerate,
+	},
+	{
+		ExposeArmorFrequency:      proto.Rogue_Rotation_Never,
+		TricksOfTheTradeFrequency: proto.Rogue_Rotation_Maintain,
+		CombatFinisherPriority:    proto.Rogue_Rotation_EviscerateRupture,
+	},
+}
+
+var RotationNames = []string{
+	"No Expose No Tricks Primary",
+	"No Expose One Tricks Primary",
+	"One Expose No Tricks Primary",
+	"Maintain Expose No Tricks Primary",
+	"No Expose Maintain Tricks Primary",
+	"No Expose Maintain Tricks Secondary",
+}
+
+func RotationSpecOptions(talents *proto.RogueTalents, options *proto.Rogue_Options) []core.SpecOptionsCombo {
+	specs := make([]core.SpecOptionsCombo, 0)
+	specLabel := "Assassination"
+	rotationOptions := AssassinationRotationOptions
+	if !talents.Mutilate {
+		specLabel = "Combat"
+		rotationOptions = CombatRotationOptions
+	}
+	for idx, rotation := range rotationOptions {
+		specs = append(specs, core.SpecOptionsCombo{
+			Label: specLabel + " " + RotationNames[idx],
+			SpecOptions: &proto.Player_Rogue{
+				Rogue: &proto.Rogue{
+					Talents:  talents,
+					Options:  options,
+					Rotation: rotation,
+				},
+			},
+		})
+	}
+	return specs
 }
 
 var PlayerOptionsCombatDI = &proto.Player_Rogue{

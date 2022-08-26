@@ -9,7 +9,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (priest *Priest) registerPenanceSpell() {
+func (priest *Priest) RegisterPenanceSpell() {
 	if !priest.Talents.Penance {
 		return
 	}

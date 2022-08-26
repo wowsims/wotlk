@@ -396,7 +396,7 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 	})
 
 	cooldownDur := time.Minute * 2
-	bladeFlurrySpell := rogue.RegisterSpell(core.SpellConfig{
+	rogue.BladeFlurry = rogue.RegisterSpell(core.SpellConfig{
 		ActionID: BladeFlurryActionID,
 
 		ResourceType: stats.Energy,
@@ -425,7 +425,7 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 	})
 
 	rogue.AddMajorCooldown(core.MajorCooldown{
-		Spell:    bladeFlurrySpell,
+		Spell:    rogue.BladeFlurry,
 		Type:     core.CooldownTypeDPS,
 		Priority: core.CooldownPriorityDefault,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
@@ -464,10 +464,12 @@ func (rogue *Rogue) registerAdrenalineRushCD() {
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.ResetEnergyTick(sim)
 			rogue.ApplyEnergyTickMultiplier(2.0)
+			rogue.rotationItems = rogue.planRotation(sim)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.ResetEnergyTick(sim)
 			rogue.ApplyEnergyTickMultiplier(1 / 2.0)
+			rogue.rotationItems = rogue.planRotation(sim)
 		},
 	})
 

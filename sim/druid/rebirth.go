@@ -14,7 +14,7 @@ func (druid *Druid) registerRebirthSpell() {
 	baseCost := 1611 + (521.4 * (1 - (float64(druid.Talents.NaturalShapeshifter) * 0.1)))
 
 	druid.Rebirth = druid.RegisterSpell(core.SpellConfig{
-		ActionID: core.ActionID{SpellID: 26994},
+		ActionID: core.ActionID{SpellID: 48477},
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,

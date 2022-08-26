@@ -13,7 +13,10 @@ import (
 	"google.golang.org/protobuf/encoding/prototext"
 )
 
-const storagePrecision = 10
+// Precise enough to detect very small changes to test results, but truncated
+// enough that we don't have flaky tests due to different OS/Go versions with
+// different float rounding behavior.
+const storagePrecision = 5
 
 type IndividualTestSuite struct {
 	Name string
@@ -67,7 +70,36 @@ func (testSuite *IndividualTestSuite) TestDPS(testName string, rsr *proto.RaidSi
 		Dps:  toFixed(result.RaidMetrics.Dps.Avg, storagePrecision),
 		Tps:  toFixed(result.RaidMetrics.Parties[0].Players[0].Threat.Avg, storagePrecision),
 		Dtps: toFixed(result.RaidMetrics.Parties[0].Players[0].Dtps.Avg, storagePrecision),
+		Hps:  toFixed(result.RaidMetrics.Parties[0].Players[0].Hps.Avg, storagePrecision),
 	}
+}
+
+func (testSuite *IndividualTestSuite) TestCasts(testName string, rsr *proto.RaidSimRequest) {
+	testSuite.testNames = append(testSuite.testNames, testName)
+	result := RunRaidSim(rsr)
+	if result.Logs != "" {
+		fmt.Printf("LOGS: %s\n", result.Logs)
+	}
+	if result.ErrorResult != "" {
+		panic("simulation failed to run: " + result.ErrorResult)
+	}
+	castsByAction := make(map[string]float64, 0)
+	for _, metric := range result.RaidMetrics.Parties[0].Players[0].Actions {
+		name := metric.Id.String()
+		name = strings.ReplaceAll(name, "  ", " ")
+		for _, targetMetrics := range metric.Targets {
+			if val, ok := castsByAction[name]; ok {
+				castsByAction[name] = val + float64(targetMetrics.Casts)
+			} else {
+				castsByAction[name] = float64(targetMetrics.Casts)
+			}
+		}
+		castsByAction[name] /= float64(rsr.SimOptions.Iterations)
+		castsByAction[name] *= 10
+		castsByAction[name] = float64(math.Round(castsByAction[name])) / 10.0
+	}
+	casts := &proto.CastsTestResult{Casts: castsByAction}
+	testSuite.testResults.CastsResults[testName] = casts
 }
 
 func (testSuite *IndividualTestSuite) Done(t *testing.T) {
@@ -110,6 +142,7 @@ func newTestSuiteResult() proto.TestSuiteResult {
 		CharacterStatsResults: make(map[string]*proto.CharacterStatsTestResult),
 		StatWeightsResults:    make(map[string]*proto.StatWeightsTestResult),
 		DpsResults:            make(map[string]*proto.DpsTestResult),
+		CastsResults:          make(map[string]*proto.CastsTestResult),
 	}
 }
 
@@ -183,12 +216,16 @@ func RunTestSuite(t *testing.T, suiteName string, generator TestGenerator) {
 					t.Logf("Missing Result for test %s", fullTestName)
 					t.Fail()
 				}
-			} else if rsr != nil {
+			} else if rsr != nil && !strings.Contains(testName, "Casts") {
 				testSuite.TestDPS(fullTestName, rsr)
 				if actualDpsResult, ok := testSuite.testResults.DpsResults[fullTestName]; ok {
 					if expectedDpsResult, ok := expectedResults.DpsResults[fullTestName]; ok {
 						if actualDpsResult.Dps < expectedDpsResult.Dps-tolerance || actualDpsResult.Dps > expectedDpsResult.Dps+tolerance {
 							t.Logf("DPS expected %0.03f but was %0.03f!.", expectedDpsResult.Dps, actualDpsResult.Dps)
+							t.Fail()
+						}
+						if actualDpsResult.Hps < expectedDpsResult.Hps-tolerance || actualDpsResult.Hps > expectedDpsResult.Hps+tolerance {
+							t.Logf("HPS expected %0.03f but was %0.03f!.", expectedDpsResult.Hps, actualDpsResult.Hps)
 							t.Fail()
 						}
 						if actualDpsResult.Tps < expectedDpsResult.Tps-tolerance || actualDpsResult.Tps > expectedDpsResult.Tps+tolerance {
@@ -201,6 +238,24 @@ func RunTestSuite(t *testing.T, suiteName string, generator TestGenerator) {
 						}
 					} else {
 						t.Logf("Unexpected test %s with %0.03f DPS!", fullTestName, actualDpsResult.Dps)
+						t.Fail()
+					}
+				} else if !ok {
+					t.Logf("Missing Result for test %s", fullTestName)
+					t.Fail()
+				}
+			} else if rsr != nil && strings.Contains(testName, "Casts") {
+				testSuite.TestCasts(fullTestName, rsr)
+				if actualCastsResult, ok := testSuite.testResults.CastsResults[fullTestName]; ok {
+					if expectedCastsResult, ok := expectedResults.CastsResults[fullTestName]; ok {
+						for action, casts := range actualCastsResult.Casts {
+							if casts < expectedCastsResult.Casts[action]-tolerance || casts > expectedCastsResult.Casts[action]+tolerance {
+								t.Logf("Expected %0.03f casts of %s but was %0.03f!.", expectedCastsResult.Casts[action], action, casts)
+								t.Fail()
+							}
+						}
+					} else {
+						t.Logf("Unexpected test %s", fullTestName)
 						t.Fail()
 					}
 				} else if !ok {

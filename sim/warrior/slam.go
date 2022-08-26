@@ -31,7 +31,7 @@ func (warrior *Warrior) registerSlamSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeMHSpecial,
 
-			DamageMultiplier: 1 + 0.02*float64(warrior.Talents.UnendingFury)*core.TernaryFloat64(warrior.HasSetBonus(ItemSetDreadnaughtBattlegear, 2), 1.1, 1),
+			DamageMultiplier: 1 * (1 + 0.02*float64(warrior.Talents.UnendingFury)) * core.TernaryFloat64(warrior.HasSetBonus(ItemSetDreadnaughtBattlegear, 2), 1.1, 1),
 			ThreatMultiplier: 1,
 			BonusCritRating:  core.TernaryFloat64(warrior.HasSetBonus(ItemSetWrynnsBattlegear, 4), 5, 0) * core.CritRatingPerCritChance,
 			FlatThreatBonus:  70,
@@ -48,8 +48,8 @@ func (warrior *Warrior) registerSlamSpell() {
 	})
 }
 
-func (warrior *Warrior) HasEnoughRageForSlam(sim *core.Simulation) bool {
-	return warrior.CurrentRage() >= warrior.Slam.DefaultCast.Cost
+func (warrior *Warrior) ShouldInstantSlam(sim *core.Simulation) bool {
+	return warrior.CurrentRage() >= warrior.Slam.DefaultCast.Cost && warrior.Slam.IsReady(sim) && warrior.BloodsurgeAura.IsActive() && sim.CurrentTime > (warrior.lastBloodsurgeProc+warrior.reactionTime)
 }
 
 func (warrior *Warrior) ShouldSlam(sim *core.Simulation) bool {

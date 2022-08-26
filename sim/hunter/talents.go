@@ -540,9 +540,9 @@ func (hunter *Hunter) applyLockAndLoad() {
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			hunter.ArcaneShot.CostMultiplier -= 1
+			hunter.ArcaneShot.CostMultiplier += 1
 			if hunter.ExplosiveShot != nil {
-				hunter.ExplosiveShot.CostMultiplier -= 1
+				hunter.ExplosiveShot.CostMultiplier += 1
 			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
@@ -779,6 +779,9 @@ func (hunter *Hunter) registerReadinessCD() {
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
 			// Don't use if there are no cooldowns to reset.
 			return !hunter.RapidFire.IsReady(sim)
+		},
+		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
+			return !hunter.RapidFireAura.IsActive() || hunter.RapidFireAura.RemainingDuration(sim) < time.Second*10
 		},
 	})
 }
