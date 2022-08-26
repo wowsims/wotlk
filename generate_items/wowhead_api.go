@@ -219,16 +219,16 @@ type classPattern struct {
 
 // Detects class-locked items, e.g. tier sets and pvp gear.
 var classPatternsWowhead = []classPattern{
-	{class: proto.Class_ClassWarrior, pattern: regexp.MustCompile(`<a href=\\"/wotlk/warrior\\" class=\\"c1\\">Warrior</a>`)},
-	{class: proto.Class_ClassPaladin, pattern: regexp.MustCompile(`<a href=\\"/wotlk/paladin\\" class=\\"c2\\">Paladin</a>`)},
-	{class: proto.Class_ClassHunter, pattern: regexp.MustCompile(`<a href=\\"/wotlk/hunter\\" class=\\"c3\\">Hunter</a>`)},
-	{class: proto.Class_ClassRogue, pattern: regexp.MustCompile(`<a href=\\"/wotlk/rogue\\" class=\\"c4\\">Rogue</a>`)},
-	{class: proto.Class_ClassPriest, pattern: regexp.MustCompile(`<a href=\\"/wotlk/priest\\" class=\\"c5\\">Priest</a>`)},
-	{class: proto.Class_ClassDeathknight, pattern: regexp.MustCompile(`<a href=\\"/wotlk/death-knight\\" class=\\"c6\\">Death Knight</a>`)},
-	{class: proto.Class_ClassShaman, pattern: regexp.MustCompile(`<a href=\\"/wotlk/shaman\\" class=\\"c7\\">Shaman</a>`)},
-	{class: proto.Class_ClassMage, pattern: regexp.MustCompile(`<a href=\\"/wotlk/mage\\" class=\\"c8\\">Mage</a>`)},
-	{class: proto.Class_ClassWarlock, pattern: regexp.MustCompile(`<a href=\\"/wotlk/warlock\\" class=\\"c9\\">Warlock</a>`)},
-	{class: proto.Class_ClassDruid, pattern: regexp.MustCompile(`<a href=\\"/wotlk/druid\\" class=\\"c11\\">Druid</a>`)},
+	{class: proto.Class_ClassWarrior, pattern: regexp.MustCompile(`<a href=\"/wotlk/warrior\" class=\"c1\">Warrior</a>`)},
+	{class: proto.Class_ClassPaladin, pattern: regexp.MustCompile(`<a href=\"/wotlk/paladin\" class=\"c2\">Paladin</a>`)},
+	{class: proto.Class_ClassHunter, pattern: regexp.MustCompile(`<a href=\"/wotlk/hunter\" class=\"c3\">Hunter</a>`)},
+	{class: proto.Class_ClassRogue, pattern: regexp.MustCompile(`<a href=\"/wotlk/rogue\" class=\"c4\">Rogue</a>`)},
+	{class: proto.Class_ClassPriest, pattern: regexp.MustCompile(`<a href=\"/wotlk/priest\" class=\"c5\">Priest</a>`)},
+	{class: proto.Class_ClassDeathknight, pattern: regexp.MustCompile(`<a href=\"/wotlk/death-knight\" class=\"c6\">Death Knight</a>`)},
+	{class: proto.Class_ClassShaman, pattern: regexp.MustCompile(`<a href=\"/wotlk/shaman\" class=\"c7\">Shaman</a>`)},
+	{class: proto.Class_ClassMage, pattern: regexp.MustCompile(`<a href=\"/wotlk/mage\" class=\"c8\">Mage</a>`)},
+	{class: proto.Class_ClassWarlock, pattern: regexp.MustCompile(`<a href=\"/wotlk/warlock\" class=\"c9\">Warlock</a>`)},
+	{class: proto.Class_ClassDruid, pattern: regexp.MustCompile(`<a href=\"/wotlk/druid\" class=\"c11\">Druid</a>`)},
 }
 
 func (item WowheadItemResponse) GetClassAllowlist() []proto.Class {
