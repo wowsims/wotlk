@@ -17,6 +17,12 @@ func (spriest *SmitePriest) tryUseGCD(sim *core.Simulation) {
 		spell = spriest.chooseSpell(sim)
 	}
 
+	if spell == nil {
+		// nil means wait for HF.
+		spriest.WaitUntil(sim, spriest.HolyFire.ReadyAt())
+		return
+	}
+
 	if success := spell.Cast(sim, spriest.CurrentTarget); !success {
 		spriest.WaitForMana(sim, spell.CurCast.Cost)
 	}
@@ -36,6 +42,8 @@ func (spriest *SmitePriest) chooseSpell(sim *core.Simulation) *core.Spell {
 		return spriest.ShadowWordPain
 	} else if spriest.HolyFire.IsReady(sim) {
 		return spriest.HolyFire
+	} else if spriest.allowedHFDelay <= spriest.HolyFire.TimeToReady(sim) {
+		return nil
 	} else if spriest.ImprovedSpiritTap.IsActive() {
 		return spriest.Smite
 	} else if spriest.Penance != nil && spriest.Penance.IsReady(sim) {
@@ -61,6 +69,8 @@ func (spriest *SmitePriest) chooseSpellMemeDream(sim *core.Simulation) *core.Spe
 		return spriest.ShadowWordPain
 	} else if spriest.HolyFire.IsReady(sim) {
 		return spriest.HolyFire
+	} else if spriest.allowedHFDelay <= spriest.HolyFire.TimeToReady(sim) {
+		return nil
 	} else {
 		if spriest.InnerFocus != nil && spriest.InnerFocus.IsReady(sim) {
 			spriest.InnerFocus.Cast(sim, nil)
