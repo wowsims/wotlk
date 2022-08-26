@@ -28,7 +28,7 @@ character_stats_results: {
   final_stats: 7991.5
   final_stats: 0
   final_stats: 0
-  final_stats: 18142.6
+  final_stats: 18488.6
   final_stats: 687
   final_stats: 320
   final_stats: 77
@@ -52,8 +52,8 @@ character_stats_results: {
 dps_results: {
  key: "TestProtection-AllItems-AegisBattlegear"
  value: {
-  dps: 346.12349
-  tps: 384.86819
+  dps: 331.7781
+  tps: 368.86209
  }
 }
 dps_results: {
@@ -304,8 +304,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-Gladiator'sVindication"
  value: {
-  dps: 412.34826
-  tps: 436.83003
+  dps: 259.25503
+  tps: 267.56366
  }
 }
 dps_results: {
@@ -374,8 +374,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-Liadrin'sBattlegear"
  value: {
-  dps: 341.72523
-  tps: 383.40405
+  dps: 376.69821
+  tps: 420.17388
  }
 }
 dps_results: {
@@ -430,8 +430,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-LightswornBattlegear"
  value: {
-  dps: 400.89996
-  tps: 453.52032
+  dps: 453.31988
+  tps: 517.16593
  }
 }
 dps_results: {
@@ -619,8 +619,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-StormshroudArmor"
  value: {
-  dps: 211.28911
-  tps: 216.0866
+  dps: 205.91919
+  tps: 210.71636
  }
 }
 dps_results: {
@@ -649,6 +649,13 @@ dps_results: {
  value: {
   dps: 243.66248
   tps: 250.60643
+ }
+}
+dps_results: {
+ key: "TestProtection-AllItems-TheTwinBladesofAzzinoth"
+ value: {
+  dps: 307.46687
+  tps: 368.24773
  }
 }
 dps_results: {
@@ -724,8 +731,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-Turalyon'sBattlegear"
  value: {
-  dps: 341.72523
-  tps: 383.40405
+  dps: 376.69821
+  tps: 420.17388
  }
 }
 dps_results: {
@@ -761,7 +768,7 @@ dps_results: {
  value: {
   dps: 300.99341
   tps: 404.46663
-  dtps: 1089.43819
+  dtps: 1078.46191
  }
 }
 dps_results: {
@@ -853,6 +860,6 @@ dps_results: {
  value: {
   dps: 325.21905
   tps: 444.46063
-  dtps: 1020.85701
+  dtps: 1010.56961
  }
 }

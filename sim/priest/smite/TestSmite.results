@@ -115,8 +115,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-CrimsonAcolyte'sRegalia"
  value: {
-  dps: 1750.52969
-  tps: 1504.80878
+  dps: 2100.2995
+  tps: 1786.34564
  }
 }
 dps_results: {
@@ -430,8 +430,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-SanctificationGarb"
  value: {
-  dps: 1941.61773
-  tps: 1667.48126
+  dps: 1872.428
+  tps: 1611.31751
  }
 }
 dps_results: {
@@ -563,8 +563,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-Zabra'sRegalia"
  value: {
-  dps: 1754.93706
-  tps: 1513.86857
+  dps: 2113.98643
+  tps: 1809.66178
  }
 }
 dps_results: {
