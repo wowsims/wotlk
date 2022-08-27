@@ -111,6 +111,9 @@ func (warrior *Warrior) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
 
 func (warrior *Warrior) Initialize() {
+	warrior.AutoAttacks.MHEffect.OutcomeApplier = warrior.OutcomeFuncMeleeWhite(warrior.critMultiplier(false))
+	warrior.AutoAttacks.OHEffect.OutcomeApplier = warrior.OutcomeFuncMeleeWhite(warrior.critMultiplier(false))
+
 	warrior.Shout = warrior.makeShoutSpell()
 
 	primaryTimer := warrior.NewTimer()
