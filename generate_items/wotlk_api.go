@@ -143,10 +143,36 @@ func (item WotlkItemResponse) GetStats() Stats {
 	}
 }
 
+var classPatternsWotlkdb = []classPattern{
+	// <a href=\"/wotlk/warrior\" class=\"c1\">Warrior</a>
+	// <a href=\"/wotlk/shaman\" class=\"c7\">Shaman</a></div>
+	// <a href=\"/wotlk/death-knight\" class=\"c6\">Death Knight</a>
+	{class: proto.Class_ClassWarrior, pattern: regexp.MustCompile("<a href=\\\"/class=1\\\" class=\\\"c1\\\">Warrior</a>")},
+	{class: proto.Class_ClassWarrior, pattern: regexp.MustCompile("<a href=\\\"\\?class=1\\\" class=\\\"c1\\\">Warrior</a>")},
+	{class: proto.Class_ClassPaladin, pattern: regexp.MustCompile("<a href=\\\"/class=2\\\" class=\\\"c2\\\">Paladin</a>")},
+	{class: proto.Class_ClassPaladin, pattern: regexp.MustCompile("<a href=\\\"\\?class=2\\\" class=\\\"c2\\\">Paladin</a>")},
+	{class: proto.Class_ClassHunter, pattern: regexp.MustCompile("<a href=\\\"/class=3\\\" class=\\\"c3\\\">Hunter</a>")},
+	{class: proto.Class_ClassHunter, pattern: regexp.MustCompile("<a href=\\\"\\?class=3\\\" class=\\\"c3\\\">Hunter</a>")},
+	{class: proto.Class_ClassRogue, pattern: regexp.MustCompile("<a href=\\\"/class=4\\\" class=\\\"c4\\\">Rogue</a>")},
+	{class: proto.Class_ClassRogue, pattern: regexp.MustCompile("<a href=\\\"\\?class=4\\\" class=\\\"c4\\\">Rogue</a>")},
+	{class: proto.Class_ClassPriest, pattern: regexp.MustCompile("<a href=\\\"/class=5\\\" class=\\\"c5\\\">Priest</a>")},
+	{class: proto.Class_ClassPriest, pattern: regexp.MustCompile("<a href=\\\"\\?class=5\\\" class=\\\"c5\\\">Priest</a>")},
+	{class: proto.Class_ClassDeathknight, pattern: regexp.MustCompile("<a href=\\\"/class=6\\\" class=\\\"c6\\\">Death Knight</a>")},
+	{class: proto.Class_ClassDeathknight, pattern: regexp.MustCompile("<a href=\\\"\\?class=6\\\" class=\\\"c6\\\">Death Knight</a>")},
+	{class: proto.Class_ClassShaman, pattern: regexp.MustCompile("<a href=\\\"/class=7\\\" class=\\\"c7\\\">Shaman</a>")},
+	{class: proto.Class_ClassShaman, pattern: regexp.MustCompile("<a href=\\\"\\?class=7\\\" class=\\\"c7\\\">Shaman</a>")},
+	{class: proto.Class_ClassMage, pattern: regexp.MustCompile("<a href=\\\"/class=8\\\" class=\\\"c8\\\">Mage</a>")},
+	{class: proto.Class_ClassMage, pattern: regexp.MustCompile("<a href=\\\"\\?class=8\\\" class=\\\"c8\\\">Mage</a>")},
+	{class: proto.Class_ClassWarlock, pattern: regexp.MustCompile("<a href=\\\"/class=9\\\" class=\\\"c9\\\">Warlock</a>")},
+	{class: proto.Class_ClassWarlock, pattern: regexp.MustCompile("<a href=\\\"\\?class=9\\\" class=\\\"c9\\\">Warlock</a>")},
+	{class: proto.Class_ClassDruid, pattern: regexp.MustCompile("<a href=\\\"/class=11\\\" class=\\\"c11\\\">Druid</a>")},
+	{class: proto.Class_ClassDruid, pattern: regexp.MustCompile("<a href=\\\"\\?class=11\\\" class=\\\"c11\\\">Druid</a>")},
+}
+
 func (item WotlkItemResponse) GetClassAllowlist() []proto.Class {
 	var allowlist []proto.Class
 
-	for _, entry := range classPatterns {
+	for _, entry := range classPatternsWotlkdb {
 		if entry.pattern.MatchString(item.Tooltip) {
 			allowlist = append(allowlist, entry.class)
 		}

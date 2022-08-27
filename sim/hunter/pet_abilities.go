@@ -1,6 +1,7 @@
 package hunter
 
 import (
+	"math"
 	"strconv"
 	"time"
 
@@ -425,8 +426,8 @@ func (hp *HunterPet) newMonstrousBite() PetAbility {
 		Duration:  time.Second * 12,
 		MaxStacks: 3,
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
-			aura.Unit.PseudoStats.DamageDealtMultiplier /= 1 + 0.03*float64(oldStacks)
-			aura.Unit.PseudoStats.DamageDealtMultiplier *= 1 + 0.03*float64(newStacks)
+			aura.Unit.PseudoStats.DamageDealtMultiplier /= math.Pow(1.03, float64(oldStacks))
+			aura.Unit.PseudoStats.DamageDealtMultiplier *= math.Pow(1.03, float64(newStacks))
 		},
 	})
 

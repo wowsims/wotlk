@@ -3,8 +3,10 @@ package main
 import (
 	"bufio"
 	"encoding/csv"
+	"encoding/json"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"sort"
@@ -25,13 +27,21 @@ func main() {
 
 	tooltipsDB := getWowheadTooltipsDB()
 
+	type tempItemIcon struct {
+		ID   int
+		Name string
+		Icon string
+	}
+
+	tempItems := []tempItemIcon{}
+
 	// Generate all item/gem ids from the tooltips db
 
 	// gems := &strings.Builder{}
 	// items := &strings.Builder{}
 	// for k := range tooltipsDB {
 	// 	resp := getWowheadItemResponse(k, tooltipsDB)
-	// 	if resp.Name == "" || strings.Contains(resp.Name, "zzOLD") {
+	// 	if resp.Name == "" || strings.Contains(resp.Name, "QA Test") || strings.Contains(resp.Name, "zzOLD") || strings.Contains(resp.Name, "Monster -") {
 	// 		continue
 	// 	}
 	// 	if resp.IsPattern() {
@@ -39,8 +49,39 @@ func main() {
 	// 	}
 	// 	// No socket color means that this isn't a gem
 	// 	if resp.GetSocketColor() == proto.GemColor_GemColorUnknown {
+	// 		itemLevel := resp.GetItemLevel()
+	// 		qual := resp.GetQuality()
+	// 		if qual < int(proto.ItemQuality_ItemQualityUncommon) {
+	// 			continue
+	// 		} else if qual > int(proto.ItemQuality_ItemQualityLegendary) {
+	// 			continue
+	// 		} else if qual < int(proto.ItemQuality_ItemQualityEpic) {
+	// 			if itemLevel < 105 {
+	// 				continue
+	// 			}
+	// 			if itemLevel < 110 && resp.GetItemSetName() == "" {
+	// 				continue
+	// 			}
+	// 		} else if qual < int(proto.ItemQuality_ItemQualityEpic) {
+	// 			if itemLevel < 110 {
+	// 				continue
+	// 			}
+	// 			if itemLevel < 140 && resp.GetItemSetName() == "" {
+	// 				continue
+	// 			}
+	// 		} else {
+	// 			// Epic and legendary items might come from classic, so use a lower ilvl threshold.
+	// 			if itemLevel < 75 {
+	// 				continue
+	// 			}
+	// 		}
+
 	// 		items.WriteString(fmt.Sprintf("%d\n", k))
 	// 	} else {
+	// 		qual := resp.GetQuality()
+	// 		if qual <= int(proto.ItemQuality_ItemQualityUncommon) && k < 30000 {
+	// 			continue
+	// 		}
 	// 		gems.WriteString(fmt.Sprintf("%d\n", k))
 	// 	}
 	// }
@@ -65,6 +106,8 @@ func main() {
 			}
 			//log.Printf("\n\n%+v\n", gemData.Response)
 			gemsData[idx] = gemData
+
+			tempItems = append(tempItems, tempItemIcon{ID: gemDeclaration.ID, Name: gemData.Response.GetName(), Icon: gemData.Response.GetIcon()})
 		}
 
 		itemDeclarations := getItemDeclarations()
@@ -81,6 +124,7 @@ func main() {
 			}
 			//fmt.Printf("\n\n%+v\n", itemData.Response)
 			itemsData[idx] = itemData
+			tempItems = append(tempItems, tempItemIcon{ID: itemDeclaration.ID, Name: itemData.Response.GetName(), Icon: itemData.Response.GetIcon()})
 		}
 	} else if *db == "wotlkdb" {
 		itemsData = make([]ItemData, 0, len(tooltipsDB))
@@ -129,6 +173,15 @@ func main() {
 		return itemsData[i].Response.GetName() < itemsData[j].Response.GetName()
 	})
 	writeItemFile(*outDir, itemsData)
+
+	// Write out the all_items_db.json so as we adjust the items we adjust it too.
+	itemDB := &strings.Builder{}
+	v, err := json.Marshal(tempItems)
+	if err != nil {
+		log.Fatalf("failed to marshal: %s", err)
+	}
+	itemDB.Write(v)
+	ioutil.WriteFile("./assets/item_data/all_items_db.json", []byte(itemDB.String()), 0666)
 }
 
 func getGemDeclarations() []GemDeclaration {
@@ -175,7 +228,6 @@ func getGemDeclarations() []GemDeclaration {
 }
 
 func getItemDeclarations() []ItemDeclaration {
-	//itemsData := readCsvFile("./assets/item_data/all_equippable_item_ids.csv")
 	itemsData := readCsvFile("./assets/item_data/all_item_ids.csv")
 
 	// Ignore first line

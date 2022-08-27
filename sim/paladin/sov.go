@@ -48,15 +48,9 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	baseMultiplier := baseModifiers.Get()
 
 	judgementModifiers := append(baseModifiers.Clone(),
-		Additive{paladin.getMajorGlyphOfJudgementBonus()},
+		Additive{paladin.getMajorGlyphOfJudgementBonus(), paladin.getTalentTheArtOfWarBonus()},
 	)
 	judgementMultiplier := judgementModifiers.Get()
-
-	paladin.SealOfVengeanceDot = make([]*core.Dot, 0, paladin.Env.GetNumTargets())
-	for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
-		dot := paladin.createSealOfVengeanceDot(baseMultiplier, &paladin.Env.Encounter.Targets[i].Unit)
-		paladin.SealOfVengeanceDot = append(paladin.SealOfVengeanceDot, dot)
-	}
 
 	onSwingProc := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 31803, Tag: 1}, // Holy Vengeance.
@@ -66,12 +60,13 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 			ProcMask: core.ProcMaskEmpty, // Might need to be changed later if SOV secondary rolls can proc other things.
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					dot := paladin.SealOfVengeanceDot[hitEffect.Target.Index]
+					dot := paladin.SealOfVengeanceDots[hitEffect.Target.Index]
 					if !dot.IsActive() {
 						dot.Apply(sim)
 					}
 					dot.AddStack(sim)
-					dot.Refresh(sim)
+					dot.TakeSnapshot(sim, false)
+					dot.Activate(sim)
 					return 0 // Does no damage, just applies dot and rolls.
 				},
 			},
@@ -92,7 +87,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 				(core.TernaryFloat64(paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 4) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 4), 5, 0) * core.CritRatingPerCritChance),
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					dot := paladin.SealOfVengeanceDot[hitEffect.Target.Index]
+					dot := paladin.SealOfVengeanceDots[hitEffect.Target.Index]
 					// i = 1 + 0.22 * HolP + 0.14 * AP
 					scaling := hybridScaling{
 						AP: 0.14,
@@ -125,11 +120,11 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 			ThreatMultiplier: 1,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					dot := paladin.SealOfVengeanceDot[hitEffect.Target.Index]
+					dot := paladin.SealOfVengeanceDots[hitEffect.Target.Index]
 					return core.MultiplyByStacks(core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 0, 1, damagePerStack, false), dot.Aura).Calculator(sim, hitEffect, spell)
 				},
 			},
-			OutcomeApplier:   paladin.OutcomeFuncMeleeSpecialCritOnly(paladin.MeleeCritMultiplier()), // can't miss if melee swing landed, but can crit
+			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialCritOnly(paladin.MeleeCritMultiplier()), // can't miss if melee swing landed, but can crit
 		}),
 	})
 
@@ -156,7 +151,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			// Don't proc on misses or our own procs.
-			dot := paladin.SealOfVengeanceDot[spellEffect.Target.Index]
+			dot := paladin.SealOfVengeanceDots[spellEffect.Target.Index]
 
 			if !spellEffect.Landed() || spell.SpellID == onSwingProc.SpellID || spell.SpellID == onJudgementProc.SpellID || spell.SpellID == onSpecialOrSwingProc.SpellID {
 				return
@@ -212,44 +207,45 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	})
 }
 
-func (paladin *Paladin) createSealOfVengeanceDot(multiplier float64, unit *core.Unit) *core.Dot {
-	//target := paladin.CurrentTarget
+func (paladin *Paladin) createSealOfVengeanceDot(target *core.Unit) *core.Dot {
+	baseModifiers := Multiplicative{
+		Additive{
+			paladin.getItemSetLightswornBattlegearBonus4(),
+			paladin.getTalentSealsOfThePureBonus(),
+		},
+	}
+	baseMultiplier := baseModifiers.Get()
 
 	dotActionID := core.ActionID{SpellID: 31803, Tag: 2} // Holy Vengeance
-	dotSpell := paladin.RegisterSpell(core.SpellConfig{
-		ActionID:    dotActionID,
-		SpellSchool: core.SpellSchoolHoly,
-	})
-	dotAura := unit.RegisterAura(core.Aura{
-		Label:     "Holy Vengeance (DoT) -" + strconv.Itoa(int(paladin.Index)),
-		ActionID:  dotActionID,
-		MaxStacks: 5,
-	})
 	dotScaling := hybridScaling{
 		AP: 0.025,
 		SP: 0.013,
 	}
 	return core.NewDot(core.Dot{
-		Spell: dotSpell,
-		Aura:  dotAura,
+		Spell: paladin.RegisterSpell(core.SpellConfig{
+			ActionID:    dotActionID,
+			SpellSchool: core.SpellSchoolHoly,
+		}),
+		Aura: target.RegisterAura(core.Aura{
+			Label:     "Holy Vengeance (DoT) -" + strconv.Itoa(int(paladin.Index)),
+			ActionID:  dotActionID,
+			MaxStacks: 5,
+		}),
 
 		NumberOfTicks: 5,
 		TickLength:    time.Second * 3, // ticking every three seconds for a grand total of 15s of duration
 
-		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			IsPeriodic:       true,
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: multiplier,
-			BaseDamage: core.MultiplyByStacks(core.BaseDamageConfig{
+			DamageMultiplier: baseMultiplier,
+			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					// (0.013 * HolP + 0.025 * AP)
 					tickValue := (dotScaling.SP * hitEffect.SpellPower(spell.Unit, spell)) + (dotScaling.AP * hitEffect.MeleeAttackPower(spell.Unit))
-					return tickValue
+					return tickValue * float64(paladin.SealOfVengeanceDots[hitEffect.Target.Index].GetStacks())
 				},
-				TargetSpellCoefficient: 1,
-			}, dotAura),
+			},
 			OutcomeApplier: paladin.OutcomeFuncAlwaysHit(),
-			// OutcomeApplier: paladin.OutcomeFuncTick(),
-		})),
+		}),
 	})
 }

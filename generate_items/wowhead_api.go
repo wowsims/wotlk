@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -217,33 +218,23 @@ type classPattern struct {
 }
 
 // Detects class-locked items, e.g. tier sets and pvp gear.
-var classPatterns = []classPattern{
-	{class: proto.Class_ClassWarrior, pattern: regexp.MustCompile("<a href=\\\"/class=1\\\" class=\\\"c1\\\">Warrior</a>")},
-	{class: proto.Class_ClassWarrior, pattern: regexp.MustCompile("<a href=\\\"\\?class=1\\\" class=\\\"c1\\\">Warrior</a>")},
-	{class: proto.Class_ClassPaladin, pattern: regexp.MustCompile("<a href=\\\"/class=2\\\" class=\\\"c2\\\">Paladin</a>")},
-	{class: proto.Class_ClassPaladin, pattern: regexp.MustCompile("<a href=\\\"\\?class=2\\\" class=\\\"c2\\\">Paladin</a>")},
-	{class: proto.Class_ClassHunter, pattern: regexp.MustCompile("<a href=\\\"/class=3\\\" class=\\\"c3\\\">Hunter</a>")},
-	{class: proto.Class_ClassHunter, pattern: regexp.MustCompile("<a href=\\\"\\?class=3\\\" class=\\\"c3\\\">Hunter</a>")},
-	{class: proto.Class_ClassRogue, pattern: regexp.MustCompile("<a href=\\\"/class=4\\\" class=\\\"c4\\\">Rogue</a>")},
-	{class: proto.Class_ClassRogue, pattern: regexp.MustCompile("<a href=\\\"\\?class=4\\\" class=\\\"c4\\\">Rogue</a>")},
-	{class: proto.Class_ClassPriest, pattern: regexp.MustCompile("<a href=\\\"/class=5\\\" class=\\\"c5\\\">Priest</a>")},
-	{class: proto.Class_ClassPriest, pattern: regexp.MustCompile("<a href=\\\"\\?class=5\\\" class=\\\"c5\\\">Priest</a>")},
-	{class: proto.Class_ClassDeathknight, pattern: regexp.MustCompile("<a href=\\\"/class=6\\\" class=\\\"c6\\\">Death Knight</a>")},
-	{class: proto.Class_ClassDeathknight, pattern: regexp.MustCompile("<a href=\\\"\\?class=6\\\" class=\\\"c6\\\">Death Knight</a>")},
-	{class: proto.Class_ClassShaman, pattern: regexp.MustCompile("<a href=\\\"/class=7\\\" class=\\\"c7\\\">Shaman</a>")},
-	{class: proto.Class_ClassShaman, pattern: regexp.MustCompile("<a href=\\\"\\?class=7\\\" class=\\\"c7\\\">Shaman</a>")},
-	{class: proto.Class_ClassMage, pattern: regexp.MustCompile("<a href=\\\"/class=8\\\" class=\\\"c8\\\">Mage</a>")},
-	{class: proto.Class_ClassMage, pattern: regexp.MustCompile("<a href=\\\"\\?class=8\\\" class=\\\"c8\\\">Mage</a>")},
-	{class: proto.Class_ClassWarlock, pattern: regexp.MustCompile("<a href=\\\"/class=9\\\" class=\\\"c9\\\">Warlock</a>")},
-	{class: proto.Class_ClassWarlock, pattern: regexp.MustCompile("<a href=\\\"\\?class=9\\\" class=\\\"c9\\\">Warlock</a>")},
-	{class: proto.Class_ClassDruid, pattern: regexp.MustCompile("<a href=\\\"/class=11\\\" class=\\\"c11\\\">Druid</a>")},
-	{class: proto.Class_ClassDruid, pattern: regexp.MustCompile("<a href=\\\"\\?class=11\\\" class=\\\"c11\\\">Druid</a>")},
+var classPatternsWowhead = []classPattern{
+	{class: proto.Class_ClassWarrior, pattern: regexp.MustCompile(`<a href=\"/wotlk/warrior\" class=\"c1\">Warrior</a>`)},
+	{class: proto.Class_ClassPaladin, pattern: regexp.MustCompile(`<a href=\"/wotlk/paladin\" class=\"c2\">Paladin</a>`)},
+	{class: proto.Class_ClassHunter, pattern: regexp.MustCompile(`<a href=\"/wotlk/hunter\" class=\"c3\">Hunter</a>`)},
+	{class: proto.Class_ClassRogue, pattern: regexp.MustCompile(`<a href=\"/wotlk/rogue\" class=\"c4\">Rogue</a>`)},
+	{class: proto.Class_ClassPriest, pattern: regexp.MustCompile(`<a href=\"/wotlk/priest\" class=\"c5\">Priest</a>`)},
+	{class: proto.Class_ClassDeathknight, pattern: regexp.MustCompile(`<a href=\"/wotlk/death-knight\" class=\"c6\">Death Knight</a>`)},
+	{class: proto.Class_ClassShaman, pattern: regexp.MustCompile(`<a href=\"/wotlk/shaman\" class=\"c7\">Shaman</a>`)},
+	{class: proto.Class_ClassMage, pattern: regexp.MustCompile(`<a href=\"/wotlk/mage\" class=\"c8\">Mage</a>`)},
+	{class: proto.Class_ClassWarlock, pattern: regexp.MustCompile(`<a href=\"/wotlk/warlock\" class=\"c9\">Warlock</a>`)},
+	{class: proto.Class_ClassDruid, pattern: regexp.MustCompile(`<a href=\"/wotlk/druid\" class=\"c11\">Druid</a>`)},
 }
 
 func (item WowheadItemResponse) GetClassAllowlist() []proto.Class {
 	var allowlist []proto.Class
 
-	for _, entry := range classPatterns {
+	for _, entry := range classPatternsWowhead {
 		if entry.pattern.MatchString(item.Tooltip) {
 			allowlist = append(allowlist, entry.class)
 		}
@@ -325,7 +316,30 @@ func (item WowheadItemResponse) GetItemLevel() int {
 var phaseRegex = regexp.MustCompile("Phase ([0-9])")
 
 func (item WowheadItemResponse) GetPhase() int {
-	return item.GetIntValue(phaseRegex)
+	phase := item.GetIntValue(phaseRegex)
+	if phase != 0 {
+		return phase
+	}
+
+	ilvl := item.GetItemLevel()
+	if ilvl <= 164 { // TBC items
+		return 0
+	}
+
+	if ilvl < 200 || ilvl == 200 || ilvl == 213 || ilvl == 226 {
+		return 1
+	} else if ilvl == 219 || ilvl == 226 || ilvl == 239 {
+		return 2
+	} else if ilvl == 232 || ilvl == 245 || ilvl == 258 {
+		return 3
+	} else if ilvl == 251 || ilvl == 258 || ilvl == 259 || ilvl == 264 || ilvl == 268 || ilvl == 270 || ilvl == 271 || ilvl == 272 {
+		return 4
+	} else if ilvl == 277 || ilvl == 284 {
+		return 5
+	}
+
+	// default to 1
+	return 1
 }
 
 var uniqueRegex = regexp.MustCompile("Unique")
@@ -638,7 +652,7 @@ func (item WowheadItemResponse) GetGemStats() Stats {
 	return stats
 }
 
-var itemSetNameRegex = regexp.MustCompile("<a href=\\\"\\/wotlk/item-set=([0-9]+)/(.*)\\\" class=\\\"q\\\">([^<]+)<")
+var itemSetNameRegex = regexp.MustCompile("<a href=\\\"\\/wotlk/item-set=-?([0-9]+)/(.*)\\\" class=\\\"q\\\">([^<]+)<")
 
 func (item WowheadItemResponse) GetItemSetName() string {
 	return item.GetTooltipRegexString(itemSetNameRegex, 3)
@@ -652,7 +666,7 @@ func getWowheadItemResponse(itemID int, tooltipsDB map[int]string) WowheadItemRe
 		tooltipBytes = []byte(tooltipStr)
 	} else {
 		fmt.Printf("Item DB missing ID: %d\n", itemID)
-		url := fmt.Sprintf("https://www.wowhead.com/wotlk/tooltip/item/%d", itemID)
+		url := fmt.Sprintf("https://wowhead.com/wotlk/tooltip/item/%d?json", itemID)
 
 		httpClient := http.Client{
 			Timeout: 5 * time.Second,
@@ -675,6 +689,15 @@ func getWowheadItemResponse(itemID int, tooltipsDB map[int]string) WowheadItemRe
 			log.Fatal(err)
 		}
 		tooltipBytes = resultBody
+		f, err := os.OpenFile("./assets/item_data/all_item_tooltips.csv", os.O_APPEND|os.O_WRONLY, 0666)
+		if err != nil {
+			log.Fatalf("failed to open file to write: %s", err)
+		}
+		if strings.Contains(string(tooltipBytes), "\"error\":") {
+			// fmt.Printf("Error in tooltip for %d: %s\n", i, bstr)
+			log.Fatalf("failed to fetch item: %d (%s)", itemID, string(tooltipBytes))
+		}
+		f.WriteString(fmt.Sprintf("%d, %s, %s\n", itemID, url, tooltipBytes))
 	}
 
 	//fmt.Printf(string(tooltipStr))
