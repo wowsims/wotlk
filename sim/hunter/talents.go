@@ -703,34 +703,34 @@ func (hunter *Hunter) applySniperTraining() {
 	}
 	uptime = core.MinFloat(1, uptime)
 
-	multiplier := 1 + 0.02*float64(hunter.Talents.SniperTraining)
+	dmgMod := .02 * float64(hunter.Talents.SniperTraining)
 
 	stAura := hunter.RegisterAura(core.Aura{
 		Label:    "Sniper Training",
 		ActionID: core.ActionID{SpellID: 53304},
 		Duration: time.Second * 15,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			hunter.SteadyShot.DamageMultiplier *= multiplier
+			hunter.SteadyShot.DamageMultiplier += dmgMod
 			if hunter.AimedShot != nil {
-				hunter.AimedShot.DamageMultiplier *= multiplier
+				hunter.AimedShot.DamageMultiplier += dmgMod
 			}
 			if hunter.BlackArrow != nil {
-				hunter.BlackArrow.DamageMultiplier *= multiplier
+				hunter.BlackArrow.DamageMultiplier += dmgMod
 			}
 			if hunter.ExplosiveShot != nil {
-				hunter.ExplosiveShot.DamageMultiplier *= multiplier
+				hunter.ExplosiveShot.DamageMultiplier += dmgMod
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			hunter.SteadyShot.DamageMultiplier /= multiplier
+			hunter.SteadyShot.DamageMultiplier -= dmgMod
 			if hunter.AimedShot != nil {
-				hunter.AimedShot.DamageMultiplier /= multiplier
+				hunter.AimedShot.DamageMultiplier -= dmgMod
 			}
 			if hunter.BlackArrow != nil {
-				hunter.BlackArrow.DamageMultiplier /= multiplier
+				hunter.BlackArrow.DamageMultiplier -= dmgMod
 			}
 			if hunter.ExplosiveShot != nil {
-				hunter.ExplosiveShot.DamageMultiplier /= multiplier
+				hunter.ExplosiveShot.DamageMultiplier -= dmgMod
 			}
 		},
 	})

@@ -48,6 +48,10 @@ func (hunter *Hunter) registerBlackArrowSpell(timer *core.Timer) {
 				}
 			},
 		}),
+
+		InitialDamageMultiplier: 1 +
+			.10*float64(hunter.Talents.TrapMastery) +
+			.02*float64(hunter.Talents.TNT),
 	})
 
 	target := hunter.CurrentTarget
@@ -66,10 +70,8 @@ func (hunter *Hunter) registerBlackArrowSpell(timer *core.Timer) {
 		NumberOfTicks: 5,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask: core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 *
-				(1 + 0.1*float64(hunter.Talents.TrapMastery)) *
-				(1 + 0.02*float64(hunter.Talents.TNT)),
+			ProcMask:         core.ProcMaskPeriodicDamage,
+			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
 
