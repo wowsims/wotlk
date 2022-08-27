@@ -1,7 +1,10 @@
 package deathknight
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -40,6 +43,7 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 800.0+bonusBaseDamage, 1.0, 0.7, true)
 	outbreakBonus := []float64{1.0, 1.07, 1.13, 1.2}[dk.Talents.Outbreak]
 	rpGain := 15.0 + 2.5*float64(dk.Talents.Dirge) + dk.scourgeborneBattlegearRunicPowerBonus()
+	hasGlyph := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfScourgeStrike)
 
 	baseCost := float64(core.NewRuneCost(uint8(rpGain), 0, 1, 1, 0))
 	rs := &RuneSpell{}
@@ -80,6 +84,19 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 				if spellEffect.Landed() && dk.DiseasesAreActive(spellEffect.Target) {
 					dk.LastScourgeStrikeDamage = spellEffect.Damage
 					shadowDamageSpell.Cast(sim, spellEffect.Target)
+
+					if hasGlyph {
+						// Extend FF by 3
+						if dk.FrostFeverDisease[spellEffect.Target.Index].IsActive() && dk.FrostFeverExtended[spellEffect.Target.Index] < 3 {
+							dk.FrostFeverExtended[spellEffect.Target.Index]++
+							dk.FrostFeverDisease[spellEffect.Target.Index].UpdateExpires(dk.FrostFeverDisease[spellEffect.Target.Index].ExpiresAt() + 3*time.Second)
+						}
+						// Extend BP by 3
+						if dk.BloodPlagueDisease[spellEffect.Target.Index].IsActive() && dk.BloodPlagueExtended[spellEffect.Target.Index] < 3 {
+							dk.BloodPlagueExtended[spellEffect.Target.Index]++
+							dk.BloodPlagueDisease[spellEffect.Target.Index].UpdateExpires(dk.BloodPlagueDisease[spellEffect.Target.Index].ExpiresAt() + 3*time.Second)
+						}
+					}
 				}
 			},
 		}, false),

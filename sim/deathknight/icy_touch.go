@@ -64,6 +64,7 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 						dk.KillingMachineAura.Deactivate(sim)
 					}
 
+					dk.FrostFeverExtended[spellEffect.Target.Index] = 0
 					dk.FrostFeverSpell.Cast(sim, spellEffect.Target)
 					if dk.Talents.CryptFever > 0 {
 						dk.CryptFeverAura[spellEffect.Target.Index].Activate(sim)
