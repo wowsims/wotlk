@@ -1,5 +1,5 @@
 import { ActionId } from './proto_utils/action_id.js';
-import { BattleElixir } from './proto/common.js';
+import { BattleElixir, HandType } from './proto/common.js';
 import { BonusStatsPicker } from './components/bonus_stats_picker.js';
 import { BooleanPicker, BooleanPickerConfig } from './components/boolean_picker.js';
 import { CharacterStats, StatMods } from './components/character_stats.js';
@@ -279,7 +279,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 						return "Dual Wielding two-hand weapon(s) without Titan's Grip spec"
 					} else {
 						return '';
-					}
+					}	
 			},
 		});
 		(config.warnings || []).forEach(warning => this.addWarning(warning(this)));
