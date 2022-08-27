@@ -85,6 +85,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestProtection-AllItems-Beast-tamer'sShoulders-30892"
+ value: {
+  dps: 243.10513
+  tps: 251.4671
+ }
+}
+dps_results: {
  key: "TestProtection-AllItems-BracingEarthsiegeDiamond"
  value: {
   dps: 242.35837

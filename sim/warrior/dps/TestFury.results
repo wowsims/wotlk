@@ -78,6 +78,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFury-AllItems-Beast-tamer'sShoulders-30892"
+ value: {
+  dps: 955.84304
+  tps: 1034.31122
+ }
+}
+dps_results: {
  key: "TestFury-AllItems-BoldArmor"
  value: {
   dps: 793.08047
