@@ -94,8 +94,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-BurningRage"
  value: {
-  dps: 6012.6334
-  tps: 4649.05952
+  dps: 6140.05368
+  tps: 4665.21725
  }
 }
 dps_results: {
@@ -136,15 +136,15 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-DarkrunedBattlegear"
  value: {
-  dps: 6727.81971
-  tps: 5266.43036
+  dps: 6812.19895
+  tps: 5245.30744
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-DarkrunedPlate"
  value: {
-  dps: 6042.59405
-  tps: 4592.7369
+  dps: 6080.7047
+  tps: 4602.15602
  }
 }
 dps_results: {
@@ -171,8 +171,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-DesolationBattlegear"
  value: {
-  dps: 5357.37696
-  tps: 4169.98782
+  dps: 5437.2251
+  tps: 4185.01731
  }
 }
 dps_results: {
@@ -185,8 +185,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-DoomplateBattlegear"
  value: {
-  dps: 5541.73819
-  tps: 4271.03097
+  dps: 5618.95503
+  tps: 4308.63191
  }
 }
 dps_results: {
@@ -374,8 +374,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-Mana-EtchedRegalia"
  value: {
-  dps: 5094.51891
-  tps: 3956.90746
+  dps: 5209.56437
+  tps: 3994.9665
  }
 }
 dps_results: {
@@ -493,29 +493,29 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-ScourgeborneBattlegear"
  value: {
-  dps: 6361.5348
-  tps: 4966.48085
+  dps: 6518.97297
+  tps: 4973.93767
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-ScourgebornePlate"
  value: {
-  dps: 5975.73431
-  tps: 4555.80076
+  dps: 6024.91237
+  tps: 4557.65373
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-Scourgelord'sBattlegear"
  value: {
-  dps: 7582.34683
-  tps: 6055.94565
+  dps: 7745.18982
+  tps: 6019.88282
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-Scourgelord'sPlate"
  value: {
-  dps: 6619.44323
-  tps: 5132.83544
+  dps: 6685.97865
+  tps: 5115.80727
  }
 }
 dps_results: {
@@ -584,8 +584,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-StormshroudArmor"
  value: {
-  dps: 5578.04816
-  tps: 4294.29553
+  dps: 5660.48869
+  tps: 4291.08022
  }
 }
 dps_results: {
@@ -619,15 +619,15 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-Thassarian'sBattlegear"
  value: {
-  dps: 7313.0651
-  tps: 5763.50551
+  dps: 7433.88011
+  tps: 5745.36376
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-Thassarian'sPlate"
  value: {
-  dps: 6181.59851
-  tps: 4731.51633
+  dps: 6287.06479
+  tps: 4750.36192
  }
 }
 dps_results: {
@@ -689,8 +689,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-WastewalkerArmor"
  value: {
-  dps: 5398.22679
-  tps: 4164.692
+  dps: 5498.58897
+  tps: 4221.32449
  }
 }
 dps_results: {
