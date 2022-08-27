@@ -78,6 +78,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-Beast-tamer'sShoulders-30892"
+ value: {
+  dps: 5075.84556
+  tps: 2811.83331
+ }
+}
+dps_results: {
  key: "TestEnhancement-AllItems-Bizuri'sTotemofShatteredIce-50458"
  value: {
   dps: 5576.99643
