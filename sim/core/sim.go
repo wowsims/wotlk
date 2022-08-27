@@ -230,7 +230,10 @@ func (sim *Simulation) run() *proto.RaidSimResult {
 	}
 
 	sim.runOnce()
-	firstIterationDuration := sim.CurrentTime
+	firstIterationDuration := sim.Duration
+	if sim.Encounter.EndFightAtHealth != 0 {
+		firstIterationDuration = sim.CurrentTime
+	}
 	totalDuration := firstIterationDuration
 
 	if !sim.Options.Debug {
@@ -251,7 +254,11 @@ func (sim *Simulation) run() *proto.RaidSimResult {
 		sim.rand.Seed(sim.Options.RandomSeed + int64(i))
 
 		sim.runOnce()
-		totalDuration += sim.CurrentTime
+		iterDuration := sim.Duration
+		if sim.Encounter.EndFightAtHealth != 0 {
+			iterDuration = sim.CurrentTime
+		}
+		totalDuration += iterDuration
 	}
 	result := &proto.RaidSimResult{
 		RaidMetrics:      sim.Raid.GetMetrics(sim.Options.Iterations),
