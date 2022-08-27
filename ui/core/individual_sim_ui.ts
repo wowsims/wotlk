@@ -1053,10 +1053,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				TypedEvent.freezeAllAndDo(() => {
 					player.setTalentsString(eventID, newTalents.talentsString);
 					player.setGlyphs(eventID, newTalents.glyphs || Glyphs.create());
-					if (!this.player.canDualWield2H() && this.player.getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.handType == HandType.HandTypeTwoHand ||
-					this.player.getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.handType == HandType.HandTypeTwoHand) {
-						this.player.equipItem(eventID, ItemSlot.ItemSlotOffHand, null)
-					}
 				});
 			},
 			changeEmitters: [this.player.talentsChangeEmitter, this.player.glyphsChangeEmitter],
