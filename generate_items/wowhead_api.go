@@ -655,7 +655,7 @@ func (item WowheadItemResponse) GetGemStats() Stats {
 var itemSetNameRegex = regexp.MustCompile("<a href=\\\"\\/wotlk/item-set=-?([0-9]+)/(.*)\\\" class=\\\"q\\\">([^<]+)<")
 
 func (item WowheadItemResponse) GetItemSetName() string {
-	return item.GetTooltipRegexString(itemSetNameRegex, 3)
+	return strings.TrimPrefix(strings.TrimPrefix(strings.TrimPrefix(strings.TrimPrefix(strings.TrimPrefix(item.GetTooltipRegexString(itemSetNameRegex, 3), "Heroes' "), "Valorous "), "Conqueror's "), "Triumphant "), "Sanctified ")
 }
 
 func getWowheadItemResponse(itemID int, tooltipsDB map[int]string) WowheadItemResponse {
