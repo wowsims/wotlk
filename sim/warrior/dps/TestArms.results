@@ -80,8 +80,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-Beast-tamer'sShoulders-30892"
  value: {
-  dps: 959.28408
-  tps: 1064.359
+  dps: 984.03468
+  tps: 1092.29113
  }
 }
 dps_results: {
