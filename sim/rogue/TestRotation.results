@@ -1,0 +1,2436 @@
+casts_results: {
+ key: "TestRotation-Casts-Assassination Maintain Expose No Tricks Primary"
+ value: {
+  casts: {
+   key: "item_id:40211"
+   value: 1
+  }
+  casts: {
+   key: "item_id:7676"
+   value: 1
+  }
+  casts: {
+   key: "other_id:OtherActionAttack tag:1"
+   value: 423.2
+  }
+  casts: {
+   key: "other_id:OtherActionAttack tag:2"
+   value: 329.3
+  }
+  casts: {
+   key: "other_id:OtherActionShoot"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:14177"
+   value: 2
+  }
+  casts: {
+   key: "spell_id:26863"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:26864"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48638"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48664"
+   value: 38.7
+  }
+  casts: {
+   key: "spell_id:48665"
+   value: 38.7
+  }
+  casts: {
+   key: "spell_id:48666"
+   value: 38.7
+  }
+  casts: {
+   key: "spell_id:48668 tag:1"
+   value: 0.1
+  }
+  casts: {
+   key: "spell_id:48668 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:5"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:5"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:51662"
+   value: 6.4
+  }
+  casts: {
+   key: "spell_id:51723"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:54758"
+   value: 5
+  }
+  casts: {
+   key: "spell_id:57934 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57968"
+   value: 155.6
+  }
+  casts: {
+   key: "spell_id:57968 tag:1"
+   value: 295.4
+  }
+  casts: {
+   key: "spell_id:57968 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57973"
+   value: 300.4
+  }
+  casts: {
+   key: "spell_id:57975"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57975 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57975 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57993 tag:1"
+   value: 32
+  }
+  casts: {
+   key: "spell_id:57993 tag:2"
+   value: 2.7
+  }
+  casts: {
+   key: "spell_id:57993 tag:3"
+   value: 15.2
+  }
+  casts: {
+   key: "spell_id:57993 tag:4"
+   value: 3.5
+  }
+  casts: {
+   key: "spell_id:57993 tag:5"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:58426"
+   value: 2
+  }
+  casts: {
+   key: "spell_id:5938"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:6774 tag:1"
+   value: 0.1
+  }
+  casts: {
+   key: "spell_id:6774 tag:2"
+   value: 0.2
+  }
+  casts: {
+   key: "spell_id:6774 tag:3"
+   value: 0.9
+  }
+  casts: {
+   key: "spell_id:6774 tag:4"
+   value: 0.1
+  }
+  casts: {
+   key: "spell_id:6774 tag:5"
+   value: 0.8
+  }
+  casts: {
+   key: "spell_id:8647 tag:1"
+   value: 6.6
+  }
+  casts: {
+   key: "spell_id:8647 tag:2"
+   value: 1.9
+  }
+  casts: {
+   key: "spell_id:8647 tag:3"
+   value: 10.1
+  }
+  casts: {
+   key: "spell_id:8647 tag:4"
+   value: 1.9
+  }
+  casts: {
+   key: "spell_id:8647 tag:5"
+   value: 0.1
+  }
+ }
+}
+casts_results: {
+ key: "TestRotation-Casts-Assassination No Expose Maintain Tricks Primary"
+ value: {
+  casts: {
+   key: "item_id:40211"
+   value: 1
+  }
+  casts: {
+   key: "item_id:7676"
+   value: 1
+  }
+  casts: {
+   key: "other_id:OtherActionAttack tag:1"
+   value: 423.3
+  }
+  casts: {
+   key: "other_id:OtherActionAttack tag:2"
+   value: 329.3
+  }
+  casts: {
+   key: "other_id:OtherActionShoot"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:14177"
+   value: 2
+  }
+  casts: {
+   key: "spell_id:26863"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:26864"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48638"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48664"
+   value: 39.3
+  }
+  casts: {
+   key: "spell_id:48665"
+   value: 39.3
+  }
+  casts: {
+   key: "spell_id:48666"
+   value: 39.3
+  }
+  casts: {
+   key: "spell_id:48668 tag:1"
+   value: 0.2
+  }
+  casts: {
+   key: "spell_id:48668 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:5"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:5"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:51662"
+   value: 5.5
+  }
+  casts: {
+   key: "spell_id:51723"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:54758"
+   value: 5
+  }
+  casts: {
+   key: "spell_id:57934 tag:1"
+   value: 8.2
+  }
+  casts: {
+   key: "spell_id:57968"
+   value: 168.9
+  }
+  casts: {
+   key: "spell_id:57968 tag:1"
+   value: 306.5
+  }
+  casts: {
+   key: "spell_id:57968 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57973"
+   value: 311.5
+  }
+  casts: {
+   key: "spell_id:57975"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57975 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57975 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57993 tag:1"
+   value: 26.6
+  }
+  casts: {
+   key: "spell_id:57993 tag:2"
+   value: 4.1
+  }
+  casts: {
+   key: "spell_id:57993 tag:3"
+   value: 23.5
+  }
+  casts: {
+   key: "spell_id:57993 tag:4"
+   value: 10.2
+  }
+  casts: {
+   key: "spell_id:57993 tag:5"
+   value: 0.1
+  }
+  casts: {
+   key: "spell_id:58426"
+   value: 2
+  }
+  casts: {
+   key: "spell_id:5938"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:6774 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:6774 tag:2"
+   value: 0.2
+  }
+  casts: {
+   key: "spell_id:6774 tag:3"
+   value: 0.8
+  }
+  casts: {
+   key: "spell_id:6774 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:6774 tag:5"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:5"
+   value: 0
+  }
+ }
+}
+casts_results: {
+ key: "TestRotation-Casts-Assassination No Expose Maintain Tricks Secondary"
+ value: {
+  casts: {
+   key: "item_id:40211"
+   value: 1
+  }
+  casts: {
+   key: "item_id:7676"
+   value: 1
+  }
+  casts: {
+   key: "other_id:OtherActionAttack tag:1"
+   value: 420.3
+  }
+  casts: {
+   key: "other_id:OtherActionAttack tag:2"
+   value: 327
+  }
+  casts: {
+   key: "other_id:OtherActionShoot"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:14177"
+   value: 2
+  }
+  casts: {
+   key: "spell_id:26863"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:26864"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48638"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48664"
+   value: 59.6
+  }
+  casts: {
+   key: "spell_id:48665"
+   value: 59.6
+  }
+  casts: {
+   key: "spell_id:48666"
+   value: 59.6
+  }
+  casts: {
+   key: "spell_id:48668 tag:1"
+   value: 0.9
+  }
+  casts: {
+   key: "spell_id:48668 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:3"
+   value: 0.2
+  }
+  casts: {
+   key: "spell_id:48668 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:5"
+   value: 3.1
+  }
+  casts: {
+   key: "spell_id:48672"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:1"
+   value: 1.2
+  }
+  casts: {
+   key: "spell_id:48672 tag:2"
+   value: 0.8
+  }
+  casts: {
+   key: "spell_id:48672 tag:3"
+   value: 4.8
+  }
+  casts: {
+   key: "spell_id:48672 tag:4"
+   value: 4.9
+  }
+  casts: {
+   key: "spell_id:48672 tag:5"
+   value: 13.4
+  }
+  casts: {
+   key: "spell_id:51662"
+   value: 5.4
+  }
+  casts: {
+   key: "spell_id:51723"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:54758"
+   value: 5
+  }
+  casts: {
+   key: "spell_id:57934 tag:1"
+   value: 8.1
+  }
+  casts: {
+   key: "spell_id:57968"
+   value: 133
+  }
+  casts: {
+   key: "spell_id:57968 tag:1"
+   value: 252.7
+  }
+  casts: {
+   key: "spell_id:57968 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57973"
+   value: 257.7
+  }
+  casts: {
+   key: "spell_id:57975"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57975 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57975 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57993 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57993 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57993 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57993 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57993 tag:5"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:58426"
+   value: 2
+  }
+  casts: {
+   key: "spell_id:5938"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:6774 tag:1"
+   value: 4.1
+  }
+  casts: {
+   key: "spell_id:6774 tag:2"
+   value: 1.1
+  }
+  casts: {
+   key: "spell_id:6774 tag:3"
+   value: 6.5
+  }
+  casts: {
+   key: "spell_id:6774 tag:4"
+   value: 3.9
+  }
+  casts: {
+   key: "spell_id:6774 tag:5"
+   value: 1.9
+  }
+  casts: {
+   key: "spell_id:8647 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:5"
+   value: 0
+  }
+ }
+}
+casts_results: {
+ key: "TestRotation-Casts-Assassination No Expose No Tricks Primary"
+ value: {
+  casts: {
+   key: "item_id:40211"
+   value: 1
+  }
+  casts: {
+   key: "item_id:7676"
+   value: 1
+  }
+  casts: {
+   key: "other_id:OtherActionAttack tag:1"
+   value: 423.3
+  }
+  casts: {
+   key: "other_id:OtherActionAttack tag:2"
+   value: 329.3
+  }
+  casts: {
+   key: "other_id:OtherActionShoot"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:14177"
+   value: 2
+  }
+  casts: {
+   key: "spell_id:26863"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:26864"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48638"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48664"
+   value: 41.3
+  }
+  casts: {
+   key: "spell_id:48665"
+   value: 41.3
+  }
+  casts: {
+   key: "spell_id:48666"
+   value: 41.3
+  }
+  casts: {
+   key: "spell_id:48668 tag:1"
+   value: 0.2
+  }
+  casts: {
+   key: "spell_id:48668 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:5"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:5"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:51662"
+   value: 5.5
+  }
+  casts: {
+   key: "spell_id:51723"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:54758"
+   value: 5
+  }
+  casts: {
+   key: "spell_id:57934 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57968"
+   value: 171.5
+  }
+  casts: {
+   key: "spell_id:57968 tag:1"
+   value: 311.5
+  }
+  casts: {
+   key: "spell_id:57968 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57973"
+   value: 316.5
+  }
+  casts: {
+   key: "spell_id:57975"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57975 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57975 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57993 tag:1"
+   value: 25.8
+  }
+  casts: {
+   key: "spell_id:57993 tag:2"
+   value: 4.1
+  }
+  casts: {
+   key: "spell_id:57993 tag:3"
+   value: 24.2
+  }
+  casts: {
+   key: "spell_id:57993 tag:4"
+   value: 11.4
+  }
+  casts: {
+   key: "spell_id:57993 tag:5"
+   value: 0.1
+  }
+  casts: {
+   key: "spell_id:58426"
+   value: 2
+  }
+  casts: {
+   key: "spell_id:5938"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:6774 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:6774 tag:2"
+   value: 0.2
+  }
+  casts: {
+   key: "spell_id:6774 tag:3"
+   value: 0.8
+  }
+  casts: {
+   key: "spell_id:6774 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:6774 tag:5"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:5"
+   value: 0
+  }
+ }
+}
+casts_results: {
+ key: "TestRotation-Casts-Assassination No Expose One Tricks Primary"
+ value: {
+  casts: {
+   key: "item_id:40211"
+   value: 1
+  }
+  casts: {
+   key: "item_id:7676"
+   value: 1
+  }
+  casts: {
+   key: "other_id:OtherActionAttack tag:1"
+   value: 423.3
+  }
+  casts: {
+   key: "other_id:OtherActionAttack tag:2"
+   value: 329.3
+  }
+  casts: {
+   key: "other_id:OtherActionShoot"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:14177"
+   value: 2
+  }
+  casts: {
+   key: "spell_id:26863"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:26864"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48638"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48664"
+   value: 39.3
+  }
+  casts: {
+   key: "spell_id:48665"
+   value: 39.3
+  }
+  casts: {
+   key: "spell_id:48666"
+   value: 39.3
+  }
+  casts: {
+   key: "spell_id:48668 tag:1"
+   value: 0.2
+  }
+  casts: {
+   key: "spell_id:48668 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:5"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:5"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:51662"
+   value: 5.5
+  }
+  casts: {
+   key: "spell_id:51723"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:54758"
+   value: 5
+  }
+  casts: {
+   key: "spell_id:57934 tag:1"
+   value: 8.2
+  }
+  casts: {
+   key: "spell_id:57968"
+   value: 168.9
+  }
+  casts: {
+   key: "spell_id:57968 tag:1"
+   value: 306.5
+  }
+  casts: {
+   key: "spell_id:57968 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57973"
+   value: 311.5
+  }
+  casts: {
+   key: "spell_id:57975"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57975 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57975 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57993 tag:1"
+   value: 26.6
+  }
+  casts: {
+   key: "spell_id:57993 tag:2"
+   value: 4.1
+  }
+  casts: {
+   key: "spell_id:57993 tag:3"
+   value: 23.5
+  }
+  casts: {
+   key: "spell_id:57993 tag:4"
+   value: 10.2
+  }
+  casts: {
+   key: "spell_id:57993 tag:5"
+   value: 0.1
+  }
+  casts: {
+   key: "spell_id:58426"
+   value: 2
+  }
+  casts: {
+   key: "spell_id:5938"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:6774 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:6774 tag:2"
+   value: 0.2
+  }
+  casts: {
+   key: "spell_id:6774 tag:3"
+   value: 0.8
+  }
+  casts: {
+   key: "spell_id:6774 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:6774 tag:5"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:5"
+   value: 0
+  }
+ }
+}
+casts_results: {
+ key: "TestRotation-Casts-Assassination One Expose No Tricks Primary"
+ value: {
+  casts: {
+   key: "item_id:40211"
+   value: 1
+  }
+  casts: {
+   key: "item_id:7676"
+   value: 1
+  }
+  casts: {
+   key: "other_id:OtherActionAttack tag:1"
+   value: 423.3
+  }
+  casts: {
+   key: "other_id:OtherActionAttack tag:2"
+   value: 329.3
+  }
+  casts: {
+   key: "other_id:OtherActionShoot"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:14177"
+   value: 2
+  }
+  casts: {
+   key: "spell_id:26863"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:26864"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48638"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48664"
+   value: 41.6
+  }
+  casts: {
+   key: "spell_id:48665"
+   value: 41.6
+  }
+  casts: {
+   key: "spell_id:48666"
+   value: 41.6
+  }
+  casts: {
+   key: "spell_id:48668 tag:1"
+   value: 0.2
+  }
+  casts: {
+   key: "spell_id:48668 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:5"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:5"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:51662"
+   value: 5.2
+  }
+  casts: {
+   key: "spell_id:51723"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:54758"
+   value: 5
+  }
+  casts: {
+   key: "spell_id:57934 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57968"
+   value: 170.7
+  }
+  casts: {
+   key: "spell_id:57968 tag:1"
+   value: 310.5
+  }
+  casts: {
+   key: "spell_id:57968 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57973"
+   value: 315.5
+  }
+  casts: {
+   key: "spell_id:57975"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57975 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57975 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57993 tag:1"
+   value: 25.7
+  }
+  casts: {
+   key: "spell_id:57993 tag:2"
+   value: 4.1
+  }
+  casts: {
+   key: "spell_id:57993 tag:3"
+   value: 23.9
+  }
+  casts: {
+   key: "spell_id:57993 tag:4"
+   value: 11.1
+  }
+  casts: {
+   key: "spell_id:57993 tag:5"
+   value: 0.1
+  }
+  casts: {
+   key: "spell_id:58426"
+   value: 2
+  }
+  casts: {
+   key: "spell_id:5938"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:6774 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:6774 tag:2"
+   value: 0.2
+  }
+  casts: {
+   key: "spell_id:6774 tag:3"
+   value: 0.9
+  }
+  casts: {
+   key: "spell_id:6774 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:6774 tag:5"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:3"
+   value: 0.4
+  }
+  casts: {
+   key: "spell_id:8647 tag:4"
+   value: 0.5
+  }
+  casts: {
+   key: "spell_id:8647 tag:5"
+   value: 0
+  }
+ }
+}
+casts_results: {
+ key: "TestRotation-Casts-Combat Maintain Expose No Tricks Primary"
+ value: {
+  casts: {
+   key: "item_id:40211"
+   value: 1
+  }
+  casts: {
+   key: "item_id:7676"
+   value: 1
+  }
+  casts: {
+   key: "other_id:OtherActionAttack tag:1"
+   value: 475.6
+  }
+  casts: {
+   key: "other_id:OtherActionAttack tag:2"
+   value: 370
+  }
+  casts: {
+   key: "other_id:OtherActionShoot"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:13750"
+   value: 1
+  }
+  casts: {
+   key: "spell_id:13877"
+   value: 3
+  }
+  casts: {
+   key: "spell_id:26863"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:26864"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48638"
+   value: 76.9
+  }
+  casts: {
+   key: "spell_id:48664"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48665"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48666"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:1"
+   value: 0.4
+  }
+  casts: {
+   key: "spell_id:48668 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:5"
+   value: 0.1
+  }
+  casts: {
+   key: "spell_id:48672"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:1"
+   value: 20.2
+  }
+  casts: {
+   key: "spell_id:48672 tag:2"
+   value: 2.9
+  }
+  casts: {
+   key: "spell_id:48672 tag:3"
+   value: 1.8
+  }
+  casts: {
+   key: "spell_id:48672 tag:4"
+   value: 0.6
+  }
+  casts: {
+   key: "spell_id:48672 tag:5"
+   value: 0.4
+  }
+  casts: {
+   key: "spell_id:51690"
+   value: 3
+  }
+  casts: {
+   key: "spell_id:51690 tag:1"
+   value: 15
+  }
+  casts: {
+   key: "spell_id:51690 tag:2"
+   value: 15
+  }
+  casts: {
+   key: "spell_id:51723"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:54758"
+   value: 5
+  }
+  casts: {
+   key: "spell_id:57934 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57968"
+   value: 112.8
+  }
+  casts: {
+   key: "spell_id:57968 tag:1"
+   value: 231.3
+  }
+  casts: {
+   key: "spell_id:57968 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57973"
+   value: 236.4
+  }
+  casts: {
+   key: "spell_id:57975"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57975 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57975 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:5938"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:6774 tag:1"
+   value: 7
+  }
+  casts: {
+   key: "spell_id:6774 tag:2"
+   value: 4.6
+  }
+  casts: {
+   key: "spell_id:6774 tag:3"
+   value: 3.1
+  }
+  casts: {
+   key: "spell_id:6774 tag:4"
+   value: 1.5
+  }
+  casts: {
+   key: "spell_id:6774 tag:5"
+   value: 0.6
+  }
+  casts: {
+   key: "spell_id:8647 tag:1"
+   value: 17.5
+  }
+  casts: {
+   key: "spell_id:8647 tag:2"
+   value: 7.1
+  }
+  casts: {
+   key: "spell_id:8647 tag:3"
+   value: 3.4
+  }
+  casts: {
+   key: "spell_id:8647 tag:4"
+   value: 1.1
+  }
+  casts: {
+   key: "spell_id:8647 tag:5"
+   value: 0.5
+  }
+ }
+}
+casts_results: {
+ key: "TestRotation-Casts-Combat No Expose Maintain Tricks Primary"
+ value: {
+  casts: {
+   key: "item_id:40211"
+   value: 1
+  }
+  casts: {
+   key: "item_id:7676"
+   value: 1
+  }
+  casts: {
+   key: "other_id:OtherActionAttack tag:1"
+   value: 474.8
+  }
+  casts: {
+   key: "other_id:OtherActionAttack tag:2"
+   value: 369.4
+  }
+  casts: {
+   key: "other_id:OtherActionShoot"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:13750"
+   value: 1
+  }
+  casts: {
+   key: "spell_id:13877"
+   value: 3
+  }
+  casts: {
+   key: "spell_id:26863"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:26864"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48638"
+   value: 92
+  }
+  casts: {
+   key: "spell_id:48664"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48665"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48666"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:1"
+   value: 1.2
+  }
+  casts: {
+   key: "spell_id:48668 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:5"
+   value: 1
+  }
+  casts: {
+   key: "spell_id:48672"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:1"
+   value: 6.2
+  }
+  casts: {
+   key: "spell_id:48672 tag:2"
+   value: 4
+  }
+  casts: {
+   key: "spell_id:48672 tag:3"
+   value: 6.1
+  }
+  casts: {
+   key: "spell_id:48672 tag:4"
+   value: 5.2
+  }
+  casts: {
+   key: "spell_id:48672 tag:5"
+   value: 4
+  }
+  casts: {
+   key: "spell_id:51690"
+   value: 3
+  }
+  casts: {
+   key: "spell_id:51690 tag:1"
+   value: 15
+  }
+  casts: {
+   key: "spell_id:51690 tag:2"
+   value: 15
+  }
+  casts: {
+   key: "spell_id:51723"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:54758"
+   value: 5
+  }
+  casts: {
+   key: "spell_id:57934 tag:1"
+   value: 8.2
+  }
+  casts: {
+   key: "spell_id:57968"
+   value: 112.7
+  }
+  casts: {
+   key: "spell_id:57968 tag:1"
+   value: 225.4
+  }
+  casts: {
+   key: "spell_id:57968 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57973"
+   value: 230.4
+  }
+  casts: {
+   key: "spell_id:57975"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57975 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57975 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:5938"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:6774 tag:1"
+   value: 5.6
+  }
+  casts: {
+   key: "spell_id:6774 tag:2"
+   value: 3.1
+  }
+  casts: {
+   key: "spell_id:6774 tag:3"
+   value: 3
+  }
+  casts: {
+   key: "spell_id:6774 tag:4"
+   value: 2.4
+  }
+  casts: {
+   key: "spell_id:6774 tag:5"
+   value: 1.4
+  }
+  casts: {
+   key: "spell_id:8647 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:5"
+   value: 0
+  }
+ }
+}
+casts_results: {
+ key: "TestRotation-Casts-Combat No Expose Maintain Tricks Secondary"
+ value: {
+  casts: {
+   key: "item_id:40211"
+   value: 1
+  }
+  casts: {
+   key: "item_id:7676"
+   value: 1
+  }
+  casts: {
+   key: "other_id:OtherActionAttack tag:1"
+   value: 469.5
+  }
+  casts: {
+   key: "other_id:OtherActionAttack tag:2"
+   value: 365.3
+  }
+  casts: {
+   key: "other_id:OtherActionShoot"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:13750"
+   value: 1
+  }
+  casts: {
+   key: "spell_id:13877"
+   value: 3
+  }
+  casts: {
+   key: "spell_id:26863"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:26864"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48638"
+   value: 39.7
+  }
+  casts: {
+   key: "spell_id:48664"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48665"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48666"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:1"
+   value: 75.7
+  }
+  casts: {
+   key: "spell_id:48668 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:5"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:5"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:51690"
+   value: 3
+  }
+  casts: {
+   key: "spell_id:51690 tag:1"
+   value: 15
+  }
+  casts: {
+   key: "spell_id:51690 tag:2"
+   value: 15
+  }
+  casts: {
+   key: "spell_id:51723"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:54758"
+   value: 5
+  }
+  casts: {
+   key: "spell_id:57934 tag:1"
+   value: 8.4
+  }
+  casts: {
+   key: "spell_id:57968"
+   value: 111.5
+  }
+  casts: {
+   key: "spell_id:57968 tag:1"
+   value: 221.7
+  }
+  casts: {
+   key: "spell_id:57968 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57973"
+   value: 226.7
+  }
+  casts: {
+   key: "spell_id:57975"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57975 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57975 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:5938"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:6774 tag:1"
+   value: 21.4
+  }
+  casts: {
+   key: "spell_id:6774 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:6774 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:6774 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:6774 tag:5"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:5"
+   value: 0
+  }
+ }
+}
+casts_results: {
+ key: "TestRotation-Casts-Combat No Expose No Tricks Primary"
+ value: {
+  casts: {
+   key: "item_id:40211"
+   value: 1
+  }
+  casts: {
+   key: "item_id:7676"
+   value: 1
+  }
+  casts: {
+   key: "other_id:OtherActionAttack tag:1"
+   value: 475.6
+  }
+  casts: {
+   key: "other_id:OtherActionAttack tag:2"
+   value: 370
+  }
+  casts: {
+   key: "other_id:OtherActionShoot"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:13750"
+   value: 1
+  }
+  casts: {
+   key: "spell_id:13877"
+   value: 3
+  }
+  casts: {
+   key: "spell_id:26863"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:26864"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48638"
+   value: 95.1
+  }
+  casts: {
+   key: "spell_id:48664"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48665"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48666"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:1"
+   value: 1.2
+  }
+  casts: {
+   key: "spell_id:48668 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:5"
+   value: 1.1
+  }
+  casts: {
+   key: "spell_id:48672"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:1"
+   value: 5.8
+  }
+  casts: {
+   key: "spell_id:48672 tag:2"
+   value: 3.7
+  }
+  casts: {
+   key: "spell_id:48672 tag:3"
+   value: 5.9
+  }
+  casts: {
+   key: "spell_id:48672 tag:4"
+   value: 5.4
+  }
+  casts: {
+   key: "spell_id:48672 tag:5"
+   value: 4.5
+  }
+  casts: {
+   key: "spell_id:51690"
+   value: 3
+  }
+  casts: {
+   key: "spell_id:51690 tag:1"
+   value: 15
+  }
+  casts: {
+   key: "spell_id:51690 tag:2"
+   value: 15
+  }
+  casts: {
+   key: "spell_id:51723"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:54758"
+   value: 5
+  }
+  casts: {
+   key: "spell_id:57934 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57968"
+   value: 112.9
+  }
+  casts: {
+   key: "spell_id:57968 tag:1"
+   value: 227
+  }
+  casts: {
+   key: "spell_id:57968 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57973"
+   value: 232.1
+  }
+  casts: {
+   key: "spell_id:57975"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57975 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57975 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:5938"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:6774 tag:1"
+   value: 5.6
+  }
+  casts: {
+   key: "spell_id:6774 tag:2"
+   value: 3
+  }
+  casts: {
+   key: "spell_id:6774 tag:3"
+   value: 2.9
+  }
+  casts: {
+   key: "spell_id:6774 tag:4"
+   value: 2.5
+  }
+  casts: {
+   key: "spell_id:6774 tag:5"
+   value: 1.5
+  }
+  casts: {
+   key: "spell_id:8647 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:5"
+   value: 0
+  }
+ }
+}
+casts_results: {
+ key: "TestRotation-Casts-Combat No Expose One Tricks Primary"
+ value: {
+  casts: {
+   key: "item_id:40211"
+   value: 1
+  }
+  casts: {
+   key: "item_id:7676"
+   value: 1
+  }
+  casts: {
+   key: "other_id:OtherActionAttack tag:1"
+   value: 474.8
+  }
+  casts: {
+   key: "other_id:OtherActionAttack tag:2"
+   value: 369.4
+  }
+  casts: {
+   key: "other_id:OtherActionShoot"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:13750"
+   value: 1
+  }
+  casts: {
+   key: "spell_id:13877"
+   value: 3
+  }
+  casts: {
+   key: "spell_id:26863"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:26864"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48638"
+   value: 92
+  }
+  casts: {
+   key: "spell_id:48664"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48665"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48666"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:1"
+   value: 1.2
+  }
+  casts: {
+   key: "spell_id:48668 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:5"
+   value: 1
+  }
+  casts: {
+   key: "spell_id:48672"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:1"
+   value: 6.2
+  }
+  casts: {
+   key: "spell_id:48672 tag:2"
+   value: 4
+  }
+  casts: {
+   key: "spell_id:48672 tag:3"
+   value: 6.1
+  }
+  casts: {
+   key: "spell_id:48672 tag:4"
+   value: 5.2
+  }
+  casts: {
+   key: "spell_id:48672 tag:5"
+   value: 4
+  }
+  casts: {
+   key: "spell_id:51690"
+   value: 3
+  }
+  casts: {
+   key: "spell_id:51690 tag:1"
+   value: 15
+  }
+  casts: {
+   key: "spell_id:51690 tag:2"
+   value: 15
+  }
+  casts: {
+   key: "spell_id:51723"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:54758"
+   value: 5
+  }
+  casts: {
+   key: "spell_id:57934 tag:1"
+   value: 8.2
+  }
+  casts: {
+   key: "spell_id:57968"
+   value: 112.7
+  }
+  casts: {
+   key: "spell_id:57968 tag:1"
+   value: 225.4
+  }
+  casts: {
+   key: "spell_id:57968 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57973"
+   value: 230.4
+  }
+  casts: {
+   key: "spell_id:57975"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57975 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57975 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:5938"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:6774 tag:1"
+   value: 5.6
+  }
+  casts: {
+   key: "spell_id:6774 tag:2"
+   value: 3.1
+  }
+  casts: {
+   key: "spell_id:6774 tag:3"
+   value: 3
+  }
+  casts: {
+   key: "spell_id:6774 tag:4"
+   value: 2.4
+  }
+  casts: {
+   key: "spell_id:6774 tag:5"
+   value: 1.4
+  }
+  casts: {
+   key: "spell_id:8647 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:5"
+   value: 0
+  }
+ }
+}
+casts_results: {
+ key: "TestRotation-Casts-Combat One Expose No Tricks Primary"
+ value: {
+  casts: {
+   key: "item_id:40211"
+   value: 1
+  }
+  casts: {
+   key: "item_id:7676"
+   value: 1
+  }
+  casts: {
+   key: "other_id:OtherActionAttack tag:1"
+   value: 475.5
+  }
+  casts: {
+   key: "other_id:OtherActionAttack tag:2"
+   value: 369.9
+  }
+  casts: {
+   key: "other_id:OtherActionShoot"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:13750"
+   value: 1
+  }
+  casts: {
+   key: "spell_id:13877"
+   value: 3
+  }
+  casts: {
+   key: "spell_id:26863"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:26864"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48638"
+   value: 94.6
+  }
+  casts: {
+   key: "spell_id:48664"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48665"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48666"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:1"
+   value: 1.2
+  }
+  casts: {
+   key: "spell_id:48668 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:5"
+   value: 1
+  }
+  casts: {
+   key: "spell_id:48672"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:1"
+   value: 5.8
+  }
+  casts: {
+   key: "spell_id:48672 tag:2"
+   value: 3.8
+  }
+  casts: {
+   key: "spell_id:48672 tag:3"
+   value: 5.9
+  }
+  casts: {
+   key: "spell_id:48672 tag:4"
+   value: 5.2
+  }
+  casts: {
+   key: "spell_id:48672 tag:5"
+   value: 4.4
+  }
+  casts: {
+   key: "spell_id:51690"
+   value: 3
+  }
+  casts: {
+   key: "spell_id:51690 tag:1"
+   value: 15
+  }
+  casts: {
+   key: "spell_id:51690 tag:2"
+   value: 15
+  }
+  casts: {
+   key: "spell_id:51723"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:54758"
+   value: 5
+  }
+  casts: {
+   key: "spell_id:57934 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57968"
+   value: 112.8
+  }
+  casts: {
+   key: "spell_id:57968 tag:1"
+   value: 227.1
+  }
+  casts: {
+   key: "spell_id:57968 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57973"
+   value: 232.1
+  }
+  casts: {
+   key: "spell_id:57975"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57975 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57975 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:5938"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:6774 tag:1"
+   value: 6.2
+  }
+  casts: {
+   key: "spell_id:6774 tag:2"
+   value: 3.1
+  }
+  casts: {
+   key: "spell_id:6774 tag:3"
+   value: 2.8
+  }
+  casts: {
+   key: "spell_id:6774 tag:4"
+   value: 2.3
+  }
+  casts: {
+   key: "spell_id:6774 tag:5"
+   value: 1.4
+  }
+  casts: {
+   key: "spell_id:8647 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:3"
+   value: 1
+  }
+  casts: {
+   key: "spell_id:8647 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:5"
+   value: 0
+  }
+ }
+}

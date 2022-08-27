@@ -38,10 +38,10 @@ func (rogue *Rogue) makeRupture(comboPoints int32) *core.Spell {
 			OutcomeApplier:   rogue.OutcomeFuncMeleeSpecialHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
-					rogue.RuptureDot.Spell = spell
-					rogue.RuptureDot.NumberOfTicks = numTicks
-					rogue.RuptureDot.RecomputeAuraDuration()
-					rogue.RuptureDot.Apply(sim)
+					rogue.ruptureDot.Spell = spell
+					rogue.ruptureDot.NumberOfTicks = numTicks
+					rogue.ruptureDot.RecomputeAuraDuration()
+					rogue.ruptureDot.Apply(sim)
 					rogue.ApplyFinisher(sim, spell)
 				} else {
 					if refundAmount > 0 {
@@ -70,7 +70,7 @@ func (rogue *Rogue) registerRupture() {
 	}
 
 	target := rogue.CurrentTarget
-	rogue.RuptureDot = core.NewDot(core.Dot{
+	rogue.ruptureDot = core.NewDot(core.Dot{
 		Spell: rogue.Rupture[0],
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "Rupture-" + strconv.Itoa(int(rogue.Index)),

@@ -21,8 +21,8 @@ func (druid *Druid) registerStarfallSpell() {
 	tickLength := core.TernaryDuration(druid.Env.GetNumTargets() > 1, time.Millisecond*500, time.Millisecond*1000)
 
 	// Improved Faerie Fire and Nature's Majesty
-	iffCritBonus := core.TernaryFloat64(druid.CurrentTarget.HasAura("Improved Faerie Fire"), float64(druid.Talents.ImprovedFaerieFire)*1*core.CritRatingPerCritChance, 0)
-	naturesMajestyCritBonus := 2 * float64(druid.Talents.NaturesMajesty) * core.CritRatingPerCritChance
+	iffCritBonus := core.TernaryFloat64(druid.CurrentTarget.HasAura("Improved Faerie Fire"), druid.TalentsBonuses.iffBonusCrit, 0)
+	naturesMajestyCritBonus := druid.TalentsBonuses.naturesMajestyBonusCrit
 
 	druid.Starfall = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 53201},
@@ -33,7 +33,7 @@ func (druid *Druid) registerStarfallSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.03*float64(druid.Talents.Moonglow)),
+				Cost: baseCost * druid.TalentsBonuses.moonglowMultiplier,
 				GCD:  core.GCDDefault,
 			},
 			CD: core.Cooldown{

@@ -36,7 +36,7 @@ export const ArmsTalents = {
 		talentsString: '3022032023335100102012213231251-305-2033',
 		glyphs: Glyphs.create({
 			major1: WarriorMajorGlyph.GlyphOfRending,
-			major2: WarriorMajorGlyph.GlyphOfHeroicStrike,
+			major2: WarriorMajorGlyph.GlyphOfMortalStrike,
 			major3: WarriorMajorGlyph.GlyphOfExecution,
 			minor1: WarriorMinorGlyph.GlyphOfBattle,
 			minor2: WarriorMinorGlyph.GlyphOfCommand,
@@ -72,7 +72,7 @@ export const DefaultRotation = WarriorRotation.create({
 	hsRageThreshold: 60,
 	rendRageThresholdBelow: 70,
   slamRageThreshold: 15,
-	rendCdThreshold: 0,
+	rendCdThreshold: 1,
 	useHsDuringExecute: true,
 	useBtDuringExecute: true,
 	useWwDuringExecute: true,
@@ -88,7 +88,7 @@ export const ArmsRotation = WarriorRotation.create({
 	msRageThreshold: 50,
   slamRageThreshold: 15,
 	hsRageThreshold: 60,
-	rendCdThreshold: 0,
+	rendCdThreshold: 1,
 	useHsDuringExecute: true,
 	spamExecute: true,
 });
@@ -107,7 +107,7 @@ export const DefaultConsumes = Consumes.create({
 });
 
 export const P1_PRERAID_FURY_PRESET = {
-	name: 'P1 Pre-Raid Fury',
+	name: 'P1 Pre-Raid Fury Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().bloodthirst,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
@@ -210,7 +210,7 @@ export const P1_PRERAID_FURY_PRESET = {
 };
 
 export const P1_FURY_PRESET = {
-	name: 'P1 BiS Fury',
+	name: 'P1 Fury Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().bloodthirst,
 	gear: EquipmentSpec.fromJsonString(`{ "items": [
@@ -244,7 +244,7 @@ export const P1_FURY_PRESET = {
           "enchant": 44489,
           "gems": [
             42142,
-            42142
+            49110
           ]
         },
         {
@@ -309,7 +309,7 @@ export const P1_FURY_PRESET = {
 };
 
 export const P1_PRERAID_ARMS_PRESET = {
-	name: 'P1 Pre-Raid Arms',
+	name: 'P1 Pre-Raid Arms Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().mortalStrike,
 	gear: EquipmentSpec.fromJsonString(`{ "items": [
@@ -377,7 +377,7 @@ export const P1_PRERAID_ARMS_PRESET = {
           "id": 44306,
           "enchant": 55016,
           "gems": [
-            0,
+            42702,
             40037
           ]
         },
@@ -412,7 +412,7 @@ export const P1_PRERAID_ARMS_PRESET = {
 };
 
 export const P1_ARMS_PRESET = {
-	name: 'P1 BiS Arms',
+	name: 'P1 Arms Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().mortalStrike,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
@@ -475,7 +475,7 @@ export const P1_ARMS_PRESET = {
           "enchant": 38374,
           "gems": [
             39996,
-            0
+            49110
           ]
         },
         {

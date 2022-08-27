@@ -1,6 +1,8 @@
 package smite
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/priest"
@@ -42,6 +44,8 @@ func NewSmitePriest(character core.Character, options proto.Player) *SmitePriest
 	spriest := &SmitePriest{
 		Priest:   basePriest,
 		rotation: *smiteOptions.Rotation,
+
+		allowedHFDelay: time.Millisecond * time.Duration(smiteOptions.Rotation.AllowedHolyFireDelayMs),
 	}
 
 	spriest.EnableResumeAfterManaWait(spriest.tryUseGCD)
@@ -53,6 +57,8 @@ type SmitePriest struct {
 	*priest.Priest
 
 	rotation proto.SmitePriest_Rotation
+
+	allowedHFDelay time.Duration
 }
 
 func (spriest *SmitePriest) GetPriest() *priest.Priest {

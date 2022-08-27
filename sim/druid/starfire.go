@@ -11,7 +11,7 @@ import (
 
 // Idol IDs
 const IvoryMoongoddess int32 = 27518
-const ShootingStar int32 = 60775
+const ShootingStar int32 = 40321
 
 func (druid *Druid) registerStarfireSpell() {
 
@@ -20,7 +20,7 @@ func (druid *Druid) registerStarfireSpell() {
 	minBaseDamage := 1038.0
 	maxBaseDamage := 1222.0
 	spellCoefficient := 1.0 * (1 + 0.04*float64(druid.Talents.WrathOfCenarius))
-	manaMetrics := druid.NewManaMetrics(actionID)
+	manaMetrics := druid.NewManaMetrics(core.ActionID{SpellID: 24858})
 
 	// This seems to be unaffected by wrath of cenarius so it needs to come first.
 	bonusFlatDamage := core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == IvoryMoongoddess, 55*spellCoefficient, 0)
@@ -28,10 +28,10 @@ func (druid *Druid) registerStarfireSpell() {
 
 	effect := core.SpellEffect{
 		ProcMask:         core.ProcMaskSpellDamage,
-		DamageMultiplier: 1 + 0.02*float64(druid.Talents.Moonfury),
+		DamageMultiplier: 1 + druid.TalentsBonuses.moonfuryMultiplier,
 		ThreatMultiplier: 1,
 		BaseDamage:       core.BaseDamageConfigMagic(minBaseDamage+bonusFlatDamage, maxBaseDamage+bonusFlatDamage, spellCoefficient),
-		OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, 0.2*float64(druid.Talents.Vengeance))),
+		OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
 		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			spellEffect.BonusSpellCritRating = 0
 			// Improved Insect Swarm
@@ -48,7 +48,7 @@ func (druid *Druid) registerStarfireSpell() {
 			}
 			// Improved Faerie Fire
 			if druid.CurrentTarget.HasAura("Improved Faerie Fire") {
-				spellEffect.BonusSpellCritRating += float64(druid.Talents.ImprovedFaerieFire) * 1 * core.CritRatingPerCritChance
+				spellEffect.BonusSpellCritRating += druid.TalentsBonuses.iffBonusCrit
 			}
 			// Lunar eclipse buff
 			if druid.HasAura("Lunar Eclipse proc") {
@@ -59,7 +59,7 @@ func (druid *Druid) registerStarfireSpell() {
 				}
 			}
 			// Nature's Majesty
-			spellEffect.BonusSpellCritRating += 2 * float64(druid.Talents.NaturesMajesty) * core.CritRatingPerCritChance
+			spellEffect.BonusSpellCritRating += druid.TalentsBonuses.naturesMajestyBonusCrit
 		},
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Landed() {
@@ -103,9 +103,9 @@ func (druid *Druid) registerStarfireSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost * (1 - 0.03*float64(druid.Talents.Moonglow)),
+				Cost:     baseCost * druid.TalentsBonuses.moonglowMultiplier,
 				GCD:      core.GCDDefault,
-				CastTime: time.Millisecond*3500 - (time.Millisecond * 100 * time.Duration(druid.Talents.StarlightWrath)),
+				CastTime: time.Millisecond*3500 - druid.TalentsBonuses.starlightWrathModifier,
 			},
 
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {

@@ -44,8 +44,9 @@ func NewBalanceDruid(character core.Character, options proto.Player) *BalanceDru
 		isInsideEclipseThreshold: balanceOptions.Options.IsInsideEclipseThreshold,
 	}
 
+	moonkin.ResetTalentsBonuses()
+	moonkin.RegisterTalentsBonuses()
 	moonkin.EnableResumeAfterManaWait(moonkin.tryUseGCD)
-
 	return moonkin
 }
 

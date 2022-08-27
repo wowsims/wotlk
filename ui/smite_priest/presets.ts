@@ -33,10 +33,10 @@ import * as Tooltips from '../core/constants/tooltips.js';
 export const StandardTalents = {
 	name: 'Standard',
 	data: SavedTalents.create({
-		talentsString: '0533203100300502331-005551002020152-324',
+		talentsString: '05332031013005023310001-005551002020152-00502',
 		glyphs: Glyphs.create({
 			major1: MajorGlyph.GlyphOfSmite,
-			major2: MajorGlyph.GlyphOfHolyNova,
+			major2: MajorGlyph.GlyphOfShadowWordPain,
 			major3: MajorGlyph.GlyphOfShadowWordDeath,
 			minor1: MinorGlyph.GlyphOfFortitude,
 			minor2: MinorGlyph.GlyphOfShadowfiend,
@@ -47,8 +47,8 @@ export const StandardTalents = {
 
 export const DefaultRotation = Rotation.create({
 	useDevouringPlague: true,
-	useShadowWordDeath: true,
-	useMindBlast: true,
+	useShadowWordDeath: false,
+	useMindBlast: false,
 });
 
 export const DefaultOptions = Options.create({
@@ -69,13 +69,8 @@ export const DefaultConsumes = Consumes.create({
 
 export const DefaultRaidBuffs = RaidBuffs.create({
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
-	powerWordFortitude: TristateEffect.TristateEffectImproved,
-	strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
 	arcaneBrilliance: true,
 	divineSpirit: true,
-	trueshotAura: true,
-	leaderOfThePack: TristateEffect.TristateEffectImproved,
-	icyTalons: true,
 	totemOfWrath: true,
 	moonkinAura: TristateEffect.TristateEffectImproved,
 	wrathOfAirTotem: true,
@@ -91,9 +86,7 @@ export const DefaultIndividualBuffs = IndividualBuffs.create({
 });
 
 export const DefaultDebuffs = Debuffs.create({
-	sunderArmor: true,
 	faerieFire: TristateEffect.TristateEffectImproved,
-	bloodFrenzy: true,
 	ebonPlaguebringer: true,
 	heartOfTheCrusader: true,
 	judgementOfWisdom: true,
@@ -200,47 +193,59 @@ export const P1_PRESET = {
 			"id": 40562,
 			"enchant": 44877,
 			"gems": [
-				41307,
-				40049
+				41333,
+				42144
 			]
 		},
 		{
-			"id": 40374
+			"id": 44661,
+			"gems": [
+				39998
+			]
 		},
 		{
-			"id": 40555,
-			"enchant": 44874
+			"id": 40459,
+			"enchant": 44874,
+			"gems": [
+				42144
+			]
 		},
 		{
-			"id": 41610,
-			"enchant": 63765
+			"id": 44005,
+			"enchant": 63765,
+			"gems": [
+				42144
+			]
 		},
 		{
-			"id": 40526,
+			"id": 40234,
 			"enchant": 33990,
 			"gems": [
-				40049
+				39998,
+				39998
 			]
 		},
 		{
-			"id": 40325,
+			"id": 44008,
 			"enchant": 44498,
 			"gems": [
+				39998,
 				0
 			]
 		},
 		{
 			"id": 40454,
-			"enchant": 44592,
+			"enchant": 54999,
 			"gems": [
 				40049,
 				0
 			]
 		},
 		{
-			"id": 40301,
+			"id": 40561,
+			"enchant": 54793,
 			"gems": [
-				40049
+				39998
 			]
 		},
 		{
@@ -248,20 +253,20 @@ export const P1_PRESET = {
 			"enchant": 41602
 		},
 		{
-			"id": 40246,
+			"id": 40558,
 			"enchant": 60623
+		},
+		{
+			"id": 40719
 		},
 		{
 			"id": 40399
 		},
 		{
-			"id": 39389
+			"id": 40255
 		},
 		{
-			"id": 42129
-		},
-		{
-			"id": 40382
+			"id": 40432
 		},
 		{
 			"id": 40395,

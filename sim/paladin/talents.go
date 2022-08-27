@@ -267,6 +267,7 @@ func (paladin *Paladin) applyCrusade() {
 	paladin.RegisterResetEffect(
 		func(s *core.Simulation) {
 			if !applied {
+				paladin.PseudoStats.DamageDealtMultiplier *= 1 + (0.01 * float64(paladin.Talents.Crusade))
 				for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
 					unit := paladin.Env.GetTargetUnit(i)
 					switch unit.MobType {

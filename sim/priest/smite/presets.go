@@ -78,6 +78,8 @@ var PlayerOptionsBasic = &proto.Player_SmitePriest{
 			UseDevouringPlague: true,
 			UseShadowWordDeath: true,
 			UseMindBlast:       true,
+
+			AllowedHolyFireDelayMs: 50,
 		},
 	},
 }

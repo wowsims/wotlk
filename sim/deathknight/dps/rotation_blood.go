@@ -38,7 +38,11 @@ func (dk *DpsDeathknight) RotationActionCallback_BloodRotation(sim *core.Simulat
 			if dk.shShouldSpreadDisease(sim) {
 				return dk.blSpreadDiseases(sim, target, s)
 			} else {
-				casted = dk.HeartStrike.Cast(sim, target)
+				if dk.Talents.HeartStrike {
+					casted = dk.HeartStrike.Cast(sim, target)
+				} else {
+					casted = dk.BloodStrike.Cast(sim, target)
+				}
 			}
 		} else {
 			dk.blRecastDiseasesSequence(sim)

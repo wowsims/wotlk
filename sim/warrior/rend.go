@@ -38,12 +38,11 @@ func (warrior *Warrior) registerRendSpell() {
 				if spellEffect.Landed() {
 					if sim.GetRemainingDurationPercent() <= 0.75 && isAbove75 {
 						isAbove75 = false
-						// TODO: figure out why this multiplier is applied twice when called
-						warrior.RendDots.Spell.DamageMultiplier /= 1 + 0.35/2
+						warrior.RendDots.Spell.DamageMultiplier /= 1.35
 					}
 					warrior.RendDots.Apply(sim)
-					warrior.procBloodFrenzy(sim, spellEffect, time.Second*15)
-					warrior.rendValidUntil = sim.CurrentTime + time.Second*15
+					warrior.procBloodFrenzy(sim, spellEffect, time.Second*core.TernaryDuration(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfRending), 21, 15))
+					warrior.rendValidUntil = sim.CurrentTime + time.Second*core.TernaryDuration(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfRending), 21, 15)
 				} else {
 					warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
 				}
@@ -51,7 +50,7 @@ func (warrior *Warrior) registerRendSpell() {
 		}),
 	})
 	target := warrior.CurrentTarget
-	tickDamage := 380 + 0.2*5*warrior.AutoAttacks.MH.AverageDamage()/15
+	tickDamage := 380 + 0.2*5*warrior.AutoAttacks.MH.AverageDamage()/5
 	warrior.RendDots = core.NewDot(core.Dot{
 		Spell: warrior.Rend,
 		Aura: target.RegisterAura(core.Aura{
@@ -60,7 +59,7 @@ func (warrior *Warrior) registerRendSpell() {
 		}),
 		NumberOfTicks: core.TernaryInt(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfRending), 7, 5),
 		TickLength:    time.Second * 3,
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
+		TickEffects: core.TickFuncApplyEffectsToUnit(target, core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskPeriodicDamage,
 			// 135% damage multiplier is applied at the begining of the fight and removed when target is at 75% health
 			DamageMultiplier: (1 + 0.1*float64(warrior.Talents.ImprovedRend)) * 1.35,
@@ -69,10 +68,10 @@ func (warrior *Warrior) registerRendSpell() {
 
 			BaseDamage:     core.BaseDamageConfigFlat(tickDamage),
 			OutcomeApplier: warrior.OutcomeFuncTick(),
-		}),
+		})),
 	})
 }
 
 func (warrior *Warrior) ShouldRend(sim *core.Simulation) bool {
-	return warrior.Rend.IsReady(sim) && sim.CurrentTime >= (warrior.rendValidUntil-warrior.RendCdThreshold) && warrior.CurrentRage() >= warrior.Rend.DefaultCast.Cost
+	return warrior.Rend.IsReady(sim) && sim.CurrentTime > (warrior.rendValidUntil-warrior.RendCdThreshold) && warrior.CurrentRage() >= warrior.Rend.DefaultCast.Cost
 }

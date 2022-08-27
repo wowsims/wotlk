@@ -3,8 +3,10 @@ package main
 import (
 	"bufio"
 	"encoding/csv"
+	"encoding/json"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"sort"
@@ -16,7 +18,7 @@ import (
 
 func main() {
 	outDir := flag.String("outDir", "", "Path to output directory for writing generated .go files.")
-	db := flag.String("db", "wotlkdb", "which database to use")
+	db := flag.String("db", "wowhead", "which database to use")
 	flag.Parse()
 
 	if *outDir == "" {
@@ -24,6 +26,71 @@ func main() {
 	}
 
 	tooltipsDB := getWowheadTooltipsDB()
+
+	type tempItemIcon struct {
+		ID   int
+		Name string
+		Icon string
+	}
+
+	tempItems := []tempItemIcon{}
+
+	// Generate all item/gem ids from the tooltips db
+
+	// gems := &strings.Builder{}
+	// items := &strings.Builder{}
+	// for k := range tooltipsDB {
+	// 	resp := getWowheadItemResponse(k, tooltipsDB)
+	// 	if resp.Name == "" || strings.Contains(resp.Name, "QA Test") || strings.Contains(resp.Name, "zzOLD") || strings.Contains(resp.Name, "Monster -") {
+	// 		continue
+	// 	}
+	// 	if resp.IsPattern() {
+	// 		continue
+	// 	}
+	// 	// No socket color means that this isn't a gem
+	// 	if resp.GetSocketColor() == proto.GemColor_GemColorUnknown {
+	// 		itemLevel := resp.GetItemLevel()
+	// 		qual := resp.GetQuality()
+	// 		if qual < int(proto.ItemQuality_ItemQualityUncommon) {
+	// 			continue
+	// 		} else if qual > int(proto.ItemQuality_ItemQualityLegendary) {
+	// 			continue
+	// 		} else if qual < int(proto.ItemQuality_ItemQualityEpic) {
+	// 			if itemLevel < 105 {
+	// 				continue
+	// 			}
+	// 			if itemLevel < 110 && resp.GetItemSetName() == "" {
+	// 				continue
+	// 			}
+	// 		} else if qual < int(proto.ItemQuality_ItemQualityEpic) {
+	// 			if itemLevel < 110 {
+	// 				continue
+	// 			}
+	// 			if itemLevel < 140 && resp.GetItemSetName() == "" {
+	// 				continue
+	// 			}
+	// 		} else {
+	// 			// Epic and legendary items might come from classic, so use a lower ilvl threshold.
+	// 			if itemLevel < 75 {
+	// 				continue
+	// 			}
+	// 		}
+
+	// 		items.WriteString(fmt.Sprintf("%d\n", k))
+	// 	} else {
+	// 		qual := resp.GetQuality()
+	// 		if qual <= int(proto.ItemQuality_ItemQualityUncommon) && k < 30000 {
+	// 			continue
+	// 		}
+	// 		gems.WriteString(fmt.Sprintf("%d\n", k))
+	// 	}
+	// }
+
+	// ioutil.WriteFile("all_item_ids", []byte(items.String()), 0666)
+	// ioutil.WriteFile("all_gem_ids", []byte(gems.String()), 0666)
+
+	// panic("done")
+
 	var gemsData []GemData
 	var itemsData []ItemData
 	if *db == "wowhead" {
@@ -39,22 +106,25 @@ func main() {
 			}
 			//log.Printf("\n\n%+v\n", gemData.Response)
 			gemsData[idx] = gemData
+
+			tempItems = append(tempItems, tempItemIcon{ID: gemDeclaration.ID, Name: gemData.Response.GetName(), Icon: gemData.Response.GetIcon()})
 		}
 
 		itemDeclarations := getItemDeclarations()
-		qualityModifiers := getItemQualityModifiers()
+		// qualityModifiers := getItemQualityModifiers()
 		itemsData = make([]ItemData, len(itemDeclarations))
 		for idx, itemDeclaration := range itemDeclarations {
 			itemData := ItemData{
-				Declaration:     itemDeclaration,
-				Response:        getWowheadItemResponse(itemDeclaration.ID, tooltipsDB),
-				QualityModifier: qualityModifiers[itemDeclaration.ID],
+				Declaration: itemDeclaration,
+				Response:    getWowheadItemResponse(itemDeclaration.ID, tooltipsDB),
+				// QualityModifier: qualityModifiers[itemDeclaration.ID],
 			}
 			if itemData.Response.GetName() == "" {
 				continue
 			}
 			//fmt.Printf("\n\n%+v\n", itemData.Response)
 			itemsData[idx] = itemData
+			tempItems = append(tempItems, tempItemIcon{ID: itemDeclaration.ID, Name: itemData.Response.GetName(), Icon: itemData.Response.GetIcon()})
 		}
 	} else if *db == "wotlkdb" {
 		itemsData = make([]ItemData, 0, len(tooltipsDB))
@@ -103,6 +173,15 @@ func main() {
 		return itemsData[i].Response.GetName() < itemsData[j].Response.GetName()
 	})
 	writeItemFile(*outDir, itemsData)
+
+	// Write out the all_items_db.json so as we adjust the items we adjust it too.
+	itemDB := &strings.Builder{}
+	v, err := json.Marshal(tempItems)
+	if err != nil {
+		log.Fatalf("failed to marshal: %s", err)
+	}
+	itemDB.Write(v)
+	ioutil.WriteFile("./assets/item_data/all_items_db.json", []byte(itemDB.String()), 0666)
 }
 
 func getGemDeclarations() []GemDeclaration {
@@ -149,7 +228,6 @@ func getGemDeclarations() []GemDeclaration {
 }
 
 func getItemDeclarations() []ItemDeclaration {
-	//itemsData := readCsvFile("./assets/item_data/all_equippable_item_ids.csv")
 	itemsData := readCsvFile("./assets/item_data/all_item_ids.csv")
 
 	// Ignore first line
@@ -227,42 +305,42 @@ func getWowheadTooltipsDB() map[int]string {
 	return db
 }
 
-func getItemQualityModifiers() map[int]float64 {
-	file, err := os.Open("./assets/item_data/quality_modifiers.csv")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
+// func getItemQualityModifiers() map[int]float64 {
+// 	file, err := os.Open("./assets/item_data/quality_modifiers.csv")
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	defer file.Close()
 
-	qualityMods := make(map[int]float64)
-	scanner := bufio.NewScanner(file)
-	i := 0
-	for scanner.Scan() {
-		i++
-		if i == 1 {
-			// Ignore first line
-			continue
-		}
+// 	qualityMods := make(map[int]float64)
+// 	scanner := bufio.NewScanner(file)
+// 	i := 0
+// 	for scanner.Scan() {
+// 		i++
+// 		if i == 1 {
+// 			// Ignore first line
+// 			continue
+// 		}
 
-		line := scanner.Text()
+// 		line := scanner.Text()
 
-		itemIDStr := line[:strings.Index(line, ",")]
-		itemID, err := strconv.Atoi(itemIDStr)
-		if err != nil {
-			log.Fatal("Invalid item ID: " + itemIDStr)
-		}
+// 		itemIDStr := line[:strings.Index(line, ",")]
+// 		itemID, err := strconv.Atoi(itemIDStr)
+// 		if err != nil {
+// 			log.Fatal("Invalid item ID: " + itemIDStr)
+// 		}
 
-		qualityModStr := line[strings.LastIndex(line, ",")+1:]
-		qualityMod, err := strconv.ParseFloat(qualityModStr, 64)
-		if err != nil {
-			log.Fatal("Invalid quality mod: ", qualityModStr)
-		}
+// 		qualityModStr := line[strings.LastIndex(line, ",")+1:]
+// 		qualityMod, err := strconv.ParseFloat(qualityModStr, 64)
+// 		if err != nil {
+// 			log.Fatal("Invalid quality mod: ", qualityModStr)
+// 		}
 
-		qualityMods[itemID] = qualityMod
-	}
+// 		qualityMods[itemID] = qualityMod
+// 	}
 
-	return qualityMods
-}
+// 	return qualityMods
+// }
 
 func readCsvFile(filePath string) [][]string {
 	f, err := os.Open(filePath)

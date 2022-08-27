@@ -74,7 +74,7 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 				core.TernaryFloat64(hunter.HasSetBonus(ItemSetRiftStalker, 4), 5*core.CritRatingPerCritChance, 0),
 			DamageMultiplier: 1 *
 				(1 + 0.03*float64(hunter.Talents.FerociousInspiration)) *
-				(1 + 0.01*float64(hunter.Talents.MarkedForDeath)) *
+				hunter.markedForDeathMultiplier() *
 				core.TernaryFloat64(hunter.HasSetBonus(ItemSetGronnstalker, 4), 1.1, 1),
 			ThreatMultiplier: 1,
 

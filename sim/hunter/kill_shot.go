@@ -35,7 +35,7 @@ func (hunter *Hunter) registerKillShotSpell() {
 			ProcMask:        core.ProcMaskRangedSpecial,
 			BonusCritRating: 5 * core.CritRatingPerCritChance * float64(hunter.Talents.SniperTraining),
 			DamageMultiplier: 1 *
-				(1 + 0.01*float64(hunter.Talents.MarkedForDeath)),
+				hunter.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{

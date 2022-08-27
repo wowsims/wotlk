@@ -59,12 +59,25 @@ func (dk *Deathknight) registerPestilenceSpell() {
 							}
 						}
 					} else {
+						applyCryptEbon := false
 						// Apply diseases on every other target
 						if dk.FrostFeverDisease[dk.CurrentTarget.Index].IsActive() {
+							dk.FrostFeverExtended[unitHit.Index] = 0
 							dk.FrostFeverDisease[unitHit.Index].Apply(sim)
+							applyCryptEbon = true
 						}
 						if dk.BloodPlagueDisease[dk.CurrentTarget.Index].IsActive() {
+							dk.BloodPlagueExtended[unitHit.Index] = 0
 							dk.BloodPlagueDisease[unitHit.Index].Apply(sim)
+							applyCryptEbon = true
+						}
+						if applyCryptEbon {
+							if dk.Talents.CryptFever > 0 {
+								dk.CryptFeverAura[unitHit.Index].Activate(sim)
+							}
+							if dk.Talents.EbonPlaguebringer > 0 {
+								dk.EbonPlagueAura[unitHit.Index].Activate(sim)
+							}
 						}
 					}
 				}
