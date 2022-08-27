@@ -44,7 +44,7 @@ func (druid *Druid) registerForceOfNatureCD() {
 			forceOfNatureAura.Activate(sim)
 
 			bonusID := core.ActionID{ItemID: 11133}
-			bonusStats := stats.Stats{stats.Strength: druid.GetStat(stats.ArcaneSpellPower) * 0.5}
+			bonusStats := stats.Stats{stats.Strength: druid.GetStat(stats.SpellPower) * 0.5}
 
 			druid.Treant1.NewTemporaryStatsAura("SP Snapshot", bonusID, bonusStats, time.Second*30).Activate(sim)
 			druid.Treant2.NewTemporaryStatsAura("SP Snapshot", bonusID, bonusStats, time.Second*30).Activate(sim)
