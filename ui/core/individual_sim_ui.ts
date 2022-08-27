@@ -277,9 +277,9 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				if (!this.player.canDualWield2H() && this.player.getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.handType == HandType.HandTypeTwoHand ||
 					this.player.getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.handType == HandType.HandTypeTwoHand) {
 						return "Dual wielding two-handed weapon(s) without Titan's Grip spec."
-					} else {
-						return '';
-					}	
+				} else {
+					return '';
+				}
 			},
 		});
 		(config.warnings || []).forEach(warning => this.addWarning(warning(this)));
