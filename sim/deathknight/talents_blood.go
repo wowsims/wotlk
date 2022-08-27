@@ -217,7 +217,7 @@ func (dk *Deathknight) applyBladeBarrier() {
 	})
 
 	dk.onRuneSpendBladeBarrier = func(sim *core.Simulation) {
-		if dk.AllBloodRunesSpent() {
+		if dk.CurrentBloodRunes() == 0 {
 			dk.BladeBarrierAura.Activate(sim)
 		}
 	}
