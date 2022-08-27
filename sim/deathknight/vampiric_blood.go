@@ -61,9 +61,11 @@ func (dk *Deathknight) registerVampiricBloodSpell() {
 		return dk.CastCostPossible(sim, 0, 1, 0, 0) && dk.VampiricBlood.IsReady(sim)
 	}, nil)
 
-	dk.AddMajorCooldown(core.MajorCooldown{
-		Spell:    dk.VampiricBlood.Spell,
-		Type:     core.CooldownTypeSurvival,
-		Priority: core.CooldownPriorityDefault,
-	})
+	if !dk.Inputs.IsDps {
+		dk.AddMajorCooldown(core.MajorCooldown{
+			Spell:    dk.VampiricBlood.Spell,
+			Type:     core.CooldownTypeSurvival,
+			Priority: core.CooldownPriorityLow,
+		})
+	}
 }

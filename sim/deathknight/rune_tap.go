@@ -56,9 +56,11 @@ func (dk *Deathknight) registerRuneTapSpell() {
 		return dk.CastCostPossible(sim, 0, 1, 0, 0) && dk.RuneTap.IsReady(sim)
 	}, nil)
 
-	dk.AddMajorCooldown(core.MajorCooldown{
-		Spell:    dk.RuneTap.Spell,
-		Type:     core.CooldownTypeSurvival,
-		Priority: core.CooldownPriorityDefault,
-	})
+	if !dk.Inputs.IsDps {
+		dk.AddMajorCooldown(core.MajorCooldown{
+			Spell:    dk.RuneTap.Spell,
+			Type:     core.CooldownTypeSurvival,
+			Priority: core.CooldownPriorityLow,
+		})
+	}
 }

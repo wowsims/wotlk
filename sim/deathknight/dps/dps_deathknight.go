@@ -58,6 +58,13 @@ func NewDpsDeathknight(character core.Character, player proto.Player) *DpsDeathk
 		MainHand:       dpsDk.WeaponFromMainHand(dpsDk.DefaultMeleeCritMultiplier()),
 		OffHand:        dpsDk.WeaponFromOffHand(dpsDk.DefaultMeleeCritMultiplier()),
 		AutoSwingMelee: true,
+		ReplaceMHSwing: func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
+			if dpsDk.RuneStrike.CanCast(sim) {
+				return dpsDk.RuneStrike.Spell
+			} else {
+				return nil
+			}
+		},
 	})
 
 	dpsDk.sr.dk = dpsDk

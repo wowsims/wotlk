@@ -58,9 +58,11 @@ func (dk *Deathknight) registerIceboundFortitudeSpell() {
 		return dk.CastCostPossible(sim, 20.0, 0, 0, 0) && dk.IceboundFortitude.IsReady(sim)
 	}, nil)
 
-	dk.AddMajorCooldown(core.MajorCooldown{
-		Spell:    dk.IceboundFortitude.Spell,
-		Type:     core.CooldownTypeSurvival,
-		Priority: core.CooldownPriorityDefault,
-	})
+	if !dk.Inputs.IsDps {
+		dk.AddMajorCooldown(core.MajorCooldown{
+			Spell:    dk.IceboundFortitude.Spell,
+			Type:     core.CooldownTypeSurvival,
+			Priority: core.CooldownPriorityLow,
+		})
+	}
 }

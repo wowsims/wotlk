@@ -47,11 +47,14 @@ func (dk *Deathknight) registerDeathPactSpell() {
 		return dk.Ghoul.Pet.IsEnabled() && dk.DeathPact.IsReady(sim)
 	}, nil)
 
-	dk.AddMajorCooldown(core.MajorCooldown{
-		Spell: dk.DeathPact.Spell,
-		Type:  core.CooldownTypeDPS,
-		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return dk.DeathPact.CanCast(sim) && dk.CurrentHealthPercent() <= 0.75
-		},
-	})
+	if !dk.Inputs.IsDps {
+		dk.AddMajorCooldown(core.MajorCooldown{
+			Spell:    dk.DeathPact.Spell,
+			Type:     core.CooldownTypeDPS,
+			Priority: core.CooldownPriorityLow,
+			ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
+				return dk.DeathPact.CanCast(sim) && dk.CurrentHealthPercent() <= 0.75
+			},
+		})
+	}
 }

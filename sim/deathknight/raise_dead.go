@@ -49,8 +49,9 @@ func (dk *Deathknight) registerRaiseDeadCD() {
 
 	if !dk.Inputs.IsDps {
 		dk.AddMajorCooldown(core.MajorCooldown{
-			Spell: dk.RaiseDead.Spell,
-			Type:  core.CooldownTypeSurvival,
+			Spell:    dk.RaiseDead.Spell,
+			Type:     core.CooldownTypeSurvival,
+			Priority: core.CooldownPriorityLow,
 			ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
 				return dk.RaiseDead.CanCast(sim) && dk.CurrentHealthPercent() <= 0.5
 			},

@@ -37,7 +37,7 @@ var BloodTankTalents = &proto.DeathknightTalents{
 	Lichborne:            true,
 	EndlessWinter:        2,
 	FrigidDreadplate:     3,
-	GlacierRot:           2,
+	GlacierRot:           1,
 	ImprovedIcyTalons:    true,
 	Anticipation:         2,
 }
@@ -55,7 +55,7 @@ var FullRaidBuffs = &proto.RaidBuffs{
 	SwiftRetribution:      true,
 	Bloodlust:             true,
 	StrengthOfEarthTotem:  proto.TristateEffect_TristateEffectImproved,
-	LeaderOfThePack:       proto.TristateEffect_TristateEffectImproved,
+	LeaderOfThePack:       proto.TristateEffect_TristateEffectRegular,
 	SanctifiedRetribution: true,
 	DevotionAura:          proto.TristateEffect_TristateEffectImproved,
 	RetributionAura:       true,

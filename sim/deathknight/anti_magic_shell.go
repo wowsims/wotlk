@@ -128,7 +128,7 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 		dk.AddMajorCooldown(core.MajorCooldown{
 			Spell:    dk.AntiMagicShell.Spell,
 			Type:     core.CooldownTypeDPS,
-			Priority: core.CooldownPriorityDefault,
+			Priority: core.CooldownPriorityLow,
 		})
 	}
 }
