@@ -140,10 +140,12 @@ type Deathknight struct {
 	IceboundFortitudeAura *core.Aura
 
 	// Diseases
-	FrostFeverSpell    *RuneSpell
-	BloodPlagueSpell   *RuneSpell
-	FrostFeverDisease  []*core.Dot
-	BloodPlagueDisease []*core.Dot
+	FrostFeverSpell     *RuneSpell
+	BloodPlagueSpell    *RuneSpell
+	FrostFeverDisease   []*core.Dot
+	BloodPlagueDisease  []*core.Dot
+	FrostFeverExtended  []int
+	BloodPlagueExtended []int
 
 	UnholyBlightSpell      *core.Spell
 	UnholyBlightDot        []*core.Dot

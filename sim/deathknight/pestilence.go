@@ -62,10 +62,12 @@ func (dk *Deathknight) registerPestilenceSpell() {
 						applyCryptEbon := false
 						// Apply diseases on every other target
 						if dk.FrostFeverDisease[dk.CurrentTarget.Index].IsActive() {
+							dk.FrostFeverExtended[unitHit.Index] = 0
 							dk.FrostFeverDisease[unitHit.Index].Apply(sim)
 							applyCryptEbon = true
 						}
 						if dk.BloodPlagueDisease[dk.CurrentTarget.Index].IsActive() {
+							dk.BloodPlagueExtended[unitHit.Index] = 0
 							dk.BloodPlagueDisease[unitHit.Index].Apply(sim)
 							applyCryptEbon = true
 						}
