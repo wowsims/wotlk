@@ -274,7 +274,7 @@ func (dk *DpsDeathknight) uhAfterGargoyleSequence(sim *core.Simulation) {
 		if !dk.PresenceMatches(deathknight.BloodPresence) {
 			if didErw || dk.CurrentBloodRunes() > 0 {
 				dk.RotationSequence.NewAction(dk.RotationActionCallback_BP)
-			} else if !didErw && dk.BloodTap.IsReady(sim) {
+			} else if !didErw && !dk.Rotation.BtGhoulFrenzy && dk.BloodTap.IsReady(sim) {
 				dk.RotationSequence.
 					NewAction(dk.RotationActionCallback_BT).
 					NewAction(dk.RotationActionCallback_BP).
