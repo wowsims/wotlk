@@ -32,8 +32,6 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 			cssClass: 'warrior-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"Deep Wound is not scaling with physical damage modifiers.",
-				"Heroic version of tier set bonus is temporarily disabled.",
 			],
 
 			// All stats for which EP should be calculated.

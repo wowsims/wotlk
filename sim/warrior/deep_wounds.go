@@ -60,9 +60,9 @@ func (warrior *Warrior) procDeepWounds(sim *core.Simulation, target *core.Unit, 
 	deepWoundsDot := warrior.DeepWoundsDots[target.Index]
 
 	if isMh {
-		warrior.DeepwoundsDamageBuffer[target.Index] += warrior.AutoAttacks.MH.AverageDamage()
+		warrior.DeepwoundsDamageBuffer[target.Index] += warrior.AutoAttacks.MH.AverageDamage() * warrior.PseudoStats.PhysicalDamageDealtMultiplier
 	} else {
-		warrior.DeepwoundsDamageBuffer[target.Index] += warrior.AutoAttacks.OH.AverageDamage()
+		warrior.DeepwoundsDamageBuffer[target.Index] += warrior.AutoAttacks.OH.AverageDamage() * warrior.PseudoStats.PhysicalDamageDealtMultiplier
 	}
 
 	newTickDamage := warrior.DeepwoundsDamageBuffer[target.Index] / 6

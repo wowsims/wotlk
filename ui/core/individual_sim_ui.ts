@@ -272,14 +272,16 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			},
 		});
 		this.addWarning({
-			updateOn: TypedEvent.onAny([this.player.gearChangeEmitter, this.player.professionChangeEmitter]),
+			updateOn: TypedEvent.onAny([this.player.gearChangeEmitter, this.player.talentsChangeEmitter]),
 			getContent: () => {
-				if (!this.player.canDualWield2H() && this.player.getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.handType == HandType.HandTypeTwoHand ||
-					this.player.getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.handType == HandType.HandTypeTwoHand) {
-						return "Dual Wielding two-hand weapon(s) without Titan's Grip spec"
-					} else {
-						return '';
-					}	
+				if (!this.player.canDualWield2H() && 
+				(this.player.getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.handType == HandType.HandTypeTwoHand && 
+				this.player.getEquippedItem(ItemSlot.ItemSlotOffHand) != null ||
+				this.player.getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.handType == HandType.HandTypeTwoHand)) {
+						return "Dual wielding two-handed weapon(s) without Titan's Grip spec."
+				} else {
+					return '';
+				}
 			},
 		});
 		(config.warnings || []).forEach(warning => this.addWarning(warning(this)));
