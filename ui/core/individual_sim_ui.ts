@@ -1,5 +1,5 @@
 import { ActionId } from './proto_utils/action_id.js';
-import { BattleElixir } from './proto/common.js';
+import { BattleElixir, HandType } from './proto/common.js';
 import { BonusStatsPicker } from './components/bonus_stats_picker.js';
 import { BooleanPicker, BooleanPickerConfig } from './components/boolean_picker.js';
 import { CharacterStats, StatMods } from './components/character_stats.js';
@@ -1042,6 +1042,10 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				TypedEvent.freezeAllAndDo(() => {
 					player.setTalentsString(eventID, newTalents.talentsString);
 					player.setGlyphs(eventID, newTalents.glyphs || Glyphs.create());
+					if (!this.player.canDualWield2H() && this.player.getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.handType == HandType.HandTypeTwoHand ||
+					this.player.getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.handType == HandType.HandTypeTwoHand) {
+						this.player.equipItem(eventID, ItemSlot.ItemSlotOffHand, null)
+					}
 				});
 			},
 			changeEmitters: [this.player.talentsChangeEmitter, this.player.glyphsChangeEmitter],
