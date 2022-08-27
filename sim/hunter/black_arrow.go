@@ -70,8 +70,9 @@ func (hunter *Hunter) registerBlackArrowSpell(timer *core.Timer) {
 		NumberOfTicks: 5,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1,
+			ProcMask: core.ProcMaskPeriodicDamage,
+			DamageMultiplier: 1 *
+				(1.0 / 1.06), // Black Arrow is not affected by its own 1.06 aura.
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
 
