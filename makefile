@@ -157,9 +157,13 @@ rundevserver: devserver
 	./wowsimwotlk --usefs=true --launch=false
 
 release: wowsimwotlk
-	GOOS=windows GOARCH=amd64 go build -o wowsimwotlk-windows.exe -ldflags="-X 'main.Version=$(VERSION)'" ./sim/web/main.go
-	GOOS=darwin GOARCH=amd64 go build -o wowsimwotlk-amd64-darwin -ldflags="-X 'main.Version=$(VERSION)'" ./sim/web/main.go
-	GOOS=linux GOARCH=amd64 go build -o wowsimwotlk-amd64-linux   -ldflags="-X 'main.Version=$(VERSION)'" ./sim/web/main.go
+	GOOS=windows GOARCH=amd64 go build -o wowsimwotlk-windows.exe -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
+	GOOS=darwin GOARCH=amd64 go build -o wowsimwotlk-amd64-darwin -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
+	GOOS=linux GOARCH=amd64 go build -o wowsimwotlk-amd64-linux   -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
+# Now compress into a zip because the files are getting large.
+	zip wowsimwotlk-windows.exe.zip wowsimwotlk-windows.exe
+	zip wowsimwotlk-amd64-darwin.zip wowsimwotlk-amd64-darwin
+	zip wowsimwotlk-amd64-linux.zip wowsimwotlk-amd64-linux
 
 sim/core/proto/api.pb.go: proto/*.proto
 	protoc -I=./proto --go_out=./sim/core ./proto/*.proto

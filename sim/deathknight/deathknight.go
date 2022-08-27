@@ -139,6 +139,8 @@ type Deathknight struct {
 	IceboundFortitude     *RuneSpell
 	IceboundFortitudeAura *core.Aura
 
+	DeathPact *RuneSpell
+
 	// Diseases
 	FrostFeverSpell     *RuneSpell
 	BloodPlagueSpell    *RuneSpell
@@ -259,6 +261,7 @@ func (dk *Deathknight) Initialize() {
 	dk.registerSummonGargoyleCD()
 	dk.registerArmyOfTheDeadCD()
 	dk.registerDancingRuneWeaponCD()
+	dk.registerDeathPactSpell()
 }
 
 func (dk *Deathknight) ResetBonusCoeffs() {
