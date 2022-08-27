@@ -271,6 +271,17 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				}
 			},
 		});
+		this.addWarning({
+			updateOn: TypedEvent.onAny([this.player.gearChangeEmitter, this.player.professionChangeEmitter]),
+			getContent: () => {
+				if (!this.player.canDualWield2H() && this.player.getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.handType == HandType.HandTypeTwoHand ||
+					this.player.getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.handType == HandType.HandTypeTwoHand) {
+						return "Dual Wielding two-hand weapon(s) without Titan's Grip spec"
+					} else {
+						return '';
+					}
+			},
+		});
 		(config.warnings || []).forEach(warning => this.addWarning(warning(this)));
 
 		if (!this.isWithinRaidSim) {
