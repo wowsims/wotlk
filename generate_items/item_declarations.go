@@ -72,40 +72,41 @@ var ItemDeclarationOverrides = []ItemDeclaration{
 	{ID: 28657, HandType: proto.HandType_HandTypeOneHand},
 	{ID: 28767, HandType: proto.HandType_HandTypeOneHand},
 
+	// Include the items we want icons for here.
 	{ID: 12662}, // Demonic Rune
-	{ID: 43015}, // Food IDs to get icons
-	{ID: 34753}, // Food IDs to get icons
-	{ID: 42999}, // Food IDs to get icons
-	{ID: 42995}, // Food IDs to get icons
-	{ID: 34754}, // Food IDs to get icons
-	{ID: 34756}, // Food IDs to get icons
-	{ID: 42994}, // Food IDs to get icons
-	{ID: 34769}, // Food IDs to get icons
-	{ID: 42996}, // Food IDs to get icons
-	{ID: 34758}, // Food IDs to get icons
-	{ID: 34767}, // Food IDs to get icons
-	{ID: 42998}, // Food IDs to get icons
-	{ID: 43000}, // Food IDs to get icons
-	{ID: 27657}, // Food IDs to get icons
-	{ID: 27664}, // Food IDs to get icons
-	{ID: 27655}, // Food IDs to get icons
-	{ID: 27658}, // Food IDs to get icons
-	{ID: 33872}, // Food IDs to get icons
-	{ID: 33825}, // Food IDs to get icons
-	{ID: 33052}, // Food IDs to get icons
-	{ID: 46376}, // Flask IDs to get icons
-	{ID: 46377}, // Flask IDs to get icons
-	{ID: 46378}, // Flask IDs to get icons
-	{ID: 46379}, // Flask IDs to get icons
-	{ID: 40079}, // Flask IDs to get icons
-	{ID: 44939}, // Flask IDs to get icons
-	{ID: 22861}, // Flask IDs to get icons
-	{ID: 22853}, // Flask IDs to get icons
-	{ID: 22866}, // Flask IDs to get icons
-	{ID: 22854}, // Flask IDs to get icons
-	{ID: 13512}, // Flask IDs to get icons
-	{ID: 22851}, // Flask IDs to get icons
-	{ID: 33208}, // Flask IDs to get icons
+	{ID: 43015}, // Food IDs
+	{ID: 34753}, // Food IDs
+	{ID: 42999}, // Food IDs
+	{ID: 42995}, // Food IDs
+	{ID: 34754}, // Food IDs
+	{ID: 34756}, // Food IDs
+	{ID: 42994}, // Food IDs
+	{ID: 34769}, // Food IDs
+	{ID: 42996}, // Food IDs
+	{ID: 34758}, // Food IDs
+	{ID: 34767}, // Food IDs
+	{ID: 42998}, // Food IDs
+	{ID: 43000}, // Food IDs
+	{ID: 27657}, // Food IDs
+	{ID: 27664}, // Food IDs
+	{ID: 27655}, // Food IDs
+	{ID: 27658}, // Food IDs
+	{ID: 33872}, // Food IDs
+	{ID: 33825}, // Food IDs
+	{ID: 33052}, // Food IDs
+	{ID: 46376}, // Flask IDs
+	{ID: 46377}, // Flask IDs
+	{ID: 46378}, // Flask IDs
+	{ID: 46379}, // Flask IDs
+	{ID: 40079}, // Flask IDs
+	{ID: 44939}, // Flask IDs
+	{ID: 22861}, // Flask IDs
+	{ID: 22853}, // Flask IDs
+	{ID: 22866}, // Flask IDs
+	{ID: 22854}, // Flask IDs
+	{ID: 13512}, // Flask IDs
+	{ID: 22851}, // Flask IDs
+	{ID: 33208}, // Flask IDs
 	{ID: 44328}, // Elixer IDs
 	{ID: 40078}, // Elixer IDs
 	{ID: 40109}, // Elixer IDs
@@ -138,27 +139,27 @@ var ItemDeclarationOverrides = []ItemDeclaration{
 	{ID: 28104}, // Elixer IDs
 	{ID: 13452}, // Elixer IDs
 	{ID: 31679}, // Elixer IDs
-	{ID: 27155}, // Elixer IDs
-	{ID: 33447}, // Include consumables so we get their icons
-	{ID: 33448}, // Include consumables so we get their icons
-	{ID: 40093}, // Include consumables so we get their icons
-	{ID: 40211}, // Include consumables so we get their icons
-	{ID: 40212}, // Include consumables so we get their icons
-	{ID: 22839}, // Include consumables so we get their icons
-	{ID: 22832}, // Include consumables so we get their icons
-	{ID: 22838}, // Include consumables so we get their icons
-	{ID: 13442}, // Include consumables so we get their icons
-	{ID: 31677}, // Include consumables so we get their icons
-	{ID: 22828}, // Include consumables so we get their icons
-	{ID: 22849}, // Include consumables so we get their icons
-	{ID: 22837}, // Include consumables so we get their icons
-	{ID: 20520}, // Include consumables so we get their icons
-	{ID: 22788}, // Include consumables so we get their icons
-	{ID: 22105}, // Include consumables so we get their icons
-	{ID: 42641}, // Include consumables so we get their icons
-	{ID: 40536}, // Include consumables so we get their icons
-	{ID: 41119}, // Include consumables so we get their icons
-	{ID: 40771}, // Include consumables so we get their icons
+	{ID: 13454}, // Elixer IDs
+	{ID: 33447}, // Potions / In Battle Consumes
+	{ID: 33448}, // Potions / In Battle Consumes
+	{ID: 40093}, // Potions / In Battle Consumes
+	{ID: 40211}, // Potions / In Battle Consumes
+	{ID: 40212}, // Potions / In Battle Consumes
+	{ID: 22839}, // Potions / In Battle Consumes
+	{ID: 22832}, // Potions / In Battle Consumes
+	{ID: 22838}, // Potions / In Battle Consumes
+	{ID: 13442}, // Potions / In Battle Consumes
+	{ID: 31677}, // Potions / In Battle Consumes
+	{ID: 22828}, // Potions / In Battle Consumes
+	{ID: 22849}, // Potions / In Battle Consumes
+	{ID: 22837}, // Potions / In Battle Consumes
+	{ID: 20520}, // Potions / In Battle Consumes
+	{ID: 22788}, // Potions / In Battle Consumes
+	{ID: 22105}, // Potions / In Battle Consumes
+	{ID: 42641}, // Potions / In Battle Consumes
+	{ID: 40536}, // Potions / In Battle Consumes
+	{ID: 41119}, // Potions / In Battle Consumes
+	{ID: 40771}, // Potions / In Battle Consumes
 
 	{ID: 17782, Filter: true}, // talisman of the binding shard
 	{ID: 17783, Filter: true}, // talisman of the binding fragment

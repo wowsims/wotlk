@@ -430,7 +430,7 @@ export const makeBattleElixirsInput = makeConsumeInputFactory('battleElixir', [
 	{ actionId: ActionId.fromItemId(28104), value: BattleElixir.ElixirOfMastery },
 	{ actionId: ActionId.fromItemId(13452), value: BattleElixir.ElixirOfTheMongoose },
 	{ actionId: ActionId.fromItemId(31679), value: BattleElixir.FelStrengthElixir },
-	{ actionId: ActionId.fromItemId(27155), value: BattleElixir.GreaterArcaneElixir },
+	{ actionId: ActionId.fromItemId(13454), value: BattleElixir.GreaterArcaneElixir },
 ] as Array<IconEnumValueConfig<Player<any>, BattleElixir>>, (eventID: EventID, player: Player<any>, newValue: BattleElixir) => {
 	if (newValue) {
 		const newConsumes = player.getConsumes();
