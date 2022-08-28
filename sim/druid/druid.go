@@ -48,6 +48,7 @@ type Druid struct {
 
 	InsectSwarmDot    *core.Dot
 	LacerateDot       *core.Dot
+	LasherweaveDot    *core.Dot
 	MoonfireDot       *core.Dot
 	RakeDot           *core.Dot
 	RipDot            *core.Dot
@@ -223,6 +224,7 @@ func (druid *Druid) RegisterBalanceSpells() {
 	druid.registerWrathSpell()
 	druid.registerStarfallSpell()
 	druid.registerForceOfNatureCD()
+	druid.registerLasherweaveDot()
 }
 
 func (druid *Druid) RegisterFeralSpells(maulRageThreshold float64) {

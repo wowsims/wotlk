@@ -70,6 +70,13 @@ func (druid *Druid) registerStarfireSpell() {
 				if spellEffect.Outcome.Matches(core.OutcomeCrit) {
 					hasMoonkinForm := core.TernaryFloat64(druid.Talents.MoonkinForm, 1, 0)
 					druid.AddMana(sim, druid.MaxMana()*0.02*hasMoonkinForm, manaMetrics, true)
+					if druid.SetBonuses.balance_t10_4 {
+						if druid.LasherweaveDot.IsActive() {
+							druid.LasherweaveDot.Refresh(sim)
+						} else {
+							druid.LasherweaveDot.Apply(sim)
+						}
+					}
 				}
 				if druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfStarfire) && druid.MoonfireDot.IsActive() {
 					maxMoonfireTicks := druid.maxMoonfireTicks()

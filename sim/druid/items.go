@@ -193,6 +193,7 @@ var ItemSetLasherweaveRegalia = core.NewItemSet(core.ItemSet{
 		},
 		4: func(agent core.Agent) {
 			// Your critical strikes from Starfire and Wrath cause the target to languish for an additional 7% of your spell's damage over 4 sec.
+			// Implemented in spell files.
 		},
 	},
 })
@@ -387,25 +388,30 @@ func (druid *Druid) registerLasherweaveDot() {
 		return
 	}
 
+	dotSpell := druid.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 71023},
+		SpellSchool: core.SpellSchoolNature,
+	})
+
 	druid.LasherweaveDot = core.NewDot(core.Dot{
-		Spell: druid.Starfall,
+		Spell: dotSpell,
 		Aura: druid.CurrentTarget.RegisterAura(core.Aura{
-			Label:    "Druid T10 Balance 4P Bonus",
-			ActionID: core.ActionID{SpellID: 70723},
+			Label:    "Languish",
+			ActionID: core.ActionID{SpellID: 71023},
 		}),
 		NumberOfTicks: 2,
-		TickLength:    2,
-		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+		TickLength:    time.Second * 2,
+		TickEffects: core.TickFuncSnapshot(druid.CurrentTarget, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-			IsPeriodic:       false,
+			IsPeriodic:       true,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return druid.GetStat(stats.SpellPower) * 0.07
 				},
 			},
 			OutcomeApplier: druid.OutcomeFuncTick(),
-		})),
+		}),
 	})
 }

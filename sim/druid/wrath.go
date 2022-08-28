@@ -28,6 +28,13 @@ func (druid *Druid) registerWrathSpell() {
 			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
 				hasMoonkinForm := core.TernaryFloat64(druid.Talents.MoonkinForm, 1, 0)
 				druid.AddMana(sim, druid.MaxMana()*0.02*hasMoonkinForm, manaMetrics, true)
+				if druid.SetBonuses.balance_t10_4 {
+					if druid.LasherweaveDot.IsActive() {
+						druid.LasherweaveDot.Refresh(sim)
+					} else {
+						druid.LasherweaveDot.Apply(sim)
+					}
+				}
 			}
 		},
 		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
