@@ -598,8 +598,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-Warp-SpringCoil-30450"
  value: {
-  dps: 7398.41052
-  tps: 5252.87147
+  dps: 7048.94375
+  tps: 5004.75006
  }
 }
 dps_results: {

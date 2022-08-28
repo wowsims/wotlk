@@ -605,8 +605,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-Warp-SpringCoil-30450"
  value: {
-  dps: 6665.80295
-  tps: 4732.7201
+  dps: 6271.27676
+  tps: 4452.6065
  }
 }
 dps_results: {
