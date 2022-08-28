@@ -437,31 +437,15 @@ dps_results: {
 dps_results: {
  key: "TestHunter-AllItems-ReignoftheDead-47316"
  value: {
-<<<<<<< HEAD
-  dps: 5403.4703823092
-  tps: 4620.6370538216
-||||||| b0979306
-  dps: 5587.0234400097
-  tps: 4804.218354339
-=======
-  dps: 5569.9016820105
-  tps: 4791.4277341643
->>>>>>> 33154b00b8b7e9ca0529de845f7be2087a3c18eb
+  dps: 5384.3987671859
+  tps: 4605.773741188
  }
 }
 dps_results: {
  key: "TestHunter-AllItems-ReignoftheDead-47477"
  value: {
-<<<<<<< HEAD
-  dps: 5403.4703823092
-  tps: 4620.6370538216
-||||||| b0979306
-  dps: 5611.0129419698
-  tps: 4828.2078562992
-=======
-  dps: 5593.1698731293
-  tps: 4814.6959252831
->>>>>>> 33154b00b8b7e9ca0529de845f7be2087a3c18eb
+  dps: 5384.3987671859
+  tps: 4605.773741188
  }
 }
 dps_results: {

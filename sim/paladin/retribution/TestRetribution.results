@@ -521,31 +521,15 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-ReignoftheDead-47316"
  value: {
-<<<<<<< HEAD
-  dps: 3000.5866967548
-  tps: 2760.5449330894
-||||||| b0979306
-  dps: 3106.3551571265
-  tps: 2864.9621726175
-=======
-  dps: 3086.779775651
-  tps: 2850.3161046791
->>>>>>> 33154b00b8b7e9ca0529de845f7be2087a3c18eb
+  dps: 2989.7100954829
+  tps: 2750.6405278899
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-ReignoftheDead-47477"
  value: {
-<<<<<<< HEAD
-  dps: 3010.6308065818
-  tps: 2769.7684064918
-||||||| b0979306
-  dps: 3129.6292155789
-  tps: 2887.4001232448
-=======
-  dps: 3109.6796911874
-  tps: 2872.3909967144
->>>>>>> 33154b00b8b7e9ca0529de845f7be2087a3c18eb
+  dps: 3000.0234900893
+  tps: 2760.1432223004
  }
 }
 dps_results: {
