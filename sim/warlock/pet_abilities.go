@@ -82,10 +82,27 @@ func (wp *WarlockPet) newFirebolt() *core.Spell {
 		}),
 	})
 }
+
 func (wp *WarlockPet) newCleave() *core.Spell {
-	baseCost := 295.0 // 10% of base
+	baseCost := 439.0 // 10% of base
+
+	baseEffect := core.SpellEffect{
+		ProcMask:         core.ProcMaskMeleeMHSpecial,
+		DamageMultiplier: 1.0,
+		ThreatMultiplier: 1,
+		BaseDamage:       core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 124, 1.0, 1.0, true),
+		OutcomeApplier:   wp.OutcomeFuncMeleeSpecialHitAndCrit(2),
+	}
+
+	numHits := core.MinInt32(2, wp.Env.GetNumTargets())
+	effects := make([]core.SpellEffect, 0, numHits)
+	for i := int32(0); i < numHits; i++ {
+		effects = append(effects, baseEffect)
+		effects[i].Target = wp.Env.GetTargetUnit(i)
+	}
+
 	return wp.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 30223},
+		ActionID:    core.ActionID{SpellID: 47994},
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 
@@ -103,13 +120,7 @@ func (wp *WarlockPet) newCleave() *core.Spell {
 				Duration: time.Second * 6,
 			},
 		},
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			DamageMultiplier: 1.0,
-			ThreatMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 78, 1.0, 1.0, true),
-			OutcomeApplier:   wp.OutcomeFuncMeleeSpecialHitAndCrit(2),
-		}),
+		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
 	})
 }
 
