@@ -13,16 +13,9 @@ func (dk *DpsDeathknight) RotationActionCallback_Auto(sim *core.Simulation, targ
 		return dk.NextGCDAt()
 	}
 
-	// 1. If you have desolation - Maintain Desolation
-	// 2. Maintain Frost Fever
-	// 3. Maintain Blood Plague
-	// 4. If you have reaping - Spend Blood Runes (Blood Strike)
-	// 5. Use extra runes on Scourge Strike
-	// 6. If you don't have reaping, spend extra blood runes (Blood Strike)
-	// 7. Use Runic Power on Death Coil
-
 	// If we have spent all our runes and ERW is ready, lets use it!
 	if dk.EmpowerRuneWeapon.IsReady(sim) && dk.AllRunesSpent() {
+		// Also a good time to swap presence.
 		if dk.Presence == deathknight.UnholyPresence && dk.BloodTap.IsReady(sim) {
 			dk.BloodTap.Cast(sim, dk.CurrentTarget)
 			dk.BloodPresence.Cast(sim, dk.CurrentTarget)
@@ -31,7 +24,6 @@ func (dk *DpsDeathknight) RotationActionCallback_Auto(sim *core.Simulation, targ
 	}
 
 	// TODO: should we make this the default or somehow configurable?
-
 	useBTForGF := true
 	// If we need GF and we can't cast it right now, but BT is ready, lets use it!
 	canGFWithBT := !dk.GhoulFrenzyAura.IsActive() && dk.BloodTap.CanCast(sim)
@@ -84,18 +76,12 @@ func (dk *DpsDeathknight) RotationActionCallback_AutoDW(sim *core.Simulation, ta
 	// 7. Use Runic Power on Death Coil
 
 	// If we need to use DnD and we don't have the runes, pop ERW
-	if dk.EmpowerRuneWeapon.IsReady(sim) && dk.DeathAndDecay.IsReady(sim) && !dk.DeathAndDecay.CanCast(sim) {
+	if dk.EmpowerRuneWeapon.IsReady(sim) && dk.AllRunesSpent() {
 		dk.EmpowerRuneWeapon.Cast(sim, dk.CurrentTarget)
-	}
-
-	if dk.FrostFeverDisease[dk.CurrentTarget.Index].IsActive() && dk.BloodPlagueDisease[dk.CurrentTarget.Index].IsActive() && dk.GhoulFrenzyAura.IsActive() && dk.DeathAndDecayDot.IsActive() {
-		if dk.Presence == deathknight.UnholyPresence && dk.BloodTap.IsReady(sim) {
-			dk.BloodTap.Cast(sim, dk.CurrentTarget)
+		if dk.Presence == deathknight.UnholyPresence {
 			dk.BloodPresence.Cast(sim, dk.CurrentTarget)
 		}
 	}
-
-	// TODO: should we make this the default or somehow configurable?
 
 	useBTForGF := true
 	// If we need GF and we can't cast it right now, but BT is ready, lets use it!
@@ -116,31 +102,35 @@ func (dk *DpsDeathknight) RotationActionCallback_AutoDW(sim *core.Simulation, ta
 		dk.DeathAndDecay.Cast(sim, dk.CurrentTarget)
 	} else if dk.SummonGargoyle.CanCast(sim) {
 		dk.SummonGargoyle.Cast(sim, dk.CurrentTarget)
-	} else if dk.DeathCoil.CanCast(sim) {
-		dk.DeathCoil.Cast(sim, dk.CurrentTarget)
 	} else {
-		waitUntil := dk.RunicPowerBar.AnySpentRuneReadyAt()
+		dndAt := dk.DeathAndDecay.ReadyAt()
+		if dndAt > sim.CurrentTime {
 
-		if !dk.DeathAndDecay.IsReady(sim) {
 			numDeath := dk.CurrentDeathRunes()
 			numBlood := dk.CurrentBloodRunes()
 			numFrost := dk.CurrentFrostRunes()
 			numUnholy := dk.CurrentUnholyRunes()
-			if numDeath+numBlood >= 2 {
-				// This means we have the runes for DnD but the dot is already up..
-				//  might as well cast blood boil!
+
+			nbr := dk.SpentBloodRuneReadyAt()
+			nfr := dk.SpentFrostRuneReadyAt()
+			nur := dk.SpentUnholyRuneReadyAt()
+
+			if numDeath+numBlood >= 2 || (numBlood == 1 && nbr < dndAt) {
 				dk.BloodBoil.Cast(sim, dk.CurrentTarget)
-			} else if numDeath+numFrost >= 2 {
+			} else if numDeath+numFrost >= 2 || (numFrost == 1 && nfr < dndAt) {
 				dk.IcyTouch.Cast(sim, dk.CurrentTarget)
-			} else if numDeath+numUnholy >= 2 {
+			} else if numDeath+numUnholy >= 2 || (numUnholy == 1 && nur < dndAt) {
 				dk.PlagueStrike.Cast(sim, dk.CurrentTarget)
 			}
 		}
 
 		if dk.GCD.IsReady(sim) {
-			if dk.HornOfWinter.CanCast(sim) && dk.CurrentRunicPower() < 80 {
+			if dk.DeathCoil.CanCast(sim) {
+				dk.DeathCoil.Cast(sim, dk.CurrentTarget)
+			} else if dk.HornOfWinter.CanCast(sim) && dk.CurrentRunicPower() < 80 {
 				dk.HornOfWinter.Cast(sim, dk.CurrentTarget)
 			} else {
+				waitUntil := dk.RunicPowerBar.AnySpentRuneReadyAt()
 				if waitUntil == sim.CurrentTime {
 					waitUntil = dk.AutoAttacks.NextAttackAt()
 				}
