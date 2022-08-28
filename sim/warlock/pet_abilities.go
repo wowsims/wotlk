@@ -157,7 +157,6 @@ func (wp *WarlockPet) newLashOfPain() *core.Spell {
 func (wp *WarlockPet) newShadowBite() *core.Spell {
 	actionID := core.ActionID{SpellID: 54053}
 	baseCost := 131.0 // TODO: should be 3% of BaseMana, but it's unclear what that actually refers to with pets
-	critMultiplier := 1.5 + 0.1*float64(wp.owner.Talents.Ruin)
 
 	var onSpellHitDealt func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)
 	if wp.owner.Talents.ImprovedFelhunter > 0 {
@@ -189,15 +188,31 @@ func (wp *WarlockPet) newShadowBite() *core.Spell {
 			},
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
-			DamageMultiplier: (1.0 + 0.03*float64(wp.owner.Talents.ShadowMastery)) * (1 + 0.15*(core.TernaryFloat64(wp.owner.DrainSoulDot.IsActive(), 1, 0)+ //core.TernaryFloat64(wp.owner.ConflagrateDot.IsActive(), 1, 0) +
-				core.TernaryFloat64(wp.owner.CorruptionDot.IsActive(), 1, 0)+ //core.TernaryFloat64(wp.owner.SeedDots.IsActive(), 1, 0) +
-				core.TernaryFloat64(wp.owner.CurseOfDoomDot.IsActive(), 1, 0)+core.TernaryFloat64(wp.owner.CurseOfAgonyDot.IsActive(), 1, 0)+
-				core.TernaryFloat64(wp.owner.UnstableAfflictionDot.IsActive(), 1, 0)+core.TernaryFloat64(wp.owner.ImmolateDot.IsActive(), 1, 0))),
+			ProcMask:         core.ProcMaskSpellDamage,
+			DamageMultiplier: 1.0 + 0.03*float64(wp.owner.Talents.ShadowMastery),
 			ThreatMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMagic(98, 138, 0.429), //TODO : change spellpower coefficient
-			OutcomeApplier:   wp.OutcomeFuncMagicHitAndCritBinary(critMultiplier),
-			OnSpellHitDealt:  onSpellHitDealt,
+			BaseDamage: core.WrapBaseDamageConfig(core.BaseDamageConfigMagic(97+1, 97+41, 0.429),
+				func(oldCalc core.BaseDamageCalculator) core.BaseDamageCalculator {
+					return func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+						w := wp.owner
+						dots := []*core.Dot{
+							w.UnstableAfflictionDot, w.ImmolateDot, w.CurseOfAgonyDot,
+							w.CurseOfDoomDot, w.CorruptionDot, w.ConflagrateDot,
+							w.SeedDots[hitEffect.Target.Index], w.DrainSoulDot,
+							// missing: drain life, shadowflame
+						}
+						counter := 0
+						for _, dot := range dots {
+							if dot.IsActive() {
+								counter++
+							}
+						}
+
+						return oldCalc(sim, hitEffect, spell) * (1.0 + 0.15*float64(counter))
+					}
+				}),
+			OutcomeApplier:  wp.OutcomeFuncMagicHitAndCritBinary(1.5 + 0.1*float64(wp.owner.Talents.Ruin)),
+			OnSpellHitDealt: onSpellHitDealt,
 		}),
 	})
 }
