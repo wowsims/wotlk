@@ -248,8 +248,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-Gladiator'sWildhide"
  value: {
-  dps: 1255.3807
-  tps: 1158.37072
+  dps: 2526.90532
+  tps: 2411.47166
  }
 }
 dps_results: {

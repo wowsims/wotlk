@@ -318,8 +318,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-Gladiator'sBattlegear"
  value: {
-  dps: 885.55388
-  tps: 981.5649
+  dps: 1276.09145
+  tps: 1407.90717
  }
 }
 dps_results: {

@@ -49,6 +49,12 @@ func init() {
 					return
 				}
 
+				if stackingAura.GetStacks() == 10 {
+					stackingAura.Deactivate(sim)
+					tempStrProc.Activate(sim)
+					choasBaneSpell.Cast(sim, player.CurrentTarget)
+				}
+
 				if sim.RandomFloat("shadowmourne") > drainChance {
 					return
 				}
@@ -56,14 +62,9 @@ func init() {
 				if !stackingAura.IsActive() {
 					stackingAura.Activate(sim)
 				}
-				if stackingAura.GetStacks() == 10 {
-					stackingAura.Deactivate(sim)
-					tempStrProc.Activate(sim)
-					choasBaneSpell.Cast(sim, player.CurrentTarget)
-				} else {
-					stackingAura.AddStack(sim)
-					stackingAura.Refresh(sim)
-				}
+				stackingAura.AddStack(sim)
+				stackingAura.Refresh(sim)
+
 			},
 		}))
 	})

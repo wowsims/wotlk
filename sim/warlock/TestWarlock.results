@@ -164,8 +164,8 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-AllItems-Gladiator'sFelshroud"
  value: {
-  dps: 5393.8843
-  tps: 4781.04434
+  dps: 6920.99274
+  tps: 6215.67127
  }
 }
 dps_results: {
