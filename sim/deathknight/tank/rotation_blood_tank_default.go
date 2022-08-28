@@ -25,6 +25,21 @@ func (dk *TankDeathknight) setupBloodTankERWOpener() {
 		NewAction(dk.RotationActionCallback_TankBlood_PrioRotation)
 }
 
+func (dk *TankDeathknight) setupBloodTankERWThreatOpener() {
+	dk.RotationSequence.
+		NewAction(dk.RotationActionCallback_IT).
+		NewAction(dk.RotationActionCallback_IT).
+		NewAction(dk.RotationActionCallback_BT).
+		NewAction(dk.RotationActionCallback_IT).
+		NewAction(dk.RotationActionCallback_ERW).
+		NewAction(dk.RotationActionCallback_IT).
+		NewAction(dk.RotationActionCallback_IT).
+		NewAction(dk.RotationActionCallback_IT).
+		NewAction(dk.RotationActionCallback_PS).
+		NewAction(dk.RotationActionCallback_BS).
+		NewAction(dk.RotationActionCallback_TankBlood_PrioRotation)
+}
+
 func (dk *TankDeathknight) RotationActionCallback_TankBlood_PrioRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	waitUntil := time.Duration(-1)
 
