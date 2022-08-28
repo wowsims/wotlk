@@ -73,7 +73,7 @@ func (fireElemental *FireElemental) registerFireNova() {
 			ProcMask:         core.ProcMaskSpellDamage,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMagic(1, 150, 1.07), // TODO these are approximation, from base SP
+			BaseDamage:       core.BaseDamageConfigMagic(1, 150, 1.071), // TODO these are approximation, from base SP
 			OutcomeApplier:   fireElemental.OutcomeFuncMagicHitAndCrit(fireElemental.DefaultSpellCritMultiplier()),
 		}),
 	})
