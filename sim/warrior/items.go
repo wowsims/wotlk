@@ -213,6 +213,23 @@ var ItemSetOnslaughtBattlegear = core.NewItemSet(core.ItemSet{
 // Wrath Item set
 /////////////////////////////////////////////////////////////////
 
+var ItemSetGladiatorsBattlegear = core.NewItemSet(core.ItemSet{
+	Name: "Gladiator's Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Increases attack power by 50.
+			// +100 resilience rating.
+			agent.GetCharacter().AddStat(stats.Resilience, 100)
+			agent.GetCharacter().AddStat(stats.AttackPower, 50)
+		},
+		4: func(agent core.Agent) {
+			// Reduces the cooldown of your Intercept ability by 5 sec.
+			// Increases attack power by 150.
+			agent.GetCharacter().AddStat(stats.AttackPower, 150)
+		},
+	},
+})
+
 var ItemSetDreadnaughtBattlegear = core.NewItemSet(core.ItemSet{
 	Name: "Dreadnaught Battlegear",
 	Bonuses: map[int32]core.ApplyEffect{

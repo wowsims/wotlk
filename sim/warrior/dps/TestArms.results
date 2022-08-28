@@ -316,6 +316,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestArms-AllItems-Gladiator'sBattlegear"
+ value: {
+  dps: 889.24926
+  tps: 985.21784
+ }
+}
+dps_results: {
  key: "TestArms-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
   dps: 949.02605
