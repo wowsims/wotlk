@@ -45,12 +45,12 @@ func (druid *Druid) ApplyTalents() {
 	}
 
 	if druid.Talents.LunarGuidance > 0 {
-		bonus := (0.25 / 3) * float64(druid.Talents.LunarGuidance)
+		bonus := 0.04 * float64(druid.Talents.LunarGuidance)
 		druid.AddStatDependency(stats.Intellect, stats.SpellPower, bonus)
 	}
 
 	if druid.Talents.Dreamstate > 0 {
-		bonus := (0.1 / 3) * float64(druid.Talents.Dreamstate)
+		bonus := 0.04 * float64(druid.Talents.Dreamstate)
 		druid.AddStatDependency(stats.Intellect, stats.MP5, bonus)
 	}
 
@@ -253,6 +253,20 @@ func (druid *Druid) applyOmenOfClarity() {
 		ActionID: core.ActionID{SpellID: 16870},
 		Duration: time.Second * 15,
 	})
+	// T10-2P
+	lasherweave2P := druid.RegisterAura(core.Aura{
+		Label:    "T10-2P proc",
+		ActionID: core.ActionID{SpellID: 70718},
+		Duration: time.Second * 6,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			druid.PseudoStats.ArcaneDamageDealtMultiplier *= 1.15
+			druid.PseudoStats.NatureDamageDealtMultiplier *= 1.15
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			druid.PseudoStats.ArcaneDamageDealtMultiplier /= 1.15
+			druid.PseudoStats.NatureDamageDealtMultiplier /= 1.15
+		},
+	})
 
 	druid.RegisterAura(core.Aura{
 		Label:    "Omen of Clarity",
@@ -268,8 +282,11 @@ func (druid *Druid) applyOmenOfClarity() {
 				druid.ClearcastingAura.Activate(sim)
 			}
 			if spellEffect.ProcMask.Matches(core.ProcMaskSpellDamage) && (spell == druid.Starfire || spell == druid.Wrath) { // Spells
-				if sim.RandomFloat("Clearcasting") <= 1.75/(60/spell.CurCast.CastTime.Seconds()) {
+				if sim.RandomFloat("Clearcasting") <= 1.75/(60/spell.CurCast.CastTime.Seconds()) { // 1.75 PPM emulation : https://github.com/JamminL/wotlk-classic-bugs/issues/66#issuecomment-1178282422
 					druid.ClearcastingAura.Activate(sim)
+					if druid.SetBonuses.balance_t10_2 {
+						lasherweave2P.Activate(sim)
+					}
 				}
 			}
 		},
@@ -349,4 +366,11 @@ func (druid *Druid) applyEclipse() {
 			}
 		},
 	})
+}
+
+func (druid *Druid) ApplySwiftStarfireBonus(sim *core.Simulation, cast *core.Cast) {
+	if druid.SwiftStarfireAura.IsActive() && druid.SetBonuses.balance_pvp_4 {
+		cast.CastTime -= 1500 * time.Millisecond
+		druid.SwiftStarfireAura.Deactivate(sim)
+	}
 }

@@ -56,13 +56,11 @@ func (war *DpsWarrior) doRotation(sim *core.Simulation) {
 	}
 
 	IsExecutePhase20 := sim.IsExecutePhase20()
-	SpamExecute := war.Rotation.SpamExecute
-	highPrioSpellsOnly := !SpamExecute
 
 	if IsExecutePhase20 {
-		war.executeRotation(sim, highPrioSpellsOnly)
+		war.executeRotation(sim)
 	} else {
-		war.normalRotation(sim, highPrioSpellsOnly)
+		war.normalRotation(sim)
 	}
 
 	if war.GCD.IsReady(sim) && !war.thunderClapNext {
@@ -77,22 +75,10 @@ func (war *DpsWarrior) doRotation(sim *core.Simulation) {
 	}
 }
 
-func (war *DpsWarrior) normalRotation(sim *core.Simulation, highPrioSpellsOnly bool) {
+func (war *DpsWarrior) normalRotation(sim *core.Simulation) {
 	if war.GCD.IsReady(sim) {
-		if war.Rotation.PrioritizeWw && war.CanWhirlwind(sim) {
-			war.Whirlwind.Cast(sim, war.CurrentTarget)
-		} else if war.CanBloodthirst(sim) {
-			war.Bloodthirst.Cast(sim, war.CurrentTarget)
-		} else if war.Rotation.UseRend && war.ShouldRend(sim) {
-			war.Rend.Cast(sim, war.CurrentTarget)
-		} else if war.Rotation.UseMs && war.CanMortalStrike(sim) {
-			war.MortalStrike.Cast(sim, war.CurrentTarget)
-		} else if war.CanShieldSlam(sim) {
-			war.ShieldSlam.Cast(sim, war.CurrentTarget)
-		} else if !war.Rotation.PrioritizeWw && war.CanWhirlwind(sim) {
-			war.Whirlwind.Cast(sim, war.CurrentTarget)
-		} else if war.SuddenDeathAura.IsActive() && war.CanExecute() {
-			war.Execute.Cast(sim, war.CurrentTarget)
+		if war.ShouldInstantSlam(sim) {
+			war.CastSlam(sim, war.CurrentTarget)
 		} else if war.ShouldOverpower(sim) {
 			if !war.StanceMatches(warrior.BattleStance) {
 				if !war.BattleStance.IsReady(sim) {
@@ -101,45 +87,81 @@ func (war *DpsWarrior) normalRotation(sim *core.Simulation, highPrioSpellsOnly b
 				war.BattleStance.Cast(sim, nil)
 			}
 			war.Overpower.Cast(sim, war.CurrentTarget)
-		} else if war.CanSlam(sim) {
-			war.Slam.Cast(sim, war.CurrentTarget)
-		} else if !highPrioSpellsOnly {
-			if war.tryMaintainDebuffs(sim) {
-				war.DoNothing()
-			} else if war.ShouldBerserkerRage(sim) {
-				war.BerserkerRage.Cast(sim, nil)
+		} else if war.tryMaintainDebuffs(sim) {
+			war.DoNothing()
+		} else if war.Rotation.PrioritizeWw && war.CanWhirlwind(sim) {
+			war.Whirlwind.Cast(sim, war.CurrentTarget)
+		} else if war.CanBloodthirst(sim) {
+			war.Bloodthirst.Cast(sim, war.CurrentTarget)
+		} else if war.Rotation.UseRend && war.ShouldRend(sim) {
+			if war.Talents.Bloodthirst && war.CurrentRage() >= war.Rotation.RendRageThresholdBelow {
+				return
 			}
+			if !war.StanceMatches(warrior.BattleStance) {
+				if !war.BattleStance.IsReady(sim) {
+					return
+				}
+				war.BattleStance.Cast(sim, nil)
+			}
+			war.Rend.Cast(sim, war.CurrentTarget)
+		} else if war.SuddenDeathAura.IsActive() && war.CanExecute() {
+			war.Execute.Cast(sim, war.CurrentTarget)
+		} else if war.Rotation.UseMs && war.CanMortalStrike(sim) && war.CurrentRage() >= war.Rotation.MsRageThreshold {
+			war.MortalStrike.Cast(sim, war.CurrentTarget)
+		} else if war.ShouldSlam(sim) && war.CurrentRage() >= war.Rotation.SlamRageThreshold {
+			war.CastSlam(sim, war.CurrentTarget)
+		} else if war.CanShieldSlam(sim) {
+			war.ShieldSlam.Cast(sim, war.CurrentTarget)
+		} else if !war.Rotation.PrioritizeWw && war.CanWhirlwind(sim) {
+			war.Whirlwind.Cast(sim, war.CurrentTarget)
+		} else if war.ShouldBerserkerRage(sim) {
+			war.BerserkerRage.Cast(sim, nil)
 		}
 	}
-
 	war.tryQueueHsCleave(sim)
 }
 
-func (war *DpsWarrior) executeRotation(sim *core.Simulation, highPrioSpellsOnly bool) {
+func (war *DpsWarrior) executeRotation(sim *core.Simulation) {
 	if war.GCD.IsReady(sim) {
-		if war.Rotation.PrioritizeWw && war.Rotation.UseWwDuringExecute && war.CanWhirlwind(sim) {
+		if war.ShouldInstantSlam(sim) {
+			war.CastSlam(sim, war.CurrentTarget)
+		} else if war.ShouldOverpower(sim) {
+			if !war.StanceMatches(warrior.BattleStance) {
+				if !war.BattleStance.IsReady(sim) {
+					return
+				}
+				war.BattleStance.Cast(sim, nil)
+			}
+			war.Overpower.Cast(sim, war.CurrentTarget)
+		} else if war.tryMaintainDebuffs(sim) {
+			war.DoNothing()
+		} else if war.SpamExecute(war.Rotation.SpamExecute) {
+			war.Execute.Cast(sim, war.CurrentTarget)
+		} else if war.Rotation.PrioritizeWw && war.Rotation.UseWwDuringExecute && war.CanWhirlwind(sim) {
 			war.Whirlwind.Cast(sim, war.CurrentTarget)
 		} else if war.Rotation.UseBtDuringExecute && war.CanBloodthirst(sim) {
 			war.Bloodthirst.Cast(sim, war.CurrentTarget)
 		} else if war.Rotation.UseRend && war.ShouldRend(sim) {
+			if war.Talents.Bloodthirst && war.CurrentRage() >= war.Rotation.RendRageThresholdBelow {
+				return
+			}
+			if !war.StanceMatches(warrior.BattleStance) {
+				if !war.BattleStance.IsReady(sim) {
+					return
+				}
+				war.BattleStance.Cast(sim, nil)
+			}
 			war.Rend.Cast(sim, war.CurrentTarget)
-		} else if war.Rotation.UseSlamOverExecute && war.CanSlam(sim) {
-			war.Slam.Cast(sim, war.CurrentTarget)
-		} else if war.Rotation.UseMs && war.CanMortalStrike(sim) {
+		} else if war.SuddenDeathAura.IsActive() && war.CanExecute() {
+			war.Execute.Cast(sim, war.CurrentTarget)
+		} else if war.Rotation.UseMs && war.CanMortalStrike(sim) && war.CurrentRage() >= war.Rotation.MsRageThreshold {
 			war.MortalStrike.Cast(sim, war.CurrentTarget)
-		} else if !war.Rotation.PrioritizeWw && war.Rotation.UseWwDuringExecute && war.CanWhirlwind(sim) {
-			war.Whirlwind.Cast(sim, war.CurrentTarget)
+		} else if war.Rotation.UseSlamOverExecute && war.ShouldSlam(sim) && war.CurrentRage() >= war.Rotation.SlamRageThreshold {
+			war.CastSlam(sim, war.CurrentTarget)
 		} else if war.CanExecute() {
 			war.Execute.Cast(sim, war.CurrentTarget)
-
-		} else if !highPrioSpellsOnly {
-			if war.tryMaintainDebuffs(sim) {
-				war.DoNothing()
-			} else if war.CanExecute() {
-				war.Execute.Cast(sim, war.CurrentTarget)
-			} else if war.ShouldBerserkerRage(sim) {
-				war.BerserkerRage.Cast(sim, nil)
-			}
+		} else if war.ShouldBerserkerRage(sim) {
+			war.BerserkerRage.Cast(sim, nil)
 		}
 	}
 

@@ -47,9 +47,11 @@ func (dk *Deathknight) registerMarkOfBloodSpell() {
 		return dk.CastCostPossible(sim, 0, 1, 0, 0) && dk.MarkOfBlood.IsReady(sim)
 	}, nil)
 
-	dk.AddMajorCooldown(core.MajorCooldown{
-		Spell:    dk.MarkOfBlood.Spell,
-		Priority: core.CooldownPriorityLow, // Use low prio so other actives get used first.
-		Type:     core.CooldownTypeSurvival,
-	})
+	if !dk.Inputs.IsDps {
+		dk.AddMajorCooldown(core.MajorCooldown{
+			Spell:    dk.MarkOfBlood.Spell,
+			Priority: core.CooldownPriorityLow, // Use low prio so other actives get used first.
+			Type:     core.CooldownTypeSurvival,
+		})
+	}
 }

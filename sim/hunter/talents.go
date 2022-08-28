@@ -37,7 +37,7 @@ func (hunter *Hunter) ApplyTalents() {
 	hunter.PseudoStats.RangedDamageDealtMultiplier *= 1 + []float64{0, .01, .03, .05}[hunter.Talents.RangedWeaponSpecialization]
 	hunter.PseudoStats.BonusRangedCritRating += 1 * float64(hunter.Talents.LethalShots) * core.CritRatingPerCritChance
 	hunter.PseudoStats.DamageTakenMultiplier *= 1 - 0.02*float64(hunter.Talents.SurvivalInstincts)
-	hunter.AutoAttacks.RangedEffect.DamageMultiplier *= 1 + .01*float64(hunter.Talents.MarkedForDeath)
+	hunter.AutoAttacks.RangedEffect.DamageMultiplier *= hunter.markedForDeathMultiplier()
 
 	if hunter.Talents.EnduranceTraining > 0 {
 		healthBonus := 0.01 * float64(hunter.Talents.EnduranceTraining)
@@ -120,6 +120,14 @@ func (hunter *Hunter) critMultiplier(isRanged bool, isMFDSpell bool, target *cor
 	}
 
 	return hunter.MeleeCritMultiplier(primaryModifier, secondaryModifier)
+}
+
+func (hunter *Hunter) markedForDeathMultiplier() float64 {
+	if hunter.Options.UseHuntersMark || hunter.Env.GetTarget(0).HasAuraWithTag(core.HuntersMarkAuraTag) {
+		return 1 + .01*float64(hunter.Talents.MarkedForDeath)
+	} else {
+		return 1
+	}
 }
 
 func (hunter *Hunter) applySpiritBond() {
@@ -314,7 +322,7 @@ func (hunter *Hunter) applyWildQuiver() {
 		Flags:       core.SpellFlagNoOnCastComplete,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskEmpty,
+			ProcMask:         core.ProcMaskRangedAuto,
 			DamageMultiplier: 0.8,
 			ThreatMultiplier: 1,
 
@@ -330,7 +338,7 @@ func (hunter *Hunter) applyWildQuiver() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.ProcMask.Matches(core.ProcMaskRangedAuto) {
+			if spell != hunter.AutoAttacks.RangedAuto {
 				return
 			}
 
@@ -540,9 +548,9 @@ func (hunter *Hunter) applyLockAndLoad() {
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			hunter.ArcaneShot.CostMultiplier -= 1
+			hunter.ArcaneShot.CostMultiplier += 1
 			if hunter.ExplosiveShot != nil {
-				hunter.ExplosiveShot.CostMultiplier -= 1
+				hunter.ExplosiveShot.CostMultiplier += 1
 			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
@@ -779,6 +787,9 @@ func (hunter *Hunter) registerReadinessCD() {
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
 			// Don't use if there are no cooldowns to reset.
 			return !hunter.RapidFire.IsReady(sim)
+		},
+		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
+			return !hunter.RapidFireAura.IsActive() || hunter.RapidFireAura.RemainingDuration(sim) < time.Second*10
 		},
 	})
 }

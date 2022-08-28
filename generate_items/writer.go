@@ -52,9 +52,9 @@ var Gems = []Gem{
 			if gemData.Response.GetQuality() < int(proto.ItemQuality_ItemQualityUncommon) {
 				continue
 			}
-			if gemData.Response.GetPhase() == 0 {
-				continue
-			}
+			// if gemData.Response.GetPhase() == 0 {
+			// 	continue
+			// }
 		}
 		file.WriteString(fmt.Sprintf("\t%s,\n", gemToGoString(gemData.Declaration, gemData.Response)))
 	}
@@ -111,12 +111,23 @@ var Items = []Item{
 		}
 		allow := allowList[itemData.Declaration.ID]
 		if !allow {
-			if itemData.Response.GetQuality() < int(proto.ItemQuality_ItemQualityUncommon) {
+			qual := itemData.Response.GetQuality()
+			if qual < int(proto.ItemQuality_ItemQualityUncommon) {
 				continue
-			} else if itemData.Response.GetQuality() > int(proto.ItemQuality_ItemQualityLegendary) {
+			} else if qual > int(proto.ItemQuality_ItemQualityLegendary) {
 				continue
-			} else if itemData.Response.GetQuality() < int(proto.ItemQuality_ItemQualityEpic) {
+			} else if qual < int(proto.ItemQuality_ItemQualityEpic) {
 				if itemLevel < 105 {
+					continue
+				}
+				if itemLevel < 110 && itemData.Response.GetItemSetName() == "" {
+					continue
+				}
+			} else if qual < int(proto.ItemQuality_ItemQualityEpic) {
+				if itemLevel < 110 {
+					continue
+				}
+				if itemLevel < 140 && itemData.Response.GetItemSetName() == "" {
 					continue
 				}
 			} else {
@@ -127,7 +138,7 @@ var Items = []Item{
 			}
 		}
 		if itemLevel == 0 {
-			fmt.Printf("Missing ilvl: %s", itemData.Response.GetName())
+			fmt.Printf("Missing ilvl: %s\n", itemData.Response.GetName())
 		}
 
 		file.WriteString(fmt.Sprintf("\t%s,\n", itemToGoString(itemData)))

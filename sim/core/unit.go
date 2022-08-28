@@ -87,6 +87,9 @@ type Unit struct {
 	// All spells that can be cast by this unit.
 	Spellbook []*Spell
 
+	// Pets owned by this Unit.
+	Pets []PetAgent
+
 	// AutoAttacks is the manager for auto attack swings.
 	// Must be enabled to use, with "EnableAutoAttacks()".
 	AutoAttacks AutoAttacks
@@ -112,8 +115,9 @@ type Unit struct {
 	hardcastAction *PendingAction
 
 	// Fields related to waiting for certain events to happen.
-	waitingForMana float64
-	waitStartTime  time.Duration
+	waitingForEnergy float64
+	waitingForMana   float64
+	waitStartTime    time.Duration
 
 	// Cached mana return values per tick.
 	manaTickWhileCasting    float64
@@ -237,6 +241,12 @@ func (unit *Unit) processDynamicBonus(sim *Simulation, bonus stats.Stats) {
 	}
 	if bonus[stats.ShadowResistance] != 0 {
 		unit.updateResistances()
+	}
+
+	if len(unit.Pets) > 0 {
+		for _, petAgent := range unit.Pets {
+			petAgent.GetPet().addOwnerStats(sim, bonus)
+		}
 	}
 }
 

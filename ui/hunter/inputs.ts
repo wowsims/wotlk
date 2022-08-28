@@ -64,6 +64,7 @@ export const SniperTrainingUptime = InputHelpers.makeSpecOptionsNumberInput<Spec
 	labelTooltip: 'Uptime for the Sniper Training talent, as a percent of the fight duration.',
 	percent: true,
 	showWhen: (player: Player<Spec.SpecHunter>) => player.getTalents().sniperTraining > 0,
+	changeEmitter: (player: Player<Spec.SpecHunter>) => TypedEvent.onAny([player.specOptionsChangeEmitter, player.talentsChangeEmitter]),
 });
 
 export const HunterRotationConfig = {

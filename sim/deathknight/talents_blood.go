@@ -33,7 +33,7 @@ func (dk *Deathknight) ApplyBloodTalents() {
 	dk.applyScentOfBlood()
 
 	// Two Handed Specialization
-	if dk.Equip[proto.ItemSlot_ItemSlotMainHand].HandType == proto.HandType_HandTypeTwoHand {
+	if dk.HasMHWeapon() && dk.Equip[proto.ItemSlot_ItemSlotMainHand].HandType == proto.HandType_HandTypeTwoHand {
 		dk.PseudoStats.PhysicalDamageDealtMultiplier *= 1 + 0.01*float64(dk.Talents.TwoHandedWeaponSpecialization)
 	}
 
@@ -217,7 +217,7 @@ func (dk *Deathknight) applyBladeBarrier() {
 	})
 
 	dk.onRuneSpendBladeBarrier = func(sim *core.Simulation) {
-		if dk.AllBloodRunesSpent() {
+		if dk.CurrentBloodRunes() == 0 {
 			dk.BladeBarrierAura.Activate(sim)
 		}
 	}

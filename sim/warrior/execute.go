@@ -1,6 +1,8 @@
 package warrior
 
 import (
+	"math"
+
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -36,7 +38,7 @@ func (warrior *Warrior) registerExecuteSpell() {
 			},
 			IgnoreHaste: true,
 			ModifyCast: func(_ *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.Cost = spell.Unit.CurrentRage()
+				cast.Cost = math.Min(spell.Unit.CurrentRage(), 30)
 				extraRage = cast.Cost - spell.BaseCost
 			},
 		},
@@ -62,6 +64,10 @@ func (warrior *Warrior) registerExecuteSpell() {
 			},
 		}),
 	})
+}
+
+func (warrior *Warrior) SpamExecute(spam bool) bool {
+	return warrior.CurrentRage() >= warrior.Execute.BaseCost && spam && warrior.Talents.MortalStrike
 }
 
 func (warrior *Warrior) CanExecute() bool {

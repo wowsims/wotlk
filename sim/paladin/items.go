@@ -400,7 +400,7 @@ func init() {
 			},
 			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				isVengeanceDot := false
-				for _, vengeanceDot := range paladin.SealOfVengeanceDot {
+				for _, vengeanceDot := range paladin.SealOfVengeanceDots {
 					if spell == vengeanceDot.Spell {
 						isVengeanceDot = true
 					}

@@ -75,7 +75,8 @@ func (dk *Deathknight) registerPlagueStrikeSpell() {
 			dk.PlagueStrikeOhHit.Cast(sim, spellEffect.Target)
 		}
 		dk.LastOutcome = spellEffect.Outcome
-		if spellEffect.Outcome.Matches(core.OutcomeLanded) {
+		if spellEffect.Landed() {
+			dk.BloodPlagueExtended[spellEffect.Target.Index] = 0
 			dk.BloodPlagueSpell.Cast(sim, spellEffect.Target)
 			if dk.Talents.CryptFever > 0 {
 				dk.CryptFeverAura[spellEffect.Target.Index].Activate(sim)

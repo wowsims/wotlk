@@ -84,29 +84,39 @@ var FuryTalents = &proto.WarriorTalents{
 }
 
 var armsRotation = &proto.Warrior_Rotation{
-	UseRend: true,
-	UseMs:   true,
+	UseRend:   true,
+	UseMs:     true,
+	UseCleave: false,
 
-	HsRageThreshold: 60,
-	MsRageThreshold: 60,
-	RendCdThreshold: 3,
+	HsRageThreshold:   60,
+	MsRageThreshold:   50,
+	SlamRageThreshold: 15,
+	RendCdThreshold:   1,
 
 	SpamExecute: false,
 
-	MaintainDemoShout:   true,
+	UseHsDuringExecute: true,
+
+	MaintainDemoShout:   false,
 	MaintainThunderClap: false,
 }
 
 var warriorRotation = &proto.Warrior_Rotation{
-	UseRend: true,
+	UseRend:   true,
+	UseCleave: false,
 
-	HsRageThreshold:   40,
-	RendRageThreshold: 75,
+	HsRageThreshold:        60,
+	RendRageThresholdBelow: 70,
+	SlamRageThreshold:      15,
+	RendCdThreshold:        1,
 
 	UseHsDuringExecute: true,
 	UseWwDuringExecute: true,
 	UseBtDuringExecute: true,
 	UseSlamOverExecute: true,
+
+	MaintainDemoShout:   false,
+	MaintainThunderClap: false,
 }
 
 var warriorOptions = &proto.Warrior_Options{
@@ -128,7 +138,12 @@ var FullIndividualBuffs = &proto.IndividualBuffs{
 	BlessingOfMight:  proto.TristateEffect_TristateEffectImproved,
 }
 
-var FullConsumes = &proto.Consumes{}
+var FullConsumes = &proto.Consumes{
+	Flask:         proto.Flask_FlaskOfEndlessRage,
+	DefaultPotion: proto.Potions_IndestructiblePotion,
+	PrepopPotion:  proto.Potions_IndestructiblePotion,
+	Food:          proto.Food_FoodDragonfinFilet,
+}
 
 var FullDebuffs = &proto.Debuffs{
 	BloodFrenzy:       true,

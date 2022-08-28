@@ -28,7 +28,7 @@ func (dk *Deathknight) ApplyFrostTalents() {
 	dk.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + 0.02*float64(dk.Talents.BlackIce)
 
 	// Nerves Of Cold Steel
-	if dk.Equip[proto.ItemSlot_ItemSlotMainHand].HandType == proto.HandType_HandTypeMainHand || dk.Equip[proto.ItemSlot_ItemSlotMainHand].HandType == proto.HandType_HandTypeOneHand {
+	if dk.HasMHWeapon() && dk.HasOHWeapon() && dk.Equip[proto.ItemSlot_ItemSlotMainHand].HandType == proto.HandType_HandTypeMainHand || dk.Equip[proto.ItemSlot_ItemSlotMainHand].HandType == proto.HandType_HandTypeOneHand {
 		dk.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*float64(dk.Talents.NervesOfColdSteel))
 		dk.AutoAttacks.OHEffect.BaseDamage.Calculator = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, dk.nervesOfColdSteelBonus(), 1.0, true)
 	}
@@ -146,7 +146,8 @@ func (dk *Deathknight) applyKillingMachine() {
 	}
 
 	actionID := core.ActionID{SpellID: 51130}
-	procChance := dk.GetMHWeapon().SwingSpeed * float64(dk.Talents.KillingMachine) / 60.0
+	attackSpeed := core.TernaryFloat64(dk.HasMHWeapon(), dk.GetMHWeapon().SwingSpeed, 2.0)
+	procChance := attackSpeed * float64(dk.Talents.KillingMachine) / 60.0
 
 	dk.KillingMachineAura = dk.RegisterAura(core.Aura{
 		Label:    "Killing Machine Proc",

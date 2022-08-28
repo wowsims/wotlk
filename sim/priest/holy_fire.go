@@ -9,7 +9,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (priest *Priest) registerHolyFireSpell() {
+func (priest *Priest) RegisterHolyFireSpell(memeDream bool) {
 	actionID := core.ActionID{SpellID: 48135}
 	baseCost := .11 * priest.BaseMana
 
@@ -49,7 +49,7 @@ func (priest *Priest) registerHolyFireSpell() {
 		}),
 	})
 
-	hasGlyph := priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfSmite)
+	hasGlyph := !memeDream && priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfSmite)
 
 	target := priest.CurrentTarget
 	priest.HolyFireDot = core.NewDot(core.Dot{

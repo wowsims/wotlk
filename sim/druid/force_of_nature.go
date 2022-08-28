@@ -36,10 +36,19 @@ func (druid *Druid) registerForceOfNatureCD() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+
 			druid.Treant1.EnableWithTimeout(sim, druid.Treant1, time.Second*30)
 			druid.Treant2.EnableWithTimeout(sim, druid.Treant2, time.Second*30)
 			druid.Treant3.EnableWithTimeout(sim, druid.Treant3, time.Second*30)
+
 			forceOfNatureAura.Activate(sim)
+
+			bonusID := core.ActionID{ItemID: 11133}
+			bonusStats := stats.Stats{stats.Strength: druid.GetStat(stats.SpellPower) * 0.5}
+
+			druid.Treant1.NewTemporaryStatsAura("SP Snapshot", bonusID, bonusStats, time.Second*30).Activate(sim)
+			druid.Treant2.NewTemporaryStatsAura("SP Snapshot", bonusID, bonusStats, time.Second*30).Activate(sim)
+			druid.Treant3.NewTemporaryStatsAura("SP Snapshot", bonusID, bonusStats, time.Second*30).Activate(sim)
 
 			// Animation delay, courtesy of our DK friends
 			pa := core.PendingAction{
@@ -65,21 +74,19 @@ func (druid *Druid) NewTreant() *TreantPet {
 			&druid.Character,
 			treantBaseStats,
 			func(ownerStats stats.Stats) stats.Stats {
-				return stats.Stats{
-					stats.AttackPower: ownerStats[stats.SpellPower] * 2,
-					stats.MeleeHaste:  ownerStats[stats.SpellHaste],
-				}
+				return stats.Stats{}
 			},
 			false,
 			false,
 		),
 		druidOwner: druid,
 	}
-
+	treant.AddStatDependency(stats.Strength, stats.AttackPower, 2)
+	treant.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/83.3)
 	treant.EnableAutoAttacks(treant, core.AutoAttackOptions{
 		MainHand: core.Weapon{
-			BaseDamageMin:  59,
-			BaseDamageMax:  87,
+			BaseDamageMin:  252,
+			BaseDamageMax:  357,
 			SwingSpeed:     2,
 			SwingDuration:  time.Second * 2,
 			CritMultiplier: 2,
@@ -105,10 +112,14 @@ func (treant *TreantPet) OnGCDReady(sim *core.Simulation) {
 	treant.DoNothing()
 }
 
-// Eyeballing those TODO: get more data
+// TODO : fix miss/dodge
 var treantBaseStats = stats.Stats{
-	stats.Stamina:   9600,
-	stats.MeleeHit:  4 * core.MeleeHitRatingPerHitChance,
-	stats.Expertise: 14 * core.ExpertisePerQuarterPercentReduction,
-	stats.MeleeCrit: 3 * core.CritRatingPerCritChance,
+	stats.Strength:  331,
+	stats.Agility:   113,
+	stats.Stamina:   598,
+	stats.Intellect: 281,
+	stats.Spirit:    109,
+	stats.MeleeCrit: 5 * core.CritRatingPerCritChance,
+	stats.MeleeHit:  5 * core.MeleeHitRatingPerHitChance,
+	stats.Expertise: 120,
 }

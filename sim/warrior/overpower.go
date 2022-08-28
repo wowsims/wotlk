@@ -32,7 +32,7 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 	damageEffect := core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeMHSpecial,
 
-		DamageMultiplier: 1 + float64(warrior.Talents.UnrelentingAssault)*0.01,
+		DamageMultiplier: 1 + float64(warrior.Talents.UnrelentingAssault)*0.1,
 		ThreatMultiplier: 0.75,
 		BonusCritRating:  25 * core.CritRatingPerCritChance * float64(warrior.Talents.ImprovedOverpower),
 

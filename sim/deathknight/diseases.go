@@ -73,6 +73,7 @@ func (dk *Deathknight) registerFrostFever() {
 	}, nil, nil)
 
 	dk.FrostFeverDisease = make([]*core.Dot, dk.Env.GetNumTargets())
+	dk.FrostFeverExtended = make([]int, dk.Env.GetNumTargets())
 
 	var wpWrapper func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)
 	if dk.Talents.WanderingPlague > 0 {
@@ -142,6 +143,7 @@ func (dk *Deathknight) registerBloodPlague() {
 	}, nil, nil)
 
 	dk.BloodPlagueDisease = make([]*core.Dot, dk.Env.GetNumTargets())
+	dk.BloodPlagueExtended = make([]int, dk.Env.GetNumTargets())
 
 	// Tier9 4Piece
 	outcomeApplier := dk.OutcomeFuncAlwaysHit()

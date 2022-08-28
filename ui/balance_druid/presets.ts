@@ -1,6 +1,6 @@
 import {
     Consumes,
-    Debuffs,
+    Debuffs, Glyphs,
     IndividualBuffs,
     PartyBuffs,
     RaidBuffs,
@@ -16,7 +16,7 @@ import {SavedTalents} from '../core/proto/ui.js';
 import {
     BalanceDruid_Rotation as BalanceDruidRotation,
     BalanceDruid_Options as BalanceDruidOptions,
-    BalanceDruid_Rotation_RotationType as RotationType
+    BalanceDruid_Rotation_RotationType as RotationType, DruidMajorGlyph, DruidMinorGlyph,
 } from '../core/proto/druid.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
@@ -32,6 +32,14 @@ export const StandardTalents = {
     name: 'Standard',
     data: SavedTalents.create({
         talentsString: '5012203125331203213305311231--205003012',
+        glyphs: Glyphs.create({
+            major1: DruidMajorGlyph.GlyphOfMoonfire,
+            major2: DruidMajorGlyph.GlyphOfStarfire,
+            major3: DruidMajorGlyph.GlyphOfStarfall,
+            minor1: DruidMinorGlyph.GlyphOfTyphoon,
+            minor2: DruidMinorGlyph.GlyphOfUnburdenedRebirth,
+            minor3: DruidMinorGlyph.GlyphOfTheWild,
+        }),
     }),
 };
 

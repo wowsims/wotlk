@@ -1,4 +1,5 @@
-import { BattleElixir } from './proto/common.js';
+import { ActionId } from './proto_utils/action_id.js';
+import { BattleElixir, HandType } from './proto/common.js';
 import { BonusStatsPicker } from './components/bonus_stats_picker.js';
 import { BooleanPicker, BooleanPickerConfig } from './components/boolean_picker.js';
 import { CharacterStats, StatMods } from './components/character_stats.js';
@@ -265,6 +266,19 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 					return 'Unspent talent points.';
 				} else if (talentPoints > Mechanics.MAX_TALENT_POINTS) {
 					return 'More than maximum talent points spent.';
+				} else {
+					return '';
+				}
+			},
+		});
+		this.addWarning({
+			updateOn: TypedEvent.onAny([this.player.gearChangeEmitter, this.player.talentsChangeEmitter]),
+			getContent: () => {
+				if (!this.player.canDualWield2H() && 
+				(this.player.getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.handType == HandType.HandTypeTwoHand && 
+				this.player.getEquippedItem(ItemSlot.ItemSlotOffHand) != null ||
+				this.player.getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.handType == HandType.HandTypeTwoHand)) {
+						return "Dual wielding two-handed weapon(s) without Titan's Grip spec."
 				} else {
 					return '';
 				}
@@ -582,6 +596,20 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			{ item: IconInputs.SpellHasteBuff, stats: [Stat.StatSpellHaste] },
 		] as Array<StatOption<IconInputConfig<Player<any>, any>>>);
 		otherBuffOptions.forEach(iconInput => makeIconInput(buffsSection, iconInput));
+
+		const revitalizeBuffOptions = this.splitRelevantOptions([
+			{ item: IconInputs.RevitalizeRejuvination, stats: [] },
+			{ item: IconInputs.RevitalizeWildGrowth, stats: [] },
+		] as Array<StatOption<IconPickerConfig<Player<any>, any>>>);
+		if (revitalizeBuffOptions.length > 0) {
+			new MultiIconPicker(buffsSection, this.player, {
+				inputs: revitalizeBuffOptions,
+				numColumns: 1,
+				emptyColor: 'grey',
+				label: 'Revitalize',
+				categoryId: ActionId.fromSpellId(48545),
+			}, this);
+		}
 
 		const miscBuffOptions = this.splitRelevantOptions([
 			{ item: IconInputs.HeroicPresence, stats: [Stat.StatMeleeHit, Stat.StatSpellHit] },

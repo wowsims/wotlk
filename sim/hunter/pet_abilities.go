@@ -1,6 +1,7 @@
 package hunter
 
 import (
+	"math"
 	"strconv"
 	"time"
 
@@ -164,7 +165,7 @@ func (hp *HunterPet) newFocusDump(pat PetAbilityType, spellID int32) PetAbility 
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				ProcMask:         core.ProcMaskMeleeMHSpecial,
-				DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
+				DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
 				ThreatMultiplier: 1,
 				BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(118, 168, 0.07)),
 				OutcomeApplier:   hp.OutcomeFuncMeleeSpecialHitAndCrit(2),
@@ -204,7 +205,7 @@ func (hp *HunterPet) newSpecialAbility(config PetSpecialAbilityConfig) PetAbilit
 		flags = core.SpellFlagMeleeMetrics
 		applyEffects = core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskSpellDamage,
-			DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
+			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,
 			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(config.MinDmg, config.MaxDmg, config.APRatio)),
 			OutcomeApplier:   hp.OutcomeFuncMeleeSpecialHitAndCrit(2),
@@ -213,7 +214,7 @@ func (hp *HunterPet) newSpecialAbility(config PetSpecialAbilityConfig) PetAbilit
 	} else {
 		applyEffects = core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
+			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,
 			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(config.MinDmg, config.MaxDmg, config.APRatio)),
 			OutcomeApplier:   hp.OutcomeFuncMagicHitAndCrit(2),
@@ -317,7 +318,7 @@ func (hp *HunterPet) newFireBreath() PetAbility {
 		TickLength:    time.Second * 1,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
+			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,
 			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigRoll(44/2, 56/2)),
 			OutcomeApplier:   hp.OutcomeFuncTick(),
@@ -425,8 +426,8 @@ func (hp *HunterPet) newMonstrousBite() PetAbility {
 		Duration:  time.Second * 12,
 		MaxStacks: 3,
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
-			aura.Unit.PseudoStats.DamageDealtMultiplier /= 1 + 0.03*float64(oldStacks)
-			aura.Unit.PseudoStats.DamageDealtMultiplier *= 1 + 0.03*float64(newStacks)
+			aura.Unit.PseudoStats.DamageDealtMultiplier /= math.Pow(1.03, float64(oldStacks))
+			aura.Unit.PseudoStats.DamageDealtMultiplier *= math.Pow(1.03, float64(newStacks))
 		},
 	})
 
@@ -509,7 +510,7 @@ func (hp *HunterPet) newPin() PetAbility {
 		TickLength:    time.Second * 1,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
+			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,
 			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(112/4, 144/4, 0.07)),
 			OutcomeApplier:   hp.OutcomeFuncTick(),
@@ -531,6 +532,7 @@ func (hp *HunterPet) newPoisonSpit() PetAbility {
 		Spell: hp.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolNature,
+			Flags:       core.SpellFlagIgnoreResists,
 
 			Cast: core.CastConfig{
 				DefaultCast: core.Cast{
@@ -566,7 +568,7 @@ func (hp *HunterPet) newPoisonSpit() PetAbility {
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
+			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,
 			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(104/4, 136/4, 0.049/4)),
 			OutcomeApplier:   hp.OutcomeFuncTick(),
@@ -609,7 +611,7 @@ func (hp *HunterPet) newRake() PetAbility {
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
+			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,
 			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(19, 25, 0.0175)),
 			OutcomeApplier:   hp.OutcomeFuncTick(),
@@ -663,7 +665,7 @@ func (hp *HunterPet) newSavageRend() PetAbility {
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskSpellDamage,
-			DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
+			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,
 
 			BaseDamage:     hp.specialDamageMod(core.BaseDamageConfigMelee(59, 83, 0.07)),
@@ -692,7 +694,7 @@ func (hp *HunterPet) newSavageRend() PetAbility {
 		TickLength:    time.Second * 5,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
+			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,
 			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(21, 27, 0.07)),
 			OutcomeApplier:   hp.OutcomeFuncTick(),
@@ -722,6 +724,7 @@ func (hp *HunterPet) newScorpidPoison() PetAbility {
 		Spell: hp.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolNature,
+			Flags:       core.SpellFlagIgnoreResists,
 
 			Cast: core.CastConfig{
 				DefaultCast: core.Cast{
@@ -757,7 +760,7 @@ func (hp *HunterPet) newScorpidPoison() PetAbility {
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
+			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,
 			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(100/5, 130/5, 0.07/5)),
 			OutcomeApplier:   hp.OutcomeFuncTick(),
@@ -826,7 +829,7 @@ func (hp *HunterPet) newSpiritStrike() PetAbility {
 		TickLength:    time.Second * 6,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
+			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,
 			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(49, 65, 0.04)),
 			OutcomeApplier:   hp.OutcomeFuncTick(),
@@ -853,6 +856,7 @@ func (hp *HunterPet) newSporeCloud() PetAbility {
 		Spell: hp.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolNature,
+			Flags:       core.SpellFlagIgnoreResists,
 
 			Cast: core.CastConfig{
 				DefaultCast: core.Cast{
@@ -883,7 +887,7 @@ func (hp *HunterPet) newSporeCloud() PetAbility {
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncAOESnapshot(hp.Env, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
+			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,
 			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(22, 28, 0.049/3)),
 			OutcomeApplier:   hp.OutcomeFuncTick(),
@@ -973,6 +977,7 @@ func (hp *HunterPet) newVenomWebSpray() PetAbility {
 		Spell: hp.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolNature,
+			Flags:       core.SpellFlagIgnoreResists,
 
 			Cast: core.CastConfig{
 				CD: core.Cooldown{
@@ -1004,7 +1009,7 @@ func (hp *HunterPet) newVenomWebSpray() PetAbility {
 		TickLength:    time.Second * 1,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * (1 + 0.01*float64(hp.hunterOwner.Talents.MarkedForDeath)),
+			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,
 			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(46, 46, 0.07)),
 			OutcomeApplier:   hp.OutcomeFuncTick(),

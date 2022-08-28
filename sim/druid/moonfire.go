@@ -1,6 +1,7 @@
 package druid
 
 import (
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -8,13 +9,25 @@ import (
 )
 
 func (druid *Druid) registerMoonfireSpell() {
-	actionID := core.ActionID{SpellID: 26988}
+	actionID := core.ActionID{SpellID: 48463}
 	baseCost := 0.21 * druid.BaseMana
-	iffCritBonus := core.TernaryFloat64(druid.CurrentTarget.HasActiveAura("Improved Faerie Fire"), float64(druid.Talents.ImprovedFaerieFire)*1*core.CritRatingPerCritChance, 0)
-	manaMetrics := druid.NewManaMetrics(actionID)
+
+	iffCritBonus := core.TernaryFloat64(druid.CurrentTarget.HasActiveAura("Improved Faerie Fire"), druid.TalentsBonuses.iffBonusCrit, 0)
+	improvedMoonfireDamageMultiplier := 0.05 * float64(druid.Talents.ImprovedMoonfire)
+
+	moonfireGlyphBaseDamageMultiplier := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMoonfire), 0.9, 0)
+	moonfireGlyphDotDamageMultiplier := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMoonfire), 0.75, 0)
+
+	// T9-2P
+	dotOutcomeApplier := druid.OutcomeFuncTick()
+	if druid.SetBonuses.balance_t9_2 {
+		dotOutcomeApplier = druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier))
+	}
+
+	manaMetrics := druid.NewManaMetrics(core.ActionID{SpellID: 24858})
 
 	druid.Moonfire = druid.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
+		ActionID:    core.ActionID{SpellID: 48463},
 		SpellSchool: core.SpellSchoolArcane,
 
 		ResourceType: stats.Mana,
@@ -22,18 +35,18 @@ func (druid *Druid) registerMoonfireSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.03*float64(druid.Talents.Moonglow)),
+				Cost: baseCost * druid.TalentsBonuses.moonglowMultiplier,
 				GCD:  core.GCDDefault,
 			},
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:             core.ProcMaskSpellDamage,
-			BonusSpellCritRating: float64(druid.Talents.ImprovedMoonfire)*5*core.CritRatingPerCritChance + iffCritBonus,
-			DamageMultiplier:     1 * (1 + 0.05*float64(druid.Talents.ImprovedMoonfire)) * (1 + 0.02*float64(druid.Talents.Moonfury)),
+			BonusSpellCritRating: (float64(druid.Talents.ImprovedMoonfire) * 5 * core.CritRatingPerCritChance) + iffCritBonus,
+			DamageMultiplier:     1 * (1 + improvedMoonfireDamageMultiplier + druid.TalentsBonuses.moonfuryMultiplier - moonfireGlyphBaseDamageMultiplier),
 			ThreatMultiplier:     1,
 			BaseDamage:           core.BaseDamageConfigMagic(305, 357, 0.15),
-			OutcomeApplier:       druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, 0.2*float64(druid.Talents.Vengeance))),
+			OutcomeApplier:       druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					druid.MoonfireDot.Apply(sim)
@@ -50,18 +63,26 @@ func (druid *Druid) registerMoonfireSpell() {
 	druid.MoonfireDot = core.NewDot(core.Dot{
 		Spell: druid.Moonfire,
 		Aura: target.RegisterAura(core.Aura{
-			Label:    "Moonfire",
+			Label:    "Moonfire Dot",
 			ActionID: actionID,
 		}),
-		NumberOfTicks: 4 + core.TernaryInt(druid.HasSetBonus(ItemSetThunderheartRegalia, 2), 1, 0) + core.TernaryInt(druid.Talents.NaturesSplendor, 1, 0),
+		NumberOfTicks: 4 + core.TernaryInt(druid.SetBonuses.balance_t6_2, 1, 0) + druid.TalentsBonuses.naturesSplendorTick,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * (1 + 0.05*float64(druid.Talents.ImprovedMoonfire)) * (1 + 0.02*float64(druid.Talents.Moonfury)),
+			DamageMultiplier: 1 * (1 + improvedMoonfireDamageMultiplier + druid.TalentsBonuses.moonfuryMultiplier + moonfireGlyphDotDamageMultiplier) * druid.TalentsBonuses.genesisMultiplier,
 			ThreatMultiplier: 1,
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(200, 0.13),
-			OutcomeApplier:   druid.OutcomeFuncTick(),
+			OutcomeApplier:   dotOutcomeApplier,
 			IsPeriodic:       true,
 		}),
 	})
+}
+
+func (druid *Druid) maxMoonfireTicks() int {
+	base := 4
+	thunderhearthRegalia := core.TernaryInt(druid.SetBonuses.balance_t6_2, 1, 0)
+	natureSplendor := druid.TalentsBonuses.naturesSplendorTick
+	starfireGlyph := core.TernaryInt(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfStarfire), 3, 0)
+	return base + thunderhearthRegalia + natureSplendor + starfireGlyph
 }

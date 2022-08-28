@@ -64,12 +64,10 @@ type Warlock struct {
 	GlyphOfLifeTapAura     *core.Aura
 
 	// Rotation related memory
-	DoingRegen             bool
-	PrevCastSECheck        *core.Spell
-	CorruptionRolloverMult float64
-	DPSPAverage            float64
-	PreviousTime           time.Duration
-	SpellsRotation         []SpellRotation
+	CorruptionRolloverPower float64
+	DPSPAverage             float64
+	PreviousTime            time.Duration
+	SpellsRotation          []SpellRotation
 }
 
 type SpellRotation struct {

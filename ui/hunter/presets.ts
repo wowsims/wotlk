@@ -101,7 +101,7 @@ export const DefaultOptions = HunterOptions.create({
 	petType: PetType.Wolf,
 	petTalents: ferocityDefault,
 	petUptime: 1,
-	sniperTrainingUptime: 0.8,
+	sniperTrainingUptime: 0.9,
 });
 
 export const BMDefaultOptions = HunterOptions.create({
@@ -110,7 +110,7 @@ export const BMDefaultOptions = HunterOptions.create({
 	petType: PetType.Wolf,
 	petTalents: ferocityBMDefault,
 	petUptime: 1,
-	sniperTrainingUptime: 0.8,
+	sniperTrainingUptime: 0.9,
 });
 
 export const DefaultConsumes = Consumes.create({

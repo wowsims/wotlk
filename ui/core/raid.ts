@@ -110,7 +110,7 @@ export class Raid {
 		this.buffs = RaidBuffs.clone(newBuffs);
 
 		// Special handle ToW since it crosses buffs/debuffs.
-		if (this.debuffs.totemOfWrath != this.buffs.totemOfWrath) {
+		if (!this.debuffs.totemOfWrath && this.buffs.totemOfWrath) {
 			var newDebuff = Debuffs.clone(this.debuffs);
 			newDebuff.totemOfWrath = this.buffs.totemOfWrath;
 			this.setDebuffs(eventID, newDebuff);
@@ -131,7 +131,7 @@ export class Raid {
 		this.debuffs = Debuffs.clone(newDebuffs);
 		
 		// Special handle ToW since it crosses buffs/debuffs.
-		if (this.debuffs.totemOfWrath != this.buffs.totemOfWrath) {
+		if (this.debuffs.totemOfWrath && !this.buffs.totemOfWrath) {
 			var newBuffs = RaidBuffs.clone(this.buffs);
 			newBuffs.totemOfWrath = this.debuffs.totemOfWrath;
 			this.setBuffs(eventID, newBuffs);

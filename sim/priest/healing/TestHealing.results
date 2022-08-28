@@ -1,0 +1,379 @@
+character_stats_results: {
+ key: "TestHealing-CharacterStats-Default"
+ value: {
+  final_stats: 97.9
+  final_stats: 103.4
+  final_stats: 1357.356
+  final_stats: 1230.845
+  final_stats: 459.1125
+  final_stats: 2672.77812
+  final_stats: 2357
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 128
+  final_stats: 500
+  final_stats: 1324.25696
+  final_stats: 489
+  final_stats: 0
+  final_stats: 80
+  final_stats: 500
+  final_stats: 561
+  final_stats: 489
+  final_stats: 0
+  final_stats: 0
+  final_stats: 22045.675
+  final_stats: 0
+  final_stats: 0
+  final_stats: 6731.8
+  final_stats: 80
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 20533.56
+  final_stats: 75
+  final_stats: 75
+  final_stats: 75
+  final_stats: 75
+  final_stats: 130
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+ }
+}
+dps_results: {
+ key: "TestHealing-AllItems-AbsolutionRegalia"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-AshtongueTalismanofAcumen-32490"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-AustereEarthsiegeDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-AvatarRegalia"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-Bandit'sInsignia-40371"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-BeamingEarthsiegeDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-BracingEarthsiegeDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-Braxley'sBackyardMoonshine-35937"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-ChaoticSkyflareDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-CrimsonAcolyte'sRegalia"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-DarkmoonCard:Berserker!-42989"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-DarkmoonCard:Death-42990"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-DarkmoonCard:Greatness-42987"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-DarkmoonCard:Greatness-44253"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-DarkmoonCard:Greatness-44254"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-DeathKnight'sAnguish-38212"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-Defender'sCode-40257"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-DestructiveSkyflareDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-EffulgentSkyflareDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-EmberSkyflareDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-EnigmaticSkyflareDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-EnigmaticStarflareDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-EternalEarthsiegeDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-ExtractofNecromanticPower-40373"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-EyeoftheBroodmother-45308"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-ForgeEmber-37660"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-ForlornSkyflareDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-ForlornStarflareDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-FuryoftheFiveFlights-40431"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-FuturesightRune-38763"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-GarbofFaith"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-IllustrationoftheDragonSoul-40432"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-ImpassiveSkyflareDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-ImpassiveStarflareDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-IncarnateRaiment"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-IncisorFragment-37723"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-InfusedColdstoneRune-35935"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-InsightfulEarthsiegeDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-InvigoratingEarthsiegeDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-Lavanthor'sTalisman-37872"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-MajesticDragonFigurine-40430"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-Mana-EtchedRegalia"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-MeteoriteWhetstone-37390"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-OfferingofSacrifice-37638"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-PersistentEarthshatterDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-PersistentEarthsiegeDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-PowerfulEarthshatterDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-PowerfulEarthsiegeDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-PurifiedShardoftheGods"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-ReignoftheDead-47316"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-ReignoftheDead-47477"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-RelentlessEarthsiegeDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-RevitalizingSkyflareDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-RuneofRepulsion-40372"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-SanctificationGarb"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-SealofthePantheon-36993"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-Serrah'sStar-37559"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-ShinyShardoftheGods"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-Sindragosa'sFlawlessFang-50361"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-SparkofLife-37657"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-SpellstrikeInfusion"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-SwiftSkyflareDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-SwiftStarflareDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-SwiftWindfireDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-TheTwinStars"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-ThunderingSkyflareDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-TinyAbominationinaJar-50351"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-TinyAbominationinaJar-50706"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-TirelessSkyflareDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-TirelessStarflareDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-TrenchantEarthshatterDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-TrenchantEarthsiegeDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-WrathofSpellfire"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-Zabra'sRegalia"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-Average-Default"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-Settings-Undead-P1-Basic-FullBuffs-LongMultiTarget"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-Settings-Undead-P1-Basic-FullBuffs-LongSingleTarget"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-Settings-Undead-P1-Basic-FullBuffs-ShortSingleTarget"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-Settings-Undead-P1-Basic-NoBuffs-LongMultiTarget"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-Settings-Undead-P1-Basic-NoBuffs-LongSingleTarget"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-Settings-Undead-P1-Basic-NoBuffs-ShortSingleTarget"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-SwitchInFrontOfTarget-Default"
+ value: {}
+}

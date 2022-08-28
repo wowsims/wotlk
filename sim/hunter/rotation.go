@@ -7,6 +7,7 @@ import (
 )
 
 func (hunter *Hunter) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
+	hunter.mayMoveAt = sim.CurrentTime
 	hunter.TryUseCooldowns(sim)
 	if hunter.GCD.IsReady(sim) {
 		hunter.rotation(sim)
@@ -96,10 +97,9 @@ func (hunter *Hunter) trySwapAspect(sim *core.Simulation) bool {
 		if !hunter.permaHawk &&
 			hunter.CurrentMana() > hunter.manaSpentPerSecondAtFirstAspectSwap*sim.GetRemainingDuration().Seconds() {
 			hunter.permaHawk = true
-		} else {
-			hunter.AspectOfTheViper.Cast(sim, nil)
-			return true
 		}
+		hunter.AspectOfTheViper.Cast(sim, nil)
+		return true
 	}
 	return false
 }

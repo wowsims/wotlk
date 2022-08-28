@@ -1,6 +1,7 @@
 package druid
 
 import (
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"strconv"
 	"time"
 
@@ -13,9 +14,15 @@ func (druid *Druid) registerStarfallSpell() {
 	if !druid.Talents.Starfall {
 		return
 	}
+
 	baseCost := druid.BaseMana * 0.35
 	target := druid.CurrentTarget
-	iffCritBonus := core.TernaryFloat64(druid.CurrentTarget.HasAura("Improved Faerie Fire"), float64(druid.Talents.ImprovedFaerieFire)*1*core.CritRatingPerCritChance, 0)
+	numberOfTicks := core.TernaryInt(druid.Env.GetNumTargets() > 1, 20, 10)
+	tickLength := core.TernaryDuration(druid.Env.GetNumTargets() > 1, time.Millisecond*500, time.Millisecond*1000)
+
+	// Improved Faerie Fire and Nature's Majesty
+	iffCritBonus := core.TernaryFloat64(druid.CurrentTarget.HasAura("Improved Faerie Fire"), druid.TalentsBonuses.iffBonusCrit, 0)
+	naturesMajestyCritBonus := druid.TalentsBonuses.naturesMajestyBonusCrit
 
 	druid.Starfall = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 53201},
@@ -26,55 +33,30 @@ func (druid *Druid) registerStarfallSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
+				Cost: baseCost * druid.TalentsBonuses.moonglowMultiplier,
 				GCD:  core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    druid.NewTimer(),
-				Duration: time.Second * 90,
+				Duration: time.Second * (90 - core.TernaryDuration(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfStarfall), 30, 0)),
 			},
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			OutcomeApplier:   druid.OutcomeFuncMagicHit(),
+			ProcMask:       core.ProcMaskSpellDamage,
+			OutcomeApplier: druid.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					druid.StarfallDot.Apply(sim)
-					druid.StarfallSplash.Cast(sim, target)
-				}
-			},
-		}),
-	})
-
-	druid.StarfallSplash = druid.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 53190},
-		SpellSchool: core.SpellSchoolArcane,
-
-		Cast: core.CastConfig{
-			CD: core.Cooldown{
-				Timer:    druid.NewTimer(),
-				Duration: time.Second * 90,
-			},
-		},
-
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			OutcomeApplier:   druid.OutcomeFuncMagicHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
 					druid.StarfallDotSplash.Apply(sim)
 				}
 			},
 		}),
 	})
 
-	numberOfTicks := core.TernaryInt(druid.Env.GetNumTargets() > 1, 20, 10)
-	tickLength := core.TernaryDuration(druid.Env.GetNumTargets() > 1, time.Millisecond*500, time.Millisecond*1000)
+	druid.StarfallSplash = druid.RegisterSpell(core.SpellConfig{
+		ActionID: core.ActionID{SpellID: 53190},
+	})
 
 	druid.StarfallDot = core.NewDot(core.Dot{
 		Spell: druid.Starfall,
@@ -86,12 +68,12 @@ func (druid *Druid) registerStarfallSpell() {
 		TickLength:    tickLength,
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1,
+			DamageMultiplier: 1 * (1 + core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfFocus), 0.1, 0)),
 			ThreatMultiplier: 1,
 			IsPeriodic:       false,
-			BaseDamage:       core.BaseDamageConfigMagic(563, 653, 0.127),
-			OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(1),
-			BonusCritRating:  iffCritBonus,
+			BaseDamage:       core.BaseDamageConfigMagic(563, 653, 0.3),
+			OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
+			BonusCritRating:  iffCritBonus + naturesMajestyCritBonus,
 		})),
 	})
 
@@ -105,12 +87,12 @@ func (druid *Druid) registerStarfallSpell() {
 		TickLength:    tickLength,
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncAOEDamageCapped(druid.Env, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1,
+			DamageMultiplier: 1 * (1 + core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfFocus), 0.1, 0)),
 			ThreatMultiplier: 1,
 			IsPeriodic:       false,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(101, 0.127),
-			OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(1),
-			BonusCritRating:  iffCritBonus,
+			BaseDamage:       core.BaseDamageConfigMagicNoRoll(101, 0.13),
+			OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
+			BonusCritRating:  iffCritBonus + naturesMajestyCritBonus,
 		})),
 	})
 }
