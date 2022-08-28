@@ -275,7 +275,7 @@ func (warrior *Warrior) applyWeaponSpecializations() {
 		if weapon.WeaponType == proto.WeaponType_WeaponTypeAxe || weapon.WeaponType == proto.WeaponType_WeaponTypePolearm {
 			warrior.PseudoStats.BonusOHCritRating += 1 * core.CritRatingPerCritChance * float64(warrior.Talents.PoleaxeSpecialization)
 		} else if weapon.WeaponType == proto.WeaponType_WeaponTypeMace {
-			warrior.PseudoStats.BonusMHArmorPenRating += 3 * core.ArmorPenPerPercentArmor * float64(warrior.Talents.MaceSpecialization)
+			warrior.PseudoStats.BonusOHArmorPenRating += 3 * core.ArmorPenPerPercentArmor * float64(warrior.Talents.MaceSpecialization)
 		} else if weapon.WeaponType == proto.WeaponType_WeaponTypeSword {
 			swordSpecMask |= core.ProcMaskMeleeOH
 		}
