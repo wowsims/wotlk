@@ -52,7 +52,7 @@ func (spellEffect *SpellEffect) applyResistances(sim *Simulation, spell *Spell, 
 func (at *AttackTable) UpdateArmorDamageReduction() {
 	defenderArmor := at.Defender.Armor()
 	reducibleArmor := MinFloat((defenderArmor+ReducibleArmorConstant)/3, defenderArmor)
-	effectiveArmor := defenderArmor - reducibleArmor*at.Attacker.ArmorPenetrationPercentage()
+	effectiveArmor := defenderArmor - reducibleArmor*at.Attacker.ArmorPenetrationPercentage(at.Attacker.stats[stats.ArmorPenetration])
 	armorConstant := float64(at.Attacker.Level)*467.5 - 22167.5
 	at.ArmorDamageModifier = 1 - effectiveArmor/(effectiveArmor+armorConstant)
 }
@@ -60,7 +60,8 @@ func (at *AttackTable) UpdateArmorDamageReduction() {
 func (at *AttackTable) GetArmorDamageModifier(spellEffect *SpellEffect) float64 {
 	defenderArmor := at.Defender.Armor()
 	reducibleArmor := MinFloat((defenderArmor+ReducibleArmorConstant)/3, defenderArmor)
-	effectiveArmor := defenderArmor - reducibleArmor*at.Attacker.ArmorPenetrationPercentage()
+	armorPenRating := at.Attacker.stats[stats.ArmorPenetration] + spellEffect.BonusArmorPenRating
+	effectiveArmor := defenderArmor - reducibleArmor*at.Attacker.ArmorPenetrationPercentage(armorPenRating)
 	armorConstant := float64(at.Attacker.Level)*467.5 - 22167.5
 	return 1 - effectiveArmor/(effectiveArmor+armorConstant)
 }
