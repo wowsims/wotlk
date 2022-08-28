@@ -246,6 +246,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeralTank-AllItems-Gladiator'sWildhide"
+ value: {
+  dps: 632.67684
+  tps: 827.26737
+ }
+}
+dps_results: {
  key: "TestFeralTank-AllItems-IdolofTerror-33509"
  value: {
   dps: 863.36875

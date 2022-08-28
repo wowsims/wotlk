@@ -28,6 +28,16 @@ func (druid *Druid) registerWrathSpell() {
 			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
 				hasMoonkinForm := core.TernaryFloat64(druid.Talents.MoonkinForm, 1, 0)
 				druid.AddMana(sim, druid.MaxMana()*0.02*hasMoonkinForm, manaMetrics, true)
+				if druid.SetBonuses.balance_t10_4 {
+					if druid.LasherweaveDot.IsActive() {
+						druid.LasherweaveDot.Refresh(sim)
+					} else {
+						druid.LasherweaveDot.Apply(sim)
+					}
+				}
+			}
+			if sim.RandomFloat("Swift Starfire proc") > 0.85 && druid.SetBonuses.balance_pvp_4 {
+				druid.SwiftStarfireAura.Activate(sim)
 			}
 		},
 		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
@@ -50,6 +60,10 @@ func (druid *Druid) registerWrathSpell() {
 				// T8-2P
 				tierEffect := core.TernaryFloat64(druid.SetBonuses.balance_t8_2, 0.07, 0)
 				spellEffect.DamageMultiplier *= 1.4 + tierEffect
+			}
+			// T9-4P
+			if druid.SetBonuses.balance_t9_4 {
+				spellEffect.DamageMultiplier *= 1.04
 			}
 			// Nature's Majesty
 			spellEffect.BonusSpellCritRating += druid.TalentsBonuses.naturesMajestyBonusCrit

@@ -72,7 +72,7 @@ func (druid *Druid) registerStarfallSpell() {
 			ThreatMultiplier: 1,
 			IsPeriodic:       false,
 			BaseDamage:       core.BaseDamageConfigMagic(563, 653, 0.3),
-			OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(1),
+			OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
 			BonusCritRating:  iffCritBonus + naturesMajestyCritBonus,
 		})),
 	})
@@ -91,7 +91,7 @@ func (druid *Druid) registerStarfallSpell() {
 			ThreatMultiplier: 1,
 			IsPeriodic:       false,
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(101, 0.13),
-			OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(1),
+			OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
 			BonusCritRating:  iffCritBonus + naturesMajestyCritBonus,
 		})),
 	})

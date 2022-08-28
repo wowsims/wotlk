@@ -159,9 +159,11 @@ var ItemSetMalfurionsRegalia = core.NewItemSet(core.ItemSet{
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
 			// Your Moonfire ability now has a chance for its periodic damage to be critical strikes.
+			// Implemented in moonfire.go
 		},
 		4: func(agent core.Agent) {
 			// Increases the damage done by your Starfire and Wrath spells by 4%.
+			// Implemented in starfire.go and wrath.go
 		},
 	},
 })
@@ -172,9 +174,11 @@ var ItemSetRunetotemsRegalia = core.NewItemSet(core.ItemSet{
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
 			// Your Moonfire ability now has a chance for its periodic damage to be critical strikes.
+			// Implemented in moonfire.go
 		},
 		4: func(agent core.Agent) {
 			// Increases the damage done by your Starfire and Wrath spells by 4%.
+			// Implemented in starfire.go and wrath.go
 		},
 	},
 })
@@ -185,9 +189,32 @@ var ItemSetLasherweaveRegalia = core.NewItemSet(core.ItemSet{
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
 			// When you gain Clearcasting from your Omen of Clarity talent, you deal 15% additional Nature and Arcane damage for 6 sec.
+			// Implemented in talents.go
 		},
 		4: func(agent core.Agent) {
 			// Your critical strikes from Starfire and Wrath cause the target to languish for an additional 7% of your spell's damage over 4 sec.
+			// Implemented in spell files.
+		},
+	},
+})
+
+var ItemSetGladiatorsWildhide = core.NewItemSet(core.ItemSet{
+	Name: "Gladiator's Wildhide",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			druid := agent.(DruidAgent).GetDruid()
+			druid.AddStat(stats.SpellPower, 29)
+			druid.AddStat(stats.Resilience, 100)
+		},
+		4: func(agent core.Agent) {
+			druid := agent.(DruidAgent).GetDruid()
+			druid.AddStat(stats.SpellPower, 88)
+			druid.SwiftStarfireAura = druid.RegisterAura(core.Aura{
+				Label:    "Moonkin Starfire Bonus",
+				ActionID: core.ActionID{SpellID: 46832},
+				Duration: time.Second * 15,
+			})
+			// Rest implemented in spells
 		},
 	},
 })
@@ -374,5 +401,38 @@ func init() {
 				procAura.AddStack(sim)
 			},
 		}))
+	})
+}
+
+func (druid *Druid) registerLasherweaveDot() {
+	if !druid.SetBonuses.balance_t10_4 {
+		return
+	}
+
+	dotSpell := druid.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 71023},
+		SpellSchool: core.SpellSchoolNature,
+	})
+
+	druid.LasherweaveDot = core.NewDot(core.Dot{
+		Spell: dotSpell,
+		Aura: druid.CurrentTarget.RegisterAura(core.Aura{
+			Label:    "Languish",
+			ActionID: core.ActionID{SpellID: 71023},
+		}),
+		NumberOfTicks: 2,
+		TickLength:    time.Second * 2,
+		TickEffects: core.TickFuncSnapshot(druid.CurrentTarget, core.SpellEffect{
+			ProcMask:         core.ProcMaskPeriodicDamage,
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
+			IsPeriodic:       true,
+			BaseDamage: core.BaseDamageConfig{
+				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+					return druid.GetStat(stats.SpellPower) * 0.07
+				},
+			},
+			OutcomeApplier: druid.OutcomeFuncTick(),
+		}),
 	})
 }
