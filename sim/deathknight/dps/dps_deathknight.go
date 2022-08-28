@@ -84,7 +84,14 @@ func (dk *DpsDeathknight) FrostPointsInUnholy() int32 {
 func (dk *DpsDeathknight) SetupRotations() {
 	if dk.Rotation.AutoRotation {
 		dk.RotationSequence.Reset()
-		dk.RotationSequence.NewAction(dk.RotationActionCallback_Auto)
+		mh := dk.GetMHWeapon()
+		oh := dk.GetOHWeapon()
+		if mh != nil && oh != nil {
+			dk.RotationSequence.NewAction(dk.RotationActionCallback_AutoDW)
+		} else {
+			dk.RotationSequence.NewAction(dk.RotationActionCallback_Auto)
+		}
+
 		return
 	}
 	dk.ur.ffFirst = dk.Rotation.FirstDisease == proto.Deathknight_Rotation_FrostFever
