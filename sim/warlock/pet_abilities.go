@@ -125,9 +125,9 @@ func (wp *WarlockPet) newCleave() *core.Spell {
 }
 
 func (wp *WarlockPet) newLashOfPain() *core.Spell {
-	baseCost := 190.0
+	baseCost := 250.0
 	return wp.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 27274},
+		ActionID:    core.ActionID{SpellID: 47992},
 		SpellSchool: core.SpellSchoolShadow,
 
 		ResourceType: stats.Mana,
@@ -146,10 +146,11 @@ func (wp *WarlockPet) newLashOfPain() *core.Spell {
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskSpellDamage,
-			DamageMultiplier: 1.0 * (1.0 + (0.1 * float64(wp.owner.Talents.ImprovedSayaad))),
+			DamageMultiplier: 1.0,
 			ThreatMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMagic(123, 123, 0.429),
-			OutcomeApplier:   wp.OutcomeFuncMagicHitAndCrit(2),
+			// TODO: the hidden 5% damage modifier succ currently gets also applies to this ...
+			BaseDamage:     core.BaseDamageConfigMagic(237, 237, 0.429),
+			OutcomeApplier: wp.OutcomeFuncMagicHitAndCrit(1.5),
 		}),
 	})
 }
