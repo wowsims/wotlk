@@ -48,6 +48,7 @@ type Druid struct {
 
 	InsectSwarmDot    *core.Dot
 	LacerateDot       *core.Dot
+	LasherweaveDot    *core.Dot
 	MoonfireDot       *core.Dot
 	RakeDot           *core.Dot
 	RipDot            *core.Dot
@@ -58,6 +59,7 @@ type Druid struct {
 	BerserkAura          *core.Aura
 	CatFormAura          *core.Aura
 	ClearcastingAura     *core.Aura
+	SwiftStarfireAura    *core.Aura
 	DemoralizingRoarAura *core.Aura
 	EnrageAura           *core.Aura
 	FaerieFireAura       *core.Aura
@@ -103,6 +105,8 @@ type DruidTierSets struct {
 	balance_t9_4  bool
 	balance_t10_2 bool
 	balance_t10_4 bool
+	balance_pvp_2 bool
+	balance_pvp_4 bool
 }
 
 type SelfBuffs struct {
@@ -199,6 +203,11 @@ func (druid *Druid) Initialize() {
 	if druid.Talents.PrimalPrecision > 0 {
 		druid.PrimalPrecisionRecoveryMetrics = druid.NewEnergyMetrics(core.ActionID{SpellID: 48410})
 	}
+	druid.registerFaerieFireSpell()
+	druid.registerRebirthSpell()
+	druid.registerInnervateCD()
+
+	// Bonus sets
 	druid.SetBonuses = DruidTierSets{
 		druid.HasSetBonus(ItemSetThunderheartRegalia, 2),
 		druid.HasSetBonus(ItemSetDreamwalkerGarb, 2),
@@ -209,10 +218,9 @@ func (druid *Druid) Initialize() {
 		druid.HasSetBonus(ItemSetMalfurionsRegalia, 4) || druid.HasSetBonus(ItemSetRunetotemsRegalia, 4),
 		druid.HasSetBonus(ItemSetLasherweaveRegalia, 2),
 		druid.HasSetBonus(ItemSetLasherweaveRegalia, 4),
+		druid.HasSetBonus(ItemSetGladiatorsWildhide, 2),
+		druid.HasSetBonus(ItemSetGladiatorsWildhide, 4),
 	}
-	druid.registerFaerieFireSpell()
-	druid.registerRebirthSpell()
-	druid.registerInnervateCD()
 }
 
 func (druid *Druid) RegisterBalanceSpells() {
@@ -223,6 +231,7 @@ func (druid *Druid) RegisterBalanceSpells() {
 	druid.registerWrathSpell()
 	druid.registerStarfallSpell()
 	druid.registerForceOfNatureCD()
+	druid.registerLasherweaveDot()
 }
 
 func (druid *Druid) RegisterFeralSpells(maulRageThreshold float64) {

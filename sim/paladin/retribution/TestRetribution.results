@@ -16,7 +16,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 91
   final_stats: 66
-  final_stats: 844.33263
+  final_stats: 844.06533
   final_stats: 133
   final_stats: 0
   final_stats: 3946.679
@@ -206,8 +206,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-EmberSkyflareDiamond"
  value: {
-  dps: 2953.41218
-  tps: 2693.7199
+  dps: 2953.25726
+  tps: 2693.56498
  }
 }
 dps_results: {
@@ -759,15 +759,15 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-Average-Default"
  value: {
-  dps: 2998.98798
-  tps: 2738.58461
+  dps: 2998.97951
+  tps: 2738.57614
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P4-Retribution Paladin-FullBuffs-LongMultiTarget"
  value: {
-  dps: 8867.59843
-  tps: 10390.23591
+  dps: 8867.45303
+  tps: 10390.09051
  }
 }
 dps_results: {

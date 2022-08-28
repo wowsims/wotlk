@@ -18,6 +18,12 @@ func (druid *Druid) registerMoonfireSpell() {
 	moonfireGlyphBaseDamageMultiplier := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMoonfire), 0.9, 0)
 	moonfireGlyphDotDamageMultiplier := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMoonfire), 0.75, 0)
 
+	// T9-2P
+	dotOutcomeApplier := druid.OutcomeFuncTick()
+	if druid.SetBonuses.balance_t9_2 {
+		dotOutcomeApplier = druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier))
+	}
+
 	manaMetrics := druid.NewManaMetrics(core.ActionID{SpellID: 24858})
 
 	druid.Moonfire = druid.RegisterSpell(core.SpellConfig{
@@ -67,7 +73,7 @@ func (druid *Druid) registerMoonfireSpell() {
 			DamageMultiplier: 1 * (1 + improvedMoonfireDamageMultiplier + druid.TalentsBonuses.moonfuryMultiplier + moonfireGlyphDotDamageMultiplier) * druid.TalentsBonuses.genesisMultiplier,
 			ThreatMultiplier: 1,
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(200, 0.13),
-			OutcomeApplier:   druid.OutcomeFuncTick(),
+			OutcomeApplier:   dotOutcomeApplier,
 			IsPeriodic:       true,
 		}),
 	})

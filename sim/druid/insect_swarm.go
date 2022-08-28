@@ -1,6 +1,7 @@
 package druid
 
 import (
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -16,6 +17,9 @@ func (druid *Druid) registerInsectSwarmSpell() {
 
 	// T7-2P
 	dreamwalkerGrab := core.TernaryFloat64(druid.SetBonuses.balance_t7_2, 1.1, 1.0)
+
+	// Glyph of Insect Swarm
+	glyphMultiplier := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfInsectSwarm), 1.3, 1.0)
 
 	druid.InsectSwarm = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -39,7 +43,9 @@ func (druid *Druid) registerInsectSwarmSpell() {
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					druid.InsectSwarmDot.Apply(sim)
-					missAura.Activate(sim)
+					if !druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfInsectSwarm) {
+						missAura.Activate(sim)
+					}
 				}
 			},
 		}),
@@ -55,7 +61,7 @@ func (druid *Druid) registerInsectSwarmSpell() {
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * druid.TalentsBonuses.genesisMultiplier * dreamwalkerGrab,
+			DamageMultiplier: 1 * druid.TalentsBonuses.genesisMultiplier * dreamwalkerGrab * glyphMultiplier,
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(215, 0.2),
