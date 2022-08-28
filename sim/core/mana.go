@@ -18,6 +18,7 @@ type manaBar struct {
 
 	BaseMana float64
 
+	currentMana           float64
 	manaCastingMetrics    *ResourceMetrics
 	manaNotCastingMetrics *ResourceMetrics
 	JowManaMetrics        *ResourceMetrics
@@ -74,10 +75,14 @@ func (unit *Unit) HasManaBar() bool {
 	return unit.manaBar.unit != nil
 }
 func (unit *Unit) MaxMana() float64 {
+	/*
+		TODO This should use unit.stats[stats.Mana], but this can break anything that's assuming MaxMana is static
+		like it is currently.
+	*/
 	return unit.GetInitialStat(stats.Mana)
 }
 func (unit *Unit) CurrentMana() float64 {
-	return unit.stats[stats.Mana]
+	return unit.currentMana
 }
 func (unit *Unit) CurrentManaPercent() float64 {
 	return unit.CurrentMana() / unit.MaxMana()
@@ -96,7 +101,7 @@ func (unit *Unit) AddMana(sim *Simulation, amount float64, metrics *ResourceMetr
 		unit.Log(sim, "Gained %0.3f mana from %s (%0.3f --> %0.3f).", amount, metrics.ActionID, oldMana, newMana)
 	}
 
-	unit.stats[stats.Mana] = newMana
+	unit.currentMana = newMana
 	unit.Metrics.ManaGained += newMana - oldMana
 	if isBonusMana {
 		unit.Metrics.BonusManaGained += newMana - oldMana
@@ -115,7 +120,7 @@ func (unit *Unit) SpendMana(sim *Simulation, amount float64, metrics *ResourceMe
 		unit.Log(sim, "Spent %0.3f mana from %s (%0.3f --> %0.3f).", amount, metrics.ActionID, unit.CurrentMana(), newMana)
 	}
 
-	unit.stats[stats.Mana] = newMana
+	unit.currentMana = newMana
 	unit.Metrics.ManaSpent += amount
 }
 
