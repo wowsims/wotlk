@@ -12,7 +12,7 @@ func (warrior *Warrior) ApplyTalents() {
 	warrior.AddStat(stats.Parry, core.ParryRatingPerParryChance*1*float64(warrior.Talents.Deflection))
 	warrior.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*1*float64(warrior.Talents.Cruelty))
 	warrior.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*1*float64(warrior.Talents.Precision))
-	warrior.AddStat(stats.Defense, core.DefenseRatingPerDefense*4*float64(warrior.Talents.Anticipation))
+	warrior.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*1*float64(warrior.Talents.Anticipation))
 	warrior.AddStat(stats.Armor, warrior.Equip.Stats()[stats.Armor]*0.02*float64(warrior.Talents.Toughness))
 	warrior.AddStat(stats.Expertise, core.ExpertisePerQuarterPercentReduction*2*float64(warrior.Talents.StrengthOfArms))
 	warrior.PseudoStats.DodgeReduction += 0.01 * float64(warrior.Talents.WeaponMastery)
@@ -507,6 +507,7 @@ func (warrior *Warrior) applyShieldSpecialization() {
 	warrior.AddStat(stats.Block, core.BlockRatingPerBlockChance*1*float64(warrior.Talents.ShieldSpecialization))
 
 	procChance := 0.2 * float64(warrior.Talents.ShieldSpecialization)
+	rageAdded := float64(warrior.Talents.ShieldSpecialization)
 	rageMetrics := warrior.NewRageMetrics(core.ActionID{SpellID: 12727})
 
 	warrior.RegisterAura(core.Aura{
@@ -516,9 +517,9 @@ func (warrior *Warrior) applyShieldSpecialization() {
 			aura.Activate(sim)
 		},
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Outcome.Matches(core.OutcomeBlock) {
-				if procChance == 1 || sim.RandomFloat("Shield Specialization") < procChance {
-					warrior.AddRage(sim, 1, rageMetrics)
+			if spellEffect.Outcome.Matches(core.OutcomeBlock | core.OutcomeDodge | core.OutcomeParry) {
+				if procChance == 1.0 || sim.RandomFloat("Shield Specialization") < procChance {
+					warrior.AddRage(sim, rageAdded, rageMetrics)
 				}
 			}
 		},
@@ -621,7 +622,7 @@ func (warrior *Warrior) registerLastStandCD() {
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    warrior.NewTimer(),
-				Duration: time.Minute * 8,
+				Duration: time.Minute * 3,
 			},
 		},
 

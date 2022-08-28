@@ -8,18 +8,8 @@ import (
 )
 
 func (warrior *Warrior) registerThunderClapSpell() {
-	cost := 20.0 - float64(warrior.Talents.FocusedRage)
-	impTCDamageMult := 1.0
-	if warrior.Talents.ImprovedThunderClap == 1 {
-		cost -= 1
-		impTCDamageMult = 1.1
-	} else if warrior.Talents.ImprovedThunderClap == 2 {
-		cost -= 2
-		impTCDamageMult = 1.2
-	} else if warrior.Talents.ImprovedThunderClap == 3 {
-		cost -= 4
-		impTCDamageMult = 1.3
-	}
+	cost := 20.0 - float64(warrior.Talents.FocusedRage) - []float64{0, 1, 2, 4}[warrior.Talents.ImprovedThunderClap]
+	impTCDamageMult := []float64{1.0, 1.1, 1.2, 1.3}[warrior.Talents.ImprovedThunderClap]
 
 	warrior.ThunderClapAura = core.ThunderClapAura(warrior.CurrentTarget, warrior.Talents.ImprovedThunderClap)
 

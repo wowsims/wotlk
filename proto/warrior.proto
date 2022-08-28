@@ -94,13 +94,6 @@ message WarriorTalents {
 	int32 sword_and_board = 83;
 	int32 damage_shield = 84;
 	bool shockwave = 85;
-
-	// TBC Talents (Here because some deprecated abilities that hasn't been removed need it so it could be compiled)
-	int32 improved_sunder_armor = 86;
-	int32 improved_shield_wall = 87;
-	bool improved_shield_block = 88;
-	int32 defiance = 89;
-	bool shield_slam = 90;
 }
 
 enum WarriorMajorGlyph {

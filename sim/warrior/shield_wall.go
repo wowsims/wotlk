@@ -13,11 +13,6 @@ func (warrior *Warrior) RegisterShieldWallCD() {
 	}
 
 	duration := time.Second*10 + time.Second*2*time.Duration(warrior.Talents.ImprovedDisciplines)
-	if warrior.Talents.ImprovedShieldWall == 1 {
-		duration += time.Second * 3
-	} else if warrior.Talents.ImprovedShieldWall == 2 {
-		duration += time.Second * 5
-	}
 
 	actionID := core.ActionID{SpellID: 871}
 	swAura := warrior.RegisterAura(core.Aura{

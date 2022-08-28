@@ -44,14 +44,21 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 			},
 		},
 
+		// TODO: Wrap Apply effects to hit 1 or 2 targets
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeMHSpecial,
 
-			DamageMultiplier: 1,
+			DamageMultiplier: 1.0 + 0.3*float64(warrior.Talents.ImprovedRevenge),
 			ThreatMultiplier: 1,
 			FlatThreatBonus:  200,
 
-			BaseDamage:     core.BaseDamageConfigRoll(414, 506),
+			BaseDamage: core.BaseDamageConfig{
+				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+					roll := (1998.0-1636.0)*sim.RandomFloat("Revenge Roll") + 1636.0
+					return roll + hitEffect.MeleeAttackPower(spell.Unit)*0.31
+				},
+				TargetSpellCoefficient: 1,
+			},
 			OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHitAndCrit(warrior.critMultiplier(true)),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

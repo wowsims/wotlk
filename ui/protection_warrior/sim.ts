@@ -168,10 +168,6 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 				// Preset gear configurations that the user can quickly select.
 				gear: [
 					Presets.P1_BALANCED_PRESET,
-					Presets.P2_BALANCED_PRESET,
-					Presets.P3_BALANCED_PRESET,
-					Presets.P4_BALANCED_PRESET,
-					Presets.P5_BALANCED_PRESET,
 				],
 			},
 		});
