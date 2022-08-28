@@ -36,10 +36,19 @@ func (druid *Druid) registerForceOfNatureCD() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+
 			druid.Treant1.EnableWithTimeout(sim, druid.Treant1, time.Second*30)
 			druid.Treant2.EnableWithTimeout(sim, druid.Treant2, time.Second*30)
 			druid.Treant3.EnableWithTimeout(sim, druid.Treant3, time.Second*30)
+
 			forceOfNatureAura.Activate(sim)
+
+			bonusID := core.ActionID{ItemID: 11133}
+			bonusStats := stats.Stats{stats.Strength: druid.GetStat(stats.SpellPower) * 0.5}
+
+			druid.Treant1.NewTemporaryStatsAura("SP Snapshot", bonusID, bonusStats, time.Second*30).Activate(sim)
+			druid.Treant2.NewTemporaryStatsAura("SP Snapshot", bonusID, bonusStats, time.Second*30).Activate(sim)
+			druid.Treant3.NewTemporaryStatsAura("SP Snapshot", bonusID, bonusStats, time.Second*30).Activate(sim)
 
 			// Animation delay, courtesy of our DK friends
 			pa := core.PendingAction{
@@ -65,9 +74,7 @@ func (druid *Druid) NewTreant() *TreantPet {
 			&druid.Character,
 			treantBaseStats,
 			func(ownerStats stats.Stats) stats.Stats {
-				return stats.Stats{
-					stats.Strength: 331 + (ownerStats[stats.NatureSpellPower] * 0.35),
-				}
+				return stats.Stats{}
 			},
 			false,
 			false,
@@ -78,8 +85,8 @@ func (druid *Druid) NewTreant() *TreantPet {
 	treant.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/83.3)
 	treant.EnableAutoAttacks(treant, core.AutoAttackOptions{
 		MainHand: core.Weapon{
-			BaseDamageMin:  59,
-			BaseDamageMax:  87,
+			BaseDamageMin:  252,
+			BaseDamageMax:  357,
 			SwingSpeed:     2,
 			SwingDuration:  time.Second * 2,
 			CritMultiplier: 2,
@@ -107,6 +114,7 @@ func (treant *TreantPet) OnGCDReady(sim *core.Simulation) {
 
 // TODO : fix miss/dodge
 var treantBaseStats = stats.Stats{
+	stats.Strength:  331,
 	stats.Agility:   113,
 	stats.Stamina:   598,
 	stats.Intellect: 281,

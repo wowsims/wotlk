@@ -32,7 +32,6 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 			cssClass: 'warrior-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"Thunder Clap is not working.",
 			],
 
 			// All stats for which EP should be calculated.
@@ -69,15 +68,15 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 				gear: Presets.P1_FURY_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatStrength]: 2.17,
-					[Stat.StatAgility]: 1.4,
+					[Stat.StatStrength]: 3.23,
+					[Stat.StatAgility]: 3.00,
 					[Stat.StatAttackPower]: 1,
 					[Stat.StatExpertise]: 3.29,
-					[Stat.StatMeleeHit]: 0.41,
-					[Stat.StatMeleeCrit]: 1.83,
-					[Stat.StatMeleeHaste]: 2.07,
-					[Stat.StatArmorPenetration]: 0.5,
-					[Stat.StatArmor]: 0.027,
+					[Stat.StatMeleeHit]: 0.48,
+					[Stat.StatMeleeCrit]: 3.62,
+					[Stat.StatMeleeHaste]: 2.92,
+					[Stat.StatArmorPenetration]: 3.19,
+					[Stat.StatArmor]: 0.08,
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,

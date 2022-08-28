@@ -1,5 +1,5 @@
 import { ActionId } from './proto_utils/action_id.js';
-import { BattleElixir } from './proto/common.js';
+import { BattleElixir, HandType } from './proto/common.js';
 import { BonusStatsPicker } from './components/bonus_stats_picker.js';
 import { BooleanPicker, BooleanPickerConfig } from './components/boolean_picker.js';
 import { CharacterStats, StatMods } from './components/character_stats.js';
@@ -266,6 +266,19 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 					return 'Unspent talent points.';
 				} else if (talentPoints > Mechanics.MAX_TALENT_POINTS) {
 					return 'More than maximum talent points spent.';
+				} else {
+					return '';
+				}
+			},
+		});
+		this.addWarning({
+			updateOn: TypedEvent.onAny([this.player.gearChangeEmitter, this.player.talentsChangeEmitter]),
+			getContent: () => {
+				if (!this.player.canDualWield2H() && 
+				(this.player.getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.handType == HandType.HandTypeTwoHand && 
+				this.player.getEquippedItem(ItemSlot.ItemSlotOffHand) != null ||
+				this.player.getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.handType == HandType.HandTypeTwoHand)) {
+						return "Dual wielding two-handed weapon(s) without Titan's Grip spec."
 				} else {
 					return '';
 				}
