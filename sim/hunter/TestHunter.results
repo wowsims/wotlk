@@ -16,7 +16,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 109
   final_stats: 238
-  final_stats: 879.62966
+  final_stats: 879.12615
   final_stats: 225
   final_stats: 0
   final_stats: 5610.1232
@@ -206,8 +206,8 @@ dps_results: {
 dps_results: {
  key: "TestHunter-AllItems-EmberSkyflareDiamond"
  value: {
-  dps: 5549.80101
-  tps: 4718.73674
+  dps: 5549.79733
+  tps: 4718.73307
  }
 }
 dps_results: {
@@ -528,8 +528,8 @@ dps_results: {
 dps_results: {
  key: "TestHunter-AllItems-StormshroudArmor"
  value: {
-  dps: 4440.26786
-  tps: 3763.72132
+  dps: 4440.26486
+  tps: 3763.71831
  }
 }
 dps_results: {
@@ -626,8 +626,8 @@ dps_results: {
 dps_results: {
  key: "TestHunter-AllItems-WastewalkerArmor"
  value: {
-  dps: 4379.6391
-  tps: 3682.29111
+  dps: 4379.63542
+  tps: 3682.28743
  }
 }
 dps_results: {
@@ -640,8 +640,8 @@ dps_results: {
 dps_results: {
  key: "TestHunter-AllItems-Windrunner'sPursuit"
  value: {
-  dps: 5815.82573
-  tps: 4975.26808
+  dps: 5815.81848
+  tps: 4975.26084
  }
 }
 dps_results: {
@@ -668,8 +668,8 @@ dps_results: {
 dps_results: {
  key: "TestHunter-Average-Default"
  value: {
-  dps: 5663.76761
-  tps: 4830.06378
+  dps: 5663.76737
+  tps: 4830.06354
  }
 }
 dps_results: {

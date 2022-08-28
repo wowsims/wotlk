@@ -16,7 +16,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 115
   final_stats: 214.928
-  final_stats: 728.76233
+  final_stats: 728.22948
   final_stats: 0
   final_stats: 0
   final_stats: 298.648
@@ -87,8 +87,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-Braxley'sBackyardMoonshine-35937"
  value: {
-  dps: 1401.87495
-  tps: 1303.60595
+  dps: 1399.92806
+  tps: 1301.62938
  }
 }
 dps_results: {
@@ -108,22 +108,22 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-DarkmoonCard:Death-42990"
  value: {
-  dps: 1439.59235
-  tps: 1340.49716
+  dps: 1448.93919
+  tps: 1349.83265
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-DarkmoonCard:Greatness-42987"
  value: {
-  dps: 1418.78563
-  tps: 1320.05866
+  dps: 1418.56838
+  tps: 1319.84576
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-DarkmoonCard:Greatness-44253"
  value: {
-  dps: 1417.10986
-  tps: 1318.4164
+  dps: 1416.89262
+  tps: 1318.20351
  }
 }
 dps_results: {
@@ -157,8 +157,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-DreamwalkerGarb"
  value: {
-  dps: 1960.8953
-  tps: 1863.56218
+  dps: 1967.43703
+  tps: 1870.12938
  }
 }
 dps_results: {
@@ -206,8 +206,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 1434.49906
-  tps: 1333.80668
+  dps: 1433.96784
+  tps: 1333.28608
  }
 }
 dps_results: {
@@ -255,29 +255,29 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-IdolofTerror-33509"
  value: {
-  dps: 1391.13461
-  tps: 1291.66027
+  dps: 1385.48641
+  tps: 1285.70012
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-IdoloftheLunarEclipse-50457"
  value: {
-  dps: 1391.13461
-  tps: 1291.66027
+  dps: 1385.48641
+  tps: 1285.70012
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-IdoloftheUnseenMoon-33510"
  value: {
-  dps: 1391.13461
-  tps: 1291.66027
+  dps: 1385.48641
+  tps: 1285.70012
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-IdoloftheWhiteStag-32257"
  value: {
-  dps: 1391.13461
-  tps: 1291.66027
+  dps: 1385.48641
+  tps: 1285.70012
  }
 }
 dps_results: {
@@ -332,8 +332,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-LasherweaveRegalia"
  value: {
-  dps: 3145.80691
-  tps: 3042.95987
+  dps: 3141.11629
+  tps: 3038.32613
  }
 }
 dps_results: {
@@ -353,8 +353,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-MajesticDragonFigurine-40430"
  value: {
-  dps: 1473.40725
-  tps: 1374.59568
+  dps: 1489.54111
+  tps: 1390.97527
  }
 }
 dps_results: {
@@ -374,8 +374,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-MalorneRegalia"
  value: {
-  dps: 1301.98329
-  tps: 1209.80438
+  dps: 1298.75774
+  tps: 1206.96698
  }
 }
 dps_results: {
@@ -395,8 +395,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-NightsongGarb"
  value: {
-  dps: 2333.20185
-  tps: 2232.3218
+  dps: 2331.62251
+  tps: 2230.49592
  }
 }
 dps_results: {
@@ -409,8 +409,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-NordrassilRegalia"
  value: {
-  dps: 1341.10043
-  tps: 1246.14148
+  dps: 1340.24811
+  tps: 1245.30837
  }
 }
 dps_results: {
@@ -465,15 +465,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 1570.41477
-  tps: 1465.40239
+  dps: 1570.35676
+  tps: 1465.34554
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 1589.64497
-  tps: 1483.82551
+  dps: 1589.5865
+  tps: 1483.76821
  }
 }
 dps_results: {
@@ -535,8 +535,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-SparkofLife-37657"
  value: {
-  dps: 1517.0443
-  tps: 1418.50688
+  dps: 1516.60181
+  tps: 1418.07324
  }
 }
 dps_results: {
@@ -556,8 +556,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-StrengthoftheClefthoof"
  value: {
-  dps: 1099.46921
-  tps: 1007.34345
+  dps: 1107.3482
+  tps: 1015.3034
  }
 }
 dps_results: {
@@ -584,8 +584,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-TheTwinStars"
  value: {
-  dps: 1390.71986
-  tps: 1290.71232
+  dps: 1350.26607
+  tps: 1249.95268
  }
 }
 dps_results: {
@@ -612,15 +612,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-TinyAbominationinaJar-50351"
  value: {
-  dps: 1492.72221
-  tps: 1394.191
+  dps: 1479.77044
+  tps: 1380.89663
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-TinyAbominationinaJar-50706"
  value: {
-  dps: 1492.72221
-  tps: 1394.191
+  dps: 1479.77044
+  tps: 1380.89663
  }
 }
 dps_results: {
@@ -675,36 +675,36 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Average-Default"
  value: {
-  dps: 1396.79874
-  tps: 1295.91722
+  dps: 1398.37244
+  tps: 1297.49083
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-Starfire-FullBuffs-LongMultiTarget"
  value: {
-  dps: 2490.71565
-  tps: 3232.60304
+  dps: 2490.5433
+  tps: 3232.43413
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-Starfire-FullBuffs-LongSingleTarget"
  value: {
-  dps: 1402.29057
-  tps: 1302.59311
+  dps: 1397.30637
+  tps: 1297.28368
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-Starfire-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 2814.27953
-  tps: 2568.38973
+  dps: 2811.92281
+  tps: 2565.97405
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-Starfire-NoBuffs-LongMultiTarget"
  value: {
-  dps: 1498.2664
-  tps: 1701.19176
+  dps: 1498.23765
+  tps: 1701.16358
  }
 }
 dps_results: {
@@ -724,7 +724,7 @@ dps_results: {
 dps_results: {
  key: "TestBalance-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 1389.62533
-  tps: 1302.59311
+  dps: 1384.64113
+  tps: 1297.28368
  }
 }
