@@ -22,7 +22,7 @@ func (dk *DpsDeathknight) RotationActionCallback_Auto(sim *core.Simulation, targ
 	// 7. Use Runic Power on Death Coil
 
 	// If we have spent all our runes and ERW is ready, lets use it!
-	if dk.EmpowerRuneWeapon.IsReady(sim) && (dk.AllBloodRunesSpent() && dk.AllFrostSpent() && dk.AllUnholySpent()) {
+	if dk.EmpowerRuneWeapon.IsReady(sim) && dk.AllRunesSpent() {
 		if dk.Presence == deathknight.UnholyPresence && dk.BloodTap.IsReady(sim) {
 			dk.BloodTap.Cast(sim, dk.CurrentTarget)
 			dk.BloodPresence.Cast(sim, dk.CurrentTarget)

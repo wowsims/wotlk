@@ -554,6 +554,11 @@ func (rp *RunicPowerBar) NormalCurrentUnholyRunes() int32 {
 	return count
 }
 
+func (rp *RunicPowerBar) AllRunesSpent() bool {
+	const allSpent = isSpent & (isSpent << 5) & (isSpent << 10) & (isSpent << 15) & (isSpent << 20) & (isSpent << 25)
+	return rp.runeStates&allSpent == allSpent
+}
+
 func (rp *RunicPowerBar) AllBloodRunesSpent() bool {
 	const checkBloodSpent = isSpent & (isSpent << 5)
 	return rp.runeStates&checkBloodSpent == checkBloodSpent
