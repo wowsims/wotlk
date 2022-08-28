@@ -58,6 +58,10 @@ func (druid *Druid) registerStarfireSpell() {
 					spellEffect.BonusSpellCritRating += core.CritRatingPerCritChance * 7
 				}
 			}
+			// T9-4P
+			if druid.SetBonuses.balance_t9_4 {
+				spellEffect.DamageMultiplier *= 1.04
+			}
 			// Nature's Majesty
 			spellEffect.BonusSpellCritRating += druid.TalentsBonuses.naturesMajestyBonusCrit
 		},

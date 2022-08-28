@@ -163,6 +163,7 @@ var ItemSetMalfurionsRegalia = core.NewItemSet(core.ItemSet{
 		},
 		4: func(agent core.Agent) {
 			// Increases the damage done by your Starfire and Wrath spells by 4%.
+			// Implemented in starfire.go and wrath.go
 		},
 	},
 })

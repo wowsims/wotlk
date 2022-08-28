@@ -51,6 +51,10 @@ func (druid *Druid) registerWrathSpell() {
 				tierEffect := core.TernaryFloat64(druid.SetBonuses.balance_t8_2, 0.07, 0)
 				spellEffect.DamageMultiplier *= 1.4 + tierEffect
 			}
+			// T9-4P
+			if druid.SetBonuses.balance_t9_4 {
+				spellEffect.DamageMultiplier *= 1.04
+			}
 			// Nature's Majesty
 			spellEffect.BonusSpellCritRating += druid.TalentsBonuses.naturesMajestyBonusCrit
 		},
