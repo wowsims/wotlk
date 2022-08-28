@@ -34,7 +34,7 @@ func (warrior *Warrior) ApplyTalents() {
 	}
 
 	if warrior.Talents.ShieldMastery > 0 {
-		warrior.MultiplyStat(stats.BlockValue, 1.0+0.1*float64(warrior.Talents.ShieldMastery))
+		warrior.MultiplyStat(stats.BlockValue, 1.0+0.15*float64(warrior.Talents.ShieldMastery))
 	}
 
 	if warrior.Talents.Vitality > 0 {
