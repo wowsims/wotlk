@@ -367,3 +367,10 @@ func (druid *Druid) applyEclipse() {
 		},
 	})
 }
+
+func (druid *Druid) ApplySwiftStarfireBonus(sim *core.Simulation, cast *core.Cast) {
+	if druid.SwiftStarfireAura.IsActive() && druid.SetBonuses.balance_pvp_4 {
+		cast.CastTime -= 1500 * time.Millisecond
+		druid.SwiftStarfireAura.Deactivate(sim)
+	}
+}

@@ -246,6 +246,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestBalance-AllItems-Gladiator'sWildhide"
+ value: {
+  dps: 1255.3807
+  tps: 1158.37072
+ }
+}
+dps_results: {
  key: "TestBalance-AllItems-IdolofTerror-33509"
  value: {
   dps: 1391.13461
@@ -325,8 +332,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-LasherweaveRegalia"
  value: {
-  dps: 3045.38069
-  tps: 2944.54217
+  dps: 3145.80691
+  tps: 3042.95987
  }
 }
 dps_results: {
@@ -353,8 +360,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-Malfurion'sRegalia"
  value: {
-  dps: 2614.86744
-  tps: 2510.56538
+  dps: -9.223372036854777e+13
+  tps: -9.223372036854777e+13
  }
 }
 dps_results: {
@@ -493,8 +500,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-Runetotem'sRegalia"
  value: {
-  dps: 2614.86744
-  tps: 2510.56538
+  dps: -9.223372036854777e+13
+  tps: -9.223372036854777e+13
  }
 }
 dps_results: {

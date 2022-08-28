@@ -36,6 +36,9 @@ func (druid *Druid) registerWrathSpell() {
 					}
 				}
 			}
+			if sim.RandomFloat("Swift Starfire proc") > 0.85 && druid.SetBonuses.balance_pvp_4 {
+				druid.SwiftStarfireAura.Activate(sim)
+			}
 		},
 		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			spellEffect.BonusSpellCritRating = 0

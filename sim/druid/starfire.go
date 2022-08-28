@@ -122,6 +122,7 @@ func (druid *Druid) registerStarfireSpell() {
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				druid.applyNaturesSwiftness(cast)
 				druid.ApplyClearcasting(sim, spell, cast)
+				druid.ApplySwiftStarfireBonus(sim, cast)
 				if druid.HasActiveAura("Elune's Wrath") {
 					cast.CastTime = 0
 					druid.GetAura("Elune's Wrath").Deactivate(sim)

@@ -198,6 +198,27 @@ var ItemSetLasherweaveRegalia = core.NewItemSet(core.ItemSet{
 	},
 })
 
+var ItemSetGladiatorsWildhide = core.NewItemSet(core.ItemSet{
+	Name: "Gladiator's Wildhide",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			druid := agent.(DruidAgent).GetDruid()
+			druid.AddStat(stats.SpellPower, 29)
+			druid.AddStat(stats.Resilience, 100)
+		},
+		4: func(agent core.Agent) {
+			druid := agent.(DruidAgent).GetDruid()
+			druid.AddStat(stats.SpellPower, 88)
+			druid.SwiftStarfireAura = druid.RegisterAura(core.Aura{
+				Label:    "Moonkin Starfire Bonus",
+				ActionID: core.ActionID{SpellID: 46832},
+				Duration: time.Second * 15,
+			})
+			// Rest implemented in spells
+		},
+	},
+})
+
 func init() {
 
 	core.NewItemEffect(30664, func(agent core.Agent) {
