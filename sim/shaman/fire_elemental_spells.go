@@ -26,15 +26,15 @@ func (fireElemental *FireElemental) registerFireBlast() {
 				Timer:    fireElemental.NewTimer(),
 				Duration: time.Second * 4,
 			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				fireElemental.AutoAttacks.DelayMeleeUntil(sim, sim.CurrentTime+time.Second*2)
+			OnCastComplete: func(sim *core.Simulation, spell *core.Spell) {
+				fireElemental.AutoAttacks.DelayMeleeUntil(sim, sim.CurrentTime+fireElemental.AutoAttacks.MainhandSwingSpeed())
 			},
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskSpellDamage,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMagic(323, 459, 0.429), // TODO find out values
+			BaseDamage:       core.BaseDamageConfigMagic(323, 459, 0.429), // TODO these are approximation, from base SP
 			OutcomeApplier:   fireElemental.OutcomeFuncMagicHitAndCrit(fireElemental.DefaultSpellCritMultiplier()),
 		}),
 	})
@@ -62,7 +62,10 @@ func (fireElemental *FireElemental) registerFireNova() {
 				Duration: time.Second * 4,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				fireElemental.AutoAttacks.DelayMeleeUntil(sim, sim.CurrentTime+time.Second*4)
+				fireElemental.AutoAttacks.DelayMeleeUntil(sim, sim.CurrentTime+fireElemental.AutoAttacks.MainhandSwingSpeed())
+			},
+			OnCastComplete: func(sim *core.Simulation, spell *core.Spell) {
+				fireElemental.AutoAttacks.DelayMeleeUntil(sim, sim.CurrentTime+fireElemental.AutoAttacks.MainhandSwingSpeed())
 			},
 		},
 
@@ -70,7 +73,7 @@ func (fireElemental *FireElemental) registerFireNova() {
 			ProcMask:         core.ProcMaskSpellDamage,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMagic(1, 150, 1.07), // TODO find out values
+			BaseDamage:       core.BaseDamageConfigMagic(1, 150, 1.07), // TODO these are approximation, from base SP
 			OutcomeApplier:   fireElemental.OutcomeFuncMagicHitAndCrit(fireElemental.DefaultSpellCritMultiplier()),
 		}),
 	})
@@ -106,7 +109,7 @@ func (fireElemental *FireElemental) registerFireShieldDot() {
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskEmpty,
 			DamageMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMagic(68, 70, 0.032), // TODO need proper values
+			BaseDamage:       core.BaseDamageConfigMagic(68, 70, 0.032), // TODO these are approximation, from base SP
 			OutcomeApplier:   fireElemental.OutcomeFuncMagicCrit(fireElemental.DefaultSpellCritMultiplier()),
 		})),
 	})

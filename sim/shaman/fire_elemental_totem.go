@@ -10,7 +10,6 @@ import (
 const fireTotemDuration time.Duration = time.Second * 120
 
 func (shaman *Shaman) registerFireElementalTotem() {
-
 	actionID := core.ActionID{SpellID: 2894}
 	manaCost := 0.23 * shaman.BaseMana
 
