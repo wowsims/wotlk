@@ -58,6 +58,10 @@ type RunicPowerBar struct {
 	clone   *RunicPowerBar
 }
 
+func (rp *RunicPowerBar) Print() {
+	fmt.Print(rp.DebugString())
+}
+
 func (rp *RunicPowerBar) DebugString() string {
 	data := ""
 	for i := int32(0); i < 6; i++ {
@@ -457,17 +461,15 @@ func (rp *RunicPowerBar) RuneIsDeath(slot int32) bool {
 func (rp *RunicPowerBar) CurrentBloodRunes() int32 {
 	const unspentBlood1 = isDeath | isSpent
 	const unspentBlood2 = unspentBlood1 << 2
-	const unspentBlood = unspentBlood1 | unspentBlood2
 
-	switch rp.runeStates & unspentBlood {
-	case 0:
-		return 2
-	case 0b1111, 0b1110, 0b0111, 0b1010, 0b0101:
-		return 0
-	case 0b0100, 0b1000, 0b1100, 0b0010, 0b0001, 0b0011:
-		return 1
+	var count int32
+	if rp.runeStates&unspentBlood1 == 0 {
+		count = 1
 	}
-	return 0
+	if rp.runeStates&unspentBlood2 == 0 {
+		return 2
+	}
+	return count
 }
 
 func (rp *RunicPowerBar) CurrentFrostRunes() int32 {
