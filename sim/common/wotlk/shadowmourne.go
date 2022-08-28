@@ -59,12 +59,8 @@ func init() {
 					return
 				}
 
-				if !stackingAura.IsActive() {
-					stackingAura.Activate(sim)
-				}
+				stackingAura.Activate(sim)
 				stackingAura.AddStack(sim)
-				stackingAura.Refresh(sim)
-
 			},
 		}))
 	})
