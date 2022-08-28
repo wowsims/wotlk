@@ -82,6 +82,11 @@ func (fireElemental *FireElemental) enable(sim *core.Simulation) {
 func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
 	target := fireElemental.CurrentTarget
 
+	if fireElemental.CurrentMana() < fireElemental.FireNova.CurCast.Cost {
+		fireElemental.WaitForMana(sim, fireElemental.FireNova.CurCast.Cost)
+		return
+	}
+
 	if fireElemental.tryThink(sim) {
 		fireElemental.WaitUntil(sim, sim.CurrentTime+(time.Second*1))
 		return
@@ -95,8 +100,6 @@ func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
 			fireElemental.fireBlastChance = .95
 			return
 		}
-		fireElemental.WaitForMana(sim, fireElemental.FireNova.CurCast.Cost)
-		return
 	}
 
 	if fireElemental.FireBlast.IsReady(sim) && randomSpell != FireNova {
@@ -105,7 +108,6 @@ func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
 			fireElemental.fireBlastChance = 0.05
 			return
 		}
-		fireElemental.WaitForMana(sim, fireElemental.FireNova.CurCast.Cost)
 	}
 
 	waitingOnCD := core.MinDuration(fireElemental.FireBlast.TimeToReady(sim), fireElemental.FireNova.TimeToReady(sim))
@@ -118,7 +120,6 @@ func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
 
 func (fireElemental *FireElemental) tryThink(sim *core.Simulation) bool {
 	if sim.RandomFloat("Fire Ele Thinking") < fireElemental.thinkChance {
-		fireElemental.WaitUntil(sim, sim.CurrentTime+(time.Second*1))
 		fireElemental.thinkChance -= .15
 		return true
 	}
@@ -127,10 +128,6 @@ func (fireElemental *FireElemental) tryThink(sim *core.Simulation) bool {
 }
 
 func (fireElemental *FireElemental) tryRandomSpellPicker(sim *core.Simulation) RandomSpell {
-
-	if fireElemental.CurrentMana() < fireElemental.FireNova.CurCast.Cost {
-		return NoRandom
-	}
 
 	if !fireElemental.FireBlast.IsReady(sim) || !fireElemental.FireNova.IsReady(sim) {
 		return NoRandom
@@ -144,7 +141,7 @@ func (fireElemental *FireElemental) tryRandomSpellPicker(sim *core.Simulation) R
 }
 
 var fireElementalPetBaseStats = stats.Stats{
-	stats.Mana:        1789,
+	stats.Mana:        5000,
 	stats.Health:      994,
 	stats.Intellect:   147,
 	stats.Stamina:     327,
