@@ -261,13 +261,12 @@ func (warrior *Warrior) applyOneHandedWeaponSpecialization() {
 }
 
 func (warrior *Warrior) applyWeaponSpecializations() {
-	maceSpecMask := core.ProcMaskUnknown
 	swordSpecMask := core.ProcMaskUnknown
 	if weapon := warrior.Equip[proto.ItemSlot_ItemSlotMainHand]; weapon.ID != 0 {
 		if weapon.WeaponType == proto.WeaponType_WeaponTypeAxe || weapon.WeaponType == proto.WeaponType_WeaponTypePolearm {
 			warrior.PseudoStats.BonusMHCritRating += 1 * core.CritRatingPerCritChance * float64(warrior.Talents.PoleaxeSpecialization)
 		} else if weapon.WeaponType == proto.WeaponType_WeaponTypeMace {
-			maceSpecMask |= core.ProcMaskMeleeMH
+			warrior.PseudoStats.BonusMHArmorPenRating += 3 * core.ArmorPenPerPercentArmor * float64(warrior.Talents.MaceSpecialization)
 		} else if weapon.WeaponType == proto.WeaponType_WeaponTypeSword {
 			swordSpecMask |= core.ProcMaskMeleeMH
 		}
@@ -276,43 +275,10 @@ func (warrior *Warrior) applyWeaponSpecializations() {
 		if weapon.WeaponType == proto.WeaponType_WeaponTypeAxe || weapon.WeaponType == proto.WeaponType_WeaponTypePolearm {
 			warrior.PseudoStats.BonusOHCritRating += 1 * core.CritRatingPerCritChance * float64(warrior.Talents.PoleaxeSpecialization)
 		} else if weapon.WeaponType == proto.WeaponType_WeaponTypeMace {
-			maceSpecMask |= core.ProcMaskMeleeOH
+			warrior.PseudoStats.BonusOHArmorPenRating += 3 * core.ArmorPenPerPercentArmor * float64(warrior.Talents.MaceSpecialization)
 		} else if weapon.WeaponType == proto.WeaponType_WeaponTypeSword {
 			swordSpecMask |= core.ProcMaskMeleeOH
 		}
-	}
-
-	if warrior.Talents.MaceSpecialization > 0 && maceSpecMask != core.ProcMaskUnknown {
-		ppmm := warrior.AutoAttacks.NewPPMManager(1.5, maceSpecMask)
-		rageMetrics := warrior.NewRageMetrics(core.ActionID{SpellID: 12704})
-
-		warrior.RegisterAura(core.Aura{
-			Label:    "Mace Specialization",
-			Duration: core.NeverExpires,
-			OnReset: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Activate(sim)
-			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() {
-					return
-				}
-
-				if !spellEffect.ProcMask.Matches(maceSpecMask) {
-					return
-				}
-
-				if spell == warrior.Whirlwind && spellEffect.ProcMask.Matches(core.ProcMaskMeleeOHSpecial) {
-					// OH WW hits cant proc this
-					return
-				}
-
-				if !ppmm.Proc(sim, spellEffect.ProcMask, "Mace Specialization") {
-					return
-				}
-
-				warrior.AddRage(sim, 7, rageMetrics)
-			},
-		})
 	}
 
 	if warrior.Talents.SwordSpecialization > 0 && swordSpecMask != core.ProcMaskUnknown {
