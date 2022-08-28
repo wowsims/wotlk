@@ -311,8 +311,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-Gladiator'sVindication"
  value: {
-  dps: 259.2908
-  tps: 267.56366
+  dps: 404.8733
+  tps: 431.96848
  }
 }
 dps_results: {

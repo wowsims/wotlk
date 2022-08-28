@@ -255,8 +255,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-Gladiator'sVestments"
  value: {
-  dps: 5270.21015
-  tps: 3741.8492
+  dps: 7046.67925
+  tps: 5003.14226
  }
 }
 dps_results: {

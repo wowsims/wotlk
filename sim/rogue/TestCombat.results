@@ -255,8 +255,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-Gladiator'sVestments"
  value: {
-  dps: 4833.88738
-  tps: 3432.06004
+  dps: 6391.10142
+  tps: 4537.68201
  }
 }
 dps_results: {
