@@ -22,6 +22,8 @@ type WarlockPet struct {
 	DemonicEmpowermentAura *core.Aura
 }
 
+const PetExpertiseScale = 1.53
+
 func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 
 	summonChoice := warlock.Options.Summon
@@ -66,8 +68,11 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 	wp.AddStats(stats.Stats{
 		stats.MeleeCrit: float64(warlock.Talents.DemonicTactics) * 2 * core.CritRatingPerCritChance,
 		stats.SpellCrit: float64(warlock.Talents.DemonicTactics) * 2 * core.CritRatingPerCritChance,
-		stats.MeleeHit:  -float64(warlock.Talents.Suppression) * core.MeleeHitRatingPerHitChance, //Remove warlock's Suppression hit bonus from pet which he gets through stat inheritance
-		stats.SpellHit:  -float64(warlock.Talents.Suppression) * core.SpellHitRatingPerHitChance, //Remove warlock's Suppression hit bonus from pet which he gets through stat inheritance
+
+		// Remove stats the pet incorrectly has because of the suppression talent through stat inheritance
+		stats.MeleeHit:  -float64(warlock.Talents.Suppression) * core.MeleeHitRatingPerHitChance,
+		stats.SpellHit:  -float64(warlock.Talents.Suppression) * core.SpellHitRatingPerHitChance,
+		stats.Expertise: -float64(warlock.Talents.Suppression) * PetExpertiseScale * core.ExpertisePerQuarterPercentReduction,
 	})
 
 	wp.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.04*float64(warlock.Talents.UnholyPower)
@@ -205,7 +210,13 @@ func (warlock *Warlock) makeStatInheritance() core.PetStatInheritance {
 			stats.MeleeCrit:        improvedDemonicTactics * 0.1 * ownerStats[stats.SpellCrit],
 			stats.MeleeHit:         ownerHitChance * core.MeleeHitRatingPerHitChance,
 			stats.SpellHit:         ownerHitChance * core.SpellHitRatingPerHitChance,
+			// TODO: revisit
+			stats.Expertise: (ownerStats[stats.SpellHit] / core.SpellHitRatingPerHitChance) *
+				PetExpertiseScale * core.ExpertisePerQuarterPercentReduction,
+
 			// Resists, 40%
+
+			// TODO: does the pet scale with the 1% hit from draenei?
 		}
 	}
 }
