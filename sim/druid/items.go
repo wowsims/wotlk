@@ -159,6 +159,7 @@ var ItemSetMalfurionsRegalia = core.NewItemSet(core.ItemSet{
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
 			// Your Moonfire ability now has a chance for its periodic damage to be critical strikes.
+			// Implemented in moonfire.go
 		},
 		4: func(agent core.Agent) {
 			// Increases the damage done by your Starfire and Wrath spells by 4%.
