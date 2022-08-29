@@ -46,6 +46,9 @@ type SpellEffect struct {
 	// Used in determining snapshot based damage from effect details (e.g. snapshot crit and % damage modifiers)
 	IsPeriodic bool
 
+	// For snapshotted effects, to ignore certain multipliers.
+	IsSnapshot bool
+
 	// Indicates this is a healing spell, rather than a damage spell.
 	IsHealing bool
 
@@ -224,7 +227,7 @@ func (spellEffect *SpellEffect) calculateBaseDamage(sim *Simulation, spell *Spel
 	if spellEffect.BaseDamage.Calculator == nil {
 		return 0
 	} else {
-		return spellEffect.BaseDamage.Calculator(sim, spellEffect, spell) * spellEffect.DamageMultiplier
+		return spellEffect.BaseDamage.Calculator(sim, spellEffect, spell)
 	}
 }
 
@@ -391,7 +394,12 @@ func (spellEffect *SpellEffect) applyAttackerModifiers(sim *Simulation, spell *S
 			spellEffect.BonusArmorPenRating = attacker.PseudoStats.BonusOHArmorPenRating
 		}
 	}
-	spellEffect.Damage *= spellEffect.snapshotAttackModifiers(spell)
+
+	if !spellEffect.IsSnapshot {
+		spellEffect.Damage *= spellEffect.snapshotAttackModifiers(spell)
+	} else {
+		spellEffect.Damage *= spellEffect.DamageMultiplier
+	}
 }
 
 // snapshotAttackModifiers will calculate the total %dmg to add from attacker bonuses.
@@ -405,6 +413,7 @@ func (spellEffect *SpellEffect) snapshotAttackModifiers(spell *Spell) float64 {
 	multiplier := attacker.PseudoStats.DamageDealtMultiplier
 
 	multiplier *= spell.DamageMultiplier
+	multiplier *= spellEffect.DamageMultiplier
 
 	if spellEffect.ProcMask.Matches(ProcMaskRanged) {
 		multiplier *= attacker.PseudoStats.RangedDamageDealtMultiplier
