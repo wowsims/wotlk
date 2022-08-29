@@ -24,12 +24,7 @@ func (warrior *Warrior) ApplyTalents() {
 
 	if warrior.Talents.StrengthOfArms > 0 {
 		warrior.MultiplyStat(stats.Strength, 1.0+0.01*float64(warrior.Talents.StrengthOfArms))
-<<<<<<< HEAD
-		warrior.AddStat(stats.Expertise, 2*float64(warrior.Talents.StrengthOfArms))
-
-=======
 		warrior.AddStat(stats.Expertise, core.ExpertisePerQuarterPercentReduction*2*float64(warrior.Talents.StrengthOfArms))
->>>>>>> c301cdb2b5911b9e0761b32168185e1e574a8a25
 	}
 
 	// TODO: This should only be applied while berserker stance is active.

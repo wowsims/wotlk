@@ -24,21 +24,13 @@ type Warrior struct {
 	WarriorInputs
 
 	// Current state
-<<<<<<< HEAD
 	Stance                 Stance
 	overpowerValidUntil    time.Duration
 	rendValidUntil         time.Duration
 	shoutExpiresAt         time.Duration
 	revengeProcAura        *core.Aura
 	glyphOfRevengeProcAura *core.Aura
-=======
-	Stance               Stance
-	overpowerValidUntil  time.Duration
-	rendValidUntil       time.Duration
-	RevengeValidUntil    time.Duration
-	shoutExpiresAt       time.Duration
-	disableHsCleaveUntil time.Duration
->>>>>>> c301cdb2b5911b9e0761b32168185e1e574a8a25
+	disableHsCleaveUntil   time.Duration
 
 	// Reaction time values
 	reactionTime       time.Duration
@@ -176,12 +168,6 @@ func (warrior *Warrior) Initialize() {
 func (warrior *Warrior) Reset(sim *core.Simulation) {
 	warrior.overpowerValidUntil = 0
 	warrior.rendValidUntil = 0
-<<<<<<< HEAD
-=======
-	warrior.RevengeValidUntil = 0
-	warrior.disableHsCleaveUntil = 0
-	warrior.lastBloodsurgeProc = 0
->>>>>>> c301cdb2b5911b9e0761b32168185e1e574a8a25
 
 	warrior.shoutExpiresAt = 0
 	if warrior.Shout != nil && warrior.PrecastShout {
