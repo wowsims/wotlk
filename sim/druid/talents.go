@@ -309,6 +309,7 @@ func (druid *Druid) applyEclipse() {
 
 	// Solar
 	solarProcChance := (1.0 / 3.0) * float64(druid.Talents.Eclipse)
+	// TODO : make this proc a regular Aura
 	solarProcAura := druid.NewTemporaryStatsAura("Solar Eclipse proc", core.ActionID{SpellID: 48517}, stats.Stats{}, time.Millisecond*15000)
 	druid.SolarICD.Duration = time.Millisecond * 30000
 	druid.RegisterAura(core.Aura{
@@ -339,6 +340,7 @@ func (druid *Druid) applyEclipse() {
 
 	// Lunar
 	lunarProcChance := 0.2 * float64(druid.Talents.Eclipse)
+	// TODO : make this proc a regular Aura
 	lunarProcAura := druid.NewTemporaryStatsAura("Lunar Eclipse proc", core.ActionID{SpellID: 48518}, stats.Stats{}, time.Millisecond*15000)
 	druid.LunarICD.Duration = time.Millisecond * 30000
 	druid.RegisterAura(core.Aura{
