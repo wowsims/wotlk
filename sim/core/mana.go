@@ -75,11 +75,7 @@ func (unit *Unit) HasManaBar() bool {
 	return unit.manaBar.unit != nil
 }
 func (unit *Unit) MaxMana() float64 {
-	/*
-		TODO This should use unit.stats[stats.Mana], but this can break anything that's assuming MaxMana is static
-		like it is currently.
-	*/
-	return unit.GetInitialStat(stats.Mana)
+	return unit.stats[stats.Mana]
 }
 func (unit *Unit) CurrentMana() float64 {
 	return unit.currentMana
@@ -95,6 +91,7 @@ func (unit *Unit) AddMana(sim *Simulation, amount float64, metrics *ResourceMetr
 
 	oldMana := unit.CurrentMana()
 	newMana := MinFloat(oldMana+amount, unit.MaxMana())
+	//fmt.Printf("New Mana: %f \n", newMana)
 	metrics.AddEvent(amount, newMana-oldMana)
 
 	if sim.Log != nil {
@@ -283,4 +280,12 @@ func (sim *Simulation) initManaTickAction() {
 		sim.AddPendingAction(pa)
 	}
 	sim.AddPendingAction(pa)
+}
+
+func (mb *manaBar) reset() {
+	if mb.unit == nil {
+		return
+	}
+
+	mb.currentMana = mb.unit.MaxMana()
 }

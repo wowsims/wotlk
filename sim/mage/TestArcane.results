@@ -115,22 +115,22 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-DarkmoonCard:Greatness-42987"
  value: {
-  dps: 6500.63934
-  tps: 3892.30153
+  dps: 6514.87745
+  tps: 3903.04822
  }
 }
 dps_results: {
  key: "TestArcane-AllItems-DarkmoonCard:Greatness-44253"
  value: {
-  dps: 6500.63934
-  tps: 3892.30153
+  dps: 6514.87745
+  tps: 3903.04822
  }
 }
 dps_results: {
  key: "TestArcane-AllItems-DarkmoonCard:Greatness-44254"
  value: {
-  dps: 6502.31219
-  tps: 3892.48869
+  dps: 6555.49737
+  tps: 3923.85242
  }
 }
 dps_results: {

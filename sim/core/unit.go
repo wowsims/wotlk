@@ -422,10 +422,7 @@ func (unit *Unit) reset(sim *Simulation, agent Agent) {
 		spell.reset(sim)
 	}
 
-	if unit.HasManaBar() {
-		unit.currentMana = unit.stats[stats.Mana]
-	}
-
+	unit.manaBar.reset()
 	unit.healthBar.reset(sim)
 	unit.UpdateManaRegenRates()
 

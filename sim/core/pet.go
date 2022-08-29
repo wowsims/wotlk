@@ -158,6 +158,9 @@ func (pet *Pet) Enable(sim *Simulation, petAgent PetAgent) {
 	pet.AddStatsDynamic(sim, pet.inheritedStats)
 	pet.currentStatInheritance = pet.statInheritance
 
+	// Reset pet mana, with new stats
+	pet.manaBar.reset()
+
 	pet.SetGCDTimer(sim, sim.CurrentTime)
 	pet.AutoAttacks.EnableAutoSwing(sim)
 
@@ -198,9 +201,6 @@ func (pet *Pet) Disable(sim *Simulation) {
 	// If a pet is immediately re-summoned it might try to use GCD, so we need to
 	// clear it.
 	pet.Hardcast = Hardcast{}
-
-	// Reset pet mana.
-	pet.stats[stats.Mana] = pet.MaxMana()
 
 	if pet.timeoutAction != nil {
 		pet.timeoutAction.Cancel(sim)
