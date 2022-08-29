@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -41,8 +40,6 @@ func (warrior *Warrior) registerDevastateSpell() {
 
 	cost := 15.0 - float64(warrior.Talents.FocusedRage) - float64(warrior.Talents.Puncture)
 	refundAmount := cost * 0.8
-
-	hasGlyph := warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfDevastate)
 
 	normalBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 0, 1.2, 1.0, true)
 
@@ -89,9 +86,6 @@ func (warrior *Warrior) registerDevastateSpell() {
 				if spellEffect.Landed() {
 					if !warrior.ExposeArmorAura.IsActive() {
 						warrior.SunderArmorDevastate.Cast(sim, spellEffect.Target)
-						if hasGlyph {
-							warrior.SunderArmorDevastate.Cast(sim, spellEffect.Target)
-						}
 					}
 				} else {
 					warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
