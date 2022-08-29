@@ -224,7 +224,7 @@ func (spellEffect *SpellEffect) calculateBaseDamage(sim *Simulation, spell *Spel
 	if spellEffect.BaseDamage.Calculator == nil {
 		return 0
 	} else {
-		return spellEffect.BaseDamage.Calculator(sim, spellEffect, spell) * spellEffect.DamageMultiplier * spell.DamageMultiplier
+		return spellEffect.BaseDamage.Calculator(sim, spellEffect, spell) * spellEffect.DamageMultiplier
 	}
 }
 
@@ -403,6 +403,8 @@ func (spellEffect *SpellEffect) snapshotAttackModifiers(spell *Spell) float64 {
 	attacker := spell.Unit
 
 	multiplier := attacker.PseudoStats.DamageDealtMultiplier
+
+	multiplier *= spell.DamageMultiplier
 
 	if spellEffect.ProcMask.Matches(ProcMaskRanged) {
 		multiplier *= attacker.PseudoStats.RangedDamageDealtMultiplier
